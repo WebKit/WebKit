@@ -37,46 +37,46 @@ ALWAYS_INLINE bool isIndex(uint32_t index)
 }
 
 template <typename CharType>
-ALWAYS_INLINE std::optional<uint32_t> parseIndex(const CharType* characters, unsigned length)
+ALWAYS_INLINE Optional<uint32_t> parseIndex(const CharType* characters, unsigned length)
 {
     // An empty string is not a number.
     if (!length)
-        return std::nullopt;
+        return WTF::nullopt;
 
     // Get the first character, turning it into a digit.
     uint32_t value = characters[0] - '0';
     if (value > 9)
-        return std::nullopt;
+        return WTF::nullopt;
 
     // Check for leading zeros. If the first characher is 0, then the
     // length of the string must be one - e.g. "042" is not equal to "42".
     if (!value && length > 1)
-        return std::nullopt;
+        return WTF::nullopt;
 
     while (--length) {
         // Multiply value by 10, checking for overflow out of 32 bits.
         if (value > 0xFFFFFFFFU / 10)
-            return std::nullopt;
+            return WTF::nullopt;
         value *= 10;
 
         // Get the next character, turning it into a digit.
         uint32_t newValue = *(++characters) - '0';
         if (newValue > 9)
-            return std::nullopt;
+            return WTF::nullopt;
 
         // Add in the old value, checking for overflow out of 32 bits.
         newValue += value;
         if (newValue < value)
-            return std::nullopt;
+            return WTF::nullopt;
         value = newValue;
     }
 
     if (!isIndex(value))
-        return std::nullopt;
+        return WTF::nullopt;
     return value;
 }
 
-ALWAYS_INLINE std::optional<uint32_t> parseIndex(StringImpl& impl)
+ALWAYS_INLINE Optional<uint32_t> parseIndex(StringImpl& impl)
 {
     if (impl.is8Bit())
         return parseIndex(impl.characters8(), impl.length());
@@ -272,13 +272,13 @@ inline bool Identifier::equal(const StringImpl* r, const UChar* s, unsigned leng
     return WTF::equal(r, s, length);
 }
 
-ALWAYS_INLINE std::optional<uint32_t> parseIndex(const Identifier& identifier)
+ALWAYS_INLINE Optional<uint32_t> parseIndex(const Identifier& identifier)
 {
     auto uid = identifier.impl();
     if (!uid)
-        return std::nullopt;
+        return WTF::nullopt;
     if (uid->isSymbol())
-        return std::nullopt;
+        return WTF::nullopt;
     return parseIndex(*uid);
 }
 

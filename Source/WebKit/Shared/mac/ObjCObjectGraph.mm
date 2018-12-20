@@ -113,7 +113,7 @@ enum class ObjCType {
 #endif
 };
 
-static std::optional<ObjCType> typeFromObject(id object)
+static Optional<ObjCType> typeFromObject(id object)
 {
     ASSERT(object);
 
@@ -139,7 +139,7 @@ static std::optional<ObjCType> typeFromObject(id object)
     ALLOW_DEPRECATED_DECLARATIONS_END
 #endif
 
-    return std::nullopt;
+    return WTF::nullopt;
 }
 
 void ObjCObjectGraph::encode(IPC::Encoder& encoder, id object)

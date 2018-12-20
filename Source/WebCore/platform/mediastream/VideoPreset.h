@@ -41,7 +41,7 @@ struct FrameRateRange {
     double maximum;
 
     template<class Encoder> void encode(Encoder&) const;
-    template<class Decoder> static std::optional<FrameRateRange> decode(Decoder&);
+    template<class Decoder> static Optional<FrameRateRange> decode(Decoder&);
 };
 
 template<class Encoder>
@@ -52,17 +52,17 @@ void FrameRateRange::encode(Encoder& encoder) const
 }
 
 template <class Decoder>
-std::optional<FrameRateRange> FrameRateRange::decode(Decoder& decoder)
+Optional<FrameRateRange> FrameRateRange::decode(Decoder& decoder)
 {
-    std::optional<double> minimum;
+    Optional<double> minimum;
     decoder >> minimum;
     if (!minimum)
-        return std::nullopt;
+        return WTF::nullopt;
 
-    std::optional<double> maximum;
+    Optional<double> maximum;
     decoder >> maximum;
     if (!maximum)
-        return std::nullopt;
+        return WTF::nullopt;
 
     return FrameRateRange { *minimum, *maximum };
 }
@@ -72,7 +72,7 @@ struct VideoPresetData {
     Vector<FrameRateRange> frameRateRanges;
 
     template<class Encoder> void encode(Encoder&) const;
-    template<class Decoder> static std::optional<VideoPresetData> decode(Decoder&);
+    template<class Decoder> static Optional<VideoPresetData> decode(Decoder&);
 };
 
 template<class Encoder>
@@ -83,17 +83,17 @@ void VideoPresetData::encode(Encoder& encoder) const
 }
 
 template <class Decoder>
-std::optional<VideoPresetData> VideoPresetData::decode(Decoder& decoder)
+Optional<VideoPresetData> VideoPresetData::decode(Decoder& decoder)
 {
-    std::optional<IntSize> size;
+    Optional<IntSize> size;
     decoder >> size;
     if (!size)
-        return std::nullopt;
+        return WTF::nullopt;
 
-    std::optional<Vector<FrameRateRange>> frameRateRanges;
+    Optional<Vector<FrameRateRange>> frameRateRanges;
     decoder >> frameRateRanges;
     if (!frameRateRanges)
-        return std::nullopt;
+        return WTF::nullopt;
 
     return VideoPresetData { *size, *frameRateRanges };
 }

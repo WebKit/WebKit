@@ -87,7 +87,7 @@ public:
     // arrays/maps that has to be traversed to reach the most nested CBORValue
     // contained in |node|. Primitive values and empty containers have nesting
     // depths of 0.
-    WEBCORE_EXPORT static std::optional<Vector<uint8_t>> write(const CBORValue&, size_t maxNestingLevel = kDefaultMaxNestingDepth);
+    WEBCORE_EXPORT static Optional<Vector<uint8_t>> write(const CBORValue&, size_t maxNestingLevel = kDefaultMaxNestingDepth);
 
 private:
     explicit CBORWriter(Vector<uint8_t>*);

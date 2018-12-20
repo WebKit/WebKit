@@ -30,7 +30,7 @@ namespace WebCore {
 class AutofillElements {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    WEBCORE_EXPORT static std::optional<AutofillElements> computeAutofillElements(Ref<HTMLInputElement>);
+    WEBCORE_EXPORT static Optional<AutofillElements> computeAutofillElements(Ref<HTMLInputElement>);
     WEBCORE_EXPORT void autofill(String, String);
 
     const HTMLInputElement* username() const { return m_username.get(); }

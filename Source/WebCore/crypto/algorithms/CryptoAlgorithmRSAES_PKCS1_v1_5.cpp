@@ -112,7 +112,7 @@ void CryptoAlgorithmRSAES_PKCS1_v1_5::importKey(CryptoKeyFormat format, KeyData&
             exceptionCallback(DataError);
             return;
         }
-        result = CryptoKeyRSA::importJwk(parameters.identifier, std::nullopt, WTFMove(key), extractable, usages);
+        result = CryptoKeyRSA::importJwk(parameters.identifier, WTF::nullopt, WTFMove(key), extractable, usages);
         break;
     }
     case CryptoKeyFormat::Spki: {
@@ -120,7 +120,7 @@ void CryptoAlgorithmRSAES_PKCS1_v1_5::importKey(CryptoKeyFormat format, KeyData&
             exceptionCallback(SyntaxError);
             return;
         }
-        result = CryptoKeyRSA::importSpki(parameters.identifier, std::nullopt, WTFMove(WTF::get<Vector<uint8_t>>(data)), extractable, usages);
+        result = CryptoKeyRSA::importSpki(parameters.identifier, WTF::nullopt, WTFMove(WTF::get<Vector<uint8_t>>(data)), extractable, usages);
         break;
     }
     case CryptoKeyFormat::Pkcs8: {
@@ -128,7 +128,7 @@ void CryptoAlgorithmRSAES_PKCS1_v1_5::importKey(CryptoKeyFormat format, KeyData&
             exceptionCallback(SyntaxError);
             return;
         }
-        result = CryptoKeyRSA::importPkcs8(parameters.identifier, std::nullopt, WTFMove(WTF::get<Vector<uint8_t>>(data)), extractable, usages);
+        result = CryptoKeyRSA::importPkcs8(parameters.identifier, WTF::nullopt, WTFMove(WTF::get<Vector<uint8_t>>(data)), extractable, usages);
         break;
     }
     default:

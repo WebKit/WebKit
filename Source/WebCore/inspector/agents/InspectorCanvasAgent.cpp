@@ -95,7 +95,7 @@ void InspectorCanvasAgent::enable(ErrorString&)
     if (m_enabled)
         return;
 
-    m_recordingAutoCaptureFrameCount = std::nullopt;
+    m_recordingAutoCaptureFrameCount = WTF::nullopt;
 
     m_enabled = true;
 
@@ -106,7 +106,7 @@ void InspectorCanvasAgent::enable(ErrorString&)
 #if ENABLE(WEBGL)
         if (is<WebGLRenderingContextBase>(inspectorCanvas->context())) {
             WebGLRenderingContextBase& contextWebGL = downcast<WebGLRenderingContextBase>(inspectorCanvas->context());
-            if (std::optional<Vector<String>> extensions = contextWebGL.getSupportedExtensions()) {
+            if (Optional<Vector<String>> extensions = contextWebGL.getSupportedExtensions()) {
                 for (const String& extension : *extensions) {
                     if (contextWebGL.extensionIsEnabled(extension))
                         m_frontendDispatcher->extensionEnabled(inspectorCanvas->identifier(), extension);
@@ -140,7 +140,7 @@ void InspectorCanvasAgent::disable(ErrorString&)
     for (auto& inspectorCanvas : m_identifierToInspectorCanvas.values())
         inspectorCanvas->resetRecordingData();
 
-    m_recordingAutoCaptureFrameCount = std::nullopt;
+    m_recordingAutoCaptureFrameCount = WTF::nullopt;
 
     m_enabled = false;
 }
@@ -270,7 +270,7 @@ void InspectorCanvasAgent::setRecordingAutoCaptureFrameCount(ErrorString&, int c
     if (count > 0)
         m_recordingAutoCaptureFrameCount = count;
     else
-        m_recordingAutoCaptureFrameCount = std::nullopt;
+        m_recordingAutoCaptureFrameCount = WTF::nullopt;
 }
 
 void InspectorCanvasAgent::startRecording(ErrorString& errorString, const String& canvasId, const int* frameCount, const int* memoryLimit)

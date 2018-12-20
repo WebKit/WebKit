@@ -506,9 +506,9 @@ void KeyframeAnimation::checkForMatchingColorFilterFunctionLists()
     });
 }
 
-std::optional<Seconds> KeyframeAnimation::timeToNextService()
+Optional<Seconds> KeyframeAnimation::timeToNextService()
 {
-    std::optional<Seconds> t = AnimationBase::timeToNextService();
+    Optional<Seconds> t = AnimationBase::timeToNextService();
     if (!t || t.value() != 0_s || preActive())
         return t;
 

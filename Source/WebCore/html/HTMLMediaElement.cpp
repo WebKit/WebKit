@@ -1758,7 +1758,7 @@ void HTMLMediaElement::updateActiveTextTrackCues(const MediaTime& movieTime)
     if (auto nearestEndingCue = std::min_element(currentCues.begin(), currentCues.end(), compareCueIntervalEndTime))
         nextInterestingTime = nearestEndingCue->data()->endMediaTime();
 
-    std::optional<CueInterval> nextCue = m_cueTree.nextIntervalAfter(movieTimeInterval);
+    Optional<CueInterval> nextCue = m_cueTree.nextIntervalAfter(movieTimeInterval);
     if (nextCue)
         nextInterestingTime = std::min(nextInterestingTime, nextCue->low());
 
@@ -7185,7 +7185,7 @@ RefPtr<VideoPlaybackQuality> HTMLMediaElement::getVideoPlaybackQuality()
     RefPtr<DOMWindow> domWindow = document().domWindow();
     double timestamp = domWindow ? 1000 * domWindow->nowTimestamp() : 0;
 
-    auto metrics = m_player ? m_player->videoPlaybackQualityMetrics() : std::nullopt;
+    auto metrics = m_player ? m_player->videoPlaybackQualityMetrics() : WTF::nullopt;
     if (!metrics)
         return VideoPlaybackQuality::create(timestamp, { });
 
@@ -7783,10 +7783,10 @@ void HTMLMediaElement::setPlaybackWithoutUserGesture(PlaybackWithoutUserGesture 
         m_playbackWithoutUserGestureStartedTime = currentMediaTime();
         break;
     case PlaybackWithoutUserGesture::None:
-        m_playbackWithoutUserGestureStartedTime = std::nullopt;
+        m_playbackWithoutUserGestureStartedTime = WTF::nullopt;
         break;
     case PlaybackWithoutUserGesture::Prevented:
-        m_playbackWithoutUserGestureStartedTime = std::nullopt;
+        m_playbackWithoutUserGestureStartedTime = WTF::nullopt;
 
         dispatchPlayPauseEventsIfNeedsQuirks();
         handleAutoplayEvent(AutoplayEvent::DidPreventMediaFromPlaying);

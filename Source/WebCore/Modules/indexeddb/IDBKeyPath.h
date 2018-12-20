@@ -46,7 +46,7 @@ enum class IDBKeyPathParseError {
 
 void IDBParseKeyPath(const String&, Vector<String>&, IDBKeyPathParseError&);
 IDBKeyPath isolatedCopy(const IDBKeyPath&);
-inline std::optional<IDBKeyPath> isolatedCopy(const std::optional<IDBKeyPath>& variant)
+inline Optional<IDBKeyPath> isolatedCopy(const Optional<IDBKeyPath>& variant)
 {
     if (!variant)
         return { };

@@ -437,7 +437,7 @@ unsigned AudioBufferSourceNode::numberOfChannels()
     return output(0)->numberOfChannels();
 }
 
-ExceptionOr<void> AudioBufferSourceNode::start(double when, double grainOffset, std::optional<double> optionalGrainDuration)
+ExceptionOr<void> AudioBufferSourceNode::start(double when, double grainOffset, Optional<double> optionalGrainDuration)
 {
     double grainDuration = 0;
     if (optionalGrainDuration)

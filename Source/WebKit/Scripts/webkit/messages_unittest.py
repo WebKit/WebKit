@@ -285,7 +285,7 @@ _expected_superclass_results = {
                 ('bool', 'value'),
             ),
             'reply_parameters': (
-                ('std::optional<WebKit::TestClassName>', 'optionalReply'),
+                ('Optional<WebKit::TestClassName>', 'optionalReply'),
             ),
             'conditions': (None),
         },

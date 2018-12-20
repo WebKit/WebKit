@@ -123,7 +123,7 @@ inline void HTMLLIElement::parseValue(const AtomicString& value)
     if (valueOK)
         downcast<RenderListItem>(*renderer()).setExplicitValue(requestedValue);
     else
-        downcast<RenderListItem>(*renderer()).setExplicitValue(std::nullopt);
+        downcast<RenderListItem>(*renderer()).setExplicitValue(WTF::nullopt);
 }
 
 }

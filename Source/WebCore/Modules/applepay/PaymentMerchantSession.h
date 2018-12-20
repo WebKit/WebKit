@@ -47,7 +47,7 @@ public:
     {
     }
 
-    static std::optional<PaymentMerchantSession> fromJS(JSC::ExecState&, JSC::JSValue, String& errorMessage);
+    static Optional<PaymentMerchantSession> fromJS(JSC::ExecState&, JSC::JSValue, String& errorMessage);
 
     PKPaymentMerchantSession *pkPaymentMerchantSession() const { return m_pkPaymentMerchantSession.get(); }
 

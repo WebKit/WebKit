@@ -51,7 +51,7 @@ private:
     MockRealtimeAudioSourceMac(String&& deviceID, String&& name, String&& hashSalt);
 
     void settingsDidChange(OptionSet<RealtimeMediaSourceSettings::Flag>) final;
-    std::optional<Vector<int>> discreteSampleRates() const final { return { { 44100, 48000 } }; }
+    Optional<Vector<int>> discreteSampleRates() const final { return { { 44100, 48000 } }; }
 
     void emitSampleBuffers(uint32_t);
     void render(Seconds) final;

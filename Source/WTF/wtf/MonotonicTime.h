@@ -144,12 +144,12 @@ public:
     }
 
     template<class Decoder>
-    static std::optional<MonotonicTime> decode(Decoder& decoder)
+    static Optional<MonotonicTime> decode(Decoder& decoder)
     {
-        std::optional<double> time;
+        Optional<double> time;
         decoder >> time;
         if (!time)
-            return std::nullopt;
+            return WTF::nullopt;
         return MonotonicTime::fromRawSeconds(*time);
     }
 

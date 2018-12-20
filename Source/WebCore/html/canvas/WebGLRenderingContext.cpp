@@ -179,10 +179,10 @@ WebGLExtension* WebGLRenderingContext::getExtension(const String& name)
     return nullptr;
 }
 
-std::optional<Vector<String>> WebGLRenderingContext::getSupportedExtensions()
+Optional<Vector<String>> WebGLRenderingContext::getSupportedExtensions()
 {
     if (isContextLost())
-        return std::nullopt;
+        return WTF::nullopt;
 
     Vector<String> result;
     
@@ -691,7 +691,7 @@ bool WebGLRenderingContext::validateIndexArrayConservative(GC3Denum type, unsign
     auto buffer = elementArrayBuffer->elementArrayBuffer();
     ASSERT(buffer);
     
-    std::optional<unsigned> maxIndex = elementArrayBuffer->getCachedMaxIndex(type);
+    Optional<unsigned> maxIndex = elementArrayBuffer->getCachedMaxIndex(type);
     if (!maxIndex) {
         // Compute the maximum index in the entire buffer for the given type of index.
         switch (type) {

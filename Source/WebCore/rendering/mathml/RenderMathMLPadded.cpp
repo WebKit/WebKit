@@ -114,7 +114,7 @@ void RenderMathMLPadded::layoutBlock(bool relayoutChildren, LayoutUnit)
     clearNeedsLayout();
 }
 
-std::optional<int> RenderMathMLPadded::firstLineBaseline() const
+Optional<int> RenderMathMLPadded::firstLineBaseline() const
 {
     // We try and calculate the baseline from the position of the first child.
     LayoutUnit ascent;
@@ -122,7 +122,7 @@ std::optional<int> RenderMathMLPadded::firstLineBaseline() const
         ascent = ascentForChild(*baselineChild) + baselineChild->logicalTop() + voffset();
     else
         ascent = mpaddedHeight(0);
-    return std::optional<int>(std::lround(static_cast<float>(ascent)));
+    return Optional<int>(std::lround(static_cast<float>(ascent)));
 }
 
 }

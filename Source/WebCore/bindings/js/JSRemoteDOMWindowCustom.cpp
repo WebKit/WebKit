@@ -34,7 +34,7 @@ using namespace JSC;
 
 bool JSRemoteDOMWindow::getOwnPropertySlot(JSObject* object, ExecState* state, PropertyName propertyName, PropertySlot& slot)
 {
-    if (std::optional<unsigned> index = parseIndex(propertyName))
+    if (Optional<unsigned> index = parseIndex(propertyName))
         return getOwnPropertySlotByIndex(object, state, index.value(), slot);
 
     auto* thisObject = jsCast<JSRemoteDOMWindow*>(object);

@@ -32,13 +32,13 @@ namespace TestWebKitAPI {
 TEST(WTF_Optional, Disengaged)
 {
     {
-        std::optional<int> optional;
+        Optional<int> optional;
 
         EXPECT_FALSE(static_cast<bool>(optional));
     }
 
     {
-        std::optional<int> optional { std::nullopt };
+        Optional<int> optional { WTF::nullopt };
 
         EXPECT_FALSE(static_cast<bool>(optional));
     }
@@ -46,7 +46,7 @@ TEST(WTF_Optional, Disengaged)
 
 TEST(WTF_Optional, Engaged)
 {
-    std::optional<int> optional { 10 };
+    Optional<int> optional { 10 };
 
     EXPECT_TRUE(static_cast<bool>(optional));
     EXPECT_EQ(10, optional.value());
@@ -64,7 +64,7 @@ TEST(WTF_Optional, Destructor)
     };
 
     {
-        std::optional<A> optional { std::in_place };
+        Optional<A> optional { std::in_place };
 
         EXPECT_TRUE(static_cast<bool>(optional));
     }
@@ -75,7 +75,7 @@ TEST(WTF_Optional, Destructor)
 TEST(WTF_Optional, Callback)
 {
     bool called = false;
-    std::optional<int> a;
+    Optional<int> a;
     int result = valueOrCompute(a, [&] {
         called = true;
         return 300;
@@ -95,22 +95,22 @@ TEST(WTF_Optional, Callback)
 
 TEST(WTF_Optional, Equality)
 {
-    std::optional<int> unengaged1;
-    std::optional<int> unengaged2;
+    Optional<int> unengaged1;
+    Optional<int> unengaged2;
 
-    std::optional<int> engaged1 { 1 };
-    std::optional<int> engaged2 { 2 };
-    std::optional<int> engagedx2 { 2 };
+    Optional<int> engaged1 { 1 };
+    Optional<int> engaged2 { 2 };
+    Optional<int> engagedx2 { 2 };
 
     EXPECT_TRUE(unengaged1 == unengaged2);
     EXPECT_FALSE(engaged1 == engaged2);
     EXPECT_FALSE(engaged1 == unengaged1);
     EXPECT_TRUE(engaged2 == engagedx2);
 
-    EXPECT_TRUE(unengaged1 == std::nullopt);
-    EXPECT_FALSE(engaged1 == std::nullopt);
-    EXPECT_TRUE(std::nullopt == unengaged1);
-    EXPECT_FALSE(std::nullopt == engaged1);
+    EXPECT_TRUE(unengaged1 == WTF::nullopt);
+    EXPECT_FALSE(engaged1 == WTF::nullopt);
+    EXPECT_TRUE(WTF::nullopt == unengaged1);
+    EXPECT_FALSE(WTF::nullopt == engaged1);
 
     EXPECT_TRUE(engaged1 == 1);
     EXPECT_TRUE(1 == engaged1);
@@ -120,22 +120,22 @@ TEST(WTF_Optional, Equality)
 
 TEST(WTF_Optional, Inequality)
 {
-    std::optional<int> unengaged1;
-    std::optional<int> unengaged2;
+    Optional<int> unengaged1;
+    Optional<int> unengaged2;
 
-    std::optional<int> engaged1 { 1 };
-    std::optional<int> engaged2 { 2 };
-    std::optional<int> engagedx2 { 2 };
+    Optional<int> engaged1 { 1 };
+    Optional<int> engaged2 { 2 };
+    Optional<int> engagedx2 { 2 };
 
     EXPECT_FALSE(unengaged1 != unengaged2);
     EXPECT_TRUE(engaged1 != engaged2);
     EXPECT_TRUE(engaged1 != unengaged1);
     EXPECT_FALSE(engaged2 != engagedx2);
 
-    EXPECT_FALSE(unengaged1 != std::nullopt);
-    EXPECT_TRUE(engaged1 != std::nullopt);
-    EXPECT_FALSE(std::nullopt != unengaged1);
-    EXPECT_TRUE(std::nullopt != engaged1);
+    EXPECT_FALSE(unengaged1 != WTF::nullopt);
+    EXPECT_TRUE(engaged1 != WTF::nullopt);
+    EXPECT_FALSE(WTF::nullopt != unengaged1);
+    EXPECT_TRUE(WTF::nullopt != engaged1);
 
     EXPECT_FALSE(engaged1 != 1);
     EXPECT_TRUE(engaged1 != 2);
@@ -146,5 +146,93 @@ TEST(WTF_Optional, Inequality)
     EXPECT_TRUE(1 != unengaged1);
 }
 
+TEST(WTF_Optional, MoveSemanticsConstructor)
+{
+    {
+        Optional<int> unengaged1 { };
+        EXPECT_FALSE(!!unengaged1);
+
+        Optional<int> unengaged2(std::move(unengaged1));
+        EXPECT_FALSE(!!unengaged1);
+        EXPECT_FALSE(!!unengaged2);
+    }
+
+    {
+        Optional<int> engagedToUnengaged { 2 };
+        EXPECT_TRUE(!!engagedToUnengaged);
+        EXPECT_EQ(2, engagedToUnengaged.value());
+
+        Optional<int> engaged(std::move(engagedToUnengaged));
+        EXPECT_FALSE(!!engagedToUnengaged);
+        EXPECT_TRUE(!!engaged);
+        EXPECT_EQ(2, engaged.value());
+    }
+}
+
+TEST(WTF_Optional, MoveSemanticsAssignment)
+{
+    {
+        Optional<int> unengaged1 { };
+        EXPECT_FALSE(!!unengaged1);
+
+        Optional<int> unengaged2;
+        EXPECT_FALSE(!!unengaged2);
+
+        unengaged2 = std::move(unengaged1);
+        EXPECT_FALSE(!!unengaged1);
+        EXPECT_FALSE(!!unengaged2);
+    }
+
+    {
+        Optional<int> engagedToUnengaged { 3 };
+        EXPECT_TRUE(!!engagedToUnengaged);
+        EXPECT_EQ(3, engagedToUnengaged.value());
+
+        engagedToUnengaged = std::move(WTF::nullopt);
+        EXPECT_FALSE(!!engagedToUnengaged);
+    }
+
+    {
+        Optional<int> engagedToUnengaged { 4 };
+        EXPECT_TRUE(!!engagedToUnengaged);
+        EXPECT_EQ(4, engagedToUnengaged.value());
+
+        Optional<int> unengagedToEngaged;
+        EXPECT_FALSE(!!unengagedToEngaged);
+
+        unengagedToEngaged = std::move(engagedToUnengaged);
+        EXPECT_FALSE(!!engagedToUnengaged);
+        EXPECT_TRUE(!!unengagedToEngaged);
+        EXPECT_EQ(4, unengagedToEngaged.value());
+    }
+
+    {
+        Optional<int> engagedToUnengaged { 5 };
+        EXPECT_TRUE(!!engagedToUnengaged);
+        EXPECT_EQ(5, engagedToUnengaged.value());
+
+        Optional<int> unengaged;
+        EXPECT_FALSE(!!unengaged);
+
+        engagedToUnengaged = std::move(unengaged);
+        EXPECT_FALSE(!!engagedToUnengaged);
+        EXPECT_FALSE(!!unengaged);
+    }
+
+    {
+        Optional<int> engagedToUnengaged { 6 };
+        EXPECT_TRUE(!!engagedToUnengaged);
+        EXPECT_EQ(6, engagedToUnengaged.value());
+
+        Optional<int> engagedToEngaged { 7 };
+        EXPECT_TRUE(!!engagedToEngaged);
+        EXPECT_EQ(7, engagedToEngaged.value());
+
+        engagedToEngaged = std::move(engagedToUnengaged);
+        EXPECT_FALSE(!!engagedToUnengaged);
+        EXPECT_TRUE(!!engagedToEngaged);
+        EXPECT_EQ(6, engagedToEngaged.value());
+    }
+}
 
 } // namespace TestWebKitAPI

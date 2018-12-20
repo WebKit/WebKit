@@ -429,7 +429,7 @@ static inline FontSelectionValue blendFunc(const CSSPropertyBlendingClient* anim
     return FontSelectionValue(blendFunc(anim, static_cast<float>(from), static_cast<float>(to), progress));
 }
 
-static inline std::optional<FontSelectionValue> blendFunc(const CSSPropertyBlendingClient* anim, std::optional<FontSelectionValue> from, std::optional<FontSelectionValue> to, double progress)
+static inline Optional<FontSelectionValue> blendFunc(const CSSPropertyBlendingClient* anim, Optional<FontSelectionValue> from, Optional<FontSelectionValue> to, double progress)
 {
     return FontSelectionValue(blendFunc(anim, static_cast<float>(from.value()), static_cast<float>(to.value()), progress));
 }
@@ -1459,11 +1459,11 @@ private:
     void (RenderStyle::*m_setter)(const Color&);
 };
 
-class PropertyWrapperFontStyle : public PropertyWrapper<std::optional<FontSelectionValue>> {
+class PropertyWrapperFontStyle : public PropertyWrapper<Optional<FontSelectionValue>> {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     PropertyWrapperFontStyle()
-        : PropertyWrapper<std::optional<FontSelectionValue>>(CSSPropertyFontStyle, &RenderStyle::fontItalic, &RenderStyle::setFontItalic)
+        : PropertyWrapper<Optional<FontSelectionValue>>(CSSPropertyFontStyle, &RenderStyle::fontItalic, &RenderStyle::setFontItalic)
     {
     }
 
@@ -1848,7 +1848,7 @@ bool CSSPropertyAnimation::canPropertyBeInterpolated(CSSPropertyID prop, const R
     return false;
 }
 
-CSSPropertyID CSSPropertyAnimation::getPropertyAtIndex(int i, std::optional<bool>& isShorthand)
+CSSPropertyID CSSPropertyAnimation::getPropertyAtIndex(int i, Optional<bool>& isShorthand)
 {
     CSSPropertyAnimationWrapperMap& map = CSSPropertyAnimationWrapperMap::singleton();
 

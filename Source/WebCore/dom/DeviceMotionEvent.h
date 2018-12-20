@@ -37,16 +37,16 @@ public:
 
     // FIXME: Merge this with DeviceMotionData::Acceleration
     struct Acceleration {
-        std::optional<double> x;
-        std::optional<double> y;
-        std::optional<double> z;
+        Optional<double> x;
+        Optional<double> y;
+        Optional<double> z;
     };
 
     // FIXME: Merge this with DeviceMotionData::RotationRate
     struct RotationRate {
-        std::optional<double> alpha;
-        std::optional<double> beta;
-        std::optional<double> gamma;
+        Optional<double> alpha;
+        Optional<double> beta;
+        Optional<double> gamma;
     };
 
     static Ref<DeviceMotionEvent> create(const AtomicString& eventType, DeviceMotionData* deviceMotionData)
@@ -59,12 +59,12 @@ public:
         return adoptRef(*new DeviceMotionEvent);
     }
 
-    std::optional<Acceleration> acceleration() const;
-    std::optional<Acceleration> accelerationIncludingGravity() const;
-    std::optional<RotationRate> rotationRate() const;
-    std::optional<double> interval() const;
+    Optional<Acceleration> acceleration() const;
+    Optional<Acceleration> accelerationIncludingGravity() const;
+    Optional<RotationRate> rotationRate() const;
+    Optional<double> interval() const;
 
-    void initDeviceMotionEvent(const AtomicString& type, bool bubbles, bool cancelable, std::optional<Acceleration>&&, std::optional<Acceleration>&&, std::optional<RotationRate>&&, std::optional<double>);
+    void initDeviceMotionEvent(const AtomicString& type, bool bubbles, bool cancelable, Optional<Acceleration>&&, Optional<Acceleration>&&, Optional<RotationRate>&&, Optional<double>);
 
 private:
     DeviceMotionEvent();

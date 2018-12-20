@@ -68,7 +68,7 @@ public:
     ReadyState readyState() const { return m_state; }
     RefPtr<FileError> error() { return m_error; }
     FileReaderLoader::ReadType readType() const { return m_readType; }
-    std::optional<Variant<String, RefPtr<JSC::ArrayBuffer>>> result() const;
+    Optional<Variant<String, RefPtr<JSC::ArrayBuffer>>> result() const;
 
     using RefCounted::ref;
     using RefCounted::deref;

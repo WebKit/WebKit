@@ -113,7 +113,7 @@ using CueInterval = CueIntervalTree::IntervalType;
 using CueList = Vector<CueInterval>;
 #endif
 
-using MediaProvider = std::optional<Variant<
+using MediaProvider = Optional<Variant<
 #if ENABLE(MEDIA_STREAM)
     RefPtr<MediaStream>,
 #endif
@@ -1118,12 +1118,12 @@ private:
     bool m_processingPreferenceChange : 1;
 
     PlaybackWithoutUserGesture m_playbackWithoutUserGesture { PlaybackWithoutUserGesture::None };
-    std::optional<MediaTime> m_playbackWithoutUserGestureStartedTime;
+    Optional<MediaTime> m_playbackWithoutUserGestureStartedTime;
 
     String m_subtitleTrackLanguage;
     MediaTime m_lastTextTrackUpdateTime { -1, 1 };
 
-    std::optional<CaptionUserPreferences::CaptionDisplayMode> m_captionDisplayMode;
+    Optional<CaptionUserPreferences::CaptionDisplayMode> m_captionDisplayMode;
 
     RefPtr<AudioTrackList> m_audioTracks;
     RefPtr<TextTrackList> m_textTracks;

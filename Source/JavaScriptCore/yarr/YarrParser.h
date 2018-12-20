@@ -1022,10 +1022,10 @@ private:
         return n;
     }
 
-    std::optional<String> tryConsumeGroupName()
+    Optional<String> tryConsumeGroupName()
     {
         if (atEndOfPattern())
-            return std::nullopt;
+            return WTF::nullopt;
 
         ParseState state = saveState();
         
@@ -1038,7 +1038,7 @@ private:
             while (!atEndOfPattern()) {
                 ch = tryConsumeIdentifierCharacter();
                 if (ch == '>')
-                    return std::optional<String>(identifierBuilder.toString());
+                    return Optional<String>(identifierBuilder.toString());
 
                 if (!isIdentifierPart(ch))
                     break;
@@ -1049,14 +1049,14 @@ private:
 
         restoreState(state);
 
-        return std::nullopt;
+        return WTF::nullopt;
     }
 
-    std::optional<BuiltInCharacterClassID> tryConsumeUnicodePropertyExpression()
+    Optional<BuiltInCharacterClassID> tryConsumeUnicodePropertyExpression()
     {
         if (atEndOfPattern() || !isUnicodePropertyValueExpressionChar(peek())) {
             m_errorCode = ErrorCode::InvalidUnicodePropertyExpression;
-            return std::nullopt;
+            return WTF::nullopt;
         }
 
         StringBuilder expressionBuilder;
@@ -1072,7 +1072,7 @@ private:
                 consume();
                 if (errors) {
                     m_errorCode = ErrorCode::InvalidUnicodePropertyExpression;
-                    return std::nullopt;
+                    return WTF::nullopt;
                 }
 
                 if (foundEquals) {
@@ -1103,7 +1103,7 @@ private:
         }
 
         m_errorCode = ErrorCode::InvalidUnicodePropertyExpression;
-        return std::nullopt;
+        return WTF::nullopt;
     }
 
     Delegate& m_delegate;
@@ -1141,7 +1141,7 @@ private:
  *    void atomCharacterClassRange(UChar32 begin, UChar32 end)
  *    void atomCharacterClassBuiltIn(BuiltInCharacterClassID classID, bool invert)
  *    void atomCharacterClassEnd()
- *    void atomParenthesesSubpatternBegin(bool capture = true, std::optional<String> groupName);
+ *    void atomParenthesesSubpatternBegin(bool capture = true, Optional<String> groupName);
  *    void atomParentheticalAssertionBegin(bool invert = false);
  *    void atomParenthesesEnd();
  *    void atomBackReference(unsigned subpatternId);

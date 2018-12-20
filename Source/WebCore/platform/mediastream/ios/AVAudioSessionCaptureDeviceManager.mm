@@ -92,14 +92,14 @@ const Vector<CaptureDevice>& AVAudioSessionCaptureDeviceManager::captureDevices(
     return m_devices.value();
 }
 
-std::optional<CaptureDevice> AVAudioSessionCaptureDeviceManager::captureDeviceWithPersistentID(CaptureDevice::DeviceType type, const String& deviceID)
+Optional<CaptureDevice> AVAudioSessionCaptureDeviceManager::captureDeviceWithPersistentID(CaptureDevice::DeviceType type, const String& deviceID)
 {
     ASSERT_UNUSED(type, type == CaptureDevice::DeviceType::Microphone);
     for (auto& device : captureDevices()) {
         if (device.persistentId() == deviceID)
             return device;
     }
-    return std::nullopt;
+    return WTF::nullopt;
 }
 
 Vector<AVAudioSessionCaptureDevice>& AVAudioSessionCaptureDeviceManager::audioSessionCaptureDevices()
@@ -109,7 +109,7 @@ Vector<AVAudioSessionCaptureDevice>& AVAudioSessionCaptureDeviceManager::audioSe
     return m_audioSessionCaptureDevices.value();
 }
 
-std::optional<AVAudioSessionCaptureDevice> AVAudioSessionCaptureDeviceManager::audioSessionDeviceWithUID(const String& deviceID)
+Optional<AVAudioSessionCaptureDevice> AVAudioSessionCaptureDeviceManager::audioSessionDeviceWithUID(const String& deviceID)
 {
     if (!m_audioSessionCaptureDevices)
         refreshAudioCaptureDevices();
@@ -118,7 +118,7 @@ std::optional<AVAudioSessionCaptureDevice> AVAudioSessionCaptureDeviceManager::a
         if (device.persistentId() == deviceID)
             return device;
     }
-    return std::nullopt;
+    return WTF::nullopt;
 }
 
 void AVAudioSessionCaptureDeviceManager::refreshAudioCaptureDevices()

@@ -40,7 +40,7 @@ struct FourCC {
     }
 
     String toString() const;
-    WEBCORE_EXPORT static std::optional<FourCC> fromString(const String&);
+    WEBCORE_EXPORT static Optional<FourCC> fromString(const String&);
 
     bool operator==(const FourCC& other) const { return value == other.value; }
     bool operator!=(const FourCC& other) const { return value != other.value; }

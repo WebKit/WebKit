@@ -192,14 +192,14 @@ bool Code::isEntrypoint(BasicBlock* block) const
     return false;
 }
 
-std::optional<unsigned> Code::entrypointIndex(BasicBlock* block) const
+Optional<unsigned> Code::entrypointIndex(BasicBlock* block) const
 {
     RELEASE_ASSERT(m_entrypoints.size());
     for (unsigned i = 0; i < m_entrypoints.size(); ++i) {
         if (m_entrypoints[i].block() == block)
             return i;
     }
-    return std::nullopt;
+    return WTF::nullopt;
 }
 
 void Code::setCalleeSaveRegisterAtOffsetList(RegisterAtOffsetList&& registerAtOffsetList, StackSlot* slot)

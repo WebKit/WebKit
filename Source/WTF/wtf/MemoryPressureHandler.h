@@ -135,11 +135,11 @@ public:
             size_t resident { 0 };
             size_t physical { 0 };
         };
-        std::optional<MemoryUsage> platformMemoryUsage();
+        Optional<MemoryUsage> platformMemoryUsage();
         void logMemoryUsageChange();
 
         const char* m_logString;
-        std::optional<MemoryUsage> m_initialMemory;
+        Optional<MemoryUsage> m_initialMemory;
 
         WTF_EXPORT_PRIVATE static bool s_loggingEnabled;
     };

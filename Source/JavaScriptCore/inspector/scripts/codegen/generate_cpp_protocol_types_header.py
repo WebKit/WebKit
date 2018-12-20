@@ -382,11 +382,11 @@ class CppProtocolTypesHeaderGenerator(CppGenerator):
             'namespace %s {' % self.helpers_namespace(),
             '',
             'template<typename ProtocolEnumType>',
-            'std::optional<ProtocolEnumType> parseEnumValueFromString(const String&);',
+            'Optional<ProtocolEnumType> parseEnumValueFromString(const String&);',
         ]))
 
         def return_type_with_export_macro(cpp_protocol_type):
-            enum_return_type = 'std::optional<%s>' % cpp_protocol_type
+            enum_return_type = 'Optional<%s>' % cpp_protocol_type
             result_terms = [enum_return_type]
             export_macro = self.model().framework.setting('export_macro', None)
             if export_macro is not None:

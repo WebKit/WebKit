@@ -33,7 +33,7 @@
 namespace WebCore {
 
 // https://drafts.fxtf.org/geometry/#dom-dommatrixreadonly-dommatrixreadonly
-ExceptionOr<Ref<DOMMatrix>> DOMMatrix::create(ScriptExecutionContext& scriptExecutionContext, std::optional<Variant<String, Vector<double>>>&& init)
+ExceptionOr<Ref<DOMMatrix>> DOMMatrix::create(ScriptExecutionContext& scriptExecutionContext, Optional<Variant<String, Vector<double>>>&& init)
 {
     if (!init)
         return adoptRef(*new DOMMatrix);
@@ -154,7 +154,7 @@ Ref<DOMMatrix> DOMMatrix::translateSelf(double tx, double ty, double tz)
 }
 
 // https://drafts.fxtf.org/geometry/#dom-dommatrix-scaleself
-Ref<DOMMatrix> DOMMatrix::scaleSelf(double scaleX, std::optional<double> scaleY, double scaleZ, double originX, double originY, double originZ)
+Ref<DOMMatrix> DOMMatrix::scaleSelf(double scaleX, Optional<double> scaleY, double scaleZ, double originX, double originY, double originZ)
 {
     if (!scaleY)
         scaleY = scaleX;
@@ -182,7 +182,7 @@ Ref<DOMMatrix> DOMMatrix::scale3dSelf(double scale, double originX, double origi
 }
 
 // https://drafts.fxtf.org/geometry/#dom-dommatrix-rotateself
-Ref<DOMMatrix> DOMMatrix::rotateSelf(double rotX, std::optional<double> rotY, std::optional<double> rotZ)
+Ref<DOMMatrix> DOMMatrix::rotateSelf(double rotX, Optional<double> rotY, Optional<double> rotZ)
 {
     if (!rotY && !rotZ) {
         rotZ = rotX;

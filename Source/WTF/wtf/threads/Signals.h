@@ -49,12 +49,12 @@ enum class Signal {
     Unknown = NumberOfSignals
 };
 
-inline std::tuple<int, std::optional<int>> toSystemSignal(Signal signal)
+inline std::tuple<int, Optional<int>> toSystemSignal(Signal signal)
 {
     switch (signal) {
     case Signal::BadAccess: return std::make_tuple(SIGSEGV, SIGBUS);
-    case Signal::Ill: return std::make_tuple(SIGILL, std::nullopt);
-    case Signal::Usr: return std::make_tuple(SIGILL, std::nullopt);
+    case Signal::Ill: return std::make_tuple(SIGILL, WTF::nullopt);
+    case Signal::Usr: return std::make_tuple(SIGILL, WTF::nullopt);
     default: break;
     }
     RELEASE_ASSERT_NOT_REACHED();

@@ -42,11 +42,11 @@ void encodeObject(Encoder& encoder, id <NSSecureCoding> object)
     IPC::encode(encoder, (__bridge CFDataRef)[archiver encodedData]);
 }
 
-std::optional<RetainPtr<id <NSSecureCoding>>> decodeObject(Decoder& decoder, NSArray<Class> *allowedClasses)
+Optional<RetainPtr<id <NSSecureCoding>>> decodeObject(Decoder& decoder, NSArray<Class> *allowedClasses)
 {
     RetainPtr<CFDataRef> data;
     if (!decode(decoder, data))
-        return std::nullopt;
+        return WTF::nullopt;
 
     auto unarchiver = secureUnarchiverFromData((__bridge NSData *)data.get());
     @try {
@@ -55,7 +55,7 @@ std::optional<RetainPtr<id <NSSecureCoding>>> decodeObject(Decoder& decoder, NSA
         return { result };
     } @catch (NSException *exception) {
         LOG_ERROR("Failed to decode object of classes %@: %@", allowedClasses, exception);
-        return std::nullopt;
+        return WTF::nullopt;
     } @finally {
         [unarchiver finishDecoding];
     }

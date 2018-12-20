@@ -49,7 +49,7 @@ struct WebsiteDataStoreParameters {
     static WebsiteDataStoreParameters privateSessionParameters(PAL::SessionID);
 
     void encode(IPC::Encoder&) const;
-    static std::optional<WebsiteDataStoreParameters> decode(IPC::Decoder&);
+    static Optional<WebsiteDataStoreParameters> decode(IPC::Decoder&);
 
     Vector<uint8_t> uiProcessCookieStorageIdentifier;
     SandboxExtension::Handle cookieStoragePathExtensionHandle;

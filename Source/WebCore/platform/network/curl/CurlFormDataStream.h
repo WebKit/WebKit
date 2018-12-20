@@ -45,14 +45,14 @@ public:
     bool shouldUseChunkTransfer();
     unsigned long long totalSize();
 
-    std::optional<size_t> read(char*, size_t);
+    Optional<size_t> read(char*, size_t);
     unsigned long long totalReadSize() { return m_totalReadSize; }
 
 private:
     void computeContentLength();
 
-    std::optional<size_t> readFromFile(const FormDataElement::EncodedFileData&, char*, size_t);
-    std::optional<size_t> readFromData(const Vector<char>&, char*, size_t);
+    Optional<size_t> readFromFile(const FormDataElement::EncodedFileData&, char*, size_t);
+    Optional<size_t> readFromData(const Vector<char>&, char*, size_t);
 
     RefPtr<FormData> m_formData;
 

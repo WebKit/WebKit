@@ -112,7 +112,7 @@ void LinkLoader::loadLinksFromHeader(const String& headerValue, const URL& baseU
     }
 }
 
-std::optional<CachedResource::Type> LinkLoader::resourceTypeFromAsAttribute(const String& as)
+Optional<CachedResource::Type> LinkLoader::resourceTypeFromAsAttribute(const String& as)
 {
     if (equalLettersIgnoringASCIICase(as, "fetch"))
         return CachedResource::Type::RawResource;
@@ -130,7 +130,7 @@ std::optional<CachedResource::Type> LinkLoader::resourceTypeFromAsAttribute(cons
     if (equalLettersIgnoringASCIICase(as, "track"))
         return CachedResource::Type::TextTrackResource;
 #endif
-    return std::nullopt;
+    return WTF::nullopt;
 }
 
 static std::unique_ptr<LinkPreloadResourceClient> createLinkPreloadResourceClient(CachedResource& resource, LinkLoader& loader)
@@ -269,7 +269,7 @@ void LinkLoader::prefetchIfNeeded(const LinkRelAttribute& relAttribute, const UR
         return;
 
     ASSERT(RuntimeEnabledFeatures::sharedFeatures().linkPrefetchEnabled());
-    std::optional<ResourceLoadPriority> priority;
+    Optional<ResourceLoadPriority> priority;
     CachedResource::Type type = CachedResource::Type::LinkPrefetch;
 
     if (m_cachedLinkResource) {

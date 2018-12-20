@@ -70,7 +70,7 @@ public:
 
     void blendPropertyValueInStyle(CSSPropertyID, RenderStyle*);
 
-    std::optional<Seconds> timeToNextService() override;
+    Optional<Seconds> timeToNextService() override;
     
     bool active() const { return m_active; }
     void setActive(bool b) { m_active = b; }

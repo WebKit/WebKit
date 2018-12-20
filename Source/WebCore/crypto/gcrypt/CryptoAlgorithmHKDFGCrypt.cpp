@@ -40,7 +40,7 @@ namespace WebCore {
 // We should switch to the libgcrypt-provided implementation once it's available.
 // https://bugs.webkit.org/show_bug.cgi?id=171536
 
-static std::optional<Vector<uint8_t>> gcryptDeriveBits(const Vector<uint8_t>& key, const Vector<uint8_t>& salt, const Vector<uint8_t>& info, size_t lengthInBytes, CryptoAlgorithmIdentifier identifier)
+static Optional<Vector<uint8_t>> gcryptDeriveBits(const Vector<uint8_t>& key, const Vector<uint8_t>& salt, const Vector<uint8_t>& info, size_t lengthInBytes, CryptoAlgorithmIdentifier identifier)
 {
     // libgcrypt doesn't provide HKDF support, so we have to implement
     // the functionality ourselves as specified in RFC5869.
@@ -48,18 +48,18 @@ static std::optional<Vector<uint8_t>> gcryptDeriveBits(const Vector<uint8_t>& ke
 
     auto macAlgorithm = hmacAlgorithm(identifier);
     if (!macAlgorithm)
-        return std::nullopt;
+        return WTF::nullopt;
 
     // We can immediately discard invalid output lengths, otherwise needed for the expand step.
     size_t macLength = gcry_mac_get_algo_maclen(*macAlgorithm);
     if (lengthInBytes > macLength * 255)
-        return std::nullopt;
+        return WTF::nullopt;
 
     PAL::GCrypt::Handle<gcry_mac_hd_t> handle;
     gcry_error_t error = gcry_mac_open(&handle, *macAlgorithm, 0, nullptr);
     if (error != GPG_ERR_NO_ERROR) {
         PAL::GCrypt::logError(error);
-        return std::nullopt;
+        return WTF::nullopt;
     }
 
     // Step 1 -- Extract. A pseudo-random key is generated with the specified algorithm
@@ -74,25 +74,25 @@ static std::optional<Vector<uint8_t>> gcryptDeriveBits(const Vector<uint8_t>& ke
             error = gcry_mac_setkey(handle, salt.data(), salt.size());
         if (error != GPG_ERR_NO_ERROR) {
             PAL::GCrypt::logError(error);
-            return std::nullopt;
+            return WTF::nullopt;
         }
 
         error = gcry_mac_write(handle, key.data(), key.size());
         if (error != GPG_ERR_NO_ERROR) {
             PAL::GCrypt::logError(error);
-            return std::nullopt;
+            return WTF::nullopt;
         }
 
         size_t pseudoRandomKeySize = pseudoRandomKey.size();
         error = gcry_mac_read(handle, pseudoRandomKey.data(), &pseudoRandomKeySize);
         if (error != GPG_ERR_NO_ERROR) {
             PAL::GCrypt::logError(error);
-            return std::nullopt;
+            return WTF::nullopt;
         }
 
         // Something went wrong if libgcrypt didn't write out the proper amount of data.
         if (pseudoRandomKeySize != macLength)
-            return std::nullopt;
+            return WTF::nullopt;
     }
 
     // Step #2 -- Expand.
@@ -108,13 +108,13 @@ static std::optional<Vector<uint8_t>> gcryptDeriveBits(const Vector<uint8_t>& ke
             error = gcry_mac_reset(handle);
             if (error != GPG_ERR_NO_ERROR) {
                 PAL::GCrypt::logError(error);
-                return std::nullopt;
+                return WTF::nullopt;
             }
 
             error = gcry_mac_setkey(handle, pseudoRandomKey.data(), pseudoRandomKey.size());
             if (error != GPG_ERR_NO_ERROR) {
                 PAL::GCrypt::logError(error);
-                return std::nullopt;
+                return WTF::nullopt;
             }
 
             // T(0) = empty string (zero length) -- i.e. empty lastBlock
@@ -128,19 +128,19 @@ static std::optional<Vector<uint8_t>> gcryptDeriveBits(const Vector<uint8_t>& ke
             error = gcry_mac_write(handle, blockData.data(), blockData.size());
             if (error != GPG_ERR_NO_ERROR) {
                 PAL::GCrypt::logError(error);
-                return std::nullopt;
+                return WTF::nullopt;
             }
 
             size_t blockSize = lastBlock.size();
             error = gcry_mac_read(handle, lastBlock.data(), &blockSize);
             if (error != GPG_ERR_NO_ERROR) {
                 PAL::GCrypt::logError(error);
-                return std::nullopt;
+                return WTF::nullopt;
             }
 
             // Something went wrong if libgcrypt didn't write out the proper amount of data.
             if (blockSize != lastBlock.size())
-                return std::nullopt;
+                return WTF::nullopt;
 
             // Append the current block data to the output vector.
             output.appendVector(lastBlock);

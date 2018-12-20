@@ -49,8 +49,8 @@ struct DragSourceState {
     CGPoint adjustedOrigin { CGPointZero };
     CGRect dragPreviewFrameInRootViewCoordinates { CGRectZero };
     RetainPtr<UIImage> image;
-    std::optional<WebCore::TextIndicatorData> indicatorData;
-    std::optional<WebCore::Path> visiblePath;
+    Optional<WebCore::TextIndicatorData> indicatorData;
+    Optional<WebCore::Path> visiblePath;
     String linkTitle;
     URL linkURL;
     bool possiblyNeedsDragPreviewUpdate { true };
@@ -94,7 +94,7 @@ public:
 
 private:
     void updatePreviewsForActiveDragSources();
-    std::optional<DragSourceState> activeDragSourceForItem(UIDragItem *) const;
+    Optional<DragSourceState> activeDragSourceForItem(UIDragItem *) const;
 
     CGPoint m_lastGlobalPosition { CGPointZero };
     CGPoint m_adjustedPositionForDragEnd { CGPointZero };
@@ -106,7 +106,7 @@ private:
     BlockPtr<void()> m_dragCancelSetDownBlock;
     BlockPtr<void(NSArray<UIDragItem *> *)> m_addDragItemCompletionBlock;
 
-    std::optional<DragSourceState> m_stagedDragSource;
+    Optional<DragSourceState> m_stagedDragSource;
     Vector<DragSourceState> m_activeDragSources;
 };
 

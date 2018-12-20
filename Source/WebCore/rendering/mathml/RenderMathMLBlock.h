@@ -111,7 +111,7 @@ public:
 private:
     bool isRenderMathMLTable() const final { return true; }
     const char* renderName() const final { return "RenderMathMLTable"; }
-    std::optional<int> firstLineBaseline() const final;
+    Optional<int> firstLineBaseline() const final;
 
     Ref<MathMLStyle> m_mathMLStyle;
 };

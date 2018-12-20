@@ -128,16 +128,16 @@ bool CSSAnimationControllerPrivate::clear(Element& element)
     return result;
 }
 
-std::optional<Seconds> CSSAnimationControllerPrivate::updateAnimations(SetChanged callSetChanged/* = DoNotCallSetChanged*/)
+Optional<Seconds> CSSAnimationControllerPrivate::updateAnimations(SetChanged callSetChanged/* = DoNotCallSetChanged*/)
 {
     AnimationPrivateUpdateBlock updateBlock(*this);
-    std::optional<Seconds> timeToNextService;
+    Optional<Seconds> timeToNextService;
     bool calledSetChanged = false;
 
     for (auto& compositeAnimation : m_compositeAnimations) {
         CompositeAnimation& animation = *compositeAnimation.value;
         if (!animation.isSuspended() && animation.hasAnimations()) {
-            std::optional<Seconds> t = animation.timeToNextService();
+            Optional<Seconds> t = animation.timeToNextService();
             if (t && (!timeToNextService || t.value() < timeToNextService.value()))
                 timeToNextService = t.value();
             if (timeToNextService && timeToNextService.value() == 0_s) {
@@ -159,7 +159,7 @@ std::optional<Seconds> CSSAnimationControllerPrivate::updateAnimations(SetChange
 
 void CSSAnimationControllerPrivate::updateAnimationTimerForElement(Element& element)
 {
-    std::optional<Seconds> timeToNextService;
+    Optional<Seconds> timeToNextService;
 
     const CompositeAnimation* compositeAnimation = m_compositeAnimations.get(&element);
     if (!compositeAnimation->isSuspended() && compositeAnimation->hasAnimations())
@@ -176,7 +176,7 @@ void CSSAnimationControllerPrivate::updateAnimationTimerForElement(Element& elem
 
 void CSSAnimationControllerPrivate::updateAnimationTimer(SetChanged callSetChanged/* = DoNotCallSetChanged*/)
 {
-    std::optional<Seconds> timeToNextService = updateAnimations(callSetChanged);
+    Optional<Seconds> timeToNextService = updateAnimations(callSetChanged);
 
     LOG(Animations, "updateAnimationTimer: timeToNextService is %.2f", timeToNextService.value_or(Seconds { -1 }).value());
 
@@ -254,7 +254,7 @@ void CSSAnimationControllerPrivate::addElementChangeToDispatch(Element& element)
 
 void CSSAnimationControllerPrivate::animationFrameCallbackFired()
 {
-    std::optional<Seconds> timeToNextService = updateAnimations(CallSetChanged);
+    Optional<Seconds> timeToNextService = updateAnimations(CallSetChanged);
 
     if (timeToNextService)
         m_frame.document()->view()->scheduleAnimation();
@@ -444,7 +444,7 @@ MonotonicTime CSSAnimationControllerPrivate::beginAnimationUpdateTime()
 void CSSAnimationControllerPrivate::beginAnimationUpdate()
 {
     if (!m_beginAnimationUpdateCount)
-        m_beginAnimationUpdateTime = std::nullopt;
+        m_beginAnimationUpdateTime = WTF::nullopt;
     ++m_beginAnimationUpdateCount;
 }
 

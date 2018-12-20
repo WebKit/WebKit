@@ -521,13 +521,13 @@ void WebProcess::getActivePagesOriginsForTesting(CompletionHandler<void(Vector<S
 void WebProcess::updateCPULimit()
 {
 #if PLATFORM(MAC)
-    std::optional<double> cpuLimit;
+    Optional<double> cpuLimit;
 
     // Use the largest limit among all pages in this process.
     for (auto& page : m_pageMap.values()) {
         auto pageCPULimit = page->cpuLimit();
         if (!pageCPULimit) {
-            cpuLimit = std::nullopt;
+            cpuLimit = WTF::nullopt;
             break;
         }
         if (!cpuLimit || pageCPULimit > cpuLimit.value())
@@ -547,7 +547,7 @@ void WebProcess::updateCPUMonitorState(CPUMonitorUpdateReason reason)
 #if PLATFORM(MAC)
     if (!m_cpuLimit) {
         if (m_cpuMonitor)
-            m_cpuMonitor->setCPULimit(std::nullopt);
+            m_cpuMonitor->setCPULimit(WTF::nullopt);
         return;
     }
 
@@ -559,7 +559,7 @@ void WebProcess::updateCPUMonitorState(CPUMonitorUpdateReason reason)
     } else if (reason == CPUMonitorUpdateReason::VisibilityHasChanged) {
         // If the visibility has changed, stop the CPU monitor before setting its limit. This is needed because the CPU usage can vary wildly based on visibility and we would
         // not want to report that a process has exceeded its background CPU limit even though most of the CPU time was used while the process was visible.
-        m_cpuMonitor->setCPULimit(std::nullopt);
+        m_cpuMonitor->setCPULimit(WTF::nullopt);
     }
     m_cpuMonitor->setCPULimit(m_cpuLimit);
 #else

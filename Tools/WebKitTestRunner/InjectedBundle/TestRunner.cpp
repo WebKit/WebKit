@@ -300,7 +300,7 @@ void TestRunner::execCommand(JSStringRef name, JSStringRef showUI, JSStringRef v
     WKBundlePageExecuteEditingCommand(InjectedBundle::singleton().page()->page(), toWK(name).get(), toWK(value).get());
 }
 
-static std::optional<WKFindOptions> findOptionsFromArray(JSValueRef optionsArrayAsValue)
+static Optional<WKFindOptions> findOptionsFromArray(JSValueRef optionsArrayAsValue)
 {
     auto& injectedBundle = InjectedBundle::singleton();
     WKBundleFrameRef mainFrame = WKBundlePageGetMainFrame(injectedBundle.page()->page());
@@ -309,7 +309,7 @@ static std::optional<WKFindOptions> findOptionsFromArray(JSValueRef optionsArray
     JSObjectRef optionsArray = JSValueToObject(context, optionsArrayAsValue, 0);
     JSValueRef lengthValue = JSObjectGetProperty(context, optionsArray, lengthPropertyName.get(), 0);
     if (!JSValueIsNumber(context, lengthValue))
-        return std::nullopt;
+        return WTF::nullopt;
 
     WKFindOptions options = 0;
     size_t length = static_cast<size_t>(JSValueToNumber(context, lengthValue, 0));

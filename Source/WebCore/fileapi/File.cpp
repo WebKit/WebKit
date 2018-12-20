@@ -63,7 +63,7 @@ File::File(const String& path, const String& nameOverride)
     ThreadableBlobRegistry::registerFileBlobURL(m_internalURL, path, m_type);
 }
 
-File::File(DeserializationContructor, const String& path, const URL& url, const String& type, const String& name, const std::optional<int64_t>& lastModified)
+File::File(DeserializationContructor, const String& path, const URL& url, const String& type, const String& name, const Optional<int64_t>& lastModified)
     : Blob(deserializationContructor, url, type, -1, path)
     , m_path(path)
     , m_name(name)

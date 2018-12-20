@@ -60,8 +60,8 @@ public:
 private:
     WebFramePolicyListenerProxy(Reply&&, ShouldExpectSafeBrowsingResult);
 
-    std::optional<std::pair<RefPtr<API::WebsitePolicies>, ProcessSwapRequestedByClient>> m_policyResult;
-    std::optional<RefPtr<SafeBrowsingWarning>> m_safeBrowsingWarning;
+    Optional<std::pair<RefPtr<API::WebsitePolicies>, ProcessSwapRequestedByClient>> m_policyResult;
+    Optional<RefPtr<SafeBrowsingWarning>> m_safeBrowsingWarning;
     Reply m_reply;
 };
 

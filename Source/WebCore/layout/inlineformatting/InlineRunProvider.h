@@ -89,7 +89,7 @@ public:
             unsigned m_length { 0 };
             IsCollapsed m_isCollapsed { IsCollapsed::No };
         };
-        std::optional<TextContext> textContext() const { return m_textContext; }
+        Optional<TextContext> textContext() const { return m_textContext; }
         // Note that style() and inlineItem() always returns the first InlineItem for a run.
         const RenderStyle& style() const { return m_inlineItem.style(); }
         const InlineItem& inlineItem() const { return m_inlineItem; }
@@ -97,12 +97,12 @@ public:
     private:
         friend class InlineRunProvider;
 
-        Run(const InlineItem&, Type, std::optional<TextContext>);
-        std::optional<TextContext>& textContext() { return m_textContext; }
+        Run(const InlineItem&, Type, Optional<TextContext>);
+        Optional<TextContext>& textContext() { return m_textContext; }
 
         const Type m_type;
         const InlineItem& m_inlineItem;
-        std::optional<TextContext> m_textContext;
+        Optional<TextContext> m_textContext;
     };
     const Vector<InlineRunProvider::Run>& runs() const { return m_inlineRuns; }
 
@@ -120,22 +120,22 @@ private:
 
 inline InlineRunProvider::Run InlineRunProvider::Run::createBoxRun(const InlineItem& inlineItem)
 {
-    return { inlineItem, Type::Box, std::nullopt };
+    return { inlineItem, Type::Box, WTF::nullopt };
 }
 
 inline InlineRunProvider::Run InlineRunProvider::Run::createFloatRun(const InlineItem& inlineItem)
 {
-    return { inlineItem, Type::Float, std::nullopt };
+    return { inlineItem, Type::Float, WTF::nullopt };
 }
 
 inline InlineRunProvider::Run InlineRunProvider::Run::createSoftLineBreakRun(const InlineItem& inlineItem)
 {
-    return { inlineItem, Type::SoftLineBreak, std::nullopt };
+    return { inlineItem, Type::SoftLineBreak, WTF::nullopt };
 }
 
 inline InlineRunProvider::Run InlineRunProvider::Run::createHardLineBreakRun(const InlineItem& inlineItem)
 {
-    return { inlineItem, Type::HardLineBreak, std::nullopt };
+    return { inlineItem, Type::HardLineBreak, WTF::nullopt };
 }
 
 inline InlineRunProvider::Run InlineRunProvider::Run::createWhitespaceRun(const InlineItem& inlineItem, ItemPosition start, unsigned length, bool isCollapsible)
@@ -150,7 +150,7 @@ inline InlineRunProvider::Run InlineRunProvider::Run::createNonWhitespaceRun(con
     return { inlineItem, Type::NonWhitespace, TextContext(start, length, TextContext::IsCollapsed::No) };
 }
 
-inline InlineRunProvider::Run::Run(const InlineItem& inlineItem, Type type, std::optional<TextContext> textContext)
+inline InlineRunProvider::Run::Run(const InlineItem& inlineItem, Type type, Optional<TextContext> textContext)
     : m_type(type)
     , m_inlineItem(inlineItem)
     , m_textContext(textContext)

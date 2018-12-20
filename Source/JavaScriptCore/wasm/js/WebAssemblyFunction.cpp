@@ -62,7 +62,7 @@ static EncodedJSValue JSC_HOST_CALL callWebAssemblyFunction(ExecState* exec)
     // Make sure that the memory we think we are going to run with matches the one we expect.
     ASSERT(wasmFunction->instance()->instance().codeBlock()->isSafeToRun(wasmFunction->instance()->memory()->memory().mode()));
 
-    std::optional<TraceScope> traceScope;
+    Optional<TraceScope> traceScope;
     if (Options::useTracePoints())
         traceScope.emplace(WebAssemblyExecuteStart, WebAssemblyExecuteEnd);
 

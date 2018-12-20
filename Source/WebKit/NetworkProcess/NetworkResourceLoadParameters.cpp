@@ -128,7 +128,7 @@ bool NetworkResourceLoadParameters::decode(IPC::Decoder& decoder, NetworkResourc
             return false;
         result.request.setHTTPBody(WTFMove(formData));
 
-        std::optional<SandboxExtension::HandleArray> requestBodySandboxExtensionHandles;
+        Optional<SandboxExtension::HandleArray> requestBodySandboxExtensionHandles;
         decoder >> requestBodySandboxExtensionHandles;
         if (!requestBodySandboxExtensionHandles)
             return false;
@@ -139,7 +139,7 @@ bool NetworkResourceLoadParameters::decode(IPC::Decoder& decoder, NetworkResourc
     }
 
     if (result.request.url().isLocalFile()) {
-        std::optional<SandboxExtension::Handle> resourceSandboxExtensionHandle;
+        Optional<SandboxExtension::Handle> resourceSandboxExtensionHandle;
         decoder >> resourceSandboxExtensionHandle;
         if (!resourceSandboxExtensionHandle)
             return false;
@@ -176,7 +176,7 @@ bool NetworkResourceLoadParameters::decode(IPC::Decoder& decoder, NetworkResourc
             return false;
     }
 
-    std::optional<FetchOptions> options;
+    Optional<FetchOptions> options;
     decoder >> options;
     if (!options)
         return false;
@@ -187,7 +187,7 @@ bool NetworkResourceLoadParameters::decode(IPC::Decoder& decoder, NetworkResourc
     if (!decoder.decode(result.originalRequestHeaders))
         return false;
 
-    std::optional<bool> shouldRestrictHTTPResponseAccess;
+    Optional<bool> shouldRestrictHTTPResponseAccess;
     decoder >> shouldRestrictHTTPResponseAccess;
     if (!shouldRestrictHTTPResponseAccess)
         return false;
@@ -196,7 +196,7 @@ bool NetworkResourceLoadParameters::decode(IPC::Decoder& decoder, NetworkResourc
     if (!decoder.decodeEnum(result.preflightPolicy))
         return false;
 
-    std::optional<bool> shouldEnableCrossOriginResourcePolicy;
+    Optional<bool> shouldEnableCrossOriginResourcePolicy;
     decoder >> shouldEnableCrossOriginResourcePolicy;
     if (!shouldEnableCrossOriginResourcePolicy)
         return false;
@@ -209,7 +209,7 @@ bool NetworkResourceLoadParameters::decode(IPC::Decoder& decoder, NetworkResourc
     if (!decoder.decode(result.mainDocumentURL))
         return false;
 
-    std::optional<std::optional<UserContentControllerIdentifier>> userContentControllerIdentifier;
+    Optional<Optional<UserContentControllerIdentifier>> userContentControllerIdentifier;
     decoder >> userContentControllerIdentifier;
     if (!userContentControllerIdentifier)
         return false;

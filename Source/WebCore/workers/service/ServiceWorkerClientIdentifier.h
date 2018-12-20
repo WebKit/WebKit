@@ -40,10 +40,10 @@ struct ServiceWorkerClientIdentifier {
     unsigned hash() const;
 
     String toString() const { return String::number(serverConnectionIdentifier.toUInt64()) + "-" +  String::number(contextIdentifier.toUInt64()); }
-    static std::optional<ServiceWorkerClientIdentifier> fromString(StringView);
+    static Optional<ServiceWorkerClientIdentifier> fromString(StringView);
 
     template<class Encoder> void encode(Encoder&) const;
-    template<class Decoder> static std::optional<ServiceWorkerClientIdentifier> decode(Decoder&);
+    template<class Decoder> static Optional<ServiceWorkerClientIdentifier> decode(Decoder&);
 };
 
 inline bool operator==(const ServiceWorkerClientIdentifier& a, const ServiceWorkerClientIdentifier& b)
@@ -51,7 +51,7 @@ inline bool operator==(const ServiceWorkerClientIdentifier& a, const ServiceWork
     return a.serverConnectionIdentifier == b.serverConnectionIdentifier &&  a.contextIdentifier == b.contextIdentifier;
 }
 
-inline std::optional<ServiceWorkerClientIdentifier> ServiceWorkerClientIdentifier::fromString(StringView string)
+inline Optional<ServiceWorkerClientIdentifier> ServiceWorkerClientIdentifier::fromString(StringView string)
 {
     ServiceWorkerClientIdentifier clientIdentifier;
 
@@ -59,13 +59,13 @@ inline std::optional<ServiceWorkerClientIdentifier> ServiceWorkerClientIdentifie
     for (auto item : string.split('-')) {
         auto identifier = item.toUInt64Strict();
         if (!identifier || !*identifier)
-            return std::nullopt;
+            return WTF::nullopt;
         if (!counter++)
             clientIdentifier.serverConnectionIdentifier = makeObjectIdentifier<SWServerConnectionIdentifierType>(identifier.value());
         else if (counter == 2)
             clientIdentifier.contextIdentifier = makeObjectIdentifier<DocumentIdentifierType>(identifier.value());
     }
-    return (counter == 2) ? std::make_optional(WTFMove(clientIdentifier)) : std::nullopt;
+    return (counter == 2) ? makeOptional(WTFMove(clientIdentifier)) : WTF::nullopt;
 }
 
 template<class Encoder>
@@ -75,17 +75,17 @@ void ServiceWorkerClientIdentifier::encode(Encoder& encoder) const
 }
 
 template<class Decoder>
-std::optional<ServiceWorkerClientIdentifier> ServiceWorkerClientIdentifier::decode(Decoder& decoder)
+Optional<ServiceWorkerClientIdentifier> ServiceWorkerClientIdentifier::decode(Decoder& decoder)
 {
-    std::optional<SWServerConnectionIdentifier> serverConnectionIdentifier;
+    Optional<SWServerConnectionIdentifier> serverConnectionIdentifier;
     decoder >> serverConnectionIdentifier;
     if (!serverConnectionIdentifier)
-        return std::nullopt;
+        return WTF::nullopt;
 
-    std::optional<DocumentIdentifier> contextIdentifier;
+    Optional<DocumentIdentifier> contextIdentifier;
     decoder >> contextIdentifier;
     if (!contextIdentifier)
-        return std::nullopt;
+        return WTF::nullopt;
 
     return { { WTFMove(*serverConnectionIdentifier), WTFMove(*contextIdentifier) } };
 }

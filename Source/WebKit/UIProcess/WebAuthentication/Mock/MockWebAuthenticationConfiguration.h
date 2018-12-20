@@ -71,8 +71,8 @@ struct MockWebAuthenticationConfiguration {
     };
 
     bool silentFailure { false };
-    std::optional<Local> local;
-    std::optional<Hid> hid;
+    Optional<Local> local;
+    Optional<Hid> hid;
 };
 
 } // namespace WebKit

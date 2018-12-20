@@ -114,7 +114,7 @@ public:
     FloatRect rect() const { return FloatRect(FloatPoint(), size()); }
     float width() const { return size().width(); }
     float height() const { return size().height(); }
-    virtual std::optional<IntPoint> hotSpot() const { return std::nullopt; }
+    virtual Optional<IntPoint> hotSpot() const { return WTF::nullopt; }
 
 #if PLATFORM(IOS_FAMILY)
     virtual FloatSize originalSize() const { return size(); }

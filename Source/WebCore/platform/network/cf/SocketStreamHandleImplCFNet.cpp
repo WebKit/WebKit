@@ -693,7 +693,7 @@ SocketStreamHandleImpl::~SocketStreamHandleImpl()
     ASSERT(!m_pacRunLoopSource);
 }
 
-std::optional<size_t> SocketStreamHandleImpl::platformSendInternal(const uint8_t* data, size_t length)
+Optional<size_t> SocketStreamHandleImpl::platformSendInternal(const uint8_t* data, size_t length)
 {
     if (!m_writeStream)
         return 0;
@@ -703,7 +703,7 @@ std::optional<size_t> SocketStreamHandleImpl::platformSendInternal(const uint8_t
 
     CFIndex result = CFWriteStreamWrite(m_writeStream.get(), reinterpret_cast<const UInt8*>(data), length);
     if (result == -1)
-        return std::nullopt;
+        return WTF::nullopt;
 
     ASSERT(result >= 0);
     return static_cast<size_t>(result);

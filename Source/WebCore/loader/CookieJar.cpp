@@ -80,7 +80,7 @@ String cookies(Document& document, const URL& url)
     if (frame)
         result = platformStrategies()->cookiesStrategy()->cookiesForDOM(storageSession(document), document.firstPartyForCookies(), sameSiteInfo(document), url, frame->loader().client().frameID(), frame->loader().client().pageID(), includeSecureCookies);
     else
-        result = platformStrategies()->cookiesStrategy()->cookiesForDOM(storageSession(document), document.firstPartyForCookies(), sameSiteInfo(document), url, std::nullopt, std::nullopt, includeSecureCookies);
+        result = platformStrategies()->cookiesStrategy()->cookiesForDOM(storageSession(document), document.firstPartyForCookies(), sameSiteInfo(document), url, WTF::nullopt, WTF::nullopt, includeSecureCookies);
 
     if (result.second)
         document.setSecureCookiesAccessed();
@@ -111,7 +111,7 @@ void setCookies(Document& document, const URL& url, const String& cookieString)
     if (frame)
         platformStrategies()->cookiesStrategy()->setCookiesFromDOM(storageSession(document), document.firstPartyForCookies(), sameSiteInfo(document), url, frame->loader().client().frameID(), frame->loader().client().pageID(), cookieString);
     else
-        platformStrategies()->cookiesStrategy()->setCookiesFromDOM(storageSession(document), document.firstPartyForCookies(), sameSiteInfo(document), url, std::nullopt, std::nullopt, cookieString);
+        platformStrategies()->cookiesStrategy()->setCookiesFromDOM(storageSession(document), document.firstPartyForCookies(), sameSiteInfo(document), url, WTF::nullopt, WTF::nullopt, cookieString);
 }
 
 bool cookiesEnabled(const Document& document)
@@ -128,7 +128,7 @@ String cookieRequestHeaderFieldValue(Document& document, const URL& url)
     if (frame)
         result = platformStrategies()->cookiesStrategy()->cookieRequestHeaderFieldValue(storageSession(document), document.firstPartyForCookies(), sameSiteInfo(document), url, frame->loader().client().frameID(), frame->loader().client().pageID(), includeSecureCookies);
     else
-        result = platformStrategies()->cookiesStrategy()->cookieRequestHeaderFieldValue(storageSession(document), document.firstPartyForCookies(), sameSiteInfo(document), url, std::nullopt, std::nullopt, includeSecureCookies);
+        result = platformStrategies()->cookiesStrategy()->cookieRequestHeaderFieldValue(storageSession(document), document.firstPartyForCookies(), sameSiteInfo(document), url, WTF::nullopt, WTF::nullopt, includeSecureCookies);
 
     if (result.second)
         document.setSecureCookiesAccessed();
@@ -142,7 +142,7 @@ bool getRawCookies(const Document& document, const URL& url, Vector<Cookie>& coo
     if (frame)
         return platformStrategies()->cookiesStrategy()->getRawCookies(storageSession(document), document.firstPartyForCookies(), sameSiteInfo(document), url, frame->loader().client().frameID(), frame->loader().client().pageID(), cookies);
 
-    return platformStrategies()->cookiesStrategy()->getRawCookies(storageSession(document), document.firstPartyForCookies(), sameSiteInfo(document), url, std::nullopt, std::nullopt, cookies);
+    return platformStrategies()->cookiesStrategy()->getRawCookies(storageSession(document), document.firstPartyForCookies(), sameSiteInfo(document), url, WTF::nullopt, WTF::nullopt, cookies);
 }
 
 void deleteCookie(const Document& document, const URL& url, const String& cookieName)

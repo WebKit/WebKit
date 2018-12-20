@@ -39,7 +39,7 @@ public:
     // FIXME: Consider merging hash and hashIdentifier.
     Variant<JSC::Strong<JSC::JSObject>, String> hash;
     CryptoAlgorithmIdentifier hashIdentifier;
-    std::optional<size_t> length;
+    Optional<size_t> length;
 
     Class parametersClass() const final { return Class::HmacKeyParams; }
 

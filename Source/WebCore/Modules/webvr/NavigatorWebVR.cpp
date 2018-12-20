@@ -48,7 +48,7 @@ void NavigatorWebVR::getVRDisplays(Navigator& navigator, Document& document, Get
 void NavigatorWebVR::getVRDisplays(Document& document, GetVRDisplaysPromise&& promise)
 {
     document.postTask([this, promise = WTFMove(promise)] (ScriptExecutionContext& context) mutable {
-        std::optional<VRManager::VRDisplaysVector> platformDisplays = VRManager::singleton().getVRDisplays();
+        Optional<VRManager::VRDisplaysVector> platformDisplays = VRManager::singleton().getVRDisplays();
         if (!platformDisplays) {
             promise.reject();
             m_displays.clear();

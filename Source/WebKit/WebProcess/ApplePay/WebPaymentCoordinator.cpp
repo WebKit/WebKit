@@ -83,12 +83,12 @@ const WebPaymentCoordinator::AvailablePaymentNetworksSet& WebPaymentCoordinator:
     return *m_availablePaymentNetworks;
 }
 
-std::optional<String> WebPaymentCoordinator::validatedPaymentNetwork(const String& paymentNetwork)
+Optional<String> WebPaymentCoordinator::validatedPaymentNetwork(const String& paymentNetwork)
 {
     auto& paymentNetworks = availablePaymentNetworks();
     auto result = paymentNetworks.find(paymentNetwork);
     if (result == paymentNetworks.end())
-        return std::nullopt;
+        return WTF::nullopt;
     return *result;
 }
 
@@ -149,22 +149,22 @@ void WebPaymentCoordinator::completeMerchantValidation(const WebCore::PaymentMer
     m_webPage.send(Messages::WebPaymentCoordinatorProxy::CompleteMerchantValidation(paymentMerchantSession));
 }
 
-void WebPaymentCoordinator::completeShippingMethodSelection(std::optional<WebCore::ShippingMethodUpdate>&& update)
+void WebPaymentCoordinator::completeShippingMethodSelection(Optional<WebCore::ShippingMethodUpdate>&& update)
 {
     m_webPage.send(Messages::WebPaymentCoordinatorProxy::CompleteShippingMethodSelection(update));
 }
 
-void WebPaymentCoordinator::completeShippingContactSelection(std::optional<WebCore::ShippingContactUpdate>&& update)
+void WebPaymentCoordinator::completeShippingContactSelection(Optional<WebCore::ShippingContactUpdate>&& update)
 {
     m_webPage.send(Messages::WebPaymentCoordinatorProxy::CompleteShippingContactSelection(update));
 }
 
-void WebPaymentCoordinator::completePaymentMethodSelection(std::optional<WebCore::PaymentMethodUpdate>&& update)
+void WebPaymentCoordinator::completePaymentMethodSelection(Optional<WebCore::PaymentMethodUpdate>&& update)
 {
     m_webPage.send(Messages::WebPaymentCoordinatorProxy::CompletePaymentMethodSelection(update));
 }
 
-void WebPaymentCoordinator::completePaymentSession(std::optional<WebCore::PaymentAuthorizationResult>&& result)
+void WebPaymentCoordinator::completePaymentSession(Optional<WebCore::PaymentAuthorizationResult>&& result)
 {
     m_webPage.send(Messages::WebPaymentCoordinatorProxy::CompletePaymentSession(result));
 }

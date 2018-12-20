@@ -34,7 +34,7 @@ WebKitPopupMenu::WebKitPopupMenu(GtkWidget* webView, WebPopupMenuProxy::Client& 
 
 static void menuCloseCallback(WebKitPopupMenu* popupMenu)
 {
-    popupMenu->activateItem(std::nullopt);
+    popupMenu->activateItem(WTF::nullopt);
 }
 
 void WebKitPopupMenu::showPopupMenu(const IntRect& rect, TextDirection direction, double pageScaleFactor, const Vector<WebPopupItem>& items, const PlatformPopupMenuData& platformData, int32_t selectedIndex)
@@ -68,7 +68,7 @@ void WebKitPopupMenu::cancelTracking()
     m_menu = nullptr;
 }
 
-void WebKitPopupMenu::activateItem(std::optional<unsigned> itemIndex)
+void WebKitPopupMenu::activateItem(Optional<unsigned> itemIndex)
 {
     WebPopupMenuProxyGtk::activateItem(itemIndex);
     if (m_menu) {

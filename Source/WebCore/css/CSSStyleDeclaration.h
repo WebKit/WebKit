@@ -75,7 +75,7 @@ public:
     virtual CSSStyleSheet* parentStyleSheet() const { return nullptr; }
 
     // Bindings support.
-    std::optional<Variant<String, double>> namedItem(const AtomicString&);
+    Optional<Variant<String, double>> namedItem(const AtomicString&);
     ExceptionOr<void> setNamedItem(const AtomicString& name, String value, bool& propertySupported);
     Vector<AtomicString> supportedPropertyNames() const;
 

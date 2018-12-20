@@ -70,8 +70,8 @@ public:
     bool infinitelyGrowable() const { return m_infinitelyGrowable; }
     void setInfinitelyGrowable(bool infinitelyGrowable) { m_infinitelyGrowable = infinitelyGrowable; }
 
-    void setGrowthLimitCap(std::optional<LayoutUnit>);
-    std::optional<LayoutUnit> growthLimitCap() const { return m_growthLimitCap; }
+    void setGrowthLimitCap(Optional<LayoutUnit>);
+    Optional<LayoutUnit> growthLimitCap() const { return m_growthLimitCap; }
 
 private:
     bool isGrowthLimitBiggerThanBaseSize() const { return growthLimitIsInfinite() || m_growthLimit >= m_baseSize; }
@@ -82,7 +82,7 @@ private:
     LayoutUnit m_growthLimit { 0 };
     LayoutUnit m_plannedSize { 0 };
     LayoutUnit m_tempSize { 0 };
-    std::optional<LayoutUnit> m_growthLimitCap;
+    Optional<LayoutUnit> m_growthLimitCap;
     bool m_infinitelyGrowable { false };
 };
 
@@ -97,7 +97,7 @@ public:
     {
     }
 
-    void setup(GridTrackSizingDirection, unsigned numTracks, SizingOperation, std::optional<LayoutUnit> availableSpace, std::optional<LayoutUnit> freeSpace);
+    void setup(GridTrackSizingDirection, unsigned numTracks, SizingOperation, Optional<LayoutUnit> availableSpace, Optional<LayoutUnit> freeSpace);
     void run();
     void reset();
 
@@ -120,11 +120,11 @@ public:
     Vector<GridTrack>& tracks(GridTrackSizingDirection direction) { return direction == ForColumns ? m_columns : m_rows; }
     const Vector<GridTrack>& tracks(GridTrackSizingDirection direction) const { return direction == ForColumns ? m_columns : m_rows; }
 
-    std::optional<LayoutUnit> freeSpace(GridTrackSizingDirection direction) const { return direction == ForColumns ? m_freeSpaceColumns : m_freeSpaceRows; }
-    void setFreeSpace(GridTrackSizingDirection, std::optional<LayoutUnit>);
+    Optional<LayoutUnit> freeSpace(GridTrackSizingDirection direction) const { return direction == ForColumns ? m_freeSpaceColumns : m_freeSpaceRows; }
+    void setFreeSpace(GridTrackSizingDirection, Optional<LayoutUnit>);
 
-    std::optional<LayoutUnit> availableSpace(GridTrackSizingDirection direction) const { return direction == ForColumns ? m_availableSpaceColumns : m_availableSpaceRows; }
-    void setAvailableSpace(GridTrackSizingDirection, std::optional<LayoutUnit>);
+    Optional<LayoutUnit> availableSpace(GridTrackSizingDirection direction) const { return direction == ForColumns ? m_availableSpaceColumns : m_availableSpaceRows; }
+    void setAvailableSpace(GridTrackSizingDirection, Optional<LayoutUnit>);
 
     LayoutUnit computeTrackBasedSize() const;
 
@@ -135,7 +135,7 @@ public:
 #endif
 
 private:
-    std::optional<LayoutUnit> availableSpace() const;
+    Optional<LayoutUnit> availableSpace() const;
     bool isRelativeGridLengthAsAuto(const GridLength&, GridTrackSizingDirection) const;
     GridTrackSize gridTrackSize(GridTrackSizingDirection, unsigned translatedIndex) const;
     const GridTrackSize& rawGridTrackSize(GridTrackSizingDirection, unsigned translatedIndex) const;
@@ -173,7 +173,7 @@ private:
     // method at thise level.
     void initializeTrackSizes();
     void resolveIntrinsicTrackSizes();
-    void stretchFlexibleTracks(std::optional<LayoutUnit> freeSpace);
+    void stretchFlexibleTracks(Optional<LayoutUnit> freeSpace);
     void stretchAutoTracks();
 
     // State machine.
@@ -184,11 +184,11 @@ private:
     bool wasSetup() const { return !!m_strategy; }
     bool m_needsSetup { true };
     bool m_hasPercentSizedRowsIndefiniteHeight { false };
-    std::optional<LayoutUnit> m_availableSpaceRows;
-    std::optional<LayoutUnit> m_availableSpaceColumns;
+    Optional<LayoutUnit> m_availableSpaceRows;
+    Optional<LayoutUnit> m_availableSpaceColumns;
 
-    std::optional<LayoutUnit> m_freeSpaceColumns;
-    std::optional<LayoutUnit> m_freeSpaceRows;
+    Optional<LayoutUnit> m_freeSpaceColumns;
+    Optional<LayoutUnit> m_freeSpaceRows;
 
     // We need to keep both alive in order to properly size grids with orthogonal
     // writing modes.
@@ -249,8 +249,8 @@ public:
 
     virtual ~GridTrackSizingAlgorithmStrategy() = default;
 
-    virtual void maximizeTracks(Vector<GridTrack>&, std::optional<LayoutUnit>& freeSpace) = 0;
-    virtual double findUsedFlexFraction(Vector<unsigned>& flexibleSizedTracksIndex, GridTrackSizingDirection, std::optional<LayoutUnit> initialFreeSpace) const = 0;
+    virtual void maximizeTracks(Vector<GridTrack>&, Optional<LayoutUnit>& freeSpace) = 0;
+    virtual double findUsedFlexFraction(Vector<unsigned>& flexibleSizedTracksIndex, GridTrackSizingDirection, Optional<LayoutUnit> initialFreeSpace) const = 0;
     virtual bool recomputeUsedFlexFractionIfNeeded(double& flexFraction, LayoutUnit& totalGrowth) const = 0;
     virtual LayoutUnit freeSpaceForStretchAutoTracksStep() const = 0;
 
@@ -262,7 +262,7 @@ protected:
     virtual void layoutGridItemForMinSizeComputation(RenderBox&, bool overrideSizeHasChanged) const = 0;
 
     LayoutUnit logicalHeightForChild(RenderBox&) const;
-    bool updateOverrideContainingBlockContentSizeForChild(RenderBox&, GridTrackSizingDirection, std::optional<LayoutUnit> = std::nullopt) const;
+    bool updateOverrideContainingBlockContentSizeForChild(RenderBox&, GridTrackSizingDirection, Optional<LayoutUnit> = WTF::nullopt) const;
 
     GridTrackSize gridTrackSize(GridTrackSizingDirection direction, size_t translatedIndex) const { return m_algorithm.gridTrackSize(direction, translatedIndex); }
 
@@ -272,7 +272,7 @@ protected:
     double findFrUnitSize(const GridSpan& tracksSpan, LayoutUnit leftOverSpace) const { return m_algorithm.findFrUnitSize(tracksSpan, leftOverSpace); }
     void distributeSpaceToTracks(Vector<GridTrack*>& tracks, LayoutUnit& availableLogicalSpace) const { m_algorithm.distributeSpaceToTracks<MaximizeTracks>(tracks, nullptr, availableLogicalSpace); }
     const RenderGrid* renderGrid() const { return m_algorithm.m_renderGrid; }
-    std::optional<LayoutUnit> availableSpace() const { return m_algorithm.availableSpace(); }
+    Optional<LayoutUnit> availableSpace() const { return m_algorithm.availableSpace(); }
 
     GridTrackSizingAlgorithm& m_algorithm;
 };

@@ -187,7 +187,7 @@ private:
     Vector<Ref<SharedBuffer>> m_keyIDs;
 #endif
 
-    std::optional<FloatSize> m_cachedSize;
+    Optional<FloatSize> m_cachedSize;
     FloatSize m_currentSize;
     bool m_parsingSucceeded { true };
     bool m_parserStateWasReset { false };

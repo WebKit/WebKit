@@ -70,13 +70,13 @@ public:
     };
 
     struct AddEventListenerOptions : ListenerOptions {
-        AddEventListenerOptions(bool capture = false, std::optional<bool> passive = std::nullopt, bool once = false)
+        AddEventListenerOptions(bool capture = false, Optional<bool> passive = WTF::nullopt, bool once = false)
             : ListenerOptions(capture)
             , passive(passive)
             , once(once)
         { }
 
-        std::optional<bool> passive;
+        Optional<bool> passive;
         bool once { false };
     };
 

@@ -55,7 +55,7 @@ public:
         WallTime timeStamp;
         Data header;
         Data body;
-        std::optional<SHA1::Digest> bodyHash;
+        Optional<SHA1::Digest> bodyHash;
 
         WTF_MAKE_FAST_ALLOCATED;
     };
@@ -147,8 +147,8 @@ private:
     void finishWriteOperation(WriteOperation&, int error = 0);
 
     bool shouldStoreBodyAsBlob(const Data& bodyData);
-    std::optional<BlobStorage::Blob> storeBodyAsBlob(WriteOperation&);
-    Data encodeRecord(const Record&, std::optional<BlobStorage::Blob>);
+    Optional<BlobStorage::Blob> storeBodyAsBlob(WriteOperation&);
+    Data encodeRecord(const Record&, Optional<BlobStorage::Blob>);
     void readRecord(ReadOperation&, const Data&);
 
     void updateFileModificationTime(const String& path);

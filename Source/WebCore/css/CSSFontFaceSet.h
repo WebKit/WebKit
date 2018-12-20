@@ -97,7 +97,7 @@ private:
 
     static String familyNameFromPrimitive(const CSSPrimitiveValue&);
 
-    using FontSelectionKey = std::optional<FontSelectionRequest>;
+    using FontSelectionKey = Optional<FontSelectionRequest>;
     struct FontSelectionKeyHash {
         static unsigned hash(const FontSelectionKey& key) { return computeHash(key); }
         static bool equal(const FontSelectionKey& a, const FontSelectionKey& b) { return a == b; }
@@ -106,7 +106,7 @@ private:
     struct FontSelectionKeyHashTraits : SimpleClassHashTraits<FontSelectionKey> {
         static const bool emptyValueIsZero = false;
         static FontSelectionKey emptyValue() { return FontSelectionRequest { }; }
-        static void constructDeletedValue(FontSelectionKey& slot) { slot = std::nullopt; }
+        static void constructDeletedValue(FontSelectionKey& slot) { slot = WTF::nullopt; }
         static bool isDeletedValue(const FontSelectionKey& value) { return !value; }
     };
     using FontSelectionHashMap = HashMap<FontSelectionKey, RefPtr<CSSSegmentedFontFace>, FontSelectionKeyHash, FontSelectionKeyHashTraits>;

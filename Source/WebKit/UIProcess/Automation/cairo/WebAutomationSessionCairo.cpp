@@ -33,15 +33,15 @@
 namespace WebKit {
 using namespace WebCore;
 
-std::optional<String> WebAutomationSession::platformGetBase64EncodedPNGData(const ShareableBitmap::Handle& handle)
+Optional<String> WebAutomationSession::platformGetBase64EncodedPNGData(const ShareableBitmap::Handle& handle)
 {
     RefPtr<ShareableBitmap> bitmap = ShareableBitmap::create(handle, SharedMemory::Protection::ReadOnly);
     if (!bitmap)
-        return std::nullopt;
+        return WTF::nullopt;
 
     auto surface = bitmap->createCairoSurface();
     if (!surface)
-        return std::nullopt;
+        return WTF::nullopt;
 
     Vector<unsigned char> pngData;
     cairo_surface_write_to_png_stream(surface.get(), [](void* userData, const unsigned char* data, unsigned length) -> cairo_status_t {
@@ -51,7 +51,7 @@ std::optional<String> WebAutomationSession::platformGetBase64EncodedPNGData(cons
     }, &pngData);
 
     if (pngData.isEmpty())
-        return std::nullopt;
+        return WTF::nullopt;
 
     return base64Encode(pngData);
 }

@@ -79,8 +79,8 @@ public:
             Vector<std::pair<String, String>> certificates;
 #endif
 #if PLATFORM(COCOA)
-            std::optional<bool> allowInsecureMediaCapture;
-            std::optional<bool> suppressICECandidateFiltering;
+            Optional<bool> allowInsecureMediaCapture;
+            Optional<bool> suppressICECandidateFiltering;
 #endif
         };
 
@@ -103,7 +103,7 @@ public:
     RemoteInspector::Client* client() const { return m_client; }
     void setClient(RemoteInspector::Client*);
     void clientCapabilitiesDidChange();
-    std::optional<RemoteInspector::Client::Capabilities> clientCapabilities() const { return m_clientCapabilities; }
+    Optional<RemoteInspector::Client::Capabilities> clientCapabilities() const { return m_clientCapabilities; }
 
     void setupFailed(unsigned targetIdentifier);
     void setupCompleted(unsigned targetIdentifier);
@@ -206,7 +206,7 @@ private:
 #endif
 
     RemoteInspector::Client* m_client { nullptr };
-    std::optional<RemoteInspector::Client::Capabilities> m_clientCapabilities;
+    Optional<RemoteInspector::Client::Capabilities> m_clientCapabilities;
 
 #if PLATFORM(COCOA)
     dispatch_queue_t m_xpcQueue;

@@ -61,14 +61,14 @@ public:
     struct Cookie {
         String name;
         String value;
-        std::optional<String> path;
-        std::optional<String> domain;
-        std::optional<bool> secure;
-        std::optional<bool> httpOnly;
-        std::optional<uint64_t> expiry;
+        Optional<String> path;
+        Optional<String> domain;
+        Optional<bool> secure;
+        Optional<bool> httpOnly;
+        Optional<uint64_t> expiry;
     };
 
-    InputSource& getOrCreateInputSource(const String& id, InputSource::Type, std::optional<PointerType>);
+    InputSource& getOrCreateInputSource(const String& id, InputSource::Type, Optional<PointerType>);
 
     void waitForNavigationToComplete(Function<void (CommandResult&&)>&&);
     void createTopLevelBrowsingContext(Function<void (CommandResult&&)>&&);
@@ -89,7 +89,7 @@ public:
     void switchToFrame(RefPtr<JSON::Value>&&, Function<void (CommandResult&&)>&&);
     void switchToParentFrame(Function<void (CommandResult&&)>&&);
     void getWindowRect(Function<void (CommandResult&&)>&&);
-    void setWindowRect(std::optional<double> x, std::optional<double> y, std::optional<double> width, std::optional<double> height, Function<void (CommandResult&&)>&&);
+    void setWindowRect(Optional<double> x, Optional<double> y, Optional<double> width, Optional<double> height, Function<void (CommandResult&&)>&&);
     void maximizeWindow(Function<void (CommandResult&&)>&&);
     void minimizeWindow(Function<void (CommandResult&&)>&&);
     void fullscreenWindow(Function<void (CommandResult&&)>&&);
@@ -119,19 +119,19 @@ public:
     void acceptAlert(Function<void (CommandResult&&)>&&);
     void getAlertText(Function<void (CommandResult&&)>&&);
     void sendAlertText(const String&, Function<void (CommandResult&&)>&&);
-    void takeScreenshot(std::optional<String> elementID, std::optional<bool> scrollIntoView, Function<void (CommandResult&&)>&&);
+    void takeScreenshot(Optional<String> elementID, Optional<bool> scrollIntoView, Function<void (CommandResult&&)>&&);
 
 private:
     Session(std::unique_ptr<SessionHost>&&);
 
-    void switchToTopLevelBrowsingContext(std::optional<String>);
-    void switchToBrowsingContext(std::optional<String>);
+    void switchToTopLevelBrowsingContext(Optional<String>);
+    void switchToBrowsingContext(Optional<String>);
     void closeTopLevelBrowsingContext(const String& toplevelBrowsingContext, Function<void (CommandResult&&)>&&);
     void closeAllToplevelBrowsingContexts(const String& toplevelBrowsingContext, Function<void (CommandResult&&)>&&);
 
     void getToplevelBrowsingContextRect(Function<void (CommandResult&&)>&&);
 
-    std::optional<String> pageLoadStrategyString() const;
+    Optional<String> pageLoadStrategyString() const;
 
     void handleUserPrompts(Function<void (CommandResult&&)>&&);
     void handleUnexpectedAlertOpen(Function<void (CommandResult&&)>&&);
@@ -164,7 +164,7 @@ private:
         ScrollIntoViewIfNeeded = 1 << 0,
         UseViewportCoordinates = 1 << 1,
     };
-    void computeElementLayout(const String& elementID, OptionSet<ElementLayoutOption>, Function<void (std::optional<Rect>&&, std::optional<Point>&&, bool, RefPtr<JSON::Object>&&)>&&);
+    void computeElementLayout(const String& elementID, OptionSet<ElementLayoutOption>, Function<void (Optional<Rect>&&, Optional<Point>&&, bool, RefPtr<JSON::Object>&&)>&&);
 
     void selectOptionElement(const String& elementID, Function<void (CommandResult&&)>&&);
 
@@ -174,8 +174,8 @@ private:
     enum class KeyboardInteractionType { KeyPress, KeyRelease, InsertByKey };
     struct KeyboardInteraction {
         KeyboardInteractionType type { KeyboardInteractionType::InsertByKey };
-        std::optional<String> text;
-        std::optional<String> key;
+        Optional<String> text;
+        Optional<String> key;
     };
     enum KeyModifier {
         None = 0,
@@ -192,9 +192,9 @@ private:
 
         Type type;
         String subtype;
-        std::optional<MouseButton> pressedButton;
-        std::optional<String> pressedKey;
-        std::optional<String> pressedVirtualKey;
+        Optional<MouseButton> pressedButton;
+        Optional<String> pressedKey;
+        Optional<String> pressedVirtualKey;
     };
     InputSourceState& inputSourceState(const String& id);
 
@@ -202,8 +202,8 @@ private:
     Seconds m_scriptTimeout;
     Seconds m_pageLoadTimeout;
     Seconds m_implicitWaitTimeout;
-    std::optional<String> m_toplevelBrowsingContext;
-    std::optional<String> m_currentBrowsingContext;
+    Optional<String> m_toplevelBrowsingContext;
+    Optional<String> m_currentBrowsingContext;
     HashMap<String, InputSource> m_activeInputSources;
     HashMap<String, InputSourceState> m_inputStateTable;
 };

@@ -1064,7 +1064,7 @@ void SourceBufferPrivateAVFObjC::flushVideo()
         });
     }
 
-    m_cachedSize = std::nullopt;
+    m_cachedSize = WTF::nullopt;
 
     if (m_mediaSource) {
         m_mediaSource->player()->setHasAvailableVideoFrame(false);

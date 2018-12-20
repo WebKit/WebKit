@@ -130,7 +130,7 @@ private:
 
         if (m_storages.size() <= index)
             m_storages.resize(index + 1);
-        if (std::optional<Storage> storage = m_storages[index])
+        if (Optional<Storage> storage = m_storages[index])
             return *storage;
 
         Identifier identifier = Identifier::fromUid(PrivateName());
@@ -153,7 +153,7 @@ private:
     UnlinkedCodeBlock* m_codeBlock;
     InstructionStreamWriter& m_instructions;
     BytecodeGraph m_graph;
-    Vector<std::optional<Storage>> m_storages;
+    Vector<Optional<Storage>> m_storages;
     Yields m_yields;
     Strong<SymbolTable> m_generatorFrameSymbolTable;
     int m_generatorFrameSymbolTableIndex;

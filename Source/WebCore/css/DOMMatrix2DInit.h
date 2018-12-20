@@ -30,18 +30,18 @@
 namespace WebCore {
 
 struct DOMMatrix2DInit {
-    std::optional<double> a;
-    std::optional<double> b;
-    std::optional<double> c;
-    std::optional<double> d;
-    std::optional<double> e;
-    std::optional<double> f;
-    std::optional<double> m11;
-    std::optional<double> m12;
-    std::optional<double> m21;
-    std::optional<double> m22;
-    std::optional<double> m41;
-    std::optional<double> m42;
+    Optional<double> a;
+    Optional<double> b;
+    Optional<double> c;
+    Optional<double> d;
+    Optional<double> e;
+    Optional<double> f;
+    Optional<double> m11;
+    Optional<double> m12;
+    Optional<double> m21;
+    Optional<double> m22;
+    Optional<double> m41;
+    Optional<double> m42;
 };
 
 }

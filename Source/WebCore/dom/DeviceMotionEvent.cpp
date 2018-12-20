@@ -43,23 +43,23 @@ DeviceMotionEvent::DeviceMotionEvent(const AtomicString& eventType, DeviceMotion
 {
 }
 
-static std::optional<DeviceMotionEvent::Acceleration> convert(const DeviceMotionData::Acceleration* acceleration)
+static Optional<DeviceMotionEvent::Acceleration> convert(const DeviceMotionData::Acceleration* acceleration)
 {
     if (!acceleration)
-        return std::nullopt;
+        return WTF::nullopt;
 
     return DeviceMotionEvent::Acceleration { acceleration->x(), acceleration->y(), acceleration->z() };
 }
 
-static std::optional<DeviceMotionEvent::RotationRate> convert(const DeviceMotionData::RotationRate* rotationRate)
+static Optional<DeviceMotionEvent::RotationRate> convert(const DeviceMotionData::RotationRate* rotationRate)
 {
     if (!rotationRate)
-        return std::nullopt;
+        return WTF::nullopt;
 
     return DeviceMotionEvent::RotationRate { rotationRate->alpha(), rotationRate->beta(), rotationRate->gamma() };
 }
 
-static RefPtr<DeviceMotionData::Acceleration> convert(std::optional<DeviceMotionEvent::Acceleration>&& acceleration)
+static RefPtr<DeviceMotionData::Acceleration> convert(Optional<DeviceMotionEvent::Acceleration>&& acceleration)
 {
     if (!acceleration)
         return nullptr;
@@ -70,7 +70,7 @@ static RefPtr<DeviceMotionData::Acceleration> convert(std::optional<DeviceMotion
     return DeviceMotionData::Acceleration::create(acceleration->x, acceleration->y, acceleration->z);
 }
 
-static RefPtr<DeviceMotionData::RotationRate> convert(std::optional<DeviceMotionEvent::RotationRate>&& rotationRate)
+static RefPtr<DeviceMotionData::RotationRate> convert(Optional<DeviceMotionEvent::RotationRate>&& rotationRate)
 {
     if (!rotationRate)
         return nullptr;
@@ -81,27 +81,27 @@ static RefPtr<DeviceMotionData::RotationRate> convert(std::optional<DeviceMotion
     return DeviceMotionData::RotationRate::create(rotationRate->alpha, rotationRate->beta, rotationRate->gamma);
 }
 
-std::optional<DeviceMotionEvent::Acceleration> DeviceMotionEvent::acceleration() const
+Optional<DeviceMotionEvent::Acceleration> DeviceMotionEvent::acceleration() const
 {
     return convert(m_deviceMotionData->acceleration());
 }
 
-std::optional<DeviceMotionEvent::Acceleration> DeviceMotionEvent::accelerationIncludingGravity() const
+Optional<DeviceMotionEvent::Acceleration> DeviceMotionEvent::accelerationIncludingGravity() const
 {
     return convert(m_deviceMotionData->accelerationIncludingGravity());
 }
 
-std::optional<DeviceMotionEvent::RotationRate> DeviceMotionEvent::rotationRate() const
+Optional<DeviceMotionEvent::RotationRate> DeviceMotionEvent::rotationRate() const
 {
     return convert(m_deviceMotionData->rotationRate());
 }
 
-std::optional<double> DeviceMotionEvent::interval() const
+Optional<double> DeviceMotionEvent::interval() const
 {
     return m_deviceMotionData->interval();
 }
 
-void DeviceMotionEvent::initDeviceMotionEvent(const AtomicString& type, bool bubbles, bool cancelable, std::optional<DeviceMotionEvent::Acceleration>&& acceleration, std::optional<DeviceMotionEvent::Acceleration>&& accelerationIncludingGravity, std::optional<DeviceMotionEvent::RotationRate>&& rotationRate, std::optional<double> interval)
+void DeviceMotionEvent::initDeviceMotionEvent(const AtomicString& type, bool bubbles, bool cancelable, Optional<DeviceMotionEvent::Acceleration>&& acceleration, Optional<DeviceMotionEvent::Acceleration>&& accelerationIncludingGravity, Optional<DeviceMotionEvent::RotationRate>&& rotationRate, Optional<double> interval)
 {
     if (isBeingDispatched())
         return;

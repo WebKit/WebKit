@@ -99,7 +99,7 @@ const GDBusInterfaceVTable SessionHost::s_interfaceVTable = {
     { 0 }
 };
 
-void SessionHost::connectToBrowser(Function<void (std::optional<String> error)>&& completionHandler)
+void SessionHost::connectToBrowser(Function<void (Optional<String> error)>&& completionHandler)
 {
     launchBrowser(WTFMove(completionHandler));
 }
@@ -110,7 +110,7 @@ bool SessionHost::isConnected() const
 }
 
 struct ConnectToBrowserAsyncData {
-    ConnectToBrowserAsyncData(SessionHost* sessionHost, GUniquePtr<char>&& dbusAddress, GCancellable* cancellable, Function<void (std::optional<String> error)>&& completionHandler)
+    ConnectToBrowserAsyncData(SessionHost* sessionHost, GUniquePtr<char>&& dbusAddress, GCancellable* cancellable, Function<void (Optional<String> error)>&& completionHandler)
         : sessionHost(sessionHost)
         , dbusAddress(WTFMove(dbusAddress))
         , cancellable(cancellable)
@@ -121,7 +121,7 @@ struct ConnectToBrowserAsyncData {
     SessionHost* sessionHost;
     GUniquePtr<char> dbusAddress;
     GRefPtr<GCancellable> cancellable;
-    Function<void (std::optional<String> error)> completionHandler;
+    Function<void (Optional<String> error)> completionHandler;
 };
 
 static guint16 freePort()
@@ -136,7 +136,7 @@ static guint16 freePort()
     return g_inet_socket_address_get_port(G_INET_SOCKET_ADDRESS(address.get()));
 }
 
-void SessionHost::launchBrowser(Function<void (std::optional<String> error)>&& completionHandler)
+void SessionHost::launchBrowser(Function<void (Optional<String> error)>&& completionHandler)
 {
     m_cancellable = adoptGRef(g_cancellable_new());
     GRefPtr<GSubprocessLauncher> launcher = adoptGRef(g_subprocess_launcher_new(G_SUBPROCESS_FLAGS_NONE));
@@ -201,7 +201,7 @@ void SessionHost::connectToBrowser(std::unique_ptr<ConnectToBrowserAsyncData>&& 
                     return;
                 }
                 data->sessionHost->setupConnection(WTFMove(connection));
-                data->completionHandler(std::nullopt);
+                data->completionHandler(WTF::nullopt);
         }, data);
     });
 }
@@ -283,7 +283,7 @@ bool SessionHost::buildSessionCapabilities(GVariantBuilder* builder) const
     return true;
 }
 
-void SessionHost::startAutomationSession(Function<void (bool, std::optional<String>)>&& completionHandler)
+void SessionHost::startAutomationSession(Function<void (bool, Optional<String>)>&& completionHandler)
 {
     ASSERT(m_dbusConnection);
     ASSERT(!m_startSessionCompletionHandler);
@@ -311,7 +311,7 @@ void SessionHost::startAutomationSession(Function<void (bool, std::optional<Stri
 
             if (!sessionHost->matchCapabilities(resultVariant.get())) {
                 auto completionHandler = std::exchange(sessionHost->m_startSessionCompletionHandler, nullptr);
-                completionHandler(false, std::nullopt);
+                completionHandler(false, WTF::nullopt);
                 return;
             }
         }, this
@@ -355,7 +355,7 @@ void SessionHost::setTargetList(uint64_t connectionID, Vector<Target>&& targetLi
         -1, m_cancellable.get(), dbusConnectionCallAsyncReadyCallback, nullptr);
 
     auto startSessionCompletionHandler = std::exchange(m_startSessionCompletionHandler, nullptr);
-    startSessionCompletionHandler(true, std::nullopt);
+    startSessionCompletionHandler(true, WTF::nullopt);
 }
 
 void SessionHost::sendMessageToFrontend(uint64_t connectionID, uint64_t targetID, const char* message)

@@ -30,7 +30,7 @@
 
 namespace JSC {
 
-std::optional<JSTextPosition> DebuggerPausePositions::breakpointLocationForLineColumn(int line, int column)
+Optional<JSTextPosition> DebuggerPausePositions::breakpointLocationForLineColumn(int line, int column)
 {
     unsigned start = 0;
     unsigned end = m_positions.size();
@@ -54,7 +54,7 @@ std::optional<JSTextPosition> DebuggerPausePositions::breakpointLocationForLineC
             // We are guarenteed to have a Leave for an Entry so we don't need to bounds check.
             while (true) {
                 if (pausePosition.type != DebuggerPausePositionType::Enter)
-                    return std::optional<JSTextPosition>(pausePosition.position);
+                    return Optional<JSTextPosition>(pausePosition.position);
                 pausePosition = m_positions[middle++];
             }
         }
@@ -67,7 +67,7 @@ std::optional<JSTextPosition> DebuggerPausePositions::breakpointLocationForLineC
 
     // Past the end, no possible pause locations.
     if (start >= m_positions.size())
-        return std::nullopt;
+        return WTF::nullopt;
 
     // If the next location is a function Entry we will need to decide if we should go into
     // the function or go past the function. We decide to go into the function if the
@@ -87,7 +87,7 @@ std::optional<JSTextPosition> DebuggerPausePositions::breakpointLocationForLineC
     // Valid pause location. Use it.
     DebuggerPausePosition& firstSlidePosition = m_positions[start];
     if (firstSlidePosition.type != DebuggerPausePositionType::Enter)
-        return std::optional<JSTextPosition>(firstSlidePosition.position);
+        return Optional<JSTextPosition>(firstSlidePosition.position);
 
     // Determine if we should enter this function or skip past it.
     // If entryStackSize is > 0 we are skipping functions.
@@ -113,11 +113,11 @@ std::optional<JSTextPosition> DebuggerPausePositions::breakpointLocationForLineC
         }
 
         // Found pause position.
-        return std::optional<JSTextPosition>(slidePosition.position);
+        return Optional<JSTextPosition>(slidePosition.position);
     }
 
     // No pause positions found.
-    return std::nullopt;
+    return WTF::nullopt;
 }
 
 void DebuggerPausePositions::sort()

@@ -173,7 +173,7 @@ public:
         static const char* typeName(Type);
     };
 
-    std::optional<Token> consumeToken()
+    Optional<Token> consumeToken()
     {
         if (!m_stack.isEmpty())
             return m_stack.takeLast();
@@ -221,34 +221,34 @@ public:
     }
 
 private:
-    std::optional<Token> consumeTokenFromStream();
+    Optional<Token> consumeTokenFromStream();
 
     void skipWhitespaceAndComments();
     void skipWhitespace();
     void skipLineComment();
     void skipLongComment();
 
-    std::optional<Token::Type> recognizeKeyword(unsigned end);
+    Optional<Token::Type> recognizeKeyword(unsigned end);
 
-    std::optional<unsigned> coreDecimalIntLiteral(unsigned) const;
-    std::optional<unsigned> decimalIntLiteral(unsigned) const;
-    std::optional<unsigned> decimalUintLiteral(unsigned) const;
-    std::optional<unsigned> coreHexadecimalIntLiteral(unsigned) const;
-    std::optional<unsigned> hexadecimalIntLiteral(unsigned) const;
-    std::optional<unsigned> hexadecimalUintLiteral(unsigned) const;
-    std::optional<unsigned> intLiteral(unsigned) const;
-    std::optional<unsigned> uintLiteral(unsigned) const;
-    std::optional<unsigned> digit(unsigned) const;
+    Optional<unsigned> coreDecimalIntLiteral(unsigned) const;
+    Optional<unsigned> decimalIntLiteral(unsigned) const;
+    Optional<unsigned> decimalUintLiteral(unsigned) const;
+    Optional<unsigned> coreHexadecimalIntLiteral(unsigned) const;
+    Optional<unsigned> hexadecimalIntLiteral(unsigned) const;
+    Optional<unsigned> hexadecimalUintLiteral(unsigned) const;
+    Optional<unsigned> intLiteral(unsigned) const;
+    Optional<unsigned> uintLiteral(unsigned) const;
+    Optional<unsigned> digit(unsigned) const;
     unsigned digitStar(unsigned) const;
-    std::optional<unsigned> character(char, unsigned) const;
-    template<unsigned length> std::optional<unsigned> anyCharacter(const char (&string)[length], unsigned) const;
-    std::optional<unsigned> coreFloatLiteralType1(unsigned) const;
-    std::optional<unsigned> coreFloatLiteral(unsigned) const;
-    std::optional<unsigned> floatLiteral(unsigned) const;
-    template<unsigned length> std::optional<unsigned> string(const char (&string)[length], unsigned) const;
-    std::optional<unsigned> validIdentifier(unsigned) const;
-    std::optional<unsigned> identifier(unsigned) const;
-    std::optional<unsigned> operatorName(unsigned) const;
+    Optional<unsigned> character(char, unsigned) const;
+    template<unsigned length> Optional<unsigned> anyCharacter(const char (&string)[length], unsigned) const;
+    Optional<unsigned> coreFloatLiteralType1(unsigned) const;
+    Optional<unsigned> coreFloatLiteral(unsigned) const;
+    Optional<unsigned> floatLiteral(unsigned) const;
+    template<unsigned length> Optional<unsigned> string(const char (&string)[length], unsigned) const;
+    Optional<unsigned> validIdentifier(unsigned) const;
+    Optional<unsigned> identifier(unsigned) const;
+    Optional<unsigned> operatorName(unsigned) const;
 
     StringView m_stringView;
     Vector<Token> m_stack;
@@ -256,24 +256,24 @@ private:
     unsigned m_lineNumber { 0 };
 };
 
-template<unsigned length> std::optional<unsigned> Lexer::string(const char (&string)[length], unsigned offset) const
+template<unsigned length> Optional<unsigned> Lexer::string(const char (&string)[length], unsigned offset) const
 {
     for (unsigned i = 0; i < length - 1; ++i) {
         if (offset + i >= m_stringView.length() || m_stringView[offset + i] != string[i])
-            return std::nullopt;
+            return WTF::nullopt;
     }
     return offset + length - 1;
 }
 
-template<unsigned length> std::optional<unsigned> Lexer::anyCharacter(const char (&string)[length], unsigned offset) const
+template<unsigned length> Optional<unsigned> Lexer::anyCharacter(const char (&string)[length], unsigned offset) const
 {
     if (offset >= m_stringView.length())
-        return std::nullopt;
+        return WTF::nullopt;
     for (unsigned i = 0; i < length - 1; ++i) {
         if (m_stringView[offset] == string[i])
             return offset + 1;
     }
-    return std::nullopt;
+    return WTF::nullopt;
 }
 
 }

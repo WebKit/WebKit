@@ -66,9 +66,9 @@ void setApplicationBundleIdentifier(const String& bundleIdentifier)
     applicationBundleIdentifierOverride() = bundleIdentifier;
 }
 
-static std::optional<uint32_t>& applicationSDKVersionOverride()
+static Optional<uint32_t>& applicationSDKVersionOverride()
 {
-    static NeverDestroyed<std::optional<uint32_t>> version;
+    static NeverDestroyed<Optional<uint32_t>> version;
     return version;
 }
 

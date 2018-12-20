@@ -153,7 +153,7 @@ public:
     int toInt() const;
     int toInt(bool& isValid) const;
     int toIntStrict(bool& isValid) const;
-    std::optional<uint64_t> toUInt64Strict() const;
+    Optional<uint64_t> toUInt64Strict() const;
     float toFloat(bool& isValid) const;
 
     static void invalidate(const StringImpl&);
@@ -529,11 +529,11 @@ inline int StringView::toIntStrict(bool& isValid) const
     return charactersToIntStrict(characters16(), m_length, &isValid);
 }
 
-inline std::optional<uint64_t> StringView::toUInt64Strict() const
+inline Optional<uint64_t> StringView::toUInt64Strict() const
 {
     bool isValid;
     uint64_t result = is8Bit() ? charactersToUInt64Strict(characters8(), m_length, &isValid) : charactersToUInt64Strict(characters16(), m_length, &isValid);
-    return isValid ? std::make_optional(result) : std::nullopt;
+    return isValid ? makeOptional(result) : WTF::nullopt;
 }
 
 inline String StringView::toStringWithoutCopying() const
@@ -743,7 +743,7 @@ public:
 
 private:
     std::reference_wrapper<const StringView> m_stringView;
-    std::optional<unsigned> m_nextCodePointOffset;
+    Optional<unsigned> m_nextCodePointOffset;
     UChar32 m_codePoint;
 };
 
@@ -808,7 +808,7 @@ inline auto StringView::CodePoints::Iterator::operator++() -> Iterator&
 {
     ASSERT(m_nextCodePointOffset);
     if (m_nextCodePointOffset.value() == m_stringView.get().length()) {
-        m_nextCodePointOffset = std::nullopt;
+        m_nextCodePointOffset = WTF::nullopt;
         return *this;
     }
     if (m_stringView.get().is8Bit())

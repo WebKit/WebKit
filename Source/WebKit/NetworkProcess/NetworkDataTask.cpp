@@ -103,7 +103,7 @@ void NetworkDataTask::didReceiveResponse(ResourceResponse&& response, ResponseCo
     ASSERT(m_client);
     if (response.isHTTP09()) {
         auto url = response.url();
-        std::optional<uint16_t> port = url.port();
+        Optional<uint16_t> port = url.port();
         if (port && !WTF::isDefaultPortForProtocol(port.value(), url.protocol())) {
             completionHandler(PolicyAction::Ignore);
             cancel();

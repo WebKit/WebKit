@@ -46,8 +46,8 @@ protected:
     void startProducingData() override;
     void stopProducingData() override;
 
-    mutable std::optional<RealtimeMediaSourceCapabilities> m_capabilities;
-    mutable std::optional<RealtimeMediaSourceSettings> m_currentSettings;
+    mutable Optional<RealtimeMediaSourceCapabilities> m_capabilities;
+    mutable Optional<RealtimeMediaSourceSettings> m_currentSettings;
 
 private:
     bool isCaptureSource() const final { return true; }

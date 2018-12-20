@@ -39,7 +39,7 @@ public:
 
     WEBCORE_EXPORT static VRManager& singleton();
 
-    std::optional<VRDisplaysVector> getVRDisplays();
+    Optional<VRDisplaysVector> getVRDisplays();
 
 private:
     VRManager();

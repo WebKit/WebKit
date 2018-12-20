@@ -87,7 +87,7 @@ public:
     enum class ForNavigationAction { No, Yes };
     uint64_t setUpPolicyListener(WebCore::FramePolicyFunction&&, ForNavigationAction);
     void invalidatePolicyListener();
-    void didReceivePolicyDecision(uint64_t listenerID, WebPolicyAction, uint64_t navigationID, DownloadID, std::optional<WebsitePoliciesData>&&);
+    void didReceivePolicyDecision(uint64_t listenerID, WebPolicyAction, uint64_t navigationID, DownloadID, Optional<WebsitePoliciesData>&&);
 
     uint64_t setUpWillSubmitFormListener(CompletionHandler<void()>&&);
     void continueWillSubmitForm(uint64_t);

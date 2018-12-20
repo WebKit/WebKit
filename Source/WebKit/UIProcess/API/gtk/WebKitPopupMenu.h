@@ -34,7 +34,7 @@ public:
     }
     ~WebKitPopupMenu() = default;
 
-    void activateItem(std::optional<unsigned> itemIndex) override;
+    void activateItem(Optional<unsigned> itemIndex) override;
 
 private:
     WebKitPopupMenu(GtkWidget*, WebPopupMenuProxy::Client&);

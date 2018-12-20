@@ -33,9 +33,9 @@ namespace WebCore {
 struct ComputedEffectTiming : EffectTiming {
     double endTime;
     double activeDuration;
-    std::optional<double> localTime;
-    std::optional<double> progress;
-    std::optional<double> currentIteration;
+    Optional<double> localTime;
+    Optional<double> progress;
+    Optional<double> currentIteration;
 };
 
 } // namespace WebCore

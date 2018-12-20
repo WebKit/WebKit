@@ -52,7 +52,7 @@ void PageGroupHandle::encode(IPC::Encoder& encoder) const
 
 bool PageGroupHandle::decode(IPC::Decoder& decoder, RefPtr<Object>& result)
 {
-    std::optional<WebKit::WebPageGroupData> webPageGroupData;
+    Optional<WebKit::WebPageGroupData> webPageGroupData;
     decoder >> webPageGroupData;
     if (!webPageGroupData)
         return false;

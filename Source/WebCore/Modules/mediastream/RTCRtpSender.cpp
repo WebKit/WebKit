@@ -127,7 +127,7 @@ bool RTCRtpSender::isCreatedBy(const PeerConnectionBackend& connection) const
     return &connection == m_connection.get();
 }
 
-std::optional<RTCRtpCapabilities> RTCRtpSender::getCapabilities(ScriptExecutionContext& context, const String& kind)
+Optional<RTCRtpCapabilities> RTCRtpSender::getCapabilities(ScriptExecutionContext& context, const String& kind)
 {
     return PeerConnectionBackend::senderCapabilities(context, kind);
 }

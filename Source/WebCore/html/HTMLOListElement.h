@@ -41,7 +41,7 @@ public:
 
     int start() const { return m_start ? m_start.value() : (m_isReversed ? itemCount() : 1); }
     bool isReversed() const { return m_isReversed; }
-    void itemCountChanged() { m_itemCount = std::nullopt; }
+    void itemCountChanged() { m_itemCount = WTF::nullopt; }
 
 private:
     HTMLOListElement(const QualifiedName&, Document&);
@@ -52,8 +52,8 @@ private:
     bool isPresentationAttribute(const QualifiedName&) const final;
     void collectStyleForPresentationAttribute(const QualifiedName&, const AtomicString&, MutableStyleProperties&) final;
 
-    std::optional<int> m_start;
-    mutable std::optional<unsigned> m_itemCount;
+    Optional<int> m_start;
+    mutable Optional<unsigned> m_itemCount;
     bool m_isReversed { false };
 };
 

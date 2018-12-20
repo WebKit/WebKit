@@ -27,7 +27,7 @@
 
 namespace WebCore {
 
-static RefPtr<Float32Array> optionalFloat3ToJSCArray(const std::optional<VRPlatformTrackingInfo::Float3>& data)
+static RefPtr<Float32Array> optionalFloat3ToJSCArray(const Optional<VRPlatformTrackingInfo::Float3>& data)
 {
     if (!data)
         return nullptr;

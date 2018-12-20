@@ -136,8 +136,8 @@ private:
     void layerTreeCommitComplete() override;
 
     void couldNotRestorePageState() override;
-    void restorePageState(std::optional<WebCore::FloatPoint>, const WebCore::FloatPoint&, const WebCore::FloatBoxExtent&, double) override;
-    void restorePageCenterAndScale(std::optional<WebCore::FloatPoint>, double) override;
+    void restorePageState(Optional<WebCore::FloatPoint>, const WebCore::FloatPoint&, const WebCore::FloatBoxExtent&, double) override;
+    void restorePageCenterAndScale(Optional<WebCore::FloatPoint>, double) override;
 
     void startAssistingNode(const AssistedNodeInformation&, bool userIsInteracting, bool blurPreviousNode, bool changingActivityState, API::Object* userData) override;
     void stopAssistingNode() override;
@@ -222,7 +222,7 @@ private:
     void didHandleStartDataInteractionRequest(bool started) override;
     void didHandleAdditionalDragItemsRequest(bool added) override;
     void startDrag(const WebCore::DragItem&, const ShareableBitmap::Handle& image) override;
-    void didConcludeEditDataInteraction(std::optional<WebCore::TextIndicatorData>) override;
+    void didConcludeEditDataInteraction(Optional<WebCore::TextIndicatorData>) override;
     void didChangeDataInteractionCaretRect(const WebCore::IntRect& previousCaretRect, const WebCore::IntRect& caretRect) override;
 #endif
 

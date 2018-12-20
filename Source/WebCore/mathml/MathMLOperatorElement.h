@@ -42,7 +42,7 @@ public:
     };
     static OperatorChar parseOperatorChar(const String&);
     const OperatorChar& operatorChar();
-    void setOperatorFormDirty() { m_dictionaryProperty = std::nullopt; }
+    void setOperatorFormDirty() { m_dictionaryProperty = WTF::nullopt; }
     MathMLOperatorDictionary::Form form() { return dictionaryProperty().form; }
     bool hasProperty(MathMLOperatorDictionary::Flag);
     Length defaultLeadingSpace();
@@ -58,9 +58,9 @@ private:
     void childrenChanged(const ChildChange&) final;
     void parseAttribute(const QualifiedName&, const AtomicString&) final;
 
-    std::optional<OperatorChar> m_operatorChar;
+    Optional<OperatorChar> m_operatorChar;
 
-    std::optional<MathMLOperatorDictionary::Property> m_dictionaryProperty;
+    Optional<MathMLOperatorDictionary::Property> m_dictionaryProperty;
     MathMLOperatorDictionary::Property computeDictionaryProperty();
     const MathMLOperatorDictionary::Property& dictionaryProperty();
 
@@ -71,10 +71,10 @@ private:
     OperatorProperties m_properties;
     void computeOperatorFlag(MathMLOperatorDictionary::Flag);
 
-    std::optional<Length> m_leadingSpace;
-    std::optional<Length> m_trailingSpace;
-    std::optional<Length> m_minSize;
-    std::optional<Length> m_maxSize;
+    Optional<Length> m_leadingSpace;
+    Optional<Length> m_trailingSpace;
+    Optional<Length> m_minSize;
+    Optional<Length> m_maxSize;
 };
 
 }

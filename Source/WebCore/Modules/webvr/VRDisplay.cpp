@@ -180,7 +180,7 @@ void VRDisplay::requestPresent(const Vector<VRLayerInit>& layers, Ref<DeferredPr
 
 void VRDisplay::stopPresenting()
 {
-    m_presentingLayer = std::nullopt;
+    m_presentingLayer = WTF::nullopt;
 }
 
 void VRDisplay::exitPresent(Ref<DeferredPromise>&& promise)
@@ -207,12 +207,12 @@ void VRDisplay::submitFrame()
 
 void VRDisplay::platformDisplayConnected()
 {
-    document()->domWindow()->dispatchEvent(VRDisplayEvent::create(eventNames().vrdisplayconnectEvent, makeRefPtr(this), std::nullopt));
+    document()->domWindow()->dispatchEvent(VRDisplayEvent::create(eventNames().vrdisplayconnectEvent, makeRefPtr(this), WTF::nullopt));
 }
 
 void VRDisplay::platformDisplayDisconnected()
 {
-    document()->domWindow()->dispatchEvent(VRDisplayEvent::create(eventNames().vrdisplaydisconnectEvent, makeRefPtr(this), std::nullopt));
+    document()->domWindow()->dispatchEvent(VRDisplayEvent::create(eventNames().vrdisplaydisconnectEvent, makeRefPtr(this), WTF::nullopt));
 }
 
 void VRDisplay::platformDisplayMounted()

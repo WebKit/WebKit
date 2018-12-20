@@ -252,7 +252,7 @@ const char* Lexer::Token::typeName(Type type)
     }
 }
 
-auto Lexer::recognizeKeyword(unsigned end) -> std::optional<Token::Type>
+auto Lexer::recognizeKeyword(unsigned end) -> Optional<Token::Type>
 {
     auto substring = m_stringView.substring(m_offset, end - m_offset);
     if (substring == "struct")
@@ -371,12 +371,12 @@ auto Lexer::recognizeKeyword(unsigned end) -> std::optional<Token::Type>
         return Token::Type::Qualifier;
     if (substring == "sample")
         return Token::Type::Qualifier;
-    return std::nullopt;
+    return WTF::nullopt;
 }
 
-auto Lexer::consumeTokenFromStream() -> std::optional<Token>
+auto Lexer::consumeTokenFromStream() -> Optional<Token>
 {
-    auto prepare = [&](unsigned newOffset, Token::Type type) -> std::optional<Token> {
+    auto prepare = [&](unsigned newOffset, Token::Type type) -> Optional<Token> {
         auto oldOffset = m_offset;
         m_offset = newOffset;
         skipWhitespaceAndComments();
@@ -492,7 +492,7 @@ auto Lexer::consumeTokenFromStream() -> std::optional<Token>
     if (auto newOffset = character('@', m_offset))
         return prepare(*newOffset, Token::Type::At);
 
-    return std::nullopt;
+    return WTF::nullopt;
 }
 
 void Lexer::skipWhitespaceAndComments()
@@ -581,10 +581,10 @@ void Lexer::skipLongComment()
 
 // Regular expression are unnecessary; we shouldn't need to compile them.
 
-std::optional<unsigned> Lexer::coreDecimalIntLiteral(unsigned offset) const
+Optional<unsigned> Lexer::coreDecimalIntLiteral(unsigned offset) const
 {
     if (offset >= m_stringView.length())
-        return std::nullopt;
+        return WTF::nullopt;
     if (m_stringView[offset] == '0')
         return offset + 1;
     if (m_stringView[offset] >= '1' && m_stringView[offset] <= '9') {
@@ -593,24 +593,24 @@ std::optional<unsigned> Lexer::coreDecimalIntLiteral(unsigned offset) const
         }
         return offset;
     }
-    return std::nullopt;
+    return WTF::nullopt;
 }
 
-std::optional<unsigned> Lexer::decimalIntLiteral(unsigned offset) const
+Optional<unsigned> Lexer::decimalIntLiteral(unsigned offset) const
 {
     if (offset < m_stringView.length() && m_stringView[offset] == '-')
         ++offset;
     return coreDecimalIntLiteral(offset);
 }
 
-std::optional<unsigned> Lexer::decimalUintLiteral(unsigned offset) const
+Optional<unsigned> Lexer::decimalUintLiteral(unsigned offset) const
 {
     auto result = coreDecimalIntLiteral(offset);
     if (!result)
-        return std::nullopt;
+        return WTF::nullopt;
     if (*result < m_stringView.length() && m_stringView[*result] == 'u')
         return *result + 1;
-    return std::nullopt;
+    return WTF::nullopt;
 }
 
 static inline bool isHexadecimalCharacter(UChar character)
@@ -620,60 +620,60 @@ static inline bool isHexadecimalCharacter(UChar character)
         || (character >= 'A' && character <= 'F');
 }
 
-std::optional<unsigned> Lexer::coreHexadecimalIntLiteral(unsigned offset) const
+Optional<unsigned> Lexer::coreHexadecimalIntLiteral(unsigned offset) const
 {
     if (offset + 1 >= m_stringView.length() || m_stringView[offset] != '0' || m_stringView[offset + 1] != 'x')
-        return std::nullopt;
+        return WTF::nullopt;
 
     offset += 2;
     if (offset >= m_stringView.length() || !isHexadecimalCharacter(m_stringView[offset]))
-        return std::nullopt;
+        return WTF::nullopt;
     ++offset;
     for ( ; offset < m_stringView.length() && isHexadecimalCharacter(m_stringView[offset]); ++offset) {
     }
     return offset;
 }
 
-std::optional<unsigned> Lexer::hexadecimalIntLiteral(unsigned offset) const
+Optional<unsigned> Lexer::hexadecimalIntLiteral(unsigned offset) const
 {
     if (offset < m_stringView.length() && m_stringView[offset] == '-')
         ++offset;
     return coreHexadecimalIntLiteral(offset);
 }
 
-std::optional<unsigned> Lexer::hexadecimalUintLiteral(unsigned offset) const
+Optional<unsigned> Lexer::hexadecimalUintLiteral(unsigned offset) const
 {
     auto result = coreHexadecimalIntLiteral(offset);
     if (!result)
-        return std::nullopt;
+        return WTF::nullopt;
     if (*result < m_stringView.length() && m_stringView[*result] == 'u')
         return *result + 1;
-    return std::nullopt;
+    return WTF::nullopt;
 }
 
-std::optional<unsigned> Lexer::intLiteral(unsigned offset) const
+Optional<unsigned> Lexer::intLiteral(unsigned offset) const
 {
     if (auto result = decimalIntLiteral(offset))
         return result;
     if (auto result = hexadecimalIntLiteral(offset))
         return result;
-    return std::nullopt;
+    return WTF::nullopt;
 }
 
-std::optional<unsigned> Lexer::uintLiteral(unsigned offset) const
+Optional<unsigned> Lexer::uintLiteral(unsigned offset) const
 {
     if (auto result = decimalUintLiteral(offset))
         return result;
     if (auto result = hexadecimalUintLiteral(offset))
         return result;
-    return std::nullopt;
+    return WTF::nullopt;
 }
 
-std::optional<unsigned> Lexer::digit(unsigned offset) const
+Optional<unsigned> Lexer::digit(unsigned offset) const
 {
     if (offset < m_stringView.length() && m_stringView[offset] >= '0' && m_stringView[offset] <= '9')
         return offset + 1;
-    return std::nullopt;
+    return WTF::nullopt;
 }
 
 unsigned Lexer::digitStar(unsigned offset) const
@@ -686,59 +686,59 @@ unsigned Lexer::digitStar(unsigned offset) const
     }
 }
 
-std::optional<unsigned> Lexer::character(char character, unsigned offset) const
+Optional<unsigned> Lexer::character(char character, unsigned offset) const
 {
     if (offset < m_stringView.length() && m_stringView[offset] == character)
         return offset + 1;
-    return std::nullopt;
+    return WTF::nullopt;
 }
 
-std::optional<unsigned> Lexer::coreFloatLiteralType1(unsigned offset) const
+Optional<unsigned> Lexer::coreFloatLiteralType1(unsigned offset) const
 {
     auto result = digit(offset);
     if (!result)
-        return std::nullopt;
+        return WTF::nullopt;
     auto result2 = digitStar(*result);
     auto result3 = character('.', result2);
     if (!result3)
-        return std::nullopt;
+        return WTF::nullopt;
     return digitStar(*result3);
 }
 
-std::optional<unsigned> Lexer::coreFloatLiteral(unsigned offset) const
+Optional<unsigned> Lexer::coreFloatLiteral(unsigned offset) const
 {
     if (auto type1 = coreFloatLiteralType1(offset))
         return type1;
     auto result = digitStar(offset);
     auto result2 = character('.', result);
     if (!result2)
-        return std::nullopt;
+        return WTF::nullopt;
     auto result3 = digit(*result2);
     if (!result3)
-        return std::nullopt;
+        return WTF::nullopt;
     return digitStar(*result3);
 }
 
-std::optional<unsigned> Lexer::floatLiteral(unsigned offset) const
+Optional<unsigned> Lexer::floatLiteral(unsigned offset) const
 {
     if (offset < m_stringView.length() && m_stringView[offset] == '-')
         ++offset;
     auto result = coreFloatLiteral(offset);
     if (!result)
-        return std::nullopt;
+        return WTF::nullopt;
     offset = *result;
     if (offset < m_stringView.length() && m_stringView[offset] == 'f')
         ++offset;
     return offset;
 }
 
-std::optional<unsigned> Lexer::validIdentifier(unsigned offset) const
+Optional<unsigned> Lexer::validIdentifier(unsigned offset) const
 {
     if (offset >= m_stringView.length()
         || !((m_stringView[offset] >= 'a' && m_stringView[offset] <= 'z')
             || (m_stringView[offset] >= 'A' && m_stringView[offset] <= 'Z')
             || (m_stringView[offset] == '_')))
-        return std::nullopt;
+        return WTF::nullopt;
     ++offset;
     while (true) {
         if (offset >= m_stringView.length()
@@ -751,12 +751,12 @@ std::optional<unsigned> Lexer::validIdentifier(unsigned offset) const
     }
 }
 
-std::optional<unsigned> Lexer::identifier(unsigned offset) const
+Optional<unsigned> Lexer::identifier(unsigned offset) const
 {
     return validIdentifier(offset);
 }
 
-std::optional<unsigned> Lexer::operatorName(unsigned offset) const
+Optional<unsigned> Lexer::operatorName(unsigned offset) const
 {
     if (auto result = string("operator&.", offset))
         return validIdentifier(*result);
@@ -818,7 +818,7 @@ std::optional<unsigned> Lexer::operatorName(unsigned offset) const
         if (auto result2 = character('|', *result))
             return result2;
     }
-    return std::nullopt;
+    return WTF::nullopt;
 }
 
 }

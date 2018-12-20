@@ -48,7 +48,7 @@ struct ServiceWorkerClientData {
     static ServiceWorkerClientData from(ScriptExecutionContext&, SWClientConnection&);
 
     template<class Encoder> void encode(Encoder&) const;
-    template<class Decoder> static std::optional<ServiceWorkerClientData> decode(Decoder&);
+    template<class Decoder> static Optional<ServiceWorkerClientData> decode(Decoder&);
 };
 
 template<class Encoder>
@@ -58,27 +58,27 @@ void ServiceWorkerClientData::encode(Encoder& encoder) const
 }
 
 template<class Decoder>
-std::optional<ServiceWorkerClientData> ServiceWorkerClientData::decode(Decoder& decoder)
+Optional<ServiceWorkerClientData> ServiceWorkerClientData::decode(Decoder& decoder)
 {
-    std::optional<ServiceWorkerClientIdentifier> identifier;
+    Optional<ServiceWorkerClientIdentifier> identifier;
     decoder >> identifier;
     if (!identifier)
-        return std::nullopt;
+        return WTF::nullopt;
 
-    std::optional<ServiceWorkerClientType> type;
+    Optional<ServiceWorkerClientType> type;
     decoder >> type;
     if (!type)
-        return std::nullopt;
+        return WTF::nullopt;
 
-    std::optional<ServiceWorkerClientFrameType> frameType;
+    Optional<ServiceWorkerClientFrameType> frameType;
     decoder >> frameType;
     if (!frameType)
-        return std::nullopt;
+        return WTF::nullopt;
 
-    std::optional<URL> url;
+    Optional<URL> url;
     decoder >> url;
     if (!url)
-        return std::nullopt;
+        return WTF::nullopt;
 
     return { { WTFMove(*identifier), WTFMove(*type), WTFMove(*frameType), WTFMove(*url) } };
 }

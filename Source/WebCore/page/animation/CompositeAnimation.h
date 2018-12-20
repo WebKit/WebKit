@@ -59,7 +59,7 @@ public:
     std::unique_ptr<RenderStyle> getAnimatedStyle() const;
     bool computeExtentOfTransformAnimation(LayoutRect&) const;
 
-    std::optional<Seconds> timeToNextService() const;
+    Optional<Seconds> timeToNextService() const;
     
     CSSAnimationControllerPrivate& animationController() const { return m_animationController; }
 

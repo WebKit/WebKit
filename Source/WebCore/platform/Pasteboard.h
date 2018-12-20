@@ -317,7 +317,7 @@ private:
 #if PLATFORM(COCOA)
     String m_pasteboardName;
     long m_changeCount;
-    std::optional<PasteboardCustomData> m_customDataCache;
+    Optional<PasteboardCustomData> m_customDataCache;
 #endif
 
 #if PLATFORM(MAC)

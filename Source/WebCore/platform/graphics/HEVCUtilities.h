@@ -40,6 +40,6 @@ struct HEVCParameterSet {
     Vector<unsigned short> constraintFlags { 6, 0 };
 };
 
-WEBCORE_EXPORT std::optional<HEVCParameterSet> parseHEVCCodecParameters(const String& codecString);
+WEBCORE_EXPORT Optional<HEVCParameterSet> parseHEVCCodecParameters(const String& codecString);
 
 }

@@ -46,47 +46,47 @@ void WebsitePoliciesData::encode(IPC::Encoder& encoder) const
     encoder << customNavigatorPlatform;
 }
 
-std::optional<WebsitePoliciesData> WebsitePoliciesData::decode(IPC::Decoder& decoder)
+Optional<WebsitePoliciesData> WebsitePoliciesData::decode(IPC::Decoder& decoder)
 {
-    std::optional<bool> contentBlockersEnabled;
+    Optional<bool> contentBlockersEnabled;
     decoder >> contentBlockersEnabled;
     if (!contentBlockersEnabled)
-        return std::nullopt;
+        return WTF::nullopt;
     
-    std::optional<WebsiteAutoplayPolicy> autoplayPolicy;
+    Optional<WebsiteAutoplayPolicy> autoplayPolicy;
     decoder >> autoplayPolicy;
     if (!autoplayPolicy)
-        return std::nullopt;
+        return WTF::nullopt;
     
-    std::optional<OptionSet<WebsiteAutoplayQuirk>> allowedAutoplayQuirks;
+    Optional<OptionSet<WebsiteAutoplayQuirk>> allowedAutoplayQuirks;
     decoder >> allowedAutoplayQuirks;
     if (!allowedAutoplayQuirks)
-        return std::nullopt;
+        return WTF::nullopt;
     
-    std::optional<Vector<WebCore::HTTPHeaderField>> customHeaderFields;
+    Optional<Vector<WebCore::HTTPHeaderField>> customHeaderFields;
     decoder >> customHeaderFields;
     if (!customHeaderFields)
-        return std::nullopt;
+        return WTF::nullopt;
 
-    std::optional<WebsitePopUpPolicy> popUpPolicy;
+    Optional<WebsitePopUpPolicy> popUpPolicy;
     decoder >> popUpPolicy;
     if (!popUpPolicy)
-        return std::nullopt;
+        return WTF::nullopt;
 
-    std::optional<std::optional<WebsiteDataStoreParameters>> websiteDataStoreParameters;
+    Optional<Optional<WebsiteDataStoreParameters>> websiteDataStoreParameters;
     decoder >> websiteDataStoreParameters;
     if (!websiteDataStoreParameters)
-        return std::nullopt;
+        return WTF::nullopt;
 
-    std::optional<String> customUserAgent;
+    Optional<String> customUserAgent;
     decoder >> customUserAgent;
     if (!customUserAgent)
-        return std::nullopt;
+        return WTF::nullopt;
 
-    std::optional<String> customNavigatorPlatform;
+    Optional<String> customNavigatorPlatform;
     decoder >> customNavigatorPlatform;
     if (!customNavigatorPlatform)
-        return std::nullopt;
+        return WTF::nullopt;
     
     return { {
         WTFMove(*contentBlockersEnabled),

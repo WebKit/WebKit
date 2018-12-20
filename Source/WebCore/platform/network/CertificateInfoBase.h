@@ -43,7 +43,7 @@ public:
         Vector<String> dnsNames;
         Vector<String> ipAddresses;
     };
-    std::optional<SummaryInfo> summaryInfo() const { return std::nullopt; };
+    Optional<SummaryInfo> summaryInfo() const { return WTF::nullopt; };
 
     bool isEmpty() const { return true; };
 };

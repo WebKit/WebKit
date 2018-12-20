@@ -44,7 +44,7 @@ public:
         LayoutUnit width;
         InlineRunProvider::Run content;
     };
-    std::optional<Run> nextRun(LayoutUnit contentLogicalLeft, LayoutUnit availableWidth, bool lineIsEmpty);
+    Optional<Run> nextRun(LayoutUnit contentLogicalLeft, LayoutUnit availableWidth, bool lineIsEmpty);
 
 private:
     enum class LineBreakingBehavior { Keep, Break, WrapToNextLine };
@@ -53,14 +53,14 @@ private:
     Run splitRun(const InlineRunProvider::Run&, LayoutUnit contentLogicalLeft, LayoutUnit availableWidth, bool lineIsEmpty);
     LayoutUnit runWidth(const InlineRunProvider::Run&, LayoutUnit contentLogicalLeft) const;
     LayoutUnit textWidth(const InlineRunProvider::Run&, LayoutUnit contentLogicalLeft) const;
-    std::optional<ItemPosition> adjustSplitPositionWithHyphenation(const InlineRunProvider::Run&, ItemPosition splitPosition, LayoutUnit contentLogicalLeft, LayoutUnit availableWidth, bool isLineEmpty) const;
+    Optional<ItemPosition> adjustSplitPositionWithHyphenation(const InlineRunProvider::Run&, ItemPosition splitPosition, LayoutUnit contentLogicalLeft, LayoutUnit availableWidth, bool isLineEmpty) const;
 
     const LayoutState& m_layoutState;
     const InlineContent& m_inlineContent;
     const Vector<InlineRunProvider::Run>& m_inlineRuns;
 
     unsigned m_currentRunIndex { 0 };
-    std::optional<ItemPosition> m_splitPosition;
+    Optional<ItemPosition> m_splitPosition;
     bool m_hyphenationIsDisabled { false };
 };
 

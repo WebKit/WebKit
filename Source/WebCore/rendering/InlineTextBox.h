@@ -94,7 +94,7 @@ public:
     int baselinePosition(FontBaseline) const final;
     LayoutUnit lineHeight() const final;
 
-    std::optional<bool> emphasisMarkExistsAndIsAbove(const RenderStyle&) const;
+    Optional<bool> emphasisMarkExistsAndIsAbove(const RenderStyle&) const;
 
     LayoutRect logicalOverflowRect() const;
     void setLogicalOverflowRect(const LayoutRect&);

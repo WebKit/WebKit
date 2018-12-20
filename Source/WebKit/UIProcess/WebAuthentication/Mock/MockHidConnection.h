@@ -59,7 +59,7 @@ private:
     void continueFeedReports();
 
     MockWebAuthenticationConfiguration m_configuration;
-    std::optional<fido::FidoHidMessage> m_requestMessage;
+    Optional<fido::FidoHidMessage> m_requestMessage;
     MockWebAuthenticationConfiguration::Hid::Stage m_stage { MockWebAuthenticationConfiguration::Hid::Stage::Info };
     MockWebAuthenticationConfiguration::Hid::SubStage m_subStage { MockWebAuthenticationConfiguration::Hid::SubStage::Init };
     uint32_t m_currentChannel { fido::kHidBroadcastChannel };

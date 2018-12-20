@@ -83,7 +83,7 @@ public:
     YarrCodeBlock() = default;
 
     void setFallBackWithFailureReason(JITFailureReason failureReason) { m_failureReason = failureReason; }
-    std::optional<JITFailureReason> failureReason() { return m_failureReason; }
+    Optional<JITFailureReason> failureReason() { return m_failureReason; }
 
     bool has8BitCode() { return m_ref8.size(); }
     bool has16BitCode() { return m_ref16.size(); }
@@ -193,7 +193,7 @@ public:
         m_ref16 = MacroAssemblerCodeRef<Yarr16BitPtrTag>();
         m_matchOnly8 = MacroAssemblerCodeRef<YarrMatchOnly8BitPtrTag>();
         m_matchOnly16 = MacroAssemblerCodeRef<YarrMatchOnly16BitPtrTag>();
-        m_failureReason = std::nullopt;
+        m_failureReason = WTF::nullopt;
     }
 
 private:
@@ -204,7 +204,7 @@ private:
 #if ENABLE(YARR_JIT_ALL_PARENS_EXPRESSIONS)
     bool m_usesPatternContextBuffer;
 #endif
-    std::optional<JITFailureReason> m_failureReason;
+    Optional<JITFailureReason> m_failureReason;
 };
 
 enum YarrJITCompileMode {

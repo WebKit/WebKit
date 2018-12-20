@@ -239,7 +239,7 @@ void AVVideoCaptureSource::commitConfiguration()
 
 void AVVideoCaptureSource::settingsDidChange(OptionSet<RealtimeMediaSourceSettings::Flag>)
 {
-    m_currentSettings = std::nullopt;
+    m_currentSettings = WTF::nullopt;
 }
 
 const RealtimeMediaSourceSettings& AVVideoCaptureSource::settings()

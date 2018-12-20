@@ -59,7 +59,7 @@ public:
 private:
     class PreloadedEntry;
 
-    void addPreloadedEntry(std::unique_ptr<Entry>, const GlobalFrameID&, std::optional<WebCore::ResourceRequest>&& revalidationRequest = std::nullopt);
+    void addPreloadedEntry(std::unique_ptr<Entry>, const GlobalFrameID&, Optional<WebCore::ResourceRequest>&& revalidationRequest = WTF::nullopt);
     void preloadEntry(const Key&, const SubresourceInfo&, const GlobalFrameID&);
     void retrieveEntryFromStorage(const SubresourceInfo&, RetrieveCompletionHandler&&);
     void revalidateSubresource(const SubresourceInfo&, std::unique_ptr<Entry>, const GlobalFrameID&);

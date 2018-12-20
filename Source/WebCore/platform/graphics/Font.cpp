@@ -148,7 +148,7 @@ static bool fillGlyphPage(GlyphPage& pageToFill, UChar* buffer, unsigned bufferL
     return hasGlyphs;
 }
 
-static std::optional<size_t> codePointSupportIndex(UChar32 codePoint)
+static Optional<size_t> codePointSupportIndex(UChar32 codePoint)
 {
     // FIXME: Consider reordering these so the most common ones are at the front.
     // Doing this could cause the BitVector to fit inside inline storage and therefore
@@ -157,7 +157,7 @@ static std::optional<size_t> codePointSupportIndex(UChar32 codePoint)
         return codePoint;
     if (codePoint >= 0x7F && codePoint < 0xA0)
         return codePoint - 0x7F + 0x20;
-    std::optional<size_t> result;
+    Optional<size_t> result;
     switch (codePoint) {
     case softHyphen:
         result = 0x41;
@@ -220,7 +220,7 @@ static std::optional<size_t> codePointSupportIndex(UChar32 codePoint)
         result = 0x54;
         break;
     default:
-        result = std::nullopt;
+        result = WTF::nullopt;
     }
 
 #ifndef NDEBUG

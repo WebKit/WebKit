@@ -971,13 +971,13 @@ struct MinMax {
 };
 
 struct VariationCapabilities {
-    std::optional<MinMax> weight;
-    std::optional<MinMax> width;
-    std::optional<MinMax> slope;
+    Optional<MinMax> weight;
+    Optional<MinMax> width;
+    Optional<MinMax> slope;
 };
 
 #if ENABLE(VARIATION_FONTS)
-static std::optional<MinMax> extractVariationBounds(CFDictionaryRef axis)
+static Optional<MinMax> extractVariationBounds(CFDictionaryRef axis)
 {
     CFNumberRef minimumValue = static_cast<CFNumberRef>(CFDictionaryGetValue(axis, kCTFontVariationAxisMinimumValueKey));
     CFNumberRef maximumValue = static_cast<CFNumberRef>(CFDictionaryGetValue(axis, kCTFontVariationAxisMaximumValueKey));
@@ -987,7 +987,7 @@ static std::optional<MinMax> extractVariationBounds(CFDictionaryRef axis)
     CFNumberGetValue(maximumValue, kCFNumberFloatType, &rawMaximumValue);
     if (rawMinimumValue < rawMaximumValue)
         return {{ rawMinimumValue, rawMaximumValue }};
-    return std::nullopt;
+    return WTF::nullopt;
 }
 #endif
 

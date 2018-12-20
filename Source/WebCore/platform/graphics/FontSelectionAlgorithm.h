@@ -171,7 +171,7 @@ constexpr FontSelectionValue italicThreshold()
     return FontSelectionValue { 20 };
 }
 
-constexpr bool isItalic(std::optional<FontSelectionValue> fontWeight)
+constexpr bool isItalic(Optional<FontSelectionValue> fontWeight)
 {
     return fontWeight && fontWeight.value() >= italicThreshold();
 }
@@ -337,9 +337,9 @@ struct FontSelectionRequest {
     // "fontStyleAxis" on the FontDescription. We should come up with a tri-state member
     // so that it's a lot clearer whether we're dealing with a "normal", "italic" or explicit
     // "oblique" font style. See webkit.org/b/187774.
-    std::optional<Value> slope;
+    Optional<Value> slope;
 
-    std::tuple<Value, Value, std::optional<Value>> tied() const
+    std::tuple<Value, Value, Optional<Value>> tied() const
     {
         return WTF::tie(weight, width, slope);
     }
@@ -351,7 +351,7 @@ inline TextStream& operator<<(TextStream& ts, const FontSelectionValue& fontSele
     return ts;
 }
 
-inline TextStream& operator<<(TextStream& ts, const std::optional<FontSelectionValue>& optionalFontSelectionValue)
+inline TextStream& operator<<(TextStream& ts, const Optional<FontSelectionValue>& optionalFontSelectionValue)
 {
     ts << optionalFontSelectionValue.value_or(normalItalicValue());
     return ts;
@@ -407,7 +407,7 @@ constexpr bool operator!=(const FontSelectionCapabilities& a, const FontSelectio
 struct FontSelectionSpecifiedCapabilities {
     using Capabilities = FontSelectionCapabilities;
     using Range = FontSelectionRange;
-    using OptionalRange = std::optional<Range>;
+    using OptionalRange = Optional<Range>;
 
     constexpr Capabilities computeFontSelectionCapabilities() const
     {
@@ -465,7 +465,7 @@ public:
     using Capabilities = FontSelectionCapabilities;
 
     FontSelectionAlgorithm() = delete;
-    FontSelectionAlgorithm(FontSelectionRequest, const Vector<Capabilities>&, std::optional<Capabilities> capabilitiesBounds = std::nullopt);
+    FontSelectionAlgorithm(FontSelectionRequest, const Vector<Capabilities>&, Optional<Capabilities> capabilitiesBounds = WTF::nullopt);
 
     struct DistanceResult {
         FontSelectionValue distance;

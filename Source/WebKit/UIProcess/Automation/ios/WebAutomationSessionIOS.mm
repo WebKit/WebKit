@@ -72,8 +72,8 @@ void WebAutomationSession::platformSimulateKeyboardInteraction(WebPageProxy& pag
     // UIKit does not send key codes for virtual keys even for a hardware keyboard.
     // Instead, it sends single unichars and WebCore maps these to "windows" key codes.
     // Synthesize a single unichar such that the correct key code is inferred.
-    std::optional<unichar> charCode;
-    std::optional<unichar> charCodeIgnoringModifiers;
+    Optional<unichar> charCode;
+    Optional<unichar> charCodeIgnoringModifiers;
 
     // Figure out the effects of sticky modifiers.
     WTF::switchOn(key,

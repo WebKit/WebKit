@@ -40,7 +40,7 @@ class CachedApplicationManifest final : public CachedResource {
 public:
     CachedApplicationManifest(CachedResourceRequest&&, PAL::SessionID);
 
-    std::optional<struct ApplicationManifest> process(const URL& manifestURL, const URL& documentURL, RefPtr<ScriptExecutionContext> = nullptr);
+    Optional<struct ApplicationManifest> process(const URL& manifestURL, const URL& documentURL, RefPtr<ScriptExecutionContext> = nullptr);
 
 private:
     void finishLoading(SharedBuffer*) override;
@@ -49,7 +49,7 @@ private:
     String encoding() const override;
 
     Ref<TextResourceDecoder> m_decoder;
-    std::optional<String> m_text;
+    Optional<String> m_text;
 };
 
 } // namespace WebCore

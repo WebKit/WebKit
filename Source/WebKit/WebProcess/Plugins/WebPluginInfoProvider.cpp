@@ -99,7 +99,7 @@ void WebPluginInfoProvider::refreshPlugins()
 #endif
 }
 
-Vector<PluginInfo> WebPluginInfoProvider::pluginInfo(Page& page, std::optional<Vector<SupportedPluginIdentifier>>& supportedPluginIdentifiers)
+Vector<PluginInfo> WebPluginInfoProvider::pluginInfo(Page& page, Optional<Vector<SupportedPluginIdentifier>>& supportedPluginIdentifiers)
 {
 #if ENABLE(NETSCAPE_PLUGIN_API)
     populatePluginCache(page);
@@ -117,7 +117,7 @@ Vector<PluginInfo> WebPluginInfoProvider::pluginInfo(Page& page, std::optional<V
 
 Vector<WebCore::PluginInfo> WebPluginInfoProvider::webVisiblePluginInfo(Page& page, const URL& url)
 {
-    std::optional<Vector<WebCore::SupportedPluginIdentifier>> supportedPluginIdentifiers;
+    Optional<Vector<WebCore::SupportedPluginIdentifier>> supportedPluginIdentifiers;
     auto plugins = pluginInfo(page, supportedPluginIdentifiers);
 
     plugins.removeAllMatching([&] (auto& plugin) {
@@ -171,7 +171,7 @@ void WebPluginInfoProvider::populatePluginCache(const WebCore::Page& page)
 #endif
 
 #if PLATFORM(MAC)
-std::optional<WebCore::PluginLoadClientPolicy> WebPluginInfoProvider::pluginLoadClientPolicyForHost(const String& host, const WebCore::PluginInfo& info) const
+Optional<WebCore::PluginLoadClientPolicy> WebPluginInfoProvider::pluginLoadClientPolicyForHost(const String& host, const WebCore::PluginInfo& info) const
 {
     String hostToLookUp = host;
     String identifier = info.bundleIdentifier;
@@ -188,7 +188,7 @@ std::optional<WebCore::PluginLoadClientPolicy> WebPluginInfoProvider::pluginLoad
         }
     }
     if (policiesByIdentifierIterator == m_hostsToPluginIdentifierData.end())
-        return std::nullopt;
+        return WTF::nullopt;
 
     auto& policiesByIdentifier = policiesByIdentifierIterator->value;
 
@@ -202,7 +202,7 @@ std::optional<WebCore::PluginLoadClientPolicy> WebPluginInfoProvider::pluginLoad
     }
 
     if (identifierPolicyIterator == policiesByIdentifier.end())
-        return std::nullopt;
+        return WTF::nullopt;
 
     auto& versionsToPolicies = identifierPolicyIterator->value;
 
@@ -216,7 +216,7 @@ std::optional<WebCore::PluginLoadClientPolicy> WebPluginInfoProvider::pluginLoad
     }
 
     if (policyIterator == versionsToPolicies.end())
-        return std::nullopt;
+        return WTF::nullopt;
 
     return policyIterator->value;
 }

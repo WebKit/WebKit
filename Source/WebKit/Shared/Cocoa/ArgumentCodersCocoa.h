@@ -32,13 +32,13 @@
 namespace IPC {
 
 void encodeObject(Encoder&, id <NSSecureCoding>);
-std::optional<RetainPtr<id <NSSecureCoding>>> decodeObject(Decoder&, NSArray<Class> *allowedClasses);
+Optional<RetainPtr<id <NSSecureCoding>>> decodeObject(Decoder&, NSArray<Class> *allowedClasses);
 
-template<typename T> std::optional<RetainPtr<T>> decode(Decoder&, Class allowedClass);
-template<typename T> std::optional<RetainPtr<T>> decode(Decoder&, NSArray<Class> *allowedClasses = @[ [T class] ]);
+template<typename T> Optional<RetainPtr<T>> decode(Decoder&, Class allowedClass);
+template<typename T> Optional<RetainPtr<T>> decode(Decoder&, NSArray<Class> *allowedClasses = @[ [T class] ]);
 
 template<typename T>
-std::optional<RetainPtr<T>> decode(Decoder& decoder, Class allowedClass)
+Optional<RetainPtr<T>> decode(Decoder& decoder, Class allowedClass)
 {
     return decode<T>(decoder, @[ allowedClass ]);
 }
@@ -57,11 +57,11 @@ static inline bool isObjectClassAllowed(id object, NSArray<Class> *allowedClasse
 #endif
 
 template<typename T>
-std::optional<RetainPtr<T>> decode(Decoder& decoder, NSArray<Class> *allowedClasses)
+Optional<RetainPtr<T>> decode(Decoder& decoder, NSArray<Class> *allowedClasses)
 {
     auto result = decodeObject(decoder, allowedClasses);
     if (!result)
-        return std::nullopt;
+        return WTF::nullopt;
 
     if (!*result)
         return { nullptr };
@@ -89,7 +89,7 @@ template<typename T> struct ArgumentCoder<RetainPtr<T>> {
     }
 
     template <typename U = T, std::enable_if_t<ConformsToSecureCoding<U>::value>* = nullptr>
-    static std::optional<RetainPtr<U>> decode(Decoder& decoder)
+    static Optional<RetainPtr<U>> decode(Decoder& decoder)
     {
         return IPC::decode<U>(decoder);
     }

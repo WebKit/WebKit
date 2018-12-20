@@ -78,7 +78,7 @@ enum class GCThreadType {
 void printInternal(PrintStream&, GCThreadType);
 
 WTF_EXPORT_PRIVATE void registerGCThread(GCThreadType);
-WTF_EXPORT_PRIVATE std::optional<GCThreadType> mayBeGCThread();
+WTF_EXPORT_PRIVATE Optional<GCThreadType> mayBeGCThread();
 WTF_EXPORT_PRIVATE bool isMainThreadOrGCThread();
 
 // NOTE: these functions are internal to the callOnMainThread implementation.

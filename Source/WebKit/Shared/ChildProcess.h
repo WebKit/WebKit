@@ -152,7 +152,7 @@ private:
 struct ChildProcessInitializationParameters {
     String uiProcessName;
     String clientIdentifier;
-    std::optional<WebCore::ProcessIdentifier> processIdentifier;
+    Optional<WebCore::ProcessIdentifier> processIdentifier;
     IPC::Connection::Identifier connectionIdentifier;
     HashMap<String, String> extraInitializationData;
     ChildProcess::ProcessType processType;

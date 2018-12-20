@@ -37,10 +37,10 @@
 namespace fido {
 
 // static
-std::optional<FidoHidMessage> FidoHidMessage::create(uint32_t channelId, FidoHidDeviceCommand type, const Vector<uint8_t>& data)
+Optional<FidoHidMessage> FidoHidMessage::create(uint32_t channelId, FidoHidDeviceCommand type, const Vector<uint8_t>& data)
 {
     if (data.size() > kHidMaxMessageSize)
-        return std::nullopt;
+        return WTF::nullopt;
 
     switch (type) {
     case FidoHidDeviceCommand::kPing:
@@ -48,46 +48,46 @@ std::optional<FidoHidMessage> FidoHidMessage::create(uint32_t channelId, FidoHid
     case FidoHidDeviceCommand::kMsg:
     case FidoHidDeviceCommand::kCbor: {
         if (data.isEmpty())
-            return std::nullopt;
+            return WTF::nullopt;
         break;
     }
 
     case FidoHidDeviceCommand::kCancel:
     case FidoHidDeviceCommand::kWink: {
         if (!data.isEmpty())
-            return std::nullopt;
+            return WTF::nullopt;
         break;
     }
     case FidoHidDeviceCommand::kLock: {
         if (data.size() != 1 || data[0] > kHidMaxLockSeconds)
-            return std::nullopt;
+            return WTF::nullopt;
         break;
     }
     case FidoHidDeviceCommand::kInit: {
         if (data.size() != 8)
-            return std::nullopt;
+            return WTF::nullopt;
         break;
     }
     case FidoHidDeviceCommand::kKeepAlive:
     case FidoHidDeviceCommand::kError:
         if (data.size() != 1)
-            return std::nullopt;
+            return WTF::nullopt;
     }
 
     return FidoHidMessage(channelId, type, data);
 }
 
 // static
-std::optional<FidoHidMessage> FidoHidMessage::createFromSerializedData(const Vector<uint8_t>& serializedData)
+Optional<FidoHidMessage> FidoHidMessage::createFromSerializedData(const Vector<uint8_t>& serializedData)
 {
     size_t remainingSize = 0;
     if (serializedData.size() > kHidPacketSize || serializedData.size() < kHidInitPacketHeaderSize)
-        return std::nullopt;
+        return WTF::nullopt;
 
     auto initPacket = FidoHidInitPacket::createFromSerializedData(serializedData, &remainingSize);
 
     if (!initPacket)
-        return std::nullopt;
+        return WTF::nullopt;
 
     return FidoHidMessage(WTFMove(initPacket), remainingSize);
 }

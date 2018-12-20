@@ -50,8 +50,8 @@ public:
     Display::Box::Rect rectInContainingBlock() const;
 
     struct HorizontalConstraints {
-        std::optional<PositionInContextRoot> left;
-        std::optional<PositionInContextRoot> right;
+        Optional<PositionInContextRoot> left;
+        Optional<PositionInContextRoot> right;
     };
     void setHorizontalConstraints(HorizontalConstraints);
     void setVerticalConstraint(PositionInContextRoot);

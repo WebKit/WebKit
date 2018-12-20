@@ -45,13 +45,13 @@ public:
     // IWebGeolocationPosition
     virtual HRESULT STDMETHODCALLTYPE initWithTimestamp(double timestamp, double latitude, double longitude, double accuracy);
 
-    const std::optional<WebCore::GeolocationPosition>& impl() const { return m_position; }
+    const Optional<WebCore::GeolocationPosition>& impl() const { return m_position; }
 
 private:
     ULONG m_refCount { 0 };
-    std::optional<WebCore::GeolocationPosition> m_position;
+    Optional<WebCore::GeolocationPosition> m_position;
 };
 
-std::optional<WebCore::GeolocationPosition> core(IWebGeolocationPosition*);
+Optional<WebCore::GeolocationPosition> core(IWebGeolocationPosition*);
 
 #endif // WebGeolocationPosition_h

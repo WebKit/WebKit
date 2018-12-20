@@ -68,11 +68,11 @@ bool MockPaymentCoordinator::supportsVersion(unsigned version)
     return version <= currentVersion;
 }
 
-std::optional<String> MockPaymentCoordinator::validatedPaymentNetwork(const String& paymentNetwork)
+Optional<String> MockPaymentCoordinator::validatedPaymentNetwork(const String& paymentNetwork)
 {
     auto result = m_availablePaymentNetworks.find(paymentNetwork);
     if (result == m_availablePaymentNetworks.end())
-        return std::nullopt;
+        return WTF::nullopt;
     return *result;
 }
 
@@ -152,13 +152,13 @@ void MockPaymentCoordinator::updateTotalAndLineItems(const ApplePaySessionPaymen
         m_lineItems.append(convert(lineItem));
 }
 
-void MockPaymentCoordinator::completeShippingMethodSelection(std::optional<ShippingMethodUpdate>&& shippingMethodUpdate)
+void MockPaymentCoordinator::completeShippingMethodSelection(Optional<ShippingMethodUpdate>&& shippingMethodUpdate)
 {
     if (shippingMethodUpdate)
         updateTotalAndLineItems(shippingMethodUpdate->newTotalAndLineItems);
 }
 
-void MockPaymentCoordinator::completeShippingContactSelection(std::optional<ShippingContactUpdate>&& shippingContactUpdate)
+void MockPaymentCoordinator::completeShippingContactSelection(Optional<ShippingContactUpdate>&& shippingContactUpdate)
 {
     if (!shippingContactUpdate)
         return;
@@ -168,7 +168,7 @@ void MockPaymentCoordinator::completeShippingContactSelection(std::optional<Ship
     m_errors = WTFMove(shippingContactUpdate->errors);
 }
 
-void MockPaymentCoordinator::completePaymentMethodSelection(std::optional<PaymentMethodUpdate>&& paymentMethodUpdate)
+void MockPaymentCoordinator::completePaymentMethodSelection(Optional<PaymentMethodUpdate>&& paymentMethodUpdate)
 {
     if (paymentMethodUpdate)
         updateTotalAndLineItems(paymentMethodUpdate->newTotalAndLineItems);
@@ -208,7 +208,7 @@ void MockPaymentCoordinator::cancelPayment()
     });
 }
 
-void MockPaymentCoordinator::completePaymentSession(std::optional<PaymentAuthorizationResult>&& result)
+void MockPaymentCoordinator::completePaymentSession(Optional<PaymentAuthorizationResult>&& result)
 {
     auto isFinalState = isFinalStateResult(result);
     m_errors = WTFMove(result->errors);

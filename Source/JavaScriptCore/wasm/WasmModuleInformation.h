@@ -76,7 +76,7 @@ struct ModuleInformation : public ThreadSafeRefCounted<ModuleInformation> {
     Vector<FunctionData> functions;
 
     Vector<Export> exports;
-    std::optional<uint32_t> startFunctionIndexSpace;
+    Optional<uint32_t> startFunctionIndexSpace;
     Vector<Segment::Ptr> data;
     Vector<Element> elements;
     TableInformation tableInformation;

@@ -62,7 +62,7 @@ public:
     void startUpdating() override;
     void stopUpdating() override;
     void setEnableHighAccuracy(bool) override;
-    std::optional<GeolocationPosition> lastPosition() override;
+    Optional<GeolocationPosition> lastPosition() override;
     void requestPermission(Geolocation&) override;
     void cancelPermissionRequest(Geolocation&) override;
 
@@ -76,7 +76,7 @@ private:
     void clearError();
 
     GeolocationController* m_controller;
-    std::optional<GeolocationPosition> m_lastPosition;
+    Optional<GeolocationPosition> m_lastPosition;
     bool m_hasError;
     String m_errorMessage;
     Timer m_controllerTimer;

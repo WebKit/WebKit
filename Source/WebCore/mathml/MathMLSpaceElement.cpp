@@ -66,11 +66,11 @@ const MathMLElement::Length& MathMLSpaceElement::depth()
 void MathMLSpaceElement::parseAttribute(const QualifiedName& name, const AtomicString& value)
 {
     if (name == widthAttr)
-        m_width = std::nullopt;
+        m_width = WTF::nullopt;
     else if (name == heightAttr)
-        m_height = std::nullopt;
+        m_height = WTF::nullopt;
     else if (name == depthAttr)
-        m_depth = std::nullopt;
+        m_depth = WTF::nullopt;
 
     MathMLPresentationElement::parseAttribute(name, value);
 }

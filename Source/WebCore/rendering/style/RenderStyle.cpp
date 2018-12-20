@@ -1797,7 +1797,7 @@ void RenderStyle::setFontStretch(FontSelectionValue value)
     fontCascade().update(currentFontSelector);
 }
 
-void RenderStyle::setFontItalic(std::optional<FontSelectionValue> value)
+void RenderStyle::setFontItalic(Optional<FontSelectionValue> value)
 {
     FontSelector* currentFontSelector = fontCascade().fontSelector();
     auto description = fontDescription();

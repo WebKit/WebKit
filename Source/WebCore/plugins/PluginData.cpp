@@ -42,7 +42,7 @@ const Vector<PluginInfo>& PluginData::webVisiblePlugins() const
     auto documentURL = m_page.mainFrame().document() ? m_page.mainFrame().document()->url() : URL { };
     if (!documentURL.isNull() && !protocolHostAndPortAreEqual(m_cachedVisiblePlugins.pageURL, documentURL)) {
         m_cachedVisiblePlugins.pageURL = WTFMove(documentURL);
-        m_cachedVisiblePlugins.pluginList = std::nullopt;
+        m_cachedVisiblePlugins.pluginList = WTF::nullopt;
     }
 
     if (!m_cachedVisiblePlugins.pluginList)

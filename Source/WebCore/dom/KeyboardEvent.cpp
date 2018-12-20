@@ -162,12 +162,12 @@ void KeyboardEvent::initKeyboardEvent(const AtomicString& type, bool canBubble, 
 
     setModifierKeys(ctrlKey, altKey, shiftKey, metaKey, altGraphKey);
 
-    m_charCode = std::nullopt;
+    m_charCode = WTF::nullopt;
     m_isComposing = false;
-    m_keyCode = std::nullopt;
+    m_keyCode = WTF::nullopt;
     m_repeat = false;
     m_underlyingPlatformEvent = nullptr;
-    m_which = std::nullopt;
+    m_which = WTF::nullopt;
 
 #if ENABLE(KEYBOARD_CODE_ATTRIBUTE)
     m_code = { };

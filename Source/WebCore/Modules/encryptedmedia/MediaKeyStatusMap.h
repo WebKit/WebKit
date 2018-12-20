@@ -62,7 +62,7 @@ public:
     class Iterator {
     public:
         explicit Iterator(MediaKeyStatusMap&);
-        std::optional<WTF::KeyValuePair<BufferSource::VariantType, MediaKeyStatus>> next();
+        Optional<WTF::KeyValuePair<BufferSource::VariantType, MediaKeyStatus>> next();
 
     private:
         Ref<MediaKeyStatusMap> m_map;

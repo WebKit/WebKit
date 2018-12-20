@@ -71,7 +71,7 @@ public:
         return CommandResult(WTFMove(result), CommandResult::ErrorCode::UnknownError);
     }
 
-    static CommandResult fail(ErrorCode errorCode, std::optional<String> errorMessage = std::nullopt)
+    static CommandResult fail(ErrorCode errorCode, Optional<String> errorMessage = WTF::nullopt)
     {
         return CommandResult(errorCode, errorMessage);
     }
@@ -82,16 +82,16 @@ public:
     bool isError() const { return !!m_errorCode; }
     ErrorCode errorCode() const { ASSERT(isError()); return m_errorCode.value(); }
     String errorString() const;
-    std::optional<String> errorMessage() const { ASSERT(isError()); return m_errorMessage; }
+    Optional<String> errorMessage() const { ASSERT(isError()); return m_errorMessage; }
     const RefPtr<JSON::Object>& additionalErrorData() const { return m_errorAdditionalData; }
 
 private:
-    explicit CommandResult(RefPtr<JSON::Value>&&, std::optional<ErrorCode> = std::nullopt);
-    explicit CommandResult(ErrorCode, std::optional<String> = std::nullopt);
+    explicit CommandResult(RefPtr<JSON::Value>&&, Optional<ErrorCode> = WTF::nullopt);
+    explicit CommandResult(ErrorCode, Optional<String> = WTF::nullopt);
 
     RefPtr<JSON::Value> m_result;
-    std::optional<ErrorCode> m_errorCode;
-    std::optional<String> m_errorMessage;
+    Optional<ErrorCode> m_errorCode;
+    Optional<String> m_errorMessage;
     RefPtr<JSON::Object> m_errorAdditionalData;
 };
 

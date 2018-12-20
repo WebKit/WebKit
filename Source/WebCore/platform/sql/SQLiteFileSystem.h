@@ -98,8 +98,8 @@ public:
 #endif
     
     static long long getDatabaseFileSize(const String& fileName);
-    WEBCORE_EXPORT static std::optional<WallTime> databaseCreationTime(const String& fileName);
-    WEBCORE_EXPORT static std::optional<WallTime> databaseModificationTime(const String& fileName);
+    WEBCORE_EXPORT static Optional<WallTime> databaseCreationTime(const String& fileName);
+    WEBCORE_EXPORT static Optional<WallTime> databaseModificationTime(const String& fileName);
 
 private:
     // do not instantiate this class

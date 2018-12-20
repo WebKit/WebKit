@@ -198,7 +198,7 @@ void SVGPathElement::parseAttribute(const QualifiedName& name, const AtomicStrin
     if (name == SVGNames::dAttr) {
         if (!buildSVGPathByteStreamFromString(value, m_pathByteStream, UnalteredParsing))
             document().accessSVGExtensions().reportError("Problem parsing d=\"" + value + "\"");
-        m_cachedPath = std::nullopt;
+        m_cachedPath = WTF::nullopt;
         return;
     }
 
@@ -341,7 +341,7 @@ void SVGPathElement::pathSegListChanged(SVGPathSegRole role, ListModification li
             appendSVGPathByteStreamFromSVGPathSeg(pathSegList.last().copyRef(), m_pathByteStream, UnalteredParsing);
         } else
             buildSVGPathByteStreamFromSVGPathSegListValues(pathSegList, m_pathByteStream, UnalteredParsing);
-        m_cachedPath = std::nullopt;
+        m_cachedPath = WTF::nullopt;
         break;
     }
     case PathSegUndefinedRole:

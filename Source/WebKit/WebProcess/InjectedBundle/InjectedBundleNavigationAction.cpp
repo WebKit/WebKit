@@ -37,21 +37,21 @@
 namespace WebKit {
 using namespace WebCore;
 
-static WebMouseEvent::Button mouseButtonForMouseEventData(const std::optional<NavigationAction::MouseEventData>& mouseEventData)
+static WebMouseEvent::Button mouseButtonForMouseEventData(const Optional<NavigationAction::MouseEventData>& mouseEventData)
 {
     if (mouseEventData && mouseEventData->buttonDown && mouseEventData->isTrusted)
         return static_cast<WebMouseEvent::Button>(mouseEventData->button);
     return WebMouseEvent::NoButton;
 }
 
-static WebMouseEvent::SyntheticClickType syntheticClickTypeForMouseEventData(const std::optional<NavigationAction::MouseEventData>& mouseEventData)
+static WebMouseEvent::SyntheticClickType syntheticClickTypeForMouseEventData(const Optional<NavigationAction::MouseEventData>& mouseEventData)
 {
     if (mouseEventData && mouseEventData->buttonDown && mouseEventData->isTrusted)
         return static_cast<WebMouseEvent::SyntheticClickType>(mouseEventData->syntheticClickType);
     return WebMouseEvent::NoTap;
 }
     
-static FloatPoint clickLocationInRootViewCoordinatesForMouseEventData(const std::optional<NavigationAction::MouseEventData>& mouseEventData)
+static FloatPoint clickLocationInRootViewCoordinatesForMouseEventData(const Optional<NavigationAction::MouseEventData>& mouseEventData)
 {
     if (mouseEventData && mouseEventData->buttonDown && mouseEventData->isTrusted)
         return mouseEventData->locationInRootViewCoordinates;

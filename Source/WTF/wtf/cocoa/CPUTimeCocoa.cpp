@@ -46,14 +46,14 @@ static int64_t timeValueToMicroseconds(const time_value_t& value)
     return result;
 }
 
-std::optional<CPUTime> CPUTime::get()
+Optional<CPUTime> CPUTime::get()
 {
     // Account for current threads.
     task_thread_times_info threadInfoData;
     mach_msg_type_number_t threadInfoCount = TASK_THREAD_TIMES_INFO_COUNT;
     kern_return_t result = task_info(mach_task_self(), TASK_THREAD_TIMES_INFO, reinterpret_cast<task_info_t>(&threadInfoData), &threadInfoCount);
     if (result != KERN_SUCCESS)
-        return std::nullopt;
+        return WTF::nullopt;
 
     int64_t userTime = timeValueToMicroseconds(threadInfoData.user_time);
     int64_t systemTime = timeValueToMicroseconds(threadInfoData.system_time);
@@ -63,7 +63,7 @@ std::optional<CPUTime> CPUTime::get()
     mach_msg_type_number_t taskInfoCount = TASK_BASIC_INFO_COUNT;
     result = task_info(mach_task_self(), TASK_BASIC_INFO, reinterpret_cast<task_info_t>(&taskInfoData), &taskInfoCount);
     if (result != KERN_SUCCESS)
-        return std::nullopt;
+        return WTF::nullopt;
 
     userTime += timeValueToMicroseconds(taskInfoData.user_time);
     systemTime += timeValueToMicroseconds(taskInfoData.system_time);

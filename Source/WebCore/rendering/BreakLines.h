@@ -90,7 +90,7 @@ inline bool needsLineBreakIterator(UChar character)
 template<typename CharacterType, NonBreakingSpaceBehavior nonBreakingSpaceBehavior, CanUseShortcut canUseShortcut>
 inline unsigned nextBreakablePosition(LazyLineBreakIterator& lazyBreakIterator, const CharacterType* string, unsigned length, unsigned startPosition)
 {
-    std::optional<unsigned> nextBreak;
+    Optional<unsigned> nextBreak;
 
     CharacterType lastLastCharacter = startPosition > 1 ? string[startPosition - 2] : static_cast<CharacterType>(lazyBreakIterator.secondToLastCharacter());
     CharacterType lastCharacter = startPosition > 0 ? string[startPosition - 1] : static_cast<CharacterType>(lazyBreakIterator.lastCharacter());
@@ -109,7 +109,7 @@ inline unsigned nextBreakablePosition(LazyLineBreakIterator& lazyBreakIterator, 
                     if (breakIterator) {
                         int candidate = ubrk_following(breakIterator, i - 1 + priorContextLength);
                         if (candidate == UBRK_DONE)
-                            nextBreak = std::nullopt;
+                            nextBreak = WTF::nullopt;
                         else {
                             unsigned result = candidate;
                             ASSERT(result >= priorContextLength);
@@ -187,7 +187,7 @@ inline unsigned nextBreakablePositionIgnoringNBSPWithoutShortcut(LazyLineBreakIt
     return nextBreakablePosition<UChar, NonBreakingSpaceBehavior::IgnoreNonBreakingSpace, CanUseShortcut::No>(lazyBreakIterator, stringView.characters16(), stringView.length(), startPosition);
 }
 
-inline bool isBreakable(LazyLineBreakIterator& lazyBreakIterator, unsigned startPosition, std::optional<unsigned>& nextBreakable, bool breakNBSP, bool canUseShortcut, bool keepAllWords)
+inline bool isBreakable(LazyLineBreakIterator& lazyBreakIterator, unsigned startPosition, Optional<unsigned>& nextBreakable, bool breakNBSP, bool canUseShortcut, bool keepAllWords)
 {
     if (nextBreakable && nextBreakable.value() >= startPosition)
         return startPosition == nextBreakable;

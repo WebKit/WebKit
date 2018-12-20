@@ -42,7 +42,7 @@
 namespace WebCore {
 
 struct RTCConfiguration {
-    std::optional<Vector<RTCIceServer>> iceServers;
+    Optional<Vector<RTCIceServer>> iceServers;
     RTCIceTransportPolicy iceTransportPolicy;
     RTCBundlePolicy bundlePolicy;
     RTCPMuxPolicy rtcpMuxPolicy;

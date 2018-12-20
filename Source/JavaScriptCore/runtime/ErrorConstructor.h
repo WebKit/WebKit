@@ -51,7 +51,7 @@ public:
         return Structure::create(vm, globalObject, prototype, TypeInfo(InternalFunctionType, StructureFlags), info()); 
     }
 
-    std::optional<unsigned> stackTraceLimit() const { return m_stackTraceLimit; }
+    Optional<unsigned> stackTraceLimit() const { return m_stackTraceLimit; }
 
 protected:
     void finishCreation(VM&, ErrorPrototype*);
@@ -62,7 +62,7 @@ protected:
 private:
     ErrorConstructor(VM&, Structure*);
 
-    std::optional<unsigned> m_stackTraceLimit;
+    Optional<unsigned> m_stackTraceLimit;
 };
 
 } // namespace JSC

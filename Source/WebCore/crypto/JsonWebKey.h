@@ -37,11 +37,11 @@ struct JsonWebKey {
     String kty;
     String use;
     // FIXME: Consider merging key_ops and usages.
-    std::optional<Vector<CryptoKeyUsage>> key_ops;
+    Optional<Vector<CryptoKeyUsage>> key_ops;
     CryptoKeyUsageBitmap usages;
     String alg;
 
-    std::optional<bool> ext;
+    Optional<bool> ext;
 
     String crv;
     String x;
@@ -54,7 +54,7 @@ struct JsonWebKey {
     String dp;
     String dq;
     String qi;
-    std::optional<Vector<RsaOtherPrimesInfo>> oth;
+    Optional<Vector<RsaOtherPrimesInfo>> oth;
     String k;
 };
 

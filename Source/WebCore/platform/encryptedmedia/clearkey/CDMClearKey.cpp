@@ -87,18 +87,18 @@ static RefPtr<JSON::Object> parseJSONObject(const SharedBuffer& buffer)
     return object;
 }
 
-static std::optional<Vector<CDMInstanceClearKey::Key>> parseLicenseFormat(const JSON::Object& root)
+static Optional<Vector<CDMInstanceClearKey::Key>> parseLicenseFormat(const JSON::Object& root)
 {
     // If the 'keys' key is present in the root object, parse the JSON further
     // according to the specified 'license' format.
     auto it = root.find("keys");
     if (it == root.end())
-        return std::nullopt;
+        return WTF::nullopt;
 
     // Retrieve the keys array.
     RefPtr<JSON::Array> keysArray;
     if (!it->value->asArray(keysArray))
-        return std::nullopt;
+        return WTF::nullopt;
 
     Vector<CDMInstanceClearKey::Key> decodedKeys;
     bool validFormat = std::all_of(keysArray->begin(), keysArray->end(),
@@ -123,7 +123,7 @@ static std::optional<Vector<CDMInstanceClearKey::Key>> parseLicenseFormat(const 
             return true;
         });
     if (!validFormat)
-        return std::nullopt;
+        return WTF::nullopt;
 
     return decodedKeys;
 }
@@ -446,13 +446,13 @@ RefPtr<SharedBuffer> CDMPrivateClearKey::sanitizeResponse(const SharedBuffer& re
     return response.copy();
 }
 
-std::optional<String> CDMPrivateClearKey::sanitizeSessionId(const String& sessionId) const
+Optional<String> CDMPrivateClearKey::sanitizeSessionId(const String& sessionId) const
 {
     // Validate the session ID string as an 32-bit integer.
     bool ok;
     sessionId.toUIntStrict(&ok);
     if (!ok)
-        return std::nullopt;
+        return WTF::nullopt;
     return sessionId;
 }
 
@@ -544,20 +544,20 @@ void CDMInstanceSessionClearKey::updateLicense(const String& sessionId, LicenseT
     // Use a helper functor that schedules the callback dispatch, avoiding
     // duplicated callOnMainThread() calls.
     auto dispatchCallback =
-        [this, &callback](bool sessionWasClosed, std::optional<KeyStatusVector>&& changedKeys, SuccessValue succeeded) {
+        [this, &callback](bool sessionWasClosed, Optional<KeyStatusVector>&& changedKeys, SuccessValue succeeded) {
             callOnMainThread(
                 [weakThis = makeWeakPtr(*this), callback = WTFMove(callback), sessionWasClosed, changedKeys = WTFMove(changedKeys), succeeded] () mutable {
                     if (!weakThis)
                         return;
 
-                    callback(sessionWasClosed, WTFMove(changedKeys), std::nullopt, std::nullopt, succeeded);
+                    callback(sessionWasClosed, WTFMove(changedKeys), WTF::nullopt, WTF::nullopt, succeeded);
                 });
         };
 
     // Parse the response buffer as an JSON object.
     RefPtr<JSON::Object> root = parseJSONObject(response);
     if (!root) {
-        dispatchCallback(false, std::nullopt, SuccessValue::Failed);
+        dispatchCallback(false, WTF::nullopt, SuccessValue::Failed);
         return;
     }
 
@@ -594,7 +594,7 @@ void CDMInstanceSessionClearKey::updateLicense(const String& sessionId, LicenseT
 
         // In case of changed keys, we have to provide a KeyStatusVector of all the keys for
         // this session.
-        std::optional<KeyStatusVector> changedKeys;
+        Optional<KeyStatusVector> changedKeys;
         if (keysChanged) {
             // First a helper Vector is constructed, cotaining pairs of SharedBuffer RefPtrs
             // representint key ID data, and the corresponding key statuses.
@@ -615,7 +615,7 @@ void CDMInstanceSessionClearKey::updateLicense(const String& sessionId, LicenseT
                 });
 
             // Finally construct the mirroring KeyStatusVector object and move it into the
-            // std::optional<> object that will be passed to the callback.
+            // Optional<> object that will be passed to the callback.
             KeyStatusVector keyStatusVector;
             keyStatusVector.reserveInitialCapacity(keys.size());
             for (auto& it : keys)
@@ -632,25 +632,25 @@ void CDMInstanceSessionClearKey::updateLicense(const String& sessionId, LicenseT
     if (parseLicenseReleaseAcknowledgementFormat(*root)) {
         // FIXME: Retrieve the key ID information and use it to validate the keys for this sessionId.
         ClearKeyState::singleton().keys().remove(sessionId);
-        dispatchCallback(true, std::nullopt, SuccessValue::Succeeded);
+        dispatchCallback(true, WTF::nullopt, SuccessValue::Succeeded);
         return;
     }
 
     // Bail in case no format was recognized.
-    dispatchCallback(false, std::nullopt, SuccessValue::Failed);
+    dispatchCallback(false, WTF::nullopt, SuccessValue::Failed);
 }
 
 void CDMInstanceSessionClearKey::loadSession(LicenseType, const String& sessionId, const String&, LoadSessionCallback&& callback)
 {
     // Use a helper functor that schedules the callback dispatch, avoiding duplicated callOnMainThread() calls.
     auto dispatchCallback =
-        [this, &callback](std::optional<KeyStatusVector>&& existingKeys, SuccessValue success, SessionLoadFailure loadFailure) {
+        [this, &callback](Optional<KeyStatusVector>&& existingKeys, SuccessValue success, SessionLoadFailure loadFailure) {
             callOnMainThread(
                 [weakThis = makeWeakPtr(*this), callback = WTFMove(callback), existingKeys = WTFMove(existingKeys), success, loadFailure]() mutable {
                     if (!weakThis)
                         return;
 
-                    callback(WTFMove(existingKeys), std::nullopt, std::nullopt, success, loadFailure);
+                    callback(WTFMove(existingKeys), WTF::nullopt, WTF::nullopt, success, loadFailure);
                 });
         };
 
@@ -660,7 +660,7 @@ void CDMInstanceSessionClearKey::loadSession(LicenseType, const String& sessionI
         auto& keys = ClearKeyState::singleton().keys();
         auto it = keys.find(sessionId);
         if (it == keys.end()) {
-            dispatchCallback(std::nullopt, Failed, SessionLoadFailure::NoSessionData);
+            dispatchCallback(WTF::nullopt, Failed, SessionLoadFailure::NoSessionData);
             return;
         }
 
@@ -688,7 +688,7 @@ void CDMInstanceSessionClearKey::removeSessionData(const String& sessionId, Lice
 {
     // Use a helper functor that schedules the callback dispatch, avoiding duplicated callOnMainThread() calls.
     auto dispatchCallback =
-        [this, &callback](KeyStatusVector&& keyStatusVector, std::optional<Ref<SharedBuffer>>&& message, SuccessValue success) {
+        [this, &callback](KeyStatusVector&& keyStatusVector, Optional<Ref<SharedBuffer>>&& message, SuccessValue success) {
             callOnMainThread(
                 [weakThis = makeWeakPtr(*this), callback = WTFMove(callback), keyStatusVector = WTFMove(keyStatusVector), message = WTFMove(message), success]() mutable {
                     if (!weakThis)
@@ -707,7 +707,7 @@ void CDMInstanceSessionClearKey::removeSessionData(const String& sessionId, Lice
         auto& keys = ClearKeyState::singleton().keys();
         auto it = keys.find(sessionId);
         if (it == keys.end()) {
-            dispatchCallback(KeyStatusVector { }, std::nullopt, SuccessValue::Failed);
+            dispatchCallback(KeyStatusVector { }, WTF::nullopt, SuccessValue::Failed);
             return;
         }
 

@@ -94,7 +94,7 @@ template<typename CharacterType> inline bool isASCIIDigitOrValidHostCharacter(Ch
 
 
 
-static BOOL isLookalikeCharacter(std::optional<UChar32> previousCodePoint, UChar32 charCode)
+static BOOL isLookalikeCharacter(Optional<UChar32> previousCodePoint, UChar32 charCode)
 {
     // This function treats the following as unsafe, lookalike characters:
     // any non-printable character, any character considered as whitespace,
@@ -328,7 +328,7 @@ static BOOL allCharactersInIDNScriptWhiteList(const UChar *buffer, int32_t lengt
     });
     
     int32_t i = 0;
-    std::optional<UChar32> previousCodePoint;
+    Optional<UChar32> previousCodePoint;
     while (i < length) {
         UChar32 c;
         U16_NEXT(buffer, i, length, c)
@@ -1062,7 +1062,7 @@ static CFStringRef createStringWithEscapedUnsafeCharacters(CFStringRef string)
     
     Vector<UChar, URL_BYTES_BUFFER_LENGTH> outBuffer;
     
-    std::optional<UChar32> previousCodePoint;
+    Optional<UChar32> previousCodePoint;
     CFIndex i = 0;
     while (i < length) {
         UChar32 c;

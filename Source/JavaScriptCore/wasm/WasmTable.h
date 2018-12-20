@@ -40,13 +40,13 @@ class Instance;
 
 class Table : public ThreadSafeRefCounted<Table> {
 public:
-    static RefPtr<Table> tryCreate(uint32_t initial, std::optional<uint32_t> maximum);
+    static RefPtr<Table> tryCreate(uint32_t initial, Optional<uint32_t> maximum);
 
     JS_EXPORT_PRIVATE ~Table();
 
-    std::optional<uint32_t> maximum() const { return m_maximum; }
+    Optional<uint32_t> maximum() const { return m_maximum; }
     uint32_t length() const { return m_length; }
-    std::optional<uint32_t> grow(uint32_t delta) WARN_UNUSED_RETURN;
+    Optional<uint32_t> grow(uint32_t delta) WARN_UNUSED_RETURN;
     void clearFunction(uint32_t);
     void setFunction(uint32_t, WasmToWasmImportableFunction, Instance*);
 
@@ -60,7 +60,7 @@ public:
     static bool isValidLength(uint32_t length) { return length < maxTableEntries; }
 
 private:
-    Table(uint32_t initial, std::optional<uint32_t> maximum);
+    Table(uint32_t initial, Optional<uint32_t> maximum);
 
     void setLength(uint32_t);
 
@@ -69,7 +69,7 @@ private:
     MallocPtr<Instance*> m_instances;
     uint32_t m_length;
     uint32_t m_mask;
-    std::optional<uint32_t> m_maximum;
+    Optional<uint32_t> m_maximum;
 };
 
 } } // namespace JSC::Wasm

@@ -364,11 +364,11 @@ enum class Reason {
 namespace TestHelpers {
 
 template<typename ProtocolEnumType>
-std::optional<ProtocolEnumType> parseEnumValueFromString(const String&);
+Optional<ProtocolEnumType> parseEnumValueFromString(const String&);
 
 // Enums in the 'Debugger' Domain
 template<>
-std::optional<Inspector::Protocol::Debugger::Reason> parseEnumValueFromString<Inspector::Protocol::Debugger::Reason>(const String&);
+Optional<Inspector::Protocol::Debugger::Reason> parseEnumValueFromString<Inspector::Protocol::Debugger::Reason>(const String&);
 
 } // namespace TestHelpers
 
@@ -444,7 +444,7 @@ String getEnumConstantValue(int code) {
 
 // Enums in the 'Debugger' Domain
 template<>
-std::optional<Inspector::Protocol::Debugger::Reason> parseEnumValueFromString<Inspector::Protocol::Debugger::Reason>(const String& protocolString)
+Optional<Inspector::Protocol::Debugger::Reason> parseEnumValueFromString<Inspector::Protocol::Debugger::Reason>(const String& protocolString)
 {
     static const size_t constantValues[] = {
         (size_t)Inspector::Protocol::Debugger::Reason::Died,
@@ -455,7 +455,7 @@ std::optional<Inspector::Protocol::Debugger::Reason> parseEnumValueFromString<In
         if (protocolString == enum_constant_values[constantValues[i]])
             return (Inspector::Protocol::Debugger::Reason)constantValues[i];
 
-    return std::nullopt;
+    return WTF::nullopt;
 }
 
 
@@ -843,7 +843,7 @@ typedef NS_ENUM(NSInteger, TestProtocolDebuggerReason) {
 namespace Inspector {
 
 template<typename ObjCEnumType>
-std::optional<ObjCEnumType> fromProtocolString(const String& value);
+Optional<ObjCEnumType> fromProtocolString(const String& value);
 
 inline String toProtocolString(TestProtocolPlatform value)
 {
@@ -860,7 +860,7 @@ inline String toProtocolString(TestProtocolPlatform value)
 }
 
 template<>
-inline std::optional<TestProtocolPlatform> fromProtocolString(const String& value)
+inline Optional<TestProtocolPlatform> fromProtocolString(const String& value)
 {
     if (value == "all")
         return TestProtocolPlatformAll;
@@ -870,7 +870,7 @@ inline std::optional<TestProtocolPlatform> fromProtocolString(const String& valu
         return TestProtocolPlatformIOS;
     if (value == "macos")
         return TestProtocolPlatformMacOS;
-    return std::nullopt;
+    return WTF::nullopt;
 }
 
 
@@ -887,7 +887,7 @@ inline String toProtocolString(TestProtocolDebuggerReason value)
 }
 
 template<>
-inline std::optional<TestProtocolDebuggerReason> fromProtocolString(const String& value)
+inline Optional<TestProtocolDebuggerReason> fromProtocolString(const String& value)
 {
     if (value == "Died")
         return TestProtocolDebuggerReasonDied;
@@ -895,7 +895,7 @@ inline std::optional<TestProtocolDebuggerReason> fromProtocolString(const String
         return TestProtocolDebuggerReasonFainted;
     if (value == "Hungry")
         return TestProtocolDebuggerReasonHungry;
-    return std::nullopt;
+    return WTF::nullopt;
 }
 
 
@@ -971,7 +971,7 @@ using namespace Inspector;
 + (void)_parseReason:(NSNumber **)outValue fromPayload:(id)payload
 {
     THROW_EXCEPTION_FOR_BAD_TYPE(payload, [NSString class]);
-    std::optional<TestProtocolDebuggerReason> result = Inspector::fromProtocolString<TestProtocolDebuggerReason>(payload);
+    Optional<TestProtocolDebuggerReason> result = Inspector::fromProtocolString<TestProtocolDebuggerReason>(payload);
     THROW_EXCEPTION_FOR_BAD_ENUM_VALUE(result, @"Reason");
     *outValue = @(result.value());
 }

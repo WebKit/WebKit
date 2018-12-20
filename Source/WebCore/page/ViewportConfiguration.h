@@ -77,7 +77,7 @@ public:
     const FloatSize& viewLayoutSize() const { return m_viewLayoutSize; }
 
     const FloatSize& minimumLayoutSize() const { return m_minimumLayoutSize; }
-    WEBCORE_EXPORT bool setViewLayoutSize(const FloatSize&, std::optional<double>&& scaleFactor = std::nullopt, std::optional<double>&& effectiveWidth = std::nullopt);
+    WEBCORE_EXPORT bool setViewLayoutSize(const FloatSize&, Optional<double>&& scaleFactor = WTF::nullopt, Optional<double>&& effectiveWidth = WTF::nullopt);
 
     const OptionSet<DisabledAdaptations>& disabledAdaptations() const { return m_disabledAdaptations; }
     WEBCORE_EXPORT bool setDisabledAdaptations(const OptionSet<DisabledAdaptations>&);

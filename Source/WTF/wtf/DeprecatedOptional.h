@@ -23,29 +23,28 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-// This file contains a deprecated version of WTF::Optional which a released
+// This file contains a deprecated version of std::optional which a released
 // version of Safari uses. Once Safari stops using this, we can remove this.
-// New code should use std::optional.
+// New code should use WTF::Optional.
 
 #pragma once
 
 #include <type_traits>
+#include <wtf/Optional.h>
+
+namespace std {
+
+template <class T>
+class optional : private WTF::OptionalBase<T> {
+public:
+    explicit constexpr operator bool() const __NOEXCEPT { return WTF::OptionalBase<T>::init_; }
+    constexpr T const& value() const& { return WTF::OptionalBase<T>::storage_.value_; }
+};
+
+}
 
 namespace WTF {
 
-template<typename T>
-class Optional {
-public:
-    explicit operator bool() const { return m_isEngaged; }
-    T& value() { return *asPtr(); }
-
-private:
-    T* asPtr() { return reinterpret_cast<T*>(&m_value); }
-
-    bool m_isEngaged;
-    typename std::aligned_storage<sizeof(T), std::alignment_of<T>::value>::type m_value;
-};
-
-template<typename T> using DeprecatedOptional = WTF::Optional<T>;
+template<typename T> using DeprecatedOptional = std::optional<T>;
 
 } // namespace WTF

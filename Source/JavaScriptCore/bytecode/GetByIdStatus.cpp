@@ -229,7 +229,7 @@ GetByIdStatus GetByIdStatus::computeForStubInfoWithoutExitSiteFeedback(
                 std::unique_ptr<CallLinkStatus> callLinkStatus;
                 JSFunction* intrinsicFunction = nullptr;
                 FunctionPtr<OperationPtrTag> customAccessorGetter;
-                std::optional<DOMAttributeAnnotation> domAttribute;
+                Optional<DOMAttributeAnnotation> domAttribute;
 
                 switch (access.type()) {
                 case AccessCase::Load:

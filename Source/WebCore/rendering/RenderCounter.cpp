@@ -111,8 +111,8 @@ static CounterDirectives listItemCounterDirectives(RenderElement& renderer)
     if (is<RenderListItem>(renderer)) {
         auto& item = downcast<RenderListItem>(renderer);
         if (auto explicitValue = item.explicitValue())
-            return { *explicitValue, std::nullopt };
-        return { std::nullopt, item.isInReversedOrderedList() ? -1 : 1 };
+            return { *explicitValue, WTF::nullopt };
+        return { WTF::nullopt, item.isInReversedOrderedList() ? -1 : 1 };
     }
     if (auto element = renderer.element()) {
         if (is<HTMLOListElement>(*element)) {
@@ -120,7 +120,7 @@ static CounterDirectives listItemCounterDirectives(RenderElement& renderer)
             return { list.start(), list.isReversed() ? 1 : -1 };
         }
         if (isHTMLListElement(*element))
-            return { 0, std::nullopt };
+            return { 0, WTF::nullopt };
     }
     return { };
 }
@@ -130,12 +130,12 @@ struct CounterPlan {
     int value;
 };
 
-static std::optional<CounterPlan> planCounter(RenderElement& renderer, const AtomicString& identifier)
+static Optional<CounterPlan> planCounter(RenderElement& renderer, const AtomicString& identifier)
 {
     // We must have a generating node or else we cannot have a counter.
     Element* generatingElement = renderer.generatingElement();
     if (!generatingElement)
-        return std::nullopt;
+        return WTF::nullopt;
 
     auto& style = renderer.style();
 
@@ -144,13 +144,13 @@ static std::optional<CounterPlan> planCounter(RenderElement& renderer, const Ato
         // Sometimes elements have more then one renderer. Only the first one gets the counter
         // LayoutTests/http/tests/css/counter-crash.html
         if (generatingElement->renderer() != &renderer)
-            return std::nullopt;
+            return WTF::nullopt;
         break;
     case PseudoId::Before:
     case PseudoId::After:
         break;
     default:
-        return std::nullopt; // Counters are forbidden from all other pseudo elements.
+        return WTF::nullopt; // Counters are forbidden from all other pseudo elements.
     }
 
     CounterDirectives directives;
@@ -170,7 +170,7 @@ static std::optional<CounterPlan> planCounter(RenderElement& renderer, const Ato
         return CounterPlan { true, saturatedAddition(*directives.resetValue, directives.incrementValue.value_or(0)) };
     if (directives.incrementValue)
         return CounterPlan { false, *directives.incrementValue };
-    return std::nullopt;
+    return WTF::nullopt;
 }
 
 // - Finds the insertion point for the counter described by counterOwner, isReset and 

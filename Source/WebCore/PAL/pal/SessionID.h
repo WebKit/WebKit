@@ -64,7 +64,7 @@ public:
 
     template<class Encoder> void encode(Encoder&) const;
     template<class Decoder> static bool decode(Decoder&, SessionID&);
-    template<class Decoder> static std::optional<SessionID> decode(Decoder&);
+    template<class Decoder> static Optional<SessionID> decode(Decoder&);
 
     SessionID isolatedCopy() const;
 
@@ -87,7 +87,7 @@ void SessionID::encode(Encoder& encoder) const
 template<class Decoder>
 bool SessionID::decode(Decoder& decoder, SessionID& sessionID)
 {
-    std::optional<SessionID> decodedSessionID;
+    Optional<SessionID> decodedSessionID;
     decoder >> decodedSessionID;
     if (!decodedSessionID)
         return false;
@@ -97,12 +97,12 @@ bool SessionID::decode(Decoder& decoder, SessionID& sessionID)
 }
 
 template<class Decoder>
-std::optional<SessionID> SessionID::decode(Decoder& decoder)
+Optional<SessionID> SessionID::decode(Decoder& decoder)
 {
-    std::optional<uint64_t> sessionID;
+    Optional<uint64_t> sessionID;
     decoder >> sessionID;
     if (!sessionID)
-        return std::nullopt;
+        return WTF::nullopt;
 
     // FIXME: Eliminate places that encode invalid SessionIDs, then fail to decode an invalid sessionID.
     return SessionID { *sessionID };

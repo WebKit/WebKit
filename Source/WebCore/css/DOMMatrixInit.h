@@ -40,7 +40,7 @@ struct DOMMatrixInit : DOMMatrix2DInit {
     double m34 { 0 };
     double m43 { 0 };
     double m44 { 1 };
-    std::optional<bool> is2D;
+    Optional<bool> is2D;
 };
 
 } // namespace WebCore

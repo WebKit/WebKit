@@ -129,7 +129,7 @@ public:
 
     bool isAccelerated() const override { return m_isAccelerated; }
 
-    virtual std::optional<Seconds> timeToNextService();
+    virtual Optional<Seconds> timeToNextService();
 
     double progress(double scale = 1, double offset = 0, const TimingFunction* = nullptr) const;
 
@@ -256,11 +256,11 @@ protected:
     CompositeAnimation* m_compositeAnimation; // Ideally this would be a reference, but it has to be cleared if an animation is destroyed inside an event callback.
     Ref<Animation> m_animation;
 
-    std::optional<double> m_startTime;
-    std::optional<double> m_pauseTime;
+    Optional<double> m_startTime;
+    Optional<double> m_pauseTime;
     double m_requestedStartTime { 0 };
-    std::optional<double> m_totalDuration;
-    std::optional<double> m_nextIterationDuration;
+    Optional<double> m_totalDuration;
+    Optional<double> m_nextIterationDuration;
 
     AnimationState m_animationState { AnimationState::New };
     bool m_colorFilterFunctionListsMatch { false };

@@ -148,7 +148,7 @@ Ref<CurlRequest> ResourceHandle::createCurlRequest(ResourceRequest&& request, Re
         auto& storageSession = NetworkStorageSession::defaultStorageSession();
         auto& cookieJar = storageSession.cookieStorage();
         auto includeSecureCookies = request.url().protocolIs("https") ? IncludeSecureCookies::Yes : IncludeSecureCookies::No;
-        String cookieHeaderField = cookieJar.cookieRequestHeaderFieldValue(storageSession, request.firstPartyForCookies(), SameSiteInfo::create(request), request.url(), std::nullopt, std::nullopt, includeSecureCookies).first;
+        String cookieHeaderField = cookieJar.cookieRequestHeaderFieldValue(storageSession, request.firstPartyForCookies(), SameSiteInfo::create(request), request.url(), WTF::nullopt, WTF::nullopt, includeSecureCookies).first;
         if (!cookieHeaderField.isEmpty())
             request.addHTTPHeaderField(HTTPHeaderName::Cookie, cookieHeaderField);
     }
@@ -335,7 +335,7 @@ void ResourceHandle::receivedChallengeRejection(const AuthenticationChallenge&)
     ASSERT_NOT_REACHED();
 }
 
-std::optional<Credential> ResourceHandle::getCredential(const ResourceRequest& request, bool redirect)
+Optional<Credential> ResourceHandle::getCredential(const ResourceRequest& request, bool redirect)
 {
     // m_user/m_pass are credentials given manually, for instance, by the arguments passed to XMLHttpRequest.open().
     Credential credential { d->m_user, d->m_pass, CredentialPersistenceNone };
@@ -359,7 +359,7 @@ std::optional<Credential> ResourceHandle::getCredential(const ResourceRequest& r
     if (!d->m_initialCredential.isEmpty())
         return d->m_initialCredential;
 
-    return std::nullopt;
+    return WTF::nullopt;
 }
 
 void ResourceHandle::restartRequestWithCredential(const ProtectionSpace& protectionSpace, const Credential& credential)

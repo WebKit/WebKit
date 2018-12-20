@@ -1736,7 +1736,7 @@ public:
     };
     Vector<SlowPathLambda> m_slowPathLambdas;
     Vector<SilentRegisterSavePlan> m_plans;
-    std::optional<unsigned> m_outOfLineStreamIndex;
+    Optional<unsigned> m_outOfLineStreamIndex;
 };
 
 

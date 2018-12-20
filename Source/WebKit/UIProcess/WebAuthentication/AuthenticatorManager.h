@@ -76,7 +76,7 @@ private:
     virtual void respondReceivedInternal(Respond&&);
 
     void startDiscovery(const TransportSet&);
-    void initTimeOutTimer(const std::optional<unsigned>& timeOutInMs);
+    void initTimeOutTimer(const Optional<unsigned>& timeOutInMs);
     void timeOutTimerFired();
 
     // Request: We only allow one request per time.

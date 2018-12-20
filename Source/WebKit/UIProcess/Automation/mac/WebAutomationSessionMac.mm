@@ -574,8 +574,8 @@ void WebAutomationSession::platformSimulateKeyboardInteraction(WebPageProxy& pag
     bool isStickyModifier = false;
     NSEventModifierFlags changedModifiers = 0;
     int keyCode = 0;
-    std::optional<unichar> charCode;
-    std::optional<unichar> charCodeIgnoringModifiers;
+    Optional<unichar> charCode;
+    Optional<unichar> charCodeIgnoringModifiers;
 
     WTF::switchOn(key,
         [&] (VirtualKey virtualKey) {

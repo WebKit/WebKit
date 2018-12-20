@@ -55,8 +55,8 @@ public:
     static Vector<CaptureDevice>& videoDevices();
     static Vector<CaptureDevice>& displayDevices();
 
-    static std::optional<MockMediaDevice> mockDeviceWithPersistentID(const String&);
-    static std::optional<CaptureDevice> captureDeviceWithPersistentID(CaptureDevice::DeviceType, const String&);
+    static Optional<MockMediaDevice> mockDeviceWithPersistentID(const String&);
+    static Optional<CaptureDevice> captureDeviceWithPersistentID(CaptureDevice::DeviceType, const String&);
 
     CaptureDeviceManager& audioCaptureDeviceManager() { return m_audioCaptureDeviceManager; }
     CaptureDeviceManager& videoCaptureDeviceManager() { return m_videoCaptureDeviceManager; }
@@ -73,17 +73,17 @@ private:
     class MockAudioCaptureDeviceManager final : public CaptureDeviceManager {
     private:
         const Vector<CaptureDevice>& captureDevices() final { return MockRealtimeMediaSourceCenter::audioDevices(); }
-        std::optional<CaptureDevice> captureDeviceWithPersistentID(CaptureDevice::DeviceType type, const String& id) final { return MockRealtimeMediaSourceCenter::captureDeviceWithPersistentID(type, id); }
+        Optional<CaptureDevice> captureDeviceWithPersistentID(CaptureDevice::DeviceType type, const String& id) final { return MockRealtimeMediaSourceCenter::captureDeviceWithPersistentID(type, id); }
     };
     class MockVideoCaptureDeviceManager final : public CaptureDeviceManager {
     private:
         const Vector<CaptureDevice>& captureDevices() final { return MockRealtimeMediaSourceCenter::videoDevices(); }
-        std::optional<CaptureDevice> captureDeviceWithPersistentID(CaptureDevice::DeviceType type, const String& id) final { return MockRealtimeMediaSourceCenter::captureDeviceWithPersistentID(type, id); }
+        Optional<CaptureDevice> captureDeviceWithPersistentID(CaptureDevice::DeviceType type, const String& id) final { return MockRealtimeMediaSourceCenter::captureDeviceWithPersistentID(type, id); }
     };
     class MockDisplayCaptureDeviceManager final : public CaptureDeviceManager {
     private:
         const Vector<CaptureDevice>& captureDevices() final { return MockRealtimeMediaSourceCenter::displayDevices(); }
-        std::optional<CaptureDevice> captureDeviceWithPersistentID(CaptureDevice::DeviceType type, const String& id) final { return MockRealtimeMediaSourceCenter::captureDeviceWithPersistentID(type, id); }
+        Optional<CaptureDevice> captureDeviceWithPersistentID(CaptureDevice::DeviceType type, const String& id) final { return MockRealtimeMediaSourceCenter::captureDeviceWithPersistentID(type, id); }
     };
 
     MockAudioCaptureDeviceManager m_audioCaptureDeviceManager;

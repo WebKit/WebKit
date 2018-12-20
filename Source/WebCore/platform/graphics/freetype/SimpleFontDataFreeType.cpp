@@ -84,7 +84,7 @@ void Font::platformInit()
     float descent = narrowPrecisionToFloat(fontExtents.descent);
     float capHeight = narrowPrecisionToFloat(fontExtents.height);
     float lineGap = narrowPrecisionToFloat(fontExtents.height - fontExtents.ascent - fontExtents.descent);
-    std::optional<float> xHeight;
+    Optional<float> xHeight;
 
     {
         CairoFtFaceLocker cairoFtFaceLocker(m_platformData.scaledFont());

@@ -228,13 +228,13 @@ void RealtimeMediaSource::captureFailed()
     });
 }
 
-bool RealtimeMediaSource::supportsSizeAndFrameRate(std::optional<int>, std::optional<int>, std::optional<double>)
+bool RealtimeMediaSource::supportsSizeAndFrameRate(Optional<int>, Optional<int>, Optional<double>)
 {
     // The size and frame rate are within the capability limits, so they are supported.
     return true;
 }
 
-bool RealtimeMediaSource::supportsSizeAndFrameRate(std::optional<IntConstraint> widthConstraint, std::optional<IntConstraint> heightConstraint, std::optional<DoubleConstraint> frameRateConstraint, String& badConstraint, double& distance)
+bool RealtimeMediaSource::supportsSizeAndFrameRate(Optional<IntConstraint> widthConstraint, Optional<IntConstraint> heightConstraint, Optional<DoubleConstraint> frameRateConstraint, String& badConstraint, double& distance)
 {
     if (!widthConstraint && !heightConstraint && !frameRateConstraint)
         return true;
@@ -243,7 +243,7 @@ bool RealtimeMediaSource::supportsSizeAndFrameRate(std::optional<IntConstraint> 
 
     distance = std::numeric_limits<double>::infinity();
 
-    std::optional<int> width;
+    Optional<int> width;
     if (widthConstraint && capabilities.supportsWidth()) {
         double constraintDistance = fitnessDistance(*widthConstraint);
         if (std::isinf(constraintDistance)) {
@@ -258,7 +258,7 @@ bool RealtimeMediaSource::supportsSizeAndFrameRate(std::optional<IntConstraint> 
         }
     }
 
-    std::optional<int> height;
+    Optional<int> height;
     if (heightConstraint && capabilities.supportsHeight()) {
         double constraintDistance = fitnessDistance(*heightConstraint);
         if (std::isinf(constraintDistance)) {
@@ -273,7 +273,7 @@ bool RealtimeMediaSource::supportsSizeAndFrameRate(std::optional<IntConstraint> 
         }
     }
 
-    std::optional<double> frameRate;
+    Optional<double> frameRate;
     if (frameRateConstraint && capabilities.supportsFrameRate()) {
         double constraintDistance = fitnessDistance(*frameRateConstraint);
         if (std::isinf(constraintDistance)) {
@@ -433,7 +433,7 @@ double RealtimeMediaSource::fitnessDistance(const MediaConstraint& constraint)
 }
 
 template <typename ValueType>
-static void applyNumericConstraint(const NumericConstraint<ValueType>& constraint, ValueType current, std::optional<Vector<ValueType>> discreteCapabilityValues, ValueType capabilityMin, ValueType capabilityMax, RealtimeMediaSource& source, void (RealtimeMediaSource::*applier)(ValueType))
+static void applyNumericConstraint(const NumericConstraint<ValueType>& constraint, ValueType current, Optional<Vector<ValueType>> discreteCapabilityValues, ValueType capabilityMin, ValueType capabilityMax, RealtimeMediaSource& source, void (RealtimeMediaSource::*applier)(ValueType))
 {
     if (discreteCapabilityValues) {
         int value = constraint.valueForDiscreteCapabilityValues(current, *discreteCapabilityValues);
@@ -447,7 +447,7 @@ static void applyNumericConstraint(const NumericConstraint<ValueType>& constrain
         (source.*applier)(value);
 }
 
-void RealtimeMediaSource::setSizeAndFrameRate(std::optional<int> width, std::optional<int> height, std::optional<double> frameRate)
+void RealtimeMediaSource::setSizeAndFrameRate(Optional<int> width, Optional<int> height, Optional<double> frameRate)
 {
     IntSize size;
     if (width)
@@ -798,7 +798,7 @@ void RealtimeMediaSource::applyConstraints(const FlattenedConstraint& constraint
 
     auto& capabilities = this->capabilities();
 
-    std::optional<int> width;
+    Optional<int> width;
     if (const MediaConstraint* constraint = constraints.find(MediaConstraintType::Width)) {
         ASSERT(constraint->isInt());
         if (capabilities.supportsWidth()) {
@@ -807,7 +807,7 @@ void RealtimeMediaSource::applyConstraints(const FlattenedConstraint& constraint
         }
     }
 
-    std::optional<int> height;
+    Optional<int> height;
     if (const MediaConstraint* constraint = constraints.find(MediaConstraintType::Height)) {
         ASSERT(constraint->isInt());
         if (capabilities.supportsHeight()) {
@@ -816,7 +816,7 @@ void RealtimeMediaSource::applyConstraints(const FlattenedConstraint& constraint
         }
     }
 
-    std::optional<double> frameRate;
+    Optional<double> frameRate;
     if (const MediaConstraint* constraint = constraints.find(MediaConstraintType::FrameRate)) {
         ASSERT(constraint->isDouble());
         if (capabilities.supportsFrameRate()) {
@@ -838,7 +838,7 @@ void RealtimeMediaSource::applyConstraints(const FlattenedConstraint& constraint
     commitConfiguration();
 }
 
-std::optional<std::pair<String, String>> RealtimeMediaSource::applyConstraints(const MediaConstraints& constraints)
+Optional<std::pair<String, String>> RealtimeMediaSource::applyConstraints(const MediaConstraints& constraints)
 {
     ASSERT(constraints.isValid);
 
@@ -848,7 +848,7 @@ std::optional<std::pair<String, String>> RealtimeMediaSource::applyConstraints(c
         return { { failedConstraint, "Constraint not supported"_s } };
 
     applyConstraints(candidates);
-    return std::nullopt;
+    return WTF::nullopt;
 }
 
 void RealtimeMediaSource::applyConstraints(const MediaConstraints& constraints, SuccessHandler&& successHandler, FailureHandler&& failureHandler)
@@ -947,9 +947,9 @@ void RealtimeMediaSource::setSampleRate(int rate)
     notifySettingsDidChangeObservers(RealtimeMediaSourceSettings::Flag::SampleRate);
 }
 
-std::optional<Vector<int>> RealtimeMediaSource::discreteSampleRates() const
+Optional<Vector<int>> RealtimeMediaSource::discreteSampleRates() const
 {
-    return std::nullopt;
+    return WTF::nullopt;
 }
 
 void RealtimeMediaSource::setSampleSize(int size)
@@ -961,9 +961,9 @@ void RealtimeMediaSource::setSampleSize(int size)
     notifySettingsDidChangeObservers(RealtimeMediaSourceSettings::Flag::SampleSize);
 }
 
-std::optional<Vector<int>> RealtimeMediaSource::discreteSampleSizes() const
+Optional<Vector<int>> RealtimeMediaSource::discreteSampleSizes() const
 {
-    return std::nullopt;
+    return WTF::nullopt;
 }
 
 void RealtimeMediaSource::setEchoCancellation(bool echoCancellation)

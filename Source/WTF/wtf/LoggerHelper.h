@@ -52,7 +52,7 @@ public:
 
 #else
 
-#define LOGIDENTIFIER (std::nullopt)
+#define LOGIDENTIFIER (WTF::nullopt)
 
 #define ALWAYS_LOG(...)     ((void)0)
 #define ERROR_LOG(...)      ((void)0)

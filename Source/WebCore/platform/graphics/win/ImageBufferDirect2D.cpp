@@ -332,13 +332,13 @@ void ImageBuffer::putByteArray(const Uint8ClampedArray& source, AlphaPremultipli
     m_data.putData(source, bufferFormat, scaledSourceSize, scaledSourceRect, destPoint, internalSize(), context().isAcceleratedContext(), 1);
 }
 
-String ImageBuffer::toDataURL(const String&, std::optional<double>, PreserveResolution) const
+String ImageBuffer::toDataURL(const String&, Optional<double>, PreserveResolution) const
 {
     notImplemented();
     return "data:,"_s;
 }
 
-Vector<uint8_t> ImageBuffer::toData(const String& mimeType, std::optional<double> quality) const
+Vector<uint8_t> ImageBuffer::toData(const String& mimeType, Optional<double> quality) const
 {
     notImplemented();
     return { };

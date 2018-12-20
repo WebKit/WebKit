@@ -63,10 +63,10 @@ void WebGeolocationClient::setEnableHighAccuracy(bool enabled)
     WebProcess::singleton().supplement<WebGeolocationManager>()->setEnableHighAccuracyForPage(m_page, enabled);
 }
 
-std::optional<GeolocationPosition> WebGeolocationClient::lastPosition()
+Optional<GeolocationPosition> WebGeolocationClient::lastPosition()
 {
     // FIXME: Implement this.
-    return std::nullopt;
+    return WTF::nullopt;
 }
 
 void WebGeolocationClient::requestPermission(Geolocation& geolocation)

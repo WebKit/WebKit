@@ -164,7 +164,7 @@ unsigned RunResolver::adjustLineIndexForStruts(LayoutUnit y, IndexType type, uns
     if (strut.lineBreak >= lineIndexCandidate)
         return lineIndexCandidate;
     unsigned strutIndex = 0;
-    std::optional<unsigned> lastIndexCandidate;
+    Optional<unsigned> lastIndexCandidate;
     auto top = strut.lineBreak * m_lineHeight;
     auto lineHeightWithOverflow = m_lineHeight;
     // If font is larger than the line height (glyphs overflow), use the font size when checking line boundaries.

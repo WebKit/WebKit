@@ -218,26 +218,26 @@ Expected<unsigned, HTMLIntegerParsingError> parseHTMLNonNegativeInteger(StringVi
 }
 
 template <typename CharacterType>
-static std::optional<int> parseValidHTMLNonNegativeIntegerInternal(const CharacterType* position, const CharacterType* end)
+static Optional<int> parseValidHTMLNonNegativeIntegerInternal(const CharacterType* position, const CharacterType* end)
 {
     // A string is a valid non-negative integer if it consists of one or more ASCII digits.
     for (auto* c = position; c < end; ++c) {
         if (!isASCIIDigit(*c))
-            return std::nullopt;
+            return WTF::nullopt;
     }
 
     auto optionalSignedValue = parseHTMLIntegerInternal(position, end);
     if (!optionalSignedValue || optionalSignedValue.value() < 0)
-        return std::nullopt;
+        return WTF::nullopt;
 
     return optionalSignedValue.value();
 }
 
 // https://html.spec.whatwg.org/#valid-non-negative-integer
-std::optional<int> parseValidHTMLNonNegativeInteger(StringView input)
+Optional<int> parseValidHTMLNonNegativeInteger(StringView input)
 {
     if (input.isEmpty())
-        return std::nullopt;
+        return WTF::nullopt;
 
     if (LIKELY(input.is8Bit())) {
         auto* start = input.characters8();
@@ -249,25 +249,25 @@ std::optional<int> parseValidHTMLNonNegativeInteger(StringView input)
 }
 
 template <typename CharacterType>
-static std::optional<double> parseValidHTMLFloatingPointNumberInternal(const CharacterType* position, size_t length)
+static Optional<double> parseValidHTMLFloatingPointNumberInternal(const CharacterType* position, size_t length)
 {
     ASSERT(length > 0);
 
     // parseDouble() allows the string to start with a '+' or to end with a '.' but those
     // are not valid floating point numbers as per HTML.
     if (*position == '+' || *(position + length - 1) == '.')
-        return std::nullopt;
+        return WTF::nullopt;
 
     size_t parsedLength = 0;
     double number = parseDouble(position, length, parsedLength);
-    return parsedLength == length && std::isfinite(number) ? number : std::optional<double>();
+    return parsedLength == length && std::isfinite(number) ? number : Optional<double>();
 }
 
 // https://html.spec.whatwg.org/#valid-floating-point-number
-std::optional<double> parseValidHTMLFloatingPointNumber(StringView input)
+Optional<double> parseValidHTMLFloatingPointNumber(StringView input)
 {
     if (input.isEmpty())
-        return std::nullopt;
+        return WTF::nullopt;
 
     if (LIKELY(input.is8Bit())) {
         auto* start = input.characters8();

@@ -33,16 +33,16 @@
 
 namespace WebCore {
 
-std::optional<PaymentMerchantSession> PaymentMerchantSession::fromJS(JSC::ExecState& state, JSC::JSValue value, String&)
+Optional<PaymentMerchantSession> PaymentMerchantSession::fromJS(JSC::ExecState& state, JSC::JSValue value, String&)
 {
     // FIXME: Don't round-trip using NSString.
     auto jsonString = JSONStringify(&state, value, 0);
     if (!jsonString)
-        return std::nullopt;
+        return WTF::nullopt;
 
     auto dictionary = dynamic_objc_cast<NSDictionary>([NSJSONSerialization JSONObjectWithData:[(NSString *)jsonString dataUsingEncoding:NSUTF8StringEncoding] options:0 error:nil]);
     if (!dictionary || ![dictionary isKindOfClass:[NSDictionary class]])
-        return std::nullopt;
+        return WTF::nullopt;
 
     auto pkPaymentMerchantSession = adoptNS([PAL::allocPKPaymentMerchantSessionInstance() initWithDictionary:dictionary]);
 

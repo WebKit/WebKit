@@ -44,30 +44,30 @@ void URLSchemeTaskParameters::encode(IPC::Encoder& encoder) const
         encoder << false;
 }
 
-std::optional<URLSchemeTaskParameters> URLSchemeTaskParameters::decode(IPC::Decoder& decoder)
+Optional<URLSchemeTaskParameters> URLSchemeTaskParameters::decode(IPC::Decoder& decoder)
 {
-    std::optional<uint64_t> handlerIdentifier;
+    Optional<uint64_t> handlerIdentifier;
     decoder >> handlerIdentifier;
     if (!handlerIdentifier)
-        return std::nullopt;
+        return WTF::nullopt;
     
-    std::optional<uint64_t> taskIdentifier;
+    Optional<uint64_t> taskIdentifier;
     decoder >> taskIdentifier;
     if (!taskIdentifier)
-        return std::nullopt;
+        return WTF::nullopt;
 
     WebCore::ResourceRequest request;
     if (!decoder.decode(request))
-        return std::nullopt;
+        return WTF::nullopt;
 
-    std::optional<bool> hasHTTPBody;
+    Optional<bool> hasHTTPBody;
     decoder >> hasHTTPBody;
     if (!hasHTTPBody)
-        return std::nullopt;
+        return WTF::nullopt;
     if (*hasHTTPBody) {
         RefPtr<WebCore::FormData> formData = WebCore::FormData::decode(decoder);
         if (!formData)
-            return std::nullopt;
+            return WTF::nullopt;
         request.setHTTPBody(WTFMove(formData));
     }
 

@@ -47,7 +47,7 @@ public:
 
     struct Init : EventInit {
         uint64_t oldVersion { 0 };
-        std::optional<uint64_t> newVersion;
+        Optional<uint64_t> newVersion;
     };
 
     static Ref<IDBVersionChangeEvent> create(const AtomicString& type, const Init& initializer, IsTrusted isTrusted = IsTrusted::No)
@@ -60,7 +60,7 @@ public:
     bool isVersionChangeEvent() const final { return true; }
 
     uint64_t oldVersion() const { return m_oldVersion; }
-    std::optional<uint64_t> newVersion() const { return m_newVersion; }
+    Optional<uint64_t> newVersion() const { return m_newVersion; }
 
 private:
     IDBVersionChangeEvent(const IDBResourceIdentifier& requestIdentifier, uint64_t oldVersion, uint64_t newVersion, const AtomicString& eventType);
@@ -70,7 +70,7 @@ private:
 
     IDBResourceIdentifier m_requestIdentifier;
     uint64_t m_oldVersion;
-    std::optional<uint64_t> m_newVersion;
+    Optional<uint64_t> m_newVersion;
 };
 
 } // namespace WebCore

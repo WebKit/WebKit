@@ -377,7 +377,7 @@ void SubresourceLoader::didReceiveResponse(const ResourceResponse& response, Com
             m_loadingMultipartContent = true;
 
             // We don't count multiParts in a CachedResourceLoader's request count
-            m_requestCountTracker = std::nullopt;
+            m_requestCountTracker = WTF::nullopt;
             if (!m_resource->isImage()) {
                 cancel();
                 return;
@@ -726,7 +726,7 @@ void SubresourceLoader::notifyDone(LoadCompletionType type)
     if (reachedTerminalState())
         return;
 
-    m_requestCountTracker = std::nullopt;
+    m_requestCountTracker = WTF::nullopt;
     bool shouldPerformPostLoadActions = true;
 #if PLATFORM(IOS_FAMILY)
     if (m_state == CancelledWhileInitializing)

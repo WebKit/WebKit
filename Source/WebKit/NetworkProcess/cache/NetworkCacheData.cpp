@@ -153,7 +153,7 @@ static Salt makeSalt()
 }
 #endif
 
-std::optional<Salt> readOrMakeSalt(const String& path)
+Optional<Salt> readOrMakeSalt(const String& path)
 {
 #if !OS(WINDOWS)
     auto cpath = WebCore::FileSystem::fileSystemRepresentation(path);

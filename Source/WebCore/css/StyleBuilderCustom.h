@@ -708,7 +708,7 @@ static inline float computeLineHeightMultiplierDueToFontSize(const Document& doc
 
 inline void StyleBuilderCustom::applyValueLineHeight(StyleResolver& styleResolver, CSSValue& value)
 {
-    std::optional<Length> lineHeight = StyleBuilderConverter::convertLineHeight(styleResolver, value, 1);
+    Optional<Length> lineHeight = StyleBuilderConverter::convertLineHeight(styleResolver, value, 1);
     if (!lineHeight)
         return;
 
@@ -1177,9 +1177,9 @@ inline void StyleBuilderCustom::applyValueCounter(StyleResolver& styleResolver, 
     CounterDirectiveMap& map = styleResolver.style()->accessCounterDirectives();
     for (auto& keyValue : map) {
         if (counterBehavior == Reset)
-            keyValue.value.resetValue = std::nullopt;
+            keyValue.value.resetValue = WTF::nullopt;
         else
-            keyValue.value.incrementValue = std::nullopt;
+            keyValue.value.incrementValue = WTF::nullopt;
     }
 
     if (setCounterIncrementToNone)

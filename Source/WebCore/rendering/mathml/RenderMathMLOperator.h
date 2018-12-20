@@ -79,7 +79,7 @@ private:
     bool isRenderMathMLOperator() const final { return true; }
     bool isInvisibleOperator() const;
 
-    std::optional<int> firstLineBaseline() const final;
+    Optional<int> firstLineBaseline() const final;
     RenderMathMLOperator* unembellishedOperator() const final { return const_cast<RenderMathMLOperator*>(this); }
 
     LayoutUnit verticalStretchedOperatorShift() const;

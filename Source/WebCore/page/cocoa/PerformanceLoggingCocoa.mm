@@ -31,13 +31,13 @@
 
 namespace WebCore {
 
-std::optional<uint64_t> PerformanceLogging::physicalFootprint()
+Optional<uint64_t> PerformanceLogging::physicalFootprint()
 {
     task_vm_info_data_t vmInfo;
     mach_msg_type_number_t count = TASK_VM_INFO_COUNT;
     kern_return_t result = task_info(mach_task_self(), TASK_VM_INFO, (task_info_t) &vmInfo, &count);
     if (result != KERN_SUCCESS)
-        return std::nullopt;
+        return WTF::nullopt;
     return vmInfo.phys_footprint;
 }
 

@@ -149,8 +149,8 @@ void WebAudioSourceProviderAVFObjC::unprepare()
 {
     std::lock_guard<Lock> lock(m_mutex);
 
-    m_inputDescription = std::nullopt;
-    m_outputDescription = std::nullopt;
+    m_inputDescription = WTF::nullopt;
+    m_outputDescription = WTF::nullopt;
     m_dataSource = nullptr;
     m_listBufferSize = 0;
     if (m_captureSource) {

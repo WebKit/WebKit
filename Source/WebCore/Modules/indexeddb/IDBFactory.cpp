@@ -72,7 +72,7 @@ IDBFactory::IDBFactory(IDBClient::IDBConnectionProxy& connectionProxy)
 
 IDBFactory::~IDBFactory() = default;
 
-ExceptionOr<Ref<IDBOpenDBRequest>> IDBFactory::open(ScriptExecutionContext& context, const String& name, std::optional<uint64_t> version)
+ExceptionOr<Ref<IDBOpenDBRequest>> IDBFactory::open(ScriptExecutionContext& context, const String& name, Optional<uint64_t> version)
 {
     LOG(IndexedDB, "IDBFactory::open");
     

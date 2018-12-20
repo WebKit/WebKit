@@ -31,9 +31,9 @@ public:
     enum class AnimationState { Playing, Paused, Stopped };
 
     struct ApplicationResult {
-        std::optional<TransformationMatrix> transform;
-        std::optional<double> opacity;
-        std::optional<FilterOperations> filters;
+        Optional<TransformationMatrix> transform;
+        Optional<double> opacity;
+        Optional<FilterOperations> filters;
         bool hasRunningAnimations { false };
     };
 

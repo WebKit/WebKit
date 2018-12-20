@@ -33,7 +33,7 @@ class ScriptExecutionContext;
 
 class DOMMatrix : public DOMMatrixReadOnly {
 public:
-    static ExceptionOr<Ref<DOMMatrix>> create(ScriptExecutionContext&, std::optional<Variant<String, Vector<double>>>&&);
+    static ExceptionOr<Ref<DOMMatrix>> create(ScriptExecutionContext&, Optional<Variant<String, Vector<double>>>&&);
 
     static Ref<DOMMatrix> create(const TransformationMatrix& matrix, Is2D is2D)
     {
@@ -53,9 +53,9 @@ public:
     ExceptionOr<Ref<DOMMatrix>> multiplySelf(DOMMatrixInit&& other);
     ExceptionOr<Ref<DOMMatrix>> preMultiplySelf(DOMMatrixInit&& other);
     Ref<DOMMatrix> translateSelf(double tx = 0, double ty = 0, double tz = 0);
-    Ref<DOMMatrix> scaleSelf(double scaleX = 1, std::optional<double> scaleY = std::nullopt, double scaleZ = 1, double originX = 0, double originY = 0, double originZ = 0);
+    Ref<DOMMatrix> scaleSelf(double scaleX = 1, Optional<double> scaleY = WTF::nullopt, double scaleZ = 1, double originX = 0, double originY = 0, double originZ = 0);
     Ref<DOMMatrix> scale3dSelf(double scale = 1, double originX = 0, double originY = 0, double originZ = 0);
-    Ref<DOMMatrix> rotateSelf(double rotX = 0, std::optional<double> rotY = std::nullopt, std::optional<double> rotZ = std::nullopt); // Angles are in degrees.
+    Ref<DOMMatrix> rotateSelf(double rotX = 0, Optional<double> rotY = WTF::nullopt, Optional<double> rotZ = WTF::nullopt); // Angles are in degrees.
     Ref<DOMMatrix> rotateFromVectorSelf(double x = 0, double y = 0);
     Ref<DOMMatrix> rotateAxisAngleSelf(double x = 0, double y = 0, double z = 0, double angle = 0); // Angle is in degrees.
     Ref<DOMMatrix> skewXSelf(double sx = 0); // Angle is in degrees.

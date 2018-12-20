@@ -160,7 +160,7 @@ static ExceptionOr<ApplePaySessionPaymentRequest::LineItem> convertAndValidate(A
     return WTFMove(result);
 }
 
-static ExceptionOr<Vector<ApplePaySessionPaymentRequest::LineItem>> convertAndValidate(std::optional<Vector<ApplePayLineItem>>&& lineItems)
+static ExceptionOr<Vector<ApplePaySessionPaymentRequest::LineItem>> convertAndValidate(Optional<Vector<ApplePayLineItem>>&& lineItems)
 {
     Vector<ApplePaySessionPaymentRequest::LineItem> result;
     if (!lineItems)
@@ -284,7 +284,7 @@ static ExceptionOr<PaymentAuthorizationResult> convertAndValidate(ApplePayPaymen
 
     case ApplePaySession::STATUS_INVALID_BILLING_POSTAL_ADDRESS:
         convertedResult.status = PaymentAuthorizationStatus::Failure;
-        convertedResult.errors.append({ PaymentError::Code::BillingContactInvalid, { }, std::nullopt });
+        convertedResult.errors.append({ PaymentError::Code::BillingContactInvalid, { }, WTF::nullopt });
         break;
 
     case ApplePaySession::STATUS_INVALID_SHIPPING_POSTAL_ADDRESS:
@@ -294,7 +294,7 @@ static ExceptionOr<PaymentAuthorizationResult> convertAndValidate(ApplePayPaymen
 
     case ApplePaySession::STATUS_INVALID_SHIPPING_CONTACT:
         convertedResult.status = PaymentAuthorizationStatus::Failure;
-        convertedResult.errors.append({ PaymentError::Code::ShippingContactInvalid, { }, std::nullopt });
+        convertedResult.errors.append({ PaymentError::Code::ShippingContactInvalid, { }, WTF::nullopt });
         break;
 
     case ApplePaySession::STATUS_PIN_REQUIRED:
@@ -691,8 +691,8 @@ ExceptionOr<void> ApplePaySession::completeShippingContactSelection(unsigned sho
 {
     ApplePayShippingContactUpdate update;
 
-    std::optional<ApplePayError::Code> errorCode;
-    std::optional<ApplePayError::ContactField> contactField;
+    Optional<ApplePayError::Code> errorCode;
+    Optional<ApplePayError::ContactField> contactField;
 
     switch (status) {
     case ApplePaySession::STATUS_SUCCESS:

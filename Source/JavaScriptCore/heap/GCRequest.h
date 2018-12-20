@@ -41,7 +41,7 @@ struct GCRequest {
     {
     }
     
-    GCRequest(std::optional<CollectionScope> scope)
+    GCRequest(Optional<CollectionScope> scope)
         : scope(scope)
     {
     }
@@ -50,7 +50,7 @@ struct GCRequest {
     
     void dump(PrintStream&) const;
     
-    std::optional<CollectionScope> scope;
+    Optional<CollectionScope> scope;
     RefPtr<SharedTask<void()>> didFinishEndPhase;
 };
 

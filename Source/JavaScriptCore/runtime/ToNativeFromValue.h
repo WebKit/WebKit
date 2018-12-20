@@ -48,10 +48,10 @@ typename Adaptor::Type toNativeFromValue(ExecState* exec, JSValue value)
 }
 
 template<typename Adaptor>
-std::optional<typename Adaptor::Type> toNativeFromValueWithoutCoercion(JSValue value)
+Optional<typename Adaptor::Type> toNativeFromValueWithoutCoercion(JSValue value)
 {
     if (!value.isNumber())
-        return std::nullopt;
+        return WTF::nullopt;
     if (value.isInt32())
         return Adaptor::toNativeFromInt32WithoutCoercion(value.asInt32());
     return Adaptor::toNativeFromDoubleWithoutCoercion(value.asDouble());

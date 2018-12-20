@@ -36,7 +36,7 @@ struct SecurityOriginData;
 class ContentSecurityPolicySource {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    ContentSecurityPolicySource(const ContentSecurityPolicy&, const String& scheme, const String& host, std::optional<uint16_t> port, const String& path, bool hostHasWildcard, bool portHasWildcard);
+    ContentSecurityPolicySource(const ContentSecurityPolicy&, const String& scheme, const String& host, Optional<uint16_t> port, const String& path, bool hostHasWildcard, bool portHasWildcard);
 
     bool matches(const URL&, bool didReceiveRedirectResponse = false) const;
 
@@ -53,7 +53,7 @@ private:
     String m_scheme;
     String m_host;
     String m_path;
-    std::optional<uint16_t> m_port;
+    Optional<uint16_t> m_port;
 
     bool m_hostHasWildcard;
     bool m_portHasWildcard;

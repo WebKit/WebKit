@@ -74,7 +74,7 @@ static EncodedJSValue JSC_HOST_CALL constructJSWebAssemblyTable(ExecState* exec)
     uint32_t initial = toNonWrappingUint32(exec, initialSizeValue);
     RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
 
-    std::optional<uint32_t> maximum;
+    Optional<uint32_t> maximum;
     Identifier maximumIdent = Identifier::fromString(&vm, "maximum");
     bool hasProperty = memoryDescriptor->hasProperty(exec, maximumIdent);
     RETURN_IF_EXCEPTION(throwScope, encodedJSValue());

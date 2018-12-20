@@ -194,7 +194,7 @@ public:
 
     // If the image has a cursor hot-spot, stores it in the argument
     // and returns true. Otherwise returns false.
-    std::optional<IntPoint> hotSpot() const override { return std::nullopt; }
+    Optional<IntPoint> hotSpot() const override { return WTF::nullopt; }
 
 protected:
     void prepareScaleDataIfNecessary();

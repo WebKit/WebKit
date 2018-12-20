@@ -38,8 +38,8 @@ struct ImageBitmapOptions {
     Orientation imageOrientation { Orientation::None };
     PremultiplyAlpha premultiplyAlpha { PremultiplyAlpha::Default };
     ColorSpaceConversion colorSpaceConversion { ColorSpaceConversion::Default };
-    std::optional<unsigned> resizeWidth;
-    std::optional<unsigned> resizeHeight;
+    Optional<unsigned> resizeWidth;
+    Optional<unsigned> resizeHeight;
     ResizeQuality resizeQuality { ResizeQuality::Low };
 };
 

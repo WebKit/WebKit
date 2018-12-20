@@ -32,8 +32,8 @@ class WEBCORE_EXPORT EmptyFrameLoaderClient : public FrameLoaderClient {
 
     void frameLoaderDestroyed() override { }
 
-    std::optional<uint64_t> frameID() const override { return std::nullopt; }
-    std::optional<uint64_t> pageID() const override { return std::nullopt; }
+    Optional<uint64_t> frameID() const override { return WTF::nullopt; }
+    Optional<uint64_t> pageID() const override { return WTF::nullopt; }
     PAL::SessionID sessionID() const override;
 
     bool hasWebView() const final { return true; } // mainly for assertions
@@ -83,7 +83,7 @@ class WEBCORE_EXPORT EmptyFrameLoaderClient : public FrameLoaderClient {
     void dispatchWillClose() final { }
     void dispatchDidStartProvisionalLoad(CompletionHandler<void()>&& completionHandler) final { completionHandler(); }
     void dispatchDidReceiveTitle(const StringWithDirection&) final { }
-    void dispatchDidCommitLoad(std::optional<HasInsecureContent>) final { }
+    void dispatchDidCommitLoad(Optional<HasInsecureContent>) final { }
     void dispatchDidFailProvisionalLoad(const ResourceError&) final { }
     void dispatchDidFailLoad(const ResourceError&) final { }
     void dispatchDidFinishDocumentLoad() final { }

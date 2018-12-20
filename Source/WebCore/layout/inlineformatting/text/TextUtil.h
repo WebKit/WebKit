@@ -36,7 +36,7 @@ namespace Layout {
 class TextUtil {
 public:
     static LayoutUnit width(const InlineItem&, ItemPosition from, ItemPosition to, LayoutUnit contentLogicalLeft);
-    static std::optional<ItemPosition> hyphenPositionBefore(const InlineItem&, ItemPosition from, unsigned length);
+    static Optional<ItemPosition> hyphenPositionBefore(const InlineItem&, ItemPosition from, unsigned length);
 
 private:
     static LayoutUnit fixedPitchWidth(String, const RenderStyle&, ItemPosition from, ItemPosition to, LayoutUnit contentLogicalLeft);

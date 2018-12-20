@@ -63,7 +63,7 @@ void RTCRtpReceiver::getStats(Ref<DeferredPromise>&& promise)
     m_connection->getStats(*this, WTFMove(promise));
 }
 
-std::optional<RTCRtpCapabilities> RTCRtpReceiver::getCapabilities(ScriptExecutionContext& context, const String& kind)
+Optional<RTCRtpCapabilities> RTCRtpReceiver::getCapabilities(ScriptExecutionContext& context, const String& kind)
 {
     return PeerConnectionBackend::receiverCapabilities(context, kind);
 }

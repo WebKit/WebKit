@@ -45,7 +45,7 @@ public:
     explicit AsyncFileStream(FileStreamClient&);
     ~AsyncFileStream();
 
-    void getSize(const String& path, std::optional<WallTime> expectedModificationTime);
+    void getSize(const String& path, Optional<WallTime> expectedModificationTime);
     void openForRead(const String& path, long long offset, long long length);
     void close();
     void read(char* buffer, int length);

@@ -103,7 +103,7 @@ bool PlatformDisplayX11::supportsXComposite() const
     return m_supportsXComposite.value();
 }
 
-bool PlatformDisplayX11::supportsXDamage(std::optional<int>& damageEventBase, std::optional<int>& damageErrorBase) const
+bool PlatformDisplayX11::supportsXDamage(Optional<int>& damageEventBase, Optional<int>& damageErrorBase) const
 {
     if (!m_supportsXDamage) {
         m_supportsXDamage = false;

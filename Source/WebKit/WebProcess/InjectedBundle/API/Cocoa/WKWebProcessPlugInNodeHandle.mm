@@ -64,7 +64,7 @@
 
 - (UIImage *)renderedImageWithOptions:(WKSnapshotOptions)options width:(NSNumber *)width
 {
-    std::optional<float> optionalWidth;
+    Optional<float> optionalWidth;
     if (width)
         optionalWidth = width.floatValue;
 
@@ -84,7 +84,7 @@
 
 - (NSImage *)renderedImageWithOptions:(WKSnapshotOptions)options width:(NSNumber *)width
 {
-    std::optional<float> optionalWidth;
+    Optional<float> optionalWidth;
     if (width)
         optionalWidth = width.floatValue;
 

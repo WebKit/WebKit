@@ -202,12 +202,12 @@ static bool isValidValue(StringView value)
 
 } // namespace RFC7230
 
-std::optional<HTTPHeaderField> HTTPHeaderField::create(String&& unparsedName, String&& unparsedValue)
+Optional<HTTPHeaderField> HTTPHeaderField::create(String&& unparsedName, String&& unparsedValue)
 {
     StringView strippedName = StringView(unparsedName).stripLeadingAndTrailingMatchedCharacters(RFC7230::isWhitespace);
     StringView strippedValue = StringView(unparsedValue).stripLeadingAndTrailingMatchedCharacters(RFC7230::isWhitespace);
     if (!RFC7230::isValidName(strippedName) || !RFC7230::isValidValue(strippedValue))
-        return std::nullopt;
+        return WTF::nullopt;
 
     String name = strippedName.length() == unparsedName.length() ? WTFMove(unparsedName) : strippedName.toString();
     String value = strippedValue.length() == unparsedValue.length() ? WTFMove(unparsedValue) : strippedValue.toString();

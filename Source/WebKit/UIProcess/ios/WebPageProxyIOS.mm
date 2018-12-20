@@ -349,7 +349,7 @@ void WebPageProxy::setDeviceOrientation(int32_t deviceOrientation)
     }
 }
 
-void WebPageProxy::setOverrideViewportArguments(const std::optional<ViewportArguments>& viewportArguments)
+void WebPageProxy::setOverrideViewportArguments(const Optional<ViewportArguments>& viewportArguments)
 {
     if (isValid())
         m_process->send(Messages::WebPage::SetOverrideViewportArguments(viewportArguments), m_pageID);
@@ -878,12 +878,12 @@ void WebPageProxy::couldNotRestorePageState()
     pageClient().couldNotRestorePageState();
 }
 
-void WebPageProxy::restorePageState(std::optional<WebCore::FloatPoint> scrollPosition, const WebCore::FloatPoint& scrollOrigin, const WebCore::FloatBoxExtent& obscuredInsetsOnSave, double scale)
+void WebPageProxy::restorePageState(Optional<WebCore::FloatPoint> scrollPosition, const WebCore::FloatPoint& scrollOrigin, const WebCore::FloatBoxExtent& obscuredInsetsOnSave, double scale)
 {
     pageClient().restorePageState(scrollPosition, scrollOrigin, obscuredInsetsOnSave, scale);
 }
 
-void WebPageProxy::restorePageCenterAndScale(std::optional<WebCore::FloatPoint> center, double scale)
+void WebPageProxy::restorePageCenterAndScale(Optional<WebCore::FloatPoint> center, double scale)
 {
     pageClient().restorePageCenterAndScale(center, scale);
 }
@@ -1127,7 +1127,7 @@ void WebPageProxy::requestAdditionalItemsForDragSession(const IntPoint& clientPo
         m_process->send(Messages::WebPage::RequestAdditionalItemsForDragSession(clientPosition, globalPosition), m_pageID);
 }
 
-void WebPageProxy::didConcludeEditDataInteraction(std::optional<TextIndicatorData> data)
+void WebPageProxy::didConcludeEditDataInteraction(Optional<TextIndicatorData> data)
 {
     pageClient().didConcludeEditDataInteraction(data);
 }

@@ -54,8 +54,8 @@ public:
     const String& sessionID() const { return m_sessionID; }
     const Capabilities& capabilities() const { return m_capabilities; }
 
-    void connectToBrowser(Function<void (std::optional<String> error)>&&);
-    void startAutomationSession(Function<void (bool, std::optional<String>)>&&);
+    void connectToBrowser(Function<void (Optional<String> error)>&&);
+    void startAutomationSession(Function<void (bool, Optional<String>)>&&);
 
     struct CommandResponse {
         RefPtr<JSON::Object> responseObject;
@@ -77,7 +77,7 @@ private:
 #if USE(GLIB)
     static void dbusConnectionClosedCallback(SessionHost*);
     static const GDBusInterfaceVTable s_interfaceVTable;
-    void launchBrowser(Function<void (std::optional<String> error)>&&);
+    void launchBrowser(Function<void (Optional<String> error)>&&);
     void connectToBrowser(std::unique_ptr<ConnectToBrowserAsyncData>&&);
     bool matchCapabilities(GVariant*);
     bool buildSessionCapabilities(GVariantBuilder*) const;
@@ -95,7 +95,7 @@ private:
     HashMap<long, Function<void (CommandResponse&&)>> m_commandRequests;
 
 #if USE(GLIB)
-    Function<void (bool, std::optional<String>)> m_startSessionCompletionHandler;
+    Function<void (bool, Optional<String>)> m_startSessionCompletionHandler;
     GRefPtr<GSubprocess> m_browser;
     GRefPtr<GDBusConnection> m_dbusConnection;
     GRefPtr<GCancellable> m_cancellable;

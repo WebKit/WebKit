@@ -42,7 +42,7 @@ struct TextList {
     bool ordered { false };
 
     template<class Encoder> void encode(Encoder&) const;
-    template<class Decoder> static std::optional<TextList> decode(Decoder&);
+    template<class Decoder> static Optional<TextList> decode(Decoder&);
 
 #if PLATFORM(COCOA)
     RetainPtr<NSTextList> createTextList() const;
@@ -54,22 +54,22 @@ template<class Encoder> inline void TextList::encode(Encoder& encoder) const
     encoder << static_cast<uint8_t>(style) << startingItemNumber << ordered;
 }
 
-template<class Decoder> inline std::optional<TextList> TextList::decode(Decoder& decoder)
+template<class Decoder> inline Optional<TextList> TextList::decode(Decoder& decoder)
 {
-    std::optional<uint8_t> style;
+    Optional<uint8_t> style;
     decoder >> style;
     if (!style)
-        return std::nullopt;
+        return WTF::nullopt;
 
-    std::optional<int> startingItemNumber;
+    Optional<int> startingItemNumber;
     decoder >> startingItemNumber;
     if (!startingItemNumber)
-        return std::nullopt;
+        return WTF::nullopt;
 
-    std::optional<bool> ordered;
+    Optional<bool> ordered;
     decoder >> ordered;
     if (!ordered)
-        return std::nullopt;
+        return WTF::nullopt;
 
     return {{ static_cast<ListStyleType>(WTFMove(*style)), WTFMove(*startingItemNumber), WTFMove(*ordered) }};
 }

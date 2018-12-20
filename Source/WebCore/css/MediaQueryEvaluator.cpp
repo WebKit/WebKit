@@ -255,10 +255,10 @@ static bool compareAspectRatioValue(CSSValue* value, int width, int height, Medi
     return compareValue(width * aspectRatio.denominatorValue(), height * aspectRatio.numeratorValue(), op);
 }
 
-static std::optional<double> doubleValue(CSSValue* value)
+static Optional<double> doubleValue(CSSValue* value)
 {
     if (!is<CSSPrimitiveValue>(value) || !downcast<CSSPrimitiveValue>(*value).isNumber())
-        return std::nullopt;
+        return WTF::nullopt;
     return downcast<CSSPrimitiveValue>(*value).doubleValue(CSSPrimitiveValue::CSS_NUMBER);
 }
 
@@ -798,7 +798,7 @@ static bool displayModeEvaluate(CSSValue* value, const CSSToLengthConversionData
 
     auto keyword = downcast<CSSPrimitiveValue>(*value).valueID();
 
-    auto manifest = frame.page() ? frame.page()->applicationManifest() : std::nullopt;
+    auto manifest = frame.page() ? frame.page()->applicationManifest() : WTF::nullopt;
     if (!manifest)
         return keyword == CSSValueBrowser;
 

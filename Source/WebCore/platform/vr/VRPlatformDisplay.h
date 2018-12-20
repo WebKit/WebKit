@@ -83,10 +83,10 @@ public:
     void setRenderSize(const RenderSize& renderSize) { m_renderSize = renderSize; }
 
     void setPlayAreaBounds(const FloatSize& playAreaBounds) { m_playAreaBounds = playAreaBounds; }
-    const std::optional<FloatSize>& playAreaBounds() const { return m_playAreaBounds; }
+    const Optional<FloatSize>& playAreaBounds() const { return m_playAreaBounds; }
 
     void setSittingToStandingTransform(const TransformationMatrix& transform) { m_sittingToStandingTransform = transform; }
-    const std::optional<TransformationMatrix>& sittingToStandingTransform() const { return m_sittingToStandingTransform; }
+    const Optional<TransformationMatrix>& sittingToStandingTransform() const { return m_sittingToStandingTransform; }
 
 private:
     String m_displayName;
@@ -100,8 +100,8 @@ private:
     RenderSize m_renderSize;
     FieldOfView m_eyeFieldOfView[Eye::NumEyes];
 
-    std::optional<FloatSize> m_playAreaBounds;
-    std::optional<TransformationMatrix> m_sittingToStandingTransform;
+    Optional<FloatSize> m_playAreaBounds;
+    Optional<TransformationMatrix> m_sittingToStandingTransform;
 };
 
 struct VRPlatformTrackingInfo {
@@ -141,20 +141,20 @@ struct VRPlatformTrackingInfo {
     void clear()
     {
         timestamp = 0;
-        position = std::nullopt;
-        orientation = std::nullopt;
-        angularAcceleration = std::nullopt;
-        angularVelocity = std::nullopt;
-        linearAcceleration = std::nullopt;
-        linearVelocity = std::nullopt;
+        position = WTF::nullopt;
+        orientation = WTF::nullopt;
+        angularAcceleration = WTF::nullopt;
+        angularVelocity = WTF::nullopt;
+        linearAcceleration = WTF::nullopt;
+        linearVelocity = WTF::nullopt;
     }
 
-    std::optional<Quaternion> orientation;
-    std::optional<FloatPoint3D> position;
-    std::optional<Float3> angularAcceleration;
-    std::optional<Float3> angularVelocity;
-    std::optional<Float3> linearAcceleration;
-    std::optional<Float3> linearVelocity;
+    Optional<Quaternion> orientation;
+    Optional<FloatPoint3D> position;
+    Optional<Float3> angularAcceleration;
+    Optional<Float3> angularVelocity;
+    Optional<Float3> linearAcceleration;
+    Optional<Float3> linearVelocity;
     double timestamp { 0 };
 };
 

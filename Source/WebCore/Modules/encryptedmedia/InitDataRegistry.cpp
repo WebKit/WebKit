@@ -49,25 +49,25 @@ namespace {
     const uint32_t kKeyIdsMaxKeyIdSizeInBytes = 512;
 }
 
-static std::optional<Vector<Ref<SharedBuffer>>> extractKeyIDsKeyids(const SharedBuffer& buffer)
+static Optional<Vector<Ref<SharedBuffer>>> extractKeyIDsKeyids(const SharedBuffer& buffer)
 {
     // 1. Format
     // https://w3c.github.io/encrypted-media/format-registry/initdata/keyids.html#format
     if (buffer.size() > std::numeric_limits<unsigned>::max())
-        return std::nullopt;
+        return WTF::nullopt;
     String json { buffer.data(), static_cast<unsigned>(buffer.size()) };
 
     RefPtr<JSON::Value> value;
     if (!JSON::Value::parseJSON(json, value))
-        return std::nullopt;
+        return WTF::nullopt;
 
     RefPtr<JSON::Object> object;
     if (!value->asObject(object))
-        return std::nullopt;
+        return WTF::nullopt;
 
     RefPtr<JSON::Array> kidsArray;
     if (!object->getArray("kids", kidsArray))
-        return std::nullopt;
+        return WTF::nullopt;
 
     Vector<Ref<SharedBuffer>> keyIDs;
     for (auto& value : *kidsArray) {
@@ -80,7 +80,7 @@ static std::optional<Vector<Ref<SharedBuffer>>> extractKeyIDsKeyids(const Shared
             continue;
 
         if (keyIDData.size() < kKeyIdsMinKeyIdSizeInBytes || keyIDData.size() > kKeyIdsMaxKeyIdSizeInBytes)
-            return std::nullopt;
+            return WTF::nullopt;
 
         Ref<SharedBuffer> keyIDBuffer = SharedBuffer::create(WTFMove(keyIDData));
         keyIDs.append(WTFMove(keyIDBuffer));
@@ -107,12 +107,12 @@ static RefPtr<SharedBuffer> sanitizeKeyids(const SharedBuffer& buffer)
     return SharedBuffer::create(jsonData.data(), jsonData.length());
 }
 
-static std::optional<Vector<Ref<SharedBuffer>>> extractKeyIDsCenc(const SharedBuffer& buffer)
+static Optional<Vector<Ref<SharedBuffer>>> extractKeyIDsCenc(const SharedBuffer& buffer)
 {
     // 4. Common SystemID and PSSH Box Format
     // https://w3c.github.io/encrypted-media/format-registry/initdata/cenc.html#common-system
     if (buffer.size() >= kCencMaxBoxSize)
-        return std::nullopt;
+        return WTF::nullopt;
 
     unsigned offset = 0;
     Vector<Ref<SharedBuffer>> keyIDs;
@@ -123,11 +123,11 @@ static std::optional<Vector<Ref<SharedBuffer>>> extractKeyIDsCenc(const SharedBu
         auto& boxSize = optionalBoxType.value().second;
 
         if (boxTypeName != ISOProtectionSystemSpecificHeaderBox::boxTypeName() || boxSize > buffer.size())
-            return std::nullopt;
+            return WTF::nullopt;
 
         ISOProtectionSystemSpecificHeaderBox psshBox;
         if (!psshBox.read(view, offset))
-            return std::nullopt;
+            return WTF::nullopt;
 
         for (auto& value : psshBox.keyIDs())
             keyIDs.append(SharedBuffer::create(WTFMove(value)));
@@ -156,12 +156,12 @@ static RefPtr<SharedBuffer> sanitizeWebM(const SharedBuffer& buffer)
     return buffer.copy();
 }
 
-static std::optional<Vector<Ref<SharedBuffer>>> extractKeyIDsWebM(const SharedBuffer& buffer)
+static Optional<Vector<Ref<SharedBuffer>>> extractKeyIDsWebM(const SharedBuffer& buffer)
 {
     Vector<Ref<SharedBuffer>> keyIDs;
     RefPtr<SharedBuffer> sanitizedBuffer = sanitizeWebM(buffer);
     if (!sanitizedBuffer)
-        return std::nullopt;
+        return WTF::nullopt;
 
     // 1. Format
     // https://w3c.github.io/encrypted-media/format-registry/initdata/webm.html#format
@@ -192,11 +192,11 @@ RefPtr<SharedBuffer> InitDataRegistry::sanitizeInitData(const AtomicString& init
     return iter->value.sanitizeInitData(buffer);
 }
 
-std::optional<Vector<Ref<SharedBuffer>>> InitDataRegistry::extractKeyIDs(const AtomicString& initDataType, const SharedBuffer& buffer)
+Optional<Vector<Ref<SharedBuffer>>> InitDataRegistry::extractKeyIDs(const AtomicString& initDataType, const SharedBuffer& buffer)
 {
     auto iter = m_types.find(initDataType);
     if (iter == m_types.end() || !iter->value.sanitizeInitData)
-        return std::nullopt;
+        return WTF::nullopt;
     return iter->value.extractKeyIDs(buffer);
 }
 

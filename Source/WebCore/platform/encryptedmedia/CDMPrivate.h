@@ -55,7 +55,7 @@ public:
     virtual bool supportsSessions() const = 0;
     virtual bool supportsInitData(const AtomicString&, const SharedBuffer&) const = 0;
     virtual RefPtr<SharedBuffer> sanitizeResponse(const SharedBuffer&) const = 0;
-    virtual std::optional<String> sanitizeSessionId(const String&) const = 0;
+    virtual Optional<String> sanitizeSessionId(const String&) const = 0;
 };
 
 }

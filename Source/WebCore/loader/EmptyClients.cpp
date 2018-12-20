@@ -311,16 +311,16 @@ class EmptyInspectorClient final : public InspectorClient {
 
 class EmptyPaymentCoordinatorClient final : public PaymentCoordinatorClient {
     bool supportsVersion(unsigned) final { return false; }
-    std::optional<String> validatedPaymentNetwork(const String&) final { return std::nullopt; }
+    Optional<String> validatedPaymentNetwork(const String&) final { return WTF::nullopt; }
     bool canMakePayments() final { return false; }
     void canMakePaymentsWithActiveCard(const String&, const String&, WTF::Function<void(bool)>&& completionHandler) final { callOnMainThread([completionHandler = WTFMove(completionHandler)] { completionHandler(false); }); }
     void openPaymentSetup(const String&, const String&, WTF::Function<void(bool)>&& completionHandler) final { callOnMainThread([completionHandler = WTFMove(completionHandler)] { completionHandler(false); }); }
     bool showPaymentUI(const URL&, const Vector<URL>&, const ApplePaySessionPaymentRequest&) final { return false; }
     void completeMerchantValidation(const PaymentMerchantSession&) final { }
-    void completeShippingMethodSelection(std::optional<ShippingMethodUpdate>&&) final { }
-    void completeShippingContactSelection(std::optional<ShippingContactUpdate>&&) final { }
-    void completePaymentMethodSelection(std::optional<PaymentMethodUpdate>&&) final { }
-    void completePaymentSession(std::optional<PaymentAuthorizationResult>&&) final { }
+    void completeShippingMethodSelection(Optional<ShippingMethodUpdate>&&) final { }
+    void completeShippingContactSelection(Optional<ShippingContactUpdate>&&) final { }
+    void completePaymentMethodSelection(Optional<PaymentMethodUpdate>&&) final { }
+    void completePaymentSession(Optional<PaymentAuthorizationResult>&&) final { }
     void cancelPaymentSession() final { }
     void abortPaymentSession() final { }
     void paymentCoordinatorDestroyed() final { }
@@ -330,7 +330,7 @@ class EmptyPaymentCoordinatorClient final : public PaymentCoordinatorClient {
 
 class EmptyPluginInfoProvider final : public PluginInfoProvider {
     void refreshPlugins() final { };
-    Vector<PluginInfo> pluginInfo(Page&, std::optional<Vector<SupportedPluginIdentifier>>&) final { return { }; }
+    Vector<PluginInfo> pluginInfo(Page&, Optional<Vector<SupportedPluginIdentifier>>&) final { return { }; }
     Vector<PluginInfo> webVisiblePluginInfo(Page&, const URL&) final { return { }; }
 };
 

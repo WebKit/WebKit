@@ -41,19 +41,19 @@ struct VerticalMargin {
     ComputedValues nonCollapsedValues() const { return m_nonCollapsed; }
     
     struct CollapsedValues {
-        std::optional<LayoutUnit> before;
-        std::optional<LayoutUnit> after;
+        Optional<LayoutUnit> before;
+        Optional<LayoutUnit> after;
     };
-    std::optional<CollapsedValues> collapsedValues() const { return m_collapsed; }
+    Optional<CollapsedValues> collapsedValues() const { return m_collapsed; }
     void setCollapsedValues(CollapsedValues collapsedValues) { m_collapsed = collapsedValues; }
 
-    VerticalMargin(ComputedValues nonCollapsed, std::optional<CollapsedValues>);
+    VerticalMargin(ComputedValues nonCollapsed, Optional<CollapsedValues>);
 
     VerticalMargin() = default;
     ~VerticalMargin() = default;
 private:
     ComputedValues m_nonCollapsed;
-    std::optional<CollapsedValues> m_collapsed;
+    Optional<CollapsedValues> m_collapsed;
 };
 
 struct HorizontalMargin {
@@ -63,14 +63,14 @@ struct HorizontalMargin {
 
 struct PositiveAndNegativeVerticalMargin {
     struct Values {
-        std::optional<LayoutUnit> positive;
-        std::optional<LayoutUnit> negative;
+        Optional<LayoutUnit> positive;
+        Optional<LayoutUnit> negative;
     };
     Values before;
     Values after;
 };
 
-inline VerticalMargin::VerticalMargin(VerticalMargin::ComputedValues nonCollapsed, std::optional<VerticalMargin::CollapsedValues> collapsed)
+inline VerticalMargin::VerticalMargin(VerticalMargin::ComputedValues nonCollapsed, Optional<VerticalMargin::CollapsedValues> collapsed)
     : m_nonCollapsed(nonCollapsed)
     , m_collapsed(collapsed)
 {

@@ -285,7 +285,7 @@ MediaQueryParser::MediaQueryData::MediaQueryData(MediaQueryParserContext context
 void MediaQueryParser::MediaQueryData::clear()
 {
     m_restrictor = MediaQuery::None;
-    m_mediaType = std::nullopt;
+    m_mediaType = WTF::nullopt;
     m_mediaFeature = String();
     m_expressions.clear();
 }

@@ -45,13 +45,13 @@ public:
     void match(RequestInfo&&, CacheQueryOptions&&, Ref<DeferredPromise>&&);
 
     using MatchAllPromise = DOMPromiseDeferred<IDLSequence<IDLInterface<FetchResponse>>>;
-    void matchAll(std::optional<RequestInfo>&&, CacheQueryOptions&&, MatchAllPromise&&);
+    void matchAll(Optional<RequestInfo>&&, CacheQueryOptions&&, MatchAllPromise&&);
     void add(RequestInfo&&, DOMPromiseDeferred<void>&&);
 
     void addAll(Vector<RequestInfo>&&, DOMPromiseDeferred<void>&&);
     void put(RequestInfo&&, Ref<FetchResponse>&&, DOMPromiseDeferred<void>&&);
     void remove(RequestInfo&&, CacheQueryOptions&&, DOMPromiseDeferred<IDLBoolean>&&);
-    void keys(std::optional<RequestInfo>&&, CacheQueryOptions&&, KeysPromise&&);
+    void keys(Optional<RequestInfo>&&, CacheQueryOptions&&, KeysPromise&&);
 
     const String& name() const { return m_name; }
     uint64_t identifier() const { return m_identifier; }
@@ -71,7 +71,7 @@ private:
 
     void putWithResponseData(DOMPromiseDeferred<void>&&, Ref<FetchRequest>&&, Ref<FetchResponse>&&, ExceptionOr<RefPtr<SharedBuffer>>&&);
 
-    void retrieveRecords(const URL&, WTF::Function<void(std::optional<Exception>&&)>&&);
+    void retrieveRecords(const URL&, WTF::Function<void(Optional<Exception>&&)>&&);
     Vector<CacheStorageRecord> queryCacheWithTargetStorage(const FetchRequest&, const CacheQueryOptions&, const Vector<CacheStorageRecord>&);
     void queryCache(Ref<FetchRequest>&&, CacheQueryOptions&&, WTF::Function<void(ExceptionOr<Vector<CacheStorageRecord>>&&)>&&);
     void batchDeleteOperation(const FetchRequest&, CacheQueryOptions&&, WTF::Function<void(ExceptionOr<bool>&&)>&&);

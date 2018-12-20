@@ -33,12 +33,12 @@
 namespace WebCore {
 
 struct RTCDataChannelInit {
-    std::optional<bool> ordered;
-    std::optional<unsigned short> maxPacketLifeTime;
-    std::optional<unsigned short> maxRetransmits;
+    Optional<bool> ordered;
+    Optional<unsigned short> maxPacketLifeTime;
+    Optional<unsigned short> maxRetransmits;
     String protocol;
-    std::optional<bool> negotiated;
-    std::optional<unsigned short> id;
+    Optional<bool> negotiated;
+    Optional<unsigned short> id;
 };
 
 class RTCDataChannelHandlerClient;

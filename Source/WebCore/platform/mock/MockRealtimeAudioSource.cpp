@@ -114,7 +114,7 @@ const RealtimeMediaSourceCapabilities& MockRealtimeAudioSource::capabilities()
 
 void MockRealtimeAudioSource::settingsDidChange(OptionSet<RealtimeMediaSourceSettings::Flag>)
 {
-    m_currentSettings = std::nullopt;
+    m_currentSettings = WTF::nullopt;
 }
 
 void MockRealtimeAudioSource::startProducingData()

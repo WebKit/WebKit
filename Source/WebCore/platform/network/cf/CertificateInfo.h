@@ -74,7 +74,7 @@ public:
     WEBCORE_EXPORT Type type() const;
     WEBCORE_EXPORT bool containsNonRootSHA1SignedCertificate() const;
 
-    std::optional<SummaryInfo> summaryInfo() const;
+    Optional<SummaryInfo> summaryInfo() const;
 
     bool isEmpty() const { return type() == Type::None; }
 

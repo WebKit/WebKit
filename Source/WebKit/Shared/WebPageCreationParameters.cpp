@@ -122,229 +122,229 @@ void WebPageCreationParameters::encode(IPC::Encoder& encoder) const
 #endif
 }
 
-std::optional<WebPageCreationParameters> WebPageCreationParameters::decode(IPC::Decoder& decoder)
+Optional<WebPageCreationParameters> WebPageCreationParameters::decode(IPC::Decoder& decoder)
 {
     WebPageCreationParameters parameters;
     if (!decoder.decode(parameters.viewSize))
-        return std::nullopt;
+        return WTF::nullopt;
     if (!decoder.decode(parameters.activityState))
-        return std::nullopt;
+        return WTF::nullopt;
     if (!decoder.decode(parameters.store))
-        return std::nullopt;
+        return WTF::nullopt;
     if (!decoder.decodeEnum(parameters.drawingAreaType))
-        return std::nullopt;
-    std::optional<WebPageGroupData> pageGroupData;
+        return WTF::nullopt;
+    Optional<WebPageGroupData> pageGroupData;
     decoder >> pageGroupData;
     if (!pageGroupData)
-        return std::nullopt;
+        return WTF::nullopt;
     parameters.pageGroupData = WTFMove(*pageGroupData);
     if (!decoder.decode(parameters.drawsBackground))
-        return std::nullopt;
+        return WTF::nullopt;
     if (!decoder.decode(parameters.isEditable))
-        return std::nullopt;
+        return WTF::nullopt;
     if (!decoder.decode(parameters.underlayColor))
-        return std::nullopt;
+        return WTF::nullopt;
     if (!decoder.decode(parameters.useFixedLayout))
-        return std::nullopt;
+        return WTF::nullopt;
     if (!decoder.decode(parameters.fixedLayoutSize))
-        return std::nullopt;
+        return WTF::nullopt;
     if (!decoder.decode(parameters.alwaysShowsHorizontalScroller))
-        return std::nullopt;
+        return WTF::nullopt;
     if (!decoder.decode(parameters.alwaysShowsVerticalScroller))
-        return std::nullopt;
+        return WTF::nullopt;
     if (!decoder.decodeEnum(parameters.paginationMode))
-        return std::nullopt;
+        return WTF::nullopt;
     if (!decoder.decode(parameters.paginationBehavesLikeColumns))
-        return std::nullopt;
+        return WTF::nullopt;
     if (!decoder.decode(parameters.pageLength))
-        return std::nullopt;
+        return WTF::nullopt;
     if (!decoder.decode(parameters.gapBetweenPages))
-        return std::nullopt;
+        return WTF::nullopt;
     if (!decoder.decode(parameters.paginationLineGridEnabled))
-        return std::nullopt;
+        return WTF::nullopt;
 
-    std::optional<String> userAgent;
+    Optional<String> userAgent;
     decoder >> userAgent;
     if (!userAgent)
-        return std::nullopt;
+        return WTF::nullopt;
     parameters.userAgent = WTFMove(*userAgent);
 
-    std::optional<Vector<BackForwardListItemState>> itemStates;
+    Optional<Vector<BackForwardListItemState>> itemStates;
     decoder >> itemStates;
     if (!itemStates)
-        return std::nullopt;
+        return WTF::nullopt;
     parameters.itemStates = WTFMove(*itemStates);
 
     if (!decoder.decode(parameters.sessionID))
-        return std::nullopt;
+        return WTF::nullopt;
 
-    std::optional<uint64_t> userContentControllerIdentifier;
+    Optional<uint64_t> userContentControllerIdentifier;
     decoder >> userContentControllerIdentifier;
     if (!userContentControllerIdentifier)
-        return std::nullopt;
+        return WTF::nullopt;
     parameters.userContentControllerID = makeObjectIdentifier<UserContentControllerIdentifierType>(*userContentControllerIdentifier);
 
     if (!decoder.decode(parameters.visitedLinkTableID))
-        return std::nullopt;
+        return WTF::nullopt;
     if (!decoder.decode(parameters.websiteDataStoreID))
-        return std::nullopt;
+        return WTF::nullopt;
     if (!decoder.decode(parameters.canRunBeforeUnloadConfirmPanel))
-        return std::nullopt;
+        return WTF::nullopt;
     if (!decoder.decode(parameters.canRunModal))
-        return std::nullopt;
+        return WTF::nullopt;
     if (!decoder.decode(parameters.deviceScaleFactor))
-        return std::nullopt;
+        return WTF::nullopt;
     if (!decoder.decode(parameters.viewScaleFactor))
-        return std::nullopt;
+        return WTF::nullopt;
     if (!decoder.decode(parameters.topContentInset))
-        return std::nullopt;
+        return WTF::nullopt;
     if (!decoder.decode(parameters.mediaVolume))
-        return std::nullopt;
+        return WTF::nullopt;
     if (!decoder.decode(parameters.muted))
-        return std::nullopt;
+        return WTF::nullopt;
     if (!decoder.decode(parameters.mayStartMediaWhenInWindow))
-        return std::nullopt;
+        return WTF::nullopt;
     if (!decoder.decode(parameters.viewLayoutSize))
-        return std::nullopt;
+        return WTF::nullopt;
     if (!decoder.decode(parameters.autoSizingShouldExpandToViewHeight))
-        return std::nullopt;
+        return WTF::nullopt;
     if (!decoder.decode(parameters.viewportSizeForCSSViewportUnits))
-        return std::nullopt;
+        return WTF::nullopt;
     if (!decoder.decodeEnum(parameters.scrollPinningBehavior))
-        return std::nullopt;
+        return WTF::nullopt;
 
-    std::optional<std::optional<uint32_t>> scrollbarOverlayStyle;
+    Optional<Optional<uint32_t>> scrollbarOverlayStyle;
     decoder >> scrollbarOverlayStyle;
     if (!scrollbarOverlayStyle)
-        return std::nullopt;
+        return WTF::nullopt;
     parameters.scrollbarOverlayStyle = WTFMove(*scrollbarOverlayStyle);
 
     if (!decoder.decode(parameters.backgroundExtendsBeyondPage))
-        return std::nullopt;
+        return WTF::nullopt;
     if (!decoder.decodeEnum(parameters.layerHostingMode))
-        return std::nullopt;
+        return WTF::nullopt;
     if (!decoder.decode(parameters.mimeTypesWithCustomContentProviders))
-        return std::nullopt;
+        return WTF::nullopt;
     if (!decoder.decode(parameters.controlledByAutomation))
-        return std::nullopt;
+        return WTF::nullopt;
 
 #if PLATFORM(MAC)
     if (!decoder.decode(parameters.colorSpace))
-        return std::nullopt;
+        return WTF::nullopt;
     if (!decoder.decode(parameters.useSystemAppearance))
-        return std::nullopt;
+        return WTF::nullopt;
     if (!decoder.decode(parameters.useDarkAppearance))
-        return std::nullopt;
+        return WTF::nullopt;
     if (!decoder.decode(parameters.shouldDelayAttachingDrawingArea))
-        return std::nullopt;
+        return WTF::nullopt;
 #endif
 
 #if PLATFORM(IOS_FAMILY)
     if (!decoder.decode(parameters.screenSize))
-        return std::nullopt;
+        return WTF::nullopt;
     if (!decoder.decode(parameters.availableScreenSize))
-        return std::nullopt;
+        return WTF::nullopt;
     if (!decoder.decode(parameters.overrideScreenSize))
-        return std::nullopt;
+        return WTF::nullopt;
     if (!decoder.decode(parameters.textAutosizingWidth))
-        return std::nullopt;
+        return WTF::nullopt;
     if (!decoder.decode(parameters.ignoresViewportScaleLimits))
-        return std::nullopt;
+        return WTF::nullopt;
     if (!decoder.decode(parameters.viewportConfigurationViewLayoutSize))
-        return std::nullopt;
+        return WTF::nullopt;
     if (!decoder.decode(parameters.viewportConfigurationLayoutSizeScaleFactor))
-        return std::nullopt;
+        return WTF::nullopt;
     if (!decoder.decode(parameters.viewportConfigurationViewSize))
-        return std::nullopt;
+        return WTF::nullopt;
     if (!decoder.decode(parameters.maximumUnobscuredSize))
-        return std::nullopt;
+        return WTF::nullopt;
     if (!decoder.decode(parameters.deviceOrientation))
-        return std::nullopt;
+        return WTF::nullopt;
 #endif
 
 #if PLATFORM(COCOA)
     if (!decoder.decode(parameters.smartInsertDeleteEnabled))
-        return std::nullopt;
+        return WTF::nullopt;
     if (!decoder.decode(parameters.additionalSupportedImageTypes))
-        return std::nullopt;
+        return WTF::nullopt;
 #endif
 
     if (!decoder.decode(parameters.appleMailPaginationQuirkEnabled))
-        return std::nullopt;
+        return WTF::nullopt;
 
     if (!decoder.decode(parameters.appleMailLinesClampEnabled))
-        return std::nullopt;
+        return WTF::nullopt;
 
     if (!decoder.decode(parameters.shouldScaleViewToFitDocument))
-        return std::nullopt;
+        return WTF::nullopt;
 
     if (!decoder.decodeEnum(parameters.userInterfaceLayoutDirection))
-        return std::nullopt;
+        return WTF::nullopt;
     if (!decoder.decode(parameters.observedLayoutMilestones))
-        return std::nullopt;
+        return WTF::nullopt;
 
     if (!decoder.decode(parameters.overrideContentSecurityPolicy))
-        return std::nullopt;
+        return WTF::nullopt;
 
-    std::optional<std::optional<double>> cpuLimit;
+    Optional<Optional<double>> cpuLimit;
     decoder >> cpuLimit;
     if (!cpuLimit)
-        return std::nullopt;
+        return WTF::nullopt;
     parameters.cpuLimit = WTFMove(*cpuLimit);
 
     if (!decoder.decode(parameters.urlSchemeHandlers))
-        return std::nullopt;
+        return WTF::nullopt;
 
 #if ENABLE(APPLICATION_MANIFEST)
-    std::optional<std::optional<WebCore::ApplicationManifest>> applicationManifest;
+    Optional<Optional<WebCore::ApplicationManifest>> applicationManifest;
     decoder >> applicationManifest;
     if (!applicationManifest)
-        return std::nullopt;
+        return WTF::nullopt;
     parameters.applicationManifest = WTFMove(*applicationManifest);
 #endif
 #if ENABLE(SERVICE_WORKER)
     if (!decoder.decode(parameters.hasRegisteredServiceWorkers))
-        return std::nullopt;
+        return WTF::nullopt;
 #endif
 
     if (!decoder.decode(parameters.needsFontAttributes))
-        return std::nullopt;
+        return WTF::nullopt;
 
     if (!decoder.decode(parameters.iceCandidateFilteringEnabled))
-        return std::nullopt;
+        return WTF::nullopt;
 
     if (!decoder.decode(parameters.enumeratingAllNetworkInterfacesEnabled))
-        return std::nullopt;
+        return WTF::nullopt;
 
-    std::optional<Vector<std::pair<uint64_t, String>>> userContentWorlds;
+    Optional<Vector<std::pair<uint64_t, String>>> userContentWorlds;
     decoder >> userContentWorlds;
     if (!userContentWorlds)
-        return std::nullopt;
+        return WTF::nullopt;
     parameters.userContentWorlds = WTFMove(*userContentWorlds);
 
-    std::optional<Vector<WebUserScriptData>> userScripts;
+    Optional<Vector<WebUserScriptData>> userScripts;
     decoder >> userScripts;
     if (!userScripts)
-        return std::nullopt;
+        return WTF::nullopt;
     parameters.userScripts = WTFMove(*userScripts);
     
-    std::optional<Vector<WebUserStyleSheetData>> userStyleSheets;
+    Optional<Vector<WebUserStyleSheetData>> userStyleSheets;
     decoder >> userStyleSheets;
     if (!userStyleSheets)
-        return std::nullopt;
+        return WTF::nullopt;
     parameters.userStyleSheets = WTFMove(*userStyleSheets);
     
-    std::optional<Vector<WebScriptMessageHandlerData>> messageHandlers;
+    Optional<Vector<WebScriptMessageHandlerData>> messageHandlers;
     decoder >> messageHandlers;
     if (!messageHandlers)
-        return std::nullopt;
+        return WTF::nullopt;
     parameters.messageHandlers = WTFMove(*messageHandlers);
     
 #if ENABLE(CONTENT_EXTENSIONS)
-    std::optional<Vector<std::pair<String, WebCompiledContentRuleListData>>> contentRuleLists;
+    Optional<Vector<std::pair<String, WebCompiledContentRuleListData>>> contentRuleLists;
     decoder >> contentRuleLists;
     if (!contentRuleLists)
-        return std::nullopt;
+        return WTF::nullopt;
     parameters.contentRuleLists = WTFMove(*contentRuleLists);
 #endif
 

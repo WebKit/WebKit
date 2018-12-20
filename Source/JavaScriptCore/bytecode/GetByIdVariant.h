@@ -47,7 +47,7 @@ public:
         std::unique_ptr<CallLinkStatus> = nullptr,
         JSFunction* = nullptr,
         FunctionPtr<OperationPtrTag> customAccessorGetter = nullptr,
-        std::optional<DOMAttributeAnnotation> = std::nullopt);
+        Optional<DOMAttributeAnnotation> = WTF::nullopt);
 
     ~GetByIdVariant();
     
@@ -67,7 +67,7 @@ public:
     JSFunction* intrinsicFunction() const { return m_intrinsicFunction; }
     Intrinsic intrinsic() const { return m_intrinsicFunction ? m_intrinsicFunction->intrinsic() : NoIntrinsic; }
     FunctionPtr<OperationPtrTag> customAccessorGetter() const { return m_customAccessorGetter; }
-    std::optional<DOMAttributeAnnotation> domAttribute() const { return m_domAttribute; }
+    Optional<DOMAttributeAnnotation> domAttribute() const { return m_domAttribute; }
 
     bool isPropertyUnset() const { return offset() == invalidOffset; }
 
@@ -90,7 +90,7 @@ private:
     std::unique_ptr<CallLinkStatus> m_callLinkStatus;
     JSFunction* m_intrinsicFunction;
     FunctionPtr<OperationPtrTag> m_customAccessorGetter;
-    std::optional<DOMAttributeAnnotation> m_domAttribute;
+    Optional<DOMAttributeAnnotation> m_domAttribute;
 };
 
 } // namespace JSC

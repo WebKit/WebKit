@@ -44,7 +44,7 @@ public:
     void atomCharacterClassRange(UChar, UChar) {}
     void atomCharacterClassBuiltIn(BuiltInCharacterClassID, bool) {}
     void atomCharacterClassEnd() {}
-    void atomParenthesesSubpatternBegin(bool = true, std::optional<String> = std::nullopt) {}
+    void atomParenthesesSubpatternBegin(bool = true, Optional<String> = WTF::nullopt) {}
     void atomParentheticalAssertionBegin(bool = false) {}
     void atomParenthesesEnd() {}
     void atomBackReference(unsigned) {}

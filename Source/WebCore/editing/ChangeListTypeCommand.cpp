@@ -35,7 +35,7 @@
 
 namespace WebCore {
 
-static std::optional<std::pair<ChangeListTypeCommand::Type, Ref<HTMLElement>>> listConversionTypeForSelection(const VisibleSelection& selection)
+static Optional<std::pair<ChangeListTypeCommand::Type, Ref<HTMLElement>>> listConversionTypeForSelection(const VisibleSelection& selection)
 {
     RefPtr<HTMLElement> listToReplace;
     auto commonAncestor = makeRefPtr(Range::commonAncestorContainer(selection.start().containerNode(), selection.end().containerNode()));
@@ -50,16 +50,16 @@ static std::optional<std::pair<ChangeListTypeCommand::Type, Ref<HTMLElement>>> l
     if (is<HTMLOListElement>(listToReplace))
         return {{ ChangeListTypeCommand::Type::ConvertToUnorderedList, listToReplace.releaseNonNull() }};
 
-    return std::nullopt;
+    return WTF::nullopt;
 }
 
-std::optional<ChangeListTypeCommand::Type> ChangeListTypeCommand::listConversionType(Document& document)
+Optional<ChangeListTypeCommand::Type> ChangeListTypeCommand::listConversionType(Document& document)
 {
     if (auto frame = makeRefPtr(document.frame())) {
         if (auto typeAndElement = listConversionTypeForSelection(frame->selection().selection()))
             return typeAndElement->first;
     }
-    return std::nullopt;
+    return WTF::nullopt;
 }
 
 Ref<HTMLElement> ChangeListTypeCommand::createNewList(const HTMLElement& listToReplace)

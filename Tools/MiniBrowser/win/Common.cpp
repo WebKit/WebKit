@@ -204,7 +204,7 @@ bool askProxySettings(HWND hwnd, ProxySettings& settings)
     return dialog.run(hInst, hwnd, IDD_PROXY);
 }
 
-std::optional<Credential> askCredential(HWND hwnd, const std::wstring& realm)
+Optional<Credential> askCredential(HWND hwnd, const std::wstring& realm)
 {
     struct AuthDialog : public Dialog {
         std::wstring realm;
@@ -228,7 +228,7 @@ std::optional<Credential> askCredential(HWND hwnd, const std::wstring& realm)
 
     if (dialog.run(hInst, hwnd, IDD_AUTH))
         return dialog.credential;
-    return std::nullopt;
+    return WTF::nullopt;
 }
 
 CommandLineOptions parseCommandLine()

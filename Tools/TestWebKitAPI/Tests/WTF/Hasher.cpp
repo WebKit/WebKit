@@ -168,7 +168,7 @@ TEST(WTF, Hasher_multiple)
     EXPECT_EQ(zero32BitHash, computeHash(std::array<int, 1> { { 0 } }));
     EXPECT_EQ(zero32BitHash, computeHash(Vector<int> { 0 }));
     EXPECT_EQ(zero32BitHash, computeHash(Vector<int, 1> { 0 }));
-    EXPECT_EQ(zero32BitHash, computeHash(std::optional<int> { std::nullopt }));
+    EXPECT_EQ(zero32BitHash, computeHash(Optional<int> { WTF::nullopt }));
     EXPECT_EQ(zero32BitHash, computeHash(std::make_tuple(0)));
 
     EXPECT_EQ(one64BitHash, computeHash(1, 0));
@@ -176,7 +176,7 @@ TEST(WTF, Hasher_multiple)
     EXPECT_EQ(one64BitHash, computeHash(std::make_pair(1, 0)));
     EXPECT_EQ(one64BitHash, computeHash(std::array<int, 2> { { 1, 0 } }));
     EXPECT_EQ(one64BitHash, computeHash({ 1, 0 }));
-    EXPECT_EQ(one64BitHash, computeHash(std::optional<int> { 0 }));
+    EXPECT_EQ(one64BitHash, computeHash(Optional<int> { 0 }));
     EXPECT_EQ(one64BitHash, computeHash(Vector<int> { { 1, 0 } }));
     EXPECT_EQ(one64BitHash, computeHash(Vector<int, 1> { { 1, 0 } }));
 

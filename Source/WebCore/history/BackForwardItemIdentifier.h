@@ -40,7 +40,7 @@ struct BackForwardItemIdentifier {
     unsigned hash() const;
 
     template<class Encoder> void encode(Encoder&) const;
-    template<class Decoder> static std::optional<BackForwardItemIdentifier> decode(Decoder&);
+    template<class Decoder> static Optional<BackForwardItemIdentifier> decode(Decoder&);
 
 #if !LOG_DISABLED
     const char* logString() const;
@@ -66,17 +66,17 @@ void BackForwardItemIdentifier::encode(Encoder& encoder) const
 }
 
 template<class Decoder>
-std::optional<BackForwardItemIdentifier> BackForwardItemIdentifier::decode(Decoder& decoder)
+Optional<BackForwardItemIdentifier> BackForwardItemIdentifier::decode(Decoder& decoder)
 {
-    std::optional<ProcessIdentifier> processIdentifier;
+    Optional<ProcessIdentifier> processIdentifier;
     decoder >> processIdentifier;
     if (!processIdentifier)
-        return std::nullopt;
+        return WTF::nullopt;
 
-    std::optional<ObjectIdentifier<ItemIdentifierType>> itemIdentifier;
+    Optional<ObjectIdentifier<ItemIdentifierType>> itemIdentifier;
     decoder >> itemIdentifier;
     if (!itemIdentifier)
-        return std::nullopt;
+        return WTF::nullopt;
 
     return { { WTFMove(*processIdentifier), WTFMove(*itemIdentifier) } };
 }

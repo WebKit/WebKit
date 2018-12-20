@@ -202,37 +202,37 @@ bool getFileSize(PlatformFileHandle handle, long long& result)
     return true;
 }
 
-std::optional<WallTime> getFileCreationTime(const String& path)
+Optional<WallTime> getFileCreationTime(const String& path)
 {
 #if OS(DARWIN) || OS(OPENBSD) || OS(NETBSD) || OS(FREEBSD)
     CString fsRep = fileSystemRepresentation(path);
 
     if (!fsRep.data() || fsRep.data()[0] == '\0')
-        return std::nullopt;
+        return WTF::nullopt;
 
     struct stat fileInfo;
 
     if (stat(fsRep.data(), &fileInfo))
-        return std::nullopt;
+        return WTF::nullopt;
 
     return WallTime::fromRawSeconds(fileInfo.st_birthtime);
 #else
     UNUSED_PARAM(path);
-    return std::nullopt;
+    return WTF::nullopt;
 #endif
 }
 
-std::optional<WallTime> getFileModificationTime(const String& path)
+Optional<WallTime> getFileModificationTime(const String& path)
 {
     CString fsRep = fileSystemRepresentation(path);
 
     if (!fsRep.data() || fsRep.data()[0] == '\0')
-        return std::nullopt;
+        return WTF::nullopt;
 
     struct stat fileInfo;
 
     if (stat(fsRep.data(), &fileInfo))
-        return std::nullopt;
+        return WTF::nullopt;
 
     return WallTime::fromRawSeconds(fileInfo.st_mtime);
 }
@@ -246,16 +246,16 @@ static FileMetadata::Type toFileMetataType(struct stat fileInfo)
     return FileMetadata::Type::File;
 }
 
-static std::optional<FileMetadata> fileMetadataUsingFunction(const String& path, int (*statFunc)(const char*, struct stat*))
+static Optional<FileMetadata> fileMetadataUsingFunction(const String& path, int (*statFunc)(const char*, struct stat*))
 {
     CString fsRep = fileSystemRepresentation(path);
 
     if (!fsRep.data() || fsRep.data()[0] == '\0')
-        return std::nullopt;
+        return WTF::nullopt;
 
     struct stat fileInfo;
     if (statFunc(fsRep.data(), &fileInfo))
-        return std::nullopt;
+        return WTF::nullopt;
 
     String filename = pathGetFileName(path);
     bool isHidden = !filename.isEmpty() && filename[0] == '.';
@@ -267,12 +267,12 @@ static std::optional<FileMetadata> fileMetadataUsingFunction(const String& path,
     };
 }
 
-std::optional<FileMetadata> fileMetadata(const String& path)
+Optional<FileMetadata> fileMetadata(const String& path)
 {
     return fileMetadataUsingFunction(path, &lstat);
 }
 
-std::optional<FileMetadata> fileMetadataFollowingSymlinks(const String& path)
+Optional<FileMetadata> fileMetadataFollowingSymlinks(const String& path)
 {
     return fileMetadataUsingFunction(path, &stat);
 }
@@ -472,11 +472,11 @@ bool hardLinkOrCopyFile(const String& source, const String& destination)
     return appendResult;
 }
 
-std::optional<int32_t> getFileDeviceId(const CString& fsFile)
+Optional<int32_t> getFileDeviceId(const CString& fsFile)
 {
     struct stat fileStat;
     if (stat(fsFile.data(), &fileStat) == -1)
-        return std::nullopt;
+        return WTF::nullopt;
 
     return fileStat.st_dev;
 }

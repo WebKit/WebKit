@@ -112,7 +112,7 @@ private:
     void trackEnded(MediaStreamTrackPrivate&) final { }
 
     Ref<MediaStreamTrackPrivate> m_videoSource;
-    std::optional<RealtimeMediaSourceSettings> m_initialSettings;
+    Optional<RealtimeMediaSourceSettings> m_initialSettings;
     Timer m_blackFrameTimer;
     rtc::scoped_refptr<webrtc::VideoFrameBuffer> m_blackFrame;
 

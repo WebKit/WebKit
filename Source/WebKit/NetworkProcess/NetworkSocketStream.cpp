@@ -53,7 +53,7 @@ void NetworkSocketStream::sendData(const IPC::DataReference& data, uint64_t iden
     });
 }
 
-void NetworkSocketStream::sendHandshake(const IPC::DataReference& data, const std::optional<CookieRequestHeaderFieldProxy>& headerFieldProxy, uint64_t identifier)
+void NetworkSocketStream::sendHandshake(const IPC::DataReference& data, const Optional<CookieRequestHeaderFieldProxy>& headerFieldProxy, uint64_t identifier)
 {
     m_impl->platformSendHandshake(data.data(), data.size(), headerFieldProxy, [this, protectedThis = makeRef(*this), identifier] (bool success, bool didAccessSecureCookies) {
         send(Messages::WebSocketStream::DidSendHandshake(identifier, success, didAccessSecureCookies));

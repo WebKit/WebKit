@@ -411,10 +411,10 @@ ExceptionOr<void> XMLHttpRequest::open(const String& method, const String& url, 
     return open(method, urlWithCredentials, async);
 }
 
-std::optional<ExceptionOr<void>> XMLHttpRequest::prepareToSend()
+Optional<ExceptionOr<void>> XMLHttpRequest::prepareToSend()
 {
-    // A return value other than std::nullopt means we should not try to send, and we should return that value to the caller.
-    // std::nullopt means we are ready to send and should continue with the send algorithm.
+    // A return value other than WTF::nullopt means we should not try to send, and we should return that value to the caller.
+    // WTF::nullopt means we are ready to send and should continue with the send algorithm.
 
     if (!scriptExecutionContext())
         return ExceptionOr<void> { };
@@ -436,10 +436,10 @@ std::optional<ExceptionOr<void>> XMLHttpRequest::prepareToSend()
     }
 
     m_error = false;
-    return std::nullopt;
+    return WTF::nullopt;
 }
 
-ExceptionOr<void> XMLHttpRequest::send(std::optional<SendTypes>&& sendType)
+ExceptionOr<void> XMLHttpRequest::send(Optional<SendTypes>&& sendType)
 {
     InspectorInstrumentation::willSendXMLHttpRequest(scriptExecutionContext(), url());
 
@@ -627,7 +627,7 @@ ExceptionOr<void> XMLHttpRequest::createRequest()
         }
     }
 
-    m_exceptionCode = std::nullopt;
+    m_exceptionCode = WTF::nullopt;
     m_error = false;
     m_uploadComplete = !request.httpBody();
     m_sendFlag = true;

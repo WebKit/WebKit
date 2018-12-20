@@ -34,7 +34,7 @@
 
 namespace WebCore {
 
-static inline void didFinishGetRequest(ServiceWorkerGlobalScope& scope, DeferredPromise& promise, ExceptionOr<std::optional<ServiceWorkerClientData>>&& clientData)
+static inline void didFinishGetRequest(ServiceWorkerGlobalScope& scope, DeferredPromise& promise, ExceptionOr<Optional<ServiceWorkerClientData>>&& clientData)
 {
     if (clientData.hasException()) {
         promise.reject(clientData.releaseException());

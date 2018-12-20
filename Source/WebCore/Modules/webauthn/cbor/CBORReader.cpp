@@ -80,10 +80,10 @@ CBORReader::~CBORReader()
 }
 
 // static
-std::optional<CBORValue> CBORReader::read(const Bytes& data, DecoderError* errorCodeOut, int maxNestingLevel)
+Optional<CBORValue> CBORReader::read(const Bytes& data, DecoderError* errorCodeOut, int maxNestingLevel)
 {
     CBORReader reader(data.begin(), data.end());
-    std::optional<CBORValue> decodedCbor = reader.decodeCBOR(maxNestingLevel);
+    Optional<CBORValue> decodedCbor = reader.decodeCBOR(maxNestingLevel);
 
     if (decodedCbor)
         reader.checkExtraneousData();
@@ -91,20 +91,20 @@ std::optional<CBORValue> CBORReader::read(const Bytes& data, DecoderError* error
         *errorCodeOut = reader.getErrorCode();
 
     if (reader.getErrorCode() != DecoderError::CBORNoError)
-        return std::nullopt;
+        return WTF::nullopt;
     return decodedCbor;
 }
 
-std::optional<CBORValue> CBORReader::decodeCBOR(int maxNestingLevel)
+Optional<CBORValue> CBORReader::decodeCBOR(int maxNestingLevel)
 {
     if (maxNestingLevel < 0 || maxNestingLevel > kCBORMaxDepth) {
         m_errorCode = DecoderError::TooMuchNesting;
-        return std::nullopt;
+        return WTF::nullopt;
     }
 
     if (!canConsume(1)) {
         m_errorCode = DecoderError::IncompleteCBORData;
-        return std::nullopt;
+        return WTF::nullopt;
     }
 
     const uint8_t initialByte = *m_it++;
@@ -113,7 +113,7 @@ std::optional<CBORValue> CBORReader::decodeCBOR(int maxNestingLevel)
 
     uint64_t value;
     if (!readVariadicLengthInteger(additionalInfo, &value))
-        return std::nullopt;
+        return WTF::nullopt;
 
     switch (major_type) {
     case CBORValue::Type::Unsigned:
@@ -135,7 +135,7 @@ std::optional<CBORValue> CBORReader::decodeCBOR(int maxNestingLevel)
     }
 
     m_errorCode = DecoderError::UnsupportedMajorType;
-    return std::nullopt;
+    return WTF::nullopt;
 }
 
 bool CBORReader::readVariadicLengthInteger(uint8_t additionalInfo, uint64_t* value)
@@ -174,30 +174,30 @@ bool CBORReader::readVariadicLengthInteger(uint8_t additionalInfo, uint64_t* val
     return checkMinimalEncoding(additionalBytes, intData);
 }
 
-std::optional<CBORValue> CBORReader::decodeValueToNegative(uint64_t value)
+Optional<CBORValue> CBORReader::decodeValueToNegative(uint64_t value)
 {
     if (value > static_cast<uint64_t>(std::numeric_limits<int64_t>::max())) {
         m_errorCode = DecoderError::OutOfRangeIntegerValue;
-        return std::nullopt;
+        return WTF::nullopt;
     }
     return CBORValue(-static_cast<int64_t>(value) - 1);
 }
 
-std::optional<CBORValue> CBORReader::decodeValueToUnsigned(uint64_t value)
+Optional<CBORValue> CBORReader::decodeValueToUnsigned(uint64_t value)
 {
     if (value > static_cast<uint64_t>(std::numeric_limits<int64_t>::max())) {
         m_errorCode = DecoderError::OutOfRangeIntegerValue;
-        return std::nullopt;
+        return WTF::nullopt;
     }
     return CBORValue(static_cast<int64_t>(value));
 }
 
-std::optional<CBORValue> CBORReader::readSimpleValue(uint8_t additionalInfo, uint64_t value)
+Optional<CBORValue> CBORReader::readSimpleValue(uint8_t additionalInfo, uint64_t value)
 {
     // Floating point numbers are not supported.
     if (additionalInfo > 24 && additionalInfo < 28) {
         m_errorCode = DecoderError::UnsupportedFloatingPointValue;
-        return std::nullopt;
+        return WTF::nullopt;
     }
 
     ASSERT(value <= 255u);
@@ -211,14 +211,14 @@ std::optional<CBORValue> CBORReader::readSimpleValue(uint8_t additionalInfo, uin
     }
 
     m_errorCode = DecoderError::UnsupportedSimpleValue;
-    return std::nullopt;
+    return WTF::nullopt;
 }
 
-std::optional<CBORValue> CBORReader::readString(uint64_t numBytes)
+Optional<CBORValue> CBORReader::readString(uint64_t numBytes)
 {
     if (!canConsume(numBytes)) {
         m_errorCode = DecoderError::IncompleteCBORData;
-        return std::nullopt;
+        return WTF::nullopt;
     }
 
     ASSERT(numBytes <= std::numeric_limits<size_t>::max());
@@ -229,14 +229,14 @@ std::optional<CBORValue> CBORReader::readString(uint64_t numBytes)
     // Not to confuse it with an actual empty WTFString.
     if (!numBytes || hasValidUTF8Format(cborString))
         return CBORValue(WTFMove(cborString));
-    return std::nullopt;
+    return WTF::nullopt;
 }
 
-std::optional<CBORValue> CBORReader::readBytes(uint64_t numBytes)
+Optional<CBORValue> CBORReader::readBytes(uint64_t numBytes)
 {
     if (!canConsume(numBytes)) {
         m_errorCode = DecoderError::IncompleteCBORData;
-        return std::nullopt;
+        return WTF::nullopt;
     }
 
     Bytes cborByteString;
@@ -247,34 +247,34 @@ std::optional<CBORValue> CBORReader::readBytes(uint64_t numBytes)
     return CBORValue(WTFMove(cborByteString));
 }
 
-std::optional<CBORValue> CBORReader::readCBORArray(uint64_t length, int maxNestingLevel)
+Optional<CBORValue> CBORReader::readCBORArray(uint64_t length, int maxNestingLevel)
 {
     CBORValue::ArrayValue cborArray;
     while (length-- > 0) {
-        std::optional<CBORValue> cborElement = decodeCBOR(maxNestingLevel - 1);
+        Optional<CBORValue> cborElement = decodeCBOR(maxNestingLevel - 1);
         if (!cborElement)
-            return std::nullopt;
+            return WTF::nullopt;
         cborArray.append(WTFMove(cborElement.value()));
     }
     return CBORValue(WTFMove(cborArray));
 }
 
-std::optional<CBORValue> CBORReader::readCBORMap(uint64_t length, int maxNestingLevel)
+Optional<CBORValue> CBORReader::readCBORMap(uint64_t length, int maxNestingLevel)
 {
     CBORValue::MapValue cborMap;
     while (length-- > 0) {
-        std::optional<CBORValue> key = decodeCBOR(maxNestingLevel - 1);
-        std::optional<CBORValue> value = decodeCBOR(maxNestingLevel - 1);
+        Optional<CBORValue> key = decodeCBOR(maxNestingLevel - 1);
+        Optional<CBORValue> value = decodeCBOR(maxNestingLevel - 1);
         if (!key || !value)
-            return std::nullopt;
+            return WTF::nullopt;
 
         // Only CBOR maps with integer or string type keys are allowed.
         if (key.value().type() != CBORValue::Type::String && key.value().type() != CBORValue::Type::Unsigned) {
             m_errorCode = DecoderError::IncorrectMapKeyType;
-            return std::nullopt;
+            return WTF::nullopt;
         }
         if (!checkDuplicateKey(key.value(), cborMap) || !checkOutOfOrderKey(key.value(), cborMap))
-            return std::nullopt;
+            return WTF::nullopt;
 
         cborMap.emplace(std::make_pair(WTFMove(key.value()), WTFMove(value.value())));
     }

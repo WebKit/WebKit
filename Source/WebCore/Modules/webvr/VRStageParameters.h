@@ -33,7 +33,7 @@ namespace WebCore {
 
 class VRStageParameters : public RefCounted<VRStageParameters> {
 public:
-    static RefPtr<VRStageParameters> create(const std::optional<TransformationMatrix>& sittingToStandingTransform, const std::optional<FloatSize>& playAreaBounds)
+    static RefPtr<VRStageParameters> create(const Optional<TransformationMatrix>& sittingToStandingTransform, const Optional<FloatSize>& playAreaBounds)
     {
         if (!sittingToStandingTransform || !playAreaBounds)
             return nullptr;

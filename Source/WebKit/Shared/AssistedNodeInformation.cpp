@@ -40,23 +40,23 @@ void OptionItem::encode(IPC::Encoder& encoder) const
     encoder << parentGroupID;
 }
 
-std::optional<OptionItem> OptionItem::decode(IPC::Decoder& decoder)
+Optional<OptionItem> OptionItem::decode(IPC::Decoder& decoder)
 {
     OptionItem result;
     if (!decoder.decode(result.text))
-        return std::nullopt;
+        return WTF::nullopt;
 
     if (!decoder.decode(result.isGroup))
-        return std::nullopt;
+        return WTF::nullopt;
 
     if (!decoder.decode(result.isSelected))
-        return std::nullopt;
+        return WTF::nullopt;
 
     if (!decoder.decode(result.disabled))
-        return std::nullopt;
+        return WTF::nullopt;
 
     if (!decoder.decode(result.parentGroupID))
-        return std::nullopt;
+        return WTF::nullopt;
     
     return WTFMove(result);
 }

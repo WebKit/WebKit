@@ -151,7 +151,7 @@ void IntersectionObserver::observe(Element& target)
     if (!trackingDocument() || !m_callback || m_observationTargets.contains(&target))
         return;
 
-    target.ensureIntersectionObserverData().registrations.append({ makeWeakPtr(this), std::nullopt });
+    target.ensureIntersectionObserverData().registrations.append({ makeWeakPtr(this), WTF::nullopt });
     bool hadObservationTargets = hasObservationTargets();
     m_observationTargets.append(&target);
     auto* document = trackingDocument();

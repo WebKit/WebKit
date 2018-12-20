@@ -83,7 +83,7 @@ void InlineFormattingContext::Line::appendContent(const InlineRunProvider::Run& 
     ASSERT(!isClosed());
 
     // Append this text run to the end of the last text run, if the last run is continuous.
-    std::optional<InlineRun::TextContext> textRun;
+    Optional<InlineRun::TextContext> textRun;
     if (run.isText()) {
         auto textContext = run.textContext();
         auto runLength = textContext->isCollapsed() ? 1 : textContext->length();

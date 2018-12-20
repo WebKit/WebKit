@@ -56,7 +56,7 @@ public:
     unsigned numberOfChannels();
 
     // Play-state
-    ExceptionOr<void> start(double when, double grainOffset, std::optional<double> grainDuration);
+    ExceptionOr<void> start(double when, double grainOffset, Optional<double> grainDuration);
 
     // Note: the attribute was originally exposed as .looping, but to be more consistent in naming with <audio>
     // and with how it's described in the specification, the proper attribute name is .loop

@@ -62,7 +62,7 @@ void computeFullDesktopFrame();
 bool getAppDataFolder(_bstr_t& directory);
 CommandLineOptions parseCommandLine();
 void createCrashReport(EXCEPTION_POINTERS*);
-std::optional<Credential> askCredential(HWND, const std::wstring& realm);
+Optional<Credential> askCredential(HWND, const std::wstring& realm);
 bool askProxySettings(HWND, ProxySettings&);
 
 extern HINSTANCE hInst;

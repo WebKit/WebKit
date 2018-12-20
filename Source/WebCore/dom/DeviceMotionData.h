@@ -39,27 +39,27 @@ public:
         {
             return adoptRef(*new Acceleration);
         }
-        static Ref<Acceleration> create(std::optional<double> x, std::optional<double> y, std::optional<double> z)
+        static Ref<Acceleration> create(Optional<double> x, Optional<double> y, Optional<double> z)
         {
             return adoptRef(*new Acceleration(x, y, z));
         }
 
-        std::optional<double> x() const { return m_x; }
-        std::optional<double> y() const { return m_y; }
-        std::optional<double> z() const { return m_z; }
+        Optional<double> x() const { return m_x; }
+        Optional<double> y() const { return m_y; }
+        Optional<double> z() const { return m_z; }
 
     private:
         Acceleration() = default;
-        Acceleration(std::optional<double> x, std::optional<double> y, std::optional<double> z)
+        Acceleration(Optional<double> x, Optional<double> y, Optional<double> z)
             : m_x(x)
             , m_y(y)
             , m_z(z)
         {
         }
 
-        std::optional<double> m_x;
-        std::optional<double> m_y;
-        std::optional<double> m_z;
+        Optional<double> m_x;
+        Optional<double> m_y;
+        Optional<double> m_z;
     };
 
     class RotationRate : public RefCounted<DeviceMotionData::RotationRate> {
@@ -68,46 +68,46 @@ public:
         {
             return adoptRef(*new RotationRate);
         }
-        static Ref<RotationRate> create(std::optional<double> alpha, std::optional<double> beta, std::optional<double> gamma)
+        static Ref<RotationRate> create(Optional<double> alpha, Optional<double> beta, Optional<double> gamma)
         {
             return adoptRef(*new RotationRate(alpha, beta, gamma));
         }
 
-        std::optional<double> alpha() const { return m_alpha; }
-        std::optional<double> beta() const { return m_beta; }
-        std::optional<double> gamma() const { return m_gamma; }
+        Optional<double> alpha() const { return m_alpha; }
+        Optional<double> beta() const { return m_beta; }
+        Optional<double> gamma() const { return m_gamma; }
 
     private:
         RotationRate() = default;
-        RotationRate(std::optional<double> alpha, std::optional<double> beta, std::optional<double> gamma)
+        RotationRate(Optional<double> alpha, Optional<double> beta, Optional<double> gamma)
             : m_alpha(alpha)
             , m_beta(beta)
             , m_gamma(gamma)
         {
         }
 
-        std::optional<double> m_alpha;
-        std::optional<double> m_beta;
-        std::optional<double> m_gamma;
+        Optional<double> m_alpha;
+        Optional<double> m_beta;
+        Optional<double> m_gamma;
     };
 
     WEBCORE_EXPORT static Ref<DeviceMotionData> create();
-    WEBCORE_EXPORT static Ref<DeviceMotionData> create(RefPtr<Acceleration>&&, RefPtr<Acceleration>&& accelerationIncludingGravity, RefPtr<RotationRate>&&, std::optional<double> interval);
+    WEBCORE_EXPORT static Ref<DeviceMotionData> create(RefPtr<Acceleration>&&, RefPtr<Acceleration>&& accelerationIncludingGravity, RefPtr<RotationRate>&&, Optional<double> interval);
 
     const Acceleration* acceleration() const { return m_acceleration.get(); }
     const Acceleration* accelerationIncludingGravity() const { return m_accelerationIncludingGravity.get(); }
     const RotationRate* rotationRate() const { return m_rotationRate.get(); }
     
-    std::optional<double> interval() const { return m_interval; }
+    Optional<double> interval() const { return m_interval; }
 
 private:
     DeviceMotionData() = default;
-    DeviceMotionData(RefPtr<Acceleration>&&, RefPtr<Acceleration>&& accelerationIncludingGravity, RefPtr<RotationRate>&&, std::optional<double> interval);
+    DeviceMotionData(RefPtr<Acceleration>&&, RefPtr<Acceleration>&& accelerationIncludingGravity, RefPtr<RotationRate>&&, Optional<double> interval);
 
     RefPtr<Acceleration> m_acceleration;
     RefPtr<Acceleration> m_accelerationIncludingGravity;
     RefPtr<RotationRate> m_rotationRate;
-    std::optional<double> m_interval;
+    Optional<double> m_interval;
 };
 
 } // namespace WebCore

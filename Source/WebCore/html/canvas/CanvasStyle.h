@@ -79,7 +79,7 @@ private:
     };
 
     struct CurrentColor {
-        std::optional<float> overrideAlpha;
+        Optional<float> overrideAlpha;
     };
 
     CanvasStyle(CurrentColor);

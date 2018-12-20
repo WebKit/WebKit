@@ -50,14 +50,14 @@ namespace Layout {
 
 std::unique_ptr<Container> TreeBuilder::createLayoutTree(const RenderView& renderView)
 {
-    std::unique_ptr<Container> initialContainingBlock(new BlockContainer(std::nullopt, RenderStyle::clone(renderView.style())));
+    std::unique_ptr<Container> initialContainingBlock(new BlockContainer(WTF::nullopt, RenderStyle::clone(renderView.style())));
     TreeBuilder::createSubTree(renderView, *initialContainingBlock);
     return initialContainingBlock;
 }
 
 void TreeBuilder::createSubTree(const RenderElement& rootRenderer, Container& rootContainer)
 {
-    auto elementAttributes = [] (const RenderElement& renderer) -> std::optional<Box::ElementAttributes> {
+    auto elementAttributes = [] (const RenderElement& renderer) -> Optional<Box::ElementAttributes> {
         if (renderer.isDocumentElementRenderer())
             return Box::ElementAttributes { Box::ElementType::Document };
         if (auto* element = renderer.element()) {
@@ -81,14 +81,14 @@ void TreeBuilder::createSubTree(const RenderElement& rootRenderer, Container& ro
                 return Box::ElementAttributes { Box::ElementType::Replaced };
             return Box::ElementAttributes { Box::ElementType::GenericElement };
         }
-        return std::nullopt;
+        return WTF::nullopt;
     };
 
     for (auto& child : childrenOfType<RenderObject>(rootRenderer)) {
         std::unique_ptr<Box> box;
 
         if (is<RenderText>(child)) {
-            box = std::make_unique<InlineBox>(std::optional<Box::ElementAttributes>(), RenderStyle::createAnonymousStyleWithDisplay(rootRenderer.style(), DisplayType::Inline));
+            box = std::make_unique<InlineBox>(Optional<Box::ElementAttributes>(), RenderStyle::createAnonymousStyleWithDisplay(rootRenderer.style(), DisplayType::Inline));
             downcast<InlineBox>(*box).setTextContent(downcast<RenderText>(child).originalText());
         } else if (is<RenderReplaced>(child)) {
             auto& renderer = downcast<RenderReplaced>(child);

@@ -109,19 +109,19 @@ public:
 
     void setIndicatorData(const TextIndicatorData& data) { m_indicatorData = data; }
     bool hasIndicatorData() const { return !!m_indicatorData; }
-    std::optional<TextIndicatorData> indicatorData() const { return m_indicatorData; }
+    Optional<TextIndicatorData> indicatorData() const { return m_indicatorData; }
 
     void setVisiblePath(const Path& path) { m_visiblePath = path; }
     bool hasVisiblePath() const { return !!m_visiblePath; }
-    std::optional<Path> visiblePath() const { return m_visiblePath; }
+    Optional<Path> visiblePath() const { return m_visiblePath; }
 
     explicit operator bool() const { return !!m_dragImageRef; }
     DragImageRef get() const { return m_dragImageRef; }
 
 private:
     DragImageRef m_dragImageRef;
-    std::optional<TextIndicatorData> m_indicatorData;
-    std::optional<Path> m_visiblePath;
+    Optional<TextIndicatorData> m_indicatorData;
+    Optional<Path> m_visiblePath;
 };
 
 }

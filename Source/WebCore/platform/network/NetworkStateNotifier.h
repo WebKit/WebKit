@@ -71,7 +71,7 @@ private:
     static void networkChangedCallback(NetworkStateNotifier*);
 #endif
 
-    std::optional<bool> m_isOnLine;
+    Optional<bool> m_isOnLine;
     Vector<WTF::Function<void(bool)>> m_listeners;
     Timer m_updateStateTimer;
 

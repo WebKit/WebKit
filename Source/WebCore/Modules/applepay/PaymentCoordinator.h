@@ -60,10 +60,10 @@ public:
 
     bool beginPaymentSession(PaymentSession&, const URL& originatingURL, const Vector<URL>& linkIconURLs, const ApplePaySessionPaymentRequest&);
     void completeMerchantValidation(const PaymentMerchantSession&);
-    void completeShippingMethodSelection(std::optional<ShippingMethodUpdate>&&);
-    void completeShippingContactSelection(std::optional<ShippingContactUpdate>&&);
-    void completePaymentMethodSelection(std::optional<PaymentMethodUpdate>&&);
-    void completePaymentSession(std::optional<PaymentAuthorizationResult>&&);
+    void completeShippingMethodSelection(Optional<ShippingMethodUpdate>&&);
+    void completeShippingContactSelection(Optional<ShippingContactUpdate>&&);
+    void completePaymentMethodSelection(Optional<PaymentMethodUpdate>&&);
+    void completePaymentSession(Optional<PaymentAuthorizationResult>&&);
     void abortPaymentSession();
     void cancelPaymentSession();
 
@@ -74,7 +74,7 @@ public:
     WEBCORE_EXPORT void didSelectShippingContact(const PaymentContact&);
     WEBCORE_EXPORT void didCancelPaymentSession();
 
-    std::optional<String> validatedPaymentNetwork(unsigned version, const String&) const;
+    Optional<String> validatedPaymentNetwork(unsigned version, const String&) const;
 
 private:
     PaymentCoordinatorClient& m_client;

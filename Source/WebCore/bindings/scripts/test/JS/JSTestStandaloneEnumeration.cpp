@@ -49,14 +49,14 @@ template<> JSString* convertEnumerationToJS(ExecState& state, TestStandaloneEnum
     return jsStringWithCache(&state, convertEnumerationToString(enumerationValue));
 }
 
-template<> std::optional<TestStandaloneEnumeration> parseEnumeration<TestStandaloneEnumeration>(ExecState& state, JSValue value)
+template<> Optional<TestStandaloneEnumeration> parseEnumeration<TestStandaloneEnumeration>(ExecState& state, JSValue value)
 {
     auto stringValue = value.toWTFString(&state);
     if (stringValue == "enumValue1")
         return TestStandaloneEnumeration::EnumValue1;
     if (stringValue == "enumValue2")
         return TestStandaloneEnumeration::EnumValue2;
-    return std::nullopt;
+    return WTF::nullopt;
 }
 
 template<> const char* expectedEnumerationValues<TestStandaloneEnumeration>()

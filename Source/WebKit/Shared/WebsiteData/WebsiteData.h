@@ -46,7 +46,7 @@ struct WebsiteData {
         uint64_t size;
 
         void encode(IPC::Encoder&) const;
-        static std::optional<WebsiteData::Entry> decode(IPC::Decoder&);
+        static Optional<WebsiteData::Entry> decode(IPC::Decoder&);
     };
 
     Vector<Entry> entries;

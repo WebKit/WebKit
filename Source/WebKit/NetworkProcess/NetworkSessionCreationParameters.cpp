@@ -69,63 +69,63 @@ void NetworkSessionCreationParameters::encode(IPC::Encoder& encoder) const
 #endif
 }
 
-std::optional<NetworkSessionCreationParameters> NetworkSessionCreationParameters::decode(IPC::Decoder& decoder)
+Optional<NetworkSessionCreationParameters> NetworkSessionCreationParameters::decode(IPC::Decoder& decoder)
 {
     PAL::SessionID sessionID;
     if (!decoder.decode(sessionID))
-        return std::nullopt;
+        return WTF::nullopt;
     
-    std::optional<String> boundInterfaceIdentifier;
+    Optional<String> boundInterfaceIdentifier;
     decoder >> boundInterfaceIdentifier;
     if (!boundInterfaceIdentifier)
-        return std::nullopt;
+        return WTF::nullopt;
     
-    std::optional<AllowsCellularAccess> allowsCellularAccess;
+    Optional<AllowsCellularAccess> allowsCellularAccess;
     decoder >> allowsCellularAccess;
     if (!allowsCellularAccess)
-        return std::nullopt;
+        return WTF::nullopt;
     
 #if PLATFORM(COCOA)
     RetainPtr<CFDictionaryRef> proxyConfiguration;
     if (!IPC::decode(decoder, proxyConfiguration))
-        return std::nullopt;
+        return WTF::nullopt;
     
-    std::optional<String> sourceApplicationBundleIdentifier;
+    Optional<String> sourceApplicationBundleIdentifier;
     decoder >> sourceApplicationBundleIdentifier;
     if (!sourceApplicationBundleIdentifier)
-        return std::nullopt;
+        return WTF::nullopt;
     
-    std::optional<String> sourceApplicationSecondaryIdentifier;
+    Optional<String> sourceApplicationSecondaryIdentifier;
     decoder >> sourceApplicationSecondaryIdentifier;
     if (!sourceApplicationSecondaryIdentifier)
-        return std::nullopt;
+        return WTF::nullopt;
     
-    std::optional<bool> shouldLogCookieInformation;
+    Optional<bool> shouldLogCookieInformation;
     decoder >> shouldLogCookieInformation;
     if (!shouldLogCookieInformation)
-        return std::nullopt;
+        return WTF::nullopt;
     
-    std::optional<Seconds> loadThrottleLatency;
+    Optional<Seconds> loadThrottleLatency;
     decoder >> loadThrottleLatency;
     if (!loadThrottleLatency)
-        return std::nullopt;
+        return WTF::nullopt;
     
-    std::optional<URL> httpProxy;
+    Optional<URL> httpProxy;
     decoder >> httpProxy;
     if (!httpProxy)
-        return std::nullopt;
+        return WTF::nullopt;
 
-    std::optional<URL> httpsProxy;
+    Optional<URL> httpsProxy;
     decoder >> httpsProxy;
     if (!httpsProxy)
-        return std::nullopt;
+        return WTF::nullopt;
 #endif
     
 #if USE(CURL)
-    std::optional<WebCore::CurlProxySettings> proxySettings;
+    Optional<WebCore::CurlProxySettings> proxySettings;
     decoder >> proxySettings;
     if (!proxySettings)
-        return std::nullopt;
+        return WTF::nullopt;
 #endif
     
     return {{

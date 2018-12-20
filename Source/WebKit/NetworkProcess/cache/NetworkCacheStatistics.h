@@ -64,7 +64,7 @@ private:
     void addStoreDecisionsToDatabase(const HashMap<String, NetworkCache::StoreDecision>&);
     void writeTimerFired();
 
-    typedef Function<void (bool wasEverRequested, const std::optional<StoreDecision>&)> RequestedCompletionHandler;
+    typedef Function<void (bool wasEverRequested, const Optional<StoreDecision>&)> RequestedCompletionHandler;
     enum class NeedUncachedReason { No, Yes };
     void queryWasEverRequested(const String&, NeedUncachedReason, RequestedCompletionHandler&&);
     void markAsRequested(const String& hash);

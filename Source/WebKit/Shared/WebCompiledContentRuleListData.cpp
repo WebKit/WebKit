@@ -49,32 +49,32 @@ void WebCompiledContentRuleListData::encode(IPC::Encoder& encoder) const
     encoder << topURLFiltersBytecodeSize;
 }
 
-std::optional<WebCompiledContentRuleListData> WebCompiledContentRuleListData::decode(IPC::Decoder& decoder)
+Optional<WebCompiledContentRuleListData> WebCompiledContentRuleListData::decode(IPC::Decoder& decoder)
 {
     WebCompiledContentRuleListData compiledContentRuleListData;
     SharedMemory::Handle handle;
     if (!decoder.decode(handle))
-        return std::nullopt;
+        return WTF::nullopt;
     compiledContentRuleListData.data = SharedMemory::map(handle, SharedMemory::Protection::ReadOnly);
 
     if (!decoder.decode(compiledContentRuleListData.conditionsApplyOnlyToDomainOffset))
-        return std::nullopt;
+        return WTF::nullopt;
     if (!decoder.decode(compiledContentRuleListData.actionsOffset))
-        return std::nullopt;
+        return WTF::nullopt;
     if (!decoder.decode(compiledContentRuleListData.actionsSize))
-        return std::nullopt;
+        return WTF::nullopt;
     if (!decoder.decode(compiledContentRuleListData.filtersWithoutConditionsBytecodeOffset))
-        return std::nullopt;
+        return WTF::nullopt;
     if (!decoder.decode(compiledContentRuleListData.filtersWithoutConditionsBytecodeSize))
-        return std::nullopt;
+        return WTF::nullopt;
     if (!decoder.decode(compiledContentRuleListData.filtersWithConditionsBytecodeOffset))
-        return std::nullopt;
+        return WTF::nullopt;
     if (!decoder.decode(compiledContentRuleListData.filtersWithConditionsBytecodeSize))
-        return std::nullopt;
+        return WTF::nullopt;
     if (!decoder.decode(compiledContentRuleListData.topURLFiltersBytecodeOffset))
-        return std::nullopt;
+        return WTF::nullopt;
     if (!decoder.decode(compiledContentRuleListData.topURLFiltersBytecodeSize))
-        return std::nullopt;
+        return WTF::nullopt;
 
     return WTFMove(compiledContentRuleListData);
 }

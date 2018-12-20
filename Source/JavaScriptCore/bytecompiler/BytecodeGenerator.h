@@ -564,7 +564,7 @@ namespace JSC {
         RegisterID* emitNodeForProperty(RegisterID* dst, ExpressionNode* node)
         {
             if (node->isString()) {
-                if (std::optional<uint32_t> index = parseIndex(static_cast<StringNode*>(node)->value()))
+                if (Optional<uint32_t> index = parseIndex(static_cast<StringNode*>(node)->value()))
                     return emitLoad(dst, jsNumber(index.value()));
             }
             return emitNode(dst, node);
@@ -1222,7 +1222,7 @@ namespace JSC {
         Vector<LexicalScopeStackEntry> m_lexicalScopeStack;
 
         Vector<TDZMap> m_TDZStack;
-        std::optional<size_t> m_varScopeLexicalScopeStackIndex;
+        Optional<size_t> m_varScopeLexicalScopeStackIndex;
         void pushTDZVariables(const VariableEnvironment&, TDZCheckOptimization, TDZRequirement);
 
         ScopeNode* const m_scopeNode;

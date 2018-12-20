@@ -212,7 +212,7 @@ public:
         ASSERT(!*this);
     }
 
-    TableInformation(uint32_t initial, std::optional<uint32_t> maximum, bool isImport)
+    TableInformation(uint32_t initial, Optional<uint32_t> maximum, bool isImport)
         : m_initial(initial)
         , m_maximum(maximum)
         , m_isImport(isImport)
@@ -224,11 +224,11 @@ public:
     explicit operator bool() const { return m_isValid; }
     bool isImport() const { return m_isImport; }
     uint32_t initial() const { return m_initial; }
-    std::optional<uint32_t> maximum() const { return m_maximum; }
+    Optional<uint32_t> maximum() const { return m_maximum; }
 
 private:
     uint32_t m_initial;
-    std::optional<uint32_t> m_maximum;
+    Optional<uint32_t> m_maximum;
     bool m_isImport { false };
     bool m_isValid { false };
 };

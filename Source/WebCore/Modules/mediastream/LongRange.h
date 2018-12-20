@@ -31,8 +31,8 @@
 namespace WebCore {
 
 struct LongRange {
-    std::optional<int> max;
-    std::optional<int> min;
+    Optional<int> max;
+    Optional<int> min;
 };
 
 }

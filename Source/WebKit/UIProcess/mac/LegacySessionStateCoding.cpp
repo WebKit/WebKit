@@ -706,13 +706,13 @@ public:
 #endif
 
     template<typename T>
-    auto operator>>(std::optional<T>& value) -> typename std::enable_if<std::is_enum<T>::value, HistoryEntryDataDecoder&>::type
+    auto operator>>(Optional<T>& value) -> typename std::enable_if<std::is_enum<T>::value, HistoryEntryDataDecoder&>::type
     {
         uint32_t underlyingEnumValue;
         *this >> underlyingEnumValue;
 
         if (!isValid() || !isValidEnum(static_cast<T>(underlyingEnumValue)))
-            value = std::nullopt;
+            value = WTF::nullopt;
         else
             value = static_cast<T>(underlyingEnumValue);
 
@@ -792,7 +792,7 @@ private:
 
 static void decodeFormDataElement(HistoryEntryDataDecoder& decoder, HTTPBody::Element& formDataElement)
 {
-    std::optional<FormDataElementType> elementType;
+    Optional<FormDataElementType> elementType;
     decoder >> elementType;
     if (!elementType)
         return;
@@ -1069,7 +1069,7 @@ static bool decodeV1SessionHistory(CFDictionaryRef sessionHistoryDictionary, Bac
     auto currentIndexNumber = dynamic_cf_cast<CFNumberRef>(CFDictionaryGetValue(sessionHistoryDictionary, sessionHistoryCurrentIndexKey));
     if (!currentIndexNumber) {
         // No current index means the dictionary represents an empty session.
-        backForwardListState.currentIndex = std::nullopt;
+        backForwardListState.currentIndex = WTF::nullopt;
         backForwardListState.items = { };
         return true;
     }

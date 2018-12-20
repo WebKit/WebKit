@@ -222,7 +222,7 @@ const char* s_guardedInternalBuiltinIsReadableStreamLockedCode =
 JSC::FunctionExecutable* codeName##Generator(JSC::VM& vm) \
 {\
     JSVMClientData* clientData = static_cast<JSVMClientData*>(vm.clientData); \
-    return clientData->builtinFunctions().guardedInternalBuiltinBuiltins().codeName##Executable()->link(vm, clientData->builtinFunctions().guardedInternalBuiltinBuiltins().codeName##Source(), std::nullopt, s_##codeName##Intrinsic); \
+    return clientData->builtinFunctions().guardedInternalBuiltinBuiltins().codeName##Executable()->link(vm, clientData->builtinFunctions().guardedInternalBuiltinBuiltins().codeName##Source(), WTF::nullopt, s_##codeName##Intrinsic); \
 }
 WEBCORE_FOREACH_GUARDEDINTERNALBUILTIN_BUILTIN_CODE(DEFINE_BUILTIN_GENERATOR)
 #undef DEFINE_BUILTIN_GENERATOR

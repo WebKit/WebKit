@@ -56,14 +56,14 @@ public:
     TextBreakIterator& operator=(const TextBreakIterator&) = delete;
     TextBreakIterator& operator=(TextBreakIterator&&) = default;
 
-    std::optional<unsigned> preceding(unsigned location) const
+    Optional<unsigned> preceding(unsigned location) const
     {
         return switchOn(m_backing, [&](const auto& iterator) {
             return iterator.preceding(location);
         });
     }
 
-    std::optional<unsigned> following(unsigned location) const
+    Optional<unsigned> following(unsigned location) const
     {
         return switchOn(m_backing, [&](const auto& iterator) {
             return iterator.following(location);
@@ -173,12 +173,12 @@ public:
     CachedTextBreakIterator& operator=(const CachedTextBreakIterator&) = delete;
     CachedTextBreakIterator& operator=(CachedTextBreakIterator&&) = default;
 
-    std::optional<unsigned> preceding(unsigned location) const
+    Optional<unsigned> preceding(unsigned location) const
     {
         return m_backing.preceding(location);
     }
 
-    std::optional<unsigned> following(unsigned location) const
+    Optional<unsigned> following(unsigned location) const
     {
         return m_backing.following(location);
     }

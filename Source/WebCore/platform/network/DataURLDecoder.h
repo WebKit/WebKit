@@ -46,7 +46,7 @@ struct Result {
     RefPtr<SharedBuffer> data;
 };
 
-using DecodeCompletionHandler = WTF::Function<void (std::optional<Result>)>;
+using DecodeCompletionHandler = WTF::Function<void (Optional<Result>)>;
 struct ScheduleContext {
 #if HAVE(RUNLOOP_TIMER)
     SchedulePairHashSet scheduledPairs;

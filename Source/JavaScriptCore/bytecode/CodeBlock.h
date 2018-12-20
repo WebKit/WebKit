@@ -239,7 +239,7 @@ public:
     void expressionRangeForBytecodeOffset(unsigned bytecodeOffset, int& divot,
         int& startOffset, int& endOffset, unsigned& line, unsigned& column) const;
 
-    std::optional<unsigned> bytecodeOffsetFromCallSiteIndex(CallSiteIndex);
+    Optional<unsigned> bytecodeOffsetFromCallSiteIndex(CallSiteIndex);
 
     void getICStatusMap(const ConcurrentJSLocker&, ICStatusMap& result);
     void getICStatusMap(ICStatusMap& result);
@@ -851,7 +851,7 @@ public:
 
 #if ENABLE(JIT)
     void setPCToCodeOriginMap(std::unique_ptr<PCToCodeOriginMap>&&);
-    std::optional<CodeOrigin> findPC(void* pc);
+    Optional<CodeOrigin> findPC(void* pc);
 #endif
 
     bool hasTailCalls() const { return m_unlinkedCode->hasTailCalls(); }

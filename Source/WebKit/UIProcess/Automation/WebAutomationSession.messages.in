@@ -26,7 +26,7 @@ messages -> WebAutomationSession {
     DidResolveChildFrame(uint64_t callbackID, uint64_t frameID, String errorType)
     DidResolveParentFrame(uint64_t callbackID, uint64_t frameID, String errorType)
 
-    DidComputeElementLayout(uint64_t callbackID, WebCore::IntRect rect, std::optional<WebCore::IntPoint> inViewCenterPoint, bool isObscured, String errorType)
+    DidComputeElementLayout(uint64_t callbackID, WebCore::IntRect rect, Optional<WebCore::IntPoint> inViewCenterPoint, bool isObscured, String errorType)
 
     DidSelectOptionElement(uint64_t callbackID, String errorType)
 

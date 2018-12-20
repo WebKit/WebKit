@@ -44,7 +44,7 @@ namespace WebKit {
 static const size_t logChannelCount = WTF_ARRAY_LENGTH(logChannels);
 static bool logChannelsNeedInitialization = true;
 
-void initializeLogChannelsIfNecessary(std::optional<String> logChannelString)
+void initializeLogChannelsIfNecessary(Optional<String> logChannelString)
 {
     if (!logChannelsNeedInitialization && !logChannelString)
         return;

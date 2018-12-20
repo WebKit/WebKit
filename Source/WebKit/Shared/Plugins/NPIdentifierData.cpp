@@ -75,20 +75,20 @@ void NPIdentifierData::encode(IPC::Encoder& encoder) const
         encoder << m_number;
 }
 
-std::optional<NPIdentifierData> NPIdentifierData::decode(IPC::Decoder& decoder)
+Optional<NPIdentifierData> NPIdentifierData::decode(IPC::Decoder& decoder)
 {
     NPIdentifierData result;
     if (!decoder.decode(result.m_isString))
-        return std::nullopt;
+        return WTF::nullopt;
         
     if (result.m_isString) {
         if (!decoder.decode(result.m_string))
-            return std::nullopt;
+            return WTF::nullopt;
         return result;
     }
 
     if (!decoder.decode(result.m_number))
-        return std::nullopt;
+        return WTF::nullopt;
     return WTFMove(result);
 }
 

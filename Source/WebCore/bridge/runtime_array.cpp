@@ -94,7 +94,7 @@ bool RuntimeArray::getOwnPropertySlot(JSObject* object, ExecState* exec, Propert
         return true;
     }
     
-    std::optional<uint32_t> index = parseIndex(propertyName);
+    Optional<uint32_t> index = parseIndex(propertyName);
     if (index && index.value() < thisObject->getLength()) {
         slot.setValue(thisObject, PropertyAttribute::DontDelete | PropertyAttribute::DontEnum,
             thisObject->getConcreteArray()->valueAt(exec, index.value()));
@@ -127,7 +127,7 @@ bool RuntimeArray::put(JSCell* cell, ExecState* exec, PropertyName propertyName,
         return false;
     }
     
-    if (std::optional<uint32_t> index = parseIndex(propertyName))
+    if (Optional<uint32_t> index = parseIndex(propertyName))
         return thisObject->getConcreteArray()->setValueAt(exec, index.value(), value);
 
     RELEASE_AND_RETURN(scope, JSObject::put(thisObject, exec, propertyName, value, slot));

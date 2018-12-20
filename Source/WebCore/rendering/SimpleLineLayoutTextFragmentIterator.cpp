@@ -167,22 +167,22 @@ unsigned TextFragmentIterator::nextNonWhitespacePosition(const FlowContents::Seg
     return position;
 }
 
-std::optional<unsigned> TextFragmentIterator::lastHyphenPosition(const TextFragmentIterator::TextFragment& run, unsigned before) const
+Optional<unsigned> TextFragmentIterator::lastHyphenPosition(const TextFragmentIterator::TextFragment& run, unsigned before) const
 {
     ASSERT(run.start() < before);
     auto& segment = *m_currentSegment;
     ASSERT(segment.start <= before && before <= segment.end);
     ASSERT(is<RenderText>(segment.renderer));
     if (!m_style.shouldHyphenate || run.type() != TextFragment::NonWhitespace)
-        return std::nullopt;
+        return WTF::nullopt;
     // Check if there are enough characters in the run.
     unsigned runLength = run.end() - run.start();
     if (m_style.hyphenLimitBefore >= runLength || m_style.hyphenLimitAfter >= runLength || m_style.hyphenLimitBefore + m_style.hyphenLimitAfter > runLength)
-        return std::nullopt;
+        return WTF::nullopt;
     auto runStart = segment.toSegmentPosition(run.start());
     auto beforeIndex = segment.toSegmentPosition(before) - runStart;
     if (beforeIndex <= m_style.hyphenLimitBefore)
-        return std::nullopt;
+        return WTF::nullopt;
     // Adjust before index to accommodate the limit-after value (this is the last potential hyphen location).
     beforeIndex = std::min(beforeIndex, runLength - m_style.hyphenLimitAfter + 1);
     auto substringForHyphenation = StringView(segment.text).substring(runStart, run.end() - run.start());
@@ -190,7 +190,7 @@ std::optional<unsigned> TextFragmentIterator::lastHyphenPosition(const TextFragm
     // Check if there are enough characters before and after the hyphen.
     if (hyphenLocation && hyphenLocation >= m_style.hyphenLimitBefore && m_style.hyphenLimitAfter <= (runLength - hyphenLocation))
         return segment.toRenderPosition(hyphenLocation + runStart);
-    return std::nullopt;
+    return WTF::nullopt;
 }
 
 unsigned TextFragmentIterator::skipToNextPosition(PositionType positionType, unsigned startPosition, float& width, float xPosition, bool& overlappingFragment)

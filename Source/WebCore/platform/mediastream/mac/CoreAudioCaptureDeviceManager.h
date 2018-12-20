@@ -44,9 +44,9 @@ public:
     static CoreAudioCaptureDeviceManager& singleton();
 
     const Vector<CaptureDevice>& captureDevices() final;
-    std::optional<CaptureDevice> captureDeviceWithPersistentID(CaptureDevice::DeviceType, const String&);
+    Optional<CaptureDevice> captureDeviceWithPersistentID(CaptureDevice::DeviceType, const String&);
 
-    std::optional<CoreAudioCaptureDevice> coreAudioDeviceWithUID(const String&);
+    Optional<CoreAudioCaptureDevice> coreAudioDeviceWithUID(const String&);
 
 private:
     CoreAudioCaptureDeviceManager() = default;

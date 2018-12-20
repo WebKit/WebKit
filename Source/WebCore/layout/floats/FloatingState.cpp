@@ -134,14 +134,14 @@ FloatingState::Constraints FloatingState::constraints(PositionInContextRoot vert
     return constraints;
 }
 
-std::optional<PositionInContextRoot> FloatingState::bottom(const Box& formattingContextRoot, Clear type) const
+Optional<PositionInContextRoot> FloatingState::bottom(const Box& formattingContextRoot, Clear type) const
 {
     if (m_floats.isEmpty())
         return { };
 
     // TODO: Currently this is only called once for each formatting context root with floats per layout.
     // Cache the value if we end up calling it more frequently (and update it at append/remove).
-    std::optional<PositionInContextRoot> bottom;
+    Optional<PositionInContextRoot> bottom;
     for (auto& floatItem : m_floats) {
         // Ignore floats from other formatting contexts when the floating state is inherited.
         if (!floatItem.inFormattingContext(formattingContextRoot))

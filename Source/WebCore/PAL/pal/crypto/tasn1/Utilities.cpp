@@ -118,39 +118,39 @@ bool decodeStructure(asn1_node* root, const char* elementName, const Vector<uint
     return ret == ASN1_SUCCESS;
 }
 
-std::optional<Vector<uint8_t>> elementData(asn1_node root, const char* elementName)
+Optional<Vector<uint8_t>> elementData(asn1_node root, const char* elementName)
 {
     int length = 0;
     unsigned type = 0;
     int ret = asn1_read_value_type(root, elementName, nullptr, &length, &type);
     if (ret != ASN1_MEM_ERROR)
-        return std::nullopt;
+        return WTF::nullopt;
 
     if (type == ASN1_ETYPE_BIT_STRING) {
         if (length % 8)
-            return std::nullopt;
+            return WTF::nullopt;
         length /= 8;
     }
 
     Vector<uint8_t> data(length);
     ret = asn1_read_value(root, elementName, data.data(), &length);
     if (ret != ASN1_SUCCESS)
-        return std::nullopt;
+        return WTF::nullopt;
 
     return data;
 }
 
-std::optional<Vector<uint8_t>> encodedData(asn1_node root, const char* elementName)
+Optional<Vector<uint8_t>> encodedData(asn1_node root, const char* elementName)
 {
     int length = 0;
     int ret = asn1_der_coding(root, elementName, nullptr, &length, nullptr);
     if (ret != ASN1_MEM_ERROR)
-        return std::nullopt;
+        return WTF::nullopt;
 
     Vector<uint8_t> data(length);
     ret = asn1_der_coding(root, elementName, data.data(), &length, nullptr);
     if (ret != ASN1_SUCCESS)
-        return std::nullopt;
+        return WTF::nullopt;
 
     return data;
 }

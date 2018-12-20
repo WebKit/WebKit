@@ -232,7 +232,7 @@ private:
     void updateVideoLayerGravity() override;
 
     bool didPassCORSAccessCheck() const override;
-    std::optional<bool> wouldTaintOrigin(const SecurityOrigin&) const final;
+    Optional<bool> wouldTaintOrigin(const SecurityOrigin&) const final;
 
 
     MediaTime getStartDate() const override;
@@ -324,7 +324,7 @@ private:
 
     void setShouldDisableSleep(bool) override;
 
-    std::optional<VideoPlaybackQualityMetrics> videoPlaybackQualityMetrics() final;
+    Optional<VideoPlaybackQualityMetrics> videoPlaybackQualityMetrics() final;
 
 #if !RELEASE_LOG_DISABLED
     const char* logClassName() const final { return "MediaPlayerPrivateAVFoundationObjC"; }
@@ -428,7 +428,7 @@ private:
     bool m_cachedCanPlayFastForward;
     bool m_cachedCanPlayFastReverse;
     bool m_muted { false };
-    mutable std::optional<bool> m_tracksArePlayable;
+    mutable Optional<bool> m_tracksArePlayable;
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
     mutable bool m_allowsWirelessVideoPlayback;
     bool m_shouldPlayToPlaybackTarget { false };

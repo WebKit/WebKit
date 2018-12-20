@@ -41,13 +41,13 @@ CBORWriter::~CBORWriter()
 }
 
 // static
-std::optional<Vector<uint8_t>> CBORWriter::write(const CBORValue& node, size_t maxNestingLevel)
+Optional<Vector<uint8_t>> CBORWriter::write(const CBORValue& node, size_t maxNestingLevel)
 {
     Vector<uint8_t> cbor;
     CBORWriter writer(&cbor);
     if (writer.encodeCBOR(node, static_cast<int>(maxNestingLevel)))
         return cbor;
-    return std::nullopt;
+    return WTF::nullopt;
 }
 
 CBORWriter::CBORWriter(Vector<uint8_t>* cbor)

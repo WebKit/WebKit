@@ -51,12 +51,12 @@ struct WebsitePoliciesData {
     WebsiteAutoplayPolicy autoplayPolicy { WebsiteAutoplayPolicy::Default };
     Vector<WebCore::HTTPHeaderField> customHeaderFields;
     WebsitePopUpPolicy popUpPolicy { WebsitePopUpPolicy::Default };
-    std::optional<WebsiteDataStoreParameters> websiteDataStoreParameters;
+    Optional<WebsiteDataStoreParameters> websiteDataStoreParameters;
     String customUserAgent;
     String customNavigatorPlatform;
     
     void encode(IPC::Encoder&) const;
-    static std::optional<WebsitePoliciesData> decode(IPC::Decoder&);
+    static Optional<WebsitePoliciesData> decode(IPC::Decoder&);
 };
 
 } // namespace WebKit

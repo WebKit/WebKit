@@ -220,7 +220,7 @@ const char* s_anotherGuardedInternalBuiltinLetsFetchCode =
 JSC::FunctionExecutable* codeName##Generator(JSC::VM& vm) \
 {\
     JSVMClientData* clientData = static_cast<JSVMClientData*>(vm.clientData); \
-    return clientData->builtinFunctions().anotherGuardedInternalBuiltinBuiltins().codeName##Executable()->link(vm, clientData->builtinFunctions().anotherGuardedInternalBuiltinBuiltins().codeName##Source(), std::nullopt, s_##codeName##Intrinsic); \
+    return clientData->builtinFunctions().anotherGuardedInternalBuiltinBuiltins().codeName##Executable()->link(vm, clientData->builtinFunctions().anotherGuardedInternalBuiltinBuiltins().codeName##Source(), WTF::nullopt, s_##codeName##Intrinsic); \
 }
 WEBCORE_FOREACH_ANOTHERGUARDEDINTERNALBUILTIN_BUILTIN_CODE(DEFINE_BUILTIN_GENERATOR)
 #undef DEFINE_BUILTIN_GENERATOR

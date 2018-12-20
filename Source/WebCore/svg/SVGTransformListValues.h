@@ -50,7 +50,7 @@ template<> struct SVGPropertyTraits<SVGTransformListValues> {
         values.parse(string);
         return values;
     }
-    static std::optional<SVGTransformListValues> parse(const QualifiedName&, const String&) { ASSERT_NOT_REACHED(); return initialValue(); }
+    static Optional<SVGTransformListValues> parse(const QualifiedName&, const String&) { ASSERT_NOT_REACHED(); return initialValue(); }
     static String toString(const SVGTransformListValues& list) { return list.valueAsString(); }
 
     using ListItemType = SVGTransformValue;

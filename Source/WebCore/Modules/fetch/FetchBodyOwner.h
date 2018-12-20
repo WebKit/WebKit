@@ -40,7 +40,7 @@ namespace WebCore {
 
 class FetchBodyOwner : public RefCounted<FetchBodyOwner>, public ActiveDOMObject {
 public:
-    FetchBodyOwner(ScriptExecutionContext&, std::optional<FetchBody>&&, Ref<FetchHeaders>&&);
+    FetchBodyOwner(ScriptExecutionContext&, Optional<FetchBody>&&, Ref<FetchHeaders>&&);
     ~FetchBodyOwner();
 
     bool bodyUsed() const { return isDisturbed(); }
@@ -109,17 +109,17 @@ private:
     };
 
 protected:
-    std::optional<FetchBody> m_body;
+    Optional<FetchBody> m_body;
     String m_contentType;
     bool m_isDisturbed { false };
 #if ENABLE(STREAMS_API)
     RefPtr<FetchBodySource> m_readableStreamSource;
 #endif
     Ref<FetchHeaders> m_headers;
-    std::optional<ResourceError> m_loadingError;
+    Optional<ResourceError> m_loadingError;
 
 private:
-    std::optional<BlobLoader> m_blobLoader;
+    Optional<BlobLoader> m_blobLoader;
     bool m_isBodyOpaque { false };
 };
 

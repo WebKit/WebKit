@@ -37,7 +37,7 @@ struct ClientOrigin {
     bool operator==(const ClientOrigin&) const;
 
     template<class Encoder> void encode(Encoder&) const;
-    template<class Decoder> static std::optional<ClientOrigin> decode(Decoder&);
+    template<class Decoder> static Optional<ClientOrigin> decode(Decoder&);
 
     ClientOrigin isolatedCopy() const;
 
@@ -70,16 +70,16 @@ template<class Encoder> inline void ClientOrigin::encode(Encoder& encoder) const
     encoder << clientOrigin;
 }
 
-template<class Decoder> inline std::optional<ClientOrigin> ClientOrigin::decode(Decoder& decoder)
+template<class Decoder> inline Optional<ClientOrigin> ClientOrigin::decode(Decoder& decoder)
 {
-    std::optional<SecurityOriginData> topOrigin;
-    std::optional<SecurityOriginData> clientOrigin;
+    Optional<SecurityOriginData> topOrigin;
+    Optional<SecurityOriginData> clientOrigin;
     decoder >> topOrigin;
     if (!topOrigin)
-        return std::nullopt;
+        return WTF::nullopt;
     decoder >> clientOrigin;
     if (!clientOrigin)
-        return std::nullopt;
+        return WTF::nullopt;
 
     return ClientOrigin { WTFMove(*topOrigin), WTFMove(*clientOrigin) };
 }

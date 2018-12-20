@@ -236,13 +236,13 @@ bool NetworkLoadMetrics::decode(Decoder& decoder, NetworkLoadMetrics& metrics)
 namespace WTF {
 namespace Persistence {
 
-template<> struct Coder<std::optional<WebCore::NetworkLoadPriority>> {
-    static NO_RETURN_DUE_TO_ASSERT void encode(Encoder&, const std::optional<WebCore::NetworkLoadPriority>&)
+template<> struct Coder<Optional<WebCore::NetworkLoadPriority>> {
+    static NO_RETURN_DUE_TO_ASSERT void encode(Encoder&, const Optional<WebCore::NetworkLoadPriority>&)
     {
         ASSERT_NOT_REACHED();
     }
 
-    static bool decode(Decoder&, std::optional<WebCore::NetworkLoadPriority>&)
+    static bool decode(Decoder&, Optional<WebCore::NetworkLoadPriority>&)
     {
         ASSERT_NOT_REACHED();
         return false;

@@ -43,7 +43,7 @@ private:
 
     void computePreferredLogicalWidths() final;
     void layoutBlock(bool relayoutChildren, LayoutUnit pageLogicalHeight = 0_lu) final;
-    std::optional<int> firstLineBaseline() const final;
+    Optional<int> firstLineBaseline() const final;
 
     MathMLPaddedElement& element() const { return static_cast<MathMLPaddedElement&>(nodeForNonAnonymous()); }
     LayoutUnit voffset() const;

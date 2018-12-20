@@ -229,7 +229,7 @@ private:
     OptionSet<ContentSecurityPolicyHashAlgorithm> m_hashAlgorithmsForInlineScripts;
     OptionSet<ContentSecurityPolicyHashAlgorithm> m_hashAlgorithmsForInlineStylesheets;
     HashSet<SecurityOriginData> m_insecureNavigationRequestsToUpgrade;
-    mutable std::optional<ContentSecurityPolicyResponseHeaders> m_cachedResponseHeaders;
+    mutable Optional<ContentSecurityPolicyResponseHeaders> m_cachedResponseHeaders;
 };
 
 }

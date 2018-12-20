@@ -365,7 +365,7 @@ void ImageSource::startAsyncDecodingQueue()
     });
 }
 
-void ImageSource::requestFrameAsyncDecodingAtIndex(size_t index, SubsamplingLevel subsamplingLevel, const std::optional<IntSize>& sizeForDrawing)
+void ImageSource::requestFrameAsyncDecodingAtIndex(size_t index, SubsamplingLevel subsamplingLevel, const Optional<IntSize>& sizeForDrawing)
 {
     ASSERT(isDecoderAvailable());
     if (!hasAsyncDecodingQueue())
@@ -406,7 +406,7 @@ void ImageSource::stopAsyncDecodingQueue()
     LOG(Images, "ImageSource::%s - %p - url: %s [decoding has been stopped]", __FUNCTION__, this, sourceURL().string().utf8().data());
 }
 
-const ImageFrame& ImageSource::frameAtIndexCacheIfNeeded(size_t index, ImageFrame::Caching caching, const std::optional<SubsamplingLevel>& subsamplingLevel)
+const ImageFrame& ImageSource::frameAtIndexCacheIfNeeded(size_t index, ImageFrame::Caching caching, const Optional<SubsamplingLevel>& subsamplingLevel)
 {
     ASSERT(index < m_frames.size());
     ImageFrame& frame = m_frames[index];
@@ -439,11 +439,11 @@ const ImageFrame& ImageSource::frameAtIndexCacheIfNeeded(size_t index, ImageFram
 
 void ImageSource::clearMetadata()
 {
-    m_frameCount = std::nullopt;
-    m_repetitionCount = std::nullopt;
-    m_singlePixelSolidColor = std::nullopt;
-    m_encodedDataStatus = std::nullopt;
-    m_uti = std::nullopt;
+    m_frameCount = WTF::nullopt;
+    m_repetitionCount = WTF::nullopt;
+    m_singlePixelSolidColor = WTF::nullopt;
+    m_encodedDataStatus = WTF::nullopt;
+    m_uti = WTF::nullopt;
 }
 
 URL ImageSource::sourceURL() const
@@ -462,7 +462,7 @@ long long ImageSource::expectedContentLength() const
 }
 
 template<typename T, T (ImageDecoder::*functor)() const>
-T ImageSource::metadata(const T& defaultValue, std::optional<T>* cachedValue)
+T ImageSource::metadata(const T& defaultValue, Optional<T>* cachedValue)
 {
     if (cachedValue && *cachedValue)
         return cachedValue->value();
@@ -486,7 +486,7 @@ T ImageSource::frameMetadataAtIndex(size_t index, T (ImageFrame::*functor)(Args.
 }
 
 template<typename T, typename... Args>
-T ImageSource::frameMetadataAtIndexCacheIfNeeded(size_t index, T (ImageFrame::*functor)() const, std::optional<T>* cachedValue, Args&&... args)
+T ImageSource::frameMetadataAtIndexCacheIfNeeded(size_t index, T (ImageFrame::*functor)() const, Optional<T>* cachedValue, Args&&... args)
 {
     if (cachedValue && *cachedValue)
         return cachedValue->value();
@@ -530,9 +530,9 @@ String ImageSource::filenameExtension()
     return metadata<String, (&ImageDecoder::filenameExtension)>(String(), &m_filenameExtension);
 }
 
-std::optional<IntPoint> ImageSource::hotSpot()
+Optional<IntPoint> ImageSource::hotSpot()
 {
-    return metadata<std::optional<IntPoint>, (&ImageDecoder::hotSpot)>(std::nullopt, &m_hotSpot);
+    return metadata<Optional<IntPoint>, (&ImageDecoder::hotSpot)>(WTF::nullopt, &m_hotSpot);
 }
 
 IntSize ImageSource::size()
@@ -603,12 +603,12 @@ bool ImageSource::frameHasAlphaAtIndex(size_t index)
     return frameMetadataAtIndex<bool>(index, (&ImageFrame::hasAlpha));
 }
 
-bool ImageSource::frameHasFullSizeNativeImageAtIndex(size_t index, const std::optional<SubsamplingLevel>& subsamplingLevel)
+bool ImageSource::frameHasFullSizeNativeImageAtIndex(size_t index, const Optional<SubsamplingLevel>& subsamplingLevel)
 {
     return frameMetadataAtIndex<bool>(index, (&ImageFrame::hasFullSizeNativeImage), subsamplingLevel);
 }
 
-bool ImageSource::frameHasDecodedNativeImageCompatibleWithOptionsAtIndex(size_t index, const std::optional<SubsamplingLevel>& subsamplingLevel, const DecodingOptions& decodingOptions)
+bool ImageSource::frameHasDecodedNativeImageCompatibleWithOptionsAtIndex(size_t index, const Optional<SubsamplingLevel>& subsamplingLevel, const DecodingOptions& decodingOptions)
 {
     return frameMetadataAtIndex<bool>(index, (&ImageFrame::hasDecodedNativeImageCompatibleWithOptions), subsamplingLevel, decodingOptions);
 }

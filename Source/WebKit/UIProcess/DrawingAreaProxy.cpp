@@ -73,7 +73,7 @@ MachSendRight DrawingAreaProxy::createFence()
 #endif
 
 #if PLATFORM(MAC)
-void DrawingAreaProxy::setViewExposedRect(std::optional<WebCore::FloatRect> viewExposedRect)
+void DrawingAreaProxy::setViewExposedRect(Optional<WebCore::FloatRect> viewExposedRect)
 {
     if (!m_webPageProxy.isValid())
         return;

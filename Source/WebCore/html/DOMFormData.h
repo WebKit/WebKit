@@ -60,7 +60,7 @@ public:
     void append(const String& name, const String& value);
     void append(const String& name, Blob&, const String& filename = { });
     void remove(const String& name);
-    std::optional<FormDataEntryValue> get(const String& name);
+    Optional<FormDataEntryValue> get(const String& name);
     Vector<FormDataEntryValue> getAll(const String& name);
     bool has(const String& name);
     void set(const String& name, const String& value);
@@ -69,7 +69,7 @@ public:
     class Iterator {
     public:
         explicit Iterator(DOMFormData&);
-        std::optional<KeyValuePair<String, FormDataEntryValue>> next();
+        Optional<KeyValuePair<String, FormDataEntryValue>> next();
 
     private:
         Ref<DOMFormData> m_target;

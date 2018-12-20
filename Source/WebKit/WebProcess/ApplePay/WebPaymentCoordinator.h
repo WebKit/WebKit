@@ -56,16 +56,16 @@ public:
 private:
     // WebCore::PaymentCoordinatorClient.
     bool supportsVersion(unsigned version) override;
-    std::optional<String> validatedPaymentNetwork(const String&) override;
+    Optional<String> validatedPaymentNetwork(const String&) override;
     bool canMakePayments() override;
     void canMakePaymentsWithActiveCard(const String& merchantIdentifier, const String& domainName, WTF::Function<void (bool)>&& completionHandler) override;
     void openPaymentSetup(const String& merchantIdentifier, const String& domainName, WTF::Function<void (bool)>&& completionHandler) override;
     bool showPaymentUI(const URL& originatingURL, const Vector<URL>& linkIconURLs, const WebCore::ApplePaySessionPaymentRequest&) override;
     void completeMerchantValidation(const WebCore::PaymentMerchantSession&) override;
-    void completeShippingMethodSelection(std::optional<WebCore::ShippingMethodUpdate>&&) override;
-    void completeShippingContactSelection(std::optional<WebCore::ShippingContactUpdate>&&) override;
-    void completePaymentMethodSelection(std::optional<WebCore::PaymentMethodUpdate>&&) override;
-    void completePaymentSession(std::optional<WebCore::PaymentAuthorizationResult>&&) override;
+    void completeShippingMethodSelection(Optional<WebCore::ShippingMethodUpdate>&&) override;
+    void completeShippingContactSelection(Optional<WebCore::ShippingContactUpdate>&&) override;
+    void completePaymentMethodSelection(Optional<WebCore::PaymentMethodUpdate>&&) override;
+    void completePaymentSession(Optional<WebCore::PaymentAuthorizationResult>&&) override;
 
     void abortPaymentSession() override;
     void cancelPaymentSession() override;
@@ -95,7 +95,7 @@ private:
     HashMap<uint64_t, WTF::Function<void (bool)>> m_pendingCanMakePaymentsWithActiveCardCallbacks;
     HashMap<uint64_t, WTF::Function<void (bool)>> m_pendingOpenPaymentSetupCallbacks;
 
-    std::optional<AvailablePaymentNetworksSet> m_availablePaymentNetworks;
+    Optional<AvailablePaymentNetworksSet> m_availablePaymentNetworks;
 
 #if USE(APPLE_INTERNAL_SDK)
 #import <WebKitAdditions/WebPaymentCoordinatorAdditions.h>

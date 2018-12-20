@@ -116,7 +116,7 @@ struct EditorState {
         String stringForCandidateRequest;
 #endif
 
-        std::optional<WebCore::FontAttributes> fontAttributes;
+        Optional<WebCore::FontAttributes> fontAttributes;
 
         bool canCut { false };
         bool canCopy { false };

@@ -253,12 +253,12 @@ double UIScriptController::maximumZoomScale() const
     return gWebScrollView.maximumZoomScale;
 }
 
-std::optional<bool> UIScriptController::stableStateOverride() const
+Optional<bool> UIScriptController::stableStateOverride() const
 {
-    return std::nullopt;
+    return WTF::nullopt;
 }
 
-void UIScriptController::setStableStateOverride(std::optional<bool>)
+void UIScriptController::setStableStateOverride(Optional<bool>)
 {
 }
 

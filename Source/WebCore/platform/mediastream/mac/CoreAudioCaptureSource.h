@@ -85,7 +85,7 @@ private:
     void startProducingData() final;
     void stopProducingData() final;
 
-    std::optional<Vector<int>> discreteSampleRates() const final { return { { 8000, 16000, 32000, 44100, 48000, 96000 } }; }
+    Optional<Vector<int>> discreteSampleRates() const final { return { { 8000, 16000, 32000, 44100, 48000, 96000 } }; }
 
     const RealtimeMediaSourceCapabilities& capabilities() final;
     const RealtimeMediaSourceSettings& settings() final;
@@ -95,8 +95,8 @@ private:
 
     uint32_t m_captureDeviceID { 0 };
 
-    std::optional<RealtimeMediaSourceCapabilities> m_capabilities;
-    std::optional<RealtimeMediaSourceSettings> m_currentSettings;
+    Optional<RealtimeMediaSourceCapabilities> m_capabilities;
+    Optional<RealtimeMediaSourceSettings> m_currentSettings;
 
     enum class SuspensionType { None, WhilePaused, WhilePlaying };
     SuspensionType m_suspendType { SuspensionType::None };

@@ -255,7 +255,7 @@ void JSRunLoopTimer::Manager::cancelTimer(JSRunLoopTimer& timer)
 #endif
 }
 
-std::optional<Seconds> JSRunLoopTimer::Manager::timeUntilFire(JSRunLoopTimer& timer)
+Optional<Seconds> JSRunLoopTimer::Manager::timeUntilFire(JSRunLoopTimer& timer)
 {
     auto locker = holdLock(m_lock);
     auto iter = m_mapping.find(timer.m_apiLock);
@@ -269,7 +269,7 @@ std::optional<Seconds> JSRunLoopTimer::Manager::timeUntilFire(JSRunLoopTimer& ti
         }
     }
 
-    return std::nullopt;
+    return WTF::nullopt;
 }
 
 #if USE(CF)
@@ -316,7 +316,7 @@ JSRunLoopTimer::~JSRunLoopTimer()
 {
 }
 
-std::optional<Seconds> JSRunLoopTimer::timeUntilFire()
+Optional<Seconds> JSRunLoopTimer::timeUntilFire()
 {
     return Manager::shared().timeUntilFire(*this);
 }

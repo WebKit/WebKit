@@ -45,7 +45,7 @@ namespace WebPage {
 
 void TestAsyncMessage::callReply(IPC::Decoder& decoder, CompletionHandler<void(uint64_t&&)>&& completionHandler)
 {
-    std::optional<uint64_t> result;
+    Optional<uint64_t> result;
     decoder >> result;
     if (!result) {
         ASSERT_NOT_REACHED();
@@ -90,13 +90,13 @@ void TestAsyncMessageWithNoArguments::send(std::unique_ptr<IPC::Encoder>&& encod
 
 void TestAsyncMessageWithMultipleArguments::callReply(IPC::Decoder& decoder, CompletionHandler<void(bool&&, uint64_t&&)>&& completionHandler)
 {
-    std::optional<bool> flag;
+    Optional<bool> flag;
     decoder >> flag;
     if (!flag) {
         ASSERT_NOT_REACHED();
         return;
     }
-    std::optional<uint64_t> value;
+    Optional<uint64_t> value;
     decoder >> value;
     if (!value) {
         ASSERT_NOT_REACHED();
@@ -119,7 +119,7 @@ void TestAsyncMessageWithMultipleArguments::send(std::unique_ptr<IPC::Encoder>&&
 
 #endif
 
-void TestDelayedMessage::send(std::unique_ptr<IPC::Encoder>&& encoder, IPC::Connection& connection, const std::optional<WebKit::TestClassName>& optionalReply)
+void TestDelayedMessage::send(std::unique_ptr<IPC::Encoder>&& encoder, IPC::Connection& connection, const Optional<WebKit::TestClassName>& optionalReply)
 {
     *encoder << optionalReply;
     connection.sendSyncReply(WTFMove(encoder));

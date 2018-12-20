@@ -285,13 +285,13 @@ void Engine::deleteMatchingRecords(uint64_t cacheIdentifier, WebCore::ResourceRe
 void Engine::initialize(CompletionCallback&& callback)
 {
     if (m_salt) {
-        callback(std::nullopt);
+        callback(WTF::nullopt);
         return;
     }
 
     if (!shouldPersist()) {
         m_salt = NetworkCache::Salt { };
-        callback(std::nullopt);
+        callback(WTF::nullopt);
         return;
     }
 
@@ -312,14 +312,14 @@ void Engine::initialize(CompletionCallback&& callback)
 
             auto callbacks = WTFMove(m_initializationCallbacks);
             for (auto& callback : callbacks)
-                callback(m_salt ? std::nullopt : std::make_optional(Error::WriteDisk));
+                callback(m_salt ? WTF::nullopt : makeOptional(Error::WriteDisk));
         });
     });
 }
 
 void Engine::readCachesFromDisk(const WebCore::ClientOrigin& origin, CachesCallback&& callback)
 {
-    initialize([this, origin, callback = WTFMove(callback)](std::optional<Error>&& error) mutable {
+    initialize([this, origin, callback = WTFMove(callback)](Optional<Error>&& error) mutable {
         auto& caches = m_caches.ensure(origin, [&origin, this] {
             auto path = cachesRootPath(origin);
             return Caches::create(*this, WebCore::ClientOrigin { origin }, WTFMove(path), m_quota);
@@ -335,7 +335,7 @@ void Engine::readCachesFromDisk(const WebCore::ClientOrigin& origin, CachesCallb
             return;
         }
 
-        caches->initialize([callback = WTFMove(callback), caches = caches.copyRef()](std::optional<Error>&& error) mutable {
+        caches->initialize([callback = WTFMove(callback), caches = caches.copyRef()](Optional<Error>&& error) mutable {
             if (error) {
                 callback(makeUnexpected(error.value()));
                 return;
@@ -354,7 +354,7 @@ void Engine::readCache(uint64_t cacheIdentifier, CacheCallback&& callback)
         return;
     }
     if (!cache->isOpened()) {
-        cache->open([this, protectedThis = makeRef(*this), cacheIdentifier, callback = WTFMove(callback)](std::optional<Error>&& error) mutable {
+        cache->open([this, protectedThis = makeRef(*this), cacheIdentifier, callback = WTFMove(callback)](Optional<Error>&& error) mutable {
             if (error) {
                 callback(makeUnexpected(error.value()));
                 return;
@@ -386,7 +386,7 @@ Cache* Engine::cache(uint64_t cacheIdentifier)
 void Engine::writeFile(const String& filename, NetworkCache::Data&& data, WebCore::DOMCacheEngine::CompletionCallback&& callback)
 {
     if (!shouldPersist()) {
-        callback(std::nullopt);
+        callback(WTF::nullopt);
         return;
     }
 
@@ -410,7 +410,7 @@ void Engine::writeFile(const String& filename, NetworkCache::Data&& data, WebCor
                 callback(Error::WriteDisk);
                 return;
             }
-            callback(std::nullopt);
+            callback(WTF::nullopt);
         });
     });
 }
@@ -575,7 +575,7 @@ void Engine::clearCachesForOriginFromDisk(const WebCore::SecurityOriginData& ori
     for (auto& folderPath : WebCore::FileSystem::listDirectory(m_rootPath, "*")) {
         if (!WebCore::FileSystem::fileIsDirectory(folderPath, WebCore::FileSystem::ShouldFollowSymbolicLinks::No))
             continue;
-        Caches::retrieveOriginFromDirectory(folderPath, *m_ioQueue, [this, protectedThis = makeRef(*this), origin, callbackAggregator = callbackAggregator.copyRef(), folderPath] (std::optional<WebCore::ClientOrigin>&& folderOrigin) mutable {
+        Caches::retrieveOriginFromDirectory(folderPath, *m_ioQueue, [this, protectedThis = makeRef(*this), origin, callbackAggregator = callbackAggregator.copyRef(), folderPath] (Optional<WebCore::ClientOrigin>&& folderOrigin) mutable {
             if (!folderOrigin)
                 return;
             if (folderOrigin->topOrigin != origin && folderOrigin->clientOrigin != origin)
@@ -606,7 +606,7 @@ void Engine::clearMemoryRepresentation(const WebCore::ClientOrigin& origin, WebC
             return;
         }
         result.value().get().clearMemoryRepresentation();
-        callback(std::nullopt);
+        callback(WTF::nullopt);
     });
 }
 

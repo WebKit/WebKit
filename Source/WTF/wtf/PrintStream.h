@@ -326,7 +326,7 @@ FormatImpl<Types...> format(Types... values)
 }
 
 template<typename T>
-void printInternal(PrintStream& out, const std::optional<T>& value)
+void printInternal(PrintStream& out, const Optional<T>& value)
 {
     if (value)
         out.print(*value);

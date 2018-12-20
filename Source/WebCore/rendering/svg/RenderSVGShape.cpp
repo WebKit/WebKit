@@ -200,7 +200,7 @@ Path* RenderSVGShape::nonScalingStrokePath(const Path* path, const AffineTransfo
 
 bool RenderSVGShape::setupNonScalingStrokeContext(AffineTransform& strokeTransform, GraphicsContextStateSaver& stateSaver)
 {
-    std::optional<AffineTransform> inverse = strokeTransform.inverse();
+    Optional<AffineTransform> inverse = strokeTransform.inverse();
     if (!inverse)
         return false;
 
@@ -441,7 +441,7 @@ FloatRect RenderSVGShape::calculateStrokeBoundingBox() const
         BoundingRectStrokeStyleApplier strokeStyle(*this);
         if (hasNonScalingStroke()) {
             AffineTransform nonScalingTransform = nonScalingStrokeTransform();
-            if (std::optional<AffineTransform> inverse = nonScalingTransform.inverse()) {
+            if (Optional<AffineTransform> inverse = nonScalingTransform.inverse()) {
                 Path* usePath = nonScalingStrokePath(m_path.get(), nonScalingTransform);
                 FloatRect strokeBoundingRect = usePath->strokeBoundingRect(&strokeStyle);
                 strokeBoundingRect = inverse.value().mapRect(strokeBoundingRect);

@@ -134,14 +134,14 @@ static bool parseDescriptors(Vector<StringView>& descriptors, DescriptorParsingR
         if (descriptorChar == 'x') {
             if (result.hasDensity() || result.hasHeight() || result.hasWidth())
                 return false;
-            std::optional<double> density = parseValidHTMLFloatingPointNumber(descriptor);
+            Optional<double> density = parseValidHTMLFloatingPointNumber(descriptor);
             if (!density || density.value() < 0)
                 return false;
             result.setDensity(density.value());
         } else if (descriptorChar == 'w') {
             if (result.hasDensity() || result.hasWidth())
                 return false;
-            std::optional<int> resourceWidth = parseValidHTMLNonNegativeInteger(descriptor);
+            Optional<int> resourceWidth = parseValidHTMLNonNegativeInteger(descriptor);
             if (!resourceWidth || resourceWidth.value() <= 0)
                 return false;
             result.setResourceWidth(resourceWidth.value());
@@ -150,7 +150,7 @@ static bool parseDescriptors(Vector<StringView>& descriptors, DescriptorParsingR
             // The value of the 'h' descriptor is not used.
             if (result.hasDensity() || result.hasHeight())
                 return false;
-            std::optional<int> resourceHeight = parseValidHTMLNonNegativeInteger(descriptor);
+            Optional<int> resourceHeight = parseValidHTMLNonNegativeInteger(descriptor);
             if (!resourceHeight || resourceHeight.value() <= 0)
                 return false;
             result.setResourceHeight(resourceHeight.value());

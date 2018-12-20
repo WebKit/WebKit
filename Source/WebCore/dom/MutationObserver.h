@@ -77,12 +77,12 @@ public:
 
     struct Init {
         bool childList;
-        std::optional<bool> attributes;
-        std::optional<bool> characterData;
+        Optional<bool> attributes;
+        Optional<bool> characterData;
         bool subtree;
-        std::optional<bool> attributeOldValue;
-        std::optional<bool> characterDataOldValue;
-        std::optional<Vector<String>> attributeFilter;
+        Optional<bool> attributeOldValue;
+        Optional<bool> characterDataOldValue;
+        Optional<Vector<String>> attributeFilter;
     };
 
     ExceptionOr<void> observe(Node&, const Init&);

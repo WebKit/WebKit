@@ -62,8 +62,8 @@ public:
     CanvasDirection direction() const;
     void setDirection(CanvasDirection);
 
-    void fillText(const String& text, float x, float y, std::optional<float> maxWidth = std::nullopt);
-    void strokeText(const String& text, float x, float y, std::optional<float> maxWidth = std::nullopt);
+    void fillText(const String& text, float x, float y, Optional<float> maxWidth = WTF::nullopt);
+    void strokeText(const String& text, float x, float y, Optional<float> maxWidth = WTF::nullopt);
     Ref<TextMetrics> measureText(const String& text);
 
     bool is2d() const override { return true; }
@@ -75,7 +75,7 @@ private:
     // Therefore, all font operations must pass through the State.
     const FontProxy& fontProxy();
 
-    void drawTextInternal(const String& text, float x, float y, bool fill, std::optional<float> maxWidth = std::nullopt);
+    void drawTextInternal(const String& text, float x, float y, bool fill, Optional<float> maxWidth = WTF::nullopt);
 
     void drawFocusIfNeededInternal(const Path&, Element&);
 

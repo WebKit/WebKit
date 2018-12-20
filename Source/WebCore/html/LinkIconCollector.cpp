@@ -95,7 +95,7 @@ auto LinkIconCollector::iconsOfTypes(OptionSet<LinkIconType> iconTypes) -> Vecto
         // This icon size parsing is a little wonky - it only parses the first
         // part of the size, "60x70" becomes "60". This is for compatibility reasons
         // and is probably good enough for now.
-        std::optional<unsigned> iconSize;
+        Optional<unsigned> iconSize;
 
         if (linkElement.sizes().length()) {
             bool ok;

@@ -111,13 +111,13 @@ bool IDBKeyRangeData::decode(Decoder& decoder, IDBKeyRangeData& keyRange)
     if (keyRange.isNull)
         return true;
 
-    std::optional<IDBKeyData> upperKey;
+    Optional<IDBKeyData> upperKey;
     decoder >> upperKey;
     if (!upperKey)
         return false;
     keyRange.upperKey = WTFMove(*upperKey);
     
-    std::optional<IDBKeyData> lowerKey;
+    Optional<IDBKeyData> lowerKey;
     decoder >> lowerKey;
     if (!lowerKey)
         return false;

@@ -136,7 +136,7 @@ void MathMLOperatorElement::computeOperatorFlag(MathMLOperatorDictionary::Flag f
 {
     ASSERT(m_properties.dirtyFlags & flag);
 
-    std::optional<BooleanValue> property;
+    Optional<BooleanValue> property;
     const auto& name = propertyFlagToAttributeName(flag);
     const BooleanValue& value = cachedBooleanAttribute(name, property);
     switch (value) {
@@ -214,13 +214,13 @@ const MathMLElement::Length& MathMLOperatorElement::maxSize()
 
 void MathMLOperatorElement::childrenChanged(const ChildChange& change)
 {
-    m_operatorChar = std::nullopt;
-    m_dictionaryProperty = std::nullopt;
+    m_operatorChar = WTF::nullopt;
+    m_dictionaryProperty = WTF::nullopt;
     m_properties.dirtyFlags = MathMLOperatorDictionary::allFlags;
     MathMLTokenElement::childrenChanged(change);
 }
 
-static std::optional<MathMLOperatorDictionary::Flag> attributeNameToPropertyFlag(const QualifiedName& name)
+static Optional<MathMLOperatorDictionary::Flag> attributeNameToPropertyFlag(const QualifiedName& name)
 {
     if (name == accentAttr)
         return Accent;
@@ -236,24 +236,24 @@ static std::optional<MathMLOperatorDictionary::Flag> attributeNameToPropertyFlag
         return Stretchy;
     if (name == symmetricAttr)
         return Symmetric;
-    return std::nullopt;
+    return WTF::nullopt;
 }
 
 void MathMLOperatorElement::parseAttribute(const QualifiedName& name, const AtomicString& value)
 {
     if (name == formAttr) {
-        m_dictionaryProperty = std::nullopt;
+        m_dictionaryProperty = WTF::nullopt;
         m_properties.dirtyFlags = MathMLOperatorDictionary::allFlags;
     } else if (auto flag = attributeNameToPropertyFlag(name))
         m_properties.dirtyFlags |= flag.value();
     else if (name == lspaceAttr)
-        m_leadingSpace = std::nullopt;
+        m_leadingSpace = WTF::nullopt;
     else if (name == rspaceAttr)
-        m_trailingSpace = std::nullopt;
+        m_trailingSpace = WTF::nullopt;
     else if (name == minsizeAttr)
-        m_minSize = std::nullopt;
+        m_minSize = WTF::nullopt;
     else if (name == maxsizeAttr)
-        m_maxSize = std::nullopt;
+        m_maxSize = WTF::nullopt;
 
     if ((name == stretchyAttr || name == lspaceAttr || name == rspaceAttr || name == movablelimitsAttr) && renderer()) {
         downcast<RenderMathMLOperator>(*renderer()).updateFromElement();

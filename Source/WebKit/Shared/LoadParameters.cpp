@@ -74,7 +74,7 @@ bool LoadParameters::decode(IPC::Decoder& decoder, LoadParameters& data)
 
     if (hasHTTPBody) {
         // FormDataReference encoder / decoder takes care of passing and consuming the needed sandbox extensions.
-        std::optional<IPC::FormDataReference> formDataReference;
+        Optional<IPC::FormDataReference> formDataReference;
         decoder >> formDataReference;
         if (!formDataReference)
             return false;
@@ -82,7 +82,7 @@ bool LoadParameters::decode(IPC::Decoder& decoder, LoadParameters& data)
         data.request.setHTTPBody(formDataReference->takeData());
     }
 
-    std::optional<SandboxExtension::Handle> sandboxExtensionHandle;
+    Optional<SandboxExtension::Handle> sandboxExtensionHandle;
     decoder >> sandboxExtensionHandle;
     if (!sandboxExtensionHandle)
         return false;
@@ -106,7 +106,7 @@ bool LoadParameters::decode(IPC::Decoder& decoder, LoadParameters& data)
     if (!decoder.decode(data.provisionalLoadErrorURLString))
         return false;
 
-    std::optional<std::optional<WebsitePoliciesData>> websitePolicies;
+    Optional<Optional<WebsitePoliciesData>> websitePolicies;
     decoder >> websitePolicies;
     if (!websitePolicies)
         return false;
@@ -127,7 +127,7 @@ bool LoadParameters::decode(IPC::Decoder& decoder, LoadParameters& data)
     if (!decoder.decodeEnum(data.lockBackForwardList))
         return false;
 
-    std::optional<String> clientRedirectSourceForHistory;
+    Optional<String> clientRedirectSourceForHistory;
     decoder >> clientRedirectSourceForHistory;
     if (!clientRedirectSourceForHistory)
         return false;

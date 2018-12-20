@@ -49,7 +49,7 @@ public:
     ~CSSAnimationControllerPrivate();
 
     // Returns the time until the next animation needs to be serviced, or -1 if there are none.
-    std::optional<Seconds> updateAnimations(SetChanged callSetChanged = DoNotCallSetChanged);
+    Optional<Seconds> updateAnimations(SetChanged callSetChanged = DoNotCallSetChanged);
     void updateAnimationTimer(SetChanged callSetChanged = DoNotCallSetChanged);
 
     CompositeAnimation& ensureCompositeAnimation(Element&);
@@ -130,7 +130,7 @@ private:
     Vector<Ref<Element>> m_elementChangesToDispatch;
     HashSet<Document*> m_suspendedDocuments;
 
-    std::optional<MonotonicTime> m_beginAnimationUpdateTime;
+    Optional<MonotonicTime> m_beginAnimationUpdateTime;
 
     using AnimationsSet = HashSet<RefPtr<AnimationBase>>;
     AnimationsSet m_animationsWaitingForStyle;

@@ -59,7 +59,7 @@ public:
 private:
     ServiceWorkerClientFetch(WebServiceWorkerProvider&, Ref<WebCore::ResourceLoader>&&, WebCore::FetchIdentifier, Ref<WebSWClientConnection>&&, bool shouldClearReferrerOnHTTPSToHTTPRedirect, Callback&&);
 
-    std::optional<WebCore::ResourceError> validateResponse(const WebCore::ResourceResponse&);
+    Optional<WebCore::ResourceError> validateResponse(const WebCore::ResourceResponse&);
 
     void didReceiveResponse(WebCore::ResourceResponse&&);
     void didReceiveData(const IPC::DataReference&, int64_t encodedDataLength);

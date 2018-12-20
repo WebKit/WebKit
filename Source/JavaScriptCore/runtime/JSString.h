@@ -694,7 +694,7 @@ ALWAYS_INLINE bool JSString::getStringPropertySlot(ExecState* exec, PropertyName
         return true;
     }
 
-    std::optional<uint32_t> index = parseIndex(propertyName);
+    Optional<uint32_t> index = parseIndex(propertyName);
     if (index && index.value() < length()) {
         JSValue value = getIndex(exec, index.value());
         RETURN_IF_EXCEPTION(scope, false);

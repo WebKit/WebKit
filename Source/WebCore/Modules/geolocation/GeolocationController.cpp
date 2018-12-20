@@ -99,7 +99,7 @@ void GeolocationController::cancelPermissionRequest(Geolocation& geolocation)
     m_client.cancelPermissionRequest(geolocation);
 }
 
-void GeolocationController::positionChanged(const std::optional<GeolocationPosition>& position)
+void GeolocationController::positionChanged(const Optional<GeolocationPosition>& position)
 {
     m_lastPosition = position;
     Vector<Ref<Geolocation>> observersVector;
@@ -120,7 +120,7 @@ void GeolocationController::errorOccurred(GeolocationError& error)
         observer->setError(error);
 }
 
-std::optional<GeolocationPosition> GeolocationController::lastPosition()
+Optional<GeolocationPosition> GeolocationController::lastPosition()
 {
     if (m_lastPosition)
         return m_lastPosition.value();

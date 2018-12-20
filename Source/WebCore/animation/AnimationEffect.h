@@ -53,7 +53,7 @@ public:
 
     EffectTiming getTiming();
     ComputedEffectTiming getComputedTiming();
-    ExceptionOr<void> updateTiming(std::optional<OptionalEffectTiming>);
+    ExceptionOr<void> updateTiming(Optional<OptionalEffectTiming>);
 
     virtual void apply(RenderStyle&) = 0;
     virtual void invalidate() = 0;
@@ -87,12 +87,12 @@ public:
     TimingFunction* timingFunction() const { return m_timingFunction.get(); }
     void setTimingFunction(const RefPtr<TimingFunction>&);
 
-    std::optional<Seconds> localTime() const;
-    std::optional<Seconds> activeTime() const;
+    Optional<Seconds> localTime() const;
+    Optional<Seconds> activeTime() const;
     Seconds endTime() const;
-    std::optional<double> simpleIterationProgress() const;
-    std::optional<double> iterationProgress() const;
-    std::optional<double> currentIteration() const;
+    Optional<double> simpleIterationProgress() const;
+    Optional<double> iterationProgress() const;
+    Optional<double> currentIteration() const;
     Seconds activeDuration() const;
 
     enum class Phase { Before, Active, After, Idle };
@@ -104,10 +104,10 @@ protected:
 private:
     enum class ComputedDirection { Forwards, Reverse };
 
-    std::optional<double> overallProgress() const;
+    Optional<double> overallProgress() const;
     AnimationEffect::ComputedDirection currentDirection() const;
-    std::optional<double> directedProgress() const;
-    std::optional<double> transformedProgress() const;
+    Optional<double> directedProgress() const;
+    Optional<double> transformedProgress() const;
     
     Seconds m_delay { 0_s };
     Seconds m_endDelay { 0_s };

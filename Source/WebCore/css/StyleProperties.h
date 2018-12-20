@@ -113,7 +113,7 @@ public:
     WEBCORE_EXPORT RefPtr<CSSValue> getPropertyCSSValue(CSSPropertyID) const;
     WEBCORE_EXPORT String getPropertyValue(CSSPropertyID) const;
 
-    WEBCORE_EXPORT std::optional<Color> propertyAsColor(CSSPropertyID) const;
+    WEBCORE_EXPORT Optional<Color> propertyAsColor(CSSPropertyID) const;
     WEBCORE_EXPORT CSSValueID propertyAsValueID(CSSPropertyID) const;
 
     bool propertyIsImportant(CSSPropertyID) const;

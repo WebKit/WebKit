@@ -69,8 +69,8 @@ private:
     void trackEnabledChanged(MediaStreamTrackPrivate&) final { }
 
     size_t m_listBufferSize { 0 };
-    std::optional<CAAudioStreamDescription> m_inputDescription;
-    std::optional<CAAudioStreamDescription> m_outputDescription;
+    Optional<CAAudioStreamDescription> m_inputDescription;
+    Optional<CAAudioStreamDescription> m_outputDescription;
     RefPtr<AudioSampleDataSource> m_dataSource;
 
     uint64_t m_writeCount { 0 };

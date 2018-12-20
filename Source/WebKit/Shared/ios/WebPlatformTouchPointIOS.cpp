@@ -49,30 +49,30 @@ void WebPlatformTouchPoint::encode(IPC::Encoder& encoder) const
 #endif
 }
 
-std::optional<WebPlatformTouchPoint> WebPlatformTouchPoint::decode(IPC::Decoder& decoder)
+Optional<WebPlatformTouchPoint> WebPlatformTouchPoint::decode(IPC::Decoder& decoder)
 {
     WebPlatformTouchPoint result;
     if (!decoder.decode(result.m_identifier))
-        return std::nullopt;
+        return WTF::nullopt;
     if (!decoder.decode(result.m_location))
-        return std::nullopt;
+        return WTF::nullopt;
     if (!decoder.decode(result.m_phase))
-        return std::nullopt;
+        return WTF::nullopt;
 #if ENABLE(IOS_TOUCH_EVENTS)
     if (!decoder.decode(result.m_radiusX))
-        return std::nullopt;
+        return WTF::nullopt;
     if (!decoder.decode(result.m_radiusY))
-        return std::nullopt;
+        return WTF::nullopt;
     if (!decoder.decode(result.m_rotationAngle))
-        return std::nullopt;
+        return WTF::nullopt;
     if (!decoder.decode(result.m_force))
-        return std::nullopt;
+        return WTF::nullopt;
     if (!decoder.decode(result.m_altitudeAngle))
-        return std::nullopt;
+        return WTF::nullopt;
     if (!decoder.decode(result.m_azimuthAngle))
-        return std::nullopt;
+        return WTF::nullopt;
     if (!decoder.decode(result.m_touchType))
-        return std::nullopt;
+        return WTF::nullopt;
 #endif
     return WTFMove(result);
 }

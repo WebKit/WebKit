@@ -38,7 +38,7 @@ struct CPUTime {
 
     WTF_EXPORT_PRIVATE double percentageCPUUsageSince(const CPUTime&) const;
 
-    WTF_EXPORT_PRIVATE static std::optional<CPUTime> get();
+    WTF_EXPORT_PRIVATE static Optional<CPUTime> get();
 
     // Returns the current CPU time of the current thread.
     // Precision varies depending on platform but is usually as good or better

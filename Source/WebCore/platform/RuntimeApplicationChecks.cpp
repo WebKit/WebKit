@@ -37,9 +37,9 @@ namespace WebCore {
 static bool presentingApplicationPIDOverrideWasQueried;
 #endif
 
-static std::optional<int>& presentingApplicationPIDOverride()
+static Optional<int>& presentingApplicationPIDOverride()
 {
-    static NeverDestroyed<std::optional<int>> pid;
+    static NeverDestroyed<Optional<int>> pid;
 #if !ASSERT_MSG_DISABLED
     presentingApplicationPIDOverrideWasQueried = true;
 #endif

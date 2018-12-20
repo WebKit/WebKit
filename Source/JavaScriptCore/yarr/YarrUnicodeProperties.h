@@ -33,8 +33,8 @@ namespace JSC { namespace Yarr {
 
 struct CharacterClass;
 
-JS_EXPORT_PRIVATE std::optional<BuiltInCharacterClassID> unicodeMatchPropertyValue(WTF::String, WTF::String);
-JS_EXPORT_PRIVATE std::optional<BuiltInCharacterClassID> unicodeMatchProperty(WTF::String);
+JS_EXPORT_PRIVATE Optional<BuiltInCharacterClassID> unicodeMatchPropertyValue(WTF::String, WTF::String);
+JS_EXPORT_PRIVATE Optional<BuiltInCharacterClassID> unicodeMatchProperty(WTF::String);
 
 std::unique_ptr<CharacterClass> createUnicodeCharacterClassFor(BuiltInCharacterClassID);
 

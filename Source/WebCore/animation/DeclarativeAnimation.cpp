@@ -117,25 +117,25 @@ void DeclarativeAnimation::syncPropertiesWithBackingAnimation()
 {
 }
 
-std::optional<double> DeclarativeAnimation::startTime() const
+Optional<double> DeclarativeAnimation::startTime() const
 {
     flushPendingStyleChanges();
     return WebAnimation::startTime();
 }
 
-void DeclarativeAnimation::setStartTime(std::optional<double> startTime)
+void DeclarativeAnimation::setStartTime(Optional<double> startTime)
 {
     flushPendingStyleChanges();
     return WebAnimation::setStartTime(startTime);
 }
 
-std::optional<double> DeclarativeAnimation::bindingsCurrentTime() const
+Optional<double> DeclarativeAnimation::bindingsCurrentTime() const
 {
     flushPendingStyleChanges();
     return WebAnimation::bindingsCurrentTime();
 }
 
-ExceptionOr<void> DeclarativeAnimation::setBindingsCurrentTime(std::optional<double> currentTime)
+ExceptionOr<void> DeclarativeAnimation::setBindingsCurrentTime(Optional<double> currentTime)
 {
     flushPendingStyleChanges();
     return WebAnimation::setBindingsCurrentTime(currentTime);

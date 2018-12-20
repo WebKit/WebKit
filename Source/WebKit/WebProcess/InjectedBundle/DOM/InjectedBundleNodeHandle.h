@@ -62,7 +62,7 @@ public:
     // Note: These should only be operations that are not exposed to JavaScript.
     WebCore::IntRect elementBounds();
     WebCore::IntRect renderRect(bool*);
-    RefPtr<WebImage> renderedImage(SnapshotOptions, bool shouldExcludeOverflow, const std::optional<float>& bitmapWidth = std::nullopt);
+    RefPtr<WebImage> renderedImage(SnapshotOptions, bool shouldExcludeOverflow, const Optional<float>& bitmapWidth = WTF::nullopt);
     RefPtr<InjectedBundleRangeHandle> visibleRange();
     void setHTMLInputElementValueForUser(const String&);
     void setHTMLInputElementSpellcheckEnabled(bool);

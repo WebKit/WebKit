@@ -30,7 +30,7 @@
 
 namespace WebCore {
 
-std::optional<OptionSet<PlatformEvent::Modifier>> PlatformKeyboardEvent::s_currentModifiers;    
+Optional<OptionSet<PlatformEvent::Modifier>> PlatformKeyboardEvent::s_currentModifiers;    
 
 void PlatformKeyboardEvent::setCurrentModifierState(OptionSet<Modifier> modifiers)
 {

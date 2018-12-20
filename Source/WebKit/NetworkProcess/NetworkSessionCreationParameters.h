@@ -50,7 +50,7 @@ enum class AllowsCellularAccess : bool { No, Yes };
     
 struct NetworkSessionCreationParameters {
     void encode(IPC::Encoder&) const;
-    static std::optional<NetworkSessionCreationParameters> decode(IPC::Decoder&);
+    static Optional<NetworkSessionCreationParameters> decode(IPC::Decoder&);
     static NetworkSessionCreationParameters privateSessionParameters(const PAL::SessionID&);
     
     PAL::SessionID sessionID { PAL::SessionID::defaultSessionID() };

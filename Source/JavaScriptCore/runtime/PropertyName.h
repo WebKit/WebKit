@@ -120,13 +120,13 @@ inline bool operator!=(PropertyName a, PropertyName b)
     return a.uid() != b.uid();
 }
 
-ALWAYS_INLINE std::optional<uint32_t> parseIndex(PropertyName propertyName)
+ALWAYS_INLINE Optional<uint32_t> parseIndex(PropertyName propertyName)
 {
     auto uid = propertyName.uid();
     if (!uid)
-        return std::nullopt;
+        return WTF::nullopt;
     if (uid->isSymbol())
-        return std::nullopt;
+        return WTF::nullopt;
     return parseIndex(*uid);
 }
 

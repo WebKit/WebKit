@@ -65,7 +65,7 @@ ProtectionSpace AuthenticationChallenge::protectionSpaceFromHandle(const CurlRes
     return ProtectionSpace(url.host().toString(), static_cast<int>(port ? *port : 0), serverType, parseRealm(response), authenticationScheme);
 }
 
-std::optional<uint16_t> AuthenticationChallenge::determineProxyPort(const URL& url)
+Optional<uint16_t> AuthenticationChallenge::determineProxyPort(const URL& url)
 {
     static const uint16_t socksPort = 1080;
 
@@ -78,7 +78,7 @@ std::optional<uint16_t> AuthenticationChallenge::determineProxyPort(const URL& u
     if (protocolIsInSocksFamily(url))
         return socksPort;
 
-    return std::nullopt;
+    return WTF::nullopt;
 }
 
 ProtectionSpaceAuthenticationScheme AuthenticationChallenge::authenticationSchemeFromCurlAuth(long curlAuth)

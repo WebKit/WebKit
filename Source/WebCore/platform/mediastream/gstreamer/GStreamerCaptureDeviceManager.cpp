@@ -66,7 +66,7 @@ GStreamerDisplayCaptureDeviceManager& GStreamerDisplayCaptureDeviceManager::sing
     return manager;
 }
 
-std::optional<GStreamerCaptureDevice> GStreamerCaptureDeviceManager::gstreamerDeviceWithUID(const String& deviceID)
+Optional<GStreamerCaptureDevice> GStreamerCaptureDeviceManager::gstreamerDeviceWithUID(const String& deviceID)
 {
     captureDevices();
 
@@ -74,7 +74,7 @@ std::optional<GStreamerCaptureDevice> GStreamerCaptureDeviceManager::gstreamerDe
         if (device.persistentId() == deviceID)
             return device;
     }
-    return std::nullopt;
+    return WTF::nullopt;
 }
 
 const Vector<CaptureDevice>& GStreamerCaptureDeviceManager::captureDevices()

@@ -42,7 +42,7 @@ class WindowDisplayCaptureSourceMac : public DisplayCaptureSourceCocoa {
 public:
     static CaptureSourceOrError create(String&&, const MediaConstraints*);
 
-    static std::optional<CaptureDevice> windowCaptureDeviceWithPersistentID(const String&);
+    static Optional<CaptureDevice> windowCaptureDeviceWithPersistentID(const String&);
     static void windowCaptureDevices(Vector<CaptureDevice>&);
 
 private:

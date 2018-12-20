@@ -46,17 +46,17 @@ struct ShippingMethodUpdate;
 class PaymentCoordinatorClient {
 public:
     virtual bool supportsVersion(unsigned version) = 0;
-    virtual std::optional<String> validatedPaymentNetwork(const String&) = 0;
+    virtual Optional<String> validatedPaymentNetwork(const String&) = 0;
     virtual bool canMakePayments() = 0;
     virtual void canMakePaymentsWithActiveCard(const String& merchantIdentifier, const String& domainName, WTF::Function<void (bool)>&& completionHandler) = 0;
     virtual void openPaymentSetup(const String& merchantIdentifier, const String& domainName, WTF::Function<void (bool)>&& completionHandler) = 0;
 
     virtual bool showPaymentUI(const URL& originatingURL, const Vector<URL>& linkIconURLs, const ApplePaySessionPaymentRequest&) = 0;
     virtual void completeMerchantValidation(const PaymentMerchantSession&) = 0;
-    virtual void completeShippingMethodSelection(std::optional<ShippingMethodUpdate>&&) = 0;
-    virtual void completeShippingContactSelection(std::optional<ShippingContactUpdate>&&) = 0;
-    virtual void completePaymentMethodSelection(std::optional<PaymentMethodUpdate>&&) = 0;
-    virtual void completePaymentSession(std::optional<PaymentAuthorizationResult>&&) = 0;
+    virtual void completeShippingMethodSelection(Optional<ShippingMethodUpdate>&&) = 0;
+    virtual void completeShippingContactSelection(Optional<ShippingContactUpdate>&&) = 0;
+    virtual void completePaymentMethodSelection(Optional<PaymentMethodUpdate>&&) = 0;
+    virtual void completePaymentSession(Optional<PaymentAuthorizationResult>&&) = 0;
     virtual void abortPaymentSession() = 0;
     virtual void cancelPaymentSession() = 0;
     virtual void paymentCoordinatorDestroyed() = 0;

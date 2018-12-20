@@ -1263,7 +1263,7 @@ void WebsiteDataStore::updatePrevalentDomainsToBlockCookiesFor(const Vector<Stri
     }
 }
 
-void WebsiteDataStore::setAgeCapForClientSideCookies(std::optional<Seconds> seconds, CompletionHandler<void()>&& completionHandler)
+void WebsiteDataStore::setAgeCapForClientSideCookies(Optional<Seconds> seconds, CompletionHandler<void()>&& completionHandler)
 {
     auto callbackAggregator = CallbackAggregator::create(WTFMove(completionHandler));
     
@@ -1297,7 +1297,7 @@ void WebsiteDataStore::getAllStorageAccessEntries(uint64_t pageID, CompletionHan
     networkProcess.getAllStorageAccessEntries(m_sessionID, WTFMove(completionHandler));
 }
 
-void WebsiteDataStore::grantStorageAccessHandler(const String& resourceDomain, const String& firstPartyDomain, std::optional<uint64_t> frameID, uint64_t pageID, CompletionHandler<void(bool wasGranted)>&& completionHandler)
+void WebsiteDataStore::grantStorageAccessHandler(const String& resourceDomain, const String& firstPartyDomain, Optional<uint64_t> frameID, uint64_t pageID, CompletionHandler<void(bool wasGranted)>&& completionHandler)
 {
     auto* webPage = WebProcessProxy::webPage(pageID);
     if (!webPage) {

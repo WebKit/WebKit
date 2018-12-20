@@ -48,10 +48,10 @@ VRManager::~VRManager()
     m_platformManager = nullptr;
 }
 
-std::optional<VRManager::VRDisplaysVector> VRManager::getVRDisplays()
+Optional<VRManager::VRDisplaysVector> VRManager::getVRDisplays()
 {
     if (!m_platformManager)
-        return std::nullopt;
+        return WTF::nullopt;
 
     auto displays = m_platformManager->getVRDisplays();
     VRDisplaysHashMap newDisplays;

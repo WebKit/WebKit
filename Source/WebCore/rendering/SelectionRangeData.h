@@ -57,8 +57,8 @@ public:
 
         RenderObject* start() const { return m_start.get(); }
         RenderObject* end() const { return m_end.get(); }
-        std::optional<unsigned> startPosition() const { return m_startPosition; }
-        std::optional<unsigned> endPosition() const { return m_endPosition; }
+        Optional<unsigned> startPosition() const { return m_startPosition; }
+        Optional<unsigned> endPosition() const { return m_endPosition; }
 
         bool operator==(const Context& other) const
         {
@@ -68,8 +68,8 @@ public:
     private:
         WeakPtr<RenderObject> m_start;
         WeakPtr<RenderObject> m_end;
-        std::optional<unsigned> m_startPosition;
-        std::optional<unsigned> m_endPosition;
+        Optional<unsigned> m_startPosition;
+        Optional<unsigned> m_endPosition;
     };
 
     enum class RepaintMode { NewXOROld, NewMinusOld, Nothing };

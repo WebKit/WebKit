@@ -31,7 +31,7 @@ class MockGStreamerAudioCaptureSource final : public GStreamerAudioCaptureSource
 public:
     MockGStreamerAudioCaptureSource(String&& deviceID, String&& name, String&& hashSalt);
     ~MockGStreamerAudioCaptureSource();
-    std::optional<std::pair<String, String>> applyConstraints(const MediaConstraints&);
+    Optional<std::pair<String, String>> applyConstraints(const MediaConstraints&);
     void applyConstraints(const MediaConstraints&, SuccessHandler&&, FailureHandler&&) final;
 
 private:

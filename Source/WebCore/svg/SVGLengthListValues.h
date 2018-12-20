@@ -43,7 +43,7 @@ struct SVGPropertyTraits<SVGLengthListValues> {
         list.parse(string, lengthMode);
         return list;
     }
-    static std::optional<SVGLengthListValues> parse(const QualifiedName& attrName, const String& string)
+    static Optional<SVGLengthListValues> parse(const QualifiedName& attrName, const String& string)
     {
         SVGLengthListValues list;
         list.parse(string, SVGLengthValue::lengthModeForAnimatedLengthAttribute(attrName));

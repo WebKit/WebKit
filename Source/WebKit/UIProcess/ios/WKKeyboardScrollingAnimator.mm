@@ -99,7 +99,7 @@ struct KeyboardScrollParameters {
     id <WKKeyboardScrollableInternal> _scrollable;
     RetainPtr<CADisplayLink> _displayLink;
 
-    std::optional<WebKit::KeyboardScroll> _currentScroll;
+    Optional<WebKit::KeyboardScroll> _currentScroll;
 
     BOOL _hasPressedScrollingKey;
 
@@ -187,16 +187,16 @@ static WebCore::PhysicalBoxSide boxSide(WebKit::ScrollingDirection direction)
     }
 }
 
-- (std::optional<WebKit::KeyboardScroll>)keyboardScrollForEvent:(::WebEvent *)event
+- (Optional<WebKit::KeyboardScroll>)keyboardScrollForEvent:(::WebEvent *)event
 {
     static const unsigned kWebSpaceKey = 0x20;
 
     if (![_scrollable isKeyboardScrollable])
-        return std::nullopt;
+        return WTF::nullopt;
 
     NSString *charactersIgnoringModifiers = event.charactersIgnoringModifiers;
     if (!charactersIgnoringModifiers.length)
-        return std::nullopt;
+        return WTF::nullopt;
 
     enum class Key : uint8_t { Other, LeftArrow, RightArrow, UpArrow, DownArrow, PageUp, PageDown, Space };
     
@@ -223,7 +223,7 @@ static WebCore::PhysicalBoxSide boxSide(WebKit::ScrollingDirection direction)
     }();
     
     if (key == Key::Other)
-        return std::nullopt;
+        return WTF::nullopt;
     
     BOOL shiftPressed = event.modifierFlags & WebEventFlagMaskShiftKey;
     BOOL altPressed = event.modifierFlags & WebEventFlagMaskOptionKey;
@@ -375,7 +375,7 @@ static WebCore::FloatPoint farthestPointInDirection(WebCore::FloatPoint a, WebCo
     // out to that point.
     _idealPosition = [_scrollable boundedContentOffset:farthestPointInDirection(_currentPosition + displacement, _idealPositionForMinimumTravel, _currentScroll->direction)];
 
-    _currentScroll = std::nullopt;
+    _currentScroll = WTF::nullopt;
 
 #if !ENABLE(ANIMATED_KEYBOARD_SCROLLING)
     [self stopRepeatTimer];

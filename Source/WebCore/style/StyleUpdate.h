@@ -53,14 +53,14 @@ enum class DescendantsToResolve { None, ChildrenWithExplicitInherit, Children, A
 struct ElementUpdates {
     ElementUpdate update;
     DescendantsToResolve descendantsToResolve { DescendantsToResolve::None };
-    std::optional<ElementUpdate> beforePseudoElementUpdate;
-    std::optional<ElementUpdate> afterPseudoElementUpdate;
+    Optional<ElementUpdate> beforePseudoElementUpdate;
+    Optional<ElementUpdate> afterPseudoElementUpdate;
 };
 
 struct TextUpdate {
     unsigned offset { 0 };
     unsigned length { std::numeric_limits<unsigned>::max() };
-    std::optional<std::unique_ptr<RenderStyle>> inheritedDisplayContentsStyle;
+    Optional<std::unique_ptr<RenderStyle>> inheritedDisplayContentsStyle;
 };
 
 class Update {

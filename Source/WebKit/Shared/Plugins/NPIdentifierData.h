@@ -45,7 +45,7 @@ public:
     NPIdentifier createNPIdentifier() const;
 
     void encode(IPC::Encoder&) const;
-    static std::optional<NPIdentifierData> decode(IPC::Decoder&);
+    static Optional<NPIdentifierData> decode(IPC::Decoder&);
 
 private:
     bool m_isString;

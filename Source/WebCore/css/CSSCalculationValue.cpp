@@ -418,7 +418,7 @@ public:
     {
         ASSERT(op == CalcOperator::Min || op == CalcOperator::Max);
 
-        std::optional<CalculationCategory> category = std::nullopt;
+        Optional<CalculationCategory> category = WTF::nullopt;
         for (auto& value : values) {
             auto valueCategory = resolvedTypeForMinOrMax(value->category(), destinationCategory);
 

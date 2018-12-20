@@ -144,13 +144,13 @@ DisplayCaptureSourceCocoa::DisplayFrameType WindowDisplayCaptureSourceMac::gener
     return DisplayCaptureSourceCocoa::DisplayFrameType { RetainPtr<CGImageRef> { windowImage() } };
 }
 
-std::optional<CaptureDevice> WindowDisplayCaptureSourceMac::windowCaptureDeviceWithPersistentID(const String& idString)
+Optional<CaptureDevice> WindowDisplayCaptureSourceMac::windowCaptureDeviceWithPersistentID(const String& idString)
 {
     bool ok;
     auto windowID = idString.toUIntStrict(&ok);
     if (!ok) {
         RELEASE_LOG(Media, "WindowDisplayCaptureSourceMac::windowCaptureDeviceWithPersistentID: window ID does not convert to 32-bit integer");
-        return std::nullopt;
+        return WTF::nullopt;
     }
 
     String windowTitle;
@@ -163,7 +163,7 @@ std::optional<CaptureDevice> WindowDisplayCaptureSourceMac::windowCaptureDeviceW
 
     })) {
         RELEASE_LOG(Media, "WindowDisplayCaptureSourceMac::windowCaptureDeviceWithPersistentID: window ID is not valid");
-        return std::nullopt;
+        return WTF::nullopt;
     }
 
     auto device = CaptureDevice(String::number(windowID), CaptureDevice::DeviceType::Window, windowTitle);

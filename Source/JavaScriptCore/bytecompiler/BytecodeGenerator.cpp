@@ -4099,7 +4099,7 @@ RegisterID* BytecodeGenerator::emitGetTemplateObject(RegisterID* dst, TaggedTemp
         ASSERT(string->raw());
         rawStrings.append(string->raw()->impl());
         if (!string->cooked())
-            cookedStrings.append(std::nullopt);
+            cookedStrings.append(WTF::nullopt);
         else
             cookedStrings.append(string->cooked()->impl());
     }

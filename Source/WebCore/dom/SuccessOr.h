@@ -30,12 +30,12 @@
 namespace WebCore {
 
 template <typename T>
-class SuccessOr : public std::optional<T> {
+class SuccessOr : public Optional<T> {
 public:
-    SuccessOr() : std::optional<T>() { }
-    SuccessOr(T&& error) : std::optional<T>(error) { }
+    SuccessOr() : Optional<T>() { }
+    SuccessOr(T&& error) : Optional<T>(error) { }
 
-    explicit constexpr operator bool() const { return !std::optional<T>::operator bool(); }
+    explicit constexpr operator bool() const { return !Optional<T>::operator bool(); }
 };
 
 } // namespace WebCore

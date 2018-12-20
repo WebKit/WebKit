@@ -138,11 +138,11 @@ public:
 
     int sampleRate() const { return m_sampleRate; }
     void setSampleRate(int);
-    virtual std::optional<Vector<int>> discreteSampleRates() const;
+    virtual Optional<Vector<int>> discreteSampleRates() const;
 
     int sampleSize() const { return m_sampleSize; }
     void setSampleSize(int);
-    virtual std::optional<Vector<int>> discreteSampleSizes() const;
+    virtual Optional<Vector<int>> discreteSampleSizes() const;
 
     bool echoCancellation() const { return m_echoCancellation; }
     void setEchoCancellation(bool);
@@ -153,7 +153,7 @@ public:
     using SuccessHandler = WTF::Function<void()>;
     using FailureHandler = WTF::Function<void(const String& badConstraint, const String& errorString)>;
     virtual void applyConstraints(const MediaConstraints&, SuccessHandler&&, FailureHandler&&);
-    std::optional<std::pair<String, String>> applyConstraints(const MediaConstraints&);
+    Optional<std::pair<String, String>> applyConstraints(const MediaConstraints&);
 
     bool supportsConstraints(const MediaConstraints&, String&);
     bool supportsConstraint(const MediaConstraint&);
@@ -189,10 +189,10 @@ protected:
     double fitnessDistance(const MediaConstraint&);
     void applyConstraint(const MediaConstraint&);
     void applyConstraints(const FlattenedConstraint&);
-    bool supportsSizeAndFrameRate(std::optional<IntConstraint> width, std::optional<IntConstraint> height, std::optional<DoubleConstraint>, String&, double& fitnessDistance);
+    bool supportsSizeAndFrameRate(Optional<IntConstraint> width, Optional<IntConstraint> height, Optional<DoubleConstraint>, String&, double& fitnessDistance);
 
-    virtual bool supportsSizeAndFrameRate(std::optional<int> width, std::optional<int> height, std::optional<double>);
-    virtual void setSizeAndFrameRate(std::optional<int> width, std::optional<int> height, std::optional<double>);
+    virtual bool supportsSizeAndFrameRate(Optional<int> width, Optional<int> height, Optional<double>);
+    virtual void setSizeAndFrameRate(Optional<int> width, Optional<int> height, Optional<double>);
 
     void notifyMutedObservers() const;
     void notifyMutedChange(bool muted);

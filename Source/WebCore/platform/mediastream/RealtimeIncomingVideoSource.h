@@ -71,7 +71,7 @@ private:
 
     bool isIncomingVideoSource() const final { return true; }
 
-    std::optional<RealtimeMediaSourceSettings> m_currentSettings;
+    Optional<RealtimeMediaSourceSettings> m_currentSettings;
     rtc::scoped_refptr<webrtc::VideoTrackInterface> m_videoTrack;
 };
 

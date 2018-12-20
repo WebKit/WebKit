@@ -59,7 +59,7 @@ TEST(CTAPRequestTest, TestConstructMakeCredentialRequestParam)
     Vector<PublicKeyCredentialCreationOptions::Parameters> params { { PublicKeyCredentialType::PublicKey, 7 }, { PublicKeyCredentialType::PublicKey, 257 } };
     PublicKeyCredentialCreationOptions::AuthenticatorSelectionCriteria selection { PublicKeyCredentialCreationOptions::AuthenticatorAttachment::Platform, true, UserVerificationRequirement::Preferred };
 
-    PublicKeyCredentialCreationOptions options { rp, user, { }, params, std::nullopt, { }, selection };
+    PublicKeyCredentialCreationOptions options { rp, user, { }, params, WTF::nullopt, { }, selection };
     Vector<uint8_t> hash;
     hash.append(TestData::kClientDataHash, sizeof(TestData::kClientDataHash));
     auto serializedData = encodeMakeCredenitalRequestAsCBOR(hash, options, AuthenticatorSupportedOptions::UserVerificationAvailability::kSupportedButNotConfigured);

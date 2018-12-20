@@ -69,7 +69,7 @@ void setLogChannelToAccumulate(const String& name)
     logChannelsNeedInitialization = true;
 }
 
-void initializeLogChannelsIfNecessary(std::optional<String> logChannelString)
+void initializeLogChannelsIfNecessary(Optional<String> logChannelString)
 {
     if (!logChannelsNeedInitialization && !logChannelString)
         return;

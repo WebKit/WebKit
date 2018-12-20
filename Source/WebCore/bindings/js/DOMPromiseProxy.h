@@ -53,7 +53,7 @@ public:
     void reject(Exception);
     
 private:
-    std::optional<ExceptionOr<Value>> m_valueOrException;
+    Optional<ExceptionOr<Value>> m_valueOrException;
     Vector<Ref<DeferredPromise>, 1> m_deferredPromises;
 };
 
@@ -73,7 +73,7 @@ public:
     void reject(Exception);
 
 private:
-    std::optional<ExceptionOr<void>> m_valueOrException;
+    Optional<ExceptionOr<void>> m_valueOrException;
     Vector<Ref<DeferredPromise>, 1> m_deferredPromises;
 };
 
@@ -103,7 +103,7 @@ public:
     
 private:
     ResolveCallback m_resolveCallback;
-    std::optional<ExceptionOr<void>> m_valueOrException;
+    Optional<ExceptionOr<void>> m_valueOrException;
     Vector<Ref<DeferredPromise>, 1> m_deferredPromises;
 };
 
@@ -138,7 +138,7 @@ inline JSC::JSValue DOMPromiseProxy<IDLType>::promise(JSC::ExecState& state, JSD
 template<typename IDLType>
 inline void DOMPromiseProxy<IDLType>::clear()
 {
-    m_valueOrException = std::nullopt;
+    m_valueOrException = WTF::nullopt;
     m_deferredPromises.clear();
 }
 
@@ -207,7 +207,7 @@ inline JSC::JSValue DOMPromiseProxy<IDLVoid>::promise(JSC::ExecState& state, JSD
 
 inline void DOMPromiseProxy<IDLVoid>::clear()
 {
-    m_valueOrException = std::nullopt;
+    m_valueOrException = WTF::nullopt;
     m_deferredPromises.clear();
 }
 
@@ -275,7 +275,7 @@ inline JSC::JSValue DOMPromiseProxyWithResolveCallback<IDLType>::promise(JSC::Ex
 template<typename IDLType>
 inline void DOMPromiseProxyWithResolveCallback<IDLType>::clear()
 {
-    m_valueOrException = std::nullopt;
+    m_valueOrException = WTF::nullopt;
     m_deferredPromises.clear();
 }
 

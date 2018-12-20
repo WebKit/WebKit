@@ -22,6 +22,6 @@
 
 messages -> NetworkSocketStream {
     SendData(IPC::DataReference data, uint64_t identifier)
-    SendHandshake(IPC::DataReference data, std::optional<WebCore::CookieRequestHeaderFieldProxy> headerFieldProxy, uint64_t identifier)
+    SendHandshake(IPC::DataReference data, Optional<WebCore::CookieRequestHeaderFieldProxy> headerFieldProxy, uint64_t identifier)
     Close()
 }

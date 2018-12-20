@@ -84,10 +84,10 @@ private:
     void openPaymentSetup(const String& merchantIdentifier, const String& domainName, uint64_t requestID);
     void showPaymentUI(const String& originatingURLString, const Vector<String>& linkIconURLStrings, const WebCore::ApplePaySessionPaymentRequest&, bool& result);
     void completeMerchantValidation(const WebCore::PaymentMerchantSession&);
-    void completeShippingMethodSelection(const std::optional<WebCore::ShippingMethodUpdate>&);
-    void completeShippingContactSelection(const std::optional<WebCore::ShippingContactUpdate>&);
-    void completePaymentMethodSelection(const std::optional<WebCore::PaymentMethodUpdate>&);
-    void completePaymentSession(const std::optional<WebCore::PaymentAuthorizationResult>&);
+    void completeShippingMethodSelection(const Optional<WebCore::ShippingMethodUpdate>&);
+    void completeShippingContactSelection(const Optional<WebCore::ShippingContactUpdate>&);
+    void completePaymentMethodSelection(const Optional<WebCore::PaymentMethodUpdate>&);
+    void completePaymentSession(const Optional<WebCore::PaymentAuthorizationResult>&);
     void abortPaymentSession();
     void cancelPaymentSession();
 
@@ -104,10 +104,10 @@ private:
     void platformOpenPaymentSetup(const String& merchantIdentifier, const String& domainName, WTF::Function<void (bool)>&& completionHandler);
     void platformShowPaymentUI(const URL& originatingURL, const Vector<URL>& linkIconURLs, const WebCore::ApplePaySessionPaymentRequest&, WTF::Function<void(bool)>&& completionHandler);
     void platformCompleteMerchantValidation(const WebCore::PaymentMerchantSession&);
-    void platformCompleteShippingMethodSelection(const std::optional<WebCore::ShippingMethodUpdate>&);
-    void platformCompleteShippingContactSelection(const std::optional<WebCore::ShippingContactUpdate>&);
-    void platformCompletePaymentMethodSelection(const std::optional<WebCore::PaymentMethodUpdate>&);
-    void platformCompletePaymentSession(const std::optional<WebCore::PaymentAuthorizationResult>&);
+    void platformCompleteShippingMethodSelection(const Optional<WebCore::ShippingMethodUpdate>&);
+    void platformCompleteShippingContactSelection(const Optional<WebCore::ShippingContactUpdate>&);
+    void platformCompletePaymentMethodSelection(const Optional<WebCore::PaymentMethodUpdate>&);
+    void platformCompletePaymentSession(const Optional<WebCore::PaymentAuthorizationResult>&);
 
     WebPageProxy& m_webPageProxy;
 

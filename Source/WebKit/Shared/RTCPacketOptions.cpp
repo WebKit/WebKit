@@ -46,47 +46,47 @@ void RTCPacketOptions::encode(IPC::Encoder& encoder) const
     encoder << options.packet_time_params.srtp_packet_index;
 }
 
-std::optional<RTCPacketOptions> RTCPacketOptions::decode(IPC::Decoder& decoder)
+Optional<RTCPacketOptions> RTCPacketOptions::decode(IPC::Decoder& decoder)
 {
     rtc::PacketTimeUpdateParams params;
     rtc::PacketOptions options;
 
     rtc::DiffServCodePoint dscp;
     if (!decoder.decodeEnum(dscp))
-        return std::nullopt;
+        return WTF::nullopt;
     options.dscp = dscp;
 
-    std::optional<int32_t> packetId;
+    Optional<int32_t> packetId;
     decoder >> packetId;
     if (!packetId)
-        return std::nullopt;
+        return WTF::nullopt;
     options.packet_id = packetId.value();
 
-    std::optional<int> rtpSendtimeExtensionId;
+    Optional<int> rtpSendtimeExtensionId;
     decoder >> rtpSendtimeExtensionId;
     if (!rtpSendtimeExtensionId)
-        return std::nullopt;
+        return WTF::nullopt;
     params.rtp_sendtime_extension_id = rtpSendtimeExtensionId.value();
 
-    std::optional<int64_t> srtpAuthTagLength;
+    Optional<int64_t> srtpAuthTagLength;
     decoder >> srtpAuthTagLength;
     if (!srtpAuthTagLength)
-        return std::nullopt;
+        return WTF::nullopt;
     params.srtp_auth_tag_len = srtpAuthTagLength.value();
 
     if (params.srtp_auth_tag_len > 0) {
         IPC::DataReference srtpAuthKey;
         if (!decoder.decode(srtpAuthKey))
-            return std::nullopt;
+            return WTF::nullopt;
 
         params.srtp_auth_key = std::vector<char>(static_cast<size_t>(srtpAuthKey.size()));
         memcpy(params.srtp_auth_key.data(), reinterpret_cast<const char*>(srtpAuthKey.data()), srtpAuthKey.size() * sizeof(char));
     }
 
-    std::optional<int64_t> srtpPacketIndex;
+    Optional<int64_t> srtpPacketIndex;
     decoder >> srtpPacketIndex;
     if (!srtpPacketIndex)
-        return std::nullopt;
+        return WTF::nullopt;
     params.srtp_packet_index = srtpPacketIndex.value();
 
     options.packet_time_params = WTFMove(params);

@@ -32,7 +32,7 @@
 
 namespace WebDriver {
 
-static bool soupServerListen(SoupServer* server, const std::optional<String>& host, unsigned port, GError** error)
+static bool soupServerListen(SoupServer* server, const Optional<String>& host, unsigned port, GError** error)
 {
     static const auto options = static_cast<SoupServerListenOptions>(0);
     if (!host || host.value() == "local")
@@ -50,7 +50,7 @@ static bool soupServerListen(SoupServer* server, const std::optional<String>& ho
     return soup_server_listen(server, address.get(), options, error);
 }
 
-bool HTTPServer::listen(const std::optional<String>& host, unsigned port)
+bool HTTPServer::listen(const Optional<String>& host, unsigned port)
 {
     m_soupServer = adoptGRef(soup_server_new(SOUP_SERVER_SERVER_HEADER, "WebKitWebDriver", nullptr));
     GUniqueOutPtr<GError> error;

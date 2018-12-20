@@ -77,8 +77,8 @@ private:
 
 TEST_F(SecurityOriginTest, SecurityOriginConstructors)
 {
-    Ref<SecurityOrigin> o1 = SecurityOrigin::create("http", "example.com", std::optional<uint16_t>(80));
-    Ref<SecurityOrigin> o2 = SecurityOrigin::create("http", "example.com", std::optional<uint16_t>());
+    Ref<SecurityOrigin> o1 = SecurityOrigin::create("http", "example.com", Optional<uint16_t>(80));
+    Ref<SecurityOrigin> o2 = SecurityOrigin::create("http", "example.com", Optional<uint16_t>());
     Ref<SecurityOrigin> o3 = SecurityOrigin::createFromString("http://example.com");
     Ref<SecurityOrigin> o4 = SecurityOrigin::createFromString("http://example.com:80");
     Ref<SecurityOrigin> o5 = SecurityOrigin::create(URL(URL(), "http://example.com"));

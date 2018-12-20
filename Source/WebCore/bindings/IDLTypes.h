@@ -65,13 +65,13 @@ struct IDLType {
     using StorageType = T;
 
     using ParameterType = T;
-    using NullableParameterType = std::optional<ImplementationType>;
+    using NullableParameterType = Optional<ImplementationType>;
 
     using InnerParameterType = T;
-    using NullableInnerParameterType = std::optional<ImplementationType>;
+    using NullableInnerParameterType = Optional<ImplementationType>;
 
-    using NullableType = std::optional<ImplementationType>;
-    static NullableType nullValue() { return std::nullopt; }
+    using NullableType = Optional<ImplementationType>;
+    static NullableType nullValue() { return WTF::nullopt; }
     static bool isNullValue(const NullableType& value) { return !value; }
     static ImplementationType extractValueFromNullable(const NullableType& value) { return value.value(); }
 };
@@ -204,14 +204,14 @@ template<typename T> struct IDLSequence : IDLType<Vector<typename T::Implementat
     using InnerType = T;
 
     using ParameterType = const Vector<typename T::InnerParameterType>&;
-    using NullableParameterType = const std::optional<Vector<typename T::InnerParameterType>>&;
+    using NullableParameterType = const Optional<Vector<typename T::InnerParameterType>>&;
 };
 
 template<typename T> struct IDLFrozenArray : IDLType<Vector<typename T::ImplementationType>> {
     using InnerType = T;
 
     using ParameterType = const Vector<typename T::ImplementationType>&;
-    using NullableParameterType = const std::optional<Vector<typename T::ImplementationType>>&;
+    using NullableParameterType = const Optional<Vector<typename T::ImplementationType>>&;
 };
 
 template<typename K, typename V> struct IDLRecord : IDLType<Vector<WTF::KeyValuePair<typename K::ImplementationType, typename V::ImplementationType>>> {
@@ -219,7 +219,7 @@ template<typename K, typename V> struct IDLRecord : IDLType<Vector<WTF::KeyValue
     using ValueType = V;
 
     using ParameterType = const Vector<WTF::KeyValuePair<typename K::ImplementationType, typename V::ImplementationType>>&;
-    using NullableParameterType = const std::optional<Vector<WTF::KeyValuePair<typename K::ImplementationType, typename V::ImplementationType>>>&;
+    using NullableParameterType = const Optional<Vector<WTF::KeyValuePair<typename K::ImplementationType, typename V::ImplementationType>>>&;
 };
 
 template<typename T> struct IDLPromise : IDLWrapper<DOMPromise> {
@@ -234,7 +234,7 @@ struct IDLUnion : IDLType<Variant<typename Ts::ImplementationType...>> {
     using TypeList = brigand::list<Ts...>;
 
     using ParameterType = const Variant<typename Ts::ImplementationType...>&;
-    using NullableParameterType = const std::optional<Variant<typename Ts::ImplementationType...>>&;
+    using NullableParameterType = const Optional<Variant<typename Ts::ImplementationType...>>&;
 };
 
 template<typename T> struct IDLBufferSource : IDLWrapper<T> { };

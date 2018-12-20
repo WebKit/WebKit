@@ -66,7 +66,7 @@ public:
 
     CString clientHandshakeMessage() const;
     ResourceRequest clientHandshakeRequest() const;
-    std::optional<CookieRequestHeaderFieldProxy> clientHandshakeCookieRequestHeaderFieldProxy() const;
+    Optional<CookieRequestHeaderFieldProxy> clientHandshakeCookieRequestHeaderFieldProxy() const;
 
     void reset();
     void clearDocument();

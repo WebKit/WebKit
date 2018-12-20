@@ -36,13 +36,13 @@ namespace WebCore {
 
 struct PublicKeyCredentialRequestOptions {
     BufferSource challenge;
-    std::optional<unsigned> timeout;
+    Optional<unsigned> timeout;
     mutable String rpId;
     Vector<PublicKeyCredentialDescriptor> allowCredentials;
     UserVerificationRequirement userVerification { UserVerificationRequirement::Preferred };
 
     template<class Encoder> void encode(Encoder&) const;
-    template<class Decoder> static std::optional<PublicKeyCredentialRequestOptions> decode(Decoder&);
+    template<class Decoder> static Optional<PublicKeyCredentialRequestOptions> decode(Decoder&);
 };
 
 // Not every member is encoded.
@@ -53,25 +53,25 @@ void PublicKeyCredentialRequestOptions::encode(Encoder& encoder) const
 }
 
 template<class Decoder>
-std::optional<PublicKeyCredentialRequestOptions> PublicKeyCredentialRequestOptions::decode(Decoder& decoder)
+Optional<PublicKeyCredentialRequestOptions> PublicKeyCredentialRequestOptions::decode(Decoder& decoder)
 {
     PublicKeyCredentialRequestOptions result;
 
-    std::optional<std::optional<unsigned>> timeout;
+    Optional<Optional<unsigned>> timeout;
     decoder >> timeout;
     if (!timeout)
-        return std::nullopt;
+        return WTF::nullopt;
     result.timeout = WTFMove(*timeout);
 
     if (!decoder.decode(result.rpId))
-        return std::nullopt;
+        return WTF::nullopt;
     if (!decoder.decode(result.allowCredentials))
-        return std::nullopt;
+        return WTF::nullopt;
 
-    std::optional<UserVerificationRequirement> userVerification;
+    Optional<UserVerificationRequirement> userVerification;
     decoder >> userVerification;
     if (!userVerification)
-        return std::nullopt;
+        return WTF::nullopt;
     result.userVerification = WTFMove(*userVerification);
 
     return result;

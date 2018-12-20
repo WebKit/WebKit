@@ -29,7 +29,7 @@ messages -> DrawingArea {
     UpdateGeometry(WebCore::IntSize viewSize, bool flushSynchronously, MachSendRight fencePort)
     SetDeviceScaleFactor(float deviceScaleFactor)
     SetColorSpace(struct WebKit::ColorSpaceData colorSpace)
-    SetViewExposedRect(std::optional<WebCore::FloatRect> viewExposedRect)
+    SetViewExposedRect(Optional<WebCore::FloatRect> viewExposedRect)
 
     AdjustTransientZoom(double scale, WebCore::FloatPoint origin)
     CommitTransientZoom(double scale, WebCore::FloatPoint origin)

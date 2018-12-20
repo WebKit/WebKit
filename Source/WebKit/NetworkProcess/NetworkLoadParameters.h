@@ -51,7 +51,7 @@ public:
     bool isMainFrameNavigation { false };
     Vector<RefPtr<WebCore::BlobDataFileReference>> blobFileReferences;
     PreconnectOnly shouldPreconnectOnly { PreconnectOnly::No };
-    std::optional<NetworkActivityTracker> networkActivityTracker;
+    Optional<NetworkActivityTracker> networkActivityTracker;
 };
 
 } // namespace WebKit

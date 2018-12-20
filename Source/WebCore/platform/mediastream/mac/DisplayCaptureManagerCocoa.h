@@ -45,9 +45,9 @@ private:
 
     const Vector<CaptureDevice>& captureDevices() final;
 
-    std::optional<CaptureDevice> captureDeviceWithPersistentID(CaptureDevice::DeviceType, const String&) final;
-    std::optional<CaptureDevice> screenCaptureDeviceWithPersistentID(const String&);
-    std::optional<CaptureDevice> windowCaptureDeviceWithPersistentID(const String&);
+    Optional<CaptureDevice> captureDeviceWithPersistentID(CaptureDevice::DeviceType, const String&) final;
+    Optional<CaptureDevice> screenCaptureDeviceWithPersistentID(const String&);
+    Optional<CaptureDevice> windowCaptureDeviceWithPersistentID(const String&);
 
     Vector<CaptureDevice> m_devices;
 };

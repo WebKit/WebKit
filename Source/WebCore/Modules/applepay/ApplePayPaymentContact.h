@@ -42,7 +42,7 @@ struct ApplePayPaymentContact {
     String phoneticGivenName;
     String phoneticFamilyName;
     String localizedPhoneticName;
-    std::optional<Vector<String>> addressLines;
+    Optional<Vector<String>> addressLines;
     String subLocality;
     String locality;
     String postalCode;

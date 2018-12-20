@@ -121,26 +121,26 @@ bool CryptoKeyEC::platformSupportedCurve(NamedCurve curve)
     return curve == NamedCurve::P256 || curve == NamedCurve::P384 || curve == NamedCurve::P521;
 }
 
-std::optional<CryptoKeyPair> CryptoKeyEC::platformGeneratePair(CryptoAlgorithmIdentifier identifier, NamedCurve curve, bool extractable, CryptoKeyUsageBitmap usages)
+Optional<CryptoKeyPair> CryptoKeyEC::platformGeneratePair(CryptoAlgorithmIdentifier identifier, NamedCurve curve, bool extractable, CryptoKeyUsageBitmap usages)
 {
     PAL::GCrypt::Handle<gcry_sexp_t> genkeySexp;
     gcry_error_t error = gcry_sexp_build(&genkeySexp, nullptr, "(genkey(ecc(curve %s)))", curveName(curve));
     if (error != GPG_ERR_NO_ERROR) {
         PAL::GCrypt::logError(error);
-        return std::nullopt;
+        return WTF::nullopt;
     }
 
     PAL::GCrypt::Handle<gcry_sexp_t> keyPairSexp;
     error = gcry_pk_genkey(&keyPairSexp, genkeySexp);
     if (error != GPG_ERR_NO_ERROR) {
         PAL::GCrypt::logError(error);
-        return std::nullopt;
+        return WTF::nullopt;
     }
 
     PAL::GCrypt::Handle<gcry_sexp_t> publicKeySexp(gcry_sexp_find_token(keyPairSexp, "public-key", 0));
     PAL::GCrypt::Handle<gcry_sexp_t> privateKeySexp(gcry_sexp_find_token(keyPairSexp, "private-key", 0));
     if (!publicKeySexp || !privateKeySexp)
-        return std::nullopt;
+        return WTF::nullopt;
 
     auto publicKey = CryptoKeyEC::create(identifier, curve, CryptoKeyType::Public, publicKeySexp.release(), true, usages);
     auto privateKey = CryptoKeyEC::create(identifier, curve, CryptoKeyType::Private, privateKeySexp.release(), extractable, usages);
@@ -237,7 +237,7 @@ static bool supportedAlgorithmIdentifier(CryptoAlgorithmIdentifier keyIdentifier
     return false;
 }
 
-static std::optional<CryptoKeyEC::NamedCurve> curveForIdentifier(const Vector<uint8_t>& identifier)
+static Optional<CryptoKeyEC::NamedCurve> curveForIdentifier(const Vector<uint8_t>& identifier)
 {
     auto* data = identifier.data();
     auto size = identifier.size();
@@ -249,7 +249,7 @@ static std::optional<CryptoKeyEC::NamedCurve> curveForIdentifier(const Vector<ui
     if (CryptoConstants::matches(data, size, CryptoConstants::s_secp521r1Identifier))
         return CryptoKeyEC::NamedCurve::P521;
 
-    return std::nullopt;
+    return WTF::nullopt;
 }
 
 RefPtr<CryptoKeyEC> CryptoKeyEC::platformImportSpki(CryptoAlgorithmIdentifier identifier, NamedCurve curve, Vector<uint8_t>&& keyData, bool extractable, CryptoKeyUsageBitmap usages)

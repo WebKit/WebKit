@@ -1539,7 +1539,7 @@ ALWAYS_INLINE auto Lexer<T>::parseHex() -> NumberParseResult
 }
 
 template <typename T>
-ALWAYS_INLINE auto Lexer<T>::parseBinary() -> std::optional<NumberParseResult>
+ALWAYS_INLINE auto Lexer<T>::parseBinary() -> Optional<NumberParseResult>
 {
     // Optimization: most binary values fit into 4 bytes.
     uint32_t binaryValue = 0;
@@ -1571,13 +1571,13 @@ ALWAYS_INLINE auto Lexer<T>::parseBinary() -> std::optional<NumberParseResult>
         return Variant<double, const Identifier*> { makeIdentifier(m_buffer8.data(), m_buffer8.size()) };
 
     if (isASCIIDigit(m_current))
-        return std::nullopt;
+        return WTF::nullopt;
 
     return Variant<double, const Identifier*> { parseIntOverflow(m_buffer8.data(), m_buffer8.size(), 2) };
 }
 
 template <typename T>
-ALWAYS_INLINE auto Lexer<T>::parseOctal() -> std::optional<NumberParseResult>
+ALWAYS_INLINE auto Lexer<T>::parseOctal() -> Optional<NumberParseResult>
 {
     // Optimization: most octal values fit into 4 bytes.
     uint32_t octalValue = 0;
@@ -1610,13 +1610,13 @@ ALWAYS_INLINE auto Lexer<T>::parseOctal() -> std::optional<NumberParseResult>
         return Variant<double, const Identifier*> { makeIdentifier(m_buffer8.data(), m_buffer8.size()) };
 
     if (isASCIIDigit(m_current))
-        return std::nullopt;
+        return WTF::nullopt;
 
     return Variant<double, const Identifier*> { parseIntOverflow(m_buffer8.data(), m_buffer8.size(), 8) };
 }
 
 template <typename T>
-ALWAYS_INLINE auto Lexer<T>::parseDecimal() -> std::optional<NumberParseResult>
+ALWAYS_INLINE auto Lexer<T>::parseDecimal() -> Optional<NumberParseResult>
 {
     // Optimization: most decimal values fit into 4 bytes.
     uint32_t decimalValue = 0;
@@ -1652,7 +1652,7 @@ ALWAYS_INLINE auto Lexer<T>::parseDecimal() -> std::optional<NumberParseResult>
     if (UNLIKELY(Options::useBigInt() && m_current == 'n'))
         return Variant<double, const Identifier*> { makeIdentifier(m_buffer8.data(), m_buffer8.size()) };
 
-    return std::nullopt;
+    return WTF::nullopt;
 }
 
 template <typename T>

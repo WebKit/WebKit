@@ -188,7 +188,7 @@ JSValue JSBigInt::toPrimitive(ExecState*, PreferredPrimitiveType) const
     return const_cast<JSBigInt*>(this);
 }
 
-std::optional<uint8_t> JSBigInt::singleDigitValueForString()
+Optional<uint8_t> JSBigInt::singleDigitValueForString()
 {
     if (isZero())
         return 0;
@@ -1961,16 +1961,16 @@ JSBigInt::ComparisonResult JSBigInt::compareToDouble(JSBigInt* x, double y)
     return ComparisonResult::Equal;
 }
 
-std::optional<JSBigInt::Digit> JSBigInt::toShiftAmount(JSBigInt* x)
+Optional<JSBigInt::Digit> JSBigInt::toShiftAmount(JSBigInt* x)
 {
     if (x->length() > 1)
-        return std::nullopt;
+        return WTF::nullopt;
     
     Digit value = x->digit(0);
     static_assert(maxLengthBits < std::numeric_limits<Digit>::max(), "maxLengthBits needs to be less than digit");
     
     if (value > maxLengthBits)
-        return std::nullopt;
+        return WTF::nullopt;
 
     return value;
 }

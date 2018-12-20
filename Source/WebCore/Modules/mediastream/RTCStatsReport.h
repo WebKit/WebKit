@@ -59,7 +59,7 @@ public:
     };
 
     struct RTCRTPStreamStats : Stats {
-        std::optional<uint32_t> ssrc;
+        Optional<uint32_t> ssrc;
         String associateStatsId;
         bool isRemote { false };
         String mediaType;
@@ -67,63 +67,63 @@ public:
         String trackId;
         String transportId;
         String codecId;
-        std::optional<uint32_t> firCount;
-        std::optional<uint32_t> pliCount;
-        std::optional<uint32_t> nackCount;
-        std::optional<uint32_t> sliCount;
-        std::optional<uint64_t> qpSum;
+        Optional<uint32_t> firCount;
+        Optional<uint32_t> pliCount;
+        Optional<uint32_t> nackCount;
+        Optional<uint32_t> sliCount;
+        Optional<uint64_t> qpSum;
     };
 
     struct InboundRTPStreamStats : RTCRTPStreamStats {
         InboundRTPStreamStats() { type = RTCStatsReport::Type::InboundRtp; }
 
-        std::optional<uint32_t> packetsReceived;
-        std::optional<uint64_t> bytesReceived;
-        std::optional<uint32_t> packetsLost;
-        std::optional<double> jitter;
-        std::optional<double> fractionLost;
-        std::optional<uint32_t> packetsDiscarded;
-        std::optional<uint32_t> packetsRepaired;
-        std::optional<uint32_t> burstPacketsLost;
-        std::optional<uint32_t> burstPacketsDiscarded;
-        std::optional<uint32_t> burstLossCount;
-        std::optional<uint32_t> burstDiscardCount;
-        std::optional<double> burstLossRate;
-        std::optional<double> burstDiscardRate;
-        std::optional<double> gapLossRate;
-        std::optional<double> gapDiscardRate;
-        std::optional<uint32_t> framesDecoded;
+        Optional<uint32_t> packetsReceived;
+        Optional<uint64_t> bytesReceived;
+        Optional<uint32_t> packetsLost;
+        Optional<double> jitter;
+        Optional<double> fractionLost;
+        Optional<uint32_t> packetsDiscarded;
+        Optional<uint32_t> packetsRepaired;
+        Optional<uint32_t> burstPacketsLost;
+        Optional<uint32_t> burstPacketsDiscarded;
+        Optional<uint32_t> burstLossCount;
+        Optional<uint32_t> burstDiscardCount;
+        Optional<double> burstLossRate;
+        Optional<double> burstDiscardRate;
+        Optional<double> gapLossRate;
+        Optional<double> gapDiscardRate;
+        Optional<uint32_t> framesDecoded;
     };
 
     struct OutboundRTPStreamStats : RTCRTPStreamStats {
         OutboundRTPStreamStats() { type = RTCStatsReport::Type::OutboundRtp; }
 
-        std::optional<uint32_t> packetsSent;
-        std::optional<uint64_t> bytesSent;
-        std::optional<double> targetBitrate;
-        std::optional<uint32_t> framesEncoded;
+        Optional<uint32_t> packetsSent;
+        Optional<uint64_t> bytesSent;
+        Optional<double> targetBitrate;
+        Optional<uint32_t> framesEncoded;
     };
 
     struct MediaStreamTrackStats : Stats {
         MediaStreamTrackStats() { type = RTCStatsReport::Type::Track; }
 
         String trackIdentifier;
-        std::optional<bool> remoteSource;
-        std::optional<bool> ended;
-        std::optional<bool> detached;
-        std::optional<uint32_t> frameWidth;
-        std::optional<uint32_t> frameHeight;
-        std::optional<double> framesPerSecond;
-        std::optional<uint32_t> framesSent;
-        std::optional<uint32_t> framesReceived;
-        std::optional<uint32_t> framesDecoded;
-        std::optional<uint32_t> framesDropped;
-        std::optional<uint32_t> framesCorrupted;
-        std::optional<uint32_t> partialFramesLost;
-        std::optional<uint32_t> fullFramesLost;
-        std::optional<double> audioLevel;
-        std::optional<double> echoReturnLoss;
-        std::optional<double> echoReturnLossEnhancement;
+        Optional<bool> remoteSource;
+        Optional<bool> ended;
+        Optional<bool> detached;
+        Optional<uint32_t> frameWidth;
+        Optional<uint32_t> frameHeight;
+        Optional<double> framesPerSecond;
+        Optional<uint32_t> framesSent;
+        Optional<uint32_t> framesReceived;
+        Optional<uint32_t> framesDecoded;
+        Optional<uint32_t> framesDropped;
+        Optional<uint32_t> framesCorrupted;
+        Optional<uint32_t> partialFramesLost;
+        Optional<uint32_t> fullFramesLost;
+        Optional<double> audioLevel;
+        Optional<double> echoReturnLoss;
+        Optional<double> echoReturnLossEnhancement;
     };
 
     struct DataChannelStats : Stats {
@@ -131,12 +131,12 @@ public:
         
         String label;
         String protocol;
-        std::optional<int> datachannelid;
+        Optional<int> datachannelid;
         String state;
-        std::optional<uint32_t> messagesSent;
-        std::optional<uint64_t> bytesSent;
-        std::optional<uint32_t> messagesReceived;
-        std::optional<uint64_t> bytesReceived;
+        Optional<uint32_t> messagesSent;
+        Optional<uint64_t> bytesSent;
+        Optional<uint32_t> messagesReceived;
+        Optional<uint64_t> bytesReceived;
     };
 
     enum class IceCandidatePairState {
@@ -155,26 +155,26 @@ public:
         String localCandidateId;
         String remoteCandidateId;
         IceCandidatePairState state;
-        std::optional<uint64_t> priority;
-        std::optional<bool> nominated;
-        std::optional<bool> writable;
-        std::optional<bool> readable;
-        std::optional<uint64_t> bytesSent;
-        std::optional<uint64_t> bytesReceived;
-        std::optional<double> totalRoundTripTime;
-        std::optional<double> currentRoundTripTime;
-        std::optional<double> availableOutgoingBitrate;
-        std::optional<double> availableIncomingBitrate;
-        std::optional<uint64_t> requestsReceived;
-        std::optional<uint64_t> requestsSent;
-        std::optional<uint64_t> responsesReceived;
-        std::optional<uint64_t> responsesSent;
-        std::optional<uint64_t> retransmissionsReceived;
-        std::optional<uint64_t> retransmissionsSent;
-        std::optional<uint64_t> consentRequestsReceived;
-        std::optional<uint64_t> consentRequestsSent;
-        std::optional<uint64_t> consentResponsesReceived;
-        std::optional<uint64_t> consentResponsesSent;
+        Optional<uint64_t> priority;
+        Optional<bool> nominated;
+        Optional<bool> writable;
+        Optional<bool> readable;
+        Optional<uint64_t> bytesSent;
+        Optional<uint64_t> bytesReceived;
+        Optional<double> totalRoundTripTime;
+        Optional<double> currentRoundTripTime;
+        Optional<double> availableOutgoingBitrate;
+        Optional<double> availableIncomingBitrate;
+        Optional<uint64_t> requestsReceived;
+        Optional<uint64_t> requestsSent;
+        Optional<uint64_t> responsesReceived;
+        Optional<uint64_t> responsesSent;
+        Optional<uint64_t> retransmissionsReceived;
+        Optional<uint64_t> retransmissionsSent;
+        Optional<uint64_t> consentRequestsReceived;
+        Optional<uint64_t> consentRequestsSent;
+        Optional<uint64_t> consentResponsesReceived;
+        Optional<uint64_t> consentResponsesSent;
     };
 
     enum class IceCandidateType { Host, Srflx, Prflx, Relay };
@@ -182,10 +182,10 @@ public:
     struct IceCandidateStats : Stats {
         String transportId;
         String address;
-        std::optional<int32_t> port;
+        Optional<int32_t> port;
         String protocol;
-        std::optional<IceCandidateType> candidateType;
-        std::optional<int32_t> priority;
+        Optional<IceCandidateType> candidateType;
+        Optional<int32_t> priority;
         String url;
         bool deleted { false };
     };
@@ -207,12 +207,12 @@ public:
     struct CodecStats : Stats {
         CodecStats() { type = RTCStatsReport::Type::Codec; }
 
-        std::optional<uint32_t> payloadType;
-        std::optional<CodecType> codecType;
+        Optional<uint32_t> payloadType;
+        Optional<CodecType> codecType;
         String transportId;
         String mimeType;
-        std::optional<uint32_t> clockRate;
-        std::optional<uint32_t> channels;
+        Optional<uint32_t> clockRate;
+        Optional<uint32_t> channels;
         String sdpFmtpLine;
         String implementation;
     };
@@ -220,8 +220,8 @@ public:
     struct TransportStats : Stats {
         TransportStats() { type = RTCStatsReport::Type::Transport; }
 
-        std::optional<uint64_t> bytesSent;
-        std::optional<uint64_t> bytesReceived;
+        Optional<uint64_t> bytesSent;
+        Optional<uint64_t> bytesReceived;
         String rtcpTransportStatsId;
         String selectedCandidatePairId;
         String localCertificateId;
@@ -231,8 +231,8 @@ public:
     struct PeerConnectionStats : Stats {
         PeerConnectionStats() { type = RTCStatsReport::Type::PeerConnection; }
 
-        std::optional<uint32_t> dataChannelsOpened;
-        std::optional<uint32_t> dataChannelsClosed;
+        Optional<uint32_t> dataChannelsOpened;
+        Optional<uint32_t> dataChannelsClosed;
     };
 
 private:

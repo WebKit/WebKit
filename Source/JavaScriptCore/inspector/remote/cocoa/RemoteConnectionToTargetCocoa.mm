@@ -120,9 +120,9 @@ RemoteConnectionToTarget::~RemoteConnectionToTarget()
     teardownRunLoop();
 }
 
-std::optional<unsigned> RemoteConnectionToTarget::targetIdentifier() const
+Optional<unsigned> RemoteConnectionToTarget::targetIdentifier() const
 {
-    return m_target ? std::optional<unsigned>(m_target->targetIdentifier()) : std::nullopt;
+    return m_target ? Optional<unsigned>(m_target->targetIdentifier()) : WTF::nullopt;
 }
 
 NSString *RemoteConnectionToTarget::connectionIdentifier() const

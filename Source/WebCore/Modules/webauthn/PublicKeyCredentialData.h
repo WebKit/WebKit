@@ -50,7 +50,7 @@ struct PublicKeyCredentialData {
     mutable RefPtr<ArrayBuffer> userHandle;
 
     template<class Encoder> void encode(Encoder&) const;
-    template<class Decoder> static std::optional<PublicKeyCredentialData> decode(Decoder&);
+    template<class Decoder> static Optional<PublicKeyCredentialData> decode(Decoder&);
 };
 
 // Noted: clientDataJSON is never encoded or decoded as it is never sent across different processes.
@@ -91,78 +91,78 @@ void PublicKeyCredentialData::encode(Encoder& encoder) const
 }
 
 template<class Decoder>
-std::optional<PublicKeyCredentialData> PublicKeyCredentialData::decode(Decoder& decoder)
+Optional<PublicKeyCredentialData> PublicKeyCredentialData::decode(Decoder& decoder)
 {
     PublicKeyCredentialData result;
 
-    std::optional<bool> isEmpty;
+    Optional<bool> isEmpty;
     decoder >> isEmpty;
     if (!isEmpty)
-        return std::nullopt;
+        return WTF::nullopt;
     if (isEmpty.value())
         return result;
 
-    std::optional<uint64_t> rawIdLength;
+    Optional<uint64_t> rawIdLength;
     decoder >> rawIdLength;
     if (!rawIdLength)
-        return std::nullopt;
+        return WTF::nullopt;
 
     result.rawId = ArrayBuffer::create(rawIdLength.value(), sizeof(uint8_t));
     if (!decoder.decodeFixedLengthData(reinterpret_cast<uint8_t*>(result.rawId->data()), rawIdLength.value(), 1))
-        return std::nullopt;
+        return WTF::nullopt;
 
-    std::optional<bool> isAuthenticatorAttestationResponse;
+    Optional<bool> isAuthenticatorAttestationResponse;
     decoder >> isAuthenticatorAttestationResponse;
     if (!isAuthenticatorAttestationResponse)
-        return std::nullopt;
+        return WTF::nullopt;
     result.isAuthenticatorAttestationResponse = isAuthenticatorAttestationResponse.value();
 
     if (result.isAuthenticatorAttestationResponse) {
-        std::optional<uint64_t> attestationObjectLength;
+        Optional<uint64_t> attestationObjectLength;
         decoder >> attestationObjectLength;
         if (!attestationObjectLength)
-            return std::nullopt;
+            return WTF::nullopt;
 
         result.attestationObject = ArrayBuffer::create(attestationObjectLength.value(), sizeof(uint8_t));
         if (!decoder.decodeFixedLengthData(reinterpret_cast<uint8_t*>(result.attestationObject->data()), attestationObjectLength.value(), 1))
-            return std::nullopt;
+            return WTF::nullopt;
 
         return result;
     }
 
-    std::optional<uint64_t> authenticatorDataLength;
+    Optional<uint64_t> authenticatorDataLength;
     decoder >> authenticatorDataLength;
     if (!authenticatorDataLength)
-        return std::nullopt;
+        return WTF::nullopt;
 
     result.authenticatorData = ArrayBuffer::create(authenticatorDataLength.value(), sizeof(uint8_t));
     if (!decoder.decodeFixedLengthData(reinterpret_cast<uint8_t*>(result.authenticatorData->data()), authenticatorDataLength.value(), 1))
-        return std::nullopt;
+        return WTF::nullopt;
 
-    std::optional<uint64_t> signatureLength;
+    Optional<uint64_t> signatureLength;
     decoder >> signatureLength;
     if (!signatureLength)
-        return std::nullopt;
+        return WTF::nullopt;
 
     result.signature = ArrayBuffer::create(signatureLength.value(), sizeof(uint8_t));
     if (!decoder.decodeFixedLengthData(reinterpret_cast<uint8_t*>(result.signature->data()), signatureLength.value(), 1))
-        return std::nullopt;
+        return WTF::nullopt;
 
-    std::optional<bool> hasUserHandle;
+    Optional<bool> hasUserHandle;
     decoder >> hasUserHandle;
     if (!hasUserHandle)
-        return std::nullopt;
+        return WTF::nullopt;
     if (!*hasUserHandle)
         return result;
 
-    std::optional<uint64_t> userHandleLength;
+    Optional<uint64_t> userHandleLength;
     decoder >> userHandleLength;
     if (!userHandleLength)
-        return std::nullopt;
+        return WTF::nullopt;
 
     result.userHandle = ArrayBuffer::create(userHandleLength.value(), sizeof(uint8_t));
     if (!decoder.decodeFixedLengthData(reinterpret_cast<uint8_t*>(result.userHandle->data()), userHandleLength.value(), 1))
-        return std::nullopt;
+        return WTF::nullopt;
 
     return result;
 }

@@ -264,10 +264,10 @@ ResourceRequest WebSocketHandshake::clientHandshakeRequest() const
     return request;
 }
 
-std::optional<CookieRequestHeaderFieldProxy> WebSocketHandshake::clientHandshakeCookieRequestHeaderFieldProxy() const
+Optional<CookieRequestHeaderFieldProxy> WebSocketHandshake::clientHandshakeCookieRequestHeaderFieldProxy() const
 {
     if (!m_document || !m_allowCookies)
-        return std::nullopt;
+        return WTF::nullopt;
     return cookieRequestHeaderFieldProxy(*m_document, httpURLForAuthenticationAndCookies());
 }
 

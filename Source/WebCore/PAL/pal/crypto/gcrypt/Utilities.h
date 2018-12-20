@@ -53,7 +53,7 @@ static inline void logError(gcry_error_t error)
 #endif
 }
 
-static inline std::optional<int> aesAlgorithmForKeySize(size_t keySize)
+static inline Optional<int> aesAlgorithmForKeySize(size_t keySize)
 {
     switch (keySize) {
     case 128:
@@ -63,7 +63,7 @@ static inline std::optional<int> aesAlgorithmForKeySize(size_t keySize)
     case 256:
         return GCRY_CIPHER_AES256;
     default:
-        return std::nullopt;
+        return WTF::nullopt;
     }
 }
 

@@ -75,11 +75,11 @@ private:
     mutable RefPtr<Range> m_paragraphRange;
     mutable RefPtr<Range> m_offsetAsRange;
     mutable String m_text;
-    mutable std::optional<int> m_checkingStart;
-    mutable std::optional<int> m_checkingEnd;
-    mutable std::optional<int> m_checkingLength;
-    mutable std::optional<int> m_automaticReplacementStart;
-    mutable std::optional<int> m_automaticReplacementLength;
+    mutable Optional<int> m_checkingStart;
+    mutable Optional<int> m_checkingEnd;
+    mutable Optional<int> m_checkingLength;
+    mutable Optional<int> m_automaticReplacementStart;
+    mutable Optional<int> m_automaticReplacementLength;
 };
 
 class TextCheckingHelper {

@@ -157,7 +157,7 @@ void setMainThreadCallbacksPaused(bool paused)
         scheduleDispatchFunctionsOnMainThread();
 }
 
-static ThreadSpecific<std::optional<GCThreadType>, CanBeGCThread::True>* isGCThread;
+static ThreadSpecific<Optional<GCThreadType>, CanBeGCThread::True>* isGCThread;
 
 void initializeGCThreads()
 {
@@ -165,7 +165,7 @@ void initializeGCThreads()
     std::call_once(
         flag,
         [] {
-            isGCThread = new ThreadSpecific<std::optional<GCThreadType>, CanBeGCThread::True>();
+            isGCThread = new ThreadSpecific<Optional<GCThreadType>, CanBeGCThread::True>();
         });
 }
 
@@ -188,12 +188,12 @@ bool isMainThreadOrGCThread()
     return isMainThread();
 }
 
-std::optional<GCThreadType> mayBeGCThread()
+Optional<GCThreadType> mayBeGCThread()
 {
     if (!isGCThread)
-        return std::nullopt;
+        return WTF::nullopt;
     if (!isGCThread->isSet())
-        return std::nullopt;
+        return WTF::nullopt;
     return **isGCThread;
 }
 

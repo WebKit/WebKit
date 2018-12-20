@@ -1,3 +1,18 @@
+2018-12-19  Chris Dumez  <cdumez@apple.com>
+
+        wtf/Optional.h: move-constructor and move-assignment operator should disengage the value being moved from
+        https://bugs.webkit.org/show_bug.cgi?id=192728
+        <rdar://problem/46746779>
+
+        Reviewed by Geoff Garen.
+
+        * NetworkProcess/*:
+        * Platform/*:
+        * Scripts/*:
+        * Shared/*:
+        * UIProcess/*:
+        * WebProcess/*:
+
 2018-12-19  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         Unreviewed, silence -Wpragmas warning

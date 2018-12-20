@@ -59,7 +59,7 @@ void PaymentResponse::setDetailsFunction(DetailsFunction&& detailsFunction)
     m_cachedDetails = { };
 }
 
-void PaymentResponse::complete(std::optional<PaymentComplete>&& result, DOMPromiseDeferred<void>&& promise)
+void PaymentResponse::complete(Optional<PaymentComplete>&& result, DOMPromiseDeferred<void>&& promise)
 {
     if (m_state == State::Stopped || !m_request) {
         promise.reject(Exception { AbortError });
@@ -117,7 +117,7 @@ void PaymentResponse::settleRetryPromise(ExceptionOr<void>&& result)
 
     ASSERT(hasPendingActivity());
     ASSERT(m_state == State::Created);
-    std::exchange(m_retryPromise, std::nullopt)->settle(WTFMove(result));
+    std::exchange(m_retryPromise, WTF::nullopt)->settle(WTFMove(result));
 }
 
 bool PaymentResponse::canSuspendForDocumentSuspension() const

@@ -36,7 +36,7 @@ struct InputSource {
     enum class Type { None, Key, Pointer };
 
     Type type;
-    std::optional<PointerType> pointerType;
+    Optional<PointerType> pointerType;
 };
 
 struct PointerParameters {
@@ -47,7 +47,7 @@ struct PointerOrigin {
     enum class Type { Viewport, Pointer, Element };
 
     Type type;
-    std::optional<String> elementID;
+    Optional<String> elementID;
 };
 
 struct Action {
@@ -64,15 +64,15 @@ struct Action {
     String id;
     Type type;
     Subtype subtype;
-    std::optional<unsigned> duration;
+    Optional<unsigned> duration;
 
-    std::optional<PointerType> pointerType;
-    std::optional<MouseButton> button;
-    std::optional<PointerOrigin> origin;
-    std::optional<int64_t> x;
-    std::optional<int64_t> y;
+    Optional<PointerType> pointerType;
+    Optional<MouseButton> button;
+    Optional<PointerOrigin> origin;
+    Optional<int64_t> x;
+    Optional<int64_t> y;
 
-    std::optional<String> key;
+    Optional<String> key;
 };
 
 } // WebDriver

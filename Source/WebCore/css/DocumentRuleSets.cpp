@@ -169,7 +169,7 @@ void DocumentRuleSets::collectFeatures() const
 
     m_classInvalidationRuleSets.clear();
     m_attributeInvalidationRuleSets.clear();
-    m_cachedHasComplexSelectorsForStyleAttribute = std::nullopt;
+    m_cachedHasComplexSelectorsForStyleAttribute = WTF::nullopt;
 
     m_features.shrinkToFit();
 }

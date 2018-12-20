@@ -114,7 +114,7 @@ bool MediaSession::hasActiveMediaElements() const
     return !m_activeParticipatingElements.isEmpty();
 }
 
-void MediaSession::setMetadata(const std::optional<Metadata>& optionalMetadata)
+void MediaSession::setMetadata(const Optional<Metadata>& optionalMetadata)
 {
     if (!optionalMetadata)
         m_metadata = { };

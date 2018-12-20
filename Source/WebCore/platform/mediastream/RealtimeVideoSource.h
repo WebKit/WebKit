@@ -47,8 +47,8 @@ protected:
     RealtimeVideoSource(String&& name, String&& id, String&& hashSalt);
 
     void prepareToProduceData();
-    bool supportsSizeAndFrameRate(std::optional<int> width, std::optional<int> height, std::optional<double>) override;
-    void setSizeAndFrameRate(std::optional<int> width, std::optional<int> height, std::optional<double>) override;
+    bool supportsSizeAndFrameRate(Optional<int> width, Optional<int> height, Optional<double>) override;
+    void setSizeAndFrameRate(Optional<int> width, Optional<int> height, Optional<double>) override;
 
     virtual void generatePresets() = 0;
     virtual bool prefersPreset(VideoPreset&) { return true; }
@@ -77,8 +77,8 @@ private:
         IntSize requestedSize;
         double requestedFrameRate { 0 };
     };
-    bool supportsCaptureSize(std::optional<int>, std::optional<int>, const Function<bool(const IntSize&)>&&);
-    std::optional<CaptureSizeAndFrameRate> bestSupportedSizeAndFrameRate(std::optional<int> width, std::optional<int> height, std::optional<double>);
+    bool supportsCaptureSize(Optional<int>, Optional<int>, const Function<bool(const IntSize&)>&&);
+    Optional<CaptureSizeAndFrameRate> bestSupportedSizeAndFrameRate(Optional<int> width, Optional<int> height, Optional<double>);
     bool presetSupportsFrameRate(RefPtr<VideoPreset>, double);
 
     Vector<Ref<VideoPreset>> m_presets;

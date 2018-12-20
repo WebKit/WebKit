@@ -40,7 +40,7 @@ public:
     static Ref<LoadableModuleScript> create(const String& nonce, const String& integrity, const String& crossOriginMode, const String& charset, const AtomicString& initiatorName, bool isInUserAgentShadowTree);
 
     bool isLoaded() const final;
-    std::optional<Error> error() const final;
+    Optional<Error> error() const final;
     bool wasCanceled() const final;
 
     bool isClassicScript() const final { return false; }
@@ -64,7 +64,7 @@ private:
 
     Ref<ModuleFetchParameters> m_parameters;
     RefPtr<UniquedStringImpl> m_moduleKey;
-    std::optional<LoadableScript::Error> m_error;
+    Optional<LoadableScript::Error> m_error;
     bool m_wasCanceled { false };
     bool m_isLoaded { false };
 };

@@ -39,7 +39,7 @@ TEST(WTF_Markable, Disengaged)
     }
 
     {
-        Markable<int, IntegralMarkableTraits<int, 42>> optional { std::nullopt };
+        Markable<int, IntegralMarkableTraits<int, 42>> optional { WTF::nullopt };
 
         EXPECT_FALSE(static_cast<bool>(optional));
     }
@@ -57,7 +57,7 @@ TEST(WTF_Markable, Engaged)
         EXPECT_TRUE(static_cast<bool>(optional));
         EXPECT_EQ(41, optional.value());
 
-        optional = std::nullopt;
+        optional = WTF::nullopt;
         EXPECT_FALSE(static_cast<bool>(optional));
 
         optional = 42;
@@ -121,40 +121,40 @@ TEST(WTF_Markable, Destructor)
 TEST(WTF_Markable, FromOptional)
 {
     {
-        std::optional<int> from;
+        Optional<int> from;
         EXPECT_FALSE(static_cast<bool>(from));
         Markable<int, IntegralMarkableTraits<int, 42>> optional = from;
         EXPECT_FALSE(static_cast<bool>(optional));
     }
     {
-        std::optional<int> from { 42 };
+        Optional<int> from { 42 };
         EXPECT_TRUE(static_cast<bool>(from));
         Markable<int, IntegralMarkableTraits<int, 42>> optional = from;
         // We convert this to nullopt.
         EXPECT_FALSE(static_cast<bool>(optional));
     }
     {
-        std::optional<int> from { 43 };
+        Optional<int> from { 43 };
         EXPECT_TRUE(static_cast<bool>(from));
         Markable<int, IntegralMarkableTraits<int, 42>> optional = from;
         EXPECT_TRUE(static_cast<bool>(optional));
         EXPECT_EQ(optional.value(), 43);
     }
     {
-        std::optional<int> from;
+        Optional<int> from;
         EXPECT_FALSE(static_cast<bool>(from));
         Markable<int, IntegralMarkableTraits<int, 42>> optional { WTFMove(from) };
         EXPECT_FALSE(static_cast<bool>(optional));
     }
     {
-        std::optional<int> from { 42 };
+        Optional<int> from { 42 };
         EXPECT_TRUE(static_cast<bool>(from));
         Markable<int, IntegralMarkableTraits<int, 42>> optional { WTFMove(from) };
         // We convert this to nullopt.
         EXPECT_FALSE(static_cast<bool>(optional));
     }
     {
-        std::optional<int> from { 43 };
+        Optional<int> from { 43 };
         EXPECT_TRUE(static_cast<bool>(from));
         Markable<int, IntegralMarkableTraits<int, 42>> optional { WTFMove(from) };
         EXPECT_TRUE(static_cast<bool>(optional));
@@ -167,40 +167,40 @@ TEST(WTF_Markable, ToOptional)
     {
         Markable<int, IntegralMarkableTraits<int, 42>> optional;
         EXPECT_FALSE(static_cast<bool>(optional));
-        std::optional<int> to = optional;
+        Optional<int> to = optional;
         EXPECT_FALSE(static_cast<bool>(to));
     }
     {
         Markable<int, IntegralMarkableTraits<int, 42>> optional { 42 };
         EXPECT_FALSE(static_cast<bool>(optional));
         // We convert this to nullopt.
-        std::optional<int> to = optional;
+        Optional<int> to = optional;
         EXPECT_FALSE(static_cast<bool>(to));
     }
     {
         Markable<int, IntegralMarkableTraits<int, 42>> optional { 43 };
         EXPECT_TRUE(static_cast<bool>(optional));
-        std::optional<int> to = optional;
+        Optional<int> to = optional;
         EXPECT_TRUE(static_cast<bool>(to));
         EXPECT_EQ(to.value(), 43);
     }
     {
         Markable<int, IntegralMarkableTraits<int, 42>> optional;
         EXPECT_FALSE(static_cast<bool>(optional));
-        std::optional<int> to { WTFMove(optional) };
+        Optional<int> to { WTFMove(optional) };
         EXPECT_FALSE(static_cast<bool>(to));
     }
     {
         Markable<int, IntegralMarkableTraits<int, 42>> optional { 42 };
         EXPECT_FALSE(static_cast<bool>(optional));
         // We convert this to nullopt.
-        std::optional<int> to { WTFMove(optional) };
+        Optional<int> to { WTFMove(optional) };
         EXPECT_FALSE(static_cast<bool>(to));
     }
     {
         Markable<int, IntegralMarkableTraits<int, 42>> optional { 43 };
         EXPECT_TRUE(static_cast<bool>(optional));
-        std::optional<int> to { WTFMove(optional) };
+        Optional<int> to { WTFMove(optional) };
         EXPECT_TRUE(static_cast<bool>(to));
         EXPECT_EQ(to.value(), 43);
     }
@@ -247,13 +247,13 @@ TEST(WTF_Markable, MoveOptional)
         int m_value;
     };
     {
-        std::optional<OnlyMovable> from { std::in_place, 20 };
+        Optional<OnlyMovable> from { std::in_place, 20 };
         EXPECT_TRUE(static_cast<bool>(from));
         EXPECT_EQ(from.value().value(), 20);
         Markable<OnlyMovable, OnlyMovable> compact = WTFMove(from);
         EXPECT_TRUE(static_cast<bool>(compact));
         EXPECT_EQ(compact.value().value(), 20);
-        std::optional<OnlyMovable> to = WTFMove(compact);
+        Optional<OnlyMovable> to = WTFMove(compact);
         EXPECT_TRUE(static_cast<bool>(to));
         EXPECT_EQ(to.value().value(), 20);
     }

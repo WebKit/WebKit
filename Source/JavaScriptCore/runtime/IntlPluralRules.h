@@ -76,8 +76,8 @@ private:
     unsigned m_minimumIntegerDigits { 1 };
     unsigned m_minimumFractionDigits { 0 };
     unsigned m_maximumFractionDigits { 3 };
-    std::optional<unsigned> m_minimumSignificantDigits;
-    std::optional<unsigned> m_maximumSignificantDigits;
+    Optional<unsigned> m_minimumSignificantDigits;
+    Optional<unsigned> m_maximumSignificantDigits;
 };
 
 } // namespace JSC

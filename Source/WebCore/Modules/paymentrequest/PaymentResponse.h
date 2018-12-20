@@ -81,7 +81,7 @@ public:
     const String& payerPhone() const { return m_payerPhone; }
     void setPayerPhone(const String& payerPhone) { m_payerPhone = payerPhone; }
 
-    void complete(std::optional<PaymentComplete>&&, DOMPromiseDeferred<void>&&);
+    void complete(Optional<PaymentComplete>&&, DOMPromiseDeferred<void>&&);
     void retry(PaymentValidationErrors&&, DOMPromiseDeferred<void>&&);
     void abortWithException(Exception&&);
     bool hasRetryPromise() const { return !!m_retryPromise; }
@@ -122,7 +122,7 @@ private:
     String m_payerEmail;
     String m_payerPhone;
     State m_state { State::Created };
-    std::optional<DOMPromiseDeferred<void>> m_retryPromise;
+    Optional<DOMPromiseDeferred<void>> m_retryPromise;
     RefPtr<PendingActivity<PaymentResponse>> m_pendingActivity;
 };
 

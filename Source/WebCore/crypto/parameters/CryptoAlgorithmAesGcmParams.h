@@ -37,8 +37,8 @@ class CryptoAlgorithmAesGcmParams final : public CryptoAlgorithmParameters {
 public:
     BufferSource iv;
     // Use additionalDataVector() instead of additionalData. The label will be gone once additionalDataVector() is called.
-    mutable std::optional<BufferSource::VariantType> additionalData;
-    mutable std::optional<uint8_t> tagLength;
+    mutable Optional<BufferSource::VariantType> additionalData;
+    mutable Optional<uint8_t> tagLength;
 
     Class parametersClass() const final { return Class::AesGcmParams; }
 
@@ -57,7 +57,7 @@ public:
             return m_additionalDataVector;
 
         BufferSource additionalDataBuffer = WTFMove(*additionalData);
-        additionalData = std::nullopt;
+        additionalData = WTF::nullopt;
         if (!additionalDataBuffer.length())
             return m_additionalDataVector;
 

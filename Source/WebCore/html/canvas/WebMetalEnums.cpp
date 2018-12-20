@@ -33,7 +33,7 @@
 
 namespace WebCore {
 
-std::optional<WebMetalCompareFunction> toWebMetalCompareFunction(const String& name)
+Optional<WebMetalCompareFunction> toWebMetalCompareFunction(const String& name)
 {
     if (equalLettersIgnoringASCIICase(name, "never"))
         return WebMetalCompareFunction::Never;
@@ -53,7 +53,7 @@ std::optional<WebMetalCompareFunction> toWebMetalCompareFunction(const String& n
         return WebMetalCompareFunction::Always;
 
     ASSERT_NOT_REACHED();
-    return std::nullopt;
+    return WTF::nullopt;
 }
 
 String web3DCompareFunctionName(WebMetalCompareFunction value)

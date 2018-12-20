@@ -34,7 +34,7 @@
 
 namespace WebCore {
 
-static std::optional<CCHmacAlgorithm> commonCryptoHMACAlgorithm(CryptoAlgorithmIdentifier hashFunction)
+static Optional<CCHmacAlgorithm> commonCryptoHMACAlgorithm(CryptoAlgorithmIdentifier hashFunction)
 {
     switch (hashFunction) {
     case CryptoAlgorithmIdentifier::SHA_1:
@@ -48,7 +48,7 @@ static std::optional<CCHmacAlgorithm> commonCryptoHMACAlgorithm(CryptoAlgorithmI
     case CryptoAlgorithmIdentifier::SHA_512:
         return kCCHmacAlgSHA512;
     default:
-        return std::nullopt;
+        return WTF::nullopt;
     }
 }
 

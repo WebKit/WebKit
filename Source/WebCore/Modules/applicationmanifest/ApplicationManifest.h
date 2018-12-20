@@ -49,7 +49,7 @@ struct ApplicationManifest {
     URL startURL;
 
     template<class Encoder> void encode(Encoder&) const;
-    template<class Decoder> static std::optional<ApplicationManifest> decode(Decoder&);
+    template<class Decoder> static Optional<ApplicationManifest> decode(Decoder&);
 };
 
 template<class Encoder>
@@ -59,22 +59,22 @@ void ApplicationManifest::encode(Encoder& encoder) const
 }
 
 template<class Decoder>
-std::optional<ApplicationManifest> ApplicationManifest::decode(Decoder& decoder)
+Optional<ApplicationManifest> ApplicationManifest::decode(Decoder& decoder)
 {
     ApplicationManifest result;
 
     if (!decoder.decode(result.name))
-        return std::nullopt;
+        return WTF::nullopt;
     if (!decoder.decode(result.shortName))
-        return std::nullopt;
+        return WTF::nullopt;
     if (!decoder.decode(result.description))
-        return std::nullopt;
+        return WTF::nullopt;
     if (!decoder.decode(result.scope))
-        return std::nullopt;
+        return WTF::nullopt;
     if (!decoder.decodeEnum(result.display))
-        return std::nullopt;
+        return WTF::nullopt;
     if (!decoder.decode(result.startURL))
-        return std::nullopt;
+        return WTF::nullopt;
 
     return result;
 }

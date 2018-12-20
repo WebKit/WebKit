@@ -53,7 +53,7 @@ struct MethodInfo {
         CString replySignature;
         Vector<HashSet<CFTypeRef>> allowedReplyClasses;
     };
-    std::optional<ReplyInfo> replyInfo;
+    Optional<ReplyInfo> replyInfo;
 };
 
 @implementation _WKRemoteObjectInterface {

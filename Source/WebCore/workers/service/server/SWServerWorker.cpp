@@ -74,7 +74,7 @@ ServiceWorkerContextData SWServerWorker::contextData() const
     auto* registration = m_server.getRegistration(m_registrationKey);
     ASSERT(registration);
 
-    return { std::nullopt, registration->data(), m_data.identifier, m_script, m_contentSecurityPolicy, m_data.scriptURL, m_data.type, m_server.sessionID(), false, m_scriptResourceMap };
+    return { WTF::nullopt, registration->data(), m_data.identifier, m_script, m_contentSecurityPolicy, m_data.scriptURL, m_data.type, m_server.sessionID(), false, m_scriptResourceMap };
 }
 
 void SWServerWorker::terminate()
@@ -101,17 +101,17 @@ SWServerToContextConnection* SWServerWorker::contextConnection()
     return SWServerToContextConnection::connectionForOrigin(securityOrigin());
 }
 
-void SWServerWorker::scriptContextFailedToStart(const std::optional<ServiceWorkerJobDataIdentifier>& jobDataIdentifier, const String& message)
+void SWServerWorker::scriptContextFailedToStart(const Optional<ServiceWorkerJobDataIdentifier>& jobDataIdentifier, const String& message)
 {
     m_server.scriptContextFailedToStart(jobDataIdentifier, *this, message);
 }
 
-void SWServerWorker::scriptContextStarted(const std::optional<ServiceWorkerJobDataIdentifier>& jobDataIdentifier)
+void SWServerWorker::scriptContextStarted(const Optional<ServiceWorkerJobDataIdentifier>& jobDataIdentifier)
 {
     m_server.scriptContextStarted(jobDataIdentifier, *this);
 }
 
-void SWServerWorker::didFinishInstall(const std::optional<ServiceWorkerJobDataIdentifier>& jobDataIdentifier, bool wasSuccessful)
+void SWServerWorker::didFinishInstall(const Optional<ServiceWorkerJobDataIdentifier>& jobDataIdentifier, bool wasSuccessful)
 {
     m_server.didFinishInstall(jobDataIdentifier, *this, wasSuccessful);
 }
@@ -126,7 +126,7 @@ void SWServerWorker::contextTerminated()
     m_server.workerContextTerminated(*this);
 }
 
-std::optional<ServiceWorkerClientData> SWServerWorker::findClientByIdentifier(const ServiceWorkerClientIdentifier& clientId) const
+Optional<ServiceWorkerClientData> SWServerWorker::findClientByIdentifier(const ServiceWorkerClientIdentifier& clientId) const
 {
     return m_server.serviceWorkerClientWithOriginByID(origin(), clientId);
 }

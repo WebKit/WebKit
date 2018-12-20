@@ -47,7 +47,7 @@ public:
 
     Document* document() const { return m_document.get(); }
 
-    std::optional<Seconds> currentTime() override;
+    Optional<Seconds> currentTime() override;
 
     void animationTimingDidChange(WebAnimation&) override;
     void removeAnimation(WebAnimation&) override;
@@ -105,7 +105,7 @@ private:
     bool m_isSuspended { false };
     bool m_waitingOnVMIdle { false };
     bool m_isUpdatingAnimations { false };
-    std::optional<Seconds> m_cachedCurrentTime;
+    Optional<Seconds> m_cachedCurrentTime;
     GenericTaskQueue<Timer> m_currentTimeClearingTaskQueue;
     HashSet<RefPtr<WebAnimation>> m_acceleratedAnimationsPendingRunningStateChange;
     Vector<Ref<AnimationPlaybackEvent>> m_pendingAnimationEvents;

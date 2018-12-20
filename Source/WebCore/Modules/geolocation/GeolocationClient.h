@@ -44,7 +44,7 @@ public:
     // We should update WebKit to reflect this if and when the V2 specification
     // is published.
     virtual void setEnableHighAccuracy(bool) = 0;
-    virtual std::optional<GeolocationPosition> lastPosition() = 0;
+    virtual Optional<GeolocationPosition> lastPosition() = 0;
 
     virtual void requestPermission(Geolocation&) = 0;
     virtual void cancelPermissionRequest(Geolocation&) = 0;

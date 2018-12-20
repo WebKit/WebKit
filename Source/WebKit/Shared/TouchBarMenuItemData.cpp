@@ -53,19 +53,19 @@ void TouchBarMenuItemData::encode(IPC::Encoder& encoder) const
     encoder << priority;
 }
 
-std::optional<TouchBarMenuItemData> TouchBarMenuItemData::decode(IPC::Decoder& decoder)
+Optional<TouchBarMenuItemData> TouchBarMenuItemData::decode(IPC::Decoder& decoder)
 {
     TouchBarMenuItemData result;
     if (!decoder.decodeEnum(result.type))
-        return std::nullopt;
+        return WTF::nullopt;
     
     if (!decoder.decode(result.identifier))
-        return std::nullopt;
+        return WTF::nullopt;
     
     if (!decoder.decode(result.priority))
-        return std::nullopt;
+        return WTF::nullopt;
     
-    return std::make_optional(WTFMove(result));
+    return makeOptional(WTFMove(result));
 }
 
 }

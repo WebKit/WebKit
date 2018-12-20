@@ -55,7 +55,7 @@ public:
     void disableSendingDirection();
 
     RTCRtpTransceiverDirection direction() const;
-    std::optional<RTCRtpTransceiverDirection> currentDirection() const;
+    Optional<RTCRtpTransceiverDirection> currentDirection() const;
     void setDirection(RTCRtpTransceiverDirection);
     String mid() const;
 

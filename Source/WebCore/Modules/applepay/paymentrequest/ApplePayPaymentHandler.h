@@ -70,7 +70,7 @@ private:
     void canMakePayment(WTF::Function<void(bool)>&& completionHandler) final;
     ExceptionOr<void> detailsUpdated(PaymentRequest::UpdateReason, String&& error, AddressErrors&&, PayerErrorFields&&, JSC::JSObject* paymentMethodErrors) final;
     ExceptionOr<void> merchantValidationCompleted(JSC::JSValue&&) final;
-    void complete(std::optional<PaymentComplete>&&) final;
+    void complete(Optional<PaymentComplete>&&) final;
     ExceptionOr<void> retry(PaymentValidationErrors&&) final;
 
     // PaymentSession
@@ -84,8 +84,8 @@ private:
 
     PaymentRequest::MethodIdentifier m_identifier;
     Ref<PaymentRequest> m_paymentRequest;
-    std::optional<ApplePayRequest> m_applePayRequest;
-    std::optional<ApplePayPaymentMethodType> m_selectedPaymentMethodType;
+    Optional<ApplePayRequest> m_applePayRequest;
+    Optional<ApplePayPaymentMethodType> m_selectedPaymentMethodType;
     bool m_isUpdating { false };
 };
 

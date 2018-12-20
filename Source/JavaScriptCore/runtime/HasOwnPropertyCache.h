@@ -68,7 +68,7 @@ public:
         return bitwise_cast<uint32_t>(structureID) + impl->hash();
     }
 
-    ALWAYS_INLINE std::optional<bool> get(Structure* structure, PropertyName propName)
+    ALWAYS_INLINE Optional<bool> get(Structure* structure, PropertyName propName)
     {
         UniquedStringImpl* impl = propName.uid();
         StructureID id = structure->id();
@@ -76,7 +76,7 @@ public:
         Entry& entry = bitwise_cast<Entry*>(this)[index];
         if (entry.structureID == id && entry.impl.get() == impl)
             return entry.result;
-        return std::nullopt;
+        return WTF::nullopt;
     }
 
     ALWAYS_INLINE void tryAdd(VM& vm, PropertySlot& slot, JSObject* object, PropertyName propName, bool result)

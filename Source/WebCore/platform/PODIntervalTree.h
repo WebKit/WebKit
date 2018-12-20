@@ -116,11 +116,11 @@ public:
         return IntervalType(low, high, data);
     }
 
-    std::optional<IntervalType> nextIntervalAfter(const IntervalType& interval)
+    Optional<IntervalType> nextIntervalAfter(const IntervalType& interval)
     {
         auto next = smallestNodeGreaterThanFrom(interval, this->root());
         if (!next)
-            return std::nullopt;
+            return WTF::nullopt;
 
         return next->data();
     }

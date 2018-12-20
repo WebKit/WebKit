@@ -110,11 +110,11 @@ bool getVideoSizeAndFormatFromCaps(GstCaps* caps, WebCore::IntSize& size, GstVid
     return true;
 }
 
-std::optional<FloatSize> getVideoResolutionFromCaps(const GstCaps* caps)
+Optional<FloatSize> getVideoResolutionFromCaps(const GstCaps* caps)
 {
     if (!doCapsHaveType(caps, GST_VIDEO_CAPS_TYPE_PREFIX)) {
         GST_WARNING("Failed to get the video resolution, these are not a video caps");
-        return std::nullopt;
+        return WTF::nullopt;
     }
 
     int width = 0, height = 0;
@@ -129,7 +129,7 @@ std::optional<FloatSize> getVideoResolutionFromCaps(const GstCaps* caps)
         GstVideoInfo info;
         gst_video_info_init(&info);
         if (!gst_video_info_from_caps(&info, caps))
-            return std::nullopt;
+            return WTF::nullopt;
 
         width = GST_VIDEO_INFO_WIDTH(&info);
         height = GST_VIDEO_INFO_HEIGHT(&info);
@@ -137,7 +137,7 @@ std::optional<FloatSize> getVideoResolutionFromCaps(const GstCaps* caps)
         pixelAspectRatioDenominator = GST_VIDEO_INFO_PAR_D(&info);
     }
 
-    return std::make_optional(FloatSize(width, height * (static_cast<float>(pixelAspectRatioDenominator) / static_cast<float>(pixelAspectRatioNumerator))));
+    return makeOptional(FloatSize(width, height * (static_cast<float>(pixelAspectRatioDenominator) / static_cast<float>(pixelAspectRatioNumerator))));
 }
 
 bool getSampleVideoInfo(GstSample* sample, GstVideoInfo& videoInfo)
@@ -215,7 +215,7 @@ Vector<String> extractGStreamerOptionsFromCommandLine()
     return options;
 }
 
-bool initializeGStreamer(std::optional<Vector<String>>&& options)
+bool initializeGStreamer(Optional<Vector<String>>&& options)
 {
     static std::once_flag onceFlag;
     static bool isGStreamerInitialized;

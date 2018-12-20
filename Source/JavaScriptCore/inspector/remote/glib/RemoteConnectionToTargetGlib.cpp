@@ -106,9 +106,9 @@ void RemoteConnectionToTarget::targetClosed()
     m_target = nullptr;
 }
 
-std::optional<unsigned> RemoteConnectionToTarget::targetIdentifier() const
+Optional<unsigned> RemoteConnectionToTarget::targetIdentifier() const
 {
-    return m_target ? std::optional<unsigned>(m_target->targetIdentifier()) : std::nullopt;
+    return m_target ? Optional<unsigned>(m_target->targetIdentifier()) : WTF::nullopt;
 }
 
 void RemoteConnectionToTarget::sendMessageToFrontend(const String& message)

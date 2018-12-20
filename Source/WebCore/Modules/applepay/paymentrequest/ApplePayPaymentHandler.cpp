@@ -316,7 +316,7 @@ ExceptionOr<ApplePaySessionPaymentRequest::TotalAndLineItems> ApplePayPaymentHan
     return ApplePaySessionPaymentRequest::TotalAndLineItems { WTFMove(total), WTFMove(lineItems) };
 }
 
-static inline void appendShippingContactInvalidError(String&& message, std::optional<PaymentError::ContactField> contactField, Vector<PaymentError>& errors)
+static inline void appendShippingContactInvalidError(String&& message, Optional<PaymentError::ContactField> contactField, Vector<PaymentError>& errors)
 {
     if (!message.isNull())
         errors.append({ PaymentError::Code::ShippingContactInvalid, WTFMove(message), WTFMove(contactField) });
@@ -347,7 +347,7 @@ void ApplePayPaymentHandler::computeAddressErrors(String&& error, AddressErrors&
         return;
 
     using ContactField = PaymentError::ContactField;
-    appendShippingContactInvalidError(WTFMove(error), std::nullopt, errors);
+    appendShippingContactInvalidError(WTFMove(error), WTF::nullopt, errors);
     appendShippingContactInvalidError(WTFMove(addressErrors.addressLine), ContactField::AddressLines, errors);
     appendShippingContactInvalidError(WTFMove(addressErrors.city), ContactField::Locality, errors);
     appendShippingContactInvalidError(WTFMove(addressErrors.country), ContactField::Country, errors);
@@ -485,11 +485,11 @@ ExceptionOr<void> ApplePayPaymentHandler::paymentMethodUpdated()
     return { };
 }
 
-void ApplePayPaymentHandler::complete(std::optional<PaymentComplete>&& result)
+void ApplePayPaymentHandler::complete(Optional<PaymentComplete>&& result)
 {
     if (!result) {
-        ASSERT(isFinalStateResult(std::nullopt));
-        paymentCoordinator().completePaymentSession(std::nullopt);
+        ASSERT(isFinalStateResult(WTF::nullopt));
+        paymentCoordinator().completePaymentSession(WTF::nullopt);
         return;
     }
 
@@ -521,7 +521,7 @@ ExceptionOr<void> ApplePayPaymentHandler::retry(PaymentValidationErrors&& valida
 
     // Ensure there is always at least one error to avoid having a final result.
     if (errors.isEmpty())
-        errors.append({ PaymentError::Code::Unknown, { }, std::nullopt });
+        errors.append({ PaymentError::Code::Unknown, { }, WTF::nullopt });
 
     PaymentAuthorizationResult authorizationResult { PaymentAuthorizationStatus::Failure, WTFMove(errors) };
     ASSERT(!isFinalStateResult(authorizationResult));

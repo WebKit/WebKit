@@ -30,5 +30,5 @@ messages -> WebCacheStorageConnection {
     PutRecordsCompleted(uint64_t requestIdentifier, WebCore::DOMCacheEngine::RecordIdentifiersOrError result);
 
     EngineRepresentationCompleted(uint64_t requestIdentifier, String representation);
-    ClearMemoryRepresentationCompleted(uint64_t requestIdentifier, std::optional<WebCore::DOMCacheEngine::Error> error);
+    ClearMemoryRepresentationCompleted(uint64_t requestIdentifier, Optional<WebCore::DOMCacheEngine::Error> error);
 }

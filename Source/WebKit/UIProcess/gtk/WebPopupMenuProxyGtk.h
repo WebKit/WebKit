@@ -54,7 +54,7 @@ public:
     void cancelTracking() override;
 
     virtual void selectItem(unsigned itemIndex);
-    virtual void activateItem(std::optional<unsigned> itemIndex);
+    virtual void activateItem(Optional<unsigned> itemIndex);
 
 protected:
     WebPopupMenuProxyGtk(GtkWidget*, WebPopupMenuProxy::Client&);
@@ -65,7 +65,7 @@ private:
     void createPopupMenu(const Vector<WebPopupItem>&, int32_t selectedIndex);
     void show();
     bool activateItemAtPath(GtkTreePath*);
-    std::optional<unsigned> typeAheadFindIndex(GdkEventKey*);
+    Optional<unsigned> typeAheadFindIndex(GdkEventKey*);
     bool typeAheadFind(GdkEventKey*);
 
     static gboolean buttonPressEventCallback(GtkWidget*, GdkEventButton*, WebPopupMenuProxyGtk*);
@@ -78,7 +78,7 @@ private:
     GdkDevice* m_device { nullptr };
 
     Vector<GUniquePtr<GtkTreePath>> m_paths;
-    std::optional<unsigned> m_selectedItem;
+    Optional<unsigned> m_selectedItem;
 
     // Typeahead find.
     gunichar m_repeatingCharacter { '\0' };

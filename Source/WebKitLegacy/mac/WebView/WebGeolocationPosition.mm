@@ -56,10 +56,10 @@ using namespace WebCore;
 
 @implementation WebGeolocationPosition
 
-std::optional<GeolocationPosition> core(WebGeolocationPosition *position)
+Optional<GeolocationPosition> core(WebGeolocationPosition *position)
 {
     if (!position)
-        return std::nullopt;
+        return WTF::nullopt;
     return position->_internal->_position;
 }
 

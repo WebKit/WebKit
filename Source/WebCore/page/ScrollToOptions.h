@@ -34,11 +34,11 @@
 namespace WebCore {
 
 struct ScrollToOptions {
-    std::optional<double> left;
-    std::optional<double> top;
+    Optional<double> left;
+    Optional<double> top;
 };
 
-inline double normalizeNonFiniteValueOrFallBackTo(std::optional<double> value, double fallbackValue)
+inline double normalizeNonFiniteValueOrFallBackTo(Optional<double> value, double fallbackValue)
 {
     // Normalize non-finite values (https://drafts.csswg.org/cssom-view/#normalize-non-finite-values).
     return value ? (std::isfinite(*value) ? *value : 0) : fallbackValue;

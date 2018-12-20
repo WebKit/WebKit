@@ -68,7 +68,7 @@ public:
     using RefCounted::ref;
     using RefCounted::deref;
     
-    ExceptionOr<void> startRecording(std::optional<int>);
+    ExceptionOr<void> startRecording(Optional<int>);
     ExceptionOr<void> stopRecording();
     
 private:

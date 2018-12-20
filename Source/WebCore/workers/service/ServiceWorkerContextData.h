@@ -70,7 +70,7 @@ struct ServiceWorkerContextData {
         }
     };
 
-    std::optional<ServiceWorkerJobDataIdentifier> jobDataIdentifier;
+    Optional<ServiceWorkerJobDataIdentifier> jobDataIdentifier;
     ServiceWorkerRegistrationData registration;
     ServiceWorkerIdentifier serviceWorkerIdentifier;
     String script;
@@ -82,7 +82,7 @@ struct ServiceWorkerContextData {
     HashMap<URL, ImportedScript> scriptResourceMap;
 
     template<class Encoder> void encode(Encoder&) const;
-    template<class Decoder> static std::optional<ServiceWorkerContextData> decode(Decoder&);
+    template<class Decoder> static Optional<ServiceWorkerContextData> decode(Decoder&);
 
     ServiceWorkerContextData isolatedCopy() const;
 };
@@ -95,49 +95,49 @@ void ServiceWorkerContextData::encode(Encoder& encoder) const
 }
 
 template<class Decoder>
-std::optional<ServiceWorkerContextData> ServiceWorkerContextData::decode(Decoder& decoder)
+Optional<ServiceWorkerContextData> ServiceWorkerContextData::decode(Decoder& decoder)
 {
-    std::optional<std::optional<ServiceWorkerJobDataIdentifier>> jobDataIdentifier;
+    Optional<Optional<ServiceWorkerJobDataIdentifier>> jobDataIdentifier;
     decoder >> jobDataIdentifier;
     if (!jobDataIdentifier)
-        return std::nullopt;
+        return WTF::nullopt;
 
-    std::optional<ServiceWorkerRegistrationData> registration;
+    Optional<ServiceWorkerRegistrationData> registration;
     decoder >> registration;
     if (!registration)
-        return std::nullopt;
+        return WTF::nullopt;
 
     auto serviceWorkerIdentifier = ServiceWorkerIdentifier::decode(decoder);
     if (!serviceWorkerIdentifier)
-        return std::nullopt;
+        return WTF::nullopt;
 
     String script;
     if (!decoder.decode(script))
-        return std::nullopt;
+        return WTF::nullopt;
 
     ContentSecurityPolicyResponseHeaders contentSecurityPolicy;
     if (!decoder.decode(contentSecurityPolicy))
-        return std::nullopt;
+        return WTF::nullopt;
 
     URL scriptURL;
     if (!decoder.decode(scriptURL))
-        return std::nullopt;
+        return WTF::nullopt;
     
     WorkerType workerType;
     if (!decoder.decodeEnum(workerType))
-        return std::nullopt;
+        return WTF::nullopt;
 
     PAL::SessionID sessionID;
     if (!decoder.decode(sessionID))
-        return std::nullopt;
+        return WTF::nullopt;
 
     bool loadedFromDisk;
     if (!decoder.decode(loadedFromDisk))
-        return std::nullopt;
+        return WTF::nullopt;
 
     HashMap<URL, ImportedScript> scriptResourceMap;
     if (!decoder.decode(scriptResourceMap))
-        return std::nullopt;
+        return WTF::nullopt;
 
     return {{ WTFMove(*jobDataIdentifier), WTFMove(*registration), WTFMove(*serviceWorkerIdentifier), WTFMove(script), WTFMove(contentSecurityPolicy), WTFMove(scriptURL), workerType, sessionID, loadedFromDisk, WTFMove(scriptResourceMap) }};
 }

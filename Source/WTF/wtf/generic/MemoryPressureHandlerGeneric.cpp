@@ -48,9 +48,9 @@ void MemoryPressureHandler::respondToMemoryPressure(Critical, Synchronous)
 {
 }
 
-std::optional<MemoryPressureHandler::ReliefLogger::MemoryUsage> MemoryPressureHandler::ReliefLogger::platformMemoryUsage()
+Optional<MemoryPressureHandler::ReliefLogger::MemoryUsage> MemoryPressureHandler::ReliefLogger::platformMemoryUsage()
 {
-    return std::nullopt;
+    return WTF::nullopt;
 }
 
 } // namespace WTF

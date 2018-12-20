@@ -93,11 +93,11 @@ bool CertificateInfo::containsNonRootSHA1SignedCertificate() const
     return false;
 }
 
-std::optional<CertificateInfo::SummaryInfo> CertificateInfo::summaryInfo() const
+Optional<CertificateInfo::SummaryInfo> CertificateInfo::summaryInfo() const
 {
     auto chain = certificateChain();
     if (!chain)
-        return std::nullopt;
+        return WTF::nullopt;
 
     SummaryInfo summaryInfo;
 

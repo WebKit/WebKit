@@ -191,7 +191,7 @@ void RealtimeVideoSource::updateCapabilities(RealtimeMediaSourceCapabilities& ca
     capabilities.setFrameRate({ minimumFrameRate, maximumFrameRate });
 }
 
-bool RealtimeVideoSource::supportsSizeAndFrameRate(std::optional<int> width, std::optional<int> height, std::optional<double> frameRate)
+bool RealtimeVideoSource::supportsSizeAndFrameRate(Optional<int> width, Optional<int> height, Optional<double> frameRate)
 {
     if (!width && !height && !frameRate)
         return true;
@@ -215,7 +215,7 @@ bool RealtimeVideoSource::presetSupportsFrameRate(RefPtr<VideoPreset> preset, do
     return false;
 }
 
-bool RealtimeVideoSource::supportsCaptureSize(std::optional<int> width, std::optional<int> height, const Function<bool(const IntSize&)>&& function)
+bool RealtimeVideoSource::supportsCaptureSize(Optional<int> width, Optional<int> height, const Function<bool(const IntSize&)>&& function)
 {
     if (width && height)
         return function({ width.value(), height.value() });
@@ -242,7 +242,7 @@ bool RealtimeVideoSource::shouldUsePreset(VideoPreset& current, VideoPreset& can
     return candidate.size.width() <= current.size.width() && candidate.size.height() <= current.size.height() && prefersPreset(candidate);
 }
 
-std::optional<RealtimeVideoSource::CaptureSizeAndFrameRate> RealtimeVideoSource::bestSupportedSizeAndFrameRate(std::optional<int> requestedWidth, std::optional<int> requestedHeight, std::optional<double> requestedFrameRate)
+Optional<RealtimeVideoSource::CaptureSizeAndFrameRate> RealtimeVideoSource::bestSupportedSizeAndFrameRate(Optional<int> requestedWidth, Optional<int> requestedHeight, Optional<double> requestedFrameRate)
 {
     if (!requestedWidth && !requestedHeight && !requestedFrameRate)
         return { };
@@ -350,9 +350,9 @@ std::optional<RealtimeVideoSource::CaptureSizeAndFrameRate> RealtimeVideoSource:
     return result;
 }
 
-void RealtimeVideoSource::setSizeAndFrameRate(std::optional<int> width, std::optional<int> height, std::optional<double> frameRate)
+void RealtimeVideoSource::setSizeAndFrameRate(Optional<int> width, Optional<int> height, Optional<double> frameRate)
 {
-    std::optional<RealtimeVideoSource::CaptureSizeAndFrameRate> match;
+    Optional<RealtimeVideoSource::CaptureSizeAndFrameRate> match;
 
     auto size = this->size();
     if (!width && !height && !size.isEmpty()) {

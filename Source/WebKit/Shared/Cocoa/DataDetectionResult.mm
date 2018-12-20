@@ -44,11 +44,11 @@ void DataDetectionResult::encode(IPC::Encoder& encoder) const
     encoder << results;
 }
 
-std::optional<DataDetectionResult> DataDetectionResult::decode(IPC::Decoder& decoder)
+Optional<DataDetectionResult> DataDetectionResult::decode(IPC::Decoder& decoder)
 {
     auto results = IPC::decode<NSArray>(decoder, @[ [NSArray class], getDDScannerResultClass() ]);
     if (!results)
-        return std::nullopt;
+        return WTF::nullopt;
 
     DataDetectionResult result;
     result.results = WTFMove(*results);

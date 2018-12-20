@@ -42,7 +42,7 @@ struct ConditionalReturner;
 template<typename ReturnType>
 struct ConditionalReturner<ReturnType, true> {
     template<typename T>
-    static std::optional<ReturnType> get(T&& value)
+    static Optional<ReturnType> get(T&& value)
     {
         return ReturnType(std::forward<T>(value));
     }
@@ -51,9 +51,9 @@ struct ConditionalReturner<ReturnType, true> {
 template<typename ReturnType>
 struct ConditionalReturner<ReturnType, false> {
     template<typename T>
-    static std::optional<ReturnType> get(T&&)
+    static Optional<ReturnType> get(T&&)
     {
-        return std::nullopt;
+        return WTF::nullopt;
     }
 };
 
@@ -62,7 +62,7 @@ struct ConditionalConverter;
 
 template<typename ReturnType, typename T>
 struct ConditionalConverter<ReturnType, T, true> {
-    static std::optional<ReturnType> convert(JSC::ExecState& state, JSC::JSValue value)
+    static Optional<ReturnType> convert(JSC::ExecState& state, JSC::JSValue value)
     {
         return ReturnType(Converter<T>::convert(state, value));
     }
@@ -70,9 +70,9 @@ struct ConditionalConverter<ReturnType, T, true> {
 
 template<typename ReturnType, typename T>
 struct ConditionalConverter<ReturnType, T, false> {
-    static std::optional<ReturnType> convert(JSC::ExecState&, JSC::JSValue)
+    static Optional<ReturnType> convert(JSC::ExecState&, JSC::JSValue)
     {
-        return std::nullopt;
+        return WTF::nullopt;
     }
 };
 
@@ -81,7 +81,7 @@ struct ConditionalSequenceConverter;
 
 template<typename ReturnType, typename T>
 struct ConditionalSequenceConverter<ReturnType, T, true> {
-    static std::optional<ReturnType> convert(JSC::ExecState& state, JSC::JSObject* object, JSC::JSValue method)
+    static Optional<ReturnType> convert(JSC::ExecState& state, JSC::JSObject* object, JSC::JSValue method)
     {
         return ReturnType(Converter<T>::convert(state, object, method));
     }
@@ -89,9 +89,9 @@ struct ConditionalSequenceConverter<ReturnType, T, true> {
 
 template<typename ReturnType, typename T>
 struct ConditionalSequenceConverter<ReturnType, T, false> {
-    static std::optional<ReturnType> convert(JSC::ExecState&, JSC::JSObject*, JSC::JSValue)
+    static Optional<ReturnType> convert(JSC::ExecState&, JSC::JSObject*, JSC::JSValue)
     {
-        return std::nullopt;
+        return WTF::nullopt;
     }
 };
 
@@ -191,7 +191,7 @@ template<typename... T> struct Converter<IDLUnion<T...>> : DefaultConverter<IDLU
         //     2. If types includes object, then return the IDL value that is a reference to the object V.
         //         (FIXME: Add support for object and step 4.2)
         if (brigand::any<TypeList, IsIDLInterface<brigand::_1>>::value) {
-            std::optional<ReturnType> returnValue;
+            Optional<ReturnType> returnValue;
             brigand::for_each<InterfaceTypeList>([&](auto&& type) {
                 if (returnValue)
                     return;
@@ -264,7 +264,7 @@ template<typename... T> struct Converter<IDLUnion<T...>> : DefaultConverter<IDLU
         //         (FIXME: Add support for object and step 9.2)
         constexpr bool hasTypedArrayType = brigand::any<TypeList, IsIDLTypedArray<brigand::_1>>::value;
         if (hasTypedArrayType) {
-            std::optional<ReturnType> returnValue;
+            Optional<ReturnType> returnValue;
             brigand::for_each<TypedArrayTypeList>([&](auto&& type) {
                 if (returnValue)
                     return;
@@ -391,7 +391,7 @@ template<typename... T> struct JSConverter<IDLUnion<T...>> {
     {
         auto index = variant.index();
 
-        std::optional<JSC::JSValue> returnValue;
+        Optional<JSC::JSValue> returnValue;
         brigand::for_each<Sequence>([&](auto&& type) {
             using I = typename WTF::RemoveCVAndReference<decltype(type)>::type::type;
             if (I::value == index) {

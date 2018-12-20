@@ -231,7 +231,7 @@ const auto WebEventMouseDown = NSEventTypeLeftMouseDown;
 - (void)forwardContextMenuAction:(id)sender;
 @end
 
-static std::optional<ContextMenuAction> toAction(NSInteger tag)
+static Optional<ContextMenuAction> toAction(NSInteger tag)
 {
     if (tag >= ContextMenuItemBaseCustomTag && tag <= ContextMenuItemLastCustomTag) {
         // Just pass these through.
@@ -406,14 +406,14 @@ static std::optional<ContextMenuAction> toAction(NSInteger tag)
     case WebMenuItemTagDictationAlternative:
         return ContextMenuItemTagDictationAlternative;
     }
-    return std::nullopt;
+    return WTF::nullopt;
 }
 
-static std::optional<NSInteger> toTag(ContextMenuAction action)
+static Optional<NSInteger> toTag(ContextMenuAction action)
 {
     switch (action) {
     case ContextMenuItemTagNoAction:
-        return std::nullopt;
+        return WTF::nullopt;
 
     case ContextMenuItemTagOpenLinkInNewWindow:
         return WebMenuItemTagOpenLinkInNewWindow;
@@ -596,7 +596,7 @@ static std::optional<NSInteger> toTag(ContextMenuAction action)
         ASSERT_NOT_REACHED();
     }
 
-    return std::nullopt;
+    return WTF::nullopt;
 }
 
 @implementation WebMenuTarget

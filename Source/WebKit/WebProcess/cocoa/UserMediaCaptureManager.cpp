@@ -190,7 +190,7 @@ private:
 
     uint64_t m_id;
     UserMediaCaptureManager& m_manager;
-    mutable std::optional<RealtimeMediaSourceCapabilities> m_capabilities;
+    mutable Optional<RealtimeMediaSourceCapabilities> m_capabilities;
     RealtimeMediaSourceSettings m_settings;
 
     CAAudioStreamDescription m_description;

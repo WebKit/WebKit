@@ -153,12 +153,12 @@ IDBRequest::~IDBRequest()
     }
 }
 
-ExceptionOr<std::optional<IDBRequest::Result>> IDBRequest::result() const
+ExceptionOr<Optional<IDBRequest::Result>> IDBRequest::result() const
 {
     if (!isDone())
         return Exception { InvalidStateError, "Failed to read the 'result' property from 'IDBRequest': The request has not finished."_s };
 
-    return std::optional<IDBRequest::Result> { m_result };
+    return Optional<IDBRequest::Result> { m_result };
 }
 
 ExceptionOr<DOMException*> IDBRequest::error() const
@@ -470,7 +470,7 @@ void IDBRequest::willIterateCursor(IDBCursor& cursor)
 
     m_pendingCursor = &cursor;
     m_hasPendingActivity = true;
-    m_result = std::nullopt;
+    m_result = WTF::nullopt;
     m_readyState = ReadyState::Pending;
     m_domError = nullptr;
     m_idbError = IDBError { };
@@ -481,7 +481,7 @@ void IDBRequest::didOpenOrIterateCursor(const IDBResultData& resultData)
     ASSERT(&originThread() == &Thread::current());
     ASSERT(m_pendingCursor);
 
-    m_result = std::nullopt;
+    m_result = WTF::nullopt;
 
     if (resultData.type() == IDBResultType::IterateCursorSuccess || resultData.type() == IDBResultType::OpenCursorSuccess) {
         m_pendingCursor->setGetResult(*this, resultData.getResult());

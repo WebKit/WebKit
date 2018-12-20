@@ -159,7 +159,7 @@ bool WebHitTestResultData::decode(IPC::Decoder& decoder, WebHitTestResultData& h
         return false;
 
     if (hasLinkTextIndicator) {
-        std::optional<WebCore::TextIndicatorData> indicatorData;
+        Optional<WebCore::TextIndicatorData> indicatorData;
         decoder >> indicatorData;
         if (!indicatorData)
             return false;

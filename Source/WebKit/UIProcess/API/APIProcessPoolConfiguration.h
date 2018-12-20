@@ -212,11 +212,11 @@ private:
     bool m_shouldCaptureVideoInUIProcess { false };
     bool m_shouldCaptureDisplayInUIProcess { DEFAULT_CAPTURE_DISPLAY_IN_UI_PROCESS };
     ProcessID m_presentingApplicationPID { getCurrentProcessID() };
-    std::optional<bool> m_processSwapsOnNavigationFromClient;
+    Optional<bool> m_processSwapsOnNavigationFromClient;
     bool m_processSwapsOnNavigationFromExperimentalFeatures { false };
     bool m_alwaysKeepAndReuseSwappedProcesses { false };
     bool m_processSwapsOnWindowOpenWithOpener { false };
-    std::optional<bool> m_isAutomaticProcessWarmingEnabledByClient;
+    Optional<bool> m_isAutomaticProcessWarmingEnabledByClient;
     bool m_clientWouldBenefitFromAutomaticProcessPrewarming { false };
     WTF::String m_customWebContentServiceBundleIdentifier;
     bool m_isJITEnabled { true };

@@ -464,13 +464,13 @@ static FloatRoundedRect::Radii adjustedtRadiiForHuggingCurve(const FloatSize& to
     return radii;
 }
     
-static std::optional<FloatRect> rectFromPolygon(const FloatPointGraph::Polygon& poly)
+static Optional<FloatRect> rectFromPolygon(const FloatPointGraph::Polygon& poly)
 {
     if (poly.size() != 4)
-        return std::optional<FloatRect>();
+        return Optional<FloatRect>();
 
-    std::optional<FloatPoint> topLeft;
-    std::optional<FloatPoint> bottomRight;
+    Optional<FloatPoint> topLeft;
+    Optional<FloatPoint> bottomRight;
     for (unsigned i = 0; i < poly.size(); ++i) {
         const auto& toEdge = poly[i];
         const auto& fromEdge = (i > 0) ? poly[i - 1] : poly[poly.size() - 1];
@@ -484,7 +484,7 @@ static std::optional<FloatRect> rectFromPolygon(const FloatPointGraph::Polygon& 
         }
     }
     if (!topLeft || !bottomRight)
-        return std::optional<FloatRect>();
+        return Optional<FloatRect>();
     return FloatRect(topLeft.value(), bottomRight.value());
 }
 
@@ -519,7 +519,7 @@ Path PathUtilities::pathWithShrinkWrappedRectsForOutline(const Vector<FloatRect>
         return Path();
     const auto& poly = polys.at(0);
     // Fast path when poly has one rect only.
-    std::optional<FloatRect> rect = rectFromPolygon(poly);
+    Optional<FloatRect> rect = rectFromPolygon(poly);
     if (rect)
         return roundedRect(rect.value());
 

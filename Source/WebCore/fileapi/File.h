@@ -36,7 +36,7 @@ namespace WebCore {
 class File final : public Blob {
 public:
     struct PropertyBag : BlobPropertyBag {
-        std::optional<int64_t> lastModified;
+        Optional<int64_t> lastModified;
     };
 
     static Ref<File> create(const String& path)
@@ -50,7 +50,7 @@ public:
         return adoptRef(*new File(WTFMove(blobPartVariants), filename, propertyBag));
     }
 
-    static Ref<File> deserialize(const String& path, const URL& srcURL, const String& type, const String& name, const std::optional<int64_t>& lastModified = std::nullopt)
+    static Ref<File> deserialize(const String& path, const URL& srcURL, const String& type, const String& name, const Optional<int64_t>& lastModified = WTF::nullopt)
     {
         return adoptRef(*new File(deserializationContructor, path, srcURL, type, name, lastModified));
     }
@@ -82,7 +82,7 @@ public:
     void setRelativePath(const String& relativePath) { m_relativePath = relativePath; }
     const String& name() const { return m_name; }
     WEBCORE_EXPORT int64_t lastModified() const; // Number of milliseconds since Epoch.
-    const std::optional<int64_t>& lastModifiedOverride() const { return m_lastModifiedDateOverride; } // Number of milliseconds since Epoch.
+    const Optional<int64_t>& lastModifiedOverride() const { return m_lastModifiedDateOverride; } // Number of milliseconds since Epoch.
 
     static String contentTypeForFile(const String& path);
 
@@ -99,7 +99,7 @@ private:
     File(const Blob&, const String& name);
     File(const File&, const String& name);
 
-    File(DeserializationContructor, const String& path, const URL& srcURL, const String& type, const String& name, const std::optional<int64_t>& lastModified);
+    File(DeserializationContructor, const String& path, const URL& srcURL, const String& type, const String& name, const Optional<int64_t>& lastModified);
 
     static void computeNameAndContentType(const String& path, const String& nameOverride, String& effectiveName, String& effectiveContentType);
 #if ENABLE(FILE_REPLACEMENT)
@@ -110,8 +110,8 @@ private:
     String m_relativePath;
     String m_name;
 
-    std::optional<int64_t> m_lastModifiedDateOverride;
-    mutable std::optional<bool> m_isDirectory;
+    Optional<int64_t> m_lastModifiedDateOverride;
+    mutable Optional<bool> m_isDirectory;
 };
 
 } // namespace WebCore

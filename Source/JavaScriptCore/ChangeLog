@@ -1,3 +1,30 @@
+2018-12-19  Chris Dumez  <cdumez@apple.com>
+
+        wtf/Optional.h: move-constructor and move-assignment operator should disengage the value being moved from
+        https://bugs.webkit.org/show_bug.cgi?id=192728
+        <rdar://problem/46746779>
+
+        Reviewed by Geoff Garen.
+
+        * API/*:
+        * Scripts/*:
+        * assembler/*:
+        * b3/*:
+        * bytecode/*:
+        * bytecompiler/*:
+        * debugger/*:
+        * dfg/*:
+        * ftl/*:
+        * heap/*:
+        * inspector/*:
+        * jit/*:
+        * llint/*:
+        * parser/*:
+        * runtime/*:
+        * tools/*:
+        * wasm/*:
+        * yarr/*:
+
 2018-12-18  Simon Fraser  <simon.fraser@apple.com>
 
         Web Inspector: Timelines: correctly label Intersection Observer callbacks

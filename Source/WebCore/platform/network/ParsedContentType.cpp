@@ -53,14 +53,14 @@ static bool isTokenCharacter(char c)
     return isASCII(c) && c > ' ' && c != '"' && c != '(' && c != ')' && c != ',' && c != '/' && (c < ':' || c > '@') && (c < '[' || c > ']');
 }
 
-static std::optional<SubstringRange> parseToken(const String& input, unsigned& startIndex)
+static Optional<SubstringRange> parseToken(const String& input, unsigned& startIndex)
 {
     unsigned inputLength = input.length();
     unsigned tokenStart = startIndex;
     unsigned& tokenEnd = startIndex;
 
     if (tokenEnd >= inputLength)
-        return std::nullopt;
+        return WTF::nullopt;
 
     while (tokenEnd < inputLength) {
         if (!isTokenCharacter(input[tokenEnd]))
@@ -69,27 +69,27 @@ static std::optional<SubstringRange> parseToken(const String& input, unsigned& s
     }
 
     if (tokenEnd == tokenStart)
-        return std::nullopt;
+        return WTF::nullopt;
     return SubstringRange(tokenStart, tokenEnd - tokenStart);
 }
 
-static std::optional<SubstringRange> parseQuotedString(const String& input, unsigned& startIndex)
+static Optional<SubstringRange> parseQuotedString(const String& input, unsigned& startIndex)
 {
     unsigned inputLength = input.length();
     unsigned quotedStringStart = startIndex + 1;
     unsigned& quotedStringEnd = startIndex;
 
     if (quotedStringEnd >= inputLength)
-        return std::nullopt;
+        return WTF::nullopt;
 
     if (input[quotedStringEnd++] != '"' || quotedStringEnd >= inputLength)
-        return std::nullopt;
+        return WTF::nullopt;
 
     bool lastCharacterWasBackslash = false;
     char currentCharacter;
     while ((currentCharacter = input[quotedStringEnd++]) != '"' || lastCharacterWasBackslash) {
         if (quotedStringEnd >= inputLength)
-            return std::nullopt;
+            return WTF::nullopt;
         if (currentCharacter == '\\' && !lastCharacterWasBackslash) {
             lastCharacterWasBackslash = true;
             continue;
@@ -205,7 +205,7 @@ bool parseContentType(const String& contentType, ReceiverType& receiver)
 
         // Should we tolerate spaces here?
         String value;
-        std::optional<SubstringRange> valueRange;
+        Optional<SubstringRange> valueRange;
         if (contentType[index] == '"')
             valueRange = parseQuotedString(contentType, index);
         else

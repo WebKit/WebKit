@@ -445,7 +445,7 @@ public:
             return true;
         }
 
-        std::optional<uint32_t> index = parseIndex(propertyName);
+        Optional<uint32_t> index = parseIndex(propertyName);
         if (index && index.value() < thisObject->getLength()) {
             slot.setValue(thisObject, PropertyAttribute::DontDelete | PropertyAttribute::DontEnum, jsNumber(thisObject->m_vector[index.value()]));
             return true;

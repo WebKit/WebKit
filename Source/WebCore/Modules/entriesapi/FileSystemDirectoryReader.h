@@ -56,7 +56,7 @@ private:
     bool canSuspendForDocumentSuspension() const final;
 
     Ref<FileSystemDirectoryEntry> m_directory;
-    std::optional<Exception> m_error;
+    Optional<Exception> m_error;
     bool m_isReading { false };
     bool m_isDone { false };
 };

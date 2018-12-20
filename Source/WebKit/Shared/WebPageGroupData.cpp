@@ -37,22 +37,22 @@ void WebPageGroupData::encode(IPC::Encoder& encoder) const
     encoder << userContentControllerIdentifier.toUInt64();
 }
 
-std::optional<WebPageGroupData> WebPageGroupData::decode(IPC::Decoder& decoder)
+Optional<WebPageGroupData> WebPageGroupData::decode(IPC::Decoder& decoder)
 {
-    std::optional<String> identifier;
+    Optional<String> identifier;
     decoder >> identifier;
     if (!identifier)
-        return std::nullopt;
+        return WTF::nullopt;
     
-    std::optional<uint64_t> pageGroupID;
+    Optional<uint64_t> pageGroupID;
     decoder >> pageGroupID;
     if (!pageGroupID)
-        return std::nullopt;
+        return WTF::nullopt;
     
-    std::optional<uint64_t> userContentControllerIdentifier;
+    Optional<uint64_t> userContentControllerIdentifier;
     decoder >> userContentControllerIdentifier;
     if (!userContentControllerIdentifier)
-        return std::nullopt;
+        return WTF::nullopt;
     
     return {{ WTFMove(*identifier), WTFMove(*pageGroupID), makeObjectIdentifier<UserContentControllerIdentifierType>(*userContentControllerIdentifier) }};
 }

@@ -42,7 +42,7 @@ struct ServiceWorkerRegistrationOptions {
     ServiceWorkerRegistrationOptions isolatedCopy() const;
 
     template<class Encoder> void encode(Encoder&) const;
-    template<class Decoder> static std::optional<ServiceWorkerRegistrationOptions> decode(Decoder&);
+    template<class Decoder> static Optional<ServiceWorkerRegistrationOptions> decode(Decoder&);
 };
 
 template<class Encoder>
@@ -52,22 +52,22 @@ void ServiceWorkerRegistrationOptions::encode(Encoder& encoder) const
 }
 
 template<class Decoder>
-std::optional<ServiceWorkerRegistrationOptions> ServiceWorkerRegistrationOptions::decode(Decoder& decoder)
+Optional<ServiceWorkerRegistrationOptions> ServiceWorkerRegistrationOptions::decode(Decoder& decoder)
 {
-    std::optional<String> scope;
+    Optional<String> scope;
     decoder >> scope;
     if (!scope)
-        return std::nullopt;
+        return WTF::nullopt;
 
-    std::optional<WorkerType> type;
+    Optional<WorkerType> type;
     decoder >> type;
     if (!type)
-        return std::nullopt;
+        return WTF::nullopt;
 
-    std::optional<ServiceWorkerUpdateViaCache> updateViaCache;
+    Optional<ServiceWorkerUpdateViaCache> updateViaCache;
     decoder >> updateViaCache;
     if (!updateViaCache)
-        return std::nullopt;
+        return WTF::nullopt;
 
     return ServiceWorkerRegistrationOptions { WTFMove(*scope), WTFMove(*type), WTFMove(*updateViaCache) };
 }

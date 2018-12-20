@@ -98,7 +98,7 @@ private:
     Type m_type;
     RefPtr<Document> m_oldDocument;
     RefPtr<Document> m_newDocument;
-    std::optional<QualifiedName> m_attributeName;
+    Optional<QualifiedName> m_attributeName;
     AtomicString m_oldValue;
     AtomicString m_newValue;
 };

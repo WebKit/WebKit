@@ -37,17 +37,17 @@
 namespace WebKit {
 using namespace WebCore;
 
-std::optional<String> WebAutomationSession::platformGetBase64EncodedPNGData(const ShareableBitmap::Handle& imageDataHandle)
+Optional<String> WebAutomationSession::platformGetBase64EncodedPNGData(const ShareableBitmap::Handle& imageDataHandle)
 {
     RefPtr<ShareableBitmap> bitmap = ShareableBitmap::create(imageDataHandle, SharedMemory::Protection::ReadOnly);
     if (!bitmap)
-        return std::nullopt;
+        return WTF::nullopt;
 
     RetainPtr<CGImageRef> cgImage = bitmap->makeCGImage();
     RetainPtr<NSMutableData> imageData = adoptNS([[NSMutableData alloc] init]);
     RetainPtr<CGImageDestinationRef> destination = adoptCF(CGImageDestinationCreateWithData((CFMutableDataRef)imageData.get(), kUTTypePNG, 1, 0));
     if (!destination)
-        return std::nullopt;
+        return WTF::nullopt;
 
     CGImageDestinationAddImage(destination.get(), cgImage.get(), 0);
     CGImageDestinationFinalize(destination.get());
@@ -55,7 +55,7 @@ std::optional<String> WebAutomationSession::platformGetBase64EncodedPNGData(cons
     return String([imageData base64EncodedStringWithOptions:0]);
 }
 
-std::optional<unichar> WebAutomationSession::charCodeForVirtualKey(Inspector::Protocol::Automation::VirtualKey key) const
+Optional<unichar> WebAutomationSession::charCodeForVirtualKey(Inspector::Protocol::Automation::VirtualKey key) const
 {
     switch (key) {
     case Inspector::Protocol::Automation::VirtualKey::Shift:
@@ -63,7 +63,7 @@ std::optional<unichar> WebAutomationSession::charCodeForVirtualKey(Inspector::Pr
     case Inspector::Protocol::Automation::VirtualKey::Alternate:
     case Inspector::Protocol::Automation::VirtualKey::Meta:
     case Inspector::Protocol::Automation::VirtualKey::Command:
-        return std::nullopt;
+        return WTF::nullopt;
     case Inspector::Protocol::Automation::VirtualKey::Help:
         return NSHelpFunctionKey;
     case Inspector::Protocol::Automation::VirtualKey::Backspace:
@@ -167,11 +167,11 @@ std::optional<unichar> WebAutomationSession::charCodeForVirtualKey(Inspector::Pr
     case Inspector::Protocol::Automation::VirtualKey::Function12:
         return NSF12FunctionKey;
     default:
-        return std::nullopt;
+        return WTF::nullopt;
     }
 }
 
-std::optional<unichar> WebAutomationSession::charCodeIgnoringModifiersForVirtualKey(Inspector::Protocol::Automation::VirtualKey key) const
+Optional<unichar> WebAutomationSession::charCodeIgnoringModifiersForVirtualKey(Inspector::Protocol::Automation::VirtualKey key) const
 {
     switch (key) {
     case Inspector::Protocol::Automation::VirtualKey::NumberPadMultiply:

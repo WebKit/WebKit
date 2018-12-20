@@ -322,9 +322,9 @@ void ImplicitAnimation::checkForMatchingColorFilterFunctionLists()
     m_colorFilterFunctionListsMatch = filterOperationsMatch(&m_fromStyle->appleColorFilter(), m_toStyle->appleColorFilter());
 }
 
-std::optional<Seconds> ImplicitAnimation::timeToNextService()
+Optional<Seconds> ImplicitAnimation::timeToNextService()
 {
-    std::optional<Seconds> t = AnimationBase::timeToNextService();
+    Optional<Seconds> t = AnimationBase::timeToNextService();
     if (!t || t.value() != 0_s || preActive())
         return t;
 

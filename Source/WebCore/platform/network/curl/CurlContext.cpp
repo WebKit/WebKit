@@ -52,7 +52,7 @@ public:
     const char* read(const char* name) { return ::getenv(name); }
     bool defined(const char* name) { return read(name) != nullptr; }
 
-    template<typename T> std::optional<T> readAs(const char* name)
+    template<typename T> Optional<T> readAs(const char* name)
     {
         if (const char* valueStr = read(name)) {
             T value;
@@ -60,7 +60,7 @@ public:
                 return value;
         }
 
-        return std::nullopt;
+        return WTF::nullopt;
     }
 
 private:
@@ -639,95 +639,95 @@ void CurlHandle::enableConnectionOnly()
     curl_easy_setopt(m_handle, CURLOPT_CONNECT_ONLY, 1L);
 }
 
-std::optional<String> CurlHandle::getProxyUrl()
+Optional<String> CurlHandle::getProxyUrl()
 {
     auto& proxy = CurlContext::singleton().proxySettings();
     if (proxy.mode() == CurlProxySettings::Mode::Default)
-        return std::nullopt;
+        return WTF::nullopt;
 
     return proxy.url();
 }
 
-std::optional<long> CurlHandle::getResponseCode()
+Optional<long> CurlHandle::getResponseCode()
 {
     if (!m_handle)
-        return std::nullopt;
+        return WTF::nullopt;
 
     long responseCode;
     CURLcode errorCode = curl_easy_getinfo(m_handle, CURLINFO_RESPONSE_CODE, &responseCode);
     if (errorCode != CURLE_OK)
-        return std::nullopt;
+        return WTF::nullopt;
 
     return responseCode;
 }
 
-std::optional<long> CurlHandle::getHttpConnectCode()
+Optional<long> CurlHandle::getHttpConnectCode()
 {
     if (!m_handle)
-        return std::nullopt;
+        return WTF::nullopt;
 
     long httpConnectCode;
     CURLcode errorCode = curl_easy_getinfo(m_handle, CURLINFO_HTTP_CONNECTCODE, &httpConnectCode);
     if (errorCode != CURLE_OK)
-        return std::nullopt;
+        return WTF::nullopt;
 
     return httpConnectCode;
 }
 
-std::optional<long long> CurlHandle::getContentLength()
+Optional<long long> CurlHandle::getContentLength()
 {
     if (!m_handle)
-        return std::nullopt;
+        return WTF::nullopt;
 
     double contentLength;
 
     CURLcode errorCode = curl_easy_getinfo(m_handle, CURLINFO_CONTENT_LENGTH_DOWNLOAD, &contentLength);
     if (errorCode != CURLE_OK)
-        return std::nullopt;
+        return WTF::nullopt;
 
     return static_cast<long long>(contentLength);
 }
 
-std::optional<long> CurlHandle::getHttpAuthAvail()
+Optional<long> CurlHandle::getHttpAuthAvail()
 {
     if (!m_handle)
-        return std::nullopt;
+        return WTF::nullopt;
 
     long httpAuthAvailable;
     CURLcode errorCode = curl_easy_getinfo(m_handle, CURLINFO_HTTPAUTH_AVAIL, &httpAuthAvailable);
     if (errorCode != CURLE_OK)
-        return std::nullopt;
+        return WTF::nullopt;
 
     return httpAuthAvailable;
 }
 
-std::optional<long> CurlHandle::getProxyAuthAvail()
+Optional<long> CurlHandle::getProxyAuthAvail()
 {
     if (!m_handle)
-        return std::nullopt;
+        return WTF::nullopt;
 
     long proxyAuthAvailable;
     CURLcode errorCode = curl_easy_getinfo(m_handle, CURLINFO_PROXYAUTH_AVAIL, &proxyAuthAvailable);
     if (errorCode != CURLE_OK)
-        return std::nullopt;
+        return WTF::nullopt;
 
     return proxyAuthAvailable;
 }
 
-std::optional<long> CurlHandle::getHttpVersion()
+Optional<long> CurlHandle::getHttpVersion()
 {
     if (!m_handle)
-        return std::nullopt;
+        return WTF::nullopt;
 
     long version;
     CURLcode errorCode = curl_easy_getinfo(m_handle, CURLINFO_HTTP_VERSION, &version);
     if (errorCode != CURLE_OK)
-        return std::nullopt;
+        return WTF::nullopt;
 
     return version;
 }
 
-std::optional<NetworkLoadMetrics> CurlHandle::getNetworkLoadMetrics(const WTF::Seconds& domainLookupStart)
+Optional<NetworkLoadMetrics> CurlHandle::getNetworkLoadMetrics(const WTF::Seconds& domainLookupStart)
 {
     double nameLookup = 0.0;
     double connect = 0.0;
@@ -736,27 +736,27 @@ std::optional<NetworkLoadMetrics> CurlHandle::getNetworkLoadMetrics(const WTF::S
     long version = 0;
 
     if (!m_handle)
-        return std::nullopt;
+        return WTF::nullopt;
 
     CURLcode errorCode = curl_easy_getinfo(m_handle, CURLINFO_NAMELOOKUP_TIME, &nameLookup);
     if (errorCode != CURLE_OK)
-        return std::nullopt;
+        return WTF::nullopt;
 
     errorCode = curl_easy_getinfo(m_handle, CURLINFO_CONNECT_TIME, &connect);
     if (errorCode != CURLE_OK)
-        return std::nullopt;
+        return WTF::nullopt;
 
     errorCode = curl_easy_getinfo(m_handle, CURLINFO_APPCONNECT_TIME, &appConnect);
     if (errorCode != CURLE_OK)
-        return std::nullopt;
+        return WTF::nullopt;
 
     errorCode = curl_easy_getinfo(m_handle, CURLINFO_STARTTRANSFER_TIME, &startTransfer);
     if (errorCode != CURLE_OK)
-        return std::nullopt;
+        return WTF::nullopt;
 
     errorCode = curl_easy_getinfo(m_handle, CURLINFO_HTTP_VERSION, &version);
     if (errorCode != CURLE_OK)
-        return std::nullopt;
+        return WTF::nullopt;
 
     NetworkLoadMetrics networkLoadMetrics;
 
@@ -829,10 +829,10 @@ void CurlHandle::addExtraNetworkLoadMetrics(NetworkLoadMetrics& networkLoadMetri
     }
 }
 
-std::optional<CertificateInfo> CurlHandle::certificateInfo() const
+Optional<CertificateInfo> CurlHandle::certificateInfo() const
 {
     if (!m_sslVerifier)
-        return std::nullopt;
+        return WTF::nullopt;
 
     return m_sslVerifier->certificateInfo();
 }
@@ -921,7 +921,7 @@ size_t CurlSocketHandle::send(const uint8_t* buffer, size_t size)
     return totalBytesSent;
 }
 
-std::optional<size_t> CurlSocketHandle::receive(uint8_t* buffer, size_t bufferSize)
+Optional<size_t> CurlSocketHandle::receive(uint8_t* buffer, size_t bufferSize)
 {
     size_t bytesRead = 0;
 
@@ -930,19 +930,19 @@ std::optional<size_t> CurlSocketHandle::receive(uint8_t* buffer, size_t bufferSi
         if (errorCode != CURLE_AGAIN)
             m_errorHandler(errorCode);
 
-        return std::nullopt;
+        return WTF::nullopt;
     }
 
     return bytesRead;
 }
 
-std::optional<CurlSocketHandle::WaitResult> CurlSocketHandle::wait(const Seconds& timeout, bool alsoWaitForWrite)
+Optional<CurlSocketHandle::WaitResult> CurlSocketHandle::wait(const Seconds& timeout, bool alsoWaitForWrite)
 {
     curl_socket_t socket;
     CURLcode errorCode = curl_easy_getinfo(handle(), CURLINFO_ACTIVESOCKET, &socket);
     if (errorCode != CURLE_OK) {
         m_errorHandler(errorCode);
-        return std::nullopt;
+        return WTF::nullopt;
     }
 
     int64_t usec = timeout.microsecondsAs<int64_t>();
@@ -978,7 +978,7 @@ std::optional<CurlSocketHandle::WaitResult> CurlSocketHandle::wait(const Seconds
     } while (rc == -1 && errno == EINTR);
 
     if (rc <= 0)
-        return std::nullopt;
+        return WTF::nullopt;
 
     WaitResult result;
     result.readable = FD_ISSET(socket, &fdread) || FD_ISSET(socket, &fderr);

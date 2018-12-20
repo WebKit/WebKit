@@ -47,25 +47,25 @@ size_t CGDisplayModeGetPixelsHigh(CGDisplayModeRef);
 
 namespace WebCore {
 
-static std::optional<CGDirectDisplayID> updateDisplayID(CGDirectDisplayID displayID)
+static Optional<CGDirectDisplayID> updateDisplayID(CGDirectDisplayID displayID)
 {
     uint32_t displayCount = 0;
     auto err = CGGetActiveDisplayList(0, nullptr, &displayCount);
     if (err) {
         RELEASE_LOG(Media, "CGGetActiveDisplayList() returned error %d when trying to get display count", static_cast<int>(err));
-        return std::nullopt;
+        return WTF::nullopt;
     }
 
     if (!displayCount) {
         RELEASE_LOG(Media, "CGGetActiveDisplayList() returned a display count of 0");
-        return std::nullopt;
+        return WTF::nullopt;
     }
 
     CGDirectDisplayID activeDisplays[displayCount];
     err = CGGetActiveDisplayList(displayCount, &(activeDisplays[0]), &displayCount);
     if (err) {
         RELEASE_LOG(Media, "CGGetActiveDisplayList() returned error %d when trying to get the active display list", static_cast<int>(err));
-        return std::nullopt;
+        return WTF::nullopt;
     }
 
     auto displayMask = CGDisplayIDToOpenGLDisplayMask(displayID);
@@ -74,7 +74,7 @@ static std::optional<CGDirectDisplayID> updateDisplayID(CGDirectDisplayID displa
             return display;
     }
 
-    return std::nullopt;
+    return WTF::nullopt;
 }
 
 CaptureSourceOrError ScreenDisplayCaptureSourceMac::create(String&& deviceID, const MediaConstraints* constraints)
@@ -277,18 +277,18 @@ void ScreenDisplayCaptureSourceMac::frameAvailable(CGDisplayStreamFrameStatus st
     m_currentFrame = frameSurface;
 }
 
-std::optional<CaptureDevice> ScreenDisplayCaptureSourceMac::screenCaptureDeviceWithPersistentID(const String& deviceID)
+Optional<CaptureDevice> ScreenDisplayCaptureSourceMac::screenCaptureDeviceWithPersistentID(const String& deviceID)
 {
     bool ok;
     auto displayID = deviceID.toUIntStrict(&ok);
     if (!ok) {
         RELEASE_LOG(Media, "ScreenDisplayCaptureSourceMac::screenCaptureDeviceWithPersistentID: display ID does not convert to 32-bit integer");
-        return std::nullopt;
+        return WTF::nullopt;
     }
 
     auto actualDisplayID = updateDisplayID(displayID);
     if (!actualDisplayID)
-        return std::nullopt;
+        return WTF::nullopt;
 
     auto device = CaptureDevice(String::number(actualDisplayID.value()), CaptureDevice::DeviceType::Screen, "ScreenCaptureDevice"_s);
     device.setEnabled(true);

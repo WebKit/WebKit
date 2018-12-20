@@ -53,7 +53,7 @@ void WebsitePolicies::setWebsiteDataStore(RefPtr<WebsiteDataStore>&& websiteData
 
 WebKit::WebsitePoliciesData WebsitePolicies::data()
 {
-    std::optional<WebKit::WebsiteDataStoreParameters> parameters;
+    Optional<WebKit::WebsiteDataStoreParameters> parameters;
     if (m_websiteDataStore)
         parameters = m_websiteDataStore->websiteDataStore().parameters();
     return { contentBlockersEnabled(), allowedAutoplayQuirks(), autoplayPolicy(), customHeaderFields(), popUpPolicy(), WTFMove(parameters), m_customUserAgent, m_customNavigatorPlatform };

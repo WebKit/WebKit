@@ -127,7 +127,7 @@ public:
     WEBCORE_EXPORT static String sanitizeSuggestedFilename(const String&);
 
     WEBCORE_EXPORT void includeCertificateInfo() const;
-    const std::optional<CertificateInfo>& certificateInfo() const { return m_certificateInfo; };
+    const Optional<CertificateInfo>& certificateInfo() const { return m_certificateInfo; };
     
     // These functions return parsed values of the corresponding response headers.
     WEBCORE_EXPORT bool cacheControlContainsNoCache() const;
@@ -135,11 +135,11 @@ public:
     WEBCORE_EXPORT bool cacheControlContainsMustRevalidate() const;
     WEBCORE_EXPORT bool cacheControlContainsImmutable() const;
     WEBCORE_EXPORT bool hasCacheValidatorFields() const;
-    WEBCORE_EXPORT std::optional<Seconds> cacheControlMaxAge() const;
-    WEBCORE_EXPORT std::optional<WallTime> date() const;
-    WEBCORE_EXPORT std::optional<Seconds> age() const;
-    WEBCORE_EXPORT std::optional<WallTime> expires() const;
-    WEBCORE_EXPORT std::optional<WallTime> lastModified() const;
+    WEBCORE_EXPORT Optional<Seconds> cacheControlMaxAge() const;
+    WEBCORE_EXPORT Optional<WallTime> date() const;
+    WEBCORE_EXPORT Optional<Seconds> age() const;
+    WEBCORE_EXPORT Optional<WallTime> expires() const;
+    WEBCORE_EXPORT Optional<WallTime> lastModified() const;
     const ParsedContentRange& contentRange() const;
 
     enum class Source : uint8_t { Unknown, Network, DiskCache, DiskCacheAfterValidation, MemoryCache, MemoryCacheAfterValidation, ServiceWorker, ApplicationCache };
@@ -214,7 +214,7 @@ protected:
     HTTPHeaderMap m_httpHeaderFields;
     mutable NetworkLoadMetrics m_networkLoadMetrics;
 
-    mutable std::optional<CertificateInfo> m_certificateInfo;
+    mutable Optional<CertificateInfo> m_certificateInfo;
 
 private:
     mutable Markable<Seconds, Seconds::MarkableTraits> m_age;

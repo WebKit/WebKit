@@ -44,10 +44,10 @@ static String cookiesForSession(const NetworkStorageSession& session, const URL&
     StringBuilder cookies;
 
     CookieJarDB& cookieJarDB = session.cookieDatabase();
-    auto searchHTTPOnly = (forHTTPHeader ? std::nullopt : std::optional<bool> {false});
-    auto secure = url.protocolIs("https") ? std::nullopt : std::optional<bool> {false};
+    auto searchHTTPOnly = (forHTTPHeader ? WTF::nullopt : Optional<bool> {false});
+    auto secure = url.protocolIs("https") ? WTF::nullopt : Optional<bool> {false};
 
-    if (auto result = cookieJarDB.searchCookies(url.string(), searchHTTPOnly, secure, std::nullopt)) {
+    if (auto result = cookieJarDB.searchCookies(url.string(), searchHTTPOnly, secure, WTF::nullopt)) {
         for (auto& cookie : *result) {
             if (!cookies.isEmpty())
                 cookies.append("; ");
@@ -59,7 +59,7 @@ static String cookiesForSession(const NetworkStorageSession& session, const URL&
     return cookies.toString();
 }
 
-void CookieJarCurl::setCookiesFromDOM(const NetworkStorageSession& session, const URL& firstParty, const SameSiteInfo&, const URL& url, std::optional<uint64_t> frameID, std::optional<uint64_t> pageID, const String& value) const
+void CookieJarCurl::setCookiesFromDOM(const NetworkStorageSession& session, const URL& firstParty, const SameSiteInfo&, const URL& url, Optional<uint64_t> frameID, Optional<uint64_t> pageID, const String& value) const
 {
     UNUSED_PARAM(frameID);
     UNUSED_PARAM(pageID);
@@ -75,7 +75,7 @@ void CookieJarCurl::setCookiesFromHTTPResponse(const NetworkStorageSession& sess
     cookieJarDB.setCookie(url.string(), value, CookieJarDB::Source::Network);
 }
 
-std::pair<String, bool> CookieJarCurl::cookiesForDOM(const NetworkStorageSession& session, const URL& firstParty, const SameSiteInfo&, const URL& url, std::optional<uint64_t> frameID, std::optional<uint64_t> pageID, IncludeSecureCookies) const
+std::pair<String, bool> CookieJarCurl::cookiesForDOM(const NetworkStorageSession& session, const URL& firstParty, const SameSiteInfo&, const URL& url, Optional<uint64_t> frameID, Optional<uint64_t> pageID, IncludeSecureCookies) const
 {
     UNUSED_PARAM(frameID);
     UNUSED_PARAM(pageID);
@@ -84,7 +84,7 @@ std::pair<String, bool> CookieJarCurl::cookiesForDOM(const NetworkStorageSession
     return { cookiesForSession(session, firstParty, url, false), false };
 }
 
-std::pair<String, bool> CookieJarCurl::cookieRequestHeaderFieldValue(const NetworkStorageSession& session, const URL& firstParty, const SameSiteInfo&, const URL& url, std::optional<uint64_t> frameID, std::optional<uint64_t> pageID, IncludeSecureCookies) const
+std::pair<String, bool> CookieJarCurl::cookieRequestHeaderFieldValue(const NetworkStorageSession& session, const URL& firstParty, const SameSiteInfo&, const URL& url, Optional<uint64_t> frameID, Optional<uint64_t> pageID, IncludeSecureCookies) const
 {
     UNUSED_PARAM(frameID);
     UNUSED_PARAM(pageID);
@@ -103,13 +103,13 @@ bool CookieJarCurl::cookiesEnabled(const NetworkStorageSession& session) const
     return session.cookieDatabase().isEnabled();
 }
 
-bool CookieJarCurl::getRawCookies(const NetworkStorageSession& session, const URL& firstParty, const SameSiteInfo&, const URL&, std::optional<uint64_t> frameID, std::optional<uint64_t> pageID, Vector<Cookie>& rawCookies) const
+bool CookieJarCurl::getRawCookies(const NetworkStorageSession& session, const URL& firstParty, const SameSiteInfo&, const URL&, Optional<uint64_t> frameID, Optional<uint64_t> pageID, Vector<Cookie>& rawCookies) const
 {
     UNUSED_PARAM(frameID);
     UNUSED_PARAM(pageID);
 
     CookieJarDB& cookieJarDB = session.cookieDatabase();
-    if (auto cookies = cookieJarDB.searchCookies(firstParty.string(), std::nullopt, std::nullopt, std::nullopt)) {
+    if (auto cookies = cookieJarDB.searchCookies(firstParty.string(), WTF::nullopt, WTF::nullopt, WTF::nullopt)) {
         rawCookies = WTFMove(*cookies);
         return true;
     }

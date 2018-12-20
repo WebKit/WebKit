@@ -112,13 +112,13 @@ void Attachment::setFileWrapperAndUpdateContentType(NSFileWrapper *fileWrapper, 
     setFileWrapper(fileWrapper);
 }
 
-std::optional<uint64_t> Attachment::fileSizeForDisplay() const
+Optional<uint64_t> Attachment::fileSizeForDisplay() const
 {
     auto fileWrapper = this->fileWrapper();
 
     if (![fileWrapper isRegularFile]) {
         // FIXME: We should display a size estimate for directory-type file wrappers.
-        return std::nullopt;
+        return WTF::nullopt;
     }
 
     if (auto fileSize = [[fileWrapper fileAttributes][NSFileSize] unsignedLongLongValue])

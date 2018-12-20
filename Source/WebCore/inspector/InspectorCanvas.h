@@ -119,7 +119,7 @@ private:
     MonotonicTime m_currentFrameStartTime { MonotonicTime::nan() };
     size_t m_bufferLimit { 100 * 1024 * 1024 };
     size_t m_bufferUsed { 0 };
-    std::optional<size_t> m_frameCount;
+    Optional<size_t> m_frameCount;
     size_t m_framesCaptured { 0 };
 };
 

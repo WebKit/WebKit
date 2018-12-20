@@ -85,7 +85,7 @@ public:
     static JSBigInt* parseInt(ExecState*, StringView, ErrorParseMode = ErrorParseMode::ThrowExceptions);
     static JSBigInt* stringToBigInt(ExecState*, StringView);
 
-    std::optional<uint8_t> singleDigitValueForString();
+    Optional<uint8_t> singleDigitValueForString();
     String toString(ExecState*, unsigned radix);
     
     enum class ComparisonMode {
@@ -225,7 +225,7 @@ private:
 
     static JSBigInt* rightShiftByMaximum(VM&, bool sign);
 
-    static std::optional<Digit> toShiftAmount(JSBigInt* x);
+    static Optional<Digit> toShiftAmount(JSBigInt* x);
 
     static size_t allocationSize(unsigned length);
     static size_t offsetOfData();

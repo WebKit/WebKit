@@ -143,7 +143,7 @@ class ObjCProtocolTypesImplementationGenerator(ObjCGenerator):
             var_name = ObjCGenerator.identifier_to_objc_identifier(member_name)
             conversion_expression = self.payload_to_objc_expression_for_member(declaration, member)
             if isinstance(member.type, EnumType):
-                lines.append('    std::optional<%s> %s = %s;' % (objc_type, var_name, conversion_expression))
+                lines.append('    Optional<%s> %s = %s;' % (objc_type, var_name, conversion_expression))
                 if not member.is_optional:
                     lines.append('    THROW_EXCEPTION_FOR_BAD_ENUM_VALUE(%s, @"%s");' % (var_name, member_name))
                     lines.append('    self.%s = %s.value();' % (var_name, var_name))

@@ -550,16 +550,16 @@ double UIScriptController::maximumZoomScale() const
     return webView.scrollView.maximumZoomScale;
 }
 
-std::optional<bool> UIScriptController::stableStateOverride() const
+Optional<bool> UIScriptController::stableStateOverride() const
 {
     TestRunnerWKWebView *webView = TestController::singleton().mainWebView()->platformView();
     if (webView._stableStateOverride)
         return webView._stableStateOverride.boolValue;
 
-    return std::nullopt;
+    return WTF::nullopt;
 }
 
-void UIScriptController::setStableStateOverride(std::optional<bool> overrideValue)
+void UIScriptController::setStableStateOverride(Optional<bool> overrideValue)
 {
     TestRunnerWKWebView *webView = TestController::singleton().mainWebView()->platformView();
     if (overrideValue)

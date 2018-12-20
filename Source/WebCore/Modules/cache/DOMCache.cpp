@@ -103,7 +103,7 @@ Vector<Ref<FetchResponse>> DOMCache::cloneResponses(const Vector<CacheStorageRec
     });
 }
 
-void DOMCache::matchAll(std::optional<RequestInfo>&& info, CacheQueryOptions&& options, MatchAllPromise&& promise)
+void DOMCache::matchAll(Optional<RequestInfo>&& info, CacheQueryOptions&& options, MatchAllPromise&& promise)
 {
     if (UNLIKELY(!scriptExecutionContext()))
         return;
@@ -119,7 +119,7 @@ void DOMCache::matchAll(std::optional<RequestInfo>&& info, CacheQueryOptions&& o
     }
 
     if (!request) {
-        retrieveRecords(URL { }, [this, promise = WTFMove(promise)](std::optional<Exception>&& exception) mutable {
+        retrieveRecords(URL { }, [this, promise = WTFMove(promise)](Optional<Exception>&& exception) mutable {
             if (exception) {
                 promise.reject(WTFMove(exception.value()));
                 return;
@@ -393,7 +393,7 @@ static inline Ref<FetchRequest> copyRequestRef(const CacheStorageRecord& record)
     return record.request.copyRef();
 }
 
-void DOMCache::keys(std::optional<RequestInfo>&& info, CacheQueryOptions&& options, KeysPromise&& promise)
+void DOMCache::keys(Optional<RequestInfo>&& info, CacheQueryOptions&& options, KeysPromise&& promise)
 {
     if (UNLIKELY(!scriptExecutionContext()))
         return;
@@ -409,7 +409,7 @@ void DOMCache::keys(std::optional<RequestInfo>&& info, CacheQueryOptions&& optio
     }
 
     if (!request) {
-        retrieveRecords(URL { }, [this, promise = WTFMove(promise)](std::optional<Exception>&& exception) mutable {
+        retrieveRecords(URL { }, [this, promise = WTFMove(promise)](Optional<Exception>&& exception) mutable {
             if (exception) {
                 promise.reject(WTFMove(exception.value()));
                 return;
@@ -429,7 +429,7 @@ void DOMCache::keys(std::optional<RequestInfo>&& info, CacheQueryOptions&& optio
     });
 }
 
-void DOMCache::retrieveRecords(const URL& url, WTF::Function<void(std::optional<Exception>&&)>&& callback)
+void DOMCache::retrieveRecords(const URL& url, WTF::Function<void(Optional<Exception>&&)>&& callback)
 {
     setPendingActivity(this);
 
@@ -445,7 +445,7 @@ void DOMCache::retrieveRecords(const URL& url, WTF::Function<void(std::optional<
 
             if (result.has_value())
                 updateRecords(WTFMove(result.value()));
-            callback(std::nullopt);
+            callback(WTF::nullopt);
         }
         unsetPendingActivity(this);
     });
@@ -454,7 +454,7 @@ void DOMCache::retrieveRecords(const URL& url, WTF::Function<void(std::optional<
 void DOMCache::queryCache(Ref<FetchRequest>&& request, CacheQueryOptions&& options, WTF::Function<void(ExceptionOr<Vector<CacheStorageRecord>>&&)>&& callback)
 {
     auto url = request->url();
-    retrieveRecords(url, [this, request = WTFMove(request), options = WTFMove(options), callback = WTFMove(callback)](std::optional<Exception>&& exception) mutable {
+    retrieveRecords(url, [this, request = WTFMove(request), options = WTFMove(options), callback = WTFMove(callback)](Optional<Exception>&& exception) mutable {
         if (exception) {
             callback(WTFMove(exception.value()));
             return;
@@ -549,7 +549,7 @@ void DOMCache::updateRecords(Vector<Record>&& records)
         if (index != notFound) {
             auto& current = m_records[index];
             if (current.updateResponseCounter != record.updateResponseCounter) {
-                auto response = FetchResponse::create(*scriptExecutionContext(), std::nullopt, record.responseHeadersGuard, WTFMove(record.response));
+                auto response = FetchResponse::create(*scriptExecutionContext(), WTF::nullopt, record.responseHeadersGuard, WTFMove(record.response));
                 response->setBodyData(WTFMove(record.responseBody), record.responseBodySize);
 
                 current.response = WTFMove(response);
@@ -558,9 +558,9 @@ void DOMCache::updateRecords(Vector<Record>&& records)
             newRecords.append(WTFMove(current));
         } else {
             auto requestHeaders = FetchHeaders::create(record.requestHeadersGuard, HTTPHeaderMap { record.request.httpHeaderFields() });
-            auto request = FetchRequest::create(*scriptExecutionContext(), std::nullopt, WTFMove(requestHeaders),  WTFMove(record.request), WTFMove(record.options), WTFMove(record.referrer));
+            auto request = FetchRequest::create(*scriptExecutionContext(), WTF::nullopt, WTFMove(requestHeaders),  WTFMove(record.request), WTFMove(record.options), WTFMove(record.referrer));
 
-            auto response = FetchResponse::create(*scriptExecutionContext(), std::nullopt, record.responseHeadersGuard, WTFMove(record.response));
+            auto response = FetchResponse::create(*scriptExecutionContext(), WTF::nullopt, record.responseHeadersGuard, WTFMove(record.response));
             response->setBodyData(WTFMove(record.responseBody), record.responseBodySize);
 
             newRecords.append(CacheStorageRecord { record.identifier, record.updateResponseCounter, WTFMove(request), WTFMove(response) });

@@ -444,11 +444,11 @@ Seconds DOMTimer::intervalClampedToMinimum() const
     return interval;
 }
 
-std::optional<MonotonicTime> DOMTimer::alignedFireTime(MonotonicTime fireTime) const
+Optional<MonotonicTime> DOMTimer::alignedFireTime(MonotonicTime fireTime) const
 {
     Seconds alignmentInterval = scriptExecutionContext()->domTimerAlignmentInterval(m_nestingLevel >= maxTimerNestingLevel);
     if (!alignmentInterval)
-        return std::nullopt;
+        return WTF::nullopt;
     
     static const double randomizedProportion = randomNumber();
 

@@ -75,7 +75,7 @@ public:
         RefPtr<SecurityOrigin> m_origin;
         PageIDAndFrameIDPair m_pageIDAndFrameIDPair;
     };
-    const std::optional<Requester>& requester() const { return m_requester; }
+    const Optional<Requester>& requester() const { return m_requester; }
 
     struct UIEventWithKeyStateData {
         UIEventWithKeyStateData(const UIEventWithKeyState&);
@@ -95,8 +95,8 @@ public:
         unsigned short syntheticClickType;
         bool buttonDown;
     };
-    const std::optional<UIEventWithKeyStateData>& keyStateEventData() const { return m_keyStateEventData; }
-    const std::optional<MouseEventData>& mouseEventData() const { return m_mouseEventData; }
+    const Optional<UIEventWithKeyStateData>& keyStateEventData() const { return m_keyStateEventData; }
+    const Optional<MouseEventData>& mouseEventData() const { return m_mouseEventData; }
 
     NavigationAction copyWithShouldOpenExternalURLsPolicy(ShouldOpenExternalURLsPolicy) const;
 
@@ -125,7 +125,7 @@ public:
     void setOpenedByDOMWithOpener() { m_openedByDOMWithOpener = true; }
 
     void setTargetBackForwardItem(HistoryItem&);
-    const std::optional<BackForwardItemIdentifier>& targetBackForwardItemIdentifier() const { return m_targetBackForwardItemIdentifier; }
+    const Optional<BackForwardItemIdentifier>& targetBackForwardItemIdentifier() const { return m_targetBackForwardItemIdentifier; }
 
     LockHistory lockHistory() const { return m_lockHistory; }
     void setLockHistory(LockHistory lockHistory) { m_lockHistory = lockHistory; }
@@ -136,19 +136,19 @@ public:
 private:
     // Do not add a strong reference to the originating document or a subobject that holds the
     // originating document. See comment above the class for more details.
-    std::optional<Requester> m_requester;
+    Optional<Requester> m_requester;
     ResourceRequest m_resourceRequest;
     NavigationType m_type;
     ShouldOpenExternalURLsPolicy m_shouldOpenExternalURLsPolicy;
     InitiatedByMainFrame m_initiatedByMainFrame;
-    std::optional<UIEventWithKeyStateData> m_keyStateEventData;
-    std::optional<MouseEventData> m_mouseEventData;
+    Optional<UIEventWithKeyStateData> m_keyStateEventData;
+    Optional<MouseEventData> m_mouseEventData;
     RefPtr<UserGestureToken> m_userGestureToken { UserGestureIndicator::currentUserGesture() };
     AtomicString m_downloadAttribute;
     bool m_treatAsSameOriginNavigation;
     bool m_hasOpenedFrames { false };
     bool m_openedByDOMWithOpener { false };
-    std::optional<BackForwardItemIdentifier> m_targetBackForwardItemIdentifier;
+    Optional<BackForwardItemIdentifier> m_targetBackForwardItemIdentifier;
     LockHistory m_lockHistory { LockHistory::No };
     LockBackForwardList m_lockBackForwardList { LockBackForwardList::No };
 };

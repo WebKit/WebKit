@@ -86,10 +86,10 @@ messages -> NetworkProcess LegacyReceiver {
 
 #if ENABLE(RESOURCE_LOAD_STATISTICS)
     UpdatePrevalentDomainsToBlockCookiesFor(PAL::SessionID sessionID, Vector<String> domainsToBlock, uint64_t contextId)
-    SetAgeCapForClientSideCookies(PAL::SessionID sessionID, std::optional<Seconds> seconds, uint64_t contextId)
+    SetAgeCapForClientSideCookies(PAL::SessionID sessionID, Optional<Seconds> seconds, uint64_t contextId)
     HasStorageAccessForFrame(PAL::SessionID sessionID, String resourceDomain, String firstPartyDomain, uint64_t frameID, uint64_t pageID, uint64_t contextId)
     GetAllStorageAccessEntries(PAL::SessionID sessionID, uint64_t contextId)
-    GrantStorageAccess(PAL::SessionID sessionID, String resourceDomain, String firstPartyDomain, std::optional<uint64_t> frameID, uint64_t pageID, uint64_t contextId)
+    GrantStorageAccess(PAL::SessionID sessionID, String resourceDomain, String firstPartyDomain, Optional<uint64_t> frameID, uint64_t pageID, uint64_t contextId)
     RemoveAllStorageAccess(PAL::SessionID sessionID, uint64_t contextId)
     RemovePrevalentDomains(PAL::SessionID sessionID, Vector<String> domainsWithInteraction)
     SetCacheMaxAgeCapForPrevalentResources(PAL::SessionID sessionID, Seconds seconds, uint64_t contextId)

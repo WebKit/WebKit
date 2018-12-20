@@ -64,10 +64,10 @@ RTCRtpTransceiverDirection RTCRtpTransceiver::direction() const
     return m_backend->direction();
 }
 
-std::optional<RTCRtpTransceiverDirection> RTCRtpTransceiver::currentDirection() const
+Optional<RTCRtpTransceiverDirection> RTCRtpTransceiver::currentDirection() const
 {
     if (!m_backend)
-        return std::nullopt;
+        return WTF::nullopt;
     return m_backend->currentDirection();
 }
 

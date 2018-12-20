@@ -37,12 +37,12 @@ struct CookieRequestHeaderFieldProxy {
     URL firstParty;
     SameSiteInfo sameSiteInfo;
     URL url;
-    std::optional<uint64_t> frameID;
-    std::optional<uint64_t> pageID;
+    Optional<uint64_t> frameID;
+    Optional<uint64_t> pageID;
     IncludeSecureCookies includeSecureCookies { IncludeSecureCookies::No };
 
     template<class Encoder> void encode(Encoder&) const;
-    template<class Decoder> static std::optional<CookieRequestHeaderFieldProxy> decode(Decoder&);
+    template<class Decoder> static Optional<CookieRequestHeaderFieldProxy> decode(Decoder&);
 };
 
 template<class Encoder>
@@ -58,23 +58,23 @@ void CookieRequestHeaderFieldProxy::encode(Encoder& encoder) const
 }
 
 template<class Decoder>
-std::optional<CookieRequestHeaderFieldProxy> CookieRequestHeaderFieldProxy::decode(Decoder& decoder)
+Optional<CookieRequestHeaderFieldProxy> CookieRequestHeaderFieldProxy::decode(Decoder& decoder)
 {
     CookieRequestHeaderFieldProxy result;
     if (!decoder.decode(result.sessionID))
-        return std::nullopt;
+        return WTF::nullopt;
     if (!decoder.decode(result.firstParty))
-        return std::nullopt;
+        return WTF::nullopt;
     if (!decoder.decode(result.sameSiteInfo))
-        return std::nullopt;
+        return WTF::nullopt;
     if (!decoder.decode(result.url))
-        return std::nullopt;
+        return WTF::nullopt;
     if (!decoder.decode(result.frameID))
-        return std::nullopt;
+        return WTF::nullopt;
     if (!decoder.decode(result.pageID))
-        return std::nullopt;
+        return WTF::nullopt;
     if (!decoder.decode(result.includeSecureCookies))
-        return std::nullopt;
+        return WTF::nullopt;
     return WTFMove(result);
 }
 

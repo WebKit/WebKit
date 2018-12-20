@@ -32,7 +32,7 @@
 
 namespace WebCore {
 
-IDBError::IDBError(std::optional<ExceptionCode> code, const String& message)
+IDBError::IDBError(Optional<ExceptionCode> code, const String& message)
     : m_code(code)
     , m_message(message)
 {

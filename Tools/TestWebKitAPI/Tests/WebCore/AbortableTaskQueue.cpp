@@ -105,7 +105,7 @@ TEST(AbortableTaskQueue, SyncTasks)
 
     auto backgroundThreadFunction = [&]() {
         EXPECT_FALSE(isMainThread());
-        std::optional<FancyResponse> response = taskQueue.enqueueTaskAndWait<FancyResponse>([&]() -> FancyResponse {
+        Optional<FancyResponse> response = taskQueue.enqueueTaskAndWait<FancyResponse>([&]() -> FancyResponse {
             EXPECT_TRUE(isMainThread());
             currentStep++;
             EXPECT_EQ(1, currentStep);
@@ -117,7 +117,7 @@ TEST(AbortableTaskQueue, SyncTasks)
         EXPECT_TRUE(response);
         EXPECT_FALSE(destructedResponseFlag);
         EXPECT_EQ(100, response->fancyInt);
-        response = std::nullopt;
+        response = WTF::nullopt;
         EXPECT_TRUE(destructedResponseFlag);
         RunLoop::main().dispatch([&]() {
             testFinished = true;
@@ -203,7 +203,7 @@ TEST(AbortableTaskQueue, Abort)
             EXPECT_TRUE(false);
         });
         // This call must return immediately because we are aborting.
-        std::optional<FancyResponse> response = taskQueue.enqueueTaskAndWait<FancyResponse>([]() -> FancyResponse {
+        Optional<FancyResponse> response = taskQueue.enqueueTaskAndWait<FancyResponse>([]() -> FancyResponse {
             // This task should not have been able to run under the scheduling of this test.
             EXPECT_TRUE(false);
             return FancyResponse(100);
@@ -245,7 +245,7 @@ TEST(AbortableTaskQueue, AbortBeforeSyncTaskRun)
     auto backgroundThreadFunction = [&]() {
         EXPECT_FALSE(isMainThread());
 
-        std::optional<FancyResponse> response = taskQueue.enqueueTaskAndWait<FancyResponse>([]() -> FancyResponse {
+        Optional<FancyResponse> response = taskQueue.enqueueTaskAndWait<FancyResponse>([]() -> FancyResponse {
             // This task should not have been able to run under the scheduling of this test.
             EXPECT_TRUE(false);
             return FancyResponse(100);
@@ -284,7 +284,7 @@ TEST(AbortableTaskQueue, AbortedBySyncTaskHandler)
         currentStep++;
         EXPECT_EQ(1, currentStep);
 
-        std::optional<FancyResponse> response = taskQueue.enqueueTaskAndWait<FancyResponse>([&]() -> FancyResponse {
+        Optional<FancyResponse> response = taskQueue.enqueueTaskAndWait<FancyResponse>([&]() -> FancyResponse {
             currentStep++;
             EXPECT_EQ(2, currentStep);
             taskQueue.startAborting();

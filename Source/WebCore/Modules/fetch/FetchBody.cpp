@@ -70,7 +70,7 @@ FetchBody FetchBody::extract(ScriptExecutionContext& context, Init&& value, Stri
     });
 }
 
-std::optional<FetchBody> FetchBody::fromFormData(FormData& formData)
+Optional<FetchBody> FetchBody::fromFormData(FormData& formData)
 {
     ASSERT(!formData.isEmpty());
 
@@ -88,7 +88,7 @@ std::optional<FetchBody> FetchBody::fromFormData(FormData& formData)
     }
 
     // FIXME: Support form data bodies.
-    return std::nullopt;
+    return WTF::nullopt;
 }
 
 void FetchBody::arrayBuffer(FetchBodyOwner& owner, Ref<DeferredPromise>&& promise)

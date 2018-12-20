@@ -763,7 +763,7 @@ int ThemeMac::baselinePositionAdjustment(ControlPart part) const
     return Theme::baselinePositionAdjustment(part);
 }
 
-std::optional<FontCascadeDescription> ThemeMac::controlFont(ControlPart part, const FontCascade& font, float zoomFactor) const
+Optional<FontCascadeDescription> ThemeMac::controlFont(ControlPart part, const FontCascade& font, float zoomFactor) const
 {
     switch (part) {
     case PushButtonPart: {
@@ -777,7 +777,7 @@ std::optional<FontCascadeDescription> ThemeMac::controlFont(ControlPart part, co
         return fontDescription;
     }
     default:
-        return std::nullopt;
+        return WTF::nullopt;
     }
 }
 

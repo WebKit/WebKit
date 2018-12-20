@@ -58,7 +58,7 @@ public:
     }
 
     void encode(IPC::Encoder&) const;
-    static std::optional<WebCompiledContentRuleListData> decode(IPC::Decoder&);
+    static Optional<WebCompiledContentRuleListData> decode(IPC::Decoder&);
 
     RefPtr<SharedMemory> data;
     NetworkCache::Data fileData;

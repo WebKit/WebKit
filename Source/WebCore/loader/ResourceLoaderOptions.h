@@ -149,10 +149,10 @@ struct ResourceLoaderOptions : public FetchOptions {
     }
 
 #if ENABLE(SERVICE_WORKER)
-    std::optional<ServiceWorkerRegistrationIdentifier> serviceWorkerRegistrationIdentifier;
+    Optional<ServiceWorkerRegistrationIdentifier> serviceWorkerRegistrationIdentifier;
 #endif
     HashSet<HTTPHeaderName, WTF::IntHash<HTTPHeaderName>, WTF::StrongEnumHashTraits<HTTPHeaderName>> httpHeadersToKeep;
-    std::optional<ContentSecurityPolicyResponseHeaders> cspResponseHeaders;
+    Optional<ContentSecurityPolicyResponseHeaders> cspResponseHeaders;
     unsigned maxRedirectCount { 20 };
 
     SendCallbackPolicy sendLoadCallbacks { SendCallbackPolicy::DoNotSendCallbacks };

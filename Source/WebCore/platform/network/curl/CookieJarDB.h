@@ -48,7 +48,7 @@ public:
     bool isEnabled() const;
     void setEnabled(bool);
 
-    std::optional<Vector<Cookie>> searchCookies(const String& requestUrl, const std::optional<bool>& httpOnly, const std::optional<bool>& secure, const std::optional<bool>& session);
+    Optional<Vector<Cookie>> searchCookies(const String& requestUrl, const Optional<bool>& httpOnly, const Optional<bool>& secure, const Optional<bool>& session);
     bool setCookie(const String& url, const String& cookie, Source);
     bool setCookie(const Cookie&);
 

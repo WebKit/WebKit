@@ -55,7 +55,7 @@ public:
 
     void setInstrinsicWidthConstraints(const Box&,  FormattingContext::InstrinsicWidthConstraints);
     void clearInstrinsicWidthConstraints(const Box&);
-    std::optional<FormattingContext::InstrinsicWidthConstraints> instrinsicWidthConstraints(const Box&) const;
+    Optional<FormattingContext::InstrinsicWidthConstraints> instrinsicWidthConstraints(const Box&) const;
 
     bool isBlockFormattingState() const { return m_type == Type::Block; }
     bool isInlineFormattingState() const { return m_type == Type::Inline; }
@@ -85,7 +85,7 @@ inline void FormattingState::clearInstrinsicWidthConstraints(const Box& layoutBo
     m_instrinsicWidthConstraints.remove(&layoutBox);
 }
 
-inline std::optional<FormattingContext::InstrinsicWidthConstraints> FormattingState::instrinsicWidthConstraints(const Box& layoutBox) const
+inline Optional<FormattingContext::InstrinsicWidthConstraints> FormattingState::instrinsicWidthConstraints(const Box& layoutBox) const
 {
     ASSERT(&m_layoutState.formattingStateForBox(layoutBox) == this);
     auto iterator = m_instrinsicWidthConstraints.find(&layoutBox);

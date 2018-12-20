@@ -32,7 +32,7 @@ namespace WebCore {
 
 class AnimationPlaybackEvent final : public Event {
 public:
-    static Ref<AnimationPlaybackEvent> create(const AtomicString& type, std::optional<Seconds> currentTime, std::optional<Seconds> timelineTime)
+    static Ref<AnimationPlaybackEvent> create(const AtomicString& type, Optional<Seconds> currentTime, Optional<Seconds> timelineTime)
     {
         return adoptRef(*new AnimationPlaybackEvent(type, currentTime, timelineTime));
     }
@@ -44,19 +44,19 @@ public:
 
     virtual ~AnimationPlaybackEvent();
 
-    std::optional<double> bindingsCurrentTime() const;
-    std::optional<Seconds> currentTime() const { return m_currentTime; }
-    std::optional<double> bindingsTimelineTime() const;
-    std::optional<Seconds> timelineTime() const { return m_timelineTime; }
+    Optional<double> bindingsCurrentTime() const;
+    Optional<Seconds> currentTime() const { return m_currentTime; }
+    Optional<double> bindingsTimelineTime() const;
+    Optional<Seconds> timelineTime() const { return m_timelineTime; }
 
     EventInterface eventInterface() const override { return AnimationPlaybackEventInterfaceType; }
 
 private:
-    AnimationPlaybackEvent(const AtomicString&, std::optional<Seconds>, std::optional<Seconds>);
+    AnimationPlaybackEvent(const AtomicString&, Optional<Seconds>, Optional<Seconds>);
     AnimationPlaybackEvent(const AtomicString&, const AnimationPlaybackEventInit&, IsTrusted);
 
-    std::optional<Seconds> m_currentTime;
-    std::optional<Seconds> m_timelineTime;
+    Optional<Seconds> m_currentTime;
+    Optional<Seconds> m_timelineTime;
 };
 
 }

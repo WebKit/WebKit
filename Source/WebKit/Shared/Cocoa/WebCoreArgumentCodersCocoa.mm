@@ -42,11 +42,11 @@ void ArgumentCoder<WebCore::Payment>::encode(Encoder& encoder, const WebCore::Pa
     encoder << payment.pkPayment();
 }
 
-std::optional<WebCore::Payment> ArgumentCoder<WebCore::Payment>::decode(Decoder& decoder)
+Optional<WebCore::Payment> ArgumentCoder<WebCore::Payment>::decode(Decoder& decoder)
 {
     auto payment = IPC::decode<PKPayment>(decoder, PAL::getPKPaymentClass());
     if (!payment)
-        return std::nullopt;
+        return WTF::nullopt;
 
     return Payment { WTFMove(*payment) };
 }
@@ -57,17 +57,17 @@ void ArgumentCoder<WebCore::PaymentAuthorizationResult>::encode(Encoder& encoder
     encoder << result.errors;
 }
 
-std::optional<WebCore::PaymentAuthorizationResult> ArgumentCoder<WebCore::PaymentAuthorizationResult>::decode(Decoder& decoder)
+Optional<WebCore::PaymentAuthorizationResult> ArgumentCoder<WebCore::PaymentAuthorizationResult>::decode(Decoder& decoder)
 {
-    std::optional<PaymentAuthorizationStatus> status;
+    Optional<PaymentAuthorizationStatus> status;
     decoder >> status;
     if (!status)
-        return std::nullopt;
+        return WTF::nullopt;
 
-    std::optional<Vector<PaymentError>> errors;
+    Optional<Vector<PaymentError>> errors;
     decoder >> errors;
     if (!errors)
-        return std::nullopt;
+        return WTF::nullopt;
 
     return {{ WTFMove(*status), WTFMove(*errors) }};
 }
@@ -77,11 +77,11 @@ void ArgumentCoder<WebCore::PaymentContact>::encode(Encoder& encoder, const WebC
     encoder << paymentContact.pkContact();
 }
 
-std::optional<WebCore::PaymentContact> ArgumentCoder<WebCore::PaymentContact>::decode(Decoder& decoder)
+Optional<WebCore::PaymentContact> ArgumentCoder<WebCore::PaymentContact>::decode(Decoder& decoder)
 {
     auto contact = IPC::decode<PKContact>(decoder, PAL::getPKContactClass());
     if (!contact)
-        return std::nullopt;
+        return WTF::nullopt;
 
     return WebCore::PaymentContact { WTFMove(*contact) };
 }
@@ -93,22 +93,22 @@ void ArgumentCoder<WebCore::PaymentError>::encode(Encoder& encoder, const WebCor
     encoder << error.contactField;
 }
 
-std::optional<WebCore::PaymentError> ArgumentCoder<WebCore::PaymentError>::decode(Decoder& decoder)
+Optional<WebCore::PaymentError> ArgumentCoder<WebCore::PaymentError>::decode(Decoder& decoder)
 {
-    std::optional<WebCore::PaymentError::Code> code;
+    Optional<WebCore::PaymentError::Code> code;
     decoder >> code;
     if (!code)
-        return std::nullopt;
+        return WTF::nullopt;
     
-    std::optional<String> message;
+    Optional<String> message;
     decoder >> message;
     if (!message)
-        return std::nullopt;
+        return WTF::nullopt;
     
-    std::optional<std::optional<WebCore::PaymentError::ContactField>> contactField;
+    Optional<Optional<WebCore::PaymentError::ContactField>> contactField;
     decoder >> contactField;
     if (!contactField)
-        return std::nullopt;
+        return WTF::nullopt;
 
     return {{ WTFMove(*code), WTFMove(*message), WTFMove(*contactField) }};
 }
@@ -118,11 +118,11 @@ void ArgumentCoder<WebCore::PaymentMerchantSession>::encode(Encoder& encoder, co
     encoder << paymentMerchantSession.pkPaymentMerchantSession();
 }
 
-std::optional<WebCore::PaymentMerchantSession> ArgumentCoder<WebCore::PaymentMerchantSession>::decode(Decoder& decoder)
+Optional<WebCore::PaymentMerchantSession> ArgumentCoder<WebCore::PaymentMerchantSession>::decode(Decoder& decoder)
 {
     auto paymentMerchantSession = IPC::decode<PKPaymentMerchantSession>(decoder, PAL::getPKPaymentMerchantSessionClass());
     if (!paymentMerchantSession)
-        return std::nullopt;
+        return WTF::nullopt;
 
     return WebCore::PaymentMerchantSession { WTFMove(*paymentMerchantSession) };
 }
@@ -132,11 +132,11 @@ void ArgumentCoder<WebCore::PaymentMethod>::encode(Encoder& encoder, const WebCo
     encoder << paymentMethod.pkPaymentMethod();
 }
 
-std::optional<WebCore::PaymentMethod> ArgumentCoder<WebCore::PaymentMethod>::decode(Decoder& decoder)
+Optional<WebCore::PaymentMethod> ArgumentCoder<WebCore::PaymentMethod>::decode(Decoder& decoder)
 {
     auto paymentMethod = IPC::decode<PKPaymentMethod>(decoder, PAL::getPKPaymentMethodClass());
     if (!paymentMethod)
-        return std::nullopt;
+        return WTF::nullopt;
 
     return PaymentMethod { WTFMove(*paymentMethod) };
 }
@@ -146,12 +146,12 @@ void ArgumentCoder<WebCore::PaymentMethodUpdate>::encode(Encoder& encoder, const
     encoder << update.newTotalAndLineItems;
 }
 
-std::optional<WebCore::PaymentMethodUpdate> ArgumentCoder<WebCore::PaymentMethodUpdate>::decode(Decoder& decoder)
+Optional<WebCore::PaymentMethodUpdate> ArgumentCoder<WebCore::PaymentMethodUpdate>::decode(Decoder& decoder)
 {
-    std::optional<ApplePaySessionPaymentRequest::TotalAndLineItems> newTotalAndLineItems;
+    Optional<ApplePaySessionPaymentRequest::TotalAndLineItems> newTotalAndLineItems;
     decoder >> newTotalAndLineItems;
     if (!newTotalAndLineItems)
-        return std::nullopt;
+        return WTF::nullopt;
     return {{ WTFMove(*newTotalAndLineItems) }};
 }
 
@@ -191,7 +191,7 @@ bool ArgumentCoder<ApplePaySessionPaymentRequest>::decode(Decoder& decoder, Appl
         return false;
     request.setRequiredBillingContactFields(requiredBillingContactFields);
 
-    std::optional<PaymentContact> billingContact;
+    Optional<PaymentContact> billingContact;
     decoder >> billingContact;
     if (!billingContact)
         return false;
@@ -202,7 +202,7 @@ bool ArgumentCoder<ApplePaySessionPaymentRequest>::decode(Decoder& decoder, Appl
         return false;
     request.setRequiredShippingContactFields(requiredShippingContactFields);
 
-    std::optional<PaymentContact> shippingContact;
+    Optional<PaymentContact> shippingContact;
     decoder >> shippingContact;
     if (!shippingContact)
         return false;
@@ -233,7 +233,7 @@ bool ArgumentCoder<ApplePaySessionPaymentRequest>::decode(Decoder& decoder, Appl
         return false;
     request.setLineItems(lineItems);
 
-    std::optional<ApplePaySessionPaymentRequest::LineItem> total;
+    Optional<ApplePaySessionPaymentRequest::LineItem> total;
     decoder >> total;
     if (!total)
         return false;
@@ -289,15 +289,15 @@ void ArgumentCoder<ApplePaySessionPaymentRequest::LineItem>::encode(Encoder& enc
     encoder << lineItem.amount;
 }
 
-std::optional<ApplePaySessionPaymentRequest::LineItem> ArgumentCoder<ApplePaySessionPaymentRequest::LineItem>::decode(Decoder& decoder)
+Optional<ApplePaySessionPaymentRequest::LineItem> ArgumentCoder<ApplePaySessionPaymentRequest::LineItem>::decode(Decoder& decoder)
 {
     WebCore::ApplePaySessionPaymentRequest::LineItem lineItem;
     if (!decoder.decodeEnum(lineItem.type))
-        return std::nullopt;
+        return WTF::nullopt;
     if (!decoder.decode(lineItem.label))
-        return std::nullopt;
+        return WTF::nullopt;
     if (!decoder.decode(lineItem.amount))
-        return std::nullopt;
+        return WTF::nullopt;
 
     return WTFMove(lineItem);
 }
@@ -332,17 +332,17 @@ void ArgumentCoder<ApplePaySessionPaymentRequest::ShippingMethod>::encode(Encode
     encoder << shippingMethod.identifier;
 }
 
-std::optional<ApplePaySessionPaymentRequest::ShippingMethod> ArgumentCoder<ApplePaySessionPaymentRequest::ShippingMethod>::decode(Decoder& decoder)
+Optional<ApplePaySessionPaymentRequest::ShippingMethod> ArgumentCoder<ApplePaySessionPaymentRequest::ShippingMethod>::decode(Decoder& decoder)
 {
     ApplePaySessionPaymentRequest::ShippingMethod shippingMethod;
     if (!decoder.decode(shippingMethod.label))
-        return std::nullopt;
+        return WTF::nullopt;
     if (!decoder.decode(shippingMethod.detail))
-        return std::nullopt;
+        return WTF::nullopt;
     if (!decoder.decode(shippingMethod.amount))
-        return std::nullopt;
+        return WTF::nullopt;
     if (!decoder.decode(shippingMethod.identifier))
-        return std::nullopt;
+        return WTF::nullopt;
     return WTFMove(shippingMethod);
 }
 
@@ -352,17 +352,17 @@ void ArgumentCoder<ApplePaySessionPaymentRequest::TotalAndLineItems>::encode(Enc
     encoder << totalAndLineItems.lineItems;
 }
 
-std::optional<ApplePaySessionPaymentRequest::TotalAndLineItems> ArgumentCoder<ApplePaySessionPaymentRequest::TotalAndLineItems>::decode(Decoder& decoder)
+Optional<ApplePaySessionPaymentRequest::TotalAndLineItems> ArgumentCoder<ApplePaySessionPaymentRequest::TotalAndLineItems>::decode(Decoder& decoder)
 {
-    std::optional<ApplePaySessionPaymentRequest::LineItem> total;
+    Optional<ApplePaySessionPaymentRequest::LineItem> total;
     decoder >> total;
     if (!total)
-        return std::nullopt;
+        return WTF::nullopt;
     
-    std::optional<Vector<ApplePaySessionPaymentRequest::LineItem>> lineItems;
+    Optional<Vector<ApplePaySessionPaymentRequest::LineItem>> lineItems;
     decoder >> lineItems;
     if (!lineItems)
-        return std::nullopt;
+        return WTF::nullopt;
     
     return {{ WTFMove(*total), WTFMove(*lineItems) }};
 }
@@ -374,22 +374,22 @@ void ArgumentCoder<WebCore::ShippingContactUpdate>::encode(Encoder& encoder, con
     encoder << update.newTotalAndLineItems;
 }
 
-std::optional<WebCore::ShippingContactUpdate> ArgumentCoder<WebCore::ShippingContactUpdate>::decode(Decoder& decoder)
+Optional<WebCore::ShippingContactUpdate> ArgumentCoder<WebCore::ShippingContactUpdate>::decode(Decoder& decoder)
 {
-    std::optional<Vector<PaymentError>> errors;
+    Optional<Vector<PaymentError>> errors;
     decoder >> errors;
     if (!errors)
-        return std::nullopt;
+        return WTF::nullopt;
     
-    std::optional<Vector<ApplePaySessionPaymentRequest::ShippingMethod>> newShippingMethods;
+    Optional<Vector<ApplePaySessionPaymentRequest::ShippingMethod>> newShippingMethods;
     decoder >> newShippingMethods;
     if (!newShippingMethods)
-        return std::nullopt;
+        return WTF::nullopt;
     
-    std::optional<ApplePaySessionPaymentRequest::TotalAndLineItems> newTotalAndLineItems;
+    Optional<ApplePaySessionPaymentRequest::TotalAndLineItems> newTotalAndLineItems;
     decoder >> newTotalAndLineItems;
     if (!newTotalAndLineItems)
-        return std::nullopt;
+        return WTF::nullopt;
     
     return {{ WTFMove(*errors), WTFMove(*newShippingMethods), WTFMove(*newTotalAndLineItems) }};
 }
@@ -399,12 +399,12 @@ void ArgumentCoder<WebCore::ShippingMethodUpdate>::encode(Encoder& encoder, cons
     encoder << update.newTotalAndLineItems;
 }
 
-std::optional<WebCore::ShippingMethodUpdate> ArgumentCoder<WebCore::ShippingMethodUpdate>::decode(Decoder& decoder)
+Optional<WebCore::ShippingMethodUpdate> ArgumentCoder<WebCore::ShippingMethodUpdate>::decode(Decoder& decoder)
 {
-    std::optional<ApplePaySessionPaymentRequest::TotalAndLineItems> newTotalAndLineItems;
+    Optional<ApplePaySessionPaymentRequest::TotalAndLineItems> newTotalAndLineItems;
     decoder >> newTotalAndLineItems;
     if (!newTotalAndLineItems)
-        return std::nullopt;
+        return WTF::nullopt;
     return {{ WTFMove(*newTotalAndLineItems) }};
 }
 

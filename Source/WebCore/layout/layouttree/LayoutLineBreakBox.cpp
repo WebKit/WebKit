@@ -36,7 +36,7 @@ namespace Layout {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(LineBreakBox);
 
-LineBreakBox::LineBreakBox(std::optional<ElementAttributes> attributes, RenderStyle&& style)
+LineBreakBox::LineBreakBox(Optional<ElementAttributes> attributes, RenderStyle&& style)
     : InlineBox(attributes, WTFMove(style), LineBreakBoxFlag)
 {
 }

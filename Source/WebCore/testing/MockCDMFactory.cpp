@@ -219,11 +219,11 @@ RefPtr<SharedBuffer> MockCDM::sanitizeResponse(const SharedBuffer& response) con
     return response.copy();
 }
 
-std::optional<String> MockCDM::sanitizeSessionId(const String& sessionId) const
+Optional<String> MockCDM::sanitizeSessionId(const String& sessionId) const
 {
     if (equalLettersIgnoringASCIICase(sessionId, "valid-loaded-session"))
         return sessionId;
-    return std::nullopt;
+    return WTF::nullopt;
 }
 
 MockCDMInstance::MockCDMInstance(WeakPtr<MockCDM> cdm)
@@ -329,18 +329,18 @@ void MockCDMInstanceSession::updateLicense(const String& sessionID, LicenseType,
 {
     MockCDMFactory* factory = m_instance ? m_instance->factory() : nullptr;
     if (!factory) {
-        callback(false, std::nullopt, std::nullopt, std::nullopt, SuccessValue::Failed);
+        callback(false, WTF::nullopt, WTF::nullopt, WTF::nullopt, SuccessValue::Failed);
         return;
     }
 
     Vector<String> responseVector = String(response.data(), response.size()).split(' ');
 
     if (responseVector.contains(String("invalid-format"_s))) {
-        callback(false, std::nullopt, std::nullopt, std::nullopt, SuccessValue::Failed);
+        callback(false, WTF::nullopt, WTF::nullopt, WTF::nullopt, SuccessValue::Failed);
         return;
     }
 
-    std::optional<KeyStatusVector> changedKeys;
+    Optional<KeyStatusVector> changedKeys;
     if (responseVector.contains(String("keys-changed"_s))) {
         const auto* keys = factory->keysForSessionWithID(sessionID);
         if (keys) {
@@ -356,14 +356,14 @@ void MockCDMInstanceSession::updateLicense(const String& sessionID, LicenseType,
     // FIXME: Session closure, expiration and message handling should be implemented
     // once the relevant algorithms are supported.
 
-    callback(false, WTFMove(changedKeys), std::nullopt, std::nullopt, SuccessValue::Succeeded);
+    callback(false, WTFMove(changedKeys), WTF::nullopt, WTF::nullopt, SuccessValue::Succeeded);
 }
 
 void MockCDMInstanceSession::loadSession(LicenseType, const String&, const String&, LoadSessionCallback&& callback)
 {
     MockCDMFactory* factory = m_instance ? m_instance->factory() : nullptr;
     if (!factory) {
-        callback(std::nullopt, std::nullopt, std::nullopt, SuccessValue::Failed, SessionLoadFailure::Other);
+        callback(WTF::nullopt, WTF::nullopt, WTF::nullopt, SuccessValue::Failed, SessionLoadFailure::Other);
         return;
     }
 
@@ -372,7 +372,7 @@ void MockCDMInstanceSession::loadSession(LicenseType, const String&, const Strin
     CString messageData { "session loaded" };
     Message message { MessageType::LicenseRenewal, SharedBuffer::create(messageData.data(), messageData.length()) };
 
-    callback(std::nullopt, std::nullopt, WTFMove(message), SuccessValue::Succeeded, SessionLoadFailure::None);
+    callback(WTF::nullopt, WTF::nullopt, WTFMove(message), SuccessValue::Succeeded, SessionLoadFailure::None);
 }
 
 void MockCDMInstanceSession::closeSession(const String& sessionID, CloseSessionCallback&& callback)
@@ -391,7 +391,7 @@ void MockCDMInstanceSession::removeSessionData(const String& id, LicenseType, Re
 {
     MockCDMFactory* factory = m_instance ? m_instance->factory() : nullptr;
     if (!factory) {
-        callback({ }, std::nullopt, SuccessValue::Failed);
+        callback({ }, WTF::nullopt, SuccessValue::Failed);
         return;
     }
 

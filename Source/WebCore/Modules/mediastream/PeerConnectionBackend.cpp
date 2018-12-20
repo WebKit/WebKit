@@ -59,13 +59,13 @@ static std::unique_ptr<PeerConnectionBackend> createNoPeerConnectionBackend(RTCP
 
 CreatePeerConnectionBackend PeerConnectionBackend::create = createNoPeerConnectionBackend;
 
-std::optional<RTCRtpCapabilities> PeerConnectionBackend::receiverCapabilities(ScriptExecutionContext&, const String&)
+Optional<RTCRtpCapabilities> PeerConnectionBackend::receiverCapabilities(ScriptExecutionContext&, const String&)
 {
     ASSERT_NOT_REACHED();
     return { };
 }
 
-std::optional<RTCRtpCapabilities> PeerConnectionBackend::senderCapabilities(ScriptExecutionContext&, const String&)
+Optional<RTCRtpCapabilities> PeerConnectionBackend::senderCapabilities(ScriptExecutionContext&, const String&)
 {
     ASSERT_NOT_REACHED();
     return { };
@@ -100,7 +100,7 @@ void PeerConnectionBackend::createOfferSucceeded(String&& sdp)
 
     ASSERT(m_offerAnswerPromise);
     m_offerAnswerPromise->resolve(RTCSessionDescription::Init { RTCSdpType::Offer, filterSDP(WTFMove(sdp)) });
-    m_offerAnswerPromise = std::nullopt;
+    m_offerAnswerPromise = WTF::nullopt;
 }
 
 void PeerConnectionBackend::createOfferFailed(Exception&& exception)
@@ -113,7 +113,7 @@ void PeerConnectionBackend::createOfferFailed(Exception&& exception)
 
     ASSERT(m_offerAnswerPromise);
     m_offerAnswerPromise->reject(WTFMove(exception));
-    m_offerAnswerPromise = std::nullopt;
+    m_offerAnswerPromise = WTF::nullopt;
 }
 
 void PeerConnectionBackend::createAnswer(RTCAnswerOptions&& options, PeerConnection::SessionDescriptionPromise&& promise)
@@ -135,7 +135,7 @@ void PeerConnectionBackend::createAnswerSucceeded(String&& sdp)
 
     ASSERT(m_offerAnswerPromise);
     m_offerAnswerPromise->resolve(RTCSessionDescription::Init { RTCSdpType::Answer, WTFMove(sdp) });
-    m_offerAnswerPromise = std::nullopt;
+    m_offerAnswerPromise = WTF::nullopt;
 }
 
 void PeerConnectionBackend::createAnswerFailed(Exception&& exception)
@@ -148,7 +148,7 @@ void PeerConnectionBackend::createAnswerFailed(Exception&& exception)
 
     ASSERT(m_offerAnswerPromise);
     m_offerAnswerPromise->reject(WTFMove(exception));
-    m_offerAnswerPromise = std::nullopt;
+    m_offerAnswerPromise = WTF::nullopt;
 }
 
 static inline bool isLocalDescriptionTypeValidForState(RTCSdpType type, RTCSignalingState state)
@@ -194,7 +194,7 @@ void PeerConnectionBackend::setLocalDescriptionSucceeded()
     ASSERT(m_setDescriptionPromise);
 
     m_setDescriptionPromise->resolve();
-    m_setDescriptionPromise = std::nullopt;
+    m_setDescriptionPromise = WTF::nullopt;
 }
 
 void PeerConnectionBackend::setLocalDescriptionFailed(Exception&& exception)
@@ -208,7 +208,7 @@ void PeerConnectionBackend::setLocalDescriptionFailed(Exception&& exception)
     ASSERT(m_setDescriptionPromise);
 
     m_setDescriptionPromise->reject(WTFMove(exception));
-    m_setDescriptionPromise = std::nullopt;
+    m_setDescriptionPromise = WTF::nullopt;
 }
 
 static inline bool isRemoteDescriptionTypeValidForState(RTCSdpType type, RTCSignalingState state)
@@ -254,7 +254,7 @@ void PeerConnectionBackend::setRemoteDescriptionSucceeded()
     ASSERT(m_setDescriptionPromise);
 
     m_setDescriptionPromise->resolve();
-    m_setDescriptionPromise = std::nullopt;
+    m_setDescriptionPromise = WTF::nullopt;
 }
 
 void PeerConnectionBackend::setRemoteDescriptionFailed(Exception&& exception)
@@ -268,7 +268,7 @@ void PeerConnectionBackend::setRemoteDescriptionFailed(Exception&& exception)
     ASSERT(m_setDescriptionPromise);
 
     m_setDescriptionPromise->reject(WTFMove(exception));
-    m_setDescriptionPromise = std::nullopt;
+    m_setDescriptionPromise = WTF::nullopt;
 }
 
 static String extractIPAddres(const String& sdp)
@@ -312,7 +312,7 @@ void PeerConnectionBackend::addIceCandidateSucceeded()
     ASSERT(m_addIceCandidatePromise);
 
     m_addIceCandidatePromise->resolve();
-    m_addIceCandidatePromise = std::nullopt;
+    m_addIceCandidatePromise = WTF::nullopt;
 
     if (!m_waitingForMDNSResolution && m_finishedReceivingCandidates)
         endOfIceCandidates(WTFMove(*m_endOfIceCandidatePromise));
@@ -329,7 +329,7 @@ void PeerConnectionBackend::addIceCandidateFailed(Exception&& exception)
     ASSERT(m_addIceCandidatePromise);
 
     m_addIceCandidatePromise->reject(WTFMove(exception));
-    m_addIceCandidatePromise = std::nullopt;
+    m_addIceCandidatePromise = WTF::nullopt;
 
     if (!m_waitingForMDNSResolution && m_finishedReceivingCandidates)
         endOfIceCandidates(WTFMove(*m_endOfIceCandidatePromise));
@@ -494,9 +494,9 @@ void PeerConnectionBackend::updateSignalingState(RTCSignalingState newSignalingS
 
 void PeerConnectionBackend::stop()
 {
-    m_offerAnswerPromise = std::nullopt;
-    m_setDescriptionPromise = std::nullopt;
-    m_addIceCandidatePromise = std::nullopt;
+    m_offerAnswerPromise = WTF::nullopt;
+    m_setDescriptionPromise = WTF::nullopt;
+    m_addIceCandidatePromise = WTF::nullopt;
 
     doStop();
 }

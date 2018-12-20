@@ -108,12 +108,12 @@ long long SQLiteFileSystem::getDatabaseFileSize(const String& fileName)
     return FileSystem::getFileSize(fileName, size) ? size : 0;
 }
 
-std::optional<WallTime> SQLiteFileSystem::databaseCreationTime(const String& fileName)
+Optional<WallTime> SQLiteFileSystem::databaseCreationTime(const String& fileName)
 {
     return FileSystem::getFileCreationTime(fileName);
 }
 
-std::optional<WallTime> SQLiteFileSystem::databaseModificationTime(const String& fileName)
+Optional<WallTime> SQLiteFileSystem::databaseModificationTime(const String& fileName)
 {
     return FileSystem::getFileModificationTime(fileName);
 }

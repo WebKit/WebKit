@@ -89,9 +89,9 @@ public:
         String name;
         String hash;
         String namedCurve;
-        std::optional<uint32_t> modulusLength;
+        Optional<uint32_t> modulusLength;
         RefPtr<Uint8Array> publicExponent;
-        std::optional<double> expires;
+        Optional<double> expires;
     };
 
     using AlgorithmIdentifier = Variant<JSC::Strong<JSC::JSObject>, String>;

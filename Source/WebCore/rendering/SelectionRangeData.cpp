@@ -49,8 +49,8 @@ struct SelectionData {
     using RendererMap = HashMap<RenderObject*, std::unique_ptr<RenderSelectionInfo>>;
     using RenderBlockMap = HashMap<const RenderBlock*, std::unique_ptr<RenderBlockSelectionInfo>>;
 
-    std::optional<unsigned> startPosition;
-    std::optional<unsigned> endPosition;
+    Optional<unsigned> startPosition;
+    Optional<unsigned> endPosition;
     RendererMap renderers;
     RenderBlockMap blocks;
 };

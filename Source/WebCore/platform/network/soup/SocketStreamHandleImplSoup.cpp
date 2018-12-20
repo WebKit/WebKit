@@ -216,7 +216,7 @@ void SocketStreamHandleImpl::writeReady()
     sendPendingData();
 }
 
-std::optional<size_t> SocketStreamHandleImpl::platformSendInternal(const uint8_t* data, size_t length)
+Optional<size_t> SocketStreamHandleImpl::platformSendInternal(const uint8_t* data, size_t length)
 {
     LOG(Network, "SocketStreamHandle %p platformSend", this);
     if (!m_outputStream || !data)
@@ -229,7 +229,7 @@ std::optional<size_t> SocketStreamHandleImpl::platformSendInternal(const uint8_t
             beginWaitingForSocketWritability();
         else
             didFail(SocketStreamError(error->code, String(), error->message));
-        return std::nullopt;
+        return WTF::nullopt;
     }
 
     // If we did not send all the bytes we were given, we know that
@@ -238,7 +238,7 @@ std::optional<size_t> SocketStreamHandleImpl::platformSendInternal(const uint8_t
         beginWaitingForSocketWritability();
 
     if (written == -1)
-        return std::nullopt;
+        return WTF::nullopt;
 
     return static_cast<size_t>(written);
 }

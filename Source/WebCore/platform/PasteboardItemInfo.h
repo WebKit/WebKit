@@ -65,7 +65,7 @@ struct PasteboardItemInfo {
     }
 
     template<class Encoder> void encode(Encoder&) const;
-    template<class Decoder> static std::optional<PasteboardItemInfo> decode(Decoder&);
+    template<class Decoder> static Optional<PasteboardItemInfo> decode(Decoder&);
 };
 
 template<class Encoder>
@@ -76,26 +76,26 @@ void PasteboardItemInfo::encode(Encoder& encoder) const
 }
 
 template<class Decoder>
-std::optional<PasteboardItemInfo> PasteboardItemInfo::decode(Decoder& decoder)
+Optional<PasteboardItemInfo> PasteboardItemInfo::decode(Decoder& decoder)
 {
     PasteboardItemInfo result;
     if (!decoder.decode(result.pathsForFileUpload))
-        return std::nullopt;
+        return WTF::nullopt;
 
     if (!decoder.decode(result.contentTypesForFileUpload))
-        return std::nullopt;
+        return WTF::nullopt;
 
     if (!decoder.decode(result.suggestedFileName))
-        return std::nullopt;
+        return WTF::nullopt;
 
     if (!decoder.decode(result.isNonTextType))
-        return std::nullopt;
+        return WTF::nullopt;
 
     if (!decoder.decode(result.containsFileURLAndFileUploadContent))
-        return std::nullopt;
+        return WTF::nullopt;
 
     if (!decoder.decodeEnum(result.preferredPresentationStyle))
-        return std::nullopt;
+        return WTF::nullopt;
 
     return WTFMove(result);
 }

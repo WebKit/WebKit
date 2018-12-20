@@ -47,10 +47,10 @@ public:
     double latitude() const { return m_corePosition.latitude; }
     double longitude() const { return m_corePosition.longitude; }
     double accuracy() const { return m_corePosition.accuracy; }
-    std::optional<double> altitude() const { return m_corePosition.altitude; }
-    std::optional<double> altitudeAccuracy() const { return m_corePosition.altitudeAccuracy; }
-    std::optional<double> heading() const { return m_corePosition.heading; }
-    std::optional<double> speed() const { return m_corePosition.speed; }
+    Optional<double> altitude() const { return m_corePosition.altitude; }
+    Optional<double> altitudeAccuracy() const { return m_corePosition.altitudeAccuracy; }
+    Optional<double> heading() const { return m_corePosition.heading; }
+    Optional<double> speed() const { return m_corePosition.speed; }
 
     const WebCore::GeolocationPosition& corePosition() const { return m_corePosition; }
 

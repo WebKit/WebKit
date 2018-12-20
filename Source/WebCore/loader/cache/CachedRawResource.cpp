@@ -46,11 +46,11 @@ CachedRawResource::CachedRawResource(CachedResourceRequest&& request, Type type,
     ASSERT(isMainOrMediaOrIconOrRawResource());
 }
 
-std::optional<SharedBufferDataView> CachedRawResource::calculateIncrementalDataChunk(const SharedBuffer* data) const
+Optional<SharedBufferDataView> CachedRawResource::calculateIncrementalDataChunk(const SharedBuffer* data) const
 {
     size_t previousDataLength = encodedSize();
     if (!data || data->size() <= previousDataLength)
-        return std::nullopt;
+        return WTF::nullopt;
     return data->getSomeData(previousDataLength);
 }
 
@@ -82,7 +82,7 @@ void CachedRawResource::updateBuffer(SharedBuffer& data)
         CachedResource::updateBuffer(data);
 
     if (m_delayedFinishLoading) {
-        auto delayedFinishLoading = std::exchange(m_delayedFinishLoading, std::nullopt);
+        auto delayedFinishLoading = std::exchange(m_delayedFinishLoading, WTF::nullopt);
         finishLoading(delayedFinishLoading->buffer.get());
     }
 }
@@ -99,7 +99,7 @@ void CachedRawResource::finishLoading(SharedBuffer* data)
     if (m_inIncrementalDataNotify) {
         // We may get here synchronously from updateBuffer() if the callback there ends up spinning a runloop.
         // In that case delay the call.
-        m_delayedFinishLoading = std::make_optional(DelayedFinishLoading { data });
+        m_delayedFinishLoading = makeOptional(DelayedFinishLoading { data });
         return;
     };
     CachedResourceHandle<CachedRawResource> protectedThis(this);

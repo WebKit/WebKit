@@ -184,7 +184,7 @@ public:
     void bindBufferBase(GC3Denum target, GC3Duint index, WebGLBuffer*);
     void bindBufferRange(GC3Denum target, GC3Duint index, WebGLBuffer*, GC3Dint64 offset, GC3Dint64 size);
     WebGLAny getIndexedParameter(GC3Denum target, GC3Duint index);
-    std::optional<Vector<GC3Duint>> getUniformIndices(WebGLProgram&, const Vector<String>& uniformNames);
+    Optional<Vector<GC3Duint>> getUniformIndices(WebGLProgram&, const Vector<String>& uniformNames);
     WebGLAny getActiveUniforms(WebGLProgram&, const Vector<GC3Duint>& uniformIndices, GC3Denum pname);
     GC3Duint getUniformBlockIndex(WebGLProgram&, const String& uniformBlockName);
     WebGLAny getActiveUniformBlockParameter(WebGLProgram&, GC3Duint uniformBlockIndex, GC3Denum pname);
@@ -198,7 +198,7 @@ public:
     void bindVertexArray(WebGLVertexArrayObject* vertexArray);
     
     WebGLExtension* getExtension(const String&) final;
-    std::optional<Vector<String>> getSupportedExtensions() final;
+    Optional<Vector<String>> getSupportedExtensions() final;
     WebGLAny getParameter(GC3Denum pname) final;
 
     void renderbufferStorage(GC3Denum target, GC3Denum internalformat, GC3Dsizei width, GC3Dsizei height) final;

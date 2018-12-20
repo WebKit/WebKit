@@ -712,11 +712,11 @@ void SVGElement::synchronizeAnimatedSVGAttribute(const QualifiedName& name) cons
         nonConstThis->synchronizeAttribute(name);
 }
 
-std::optional<ElementStyle> SVGElement::resolveCustomStyle(const RenderStyle& parentStyle, const RenderStyle*)
+Optional<ElementStyle> SVGElement::resolveCustomStyle(const RenderStyle& parentStyle, const RenderStyle*)
 {
     // If the element is in a <use> tree we get the style from the definition tree.
     if (auto styleElement = makeRefPtr(this->correspondingElement())) {
-        std::optional<ElementStyle> style = styleElement->resolveStyle(&parentStyle);
+        Optional<ElementStyle> style = styleElement->resolveStyle(&parentStyle);
         StyleResolver::adjustSVGElementStyle(*this, *style->renderStyle);
         return style;
     }

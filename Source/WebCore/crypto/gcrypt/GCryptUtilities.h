@@ -68,19 +68,19 @@ static inline bool matches(const void* lhs, size_t size, const std::array<uint8_
 
 } // namespace CryptoConstants
 
-std::optional<const char*> hashAlgorithmName(CryptoAlgorithmIdentifier);
+Optional<const char*> hashAlgorithmName(CryptoAlgorithmIdentifier);
 
-std::optional<int> hmacAlgorithm(CryptoAlgorithmIdentifier);
-std::optional<int> digestAlgorithm(CryptoAlgorithmIdentifier);
-std::optional<PAL::CryptoDigest::Algorithm> hashCryptoDigestAlgorithm(CryptoAlgorithmIdentifier);
+Optional<int> hmacAlgorithm(CryptoAlgorithmIdentifier);
+Optional<int> digestAlgorithm(CryptoAlgorithmIdentifier);
+Optional<PAL::CryptoDigest::Algorithm> hashCryptoDigestAlgorithm(CryptoAlgorithmIdentifier);
 
-std::optional<size_t> mpiLength(gcry_mpi_t);
-std::optional<size_t> mpiLength(gcry_sexp_t);
-std::optional<Vector<uint8_t>> mpiData(gcry_mpi_t);
-std::optional<Vector<uint8_t>> mpiZeroPrefixedData(gcry_mpi_t, size_t targetLength);
-std::optional<Vector<uint8_t>> mpiData(gcry_sexp_t);
-std::optional<Vector<uint8_t>> mpiZeroPrefixedData(gcry_sexp_t, size_t targetLength);
-std::optional<Vector<uint8_t>> mpiSignedData(gcry_mpi_t);
-std::optional<Vector<uint8_t>> mpiSignedData(gcry_sexp_t);
+Optional<size_t> mpiLength(gcry_mpi_t);
+Optional<size_t> mpiLength(gcry_sexp_t);
+Optional<Vector<uint8_t>> mpiData(gcry_mpi_t);
+Optional<Vector<uint8_t>> mpiZeroPrefixedData(gcry_mpi_t, size_t targetLength);
+Optional<Vector<uint8_t>> mpiData(gcry_sexp_t);
+Optional<Vector<uint8_t>> mpiZeroPrefixedData(gcry_sexp_t, size_t targetLength);
+Optional<Vector<uint8_t>> mpiSignedData(gcry_mpi_t);
+Optional<Vector<uint8_t>> mpiSignedData(gcry_sexp_t);
 
 } // namespace WebCore

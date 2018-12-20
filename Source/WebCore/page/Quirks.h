@@ -42,7 +42,7 @@ public:
 private:
     WeakPtr<Document> m_document;
 
-    mutable std::optional<bool> m_hasBrokenEncryptedMediaAPISupportQuirk;
+    mutable Optional<bool> m_hasBrokenEncryptedMediaAPISupportQuirk;
 };
 
 }

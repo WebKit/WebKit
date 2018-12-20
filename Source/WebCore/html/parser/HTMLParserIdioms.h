@@ -71,10 +71,10 @@ WEBCORE_EXPORT Expected<int, HTMLIntegerParsingError> parseHTMLInteger(StringVie
 WEBCORE_EXPORT Expected<unsigned, HTMLIntegerParsingError> parseHTMLNonNegativeInteger(StringView);
 
 // https://html.spec.whatwg.org/#valid-non-negative-integer
-std::optional<int> parseValidHTMLNonNegativeInteger(StringView);
+Optional<int> parseValidHTMLNonNegativeInteger(StringView);
 
 // https://html.spec.whatwg.org/#valid-floating-point-number
-std::optional<double> parseValidHTMLFloatingPointNumber(StringView);
+Optional<double> parseValidHTMLFloatingPointNumber(StringView);
 
 // https://html.spec.whatwg.org/multipage/infrastructure.html#rules-for-parsing-floating-point-number-values
 Vector<double> parseHTMLListOfOfFloatingPointNumberValues(StringView);

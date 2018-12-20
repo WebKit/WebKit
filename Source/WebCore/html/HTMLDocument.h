@@ -44,7 +44,7 @@ public:
     WEBCORE_EXPORT int width();
     WEBCORE_EXPORT int height();
     
-    std::optional<Variant<RefPtr<WindowProxy>, RefPtr<Element>, RefPtr<HTMLCollection>>> namedItem(const AtomicString&);
+    Optional<Variant<RefPtr<WindowProxy>, RefPtr<Element>, RefPtr<HTMLCollection>>> namedItem(const AtomicString&);
     Vector<AtomicString> supportedPropertyNames() const;
 
     Element* documentNamedItem(const AtomicStringImpl& name) const { return m_documentNamedItem.getElementByDocumentNamedItem(name, *this); }

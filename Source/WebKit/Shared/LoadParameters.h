@@ -61,7 +61,7 @@ struct LoadParameters {
     String unreachableURLString;
     String provisionalLoadErrorURLString;
 
-    std::optional<WebsitePoliciesData> websitePolicies;
+    Optional<WebsitePoliciesData> websitePolicies;
 
     uint64_t shouldOpenExternalURLsPolicy;
     bool shouldTreatAsContinuingLoad { false };

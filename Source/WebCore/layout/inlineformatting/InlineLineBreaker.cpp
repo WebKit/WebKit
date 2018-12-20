@@ -46,16 +46,16 @@ InlineLineBreaker::InlineLineBreaker(const LayoutState& layoutState, const Inlin
 {
 }
 
-std::optional<InlineLineBreaker::Run> InlineLineBreaker::nextRun(LayoutUnit contentLogicalLeft, LayoutUnit availableWidth, bool lineIsEmpty)
+Optional<InlineLineBreaker::Run> InlineLineBreaker::nextRun(LayoutUnit contentLogicalLeft, LayoutUnit availableWidth, bool lineIsEmpty)
 {
     if (isAtContentEnd())
-        return std::nullopt;
+        return WTF::nullopt;
 
     InlineRunProvider::Run currentInlineRun = m_inlineRuns[m_currentRunIndex];
     // Adjust the current run if it is split midword.
     if (m_splitPosition) {
         ASSERT(currentInlineRun.isText());
-        m_splitPosition = std::nullopt;
+        m_splitPosition = WTF::nullopt;
     }
 
     if (currentInlineRun.isLineBreak()) {
@@ -190,7 +190,7 @@ InlineLineBreaker::Run InlineLineBreaker::splitRun(const InlineRunProvider::Run&
     return { Run::Position::Undetermined, { }, inlineRun };
 }
 
-std::optional<ItemPosition> InlineLineBreaker::adjustSplitPositionWithHyphenation(const InlineRunProvider::Run&, ItemPosition, LayoutUnit, LayoutUnit, bool) const
+Optional<ItemPosition> InlineLineBreaker::adjustSplitPositionWithHyphenation(const InlineRunProvider::Run&, ItemPosition, LayoutUnit, LayoutUnit, bool) const
 {
     return { };
 }

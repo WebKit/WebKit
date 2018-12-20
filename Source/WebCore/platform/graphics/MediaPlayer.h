@@ -544,7 +544,7 @@ public:
 
     unsigned long long fileSize() const;
 
-    std::optional<VideoPlaybackQualityMetrics> videoPlaybackQualityMetrics();
+    Optional<VideoPlaybackQualityMetrics> videoPlaybackQualityMetrics();
 
     void handlePlaybackCommand(PlatformMediaSession::RemoteControlCommandType);
     String sourceApplicationIdentifier() const;

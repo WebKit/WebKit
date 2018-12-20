@@ -63,8 +63,8 @@ private:
     void frameLoaderDestroyed() final;
     bool hasWebView() const final; // mainly for assertions
 
-    std::optional<uint64_t> pageID() const final;
-    std::optional<uint64_t> frameID() const final;
+    Optional<uint64_t> pageID() const final;
+    Optional<uint64_t> frameID() const final;
     PAL::SessionID sessionID() const final;
 
     void makeRepresentation(WebCore::DocumentLoader*) final;
@@ -116,7 +116,7 @@ private:
     void dispatchWillClose() final;
     void dispatchDidStartProvisionalLoad(CompletionHandler<void()>&&) final;
     void dispatchDidReceiveTitle(const WebCore::StringWithDirection&) final;
-    void dispatchDidCommitLoad(std::optional<WebCore::HasInsecureContent>) final;
+    void dispatchDidCommitLoad(Optional<WebCore::HasInsecureContent>) final;
     void dispatchDidFailProvisionalLoad(const WebCore::ResourceError&) final;
     void dispatchDidFailLoad(const WebCore::ResourceError&) final;
     void dispatchDidFinishDocumentLoad() final;

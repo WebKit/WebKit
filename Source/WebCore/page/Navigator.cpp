@@ -133,7 +133,7 @@ void Navigator::share(ScriptExecutionContext& context, ShareData data, Ref<Defer
         return;
     }
 
-    std::optional<URL> url;
+    Optional<URL> url;
     if (!data.url.isEmpty()) {
         url = context.completeURL(data.url);
         if (!url->isValid()) {

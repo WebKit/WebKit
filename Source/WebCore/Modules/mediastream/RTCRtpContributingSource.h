@@ -32,7 +32,7 @@ namespace WebCore {
 struct RTCRtpContributingSource {
     double timestamp;
     unsigned long source;
-    std::optional<double> audioLevel;
+    Optional<double> audioLevel;
 };
 
 

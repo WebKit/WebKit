@@ -294,7 +294,7 @@ void DocumentLoader::stopLoading()
     
 #if ENABLE(APPLICATION_MANIFEST)
     for (auto callbackIdentifier : m_applicationManifestLoaders.values())
-        notifyFinishedLoadingApplicationManifest(callbackIdentifier, std::nullopt);
+        notifyFinishedLoadingApplicationManifest(callbackIdentifier, WTF::nullopt);
     m_applicationManifestLoaders.clear();
 #endif
 
@@ -484,7 +484,7 @@ void DocumentLoader::matchRegistration(const URL& url, SWClientConnection::Regis
 {
     auto shouldTryLoadingThroughServiceWorker = !frameLoader()->isReloadingFromOrigin() && m_frame->page() && RuntimeEnabledFeatures::sharedFeatures().serviceWorkerEnabled() && SchemeRegistry::canServiceWorkersHandleURLScheme(url.protocol().toStringWithoutCopying());
     if (!shouldTryLoadingThroughServiceWorker) {
-        callback(std::nullopt);
+        callback(WTF::nullopt);
         return;
     }
 
@@ -492,7 +492,7 @@ void DocumentLoader::matchRegistration(const URL& url, SWClientConnection::Regis
     auto sessionID = m_frame->page()->sessionID();
     auto& provider = ServiceWorkerProvider::singleton();
     if (!provider.mayHaveServiceWorkerRegisteredForOrigin(sessionID, origin)) {
-        callback(std::nullopt);
+        callback(WTF::nullopt);
         return;
     }
 
@@ -500,7 +500,7 @@ void DocumentLoader::matchRegistration(const URL& url, SWClientConnection::Regis
     connection.matchRegistration(WTFMove(origin), url, WTFMove(callback));
 }
 
-static inline bool areRegistrationsEqual(const std::optional<ServiceWorkerRegistrationData>& a, const std::optional<ServiceWorkerRegistrationData>& b)
+static inline bool areRegistrationsEqual(const Optional<ServiceWorkerRegistrationData>& a, const Optional<ServiceWorkerRegistrationData>& b)
 {
     if (!a)
         return !b;
@@ -702,7 +702,7 @@ bool DocumentLoader::tryLoadingRedirectRequestFromApplicationCache(const Resourc
 }
 
 #if ENABLE(SERVICE_WORKER)
-void DocumentLoader::restartLoadingDueToServiceWorkerRegistrationChange(ResourceRequest&& request, std::optional<ServiceWorkerRegistrationData>&& registrationData)
+void DocumentLoader::restartLoadingDueToServiceWorkerRegistrationChange(ResourceRequest&& request, Optional<ServiceWorkerRegistrationData>&& registrationData)
 {
     clearMainResource();
 
@@ -1263,7 +1263,7 @@ void DocumentLoader::finishedLoadingApplicationManifest(ApplicationManifestLoade
     m_applicationManifestLoaders.remove(&loader);
 }
 
-void DocumentLoader::notifyFinishedLoadingApplicationManifest(uint64_t callbackIdentifier, std::optional<ApplicationManifest> manifest)
+void DocumentLoader::notifyFinishedLoadingApplicationManifest(uint64_t callbackIdentifier, Optional<ApplicationManifest> manifest)
 {
     RELEASE_ASSERT(callbackIdentifier);
     RELEASE_ASSERT(m_frame);
@@ -1780,7 +1780,7 @@ void DocumentLoader::unregisterTemporaryServiceWorkerClient()
         return;
 
     m_temporaryServiceWorkerClient->serviceWorkerConnection->unregisterServiceWorkerClient(m_temporaryServiceWorkerClient->documentIdentifier);
-    m_temporaryServiceWorkerClient = std::nullopt;
+    m_temporaryServiceWorkerClient = WTF::nullopt;
 #endif
 }
 
@@ -1964,7 +1964,7 @@ void DocumentLoader::startIconLoading()
 
     auto findResult = m_linkIcons.findMatching([](auto& icon) { return icon.type == LinkIconType::Favicon; });
     if (findResult == notFound)
-        m_linkIcons.append({ document->completeURL("/favicon.ico"_s), LinkIconType::Favicon, String(), std::nullopt, { } });
+        m_linkIcons.append({ document->completeURL("/favicon.ico"_s), LinkIconType::Favicon, String(), WTF::nullopt, { } });
 
     if (!m_linkIcons.size())
         return;

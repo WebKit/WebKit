@@ -87,7 +87,7 @@ public:
 #endif
 
 #if ENABLE(APPLICATION_MANIFEST)
-    std::optional<ApplicationManifest> applicationManifest;
+    Optional<ApplicationManifest> applicationManifest;
 #endif
 
     UniqueRef<LibWebRTCProvider> libWebRTCProvider;

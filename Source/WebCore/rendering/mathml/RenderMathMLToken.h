@@ -49,7 +49,7 @@ public:
 protected:
     void paint(PaintInfo&, const LayoutPoint&) override;
     void paintChildren(PaintInfo& forSelf, const LayoutPoint&, PaintInfo& forChild, bool usePrintRect) override;
-    std::optional<int> firstLineBaseline() const override;
+    Optional<int> firstLineBaseline() const override;
     void layoutBlock(bool relayoutChildren, LayoutUnit pageLogicalHeight = 0_lu) override;
     void computePreferredLogicalWidths() override;
 
@@ -64,7 +64,7 @@ private:
         m_mathVariantGlyphDirty = true;
         setNeedsLayoutAndPrefWidthsRecalc();
     }
-    std::optional<UChar32> m_mathVariantCodePoint { std::nullopt };
+    Optional<UChar32> m_mathVariantCodePoint { WTF::nullopt };
     bool m_mathVariantIsMirrored { false };
     bool m_mathVariantGlyphDirty { false };
 };

@@ -122,7 +122,7 @@ private:
     bool supportsSessions() const final;
     bool supportsInitData(const AtomicString&, const SharedBuffer&) const final;
     RefPtr<SharedBuffer> sanitizeResponse(const SharedBuffer&) const final;
-    std::optional<String> sanitizeSessionId(const String&) const final;
+    Optional<String> sanitizeSessionId(const String&) const final;
 
     WeakPtr<MockCDMFactory> m_factory;
 };

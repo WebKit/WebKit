@@ -110,8 +110,8 @@ public:
 
     rtc::RTCCertificateGenerator& certificateGenerator();
 
-    std::optional<RTCRtpCapabilities> receiverCapabilities(const String& kind);
-    std::optional<RTCRtpCapabilities> senderCapabilities(const String& kind);
+    Optional<RTCRtpCapabilities> receiverCapabilities(const String& kind);
+    Optional<RTCRtpCapabilities> senderCapabilities(const String& kind);
 
 protected:
     LibWebRTCProvider() = default;

@@ -52,16 +52,16 @@ bool LoadableClassicScript::isLoaded() const
     return m_cachedScript->isLoaded();
 }
 
-std::optional<LoadableScript::Error> LoadableClassicScript::error() const
+Optional<LoadableScript::Error> LoadableClassicScript::error() const
 {
     ASSERT(m_cachedScript);
     if (m_error)
         return m_error;
 
     if (m_cachedScript->errorOccurred())
-        return Error { ErrorType::CachedScript, std::nullopt };
+        return Error { ErrorType::CachedScript, WTF::nullopt };
 
-    return std::nullopt;
+    return WTF::nullopt;
 }
 
 bool LoadableClassicScript::wasCanceled() const

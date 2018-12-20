@@ -107,7 +107,7 @@ MockGStreamerVideoCaptureSource::~MockGStreamerVideoCaptureSource()
     m_wrappedSource->removeObserver(*this);
 }
 
-std::optional<std::pair<String, String>> MockGStreamerVideoCaptureSource::applyConstraints(const MediaConstraints& constraints)
+Optional<std::pair<String, String>> MockGStreamerVideoCaptureSource::applyConstraints(const MediaConstraints& constraints)
 {
     m_wrappedSource->applyConstraints(constraints);
     return GStreamerVideoCaptureSource::applyConstraints(constraints);

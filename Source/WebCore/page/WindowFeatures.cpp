@@ -37,8 +37,8 @@ typedef HashMap<String, String, ASCIICaseInsensitiveHash> DialogFeaturesMap;
 static void setWindowFeature(WindowFeatures&, StringView key, StringView value);
 
 static DialogFeaturesMap parseDialogFeaturesMap(const String&);
-static std::optional<bool> boolFeature(const DialogFeaturesMap&, const char* key);
-static std::optional<float> floatFeature(const DialogFeaturesMap&, const char* key, float min, float max);
+static Optional<bool> boolFeature(const DialogFeaturesMap&, const char* key);
+static Optional<float> floatFeature(const DialogFeaturesMap&, const char* key, float min, float max);
 
 // https://html.spec.whatwg.org/#feature-separator
 static bool isSeparator(UChar character, FeatureMode mode)
@@ -205,11 +205,11 @@ WindowFeatures parseDialogFeatures(const String& dialogFeaturesString, const Flo
     return features;
 }
 
-static std::optional<bool> boolFeature(const DialogFeaturesMap& features, const char* key)
+static Optional<bool> boolFeature(const DialogFeaturesMap& features, const char* key)
 {
     auto it = features.find(key);
     if (it == features.end())
-        return std::nullopt;
+        return WTF::nullopt;
 
     auto& value = it->value;
     return value.isNull()
@@ -218,18 +218,18 @@ static std::optional<bool> boolFeature(const DialogFeaturesMap& features, const 
         || equalLettersIgnoringASCIICase(value, "on");
 }
 
-static std::optional<float> floatFeature(const DialogFeaturesMap& features, const char* key, float min, float max)
+static Optional<float> floatFeature(const DialogFeaturesMap& features, const char* key, float min, float max)
 {
     auto it = features.find(key);
     if (it == features.end())
-        return std::nullopt;
+        return WTF::nullopt;
 
     // FIXME: The toDouble function does not offer a way to tell "0q" from string with no digits in it: Both
     // return the number 0 and false for ok. But "0q" should yield the minimum rather than the default.
     bool ok;
     double parsedNumber = it->value.toDouble(&ok);
     if ((!parsedNumber && !ok) || std::isnan(parsedNumber))
-        return std::nullopt;
+        return WTF::nullopt;
     if (parsedNumber < min || max <= min)
         return min;
     if (parsedNumber > max)

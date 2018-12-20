@@ -91,9 +91,9 @@ WTF::String Attachment::fileName() const
     return { };
 }
 
-std::optional<uint64_t> Attachment::fileSizeForDisplay() const
+Optional<uint64_t> Attachment::fileSizeForDisplay() const
 {
-    return std::nullopt;
+    return WTF::nullopt;
 }
 
 RefPtr<WebCore::SharedBuffer> Attachment::enclosingImageData() const

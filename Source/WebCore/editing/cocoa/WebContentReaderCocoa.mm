@@ -442,19 +442,19 @@ struct MarkupAndArchive {
     Ref<Archive> archive;
 };
 
-static std::optional<MarkupAndArchive> extractMarkupAndArchive(SharedBuffer& buffer, const std::function<bool(const String)>& canShowMIMETypeAsHTML)
+static Optional<MarkupAndArchive> extractMarkupAndArchive(SharedBuffer& buffer, const std::function<bool(const String)>& canShowMIMETypeAsHTML)
 {
     auto archive = LegacyWebArchive::create(URL(), buffer);
     if (!archive)
-        return std::nullopt;
+        return WTF::nullopt;
 
     RefPtr<ArchiveResource> mainResource = archive->mainResource();
     if (!mainResource)
-        return std::nullopt;
+        return WTF::nullopt;
 
     auto type = mainResource->mimeType();
     if (!canShowMIMETypeAsHTML(type))
-        return std::nullopt;
+        return WTF::nullopt;
 
     return MarkupAndArchive { String::fromUTF8(mainResource->data().data(), mainResource->data().size()), mainResource.releaseNonNull(), archive.releaseNonNull() };
 }
@@ -727,7 +727,7 @@ static Ref<HTMLElement> attachmentForFilePath(Frame& frame, const String& path)
     }
 
     String contentType;
-    std::optional<uint64_t> fileSizeForDisplay;
+    Optional<uint64_t> fileSizeForDisplay;
     if (FileSystem::fileIsDirectory(path, FileSystem::ShouldFollowSymbolicLinks::Yes))
         contentType = kUTTypeDirectory;
     else {

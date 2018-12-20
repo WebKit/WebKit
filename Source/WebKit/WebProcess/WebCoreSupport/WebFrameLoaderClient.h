@@ -51,8 +51,8 @@ public:
 
     void applyToDocumentLoader(WebsitePoliciesData&&);
 
-    std::optional<uint64_t> pageID() const final;
-    std::optional<uint64_t> frameID() const final;
+    Optional<uint64_t> pageID() const final;
+    Optional<uint64_t> frameID() const final;
     PAL::SessionID sessionID() const final;
 
 #if ENABLE(RESOURCE_LOAD_STATISTICS)
@@ -111,7 +111,7 @@ private:
     void dispatchWillClose() final;
     void dispatchDidStartProvisionalLoad(CompletionHandler<void()>&&) final;
     void dispatchDidReceiveTitle(const WebCore::StringWithDirection&) final;
-    void dispatchDidCommitLoad(std::optional<WebCore::HasInsecureContent>) final;
+    void dispatchDidCommitLoad(Optional<WebCore::HasInsecureContent>) final;
     void dispatchDidFailProvisionalLoad(const WebCore::ResourceError&) final;
     void dispatchDidFailLoad(const WebCore::ResourceError&) final;
     void dispatchDidFinishDocumentLoad() final;
@@ -273,7 +273,7 @@ private:
     void didCreateWindow(WebCore::DOMWindow&) final;
 
 #if ENABLE(APPLICATION_MANIFEST)
-    void finishedLoadingApplicationManifest(uint64_t, const std::optional<WebCore::ApplicationManifest>&) final;
+    void finishedLoadingApplicationManifest(uint64_t, const Optional<WebCore::ApplicationManifest>&) final;
 #endif
 
     WebFrame* m_frame;

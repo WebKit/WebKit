@@ -87,11 +87,11 @@ private:
     { }
 
 public:
-    static std::optional<SignalContext> tryCreate(PlatformRegisters& registers)
+    static Optional<SignalContext> tryCreate(PlatformRegisters& registers)
     {
         auto instructionPointer = MachineContext::instructionPointer(registers);
         if (!instructionPointer)
-            return std::nullopt;
+            return WTF::nullopt;
         return SignalContext(registers, *instructionPointer);
     }
 

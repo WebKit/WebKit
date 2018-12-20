@@ -55,17 +55,17 @@ public:
 
     const StdSet<ProtocolVersion>& versions() const { return m_versions; }
     const Vector<uint8_t>& aaguid() const { return m_aaguid; }
-    const std::optional<uint32_t>& maxMsgSize() const { return m_maxMsgSize; }
-    const std::optional<Vector<uint8_t>>& pinProtocol() const { return m_pinProtocols; }
-    const std::optional<Vector<String>>& extensions() const { return m_extensions; }
+    const Optional<uint32_t>& maxMsgSize() const { return m_maxMsgSize; }
+    const Optional<Vector<uint8_t>>& pinProtocol() const { return m_pinProtocols; }
+    const Optional<Vector<String>>& extensions() const { return m_extensions; }
     const AuthenticatorSupportedOptions& options() const { return m_options; }
 
 private:
     StdSet<ProtocolVersion> m_versions;
     Vector<uint8_t> m_aaguid;
-    std::optional<uint32_t> m_maxMsgSize;
-    std::optional<Vector<uint8_t>> m_pinProtocols;
-    std::optional<Vector<String>> m_extensions;
+    Optional<uint32_t> m_maxMsgSize;
+    Optional<Vector<uint8_t>> m_pinProtocols;
+    Optional<Vector<String>> m_extensions;
     AuthenticatorSupportedOptions m_options;
 };
 

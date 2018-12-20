@@ -28,7 +28,7 @@
 
 namespace WebCore {
 
-FontSelectionAlgorithm::FontSelectionAlgorithm(FontSelectionRequest request, const Vector<Capabilities>& capabilities, std::optional<Capabilities> bounds)
+FontSelectionAlgorithm::FontSelectionAlgorithm(FontSelectionRequest request, const Vector<Capabilities>& capabilities, Optional<Capabilities> bounds)
     : m_request(request)
     , m_capabilities(capabilities)
 {
@@ -139,7 +139,7 @@ auto FontSelectionAlgorithm::weightDistance(Capabilities capabilities) const -> 
 
 FontSelectionValue FontSelectionAlgorithm::bestValue(const bool eliminated[], DistanceFunction computeDistance) const
 {
-    std::optional<DistanceResult> smallestDistance;
+    Optional<DistanceResult> smallestDistance;
     for (size_t i = 0, size = m_capabilities.size(); i < size; ++i) {
         if (eliminated[i])
             continue;

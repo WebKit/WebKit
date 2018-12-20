@@ -85,8 +85,8 @@ public:
         Stretched = 18
     };
 
-    virtual std::optional<bool> specifiedDisplayStyle() { return std::nullopt; }
-    virtual std::optional<MathVariant> specifiedMathVariant() { return std::nullopt; }
+    virtual Optional<bool> specifiedDisplayStyle() { return WTF::nullopt; }
+    virtual Optional<MathVariant> specifiedMathVariant() { return WTF::nullopt; }
 
     virtual void updateSelectedChild() { }
 

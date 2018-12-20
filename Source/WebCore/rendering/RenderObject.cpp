@@ -989,7 +989,7 @@ FloatRect RenderObject::computeFloatRectForRepaint(const FloatRect& rect, const 
     return *computeFloatVisibleRectInContainer(rect, repaintContainer, visibleRectContextForRepaint());
 }
 
-std::optional<LayoutRect> RenderObject::computeVisibleRectInContainer(const LayoutRect& rect, const RenderLayerModelObject* container, VisibleRectContext context) const
+Optional<LayoutRect> RenderObject::computeVisibleRectInContainer(const LayoutRect& rect, const RenderLayerModelObject* container, VisibleRectContext context) const
 {
     if (container == this)
         return rect;
@@ -1003,14 +1003,14 @@ std::optional<LayoutRect> RenderObject::computeVisibleRectInContainer(const Layo
         bool isEmpty = !downcast<RenderBox>(*parent).applyCachedClipAndScrollPosition(adjustedRect, container, context);
         if (isEmpty) {
             if (context.m_options.contains(VisibleRectContextOption::UseEdgeInclusiveIntersection))
-                return std::nullopt;
+                return WTF::nullopt;
             return adjustedRect;
         }
     }
     return parent->computeVisibleRectInContainer(adjustedRect, container, context);
 }
 
-std::optional<FloatRect> RenderObject::computeFloatVisibleRectInContainer(const FloatRect&, const RenderLayerModelObject*, VisibleRectContext) const
+Optional<FloatRect> RenderObject::computeFloatVisibleRectInContainer(const FloatRect&, const RenderLayerModelObject*, VisibleRectContext) const
 {
     ASSERT_NOT_REACHED();
     return FloatRect();

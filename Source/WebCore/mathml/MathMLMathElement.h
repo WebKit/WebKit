@@ -45,7 +45,7 @@ private:
 
     bool acceptsDisplayStyleAttribute() final { return true; }
     bool acceptsMathVariantAttribute() final { return true; }
-    std::optional<bool> specifiedDisplayStyle() final;
+    Optional<bool> specifiedDisplayStyle() final;
 
     RenderPtr<RenderElement> createElementRenderer(RenderStyle&&, const RenderTreePosition&) final;
 };

@@ -123,7 +123,7 @@ void WebDriverService::platformParseCapabilities(const JSON::Object& matchedCapa
     String browserBinary;
     if (browserOptions->getString("binary"_s, browserBinary)) {
         capabilities.browserBinary = browserBinary;
-        capabilities.browserArguments = std::nullopt;
+        capabilities.browserArguments = WTF::nullopt;
     }
 
     RefPtr<JSON::Array> browserArguments;

@@ -57,7 +57,7 @@ private:
 
     void loadMIMETypes();
 
-    std::optional<HashSet<String, ASCIICaseInsensitiveHash>> m_cache;
+    Optional<HashSet<String, ASCIICaseInsensitiveHash>> m_cache;
     CacheMIMETypesCallback m_cacheTypeCallback;
 };
 

@@ -193,12 +193,12 @@ static OSStatus enableSandboxStyleFileQuarantine()
 }
 
 #if USE(CACHE_COMPILED_SANDBOX)
-static std::optional<Vector<char>> fileContents(const String& path, bool shouldLock = false, OptionSet<FileSystem::FileLockMode> lockMode = FileSystem::FileLockMode::Exclusive)
+static Optional<Vector<char>> fileContents(const String& path, bool shouldLock = false, OptionSet<FileSystem::FileLockMode> lockMode = FileSystem::FileLockMode::Exclusive)
 {
     FileHandle file = shouldLock ? FileHandle(path, FileSystem::FileOpenMode::Read, lockMode) : FileHandle(path, FileSystem::FileOpenMode::Read);
     file.open();
     if (!file)
-        return std::nullopt;
+        return WTF::nullopt;
 
     char chunk[4096];
     constexpr size_t chunkSize = WTF_ARRAY_LENGTH(chunk);
@@ -230,7 +230,7 @@ constexpr const char* processStorageClass(ChildProcess::ProcessType type)
 }
 #endif // USE(APPLE_INTERNAL_SDK)
 
-static std::optional<CString> setAndSerializeSandboxParameters(const SandboxInitializationParameters& initializationParameters, const SandboxParametersPtr& sandboxParameters, const String& profileOrProfilePath, bool isProfilePath)
+static Optional<CString> setAndSerializeSandboxParameters(const SandboxInitializationParameters& initializationParameters, const SandboxParametersPtr& sandboxParameters, const String& profileOrProfilePath, bool isProfilePath)
 {
     StringBuilder builder;
     for (size_t i = 0; i < initializationParameters.count(); ++i) {
@@ -248,7 +248,7 @@ static std::optional<CString> setAndSerializeSandboxParameters(const SandboxInit
     if (isProfilePath) {
         auto contents = fileContents(profileOrProfilePath);
         if (!contents)
-            return std::nullopt;
+            return WTF::nullopt;
         builder.append(contents->data(), contents->size());
     } else
         builder.append(profileOrProfilePath);

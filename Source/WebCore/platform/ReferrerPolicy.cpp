@@ -31,7 +31,7 @@ namespace WebCore {
 
 enum class ShouldParseLegacyKeywords { No, Yes };
 
-static std::optional<ReferrerPolicy> parseReferrerPolicyToken(StringView policy, ShouldParseLegacyKeywords shouldParseLegacyKeywords)
+static Optional<ReferrerPolicy> parseReferrerPolicyToken(StringView policy, ShouldParseLegacyKeywords shouldParseLegacyKeywords)
 {
     // "never" / "default" / "always" are legacy keywords that we support and still defined in the HTML specification:
     // https://html.spec.whatwg.org/#meta-referrer
@@ -63,15 +63,15 @@ static std::optional<ReferrerPolicy> parseReferrerPolicyToken(StringView policy,
     if (!policy.isNull() && policy.isEmpty())
         return ReferrerPolicy::EmptyString;
 
-    return std::nullopt;
+    return WTF::nullopt;
 }
     
-std::optional<ReferrerPolicy> parseReferrerPolicy(StringView policyString, ReferrerPolicySource source)
+Optional<ReferrerPolicy> parseReferrerPolicy(StringView policyString, ReferrerPolicySource source)
 {
     switch (source) {
     case ReferrerPolicySource::HTTPHeader: {
         // Implementing https://www.w3.org/TR/2017/CR-referrer-policy-20170126/#parse-referrer-policy-from-header.
-        std::optional<ReferrerPolicy> result;
+        Optional<ReferrerPolicy> result;
         for (auto tokenView : policyString.split(',')) {
             auto token = parseReferrerPolicyToken(stripLeadingAndTrailingHTTPSpaces(tokenView), ShouldParseLegacyKeywords::No);
             if (token && token.value() != ReferrerPolicy::EmptyString)
@@ -83,7 +83,7 @@ std::optional<ReferrerPolicy> parseReferrerPolicy(StringView policyString, Refer
         return parseReferrerPolicyToken(policyString, ShouldParseLegacyKeywords::Yes);
     }
     ASSERT_NOT_REACHED();
-    return std::nullopt;
+    return WTF::nullopt;
 }
 
 } // namespace WebCore

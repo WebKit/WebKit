@@ -308,7 +308,7 @@ static void webKitWebAudioSrcGetProperty(GObject* object, guint propertyId, GVal
     }
 }
 
-static std::optional<Vector<GRefPtr<GstBuffer>>> webKitWebAudioSrcAllocateBuffersAndRenderAudio(WebKitWebAudioSrc* src)
+static Optional<Vector<GRefPtr<GstBuffer>>> webKitWebAudioSrcAllocateBuffersAndRenderAudio(WebKitWebAudioSrc* src)
 {
     WebKitWebAudioSourcePrivate* priv = src->priv;
 
@@ -317,7 +317,7 @@ static std::optional<Vector<GRefPtr<GstBuffer>>> webKitWebAudioSrcAllocateBuffer
     if (!priv->provider || !priv->bus) {
         GST_ELEMENT_ERROR(src, CORE, FAILED, ("Internal WebAudioSrc error"), ("Can't start without provider or bus"));
         gst_task_stop(src->priv->task.get());
-        return std::nullopt;
+        return WTF::nullopt;
     }
 
     ASSERT(priv->pool);
@@ -336,7 +336,7 @@ static std::optional<Vector<GRefPtr<GstBuffer>>> webKitWebAudioSrcAllocateBuffer
             // FLUSHING and EOS are not errors.
             if (ret < GST_FLOW_EOS || ret == GST_FLOW_NOT_LINKED)
                 GST_ELEMENT_ERROR(src, CORE, PAD, ("Internal WebAudioSrc error"), ("Failed to allocate buffer for flow: %s", gst_flow_get_name(ret)));
-            return std::nullopt;
+            return WTF::nullopt;
         }
 
         ASSERT(buffer);
@@ -352,14 +352,14 @@ static std::optional<Vector<GRefPtr<GstBuffer>>> webKitWebAudioSrcAllocateBuffer
     // FIXME: Add support for local/live audio input.
     priv->provider->render(nullptr, priv->bus, priv->framesToPull);
 
-    return std::make_optional(channelBufferList);
+    return makeOptional(channelBufferList);
 }
 
 static void webKitWebAudioSrcLoop(WebKitWebAudioSrc* src)
 {
     WebKitWebAudioSourcePrivate* priv = src->priv;
 
-    std::optional<Vector<GRefPtr<GstBuffer>>> channelBufferList = webKitWebAudioSrcAllocateBuffersAndRenderAudio(src);
+    Optional<Vector<GRefPtr<GstBuffer>>> channelBufferList = webKitWebAudioSrcAllocateBuffersAndRenderAudio(src);
     if (!channelBufferList) {
         gst_task_stop(src->priv->task.get());
         return;

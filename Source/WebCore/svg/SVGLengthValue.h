@@ -147,7 +147,7 @@ private:
 
 template<> struct SVGPropertyTraits<SVGLengthValue> {
     static SVGLengthValue initialValue() { return { }; }
-    static std::optional<SVGLengthValue> parse(const QualifiedName& attrName, const String& string)
+    static Optional<SVGLengthValue> parse(const QualifiedName& attrName, const String& string)
     {
         SVGLengthValue length;
         length.setValueAsString(string, SVGLengthValue::lengthModeForAnimatedLengthAttribute(attrName)).hasException();

@@ -98,7 +98,7 @@ public:
     }
 
     void encode(IPC::Encoder&) const;
-    static std::optional<NPVariantData> decode(IPC::Decoder&);
+    static Optional<NPVariantData> decode(IPC::Decoder&);
 
 private:
     uint32_t m_type;

@@ -179,9 +179,9 @@ private:
     
     using NumberParseResult = Variant<double, const Identifier*>;
     ALWAYS_INLINE NumberParseResult parseHex();
-    ALWAYS_INLINE std::optional<NumberParseResult> parseBinary();
-    ALWAYS_INLINE std::optional<NumberParseResult> parseOctal();
-    ALWAYS_INLINE std::optional<NumberParseResult> parseDecimal();
+    ALWAYS_INLINE Optional<NumberParseResult> parseBinary();
+    ALWAYS_INLINE Optional<NumberParseResult> parseOctal();
+    ALWAYS_INLINE Optional<NumberParseResult> parseDecimal();
     ALWAYS_INLINE void parseNumberAfterDecimalPoint();
     ALWAYS_INLINE bool parseNumberAfterExponentIndicator();
     ALWAYS_INLINE bool parseMultilineComment();

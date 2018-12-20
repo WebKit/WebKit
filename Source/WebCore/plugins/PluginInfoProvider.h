@@ -40,7 +40,7 @@ public:
     void removePage(Page&);
     void clearPagesPluginData();
 
-    virtual Vector<PluginInfo> pluginInfo(Page&, std::optional<Vector<SupportedPluginIdentifier>>&) = 0;
+    virtual Vector<PluginInfo> pluginInfo(Page&, Optional<Vector<SupportedPluginIdentifier>>&) = 0;
     virtual Vector<PluginInfo> webVisiblePluginInfo(Page&, const URL&) = 0;
 
 private:

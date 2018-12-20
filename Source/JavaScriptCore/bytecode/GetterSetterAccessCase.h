@@ -41,7 +41,7 @@ public:
     // actually somewhat likely because of how we do buffering of new cases.
     CallLinkInfo* callLinkInfo() const { return m_callLinkInfo.get(); }
     JSObject* customSlotBase() const { return m_customSlotBase.get(); }
-    std::optional<DOMAttributeAnnotation> domAttribute() const { return m_domAttribute; }
+    Optional<DOMAttributeAnnotation> domAttribute() const { return m_domAttribute; }
 
     bool hasAlternateBase() const override;
     JSObject* alternateBase() const override;
@@ -51,7 +51,7 @@ public:
     static std::unique_ptr<AccessCase> create(
         VM&, JSCell* owner, AccessType, PropertyOffset, Structure*,
         const ObjectPropertyConditionSet&, bool viaProxy, WatchpointSet* additionalSet, FunctionPtr<OperationPtrTag> customGetter,
-        JSObject* customSlotBase, std::optional<DOMAttributeAnnotation>, std::unique_ptr<PolyProtoAccessChain>);
+        JSObject* customSlotBase, Optional<DOMAttributeAnnotation>, std::unique_ptr<PolyProtoAccessChain>);
 
     static std::unique_ptr<AccessCase> create(VM&, JSCell* owner, AccessType, Structure*, PropertyOffset,
         const ObjectPropertyConditionSet&, std::unique_ptr<PolyProtoAccessChain>,
@@ -72,7 +72,7 @@ private:
     WriteBarrier<JSObject> m_customSlotBase;
     std::unique_ptr<CallLinkInfo> m_callLinkInfo;
     FunctionPtr<OperationPtrTag> m_customAccessor;
-    std::optional<DOMAttributeAnnotation> m_domAttribute;
+    Optional<DOMAttributeAnnotation> m_domAttribute;
 };
 
 } // namespace JSC

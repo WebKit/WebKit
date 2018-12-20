@@ -720,17 +720,17 @@ Ref<HTMLStackItem> HTMLConstructionSite::createElementFromSavedToken(HTMLStackIt
     return HTMLStackItem::create(createHTMLElement(fakeToken), WTFMove(fakeToken), item.namespaceURI());
 }
 
-std::optional<unsigned> HTMLConstructionSite::indexOfFirstUnopenFormattingElement() const
+Optional<unsigned> HTMLConstructionSite::indexOfFirstUnopenFormattingElement() const
 {
     if (m_activeFormattingElements.isEmpty())
-        return std::nullopt;
+        return WTF::nullopt;
     unsigned index = m_activeFormattingElements.size();
     do {
         --index;
         const auto& entry = m_activeFormattingElements.at(index);
         if (entry.isMarker() || m_openElements.contains(entry.element())) {
             unsigned firstUnopenElementIndex = index + 1;
-            return firstUnopenElementIndex < m_activeFormattingElements.size() ? firstUnopenElementIndex : std::optional<unsigned>(std::nullopt);
+            return firstUnopenElementIndex < m_activeFormattingElements.size() ? firstUnopenElementIndex : Optional<unsigned>(WTF::nullopt);
         }
     } while (index);
 
@@ -739,7 +739,7 @@ std::optional<unsigned> HTMLConstructionSite::indexOfFirstUnopenFormattingElemen
 
 void HTMLConstructionSite::reconstructTheActiveFormattingElements()
 {
-    std::optional<unsigned> firstUnopenElementIndex = indexOfFirstUnopenFormattingElement();
+    Optional<unsigned> firstUnopenElementIndex = indexOfFirstUnopenFormattingElement();
     if (!firstUnopenElementIndex)
         return;
 

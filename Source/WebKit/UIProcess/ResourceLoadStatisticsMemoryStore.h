@@ -144,7 +144,7 @@ private:
     void setDebugLogggingEnabled(bool enabled) { m_debugLoggingEnabled  = enabled; }
     void setDataRecordsBeingRemoved(bool);
     void scheduleStatisticsProcessingRequestIfNecessary();
-    void grantStorageAccessInternal(String&& subFrameHost, String&& topFrameHost, std::optional<uint64_t> frameID, uint64_t pageID, bool userWasPromptedNowOrEarlier, CompletionHandler<void(bool)>&&);
+    void grantStorageAccessInternal(String&& subFrameHost, String&& topFrameHost, Optional<uint64_t> frameID, uint64_t pageID, bool userWasPromptedNowOrEarlier, CompletionHandler<void(bool)>&&);
     void markAsPrevalentIfHasRedirectedToPrevalent(WebCore::ResourceLoadStatistics&);
     bool isPrevalentDueToDebugMode(WebCore::ResourceLoadStatistics&);
     Vector<String> ensurePrevalentResourcesForDebugMode();
@@ -164,7 +164,7 @@ private:
     struct Parameters {
         size_t pruneEntriesDownTo { 800 };
         size_t maxStatisticsEntries { 1000 };
-        std::optional<Seconds> timeToLiveUserInteraction;
+        Optional<Seconds> timeToLiveUserInteraction;
         Seconds minimumTimeBetweenDataRecordsRemoval { 1_h };
         Seconds grandfatheringTime { 24_h * 7 };
         Seconds cacheMaxAgeCapTime { 24_h * 7 };
@@ -197,7 +197,7 @@ private:
     MonotonicTime m_lastTimeDataRecordsWereRemoved;
 
     uint64_t m_lastStatisticsProcessingRequestIdentifier { 0 };
-    std::optional<uint64_t> m_pendingStatisticsProcessingRequestIdentifier;
+    Optional<uint64_t> m_pendingStatisticsProcessingRequestIdentifier;
 };
 
 } // namespace WebKit

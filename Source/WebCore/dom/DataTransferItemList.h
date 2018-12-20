@@ -76,7 +76,7 @@ private:
     Vector<Ref<DataTransferItem>>& ensureItems() const;
 
     DataTransfer& m_dataTransfer;
-    mutable std::optional<Vector<Ref<DataTransferItem>>> m_items;
+    mutable Optional<Vector<Ref<DataTransferItem>>> m_items;
 };
 
 } // namespace WebCore

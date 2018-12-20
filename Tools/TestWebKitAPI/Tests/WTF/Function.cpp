@@ -190,12 +190,12 @@ struct FunctionDestructionChecker {
     }
 
     Function<unsigned()>& function;
-    static std::optional<bool> functionAsBool;
-    static std::optional<unsigned> functionResult;
+    static Optional<bool> functionAsBool;
+    static Optional<unsigned> functionResult;
 };
 
-std::optional<bool> FunctionDestructionChecker::functionAsBool;
-std::optional<unsigned> FunctionDestructionChecker::functionResult;
+Optional<bool> FunctionDestructionChecker::functionAsBool;
+Optional<unsigned> FunctionDestructionChecker::functionResult;
 
 TEST(WTF_Function, AssignBeforeDestroy)
 {
@@ -209,8 +209,8 @@ TEST(WTF_Function, AssignBeforeDestroy)
     EXPECT_TRUE(static_cast<bool>(FunctionDestructionChecker::functionResult));
     EXPECT_TRUE(FunctionDestructionChecker::functionAsBool.value());
     EXPECT_EQ(1U, FunctionDestructionChecker::functionResult.value());
-    FunctionDestructionChecker::functionAsBool = std::nullopt;
-    FunctionDestructionChecker::functionResult = std::nullopt;
+    FunctionDestructionChecker::functionAsBool = WTF::nullopt;
+    FunctionDestructionChecker::functionResult = WTF::nullopt;
 
     a = FunctionDestructionChecker(a);
     a = MoveOnly { 2 };
@@ -218,8 +218,8 @@ TEST(WTF_Function, AssignBeforeDestroy)
     EXPECT_TRUE(static_cast<bool>(FunctionDestructionChecker::functionResult));
     EXPECT_TRUE(FunctionDestructionChecker::functionAsBool.value());
     EXPECT_EQ(2U, FunctionDestructionChecker::functionResult.value());
-    FunctionDestructionChecker::functionAsBool = std::nullopt;
-    FunctionDestructionChecker::functionResult = std::nullopt;
+    FunctionDestructionChecker::functionAsBool = WTF::nullopt;
+    FunctionDestructionChecker::functionResult = WTF::nullopt;
 }
 
 static int returnThree()

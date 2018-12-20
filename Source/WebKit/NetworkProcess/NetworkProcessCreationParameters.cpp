@@ -119,7 +119,7 @@ bool NetworkProcessCreationParameters::decode(IPC::Decoder& decoder, NetworkProc
     if (!decoder.decode(result.diskCacheDirectory))
         return false;
     
-    std::optional<SandboxExtension::Handle> diskCacheDirectoryExtensionHandle;
+    Optional<SandboxExtension::Handle> diskCacheDirectoryExtensionHandle;
     decoder >> diskCacheDirectoryExtensionHandle;
     if (!diskCacheDirectoryExtensionHandle)
         return false;
@@ -138,26 +138,26 @@ bool NetworkProcessCreationParameters::decode(IPC::Decoder& decoder, NetworkProc
     if (!decoder.decode(result.defaultSessionPendingCookies))
         return false;
 #if PLATFORM(IOS_FAMILY)
-    std::optional<SandboxExtension::Handle> cookieStorageDirectoryExtensionHandle;
+    Optional<SandboxExtension::Handle> cookieStorageDirectoryExtensionHandle;
     decoder >> cookieStorageDirectoryExtensionHandle;
     if (!cookieStorageDirectoryExtensionHandle)
         return false;
     result.cookieStorageDirectoryExtensionHandle = WTFMove(*cookieStorageDirectoryExtensionHandle);
 
-    std::optional<SandboxExtension::Handle> containerCachesDirectoryExtensionHandle;
+    Optional<SandboxExtension::Handle> containerCachesDirectoryExtensionHandle;
     decoder >> containerCachesDirectoryExtensionHandle;
     if (!containerCachesDirectoryExtensionHandle)
         return false;
     result.containerCachesDirectoryExtensionHandle = WTFMove(*containerCachesDirectoryExtensionHandle);
 
-    std::optional<SandboxExtension::Handle> parentBundleDirectoryExtensionHandle;
+    Optional<SandboxExtension::Handle> parentBundleDirectoryExtensionHandle;
     decoder >> parentBundleDirectoryExtensionHandle;
     if (!parentBundleDirectoryExtensionHandle)
         return false;
     result.parentBundleDirectoryExtensionHandle = WTFMove(*parentBundleDirectoryExtensionHandle);
 
 #if ENABLE(INDEXED_DATABASE)
-    std::optional<SandboxExtension::Handle> indexedDatabaseTempBlobDirectoryExtensionHandle;
+    Optional<SandboxExtension::Handle> indexedDatabaseTempBlobDirectoryExtensionHandle;
     decoder >> indexedDatabaseTempBlobDirectoryExtensionHandle;
     if (!indexedDatabaseTempBlobDirectoryExtensionHandle)
         return false;
@@ -235,7 +235,7 @@ bool NetworkProcessCreationParameters::decode(IPC::Decoder& decoder, NetworkProc
     if (!decoder.decode(result.indexedDatabaseDirectory))
         return false;
     
-    std::optional<SandboxExtension::Handle> indexedDatabaseDirectoryExtensionHandle;
+    Optional<SandboxExtension::Handle> indexedDatabaseDirectoryExtensionHandle;
     decoder >> indexedDatabaseDirectoryExtensionHandle;
     if (!indexedDatabaseDirectoryExtensionHandle)
         return false;
@@ -246,7 +246,7 @@ bool NetworkProcessCreationParameters::decode(IPC::Decoder& decoder, NetworkProc
     if (!decoder.decode(result.serviceWorkerRegistrationDirectory))
         return false;
     
-    std::optional<SandboxExtension::Handle> serviceWorkerRegistrationDirectoryExtensionHandle;
+    Optional<SandboxExtension::Handle> serviceWorkerRegistrationDirectoryExtensionHandle;
     decoder >> serviceWorkerRegistrationDirectoryExtensionHandle;
     if (!serviceWorkerRegistrationDirectoryExtensionHandle)
         return false;

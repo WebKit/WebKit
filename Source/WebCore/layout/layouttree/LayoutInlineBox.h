@@ -39,7 +39,7 @@ namespace Layout {
 class InlineBox : public Box {
     WTF_MAKE_ISO_ALLOCATED(InlineBox);
 public:
-    InlineBox(std::optional<ElementAttributes>, RenderStyle&&, BaseTypeFlags = InlineBoxFlag);
+    InlineBox(Optional<ElementAttributes>, RenderStyle&&, BaseTypeFlags = InlineBoxFlag);
 
     void setTextContent(String text) { m_textContent = text; }
     bool hasTextContent() const { return !m_textContent.isNull(); }

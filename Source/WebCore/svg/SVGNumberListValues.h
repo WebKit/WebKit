@@ -42,7 +42,7 @@ template<> struct SVGPropertyTraits<SVGNumberListValues> {
         list.parse(string);
         return list;
     }
-    static std::optional<SVGNumberListValues> parse(const QualifiedName&, const String&) { ASSERT_NOT_REACHED(); return initialValue(); }
+    static Optional<SVGNumberListValues> parse(const QualifiedName&, const String&) { ASSERT_NOT_REACHED(); return initialValue(); }
     static String toString(const SVGNumberListValues& list) { return list.valueAsString(); }
 
     using ListItemType = float;

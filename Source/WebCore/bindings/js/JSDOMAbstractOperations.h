@@ -91,17 +91,17 @@ static auto accessVisibleNamedProperty(JSC::ExecState& state, JSClass& thisObjec
     // NOTE: While it is not specified, a Symbol can never be a 'supported property
     // name' so we check that first.
     if (propertyName.isSymbol())
-        return std::nullopt;
+        return WTF::nullopt;
 
     // 1. If P is not a supported property name of O, then return false.
     auto result = itemAccessor(thisObject, propertyName);
     if (!result)
-        return std::nullopt;
+        return WTF::nullopt;
 
     // 2. If O has an own property named P, then return false.
     JSC::PropertySlot slot { &thisObject, JSC::PropertySlot::InternalMethodType::VMInquiry };
     if (JSC::JSObject::getOwnPropertySlot(&thisObject, &state, propertyName, slot))
-        return std::nullopt;
+        return WTF::nullopt;
 
     // 3. If O implements an interface that has the [OverrideBuiltins] extended attribute, then return true.
     if (overrideBuiltins == OverrideBuiltins::Yes && !worldForDOMObject(thisObject).shouldDisableOverrideBuiltinsBehavior())
@@ -114,7 +114,7 @@ static auto accessVisibleNamedProperty(JSC::ExecState& state, JSClass& thisObjec
     //    2. Set prototype to be the value of the internal [[Prototype]] property of prototype.
     auto prototype = thisObject.getPrototypeDirect(state.vm());
     if (prototype.isObject() && JSC::asObject(prototype)->getPropertySlot(&state, propertyName, slot))
-        return std::nullopt;
+        return WTF::nullopt;
 
     // 6. Return true.
     return result;

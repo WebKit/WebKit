@@ -136,10 +136,10 @@ StringView URL::host() const
     return StringView(m_string).substring(start, m_hostEnd - start);
 }
 
-std::optional<uint16_t> URL::port() const
+Optional<uint16_t> URL::port() const
 {
     if (!m_portLength)
-        return std::nullopt;
+        return WTF::nullopt;
 
     bool ok = false;
     unsigned number;
@@ -148,7 +148,7 @@ std::optional<uint16_t> URL::port() const
     else
         number = charactersToUIntStrict(m_string.characters16() + m_hostEnd + 1, m_portLength - 1, &ok);
     if (!ok || number > std::numeric_limits<uint16_t>::max())
-        return std::nullopt;
+        return WTF::nullopt;
     return number;
 }
 
@@ -301,7 +301,7 @@ void clearDefaultPortForProtocolMapForTesting()
         map->clear();
 }
 
-std::optional<uint16_t> defaultPortForProtocol(StringView protocol)
+Optional<uint16_t> defaultPortForProtocol(StringView protocol)
 {
     if (auto* overrideMap = defaultPortForProtocolMapForTesting()) {
         auto locker = holdLock(defaultPortForProtocolMapForTestingLock);
@@ -871,7 +871,7 @@ bool URL::protocolIsAbout() const
 
 bool portAllowed(const URL& url)
 {
-    std::optional<uint16_t> port = url.port();
+    Optional<uint16_t> port = url.port();
 
     // Since most URLs don't have a port, return early for the "no port" case.
     if (!port)

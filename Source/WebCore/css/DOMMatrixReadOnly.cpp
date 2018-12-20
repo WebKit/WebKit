@@ -41,7 +41,7 @@
 namespace WebCore {
 
 // https://drafts.fxtf.org/geometry/#dom-dommatrixreadonly-dommatrixreadonly
-ExceptionOr<Ref<DOMMatrixReadOnly>> DOMMatrixReadOnly::create(ScriptExecutionContext& scriptExecutionContext, std::optional<Variant<String, Vector<double>>>&& init)
+ExceptionOr<Ref<DOMMatrixReadOnly>> DOMMatrixReadOnly::create(ScriptExecutionContext& scriptExecutionContext, Optional<Variant<String, Vector<double>>>&& init)
 {
     if (!init)
         return adoptRef(*new DOMMatrixReadOnly);
@@ -288,7 +288,7 @@ ExceptionOr<Ref<DOMMatrix>> DOMMatrixReadOnly::multiply(DOMMatrixInit&& other) c
     return matrix->multiplySelf(WTFMove(other));
 }
 
-Ref<DOMMatrix> DOMMatrixReadOnly::scale(double scaleX, std::optional<double> scaleY, double scaleZ, double originX, double originY, double originZ)
+Ref<DOMMatrix> DOMMatrixReadOnly::scale(double scaleX, Optional<double> scaleY, double scaleZ, double originX, double originY, double originZ)
 {
     auto matrix = cloneAsDOMMatrix();
     return matrix->scaleSelf(scaleX, scaleY, scaleZ, originX, originY, originZ);
@@ -300,7 +300,7 @@ Ref<DOMMatrix> DOMMatrixReadOnly::scale3d(double scale, double originX, double o
     return matrix->scale3dSelf(scale, originX, originY, originZ);
 }
 
-Ref<DOMMatrix> DOMMatrixReadOnly::rotate(double rotX, std::optional<double> rotY, std::optional<double> rotZ)
+Ref<DOMMatrix> DOMMatrixReadOnly::rotate(double rotX, Optional<double> rotY, Optional<double> rotZ)
 {
     auto matrix = cloneAsDOMMatrix();
     return matrix->rotateSelf(rotX, rotY, rotZ);

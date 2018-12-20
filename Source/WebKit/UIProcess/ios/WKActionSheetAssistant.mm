@@ -89,7 +89,7 @@ static LSAppLink *appLinkForURL(NSURL *url)
     WeakObjCPtr<id <WKActionSheetAssistantDelegate>> _delegate;
     RetainPtr<WKActionSheet> _interactionSheet;
     RetainPtr<_WKActivatedElementInfo> _elementInfo;
-    std::optional<WebKit::InteractionInformationAtPosition> _positionInformation;
+    Optional<WebKit::InteractionInformationAtPosition> _positionInformation;
     WeakObjCPtr<UIView> _view;
     BOOL _needsLinkIndicator;
     BOOL _isPresentingDDUserInterface;
@@ -628,7 +628,7 @@ static const CGFloat presentationElementRectPadding = 15;
     [_interactionSheet setSheetDelegate:nil];
     _interactionSheet = nil;
     _elementInfo = nil;
-    _positionInformation = std::nullopt;
+    _positionInformation = WTF::nullopt;
     _needsLinkIndicator = NO;
     _isPresentingDDUserInterface = NO;
     _hasPendingActionSheet = NO;

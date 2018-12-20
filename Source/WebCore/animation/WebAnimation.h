@@ -65,8 +65,8 @@ public:
     AnimationTimeline* timeline() const { return m_timeline.get(); }
     virtual void setTimeline(RefPtr<AnimationTimeline>&&);
 
-    std::optional<Seconds> currentTime() const;
-    ExceptionOr<void> setCurrentTime(std::optional<Seconds>);
+    Optional<Seconds> currentTime() const;
+    ExceptionOr<void> setCurrentTime(Optional<Seconds>);
 
     enum class Silently { Yes, No };
     double playbackRate() const { return m_playbackRate + 0; }
@@ -91,10 +91,10 @@ public:
     ExceptionOr<void> pause();
     ExceptionOr<void> reverse();
 
-    virtual std::optional<double> startTime() const;
-    virtual void setStartTime(std::optional<double>);
-    virtual std::optional<double> bindingsCurrentTime() const;
-    virtual ExceptionOr<void> setBindingsCurrentTime(std::optional<double>);
+    virtual Optional<double> startTime() const;
+    virtual void setStartTime(Optional<double>);
+    virtual Optional<double> bindingsCurrentTime() const;
+    virtual ExceptionOr<void> setBindingsCurrentTime(Optional<double>);
     virtual PlayState bindingsPlayState() const { return playState(); }
     virtual bool bindingsPending() const { return pending(); }
     virtual ReadyPromise& bindingsReady() { return ready(); }
@@ -136,12 +136,12 @@ private:
 
     void timingDidChange(DidSeek, SynchronouslyNotify);
     void updateFinishedState(DidSeek, SynchronouslyNotify);
-    void enqueueAnimationPlaybackEvent(const AtomicString&, std::optional<Seconds>, std::optional<Seconds>);
+    void enqueueAnimationPlaybackEvent(const AtomicString&, Optional<Seconds>, Optional<Seconds>);
     Seconds effectEndTime() const;
     WebAnimation& readyPromiseResolve();
     WebAnimation& finishedPromiseResolve();
-    std::optional<Seconds> currentTime(RespectHoldTime) const;
-    ExceptionOr<void> silentlySetCurrentTime(std::optional<Seconds>);
+    Optional<Seconds> currentTime(RespectHoldTime) const;
+    ExceptionOr<void> silentlySetCurrentTime(Optional<Seconds>);
     void finishNotificationSteps();
     bool hasPendingPauseTask() const { return m_timeToRunPendingPauseTask != TimeToRunPendingTask::NotScheduled; }
     bool hasPendingPlayTask() const { return m_timeToRunPendingPlayTask != TimeToRunPendingTask::NotScheduled; }
@@ -161,12 +161,12 @@ private:
     String m_id;
     RefPtr<AnimationEffect> m_effect;
     RefPtr<AnimationTimeline> m_timeline;
-    std::optional<Seconds> m_previousCurrentTime;
-    std::optional<Seconds> m_startTime;
-    std::optional<Seconds> m_holdTime;
+    Optional<Seconds> m_previousCurrentTime;
+    Optional<Seconds> m_startTime;
+    Optional<Seconds> m_holdTime;
     int m_suspendCount { 0 };
     double m_playbackRate { 1 };
-    std::optional<double> m_pendingPlaybackRate;
+    Optional<double> m_pendingPlaybackRate;
     bool m_isStopped { false };
     bool m_isSuspended { false };
     bool m_finishNotificationStepsMicrotaskPending;

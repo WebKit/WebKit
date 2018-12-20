@@ -40,10 +40,10 @@ namespace WebCore {
 class FloatRect;
 
 struct WindowFeatures {
-    std::optional<float> x;
-    std::optional<float> y;
-    std::optional<float> width;
-    std::optional<float> height;
+    Optional<float> x;
+    Optional<float> y;
+    Optional<float> width;
+    Optional<float> height;
 
     bool menuBarVisible { true };
     bool statusBarVisible { true };

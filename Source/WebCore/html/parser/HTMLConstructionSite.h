@@ -130,7 +130,7 @@ public:
     bool shouldFosterParent() const;
     void fosterParent(Ref<Node>&&);
 
-    std::optional<unsigned> indexOfFirstUnopenFormattingElement() const;
+    Optional<unsigned> indexOfFirstUnopenFormattingElement() const;
     void reconstructTheActiveFormattingElements();
 
     void generateImpliedEndTags();

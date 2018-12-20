@@ -67,7 +67,7 @@ SocketStreamHandleImpl::~SocketStreamHandleImpl()
     stopThread();
 }
 
-std::optional<size_t> SocketStreamHandleImpl::platformSendInternal(const uint8_t* data, size_t length)
+Optional<size_t> SocketStreamHandleImpl::platformSendInternal(const uint8_t* data, size_t length)
 {
     LOG(Network, "SocketStreamHandle %p platformSend", this);
     ASSERT(isMainThread());

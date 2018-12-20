@@ -48,7 +48,7 @@ struct Cookie {
     }
 
     template<class Encoder> void encode(Encoder&) const;
-    template<class Decoder> static std::optional<Cookie> decode(Decoder&);
+    template<class Decoder> static Optional<Cookie> decode(Decoder&);
 
     WEBCORE_EXPORT bool operator==(const Cookie&) const;
     WEBCORE_EXPORT unsigned hash() const;
@@ -126,35 +126,35 @@ void Cookie::encode(Encoder& encoder) const
 }
 
 template<class Decoder>
-std::optional<Cookie> Cookie::decode(Decoder& decoder)
+Optional<Cookie> Cookie::decode(Decoder& decoder)
 {
     Cookie cookie;
     if (!decoder.decode(cookie.name))
-        return std::nullopt;
+        return WTF::nullopt;
     if (!decoder.decode(cookie.value))
-        return std::nullopt;
+        return WTF::nullopt;
     if (!decoder.decode(cookie.domain))
-        return std::nullopt;
+        return WTF::nullopt;
     if (!decoder.decode(cookie.path))
-        return std::nullopt;
+        return WTF::nullopt;
     if (!decoder.decode(cookie.created))
-        return std::nullopt;
+        return WTF::nullopt;
     if (!decoder.decode(cookie.expires))
-        return std::nullopt;
+        return WTF::nullopt;
     if (!decoder.decode(cookie.httpOnly))
-        return std::nullopt;
+        return WTF::nullopt;
     if (!decoder.decode(cookie.secure))
-        return std::nullopt;
+        return WTF::nullopt;
     if (!decoder.decode(cookie.session))
-        return std::nullopt;
+        return WTF::nullopt;
     if (!decoder.decode(cookie.comment))
-        return std::nullopt;
+        return WTF::nullopt;
     if (!decoder.decode(cookie.commentURL))
-        return std::nullopt;
+        return WTF::nullopt;
     if (!decoder.decode(cookie.ports))
-        return std::nullopt;
+        return WTF::nullopt;
     if (!decoder.decode(cookie.sameSite))
-        return std::nullopt;
+        return WTF::nullopt;
     return cookie;
 }
 

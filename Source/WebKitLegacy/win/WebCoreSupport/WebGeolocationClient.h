@@ -43,7 +43,7 @@ public:
     void startUpdating() final;
     void stopUpdating() final;
     void setEnableHighAccuracy(bool) final { }
-    std::optional<WebCore::GeolocationPosition> lastPosition() final;
+    Optional<WebCore::GeolocationPosition> lastPosition() final;
 
     void requestPermission(WebCore::Geolocation&) final;
     void cancelPermissionRequest(WebCore::Geolocation&) final { }

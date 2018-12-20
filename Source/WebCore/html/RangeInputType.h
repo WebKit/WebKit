@@ -72,7 +72,7 @@ private:
 #if ENABLE(DATALIST_ELEMENT)
     void listAttributeTargetChanged() final;
     void updateTickMarkValues();
-    std::optional<Decimal> findClosestTickMarkValue(const Decimal&) final;
+    Optional<Decimal> findClosestTickMarkValue(const Decimal&) final;
 
     bool m_tickMarkValuesDirty { true };
     Vector<Decimal> m_tickMarkValues;

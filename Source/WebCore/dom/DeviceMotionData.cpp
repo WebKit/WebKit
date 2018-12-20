@@ -33,12 +33,12 @@ Ref<DeviceMotionData> DeviceMotionData::create()
     return adoptRef(*new DeviceMotionData);
 }
 
-Ref<DeviceMotionData> DeviceMotionData::create(RefPtr<Acceleration>&& acceleration, RefPtr<Acceleration>&& accelerationIncludingGravity, RefPtr<RotationRate>&& rotationRate, std::optional<double> interval)
+Ref<DeviceMotionData> DeviceMotionData::create(RefPtr<Acceleration>&& acceleration, RefPtr<Acceleration>&& accelerationIncludingGravity, RefPtr<RotationRate>&& rotationRate, Optional<double> interval)
 {
     return adoptRef(*new DeviceMotionData(WTFMove(acceleration), WTFMove(accelerationIncludingGravity), WTFMove(rotationRate), interval));
 }
 
-DeviceMotionData::DeviceMotionData(RefPtr<Acceleration>&& acceleration, RefPtr<Acceleration>&& accelerationIncludingGravity, RefPtr<RotationRate>&& rotationRate, std::optional<double> interval)
+DeviceMotionData::DeviceMotionData(RefPtr<Acceleration>&& acceleration, RefPtr<Acceleration>&& accelerationIncludingGravity, RefPtr<RotationRate>&& rotationRate, Optional<double> interval)
     : m_acceleration(WTFMove(acceleration))
     , m_accelerationIncludingGravity(WTFMove(accelerationIncludingGravity))
     , m_rotationRate(WTFMove(rotationRate))

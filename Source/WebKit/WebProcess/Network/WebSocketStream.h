@@ -53,7 +53,7 @@ public:
     
     // SocketStreamHandle
     void platformSend(const uint8_t*, size_t, Function<void(bool)>&&) final;
-    void platformSendHandshake(const uint8_t*, size_t, const std::optional<WebCore::CookieRequestHeaderFieldProxy>&, Function<void(bool, bool)>&&);
+    void platformSendHandshake(const uint8_t*, size_t, const Optional<WebCore::CookieRequestHeaderFieldProxy>&, Function<void(bool, bool)>&&);
     void platformClose() final;
     size_t bufferedAmount() final;
 

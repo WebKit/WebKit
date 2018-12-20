@@ -312,21 +312,21 @@ HTMLLabelElement* TreeScope::labelElementForId(const AtomicString& forAttributeV
     return m_labelsByForAttribute->getElementByLabelForAttribute(*forAttributeValue.impl(), *this);
 }
 
-static std::optional<LayoutPoint> absolutePointIfNotClipped(Document& document, const LayoutPoint& clientPoint)
+static Optional<LayoutPoint> absolutePointIfNotClipped(Document& document, const LayoutPoint& clientPoint)
 {
     if (!document.frame() || !document.view())
-        return std::nullopt;
+        return WTF::nullopt;
 
     const auto& settings = document.frame()->settings();
     if (settings.visualViewportEnabled() && settings.clientCoordinatesRelativeToLayoutViewport()) {
         document.updateLayout();
         if (!document.view() || !document.hasLivingRenderTree())
-            return std::nullopt;
+            return WTF::nullopt;
         auto* view = document.view();
         FloatPoint layoutViewportPoint = view->clientToLayoutViewportPoint(clientPoint);
         FloatRect layoutViewportBounds({ }, view->layoutViewportRect().size());
         if (!layoutViewportBounds.contains(layoutViewportPoint))
-            return std::nullopt;
+            return WTF::nullopt;
         return LayoutPoint(view->layoutViewportToAbsolutePoint(layoutViewportPoint));
     }
 
@@ -346,7 +346,7 @@ static std::optional<LayoutPoint> absolutePointIfNotClipped(Document& document, 
 #endif
     if (visibleRect.contains(absolutePoint))
         return absolutePoint;
-    return std::nullopt;
+    return WTF::nullopt;
 }
 
 Node* TreeScope::nodeFromPoint(const LayoutPoint& clientPoint, LayoutPoint* localPoint)

@@ -135,7 +135,7 @@ void SWClientConnection::postMessageToServiceWorkerClient(DocumentIdentifier des
     container->dispatchEvent(messageEvent);
 }
 
-void SWClientConnection::updateRegistrationState(ServiceWorkerRegistrationIdentifier identifier, ServiceWorkerRegistrationState state, const std::optional<ServiceWorkerData>& serviceWorkerData)
+void SWClientConnection::updateRegistrationState(ServiceWorkerRegistrationIdentifier identifier, ServiceWorkerRegistrationState state, const Optional<ServiceWorkerData>& serviceWorkerData)
 {
     ASSERT(isMainThread());
 

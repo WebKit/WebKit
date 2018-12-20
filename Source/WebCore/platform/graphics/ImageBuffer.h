@@ -106,8 +106,8 @@ public:
     
     void convertToLuminanceMask();
 
-    String toDataURL(const String& mimeType, std::optional<double> quality = std::nullopt, PreserveResolution = PreserveResolution::No) const;
-    Vector<uint8_t> toData(const String& mimeType, std::optional<double> quality = std::nullopt) const;
+    String toDataURL(const String& mimeType, Optional<double> quality = WTF::nullopt, PreserveResolution = PreserveResolution::No) const;
+    Vector<uint8_t> toData(const String& mimeType, Optional<double> quality = WTF::nullopt) const;
     Vector<uint8_t> toBGRAData() const;
 
 #if !USE(CG)
@@ -171,15 +171,15 @@ private:
     WEBCORE_EXPORT ImageBuffer(const FloatSize&, float resolutionScale, ColorSpace, RenderingMode, const HostWindow*, bool& success);
 #if USE(CG)
     ImageBuffer(const FloatSize&, float resolutionScale, CGColorSpaceRef, RenderingMode, const HostWindow*, bool& success);
-    RetainPtr<CFDataRef> toCFData(const String& mimeType, std::optional<double> quality, PreserveResolution) const;
+    RetainPtr<CFDataRef> toCFData(const String& mimeType, Optional<double> quality, PreserveResolution) const;
 #elif USE(DIRECT2D)
     ImageBuffer(const FloatSize&, float resolutionScale, ColorSpace, RenderingMode, const HostWindow*, const GraphicsContext*, bool& success);
 #endif
 };
 
 #if USE(CG)
-String dataURL(const ImageData&, const String& mimeType, std::optional<double> quality);
-Vector<uint8_t> data(const ImageData&, const String& mimeType, std::optional<double> quality);
+String dataURL(const ImageData&, const String& mimeType, Optional<double> quality);
+Vector<uint8_t> data(const ImageData&, const String& mimeType, Optional<double> quality);
 #endif
 
 } // namespace WebCore

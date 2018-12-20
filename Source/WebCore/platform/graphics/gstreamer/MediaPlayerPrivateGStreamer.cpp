@@ -309,7 +309,7 @@ void MediaPlayerPrivateGStreamer::loadFull(const String& urlString, const gchar*
     m_player->readyStateChanged();
     m_volumeAndMuteInitialized = false;
     m_durationAtEOS = MediaTime::invalidTime();
-    m_hasTaintedOrigin = std::nullopt;
+    m_hasTaintedOrigin = WTF::nullopt;
 
     if (!m_delayingLoad)
         commitLoad();
@@ -2671,7 +2671,7 @@ bool MediaPlayerPrivateGStreamer::canSaveMediaData() const
     return false;
 }
 
-std::optional<bool> MediaPlayerPrivateGStreamer::wouldTaintOrigin(const SecurityOrigin&) const
+Optional<bool> MediaPlayerPrivateGStreamer::wouldTaintOrigin(const SecurityOrigin&) const
 {
     // Ideally the given origin should always be verified with
     // webKitSrcWouldTaintOrigin() instead of only checking it for

@@ -103,12 +103,12 @@ bool NetworkStorageSession::shouldBlockThirdPartyCookies(const String& topPrivat
     return m_topPrivatelyControlledDomainsToBlock.contains(topPrivatelyControlledDomain);
 }
 
-bool NetworkStorageSession::shouldBlockCookies(const ResourceRequest& request, std::optional<uint64_t> frameID, std::optional<uint64_t> pageID) const
+bool NetworkStorageSession::shouldBlockCookies(const ResourceRequest& request, Optional<uint64_t> frameID, Optional<uint64_t> pageID) const
 {
     return shouldBlockCookies(request.firstPartyForCookies(), request.url(), frameID, pageID);
 }
     
-bool NetworkStorageSession::shouldBlockCookies(const URL& firstPartyForCookies, const URL& resource, std::optional<uint64_t> frameID, std::optional<uint64_t> pageID) const
+bool NetworkStorageSession::shouldBlockCookies(const URL& firstPartyForCookies, const URL& resource, Optional<uint64_t> frameID, Optional<uint64_t> pageID) const
 {
     auto firstPartyDomain = getPartitioningDomain(firstPartyForCookies);
     if (firstPartyDomain.isEmpty())
@@ -127,14 +127,14 @@ bool NetworkStorageSession::shouldBlockCookies(const URL& firstPartyForCookies, 
     return shouldBlockThirdPartyCookies(resourceDomain);
 }
 
-std::optional<Seconds> NetworkStorageSession::maxAgeCacheCap(const ResourceRequest& request)
+Optional<Seconds> NetworkStorageSession::maxAgeCacheCap(const ResourceRequest& request)
 {
-    if (m_cacheMaxAgeCapForPrevalentResources && shouldBlockCookies(request, std::nullopt, std::nullopt))
+    if (m_cacheMaxAgeCapForPrevalentResources && shouldBlockCookies(request, WTF::nullopt, WTF::nullopt))
         return m_cacheMaxAgeCapForPrevalentResources;
-    return std::nullopt;
+    return WTF::nullopt;
 }
 
-void NetworkStorageSession::setAgeCapForClientSideCookies(std::optional<Seconds> seconds)
+void NetworkStorageSession::setAgeCapForClientSideCookies(Optional<Seconds> seconds)
 {
     m_ageCapForClientSideCookies = seconds;
 }
@@ -151,7 +151,7 @@ void NetworkStorageSession::removePrevalentDomains(const Vector<String>& domains
         m_topPrivatelyControlledDomainsToBlock.remove(domain);
 }
 
-bool NetworkStorageSession::hasStorageAccess(const String& resourceDomain, const String& firstPartyDomain, std::optional<uint64_t> frameID, uint64_t pageID) const
+bool NetworkStorageSession::hasStorageAccess(const String& resourceDomain, const String& firstPartyDomain, Optional<uint64_t> frameID, uint64_t pageID) const
 {
     if (frameID) {
         auto framesGrantedIterator = m_framesGrantedStorageAccess.find(pageID);
@@ -184,7 +184,7 @@ Vector<String> NetworkStorageSession::getAllStorageAccessEntries() const
     return entries;
 }
     
-void NetworkStorageSession::grantStorageAccess(const String& resourceDomain, const String& firstPartyDomain, std::optional<uint64_t> frameID, uint64_t pageID)
+void NetworkStorageSession::grantStorageAccess(const String& resourceDomain, const String& firstPartyDomain, Optional<uint64_t> frameID, uint64_t pageID)
 {
     if (!frameID) {
         if (firstPartyDomain.isEmpty())
@@ -246,7 +246,7 @@ void NetworkStorageSession::setCacheMaxAgeCapForPrevalentResources(Seconds secon
     
 void NetworkStorageSession::resetCacheMaxAgeCapForPrevalentResources()
 {
-    m_cacheMaxAgeCapForPrevalentResources = std::nullopt;
+    m_cacheMaxAgeCapForPrevalentResources = WTF::nullopt;
 }
 #endif // ENABLE(RESOURCE_LOAD_STATISTICS)
 

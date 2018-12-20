@@ -46,7 +46,7 @@ const size_t maxTransportNumber = 1;
 const unsigned maxTimeOutValue = 120000;
 
 // FIXME(188624, 188625): Support NFC and BLE authenticators.
-static AuthenticatorManager::TransportSet collectTransports(const std::optional<PublicKeyCredentialCreationOptions::AuthenticatorSelectionCriteria>& authenticatorSelection)
+static AuthenticatorManager::TransportSet collectTransports(const Optional<PublicKeyCredentialCreationOptions::AuthenticatorSelectionCriteria>& authenticatorSelection)
 {
     AuthenticatorManager::TransportSet result;
     if (!authenticatorSelection || !authenticatorSelection->authenticatorAttachment) {
@@ -220,7 +220,7 @@ void AuthenticatorManager::startDiscovery(const TransportSet& transports)
     }
 }
 
-void AuthenticatorManager::initTimeOutTimer(const std::optional<unsigned>& timeOutInMs)
+void AuthenticatorManager::initTimeOutTimer(const Optional<unsigned>& timeOutInMs)
 {
     using namespace AuthenticatorManagerInternal;
 

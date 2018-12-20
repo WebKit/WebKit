@@ -37,7 +37,7 @@ namespace WebCore {
 String logLevelString();
 bool isLogChannelEnabled(const String& name);
 WEBCORE_EXPORT void setLogChannelToAccumulate(const String& name);
-WEBCORE_EXPORT void initializeLogChannelsIfNecessary(std::optional<String> = std::nullopt);
+WEBCORE_EXPORT void initializeLogChannelsIfNecessary(Optional<String> = WTF::nullopt);
 
 #endif // !LOG_DISABLED || !RELEASE_LOG_DISABLED
 

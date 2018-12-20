@@ -602,7 +602,7 @@ bool Page::showAllPlugins() const
     return false;
 }
 
-inline std::optional<std::pair<MediaCanStartListener&, Document&>>  Page::takeAnyMediaCanStartListener()
+inline Optional<std::pair<MediaCanStartListener&, Document&>>  Page::takeAnyMediaCanStartListener()
 {
     for (Frame* frame = &mainFrame(); frame; frame = frame->tree().traverseNext()) {
         if (!frame->document())
@@ -610,7 +610,7 @@ inline std::optional<std::pair<MediaCanStartListener&, Document&>>  Page::takeAn
         if (MediaCanStartListener* listener = frame->document()->takeAnyMediaCanStartListener())
             return { { *listener, *frame->document() } };
     }
-    return std::nullopt;
+    return WTF::nullopt;
 }
 
 void Page::setCanStartMedia(bool canStartMedia)
@@ -1125,7 +1125,7 @@ bool Page::isLowPowerModeEnabled() const
     return m_lowPowerModeNotifier->isLowPowerModeEnabled();
 }
 
-void Page::setLowPowerModeEnabledOverrideForTesting(std::optional<bool> isEnabled)
+void Page::setLowPowerModeEnabledOverrideForTesting(Optional<bool> isEnabled)
 {
     m_lowPowerModeEnabledOverrideForTesting = isEnabled;
     handleLowModePowerChange(m_lowPowerModeEnabledOverrideForTesting.value_or(false));
@@ -1347,7 +1347,7 @@ void Page::userStyleSheetLocationChanged()
 
     m_didLoadUserStyleSheet = false;
     m_userStyleSheet = String();
-    m_userStyleSheetModificationTime = std::nullopt;
+    m_userStyleSheetModificationTime = WTF::nullopt;
 
     // Data URLs with base64-encoded UTF-8 style sheets are common. We can process them
     // synchronously and avoid using a loader. 
@@ -1871,7 +1871,7 @@ void Page::setIsVisibleInternal(bool isVisible)
 
         if (m_navigationToLogWhenVisible) {
             logNavigation(m_navigationToLogWhenVisible.value());
-            m_navigationToLogWhenVisible = std::nullopt;
+            m_navigationToLogWhenVisible = WTF::nullopt;
         }
     }
 
@@ -2337,7 +2337,7 @@ void Page::mainFrameLoadStarted(const URL& destinationURL, FrameLoadType type)
         return;
     }
 
-    m_navigationToLogWhenVisible = std::nullopt;
+    m_navigationToLogWhenVisible = WTF::nullopt;
     logNavigation(navigation);
 }
 
@@ -2645,7 +2645,7 @@ bool Page::useDarkAppearance() const
     return m_useDarkAppearance;
 }
 
-void Page::setUseDarkAppearanceOverride(std::optional<bool> valueOverride)
+void Page::setUseDarkAppearanceOverride(Optional<bool> valueOverride)
 {
     if (valueOverride == m_useDarkAppearanceOverride)
         return;

@@ -45,10 +45,10 @@ public:
     static AVAudioSessionCaptureDeviceManager& singleton();
 
     const Vector<CaptureDevice>& captureDevices() final;
-    std::optional<CaptureDevice> captureDeviceWithPersistentID(CaptureDevice::DeviceType, const String&);
+    Optional<CaptureDevice> captureDeviceWithPersistentID(CaptureDevice::DeviceType, const String&);
 
     Vector<AVAudioSessionCaptureDevice>& audioSessionCaptureDevices();
-    std::optional<AVAudioSessionCaptureDevice> audioSessionDeviceWithUID(const String&);
+    Optional<AVAudioSessionCaptureDevice> audioSessionDeviceWithUID(const String&);
 
 private:
     AVAudioSessionCaptureDeviceManager() = default;
@@ -56,8 +56,8 @@ private:
 
     void refreshAudioCaptureDevices();
 
-    std::optional<Vector<CaptureDevice>> m_devices;
-    std::optional<Vector<AVAudioSessionCaptureDevice>> m_audioSessionCaptureDevices;
+    Optional<Vector<CaptureDevice>> m_devices;
+    Optional<Vector<AVAudioSessionCaptureDevice>> m_audioSessionCaptureDevices;
     RetainPtr<WebAVAudioSessionAvailableInputsListener> m_listener;
 };
 

@@ -92,7 +92,7 @@ MockRealtimeVideoSource::MockRealtimeVideoSource(String&& deviceID, String&& nam
     m_fillColor = properties.fillColor;
 }
 
-bool MockRealtimeVideoSource::supportsSizeAndFrameRate(std::optional<int> width, std::optional<int> height, std::optional<double> rate)
+bool MockRealtimeVideoSource::supportsSizeAndFrameRate(Optional<int> width, Optional<int> height, Optional<double> rate)
 {
     // FIXME: consider splitting mock display into another class so we don't don't have to do this silly dance
     // because of the RealtimeVideoSource inheritance.
@@ -102,7 +102,7 @@ bool MockRealtimeVideoSource::supportsSizeAndFrameRate(std::optional<int> width,
     return RealtimeMediaSource::supportsSizeAndFrameRate(width, height, rate);
 }
 
-void MockRealtimeVideoSource::setSizeAndFrameRate(std::optional<int> width, std::optional<int> height, std::optional<double> rate)
+void MockRealtimeVideoSource::setSizeAndFrameRate(Optional<int> width, Optional<int> height, Optional<double> rate)
 {
     // FIXME: consider splitting mock display into another class so we don't don't have to do this silly dance
     // because of the RealtimeVideoSource inheritance.
@@ -195,7 +195,7 @@ IntSize MockRealtimeVideoSource::captureSize() const
 
 void MockRealtimeVideoSource::settingsDidChange(OptionSet<RealtimeMediaSourceSettings::Flag> settings)
 {
-    m_currentSettings = std::nullopt;
+    m_currentSettings = WTF::nullopt;
     if (settings.containsAny({ RealtimeMediaSourceSettings::Flag::Width, RealtimeMediaSourceSettings::Flag::Height })) {
         m_baseFontSize = captureSize().height() * .08;
         m_bipBopFontSize = m_baseFontSize * 2.5;

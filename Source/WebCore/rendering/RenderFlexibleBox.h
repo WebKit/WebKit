@@ -53,8 +53,8 @@ public:
     void layoutBlock(bool relayoutChildren, LayoutUnit pageLogicalHeight = 0_lu) final;
 
     int baselinePosition(FontBaseline, bool firstLine, LineDirectionMode, LinePositionMode = PositionOnContainingLine) const override;
-    std::optional<int> firstLineBaseline() const override;
-    std::optional<int> inlineBlockBaseline(LineDirectionMode) const override;
+    Optional<int> firstLineBaseline() const override;
+    Optional<int> inlineBlockBaseline(LineDirectionMode) const override;
 
     void styleDidChange(StyleDifference, const RenderStyle*) override;
     void paintChildren(PaintInfo& forSelf, const LayoutPoint&, PaintInfo& forChild, bool usePrintRect) override;
@@ -68,9 +68,9 @@ public:
 
     virtual bool isFlexibleBoxImpl() const { return false; };
     
-    std::optional<LayoutUnit> crossSizeForPercentageResolution(const RenderBox&);
-    std::optional<LayoutUnit> mainSizeForPercentageResolution(const RenderBox&);
-    std::optional<LayoutUnit> childLogicalHeightForPercentageResolution(const RenderBox&);
+    Optional<LayoutUnit> crossSizeForPercentageResolution(const RenderBox&);
+    Optional<LayoutUnit> mainSizeForPercentageResolution(const RenderBox&);
+    Optional<LayoutUnit> childLogicalHeightForPercentageResolution(const RenderBox&);
     
     void clearCachedMainSizeForChild(const RenderBox& child);
     
@@ -122,7 +122,7 @@ private:
     LayoutUnit mainAxisExtent() const;
     LayoutUnit crossAxisContentExtent() const;
     LayoutUnit mainAxisContentExtent(LayoutUnit contentLogicalHeight);
-    std::optional<LayoutUnit> computeMainAxisExtentForChild(const RenderBox& child, SizeType, const Length& size);
+    Optional<LayoutUnit> computeMainAxisExtentForChild(const RenderBox& child, SizeType, const Length& size);
     WritingMode transformedWritingMode() const;
     LayoutUnit flowAwareBorderStart() const;
     LayoutUnit flowAwareBorderEnd() const;

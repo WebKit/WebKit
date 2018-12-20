@@ -341,7 +341,7 @@ void WebPage::restorePageState(const HistoryItem& historyItem)
         float boundedScale = std::min<float>(m_viewportConfiguration.maximumScale(), std::max<float>(m_viewportConfiguration.minimumScale(), historyItem.pageScaleFactor()));
         scalePage(boundedScale, IntPoint());
 
-        std::optional<FloatPoint> scrollPosition;
+        Optional<FloatPoint> scrollPosition;
         if (historyItem.shouldRestoreScrollPosition()) {
             m_drawingArea->setExposedContentRect(historyItem.exposedContentRect());
             scrollPosition = FloatPoint(historyItem.scrollPosition());
@@ -354,7 +354,7 @@ void WebPage::restorePageState(const HistoryItem& historyItem)
 
         double newScale = scaleAfterViewportWidthChange(historyItem.pageScaleFactor(), !historyItem.scaleIsInitial(), m_viewportConfiguration, currentMinimumLayoutSizeInScrollViewCoordinates.width(), newContentSize, oldContentSize, visibleHorizontalFraction);
 
-        std::optional<FloatPoint> newCenter;
+        Optional<FloatPoint> newCenter;
         if (historyItem.shouldRestoreScrollPosition()) {
             if (!oldContentSize.isEmpty() && !newContentSize.isEmpty() && newContentSize != oldContentSize)
                 newCenter = relativeCenterAfterContentSizeChange(historyItem.unobscuredContentRect(), oldContentSize, newContentSize);
@@ -674,7 +674,7 @@ void WebPage::requestAdditionalItemsForDragSession(const IntPoint& clientPositio
 
 void WebPage::didConcludeEditDataInteraction()
 {
-    std::optional<TextIndicatorData> textIndicatorData;
+    Optional<TextIndicatorData> textIndicatorData;
 
     static auto defaultEditDataInteractionTextIndicatorOptions = TextIndicatorOptionIncludeSnapshotOfAllVisibleContentWithoutSelection | TextIndicatorOptionExpandClipBeyondVisibleRect | TextIndicatorOptionPaintAllContent | TextIndicatorOptionIncludeMarginIfRangeMatchesSelection | TextIndicatorOptionPaintBackgrounds | TextIndicatorOptionComputeEstimatedBackgroundColor| TextIndicatorOptionUseSelectionRectForSizing | TextIndicatorOptionIncludeSnapshotWithSelectionHighlight;
     auto& frame = m_page->focusController().focusedOrMainFrame();
@@ -2590,7 +2590,7 @@ void WebPage::setDeviceOrientation(int32_t deviceOrientation)
     m_page->mainFrame().orientationChanged();
 }
 
-void WebPage::setOverrideViewportArguments(const std::optional<WebCore::ViewportArguments>& arguments)
+void WebPage::setOverrideViewportArguments(const Optional<WebCore::ViewportArguments>& arguments)
 {
     if (auto* document = m_page->mainFrame().document())
         document->setOverrideViewportArguments(arguments);
@@ -2925,11 +2925,11 @@ static inline void adjustVelocityDataForBoundedScale(double& horizontalVelocity,
         scaleChangeRate = 0;
 }
 
-std::optional<float> WebPage::scaleFromUIProcess(const VisibleContentRectUpdateInfo& visibleContentRectUpdateInfo) const
+Optional<float> WebPage::scaleFromUIProcess(const VisibleContentRectUpdateInfo& visibleContentRectUpdateInfo) const
 {
     auto transactionIDForLastScaleFromUIProcess = visibleContentRectUpdateInfo.lastLayerTreeTransactionID();
     if (m_lastTransactionIDWithScaleChange > transactionIDForLastScaleFromUIProcess)
-        return std::nullopt;
+        return WTF::nullopt;
 
     float scaleFromUIProcess = visibleContentRectUpdateInfo.scale();
     float currentScale = m_page->pageScaleFactor();
@@ -2943,7 +2943,7 @@ std::optional<float> WebPage::scaleFromUIProcess(const VisibleContentRectUpdateI
     
     scaleFromUIProcess = std::min<float>(m_viewportConfiguration.maximumScale(), std::max<float>(m_viewportConfiguration.minimumScale(), scaleFromUIProcess));
     if (areEssentiallyEqualAsFloat(currentScale, scaleFromUIProcess))
-        return std::nullopt;
+        return WTF::nullopt;
 
     return scaleFromUIProcess;
 }
@@ -3041,7 +3041,7 @@ void WebPage::updateVisibleContentRects(const VisibleContentRectUpdateInfo& visi
             if (visibleContentRectUpdateInfo.unobscuredContentRect() != visibleContentRectUpdateInfo.unobscuredContentRectRespectingInputViewBounds())
                 frameView.setVisualViewportOverrideRect(LayoutRect(visibleContentRectUpdateInfo.unobscuredContentRectRespectingInputViewBounds()));
             else
-                frameView.setVisualViewportOverrideRect(std::nullopt);
+                frameView.setVisualViewportOverrideRect(WTF::nullopt);
 
             LOG_WITH_STREAM(VisibleRects, stream << "WebPage::updateVisibleContentRects - setLayoutViewportOverrideRect " << visibleContentRectUpdateInfo.customFixedPositionRect());
             frameView.setLayoutViewportOverrideRect(LayoutRect(visibleContentRectUpdateInfo.customFixedPositionRect()));

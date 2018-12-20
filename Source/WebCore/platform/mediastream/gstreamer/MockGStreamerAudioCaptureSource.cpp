@@ -123,7 +123,7 @@ public:
     }
 
     GRefPtr<GstElement> m_src;
-    std::optional<GStreamerAudioStreamDescription> m_streamFormat;
+    Optional<GStreamerAudioStreamDescription> m_streamFormat;
     Vector<float> m_bipBopBuffer;
     uint32_t m_maximiumFrameCount;
     uint64_t m_samplesEmitted { 0 };
@@ -141,7 +141,7 @@ CaptureSourceOrError MockRealtimeAudioSource::create(String&& deviceID,
     return CaptureSourceOrError(WTFMove(source));
 }
 
-std::optional<std::pair<String, String>> MockGStreamerAudioCaptureSource::applyConstraints(const MediaConstraints& constraints)
+Optional<std::pair<String, String>> MockGStreamerAudioCaptureSource::applyConstraints(const MediaConstraints& constraints)
 {
     m_wrappedSource->applyConstraints(constraints);
     return GStreamerAudioCaptureSource::applyConstraints(constraints);

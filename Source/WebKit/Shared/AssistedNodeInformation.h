@@ -90,7 +90,7 @@ struct OptionItem {
     int parentGroupID { 0 };
 
     void encode(IPC::Encoder&) const;
-    static std::optional<OptionItem> decode(IPC::Decoder&);
+    static Optional<OptionItem> decode(IPC::Decoder&);
 };
 
 struct AssistedNodeInformation {

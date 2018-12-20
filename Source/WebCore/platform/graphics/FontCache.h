@@ -245,7 +245,7 @@ public:
         PrewarmInformation isolatedCopy() const;
 
         template<class Encoder> void encode(Encoder&) const;
-        template<class Decoder> static std::optional<PrewarmInformation> decode(Decoder&);
+        template<class Decoder> static Optional<PrewarmInformation> decode(Decoder&);
     };
     PrewarmInformation collectPrewarmInformation() const;
     void prewarm(const PrewarmInformation&);
@@ -314,7 +314,7 @@ void FontCache::PrewarmInformation::encode(Encoder& encoder) const
 }
 
 template<class Decoder>
-std::optional<FontCache::PrewarmInformation> FontCache::PrewarmInformation::decode(Decoder& decoder)
+Optional<FontCache::PrewarmInformation> FontCache::PrewarmInformation::decode(Decoder& decoder)
 {
     PrewarmInformation prewarmInformation;
     if (!decoder.decode(prewarmInformation.seenFamilies))

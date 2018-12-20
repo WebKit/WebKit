@@ -39,7 +39,7 @@ class ScriptExecutionContext;
 
 class CanvasCaptureMediaStreamTrack final : public MediaStreamTrack {
 public:
-    static Ref<CanvasCaptureMediaStreamTrack> create(ScriptExecutionContext&, Ref<HTMLCanvasElement>&&, std::optional<double>&& frameRequestRate);
+    static Ref<CanvasCaptureMediaStreamTrack> create(ScriptExecutionContext&, Ref<HTMLCanvasElement>&&, Optional<double>&& frameRequestRate);
 
     HTMLCanvasElement& canvas() { return m_canvas.get(); }
     void requestFrame() { static_cast<Source&>(source()).requestFrame(); }
@@ -49,13 +49,13 @@ public:
 private:
     class Source final : public RealtimeMediaSource, private CanvasObserver {
     public:
-        static Ref<Source> create(HTMLCanvasElement&, std::optional<double>&& frameRequestRate);
+        static Ref<Source> create(HTMLCanvasElement&, Optional<double>&& frameRequestRate);
         
         void requestFrame() { m_shouldEmitFrame = true; }
-        std::optional<double> frameRequestRate() const { return m_frameRequestRate; }
+        Optional<double> frameRequestRate() const { return m_frameRequestRate; }
 
     private:
-        Source(HTMLCanvasElement&, std::optional<double>&&);
+        Source(HTMLCanvasElement&, Optional<double>&&);
 
         // CanvasObserver API
         void canvasChanged(CanvasBase&, const FloatRect&) final;
@@ -73,10 +73,10 @@ private:
         void requestFrameTimerFired();
 
         bool m_shouldEmitFrame { true };
-        std::optional<double> m_frameRequestRate;
+        Optional<double> m_frameRequestRate;
         Timer m_requestFrameTimer;
         Timer m_canvasChangedTimer;
-        std::optional<RealtimeMediaSourceSettings> m_currentSettings;
+        Optional<RealtimeMediaSourceSettings> m_currentSettings;
         HTMLCanvasElement* m_canvas;
         RefPtr<Image> m_currentImage;
     };

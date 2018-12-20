@@ -302,7 +302,7 @@ void BlockFormattingContext::computeWidthAndMargin(const Box& layoutBox) const
 {
     auto& layoutState = this->layoutState();
 
-    auto compute = [&](std::optional<LayoutUnit> usedWidth) -> WidthAndMargin {
+    auto compute = [&](Optional<LayoutUnit> usedWidth) -> WidthAndMargin {
 
         if (layoutBox.isInFlow())
             return Geometry::inFlowWidthAndMargin(layoutState, layoutBox, usedWidth);
@@ -340,7 +340,7 @@ void BlockFormattingContext::computeHeightAndMargin(const Box& layoutBox) const
 {
     auto& layoutState = this->layoutState();
 
-    auto compute = [&](std::optional<LayoutUnit> usedHeight) -> HeightAndMargin {
+    auto compute = [&](Optional<LayoutUnit> usedHeight) -> HeightAndMargin {
 
         if (layoutBox.isInFlow())
             return Geometry::inFlowHeightAndMargin(layoutState, layoutBox, usedHeight);

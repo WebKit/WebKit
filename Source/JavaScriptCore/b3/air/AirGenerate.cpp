@@ -207,7 +207,7 @@ void generate(Code& code, CCallHelpers& jit)
         if (disassembler)
             disassembler->startBlock(block, jit); 
 
-        if (std::optional<unsigned> entrypointIndex = code.entrypointIndex(block)) {
+        if (Optional<unsigned> entrypointIndex = code.entrypointIndex(block)) {
             ASSERT(code.isEntrypoint(block));
 
             if (disassembler)

@@ -31,7 +31,7 @@
 namespace WebCore {
 namespace Process {
 
-static std::optional<ProcessIdentifier> globalIdentifier;
+static Optional<ProcessIdentifier> globalIdentifier;
 
 void setIdentifier(ProcessIdentifier processIdentifier)
 {

@@ -66,7 +66,7 @@ void WebPopupMenuProxyGtk::selectItem(unsigned itemIndex)
     m_selectedItem = itemIndex;
 }
 
-void WebPopupMenuProxyGtk::activateItem(std::optional<unsigned> itemIndex)
+void WebPopupMenuProxyGtk::activateItem(Optional<unsigned> itemIndex)
 {
     if (m_client)
         m_client->valueChangedForPopupMenu(this, itemIndex.value_or(m_selectedItem.value_or(-1)));
@@ -348,7 +348,7 @@ void WebPopupMenuProxyGtk::hidePopupMenu()
         m_device = nullptr;
     }
 
-    activateItem(std::nullopt);
+    activateItem(WTF::nullopt);
 
     if (m_currentSearchString) {
         g_string_free(m_currentSearchString, TRUE);
@@ -368,14 +368,14 @@ void WebPopupMenuProxyGtk::cancelTracking()
     hidePopupMenu();
 }
 
-std::optional<unsigned> WebPopupMenuProxyGtk::typeAheadFindIndex(GdkEventKey* event)
+Optional<unsigned> WebPopupMenuProxyGtk::typeAheadFindIndex(GdkEventKey* event)
 {
     gunichar keychar = gdk_keyval_to_unicode(event->keyval);
     if (!g_unichar_isprint(keychar))
-        return std::nullopt;
+        return WTF::nullopt;
 
     if (event->time < m_previousKeyEventTime)
-        return std::nullopt;
+        return WTF::nullopt;
 
     static const uint32_t typeaheadTimeoutMs = 1000;
     if (event->time - m_previousKeyEventTime > typeaheadTimeoutMs) {
@@ -409,7 +409,7 @@ std::optional<unsigned> WebPopupMenuProxyGtk::typeAheadFindIndex(GdkEventKey* ev
     GUniquePtr<char> normalizedPrefix(g_utf8_normalize(m_currentSearchString->str, prefixLength, G_NORMALIZE_ALL));
     GUniquePtr<char> prefix(normalizedPrefix ? g_utf8_casefold(normalizedPrefix.get(), -1) : nullptr);
     if (!prefix)
-        return std::nullopt;
+        return WTF::nullopt;
 
     model = gtk_tree_view_get_model(GTK_TREE_VIEW(m_treeView));
     for (unsigned i = 0; i < itemCount; i++, index = (index + 1) % itemCount) {
@@ -432,7 +432,7 @@ std::optional<unsigned> WebPopupMenuProxyGtk::typeAheadFindIndex(GdkEventKey* ev
             return index;
     }
 
-    return std::nullopt;
+    return WTF::nullopt;
 }
 
 bool WebPopupMenuProxyGtk::typeAheadFind(GdkEventKey* event)

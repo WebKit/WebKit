@@ -75,7 +75,7 @@ private:
     // SuspendableTimer
     void fired() override;
     void didStop() override;
-    WEBCORE_EXPORT std::optional<MonotonicTime> alignedFireTime(MonotonicTime) const override;
+    WEBCORE_EXPORT Optional<MonotonicTime> alignedFireTime(MonotonicTime) const override;
 
     // ActiveDOMObject API.
     const char* activeDOMObjectName() const override;

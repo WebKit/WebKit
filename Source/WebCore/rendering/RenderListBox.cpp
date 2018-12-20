@@ -130,7 +130,7 @@ void RenderListBox::updateFromElement()
     if (m_optionsChanged) {
         float width = 0;
         auto& normalFont = style().fontCascade();
-        std::optional<FontCascade> boldFont;
+        Optional<FontCascade> boldFont;
         for (auto* element : selectElement().listItems()) {
             String text;
             WTF::Function<const FontCascade&()> selectFont = [&normalFont] () -> const FontCascade& {
@@ -693,8 +693,8 @@ int RenderListBox::numberOfVisibleItemsInPaddingBottom() const
 
 void RenderListBox::computeFirstIndexesVisibleInPaddingTopBottomAreas()
 {
-    m_indexOfFirstVisibleItemInsidePaddingTopArea = std::nullopt;
-    m_indexOfFirstVisibleItemInsidePaddingBottomArea = std::nullopt;
+    m_indexOfFirstVisibleItemInsidePaddingTopArea = WTF::nullopt;
+    m_indexOfFirstVisibleItemInsidePaddingBottomArea = WTF::nullopt;
 
     int maximumNumberOfItemsThatFitInPaddingTopArea = paddingTop() / itemHeight();
     if (maximumNumberOfItemsThatFitInPaddingTopArea) {

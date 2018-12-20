@@ -93,7 +93,7 @@ struct SupportedPluginIdentifier {
     String pluginIdentifier;
 
     template<class Encoder> void encode(Encoder&) const;
-    template<class Decoder> static std::optional<SupportedPluginIdentifier> decode(Decoder&);
+    template<class Decoder> static Optional<SupportedPluginIdentifier> decode(Decoder&);
 };
 
 // FIXME: merge with PluginDatabase in the future
@@ -128,11 +128,11 @@ private:
 protected:
     Page& m_page;
     Vector<PluginInfo> m_plugins;
-    std::optional<Vector<SupportedPluginIdentifier>> m_supportedPluginIdentifiers;
+    Optional<Vector<SupportedPluginIdentifier>> m_supportedPluginIdentifiers;
 
     struct CachedVisiblePlugins {
         URL pageURL;
-        std::optional<Vector<PluginInfo>> pluginList;
+        Optional<Vector<PluginInfo>> pluginList;
     };
     mutable CachedVisiblePlugins m_cachedVisiblePlugins;
 };
@@ -144,17 +144,17 @@ inline bool isSupportedPlugin(const Vector<SupportedPluginIdentifier>& pluginIde
     }) != notFound;
 }
 
-template<class Decoder> inline std::optional<SupportedPluginIdentifier> SupportedPluginIdentifier::decode(Decoder& decoder)
+template<class Decoder> inline Optional<SupportedPluginIdentifier> SupportedPluginIdentifier::decode(Decoder& decoder)
 {
-    std::optional<String> matchingDomain;
+    Optional<String> matchingDomain;
     decoder >> matchingDomain;
     if (!matchingDomain)
-        return std::nullopt;
+        return WTF::nullopt;
 
-    std::optional<String> pluginIdentifier;
+    Optional<String> pluginIdentifier;
     decoder >> pluginIdentifier;
     if (!pluginIdentifier)
-        return std::nullopt;
+        return WTF::nullopt;
 
     return SupportedPluginIdentifier { WTFMove(matchingDomain.value()), WTFMove(pluginIdentifier.value()) };
 }

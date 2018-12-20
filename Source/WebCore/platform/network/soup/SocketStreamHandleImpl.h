@@ -57,13 +57,13 @@ public:
     const URL& url() const { return m_url; }
 
     void platformSend(const uint8_t* data, size_t length, Function<void(bool)>&&) final;
-    void platformSendHandshake(const uint8_t* data, size_t length, const std::optional<CookieRequestHeaderFieldProxy>&, Function<void(bool, bool)>&&) final;
+    void platformSendHandshake(const uint8_t* data, size_t length, const Optional<CookieRequestHeaderFieldProxy>&, Function<void(bool, bool)>&&) final;
     void platformClose() final;
 private:
     SocketStreamHandleImpl(const URL&, SocketStreamHandleClient&);
 
     size_t bufferedAmount() final;
-    std::optional<size_t> platformSendInternal(const uint8_t*, size_t);
+    Optional<size_t> platformSendInternal(const uint8_t*, size_t);
     bool sendPendingData();
 
     void beginWaitingForSocketWritability();

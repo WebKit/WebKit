@@ -211,8 +211,8 @@ template<typename P> struct HashTraits<Ref<P>> : SimpleClassHashTraits<Ref<P>> {
     static PeekType peek(const Ref<P>& value) { return const_cast<PeekType>(value.ptrAllowingHashTableEmptyValue()); }
     static PeekType peek(P* value) { return value; }
 
-    typedef std::optional<Ref<P>> TakeType;
-    static TakeType take(Ref<P>&& value) { return isEmptyValue(value) ? std::nullopt : std::optional<Ref<P>>(WTFMove(value)); }
+    typedef Optional<Ref<P>> TakeType;
+    static TakeType take(Ref<P>&& value) { return isEmptyValue(value) ? WTF::nullopt : Optional<Ref<P>>(WTFMove(value)); }
 };
 
 template<> struct HashTraits<String> : SimpleClassHashTraits<String> {

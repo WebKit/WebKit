@@ -183,13 +183,13 @@ FloatQuad TransformState::mappedQuad(bool* wasClamped) const
     return quad;
 }
 
-std::optional<FloatQuad> TransformState::mappedSecondaryQuad(bool* wasClamped) const
+Optional<FloatQuad> TransformState::mappedSecondaryQuad(bool* wasClamped) const
 {
     if (wasClamped)
         *wasClamped = false;
 
     if (!m_lastPlanarSecondaryQuad)
-        return std::optional<FloatQuad>();
+        return Optional<FloatQuad>();
 
     FloatQuad quad = *m_lastPlanarSecondaryQuad;
     mapQuad(quad, m_direction, wasClamped);

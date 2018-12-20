@@ -73,8 +73,8 @@ struct InlineRun {
         unsigned m_length;
     };
     void setTextContext(TextContext textContext) { m_textContext.emplace(textContext); }
-    std::optional<TextContext>& textContext() { return m_textContext; }
-    std::optional<TextContext> textContext() const { return m_textContext; }
+    Optional<TextContext>& textContext() { return m_textContext; }
+    Optional<TextContext> textContext() const { return m_textContext; }
 
     const InlineItem& inlineItem() const { return m_inlineItem; }
 
@@ -83,7 +83,7 @@ private:
     ExpansionOpportunity m_expansionOpportunity;
 
     const InlineItem& m_inlineItem;
-    std::optional<TextContext> m_textContext;
+    Optional<TextContext> m_textContext;
 };
 
 using InlineRuns = Vector<InlineRun>;

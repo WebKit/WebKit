@@ -63,7 +63,7 @@ namespace WebKit {
 
 struct WebPageCreationParameters {
     void encode(IPC::Encoder&) const;
-    static std::optional<WebPageCreationParameters> decode(IPC::Decoder&);
+    static Optional<WebPageCreationParameters> decode(IPC::Decoder&);
 
     WebCore::IntSize viewSize;
 
@@ -114,13 +114,13 @@ struct WebPageCreationParameters {
 
     WebCore::IntSize viewLayoutSize;
     bool autoSizingShouldExpandToViewHeight;
-    std::optional<WebCore::IntSize> viewportSizeForCSSViewportUnits;
+    Optional<WebCore::IntSize> viewportSizeForCSSViewportUnits;
     
     WebCore::ScrollPinningBehavior scrollPinningBehavior;
 
-    // FIXME: This should be std::optional<WebCore::ScrollbarOverlayStyle>, but we would need to
+    // FIXME: This should be Optional<WebCore::ScrollbarOverlayStyle>, but we would need to
     // correctly handle enums inside Optionals when encoding and decoding. 
-    std::optional<uint32_t> scrollbarOverlayStyle;
+    Optional<uint32_t> scrollbarOverlayStyle;
 
     bool backgroundExtendsBeyondPage;
 
@@ -160,12 +160,12 @@ struct WebPageCreationParameters {
     OptionSet<WebCore::LayoutMilestone> observedLayoutMilestones;
 
     String overrideContentSecurityPolicy;
-    std::optional<double> cpuLimit;
+    Optional<double> cpuLimit;
 
     HashMap<String, uint64_t> urlSchemeHandlers;
 
 #if ENABLE(APPLICATION_MANIFEST)
-    std::optional<WebCore::ApplicationManifest> applicationManifest;
+    Optional<WebCore::ApplicationManifest> applicationManifest;
 #endif
 
 #if ENABLE(SERVICE_WORKER)

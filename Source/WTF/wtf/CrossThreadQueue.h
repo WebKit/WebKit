@@ -44,7 +44,7 @@ public:
     void append(DataType&&);
 
     DataType waitForMessage();
-    std::optional<DataType> tryGetMessage();
+    Optional<DataType> tryGetMessage();
 
     void kill();
     bool isKilled() const;
@@ -84,7 +84,7 @@ DataType CrossThreadQueue<DataType>::waitForMessage()
 }
 
 template<typename DataType>
-std::optional<DataType> CrossThreadQueue<DataType>::tryGetMessage()
+Optional<DataType> CrossThreadQueue<DataType>::tryGetMessage()
 {
     LockHolder lock(m_lock);
 

@@ -40,7 +40,7 @@ struct MessageWithMessagePorts {
     TransferredMessagePortArray transferredPorts;
 
     template<class Encoder> void encode(Encoder&) const;
-    template<class Decoder> static std::optional<MessageWithMessagePorts> decode(Decoder&);
+    template<class Decoder> static Optional<MessageWithMessagePorts> decode(Decoder&);
 };
 
 
@@ -52,16 +52,16 @@ void MessageWithMessagePorts::encode(Encoder& encoder) const
 }
 
 template<class Decoder>
-std::optional<MessageWithMessagePorts> MessageWithMessagePorts::decode(Decoder& decoder)
+Optional<MessageWithMessagePorts> MessageWithMessagePorts::decode(Decoder& decoder)
 {
     MessageWithMessagePorts result;
 
     result.message = SerializedScriptValue::decode(decoder);
     if (!result.message)
-        return std::nullopt;
+        return WTF::nullopt;
 
     if (!decoder.decode(result.transferredPorts))
-        return std::nullopt;
+        return WTF::nullopt;
 
     return result;
 }

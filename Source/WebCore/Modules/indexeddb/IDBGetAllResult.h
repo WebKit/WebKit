@@ -115,7 +115,7 @@ bool IDBGetAllResult::decode(Decoder& decoder, IDBGetAllResult& result)
     }
     case 1: {
         result.m_results = Vector<IDBValue>();
-        std::optional<Vector<IDBValue>> optional;
+        Optional<Vector<IDBValue>> optional;
         decoder >> optional;
         if (!optional)
             return false;

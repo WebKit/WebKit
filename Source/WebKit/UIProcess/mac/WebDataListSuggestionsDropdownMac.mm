@@ -55,13 +55,13 @@ static NSString * const suggestionCellReuseIdentifier = @"WKDataListSuggestionCe
 
 @interface WKDataListSuggestionTable : NSTableView {
     RetainPtr<NSScrollView> _enclosingScrollView;
-    std::optional<size_t> _activeRow;
+    Optional<size_t> _activeRow;
 }
 
 - (id)initWithElementRect:(const WebCore::IntRect&)rect;
 - (void)setVisibleRect:(NSRect)rect;
 - (void)setActiveRow:(size_t)row;
-- (std::optional<size_t>)currentActiveRow;
+- (Optional<size_t>)currentActiveRow;
 - (void)reload;
 @end
 
@@ -265,7 +265,7 @@ void WebDataListSuggestionsDropdownMac::close()
     [_enclosingScrollView setFrame:NSMakeRect(dropdownShadowHeight, dropdownShadowHeight, NSWidth(rect) - dropdownShadowHeight * 2, NSHeight(rect) - dropdownShadowHeight)];
 }
 
-- (std::optional<size_t>)currentActiveRow
+- (Optional<size_t>)currentActiveRow
 {
     return _activeRow;
 }
@@ -286,7 +286,7 @@ void WebDataListSuggestionsDropdownMac::close()
 
 - (void)reload
 {
-    _activeRow = std::nullopt;
+    _activeRow = WTF::nullopt;
     [self reloadData];
 }
 
@@ -336,7 +336,7 @@ void WebDataListSuggestionsDropdownMac::close()
 
 - (String)currentSelectedString
 {
-    std::optional<size_t> selectedRow = [_table currentActiveRow];
+    Optional<size_t> selectedRow = [_table currentActiveRow];
     if (selectedRow && selectedRow.value() < _suggestions.size())
         return _suggestions.at(selectedRow.value());
 
@@ -355,7 +355,7 @@ void WebDataListSuggestionsDropdownMac::close()
 - (void)moveSelectionByDirection:(const String&)direction
 {
     size_t size = _suggestions.size();
-    std::optional<size_t> oldSelection = [_table currentActiveRow];
+    Optional<size_t> oldSelection = [_table currentActiveRow];
 
     size_t newSelection;
     if (oldSelection) {
@@ -427,7 +427,7 @@ void WebDataListSuggestionsDropdownMac::close()
 
     [result setText:_suggestions.at(row)];
 
-    std::optional<size_t> currentActiveRow = [_table currentActiveRow];
+    Optional<size_t> currentActiveRow = [_table currentActiveRow];
     if (currentActiveRow && static_cast<size_t>(row) == currentActiveRow.value())
         result.active = YES;
 

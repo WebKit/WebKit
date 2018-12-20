@@ -85,37 +85,37 @@ String SecurityOriginData::databaseIdentifier() const
     return stringBuilder.toString();
 }
 
-std::optional<SecurityOriginData> SecurityOriginData::fromDatabaseIdentifier(const String& databaseIdentifier)
+Optional<SecurityOriginData> SecurityOriginData::fromDatabaseIdentifier(const String& databaseIdentifier)
 {
     // Make sure there's a first separator
     size_t separator1 = databaseIdentifier.find(separatorCharacter);
     if (separator1 == notFound)
-        return std::nullopt;
+        return WTF::nullopt;
     
     // Make sure there's a second separator
     size_t separator2 = databaseIdentifier.reverseFind(separatorCharacter);
     if (separator2 == notFound)
-        return std::nullopt;
+        return WTF::nullopt;
     
     // Ensure there were at least 2 separator characters. Some hostnames on intranets have
     // underscores in them, so we'll assume that any additional underscores are part of the host.
     if (separator1 == separator2)
-        return std::nullopt;
+        return WTF::nullopt;
     
     // Make sure the port section is a valid port number or doesn't exist
     bool portOkay;
     int port = databaseIdentifier.right(databaseIdentifier.length() - separator2 - 1).toInt(&portOkay);
     bool portAbsent = (separator2 == databaseIdentifier.length() - 1);
     if (!(portOkay || portAbsent))
-        return std::nullopt;
+        return WTF::nullopt;
     
     if (port < 0 || port > std::numeric_limits<uint16_t>::max())
-        return std::nullopt;
+        return WTF::nullopt;
     
     auto protocol = databaseIdentifier.substring(0, separator1);
     auto host = databaseIdentifier.substring(separator1 + 1, separator2 - separator1 - 1);
     if (!port)
-        return SecurityOriginData { protocol, host, std::nullopt };
+        return SecurityOriginData { protocol, host, WTF::nullopt };
 
     return SecurityOriginData { protocol, host, static_cast<uint16_t>(port) };
 }

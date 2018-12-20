@@ -33,13 +33,13 @@
 namespace WebCore {
 
 struct OptionalEffectTiming {
-    std::optional<double> delay;
-    std::optional<double> endDelay;
-    std::optional<FillMode> fill;
-    std::optional<double> iterationStart;
-    std::optional<double> iterations;
-    std::optional<Variant<double, String>> duration;
-    std::optional<PlaybackDirection> direction;
+    Optional<double> delay;
+    Optional<double> endDelay;
+    Optional<FillMode> fill;
+    Optional<double> iterationStart;
+    Optional<double> iterations;
+    Optional<Variant<double, String>> duration;
+    Optional<PlaybackDirection> direction;
     String easing;
 };
 

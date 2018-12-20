@@ -131,7 +131,7 @@ private:
 #endif
 
 #if USE(UNIX_DOMAIN_SOCKETS)
-    std::optional<int> m_fileDescriptor;
+    Optional<int> m_fileDescriptor;
     bool m_isWrappingMap { false };
 #elif OS(DARWIN)
     mach_port_t m_port { MACH_PORT_NULL };

@@ -37,7 +37,7 @@
 
 namespace WebCore {
 
-inline RTCIceCandidate::RTCIceCandidate(const String& candidate, const String& sdpMid, std::optional<unsigned short> sdpMLineIndex)
+inline RTCIceCandidate::RTCIceCandidate(const String& candidate, const String& sdpMid, Optional<unsigned short> sdpMLineIndex)
     : m_candidate(candidate)
     , m_sdpMid(sdpMid)
     , m_sdpMLineIndex(sdpMLineIndex)
@@ -52,7 +52,7 @@ ExceptionOr<Ref<RTCIceCandidate>> RTCIceCandidate::create(const Init& dictionary
     return create(dictionary.candidate, dictionary.sdpMid, dictionary.sdpMLineIndex);
 }
 
-Ref<RTCIceCandidate> RTCIceCandidate::create(const String& candidate, const String& sdpMid, std::optional<unsigned short> sdpMLineIndex)
+Ref<RTCIceCandidate> RTCIceCandidate::create(const String& candidate, const String& sdpMid, Optional<unsigned short> sdpMLineIndex)
 {
     return adoptRef(*new RTCIceCandidate(candidate, sdpMid, sdpMLineIndex));
 }

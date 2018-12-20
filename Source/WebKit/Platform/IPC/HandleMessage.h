@@ -190,7 +190,7 @@ void handleMessageDelayed(Connection& connection, Decoder& decoder, std::unique_
 template<typename T, typename C, typename MF>
 void handleMessageAsync(Connection& connection, Decoder& decoder, C* object, MF function)
 {
-    std::optional<uint64_t> listenerID;
+    Optional<uint64_t> listenerID;
     decoder >> listenerID;
     if (!listenerID) {
         ASSERT(decoder.isInvalid());

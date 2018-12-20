@@ -63,7 +63,7 @@ public:
 #endif
     };
 
-    const std::optional<PlainText>& plainText() const { return m_plainText; }
+    const Optional<PlainText>& plainText() const { return m_plainText; }
     void setPlainText(PlainText);
 
     struct URLData {
@@ -76,16 +76,16 @@ public:
 #endif
     };
 
-    const std::optional<URLData>& urlData() const { return m_url; }
+    const Optional<URLData>& urlData() const { return m_url; }
     void setURLData(URLData);
 
-    const std::optional<WebContent>& webContent() const { return m_webContent; }
+    const Optional<WebContent>& webContent() const { return m_webContent; }
     void setWebContent(WebContent);
 
 private:
-    std::optional<PlainText> m_plainText;
-    std::optional<URLData> m_url;
-    std::optional<WebContent> m_webContent;
+    Optional<PlainText> m_plainText;
+    Optional<URLData> m_url;
+    Optional<WebContent> m_webContent;
 };
 
 }

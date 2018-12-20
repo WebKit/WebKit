@@ -201,12 +201,12 @@ static Vector<hb_feature_t, 4> fontFeatures(const FontCascade& font, FontOrienta
     return features;
 }
 
-static std::optional<UScriptCode> characterScript(UChar32 character)
+static Optional<UScriptCode> characterScript(UChar32 character)
 {
     UErrorCode errorCode = U_ZERO_ERROR;
     UScriptCode script = uscript_getScript(character, &errorCode);
     if (U_FAILURE(errorCode))
-        return std::nullopt;
+        return WTF::nullopt;
     return script;
 }
 
@@ -216,17 +216,17 @@ struct HBRun {
     UScriptCode script;
 };
 
-static std::optional<HBRun> findNextRun(const UChar* characters, unsigned length, unsigned offset)
+static Optional<HBRun> findNextRun(const UChar* characters, unsigned length, unsigned offset)
 {
     SurrogatePairAwareTextIterator textIterator(characters + offset, offset, length, length);
     UChar32 character;
     unsigned clusterLength = 0;
     if (!textIterator.consume(character, clusterLength))
-        return std::nullopt;
+        return WTF::nullopt;
 
     auto currentScript = characterScript(character);
     if (!currentScript)
-        return std::nullopt;
+        return WTF::nullopt;
 
     unsigned startIndex = offset;
     for (textIterator.advance(clusterLength); textIterator.consume(character, clusterLength); textIterator.advance(clusterLength)) {
@@ -235,7 +235,7 @@ static std::optional<HBRun> findNextRun(const UChar* characters, unsigned length
 
         auto nextScript = characterScript(character);
         if (!nextScript)
-            return std::nullopt;
+            return WTF::nullopt;
 
         // §5.1 Handling Characters with the Common Script Property.
         // Programs must resolve any of the special Script property values, such as Common,
@@ -256,10 +256,10 @@ static std::optional<HBRun> findNextRun(const UChar* characters, unsigned length
         }
 
         if (currentScript != nextScript && !uscript_hasScript(character, currentScript.value()))
-            return std::optional<HBRun>({ startIndex, textIterator.currentIndex(), currentScript.value() });
+            return Optional<HBRun>({ startIndex, textIterator.currentIndex(), currentScript.value() });
     }
 
-    return std::optional<HBRun>({ startIndex, textIterator.currentIndex(), currentScript.value() });
+    return Optional<HBRun>({ startIndex, textIterator.currentIndex(), currentScript.value() });
 }
 
 static hb_script_t findScriptForVerticalGlyphSubstitution(hb_face_t* face)

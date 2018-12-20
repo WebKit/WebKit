@@ -91,12 +91,12 @@ template<typename T> struct JSConverter<IDLInterface<T>> {
 template<typename T> struct VariadicConverter<IDLInterface<T>> {
     using Item = std::reference_wrapper<T>;
 
-    static std::optional<Item> convert(JSC::ExecState& state, JSC::JSValue value)
+    static Optional<Item> convert(JSC::ExecState& state, JSC::JSValue value)
     {
         auto* result = Converter<IDLInterface<T>>::convert(state, value);
         if (!result)
-            return std::nullopt;
-        return std::optional<Item> { *result };
+            return WTF::nullopt;
+        return Optional<Item> { *result };
     }
 };
 

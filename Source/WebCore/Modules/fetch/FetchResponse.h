@@ -52,12 +52,12 @@ public:
     struct Init {
         unsigned short status { 200 };
         String statusText { "OK"_s };
-        std::optional<FetchHeaders::Init> headers;
+        Optional<FetchHeaders::Init> headers;
     };
 
-    WEBCORE_EXPORT static Ref<FetchResponse> create(ScriptExecutionContext&, std::optional<FetchBody>&&, FetchHeaders::Guard, ResourceResponse&&);
+    WEBCORE_EXPORT static Ref<FetchResponse> create(ScriptExecutionContext&, Optional<FetchBody>&&, FetchHeaders::Guard, ResourceResponse&&);
 
-    static ExceptionOr<Ref<FetchResponse>> create(ScriptExecutionContext&, std::optional<FetchBody::Init>&&, Init&&);
+    static ExceptionOr<Ref<FetchResponse>> create(ScriptExecutionContext&, Optional<FetchBody::Init>&&, Init&&);
     static Ref<FetchResponse> error(ScriptExecutionContext&);
     static ExceptionOr<Ref<FetchResponse>> redirect(ScriptExecutionContext&, const String& url, int status);
 
@@ -107,12 +107,12 @@ public:
 
     void initializeOpaqueLoadIdentifierForTesting() { m_opaqueLoadIdentifier = 1; }
 
-    const std::optional<ResourceError>& loadingError() const { return m_loadingError; }
+    const Optional<ResourceError>& loadingError() const { return m_loadingError; }
 
     const HTTPHeaderMap& internalResponseHeaders() const { return m_internalResponse.httpHeaderFields(); }
 
 private:
-    FetchResponse(ScriptExecutionContext&, std::optional<FetchBody>&&, Ref<FetchHeaders>&&, ResourceResponse&&);
+    FetchResponse(ScriptExecutionContext&, Optional<FetchBody>&&, Ref<FetchHeaders>&&, ResourceResponse&&);
 
     void stop() final;
     const char* activeDOMObjectName() const final;
@@ -151,9 +151,9 @@ private:
         std::unique_ptr<FetchLoader> m_loader;
     };
 
-    mutable std::optional<ResourceResponse> m_filteredResponse;
+    mutable Optional<ResourceResponse> m_filteredResponse;
     ResourceResponse m_internalResponse;
-    std::optional<BodyLoader> m_bodyLoader;
+    Optional<BodyLoader> m_bodyLoader;
     mutable String m_responseURL;
     // Opaque responses will padd their body size when used with Cache API.
     uint64_t m_bodySizeWithPadding { 0 };

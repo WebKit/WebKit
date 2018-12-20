@@ -210,7 +210,7 @@ namespace WebCore {
 #endif
         
         // The modifier state is optional, since it is not needed in the UI process or in legacy WebKit.
-        static std::optional<OptionSet<Modifier>> s_currentModifiers;
+        static Optional<OptionSet<Modifier>> s_currentModifiers;
     };
     
 } // namespace WebCore

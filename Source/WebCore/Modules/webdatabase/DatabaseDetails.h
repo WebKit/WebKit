@@ -66,7 +66,7 @@ public:
         return *this;
     }
 
-    DatabaseDetails(const String& databaseName, const String& displayName, unsigned long long expectedUsage, unsigned long long currentUsage, std::optional<WallTime> creationTime, std::optional<WallTime> modificationTime)
+    DatabaseDetails(const String& databaseName, const String& displayName, unsigned long long expectedUsage, unsigned long long currentUsage, Optional<WallTime> creationTime, Optional<WallTime> modificationTime)
         : m_name(databaseName)
         , m_displayName(displayName)
         , m_expectedUsage(expectedUsage)
@@ -80,8 +80,8 @@ public:
     const String& displayName() const { return m_displayName; }
     uint64_t expectedUsage() const { return m_expectedUsage; }
     uint64_t currentUsage() const { return m_currentUsage; }
-    std::optional<WallTime> creationTime() const { return m_creationTime; }
-    std::optional<WallTime> modificationTime() const { return m_modificationTime; }
+    Optional<WallTime> creationTime() const { return m_creationTime; }
+    Optional<WallTime> modificationTime() const { return m_modificationTime; }
 #ifndef NDEBUG
     Thread& thread() const { return m_thread.get(); }
 #endif

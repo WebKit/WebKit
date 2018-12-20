@@ -43,8 +43,8 @@ private:
     RenderPtr<RenderElement> createElementRenderer(RenderStyle&&, const RenderTreePosition&) final;
     void parseAttribute(const QualifiedName&, const AtomicString&) final;
 
-    std::optional<BooleanValue> m_accent;
-    std::optional<BooleanValue> m_accentUnder;
+    Optional<BooleanValue> m_accent;
+    Optional<BooleanValue> m_accentUnder;
 };
 
 }

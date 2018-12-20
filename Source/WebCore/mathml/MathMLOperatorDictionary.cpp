@@ -1107,17 +1107,17 @@ static const UChar32 horizontalOperators[] = {
     0x003D, 0x005E, 0x005F, 0x007E, 0x00AF, 0x02C6, 0x02C7, 0x02C9, 0x02CD, 0x02DC, 0x02F7, 0x0302, 0x0332, 0x203E, 0x20D0, 0x20D1, 0x20D6, 0x20D7, 0x20E1, 0x2190, 0x2192, 0x2194, 0x2198, 0x2199, 0x219C, 0x219D, 0x219E, 0x21A0, 0x21A2, 0x21A3, 0x21A4, 0x21A6, 0x21A9, 0x21AA, 0x21AB, 0x21AC, 0x21AD, 0x21B4, 0x21B9, 0x21BC, 0x21BD, 0x21C0, 0x21C1, 0x21C4, 0x21C6, 0x21C7, 0x21C9, 0x21CB, 0x21CC, 0x21D0, 0x21D2, 0x21D4, 0x21DA, 0x21DB, 0x21DC, 0x21DD, 0x21E0, 0x21E2, 0x21E4, 0x21E5, 0x21E6, 0x21E8, 0x21F0, 0x21F6, 0x21FD, 0x21FE, 0x21FF, 0x23B4, 0x23B5, 0x23DC, 0x23DD, 0x23DE, 0x23DF, 0x23E0, 0x23E1, 0x2500, 0x27F5, 0x27F6, 0x27F7, 0x27F8, 0x27F9, 0x27FA, 0x27FB, 0x27FC, 0x27FD, 0x27FE, 0x27FF, 0x290C, 0x290D, 0x290E, 0x290F, 0x2910, 0x294E, 0x2950, 0x2952, 0x2953, 0x2956, 0x2957, 0x295A, 0x295B, 0x295E, 0x295F, 0x2B45, 0x2B46, 0xFE35, 0xFE36, 0xFE37, 0xFE38, 0x1EEF0, 0x1EEF1
 };
 
-std::optional<Property> MathMLOperatorDictionary::search(UChar32 character, Form form, bool explicitForm)
+Optional<Property> MathMLOperatorDictionary::search(UChar32 character, Form form, bool explicitForm)
 {
     if (!character)
-        return std::nullopt;
+        return WTF::nullopt;
 
     // We try and find the default values from the operator dictionary.
     if (auto* entry = tryBinarySearch<const Entry, Key>(dictionary, dictionarySize, Key(character, form), ExtractKey))
         return ExtractProperty(*entry);
 
     if (explicitForm)
-        return std::nullopt;
+        return WTF::nullopt;
 
     // If we did not find the desired operator form and if it was not set explicitely, we use the first one in the following order: Infix, Prefix, Postfix.
     // This is to handle bad MathML markup without explicit <mrow> delimiters like "<mo>(</mo><mi>a</mi><mo>)</mo><mo>(</mo><mi>b</mi><mo>)</mo>" where innerfences should not be considered infix.
@@ -1130,7 +1130,7 @@ std::optional<Property> MathMLOperatorDictionary::search(UChar32 character, Form
         return ExtractProperty(*entry);
     }
 
-    return std::nullopt;
+    return WTF::nullopt;
 }
 
 bool MathMLOperatorDictionary::isVertical(UChar32 textContent)

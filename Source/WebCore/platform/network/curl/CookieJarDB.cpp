@@ -312,17 +312,17 @@ bool CookieJarDB::isEnabled() const
     return m_isEnabled;
 }
 
-std::optional<Vector<Cookie>> CookieJarDB::searchCookies(const String& requestUrl, const std::optional<bool>& httpOnly, const std::optional<bool>& secure, const std::optional<bool>& session)
+Optional<Vector<Cookie>> CookieJarDB::searchCookies(const String& requestUrl, const Optional<bool>& httpOnly, const Optional<bool>& secure, const Optional<bool>& session)
 {
     if (!isEnabled() || !m_database.isOpen())
-        return std::nullopt;
+        return WTF::nullopt;
 
     URL requestUrlObj({ }, requestUrl);
     String requestHost(requestUrlObj.host().toString().convertToASCIILowercase());
     String requestPath(requestUrlObj.path().convertToASCIILowercase());
 
     if (requestHost.isEmpty())
-        return std::nullopt;
+        return WTF::nullopt;
 
     if (requestPath.isEmpty())
         requestPath = "/";
@@ -338,7 +338,7 @@ std::optional<Vector<Cookie>> CookieJarDB::searchCookies(const String& requestUr
 
     auto pstmt = std::make_unique<SQLiteStatement>(m_database, sql);
     if (!pstmt)
-        return std::nullopt;
+        return WTF::nullopt;
 
     pstmt->prepare();
     pstmt->bindInt(1, httpOnly ? *httpOnly : -1);
@@ -368,7 +368,7 @@ std::optional<Vector<Cookie>> CookieJarDB::searchCookies(const String& requestUr
     }
 
     if (!pstmt)
-        return std::nullopt;
+        return WTF::nullopt;
 
     Vector<Cookie> results;
 

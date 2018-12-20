@@ -217,15 +217,15 @@ protected:
         return value->asInteger(output);
     }
 
-    template<class T> std::optional<T> getNumber(const String& name) const
+    template<class T> Optional<T> getNumber(const String& name) const
     {
         RefPtr<Value> value;
         if (!getValue(name, value))
-            return std::nullopt;
+            return WTF::nullopt;
 
         T result;
         if (!value->asDouble(result))
-            return std::nullopt;
+            return WTF::nullopt;
 
         return result;
     }

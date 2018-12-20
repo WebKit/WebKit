@@ -37,10 +37,10 @@ ShadowData::ShadowData(const ShadowData& o)
 {
 }
 
-std::optional<ShadowData> ShadowData::clone(const ShadowData* data)
+Optional<ShadowData> ShadowData::clone(const ShadowData* data)
 {
     if (!data)
-        return std::nullopt;
+        return WTF::nullopt;
     return *data;
 }
 

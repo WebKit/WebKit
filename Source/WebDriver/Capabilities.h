@@ -34,9 +34,9 @@
 namespace WebDriver {
 
 struct Timeouts {
-    std::optional<Seconds> script;
-    std::optional<Seconds> pageLoad;
-    std::optional<Seconds> implicit;
+    Optional<Seconds> script;
+    Optional<Seconds> pageLoad;
+    Optional<Seconds> implicit;
 };
 
 enum class PageLoadStrategy {
@@ -54,21 +54,21 @@ enum class UnhandledPromptBehavior {
 };
 
 struct Capabilities {
-    std::optional<String> browserName;
-    std::optional<String> browserVersion;
-    std::optional<String> platformName;
-    std::optional<bool> acceptInsecureCerts;
-    std::optional<bool> setWindowRect;
-    std::optional<Timeouts> timeouts;
-    std::optional<PageLoadStrategy> pageLoadStrategy;
-    std::optional<UnhandledPromptBehavior> unhandledPromptBehavior;
+    Optional<String> browserName;
+    Optional<String> browserVersion;
+    Optional<String> platformName;
+    Optional<bool> acceptInsecureCerts;
+    Optional<bool> setWindowRect;
+    Optional<Timeouts> timeouts;
+    Optional<PageLoadStrategy> pageLoadStrategy;
+    Optional<UnhandledPromptBehavior> unhandledPromptBehavior;
 #if PLATFORM(GTK) || PLATFORM(WPE)
-    std::optional<String> browserBinary;
-    std::optional<Vector<String>> browserArguments;
-    std::optional<Vector<std::pair<String, String>>> certificates;
+    Optional<String> browserBinary;
+    Optional<Vector<String>> browserArguments;
+    Optional<Vector<std::pair<String, String>>> certificates;
 #endif
 #if PLATFORM(GTK)
-    std::optional<bool> useOverlayScrollbars;
+    Optional<bool> useOverlayScrollbars;
 #endif
 };
 

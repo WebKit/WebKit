@@ -84,7 +84,7 @@ void ServiceWorkerClientFetch::start()
 }
 
 // https://fetch.spec.whatwg.org/#http-fetch step 3.3
-std::optional<ResourceError> ServiceWorkerClientFetch::validateResponse(const ResourceResponse& response)
+Optional<ResourceError> ServiceWorkerClientFetch::validateResponse(const ResourceResponse& response)
 {
     // FIXME: make a better error reporting.
     if (response.type() == ResourceResponse::Type::Error)
@@ -101,7 +101,7 @@ std::optional<ResourceError> ServiceWorkerClientFetch::validateResponse(const Re
     if ((options.redirect != FetchOptions::Redirect::Follow || options.mode == FetchOptions::Mode::Navigate) && response.isRedirected())
         return ResourceError { errorDomainWebKitInternal, 0, response.url(), "Response served by service worker has redirections"_s, ResourceError::Type::AccessControl };
 
-    return std::nullopt;
+    return WTF::nullopt;
 }
 
 void ServiceWorkerClientFetch::didReceiveResponse(ResourceResponse&& response)

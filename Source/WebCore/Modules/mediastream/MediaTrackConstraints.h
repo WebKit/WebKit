@@ -37,23 +37,23 @@ namespace WebCore {
 struct MediaConstraints;
 
 struct ConstrainBooleanParameters {
-    std::optional<bool> exact;
-    std::optional<bool> ideal;
+    Optional<bool> exact;
+    Optional<bool> ideal;
 };
 
 struct ConstrainDOMStringParameters {
-    std::optional<Variant<String, Vector<String>>> exact;
-    std::optional<Variant<String, Vector<String>>> ideal;
+    Optional<Variant<String, Vector<String>>> exact;
+    Optional<Variant<String, Vector<String>>> ideal;
 };
 
 struct ConstrainDoubleRange : DoubleRange {
-    std::optional<double> exact;
-    std::optional<double> ideal;
+    Optional<double> exact;
+    Optional<double> ideal;
 };
 
 struct ConstrainLongRange : LongRange {
-    std::optional<int> exact;
-    std::optional<int> ideal;
+    Optional<int> exact;
+    Optional<int> ideal;
 };
 
 using ConstrainBoolean = Variant<bool, ConstrainBooleanParameters>;
@@ -62,23 +62,23 @@ using ConstrainDouble = Variant<double, ConstrainDoubleRange>;
 using ConstrainLong = Variant<int, ConstrainLongRange>;
 
 struct MediaTrackConstraintSet {
-    std::optional<ConstrainLong> width;
-    std::optional<ConstrainLong> height;
-    std::optional<ConstrainDouble> aspectRatio;
-    std::optional<ConstrainDouble> frameRate;
-    std::optional<ConstrainDOMString> facingMode;
-    std::optional<ConstrainDouble> volume;
-    std::optional<ConstrainLong> sampleRate;
-    std::optional<ConstrainLong> sampleSize;
-    std::optional<ConstrainBoolean> echoCancellation;
-    std::optional<ConstrainDOMString> deviceId;
-    std::optional<ConstrainDOMString> groupId;
-    std::optional<ConstrainDOMString> displaySurface;
-    std::optional<ConstrainBoolean> logicalSurface;
+    Optional<ConstrainLong> width;
+    Optional<ConstrainLong> height;
+    Optional<ConstrainDouble> aspectRatio;
+    Optional<ConstrainDouble> frameRate;
+    Optional<ConstrainDOMString> facingMode;
+    Optional<ConstrainDouble> volume;
+    Optional<ConstrainLong> sampleRate;
+    Optional<ConstrainLong> sampleSize;
+    Optional<ConstrainBoolean> echoCancellation;
+    Optional<ConstrainDOMString> deviceId;
+    Optional<ConstrainDOMString> groupId;
+    Optional<ConstrainDOMString> displaySurface;
+    Optional<ConstrainBoolean> logicalSurface;
 };
 
 struct MediaTrackConstraints : MediaTrackConstraintSet {
-    std::optional<Vector<MediaTrackConstraintSet>> advanced;
+    Optional<Vector<MediaTrackConstraintSet>> advanced;
 };
 
 MediaConstraints createMediaConstraints(const MediaTrackConstraints&);

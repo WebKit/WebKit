@@ -56,7 +56,7 @@ public:
 
     Type type() const { return m_type; }
 
-    static std::optional<Type> parseEntryTypeString(const String& entryType);
+    static Optional<Type> parseEntryTypeString(const String& entryType);
 
     bool isResource() const { return m_type == Type::Resource; }
     bool isMark() const { return m_type == Type::Mark; }

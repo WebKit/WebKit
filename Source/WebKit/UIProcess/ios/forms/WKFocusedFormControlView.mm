@@ -79,7 +79,7 @@ static UIBezierPath *pathWithRoundedRectInFrame(CGRect rect, CGFloat borderRadiu
     WeakObjCPtr<id <WKFocusedFormControlViewDelegate>> _delegate;
     RetainPtr<NSString> _submitActionName;
     RetainPtr<PUICCrownInputSequencer> _crownInputSequencer;
-    std::optional<CGPoint> _initialScrollViewContentOffset;
+    Optional<CGPoint> _initialScrollViewContentOffset;
     BOOL _hasPendingFocusRequest;
 }
 
@@ -127,7 +127,7 @@ static UIBezierPath *pathWithRoundedRectInFrame(CGRect rect, CGFloat borderRadiu
     [self addSubview:_submitButtonBackgroundView.get()];
 
     _hasPendingFocusRequest = NO;
-    _initialScrollViewContentOffset = std::nullopt;
+    _initialScrollViewContentOffset = WTF::nullopt;
 
     return self;
 }

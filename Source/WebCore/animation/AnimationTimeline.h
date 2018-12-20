@@ -52,8 +52,8 @@ public:
     virtual void animationTimingDidChange(WebAnimation&);
     virtual void removeAnimation(WebAnimation&);
 
-    std::optional<double> bindingsCurrentTime();
-    virtual std::optional<Seconds> currentTime() { return m_currentTime; }
+    Optional<double> bindingsCurrentTime();
+    virtual Optional<Seconds> currentTime() { return m_currentTime; }
 
     enum class Ordering { Sorted, Unsorted };
     Vector<RefPtr<WebAnimation>> animationsForElement(Element&, Ordering ordering = Ordering::Unsorted) const;
@@ -91,7 +91,7 @@ private:
     void cancelDeclarativeAnimation(DeclarativeAnimation&);
 
     ClassType m_classType;
-    std::optional<Seconds> m_currentTime;
+    Optional<Seconds> m_currentTime;
     ElementToAnimationsMap m_elementToAnimationsMap;
     ElementToAnimationsMap m_elementToCSSAnimationsMap;
     ElementToAnimationsMap m_elementToCSSTransitionsMap;

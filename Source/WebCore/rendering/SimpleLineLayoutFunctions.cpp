@@ -93,7 +93,7 @@ void paintFlow(const RenderBlockFlow& flow, const Layout& layout, PaintInfo& pai
         textPainter.setShadow(debugShadow.get());
     }
 
-    std::optional<TextDecorationPainter> textDecorationPainter;
+    Optional<TextDecorationPainter> textDecorationPainter;
     if (!style.textDecorationsInEffect().isEmpty()) {
         const RenderText* textRenderer = childrenOfType<RenderText>(flow).first();
         if (textRenderer) {

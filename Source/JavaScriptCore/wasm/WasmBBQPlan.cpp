@@ -239,7 +239,7 @@ void BBQPlan::compileFunctions(CompilationEffort effort)
     if (!hasWork())
         return;
 
-    std::optional<TraceScope> traceScope;
+    Optional<TraceScope> traceScope;
     if (Options::useTracePoints())
         traceScope.emplace(WebAssemblyCompileStart, WebAssemblyCompileEnd);
     ThreadCountHolder holder(*this);

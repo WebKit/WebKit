@@ -211,7 +211,7 @@ class CppGenerator(Generator):
         if isinstance(_type, PrimitiveType):
             cpp_name = CppGenerator.cpp_name_for_primitive_type(_type)
             if parameter.is_optional:
-                return "std::optional<%s>&" % cpp_name
+                return "Optional<%s>&" % cpp_name
             else:
                 return '%s*' % cpp_name
         if isinstance(_type, EnumType):
@@ -237,7 +237,7 @@ class CppGenerator(Generator):
         if isinstance(_type, PrimitiveType):
             cpp_name = CppGenerator.cpp_name_for_primitive_type(_type)
             if parameter.is_optional:
-                return "std::optional<%s>&" % cpp_name
+                return "Optional<%s>&" % cpp_name
             elif _type.qualified_name() in ['integer', 'number']:
                 return CppGenerator.cpp_name_for_primitive_type(_type)
             elif _type.qualified_name() in ['string']:
@@ -269,7 +269,7 @@ class CppGenerator(Generator):
             if _type.qualified_name() in ['any', 'object']:
                 return "RefPtr<%s>" % CppGenerator.cpp_name_for_primitive_type(_type)
             elif parameter.is_optional and _type.qualified_name() not in ['boolean', 'string', 'integer']:
-                return "std::optional<%s>" % cpp_name
+                return "Optional<%s>" % cpp_name
             else:
                 return cpp_name
 
@@ -281,12 +281,12 @@ class CppGenerator(Generator):
         if isinstance(_type, AliasedType):
             builder_type = CppGenerator.cpp_protocol_type_for_type(_type)
             if parameter.is_optional:
-                return "std::optional<%s>" % builder_type
+                return "Optional<%s>" % builder_type
             return '%s' % builder_type
         if isinstance(_type, PrimitiveType):
             cpp_name = CppGenerator.cpp_name_for_primitive_type(_type)
             if parameter.is_optional:
-                return "std::optional<%s>" % cpp_name
+                return "Optional<%s>" % cpp_name
             else:
                 return cpp_name
         if isinstance(_type, EnumType):

@@ -126,7 +126,7 @@ bool IDBRequestData::decode(Decoder& decoder, IDBRequestData& request)
     if (!decoder.decode(request.m_indexIdentifier))
         return false;
 
-    std::optional<IDBDatabaseIdentifier> databaseIdentifier;
+    Optional<IDBDatabaseIdentifier> databaseIdentifier;
     decoder >> databaseIdentifier;
     if (!databaseIdentifier)
         return false;

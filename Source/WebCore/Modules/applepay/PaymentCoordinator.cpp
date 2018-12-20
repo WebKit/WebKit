@@ -83,28 +83,28 @@ void PaymentCoordinator::completeMerchantValidation(const PaymentMerchantSession
     m_client.completeMerchantValidation(paymentMerchantSession);
 }
 
-void PaymentCoordinator::completeShippingMethodSelection(std::optional<ShippingMethodUpdate>&& update)
+void PaymentCoordinator::completeShippingMethodSelection(Optional<ShippingMethodUpdate>&& update)
 {
     ASSERT(m_activeSession);
 
     m_client.completeShippingMethodSelection(WTFMove(update));
 }
 
-void PaymentCoordinator::completeShippingContactSelection(std::optional<ShippingContactUpdate>&& update)
+void PaymentCoordinator::completeShippingContactSelection(Optional<ShippingContactUpdate>&& update)
 {
     ASSERT(m_activeSession);
 
     m_client.completeShippingContactSelection(WTFMove(update));
 }
 
-void PaymentCoordinator::completePaymentMethodSelection(std::optional<PaymentMethodUpdate>&& update)
+void PaymentCoordinator::completePaymentMethodSelection(Optional<PaymentMethodUpdate>&& update)
 {
     ASSERT(m_activeSession);
 
     m_client.completePaymentMethodSelection(WTFMove(update));
 }
 
-void PaymentCoordinator::completePaymentSession(std::optional<PaymentAuthorizationResult>&& result)
+void PaymentCoordinator::completePaymentSession(Optional<PaymentAuthorizationResult>&& result)
 {
     ASSERT(m_activeSession);
 
@@ -194,13 +194,13 @@ void PaymentCoordinator::didCancelPaymentSession()
     m_activeSession = nullptr;
 }
 
-std::optional<String> PaymentCoordinator::validatedPaymentNetwork(unsigned version, const String& paymentNetwork) const
+Optional<String> PaymentCoordinator::validatedPaymentNetwork(unsigned version, const String& paymentNetwork) const
 {
     if (version < 2 && equalIgnoringASCIICase(paymentNetwork, "jcb"))
-        return std::nullopt;
+        return WTF::nullopt;
 
     if (version < 3 && equalIgnoringASCIICase(paymentNetwork, "carteBancaire"))
-        return std::nullopt;
+        return WTF::nullopt;
 
     return m_client.validatedPaymentNetwork(paymentNetwork);
 }

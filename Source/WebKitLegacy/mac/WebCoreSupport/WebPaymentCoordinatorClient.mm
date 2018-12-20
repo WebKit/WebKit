@@ -43,9 +43,9 @@ bool WebPaymentCoordinatorClient::supportsVersion(unsigned)
     return false;
 }
 
-std::optional<String> WebPaymentCoordinatorClient::validatedPaymentNetwork(const String&)
+Optional<String> WebPaymentCoordinatorClient::validatedPaymentNetwork(const String&)
 {
-    return std::nullopt;
+    return WTF::nullopt;
 }
 
 bool WebPaymentCoordinatorClient::canMakePayments()
@@ -76,19 +76,19 @@ void WebPaymentCoordinatorClient::completeMerchantValidation(const WebCore::Paym
 {
 }
 
-void WebPaymentCoordinatorClient::completeShippingMethodSelection(std::optional<WebCore::ShippingMethodUpdate>&&)
+void WebPaymentCoordinatorClient::completeShippingMethodSelection(Optional<WebCore::ShippingMethodUpdate>&&)
 {
 }
 
-void WebPaymentCoordinatorClient::completeShippingContactSelection(std::optional<WebCore::ShippingContactUpdate>&&)
+void WebPaymentCoordinatorClient::completeShippingContactSelection(Optional<WebCore::ShippingContactUpdate>&&)
 {
 }
 
-void WebPaymentCoordinatorClient::completePaymentMethodSelection(std::optional<WebCore::PaymentMethodUpdate>&&)
+void WebPaymentCoordinatorClient::completePaymentMethodSelection(Optional<WebCore::PaymentMethodUpdate>&&)
 {
 }
 
-void WebPaymentCoordinatorClient::completePaymentSession(std::optional<WebCore::PaymentAuthorizationResult>&&)
+void WebPaymentCoordinatorClient::completePaymentSession(Optional<WebCore::PaymentAuthorizationResult>&&)
 {
 }
 

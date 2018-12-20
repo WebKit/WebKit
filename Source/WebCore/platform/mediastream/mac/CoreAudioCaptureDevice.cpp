@@ -65,12 +65,12 @@ static bool getDeviceInfo(uint32_t deviceID, String& persistentID, String& label
     return true;
 }
 
-std::optional<CoreAudioCaptureDevice> CoreAudioCaptureDevice::create(uint32_t deviceID)
+Optional<CoreAudioCaptureDevice> CoreAudioCaptureDevice::create(uint32_t deviceID)
 {
     String persistentID;
     String label;
     if (!getDeviceInfo(deviceID, persistentID, label))
-        return std::nullopt;
+        return WTF::nullopt;
 
     return CoreAudioCaptureDevice(deviceID, persistentID, label);
 }

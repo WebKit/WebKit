@@ -270,7 +270,7 @@ static WebCore::PolicyAction toPolicyAction(WebPolicyAction policyAction)
     return WebCore::PolicyAction::Ignore;
 }
 
-void WebFrame::didReceivePolicyDecision(uint64_t listenerID, WebPolicyAction action, uint64_t navigationID, DownloadID downloadID, std::optional<WebsitePoliciesData>&& websitePolicies)
+void WebFrame::didReceivePolicyDecision(uint64_t listenerID, WebPolicyAction action, uint64_t navigationID, DownloadID downloadID, Optional<WebsitePoliciesData>&& websitePolicies)
 {
     if (!m_coreFrame || !m_policyListenerID || listenerID != m_policyListenerID || !m_policyFunction) {
         if (action == WebPolicyAction::Suspend)

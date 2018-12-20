@@ -40,7 +40,7 @@ struct URLSchemeTaskParameters {
     WebCore::ResourceRequest request;
     
     void encode(IPC::Encoder&) const;
-    static std::optional<URLSchemeTaskParameters> decode(IPC::Decoder&);
+    static Optional<URLSchemeTaskParameters> decode(IPC::Decoder&);
 };
 
 } // namespace WebKit

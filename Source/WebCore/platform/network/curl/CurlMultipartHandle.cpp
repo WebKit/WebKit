@@ -49,7 +49,7 @@ std::unique_ptr<CurlMultipartHandle> CurlMultipartHandle::createIfNeeded(CurlMul
     return std::make_unique<CurlMultipartHandle>(client, *boundary);
 }
 
-std::optional<String> CurlMultipartHandle::extractBoundary(const CurlResponse& response)
+Optional<String> CurlMultipartHandle::extractBoundary(const CurlResponse& response)
 {
     for (auto header : response.headers) {
         auto splitPosistion = header.find(":");
@@ -72,16 +72,16 @@ std::optional<String> CurlMultipartHandle::extractBoundary(const CurlResponse& r
         return String("--" + *boundary);
     }
 
-    return std::nullopt;
+    return WTF::nullopt;
 }
 
-std::optional<String> CurlMultipartHandle::extractBoundaryFromContentType(const String& contentType)
+Optional<String> CurlMultipartHandle::extractBoundaryFromContentType(const String& contentType)
 {
     static const size_t length = strlen("boundary=");
 
     auto boundaryStart = contentType.findIgnoringASCIICase("boundary=");
     if (boundaryStart == notFound)
-        return std::nullopt;
+        return WTF::nullopt;
 
     boundaryStart += length;
     size_t boundaryEnd = 0;
@@ -91,13 +91,13 @@ std::optional<String> CurlMultipartHandle::extractBoundaryFromContentType(const 
         ++boundaryStart;
         boundaryEnd = contentType.find('"', boundaryStart);
         if (boundaryEnd == notFound)
-            return std::nullopt;
+            return WTF::nullopt;
     } else if (contentType[boundaryStart] == '\'') {
         // Boundary value starts with a ' quote. Search for the closing one.
         ++boundaryStart;
         boundaryEnd = contentType.find('\'', boundaryStart);
         if (boundaryEnd == notFound)
-            return std::nullopt;
+            return WTF::nullopt;
     } else {
         // Check for the end of the boundary. That can be a semicolon or a newline.
         boundaryEnd = contentType.find(';', boundaryStart);
@@ -107,7 +107,7 @@ std::optional<String> CurlMultipartHandle::extractBoundaryFromContentType(const 
 
     // The boundary end should not be before the start
     if (boundaryEnd <= boundaryStart)
-        return std::nullopt;
+        return WTF::nullopt;
 
     return contentType.substring(boundaryStart, boundaryEnd - boundaryStart);
 }

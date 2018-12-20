@@ -105,9 +105,9 @@ public:
 
 private:
     struct RecordingOptions {
-        std::optional<long> frameCount;
-        std::optional<long> memoryLimit;
-        std::optional<String> name;
+        Optional<long> frameCount;
+        Optional<long> memoryLimit;
+        Optional<String> name;
     };
     void startRecording(InspectorCanvas&, Inspector::Protocol::Recording::Initiator, RecordingOptions&& = { });
 
@@ -132,7 +132,7 @@ private:
     Vector<String> m_removedCanvasIdentifiers;
     Timer m_canvasDestroyedTimer;
     Timer m_canvasRecordingTimer;
-    std::optional<size_t> m_recordingAutoCaptureFrameCount;
+    Optional<size_t> m_recordingAutoCaptureFrameCount;
 
     bool m_enabled { false };
 };

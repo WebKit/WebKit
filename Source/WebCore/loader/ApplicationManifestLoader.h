@@ -49,13 +49,13 @@ public:
     bool startLoading();
     void stopLoading();
 
-    std::optional<ApplicationManifest>& processManifest();
+    Optional<ApplicationManifest>& processManifest();
 
 private:
     void notifyFinished(CachedResource&);
 
     DocumentLoader& m_documentLoader;
-    std::optional<ApplicationManifest> m_processedManifest;
+    Optional<ApplicationManifest> m_processedManifest;
     URL m_url;
     bool m_useCredentials;
     CachedResourceHandle<CachedApplicationManifest> m_resource;

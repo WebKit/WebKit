@@ -50,10 +50,10 @@ static ApplePayPaymentPass::ActivationState convert(PKPaymentPassActivationState
     }
 }
 
-static std::optional<ApplePayPaymentPass> convert(PKPaymentPass *paymentPass)
+static Optional<ApplePayPaymentPass> convert(PKPaymentPass *paymentPass)
 {
     if (!paymentPass)
-        return std::nullopt;
+        return WTF::nullopt;
 
     ApplePayPaymentPass result;
 
@@ -70,7 +70,7 @@ static std::optional<ApplePayPaymentPass> convert(PKPaymentPass *paymentPass)
     return result;
 }
 
-static std::optional<ApplePayPaymentMethod::Type> convert(PKPaymentMethodType paymentMethodType)
+static Optional<ApplePayPaymentMethod::Type> convert(PKPaymentMethodType paymentMethodType)
 {
     switch (paymentMethodType) {
     case PKPaymentMethodTypeDebit:
@@ -82,7 +82,7 @@ static std::optional<ApplePayPaymentMethod::Type> convert(PKPaymentMethodType pa
     case PKPaymentMethodTypeStore:
         return ApplePayPaymentMethod::Type::Store;
     case PKPaymentMethodTypeUnknown:
-        return std::nullopt;
+        return WTF::nullopt;
     }
 }
 

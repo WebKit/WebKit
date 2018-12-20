@@ -45,7 +45,7 @@ private:
     bool requiresMomentumScrolling();
 
     RetainPtr<_NSScrollingMomentumCalculator> m_platformMomentumCalculator;
-    std::optional<bool> m_requiresMomentumScrolling;
+    Optional<bool> m_requiresMomentumScrolling;
     FloatPoint m_initialDestinationOrigin;
 };
 

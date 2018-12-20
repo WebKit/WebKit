@@ -49,8 +49,8 @@ private:
     void parseAttribute(const QualifiedName&, const AtomicString&) override;
 
     const ScriptType m_scriptType;
-    std::optional<Length> m_subscriptShift;
-    std::optional<Length> m_superscriptShift;
+    Optional<Length> m_subscriptShift;
+    Optional<Length> m_superscriptShift;
 };
 
 }

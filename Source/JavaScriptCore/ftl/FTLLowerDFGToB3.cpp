@@ -13473,8 +13473,8 @@ private:
         
         LBasicBlock lastNext = m_out.insertNewBlocksBefore(fastCase);
 
-        std::optional<unsigned> staticVectorLength;
-        std::optional<unsigned> staticVectorLengthFromPublicLength;
+        Optional<unsigned> staticVectorLength;
+        Optional<unsigned> staticVectorLengthFromPublicLength;
         if (structure->hasIntPtr()) {
             if (publicLength->hasInt32()) {
                 unsigned publicLengthConst = static_cast<unsigned>(publicLength->asInt32());

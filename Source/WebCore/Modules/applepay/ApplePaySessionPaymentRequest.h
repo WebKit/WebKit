@@ -190,7 +190,7 @@ struct PaymentError {
 
     Code code;
     String message;
-    std::optional<ContactField> contactField;
+    Optional<ContactField> contactField;
 };
 
 struct PaymentAuthorizationResult {
@@ -213,7 +213,7 @@ struct ShippingMethodUpdate {
     ApplePaySessionPaymentRequest::TotalAndLineItems newTotalAndLineItems;
 };
 
-WEBCORE_EXPORT bool isFinalStateResult(const std::optional<PaymentAuthorizationResult>&);
+WEBCORE_EXPORT bool isFinalStateResult(const Optional<PaymentAuthorizationResult>&);
 
 }
 

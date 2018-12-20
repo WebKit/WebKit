@@ -38,7 +38,7 @@ public:
     WEBCORE_EXPORT static void setUseOverlayScrollbars(bool);
     
 private:
-    static std::optional<bool> m_useOverlayScrollbars;
+    static Optional<bool> m_useOverlayScrollbars;
 };
 
 }

@@ -60,7 +60,7 @@ MessagePortChannel::~MessagePortChannel()
     m_registry.messagePortChannelDestroyed(*this);
 }
 
-std::optional<ProcessIdentifier> MessagePortChannel::processForPort(const MessagePortIdentifier& port)
+Optional<ProcessIdentifier> MessagePortChannel::processForPort(const MessagePortIdentifier& port)
 {
     ASSERT(isMainThread());
     ASSERT(port == m_ports[0] || port == m_ports[1]);
@@ -100,7 +100,7 @@ void MessagePortChannel::disentanglePort(const MessagePortIdentifier& port)
     size_t i = port == m_ports[0] ? 0 : 1;
 
     ASSERT(m_processes[i] || m_isClosed[i]);
-    m_processes[i] = std::nullopt;
+    m_processes[i] = WTF::nullopt;
     m_pendingMessagePortTransfers[i].add(this);
 
     // This set of steps is to guarantee that the lock is unlocked before the
@@ -115,7 +115,7 @@ void MessagePortChannel::closePort(const MessagePortIdentifier& port)
     ASSERT(port == m_ports[0] || port == m_ports[1]);
     size_t i = port == m_ports[0] ? 0 : 1;
 
-    m_processes[i] = std::nullopt;
+    m_processes[i] = WTF::nullopt;
     m_isClosed[i] = true;
 
     // This set of steps is to guarantee that the lock is unlocked before the

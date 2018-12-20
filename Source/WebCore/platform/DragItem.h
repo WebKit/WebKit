@@ -97,7 +97,7 @@ bool DragItem::decode(Decoder& decoder, DragItem& result)
     if (!decoder.decode(hasIndicatorData))
         return false;
     if (hasIndicatorData) {
-        std::optional<TextIndicatorData> indicatorData;
+        Optional<TextIndicatorData> indicatorData;
         decoder >> indicatorData;
         if (!indicatorData)
             return false;
@@ -107,7 +107,7 @@ bool DragItem::decode(Decoder& decoder, DragItem& result)
     if (!decoder.decode(hasVisiblePath))
         return false;
     if (hasVisiblePath) {
-        std::optional<Path> visiblePath;
+        Optional<Path> visiblePath;
         decoder >> visiblePath;
         if (!visiblePath)
             return false;

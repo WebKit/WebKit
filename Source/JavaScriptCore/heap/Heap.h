@@ -153,7 +153,7 @@ public:
     void removeObserver(HeapObserver* observer) { m_observers.removeFirst(observer); }
 
     MutatorState mutatorState() const { return m_mutatorState; }
-    std::optional<CollectionScope> collectionScope() const { return m_collectionScope; }
+    Optional<CollectionScope> collectionScope() const { return m_collectionScope; }
     bool hasHeapAccess() const;
     bool worldIsStopped() const;
     bool worldIsRunning() const { return !worldIsStopped(); }
@@ -177,8 +177,8 @@ public:
     bool shouldCollectHeuristic();
     
     // Queue up a collection. Returns immediately. This will not queue a collection if a collection
-    // of equal or greater strength exists. Full collections are stronger than std::nullopt collections
-    // and std::nullopt collections are stronger than Eden collections. std::nullopt means that the GC can
+    // of equal or greater strength exists. Full collections are stronger than WTF::nullopt collections
+    // and WTF::nullopt collections are stronger than Eden collections. WTF::nullopt means that the GC can
     // choose Eden or Full. This implies that if you request a GC while that GC is ongoing, nothing
     // will happen.
     JS_EXPORT_PRIVATE void collectAsync(GCRequest = GCRequest());
@@ -576,8 +576,8 @@ private:
     size_t m_totalBytesVisitedThisCycle;
     double m_incrementBalance { 0 };
     
-    std::optional<CollectionScope> m_collectionScope;
-    std::optional<CollectionScope> m_lastCollectionScope;
+    Optional<CollectionScope> m_collectionScope;
+    Optional<CollectionScope> m_lastCollectionScope;
     MutatorState m_mutatorState { MutatorState::Running };
     StructureIDTable m_structureIDTable;
     MarkedSpace m_objectSpace;

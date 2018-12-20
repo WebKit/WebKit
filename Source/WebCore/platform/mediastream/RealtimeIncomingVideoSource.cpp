@@ -101,7 +101,7 @@ const RealtimeMediaSourceSettings& RealtimeIncomingVideoSource::settings()
 void RealtimeIncomingVideoSource::settingsDidChange(OptionSet<RealtimeMediaSourceSettings::Flag> settings)
 {
     if (settings.containsAny({ RealtimeMediaSourceSettings::Flag::Width, RealtimeMediaSourceSettings::Flag::Height }))
-        m_currentSettings = std::nullopt;
+        m_currentSettings = WTF::nullopt;
 }
 
 } // namespace WebCore

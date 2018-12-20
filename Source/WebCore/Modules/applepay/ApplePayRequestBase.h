@@ -40,10 +40,10 @@ struct ApplePayRequestBase {
     Vector<String> supportedNetworks;
     String countryCode;
 
-    std::optional<Vector<ApplePayContactField>> requiredBillingContactFields;
-    std::optional<ApplePayPaymentContact> billingContact;
+    Optional<Vector<ApplePayContactField>> requiredBillingContactFields;
+    Optional<ApplePayPaymentContact> billingContact;
 
-    std::optional<ApplePayPaymentContact> shippingContact;
+    Optional<ApplePayPaymentContact> shippingContact;
 
     String applicationData;
     Vector<String> supportedCountries;

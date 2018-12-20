@@ -39,8 +39,8 @@ struct ApplePayPaymentMethod {
     
     String displayName;
     String network;
-    std::optional<Type> type;
-    std::optional<ApplePayPaymentPass> paymentPass;
+    Optional<Type> type;
+    Optional<ApplePayPaymentPass> paymentPass;
 };
 
 }

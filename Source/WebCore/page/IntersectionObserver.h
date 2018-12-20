@@ -44,7 +44,7 @@ class Element;
 
 struct IntersectionObserverRegistration {
     WeakPtr<IntersectionObserver> observer;
-    std::optional<size_t> previousThresholdIndex;
+    Optional<size_t> previousThresholdIndex;
 };
 
 struct IntersectionObserverData {

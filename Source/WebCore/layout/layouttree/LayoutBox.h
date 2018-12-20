@@ -69,7 +69,7 @@ public:
     };
     typedef unsigned BaseTypeFlags;
 
-    Box(std::optional<ElementAttributes>, RenderStyle&&, BaseTypeFlags);
+    Box(Optional<ElementAttributes>, RenderStyle&&, BaseTypeFlags);
     virtual ~Box();
 
     bool establishesFormattingContext() const;
@@ -137,7 +137,7 @@ public:
 
 private:
     RenderStyle m_style;
-    std::optional<ElementAttributes> m_elementAttributes;
+    Optional<ElementAttributes> m_elementAttributes;
 
     Container* m_parent { nullptr };
     Box* m_previousSibling { nullptr };

@@ -474,7 +474,7 @@ void InspectorNetworkAgent::didReceiveResponse(unsigned long identifier, Documen
 
     String requestId = IdentifiersFactory::requestId(identifier);
 
-    std::optional<ResourceResponse> realResponse;
+    Optional<ResourceResponse> realResponse;
     if (platformStrategies()->loaderStrategy()->havePerformedSecurityChecks(response)) {
         callOnMainThreadAndWait([&] {
             // We do not need to isolate response since it comes straight from IPC, but we might want to isolate it for extra safety.
@@ -566,7 +566,7 @@ void InspectorNetworkAgent::didFinishLoading(unsigned long identifier, DocumentL
     if (resourceData && resourceData->cachedResource())
         sourceMappingURL = InspectorPageAgent::sourceMapURLForResource(resourceData->cachedResource());
 
-    std::optional<NetworkLoadMetrics> realMetrics;
+    Optional<NetworkLoadMetrics> realMetrics;
     if (platformStrategies()->loaderStrategy()->shouldPerformSecurityChecks() && !networkLoadMetrics.isComplete()) {
         callOnMainThreadAndWait([&] {
             realMetrics = platformStrategies()->loaderStrategy()->networkMetricsFromResourceLoadIdentifier(identifier).isolatedCopy();
@@ -680,7 +680,7 @@ void InspectorNetworkAgent::didScheduleStyleRecalculation(Document& document)
         m_styleRecalculationInitiator = buildInitiatorObject(&document);
 }
 
-RefPtr<Inspector::Protocol::Network::Initiator> InspectorNetworkAgent::buildInitiatorObject(Document* document, std::optional<const ResourceRequest&> resourceRequest)
+RefPtr<Inspector::Protocol::Network::Initiator> InspectorNetworkAgent::buildInitiatorObject(Document* document, Optional<const ResourceRequest&> resourceRequest)
 {
     // FIXME: Worker support.
     if (!isMainThread()) {
@@ -998,10 +998,10 @@ Ref<TextResourceDecoder> InspectorNetworkAgent::createTextDecoder(const String& 
     return TextResourceDecoder::create("text/plain"_s, "UTF-8");
 }
 
-std::optional<String> InspectorNetworkAgent::textContentForCachedResource(CachedResource& cachedResource)
+Optional<String> InspectorNetworkAgent::textContentForCachedResource(CachedResource& cachedResource)
 {
     if (!InspectorNetworkAgent::shouldTreatAsText(cachedResource.mimeType()))
-        return std::nullopt;
+        return WTF::nullopt;
 
     String result;
     bool base64Encoded;
@@ -1010,7 +1010,7 @@ std::optional<String> InspectorNetworkAgent::textContentForCachedResource(Cached
         return result;
     }
 
-    return std::nullopt;
+    return WTF::nullopt;
 }
 
 bool InspectorNetworkAgent::cachedResourceContent(CachedResource& resource, String* result, bool* base64Encoded)
@@ -1063,7 +1063,7 @@ static Ref<Inspector::Protocol::Page::SearchResult> buildObjectForSearchResult(c
     return searchResult;
 }
 
-static std::optional<String> textContentForResourceData(const NetworkResourcesData::ResourceData& resourceData)
+static Optional<String> textContentForResourceData(const NetworkResourcesData::ResourceData& resourceData)
 {
     if (resourceData.hasContent() && !resourceData.base64Encoded())
         return resourceData.content();
@@ -1071,7 +1071,7 @@ static std::optional<String> textContentForResourceData(const NetworkResourcesDa
     if (resourceData.cachedResource())
         return InspectorNetworkAgent::textContentForCachedResource(*resourceData.cachedResource());
 
-    return std::nullopt;
+    return WTF::nullopt;
 }
 
 void InspectorNetworkAgent::searchOtherRequests(const JSC::Yarr::RegularExpression& regex, RefPtr<JSON::ArrayOf<Inspector::Protocol::Page::SearchResult>>& result)

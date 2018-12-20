@@ -773,7 +773,7 @@ WKArrayRef WKBundlePageCopyOriginsWithApplicationCache(WKBundlePageRef page)
 
 void WKBundlePageSetEventThrottlingBehaviorOverride(WKBundlePageRef page, WKEventThrottlingBehavior* behavior)
 {
-    std::optional<WebCore::EventThrottlingBehavior> behaviorValue;
+    Optional<WebCore::EventThrottlingBehavior> behaviorValue;
     if (behavior) {
         switch (*behavior) {
         case kWKEventThrottlingBehaviorResponsive:
@@ -790,7 +790,7 @@ void WKBundlePageSetEventThrottlingBehaviorOverride(WKBundlePageRef page, WKEven
 
 void WKBundlePageSetCompositingPolicyOverride(WKBundlePageRef page, WKCompositingPolicy* policy)
 {
-    std::optional<WebCore::CompositingPolicy> policyValue;
+    Optional<WebCore::CompositingPolicy> policyValue;
     if (policy) {
         switch (*policy) {
         case kWKCompositingPolicyNormal:

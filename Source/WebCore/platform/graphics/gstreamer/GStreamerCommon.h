@@ -60,14 +60,14 @@ inline bool webkitGstCheckVersion(guint major, guint minor, guint micro)
 GstPad* webkitGstGhostPadFromStaticTemplate(GstStaticPadTemplate*, const gchar* name, GstPad* target);
 #if ENABLE(VIDEO)
 bool getVideoSizeAndFormatFromCaps(GstCaps*, WebCore::IntSize&, GstVideoFormat&, int& pixelAspectRatioNumerator, int& pixelAspectRatioDenominator, int& stride);
-std::optional<FloatSize> getVideoResolutionFromCaps(const GstCaps*);
+Optional<FloatSize> getVideoResolutionFromCaps(const GstCaps*);
 bool getSampleVideoInfo(GstSample*, GstVideoInfo&);
 #endif
 const char* capsMediaType(const GstCaps*);
 bool doCapsHaveType(const GstCaps*, const char*);
 bool areEncryptedCaps(const GstCaps*);
 Vector<String> extractGStreamerOptionsFromCommandLine();
-bool initializeGStreamer(std::optional<Vector<String>>&& = std::nullopt);
+bool initializeGStreamer(Optional<Vector<String>>&& = WTF::nullopt);
 bool initializeGStreamerAndRegisterWebKitElements();
 unsigned getGstPlayFlag(const char* nick);
 uint64_t toGstUnsigned64Time(const MediaTime&);

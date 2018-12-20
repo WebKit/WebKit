@@ -50,7 +50,7 @@ public:
     virtual void jobResolvedWithUnregistrationResult(ServiceWorkerJob&, bool unregistrationResult) = 0;
     virtual void startScriptFetchForJob(ServiceWorkerJob&, FetchOptions::Cache) = 0;
     virtual void jobFinishedLoadingScript(ServiceWorkerJob&, const String& script, const ContentSecurityPolicyResponseHeaders&) = 0;
-    virtual void jobFailedLoadingScript(ServiceWorkerJob&, const ResourceError&, std::optional<Exception>&&) = 0;
+    virtual void jobFailedLoadingScript(ServiceWorkerJob&, const ResourceError&, Optional<Exception>&&) = 0;
 
     virtual SWServerConnectionIdentifier connectionIdentifier() = 0;
 

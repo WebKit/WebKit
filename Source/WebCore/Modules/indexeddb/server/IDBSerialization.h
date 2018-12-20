@@ -34,8 +34,8 @@ namespace WebCore {
 
 class IDBKeyData;
 
-RefPtr<SharedBuffer> serializeIDBKeyPath(const std::optional<IDBKeyPath>&);
-bool deserializeIDBKeyPath(const uint8_t* buffer, size_t bufferSize, std::optional<IDBKeyPath>&);
+RefPtr<SharedBuffer> serializeIDBKeyPath(const Optional<IDBKeyPath>&);
+bool deserializeIDBKeyPath(const uint8_t* buffer, size_t bufferSize, Optional<IDBKeyPath>&);
 
 RefPtr<SharedBuffer> serializeIDBKeyData(const IDBKeyData&);
 bool deserializeIDBKeyData(const uint8_t* buffer, size_t bufferSize, IDBKeyData&);

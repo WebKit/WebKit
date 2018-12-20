@@ -131,7 +131,7 @@ private:
 
 private:
     SVGPathByteStream m_pathByteStream;
-    mutable std::optional<Path> m_cachedPath;
+    mutable Optional<Path> m_cachedPath;
     bool m_isAnimValObserved { false };
 
     class SVGAnimatedCustomPathSegListAttribute : public SVGAnimatedPathSegListAttribute {

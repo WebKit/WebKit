@@ -46,24 +46,24 @@ PerformanceEntry::PerformanceEntry(Type type, const String& name, const String& 
 
 PerformanceEntry::~PerformanceEntry() = default;
 
-std::optional<PerformanceEntry::Type> PerformanceEntry::parseEntryTypeString(const String& entryType)
+Optional<PerformanceEntry::Type> PerformanceEntry::parseEntryTypeString(const String& entryType)
 {
     if (entryType == "navigation")
-        return std::optional<Type>(Type::Navigation);
+        return Optional<Type>(Type::Navigation);
 
     if (RuntimeEnabledFeatures::sharedFeatures().userTimingEnabled()) {
         if (entryType == "mark")
-            return std::optional<Type>(Type::Mark);
+            return Optional<Type>(Type::Mark);
         if (entryType == "measure")
-            return std::optional<Type>(Type::Measure);
+            return Optional<Type>(Type::Measure);
     }
 
     if (RuntimeEnabledFeatures::sharedFeatures().resourceTimingEnabled()) {
         if (entryType == "resource")
-            return std::optional<Type>(Type::Resource);
+            return Optional<Type>(Type::Resource);
     }
 
-    return std::nullopt;
+    return WTF::nullopt;
 }
 
 } // namespace WebCore

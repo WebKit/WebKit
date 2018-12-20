@@ -43,7 +43,7 @@ public:
 
     // Gets the size of a file. Also validates if the file has been changed or not if the expected modification time is provided, i.e. non-zero.
     // Returns total number of bytes if successful. -1 otherwise.
-    long long getSize(const String& path, std::optional<WallTime> expectedModificationTime);
+    long long getSize(const String& path, Optional<WallTime> expectedModificationTime);
 
     // Opens a file for reading. The reading starts at the specified offset and lasts till the specified length.
     // Returns true on success. False otherwise.

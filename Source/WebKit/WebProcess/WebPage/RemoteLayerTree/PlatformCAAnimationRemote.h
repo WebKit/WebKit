@@ -230,7 +230,7 @@ public:
         }
 
         void encode(IPC::Encoder&) const;
-        static std::optional<KeyframeValue> decode(IPC::Decoder&);
+        static Optional<KeyframeValue> decode(IPC::Decoder&);
 
     private:
         KeyframeType keyType;
@@ -262,7 +262,7 @@ public:
         }
 
         void encode(IPC::Encoder&) const;
-        static std::optional<Properties> decode(IPC::Decoder&);
+        static Optional<Properties> decode(IPC::Decoder&);
 
         String keyPath;
         PlatformCAAnimation::AnimationType animationType;

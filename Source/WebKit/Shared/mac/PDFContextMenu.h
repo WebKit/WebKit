@@ -41,37 +41,37 @@ struct PDFContextMenuItem {
         encoder << title << enabled << separator << state << hasAction << tag;
     }
     
-    template<class Decoder> static std::optional<PDFContextMenuItem> decode(Decoder& decoder)
+    template<class Decoder> static Optional<PDFContextMenuItem> decode(Decoder& decoder)
     {
-        std::optional<String> title;
+        Optional<String> title;
         decoder >> title;
         if (!title)
-            return std::nullopt;
+            return WTF::nullopt;
 
-        std::optional<bool> enabled;
+        Optional<bool> enabled;
         decoder >> enabled;
         if (!enabled)
-            return std::nullopt;
+            return WTF::nullopt;
 
-        std::optional<bool> separator;
+        Optional<bool> separator;
         decoder >> separator;
         if (!separator)
-            return std::nullopt;
+            return WTF::nullopt;
 
-        std::optional<int> state;
+        Optional<int> state;
         decoder >> state;
         if (!state)
-            return std::nullopt;
+            return WTF::nullopt;
 
-        std::optional<bool> hasAction;
+        Optional<bool> hasAction;
         decoder >> hasAction;
         if (!hasAction)
-            return std::nullopt;
+            return WTF::nullopt;
 
-        std::optional<int> tag;
+        Optional<int> tag;
         decoder >> tag;
         if (!tag)
-            return std::nullopt;
+            return WTF::nullopt;
 
         return { { WTFMove(*title), WTFMove(*enabled), WTFMove(*separator), WTFMove(*state), WTFMove(*hasAction), WTFMove(*tag) } };
     }
@@ -86,17 +86,17 @@ struct PDFContextMenu {
         encoder << m_point << m_items;
     }
     
-    template<class Decoder> static std::optional<PDFContextMenu> decode(Decoder& decoder)
+    template<class Decoder> static Optional<PDFContextMenu> decode(Decoder& decoder)
     {
-        std::optional<WebCore::IntPoint> point;
+        Optional<WebCore::IntPoint> point;
         decoder >> point;
         if (!point)
-            return std::nullopt;
+            return WTF::nullopt;
 
-        std::optional<Vector<PDFContextMenuItem>> items;
+        Optional<Vector<PDFContextMenuItem>> items;
         decoder >> items;
         if (!items)
-            return std::nullopt;
+            return WTF::nullopt;
         
         return { { WTFMove(*point), WTFMove(*items) } };
     }

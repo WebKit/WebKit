@@ -82,14 +82,14 @@ void DOMFormData::remove(const String& name)
     });
 }
 
-auto DOMFormData::get(const String& name) -> std::optional<FormDataEntryValue>
+auto DOMFormData::get(const String& name) -> Optional<FormDataEntryValue>
 {
     for (auto& item : m_items) {
         if (item.name == name)
             return item.data;
     }
 
-    return std::nullopt;
+    return WTF::nullopt;
 }
 
 auto DOMFormData::getAll(const String& name) -> Vector<FormDataEntryValue>
@@ -126,7 +126,7 @@ void DOMFormData::set(const String& name, Blob& blob, const String& filename)
 
 void DOMFormData::set(const String& name, Item&& item)
 {
-    std::optional<size_t> initialMatchLocation;
+    Optional<size_t> initialMatchLocation;
 
     // Find location of the first item with a matching name.
     for (size_t i = 0; i < m_items.size(); ++i) {
@@ -153,11 +153,11 @@ DOMFormData::Iterator::Iterator(DOMFormData& target)
 {
 }
 
-std::optional<KeyValuePair<String, DOMFormData::FormDataEntryValue>> DOMFormData::Iterator::next()
+Optional<KeyValuePair<String, DOMFormData::FormDataEntryValue>> DOMFormData::Iterator::next()
 {
     auto& items = m_target->items();
     if (m_index >= items.size())
-        return std::nullopt;
+        return WTF::nullopt;
 
     auto& item = items[m_index++];
     return makeKeyValuePair(item.name, item.data);

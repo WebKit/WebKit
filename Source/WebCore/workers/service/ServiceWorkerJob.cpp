@@ -150,7 +150,7 @@ void ServiceWorkerJob::notifyFinished()
     else {
         auto& error =  m_scriptLoader->error();
         ASSERT(!error.isNull());
-        m_client->jobFailedLoadingScript(*this, error, std::nullopt);
+        m_client->jobFailedLoadingScript(*this, error, WTF::nullopt);
     }
 
     m_scriptLoader = nullptr;

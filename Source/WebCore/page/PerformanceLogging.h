@@ -49,7 +49,7 @@ public:
 
     WEBCORE_EXPORT static HashCountedSet<const char*> javaScriptObjectCounts();
     WEBCORE_EXPORT static HashMap<const char*, size_t> memoryUsageStatistics(ShouldIncludeExpensiveComputations);
-    WEBCORE_EXPORT static std::optional<uint64_t> physicalFootprint();
+    WEBCORE_EXPORT static Optional<uint64_t> physicalFootprint();
 
 private:
     static void getPlatformMemoryUsageStatistics(HashMap<const char*, size_t>&);

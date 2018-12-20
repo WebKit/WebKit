@@ -88,7 +88,7 @@ private:
         return m_result && m_result.value() && m_result.value()->isInterstitial();
     }
 
-    mutable std::optional<RefPtr<Font>> m_result; // Caches nullptr too
+    mutable Optional<RefPtr<Font>> m_result; // Caches nullptr too
     mutable Ref<CSSFontFace> m_fontFace;
     FontDescription m_fontDescription;
     bool m_syntheticBold;

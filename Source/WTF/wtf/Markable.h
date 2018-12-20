@@ -75,12 +75,12 @@ struct IntegralMarkableTraits {
     }
 };
 
-// The goal of Markable is offering std::optional without sacrificing storage efficiency.
+// The goal of Markable is offering Optional without sacrificing storage efficiency.
 // Markable takes Traits, which should have isEmptyValue and emptyValue functions. By using
-// one value of T as an empty value, we can remove bool flag in std::optional. This strategy is
+// one value of T as an empty value, we can remove bool flag in Optional. This strategy is
 // similar to WTF::HashTable, which uses two values of T as an empty value and a deleted value.
 // This class is intended to be used as a member of a class to compact the size of the class.
-// Otherwise, you should use std::optional.
+// Otherwise, you should use Optional.
 template<typename T, typename Traits>
 class Markable {
 public:
@@ -88,7 +88,7 @@ public:
         : m_value(Traits::emptyValue())
     { }
 
-    constexpr Markable(std::nullopt_t)
+    constexpr Markable(WTF::nullopt_t)
         : Markable()
     { }
 
@@ -105,11 +105,11 @@ public:
         : m_value(std::forward<Args>(args)...)
     { }
 
-    constexpr Markable(const std::optional<T>& value)
+    constexpr Markable(const Optional<T>& value)
         : m_value(bool(value) ? *value : Traits::emptyValue())
     { }
 
-    constexpr Markable(std::optional<T>&& value)
+    constexpr Markable(Optional<T>&& value)
         : m_value(bool(value) ? WTFMove(*value) : Traits::emptyValue())
     { }
 
@@ -127,18 +127,18 @@ public:
     constexpr const T& operator*() const& { return m_value; }
     constexpr T& operator*() & { return m_value; }
 
-    operator std::optional<T>() &&
+    operator Optional<T>() &&
     {
         if (bool(*this))
             return WTFMove(m_value);
-        return std::nullopt;
+        return WTF::nullopt;
     }
 
-    operator std::optional<T>() const&
+    operator Optional<T>() const&
     {
         if (bool(*this))
             return m_value;
-        return std::nullopt;
+        return WTF::nullopt;
     }
 
 private:

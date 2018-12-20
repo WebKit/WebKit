@@ -79,13 +79,13 @@ bool domainMatch(const String& cookieDomain, const String& host)
     return false;
 }
 
-static std::optional<double> parseExpires(const char* expires)
+static Optional<double> parseExpires(const char* expires)
 {
     double tmp = WTF::parseDateFromNullTerminatedCharacters(expires);
     if (isnan(tmp))
         return { };
 
-    return std::optional<double> {tmp / WTF::msPerSecond};
+    return Optional<double> {tmp / WTF::msPerSecond};
 }
 
 static void parseCookieAttributes(const String& attribute, bool& hasMaxAge, Cookie& result)
@@ -137,10 +137,10 @@ static void parseCookieAttributes(const String& attribute, bool& hasMaxAge, Cook
     }
 }
 
-std::optional<Cookie> parseCookieHeader(const String& cookieLine)
+Optional<Cookie> parseCookieHeader(const String& cookieLine)
 {
     if (cookieLine.length() >= MAX_COOKIE_LINE)
-        return std::nullopt;
+        return WTF::nullopt;
 
     // This Algorithm is based on the algorithm defined in RFC 6265 5.2 https://tools.ietf.org/html/rfc6265#section-5.2/
 

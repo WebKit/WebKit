@@ -132,7 +132,7 @@ private:
     String m_rootPath;
     uint64_t m_quota { 0 };
     RefPtr<WorkQueue> m_ioQueue;
-    std::optional<NetworkCache::Salt> m_salt;
+    Optional<NetworkCache::Salt> m_salt;
     HashMap<CacheIdentifier, LockCount> m_cacheLocks;
     Vector<WebCore::DOMCacheEngine::CompletionCallback> m_initializationCallbacks;
     HashMap<uint64_t, WebCore::DOMCacheEngine::CompletionCallback> m_pendingWriteCallbacks;

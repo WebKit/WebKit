@@ -351,12 +351,12 @@ JSC::JSObject* JSDOMWindowBase::moduleLoaderCreateImportMetaProperties(JSC::JSGl
 }
 
 #if ENABLE(WEBASSEMBLY)
-static std::optional<Vector<uint8_t>> tryAllocate(JSC::ExecState* exec, JSC::JSPromiseDeferred* promise, const char* data, size_t byteSize)
+static Optional<Vector<uint8_t>> tryAllocate(JSC::ExecState* exec, JSC::JSPromiseDeferred* promise, const char* data, size_t byteSize)
 {
     Vector<uint8_t> arrayBuffer;
     if (!arrayBuffer.tryReserveCapacity(byteSize)) {
         promise->reject(exec, createOutOfMemoryError(exec));
-        return std::nullopt;
+        return WTF::nullopt;
     }
 
     arrayBuffer.grow(byteSize);

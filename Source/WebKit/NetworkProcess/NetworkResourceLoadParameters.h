@@ -53,7 +53,7 @@ public:
     Seconds maximumBufferingTime;
     RefPtr<WebCore::SecurityOrigin> sourceOrigin;
     WebCore::FetchOptions options;
-    std::optional<WebCore::ContentSecurityPolicyResponseHeaders> cspResponseHeaders;
+    Optional<WebCore::ContentSecurityPolicyResponseHeaders> cspResponseHeaders;
     WebCore::HTTPHeaderMap originalRequestHeaders;
     bool shouldRestrictHTTPResponseAccess { false };
     WebCore::PreflightPolicy preflightPolicy { WebCore::PreflightPolicy::Consider };
@@ -62,7 +62,7 @@ public:
 
 #if ENABLE(CONTENT_EXTENSIONS)
     URL mainDocumentURL;
-    std::optional<UserContentControllerIdentifier> userContentControllerIdentifier;
+    Optional<UserContentControllerIdentifier> userContentControllerIdentifier;
 #endif
 };
 

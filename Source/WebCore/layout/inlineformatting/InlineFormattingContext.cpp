@@ -143,7 +143,7 @@ void InlineFormattingContext::splitInlineRunIfNeeded(const InlineRun& inlineRun,
         const InlineItem* lastInlineItem { nullptr };
         unsigned length { 0 };
     };
-    std::optional<Uncommitted> uncommitted;
+    Optional<Uncommitted> uncommitted;
 
     auto commit = [&] {
         if (!uncommitted)
@@ -411,7 +411,7 @@ void InlineFormattingContext::placeInFlowPositionedChildren(unsigned fistRunInde
 
         auto positionOffset = [&](auto& layoutBox) {
             // FIXME: Need to figure out whether in-flow offset should stick. This might very well be temporary.
-            std::optional<LayoutSize> offset;
+            Optional<LayoutSize> offset;
             for (auto* box = &layoutBox; box != &root(); box = box->parent()) {
                 if (!box->isInFlowPositioned())
                     continue;

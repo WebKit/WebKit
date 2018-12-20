@@ -124,7 +124,7 @@ protected:
     bool isValid(Air::Inst&) final;
     bool admitsStack(Air::Inst&, unsigned argIndex) final;
     bool admitsExtendedOffsetAddr(Air::Inst&, unsigned) final;
-    std::optional<unsigned> shouldTryAliasingDef(Air::Inst&) final;
+    Optional<unsigned> shouldTryAliasingDef(Air::Inst&) final;
 
     // NOTE: the generate method will generate the hidden branch and then register a LatePath that
     // generates the stackmap. Super crazy dude!

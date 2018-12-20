@@ -46,7 +46,7 @@ class ResourceHandle;
     RetainPtr<NSURLRequest> m_requestResult;
     Lock m_mutex;
     RetainPtr<NSCachedURLResponse> m_cachedResponseResult;
-    std::optional<SchedulePairHashSet> m_scheduledPairs;
+    Optional<SchedulePairHashSet> m_scheduledPairs;
     BOOL m_boolResult;
 }
 

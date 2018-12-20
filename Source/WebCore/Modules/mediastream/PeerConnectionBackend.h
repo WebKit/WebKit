@@ -79,8 +79,8 @@ class PeerConnectionBackend
 public:
     WEBCORE_EXPORT static CreatePeerConnectionBackend create;
 
-    static std::optional<RTCRtpCapabilities> receiverCapabilities(ScriptExecutionContext&, const String& kind);
-    static std::optional<RTCRtpCapabilities> senderCapabilities(ScriptExecutionContext&, const String& kind);
+    static Optional<RTCRtpCapabilities> receiverCapabilities(ScriptExecutionContext&, const String& kind);
+    static Optional<RTCRtpCapabilities> senderCapabilities(ScriptExecutionContext&, const String& kind);
 
     explicit PeerConnectionBackend(RTCPeerConnection&);
     virtual ~PeerConnectionBackend() = default;
@@ -161,9 +161,9 @@ public:
         }
 
         Type type;
-        std::optional<double> expires;
+        Optional<double> expires;
 
-        std::optional<RSA> rsaParameters;
+        Optional<RSA> rsaParameters;
     };
     static void generateCertificate(Document&, const CertificateInformation&, DOMPromiseDeferred<IDLInterface<RTCCertificate>>&&);
 
@@ -207,10 +207,10 @@ protected:
     RTCPeerConnection& m_peerConnection;
 
 private:
-    std::optional<PeerConnection::SessionDescriptionPromise> m_offerAnswerPromise;
-    std::optional<DOMPromiseDeferred<void>> m_setDescriptionPromise;
-    std::optional<DOMPromiseDeferred<void>> m_addIceCandidatePromise;
-    std::optional<DOMPromiseDeferred<void>> m_endOfIceCandidatePromise;
+    Optional<PeerConnection::SessionDescriptionPromise> m_offerAnswerPromise;
+    Optional<DOMPromiseDeferred<void>> m_setDescriptionPromise;
+    Optional<DOMPromiseDeferred<void>> m_addIceCandidatePromise;
+    Optional<DOMPromiseDeferred<void>> m_endOfIceCandidatePromise;
 
     bool m_shouldFilterICECandidates { true };
     struct PendingICECandidate {

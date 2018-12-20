@@ -225,19 +225,19 @@ static bool isValidURLBasedPaymentMethodIdentifier(const URL& url)
 
 // Implements "validate a payment method identifier"
 // https://www.w3.org/TR/payment-method-id/#validity
-std::optional<PaymentRequest::MethodIdentifier> convertAndValidatePaymentMethodIdentifier(const String& identifier)
+Optional<PaymentRequest::MethodIdentifier> convertAndValidatePaymentMethodIdentifier(const String& identifier)
 {
     URL url { URL(), identifier };
     if (!url.isValid()) {
         if (isValidStandardizedPaymentMethodIdentifier(identifier))
             return { identifier };
-        return std::nullopt;
+        return WTF::nullopt;
     }
 
     if (isValidURLBasedPaymentMethodIdentifier(url))
         return { WTFMove(url) };
 
-    return std::nullopt;
+    return WTF::nullopt;
 }
 
 enum class ShouldValidatePaymentMethodIdentifier {
@@ -457,13 +457,13 @@ void PaymentRequest::abortWithException(Exception&& exception)
 
 void PaymentRequest::settleShowPromise(ExceptionOr<PaymentResponse&>&& result)
 {
-    if (auto showPromise = std::exchange(m_showPromise, std::nullopt))
+    if (auto showPromise = std::exchange(m_showPromise, WTF::nullopt))
         showPromise->settle(WTFMove(result));
 }
 
 void PaymentRequest::closeActivePaymentHandler()
 {
-    if (auto activePaymentHandler = std::exchange(m_activePaymentHandler, std::nullopt))
+    if (auto activePaymentHandler = std::exchange(m_activePaymentHandler, WTF::nullopt))
         activePaymentHandler->paymentHandler->hide();
 
     m_isUpdating = false;
@@ -520,11 +520,11 @@ const String& PaymentRequest::id() const
     return m_details.id;
 }
 
-std::optional<PaymentShippingType> PaymentRequest::shippingType() const
+Optional<PaymentShippingType> PaymentRequest::shippingType() const
 {
     if (m_options.requestShipping)
         return m_options.shippingType;
-    return std::nullopt;
+    return WTF::nullopt;
 }
 
 bool PaymentRequest::canSuspendForDocumentSuspension() const
@@ -711,14 +711,14 @@ void PaymentRequest::accept(const String& methodName, PaymentResponse::DetailsFu
     m_state = State::Closed;
 }
 
-ExceptionOr<void> PaymentRequest::complete(std::optional<PaymentComplete>&& result)
+ExceptionOr<void> PaymentRequest::complete(Optional<PaymentComplete>&& result)
 {
     ASSERT(m_state == State::Closed);
     if (!m_activePaymentHandler)
         return Exception { AbortError };
 
     activePaymentHandler()->complete(WTFMove(result));
-    m_activePaymentHandler = std::nullopt;
+    m_activePaymentHandler = WTF::nullopt;
     return { };
 }
 
@@ -734,7 +734,7 @@ ExceptionOr<void> PaymentRequest::retry(PaymentValidationErrors&& errors)
 
 void PaymentRequest::cancel()
 {
-    m_activePaymentHandler = std::nullopt;
+    m_activePaymentHandler = WTF::nullopt;
 
     if (m_isUpdating) {
         m_isCancelPending = true;

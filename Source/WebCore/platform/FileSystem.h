@@ -104,10 +104,10 @@ WEBCORE_EXPORT bool deleteEmptyDirectory(const String&);
 WEBCORE_EXPORT bool moveFile(const String& oldPath, const String& newPath);
 WEBCORE_EXPORT bool getFileSize(const String&, long long& result);
 WEBCORE_EXPORT bool getFileSize(PlatformFileHandle, long long& result);
-WEBCORE_EXPORT std::optional<WallTime> getFileModificationTime(const String&);
-WEBCORE_EXPORT std::optional<WallTime> getFileCreationTime(const String&); // Not all platforms store file creation time.
-WEBCORE_EXPORT std::optional<FileMetadata> fileMetadata(const String& path);
-WEBCORE_EXPORT std::optional<FileMetadata> fileMetadataFollowingSymlinks(const String& path);
+WEBCORE_EXPORT Optional<WallTime> getFileModificationTime(const String&);
+WEBCORE_EXPORT Optional<WallTime> getFileCreationTime(const String&); // Not all platforms store file creation time.
+WEBCORE_EXPORT Optional<FileMetadata> fileMetadata(const String& path);
+WEBCORE_EXPORT Optional<FileMetadata> fileMetadataFollowingSymlinks(const String& path);
 WEBCORE_EXPORT bool fileIsDirectory(const String&, ShouldFollowSymbolicLinks);
 WEBCORE_EXPORT String pathByAppendingComponent(const String& path, const String& component);
 String pathByAppendingComponents(StringView path, const Vector<StringView>& components);
@@ -117,7 +117,7 @@ String homeDirectoryPath();
 WEBCORE_EXPORT String pathGetFileName(const String&);
 WEBCORE_EXPORT String directoryName(const String&);
 WEBCORE_EXPORT bool getVolumeFreeSpace(const String&, uint64_t&);
-WEBCORE_EXPORT std::optional<int32_t> getFileDeviceId(const CString&);
+WEBCORE_EXPORT Optional<int32_t> getFileDeviceId(const CString&);
 WEBCORE_EXPORT bool createSymbolicLink(const String& targetPath, const String& symbolicLinkPath);
 
 WEBCORE_EXPORT void setMetadataURL(const String& path, const String& urlString, const String& referrer = { });

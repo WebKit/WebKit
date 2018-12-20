@@ -174,7 +174,7 @@ void MockHidConnection::parseRequest()
     }
 
     m_currentChannel = m_requestMessage->channelId();
-    m_requestMessage = std::nullopt;
+    m_requestMessage = WTF::nullopt;
     if (m_configuration.hid->fastDataArrival)
         feedReports();
 }
@@ -200,7 +200,7 @@ void MockHidConnection::feedReports()
         return;
     }
 
-    std::optional<FidoHidMessage> message;
+    Optional<FidoHidMessage> message;
     if (m_stage == Mock::Stage::Info && m_subStage == Mock::SubStage::Msg) {
         auto infoData = encodeAsCBOR(AuthenticatorGetInfoResponse({ ProtocolVersion::kCtap }, Vector<uint8_t>(kAaguidLength, 0u)));
         infoData.insert(0, static_cast<uint8_t>(CtapDeviceResponseCode::kSuccess)); // Prepend status code.

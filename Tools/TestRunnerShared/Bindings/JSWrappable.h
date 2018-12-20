@@ -37,14 +37,14 @@ public:
     virtual JSClassRef wrapperClass() = 0;
 };
 
-inline JSValueRef JSValueMakeBooleanOrNull(JSContextRef context, std::optional<bool> value)
+inline JSValueRef JSValueMakeBooleanOrNull(JSContextRef context, Optional<bool> value)
 {
     return value ? JSValueMakeBoolean(context, value.value()) : JSValueMakeNull(context);
 }
 
-inline std::optional<bool> JSValueToNullableBoolean(JSContextRef context, JSValueRef value)
+inline Optional<bool> JSValueToNullableBoolean(JSContextRef context, JSValueRef value)
 {
-    return JSValueIsUndefined(context, value) || JSValueIsNull(context, value) ? std::nullopt : std::optional<bool>(JSValueToBoolean(context, value));
+    return JSValueIsUndefined(context, value) || JSValueIsNull(context, value) ? WTF::nullopt : Optional<bool>(JSValueToBoolean(context, value));
 }
 
 inline JSValueRef JSValueMakeStringOrNull(JSContextRef context, JSStringRef stringOrNull)

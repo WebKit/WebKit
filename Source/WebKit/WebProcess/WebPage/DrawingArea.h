@@ -92,8 +92,8 @@ public:
     virtual void mainFrameContentSizeChanged(const WebCore::IntSize&) { }
 
 #if PLATFORM(COCOA)
-    virtual void setViewExposedRect(std::optional<WebCore::FloatRect>) = 0;
-    virtual std::optional<WebCore::FloatRect> viewExposedRect() const = 0;
+    virtual void setViewExposedRect(Optional<WebCore::FloatRect>) = 0;
+    virtual Optional<WebCore::FloatRect> viewExposedRect() const = 0;
 
     virtual void acceleratedAnimationDidStart(uint64_t /*layerID*/, const String& /*key*/, MonotonicTime /*startTime*/) { }
     virtual void acceleratedAnimationDidEnd(uint64_t /*layerID*/, const String& /*key*/) { }

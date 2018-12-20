@@ -53,7 +53,7 @@ public:
     class Iterator {
     public:
         explicit Iterator(URLSearchParams&);
-        std::optional<WTF::KeyValuePair<String, String>> next();
+        Optional<WTF::KeyValuePair<String, String>> next();
 
     private:
         Ref<URLSearchParams> m_target;

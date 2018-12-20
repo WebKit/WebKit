@@ -45,9 +45,9 @@ private:
 
     bool acceptsDisplayStyleAttribute() final { return false; }
 
-    std::optional<Length> m_width;
-    std::optional<Length> m_height;
-    std::optional<Length> m_depth;
+    Optional<Length> m_width;
+    Optional<Length> m_height;
+    Optional<Length> m_depth;
 };
 
 }

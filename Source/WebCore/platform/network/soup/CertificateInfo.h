@@ -55,7 +55,7 @@ public:
 
     bool containsNonRootSHA1SignedCertificate() const { notImplemented(); return false; }
 
-    std::optional<SummaryInfo> summaryInfo() const { notImplemented(); return std::nullopt; }
+    Optional<SummaryInfo> summaryInfo() const { notImplemented(); return WTF::nullopt; }
 
     bool isEmpty() const { return !m_certificate; }
 

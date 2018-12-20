@@ -39,7 +39,7 @@ namespace Layout {
 class LineBreakBox : public InlineBox {
     WTF_MAKE_ISO_ALLOCATED(LineBreakBox);
 public:
-    LineBreakBox(std::optional<ElementAttributes>, RenderStyle&&);
+    LineBreakBox(Optional<ElementAttributes>, RenderStyle&&);
 };
 
 }

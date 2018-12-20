@@ -47,10 +47,10 @@ public:
     void setBackingAnimation(const Animation&);
     void cancelFromStyle();
 
-    std::optional<double> startTime() const final;
-    void setStartTime(std::optional<double>) final;
-    std::optional<double> bindingsCurrentTime() const final;
-    ExceptionOr<void> setBindingsCurrentTime(std::optional<double>) final;
+    Optional<double> startTime() const final;
+    void setStartTime(Optional<double>) final;
+    Optional<double> bindingsCurrentTime() const final;
+    ExceptionOr<void> setBindingsCurrentTime(Optional<double>) final;
     WebAnimation::PlayState bindingsPlayState() const final;
     bool bindingsPending() const final;
     WebAnimation::ReadyPromise& bindingsReady() final;

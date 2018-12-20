@@ -112,7 +112,7 @@ static inline void computeMissingKeyframeOffsets(Vector<KeyframeEffect::ParsedKe
         return;
 
     // 1. For each keyframe, in keyframes, let the computed keyframe offset of the keyframe be equal to its keyframe offset value.
-    // In our implementation, we only set non-null values to avoid making computedOffset std::optional<double>. Instead, we'll know
+    // In our implementation, we only set non-null values to avoid making computedOffset Optional<double>. Instead, we'll know
     // that a keyframe hasn't had a computed offset by checking if it has a null offset and a 0 computedOffset, since the first
     // keyframe will already have a 0 computedOffset.
     for (auto& keyframe : keyframes)
@@ -390,13 +390,13 @@ static inline ExceptionOr<void> processPropertyIndexedKeyframes(ExecState& state
     // 5. Let offsets be a sequence of nullable double values assigned based on the type of the “offset” member of the property-indexed keyframe as follows:
     //    - sequence<double?>, the value of “offset” as-is.
     //    - double?, a sequence of length one with the value of “offset” as its single item, i.e. « offset »,
-    Vector<std::optional<double>> offsets;
-    if (WTF::holds_alternative<Vector<std::optional<double>>>(propertyIndexedKeyframe.baseProperties.offset))
-        offsets = WTF::get<Vector<std::optional<double>>>(propertyIndexedKeyframe.baseProperties.offset);
+    Vector<Optional<double>> offsets;
+    if (WTF::holds_alternative<Vector<Optional<double>>>(propertyIndexedKeyframe.baseProperties.offset))
+        offsets = WTF::get<Vector<Optional<double>>>(propertyIndexedKeyframe.baseProperties.offset);
     else if (WTF::holds_alternative<double>(propertyIndexedKeyframe.baseProperties.offset))
         offsets.append(WTF::get<double>(propertyIndexedKeyframe.baseProperties.offset));
     else if (WTF::holds_alternative<std::nullptr_t>(propertyIndexedKeyframe.baseProperties.offset))
-        offsets.append(std::nullopt);
+        offsets.append(WTF::nullopt);
 
     // 6. Assign each value in offsets to the keyframe offset of the keyframe with corresponding position in property keyframes until the end of either sequence is reached.
     for (size_t i = 0; i < offsets.size() && i < parsedKeyframes.size(); ++i)
@@ -459,7 +459,7 @@ static inline ExceptionOr<void> processPropertyIndexedKeyframes(ExecState& state
     return { };
 }
 
-ExceptionOr<Ref<KeyframeEffect>> KeyframeEffect::create(ExecState& state, Element* target, Strong<JSObject>&& keyframes, std::optional<Variant<double, KeyframeEffectOptions>>&& options)
+ExceptionOr<Ref<KeyframeEffect>> KeyframeEffect::create(ExecState& state, Element* target, Strong<JSObject>&& keyframes, Optional<Variant<double, KeyframeEffectOptions>>&& options)
 {
     auto keyframeEffect = adoptRef(*new KeyframeEffect(target));
 
@@ -1077,7 +1077,7 @@ void KeyframeEffect::setAnimatedPropertiesInStyle(RenderStyle& targetStyle, doub
         // 6. Remove any keyframes from property-specific keyframes that do not have a property value for target property.
         unsigned numberOfKeyframesWithZeroOffset = 0;
         unsigned numberOfKeyframesWithOneOffset = 0;
-        Vector<std::optional<size_t>> propertySpecificKeyframes;
+        Vector<Optional<size_t>> propertySpecificKeyframes;
         for (size_t i = 0; i < m_blendingKeyframes.size(); ++i) {
             auto& keyframe = m_blendingKeyframes[i];
             auto offset = keyframe.key();
@@ -1102,7 +1102,7 @@ void KeyframeEffect::setAnimatedPropertiesInStyle(RenderStyle& targetStyle, doub
         //    offset of 0, a property value set to the neutral value for composition, and a composite operation of add, and prepend it to the beginning of
         //    property-specific keyframes.
         if (!numberOfKeyframesWithZeroOffset) {
-            propertySpecificKeyframes.insert(0, std::nullopt);
+            propertySpecificKeyframes.insert(0, WTF::nullopt);
             numberOfKeyframesWithZeroOffset = 1;
         }
 
@@ -1110,12 +1110,12 @@ void KeyframeEffect::setAnimatedPropertiesInStyle(RenderStyle& targetStyle, doub
         //    keyframe offset of 1, a property value set to the neutral value for composition, and a composite operation of add, and append it to the end of
         //    property-specific keyframes.
         if (!numberOfKeyframesWithOneOffset) {
-            propertySpecificKeyframes.append(std::nullopt);
+            propertySpecificKeyframes.append(WTF::nullopt);
             numberOfKeyframesWithOneOffset = 1;
         }
 
         // 10. Let interval endpoints be an empty sequence of keyframes.
-        Vector<std::optional<size_t>> intervalEndpoints;
+        Vector<Optional<size_t>> intervalEndpoints;
 
         // 11. Populate interval endpoints by following the steps from the first matching condition from below:
         if (iterationProgress < 0 && numberOfKeyframesWithZeroOffset > 1) {

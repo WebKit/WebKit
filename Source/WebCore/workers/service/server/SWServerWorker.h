@@ -86,12 +86,12 @@ public:
     bool hasPendingEvents() const { return m_hasPendingEvents; }
     void setHasPendingEvents(bool);
 
-    void scriptContextFailedToStart(const std::optional<ServiceWorkerJobDataIdentifier>&, const String& message);
-    void scriptContextStarted(const std::optional<ServiceWorkerJobDataIdentifier>&);
-    void didFinishInstall(const std::optional<ServiceWorkerJobDataIdentifier>&, bool wasSuccessful);
+    void scriptContextFailedToStart(const Optional<ServiceWorkerJobDataIdentifier>&, const String& message);
+    void scriptContextStarted(const Optional<ServiceWorkerJobDataIdentifier>&);
+    void didFinishInstall(const Optional<ServiceWorkerJobDataIdentifier>&, bool wasSuccessful);
     void didFinishActivation();
     void contextTerminated();
-    WEBCORE_EXPORT std::optional<ServiceWorkerClientData> findClientByIdentifier(const ServiceWorkerClientIdentifier&) const;
+    WEBCORE_EXPORT Optional<ServiceWorkerClientData> findClientByIdentifier(const ServiceWorkerClientIdentifier&) const;
     void matchAll(const ServiceWorkerClientQueryOptions&, ServiceWorkerClientsMatchAllCallback&&);
     void claim();
     void setScriptResource(URL&&, ServiceWorkerContextData::ImportedScript&&);
@@ -122,7 +122,7 @@ private:
     ContentSecurityPolicyResponseHeaders m_contentSecurityPolicy;
     bool m_hasPendingEvents { false };
     State m_state { State::NotRunning };
-    mutable std::optional<ClientOrigin> m_origin;
+    mutable Optional<ClientOrigin> m_origin;
     bool m_isSkipWaitingFlagSet { false };
     Vector<Function<void(bool)>> m_whenActivatedHandlers;
     HashMap<URL, ServiceWorkerContextData::ImportedScript> m_scriptResourceMap;

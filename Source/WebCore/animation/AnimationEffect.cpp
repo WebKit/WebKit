@@ -41,11 +41,11 @@ AnimationEffect::~AnimationEffect()
 {
 }
 
-std::optional<Seconds> AnimationEffect::localTime() const
+Optional<Seconds> AnimationEffect::localTime() const
 {
     if (m_animation)
         return m_animation->currentTime();
-    return std::nullopt;
+    return WTF::nullopt;
 }
 
 auto AnimationEffect::phase() const -> Phase
@@ -86,7 +86,7 @@ auto AnimationEffect::phase() const -> Phase
     return Phase::Active;
 }
 
-std::optional<Seconds> AnimationEffect::activeTime() const
+Optional<Seconds> AnimationEffect::activeTime() const
 {
     // 3.8.3.1. Calculating the active time
     // https://drafts.csswg.org/web-animations-1/#calculating-the-active-time
@@ -105,7 +105,7 @@ std::optional<Seconds> AnimationEffect::activeTime() const
         if (m_fill == FillMode::Backwards || m_fill == FillMode::Both)
             return std::max(localTime().value() - m_delay, 0_s);
         // Otherwise, return an unresolved time value.
-        return std::nullopt;
+        return WTF::nullopt;
     }
 
     // If the animation effect is in the active phase, return the result of evaluating local time - start delay.
@@ -120,14 +120,14 @@ std::optional<Seconds> AnimationEffect::activeTime() const
         if (m_fill == FillMode::Forwards || m_fill == FillMode::Both)
             return std::max(std::min(localTime().value() - m_delay, activeDuration()), 0_s);
         // Otherwise, return an unresolved time value.
-        return std::nullopt;
+        return WTF::nullopt;
     }
 
     // Otherwise (the local time is unresolved), return an unresolved time value.
-    return std::nullopt;
+    return WTF::nullopt;
 }
 
-std::optional<double> AnimationEffect::overallProgress() const
+Optional<double> AnimationEffect::overallProgress() const
 {
     // 3.8.3.2. Calculating the overall progress
     // https://drafts.csswg.org/web-animations-1/#calculating-the-overall-progress
@@ -137,7 +137,7 @@ std::optional<double> AnimationEffect::overallProgress() const
     // 1. If the active time is unresolved, return unresolved.
     auto effectActiveTime = activeTime();
     if (!effectActiveTime)
-        return std::nullopt;
+        return WTF::nullopt;
 
     // 2. Calculate an initial value for overall progress based on the first matching condition from below,
     double overallProgress;
@@ -156,7 +156,7 @@ std::optional<double> AnimationEffect::overallProgress() const
     return std::abs(overallProgress);
 }
 
-std::optional<double> AnimationEffect::simpleIterationProgress() const
+Optional<double> AnimationEffect::simpleIterationProgress() const
 {
     // 3.8.3.3. Calculating the simple iteration progress
     // https://drafts.csswg.org/web-animations-1/#calculating-the-simple-iteration-progress
@@ -168,7 +168,7 @@ std::optional<double> AnimationEffect::simpleIterationProgress() const
     // 1. If the overall progress is unresolved, return unresolved.
     auto effectOverallProgress = overallProgress();
     if (!effectOverallProgress)
-        return std::nullopt;
+        return WTF::nullopt;
 
     // 2. If overall progress is infinity, let the simple iteration progress be iteration start % 1.0,
     // otherwise, let the simple iteration progress be overall progress % 1.0.
@@ -189,7 +189,7 @@ std::optional<double> AnimationEffect::simpleIterationProgress() const
     return simpleIterationProgress;
 }
 
-std::optional<double> AnimationEffect::currentIteration() const
+Optional<double> AnimationEffect::currentIteration() const
 {
     // 3.8.4. Calculating the current iteration
     // https://drafts.csswg.org/web-animations-1/#calculating-the-current-iteration
@@ -198,7 +198,7 @@ std::optional<double> AnimationEffect::currentIteration() const
 
     // 1. If the active time is unresolved, return unresolved.
     if (!activeTime())
-        return std::nullopt;
+        return WTF::nullopt;
 
     // 2. If the animation effect is in the after phase and the iteration count is infinity, return infinity.
     if (phase() == Phase::After && std::isinf(m_iterations))
@@ -237,7 +237,7 @@ AnimationEffect::ComputedDirection AnimationEffect::currentDirection() const
     return AnimationEffect::ComputedDirection::Reverse;
 }
 
-std::optional<double> AnimationEffect::directedProgress() const
+Optional<double> AnimationEffect::directedProgress() const
 {
     // 3.9.1. Calculating the directed progress
     // https://drafts.csswg.org/web-animations-1/#calculating-the-directed-progress
@@ -247,7 +247,7 @@ std::optional<double> AnimationEffect::directedProgress() const
     // 1. If the simple iteration progress is unresolved, return unresolved.
     auto effectSimpleIterationProgress = simpleIterationProgress();
     if (!effectSimpleIterationProgress)
-        return std::nullopt;
+        return WTF::nullopt;
 
     // 2. Calculate the current direction (we implement this as a separate method).
 
@@ -259,7 +259,7 @@ std::optional<double> AnimationEffect::directedProgress() const
     return 1 - effectSimpleIterationProgress.value();
 }
 
-std::optional<double> AnimationEffect::transformedProgress() const
+Optional<double> AnimationEffect::transformedProgress() const
 {
     // 3.10.1. Calculating the transformed progress
     // https://drafts.csswg.org/web-animations-1/#calculating-the-transformed-progress
@@ -269,7 +269,7 @@ std::optional<double> AnimationEffect::transformedProgress() const
     // 1. If the directed progress is unresolved, return unresolved.
     auto effectDirectedProgress = directedProgress();
     if (!effectDirectedProgress)
-        return std::nullopt;
+        return WTF::nullopt;
 
     auto effectDirectedProgressValue = effectDirectedProgress.value();
 
@@ -294,7 +294,7 @@ std::optional<double> AnimationEffect::transformedProgress() const
     return effectDirectedProgressValue;
 }
 
-std::optional<double> AnimationEffect::iterationProgress() const
+Optional<double> AnimationEffect::iterationProgress() const
 {
     return transformedProgress();
 }
@@ -336,7 +336,7 @@ ComputedEffectTiming AnimationEffect::getComputedTiming()
     return computedTiming;
 }
 
-ExceptionOr<void> AnimationEffect::updateTiming(std::optional<OptionalEffectTiming> timing)
+ExceptionOr<void> AnimationEffect::updateTiming(Optional<OptionalEffectTiming> timing)
 {
     // 6.5.4. Updating the timing of an AnimationEffect
     // https://drafts.csswg.org/web-animations/#updating-animationeffect-timing

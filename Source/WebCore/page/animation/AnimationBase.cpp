@@ -161,10 +161,10 @@ void AnimationBase::updateStateMachine(AnimationStateInput input, double param)
             m_compositeAnimation->animationController().removeFromAnimationsWaitingForStyle(this);
         LOG(Animations, "%p AnimationState %s -> New", this, nameForState(m_animationState));
         m_animationState = AnimationState::New;
-        m_startTime = std::nullopt;
-        m_pauseTime = std::nullopt;
+        m_startTime = WTF::nullopt;
+        m_pauseTime = WTF::nullopt;
         m_requestedStartTime = 0;
-        m_nextIterationDuration = std::nullopt;
+        m_nextIterationDuration = WTF::nullopt;
         endAnimation();
         return;
     }
@@ -174,10 +174,10 @@ void AnimationBase::updateStateMachine(AnimationStateInput input, double param)
             m_compositeAnimation->animationController().removeFromAnimationsWaitingForStyle(this);
         LOG(Animations, "%p AnimationState %s -> New", this, nameForState(m_animationState));
         m_animationState = AnimationState::New;
-        m_startTime = std::nullopt;
-        m_pauseTime = std::nullopt;
+        m_startTime = WTF::nullopt;
+        m_pauseTime = WTF::nullopt;
         m_requestedStartTime = 0;
-        m_nextIterationDuration = std::nullopt;
+        m_nextIterationDuration = WTF::nullopt;
         endAnimation();
 
         if (!paused())
@@ -225,7 +225,7 @@ void AnimationBase::updateStateMachine(AnimationStateInput input, double param)
                 // We are pausing before we even started.
                 LOG(Animations, "%p AnimationState %s -> AnimationState::PausedNew", this, nameForState(m_animationState));
                 m_animationState = AnimationState::PausedNew;
-                m_pauseTime = std::nullopt;
+                m_pauseTime = WTF::nullopt;
             }
 
             break;
@@ -376,7 +376,7 @@ void AnimationBase::updateStateMachine(AnimationStateInput input, double param)
             ASSERT(paused());
             // Update the times
             m_startTime = m_startTime.value_or(0) + beginAnimationUpdateTime() - m_pauseTime.value_or(0);
-            m_pauseTime = std::nullopt;
+            m_pauseTime = WTF::nullopt;
 
             // we were waiting for the start timer to fire, go back and wait again
             LOG(Animations, "%p AnimationState %s -> New", this, nameForState(m_animationState));
@@ -400,7 +400,7 @@ void AnimationBase::updateStateMachine(AnimationStateInput input, double param)
                     // to start, so jump back to the New state and reset.
                     LOG(Animations, "%p AnimationState %s -> AnimationState::New", this, nameForState(m_animationState));
                     m_animationState = AnimationState::New;
-                    m_pauseTime = std::nullopt;
+                    m_pauseTime = WTF::nullopt;
                     updateStateMachine(input, param);
                     break;
                 }
@@ -411,7 +411,7 @@ void AnimationBase::updateStateMachine(AnimationStateInput input, double param)
                 else
                     m_startTime = 0;
 
-                m_pauseTime = std::nullopt;
+                m_pauseTime = WTF::nullopt;
 
                 if (m_animationState == AnimationState::PausedWaitStyleAvailable) {
                     LOG(Animations, "%p AnimationState %s -> StartWaitStyleAvailable", this, nameForState(m_animationState));
@@ -546,12 +546,12 @@ void AnimationBase::updatePlayState(AnimationPlayState playState)
     updateStateMachine(pause ?  AnimationStateInput::PlayStatePaused : AnimationStateInput::PlayStateRunning, -1);
 }
 
-std::optional<Seconds> AnimationBase::timeToNextService()
+Optional<Seconds> AnimationBase::timeToNextService()
 {
-    // Returns the time at which next service is required. std::nullopt means no service is required. 0 means
+    // Returns the time at which next service is required. WTF::nullopt means no service is required. 0 means
     // service is required now, and > 0 means service is required that many seconds in the future.
     if (paused() || isNew() || postActive() || fillingForwards())
-        return std::nullopt;
+        return WTF::nullopt;
     
     if (m_animationState == AnimationState::StartWaitTimer) {
         double timeFromNow = m_animation->delay() - (beginAnimationUpdateTime() - m_requestedStartTime);

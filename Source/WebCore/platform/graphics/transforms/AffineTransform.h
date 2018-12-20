@@ -129,7 +129,7 @@ public:
     WEBCORE_EXPORT double yScale() const;
 
     bool isInvertible() const; // If you call this this, you're probably doing it wrong.
-    WEBCORE_EXPORT std::optional<AffineTransform> inverse() const;
+    WEBCORE_EXPORT Optional<AffineTransform> inverse() const;
 
     WEBCORE_EXPORT void blend(const AffineTransform& from, double progress);
 

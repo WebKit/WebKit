@@ -143,7 +143,7 @@ public:
     unsigned tileCapacityForGrid(LegacyTileGrid*);
     Color colorForGridTileBorder(LegacyTileGrid*) const;
     bool setOverrideVisibleRect(const FloatRect&);
-    void clearOverrideVisibleRect() { m_overrideVisibleRect = std::nullopt; }
+    void clearOverrideVisibleRect() { m_overrideVisibleRect = WTF::nullopt; }
 
     void doPendingRepaints();
 
@@ -184,7 +184,7 @@ private:
     // Ensure there are no async calls on a dead tile cache.
     RetainPtr<LegacyTileCacheTombstone> m_tombstone;
 
-    std::optional<FloatRect> m_overrideVisibleRect;
+    Optional<FloatRect> m_overrideVisibleRect;
 
     IntSize m_tileSize { 512, 512 };
     

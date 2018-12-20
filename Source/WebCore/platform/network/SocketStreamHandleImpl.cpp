@@ -76,11 +76,11 @@ static size_t removeTerminationCharacters(const uint8_t* data, size_t dataLength
     return dataLength - 2;
 }
 
-static std::optional<std::pair<Vector<uint8_t>, bool>> cookieDataForHandshake(const CookieRequestHeaderFieldProxy& headerFieldProxy)
+static Optional<std::pair<Vector<uint8_t>, bool>> cookieDataForHandshake(const CookieRequestHeaderFieldProxy& headerFieldProxy)
 {
     auto networkStorageSession = NetworkStorageSession::storageSession(headerFieldProxy.sessionID);
     if (!networkStorageSession)
-        return std::nullopt;
+        return WTF::nullopt;
     
     String cookieDataString;
     bool secureCookiesAccessed = false;
@@ -97,7 +97,7 @@ static std::optional<std::pair<Vector<uint8_t>, bool>> cookieDataForHandshake(co
     return std::pair<Vector<uint8_t>, bool> { data, secureCookiesAccessed };
 }
 
-void SocketStreamHandleImpl::platformSendHandshake(const uint8_t* data, size_t length, const std::optional<CookieRequestHeaderFieldProxy>& headerFieldProxy, Function<void(bool, bool)>&& completionHandler)
+void SocketStreamHandleImpl::platformSendHandshake(const uint8_t* data, size_t length, const Optional<CookieRequestHeaderFieldProxy>& headerFieldProxy, Function<void(bool, bool)>&& completionHandler)
 {
     Vector<uint8_t> cookieData;
     bool secureCookiesAccessed = false;

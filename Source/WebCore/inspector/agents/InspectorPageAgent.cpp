@@ -830,7 +830,7 @@ void InspectorPageAgent::setForcedAppearance(ErrorString&, const String& appeara
     else if (appearance == "Dark"_s)
         m_page.setUseDarkAppearanceOverride(true);
     else
-        m_page.setUseDarkAppearanceOverride(std::nullopt);
+        m_page.setUseDarkAppearanceOverride(WTF::nullopt);
 }
 
 void InspectorPageAgent::applyEmulatedMedia(String& media)
@@ -866,7 +866,7 @@ void InspectorPageAgent::snapshotNode(ErrorString& errorString, int nodeId, Stri
         return;
     }
 
-    *outDataURL = snapshot->toDataURL("image/png"_s, std::nullopt, PreserveResolution::Yes);
+    *outDataURL = snapshot->toDataURL("image/png"_s, WTF::nullopt, PreserveResolution::Yes);
 }
 
 void InspectorPageAgent::snapshotRect(ErrorString& errorString, int x, int y, int width, int height, const String& coordinateSystem, String* outDataURL)
@@ -885,7 +885,7 @@ void InspectorPageAgent::snapshotRect(ErrorString& errorString, int x, int y, in
         return;
     }
 
-    *outDataURL = snapshot->toDataURL("image/png"_s, std::nullopt, PreserveResolution::Yes);
+    *outDataURL = snapshot->toDataURL("image/png"_s, WTF::nullopt, PreserveResolution::Yes);
 }
 
 void InspectorPageAgent::archive(ErrorString& errorString, String* data)

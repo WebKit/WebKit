@@ -66,7 +66,7 @@ private:
         LayoutUnit contentLogicalRight() const;
         LayoutUnit contentLogicalLeft() const { return m_logicalRect.left(); }
         LayoutUnit availableWidth() const { return m_availableWidth; }
-        std::optional<InlineRunProvider::Run::Type> lastRunType() const { return m_lastRunType; }
+        Optional<InlineRunProvider::Run::Type> lastRunType() const { return m_lastRunType; }
 
         LayoutUnit logicalTop() const { return m_logicalRect.top(); }
         LayoutUnit logicalBottom() const { return m_logicalRect.bottom(); }
@@ -77,8 +77,8 @@ private:
             LayoutUnit width;
             unsigned length;
         };
-        std::optional<TrailingTrimmableContent> m_trailingTrimmableContent;
-        std::optional<InlineRunProvider::Run::Type> m_lastRunType;
+        Optional<TrailingTrimmableContent> m_trailingTrimmableContent;
+        Optional<InlineRunProvider::Run::Type> m_lastRunType;
         bool m_lastRunCanExpand { false };
 
         Display::Box::Rect m_logicalRect;

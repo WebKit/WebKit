@@ -32,8 +32,8 @@
 namespace WebCore {
 
 struct MediaConfiguration {
-    std::optional<VideoConfiguration> video;
-    std::optional<AudioConfiguration> audio;
+    Optional<VideoConfiguration> video;
+    Optional<AudioConfiguration> audio;
 };
 
 }

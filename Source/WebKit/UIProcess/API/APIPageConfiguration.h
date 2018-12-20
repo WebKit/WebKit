@@ -95,7 +95,7 @@ public:
     bool initialCapitalizationEnabled() { return m_initialCapitalizationEnabled; }
     void setInitialCapitalizationEnabled(bool initialCapitalizationEnabled) { m_initialCapitalizationEnabled = initialCapitalizationEnabled; }
 
-    std::optional<double> cpuLimit() const { return m_cpuLimit; }
+    Optional<double> cpuLimit() const { return m_cpuLimit; }
     void setCPULimit(double cpuLimit) { m_cpuLimit = cpuLimit; }
 
     bool waitsForPaintAfterViewDidMoveToWindow() const { return m_waitsForPaintAfterViewDidMoveToWindow; }
@@ -147,7 +147,7 @@ private:
     bool m_waitsForPaintAfterViewDidMoveToWindow { true };
     bool m_drawsBackground { true };
     bool m_controlledByAutomation { false };
-    std::optional<double> m_cpuLimit;
+    Optional<double> m_cpuLimit;
 
     WTF::String m_overrideContentSecurityPolicy;
 

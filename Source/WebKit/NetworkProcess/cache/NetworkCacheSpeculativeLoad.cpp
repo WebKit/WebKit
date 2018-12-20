@@ -72,7 +72,7 @@ void SpeculativeLoad::willSendRedirectedRequest(ResourceRequest&& request, Resou
 {
     LOG(NetworkCacheSpeculativePreloading, "Speculative redirect %s -> %s", request.url().string().utf8().data(), redirectRequest.url().string().utf8().data());
 
-    std::optional<Seconds> maxAgeCap;
+    Optional<Seconds> maxAgeCap;
 #if ENABLE(RESOURCE_LOAD_STATISTICS)
     if (auto networkStorageSession = WebCore::NetworkStorageSession::storageSession(PAL::SessionID::defaultSessionID()))
         maxAgeCap = networkStorageSession->maxAgeCacheCap(request);

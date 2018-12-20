@@ -48,18 +48,18 @@ WEBCORE_EXPORT CtapDeviceResponseCode getResponseCode(const Vector<uint8_t>&);
 // and converts response to AuthenticatorMakeCredentialResponse object with
 // CBOR map keys that conform to format of attestation object defined by the
 // WebAuthN spec : https://w3c.github.io/webauthn/#fig-attStructs
-WEBCORE_EXPORT std::optional<WebCore::PublicKeyCredentialData> readCTAPMakeCredentialResponse(const Vector<uint8_t>&);
+WEBCORE_EXPORT Optional<WebCore::PublicKeyCredentialData> readCTAPMakeCredentialResponse(const Vector<uint8_t>&);
 
 // De-serializes CBOR encoded response to AuthenticatorGetAssertion /
 // AuthenticatorGetNextAssertion request to AuthenticatorGetAssertionResponse
 // object.
 // FIXME(190783): Probably need to remake AuthenticatorResponse to include more fields like numberOfCredentials,
 // and use it here instead of PublicKeyCredentialData.
-WEBCORE_EXPORT std::optional<WebCore::PublicKeyCredentialData> readCTAPGetAssertionResponse(const Vector<uint8_t>&);
+WEBCORE_EXPORT Optional<WebCore::PublicKeyCredentialData> readCTAPGetAssertionResponse(const Vector<uint8_t>&);
 
 // De-serializes CBOR encoded response to AuthenticatorGetInfo request to
 // AuthenticatorGetInfoResponse object.
-WEBCORE_EXPORT std::optional<AuthenticatorGetInfoResponse> readCTAPGetInfoResponse(const Vector<uint8_t>&);
+WEBCORE_EXPORT Optional<AuthenticatorGetInfoResponse> readCTAPGetInfoResponse(const Vector<uint8_t>&);
 
 } // namespace fido
 

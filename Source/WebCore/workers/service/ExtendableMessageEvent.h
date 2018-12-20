@@ -53,7 +53,7 @@ public:
         JSC::JSValue data;
         String origin;
         String lastEventId;
-        std::optional<ExtendableMessageEventSource> source;
+        Optional<ExtendableMessageEventSource> source;
         Vector<RefPtr<MessagePort>> ports;
     };
 
@@ -62,26 +62,26 @@ public:
         return adoptRef(*new ExtendableMessageEvent(state, type, initializer, isTrusted));
     }
 
-    static Ref<ExtendableMessageEvent> create(Vector<RefPtr<MessagePort>>&&, RefPtr<SerializedScriptValue>&&, const String& origin = { }, const String& lastEventId = { }, std::optional<ExtendableMessageEventSource>&& source = std::nullopt);
+    static Ref<ExtendableMessageEvent> create(Vector<RefPtr<MessagePort>>&&, RefPtr<SerializedScriptValue>&&, const String& origin = { }, const String& lastEventId = { }, Optional<ExtendableMessageEventSource>&& source = WTF::nullopt);
 
     ~ExtendableMessageEvent();
 
     SerializedScriptValue* data() const { return m_data.get(); }
     const String& origin() const { return m_origin; }
     const String& lastEventId() const { return m_lastEventId; }
-    const std::optional<ExtendableMessageEventSource>& source() const { return m_source; }
+    const Optional<ExtendableMessageEventSource>& source() const { return m_source; }
     const Vector<RefPtr<MessagePort>>& ports() const { return m_ports; }
 
     EventInterface eventInterface() const final { return ExtendableMessageEventInterfaceType; }
 
 private:
     ExtendableMessageEvent(JSC::ExecState&, const AtomicString&, const Init&, IsTrusted);
-    ExtendableMessageEvent(RefPtr<SerializedScriptValue>&& data, const String& origin, const String& lastEventId, std::optional<ExtendableMessageEventSource>&&, Vector<RefPtr<MessagePort>>&&);
+    ExtendableMessageEvent(RefPtr<SerializedScriptValue>&& data, const String& origin, const String& lastEventId, Optional<ExtendableMessageEventSource>&&, Vector<RefPtr<MessagePort>>&&);
 
     RefPtr<SerializedScriptValue> m_data;
     String m_origin;
     String m_lastEventId;
-    std::optional<ExtendableMessageEventSource> m_source;
+    Optional<ExtendableMessageEventSource> m_source;
     Vector<RefPtr<MessagePort>> m_ports;
 };
 

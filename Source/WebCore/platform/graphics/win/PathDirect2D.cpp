@@ -286,7 +286,7 @@ void Path::transform(const AffineTransform& transform)
     if (transform.isIdentity() || isEmpty())
         return;
 
-    std::optional<FloatPoint> currentPoint;
+    Optional<FloatPoint> currentPoint;
     if (hasCurrentPoint())
         currentPoint = this->currentPoint();
 

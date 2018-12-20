@@ -92,7 +92,7 @@ private:
     mutable HashMap<AtomicString, std::unique_ptr<Vector<InvalidationRuleSet>>> m_classInvalidationRuleSets;
     mutable HashMap<AtomicString, std::unique_ptr<Vector<InvalidationRuleSet>>> m_attributeInvalidationRuleSets;
 
-    mutable std::optional<bool> m_cachedHasComplexSelectorsForStyleAttribute;
+    mutable Optional<bool> m_cachedHasComplexSelectorsForStyleAttribute;
 
     mutable unsigned m_defaultStyleVersionOnFeatureCollection { 0 };
     mutable unsigned m_userAgentMediaQueryRuleCountOnUpdate { 0 };

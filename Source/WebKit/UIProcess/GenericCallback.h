@@ -105,7 +105,7 @@ public:
         if (!m_callback)
             return;
 
-        auto callback = std::exchange(m_callback, std::nullopt);
+        auto callback = std::exchange(m_callback, WTF::nullopt);
         callback.value()(returnValue..., Error::None);
     }
 
@@ -121,7 +121,7 @@ public:
         if (!m_callback)
             return;
 
-        auto callback = std::exchange(m_callback, std::nullopt);
+        auto callback = std::exchange(m_callback, WTF::nullopt);
         callback.value()(typename std::remove_reference<T>::type()..., error);
     }
 
@@ -139,7 +139,7 @@ private:
         return &tag;
     }
 
-    std::optional<CallbackFunction> m_callback;
+    Optional<CallbackFunction> m_callback;
 
 #ifndef NDEBUG
     Ref<Thread> m_originThread { Thread::current() };

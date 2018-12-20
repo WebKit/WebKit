@@ -45,12 +45,12 @@ public:
         ASSERT(isValidIdentifier(m_identifier));
         encoder << m_identifier;
     }
-    template<typename Decoder> static std::optional<ObjectIdentifier> decode(Decoder& decoder)
+    template<typename Decoder> static Optional<ObjectIdentifier> decode(Decoder& decoder)
     {
-        std::optional<uint64_t> identifier;
+        Optional<uint64_t> identifier;
         decoder >> identifier;
         if (!identifier)
-            return std::nullopt;
+            return WTF::nullopt;
         ASSERT(isValidIdentifier(*identifier));
         return ObjectIdentifier { *identifier };
     }

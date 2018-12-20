@@ -139,7 +139,7 @@ void WebPaymentCoordinatorProxy::completeMerchantValidation(const WebCore::Payme
     m_merchantValidationState = MerchantValidationState::ValidationComplete;
 }
 
-void WebPaymentCoordinatorProxy::completeShippingMethodSelection(const std::optional<WebCore::ShippingMethodUpdate>& update)
+void WebPaymentCoordinatorProxy::completeShippingMethodSelection(const Optional<WebCore::ShippingMethodUpdate>& update)
 {
     // It's possible that the payment has been canceled already.
     if (m_state == State::Idle)
@@ -152,7 +152,7 @@ void WebPaymentCoordinatorProxy::completeShippingMethodSelection(const std::opti
     m_state = State::Active;
 }
 
-void WebPaymentCoordinatorProxy::completeShippingContactSelection(const std::optional<WebCore::ShippingContactUpdate>& update)
+void WebPaymentCoordinatorProxy::completeShippingContactSelection(const Optional<WebCore::ShippingContactUpdate>& update)
 {
     // It's possible that the payment has been canceled already.
     if (m_state == State::Idle)
@@ -165,7 +165,7 @@ void WebPaymentCoordinatorProxy::completeShippingContactSelection(const std::opt
     m_state = State::Active;
 }
 
-void WebPaymentCoordinatorProxy::completePaymentMethodSelection(const std::optional<WebCore::PaymentMethodUpdate>& update)
+void WebPaymentCoordinatorProxy::completePaymentMethodSelection(const Optional<WebCore::PaymentMethodUpdate>& update)
 {
     // It's possible that the payment has been canceled already.
     if (m_state == State::Idle)
@@ -178,7 +178,7 @@ void WebPaymentCoordinatorProxy::completePaymentMethodSelection(const std::optio
     m_state = State::Active;
 }
 
-void WebPaymentCoordinatorProxy::completePaymentSession(const std::optional<WebCore::PaymentAuthorizationResult>& result)
+void WebPaymentCoordinatorProxy::completePaymentSession(const Optional<WebCore::PaymentAuthorizationResult>& result)
 {
     // It's possible that the payment has been canceled already.
     if (!canCompletePayment())

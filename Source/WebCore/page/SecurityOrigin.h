@@ -52,7 +52,7 @@ public:
     WEBCORE_EXPORT static Ref<SecurityOrigin> createUnique();
 
     WEBCORE_EXPORT static Ref<SecurityOrigin> createFromString(const String&);
-    WEBCORE_EXPORT static Ref<SecurityOrigin> create(const String& protocol, const String& host, std::optional<uint16_t> port);
+    WEBCORE_EXPORT static Ref<SecurityOrigin> create(const String& protocol, const String& host, Optional<uint16_t> port);
 
     // Some URL schemes use nested URLs for their security context. For example,
     // filesystem URLs look like the following:
@@ -80,7 +80,7 @@ public:
     const String& protocol() const { return m_data.protocol; }
     const String& host() const { return m_data.host; }
     const String& domain() const { return m_domain; }
-    std::optional<uint16_t> port() const { return m_data.port; }
+    Optional<uint16_t> port() const { return m_data.port; }
 
     // Returns true if a given URL is secure, based either directly on its
     // own protocol, or, when relevant, on the protocol of its "inner URL"
@@ -261,7 +261,7 @@ template<class Encoder> inline void SecurityOrigin::encode(Encoder& encoder) con
 
 template<class Decoder> inline RefPtr<SecurityOrigin> SecurityOrigin::decode(Decoder& decoder)
 {
-    std::optional<SecurityOriginData> data;
+    Optional<SecurityOriginData> data;
     decoder >> data;
     if (!data)
         return nullptr;

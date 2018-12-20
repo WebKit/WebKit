@@ -62,7 +62,7 @@ struct WebsiteDataRecord {
         uint64_t totalSize;
         HashMap<unsigned, uint64_t> typeSizes;
     };
-    std::optional<Size> size;
+    Optional<Size> size;
 
     HashSet<WebCore::SecurityOriginData> origins;
     HashSet<String> cookieHostNames;

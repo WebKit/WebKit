@@ -79,8 +79,8 @@ private:
 
     void emitFrame();
 
-    std::optional<RealtimeMediaSourceCapabilities> m_capabilities;
-    std::optional<RealtimeMediaSourceSettings> m_currentSettings;
+    Optional<RealtimeMediaSourceCapabilities> m_capabilities;
+    Optional<RealtimeMediaSourceSettings> m_currentSettings;
     RealtimeMediaSourceSupportedConstraints m_supportedConstraints;
 
     MonotonicTime m_startTime { MonotonicTime::nan() };

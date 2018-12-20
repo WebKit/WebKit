@@ -63,7 +63,7 @@ private:
 
     Timer m_errorEventTimer;
     bool m_shouldRescheduleErrorEventOnResume { false };
-    mutable std::optional<RefPtr<const MediaQuerySet>> m_cachedParsedMediaAttribute;
+    mutable Optional<RefPtr<const MediaQuerySet>> m_cachedParsedMediaAttribute;
 };
 
 } // namespace WebCore

@@ -39,7 +39,7 @@ namespace Layout {
 class BlockContainer : public Container {
     WTF_MAKE_ISO_ALLOCATED(BlockContainer);
 public:
-    BlockContainer(std::optional<ElementAttributes>, RenderStyle&&, BaseTypeFlags = BlockContainerFlag);
+    BlockContainer(Optional<ElementAttributes>, RenderStyle&&, BaseTypeFlags = BlockContainerFlag);
 
     bool establishesInlineFormattingContext() const final;
 

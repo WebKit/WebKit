@@ -56,8 +56,8 @@ private:
         End
     };
 
-    static std::optional<String> extractBoundary(const CurlResponse&);
-    static std::optional<String> extractBoundaryFromContentType(const String&);
+    static Optional<String> extractBoundary(const CurlResponse&);
+    static Optional<String> extractBoundaryFromContentType(const String&);
 
     bool processContent();
     bool checkForBoundary(size_t& boundaryStartPosition, size_t& lastPartialMatchPosition);

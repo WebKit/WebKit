@@ -178,10 +178,10 @@ int RenderFlexibleBox::baselinePosition(FontBaseline, bool, LineDirectionMode di
     return baseline + marginAscent;
 }
 
-std::optional<int> RenderFlexibleBox::firstLineBaseline() const
+Optional<int> RenderFlexibleBox::firstLineBaseline() const
 {
     if (isWritingModeRoot() || m_numberOfInFlowChildrenOnFirstLine <= 0)
-        return std::optional<int>();
+        return Optional<int>();
     RenderBox* baselineChild = nullptr;
     int childNumber = 0;
     for (RenderBox* child = m_orderIterator.first(); child; child = m_orderIterator.next()) {
@@ -200,27 +200,27 @@ std::optional<int> RenderFlexibleBox::firstLineBaseline() const
     }
 
     if (!baselineChild)
-        return std::optional<int>();
+        return Optional<int>();
 
     if (!isColumnFlow() && hasOrthogonalFlow(*baselineChild))
-        return std::optional<int>(crossAxisExtentForChild(*baselineChild) + baselineChild->logicalTop());
+        return Optional<int>(crossAxisExtentForChild(*baselineChild) + baselineChild->logicalTop());
     if (isColumnFlow() && !hasOrthogonalFlow(*baselineChild))
-        return std::optional<int>(mainAxisExtentForChild(*baselineChild) + baselineChild->logicalTop());
+        return Optional<int>(mainAxisExtentForChild(*baselineChild) + baselineChild->logicalTop());
 
-    std::optional<int> baseline = baselineChild->firstLineBaseline();
+    Optional<int> baseline = baselineChild->firstLineBaseline();
     if (!baseline) {
         // FIXME: We should pass |direction| into firstLineBoxBaseline and stop bailing out if we're a writing mode root.
         // This would also fix some cases where the flexbox is orthogonal to its container.
         LineDirectionMode direction = isHorizontalWritingMode() ? HorizontalLine : VerticalLine;
-        return std::optional<int>(synthesizedBaselineFromContentBox(*baselineChild, direction) + baselineChild->logicalTop());
+        return Optional<int>(synthesizedBaselineFromContentBox(*baselineChild, direction) + baselineChild->logicalTop());
     }
 
-    return std::optional<int>(baseline.value() + baselineChild->logicalTop());
+    return Optional<int>(baseline.value() + baselineChild->logicalTop());
 }
 
-std::optional<int> RenderFlexibleBox::inlineBlockBaseline(LineDirectionMode direction) const
+Optional<int> RenderFlexibleBox::inlineBlockBaseline(LineDirectionMode direction) const
 {
-    if (std::optional<int> baseline = firstLineBaseline())
+    if (Optional<int> baseline = firstLineBaseline())
         return baseline;
 
     int marginAscent = direction == HorizontalLine ? marginTop() : marginRight();
@@ -517,7 +517,7 @@ LayoutUnit RenderFlexibleBox::mainAxisContentExtent(LayoutUnit contentLogicalHei
     return contentLogicalWidth();
 }
 
-std::optional<LayoutUnit> RenderFlexibleBox::computeMainAxisExtentForChild(const RenderBox& child, SizeType sizeType, const Length& size)
+Optional<LayoutUnit> RenderFlexibleBox::computeMainAxisExtentForChild(const RenderBox& child, SizeType sizeType, const Length& size)
 {
     // If we have a horizontal flow, that means the main size is the width.
     // That's the logical width for horizontal writing modes, and the logical
@@ -533,7 +533,7 @@ std::optional<LayoutUnit> RenderFlexibleBox::computeMainAxisExtentForChild(const
         // if necessary (see ComputeNextFlexLine and the call to
         // childHasIntrinsicMainAxisSize) so we can be sure that the two height
         // calls here will return up-to-date data.
-        std::optional<LayoutUnit> height = child.computeContentLogicalHeight(sizeType, size, cachedChildIntrinsicContentLogicalHeight(child));
+        Optional<LayoutUnit> height = child.computeContentLogicalHeight(sizeType, size, cachedChildIntrinsicContentLogicalHeight(child));
         if (!height)
             return height;
         return height.value() + child.scrollbarLogicalHeight();
@@ -733,7 +733,7 @@ LayoutUnit RenderFlexibleBox::computeMainSizeFromAspectRatioUsing(const RenderBo
     ASSERT(child.hasAspectRatio());
     ASSERT(child.intrinsicSize().height());
     
-    std::optional<LayoutUnit> crossSize;
+    Optional<LayoutUnit> crossSize;
     if (crossSizeLength.isFixed())
         crossSize = LayoutUnit(crossSizeLength.value());
     else {
@@ -768,7 +768,7 @@ bool RenderFlexibleBox::mainAxisLengthIsDefinite(const RenderBox& child, const L
             return true;
         if (m_hasDefiniteHeight == SizeDefiniteness::Indefinite)
             return false;
-        bool definite = child.computePercentageLogicalHeight(flexBasis) != std::nullopt;
+        bool definite = child.computePercentageLogicalHeight(flexBasis) != WTF::nullopt;
         if (m_inLayout) {
             // We can reach this code even while we're not laying ourselves out, such
             // as from mainSizeForPercentageResolution.
@@ -1071,7 +1071,7 @@ void RenderFlexibleBox::prepareOrderIteratorAndMargins()
 LayoutUnit RenderFlexibleBox::adjustChildSizeForMinAndMax(const RenderBox& child, LayoutUnit childSize)
 {
     Length max = isHorizontalFlow() ? child.style().maxWidth() : child.style().maxHeight();
-    std::optional<LayoutUnit> maxExtent = std::nullopt;
+    Optional<LayoutUnit> maxExtent = WTF::nullopt;
     if (max.isSpecifiedOrIntrinsic()) {
         maxExtent = computeMainAxisExtentForChild(child, MaxSize, max);
         childSize = std::min(childSize, maxExtent.value_or(childSize));
@@ -1105,7 +1105,7 @@ LayoutUnit RenderFlexibleBox::adjustChildSizeForMinAndMax(const RenderBox& child
 
         if (useChildAspectRatio(child)) {
             Length crossSizeLength = isHorizontalFlow() ? child.style().height() : child.style().width();
-            std::optional<LayoutUnit> transferredSize = computeMainSizeFromAspectRatioUsing(child, crossSizeLength);
+            Optional<LayoutUnit> transferredSize = computeMainSizeFromAspectRatioUsing(child, crossSizeLength);
             if (transferredSize) {
                 transferredSize = adjustChildSizeForAspectRatioCrossAxisMinAndMax(child, transferredSize.value());
                 return std::max(childSize, std::min(transferredSize.value(), contentSize));
@@ -1118,10 +1118,10 @@ LayoutUnit RenderFlexibleBox::adjustChildSizeForMinAndMax(const RenderBox& child
     return std::max(0_lu, childSize);
 }
     
-std::optional<LayoutUnit> RenderFlexibleBox::crossSizeForPercentageResolution(const RenderBox& child)
+Optional<LayoutUnit> RenderFlexibleBox::crossSizeForPercentageResolution(const RenderBox& child)
 {
     if (alignmentForChild(child) != ItemPosition::Stretch)
-        return std::nullopt;
+        return WTF::nullopt;
 
     // Here we implement https://drafts.csswg.org/css-flexbox/#algo-stretch
     if (hasOrthogonalFlow(child) && child.hasOverrideContentLogicalWidth())
@@ -1135,10 +1135,10 @@ std::optional<LayoutUnit> RenderFlexibleBox::crossSizeForPercentageResolution(co
     // definite size, which itself is not cheap. We can consider implementing it
     // at a later time. (The correctness is ensured by redoing layout in
     // applyStretchAlignmentToChild)
-    return std::nullopt;
+    return WTF::nullopt;
 }
 
-std::optional<LayoutUnit> RenderFlexibleBox::mainSizeForPercentageResolution(const RenderBox& child)
+Optional<LayoutUnit> RenderFlexibleBox::mainSizeForPercentageResolution(const RenderBox& child)
 {
     // This function implements section 9.8. Definite and Indefinite Sizes, case
     // 2) of the flexbox spec.
@@ -1146,21 +1146,21 @@ std::optional<LayoutUnit> RenderFlexibleBox::mainSizeForPercentageResolution(con
     // flex item to have a definite flex basis.
     const Length& flexBasis = flexBasisForChild(child);
     if (!mainAxisLengthIsDefinite(child, flexBasis))
-        return std::nullopt;
+        return WTF::nullopt;
     if (!flexBasis.isPercentOrCalculated()) {
         // If flex basis had a percentage, our size is guaranteed to be definite or
         // the flex item's size could not be definite. Otherwise, we make up a
         // percentage to check whether we have a definite size.
         if (!mainAxisLengthIsDefinite(child, Length(0, Percent)))
-            return std::nullopt;
+            return WTF::nullopt;
     }
     
     if (hasOrthogonalFlow(child))
-        return child.hasOverrideContentLogicalHeight() ? std::optional<LayoutUnit>(child.overrideContentLogicalHeight()) : std::nullopt;
-    return child.hasOverrideContentLogicalWidth() ? std::optional<LayoutUnit>(child.overrideContentLogicalWidth()) : std::nullopt;
+        return child.hasOverrideContentLogicalHeight() ? Optional<LayoutUnit>(child.overrideContentLogicalHeight()) : WTF::nullopt;
+    return child.hasOverrideContentLogicalWidth() ? Optional<LayoutUnit>(child.overrideContentLogicalWidth()) : WTF::nullopt;
 }
 
-std::optional<LayoutUnit> RenderFlexibleBox::childLogicalHeightForPercentageResolution(const RenderBox& child)
+Optional<LayoutUnit> RenderFlexibleBox::childLogicalHeightForPercentageResolution(const RenderBox& child)
 {
     if (!hasOrthogonalFlow(child))
         return crossSizeForPercentageResolution(child);

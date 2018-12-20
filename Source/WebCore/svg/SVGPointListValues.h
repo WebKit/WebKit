@@ -44,7 +44,7 @@ struct SVGPropertyTraits<SVGPointListValues> {
         pointsListFromSVGData(list, string);
         return list;
     }
-    static std::optional<SVGPointListValues> parse(const QualifiedName&, const String&) { ASSERT_NOT_REACHED(); return { }; }
+    static Optional<SVGPointListValues> parse(const QualifiedName&, const String&) { ASSERT_NOT_REACHED(); return { }; }
     static String toString(const SVGPointListValues& list) { return list.valueAsString(); }
 
     using ListItemType = FloatPoint;

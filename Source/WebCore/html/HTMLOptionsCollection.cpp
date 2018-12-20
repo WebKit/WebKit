@@ -33,7 +33,7 @@ Ref<HTMLOptionsCollection> HTMLOptionsCollection::create(HTMLSelectElement& sele
     return adoptRef(*new HTMLOptionsCollection(select));
 }
 
-ExceptionOr<void> HTMLOptionsCollection::add(const OptionOrOptGroupElement& element, const std::optional<HTMLElementOrInt>& before)
+ExceptionOr<void> HTMLOptionsCollection::add(const OptionOrOptGroupElement& element, const Optional<HTMLElementOrInt>& before)
 {
     return selectElement().add(element, before);
 }

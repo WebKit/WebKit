@@ -38,7 +38,7 @@ namespace WebCore {
 class CoreAudioCaptureDevice : public CaptureDevice {
 public:
 
-    static std::optional<CoreAudioCaptureDevice> create(uint32_t);
+    static Optional<CoreAudioCaptureDevice> create(uint32_t);
     virtual ~CoreAudioCaptureDevice() = default;
 
     uint32_t deviceID() const { return m_deviceID; }

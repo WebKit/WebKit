@@ -30,12 +30,12 @@
 
 namespace WebCore {
 
-Ref<ApplePayError> ApplePayError::create(Code code, std::optional<ContactField> contactField, const String& message)
+Ref<ApplePayError> ApplePayError::create(Code code, Optional<ContactField> contactField, const String& message)
 {
     return adoptRef(*new ApplePayError { code, contactField, message });
 }
 
-ApplePayError::ApplePayError(Code code, std::optional<ContactField> contactField, const String& message)
+ApplePayError::ApplePayError(Code code, Optional<ContactField> contactField, const String& message)
     : m_code { code }
     , m_contactField { contactField }
     , m_message { message }

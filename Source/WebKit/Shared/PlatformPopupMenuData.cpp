@@ -99,11 +99,11 @@ bool PlatformPopupMenuData::decode(IPC::Decoder& decoder, PlatformPopupMenuData&
     return true;
 }
 
-std::optional<PlatformPopupMenuData> PlatformPopupMenuData::decode(IPC::Decoder& decoder)
+Optional<PlatformPopupMenuData> PlatformPopupMenuData::decode(IPC::Decoder& decoder)
 {
     PlatformPopupMenuData data;
     if (!decode(decoder, data))
-        return std::nullopt;
+        return WTF::nullopt;
     return data;
 }
 

@@ -55,7 +55,7 @@ void HitTestingTransformState::flatten()
 
 void HitTestingTransformState::flattenWithTransform(const TransformationMatrix& t)
 {
-    if (std::optional<TransformationMatrix> inverse = t.inverse()) {
+    if (Optional<TransformationMatrix> inverse = t.inverse()) {
         m_lastPlanarPoint = inverse.value().projectPoint(m_lastPlanarPoint);
         m_lastPlanarQuad = inverse.value().projectQuad(m_lastPlanarQuad);
         m_lastPlanarArea = inverse.value().projectQuad(m_lastPlanarArea);

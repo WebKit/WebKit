@@ -42,7 +42,7 @@ public:
     int releaseConnectionFd();
 
 private:
-    std::optional<int> m_connectionFd;
+    Optional<int> m_connectionFd;
 };
 
 } // namespace WebKit

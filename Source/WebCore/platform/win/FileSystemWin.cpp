@@ -124,22 +124,22 @@ bool getFileSize(PlatformFileHandle fileHandle, long long& size)
     return getFileSizeFromByHandleFileInformationStructure(fileInformation, size);
 }
 
-std::optional<WallTime> getFileModificationTime(const String& path)
+Optional<WallTime> getFileModificationTime(const String& path)
 {
     WIN32_FIND_DATAW findData;
     if (!getFindData(path, findData))
-        return std::nullopt;
+        return WTF::nullopt;
 
     time_t time = 0;
     getFileModificationTimeFromFindData(findData, time);
     return WallTime::fromRawSeconds(time);
 }
 
-std::optional<WallTime> getFileCreationTime(const String& path)
+Optional<WallTime> getFileCreationTime(const String& path)
 {
     WIN32_FIND_DATAW findData;
     if (!getFindData(path, findData))
-        return std::nullopt;
+        return WTF::nullopt;
 
     time_t time = 0;
     getFileCreationTimeFromFindData(findData, time);
@@ -177,11 +177,11 @@ static FileMetadata::Type toFileMetadataType(WIN32_FIND_DATAW findData)
     return FileMetadata::Type::File;
 }
 
-static std::optional<FileMetadata> findDataToFileMetadata(WIN32_FIND_DATAW findData)
+static Optional<FileMetadata> findDataToFileMetadata(WIN32_FIND_DATAW findData)
 {
     long long length;
     if (!getFileSizeFromFindData(findData, length))
-        return std::nullopt;
+        return WTF::nullopt;
 
     time_t modificationTime;
     getFileModificationTimeFromFindData(findData, modificationTime);
@@ -194,27 +194,27 @@ static std::optional<FileMetadata> findDataToFileMetadata(WIN32_FIND_DATAW findD
     };
 }
 
-std::optional<FileMetadata> fileMetadata(const String& path)
+Optional<FileMetadata> fileMetadata(const String& path)
 {
     WIN32_FIND_DATAW findData;
     if (!getFindData(path, findData))
-        return std::nullopt;
+        return WTF::nullopt;
 
     return findDataToFileMetadata(findData);
 }
 
-std::optional<FileMetadata> fileMetadataFollowingSymlinks(const String& path)
+Optional<FileMetadata> fileMetadataFollowingSymlinks(const String& path)
 {
     WIN32_FIND_DATAW findData;
     if (!getFindData(path, findData))
-        return std::nullopt;
+        return WTF::nullopt;
 
     if (isSymbolicLink(findData)) {
         String targetPath = getFinalPathName(path);
         if (targetPath.isNull())
-            return std::nullopt;
+            return WTF::nullopt;
         if (!getFindData(targetPath, findData))
-            return std::nullopt;
+            return WTF::nullopt;
     }
 
     return findDataToFileMetadata(findData);
@@ -541,16 +541,16 @@ bool getVolumeFreeSpace(const String&, uint64_t&)
     return false;
 }
 
-std::optional<int32_t> getFileDeviceId(const CString& fsFile)
+Optional<int32_t> getFileDeviceId(const CString& fsFile)
 {
     auto handle = openFile(fsFile.data(), FileOpenMode::Read);
     if (!isHandleValid(handle))
-        return std::nullopt;
+        return WTF::nullopt;
 
     BY_HANDLE_FILE_INFORMATION fileInformation = { };
     if (!::GetFileInformationByHandle(handle, &fileInformation)) {
         closeFile(handle);
-        return std::nullopt;
+        return WTF::nullopt;
     }
 
     closeFile(handle);

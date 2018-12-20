@@ -48,7 +48,7 @@ struct FetchOptions {
     template<class Encoder> void encodePersistent(Encoder&) const;
     template<class Decoder> static bool decodePersistent(Decoder&, FetchOptions&);
     template<class Encoder> void encode(Encoder&) const;
-    template<class Decoder> static std::optional<FetchOptions> decode(Decoder&);
+    template<class Decoder> static Optional<FetchOptions> decode(Decoder&);
 
     Destination destination { Destination::EmptyString };
     Mode mode { Mode::NoCors };
@@ -58,7 +58,7 @@ struct FetchOptions {
     ReferrerPolicy referrerPolicy { ReferrerPolicy::EmptyString };
     bool keepAlive { false };
     String integrity;
-    std::optional<DocumentIdentifier> clientIdentifier;
+    Optional<DocumentIdentifier> clientIdentifier;
 };
 
 inline FetchOptions::FetchOptions(Destination destination, Mode mode, Credentials credentials, Cache cache, Redirect redirect, ReferrerPolicy referrerPolicy, String&& integrity, bool keepAlive)
@@ -231,16 +231,16 @@ template<class Encoder> inline void FetchOptions::encode(Encoder& encoder) const
     encoder << clientIdentifier;
 }
 
-template<class Decoder> inline std::optional<FetchOptions> FetchOptions::decode(Decoder& decoder)
+template<class Decoder> inline Optional<FetchOptions> FetchOptions::decode(Decoder& decoder)
 {
     FetchOptions options;
     if (!decodePersistent(decoder, options))
-        return std::nullopt;
+        return WTF::nullopt;
 
-    std::optional<std::optional<DocumentIdentifier>> clientIdentifier;
+    Optional<Optional<DocumentIdentifier>> clientIdentifier;
     decoder >> clientIdentifier;
     if (!clientIdentifier)
-        return std::nullopt;
+        return WTF::nullopt;
     options.clientIdentifier = WTFMove(clientIdentifier.value());
 
     return WTFMove(options);

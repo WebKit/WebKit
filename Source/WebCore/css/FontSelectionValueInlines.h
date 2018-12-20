@@ -48,16 +48,16 @@ inline bool isCSS21Weight(int weight)
     return !((weight % 100) || weight < 100 || weight > 900);
 }
 
-inline std::optional<CSSValueID> fontWeightKeyword(FontSelectionValue weight)
+inline Optional<CSSValueID> fontWeightKeyword(FontSelectionValue weight)
 {
     if (weight == normalWeightValue())
         return CSSValueNormal;
     if (weight == boldWeightValue())
         return CSSValueBold;
-    return std::nullopt;
+    return WTF::nullopt;
 }
 
-inline std::optional<FontSelectionValue> fontWeightValue(CSSValueID value)
+inline Optional<FontSelectionValue> fontWeightValue(CSSValueID value)
 {
     switch (value) {
     case CSSValueNormal:
@@ -68,11 +68,11 @@ inline std::optional<FontSelectionValue> fontWeightValue(CSSValueID value)
     case CSSValueLighter:
         return lightWeightValue();
     default:
-        return std::nullopt;
+        return WTF::nullopt;
     }
 }
 
-inline std::optional<CSSValueID> fontStretchKeyword(FontSelectionValue stretch)
+inline Optional<CSSValueID> fontStretchKeyword(FontSelectionValue stretch)
 {
     if (stretch == ultraCondensedStretchValue())
         return CSSValueUltraCondensed;
@@ -92,10 +92,10 @@ inline std::optional<CSSValueID> fontStretchKeyword(FontSelectionValue stretch)
         return CSSValueExtraExpanded;
     if (stretch == ultraExpandedStretchValue())
         return CSSValueUltraExpanded;
-    return std::nullopt;
+    return WTF::nullopt;
 }
 
-inline std::optional<FontSelectionValue> fontStretchValue(CSSValueID value)
+inline Optional<FontSelectionValue> fontStretchValue(CSSValueID value)
 {
     switch (value) {
     case CSSValueUltraCondensed:
@@ -117,17 +117,17 @@ inline std::optional<FontSelectionValue> fontStretchValue(CSSValueID value)
     case CSSValueUltraExpanded:
         return ultraExpandedStretchValue();
     default:
-        return std::nullopt;
+        return WTF::nullopt;
     }
 }
 
-inline std::optional<CSSValueID> fontStyleKeyword(std::optional<FontSelectionValue> style, FontStyleAxis axis)
+inline Optional<CSSValueID> fontStyleKeyword(Optional<FontSelectionValue> style, FontStyleAxis axis)
 {
     if (!style || style.value() == normalItalicValue())
         return CSSValueNormal;
     if (style.value() == italicValue())
         return axis == FontStyleAxis::ital ? CSSValueItalic : CSSValueOblique;
-    return std::nullopt;
+    return WTF::nullopt;
 }
 
 }

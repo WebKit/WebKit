@@ -72,10 +72,10 @@ public:
     // FIXME: The following use of JSC::Strong is incorrect and can lead to storage leaks
     // due to reference cycles; we should use JSValueInWrappedObject instead.
     using Result = Variant<RefPtr<IDBCursor>, RefPtr<IDBDatabase>, JSC::Strong<JSC::Unknown>>;
-    ExceptionOr<std::optional<Result>> result() const;
+    ExceptionOr<Optional<Result>> result() const;
 
     using Source = Variant<RefPtr<IDBObjectStore>, RefPtr<IDBIndex>, RefPtr<IDBCursor>>;
-    const std::optional<Source>& source() const { return m_source; }
+    const Optional<Source>& source() const { return m_source; }
 
     ExceptionOr<DOMException*> error() const;
 
@@ -165,8 +165,8 @@ private:
     IDBError m_idbError;
     IDBResourceIdentifier m_resourceIdentifier;
 
-    std::optional<Result> m_result;
-    std::optional<Source> m_source;
+    Optional<Result> m_result;
+    Optional<Source> m_source;
 
     bool m_hasPendingActivity { true };
     IndexedDB::ObjectStoreRecordType m_requestedObjectStoreRecordType { IndexedDB::ObjectStoreRecordType::ValueOnly };

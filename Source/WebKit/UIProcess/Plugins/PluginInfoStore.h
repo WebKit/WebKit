@@ -60,9 +60,9 @@ public:
     static PluginModuleLoadPolicy defaultLoadPolicyForPlugin(const PluginModuleInfo&);
 
     bool isSupportedPlugin(const String& mimeType, const URL& pluginURL, const String& frameURLString, const URL& pageURL);
-    std::optional<Vector<WebCore::SupportedPluginIdentifier>> supportedPluginIdentifiers();
+    Optional<Vector<WebCore::SupportedPluginIdentifier>> supportedPluginIdentifiers();
     void addSupportedPlugin(String&& matchingDomain, String&& identifier, HashSet<String>&& mimeTypes, HashSet<String> extensions);
-    void clearSupportedPlugins() { m_supportedPlugins = std::nullopt; }
+    void clearSupportedPlugins() { m_supportedPlugins = WTF::nullopt; }
 
     static bool shouldAllowPluginToRunUnsandboxed(const String& pluginBundleIdentifier);
 
@@ -102,7 +102,7 @@ private:
     };
     static bool isSupportedPlugin(const SupportedPlugin&, const String& mimeType, const URL& pluginURL);
 
-    std::optional<Vector<SupportedPlugin>> m_supportedPlugins;
+    Optional<Vector<SupportedPlugin>> m_supportedPlugins;
 };
     
 } // namespace WebKit

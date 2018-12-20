@@ -177,11 +177,11 @@ static ExceptionOr<String> validatePathIsExpectedType(const String& fullPath, St
     return WTFMove(virtualPath);
 }
 
-static std::optional<FileMetadata::Type> fileType(const String& fullPath)
+static Optional<FileMetadata::Type> fileType(const String& fullPath)
 {
     auto metadata = FileSystem::fileMetadata(fullPath);
     if (!metadata || metadata.value().isHidden)
-        return std::nullopt;
+        return WTF::nullopt;
     return metadata.value().type;
 }
 

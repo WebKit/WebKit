@@ -61,7 +61,7 @@ public:
     void setUserData(API::Object*);
     
     void encode(IPC::Encoder&) const;
-    static std::optional<WebContextMenuItemData> decode(IPC::Decoder&);
+    static Optional<WebContextMenuItemData> decode(IPC::Decoder&);
 
 private:
     WebCore::ContextMenuItemType m_type;

@@ -52,7 +52,7 @@ static const ASCIILiteral failedToStartServiceErrorMessage { "Failed to start Ge
 static const ASCIILiteral framelessDocumentErrorMessage { "Geolocation cannot be used in frameless documents"_s };
 static const ASCIILiteral originCannotRequestGeolocationErrorMessage { "Origin does not have permission to use Geolocation service"_s };
 
-static RefPtr<Geoposition> createGeoposition(std::optional<GeolocationPosition>&& position)
+static RefPtr<Geoposition> createGeoposition(Optional<GeolocationPosition>&& position)
 {
     if (!position)
         return nullptr;

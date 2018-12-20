@@ -131,7 +131,7 @@ void MemoryPressureHandler::platformReleaseMemory(Critical)
 #endif
 }
 
-std::optional<MemoryPressureHandler::ReliefLogger::MemoryUsage> MemoryPressureHandler::ReliefLogger::platformMemoryUsage()
+Optional<MemoryPressureHandler::ReliefLogger::MemoryUsage> MemoryPressureHandler::ReliefLogger::platformMemoryUsage()
 {
     return MemoryUsage {processMemoryUsage(), memoryFootprint()};
 }

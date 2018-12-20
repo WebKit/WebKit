@@ -127,7 +127,7 @@ private:
 
     RefPtr<ScriptedAnimationController> m_scriptedAnimationController;
 
-    std::optional<VRLayerInit> m_presentingLayer;
+    Optional<VRLayerInit> m_presentingLayer;
 };
 
 } // namespace WebCore

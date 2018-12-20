@@ -47,12 +47,12 @@ bool ArgumentCoder<WallTime>::decode(Decoder& decoder, WallTime& time)
     return true;
 }
 
-std::optional<WallTime> ArgumentCoder<WallTime>::decode(Decoder& decoder)
+Optional<WallTime> ArgumentCoder<WallTime>::decode(Decoder& decoder)
 {
-    std::optional<double> time;
+    Optional<double> time;
     decoder >> time;
     if (!time)
-        return std::nullopt;
+        return WTF::nullopt;
     return WallTime::fromRawSeconds(*time);
 }
 
@@ -170,11 +170,11 @@ bool ArgumentCoder<String>::decode(Decoder& decoder, String& result)
     return decodeStringText<UChar>(decoder, length, result);
 }
 
-std::optional<String> ArgumentCoder<String>::decode(Decoder& decoder)
+Optional<String> ArgumentCoder<String>::decode(Decoder& decoder)
 {
     uint32_t length;
     if (!decoder.decode(length))
-        return std::nullopt;
+        return WTF::nullopt;
     
     if (length == std::numeric_limits<uint32_t>::max()) {
         // This is the null string.
@@ -183,16 +183,16 @@ std::optional<String> ArgumentCoder<String>::decode(Decoder& decoder)
     
     bool is8Bit;
     if (!decoder.decode(is8Bit))
-        return std::nullopt;
+        return WTF::nullopt;
     
     String result;
     if (is8Bit) {
         if (!decodeStringText<LChar>(decoder, length, result))
-            return std::nullopt;
+            return WTF::nullopt;
         return result;
     }
     if (!decodeStringText<UChar>(decoder, length, result))
-        return std::nullopt;
+        return WTF::nullopt;
     return result;
 }
 

@@ -533,17 +533,17 @@ void ArgumentCoder<WebCore::KeypressCommand>::encode(Encoder& encoder, const Web
     encoder << keypressCommand.commandName << keypressCommand.text;
 }
     
-std::optional<WebCore::KeypressCommand> ArgumentCoder<WebCore::KeypressCommand>::decode(Decoder& decoder)
+Optional<WebCore::KeypressCommand> ArgumentCoder<WebCore::KeypressCommand>::decode(Decoder& decoder)
 {
-    std::optional<String> commandName;
+    Optional<String> commandName;
     decoder >> commandName;
     if (!commandName)
-        return std::nullopt;
+        return WTF::nullopt;
     
-    std::optional<String> text;
+    Optional<String> text;
     decoder >> text;
     if (!text)
-        return std::nullopt;
+        return WTF::nullopt;
     
     WebCore::KeypressCommand command;
     command.commandName = WTFMove(*commandName);

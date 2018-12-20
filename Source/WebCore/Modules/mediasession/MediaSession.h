@@ -62,7 +62,7 @@ public:
     WEBCORE_EXPORT State currentState() const { return m_currentState; }
     bool hasActiveMediaElements() const;
 
-    void setMetadata(const std::optional<Metadata>&);
+    void setMetadata(const Optional<Metadata>&);
 
     void deactivate();
 

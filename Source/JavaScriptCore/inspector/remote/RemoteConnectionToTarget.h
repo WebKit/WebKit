@@ -65,7 +65,7 @@ public:
     void close();
     void targetClosed();
 
-    std::optional<unsigned> targetIdentifier() const;
+    Optional<unsigned> targetIdentifier() const;
 #if PLATFORM(COCOA)
     NSString *connectionIdentifier() const;
     NSString *destination() const;

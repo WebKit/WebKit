@@ -2066,7 +2066,7 @@ private:
         CachedStringRef name;
         if (!readStringData(name))
             return false;
-        std::optional<int64_t> optionalLastModified;
+        Optional<int64_t> optionalLastModified;
         if (m_version > 6) {
             double lastModified;
             if (!read(lastModified))
@@ -2629,17 +2629,17 @@ private:
         return toJSNewlyCreated(m_exec, jsCast<JSDOMGlobalObject*>(m_globalObject), T::create(x, y, width, height));
     }
 
-    std::optional<DOMPointInit> readDOMPointInit()
+    Optional<DOMPointInit> readDOMPointInit()
     {
         DOMPointInit point;
         if (!read(point.x))
-            return std::nullopt;
+            return WTF::nullopt;
         if (!read(point.y))
-            return std::nullopt;
+            return WTF::nullopt;
         if (!read(point.z))
-            return std::nullopt;
+            return WTF::nullopt;
         if (!read(point.w))
-            return std::nullopt;
+            return WTF::nullopt;
 
         return WTFMove(point);
     }

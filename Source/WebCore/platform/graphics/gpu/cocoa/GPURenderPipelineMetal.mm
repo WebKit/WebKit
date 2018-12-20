@@ -83,7 +83,7 @@ static bool setFunctionsForPipelineDescriptor(const char* const functionName, MT
     return true;
 }
 
-static std::optional<MTLVertexFormat> validateAndConvertVertexFormatToMTLVertexFormat(GPUVertexFormatEnum format)
+static Optional<MTLVertexFormat> validateAndConvertVertexFormatToMTLVertexFormat(GPUVertexFormatEnum format)
 {
     switch (format) {
     case GPUVertexFormat::FloatR32G32B32A32:
@@ -95,11 +95,11 @@ static std::optional<MTLVertexFormat> validateAndConvertVertexFormatToMTLVertexF
     case GPUVertexFormat::FloatR32:
         return MTLVertexFormatFloat;
     default:
-        return std::nullopt;
+        return WTF::nullopt;
     }
 }
 
-static std::optional<MTLVertexStepFunction> validateAndConvertStepModeToMTLStepFunction(GPUInputStepModeEnum mode)
+static Optional<MTLVertexStepFunction> validateAndConvertStepModeToMTLStepFunction(GPUInputStepModeEnum mode)
 {
     switch (mode) {
     case GPUInputStepMode::Vertex:
@@ -107,7 +107,7 @@ static std::optional<MTLVertexStepFunction> validateAndConvertStepModeToMTLStepF
     case GPUInputStepMode::Instance:
         return MTLVertexStepFunctionPerInstance;
     default:
-        return std::nullopt;
+        return WTF::nullopt;
     }
 }
 

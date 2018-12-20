@@ -34,9 +34,9 @@
 namespace WebCore {
 namespace Layout {
 
-std::optional<ItemPosition> TextUtil::hyphenPositionBefore(const InlineItem&, ItemPosition, unsigned)
+Optional<ItemPosition> TextUtil::hyphenPositionBefore(const InlineItem&, ItemPosition, unsigned)
 {
-    return std::nullopt;
+    return WTF::nullopt;
 }
 
 LayoutUnit TextUtil::width(const InlineItem& inlineTextItem, ItemPosition from, ItemPosition to, LayoutUnit contentLogicalLeft)

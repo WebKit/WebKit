@@ -35,7 +35,7 @@ struct RTCRtpCapabilities {
     struct CodecCapability {
         String mimeType;
         uint32_t clockRate { 0 };
-        std::optional<uint16_t> channels;
+        Optional<uint16_t> channels;
         String sdpFmtpLine;
     };
     struct HeaderExtensionCapability {

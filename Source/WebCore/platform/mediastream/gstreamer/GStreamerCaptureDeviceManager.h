@@ -32,7 +32,7 @@ namespace WebCore {
 
 class GStreamerCaptureDeviceManager : public CaptureDeviceManager {
 public:
-    std::optional<GStreamerCaptureDevice> gstreamerDeviceWithUID(const String&);
+    Optional<GStreamerCaptureDevice> gstreamerDeviceWithUID(const String&);
 
     const Vector<CaptureDevice>& captureDevices() final;
     virtual CaptureDevice::DeviceType deviceType() = 0;

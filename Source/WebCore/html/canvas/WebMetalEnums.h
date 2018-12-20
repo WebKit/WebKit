@@ -45,7 +45,7 @@ enum class WebMetalCompareFunction {
     Always
 };
 
-std::optional<WebMetalCompareFunction> toWebMetalCompareFunction(const String&);
+Optional<WebMetalCompareFunction> toWebMetalCompareFunction(const String&);
 String web3DCompareFunctionName(WebMetalCompareFunction);
 GPULegacyCompareFunction toGPULegacyCompareFunction(WebMetalCompareFunction);
 

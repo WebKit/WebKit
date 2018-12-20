@@ -187,11 +187,11 @@ public:
         return m_watchpointSet;
     }
 
-    std::optional<DOMAttributeAnnotation> domAttribute() const
+    Optional<DOMAttributeAnnotation> domAttribute() const
     {
         if (m_additionalDataType == AdditionalDataType::DOMAttribute)
             return m_additionalData.domAttribute;
-        return std::nullopt;
+        return WTF::nullopt;
     }
 
     struct ModuleNamespaceSlot {
@@ -199,11 +199,11 @@ public:
         unsigned scopeOffset;
     };
 
-    std::optional<ModuleNamespaceSlot> moduleNamespaceSlot() const
+    Optional<ModuleNamespaceSlot> moduleNamespaceSlot() const
     {
         if (m_additionalDataType == AdditionalDataType::ModuleNamespace)
             return m_additionalData.moduleNamespaceSlot;
-        return std::nullopt;
+        return WTF::nullopt;
     }
 
     void setValue(JSObject* slotBase, unsigned attributes, JSValue value)

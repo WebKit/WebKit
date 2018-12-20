@@ -78,17 +78,17 @@ AutofillElements::AutofillElements(RefPtr<HTMLInputElement>&& username, RefPtr<H
 {
 }
 
-std::optional<AutofillElements> AutofillElements::computeAutofillElements(Ref<HTMLInputElement> start)
+Optional<AutofillElements> AutofillElements::computeAutofillElements(Ref<HTMLInputElement> start)
 {
     if (!start->document().page())
-        return std::nullopt;
+        return WTF::nullopt;
     FocusController& focusController = start->document().page()->focusController();
     if (start->isPasswordField()) {
         RefPtr<HTMLInputElement> previousElement = previousAutofillableElement(start.ptr(), focusController);
         RefPtr<HTMLInputElement> nextElement = nextAutofillableElement(start.ptr(), focusController);
         bool hasDuplicatePasswordElements = (nextElement && nextElement->isPasswordField()) || (previousElement && previousElement->isPasswordField());
         if (hasDuplicatePasswordElements)
-            return std::nullopt;
+            return WTF::nullopt;
 
         if (previousElement && is<HTMLInputElement>(*previousElement)) {
             if (previousElement->isTextField())
@@ -101,7 +101,7 @@ std::optional<AutofillElements> AutofillElements::computeAutofillElements(Ref<HT
                 RefPtr<HTMLInputElement> elementAfternextElement = nextAutofillableElement(nextElement.get(), focusController);
                 bool hasDuplicatePasswordElements = elementAfternextElement && elementAfternextElement->isPasswordField();
                 if (hasDuplicatePasswordElements)
-                    return std::nullopt;
+                    return WTF::nullopt;
 
                 return AutofillElements(WTFMove(start), WTFMove(nextElement));
             }
@@ -114,7 +114,7 @@ std::optional<AutofillElements> AutofillElements::computeAutofillElements(Ref<HT
         if (!previousElement && !nextElement)
             return AutofillElements(nullptr, start.ptr());
     }
-    return std::nullopt;
+    return WTF::nullopt;
 }
 
 void AutofillElements::autofill(String username, String password)

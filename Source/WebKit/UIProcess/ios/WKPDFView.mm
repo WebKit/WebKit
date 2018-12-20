@@ -59,7 +59,7 @@
     NSUInteger _findStringCount;
     NSUInteger _findStringMaxCount;
     RetainPtr<UIView> _fixedOverlayView;
-    std::optional<NSUInteger> _focusedSearchResultIndex;
+    Optional<NSUInteger> _focusedSearchResultIndex;
     NSInteger _focusedSearchResultPendingOffset;
     RetainPtr<PDFHostViewController> _hostViewController;
     CGSize _overlaidAccessoryViewsInset;
@@ -250,7 +250,7 @@ static NSStringCompareOptions stringCompareOptions(_WKFindOptions findOptions)
     _findString = nil;
     _findStringCount = 0;
     _findStringMaxCount = 0;
-    _focusedSearchResultIndex = std::nullopt;
+    _focusedSearchResultIndex = WTF::nullopt;
     _focusedSearchResultPendingOffset = 0;
 }
 
@@ -493,7 +493,7 @@ static NSStringCompareOptions stringCompareOptions(_WKFindOptions findOptions)
 
 #pragma mark WKActionSheetAssistantDelegate
 
-- (std::optional<WebKit::InteractionInformationAtPosition>)positionInformationForActionSheetAssistant:(WKActionSheetAssistant *)assistant
+- (Optional<WebKit::InteractionInformationAtPosition>)positionInformationForActionSheetAssistant:(WKActionSheetAssistant *)assistant
 {
     return _positionInformation;
 }

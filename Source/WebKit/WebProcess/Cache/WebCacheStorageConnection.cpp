@@ -132,7 +132,7 @@ void WebCacheStorageConnection::clearMemoryRepresentation(const WebCore::ClientO
     connection().send(Messages::CacheStorageEngineConnection::ClearMemoryRepresentation(m_sessionID, requestIdentifier, origin), 0);
 }
 
-void WebCacheStorageConnection::clearMemoryRepresentationCompleted(uint64_t requestIdentifier, std::optional<Error>&& result)
+void WebCacheStorageConnection::clearMemoryRepresentationCompleted(uint64_t requestIdentifier, Optional<Error>&& result)
 {
     if (auto callback = m_clearRepresentationCallbacks.take(requestIdentifier))
         callback(WTFMove(result));

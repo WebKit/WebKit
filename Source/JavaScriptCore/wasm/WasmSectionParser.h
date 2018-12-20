@@ -62,7 +62,7 @@ private:
     PartialResult WARN_UNUSED_RETURN parseGlobalType(Global&);
     PartialResult WARN_UNUSED_RETURN parseMemoryHelper(bool isImport);
     PartialResult WARN_UNUSED_RETURN parseTableHelper(bool isImport);
-    PartialResult WARN_UNUSED_RETURN parseResizableLimits(uint32_t& initial, std::optional<uint32_t>& maximum);
+    PartialResult WARN_UNUSED_RETURN parseResizableLimits(uint32_t& initial, Optional<uint32_t>& maximum);
     PartialResult WARN_UNUSED_RETURN parseInitExpr(uint8_t&, uint64_t&, Type& initExprType);
 
     size_t m_offsetInSource;

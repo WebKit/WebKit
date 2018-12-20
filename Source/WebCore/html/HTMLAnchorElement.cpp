@@ -432,7 +432,7 @@ void HTMLAnchorElement::handleClick(Event& event)
     ShouldSendReferrer shouldSendReferrer = hasRel(Relation::NoReferrer) ? NeverSendReferrer : MaybeSendReferrer;
 
     auto effectiveTarget = this->effectiveTarget();
-    std::optional<NewFrameOpenerPolicy> newFrameOpenerPolicy;
+    Optional<NewFrameOpenerPolicy> newFrameOpenerPolicy;
     if (hasRel(Relation::Opener))
         newFrameOpenerPolicy = NewFrameOpenerPolicy::Allow;
     else if (hasRel(Relation::NoOpener) || (RuntimeEnabledFeatures::sharedFeatures().blankAnchorTargetImpliesNoOpenerEnabled() && equalIgnoringASCIICase(effectiveTarget, "_blank")))

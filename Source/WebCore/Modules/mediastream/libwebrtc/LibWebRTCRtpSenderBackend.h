@@ -114,7 +114,7 @@ private:
     WeakPtr<LibWebRTCPeerConnectionBackend> m_peerConnectionBackend;
     rtc::scoped_refptr<webrtc::RtpSenderInterface> m_rtcSender;
     Source m_source;
-    mutable std::optional<webrtc::RtpParameters> m_currentParameters;
+    mutable Optional<webrtc::RtpParameters> m_currentParameters;
 };
 
 } // namespace WebCore

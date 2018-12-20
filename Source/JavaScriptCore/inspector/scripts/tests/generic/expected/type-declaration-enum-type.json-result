@@ -361,13 +361,13 @@ enum class TwoLeggedAnimals {
 namespace TestHelpers {
 
 template<typename ProtocolEnumType>
-std::optional<ProtocolEnumType> parseEnumValueFromString(const String&);
+Optional<ProtocolEnumType> parseEnumValueFromString(const String&);
 
 // Enums in the 'Runtime' Domain
 template<>
-std::optional<Inspector::Protocol::Runtime::FarmAnimals> parseEnumValueFromString<Inspector::Protocol::Runtime::FarmAnimals>(const String&);
+Optional<Inspector::Protocol::Runtime::FarmAnimals> parseEnumValueFromString<Inspector::Protocol::Runtime::FarmAnimals>(const String&);
 template<>
-std::optional<Inspector::Protocol::Runtime::TwoLeggedAnimals> parseEnumValueFromString<Inspector::Protocol::Runtime::TwoLeggedAnimals>(const String&);
+Optional<Inspector::Protocol::Runtime::TwoLeggedAnimals> parseEnumValueFromString<Inspector::Protocol::Runtime::TwoLeggedAnimals>(const String&);
 
 } // namespace TestHelpers
 
@@ -451,7 +451,7 @@ String getEnumConstantValue(int code) {
 
 // Enums in the 'Runtime' Domain
 template<>
-std::optional<Inspector::Protocol::Runtime::FarmAnimals> parseEnumValueFromString<Inspector::Protocol::Runtime::FarmAnimals>(const String& protocolString)
+Optional<Inspector::Protocol::Runtime::FarmAnimals> parseEnumValueFromString<Inspector::Protocol::Runtime::FarmAnimals>(const String& protocolString)
 {
     static const size_t constantValues[] = {
         (size_t)Inspector::Protocol::Runtime::FarmAnimals::Pigs,
@@ -463,11 +463,11 @@ std::optional<Inspector::Protocol::Runtime::FarmAnimals> parseEnumValueFromStrin
         if (protocolString == enum_constant_values[constantValues[i]])
             return (Inspector::Protocol::Runtime::FarmAnimals)constantValues[i];
 
-    return std::nullopt;
+    return WTF::nullopt;
 }
 
 template<>
-std::optional<Inspector::Protocol::Runtime::TwoLeggedAnimals> parseEnumValueFromString<Inspector::Protocol::Runtime::TwoLeggedAnimals>(const String& protocolString)
+Optional<Inspector::Protocol::Runtime::TwoLeggedAnimals> parseEnumValueFromString<Inspector::Protocol::Runtime::TwoLeggedAnimals>(const String& protocolString)
 {
     static const size_t constantValues[] = {
         (size_t)Inspector::Protocol::Runtime::TwoLeggedAnimals::Ducks,
@@ -479,7 +479,7 @@ std::optional<Inspector::Protocol::Runtime::TwoLeggedAnimals> parseEnumValueFrom
         if (protocolString == enum_constant_values[constantValues[i]])
             return (Inspector::Protocol::Runtime::TwoLeggedAnimals)constantValues[i];
 
-    return std::nullopt;
+    return WTF::nullopt;
 }
 
 
@@ -875,7 +875,7 @@ typedef NS_ENUM(NSInteger, TestProtocolRuntimeTwoLeggedAnimals) {
 namespace Inspector {
 
 template<typename ObjCEnumType>
-std::optional<ObjCEnumType> fromProtocolString(const String& value);
+Optional<ObjCEnumType> fromProtocolString(const String& value);
 
 inline String toProtocolString(TestProtocolPlatform value)
 {
@@ -892,7 +892,7 @@ inline String toProtocolString(TestProtocolPlatform value)
 }
 
 template<>
-inline std::optional<TestProtocolPlatform> fromProtocolString(const String& value)
+inline Optional<TestProtocolPlatform> fromProtocolString(const String& value)
 {
     if (value == "all")
         return TestProtocolPlatformAll;
@@ -902,7 +902,7 @@ inline std::optional<TestProtocolPlatform> fromProtocolString(const String& valu
         return TestProtocolPlatformIOS;
     if (value == "macos")
         return TestProtocolPlatformMacOS;
-    return std::nullopt;
+    return WTF::nullopt;
 }
 
 
@@ -921,7 +921,7 @@ inline String toProtocolString(TestProtocolRuntimeFarmAnimals value)
 }
 
 template<>
-inline std::optional<TestProtocolRuntimeFarmAnimals> fromProtocolString(const String& value)
+inline Optional<TestProtocolRuntimeFarmAnimals> fromProtocolString(const String& value)
 {
     if (value == "Pigs")
         return TestProtocolRuntimeFarmAnimalsPigs;
@@ -931,7 +931,7 @@ inline std::optional<TestProtocolRuntimeFarmAnimals> fromProtocolString(const St
         return TestProtocolRuntimeFarmAnimalsCats;
     if (value == "Hens")
         return TestProtocolRuntimeFarmAnimalsHens;
-    return std::nullopt;
+    return WTF::nullopt;
 }
 
 inline String toProtocolString(TestProtocolRuntimeTwoLeggedAnimals value)
@@ -949,7 +949,7 @@ inline String toProtocolString(TestProtocolRuntimeTwoLeggedAnimals value)
 }
 
 template<>
-inline std::optional<TestProtocolRuntimeTwoLeggedAnimals> fromProtocolString(const String& value)
+inline Optional<TestProtocolRuntimeTwoLeggedAnimals> fromProtocolString(const String& value)
 {
     if (value == "Ducks")
         return TestProtocolRuntimeTwoLeggedAnimalsDucks;
@@ -959,7 +959,7 @@ inline std::optional<TestProtocolRuntimeTwoLeggedAnimals> fromProtocolString(con
         return TestProtocolRuntimeTwoLeggedAnimalsCrows;
     if (value == "Flamingos")
         return TestProtocolRuntimeTwoLeggedAnimalsFlamingos;
-    return std::nullopt;
+    return WTF::nullopt;
 }
 
 } // namespace Inspector
@@ -1017,7 +1017,7 @@ using namespace Inspector;
 + (void)_parseFarmAnimals:(NSNumber **)outValue fromPayload:(id)payload
 {
     THROW_EXCEPTION_FOR_BAD_TYPE(payload, [NSString class]);
-    std::optional<TestProtocolRuntimeFarmAnimals> result = Inspector::fromProtocolString<TestProtocolRuntimeFarmAnimals>(payload);
+    Optional<TestProtocolRuntimeFarmAnimals> result = Inspector::fromProtocolString<TestProtocolRuntimeFarmAnimals>(payload);
     THROW_EXCEPTION_FOR_BAD_ENUM_VALUE(result, @"FarmAnimals");
     *outValue = @(result.value());
 }
@@ -1025,7 +1025,7 @@ using namespace Inspector;
 + (void)_parseTwoLeggedAnimals:(NSNumber **)outValue fromPayload:(id)payload
 {
     THROW_EXCEPTION_FOR_BAD_TYPE(payload, [NSString class]);
-    std::optional<TestProtocolRuntimeTwoLeggedAnimals> result = Inspector::fromProtocolString<TestProtocolRuntimeTwoLeggedAnimals>(payload);
+    Optional<TestProtocolRuntimeTwoLeggedAnimals> result = Inspector::fromProtocolString<TestProtocolRuntimeTwoLeggedAnimals>(payload);
     THROW_EXCEPTION_FOR_BAD_ENUM_VALUE(result, @"TwoLeggedAnimals");
     *outValue = @(result.value());
 }

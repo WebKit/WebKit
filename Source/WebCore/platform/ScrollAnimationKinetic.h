@@ -69,8 +69,8 @@ private:
 
     std::function<void(FloatPoint&&)> m_notifyPositionChangedFunction;
 
-    std::optional<PerAxisData> m_horizontalData;
-    std::optional<PerAxisData> m_verticalData;
+    Optional<PerAxisData> m_horizontalData;
+    Optional<PerAxisData> m_verticalData;
 
     MonotonicTime m_startTime;
     Timer m_animationTimer;

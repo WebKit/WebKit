@@ -53,7 +53,7 @@ public:
     const Vector<String>& blobFilePaths() const { return m_blobFilePaths; }
 
     template<class Encoder> void encode(Encoder&) const;
-    template<class Decoder> static std::optional<IDBValue> decode(Decoder&);
+    template<class Decoder> static Optional<IDBValue> decode(Decoder&);
 
 private:
     ThreadSafeDataBuffer m_data;
@@ -73,20 +73,20 @@ void IDBValue::encode(Encoder& encoder) const
 }
 
 template<class Decoder>
-std::optional<IDBValue> IDBValue::decode(Decoder& decoder)
+Optional<IDBValue> IDBValue::decode(Decoder& decoder)
 {
     IDBValue result;
     if (!decoder.decode(result.m_data))
-        return std::nullopt;
+        return WTF::nullopt;
 
     if (!decoder.decode(result.m_blobURLs))
-        return std::nullopt;
+        return WTF::nullopt;
 
     if (!decoder.decode(result.m_sessionID))
-        return std::nullopt;
+        return WTF::nullopt;
 
     if (!decoder.decode(result.m_blobFilePaths))
-        return std::nullopt;
+        return WTF::nullopt;
 
     return WTFMove(result);
 }

@@ -43,10 +43,10 @@ class NavigatorBeacon final : public Supplement<Navigator>, private CachedRawRes
 public:
     explicit NavigatorBeacon(Navigator&);
     ~NavigatorBeacon();
-    static ExceptionOr<bool> sendBeacon(Navigator&, Document&, const String& url, std::optional<FetchBody::Init>&&);
+    static ExceptionOr<bool> sendBeacon(Navigator&, Document&, const String& url, Optional<FetchBody::Init>&&);
 
 private:
-    ExceptionOr<bool> sendBeacon(Document&, const String& url, std::optional<FetchBody::Init>&&);
+    ExceptionOr<bool> sendBeacon(Document&, const String& url, Optional<FetchBody::Init>&&);
 
     static NavigatorBeacon* from(Navigator&);
     static const char* supplementName();

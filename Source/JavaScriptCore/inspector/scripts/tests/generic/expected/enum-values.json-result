@@ -472,11 +472,11 @@ enum class TypeDomainEnum {
 namespace TestHelpers {
 
 template<typename ProtocolEnumType>
-std::optional<ProtocolEnumType> parseEnumValueFromString(const String&);
+Optional<ProtocolEnumType> parseEnumValueFromString(const String&);
 
 // Enums in the 'TypeDomain' Domain
 template<>
-std::optional<Inspector::Protocol::TypeDomain::TypeDomainEnum> parseEnumValueFromString<Inspector::Protocol::TypeDomain::TypeDomainEnum>(const String&);
+Optional<Inspector::Protocol::TypeDomain::TypeDomainEnum> parseEnumValueFromString<Inspector::Protocol::TypeDomain::TypeDomainEnum>(const String&);
 
 } // namespace TestHelpers
 
@@ -558,7 +558,7 @@ String getEnumConstantValue(int code) {
 
 // Enums in the 'TypeDomain' Domain
 template<>
-std::optional<Inspector::Protocol::TypeDomain::TypeDomainEnum> parseEnumValueFromString<Inspector::Protocol::TypeDomain::TypeDomainEnum>(const String& protocolString)
+Optional<Inspector::Protocol::TypeDomain::TypeDomainEnum> parseEnumValueFromString<Inspector::Protocol::TypeDomain::TypeDomainEnum>(const String& protocolString)
 {
     static const size_t constantValues[] = {
         (size_t)Inspector::Protocol::TypeDomain::TypeDomainEnum::Shared,
@@ -570,7 +570,7 @@ std::optional<Inspector::Protocol::TypeDomain::TypeDomainEnum> parseEnumValueFro
         if (protocolString == enum_constant_values[constantValues[i]])
             return (Inspector::Protocol::TypeDomain::TypeDomainEnum)constantValues[i];
 
-    return std::nullopt;
+    return WTF::nullopt;
 }
 
 
@@ -1052,7 +1052,7 @@ __attribute__((visibility ("default")))
 namespace Inspector {
 
 template<typename ObjCEnumType>
-std::optional<ObjCEnumType> fromProtocolString(const String& value);
+Optional<ObjCEnumType> fromProtocolString(const String& value);
 
 inline String toProtocolString(TestProtocolPlatform value)
 {
@@ -1069,7 +1069,7 @@ inline String toProtocolString(TestProtocolPlatform value)
 }
 
 template<>
-inline std::optional<TestProtocolPlatform> fromProtocolString(const String& value)
+inline Optional<TestProtocolPlatform> fromProtocolString(const String& value)
 {
     if (value == "all")
         return TestProtocolPlatformAll;
@@ -1079,7 +1079,7 @@ inline std::optional<TestProtocolPlatform> fromProtocolString(const String& valu
         return TestProtocolPlatformIOS;
     if (value == "macos")
         return TestProtocolPlatformMacOS;
-    return std::nullopt;
+    return WTF::nullopt;
 }
 
 
@@ -1098,7 +1098,7 @@ inline String toProtocolString(TestProtocolTypeDomainEnum value)
 }
 
 template<>
-inline std::optional<TestProtocolTypeDomainEnum> fromProtocolString(const String& value)
+inline Optional<TestProtocolTypeDomainEnum> fromProtocolString(const String& value)
 {
     if (value == "shared")
         return TestProtocolTypeDomainEnumShared;
@@ -1108,7 +1108,7 @@ inline std::optional<TestProtocolTypeDomainEnum> fromProtocolString(const String
         return TestProtocolTypeDomainEnumGreen;
     if (value == "blue")
         return TestProtocolTypeDomainEnumBlue;
-    return std::nullopt;
+    return WTF::nullopt;
 }
 
 } // namespace Inspector
@@ -1165,7 +1165,7 @@ using namespace Inspector;
 + (void)_parseTypeDomainEnum:(NSNumber **)outValue fromPayload:(id)payload
 {
     THROW_EXCEPTION_FOR_BAD_TYPE(payload, [NSString class]);
-    std::optional<TestProtocolTypeDomainEnum> result = Inspector::fromProtocolString<TestProtocolTypeDomainEnum>(payload);
+    Optional<TestProtocolTypeDomainEnum> result = Inspector::fromProtocolString<TestProtocolTypeDomainEnum>(payload);
     THROW_EXCEPTION_FOR_BAD_ENUM_VALUE(result, @"TypeDomainEnum");
     *outValue = @(result.value());
 }

@@ -708,11 +708,11 @@ ModuleName::ModuleName(const String& moduleName)
     queries = moduleName.splitAllowingEmptyEntries('/');
 }
 
-static std::optional<DirectoryName> extractDirectoryName(const String& absolutePathToFile)
+static Optional<DirectoryName> extractDirectoryName(const String& absolutePathToFile)
 {
     size_t firstSeparatorPosition = absolutePathToFile.find(pathSeparator());
     if (firstSeparatorPosition == notFound)
-        return std::nullopt;
+        return WTF::nullopt;
     DirectoryName directoryName;
     directoryName.rootName = absolutePathToFile.substring(0, firstSeparatorPosition + 1); // Include the separator.
     size_t lastSeparatorPosition = absolutePathToFile.reverseFind(pathSeparator());
@@ -727,7 +727,7 @@ static std::optional<DirectoryName> extractDirectoryName(const String& absoluteP
     return directoryName;
 }
 
-static std::optional<DirectoryName> currentWorkingDirectory()
+static Optional<DirectoryName> currentWorkingDirectory()
 {
 #if OS(WINDOWS)
     // https://msdn.microsoft.com/en-us/library/windows/desktop/aa364934.aspx
@@ -741,7 +741,7 @@ static std::optional<DirectoryName> currentWorkingDirectory()
     // In the path utility functions inside the JSC shell, we does not handle the UNC and UNCW including the network host name.
     DWORD bufferLength = ::GetCurrentDirectoryW(0, nullptr);
     if (!bufferLength)
-        return std::nullopt;
+        return WTF::nullopt;
     // In Windows, wchar_t is the UTF-16LE.
     // https://msdn.microsoft.com/en-us/library/dd374081.aspx
     // https://msdn.microsoft.com/en-us/library/windows/desktop/ff381407.aspx
@@ -750,15 +750,15 @@ static std::optional<DirectoryName> currentWorkingDirectory()
     String directoryString = wcharToString(buffer.data(), lengthNotIncludingNull);
     // We don't support network path like \\host\share\<path name>.
     if (directoryString.startsWith("\\\\"))
-        return std::nullopt;
+        return WTF::nullopt;
 #else
     Vector<char> buffer(PATH_MAX);
     if (!getcwd(buffer.data(), PATH_MAX))
-        return std::nullopt;
+        return WTF::nullopt;
     String directoryString = String::fromUTF8(buffer.data());
 #endif
     if (directoryString.isEmpty())
-        return std::nullopt;
+        return WTF::nullopt;
 
     if (directoryString[directoryString.length() - 1] == pathSeparator())
         return extractDirectoryName(directoryString);
@@ -2482,7 +2482,7 @@ static void runInteractive(GlobalObject* globalObject)
     VM& vm = globalObject->vm();
     auto scope = DECLARE_CATCH_SCOPE(vm);
 
-    std::optional<DirectoryName> directoryName = currentWorkingDirectory();
+    Optional<DirectoryName> directoryName = currentWorkingDirectory();
     if (!directoryName)
         return;
     SourceOrigin sourceOrigin(resolvePath(directoryName.value(), ModuleName("interpreter")));

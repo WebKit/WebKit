@@ -31,12 +31,12 @@ namespace WebCore {
 #if PLATFORM(IOS_FAMILY)
 
 // FIXME: We should reconcile the iOS and OpenSource differences.
-Ref<DeviceOrientationData> DeviceOrientationData::create(std::optional<double> alpha, std::optional<double> beta, std::optional<double> gamma, std::optional<double> compassHeading, std::optional<double> compassAccuracy)
+Ref<DeviceOrientationData> DeviceOrientationData::create(Optional<double> alpha, Optional<double> beta, Optional<double> gamma, Optional<double> compassHeading, Optional<double> compassAccuracy)
 {
     return adoptRef(*new DeviceOrientationData(alpha, beta, gamma, compassHeading, compassAccuracy));
 }
 
-DeviceOrientationData::DeviceOrientationData(std::optional<double> alpha, std::optional<double> beta, std::optional<double> gamma, std::optional<double> compassHeading, std::optional<double> compassAccuracy)
+DeviceOrientationData::DeviceOrientationData(Optional<double> alpha, Optional<double> beta, Optional<double> gamma, Optional<double> compassHeading, Optional<double> compassAccuracy)
     : m_alpha(alpha)
     , m_beta(beta)
     , m_gamma(gamma)
@@ -47,12 +47,12 @@ DeviceOrientationData::DeviceOrientationData(std::optional<double> alpha, std::o
 
 #else
 
-Ref<DeviceOrientationData> DeviceOrientationData::create(std::optional<double> alpha, std::optional<double> beta, std::optional<double> gamma, std::optional<bool> absolute)
+Ref<DeviceOrientationData> DeviceOrientationData::create(Optional<double> alpha, Optional<double> beta, Optional<double> gamma, Optional<bool> absolute)
 {
     return adoptRef(*new DeviceOrientationData(alpha, beta, gamma, absolute));
 }
 
-DeviceOrientationData::DeviceOrientationData(std::optional<double> alpha, std::optional<double> beta, std::optional<double> gamma, std::optional<bool> absolute)
+DeviceOrientationData::DeviceOrientationData(Optional<double> alpha, Optional<double> beta, Optional<double> gamma, Optional<bool> absolute)
     : m_alpha(alpha)
     , m_beta(beta)
     , m_gamma(gamma)

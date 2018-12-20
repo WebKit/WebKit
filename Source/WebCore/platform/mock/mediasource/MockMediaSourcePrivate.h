@@ -53,7 +53,7 @@ public:
     void seekToTime(const MediaTime&);
     MediaTime seekToTime(const MediaTime&, const MediaTime& negativeThreshold, const MediaTime& positiveThreshold);
 
-    std::optional<VideoPlaybackQualityMetrics> videoPlaybackQualityMetrics();
+    Optional<VideoPlaybackQualityMetrics> videoPlaybackQualityMetrics();
 
     void incrementTotalVideoFrames() { ++m_totalVideoFrames; }
     void incrementDroppedFrames() { ++m_droppedVideoFrames; }

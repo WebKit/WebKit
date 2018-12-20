@@ -78,48 +78,48 @@ protected:
     // This class implements generic positioning and sizing.
     class Geometry {
     public:
-        static VerticalGeometry outOfFlowVerticalGeometry(const LayoutState&, const Box&, std::optional<LayoutUnit> usedHeight = { });
-        static HorizontalGeometry outOfFlowHorizontalGeometry(LayoutState&, const Box&, std::optional<LayoutUnit> usedWidth = { });
+        static VerticalGeometry outOfFlowVerticalGeometry(const LayoutState&, const Box&, Optional<LayoutUnit> usedHeight = { });
+        static HorizontalGeometry outOfFlowHorizontalGeometry(LayoutState&, const Box&, Optional<LayoutUnit> usedWidth = { });
 
-        static HeightAndMargin floatingHeightAndMargin(const LayoutState&, const Box&, std::optional<LayoutUnit> usedHeight = { });
-        static WidthAndMargin floatingWidthAndMargin(LayoutState&, const Box&, std::optional<LayoutUnit> usedWidth = { });
+        static HeightAndMargin floatingHeightAndMargin(const LayoutState&, const Box&, Optional<LayoutUnit> usedHeight = { });
+        static WidthAndMargin floatingWidthAndMargin(LayoutState&, const Box&, Optional<LayoutUnit> usedWidth = { });
 
-        static HeightAndMargin inlineReplacedHeightAndMargin(const LayoutState&, const Box&, std::optional<LayoutUnit> usedHeight = { });
-        static WidthAndMargin inlineReplacedWidthAndMargin(const LayoutState&, const Box&, std::optional<LayoutUnit> usedWidth = { }, 
-            std::optional<LayoutUnit> precomputedMarginStart = { }, std::optional<LayoutUnit> precomputedMarginEnd = { });
+        static HeightAndMargin inlineReplacedHeightAndMargin(const LayoutState&, const Box&, Optional<LayoutUnit> usedHeight = { });
+        static WidthAndMargin inlineReplacedWidthAndMargin(const LayoutState&, const Box&, Optional<LayoutUnit> usedWidth = { }, 
+            Optional<LayoutUnit> precomputedMarginStart = { }, Optional<LayoutUnit> precomputedMarginEnd = { });
 
         static LayoutSize inFlowPositionedPositionOffset(const LayoutState&, const Box&);
 
-        static HeightAndMargin complicatedCases(const LayoutState&, const Box&, std::optional<LayoutUnit> usedHeight = { });
+        static HeightAndMargin complicatedCases(const LayoutState&, const Box&, Optional<LayoutUnit> usedHeight = { });
         static LayoutUnit shrinkToFitWidth(LayoutState&, const Box&);
 
         static Edges computedBorder(const LayoutState&, const Box&);
-        static std::optional<Edges> computedPadding(const LayoutState&, const Box&);
+        static Optional<Edges> computedPadding(const LayoutState&, const Box&);
 
         static HorizontalMargin computedNonCollapsedHorizontalMarginValue(const LayoutState&, const Box&);
         static VerticalMargin::ComputedValues computedNonCollapsedVerticalMarginValue(const LayoutState&, const Box&);
 
-        static std::optional<LayoutUnit> computedValueIfNotAuto(const Length& geometryProperty, LayoutUnit containingBlockWidth);
-        static std::optional<LayoutUnit> fixedValue(const Length& geometryProperty);
+        static Optional<LayoutUnit> computedValueIfNotAuto(const Length& geometryProperty, LayoutUnit containingBlockWidth);
+        static Optional<LayoutUnit> fixedValue(const Length& geometryProperty);
 
-        static std::optional<LayoutUnit> computedMinHeight(const LayoutState&, const Box&);
-        static std::optional<LayoutUnit> computedMaxHeight(const LayoutState&, const Box&);
+        static Optional<LayoutUnit> computedMinHeight(const LayoutState&, const Box&);
+        static Optional<LayoutUnit> computedMaxHeight(const LayoutState&, const Box&);
 
     protected:
         enum class HeightType { Min, Max, Normal };
-        static std::optional<LayoutUnit> computedHeightValue(const LayoutState&, const Box&, HeightType);
+        static Optional<LayoutUnit> computedHeightValue(const LayoutState&, const Box&, HeightType);
 
     private:
-        static VerticalGeometry outOfFlowReplacedVerticalGeometry(const LayoutState&, const Box&, std::optional<LayoutUnit> usedHeight = { });
-        static HorizontalGeometry outOfFlowReplacedHorizontalGeometry(const LayoutState&, const Box&, std::optional<LayoutUnit> usedWidth = { });
+        static VerticalGeometry outOfFlowReplacedVerticalGeometry(const LayoutState&, const Box&, Optional<LayoutUnit> usedHeight = { });
+        static HorizontalGeometry outOfFlowReplacedHorizontalGeometry(const LayoutState&, const Box&, Optional<LayoutUnit> usedWidth = { });
 
-        static VerticalGeometry outOfFlowNonReplacedVerticalGeometry(const LayoutState&, const Box&, std::optional<LayoutUnit> usedHeight = { });
-        static HorizontalGeometry outOfFlowNonReplacedHorizontalGeometry(LayoutState&, const Box&, std::optional<LayoutUnit> usedWidth = { });
+        static VerticalGeometry outOfFlowNonReplacedVerticalGeometry(const LayoutState&, const Box&, Optional<LayoutUnit> usedHeight = { });
+        static HorizontalGeometry outOfFlowNonReplacedHorizontalGeometry(LayoutState&, const Box&, Optional<LayoutUnit> usedWidth = { });
 
-        static HeightAndMargin floatingReplacedHeightAndMargin(const LayoutState&, const Box&, std::optional<LayoutUnit> usedHeight = { });
-        static WidthAndMargin floatingReplacedWidthAndMargin(const LayoutState&, const Box&, std::optional<LayoutUnit> usedWidth = { });
+        static HeightAndMargin floatingReplacedHeightAndMargin(const LayoutState&, const Box&, Optional<LayoutUnit> usedHeight = { });
+        static WidthAndMargin floatingReplacedWidthAndMargin(const LayoutState&, const Box&, Optional<LayoutUnit> usedWidth = { });
 
-        static WidthAndMargin floatingNonReplacedWidthAndMargin(LayoutState&, const Box&, std::optional<LayoutUnit> usedWidth = { });
+        static WidthAndMargin floatingNonReplacedWidthAndMargin(LayoutState&, const Box&, Optional<LayoutUnit> usedWidth = { });
     };
 
     class Quirks {

@@ -68,7 +68,7 @@ Vector<MarkedText> subdivide(const Vector<MarkedText>& markedTexts, OverlapStrat
     for (unsigned i = 1; i < numberOfOffsets; ++i) {
         if (offsets[i].value > offsets[i - 1].value) {
             if (overlapStrategy == OverlapStrategy::Frontmost) {
-                std::optional<unsigned> frontmost;
+                Optional<unsigned> frontmost;
                 for (unsigned j = 0; j < i; ++j) {
                     if (!processedMarkedTexts.contains(offsets[j].markedText) && (!frontmost || offsets[j].markedText->type > offsets[*frontmost].markedText->type))
                         frontmost = j;

@@ -31,7 +31,7 @@
 
 namespace WebKit {
 
-void initializeLogChannelsIfNecessary(std::optional<String> = std::nullopt);
+void initializeLogChannelsIfNecessary(Optional<String> = WTF::nullopt);
 String logLevelString();
 
 } // namespace WebKit

@@ -75,7 +75,7 @@ private:
     void putRecordsCompleted(uint64_t requestIdentifier, WebCore::DOMCacheEngine::RecordIdentifiersOrError&&);
 
     void engineRepresentationCompleted(uint64_t requestIdentifier, const String& representation);
-    void clearMemoryRepresentationCompleted(uint64_t requestIdentifier, std::optional<WebCore::DOMCacheEngine::Error>&&);
+    void clearMemoryRepresentationCompleted(uint64_t requestIdentifier, Optional<WebCore::DOMCacheEngine::Error>&&);
 
     WebCacheStorageProvider& m_provider;
     PAL::SessionID m_sessionID;

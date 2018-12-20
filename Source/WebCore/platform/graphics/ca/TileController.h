@@ -88,7 +88,7 @@ public:
 
     FloatRect visibleRect() const override { return m_visibleRect; }
     FloatRect coverageRect() const override { return m_coverageRect; }
-    std::optional<FloatRect> layoutViewportRect() const { return m_layoutViewportRect; }
+    Optional<FloatRect> layoutViewportRect() const { return m_layoutViewportRect; }
 
     void setTileSizeUpdateDelayDisabledForTesting(bool) final;
 
@@ -151,7 +151,7 @@ private:
 
     // TiledBacking member functions.
     void setVisibleRect(const FloatRect&) override;
-    void setLayoutViewportRect(std::optional<FloatRect>) override;
+    void setLayoutViewportRect(Optional<FloatRect>) override;
     void setCoverageRect(const FloatRect&) override;
     bool tilesWouldChangeForCoverageRect(const FloatRect&) const override;
     void setTiledScrollingIndicatorPosition(const FloatPoint&) override;
@@ -202,7 +202,7 @@ private:
     std::unique_ptr<TileGrid> m_zoomedOutTileGrid;
 
     FloatRect m_visibleRect; // Only used for scroll performance logging.
-    std::optional<FloatRect> m_layoutViewportRect; // Only used by the tiled scrolling indicator.
+    Optional<FloatRect> m_layoutViewportRect; // Only used by the tiled scrolling indicator.
     FloatRect m_coverageRect;
     IntRect m_boundsAtLastRevalidate;
 

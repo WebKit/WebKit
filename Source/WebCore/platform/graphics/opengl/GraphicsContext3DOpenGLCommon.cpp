@@ -980,16 +980,16 @@ static String generateHashedName(const String& name)
     return builder.toString();
 }
 
-std::optional<String> GraphicsContext3D::mappedSymbolInShaderSourceMap(Platform3DObject shader, ANGLEShaderSymbolType symbolType, const String& name)
+Optional<String> GraphicsContext3D::mappedSymbolInShaderSourceMap(Platform3DObject shader, ANGLEShaderSymbolType symbolType, const String& name)
 {
     auto result = m_shaderSourceMap.find(shader);
     if (result == m_shaderSourceMap.end())
-        return std::nullopt;
+        return WTF::nullopt;
 
     const auto& symbolMap = result->value.symbolMap(symbolType);
     auto symbolEntry = symbolMap.find(name);
     if (symbolEntry == symbolMap.end())
-        return std::nullopt;
+        return WTF::nullopt;
 
     auto& mappedName = symbolEntry->value.mappedName;
     return String(mappedName.c_str(), mappedName.length());
@@ -1038,18 +1038,18 @@ String GraphicsContext3D::mappedSymbolName(Platform3DObject program, ANGLEShader
     return name;
 }
 
-std::optional<String> GraphicsContext3D::originalSymbolInShaderSourceMap(Platform3DObject shader, ANGLEShaderSymbolType symbolType, const String& name)
+Optional<String> GraphicsContext3D::originalSymbolInShaderSourceMap(Platform3DObject shader, ANGLEShaderSymbolType symbolType, const String& name)
 {
     auto result = m_shaderSourceMap.find(shader);
     if (result == m_shaderSourceMap.end())
-        return std::nullopt;
+        return WTF::nullopt;
 
     const auto& symbolMap = result->value.symbolMap(symbolType);
     for (const auto& symbolEntry : symbolMap) {
         if (name == symbolEntry.value.mappedName.c_str())
             return symbolEntry.key;
     }
-    return std::nullopt;
+    return WTF::nullopt;
 }
 
 String GraphicsContext3D::originalSymbolName(Platform3DObject program, ANGLEShaderSymbolType symbolType, const String& name)

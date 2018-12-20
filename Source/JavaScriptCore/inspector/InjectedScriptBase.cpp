@@ -96,7 +96,7 @@ Ref<JSON::Value> InjectedScriptBase::makeCall(Deprecated::ScriptFunctionCall& fu
     return resultJSONValue.releaseNonNull();
 }
 
-void InjectedScriptBase::makeEvalCall(ErrorString& errorString, Deprecated::ScriptFunctionCall& function, RefPtr<Protocol::Runtime::RemoteObject>& out_resultObject, std::optional<bool>& out_wasThrown, std::optional<int>& out_savedResultIndex)
+void InjectedScriptBase::makeEvalCall(ErrorString& errorString, Deprecated::ScriptFunctionCall& function, RefPtr<Protocol::Runtime::RemoteObject>& out_resultObject, Optional<bool>& out_wasThrown, Optional<int>& out_savedResultIndex)
 {
     checkCallResult(errorString, makeCall(function), out_resultObject, out_wasThrown, out_savedResultIndex);
 }
@@ -141,7 +141,7 @@ void InjectedScriptBase::makeAsyncCall(Deprecated::ScriptFunctionCall& function,
     }
 }
 
-void InjectedScriptBase::checkCallResult(ErrorString& errorString, RefPtr<JSON::Value> result, RefPtr<Protocol::Runtime::RemoteObject>& out_resultObject, std::optional<bool>& out_wasThrown, std::optional<int>& out_savedResultIndex)
+void InjectedScriptBase::checkCallResult(ErrorString& errorString, RefPtr<JSON::Value> result, RefPtr<Protocol::Runtime::RemoteObject>& out_resultObject, Optional<bool>& out_wasThrown, Optional<int>& out_savedResultIndex)
 {
     if (!result) {
         errorString = "Internal error: result value is empty"_s;
@@ -186,8 +186,8 @@ void InjectedScriptBase::checkAsyncCallResult(RefPtr<JSON::Value> result, const 
 {
     ErrorString errorString;
     RefPtr<Protocol::Runtime::RemoteObject> resultObject;
-    std::optional<bool> wasThrown;
-    std::optional<int> savedResultIndex;
+    Optional<bool> wasThrown;
+    Optional<int> savedResultIndex;
 
     checkCallResult(errorString, result, resultObject, wasThrown, savedResultIndex);
 

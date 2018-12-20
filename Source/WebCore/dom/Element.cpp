@@ -655,7 +655,7 @@ void Element::setHovered(bool flag)
 }
 
 // FIXME(webkit.org/b/161611): Take into account orientation/direction.
-inline ScrollAlignment toScrollAlignment(std::optional<ScrollLogicalPosition> position, bool isVertical)
+inline ScrollAlignment toScrollAlignment(Optional<ScrollLogicalPosition> position, bool isVertical)
 {
     switch (position.value_or(isVertical ? ScrollLogicalPosition::Start : ScrollLogicalPosition::Nearest)) {
     case ScrollLogicalPosition::Start:
@@ -672,7 +672,7 @@ inline ScrollAlignment toScrollAlignment(std::optional<ScrollLogicalPosition> po
     }
 }
 
-void Element::scrollIntoView(std::optional<Variant<bool, ScrollIntoViewOptions>>&& arg)
+void Element::scrollIntoView(Optional<Variant<bool, ScrollIntoViewOptions>>&& arg)
 {
     document().updateLayoutIgnorePendingStylesheets();
 
@@ -1322,7 +1322,7 @@ LayoutRect Element::absoluteEventHandlerBounds(bool& includesFixedPositionElemen
     return absoluteEventBoundsOfElementAndDescendants(includesFixedPositionElements);
 }
 
-static std::optional<std::pair<RenderObject*, LayoutRect>> listBoxElementBoundingBox(Element& element)
+static Optional<std::pair<RenderObject*, LayoutRect>> listBoxElementBoundingBox(Element& element)
 {
     HTMLSelectElement* selectElement;
     bool isGroup;
@@ -1333,13 +1333,13 @@ static std::optional<std::pair<RenderObject*, LayoutRect>> listBoxElementBoundin
         selectElement = downcast<HTMLOptGroupElement>(element).ownerSelectElement();
         isGroup = true;
     } else
-        return std::nullopt;
+        return WTF::nullopt;
 
     if (!selectElement || !selectElement->renderer() || !is<RenderListBox>(selectElement->renderer()))
-        return std::nullopt;
+        return WTF::nullopt;
 
     auto& renderer = downcast<RenderListBox>(*selectElement->renderer());
-    std::optional<LayoutRect> boundingBox;
+    Optional<LayoutRect> boundingBox;
     int optionIndex = 0;
     for (auto* item : selectElement->listItems()) {
         if (item == &element) {
@@ -1357,7 +1357,7 @@ static std::optional<std::pair<RenderObject*, LayoutRect>> listBoxElementBoundin
     }
 
     if (!boundingBox)
-        return std::nullopt;
+        return WTF::nullopt;
 
     return std::pair<RenderObject*, LayoutRect> { &renderer, boundingBox.value() };
 }
@@ -1450,7 +1450,7 @@ const AtomicString& Element::getAttributeNS(const AtomicString& namespaceURI, co
 }
 
 // https://dom.spec.whatwg.org/#dom-element-toggleattribute
-ExceptionOr<bool> Element::toggleAttribute(const AtomicString& qualifiedName, std::optional<bool> force)
+ExceptionOr<bool> Element::toggleAttribute(const AtomicString& qualifiedName, Optional<bool> force)
 {
     if (!Document::isValidName(qualifiedName))
         return Exception { InvalidCharacterError };
@@ -3808,10 +3808,10 @@ void Element::didDetachRenderers()
     ASSERT(hasCustomStyleResolveCallbacks());
 }
 
-std::optional<ElementStyle> Element::resolveCustomStyle(const RenderStyle&, const RenderStyle*)
+Optional<ElementStyle> Element::resolveCustomStyle(const RenderStyle&, const RenderStyle*)
 {
     ASSERT(hasCustomStyleResolveCallbacks());
-    return std::nullopt;
+    return WTF::nullopt;
 }
 
 void Element::cloneAttributesFromElement(const Element& other)
@@ -4055,10 +4055,10 @@ Element* Element::findAnchorElementForLink(String& outAnchorName)
     return nullptr;
 }
 
-ExceptionOr<Ref<WebAnimation>> Element::animate(JSC::ExecState& state, JSC::Strong<JSC::JSObject>&& keyframes, std::optional<Variant<double, KeyframeAnimationOptions>>&& options)
+ExceptionOr<Ref<WebAnimation>> Element::animate(JSC::ExecState& state, JSC::Strong<JSC::JSObject>&& keyframes, Optional<Variant<double, KeyframeAnimationOptions>>&& options)
 {
     String id = "";
-    std::optional<Variant<double, KeyframeEffectOptions>> keyframeEffectOptions;
+    Optional<Variant<double, KeyframeEffectOptions>> keyframeEffectOptions;
     if (options) {
         auto optionsValue = options.value();
         Variant<double, KeyframeEffectOptions> keyframeEffectOptionsVariant;

@@ -28,11 +28,11 @@
 
 namespace WebCore {
 
-std::optional<FourCC> FourCC::fromString(const String& stringValue)
+Optional<FourCC> FourCC::fromString(const String& stringValue)
 {
     auto asciiValue = stringValue.ascii();
     if (asciiValue.length() != 4)
-        return std::nullopt;
+        return WTF::nullopt;
 
     const char* data = asciiValue.data();
     ASSERT(asciiValue.data());

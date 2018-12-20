@@ -62,16 +62,16 @@ public:
 
 private:
     bool supportsVersion(unsigned) final;
-    std::optional<String> validatedPaymentNetwork(const String&) final;
+    Optional<String> validatedPaymentNetwork(const String&) final;
     bool canMakePayments() final;
     void canMakePaymentsWithActiveCard(const String&, const String&, WTF::Function<void(bool)>&&);
     void openPaymentSetup(const String&, const String&, WTF::Function<void(bool)>&&);
     bool showPaymentUI(const URL&, const Vector<URL>&, const ApplePaySessionPaymentRequest&) final;
     void completeMerchantValidation(const PaymentMerchantSession&) final;
-    void completeShippingMethodSelection(std::optional<ShippingMethodUpdate>&&) final;
-    void completeShippingContactSelection(std::optional<ShippingContactUpdate>&&) final;
-    void completePaymentMethodSelection(std::optional<PaymentMethodUpdate>&&) final;
-    void completePaymentSession(std::optional<PaymentAuthorizationResult>&&) final;
+    void completeShippingMethodSelection(Optional<ShippingMethodUpdate>&&) final;
+    void completeShippingContactSelection(Optional<ShippingContactUpdate>&&) final;
+    void completePaymentMethodSelection(Optional<PaymentMethodUpdate>&&) final;
+    void completePaymentSession(Optional<PaymentAuthorizationResult>&&) final;
     void abortPaymentSession() final;
     void cancelPaymentSession() final;
     void paymentCoordinatorDestroyed() final;

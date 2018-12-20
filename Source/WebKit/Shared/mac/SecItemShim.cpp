@@ -72,9 +72,9 @@ static WorkQueue& workQueue()
     return *workQueue;
 }
 
-static std::optional<SecItemResponseData> sendSecItemRequest(SecItemRequestData::Type requestType, CFDictionaryRef query, CFDictionaryRef attributesToMatch = 0)
+static Optional<SecItemResponseData> sendSecItemRequest(SecItemRequestData::Type requestType, CFDictionaryRef query, CFDictionaryRef attributesToMatch = 0)
 {
-    std::optional<SecItemResponseData> response;
+    Optional<SecItemResponseData> response;
 
     BinarySemaphore semaphore;
 

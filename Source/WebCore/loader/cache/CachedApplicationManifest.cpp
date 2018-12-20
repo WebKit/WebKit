@@ -59,10 +59,10 @@ String CachedApplicationManifest::encoding() const
     return m_decoder->encoding().name();
 }
 
-std::optional<ApplicationManifest> CachedApplicationManifest::process(const URL& manifestURL, const URL& documentURL, RefPtr<ScriptExecutionContext> scriptExecutionContext)
+Optional<ApplicationManifest> CachedApplicationManifest::process(const URL& manifestURL, const URL& documentURL, RefPtr<ScriptExecutionContext> scriptExecutionContext)
 {
     if (!m_text)
-        return std::nullopt;
+        return WTF::nullopt;
     if (scriptExecutionContext)
         return ApplicationManifestParser::parse(*scriptExecutionContext, *m_text, manifestURL, documentURL);
     return ApplicationManifestParser::parse(*m_text, manifestURL, documentURL);

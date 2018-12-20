@@ -66,7 +66,7 @@ public:
     const String& id() const;
     PaymentAddress* shippingAddress() const { return m_shippingAddress.get(); }
     const String& shippingOption() const { return m_shippingOption; }
-    std::optional<PaymentShippingType> shippingType() const;
+    Optional<PaymentShippingType> shippingType() const;
 
     enum class State {
         Created,
@@ -93,7 +93,7 @@ public:
     ExceptionOr<void> updateWith(UpdateReason, Ref<DOMPromise>&&);
     ExceptionOr<void> completeMerchantValidation(Event&, Ref<DOMPromise>&&);
     void accept(const String& methodName, PaymentResponse::DetailsFunction&&, Ref<PaymentAddress>&& shippingAddress, const String& payerName, const String& payerEmail, const String& payerPhone);
-    ExceptionOr<void> complete(std::optional<PaymentComplete>&&);
+    ExceptionOr<void> complete(Optional<PaymentComplete>&&);
     ExceptionOr<void> retry(PaymentValidationErrors&&);
     void cancel();
 
@@ -140,8 +140,8 @@ private:
     String m_shippingOption;
     RefPtr<PaymentAddress> m_shippingAddress;
     State m_state { State::Created };
-    std::optional<ShowPromise> m_showPromise;
-    std::optional<PaymentHandlerWithPendingActivity> m_activePaymentHandler;
+    Optional<ShowPromise> m_showPromise;
+    Optional<PaymentHandlerWithPendingActivity> m_activePaymentHandler;
     RefPtr<DOMPromise> m_detailsPromise;
     RefPtr<DOMPromise> m_merchantSessionPromise;
     RefPtr<PaymentResponse> m_response;
@@ -149,7 +149,7 @@ private:
     bool m_isCancelPending { false };
 };
 
-std::optional<PaymentRequest::MethodIdentifier> convertAndValidatePaymentMethodIdentifier(const String& identifier);
+Optional<PaymentRequest::MethodIdentifier> convertAndValidatePaymentMethodIdentifier(const String& identifier);
 
 } // namespace WebCore
 

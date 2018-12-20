@@ -717,7 +717,7 @@ static const NSTimeInterval kAnimationDuration = 0.2;
 
     _viewState.applyTo(webView.get());
     if (auto* page = [webView _page])
-        page->setOverrideViewportArguments(std::nullopt);
+        page->setOverrideViewportArguments(WTF::nullopt);
 
     [webView setNeedsLayout];
     [webView layoutIfNeeded];

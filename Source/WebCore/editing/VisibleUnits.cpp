@@ -360,7 +360,7 @@ static VisiblePosition visualWordPosition(const VisiblePosition& visiblePosition
     TextDirection blockDirection = directionOfEnclosingBlock(visiblePosition.deepEquivalent());
     InlineBox* previouslyVisitedBox = nullptr;
     VisiblePosition current = visiblePosition;
-    std::optional<VisiblePosition> previousPosition;
+    Optional<VisiblePosition> previousPosition;
     UBreakIterator* iter = nullptr;
 
     CachedLogicallyOrderedLeafBoxes leafBoxes;

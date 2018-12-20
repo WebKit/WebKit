@@ -181,8 +181,8 @@ public:
     bool areTimersThrottled() const;
 
     enum EventThrottlingBehavior { Responsive, Unresponsive };
-    void setEventThrottlingBehaviorOverride(std::optional<EventThrottlingBehavior>);
-    std::optional<EventThrottlingBehavior> eventThrottlingBehaviorOverride() const;
+    void setEventThrottlingBehaviorOverride(Optional<EventThrottlingBehavior>);
+    Optional<EventThrottlingBehavior> eventThrottlingBehaviorOverride() const;
 
     // Spatial Navigation testing.
     ExceptionOr<unsigned> lastSpatialNavigationCandidateCount() const;
@@ -466,8 +466,8 @@ public:
     ExceptionOr<unsigned> compositingUpdateCount();
 
     enum CompositingPolicy { Normal, Conservative };
-    ExceptionOr<void> setCompositingPolicyOverride(std::optional<CompositingPolicy>);
-    ExceptionOr<std::optional<CompositingPolicy>> compositingPolicyOverride() const;
+    ExceptionOr<void> setCompositingPolicyOverride(Optional<CompositingPolicy>);
+    ExceptionOr<Optional<CompositingPolicy>> compositingPolicyOverride() const;
 
     ExceptionOr<void> updateLayoutIgnorePendingStylesheetsAndRunPostLayoutTasks(Node*);
     unsigned layoutCount() const;
@@ -756,7 +756,7 @@ public:
     bool supportsVCPEncoder();
         
     using HEVCParameterSet = WebCore::HEVCParameterSet;
-    std::optional<HEVCParameterSet> parseHEVCCodecParameters(const String& codecString);
+    Optional<HEVCParameterSet> parseHEVCCodecParameters(const String& codecString);
 
     struct CookieData {
         String name;
@@ -808,7 +808,7 @@ private:
     unsigned long m_trackVideoSampleCount { 0 };
     unsigned long m_trackAudioSampleCount { 0 };
     RefPtr<MediaStreamTrack> m_track;
-    std::optional<TrackFramePromise> m_nextTrackFramePromise;
+    Optional<TrackFramePromise> m_nextTrackFramePromise;
 #endif
 
     std::unique_ptr<InspectorStubFrontend> m_inspectorFrontend;

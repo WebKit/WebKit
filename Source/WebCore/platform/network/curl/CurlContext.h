@@ -274,18 +274,18 @@ public:
     void setSslCtxCallbackFunction(curl_ssl_ctx_callback, void*);
 
     // Status
-    std::optional<String> getProxyUrl();
-    std::optional<long> getResponseCode();
-    std::optional<long> getHttpConnectCode();
-    std::optional<long long> getContentLength();
-    std::optional<long> getHttpAuthAvail();
-    std::optional<long> getProxyAuthAvail();
-    std::optional<long> getHttpVersion();
-    std::optional<NetworkLoadMetrics> getNetworkLoadMetrics(const WTF::Seconds& domainLookupStart);
+    Optional<String> getProxyUrl();
+    Optional<long> getResponseCode();
+    Optional<long> getHttpConnectCode();
+    Optional<long long> getContentLength();
+    Optional<long> getHttpAuthAvail();
+    Optional<long> getProxyAuthAvail();
+    Optional<long> getHttpVersion();
+    Optional<NetworkLoadMetrics> getNetworkLoadMetrics(const WTF::Seconds& domainLookupStart);
     void addExtraNetworkLoadMetrics(NetworkLoadMetrics&);
 
     int sslErrors() const;
-    std::optional<CertificateInfo> certificateInfo() const;
+    Optional<CertificateInfo> certificateInfo() const;
 
     static long long maxCurlOffT();
 
@@ -322,8 +322,8 @@ public:
 
     bool connect();
     size_t send(const uint8_t*, size_t);
-    std::optional<size_t> receive(uint8_t*, size_t);
-    std::optional<WaitResult> wait(const Seconds& timeout, bool alsoWaitForWrite);
+    Optional<size_t> receive(uint8_t*, size_t);
+    Optional<WaitResult> wait(const Seconds& timeout, bool alsoWaitForWrite);
 
 private:
     Function<void(CURLcode)> m_errorHandler;

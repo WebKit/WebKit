@@ -182,7 +182,7 @@ bool JSDOMWindow::getOwnPropertySlot(JSObject* object, ExecState* state, Propert
 {
     // (1) First, indexed properties.
     // Hand off all indexed access to getOwnPropertySlotByIndex, which supports the indexed getter.
-    if (std::optional<unsigned> index = parseIndex(propertyName))
+    if (Optional<unsigned> index = parseIndex(propertyName))
         return getOwnPropertySlotByIndex(object, state, index.value(), slot);
 
     auto* thisObject = jsCast<JSDOMWindow*>(object);
@@ -235,7 +235,7 @@ bool JSDOMWindow::getOwnPropertySlotByIndex(JSObject* object, ExecState* state, 
     slot.disableCaching();
 
     String errorMessage;
-    std::optional<bool> cachedIsCrossOriginAccess;
+    Optional<bool> cachedIsCrossOriginAccess;
     auto isCrossOriginAccess = [&] {
         if (!cachedIsCrossOriginAccess)
             cachedIsCrossOriginAccess = !BindingSecurity::shouldAllowAccessToDOMWindow(*state, window, errorMessage);

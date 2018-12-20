@@ -53,7 +53,7 @@ public:
     const RefPtr<JSC::ArrayBuffer> elementArrayBuffer() const { return m_elementArrayBuffer; }
 
     // Gets the cached max index for the given type if one has been set.
-    std::optional<unsigned> getCachedMaxIndex(GC3Denum type);
+    Optional<unsigned> getCachedMaxIndex(GC3Denum type);
     // Sets the cached max index for the given type.
     void setCachedMaxIndex(GC3Denum type, unsigned value);
 

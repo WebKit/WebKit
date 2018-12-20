@@ -163,7 +163,7 @@ UnlinkedFunctionExecutable* BuiltinExecutables::createExecutable(VM& vm, const S
     unsigned lineCount = 0;
     unsigned endColumn = 0;
     unsigned offsetOfLastNewline = 0;
-    std::optional<unsigned> offsetOfSecondToLastNewline;
+    Optional<unsigned> offsetOfSecondToLastNewline;
     for (unsigned i = 0; i < view.length(); ++i) {
         if (characters[i] == '\n') {
             if (lineCount)

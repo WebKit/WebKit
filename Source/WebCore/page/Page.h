@@ -360,7 +360,7 @@ public:
     WEBCORE_EXPORT bool useDarkAppearance() const;
     WEBCORE_EXPORT void setUseDarkAppearance(bool);
     bool defaultUseDarkAppearance() const { return m_useDarkAppearance; }
-    void setUseDarkAppearanceOverride(std::optional<bool>);
+    void setUseDarkAppearanceOverride(Optional<bool>);
 
 #if ENABLE(TEXT_AUTOSIZING)
     float textAutosizingWidth() const { return m_textAutosizingWidth; }
@@ -426,7 +426,7 @@ public:
 #endif
 
 #if ENABLE(APPLICATION_MANIFEST)
-    const std::optional<ApplicationManifest>& applicationManifest() const { return m_applicationManifest; }
+    const Optional<ApplicationManifest>& applicationManifest() const { return m_applicationManifest; }
 #endif
 
     // Notifications when the Page starts and stops being presented via a native window.
@@ -656,11 +656,11 @@ public:
     // Web Inspector can override whatever value is set via WebKit SPI, but only while it is open.
     void setResourceCachingDisabledOverride(bool disabled) { m_resourceCachingDisabledOverride = disabled; }
 
-    std::optional<EventThrottlingBehavior> eventThrottlingBehaviorOverride() const { return m_eventThrottlingBehaviorOverride; }
-    void setEventThrottlingBehaviorOverride(std::optional<EventThrottlingBehavior> throttling) { m_eventThrottlingBehaviorOverride = throttling; }
+    Optional<EventThrottlingBehavior> eventThrottlingBehaviorOverride() const { return m_eventThrottlingBehaviorOverride; }
+    void setEventThrottlingBehaviorOverride(Optional<EventThrottlingBehavior> throttling) { m_eventThrottlingBehaviorOverride = throttling; }
 
-    std::optional<CompositingPolicy> compositingPolicyOverride() const { return m_compositingPolicyOverride; }
-    void setCompositingPolicyOverride(std::optional<CompositingPolicy> policy) { m_compositingPolicyOverride = policy; }
+    Optional<CompositingPolicy> compositingPolicyOverride() const { return m_compositingPolicyOverride; }
+    void setCompositingPolicyOverride(Optional<CompositingPolicy> policy) { m_compositingPolicyOverride = policy; }
 
     WebGLStateTracker* webGLStateTracker() const { return m_webGLStateTracker.get(); }
 
@@ -672,7 +672,7 @@ public:
 #endif
 
     bool isLowPowerModeEnabled() const;
-    WEBCORE_EXPORT void setLowPowerModeEnabledOverrideForTesting(std::optional<bool>);
+    WEBCORE_EXPORT void setLowPowerModeEnabledOverrideForTesting(Optional<bool>);
 
     WEBCORE_EXPORT void applicationWillResignActive();
     WEBCORE_EXPORT void applicationDidEnterBackground();
@@ -705,7 +705,7 @@ private:
 
     unsigned findMatchesForText(const String&, FindOptions, unsigned maxMatchCount, ShouldHighlightMatches, ShouldMarkMatches);
 
-    std::optional<std::pair<MediaCanStartListener&, Document&>> takeAnyMediaCanStartListener();
+    Optional<std::pair<MediaCanStartListener&, Document&>> takeAnyMediaCanStartListener();
 
 #if ENABLE(VIDEO)
     void playbackControlsManagerUpdateTimerFired();
@@ -794,7 +794,7 @@ private:
     
     bool m_useSystemAppearance { false };
     bool m_useDarkAppearance { false };
-    std::optional<bool> m_useDarkAppearanceOverride;
+    Optional<bool> m_useDarkAppearanceOverride;
 
 #if ENABLE(TEXT_AUTOSIZING)
     float m_textAutosizingWidth { 0 };
@@ -811,7 +811,7 @@ private:
     String m_userStyleSheetPath;
     mutable String m_userStyleSheet;
     mutable bool m_didLoadUserStyleSheet { false };
-    mutable std::optional<WallTime> m_userStyleSheetModificationTime;
+    mutable Optional<WallTime> m_userStyleSheetModificationTime;
 
     String m_captionUserPreferencesStyleSheet;
 
@@ -912,14 +912,14 @@ private:
     UserInterfaceLayoutDirection m_userInterfaceLayoutDirection { UserInterfaceLayoutDirection::LTR };
     
     // For testing.
-    std::optional<EventThrottlingBehavior> m_eventThrottlingBehaviorOverride;
-    std::optional<CompositingPolicy> m_compositingPolicyOverride;
+    Optional<EventThrottlingBehavior> m_eventThrottlingBehaviorOverride;
+    Optional<CompositingPolicy> m_compositingPolicyOverride;
 
     std::unique_ptr<PerformanceMonitor> m_performanceMonitor;
     std::unique_ptr<LowPowerModeNotifier> m_lowPowerModeNotifier;
-    std::optional<bool> m_lowPowerModeEnabledOverrideForTesting;
+    Optional<bool> m_lowPowerModeEnabledOverrideForTesting;
 
-    std::optional<Navigation> m_navigationToLogWhenVisible;
+    Optional<Navigation> m_navigationToLogWhenVisible;
 
     std::unique_ptr<PerformanceLogging> m_performanceLogging;
 #if PLATFORM(MAC)
@@ -941,7 +941,7 @@ private:
 #endif
 
 #if ENABLE(APPLICATION_MANIFEST)
-    std::optional<ApplicationManifest> m_applicationManifest;
+    Optional<ApplicationManifest> m_applicationManifest;
 #endif
 
     bool m_shouldEnableICECandidateFilteringByDefault { true };

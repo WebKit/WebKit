@@ -103,7 +103,7 @@ void InspectorCanvas::resetRecordingData()
     m_recordingName = { };
     m_bufferLimit = 100 * 1024 * 1024;
     m_bufferUsed = 0;
-    m_frameCount = std::nullopt;
+    m_frameCount = WTF::nullopt;
     m_framesCaptured = 0;
 
     m_context.setCallTracingActive(false);
@@ -221,7 +221,7 @@ void InspectorCanvas::setFrameCount(long frameCount)
     if (frameCount > 0)
         m_frameCount = std::min<long>(frameCount, std::numeric_limits<int>::max());
     else
-        m_frameCount = std::nullopt;
+        m_frameCount = WTF::nullopt;
 }
 
 bool InspectorCanvas::overFrameCount() const
@@ -274,7 +274,7 @@ Ref<Inspector::Protocol::Canvas::Canvas> InspectorCanvas::buildObjectForCanvas(b
     }
 #if ENABLE(WEBGL)
     else if (is<WebGLRenderingContextBase>(m_context)) {
-        if (std::optional<WebGLContextAttributes> attributes = downcast<WebGLRenderingContextBase>(m_context).getContextAttributes()) {
+        if (Optional<WebGLContextAttributes> attributes = downcast<WebGLRenderingContextBase>(m_context).getContextAttributes()) {
             auto contextAttributes = Inspector::Protocol::Canvas::ContextAttributes::create()
                 .release();
             contextAttributes->setAlpha(attributes->alpha);
@@ -532,7 +532,7 @@ Ref<Inspector::Protocol::Recording::InitialState> InspectorCanvas::buildInitialS
 #if ENABLE(WEBGL)
     else if (is<WebGLRenderingContextBase>(m_context)) {
         WebGLRenderingContextBase& contextWebGLBase = downcast<WebGLRenderingContextBase>(m_context);
-        if (std::optional<WebGLContextAttributes> webGLContextAttributes = contextWebGLBase.getContextAttributes()) {
+        if (Optional<WebGLContextAttributes> webGLContextAttributes = contextWebGLBase.getContextAttributes()) {
             RefPtr<JSON::Object> webGLContextAttributesPayload = JSON::Object::create();
             webGLContextAttributesPayload->setBoolean("alpha"_s, webGLContextAttributes->alpha);
             webGLContextAttributesPayload->setBoolean("depth"_s, webGLContextAttributes->depth);

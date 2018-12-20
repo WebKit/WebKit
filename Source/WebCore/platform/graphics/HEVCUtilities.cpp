@@ -30,30 +30,30 @@
 
 namespace WebCore {
 
-std::optional<HEVCParameterSet> parseHEVCCodecParameters(const String& codecString)
+Optional<HEVCParameterSet> parseHEVCCodecParameters(const String& codecString)
 {
     // The format of the 'hevc' codec string is specified in ISO/IEC 14496-15:2014, Annex E.3.
     StringView codecView(codecString);
     auto codecSplit = codecView.split('.');
     auto nextElement = codecSplit.begin();
     if (nextElement == codecSplit.end())
-        return std::nullopt;
+        return WTF::nullopt;
 
     HEVCParameterSet parameters;
 
     // Codec identifier: legal values are specified in ISO/IEC 14496-15:2014, section 8:
     parameters.codecName = (*nextElement).toString();
     if (!equal(parameters.codecName, "hvc1") && !equal(parameters.codecName, "hev1"))
-        return std::nullopt;
+        return WTF::nullopt;
 
     if (++nextElement == codecSplit.end())
-        return std::nullopt;
+        return WTF::nullopt;
 
     // First element: Optional General Profile Space parameter ['A', 'B', 'C'], mapping to [1, 2, 3]
     // and [0] for absent, then General Profile IDC as a 5-bit decimal number.
     auto profileSpace = *nextElement;
     if (!profileSpace.length())
-        return std::nullopt;
+        return WTF::nullopt;
 
     auto firstCharacter = profileSpace[0];
     bool hasProfileSpace = firstCharacter >= 'A' && firstCharacter <= 'C';
@@ -65,10 +65,10 @@ std::optional<HEVCParameterSet> parseHEVCCodecParameters(const String& codecStri
     bool isValidProfileIDC = false;
     parameters.generalProfileIDC = toIntegralType<uint8_t>(profileSpace, &isValidProfileIDC);
     if (!isValidProfileIDC)
-        return std::nullopt;
+        return WTF::nullopt;
 
     if (++nextElement == codecSplit.end())
-        return std::nullopt;
+        return WTF::nullopt;
 
     // Second element: 32 bit of General Profile Compatibility Flags, in reverse bit order,
     // in hex with leading zeros omitted.
@@ -76,23 +76,23 @@ std::optional<HEVCParameterSet> parseHEVCCodecParameters(const String& codecStri
     bool isValidCompatibilityFlags = false;
     parameters.generalProfileCompatibilityFlags = toIntegralType<uint32_t>(compatibilityFlags, &isValidCompatibilityFlags, 16);
     if (!isValidCompatibilityFlags)
-        return std::nullopt;
+        return WTF::nullopt;
 
     if (++nextElement == codecSplit.end())
-        return std::nullopt;
+        return WTF::nullopt;
 
     // Third element: General Tier Flag ['L', 'H'], mapping to [false, true], followed by
     // General Level IDC as a 8-bit decimal number.
     auto generalTier = *nextElement;
     firstCharacter = generalTier[0];
     if (firstCharacter != 'L' && firstCharacter != 'H')
-        return std::nullopt;
+        return WTF::nullopt;
 
     parameters.generalTierFlag = firstCharacter == 'H';
     bool isValidGeneralLevelIDC = false;
     parameters.generalLevelIDC = toIntegralType<uint8_t>(generalTier.substring(1), &isValidGeneralLevelIDC);
     if (!isValidGeneralLevelIDC)
-        return std::nullopt;
+        return WTF::nullopt;
 
     // Optional fourth and remaning elements: a sequence of 6 1-byte constraint flags, each byte encoded
     // in hex, and separated by a period, with trailing zero bytes omitted.
@@ -104,7 +104,7 @@ std::optional<HEVCParameterSet> parseHEVCCodecParameters(const String& codecStri
         bool isValidFlag = false;
         flag = toIntegralType<uint8_t>(*nextElement, &isValidFlag, 16);
         if (!isValidFlag)
-            return std::nullopt;
+            return WTF::nullopt;
     }
 
     return WTFMove(parameters);

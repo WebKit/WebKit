@@ -73,7 +73,7 @@ public:
 private:
     virtual void fired() = 0;
 
-    virtual std::optional<MonotonicTime> alignedFireTime(MonotonicTime) const { return std::nullopt; }
+    virtual Optional<MonotonicTime> alignedFireTime(MonotonicTime) const { return WTF::nullopt; }
 
     void checkConsistency() const;
     void checkHeapIndex() const;

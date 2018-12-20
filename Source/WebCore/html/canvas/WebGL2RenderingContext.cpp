@@ -113,12 +113,12 @@ void WebGL2RenderingContext::initializeShaderExtensions()
     m_context->getExtensions().ensureEnabled("GL_EXT_frag_depth");
 }
 
-inline static std::optional<unsigned> arrayBufferViewElementSize(const ArrayBufferView& data)
+inline static Optional<unsigned> arrayBufferViewElementSize(const ArrayBufferView& data)
 {
     switch (data.getType()) {
     case JSC::NotTypedArray:
     case JSC::TypeDataView:
-        return std::nullopt;
+        return WTF::nullopt;
     case JSC::TypeInt8:
     case JSC::TypeUint8:
     case JSC::TypeUint8Clamped:
@@ -1236,10 +1236,10 @@ WebGLAny WebGL2RenderingContext::getIndexedParameter(GC3Denum target, GC3Duint)
     }
 }
 
-std::optional<Vector<GC3Duint>> WebGL2RenderingContext::getUniformIndices(WebGLProgram&, const Vector<String>&)
+Optional<Vector<GC3Duint>> WebGL2RenderingContext::getUniformIndices(WebGLProgram&, const Vector<String>&)
 {
     LOG(WebGL, "[[ NOT IMPLEMENTED ]] getUniformIndices()");
-    return std::nullopt;
+    return WTF::nullopt;
 }
 
 WebGLAny WebGL2RenderingContext::getActiveUniforms(WebGLProgram& program, const Vector<GC3Duint>& uniformIndices, GC3Denum pname)
@@ -1380,10 +1380,10 @@ WebGLExtension* WebGL2RenderingContext::getExtension(const String& name)
     return nullptr;
 }
 
-std::optional<Vector<String>> WebGL2RenderingContext::getSupportedExtensions()
+Optional<Vector<String>> WebGL2RenderingContext::getSupportedExtensions()
 {
     if (isContextLost())
-        return std::nullopt;
+        return WTF::nullopt;
 
     Vector<String> result;
     
@@ -2106,7 +2106,7 @@ bool WebGL2RenderingContext::validateIndexArrayConservative(GC3Denum type, unsig
     auto buffer = elementArrayBuffer->elementArrayBuffer();
     ASSERT(buffer);
     
-    std::optional<unsigned> maxIndex = elementArrayBuffer->getCachedMaxIndex(type);
+    Optional<unsigned> maxIndex = elementArrayBuffer->getCachedMaxIndex(type);
     if (!maxIndex) {
         // Compute the maximum index in the entire buffer for the given type of index.
         switch (type) {

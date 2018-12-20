@@ -56,7 +56,7 @@ RenderPtr<RenderElement> MathMLMathElement::createElementRenderer(RenderStyle&& 
     return createRenderer<RenderMathMLMath>(*this, WTFMove(style));
 }
 
-std::optional<bool> MathMLMathElement::specifiedDisplayStyle()
+Optional<bool> MathMLMathElement::specifiedDisplayStyle()
 {
     if (cachedBooleanAttribute(displaystyleAttr, m_displayStyle) == BooleanValue::Default) {
         // The default displaystyle value of the <math> depends on the display attribute, so we parse it here.
@@ -74,9 +74,9 @@ void MathMLMathElement::parseAttribute(const QualifiedName& name, const AtomicSt
     bool displayStyleAttribute = (name == displaystyleAttr || name == displayAttr);
     bool mathVariantAttribute = name == mathvariantAttr;
     if (displayStyleAttribute)
-        m_displayStyle = std::nullopt;
+        m_displayStyle = WTF::nullopt;
     if (mathVariantAttribute)
-        m_mathVariant = std::nullopt;
+        m_mathVariant = WTF::nullopt;
     if ((displayStyleAttribute || mathVariantAttribute) && renderer())
         MathMLStyle::resolveMathMLStyleTree(renderer());
 

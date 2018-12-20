@@ -348,7 +348,7 @@ private:
     Document* document() const;
 
 #if ENABLE(SERVICE_WORKER)
-    void matchRegistration(const URL&, CompletionHandler<void(std::optional<ServiceWorkerRegistrationData>&&)>&&);
+    void matchRegistration(const URL&, CompletionHandler<void(Optional<ServiceWorkerRegistrationData>&&)>&&);
 #endif
     void registerTemporaryServiceWorkerClient(const URL&);
     void unregisterTemporaryServiceWorkerClient();
@@ -390,7 +390,7 @@ private:
     bool tryLoadingSubstituteData();
     bool tryLoadingRedirectRequestFromApplicationCache(const ResourceRequest&);
 #if ENABLE(SERVICE_WORKER)
-    void restartLoadingDueToServiceWorkerRegistrationChange(ResourceRequest&&, std::optional<ServiceWorkerRegistrationData>&&);
+    void restartLoadingDueToServiceWorkerRegistrationChange(ResourceRequest&&, Optional<ServiceWorkerRegistrationData>&&);
 #endif
     void continueAfterContentPolicy(PolicyAction);
 
@@ -416,7 +416,7 @@ private:
     void notifyFinishedLoadingIcon(uint64_t callbackIdentifier, SharedBuffer*);
 
 #if ENABLE(APPLICATION_MANIFEST)
-    void notifyFinishedLoadingApplicationManifest(uint64_t callbackIdentifier, std::optional<ApplicationManifest>);
+    void notifyFinishedLoadingApplicationManifest(uint64_t callbackIdentifier, Optional<ApplicationManifest>);
 #endif
 
     // ContentSecurityPolicyClient
@@ -546,12 +546,12 @@ private:
     PopUpPolicy m_popUpPolicy { PopUpPolicy::Default };
 
 #if ENABLE(SERVICE_WORKER)
-    std::optional<ServiceWorkerRegistrationData> m_serviceWorkerRegistrationData;
+    Optional<ServiceWorkerRegistrationData> m_serviceWorkerRegistrationData;
     struct TemporaryServiceWorkerClient {
         DocumentIdentifier documentIdentifier;
         Ref<SWClientConnection> serviceWorkerConnection;
     };
-    std::optional<TemporaryServiceWorkerClient> m_temporaryServiceWorkerClient;
+    Optional<TemporaryServiceWorkerClient> m_temporaryServiceWorkerClient;
 #endif
 
 #ifndef NDEBUG

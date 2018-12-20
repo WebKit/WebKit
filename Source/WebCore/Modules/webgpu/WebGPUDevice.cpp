@@ -90,10 +90,10 @@ RefPtr<WebGPUShaderModule> WebGPUDevice::createShaderModule(WebGPUShaderModuleDe
     return module ? WebGPUShaderModule::create(module.releaseNonNull()) : nullptr;
 }
 
-static std::optional<GPUPipelineStageDescriptor> validateAndConvertPipelineStage(const WebGPUPipelineStageDescriptor& descriptor)
+static Optional<GPUPipelineStageDescriptor> validateAndConvertPipelineStage(const WebGPUPipelineStageDescriptor& descriptor)
 {
     if (!descriptor.module || !descriptor.module->module() || descriptor.entryPoint.isEmpty())
-        return std::nullopt;
+        return WTF::nullopt;
 
     return GPUPipelineStageDescriptor { descriptor.module->module(), descriptor.entryPoint };
 }

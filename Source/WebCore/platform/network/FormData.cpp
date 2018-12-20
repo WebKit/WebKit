@@ -172,7 +172,7 @@ FormDataElement FormDataElement::isolatedCopy() const
 
 void FormData::appendData(const void* data, size_t size)
 {
-    m_lengthInBytes = std::nullopt;
+    m_lengthInBytes = WTF::nullopt;
     if (!m_elements.isEmpty()) {
         if (auto* vector = WTF::get_if<Vector<char>>(m_elements.last().data)) {
             vector->append(reinterpret_cast<const char*>(data), size);
@@ -186,20 +186,20 @@ void FormData::appendData(const void* data, size_t size)
 
 void FormData::appendFile(const String& filename, bool shouldGenerateFile)
 {
-    m_elements.append(FormDataElement(filename, 0, BlobDataItem::toEndOfFile, std::nullopt, shouldGenerateFile));
-    m_lengthInBytes = std::nullopt;
+    m_elements.append(FormDataElement(filename, 0, BlobDataItem::toEndOfFile, WTF::nullopt, shouldGenerateFile));
+    m_lengthInBytes = WTF::nullopt;
 }
 
-void FormData::appendFileRange(const String& filename, long long start, long long length, std::optional<WallTime> expectedModificationTime, bool shouldGenerateFile)
+void FormData::appendFileRange(const String& filename, long long start, long long length, Optional<WallTime> expectedModificationTime, bool shouldGenerateFile)
 {
     m_elements.append(FormDataElement(filename, start, length, expectedModificationTime, shouldGenerateFile));
-    m_lengthInBytes = std::nullopt;
+    m_lengthInBytes = WTF::nullopt;
 }
 
 void FormData::appendBlob(const URL& blobURL)
 {
     m_elements.append(FormDataElement(blobURL));
-    m_lengthInBytes = std::nullopt;
+    m_lengthInBytes = WTF::nullopt;
 }
 
 static Vector<uint8_t> normalizeStringData(TextEncoding& encoding, const String& value)

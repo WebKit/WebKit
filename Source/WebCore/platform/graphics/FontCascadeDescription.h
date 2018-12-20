@@ -119,7 +119,7 @@ public:
 #endif
 
     // Initial values for font properties.
-    static std::optional<FontSelectionValue> initialItalic() { return std::nullopt; }
+    static Optional<FontSelectionValue> initialItalic() { return WTF::nullopt; }
     static FontStyleAxis initialFontStyleAxis() { return FontStyleAxis::slnt; }
     static FontSelectionValue initialWeight() { return normalWeightValue(); }
     static FontSelectionValue initialStretch() { return normalStretchValue(); }

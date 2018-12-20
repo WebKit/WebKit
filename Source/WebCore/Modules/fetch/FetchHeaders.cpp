@@ -100,7 +100,7 @@ static ExceptionOr<void> fillHeaderMap(HTTPHeaderMap& headers, const FetchHeader
     return { };
 }
 
-ExceptionOr<Ref<FetchHeaders>> FetchHeaders::create(std::optional<Init>&& headersInit)
+ExceptionOr<Ref<FetchHeaders>> FetchHeaders::create(Optional<Init>&& headersInit)
 {
     HTTPHeaderMap headers;
 
@@ -186,7 +186,7 @@ void FetchHeaders::filterAndFill(const HTTPHeaderMap& headers, Guard guard)
     }
 }
 
-std::optional<WTF::KeyValuePair<String, String>> FetchHeaders::Iterator::next()
+Optional<WTF::KeyValuePair<String, String>> FetchHeaders::Iterator::next()
 {
     while (m_currentIndex < m_keys.size()) {
         auto key = m_keys[m_currentIndex++];
@@ -194,7 +194,7 @@ std::optional<WTF::KeyValuePair<String, String>> FetchHeaders::Iterator::next()
         if (!value.isNull())
             return WTF::KeyValuePair<String, String> { WTFMove(key), WTFMove(value) };
     }
-    return std::nullopt;
+    return WTF::nullopt;
 }
 
 FetchHeaders::Iterator::Iterator(FetchHeaders& headers)

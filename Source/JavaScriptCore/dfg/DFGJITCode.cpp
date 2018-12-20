@@ -225,16 +225,16 @@ void JITCode::validateReferences(const TrackedReferences& trackedReferences)
     minifiedDFG.validateReferences(trackedReferences);
 }
 
-std::optional<CodeOrigin> JITCode::findPC(CodeBlock*, void* pc)
+Optional<CodeOrigin> JITCode::findPC(CodeBlock*, void* pc)
 {
     for (OSRExit& exit : osrExit) {
         if (ExecutableMemoryHandle* handle = exit.m_code.executableMemory()) {
             if (handle->start().untaggedPtr() <= pc && pc < handle->end().untaggedPtr())
-                return std::optional<CodeOrigin>(exit.m_codeOriginForExitProfile);
+                return Optional<CodeOrigin>(exit.m_codeOriginForExitProfile);
         }
     }
 
-    return std::nullopt;
+    return WTF::nullopt;
 }
 
 void JITCode::finalizeOSREntrypoints()

@@ -64,14 +64,14 @@ void WebGeolocationClient::stopUpdating()
     provider->unregisterWebView(m_webView.get());
 }
 
-std::optional<GeolocationPosition> WebGeolocationClient::lastPosition()
+Optional<GeolocationPosition> WebGeolocationClient::lastPosition()
 {
     COMPtr<IWebGeolocationProvider> provider;
     if (FAILED(m_webView->geolocationProvider(&provider)))
-        return std::nullopt;
+        return WTF::nullopt;
     COMPtr<IWebGeolocationPosition> position;
     if (FAILED(provider->lastPosition(&position)))
-        return std::nullopt;
+        return WTF::nullopt;
     return core(position.get());
 }
 

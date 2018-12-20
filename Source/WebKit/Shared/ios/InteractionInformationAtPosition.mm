@@ -150,7 +150,7 @@ bool InteractionInformationAtPosition::decode(IPC::Decoder& decoder, Interaction
     if (!decoder.decode(result.textAfter))
         return false;
     
-    std::optional<WebCore::TextIndicatorData> linkIndicator;
+    Optional<WebCore::TextIndicatorData> linkIndicator;
     decoder >> linkIndicator;
     if (!linkIndicator)
         return false;

@@ -86,7 +86,7 @@ private:
 
     WebPageProxy* m_page;
     BackForwardListItemVector m_entries;
-    std::optional<size_t> m_currentIndex;
+    Optional<size_t> m_currentIndex;
 };
 
 } // namespace WebKit

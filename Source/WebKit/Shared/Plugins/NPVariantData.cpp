@@ -147,12 +147,12 @@ void NPVariantData::encode(IPC::Encoder& encoder) const
     }
 }
 
-std::optional<NPVariantData> NPVariantData::decode(IPC::Decoder& decoder)
+Optional<NPVariantData> NPVariantData::decode(IPC::Decoder& decoder)
 {
     NPVariantData result;
     uint32_t type;
     if (!decoder.decode(type))
-        return std::nullopt;
+        return WTF::nullopt;
 
     // We special-case LocalNPObjectID and RemoteNPObjectID here so a LocalNPObjectID is
     // decoded as a RemoteNPObjectID and vice versa.
@@ -171,31 +171,31 @@ std::optional<NPVariantData> NPVariantData::decode(IPC::Decoder& decoder)
         return WTFMove(result);
     case NPVariantData::Bool:
         if (!decoder.decode(result.m_boolValue))
-            return std::nullopt;
+            return WTF::nullopt;
         return WTFMove(result);
     case NPVariantData::Int32:
         if (!decoder.decode(result.m_int32Value))
-            return std::nullopt;
+            return WTF::nullopt;
         return WTFMove(result);
     case NPVariantData::Double:
         if (!decoder.decode(result.m_doubleValue))
-            return std::nullopt;
+            return WTF::nullopt;
         return WTFMove(result);
     case NPVariantData::String:
         if (!decoder.decode(result.m_stringValue))
-            return std::nullopt;
+            return WTF::nullopt;
         return WTFMove(result);
     case NPVariantData::LocalNPObjectID:
         if (!decoder.decode(result.m_localNPObjectIDValue))
-            return std::nullopt;
+            return WTF::nullopt;
         return WTFMove(result);
     case NPVariantData::RemoteNPObjectID:
         if (!decoder.decode(result.m_remoteNPObjectIDValue))
-            return std::nullopt;
+            return WTF::nullopt;
         return WTFMove(result);
     }
 
-    return std::nullopt;
+    return WTF::nullopt;
 }
 
 } // namespace WebKit

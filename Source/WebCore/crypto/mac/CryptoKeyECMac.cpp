@@ -111,13 +111,13 @@ bool CryptoKeyEC::platformSupportedCurve(NamedCurve curve)
     return curve == NamedCurve::P256 || curve == NamedCurve::P384;
 }
 
-std::optional<CryptoKeyPair> CryptoKeyEC::platformGeneratePair(CryptoAlgorithmIdentifier identifier, NamedCurve curve, bool extractable, CryptoKeyUsageBitmap usages)
+Optional<CryptoKeyPair> CryptoKeyEC::platformGeneratePair(CryptoAlgorithmIdentifier identifier, NamedCurve curve, bool extractable, CryptoKeyUsageBitmap usages)
 {
     size_t size = getKeySizeFromNamedCurve(curve);
     CCECCryptorRef ccPublicKey;
     CCECCryptorRef ccPrivateKey;
     if (CCECCryptorGeneratePair(size, &ccPublicKey, &ccPrivateKey))
-        return std::nullopt;
+        return WTF::nullopt;
 
     auto publicKey = CryptoKeyEC::create(identifier, curve, CryptoKeyType::Public, ccPublicKey, true, usages);
     auto privateKey = CryptoKeyEC::create(identifier, curve, CryptoKeyType::Private, ccPrivateKey, extractable, usages);

@@ -180,9 +180,9 @@ public:
     static IPC::StringReference name() { return IPC::StringReference("TestDelayedMessage"); }
     static const bool isSync = true;
 
-    using DelayedReply = CompletionHandler<void(const std::optional<WebKit::TestClassName>& optionalReply)>;
-    static void send(std::unique_ptr<IPC::Encoder>&&, IPC::Connection&, const std::optional<WebKit::TestClassName>& optionalReply);
-    typedef std::tuple<std::optional<WebKit::TestClassName>&> Reply;
+    using DelayedReply = CompletionHandler<void(const Optional<WebKit::TestClassName>& optionalReply)>;
+    static void send(std::unique_ptr<IPC::Encoder>&&, IPC::Connection&, const Optional<WebKit::TestClassName>& optionalReply);
+    typedef std::tuple<Optional<WebKit::TestClassName>&> Reply;
     explicit TestDelayedMessage(bool value)
         : m_arguments(value)
     {

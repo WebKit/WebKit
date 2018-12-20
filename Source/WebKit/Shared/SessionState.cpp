@@ -66,23 +66,23 @@ static bool isValidEnum(HTTPBody::Element::Type type)
     return false;
 }
 
-auto HTTPBody::Element::decode(IPC::Decoder& decoder) -> std::optional<Element>
+auto HTTPBody::Element::decode(IPC::Decoder& decoder) -> Optional<Element>
 {
     Element result;
     if (!decoder.decodeEnum(result.type) || !isValidEnum(result.type))
-        return std::nullopt;
+        return WTF::nullopt;
     if (!decoder.decode(result.data))
-        return std::nullopt;
+        return WTF::nullopt;
     if (!decoder.decode(result.filePath))
-        return std::nullopt;
+        return WTF::nullopt;
     if (!decoder.decode(result.fileStart))
-        return std::nullopt;
+        return WTF::nullopt;
     if (!decoder.decode(result.fileLength))
-        return std::nullopt;
+        return WTF::nullopt;
     if (!decoder.decode(result.expectedFileModificationTime))
-        return std::nullopt;
+        return WTF::nullopt;
     if (!decoder.decode(result.blobURLString))
-        return std::nullopt;
+        return WTF::nullopt;
 
     return WTFMove(result);
 }
@@ -133,53 +133,53 @@ void FrameState::encode(IPC::Encoder& encoder) const
     encoder << children;
 }
 
-std::optional<FrameState> FrameState::decode(IPC::Decoder& decoder)
+Optional<FrameState> FrameState::decode(IPC::Decoder& decoder)
 {
     FrameState result;
     if (!decoder.decode(result.urlString))
-        return std::nullopt;
+        return WTF::nullopt;
     if (!decoder.decode(result.originalURLString))
-        return std::nullopt;
+        return WTF::nullopt;
     if (!decoder.decode(result.referrer))
-        return std::nullopt;
+        return WTF::nullopt;
     if (!decoder.decode(result.target))
-        return std::nullopt;
+        return WTF::nullopt;
 
     if (!decoder.decode(result.documentState))
-        return std::nullopt;
+        return WTF::nullopt;
     if (!decoder.decode(result.stateObjectData))
-        return std::nullopt;
+        return WTF::nullopt;
 
     if (!decoder.decode(result.documentSequenceNumber))
-        return std::nullopt;
+        return WTF::nullopt;
     if (!decoder.decode(result.itemSequenceNumber))
-        return std::nullopt;
+        return WTF::nullopt;
 
     if (!decoder.decode(result.scrollPosition))
-        return std::nullopt;
+        return WTF::nullopt;
     if (!decoder.decode(result.shouldRestoreScrollPosition))
-        return std::nullopt;
+        return WTF::nullopt;
     if (!decoder.decode(result.pageScaleFactor))
-        return std::nullopt;
+        return WTF::nullopt;
 
     if (!decoder.decode(result.httpBody))
-        return std::nullopt;
+        return WTF::nullopt;
 
 #if PLATFORM(IOS_FAMILY)
     if (!decoder.decode(result.exposedContentRect))
-        return std::nullopt;
+        return WTF::nullopt;
     if (!decoder.decode(result.unobscuredContentRect))
-        return std::nullopt;
+        return WTF::nullopt;
     if (!decoder.decode(result.minimumLayoutSizeInScrollViewCoordinates))
-        return std::nullopt;
+        return WTF::nullopt;
     if (!decoder.decode(result.contentSize))
-        return std::nullopt;
+        return WTF::nullopt;
     if (!decoder.decode(result.scaleIsInitial))
-        return std::nullopt;
+        return WTF::nullopt;
 #endif
 
     if (!decoder.decode(result.children))
-        return std::nullopt;
+        return WTF::nullopt;
 
     return WTFMove(result);
 }
@@ -198,7 +198,7 @@ bool PageState::decode(IPC::Decoder& decoder, PageState& result)
 {
     if (!decoder.decode(result.title))
         return false;
-    std::optional<FrameState> mainFrameState;
+    Optional<FrameState> mainFrameState;
     decoder >> mainFrameState;
     if (!mainFrameState)
         return false;
@@ -228,17 +228,17 @@ void BackForwardListItemState::encode(IPC::Encoder& encoder) const
     encoder << pageState;
 }
 
-std::optional<BackForwardListItemState> BackForwardListItemState::decode(IPC::Decoder& decoder)
+Optional<BackForwardListItemState> BackForwardListItemState::decode(IPC::Decoder& decoder)
 {
     BackForwardListItemState result;
 
     auto identifier = BackForwardItemIdentifier::decode(decoder);
     if (!identifier)
-        return std::nullopt;
+        return WTF::nullopt;
     result.identifier = *identifier;
 
     if (!decoder.decode(result.pageState))
-        return std::nullopt;
+        return WTF::nullopt;
 
     return WTFMove(result);
 }
@@ -249,16 +249,16 @@ void BackForwardListState::encode(IPC::Encoder& encoder) const
     encoder << currentIndex;
 }
 
-std::optional<BackForwardListState> BackForwardListState::decode(IPC::Decoder& decoder)
+Optional<BackForwardListState> BackForwardListState::decode(IPC::Decoder& decoder)
 {
-    std::optional<Vector<BackForwardListItemState>> items;
+    Optional<Vector<BackForwardListItemState>> items;
     decoder >> items;
     if (!items)
-        return std::nullopt;
+        return WTF::nullopt;
 
-    std::optional<uint32_t> currentIndex;
+    Optional<uint32_t> currentIndex;
     if (!decoder.decode(currentIndex))
-        return std::nullopt;
+        return WTF::nullopt;
 
     return {{ WTFMove(*items), WTFMove(currentIndex) }};
 }
