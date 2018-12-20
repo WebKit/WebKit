@@ -466,6 +466,10 @@ canvas/philip/tests/2d.text.draw.space.collapse.space.html [ Failure ]
 canvas/philip/tests/2d.text.draw.space.collapse.start.html [ Failure ]
 canvas/philip/tests/2d.text.measure.width.space.html [ Failure ]
 
+# This only applies to file:// loading of ES6 Modules via the import syntax. When
+# Windows recognizes .mjs files as JavaScript, this will just work.
+js/dom/modules/import-mjs-module.html [ Failure ]
+
 #//////////////////////////////////////////////////////////////////////////////////////////
 # These areas are not implemented well on WinCairo
 #//////////////////////////////////////////////////////////////////////////////////////////
@@ -1007,7 +1011,7 @@ webkit.org/b/191498 http/tests/inspector/network/getSerializedCertificate.html [
 #///////////////////////////////////////////////////////////////////////////////
 
 ################################################################################
-##################        Accessibility Issues              ####################
+###########################   Accessibility Issues   ###########################
 ################################################################################
 
 accessibility/win [ Pass ]
@@ -1271,12 +1275,12 @@ webkit.org/b/183955 accessibility/row-with-aria-role-in-native-table.html [ Fail
 [ Debug ] accessibility/win/focus-events.html [ Skip ]
 
 ################################################################################
-#######################   End Accessibility Issues   ###########################
+########################    End Accessibility Issues    ########################
 ################################################################################
 
 
 ################################################################################
-#################         Animation Issues                  ####################
+#############################   Animation Issues   #############################
 ################################################################################
 
 webkit.org/b/49182 animations/stop-animation-on-suspend.html [ Pass Failure ]
@@ -1332,12 +1336,12 @@ webkit.org/b/191584 legacy-animation-engine/animations/animation-direction-rever
 webkit.org/b/191584 legacy-animation-engine/animations/transform-non-accelerated.html [ Failure ]
 
 ################################################################################
-##################       End Animation Issues             ######################
+###########################   End Animation Issues   ###########################
 ################################################################################
 
 
 ################################################################################
-############               Compositing Issues                   ################
+############################   Compositing Issues   ############################
 ################################################################################
 
 # TODO LAYER_TREE_INCLUDES_VISIBLE_RECTS option to layerTreeAsText is only applicable to Mac.
@@ -1369,13 +1373,15 @@ webkit.org/b/184482 legacy-animation-engine/compositing/layer-creation/translate
 webkit.org/b/184482 legacy-animation-engine/compositing/layer-creation/translate-transition-overlap.html [ Failure ]
 webkit.org/b/184482 legacy-animation-engine/compositing/reflections/load-video-in-reflection.html [ Skip ]
 
+legacy-animation-engine/compositing/backing/backing-store-attachment-empty-keyframe.html [ Failure ]
+
 ################################################################################
-#################       End Compositing Issues             #####################
+##########################   End Compositing Issues   ##########################
 ################################################################################
 
 
 ################################################################################
-################               CSS Issues                   ####################
+################################   CSS Issues   ################################
 ################################################################################
 
 webkit.org/b/117322 fast/css/text-indent-first-line-006.html [ ImageOnlyFailure ]
@@ -1470,7 +1476,6 @@ fast/css/will-change/will-change-creates-stacking-context-inline.html [ ImageOnl
 fast/css3-text/ [ Skip ]
 
 imported/blink/fast/css/tab-size-complex-path.html [ ImageOnlyFailure ]
-imported/blink/fast/css/text-decoration-propagate.html [ ImageOnlyFailure ]
 webkit.org/b/150949 imported/blink/fast/css/transformed-overflow-hidden-clips-fixed.html [ ImageOnlyFailure ]
 
 # color-filters are off by default
@@ -1488,6 +1493,7 @@ fast/css/sticky/sticky-top.html [ Pass ImageOnlyFailure ]
 
 css-custom-properties-api/ [ Failure ImageOnlyFailure ]
 fast/css-custom-paint/ [ Skip ]
+css-typedom [ Skip ]
 
 # Dark mode not supported on Windows
 css-dark-mode [ Skip ]
@@ -1495,12 +1501,12 @@ css-dark-mode [ Skip ]
 webkit.org/b/142260 fast/css/has-attachment.html [ Skip ]
 
 ################################################################################
-#################            End CSS Issues              #######################
+##############################   End CSS Issues   ##############################
 ################################################################################
 
 
 ################################################################################
-################             DOM Issues                  #######################
+################################   DOM Issues   ################################
 ################################################################################
 
 webkit.org/b/141756 fast/dom/Element/getClientRects.html [ Failure ]
@@ -1547,12 +1553,12 @@ webkit.org/b/176998 fast/dom/Window/Plug-ins.html [ Failure ]
 fast/dom/HTMLInputElement/change-type-in-input-event-listener.html [ Skip ]
 
 ################################################################################
-#################            End DOM Issues              #######################
+##############################   End DOM Issues   ##############################
 ################################################################################
 
 
 ################################################################################
-######################        Editing Issues              ######################
+##############################   Editing Issues   ##############################
 ################################################################################
 
 ###### Pasteboard
@@ -1694,11 +1700,12 @@ editing/input/press-tab-during-ime-composition.html [ Failure ]
 editing/undo/undo-deleteWord.html [ Pass Failure ]
 
 ################################################################################
-###########################   End Editing Failures   ###########################
+############################   End Editing Issues   ############################
 ################################################################################
 
+
 ################################################################################
-######################        Storage Issues              ######################
+##############################   Storage Issues   ##############################
 ################################################################################
 
 # TODO These tests failures need to be investigated
@@ -1717,15 +1724,18 @@ storage/indexeddb/wasm-exceptions.html [ Failure ]
 webkit.org/b/116559 storage/websql/ [ Skip ]
 
 # Crashing indexeddb tests
+storage/indexeddb/invalid-keys.html [ Crash Pass ]
 storage/indexeddb/modern/autoincrement-abort.html [ Crash Pass ]
+storage/indexeddb/modern/idbobjectstore-get-failures.html [ Crash Pass ]
 storage/indexeddb/modern/multiple-objectstore-index-cursor-collision.html [ Crash Pass ]
 storage/indexeddb/modern/objectstore-cursor-advance-failures-private.html [ Crash Pass ]
-storage/indexeddb/invalid-keys.html [ Crash Pass ]
-storage/indexeddb/modern/idbobjectstore-get-failures.html [ Crash Pass ]
 storage/indexeddb/modern/workers-disabled.html [ Crash Pass ]
-storage/indexeddb/modern/workers-enable.html [ Crash  Pass ]
+storage/indexeddb/modern/workers-enable.html [ Crash Pass ]
+[ Debug ] storage/indexeddb/key-generator.html [ Crash ]
 [ Debug ] storage/indexeddb/key-type-array-private.html [ Crash ]
 [ Debug ] storage/indexeddb/key-type-array.html [ Crash ]
+[ Debug ] storage/indexeddb/modern/blob-simple-workers.html [ Crash ]
+[ Debug ] storage/indexeddb/opencursor-key.html [ Crash ]
 
 # Flaky timeouts
 storage/indexeddb/clone-exception.html [ Timeout Pass ]
@@ -1750,7 +1760,7 @@ storage/indexeddb/intversion-revert-on-abort.html [ Skip ]
 storage/indexeddb/version-change-abort.html [ Skip ]
 
 ################################################################################
-###########################   End Storage Issuess   ############################
+############################   End Storage Issues   ############################
 ################################################################################
 
 #//////////////////////////////////////////////////////////////////////////////////////////
