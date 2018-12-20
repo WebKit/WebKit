@@ -11,7 +11,7 @@
 
     <meta name="application-name" content="WebKit">
 
-    <link rel="stylesheet" type="text/css" href="<?php echo get_stylesheet_uri(); ?>?20171013" media="all">
+    <link rel="stylesheet" type="text/css" href="<?php echo get_stylesheet_uri(); ?>?20181220" media="all">
     <link rel="stylesheet" href="https://www.apple.com/wss/fonts?families=SF+Pro,v1" type="text/css">
     <meta name="supported-color-schemes" content="light dark">
 
