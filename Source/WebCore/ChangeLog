@@ -1,3 +1,18 @@
+2018-12-20  Jeremy Jones  <jeremyj@apple.com>
+
+        Switch tabs before retuning PiP video to inline.
+        https://bugs.webkit.org/show_bug.cgi?id=192767
+        rdar://problem/46006046
+
+        Reviewed by Jer Noble.
+
+        No new tests because this code path only happens with a user action on system UI.
+
+        When exiting PiP, notify the fullscreen change observer so it can restore client UI state before exiting.
+
+        * platform/mac/VideoFullscreenInterfaceMac.mm:
+        (-[WebVideoFullscreenInterfaceMacObjC pipShouldClose:]):
+
 2018-12-19  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         Unreviewed, fix GTK build after r239410

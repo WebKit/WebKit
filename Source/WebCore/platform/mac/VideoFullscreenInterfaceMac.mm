@@ -272,8 +272,11 @@ enum class PIPState {
 {
     ASSERT_UNUSED(pip, pip == _pipViewController);
 
-    if (!_videoFullscreenInterfaceMac || !_videoFullscreenInterfaceMac->videoFullscreenChangeObserver())
+    if (!_videoFullscreenInterfaceMac)
         return YES;
+    
+    if (_videoFullscreenInterfaceMac->videoFullscreenChangeObserver())
+        _videoFullscreenInterfaceMac->videoFullscreenChangeObserver()->fullscreenMayReturnToInline();
 
     _videoFullscreenInterfaceMac->requestHideAndExitPiP();
 
