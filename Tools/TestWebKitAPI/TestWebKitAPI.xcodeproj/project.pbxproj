@@ -88,6 +88,7 @@
 		2D4CF8BD1D8360CC0001CE8D /* WKThumbnailView.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2D4CF8BC1D8360CC0001CE8D /* WKThumbnailView.mm */; };
 		2D51A0C71C8BF00C00765C45 /* DOMHTMLVideoElementWrapper.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2D51A0C51C8BF00400765C45 /* DOMHTMLVideoElementWrapper.mm */; };
 		2D838B1F1EEF3A5C009B980E /* WKContentViewEditingActions.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2D838B1E1EEF3A5B009B980E /* WKContentViewEditingActions.mm */; };
+		2DADF26321CB8F32003D3E3A /* GetResourceData.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2DADF26221CB8F32003D3E3A /* GetResourceData.mm */; };
 		2DB0232F1E4E871800707123 /* InteractionDeadlockAfterCrash.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2DB0232E1E4E871800707123 /* InteractionDeadlockAfterCrash.mm */; };
 		2DB647881F4163D60051A89E /* WKWebViewDoesNotLogDuringInitialization.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2DB647871F4161F70051A89E /* WKWebViewDoesNotLogDuringInitialization.mm */; };
 		2DC4CF771D2D9DD800ECCC94 /* DataDetection.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2DC4CF761D2D9DD800ECCC94 /* DataDetection.mm */; };
@@ -1382,6 +1383,7 @@
 		2D8104CB1BEC13E70020DA46 /* FindInPage.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = FindInPage.mm; sourceTree = "<group>"; };
 		2D838B1E1EEF3A5B009B980E /* WKContentViewEditingActions.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WKContentViewEditingActions.mm; sourceTree = "<group>"; };
 		2D9A53AE1B31FA8D0074D5AA /* ShrinkToFit.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ShrinkToFit.mm; sourceTree = "<group>"; };
+		2DADF26221CB8F32003D3E3A /* GetResourceData.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = GetResourceData.mm; sourceTree = "<group>"; };
 		2DB0232E1E4E871800707123 /* InteractionDeadlockAfterCrash.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = InteractionDeadlockAfterCrash.mm; sourceTree = "<group>"; };
 		2DB647871F4161F70051A89E /* WKWebViewDoesNotLogDuringInitialization.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = WKWebViewDoesNotLogDuringInitialization.mm; sourceTree = "<group>"; };
 		2DC4CF761D2D9DD800ECCC94 /* DataDetection.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = DataDetection.mm; sourceTree = "<group>"; };
@@ -2445,6 +2447,7 @@
 				CDE195B31CFE0ADE0053D256 /* FullscreenTopContentInset.mm */,
 				631EFFF51E7B5E8D00D2EBB8 /* Geolocation.mm */,
 				07E1F6A01FFC3A080096C7EC /* GetDisplayMedia.mm */,
+				2DADF26221CB8F32003D3E3A /* GetResourceData.mm */,
 				51AF23DE1EF1A3720072F281 /* IconLoadingDelegate.mm */,
 				510477751D298E03009747EB /* IDBDeleteRecovery.mm */,
 				5110FCEF1E01CBAA006F8D0B /* IDBIndexUpgradeToV2.mm */,
@@ -3969,6 +3972,7 @@
 				07E1F6A31FFC4B760096C7EC /* GetDisplayMedia.mm in Sources */,
 				7CCE7EF91A411AE600447C4C /* GetInjectedBundleInitializationUserDataCallback.cpp in Sources */,
 				7CCE7EE21A411A9A00447C4C /* GetPIDAfterAbortedProcessLaunch.cpp in Sources */,
+				2DADF26321CB8F32003D3E3A /* GetResourceData.mm in Sources */,
 				07CE1CF31F06A7E000BF89F5 /* GetUserMediaNavigation.mm in Sources */,
 				07E499911F9E56DF002F1EF3 /* GetUserMediaReprompt.mm in Sources */,
 				316BDBAC1E7207F100DE0D5A /* GPULegacyBuffer.mm in Sources */,

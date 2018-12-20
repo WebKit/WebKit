@@ -997,8 +997,12 @@ void PluginView::willDetachRenderer()
 
 RefPtr<SharedBuffer> PluginView::liveResourceData() const
 {
-    if (!m_isInitialized || !m_plugin)
-        return 0;
+    if (!m_isInitialized || !m_plugin) {
+        if (m_manualStreamData && m_manualStreamState == ManualStreamState::Finished)
+            return m_manualStreamData;
+
+        return nullptr;
+    }
 
     return m_plugin->liveResourceData();
 }

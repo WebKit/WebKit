@@ -1,3 +1,18 @@
+2018-12-20  Tim Horton  <timothy_horton@apple.com>
+
+        Unparented WKWebView can't retrieve main resource data for a main frame plugin
+        https://bugs.webkit.org/show_bug.cgi?id=192923
+        <rdar://problem/46859068>
+
+        Reviewed by Wenson Hsieh.
+
+        * WebProcess/Plugins/PluginView.cpp:
+        (WebKit::PluginView::liveResourceData const):
+        If the WKWebView is unparented, we may not immediately initialize the plugin.
+        In that case, PluginView holds on to the backing data until the plugin
+        is initialized. If a WKWebView API client asks for the backing data
+        for the plugin during this time, we should return it, instead of bailing.
+
 2018-12-20  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [iOS] Focusing an editable element should scroll to reveal the selection
