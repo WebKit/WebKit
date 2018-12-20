@@ -211,7 +211,6 @@ private:
     std::unique_ptr<WebCore::TextIndicatorWindow> textIndicatorWindow;
     BOOL hasInitializedLookupObserver;
     RetainPtr<WebWindowVisibilityObserver> windowVisibilityObserver;
-    BOOL windowOcclusionDetectionEnabled;
     RetainPtr<NSEvent> pressureEvent;
 #endif // PLATFORM(MAC)
 
