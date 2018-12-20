@@ -1,3 +1,24 @@
+2018-12-20  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: Dark Mode: unreadable background color for tables containing object previews
+        https://bugs.webkit.org/show_bug.cgi?id=192887
+        <rdar://problem/46855270>
+
+        Reviewed by Brian Burg.
+
+        * UserInterface/Views/LogContentView.css:
+        (.console-messages:focus .console-item .data-grid tr.selected td:not(:last-child)): Added.
+        (@media (prefers-dark-interface) .console-item .data-grid tr.selected): Added.
+        (@media (prefers-dark-interface) .console-messages:focus .console-item.selected .data-grid tr.selected): Added.
+        (@media (prefers-dark-interface) .console-messages:focus .console-item .data-grid tr.selected td:not(:last-child)): Added.
+
+        * UserInterface/Views/IndexedDatabaseObjectStoreContentView.css:
+        (.content-view.indexed-database-object-store > .data-grid tr.selected):
+        (.content-view.indexed-database-object-store > .data-grid:focus tr.selected): Added.
+        (@media (prefers-dark-interface) .content-view.indexed-database-object-store > .data-grid tr.selected): Added.
+        (@media (prefers-dark-interface) .content-view.indexed-database-object-store > .data-grid:focus tr.selected): Added.
+        (@media (prefers-dark-interface) .content-view.indexed-database-object-store > .data-grid:focus tr.selected td:not(:last-child)): Added.
+
 2018-12-19  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: Audit: fix descriptions for default tests

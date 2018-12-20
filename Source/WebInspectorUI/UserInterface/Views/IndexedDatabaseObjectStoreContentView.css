@@ -32,6 +32,10 @@
 }
 
 .content-view.indexed-database-object-store > .data-grid tr.selected {
+    background-color: hsl(210, 0%, 90%) !important;
+}
+
+.content-view.indexed-database-object-store > .data-grid:focus tr.selected {
     background-color: hsl(210, 90%, 90%) !important;
 }
 
@@ -42,4 +46,18 @@
 .content-view.indexed-database-object-store > .data-grid .object-tree > :matches(.title, .object-preview)::before {
  /* The line-height inside a data-grid is 17px instead of 13px, this will center vertically on the top line. */
     top: 2px;
+}
+
+@media (prefers-dark-interface) {
+    .content-view.indexed-database-object-store > .data-grid tr.selected {
+        background-color: hsl(210, 0%, 30%) !important;
+    }
+
+    .content-view.indexed-database-object-store > .data-grid:focus tr.selected {
+        background-color: hsl(210, 90%, 30%) !important;
+    }
+
+    .content-view.indexed-database-object-store > .data-grid:focus tr.selected td:not(:last-child) {
+        border-right-color: hsl(210, 70%, 25%);
+    }
 }

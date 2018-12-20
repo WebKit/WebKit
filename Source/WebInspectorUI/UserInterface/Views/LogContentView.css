@@ -134,6 +134,10 @@ body[dir=rtl] .log-scope-bar > li.unread::before {
     background-color: hsl(210, 0%, 90%) !important;
 }
 
+.console-messages:focus .console-item .data-grid tr.selected td:not(:last-child) {
+    border-right-color: hsl(210, 70%, 75%);
+}
+
 .console-messages:focus .console-item.selected {
     background-color: hsl(210, 98%, 96%);
     border-color: hsl(210, 90%, 93%);
@@ -257,6 +261,18 @@ body[dir=rtl] .console-group-title::before {
 
     .console-item {
         border-top-color: var(--console-message-separator);
+    }
+
+    .console-item .data-grid tr.selected {
+        background-color: hsl(210, 0%, 35%) !important;
+    }
+
+    .console-messages:focus .console-item.selected .data-grid tr.selected {
+        background-color: hsl(210, 90%, 35%) !important;
+    }
+
+    .console-messages:focus .console-item .data-grid tr.selected td:not(:last-child) {
+        border-right-color: hsl(210, 70%, 25%);
     }
 
     .console-messages {
