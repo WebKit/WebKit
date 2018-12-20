@@ -321,29 +321,29 @@ set(webrtc_SOURCES
     Source/third_party/libyuv/source/video_common.cc
     Source/third_party/rnnoise/src/kiss_fft.cc
     Source/third_party/rnnoise/src/rnn_vad_weights.cc
-    Source/third_party/usrsctp/usrsctplib/netinet/sctp_asconf.c
-    Source/third_party/usrsctp/usrsctplib/netinet/sctp_auth.c
-    Source/third_party/usrsctp/usrsctplib/netinet/sctp_bsd_addr.c
-    Source/third_party/usrsctp/usrsctplib/netinet/sctp_callout.c
-    Source/third_party/usrsctp/usrsctplib/netinet/sctp_cc_functions.c
-    Source/third_party/usrsctp/usrsctplib/netinet/sctp_crc32.c
-    Source/third_party/usrsctp/usrsctplib/netinet/sctp_indata.c
-    Source/third_party/usrsctp/usrsctplib/netinet/sctp_input.c
-    Source/third_party/usrsctp/usrsctplib/netinet/sctp_output.c
-    Source/third_party/usrsctp/usrsctplib/netinet/sctp_pcb.c
-    Source/third_party/usrsctp/usrsctplib/netinet/sctp_peeloff.c
-    Source/third_party/usrsctp/usrsctplib/netinet/sctp_sha1.c
-    Source/third_party/usrsctp/usrsctplib/netinet/sctp_ss_functions.c
-    Source/third_party/usrsctp/usrsctplib/netinet/sctp_sysctl.c
-    Source/third_party/usrsctp/usrsctplib/netinet/sctp_timer.c
-    Source/third_party/usrsctp/usrsctplib/netinet/sctp_userspace.c
-    Source/third_party/usrsctp/usrsctplib/netinet/sctp_usrreq.c
-    Source/third_party/usrsctp/usrsctplib/netinet/sctputil.c
-    Source/third_party/usrsctp/usrsctplib/netinet6/sctp6_usrreq.c
-    Source/third_party/usrsctp/usrsctplib/user_environment.c
-    Source/third_party/usrsctp/usrsctplib/user_mbuf.c
-    Source/third_party/usrsctp/usrsctplib/user_recv_thread.c
-    Source/third_party/usrsctp/usrsctplib/user_socket.c
+    Source/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp_asconf.c
+    Source/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp_auth.c
+    Source/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp_bsd_addr.c
+    Source/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp_callout.c
+    Source/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp_cc_functions.c
+    Source/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp_crc32.c
+    Source/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp_indata.c
+    Source/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp_input.c
+    Source/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp_output.c
+    Source/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp_pcb.c
+    Source/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp_peeloff.c
+    Source/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp_sha1.c
+    Source/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp_ss_functions.c
+    Source/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp_sysctl.c
+    Source/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp_timer.c
+    Source/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp_userspace.c
+    Source/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp_usrreq.c
+    Source/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctputil.c
+    Source/third_party/usrsctp/usrsctplib/usrsctplib/netinet6/sctp6_usrreq.c
+    Source/third_party/usrsctp/usrsctplib/usrsctplib/user_environment.c
+    Source/third_party/usrsctp/usrsctplib/usrsctplib/user_mbuf.c
+    Source/third_party/usrsctp/usrsctplib/usrsctplib/user_recv_thread.c
+    Source/third_party/usrsctp/usrsctplib/usrsctplib/user_socket.c
     Source/webrtc/api/audio/audio_frame.cc
     Source/webrtc/api/audio_codecs/L16/audio_decoder_L16.cc
     Source/webrtc/api/audio_codecs/L16/audio_encoder_L16.cc
@@ -1410,7 +1410,8 @@ target_include_directories(webrtc PRIVATE
     Source/third_party/opus/src/silk/float
     Source/third_party/usrsctp
     Source/third_party/usrsctp/usrsctplib
-    Source/third_party/usrsctp/usrsctplib/netinet
+    Source/third_party/usrsctp/usrsctplib/usrsctplib
+    Source/third_party/usrsctp/usrsctplib/usrsctplib/netinet
     Source/webrtc
     Source/webrtc/common_audio/resampler/include
     Source/webrtc/common_audio/signal_processing/include

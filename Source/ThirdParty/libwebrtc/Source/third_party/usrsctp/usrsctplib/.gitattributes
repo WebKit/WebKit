@@ -1,6 +1,0 @@
-user_atomic.h svn-properties=allow-tabs=on
-user_ip_icmp.h svn-properties=allow-tabs=on
-user_mbuf.c svn-properties=allow-tabs=on
-user_recv_thread.c svn-properties=allow-tabs=on
-user_socket.c svn-properties=allow-tabs=on
-usrsctp.h svn-properties=allow-tabs=on
