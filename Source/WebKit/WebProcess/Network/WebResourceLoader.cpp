@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2012-2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -88,12 +88,16 @@ void WebResourceLoader::willSendRequest(ResourceRequest&& proposedRequest, Resou
     LOG(Network, "(WebProcess) WebResourceLoader::willSendRequest to '%s'", proposedRequest.url().string().latin1().data());
     RELEASE_LOG_IF_ALLOWED("willSendRequest: (pageID = %" PRIu64 ", frameID = %" PRIu64 ", resourceID = %" PRIu64 ")", m_trackingParameters.pageID, m_trackingParameters.frameID, m_trackingParameters.resourceID);
 
-    if (m_coreLoader->documentLoader()->applicationCacheHost().maybeLoadFallbackForRedirect(m_coreLoader.get(), proposedRequest, redirectResponse))
+    if (m_coreLoader->documentLoader()->applicationCacheHost().maybeLoadFallbackForRedirect(m_coreLoader.get(), proposedRequest, redirectResponse)) {
+        RELEASE_LOG_IF_ALLOWED("willSendRequest: exiting early because maybeLoadFallbackForRedirect returned false (pageID = %" PRIu64 ", frameID = %" PRIu64 ", resourceID = %" PRIu64 ")", m_trackingParameters.pageID, m_trackingParameters.frameID, m_trackingParameters.resourceID);
         return;
+    }
 
     m_coreLoader->willSendRequest(WTFMove(proposedRequest), redirectResponse, [this, protectedThis = makeRef(*this)](ResourceRequest&& request) {
-        if (!m_coreLoader || !m_coreLoader->identifier())
+        if (!m_coreLoader || !m_coreLoader->identifier()) {
+            RELEASE_LOG_IF_ALLOWED("willSendRequest: exiting early because no coreloader or identifier (pageID = %" PRIu64 ", frameID = %" PRIu64 ", resourceID = %" PRIu64 ")", m_trackingParameters.pageID, m_trackingParameters.frameID, m_trackingParameters.resourceID);
             return;
+        }
 
         send(Messages::NetworkResourceLoader::ContinueWillSendRequest(request, m_coreLoader->isAllowedToAskUserForCredentials()));
     });
@@ -111,8 +115,10 @@ void WebResourceLoader::didReceiveResponse(const ResourceResponse& response, boo
 
     Ref<WebResourceLoader> protectedThis(*this);
 
-    if (m_coreLoader->documentLoader()->applicationCacheHost().maybeLoadFallbackForResponse(m_coreLoader.get(), response))
+    if (m_coreLoader->documentLoader()->applicationCacheHost().maybeLoadFallbackForResponse(m_coreLoader.get(), response)) {
+        RELEASE_LOG_IF_ALLOWED("didReceiveResponse: not continuing load because the content is already cached (pageID = %" PRIu64 ", frameID = %" PRIu64 ", resourceID = %" PRIu64 ")", m_trackingParameters.pageID, m_trackingParameters.frameID, m_trackingParameters.resourceID);
         return;
+    }
 
     CompletionHandler<void()> policyDecisionCompletionHandler;
     if (needsContinueDidReceiveResponseMessage) {
@@ -126,6 +132,8 @@ void WebResourceLoader::didReceiveResponse(const ResourceResponse& response, boo
             // If m_coreLoader becomes null as a result of the didReceiveResponse callback, we can't use the send function().
             if (m_coreLoader && m_coreLoader->identifier())
                 send(Messages::NetworkResourceLoader::ContinueDidReceiveResponse());
+            else
+                RELEASE_LOG_IF_ALLOWED("didReceiveResponse: not continuing load because no coreLoader or no ID (pageID = %" PRIu64 ", frameID = %" PRIu64 ", resourceID = %" PRIu64 ")", m_trackingParameters.pageID, m_trackingParameters.frameID, m_trackingParameters.resourceID);
         };
     }
 

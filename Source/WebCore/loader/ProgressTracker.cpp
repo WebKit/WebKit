@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007 Apple Inc.  All rights reserved.
+ * Copyright (C) 2007, 2018 Apple Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -20,7 +20,7 @@
  * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
 #include "config.h"
@@ -37,12 +37,14 @@
 #include "ResourceResponse.h"
 #include <wtf/text/CString.h>
 
+#define RELEASE_LOG_IF_ALLOWED(fmt, ...) RELEASE_LOG_IF(isAlwaysOnLoggingAllowed(), Network, "%p - ProgressTracker::" fmt, this, ##__VA_ARGS__)
+
 namespace WebCore {
 
-// Always start progress at initialProgressValue. This helps provide feedback as 
+// Always start progress at initialProgressValue. This helps provide feedback as
 // soon as a load starts.
 static const double initialProgressValue = 0.1;
-    
+
 // Similarly, always leave space at the end. This helps show the user that we're not done
 // until we're done.
 static const double finalProgressValue = 0.9; // 1.0 - initialProgressValue
@@ -63,12 +65,12 @@ static const Seconds progressNotificationTimeInterval { 200_ms };
 struct ProgressItem {
     WTF_MAKE_NONCOPYABLE(ProgressItem); WTF_MAKE_FAST_ALLOCATED;
 public:
-    ProgressItem(long long length) 
+    ProgressItem(long long length)
         : bytesReceived(0)
         , estimatedLength(length)
     {
     }
-    
+
     long long bytesReceived;
     long long estimatedLength;
 };
@@ -93,7 +95,7 @@ double ProgressTracker::estimatedProgress() const
 
 void ProgressTracker::reset()
 {
-    m_progressItems.clear();    
+    m_progressItems.clear();
 
     m_totalPageAndResourceBytesToLoad = 0;
     m_totalBytesReceived = 0;
@@ -116,7 +118,7 @@ void ProgressTracker::progressStarted(Frame& frame)
     LOG(Progress, "Progress started (%p) - frame %p(\"%s\"), value %f, tracked frames %d, originating frame %p", this, &frame, frame.tree().uniqueName().string().utf8().data(), m_progressValue, m_numProgressTrackedFrames, m_originatingProgressFrame.get());
 
     m_client.willChangeEstimatedProgress();
-    
+
     if (!m_numProgressTrackedFrames || m_originatingProgressFrame == &frame) {
         reset();
         m_progressValue = initialProgressValue;
@@ -135,6 +137,8 @@ void ProgressTracker::progressStarted(Frame& frame)
     }
     m_numProgressTrackedFrames++;
 
+    RELEASE_LOG_IF_ALLOWED("progressStarted: frame %p, value %f, tracked frames %d, originating frame %p, isMainLoad %d", &frame, m_progressValue, m_numProgressTrackedFrames, m_originatingProgressFrame.get(), m_isMainLoad);
+
     m_client.didChangeEstimatedProgress();
     InspectorInstrumentation::frameStartedLoading(frame);
 }
@@ -142,25 +146,27 @@ void ProgressTracker::progressStarted(Frame& frame)
 void ProgressTracker::progressCompleted(Frame& frame)
 {
     LOG(Progress, "Progress completed (%p) - frame %p(\"%s\"), value %f, tracked frames %d, originating frame %p", this, &frame, frame.tree().uniqueName().string().utf8().data(), m_progressValue, m_numProgressTrackedFrames, m_originatingProgressFrame.get());
-    
+    RELEASE_LOG_IF_ALLOWED("progressCompleted: frame %p, value %f, tracked frames %d, originating frame %p, isMainLoad %d", &frame, m_progressValue, m_numProgressTrackedFrames, m_originatingProgressFrame.get(), m_isMainLoad);
+
     if (m_numProgressTrackedFrames <= 0)
         return;
-    
+
     m_client.willChangeEstimatedProgress();
-        
+
     m_numProgressTrackedFrames--;
     if (!m_numProgressTrackedFrames || m_originatingProgressFrame == &frame)
         finalProgressComplete();
-    
+
     m_client.didChangeEstimatedProgress();
 }
 
 void ProgressTracker::finalProgressComplete()
 {
     LOG(Progress, "Final progress complete (%p)", this);
-    
+    RELEASE_LOG_IF_ALLOWED("finalProgressComplete: value %f, tracked frames %d, originating frame %p, isMainLoad %d, isMainLoadProgressing %d", m_progressValue, m_numProgressTrackedFrames, m_originatingProgressFrame.get(), m_isMainLoad, isMainLoadProgressing());
+
     auto frame = WTFMove(m_originatingProgressFrame);
-    
+
     // Before resetting progress value be sure to send client a least one notification
     // with final progress value.
     if (!m_finalProgressChangedSent) {
@@ -186,11 +192,11 @@ void ProgressTracker::incrementProgress(unsigned long identifier, const Resource
 
     if (m_numProgressTrackedFrames <= 0)
         return;
-    
+
     long long estimatedLength = response.expectedContentLength();
     if (estimatedLength < 0)
         estimatedLength = progressItemDefaultEstimatedLength;
-    
+
     m_totalPageAndResourceBytesToLoad += estimatedLength;
 
     auto& item = m_progressItems.add(identifier, nullptr).iterator->value;
@@ -198,7 +204,7 @@ void ProgressTracker::incrementProgress(unsigned long identifier, const Resource
         item = std::make_unique<ProgressItem>(estimatedLength);
         return;
     }
-    
+
     item->bytesReceived = 0;
     item->estimatedLength = estimatedLength;
 }
@@ -206,24 +212,24 @@ void ProgressTracker::incrementProgress(unsigned long identifier, const Resource
 void ProgressTracker::incrementProgress(unsigned long identifier, unsigned bytesReceived)
 {
     ProgressItem* item = m_progressItems.get(identifier);
-    
+
     // FIXME: Can this ever happen?
     if (!item)
         return;
 
     RefPtr<Frame> frame = m_originatingProgressFrame;
-    
+
     m_client.willChangeEstimatedProgress();
-    
+
     double increment, percentOfRemainingBytes;
     long long remainingBytes, estimatedBytesForPendingRequests;
-    
+
     item->bytesReceived += bytesReceived;
     if (item->bytesReceived > item->estimatedLength) {
         m_totalPageAndResourceBytesToLoad += ((item->bytesReceived * 2) - item->estimatedLength);
         item->estimatedLength = item->bytesReceived * 2;
     }
-    
+
     int numPendingOrLoadingRequests = frame->loader().numPendingOrLoadingRequests(true);
     estimatedBytesForPendingRequests = static_cast<long long>(progressItemDefaultEstimatedLength) * numPendingOrLoadingRequests;
     remainingBytes = ((m_totalPageAndResourceBytesToLoad + estimatedBytesForPendingRequests) - m_totalBytesReceived);
@@ -231,7 +237,7 @@ void ProgressTracker::incrementProgress(unsigned long identifier, unsigned bytes
         percentOfRemainingBytes = (double)bytesReceived / (double)remainingBytes;
     else
         percentOfRemainingBytes = 1.0;
-    
+
     // For documents that use WebCore's layout system, treat first layout as the half-way point.
     // FIXME: The hasHTMLView function is a sort of roundabout way of asking "do you use WebCore's layout system".
     bool useClampedMaxProgress = frame->loader().client().hasHTMLView()
@@ -241,25 +247,25 @@ void ProgressTracker::incrementProgress(unsigned long identifier, unsigned bytes
     m_progressValue += increment;
     m_progressValue = std::min(m_progressValue, maxProgressValue);
     ASSERT(m_progressValue >= initialProgressValue);
-    
+
     m_totalBytesReceived += bytesReceived;
-    
+
     auto now = MonotonicTime::now();
     auto notifiedProgressTimeDelta = now - m_lastNotifiedProgressTime;
-    
+
     LOG(Progress, "Progress incremented (%p) - value %f, tracked frames %d", this, m_progressValue, m_numProgressTrackedFrames);
     if ((notifiedProgressTimeDelta >= progressNotificationTimeInterval || m_progressValue == 1) && m_numProgressTrackedFrames > 0) {
         if (!m_finalProgressChangedSent) {
             if (m_progressValue == 1)
                 m_finalProgressChangedSent = true;
-            
+
             m_client.progressEstimateChanged(*frame);
 
             m_lastNotifiedProgressValue = m_progressValue;
             m_lastNotifiedProgressTime = now;
         }
     }
-    
+
     m_client.didChangeEstimatedProgress();
 }
 
@@ -272,7 +278,7 @@ void ProgressTracker::completeProgress(unsigned long identifier)
         return;
 
     ProgressItem& item = *it->value;
-    
+
     // Adjust the total expected bytes to account for any overage/underage.
     long long delta = item.bytesReceived - item.estimatedLength;
     m_totalPageAndResourceBytesToLoad += delta;
@@ -310,6 +316,14 @@ void ProgressTracker::progressHeartbeatTimerFired()
 
     if (m_progressValue >= finalProgressValue)
         m_progressHeartbeatTimer.stop();
+}
+
+bool ProgressTracker::isAlwaysOnLoggingAllowed() const
+{
+    if (!m_originatingProgressFrame)
+        return false;
+
+    return m_originatingProgressFrame->isAlwaysOnLoggingAllowed();
 }
 
 }

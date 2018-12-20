@@ -41,6 +41,7 @@
 #include "FrameLoaderClient.h"
 #include "InspectorInstrumentation.h"
 #include "LoaderStrategy.h"
+#include "Logging.h"
 #include "Page.h"
 #include "PlatformStrategies.h"
 #include "ProgressTracker.h"
@@ -59,6 +60,9 @@
 #include "PreviewConverter.h"
 #include "PreviewLoader.h"
 #endif
+
+#undef RELEASE_LOG_IF_ALLOWED
+#define RELEASE_LOG_IF_ALLOWED(fmt, ...) RELEASE_LOG_IF(isAlwaysOnLoggingAllowed(), Network, "%p - ResourceLoader::" fmt, this, ##__VA_ARGS__)
 
 namespace WebCore {
 
@@ -256,6 +260,7 @@ void ResourceLoader::loadDataURL()
         if (this->reachedTerminalState())
             return;
         if (!decodeResult) {
+            RELEASE_LOG_IF_ALLOWED("loadDataURL: decoding of data failed (frame = %p, frameLoader = %p, resourceID = %lu)", frame(), frameLoader(), identifier());
             protectedThis->didFail(ResourceError(errorDomainWebKitInternal, 0, url, "Data URL decoding failed"));
             return;
         }
@@ -353,6 +358,7 @@ void ResourceLoader::willSendRequestInternal(ResourceRequest&& request, const Re
             auto blockedStatus = page->userContentProvider().processContentExtensionRulesForLoad(request.url(), m_resourceType, *m_documentLoader);
             applyBlockedStatusToRequest(blockedStatus, page, request);
             if (blockedStatus.blockedLoad) {
+                RELEASE_LOG_IF_ALLOWED("willSendRequestinternal: resource load canceled because of content blocker (frame = %p, frameLoader = %p, resourceID = %lu)", frame(), frameLoader(), identifier());
                 didFail(blockedByContentBlockerError());
                 completionHandler({ });
                 return;
@@ -362,6 +368,7 @@ void ResourceLoader::willSendRequestInternal(ResourceRequest&& request, const Re
 #endif
 
     if (request.isNull()) {
+        RELEASE_LOG_IF_ALLOWED("willSendRequestinternal: resource load canceled because of empty request (frame = %p, frameLoader = %p, resourceID = %lu)", frame(), frameLoader(), identifier());
         didFail(cannotShowURLError());
         completionHandler({ });
         return;
@@ -517,6 +524,8 @@ void ResourceLoader::didReceiveDataOrBuffer(const char* data, unsigned length, R
 
 void ResourceLoader::didFinishLoading(const NetworkLoadMetrics& networkLoadMetrics)
 {
+    RELEASE_LOG_IF_ALLOWED("didFinishLoading: (frame = %p, frameLoader = %p, resourceID = %lu)", frame(), frameLoader(), identifier());
+
     didFinishLoadingOnePart(networkLoadMetrics);
 
     // If the load has been cancelled by a delegate in response to didFinishLoad(), do not release
@@ -543,6 +552,8 @@ void ResourceLoader::didFinishLoadingOnePart(const NetworkLoadMetrics& networkLo
 
 void ResourceLoader::didFail(const ResourceError& error)
 {
+    RELEASE_LOG_IF_ALLOWED("didFail: (frame = %p, frameLoader = %p, resourceID = %lu)", frame(), frameLoader(), identifier());
+
     if (wasCancelled())
         return;
     ASSERT(!m_reachedTerminalState);
@@ -646,6 +657,7 @@ void ResourceLoader::willSendRequestAsync(ResourceHandle* handle, ResourceReques
 {
     RefPtr<ResourceHandle> protectedHandle(handle);
     if (documentLoader()->applicationCacheHost().maybeLoadFallbackForRedirect(this, request, redirectResponse)) {
+        RELEASE_LOG_IF_ALLOWED("willSendRequestAsync: exiting early because maybeLoadFallbackForRedirect returned false (frame = %p, frameLoader = %p, resourceID = %lu)", frame(), frameLoader(), identifier());
         completionHandler(WTFMove(request));
         return;
     }
@@ -691,11 +703,13 @@ void ResourceLoader::didFail(ResourceHandle*, const ResourceError& error)
 
 void ResourceLoader::wasBlocked(ResourceHandle*)
 {
+    RELEASE_LOG_IF_ALLOWED("wasBlocked: resource load canceled because of content blocker (frame = %p, frameLoader = %p, resourceID = %lu)", frame(), frameLoader(), identifier());
     didFail(blockedError());
 }
 
 void ResourceLoader::cannotShowURL(ResourceHandle*)
 {
+    RELEASE_LOG_IF_ALLOWED("wasBlocked: resource load canceled because of invalid URL (frame = %p, frameLoader = %p, resourceID = %lu)", frame(), frameLoader(), identifier());
     didFail(cannotShowURLError());
 }
 

@@ -528,6 +528,8 @@ void WebFrameLoaderClient::dispatchDidFailProvisionalLoad(const ResourceError& e
     if (!webPage)
         return;
 
+    RELEASE_LOG(Network, "%p - WebFrameLoaderClient::dispatchDidFailProvisionalLoad: (pageID = %" PRIu64 ", frameID = %" PRIu64 ")", this, webPage->pageID(), m_frame->frameID());
+
     RefPtr<API::Object> userData;
 
     // Notify the bundle client.
@@ -561,6 +563,8 @@ void WebFrameLoaderClient::dispatchDidFailLoad(const ResourceError& error)
     WebPage* webPage = m_frame->page();
     if (!webPage)
         return;
+
+    RELEASE_LOG(Network, "%p - WebFrameLoaderClient::dispatchDidFailLoad: (pageID = %" PRIu64 ", frameID = %" PRIu64 ")", this, webPage->pageID(), m_frame->frameID());
 
     RefPtr<API::Object> userData;
 

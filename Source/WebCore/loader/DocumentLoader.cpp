@@ -228,6 +228,9 @@ void DocumentLoader::setRequest(const ResourceRequest& req)
 
 void DocumentLoader::setMainDocumentError(const ResourceError& error)
 {
+    if (!error.isNull())
+        RELEASE_LOG_IF_ALLOWED("setMainDocumentError: (frame = %p, main = %d, type = %d, code = %d)", m_frame, m_frame->isMainFrame(), static_cast<int>(error.type()), error.errorCode());
+
     m_mainDocumentError = error;    
     frameLoader()->client().setMainDocumentError(this, error);
 }
@@ -238,6 +241,9 @@ void DocumentLoader::mainReceivedError(const ResourceError& error)
 
     if (!frameLoader())
         return;
+
+    if (!error.isNull())
+        RELEASE_LOG_IF_ALLOWED("mainReceivedError: (frame = %p, main = %d, type = %d, code = %d)", m_frame, m_frame->isMainFrame(), static_cast<int>(error.type()), error.errorCode());
 
     if (m_identifierForLoadWithoutResourceLoader) {
         ASSERT(!mainResourceLoader());
@@ -325,6 +331,7 @@ void DocumentLoader::stopLoading()
 
     // The frame may have been detached from this document by the onunload handler
     if (auto* frameLoader = DocumentLoader::frameLoader()) {
+        RELEASE_LOG_IF_ALLOWED("stopLoading: canceling load (frame = %p, main = %d)", m_frame, m_frame->isMainFrame());
         if (isLoadingMainResource()) {
             // Stop the main resource loader and let it send the cancelled message.
             cancelMainResourceLoad(frameLoader->cancelledError(m_request));
@@ -389,6 +396,9 @@ void DocumentLoader::notifyFinished(CachedResource& resource)
         frameLoader()->retryAfterFailedCacheOnlyMainResourceLoad();
         return;
     }
+
+    if (!m_mainResource->resourceError().isNull())
+        RELEASE_LOG_IF_ALLOWED("notifyFinished: canceling load (frame = %p, main = %d)", m_frame, m_frame->isMainFrame());
 
     mainReceivedError(m_mainResource->resourceError());
 }
@@ -562,6 +572,7 @@ void DocumentLoader::willSendRequest(ResourceRequest&& newRequest, const Resourc
 
     bool didReceiveRedirectResponse = !redirectResponse.isNull();
     if (!frameLoader()->checkIfFormActionAllowedByCSP(newRequest.url(), didReceiveRedirectResponse)) {
+        RELEASE_LOG_IF_ALLOWED("willSendRequest: canceling - form action not allowed by CSP (frame = %p, main = %d)", m_frame, m_frame->isMainFrame());
         cancelMainResourceLoad(frameLoader()->cancelledError(newRequest));
         return completionHandler(WTFMove(newRequest));
     }
@@ -572,11 +583,13 @@ void DocumentLoader::willSendRequest(ResourceRequest&& newRequest, const Resourc
         // then block the redirect.
         Ref<SecurityOrigin> redirectingOrigin(SecurityOrigin::create(redirectResponse.url()));
         if (!redirectingOrigin.get().canDisplay(newRequest.url())) {
+            RELEASE_LOG_IF_ALLOWED("willSendRequest: canceling - redirecting URL not allowed to display content from target(frame = %p, main = %d)", m_frame, m_frame->isMainFrame());
             FrameLoader::reportLocalLoadFailed(m_frame, newRequest.url().string());
             cancelMainResourceLoad(frameLoader()->cancelledError(newRequest));
             return completionHandler(WTFMove(newRequest));
         }
         if (!portAllowed(newRequest.url())) {
+            RELEASE_LOG_IF_ALLOWED("willSendRequest: canceling - port not allowed (frame = %p, main = %d)", m_frame, m_frame->isMainFrame());
             FrameLoader::reportBlockedPortFailed(m_frame, newRequest.url().string());
             cancelMainResourceLoad(frameLoader()->blockedError(newRequest));
             return completionHandler(WTFMove(newRequest));
@@ -892,6 +905,7 @@ void DocumentLoader::continueAfterContentPolicy(PolicyAction policy)
     case PolicyAction::Download: {
         // m_mainResource can be null, e.g. when loading a substitute resource from application cache.
         if (!m_mainResource) {
+            RELEASE_LOG_IF_ALLOWED("continueAfterContentPolicy: cannot show URL (frame = %p, main = %d)", m_frame, m_frame->isMainFrame());
             mainReceivedError(frameLoader()->client().cannotShowURLError(m_request));
             return;
         }
@@ -1725,22 +1739,30 @@ void DocumentLoader::startLoadingMainResource()
         // FIXME: Implement local URL interception by getting the service worker of the parent.
         auto url = request.url();
         matchRegistration(url, [request = WTFMove(request), protectedThis = WTFMove(protectedThis), this] (auto&& registrationData) mutable {
-            if (!m_mainDocumentError.isNull() || !m_frame)
+            if (!m_mainDocumentError.isNull() || !m_frame) {
+                RELEASE_LOG_IF_ALLOWED("startLoadingMainResource callback: Load canceled because of main document error (frame = %p, main = %d)", m_frame, m_frame ? m_frame->isMainFrame() : false);
                 return;
+            }
 
             m_serviceWorkerRegistrationData = WTFMove(registrationData);
 
             // Prefer existing substitute data (from WKWebView.loadData etc) over service worker fetch.
-            if (this->tryLoadingSubstituteData())
+            if (this->tryLoadingSubstituteData()) {
+                RELEASE_LOG_IF_ALLOWED("startLoadingMainResource callback: Load canceled because of substitute data (frame = %p, main = %d)", m_frame, m_frame ? m_frame->isMainFrame() : false);
                 return;
+            }
             // Try app cache only if there is no service worker.
-            if (!m_serviceWorkerRegistrationData && this->tryLoadingRequestFromApplicationCache())
+            if (!m_serviceWorkerRegistrationData && this->tryLoadingRequestFromApplicationCache()) {
+                RELEASE_LOG_IF_ALLOWED("startLoadingMainResource callback: Loaded from Application Cache (frame = %p, main = %d)", m_frame, m_frame->isMainFrame());
                 return;
+            }
             this->loadMainResource(WTFMove(request));
         });
 #else
-        if (tryLoadingRequestFromApplicationCache())
+        if (tryLoadingRequestFromApplicationCache()) {
+            RELEASE_LOG_IF_ALLOWED("startLoadingMainResource: Loaded from Application Cache (frame = %p, main = %d)", m_frame, m_frame->isMainFrame());
             return;
+        }
         loadMainResource(WTFMove(request));
 #endif
     });
@@ -1823,16 +1845,18 @@ void DocumentLoader::loadMainResource(ResourceRequest&& request)
     if (!m_mainResource) {
         // The frame may have gone away if this load was cancelled synchronously and this was the last pending load.
         // This is because we may have fired the load event in a parent frame.
-        if (!m_frame)
+        if (!m_frame) {
+            RELEASE_LOG_IF_ALLOWED("loadMainResource: Unable to load main resource, frame has gone away (frame = %p, main = %d)", m_frame, m_frame->isMainFrame());
             return;
+        }
 
         if (!m_request.url().isValid()) {
-            RELEASE_LOG_IF_ALLOWED("startLoadingMainResource: Unable to load main resource, URL is invalid (frame = %p, main = %d)", m_frame, m_frame->isMainFrame());
+            RELEASE_LOG_IF_ALLOWED("loadMainResource: Unable to load main resource, URL is invalid (frame = %p, main = %d)", m_frame, m_frame->isMainFrame());
             cancelMainResourceLoad(frameLoader()->client().cannotShowURLError(m_request));
             return;
         }
 
-        RELEASE_LOG_IF_ALLOWED("startLoadingMainResource: Unable to load main resource, returning empty document (frame = %p, main = %d)", m_frame, m_frame->isMainFrame());
+        RELEASE_LOG_IF_ALLOWED("loadMainResource: Unable to load main resource, returning empty document (frame = %p, main = %d)", m_frame, m_frame->isMainFrame());
 
         setRequest(ResourceRequest());
         // If the load was aborted by clearing m_request, it's possible the ApplicationCacheHost
@@ -1847,7 +1871,7 @@ void DocumentLoader::loadMainResource(ResourceRequest&& request)
 
 #if ENABLE(CONTENT_EXTENSIONS)
     if (m_mainResource->errorOccurred() && m_frame->page() && m_mainResource->resourceError().domain() == ContentExtensions::WebKitContentBlockerDomain) {
-        RELEASE_LOG_IF_ALLOWED("startLoadingMainResource: Blocked by content blocker error (frame = %p, main = %d)", m_frame, m_frame->isMainFrame());
+        RELEASE_LOG_IF_ALLOWED("loadMainResource: Blocked by content blocker error (frame = %p, main = %d)", m_frame, m_frame->isMainFrame());
         cancelMainResourceLoad(frameLoader()->blockedByContentBlockerError(m_request));
         return;
     }
@@ -1884,6 +1908,8 @@ void DocumentLoader::cancelMainResourceLoad(const ResourceError& resourceError)
 {
     Ref<DocumentLoader> protectedThis(*this);
     ResourceError error = resourceError.isNull() ? frameLoader()->cancelledError(m_request) : resourceError;
+
+    RELEASE_LOG_IF_ALLOWED("cancelMainResourceLoad: (frame = %p, main = %d, type = %d, code = %d)", m_frame, m_frame->isMainFrame(), static_cast<int>(error.type()), error.errorCode());
 
     m_dataLoadTimer.stop();
 

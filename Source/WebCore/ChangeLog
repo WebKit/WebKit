@@ -1,3 +1,75 @@
+2018-12-20  Keith Rollin  <krollin@apple.com>
+
+        Improve release-level page-load logging
+        https://bugs.webkit.org/show_bug.cgi?id=192872
+        <rdar://problem/46850309>
+
+        Reviewed by Chris Dumez.
+
+        There are a number of reported bugs that are difficult or impossible
+        to track down with our current level of logging. Additionally, some
+        software groups lower in the page-loading stack have requested logging
+        sufficient for tracking a user-visible error message down to the
+        requested resource that caused the message. Add more-comprehensive
+        logging to address these issues/requests.
+
+        No new tests -- no changed functionality.
+
+        * loader/DocumentLoader.cpp:
+        (WebCore::DocumentLoader::setMainDocumentError):
+        (WebCore::DocumentLoader::mainReceivedError):
+        (WebCore::DocumentLoader::stopLoading):
+        (WebCore::DocumentLoader::notifyFinished):
+        (WebCore::DocumentLoader::willSendRequest):
+        (WebCore::DocumentLoader::continueAfterContentPolicy):
+        (WebCore::DocumentLoader::startLoadingMainResource):
+        (WebCore::DocumentLoader::loadMainResource):
+        (WebCore::DocumentLoader::cancelMainResourceLoad):
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::urlSelected):
+        (WebCore::FrameLoader::loadURLIntoChildFrame):
+        (WebCore::FrameLoader::loadArchive):
+        (WebCore::FrameLoader::loadInSameDocument):
+        (WebCore::FrameLoader::loadFrameRequest):
+        (WebCore::FrameLoader::loadURL):
+        (WebCore::FrameLoader::load):
+        (WebCore::FrameLoader::loadWithNavigationAction):
+        (WebCore::FrameLoader::loadWithDocumentLoader):
+        (WebCore::FrameLoader::reloadWithOverrideEncoding):
+        (WebCore::FrameLoader::reload):
+        (WebCore::FrameLoader::setState):
+        (WebCore::FrameLoader::checkLoadCompleteForThisFrame):
+        (WebCore::FrameLoader::loadPostRequest):
+        (WebCore::FrameLoader::continueLoadAfterNavigationPolicy):
+        (WebCore::FrameLoader::loadDifferentDocumentItem):
+        * loader/ProgressTracker.cpp:
+        (WebCore::ProgressItem::ProgressItem):
+        (WebCore::ProgressTracker::reset):
+        (WebCore::ProgressTracker::progressStarted):
+        (WebCore::ProgressTracker::progressCompleted):
+        (WebCore::ProgressTracker::finalProgressComplete):
+        (WebCore::ProgressTracker::incrementProgress):
+        (WebCore::ProgressTracker::completeProgress):
+        (WebCore::ProgressTracker::isAlwaysOnLoggingAllowed const):
+        * loader/ProgressTracker.h:
+        * loader/ResourceLoader.cpp:
+        (WebCore::ResourceLoader::loadDataURL):
+        (WebCore::ResourceLoader::willSendRequestInternal):
+        (WebCore::ResourceLoader::didFinishLoading):
+        (WebCore::ResourceLoader::didFail):
+        (WebCore::ResourceLoader::willSendRequestAsync):
+        (WebCore::ResourceLoader::wasBlocked):
+        (WebCore::ResourceLoader::cannotShowURL):
+        * loader/SubresourceLoader.cpp:
+        (WebCore::SubresourceLoader::willSendRequestInternal):
+        (WebCore::=):
+        (WebCore::SubresourceLoader::didReceiveResponse):
+        (WebCore::SubresourceLoader::didFinishLoading):
+        (WebCore::SubresourceLoader::didFail):
+        (WebCore::SubresourceLoader::willCancel):
+        * loader/cache/CachedResource.cpp:
+        (WebCore::CachedResource::load):
+
 2018-12-20  Jeremy Jones  <jeremyj@apple.com>
 
         Switch tabs before retuning PiP video to inline.

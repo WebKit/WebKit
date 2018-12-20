@@ -1,3 +1,74 @@
+2018-12-20  Keith Rollin  <krollin@apple.com>
+
+        Improve release-level page-load logging
+        https://bugs.webkit.org/show_bug.cgi?id=192872
+        <rdar://problem/46850309>
+
+        Reviewed by Chris Dumez.
+
+        There are a number of reported bugs that are difficult or impossible
+        to track down with our current level of logging. Additionally, some
+        software groups lower in the page-loading stack have requested logging
+        sufficient for tracking a user-visible error message down to the
+        requested resource that caused the message. Add more-comprehensive
+        logging to address these issues/requests.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::m_editableImageController):
+        (WebKit::WebPageProxy::~WebPageProxy):
+        (WebKit::WebPageProxy::reattachToWebProcess):
+        (WebKit::WebPageProxy::swapToWebProcess):
+        (WebKit::WebPageProxy::reattachToWebProcessForReload):
+        (WebKit::WebPageProxy::reattachToWebProcessWithItem):
+        (WebKit::WebPageProxy::close):
+        (WebKit::WebPageProxy::tryClose):
+        (WebKit::WebPageProxy::loadRequest):
+        (WebKit::WebPageProxy::loadRequestWithNavigation):
+        (WebKit::WebPageProxy::loadFile):
+        (WebKit::WebPageProxy::loadData):
+        (WebKit::WebPageProxy::loadDataWithNavigation):
+        (WebKit::WebPageProxy::loadAlternateHTML):
+        (WebKit::WebPageProxy::loadWebArchiveData):
+        (WebKit::WebPageProxy::navigateToPDFLinkWithSimulatedClick):
+        (WebKit::WebPageProxy::stopLoading):
+        (WebKit::WebPageProxy::reload):
+        (WebKit::WebPageProxy::goToBackForwardItem):
+        (WebKit::WebPageProxy::tryRestoreScrollPosition):
+        (WebKit::WebPageProxy::updateThrottleState):
+        (WebKit::WebPageProxy::receivedNavigationPolicyDecision):
+        (WebKit::WebPageProxy::continueNavigationInNewProcess):
+        (WebKit::WebPageProxy::restoreFromSessionState):
+        (WebKit::WebPageProxy::didStartProvisionalLoadForFrame):
+        (WebKit::WebPageProxy::didReceiveServerRedirectForProvisionalLoadForFrame):
+        (WebKit::WebPageProxy::willPerformClientRedirectForFrame):
+        (WebKit::WebPageProxy::didCancelClientRedirectForFrame):
+        (WebKit::WebPageProxy::didFailProvisionalLoadForFrame):
+        (WebKit::WebPageProxy::didCommitLoadForFrame):
+        (WebKit::WebPageProxy::didFinishDocumentLoadForFrame):
+        (WebKit::WebPageProxy::didFinishLoadForFrame):
+        (WebKit::WebPageProxy::didFailLoadForFrame):
+        (WebKit::WebPageProxy::didSameDocumentNavigationForFrame):
+        (WebKit::WebPageProxy::didNavigateWithNavigationData):
+        (WebKit::WebPageProxy::didPerformClientRedirect):
+        (WebKit::WebPageProxy::didPerformServerRedirect):
+        (WebKit::WebPageProxy::processDidBecomeUnresponsive):
+        (WebKit::WebPageProxy::processDidBecomeResponsive):
+        (WebKit::WebPageProxy::processDidTerminate):
+        (WebKit::WebPageProxy::dispatchProcessDidTerminate):
+        (WebKit::WebPageProxy::tryReloadAfterProcessTermination):
+        (WebKit::WebPageProxy::didExceedInactiveMemoryLimitWhileActive):
+        (WebKit::WebPageProxy::didExceedBackgroundCPULimitWhileInForeground):
+        * WebProcess/Network/WebLoaderStrategy.cpp:
+        (WebKit::WebLoaderStrategy::scheduleLoad):
+        (WebKit::WebLoaderStrategy::scheduleLoadFromNetworkProcess):
+        (WebKit::WebLoaderStrategy::loadResourceSynchronously):
+        * WebProcess/Network/WebResourceLoader.cpp:
+        (WebKit::WebResourceLoader::willSendRequest):
+        (WebKit::WebResourceLoader::didReceiveResponse):
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebKit::WebFrameLoaderClient::dispatchDidFailProvisionalLoad):
+        (WebKit::WebFrameLoaderClient::dispatchDidFailLoad):
+
 2018-12-20  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [iOS] Replace "node assistance" terminology in WebKit with "focused element"
