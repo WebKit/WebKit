@@ -1,3 +1,13 @@
+2018-12-19  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        Unreviewed, fix GTK build after r239410
+
+        It added a new file to the build, breaking the unified sources magic that obscured a bug in
+        URLSoup.h. It forward-declares URL, but this never worked unless the URL.h header was
+        included via another source file in the unified source bundle.
+
+        * platform/network/soup/URLSoup.h:
+
 2018-12-19  Chris Dumez  <cdumez@apple.com>
 
         wtf/Optional.h: move-constructor and move-assignment operator should disengage the value being moved from

@@ -32,6 +32,6 @@ class URL;
 }
 
 namespace WebCore {
-URL soupURIToURL(SoupURI*);
+WTF::URL soupURIToURL(SoupURI*);
 GUniquePtr<SoupURI> urlToSoupURI(const WTF::URL&);
 } // namespace WebCore
