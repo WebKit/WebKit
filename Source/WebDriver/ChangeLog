@@ -1,3 +1,15 @@
+2018-12-20  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] WebDriver: tests in imported/w3c/webdriver/tests/element_clear/user_prompts.py are failing
+        https://bugs.webkit.org/show_bug.cgi?id=192927
+
+        Reviewed by Michael Catanzaro.
+
+        Handle user prompts in element clear command.
+
+        * Session.cpp:
+        (WebDriver::Session::elementClear):
+
 2018-12-19  Chris Dumez  <cdumez@apple.com>
 
         wtf/Optional.h: move-constructor and move-assignment operator should disengage the value being moved from

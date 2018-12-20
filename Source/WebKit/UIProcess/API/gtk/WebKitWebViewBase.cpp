@@ -460,6 +460,8 @@ static void webkitWebViewBaseContainerRemove(GtkContainer* container, GtkWidget*
         priv->inspectorViewSize = 0;
     } else if (priv->dialog == widget) {
         priv->dialog = nullptr;
+        if (gtk_widget_get_visible(widgetContainer))
+            gtk_widget_grab_focus(widgetContainer);
     } else {
         ASSERT(priv->children.contains(widget));
         priv->children.remove(widget);

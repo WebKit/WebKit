@@ -1,3 +1,15 @@
+2018-12-20  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] WebDriver: tests in imported/w3c/webdriver/tests/element_clear/user_prompts.py are failing
+        https://bugs.webkit.org/show_bug.cgi?id=192927
+
+        Reviewed by Michael Catanzaro.
+
+        Give the focus back to the web view when a dialog is dismissed.
+
+        * UIProcess/API/gtk/WebKitWebViewBase.cpp:
+        (webkitWebViewBaseContainerRemove):
+
 2018-12-20  Tim Horton  <timothy_horton@apple.com>
 
         Unparented WKWebView can't retrieve main resource data for a main frame plugin

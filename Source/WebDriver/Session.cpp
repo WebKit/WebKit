@@ -1560,21 +1560,28 @@ void Session::elementClear(const String& elementID, Function<void (CommandResult
         return;
     }
 
-    RefPtr<JSON::Array> arguments = JSON::Array::create();
-    arguments->pushString(createElement(elementID)->toJSONString());
-
-    RefPtr<JSON::Object> parameters = JSON::Object::create();
-    parameters->setString("browsingContextHandle"_s, m_toplevelBrowsingContext.value());
-    if (m_currentBrowsingContext)
-        parameters->setString("frameHandle"_s, m_currentBrowsingContext.value());
-    parameters->setString("function"_s, FormElementClearJavaScript);
-    parameters->setArray("arguments"_s, WTFMove(arguments));
-    m_host->sendCommandToBackend("evaluateJavaScriptFunction"_s, WTFMove(parameters), [protectedThis = makeRef(*this), completionHandler = WTFMove(completionHandler)](SessionHost::CommandResponse&& response) {
-        if (response.isError) {
-            completionHandler(CommandResult::fail(WTFMove(response.responseObject)));
+    handleUserPrompts([this, elementID, completionHandler = WTFMove(completionHandler)](CommandResult&& result) mutable {
+        if (result.isError()) {
+            completionHandler(WTFMove(result));
             return;
         }
-        completionHandler(CommandResult::success());
+
+        RefPtr<JSON::Array> arguments = JSON::Array::create();
+        arguments->pushString(createElement(elementID)->toJSONString());
+
+        RefPtr<JSON::Object> parameters = JSON::Object::create();
+        parameters->setString("browsingContextHandle"_s, m_toplevelBrowsingContext.value());
+        if (m_currentBrowsingContext)
+            parameters->setString("frameHandle"_s, m_currentBrowsingContext.value());
+        parameters->setString("function"_s, FormElementClearJavaScript);
+        parameters->setArray("arguments"_s, WTFMove(arguments));
+        m_host->sendCommandToBackend("evaluateJavaScriptFunction"_s, WTFMove(parameters), [protectedThis = makeRef(*this), completionHandler = WTFMove(completionHandler)](SessionHost::CommandResponse&& response) {
+            if (response.isError) {
+                completionHandler(CommandResult::fail(WTFMove(response.responseObject)));
+                return;
+            }
+            completionHandler(CommandResult::success());
+        });
     });
 }
 
