@@ -248,10 +248,11 @@ void AudioSourceProviderAVFObjC::finalizeCallback(MTAudioProcessingTapRef tap)
     ASSERT(tap);
     TapStorage* tapStorage = static_cast<TapStorage*>(MTAudioProcessingTapGetStorage(tap));
 
-    std::lock_guard<Lock> lock(tapStorage->mutex);
-
-    if (tapStorage->_this)
-        tapStorage->_this->finalize();
+    {
+        std::lock_guard<Lock> lock(tapStorage->mutex);
+        if (tapStorage->_this)
+            tapStorage->_this->finalize();
+    }
     delete tapStorage;
 }
 

@@ -1,3 +1,16 @@
+2018-12-20  Jer Noble  <jer.noble@apple.com>
+
+        REGRESSION (r239419): heap-use-after-free in AudioSourceProviderAVFObjC::finalizeCallback()
+        https://bugs.webkit.org/show_bug.cgi?id=192941
+        <rdar://problem/46874096>
+
+        Reviewed by Brent Fulgham.
+
+        Don't delete the locked lock before unlocking the lock. 
+
+        * platform/graphics/avfoundation/AudioSourceProviderAVFObjC.mm:
+        (WebCore::AudioSourceProviderAVFObjC::finalizeCallback):
+
 2018-12-20  Keith Rollin  <krollin@apple.com>
 
         Improve release-level page-load logging
