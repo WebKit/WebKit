@@ -1,3 +1,15 @@
+2018-12-19  Tim Horton  <timothy_horton@apple.com>
+
+        Use delegate instead of drawingDelegate in WKDrawingView
+        https://bugs.webkit.org/show_bug.cgi?id=192899
+        <rdar://problem/46733339>
+
+        Reviewed by Wenson Hsieh.
+
+        * UIProcess/ios/WKDrawingView.mm:
+        (-[WKDrawingView initWithEmbeddedViewID:webPageProxy:]):
+        Do the dance.
+
 2018-12-19  Alex Christensen  <achristensen@webkit.org>
 
         Navigations away from the SafeBrowsing interstitial show a flash of old content

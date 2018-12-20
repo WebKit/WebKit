@@ -60,10 +60,7 @@
     [_pencilView setFingerDrawingEnabled:NO];
     [_pencilView setUserInteractionEnabled:YES];
     [_pencilView setOpaque:NO];
-
-    ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-    [_pencilView setDrawingDelegate:self];
-    ALLOW_DEPRECATED_DECLARATIONS_END
+    [_pencilView setDelegate:self];
 
     [self addSubview:_pencilView.get()];
 
