@@ -272,6 +272,8 @@ WI.GeneralStyleDetailsSidebarPanel = class GeneralStyleDetailsSidebarPanel exten
             return;
 
         let effectiveDOMNode = this.domNode.isPseudoElement() ? this.domNode.parentNode : this.domNode;
+        if (!effectiveDOMNode)
+            return;
 
         effectiveDOMNode.setPseudoClassEnabled(pseudoClass, event.target.checked);
 
@@ -284,6 +286,8 @@ WI.GeneralStyleDetailsSidebarPanel = class GeneralStyleDetailsSidebarPanel exten
             return;
 
         let effectiveDOMNode = this.domNode.isPseudoElement() ? this.domNode.parentNode : this.domNode;
+        if (!effectiveDOMNode)
+            return;
 
         let enabledPseudoClasses = effectiveDOMNode.enabledPseudoClasses;
 
