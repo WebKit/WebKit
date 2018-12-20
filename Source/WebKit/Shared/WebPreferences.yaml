@@ -1097,10 +1097,7 @@ ShouldAllowUserInstalledFonts:
 
 MediaCapabilitiesEnabled:
   type: bool
-  defaultValue: DEFAULT_EXPERIMENTAL_FEATURES_ENABLED
-  humanReadableName: "Media Capabilities API"
-  humanReadableDescription: "Media Capabilities API"
-  category: experimental
+  defaultValue: true
 
 SystemPreviewEnabled:
   type: bool
