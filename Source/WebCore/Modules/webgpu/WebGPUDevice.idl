@@ -36,6 +36,7 @@
     WebGPUBuffer createBuffer(WebGPUBufferDescriptor descriptor);
 
     WebGPUBindGroupLayout createBindGroupLayout(WebGPUBindGroupLayoutDescriptor descriptor);
+    WebGPUPipelineLayout createPipelineLayout(WebGPUPipelineLayoutDescriptor descriptor);
 
     WebGPUShaderModule createShaderModule(WebGPUShaderModuleDescriptor descriptor);
     WebGPURenderPipeline createRenderPipeline(WebGPURenderPipelineDescriptor descriptor);
@@ -49,7 +50,6 @@
     // WebGPUTexture createTexture(WebGPUTextureDescriptor descriptor);
     // WebGPUSampler createSampler(WebGPUSamplerDescriptor descriptor);
     //
-    // WebGPUPipelineLayout createPipelineLayout(WebGPUPipelineLayoutDescriptor descriptor);
     // WebGPUBindGroup createBindGroup(WebGPUBindGroupDescriptor descriptor);
     //
     // WebGPUBlendState createBlendState(WebGPUBlendStateDescriptor descriptor);

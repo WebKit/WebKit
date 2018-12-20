@@ -23,24 +23,21 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "GPUBindGroupLayout.h"
+#pragma once
 
 #if ENABLE(WEBGPU)
 
+#include "WebGPUBindGroupLayout.h"
+
+#include <wtf/RefPtr.h>
+#include <wtf/Vector.h>
+
 namespace WebCore {
 
-Ref<GPUBindGroupLayout> GPUBindGroupLayout::create(GPUBindGroupLayoutDescriptor&& descriptor)
-{
-    return adoptRef(*new GPUBindGroupLayout(WTFMove(descriptor)));
-}
-
-GPUBindGroupLayout::GPUBindGroupLayout(GPUBindGroupLayoutDescriptor&&)
-{
-    // FIXME: Stub implementation.
-}
+struct WebGPUPipelineLayoutDescriptor {
+    Vector<RefPtr<WebGPUBindGroupLayout>> bindGroupLayouts;
+};
 
 } // namespace WebCore
 
 #endif // ENABLE(WEBGPU)
-

@@ -36,6 +36,8 @@
 #include "WebGPUBindGroupLayout.h"
 #include "WebGPUBuffer.h"
 #include "WebGPUCommandBuffer.h"
+#include "WebGPUPipelineLayout.h"
+#include "WebGPUPipelineLayoutDescriptor.h"
 #include "WebGPUPipelineStageDescriptor.h"
 #include "WebGPUQueue.h"
 #include "WebGPURenderPipeline.h"
@@ -69,6 +71,16 @@ Ref<WebGPUBindGroupLayout> WebGPUDevice::createBindGroupLayout(WebGPUBindGroupLa
 {
     auto layout = m_device->createBindGroupLayout(GPUBindGroupLayoutDescriptor { descriptor.bindings });
     return WebGPUBindGroupLayout::create(WTFMove(layout));
+}
+
+Ref<WebGPUPipelineLayout> WebGPUDevice::createPipelineLayout(WebGPUPipelineLayoutDescriptor&& descriptor) const
+{
+    // FIXME: Is an empty pipelineLayout an error?
+    auto bindGroupLayouts = descriptor.bindGroupLayouts.map([] (const auto& layout) -> RefPtr<const GPUBindGroupLayout> {
+        return layout->bindGroupLayout();
+    });
+    auto layout = m_device->createPipelineLayout(GPUPipelineLayoutDescriptor { WTFMove(bindGroupLayouts) });
+    return WebGPUPipelineLayout::create(WTFMove(layout));
 }
 
 RefPtr<WebGPUShaderModule> WebGPUDevice::createShaderModule(WebGPUShaderModuleDescriptor&& descriptor) const

@@ -1,3 +1,17 @@
+2018-12-19  Justin Fan  <justin_fan@apple.com>
+
+        [WebGPU] Add stubs for WebGPUPipelineLayout/Descriptor and device::createPipelineLayout
+        https://bugs.webkit.org/show_bug.cgi?id=192843
+        <rdar://problem/46820395>
+
+        Reviewed by Myles Maxfield.
+
+        Update bind-group-layouts and rename to match new PipelineLayout functionality.
+
+        * webgpu/bind-group-layouts-expected.txt: Removed.
+        * webgpu/pipeline-layouts-expected.txt: Added.
+        * webgpu/pipeline-layouts.html: Renamed from LayoutTests/webgpu/bind-group-layouts.html.
+
 2018-12-19  Ryan Haddad  <ryanhaddad@apple.com>
 
         REGRESSION: [ iOS Sim ] Layout Test imported/w3c/web-platform-tests/service-workers/service-worker/update-missing-import-scripts.https.html is failing

@@ -29,8 +29,8 @@
 
 #include "GPUBindGroupLayout.h"
 
-#include <wtf/Ref.h>
 #include <wtf/RefCounted.h>
+#include <wtf/RefPtr.h>
 
 namespace WebCore {
 
@@ -38,10 +38,12 @@ class WebGPUBindGroupLayout : public RefCounted<WebGPUBindGroupLayout> {
 public:
     static Ref<WebGPUBindGroupLayout> create(Ref<GPUBindGroupLayout>&&);
 
+    RefPtr<GPUBindGroupLayout> bindGroupLayout() const { return m_bindGroupLayout.copyRef(); }
+
 private:
     explicit WebGPUBindGroupLayout(Ref<GPUBindGroupLayout>&&);
 
-    Ref<GPUBindGroupLayout> m_layout;
+    Ref<GPUBindGroupLayout> m_bindGroupLayout;
 };
 
 } // namespace WebCore

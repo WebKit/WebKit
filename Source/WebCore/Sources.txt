@@ -309,6 +309,7 @@ Modules/webgpu/WebGPUBuffer.cpp
 Modules/webgpu/WebGPUCommandBuffer.cpp
 Modules/webgpu/WebGPUDevice.cpp
 Modules/webgpu/WebGPUQueue.cpp
+Modules/webgpu/WebGPUPipelineLayout.cpp
 Modules/webgpu/WebGPUProgrammablePassEncoder.cpp
 Modules/webgpu/WebGPURenderingContext.cpp
 Modules/webgpu/WebGPURenderPassEncoder.cpp
@@ -1745,6 +1746,7 @@ platform/graphics/filters/SpotLightSource.cpp
 
 platform/graphics/gpu/GPUBindGroupLayout.cpp
 platform/graphics/gpu/GPUDevice.cpp
+platform/graphics/gpu/GPUPipelineLayout.cpp
 platform/graphics/gpu/legacy/GPULegacyBuffer.cpp
 platform/graphics/gpu/legacy/GPULegacyCommandBuffer.cpp
 platform/graphics/gpu/legacy/GPULegacyCommandQueue.cpp
@@ -3242,6 +3244,8 @@ JSWebGPUInputStateDescriptor.cpp
 JSWebGPUInputStepMode.cpp
 JSWebGPUQueue.cpp
 JSWebGPUPipelineDescriptorBase.cpp
+JSWebGPUPipelineLayout.cpp
+JSWebGPUPipelineLayoutDescriptor.cpp
 JSWebGPUPipelineStageDescriptor.cpp
 JSWebGPUProgrammablePassEncoder.cpp
 JSWebGPURenderingContext.cpp

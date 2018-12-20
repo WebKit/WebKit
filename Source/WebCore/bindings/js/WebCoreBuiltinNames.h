@@ -198,6 +198,7 @@ namespace WebCore {
     macro(WebGPUIndexFormat) \
     macro(WebGPUInputStepMode) \
     macro(WebGPUQueue) \
+    macro(WebGPUPipelineLayout) \
     macro(WebGPUProgrammablePassEncoder) \
     macro(WebGPURenderingContext) \
     macro(WebGPURenderPassEncoder) \

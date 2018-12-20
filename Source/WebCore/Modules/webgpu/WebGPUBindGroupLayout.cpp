@@ -36,7 +36,7 @@ Ref<WebGPUBindGroupLayout> WebGPUBindGroupLayout::create(Ref<GPUBindGroupLayout>
 }
 
 WebGPUBindGroupLayout::WebGPUBindGroupLayout(Ref<GPUBindGroupLayout>&& layout)
-    : m_layout(WTFMove(layout))
+    : m_bindGroupLayout(WTFMove(layout))
 {
 }
 

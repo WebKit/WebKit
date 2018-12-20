@@ -40,8 +40,6 @@ public:
 
 private:
     GPUBindGroupLayout(GPUBindGroupLayoutDescriptor&&);
-
-    GPUBindGroupLayoutDescriptor m_descriptor;
 };
 
 } // namespace WebCore

@@ -477,6 +477,8 @@ set(WebCore_NON_SVG_IDL_FILES
     Modules/webgpu/WebGPUInputStateDescriptor.idl
     Modules/webgpu/WebGPUInputStepMode.idl
     Modules/webgpu/WebGPUPipelineDescriptorBase.idl
+    Modules/webgpu/WebGPUPipelineLayout.idl
+    Modules/webgpu/WebGPUPipelineLayoutDescriptor.idl
     Modules/webgpu/WebGPUPipelineStageDescriptor.idl
     Modules/webgpu/WebGPUProgrammablePassEncoder.idl
     Modules/webgpu/WebGPUQueue.idl

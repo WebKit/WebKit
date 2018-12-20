@@ -24,59 +24,20 @@
  */
 
 #include "config.h"
-#include "GPUDevice.h"
+#include "GPUPipelineLayout.h"
 
 #if ENABLE(WEBGPU)
 
-#include "GPUBindGroupLayout.h"
-#include "GPUBindGroupLayoutDescriptor.h"
-#include "GPUBuffer.h"
-#include "GPUBufferDescriptor.h"
-#include "GPUPipelineLayout.h"
-#include "GPUPipelineLayoutDescriptor.h"
-#include "GPURenderPipeline.h"
-#include "GPURenderPipelineDescriptor.h"
-#include "GPUShaderModule.h"
-#include "GPUShaderModuleDescriptor.h"
-
 namespace WebCore {
 
-RefPtr<GPUBuffer> GPUDevice::createBuffer(GPUBufferDescriptor&& descriptor) const
+Ref<GPUPipelineLayout> GPUPipelineLayout::create(GPUPipelineLayoutDescriptor&& descriptor)
 {
-    return GPUBuffer::create(*this, WTFMove(descriptor));
+    return adoptRef(*new GPUPipelineLayout(WTFMove(descriptor)));
 }
 
-Ref<GPUBindGroupLayout> GPUDevice::createBindGroupLayout(GPUBindGroupLayoutDescriptor&& descriptor) const
+GPUPipelineLayout::GPUPipelineLayout(GPUPipelineLayoutDescriptor&&)
 {
-    return GPUBindGroupLayout::create(WTFMove(descriptor));
-}
-
-Ref<GPUPipelineLayout> GPUDevice::createPipelineLayout(GPUPipelineLayoutDescriptor&& descriptor) const
-{
-    return GPUPipelineLayout::create(WTFMove(descriptor));
-}
-
-RefPtr<GPUShaderModule> GPUDevice::createShaderModule(GPUShaderModuleDescriptor&& descriptor) const
-{
-    return GPUShaderModule::create(*this, WTFMove(descriptor));
-}
-
-RefPtr<GPURenderPipeline> GPUDevice::createRenderPipeline(GPURenderPipelineDescriptor&& descriptor) const
-{
-    return GPURenderPipeline::create(*this, WTFMove(descriptor));
-}
-
-RefPtr<GPUCommandBuffer> GPUDevice::createCommandBuffer()
-{
-    return GPUCommandBuffer::create(*this);
-}
-
-RefPtr<GPUQueue> GPUDevice::getQueue()
-{
-    if (!m_queue)
-        m_queue = GPUQueue::create(*this);
-
-    return m_queue;
+    // FIXME: Stub implementation.
 }
 
 } // namespace WebCore

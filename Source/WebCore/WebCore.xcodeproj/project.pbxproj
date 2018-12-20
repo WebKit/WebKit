@@ -13722,6 +13722,9 @@
 		D003287921C8645B00622AA6 /* WebGPUBindGroupLayout.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebGPUBindGroupLayout.h; sourceTree = "<group>"; };
 		D003287A21C8645B00622AA6 /* WebGPUBindGroupLayout.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = WebGPUBindGroupLayout.cpp; sourceTree = "<group>"; };
 		D003287B21C8645B00622AA6 /* WebGPUBindGroupLayout.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = WebGPUBindGroupLayout.idl; sourceTree = "<group>"; };
+		D003288421C9A20D00622AA6 /* GPUPipelineLayoutDescriptor.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GPUPipelineLayoutDescriptor.h; sourceTree = "<group>"; };
+		D003288621C9A4E500622AA6 /* GPUPipelineLayout.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GPUPipelineLayout.h; sourceTree = "<group>"; };
+		D003288721C9A4E500622AA6 /* GPUPipelineLayout.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = GPUPipelineLayout.cpp; sourceTree = "<group>"; };
 		D00F5940216ECC7A000D71DB /* DOMWindowWebGPU.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DOMWindowWebGPU.h; sourceTree = "<group>"; };
 		D00F5941216ECC7A000D71DB /* DOMWindowWebGPU.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = DOMWindowWebGPU.cpp; sourceTree = "<group>"; };
 		D00F5942216ECC7A000D71DB /* DOMWindowWebGPU.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = DOMWindowWebGPU.idl; sourceTree = "<group>"; };
@@ -13810,6 +13813,11 @@
 		D045AD2121682474000A6E9B /* WebMetalBuffer.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = WebMetalBuffer.cpp; sourceTree = "<group>"; };
 		D045AD2221682474000A6E9B /* WebMetalCommandBuffer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebMetalCommandBuffer.h; sourceTree = "<group>"; };
 		D045AD2321682475000A6E9B /* WebMetalCommandQueue.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = WebMetalCommandQueue.cpp; sourceTree = "<group>"; };
+		D05A99E121C9B50F00032B75 /* WebGPUPipelineLayoutDescriptor.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebGPUPipelineLayoutDescriptor.h; sourceTree = "<group>"; };
+		D05A99E221C9B50F00032B75 /* WebGPUPipelineLayoutDescriptor.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = WebGPUPipelineLayoutDescriptor.idl; sourceTree = "<group>"; };
+		D05A99E421C9BF2C00032B75 /* WebGPUPipelineLayout.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebGPUPipelineLayout.h; sourceTree = "<group>"; };
+		D05A99E521C9BF2C00032B75 /* WebGPUPipelineLayout.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = WebGPUPipelineLayout.cpp; sourceTree = "<group>"; };
+		D05A99E621C9BF2C00032B75 /* WebGPUPipelineLayout.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = WebGPUPipelineLayout.idl; sourceTree = "<group>"; };
 		D05CED270A40BB2C00C5AF38 /* FormatBlockCommand.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = FormatBlockCommand.cpp; sourceTree = "<group>"; };
 		D05CED280A40BB2C00C5AF38 /* FormatBlockCommand.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = FormatBlockCommand.h; sourceTree = "<group>"; };
 		D060D88421825D5F00339318 /* WebGPUShaderModuleDescriptor.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = WebGPUShaderModuleDescriptor.idl; sourceTree = "<group>"; };
@@ -18070,6 +18078,9 @@
 				312FF8BE21A4C2F100EB199D /* GPUDevice.h */,
 				D0D8649921BA1B1F003C983C /* GPUInputStateDescriptor.h */,
 				312FF8C421A4C2F400EB199D /* GPUPipelineDescriptorBase.h */,
+				D003288721C9A4E500622AA6 /* GPUPipelineLayout.cpp */,
+				D003288621C9A4E500622AA6 /* GPUPipelineLayout.h */,
+				D003288421C9A20D00622AA6 /* GPUPipelineLayoutDescriptor.h */,
 				312FF8C221A4C2F300EB199D /* GPUPipelineStageDescriptor.h */,
 				D03211CF21AC954E00763CF2 /* GPUProgrammablePassEncoder.h */,
 				312FF8C121A4C2F200EB199D /* GPUQueue.h */,
@@ -25612,6 +25623,11 @@
 				D063AE4721C06626000E6A35 /* WebGPUInputStepMode.idl */,
 				D0C419F02183EB31009EC1DE /* WebGPUPipelineDescriptorBase.h */,
 				D0C419F12183EB31009EC1DE /* WebGPUPipelineDescriptorBase.idl */,
+				D05A99E521C9BF2C00032B75 /* WebGPUPipelineLayout.cpp */,
+				D05A99E421C9BF2C00032B75 /* WebGPUPipelineLayout.h */,
+				D05A99E621C9BF2C00032B75 /* WebGPUPipelineLayout.idl */,
+				D05A99E121C9B50F00032B75 /* WebGPUPipelineLayoutDescriptor.h */,
+				D05A99E221C9B50F00032B75 /* WebGPUPipelineLayoutDescriptor.idl */,
 				D0C419EB2183CFA2009EC1DE /* WebGPUPipelineStageDescriptor.h */,
 				D0C419EC2183CFA2009EC1DE /* WebGPUPipelineStageDescriptor.idl */,
 				D0EACF9221940A5B000FA75C /* WebGPUProgrammablePassEncoder.cpp */,

@@ -389,6 +389,8 @@ JS_BINDING_IDLS = \
     $(WebCore)/Modules/webgpu/WebGPUInputStepMode.idl \
     $(WebCore)/Modules/webgpu/WebGPUQueue.idl \
     $(WebCore)/Modules/webgpu/WebGPUPipelineDescriptorBase.idl \
+    $(WebCore)/Modules/webgpu/WebGPUPipelineLayout.idl \
+    $(WebCore)/Modules/webgpu/WebGPUPipelineLayoutDescriptor.idl \
     $(WebCore)/Modules/webgpu/WebGPUPipelineStageDescriptor.idl \
     $(WebCore)/Modules/webgpu/WebGPUProgrammablePassEncoder.idl \
     $(WebCore)/Modules/webgpu/WebGPURenderPassColorAttachmentDescriptor.idl \

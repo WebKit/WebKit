@@ -23,61 +23,24 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "GPUDevice.h"
+#pragma once
 
 #if ENABLE(WEBGPU)
 
-#include "GPUBindGroupLayout.h"
-#include "GPUBindGroupLayoutDescriptor.h"
-#include "GPUBuffer.h"
-#include "GPUBufferDescriptor.h"
-#include "GPUPipelineLayout.h"
 #include "GPUPipelineLayoutDescriptor.h"
-#include "GPURenderPipeline.h"
-#include "GPURenderPipelineDescriptor.h"
-#include "GPUShaderModule.h"
-#include "GPUShaderModuleDescriptor.h"
+
+#include <wtf/Ref.h>
+#include <wtf/RefCounted.h>
 
 namespace WebCore {
 
-RefPtr<GPUBuffer> GPUDevice::createBuffer(GPUBufferDescriptor&& descriptor) const
-{
-    return GPUBuffer::create(*this, WTFMove(descriptor));
-}
+class GPUPipelineLayout : public RefCounted<GPUPipelineLayout> {
+public:
+    static Ref<GPUPipelineLayout> create(GPUPipelineLayoutDescriptor&&);
 
-Ref<GPUBindGroupLayout> GPUDevice::createBindGroupLayout(GPUBindGroupLayoutDescriptor&& descriptor) const
-{
-    return GPUBindGroupLayout::create(WTFMove(descriptor));
-}
-
-Ref<GPUPipelineLayout> GPUDevice::createPipelineLayout(GPUPipelineLayoutDescriptor&& descriptor) const
-{
-    return GPUPipelineLayout::create(WTFMove(descriptor));
-}
-
-RefPtr<GPUShaderModule> GPUDevice::createShaderModule(GPUShaderModuleDescriptor&& descriptor) const
-{
-    return GPUShaderModule::create(*this, WTFMove(descriptor));
-}
-
-RefPtr<GPURenderPipeline> GPUDevice::createRenderPipeline(GPURenderPipelineDescriptor&& descriptor) const
-{
-    return GPURenderPipeline::create(*this, WTFMove(descriptor));
-}
-
-RefPtr<GPUCommandBuffer> GPUDevice::createCommandBuffer()
-{
-    return GPUCommandBuffer::create(*this);
-}
-
-RefPtr<GPUQueue> GPUDevice::getQueue()
-{
-    if (!m_queue)
-        m_queue = GPUQueue::create(*this);
-
-    return m_queue;
-}
+private:
+    explicit GPUPipelineLayout(GPUPipelineLayoutDescriptor&&);
+};
 
 } // namespace WebCore
 
