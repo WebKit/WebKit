@@ -1158,12 +1158,15 @@ static CFMutableSetRef allWebViewsSet;
 #if PLATFORM(IOS_FAMILY)
 - (void)_setBrowserUserAgentProductVersion:(NSString *)productVersion buildVersion:(NSString *)buildVersion bundleVersion:(NSString *)bundleVersion
 {
-    [self setApplicationNameForUserAgent:[NSString stringWithFormat:@"Version/%@ Mobile/%@ Safari/%@", productVersion, buildVersion, bundleVersion]];
+    // The web-visible build and bundle versions are frozen to remove a fingerprinting surface
+    UNUSED_PARAM(buildVersion);
+    [self setApplicationNameForUserAgent:[NSString stringWithFormat:@"Version/%@ Mobile/15E148 Safari/%@", productVersion, bundleVersion]];
 }
 
 - (void)_setUIWebViewUserAgentWithBuildVersion:(NSString *)buildVersion
 {
-    [self setApplicationNameForUserAgent:[@"Mobile/" stringByAppendingString:buildVersion]];
+    UNUSED_PARAM(buildVersion);
+    [self setApplicationNameForUserAgent:@"Mobile/15E148"];
 }
 #endif // PLATFORM(IOS_FAMILY)
 

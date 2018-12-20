@@ -456,7 +456,7 @@ static _WKDragLiftDelay toDragLiftDelay(NSUInteger value)
 static NSString *defaultApplicationNameForUserAgent()
 {
 #if PLATFORM(IOS_FAMILY)
-    return [@"Mobile/" stringByAppendingString:[UIDevice currentDevice].buildVersion];
+    return @"Mobile/15E148";
 #else
     return nil;
 #endif

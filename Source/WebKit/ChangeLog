@@ -1,3 +1,16 @@
+2018-12-20  Brent Fulgham  <bfulgham@apple.com>
+
+        WKWebView default UA doesn't freeze the build number
+        https://bugs.webkit.org/show_bug.cgi?id=192809
+        <rdar://problem/44687185>
+
+        Reviewed by Andy Estes.
+
+        Always reports the frozen build number.
+
+        * UIProcess/API/Cocoa/WKWebViewConfiguration.mm:
+        (defaultApplicationNameForUserAgent): Do not expose the actual build number through this API.
+
 2018-12-20  Jer Noble  <jer.noble@apple.com>
 
         Enable MediaCapabilities by default.
