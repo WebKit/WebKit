@@ -9,12 +9,12 @@ info: |
   GetValue ( V )
     ...
     5. If IsPropertyReference(V), then
-        ...
-        b. If IsPrivateReference(V), then
-            i. Let env be the running execution context's PrivateNameEnvironment.
-            ii. Let field be ? ResolveBinding(GetReferencedName(V), env).
-            iii. Assert: field is a Private Name.
-            iv. Return ? PrivateFieldGet(field, base).
+      ...
+      b. If IsPrivateReference(V), then
+        i. Let env be the running execution context's PrivateNameEnvironment.
+        ii. Let field be ? ResolveBinding(GetReferencedName(V), env).
+        iii. Assert: field is a Private Name.
+        iv. Return ? PrivateFieldGet(field, base).
 
   PrivateFieldGet (P, O )
     1. Assert: P is a Private Name value.

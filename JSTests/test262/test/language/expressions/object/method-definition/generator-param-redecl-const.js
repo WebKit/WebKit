@@ -4,7 +4,7 @@
 /*---
 info: |
  GeneratorMethod early SyntaxError when lexical declaration
- inside generator shadows parameter name 
+ inside generator shadows parameter name
 features: [generators]
 es6id: 14.4.1
 author: Sam Mikes
@@ -14,7 +14,7 @@ negative:
   type: SyntaxError
 ---*/
 
-throw "Test262: This statement should not be evaluated.";
+$DONOTEVALUATE();
 
 var obj = {
     *foo(a) {

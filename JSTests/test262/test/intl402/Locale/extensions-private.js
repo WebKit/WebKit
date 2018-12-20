@@ -39,8 +39,8 @@ const loc = new Intl.Locale("x-default", {
   region: "DE",
   numberingSystem: "latn",
 });
-assert.sameValue(loc.toString(), "x-default");
-assert.sameValue(loc.language, undefined);
-assert.sameValue(loc.script, undefined);
-assert.sameValue(loc.region, undefined);
-assert.sameValue(loc.numberingSystem, undefined);
+assert.sameValue(loc.toString(), "fr-Cyrl-DE-u-nu-latn");
+assert.sameValue(loc.language, "fr");
+assert.sameValue(loc.script, "Cyrl");
+assert.sameValue(loc.region, "DE");
+assert.sameValue(loc.numberingSystem, "latn");

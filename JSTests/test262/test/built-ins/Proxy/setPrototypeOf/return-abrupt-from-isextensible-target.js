@@ -9,6 +9,7 @@ info: |
   [[SetPrototypeOf]] (V)
 
   10. Let extensibleTarget be ? IsExtensible(target).
+features: [Proxy]
 ---*/
 
 var target = new Proxy({}, {

@@ -12,63 +12,68 @@ info: |
 
     Null -> Return +0.
 
+includes: [atomicsHelper.js]
 features: [Atomics, SharedArrayBuffer, TypedArray]
-includes: [ atomicsHelper.js ]
 ---*/
 
-function getReport() {
-  var r;
-  while ((r = $262.agent.getReport()) == null) {
-    $262.agent.sleep(100);
-  }
-  return r;
-}
+const RUNNING = 1;
 
-$262.agent.start(
-  `
-var poisonedValueOf = {
-  valueOf: function() {
-    throw new Error("should not evaluate this code");
-  }
-};
+$262.agent.start(`
+  const poisonedValueOf = {
+    valueOf: function() {
+      throw new Error("should not evaluate this code");
+    }
+  };
 
-var poisonedToPrimitive = {
-  [Symbol.toPrimitive]: function() {
-    throw new Error("passing a poisoned object using @@ToPrimitive");
-  }
-};
+  const poisonedToPrimitive = {
+    [Symbol.toPrimitive]: function() {
+      throw new Error("passing a poisoned object using @@ToPrimitive");
+    }
+  };
 
-$262.agent.receiveBroadcast(function (sab) {
-  var int32Array = new Int32Array(sab);
-  var start = Date.now();
-  try {
-    Atomics.wait(int32Array, 0, 0, poisonedValueOf);
-  } catch (error) {
-    $262.agent.report("poisonedValueOf");
-  }
-  try {
-    Atomics.wait(int32Array, 0, 0, poisonedToPrimitive);
-  } catch (error) {
-    $262.agent.report("poisonedToPrimitive");
-  }
-  $262.agent.report(Date.now() - start);
-  $262.agent.leaving();
-});
+  $262.agent.receiveBroadcast(function(sab) {
+    const i32a = new Int32Array(sab);
+    Atomics.add(i32a, ${RUNNING}, 1);
+
+    let status1 = "";
+    let status2 = "";
+
+    try {
+      Atomics.wait(i32a, 0, 0, poisonedValueOf);
+    } catch (error) {
+      status1 = "poisonedValueOf";
+    }
+    try {
+      Atomics.wait(i32a, 0, 0, poisonedToPrimitive);
+    } catch (error) {
+      status2 = "poisonedToPrimitive";
+    }
+
+    $262.agent.report(status1);
+    $262.agent.report(status2);
+    $262.agent.leaving();
+  });
 `);
 
-var int32Array = new Int32Array(new SharedArrayBuffer(Int32Array.BYTES_PER_ELEMENT));
+const i32a = new Int32Array(
+  new SharedArrayBuffer(Int32Array.BYTES_PER_ELEMENT * 4)
+);
 
-$262.agent.broadcast(int32Array.buffer);
-$262.agent.sleep(150);
+$262.agent.safeBroadcast(i32a);
+$262.agent.waitUntil(i32a, RUNNING, 1);
 
-assert.sameValue(getReport(), "poisonedValueOf");
-assert.sameValue(getReport(), "poisonedToPrimitive");
+// Try to yield control to ensure the agent actually started to wait.
+$262.agent.tryYield();
 
-var timeDiffReport = getReport();
+assert.sameValue(
+  $262.agent.getReport(),
+  'poisonedValueOf',
+  '$262.agent.getReport() returns "poisonedValueOf"'
+);
+assert.sameValue(
+  $262.agent.getReport(),
+  'poisonedToPrimitive',
+  '$262.agent.getReport() returns "poisonedToPrimitive"'
+);
 
-assert(timeDiffReport >= 0, "timeout should be a min of 0ms");
-
-assert(timeDiffReport <= $ATOMICS_MAX_TIME_EPSILON, "timeout should be a max of $$ATOMICS_MAX_TIME_EPSILON");
-
-assert.sameValue(Atomics.wake(int32Array, 0), 0);
-
+assert.sameValue(Atomics.notify(i32a, 0), 0, 'Atomics.notify(i32a, 0) returns 0');

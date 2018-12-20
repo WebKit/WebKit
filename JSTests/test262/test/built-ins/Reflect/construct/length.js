@@ -9,6 +9,7 @@ info: |
 
   The length property of the construct function is 2.
 includes: [propertyHelper.js]
+features: [Reflect, Reflect.construct]
 ---*/
 
 assert.sameValue(

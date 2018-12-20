@@ -26,7 +26,7 @@ info: |
     StringValue of Identifier is "await".
 
 ---*/
-throw "Test262: This statement should not be evaluated.";
+$DONOTEVALUATE();
 
 
 async() => {

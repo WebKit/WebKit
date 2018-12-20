@@ -29,8 +29,8 @@ const invalidCalendarOptions = [
   "abcdefghi",
   "abc-abcdefghi",
 ];
-for (const invalidCalendarOption of invalidCalendarOptions) {
+for (const calendar of invalidCalendarOptions) {
   assert.throws(RangeError, function() {
-    new Intl.Locale("en", {calendar: invalidCalendarOption});
-  }, `${invalidCalendarOption} is an invalid calendar option value`);
+    new Intl.Locale("en", {calendar});
+  }, `new Intl.Locale("en", {calendar: "${calendar}"}) throws RangeError`);
 }

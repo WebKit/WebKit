@@ -2,7 +2,7 @@
 // This code is governed by the BSD license found in the LICENSE file.
 /*---
 esid: sec-html-like-comments
-description: An HTMLCloseComment must be preceeded by a LineTerminator
+description: An HTMLCloseComment must be preceded by a LineTerminator
 info: |
     Comment ::
       MultiLineComment
@@ -18,6 +18,6 @@ negative:
   type: SyntaxError
 ---*/
 
-throw "Test262: This statement should not be evaluated.";
+$DONOTEVALUATE();
 
 ;-->

@@ -28,7 +28,7 @@ info: |
     StringValue of Identifier is "yield".
 
 ---*/
-throw "Test262: This statement should not be evaluated.";
+$DONOTEVALUATE();
 
 var C = class {*gen() {
     void yield;

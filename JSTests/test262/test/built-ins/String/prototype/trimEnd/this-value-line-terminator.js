@@ -26,5 +26,5 @@ var expected = lt + 'a' + lt + 'b';
 
 assert.sameValue(
   trimEnd.call(str),
-  expected,
+  expected
 );

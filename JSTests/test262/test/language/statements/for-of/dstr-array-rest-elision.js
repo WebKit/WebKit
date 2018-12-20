@@ -2,7 +2,7 @@
 // - src/dstr-assignment/array-rest-elision.case
 // - src/dstr-assignment/default/for-of.template
 /*---
-description: ArrayAssignmentPattern may include elisions at any position preceeding a AssignmentRestElement in a AssignmentElementList. (For..of statement)
+description: ArrayAssignmentPattern may include elisions at any position preceding a AssignmentRestElement in a AssignmentElementList. (For..of statement)
 esid: sec-for-in-and-for-of-statements-runtime-semantics-labelledevaluation
 es6id: 13.7.5.11
 features: [destructuring-binding]

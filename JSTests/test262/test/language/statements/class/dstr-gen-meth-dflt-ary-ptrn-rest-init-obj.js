@@ -2,7 +2,7 @@
 // - src/dstr-binding/ary-ptrn-rest-init-obj.case
 // - src/dstr-binding/default/cls-decl-gen-meth-dflt.template
 /*---
-description: Reset element (nested object pattern) does not support initializer (class expression method (default parameters))
+description: Rest element (nested object pattern) does not support initializer (class expression method (default parameters))
 esid: sec-class-definitions-runtime-semantics-evaluation
 es6id: 14.5.16
 features: [generators, destructuring-binding, default-parameters]
@@ -68,7 +68,7 @@ info: |
         [ BindingElementList[?Yield] ]
         [ BindingElementList[?Yield] , Elisionopt BindingRestElement[?Yield]opt ]
 ---*/
-throw "Test262: This statement should not be evaluated.";
+$DONOTEVALUATE();
 
 var callCount = 0;
 class C {

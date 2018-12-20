@@ -17,7 +17,7 @@ info: |
       Let status be PutValue(lhsRef, nextValue).
   ...
 
-features: [for-of,Symbol.iterator]
+features: [for-of, Symbol.iterator]
 ---*/
 
 var callCount = 0;

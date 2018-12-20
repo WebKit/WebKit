@@ -12,6 +12,8 @@ info: |
 features: [Intl.Locale]
 ---*/
 
+assert.sameValue(typeof Intl.Locale, "function");
+
 assert.throws(TypeError, function() {
   new Intl.Locale(0);
 }, "0 is an invalid tag value");

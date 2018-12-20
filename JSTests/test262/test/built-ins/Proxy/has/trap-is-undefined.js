@@ -11,6 +11,7 @@ info: |
     8. If trap is undefined, then
         a. Return target.[[HasProperty]](P).
     ...
+features: [Proxy]
 ---*/
 
 var target = Object.create(Array.prototype);

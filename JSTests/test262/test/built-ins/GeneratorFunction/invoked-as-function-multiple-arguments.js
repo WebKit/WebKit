@@ -6,7 +6,7 @@ description: >
     When invoked via the function invocation pattern with multiple arguments,
     the GeneratorFunction intrinsic creates a valid generator whose body is the
     last argument evaluated as source code and whose formal parameters are
-    defined by the preceeding arguments.
+    defined by the preceding arguments.
 features: [generators]
 ---*/
 

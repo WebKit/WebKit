@@ -17,6 +17,7 @@ info: |
   List elements. If length is 0, the empty string is returned.
 
   Ref: 7.1.3 ToNumber ( argument )
+features: [String.fromCodePoint]
 ---*/
 
 assert.sameValue(String.fromCodePoint(null), '\x00');

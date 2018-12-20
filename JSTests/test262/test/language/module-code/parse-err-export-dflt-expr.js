@@ -7,8 +7,9 @@ esid: sec-exports
 info: |
     ExportDeclaration:
       export * FromClause;
-      export ExportClause FromClause;
-      export ExportClause;
+      export * as IdentifierName FromClause;
+      export NamedExports FromClause;
+      export NamedExports;
       export VariableStatement
       export Declaration
       export default HoistableDeclaration[Default]
@@ -20,6 +21,6 @@ negative:
 flags: [module]
 ---*/
 
-throw "Test262: This statement should not be evaluated.";
+$DONOTEVALUATE();
 
 export default null, null;

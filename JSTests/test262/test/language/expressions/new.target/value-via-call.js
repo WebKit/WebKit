@@ -9,6 +9,7 @@ info: |
 
   [...]
   8. Return ? EvaluateDirectCall(func, thisValue, Arguments, tailCall).
+features: [new.target]
 ---*/
 
 var newTarget = null;

@@ -29,5 +29,5 @@ var expected = 'a' + wspc + 'b' + wspc;
 
 assert.sameValue(
   trimStart.call(str),
-  expected,
+  expected
 );

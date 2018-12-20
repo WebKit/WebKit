@@ -17,6 +17,6 @@ info: |
 ---*/
 
 
-throw "Test262: This statement should not be evaluated.";
+$DONOTEVALUATE();
 
 { let f; class f {}; }

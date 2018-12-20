@@ -27,6 +27,7 @@ info: |
   desc.[[Get]].
   7. If getter is undefined, return undefined.
   8. Return Call(getter, Receiver).
+features: [Reflect]
 ---*/
 
 var o1 = {};

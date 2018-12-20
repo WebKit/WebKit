@@ -3,7 +3,7 @@
 
 /*---
 info: |
-    Refer 13.1; 
+    Refer 13.1;
     It is a SyntaxError if any Identifier value occurs more than once within a FormalParameterList of a strict mode
     FunctionDeclaration or FunctionExpression.
 es5id: 13.1-5-s
@@ -17,6 +17,6 @@ negative:
 flags: [onlyStrict]
 ---*/
 
-throw "Test262: This statement should not be evaluated.";
+$DONOTEVALUATE();
 
 function _13_1_5_fun(param, param) { }

@@ -3,18 +3,17 @@
 /*---
 esid: pending
 description: |
-  Re-throws errors thrown while accessing species constructed RegExp's
-  global property
+  Doesn't access the "global" property of the constructed RegExp
 info: |
   RegExp.prototype [ @@matchAll ] ( string )
     [...]
-    3. Return ? MatchAllIterator(R, string).
-
-  MatchAllIterator ( R, O )
+    4. Let C be ? SpeciesConstructor(R, %RegExp%).
+    5. Let flags be ? ToString(? Get(R, "flags")).
+    6. Let matcher be ? Construct(C, « R, flags »).
     [...]
-    2. If ? IsRegExp(R) is true, then
-      [...]
-      d. Let global be ? ToBoolean(? Get(matcher, "global")).
+    9. If flags contains "g", let global be true.
+    10. Else, let global be false.
+    [...]
 features: [Symbol.matchAll, Symbol.species]
 ---*/
 
@@ -29,6 +28,4 @@ regexp.constructor = {
   }
 };
 
-assert.throws(Test262Error, function() {
-  regexp[Symbol.matchAll]('');
-});
+regexp[Symbol.matchAll]('');

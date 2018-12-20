@@ -28,6 +28,7 @@ info: |
     f. Else Receiver does not currently have a property P,
       i. Return CreateDataProperty(Receiver, P, V).
   ...
+features: [Reflect, Reflect.set]
 ---*/
 
 var o1 = {

@@ -772,6 +772,65 @@ function isCanonicalizedStructurallyValidLanguageTag(locale) {
 
 
 /**
+ * Returns an array of error cases handled by CanonicalizeLocaleList().
+ */
+function getInvalidLocaleArguments() {
+  function CustomError() {}
+
+  var topLevelErrors = [
+    // fails ToObject
+    [null, TypeError],
+
+    // fails Get
+    [{ get length() { throw new CustomError(); } }, CustomError],
+
+    // fail ToLength
+    [{ length: Symbol.toPrimitive }, TypeError],
+    [{ length: { get [Symbol.toPrimitive]() { throw new CustomError(); } } }, CustomError],
+    [{ length: { [Symbol.toPrimitive]() { throw new CustomError(); } } }, CustomError],
+    [{ length: { get valueOf() { throw new CustomError(); } } }, CustomError],
+    [{ length: { valueOf() { throw new CustomError(); } } }, CustomError],
+    [{ length: { get toString() { throw new CustomError(); } } }, CustomError],
+    [{ length: { toString() { throw new CustomError(); } } }, CustomError],
+
+    // fail type check
+    [[undefined], TypeError],
+    [[null], TypeError],
+    [[true], TypeError],
+    [[Symbol.toPrimitive], TypeError],
+    [[1], TypeError],
+    [[0.1], TypeError],
+    [[NaN], TypeError],
+  ];
+
+  var invalidLanguageTags = [
+    "", // empty tag
+    "i", // singleton alone
+    "x", // private use without subtag
+    "u", // extension singleton in first place
+    "419", // region code in first place
+    "u-nu-latn-cu-bob", // extension sequence without language
+    "hans-cmn-cn", // "hans" could theoretically be a 4-letter language code,
+                   // but those can't be followed by extlang codes.
+    "abcdefghi", // overlong language
+    "cmn-hans-cn-u-u", // duplicate singleton
+    "cmn-hans-cn-t-u-ca-u", // duplicate singleton
+    "de-gregory-gregory", // duplicate variant
+    "*", // language range
+    "de-*", // language range
+    "中文", // non-ASCII letters
+    "en-ß", // non-ASCII letters
+    "ıd" // non-ASCII letters
+  ];
+
+  return topLevelErrors.concat(
+    invalidLanguageTags.map(tag => [tag, RangeError]),
+    invalidLanguageTags.map(tag => [[tag], RangeError]),
+    invalidLanguageTags.map(tag => [["en", tag], RangeError]),
+  )
+}
+
+/**
  * Tests whether the named options property is correctly handled by the given constructor.
  * @param {object} Constructor the constructor to test.
  * @param {string} property the name of the options property to test.

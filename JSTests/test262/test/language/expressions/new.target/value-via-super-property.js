@@ -11,7 +11,7 @@ info: |
   [...]
   6. Let result be ? Construct(func, argList, newTarget).
   [...]
-features: [class]
+features: [class, new.target]
 ---*/
 
 var newTarget = null;

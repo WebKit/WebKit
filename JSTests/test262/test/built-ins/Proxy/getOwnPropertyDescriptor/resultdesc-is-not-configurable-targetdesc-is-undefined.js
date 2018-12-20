@@ -24,6 +24,7 @@ info: |
         a. If targetDesc is undefined or targetDesc.[[Configurable]] is true, then
             i. Throw a TypeError exception.
 
+features: [Proxy]
 ---*/
 
 var target = {};

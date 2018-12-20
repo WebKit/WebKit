@@ -19,7 +19,7 @@ try {
   probeBlock = function() { return x; };
 }
 
-assert.sameValue(probeBefore(), 4, 'reference preceeding statement');
+assert.sameValue(probeBefore(), 4, 'reference preceding statement');
 assert.sameValue(probeTry(), 4, 'reference from `try` block');
 assert.sameValue(probeParam(), 4, 'reference within CatchParameter');
 assert.sameValue(probeBlock(), 4, 'reference from `catch` block');

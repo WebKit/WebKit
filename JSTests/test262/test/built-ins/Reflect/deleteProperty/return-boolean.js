@@ -9,6 +9,7 @@ info: |
 
   ...
   4. Return target.[[Delete]](key).
+features: [Reflect]
 ---*/
 
 var o = {};

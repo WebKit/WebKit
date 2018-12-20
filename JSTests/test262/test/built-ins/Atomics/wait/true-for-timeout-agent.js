@@ -12,57 +12,64 @@ info: |
 
     Boolean -> If argument is true, return 1. If argument is false, return +0.
 
+includes: [atomicsHelper.js]
 features: [Atomics, SharedArrayBuffer, TypedArray]
-includes: [ atomicsHelper.js ]
 ---*/
 
-function getReport() {
-  var r;
-  while ((r = $262.agent.getReport()) == null) {
-    $262.agent.sleep(100);
-  }
-  return r;
-}
+const RUNNING = 1;
 
-$262.agent.start(
-  `
-var valueOf = {
-  valueOf: function() {
-    return true;
-  }
-};
+$262.agent.start(`
+  const valueOf = {
+    valueOf: function() {
+      return true;
+    }
+  };
 
-var toPrimitive = {
-  [Symbol.toPrimitive]: function() {
-    return true;
-  }
-};
+  const toPrimitive = {
+    [Symbol.toPrimitive]: function() {
+      return true;
+    }
+  };
 
-$262.agent.receiveBroadcast(function (sab) {
-  var int32Array = new Int32Array(sab);
-  var start = Date.now();
-  $262.agent.report(Atomics.wait(int32Array, 0, 0, true));
-  $262.agent.report(Atomics.wait(int32Array, 0, 0, valueOf));
-  $262.agent.report(Atomics.wait(int32Array, 0, 0, toPrimitive));
-  $262.agent.report(Date.now() - start);
-  $262.agent.leaving();
-})
+  $262.agent.receiveBroadcast(function(sab) {
+    const i32a = new Int32Array(sab);
+    Atomics.add(i32a, ${RUNNING}, 1);
+
+    const status1 = Atomics.wait(i32a, 0, 0, true);
+    const status2 = Atomics.wait(i32a, 0, 0, valueOf);
+    const status3 = Atomics.wait(i32a, 0, 0, toPrimitive);
+
+    $262.agent.report(status1);
+    $262.agent.report(status2);
+    $262.agent.report(status3);
+    $262.agent.leaving();
+  });
 `);
 
-var int32Array = new Int32Array(new SharedArrayBuffer(Int32Array.BYTES_PER_ELEMENT));
+const i32a = new Int32Array(
+  new SharedArrayBuffer(Int32Array.BYTES_PER_ELEMENT * 4)
+);
 
-$262.agent.broadcast(int32Array.buffer);
-$262.agent.sleep(150);
+$262.agent.safeBroadcast(i32a);
+$262.agent.waitUntil(i32a, RUNNING, 1);
 
-assert.sameValue(getReport(), 'timed-out');
-assert.sameValue(getReport(), 'timed-out');
-assert.sameValue(getReport(), 'timed-out');
+// Try to yield control to ensure the agent actually started to wait.
+$262.agent.tryYield();
 
-var timeDiffReport = getReport();
+assert.sameValue(
+  $262.agent.getReport(),
+  'timed-out',
+  '$262.agent.getReport() returns "timed-out"'
+);
+assert.sameValue(
+  $262.agent.getReport(),
+  'timed-out',
+  '$262.agent.getReport() returns "timed-out"'
+);
+assert.sameValue(
+  $262.agent.getReport(),
+  'timed-out',
+  '$262.agent.getReport() returns "timed-out"'
+);
 
-assert(timeDiffReport >= 0, 'timeout should be a min of 0ms');
-
-assert(timeDiffReport <= $ATOMICS_MAX_TIME_EPSILON, 'timeout should be a max of $$ATOMICS_MAX_TIME_EPSILON');
-
-assert.sameValue(Atomics.wake(int32Array, 0), 0);
-
+assert.sameValue(Atomics.notify(i32a, 0), 0, 'Atomics.notify(i32a, 0) returns 0');

@@ -40,7 +40,7 @@ try {
 assert.sameValue(
   Object.getOwnPropertyDescriptor(this, "shouldNotBeDefined1"),
   undefined,
-  "declaration preceeding"
+  "declaration preceding"
 );
 assert.sameValue(
   Object.getOwnPropertyDescriptor(this, "shouldNotBeDefined2"),

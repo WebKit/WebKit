@@ -7,6 +7,7 @@ description: >
 
     8. If trap is undefined, then return target.[[Set]](P, V, Receiver).
 
+features: [Proxy]
 ---*/
 
 var target = {

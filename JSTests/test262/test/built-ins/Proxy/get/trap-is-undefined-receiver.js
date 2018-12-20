@@ -10,6 +10,7 @@ info: |
 
     7. If trap is undefined, then
         a. Return ? target.[[Get]](P, Receiver).
+features: [Proxy]
 ---*/
 
 var target = {

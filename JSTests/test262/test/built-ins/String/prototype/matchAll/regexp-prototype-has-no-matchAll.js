@@ -10,15 +10,17 @@ info: |
       a. Let matcher be ? GetMethod(regexp, @@matchAll).
       b. If matcher is not undefined, then
         [...]
-    3. Return ? MatchAllIterator(regexp, O).
+    [...]
+    4. Let rx be ? RegExpCreate(R, "g").
+    5. Return ? Invoke(rx, @@matchAll, « S »).
+
 features: [Symbol.matchAll, String.prototype.matchAll]
 includes: [compareArray.js, compareIterator.js, regExpUtils.js]
 ---*/
 
 delete RegExp.prototype[Symbol.matchAll];
-var str = 'a*b';
+var str = '/a/g*/b/g';
 
-assert.compareIterator(str.matchAll(/\w/g), [
-  matchValidator(['a'], 0, str),
-  matchValidator(['b'], 2, str)
-]);
+assert.throws(TypeError, function() {
+  str.matchAll(/\w/g);
+});

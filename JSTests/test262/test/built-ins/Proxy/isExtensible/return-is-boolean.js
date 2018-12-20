@@ -4,6 +4,7 @@
 es6id: 9.5.3
 description: >
     The trap returns a boolean result.
+features: [Proxy]
 ---*/
 
 var target = {};

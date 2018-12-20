@@ -11,6 +11,7 @@ info: |
     ...
     15. If extensibleTarget is true and targetNonconfigurableKeys is empty, then
         a. Return trapResult.
+features: [Proxy]
 ---*/
 
 var p = new Proxy({

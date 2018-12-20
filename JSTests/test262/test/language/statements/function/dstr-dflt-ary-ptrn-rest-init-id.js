@@ -2,7 +2,7 @@
 // - src/dstr-binding/ary-ptrn-rest-init-id.case
 // - src/dstr-binding/default/func-decl-dflt.template
 /*---
-description: Reset element (identifier) does not support initializer (function declaration (default parameter))
+description: Rest element (identifier) does not support initializer (function declaration (default parameter))
 esid: sec-function-definitions-runtime-semantics-instantiatefunctionobject
 es6id: 14.1.19
 features: [destructuring-binding, default-parameters]
@@ -48,7 +48,7 @@ info: |
         [ BindingElementList[?Yield] ]
         [ BindingElementList[?Yield] , Elisionopt BindingRestElement[?Yield]opt ]
 ---*/
-throw "Test262: This statement should not be evaluated.";
+$DONOTEVALUATE();
 
 var callCount = 0;
 function f([...x = []] = []) {

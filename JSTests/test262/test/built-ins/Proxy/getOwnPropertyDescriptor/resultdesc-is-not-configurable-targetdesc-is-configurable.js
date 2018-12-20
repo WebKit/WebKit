@@ -14,6 +14,7 @@ info: |
         then
             i. Throw a TypeError exception.
     ...
+features: [Proxy]
 ---*/
 
 var target = {

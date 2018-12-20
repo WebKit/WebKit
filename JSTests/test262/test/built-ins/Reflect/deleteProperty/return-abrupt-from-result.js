@@ -10,7 +10,7 @@ info: |
   ...
   6. Return target.[[DefineOwnProperty]](key, desc).
   ...
-features: [Proxy]
+features: [Proxy, Reflect]
 ---*/
 
 var o = {};

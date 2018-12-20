@@ -22,6 +22,6 @@ var probeInside;
   probeInside = function() { return x; };
 }
 
-assert.sameValue(probeBefore(), 'inside', 'reference preceeding statement');
+assert.sameValue(probeBefore(), 'inside', 'reference preceding statement');
 assert.sameValue(probeInside(), 'inside', 'reference within statement');
 assert.sameValue(x, 'inside', 'reference following statement');

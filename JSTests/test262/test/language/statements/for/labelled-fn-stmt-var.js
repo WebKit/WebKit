@@ -13,6 +13,6 @@ info: |
     of the language mode.
 ---*/
 
-throw "Test262: This statement should not be evaluated.";
+$DONOTEVALUATE();
 
 for (var x; false; ) label1: label2: function f() {}

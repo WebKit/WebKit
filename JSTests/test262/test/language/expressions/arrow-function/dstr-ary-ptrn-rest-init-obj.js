@@ -2,7 +2,7 @@
 // - src/dstr-binding/ary-ptrn-rest-init-obj.case
 // - src/dstr-binding/default/arrow-function.template
 /*---
-description: Reset element (nested object pattern) does not support initializer (arrow function expression)
+description: Rest element (nested object pattern) does not support initializer (arrow function expression)
 esid: sec-arrow-function-definitions-runtime-semantics-evaluation
 es6id: 14.2.16
 features: [destructuring-binding]
@@ -46,7 +46,7 @@ info: |
         [ BindingElementList[?Yield] ]
         [ BindingElementList[?Yield] , Elisionopt BindingRestElement[?Yield]opt ]
 ---*/
-throw "Test262: This statement should not be evaluated.";
+$DONOTEVALUATE();
 
 var callCount = 0;
 var f;

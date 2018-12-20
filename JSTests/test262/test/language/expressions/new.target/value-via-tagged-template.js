@@ -9,7 +9,7 @@ info: |
 
    [...]
    4. Return ? EvaluateCall(tagRef, TemplateLiteral, tailCall).
-features: [template]
+features: [new.target, template]
 ---*/
 
 var newTarget = null;

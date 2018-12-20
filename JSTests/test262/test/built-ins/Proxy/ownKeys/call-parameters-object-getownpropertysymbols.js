@@ -7,7 +7,7 @@ description: >
 
     7. Let trapResultArray be ? Call(trap, handler, « target »).
 
-features: [Symbol]
+features: [Proxy, Symbol]
 ---*/
 
 var _target, _handler;

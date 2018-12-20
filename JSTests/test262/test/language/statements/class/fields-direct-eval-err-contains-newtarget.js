@@ -1,10 +1,10 @@
 // This file was procedurally generated from the following sources:
-// - src/class-fields/eval-err-contains-newtarget.case
-// - src/class-fields/initializer-eval-newtarget/cls-decl-fields-eval.template
+// - src/class-elements/eval-err-contains-newtarget.case
+// - src/class-elements/initializer-eval-newtarget/cls-decl-fields-eval.template
 /*---
 description: error if `new.target` in StatementList of eval (direct eval)
 esid: sec-performeval-rules-in-initializer
-features: [class, class-fields-public]
+features: [class, new.target, class-fields-public]
 flags: [generated]
 info: |
     Additional Early Error Rules for Eval Inside Initializer
@@ -16,7 +16,7 @@ info: |
 
     Additional Early Error Rules for Eval Outside Functions
     These static semantics are applied by PerformEval when a direct eval call occurs outside of any function.
-    ScriptBody:StatementList
+    ScriptBody : StatementList
 
       It is a Syntax Error if StatementList Contains NewTarget.
 

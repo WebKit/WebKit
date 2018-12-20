@@ -19,7 +19,7 @@ info: |
     b. ReturnIfAbrupt(targetIsExtensible).
     c. If targetIsExtensible is true, throw a TypeError exception.
   11. Return booleanTrapResult.
-features: [Proxy]
+features: [Proxy, Reflect]
 ---*/
 
 var p1 = new Proxy({}, {

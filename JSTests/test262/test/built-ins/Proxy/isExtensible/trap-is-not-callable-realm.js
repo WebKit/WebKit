@@ -19,7 +19,7 @@ info: |
         2. Let func be GetV(O, P).
         5. If IsCallable(func) is false, throw a TypeError exception.
         ...
-features: [cross-realm]
+features: [cross-realm, Proxy]
 ---*/
 
 var OProxy = $262.createRealm().global.Proxy;

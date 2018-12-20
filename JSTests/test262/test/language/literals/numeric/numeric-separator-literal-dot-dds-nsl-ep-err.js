@@ -25,6 +25,6 @@ negative:
 features: [numeric-separator-literal]
 ---*/
 
-throw "Test262: This statement should not be evaluated.";
+$DONOTEVALUATE();
 
 .0_e1

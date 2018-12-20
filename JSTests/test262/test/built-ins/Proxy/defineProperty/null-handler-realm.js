@@ -10,7 +10,7 @@ info: |
   1. Assert: IsPropertyKey(P) is true.
   2. Let handler be O.[[ProxyHandler]].
   3. If handler is null, throw a TypeError exception.
-features: [cross-realm]
+features: [cross-realm, Proxy]
 ---*/
 
 var OProxy = $262.createRealm().global.Proxy;

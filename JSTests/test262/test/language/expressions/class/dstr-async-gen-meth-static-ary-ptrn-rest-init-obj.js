@@ -2,7 +2,7 @@
 // - src/dstr-binding/ary-ptrn-rest-init-obj.case
 // - src/dstr-binding/default/cls-expr-async-gen-meth-static.template
 /*---
-description: Reset element (nested object pattern) does not support initializer (static class expression async generator method)
+description: Rest element (nested object pattern) does not support initializer (static class expression async generator method)
 esid: sec-class-definitions-runtime-semantics-evaluation
 features: [async-iteration]
 flags: [generated, async]
@@ -49,7 +49,7 @@ info: |
         [ BindingElementList[?Yield] ]
         [ BindingElementList[?Yield] , Elisionopt BindingRestElement[?Yield]opt ]
 ---*/
-throw "Test262: This statement should not be evaluated.";
+$DONOTEVALUATE();
 
 
 var callCount = 0;

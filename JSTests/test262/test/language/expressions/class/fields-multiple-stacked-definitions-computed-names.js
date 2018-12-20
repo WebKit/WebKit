@@ -1,10 +1,10 @@
 // This file was procedurally generated from the following sources:
-// - src/class-fields/computed-names.case
-// - src/class-fields/productions/cls-expr-multiple-stacked-definitions.template
+// - src/class-elements/computed-names.case
+// - src/class-elements/productions/cls-expr-multiple-stacked-definitions.template
 /*---
 description: Computed property names (multiple stacked fields definitions through ASI)
 esid: prod-FieldDefinition
-features: [computed-property-names, class, class-fields-public]
+features: [class-fields-public, computed-property-names, class]
 flags: [generated]
 includes: [propertyHelper.js]
 info: |
@@ -27,7 +27,7 @@ var C = class {
   [x] = 42; [10] = "meep"; ["not initialized"]
   foo = "foobar"
   bar = "barbaz";
-
+  
 }
 
 var c = new C();

@@ -1,3 +1,12 @@
+2018-12-19  Keith Miller  <keith_miller@apple.com>
+
+        Update test262 tests.
+        https://bugs.webkit.org/show_bug.cgi?id=192907
+
+        Rubber stamped by Mark Lam.
+
+        * test262/*: Omitted because prepare-changelog crashes.
+
 2018-12-19  Mark Lam  <mark.lam@apple.com>
 
         JSPropertyNameEnumerator should cache the iterated object's structure only after getting its property names.

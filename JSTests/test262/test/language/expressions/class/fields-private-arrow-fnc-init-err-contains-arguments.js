@@ -1,6 +1,6 @@
 // This file was procedurally generated from the following sources:
-// - src/class-fields/init-err-contains-arguments.case
-// - src/class-fields/initializer-error/cls-expr-fields-private-arrow-fnc.template
+// - src/class-elements/init-err-contains-arguments.case
+// - src/class-elements/initializer-error/cls-expr-fields-private-arrow-fnc.template
 /*---
 description: Syntax error if `arguments` used in class field (private field, arrow function expression)
 esid: sec-class-definitions-static-semantics-early-errors
@@ -27,7 +27,7 @@ info: |
 ---*/
 
 
-throw "Test262: This statement should not be evaluated.";
+$DONOTEVALUATE();
 
 var C = class {
   #x = () => arguments;

@@ -15,7 +15,7 @@ info: |
         b. If settingConfigFalse is true and targetDesc.[[Configurable]] is
         true, throw a TypeError exception.
     ...
-features: [cross-realm]
+features: [cross-realm, Proxy]
 ---*/
 
 var OProxy = $262.createRealm().global.Proxy;

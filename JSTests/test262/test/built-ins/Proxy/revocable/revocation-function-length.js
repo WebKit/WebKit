@@ -12,6 +12,7 @@ info: |
     object has the attributes { [[Writable]]: false, [[Enumerable]]: false,
     [[Configurable]]: true }.
 includes: [propertyHelper.js]
+features: [Proxy]
 ---*/
 
 var revocationFunction = Proxy.revocable({}, {}).revoke;

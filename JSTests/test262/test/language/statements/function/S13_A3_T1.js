@@ -9,7 +9,7 @@ info: |
 es5id: 13_A3_T1
 description: >
     Creating a recursive function that calculates factorial, as a
-    variable.  Function call itself by it`s name
+    variable.  Function call itself by its name
 ---*/
 
 var __func = function __exp__func(arg){

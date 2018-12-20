@@ -11,7 +11,7 @@ info: |
   2. Let keys be target.[[OwnPropertyKeys]]().
   3. ReturnIfAbrupt(keys).
   ...
-features: [Proxy]
+features: [Proxy, Reflect]
 ---*/
 
 var o = {};

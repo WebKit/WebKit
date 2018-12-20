@@ -4,7 +4,7 @@
 /*---
 description: Use of initializer when argument value is `undefined` (async function named expression)
 esid: sec-async-function-definitions
-features: [default-parameters]
+features: [default-parameters, async-functions]
 flags: [generated, async]
 info: |
     14.6 Async Function Definitions

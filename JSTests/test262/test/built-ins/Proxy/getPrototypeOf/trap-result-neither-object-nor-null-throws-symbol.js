@@ -4,7 +4,7 @@
 es6id: 9.5.1
 description: >
     Throw a TypeError exception if trap result is a Symbol.
-features: [Symbol]
+features: [Proxy, Symbol]
 ---*/
 
 var p = new Proxy({}, {

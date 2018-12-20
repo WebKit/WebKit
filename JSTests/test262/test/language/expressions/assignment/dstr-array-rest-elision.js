@@ -2,7 +2,7 @@
 // - src/dstr-assignment/array-rest-elision.case
 // - src/dstr-assignment/default/assignment-expr.template
 /*---
-description: ArrayAssignmentPattern may include elisions at any position preceeding a AssignmentRestElement in a AssignmentElementList. (AssignmentExpression)
+description: ArrayAssignmentPattern may include elisions at any position preceding a AssignmentRestElement in a AssignmentElementList. (AssignmentExpression)
 esid: sec-variable-statement-runtime-semantics-evaluation
 es6id: 13.3.2.4
 features: [destructuring-binding]

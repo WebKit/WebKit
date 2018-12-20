@@ -8,6 +8,7 @@ description: >
     Besides the length property (whose value is 2)
 
 includes: [propertyHelper.js]
+features: [Proxy]
 ---*/
 
 assert.sameValue(Proxy.length, 2, "The value of `Proxy.length` is `2`");

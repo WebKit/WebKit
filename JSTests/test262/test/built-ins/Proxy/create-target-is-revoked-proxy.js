@@ -9,6 +9,7 @@ description: >
     [[ProxyHandler]] internal slot of target is null, throw a
     TypeError exception.
     ...
+features: [Proxy]
 ---*/
 
 var revocable = Proxy.revocable({}, {});

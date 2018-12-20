@@ -4,7 +4,7 @@
 /*---
 description: >
   The first argument should have an own property
-includes: [propertyHelper.js,sta.js]
+includes: [propertyHelper.js]
 ---*/
 assert.throws(Test262Error, () => {
   verifyProperty(Object, 'JeanPaulSartre', {});

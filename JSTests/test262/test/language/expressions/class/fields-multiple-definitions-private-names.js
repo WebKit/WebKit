@@ -1,25 +1,25 @@
 // This file was procedurally generated from the following sources:
-// - src/class-fields/private-names.case
-// - src/class-fields/productions/cls-expr-multiple-definitions.template
+// - src/class-elements/private-names.case
+// - src/class-elements/productions/cls-expr-multiple-definitions.template
 /*---
-description: static literal private names (multiple fields definitions)
+description: private names (multiple fields definitions)
 esid: prod-FieldDefinition
 features: [class-fields-private, class, class-fields-public]
 flags: [generated]
 includes: [propertyHelper.js]
 info: |
-    ClassElement:
+    ClassElement :
       ...
       FieldDefinition ;
 
-    FieldDefinition:
+    FieldDefinition :
       ClassElementName Initializer_opt
 
-    ClassElementName:
+    ClassElementName :
       PrivateName
 
-    PrivateName:
-      #IdentifierName
+    PrivateName :
+      # IdentifierName
 
 ---*/
 
@@ -30,7 +30,7 @@ var C = class {
   #x; #y
   m2() { return 39 }
   bar = "barbaz";
-x() {
+  x() {
     this.#x = 42;
     return this.#x;
   }

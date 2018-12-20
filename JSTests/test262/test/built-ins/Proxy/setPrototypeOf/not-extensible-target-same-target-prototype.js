@@ -12,7 +12,7 @@ info: |
   12. Let targetProto be ? target.[[GetPrototypeOf]]().
   13. If SameValue(V, targetProto) is false, throw a TypeError exception.
   14. Return true.
-features: [Reflect.setPrototypeOf]
+features: [Proxy, Reflect, Reflect.setPrototypeOf]
 ---*/
 
 var proto = {};

@@ -18,6 +18,7 @@ info: |
     d. If SameValue(nextCP, ToInteger(nextCP)) is false, throw a RangeError
     exception.
   ...
+features: [String.fromCodePoint]
 ---*/
 
 assert.throws(RangeError, function() {

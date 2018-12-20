@@ -7,6 +7,7 @@ description: Value when invoked via `Function.prototype.apply`
 info: |
   [...]
   5. Return ? Call(func, thisArg, argList).
+features: [new.target]
 ---*/
 
 var newTarget = null;

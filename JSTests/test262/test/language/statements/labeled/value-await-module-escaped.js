@@ -16,6 +16,6 @@ negative:
 flags: [module]
 ---*/
 
-throw "Test262: This statement should not be evaluated.";
+$DONOTEVALUATE();
 
 aw\u0061it: 1;

@@ -3,11 +3,15 @@
 
 /*---
 es5id: 15.12.3_4-1-2
-description: JSON.stringify a circular object throws a TypeError
+description: JSON.stringify of an indirectly circular object throws a TypeError
 ---*/
 
-var obj = {};
-obj.prop = obj;
+var obj = {
+  p1: {
+    p2: {}
+  }
+};
+obj.p1.p2.prop = obj;
 
 assert.throws(TypeError, function() {
   JSON.stringify(obj);

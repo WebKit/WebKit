@@ -9,6 +9,7 @@ info: |
     [[Call]] (thisArgument, argumentsList)
 
     9. Return Call(trap, handler, «target, thisArgument, argArray»).
+features: [Proxy]
 ---*/
 
 var _target, _args, _handler, _context;

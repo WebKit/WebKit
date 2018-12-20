@@ -6,10 +6,15 @@ esid: sec-atomics.wait
 description: >
   Test that Atomics.wait times out with a negative timeout
 features: [Atomics, SharedArrayBuffer, TypedArray]
-flags: [CanBlockIsFalse]
+flags: [CanBlockIsTrue]
 ---*/
 
-var buffer = new SharedArrayBuffer(1024);
-var int32Array = new Int32Array(buffer);
+const i32a = new Int32Array(
+  new SharedArrayBuffer(Int32Array.BYTES_PER_ELEMENT * 4)
+);
 
-assert.sameValue(Atomics.wait(int32Array, 0, 0, -1), "timed-out");
+assert.sameValue(
+  Atomics.wait(i32a, 0, 0, -1),
+  "timed-out",
+  'Atomics.wait(i32a, 0, 0, -1) returns "timed-out"'
+);

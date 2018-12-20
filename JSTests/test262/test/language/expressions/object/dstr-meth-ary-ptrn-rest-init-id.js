@@ -2,7 +2,7 @@
 // - src/dstr-binding/ary-ptrn-rest-init-id.case
 // - src/dstr-binding/default/meth.template
 /*---
-description: Reset element (identifier) does not support initializer (method)
+description: Rest element (identifier) does not support initializer (method)
 esid: sec-runtime-semantics-definemethod
 es6id: 14.3.8
 features: [destructuring-binding]
@@ -49,7 +49,7 @@ info: |
         [ BindingElementList[?Yield] ]
         [ BindingElementList[?Yield] , Elisionopt BindingRestElement[?Yield]opt ]
 ---*/
-throw "Test262: This statement should not be evaluated.";
+$DONOTEVALUATE();
 
 var callCount = 0;
 var obj = {

@@ -28,7 +28,7 @@ class SubPromise extends Promise {
   }
 }
 
-var instance = Promise.all.call(SubPromise);
+var instance = Promise.all.call(SubPromise, []);
 
 assert.sameValue(instance.constructor, SubPromise);
 assert.sameValue(instance instanceof SubPromise, true);

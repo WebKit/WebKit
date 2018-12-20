@@ -9,6 +9,6 @@ negative:
 flags: [module]
 ---*/
 
-throw "Test262: This statement should not be evaluated.";
+$DONOTEVALUATE();
 
 do export default null; while (false)

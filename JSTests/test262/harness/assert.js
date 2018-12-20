@@ -27,7 +27,12 @@ assert._isSameValue = function (a, b) {
 };
 
 assert.sameValue = function (actual, expected, message) {
-  if (assert._isSameValue(actual, expected)) {
+  try {
+    if (assert._isSameValue(actual, expected)) {
+      return;
+    }
+  } catch (error) {
+    $ERROR(message + ' (_isSameValue operation threw) ' + error);
     return;
   }
 
@@ -85,11 +90,4 @@ assert.throws = function (expectedErrorConstructor, func, message) {
 
   message += 'Expected a ' + expectedErrorConstructor.name + ' to be thrown but no exception was thrown at all';
   $ERROR(message);
-};
-
-assert.throws.early = function(err, code) {
-  var wrappedCode = 'function wrapperFn() { ' + code + ' }';
-  var ieval = eval;
-
-  assert.throws(err, function() { Function(wrappedCode); }, 'Function: ' + code);
 };

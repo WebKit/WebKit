@@ -18,12 +18,12 @@ info: |
         if ( Expression[In, ?Yield] ) FunctionDeclaration[?Yield]
 
     B.3.3.2 Changes to GlobalDeclarationInstantiation
-    
+
     1. 1. Let strict be IsStrict of script
     2. If strict is *false*, then
        [...]
 ---*/
 
-throw "Test262: This statement should not be evaluated.";
+$DONOTEVALUATE();
 
 if (false) ; else function f() {}

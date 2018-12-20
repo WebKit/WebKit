@@ -41,6 +41,7 @@ info: |
   ...
   11. Return true.
 includes: [propertyHelper.js]
+features: [Reflect, Reflect.set]
 ---*/
 
 var o1 = {};

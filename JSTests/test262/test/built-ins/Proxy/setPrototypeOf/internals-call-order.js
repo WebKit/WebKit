@@ -14,7 +14,7 @@ info: |
   10. Let extensibleTarget be ? IsExtensible(target).
   11. If extensibleTarget is true, return true.
   12. Let targetProto be ? target.[[GetPrototypeOf]]().
-features: [Reflect.setPrototypeOf]
+features: [Proxy, Reflect, Reflect.setPrototypeOf]
 ---*/
 
 var calls = [];

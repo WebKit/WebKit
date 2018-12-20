@@ -1,10 +1,10 @@
 // This file was procedurally generated from the following sources:
-// - src/class-fields/init-err-evaluation.case
-// - src/class-fields/default/cls-expr.template
+// - src/class-elements/init-err-evaluation.case
+// - src/class-elements/default/cls-expr.template
 /*---
 description: Return abrupt completion evaluating the field initializer (field definitions in a class expression)
 esid: prod-FieldDefinition
-features: [class, class-fields-public]
+features: [class-fields-public, class]
 flags: [generated]
 info: |
     [[Construct]] ( argumentsList, newTarget)

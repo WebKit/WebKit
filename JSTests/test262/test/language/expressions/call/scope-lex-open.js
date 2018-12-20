@@ -4,7 +4,7 @@
 esid: sec-ecmascript-function-objects-call-thisargument-argumentslist
 description: >
     Creation of new variable environment for the function parameters and body
-    (as disinct from that for the function's BindingIdentifier)
+    (as distinct from that for the function's BindingIdentifier)
 info: |
     [...]
     3. Let callerContext be the running execution context.

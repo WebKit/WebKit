@@ -30,8 +30,8 @@ const invalidCaseFirstOptions = [
   "true",
   { valueOf() { return false; } },
 ];
-for (const invalidCaseFirstOption of invalidCaseFirstOptions) {
+for (const caseFirst of invalidCaseFirstOptions) {
   assert.throws(RangeError, function() {
-    new Intl.Locale("en", {caseFirst: invalidCaseFirstOption});
-  }, `${invalidCaseFirstOption} is an invalid caseFirst option value`);
+    new Intl.Locale("en", {caseFirst});
+  }, `new Intl.Locale("en", {caseFirst: "${caseFirst}"}) throws RangeError`);
 }

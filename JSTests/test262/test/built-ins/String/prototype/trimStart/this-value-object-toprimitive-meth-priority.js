@@ -63,7 +63,7 @@ assert.sameValue(
 assert.sameValue(
   result,
   '42',
-  'thisVal[Symbol.toPrimitive] expected to have been called.',
+  'thisVal[Symbol.toPrimitive] expected to have been called.'
 );
 
 // Test that thisVal.toString and thisVal.valueOf have not been accessedo

@@ -5,7 +5,7 @@
 esid: sec-atomics.sub
 description: Test Atomics.sub on arrays that allow atomic operations
 includes: [testAtomics.js, testTypedArray.js]
-features: [ArrayBuffer, arrow-function, Atomics, DataView, for-of, let, SharedArrayBuffer, TypedArray]
+features: [ArrayBuffer, Atomics, DataView, SharedArrayBuffer, Symbol, TypedArray]
 ---*/
 
 var sab = new SharedArrayBuffer(1024);
@@ -20,27 +20,27 @@ testWithTypedArrayConstructors(function(TA) {
 
   view[8] = 100;
   assert.sameValue(Atomics.sub(view, 8, 10), 100,
-    "Subtract positive number");
-  assert.sameValue(view[8], 90);
+    'Atomics.sub(view, 8, 10) returns 100');
+  assert.sameValue(view[8], 90, 'The value of view[8] is 90');
 
   assert.sameValue(Atomics.sub(view, 8, -5), 90,
-    "Subtract negative number, though result remains positive");
-  assert.sameValue(view[8], 95);
+    'Atomics.sub(view, 8, -5) returns 90');
+  assert.sameValue(view[8], 95, 'The value of view[8] is 95');
 
   view[3] = -5;
   control[0] = -5;
   assert.sameValue(Atomics.sub(view, 3, 0), control[0],
-    "Result is negative and subject to coercion");
+    'Atomics.sub(view, 3, 0) returns the value of `control[0]` (-5)');
 
   control[0] = 12345;
   view[3] = 12345;
   assert.sameValue(Atomics.sub(view, 3, 0), control[0],
-    "Result is subject to chopping");
+    'Atomics.sub(view, 3, 0) returns the value of `control[0]` (12345)');
 
   control[0] = 123456789;
   view[3] = 123456789;
   assert.sameValue(Atomics.sub(view, 3, 0), control[0],
-    "Result is subject to chopping");
+    'Atomics.sub(view, 3, 0) returns the value of `control[0]` (123456789)');
 
   // In-bounds boundary cases for indexing
   testWithAtomicsInBoundsIndices(function(IdxGen) {
@@ -49,6 +49,6 @@ testWithTypedArrayConstructors(function(TA) {
     // Atomics.store() computes an index from Idx in the same way as other
     // Atomics operations, not quite like view[Idx].
     Atomics.store(view, Idx, 37);
-    assert.sameValue(Atomics.sub(view, Idx, 0), 37);
+    assert.sameValue(Atomics.sub(view, Idx, 0), 37, 'Atomics.sub(view, Idx, 0) returns 37');
   });
 }, views);

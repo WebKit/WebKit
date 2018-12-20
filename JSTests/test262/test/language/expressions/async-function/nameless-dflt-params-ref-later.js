@@ -4,7 +4,7 @@
 /*---
 description: Referencing a parameter that occurs later in the ParameterList (async function nameless expression)
 esid: sec-async-function-definitions
-features: [default-parameters]
+features: [default-parameters, async-functions]
 flags: [generated, async]
 info: |
     14.6 Async Function Definitions

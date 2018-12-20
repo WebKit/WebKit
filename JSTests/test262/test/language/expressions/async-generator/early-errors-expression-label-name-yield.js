@@ -19,7 +19,7 @@ negative:
 features: [async-iteration]
 ---*/
 
-throw "Test262: This statement should not be evaluated.";
+$DONOTEVALUATE();
 
 (async function*() {
   yield: 1;

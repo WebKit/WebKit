@@ -33,6 +33,7 @@ info: |
   11. Return obj.
 
 includes: [compareArray.js]
+features: [Reflect]
 ---*/
 
 var o1 = {};

@@ -17,34 +17,34 @@ info: |
 
           If value is undefined, then
           Let index be 0.
+
+includes: [atomicsHelper.js]
 features: [Atomics, SharedArrayBuffer, TypedArray]
 ---*/
 
-$262.agent.start(
-`
-$262.agent.receiveBroadcast(function (sab) {
-  var int32Array = new Int32Array(sab);
-  $262.agent.report(Atomics.wait(int32Array, undefined, 0, 1000)); // undefined index => 0
-  $262.agent.leaving();
-})
+const RUNNING = 1;
+const TIMEOUT = $262.agent.timeouts.long;
+
+$262.agent.start(`
+  $262.agent.receiveBroadcast(function(sab) {
+    const i32a = new Int32Array(sab);
+    Atomics.add(i32a, ${RUNNING}, 1);
+
+    $262.agent.report(Atomics.wait(i32a, undefined, 0, ${TIMEOUT})); // undefined index => 0
+    $262.agent.leaving();
+  });
 `);
 
-var sab = new SharedArrayBuffer(4);
-var int32Array = new Int32Array(sab);
+const i32a = new Int32Array(
+  new SharedArrayBuffer(Int32Array.BYTES_PER_ELEMENT * 4)
+);
 
-$262.agent.broadcast(int32Array.buffer);
+$262.agent.safeBroadcast(i32a);
+$262.agent.waitUntil(i32a, RUNNING, 1);
 
-$262.agent.sleep(150);
+// Try to yield control to ensure the agent actually started to wait.
+$262.agent.tryYield();
 
-assert.sameValue(Atomics.wake(int32Array, 0), 1); // wake at index 0
-assert.sameValue(Atomics.wake(int32Array, 0), 0); // wake again at index 0, and 0 agents should be woken
-
-assert.sameValue(getReport(), "ok");
-
-function getReport() {
-  var r;
-  while ((r = $262.agent.getReport()) == null) {
-    $262.agent.sleep(100);
-  }
-  return r;
-}
+assert.sameValue(Atomics.notify(i32a, 0), 1, 'Atomics.notify(i32a, 0) returns 1'); // notify at index 0
+assert.sameValue(Atomics.notify(i32a, 0), 0, 'Atomics.notify(i32a, 0) returns 0'); // notify again at index 0, and 0 agents should be woken
+assert.sameValue($262.agent.getReport(), 'ok', '$262.agent.getReport() returns "ok"');

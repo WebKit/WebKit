@@ -16,7 +16,7 @@ info: |
       function * BindingIdentifier ( FormalParameters ) { GeneratorBody }
 
 ---*/
-throw "Test262: This statement should not be evaluated.";
+$DONOTEVALUATE();
 
 var callCount = 0;
 

@@ -2,7 +2,7 @@
 // - src/dstr-binding/ary-ptrn-rest-init-ary.case
 // - src/dstr-binding/default/cls-expr-gen-meth-dflt.template
 /*---
-description: Reset element (nested array pattern) does not support initializer (class expression method (default parameter))
+description: Rest element (nested array pattern) does not support initializer (class expression method (default parameter))
 esid: sec-class-definitions-runtime-semantics-evaluation
 es6id: 14.5.16
 features: [generators, destructuring-binding, default-parameters]
@@ -70,7 +70,7 @@ info: |
         [ BindingElementList[?Yield] ]
         [ BindingElementList[?Yield] , Elisionopt BindingRestElement[?Yield]opt ]
 ---*/
-throw "Test262: This statement should not be evaluated.";
+$DONOTEVALUATE();
 
 var callCount = 0;
 var C = class {

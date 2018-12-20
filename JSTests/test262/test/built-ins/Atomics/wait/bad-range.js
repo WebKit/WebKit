@@ -2,30 +2,25 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-esid: sec-atomics.wake
+esid: sec-atomics.wait
 description: >
-  Test range checking of Atomics.wake on arrays that allow atomic operations
+  Test range checking of Atomics.wait on arrays that allow atomic operations
 info: |
   Atomics.wait( typedArray, index, value, timeout )
 
   1. Let buffer be ? ValidateSharedIntegerTypedArray(typedArray, true).
   ...
 
-includes: [testAtomics.js, testTypedArray.js]
-features: [ArrayBuffer, arrow-function, Atomics, BigInt, DataView, for-of, let, SharedArrayBuffer, TypedArray]
+includes: [testAtomics.js]
+features: [ArrayBuffer, Atomics, DataView, SharedArrayBuffer, Symbol, TypedArray]
 ---*/
 
-var sab = new SharedArrayBuffer(8);
-var views = [Int32Array];
+const i32a = new Int32Array(
+  new SharedArrayBuffer(Int32Array.BYTES_PER_ELEMENT * 8)
+);
 
-if (typeof BigInt !== "undefined") {
-  views.push(BigInt64Array);
-  views.push(BigUint64Array);
-}
-
-testWithTypedArrayConstructors(function(TA) {
-  let view = new TA(sab);
-  testWithAtomicsOutOfBoundsIndices(function(IdxGen) {
-    assert.throws(RangeError, () => Atomics.wake(view, IdxGen(view), 0)); // Even with waking zero
-  });
-}, views);
+testWithAtomicsOutOfBoundsIndices(function(IdxGen) {
+  assert.throws(RangeError, function() {
+    Atomics.wait(i32a, IdxGen(i32a), 0, 0);
+  }, '`Atomics.wait(i32a, IdxGen(i32a), 0, 0)` throws RangeError');
+});

@@ -6,6 +6,7 @@ description: >
     [[Set]] ( P, V, Receiver)
 
     3. If handler is null, throw a TypeError exception.
+features: [Proxy]
 ---*/
 
 var p = Proxy.revocable({}, {});

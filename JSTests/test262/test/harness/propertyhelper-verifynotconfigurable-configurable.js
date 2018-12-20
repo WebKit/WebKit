@@ -5,7 +5,7 @@
 description: >
     Objects whose specified property is configurable do not satisfy the
     assertion.
-includes: [propertyHelper.js,sta.js]
+includes: [propertyHelper.js]
 ---*/
 var threw = false;
 var obj = {};

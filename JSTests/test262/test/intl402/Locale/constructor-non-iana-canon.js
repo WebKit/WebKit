@@ -57,12 +57,6 @@ var testData = [
         tag: "heb-x-private",
     },
     {
-        tag: "und-ita",
-        // canonical: "und" or "ita" ?
-        maximized: "en-Latn-US",
-        minimized: "und",
-    },
-    {
         tag: "de-u-kf",
         maximized: "de-Latn-DE-u-kf",
     },
@@ -81,10 +75,26 @@ var testData = [
 ];
 
 for (const {tag, canonical = tag, maximized = canonical, minimized = canonical} of testData) {
-    assert.sameValue(Intl.getCanonicalLocales(tag)[0], canonical);
+    assert.sameValue(
+      Intl.getCanonicalLocales(tag)[0],
+      canonical,
+      'The value of Intl.getCanonicalLocales(tag)[0] equals the value of `canonical`'
+    );
 
     const loc = new Intl.Locale(tag);
-    assert.sameValue(loc.toString(), canonical);
-    assert.sameValue(loc.maximize().toString(), maximized);
-    assert.sameValue(loc.minimize().toString(), minimized);
+    assert.sameValue(
+      new Intl.Locale(tag).toString(),
+      canonical,
+      `new Intl.Locale("${tag}").toString() returns "${canonical}"`
+    );
+    assert.sameValue(
+      new Intl.Locale(tag).maximize().toString(),
+      maximized,
+      `new Intl.Locale("${tag}").maximize().toString() returns "${maximized}"`
+    );
+    assert.sameValue(
+      new Intl.Locale(tag).minimize().toString(),
+      minimized,
+      `new Intl.Locale("${tag}").minimize().toString() returns "${minimized}"`
+    );
 }

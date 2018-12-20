@@ -6,7 +6,7 @@ description: >
     If a property has a corresponding target object property then applying the
     Property Descriptor of the property to the target object using
     [[DefineOwnProperty]] will not throw an exception.
-features: [Reflect]
+features: [Proxy, Reflect]
 includes: [propertyHelper.js]
 ---*/
 

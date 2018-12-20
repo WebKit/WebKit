@@ -12,6 +12,7 @@ info: |
         b. If IsAccessorDescriptor(targetDesc) and targetDesc.[[Configurable]] is false, then
             i. If targetDesc.[[Set]] is undefined, throw a TypeError exception.
 
+features: [Proxy]
 ---*/
 
 var target = {};

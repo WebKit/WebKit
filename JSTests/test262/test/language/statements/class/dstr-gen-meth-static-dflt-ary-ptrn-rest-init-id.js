@@ -2,7 +2,7 @@
 // - src/dstr-binding/ary-ptrn-rest-init-id.case
 // - src/dstr-binding/default/cls-decl-gen-meth-static-dflt.template
 /*---
-description: Reset element (identifier) does not support initializer (static class expression generator method (default parameter))
+description: Rest element (identifier) does not support initializer (static class expression generator method (default parameter))
 esid: sec-runtime-semantics-bindingclassdeclarationevaluation
 es6id: 14.5.15
 features: [generators, destructuring-binding, default-parameters]
@@ -68,7 +68,7 @@ info: |
         [ BindingElementList[?Yield] ]
         [ BindingElementList[?Yield] , Elisionopt BindingRestElement[?Yield]opt ]
 ---*/
-throw "Test262: This statement should not be evaluated.";
+$DONOTEVALUATE();
 
 var callCount = 0;
 class C {

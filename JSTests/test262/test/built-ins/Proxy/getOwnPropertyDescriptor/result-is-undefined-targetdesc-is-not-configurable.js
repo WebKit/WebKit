@@ -13,6 +13,7 @@ info: |
         ...
         b. If targetDesc.[[Configurable]] is false, throw a TypeError exception.
     ...
+features: [Proxy]
 ---*/
 
 var target = {};

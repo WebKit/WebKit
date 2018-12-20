@@ -7,7 +7,7 @@ description: >
 
     Returns true if trap returns true and target property is configurable
     but not writable.
-features: [Reflect]
+features: [Proxy, Reflect, Reflect.set]
 ---*/
 
 var target = {};

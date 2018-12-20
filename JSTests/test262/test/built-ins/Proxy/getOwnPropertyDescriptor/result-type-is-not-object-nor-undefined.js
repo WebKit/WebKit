@@ -11,15 +11,14 @@ info: |
     11. If Type(trapResultObj) is neither Object nor Undefined, throw a
     TypeError exception.
     ...
-features: [Symbol]
+features: [Proxy, Symbol]
 ---*/
 
 var target = {
   number: 1,
   symbol: Symbol(),
   string: '',
-  boolean: true,
-  fn: function() {}
+  boolean: true
 };
 var p = new Proxy(target, {
   getOwnPropertyDescriptor: function(t, prop) {
@@ -41,8 +40,4 @@ assert.throws(TypeError, function() {
 
 assert.throws(TypeError, function() {
   Object.getOwnPropertyDescriptor(p, "boolean");
-});
-
-assert.throws(TypeError, function() {
-  Object.getOwnPropertyDescriptor(p, "fn");
 });

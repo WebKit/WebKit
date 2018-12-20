@@ -11,6 +11,7 @@ info: |
     ...
     12. Return booleanTrapResult.
 flags: [noStrict]
+features: [Proxy]
 ---*/
 
 var target = {

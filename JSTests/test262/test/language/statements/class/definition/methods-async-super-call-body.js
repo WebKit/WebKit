@@ -7,6 +7,7 @@ esid: pending
 description: >
   Super calls work in body of async methods
 flags: [async]
+features: [async-functions]
 ---*/
 class A {
   async method() {

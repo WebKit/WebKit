@@ -10,6 +10,7 @@ info: |
     code containing NewTarget is eval code that is being processed by a direct
     eval that is contained in function code that is not the function code of an
     ArrowFunction.
+features: [new.target]
 ---*/
 
 var caught;

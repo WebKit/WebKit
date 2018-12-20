@@ -11,6 +11,7 @@ info: |
   2. If Type(proto) is not Object and proto is not null, throw a TypeError
   exception
   ...
+features: [Reflect, Reflect.setPrototypeOf]
 ---*/
 
 assert.throws(TypeError, function() {

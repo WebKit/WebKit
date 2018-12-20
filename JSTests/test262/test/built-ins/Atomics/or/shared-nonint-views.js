@@ -12,7 +12,9 @@ features: [Atomics, SharedArrayBuffer, TypedArray]
 var buffer = new SharedArrayBuffer(1024);
 
 testWithTypedArrayConstructors(function(TA) {
-  assert.throws(TypeError, (() => Atomics.or(new TA(buffer), 0, 0)));
+  assert.throws(TypeError, function() {
+    Atomics.or(new TA(buffer), 0, 0);
+  }, '`Atomics.or(new TA(buffer), 0, 0)` throws TypeError');
 }, floatArrayConstructors);
 
 

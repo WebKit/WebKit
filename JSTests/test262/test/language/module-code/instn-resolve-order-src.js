@@ -9,7 +9,7 @@ negative:
 flags: [module]
 ---*/
 
-throw "Test262: This statement should not be evaluated.";
+$DONOTEVALUATE();
 
 import './instn-resolve-order-src-valid_FIXTURE.js';
 import './instn-resolve-order-src-reference_FIXTURE.js';

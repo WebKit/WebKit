@@ -10,6 +10,7 @@ info: |
     ...
     1. Let p be the value of F’s [[RevocableProxy]] internal slot.
     2. If p is null, return undefined.
+features: [Proxy]
 ---*/
 
 var r = Proxy.revocable({}, {});

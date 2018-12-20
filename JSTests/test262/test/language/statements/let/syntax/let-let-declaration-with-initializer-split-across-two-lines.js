@@ -27,7 +27,7 @@ negative:
   type: SyntaxError
 ---*/
 
-throw "Test262: This statement should not be evaluated.";
+$DONOTEVALUATE();
 
 let  // start of a LexicalDeclaration, *not* an ASI opportunity
 let = "irrelevant initializer";

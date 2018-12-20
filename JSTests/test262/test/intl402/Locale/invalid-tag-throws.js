@@ -24,9 +24,10 @@ includes: [testIntl.js]
 features: [Intl.Locale]
 ---*/
 
+assert.sameValue(typeof Intl.Locale, "function");
+
 // Intl.Locale step 11.a.
 assert.throws(TypeError, function() { new Intl.Locale("en", null) })
-
 
 // ApplyOptionsToTag step 2.
 for (const invalidTag of getInvalidLanguageTags()) {

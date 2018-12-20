@@ -8,6 +8,7 @@ info: |
     [[Call]] (thisArgument, argumentsList)
 
     9. Return Call(trap, handler, «target, thisArgument, argArray»).
+features: [Proxy]
 ---*/
 
 var target = function(a, b) {

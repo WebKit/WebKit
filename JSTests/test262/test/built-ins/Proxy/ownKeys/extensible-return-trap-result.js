@@ -10,6 +10,7 @@ info: |
 
     ...
     18. If extensibleTarget is true, return trapResult.
+features: [Proxy]
 ---*/
 
 var target = {};

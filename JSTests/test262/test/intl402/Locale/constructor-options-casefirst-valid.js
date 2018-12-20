@@ -43,22 +43,24 @@ const validCaseFirstOptions = [
   { toString() { return false; } },
 ];
 for (const caseFirst of validCaseFirstOptions) {
-  const options = { caseFirst };
   const expected = String(caseFirst);
+  let expect = "en-u-kf-" + expected;
   assert.sameValue(
-    new Intl.Locale('en', options).toString(),
-    "en-u-kf-" + expected,
+    new Intl.Locale('en', { caseFirst }).toString(),
+    expect,
+    `new Intl.Locale("en", { caseFirst: "${caseFirst}" }).toString() returns "${expect}"`
+  );
+
+  expect = "en-u-kf-" + expected;
+  assert.sameValue(
+    new Intl.Locale('en-u-kf-lower', { caseFirst }).toString(),
+    expect,
+    `new Intl.Locale("en-u-kf-lower", { caseFirst: "${caseFirst}" }).toString() returns "${expect}"`
   );
 
   assert.sameValue(
-    new Intl.Locale('en-u-kf-lower', options).toString(),
-    "en-u-kf-" + expected,
+    new Intl.Locale('en-u-kf-lower', { caseFirst }).caseFirst,
+    expected,
+    `new Intl.Locale("en-u-kf-lower", { caseFirst }).caseFirst equals "${expected}"`
   );
-
-  if ("caseFirst" in Intl.Locale.prototype) {
-    assert.sameValue(
-      new Intl.Locale('en-u-kf-lower', options).caseFirst,
-      expected,
-    );
-  }
 }

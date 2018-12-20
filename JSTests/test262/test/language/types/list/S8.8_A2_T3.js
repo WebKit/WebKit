@@ -4,7 +4,7 @@
 /*---
 info: Values of the List type are simply ordered sequences of values
 es5id: 8.8_A2_T3
-description: Call function, that concatenate all it`s arguments
+description: Call function, that concatenate all its arguments
 ---*/
 
 function __mFunc(){var __accum=""; for (var i = 0; i < arguments.length; ++i){__accum += arguments[i]};return __accum;};

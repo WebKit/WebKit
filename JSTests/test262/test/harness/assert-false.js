@@ -4,7 +4,6 @@
 /*---
 description: >
     `false` does not satisfy the assertion.
-includes: [sta.js]
 ---*/
 
 var threw = false;

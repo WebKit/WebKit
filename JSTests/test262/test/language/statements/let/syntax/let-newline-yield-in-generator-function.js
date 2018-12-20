@@ -17,7 +17,7 @@ negative:
 features: [generators]
 ---*/
 
-throw "Test262: This statement should not be evaluated.";
+$DONOTEVALUATE();
 
 function* f() {
     let

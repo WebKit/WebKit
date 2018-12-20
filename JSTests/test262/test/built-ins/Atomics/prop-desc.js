@@ -24,15 +24,15 @@ includes: [propertyHelper.js]
 features: [Atomics]
 ---*/
 
-assert.sameValue(typeof Atomics, "object");
+assert.sameValue(typeof Atomics, "object", 'The value of `typeof Atomics` is "object"');
 
 assert.throws(TypeError, function() {
   Atomics();
-}, "no [[Call]]");
+}, '`Atomics()` throws TypeError');
 
 assert.throws(TypeError, function() {
   new Atomics();
-}, "no [[Construct]]");
+}, '`new Atomics()` throws TypeError');
 
 verifyProperty(this, "Atomics", {
   enumerable: false,

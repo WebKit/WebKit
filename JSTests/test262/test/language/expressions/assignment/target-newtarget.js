@@ -21,9 +21,10 @@ info: |
 negative:
   phase: parse
   type: ReferenceError
+features: [new.target]
 ---*/
 
-throw "Test262: This statement should not be evaluated.";
+$DONOTEVALUATE();
 
 function f() {
   new.target = 1;

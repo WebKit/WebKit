@@ -6,7 +6,7 @@ description: >
     [[Delete]] (P)
 
     The result is a Boolean value.
-features: [Reflect]
+features: [Proxy, Reflect]
 ---*/
 
 var target = {};

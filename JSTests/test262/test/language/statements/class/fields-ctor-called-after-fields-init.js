@@ -1,10 +1,10 @@
 // This file was procedurally generated from the following sources:
-// - src/class-fields/ctor-called-after-fields-init.case
-// - src/class-fields/default/cls-decl.template
+// - src/class-elements/ctor-called-after-fields-init.case
+// - src/class-elements/default/cls-decl.template
 /*---
 description: The constructor method is called after the fields are initalized (field definitions in a class declaration)
 esid: prod-FieldDefinition
-features: [class, class-fields-public]
+features: [class-fields-public, class]
 flags: [generated]
 info: |
     [[Construct]] ( argumentsList, newTarget)

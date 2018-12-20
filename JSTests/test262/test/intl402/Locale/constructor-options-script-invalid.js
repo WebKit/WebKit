@@ -45,8 +45,8 @@ const invalidScriptOptions = [
 
   7,
 ];
-for (const invalidScriptOption of invalidScriptOptions) {
+for (const script of invalidScriptOptions) {
   assert.throws(RangeError, function() {
-    new Intl.Locale("en", {script: invalidScriptOption});
-  }, `${invalidScriptOption} is an invalid script option value`);
+    new Intl.Locale("en", {script});
+  }, `new Intl.Locale("en", {script: "${script}"}) throws RangeError`);
 }

@@ -4,7 +4,6 @@
 /*---
 description: >
     Functions that do not throw errors do not satisfy the assertion.
-includes: [sta.js]
 ---*/
 
 var threw = false;

@@ -9,6 +9,7 @@ info: |
 
   The length property of the set function is 3.
 includes: [propertyHelper.js]
+features: [Reflect, Reflect.set]
 ---*/
 
 assert.sameValue(

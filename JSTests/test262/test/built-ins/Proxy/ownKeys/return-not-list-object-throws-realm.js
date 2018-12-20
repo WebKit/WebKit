@@ -17,7 +17,7 @@ info: |
 
     2. If Type(obj) is not Object, throw a TypeError exception.
 
-features: [cross-realm, Symbol]
+features: [cross-realm, Proxy, Symbol]
 ---*/
 
 var other = $262.createRealm().global;

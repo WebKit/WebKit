@@ -3,12 +3,12 @@
 /*---
 es6id: 13.1
 description: >
-    let declarations without initialisers in statement positions: 
+    let declarations without initialisers in statement positions:
     for ( ;;) Statement
 negative:
   phase: parse
   type: SyntaxError
 ---*/
 
-throw "Test262: This statement should not be evaluated.";
+$DONOTEVALUATE();
 for (;false;) let x;

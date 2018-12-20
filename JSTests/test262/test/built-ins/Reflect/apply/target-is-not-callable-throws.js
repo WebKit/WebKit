@@ -16,6 +16,7 @@ info: |
   2. If Type(argument) is not Object, return false.
   3. If argument has a [[Call]] internal method, return true.
   4. Return false.
+features: [Reflect]
 ---*/
 
 assert.throws(TypeError, function() {

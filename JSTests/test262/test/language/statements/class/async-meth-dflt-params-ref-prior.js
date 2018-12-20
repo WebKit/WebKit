@@ -4,7 +4,7 @@
 /*---
 description: Referencing a parameter that occurs earlier in the ParameterList (class declaration async method)
 esid: sec-class-definitions-runtime-semantics-evaluation
-features: [default-parameters]
+features: [default-parameters, async-functions]
 flags: [generated, async]
 info: |
     ClassDeclaration : class BindingIdentifier ClassTail

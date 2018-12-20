@@ -1,25 +1,25 @@
 // This file was procedurally generated from the following sources:
-// - src/class-fields/private-names.case
-// - src/class-fields/productions/cls-expr-new-sc-line-method.template
+// - src/class-elements/private-names.case
+// - src/class-elements/productions/cls-expr-new-sc-line-method.template
 /*---
-description: static literal private names (field definitions followed by a method in a new line with a semicolon)
+description: private names (field definitions followed by a method in a new line with a semicolon)
 esid: prod-FieldDefinition
 features: [class-fields-private, class, class-fields-public]
 flags: [generated]
 includes: [propertyHelper.js]
 info: |
-    ClassElement:
+    ClassElement :
       ...
       FieldDefinition ;
 
-    FieldDefinition:
+    FieldDefinition :
       ClassElementName Initializer_opt
 
-    ClassElementName:
+    ClassElementName :
       PrivateName
 
-    PrivateName:
-      #IdentifierName
+    PrivateName :
+      # IdentifierName
 
 ---*/
 
@@ -27,7 +27,7 @@ info: |
 var C = class {
   #x; #y;
   m() { return 42; }
-x() {
+  x() {
     this.#x = 42;
     return this.#x;
   }

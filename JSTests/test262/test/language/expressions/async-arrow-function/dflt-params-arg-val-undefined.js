@@ -4,7 +4,7 @@
 /*---
 description: Use of initializer when argument value is `undefined` (async arrow function expression)
 esid: sec-async-arrow-function-definitions
-features: [default-parameters]
+features: [default-parameters, async-functions]
 flags: [generated, async]
 info: |
     14.7 Async Arrow Function Definitions

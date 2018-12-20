@@ -1,10 +1,10 @@
 // This file was procedurally generated from the following sources:
-// - src/class-fields/init-value-incremental.case
-// - src/class-fields/default/cls-expr.template
+// - src/class-elements/init-value-incremental.case
+// - src/class-elements/default/cls-expr.template
 /*---
 description: The initializer value is defined during the class instatiation (field definitions in a class expression)
 esid: prod-FieldDefinition
-features: [computed-property-names, class, class-fields-public]
+features: [class-fields-public, computed-property-names, class]
 flags: [generated]
 includes: [propertyHelper.js]
 info: |

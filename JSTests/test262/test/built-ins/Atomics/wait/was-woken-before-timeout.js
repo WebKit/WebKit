@@ -18,39 +18,44 @@ info: |
 
           If value is undefined, then
           Let index be 0.
+includes: [atomicsHelper.js]
 features: [Atomics, SharedArrayBuffer, TypedArray]
 ---*/
 
-var sleeping = 100;
-var timeout = 20000;
+const RUNNING = 1;
+const TIMEOUT = $262.agent.timeouts.huge;
 
-function getReport() {
-  var r;
-  while ((r = $262.agent.getReport()) == null) {
-    sleeping += 100;
-    $262.agent.sleep(100);
-  }
-  return r;
-}
+$262.agent.start(`
+  $262.agent.receiveBroadcast(function(sab) {
+    const i32a = new Int32Array(sab);
+    Atomics.add(i32a, ${RUNNING}, 1);
 
-$262.agent.start(
-`
-$262.agent.receiveBroadcast(function(sab) {
-  var int32Array = new Int32Array(sab);
-  $262.agent.report(Atomics.wait(int32Array, 0, 0, ${timeout}));
-  $262.agent.leaving();
-});
+    const before = $262.agent.monotonicNow();
+    const unpark = Atomics.wait(i32a, 0, 0, ${TIMEOUT});
+    const duration = $262.agent.monotonicNow() - before;
+
+    $262.agent.report(duration);
+    $262.agent.report(unpark);
+    $262.agent.leaving();
+  });
 `);
 
-var sab = new SharedArrayBuffer(4);
-var int32Array = new Int32Array(sab);
+const i32a = new Int32Array(
+  new SharedArrayBuffer(Int32Array.BYTES_PER_ELEMENT * 4)
+);
 
+$262.agent.safeBroadcast(i32a);
+$262.agent.waitUntil(i32a, RUNNING, 1);
 
-$262.agent.broadcast(int32Array.buffer);
-$262.agent.sleep(sleeping);
+// Try to yield control to ensure the agent actually started to wait.
+$262.agent.tryYield();
 
-assert.sameValue(Atomics.wake(int32Array, 0), 1);
+assert.sameValue(Atomics.notify(i32a, 0), 1, 'Atomics.notify(i32a, 0) returns 1');
 
-assert.sameValue(getReport(), "ok");
-assert(sleeping < timeout, "this test assumes it won't last for more than 20 seconds");
+const lapse = $262.agent.getReport();
 
+assert(
+  lapse < TIMEOUT,
+  'The result of `(lapse < TIMEOUT)` is true'
+);
+assert.sameValue($262.agent.getReport(), 'ok', '$262.agent.getReport() returns "ok"');

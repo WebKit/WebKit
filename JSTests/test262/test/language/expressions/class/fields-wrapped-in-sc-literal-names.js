@@ -1,10 +1,10 @@
 // This file was procedurally generated from the following sources:
-// - src/class-fields/literal-names.case
-// - src/class-fields/productions/cls-expr-wrapped-in-sc.template
+// - src/class-elements/literal-names.case
+// - src/class-elements/productions/cls-expr-wrapped-in-sc.template
 /*---
 description: Literal property names (fields definition wrapped in semicolons)
 esid: prod-FieldDefinition
-features: [class, class-fields-public]
+features: [class-fields-public, class]
 flags: [generated]
 includes: [propertyHelper.js]
 info: |
@@ -28,7 +28,7 @@ var C = class {
   ;;;;;;a; b = 42;
   c = fn;;;;;;;
   ;;;;
-
+  
 }
 
 var c = new C();

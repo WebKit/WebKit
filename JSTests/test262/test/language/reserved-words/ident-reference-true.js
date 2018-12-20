@@ -15,7 +15,7 @@ negative:
   type: SyntaxError
 ---*/
 
-throw "Test262: This statement should not be evaluated.";
+$DONOTEVALUATE();
 
 // It's tempting to write `true = 0`, but that'd be a test to validate `true`
 // is not a valid simple assignment target, cf. tests in language/expressions/assignment.

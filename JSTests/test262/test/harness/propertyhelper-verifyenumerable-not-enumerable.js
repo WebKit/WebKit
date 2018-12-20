@@ -5,7 +5,7 @@
 description: >
     Objects whose specified string property is not enumerable do not satisfy the
     assertion.
-includes: [propertyHelper.js,sta.js]
+includes: [propertyHelper.js]
 ---*/
 var threw = false;
 var obj = {};

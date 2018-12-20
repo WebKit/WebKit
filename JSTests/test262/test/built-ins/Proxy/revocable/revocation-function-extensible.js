@@ -8,6 +8,7 @@ info: |
   17 ECMAScript Standard Built-in Objects:
     Unless specified otherwise, the [[Extensible]] internal slot
     of a built-in object initially has the value true.
+features: [Proxy]
 ---*/
 
 var revocationFunction = Proxy.revocable({}, {}).revoke;

@@ -3,7 +3,7 @@
 
 /*---
 info: |
-    Refer 13; 
+    Refer 13;
     The production FunctionBody : SourceElementsopt is evaluated as follows:
 es5id: 13.0-10-s
 description: >
@@ -16,7 +16,7 @@ negative:
 flags: [noStrict]
 ---*/
 
-throw "Test262: This statement should not be evaluated.";
+$DONOTEVALUATE();
 
 function _13_0_10_fun() {
     function _13_0_10_inner() {

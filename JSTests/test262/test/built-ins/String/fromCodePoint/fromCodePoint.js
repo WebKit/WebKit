@@ -9,6 +9,7 @@ info: |
 
   17 ECMAScript Standard Built-in Objects
 includes: [propertyHelper.js]
+features: [String.fromCodePoint]
 ---*/
 
 verifyNotEnumerable(String, 'fromCodePoint');

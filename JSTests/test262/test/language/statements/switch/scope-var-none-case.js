@@ -25,7 +25,7 @@ switch (eval('var x = 1;'), probeExpr = function() { return x; }, null) {
     var x = 3;
 }
 
-assert.sameValue(probeBefore(), 3, 'reference preceeding statement');
+assert.sameValue(probeBefore(), 3, 'reference preceding statement');
 assert.sameValue(probeExpr(), 3, 'reference from first Expression');
 assert.sameValue(probeSelector(), 3, 'reference from "selector" Expression');
 assert.sameValue(probeStmt(), 3, 'reference from Statement position');

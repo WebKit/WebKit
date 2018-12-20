@@ -6,6 +6,7 @@ description: >
     The result of [[HasProperty]] is a Boolean value and will affect has
     checkings. True returned when target property exists;
 flags: [noStrict]
+features: [Proxy]
 ---*/
 
 var target = {

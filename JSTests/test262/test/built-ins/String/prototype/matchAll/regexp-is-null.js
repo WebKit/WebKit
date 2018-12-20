@@ -8,14 +8,9 @@ info: |
     1. Let O be ? RequireObjectCoercible(this value).
     2. If regexp is neither undefined nor null, then
       [...]
-    3. Return ? MatchAllIterator(regexp, O).
-
-  MatchAllIterator( regexp, O )
-    [...]
-    2. If ? IsRegExp(regexp) is true, then
-      [...]
-    3. Else,
-      a. Let R be RegExpCreate(regexp, "g").
+    3. Let S be ? ToString(O).
+    4. Let rx be ? RegExpCreate(R, "g").
+    5. Return ? Invoke(rx, @@matchAll, « S »).
 features: [String.prototype.matchAll]
 includes: [compareArray.js, compareIterator.js, regExpUtils.js]
 ---*/

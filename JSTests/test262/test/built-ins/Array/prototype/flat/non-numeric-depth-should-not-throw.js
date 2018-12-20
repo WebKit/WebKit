@@ -17,27 +17,27 @@ var actual = a.flat(depthNum);
 assert(compareArray(actual, expected), 'non integral string depthNum');
 
 // object type depthNum is converted to 0
-var depthNum = {};
-var actual = a.flat(depthNum);
+depthNum = {};
+actual = a.flat(depthNum);
 assert(compareArray(actual, expected), 'object type depthNum');
 
 // negative infinity depthNum is converted to 0
-var depthNum = Number.NEGATIVE_INFINITY;
-var actual = a.flat(depthNum);
+depthNum = Number.NEGATIVE_INFINITY;
+actual = a.flat(depthNum);
 assert(compareArray(actual, expected), 'negative infinity depthNum');
 
 // positive zero depthNum is converted to 0
-var depthNum = +0;
-var actual = a.flat(depthNum);
+depthNum = +0;
+actual = a.flat(depthNum);
 assert(compareArray(actual, expected), 'positive zero depthNum');
 
 // negative zero depthNum is converted to 0
-var depthNum = -0;
-var actual = a.flat(depthNum);
+depthNum = -0;
+actual = a.flat(depthNum);
 assert(compareArray(actual, expected), 'negative zero depthNum');
 
 // integral string depthNum is converted to an integer
-var depthNum = '1';
-var actual = a.flat(depthNum);
-var expected = [1, 2]
+depthNum = '1';
+actual = a.flat(depthNum);
+expected = [1, 2]
 assert(compareArray(actual, expected), 'integral string depthNum');

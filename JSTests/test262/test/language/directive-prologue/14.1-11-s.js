@@ -3,7 +3,7 @@
 
 /*---
 es5id: 14.1-11-s
-description: comments may preceed 'use strict' directive
+description: comments may precede 'use strict' directive
 flags: [noStrict]
 ---*/
 

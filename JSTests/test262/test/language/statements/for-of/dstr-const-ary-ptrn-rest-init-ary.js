@@ -2,7 +2,7 @@
 // - src/dstr-binding/ary-ptrn-rest-init-ary.case
 // - src/dstr-binding/default/for-of-const.template
 /*---
-description: Reset element (nested array pattern) does not support initializer (for-of statement)
+description: Rest element (nested array pattern) does not support initializer (for-of statement)
 esid: sec-for-in-and-for-of-statements-runtime-semantics-labelledevaluation
 es6id: 13.7.5.11
 features: [destructuring-binding]
@@ -45,7 +45,7 @@ info: |
         [ BindingElementList[?Yield] ]
         [ BindingElementList[?Yield] , Elisionopt BindingRestElement[?Yield]opt ]
 ---*/
-throw "Test262: This statement should not be evaluated.";
+$DONOTEVALUATE();
 
 var iterCount = 0;
 

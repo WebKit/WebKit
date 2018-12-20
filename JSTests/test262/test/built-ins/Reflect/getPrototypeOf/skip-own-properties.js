@@ -9,6 +9,7 @@ info: |
 
   ...
   2. Return target.[[GetPrototypeOf]]().
+features: [Reflect]
 ---*/
 
 var valid = {};

@@ -13,25 +13,37 @@ info: |
     Boolean -> If argument is true, return 1. If argument is false, return +0.
 
 features: [Atomics, SharedArrayBuffer, Symbol, Symbol.toPrimitive, TypedArray]
-flags: [CanBlockIsFalse]
+flags: [CanBlockIsTrue]
 ---*/
 
-var buffer = new SharedArrayBuffer(1024);
-var int32Array = new Int32Array(buffer);
+const i32a = new Int32Array(
+  new SharedArrayBuffer(Int32Array.BYTES_PER_ELEMENT * 4)
+);
 
-var valueOf = {
+const valueOf = {
   valueOf: function() {
     return true;
   }
 };
 
-var toPrimitive = {
+const toPrimitive = {
   [Symbol.toPrimitive]: function() {
     return true;
   }
 };
 
-assert.sameValue(Atomics.wait(int32Array, 0, 0, true), "timed-out");
-assert.sameValue(Atomics.wait(int32Array, 0, 0, valueOf), "timed-out");
-assert.sameValue(Atomics.wait(int32Array, 0, 0, toPrimitive), "timed-out");
-
+assert.sameValue(
+  Atomics.wait(i32a, 0, 0, true),
+  'timed-out',
+  'Atomics.wait(i32a, 0, 0, true) returns "timed-out"'
+);
+assert.sameValue(
+  Atomics.wait(i32a, 0, 0, valueOf),
+  'timed-out',
+  'Atomics.wait(i32a, 0, 0, valueOf) returns "timed-out"'
+);
+assert.sameValue(
+  Atomics.wait(i32a, 0, 0, toPrimitive),
+  'timed-out',
+  'Atomics.wait(i32a, 0, 0, toPrimitive) returns "timed-out"'
+);

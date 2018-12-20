@@ -11,6 +11,7 @@ info: |
     8. Let booleanTrapResult be ToBoolean(Call(trap, handler, «target»)).
     9. ReturnIfAbrupt(booleanTrapResult).
     ...
+features: [Proxy]
 ---*/
 
 var p = new Proxy({}, {

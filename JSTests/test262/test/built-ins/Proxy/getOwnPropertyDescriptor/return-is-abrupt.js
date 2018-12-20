@@ -11,6 +11,7 @@ info: |
     9. Let trapResultObj be Call(trap, handler, «target, P»).
     10. ReturnIfAbrupt(trapResultObj).
     ...
+features: [Proxy]
 ---*/
 
 var p = new Proxy({}, {

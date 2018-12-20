@@ -16,6 +16,7 @@ info: |
         5. If IsCallable(func) is false, throw a TypeError exception.
         ...
 flags: [noStrict]
+features: [Proxy]
 ---*/
 
 var target = {};

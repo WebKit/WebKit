@@ -34,8 +34,8 @@ const invalidNumberingSystemOptions = [
   "latn-ca-",
   "latn-ca-gregory",
 ];
-for (const invalidNumberingSystemOption of invalidNumberingSystemOptions) {
+for (const numberingSystem of invalidNumberingSystemOptions) {
   assert.throws(RangeError, function() {
-    new Intl.Locale("en", {numberingSystem: invalidNumberingSystemOption});
-  }, `${invalidNumberingSystemOption} is an invalid numberingSystem option value`);
+    new Intl.Locale('en', {numberingSystem});
+  }, `new Intl.Locale("en", {numberingSystem: "${numberingSystem}"}) throws RangeError`);
 }

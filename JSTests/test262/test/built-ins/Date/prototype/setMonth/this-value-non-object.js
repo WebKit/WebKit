@@ -51,4 +51,4 @@ assert.throws(TypeError, function() {
   setMonth.call(symbol, arg);
 }, 'symbol');
 
-assert.sameValue(callCount, 0, 'validation preceeds input coercion');
+assert.sameValue(callCount, 0, 'validation precedes input coercion');

@@ -16,6 +16,6 @@ info: |
          StatementList
 ---*/
 
-throw "Test262: This statement should not be evaluated.";
+$DONOTEVALUATE();
 
 import v from './import.js';

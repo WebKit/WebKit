@@ -9,7 +9,7 @@ negative:
 flags: [module]
 ---*/
 
-throw "Test262: This statement should not be evaluated.";
+$DONOTEVALUATE();
 
 try { } catch (err) { } finally {
   import v from './decl-pos-import-try-catch-finally.js';

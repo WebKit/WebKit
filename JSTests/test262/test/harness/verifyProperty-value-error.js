@@ -8,7 +8,7 @@ description: >
         verifyProperty()
         ...
 
-includes: [propertyHelper.js,sta.js]
+includes: [propertyHelper.js]
 ---*/
 
 var threw = false;

@@ -4,10 +4,11 @@
 /*---
 esid: sec-intl.locale
 description: >
-    Checks error cases for the options argument to the Locale
-    constructor.
+    Verify valid language option values (various)
 info: |
     Intl.Locale( tag [, options] )
+    9. Else,
+        a. Let tag be ? ToString(tag).
     10. If options is undefined, then
     11. Else
         a. Let options be ? ToObject(options).
@@ -30,34 +31,32 @@ features: [Intl.Locale]
 ---*/
 
 const validScriptOptions = [
-  [undefined, undefined],
   [null, 'Null'],
   ['bali', 'Bali'],
   ['Bali', 'Bali'],
-  ['bALI', 'BALI'], // TODO REVIEW: is this the correct case regularization?
+  ['bALI', 'Bali'],
   [{ toString() { return 'Brai' } }, 'Brai'],
 ];
 for (const [script, expected] of validScriptOptions) {
-  let options = { script };
   let expect = expected ? 'en-' + expected : 'en';
 
   assert.sameValue(
-    new Intl.Locale('en', options).toString(),
+    new Intl.Locale('en', { script }).toString(),
     expect,
-    `new Intl.Locale('en', options).toString() equals the value of ${expect}`
+    `new Intl.Locale("en", {script: "${script}"}).toString() returns "${expect}"`
   );
 
   expect = (expected ? ('en-' + expected) : 'en') + '-DK';
   assert.sameValue(
-    new Intl.Locale('en-DK', options).toString(),
+    new Intl.Locale('en-DK', { script }).toString(),
     expect,
-    `new Intl.Locale('en', options).toString() equals the value of ${expect}`
+    `new Intl.Locale("en-DK", {script: "${script}"}).toString() returns "${expect}"`
   );
 
   expect = expected ? ('en-' + expected) : 'en-Cyrl';
   assert.sameValue(
-    new Intl.Locale('en-Cyrl', options).toString(),
+    new Intl.Locale('en-Cyrl', { script }).toString(),
     expect,
-    `new Intl.Locale('en-Cyrl', options).toString() equals the value of ${expect}`
+    `new Intl.Locale("en-Cyrl", {script: "${script}"}).toString() returns "${expect}"`
   );
 }

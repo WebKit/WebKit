@@ -8,25 +8,27 @@ description: >
 features: [Array.prototype.flatMap]
 ---*/
 
+assert.sameValue(typeof Array.prototype.flatMap, 'function');
+
 var a = [];
 a.constructor = null;
 assert.throws(TypeError, function() {
   a.flatMap();
 }, 'null value');
 
-var a = [];
+a = [];
 a.constructor = 1;
 assert.throws(TypeError, function() {
   a.flatMap();
 }, 'number value');
 
-var a = [];
+a = [];
 a.constructor = 'string';
 assert.throws(TypeError, function() {
   a.flatMap();
 }, 'string value');
 
-var a = [];
+a = [];
 a.constructor = true;
 assert.throws(TypeError, function() {
   a.flatMap();

@@ -16,20 +16,25 @@ info: |
 features: [Atomics, SharedArrayBuffer, TypedArray]
 ---*/
 
-var int32Array = new Int32Array(new SharedArrayBuffer(4));
+const i32a = new Int32Array(
+  new SharedArrayBuffer(Int32Array.BYTES_PER_ELEMENT * 4)
+);
 
-var poisoned = {
+const poisoned = {
   valueOf: function() {
-    throw new Test262Error("should not evaluate this code");
+    throw new Test262Error('should not evaluate this code');
   }
 };
 
 assert.throws(RangeError, function() {
-  Atomics.wait(int32Array, Infinity, poisoned, poisoned);
-});
+  Atomics.wait(i32a, Infinity, poisoned, poisoned);
+}, '`Atomics.wait(i32a, Infinity, poisoned, poisoned)` throws RangeError');
 assert.throws(RangeError, function() {
-  Atomics.wait(int32Array, 2, poisoned, poisoned);
-});
+  Atomics.wait(i32a, -1, poisoned, poisoned);
+}, '`Atomics.wait(i32a, -1, poisoned, poisoned)` throws RangeError');
 assert.throws(RangeError, function() {
-  Atomics.wait(int32Array, 200, poisoned, poisoned);
-});
+  Atomics.wait(i32a, 4, poisoned, poisoned);
+}, '`Atomics.wait(i32a, 4, poisoned, poisoned)` throws RangeError');
+assert.throws(RangeError, function() {
+  Atomics.wait(i32a, 200, poisoned, poisoned);
+}, '`Atomics.wait(i32a, 200, poisoned, poisoned)` throws RangeError');

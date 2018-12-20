@@ -10,11 +10,11 @@ negative:
   type: SyntaxError
 ---*/
 
-throw "Test262: This statement should not be evaluated.";
+$DONOTEVALUATE();
 
 function SwitchTest(value){
   var result = 0;
-  
+
   switch() {
     case 0:
       result += 2;
@@ -22,7 +22,7 @@ function SwitchTest(value){
       result += 32;
       break;
   }
-  
+
   return result;
 }
 

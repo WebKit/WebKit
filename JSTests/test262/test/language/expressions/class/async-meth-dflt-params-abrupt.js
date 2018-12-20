@@ -4,7 +4,7 @@
 /*---
 description: Abrupt completion returned by evaluation of initializer (class expression async method)
 esid: sec-class-definitions-runtime-semantics-evaluation
-features: [default-parameters]
+features: [default-parameters, async-functions]
 flags: [generated, async]
 info: |
     ClassExpression : class BindingIdentifieropt ClassTail

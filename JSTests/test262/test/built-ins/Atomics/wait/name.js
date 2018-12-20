@@ -10,8 +10,9 @@ includes: [propertyHelper.js]
 features: [Atomics]
 ---*/
 
-assert.sameValue(Atomics.wait.name, "wait");
-
-verifyNotEnumerable(Atomics.wait, "name");
-verifyNotWritable(Atomics.wait, "name");
-verifyConfigurable(Atomics.wait, "name");
+verifyProperty(Atomics.wait, 'name', {
+  value: 'wait',
+  enumerable: false,
+  writable: false,
+  configurable: true,
+});

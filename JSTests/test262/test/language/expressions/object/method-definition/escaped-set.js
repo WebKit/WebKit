@@ -18,7 +18,7 @@ negative:
   type: SyntaxError
 ---*/
 
-throw "Test262: This statement should not be evaluated.";
+$DONOTEVALUATE();
 
 ({
   s\u0065t m(v) {}

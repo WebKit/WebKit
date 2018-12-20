@@ -2,7 +2,7 @@
 // - src/dstr-assignment-for-await/array-rest-elision.case
 // - src/dstr-assignment-for-await/default/async-func-decl.template
 /*---
-description: ArrayAssignmentPattern may include elisions at any position preceeding a AssignmentRestElement in a AssignmentElementList. (for-await-of statement in an async function declaration)
+description: ArrayAssignmentPattern may include elisions at any position preceding a AssignmentRestElement in a AssignmentElementList. (for-await-of statement in an async function declaration)
 esid: sec-for-in-and-for-of-statements-runtime-semantics-labelledevaluation
 features: [destructuring-binding, async-iteration]
 flags: [generated, async]

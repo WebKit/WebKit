@@ -17,6 +17,6 @@ info: |
 ---*/
 
 
-throw "Test262: This statement should not be evaluated.";
+$DONOTEVALUATE();
 
 switch (0) { case 1: let f; default: const f = 0; }

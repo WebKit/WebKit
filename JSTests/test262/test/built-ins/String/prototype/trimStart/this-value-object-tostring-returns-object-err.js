@@ -51,6 +51,7 @@ var thisVal = {
   },
 };
 
+assert.sameValue(typeof String.prototype.trimStart, 'function');
 assert.throws(TypeError, function() {
   String.prototype.trimStart.call(thisVal);
 });

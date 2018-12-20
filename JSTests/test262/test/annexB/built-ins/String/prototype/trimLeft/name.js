@@ -11,7 +11,7 @@ info: >
   The function object that is the initial value of  String.prototype.trimLeft is the same function object that is the initial value of  String.prototype.trimStart.
 
 includes: [propertyHelper.js]
-features: [string-trimming,String.prototype.trimStart]
+features: [string-trimming, String.prototype.trimStart]
 ---*/
 
 verifyProperty(String.prototype.trimLeft, "name", {

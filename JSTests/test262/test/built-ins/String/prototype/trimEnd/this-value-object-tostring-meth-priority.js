@@ -77,7 +77,7 @@ assert.sameValue(
 assert.sameValue(
   result,
   '42',
-  'thisVal.toString expected to have been called.',
+  'thisVal.toString expected to have been called.'
 );
 
 // Test that thisVal[toPrimitive] has been accessed.

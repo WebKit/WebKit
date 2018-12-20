@@ -6,6 +6,7 @@ description: >
     The Proxy constructor does not have a prototype property because
     proxy exotic objects do not have a [[Prototype]] internal slot
     that requires initialization.
+features: [Proxy]
 ---*/
 
 assert.sameValue(Object.hasOwnProperty.call(Proxy, 'prototype'), false);

@@ -7,6 +7,7 @@ description: >
 
     11. If booleanTrapResult is false, return false.
 flags: [noStrict]
+features: [Proxy]
 ---*/
 
 var p = new Proxy({}, {

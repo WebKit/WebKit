@@ -17,7 +17,7 @@ info: |
   object has the attributes { [[Writable]]: false, [[Enumerable]]: false,
   [[Configurable]]: true }.
 includes: [propertyHelper.js]
-features: [BigInt]
+features: [TypedArray]
 ---*/
 
 verifyProperty(Float32Array, "length", {

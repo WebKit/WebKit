@@ -17,7 +17,7 @@ info: |
   3. If Type(key) is Symbol, then
     a. Return key.
   ...
-features: [Symbol]
+features: [Reflect, Symbol]
 ---*/
 
 var s = Symbol('1');

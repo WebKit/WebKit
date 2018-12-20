@@ -64,7 +64,7 @@ info: |
       ...BindingPattern[?Yield]
 
 ---*/
-throw "Test262: This statement should not be evaluated.";
+$DONOTEVALUATE();
 
 0, {
   *method(...x = []) {

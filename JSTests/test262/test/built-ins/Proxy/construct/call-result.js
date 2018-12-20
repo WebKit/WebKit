@@ -8,6 +8,7 @@ info: |
     [[Construct]] ( argumentsList, newTarget)
 
     12. Return newObj
+features: [Proxy]
 ---*/
 
 function Target(a, b) {

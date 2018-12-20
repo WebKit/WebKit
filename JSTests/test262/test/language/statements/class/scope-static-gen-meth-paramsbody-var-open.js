@@ -3,7 +3,7 @@
 /*---
 esid: sec-functiondeclarationinstantiation
 description: >
-    Creation of new variable environment for the function body (as disinct from
+    Creation of new variable environment for the function body (as distinct from
     that for the function's parameters)
 info: |
     [...]

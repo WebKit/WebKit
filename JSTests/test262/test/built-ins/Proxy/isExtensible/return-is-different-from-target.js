@@ -12,6 +12,7 @@ info: |
     12. If SameValue(booleanTrapResult, targetResult) is false, throw a
     TypeError exception.
     ...
+features: [Proxy]
 ---*/
 
 var p = new Proxy({}, {

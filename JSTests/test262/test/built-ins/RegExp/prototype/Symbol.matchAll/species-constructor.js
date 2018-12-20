@@ -6,14 +6,13 @@ description: Custom species constructor is called when creating internal RegExp
 info: |
   RegExp.prototype [ @@matchAll ] ( string )
     [...]
-    3. Return ? MatchAllIterator(R, string).
-
-  MatchAllIterator ( R, O )
+    4. Let C be ? SpeciesConstructor(R, %RegExp%).
+    5. Let flags be ? ToString(? Get(R, "flags")).
+    6. Let matcher be ? Construct(C, « R, flags »).
     [...]
-    2. If ? IsRegExp(R) is true, then
-      a. Let C be ? SpeciesConstructor(R, RegExp).
-      b. Let flags be ? ToString(? Get(R, "flags"))
-      c. Let matcher be ? Construct(C, R, flags).
+    9. If flags contains "g", let global be true.
+    10. Else, let global be false.
+    [...]
 features: [Symbol.matchAll, Symbol.species]
 includes: [compareArray.js, compareIterator.js, regExpUtils.js]
 ---*/
@@ -38,5 +37,4 @@ assert.sameValue(callArgs[1], 'u');
 
 assert.compareIterator(iter, [
   matchValidator(['a'], 0, str),
-  matchValidator(['b'], 2, str)
 ]);

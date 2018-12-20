@@ -4,7 +4,7 @@
 /*---
 info: String.prototype.toString() returns this string value
 es5id: 15.5.4.2_A1_T3
-description: Create new String(string) and check it`s method toString()
+description: Create new String(string) and check its method toString()
 ---*/
 
 var __string__obj = new String("metal");

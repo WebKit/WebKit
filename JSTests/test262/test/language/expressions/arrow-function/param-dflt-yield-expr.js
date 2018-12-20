@@ -14,14 +14,14 @@ info: |
 
   ArrowFunction : ArrowParameters=>ConciseBody
 
-  - It is a Syntax Error if ArrowParameters Contains YieldExpression is true. 
+  - It is a Syntax Error if ArrowParameters Contains YieldExpression is true.
 features: [generators, default-parameters]
 negative:
   phase: parse
   type: SyntaxError
 ---*/
 
-throw "Test262: This statement should not be evaluated.";
+$DONOTEVALUATE();
 
 function *g() {
   (x = yield) => {};

@@ -19,6 +19,6 @@ negative:
 flags: [module]
 ---*/
 
-throw "Test262: This statement should not be evaluated.";
+$DONOTEVALUATE();
 
 export {} \u0066rom "./escaped-from.js";

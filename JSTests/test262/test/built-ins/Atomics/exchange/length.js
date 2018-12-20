@@ -24,8 +24,9 @@ includes: [propertyHelper.js]
 features: [Atomics]
 ---*/
 
-assert.sameValue(Atomics.exchange.length, 3);
-
-verifyNotEnumerable(Atomics.exchange, "length");
-verifyNotWritable(Atomics.exchange, "length");
-verifyConfigurable(Atomics.exchange, "length");
+verifyProperty(Atomics.exchange, 'length', {
+  value: 3,
+  enumerable: false,
+  writable: false,
+  configurable: true,
+});

@@ -2,7 +2,7 @@
 // - src/dstr-binding/ary-ptrn-rest-init-id.case
 // - src/dstr-binding/default/for-of-var.template
 /*---
-description: Reset element (identifier) does not support initializer (for-of statement)
+description: Rest element (identifier) does not support initializer (for-of statement)
 esid: sec-for-in-and-for-of-statements-runtime-semantics-labelledevaluation
 es6id: 13.7.5.11
 features: [destructuring-binding]
@@ -42,7 +42,7 @@ info: |
         [ BindingElementList[?Yield] ]
         [ BindingElementList[?Yield] , Elisionopt BindingRestElement[?Yield]opt ]
 ---*/
-throw "Test262: This statement should not be evaluated.";
+$DONOTEVALUATE();
 
 var iterCount = 0;
 

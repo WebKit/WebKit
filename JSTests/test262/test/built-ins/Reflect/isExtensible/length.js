@@ -5,6 +5,7 @@ es6id: 26.1.10
 description: >
   Reflect.isExtensible.length value and property descriptor
 includes: [propertyHelper.js]
+features: [Reflect]
 ---*/
 
 assert.sameValue(

@@ -11,7 +11,7 @@ info: |
       Let status be the result of performing DestructuringAssignmentEvaluation of
       assignmentPattern using nextValue as the argument.
 
-features: [destructuring-assignment,for-of]
+features: [destructuring-assignment, for-of]
 ---*/
 
 var iterationCount = 0;

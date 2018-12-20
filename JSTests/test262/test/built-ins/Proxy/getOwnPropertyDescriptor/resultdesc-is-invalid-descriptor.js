@@ -12,6 +12,7 @@ info: |
     20. Let valid be IsCompatiblePropertyDescriptor (extensibleTarget,
     resultDesc, targetDesc).
     21. If valid is false, throw a TypeError exception.
+features: [Proxy]
 ---*/
 
 var target = {};

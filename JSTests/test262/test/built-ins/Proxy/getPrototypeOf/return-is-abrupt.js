@@ -7,6 +7,7 @@ description: >
 info: |
     8. Let handlerProto be Call(trap, handler, «target»).
     9. ReturnIfAbrupt(handlerProto).
+features: [Proxy]
 ---*/
 
 var p = new Proxy({}, {

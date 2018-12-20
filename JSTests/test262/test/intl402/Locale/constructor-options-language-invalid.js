@@ -62,8 +62,8 @@ const invalidLanguageOptions = [
 
   7,
 ];
-for (const invalidLanguageOption of invalidLanguageOptions) {
+for (const language of invalidLanguageOptions) {
   assert.throws(RangeError, function() {
-    new Intl.Locale("en", {language: invalidLanguageOption});
-  }, `${invalidLanguageOption} is an invalid language option value`);
+    new Intl.Locale("en", {language});
+  }, `new Intl.Locale("en", {language: "${language}"}) throws RangeError`);
 }

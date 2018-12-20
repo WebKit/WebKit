@@ -6,20 +6,17 @@ esid: sec-atomics.store
 description: >
   Test range checking of Atomics.store on arrays that allow atomic operations
 includes: [testAtomics.js, testTypedArray.js]
-features: [ArrayBuffer, arrow-function, Atomics, BigInt, DataView, for-of, let, SharedArrayBuffer, TypedArray]
+features: [ArrayBuffer, Atomics, DataView, SharedArrayBuffer, Symbol, TypedArray]
 ---*/
 
-var buffer = new SharedArrayBuffer(8);
-var views = intArrayConstructors.slice();
-
-if (typeof BigInt !== "undefined") {
-  views.push(BigInt64Array);
-  views.push(BigUint64Array);
-}
+const buffer = new SharedArrayBuffer(Int32Array.BYTES_PER_ELEMENT * 2);
+const views = intArrayConstructors.slice();
 
 testWithTypedArrayConstructors(function(TA) {
-  let view = new TA(buffer);
+  const view = new TA(buffer);
   testWithAtomicsOutOfBoundsIndices(function(IdxGen) {
-    assert.throws(RangeError, () => Atomics.store(view, IdxGen(view), 10));
+    assert.throws(RangeError, function() {
+      Atomics.store(view, IdxGen(view), 10);
+    }, '`Atomics.store(view, IdxGen(view), 10)` throws RangeError');
   });
 }, views);

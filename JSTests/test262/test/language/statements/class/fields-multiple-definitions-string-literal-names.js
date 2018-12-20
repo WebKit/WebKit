@@ -1,10 +1,10 @@
 // This file was procedurally generated from the following sources:
-// - src/class-fields/string-literal-names.case
-// - src/class-fields/productions/cls-decl-multiple-definitions.template
+// - src/class-elements/string-literal-names.case
+// - src/class-elements/productions/cls-decl-multiple-definitions.template
 /*---
 description: String literal names (multiple fields definitions)
 esid: prod-FieldDefinition
-features: [class, class-fields-public]
+features: [class-fields-public, class]
 flags: [generated]
 includes: [propertyHelper.js]
 info: |
@@ -28,7 +28,7 @@ class C {
   "d" = 42
   m2() { return 39 }
   bar = "barbaz";
-
+  
 }
 
 var c = new C();

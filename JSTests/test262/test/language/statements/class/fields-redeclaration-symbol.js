@@ -1,10 +1,10 @@
 // This file was procedurally generated from the following sources:
-// - src/class-fields/redeclaration-symbol.case
-// - src/class-fields/default/cls-decl.template
+// - src/class-elements/redeclaration-symbol.case
+// - src/class-elements/default/cls-decl.template
 /*---
 description: Redeclaration of public fields with the same name (field definitions in a class declaration)
 esid: prod-FieldDefinition
-features: [class, class-fields-public]
+features: [class-fields-public, class]
 flags: [generated]
 includes: [propertyHelper.js, compareArray.js]
 info: |

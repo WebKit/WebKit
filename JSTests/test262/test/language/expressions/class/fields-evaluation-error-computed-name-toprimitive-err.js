@@ -1,10 +1,10 @@
 // This file was procedurally generated from the following sources:
-// - src/class-fields/computed-name-toprimitive-err.case
-// - src/class-fields/class-evaluation-error/cls-expr.template
+// - src/class-elements/computed-name-toprimitive-err.case
+// - src/class-elements/class-evaluation-error/cls-expr.template
 /*---
 description: Custom error evaluating a computed property name (field definitions in a class expression)
 esid: sec-runtime-semantics-classdefinitionevaluation
-features: [computed-property-names, Symbol.toPrimitive, class, class-fields-public]
+features: [class-fields-public, computed-property-names, Symbol.toPrimitive, class]
 flags: [generated]
 info: |
     Runtime Semantics: ClassDefinitionEvaluation

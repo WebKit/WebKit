@@ -8,6 +8,7 @@ info: |
     Proxy.revocable ( target, handler )
 
     7. Perform CreateDataProperty(result, "revoke", revoker).
+features: [Proxy]
 ---*/
 
 var r = Proxy.revocable({}, {});

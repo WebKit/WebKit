@@ -2,7 +2,7 @@
 // - src/generators/yield-spread-arr-single.case
 // - src/generators/default/class-decl-method.template
 /*---
-description: Use yield value in a array spread position (Geenerator method as a ClassDeclaration element)
+description: Use yield value in a array spread position (Generator method as a ClassDeclaration element)
 esid: prod-GeneratorMethod
 features: [generators]
 flags: [generated]

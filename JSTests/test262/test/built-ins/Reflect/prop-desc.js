@@ -21,6 +21,7 @@ info: |
   has the attributes { [[Writable]]: true, [[Enumerable]]: false,
   [[Configurable]]: true } unless otherwise specified.
 includes: [propertyHelper.js]
+features: [Reflect]
 ---*/
 
 assert.sameValue(typeof Reflect, "object");

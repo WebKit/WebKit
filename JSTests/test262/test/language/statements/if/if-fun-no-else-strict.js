@@ -20,6 +20,6 @@ info: |
     The above rules are only applied when parsing code that is not strict mode code.
 ---*/
 
-throw "Test262: This statement should not be evaluated.";
+$DONOTEVALUATE();
 
 if (true) function f() {}

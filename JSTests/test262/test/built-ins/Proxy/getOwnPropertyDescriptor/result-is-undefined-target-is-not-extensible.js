@@ -13,6 +13,7 @@ info: |
         ...
         e. If ToBoolean(extensibleTarget) is false, throw a TypeError exception.
     ...
+features: [Proxy]
 ---*/
 
 var target = {

@@ -21,7 +21,7 @@ info: |
     16. If booleanTrapResult is true and SameValue(V, targetProto) is false,
     throw a TypeError exception.
     ...
-features: [Reflect.setPrototypeOf]
+features: [Proxy, Reflect, Reflect.setPrototypeOf]
 ---*/
 
 var target, proxy;

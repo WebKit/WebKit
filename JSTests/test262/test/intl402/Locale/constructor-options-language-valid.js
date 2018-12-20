@@ -4,8 +4,7 @@
 /*---
 esid: sec-intl.locale
 description: >
-    Checks error cases for the options argument to the Locale
-    constructor.
+    Verify valid language option values (various)
 info: |
     Intl.Locale( tag [, options] )
     10. If options is undefined, then
@@ -23,38 +22,32 @@ features: [Intl.Locale]
 ---*/
 
 const validLanguageOptions = [
-  [undefined, undefined],
   [null, 'null'],
   ['zh-cmn', 'cmn'],
   ['ZH-CMN', 'cmn'],
   ['abcd', 'abcd'],
-  ['abcde', 'abcde'],
-  ['abcdef', 'abcdef'],
-  ['abcdefg', 'abcdefg'],
-  ['abcdefgh', 'abcdefgh'],
   [{ toString() { return 'de' } }, 'de'],
 ];
 for (const [language, expected] of validLanguageOptions) {
-  let options = { language };
   let expect = expected || 'en';
 
   assert.sameValue(
-    new Intl.Locale('en', options).toString(),
+    new Intl.Locale('en', {language}).toString(),
     expect,
-    `new Intl.Locale('en', options).toString() equals the value of ${expect}`
+    `new Intl.Locale('en', {language: "${language}"}).toString() returns "${expect}"`
   );
 
   expect = (expected || 'en') + '-US';
   assert.sameValue(
-    new Intl.Locale('en-US', options).toString(),
-    expected,
-    `new Intl.Locale('en-US', options).toString() equals the value of ${expect}`
+    new Intl.Locale('en-US', {language}).toString(),
+    expect,
+    `new Intl.Locale('en-US', {language: "${language}"}).toString() returns "${expect}"`
   );
 
   expect = expected || 'en-els';
   assert.sameValue(
-    new Intl.Locale('en-els', options).toString(),
+    new Intl.Locale('en-els', {language}).toString(),
     expect,
-    `new Intl.Locale('en-els', options).toString() equals the value of ${expect}`
+    `new Intl.Locale('en-els', {language: "${language}"}).toString() returns "${expect}"`
   );
 }

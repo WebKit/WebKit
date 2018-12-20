@@ -5,7 +5,6 @@
 description: >
     Functions that throw instances of the specified native Error constructor
     satisfy the assertion.
-includes: [sta.js]
 ---*/
 
 assert.throws(Error, function() {

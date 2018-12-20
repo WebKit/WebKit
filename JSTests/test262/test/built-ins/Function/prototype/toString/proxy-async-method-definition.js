@@ -14,7 +14,7 @@ info: |
   NativeFunction:
     function IdentifierName_opt ( FormalParameters ) { [ native code ] }
 
-features: [async-functions, generators, Proxy]
+features: [async-functions, Proxy]
 includes: [nativeFunctionMatcher.js]
 ---*/
 

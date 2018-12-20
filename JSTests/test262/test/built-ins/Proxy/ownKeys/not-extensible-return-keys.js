@@ -10,6 +10,7 @@ info: |
 
     ...
     21. Return trapResult.
+features: [Proxy]
 ---*/
 
 var target = {

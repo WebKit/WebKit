@@ -4,6 +4,7 @@
 /*---
 description: A trailing comma should not increase the respective length, using multiple parameters (class expression async method)
 esid: sec-class-definitions-runtime-semantics-evaluation
+features: [async-functions]
 flags: [generated, async]
 info: |
     ClassExpression : class BindingIdentifieropt ClassTail

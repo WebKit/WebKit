@@ -4,7 +4,7 @@
 /*---
 description: Referencing a parameter from within its own initializer (class expression async method)
 esid: sec-class-definitions-runtime-semantics-evaluation
-features: [default-parameters]
+features: [default-parameters, async-functions]
 flags: [generated, async]
 info: |
     ClassExpression : class BindingIdentifieropt ClassTail

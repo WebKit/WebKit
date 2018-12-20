@@ -1,10 +1,10 @@
 // This file was procedurally generated from the following sources:
-// - src/class-fields/computed-symbol-names.case
-// - src/class-fields/productions/cls-expr-multiple-definitions.template
+// - src/class-elements/computed-symbol-names.case
+// - src/class-elements/productions/cls-expr-multiple-definitions.template
 /*---
 description: Computed property symbol names (multiple fields definitions)
 esid: prod-FieldDefinition
-features: [Symbol, computed-property-names, class, class-fields-public]
+features: [class-fields-public, Symbol, computed-property-names, class]
 flags: [generated]
 includes: [propertyHelper.js]
 info: |
@@ -30,7 +30,7 @@ var C = class {
   [x]; [y] = 42
   m2() { return 39 }
   bar = "barbaz";
-
+  
 }
 
 var c = new C();

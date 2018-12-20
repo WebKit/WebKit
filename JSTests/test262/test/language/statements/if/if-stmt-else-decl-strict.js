@@ -9,7 +9,7 @@ negative:
   type: SyntaxError
 info: |
     The following rules for IfStatement augment those in 13.6:
-    
+
     IfStatement[Yield, Return]:
         if ( Expression[In, ?Yield] ) FunctionDeclaration[?Yield] else Statement[?Yield, ?Return]
         if ( Expression[In, ?Yield] ) Statement[?Yield, ?Return] else FunctionDeclaration[?Yield]
@@ -17,12 +17,12 @@ info: |
         if ( Expression[In, ?Yield] ) FunctionDeclaration[?Yield]
 
     B.3.3.2 Changes to GlobalDeclarationInstantiation
-    
+
     1. 1. Let strict be IsStrict of script
     2. If strict is *false*, then
        [...]
 ---*/
 
-throw "Test262: This statement should not be evaluated.";
+$DONOTEVALUATE();
 
 if (false) ; else function f() {  }

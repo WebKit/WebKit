@@ -2,7 +2,7 @@
 // - src/dstr-binding/ary-ptrn-rest-init-obj.case
 // - src/dstr-binding/default/for-const.template
 /*---
-description: Reset element (nested object pattern) does not support initializer (for statement)
+description: Rest element (nested object pattern) does not support initializer (for statement)
 esid: sec-for-statement-runtime-semantics-labelledevaluation
 es6id: 13.7.4.7
 features: [destructuring-binding]
@@ -45,7 +45,7 @@ info: |
         [ BindingElementList[?Yield] ]
         [ BindingElementList[?Yield] , Elisionopt BindingRestElement[?Yield]opt ]
 ---*/
-throw "Test262: This statement should not be evaluated.";
+$DONOTEVALUATE();
 
 var iterCount = 0;
 

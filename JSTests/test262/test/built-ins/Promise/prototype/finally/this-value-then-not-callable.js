@@ -8,6 +8,7 @@ description: >
 esid: sec-promise.prototype.finally
 features: [Symbol, Promise.prototype.finally]
 ---*/
+assert.sameValue(typeof Promise.prototype.finally, 'function');
 
 var symbol = Symbol();
 

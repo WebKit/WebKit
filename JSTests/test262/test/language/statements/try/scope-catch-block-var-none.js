@@ -20,6 +20,6 @@ try {
   probeInside = function() { return x; };
 }
 
-assert.sameValue(probeBefore(), 2, 'reference preceeding statement');
+assert.sameValue(probeBefore(), 2, 'reference preceding statement');
 assert.sameValue(probeInside(), 2, 'reference within statement');
 assert.sameValue(x, 2, 'reference following statement');

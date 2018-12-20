@@ -10,6 +10,7 @@ info: |
     [[Construct]] ( argumentsList, newTarget)
 
     9. Let newObj be Call(trap, handler, «target, argArray, newTarget »).
+features: [Proxy]
 ---*/
 
 var _target, _handler, _args, _P;

@@ -11,6 +11,6 @@ negative:
   type: SyntaxError
 ---*/
 
-throw "Test262: This statement should not be evaluated.";
+$DONOTEVALUATE();
 
 async (x = 1) => {"use strict"}

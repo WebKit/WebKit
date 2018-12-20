@@ -12,6 +12,7 @@ info: |
     19. For each key that is an element of targetConfigurableKeys, do
         a. If key is not an element of uncheckedResultKeys, throw a TypeError
         exception.
+features: [Proxy]
 ---*/
 
 var target = {

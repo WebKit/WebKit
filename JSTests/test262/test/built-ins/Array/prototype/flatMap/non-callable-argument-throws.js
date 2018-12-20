@@ -7,6 +7,8 @@ description: >
 features: [Array.prototype.flatMap]
 ---*/
 
+assert.sameValue(typeof Array.prototype.flatMap, "function");
+
 assert.throws(TypeError, function() {
   [].flatMap({});
 }, 'non callable argument');

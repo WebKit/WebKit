@@ -1,24 +1,24 @@
 // This file was procedurally generated from the following sources:
-// - src/class-fields/private-names.case
-// - src/class-fields/productions/cls-expr-wrapped-in-sc.template
+// - src/class-elements/private-names.case
+// - src/class-elements/productions/cls-expr-wrapped-in-sc.template
 /*---
-description: static literal private names (fields definition wrapped in semicolons)
+description: private names (fields definition wrapped in semicolons)
 esid: prod-FieldDefinition
 features: [class-fields-private, class, class-fields-public]
 flags: [generated]
 info: |
-    ClassElement:
+    ClassElement :
       ...
       FieldDefinition ;
 
-    FieldDefinition:
+    FieldDefinition :
       ClassElementName Initializer_opt
 
-    ClassElementName:
+    ClassElementName :
       PrivateName
 
-    PrivateName:
-      #IdentifierName
+    PrivateName :
+      # IdentifierName
 
 ---*/
 
@@ -27,7 +27,7 @@ var C = class {
   ;;;;
   ;;;;;;#x; #y;;;;;;;
   ;;;;
-x() {
+  x() {
     this.#x = 42;
     return this.#x;
   }

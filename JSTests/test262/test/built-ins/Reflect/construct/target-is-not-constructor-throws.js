@@ -8,6 +8,7 @@ info: |
   26.1.2 Reflect.construct ( target, argumentsList [, newTarget] )
 
   1. If IsConstructor(target) is false, throw a TypeError exception.
+features: [Reflect, Reflect.construct]
 ---*/
 
 assert.throws(TypeError, function() {

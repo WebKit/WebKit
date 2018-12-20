@@ -18,7 +18,7 @@ info: |
     If iterationKind is enumerate, then
       Return status.
 
-features: [destructuring-assignment,for-of,Symbol.iterator]
+features: [destructuring-assignment, for-of, Symbol.iterator]
 ---*/
 
 var callCount = 0;

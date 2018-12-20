@@ -8,7 +8,7 @@ description: >
 
     $DETACHBUFFER relies on the presence of a host definition for $262.detachArrayBuffer
 
-includes: [detachArrayBuffer.js,sta.js]
+includes: [detachArrayBuffer.js]
 ---*/
 
 var $262 = {

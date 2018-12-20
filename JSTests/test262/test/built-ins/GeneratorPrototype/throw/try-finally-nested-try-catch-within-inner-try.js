@@ -54,7 +54,7 @@ assert.sameValue(result.done, false, 'Fourth result `done` flag');
 
 result = iter.next();
 assert.sameValue(result.value, 4, 'Fifth result `value`');
-assert.sameValue(result.done, false, 'Firth result `done` flag');
+assert.sameValue(result.done, false, 'Fifth result `done` flag');
 
 result = iter.next();
 assert.sameValue(result.value, 5, 'Sixth result `value`');

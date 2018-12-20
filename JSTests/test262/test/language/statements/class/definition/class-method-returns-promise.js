@@ -4,6 +4,7 @@
 /*---
 author: Brian Terlson <brian.terlson@microsoft.com>
 esid: pending
+features: [async-functions]
 description: >
   Async function expressions return promises
 ---*/

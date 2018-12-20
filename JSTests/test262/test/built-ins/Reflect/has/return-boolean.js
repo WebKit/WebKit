@@ -21,6 +21,7 @@ info: |
   6. If parent is not null, then
     a. Return parent.[[HasProperty]](P).
   7. Return false.
+features: [Reflect]
 ---*/
 
 var o1 = {

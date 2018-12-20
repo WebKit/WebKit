@@ -2,7 +2,7 @@
 // - src/dstr-binding/ary-ptrn-rest-init-ary.case
 // - src/dstr-binding/default/gen-method-dflt.template
 /*---
-description: Reset element (nested array pattern) does not support initializer (generator method (default parameter))
+description: Rest element (nested array pattern) does not support initializer (generator method (default parameter))
 esid: sec-generator-function-definitions-runtime-semantics-propertydefinitionevaluation
 es6id: 14.4.13
 features: [generators, destructuring-binding, default-parameters]
@@ -52,7 +52,7 @@ info: |
         [ BindingElementList[?Yield] ]
         [ BindingElementList[?Yield] , Elisionopt BindingRestElement[?Yield]opt ]
 ---*/
-throw "Test262: This statement should not be evaluated.";
+$DONOTEVALUATE();
 
 var callCount = 0;
 var obj = {

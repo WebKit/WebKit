@@ -5,15 +5,10 @@ esid: sec-scripts-static-semantics-early-errors
 description: Early error when referencing privatename in function in class without declaring in field
 info: |
   Static Semantics: Early Errors
-  Script : ScriptBody
-    1. Let names be an empty List.
-    2. If Script is parsed directly from PerformEval,
-        a. Let env be the running execution context's PrivateNameEnvironment.
-        b. Repeat while env is not null,
-            i. For each binding named N in env,
-                1. If names does not contain N, append N to names.
-            ii. Let env be env's outer environment reference.
-    3. If AllPrivateNamesValid of ScriptBody with the argument names is false, throw a SyntaxError exception.
+    ScriptBody : StatementList
+
+    It is a Syntax Error if AllPrivateNamesValid of StatementList with an empty List as an argument is false unless the source code is eval code that is being processed by a direct eval.
+
 features: [class, class-fields-private]
 ---*/
 

@@ -35,7 +35,7 @@ for (
 
 var x = 2;
 
-assert.sameValue(probeBefore(), 2, 'reference preceeding statement');
+assert.sameValue(probeBefore(), 2, 'reference preceding statement');
 assert.sameValue(probeTest(), 2, 'reference from "test" position');
 assert.sameValue(probeBody(), 2, 'reference from statement body');
 assert.sameValue(probeIncr(), 2, 'reference from "increment" position');

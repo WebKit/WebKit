@@ -16,6 +16,7 @@ info: |
   9. Set the value of the [[Prototype]] internal slot of O to V.
   10. Return true.
   ...
+features: [Reflect, Reflect.setPrototypeOf]
 ---*/
 
 var o1 = {};

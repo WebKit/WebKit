@@ -12,6 +12,6 @@ es6id: 13.7.5
 flags: [noStrict]
 ---*/
 
-throw "Test262: This statement should not be evaluated.";
+$DONOTEVALUATE();
 
 for (const let in {}) {}

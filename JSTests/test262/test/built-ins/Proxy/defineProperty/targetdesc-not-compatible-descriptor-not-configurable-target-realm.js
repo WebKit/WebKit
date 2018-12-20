@@ -14,7 +14,7 @@ info: |
         a. If IsCompatiblePropertyDescriptor(extensibleTarget, Desc ,
         targetDesc) is false, throw a TypeError exception.
     ...
-features: [cross-realm]
+features: [cross-realm, Proxy]
 ---*/
 
 var OProxy = $262.createRealm().global.Proxy;

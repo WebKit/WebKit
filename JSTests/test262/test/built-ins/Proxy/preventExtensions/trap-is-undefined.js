@@ -4,7 +4,7 @@
 es6id: 9.5.4
 description: >
     Return target.[[PreventExtensions]]() if target is undefined.
-features: [Reflect]
+features: [Proxy, Reflect]
 ---*/
 
 var target = {};

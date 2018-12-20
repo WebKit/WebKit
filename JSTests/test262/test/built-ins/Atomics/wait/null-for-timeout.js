@@ -13,25 +13,37 @@ info: |
     Null -> Return +0.
 
 features: [Atomics, SharedArrayBuffer, Symbol, Symbol.toPrimitive, TypedArray]
-flags: [CanBlockIsFalse]
+flags: [CanBlockIsTrue]
 ---*/
 
-var buffer = new SharedArrayBuffer(1024);
-var int32Array = new Int32Array(buffer);
+const i32a = new Int32Array(
+  new SharedArrayBuffer(Int32Array.BYTES_PER_ELEMENT * 4)
+);
 
-var valueOf = {
+const valueOf = {
   valueOf: function() {
     return null;
   }
 };
 
-var toPrimitive = {
+const toPrimitive = {
   [Symbol.toPrimitive]: function() {
     return null;
   }
 };
 
-assert.sameValue(Atomics.wait(int32Array, 0, 0, null), "timed-out");
-assert.sameValue(Atomics.wait(int32Array, 0, 0, valueOf), "timed-out");
-assert.sameValue(Atomics.wait(int32Array, 0, 0, toPrimitive), "timed-out");
-
+assert.sameValue(
+  Atomics.wait(i32a, 0, 0, null),
+  "timed-out",
+  'Atomics.wait(i32a, 0, 0, null) returns "timed-out"'
+);
+assert.sameValue(
+  Atomics.wait(i32a, 0, 0, valueOf),
+  "timed-out",
+  'Atomics.wait(i32a, 0, 0, valueOf) returns "timed-out"'
+);
+assert.sameValue(
+  Atomics.wait(i32a, 0, 0, toPrimitive),
+  "timed-out",
+  'Atomics.wait(i32a, 0, 0, toPrimitive) returns "timed-out"'
+);

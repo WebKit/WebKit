@@ -12,6 +12,7 @@ info: |
     8. Let booleanTrapResult be ToBoolean(Call(trap, handler, «target»)).
     ...
 
+features: [Proxy]
 ---*/
 
 var _target, _handler;

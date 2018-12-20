@@ -13,7 +13,10 @@ info: |
 features: [Intl.Locale]
 ---*/
 
-const fn = Intl.Locale.prototype.minimize;
+const minimize = Intl.Locale.prototype.minimize;
+
+assert.sameValue(typeof minimize, "function");
+
 const invalidValues = [
   undefined,
   null,
@@ -26,5 +29,5 @@ const invalidValues = [
 ];
 
 for (const invalidValue of invalidValues) {
-  assert.throws(TypeError, () => fn.call(invalidValue));
+  assert.throws(TypeError, () => minimize.call(invalidValue));
 }

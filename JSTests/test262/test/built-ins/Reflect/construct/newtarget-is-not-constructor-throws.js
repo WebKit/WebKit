@@ -11,6 +11,7 @@ info: |
   2. If newTarget is not present, let newTarget be target.
   3. Else, if IsConstructor(newTarget) is false, throw a TypeError exception.
   ...
+features: [Reflect, Reflect.construct]
 ---*/
 
 assert.throws(TypeError, function() {

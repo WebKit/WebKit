@@ -19,6 +19,7 @@ info: |
   4. Let len be ToLength(Get(obj, "length")).
   5. ReturnIfAbrupt(len).
   ...
+features: [Reflect]
 ---*/
 
 function fn() {}

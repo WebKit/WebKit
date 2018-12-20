@@ -6,9 +6,11 @@ esid: sec-atomics.add
 description: >
   Test Atomics.add on view values other than TypedArrays
 includes: [testAtomics.js]
-features: [ArrayBuffer, arrow-function, Atomics, DataView, for-of, let, SharedArrayBuffer]
+features: [ArrayBuffer, Atomics, DataView, SharedArrayBuffer, Symbol, TypedArray]
 ---*/
 
 testWithAtomicsNonViewValues(function(view) {
-  assert.throws(TypeError, (() => Atomics.add(view, 0, 0)));
+  assert.throws(TypeError, function() {
+    Atomics.add(view, 0, 0);
+  }, '`Atomics.add(view, 0, 0)` throws TypeError');
 });

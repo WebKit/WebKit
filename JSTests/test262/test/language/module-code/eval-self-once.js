@@ -4,15 +4,25 @@
 description: Module is evaluated exactly once
 esid: sec-moduleevaluation
 info: |
+  Evaluate( ) Concrete Method
     [...]
-    4. If module.[[Evaluated]] is true, return undefined.
-    5. Set module.[[Evaluated]] to true.
+    4. Let result be InnerModuleEvaluation(module, stack, 0).
+    [...]
+
+  InnerModuleEvaluation( module, stack, index )
+    [...]
+    2. If module.[[Status]] is "evaluated", then
+      a. If module.[[EvaluationError]] is undefined, return index.
+      b. Otherwise return module.[[EvaluationError]].
+    [...]
     6. For each String required that is an element of module.[[RequestedModules]] do,
        a. Let requiredModule be ? HostResolveImportedModule(module, required).
-       b. Perform ? requiredModule.ModuleEvaluation().
+       [...]
+       c. Set index to ? InnerModuleEvaluation(requiredModule, stack, index).
     [...]
 includes: [fnGlobalObject.js]
 flags: [module]
+features: [export-star-as-namespace-from-module]
 ---*/
 
 import {} from './eval-self-once.js';
@@ -22,6 +32,7 @@ import dflt1 from './eval-self-once.js';
 export {} from './eval-self-once.js';
 import dflt2, {} from './eval-self-once.js';
 export * from './eval-self-once.js';
+export * as ns2 from './eval-self-once.js';
 import dflt3, * as ns from './eval-self-once.js';
 export default null;
 

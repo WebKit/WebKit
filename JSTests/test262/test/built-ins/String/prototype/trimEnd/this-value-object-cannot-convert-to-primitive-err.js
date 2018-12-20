@@ -43,6 +43,8 @@ info: |
 features: [string-trimming, String.prototype.trimEnd, Symbol.toPrimitive]
 ---*/
 
+assert.sameValue(typeof String.prototype.trimEnd, "function");
+
 var thisVal = {
   [Symbol.toPrimitive]: undefined,
   toString: undefined,
@@ -55,5 +57,5 @@ assert.throws(
   TypeError,
   function() {
     String.prototype.trimEnd.call(thisVal);
-  },
+  }
 );

@@ -24,13 +24,13 @@ info: |
   NOTE Normally, Contains does not look inside most function forms. However,
        Contains is used to detect new.target, this, and super usage within an
        ArrowFunction.
-features: [arrow-function]
+features: [arrow-function, new.target]
 negative:
   phase: parse
   type: SyntaxError
 ---*/
 
-throw "Test262: This statement should not be evaluated.";
+$DONOTEVALUATE();
 
 () => {
   new.target;

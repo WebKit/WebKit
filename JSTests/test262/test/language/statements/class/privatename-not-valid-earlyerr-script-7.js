@@ -5,17 +5,17 @@ esid: sec-scripts-static-semantics-early-errors
 description: Early error when referencing privatename on object, outside of class.
 info: |
   Static Semantics: Early Errors
-    Script : ScriptBody
-    1. Let names be an empty List.
-      ...
-    3. If AllPrivateNamesValid of ScriptBody with the argument names is false, throw a SyntaxError exception.
-features: [class-fields-private]
+    ScriptBody : StatementList
+
+    It is a Syntax Error if AllPrivateNamesValid of StatementList with an empty List as an argument is false unless the source code is eval code that is being processed by a direct eval.
+
+features: [class, class-fields-private]
 negative:
   phase: parse
   type: SyntaxError
 ---*/
 
-throw "Test262: This statement should not be evaluated.";
+$DONOTEVALUATE();
 
 obj = {};
 

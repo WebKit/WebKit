@@ -1,10 +1,10 @@
 // This file was procedurally generated from the following sources:
-// - src/class-fields/computed-names.case
-// - src/class-fields/productions/cls-decl-after-same-line-static-gen.template
+// - src/class-elements/computed-names.case
+// - src/class-elements/productions/cls-decl-after-same-line-static-gen.template
 /*---
 description: Computed property names (field definitions after a static generator in the same line)
 esid: prod-FieldDefinition
-features: [computed-property-names, generators, class, class-fields-public]
+features: [class-fields-public, computed-property-names, generators, class]
 flags: [generated]
 includes: [propertyHelper.js]
 info: |
@@ -25,7 +25,7 @@ var x = "b";
 
 class C {
   static *m() { return 42; } [x] = 42; [10] = "meep"; ["not initialized"];
-
+  
 }
 
 var c = new C();

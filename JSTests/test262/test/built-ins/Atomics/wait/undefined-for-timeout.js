@@ -12,54 +12,59 @@ info: |
     ...
     Undefined    Return NaN.
   5.If q is NaN, let t be +∞, else let t be max(q, 0)
+
+includes: [atomicsHelper.js]
 features: [Atomics, SharedArrayBuffer, TypedArray]
 ---*/
 
-var NUMAGENT = 2; // Total number of agents started
-var WAKEUP = 0; // Index all agents are waiting on
-var WAKECOUNT = 2; // Total number of agents to wake up
+const WAIT_INDEX = 0; // Index all agents are waiting on
+const RUNNING = 1;
+const NUMAGENT = 2;   // Total number of agents started
+const NOTIFYCOUNT = 2;  // Total number of agents to notify up
 
-function getReport() {
-  var r;
-  while ((r = $262.agent.getReport()) == null) {
-    $262.agent.sleep(100);
-  }
-  return r;
-}
+$262.agent.start(`
+  $262.agent.receiveBroadcast(function(sab) {
+    var i32a = new Int32Array(sab);
+    Atomics.add(i32a, ${RUNNING}, 1);
 
-$262.agent.start(
-`
-$262.agent.receiveBroadcast(function (sab) {
-  var int32Array = new Int32Array(sab);
-  $262.agent.report("A " + Atomics.wait(int32Array, 0, 0, undefined));  // undefined => NaN => +Infinity
-  $262.agent.leaving();
-})
+    // undefined => NaN => +Infinity
+    $262.agent.report("A " + Atomics.wait(i32a, 0, 0, undefined));
+    $262.agent.leaving();
+  });
 `);
 
-$262.agent.start(
-  `
-$262.agent.receiveBroadcast(function (sab) {
-  var int32Array = new Int32Array(sab);
-  $262.agent.report("B " + Atomics.wait(int32Array, 0, 0));  // undefined timeout arg => NaN => +Infinity
-  $262.agent.leaving();
-})
+$262.agent.start(`
+  $262.agent.receiveBroadcast(function(sab) {
+    var i32a = new Int32Array(sab);
+    Atomics.add(i32a, ${RUNNING}, 1);
+
+    // undefined timeout arg => NaN => +Infinity
+    $262.agent.report("B " + Atomics.wait(i32a, 0, 0));
+    $262.agent.leaving();
+  });
 `);
 
-var int32Array = new Int32Array(new SharedArrayBuffer(Int32Array.BYTES_PER_ELEMENT));
+const i32a = new Int32Array(
+  new SharedArrayBuffer(Int32Array.BYTES_PER_ELEMENT * 4)
+);
 
-$262.agent.broadcast(int32Array.buffer);
+$262.agent.safeBroadcast(i32a);
+$262.agent.waitUntil(i32a, RUNNING, NUMAGENT);
 
-$262.agent.sleep(500); // Ample time
+// Try to yield control to ensure the agent actually started to wait.
+$262.agent.tryYield();
 
-assert.sameValue($262.agent.getReport(), null);
+assert.sameValue(
+  Atomics.notify(i32a, WAIT_INDEX, NOTIFYCOUNT),
+  NOTIFYCOUNT,
+  'Atomics.notify(i32a, WAIT_INDEX, NOTIFYCOUNT) returns the value of `NOTIFYCOUNT` (2)'
+);
 
-assert.sameValue(Atomics.wake(int32Array, WAKEUP, WAKECOUNT), WAKECOUNT);
-
-var sortedReports = [];
+const reports = [];
 for (var i = 0; i < NUMAGENT; i++) {
-  sortedReports.push(getReport());
+  reports.push($262.agent.getReport());
 }
-sortedReports.sort();
+reports.sort();
 
-assert.sameValue(sortedReports[0], "A ok");
-assert.sameValue(sortedReports[1], "B ok");
+assert.sameValue(reports[0], 'A ok', 'The value of reports[0] is "A ok"');
+assert.sameValue(reports[1], 'B ok', 'The value of reports[1] is "B ok"');

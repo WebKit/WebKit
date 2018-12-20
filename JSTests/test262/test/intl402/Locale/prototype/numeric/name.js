@@ -13,13 +13,10 @@ includes: [propertyHelper.js]
 features: [Intl.Locale]
 ---*/
 
-const propdesc = Object.getOwnPropertyDescriptor(Intl.Locale.prototype, "numeric");
-if (propdesc !== undefined) {
-  const getter = propdesc.get;
-  verifyProperty(getter, "name", {
-    value: "get numeric",
-    writable: false,
-    enumerable: false,
-    configurable: true,
-  });
-}
+const getter = Object.getOwnPropertyDescriptor(Intl.Locale.prototype, "numeric").get;
+verifyProperty(getter, "name", {
+  value: "get numeric",
+  writable: false,
+  enumerable: false,
+  configurable: true,
+});

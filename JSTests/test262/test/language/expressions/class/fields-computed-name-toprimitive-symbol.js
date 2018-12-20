@@ -1,10 +1,10 @@
 // This file was procedurally generated from the following sources:
-// - src/class-fields/computed-name-toprimitive-symbol.case
-// - src/class-fields/default/cls-expr.template
+// - src/class-elements/computed-name-toprimitive-symbol.case
+// - src/class-elements/default/cls-expr.template
 /*---
 description: ToPrimitive evaluation in the ComputedPropertyName (field definitions in a class expression)
 esid: prod-FieldDefinition
-features: [computed-property-names, Symbol.toPrimitive, Symbol, class, class-fields-public]
+features: [class-fields-public, computed-property-names, Symbol.toPrimitive, Symbol, class]
 flags: [generated]
 includes: [propertyHelper.js]
 info: |

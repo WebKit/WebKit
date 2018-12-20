@@ -39,7 +39,7 @@ switch (null) {
 assert.sameValue(
   probeDefaultBeforeCase(),
   'inside',
-  'from `default` clause preceeding `case` clause'
+  'from `default` clause preceding `case` clause'
 );
 assert.sameValue(
   probeCase(), 'inside', 'from `case` clause following `default` clause'

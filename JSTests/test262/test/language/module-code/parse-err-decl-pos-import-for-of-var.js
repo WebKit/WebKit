@@ -9,7 +9,7 @@ negative:
 flags: [module]
 ---*/
 
-throw "Test262: This statement should not be evaluated.";
+$DONOTEVALUATE();
 
 for (var y of [])
   import v from './decl-pos-import-for-of-var.js';

@@ -5,6 +5,7 @@ es6id: 9.5.5
 description: >
     Return descriptor from trap result if it has the same value as the target
     property descriptor.
+features: [Proxy]
 ---*/
 
 var target = {};

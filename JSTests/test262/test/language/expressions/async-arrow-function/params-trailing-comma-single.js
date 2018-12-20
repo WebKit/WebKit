@@ -4,6 +4,7 @@
 /*---
 description: A trailing comma should not increase the respective length, using a single parameter (async arrow function expression)
 esid: sec-async-arrow-function-definitions
+features: [async-functions]
 flags: [generated, async]
 info: |
     14.7 Async Arrow Function Definitions

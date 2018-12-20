@@ -28,6 +28,6 @@ info: |
           lhs using AssignmentPattern as the goal symbol.
     [...]
 ---*/
-throw "Test262: This statement should not be evaluated.";
+$DONOTEVALUATE();
 
 for ([...{ x = yield }] in [[{}]]) ;

@@ -4,7 +4,7 @@
 /*---
 description: >
   Verify an undefined descriptor
-includes: [propertyHelper.js,sta.js]
+includes: [propertyHelper.js]
 ---*/
 var sample = {
   bar: undefined,

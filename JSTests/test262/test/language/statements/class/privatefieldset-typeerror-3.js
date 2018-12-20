@@ -8,7 +8,7 @@ esid: sec-putvalue
 info: |
   PutValue ( V, W )
     ...
-    5. Else if IsPropertyReference(V), then
+    6. Else if IsPropertyReference(V), then
       ...
       b. If IsPrivateReference(V), then
         i. Let env be the running execution context's PrivateNameEnvironment.

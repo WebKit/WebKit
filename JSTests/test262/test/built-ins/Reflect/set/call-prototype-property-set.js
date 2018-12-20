@@ -22,6 +22,7 @@ info: |
       i. Return parent.[[Set]](P, V, Receiver).
   ...
   11. Return true.
+features: [Reflect, Reflect.set]
 ---*/
 
 var args;

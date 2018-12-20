@@ -36,8 +36,8 @@ const invalidHourCycleOptions = [
   "h12\0",
   "H12",
 ];
-for (const invalidHourCycleOption of invalidHourCycleOptions) {
+for (const hourCycle of invalidHourCycleOptions) {
   assert.throws(RangeError, function() {
-    new Intl.Locale("en", {hourCycle: invalidHourCycleOption});
-  }, `${invalidHourCycleOption} is an invalid hourCycle option value`);
+    new Intl.Locale("en", {hourCycle});
+  }, `new Intl.Locale("en", {hourCycle: "${hourCycle}"}) throws RangeError`);
 }

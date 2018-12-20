@@ -10,6 +10,7 @@ info: |
     ...
     9. Let trapResultObj be Call(trap, handler, «target, P»).
     ...
+features: [Proxy]
 ---*/
 
 var _target, _handler, _prop;
@@ -22,7 +23,7 @@ var handler = {
     _handler = this;
     _prop = prop;
 
-    return Object.getOwnPropertyDescriptor(t);
+    return Object.getOwnPropertyDescriptor(t, prop);
   }
 };
 var p = new Proxy(target, handler);

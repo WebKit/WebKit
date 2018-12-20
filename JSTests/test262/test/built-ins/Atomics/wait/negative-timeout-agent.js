@@ -5,29 +5,35 @@
 esid: sec-atomics.wait
 description: >
   Test that Atomics.wait times out with a negative timeout
+includes: [atomicsHelper.js]
 features: [Atomics, SharedArrayBuffer, TypedArray]
 ---*/
 
-function getReport() {
-  var r;
-  while ((r = $262.agent.getReport()) == null) {
-    $262.agent.sleep(100);
-  }
-  return r;
-}
+const RUNNING = 1;
 
-$262.agent.start(
-`
-$262.agent.receiveBroadcast(function(sab, id) {
-  var ia = new Int32Array(sab);
-  $262.agent.report(Atomics.wait(ia, 0, 0, -5)); // -5 => 0
-  $262.agent.leaving();
-})
+$262.agent.start(`
+  $262.agent.receiveBroadcast(function(sab, id) {
+    var i32a = new Int32Array(sab);
+    Atomics.add(i32a, ${RUNNING}, 1);
+
+    $262.agent.report(Atomics.wait(i32a, 0, 0, -5)); // -5 => 0
+    $262.agent.leaving();
+  });
 `);
 
-var buffer = new SharedArrayBuffer(1024);
-var int32Array = new Int32Array(buffer);
+const i32a = new Int32Array(
+  new SharedArrayBuffer(Int32Array.BYTES_PER_ELEMENT * 4)
+);
 
-$262.agent.broadcast(int32Array.buffer);
-assert.sameValue(getReport(), "timed-out");
-assert.sameValue(Atomics.wake(int32Array, 0), 0);
+$262.agent.safeBroadcast(i32a);
+$262.agent.waitUntil(i32a, RUNNING, 1);
+
+// Try to yield control to ensure the agent actually started to wait.
+$262.agent.tryYield();
+
+assert.sameValue(
+  $262.agent.getReport(),
+  'timed-out',
+  '$262.agent.getReport() returns "timed-out"'
+);
+assert.sameValue(Atomics.notify(i32a, 0), 0, 'Atomics.notify(i32a, 0) returns 0');

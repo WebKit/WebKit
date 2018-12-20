@@ -32,6 +32,7 @@ info: |
     e. If existingDescriptor is not undefined, then
       i. If IsAccessorDescriptor(existingDescriptor) is true, return false.
   ...
+features: [Reflect, Reflect.set]
 ---*/
 
 var receiver = {};

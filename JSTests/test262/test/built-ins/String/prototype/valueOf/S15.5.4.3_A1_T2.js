@@ -4,7 +4,7 @@
 /*---
 info: String.prototype.valueOf() returns this string value
 es5id: 15.5.4.3_A1_T2
-description: Create String object as new String(true) and check it`s valueOf()
+description: Create String object as new String(true) and check its valueOf()
 ---*/
 
 var __string__obj = new String(true);

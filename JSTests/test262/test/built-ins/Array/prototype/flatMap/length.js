@@ -14,6 +14,8 @@ assert.sameValue(
   'The value of `Array.prototype.flatmap.length` is `1`'
 );
 
-verifyNotEnumerable(Array.prototype.flatMap, 'length');
-verifyNotWritable(Array.prototype.flatMap, 'length');
-verifyConfigurable(Array.prototype.flatMap, 'length');
+verifyProperty(Array.prototype.flatMap, 'length', {
+  enumerable: false,
+  writable: false,
+  configurable: true,
+});

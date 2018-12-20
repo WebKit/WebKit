@@ -5,7 +5,6 @@
 description: >
   Functions that throw values whose constructor does not match the specified
   constructor do not satisfy the assertion.
-includes: [sta.js]
 ---*/
 
 var threw = false;

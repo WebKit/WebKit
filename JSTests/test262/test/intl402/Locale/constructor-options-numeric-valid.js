@@ -36,30 +36,33 @@ features: [Intl.Locale]
 ---*/
 
 const validNumericOptions = [
-  [undefined, undefined],
-  [false, "false"],
-  [true, "true"],
-  [null, "false"],
-  [0, "false"],
-  [0.5, "true"],
-  [{ valueOf() { return false; } }, "true"],
+  [false, false],
+  [true, true],
+  [null, false],
+  [0, false],
+  [0.5, true],
+  ["true", true],
+  ["false", true],
+  [{ valueOf() { return false; } }, true],
 ];
 for (const [numeric, expected] of validNumericOptions) {
-  const options = { numeric };
+  let expect = expected ? "en-u-kn" : "en-u-kn-false";
+
   assert.sameValue(
-    new Intl.Locale('en', options).toString(),
-    expected ? ("en-u-kn-" + expected) : "en",
+    new Intl.Locale('en', {numeric}).toString(),
+    expect,
+    `new Intl.Locale("en", {numeric: ${numeric}}).toString() returns "${expected}"`
   );
 
   assert.sameValue(
-    new Intl.Locale('en-u-kn-true', options).toString(),
-    "en-u-kn-" + (expected || "true"),
+    new Intl.Locale('en-u-kn-true', {numeric}).toString(),
+    expect,
+    `new Intl.Locale("en-u-kn-true", {numeric: ${numeric}}).toString() returns "${expected}"`
   );
 
-  if ("numeric" in Intl.Locale.prototype) {
-    assert.sameValue(
-      new Intl.Locale('en-u-kf-lower', options).numeric,
-      expected,
-    );
-  }
+  assert.sameValue(
+    new Intl.Locale('en-u-kf-lower', {numeric}).numeric,
+    expected,
+    `new Intl.Locale("en-u-kf-lower", {numeric: ${numeric}}).numeric equals "${expected}"`
+  );
 }

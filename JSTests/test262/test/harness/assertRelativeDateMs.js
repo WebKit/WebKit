@@ -4,7 +4,7 @@
 description: >
      Only passes when the provided date is exactly the specified number of
      milliseconds from the Unix epoch
-includes: [assertRelativeDateMs.js,sta.js]
+includes: [assertRelativeDateMs.js]
 ---*/
 
 var thrown;

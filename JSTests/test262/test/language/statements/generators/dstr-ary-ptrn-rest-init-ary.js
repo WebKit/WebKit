@@ -2,7 +2,7 @@
 // - src/dstr-binding/ary-ptrn-rest-init-ary.case
 // - src/dstr-binding/default/gen-func-decl.template
 /*---
-description: Reset element (nested array pattern) does not support initializer (generator function declaration)
+description: Rest element (nested array pattern) does not support initializer (generator function declaration)
 esid: sec-generator-function-definitions-runtime-semantics-instantiatefunctionobject
 es6id: 14.4.12
 features: [generators, destructuring-binding]
@@ -47,7 +47,7 @@ info: |
         [ BindingElementList[?Yield] ]
         [ BindingElementList[?Yield] , Elisionopt BindingRestElement[?Yield]opt ]
 ---*/
-throw "Test262: This statement should not be evaluated.";
+$DONOTEVALUATE();
 
 var callCount = 0;
 function* f([...[ x ] = []]) {

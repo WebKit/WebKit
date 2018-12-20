@@ -33,6 +33,7 @@ var thisVal = {
   },
 };
 
+assert.sameValue(typeof String.prototype.trimEnd, 'function');
 assert.throws(TypeError, function() {
   String.prototype.trimEnd.call(thisVal);
 });

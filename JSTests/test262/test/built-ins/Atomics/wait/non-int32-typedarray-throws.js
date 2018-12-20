@@ -15,40 +15,64 @@ info: |
 features: [Atomics, Float32Array, Float64Array, Int8Array, TypedArray, Uint16Array, Uint8Array, Uint8ClampedArray]
 ---*/
 
-var poisoned = {
+const poisoned = {
   valueOf: function() {
-    throw new Test262Error("should not evaluate this code");
+    throw new Test262Error('should not evaluate this code');
   }
 };
 
 assert.throws(TypeError, function() {
-  Atomics.wait(new Float64Array(), poisoned, poisoned, poisoned);
-}, 'Float64Array');
+  const view = new Float64Array(
+    new SharedArrayBuffer(Float64Array.BYTES_PER_ELEMENT * 8)
+  );
+  Atomics.wait(view, poisoned, poisoned, poisoned);
+}, '`const view = new Float64Array( new SharedArrayBuffer(Float64Array.BYTES_PER_ELEMENT * 8) ); Atomics.wait(view, poisoned, poisoned, poisoned)` throws TypeError');
 
 assert.throws(TypeError, function() {
-  Atomics.wait(new Float32Array(), poisoned, poisoned, poisoned);
-}, 'Float32Array');
+  const view = new Float32Array(
+    new SharedArrayBuffer(Float32Array.BYTES_PER_ELEMENT * 4)
+  );
+  Atomics.wait(view, poisoned, poisoned, poisoned);
+}, '`const view = new Float32Array( new SharedArrayBuffer(Float32Array.BYTES_PER_ELEMENT * 4) ); Atomics.wait(view, poisoned, poisoned, poisoned)` throws TypeError');
 
 assert.throws(TypeError, function() {
-  Atomics.wait(new Int16Array(), poisoned, poisoned, poisoned);
-}, 'Int16Array');
+  const view = new Int16Array(
+    new SharedArrayBuffer(Int16Array.BYTES_PER_ELEMENT * 2)
+  );
+  Atomics.wait(view, poisoned, poisoned, poisoned);
+}, '`const view = new Int16Array( new SharedArrayBuffer(Int16Array.BYTES_PER_ELEMENT * 2) ); Atomics.wait(view, poisoned, poisoned, poisoned)` throws TypeError');
 
 assert.throws(TypeError, function() {
-  Atomics.wait(new Int8Array(), poisoned, poisoned, poisoned);
-}, 'Int8Array');
+  const view = new Int8Array(
+    new SharedArrayBuffer(Int8Array.BYTES_PER_ELEMENT)
+  );
+  Atomics.wait(view, poisoned, poisoned, poisoned);
+}, '`const view = new Int8Array( new SharedArrayBuffer(Int8Array.BYTES_PER_ELEMENT) ); Atomics.wait(view, poisoned, poisoned, poisoned)` throws TypeError');
 
 assert.throws(TypeError, function() {
-  Atomics.wait(new Uint32Array(),  poisoned, poisoned, poisoned);
-}, 'Uint32Array');
+  const view = new Uint32Array(
+    new SharedArrayBuffer(Uint32Array.BYTES_PER_ELEMENT * 4)
+  );
+  Atomics.wait(view, poisoned, poisoned, poisoned);
+}, '`const view = new Uint32Array( new SharedArrayBuffer(Uint32Array.BYTES_PER_ELEMENT * 4) ); Atomics.wait(view, poisoned, poisoned, poisoned)` throws TypeError');
 
 assert.throws(TypeError, function() {
-  Atomics.wait(new Uint16Array(), poisoned, poisoned, poisoned);
-}, 'Uint16Array');
+  const view = new Uint16Array(
+    new SharedArrayBuffer(Uint16Array.BYTES_PER_ELEMENT * 2)
+  );
+  Atomics.wait(view, poisoned, poisoned, poisoned);
+}, '`const view = new Uint16Array( new SharedArrayBuffer(Uint16Array.BYTES_PER_ELEMENT * 2) ); Atomics.wait(view, poisoned, poisoned, poisoned)` throws TypeError');
 
 assert.throws(TypeError, function() {
-  Atomics.wait(new Uint8Array(), poisoned, poisoned, poisoned);
-}, 'Uint8Array');
+  const view = new Uint8Array(
+    new SharedArrayBuffer(Uint8Array.BYTES_PER_ELEMENT)
+  );
+  Atomics.wait(view, poisoned, poisoned, poisoned);
+}, '`const view = new Uint8Array( new SharedArrayBuffer(Uint8Array.BYTES_PER_ELEMENT) ); Atomics.wait(view, poisoned, poisoned, poisoned)` throws TypeError');
 
 assert.throws(TypeError, function() {
-  Atomics.wait(new Uint8ClampedArray(), poisoned, poisoned, poisoned);
-}, 'Uint8ClampedArray');
+  const view = new Uint8ClampedArray(
+    new SharedArrayBuffer(Uint8ClampedArray.BYTES_PER_ELEMENT)
+  );
+  Atomics.wait(view, poisoned, poisoned, poisoned);
+}, '`const view = new Uint8ClampedArray( new SharedArrayBuffer(Uint8ClampedArray.BYTES_PER_ELEMENT) ); Atomics.wait(view, poisoned, poisoned, poisoned)` throws TypeError');

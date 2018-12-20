@@ -4,7 +4,7 @@
 /*---
 info: String.prototype.indexOf works properly
 es5id: 15.5.4.7_A5_T6
-description: Search substring from it`s position+1 in the string
+description: Search substring from its position+1 in the string
 ---*/
 
 var TEST_STRING = new String(" !\"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~");

@@ -4,7 +4,6 @@
 /*---
 description: >
     Functions that throw the `null` value do not satisfy the assertion.
-includes: [sta.js]
 ---*/
 
 var threw = false;

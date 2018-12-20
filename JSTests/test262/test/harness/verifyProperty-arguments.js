@@ -4,7 +4,7 @@
 /*---
 description: >
   verifyProperty should receive at least 3 arguments: obj, name, and descriptor
-includes: [propertyHelper.js,sta.js]
+includes: [propertyHelper.js]
 ---*/
 assert.throws(Test262Error, () => {
   verifyProperty();

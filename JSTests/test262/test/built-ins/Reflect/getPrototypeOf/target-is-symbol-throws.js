@@ -9,7 +9,7 @@ info: |
 
   1. If Type(target) is not Object, throw a TypeError exception.
   ...
-features: [Symbol]
+features: [Reflect, Symbol]
 ---*/
 
 assert.throws(TypeError, function() {

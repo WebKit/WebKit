@@ -10,6 +10,6 @@ flags: [module]
 features: [generators]
 ---*/
 
-throw "Test262: This statement should not be evaluated.";
+$DONOTEVALUATE();
 
 ({ *m() { import v from './decl-pos-import-object-gen-method.js'; } });

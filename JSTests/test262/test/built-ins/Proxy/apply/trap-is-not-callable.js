@@ -4,6 +4,7 @@
 es6id: 9.5.13
 description: >
     Throws if trap is not callable.
+features: [Proxy]
 ---*/
 
 var p = new Proxy(function() {}, {

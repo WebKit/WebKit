@@ -4,7 +4,7 @@
 /*---
 description: >
   The desc argument should be an object or undefined
-includes: [propertyHelper.js,sta.js]
+includes: [propertyHelper.js]
 features: [Symbol]
 ---*/
 var sample = { foo: 42 };

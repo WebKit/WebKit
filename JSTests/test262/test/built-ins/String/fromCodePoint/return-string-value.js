@@ -17,6 +17,7 @@ info: |
     g. Let nextIndex be nextIndex + 1.
   6. Return the String value whose elements are, in order, the elements in the
   List elements. If length is 0, the empty string is returned.
+features: [String.fromCodePoint]
 ---*/
 
 assert.sameValue(String.fromCodePoint(0), '\x00');

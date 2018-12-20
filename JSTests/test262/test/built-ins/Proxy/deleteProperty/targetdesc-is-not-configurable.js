@@ -9,6 +9,7 @@ description: >
     own property of the target object.
 info: |
     14. If targetDesc.[[Configurable]] is false, throw a TypeError exception.
+features: [Proxy]
 ---*/
 
 var target = {};

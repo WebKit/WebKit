@@ -21,6 +21,7 @@ info: |
   9. Let setterResult be Call(setter, Receiver, «V»).
   10. ReturnIfAbrupt(setterResult).
   11. Return true.
+features: [Reflect, Reflect.set]
 ---*/
 
 var args;

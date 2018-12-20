@@ -10,6 +10,7 @@ info: |
     6.1.7.2 Object Internal Methods and Internal Slots
 
     (...) Receiver is used as the this value when evaluating the code
+features: [Proxy]
 ---*/
 
 var _target, _handler, _prop, _receiver;

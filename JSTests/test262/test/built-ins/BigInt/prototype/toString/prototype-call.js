@@ -15,6 +15,7 @@ info: |
   [[BigIntData]] internal slot.
 features: [BigInt]
 ---*/
+assert.sameValue(typeof BigInt, 'function');
 
 assert.throws(TypeError, function() {
   BigInt.prototype.toString(1);

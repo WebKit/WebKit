@@ -19,8 +19,8 @@ info: |
     2. Assert: Assert constructor is an ECMAScript function object.
     3. Let fieldRecords be the value of constructor's [[Fields]] internal slot.
     4. For each item fieldRecord in order from fieldRecords,
-      a. If fieldRecord.[[static]] is false, then
-        i. Perform ? DefineField(O, fieldRecord).
+      a. Perform ? DefineField(O, fieldRecord).
+    5. Return.
 
   DefineField(receiver, fieldRecord)
     ...
@@ -32,6 +32,7 @@ info: |
     2. If O is not an object, throw a TypeError exception.
     3. Let entry be PrivateFieldFind(P, O).
     4. If entry is not empty, throw a TypeError exception.
+    ...
 
 features: [class, class-fields-private]
 ---*/

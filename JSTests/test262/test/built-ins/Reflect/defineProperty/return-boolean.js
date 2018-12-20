@@ -9,6 +9,7 @@ info: |
 
   ...
   6. Return target.[[DefineOwnProperty]](key, desc).
+features: [Reflect]
 ---*/
 
 var o = {};

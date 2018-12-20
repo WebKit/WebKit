@@ -2,7 +2,7 @@
 // - src/dstr-binding-for-await/ary-ptrn-rest-init-ary.case
 // - src/dstr-binding-for-await/default/for-await-of-async-gen-var.template
 /*---
-description: Reset element (nested array pattern) does not support initializer (for-await-of statement)
+description: Rest element (nested array pattern) does not support initializer (for-await-of statement)
 esid: sec-for-in-and-for-of-statements-runtime-semantics-labelledevaluation
 features: [destructuring-binding, async-iteration]
 flags: [generated, async]
@@ -41,7 +41,7 @@ info: |
         [ BindingElementList[?Yield] ]
         [ BindingElementList[?Yield] , Elisionopt BindingRestElement[?Yield]opt ]
 ---*/
-throw "Test262: This statement should not be evaluated.";
+$DONOTEVALUATE();
 
 var iterCount = 0;
 

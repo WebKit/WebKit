@@ -22,6 +22,7 @@ info: |
     ...
     17. Return handlerProto.
 
+features: [Proxy]
 ---*/
 
 var target = Object.create(Array.prototype);

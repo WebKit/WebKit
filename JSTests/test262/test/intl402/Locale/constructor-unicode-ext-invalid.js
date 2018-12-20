@@ -12,19 +12,20 @@ features: [Intl.Locale]
 ---*/
 
 const invalidLanguageTags = [
-    // Unicode extension sequence is incomplete.
-    "da-u",
-    "da-u-",
-    "da-u--",
-    "da-u-t-latn",
-    "da-u-x-priv",
+  // Unicode extension sequence is incomplete.
+  "da-u",
+  "da-u-",
+  "da-u--",
+  "da-u-t-latn",
+  "da-u-x-priv",
 
-    // Duplicate 'u' singleton.
-    "da-u-ca-gregory-u-ca-buddhist"
+  // Duplicate 'u' singleton.
+  "da-u-ca-gregory-u-ca-buddhist"
 ];
 
 for (const langtag of invalidLanguageTags) {
-    assert.throws(RangeError, function() {
-        new Intl.Locale(langtag)
-    });
+  assert.throws(RangeError, function() {
+    new Intl.Locale(langtag)
+  },
+  `new Intl.Locale("${langtag}") throws RangeError`);
 }

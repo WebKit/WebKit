@@ -10,7 +10,7 @@ description: >
     of numbers, each added during some operation, and verifies that they
     are in numeric order.
 
-includes: [promiseHelper.js,sta.js]
+includes: [promiseHelper.js]
 ---*/
 
 assert(checkSequence([1, 2, 3, 4, 5]));

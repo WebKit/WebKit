@@ -7,7 +7,7 @@ description: >
 
     8. If trap is undefined, then Return target.[[Delete]](P).
 flags: [onlyStrict]
-features: [Reflect]
+features: [Proxy, Reflect]
 ---*/
 
 var target = {

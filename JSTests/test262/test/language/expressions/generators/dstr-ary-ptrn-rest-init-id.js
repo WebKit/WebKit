@@ -2,7 +2,7 @@
 // - src/dstr-binding/ary-ptrn-rest-init-id.case
 // - src/dstr-binding/default/gen-func-expr.template
 /*---
-description: Reset element (identifier) does not support initializer (generator function expression)
+description: Rest element (identifier) does not support initializer (generator function expression)
 esid: sec-generator-function-definitions-runtime-semantics-evaluation
 es6id: 14.4.14
 features: [generators, destructuring-binding]
@@ -47,7 +47,7 @@ info: |
         [ BindingElementList[?Yield] ]
         [ BindingElementList[?Yield] , Elisionopt BindingRestElement[?Yield]opt ]
 ---*/
-throw "Test262: This statement should not be evaluated.";
+$DONOTEVALUATE();
 
 var callCount = 0;
 var f;

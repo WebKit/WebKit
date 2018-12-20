@@ -14,6 +14,7 @@ info: |
     7.3.9 GetMethod (O, P)
 
     4. If IsCallable(func) is false, throw a TypeError exception.
+features: [Proxy]
 ---*/
 
 var p = new Proxy({

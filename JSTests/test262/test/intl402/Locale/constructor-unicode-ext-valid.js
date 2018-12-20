@@ -30,5 +30,9 @@ const validLanguageTags = {
 };
 
 for (const [langtag, canonical] of Object.entries(validLanguageTags)) {
-    assert.sameValue(new Intl.Locale(langtag).toString(), canonical);
+    assert.sameValue(
+      new Intl.Locale(langtag).toString(),
+      canonical,
+      `new Intl.Locale("${langtag}").toString() returns "${canonical}"`
+    );
 }

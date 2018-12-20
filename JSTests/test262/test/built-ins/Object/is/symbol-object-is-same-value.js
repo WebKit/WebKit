@@ -4,7 +4,7 @@
 esid: sec-object.is
 description: >
     Object.is/SameValue: Symbol
-features: [Object.is,Symbol]
+features: [Object.is, Symbol]
 ---*/
 var symA = Symbol('66');
 var symB = Symbol('66');

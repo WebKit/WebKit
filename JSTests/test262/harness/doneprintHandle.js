@@ -5,13 +5,18 @@ description: |
 
 ---*/
 
-function __consolePrintHandle__(msg){
+function __consolePrintHandle__(msg) {
   print(msg);
 }
 
-function $DONE(){
-  if(!arguments[0])
+function $DONE(error) {
+  if (error) {
+    if(typeof error === 'object' && error !== null && 'name' in error) {
+      __consolePrintHandle__('Test262:AsyncTestFailure:' + error.name + ': ' + error.message);
+    } else {
+      __consolePrintHandle__('Test262:AsyncTestFailure:Test262Error: ' + error);
+    }
+  } else {
     __consolePrintHandle__('Test262:AsyncTestComplete');
-  else
-    __consolePrintHandle__('Test262:AsyncTestFailure:' + arguments[0]);
+  }
 }

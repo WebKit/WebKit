@@ -19,6 +19,7 @@ info: |
     exception.
     e. If nextCP < 0 or nextCP > 0x10FFFF, throw a RangeError exception.
   ...
+features: [String.fromCodePoint]
 ---*/
 
 assert.throws(RangeError, function() {

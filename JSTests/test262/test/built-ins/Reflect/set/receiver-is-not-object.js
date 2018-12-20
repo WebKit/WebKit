@@ -27,6 +27,7 @@ info: |
     a. If ownDesc.[[Writable]] is false, return false.
     b. If Type(Receiver) is not Object, return false.
   ...
+features: [Reflect, Reflect.set]
 ---*/
 
 var o1 = {

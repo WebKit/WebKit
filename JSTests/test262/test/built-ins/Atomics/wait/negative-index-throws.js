@@ -13,26 +13,30 @@ info: |
       2.Let accessIndex be ? ToIndex(requestIndex).
         ...
         2.b If integerIndex < 0, throw a RangeError exception
+
+includes: [atomicsHelper.js]
 features: [Atomics, SharedArrayBuffer, TypedArray]
 ---*/
 
-var sab = new SharedArrayBuffer(1024);
-var int32Array = new Int32Array(sab);
-var poisoned = {
+const i32a = new Int32Array(
+  new SharedArrayBuffer(Int32Array.BYTES_PER_ELEMENT * 4)
+);
+
+const poisoned = {
   valueOf: function() {
-    throw new Test262Error("should not evaluate this code");
+    throw new Test262Error('should not evaluate this code');
   }
 };
 
 assert.throws(RangeError, function() {
-  Atomics.wait(int32Array, -Infinity, poisoned, poisoned);
-});
+  Atomics.wait(i32a, -Infinity, poisoned, poisoned);
+}, '`Atomics.wait(i32a, -Infinity, poisoned, poisoned)` throws RangeError');
 assert.throws(RangeError, function() {
-  Atomics.wait(int32Array, -7.999, poisoned, poisoned);
-});
+  Atomics.wait(i32a, -7.999, poisoned, poisoned);
+}, '`Atomics.wait(i32a, -7.999, poisoned, poisoned)` throws RangeError');
 assert.throws(RangeError, function() {
-  Atomics.wait(int32Array, -1, poisoned, poisoned);
-});
+  Atomics.wait(i32a, -1, poisoned, poisoned);
+}, '`Atomics.wait(i32a, -1, poisoned, poisoned)` throws RangeError');
 assert.throws(RangeError, function() {
-  Atomics.wait(int32Array, -300, poisoned, poisoned);
-});
+  Atomics.wait(i32a, -300, poisoned, poisoned);
+}, '`Atomics.wait(i32a, -300, poisoned, poisoned)` throws RangeError');

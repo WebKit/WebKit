@@ -12,6 +12,8 @@ info: |
 features: [Intl.Locale, Symbol]
 ---*/
 
+assert.sameValue(typeof Intl.Locale, "function");
+
 assert.throws(TypeError, function() {
   new Intl.Locale(Symbol());
 }, "Symbol() is an invalid tag value");

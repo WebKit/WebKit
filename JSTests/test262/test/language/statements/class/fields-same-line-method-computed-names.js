@@ -1,10 +1,10 @@
 // This file was procedurally generated from the following sources:
-// - src/class-fields/computed-names.case
-// - src/class-fields/productions/cls-decl-same-line-method.template
+// - src/class-elements/computed-names.case
+// - src/class-elements/productions/cls-decl-same-line-method.template
 /*---
 description: Computed property names (field definitions followed by a method in the same line)
 esid: prod-FieldDefinition
-features: [computed-property-names, class, class-fields-public]
+features: [class-fields-public, computed-property-names, class]
 flags: [generated]
 includes: [propertyHelper.js]
 info: |
@@ -25,7 +25,7 @@ var x = "b";
 
 class C {
   [x] = 42; [10] = "meep"; ["not initialized"]; m() { return 42; }
-
+  
 }
 
 var c = new C();

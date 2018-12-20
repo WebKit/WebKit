@@ -14,37 +14,46 @@ info: |
     a.Perform LeaveCriticalSection(WL).
     b. Return the String "not-equal".
 
-features: [Atomics, SharedArrayBuffer, TypedArray]
 includes: [atomicsHelper.js]
+features: [Atomics, SharedArrayBuffer, TypedArray]
 ---*/
 
-function getReport() {
-  var r;
-  while ((r = $262.agent.getReport()) == null) {
-    $262.agent.sleep(100);
-  }
-  return r;
-}
+const RUNNING = 1;
 
 var value = 42;
 
-$262.agent.start(
-`
-$262.agent.receiveBroadcast(function (sab) {
-  var int32Array = new Int32Array(sab);
+$262.agent.start(`
+  $262.agent.receiveBroadcast(function(sab) {
+    const i32a = new Int32Array(sab);
+    Atomics.add(i32a, ${RUNNING}, 1);
 
-  $262.agent.report(Atomics.store(int32Array, 0, ${value}));
-
-  $262.agent.report(Atomics.wait(int32Array, 0, 0));
-
-  $262.agent.leaving();
-})
+    $262.agent.report(Atomics.store(i32a, 0, ${value}));
+    $262.agent.report(Atomics.wait(i32a, 0, 0));
+    $262.agent.leaving();
+  });
 `);
 
-var int32Array = new Int32Array(new SharedArrayBuffer(Int32Array.BYTES_PER_ELEMENT));
+const i32a = new Int32Array(
+  new SharedArrayBuffer(Int32Array.BYTES_PER_ELEMENT * 4)
+);
 
-$262.agent.broadcast(int32Array.buffer);
+// NB: We don't actually explicitly need to wait for the agent to start in this
+// test case, we only do it for consistency with other test cases which do
+// require the main agent to wait and yield control.
 
-assert.sameValue(getReport(), value.toString());
-assert.sameValue(getReport(), "not-equal");
+$262.agent.safeBroadcast(i32a);
+$262.agent.waitUntil(i32a, RUNNING, 1);
 
+// Try to yield control to ensure the agent actually started to wait.
+$262.agent.tryYield();
+
+assert.sameValue(
+  $262.agent.getReport(),
+  value.toString(),
+  '$262.agent.getReport() returns value.toString()'
+);
+assert.sameValue(
+  $262.agent.getReport(),
+  'not-equal',
+  '$262.agent.getReport() returns "not-equal"'
+);

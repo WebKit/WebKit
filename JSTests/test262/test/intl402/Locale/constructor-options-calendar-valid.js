@@ -28,15 +28,14 @@ const validCalendarOptions = [
   ["1234abcd-abc123", "en-u-ca-1234abcd-abc123"],
 ];
 for (const [calendar, expected] of validCalendarOptions) {
-  let options = { calendar };
   assert.sameValue(
-    new Intl.Locale('en', options).toString(),
+    new Intl.Locale('en', { calendar }).toString(),
     expected,
-    `new Intl.Locale('en', options).toString() equals the value of ${expected}`
+    `new Intl.Locale('en', { calendar: "${calendar}" }).toString() returns "${expected}"`
   );
   assert.sameValue(
-    new Intl.Locale('en-u-ca-gregory', options).toString(),
+    new Intl.Locale('en-u-ca-gregory', { calendar }).toString(),
     expected,
-    `new Intl.Locale('en-u-ca-gregory', options).toString() equals the value of ${expected}`
+    `new Intl.Locale('en-u-ca-gregory', { calendar: "${calendar}" }).toString() returns "${expected}"`
   );
 }

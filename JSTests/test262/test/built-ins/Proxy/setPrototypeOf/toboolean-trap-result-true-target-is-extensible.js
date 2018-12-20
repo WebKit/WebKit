@@ -13,7 +13,7 @@ info: |
   9. If booleanTrapResult is false, return false.
   10. Let extensibleTarget be ? IsExtensible(target).
   11. If extensibleTarget is true, return true.
-features: [Reflect.setPrototypeOf, Symbol]
+features: [Proxy, Reflect, Reflect.setPrototypeOf, Symbol]
 ---*/
 
 var called;

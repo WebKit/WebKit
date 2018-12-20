@@ -49,17 +49,17 @@ var z = 2;
 assert.sameValue(
   probeBefore()[0],
   2,
-  'reference preceeding statement (redeclared in "test" position)'
+  'reference preceding statement (redeclared in "test" position)'
 );
 assert.sameValue(
   probeBefore()[1],
   2,
-  'reference preceeding statement (redeclared in statement body)'
+  'reference preceding statement (redeclared in statement body)'
 );
 assert.sameValue(
   probeBefore()[2],
   2,
-  'reference preceeding statement (redeclared in "increment" position)'
+  'reference preceding statement (redeclared in "increment" position)'
 );
 
 assert.sameValue(

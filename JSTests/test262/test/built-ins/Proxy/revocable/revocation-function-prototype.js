@@ -10,6 +10,7 @@ info: |
     constructor has the Function prototype object, which is the initial
     value of the expression Function.prototype (19.2.3), as the value of
     its [[Prototype]] internal slot.
+features: [Proxy]
 ---*/
 
 var revocationFunction = Proxy.revocable({}, {}).revoke;

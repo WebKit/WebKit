@@ -18,9 +18,10 @@ features: [Atomics, SharedArrayBuffer, TypedArray]
 flags: [CanBlockIsFalse]
 ---*/
 
-var buffer = new SharedArrayBuffer(4);
-var int32Array = new Int32Array(buffer);
+const i32a = new Int32Array(
+  new SharedArrayBuffer(Int32Array.BYTES_PER_ELEMENT * 4)
+);
 
 assert.throws(TypeError, function() {
-  Atomics.wait(int32Array, 0, 0, 0);
-});
+  Atomics.wait(i32a, 0, 0, 0);
+}, '`Atomics.wait(i32a, 0, 0, 0)` throws TypeError');

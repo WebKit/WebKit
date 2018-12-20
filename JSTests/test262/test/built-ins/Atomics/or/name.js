@@ -10,8 +10,9 @@ includes: [propertyHelper.js]
 features: [Atomics]
 ---*/
 
-assert.sameValue(Atomics.or.name, "or");
-
-verifyNotEnumerable(Atomics.or, "name");
-verifyNotWritable(Atomics.or, "name");
-verifyConfigurable(Atomics.or, "name");
+verifyProperty(Atomics.or, 'name', {
+  value: 'or',
+  enumerable: false,
+  writable: false,
+  configurable: true,
+});

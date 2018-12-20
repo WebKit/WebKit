@@ -2,7 +2,7 @@
 // - src/dstr-binding/ary-ptrn-rest-init-obj.case
 // - src/dstr-binding/default/meth-dflt.template
 /*---
-description: Reset element (nested object pattern) does not support initializer (method (default parameter))
+description: Rest element (nested object pattern) does not support initializer (method (default parameter))
 esid: sec-runtime-semantics-definemethod
 es6id: 14.3.8
 features: [destructuring-binding, default-parameters]
@@ -49,7 +49,7 @@ info: |
         [ BindingElementList[?Yield] ]
         [ BindingElementList[?Yield] , Elisionopt BindingRestElement[?Yield]opt ]
 ---*/
-throw "Test262: This statement should not be evaluated.";
+$DONOTEVALUATE();
 
 var callCount = 0;
 var obj = {

@@ -10,8 +10,9 @@ includes: [propertyHelper.js]
 features: [Atomics]
 ---*/
 
-assert.sameValue(Atomics.exchange.name, "exchange");
-
-verifyNotEnumerable(Atomics.exchange, "name");
-verifyNotWritable(Atomics.exchange, "name");
-verifyConfigurable(Atomics.exchange, "name");
+verifyProperty(Atomics.exchange, 'name', {
+  value: 'exchange',
+  enumerable: false,
+  writable: false,
+  configurable: true,
+});

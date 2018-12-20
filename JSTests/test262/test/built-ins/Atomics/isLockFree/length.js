@@ -24,8 +24,9 @@ includes: [propertyHelper.js]
 features: [Atomics]
 ---*/
 
-assert.sameValue(Atomics.isLockFree.length, 1);
-
-verifyNotEnumerable(Atomics.isLockFree, "length");
-verifyNotWritable(Atomics.isLockFree, "length");
-verifyConfigurable(Atomics.isLockFree, "length");
+verifyProperty(Atomics.isLockFree, 'length', {
+  value: 1,
+  enumerable: false,
+  writable: false,
+  configurable: true,
+});

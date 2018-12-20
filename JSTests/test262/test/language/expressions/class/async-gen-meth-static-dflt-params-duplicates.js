@@ -57,7 +57,7 @@ info: |
       elements.
 
 ---*/
-throw "Test262: This statement should not be evaluated.";
+$DONOTEVALUATE();
 
 0, class {
   static async *method(x = 0, x) {

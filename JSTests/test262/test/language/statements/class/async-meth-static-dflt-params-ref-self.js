@@ -4,7 +4,7 @@
 /*---
 description: Referencing a parameter from within its own initializer (static class declaration async method)
 esid: sec-runtime-semantics-bindingclassdeclarationevaluation
-features: [default-parameters]
+features: [default-parameters, async-functions]
 flags: [generated, async]
 info: |
     ClassDeclaration : class BindingIdentifier ClassTail

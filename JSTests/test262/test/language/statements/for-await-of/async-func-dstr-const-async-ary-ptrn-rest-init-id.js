@@ -2,7 +2,7 @@
 // - src/dstr-binding-for-await/ary-ptrn-rest-init-id.case
 // - src/dstr-binding-for-await/default/for-await-of-async-func-const-async.template
 /*---
-description: Reset element (identifier) does not support initializer (for-await-of statement)
+description: Rest element (identifier) does not support initializer (for-await-of statement)
 esid: sec-for-in-and-for-of-statements-runtime-semantics-labelledevaluation
 features: [destructuring-binding, async-iteration]
 flags: [generated, async]
@@ -44,7 +44,7 @@ info: |
         [ BindingElementList[?Yield] ]
         [ BindingElementList[?Yield] , Elisionopt BindingRestElement[?Yield]opt ]
 ---*/
-throw "Test262: This statement should not be evaluated.";
+$DONOTEVALUATE();
 
 var iterCount = 0;
 var asyncIter = (async function*() {
