@@ -1,5 +1,20 @@
 2018-12-19  Devin Rousso  <drousso@apple.com>
 
+        Web Inspector: REGRESSION (r237195): Timelines: selecting a rendering frame row moves the time selection
+        https://bugs.webkit.org/show_bug.cgi?id=192773
+        <rdar://problem/46782446>
+
+        Reviewed by Joseph Pecoraro.
+
+        * UserInterface/Views/TimelineOverview.js:
+        (WI.TimelineOverview.prototype._recordSelected):
+        The Frames timeline uses `frameIndex` instead of `startTime`/`endTime`, so when trying to
+        ensure that the selected record is within the filtered range, use `frameIndex` instead.
+        The associated `WI.TimelineRuler` will already be using an index-based approach for
+        selection, so this will match.
+
+2018-12-19  Devin Rousso  <drousso@apple.com>
+
         Web Inspector: Canvas: the recording auto-capture input shouldn't start focused
         https://bugs.webkit.org/show_bug.cgi?id=192454
 

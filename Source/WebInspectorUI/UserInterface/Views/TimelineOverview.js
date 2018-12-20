@@ -733,10 +733,13 @@ WI.TimelineOverview = class TimelineOverview extends WI.View
                 lastRecord = recordBar.records.lastValue;
             }
 
-            if (firstRecord.startTime < this.selectionStartTime || lastRecord.endTime > this.selectionStartTime + this.selectionDuration) {
+            let startTime = firstRecord instanceof WI.RenderingFrameTimelineRecord ? firstRecord.frameIndex : firstRecord.startTime;
+            let endTime = lastRecord instanceof WI.RenderingFrameTimelineRecord ? lastRecord.frameIndex : lastRecord.startTime;
+
+            if (startTime < this.selectionStartTime || endTime > this.selectionStartTime + this.selectionDuration) {
                 let selectionPadding = this.secondsPerPixel * 10;
-                this.selectionStartTime = firstRecord.startTime - selectionPadding;
-                this.selectionDuration = lastRecord.endTime - firstRecord.startTime + (selectionPadding * 2);
+                this.selectionStartTime = startTime - selectionPadding;
+                this.selectionDuration = endTime - startTime + (selectionPadding * 2);
             }
         }
 
