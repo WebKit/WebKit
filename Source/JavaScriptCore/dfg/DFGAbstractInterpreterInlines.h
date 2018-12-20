@@ -397,12 +397,11 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
     case ValueBitXor:
     case ValueBitAnd:
     case ValueBitOr:
+        clobberWorld();
         if (node->binaryUseKind() == BigIntUse)
             setTypeForNode(node, SpecBigInt);
-        else {
-            clobberWorld();
+        else
             setTypeForNode(node, SpecBoolInt32 | SpecBigInt);
-        }
         break;
             
     case ArithBitAnd:
@@ -614,12 +613,11 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
     case ValueSub:
     case ValueAdd: {
         DFG_ASSERT(m_graph, node, node->binaryUseKind() == UntypedUse || node->binaryUseKind() == BigIntUse);
+        clobberWorld();
         if (node->binaryUseKind() == BigIntUse)
             setTypeForNode(node, SpecBigInt);
-        else {
-            clobberWorld();
+        else
             setTypeForNode(node, SpecString | SpecBytecodeNumber | SpecBigInt);
-        }
         break;
     }
 
@@ -858,12 +856,11 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
     }
         
     case ValueMul: {
+        clobberWorld();
         if (node->binaryUseKind() == BigIntUse)
             setTypeForNode(node, SpecBigInt);
-        else {
-            clobberWorld();
+        else
             setTypeForNode(node, SpecBytecodeNumber | SpecBigInt);
-        }
         break;
     }
 
@@ -918,12 +915,11 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
     }
         
     case ValueDiv: {
+        clobberWorld();
         if (node->binaryUseKind() == BigIntUse)
             setTypeForNode(node, SpecBigInt);
-        else {
-            clobberWorld();
+        else
             setTypeForNode(node, SpecBytecodeNumber | SpecBigInt);
-        }
         break;
     }
 

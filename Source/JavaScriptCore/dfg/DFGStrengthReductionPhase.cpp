@@ -121,15 +121,6 @@ private:
             }
             break;
             
-        case ValueMul:
-        case ValueBitOr:
-        case ValueBitAnd:
-        case ValueBitXor: {
-            if (m_node->binaryUseKind() == BigIntUse)
-                handleCommutativity();
-            break;
-        }
-
         case ArithMul: {
             handleCommutativity();
             Edge& child2 = m_node->child2();
@@ -373,10 +364,6 @@ private:
                 convertToLazyJSValue(m_node, LazyJSValue::newString(m_graph, builder.toString()));
                 m_changed = true;
             }
-
-            if (m_node->binaryUseKind() == BigIntUse)
-                handleCommutativity();
-
             break;
         }
 
