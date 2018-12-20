@@ -888,7 +888,7 @@ Optional<int> RenderTableSection::firstLineBaseline() const
         // Only cells with content have a baseline
         if (cell && cell->contentLogicalHeight()) {
             int candidate = roundToInt(cell->logicalTop() + cell->borderAndPaddingBefore() + cell->contentLogicalHeight());
-            result = std::max(result.value_or(candidate), candidate);
+            result = std::max(result.valueOr(candidate), candidate);
         }
     }
 

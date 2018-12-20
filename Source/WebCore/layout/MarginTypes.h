@@ -80,8 +80,8 @@ inline VerticalMargin::ComputedValues VerticalMargin::usedValues() const
 {
     if (!m_collapsed)
         return m_nonCollapsed;
-    return { m_collapsed->before.value_or(m_nonCollapsed.before),
-        m_collapsed->after.value_or(m_nonCollapsed.after) };
+    return { m_collapsed->before.valueOr(m_nonCollapsed.before),
+        m_collapsed->after.valueOr(m_nonCollapsed.after) };
 }
 
 }

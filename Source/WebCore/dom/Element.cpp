@@ -657,7 +657,7 @@ void Element::setHovered(bool flag)
 // FIXME(webkit.org/b/161611): Take into account orientation/direction.
 inline ScrollAlignment toScrollAlignment(Optional<ScrollLogicalPosition> position, bool isVertical)
 {
-    switch (position.value_or(isVertical ? ScrollLogicalPosition::Start : ScrollLogicalPosition::Nearest)) {
+    switch (position.valueOr(isVertical ? ScrollLogicalPosition::Start : ScrollLogicalPosition::Nearest)) {
     case ScrollLogicalPosition::Start:
         return isVertical ? ScrollAlignment::alignTopAlways : ScrollAlignment::alignLeftAlways;
     case ScrollLogicalPosition::Center:

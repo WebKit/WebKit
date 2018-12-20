@@ -310,7 +310,7 @@ LayoutUnit RenderGrid::gridGap(GridTrackSizingDirection direction, Optional<Layo
     if (gapLength.isNormal())
         return 0_lu;
 
-    return valueForLength(gapLength.length(), availableSize.value_or(0));
+    return valueForLength(gapLength.length(), availableSize.valueOr(0));
 }
 
 LayoutUnit RenderGrid::gridGap(GridTrackSizingDirection direction) const
@@ -1226,7 +1226,7 @@ int RenderGrid::baselinePosition(FontBaseline, bool, LineDirectionMode direction
 #else
     UNUSED_PARAM(mode);
 #endif
-    return firstLineBaseline().value_or(synthesizedBaselineFromMarginBox(*this, direction));
+    return firstLineBaseline().valueOr(synthesizedBaselineFromMarginBox(*this, direction));
 }
 
 Optional<int> RenderGrid::firstLineBaseline() const

@@ -199,7 +199,7 @@ void DeclarativeAnimation::cancel()
 {
     auto cancelationTime = 0_s;
     if (auto animationEffect = effect())
-        cancelationTime = animationEffect->activeTime().value_or(0_s);
+        cancelationTime = animationEffect->activeTime().valueOr(0_s);
 
     WebAnimation::cancel();
 
@@ -236,7 +236,7 @@ void DeclarativeAnimation::invalidateDOMEvents(Seconds elapsedTime)
     if (isPending && m_wasPending)
         return;
 
-    auto iteration = animationEffect ? animationEffect->currentIteration().value_or(0) : 0;
+    auto iteration = animationEffect ? animationEffect->currentIteration().valueOr(0) : 0;
     auto currentPhase = animationEffect ? animationEffect->phase() : phaseWithoutEffect();
 
     bool wasActive = m_previousPhase == AnimationEffect::Phase::Active;

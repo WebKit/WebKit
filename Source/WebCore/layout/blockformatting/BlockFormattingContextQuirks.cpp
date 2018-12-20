@@ -73,7 +73,7 @@ HeightAndMargin BlockFormattingContext::Quirks::stretchedHeight(const LayoutStat
     auto& documentBox = layoutBox.isDocumentBox() ? layoutBox : *layoutBox.parent();
     auto& documentBoxDisplayBox = layoutState.displayBoxForLayoutBox(documentBox);
     auto documentBoxVerticalBorders = documentBoxDisplayBox.borderTop() + documentBoxDisplayBox.borderBottom();
-    auto documentBoxVerticalPaddings = documentBoxDisplayBox.paddingTop().value_or(0) + documentBoxDisplayBox.paddingBottom().value_or(0);
+    auto documentBoxVerticalPaddings = documentBoxDisplayBox.paddingTop().valueOr(0) + documentBoxDisplayBox.paddingBottom().valueOr(0);
 
     auto strechedHeight = layoutState.displayBoxForLayoutBox(initialContainingBlock(layoutBox)).contentBoxHeight();
     strechedHeight -= documentBoxVerticalBorders + documentBoxVerticalPaddings;

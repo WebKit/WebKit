@@ -340,7 +340,7 @@ void MediaStreamTrack::applyConstraints(const Optional<MediaTrackConstraints>& c
         if (!weakThis || !weakThis->m_promise)
             return;
         weakThis->m_promise->resolve();
-        weakThis->m_constraints = constraints.value_or(MediaTrackConstraints { });
+        weakThis->m_constraints = constraints.valueOr(MediaTrackConstraints { });
     };
     m_private->applyConstraints(createMediaConstraints(constraints), WTFMove(successHandler), WTFMove(failureHandler));
 }

@@ -1,3 +1,53 @@
+2018-12-20  Chris Dumez  <cdumez@apple.com>
+
+        Use Optional::valueOr() instead of Optional::value_or()
+        https://bugs.webkit.org/show_bug.cgi?id=192933
+
+        Reviewed by Geoffrey Garen.
+
+        * Shared/API/c/WKSecurityOriginRef.cpp:
+        (WKSecurityOriginGetPort):
+        * UIProcess/API/APIProcessPoolConfiguration.h:
+        * UIProcess/API/Cocoa/WKSecurityOrigin.mm:
+        (-[WKSecurityOrigin port]):
+        * UIProcess/API/Cocoa/WKWebViewConfiguration.mm:
+        (-[WKWebViewConfiguration _cpuLimit]):
+        * UIProcess/API/glib/WebKitSecurityOrigin.cpp:
+        (webkit_security_origin_get_port):
+        * UIProcess/API/gtk/WebKitWebViewBase.cpp:
+        (webkitWebViewBaseHandleWheelEvent):
+        * UIProcess/Automation/SimulatedInputDispatcher.cpp:
+        (WebKit::SimulatedInputKeyFrame::maximumDuration const):
+        (WebKit::SimulatedInputDispatcher::transitionInputSourceToState):
+        * UIProcess/Automation/WebAutomationSession.cpp:
+        (WebKit::WebAutomationSession::setWindowFrameOfBrowsingContext):
+        (WebKit::WebAutomationSession::performInteractionSequence):
+        * UIProcess/Automation/WebAutomationSessionMacros.h:
+        * UIProcess/ServiceWorkerProcessProxy.cpp:
+        (WebKit::ServiceWorkerProcessProxy::start):
+        * UIProcess/WebAuthentication/AuthenticatorManager.cpp:
+        (WebKit::AuthenticatorManager::initTimeOutTimer):
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::deviceScaleFactor const):
+        * UIProcess/WebPageProxy.h:
+        (WebKit::WebPageProxy::viewportSizeForCSSViewportUnits const):
+        * UIProcess/gtk/WebPopupMenuProxyGtk.cpp:
+        (WebKit::WebPopupMenuProxyGtk::activateItem):
+        * UIProcess/mac/LegacySessionStateCoding.cpp:
+        (WebKit::encodeFormDataElement):
+        * WebProcess/Network/WebLoaderStrategy.cpp:
+        (WebKit::WebLoaderStrategy::scheduleLoad):
+        * WebProcess/Plugins/PDF/PDFPlugin.mm:
+        (WebKit::PDFPlugin::convertFromPDFViewToRootView const):
+        (WebKit::PDFPlugin::boundsOnScreen const):
+        (WebKit::PDFPlugin::geometryDidChange):
+        * WebProcess/WebCoreSupport/SessionStateConversion.cpp:
+        (WebKit::toFormData):
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::updateVisibleContentRects):
+        * WebProcess/WebPage/wpe/CompositingManager.cpp:
+        (WebKit::CompositingManager::releaseConnectionFd):
+
 2018-12-20  Keith Rollin  <krollin@apple.com>
 
         Improve release-level page-load logging

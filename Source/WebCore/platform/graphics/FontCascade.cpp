@@ -286,7 +286,7 @@ float FontCascade::glyphBufferForTextRun(CodePath codePathToUse, const TextRun& 
 
 float FontCascade::drawText(GraphicsContext& context, const TextRun& run, const FloatPoint& point, unsigned from, Optional<unsigned> to, CustomFontNotReadyAction customFontNotReadyAction) const
 {
-    unsigned destination = to.value_or(run.length());
+    unsigned destination = to.valueOr(run.length());
     GlyphBuffer glyphBuffer;
     float startX = point.x() + glyphBufferForTextRun(codePath(run, from, to), run, from, destination, glyphBuffer);
     // We couldn't generate any glyphs for the run. Give up.
@@ -303,7 +303,7 @@ void FontCascade::drawEmphasisMarks(GraphicsContext& context, const TextRun& run
     if (isLoadingCustomFonts())
         return;
 
-    unsigned destination = to.value_or(run.length());
+    unsigned destination = to.valueOr(run.length());
     if (codePath(run, from, to) != Complex)
         drawEmphasisMarksForSimpleText(context, run, mark, point, from, destination);
     else
@@ -313,7 +313,7 @@ void FontCascade::drawEmphasisMarks(GraphicsContext& context, const TextRun& run
 std::unique_ptr<DisplayList::DisplayList> FontCascade::displayListForTextRun(GraphicsContext& context, const TextRun& run, unsigned from, Optional<unsigned> to, CustomFontNotReadyAction customFontNotReadyAction) const
 {
     ASSERT(!context.paintingDisabled());
-    unsigned destination = to.value_or(run.length());
+    unsigned destination = to.valueOr(run.length());
     
     // FIXME: Use the fast code path once it handles partial runs with kerning and ligatures. See http://webkit.org/b/100050
     CodePath codePathToUse = codePath(run);
@@ -545,7 +545,7 @@ bool FontCascade::fastAverageCharWidthIfAvailable(float& width) const
 
 void FontCascade::adjustSelectionRectForText(const TextRun& run, LayoutRect& selectionRect, unsigned from, Optional<unsigned> to) const
 {
-    unsigned destination = to.value_or(run.length());
+    unsigned destination = to.valueOr(run.length());
     if (codePath(run, from, to) != Complex)
         return adjustSelectionRectForSimpleText(run, selectionRect, from, destination);
 
@@ -619,7 +619,7 @@ FontCascade::CodePath FontCascade::codePath(const TextRun& run, Optional<unsigne
 
 #if !USE(FREETYPE)
     // FIXME: Use the fast code path once it handles partial runs with kerning and ligatures. See http://webkit.org/b/100050
-    if ((enableKerning() || requiresShaping()) && (from.value_or(0) || to.value_or(run.length()) != run.length()))
+    if ((enableKerning() || requiresShaping()) && (from.valueOr(0) || to.valueOr(run.length()) != run.length()))
         return Complex;
 #else
     UNUSED_PARAM(from);

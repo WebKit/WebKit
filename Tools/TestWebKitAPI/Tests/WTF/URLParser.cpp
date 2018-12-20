@@ -94,7 +94,7 @@ static void checkURL(const String& urlString, const ExpectedParts& parts, TestTa
     EXPECT_TRUE(eq(parts.user, url.user()));
     EXPECT_TRUE(eq(parts.password, url.pass()));
     EXPECT_TRUE(eq(parts.host, url.host()));
-    EXPECT_EQ(parts.port, url.port().value_or(0));
+    EXPECT_EQ(parts.port, url.port().valueOr(0));
     EXPECT_TRUE(eq(parts.path, url.path()));
     EXPECT_TRUE(eq(parts.query, url.query()));
     EXPECT_TRUE(eq(parts.fragment, url.fragmentIdentifier()));
@@ -121,7 +121,7 @@ static void checkRelativeURL(const String& urlString, const String& baseURLStrin
     EXPECT_TRUE(eq(parts.user, url.user()));
     EXPECT_TRUE(eq(parts.password, url.pass()));
     EXPECT_TRUE(eq(parts.host, url.host()));
-    EXPECT_EQ(parts.port, url.port().value_or(0));
+    EXPECT_EQ(parts.port, url.port().valueOr(0));
     EXPECT_TRUE(eq(parts.path, url.path()));
     EXPECT_TRUE(eq(parts.query, url.query()));
     EXPECT_TRUE(eq(parts.fragment, url.fragmentIdentifier()));
@@ -150,7 +150,7 @@ static void checkURLDifferences(const String& urlString, const ExpectedParts& pa
     EXPECT_TRUE(eq(partsNew.user, url.user()));
     EXPECT_TRUE(eq(partsNew.password, url.pass()));
     EXPECT_TRUE(eq(partsNew.host, url.host()));
-    EXPECT_EQ(partsNew.port, url.port().value_or(0));
+    EXPECT_EQ(partsNew.port, url.port().valueOr(0));
     EXPECT_TRUE(eq(partsNew.path, url.path()));
     EXPECT_TRUE(eq(partsNew.query, url.query()));
     EXPECT_TRUE(eq(partsNew.fragment, url.fragmentIdentifier()));
@@ -179,7 +179,7 @@ static void checkRelativeURLDifferences(const String& urlString, const String& b
     EXPECT_TRUE(eq(partsNew.user, url.user()));
     EXPECT_TRUE(eq(partsNew.password, url.pass()));
     EXPECT_TRUE(eq(partsNew.host, url.host()));
-    EXPECT_EQ(partsNew.port, url.port().value_or(0));
+    EXPECT_EQ(partsNew.port, url.port().valueOr(0));
     EXPECT_TRUE(eq(partsNew.path, url.path()));
     EXPECT_TRUE(eq(partsNew.query, url.query()));
     EXPECT_TRUE(eq(partsNew.fragment, url.fragmentIdentifier()));

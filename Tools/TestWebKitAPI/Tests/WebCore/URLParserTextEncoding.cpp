@@ -96,7 +96,7 @@ static void checkURL(const String& urlString, const TextEncoding* encoding, cons
     EXPECT_TRUE(eq(parts.user, url.user()));
     EXPECT_TRUE(eq(parts.password, url.pass()));
     EXPECT_TRUE(eq(parts.host, url.host()));
-    EXPECT_EQ(parts.port, url.port().value_or(0));
+    EXPECT_EQ(parts.port, url.port().valueOr(0));
     EXPECT_TRUE(eq(parts.path, url.path()));
     EXPECT_TRUE(eq(parts.query, url.query()));
     EXPECT_TRUE(eq(parts.fragment, url.fragmentIdentifier()));
@@ -120,7 +120,7 @@ static void checkURL(const String& urlString, const String& baseURLString, const
     EXPECT_TRUE(eq(parts.user, url.user()));
     EXPECT_TRUE(eq(parts.password, url.pass()));
     EXPECT_TRUE(eq(parts.host, url.host()));
-    EXPECT_EQ(parts.port, url.port().value_or(0));
+    EXPECT_EQ(parts.port, url.port().valueOr(0));
     EXPECT_TRUE(eq(parts.path, url.path()));
     EXPECT_TRUE(eq(parts.query, url.query()));
     EXPECT_TRUE(eq(parts.fragment, url.fragmentIdentifier()));

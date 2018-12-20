@@ -1,3 +1,18 @@
+2018-12-20  Chris Dumez  <cdumez@apple.com>
+
+        Use Optional::valueOr() instead of Optional::value_or()
+        https://bugs.webkit.org/show_bug.cgi?id=192933
+
+        Reviewed by Geoffrey Garen.
+
+        * TestWebKitAPI/Tests/WTF/URLParser.cpp:
+        (TestWebKitAPI::checkURL):
+        (TestWebKitAPI::checkRelativeURL):
+        (TestWebKitAPI::checkURLDifferences):
+        (TestWebKitAPI::checkRelativeURLDifferences):
+        * TestWebKitAPI/Tests/WebCore/URLParserTextEncoding.cpp:
+        (TestWebKitAPI::checkURL):
+
 2018-12-20  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed, rolling out r239417.

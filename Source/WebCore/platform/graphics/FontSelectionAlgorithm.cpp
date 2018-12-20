@@ -66,7 +66,7 @@ auto FontSelectionAlgorithm::stretchDistance(Capabilities capabilities) const ->
 auto FontSelectionAlgorithm::styleDistance(Capabilities capabilities) const -> DistanceResult
 {
     auto slope = capabilities.slope;
-    auto requestSlope = m_request.slope.value_or(normalItalicValue());
+    auto requestSlope = m_request.slope.valueOr(normalItalicValue());
     ASSERT(slope.isValid());
     if (slope.includes(requestSlope))
         return { FontSelectionValue(), requestSlope };

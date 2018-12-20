@@ -82,7 +82,7 @@ public:
             : m_sourceCode(sourceCode)
             , m_name(name)
             , m_flags(codeType, strictMode, scriptMode, derivedContextType, evalContextType, isArrowFunctionContext, debuggerMode, typeProfilerEnabled, controlFlowProfilerEnabled)
-            , m_functionConstructorParametersEndPosition(functionConstructorParametersEndPosition.value_or(-1))
+            , m_functionConstructorParametersEndPosition(functionConstructorParametersEndPosition.valueOr(-1))
             , m_hash(sourceCode.hash() ^ m_flags.bits())
     {
     }

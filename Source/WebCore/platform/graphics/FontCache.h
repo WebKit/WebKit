@@ -113,7 +113,7 @@ struct FontDescriptionKey {
         hasher.add(m_size);
         hasher.add(m_fontSelectionRequest.weight);
         hasher.add(m_fontSelectionRequest.width);
-        hasher.add(m_fontSelectionRequest.slope.value_or(normalItalicValue()));
+        hasher.add(m_fontSelectionRequest.slope.valueOr(normalItalicValue()));
         hasher.add(m_locale.existingHash());
         for (unsigned flagItem : m_flags)
             hasher.add(flagItem);

@@ -282,8 +282,8 @@ VerticalGeometry FormattingContext::Geometry::outOfFlowNonReplacedVerticalGeomet
     auto height = usedHeight ? usedHeight.value() : computedHeightValue(layoutState, layoutBox, HeightType::Normal);
     auto marginBefore = computedValueIfNotAuto(style.marginBefore(), containingBlockWidth);
     auto marginAfter = computedValueIfNotAuto(style.marginAfter(), containingBlockWidth);
-    auto paddingTop = displayBox.paddingTop().value_or(0);
-    auto paddingBottom = displayBox.paddingBottom().value_or(0);
+    auto paddingTop = displayBox.paddingTop().valueOr(0);
+    auto paddingBottom = displayBox.paddingBottom().valueOr(0);
     auto borderTop = displayBox.borderTop();
     auto borderBottom = displayBox.borderBottom();
 
@@ -307,45 +307,45 @@ VerticalGeometry FormattingContext::Geometry::outOfFlowNonReplacedVerticalGeomet
     if (!top && !height && bottom) {
         // #1
         height = contentHeightForFormattingContextRoot(layoutState, layoutBox);
-        marginBefore = marginBefore.value_or(0);
-        marginAfter = marginAfter.value_or(0);
+        marginBefore = marginBefore.valueOr(0);
+        marginAfter = marginAfter.valueOr(0);
         top = containingBlockHeight - (*marginBefore + borderTop + paddingTop + *height + paddingBottom + borderBottom + *marginAfter + *bottom); 
     }
 
     if (!top && !bottom && height) {
         // #2
         top = staticVerticalPositionForOutOfFlowPositioned(layoutState, layoutBox);
-        marginBefore = marginBefore.value_or(0);
-        marginAfter = marginAfter.value_or(0);
+        marginBefore = marginBefore.valueOr(0);
+        marginAfter = marginAfter.valueOr(0);
         bottom = containingBlockHeight - (*top + *marginBefore + borderTop + paddingTop + *height + paddingBottom + borderBottom + *marginAfter); 
     }
 
     if (!height && !bottom && top) {
         // #3
         height = contentHeightForFormattingContextRoot(layoutState, layoutBox);
-        marginBefore = marginBefore.value_or(0);
-        marginAfter = marginAfter.value_or(0);
+        marginBefore = marginBefore.valueOr(0);
+        marginAfter = marginAfter.valueOr(0);
         bottom = containingBlockHeight - (*top + *marginBefore + borderTop + paddingTop + *height + paddingBottom + borderBottom + *marginAfter); 
     }
 
     if (!top && height && bottom) {
         // #4
-        marginBefore = marginBefore.value_or(0);
-        marginAfter = marginAfter.value_or(0);
+        marginBefore = marginBefore.valueOr(0);
+        marginAfter = marginAfter.valueOr(0);
         top = containingBlockHeight - (*marginBefore + borderTop + paddingTop + *height + paddingBottom + borderBottom + *marginAfter + *bottom); 
     }
 
     if (!height && top && bottom) {
         // #5
-        marginBefore = marginBefore.value_or(0);
-        marginAfter = marginAfter.value_or(0);
+        marginBefore = marginBefore.valueOr(0);
+        marginAfter = marginAfter.valueOr(0);
         height = containingBlockHeight - (*top + *marginBefore + borderTop + paddingTop + paddingBottom + borderBottom + *marginAfter + *bottom); 
     }
 
     if (!bottom && top && height) {
         // #6
-        marginBefore = marginBefore.value_or(0);
-        marginAfter = marginAfter.value_or(0);
+        marginBefore = marginBefore.valueOr(0);
+        marginAfter = marginAfter.valueOr(0);
         bottom = containingBlockHeight - (*top + *marginBefore + borderTop + paddingTop + *height + paddingBottom + borderBottom + *marginAfter); 
     }
 
@@ -400,10 +400,10 @@ HorizontalGeometry FormattingContext::Geometry::outOfFlowNonReplacedHorizontalGe
     auto width = computedValueIfNotAuto(usedWidth ? Length { usedWidth.value(), Fixed } : style.logicalWidth(), containingBlockWidth);
     auto marginStart = computedValueIfNotAuto(style.marginStart(), containingBlockWidth);
     auto marginEnd = computedValueIfNotAuto(style.marginEnd(), containingBlockWidth);
-    auto nonComputedMarginStart = marginStart.value_or(0);
-    auto nonComputedMarginEnd = marginEnd.value_or(0);
-    auto paddingLeft = displayBox.paddingLeft().value_or(0);
-    auto paddingRight = displayBox.paddingRight().value_or(0);
+    auto nonComputedMarginStart = marginStart.valueOr(0);
+    auto nonComputedMarginEnd = marginEnd.valueOr(0);
+    auto paddingLeft = displayBox.paddingLeft().valueOr(0);
+    auto paddingRight = displayBox.paddingRight().valueOr(0);
     auto borderLeft = displayBox.borderLeft();
     auto borderRight = displayBox.borderRight();
 
@@ -411,8 +411,8 @@ HorizontalGeometry FormattingContext::Geometry::outOfFlowNonReplacedHorizontalGe
         // If all three of 'left', 'width', and 'right' are 'auto': First set any 'auto' values for 'margin-left' and 'margin-right' to 0.
         // Then, if the 'direction' property of the element establishing the static-position containing block is 'ltr' set 'left' to the static
         // position and apply rule number three below; otherwise, set 'right' to the static position and apply rule number one below.
-        marginStart = marginStart.value_or(0);
-        marginEnd = marginEnd.value_or(0);
+        marginStart = marginStart.valueOr(0);
+        marginEnd = marginEnd.valueOr(0);
 
         auto staticHorizontalPosition = staticHorizontalPositionForOutOfFlowPositioned(layoutState, layoutBox);
         if (isLeftToRightDirection)
@@ -459,8 +459,8 @@ HorizontalGeometry FormattingContext::Geometry::outOfFlowNonReplacedHorizontalGe
         }
     } else {
         // Otherwise, set 'auto' values for 'margin-left' and 'margin-right' to 0, and pick the one of the following six rules that applies.
-        marginStart = marginStart.value_or(0);
-        marginEnd = marginEnd.value_or(0);
+        marginStart = marginStart.valueOr(0);
+        marginEnd = marginEnd.valueOr(0);
     }
 
     ASSERT(marginStart);
@@ -530,8 +530,8 @@ VerticalGeometry FormattingContext::Geometry::outOfFlowReplacedVerticalGeometry(
     auto height = inlineReplacedHeightAndMargin(layoutState, layoutBox, usedHeight).height;
     auto marginBefore = computedValueIfNotAuto(style.marginBefore(), containingBlockWidth);
     auto marginAfter = computedValueIfNotAuto(style.marginAfter(), containingBlockWidth);
-    auto paddingTop = displayBox.paddingTop().value_or(0);
-    auto paddingBottom = displayBox.paddingBottom().value_or(0);
+    auto paddingTop = displayBox.paddingTop().valueOr(0);
+    auto paddingBottom = displayBox.paddingBottom().valueOr(0);
     auto borderTop = displayBox.borderTop();
     auto borderBottom = displayBox.borderBottom();
 
@@ -542,8 +542,8 @@ VerticalGeometry FormattingContext::Geometry::outOfFlowReplacedVerticalGeometry(
 
     if (!bottom) {
         // #2
-        marginBefore = marginBefore.value_or(0);
-        marginAfter = marginAfter.value_or(0);
+        marginBefore = marginBefore.valueOr(0);
+        marginAfter = marginAfter.valueOr(0);
     }
 
     if (!marginBefore && !marginAfter) {
@@ -602,11 +602,11 @@ HorizontalGeometry FormattingContext::Geometry::outOfFlowReplacedHorizontalGeome
     auto right = computedValueIfNotAuto(style.logicalRight(), containingBlockWidth);
     auto marginStart = computedValueIfNotAuto(style.marginStart(), containingBlockWidth);
     auto marginEnd = computedValueIfNotAuto(style.marginEnd(), containingBlockWidth);
-    auto nonComputedMarginStart = marginStart.value_or(0);
-    auto nonComputedMarginEnd = marginEnd.value_or(0);
+    auto nonComputedMarginStart = marginStart.valueOr(0);
+    auto nonComputedMarginEnd = marginEnd.valueOr(0);
     auto width = inlineReplacedWidthAndMargin(layoutState, layoutBox, usedWidth).width;
-    auto paddingLeft = displayBox.paddingLeft().value_or(0);
-    auto paddingRight = displayBox.paddingRight().value_or(0);
+    auto paddingLeft = displayBox.paddingLeft().valueOr(0);
+    auto paddingRight = displayBox.paddingRight().valueOr(0);
     auto borderLeft = displayBox.borderLeft();
     auto borderRight = displayBox.borderRight();
 
@@ -621,8 +621,8 @@ HorizontalGeometry FormattingContext::Geometry::outOfFlowReplacedHorizontalGeome
 
     if (!left || !right) {
         // #2
-        marginStart = marginStart.value_or(0); 
-        marginEnd = marginEnd.value_or(0); 
+        marginStart = marginStart.valueOr(0); 
+        marginEnd = marginEnd.valueOr(0); 
     }
 
     if (!marginStart && !marginEnd) {
@@ -697,8 +697,8 @@ HeightAndMargin FormattingContext::Geometry::complicatedCases(const LayoutState&
     auto marginAfter = computedValueIfNotAuto(style.marginAfter(), containingBlockWidth);
 
     // #1
-    marginBefore = marginBefore.value_or(0);
-    marginAfter = marginAfter.value_or(0);
+    marginBefore = marginBefore.valueOr(0);
+    marginAfter = marginAfter.valueOr(0);
     // #2
     if (!height) {
         ASSERT(isHeightAuto(layoutBox));
@@ -873,14 +873,14 @@ WidthAndMargin FormattingContext::Geometry::inlineReplacedWidthAndMargin(const L
         if (precomputedMarginEnd)
             return precomputedMarginEnd.value();
         auto marginEnd = computedValueIfNotAuto(style.marginEnd(), containingBlockWidth);
-        return marginEnd.value_or(0_lu);
+        return marginEnd.valueOr(0_lu);
     };
 
     auto computeMarginStart = [&]() {
         if (precomputedMarginStart)
             return precomputedMarginStart.value();
         auto marginStart = computedValueIfNotAuto(style.marginStart(), containingBlockWidth);
-        return marginStart.value_or(0_lu);
+        return marginStart.valueOr(0_lu);
     };
 
     auto replaced = layoutBox.replaced();
@@ -888,8 +888,8 @@ WidthAndMargin FormattingContext::Geometry::inlineReplacedWidthAndMargin(const L
 
     auto marginStart = computeMarginStart();
     auto marginEnd = computeMarginEnd();
-    auto nonComputedMarginStart = computedValueIfNotAuto(style.marginStart(), containingBlockWidth).value_or(0);
-    auto nonComputedMarginEnd = computedValueIfNotAuto(style.marginEnd(), containingBlockWidth).value_or(0);
+    auto nonComputedMarginStart = computedValueIfNotAuto(style.marginStart(), containingBlockWidth).valueOr(0);
+    auto nonComputedMarginEnd = computedValueIfNotAuto(style.marginEnd(), containingBlockWidth).valueOr(0);
     auto width = computedValueIfNotAuto(usedWidth ? Length { usedWidth.value(), Fixed } : style.logicalWidth(), containingBlockWidth);
 
     auto heightIsAuto = isHeightAuto(layoutBox);
@@ -901,7 +901,7 @@ WidthAndMargin FormattingContext::Geometry::inlineReplacedWidthAndMargin(const L
     } else if ((!width && heightIsAuto && !replaced->hasIntrinsicWidth() && replaced->hasIntrinsicHeight() && replaced->hasIntrinsicRatio())
         || (!width && height && replaced->hasIntrinsicRatio())) {
         // #2
-        width = height.value_or(replaced->hasIntrinsicHeight()) * replaced->intrinsicRatio();
+        width = height.valueOr(replaced->hasIntrinsicHeight()) * replaced->intrinsicRatio();
     } else if (!width && heightIsAuto && replaced->hasIntrinsicRatio() && !replaced->hasIntrinsicWidth() && !replaced->hasIntrinsicHeight()) {
         // #3
         // FIXME: undefined but surely doable.
@@ -990,7 +990,7 @@ LayoutSize FormattingContext::Geometry::inFlowPositionedPositionOffset(const Lay
     ASSERT(!left || *left == -*right);
 
     auto topPositionOffset = *top;
-    auto leftPositionOffset = left.value_or(-*right);
+    auto leftPositionOffset = left.valueOr(-*right);
 
     LOG_WITH_STREAM(FormattingContextLayout, stream << "[Position] -> positioned inflow -> top offset(" << topPositionOffset << "px) left offset(" << leftPositionOffset << "px) layoutBox(" << &layoutBox << ")");
     return { leftPositionOffset, topPositionOffset };
@@ -1025,8 +1025,8 @@ HorizontalMargin FormattingContext::Geometry::computedNonCollapsedHorizontalMarg
     auto& style = layoutBox.style();
     auto containingBlockWidth = layoutState.displayBoxForLayoutBox(*layoutBox.containingBlock()).contentBoxWidth();
 
-    auto marginStart = computedValueIfNotAuto(style.marginStart(), containingBlockWidth).value_or(0_lu);
-    auto marginEnd = computedValueIfNotAuto(style.marginEnd(), containingBlockWidth).value_or(0_lu);
+    auto marginStart = computedValueIfNotAuto(style.marginStart(), containingBlockWidth).valueOr(0_lu);
+    auto marginEnd = computedValueIfNotAuto(style.marginEnd(), containingBlockWidth).valueOr(0_lu);
 
     LOG_WITH_STREAM(FormattingContextLayout, stream << "[Margin] -> non collapsed horizontal -> margin(" << marginStart << "px, " << marginEnd << "px) -> layoutBox: " << &layoutBox);
     return { marginStart, marginEnd };
@@ -1037,8 +1037,8 @@ VerticalMargin::ComputedValues FormattingContext::Geometry::computedNonCollapsed
     auto& style = layoutBox.style();
     auto containingBlockWidth = layoutState.displayBoxForLayoutBox(*layoutBox.containingBlock()).contentBoxWidth();
 
-    auto marginBefore = computedValueIfNotAuto(style.marginBefore(), containingBlockWidth).value_or(0_lu);
-    auto marginAfter = computedValueIfNotAuto(style.marginAfter(), containingBlockWidth).value_or(0_lu);
+    auto marginBefore = computedValueIfNotAuto(style.marginBefore(), containingBlockWidth).valueOr(0_lu);
+    auto marginAfter = computedValueIfNotAuto(style.marginAfter(), containingBlockWidth).valueOr(0_lu);
 
     LOG_WITH_STREAM(FormattingContextLayout, stream << "[Margin] -> non collapsed vertical -> margin(" << marginBefore << "px, " << marginAfter << "px) -> layoutBox: " << &layoutBox);
     return { marginBefore, marginAfter };

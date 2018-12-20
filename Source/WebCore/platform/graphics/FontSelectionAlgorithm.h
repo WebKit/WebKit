@@ -353,7 +353,7 @@ inline TextStream& operator<<(TextStream& ts, const FontSelectionValue& fontSele
 
 inline TextStream& operator<<(TextStream& ts, const Optional<FontSelectionValue>& optionalFontSelectionValue)
 {
-    ts << optionalFontSelectionValue.value_or(normalItalicValue());
+    ts << optionalFontSelectionValue.valueOr(normalItalicValue());
     return ts;
 }
 
@@ -432,17 +432,17 @@ struct FontSelectionSpecifiedCapabilities {
 
     constexpr Range computeWeight() const
     {
-        return weight.value_or(Range { normalWeightValue() });
+        return weight.valueOr(Range { normalWeightValue() });
     }
 
     constexpr Range computeWidth() const
     {
-        return width.value_or(Range { normalStretchValue() });
+        return width.valueOr(Range { normalStretchValue() });
     }
 
     constexpr Range computeSlope() const
     {
-        return slope.value_or(Range { normalItalicValue() });
+        return slope.valueOr(Range { normalItalicValue() });
     }
 
     OptionalRange weight;

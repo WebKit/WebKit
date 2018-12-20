@@ -54,7 +54,7 @@ void GridTrack::setBaseSize(LayoutUnit baseSize)
 
 void GridTrack::setGrowthLimit(LayoutUnit growthLimit)
 {
-    m_growthLimit = growthLimit == infinity ? growthLimit : std::min(growthLimit, m_growthLimitCap.value_or(growthLimit));
+    m_growthLimit = growthLimit == infinity ? growthLimit : std::min(growthLimit, m_growthLimitCap.valueOr(growthLimit));
     ensureGrowthLimitIsBiggerThanBaseSize();
 }
 
@@ -216,7 +216,7 @@ LayoutUnit GridTrackSizingAlgorithm::initialBaseSize(const GridTrackSize& trackS
 
     const Length& trackLength = gridLength.length();
     if (trackLength.isSpecified())
-        return valueForLength(trackLength, std::max<LayoutUnit>(availableSpace().value_or(0), 0));
+        return valueForLength(trackLength, std::max<LayoutUnit>(availableSpace().valueOr(0), 0));
 
     ASSERT(trackLength.isMinContent() || trackLength.isAuto() || trackLength.isMaxContent());
     return 0;
@@ -230,7 +230,7 @@ LayoutUnit GridTrackSizingAlgorithm::initialGrowthLimit(const GridTrackSize& tra
 
     const Length& trackLength = gridLength.length();
     if (trackLength.isSpecified())
-        return valueForLength(trackLength, std::max<LayoutUnit>(availableSpace().value_or(0), 0));
+        return valueForLength(trackLength, std::max<LayoutUnit>(availableSpace().valueOr(0), 0));
 
     ASSERT(trackLength.isMinContent() || trackLength.isAuto() || trackLength.isMaxContent());
     return infinity;
@@ -254,7 +254,7 @@ void GridTrackSizingAlgorithm::sizeTrackToFitNonSpanningItem(const GridSpan& spa
     } else if (trackSize.hasMaxContentOrAutoMaxTrackBreadth()) {
         LayoutUnit growthLimit = m_strategy->maxContentForChild(gridItem);
         if (trackSize.isFitContent())
-            growthLimit = std::min(growthLimit, valueForLength(trackSize.fitContentTrackBreadth().length(), availableSpace().value_or(0)));
+            growthLimit = std::min(growthLimit, valueForLength(trackSize.fitContentTrackBreadth().length(), availableSpace().valueOr(0)));
         track.setGrowthLimit(std::max(track.growthLimit(), growthLimit));
     }
 }
@@ -483,8 +483,8 @@ static bool sortByGridTrackGrowthPotential(const GridTrack* track1, const GridTr
     if (track1HasInfiniteGrowthPotentialWithoutCap || track2HasInfiniteGrowthPotentialWithoutCap)
         return track2HasInfiniteGrowthPotentialWithoutCap;
 
-    LayoutUnit track1Limit = track1->growthLimitCap().value_or(track1->growthLimit());
-    LayoutUnit track2Limit = track2->growthLimitCap().value_or(track2->growthLimit());
+    LayoutUnit track1Limit = track1->growthLimitCap().valueOr(track1->growthLimit());
+    LayoutUnit track2Limit = track2->growthLimitCap().valueOr(track2->growthLimit());
     return (track1Limit - track1->baseSize()) < (track2Limit - track2->baseSize());
 }
 
@@ -569,7 +569,7 @@ LayoutUnit GridTrackSizingAlgorithm::estimatedGridAreaBreadthForChild(const Rend
         if (maxTrackSize.isContentSized() || maxTrackSize.isFlex() || isRelativeGridLengthAsAuto(maxTrackSize, direction))
             gridAreaIsIndefinite = true;
         else
-            gridAreaSize += valueForLength(maxTrackSize.length(), availableSize.value_or(0_lu));
+            gridAreaSize += valueForLength(maxTrackSize.length(), availableSize.valueOr(0_lu));
     }
 
     gridAreaSize += m_renderGrid->guttersSize(m_grid, direction, span.startLine(), span.integerSpan(), availableSize);
@@ -810,7 +810,7 @@ LayoutUnit GridTrackSizingAlgorithmStrategy::minSizeForChild(RenderBox& child) c
             GridTrackSize trackSize = m_algorithm.gridTrackSize(direction(), trackPosition);
             if (!trackSize.hasFixedMaxTrackBreadth())
                 return minSize;
-            maxBreadth += valueForLength(trackSize.maxTrackBreadth().length(), availableSpace().value_or(0_lu));
+            maxBreadth += valueForLength(trackSize.maxTrackBreadth().length(), availableSpace().valueOr(0_lu));
         }
         if (minSize > maxBreadth) {
             auto marginAndBorderAndPadding = GridLayoutFunctions::marginLogicalSizeForChild(*renderGrid(), direction(), child);
@@ -831,7 +831,7 @@ LayoutUnit GridTrackSizingAlgorithmStrategy::minSizeForChild(RenderBox& child) c
     bool overrideSizeHasChanged = updateOverrideContainingBlockContentSizeForChild(child, childInlineDirection, gridAreaSize);
     layoutGridItemForMinSizeComputation(child, overrideSizeHasChanged);
 
-    return child.computeLogicalHeightUsing(MinSize, childMinSize, WTF::nullopt).value_or(0) + child.marginLogicalHeight() + child.scrollbarLogicalHeight() + baselineShim;
+    return child.computeLogicalHeightUsing(MinSize, childMinSize, WTF::nullopt).valueOr(0) + child.marginLogicalHeight() + child.scrollbarLogicalHeight() + baselineShim;
 }
 
 bool GridTrackSizingAlgorithm::canParticipateInBaselineAlignment(const RenderBox& child, GridAxis baselineAxis) const
@@ -1101,7 +1101,7 @@ void GridTrackSizingAlgorithm::initializeTrackSizes()
     Vector<GridTrack>& allTracks = tracks(m_direction);
     const bool hasDefiniteFreeSpace = !!availableSpace();
     const bool indefiniteHeight = m_direction == ForRows && !m_renderGrid->hasDefiniteLogicalHeight();
-    LayoutUnit maxSize = std::max(0_lu, availableSpace().value_or(0_lu));
+    LayoutUnit maxSize = std::max(0_lu, availableSpace().valueOr(0_lu));
     // 1. Initialize per Grid track variables.
     for (unsigned i = 0; i < allTracks.size(); ++i) {
         GridTrack& track = allTracks[i];

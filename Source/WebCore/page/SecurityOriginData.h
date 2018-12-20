@@ -134,7 +134,7 @@ struct SecurityOriginDataHash {
         unsigned hashCodes[3] = {
             data.protocol.impl() ? data.protocol.impl()->hash() : 0,
             data.host.impl() ? data.host.impl()->hash() : 0,
-            data.port.value_or(0)
+            data.port.valueOr(0)
         };
         return StringHasher::hashMemory<sizeof(hashCodes)>(hashCodes);
     }

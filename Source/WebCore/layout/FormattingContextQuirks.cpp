@@ -52,7 +52,7 @@ LayoutUnit FormattingContext::Quirks::heightValueOfNearestContainingBlockWithFix
             auto& displayBox = layoutState.displayBoxForLayoutBox(*containingBlock);
 
             auto verticalMargin = FormattingContext::Geometry::computedNonCollapsedVerticalMarginValue(layoutState, *containingBlock);
-            auto verticalPadding = displayBox.paddingTop().value_or(0) + displayBox.paddingBottom().value_or(0);
+            auto verticalPadding = displayBox.paddingTop().valueOr(0) + displayBox.paddingBottom().valueOr(0);
             auto verticalBorder = displayBox.borderTop() + displayBox.borderBottom();
             bodyAndDocumentVerticalMarginPaddingAndBorder += verticalMargin.before + verticalMargin.after + verticalPadding + verticalBorder;
         }

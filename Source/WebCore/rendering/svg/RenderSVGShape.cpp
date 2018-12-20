@@ -368,7 +368,7 @@ bool RenderSVGShape::nodeAtFloatPoint(const HitTestRequest& request, HitTestResu
     if (hitTestAction != HitTestForeground)
         return false;
 
-    FloatPoint localPoint = m_localTransform.inverse().value_or(AffineTransform()).mapPoint(pointInParent);
+    FloatPoint localPoint = m_localTransform.inverse().valueOr(AffineTransform()).mapPoint(pointInParent);
 
     if (!SVGRenderSupport::pointInClippingArea(*this, localPoint))
         return false;

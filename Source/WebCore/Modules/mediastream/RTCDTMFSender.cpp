@@ -79,8 +79,8 @@ ExceptionOr<void> RTCDTMFSender::insertDTMF(const String&, Optional<int> duratio
     if (interToneGap && interToneGap.value() < minInterToneGapMs)
         return Exception { SyntaxError };
 
-    m_duration = duration.value_or(defaultToneDurationMs);
-    m_interToneGap = interToneGap.value_or(defaultInterToneGapMs);
+    m_duration = duration.valueOr(defaultToneDurationMs);
+    m_interToneGap = interToneGap.valueOr(defaultInterToneGapMs);
 
     return Exception { SyntaxError };
 }

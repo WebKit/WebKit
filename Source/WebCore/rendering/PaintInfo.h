@@ -115,7 +115,7 @@ struct PaintInfo {
         if (rect.isInfinite())
             return;
 
-        FloatRect tranformedRect(localToAncestorTransform.inverse().value_or(AffineTransform()).mapRect(rect));
+        FloatRect tranformedRect(localToAncestorTransform.inverse().valueOr(AffineTransform()).mapRect(rect));
         rect.setLocation(LayoutPoint(tranformedRect.location()));
         rect.setSize(LayoutSize(tranformedRect.size()));
     }

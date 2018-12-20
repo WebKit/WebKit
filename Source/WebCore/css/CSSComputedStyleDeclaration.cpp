@@ -1951,7 +1951,7 @@ static Ref<CSSValue> counterToCSSValue(const RenderStyle& style, CSSPropertyID p
     auto list = CSSValueList::createSpaceSeparated();
     for (auto& keyValue : *map) {
         list->append(cssValuePool.createValue(keyValue.key, CSSPrimitiveValue::CSS_STRING));
-        double number = (propertyID == CSSPropertyCounterIncrement ? keyValue.value.incrementValue : keyValue.value.resetValue).value_or(0);
+        double number = (propertyID == CSSPropertyCounterIncrement ? keyValue.value.incrementValue : keyValue.value.resetValue).valueOr(0);
         list->append(cssValuePool.createValue(number, CSSPrimitiveValue::CSS_NUMBER));
     }
     return WTFMove(list);

@@ -787,7 +787,7 @@ ExceptionOr<float> CSSPrimitiveValue::getFloatValue(unsigned short unitType) con
 
 double CSSPrimitiveValue::doubleValue(UnitType unitType) const
 {
-    return doubleValueInternal(unitType).value_or(0);
+    return doubleValueInternal(unitType).valueOr(0);
 }
 
 double CSSPrimitiveValue::doubleValue() const

@@ -195,8 +195,8 @@ public:
     LayoutUnit highValue() const { return LayoutUnit::max(); }
     void collectIfNeeded(const IntervalType&);
 
-    LayoutUnit nextLogicalBottom() const { return m_nextLogicalBottom.value_or(0); }
-    LayoutUnit nextShapeLogicalBottom() const { return m_nextShapeLogicalBottom.value_or(nextLogicalBottom()); }
+    LayoutUnit nextLogicalBottom() const { return m_nextLogicalBottom.valueOr(0); }
+    LayoutUnit nextShapeLogicalBottom() const { return m_nextShapeLogicalBottom.valueOr(nextLogicalBottom()); }
 
 private:
     WeakPtr<const RenderBlockFlow> m_renderer;

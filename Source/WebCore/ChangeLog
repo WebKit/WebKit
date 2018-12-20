@@ -1,3 +1,296 @@
+2018-12-20  Chris Dumez  <cdumez@apple.com>
+
+        Use Optional::valueOr() instead of Optional::value_or()
+        https://bugs.webkit.org/show_bug.cgi?id=192933
+
+        Reviewed by Geoffrey Garen.
+
+        * Modules/applepay/paymentrequest/ApplePayPaymentHandler.cpp:
+        (WebCore::convert):
+        (WebCore::ApplePayPaymentHandler::didAuthorizePayment):
+        * Modules/encryptedmedia/MediaKeySession.cpp:
+        (WebCore::MediaKeySession::load):
+        * Modules/indexeddb/IDBDatabaseIdentifier.h:
+        (WebCore::IDBDatabaseIdentifier::hash const):
+        * Modules/indexeddb/IDBFactory.cpp:
+        (WebCore::IDBFactory::open):
+        * Modules/mediastream/MediaStreamTrack.cpp:
+        (WebCore::MediaStreamTrack::applyConstraints):
+        * Modules/mediastream/RTCDTMFSender.cpp:
+        (WebCore::RTCDTMFSender::insertDTMF):
+        * Modules/webdatabase/SQLTransaction.cpp:
+        (WebCore::SQLTransaction::executeSql):
+        * Modules/webvr/VRFrameData.cpp:
+        (WebCore::VRFrameData::update):
+        * animation/AnimationTimeline.cpp:
+        (WebCore::AnimationTimeline::updateCSSTransitionsForElement):
+        * animation/DeclarativeAnimation.cpp:
+        (WebCore::DeclarativeAnimation::cancel):
+        (WebCore::DeclarativeAnimation::invalidateDOMEvents):
+        * animation/KeyframeEffect.cpp:
+        (WebCore::computeMissingKeyframeOffsets):
+        (WebCore::KeyframeEffect::applyPendingAcceleratedActions):
+        * animation/WebAnimation.cpp:
+        (WebCore::WebAnimation::runPendingPlayTask):
+        (WebCore::WebAnimation::runPendingPauseTask):
+        * bindings/js/SerializedScriptValue.cpp:
+        (WebCore::CloneSerializer::write):
+        * crypto/algorithms/CryptoAlgorithmHMAC.cpp:
+        (WebCore::CryptoAlgorithmHMAC::generateKey):
+        (WebCore::CryptoAlgorithmHMAC::importKey):
+        * crypto/gcrypt/CryptoAlgorithmAES_GCMGCrypt.cpp:
+        (WebCore::CryptoAlgorithmAES_GCM::platformEncrypt):
+        (WebCore::CryptoAlgorithmAES_GCM::platformDecrypt):
+        * crypto/gcrypt/CryptoKeyRSAGCrypt.cpp:
+        (WebCore::CryptoKeyRSA::importSpki):
+        (WebCore::CryptoKeyRSA::importPkcs8):
+        * crypto/keys/CryptoKeyRSA.cpp:
+        (WebCore::CryptoKeyRSA::importJwk):
+        * crypto/mac/CryptoAlgorithmAES_GCMMac.cpp:
+        (WebCore::CryptoAlgorithmAES_GCM::platformEncrypt):
+        (WebCore::CryptoAlgorithmAES_GCM::platformDecrypt):
+        * crypto/mac/CryptoKeyRSAMac.cpp:
+        (WebCore::CryptoKeyRSA::importSpki):
+        (WebCore::CryptoKeyRSA::importPkcs8):
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::counterToCSSValue):
+        * css/CSSFontFace.cpp:
+        (WebCore::calculateItalicRange):
+        * css/CSSPrimitiveValue.cpp:
+        (WebCore::CSSPrimitiveValue::doubleValue const):
+        * css/CSSStyleSheet.cpp:
+        (WebCore::CSSStyleSheet::addRule):
+        * css/DOMMatrix.cpp:
+        (WebCore::DOMMatrix::rotateSelf):
+        * css/DOMMatrixReadOnly.cpp:
+        (WebCore::DOMMatrixReadOnly::validateAndFixup):
+        * css/StyleBuilderCustom.h:
+        (WebCore::StyleBuilderCustom::applyValueCounter):
+        * css/parser/MediaQueryParser.cpp:
+        (WebCore::MediaQueryParser::commitMediaQuery):
+        * dom/Document.h:
+        (WebCore::Document::referrerPolicy const):
+        * dom/Element.cpp:
+        (WebCore::toScrollAlignment):
+        * dom/EventTarget.cpp:
+        (WebCore::EventTarget::addEventListener):
+        * dom/MutationObserver.cpp:
+        (WebCore::MutationObserver::observe):
+        * editing/cocoa/FontAttributeChangesCocoa.mm:
+        (WebCore::FontChanges::platformFontFamilyNameForCSS const):
+        * fileapi/File.cpp:
+        (WebCore::File::File):
+        * html/DOMTokenList.cpp:
+        (WebCore::DOMTokenList::toggle):
+        * html/HTMLOListElement.h:
+        * html/ImageBitmap.cpp:
+        (WebCore::croppedSourceRectangleWithFormatting):
+        * html/canvas/CanvasPattern.cpp:
+        (WebCore::CanvasPattern::setTransform):
+        * html/canvas/CanvasRenderingContext2DBase.cpp:
+        (WebCore::CanvasRenderingContext2DBase::setTransform):
+        (WebCore::CanvasRenderingContext2DBase::isPointInPathInternal):
+        (WebCore::CanvasRenderingContext2DBase::isPointInStrokeInternal):
+        * html/canvas/Path2D.cpp:
+        (WebCore::Path2D::addPath):
+        * inspector/InspectorCanvas.cpp:
+        (WebCore::InspectorCanvas::buildAction):
+        * inspector/InspectorFrontendHost.cpp:
+        (WebCore::populateContextMenu):
+        * layout/FormattingContext.cpp:
+        (WebCore::Layout::FormattingContext::validateGeometryConstraintsAfterLayout const):
+        * layout/FormattingContextGeometry.cpp:
+        (WebCore::Layout::FormattingContext::Geometry::outOfFlowNonReplacedVerticalGeometry):
+        (WebCore::Layout::FormattingContext::Geometry::outOfFlowNonReplacedHorizontalGeometry):
+        (WebCore::Layout::FormattingContext::Geometry::outOfFlowReplacedVerticalGeometry):
+        (WebCore::Layout::FormattingContext::Geometry::outOfFlowReplacedHorizontalGeometry):
+        (WebCore::Layout::FormattingContext::Geometry::complicatedCases):
+        (WebCore::Layout::FormattingContext::Geometry::inlineReplacedWidthAndMargin):
+        (WebCore::Layout::FormattingContext::Geometry::inFlowPositionedPositionOffset):
+        (WebCore::Layout::FormattingContext::Geometry::computedNonCollapsedHorizontalMarginValue):
+        (WebCore::Layout::FormattingContext::Geometry::computedNonCollapsedVerticalMarginValue):
+        * layout/FormattingContextQuirks.cpp:
+        (WebCore::Layout::FormattingContext::Quirks::heightValueOfNearestContainingBlockWithFixedHeight):
+        * layout/MarginTypes.h:
+        (WebCore::Layout::VerticalMargin::usedValues const):
+        * layout/blockformatting/BlockFormattingContextGeometry.cpp:
+        (WebCore::Layout::BlockFormattingContext::Geometry::inFlowNonReplacedHeightAndMargin):
+        (WebCore::Layout::BlockFormattingContext::Geometry::inFlowNonReplacedWidthAndMargin):
+        (WebCore::Layout::BlockFormattingContext::Geometry::instrinsicWidthConstraints):
+        * layout/blockformatting/BlockFormattingContextQuirks.cpp:
+        (WebCore::Layout::BlockFormattingContext::Quirks::stretchedHeight):
+        * layout/displaytree/DisplayBox.h:
+        (WebCore::Display::Box::width const):
+        (WebCore::Display::Box::height const):
+        (WebCore::Display::Box::contentBoxTop const):
+        (WebCore::Display::Box::contentBoxLeft const):
+        * layout/floats/FloatingContext.cpp:
+        (WebCore::Layout::Iterator::set):
+        * layout/inlineformatting/InlineFormattingContext.cpp:
+        (WebCore::Layout::InlineFormattingContext::appendContentToLine const):
+        (WebCore::Layout::InlineFormattingContext::placeInFlowPositionedChildren const):
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::urlSelected):
+        * loader/NavigationAction.cpp:
+        * page/FrameView.cpp:
+        (WebCore::FrameView::setLayoutViewportOverrideRect):
+        (WebCore::FrameView::documentToAbsoluteScaleFactor const):
+        (WebCore::FrameView::viewportSizeForCSSViewportUnits const):
+        * page/Page.cpp:
+        (WebCore::Page::setLowPowerModeEnabledOverrideForTesting):
+        * page/SecurityOriginData.cpp:
+        (WebCore::SecurityOriginData::databaseIdentifier const):
+        * page/SecurityOriginData.h:
+        (WebCore::SecurityOriginDataHash::hash):
+        * page/SecurityOriginHash.h:
+        (WebCore::SecurityOriginHash::hash):
+        * page/ViewportConfiguration.cpp:
+        (WebCore::ViewportConfiguration::setViewLayoutSize):
+        * page/WindowFeatures.cpp:
+        (WebCore::parseDialogFeatures):
+        * page/animation/AnimationBase.cpp:
+        (WebCore::AnimationBase::updateStateMachine):
+        (WebCore::AnimationBase::fireAnimationEventsIfNeeded):
+        (WebCore::AnimationBase::getTimeToNextEvent const):
+        (WebCore::AnimationBase::freezeAtTime):
+        (WebCore::AnimationBase::getElapsedTime const):
+        * page/animation/CSSAnimationController.cpp:
+        (WebCore::CSSAnimationControllerPrivate::updateAnimationTimer):
+        * page/cocoa/ResourceUsageThreadCocoa.mm:
+        (WebCore::ResourceUsageThread::platformThreadBody):
+        * page/linux/ResourceUsageThreadLinux.cpp:
+        (WebCore::ResourceUsageThread::platformThreadBody):
+        * platform/graphics/ComplexTextController.cpp:
+        (WebCore::ComplexTextController::offsetForPosition):
+        * platform/graphics/FontCache.h:
+        (WebCore::FontDescriptionKey::computeHash const):
+        * platform/graphics/FontCascade.cpp:
+        (WebCore::FontCascade::drawText const):
+        (WebCore::FontCascade::drawEmphasisMarks const):
+        (WebCore::FontCascade::displayListForTextRun const):
+        (WebCore::FontCascade::adjustSelectionRectForText const):
+        (WebCore::FontCascade::codePath const):
+        * platform/graphics/FontSelectionAlgorithm.cpp:
+        (WebCore::FontSelectionAlgorithm::styleDistance const):
+        * platform/graphics/FontSelectionAlgorithm.h:
+        (WebCore::operator<<):
+        (WebCore::FontSelectionSpecifiedCapabilities::computeWeight const):
+        (WebCore::FontSelectionSpecifiedCapabilities::computeWidth const):
+        (WebCore::FontSelectionSpecifiedCapabilities::computeSlope const):
+        * platform/graphics/ShadowBlur.cpp:
+        (WebCore::ShadowBlur::calculateLayerBoundingRect):
+        * platform/graphics/avfoundation/cf/WebCoreAVCFResourceLoader.cpp:
+        (WebCore::WebCoreAVCFResourceLoader::startLoading):
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.mm:
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::paintWithVideoOutput):
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateMediaStreamAVFObjC.mm:
+        (WebCore::MediaPlayerPrivateMediaStreamAVFObjC::paintCurrentFrameInContext):
+        * platform/graphics/avfoundation/objc/SourceBufferPrivateAVFObjC.mm:
+        (WebCore::SourceBufferPrivateAVFObjC::naturalSize):
+        * platform/graphics/ca/GraphicsLayerCA.cpp:
+        (WebCore::GraphicsLayerCA::setVisibleAndCoverageRects):
+        * platform/graphics/cocoa/FontCacheCoreText.cpp:
+        (WebCore::preparePlatformFont):
+        * platform/graphics/filters/FETurbulence.cpp:
+        (WebCore::FETurbulence::fillRegion const):
+        * platform/graphics/gstreamer/GStreamerCommon.cpp:
+        (WebCore::initializeGStreamer):
+        * platform/graphics/texmap/TextureMapperLayer.cpp:
+        (WebCore::TextureMapperLayer::paintSelfAndChildrenWithReplica):
+        (WebCore::TextureMapperLayer::replicaTransform):
+        (WebCore::TextureMapperLayer::syncAnimations):
+        * platform/graphics/texmap/coordinated/CoordinatedGraphicsLayer.cpp:
+        (WebCore::CoordinatedGraphicsLayer::transformedVisibleRect):
+        (WebCore::CoordinatedGraphicsLayer::computeTransformedVisibleRect):
+        * platform/graphics/transforms/TransformState.cpp:
+        (WebCore::TransformState::mappedPoint const):
+        (WebCore::TransformState::mapQuad const):
+        (WebCore::TransformState::flattenWithTransform):
+        * platform/network/CacheValidation.cpp:
+        (WebCore::computeCurrentAge):
+        (WebCore::computeFreshnessLifetimeForHTTPFamily):
+        * platform/network/NetworkStateNotifier.cpp:
+        (WebCore::NetworkStateNotifier::onLine):
+        * rendering/FloatingObjects.cpp:
+        (WebCore::FindNextFloatLogicalBottomAdapter::nextLogicalBottom const):
+        (WebCore::FindNextFloatLogicalBottomAdapter::nextShapeLogicalBottom const):
+        * rendering/GridBaselineAlignment.cpp:
+        (WebCore::GridBaselineAlignment::ascentForChild const):
+        * rendering/GridTrackSizingAlgorithm.cpp:
+        (WebCore::GridTrack::setGrowthLimit):
+        (WebCore::GridTrackSizingAlgorithm::initialBaseSize const):
+        (WebCore::GridTrackSizingAlgorithm::initialGrowthLimit const):
+        (WebCore::GridTrackSizingAlgorithm::sizeTrackToFitNonSpanningItem):
+        (WebCore::sortByGridTrackGrowthPotential):
+        (WebCore::GridTrackSizingAlgorithm::estimatedGridAreaBreadthForChild const):
+        (WebCore::GridTrackSizingAlgorithmStrategy::minSizeForChild const):
+        (WebCore::GridTrackSizingAlgorithm::initializeTrackSizes):
+        * rendering/PaintInfo.h:
+        (WebCore::PaintInfo::applyTransform):
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::computeLogicalHeight const):
+        * rendering/RenderCounter.cpp:
+        (WebCore::planCounter):
+        * rendering/RenderDeprecatedFlexibleBox.cpp:
+        (WebCore::RenderDeprecatedFlexibleBox::layoutHorizontalBox):
+        * rendering/RenderFlexibleBox.cpp:
+        (WebCore::RenderFlexibleBox::baselinePosition const):
+        (WebCore::RenderFlexibleBox::marginBoxAscentForChild):
+        (WebCore::RenderFlexibleBox::adjustChildSizeForMinAndMax):
+        * rendering/RenderGrid.cpp:
+        (WebCore::RenderGrid::gridGap const):
+        (WebCore::RenderGrid::baselinePosition const):
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::paintLayerByApplyingTransform):
+        * rendering/RenderListBox.cpp:
+        (WebCore::RenderListBox::paintItem):
+        (WebCore::RenderListBox::listIndexIsVisible):
+        * rendering/RenderMultiColumnSet.cpp:
+        (WebCore::RenderMultiColumnSet::calculateMaxColumnHeight const):
+        * rendering/RenderTable.cpp:
+        (WebCore::RenderTable::convertStyleLogicalHeightToComputedHeight):
+        * rendering/RenderTableCell.cpp:
+        (WebCore::RenderTableCell::cellBaselinePosition const):
+        * rendering/RenderTableSection.cpp:
+        (WebCore::RenderTableSection::firstLineBaseline const):
+        * rendering/RenderText.cpp:
+        (WebCore::RenderText::computePreferredLogicalWidths):
+        (WebCore::RenderText::previousOffset const):
+        (WebCore::RenderText::previousOffsetForBackwardDeletion const):
+        (WebCore::RenderText::nextOffset const):
+        (WebCore::RenderText::stringView const):
+        * rendering/RenderView.cpp:
+        (WebCore::RenderView::layout):
+        * rendering/mathml/RenderMathMLBlock.cpp:
+        (WebCore::RenderMathMLBlock::baselinePosition const):
+        * rendering/mathml/RenderMathMLBlock.h:
+        (WebCore::RenderMathMLBlock::ascentForChild):
+        * rendering/style/GridPosition.cpp:
+        (WebCore::GridPosition::max):
+        * rendering/style/TextUnderlineOffset.h:
+        (WebCore::TextUnderlineOffset::lengthOr const):
+        * rendering/svg/RenderSVGContainer.cpp:
+        (WebCore::RenderSVGContainer::nodeAtFloatPoint):
+        * rendering/svg/RenderSVGForeignObject.cpp:
+        (WebCore::RenderSVGForeignObject::nodeAtFloatPoint):
+        * rendering/svg/RenderSVGImage.cpp:
+        (WebCore::RenderSVGImage::nodeAtFloatPoint):
+        * rendering/svg/RenderSVGResourceClipper.cpp:
+        (WebCore::RenderSVGResourceClipper::hitTestClipContent):
+        * rendering/svg/RenderSVGResourceFilter.cpp:
+        (WebCore::RenderSVGResourceFilter::postApplyResource):
+        * rendering/svg/RenderSVGRoot.cpp:
+        (WebCore::RenderSVGRoot::nodeAtPoint):
+        * rendering/svg/RenderSVGShape.cpp:
+        (WebCore::RenderSVGShape::nodeAtFloatPoint):
+        * rendering/svg/RenderSVGText.cpp:
+        (WebCore::RenderSVGText::nodeAtFloatPoint):
+        * rendering/svg/SVGRenderingContext.cpp:
+        (WebCore::SVGRenderingContext::clipToImageBuffer):
+        * svg/SVGToOTFFontConversion.cpp:
+        (WebCore::SVGToOTFFontConverter::processGlyphElement):
+        (WebCore::SVGToOTFFontConverter::SVGToOTFFontConverter):
+
 2018-12-20  Jer Noble  <jer.noble@apple.com>
 
         REGRESSION (r239419): heap-use-after-free in AudioSourceProviderAVFObjC::finalizeCallback()

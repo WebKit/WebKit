@@ -49,7 +49,7 @@ bool RemoteConnectionToTarget::setup(bool isAutomaticInspection, bool automatica
     if (!m_target)
         return false;
 
-    unsigned targetIdentifier = this->targetIdentifier().value_or(0);
+    unsigned targetIdentifier = this->targetIdentifier().valueOr(0);
 
     if (!m_target || !m_target->remoteControlAllowed()) {
         RemoteInspector::singleton().setupFailed(targetIdentifier);

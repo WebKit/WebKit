@@ -284,8 +284,8 @@ static void encodeFormDataElement(HistoryEntryDataEncoder& encoder, const HTTPBo
         encoder << false;
 
         encoder << element.fileStart;
-        encoder << element.fileLength.value_or(-1);
-        encoder << element.expectedFileModificationTime.value_or(WallTime::nan()).secondsSinceEpoch().value();
+        encoder << element.fileLength.valueOr(-1);
+        encoder << element.expectedFileModificationTime.valueOr(WallTime::nan()).secondsSinceEpoch().value();
         break;
 
     case HTTPBody::Element::Type::Blob:

@@ -917,7 +917,7 @@ void WebAnimation::runPendingPlayTask()
         // Subsequently, the resulting readyTime value can be null. Unify behavior between C++17 and
         // C++14 builds (the latter using WTF's Optional) and avoid null Optional dereferencing
         // by defaulting to a Seconds(0) value. See https://bugs.webkit.org/show_bug.cgi?id=186189.
-        auto newStartTime = readyTime.value_or(0_s);
+        auto newStartTime = readyTime.valueOr(0_s);
         if (m_playbackRate)
             newStartTime -= m_holdTime.value() / m_playbackRate;
         // 3. Set the start time of animation to new start time.
@@ -928,7 +928,7 @@ void WebAnimation::runPendingPlayTask()
     } else if (m_startTime && m_pendingPlaybackRate) {
         // If animation's start time is resolved and animation has a pending playback rate,
         // 1. Let current time to match be the result of evaluating (ready time - start time) × playback rate for animation.
-        auto currentTimeToMatch = (readyTime.value_or(0_s) - m_startTime.value()) * m_playbackRate;
+        auto currentTimeToMatch = (readyTime.valueOr(0_s) - m_startTime.value()) * m_playbackRate;
         // 2. Apply any pending playback rate on animation.
         applyPendingPlaybackRate();
         // 3. If animation's playback rate is zero, let animation's hold time be current time to match.
@@ -936,7 +936,7 @@ void WebAnimation::runPendingPlayTask()
             m_holdTime = currentTimeToMatch;
         // 4. Let new start time be the result of evaluating ready time - current time to match / playback rate for animation.
         // If the playback rate is zero, let new start time be simply ready time.
-        auto newStartTime = readyTime.value_or(0_s);
+        auto newStartTime = readyTime.valueOr(0_s);
         if (m_playbackRate)
             newStartTime -= currentTimeToMatch / m_playbackRate;
         // 5. Set the start time of animation to new start time.
@@ -1059,7 +1059,7 @@ void WebAnimation::runPendingPauseTask()
         // Subsequently, the resulting readyTime value can be null. Unify behavior between C++17 and
         // C++14 builds (the latter using WTF's Optional) and avoid null Optional dereferencing
         // by defaulting to a Seconds(0) value. See https://bugs.webkit.org/show_bug.cgi?id=186189.
-        m_holdTime = (readyTime.value_or(0_s) - animationStartTime.value()) * m_playbackRate;
+        m_holdTime = (readyTime.valueOr(0_s) - animationStartTime.value()) * m_playbackRate;
     }
 
     // 3. Apply any pending playback rate on animation.

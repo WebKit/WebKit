@@ -217,7 +217,7 @@ guint16 webkit_security_origin_get_port(WebKitSecurityOrigin* origin)
 {
     g_return_val_if_fail(origin, 0);
 
-    return origin->securityOrigin->port().value_or(0);
+    return origin->securityOrigin->port().valueOr(0);
 }
 
 /**

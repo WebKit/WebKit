@@ -103,7 +103,7 @@ Seconds computeCurrentAge(const ResourceResponse& response, WallTime responseTim
     // No compensation for latency as that is not terribly important in practice.
     auto dateValue = response.date();
     auto apparentAge = dateValue ? std::max(0_us, responseTime - *dateValue) : 0_us;
-    auto ageValue = response.age().value_or(0_us);
+    auto ageValue = response.age().valueOr(0_us);
     auto correctedInitialAge = std::max(apparentAge, ageValue);
     auto residentTime = WallTime::now() - responseTime;
     return correctedInitialAge + residentTime;
@@ -121,7 +121,7 @@ Seconds computeFreshnessLifetimeForHTTPFamily(const ResourceResponse& response, 
         return *maxAge;
 
     auto date = response.date();
-    auto effectiveDate = date.value_or(responseTime);
+    auto effectiveDate = date.valueOr(responseTime);
     if (auto expires = response.expires())
         return *expires - effectiveDate;
 

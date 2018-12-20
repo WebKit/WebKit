@@ -78,7 +78,7 @@ ExceptionOr<void> CanvasPattern::setTransform(DOMMatrix2DInit&& matrixInit)
     if (checkValid.hasException())
         return checkValid.releaseException();
 
-    m_pattern->setPatternSpaceTransform({ matrixInit.a.value_or(1), matrixInit.b.value_or(0), matrixInit.c.value_or(0), matrixInit.d.value_or(1), matrixInit.e.value_or(0), matrixInit.f.value_or(0) });
+    m_pattern->setPatternSpaceTransform({ matrixInit.a.valueOr(1), matrixInit.b.valueOr(0), matrixInit.c.valueOr(0), matrixInit.d.valueOr(1), matrixInit.e.valueOr(0), matrixInit.f.valueOr(0) });
     return { };
 }
 

@@ -219,7 +219,7 @@ void Session::handleUserPrompts(Function<void (CommandResult&&)>&& completionHan
 
 void Session::handleUnexpectedAlertOpen(Function<void (CommandResult&&)>&& completionHandler)
 {
-    switch (capabilities().unhandledPromptBehavior.value_or(UnhandledPromptBehavior::DismissAndNotify)) {
+    switch (capabilities().unhandledPromptBehavior.valueOr(UnhandledPromptBehavior::DismissAndNotify)) {
     case UnhandledPromptBehavior::Dismiss:
         dismissAlert(WTFMove(completionHandler));
         break;
@@ -911,7 +911,7 @@ void Session::computeElementLayout(const String& elementID, OptionSet<ElementLay
 
     RefPtr<JSON::Object> parameters = JSON::Object::create();
     parameters->setString("browsingContextHandle"_s, m_toplevelBrowsingContext.value());
-    parameters->setString("frameHandle"_s, m_currentBrowsingContext.value_or(emptyString()));
+    parameters->setString("frameHandle"_s, m_currentBrowsingContext.valueOr(emptyString()));
     parameters->setString("nodeHandle"_s, elementID);
     parameters->setBoolean("scrollIntoViewIfNeeded"_s, options.contains(ElementLayoutOption::ScrollIntoViewIfNeeded));
     parameters->setString("coordinateSystem"_s, options.contains(ElementLayoutOption::UseViewportCoordinates) ? "LayoutViewport"_s : "Page"_s);
@@ -1502,7 +1502,7 @@ void Session::selectOptionElement(const String& elementID, Function<void (Comman
 {
     RefPtr<JSON::Object> parameters = JSON::Object::create();
     parameters->setString("browsingContextHandle"_s, m_toplevelBrowsingContext.value());
-    parameters->setString("frameHandle"_s, m_currentBrowsingContext.value_or(emptyString()));
+    parameters->setString("frameHandle"_s, m_currentBrowsingContext.valueOr(emptyString()));
     parameters->setString("nodeHandle"_s, elementID);
     m_host->sendCommandToBackend("selectOptionElement"_s, WTFMove(parameters), [protectedThis = makeRef(*this), completionHandler = WTFMove(completionHandler)](SessionHost::CommandResponse&& response) {
         if (response.isError) {
@@ -2017,12 +2017,12 @@ static RefPtr<JSON::Object> builtAutomationCookie(const Session::Cookie& cookie)
     RefPtr<JSON::Object> cookieObject = JSON::Object::create();
     cookieObject->setString("name"_s, cookie.name);
     cookieObject->setString("value"_s, cookie.value);
-    cookieObject->setString("path"_s, cookie.path.value_or("/"));
-    cookieObject->setString("domain"_s, cookie.domain.value_or(emptyString()));
-    cookieObject->setBoolean("secure"_s, cookie.secure.value_or(false));
-    cookieObject->setBoolean("httpOnly"_s, cookie.httpOnly.value_or(false));
+    cookieObject->setString("path"_s, cookie.path.valueOr("/"));
+    cookieObject->setString("domain"_s, cookie.domain.valueOr(emptyString()));
+    cookieObject->setBoolean("secure"_s, cookie.secure.valueOr(false));
+    cookieObject->setBoolean("httpOnly"_s, cookie.httpOnly.valueOr(false));
     cookieObject->setBoolean("session"_s, !cookie.expiry);
-    cookieObject->setDouble("expires"_s, cookie.expiry.value_or(0));
+    cookieObject->setDouble("expires"_s, cookie.expiry.valueOr(0));
     return cookieObject;
 }
 
@@ -2479,7 +2479,7 @@ void Session::takeScreenshot(Optional<String> elementID, Optional<bool> scrollIn
             parameters->setString("nodeHandle"_s, elementID.value());
         else
             parameters->setBoolean("clipToViewport"_s, true);
-        if (scrollIntoView.value_or(false))
+        if (scrollIntoView.valueOr(false))
             parameters->setBoolean("scrollIntoViewIfNeeded"_s, true);
         m_host->sendCommandToBackend("takeScreenshot"_s, WTFMove(parameters), [protectedThis = makeRef(*this), completionHandler = WTFMove(completionHandler)](SessionHost::CommandResponse&& response) mutable {
             if (response.isError || !response.responseObject) {

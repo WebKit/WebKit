@@ -116,8 +116,8 @@ bool ViewportConfiguration::setContentsSize(const IntSize& contentSize)
 
 bool ViewportConfiguration::setViewLayoutSize(const FloatSize& viewLayoutSize, Optional<double>&& scaleFactor, Optional<double>&& minimumEffectiveDeviceWidth)
 {
-    double newScaleFactor = scaleFactor.value_or(m_layoutSizeScaleFactor);
-    double newEffectiveWidth = minimumEffectiveDeviceWidth.value_or(m_minimumEffectiveDeviceWidth);
+    double newScaleFactor = scaleFactor.valueOr(m_layoutSizeScaleFactor);
+    double newEffectiveWidth = minimumEffectiveDeviceWidth.valueOr(m_minimumEffectiveDeviceWidth);
     if (m_viewLayoutSize == viewLayoutSize && m_layoutSizeScaleFactor == newScaleFactor && newEffectiveWidth == m_minimumEffectiveDeviceWidth)
         return false;
 

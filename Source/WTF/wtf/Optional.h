@@ -557,22 +557,8 @@ public:
     return *this ? **this : detail_::convert<T>(detail_::constexpr_forward<V>(v));
   }
 
-  // FIXME: Remove this.
-  template <class V>
-  constexpr T value_or(V&& v) const&
-  {
-    return *this ? **this : detail_::convert<T>(detail_::constexpr_forward<V>(v));
-  }
-
   template <class V>
   OPTIONAL_MUTABLE_CONSTEXPR T valueOr(V&& v) &&
-  {
-    return *this ? detail_::constexpr_move(const_cast<Optional<T>&>(*this).contained_val()) : detail_::convert<T>(detail_::constexpr_forward<V>(v));
-  }
-
-  // FIXME: Remove this.
-  template <class V>
-  OPTIONAL_MUTABLE_CONSTEXPR T value_or(V&& v) &&
   {
     return *this ? detail_::constexpr_move(const_cast<Optional<T>&>(*this).contained_val()) : detail_::convert<T>(detail_::constexpr_forward<V>(v));
   }
@@ -581,13 +567,6 @@ public:
 
   template <class V>
   constexpr T valueOr(V&& v) const
-  {
-    return *this ? **this : detail_::convert<T>(detail_::constexpr_forward<V>(v));
-  }
-
-  // FIXME: Remove this.
-  template <class V>
-  constexpr T value_or(V&& v) const
   {
     return *this ? **this : detail_::convert<T>(detail_::constexpr_forward<V>(v));
   }
@@ -699,7 +678,7 @@ public:
   }
 
   template <class V>
-  constexpr typename std::decay<T>::type value_or(V&& v) const
+  constexpr typename std::decay<T>::type valueOr(V&& v) const
   {
     return *this ? **this : detail_::convert<typename std::decay<T>::type>(detail_::constexpr_forward<V>(v));
   }

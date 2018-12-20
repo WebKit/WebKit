@@ -236,7 +236,7 @@ void TextureMapperLayer::paintSelfAndChildrenWithReplica(const TextureMapperPain
         TextureMapperPaintOptions replicaOptions(options);
         replicaOptions.transform
             .multiply(m_state.replicaLayer->m_layerTransforms.combined)
-            .multiply(m_layerTransforms.combined.inverse().value_or(TransformationMatrix()));
+            .multiply(m_layerTransforms.combined.inverse().valueOr(TransformationMatrix()));
         paintSelfAndChildren(replicaOptions);
     }
 
@@ -246,7 +246,7 @@ void TextureMapperLayer::paintSelfAndChildrenWithReplica(const TextureMapperPain
 TransformationMatrix TextureMapperLayer::replicaTransform()
 {
     return TransformationMatrix(m_state.replicaLayer->m_layerTransforms.combined)
-        .multiply(m_layerTransforms.combined.inverse().value_or(TransformationMatrix()));
+        .multiply(m_layerTransforms.combined.inverse().valueOr(TransformationMatrix()));
 }
 
 static void resolveOverlaps(Region& newRegion, Region& overlapRegion, Region& nonOverlapRegion)
@@ -647,9 +647,9 @@ bool TextureMapperLayer::syncAnimations(MonotonicTime time)
     TextureMapperAnimation::ApplicationResult applicationResults;
     m_animations.apply(applicationResults, time);
 
-    m_layerTransforms.localTransform = applicationResults.transform.value_or(m_state.transform);
-    m_currentOpacity = applicationResults.opacity.value_or(m_state.opacity);
-    m_currentFilters = applicationResults.filters.value_or(m_state.filters);
+    m_layerTransforms.localTransform = applicationResults.transform.valueOr(m_state.transform);
+    m_currentOpacity = applicationResults.opacity.valueOr(m_state.opacity);
+    m_currentFilters = applicationResults.filters.valueOr(m_state.filters);
 
     return applicationResults.hasRunningAnimations;
 }

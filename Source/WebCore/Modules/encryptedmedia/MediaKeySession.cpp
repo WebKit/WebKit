@@ -342,7 +342,7 @@ void MediaKeySession::load(const String& sessionId, Ref<DeferredPromise>&& promi
 
                 // 8.9.5. Run the Update Expiration algorithm on the session, providing expiration time.
                 // This must be run, and NaN is the default value if the CDM instance doesn't provide one.
-                updateExpiration(expiration.value_or(std::numeric_limits<double>::quiet_NaN()));
+                updateExpiration(expiration.valueOr(std::numeric_limits<double>::quiet_NaN()));
 
                 // 8.9.6. If message is not null, run the Queue a "message" Event algorithm on the session, providing message type and message.
                 if (message)

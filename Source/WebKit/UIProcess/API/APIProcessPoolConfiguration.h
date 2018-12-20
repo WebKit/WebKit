@@ -61,7 +61,7 @@ public:
 
     bool isAutomaticProcessWarmingEnabled() const
     {
-        return m_isAutomaticProcessWarmingEnabledByClient.value_or(m_clientWouldBenefitFromAutomaticProcessPrewarming);
+        return m_isAutomaticProcessWarmingEnabledByClient.valueOr(m_clientWouldBenefitFromAutomaticProcessPrewarming);
     }
 
     bool wasAutomaticProcessWarmingSetByClient() const { return !!m_isAutomaticProcessWarmingEnabledByClient; }
@@ -157,7 +157,7 @@ public:
 
     bool processSwapsOnNavigation() const
     {
-        return m_processSwapsOnNavigationFromClient.value_or(m_processSwapsOnNavigationFromExperimentalFeatures);
+        return m_processSwapsOnNavigationFromClient.valueOr(m_processSwapsOnNavigationFromExperimentalFeatures);
     }
     void setProcessSwapsOnNavigation(bool swaps) { m_processSwapsOnNavigationFromClient = swaps; }
     void setProcessSwapsOnNavigationFromExperimentalFeatures(bool swaps) { m_processSwapsOnNavigationFromExperimentalFeatures = swaps; }

@@ -1262,7 +1262,7 @@ private:
         write(file.url());
         write(file.type());
         write(file.name());
-        write(static_cast<double>(file.lastModifiedOverride().value_or(-1)));
+        write(static_cast<double>(file.lastModifiedOverride().valueOr(-1)));
     }
 
 #if ENABLE(WEB_CRYPTO)

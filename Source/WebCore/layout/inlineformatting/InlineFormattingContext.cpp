@@ -264,7 +264,7 @@ void InlineFormattingContext::appendContentToLine(Line& line, const InlineRunPro
     line.appendContent(run, runSize);
 
     if (root().style().textAlign() == TextAlignMode::Justify)
-        Geometry::computeExpansionOpportunities(line, run, lastRunType.value_or(InlineRunProvider::Run::Type::NonWhitespace));
+        Geometry::computeExpansionOpportunities(line, run, lastRunType.valueOr(InlineRunProvider::Run::Type::NonWhitespace));
 }
 
 void InlineFormattingContext::layoutInlineContent(const InlineRunProvider& inlineRunProvider) const
@@ -415,7 +415,7 @@ void InlineFormattingContext::placeInFlowPositionedChildren(unsigned fistRunInde
             for (auto* box = &layoutBox; box != &root(); box = box->parent()) {
                 if (!box->isInFlowPositioned())
                     continue;
-                offset = offset.value_or(LayoutSize()) + Geometry::inFlowPositionedPositionOffset(layoutState(), *box);
+                offset = offset.valueOr(LayoutSize()) + Geometry::inFlowPositionedPositionOffset(layoutState(), *box);
             }
             return offset;
         };

@@ -547,7 +547,7 @@ void ApplePayPaymentHandler::validateMerchant(URL&& validationURL)
 
 static Ref<PaymentAddress> convert(const ApplePayPaymentContact& contact)
 {
-    return PaymentAddress::create(contact.countryCode, contact.addressLines.value_or(Vector<String>()), contact.administrativeArea, contact.locality, contact.subLocality, contact.postalCode, String(), String(), contact.localizedName, contact.phoneNumber);
+    return PaymentAddress::create(contact.countryCode, contact.addressLines.valueOr(Vector<String>()), contact.administrativeArea, contact.locality, contact.subLocality, contact.postalCode, String(), String(), contact.localizedName, contact.phoneNumber);
 }
 
 template<typename T>
@@ -562,7 +562,7 @@ void ApplePayPaymentHandler::didAuthorizePayment(const Payment& payment)
     ASSERT(!m_isUpdating);
 
     auto applePayPayment = payment.toApplePayPayment(version());
-    auto shippingContact = applePayPayment.shippingContact.value_or(ApplePayPaymentContact());
+    auto shippingContact = applePayPayment.shippingContact.valueOr(ApplePayPaymentContact());
     auto detailsFunction = [applePayPayment = WTFMove(applePayPayment)](JSC::ExecState& execState) {
         return toJSDictionary(execState, applePayPayment);
     };

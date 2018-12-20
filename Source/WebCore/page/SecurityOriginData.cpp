@@ -80,7 +80,7 @@ String SecurityOriginData::databaseIdentifier() const
     stringBuilder.append(separatorCharacter);
     stringBuilder.append(FileSystem::encodeForFileName(host));
     stringBuilder.append(separatorCharacter);
-    stringBuilder.appendNumber(port.value_or(0));
+    stringBuilder.appendNumber(port.valueOr(0));
     
     return stringBuilder.toString();
 }

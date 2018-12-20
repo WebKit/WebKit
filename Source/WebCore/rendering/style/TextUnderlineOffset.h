@@ -68,7 +68,7 @@ public:
 
     float lengthOr(float defaultValue) const
     {
-        return m_length.value_or(defaultValue);
+        return m_length.valueOr(defaultValue);
     }
 
     bool operator==(const TextUnderlineOffset& other) const

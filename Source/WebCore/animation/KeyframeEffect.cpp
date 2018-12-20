@@ -116,7 +116,7 @@ static inline void computeMissingKeyframeOffsets(Vector<KeyframeEffect::ParsedKe
     // that a keyframe hasn't had a computed offset by checking if it has a null offset and a 0 computedOffset, since the first
     // keyframe will already have a 0 computedOffset.
     for (auto& keyframe : keyframes)
-        keyframe.computedOffset = keyframe.offset.value_or(0);
+        keyframe.computedOffset = keyframe.offset.valueOr(0);
 
     // 2. If keyframes contains more than one keyframe and the computed keyframe offset of the first keyframe in keyframes is null,
     //    set the computed keyframe offset of the first keyframe to 0.
@@ -1314,7 +1314,7 @@ void KeyframeEffect::applyPendingAcceleratedActions()
     auto* compositedRenderer = downcast<RenderBoxModelObject>(renderer);
 
     // To simplify the code we use a default of 0s for an unresolved current time since for a Stop action that is acceptable.
-    auto timeOffset = animation()->currentTime().value_or(0_s).seconds() - delay().seconds();
+    auto timeOffset = animation()->currentTime().valueOr(0_s).seconds() - delay().seconds();
 
     for (const auto& action : pendingAcceleratedActions) {
         switch (action) {

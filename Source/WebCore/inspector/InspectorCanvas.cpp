@@ -582,12 +582,12 @@ Ref<JSON::ArrayOf<JSON::Value>> InspectorCanvas::buildAction(const String& name,
             [&] (CanvasTextBaseline value) { addParameter(indexForData(convertEnumerationToString(value)), RecordingSwizzleTypes::String); },
             [&] (const DOMMatrix2DInit& value) {
                 auto array = JSON::ArrayOf<double>::create();
-                array->addItem(value.a.value_or(1));
-                array->addItem(value.b.value_or(0));
-                array->addItem(value.c.value_or(0));
-                array->addItem(value.d.value_or(1));
-                array->addItem(value.e.value_or(0));
-                array->addItem(value.f.value_or(0));
+                array->addItem(value.a.valueOr(1));
+                array->addItem(value.b.valueOr(0));
+                array->addItem(value.c.valueOr(0));
+                array->addItem(value.d.valueOr(1));
+                array->addItem(value.e.valueOr(0));
+                array->addItem(value.f.valueOr(0));
                 addParameter(array.ptr(), RecordingSwizzleTypes::DOMMatrix);
             },
             [&] (const Element*) {

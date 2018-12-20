@@ -61,10 +61,10 @@ HeightAndMargin BlockFormattingContext::Geometry::inFlowNonReplacedHeightAndMarg
         auto containingBlockWidth = layoutState.displayBoxForLayoutBox(*layoutBox.containingBlock()).contentBoxWidth();
         auto& displayBox = layoutState.displayBoxForLayoutBox(layoutBox);
 
-        auto nonCollapsedMargin = VerticalMargin::ComputedValues { computedValueIfNotAuto(style.marginBefore(), containingBlockWidth).value_or(0),
-            computedValueIfNotAuto(style.marginAfter(), containingBlockWidth).value_or(0) }; 
+        auto nonCollapsedMargin = VerticalMargin::ComputedValues { computedValueIfNotAuto(style.marginBefore(), containingBlockWidth).valueOr(0),
+            computedValueIfNotAuto(style.marginAfter(), containingBlockWidth).valueOr(0) }; 
         auto collapsedMargin = VerticalMargin::CollapsedValues { MarginCollapse::marginBefore(layoutState, layoutBox), MarginCollapse::marginAfter(layoutState, layoutBox) };
-        auto borderAndPaddingTop = displayBox.borderTop() + displayBox.paddingTop().value_or(0);
+        auto borderAndPaddingTop = displayBox.borderTop() + displayBox.paddingTop().valueOr(0);
 
         auto height = usedHeight ? usedHeight.value() : computedHeightValue(layoutState, layoutBox, HeightType::Normal);
         if (height)
@@ -143,19 +143,19 @@ WidthAndMargin BlockFormattingContext::Geometry::inFlowNonReplacedWidthAndMargin
         auto width = computedValueIfNotAuto(usedWidth ? Length { usedWidth.value(), Fixed } : style.logicalWidth(), containingBlockWidth);
         auto marginStart = computedValueIfNotAuto(style.marginStart(), containingBlockWidth);
         auto marginEnd = computedValueIfNotAuto(style.marginEnd(), containingBlockWidth);
-        auto nonComputedMarginStart = marginStart.value_or(0);
-        auto nonComputedMarginEnd = marginEnd.value_or(0);
+        auto nonComputedMarginStart = marginStart.valueOr(0);
+        auto nonComputedMarginEnd = marginEnd.valueOr(0);
         auto borderLeft = displayBox.borderLeft();
         auto borderRight = displayBox.borderRight();
-        auto paddingLeft = displayBox.paddingLeft().value_or(0);
-        auto paddingRight = displayBox.paddingRight().value_or(0);
+        auto paddingLeft = displayBox.paddingLeft().valueOr(0);
+        auto paddingRight = displayBox.paddingRight().valueOr(0);
 
         // #1
         if (width) {
-            auto horizontalSpaceForMargin = containingBlockWidth - (marginStart.value_or(0) + borderLeft + paddingLeft + *width + paddingRight + borderRight + marginEnd.value_or(0));
+            auto horizontalSpaceForMargin = containingBlockWidth - (marginStart.valueOr(0) + borderLeft + paddingLeft + *width + paddingRight + borderRight + marginEnd.valueOr(0));
             if (horizontalSpaceForMargin < 0) {
-                marginStart = marginStart.value_or(0);
-                marginEnd = marginEnd.value_or(0);
+                marginStart = marginStart.valueOr(0);
+                marginEnd = marginEnd.valueOr(0);
             }
         }
 
@@ -177,8 +177,8 @@ WidthAndMargin BlockFormattingContext::Geometry::inFlowNonReplacedWidthAndMargin
 
         // #4
         if (!width) {
-            marginStart = marginStart.value_or(0);
-            marginEnd = marginEnd.value_or(0);
+            marginStart = marginStart.valueOr(0);
+            marginEnd = marginEnd.valueOr(0);
             width = containingBlockWidth - (*marginStart + borderLeft + paddingLeft + paddingRight + borderRight + *marginEnd);
         }
 
@@ -308,12 +308,12 @@ FormattingContext::InstrinsicWidthConstraints BlockFormattingContext::Geometry::
         ASSERT(childInstrinsicWidthConstraints);
         
         auto& style = child.style();
-        auto horizontalMarginBorderAndPadding = fixedValue(style.marginStart()).value_or(0)
+        auto horizontalMarginBorderAndPadding = fixedValue(style.marginStart()).valueOr(0)
             + LayoutUnit { style.borderLeftWidth() }
-            + fixedValue(style.paddingLeft()).value_or(0)
-            + fixedValue(style.paddingRight()).value_or(0)
+            + fixedValue(style.paddingLeft()).valueOr(0)
+            + fixedValue(style.paddingRight()).valueOr(0)
             + LayoutUnit { style.borderRightWidth() }
-            + fixedValue(style.marginEnd()).value_or(0);
+            + fixedValue(style.marginEnd()).valueOr(0);
 
         minimumIntrinsicWidth = std::max(minimumIntrinsicWidth, childInstrinsicWidthConstraints->minimum + horizontalMarginBorderAndPadding); 
         maximumIntrinsicWidth = std::max(maximumIntrinsicWidth, childInstrinsicWidthConstraints->maximum + horizontalMarginBorderAndPadding); 

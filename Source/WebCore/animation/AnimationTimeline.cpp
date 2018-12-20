@@ -460,7 +460,7 @@ void AnimationTimeline::updateCSSTransitionsForElement(Element& element, const R
                 auto& reversingAdjustedStartStyle = previouslyRunningTransition->targetStyle();
                 double transformedProgress = 1;
                 if (auto* effect = previouslyRunningTransition->effect())
-                    transformedProgress = effect->iterationProgress().value_or(transformedProgress);
+                    transformedProgress = effect->iterationProgress().valueOr(transformedProgress);
                 auto reversingShorteningFactor = std::max(std::min(((transformedProgress * previouslyRunningTransition->reversingShorteningFactor()) + (1 - previouslyRunningTransition->reversingShorteningFactor())), 1.0), 0.0);
                 auto delay = matchingBackingAnimation->delay() < 0 ? Seconds(matchingBackingAnimation->delay()) * reversingShorteningFactor : Seconds(matchingBackingAnimation->delay());
                 auto duration = Seconds(matchingBackingAnimation->duration()) * reversingShorteningFactor;

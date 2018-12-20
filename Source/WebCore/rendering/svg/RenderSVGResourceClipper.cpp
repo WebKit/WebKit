@@ -268,10 +268,10 @@ bool RenderSVGResourceClipper::hitTestClipContent(const FloatRect& objectBoundin
         AffineTransform transform;
         transform.translate(objectBoundingBox.location());
         transform.scale(objectBoundingBox.size());
-        point = transform.inverse().value_or(AffineTransform()).mapPoint(point);
+        point = transform.inverse().valueOr(AffineTransform()).mapPoint(point);
     }
 
-    point = clipPathElement().animatedLocalTransform().inverse().value_or(AffineTransform()).mapPoint(point);
+    point = clipPathElement().animatedLocalTransform().inverse().valueOr(AffineTransform()).mapPoint(point);
 
     for (Node* childNode = clipPathElement().firstChild(); childNode; childNode = childNode->nextSibling()) {
         RenderObject* renderer = childNode->renderer();

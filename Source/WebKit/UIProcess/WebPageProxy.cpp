@@ -3119,7 +3119,7 @@ void WebPageProxy::windowScreenDidChange(PlatformDisplayID displayID)
 
 float WebPageProxy::deviceScaleFactor() const
 {
-    return m_customDeviceScaleFactor.value_or(m_intrinsicDeviceScaleFactor);
+    return m_customDeviceScaleFactor.valueOr(m_intrinsicDeviceScaleFactor);
 }
 
 void WebPageProxy::setCustomDeviceScaleFactor(float customScaleFactor)

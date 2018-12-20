@@ -1671,7 +1671,7 @@ void FrameView::setLayoutViewportOverrideRect(Optional<LayoutRect> rect, Trigger
     if (oldRect.height() != layoutViewportRect().height())
         layoutTriggering = TriggerLayoutOrNot::Yes;
 
-    LOG_WITH_STREAM(Scrolling, stream << "\nFrameView " << this << " setLayoutViewportOverrideRect() - changing override layout viewport from " << oldRect << " to " << m_layoutViewportOverrideRect.value_or(LayoutRect()) << " layoutTriggering " << (layoutTriggering == TriggerLayoutOrNot::Yes ? "yes" : "no"));
+    LOG_WITH_STREAM(Scrolling, stream << "\nFrameView " << this << " setLayoutViewportOverrideRect() - changing override layout viewport from " << oldRect << " to " << m_layoutViewportOverrideRect.valueOr(LayoutRect()) << " layoutTriggering " << (layoutTriggering == TriggerLayoutOrNot::Yes ? "yes" : "no"));
 
     if (oldRect != layoutViewportRect() && layoutTriggering == TriggerLayoutOrNot::Yes)
         setViewportConstrainedObjectsNeedLayout();
@@ -4823,7 +4823,7 @@ IntPoint FrameView::convertFromContainingView(const IntPoint& parentPoint) const
 float FrameView::documentToAbsoluteScaleFactor(Optional<float> effectiveZoom) const
 {
     // If effectiveZoom is passed, it already factors in pageZoomFactor(). 
-    return effectiveZoom.value_or(frame().pageZoomFactor()) * frame().frameScaleFactor();
+    return effectiveZoom.valueOr(frame().pageZoomFactor()) * frame().frameScaleFactor();
 }
 
 float FrameView::absoluteToDocumentScaleFactor(Optional<float> effectiveZoom) const
@@ -5370,16 +5370,16 @@ IntSize FrameView::viewportSizeForCSSViewportUnits() const
 
     if (useFixedLayout()) {
         auto fixedLayoutSize = this->fixedLayoutSize();
-        viewportSize.width = viewportSize.width.value_or(fixedLayoutSize.width());
-        viewportSize.height = viewportSize.height.value_or(fixedLayoutSize.height());
+        viewportSize.width = viewportSize.width.valueOr(fixedLayoutSize.width());
+        viewportSize.height = viewportSize.height.valueOr(fixedLayoutSize.height());
         return { *viewportSize.width, *viewportSize.height };
     }
     
     // FIXME: the value returned should take into account the value of the overflow
     // property on the root element.
     auto visibleContentSizeIncludingScrollbars = visibleContentRectIncludingScrollbars().size();
-    viewportSize.width = viewportSize.width.value_or(visibleContentSizeIncludingScrollbars.width());
-    viewportSize.height = viewportSize.height.value_or(visibleContentSizeIncludingScrollbars.height());
+    viewportSize.width = viewportSize.width.valueOr(visibleContentSizeIncludingScrollbars.width());
+    viewportSize.height = viewportSize.height.valueOr(visibleContentSizeIncludingScrollbars.height());
     return { *viewportSize.width, *viewportSize.height };
 }
 

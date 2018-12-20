@@ -167,7 +167,7 @@ static Optional<CounterPlan> planCounter(RenderElement& renderer, const AtomicSt
     }
 
     if (directives.resetValue)
-        return CounterPlan { true, saturatedAddition(*directives.resetValue, directives.incrementValue.value_or(0)) };
+        return CounterPlan { true, saturatedAddition(*directives.resetValue, directives.incrementValue.valueOr(0)) };
     if (directives.incrementValue)
         return CounterPlan { false, *directives.incrementValue };
     return WTF::nullopt;

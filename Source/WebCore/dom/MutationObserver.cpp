@@ -85,9 +85,9 @@ ExceptionOr<void> MutationObserver::observe(Node& node, const Init& init)
         options |= ChildList;
     if (init.subtree)
         options |= Subtree;
-    if (init.attributeOldValue.value_or(false))
+    if (init.attributeOldValue.valueOr(false))
         options |= AttributeOldValue;
-    if (init.characterDataOldValue.value_or(false))
+    if (init.characterDataOldValue.valueOr(false))
         options |= CharacterDataOldValue;
 
     HashSet<AtomicString> attributeFilter;

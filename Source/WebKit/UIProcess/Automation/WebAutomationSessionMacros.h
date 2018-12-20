@@ -28,7 +28,7 @@
 #define errorNameAndDetailsSeparator ";"
 
 // Make sure the predefined error name is valid, otherwise use InternalError.
-#define VALIDATED_ERROR_MESSAGE(errorString) Inspector::Protocol::AutomationHelpers::parseEnumValueFromString<Inspector::Protocol::Automation::ErrorMessage>(errorString).value_or(Inspector::Protocol::Automation::ErrorMessage::InternalError)
+#define VALIDATED_ERROR_MESSAGE(errorString) Inspector::Protocol::AutomationHelpers::parseEnumValueFromString<Inspector::Protocol::Automation::ErrorMessage>(errorString).valueOr(Inspector::Protocol::Automation::ErrorMessage::InternalError)
 
 // If the error name is incorrect for these macros, it will be a compile-time error.
 #define STRING_FOR_PREDEFINED_ERROR_NAME(errorName) Inspector::Protocol::AutomationHelpers::getEnumConstantValue(Inspector::Protocol::Automation::ErrorMessage::errorName)

@@ -82,7 +82,7 @@ bool EventTarget::addEventListener(const AtomicString& eventType, Ref<EventListe
     bool listenerCreatedFromScript = listener->type() == EventListener::JSEventListenerType && !listener->wasCreatedFromMarkup();
     auto listenerRef = listener.copyRef();
 
-    if (!ensureEventTargetData().eventListenerMap.add(eventType, WTFMove(listener), { options.capture, passive.value_or(false), options.once }))
+    if (!ensureEventTargetData().eventListenerMap.add(eventType, WTFMove(listener), { options.capture, passive.valueOr(false), options.once }))
         return false;
 
     if (listenerCreatedFromScript)

@@ -464,7 +464,7 @@ void Iterator::set(PositionInContextRoot verticalPosition)
 
         auto index = floatingType == Float::Left ? m_current.m_leftIndex : m_current.m_rightIndex;
         // Start from the end if we don't have current yet.
-        index = index.value_or(m_floats.size());
+        index = index.valueOr(m_floats.size());
         while (true) {
             index = previousFloatingIndex(floatingType, m_floats, *index);
             if (!index)

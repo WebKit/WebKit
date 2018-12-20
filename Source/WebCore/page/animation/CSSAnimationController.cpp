@@ -178,7 +178,7 @@ void CSSAnimationControllerPrivate::updateAnimationTimer(SetChanged callSetChang
 {
     Optional<Seconds> timeToNextService = updateAnimations(callSetChanged);
 
-    LOG(Animations, "updateAnimationTimer: timeToNextService is %.2f", timeToNextService.value_or(Seconds { -1 }).value());
+    LOG(Animations, "updateAnimationTimer: timeToNextService is %.2f", timeToNextService.valueOr(Seconds { -1 }).value());
 
     // If we don't need service, we want to make sure the timer is no longer running
     if (!timeToNextService) {

@@ -128,8 +128,8 @@ void VRFrameData::update(const VRPlatformTrackingInfo& trackingInfo, const VREye
     m_timestamp = trackingInfo.timestamp;
     m_pose->update(trackingInfo);
 
-    auto rotationMatrix = rotationMatrixFromQuaternion(trackingInfo.orientation.value_or(VRPlatformTrackingInfo::Quaternion(0, 0, 0, 1)));
-    FloatPoint3D position = trackingInfo.position.value_or(FloatPoint3D(0, 0, 0));
+    auto rotationMatrix = rotationMatrixFromQuaternion(trackingInfo.orientation.valueOr(VRPlatformTrackingInfo::Quaternion(0, 0, 0, 1)));
+    FloatPoint3D position = trackingInfo.position.valueOr(FloatPoint3D(0, 0, 0));
     rotationMatrix.translate3d(-position.x(), -position.y(), -position.z());
 
     m_leftViewMatrix = rotationMatrix;

@@ -373,7 +373,7 @@ void FETurbulence::fillRegion(Uint8ClampedArray& pixelArray, const PaintingData&
     filterRegion.scale(filter().filterScale());
     FloatPoint point(0, filterRegion.y() + startY);
     int indexOfPixelChannel = startY * (filterRegion.width() << 2);
-    AffineTransform inverseTransfrom = filter().absoluteTransform().inverse().value_or(AffineTransform());
+    AffineTransform inverseTransfrom = filter().absoluteTransform().inverse().valueOr(AffineTransform());
 
     for (int y = startY; y < endY; ++y) {
         point.setY(point.y() + 1);

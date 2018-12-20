@@ -69,7 +69,7 @@ void WebPopupMenuProxyGtk::selectItem(unsigned itemIndex)
 void WebPopupMenuProxyGtk::activateItem(Optional<unsigned> itemIndex)
 {
     if (m_client)
-        m_client->valueChangedForPopupMenu(this, itemIndex.value_or(m_selectedItem.value_or(-1)));
+        m_client->valueChangedForPopupMenu(this, itemIndex.valueOr(m_selectedItem.valueOr(-1)));
 }
 
 bool WebPopupMenuProxyGtk::activateItemAtPath(GtkTreePath* path)

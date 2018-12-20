@@ -62,7 +62,7 @@ public:
         unsigned mainFrameProtocolHash = StringHash::hash(m_mainFrameOrigin.protocol);
         unsigned mainFrameHostHash = StringHash::hash(m_mainFrameOrigin.host);
         
-        unsigned hashCodes[8] = { nameHash, sessionIDHash, openingProtocolHash, openingHostHash, m_openingOrigin.port.value_or(0), mainFrameProtocolHash, mainFrameHostHash, m_mainFrameOrigin.port.value_or(0) };
+        unsigned hashCodes[8] = { nameHash, sessionIDHash, openingProtocolHash, openingHostHash, m_openingOrigin.port.valueOr(0), mainFrameProtocolHash, mainFrameHostHash, m_mainFrameOrigin.port.valueOr(0) };
         return StringHasher::hashMemory<sizeof(hashCodes)>(hashCodes);
     }
 

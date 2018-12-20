@@ -59,7 +59,7 @@ Seconds SimulatedInputKeyFrame::maximumDuration() const
     // The "compute the tick duration" algorithm (§17.4 Dispatching Actions).
     Seconds result;
     for (auto& entry : states)
-        result = std::max(result, entry.second.duration.value_or(Seconds(0)));
+        result = std::max(result, entry.second.duration.valueOr(Seconds(0)));
     
     return result;
 }
@@ -259,7 +259,7 @@ void SimulatedInputDispatcher::transitionInputSourceToState(SimulatedInputSource
         eventDispatchFinished(WTF::nullopt);
         break;
     case SimulatedInputSourceType::Mouse: {
-        resolveLocation(a.location.value_or(WebCore::IntPoint()), b.location, b.origin.value_or(MouseMoveOrigin::Viewport), b.nodeHandle, [this, &a, &b, eventDispatchFinished = WTFMove(eventDispatchFinished)](Optional<WebCore::IntPoint> location, Optional<AutomationCommandError> error) mutable {
+        resolveLocation(a.location.valueOr(WebCore::IntPoint()), b.location, b.origin.valueOr(MouseMoveOrigin::Viewport), b.nodeHandle, [this, &a, &b, eventDispatchFinished = WTFMove(eventDispatchFinished)](Optional<WebCore::IntPoint> location, Optional<AutomationCommandError> error) mutable {
             if (error) {
                 eventDispatchFinished(error);
                 return;
@@ -282,7 +282,7 @@ void SimulatedInputDispatcher::transitionInputSourceToState(SimulatedInputSource
             } else if (a.location != b.location) {
                 LOG(Automation, "SimulatedInputDispatcher[%p]: simulating MouseMove for transition to %d.%d", this, m_keyframeIndex, m_inputSourceStateIndex);
                 // FIXME: This does not interpolate mousemoves per the "perform a pointer move" algorithm (§17.4 Dispatching Actions).
-                m_client.simulateMouseInteraction(m_page, MouseInteraction::Move, b.pressedMouseButton.value_or(MouseButton::NoButton), b.location.value(), WTFMove(eventDispatchFinished));
+                m_client.simulateMouseInteraction(m_page, MouseInteraction::Move, b.pressedMouseButton.valueOr(MouseButton::NoButton), b.location.value(), WTFMove(eventDispatchFinished));
             } else
                 eventDispatchFinished(WTF::nullopt);
         });

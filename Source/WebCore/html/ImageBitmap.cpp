@@ -160,7 +160,7 @@ static ExceptionOr<IntRect> croppedSourceRectangleWithFormatting(IntSize inputSi
     //    Otherwise let sourceRectangle be a rectangle whose corners are the four points
     //    (0,0), (width of input, 0), (width of input, height of input), (0, height of
     //    input).
-    auto sourceRectangle = rect.value_or(IntRect { 0, 0, inputSize.width(), inputSize.height() });
+    auto sourceRectangle = rect.valueOr(IntRect { 0, 0, inputSize.width(), inputSize.height() });
 
     // 4. Clip sourceRectangle to the dimensions of input.
     sourceRectangle.intersect(IntRect { 0, 0, inputSize.width(), inputSize.height() });

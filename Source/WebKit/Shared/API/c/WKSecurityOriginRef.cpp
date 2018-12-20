@@ -76,5 +76,5 @@ WKStringRef WKSecurityOriginCopyHost(WKSecurityOriginRef securityOrigin)
 
 unsigned short WKSecurityOriginGetPort(WKSecurityOriginRef securityOrigin)
 {
-    return WebKit::toImpl(securityOrigin)->securityOrigin().port().value_or(0);
+    return WebKit::toImpl(securityOrigin)->securityOrigin().port().valueOr(0);
 }

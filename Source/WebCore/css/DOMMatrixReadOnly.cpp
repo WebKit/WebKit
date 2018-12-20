@@ -120,17 +120,17 @@ ExceptionOr<void> DOMMatrixReadOnly::validateAndFixup(DOMMatrix2DInit& init)
         return Exception { TypeError, "init.f and init.m42 do not match"_s };
 
     if (!init.m11)
-        init.m11 = init.a.value_or(1);
+        init.m11 = init.a.valueOr(1);
     if (!init.m12)
-        init.m12 = init.b.value_or(0);
+        init.m12 = init.b.valueOr(0);
     if (!init.m21)
-        init.m21 = init.c.value_or(0);
+        init.m21 = init.c.valueOr(0);
     if (!init.m22)
-        init.m22 = init.d.value_or(1);
+        init.m22 = init.d.valueOr(1);
     if (!init.m41)
-        init.m41 = init.e.value_or(0);
+        init.m41 = init.e.valueOr(0);
     if (!init.m42)
-        init.m42 = init.f.value_or(0);
+        init.m42 = init.f.valueOr(0);
 
     return { };
 }

@@ -387,7 +387,7 @@ void WebAutomationSession::setWindowFrameOfBrowsingContext(const String& handle,
         this->restoreWindowForPage(webPage, [callback = WTFMove(callback), page = WTFMove(page), width, height, x, y]() mutable {
             auto& webPage = *page;
             webPage.getWindowFrameWithCallback([callback = WTFMove(callback), page = WTFMove(page), width, height, x, y](WebCore::FloatRect originalFrame) mutable {
-                WebCore::FloatRect newFrame = WebCore::FloatRect(WebCore::FloatPoint(x.value_or(originalFrame.location().x()), y.value_or(originalFrame.location().y())), WebCore::FloatSize(width.value_or(originalFrame.size().width()), height.value_or(originalFrame.size().height())));
+                WebCore::FloatRect newFrame = WebCore::FloatRect(WebCore::FloatPoint(x.valueOr(originalFrame.location().x()), y.valueOr(originalFrame.location().y())), WebCore::FloatSize(width.valueOr(originalFrame.size().width()), height.valueOr(originalFrame.size().height())));
                 if (newFrame != originalFrame)
                     page->setWindowFrame(newFrame);
                 
@@ -1834,7 +1834,7 @@ void WebAutomationSession::performInteractionSequence(const String& handle, cons
             String pressedButtonString;
             if (stateObject->getString("pressedButton"_s, pressedButtonString)) {
                 auto protocolButton = Inspector::Protocol::AutomationHelpers::parseEnumValueFromString<Inspector::Protocol::Automation::MouseButton>(pressedButtonString);
-                sourceState.pressedMouseButton = protocolMouseButtonToWebMouseEventButton(protocolButton.value_or(Inspector::Protocol::Automation::MouseButton::None));
+                sourceState.pressedMouseButton = protocolMouseButtonToWebMouseEventButton(protocolButton.valueOr(Inspector::Protocol::Automation::MouseButton::None));
             }
 
             String originString;

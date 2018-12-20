@@ -189,8 +189,8 @@ Ref<DOMMatrix> DOMMatrix::rotateSelf(double rotX, Optional<double> rotY, Optiona
         rotX = 0;
         rotY = 0;
     }
-    m_matrix.rotate3d(rotX, rotY.value_or(0), rotZ.value_or(0));
-    if (rotX || rotY.value_or(0))
+    m_matrix.rotate3d(rotX, rotY.valueOr(0), rotZ.valueOr(0));
+    if (rotX || rotY.valueOr(0))
         m_is2D = false;
     return *this;
 }

@@ -316,7 +316,7 @@ ExceptionOr<int> CSSStyleSheet::addRule(const String& selector, const String& st
     if (!style.isEmpty())
         text.append(' ');
     text.append('}');
-    auto insertRuleResult = insertRule(text.toString(), index.value_or(length()));
+    auto insertRuleResult = insertRule(text.toString(), index.valueOr(length()));
     if (insertRuleResult.hasException())
         return insertRuleResult.releaseException();
     

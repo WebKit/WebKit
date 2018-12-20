@@ -47,7 +47,7 @@ void CompositingManager::establishConnection(WebPage& webPage)
 
 int CompositingManager::releaseConnectionFd()
 {
-    int fd = m_connectionFd.value_or(-1);
+    int fd = m_connectionFd.valueOr(-1);
     m_connectionFd = WTF::nullopt;
     return fd;
 }

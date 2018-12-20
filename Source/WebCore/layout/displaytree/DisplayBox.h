@@ -133,8 +133,8 @@ public:
     LayoutPoint bottomRight() const { return { right(), bottom() }; }
 
     LayoutSize size() const { return { width(), height() }; }
-    LayoutUnit width() const { return borderLeft() + paddingLeft().value_or(0) + contentBoxWidth() + paddingRight().value_or(0) + borderRight(); }
-    LayoutUnit height() const { return borderTop() + paddingTop().value_or(0) + contentBoxHeight() + paddingBottom().value_or(0) + borderBottom(); }
+    LayoutUnit width() const { return borderLeft() + paddingLeft().valueOr(0) + contentBoxWidth() + paddingRight().valueOr(0) + borderRight(); }
+    LayoutUnit height() const { return borderTop() + paddingTop().valueOr(0) + contentBoxHeight() + paddingBottom().valueOr(0) + borderBottom(); }
     Rect rect() const { return { top(), left(), width(), height() }; }
     Rect rectWithMargin() const { return { top() - marginBefore(), left() - marginStart(), marginStart() + width() + marginEnd(), marginBefore() + height() + marginAfter() }; }
 
@@ -161,8 +161,8 @@ public:
     Optional<LayoutUnit> paddingBottom() const;
     Optional<LayoutUnit> paddingRight() const;
 
-    LayoutUnit contentBoxTop() const { return borderTop() + paddingTop().value_or(0); }
-    LayoutUnit contentBoxLeft() const { return borderLeft() + paddingLeft().value_or(0); }
+    LayoutUnit contentBoxTop() const { return borderTop() + paddingTop().valueOr(0); }
+    LayoutUnit contentBoxLeft() const { return borderLeft() + paddingLeft().valueOr(0); }
     LayoutUnit contentBoxBottom() const { return contentBoxTop() + contentBoxHeight(); }
     LayoutUnit contentBoxRight() const { return contentBoxLeft() + contentBoxWidth(); }
     LayoutUnit contentBoxHeight() const;

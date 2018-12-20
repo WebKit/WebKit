@@ -946,7 +946,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
 - (double)_cpuLimit
 {
-    return _pageConfiguration->cpuLimit().value_or(0);
+    return _pageConfiguration->cpuLimit().valueOr(0);
 }
 
 #endif // PLATFORM(MAC)

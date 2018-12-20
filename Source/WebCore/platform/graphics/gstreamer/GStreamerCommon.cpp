@@ -223,7 +223,7 @@ bool initializeGStreamer(Optional<Vector<String>>&& options)
         isGStreamerInitialized = false;
 
 #if ENABLE(VIDEO) || ENABLE(WEB_AUDIO)
-        Vector<String> parameters = options.value_or(extractGStreamerOptionsFromCommandLine());
+        Vector<String> parameters = options.valueOr(extractGStreamerOptionsFromCommandLine());
         char** argv = g_new0(char*, parameters.size() + 2);
         int argc = parameters.size() + 1;
         argv[0] = g_strdup(getCurrentExecutableName().data());

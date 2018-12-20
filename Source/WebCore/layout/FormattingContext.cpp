@@ -224,16 +224,16 @@ void FormattingContext::validateGeometryConstraintsAfterLayout() const
         if ((layoutBox.isBlockLevelBox() || layoutBox.isOutOfFlowPositioned()) && !layoutBox.replaced()) {
             // margin-left + border-left-width + padding-left + width + padding-right + border-right-width + margin-right = width of containing block
             auto containingBlockWidth = containingBlockDisplayBox.contentBoxWidth();
-            ASSERT(displayBox.marginStart() + displayBox.borderLeft() + displayBox.paddingLeft().value_or(0) + displayBox.contentBoxWidth()
-                + displayBox.paddingRight().value_or(0) + displayBox.borderRight() + displayBox.marginEnd() == containingBlockWidth);
+            ASSERT(displayBox.marginStart() + displayBox.borderLeft() + displayBox.paddingLeft().valueOr(0) + displayBox.contentBoxWidth()
+                + displayBox.paddingRight().valueOr(0) + displayBox.borderRight() + displayBox.marginEnd() == containingBlockWidth);
         }
 
         // 10.6.4 Absolutely positioned, non-replaced elements
         if (layoutBox.isOutOfFlowPositioned() && !layoutBox.replaced()) {
             // top + margin-top + border-top-width + padding-top + height + padding-bottom + border-bottom-width + margin-bottom + bottom = height of containing block
             auto containingBlockHeight = containingBlockDisplayBox.contentBoxHeight();
-            ASSERT(displayBox.top() + displayBox.marginBefore() + displayBox.borderTop() + displayBox.paddingTop().value_or(0) + displayBox.contentBoxHeight()
-                + displayBox.paddingBottom().value_or(0) + displayBox.borderBottom() + displayBox.marginAfter() == containingBlockHeight);
+            ASSERT(displayBox.top() + displayBox.marginBefore() + displayBox.borderTop() + displayBox.paddingTop().valueOr(0) + displayBox.contentBoxHeight()
+                + displayBox.paddingBottom().valueOr(0) + displayBox.borderBottom() + displayBox.marginAfter() == containingBlockHeight);
         }
     }
 }

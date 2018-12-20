@@ -1193,7 +1193,7 @@ inline void StyleBuilderCustom::applyValueCounter(StyleResolver& styleResolver, 
         if (counterBehavior == Reset)
             directives.resetValue = value;
         else
-            directives.incrementValue = saturatedAddition(directives.incrementValue.value_or(0), value);
+            directives.incrementValue = saturatedAddition(directives.incrementValue.valueOr(0), value);
     }
 }
 

@@ -1128,7 +1128,7 @@ bool Page::isLowPowerModeEnabled() const
 void Page::setLowPowerModeEnabledOverrideForTesting(Optional<bool> isEnabled)
 {
     m_lowPowerModeEnabledOverrideForTesting = isEnabled;
-    handleLowModePowerChange(m_lowPowerModeEnabledOverrideForTesting.value_or(false));
+    handleLowModePowerChange(m_lowPowerModeEnabledOverrideForTesting.valueOr(false));
 }
 
 void Page::setTopContentInset(float contentInset)

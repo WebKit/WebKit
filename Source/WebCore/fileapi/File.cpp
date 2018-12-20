@@ -81,7 +81,7 @@ static BlobPropertyBag convertPropertyBag(const File::PropertyBag& initialBag)
 File::File(Vector<BlobPartVariant>&& blobPartVariants, const String& filename, const PropertyBag& propertyBag)
     : Blob(WTFMove(blobPartVariants), convertPropertyBag(propertyBag))
     , m_name(filename)
-    , m_lastModifiedDateOverride(propertyBag.lastModified.value_or(WallTime::now().secondsSinceEpoch().milliseconds()))
+    , m_lastModifiedDateOverride(propertyBag.lastModified.valueOr(WallTime::now().secondsSinceEpoch().milliseconds()))
 {
 }
 

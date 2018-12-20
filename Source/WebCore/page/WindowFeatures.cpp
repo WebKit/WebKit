@@ -182,8 +182,8 @@ WindowFeatures parseDialogFeatures(const String& dialogFeaturesString, const Flo
     features.locationBarVisible = false;
     features.dialog = true;
 
-    float width = floatFeature(featuresMap, "dialogwidth", 100, screenAvailableRect.width()).value_or(620); // default here came from frame size of dialog in MacIE
-    float height = floatFeature(featuresMap, "dialogheight", 100, screenAvailableRect.height()).value_or(450); // default here came from frame size of dialog in MacIE
+    float width = floatFeature(featuresMap, "dialogwidth", 100, screenAvailableRect.width()).valueOr(620); // default here came from frame size of dialog in MacIE
+    float height = floatFeature(featuresMap, "dialogheight", 100, screenAvailableRect.height()).valueOr(450); // default here came from frame size of dialog in MacIE
 
     features.width = width;
     features.height = height;
@@ -191,16 +191,16 @@ WindowFeatures parseDialogFeatures(const String& dialogFeaturesString, const Flo
     features.x = floatFeature(featuresMap, "dialogleft", screenAvailableRect.x(), screenAvailableRect.maxX() - width);
     features.y = floatFeature(featuresMap, "dialogtop", screenAvailableRect.y(), screenAvailableRect.maxY() - height);
 
-    if (boolFeature(featuresMap, "center").value_or(true)) {
+    if (boolFeature(featuresMap, "center").valueOr(true)) {
         if (!features.x)
             features.x = screenAvailableRect.x() + (screenAvailableRect.width() - width) / 2;
         if (!features.y)
             features.y = screenAvailableRect.y() + (screenAvailableRect.height() - height) / 2;
     }
 
-    features.resizable = boolFeature(featuresMap, "resizable").value_or(false);
-    features.scrollbarsVisible = boolFeature(featuresMap, "scroll").value_or(true);
-    features.statusBarVisible = boolFeature(featuresMap, "status").value_or(false);
+    features.resizable = boolFeature(featuresMap, "resizable").valueOr(false);
+    features.scrollbarsVisible = boolFeature(featuresMap, "scroll").valueOr(true);
+    features.statusBarVisible = boolFeature(featuresMap, "status").valueOr(false);
 
     return features;
 }

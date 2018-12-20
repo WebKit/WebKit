@@ -915,7 +915,7 @@ ExceptionOr<void> CanvasRenderingContext2DBase::setTransform(DOMMatrix2DInit&& m
     if (checkValid.hasException())
         return checkValid.releaseException();
 
-    setTransform(matrixInit.a.value_or(1), matrixInit.b.value_or(0), matrixInit.c.value_or(0), matrixInit.d.value_or(1), matrixInit.e.value_or(0), matrixInit.f.value_or(0));
+    setTransform(matrixInit.a.valueOr(1), matrixInit.b.valueOr(0), matrixInit.c.valueOr(0), matrixInit.d.valueOr(1), matrixInit.e.valueOr(0), matrixInit.f.valueOr(0));
     return { };
 }
 
@@ -1204,7 +1204,7 @@ bool CanvasRenderingContext2DBase::isPointInPathInternal(const Path& path, float
     if (!state().hasInvertibleTransform)
         return false;
 
-    auto transformedPoint = state().transform.inverse().value_or(AffineTransform()).mapPoint(FloatPoint(x, y));
+    auto transformedPoint = state().transform.inverse().valueOr(AffineTransform()).mapPoint(FloatPoint(x, y));
 
     if (!std::isfinite(transformedPoint.x()) || !std::isfinite(transformedPoint.y()))
         return false;
@@ -1220,7 +1220,7 @@ bool CanvasRenderingContext2DBase::isPointInStrokeInternal(const Path& path, flo
     if (!state().hasInvertibleTransform)
         return false;
 
-    auto transformedPoint = state().transform.inverse().value_or(AffineTransform()).mapPoint(FloatPoint(x, y));
+    auto transformedPoint = state().transform.inverse().valueOr(AffineTransform()).mapPoint(FloatPoint(x, y));
     if (!std::isfinite(transformedPoint.x()) || !std::isfinite(transformedPoint.y()))
         return false;
 

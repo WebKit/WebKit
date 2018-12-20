@@ -172,7 +172,7 @@ static int synthesizedBaselineFromContentBox(const RenderBox& box, LineDirection
 
 int RenderFlexibleBox::baselinePosition(FontBaseline, bool, LineDirectionMode direction, LinePositionMode) const
 {
-    int baseline = firstLineBaseline().value_or(synthesizedBaselineFromContentBox(*this, direction));
+    int baseline = firstLineBaseline().valueOr(synthesizedBaselineFromContentBox(*this, direction));
 
     int marginAscent = direction == HorizontalLine ? marginTop() : marginRight();
     return baseline + marginAscent;
@@ -1036,7 +1036,7 @@ bool RenderFlexibleBox::updateAutoMarginsInCrossAxis(RenderBox& child, LayoutUni
 
 LayoutUnit RenderFlexibleBox::marginBoxAscentForChild(const RenderBox& child)
 {
-    LayoutUnit ascent = child.firstLineBaseline().value_or(crossAxisExtentForChild(child));
+    LayoutUnit ascent = child.firstLineBaseline().valueOr(crossAxisExtentForChild(child));
     return ascent + flowAwareMarginBeforeForChild(child);
 }
 
@@ -1074,12 +1074,12 @@ LayoutUnit RenderFlexibleBox::adjustChildSizeForMinAndMax(const RenderBox& child
     Optional<LayoutUnit> maxExtent = WTF::nullopt;
     if (max.isSpecifiedOrIntrinsic()) {
         maxExtent = computeMainAxisExtentForChild(child, MaxSize, max);
-        childSize = std::min(childSize, maxExtent.value_or(childSize));
+        childSize = std::min(childSize, maxExtent.valueOr(childSize));
     }
 
     Length min = isHorizontalFlow() ? child.style().minWidth() : child.style().minHeight();
     if (min.isSpecifiedOrIntrinsic())
-        return std::max(childSize, std::max(0_lu, computeMainAxisExtentForChild(child, MinSize, min).value_or(childSize)));
+        return std::max(childSize, std::max(0_lu, computeMainAxisExtentForChild(child, MinSize, min).valueOr(childSize)));
     
     if (!isFlexibleBoxImpl() && min.isAuto() && mainAxisOverflowForChild(child) == Overflow::Visible && !(isColumnFlow() && is<RenderFlexibleBox>(child))) {
         // FIXME: For now, we do not handle min-height: auto for nested
@@ -1089,17 +1089,17 @@ LayoutUnit RenderFlexibleBox::adjustChildSizeForMinAndMax(const RenderBox& child
         // css-flexbox section 4.5
         // FIXME: If the min value is expected to be valid here, we need to come up with a non optional version of computeMainAxisExtentForChild and
         // ensure it's valid through the virtual calls of computeIntrinsicLogicalContentHeightUsing.
-        LayoutUnit contentSize = computeMainAxisExtentForChild(child, MinSize, Length(MinContent)).value_or(0);
+        LayoutUnit contentSize = computeMainAxisExtentForChild(child, MinSize, Length(MinContent)).valueOr(0);
         ASSERT(contentSize >= 0);
         if (child.hasAspectRatio() && child.intrinsicSize().height() > 0)
             contentSize = adjustChildSizeForAspectRatioCrossAxisMinAndMax(child, contentSize);
-        contentSize = std::min(contentSize, maxExtent.value_or(contentSize));
+        contentSize = std::min(contentSize, maxExtent.valueOr(contentSize));
         
         Length mainSize = isHorizontalFlow() ? child.style().width() : child.style().height();
         if (mainAxisLengthIsDefinite(child, mainSize)) {
-            LayoutUnit resolvedMainSize = computeMainAxisExtentForChild(child, MainOrPreferredSize, mainSize).value_or(0);
+            LayoutUnit resolvedMainSize = computeMainAxisExtentForChild(child, MainOrPreferredSize, mainSize).valueOr(0);
             ASSERT(resolvedMainSize >= 0);
-            LayoutUnit specifiedSize = std::min(resolvedMainSize, maxExtent.value_or(resolvedMainSize));
+            LayoutUnit specifiedSize = std::min(resolvedMainSize, maxExtent.valueOr(resolvedMainSize));
             return std::max(childSize, std::min(specifiedSize, contentSize));
         }
 

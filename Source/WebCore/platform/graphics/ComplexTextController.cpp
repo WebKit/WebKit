@@ -222,12 +222,12 @@ unsigned ComplexTextController::offsetForPosition(float h, bool includePartialGl
                 if (cursorPositionIterator.isBoundary(hitIndex))
                     clusterStart = hitIndex;
                 else
-                    clusterStart = cursorPositionIterator.preceding(hitIndex).value_or(0);
+                    clusterStart = cursorPositionIterator.preceding(hitIndex).valueOr(0);
 
                 if (!includePartialGlyphs)
                     return complexTextRun.stringLocation() + clusterStart;
 
-                unsigned clusterEnd = cursorPositionIterator.following(hitIndex).value_or(stringLength);
+                unsigned clusterEnd = cursorPositionIterator.following(hitIndex).valueOr(stringLength);
 
                 float clusterWidth;
                 // FIXME: The search stops at the boundaries of complexTextRun. In theory, it should go on into neighboring ComplexTextRuns

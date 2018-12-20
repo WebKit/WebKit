@@ -64,7 +64,7 @@ LayoutUnit GridBaselineAlignment::logicalAscentForChild(const RenderBox& child, 
 LayoutUnit GridBaselineAlignment::ascentForChild(const RenderBox& child, GridAxis baselineAxis) const
 {
     LayoutUnit margin = isDescentBaselineForChild(child, baselineAxis) ? marginUnderForChild(child, baselineAxis) : marginOverForChild(child, baselineAxis);
-    LayoutUnit baseline(isParallelToBaselineAxisForChild(child, baselineAxis) ? child.firstLineBaseline().value_or(-1) : -1);
+    LayoutUnit baseline(isParallelToBaselineAxisForChild(child, baselineAxis) ? child.firstLineBaseline().valueOr(-1) : -1);
     // We take border-box's under edge if no valid baseline.
     if (baseline == -1) {
         if (isHorizontalBaselineAxis(baselineAxis))

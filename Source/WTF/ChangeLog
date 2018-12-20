@@ -1,3 +1,13 @@
+2018-12-20  Chris Dumez  <cdumez@apple.com>
+
+        Use Optional::valueOr() instead of Optional::value_or()
+        https://bugs.webkit.org/show_bug.cgi?id=192933
+
+        Reviewed by Geoffrey Garen.
+
+        * wtf/Optional.h:
+        (WTF::Optional<T::valueOr const):
+
 2018-12-20  Tadeu Zagallo  <tzagallo@apple.com>
 
         Consistently use MaxLength for all WTF strings

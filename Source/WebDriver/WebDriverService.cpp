@@ -268,7 +268,7 @@ void WebDriverService::sendResponse(Function<void (HTTPRequestHandler::Response&
         // Let body be a new JSON Object initialised with the following properties: "error", "message", "stacktrace".
         auto errorObject = JSON::Object::create();
         errorObject->setString("error"_s, result.errorString());
-        errorObject->setString("message"_s, result.errorMessage().value_or(emptyString()));
+        errorObject->setString("message"_s, result.errorMessage().valueOr(emptyString()));
         errorObject->setString("stacktrace"_s, emptyString());
         // If the error data dictionary contains any entries, set the "data" field on body to a new JSON Object populated with the dictionary.
         if (auto& additionalData = result.additionalErrorData())
@@ -695,12 +695,12 @@ void WebDriverService::createSession(Vector<Capabilities>&& capabilitiesList, st
             resultObject->setString("sessionId"_s, m_session->id());
             RefPtr<JSON::Object> capabilitiesObject = JSON::Object::create();
             const auto& capabilities = m_session->capabilities();
-            capabilitiesObject->setString("browserName"_s, capabilities.browserName.value_or(emptyString()));
-            capabilitiesObject->setString("browserVersion"_s, capabilities.browserVersion.value_or(emptyString()));
-            capabilitiesObject->setString("platformName"_s, capabilities.platformName.value_or(emptyString()));
-            capabilitiesObject->setBoolean("acceptInsecureCerts"_s, capabilities.acceptInsecureCerts.value_or(false));
-            capabilitiesObject->setBoolean("setWindowRect"_s, capabilities.setWindowRect.value_or(true));
-            switch (capabilities.unhandledPromptBehavior.value_or(UnhandledPromptBehavior::DismissAndNotify)) {
+            capabilitiesObject->setString("browserName"_s, capabilities.browserName.valueOr(emptyString()));
+            capabilitiesObject->setString("browserVersion"_s, capabilities.browserVersion.valueOr(emptyString()));
+            capabilitiesObject->setString("platformName"_s, capabilities.platformName.valueOr(emptyString()));
+            capabilitiesObject->setBoolean("acceptInsecureCerts"_s, capabilities.acceptInsecureCerts.valueOr(false));
+            capabilitiesObject->setBoolean("setWindowRect"_s, capabilities.setWindowRect.valueOr(true));
+            switch (capabilities.unhandledPromptBehavior.valueOr(UnhandledPromptBehavior::DismissAndNotify)) {
             case UnhandledPromptBehavior::Dismiss:
                 capabilitiesObject->setString("unhandledPromptBehavior"_s, "dismiss");
                 break;
@@ -717,7 +717,7 @@ void WebDriverService::createSession(Vector<Capabilities>&& capabilitiesList, st
                 capabilitiesObject->setString("unhandledPromptBehavior"_s, "ignore");
                 break;
             }
-            switch (capabilities.pageLoadStrategy.value_or(PageLoadStrategy::Normal)) {
+            switch (capabilities.pageLoadStrategy.valueOr(PageLoadStrategy::Normal)) {
             case PageLoadStrategy::None:
                 capabilitiesObject->setString("pageLoadStrategy"_s, "none");
                 break;

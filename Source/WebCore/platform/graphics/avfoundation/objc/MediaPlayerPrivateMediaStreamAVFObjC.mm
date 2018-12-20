@@ -1119,7 +1119,7 @@ void MediaPlayerPrivateMediaStreamAVFObjC::paintCurrentFrameInContext(GraphicsCo
     auto image = m_imagePainter.cgImage.get();
     FloatRect imageRect(0, 0, CGImageGetWidth(image), CGImageGetHeight(image));
     AffineTransform videoTransform = videoTransformationMatrix(*m_imagePainter.mediaSample);
-    FloatRect transformedDestRect = videoTransform.inverse().value_or(AffineTransform()).mapRect(destRect);
+    FloatRect transformedDestRect = videoTransform.inverse().valueOr(AffineTransform()).mapRect(destRect);
     context.concatCTM(videoTransform);
     context.drawNativeImage(image, imageRect.size(), transformedDestRect, imageRect);
 }

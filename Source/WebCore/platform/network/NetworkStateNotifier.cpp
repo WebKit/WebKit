@@ -50,7 +50,7 @@ bool NetworkStateNotifier::onLine()
 {
     if (!m_isOnLine)
         updateState();
-    return m_isOnLine.value_or(true);
+    return m_isOnLine.valueOr(true);
 }
 
 void NetworkStateNotifier::addListener(WTF::Function<void(bool)>&& listener)
