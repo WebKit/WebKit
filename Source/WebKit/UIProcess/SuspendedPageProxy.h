@@ -57,8 +57,8 @@ public:
 #endif
 
 private:
-    void didSuspend();
-    void didFailToSuspend();
+    enum class SuspensionState : uint8_t { Suspending, FailedToSuspend, Suspended, Resumed };
+    void didProcessRequestToSuspend(SuspensionState);
 
     // IPC::MessageReceiver
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) final;
@@ -69,7 +69,6 @@ private:
     uint64_t m_mainFrameID;
     String m_registrableDomain;
 
-    enum class SuspensionState : uint8_t { Suspending, FailedToSuspend, Suspended, Resumed };
     SuspensionState m_suspensionState { SuspensionState::Suspending };
     CompletionHandler<void(SuspendedPageProxy*)> m_readyToUnsuspendHandler;
 #if PLATFORM(IOS_FAMILY)

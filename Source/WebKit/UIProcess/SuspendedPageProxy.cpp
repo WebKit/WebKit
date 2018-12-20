@@ -138,25 +138,18 @@ void SuspendedPageProxy::unsuspend()
     m_process->send(Messages::WebPage::SetIsSuspended(false), m_page.pageID());
 }
 
-void SuspendedPageProxy::didSuspend()
+void SuspendedPageProxy::didProcessRequestToSuspend(SuspensionState newSuspensionState)
 {
     LOG(ProcessSwapping, "SuspendedPageProxy %s from process %i finished transition to suspended", loggingString(), m_process->processIdentifier());
 
     ASSERT(m_suspensionState == SuspensionState::Suspending);
-    m_suspensionState = SuspensionState::Suspended;
+    ASSERT(newSuspensionState == SuspensionState::Suspended || newSuspensionState == SuspensionState::FailedToSuspend);
+
+    m_suspensionState = newSuspensionState;
 
 #if PLATFORM(IOS_FAMILY)
     m_suspensionToken = nullptr;
 #endif
-
-    if (m_readyToUnsuspendHandler)
-        m_readyToUnsuspendHandler(this);
-}
-
-void SuspendedPageProxy::didFailToSuspend()
-{
-    ASSERT(m_suspensionState == SuspensionState::Suspending);
-    m_suspensionState = SuspensionState::FailedToSuspend;
 
     if (m_readyToUnsuspendHandler)
         m_readyToUnsuspendHandler(this);
@@ -167,12 +160,12 @@ void SuspendedPageProxy::didReceiveMessage(IPC::Connection&, IPC::Decoder& decod
     ASSERT(decoder.messageReceiverName() == Messages::WebPageProxy::messageReceiverName());
 
     if (decoder.messageName() == Messages::WebPageProxy::DidSuspendAfterProcessSwap::name()) {
-        didSuspend();
+        didProcessRequestToSuspend(SuspensionState::Suspended);
         return;
     }
 
     if (decoder.messageName() == Messages::WebPageProxy::DidFailToSuspendAfterProcessSwap::name()) {
-        didFailToSuspend();
+        didProcessRequestToSuspend(SuspensionState::FailedToSuspend);
         return;
     }
 

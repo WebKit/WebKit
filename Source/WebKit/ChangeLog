@@ -1,3 +1,20 @@
+2018-12-20  Chris Dumez  <cdumez@apple.com>
+
+        [PSON] SuspendedPageProxy fails to release its process assertion if the WebPage fails to enter PageCache
+        https://bugs.webkit.org/show_bug.cgi?id=192873
+
+        Reviewed by Antti Koivisto.
+
+        SuspendedPageProxy fails to release its process assertion if the WebPage fails to enter PageCache, preventing
+        the process from suspending on iOS.
+
+        * UIProcess/SuspendedPageProxy.cpp:
+        (WebKit::SuspendedPageProxy::didProcessRequestToSuspend):
+        (WebKit::SuspendedPageProxy::didReceiveMessage):
+        (WebKit::SuspendedPageProxy::didSuspend): Deleted.
+        (WebKit::SuspendedPageProxy::didFailToSuspend): Deleted.
+        * UIProcess/SuspendedPageProxy.h:
+
 2018-12-19  Chris Dumez  <cdumez@apple.com>
 
         wtf/Optional.h: move-constructor and move-assignment operator should disengage the value being moved from
