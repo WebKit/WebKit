@@ -59,9 +59,16 @@ WI.AuditTestGroupContentView = class AuditTestGroupContentView extends WI.AuditT
         this._levelNavigationBar.element.dataset.prefix = WI.UIString("Showing:");
         this.headerView.addSubview(this._levelNavigationBar);
 
-        this._percentageTextElement = this.headerView.element.appendChild(document.createElement("div"));
-        this._percentageTextElement.classList.add("percentage-pass");
-        this.headerView.element.appendChild(this._percentageTextElement);
+        this._percentageContainer = this.headerView.element.appendChild(document.createElement("div"));
+        this._percentageContainer.classList.add("percentage-pass");
+        this._percentageContainer.hidden = true;
+
+        this._percentageTextElement = document.createElement("span");
+
+        String.format(WI.UIString("%s%%"), [this._percentageTextElement], String.standardFormatters, this._percentageContainer, (a, b) => {
+            a.append(b);
+            return a;
+        });
     }
 
     layout()
@@ -78,6 +85,7 @@ WI.AuditTestGroupContentView = class AuditTestGroupContentView extends WI.AuditT
                 this._levelScopeBar = null;
             }
 
+            this._percentageContainer.hidden = true;
             this._percentageTextElement.textContent = "";
 
             if (this.representedObject.runningState === WI.AuditManager.RunningState.Inactive)
@@ -93,6 +101,7 @@ WI.AuditTestGroupContentView = class AuditTestGroupContentView extends WI.AuditT
         let levelCounts = result.levelCounts;
         let totalCount = Object.values(levelCounts).reduce((accumulator, current) => accumulator + current);
         this._percentageTextElement.textContent = Math.floor(100 * levelCounts[WI.AuditTestCaseResult.Level.Pass] / totalCount);
+        this._percentageContainer.hidden = false;
 
         if (!this._levelScopeBar) {
             let scopeBarItems = [];

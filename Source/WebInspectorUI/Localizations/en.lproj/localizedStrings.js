@@ -56,6 +56,7 @@ localizedStrings["%s cannot be modified"] = "%s cannot be modified";
 localizedStrings["%s delay"] = "%s delay";
 localizedStrings["%s eval\n%s async"] = "%s eval\n%s async";
 localizedStrings["%s interval"] = "%s interval";
+localizedStrings["%s%%"] = "%s%%";
 localizedStrings["(Action %s)"] = "(Action %s)";
 localizedStrings["(Disk)"] = "(Disk)";
 localizedStrings["(Index)"] = "(Index)";

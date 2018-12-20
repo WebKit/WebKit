@@ -122,16 +122,17 @@
 .content-view.audit-test-group > header > .percentage-pass {
     width: var(--metadata-width);
     -webkit-margin-start: var(--audit-test-horizontal-space);
-    font-size: 24px;
+    font-size: 16px;
     text-align: center;
     font-weight: bold;
-    opacity: 0.65;
+    /* FIXME: Use CSS4 color blend functions once they're available. */
+    color: hsla(0, 0%, 0%, 0.5);
 }
 
-.content-view.audit-test-group > header > .percentage-pass:not(:empty)::after {
-    content: "%";
-    font-size: 16px;
-    opacity: 0.75;
+.content-view.audit-test-group > header > .percentage-pass > span {
+    font-size: 24px;
+    /* FIXME: Use CSS4 color blend functions once they're available. */
+    color: hsla(0, 0%, 0%, 0.65);
 }
 
 .content-view.audit-test-group > section > .audit-test-case:first-child,
@@ -142,4 +143,16 @@
 
 .content-view.audit-test-group > section > .audit-test-case:last-child {
     margin-bottom: var(--audit-test-vertical-space);
+}
+
+@media (prefers-dark-interface) {
+    .content-view.audit-test-group > header > .percentage-pass {
+        /* FIXME: Use CSS4 color blend functions once they're available. */
+        color: hsla(0, 0%, 88%, 0.5);
+    }
+
+    .content-view.audit-test-group > header > .percentage-pass > span {
+        /* FIXME: Use CSS4 color blend functions once they're available. */
+        color: hsla(0, 0%, 88%, 0.65);
+    }
 }
