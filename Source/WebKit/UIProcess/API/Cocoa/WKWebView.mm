@@ -2247,7 +2247,7 @@ static WebCore::FloatPoint constrainContentOffset(WebCore::FloatPoint contentOff
 
     const double minimumHeightToShowContentAboveKeyboard = 106;
     const CFTimeInterval formControlZoomAnimationDuration = 0.25;
-    const double caretOffsetFromWindowEdge = 20;
+    const double caretOffsetFromWindowEdge = 8;
 
     UIWindow *window = [_scrollView window];
 

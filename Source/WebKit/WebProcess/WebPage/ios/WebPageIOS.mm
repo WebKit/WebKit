@@ -615,7 +615,7 @@ void WebPage::completeSyntheticClick(Node* nodeRespondingToClick, const WebCore:
     // If the node has been focused by JavaScript without user interaction, the
     // keyboard is not on screen.
     if (newFocusedElement && newFocusedElement == oldFocusedElement)
-        elementDidFocus(newFocusedElement.get());
+        elementDidRefocus(newFocusedElement.get());
 
     if (!tapWasHandled || !nodeRespondingToClick || !nodeRespondingToClick->isElementNode())
         send(Messages::WebPageProxy::DidNotHandleTapAsClick(roundedIntPoint(location)));
@@ -2363,9 +2363,7 @@ void WebPage::getAssistedNodeInformation(AssistedNodeInformation& information)
 {
     layoutIfNeeded();
 
-    // FIXME: information.selectionRect should be set to the actual selection rect, but when this is called at focus time
-    // we don't have a selection yet. Using the last interaction location is a reasonable approximation for now.
-    information.selectionRect = IntRect(m_lastInteractionLocation, IntSize(1, 1));
+    information.elementInteractionLocation = m_lastInteractionLocation;
 
     if (RenderObject* renderer = m_assistedNode->renderer()) {
         Frame& elementFrame = m_page->focusController().focusedOrMainFrame();
@@ -2386,11 +2384,11 @@ void WebPage::getAssistedNodeInformation(AssistedNodeInformation& information)
             frameView->setCustomFixedPositionLayoutRect(currentFixedPositionRect);
             
             if (!information.elementRect.contains(m_lastInteractionLocation))
-                information.selectionRect.setLocation(information.elementRect.location());
+                information.elementInteractionLocation = information.elementRect.location();
         } else {
             // Don't use the selection rect if interaction was outside the element rect.
             if (!information.elementRect.contains(m_lastInteractionLocation))
-                information.selectionRect = IntRect();
+                information.elementInteractionLocation = { };
         }
     } else
         information.elementRect = IntRect();

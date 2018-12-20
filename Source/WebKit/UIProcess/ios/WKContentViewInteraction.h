@@ -301,9 +301,11 @@ struct WKAutoCorrectionData {
     BOOL _shouldRestoreSelection;
     BOOL _usingGestureForSelection;
     BOOL _inspectorNodeSearchEnabled;
+    BOOL _isChangingFocusUsingAccessoryTab;
     BOOL _didAccessoryTabInitiateFocus;
     BOOL _isExpectingFastSingleTapCommit;
     BOOL _showDebugTapHighlightsForFastClicking;
+    BOOL _isZoomingToRevealFocusedElement;
 
     BOOL _becomingFirstResponder;
     BOOL _resigningFirstResponder;

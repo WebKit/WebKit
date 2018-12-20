@@ -585,7 +585,9 @@ public:
     void captureDevicesChanged();
 #endif
 
+    // FIXME: These should all take Element& instead of Node*.
     void elementDidFocus(WebCore::Node*);
+    void elementDidRefocus(WebCore::Node*);
     void elementDidBlur(WebCore::Node*);
     void resetAssistedNodeForFrame(WebFrame*);
 

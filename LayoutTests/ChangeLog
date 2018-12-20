@@ -1,3 +1,17 @@
+2018-12-20  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [iOS] Focusing an editable element should scroll to reveal the selection
+        https://bugs.webkit.org/show_bug.cgi?id=192802
+        <rdar://problem/46781759>
+
+        Reviewed by Tim Horton.
+
+        Adds a new layout test to verify that tapping near the bottom of a tall editable element to focus it doesn't
+        cause the page to scroll up (and, as a result, leave the selection caret obscured).
+
+        * editing/selection/ios/selection-is-visible-after-focusing-editable-area-expected.txt: Added.
+        * editing/selection/ios/selection-is-visible-after-focusing-editable-area.html: Added.
+
 2018-12-19  Ross Kirsling  <ross.kirsling@sony.com>
 
         [WinCairo] Unreviewed test gardening.

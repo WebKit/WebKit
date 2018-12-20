@@ -203,6 +203,11 @@ void WebChromeClient::elementDidFocus(Element& element)
     m_page.elementDidFocus(&element);
 }
 
+void WebChromeClient::elementDidRefocus(Element& element)
+{
+    m_page.elementDidRefocus(&element);
+}
+
 void WebChromeClient::elementDidBlur(Element& element)
 {
     m_page.elementDidBlur(&element);

@@ -95,7 +95,7 @@ struct OptionItem {
 
 struct AssistedNodeInformation {
     WebCore::IntRect elementRect;
-    WebCore::IntRect selectionRect;
+    WebCore::IntPoint elementInteractionLocation;
     double minimumScaleFactor { -INFINITY };
     double maximumScaleFactor { INFINITY };
     double maximumScaleFactorIgnoringAlwaysScalable { INFINITY };

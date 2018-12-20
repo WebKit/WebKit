@@ -53,11 +53,6 @@ void WebChromeClient::didPreventDefaultForEvent()
 
 #endif
 
-void WebChromeClient::elementDidRefocus(WebCore::Element& element)
-{
-    elementDidFocus(element);
-}
-
 void WebChromeClient::didReceiveMobileDocType(bool isMobileDoctype)
 {
     m_page.didReceiveMobileDocType(isMobileDoctype);

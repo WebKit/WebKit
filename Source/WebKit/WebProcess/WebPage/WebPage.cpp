@@ -5278,6 +5278,12 @@ void WebPage::resetAssistedNodeForFrame(WebFrame* frame)
     }
 }
 
+void WebPage::elementDidRefocus(WebCore::Node* node)
+{
+    elementDidFocus(node);
+    m_hasPendingEditorStateUpdate = true;
+}
+
 void WebPage::elementDidFocus(WebCore::Node* node)
 {
     if (m_assistedNode == node && m_isAssistingNodeDueToUserInteraction)

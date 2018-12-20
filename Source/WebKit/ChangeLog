@@ -1,3 +1,132 @@
+2018-12-20  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [iOS] Focusing an editable element should scroll to reveal the selection
+        https://bugs.webkit.org/show_bug.cgi?id=192802
+        <rdar://problem/46781759>
+
+        Reviewed by Tim Horton.
+
+        Currently, when tapping on an editable element, logic in -[WKWebView _zoomToFocusRect:…:] attempts to adjust the
+        visible viewport such that the rect containing the selection is visible. However, AssistedNodeInformation's
+        selectionRect is used here, which (as the FIXME in WebPage::getAssistedNodeInformation notes) is either the last
+        touch location, or the top left of the element if the touch location is outside of the element's bounding rect.
+        This leads to confusing and undesirable behavior when tapping near the bottom of a large contenteditable element
+        to focus it, since the actual selection will end up near the top of the element, yet we'll try to scroll to
+        reveal the bottom of the element, which causes the visible selection to scroll offscreen. Notably, this affects
+        scenarios involving editable web views embedded in apps, such as Mail compose.
+
+        Right now, we use the last touch location as an approximation for the selection rect because the selection may
+        have not yet been updated at the moment when focus moves into an editable element. To fix this, we defer the
+        process of zooming to the focused element rect until after the selection changes and the UI process is updated
+        with information about the new selection rects.
+
+        Test: editing/selection/ios/selection-is-visible-after-focusing-editable-area.html
+
+        * Shared/AssistedNodeInformation.cpp:
+        (WebKit::AssistedNodeInformation::encode const):
+        (WebKit::AssistedNodeInformation::decode):
+        * Shared/AssistedNodeInformation.h:
+
+        Rename selectionRect to elementInteractionLocation, to more accurately reflect its value and purpose. This isn't
+        strictly always the last touch location, since we may default to the focused element location instead if the
+        last touch location is outside of the element rect.
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _zoomToFocusRect:selectionRect:insideFixed:fontSize:minimumScale:maximumScale:allowScaling:forceScroll:]):
+
+        Tweak a constant that determines the minimum amount of margin to leave between the selection rect and the edge
+        of the window when scrolling to reveal the focused element. Previously, this was larger than necessary to
+        accomodate for the fact that the "selection rect" used when zooming to the focused element did not take the
+        actual selection into account at all, and was simply a 1 by 1 rect; this meant that the margin needed to be
+        large enough to exceed the usual height of a text caret in editable content. Since we now use the real selection
+        rect, we can be much less generous with this margin.
+
+        * UIProcess/ios/WKContentViewInteraction.h:
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView cleanupInteraction]):
+        (-[WKContentView observeValueForKeyPath:ofObject:change:context:]):
+
+        Don't additionally update the selection in the middle of triggering zooming to the focused element; on
+        particular versions of iOS, this now attempts to scroll the selection rect on-screen, which then conflicts with
+        zooming to reveal the focused element.
+
+        (-[WKContentView _zoomToRevealFocusedElement]):
+
+        Renamed from _displayFormNodeInputView to _zoomToRevealFocusedElement, to make the purpose of this function more
+        clear. Additionally, pull logic to update the accessory view out of this method, so that it's strictly concerned
+        with zooming to the focused element.
+
+        (-[WKContentView inputView]):
+
+        Add a FIXME describing the implications of zooming to the focused element in the implementation of -inputView.
+        See also: <https://bugs.webkit.org/show_bug.cgi?id=192878>.
+
+        (-[WKContentView accessoryTab:]):
+
+        Fix a subtle issue when keeping track of _didAccessoryTabInitiateFocus. Currently, this is set to YES in
+        -accessoryTab: and unset in _displayFormNodeInputView, but since _displayFormNodeInputView may be invoked
+        multiple times for the same focused element (see: -inputView), we might end up zooming to the focused element
+        with _didAccessoryTabInitiateFocus set to NO, even though we initiated focus with the previous/next buttons.
+
+        Instead, temporarily set a different ivar, _isChangingFocusUsingAccessoryTab, to YES in -accessoryTab:, and
+        unset it in the completion handler after the focused element has changed. Then, when we _startAssistingNode:,
+        set _didAccessoryTabInitiateFocus to _isChangingFocusUsingAccessoryTab. This ensures that the correctness of
+        _didAccessoryTabInitiateFocus isn't tied to the number of times -[WKContentView inputView] is invoked when
+        focusing an element.
+
+        (shouldZoomToRevealSelectionRect):
+        (rectToRevealWhenZoomingToFocusedElement):
+
+        Add a helper method to determine the selection rect to use when zooming to reveal the focused element. ASSERTs
+        that we have post-layout data in the EditorState.
+
+        (-[WKContentView _startAssistingNode:userIsInteracting:blurPreviousNode:changingActivityState:userObject:]):
+
+        When "assisting" a focused element, immediately zoom to it if we don't need selection information to compute the
+        rect to zoom to; otherwise, defer zooming until we receive the first editor state update in the UI process that
+        contains information about our selection rects.
+
+        (-[WKContentView _stopAssistingNode]):
+        (-[WKContentView _didReceiveEditorStateUpdateAfterFocus]):
+
+        If necessary, reveal the focused element by zooming.
+
+        (-[WKContentView _updateInitialWritingDirectionIfNecessary]):
+
+        Pull this initial writing direction update logic out into a separate helper method.
+
+        (-[WKContentView _displayFormNodeInputView]): Deleted.
+
+        Replaced by _zoomToRevealFocusedElement.
+
+        * WebProcess/WebCoreSupport/WebChromeClient.cpp:
+        (WebKit::WebChromeClient::elementDidRefocus):
+
+        This currently calls WebChromeClient::elementDidFocus; instead, call the new WebPage::elementDidRefocus;
+        additionally, make this available on all PLATFORM(COCOA), rather than just IOS_FAMILY.
+
+        * WebProcess/WebCoreSupport/WebChromeClient.h:
+        * WebProcess/WebCoreSupport/ios/WebChromeClientIOS.mm:
+        (WebKit::WebChromeClient::elementDidRefocus): Deleted.
+
+        Replaced by the PLATFORM(COCOA) version.
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::elementDidRefocus):
+
+        When refocusing an element, ensure that post-layout editor state data is sent to the UI process by including a
+        full EditorState in the next layer tree transaction.
+
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::completeSyntheticClick):
+
+        Call elementDidRefocus instead of elementDidFocus, in the case where the existing focused element is clicked.
+
+        (WebKit::WebPage::getAssistedNodeInformation):
+
+        Adjust for the change from selectionRect to elementInteractionLocation.
+
 2018-12-20  Patrick Griffis  <pgriffis@igalia.com>
 
         [GTK][WPE] Grant the sandbox read access to XDG_DATA_HOME/prgname

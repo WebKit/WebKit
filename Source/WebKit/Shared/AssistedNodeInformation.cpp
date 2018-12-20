@@ -64,7 +64,7 @@ Optional<OptionItem> OptionItem::decode(IPC::Decoder& decoder)
 void AssistedNodeInformation::encode(IPC::Encoder& encoder) const
 {
     encoder << elementRect;
-    encoder << selectionRect;
+    encoder << elementInteractionLocation;
     encoder << minimumScaleFactor;
     encoder << maximumScaleFactor;
     encoder << maximumScaleFactorIgnoringAlwaysScalable;
@@ -112,7 +112,7 @@ bool AssistedNodeInformation::decode(IPC::Decoder& decoder, AssistedNodeInformat
     if (!decoder.decode(result.elementRect))
         return false;
 
-    if (!decoder.decode(result.selectionRect))
+    if (!decoder.decode(result.elementInteractionLocation))
         return false;
 
     if (!decoder.decode(result.minimumScaleFactor))

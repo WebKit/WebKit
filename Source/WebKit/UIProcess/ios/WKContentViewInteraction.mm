@@ -757,6 +757,7 @@ static inline bool hasAssistedNode(WebKit::AssistedNodeInformation assistedNodeI
     
     _smartMagnificationController = nil;
     _didAccessoryTabInitiateFocus = NO;
+    _isChangingFocusUsingAccessoryTab = NO;
     _isExpectingFastSingleTapCommit = NO;
     _needsDeferredEndScrollingSelectionUpdate = NO;
     [_formInputSession invalidate];
@@ -854,6 +855,7 @@ static inline bool hasAssistedNode(WebKit::AssistedNodeInformation assistedNodeI
 
     _hasSetUpInteractions = NO;
     _suppressSelectionAssistantReasons = { };
+    _isZoomingToRevealFocusedElement = NO;
 }
 
 - (void)_removeDefaultGestureRecognizers
@@ -941,9 +943,16 @@ static inline bool hasAssistedNode(WebKit::AssistedNodeInformation assistedNodeI
         [UIView _addCompletion:^(BOOL){ [_interactionViewsContainerView setHidden:NO]; }];
     }
 
+    [self _updateTapHighlight];
+
+    if (_isZoomingToRevealFocusedElement) {
+        // When zooming to the focused element, avoid additionally scrolling to reveal the selection. Since the scale transform has not yet been
+        // applied to the content view at this point, we'll end up scrolling to reveal a rect that is computed using the wrong scale.
+        return;
+    }
+
     _selectionNeedsUpdate = YES;
     [self _updateChangedSelection:YES];
-    [self _updateTapHighlight];
 }
 
 - (void)_enableInspectorNodeSearch
@@ -1387,24 +1396,22 @@ static NSValue *nsSizeForTapHighlightBorderRadius(WebCore::IntSize borderRadius,
     return YES;
 }
 
-- (void)_displayFormNodeInputView
+- (void)_zoomToRevealFocusedElement
 {
-    if (!_suppressSelectionAssistantReasons.contains(WebKit::FocusedElementIsTransparent)) {
-        // In case user scaling is force enabled, do not use that scaling when zooming in with an input field.
-        // Zooming above the page's default scale factor should only happen when the user performs it.
-        [self _zoomToFocusRect:_assistedNodeInformation.elementRect
-            selectionRect:_didAccessoryTabInitiateFocus ? WebCore::IntRect() : _assistedNodeInformation.selectionRect
-            insideFixed:_assistedNodeInformation.insideFixedPosition
-            fontSize:_assistedNodeInformation.nodeFontSize
-            minimumScale:_assistedNodeInformation.minimumScaleFactor
-            maximumScale:_assistedNodeInformation.maximumScaleFactorIgnoringAlwaysScalable
-            allowScaling:_assistedNodeInformation.allowsUserScalingIgnoringAlwaysScalable && !currentUserInterfaceIdiomIsPad()
-            forceScroll:(_assistedNodeInformation.inputMode == WebCore::InputMode::None) ? !currentUserInterfaceIdiomIsPad() : [self requiresAccessoryView]];
-    }
+    if (_suppressSelectionAssistantReasons.contains(WebKit::FocusedElementIsTransparent))
+        return;
 
-    _didAccessoryTabInitiateFocus = NO;
-    [self _ensureFormAccessoryView];
-    [self _updateAccessory];
+    SetForScope<BOOL> isZoomingToRevealFocusedElementForScope { _isZoomingToRevealFocusedElement, YES };
+    // In case user scaling is force enabled, do not use that scaling when zooming in with an input field.
+    // Zooming above the page's default scale factor should only happen when the user performs it.
+    [self _zoomToFocusRect:_assistedNodeInformation.elementRect
+        selectionRect:_didAccessoryTabInitiateFocus ? WebCore::FloatRect() : rectToRevealWhenZoomingToFocusedElement(_assistedNodeInformation, _page->editorState())
+        insideFixed:_assistedNodeInformation.insideFixedPosition
+        fontSize:_assistedNodeInformation.nodeFontSize
+        minimumScale:_assistedNodeInformation.minimumScaleFactor
+        maximumScale:_assistedNodeInformation.maximumScaleFactorIgnoringAlwaysScalable
+        allowScaling:_assistedNodeInformation.allowsUserScalingIgnoringAlwaysScalable && !currentUserInterfaceIdiomIsPad()
+        forceScroll:(_assistedNodeInformation.inputMode == WebCore::InputMode::None) ? !currentUserInterfaceIdiomIsPad() : [self requiresAccessoryView]];
 }
 
 - (UIView *)inputView
@@ -1429,8 +1436,19 @@ static NSValue *nsSizeForTapHighlightBorderRadius(WebCore::IntSize borderRadius,
             _inputPeripheral = adoptNS([[WKFormInputControl alloc] initWithView:self]);
             break;
         }
-    } else
-        [self _displayFormNodeInputView];
+    } else {
+        // FIXME: UIKit may invoke -[WKContentView inputView] at any time when WKContentView is the first responder;
+        // as such, it doesn't make sense to change the enclosing scroll view's zoom scale and content offset to reveal
+        // the focused element here. It seems this behavior was added to match logic in legacy WebKit (refer to
+        // UIWebBrowserView). Instead, we should find the places where we currently assume that UIKit (or other clients)
+        // invoke -inputView to zoom to the focused element, and either surface SPI for clients to zoom to the focused
+        // element, or explicitly trigger the zoom from WebKit.
+        // For instance, one use case that currently relies on this detail is adjusting the zoom scale and viewport upon
+        // rotation, when a select element is focused. See <https://webkit.org/b/192878> for more information.
+        [self _zoomToRevealFocusedElement];
+        [self _ensureFormAccessoryView];
+        [self _updateAccessory];
+    }
 
     if (UIView *customInputView = [_formInputSession customInputView])
         return customInputView;
@@ -3330,12 +3348,13 @@ static void selectionChangedWithTouch(WKContentView *view, const WebCore::IntPoi
     [self _endEditing];
     _inputPeripheral = nil;
 
-    _didAccessoryTabInitiateFocus = YES; // Will be cleared in either -_displayFormNodeInputView or -cleanupInteraction.
+    _isChangingFocusUsingAccessoryTab = YES;
     [self beginSelectionChange];
     RetainPtr<WKContentView> view = self;
     _page->focusNextAssistedNode(isNext, [view](WebKit::CallbackBase::Error) {
         [view endSelectionChange];
         [view reloadInputViews];
+        view->_isChangingFocusUsingAccessoryTab = NO;
     });
 }
 
@@ -4348,6 +4367,51 @@ static NSString *contentTypeFromFieldName(WebCore::AutofillFieldName fieldName)
     return _formAccessoryView.get();
 }
 
+static bool shouldZoomToRevealSelectionRect(WebKit::InputType type)
+{
+    switch (type) {
+    case WebKit::InputType::ContentEditable:
+    case WebKit::InputType::Text:
+    case WebKit::InputType::Password:
+    case WebKit::InputType::TextArea:
+    case WebKit::InputType::Search:
+    case WebKit::InputType::Email:
+    case WebKit::InputType::URL:
+    case WebKit::InputType::Phone:
+    case WebKit::InputType::Number:
+    case WebKit::InputType::NumberPad:
+        return true;
+    default:
+        return false;
+    }
+}
+
+static WebCore::FloatRect rectToRevealWhenZoomingToFocusedElement(const WebKit::AssistedNodeInformation& elementInfo, const WebKit::EditorState& editorState)
+{
+    WebCore::IntRect elementInteractionRect(elementInfo.elementInteractionLocation, { 1, 1 });
+    if (!shouldZoomToRevealSelectionRect(elementInfo.elementType))
+        return elementInteractionRect;
+
+    if (editorState.isMissingPostLayoutData) {
+        ASSERT_NOT_REACHED();
+        return elementInteractionRect;
+    }
+
+    if (editorState.selectionIsNone)
+        return { };
+
+    WebCore::FloatRect selectionBoundingRect;
+    auto& postLayoutData = editorState.postLayoutData();
+    if (editorState.selectionIsRange) {
+        for (auto& rect : postLayoutData.selectionRects)
+            selectionBoundingRect.unite(rect.rect());
+    } else
+        selectionBoundingRect = postLayoutData.caretRectAtStart;
+
+    selectionBoundingRect.intersect(elementInfo.elementRect);
+    return selectionBoundingRect;
+}
+
 static bool isAssistableInputType(WebKit::InputType type)
 {
     switch (type) {
@@ -4386,6 +4450,8 @@ static bool isAssistableInputType(WebKit::InputType type)
 {
     SetForScope<BOOL> isChangingFocusForScope { _isChangingFocus, hasAssistedNode(_assistedNodeInformation) };
     _inputViewUpdateDeferrer = nullptr;
+
+    _didAccessoryTabInitiateFocus = _isChangingFocusUsingAccessoryTab;
 
     id <_WKInputDelegate> inputDelegate = [_webView _inputDelegate];
     RetainPtr<WKFocusedElementInfo> focusedElementInfo = adoptNS([[WKFocusedElementInfo alloc] initWithAssistedNodeInformation:information isUserInitiated:userIsInteracting userObject:userObject]);
@@ -4506,7 +4572,11 @@ static bool isAssistableInputType(WebKit::InputType type)
     if (editableChanged)
         [_webView _scheduleVisibleContentRectUpdate];
     
-    [self _displayFormNodeInputView];
+    if (!shouldZoomToRevealSelectionRect(_assistedNodeInformation.elementType))
+        [self _zoomToRevealFocusedElement];
+
+    [self _ensureFormAccessoryView];
+    [self _updateAccessory];
 
 #if PLATFORM(WATCHOS)
     if (_isChangingFocus)
@@ -4563,9 +4633,22 @@ static bool isAssistableInputType(WebKit::InputType type)
     [_webView didEndFormControlInteraction];
 
     [self _stopSuppressingSelectionAssistantForReason:WebKit::FocusedElementIsTransparent];
+
+    if (!_isChangingFocus)
+        _didAccessoryTabInitiateFocus = NO;
 }
 
 - (void)_didReceiveEditorStateUpdateAfterFocus
+{
+    [self _updateInitialWritingDirectionIfNecessary];
+
+    // FIXME: If the initial writing direction just changed, we should wait until we get the next post-layout editor state
+    // before zooming to reveal the selection rect.
+    if (shouldZoomToRevealSelectionRect(_assistedNodeInformation.elementType))
+        [self _zoomToRevealFocusedElement];
+}
+
+- (void)_updateInitialWritingDirectionIfNecessary
 {
     if (!_page->isEditable())
         return;
