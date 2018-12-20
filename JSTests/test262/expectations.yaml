@@ -2065,9 +2065,39 @@ test/intl402/NumberFormat/prototype/format/format-significant-digits-precision.j
 test/intl402/NumberFormat/prototype/format/format-significant-digits.js:
   default: 'Test262Error: Formatted value for -0, en-US-u-nu-arab and options {"useGrouping":false,"minimumSignificantDigits":3,"maximumSignificantDigits":5} is Ù Ù«Ù Ù ; expected Ø-Ù Ù«Ù Ù .'
   strict mode: 'Test262Error: Formatted value for -0, en-US-u-nu-arab and options {"useGrouping":false,"minimumSignificantDigits":3,"maximumSignificantDigits":5} is Ù Ù«Ù Ù ; expected Ø-Ù Ù«Ù Ù .'
+test/intl402/NumberFormat/prototype/formatToParts/default-parameter.js:
+  default: "TypeError: nf.formatToParts is not a function. (In 'nf.formatToParts()', 'nf.formatToParts' is undefined)"
+  strict mode: "TypeError: nf.formatToParts is not a function. (In 'nf.formatToParts()', 'nf.formatToParts' is undefined)"
+test/intl402/NumberFormat/prototype/formatToParts/formatToParts.js:
+  default: 'Test262Error: `typeof Intl.NumberFormat.prototype.formatToParts` is `function` Expected SameValue(Â«undefinedÂ», Â«functionÂ») to be true'
+  strict mode: 'Test262Error: `typeof Intl.NumberFormat.prototype.formatToParts` is `function` Expected SameValue(Â«undefinedÂ», Â«functionÂ») to be true'
+test/intl402/NumberFormat/prototype/formatToParts/length.js:
+  default: "TypeError: undefined is not an object (evaluating 'Intl.NumberFormat.prototype.formatToParts.length')"
+  strict mode: "TypeError: undefined is not an object (evaluating 'Intl.NumberFormat.prototype.formatToParts.length')"
+test/intl402/NumberFormat/prototype/formatToParts/main.js:
+  default: "TypeError: nf.formatToParts is not a function. (In 'nf.formatToParts(value)', 'nf.formatToParts' is undefined)"
+  strict mode: "TypeError: nf.formatToParts is not a function. (In 'nf.formatToParts(value)', 'nf.formatToParts' is undefined)"
+test/intl402/NumberFormat/prototype/formatToParts/name.js:
+  default: "TypeError: undefined is not an object (evaluating 'Intl.NumberFormat.prototype.formatToParts.name')"
+  strict mode: "TypeError: undefined is not an object (evaluating 'Intl.NumberFormat.prototype.formatToParts.name')"
+test/intl402/NumberFormat/prototype/formatToParts/prop-desc.js:
+  default: 'Test262Error: `typeof Intl.NumberFormat.prototype.formatToParts` is `function` Expected SameValue(Â«undefinedÂ», Â«functionÂ») to be true'
+  strict mode: 'Test262Error: `typeof Intl.NumberFormat.prototype.formatToParts` is `function` Expected SameValue(Â«undefinedÂ», Â«functionÂ») to be true'
+test/intl402/NumberFormat/prototype/formatToParts/return-abrupt-tonumber.js:
+  default: 'Test262Error: valueOf Expected a Test262Error but got a TypeError'
+  strict mode: 'Test262Error: valueOf Expected a Test262Error but got a TypeError'
+test/intl402/NumberFormat/prototype/formatToParts/value-tonumber.js:
+  default: "TypeError: nf.formatToParts is not a function. (In 'nf.formatToParts(value)', 'nf.formatToParts' is undefined)"
+  strict mode: "TypeError: nf.formatToParts is not a function. (In 'nf.formatToParts(value)', 'nf.formatToParts' is undefined)"
 test/intl402/NumberFormat/style-unit.js:
   default: 'RangeError: style must be either "decimal", "percent", or "currency"'
   strict mode: 'RangeError: style must be either "decimal", "percent", or "currency"'
+test/intl402/PluralRules/prototype/resolvedOptions/order.js:
+  default: 'Test262Error: Expected [locale, type, minimumIntegerDigits, minimumFractionDigits, maximumFractionDigits, minimumSignificantDigits, maximumSignificantDigits] and [locale, type, minimumIntegerDigits, minimumFractionDigits, maximumFractionDigits, minimumSignificantDigits, maximumSignificantDigits, pluralCategories] to have the same contents. undefined'
+  strict mode: 'Test262Error: Expected [locale, type, minimumIntegerDigits, minimumFractionDigits, maximumFractionDigits, minimumSignificantDigits, maximumSignificantDigits] and [locale, type, minimumIntegerDigits, minimumFractionDigits, maximumFractionDigits, minimumSignificantDigits, maximumSignificantDigits, pluralCategories] to have the same contents. undefined'
+test/intl402/PluralRules/prototype/resolvedOptions/pluralCategories.js:
+  default: 'Test262Error: Should have different arrays Expected SameValue(Â«undefinedÂ», Â«undefinedÂ») to be false'
+  strict mode: 'Test262Error: Should have different arrays Expected SameValue(Â«undefinedÂ», Â«undefinedÂ») to be false'
 test/intl402/RelativeTimeFormat/constructor/constructor/locales-invalid.js:
   default: 'Test262Error: Expected SameValue(Â«undefinedÂ», Â«functionÂ») to be true'
   strict mode: 'Test262Error: Expected SameValue(Â«undefinedÂ», Â«functionÂ») to be true'
