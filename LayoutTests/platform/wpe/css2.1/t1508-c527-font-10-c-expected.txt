@@ -9,7 +9,7 @@ layer at (0,0) size 800x468
             text run at (0,17) width 486: "This text should be 18px sans-serif, in small-caps, italicized, "
             text run at (485,17) width 263: "and very light. There should be a"
             text run at (0,71) width 251: "36px gap betwen each line. The "
-            text run at (251,71) width 452: "text should have a blue background, the gap should not. "
+            text run at (250,71) width 453: "text should have a blue background, the gap should not. "
           RenderInline {SPAN} at (0,0) size 778x344 [color=#0000FF]
             RenderText {#text} at (702,71) size 778x344
               text run at (702,71) width 50: "dummy"

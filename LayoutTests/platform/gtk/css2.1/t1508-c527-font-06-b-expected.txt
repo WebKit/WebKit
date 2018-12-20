@@ -8,8 +8,8 @@ layer at (0,0) size 800x288
           text run at (0,8) width 775: "This text should be 18px monospace, in small-caps, italicized, and very bold, with double"
           text run at (0,44) width 121: "line spacing. "
         RenderInline {SPAN} at (0,0) size 768x200 [color=#C0C0C0]
-          RenderText {#text} at (120,44) size 768x200
-            text run at (120,44) width 522: "dummy text dummy text dummy text dummy text dummy text dummy "
+          RenderText {#text} at (121,44) size 768x200
+            text run at (121,44) width 521: "dummy text dummy text dummy text dummy text dummy text dummy "
             text run at (642,44) width 126: "text dummy text"
             text run at (0,80) width 427: "dummy text dummy text dummy text dummy text dummy "
             text run at (427,80) width 314: "text dummy text dummy text dummy text"

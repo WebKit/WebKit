@@ -52,7 +52,7 @@ layer at (0,0) size 785x1030
             text run at (0,1) width 76: "\"W"
         RenderText {#text} at (76,37) size 765x80
           text run at (76,37) width 333: "e should check for quotation support,\" it was said. "
-          text run at (408,37) width 355: "The first two characters in this paragraph-- a double-"
+          text run at (408,37) width 356: "The first two characters in this paragraph-- a double-"
           text run at (0,64) width 683: "quote mark and a capital 'W'-- should be 350% bigger than the rest of the paragraph, and maroon (dark red). "
           text run at (683,64) width 81: "Note that the"
           text run at (0,82) width 765: "inclusion of both the quotation mark and the 'W' in the first-letter style is not required under CSS1, but it is recommended."
@@ -97,7 +97,7 @@ layer at (0,0) size 785x1030
                     text run at (0,1) width 76: "\"W"
                 RenderText {#text} at (76,37) size 739x80
                   text run at (76,37) width 333: "e should check for quotation support,\" it was said. "
-                  text run at (408,37) width 301: "The first two characters in this paragraph-- a"
+                  text run at (408,37) width 302: "The first two characters in this paragraph-- a"
                   text run at (0,64) width 727: "double-quote mark and a capital 'W'-- should be 350% bigger than the rest of the paragraph, and maroon (dark red)."
                   text run at (0,82) width 739: "Note that the inclusion of both the quotation mark and the 'W' in the first-letter style is not required under CSS1, but it"
                   text run at (0,100) width 111: "is recommended. "

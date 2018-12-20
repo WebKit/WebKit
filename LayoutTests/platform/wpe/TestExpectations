@@ -120,6 +120,9 @@ webkit.org/b/169811 fast/mediastream/captureStream/canvas3d.html [ Crash Timeout
 
 webkit.org/b/190576 fast/mediastream/get-user-media-device-id.html [ Failure ]
 
+# MediaRecorder is not currently implemented
+http/wpt/mediarecorder [ Skip ]
+imported/w3c/web-platform-tests/mediacapture-record [ Skip ]
 
 # Skip anything related to WebAuthN
 # ---------------------------------
@@ -726,6 +729,15 @@ Bug(WPE) fast/doctypes/xhtml-with-xhtmlmp12-doctype.xhtml [ Pass Failure ]
 
 webkit.org/b/112532 fast/frames/flattening/frameset-flattening-advanced.html [ Pass Failure ]
 
+webkit.org/b/192892 http/tests/appcache/deferred-events.html [ Pass Failure ]
+webkit.org/b/192893 http/tests/workers/service/postmessage-after-sw-process-crash.https.html [ Pass Failure ]
+webkit.org/b/192894 imported/w3c/web-platform-tests/encrypted-media/clearkey-mp4-playback-persistent-license-events.https.html [ Pass Failure ]
+
+webkit.org/b/192903 imported/w3c/web-platform-tests/service-workers/service-worker/fetch-request-redirect.https.html [ Pass Failure ]
+
+webkit.org/b/178705 webkit.org/b/169917 webgl/1.0.2/conformance/rendering/multisample-corruption.html [ Pass Failure Timeout ]
+webkit.org/b/178705 webgl/2.0.0/conformance/rendering/multisample-corruption.html [ Pass Failure Timeout ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # 7. SLOW TESTS
 #////////////////////////////////////////////////////////////////////////////////////////
@@ -1300,8 +1312,6 @@ Bug(WPE) svg/zoom/page/zoom-zoom-coords.xhtml [ Failure ]
 webkit.org/b/178704 svg/as-image/svg-as-image-canvas.html [ Crash Pass ImageOnlyFailure ]
 webkit.org/b/178704 svg/css/svg-resource-fragment-identifier-img-src.html [ Crash Pass ImageOnlyFailure ]
 
-webkit.org/b/178705 webgl/1.0.2/conformance/rendering/multisample-corruption.html [ Failure ]
-
 webkit.org/b/181659 fast/canvas/webgl/simulated-vertexAttrib0-invalid-indicies.html [ Failure ]
 webkit.org/b/179760 fast/canvas/webgl/texImage2D-mse-flipY-false.html [ Timeout ]
 webkit.org/b/179760 fast/canvas/webgl/texImage2D-mse-flipY-true.html [ Timeout ]
@@ -1520,6 +1530,21 @@ webkit.org/b/191250 fast/mediastream/getUserMedia-deny-persistency3.html [ Failu
 
 webkit.org/b/189343 imported/w3c/web-platform-tests/xhr/sync-no-timeout.any.html [ Failure ]
 webkit.org/b/189343 imported/w3c/web-platform-tests/xhr/sync-no-timeout.any.worker.html [ Failure ]
+
+webkit.org/b/192875 css-typedom/attributeStyleMap.html [ Failure ]
+webkit.org/b/192875 imported/w3c/web-platform-tests/css/css-properties-values-api/unit-cycles.html [ Failure ]
+
+webkit.org/b/192883 fast/cookies/cookie-averse-document.html [ Failure ]
+webkit.org/b/192883 fast/cookies/local-file-can-set-cookies.html [ Failure ]
+
+webkit.org/b/192886 fast/mediastream/media-stream-renders-first-frame.html [ Failure ]
+webkit.org/b/192888 fast/mediastream/resize-letterbox.html [ Failure ]
+
+webkit.org/b/192891 fast/writing-mode/vertical-align-table-baseline.html [ Failure ]
+
+webkit.org/b/192900 imported/w3c/web-platform-tests/eventsource/format-mime-bogus.htm [ Failure ]
+
+webkit.org/b/192902 js/dom/modules/import-mjs-module.html [ Failure ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 #  >> NOTICE <<

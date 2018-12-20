@@ -502,7 +502,6 @@ webkit.org/b/169917 webgl/1.0.2/conformance/extensions/oes-texture-float-with-vi
 webkit.org/b/169917 webgl/1.0.2/conformance/glsl/misc/shader-uniform-packing-restrictions.html [ Slow ]
 webkit.org/b/169917 webgl/1.0.2/conformance/glsl/misc/shader-with-non-reserved-words.html [ Slow ]
 webkit.org/b/169917 webgl/1.0.3/conformance/rendering/many-draw-calls.html [ Slow ]
-webkit.org/b/169917 webgl/1.0.2/conformance/rendering/multisample-corruption.html [ Timeout Pass ]
 webkit.org/b/169917 webgl/1.0.2/conformance/textures/tex-image-and-sub-image-2d-with-video-rgb565.html [ Timeout ]
 webkit.org/b/169917 webgl/1.0.2/conformance/textures/tex-image-and-sub-image-2d-with-video-rgba4444.html [ Timeout ]
 webkit.org/b/169917 webgl/1.0.2/conformance/textures/tex-image-and-sub-image-2d-with-video-rgba5551.html [ Timeout ]
@@ -1200,6 +1199,10 @@ webkit.org/b/187550 http/tests/plugins/plugin-allow-then-reload.html [ Failure ]
 webkit.org/b/190738 media/encrypted-media/clearKey/clearKey-encrypted-webm-event-mse.html [ Failure ]
 webkit.org/b/190738 imported/w3c/web-platform-tests/encrypted-media/resources/clearkey-retrieve-destroy-persistent-license.html [ Missing ]
 webkit.org/b/190738 imported/w3c/web-platform-tests/encrypted-media/resources/clearkey-retrieve-persistent-license.html [ Missing ]
+
+# MediaRecorder is not currently implemented
+http/wpt/mediarecorder [ Skip ]
+imported/w3c/web-platform-tests/mediacapture-record [ Skip ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Expected failures.
@@ -2056,6 +2059,13 @@ webkit.org/b/192148 imported/w3c/web-platform-tests/html/webappapis/animation-fr
 webkit.org/b/192148 imported/w3c/web-platform-tests/html/webappapis/animation-frames/same-dispatch-time.html [ Failure Pass ]
 
 webkit.org/b/192149 imported/blink/animations/animation-events-prefixed-01.html [ Timeout Pass ]
+
+webkit.org/b/192892 http/tests/appcache/deferred-events.html [ Pass Failure ]
+
+webkit.org/b/192903 imported/w3c/web-platform-tests/service-workers/service-worker/fetch-request-redirect.https.html [ Pass Failure ]
+
+webkit.org/b/178705 webkit.org/b/169917 webgl/1.0.2/conformance/rendering/multisample-corruption.html [ Pass Failure Timeout ]
+webkit.org/b/178705 webgl/2.0.0/conformance/rendering/multisample-corruption.html [ Pass Failure Timeout ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Flaky tests
@@ -3639,6 +3649,19 @@ webkit.org/b/192435 fast/css-custom-paint/leaks.html [ Failure ]
 webkit.org/b/162815 fast/text/variations/font-face-clamp.html [ ImageOnlyFailure ]
 webkit.org/b/162815 fast/text/variations/font-selection-properties.html [ ImageOnlyFailure ]
 webkit.org/b/162815 fast/text/variations/skia-postscript-name.html [ ImageOnlyFailure ]
+
+webkit.org/b/192875 css-typedom/attributeStyleMap.html [ Failure ]
+webkit.org/b/192875 imported/w3c/web-platform-tests/css/css-properties-values-api/unit-cycles.html [ Failure ]
+
+webkit.org/b/192883 fast/cookies/cookie-averse-document.html [ Failure ]
+webkit.org/b/192883 fast/cookies/local-file-can-set-cookies.html [ Failure ]
+
+webkit.org/b/192886 fast/mediastream/media-stream-renders-first-frame.html [ Failure ]
+webkit.org/b/192888 fast/mediastream/resize-letterbox.html [ Failure ]
+
+webkit.org/b/192900 imported/w3c/web-platform-tests/eventsource/format-mime-bogus.htm [ Failure ]
+
+webkit.org/b/192902 js/dom/modules/import-mjs-module.html [ Failure ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of non-crashing, non-flaky tests failing
