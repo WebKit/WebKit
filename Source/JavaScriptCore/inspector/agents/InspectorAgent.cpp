@@ -68,11 +68,6 @@ void InspectorAgent::enable(ErrorString&)
     if (m_pendingInspectData.first)
         inspect(m_pendingInspectData.first.copyRef(), m_pendingInspectData.second.copyRef());
 
-#if ENABLE(INSPECTOR_ALTERNATE_DISPATCHERS)
-    if (m_pendingExtraDomainsData)
-        m_frontendDispatcher->activateExtraDomains(m_pendingExtraDomainsData);
-#endif
-
     for (auto& testCommand : m_pendingEvaluateTestCommands)
         m_frontendDispatcher->evaluateForTestInFrontend(testCommand);
 
@@ -113,12 +108,8 @@ void InspectorAgent::evaluateForTestInFrontend(const String& script)
 #if ENABLE(INSPECTOR_ALTERNATE_DISPATCHERS)
 void InspectorAgent::activateExtraDomain(const String& domainName)
 {
-    if (!m_enabled) {
-        if (!m_pendingExtraDomainsData)
-            m_pendingExtraDomainsData = JSON::ArrayOf<String>::create();
-        m_pendingExtraDomainsData->addItem(domainName);
+    if (!m_enabled)
         return;
-    }
 
     auto domainNames = JSON::ArrayOf<String>::create();
     domainNames->addItem(domainName);
@@ -134,10 +125,7 @@ void InspectorAgent::activateExtraDomains(const Vector<String>& extraDomains)
     for (auto domainName : extraDomains)
         domainNames->addItem(domainName);
 
-    if (!m_enabled)
-        m_pendingExtraDomainsData = WTFMove(domainNames);
-    else
-        m_frontendDispatcher->activateExtraDomains(WTFMove(domainNames));
+    m_frontendDispatcher->activateExtraDomains(WTFMove(domainNames));
 }
 #endif
 

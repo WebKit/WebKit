@@ -43,8 +43,11 @@ WI.Target = class Target extends WI.Object
         // supported by the target.
         this._agents = {};
         const supportedDomains = this._supportedDomainsForTargetType(this._type);
-        for (let domain of supportedDomains)
-            this._agents[domain] = this._connection._agents[domain];
+        for (let domain of supportedDomains) {
+            let agent = this._connection._agents[domain];
+            if (agent && agent.active)
+                this._agents[domain] = agent;
+        }
 
         this._connection.target = this;
 
@@ -95,6 +98,13 @@ WI.Target = class Target extends WI.Object
             if (this.InspectorAgent && this.InspectorAgent.initialized)
                 this.InspectorAgent.initialized();
         });
+    }
+
+    activateExtraDomain(domain)
+    {
+        let agent = this._connection._agents[domain];
+        if (agent && agent.active)
+            this._agents[domain] = agent;
     }
 
     // Agents

@@ -65,10 +65,17 @@ WI.AppController = class AppController extends WI.AppControllerBase
 
         this._hasExtraDomains = true;
 
+        console.assert(WI.mainTarget instanceof WI.DirectBackendTarget);
+        console.assert(WI.mainTarget.type === WI.Target.Type.JSContext);
+        console.assert(WI.sharedApp.debuggableType === WI.DebuggableType.JavaScript);
+        console.assert(WI.targets.length === 1);
+
         for (let domain of domains) {
             let agent = InspectorBackend.activateDomain(domain);
             if (agent.enable)
                 agent.enable();
+            for (let target of WI.targets)
+                target.activateExtraDomain(domain);
         }
 
         // FIXME: all code within WI.activateExtraDomains should be distributed elsewhere.

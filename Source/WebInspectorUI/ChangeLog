@@ -1,5 +1,29 @@
 2018-12-20  Joseph Pecoraro  <pecoraro@apple.com>
 
+        ITMLKit Inspector: Elements tab does not show DOM Tree
+        https://bugs.webkit.org/show_bug.cgi?id=192910
+        <rdar://problem/46680585>
+
+        Reviewed by Brian Burg.
+
+        * UserInterface/Protocol/Connection.js:
+        (InspectorBackend.Connection.prototype._dispatchEvent):
+        Better logging for errors.
+
+        * UserInterface/Base/Main.js:
+        * UserInterface/Controllers/AppController.js:
+        (WI.AppController.prototype.activateExtraDomains):
+        Let Targets get a chance to activate extra domains.
+        Perform a little more work in these cases.
+
+        * UserInterface/Protocol/Target.js:
+        (WI.Target):
+        (WI.Target.prototype.activateExtraDomain):
+        Expose agents for domains that are active.
+        Expose agents for extra domains when they are activated.
+
+2018-12-20  Joseph Pecoraro  <pecoraro@apple.com>
+
         ITMLKit Inspector: Computed Style Box Model section throws exceptions
         https://bugs.webkit.org/show_bug.cgi?id=192911
         <rdar://problem/46861112>

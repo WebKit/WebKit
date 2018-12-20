@@ -1,3 +1,21 @@
+2018-12-20  Joseph Pecoraro  <pecoraro@apple.com>
+
+        ITMLKit Inspector: Elements tab does not show DOM Tree
+        https://bugs.webkit.org/show_bug.cgi?id=192910
+        <rdar://problem/46680585>
+
+        Reviewed by Brian Burg.
+
+        * inspector/agents/InspectorAgent.h:
+        * inspector/agents/InspectorAgent.cpp:
+        (Inspector::InspectorAgent::enable):
+        (Inspector::InspectorAgent::activateExtraDomain):
+        (Inspector::InspectorAgent::activateExtraDomains):
+        Send extra domains immediately instead of waiting until
+        the Inspector domain is enabled. This will ensure the frontend
+        hears about extra augmented domains before augmenting agents
+        get a chance to send any messages.
+
 2018-12-20  Mark Lam  <mark.lam@apple.com>
 
         Fix a typo in slow_path_construct_arityCheck and operationConstructArityCheck.

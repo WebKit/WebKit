@@ -165,19 +165,19 @@ InspectorBackend.Connection = class InspectorBackendConnection
         let qualifiedName = messageObject["method"];
         let [domainName, eventName] = qualifiedName.split(".");
         if (!(domainName in this._agents)) {
-            console.error("Protocol Error: Attempted to dispatch method '" + eventName + "' for non-existing domain '" + domainName + "'");
+            console.error("Protocol Error: Attempted to dispatch method '" + eventName + "' for non-existing domain '" + domainName + "'", messageObject);
             return;
         }
 
         let agent = this._agents[domainName];
         if (!agent.active) {
-            console.error("Protocol Error: Attempted to dispatch method for domain '" + domainName + "' which exists but is not active.");
+            console.error("Protocol Error: Attempted to dispatch method for domain '" + domainName + "' which exists but is not active.", messageObject);
             return;
         }
 
         let event = agent.getEvent(eventName);
         if (!event) {
-            console.error("Protocol Error: Attempted to dispatch an unspecified method '" + qualifiedName + "'");
+            console.error("Protocol Error: Attempted to dispatch an unspecified method '" + qualifiedName + "'", messageObject);
             return;
         }
 

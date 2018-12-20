@@ -754,8 +754,19 @@ WI.activateExtraDomains = function(domains)
 {
     this.notifications.dispatchEventToListeners(WI.Notification.ExtraDomainsActivated, {domains});
 
-    if (WI.mainTarget && WI.mainTarget.CSSAgent)
-        WI.CSSCompletions.initializeCSSCompletions(WI.assumingMainTarget());
+    if (WI.mainTarget) {
+        if (!WI.pageTarget && WI.mainTarget.DOMAgent)
+            WI.pageTarget = WI.mainTarget;
+
+        if (WI.mainTarget.CSSAgent)
+            WI.CSSCompletions.initializeCSSCompletions(WI.assumingMainTarget());
+
+        if (WI.mainTarget.DOMAgent)
+            WI.domManager.ensureDocument();
+
+        if (WI.mainTarget.PageAgent)
+            WI.networkManager.initializeTarget(WI.mainTarget);
+    }
 
     this._updateReloadToolbarButton();
     this._updateDownloadToolbarButton();
