@@ -33,13 +33,13 @@
     width: 11px;
     height: 11px;
     vertical-align: middle;
-    fill: hsla(0, 0%, 0%, 0.5);
+    fill: hsla(0, 0%, var(--foreground-lightness), 0.5);
     stroke: none;
     display: none;
 }
 
 .tree-outline > .item.thread .status-button.resume:active {
-    fill: hsla(0, 0%, 0%, 0.7);
+    fill: hsla(0, 0%, var(--foreground-lightness), 0.7);
 }
 
 .tree-outline:focus > .item.thread.selected .status-button.resume {
