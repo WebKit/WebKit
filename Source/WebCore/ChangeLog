@@ -1,3 +1,16 @@
+2018-12-19  Timothy Hatcher  <timothy@apple.com>
+
+        REGRESSION (r232991): Switching to dark mode in Mail does not update the message view to be transparent
+        https://bugs.webkit.org/show_bug.cgi?id=188891
+        rdar://problem/42344352
+
+        Reviewed by Simon Fraser.
+
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::rootBackgroundColorOrTransparencyChanged):
+        Don't return early when m_layerForOverhangAreas is null to avoid skipping
+        setRootLayerConfigurationNeedsUpdate() and scheduleCompositingLayerUpdate().
+
 2018-12-19  Justin Fan  <justin_fan@apple.com>
 
         [WebGPU] Add stubs for WebGPUPipelineLayout/Descriptor and device::createPipelineLayout

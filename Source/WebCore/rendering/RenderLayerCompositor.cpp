@@ -3280,13 +3280,12 @@ void RenderLayerCompositor::rootBackgroundColorOrTransparencyChanged()
         page().chrome().client().pageExtendedBackgroundColorDidChange(m_rootExtendedBackgroundColor);
         
 #if ENABLE(RUBBER_BANDING)
-        if (!m_layerForOverhangAreas)
-            return;
-        
-        m_layerForOverhangAreas->setBackgroundColor(m_rootExtendedBackgroundColor);
-        
-        if (!m_rootExtendedBackgroundColor.isValid())
-            m_layerForOverhangAreas->setCustomAppearance(GraphicsLayer::CustomAppearance::ScrollingOverhang);
+        if (m_layerForOverhangAreas) {
+            m_layerForOverhangAreas->setBackgroundColor(m_rootExtendedBackgroundColor);
+
+            if (!m_rootExtendedBackgroundColor.isValid())
+                m_layerForOverhangAreas->setCustomAppearance(GraphicsLayer::CustomAppearance::ScrollingOverhang);
+        }
 #endif
     }
     
