@@ -172,7 +172,8 @@ WI.AuditManager = class AuditManager extends WI.Object
 
         this.dispatchEventToListeners(WI.AuditManager.Event.TestRemoved, {test});
 
-        WI.objectStores.audits.deleteObject(test);
+        if (!test.__default)
+            WI.objectStores.audits.deleteObject(test);
     }
 
     // Private
@@ -253,8 +254,8 @@ WI.AuditManager = class AuditManager extends WI.Object
         ];
 
         for (let test of defaultTests) {
+            test.__default = true;
             this._addTest(test);
-            WI.objectStores.audits.addObject(test);
         }
     }
 };

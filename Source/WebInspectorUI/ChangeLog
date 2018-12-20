@@ -1,5 +1,21 @@
 2018-12-20  Devin Rousso  <drousso@apple.com>
 
+        Web Inspector: Audits: don't cache default audits
+        https://bugs.webkit.org/show_bug.cgi?id=192918
+        <rdar://problem/46626543>
+
+        Reviewed by Brian Burg.
+
+        Instead of adding the default audits to the "audits" `WI.ObjectStore`, which preserves them
+        across WebInspector sessions, load them every time WebInspector is opened (unless there are
+        existing audits) so that the localized strings are able to respond to locale changes.
+
+        * UserInterface/Controllers/AuditManager.js:
+        (WI.AuditManager.prototype.removeTest):
+        (WI.AuditManager.prototype.addDefaultTestsIfNeeded):
+
+2018-12-20  Devin Rousso  <drousso@apple.com>
+
         Web Inspector: Dark Mode: unreadable background color for tables containing object previews
         https://bugs.webkit.org/show_bug.cgi?id=192887
         <rdar://problem/46855270>
