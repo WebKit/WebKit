@@ -194,8 +194,8 @@ public:
     size_t find(const LChar* string, unsigned start = 0) const { return m_impl ? m_impl->find(string, start) : notFound; }
 
     // Find the last instance of a single character or string.
-    size_t reverseFind(UChar character, unsigned start = std::numeric_limits<unsigned>::max()) const { return m_impl ? m_impl->reverseFind(character, start) : notFound; }
-    size_t reverseFind(const String& string, unsigned start = std::numeric_limits<unsigned>::max()) const { return m_impl ? m_impl->reverseFind(string.impl(), start) : notFound; }
+    size_t reverseFind(UChar character, unsigned start = MaxLength) const { return m_impl ? m_impl->reverseFind(character, start) : notFound; }
+    size_t reverseFind(const String& string, unsigned start = MaxLength) const { return m_impl ? m_impl->reverseFind(string.impl(), start) : notFound; }
 
     WTF_EXPORT_PRIVATE Vector<UChar> charactersWithNullTermination() const;
 
@@ -237,8 +237,8 @@ public:
     WTF_EXPORT_PRIVATE void truncate(unsigned length);
     WTF_EXPORT_PRIVATE void remove(unsigned position, unsigned length = 1);
 
-    WTF_EXPORT_PRIVATE String substring(unsigned position, unsigned length = std::numeric_limits<unsigned>::max()) const;
-    WTF_EXPORT_PRIVATE String substringSharingImpl(unsigned position, unsigned length = std::numeric_limits<unsigned>::max()) const;
+    WTF_EXPORT_PRIVATE String substring(unsigned position, unsigned length = MaxLength) const;
+    WTF_EXPORT_PRIVATE String substringSharingImpl(unsigned position, unsigned length = MaxLength) const;
     String left(unsigned length) const { return substring(0, length); }
     String right(unsigned length) const { return substring(this->length() - length, length); }
 

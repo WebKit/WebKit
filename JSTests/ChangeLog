@@ -1,3 +1,14 @@
+2018-12-20  Tadeu Zagallo  <tzagallo@apple.com>
+
+        WTF::String and StringImpl overflow MaxLength
+        https://bugs.webkit.org/show_bug.cgi?id=192853
+        <rdar://problem/45726906>
+
+        Reviewed by Mark Lam.
+
+        * stress/string-16bit-repeat-overflow.js: Added.
+        (catch):
+
 2018-12-19  Ross Kirsling  <ross.kirsling@sony.com>
 
         Unreviewed follow-up to r192914.

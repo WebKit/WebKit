@@ -193,7 +193,7 @@ template<typename CharacterType> inline Ref<StringImpl> StringImpl::createUninit
     // Allocate a single buffer large enough to contain the StringImpl
     // struct as well as the data which it contains. This removes one
     // heap allocation from this call.
-    if (length > ((std::numeric_limits<unsigned>::max() - sizeof(StringImpl)) / sizeof(CharacterType)))
+    if (length > maxInternalLength<CharacterType>())
         CRASH();
     StringImpl* string = static_cast<StringImpl*>(fastMalloc(allocationSize<CharacterType>(length)));
 
@@ -222,7 +222,7 @@ template<typename CharacterType> inline Expected<Ref<StringImpl>, UTF8Conversion
     }
 
     // Same as createUninitialized() except here we use fastRealloc.
-    if (length > ((std::numeric_limits<unsigned>::max() - sizeof(StringImpl)) / sizeof(CharacterType)))
+    if (length > maxInternalLength<CharacterType>())
         return makeUnexpected(UTF8ConversionError::OutOfMemory);
 
     originalString->~StringImpl();
@@ -307,7 +307,7 @@ Ref<StringImpl> StringImpl::create(const LChar* string)
     if (!string)
         return *empty();
     size_t length = strlen(reinterpret_cast<const char*>(string));
-    if (length > std::numeric_limits<unsigned>::max())
+    if (length > MaxLength)
         CRASH();
     return create(string, length);
 }
@@ -377,7 +377,7 @@ Ref<StringImpl> StringImpl::convertToLowercaseWithoutLocale()
         return newImpl;
     }
 
-    if (m_length > static_cast<unsigned>(std::numeric_limits<int32_t>::max()))
+    if (m_length > MaxLength)
         CRASH();
     int32_t length = m_length;
 
@@ -429,7 +429,7 @@ Ref<StringImpl> StringImpl::convertToUppercaseWithoutLocale()
     // few actual calls to upper() are no-ops, so it wouldn't be worth
     // the extra time for pre-scanning.
 
-    if (m_length > static_cast<unsigned>(std::numeric_limits<int32_t>::max()))
+    if (m_length > MaxLength)
         CRASH();
     int32_t length = m_length;
 
@@ -541,7 +541,7 @@ Ref<StringImpl> StringImpl::convertToLowercaseWithLocale(const AtomicString& loc
     // this last part into a shared function that takes a locale string, since this is
     // just like the end of that function.
 
-    if (m_length > static_cast<unsigned>(std::numeric_limits<int32_t>::max()))
+    if (m_length > MaxLength)
         CRASH();
     int length = m_length;
 
@@ -572,7 +572,7 @@ Ref<StringImpl> StringImpl::convertToUppercaseWithLocale(const AtomicString& loc
     if (!needsTurkishCasingRules(localeIdentifier) || find('i') == notFound)
         return convertToUppercaseWithoutLocale();
 
-    if (m_length > static_cast<unsigned>(std::numeric_limits<int32_t>::max()))
+    if (m_length > MaxLength)
         CRASH();
     int length = m_length;
 
@@ -657,7 +657,7 @@ SlowPath:
         }
     }
 
-    if (m_length > static_cast<unsigned>(std::numeric_limits<int32_t>::max()))
+    if (m_length > MaxLength)
         CRASH();
 
     auto upconvertedCharacters = StringView(*this).upconvertedCharacters();
@@ -935,7 +935,7 @@ size_t StringImpl::find(const LChar* matchString, unsigned index)
     if (!matchString)
         return notFound;
     size_t matchStringLength = strlen(reinterpret_cast<const char*>(matchString));
-    if (matchStringLength > std::numeric_limits<unsigned>::max())
+    if (matchStringLength > MaxLength)
         CRASH();
     unsigned matchLength = matchStringLength;
     if (!matchLength)
@@ -1307,7 +1307,7 @@ Ref<StringImpl> StringImpl::replace(unsigned position, unsigned lengthToReplace,
     if (!lengthToReplace && !lengthToInsert)
         return *this;
 
-    if ((length() - lengthToReplace) >= (std::numeric_limits<unsigned>::max() - lengthToInsert))
+    if ((length() - lengthToReplace) >= (MaxLength - lengthToInsert))
         CRASH();
 
     if (is8Bit() && (!string || string->is8Bit())) {
@@ -1364,12 +1364,12 @@ Ref<StringImpl> StringImpl::replace(UChar pattern, const LChar* replacement, uns
     if (!matchCount)
         return *this;
 
-    if (repStrLength && matchCount > std::numeric_limits<unsigned>::max() / repStrLength)
+    if (repStrLength && matchCount > MaxLength / repStrLength)
         CRASH();
 
     unsigned replaceSize = matchCount * repStrLength;
     unsigned newSize = m_length - matchCount;
-    if (newSize >= (std::numeric_limits<unsigned>::max() - replaceSize))
+    if (newSize >= (MaxLength - replaceSize))
         CRASH();
 
     newSize += replaceSize;
@@ -1440,12 +1440,12 @@ Ref<StringImpl> StringImpl::replace(UChar pattern, const UChar* replacement, uns
     if (!matchCount)
         return *this;
 
-    if (repStrLength && matchCount > std::numeric_limits<unsigned>::max() / repStrLength)
+    if (repStrLength && matchCount > MaxLength / repStrLength)
         CRASH();
 
     unsigned replaceSize = matchCount * repStrLength;
     unsigned newSize = m_length - matchCount;
-    if (newSize >= (std::numeric_limits<unsigned>::max() - replaceSize))
+    if (newSize >= (MaxLength - replaceSize))
         CRASH();
 
     newSize += replaceSize;
@@ -1525,10 +1525,10 @@ Ref<StringImpl> StringImpl::replace(StringImpl* pattern, StringImpl* replacement
         return *this;
     
     unsigned newSize = m_length - matchCount * patternLength;
-    if (repStrLength && matchCount > std::numeric_limits<unsigned>::max() / repStrLength)
+    if (repStrLength && matchCount > MaxLength / repStrLength)
         CRASH();
 
-    if (newSize > (std::numeric_limits<unsigned>::max() - matchCount * repStrLength))
+    if (newSize > (MaxLength - matchCount * repStrLength))
         CRASH();
 
     newSize += matchCount * repStrLength;
@@ -1804,7 +1804,7 @@ Expected<CString, UTF8ConversionError> StringImpl::utf8ForCharacters(const LChar
 {
     if (!length)
         return CString("", 0);
-    if (length > std::numeric_limits<unsigned>::max() / 3)
+    if (length > MaxLength / 3)
         return makeUnexpected(UTF8ConversionError::OutOfMemory);
     Vector<char, 1024> bufferVector(length * 3);
     char* buffer = bufferVector.data();
@@ -1818,7 +1818,7 @@ Expected<CString, UTF8ConversionError> StringImpl::utf8ForCharacters(const UChar
 {
     if (!length)
         return CString("", 0);
-    if (length > std::numeric_limits<unsigned>::max() / 3)
+    if (length > MaxLength / 3)
         return makeUnexpected(UTF8ConversionError::OutOfMemory);
     Vector<char, 1024> bufferVector(length * 3);
     char* buffer = bufferVector.data();
@@ -1846,7 +1846,7 @@ Expected<CString, UTF8ConversionError> StringImpl::tryGetUtf8ForRange(unsigned o
     //  * We could allocate a CStringBuffer with an appropriate size to
     //    have a good chance of being able to write the string into the
     //    buffer without reallocing (say, 1.5 x length).
-    if (length > std::numeric_limits<unsigned>::max() / 3)
+    if (length > MaxLength / 3)
         return makeUnexpected(UTF8ConversionError::OutOfMemory);
     Vector<char, 1024> bufferVector(length * 3);
 

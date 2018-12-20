@@ -99,7 +99,7 @@ void String::append(const String& otherString)
 
     auto length = m_impl->length();
     auto otherLength = otherString.m_impl->length();
-    if (otherLength > std::numeric_limits<unsigned>::max() - length)
+    if (otherLength > MaxLength - length)
         CRASH();
 
     if (m_impl->is8Bit() && otherString.m_impl->is8Bit()) {
@@ -129,7 +129,7 @@ void String::append(LChar character)
         append(static_cast<UChar>(character));
         return;
     }
-    if (m_impl->length() >= std::numeric_limits<unsigned>::max())
+    if (m_impl->length() >= MaxLength)
         CRASH();
     LChar* data;
     auto newImpl = StringImpl::createUninitialized(m_impl->length() + 1, data);
@@ -150,7 +150,7 @@ void String::append(UChar character)
         append(static_cast<LChar>(character));
         return;
     }
-    if (m_impl->length() >= std::numeric_limits<unsigned>::max())
+    if (m_impl->length() >= MaxLength)
         CRASH();
     UChar* data;
     auto newImpl = StringImpl::createUninitialized(m_impl->length() + 1, data);
@@ -183,7 +183,7 @@ void String::insert(const String& string, unsigned position)
         return;
     }
 
-    if (lengthToInsert > std::numeric_limits<unsigned>::max() - length())
+    if (lengthToInsert > MaxLength - length())
         CRASH();
 
     if (is8Bit() && string.is8Bit()) {
@@ -222,7 +222,7 @@ void String::append(const LChar* charactersToAppend, unsigned lengthToAppend)
     unsigned strLength = m_impl->length();
 
     if (m_impl->is8Bit()) {
-        if (lengthToAppend > std::numeric_limits<unsigned>::max() - strLength)
+        if (lengthToAppend > MaxLength - strLength)
             CRASH();
         LChar* data;
         auto newImpl = StringImpl::createUninitialized(strLength + lengthToAppend, data);
@@ -232,7 +232,7 @@ void String::append(const LChar* charactersToAppend, unsigned lengthToAppend)
         return;
     }
 
-    if (lengthToAppend > std::numeric_limits<unsigned>::max() - strLength)
+    if (lengthToAppend > MaxLength - strLength)
         CRASH();
     UChar* data;
     auto newImpl = StringImpl::createUninitialized(length() + lengthToAppend, data);
@@ -258,7 +258,7 @@ void String::append(const UChar* charactersToAppend, unsigned lengthToAppend)
     unsigned strLength = m_impl->length();
     
     ASSERT(charactersToAppend);
-    if (lengthToAppend > std::numeric_limits<unsigned>::max() - strLength)
+    if (lengthToAppend > MaxLength - strLength)
         CRASH();
     UChar* data;
     auto newImpl = StringImpl::createUninitialized(strLength + lengthToAppend, data);
@@ -885,7 +885,7 @@ String String::make16BitFrom8BitSource(const LChar* source, size_t length)
 
 String String::fromUTF8(const LChar* stringStart, size_t length)
 {
-    if (length > std::numeric_limits<unsigned>::max())
+    if (length > MaxLength)
         CRASH();
 
     if (!stringStart)

@@ -379,7 +379,7 @@ public:
     // its own copy of the string.
     Ref<StringImpl> isolatedCopy() const;
 
-    WTF_EXPORT_PRIVATE Ref<StringImpl> substring(unsigned position, unsigned length = std::numeric_limits<unsigned>::max());
+    WTF_EXPORT_PRIVATE Ref<StringImpl> substring(unsigned position, unsigned length = MaxLength);
 
     UChar at(unsigned) const;
     UChar operator[](unsigned i) const { return at(i); }
@@ -437,8 +437,8 @@ public:
     WTF_EXPORT_PRIVATE size_t findIgnoringASCIICase(const StringImpl*) const;
     WTF_EXPORT_PRIVATE size_t findIgnoringASCIICase(const StringImpl*, unsigned startOffset) const;
 
-    WTF_EXPORT_PRIVATE size_t reverseFind(UChar, unsigned index = std::numeric_limits<unsigned>::max());
-    WTF_EXPORT_PRIVATE size_t reverseFind(StringImpl*, unsigned index = std::numeric_limits<unsigned>::max());
+    WTF_EXPORT_PRIVATE size_t reverseFind(UChar, unsigned index = MaxLength);
+    WTF_EXPORT_PRIVATE size_t reverseFind(StringImpl*, unsigned index = MaxLength);
 
     WTF_EXPORT_PRIVATE bool startsWith(const StringImpl*) const;
     WTF_EXPORT_PRIVATE bool startsWith(const StringImpl&) const;
@@ -495,6 +495,7 @@ protected:
 
 private:
     template<typename> static size_t allocationSize(Checked<size_t> tailElementCount);
+    template<typename> static size_t maxInternalLength();
     template<typename> static size_t tailOffset();
 
     bool requiresCopy() const;
@@ -569,10 +570,10 @@ template<unsigned length> bool equalLettersIgnoringASCIICase(const StringImpl*, 
 size_t find(const LChar*, unsigned length, CodeUnitMatchFunction, unsigned index = 0);
 size_t find(const UChar*, unsigned length, CodeUnitMatchFunction, unsigned index = 0);
 
-template<typename CharacterType> size_t reverseFindLineTerminator(const CharacterType*, unsigned length, unsigned index = std::numeric_limits<unsigned>::max());
-template<typename CharacterType> size_t reverseFind(const CharacterType*, unsigned length, CharacterType matchCharacter, unsigned index = std::numeric_limits<unsigned>::max());
-size_t reverseFind(const UChar*, unsigned length, LChar matchCharacter, unsigned index = std::numeric_limits<unsigned>::max());
-size_t reverseFind(const LChar*, unsigned length, UChar matchCharacter, unsigned index = std::numeric_limits<unsigned>::max());
+template<typename CharacterType> size_t reverseFindLineTerminator(const CharacterType*, unsigned length, unsigned index = StringImpl::MaxLength);
+template<typename CharacterType> size_t reverseFind(const CharacterType*, unsigned length, CharacterType matchCharacter, unsigned index = StringImpl::MaxLength);
+size_t reverseFind(const UChar*, unsigned length, LChar matchCharacter, unsigned index = StringImpl::MaxLength);
+size_t reverseFind(const LChar*, unsigned length, UChar matchCharacter, unsigned index = StringImpl::MaxLength);
 
 template<size_t inlineCapacity> bool equalIgnoringNullity(const Vector<UChar, inlineCapacity>&, StringImpl*);
 
@@ -755,7 +756,7 @@ template<typename CharacterType> inline unsigned lengthOfNullTerminatedString(co
     while (string[length])
         ++length;
 
-    RELEASE_ASSERT(length < std::numeric_limits<unsigned>::max());
+    RELEASE_ASSERT(length < StringImpl::MaxLength);
     return static_cast<unsigned>(length);
 }
 
@@ -954,7 +955,7 @@ template<typename CharacterType> ALWAYS_INLINE RefPtr<StringImpl> StringImpl::tr
         return empty();
     }
 
-    if (length > ((std::numeric_limits<unsigned>::max() - sizeof(StringImpl)) / sizeof(CharacterType))) {
+    if (length > maxInternalLength<CharacterType>()) {
         output = nullptr;
         return nullptr;
     }
@@ -973,7 +974,7 @@ inline Ref<StringImpl> StringImpl::adopt(Vector<CharacterType, inlineCapacity, O
 {
     if (size_t size = vector.size()) {
         ASSERT(vector.data());
-        if (size > std::numeric_limits<unsigned>::max())
+        if (size > MaxLength)
             CRASH();
         return adoptRef(*new StringImpl(vector.releaseBuffer(), size));
     }
@@ -1110,6 +1111,13 @@ inline StringImpl::StringImpl(CreateSymbolTag)
 template<typename T> inline size_t StringImpl::allocationSize(Checked<size_t> tailElementCount)
 {
     return (tailOffset<T>() + tailElementCount * sizeof(T)).unsafeGet();
+}
+
+template<typename CharacterType>
+inline size_t StringImpl::maxInternalLength()
+{
+    // In order to not overflow the unsigned length, the check for (std::numeric_limits<unsigned>::max() - sizeof(StringImpl)) is needed when sizeof(CharacterType) == 2.
+    return std::min(static_cast<size_t>(MaxLength), (std::numeric_limits<unsigned>::max() - sizeof(StringImpl)) / sizeof(CharacterType));
 }
 
 template<typename T> inline size_t StringImpl::tailOffset()
