@@ -123,7 +123,7 @@ class WebPopupMenuProxy;
 
 enum class ContinueUnsafeLoad : bool { No, Yes };
 
-struct AssistedNodeInformation;
+struct FocusedElementInformation;
 struct InteractionInformationAtPosition;
 struct WebHitTestResultData;
 
@@ -362,10 +362,10 @@ public:
     virtual void restorePageState(Optional<WebCore::FloatPoint> scrollPosition, const WebCore::FloatPoint& scrollOrigin, const WebCore::FloatBoxExtent& obscuredInsetsOnSave, double scale) = 0;
     virtual void restorePageCenterAndScale(Optional<WebCore::FloatPoint> center, double scale) = 0;
 
-    virtual void startAssistingNode(const AssistedNodeInformation&, bool userIsInteracting, bool blurPreviousNode, bool changingActivityState, API::Object* userData) = 0;
-    virtual void stopAssistingNode() = 0;
+    virtual void elementDidFocus(const FocusedElementInformation&, bool userIsInteracting, bool blurPreviousNode, bool changingActivityState, API::Object* userData) = 0;
+    virtual void elementDidBlur() = 0;
     virtual void didReceiveEditorStateUpdateAfterFocus() = 0;
-    virtual bool isAssistingNode() = 0;
+    virtual bool isFocusingElement() = 0;
     virtual bool interpretKeyEvent(const NativeWebKeyboardEvent&, bool isCharEvent) = 0;
     virtual void positionInformationDidChange(const InteractionInformationAtPosition&) = 0;
     virtual void saveImageToLibrary(Ref<WebCore::SharedBuffer>&&) = 0;

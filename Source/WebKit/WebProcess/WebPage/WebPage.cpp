@@ -30,7 +30,6 @@
 
 #include "APIArray.h"
 #include "APIGeometry.h"
-#include "AssistedNodeInformation.h"
 #include "DataReference.h"
 #include "DragControllerAction.h"
 #include "DrawingArea.h"
@@ -3059,7 +3058,7 @@ void WebPage::didStartPageTransition()
     bool hasPreviouslyFocusedDueToUserInteraction = m_hasEverFocusedElementDueToUserInteractionSincePageTransition;
 #endif
     m_hasEverFocusedElementDueToUserInteractionSincePageTransition = false;
-    m_isAssistingNodeDueToUserInteraction = false;
+    m_isFocusingElementDueToUserInteraction = false;
     m_lastEditorStateWasContentEditable = EditorStateIsContentEditable::Unset;
 #if PLATFORM(MAC)
     if (hasPreviouslyFocusedDueToUserInteraction)
@@ -4971,8 +4970,8 @@ void WebPage::setTextAsync(const String& text)
         return;
     }
 
-    if (is<HTMLInputElement>(m_assistedNode.get())) {
-        downcast<HTMLInputElement>(*m_assistedNode).setValueForUser(text);
+    if (is<HTMLInputElement>(m_focusedElement.get())) {
+        downcast<HTMLInputElement>(*m_focusedElement).setValueForUser(text);
         return;
     }
 
@@ -5264,52 +5263,53 @@ void WebPage::didChangeSelection()
     sendPartialEditorStateAndSchedulePostLayoutUpdate();
 }
 
-void WebPage::resetAssistedNodeForFrame(WebFrame* frame)
+void WebPage::resetFocusedElementForFrame(WebFrame* frame)
 {
-    if (!m_assistedNode)
+    if (!m_focusedElement)
         return;
-    if (frame->isMainFrame() || m_assistedNode->document().frame() == frame->coreFrame()) {
+
+    if (frame->isMainFrame() || m_focusedElement->document().frame() == frame->coreFrame()) {
 #if PLATFORM(IOS_FAMILY)
-        send(Messages::WebPageProxy::StopAssistingNode());
+        send(Messages::WebPageProxy::ElementDidBlur());
 #elif PLATFORM(MAC)
         send(Messages::WebPageProxy::SetEditableElementIsFocused(false));
 #endif
-        m_assistedNode = nullptr;
+        m_focusedElement = nullptr;
     }
 }
 
-void WebPage::elementDidRefocus(WebCore::Node* node)
+void WebPage::elementDidRefocus(WebCore::Element& element)
 {
-    elementDidFocus(node);
+    elementDidFocus(element);
     m_hasPendingEditorStateUpdate = true;
 }
 
-void WebPage::elementDidFocus(WebCore::Node* node)
+void WebPage::elementDidFocus(WebCore::Element& element)
 {
-    if (m_assistedNode == node && m_isAssistingNodeDueToUserInteraction)
+    if (m_focusedElement == &element && m_isFocusingElementDueToUserInteraction)
         return;
 
-    if (node->hasTagName(WebCore::HTMLNames::selectTag) || node->hasTagName(WebCore::HTMLNames::inputTag) || node->hasTagName(WebCore::HTMLNames::textareaTag) || node->hasEditableStyle()) {
-        m_assistedNode = node;
-        m_isAssistingNodeDueToUserInteraction |= m_userIsInteracting;
+    if (element.hasTagName(WebCore::HTMLNames::selectTag) || element.hasTagName(WebCore::HTMLNames::inputTag) || element.hasTagName(WebCore::HTMLNames::textareaTag) || element.hasEditableStyle()) {
+        m_focusedElement = &element;
+        m_isFocusingElementDueToUserInteraction |= m_userIsInteracting;
 
 #if PLATFORM(IOS_FAMILY)
 
 #if ENABLE(FULLSCREEN_API)
-        if (node->document().webkitIsFullScreen())
-            node->document().webkitCancelFullScreen();
+        if (element.document().webkitIsFullScreen())
+            element.document().webkitCancelFullScreen();
 #endif
 
-        ++m_currentAssistedNodeIdentifier;
-        AssistedNodeInformation information;
-        getAssistedNodeInformation(information);
+        ++m_currentFocusedElementIdentifier;
+        FocusedElementInformation information;
+        getFocusedElementInformation(information);
         RefPtr<API::Object> userData;
 
-        m_formClient->willBeginInputSession(this, downcast<Element>(node), WebFrame::fromCoreFrame(*node->document().frame()), m_userIsInteracting, userData);
+        m_formClient->willBeginInputSession(this, &element, WebFrame::fromCoreFrame(*element.document().frame()), m_userIsInteracting, userData);
 
-        send(Messages::WebPageProxy::StartAssistingNode(information, m_userIsInteracting, m_hasPendingBlurNotification, m_changingActivityState, UserData(WebProcess::singleton().transformObjectsToHandles(userData.get()).get())));
+        send(Messages::WebPageProxy::ElementDidFocus(information, m_userIsInteracting, m_hasPendingBlurNotification, m_changingActivityState, UserData(WebProcess::singleton().transformObjectsToHandles(userData.get()).get())));
 #elif PLATFORM(MAC)
-        if (node->hasTagName(WebCore::HTMLNames::selectTag))
+        if (element.hasTagName(WebCore::HTMLNames::selectTag))
             send(Messages::WebPageProxy::SetEditableElementIsFocused(false));
         else
             send(Messages::WebPageProxy::SetEditableElementIsFocused(true));
@@ -5318,15 +5318,15 @@ void WebPage::elementDidFocus(WebCore::Node* node)
     }
 }
 
-void WebPage::elementDidBlur(WebCore::Node* node)
+void WebPage::elementDidBlur(WebCore::Element& element)
 {
-    if (m_assistedNode == node) {
+    if (m_focusedElement == &element) {
         m_hasPendingBlurNotification = true;
         RefPtr<WebPage> protectedThis(this);
         callOnMainThread([protectedThis] {
             if (protectedThis->m_hasPendingBlurNotification) {
 #if PLATFORM(IOS_FAMILY)
-                protectedThis->send(Messages::WebPageProxy::StopAssistingNode());
+                protectedThis->send(Messages::WebPageProxy::ElementDidBlur());
 #elif PLATFORM(MAC)
                 protectedThis->send(Messages::WebPageProxy::SetEditableElementIsFocused(false));
 #endif
@@ -5334,8 +5334,8 @@ void WebPage::elementDidBlur(WebCore::Node* node)
             protectedThis->m_hasPendingBlurNotification = false;
         });
 
-        m_isAssistingNodeDueToUserInteraction = false;
-        m_assistedNode = nullptr;
+        m_isFocusingElementDueToUserInteraction = false;
+        m_focusedElement = nullptr;
     }
 }
 
@@ -5535,7 +5535,7 @@ void WebPage::didCommitLoad(WebFrame* frame)
     frame->setFirstLayerTreeTransactionIDAfterDidCommitLoad(downcast<RemoteLayerTreeDrawingArea>(*m_drawingArea).nextTransactionID());
     cancelPotentialTapInFrame(*frame);
 #endif
-    resetAssistedNodeForFrame(frame);
+    resetFocusedElementForFrame(frame);
 
     if (!frame->isMainFrame())
         return;

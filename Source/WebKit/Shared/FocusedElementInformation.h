@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2014-2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -93,7 +93,9 @@ struct OptionItem {
     static Optional<OptionItem> decode(IPC::Decoder&);
 };
 
-struct AssistedNodeInformation {
+using FocusedElementIdentifier = uint64_t;
+
+struct FocusedElementInformation {
     WebCore::IntRect elementRect;
     WebCore::IntPoint elementInteractionLocation;
     double minimumScaleFactor { -INFINITY };
@@ -136,10 +138,10 @@ struct AssistedNodeInformation {
 #endif
 #endif
 
-    uint64_t assistedNodeIdentifier { 0 };
+    FocusedElementIdentifier focusedElementIdentifier { 0 };
 
     void encode(IPC::Encoder&) const;
-    static bool decode(IPC::Decoder&, AssistedNodeInformation&);
+    static bool decode(IPC::Decoder&, FocusedElementInformation&);
 };
 #endif
 

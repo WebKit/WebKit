@@ -31,9 +31,9 @@
 #import "WKShareSheet.h"
 #endif
 
-#import "AssistedNodeInformation.h"
 #import "DragDropInteractionState.h"
 #import "EditorState.h"
+#import "FocusedElementInformation.h"
 #import "GestureTypes.h"
 #import "InteractionInformationAtPosition.h"
 #import "UIKitSPI.h"
@@ -261,7 +261,7 @@ struct WKAutoCorrectionData {
 
     WebKit::WKAutoCorrectionData _autocorrectionData;
     WebKit::InteractionInformationAtPosition _positionInformation;
-    WebKit::AssistedNodeInformation _assistedNodeInformation;
+    WebKit::FocusedElementInformation _focusedElementInformation;
     RetainPtr<NSObject<WKFormPeripheral>> _inputPeripheral;
     RetainPtr<UIEvent> _uiEventBeingResent;
     BlockPtr<void(::WebEvent *, BOOL)> _keyWebEventHandler;
@@ -353,7 +353,7 @@ struct WKAutoCorrectionData {
 @property (nonatomic, readonly) BOOL shouldHideSelectionWhenScrolling;
 @property (nonatomic, readonly) const WebKit::InteractionInformationAtPosition& positionInformation;
 @property (nonatomic, readonly) const WebKit::WKAutoCorrectionData& autocorrectionData;
-@property (nonatomic, readonly) const WebKit::AssistedNodeInformation& assistedNodeInformation;
+@property (nonatomic, readonly) const WebKit::FocusedElementInformation& focusedElementInformation;
 @property (nonatomic, readonly) UIWebFormAccessory *formAccessoryView;
 @property (nonatomic, readonly) UITextInputAssistantItem *inputAssistantItemForWebView;
 
@@ -393,8 +393,8 @@ FOR_EACH_PRIVATE_WKCONTENTVIEW_ACTION(DECLARE_WKCONTENTVIEW_ACTION_FOR_WEB_VIEW)
 
 - (BOOL)_mayDisableDoubleTapGesturesDuringSingleTap;
 - (void)_disableDoubleTapGesturesDuringTapIfNecessary:(uint64_t)requestID;
-- (void)_startAssistingNode:(const WebKit::AssistedNodeInformation&)information userIsInteracting:(BOOL)userIsInteracting blurPreviousNode:(BOOL)blurPreviousNode changingActivityState:(BOOL)changingActivityState userObject:(NSObject <NSSecureCoding> *)userObject;
-- (void)_stopAssistingNode;
+- (void)_elementDidFocus:(const WebKit::FocusedElementInformation&)information userIsInteracting:(BOOL)userIsInteracting blurPreviousNode:(BOOL)blurPreviousNode changingActivityState:(BOOL)changingActivityState userObject:(NSObject <NSSecureCoding> *)userObject;
+- (void)_elementDidBlur;
 - (void)_didReceiveEditorStateUpdateAfterFocus;
 - (void)_selectionChanged;
 - (void)_updateChangedSelection;
@@ -411,7 +411,7 @@ FOR_EACH_PRIVATE_WKCONTENTVIEW_ACTION(DECLARE_WKCONTENTVIEW_ACTION_FOR_WEB_VIEW)
 - (void)_showShareSheet:(const WebCore::ShareDataWithParsedURL&)shareData completionHandler:(WTF::CompletionHandler<void(bool)>&&)completionHandler;
 - (void)accessoryDone;
 - (void)_didHandleKeyEvent:(::WebEvent *)event eventWasHandled:(BOOL)eventWasHandled;
-- (Vector<WebKit::OptionItem>&) assistedNodeSelectOptions;
+- (Vector<WebKit::OptionItem>&) focusedSelectElementOptions;
 - (void)_enableInspectorNodeSearch;
 - (void)_disableInspectorNodeSearch;
 - (void)_becomeFirstResponderWithSelectionMovingForward:(BOOL)selectingForward completionHandler:(void (^)(BOOL didBecomeFirstResponder))completionHandler;

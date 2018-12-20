@@ -1,3 +1,256 @@
+2018-12-20  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [iOS] Replace "node assistance" terminology in WebKit with "focused element"
+        https://bugs.webkit.org/show_bug.cgi?id=192936
+
+        Reviewed by Tim Horton.
+
+        Renames a few methods and data structures in WebKit, to refer to "focused elements" rather than "assisted nodes";
+        see below for more details. No new tests, because there should be no change in behavior.
+
+        * Shared/FocusedElementInformation.cpp: Renamed from Source/WebKit/Shared/AssistedNodeInformation.cpp.
+        (WebKit::OptionItem::encode const):
+        (WebKit::OptionItem::decode):
+        (WebKit::FocusedElementInformation::encode const):
+        (WebKit::FocusedElementInformation::decode):
+        * Shared/FocusedElementInformation.h: Renamed from Source/WebKit/Shared/AssistedNodeInformation.h.
+
+        Rename AssistedNodeInformation to FocusedElementInformation. Additionally, introduce a named type for the
+        focusedElementIdentifier (which is currently just a `uint64_t`).
+
+        (WebKit::OptionItem::OptionItem):
+        * Shared/ios/InteractionInformationAtPosition.h:
+        * Shared/ios/InteractionInformationAtPosition.mm:
+        (WebKit::InteractionInformationAtPosition::encode const):
+        (WebKit::InteractionInformationAtPosition::decode):
+        * SourcesCocoa.txt:
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _shouldUpdateKeyboardWithInfo:]):
+        * UIProcess/PageClient.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::resetStateAfterProcessExited):
+        * UIProcess/WebPageProxy.h:
+
+        Rename NodeAssistanceArguments to ElementDidFocusArguments (and also add a FIXME for removing this mechanism
+        eventually).
+
+        (WebKit::WebPageProxy::focusNextFocusedElement):
+        (WebKit::WebPageProxy::focusNextAssistedNode): Deleted.
+        * UIProcess/WebPageProxy.messages.in:
+
+        Rename StartAssistingNode to ElementDidFocus, and StopAssistingNode to ElementDidBlur.
+
+        * UIProcess/ios/PageClientImplIOS.h:
+        * UIProcess/ios/PageClientImplIOS.mm:
+        (WebKit::PageClientImpl::elementDidFocus):
+        (WebKit::PageClientImpl::isFocusingElement):
+        (WebKit::PageClientImpl::elementDidBlur):
+        (WebKit::PageClientImpl::startAssistingNode): Deleted.
+        (WebKit::PageClientImpl::isAssistingNode): Deleted.
+        (WebKit::PageClientImpl::stopAssistingNode): Deleted.
+        * UIProcess/ios/WKContentView.h:
+        * UIProcess/ios/WKContentView.mm:
+        (-[WKContentView isFocusingElement]):
+        (-[WKContentView _didCommitLoadForMainFrame]):
+        (-[WKContentView isAssistingNode]): Deleted.
+        * UIProcess/ios/WKContentViewInteraction.h:
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKFocusedElementInfo initWithFocusedElementInformation:isUserInitiated:userObject:]):
+        (hasFocusedElement):
+        (-[WKContentView cleanupInteraction]):
+        (-[WKContentView shouldHideSelectionWhenScrolling]):
+        (-[WKContentView resignFirstResponderForWebView]):
+        (-[WKContentView _didGetTapHighlightForRequest:color:quads:topLeftRadius:topRightRadius:bottomLeftRadius:bottomRightRadius:]):
+        (-[WKContentView _requiresKeyboardWhenFirstResponder]):
+        (-[WKContentView _zoomToRevealFocusedElement]):
+        (-[WKContentView inputView]):
+        (-[WKContentView _selectionClipRect]):
+        (-[WKContentView gestureRecognizerShouldBegin:]):
+        (-[WKContentView textInteractionGesture:shouldBeginAtPoint:]):
+        (-[WKContentView clearSelection]):
+        (-[WKContentView requiresAccessoryView]):
+        (-[WKContentView canPerformActionForWebView:withSender:]):
+        (-[WKContentView _isInteractingWithFocusedElement]):
+        (-[WKContentView changeSelectionWithGestureAt:withGesture:withState:withFlags:]):
+        (-[WKContentView selectPositionAtPoint:completionHandler:]):
+        (-[WKContentView selectPositionAtBoundary:inDirection:fromPoint:completionHandler:]):
+        (-[WKContentView selectTextWithGranularity:atPoint:completionHandler:]):
+        (-[WKContentView updateSelectionWithExtentPoint:completionHandler:]):
+        (-[WKContentView updateSelectionWithExtentPoint:withBoundary:completionHandler:]):
+        (-[WKContentView accessoryTab:]):
+        (-[WKContentView _becomeFirstResponderWithSelectionMovingForward:completionHandler:]):
+        (-[WKContentView accessoryClear]):
+        (-[WKContentView _updateAccessory]):
+        (-[WKContentView insertTextSuggestion:]):
+        (-[WKContentView setSelectedTextRange:]):
+        (-[WKContentView textInputTraits]):
+        (-[WKContentView isScrollableForKeyboardScrollViewAnimator:]):
+        (-[WKContentView focusedElementInformation]):
+        (-[WKContentView focusedSelectElementOptions]):
+        (rectToRevealWhenZoomingToFocusedElement):
+        (-[WKContentView _elementDidFocus:userIsInteracting:blurPreviousNode:changingActivityState:userObject:]):
+        (-[WKContentView _elementDidBlur]):
+        (-[WKContentView _didReceiveEditorStateUpdateAfterFocus]):
+        (-[WKContentView updateCurrentFocusedElementInformation:]):
+        (-[WKContentView presentViewControllerForCurrentFocusedElement]):
+        (-[WKContentView focusedFormControlViewDidSubmit:]):
+        (-[WKContentView focusedFormControlViewDidCancel:]):
+        (-[WKContentView focusedFormControlViewDidBeginEditing:]):
+        (-[WKContentView rectForFocusedFormControlView:]):
+        (-[WKContentView nextRectForFocusedFormControlView:]):
+        (-[WKContentView previousRectForFocusedFormControlView:]):
+        (-[WKContentView actionNameForFocusedFormControlView:]):
+        (-[WKContentView focusedFormControlViewDidRequestNextNode:]):
+        (-[WKContentView focusedFormControlViewDidRequestPreviousNode:]):
+        (-[WKContentView hasNextNodeForFocusedFormControlView:]):
+        (-[WKContentView hasPreviousNodeForFocusedFormControlView:]):
+        (-[WKContentView selectMenu:didSelectItemAtIndex:]):
+        (-[WKContentView numberOfItemsInSelectMenu:]):
+        (-[WKContentView selectMenu:displayTextForItemAtIndex:]):
+        (-[WKContentView selectMenu:didCheckItemAtIndex:checked:]):
+        (-[WKContentView selectMenuUsesMultipleSelection:]):
+        (-[WKContentView selectMenu:hasSelectedOptionAtIndex:]):
+        (-[WKContentView _updateChangedSelection:]):
+        (-[WKContentView _autofillContext]):
+        (-[WKContentView dismissQuickboardViewControllerAndRevealFocusedFormOverlayIfNecessary:]):
+        (-[WKContentView allowsLanguageSelectionMenuForListViewController:]):
+        (-[WKContentView inputLabelTextForViewController:]):
+        (-[WKContentView initialValueForViewController:]):
+        (-[WKContentView shouldDisplayInputContextViewForListViewController:]):
+        (-[WKContentView numericInputModeForListViewController:]):
+        (-[WKContentView textContentTypeForListViewController:]):
+        (-[WKContentView allowsDictationInputForListViewController:]):
+        (-[WKFocusedElementInfo initWithAssistedNodeInformation:isUserInitiated:userObject:]): Deleted.
+        (hasAssistedNode): Deleted.
+
+        Replaced with hasFocusedElement.
+
+        (-[WKContentView _isInteractingWithAssistedNode]): Deleted.
+        (-[WKContentView assistedNodeInformation]): Deleted.
+        (-[WKContentView assistedNodeSelectOptions]): Deleted.
+        (-[WKContentView _startAssistingNode:userIsInteracting:blurPreviousNode:changingActivityState:userObject:]): Deleted.
+        (-[WKContentView _stopAssistingNode]): Deleted.
+        (-[WKContentView updateCurrentAssistedNodeInformation:]): Deleted.
+        (-[WKContentView presentViewControllerForCurrentAssistedNode]): Deleted.
+        * UIProcess/ios/WebDataListSuggestionsDropdownIOS.mm:
+        (-[WKDataListSuggestionsControl textAlignment]):
+        * UIProcess/ios/WebPageProxyIOS.mm:
+        (WebKit::WebPageProxy::focusedElementInformationCallback):
+        (WebKit::WebPageProxy::requestFocusedElementInformation):
+        (WebKit::WebPageProxy::computeCustomFixedPositionRect const):
+        (WebKit::WebPageProxy::didCommitLayerTree):
+        (WebKit::WebPageProxy::selectWithGesture):
+        (WebKit::WebPageProxy::selectTextWithGranularityAtPoint):
+        (WebKit::WebPageProxy::selectPositionAtBoundaryWithDirection):
+        (WebKit::WebPageProxy::selectPositionAtPoint):
+        (WebKit::WebPageProxy::updateSelectionWithExtentPoint):
+        (WebKit::WebPageProxy::updateSelectionWithExtentPointAndBoundary):
+        (WebKit::WebPageProxy::blurFocusedElement):
+        (WebKit::WebPageProxy::elementDidFocus):
+        (WebKit::WebPageProxy::elementDidBlur):
+        (WebKit::WebPageProxy::focusNextFocusedElement):
+        (WebKit::WebPageProxy::setFocusedElementValue):
+        (WebKit::WebPageProxy::setFocusedElementValueAsNumber):
+        (WebKit::WebPageProxy::setFocusedElementSelectedIndex):
+        (WebKit::WebPageProxy::assistedNodeInformationCallback): Deleted.
+        (WebKit::WebPageProxy::requestAssistedNodeInformation): Deleted.
+        (WebKit::WebPageProxy::blurAssistedNode): Deleted.
+        (WebKit::WebPageProxy::startAssistingNode): Deleted.
+        (WebKit::WebPageProxy::stopAssistingNode): Deleted.
+        (WebKit::WebPageProxy::focusNextAssistedNode): Deleted.
+        (WebKit::WebPageProxy::setAssistedNodeValue): Deleted.
+        (WebKit::WebPageProxy::setAssistedNodeValueAsNumber): Deleted.
+        (WebKit::WebPageProxy::setAssistedNodeSelectedIndex): Deleted.
+        * UIProcess/ios/forms/WKFormColorPicker.mm:
+        (-[WKColorPicker initWithView:]):
+        (-[WKColorPicker setControlValueFromUIColor:]):
+        * UIProcess/ios/forms/WKFormInputControl.mm:
+        (-[WKDateTimePicker initWithView:datePickerMode:]):
+        (-[WKDateTimePicker shouldPresentGregorianCalendar:]):
+        (-[WKDateTimePicker _dateChangedSetAsNumber]):
+        (-[WKDateTimePicker _dateChangedSetAsString]):
+        (-[WKDateTimePicker controlBeginEditing]):
+        (-[WKFormInputControl initWithView:]):
+        (-[WKDateTimePopover clear:]):
+        (-[WKDateTimePopover initWithView:datePickerMode:]):
+        * UIProcess/ios/forms/WKFormPopover.mm:
+        (-[WKRotatingPopover presentPopoverAnimated:]):
+        * UIProcess/ios/forms/WKFormSelectControl.h:
+        * UIProcess/ios/forms/WKFormSelectControl.mm:
+        (-[WKFormSelectControl initWithView:]):
+        * UIProcess/ios/forms/WKFormSelectPicker.mm:
+        (-[WKMultipleSelectPicker initWithView:]):
+        (-[WKMultipleSelectPicker pickerView:viewForRow:forComponent:reusingView:]):
+        (-[WKMultipleSelectPicker pickerView:numberOfRowsInComponent:]):
+        (-[WKMultipleSelectPicker findItemIndexAt:]):
+        (-[WKMultipleSelectPicker pickerView:row:column:checked:]):
+        (-[WKSelectSinglePicker initWithView:]):
+        (-[WKSelectSinglePicker controlEndEditing]):
+        (-[WKSelectSinglePicker pickerView:numberOfRowsInComponent:]):
+        (-[WKSelectSinglePicker pickerView:attributedTitleForRow:forComponent:]):
+        (-[WKSelectSinglePicker pickerView:didSelectRow:inComponent:]):
+        * UIProcess/ios/forms/WKFormSelectPopover.mm:
+        (-[WKSelectTableViewController initWithView:hasGroups:]):
+        (-[WKSelectTableViewController tableView:numberOfRowsInSection:]):
+        (-[WKSelectTableViewController tableView:titleForHeaderInSection:]):
+        (-[WKSelectTableViewController findItemIndexAt:]):
+        (-[WKSelectTableViewController findItemAt:]):
+        (-[WKSelectTableViewController tableView:cellForRowAtIndexPath:]):
+        (-[WKSelectTableViewController tableView:didSelectRowAtIndexPath:]):
+        (-[WKSelectPopover initWithView:hasGroups:]):
+        * WebKit.xcodeproj/project.pbxproj:
+        * WebProcess/WebCoreSupport/WebChromeClient.cpp:
+        (WebKit::WebChromeClient::elementDidFocus):
+        (WebKit::WebChromeClient::elementDidRefocus):
+        (WebKit::WebChromeClient::elementDidBlur):
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::didStartPageTransition):
+        (WebKit::WebPage::setTextAsync):
+        (WebKit::WebPage::resetFocusedElementForFrame):
+        (WebKit::WebPage::elementDidRefocus):
+        (WebKit::WebPage::elementDidFocus):
+        (WebKit::WebPage::elementDidBlur):
+        (WebKit::WebPage::didCommitLoad):
+        (WebKit::WebPage::resetAssistedNodeForFrame): Deleted.
+        * WebProcess/WebPage/WebPage.h:
+
+        Refactor elementDid{Refocus|Focus|Blur} to take `Element&` rather than `Node*`.
+
+        * WebProcess/WebPage/WebPage.messages.in:
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+
+        Replace m_assistedNode (a `RefPtr<Node>`) with m_focusedElement (a `RefPtr<Element>`).
+
+        (WebKit::WebPage::platformEditorState const):
+        (WebKit::WebPage::completeSyntheticClick):
+        (WebKit::WebPage::requestFocusedElementInformation):
+        (WebKit::WebPage::blurFocusedElement):
+        (WebKit::WebPage::setFocusedElementValue):
+        (WebKit::WebPage::setFocusedElementValueAsNumber):
+        (WebKit::WebPage::setFocusedElementSelectedIndex):
+        (WebKit::innerFrameQuad):
+        (WebKit::constrainPoint):
+        (WebKit::WebPage::selectWithGesture):
+        (WebKit::WebPage::startAutoscrollAtPosition):
+        (WebKit::WebPage::visiblePositionInFocusedNodeForPoint):
+        (WebKit::WebPage::selectPositionAtPoint):
+        (WebKit::WebPage::selectPositionAtBoundaryWithDirection):
+        (WebKit::WebPage::rangeForGranularityAtPoint):
+        (WebKit::WebPage::selectTextWithGranularityAtPoint):
+        (WebKit::WebPage::updateSelectionWithExtentPointAndBoundary):
+        (WebKit::WebPage::updateSelectionWithExtentPoint):
+        (WebKit::WebPage::getPositionInformation):
+        (WebKit::WebPage::focusNextFocusedElement):
+        (WebKit::WebPage::getFocusedElementInformation):
+        (WebKit::WebPage::autofillLoginCredentials):
+        (WebKit::WebPage::requestAssistedNodeInformation): Deleted.
+        (WebKit::WebPage::blurAssistedNode): Deleted.
+        (WebKit::WebPage::setAssistedNodeValue): Deleted.
+        (WebKit::WebPage::setAssistedNodeValueAsNumber): Deleted.
+        (WebKit::WebPage::setAssistedNodeSelectedIndex): Deleted.
+        (WebKit::WebPage::focusNextAssistedNode): Deleted.
+        (WebKit::WebPage::getAssistedNodeInformation): Deleted.
+
 2018-12-20  Brent Fulgham  <bfulgham@apple.com>
 
         WKWebView default UA doesn't freeze the build number

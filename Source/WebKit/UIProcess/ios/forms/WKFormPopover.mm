@@ -142,7 +142,7 @@ ALLOW_DEPRECATED_DECLARATIONS_BEGIN
                           permittedArrowDirections:directions
                                           animated:animated];
     } else {
-        CGRect boundingBoxOfDOMNode = _view.assistedNodeInformation.elementRect;
+        CGRect boundingBoxOfDOMNode = _view.focusedElementInformation.elementRect;
         [_popoverController presentPopoverFromRect:CGRectIntegral(boundingBoxOfDOMNode)
                                             inView:_view
                           permittedArrowDirections:directions

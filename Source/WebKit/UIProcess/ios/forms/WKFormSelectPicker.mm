@@ -146,7 +146,7 @@ static const float GroupOptionTextColorAlpha = 0.5;
         return nil;
 
     _view = view;
-    _allowsMultipleSelection = _view.assistedNodeInformation.isMultiSelect;
+    _allowsMultipleSelection = _view.focusedElementInformation.isMultiSelect;
     _singleSelectionIndex = NSNotFound;
     [self setAutoresizingMask:UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight];
     [self setDataSource:self];
@@ -165,7 +165,7 @@ static const float GroupOptionTextColorAlpha = 0.5;
     [self reloadAllComponents];
 
     if (!_allowsMultipleSelection) {
-        const Vector<OptionItem>& selectOptions = [_view assistedNodeSelectOptions];
+        const Vector<OptionItem>& selectOptions = [_view focusedSelectElementOptions];
         for (size_t i = 0; i < selectOptions.size(); ++i) {
             const OptionItem& item = selectOptions[i];
             if (item.isGroup)
@@ -219,7 +219,7 @@ static const float GroupOptionTextColorAlpha = 0.5;
 
 - (UIView *)pickerView:(UIPickerView *)pickerView viewForRow:(NSInteger)rowIndex forComponent:(NSInteger)columnIndex reusingView:(UIView *)view
 {
-    const OptionItem& item = [_view assistedNodeSelectOptions][rowIndex];
+    const OptionItem& item = [_view focusedSelectElementOptions][rowIndex];
     UIPickerContentView* pickerItem = item.isGroup ? [[[WKOptionGroupPickerCell alloc] initWithOptionItem:item] autorelease] : [[[WKOptionPickerCell alloc] initWithOptionItem:item] autorelease];
 
     // The cell starts out with a null frame. We need to set its frame now so we can find the right font size.
@@ -235,7 +235,7 @@ static const float GroupOptionTextColorAlpha = 0.5;
     UIFont *font = titleTextLabel.font;
     if (width != _maximumTextWidth || _fontSize == 0) {
         _maximumTextWidth = width;
-        _fontSize = adjustedFontSize(_maximumTextWidth, font, titleTextLabel.font.pointSize, [_view assistedNodeSelectOptions]);
+        _fontSize = adjustedFontSize(_maximumTextWidth, font, titleTextLabel.font.pointSize, [_view focusedSelectElementOptions]);
     }
 
     [titleTextLabel setFont:[font fontWithSize:_fontSize]];
@@ -253,15 +253,15 @@ static const float GroupOptionTextColorAlpha = 0.5;
 
 - (NSInteger)pickerView:(UIPickerView *)pickerView numberOfRowsInComponent:(NSInteger)columnIndex
 {
-    return [_view assistedNodeSelectOptions].size();
+    return [_view focusedSelectElementOptions].size();
 }
 
 - (NSInteger)findItemIndexAt:(int)rowIndex
 {
-    ASSERT(rowIndex >= 0 && (size_t)rowIndex < [_view assistedNodeSelectOptions].size());
+    ASSERT(rowIndex >= 0 && (size_t)rowIndex < [_view focusedSelectElementOptions].size());
     NSInteger itemIndex = 0;
     for (int i = 0; i < rowIndex; ++i) {
-        if ([_view assistedNodeSelectOptions][i].isGroup)
+        if ([_view focusedSelectElementOptions][i].isGroup)
             continue;
         itemIndex++;
     }
@@ -272,10 +272,10 @@ static const float GroupOptionTextColorAlpha = 0.5;
 
 - (void)pickerView:(UIPickerView *)pickerView row:(int)rowIndex column:(int)columnIndex checked:(BOOL)isChecked
 {
-    if ((size_t)rowIndex >= [_view assistedNodeSelectOptions].size())
+    if ((size_t)rowIndex >= [_view focusedSelectElementOptions].size())
         return;
 
-    OptionItem& item = [_view assistedNodeSelectOptions][rowIndex];
+    OptionItem& item = [_view focusedSelectElementOptions][rowIndex];
 
     // FIXME: Remove this workaround once <rdar://problem/18745253> is fixed.
     // Group rows should not be checkable, but we are getting this delegate for
@@ -289,7 +289,7 @@ static const float GroupOptionTextColorAlpha = 0.5;
     }
 
     if ([self allowsMultipleSelection]) {
-        [_view page]->setAssistedNodeSelectedIndex([self findItemIndexAt:rowIndex], true);
+        [_view page]->setFocusedElementSelectedIndex([self findItemIndexAt:rowIndex], true);
         item.isSelected = isChecked;
     } else {
         // Single selection.
@@ -299,7 +299,7 @@ static const float GroupOptionTextColorAlpha = 0.5;
         // This private delegate often gets called for multiple rows in the picker,
         // so we only activate and set as selected the checked item in single selection.
         if (isChecked) {
-            [_view page]->setAssistedNodeSelectedIndex([self findItemIndexAt:rowIndex]);
+            [_view page]->setFocusedElementSelectedIndex([self findItemIndexAt:rowIndex]);
             item.isSelected = YES;
         }
     }
@@ -333,8 +333,8 @@ static const float GroupOptionTextColorAlpha = 0.5;
 
     _selectedIndex = NSNotFound;
 
-    for (size_t i = 0; i < [view assistedNodeSelectOptions].size(); ++i) {
-        if ([_view assistedNodeSelectOptions][i].isSelected) {
+    for (size_t i = 0; i < [view focusedSelectElementOptions].size(); ++i) {
+        if ([_view focusedSelectElementOptions][i].isSelected) {
             _selectedIndex = i;
             break;
         }
@@ -370,9 +370,9 @@ static const float GroupOptionTextColorAlpha = 0.5;
     if (_selectedIndex == NSNotFound)
         return;
 
-    if (_selectedIndex < (NSInteger)[_view assistedNodeSelectOptions].size()) {
-        [_view assistedNodeSelectOptions][_selectedIndex].isSelected = true;
-        [_view page]->setAssistedNodeSelectedIndex(_selectedIndex);
+    if (_selectedIndex < (NSInteger)[_view focusedSelectElementOptions].size()) {
+        [_view focusedSelectElementOptions][_selectedIndex].isSelected = true;
+        [_view page]->setFocusedElementSelectedIndex(_selectedIndex);
     }
 }
 
@@ -383,15 +383,15 @@ static const float GroupOptionTextColorAlpha = 0.5;
 
 - (NSInteger)pickerView:(UIPickerView *)pickerView numberOfRowsInComponent:(NSInteger)columnIndex
 {
-    return _view.assistedNodeInformation.selectOptions.size();
+    return _view.focusedElementInformation.selectOptions.size();
 }
 
 - (NSAttributedString *)pickerView:(UIPickerView *)pickerView attributedTitleForRow:(NSInteger)row forComponent:(NSInteger)component
 {
-    if (row < 0 || row >= (NSInteger)[_view assistedNodeSelectOptions].size())
+    if (row < 0 || row >= (NSInteger)[_view focusedSelectElementOptions].size())
         return nil;
 
-    const OptionItem& option = [_view assistedNodeSelectOptions][row];
+    const OptionItem& option = [_view focusedSelectElementOptions][row];
     NSMutableString *trimmedText = [[option.text mutableCopy] autorelease];
     CFStringTrimWhitespace((CFMutableStringRef)trimmedText);
 
@@ -404,16 +404,16 @@ static const float GroupOptionTextColorAlpha = 0.5;
 
 - (void)pickerView:(UIPickerView *)pickerView didSelectRow:(NSInteger)row inComponent:(NSInteger)component
 {
-    if (row < 0 || row >= (NSInteger)[_view assistedNodeSelectOptions].size())
+    if (row < 0 || row >= (NSInteger)[_view focusedSelectElementOptions].size())
         return;
 
-    const OptionItem& newSelectedOption = [_view assistedNodeSelectOptions][row];
+    const OptionItem& newSelectedOption = [_view focusedSelectElementOptions][row];
     if (newSelectedOption.disabled) {
         NSInteger rowToSelect = NSNotFound;
 
         // Search backwards for the previous enabled option.
         for (NSInteger i = row - 1; i >= 0; --i) {
-            const OptionItem& earlierOption = [_view assistedNodeSelectOptions][i];
+            const OptionItem& earlierOption = [_view focusedSelectElementOptions][i];
             if (!earlierOption.disabled) {
                 rowToSelect = i;
                 break;
@@ -422,8 +422,8 @@ static const float GroupOptionTextColorAlpha = 0.5;
 
         // If nothing previous, search forwards for the next enabled option.
         if (rowToSelect == NSNotFound) {
-            for (size_t i = row + 1; i < [_view assistedNodeSelectOptions].size(); ++i) {
-                const OptionItem& laterOption = [_view assistedNodeSelectOptions][i];
+            for (size_t i = row + 1; i < [_view focusedSelectElementOptions].size(); ++i) {
+                const OptionItem& laterOption = [_view focusedSelectElementOptions][i];
                 if (!laterOption.disabled) {
                     rowToSelect = i;
                     break;

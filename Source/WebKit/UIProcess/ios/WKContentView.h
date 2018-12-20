@@ -61,7 +61,7 @@ class WebProcessPool;
 #pragma clang diagnostic pop
 
 @property (nonatomic, readonly) WebKit::WebPageProxy* page;
-@property (nonatomic, readonly) BOOL isAssistingNode;
+@property (nonatomic, readonly) BOOL isFocusingElement;
 @property (nonatomic, getter=isShowingInspectorIndication) BOOL showingInspectorIndication;
 @property (nonatomic, readonly, getter=isResigningFirstResponder) BOOL resigningFirstResponder;
 @property (nonatomic) BOOL sizeChangedSinceLastVisibleContentRectUpdate;

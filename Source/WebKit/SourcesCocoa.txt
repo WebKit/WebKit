@@ -110,7 +110,7 @@ Shared/API/Cocoa/WKRemoteObjectCoder.mm
 
 Shared/APIWebArchive.mm
 Shared/APIWebArchiveResource.mm
-Shared/AssistedNodeInformation.cpp
+Shared/FocusedElementInformation.cpp
 Shared/VisibleContentRectUpdateInfo.cpp
 Shared/WebSQLiteDatabaseTracker.cpp
 

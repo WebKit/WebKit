@@ -69,8 +69,8 @@ CGFloat adjustedFontSize(CGFloat textWidth, UIFont *font, CGFloat initialFontSiz
         return nil;
 
     bool hasGroups = false;
-    for (size_t i = 0; i < view.assistedNodeInformation.selectOptions.size(); ++i) {
-        if (view.assistedNodeInformation.selectOptions[i].isGroup) {
+    for (size_t i = 0; i < view.focusedElementInformation.selectOptions.size(); ++i) {
+        if (view.focusedElementInformation.selectOptions[i].isGroup) {
             hasGroups = true;
             break;
         }
@@ -78,7 +78,7 @@ CGFloat adjustedFontSize(CGFloat textWidth, UIFont *font, CGFloat initialFontSiz
 
     if (currentUserInterfaceIdiomIsPad())
         _control = adoptNS([[WKSelectPopover alloc] initWithView:view hasGroups:hasGroups]);
-    else if (view.assistedNodeInformation.isMultiSelect || hasGroups)
+    else if (view.focusedElementInformation.isMultiSelect || hasGroups)
         _control = adoptNS([[WKMultipleSelectPicker alloc] initWithView:view]);
     else
         _control = adoptNS([[WKSelectSinglePicker alloc] initWithView:view]);

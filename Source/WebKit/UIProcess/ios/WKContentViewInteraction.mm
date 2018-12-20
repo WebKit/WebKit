@@ -281,7 +281,7 @@ const CGFloat minimumTapHighlightRadius = 2.0;
 @protocol UISelectionInteractionAssistant;
 
 @interface WKFocusedElementInfo : NSObject <_WKFocusedElementInfo>
-- (instancetype)initWithAssistedNodeInformation:(const WebKit::AssistedNodeInformation&)information isUserInitiated:(BOOL)isUserInitiated userObject:(NSObject <NSSecureCoding> *)userObject;
+- (instancetype)initWithFocusedElementInformation:(const WebKit::FocusedElementInformation&)information isUserInitiated:(BOOL)isUserInitiated userObject:(NSObject <NSSecureCoding> *)userObject;
 @end
 
 @implementation WKFormInputSession {
@@ -441,7 +441,7 @@ const CGFloat minimumTapHighlightRadius = 2.0;
     RetainPtr<NSString> _label;
 }
 
-- (instancetype)initWithAssistedNodeInformation:(const WebKit::AssistedNodeInformation&)information isUserInitiated:(BOOL)isUserInitiated userObject:(NSObject <NSSecureCoding> *)userObject
+- (instancetype)initWithFocusedElementInformation:(const WebKit::FocusedElementInformation&)information isUserInitiated:(BOOL)isUserInitiated userObject:(NSObject <NSSecureCoding> *)userObject
 {
     if (!(self = [super init]))
         return nil;
@@ -609,9 +609,9 @@ static WKDragSessionContext *ensureLocalDragSessionContext(id <UIDragSession> se
 
 @implementation WKContentView (WKInteraction)
 
-static inline bool hasAssistedNode(WebKit::AssistedNodeInformation assistedNodeInformation)
+static inline bool hasFocusedElement(WebKit::FocusedElementInformation focusedElementInformation)
 {
-    return (assistedNodeInformation.elementType != WebKit::InputType::None);
+    return (focusedElementInformation.elementType != WebKit::InputType::None);
 }
 
 - (WKFormInputSession *)_formInputSession
@@ -843,7 +843,7 @@ static inline bool hasAssistedNode(WebKit::AssistedNodeInformation assistedNodeI
 #endif
 
     _inputViewUpdateDeferrer = nullptr;
-    _assistedNodeInformation = { };
+    _focusedElementInformation = { };
     
     [_keyboardScrollingAnimator invalidate];
     _keyboardScrollingAnimator = nil;
@@ -1008,7 +1008,7 @@ static inline bool hasAssistedNode(WebKit::AssistedNodeInformation assistedNodeI
 - (BOOL)shouldHideSelectionWhenScrolling
 {
     if (_isEditable)
-        return _assistedNodeInformation.insideFixedPosition;
+        return _focusedElementInformation.insideFixedPosition;
 
     auto& editorState = _page->editorState();
     return !editorState.isMissingPostLayoutData && editorState.postLayoutData().insideFixedPosition;
@@ -1090,7 +1090,7 @@ static inline bool hasAssistedNode(WebKit::AssistedNodeInformation assistedNodeI
     if (!_webView._retainingActiveFocusedState) {
         // We need to complete the editing operation before we blur the element.
         [self _endEditing];
-        _page->blurAssistedNode();
+        _page->blurFocusedElement();
     }
 
     [self _cancelInteraction];
@@ -1300,7 +1300,7 @@ static NSValue *nsSizeForTapHighlightBorderRadius(WebCore::IntSize borderRadius,
     if (!_isTapHighlightIDValid || _latestTapID != requestID)
         return;
 
-    if (hasAssistedNode(_assistedNodeInformation) && _positionInformation.nodeAtPositionIsAssistedNode)
+    if (hasFocusedElement(_focusedElementInformation) && _positionInformation.nodeAtPositionIsFocusedElement)
         return;
 
     _isTapHighlightIDValid = NO;
@@ -1372,7 +1372,7 @@ static NSValue *nsSizeForTapHighlightBorderRadius(WebCore::IntSize borderRadius,
 - (BOOL)_requiresKeyboardWhenFirstResponder
 {
     // FIXME: We should add the logic to handle keyboard visibility during focus redirects.
-    switch (_assistedNodeInformation.elementType) {
+    switch (_focusedElementInformation.elementType) {
     case WebKit::InputType::None:
     case WebKit::InputType::Drawing:
         return NO;
@@ -1386,7 +1386,7 @@ static NSValue *nsSizeForTapHighlightBorderRadius(WebCore::IntSize borderRadius,
     case WebKit::InputType::Time:
         return !currentUserInterfaceIdiomIsPad();
     default:
-        return !_assistedNodeInformation.isReadOnly;
+        return !_focusedElementInformation.isReadOnly;
     }
     return NO;
 }
@@ -1404,26 +1404,26 @@ static NSValue *nsSizeForTapHighlightBorderRadius(WebCore::IntSize borderRadius,
     SetForScope<BOOL> isZoomingToRevealFocusedElementForScope { _isZoomingToRevealFocusedElement, YES };
     // In case user scaling is force enabled, do not use that scaling when zooming in with an input field.
     // Zooming above the page's default scale factor should only happen when the user performs it.
-    [self _zoomToFocusRect:_assistedNodeInformation.elementRect
-        selectionRect:_didAccessoryTabInitiateFocus ? WebCore::FloatRect() : rectToRevealWhenZoomingToFocusedElement(_assistedNodeInformation, _page->editorState())
-        insideFixed:_assistedNodeInformation.insideFixedPosition
-        fontSize:_assistedNodeInformation.nodeFontSize
-        minimumScale:_assistedNodeInformation.minimumScaleFactor
-        maximumScale:_assistedNodeInformation.maximumScaleFactorIgnoringAlwaysScalable
-        allowScaling:_assistedNodeInformation.allowsUserScalingIgnoringAlwaysScalable && !currentUserInterfaceIdiomIsPad()
-        forceScroll:(_assistedNodeInformation.inputMode == WebCore::InputMode::None) ? !currentUserInterfaceIdiomIsPad() : [self requiresAccessoryView]];
+    [self _zoomToFocusRect:_focusedElementInformation.elementRect
+        selectionRect:_didAccessoryTabInitiateFocus ? WebCore::FloatRect() : rectToRevealWhenZoomingToFocusedElement(_focusedElementInformation, _page->editorState())
+        insideFixed:_focusedElementInformation.insideFixedPosition
+        fontSize:_focusedElementInformation.nodeFontSize
+        minimumScale:_focusedElementInformation.minimumScaleFactor
+        maximumScale:_focusedElementInformation.maximumScaleFactorIgnoringAlwaysScalable
+        allowScaling:_focusedElementInformation.allowsUserScalingIgnoringAlwaysScalable && !currentUserInterfaceIdiomIsPad()
+        forceScroll:(_focusedElementInformation.inputMode == WebCore::InputMode::None) ? !currentUserInterfaceIdiomIsPad() : [self requiresAccessoryView]];
 }
 
 - (UIView *)inputView
 {
-    if (!hasAssistedNode(_assistedNodeInformation))
+    if (!hasFocusedElement(_focusedElementInformation))
         return nil;
 
-    if (_assistedNodeInformation.inputMode == WebCore::InputMode::None)
+    if (_focusedElementInformation.inputMode == WebCore::InputMode::None)
         return [[UIView new] autorelease];
 
     if (!_inputPeripheral) {
-        switch (_assistedNodeInformation.elementType) {
+        switch (_focusedElementInformation.elementType) {
         case WebKit::InputType::Select:
             _inputPeripheral = adoptNS([[WKFormSelectControl alloc] initWithView:self]);
             break;
@@ -1463,7 +1463,7 @@ static NSValue *nsSizeForTapHighlightBorderRadius(WebCore::IntSize borderRadius,
 
 - (CGRect)_selectionClipRect
 {
-    if (!hasAssistedNode(_assistedNodeInformation))
+    if (!hasFocusedElement(_focusedElementInformation))
         return CGRectNull;
     return _page->editorState().postLayoutData().selectionClipRect;
 }
@@ -1725,18 +1725,18 @@ static inline bool isSamePair(UIGestureRecognizer *a, UIGestureRecognizer *b, UI
         || gestureRecognizer == _nonBlockingDoubleTapGestureRecognizer
         || gestureRecognizer == _twoFingerDoubleTapGestureRecognizer) {
 
-        if (hasAssistedNode(_assistedNodeInformation)) {
+        if (hasFocusedElement(_focusedElementInformation)) {
             // Request information about the position with sync message.
             // If the assisted node is the same, prevent the gesture.
             if (![self ensurePositionInformationIsUpToDate:WebKit::InteractionInformationRequest(WebCore::roundedIntPoint(point))])
                 return NO;
-            if (_positionInformation.nodeAtPositionIsAssistedNode)
+            if (_positionInformation.nodeAtPositionIsFocusedElement)
                 return NO;
         }
     }
 
     if (gestureRecognizer == _highlightLongPressGestureRecognizer) {
-        if (hasAssistedNode(_assistedNodeInformation)) {
+        if (hasFocusedElement(_focusedElementInformation)) {
             // This is a different node than the assisted one.
             // Prevent the gesture if there is no node.
             // Allow the gesture if it is a node that wants highlight or if there is an action for it.
@@ -1770,9 +1770,9 @@ static inline bool isSamePair(UIGestureRecognizer *a, UIGestureRecognizer *b, UI
         if (![self ensurePositionInformationIsUpToDate:request])
             return NO;
 
-        if (hasAssistedNode(_assistedNodeInformation)) {
+        if (hasFocusedElement(_focusedElementInformation)) {
             // Prevent the gesture if it is the same node.
-            if (_positionInformation.nodeAtPositionIsAssistedNode)
+            if (_positionInformation.nodeAtPositionIsFocusedElement)
                 return NO;
         } else {
             // Prevent the gesture if there is no action for the node.
@@ -1877,8 +1877,8 @@ static inline bool isSamePair(UIGestureRecognizer *a, UIGestureRecognizer *b, UI
 #endif
 
     // If we're currently editing an assisted node, only allow the selection to move within that assisted node.
-    if (self.isAssistingNode)
-        return _positionInformation.nodeAtPositionIsAssistedNode;
+    if (self.isFocusingElement)
+        return _positionInformation.nodeAtPositionIsFocusedElement;
     
     // Don't allow double tap text gestures in noneditable content.
     if (gesture == UIWKGestureDoubleTap)
@@ -2141,7 +2141,7 @@ static void cancelPotentialTapIfNecessary(WKContentView* contentView)
 
 - (void)clearSelection
 {
-    [self _stopAssistingNode];
+    [self _elementDidBlur];
     _page->clearSelection();
 }
 
@@ -2198,10 +2198,10 @@ static void cancelPotentialTapIfNecessary(WKContentView* contentView)
     if ([_formInputSession customInputAccessoryView])
         return YES;
 
-    if (_assistedNodeInformation.inputMode == WebCore::InputMode::None)
+    if (_focusedElementInformation.inputMode == WebCore::InputMode::None)
         return NO;
 
-    switch (_assistedNodeInformation.elementType) {
+    switch (_focusedElementInformation.elementType) {
     case WebKit::InputType::None:
     case WebKit::InputType::Drawing:
         return NO;
@@ -2546,9 +2546,9 @@ WEBCORE_COMMAND_FOR_WEBVIEW(pasteAndMatchStyle);
 - (BOOL)canPerformActionForWebView:(SEL)action withSender:(id)sender
 {
     if (action == @selector(_nextAccessoryTab:))
-        return hasAssistedNode(_assistedNodeInformation) && _assistedNodeInformation.hasNextNode;
+        return hasFocusedElement(_focusedElementInformation) && _focusedElementInformation.hasNextNode;
     if (action == @selector(_previousAccessoryTab:))
-        return hasAssistedNode(_assistedNodeInformation) && _assistedNodeInformation.hasPreviousNode;
+        return hasFocusedElement(_focusedElementInformation) && _focusedElementInformation.hasPreviousNode;
 
     auto editorState = _page->editorState();
     if (action == @selector(_showTextStyleOptions:))
@@ -3055,9 +3055,9 @@ static void selectionChangedWithTouch(WKContentView *view, const WebCore::IntPoi
     [(UIWKTextInteractionAssistant *)[view interactionAssistant] selectionChangedWithTouchAt:(CGPoint)point withSelectionTouch:toUIWKSelectionTouch((WebKit::SelectionTouch)touch) withFlags:static_cast<UIWKSelectionFlags>(flags)];
 }
 
-- (BOOL)_isInteractingWithAssistedNode
+- (BOOL)_isInteractingWithFocusedElement
 {
-    return hasAssistedNode(_assistedNodeInformation);
+    return hasFocusedElement(_focusedElementInformation);
 }
 
 - (void)changeSelectionWithGestureAt:(CGPoint)point withGesture:(UIWKGestureType)gestureType withState:(UIGestureRecognizerState)state
@@ -3068,7 +3068,7 @@ static void selectionChangedWithTouch(WKContentView *view, const WebCore::IntPoi
 - (void)changeSelectionWithGestureAt:(CGPoint)point withGesture:(UIWKGestureType)gestureType withState:(UIGestureRecognizerState)state withFlags:(UIWKSelectionFlags)flags
 {
     _usingGestureForSelection = YES;
-    _page->selectWithGesture(WebCore::IntPoint(point), WebCore::CharacterGranularity, static_cast<uint32_t>(toGestureType(gestureType)), static_cast<uint32_t>(toGestureRecognizerState(state)), [self _isInteractingWithAssistedNode], [self, state, flags](const WebCore::IntPoint& point, uint32_t gestureType, uint32_t gestureState, uint32_t innerFlags, WebKit::CallbackBase::Error error) {
+    _page->selectWithGesture(WebCore::IntPoint(point), WebCore::CharacterGranularity, static_cast<uint32_t>(toGestureType(gestureType)), static_cast<uint32_t>(toGestureRecognizerState(state)), [self _isInteractingWithFocusedElement], [self, state, flags](const WebCore::IntPoint& point, uint32_t gestureType, uint32_t gestureState, uint32_t innerFlags, WebKit::CallbackBase::Error error) {
         selectionChangedWithGesture(self, point, gestureType, gestureState, flags | innerFlags, error);
         if (state == UIGestureRecognizerStateEnded || state == UIGestureRecognizerStateCancelled)
             _usingGestureForSelection = NO;
@@ -3148,7 +3148,7 @@ static void selectionChangedWithTouch(WKContentView *view, const WebCore::IntPoi
     UIWKSelectionCompletionHandler selectionHandler = [completionHandler copy];
     RetainPtr<WKContentView> view = self;
     
-    _page->selectPositionAtPoint(WebCore::IntPoint(point), [self _isInteractingWithAssistedNode], [view, selectionHandler](WebKit::CallbackBase::Error error) {
+    _page->selectPositionAtPoint(WebCore::IntPoint(point), [self _isInteractingWithFocusedElement], [view, selectionHandler](WebKit::CallbackBase::Error error) {
         selectionHandler();
         view->_usingGestureForSelection = NO;
         [selectionHandler release];
@@ -3161,7 +3161,7 @@ static void selectionChangedWithTouch(WKContentView *view, const WebCore::IntPoi
     UIWKSelectionCompletionHandler selectionHandler = [completionHandler copy];
     RetainPtr<WKContentView> view = self;
     
-    _page->selectPositionAtBoundaryWithDirection(WebCore::IntPoint(point), toWKTextGranularity(granularity), toWKSelectionDirection(direction), [self _isInteractingWithAssistedNode], [view, selectionHandler](WebKit::CallbackBase::Error error) {
+    _page->selectPositionAtBoundaryWithDirection(WebCore::IntPoint(point), toWKTextGranularity(granularity), toWKSelectionDirection(direction), [self _isInteractingWithFocusedElement], [view, selectionHandler](WebKit::CallbackBase::Error error) {
         selectionHandler();
         view->_usingGestureForSelection = NO;
         [selectionHandler release];
@@ -3187,7 +3187,7 @@ static void selectionChangedWithTouch(WKContentView *view, const WebCore::IntPoi
     UIWKSelectionCompletionHandler selectionHandler = [completionHandler copy];
     RetainPtr<WKContentView> view = self;
 
-    _page->selectTextWithGranularityAtPoint(WebCore::IntPoint(point), toWKTextGranularity(granularity), [self _isInteractingWithAssistedNode], [view, selectionHandler](WebKit::CallbackBase::Error error) {
+    _page->selectTextWithGranularityAtPoint(WebCore::IntPoint(point), toWKTextGranularity(granularity), [self _isInteractingWithFocusedElement], [view, selectionHandler](WebKit::CallbackBase::Error error) {
         selectionHandler();
         view->_usingGestureForSelection = NO;
         [selectionHandler release];
@@ -3208,7 +3208,7 @@ static void selectionChangedWithTouch(WKContentView *view, const WebCore::IntPoi
 {
     UIWKSelectionWithDirectionCompletionHandler selectionHandler = [completionHandler copy];
     
-    _page->updateSelectionWithExtentPoint(WebCore::IntPoint(point), [self _isInteractingWithAssistedNode], [selectionHandler](bool endIsMoving, WebKit::CallbackBase::Error error) {
+    _page->updateSelectionWithExtentPoint(WebCore::IntPoint(point), [self _isInteractingWithFocusedElement], [selectionHandler](bool endIsMoving, WebKit::CallbackBase::Error error) {
         selectionHandler(endIsMoving);
         [selectionHandler release];
     });
@@ -3218,7 +3218,7 @@ static void selectionChangedWithTouch(WKContentView *view, const WebCore::IntPoi
 {
     UIWKSelectionWithDirectionCompletionHandler selectionHandler = [completionHandler copy];
     
-    _page->updateSelectionWithExtentPointAndBoundary(WebCore::IntPoint(point), toWKTextGranularity(granularity), [self _isInteractingWithAssistedNode], [selectionHandler](bool endIsMoving, WebKit::CallbackBase::Error error) {
+    _page->updateSelectionWithExtentPointAndBoundary(WebCore::IntPoint(point), toWKTextGranularity(granularity), [self _isInteractingWithFocusedElement], [selectionHandler](bool endIsMoving, WebKit::CallbackBase::Error error) {
         selectionHandler(endIsMoving);
         [selectionHandler release];
     });
@@ -3351,7 +3351,7 @@ static void selectionChangedWithTouch(WKContentView *view, const WebCore::IntPoi
     _isChangingFocusUsingAccessoryTab = YES;
     [self beginSelectionChange];
     RetainPtr<WKContentView> view = self;
-    _page->focusNextAssistedNode(isNext, [view](WebKit::CallbackBase::Error) {
+    _page->focusNextFocusedElement(isNext, [view](WebKit::CallbackBase::Error) {
         [view endSelectionChange];
         [view reloadInputViews];
         view->_isChangingFocusUsingAccessoryTab = NO;
@@ -3363,7 +3363,7 @@ static void selectionChangedWithTouch(WKContentView *view, const WebCore::IntPoi
     auto completionHandlerCopy = Block_copy(completionHandler);
     RetainPtr<WKContentView> view = self;
     _page->setInitialFocus(selectingForward, false, WebKit::WebKeyboardEvent(), [view, completionHandlerCopy](WebKit::CallbackBase::Error) {
-        BOOL didBecomeFirstResponder = view->_assistedNodeInformation.elementType != WebKit::InputType::None && [view becomeFirstResponder];
+        BOOL didBecomeFirstResponder = view->_focusedElementInformation.elementType != WebKit::InputType::None && [view becomeFirstResponder];
         completionHandlerCopy(didBecomeFirstResponder);
         Block_release(completionHandlerCopy);
     });
@@ -3402,18 +3402,18 @@ static void selectionChangedWithTouch(WKContentView *view, const WebCore::IntPoi
 
 - (void)accessoryClear
 {
-    _page->setAssistedNodeValue(String());
+    _page->setFocusedElementValue(String());
 }
 
 - (void)_updateAccessory
 {
-    [_formAccessoryView setNextEnabled:_assistedNodeInformation.hasNextNode];
-    [_formAccessoryView setPreviousEnabled:_assistedNodeInformation.hasPreviousNode];
+    [_formAccessoryView setNextEnabled:_focusedElementInformation.hasNextNode];
+    [_formAccessoryView setPreviousEnabled:_focusedElementInformation.hasPreviousNode];
 
     if (currentUserInterfaceIdiomIsPad())
         [_formAccessoryView setClearVisible:NO];
     else {
-        switch (_assistedNodeInformation.elementType) {
+        switch (_focusedElementInformation.elementType) {
         case WebKit::InputType::Date:
         case WebKit::InputType::Month:
         case WebKit::InputType::DateTimeLocal:
@@ -3456,7 +3456,7 @@ static void selectionChangedWithTouch(WKContentView *view, const WebCore::IntPoi
     }
 #if ENABLE(DATALIST_ELEMENT)
     if ([textSuggestion isKindOfClass:[WKDataListTextSuggestion class]]) {
-        _page->setAssistedNodeValue([textSuggestion inputText]);
+        _page->setFocusedElementValue([textSuggestion inputText]);
         return;
     }
 #endif
@@ -3530,7 +3530,7 @@ static void selectionChangedWithTouch(WKContentView *view, const WebCore::IntPoi
     if (range)
         return;
 #if !PLATFORM(IOSMAC)
-    if (!hasAssistedNode(_assistedNodeInformation))
+    if (!hasFocusedElement(_focusedElementInformation))
         return;
 #endif
     [self clearSelection];
@@ -3806,23 +3806,23 @@ static NSString *contentTypeFromFieldName(WebCore::AutofillFieldName fieldName)
     if (!_traits)
         _traits = adoptNS([[UITextInputTraits alloc] init]);
 
-    [_traits setSecureTextEntry:_assistedNodeInformation.elementType == WebKit::InputType::Password || [_formInputSession forceSecureTextEntry]];
-    [_traits setShortcutConversionType:_assistedNodeInformation.elementType == WebKit::InputType::Password ? UITextShortcutConversionTypeNo : UITextShortcutConversionTypeDefault];
+    [_traits setSecureTextEntry:_focusedElementInformation.elementType == WebKit::InputType::Password || [_formInputSession forceSecureTextEntry]];
+    [_traits setShortcutConversionType:_focusedElementInformation.elementType == WebKit::InputType::Password ? UITextShortcutConversionTypeNo : UITextShortcutConversionTypeDefault];
 
-    if (!_assistedNodeInformation.formAction.isEmpty())
-        [_traits setReturnKeyType:(_assistedNodeInformation.elementType == WebKit::InputType::Search) ? UIReturnKeySearch : UIReturnKeyGo];
+    if (!_focusedElementInformation.formAction.isEmpty())
+        [_traits setReturnKeyType:(_focusedElementInformation.elementType == WebKit::InputType::Search) ? UIReturnKeySearch : UIReturnKeyGo];
 
-    if (_assistedNodeInformation.elementType == WebKit::InputType::Password || _assistedNodeInformation.elementType == WebKit::InputType::Email || _assistedNodeInformation.elementType == WebKit::InputType::URL || _assistedNodeInformation.formAction.contains("login")) {
+    if (_focusedElementInformation.elementType == WebKit::InputType::Password || _focusedElementInformation.elementType == WebKit::InputType::Email || _focusedElementInformation.elementType == WebKit::InputType::URL || _focusedElementInformation.formAction.contains("login")) {
         [_traits setAutocapitalizationType:UITextAutocapitalizationTypeNone];
         [_traits setAutocorrectionType:UITextAutocorrectionTypeNo];
     } else {
-        [_traits setAutocapitalizationType:toUITextAutocapitalize(_assistedNodeInformation.autocapitalizeType)];
-        [_traits setAutocorrectionType:_assistedNodeInformation.isAutocorrect ? UITextAutocorrectionTypeYes : UITextAutocorrectionTypeNo];
+        [_traits setAutocapitalizationType:toUITextAutocapitalize(_focusedElementInformation.autocapitalizeType)];
+        [_traits setAutocorrectionType:_focusedElementInformation.isAutocorrect ? UITextAutocorrectionTypeYes : UITextAutocorrectionTypeNo];
     }
 
-    switch (_assistedNodeInformation.inputMode) {
+    switch (_focusedElementInformation.inputMode) {
     case WebCore::InputMode::Unspecified:
-        switch (_assistedNodeInformation.elementType) {
+        switch (_focusedElementInformation.elementType) {
         case WebKit::InputType::Phone:
             [_traits setKeyboardType:UIKeyboardTypePhonePad];
             break;
@@ -3883,7 +3883,7 @@ static NSString *contentTypeFromFieldName(WebCore::AutofillFieldName fieldName)
         break;
     }
 
-    [_traits setTextContentType:contentTypeFromFieldName(_assistedNodeInformation.autofillFieldName)];
+    [_traits setTextContentType:contentTypeFromFieldName(_focusedElementInformation.autofillFieldName)];
 
     [self _updateInteractionTintColor];
 
@@ -4082,7 +4082,7 @@ static NSString *contentTypeFromFieldName(WebCore::AutofillFieldName fieldName)
     if (_page->editorState().isContentEditable)
         return NO;
 
-    if (_assistedNodeInformation.elementType == WebKit::InputType::Select)
+    if (_focusedElementInformation.elementType == WebKit::InputType::Select)
         return NO;
 
     return YES;
@@ -4351,14 +4351,14 @@ static NSString *contentTypeFromFieldName(WebCore::AutofillFieldName fieldName)
     [_textSelectionAssistant deactivateSelection];
 }
 
-- (const WebKit::AssistedNodeInformation&)assistedNodeInformation
+- (const WebKit::FocusedElementInformation&)focusedElementInformation
 {
-    return _assistedNodeInformation;
+    return _focusedElementInformation;
 }
 
-- (Vector<WebKit::OptionItem>&)assistedNodeSelectOptions
+- (Vector<WebKit::OptionItem>&)focusedSelectElementOptions
 {
-    return _assistedNodeInformation.selectOptions;
+    return _focusedElementInformation.selectOptions;
 }
 
 - (UIWebFormAccessory *)formAccessoryView
@@ -4386,7 +4386,7 @@ static bool shouldZoomToRevealSelectionRect(WebKit::InputType type)
     }
 }
 
-static WebCore::FloatRect rectToRevealWhenZoomingToFocusedElement(const WebKit::AssistedNodeInformation& elementInfo, const WebKit::EditorState& editorState)
+static WebCore::FloatRect rectToRevealWhenZoomingToFocusedElement(const WebKit::FocusedElementInformation& elementInfo, const WebKit::EditorState& editorState)
 {
     WebCore::IntRect elementInteractionRect(elementInfo.elementInteractionLocation, { 1, 1 });
     if (!shouldZoomToRevealSelectionRect(elementInfo.elementType))
@@ -4446,15 +4446,15 @@ static bool isAssistableInputType(WebKit::InputType type)
     return false;
 }
 
-- (void)_startAssistingNode:(const WebKit::AssistedNodeInformation&)information userIsInteracting:(BOOL)userIsInteracting blurPreviousNode:(BOOL)blurPreviousNode changingActivityState:(BOOL)changingActivityState userObject:(NSObject <NSSecureCoding> *)userObject
+- (void)_elementDidFocus:(const WebKit::FocusedElementInformation&)information userIsInteracting:(BOOL)userIsInteracting blurPreviousNode:(BOOL)blurPreviousNode changingActivityState:(BOOL)changingActivityState userObject:(NSObject <NSSecureCoding> *)userObject
 {
-    SetForScope<BOOL> isChangingFocusForScope { _isChangingFocus, hasAssistedNode(_assistedNodeInformation) };
+    SetForScope<BOOL> isChangingFocusForScope { _isChangingFocus, hasFocusedElement(_focusedElementInformation) };
     _inputViewUpdateDeferrer = nullptr;
 
     _didAccessoryTabInitiateFocus = _isChangingFocusUsingAccessoryTab;
 
     id <_WKInputDelegate> inputDelegate = [_webView _inputDelegate];
-    RetainPtr<WKFocusedElementInfo> focusedElementInfo = adoptNS([[WKFocusedElementInfo alloc] initWithAssistedNodeInformation:information isUserInitiated:userIsInteracting userObject:userObject]);
+    RetainPtr<WKFocusedElementInfo> focusedElementInfo = adoptNS([[WKFocusedElementInfo alloc] initWithFocusedElementInformation:information isUserInitiated:userIsInteracting userObject:userObject]);
 
     BOOL shouldShowKeyboard = NO;
     _WKFocusStartsInputSessionPolicy startInputSessionPolicy = _WKFocusStartsInputSessionPolicyAuto;
@@ -4501,7 +4501,7 @@ static bool isAssistableInputType(WebKit::InputType type)
     }
 
     if (blurPreviousNode)
-        [self _stopAssistingNode];
+        [self _elementDidBlur];
 
 #if HAVE(PENCILKIT)
     if (information.elementType == WebKit::InputType::Drawing)
@@ -4514,9 +4514,9 @@ static bool isAssistableInputType(WebKit::InputType type)
     if (!isAssistableInputType(information.elementType))
         return;
 
-    // FIXME: We should remove this check when we manage to send StartAssistingNode from the WebProcess
+    // FIXME: We should remove this check when we manage to send ElementDidFocus from the WebProcess
     // only when it is truly time to show the keyboard.
-    if (_assistedNodeInformation.elementType == information.elementType && _assistedNodeInformation.elementRect == information.elementRect)
+    if (_focusedElementInformation.elementType == information.elementType && _focusedElementInformation.elementRect == information.elementRect)
         return;
 
     [_webView _resetFocusPreservationCount];
@@ -4537,7 +4537,7 @@ static bool isAssistableInputType(WebKit::InputType type)
         [inputDelegate _webView:_webView willStartInputSession:_formInputSession.get()];
 
     BOOL editableChanged = [self setIsEditable:YES];
-    _assistedNodeInformation = information;
+    _focusedElementInformation = information;
     _inputPeripheral = nil;
     _traits = nil;
 
@@ -4547,7 +4547,7 @@ static bool isAssistableInputType(WebKit::InputType type)
 #if PLATFORM(WATCHOS)
     [self addFocusedFormControlOverlay];
     if (!_isChangingFocus)
-        [self presentViewControllerForCurrentAssistedNode];
+        [self presentViewControllerForCurrentFocusedElement];
 #else
     [self reloadInputViews];
 #endif
@@ -4568,11 +4568,11 @@ static bool isAssistableInputType(WebKit::InputType type)
         break;
     }
     
-    // The custom fixed position rect behavior is affected by -isAssistingNode, so if that changes we need to recompute rects.
+    // The custom fixed position rect behavior is affected by -isFocusingElement, so if that changes we need to recompute rects.
     if (editableChanged)
         [_webView _scheduleVisibleContentRectUpdate];
     
-    if (!shouldZoomToRevealSelectionRect(_assistedNodeInformation.elementType))
+    if (!shouldZoomToRevealSelectionRect(_focusedElementInformation.elementType))
         [self _zoomToRevealFocusedElement];
 
     [self _ensureFormAccessoryView];
@@ -4592,7 +4592,7 @@ static bool isAssistableInputType(WebKit::InputType type)
     [_webView didStartFormControlInteraction];
 }
 
-- (void)_stopAssistingNode
+- (void)_elementDidBlur
 {
     SetForScope<BOOL> isBlurringFocusedNodeForScope { _isBlurringFocusedNode, YES };
 
@@ -4611,7 +4611,7 @@ static bool isAssistableInputType(WebKit::InputType type)
 
     BOOL editableChanged = [self setIsEditable:NO];
 
-    _assistedNodeInformation.elementType = WebKit::InputType::None;
+    _focusedElementInformation.elementType = WebKit::InputType::None;
     _inputPeripheral = nil;
     _focusRequiresStrongPasswordAssistance = NO;
 
@@ -4626,7 +4626,7 @@ static bool isAssistableInputType(WebKit::InputType type)
         [self removeFocusedFormControlOverlay];
 #endif
 
-    // The custom fixed position rect behavior is affected by -isAssistingNode, so if that changes we need to recompute rects.
+    // The custom fixed position rect behavior is affected by -isFocusingElement, so if that changes we need to recompute rects.
     if (editableChanged)
         [_webView _scheduleVisibleContentRectUpdate];
 
@@ -4644,7 +4644,7 @@ static bool isAssistableInputType(WebKit::InputType type)
 
     // FIXME: If the initial writing direction just changed, we should wait until we get the next post-layout editor state
     // before zooming to reveal the selection rect.
-    if (shouldZoomToRevealSelectionRect(_assistedNodeInformation.elementType))
+    if (shouldZoomToRevealSelectionRect(_focusedElementInformation.elementType))
         [self _zoomToRevealFocusedElement];
 }
 
@@ -4665,18 +4665,18 @@ static bool isAssistableInputType(WebKit::InputType type)
     [keyboard setInitialDirection];
 }
 
-- (void)updateCurrentAssistedNodeInformation:(Function<void(bool didUpdate)>&&)callback
+- (void)updateCurrentFocusedElementInformation:(Function<void(bool didUpdate)>&&)callback
 {
     WeakObjCPtr<WKContentView> weakSelf { self };
-    auto identifierBeforeUpdate = _assistedNodeInformation.assistedNodeIdentifier;
-    _page->requestAssistedNodeInformation([callback = WTFMove(callback), identifierBeforeUpdate, weakSelf] (auto& info, auto error) {
-        if (!weakSelf || error != WebKit::CallbackBase::Error::None || info.assistedNodeIdentifier != identifierBeforeUpdate) {
+    auto identifierBeforeUpdate = _focusedElementInformation.focusedElementIdentifier;
+    _page->requestFocusedElementInformation([callback = WTFMove(callback), identifierBeforeUpdate, weakSelf] (auto& info, auto error) {
+        if (!weakSelf || error != WebKit::CallbackBase::Error::None || info.focusedElementIdentifier != identifierBeforeUpdate) {
             // If the assisted node may have changed in the meantime, don't overwrite assisted node information.
             callback(false);
             return;
         }
 
-        weakSelf.get()->_assistedNodeInformation = info;
+        weakSelf.get()->_focusedElementInformation = info;
         callback(true);
     });
 }
@@ -4717,7 +4717,7 @@ static bool isAssistableInputType(WebKit::InputType type)
     [self setInputDelegate:nil];
 }
 
-- (void)presentViewControllerForCurrentAssistedNode
+- (void)presentViewControllerForCurrentFocusedElement
 {
     [self dismissAllInputViewControllers:NO];
 
@@ -4728,7 +4728,7 @@ static bool isAssistableInputType(WebKit::InputType type)
 
     BOOL prefersModalPresentation = NO;
 
-    switch (_assistedNodeInformation.elementType) {
+    switch (_focusedElementInformation.elementType) {
     case WebKit::InputType::Select:
         _presentedFullScreenInputViewController = adoptNS([[WKSelectMenuListViewController alloc] initWithDelegate:self]);
         break;
@@ -4808,45 +4808,45 @@ static bool isAssistableInputType(WebKit::InputType type)
 - (void)focusedFormControlViewDidSubmit:(WKFocusedFormControlView *)view
 {
     [self insertText:@"\n"];
-    _page->blurAssistedNode();
+    _page->blurFocusedElement();
 }
 
 - (void)focusedFormControlViewDidCancel:(WKFocusedFormControlView *)view
 {
-    _page->blurAssistedNode();
+    _page->blurFocusedElement();
 }
 
 - (void)focusedFormControlViewDidBeginEditing:(WKFocusedFormControlView *)view
 {
-    [self updateCurrentAssistedNodeInformation:[weakSelf = WeakObjCPtr<WKContentView>(self)] (bool didUpdate) {
+    [self updateCurrentFocusedElementInformation:[weakSelf = WeakObjCPtr<WKContentView>(self)] (bool didUpdate) {
         if (!didUpdate)
             return;
 
         auto strongSelf = weakSelf.get();
-        [strongSelf presentViewControllerForCurrentAssistedNode];
+        [strongSelf presentViewControllerForCurrentFocusedElement];
         [strongSelf->_focusedFormControlView hide:YES];
     }];
 }
 
 - (CGRect)rectForFocusedFormControlView:(WKFocusedFormControlView *)view
 {
-    return [self convertRect:_assistedNodeInformation.elementRect toView:view];
+    return [self convertRect:_focusedElementInformation.elementRect toView:view];
 }
 
 - (CGRect)nextRectForFocusedFormControlView:(WKFocusedFormControlView *)view
 {
-    if (!_assistedNodeInformation.hasNextNode)
+    if (!_focusedElementInformation.hasNextNode)
         return CGRectNull;
 
-    return [self convertRect:_assistedNodeInformation.nextNodeRect toView:view];
+    return [self convertRect:_focusedElementInformation.nextNodeRect toView:view];
 }
 
 - (CGRect)previousRectForFocusedFormControlView:(WKFocusedFormControlView *)view
 {
-    if (!_assistedNodeInformation.hasPreviousNode)
+    if (!_focusedElementInformation.hasPreviousNode)
         return CGRectNull;
 
-    return [self convertRect:_assistedNodeInformation.previousNodeRect toView:view];
+    return [self convertRect:_focusedElementInformation.previousNodeRect toView:view];
 }
 
 - (UIScrollView *)scrollViewForFocusedFormControlView:(WKFocusedFormControlView *)view
@@ -4856,10 +4856,10 @@ static bool isAssistableInputType(WebKit::InputType type)
 
 - (NSString *)actionNameForFocusedFormControlView:(WKFocusedFormControlView *)view
 {
-    if (_assistedNodeInformation.formAction.isEmpty())
+    if (_focusedElementInformation.formAction.isEmpty())
         return nil;
 
-    switch (_assistedNodeInformation.elementType) {
+    switch (_focusedElementInformation.elementType) {
     case WebKit::InputType::Select:
     case WebKit::InputType::Time:
     case WebKit::InputType::Date:
@@ -4876,24 +4876,24 @@ static bool isAssistableInputType(WebKit::InputType type)
 
 - (void)focusedFormControlViewDidRequestNextNode:(WKFocusedFormControlView *)view
 {
-    if (_assistedNodeInformation.hasNextNode)
-        _page->focusNextAssistedNode(true);
+    if (_focusedElementInformation.hasNextNode)
+        _page->focusNextFocusedElement(true);
 }
 
 - (void)focusedFormControlViewDidRequestPreviousNode:(WKFocusedFormControlView *)view
 {
-    if (_assistedNodeInformation.hasPreviousNode)
-        _page->focusNextAssistedNode(false);
+    if (_focusedElementInformation.hasPreviousNode)
+        _page->focusNextFocusedElement(false);
 }
 
 - (BOOL)hasNextNodeForFocusedFormControlView:(WKFocusedFormControlView *)view
 {
-    return _assistedNodeInformation.hasNextNode;
+    return _focusedElementInformation.hasNextNode;
 }
 
 - (BOOL)hasPreviousNodeForFocusedFormControlView:(WKFocusedFormControlView *)view
 {
-    return _assistedNodeInformation.hasPreviousNode;
+    return _focusedElementInformation.hasPreviousNode;
 }
 
 - (void)focusedFormControllerDidUpdateSuggestions:(WKFocusedFormControlView *)view
@@ -4908,18 +4908,18 @@ static bool isAssistableInputType(WebKit::InputType type)
 
 - (void)selectMenu:(WKSelectMenuListViewController *)selectMenu didSelectItemAtIndex:(NSUInteger)index
 {
-    ASSERT(!_assistedNodeInformation.isMultiSelect);
-    _page->setAssistedNodeSelectedIndex(index, false);
+    ASSERT(!_focusedElementInformation.isMultiSelect);
+    _page->setFocusedElementSelectedIndex(index, false);
 }
 
 - (NSUInteger)numberOfItemsInSelectMenu:(WKSelectMenuListViewController *)selectMenu
 {
-    return self.assistedNodeSelectOptions.size();
+    return self.focusedSelectElementOptions.size();
 }
 
 - (NSString *)selectMenu:(WKSelectMenuListViewController *)selectMenu displayTextForItemAtIndex:(NSUInteger)index
 {
-    auto& options = self.assistedNodeSelectOptions;
+    auto& options = self.focusedSelectElementOptions;
     if (index >= options.size()) {
         ASSERT_NOT_REACHED();
         return @"";
@@ -4930,35 +4930,35 @@ static bool isAssistableInputType(WebKit::InputType type)
 
 - (void)selectMenu:(WKSelectMenuListViewController *)selectMenu didCheckItemAtIndex:(NSUInteger)index checked:(BOOL)checked
 {
-    ASSERT(_assistedNodeInformation.isMultiSelect);
-    if (index >= self.assistedNodeSelectOptions.size()) {
+    ASSERT(_focusedElementInformation.isMultiSelect);
+    if (index >= self.focusedSelectElementOptions.size()) {
         ASSERT_NOT_REACHED();
         return;
     }
 
-    auto& option = self.assistedNodeSelectOptions[index];
+    auto& option = self.focusedSelectElementOptions[index];
     if (option.isSelected == checked) {
         ASSERT_NOT_REACHED();
         return;
     }
 
-    _page->setAssistedNodeSelectedIndex(index, true);
+    _page->setFocusedElementSelectedIndex(index, true);
     option.isSelected = checked;
 }
 
 - (BOOL)selectMenuUsesMultipleSelection:(WKSelectMenuListViewController *)selectMenu
 {
-    return _assistedNodeInformation.isMultiSelect;
+    return _focusedElementInformation.isMultiSelect;
 }
 
 - (BOOL)selectMenu:(WKSelectMenuListViewController *)selectMenu hasSelectedOptionAtIndex:(NSUInteger)index
 {
-    if (index >= self.assistedNodeSelectOptions.size()) {
+    if (index >= self.focusedSelectElementOptions.size()) {
         ASSERT_NOT_REACHED();
         return NO;
     }
 
-    return self.assistedNodeSelectOptions[index].isSelected;
+    return self.focusedSelectElementOptions[index].isSelected;
 }
 
 #endif // PLATFORM(WATCHOS)
@@ -5000,7 +5000,7 @@ static bool isAssistableInputType(WebKit::InputType type)
         return;
 
     auto& postLayoutData = state.postLayoutData();
-    if (hasAssistedNode(_assistedNodeInformation)) {
+    if (hasFocusedElement(_focusedElementInformation)) {
         if (postLayoutData.elementIsTransparent)
             [self _beginSuppressingSelectionAssistantForReason:WebKit::FocusedElementIsTransparent];
         else
@@ -5744,14 +5744,14 @@ static NSArray<NSItemProvider *> *extractItemProvidersFromDropSession(id <UIDrop
 
 - (NSDictionary *)_autofillContext
 {
-    BOOL provideStrongPasswordAssistance = _focusRequiresStrongPasswordAssistance && _assistedNodeInformation.elementType == WebKit::InputType::Password;
-    if (!hasAssistedNode(_assistedNodeInformation) || (!_assistedNodeInformation.acceptsAutofilledLoginCredentials && !provideStrongPasswordAssistance))
+    BOOL provideStrongPasswordAssistance = _focusRequiresStrongPasswordAssistance && _focusedElementInformation.elementType == WebKit::InputType::Password;
+    if (!hasFocusedElement(_focusedElementInformation) || (!_focusedElementInformation.acceptsAutofilledLoginCredentials && !provideStrongPasswordAssistance))
         return nil;
 
     if (provideStrongPasswordAssistance)
         return @{ @"_automaticPasswordKeyboard" : @YES };
 
-    NSURL *platformURL = _assistedNodeInformation.representingPageURL;
+    NSURL *platformURL = _focusedElementInformation.representingPageURL;
     if (platformURL)
         return @{ @"_WebViewURL" : platformURL };
 
@@ -6094,12 +6094,12 @@ static NSArray<NSItemProvider *> *extractItemProvidersFromDropSession(id <UIDrop
     BOOL shouldRevealFocusOverlay = NO;
     // In the case where there's nothing the user could potentially do besides dismiss the overlay, we can just automatically without asking the delegate.
     if ([_webView._inputDelegate respondsToSelector:@selector(_webView:shouldRevealFocusOverlayForInputSession:)]
-        && ([self actionNameForFocusedFormControlView:_focusedFormControlView.get()] || _assistedNodeInformation.hasNextNode || _assistedNodeInformation.hasPreviousNode))
+        && ([self actionNameForFocusedFormControlView:_focusedFormControlView.get()] || _focusedElementInformation.hasNextNode || _focusedElementInformation.hasPreviousNode))
         shouldRevealFocusOverlay = [_webView._inputDelegate _webView:_webView shouldRevealFocusOverlayForInputSession:_formInputSession.get()];
 
     if (shouldRevealFocusOverlay) {
         [_focusedFormControlView show:NO];
-        [self updateCurrentAssistedNodeInformation:[weakSelf = WeakObjCPtr<WKContentView>(self)] (bool didUpdate) {
+        [self updateCurrentFocusedElementInformation:[weakSelf = WeakObjCPtr<WKContentView>(self)] (bool didUpdate) {
             if (!didUpdate)
                 return;
 
@@ -6108,7 +6108,7 @@ static NSArray<NSItemProvider *> *extractItemProvidersFromDropSession(id <UIDrop
             [focusedFormController engageFocusedFormControlNavigation];
         }];
     } else
-        _page->blurAssistedNode();
+        _page->blurFocusedElement();
 
     // The Quickboard view controller passed into this delegate method is not necessarily the view controller we originally presented;
     // this happens in the case when the user chooses an input method (e.g. scribble) and a new Quickboard view controller is presented.
@@ -6146,7 +6146,7 @@ static NSArray<NSItemProvider *> *extractItemProvidersFromDropSession(id <UIDrop
 
 - (BOOL)allowsLanguageSelectionMenuForListViewController:(PUICQuickboardViewController *)controller
 {
-    switch (_assistedNodeInformation.elementType) {
+    switch (_focusedElementInformation.elementType) {
     case WebKit::InputType::ContentEditable:
     case WebKit::InputType::Text:
     case WebKit::InputType::TextArea:
@@ -6170,26 +6170,26 @@ static NSArray<NSItemProvider *> *extractItemProvidersFromDropSession(id <UIDrop
 
 - (NSString *)inputLabelTextForViewController:(PUICQuickboardViewController *)controller
 {
-    if (!_assistedNodeInformation.label.isEmpty())
-        return _assistedNodeInformation.label;
+    if (!_focusedElementInformation.label.isEmpty())
+        return _focusedElementInformation.label;
 
-    if (!_assistedNodeInformation.ariaLabel.isEmpty())
-        return _assistedNodeInformation.ariaLabel;
+    if (!_focusedElementInformation.ariaLabel.isEmpty())
+        return _focusedElementInformation.ariaLabel;
 
-    if (!_assistedNodeInformation.title.isEmpty())
-        return _assistedNodeInformation.title;
+    if (!_focusedElementInformation.title.isEmpty())
+        return _focusedElementInformation.title;
 
-    return _assistedNodeInformation.placeholder;
+    return _focusedElementInformation.placeholder;
 }
 
 - (NSString *)initialValueForViewController:(PUICQuickboardViewController *)controller
 {
-    return _assistedNodeInformation.value;
+    return _focusedElementInformation.value;
 }
 
 - (BOOL)shouldDisplayInputContextViewForListViewController:(PUICQuickboardViewController *)controller
 {
-    switch (_assistedNodeInformation.elementType) {
+    switch (_focusedElementInformation.elementType) {
     case WebKit::InputType::ContentEditable:
     case WebKit::InputType::Text:
     case WebKit::InputType::Password:
@@ -6208,7 +6208,7 @@ static NSArray<NSItemProvider *> *extractItemProvidersFromDropSession(id <UIDrop
 
 - (WKNumberPadInputMode)numericInputModeForListViewController:(WKTextInputListViewController *)controller
 {
-    switch (_assistedNodeInformation.elementType) {
+    switch (_focusedElementInformation.elementType) {
     case WebKit::InputType::Phone:
         return WKNumberPadInputModeTelephone;
     case WebKit::InputType::Number:
@@ -6222,7 +6222,7 @@ static NSArray<NSItemProvider *> *extractItemProvidersFromDropSession(id <UIDrop
 
 - (NSString *)textContentTypeForListViewController:(WKTextInputListViewController *)controller
 {
-    switch (_assistedNodeInformation.elementType) {
+    switch (_focusedElementInformation.elementType) {
     case WebKit::InputType::Password:
         return UITextContentTypePassword;
     case WebKit::InputType::URL:
@@ -6233,10 +6233,10 @@ static NSArray<NSItemProvider *> *extractItemProvidersFromDropSession(id <UIDrop
         return UITextContentTypeTelephoneNumber;
     default:
         // The element type alone is insufficient to infer content type; fall back to autofill data.
-        if (NSString *contentType = contentTypeFromFieldName(_assistedNodeInformation.autofillFieldName))
+        if (NSString *contentType = contentTypeFromFieldName(_focusedElementInformation.autofillFieldName))
             return contentType;
 
-        if (_assistedNodeInformation.isAutofillableUsernameField)
+        if (_focusedElementInformation.isAutofillableUsernameField)
             return UITextContentTypeUsername;
 
         return nil;
@@ -6256,7 +6256,7 @@ static NSArray<NSItemProvider *> *extractItemProvidersFromDropSession(id <UIDrop
 
 - (BOOL)allowsDictationInputForListViewController:(PUICQuickboardViewController *)controller
 {
-    return _assistedNodeInformation.elementType != WebKit::InputType::Password;
+    return _focusedElementInformation.elementType != WebKit::InputType::Password;
 }
 
 #endif // PLATFORM(WATCHOS)

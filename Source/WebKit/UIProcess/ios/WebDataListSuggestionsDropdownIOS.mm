@@ -190,7 +190,7 @@ void WebDataListSuggestionsDropdownIOS::didSelectOption(const String& selectedOp
 
 - (NSTextAlignment)textAlignment
 {
-    return _view.assistedNodeInformation.isRTL ? NSTextAlignmentRight : NSTextAlignmentLeft;
+    return _view.focusedElementInformation.isRTL ? NSTextAlignmentRight : NSTextAlignmentLeft;
 }
 
 @end

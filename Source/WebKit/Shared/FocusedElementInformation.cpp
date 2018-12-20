@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2014-2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -24,7 +24,7 @@
  */
 
 #include "config.h"
-#include "AssistedNodeInformation.h"
+#include "FocusedElementInformation.h"
 
 #include "WebCoreArgumentCoders.h"
 
@@ -61,7 +61,7 @@ Optional<OptionItem> OptionItem::decode(IPC::Decoder& decoder)
     return WTFMove(result);
 }
 
-void AssistedNodeInformation::encode(IPC::Encoder& encoder) const
+void FocusedElementInformation::encode(IPC::Encoder& encoder) const
 {
     encoder << elementRect;
     encoder << elementInteractionLocation;
@@ -98,7 +98,7 @@ void AssistedNodeInformation::encode(IPC::Encoder& encoder) const
     encoder << label;
     encoder << ariaLabel;
     encoder << embeddedViewID;
-    encoder << assistedNodeIdentifier;
+    encoder << focusedElementIdentifier;
 #if ENABLE(DATALIST_ELEMENT)
     encoder << hasSuggestions;
 #if ENABLE(INPUT_TYPE_COLOR)
@@ -107,7 +107,7 @@ void AssistedNodeInformation::encode(IPC::Encoder& encoder) const
 #endif
 }
 
-bool AssistedNodeInformation::decode(IPC::Decoder& decoder, AssistedNodeInformation& result)
+bool FocusedElementInformation::decode(IPC::Decoder& decoder, FocusedElementInformation& result)
 {
     if (!decoder.decode(result.elementRect))
         return false;
@@ -214,7 +214,7 @@ bool AssistedNodeInformation::decode(IPC::Decoder& decoder, AssistedNodeInformat
     if (!decoder.decode(result.embeddedViewID))
         return false;
 
-    if (!decoder.decode(result.assistedNodeIdentifier))
+    if (!decoder.decode(result.focusedElementIdentifier))
         return false;
 
 #if ENABLE(DATALIST_ELEMENT)

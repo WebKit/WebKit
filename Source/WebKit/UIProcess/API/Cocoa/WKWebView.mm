@@ -3151,7 +3151,7 @@ static int32_t activeOrientation(WKWebView *webView)
 
 - (BOOL)_shouldUpdateKeyboardWithInfo:(NSDictionary *)keyboardInfo
 {
-    if ([_contentView isAssistingNode])
+    if ([_contentView isFocusingElement])
         return YES;
 
     NSNumber *isLocalKeyboard = [keyboardInfo valueForKey:UIKeyboardIsLocalUserInfoKey];

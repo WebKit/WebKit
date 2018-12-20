@@ -41,7 +41,7 @@ namespace WebKit {
 struct InteractionInformationAtPosition {
     InteractionInformationRequest request;
 
-    bool nodeAtPositionIsAssistedNode { false };
+    bool nodeAtPositionIsFocusedElement { false };
 #if ENABLE(DATA_INTERACTION)
     bool hasSelectionAtPosition { false };
 #endif

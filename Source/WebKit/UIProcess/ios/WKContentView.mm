@@ -300,7 +300,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     return toAPI(_page.get());
 }
 
-- (BOOL)isAssistingNode
+- (BOOL)isFocusingElement
 {
     return [self isEditable];
 }
@@ -544,7 +544,7 @@ static void storeAccessibilityRemoteConnectionInformation(id element, pid_t pid,
 
 - (void)_didCommitLoadForMainFrame
 {
-    [self _stopAssistingNode];
+    [self _elementDidBlur];
     [self _cancelLongPressGestureRecognizer];
     [_webView _didCommitLoadForMainFrame];
 }

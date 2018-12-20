@@ -25,7 +25,7 @@
 
 #if PLATFORM(IOS_FAMILY)
 
-#import "AssistedNodeInformation.h"
+#import "FocusedElementInformation.h"
 #import "UIKitSPI.h"
 #import "WKFormPeripheral.h"
 #import "WKFormPopover.h"

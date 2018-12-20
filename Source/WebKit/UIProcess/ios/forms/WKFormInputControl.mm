@@ -87,7 +87,7 @@ static const NSTimeInterval kMillisecondsPerSecond = 1000;
     _view = view;
     _shouldRemoveTimeZoneInformation = NO;
     _isTimeInput = NO;
-    switch (view.assistedNodeInformation.elementType) {
+    switch (view.focusedElementInformation.elementType) {
     case InputType::Date:
         _formatString = kDateFormatString;
         break;
@@ -111,7 +111,7 @@ static const NSTimeInterval kMillisecondsPerSecond = 1000;
     _datePicker.get().datePickerMode = mode;
     _datePicker.get().hidden = NO;
     
-    if ([self shouldPresentGregorianCalendar:view.assistedNodeInformation])
+    if ([self shouldPresentGregorianCalendar:view.focusedElementInformation])
         _datePicker.get().calendar = [NSCalendar calendarWithIdentifier:NSCalendarIdentifierGregorian];
     
     [_datePicker addTarget:self action:@selector(_dateChangeHandler:) forControlEvents:UIControlEventValueChanged];
@@ -130,7 +130,7 @@ static const NSTimeInterval kMillisecondsPerSecond = 1000;
     [super dealloc];
 }
 
-- (BOOL)shouldPresentGregorianCalendar:(const AssistedNodeInformation&)nodeInfo
+- (BOOL)shouldPresentGregorianCalendar:(const FocusedElementInformation&)nodeInfo
 {
     return nodeInfo.autofillFieldName == WebCore::AutofillFieldName::CcExpMonth
         || nodeInfo.autofillFieldName == WebCore::AutofillFieldName::CcExp
@@ -163,7 +163,7 @@ static const NSTimeInterval kMillisecondsPerSecond = 1000;
 - (void)_dateChangedSetAsNumber
 {
     NSDate *date = [_datePicker date];
-    [_view page]->setAssistedNodeValueAsNumber(([date timeIntervalSince1970] + [self _timeZoneOffsetFromGMT:date]) * kMillisecondsPerSecond);
+    [_view page]->setFocusedElementValueAsNumber(([date timeIntervalSince1970] + [self _timeZoneOffsetFromGMT:date]) * kMillisecondsPerSecond);
 }
 
 - (RetainPtr<NSDateFormatter>)dateFormatterForPicker
@@ -181,7 +181,7 @@ static const NSTimeInterval kMillisecondsPerSecond = 1000;
     // Force English locale because that is what HTML5 value parsing expects.
     RetainPtr<NSDateFormatter> dateFormatter = [self dateFormatterForPicker];
 
-    [_view page]->setAssistedNodeValue([dateFormatter stringFromDate:[_datePicker date]]);
+    [_view page]->setFocusedElementValue([dateFormatter stringFromDate:[_datePicker date]]);
 }
 
 - (void)_dateChanged
@@ -208,8 +208,8 @@ static const NSTimeInterval kMillisecondsPerSecond = 1000;
 
     // Currently no value for the <input>. Start the picker with the current time.
     // Also, update the actual <input> value.
-    NSString *value = _view.assistedNodeInformation.value;
-    if (_view.assistedNodeInformation.value.isEmpty()) {
+    NSString *value = _view.focusedElementInformation.value;
+    if (_view.focusedElementInformation.value.isEmpty()) {
         [_datePicker setDate:[NSDate date]];
         [self _dateChanged];
         return;
@@ -225,7 +225,7 @@ static const NSTimeInterval kMillisecondsPerSecond = 1000;
     }
 
     // Convert the number value to a date object for the fields affected by timezones.
-    NSTimeInterval secondsSince1970 = _view.assistedNodeInformation.valueAsNumber / kMillisecondsPerSecond;
+    NSTimeInterval secondsSince1970 = _view.focusedElementInformation.valueAsNumber / kMillisecondsPerSecond;
     NSInteger timeZoneOffset = [self _timeZoneOffsetFromGMT:[NSDate dateWithTimeIntervalSince1970:secondsSince1970]];
     NSTimeInterval adjustedSecondsSince1970 = secondsSince1970 - timeZoneOffset;
     [_datePicker setDate:[NSDate dateWithTimeIntervalSince1970:adjustedSecondsSince1970]];
@@ -249,7 +249,7 @@ static const NSTimeInterval kMillisecondsPerSecond = 1000;
 
     UIDatePickerMode mode;
 
-    switch (view.assistedNodeInformation.elementType) {
+    switch (view.focusedElementInformation.elementType) {
     case InputType::Date:
         mode = UIDatePickerModeDate;
         break;
@@ -334,7 +334,7 @@ static const NSTimeInterval kMillisecondsPerSecond = 1000;
 
 - (void)clear:(id)sender
 {
-    [_view page]->setAssistedNodeValue(String());
+    [_view page]->setFocusedElementValue(String());
 }
 
 - (id)initWithView:(WKContentView *)view datePickerMode:(UIDatePickerMode)mode
@@ -349,7 +349,7 @@ static const NSTimeInterval kMillisecondsPerSecond = 1000;
     CGFloat popoverHeight = _viewController.get().view.frame.size.height;
     [_viewController setPreferredContentSize:CGSizeMake(popoverWidth, popoverHeight)];
     [_viewController setEdgesForExtendedLayout:UIRectEdgeNone];
-    [_viewController setTitle:_view.assistedNodeInformation.title];
+    [_viewController setTitle:_view.focusedElementInformation.title];
 
     // Always have a navigation controller with a clear button, and a title if the input element has a title.
     RetainPtr<UINavigationController> navigationController = adoptNS([[UINavigationController alloc] initWithRootViewController:_viewController.get()]);

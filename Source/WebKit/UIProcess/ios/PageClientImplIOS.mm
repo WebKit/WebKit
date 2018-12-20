@@ -555,7 +555,7 @@ void PageClientImpl::restorePageCenterAndScale(Optional<WebCore::FloatPoint> cen
     [m_webView _restorePageStateToUnobscuredCenter:center scale:scale];
 }
 
-void PageClientImpl::startAssistingNode(const AssistedNodeInformation& nodeInformation, bool userIsInteracting, bool blurPreviousNode, bool changingActivityState, API::Object* userData)
+void PageClientImpl::elementDidFocus(const FocusedElementInformation& nodeInformation, bool userIsInteracting, bool blurPreviousNode, bool changingActivityState, API::Object* userData)
 {
     MESSAGE_CHECK(!userData || userData->type() == API::Object::Type::Data);
 
@@ -570,17 +570,17 @@ void PageClientImpl::startAssistingNode(const AssistedNodeInformation& nodeInfor
         }
     }
 
-    [m_contentView _startAssistingNode:nodeInformation userIsInteracting:userIsInteracting blurPreviousNode:blurPreviousNode changingActivityState:changingActivityState userObject:userObject];
+    [m_contentView _elementDidFocus:nodeInformation userIsInteracting:userIsInteracting blurPreviousNode:blurPreviousNode changingActivityState:changingActivityState userObject:userObject];
 }
 
-bool PageClientImpl::isAssistingNode()
+bool PageClientImpl::isFocusingElement()
 {
-    return [m_contentView isAssistingNode];
+    return [m_contentView isFocusingElement];
 }
 
-void PageClientImpl::stopAssistingNode()
+void PageClientImpl::elementDidBlur()
 {
-    [m_contentView _stopAssistingNode];
+    [m_contentView _elementDidBlur];
 }
 
 void PageClientImpl::didReceiveEditorStateUpdateAfterFocus()

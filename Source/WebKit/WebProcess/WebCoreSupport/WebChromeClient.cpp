@@ -200,17 +200,17 @@ void WebChromeClient::unfocus()
 
 void WebChromeClient::elementDidFocus(Element& element)
 {
-    m_page.elementDidFocus(&element);
+    m_page.elementDidFocus(element);
 }
 
 void WebChromeClient::elementDidRefocus(Element& element)
 {
-    m_page.elementDidRefocus(&element);
+    m_page.elementDidRefocus(element);
 }
 
 void WebChromeClient::elementDidBlur(Element& element)
 {
-    m_page.elementDidBlur(&element);
+    m_page.elementDidBlur(element);
 }
 
 void WebChromeClient::makeFirstResponder()

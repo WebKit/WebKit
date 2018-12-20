@@ -6483,7 +6483,7 @@ void WebPageProxy::resetStateAfterProcessExited(ProcessTerminationReason termina
 
 #if PLATFORM(IOS_FAMILY)
     m_waitingForPostLayoutEditorStateUpdateAfterFocusingElement = false;
-    m_deferredNodeAssistanceArguments = nullptr;
+    m_deferredElementDidFocusArguments = nullptr;
     m_activityToken = nullptr;
 #endif
 

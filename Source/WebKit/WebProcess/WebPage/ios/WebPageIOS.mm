@@ -29,7 +29,6 @@
 #if PLATFORM(IOS_FAMILY)
 
 #import "AccessibilityIOS.h"
-#import "AssistedNodeInformation.h"
 #import "DataReference.h"
 #import "DrawingArea.h"
 #import "EditingRange.h"
@@ -241,10 +240,10 @@ void WebPage::platformEditorState(Frame& frame, EditorState& result, IncludePost
     }
     postLayoutData.insideFixedPosition = startNodeIsInsideFixedPosition || endNodeIsInsideFixedPosition;
     if (!selection.isNone()) {
-        if (m_assistedNode && m_assistedNode->renderer()) {
-            postLayoutData.selectionClipRect = view->contentsToRootView(m_assistedNode->renderer()->absoluteBoundingBoxRect());
-            postLayoutData.caretColor = m_assistedNode->renderer()->style().caretColor();
-            postLayoutData.elementIsTransparent = m_assistedNode->renderer()->isTransparentRespectingParentFrames();
+        if (m_focusedElement && m_focusedElement->renderer()) {
+            postLayoutData.selectionClipRect = view->contentsToRootView(m_focusedElement->renderer()->absoluteBoundingBoxRect());
+            postLayoutData.caretColor = m_focusedElement->renderer()->style().caretColor();
+            postLayoutData.elementIsTransparent = m_focusedElement->renderer()->isTransparentRespectingParentFrames();
         }
         computeEditableRootHasContentAndPlainText(selection, postLayoutData);
     }
@@ -615,7 +614,7 @@ void WebPage::completeSyntheticClick(Node* nodeRespondingToClick, const WebCore:
     // If the node has been focused by JavaScript without user interaction, the
     // keyboard is not on screen.
     if (newFocusedElement && newFocusedElement == oldFocusedElement)
-        elementDidRefocus(newFocusedElement.get());
+        elementDidRefocus(*newFocusedElement);
 
     if (!tapWasHandled || !nodeRespondingToClick || !nodeRespondingToClick->isElementNode())
         send(Messages::WebPageProxy::DidNotHandleTapAsClick(roundedIntPoint(location)));
@@ -643,13 +642,13 @@ void WebPage::handleTap(const IntPoint& point, uint64_t lastLayerTreeTransaction
         handleSyntheticClick(nodeRespondingToClick, adjustedPoint);
 }
 
-void WebPage::requestAssistedNodeInformation(WebKit::CallbackID callbackID)
+void WebPage::requestFocusedElementInformation(WebKit::CallbackID callbackID)
 {
-    AssistedNodeInformation info;
-    if (m_assistedNode)
-        getAssistedNodeInformation(info);
+    FocusedElementInformation info;
+    if (m_focusedElement)
+        getFocusedElementInformation(info);
 
-    send(Messages::WebPageProxy::AssistedNodeInformationCallback(info, callbackID));
+    send(Messages::WebPageProxy::FocusedElementInformationCallback(info, callbackID));
 }
 
 #if ENABLE(DATA_INTERACTION)
@@ -874,29 +873,31 @@ void WebPage::inspectorNodeSearchEndedAtPosition(const FloatPoint& position)
         node->inspect();
 }
 
-void WebPage::blurAssistedNode()
+void WebPage::blurFocusedElement()
 {
-    if (is<Element>(m_assistedNode.get()))
-        downcast<Element>(*m_assistedNode).blur();
+    if (!m_focusedElement)
+        return;
+
+    m_focusedElement->blur();
 }
 
-void WebPage::setAssistedNodeValue(const String& value)
+void WebPage::setFocusedElementValue(const String& value)
 {
     // FIXME: should also handle the case of HTMLSelectElement.
-    if (is<HTMLInputElement>(m_assistedNode.get()))
-        downcast<HTMLInputElement>(*m_assistedNode).setValue(value, DispatchInputAndChangeEvent);
+    if (is<HTMLInputElement>(m_focusedElement.get()))
+        downcast<HTMLInputElement>(*m_focusedElement).setValue(value, DispatchInputAndChangeEvent);
 }
 
-void WebPage::setAssistedNodeValueAsNumber(double value)
+void WebPage::setFocusedElementValueAsNumber(double value)
 {
-    if (is<HTMLInputElement>(m_assistedNode.get()))
-        downcast<HTMLInputElement>(*m_assistedNode).setValueAsNumber(value, DispatchInputAndChangeEvent);
+    if (is<HTMLInputElement>(m_focusedElement.get()))
+        downcast<HTMLInputElement>(*m_focusedElement).setValueAsNumber(value, DispatchInputAndChangeEvent);
 }
 
-void WebPage::setAssistedNodeSelectedIndex(uint32_t index, bool allowMultipleSelection)
+void WebPage::setFocusedElementSelectedIndex(uint32_t index, bool allowMultipleSelection)
 {
-    if (is<HTMLSelectElement>(m_assistedNode.get()))
-        downcast<HTMLSelectElement>(*m_assistedNode).optionSelectedByUser(index, true, allowMultipleSelection);
+    if (is<HTMLSelectElement>(m_focusedElement.get()))
+        downcast<HTMLSelectElement>(*m_focusedElement).optionSelectedByUser(index, true, allowMultipleSelection);
 }
 
 void WebPage::showInspectorHighlight(const WebCore::Highlight& highlight)
@@ -935,13 +936,13 @@ void WebPage::setForceAlwaysUserScalable(bool userScalable)
     m_viewportConfiguration.setForceAlwaysUserScalable(userScalable);
 }
 
-static FloatQuad innerFrameQuad(const Frame& frame, const Node& assistedNode)
+static FloatQuad innerFrameQuad(const Frame& frame, const Element& focusedElement)
 {
     frame.document()->updateLayoutIgnorePendingStylesheets();
     RenderElement* renderer = nullptr;
-    if (assistedNode.hasTagName(HTMLNames::textareaTag) || assistedNode.hasTagName(HTMLNames::inputTag) || assistedNode.hasTagName(HTMLNames::selectTag))
-        renderer = downcast<RenderElement>(assistedNode.renderer());
-    else if (Element* rootEditableElement = assistedNode.rootEditableElement())
+    if (focusedElement.hasTagName(HTMLNames::textareaTag) || focusedElement.hasTagName(HTMLNames::inputTag) || focusedElement.hasTagName(HTMLNames::selectTag))
+        renderer = focusedElement.renderer();
+    else if (auto* rootEditableElement = focusedElement.rootEditableElement())
         renderer = rootEditableElement->renderer();
     
     if (!renderer)
@@ -957,11 +958,11 @@ static FloatQuad innerFrameQuad(const Frame& frame, const Node& assistedNode)
     return FloatQuad(boundingBox);
 }
 
-static IntPoint constrainPoint(const IntPoint& point, const Frame& frame, const Node& assistedNode)
+static IntPoint constrainPoint(const IntPoint& point, const Frame& frame, const Element& focusedElement)
 {
-    ASSERT(&assistedNode.document() == frame.document());
+    ASSERT(&focusedElement.document() == frame.document());
     const int DEFAULT_CONSTRAIN_INSET = 2;
-    IntRect innerFrame = innerFrameQuad(frame, assistedNode).enclosingBoundingBox();
+    IntRect innerFrame = innerFrameQuad(frame, focusedElement).enclosingBoundingBox();
     IntPoint constrainedPoint = point;
 
     int minX = innerFrame.x() + DEFAULT_CONSTRAIN_INSET;
@@ -1089,10 +1090,10 @@ RefPtr<Range> WebPage::rangeForWebSelectionAtPosition(const IntPoint& point, con
     return range->collapsed() ? nullptr : range;
 }
 
-void WebPage::selectWithGesture(const IntPoint& point, uint32_t granularity, uint32_t gestureType, uint32_t gestureState, bool isInteractingWithAssistedNode, CallbackID callbackID)
+void WebPage::selectWithGesture(const IntPoint& point, uint32_t granularity, uint32_t gestureType, uint32_t gestureState, bool isInteractingWithFocusedElement, CallbackID callbackID)
 {
     auto& frame = m_page->focusController().focusedOrMainFrame();
-    VisiblePosition position = visiblePositionInFocusedNodeForPoint(frame, point, isInteractingWithAssistedNode);
+    VisiblePosition position = visiblePositionInFocusedNodeForPoint(frame, point, isInteractingWithFocusedElement);
 
     if (position.isNull()) {
         send(Messages::WebPageProxy::GestureCallback(point, gestureType, gestureState, 0, callbackID));
@@ -1462,8 +1463,8 @@ void WebPage::moveSelectionByOffset(int32_t offset, CallbackID callbackID)
     
 void WebPage::startAutoscrollAtPosition(const WebCore::FloatPoint& positionInWindow)
 {
-    if (m_assistedNode && m_assistedNode->renderer())
-        m_page->mainFrame().eventHandler().startSelectionAutoscroll(m_assistedNode->renderer(), positionInWindow);
+    if (m_focusedElement && m_focusedElement->renderer())
+        m_page->mainFrame().eventHandler().startSelectionAutoscroll(m_focusedElement->renderer(), positionInWindow);
     else {
         Frame& frame = m_page->focusController().focusedOrMainFrame();
         VisibleSelection selection = frame.selection().selection();
@@ -1563,27 +1564,27 @@ void WebPage::getRectsAtSelectionOffsetWithText(int32_t offset, const String& te
     send(Messages::WebPageProxy::SelectionRectsCallback(selectionRects, callbackID));
 }
 
-VisiblePosition WebPage::visiblePositionInFocusedNodeForPoint(const Frame& frame, const IntPoint& point, bool isInteractingWithAssistedNode)
+VisiblePosition WebPage::visiblePositionInFocusedNodeForPoint(const Frame& frame, const IntPoint& point, bool isInteractingWithFocusedElement)
 {
     IntPoint adjustedPoint(frame.view()->rootViewToContents(point));
-    IntPoint constrainedPoint = m_assistedNode && isInteractingWithAssistedNode ? constrainPoint(adjustedPoint, frame, *m_assistedNode) : adjustedPoint;
+    IntPoint constrainedPoint = m_focusedElement && isInteractingWithFocusedElement ? constrainPoint(adjustedPoint, frame, *m_focusedElement) : adjustedPoint;
     return frame.visiblePositionForPoint(constrainedPoint);
 }
 
-void WebPage::selectPositionAtPoint(const WebCore::IntPoint& point, bool isInteractingWithAssistedNode, CallbackID callbackID)
+void WebPage::selectPositionAtPoint(const WebCore::IntPoint& point, bool isInteractingWithFocusedElement, CallbackID callbackID)
 {
     auto& frame = m_page->focusController().focusedOrMainFrame();
-    VisiblePosition position = visiblePositionInFocusedNodeForPoint(frame, point, isInteractingWithAssistedNode);
+    VisiblePosition position = visiblePositionInFocusedNodeForPoint(frame, point, isInteractingWithFocusedElement);
     
     if (position.isNotNull())
         frame.selection().setSelectedRange(Range::create(*frame.document(), position, position).ptr(), position.affinity(), WebCore::FrameSelection::ShouldCloseTyping::Yes, UserTriggered);
     send(Messages::WebPageProxy::VoidCallback(callbackID));
 }
 
-void WebPage::selectPositionAtBoundaryWithDirection(const WebCore::IntPoint& point, uint32_t granularity, uint32_t direction, bool isInteractingWithAssistedNode, CallbackID callbackID)
+void WebPage::selectPositionAtBoundaryWithDirection(const WebCore::IntPoint& point, uint32_t granularity, uint32_t direction, bool isInteractingWithFocusedElement, CallbackID callbackID)
 {
     auto& frame = m_page->focusController().focusedOrMainFrame();
-    VisiblePosition position = visiblePositionInFocusedNodeForPoint(frame, point, isInteractingWithAssistedNode);
+    VisiblePosition position = visiblePositionInFocusedNodeForPoint(frame, point, isInteractingWithFocusedElement);
 
     if (position.isNotNull()) {
         position = positionOfNextBoundaryOfGranularity(position, static_cast<WebCore::TextGranularity>(granularity), static_cast<SelectionDirection>(direction));
@@ -1607,9 +1608,9 @@ void WebPage::moveSelectionAtBoundaryWithDirection(uint32_t granularity, uint32_
     send(Messages::WebPageProxy::VoidCallback(callbackID));
 }
 
-RefPtr<Range> WebPage::rangeForGranularityAtPoint(Frame& frame, const WebCore::IntPoint& point, uint32_t granularity, bool isInteractingWithAssistedNode)
+RefPtr<Range> WebPage::rangeForGranularityAtPoint(Frame& frame, const WebCore::IntPoint& point, uint32_t granularity, bool isInteractingWithFocusedElement)
 {
-    VisiblePosition position = visiblePositionInFocusedNodeForPoint(frame, point, isInteractingWithAssistedNode);
+    VisiblePosition position = visiblePositionInFocusedNodeForPoint(frame, point, isInteractingWithFocusedElement);
 
     RefPtr<Range> range;
     switch (static_cast<WebCore::TextGranularity>(granularity)) {
@@ -1637,11 +1638,11 @@ static inline bool rectIsTooBigForSelection(const IntRect& blockRect, const Fram
     return blockRect.height() > frame.view()->unobscuredContentRect().height() * factor;
 }
 
-void WebPage::selectTextWithGranularityAtPoint(const WebCore::IntPoint& point, uint32_t granularity, bool isInteractingWithAssistedNode, CallbackID callbackID)
+void WebPage::selectTextWithGranularityAtPoint(const WebCore::IntPoint& point, uint32_t granularity, bool isInteractingWithFocusedElement, CallbackID callbackID)
 {
     auto& frame = m_page->focusController().focusedOrMainFrame();
-    RefPtr<Range> range = rangeForGranularityAtPoint(frame, point, granularity, isInteractingWithAssistedNode);
-    if (!isInteractingWithAssistedNode) {
+    RefPtr<Range> range = rangeForGranularityAtPoint(frame, point, granularity, isInteractingWithFocusedElement);
+    if (!isInteractingWithFocusedElement) {
         m_blockSelectionDesiredSize.setWidth(blockSelectionStartWidth);
         m_blockSelectionDesiredSize.setHeight(blockSelectionStartHeight);
         m_currentBlockSelection = nullptr;
@@ -1649,7 +1650,7 @@ void WebPage::selectTextWithGranularityAtPoint(const WebCore::IntPoint& point, u
         if (renderer && renderer->style().preserveNewline())
             m_blockRectForTextSelection = renderer->absoluteBoundingBoxRect(true);
         else {
-            auto paragraphRange = enclosingTextUnitOfGranularity(visiblePositionInFocusedNodeForPoint(frame, point, isInteractingWithAssistedNode), ParagraphGranularity, DirectionForward);
+            auto paragraphRange = enclosingTextUnitOfGranularity(visiblePositionInFocusedNodeForPoint(frame, point, isInteractingWithFocusedElement), ParagraphGranularity, DirectionForward);
             if (paragraphRange && !paragraphRange->collapsed())
                 m_blockRectForTextSelection = selectionBoxForRange(paragraphRange.get());
         }
@@ -1670,11 +1671,11 @@ void WebPage::beginSelectionInDirection(uint32_t direction, CallbackID callbackI
     send(Messages::WebPageProxy::UnsignedCallback(m_selectionAnchor == Start, callbackID));
 }
 
-void WebPage::updateSelectionWithExtentPointAndBoundary(const WebCore::IntPoint& point, uint32_t granularity, bool isInteractingWithAssistedNode, CallbackID callbackID)
+void WebPage::updateSelectionWithExtentPointAndBoundary(const WebCore::IntPoint& point, uint32_t granularity, bool isInteractingWithFocusedElement, CallbackID callbackID)
 {
     auto& frame = m_page->focusController().focusedOrMainFrame();
-    VisiblePosition position = visiblePositionInFocusedNodeForPoint(frame, point, isInteractingWithAssistedNode);
-    RefPtr<Range> newRange = rangeForGranularityAtPoint(frame, point, granularity, isInteractingWithAssistedNode);
+    VisiblePosition position = visiblePositionInFocusedNodeForPoint(frame, point, isInteractingWithFocusedElement);
+    RefPtr<Range> newRange = rangeForGranularityAtPoint(frame, point, granularity, isInteractingWithFocusedElement);
     
     if (position.isNull() || !m_initialSelection || !newRange) {
         send(Messages::WebPageProxy::UnsignedCallback(false, callbackID));
@@ -1699,10 +1700,10 @@ void WebPage::updateSelectionWithExtentPointAndBoundary(const WebCore::IntPoint&
     send(Messages::WebPageProxy::UnsignedCallback(selectionStart == m_initialSelection->startPosition(), callbackID));
 }
 
-void WebPage::updateSelectionWithExtentPoint(const WebCore::IntPoint& point, bool isInteractingWithAssistedNode, CallbackID callbackID)
+void WebPage::updateSelectionWithExtentPoint(const WebCore::IntPoint& point, bool isInteractingWithFocusedElement, CallbackID callbackID)
 {
     auto& frame = m_page->focusController().focusedOrMainFrame();
-    VisiblePosition position = visiblePositionInFocusedNodeForPoint(frame, point, isInteractingWithAssistedNode);
+    VisiblePosition position = visiblePositionInFocusedNodeForPoint(frame, point, isInteractingWithFocusedElement);
 
     if (position.isNull()) {
         send(Messages::WebPageProxy::UnsignedCallback(false, callbackID));
@@ -2086,15 +2087,15 @@ void WebPage::getPositionInformation(const InteractionInformationRequest& reques
     FloatPoint adjustedPoint;
     Node* hitNode = m_page->mainFrame().nodeRespondingToClickEvents(request.point, adjustedPoint);
 
-    info.nodeAtPositionIsAssistedNode = (hitNode == m_assistedNode);
-    if (m_assistedNode) {
+    info.nodeAtPositionIsFocusedElement = hitNode == m_focusedElement;
+    if (m_focusedElement) {
         const Frame& frame = m_page->focusController().focusedOrMainFrame();
         if (frame.editor().hasComposition()) {
             const uint32_t kHitAreaWidth = 66;
             const uint32_t kHitAreaHeight = 66;
             FrameView& view = *frame.view();
             IntPoint adjustedPoint(view.rootViewToContents(request.point));
-            IntPoint constrainedPoint = m_assistedNode ? constrainPoint(adjustedPoint, frame, *m_assistedNode) : adjustedPoint;
+            IntPoint constrainedPoint = m_focusedElement ? constrainPoint(adjustedPoint, frame, *m_focusedElement) : adjustedPoint;
             VisiblePosition position = frame.visiblePositionForPoint(constrainedPoint);
 
             RefPtr<Range> compositionRange = frame.editor().compositionRange();
@@ -2336,9 +2337,9 @@ static inline Element* nextAssistableElement(Node* startNode, Page& page, bool i
     return nextElement;
 }
 
-void WebPage::focusNextAssistedNode(bool isForward, CallbackID callbackID)
+void WebPage::focusNextFocusedElement(bool isForward, CallbackID callbackID)
 {
-    Element* nextElement = nextAssistableElement(m_assistedNode.get(), *m_page, isForward);
+    Element* nextElement = nextAssistableElement(m_focusedElement.get(), *m_page, isForward);
     m_userIsInteracting = true;
     if (nextElement)
         nextElement->focus();
@@ -2359,15 +2360,15 @@ static IntRect elementRectInRootViewCoordinates(const Node& node, const Frame& f
     return view->contentsToRootView(renderer->absoluteBoundingBoxRect());
 }
 
-void WebPage::getAssistedNodeInformation(AssistedNodeInformation& information)
+void WebPage::getFocusedElementInformation(FocusedElementInformation& information)
 {
     layoutIfNeeded();
 
     information.elementInteractionLocation = m_lastInteractionLocation;
 
-    if (RenderObject* renderer = m_assistedNode->renderer()) {
-        Frame& elementFrame = m_page->focusController().focusedOrMainFrame();
-        information.elementRect = elementRectInRootViewCoordinates(*m_assistedNode, elementFrame);
+    if (auto* renderer = m_focusedElement->renderer()) {
+        auto& elementFrame = m_page->focusController().focusedOrMainFrame();
+        information.elementRect = elementRectInRootViewCoordinates(*m_focusedElement, elementFrame);
         information.nodeFontSize = renderer->style().fontDescription().computedSize();
         information.elementIsTransparent = renderer->isTransparentRespectingParentFrames();
 
@@ -2376,7 +2377,7 @@ void WebPage::getAssistedNodeInformation(AssistedNodeInformation& information)
         information.insideFixedPosition = inFixed;
         information.isRTL = renderer->style().direction() == TextDirection::RTL;
 
-        FrameView* frameView = elementFrame.view();
+        auto* frameView = elementFrame.view();
         if (inFixed && elementFrame.isMainFrame() && !frameView->frame().settings().visualViewportEnabled()) {
             IntRect currentFixedPositionRect = frameView->customFixedPositionLayoutRect();
             frameView->setCustomFixedPositionLayoutRect(frameView->renderView()->documentRect());
@@ -2398,20 +2399,20 @@ void WebPage::getAssistedNodeInformation(AssistedNodeInformation& information)
     information.maximumScaleFactorIgnoringAlwaysScalable = maximumPageScaleFactorIgnoringAlwaysScalable();
     information.allowsUserScaling = m_viewportConfiguration.allowsUserScaling();
     information.allowsUserScalingIgnoringAlwaysScalable = m_viewportConfiguration.allowsUserScalingIgnoringAlwaysScalable();
-    if (auto* nextElement = nextAssistableElement(m_assistedNode.get(), *m_page, true)) {
+    if (auto* nextElement = nextAssistableElement(m_focusedElement.get(), *m_page, true)) {
         if (auto* frame = nextElement->document().frame())
             information.nextNodeRect = elementRectInRootViewCoordinates(*nextElement, *frame);
         information.hasNextNode = true;
     }
-    if (auto* previousElement = nextAssistableElement(m_assistedNode.get(), *m_page, false)) {
+    if (auto* previousElement = nextAssistableElement(m_focusedElement.get(), *m_page, false)) {
         if (auto* frame = previousElement->document().frame())
             information.previousNodeRect = elementRectInRootViewCoordinates(*previousElement, *frame);
         information.hasPreviousNode = true;
     }
-    information.assistedNodeIdentifier = m_currentAssistedNodeIdentifier;
+    information.focusedElementIdentifier = m_currentFocusedElementIdentifier;
 
-    if (is<LabelableElement>(*m_assistedNode)) {
-        auto labels = downcast<LabelableElement>(*m_assistedNode).labels();
+    if (is<LabelableElement>(*m_focusedElement)) {
+        auto labels = downcast<LabelableElement>(*m_focusedElement).labels();
         Vector<Ref<Element>> associatedLabels;
         for (unsigned index = 0; index < labels->length(); ++index) {
             if (is<Element>(labels->item(index)) && labels->item(index)->renderer())
@@ -2426,14 +2427,11 @@ void WebPage::getAssistedNodeInformation(AssistedNodeInformation& information)
         }
     }
 
-    if (is<Element>(m_assistedNode.get())) {
-        auto& element = downcast<Element>(*m_assistedNode);
-        information.title = element.title();
-        information.ariaLabel = element.attributeWithoutSynchronization(HTMLNames::aria_labelAttr);
-    }
+    information.title = m_focusedElement->title();
+    information.ariaLabel = m_focusedElement->attributeWithoutSynchronization(HTMLNames::aria_labelAttr);
 
-    if (is<HTMLSelectElement>(*m_assistedNode)) {
-        HTMLSelectElement& element = downcast<HTMLSelectElement>(*m_assistedNode);
+    if (is<HTMLSelectElement>(*m_focusedElement)) {
+        HTMLSelectElement& element = downcast<HTMLSelectElement>(*m_focusedElement);
         information.elementType = InputType::Select;
         const Vector<HTMLElement*>& items = element.listItems();
         size_t count = items.size();
@@ -2454,8 +2452,8 @@ void WebPage::getAssistedNodeInformation(AssistedNodeInformation& information)
         }
         information.selectedIndex = element.selectedIndex();
         information.isMultiSelect = element.multiple();
-    } else if (is<HTMLTextAreaElement>(*m_assistedNode)) {
-        HTMLTextAreaElement& element = downcast<HTMLTextAreaElement>(*m_assistedNode);
+    } else if (is<HTMLTextAreaElement>(*m_focusedElement)) {
+        HTMLTextAreaElement& element = downcast<HTMLTextAreaElement>(*m_focusedElement);
         information.autocapitalizeType = element.autocapitalizeType();
         information.isAutocorrect = element.shouldAutocorrect();
         information.elementType = InputType::TextArea;
@@ -2464,14 +2462,14 @@ void WebPage::getAssistedNodeInformation(AssistedNodeInformation& information)
         information.autofillFieldName = WebCore::toAutofillFieldName(element.autofillData().fieldName);
         information.placeholder = element.attributeWithoutSynchronization(HTMLNames::placeholderAttr);
         information.inputMode = element.canonicalInputMode();
-    } else if (is<HTMLInputElement>(*m_assistedNode)) {
-        HTMLInputElement& element = downcast<HTMLInputElement>(*m_assistedNode);
+    } else if (is<HTMLInputElement>(*m_focusedElement)) {
+        HTMLInputElement& element = downcast<HTMLInputElement>(*m_focusedElement);
         HTMLFormElement* form = element.form();
         if (form)
             information.formAction = form->getURLAttribute(WebCore::HTMLNames::actionAttr);
         if (auto autofillElements = WebCore::AutofillElements::computeAutofillElements(element)) {
             information.acceptsAutofilledLoginCredentials = true;
-            information.isAutofillableUsernameField = autofillElements->username() == m_assistedNode;
+            information.isAutofillableUsernameField = autofillElements->username() == m_focusedElement;
         }
         information.representingPageURL = element.document().urlForBindings();
         information.autocapitalizeType = element.autocapitalizeType();
@@ -2529,13 +2527,13 @@ void WebPage::getAssistedNodeInformation(AssistedNodeInformation& information)
         information.value = element.value();
         information.valueAsNumber = element.valueAsNumber();
         information.autofillFieldName = WebCore::toAutofillFieldName(element.autofillData().fieldName);
-    } else if (is<HTMLImageElement>(*m_assistedNode) && downcast<HTMLImageElement>(*m_assistedNode).hasEditableImageAttribute()) {
+    } else if (is<HTMLImageElement>(*m_focusedElement) && downcast<HTMLImageElement>(*m_focusedElement).hasEditableImageAttribute()) {
         information.elementType = InputType::Drawing;
-        information.embeddedViewID = downcast<HTMLImageElement>(*m_assistedNode).editableImageViewID();
-    } else if (m_assistedNode->hasEditableStyle()) {
+        information.embeddedViewID = downcast<HTMLImageElement>(*m_focusedElement).editableImageViewID();
+    } else if (m_focusedElement->hasEditableStyle()) {
         information.elementType = InputType::ContentEditable;
-        if (is<HTMLElement>(*m_assistedNode)) {
-            auto& assistedElement = downcast<HTMLElement>(*m_assistedNode);
+        if (is<HTMLElement>(*m_focusedElement)) {
+            auto& assistedElement = downcast<HTMLElement>(*m_focusedElement);
             information.isAutocorrect = assistedElement.shouldAutocorrect();
             information.autocapitalizeType = assistedElement.autocapitalizeType();
             information.inputMode = assistedElement.canonicalInputMode();
@@ -2549,8 +2547,8 @@ void WebPage::getAssistedNodeInformation(AssistedNodeInformation& information)
 
 void WebPage::autofillLoginCredentials(const String& username, const String& password)
 {
-    if (is<HTMLInputElement>(m_assistedNode.get())) {
-        if (auto autofillElements = AutofillElements::computeAutofillElements(downcast<HTMLInputElement>(*m_assistedNode)))
+    if (is<HTMLInputElement>(m_focusedElement.get())) {
+        if (auto autofillElements = AutofillElements::computeAutofillElements(downcast<HTMLInputElement>(*m_focusedElement)))
             autofillElements->autofill(username, password);
     }
 }
