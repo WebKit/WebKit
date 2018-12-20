@@ -983,69 +983,75 @@ void Session::findElements(const String& strategy, const String& selector, FindE
         return;
     }
 
-    RefPtr<JSON::Array> arguments = JSON::Array::create();
-    arguments->pushString(JSON::Value::create(strategy)->toJSONString());
-    if (rootElementID.isEmpty())
-        arguments->pushString(JSON::Value::null()->toJSONString());
-    else
-        arguments->pushString(createElement(rootElementID)->toJSONString());
-    arguments->pushString(JSON::Value::create(selector)->toJSONString());
-    arguments->pushString(JSON::Value::create(mode == FindElementsMode::Single)->toJSONString());
-    arguments->pushString(JSON::Value::create(m_implicitWaitTimeout.milliseconds())->toJSONString());
-
-    RefPtr<JSON::Object> parameters = JSON::Object::create();
-    parameters->setString("browsingContextHandle"_s, m_toplevelBrowsingContext.value());
-    if (m_currentBrowsingContext)
-        parameters->setString("frameHandle"_s, m_currentBrowsingContext.value());
-    parameters->setString("function"_s, FindNodesJavaScript);
-    parameters->setArray("arguments"_s, WTFMove(arguments));
-    parameters->setBoolean("expectsImplicitCallbackArgument"_s, true);
-    // If there's an implicit wait, use one second more as callback timeout.
-    if (m_implicitWaitTimeout)
-        parameters->setInteger("callbackTimeout"_s, Seconds(m_implicitWaitTimeout + 1_s).millisecondsAs<int>());
-
-    m_host->sendCommandToBackend("evaluateJavaScriptFunction"_s, WTFMove(parameters), [this, protectedThis = makeRef(*this), mode, completionHandler = WTFMove(completionHandler)](SessionHost::CommandResponse&& response) {
-        if (response.isError || !response.responseObject) {
-            completionHandler(CommandResult::fail(WTFMove(response.responseObject)));
+    handleUserPrompts([this, strategy, selector, mode, rootElementID, completionHandler = WTFMove(completionHandler)](CommandResult&& result) mutable {
+        if (result.isError()) {
+            completionHandler(WTFMove(result));
             return;
         }
-        String valueString;
-        if (!response.responseObject->getString("result"_s, valueString)) {
-            completionHandler(CommandResult::fail(CommandResult::ErrorCode::UnknownError));
-            return;
-        }
-        RefPtr<JSON::Value> resultValue;
-        if (!JSON::Value::parseJSON(valueString, resultValue)) {
-            completionHandler(CommandResult::fail(CommandResult::ErrorCode::UnknownError));
-            return;
-        }
+        RefPtr<JSON::Array> arguments = JSON::Array::create();
+        arguments->pushString(JSON::Value::create(strategy)->toJSONString());
+        if (rootElementID.isEmpty())
+            arguments->pushString(JSON::Value::null()->toJSONString());
+        else
+            arguments->pushString(createElement(rootElementID)->toJSONString());
+        arguments->pushString(JSON::Value::create(selector)->toJSONString());
+        arguments->pushString(JSON::Value::create(mode == FindElementsMode::Single)->toJSONString());
+        arguments->pushString(JSON::Value::create(m_implicitWaitTimeout.milliseconds())->toJSONString());
 
-        switch (mode) {
-        case FindElementsMode::Single: {
-            RefPtr<JSON::Object> elementObject = createElement(WTFMove(resultValue));
-            if (!elementObject) {
-                completionHandler(CommandResult::fail(CommandResult::ErrorCode::NoSuchElement));
+        RefPtr<JSON::Object> parameters = JSON::Object::create();
+        parameters->setString("browsingContextHandle"_s, m_toplevelBrowsingContext.value());
+        if (m_currentBrowsingContext)
+            parameters->setString("frameHandle"_s, m_currentBrowsingContext.value());
+        parameters->setString("function"_s, FindNodesJavaScript);
+        parameters->setArray("arguments"_s, WTFMove(arguments));
+        parameters->setBoolean("expectsImplicitCallbackArgument"_s, true);
+        // If there's an implicit wait, use one second more as callback timeout.
+        if (m_implicitWaitTimeout)
+            parameters->setInteger("callbackTimeout"_s, Seconds(m_implicitWaitTimeout + 1_s).millisecondsAs<int>());
+
+        m_host->sendCommandToBackend("evaluateJavaScriptFunction"_s, WTFMove(parameters), [this, protectedThis = makeRef(*this), mode, completionHandler = WTFMove(completionHandler)](SessionHost::CommandResponse&& response) {
+            if (response.isError || !response.responseObject) {
+                completionHandler(CommandResult::fail(WTFMove(response.responseObject)));
                 return;
             }
-            completionHandler(CommandResult::success(WTFMove(elementObject)));
-            break;
-        }
-        case FindElementsMode::Multiple: {
-            RefPtr<JSON::Array> elementsArray;
-            if (!resultValue->asArray(elementsArray)) {
-                completionHandler(CommandResult::fail(CommandResult::ErrorCode::NoSuchElement));
+            String valueString;
+            if (!response.responseObject->getString("result"_s, valueString)) {
+                completionHandler(CommandResult::fail(CommandResult::ErrorCode::UnknownError));
                 return;
             }
-            RefPtr<JSON::Array> elementObjectsArray = JSON::Array::create();
-            unsigned elementsArrayLength = elementsArray->length();
-            for (unsigned i = 0; i < elementsArrayLength; ++i) {
-                if (auto elementObject = createElement(elementsArray->get(i)))
-                    elementObjectsArray->pushObject(WTFMove(elementObject));
+            RefPtr<JSON::Value> resultValue;
+            if (!JSON::Value::parseJSON(valueString, resultValue)) {
+                completionHandler(CommandResult::fail(CommandResult::ErrorCode::UnknownError));
+                return;
             }
-            completionHandler(CommandResult::success(WTFMove(elementObjectsArray)));
-            break;
-        }
-        }
+
+            switch (mode) {
+            case FindElementsMode::Single: {
+                RefPtr<JSON::Object> elementObject = createElement(WTFMove(resultValue));
+                if (!elementObject) {
+                    completionHandler(CommandResult::fail(CommandResult::ErrorCode::NoSuchElement));
+                    return;
+                }
+                completionHandler(CommandResult::success(WTFMove(elementObject)));
+                break;
+            }
+            case FindElementsMode::Multiple: {
+                RefPtr<JSON::Array> elementsArray;
+                if (!resultValue->asArray(elementsArray)) {
+                    completionHandler(CommandResult::fail(CommandResult::ErrorCode::NoSuchElement));
+                    return;
+                }
+                RefPtr<JSON::Array> elementObjectsArray = JSON::Array::create();
+                unsigned elementsArrayLength = elementsArray->length();
+                for (unsigned i = 0; i < elementsArrayLength; ++i) {
+                    if (auto elementObject = createElement(elementsArray->get(i)))
+                        elementObjectsArray->pushObject(WTFMove(elementObject));
+                }
+                completionHandler(CommandResult::success(WTFMove(elementObjectsArray)));
+                break;
+            }
+            }
+        });
     });
 }
 
