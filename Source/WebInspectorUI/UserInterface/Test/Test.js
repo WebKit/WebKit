@@ -165,7 +165,7 @@ WI.assumingMainTarget = () => WI.mainTarget;
 WI.isDebugUIEnabled = () => false;
 
 WI.unlocalizedString = (string) => string;
-WI.UIString = (string) => string;
+WI.UIString = (string, key, comment) => string;
 
 WI.indentString = () => "    ";
 

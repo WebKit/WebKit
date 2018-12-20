@@ -41,23 +41,25 @@ WI.unlocalizedString = function(string)
     return string;
 };
 
-WI.UIString = function(string)
+WI.UIString = function(string, key, comment)
 {
     if (WI.dontLocalizeUserInterface)
         return string;
 
-    if (window.localizedStrings && string in window.localizedStrings)
-        return window.localizedStrings[string];
+    key = key || string;
+
+    if (window.localizedStrings && key in window.localizedStrings)
+        return window.localizedStrings[key];
 
     if (!window.localizedStrings)
-        console.error(`Attempted to load localized string "${string}" before localizedStrings was initialized.`);
+        console.error(`Attempted to load localized string "${key}" before localizedStrings was initialized.`, comment);
 
     if (!this._missingLocalizedStrings)
         this._missingLocalizedStrings = {};
 
-    if (!(string in this._missingLocalizedStrings)) {
-        console.error("Localized string \"" + string + "\" was not found.");
-        this._missingLocalizedStrings[string] = true;
+    if (!(key in this._missingLocalizedStrings)) {
+        console.error(`Localized string "${key}" was not found.`, comment);
+        this._missingLocalizedStrings[key] = true;
     }
 
     return "LOCALIZED STRING NOT FOUND";

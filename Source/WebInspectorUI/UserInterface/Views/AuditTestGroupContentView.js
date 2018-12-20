@@ -65,7 +65,8 @@ WI.AuditTestGroupContentView = class AuditTestGroupContentView extends WI.AuditT
 
         this._percentageTextElement = document.createElement("span");
 
-        String.format(WI.UIString("%s%%"), [this._percentageTextElement], String.standardFormatters, this._percentageContainer, (a, b) => {
+        const format = WI.UIString("%s%%", "Percentage (of audits)", "The number of tests that passed expressed as a percentage, followed by a literal %.");
+        String.format(format, [this._percentageTextElement], String.standardFormatters, this._percentageContainer, (a, b) => {
             a.append(b);
             return a;
         });

@@ -56,7 +56,6 @@ localizedStrings["%s cannot be modified"] = "%s cannot be modified";
 localizedStrings["%s delay"] = "%s delay";
 localizedStrings["%s eval\n%s async"] = "%s eval\n%s async";
 localizedStrings["%s interval"] = "%s interval";
-localizedStrings["%s%%"] = "%s%%";
 localizedStrings["(Action %s)"] = "(Action %s)";
 localizedStrings["(Disk)"] = "(Disk)";
 localizedStrings["(Index)"] = "(Index)";
@@ -672,6 +671,8 @@ localizedStrings["Path"] = "Path";
 localizedStrings["Pause Processing"] = "Pause Processing";
 localizedStrings["Pause Reason"] = "Pause Reason";
 localizedStrings["Pause script execution (%s or %s)"] = "Pause script execution (%s or %s)";
+/* The number of tests that passed expressed as a percentage, followed by a literal %. */
+localizedStrings["Percentage (of audits)"] = "%s%%";
 localizedStrings["Ping"] = "Ping";
 localizedStrings["Ping Frame"] = "Ping Frame";
 localizedStrings["Pings"] = "Pings";

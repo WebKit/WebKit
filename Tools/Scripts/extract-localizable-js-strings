@@ -74,7 +74,7 @@ for my $file (sort @files) {
         chomp;
 
         # Handle WebInspector strings. Prints a warning if a non-string literal is passed to WI.UIString().
-        HandleUIString($1, $1, "", $file, $.) while s/WI\.UIString\("([^"]+)"\)//;
+        HandleUIString($1, $2 || $1, $3 || "", $file, $.) while s/WI\.UIString\("([^"]+)"(?:,\s*"([^"]+)"(?:,\s*"([^"]+)")?)?\)//;
         print "$file:$.:WARNING: $&\n" while s/WI\.UIString\(.*?\)//;
 
         # Handle strings for other projects that also use this script.
@@ -151,6 +151,7 @@ if ($sawError) {
 my $localizedStrings = "var localizedStrings = new Object;\n\n";
 
 for my $key (sort keys %commentByKey) {
+    $localizedStrings .= "/* $commentByKey{$key} */\n" if length $commentByKey{$key};
     $localizedStrings .= "localizedStrings[\"$key\"] = \"$stringByKey{$key}\";\n";
 }
 
