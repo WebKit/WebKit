@@ -1131,36 +1131,60 @@ test/built-ins/RegExp/named-groups/unicode-malformed.js:
 test/built-ins/RegExp/named-groups/unicode-property-names.js:
   default: 'SyntaxError: Invalid regular expression: invalid group specifier name'
   strict mode: 'SyntaxError: Invalid regular expression: invalid group specifier name'
+test/built-ins/RegExp/property-escapes/binary-properties-with-value.js:
+  default: "TypeError: assert.throws.early is not a function. (In 'assert.throws.early(SyntaxError, \"/\\\\p{ASCII=Yes}/u\")', 'assert.throws.early' is undefined)"
+  strict mode: "TypeError: assert.throws.early is not a function. (In 'assert.throws.early(SyntaxError, \"/\\\\p{ASCII=Yes}/u\")', 'assert.throws.early' is undefined)"
 test/built-ins/RegExp/property-escapes/character-class-range-end.js:
-  default: "ReferenceError: Can't find variable: $DONOTEVALUATE"
-  strict mode: "ReferenceError: Can't find variable: $DONOTEVALUATE"
+  default: 'Test262: This statement should not be evaluated.'
+  strict mode: 'Test262: This statement should not be evaluated.'
 test/built-ins/RegExp/property-escapes/character-class-range-no-dash-end.js:
-  default: "ReferenceError: Can't find variable: $DONOTEVALUATE"
-  strict mode: "ReferenceError: Can't find variable: $DONOTEVALUATE"
+  default: 'Test262: This statement should not be evaluated.'
+  strict mode: 'Test262: This statement should not be evaluated.'
 test/built-ins/RegExp/property-escapes/character-class-range-no-dash-start.js:
-  default: "ReferenceError: Can't find variable: $DONOTEVALUATE"
-  strict mode: "ReferenceError: Can't find variable: $DONOTEVALUATE"
+  default: 'Test262: This statement should not be evaluated.'
+  strict mode: 'Test262: This statement should not be evaluated.'
 test/built-ins/RegExp/property-escapes/character-class-range-start.js:
-  default: "ReferenceError: Can't find variable: $DONOTEVALUATE"
-  strict mode: "ReferenceError: Can't find variable: $DONOTEVALUATE"
+  default: 'Test262: This statement should not be evaluated.'
+  strict mode: 'Test262: This statement should not be evaluated.'
+test/built-ins/RegExp/property-escapes/grammar-extensions.js:
+  default: "TypeError: assert.throws.early is not a function. (In 'assert.throws.early(SyntaxError, \"/\\\\p{^General_Category=Letter}/u\")', 'assert.throws.early' is undefined)"
+  strict mode: "TypeError: assert.throws.early is not a function. (In 'assert.throws.early(SyntaxError, \"/\\\\p{^General_Category=Letter}/u\")', 'assert.throws.early' is undefined)"
+test/built-ins/RegExp/property-escapes/loose-matching.js:
+  default: "TypeError: assert.throws.early is not a function. (In 'assert.throws.early(SyntaxError, \"/\\\\p{any}/u\")', 'assert.throws.early' is undefined)"
+  strict mode: "TypeError: assert.throws.early is not a function. (In 'assert.throws.early(SyntaxError, \"/\\\\p{any}/u\")', 'assert.throws.early' is undefined)"
+test/built-ins/RegExp/property-escapes/non-binary-properties-without-value.js:
+  default: "TypeError: assert.throws.early is not a function. (In 'assert.throws.early(SyntaxError, \"/\\\\p{General_Category}/u\")', 'assert.throws.early' is undefined)"
+  strict mode: "TypeError: assert.throws.early is not a function. (In 'assert.throws.early(SyntaxError, \"/\\\\p{General_Category}/u\")', 'assert.throws.early' is undefined)"
+test/built-ins/RegExp/property-escapes/non-existent-properties.js:
+  default: "TypeError: assert.throws.early is not a function. (In 'assert.throws.early(SyntaxError, \"/\\\\p{UnknownBinaryProperty}/u\")', 'assert.throws.early' is undefined)"
+  strict mode: "TypeError: assert.throws.early is not a function. (In 'assert.throws.early(SyntaxError, \"/\\\\p{UnknownBinaryProperty}/u\")', 'assert.throws.early' is undefined)"
 test/built-ins/RegExp/property-escapes/non-existent-property-value-General_Category-negated.js:
-  default: "ReferenceError: Can't find variable: $DONOTEVALUATE"
-  strict mode: "ReferenceError: Can't find variable: $DONOTEVALUATE"
+  default: 'Test262: This statement should not be evaluated.'
+  strict mode: 'Test262: This statement should not be evaluated.'
 test/built-ins/RegExp/property-escapes/non-existent-property-value-Script-negated.js:
-  default: "ReferenceError: Can't find variable: $DONOTEVALUATE"
-  strict mode: "ReferenceError: Can't find variable: $DONOTEVALUATE"
+  default: 'Test262: This statement should not be evaluated.'
+  strict mode: 'Test262: This statement should not be evaluated.'
 test/built-ins/RegExp/property-escapes/non-existent-property-value-Script.js:
-  default: "ReferenceError: Can't find variable: $DONOTEVALUATE"
-  strict mode: "ReferenceError: Can't find variable: $DONOTEVALUATE"
+  default: 'Test262: This statement should not be evaluated.'
+  strict mode: 'Test262: This statement should not be evaluated.'
 test/built-ins/RegExp/property-escapes/non-existent-property-value-Script_Extensions-negated.js:
-  default: "ReferenceError: Can't find variable: $DONOTEVALUATE"
-  strict mode: "ReferenceError: Can't find variable: $DONOTEVALUATE"
+  default: 'Test262: This statement should not be evaluated.'
+  strict mode: 'Test262: This statement should not be evaluated.'
 test/built-ins/RegExp/property-escapes/non-existent-property-value-Script_Extensions.js:
-  default: "ReferenceError: Can't find variable: $DONOTEVALUATE"
-  strict mode: "ReferenceError: Can't find variable: $DONOTEVALUATE"
+  default: 'Test262: This statement should not be evaluated.'
+  strict mode: 'Test262: This statement should not be evaluated.'
 test/built-ins/RegExp/property-escapes/non-existent-property-value-general-category.js:
-  default: "ReferenceError: Can't find variable: $DONOTEVALUATE"
-  strict mode: "ReferenceError: Can't find variable: $DONOTEVALUATE"
+  default: 'Test262: This statement should not be evaluated.'
+  strict mode: 'Test262: This statement should not be evaluated.'
+test/built-ins/RegExp/property-escapes/non-existent-property-values.js:
+  default: "TypeError: assert.throws.early is not a function. (In 'assert.throws.early(SyntaxError, \"/\\\\p{General_Category=WAT}/u\")', 'assert.throws.early' is undefined)"
+  strict mode: "TypeError: assert.throws.early is not a function. (In 'assert.throws.early(SyntaxError, \"/\\\\p{General_Category=WAT}/u\")', 'assert.throws.early' is undefined)"
+test/built-ins/RegExp/property-escapes/unsupported-binary-properties.js:
+  default: "TypeError: assert.throws.early is not a function. (In 'assert.throws.early(SyntaxError, \"/\\\\p{Composition_Exclusion}/u\")', 'assert.throws.early' is undefined)"
+  strict mode: "TypeError: assert.throws.early is not a function. (In 'assert.throws.early(SyntaxError, \"/\\\\p{Composition_Exclusion}/u\")', 'assert.throws.early' is undefined)"
+test/built-ins/RegExp/property-escapes/unsupported-properties.js:
+  default: "TypeError: assert.throws.early is not a function. (In 'assert.throws.early(SyntaxError, \"/\\\\p{UnknownBinaryProperty}/u\")', 'assert.throws.early' is undefined)"
+  strict mode: "TypeError: assert.throws.early is not a function. (In 'assert.throws.early(SyntaxError, \"/\\\\p{UnknownBinaryProperty}/u\")', 'assert.throws.early' is undefined)"
 test/built-ins/RegExp/proto-from-ctor-realm.js:
   default: 'Test262Error: Expected SameValue(Â«/(?:)/Â», Â«/(?:)/Â») to be true'
   strict mode: 'Test262Error: Expected SameValue(Â«/(?:)/Â», Â«/(?:)/Â») to be true'
@@ -1495,9 +1519,18 @@ test/built-ins/WeakMap/proto-from-ctor-realm.js:
 test/built-ins/WeakSet/proto-from-ctor-realm.js:
   default: 'Test262Error: Expected SameValue(Â«[object WeakSet]Â», Â«[object WeakSet]Â») to be true'
   strict mode: 'Test262Error: Expected SameValue(Â«[object WeakSet]Â», Â«[object WeakSet]Â») to be true'
+test/harness/assert-throws-early-incorrect-ctor.js:
+  default: "Test262Error: '1=1' is a ReferenceError Expected a Test262Error but got a TypeError"
+  strict mode: "Test262Error: '1=1' is a ReferenceError Expected a Test262Error but got a TypeError"
+test/harness/assert-throws-early-not-early.js:
+  default: 'Test262Error: Expected a Test262Error but got a TypeError'
+  strict mode: 'Test262Error: Expected a Test262Error but got a TypeError'
 test/harness/assert-throws-early-referenceerror.js:
-  default: 'Test262Error: Function: 1 = 1; Expected a ReferenceError to be thrown but no exception was thrown at all'
-  strict mode: 'Test262Error: Function: 1 = 1; Expected a ReferenceError to be thrown but no exception was thrown at all'
+  default: "TypeError: assert.throws.early is not a function. (In 'assert.throws.early(ReferenceError, '1 = 1;')', 'assert.throws.early' is undefined)"
+  strict mode: "TypeError: assert.throws.early is not a function. (In 'assert.throws.early(ReferenceError, '1 = 1;')', 'assert.throws.early' is undefined)"
+test/harness/assert-throws-early-syntaxerror.js:
+  default: "TypeError: assert.throws.early is not a function. (In 'assert.throws.early(SyntaxError, 'let let')', 'assert.throws.early' is undefined)"
+  strict mode: "TypeError: assert.throws.early is not a function. (In 'assert.throws.early(SyntaxError, 'let let')', 'assert.throws.early' is undefined)"
 test/intl402/Collator/prototype/compare/compare-function-name.js:
   default: 'Test262Error: Expected SameValue(Â«trueÂ», Â«falseÂ») to be true'
   strict mode: 'Test262Error: Expected SameValue(Â«trueÂ», Â«falseÂ») to be true'
@@ -1517,8 +1550,8 @@ test/intl402/Intl/getCanonicalLocales/invalid-tags.js:
   default: 'Test262Error: Test data "de-gregory-gregory" is a canonicalized and structurally valid language tag.'
   strict mode: 'Test262Error: Test data "de-gregory-gregory" is a canonicalized and structurally valid language tag.'
 test/intl402/ListFormat/constructor/constructor/locales-invalid.js:
-  default: "ReferenceError: Can't find variable: getInvalidLocaleArguments"
-  strict mode: "ReferenceError: Can't find variable: getInvalidLocaleArguments"
+  default: 'Test262Error: Expected a CustomError but got a TypeError'
+  strict mode: 'Test262Error: Expected a CustomError but got a TypeError'
 test/intl402/ListFormat/constructor/constructor/locales-valid.js:
   default: "TypeError: undefined is not a constructor (evaluating 'new Intl.ListFormat()')"
   strict mode: "TypeError: undefined is not a constructor (evaluating 'new Intl.ListFormat()')"
@@ -1726,72 +1759,75 @@ test/intl402/Locale/constructor-getter-order.js:
 test/intl402/Locale/constructor-locale-object.js:
   default: "TypeError: undefined is not a constructor (evaluating 'new Intl.Locale(\"en-US\")')"
   strict mode: "TypeError: undefined is not a constructor (evaluating 'new Intl.Locale(\"en-US\")')"
+test/intl402/Locale/constructor-newtarget-undefined.js:
+  default: 'Test262Error: Expected SameValue(Â«undefinedÂ», Â«functionÂ») to be true'
+  strict mode: 'Test262Error: Expected SameValue(Â«undefinedÂ», Â«functionÂ») to be true'
 test/intl402/Locale/constructor-non-iana-canon.js:
   default: "TypeError: undefined is not a constructor (evaluating 'new Intl.Locale(tag)')"
   strict mode: "TypeError: undefined is not a constructor (evaluating 'new Intl.Locale(tag)')"
 test/intl402/Locale/constructor-options-calendar-invalid.js:
-  default: 'Test262Error:  is an invalid calendar option value Expected a RangeError but got a TypeError'
-  strict mode: 'Test262Error:  is an invalid calendar option value Expected a RangeError but got a TypeError'
+  default: 'Test262Error: new Intl.Locale("en", {calendar: ""}) throws RangeError Expected a RangeError but got a TypeError'
+  strict mode: 'Test262Error: new Intl.Locale("en", {calendar: ""}) throws RangeError Expected a RangeError but got a TypeError'
 test/intl402/Locale/constructor-options-calendar-valid.js:
-  default: "TypeError: undefined is not a constructor (evaluating 'new Intl.Locale('en', options)')"
-  strict mode: "TypeError: undefined is not a constructor (evaluating 'new Intl.Locale('en', options)')"
+  default: "TypeError: undefined is not a constructor (evaluating 'new Intl.Locale('en', { calendar })')"
+  strict mode: "TypeError: undefined is not a constructor (evaluating 'new Intl.Locale('en', { calendar })')"
 test/intl402/Locale/constructor-options-casefirst-invalid.js:
-  default: 'Test262Error:  is an invalid caseFirst option value Expected a RangeError but got a TypeError'
-  strict mode: 'Test262Error:  is an invalid caseFirst option value Expected a RangeError but got a TypeError'
+  default: 'Test262Error: new Intl.Locale("en", {caseFirst: ""}) throws RangeError Expected a RangeError but got a TypeError'
+  strict mode: 'Test262Error: new Intl.Locale("en", {caseFirst: ""}) throws RangeError Expected a RangeError but got a TypeError'
 test/intl402/Locale/constructor-options-casefirst-valid.js:
-  default: "TypeError: undefined is not a constructor (evaluating 'new Intl.Locale('en', options)')"
-  strict mode: "TypeError: undefined is not a constructor (evaluating 'new Intl.Locale('en', options)')"
+  default: "TypeError: undefined is not a constructor (evaluating 'new Intl.Locale('en', { caseFirst })')"
+  strict mode: "TypeError: undefined is not a constructor (evaluating 'new Intl.Locale('en', { caseFirst })')"
 test/intl402/Locale/constructor-options-collation-invalid.js:
-  default: 'Test262Error:  is an invalid collation option value Expected a RangeError but got a TypeError'
-  strict mode: 'Test262Error:  is an invalid collation option value Expected a RangeError but got a TypeError'
+  default: 'Test262Error: `new Intl.Locale("en", {collation: invalidCollationOption})` throws RangeError Expected a RangeError but got a TypeError'
+  strict mode: 'Test262Error: `new Intl.Locale("en", {collation: invalidCollationOption})` throws RangeError Expected a RangeError but got a TypeError'
 test/intl402/Locale/constructor-options-collation-valid.js:
-  default: "TypeError: undefined is not a constructor (evaluating 'new Intl.Locale('en', options)')"
-  strict mode: "TypeError: undefined is not a constructor (evaluating 'new Intl.Locale('en', options)')"
+  default: "TypeError: undefined is not a constructor (evaluating 'new Intl.Locale('en', {collation})')"
+  strict mode: "TypeError: undefined is not a constructor (evaluating 'new Intl.Locale('en', {collation})')"
 test/intl402/Locale/constructor-options-hourcycle-invalid.js:
-  default: 'Test262Error:  is an invalid hourCycle option value Expected a RangeError but got a TypeError'
-  strict mode: 'Test262Error:  is an invalid hourCycle option value Expected a RangeError but got a TypeError'
+  default: 'Test262Error: new Intl.Locale("en", {hourCycle: ""}) throws RangeError Expected a RangeError but got a TypeError'
+  strict mode: 'Test262Error: new Intl.Locale("en", {hourCycle: ""}) throws RangeError Expected a RangeError but got a TypeError'
 test/intl402/Locale/constructor-options-hourcycle-valid.js:
-  default: "TypeError: undefined is not a constructor (evaluating 'new Intl.Locale('en', options)')"
-  strict mode: "TypeError: undefined is not a constructor (evaluating 'new Intl.Locale('en', options)')"
+  default: "TypeError: undefined is not a constructor (evaluating 'new Intl.Locale('en', {hourCycle})')"
+  strict mode: "TypeError: undefined is not a constructor (evaluating 'new Intl.Locale('en', {hourCycle})')"
 test/intl402/Locale/constructor-options-language-grandfathered.js:
-  default: 'Test262Error: Expected a RangeError but got a TypeError'
-  strict mode: 'Test262Error: Expected a RangeError but got a TypeError'
+  default: 'Test262Error: new Intl.Locale("nb", {language: "no-bok"}) throws RangeError Expected a RangeError but got a TypeError'
+  strict mode: 'Test262Error: new Intl.Locale("nb", {language: "no-bok"}) throws RangeError Expected a RangeError but got a TypeError'
 test/intl402/Locale/constructor-options-language-invalid.js:
-  default: 'Test262Error:  is an invalid language option value Expected a RangeError but got a TypeError'
-  strict mode: 'Test262Error:  is an invalid language option value Expected a RangeError but got a TypeError'
+  default: 'Test262Error: new Intl.Locale("en", {language: ""}) throws RangeError Expected a RangeError but got a TypeError'
+  strict mode: 'Test262Error: new Intl.Locale("en", {language: ""}) throws RangeError Expected a RangeError but got a TypeError'
 test/intl402/Locale/constructor-options-language-valid-undefined.js:
   default: "TypeError: undefined is not a constructor (evaluating 'new Intl.Locale('en', {language: undefined})')"
   strict mode: "TypeError: undefined is not a constructor (evaluating 'new Intl.Locale('en', {language: undefined})')"
 test/intl402/Locale/constructor-options-language-valid.js:
-  default: "TypeError: undefined is not a constructor (evaluating 'new Intl.Locale('en', options)')"
-  strict mode: "TypeError: undefined is not a constructor (evaluating 'new Intl.Locale('en', options)')"
+  default: "TypeError: undefined is not a constructor (evaluating 'new Intl.Locale('en', {language})')"
+  strict mode: "TypeError: undefined is not a constructor (evaluating 'new Intl.Locale('en', {language})')"
 test/intl402/Locale/constructor-options-numberingsystem-invalid.js:
-  default: 'Test262Error:  is an invalid numberingSystem option value Expected a RangeError but got a TypeError'
-  strict mode: 'Test262Error:  is an invalid numberingSystem option value Expected a RangeError but got a TypeError'
+  default: 'Test262Error: new Intl.Locale("en", {numberingSystem: ""}) throws RangeError Expected a RangeError but got a TypeError'
+  strict mode: 'Test262Error: new Intl.Locale("en", {numberingSystem: ""}) throws RangeError Expected a RangeError but got a TypeError'
 test/intl402/Locale/constructor-options-numberingsystem-valid.js:
-  default: "TypeError: undefined is not a constructor (evaluating 'new Intl.Locale('en', options)')"
-  strict mode: "TypeError: undefined is not a constructor (evaluating 'new Intl.Locale('en', options)')"
+  default: "TypeError: undefined is not a constructor (evaluating 'new Intl.Locale('en', { numberingSystem })')"
+  strict mode: "TypeError: undefined is not a constructor (evaluating 'new Intl.Locale('en', { numberingSystem })')"
 test/intl402/Locale/constructor-options-numeric-undefined.js:
   default: "TypeError: undefined is not a constructor (evaluating 'new Intl.Locale('en', options)')"
   strict mode: "TypeError: undefined is not a constructor (evaluating 'new Intl.Locale('en', options)')"
 test/intl402/Locale/constructor-options-numeric-valid.js:
-  default: "TypeError: undefined is not a constructor (evaluating 'new Intl.Locale('en', options)')"
-  strict mode: "TypeError: undefined is not a constructor (evaluating 'new Intl.Locale('en', options)')"
+  default: "TypeError: undefined is not a constructor (evaluating 'new Intl.Locale('en', {numeric})')"
+  strict mode: "TypeError: undefined is not a constructor (evaluating 'new Intl.Locale('en', {numeric})')"
 test/intl402/Locale/constructor-options-region-invalid.js:
-  default: 'Test262Error:  is an invalid region option value Expected a RangeError but got a TypeError'
-  strict mode: 'Test262Error:  is an invalid region option value Expected a RangeError but got a TypeError'
+  default: 'Test262Error: new Intl.Locale("en", {region: ""}) throws RangeError Expected a RangeError but got a TypeError'
+  strict mode: 'Test262Error: new Intl.Locale("en", {region: ""}) throws RangeError Expected a RangeError but got a TypeError'
 test/intl402/Locale/constructor-options-region-valid.js:
   default: "TypeError: undefined is not a constructor (evaluating 'new Intl.Locale('en', options)')"
   strict mode: "TypeError: undefined is not a constructor (evaluating 'new Intl.Locale('en', options)')"
 test/intl402/Locale/constructor-options-script-invalid.js:
-  default: 'Test262Error:  is an invalid script option value Expected a RangeError but got a TypeError'
-  strict mode: 'Test262Error:  is an invalid script option value Expected a RangeError but got a TypeError'
+  default: 'Test262Error: new Intl.Locale("en", {script: ""}) throws RangeError Expected a RangeError but got a TypeError'
+  strict mode: 'Test262Error: new Intl.Locale("en", {script: ""}) throws RangeError Expected a RangeError but got a TypeError'
 test/intl402/Locale/constructor-options-script-valid-undefined.js:
   default: "TypeError: undefined is not a constructor (evaluating 'new Intl.Locale('en', {script: undefined})')"
   strict mode: "TypeError: undefined is not a constructor (evaluating 'new Intl.Locale('en', {script: undefined})')"
 test/intl402/Locale/constructor-options-script-valid.js:
-  default: "TypeError: undefined is not a constructor (evaluating 'new Intl.Locale('en', options)')"
-  strict mode: "TypeError: undefined is not a constructor (evaluating 'new Intl.Locale('en', options)')"
+  default: "TypeError: undefined is not a constructor (evaluating 'new Intl.Locale('en', { script })')"
+  strict mode: "TypeError: undefined is not a constructor (evaluating 'new Intl.Locale('en', { script })')"
 test/intl402/Locale/constructor-options-throwing-getters.js:
   default: 'Test262Error: new Intl.Locale("en", {get language() {throw new CustomError();}}) throws CustomError Expected a CustomError but got a TypeError'
   strict mode: 'Test262Error: new Intl.Locale("en", {get language() {throw new CustomError();}}) throws CustomError Expected a CustomError but got a TypeError'
@@ -1805,8 +1841,8 @@ test/intl402/Locale/constructor-tag.js:
   default: "TypeError: undefined is not a constructor (evaluating 'new Intl.Locale(canonical)')"
   strict mode: "TypeError: undefined is not a constructor (evaluating 'new Intl.Locale(canonical)')"
 test/intl402/Locale/constructor-unicode-ext-invalid.js:
-  default: 'Test262Error: Expected a RangeError but got a TypeError'
-  strict mode: 'Test262Error: Expected a RangeError but got a TypeError'
+  default: 'Test262Error: new Intl.Locale("da-u") throws RangeError Expected a RangeError but got a TypeError'
+  strict mode: 'Test262Error: new Intl.Locale("da-u") throws RangeError Expected a RangeError but got a TypeError'
 test/intl402/Locale/constructor-unicode-ext-valid.js:
   default: "TypeError: undefined is not a constructor (evaluating 'new Intl.Locale(langtag)')"
   strict mode: "TypeError: undefined is not a constructor (evaluating 'new Intl.Locale(langtag)')"
@@ -1837,9 +1873,24 @@ test/intl402/Locale/instance-extensibility.js:
 test/intl402/Locale/instance.js:
   default: "TypeError: undefined is not a constructor (evaluating 'new Intl.Locale('en')')"
   strict mode: "TypeError: undefined is not a constructor (evaluating 'new Intl.Locale('en')')"
+test/intl402/Locale/invalid-tag-throws-boolean.js:
+  default: 'Test262Error: Expected SameValue(Â«undefinedÂ», Â«functionÂ») to be true'
+  strict mode: 'Test262Error: Expected SameValue(Â«undefinedÂ», Â«functionÂ») to be true'
+test/intl402/Locale/invalid-tag-throws-null.js:
+  default: 'Test262Error: Expected SameValue(Â«undefinedÂ», Â«functionÂ») to be true'
+  strict mode: 'Test262Error: Expected SameValue(Â«undefinedÂ», Â«functionÂ») to be true'
+test/intl402/Locale/invalid-tag-throws-number.js:
+  default: 'Test262Error: Expected SameValue(Â«undefinedÂ», Â«functionÂ») to be true'
+  strict mode: 'Test262Error: Expected SameValue(Â«undefinedÂ», Â«functionÂ») to be true'
+test/intl402/Locale/invalid-tag-throws-symbol.js:
+  default: 'Test262Error: Expected SameValue(Â«undefinedÂ», Â«functionÂ») to be true'
+  strict mode: 'Test262Error: Expected SameValue(Â«undefinedÂ», Â«functionÂ») to be true'
+test/intl402/Locale/invalid-tag-throws-undefined.js:
+  default: 'Test262Error: Expected SameValue(Â«undefinedÂ», Â«functionÂ») to be true'
+  strict mode: 'Test262Error: Expected SameValue(Â«undefinedÂ», Â«functionÂ») to be true'
 test/intl402/Locale/invalid-tag-throws.js:
-  default: 'Test262Error: Test data "de-gregory-gregory" is a canonicalized and structurally valid language tag.'
-  strict mode: 'Test262Error: Test data "de-gregory-gregory" is a canonicalized and structurally valid language tag.'
+  default: 'Test262Error: Expected SameValue(Â«undefinedÂ», Â«functionÂ») to be true'
+  strict mode: 'Test262Error: Expected SameValue(Â«undefinedÂ», Â«functionÂ») to be true'
 test/intl402/Locale/length.js:
   default: "TypeError: undefined is not an object (evaluating 'Object.getOwnPropertyDescriptor(obj, name)')"
   strict mode: "TypeError: undefined is not an object (evaluating 'Object.getOwnPropertyDescriptor(obj, name)')"
@@ -2000,17 +2051,20 @@ test/intl402/NumberFormat/prototype/format/format-fraction-digits-precision.js:
   default: 'Test262Error: Formatted value for 12344501000000000000000000000000000, en-US-u-nu-arab and options {"useGrouping":false,"minimumIntegerDigits":3,"minimumFractionDigits":1,"maximumFractionDigits":3} is Ù¡Ù¢Ù£Ù¤Ù¤Ù¥Ù Ù¡Ù Ù Ù Ù Ù Ù Ù Ù Ù Ù Ù Ù Ù Ù Ù Ù Ù Ù Ù Ù Ù Ù Ù Ù Ù Ù Ù Ù«Ù ; expected Ù¡Ù¢Ù£Ù¤Ù¤Ù¥Ù Ù¡Ù Ù Ù Ù Ù Ù Ù Ù Ù Ù¤Ù¨Ù§Ù¨Ù¡Ù¥Ù¤Ù¤Ù¤Ù¦Ù§Ù¨Ù£Ù¡Ù¡Ù©Ù£Ù¦Ù«Ù .'
   strict mode: 'Test262Error: Formatted value for 12344501000000000000000000000000000, en-US-u-nu-arab and options {"useGrouping":false,"minimumIntegerDigits":3,"minimumFractionDigits":1,"maximumFractionDigits":3} is Ù¡Ù¢Ù£Ù¤Ù¤Ù¥Ù Ù¡Ù Ù Ù Ù Ù Ù Ù Ù Ù Ù Ù Ù Ù Ù Ù Ù Ù Ù Ù Ù Ù Ù Ù Ù Ù Ù Ù Ù«Ù ; expected Ù¡Ù¢Ù£Ù¤Ù¤Ù¥Ù Ù¡Ù Ù Ù Ù Ù Ù Ù Ù Ù Ù¤Ù¨Ù§Ù¨Ù¡Ù¥Ù¤Ù¤Ù¤Ù¦Ù§Ù¨Ù£Ù¡Ù¡Ù©Ù£Ù¦Ù«Ù .'
 test/intl402/NumberFormat/prototype/format/format-fraction-digits.js:
-  default: 'Test262Error: Formatted value for 12344501000000000000000000000000000, en-US-u-nu-arab and options {"useGrouping":false,"minimumIntegerDigits":3,"minimumFractionDigits":1,"maximumFractionDigits":3} is Ù¡Ù¢Ù£Ù¤Ù¤Ù¥Ù Ù¡Ù Ù Ù Ù Ù Ù Ù Ù Ù Ù Ù Ù Ù Ù Ù Ù Ù Ù Ù Ù Ù Ù Ù Ù Ù Ù Ù Ù«Ù ; expected Ù¡Ù¢Ù£Ù¤Ù¤Ù¥Ù Ù¡Ù Ù Ù Ù Ù Ù Ù Ù Ù Ù¤Ù¨Ù§Ù¨Ù¡Ù¥Ù¤Ù¤Ù¤Ù¦Ù§Ù¨Ù£Ù¡Ù¡Ù©Ù£Ù¦Ù«Ù .'
-  strict mode: 'Test262Error: Formatted value for 12344501000000000000000000000000000, en-US-u-nu-arab and options {"useGrouping":false,"minimumIntegerDigits":3,"minimumFractionDigits":1,"maximumFractionDigits":3} is Ù¡Ù¢Ù£Ù¤Ù¤Ù¥Ù Ù¡Ù Ù Ù Ù Ù Ù Ù Ù Ù Ù Ù Ù Ù Ù Ù Ù Ù Ù Ù Ù Ù Ù Ù Ù Ù Ù Ù Ù«Ù ; expected Ù¡Ù¢Ù£Ù¤Ù¤Ù¥Ù Ù¡Ù Ù Ù Ù Ù Ù Ù Ù Ù Ù¤Ù¨Ù§Ù¨Ù¡Ù¥Ù¤Ù¤Ù¤Ù¦Ù§Ù¨Ù£Ù¡Ù¡Ù©Ù£Ù¦Ù«Ù .'
+  default: 'Test262Error: Formatted value for -0, en-US-u-nu-arab and options {"useGrouping":false,"minimumIntegerDigits":3,"minimumFractionDigits":1,"maximumFractionDigits":3} is Ù Ù Ù Ù«Ù ; expected Ø-Ù Ù Ù Ù«Ù .'
+  strict mode: 'Test262Error: Formatted value for -0, en-US-u-nu-arab and options {"useGrouping":false,"minimumIntegerDigits":3,"minimumFractionDigits":1,"maximumFractionDigits":3} is Ù Ù Ù Ù«Ù ; expected Ø-Ù Ù Ù Ù«Ù .'
 test/intl402/NumberFormat/prototype/format/format-function-name.js:
   default: 'Test262Error: Expected SameValue(Â«trueÂ», Â«falseÂ») to be true'
   strict mode: 'Test262Error: Expected SameValue(Â«trueÂ», Â«falseÂ») to be true'
+test/intl402/NumberFormat/prototype/format/format-negative-numbers.js:
+  default: 'Test262Error: Intl.NumberFormat is formatting 0 and -0 the same way. Expected SameValue(Â«0Â», Â«0Â») to be false'
+  strict mode: 'Test262Error: Intl.NumberFormat is formatting 0 and -0 the same way. Expected SameValue(Â«0Â», Â«0Â») to be false'
 test/intl402/NumberFormat/prototype/format/format-significant-digits-precision.js:
   default: 'Test262Error: Formatted value for 123.44500, en-US-u-nu-arab and options {"useGrouping":false,"minimumSignificantDigits":3,"maximumSignificantDigits":5} is Ù¡Ù¢Ù£Ù«Ù¤Ù¥; expected Ù¡Ù¢Ù£Ù«Ù¤Ù¤.'
   strict mode: 'Test262Error: Formatted value for 123.44500, en-US-u-nu-arab and options {"useGrouping":false,"minimumSignificantDigits":3,"maximumSignificantDigits":5} is Ù¡Ù¢Ù£Ù«Ù¤Ù¥; expected Ù¡Ù¢Ù£Ù«Ù¤Ù¤.'
 test/intl402/NumberFormat/prototype/format/format-significant-digits.js:
-  default: 'Test262Error: Formatted value for 123.44500, en-US-u-nu-arab and options {"useGrouping":false,"minimumSignificantDigits":3,"maximumSignificantDigits":5} is Ù¡Ù¢Ù£Ù«Ù¤Ù¥; expected Ù¡Ù¢Ù£Ù«Ù¤Ù¤.'
-  strict mode: 'Test262Error: Formatted value for 123.44500, en-US-u-nu-arab and options {"useGrouping":false,"minimumSignificantDigits":3,"maximumSignificantDigits":5} is Ù¡Ù¢Ù£Ù«Ù¤Ù¥; expected Ù¡Ù¢Ù£Ù«Ù¤Ù¤.'
+  default: 'Test262Error: Formatted value for -0, en-US-u-nu-arab and options {"useGrouping":false,"minimumSignificantDigits":3,"maximumSignificantDigits":5} is Ù Ù«Ù Ù ; expected Ø-Ù Ù«Ù Ù .'
+  strict mode: 'Test262Error: Formatted value for -0, en-US-u-nu-arab and options {"useGrouping":false,"minimumSignificantDigits":3,"maximumSignificantDigits":5} is Ù Ù«Ù Ù ; expected Ø-Ù Ù«Ù Ù .'
 test/intl402/NumberFormat/style-unit.js:
   default: 'RangeError: style must be either "decimal", "percent", or "currency"'
   strict mode: 'RangeError: style must be either "decimal", "percent", or "currency"'
@@ -2240,8 +2294,8 @@ test/intl402/RelativeTimeFormat/prototype/toStringTag/toStringTag.js:
   default: "TypeError: undefined is not an object (evaluating 'Intl.RelativeTimeFormat.prototype')"
   strict mode: "TypeError: undefined is not an object (evaluating 'Intl.RelativeTimeFormat.prototype')"
 test/intl402/Segmenter/constructor/constructor/locales-invalid.js:
-  default: "ReferenceError: Can't find variable: getInvalidLocaleArguments"
-  strict mode: "ReferenceError: Can't find variable: getInvalidLocaleArguments"
+  default: 'Test262Error: Expected a CustomError but got a TypeError'
+  strict mode: 'Test262Error: Expected a CustomError but got a TypeError'
 test/intl402/Segmenter/constructor/constructor/locales-valid.js:
   default: "TypeError: undefined is not a constructor (evaluating 'new Intl.Segmenter()')"
   strict mode: "TypeError: undefined is not a constructor (evaluating 'new Intl.Segmenter()')"
@@ -2717,11 +2771,11 @@ test/language/eval-code/direct/var-env-lower-lex-catch-non-strict.js:
 test/language/eval-code/direct/var-env-lower-lex-non-strict.js:
   default: 'Test262Error: Expected a SyntaxError to be thrown but no exception was thrown at all'
 test/language/eval-code/indirect/non-definable-function-with-function.js:
-  default: 'Test262Error: declaration preceeding Expected SameValue(Â«[object Object]Â», Â«undefinedÂ») to be true'
-  strict mode: 'Test262Error: declaration preceeding Expected SameValue(Â«[object Object]Â», Â«undefinedÂ») to be true'
+  default: 'Test262Error: declaration preceding Expected SameValue(Â«[object Object]Â», Â«undefinedÂ») to be true'
+  strict mode: 'Test262Error: declaration preceding Expected SameValue(Â«[object Object]Â», Â«undefinedÂ») to be true'
 test/language/eval-code/indirect/non-definable-function-with-variable.js:
-  default: 'Test262Error: declaration preceeding Expected SameValue(Â«[object Object]Â», Â«undefinedÂ») to be true'
-  strict mode: 'Test262Error: declaration preceeding Expected SameValue(Â«[object Object]Â», Â«undefinedÂ») to be true'
+  default: 'Test262Error: declaration preceding Expected SameValue(Â«[object Object]Â», Â«undefinedÂ») to be true'
+  strict mode: 'Test262Error: declaration preceding Expected SameValue(Â«[object Object]Â», Â«undefinedÂ») to be true'
 test/language/eval-code/indirect/non-definable-global-function.js:
   default: 'Test262Error: Expected a TypeError to be thrown but no exception was thrown at all'
   strict mode: 'Test262Error: Expected a TypeError to be thrown but no exception was thrown at all'
@@ -6623,6 +6677,57 @@ test/language/expressions/compound-assignment/u-right-shift-non-simple.js:
 test/language/expressions/conditional/in-branch-1.js:
   default: "SyntaxError: Unexpected keyword 'in'. Expected ':' in ternary operator."
   strict mode: "SyntaxError: Unexpected keyword 'in'. Expected ':' in ternary operator."
+test/language/expressions/dynamic-import/syntax/invalid/invalid-asssignmenttargettype-reference-error-1-update-expression.js:
+  default: 'Test262: This statement should not be evaluated.'
+  strict mode: 'Test262: This statement should not be evaluated.'
+test/language/expressions/dynamic-import/syntax/invalid/invalid-asssignmenttargettype-reference-error-10-lhs-assignment-operator-assignment-expression.js:
+  default: 'Test262: This statement should not be evaluated.'
+  strict mode: 'Test262: This statement should not be evaluated.'
+test/language/expressions/dynamic-import/syntax/invalid/invalid-asssignmenttargettype-reference-error-11-lhs-assignment-operator-assignment-expression.js:
+  default: 'Test262: This statement should not be evaluated.'
+  strict mode: 'Test262: This statement should not be evaluated.'
+test/language/expressions/dynamic-import/syntax/invalid/invalid-asssignmenttargettype-reference-error-12-lhs-assignment-operator-assignment-expression.js:
+  default: 'Test262: This statement should not be evaluated.'
+  strict mode: 'Test262: This statement should not be evaluated.'
+test/language/expressions/dynamic-import/syntax/invalid/invalid-asssignmenttargettype-reference-error-13-lhs-assignment-operator-assignment-expression.js:
+  default: 'Test262: This statement should not be evaluated.'
+  strict mode: 'Test262: This statement should not be evaluated.'
+test/language/expressions/dynamic-import/syntax/invalid/invalid-asssignmenttargettype-reference-error-14-lhs-assignment-operator-assignment-expression.js:
+  default: 'Test262: This statement should not be evaluated.'
+  strict mode: 'Test262: This statement should not be evaluated.'
+test/language/expressions/dynamic-import/syntax/invalid/invalid-asssignmenttargettype-reference-error-15-lhs-assignment-operator-assignment-expression.js:
+  default: 'Test262: This statement should not be evaluated.'
+  strict mode: 'Test262: This statement should not be evaluated.'
+test/language/expressions/dynamic-import/syntax/invalid/invalid-asssignmenttargettype-reference-error-16-lhs-assignment-operator-assignment-expression.js:
+  default: 'Test262: This statement should not be evaluated.'
+  strict mode: 'Test262: This statement should not be evaluated.'
+test/language/expressions/dynamic-import/syntax/invalid/invalid-asssignmenttargettype-reference-error-17-lhs-assignment-operator-assignment-expression.js:
+  default: 'Test262: This statement should not be evaluated.'
+  strict mode: 'Test262: This statement should not be evaluated.'
+test/language/expressions/dynamic-import/syntax/invalid/invalid-asssignmenttargettype-reference-error-2-update-expression.js:
+  default: 'Test262: This statement should not be evaluated.'
+  strict mode: 'Test262: This statement should not be evaluated.'
+test/language/expressions/dynamic-import/syntax/invalid/invalid-asssignmenttargettype-reference-error-3-update-expression.js:
+  default: 'Test262: This statement should not be evaluated.'
+  strict mode: 'Test262: This statement should not be evaluated.'
+test/language/expressions/dynamic-import/syntax/invalid/invalid-asssignmenttargettype-reference-error-4-update-expression.js:
+  default: 'Test262: This statement should not be evaluated.'
+  strict mode: 'Test262: This statement should not be evaluated.'
+test/language/expressions/dynamic-import/syntax/invalid/invalid-asssignmenttargettype-reference-error-5-lhs-equals-assignment-expression.js:
+  default: 'Test262: This statement should not be evaluated.'
+  strict mode: 'Test262: This statement should not be evaluated.'
+test/language/expressions/dynamic-import/syntax/invalid/invalid-asssignmenttargettype-reference-error-6-lhs-assignment-operator-assignment-expression.js:
+  default: 'Test262: This statement should not be evaluated.'
+  strict mode: 'Test262: This statement should not be evaluated.'
+test/language/expressions/dynamic-import/syntax/invalid/invalid-asssignmenttargettype-reference-error-7-lhs-assignment-operator-assignment-expression.js:
+  default: 'Test262: This statement should not be evaluated.'
+  strict mode: 'Test262: This statement should not be evaluated.'
+test/language/expressions/dynamic-import/syntax/invalid/invalid-asssignmenttargettype-reference-error-8-lhs-assignment-operator-assignment-expression.js:
+  default: 'Test262: This statement should not be evaluated.'
+  strict mode: 'Test262: This statement should not be evaluated.'
+test/language/expressions/dynamic-import/syntax/invalid/invalid-asssignmenttargettype-reference-error-9-lhs-assignment-operator-assignment-expression.js:
+  default: 'Test262: This statement should not be evaluated.'
+  strict mode: 'Test262: This statement should not be evaluated.'
 test/language/expressions/function/name.js:
   default: 'Test262Error: Expected SameValue(Â«trueÂ», Â«falseÂ») to be true'
   strict mode: 'Test262Error: Expected SameValue(Â«trueÂ», Â«falseÂ») to be true'
@@ -6653,9 +6758,9 @@ test/language/expressions/import.meta/import-meta-is-an-ordinary-object.js:
 test/language/expressions/import.meta/syntax/invalid-assignment-target-assignment-expr.js:
   module: "SyntaxError: import.meta can't be the left hand side of an assignment expression."
 test/language/expressions/import.meta/syntax/invalid-assignment-target-for-in-loop.js:
-  module: "ReferenceError: Can't find variable: $DONOTEVALUATE"
+  module: 'Test262: This statement should not be evaluated.'
 test/language/expressions/import.meta/syntax/invalid-assignment-target-for-of-loop.js:
-  module: "ReferenceError: Can't find variable: $DONOTEVALUATE"
+  module: 'Test262: This statement should not be evaluated.'
 test/language/expressions/import.meta/syntax/invalid-assignment-target-update-expr.js:
   module: "SyntaxError: import.meta can't come before a postfix operator."
 test/language/expressions/instanceof/prototype-getter-with-primitive.js:
@@ -6975,59 +7080,59 @@ test/language/literals/regexp/early-err-dup-flag.js:
   default: 'Test262: This statement should not be evaluated.'
   strict mode: 'Test262: This statement should not be evaluated.'
 test/language/literals/regexp/named-groups/invalid-dangling-groupname-2-u.js:
-  default: "ReferenceError: Can't find variable: $DONOTEVALUATE"
-  strict mode: "ReferenceError: Can't find variable: $DONOTEVALUATE"
+  default: 'Test262: This statement should not be evaluated.'
+  strict mode: 'Test262: This statement should not be evaluated.'
 test/language/literals/regexp/named-groups/invalid-dangling-groupname-2.js:
-  default: "ReferenceError: Can't find variable: $DONOTEVALUATE"
-  strict mode: "ReferenceError: Can't find variable: $DONOTEVALUATE"
+  default: 'Test262: This statement should not be evaluated.'
+  strict mode: 'Test262: This statement should not be evaluated.'
 test/language/literals/regexp/named-groups/invalid-dangling-groupname-3-u.js:
-  default: "ReferenceError: Can't find variable: $DONOTEVALUATE"
-  strict mode: "ReferenceError: Can't find variable: $DONOTEVALUATE"
+  default: 'Test262: This statement should not be evaluated.'
+  strict mode: 'Test262: This statement should not be evaluated.'
 test/language/literals/regexp/named-groups/invalid-dangling-groupname-3.js:
-  default: "ReferenceError: Can't find variable: $DONOTEVALUATE"
-  strict mode: "ReferenceError: Can't find variable: $DONOTEVALUATE"
+  default: 'Test262: This statement should not be evaluated.'
+  strict mode: 'Test262: This statement should not be evaluated.'
 test/language/literals/regexp/named-groups/invalid-dangling-groupname-4-u.js:
-  default: "ReferenceError: Can't find variable: $DONOTEVALUATE"
-  strict mode: "ReferenceError: Can't find variable: $DONOTEVALUATE"
+  default: 'Test262: This statement should not be evaluated.'
+  strict mode: 'Test262: This statement should not be evaluated.'
 test/language/literals/regexp/named-groups/invalid-dangling-groupname-4.js:
-  default: "ReferenceError: Can't find variable: $DONOTEVALUATE"
-  strict mode: "ReferenceError: Can't find variable: $DONOTEVALUATE"
+  default: 'Test262: This statement should not be evaluated.'
+  strict mode: 'Test262: This statement should not be evaluated.'
 test/language/literals/regexp/named-groups/invalid-dangling-groupname-5.js:
-  default: "ReferenceError: Can't find variable: $DONOTEVALUATE"
-  strict mode: "ReferenceError: Can't find variable: $DONOTEVALUATE"
+  default: 'Test262: This statement should not be evaluated.'
+  strict mode: 'Test262: This statement should not be evaluated.'
 test/language/literals/regexp/named-groups/invalid-dangling-groupname-u.js:
-  default: "ReferenceError: Can't find variable: $DONOTEVALUATE"
-  strict mode: "ReferenceError: Can't find variable: $DONOTEVALUATE"
+  default: 'Test262: This statement should not be evaluated.'
+  strict mode: 'Test262: This statement should not be evaluated.'
 test/language/literals/regexp/named-groups/invalid-dangling-groupname-without-group-u.js:
-  default: "ReferenceError: Can't find variable: $DONOTEVALUATE"
-  strict mode: "ReferenceError: Can't find variable: $DONOTEVALUATE"
+  default: 'Test262: This statement should not be evaluated.'
+  strict mode: 'Test262: This statement should not be evaluated.'
 test/language/literals/regexp/named-groups/invalid-dangling-groupname.js:
-  default: "ReferenceError: Can't find variable: $DONOTEVALUATE"
-  strict mode: "ReferenceError: Can't find variable: $DONOTEVALUATE"
+  default: 'Test262: This statement should not be evaluated.'
+  strict mode: 'Test262: This statement should not be evaluated.'
 test/language/literals/regexp/named-groups/invalid-incomplete-groupname-2.js:
-  default: "ReferenceError: Can't find variable: $DONOTEVALUATE"
-  strict mode: "ReferenceError: Can't find variable: $DONOTEVALUATE"
+  default: 'Test262: This statement should not be evaluated.'
+  strict mode: 'Test262: This statement should not be evaluated.'
 test/language/literals/regexp/named-groups/invalid-incomplete-groupname-3.js:
-  default: "ReferenceError: Can't find variable: $DONOTEVALUATE"
-  strict mode: "ReferenceError: Can't find variable: $DONOTEVALUATE"
+  default: 'Test262: This statement should not be evaluated.'
+  strict mode: 'Test262: This statement should not be evaluated.'
 test/language/literals/regexp/named-groups/invalid-incomplete-groupname-4.js:
-  default: "ReferenceError: Can't find variable: $DONOTEVALUATE"
-  strict mode: "ReferenceError: Can't find variable: $DONOTEVALUATE"
+  default: 'Test262: This statement should not be evaluated.'
+  strict mode: 'Test262: This statement should not be evaluated.'
 test/language/literals/regexp/named-groups/invalid-incomplete-groupname-5.js:
-  default: "ReferenceError: Can't find variable: $DONOTEVALUATE"
-  strict mode: "ReferenceError: Can't find variable: $DONOTEVALUATE"
+  default: 'Test262: This statement should not be evaluated.'
+  strict mode: 'Test262: This statement should not be evaluated.'
 test/language/literals/regexp/named-groups/invalid-incomplete-groupname-6.js:
-  default: "ReferenceError: Can't find variable: $DONOTEVALUATE"
-  strict mode: "ReferenceError: Can't find variable: $DONOTEVALUATE"
+  default: 'Test262: This statement should not be evaluated.'
+  strict mode: 'Test262: This statement should not be evaluated.'
 test/language/literals/regexp/named-groups/invalid-incomplete-groupname-u.js:
-  default: "ReferenceError: Can't find variable: $DONOTEVALUATE"
-  strict mode: "ReferenceError: Can't find variable: $DONOTEVALUATE"
+  default: 'Test262: This statement should not be evaluated.'
+  strict mode: 'Test262: This statement should not be evaluated.'
 test/language/literals/regexp/named-groups/invalid-incomplete-groupname-without-group-3-u.js:
-  default: "ReferenceError: Can't find variable: $DONOTEVALUATE"
-  strict mode: "ReferenceError: Can't find variable: $DONOTEVALUATE"
+  default: 'Test262: This statement should not be evaluated.'
+  strict mode: 'Test262: This statement should not be evaluated.'
 test/language/literals/regexp/named-groups/invalid-incomplete-groupname.js:
-  default: "ReferenceError: Can't find variable: $DONOTEVALUATE"
-  strict mode: "ReferenceError: Can't find variable: $DONOTEVALUATE"
+  default: 'Test262: This statement should not be evaluated.'
+  strict mode: 'Test262: This statement should not be evaluated.'
 test/language/literals/regexp/u-dec-esc.js:
   default: 'Test262: This statement should not be evaluated.'
   strict mode: 'Test262: This statement should not be evaluated.'
@@ -7067,6 +7172,14 @@ test/language/literals/regexp/u-invalid-range-lookahead.js:
 test/language/literals/regexp/u-invalid-range-negative-lookahead.js:
   default: 'Test262: This statement should not be evaluated.'
   strict mode: 'Test262: This statement should not be evaluated.'
+test/language/module-code/eval-rqstd-once.js:
+  module: "SyntaxError: Unexpected identifier 'as'. Expected 'from' before exported module name."
+test/language/module-code/eval-rqstd-order.js:
+  module: "SyntaxError: Unexpected identifier 'as'. Expected 'from' before exported module name."
+test/language/module-code/eval-self-once.js:
+  module: "SyntaxError: Unexpected identifier 'as'. Expected 'from' before exported module name."
+test/language/module-code/instn-once.js:
+  module: "SyntaxError: Unexpected identifier 'as'. Expected 'from' before exported module name."
 test/language/module-code/instn-resolve-order-depth.js:
   module: "SyntaxError: 'break' is only valid inside a switch or loop statement."
 test/language/module-code/instn-resolve-order-src.js:
@@ -7074,6 +7187,8 @@ test/language/module-code/instn-resolve-order-src.js:
 test/language/module-code/instn-star-as-props-dflt-skip.js:
   default: "SyntaxError: Unexpected token '{'. import call expects exactly one argument."
   strict mode: "SyntaxError: Unexpected token '{'. import call expects exactly one argument."
+test/language/module-code/instn-star-props-nrml.js:
+  module: "SyntaxError: Unexpected identifier 'as'. Expected 'from' before exported module name."
 test/language/module-code/namespace/internals/define-own-property.js:
   module: 'Test262Error: Reflect.defineProperty: local1 Expected SameValue(Â«falseÂ», Â«trueÂ») to be true'
 test/language/module-code/namespace/internals/get-nested-namespace-dflt-skip.js:
