@@ -1,3 +1,31 @@
+2018-12-20  Jonathan Bedard  <jbedard@apple.com>
+
+        webkitpy: Autoinstall package URLs have changed
+        https://bugs.webkit.org/show_bug.cgi?id=192909
+        <rdar://problem/46860359>
+
+        Rubber-stamped by Alexey Proskuryakov.
+
+        PyPi urls have been moved around, we need to update our auto-installed packages.
+
+        We should check for Selenium before asking PyPi for the latest version.
+
+        * Scripts/webkitpy/thirdparty/__init__.py:
+        (AutoinstallImportHook._install_mechanize): Update with new pypi url.
+        (AutoinstallImportHook._install_keyring): Ditto.
+        (AutoinstallImportHook._install_pep8): Ditto.
+        (AutoinstallImportHook._install_mozlog): Ditto.
+        (AutoinstallImportHook._install_mozprocess): Ditto.
+        (AutoinstallImportHook._install_pytest_timeout): Ditto.
+        (AutoinstallImportHook._install_pytest): Ditto.
+        (AutoinstallImportHook._install_pylint): Ditto.
+        (AutoinstallImportHook._install_buildbot): Ditto.
+        (AutoinstallImportHook._install_coverage): Ditto.
+        (AutoinstallImportHook._install_twisted_15_5_0): Ditto.
+        (AutoinstallImportHook._install_selenium): Update with new pypi url, only check
+        for new Selenium if the installed version isn't sufficient.
+        (AutoinstallImportHook.get_latest_pypi_url): Update with new pypi url.
+
 2018-12-20  Chris Dumez  <cdumez@apple.com>
 
         Use Optional::valueOr() instead of Optional::value_or()
