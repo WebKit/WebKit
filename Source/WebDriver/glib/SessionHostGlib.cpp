@@ -41,6 +41,8 @@ namespace WebDriver {
 
 SessionHost::~SessionHost()
 {
+    if (m_dbusConnection)
+        g_signal_handlers_disconnect_matched(m_dbusConnection.get(), G_SIGNAL_MATCH_DATA, 0, 0, nullptr, nullptr, this);
     g_cancellable_cancel(m_cancellable.get());
     if (m_browser)
         g_subprocess_force_exit(m_browser.get());
