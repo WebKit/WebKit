@@ -1,3 +1,24 @@
+2018-12-21  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed GTK+ gardening. Rebaseline several tests.
+
+        * platform/gtk/css2.1/t051201-c23-first-line-00-b-expected.png:
+        * platform/gtk/css2.1/t051201-c23-first-line-00-b-expected.txt:
+        * platform/gtk/css2.1/t1508-c527-font-04-b-expected.png:
+        * platform/gtk/css2.1/t1508-c527-font-04-b-expected.txt:
+        * platform/gtk/css2.1/t1508-c527-font-05-b-expected.png:
+        * platform/gtk/css2.1/t1508-c527-font-05-b-expected.txt:
+        * platform/gtk/css2.1/t1508-c527-font-07-b-expected.png:
+        * platform/gtk/css2.1/t1508-c527-font-07-b-expected.txt:
+        * platform/gtk/fast/css/getComputedStyle/computed-style-expected.txt: Added.
+        * platform/gtk/fast/css/getComputedStyle/computed-style-font-family-expected.txt: Added.
+        * platform/gtk/fast/css/getComputedStyle/computed-style-without-renderer-expected.txt: Added.
+        * platform/gtk/fast/text/font-selection-font-loading-api-parse-expected.txt: Added.
+        * platform/gtk/fast/text/font-stretch-parse-expected.txt: Added.
+        * platform/gtk/fast/text/font-style-parse-expected.txt: Added.
+        * platform/gtk/fast/text/font-weight-parse-expected.txt: Added.
+        * platform/gtk/svg/css/getComputedStyle-basic-expected.txt: Added.
+
 2018-12-20  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [iOS] Some layout tests are failing after r239441
