@@ -344,8 +344,8 @@ constexpr uint8_t kTestComplexCtapGetAssertionRequest[] = {
     0xa2,
     // key -"up"
     0x62, 0x75, 0x70,
-    // value - False(20)
-    0xf4,
+    // value - True(21)
+    0xf5,
     // key - "uv"
     0x62, 0x75, 0x76,
     // value - True(21)

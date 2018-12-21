@@ -159,7 +159,7 @@ Vector<uint8_t> encodeGetAssertionRequestAsCBOR(const Vector<uint8_t>& hash, con
         requireUserVerification = false;
     }
     optionMap[CBORValue(kUserVerificationMapKey)] = CBORValue(requireUserVerification);
-    optionMap[CBORValue(kUserPresenceMapKey)] = CBORValue(!requireUserVerification);
+    optionMap[CBORValue(kUserPresenceMapKey)] = CBORValue(true);
 
     if (!optionMap.empty())
         cborMap[CBORValue(5)] = CBORValue(WTFMove(optionMap));

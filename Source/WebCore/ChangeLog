@@ -1,5 +1,22 @@
 2018-12-21  Jiewen Tan  <jiewen_tan@apple.com>
 
+        [WebAuthN] userPresence should always be true
+        https://bugs.webkit.org/show_bug.cgi?id=192835
+        <rdar://problem/46538788>
+
+        Reviewed by Brent Fulgham.
+
+        In the current spec as of 7 August 2018, userPresence is suggested to set to the inverse of userVerification.
+        This doesn't comply with the CTAP spec. Details in: https://github.com/w3c/webauthn/issues/1123.
+        After discussing with other members of the working group, we decided to make userPresence always default to true.
+
+        Covered by exisiting tests.
+
+        * Modules/webauthn/fido/DeviceRequestConverter.cpp:
+        (fido::encodeGetAssertionRequestAsCBOR):
+
+2018-12-21  Jiewen Tan  <jiewen_tan@apple.com>
+
         [WebAuthN] Import an APDU coder from Chromium
         https://bugs.webkit.org/show_bug.cgi?id=192949
         <rdar://problem/46879933>

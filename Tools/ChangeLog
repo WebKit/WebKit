@@ -1,3 +1,14 @@
+2018-12-21  Jiewen Tan  <jiewen_tan@apple.com>
+
+        [WebAuthN] userPresence should always be true
+        https://bugs.webkit.org/show_bug.cgi?id=192835
+        <rdar://problem/46538788>
+
+        Reviewed by Brent Fulgham.
+
+        * TestWebKitAPI/Tests/WebCore/CtapRequestTest.cpp:
+        (TestWebKitAPI::TEST):
+
 2018-12-19  Simon Fraser  <simon.fraser@apple.com>
 
         Add support to run-benchmark to use non-default copies of the browser apps
