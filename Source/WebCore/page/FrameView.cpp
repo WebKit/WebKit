@@ -4586,48 +4586,56 @@ void FrameView::forceLayout(bool allowSubtreeLayout)
 
 void FrameView::forceLayoutForPagination(const FloatSize& pageSize, const FloatSize& originalPageSize, float maximumShrinkFactor, AdjustViewSizeOrNot shouldAdjustViewSize)
 {
+    if (!renderView())
+        return;
+
+    Ref<FrameView> protectedThis(*this);
+    auto& renderView = *this->renderView();
+
     // Dumping externalRepresentation(frame().renderer()).ascii() is a good trick to see
     // the state of things before and after the layout
-    if (RenderView* renderView = this->renderView()) {
-        float pageLogicalWidth = renderView->style().isHorizontalWritingMode() ? pageSize.width() : pageSize.height();
-        float pageLogicalHeight = renderView->style().isHorizontalWritingMode() ? pageSize.height() : pageSize.width();
+    float pageLogicalWidth = renderView.style().isHorizontalWritingMode() ? pageSize.width() : pageSize.height();
+    float pageLogicalHeight = renderView.style().isHorizontalWritingMode() ? pageSize.height() : pageSize.width();
 
-        renderView->setPageLogicalSize({ floor(pageLogicalWidth), floor(pageLogicalHeight) });
-        renderView->setNeedsLayoutAndPrefWidthsRecalc();
+    renderView.setPageLogicalSize({ floor(pageLogicalWidth), floor(pageLogicalHeight) });
+    renderView.setNeedsLayoutAndPrefWidthsRecalc();
+    forceLayout();
+    if (hasOneRef())
+        return;
+
+    // If we don't fit in the given page width, we'll lay out again. If we don't fit in the
+    // page width when shrunk, we will lay out at maximum shrink and clip extra content.
+    // FIXME: We are assuming a shrink-to-fit printing implementation. A cropping
+    // implementation should not do this!
+    bool horizontalWritingMode = renderView.style().isHorizontalWritingMode();
+    const LayoutRect& documentRect = renderView.documentRect();
+    LayoutUnit docLogicalWidth = horizontalWritingMode ? documentRect.width() : documentRect.height();
+    if (docLogicalWidth > pageLogicalWidth) {
+        int expectedPageWidth = std::min<float>(documentRect.width(), pageSize.width() * maximumShrinkFactor);
+        int expectedPageHeight = std::min<float>(documentRect.height(), pageSize.height() * maximumShrinkFactor);
+        FloatSize maxPageSize = frame().resizePageRectsKeepingRatio(FloatSize(originalPageSize.width(), originalPageSize.height()), FloatSize(expectedPageWidth, expectedPageHeight));
+        pageLogicalWidth = horizontalWritingMode ? maxPageSize.width() : maxPageSize.height();
+        pageLogicalHeight = horizontalWritingMode ? maxPageSize.height() : maxPageSize.width();
+
+        renderView.setPageLogicalSize({ floor(pageLogicalWidth), floor(pageLogicalHeight) });
+        renderView.setNeedsLayoutAndPrefWidthsRecalc();
         forceLayout();
+        if (hasOneRef())
+            return;
 
-        // If we don't fit in the given page width, we'll lay out again. If we don't fit in the
-        // page width when shrunk, we will lay out at maximum shrink and clip extra content.
-        // FIXME: We are assuming a shrink-to-fit printing implementation.  A cropping
-        // implementation should not do this!
-        bool horizontalWritingMode = renderView->style().isHorizontalWritingMode();
-        const LayoutRect& documentRect = renderView->documentRect();
-        LayoutUnit docLogicalWidth = horizontalWritingMode ? documentRect.width() : documentRect.height();
-        if (docLogicalWidth > pageLogicalWidth) {
-            int expectedPageWidth = std::min<float>(documentRect.width(), pageSize.width() * maximumShrinkFactor);
-            int expectedPageHeight = std::min<float>(documentRect.height(), pageSize.height() * maximumShrinkFactor);
-            FloatSize maxPageSize = frame().resizePageRectsKeepingRatio(FloatSize(originalPageSize.width(), originalPageSize.height()), FloatSize(expectedPageWidth, expectedPageHeight));
-            pageLogicalWidth = horizontalWritingMode ? maxPageSize.width() : maxPageSize.height();
-            pageLogicalHeight = horizontalWritingMode ? maxPageSize.height() : maxPageSize.width();
+        const LayoutRect& updatedDocumentRect = renderView.documentRect();
+        LayoutUnit docLogicalHeight = horizontalWritingMode ? updatedDocumentRect.height() : updatedDocumentRect.width();
+        LayoutUnit docLogicalTop = horizontalWritingMode ? updatedDocumentRect.y() : updatedDocumentRect.x();
+        LayoutUnit docLogicalRight = horizontalWritingMode ? updatedDocumentRect.maxX() : updatedDocumentRect.maxY();
+        LayoutUnit clippedLogicalLeft;
+        if (!renderView.style().isLeftToRightDirection())
+            clippedLogicalLeft = docLogicalRight - pageLogicalWidth;
+        LayoutRect overflow(clippedLogicalLeft, docLogicalTop, pageLogicalWidth, docLogicalHeight);
 
-            renderView->setPageLogicalSize({ floor(pageLogicalWidth), floor(pageLogicalHeight) });
-            renderView->setNeedsLayoutAndPrefWidthsRecalc();
-            forceLayout();
-
-            const LayoutRect& updatedDocumentRect = renderView->documentRect();
-            LayoutUnit docLogicalHeight = horizontalWritingMode ? updatedDocumentRect.height() : updatedDocumentRect.width();
-            LayoutUnit docLogicalTop = horizontalWritingMode ? updatedDocumentRect.y() : updatedDocumentRect.x();
-            LayoutUnit docLogicalRight = horizontalWritingMode ? updatedDocumentRect.maxX() : updatedDocumentRect.maxY();
-            LayoutUnit clippedLogicalLeft;
-            if (!renderView->style().isLeftToRightDirection())
-                clippedLogicalLeft = docLogicalRight - pageLogicalWidth;
-            LayoutRect overflow(clippedLogicalLeft, docLogicalTop, pageLogicalWidth, docLogicalHeight);
-
-            if (!horizontalWritingMode)
-                overflow = overflow.transposedRect();
-            renderView->clearLayoutOverflow();
-            renderView->addLayoutOverflow(overflow); // This is how we clip in case we overflow again.
-        }
+        if (!horizontalWritingMode)
+            overflow = overflow.transposedRect();
+        renderView.clearLayoutOverflow();
+        renderView.addLayoutOverflow(overflow); // This is how we clip in case we overflow again.
     }
 
     if (shouldAdjustViewSize)
