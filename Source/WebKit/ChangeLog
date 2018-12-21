@@ -1,3 +1,21 @@
+2018-12-20  Jeremy Jones  <jeremyj@apple.com>
+
+        Flicker when exiting element fullscreen.
+        https://bugs.webkit.org/show_bug.cgi?id=192774
+        rdar://problem/33088878
+
+        Reviewed by Jer Noble.
+
+        Fixes an issue where the web page would flicker upon exiting element fullscreen.
+
+        Replace WebView with a snapshot while the WebView is restyled and resized for inline.
+
+        * UIProcess/mac/WKFullScreenWindowController.h:
+        * UIProcess/mac/WKFullScreenWindowController.mm:
+        (-[WKFullScreenWindowController initWithWindow:webView:page:]):
+        (-[WKFullScreenWindowController finishedExitFullScreenAnimation:]):
+        (-[WKFullScreenWindowController completeFinishExitFullScreenAnimationAfterRepaint]):
+
 2018-12-20  Chris Dumez  <cdumez@apple.com>
 
         Move HTTPS_UPGRADE code behind a runtime flag, off by default

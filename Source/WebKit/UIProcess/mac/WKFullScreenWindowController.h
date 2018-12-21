@@ -48,6 +48,7 @@ typedef enum FullScreenState : NSInteger FullScreenState;
     NSView *_webView; // Cannot be retained, see <rdar://problem/14884666>.
     WebKit::WebPageProxy* _page;
     RetainPtr<WebCoreFullScreenPlaceholderView> _webViewPlaceholder;
+    RetainPtr<NSView> _exitPlaceholder;
     RetainPtr<NSView> _clipView;
     RetainPtr<NSView> _backgroundView;
     NSRect _initialFrame;

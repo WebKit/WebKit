@@ -440,6 +440,26 @@ static const float minVideoWidth = 480 + 20 + 20; // Note: Keep in sync with med
     [[self window] exitFullScreenMode:self];
 }
 
+WTF_DECLARE_CF_TYPE_TRAIT(CGImage);
+
+static RetainPtr<CGImageRef> takeWindowSnapshot(CGSWindowID windowID, bool captureAtNominalResolution)
+{
+    CGSWindowCaptureOptions options = kCGSCaptureIgnoreGlobalClipShape;
+    if (captureAtNominalResolution)
+        options |= kCGSWindowCaptureNominalResolution;
+    RetainPtr<CFArrayRef> windowSnapshotImages = adoptCF(CGSHWCaptureWindowList(CGSMainConnectionID(), &windowID, 1, options));
+
+    if (windowSnapshotImages && CFArrayGetCount(windowSnapshotImages.get()))
+        return checked_cf_cast<CGImageRef>(CFArrayGetValueAtIndex(windowSnapshotImages.get(), 0));
+
+    // Fall back to the non-hardware capture path if we didn't get a snapshot
+    // (which usually happens if the window is fully off-screen).
+    CGWindowImageOption imageOptions = kCGWindowImageBoundsIgnoreFraming | kCGWindowImageShouldBeOpaque;
+    if (captureAtNominalResolution)
+        imageOptions |= kCGWindowImageNominalResolution;
+    return adoptCF(CGWindowListCreateImage(CGRectNull, kCGWindowListOptionIncludingWindow, windowID, imageOptions));
+}
+
 - (void)finishedExitFullScreenAnimation:(bool)completed
 {
     if (_fullScreenState == InFullScreen) {
@@ -457,27 +477,41 @@ static const float minVideoWidth = 480 + 20 + 20; // Note: Keep in sync with med
 
     NSResponder *firstResponder = [[self window] firstResponder];
 
-    ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-    // Screen updates to be re-enabled in completeFinishExitFullScreenAnimationAfterRepaint.
-    NSDisableScreenUpdates();
-    ALLOW_DEPRECATED_DECLARATIONS_END
-    _page->setSuppressVisibilityUpdates(true);
-    [[self window] orderOut:self];
-    NSView *contentView = [[self window] contentView];
-    contentView.hidden = YES;
-    [_backgroundView.get().layer removeAllAnimations];
-    ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-    [[_webViewPlaceholder window] setAutodisplay:NO];
-    ALLOW_DEPRECATED_DECLARATIONS_END
+    [CATransaction begin];
+    [CATransaction setDisableActions:YES];
+    NSRect exitPlaceholderScreenRect = _initialFrame;
+    exitPlaceholderScreenRect.origin.y = NSMaxY([[[NSScreen screens] objectAtIndex:0] frame]) - NSMaxY(exitPlaceholderScreenRect);
 
-    [self _replaceView:_webViewPlaceholder.get() with:_webView];
+    RetainPtr<CGImageRef> webViewContents = takeWindowSnapshot([[_webView window] windowNumber], true);
+    webViewContents = adoptCF(CGImageCreateWithImageInRect(webViewContents.get(), NSRectToCGRect(exitPlaceholderScreenRect)));
+    
+    _exitPlaceholder = adoptNS([[NSView alloc] initWithFrame:[_webView frame]]);
+    [_exitPlaceholder setWantsLayer: YES];
+    [_exitPlaceholder setAutoresizesSubviews: YES];
+    [_exitPlaceholder setLayerContentsPlacement: NSViewLayerContentsPlacementScaleProportionallyToFit];
+    [_exitPlaceholder setLayerContentsRedrawPolicy: NSViewLayerContentsRedrawNever];
+    [_exitPlaceholder setFrame:[_webView frame]];
+    [[_exitPlaceholder layer] setContents:(__bridge id)webViewContents.get()];
+    [[_webView superview] addSubview:_exitPlaceholder.get() positioned:NSWindowAbove relativeTo:_webView];
+
+    [CATransaction commit];
+    [CATransaction flush];
+
+    [CATransaction begin];
+    [CATransaction setDisableActions:YES];
+    
+    [_backgroundView.get().layer removeAllAnimations];
+    _page->setSuppressVisibilityUpdates(true);
+    [_webView removeFromSuperview];
+    [_webView setFrame:[_webViewPlaceholder frame]];
+    [_webView setAutoresizingMask:[_webViewPlaceholder autoresizingMask]];
+    [[_webViewPlaceholder superview] addSubview:_webView positioned:NSWindowBelow relativeTo:_webViewPlaceholder.get()];
+
     BEGIN_BLOCK_OBJC_EXCEPTIONS
     [NSLayoutConstraint activateConstraints:self.savedConstraints];
     END_BLOCK_OBJC_EXCEPTIONS
     self.savedConstraints = nil;
     makeResponderFirstResponderIfDescendantOfView(_webView.window, firstResponder, _webView);
-
-    [[_webView window] makeKeyAndOrderFront:self];
 
     // These messages must be sent after the swap or flashing will occur during forceRepaint:
     [self _manager]->didExitFullScreen();
@@ -496,19 +530,32 @@ static const float minVideoWidth = 480 + 20 + 20; // Note: Keep in sync with med
         [self completeFinishExitFullScreenAnimationAfterRepaint];
     });
     _page->forceRepaint(_repaintCallback.copyRef());
+
+    [CATransaction commit];
+    [CATransaction flush];
 }
 
 - (void)completeFinishExitFullScreenAnimationAfterRepaint
 {
+    [CATransaction begin];
+    [CATransaction setDisableActions:YES];
+
+    [_webViewPlaceholder removeFromSuperview];
+    [[self window] orderOut:self];
+    NSView *contentView = [[self window] contentView];
+    contentView.hidden = YES;
+    [_exitPlaceholder removeFromSuperview];
+    [[_exitPlaceholder layer] setContents:nil];
+    _exitPlaceholder = nil;
+    
+    [[_webView window] makeKeyAndOrderFront:self];
+    _webViewPlaceholder = nil;
+    
     _repaintCallback = nullptr;
-    ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-    [[_webView window] setAutodisplay:YES];
-    ALLOW_DEPRECATED_DECLARATIONS_END
-    [[_webView window] displayIfNeeded];
     _page->setSuppressVisibilityUpdates(false);
-    ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-    NSEnableScreenUpdates();
-    ALLOW_DEPRECATED_DECLARATIONS_END
+
+    [CATransaction commit];
+    [CATransaction flush];
 }
 
 - (void)performClose:(id)sender
