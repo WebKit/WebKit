@@ -167,7 +167,7 @@ void AsyncStackTrace::truncate(size_t maxDepth)
 
     // The subtree being truncated must be removed from it's parent before
     // updating its parent pointer chain.
-    auto* sourceNode = lastUnlockedAncestor->m_parent.get();
+    RefPtr<AsyncStackTrace> sourceNode = lastUnlockedAncestor->m_parent;
     lastUnlockedAncestor->remove();
 
     while (sourceNode) {
@@ -175,10 +175,10 @@ void AsyncStackTrace::truncate(size_t maxDepth)
         previousNode->m_parent->m_childCount = 1;
         previousNode = previousNode->m_parent.get();
 
-        if (sourceNode == newStackTraceRoot)
+        if (sourceNode.get() == newStackTraceRoot)
             break;
 
-        sourceNode = sourceNode->m_parent.get();
+        sourceNode = sourceNode->m_parent;
     }
 
     previousNode->m_truncated = true;

@@ -1,3 +1,17 @@
+2018-12-21  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Crashes seen under Inspector::ScriptCallFrame::~ScriptCallFrame
+        https://bugs.webkit.org/show_bug.cgi?id=180373
+        <rdar://problem/33894170>
+
+        Rubber-stamped by Devin Rousso.
+
+        * inspector/AsyncStackTrace.cpp:
+        (Inspector::AsyncStackTrace::truncate):
+        The `lastUnlockedAncestor->remove()` may release the only reference to it's
+        parent which we intend to use later but don't hold a RefPtr to. Keep the
+        parent alive explicitly by protecting it.
+
 2018-12-20  Chris Dumez  <cdumez@apple.com>
 
         Use Optional::hasValue() instead of Optional::has_value()
