@@ -1,3 +1,23 @@
+2018-12-21  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: update scroll position when revealing a virtualized WI.DataGridNode
+        https://bugs.webkit.org/show_bug.cgi?id=192992
+        <rdar://problem/46886427>
+
+        Reviewed by Joseph Pecoraro.
+
+        When `reveal`ing a `WI.DataGridNode`, if it is not currently in the DOM tree (e.g. it's been
+        virtualized by it's owner `WI.DataGrid`), we need to scroll to it's position so that it gets
+        added to the DOM tree before it can be revealed/selected.
+
+        * UserInterface/Views/DataGrid.js:
+        (WI.DataGrid.prototype.layout):
+        (WI.DataGrid.prototype.updateVisibleRows):
+        (WI.DataGrid.prototype._updateVisibleRows): Deleted.
+
+        * UserInterface/Views/DataGridNode.js:
+        (WI.DataGridNode.prototype.reveal):
+
 2018-12-20  Nikita Vasilyev  <nvasilyev@apple.com>
 
         Web Inspector: Dark Mode: Type profiler popovers have black text on dark background

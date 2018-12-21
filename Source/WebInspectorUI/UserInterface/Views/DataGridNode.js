@@ -544,7 +544,7 @@ WI.DataGridNode = class DataGridNode extends WI.Object
             currentAncestor = currentAncestor.parent;
         }
 
-        this.element.scrollIntoViewIfNeeded(false);
+        this.dataGrid.updateVisibleRows(this);
 
         this.dispatchEventToListeners("revealed");
     }

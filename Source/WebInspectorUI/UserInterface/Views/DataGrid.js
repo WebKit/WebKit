@@ -876,7 +876,7 @@ WI.DataGrid = class DataGrid extends WI.View
             this._updateHeaderAndScrollbar();
         }
 
-        this._updateVisibleRows();
+        this.updateVisibleRows();
     }
 
     sizeDidChange()
@@ -1047,7 +1047,7 @@ WI.DataGrid = class DataGrid extends WI.View
         this.needsLayout();
     }
 
-    _updateVisibleRows()
+    updateVisibleRows(focusedDataGridNode)
     {
         if (this._inline || this._variableHeightRows) {
             // Inline DataGrids always show all their rows, so we can't virtualize them.
@@ -1066,6 +1066,9 @@ WI.DataGrid = class DataGrid extends WI.View
                 nextElement = rowElement;
             }
 
+            if (focusedDataGridNode)
+                focusedDataGridNode.element.scrollIntoViewIfNeeded(false);
+
             return;
         }
 
@@ -1079,26 +1082,32 @@ WI.DataGrid = class DataGrid extends WI.View
         if (isNaN(this._cachedScrollableOffsetHeight))
             this._cachedScrollableOffsetHeight = this._scrollContainerElement.offsetHeight;
 
-        let scrollTop = this._cachedScrollTop;
-        let scrollableOffsetHeight = this._cachedScrollableOffsetHeight;
+        let visibleRowCount = Math.ceil((this._cachedScrollableOffsetHeight + (overflowPadding * 2)) / rowHeight);
 
-        let visibleRowCount = Math.ceil((scrollableOffsetHeight + (overflowPadding * 2)) / rowHeight);
+        if (!focusedDataGridNode) {
+            let currentTopMargin = this._topDataTableMarginHeight;
+            let currentBottomMargin = this._bottomDataTableMarginHeight;
+            let currentTableBottom = currentTopMargin + (visibleRowCount * rowHeight);
 
-        let currentTopMargin = this._topDataTableMarginHeight;
-        let currentBottomMargin = this._bottomDataTableMarginHeight;
-        let currentTableBottom = currentTopMargin + (visibleRowCount * rowHeight);
+            let belowTopThreshold = !currentTopMargin || this._cachedScrollTop > currentTopMargin + updateOffsetThreshold;
+            let aboveBottomThreshold = !currentBottomMargin || this._cachedScrollTop + this._cachedScrollableOffsetHeight < currentTableBottom - updateOffsetThreshold;
 
-        let belowTopThreshold = !currentTopMargin || scrollTop > currentTopMargin + updateOffsetThreshold;
-        let aboveBottomThreshold = !currentBottomMargin || scrollTop + scrollableOffsetHeight < currentTableBottom - updateOffsetThreshold;
-
-        if (belowTopThreshold && aboveBottomThreshold && !isNaN(this._previousRevealedRowCount))
-            return;
+            if (belowTopThreshold && aboveBottomThreshold && !isNaN(this._previousRevealedRowCount))
+                return;
+        }
 
         let revealedRows = this._rows.filter((row) => row.revealed && !row.hidden);
 
         this._previousRevealedRowCount = revealedRows.length;
 
-        let topHiddenRowCount = Math.max(0, Math.floor((scrollTop - overflowPadding) / rowHeight));
+        if (focusedDataGridNode) {
+            let focusedIndex = revealedRows.indexOf(focusedDataGridNode);
+            let firstVisibleRowIndex = this._cachedScrollTop / rowHeight;
+            if (focusedIndex < firstVisibleRowIndex || focusedIndex > firstVisibleRowIndex + visibleRowCount)
+                this._scrollContainerElement.scrollTop = this._cachedScrollTop = (focusedIndex * rowHeight) - (this._cachedScrollableOffsetHeight / 2) + (rowHeight / 2);
+        }
+
+        let topHiddenRowCount = Math.max(0, Math.floor((this._cachedScrollTop - overflowPadding) / rowHeight));
         let bottomHiddenRowCount = Math.max(0, this._previousRevealedRowCount - topHiddenRowCount - visibleRowCount);
 
         let marginTop = topHiddenRowCount * rowHeight;
