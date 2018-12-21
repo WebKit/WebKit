@@ -448,7 +448,7 @@ void TestRunner::setDatabaseQuota(unsigned long long quota)
     if (FAILED(tmpDatabaseManager->sharedWebDatabaseManager(&databaseManager)))
         return;
 
-    databaseManager->setQuota(TEXT("file:///"), quota);
+    databaseManager->setQuota(_bstr_t("file:///"), quota);
 }
 
 void TestRunner::goBack()

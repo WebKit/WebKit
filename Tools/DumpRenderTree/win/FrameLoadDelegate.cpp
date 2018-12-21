@@ -51,8 +51,6 @@
 
 using std::string;
 
-static FrameLoadDelegate* g_delegateWaitingOnTimer;
-
 string descriptionSuitableForTestResult(IWebFrame* webFrame)
 {
     COMPtr<IWebView> webView;

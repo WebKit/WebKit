@@ -120,7 +120,7 @@ static std::string dump(IDOMRange* range)
         return std::string();
 
     char buffer[1024];
-    snprintf(buffer, ARRAYSIZE(buffer), "range from %ld of %s to %ld of %s", startOffset, dumpPath(startContainer.get()).c_str(), endOffset, dumpPath(endContainer.get()).c_str());
+    snprintf(buffer, ARRAYSIZE(buffer), "range from %d of %s to %d of %s", startOffset, dumpPath(startContainer.get()).c_str(), endOffset, dumpPath(endContainer.get()).c_str());
     return buffer;
 }
 

@@ -52,14 +52,6 @@ static inline wstring wstringFromInt(int i)
     return ss.str();
 }
 
-static inline BSTR BSTRFromString(const string& str)
-{
-    int length = ::MultiByteToWideChar(CP_UTF8, 0, str.c_str(), str.length(), 0, 0);
-    BSTR result = ::SysAllocStringLen(0, length);
-    ::MultiByteToWideChar(CP_UTF8, 0, str.c_str(), str.length(), result, length);
-    return result;
-}
-
 wstring ResourceLoadDelegate::descriptionSuitableForTestResult(unsigned long identifier) const
 {
     IdentifierMap::const_iterator it = m_urlMap.find(identifier);

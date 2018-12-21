@@ -524,8 +524,8 @@ static void dumpHistoryItem(IWebHistoryItem* item, int indent, bool current)
         return;
 
     if (wcsstr(static_cast<wchar_t*>(url), L"file:/") == static_cast<wchar_t*>(url)) {
-        static wchar_t* layoutTestsStringUnixPath = L"/LayoutTests/";
-        static wchar_t* layoutTestsStringDOSPath = L"\\LayoutTests\\";
+        auto layoutTestsStringUnixPath = L"/LayoutTests/";
+        auto layoutTestsStringDOSPath = L"\\LayoutTests\\";
         
         wchar_t* result = wcsstr(static_cast<wchar_t*>(url), layoutTestsStringUnixPath);
         if (!result)
@@ -832,7 +832,7 @@ static void resetWebPreferencesToConsistentValues(IWebPreferences* preferences)
     preferences->setDefaultFontSize(16);
     preferences->setDefaultFixedFontSize(13);
     preferences->setMinimumFontSize(0);
-    preferences->setDefaultTextEncodingName(L"ISO-8859-1");
+    preferences->setDefaultTextEncodingName(_bstr_t(L"ISO-8859-1"));
     preferences->setJavaEnabled(FALSE);
     preferences->setJavaScriptEnabled(TRUE);
     preferences->setEditableLinkBehavior(WebKitEditableLinkOnlyLiveWithShiftKey);
@@ -916,17 +916,6 @@ static void setApplicationId()
         ASSERT(prefsPrivate4);
         _bstr_t fileName = applicationId().charactersWithNullTermination().data();
         prefsPrivate4->setApplicationId(fileName);
-    }
-}
-
-static void setCacheFolder()
-{
-    String libraryPath = libraryPathForDumpRenderTree();
-
-    COMPtr<IWebCache> webCache;
-    if (SUCCEEDED(WebKitCreateInstance(CLSID_WebCache, 0, IID_IWebCache, (void**)&webCache))) {
-        _bstr_t cacheFolder = WebCore::FileSystem::pathByAppendingComponent(libraryPath, "LocalCache").utf8().data();
-        webCache->setCacheFolder(cacheFolder);
     }
 }
 
@@ -1338,7 +1327,7 @@ IWebView* createWebViewAndOffscreenWindow(HWND* webViewWindow)
     IWebView* webView = nullptr;
     HRESULT hr = WebKitCreateInstance(CLSID_WebView, 0, IID_IWebView, (void**)&webView);
     if (FAILED(hr)) {
-        fprintf(stderr, "Failed to create CLSID_WebView instance, error 0x%x\n", hr);
+        fprintf(stderr, "Failed to create CLSID_WebView instance, error 0x%lx\n", hr);
         return nullptr;
     }
 
@@ -1542,6 +1531,8 @@ int main(int argc, const char* argv[])
     testResult = fdopen(fdStdout, "a+b");
     // Redirect stdout to stderr.
     int result = _dup2(_fileno(stderr), 1);
+    if (result)
+        return -5;
 
     // Tests involving the clipboard are flaky when running with multiple DRTs, since the clipboard is global.
     // We can fix this by assigning each DRT a separate window station (each window station has its own clipboard).
@@ -1553,14 +1544,14 @@ int main(int argc, const char* argv[])
     auto windowsStation = ::CreateWindowStation(windowStationName.charactersWithNullTermination().data(), CWF_CREATE_ONLY, WINSTA_ALL_ACCESS, nullptr);
     if (windowsStation) {
         if (!::SetProcessWindowStation(windowsStation))
-            fprintf(stderr, "SetProcessWindowStation failed with error %d\n", ::GetLastError());
+            fprintf(stderr, "SetProcessWindowStation failed with error %lu\n", ::GetLastError());
 
         desktop = ::CreateDesktop(desktopName.charactersWithNullTermination().data(), nullptr, nullptr, 0, GENERIC_ALL, nullptr);
         if (!desktop)
-            fprintf(stderr, "Failed to create desktop with error %d\n", ::GetLastError());
+            fprintf(stderr, "Failed to create desktop with error %lu\n", ::GetLastError());
     } else {
         DWORD error = ::GetLastError();
-        fprintf(stderr, "Failed to create window station with error %d\n", error);
+        fprintf(stderr, "Failed to create window station with error %lu\n", error);
         if (error == ERROR_ACCESS_DENIED)
             fprintf(stderr, "DumpRenderTree should be run as Administrator!\n");
     }

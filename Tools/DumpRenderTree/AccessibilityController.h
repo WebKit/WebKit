@@ -84,12 +84,12 @@ private:
     static JSClassRef getJSClass();
 
 #if PLATFORM(WIN)
-    HWINEVENTHOOK m_focusEventHook;
-    HWINEVENTHOOK m_valueChangeEventHook;
-    HWINEVENTHOOK m_scrollingStartEventHook;
+    HWINEVENTHOOK m_focusEventHook { nullptr };
+    HWINEVENTHOOK m_valueChangeEventHook { nullptr };
+    HWINEVENTHOOK m_scrollingStartEventHook { nullptr };
 
-    HWINEVENTHOOK m_allEventsHook;
-    HWINEVENTHOOK m_notificationsEventHook;
+    HWINEVENTHOOK m_allEventsHook { nullptr };
+    HWINEVENTHOOK m_notificationsEventHook { nullptr };
     HashMap<PlatformUIElement, JSObjectRef> m_notificationListeners;
 #endif
 

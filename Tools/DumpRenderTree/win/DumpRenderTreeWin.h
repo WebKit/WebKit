@@ -32,8 +32,8 @@
 struct IWebFrame;
 struct IWebScriptWorld;
 struct IWebView;
-struct FrameLoadDelegate;
-struct PolicyDelegate;
+class FrameLoadDelegate;
+class PolicyDelegate;
 typedef const struct __CFString* CFStringRef;
 typedef struct HWND__* HWND;
 

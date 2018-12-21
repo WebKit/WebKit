@@ -42,14 +42,7 @@
 #include <wtf/Assertions.h>
 #include <wtf/text/AtomicString.h>
 
-AccessibilityController::AccessibilityController()
-    : m_focusEventHook(0)
-    , m_scrollingStartEventHook(0)
-    , m_valueChangeEventHook(0)
-    , m_allEventsHook(0)
-    , m_notificationsEventHook(0)
-{
-}
+AccessibilityController::AccessibilityController() = default;
 
 AccessibilityController::~AccessibilityController()
 {

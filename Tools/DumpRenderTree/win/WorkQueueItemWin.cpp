@@ -43,16 +43,6 @@
 
 using std::wstring;
 
-static wstring jsStringRefToWString(JSStringRef jsStr)
-{
-    size_t length = JSStringGetLength(jsStr);
-    Vector<WCHAR> buffer(length + 1);
-    memcpy(buffer.data(), JSStringGetCharactersPtr(jsStr), length * sizeof(WCHAR));
-    buffer[length] = '\0';
-
-    return buffer.data();
-}
-
 bool LoadItem::invoke() const
 {
     _bstr_t targetBSTR(JSStringCopyBSTR(m_target.get()), false);
