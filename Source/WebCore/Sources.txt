@@ -256,6 +256,8 @@ Modules/webaudio/WaveShaperProcessor.cpp
 Modules/webauthn/AuthenticatorCoordinator.cpp
 Modules/webauthn/AuthenticatorCoordinatorClient.cpp
 Modules/webauthn/PublicKeyCredential.cpp
+Modules/webauthn/apdu/ApduCommand.cpp
+Modules/webauthn/apdu/ApduResponse.cpp
 Modules/webauthn/cbor/CBORReader.cpp
 Modules/webauthn/cbor/CBORValue.cpp
 Modules/webauthn/cbor/CBORWriter.cpp

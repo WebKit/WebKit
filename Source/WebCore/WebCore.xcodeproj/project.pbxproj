@@ -1781,6 +1781,8 @@
 		5706A6961DDE5C9500A03B14 /* CryptoAlgorithmRsaOaepParams.h in Headers */ = {isa = PBXBuildFile; fileRef = 5706A6951DDE5C9500A03B14 /* CryptoAlgorithmRsaOaepParams.h */; };
 		5706A6981DDE5E4600A03B14 /* JSRsaOaepParams.h in Headers */ = {isa = PBXBuildFile; fileRef = 5706A6971DDE5E4600A03B14 /* JSRsaOaepParams.h */; };
 		571252691E524EB1008FF369 /* CryptoAlgorithmAES_CFB.h in Headers */ = {isa = PBXBuildFile; fileRef = 571252681E524EB1008FF369 /* CryptoAlgorithmAES_CFB.h */; };
+		57152B5A21CB3E88000C37CA /* ApduCommand.h in Headers */ = {isa = PBXBuildFile; fileRef = 57152B5821CB2E3B000C37CA /* ApduCommand.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		57152B5C21CC1902000C37CA /* ApduResponse.h in Headers */ = {isa = PBXBuildFile; fileRef = 57152B5621CB2E3A000C37CA /* ApduResponse.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		571F21891DA57C54005C9EFD /* JSSubtleCrypto.h in Headers */ = {isa = PBXBuildFile; fileRef = 571F21881DA57C54005C9EFD /* JSSubtleCrypto.h */; };
 		572093D31DDCEB9A00310AB0 /* CryptoAlgorithmAesCbcCfbParams.h in Headers */ = {isa = PBXBuildFile; fileRef = 572093D21DDCEB9A00310AB0 /* CryptoAlgorithmAesCbcCfbParams.h */; };
 		5721A9871ECE53B10081295A /* CryptoDigestAlgorithm.h in Headers */ = {isa = PBXBuildFile; fileRef = 5721A9861ECE53B10081295A /* CryptoDigestAlgorithm.h */; };
@@ -8586,6 +8588,10 @@
 		5706A6991DDE5E8500A03B14 /* JSRsaOaepParams.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSRsaOaepParams.cpp; sourceTree = "<group>"; };
 		571252681E524EB1008FF369 /* CryptoAlgorithmAES_CFB.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CryptoAlgorithmAES_CFB.h; sourceTree = "<group>"; };
 		5712526A1E52527C008FF369 /* CryptoAlgorithmAES_CFB.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CryptoAlgorithmAES_CFB.cpp; sourceTree = "<group>"; };
+		57152B5521CB2E3A000C37CA /* ApduResponse.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ApduResponse.cpp; path = Modules/webauthn/apdu/ApduResponse.cpp; sourceTree = SOURCE_ROOT; };
+		57152B5621CB2E3A000C37CA /* ApduResponse.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ApduResponse.h; path = Modules/webauthn/apdu/ApduResponse.h; sourceTree = SOURCE_ROOT; };
+		57152B5721CB2E3A000C37CA /* ApduCommand.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ApduCommand.cpp; path = Modules/webauthn/apdu/ApduCommand.cpp; sourceTree = SOURCE_ROOT; };
+		57152B5821CB2E3B000C37CA /* ApduCommand.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ApduCommand.h; path = Modules/webauthn/apdu/ApduCommand.h; sourceTree = SOURCE_ROOT; };
 		571F21881DA57C54005C9EFD /* JSSubtleCrypto.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSSubtleCrypto.h; sourceTree = "<group>"; };
 		571F218A1DA57C7A005C9EFD /* JSSubtleCrypto.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSSubtleCrypto.cpp; sourceTree = "<group>"; };
 		572093D11DDCEA4B00310AB0 /* AesCbcCfbParams.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = AesCbcCfbParams.idl; sourceTree = "<group>"; };
@@ -19270,6 +19276,17 @@
 			path = "unified-sources";
 			sourceTree = "<group>";
 		};
+		57152B5321CB2CE3000C37CA /* apdu */ = {
+			isa = PBXGroup;
+			children = (
+				57152B5721CB2E3A000C37CA /* ApduCommand.cpp */,
+				57152B5821CB2E3B000C37CA /* ApduCommand.h */,
+				57152B5521CB2E3A000C37CA /* ApduResponse.cpp */,
+				57152B5621CB2E3A000C37CA /* ApduResponse.h */,
+			);
+			path = apdu;
+			sourceTree = "<group>";
+		};
 		57303BB32006C6ED00355965 /* cbor */ = {
 			isa = PBXGroup;
 			children = (
@@ -19347,6 +19364,7 @@
 		57D8462A1FEAF57F00CA3682 /* webauthn */ = {
 			isa = PBXGroup;
 			children = (
+				57152B5321CB2CE3000C37CA /* apdu */,
 				57303BB32006C6ED00355965 /* cbor */,
 				578A4BFA2166AE0000D08F34 /* fido */,
 				57303C272009B2FC00355965 /* AuthenticatorAssertionResponse.h */,
@@ -27862,6 +27880,8 @@
 				714C7C671FDAD2A900F2BEE1 /* AnimationPlaybackEventInit.h in Headers */,
 				71025ECD1F99F0CE004A250C /* AnimationTimeline.h in Headers */,
 				0F580FAF149800D400FB5BD8 /* AnimationUtilities.h in Headers */,
+				57152B5A21CB3E88000C37CA /* ApduCommand.h in Headers */,
+				57152B5C21CC1902000C37CA /* ApduResponse.h in Headers */,
 				93309DD7099E64920056E581 /* AppendNodeCommand.h in Headers */,
 				A1DF5A941F7EC4320058A477 /* ApplePayContactField.h in Headers */,
 				A12C59EE2035FC9B0012236B /* ApplePayError.h in Headers */,

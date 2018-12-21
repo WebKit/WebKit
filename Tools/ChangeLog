@@ -1,3 +1,15 @@
+2018-12-21  Jiewen Tan  <jiewen_tan@apple.com>
+
+        [WebAuthN] Import an APDU coder from Chromium
+        https://bugs.webkit.org/show_bug.cgi?id=192949
+        <rdar://problem/46879933>
+
+        Reviewed by Brent Fulgham.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WebCore/ApduTest.cpp: Added.
+        (TestWebKitAPI::TEST):
+
 2018-12-21  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Setting the file wrapper and content type of an attachment to a PDF should update its image

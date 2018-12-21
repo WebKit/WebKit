@@ -1,3 +1,37 @@
+2018-12-21  Jiewen Tan  <jiewen_tan@apple.com>
+
+        [WebAuthN] Import an APDU coder from Chromium
+        https://bugs.webkit.org/show_bug.cgi?id=192949
+        <rdar://problem/46879933>
+
+        Reviewed by Brent Fulgham.
+
+        This patch imports an APDU coder from Chromium. Here is the documentation:
+        https://fidoalliance.org/specs/fido-u2f-v1.2-ps-20170411/fido-u2f-raw-message-formats-v1.2-ps-20170411.html#u2f-message-framing
+        APDU is a binary format to frame any U2F requests/responses into binaries. It is equivalent to CBOR in CTAP2.
+
+        Here is a list of files that are imported from Chromium:
+        https://cs.chromium.org/chromium/src/components/apdu/apdu_command.cc?rcl=a2f290c10d132f53518e7f99d5635ee814ff8090
+        https://cs.chromium.org/chromium/src/components/apdu/apdu_command.h?rcl=867b103481f6f4ccc79a69bba16c11eefac3cdb6
+        https://cs.chromium.org/chromium/src/components/apdu/apdu_response.cc?rcl=867b103481f6f4ccc79a69bba16c11eefac3cdb6
+        https://cs.chromium.org/chromium/src/components/apdu/apdu_response.h?rcl=867b103481f6f4ccc79a69bba16c11eefac3cdb6
+        https://cs.chromium.org/chromium/src/components/apdu/apdu_unittest.cc?rcl=867b103481f6f4ccc79a69bba16c11eefac3cdb6
+
+        Covered by API tests.
+
+        * Modules/webauthn/apdu/ApduCommand.cpp: Added.
+        (apdu::ApduCommand::createFromMessage):
+        (apdu::ApduCommand::ApduCommand):
+        (apdu::ApduCommand::getEncodedCommand const):
+        * Modules/webauthn/apdu/ApduCommand.h: Added.
+        * Modules/webauthn/apdu/ApduResponse.cpp: Added.
+        (apdu::ApduResponse::createFromMessage):
+        (apdu::ApduResponse::ApduResponse):
+        (apdu::ApduResponse::getEncodedResponse const):
+        * Modules/webauthn/apdu/ApduResponse.h: Added.
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+
 2018-12-21  Jer Noble  <jer.noble@apple.com>
 
         Convert raw CDMSessionMediaSourceAVFObjC pointer in MediaPlayerPrivateMediaSourceAVFObjC
