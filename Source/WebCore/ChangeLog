@@ -1,3 +1,40 @@
+2018-12-21  Justin Fan  <justin_fan@apple.com>
+
+        [WebGPU] GPUBindGroupLayout refactoring: no HashMap, and failure logging
+        https://bugs.webkit.org/show_bug.cgi?id=192990
+
+        Reviewed by Myles C. Maxfield.
+
+        Refactor away the unnecessary HashMaps when creating MTLArgumentEncoders in GPUBindGroupLayout creation.
+        Also update GPUBindGroupLayout::create -> tryCreate, in order to better handle Objective-C exceptions.
+
+        No new tests; no change in behavior.
+
+        * Modules/webgpu/WebGPUBindGroupLayout.cpp:
+        (WebCore::WebGPUBindGroupLayout::create):
+        (WebCore::WebGPUBindGroupLayout::WebGPUBindGroupLayout):
+        * Modules/webgpu/WebGPUBindGroupLayout.h:
+        (WebCore::WebGPUBindGroupLayout::bindGroupLayout const):
+        * Modules/webgpu/WebGPUDevice.cpp:
+        (WebCore::WebGPUDevice::createBindGroupLayout const):
+        * platform/graphics/gpu/GPUBindGroupLayout.h:
+        * platform/graphics/gpu/GPUDevice.cpp:
+        (WebCore::GPUDevice::tryCreateBindGroupLayout const): Renamed from ::create*. Now returning a RefPtr. 
+        (WebCore::GPUDevice::createBindGroupLayout const): Deleted.
+        * platform/graphics/gpu/GPUDevice.h:
+        * platform/graphics/gpu/cocoa/GPUBindGroupLayoutMetal.mm:
+        (WebCore::appendArgumentToArray):
+        (WebCore::newEncoder):
+        (WebCore::GPUBindGroupLayout::tryCreate): Renamed from ::create. Now returning a RefPtr.
+        (WebCore::GPUBindGroupLayout::GPUBindGroupLayout):
+        (WebCore::appendArgumentToArrayInMap): Deleted.
+        (WebCore::GPUBindGroupLayout::create): Deleted.
+
+        Deleted unneeded GPUBindGroupLayout.cpp:
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * platform/graphics/gpu/GPUBindGroupLayout.cpp: Removed.
+
 2018-12-21  Alejandro G. Castro  <alex@igalia.com>
 
         [GTK][WPE] Add DeviceIdHashSaltStorage disk persistence

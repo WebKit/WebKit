@@ -36,14 +36,14 @@ namespace WebCore {
 
 class WebGPUBindGroupLayout : public RefCounted<WebGPUBindGroupLayout> {
 public:
-    static Ref<WebGPUBindGroupLayout> create(Ref<GPUBindGroupLayout>&&);
+    static Ref<WebGPUBindGroupLayout> create(RefPtr<GPUBindGroupLayout>&&);
 
-    RefPtr<GPUBindGroupLayout> bindGroupLayout() const { return m_bindGroupLayout.copyRef(); }
+    RefPtr<GPUBindGroupLayout> bindGroupLayout() const { return m_bindGroupLayout; }
 
 private:
-    explicit WebGPUBindGroupLayout(Ref<GPUBindGroupLayout>&&);
+    explicit WebGPUBindGroupLayout(RefPtr<GPUBindGroupLayout>&&);
 
-    Ref<GPUBindGroupLayout> m_bindGroupLayout;
+    RefPtr<GPUBindGroupLayout> m_bindGroupLayout;
 };
 
 } // namespace WebCore

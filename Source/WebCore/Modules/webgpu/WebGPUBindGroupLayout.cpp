@@ -30,12 +30,12 @@
 
 namespace WebCore {
 
-Ref<WebGPUBindGroupLayout> WebGPUBindGroupLayout::create(Ref<GPUBindGroupLayout>&& layout)
+Ref<WebGPUBindGroupLayout> WebGPUBindGroupLayout::create(RefPtr<GPUBindGroupLayout>&& layout)
 {
     return adoptRef(*new WebGPUBindGroupLayout(WTFMove(layout)));
 }
 
-WebGPUBindGroupLayout::WebGPUBindGroupLayout(Ref<GPUBindGroupLayout>&& layout)
+WebGPUBindGroupLayout::WebGPUBindGroupLayout(RefPtr<GPUBindGroupLayout>&& layout)
     : m_bindGroupLayout(WTFMove(layout))
 {
 }

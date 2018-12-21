@@ -29,7 +29,9 @@
 #if ENABLE(WEBGPU)
 
 #import "GPUDevice.h"
+#import "Logging.h"
 
+#import <Foundation/Foundation.h>
 #import <Metal/Metal.h>
 #import <wtf/BlockObjCExceptions.h>
 
@@ -48,57 +50,76 @@ static MTLDataType MTLDataTypeForBindingType(GPUBindGroupLayoutBinding::BindingT
     }
 }
 
-using ArgumentArraysMap = HashMap<GPUShaderStageFlags, RetainPtr<NSMutableArray<MTLArgumentDescriptor *>>>;
-static void appendArgumentToArrayInMap(ArgumentArraysMap& map, GPUShaderStageFlags stage, RetainPtr<MTLArgumentDescriptor> argument)
+using ArgumentArray = RetainPtr<NSMutableArray<MTLArgumentDescriptor *>>;
+static void appendArgumentToArray(ArgumentArray array, RetainPtr<MTLArgumentDescriptor> argument)
 {
-    auto iterator = map.find(stage);
-    if (iterator == map.end()) {
-        BEGIN_BLOCK_OBJC_EXCEPTIONS;
-        map.set(stage, [[NSMutableArray alloc] initWithObjects:argument.get(), nil]);
-        END_BLOCK_OBJC_EXCEPTIONS;
-    } else
-        [iterator->value addObject:argument.get()];
+    BEGIN_BLOCK_OBJC_EXCEPTIONS;
+    if (!array)
+        array = [[NSMutableArray alloc] initWithObjects:argument.get(), nil];
+    else
+        [array addObject:argument.get()];
+    END_BLOCK_OBJC_EXCEPTIONS;
 }
 
-Ref<GPUBindGroupLayout> GPUBindGroupLayout::create(const GPUDevice& device, GPUBindGroupLayoutDescriptor&& descriptor)
+static RetainPtr<MTLArgumentEncoder> newEncoder(const GPUDevice& device, ArgumentArray array)
 {
-    ArgumentArraysMap argumentArraysMap;
+    RetainPtr<MTLArgumentEncoder> encoder;
+    BEGIN_BLOCK_OBJC_EXCEPTIONS;
+    encoder = adoptNS([device.platformDevice() newArgumentEncoderWithArguments:array.get()]);
+    END_BLOCK_OBJC_EXCEPTIONS;
+    if (!encoder)
+        LOG(WebGPU, "GPUBindGroupLayout::tryCreate(): Unable to create MTLArgumentEncoder!");
+
+    return encoder;
+};
+
+RefPtr<GPUBindGroupLayout> GPUBindGroupLayout::tryCreate(const GPUDevice& device, GPUBindGroupLayoutDescriptor&& descriptor)
+{
+    ArgumentArray vertexArguments, fragmentArguments, computeArguments;
 
     for (const auto& binding : descriptor.bindings) {
-
         RetainPtr<MTLArgumentDescriptor> mtlArgument;
 
         BEGIN_BLOCK_OBJC_EXCEPTIONS;
         mtlArgument = adoptNS([MTLArgumentDescriptor new]);
         END_BLOCK_OBJC_EXCEPTIONS;
 
+        if (!mtlArgument) {
+            LOG(WebGPU, "GPUBindGroupLayout::tryCreate(): Unable to create MTLArgumentDescriptor!");
+            return nullptr;
+        }
+
         mtlArgument.get().dataType = MTLDataTypeForBindingType(binding.type);
         mtlArgument.get().index = binding.binding;
 
         if (binding.visibility & GPUShaderStageBit::VERTEX)
-            appendArgumentToArrayInMap(argumentArraysMap, GPUShaderStageBit::VERTEX, mtlArgument);
+            appendArgumentToArray(vertexArguments, mtlArgument);
         if (binding.visibility & GPUShaderStageBit::FRAGMENT)
-            appendArgumentToArrayInMap(argumentArraysMap, GPUShaderStageBit::FRAGMENT, mtlArgument);
+            appendArgumentToArray(fragmentArguments, mtlArgument);
         if (binding.visibility & GPUShaderStageBit::COMPUTE)
-            appendArgumentToArrayInMap(argumentArraysMap, GPUShaderStageBit::COMPUTE, mtlArgument);
+            appendArgumentToArray(computeArguments, mtlArgument);
     }
 
-    ArgumentsMap argumentsMap;
+    ArgumentEncoders encoders;
 
-    BEGIN_BLOCK_OBJC_EXCEPTIONS;
-
-    for (const auto& argumentArrayPair : argumentArraysMap) {
-        auto mtlArgumentEncoder = adoptNS([device.platformDevice() newArgumentEncoderWithArguments:argumentArrayPair.value.get()]);
-        argumentsMap.set(argumentArrayPair.key, mtlArgumentEncoder);
+    if (vertexArguments) {
+        if (!(encoders.vertex = newEncoder(device, vertexArguments)))
+            return nullptr;
+    }
+    if (fragmentArguments) {
+        if (!(encoders.fragment = newEncoder(device, fragmentArguments)))
+            return nullptr;
+    }
+    if (computeArguments) {
+        if (!(encoders.compute = newEncoder(device, computeArguments)))
+            return nullptr;
     }
 
-    END_BLOCK_OBJC_EXCEPTIONS;
-
-    return adoptRef(*new GPUBindGroupLayout(WTFMove(argumentsMap)));
+    return adoptRef(new GPUBindGroupLayout(WTFMove(encoders)));
 }
 
-GPUBindGroupLayout::GPUBindGroupLayout(ArgumentsMap&& map)
-    : m_argumentsMap(map)
+GPUBindGroupLayout::GPUBindGroupLayout(ArgumentEncoders&& encoders)
+    : m_argumentEncoders(WTFMove(encoders))
 {
 }
 

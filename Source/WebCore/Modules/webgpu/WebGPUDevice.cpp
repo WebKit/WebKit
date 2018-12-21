@@ -69,7 +69,7 @@ RefPtr<WebGPUBuffer> WebGPUDevice::createBuffer(WebGPUBufferDescriptor&& descrip
 
 Ref<WebGPUBindGroupLayout> WebGPUDevice::createBindGroupLayout(WebGPUBindGroupLayoutDescriptor&& descriptor) const
 {
-    auto layout = m_device->createBindGroupLayout(GPUBindGroupLayoutDescriptor { descriptor.bindings });
+    auto layout = m_device->tryCreateBindGroupLayout(GPUBindGroupLayoutDescriptor { descriptor.bindings });
     return WebGPUBindGroupLayout::create(WTFMove(layout));
 }
 
