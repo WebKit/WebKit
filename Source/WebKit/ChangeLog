@@ -1,3 +1,24 @@
+2018-12-21  Alex Christensen  <achristensen@webkit.org>
+
+        Expand use of sourceApplicationAuditData
+        https://bugs.webkit.org/show_bug.cgi?id=192995
+        <rdar://problem/46627875>
+
+        Reviewed by Brady Eidson.
+
+        sourceApplicationAuditData has been used for a long time on iOS, but it's needed on more platforms.
+        I also made it return an Optional instead of a bool and returning by reference. Ahhh. So much nicer.
+
+        * NetworkProcess/cocoa/NetworkProcessCocoa.mm:
+        (WebKit::NetworkProcess::sourceApplicationAuditData const):
+        * Platform/IPC/Connection.h:
+        * Platform/IPC/mac/ConnectionMac.mm:
+        (IPC::Connection::getAuditToken):
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::initializeWebProcess):
+        * WebProcess/cocoa/WebProcessCocoa.mm:
+        (WebKit::WebProcess::sourceApplicationAuditData const):
+
 2018-12-21  Jiewen Tan  <jiewen_tan@apple.com>
 
         [Mac] Layout Test http/wpt/webauthn/public-key-credential-create-success-hid.https.html and http/wpt/webauthn/public-key-credential-get-success-hid.https.html are flaky

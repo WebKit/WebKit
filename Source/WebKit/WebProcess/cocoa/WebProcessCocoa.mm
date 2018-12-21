@@ -417,12 +417,14 @@ void WebProcess::platformTerminate()
 
 RetainPtr<CFDataRef> WebProcess::sourceApplicationAuditData() const
 {
-#if PLATFORM(IOS_FAMILY)
-    audit_token_t auditToken;
+#if USE(SOURCE_APPLICATION_AUDIT_DATA)
     ASSERT(parentProcessConnection());
-    if (!parentProcessConnection() || !parentProcessConnection()->getAuditToken(auditToken))
+    if (!parentProcessConnection())
         return nullptr;
-    return adoptCF(CFDataCreate(nullptr, (const UInt8*)&auditToken, sizeof(auditToken)));
+    Optional<audit_token_t> auditToken = parentProcessConnection()->getAuditToken();
+    if (!auditToken)
+        return nullptr;
+    return adoptCF(CFDataCreate(nullptr, (const UInt8*)&*auditToken, sizeof(*auditToken)));
 #else
     return nullptr;
 #endif

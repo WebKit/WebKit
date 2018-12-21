@@ -401,9 +401,8 @@ void WebProcess::initializeWebProcess(WebProcessCreationParameters&& parameters)
 #endif
 
 #if ENABLE(REMOTE_INSPECTOR) && PLATFORM(COCOA)
-    audit_token_t auditToken;
-    if (parentProcessConnection()->getAuditToken(auditToken)) {
-        RetainPtr<CFDataRef> auditData = adoptCF(CFDataCreate(nullptr, (const UInt8*)&auditToken, sizeof(auditToken)));
+    if (Optional<audit_token_t> auditToken = parentProcessConnection()->getAuditToken()) {
+        RetainPtr<CFDataRef> auditData = adoptCF(CFDataCreate(nullptr, (const UInt8*)&*auditToken, sizeof(*auditToken)));
         Inspector::RemoteInspector::singleton().setParentProcessInformation(WebCore::presentingApplicationPID(), auditData);
     }
 #endif
