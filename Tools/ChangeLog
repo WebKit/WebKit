@@ -1,3 +1,34 @@
+2018-12-21  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        Add JSCOnly to bot dashboard
+        https://bugs.webkit.org/show_bug.cgi?id=192964
+
+        Reviewed by Alexey Proskuryakov.
+
+        Apparently we have five JSCOnly test bots and multiple developers working on keeping them in
+        good shape. Sadly, they are hidden bots not exposed in the dashboard. They would be more
+        useful if they were not so secret, so add them.
+
+        There appear to be no build-only bots, so the first column is blank. And of course there are
+        no WebKit1 or WebKit2 bots, because this is JSCOnly, so the second and third columns are
+        blank too. That's OK. This will be the last bot on the dashboard, so it won't look too bad,
+        and there's plenty of room in the final column for all the bots.
+
+        I had a hard time picking a logo to use, because the JavaScript language does not have an
+        official logo. But I believe I've found one that will be satisfactory.
+
+        I will sneak in one bonus change: WPE's EWS queue was missing, and has been added.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Images/SquirrelFish.png: Added.
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Images/SquirrelFish@2x.png: Added.
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Scripts/BubbleQueueServer.js:
+        (BubbleQueueServer):
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Scripts/Dashboard.js:
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Scripts/WebKitBuildbot.js:
+        (WebKitBuildbot):
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Styles/Main.css:
+        (table.queue-grid tr.platform.linux-jsconly img.logo):
+
 2018-12-21  Benjamin Poulain  <benjamin@webkit.org>
 
         <rdar://problem/46194315> macOS: WebKit1 does not handle occlusion changes

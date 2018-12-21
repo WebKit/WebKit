@@ -34,7 +34,8 @@ Dashboard = {
         Windows7: { name: "windows-7", readableName: "Windows 7", order: 35 },
         WinCairo: { name: "wincairo-windows-10", readableName: "WinCairo", order: 50 },
         LinuxWPE: { name : "linux-wpe", readableName: "Linux WPE", order: 90 },
-        LinuxGTK: { name : "linux-gtk", readableName: "Linux GTK", order: 91 }
+        LinuxGTK: { name : "linux-gtk", readableName: "Linux GTK", order: 91 },
+        LinuxJSCOnly: { name : "linux-jsconly", readableName: "Linux JSCOnly", order: 92 },
     },
     Branch: {},
     Repository: {

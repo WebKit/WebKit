@@ -88,7 +88,18 @@ WebKitBuildbot = function()
         }},
         "GTK Wayland Testers": {platform: Dashboard.Platform.LinuxGTK, heading: "Wayland", combinedQueues: {
             "GTK Linux 64-bit Release Wayland (Tests)": {heading: "Wayland"},
-        }}
+        }},
+        "JSCOnly AArch64 Testers": {platform: Dashboard.Platform.LinuxJSCOnly, heading: "AArch64", combinedQueues: {
+            "JSCOnly Linux AArch64 Release": {heading: "AArch64"},
+        }},
+        "JSCOnly ARMv7 Testers": {platform: Dashboard.Platform.LinuxJSCOnly, heading: "ARMv7", combinedQueues: {
+            "JSCOnly Linux ARMv7 Thumb2 Release": {heading: "ARMv7 Thumb2"},
+            "JSCOnly Linux ARMv7 Thumb2 SoftFP Release": {heading: "ARMv7 Thumb2 SoftFP"},
+            "JSCOnly Linux ARMv7 Traditional Release": {heading: "ARMv7 Traditional"},
+        }},
+        "JSCOnly MIPS Testers": {platform: Dashboard.Platform.LinuxJSCOnly, heading: "MIPS", combinedQueues: {
+            "JSCOnly Linux MIPS32el Release": {heading: "MIPS32el"},
+        }},
     };
 
     Buildbot.call(this, "https://build.webkit.org/", queueInfo, {"USE_BUILDBOT_VERSION_LESS_THAN_09" : true});

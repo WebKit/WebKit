@@ -237,6 +237,10 @@ table.queue-grid tr.platform.linux-wpe img.logo {
     content: -webkit-image-set(url(../Images/WPE@2x.png) 2x, url(../Images/WPE.png) 1x);
 }
 
+table.queue-grid tr.platform.linux-jsconly img.logo {
+    content: -webkit-image-set(url(../Images/SquirrelFish@2x.png) 2x, url(../Images/SquirrelFish.png) 1x);
+}
+
 .popover-tracking:hover {
     text-shadow: 0px 0px 3px rgba(0, 0, 0, 0.2)
 }
