@@ -15,7 +15,7 @@ class BrowserDriver(object):
         pass
 
     @abstractmethod
-    def launch_url(self, url, options, browser_build_path=None):
+    def launch_url(self, url, options, browser_build_path=None, browser_path=None):
         pass
 
     @abstractmethod

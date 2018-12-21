@@ -31,11 +31,11 @@ class EpiphanyBrowserDriver(LinuxBrowserDriver):
     browser_name = 'epiphany'
     process_search_list = ['epiphany', 'epiphany-browser']
 
-    def launch_url(self, url, options, browser_build_path):
+    def launch_url(self, url, options, browser_build_path, browser_path):
         self._browser_arguments = ['--new-window', '-p',
                                    '--profile={profile}'.format(profile=self._temp_profiledir),
                                    url]
-        super(EpiphanyBrowserDriver, self).launch_url(url, options, browser_build_path)
+        super(EpiphanyBrowserDriver, self).launch_url(url, options, browser_build_path, browser_path)
 
     def launch_driver(self, url, options, browser_build_path):
         raise ValueError("Browser {browser} is not available with webdriver".format(browser=self.browser_name))

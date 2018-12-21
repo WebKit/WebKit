@@ -33,10 +33,10 @@ class LinuxChromeDriver(LinuxBrowserDriver):
     browser_name = 'chrome'
     process_search_list = ['chromium', 'chromium-browser', 'chrome']
 
-    def launch_url(self, url, options, browser_build_path):
+    def launch_url(self, url, options, browser_build_path, browser_path):
         self._browser_arguments = ['--temp-profile', '--start-maximized',
                                    '--homepage', url]
-        super(LinuxChromeDriver, self).launch_url(url, options, browser_build_path)
+        super(LinuxChromeDriver, self).launch_url(url, options, browser_build_path, browser_path)
 
     def launch_driver(self, url, options, browser_build_path):
         import webkitpy.thirdparty.autoinstalled.selenium

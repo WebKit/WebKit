@@ -40,7 +40,6 @@ def parse_args():
     mutual_group.add_argument('--allplans', action='store_true', help='Run all available benchmark plans in order.')
     mutual_group.add_argument('--read-results-json', dest='json_file', help='Instead of running a benchmark, format the output saved in JSON_FILE.')
     parser.add_argument('--output-file', default=None, help='Save detailed results to OUTPUT in JSON format. By default, results will not be saved.')
-    parser.add_argument('--build-directory', dest='build_dir', help='Path to the browser executable (e.g. WebKitBuild/Release/).')
     parser.add_argument('--count', type=int, help='Number of times to run the benchmark (e.g. 5).')
     parser.add_argument('--driver', default=WebServerBenchmarkRunner.name, choices=benchmark_runner_subclasses.keys(), help='Use the specified benchmark driver. Defaults to %s.' % WebServerBenchmarkRunner.name)
     parser.add_argument('--browser', default=default_browser(), choices=BrowserDriverFactory.available_browsers(), help='Browser to run the nechmark in. Defaults to %s.' % default_browser())
@@ -50,6 +49,10 @@ def parse_args():
     parser.add_argument('--debug', action='store_true', help='Enable debug logging.')
     parser.add_argument('--no-adjust-unit', dest='scale_unit', action='store_false', help="Don't convert to scientific notation.")
     parser.add_argument('--show-iteration-values', dest='show_iteration_values', action='store_true', help="Show the measured value for each iteration in addition to averages.")
+
+    group = parser.add_mutually_exclusive_group()
+    group.add_argument('--browser-path', help='Specify the path to a non-default copy of the target browser as a path to the .app.')
+    group.add_argument('--build-directory', dest='build_dir', help='Path to the browser executable (e.g. WebKitBuild/Release/).')
 
     args = parser.parse_args()
 
@@ -65,7 +68,7 @@ def parse_args():
 
 def run_benchmark_plan(args, plan):
     benchmark_runner_class = benchmark_runner_subclasses[args.driver]
-    runner = benchmark_runner_class(plan, args.local_copy, args.count, args.build_dir, args.output_file, args.platform, args.browser, args.scale_unit, args.show_iteration_values, args.device_id)
+    runner = benchmark_runner_class(plan, args.local_copy, args.count, args.build_dir, args.output_file, args.platform, args.browser, args.browser_path, args.scale_unit, args.show_iteration_values, args.device_id)
     runner.execute()
 
 

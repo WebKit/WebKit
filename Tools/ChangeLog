@@ -1,3 +1,39 @@
+2018-12-19  Simon Fraser  <simon.fraser@apple.com>
+
+        Add support to run-benchmark to use non-default copies of the browser apps
+        https://bugs.webkit.org/show_bug.cgi?id=192905
+        rdar://problem/46845840
+
+        Reviewed by Dewei Zhu.
+        
+        Add support for a --browser-path argument to run-benchmark, which allows you to use
+        a custom app bundle for a given browser (only implemented for Safari at present).
+
+        * Scripts/webkitpy/benchmark_runner/benchmark_runner.py:
+        (BenchmarkRunner.__init__):
+        * Scripts/webkitpy/benchmark_runner/browser_driver/browser_driver.py:
+        (BrowserDriver.__init__):
+        * Scripts/webkitpy/benchmark_runner/browser_driver/browser_driver_factory.py:
+        (BrowserDriverFactory.create):
+        * Scripts/webkitpy/benchmark_runner/browser_driver/osx_browser_driver.py:
+        (OSXBrowserDriver._launch_process):
+        (OSXBrowserDriver._launch_process_with_caffeinate): Fix spelling.
+        (OSXBrowserDriver._launch_process_with_caffinate): Deleted.
+        * Scripts/webkitpy/benchmark_runner/browser_driver/osx_chrome_driver.py:
+        (OSXChromeCanaryDriver.launch_url):
+        * Scripts/webkitpy/benchmark_runner/browser_driver/osx_firefox_driver.py:
+        (OSXFirefoxNightlyDriver.launch_url):
+        * Scripts/webkitpy/benchmark_runner/browser_driver/osx_safari_driver.py:
+        (OSXSafariDriver.__init__):
+        (OSXSafariDriver.launch_url):
+        * Scripts/webkitpy/benchmark_runner/run_benchmark.py:
+        (parse_args):
+        (run_benchmark_plan):
+        * Scripts/webkitpy/benchmark_runner/webserver_benchmark_runner.py:
+        (WebServerBenchmarkRunner.__init__):
+        * Scripts/webkitpy/browserperfdash/browserperfdash_unittest.py:
+        (FakeBenchmarkRunner.__init__):
+
 2018-12-21  Jiewen Tan  <jiewen_tan@apple.com>
 
         [WebAuthN] Import an APDU coder from Chromium

@@ -14,7 +14,8 @@ class OSXChromeDriver(OSXBrowserDriver):
     browser_name = 'chrome'
     app_name = 'Google Chrome.app'
 
-    def launch_url(self, url, options, browser_build_path):
+    def launch_url(self, url, options, browser_build_path, browser_path):
+        # FIXME: handle self._browser_path.
         args_with_url = self._insert_url(create_args(), 2, url)
         self._launch_process(build_dir=browser_build_path, app_name=self.app_name, url=url, args=args_with_url)
 
@@ -37,7 +38,8 @@ class OSXChromeCanaryDriver(OSXBrowserDriver):
     browser_name = 'chrome-canary'
     app_name = 'Google Chrome Canary.app'
 
-    def launch_url(self, url, options, browser_build_path):
+    def launch_url(self, url, options, browser_build_path, browser_path):
+        # FIXME: handle self._browser_path.
         args_with_url = self._insert_url(create_args(), 2, url)
         self._launch_process(build_dir=browser_build_path, app_name=self.app_name, url=url, args=args_with_url)
 

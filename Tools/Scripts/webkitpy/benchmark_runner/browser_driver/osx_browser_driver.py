@@ -40,7 +40,7 @@ class OSXBrowserDriver(BrowserDriver):
 
         # FIXME: May need to be modified for a local build such as setting up DYLD libraries
         args = ['open', '-a', app_path] + args
-        cls._launch_process_with_caffinate(args)
+        cls._launch_process_with_caffeinate(args)
 
     @classmethod
     def _launch_webdriver(cls, url, driver):
@@ -57,8 +57,13 @@ class OSXBrowserDriver(BrowserDriver):
         subprocess.call(['/usr/bin/killall', process_name])
 
     @classmethod
-    def _launch_process_with_caffinate(cls, args, env=None):
-        process = subprocess.Popen(args, env=env)
+    def _launch_process_with_caffeinate(cls, args, env=None):
+        try:
+            process = subprocess.Popen(args, env=env)
+        except Exception as error:
+            _log.error('Popen failed: {error}'.format(error=error))
+            return
+
         subprocess.Popen(["/usr/bin/caffeinate", "-disw", str(process.pid)])
         return process
 

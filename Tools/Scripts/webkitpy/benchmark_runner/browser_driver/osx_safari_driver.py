@@ -24,7 +24,7 @@ class OSXSafariDriver(OSXBrowserDriver):
         self._maximize_window()
         self._safari_preferences = ["-HomePage", "about:blank", "-WarnAboutFraudulentWebsites", "0", "-ExtensionsEnabled", "0", "-ShowStatusBar", "0", "-NewWindowBehavior", "1", "-NewTabBehavior", "1"]
 
-    def launch_url(self, url, options, browser_build_path):
+    def launch_url(self, url, options, browser_build_path, browser_path):
         args = ['/Applications/Safari.app/Contents/MacOS/Safari']
         env = {}
         if browser_build_path:
@@ -34,10 +34,16 @@ class OSXSafariDriver(OSXBrowserDriver):
                 env = {'DYLD_FRAMEWORK_PATH': browser_build_path, 'DYLD_LIBRARY_PATH': browser_build_path, '__XPC_DYLD_FRAMEWORK_PATH': browser_build_path, '__XPC_DYLD_LIBRARY_PATH': browser_build_path}
             else:
                 _log.info('Could not find Safari.app at %s, using the system Safari instead' % safari_app_in_build_path)
+        elif browser_path:
+            safari_app_in_browser_path = os.path.join(browser_path, 'Contents/MacOS/Safari')
+            if os.path.exists(safari_app_in_browser_path):
+                args = [safari_app_in_browser_path]
+            else:
+                _log.info('Could not find application at %s, using the system Safari instead' % safari_app_in_browser_path)
 
         args.extend(self._safari_preferences)
         _log.info('Launching safari: %s with url: %s' % (args[0], url))
-        self._safari_process = OSXSafariDriver._launch_process_with_caffinate(args, env)
+        self._safari_process = OSXSafariDriver._launch_process_with_caffeinate(args, env)
 
         # Stop for initialization of the safari process, otherwise, open
         # command may use the system safari.

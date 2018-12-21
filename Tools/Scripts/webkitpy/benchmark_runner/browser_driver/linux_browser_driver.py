@@ -88,7 +88,7 @@ class LinuxBrowserDriver(BrowserDriver):
                             browser_name=self.browser_name, browser_pid=self._browser_process.pid,
                             browser_retcode=self._browser_process.returncode))
 
-    def launch_url(self, url, options, browser_build_path):
+    def launch_url(self, url, options, browser_build_path, browser_path):
         if not self._browser_arguments:
             self._browser_arguments = [url]
         exec_args = [self.process_name] + self._browser_arguments

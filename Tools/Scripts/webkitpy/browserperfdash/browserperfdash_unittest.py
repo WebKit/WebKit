@@ -40,8 +40,8 @@ _log = logging.getLogger(__name__)
 class FakeBenchmarkRunner(BenchmarkRunner):
     name = 'fake'
 
-    def __init__(self, plan_file, local_copy, count_override, build_dir, output_file, platform, browser):
-        super(FakeBenchmarkRunner, self).__init__(plan_file, local_copy, count_override, build_dir, output_file, platform, browser)
+    def __init__(self, plan_file, local_copy, count_override, build_dir, output_file, platform, browser, browser_path):
+        super(FakeBenchmarkRunner, self).__init__(plan_file, local_copy, count_override, build_dir, output_file, platform, browser, browser_path)
 
     def execute(self):
         return True
@@ -60,5 +60,5 @@ class BrowserPerfDashRunnerTest(unittest.TestCase):
         # This tests that constructing the benchmark_runner object specifying the minimum required paramaters is ok.
         plan_list = BenchmarkRunner.available_plans()
         build_dir = os.path.abspath(os.curdir)
-        runner = FakeBenchmarkRunner(plan_list[0], False, 1, build_dir, "/tmp/testOutput.txt", default_platform(), default_browser())
+        runner = FakeBenchmarkRunner(plan_list[0], False, 1, build_dir, "/tmp/testOutput.txt", default_platform(), default_browser(), None)
         self.assertTrue(runner.execute())
