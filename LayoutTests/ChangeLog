@@ -1,5 +1,17 @@
 2018-12-21  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        Unreviewed GTK+ gardening. Remove platform specific files that are exactly the same as the generic expectation.
+
+        * platform/gtk/fast/text/selection-in-initial-advance-region-expected.txt: Removed.
+        * platform/gtk/imported/w3c/web-platform-tests/2dcontext/imagebitmap/createImageBitmap-invalid-args-expected.txt: Removed.
+        * platform/gtk/legacy-animation-engine/animations/lineheight-animation-expected.txt: Removed.
+        * platform/gtk/legacy-animation-engine/animations/simultaneous-start-transform-expected.txt: Removed.
+        * platform/gtk/legacy-animation-engine/animations/width-using-ems-expected.txt: Removed.
+        * platform/gtk/security/block-test-expected.txt: Removed.
+        * platform/gtk/webaudio/codec-tests/wav/24bit-22khz-resample-expected.wav: Removed.
+
+2018-12-21  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         Unreviewed GTK+ gardening. Rebaseline several tests.
 
         * platform/gtk/css2.1/t051201-c23-first-line-00-b-expected.png:
