@@ -1,3 +1,12 @@
+2018-12-21  Truitt Savell  <tsavell@apple.com>
+
+        Skipping webgpu/ tests after https://trac.webkit.org/changeset/239495/webkit disabled webgpu on 10.12
+        https://bugs.webkit.org/show_bug.cgi?id=192956
+
+        Unreviewed Test Gardening.
+
+        * platform/mac/TestExpectations:
+
 2018-12-21  Justin Michaud  <justin_michaud@apple.com>
 
         Repeated background images with zero size should display the background color
