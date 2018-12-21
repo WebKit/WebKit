@@ -391,6 +391,15 @@ WI.SpreadsheetStyleProperty = class SpreadsheetStyleProperty extends WI.Object
             this._nameTextField.startEditing();
     }
 
+    spreadsheetTextFieldDidPressEsc(textField, textBeforeEditing)
+    {
+        let isNewProperty = !textBeforeEditing;
+        if (isNewProperty)
+            this.remove();
+        else if (this._delegate.spreadsheetStylePropertyDidPressEsc)
+            this._delegate.spreadsheetStylePropertyDidPressEsc(this);
+    }
+
     // Private
 
     _isEditable()

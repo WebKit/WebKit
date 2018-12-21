@@ -191,7 +191,6 @@ WI.SpreadsheetTextField = class SpreadsheetTextField
     {
         if (this._valueBeforeEditing !== this.value) {
             this.value = this._valueBeforeEditing;
-            this._selectText();
 
             if (this._delegate && typeof this._delegate.spreadsheetTextFieldDidChange === "function")
                 this._delegate.spreadsheetTextFieldDidChange(this);
@@ -282,6 +281,10 @@ WI.SpreadsheetTextField = class SpreadsheetTextField
         if (event.key === "Escape") {
             event.stop();
             this._discardChange();
+            window.getSelection().removeAllRanges();
+
+            if (this._delegate && this._delegate.spreadsheetTextFieldDidPressEsc)
+                this._delegate.spreadsheetTextFieldDidPressEsc(this, this._valueBeforeEditing);
         }
     }
 

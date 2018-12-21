@@ -1,3 +1,25 @@
+2018-12-20  Nikita Vasilyev  <nvasilyev@apple.com>
+
+        Web Inspector: Styles: Pressing Esc when editing name/value should select entire property
+        https://bugs.webkit.org/show_bug.cgi?id=192919
+
+        Reviewed by Devin Rousso.
+
+        - Esc still hides the completion popover.
+        - Esc still discards changes.
+        - When there's no completion popover, Esc selects outer scope.
+          I.e., it goes from editing name/value to selecting the entire property.
+        - Pressing Esc for newly added properties discards those properties.
+
+        * UserInterface/Views/SpreadsheetCSSStyleDeclarationEditor.js:
+        (WI.SpreadsheetCSSStyleDeclarationEditor.prototype.spreadsheetStylePropertyRemoved):
+        (WI.SpreadsheetCSSStyleDeclarationEditor.prototype.spreadsheetStylePropertyDidPressEsc):
+        * UserInterface/Views/SpreadsheetStyleProperty.js:
+        (WI.SpreadsheetStyleProperty.prototype.spreadsheetTextFieldDidPressEsc):
+        * UserInterface/Views/SpreadsheetTextField.js:
+        (WI.SpreadsheetTextField.prototype._discardChange):
+        (WI.SpreadsheetTextField.prototype._handleKeyDown):
+
 2018-12-20  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Charles Proxy errors opening har files exported from Safari (invalid startedDateTime)
