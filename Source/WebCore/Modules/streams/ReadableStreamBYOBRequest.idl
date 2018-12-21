@@ -28,7 +28,8 @@
 
 [
     Conditional=STREAMS_API,
-    CustomConstructor(ReadableByteStreamController controller, TypedArray view),
+    Constructor(ReadableByteStreamController controller, TypedArray view),
+    Exposed=(Window,Worker),
     JSBuiltin,
     PrivateIdentifier
 ] interface ReadableStreamBYOBRequest {

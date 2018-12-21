@@ -25,6 +25,21 @@
 
 // @conditional=ENABLE(STREAMS_API)
 
+function initializeReadableStreamDefaultReader(stream)
+{
+    "use strict";
+
+    if (!@isReadableStream(stream))
+        @throwTypeError("ReadableStreamDefaultReader needs a ReadableStream");
+    if (@isReadableStreamLocked(stream))
+        @throwTypeError("ReadableStream is locked");
+
+    @readableStreamReaderGenericInitialize(this, stream);
+    @putByIdDirectPrivate(this, "readRequests", []);
+
+    return this;
+}
+
 function cancel(reason)
 {
     "use strict";

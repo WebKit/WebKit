@@ -29,7 +29,8 @@
 
 [
     Conditional=STREAMS_API,
-    CustomConstructor(ReadableStream stream, any underlyingSource, unsigned long size, unsigned long highWaterMark),
+    Constructor(ReadableStream stream, any underlyingSource, unsigned long size, unsigned long highWaterMark),
+    Exposed=(Window,Worker),
     JSBuiltin,
     PrivateIdentifier
 ] interface ReadableStreamDefaultController {

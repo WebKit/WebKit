@@ -25,6 +25,16 @@
 
 // @conditional=ENABLE(STREAMS_API)
 
+function initializeReadableStreamDefaultController(stream, underlyingSource, size, highWaterMark)
+{
+    "use strict";
+
+    if (arguments.length !== 5 && arguments[4] !== @isReadableStream)
+        @throwTypeError("ReadableStreamDefaultController constructor should not be called directly");
+
+    return @privateInitializeReadableStreamDefaultController.@call(this, stream, underlyingSource, size, highWaterMark);
+}
+
 function enqueue(chunk)
 {
     "use strict";

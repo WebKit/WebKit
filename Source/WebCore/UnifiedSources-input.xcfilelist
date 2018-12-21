@@ -1393,7 +1393,6 @@ $(SRCROOT)/bindings/js/JSPerformanceObserverCustom.cpp
 $(SRCROOT)/bindings/js/JSPluginElementFunctions.cpp
 $(SRCROOT)/bindings/js/JSPopStateEventCustom.cpp
 $(SRCROOT)/bindings/js/JSPromiseRejectionEventCustom.cpp
-$(SRCROOT)/bindings/js/JSReadableStreamPrivateConstructors.cpp
 $(SRCROOT)/bindings/js/JSReadableStreamSourceCustom.cpp
 $(SRCROOT)/bindings/js/JSRemoteDOMWindowBase.cpp
 $(SRCROOT)/bindings/js/JSRemoteDOMWindowCustom.cpp

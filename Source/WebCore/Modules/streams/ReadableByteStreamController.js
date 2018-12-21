@@ -25,6 +25,16 @@
 
 // @conditional=ENABLE(STREAMS_API)
 
+function initializeReadableByteStreamController(stream, underlyingByteSource, highWaterMark)
+{
+    "use strict";
+
+    if (arguments.length !== 4 && arguments[3] !== @isReadableStream)
+        @throwTypeError("ReadableByteStreamController constructor should not be called directly");
+
+    return @privateInitializeReadableByteStreamController.@call(this, stream, underlyingByteSource, highWaterMark);
+}
+
 function enqueue(chunk)
 {
     "use strict";
@@ -89,7 +99,7 @@ function byobRequest()
         const view = new @Uint8Array(firstDescriptor.buffer,
             firstDescriptor.byteOffset + firstDescriptor.bytesFilled,
             firstDescriptor.byteLength - firstDescriptor.bytesFilled);
-        @putByIdDirectPrivate(this, "byobRequest", new @ReadableStreamBYOBRequest(this, view));
+        @putByIdDirectPrivate(this, "byobRequest", new @ReadableStreamBYOBRequest(this, view, @isReadableStream));
     }
 
     return @getByIdDirectPrivate(this, "byobRequest");

@@ -408,7 +408,5 @@ sub shouldExposeInterface
 {
     my $extendedAttributes = shift;
 
-    return 0 if $extendedAttributes->{"NoInterfaceObject"};
-    return 0 if $extendedAttributes->{"PrivateIdentifier"} && !($extendedAttributes->{"PublicIdentifier"});
-    return 1;
+    return !$extendedAttributes->{"NoInterfaceObject"};
 }

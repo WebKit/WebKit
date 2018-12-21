@@ -1,3 +1,56 @@
+2018-12-20  Youenn Fablet  <youenn@apple.com>
+
+        Remove custom constructors of ReadableStreamDefaultReader and ReadableStreamBYOBReader
+        https://bugs.webkit.org/show_bug.cgi?id=192838
+
+        Reviewed by Chris Dumez.
+
+        Generate constructor code in case of a Private but not Public constructor.
+        Make sure this is correctly exposed in global objects.
+        Add JS built-in constructor implementations for those two objects.
+
+        Also add JS built-in constructors for controller and byob request.
+        To keep existing behavior, JS built-ins calling these constructors need to pass
+        an additional parameter that allows making the difference between a JS builtin caller or a JS caller.
+        In the latter case, the constructor will throw.
+
+        Covered by existing tests, no observable change of behavior.
+
+        * Modules/streams/ReadableByteStreamController.idl:
+        * Modules/streams/ReadableByteStreamController.js:
+        (initializeReadableByteStreamController):
+        (getter.byobRequest):
+        * Modules/streams/ReadableByteStreamInternals.js:
+        (privateInitializeReadableByteStreamController): Deleted.
+        (privateInitializeReadableStreamBYOBRequest): Deleted.
+        * Modules/streams/ReadableStream.js:
+        (initializeReadableStream):
+        * Modules/streams/ReadableStreamBYOBReader.js:
+        (initializeReadableStreamBYOBReader):
+        * Modules/streams/ReadableStreamBYOBRequest.idl:
+        * Modules/streams/ReadableStreamBYOBRequest.js:
+        (initializeReadableStreamBYOBRequest):
+        * Modules/streams/ReadableStreamDefaultController.idl:
+        * Modules/streams/ReadableStreamDefaultController.js:
+        (initializeReadableStreamDefaultController):
+        (enqueue):
+        * Modules/streams/ReadableStreamDefaultReader.js:
+        (initializeReadableStreamDefaultReader):
+        * Modules/streams/ReadableStreamInternals.js:
+        (readableStreamDefaultControllerError): Deleted.
+        * Sources.txt:
+        * UnifiedSources-input.xcfilelist:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/JSDOMBuiltinConstructor.h:
+        * bindings/js/JSDOMGlobalObject.cpp:
+        (WebCore::JSDOMGlobalObject::addBuiltinGlobals):
+        * bindings/js/JSReadableStreamPrivateConstructors.cpp: Removed.
+        * bindings/js/JSReadableStreamPrivateConstructors.h: Removed.
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GeneratePropertiesHashTable):
+        * bindings/scripts/preprocess-idls.pl:
+        (shouldExposeInterface):
+
 2018-12-20  Jiewen Tan  <jiewen_tan@apple.com>
 
         [WebAuthN] Remove hash from Client Data

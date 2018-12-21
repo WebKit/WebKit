@@ -3057,6 +3057,7 @@ sub GeneratePropertiesHashTable
     foreach my $attribute (@attributes) {
         next if ($attribute->isStatic);
         next if AttributeShouldBeOnInstance($interface, $attribute) != $isInstance;
+        next if ($attribute->extendedAttributes->{PrivateIdentifier} and not $attribute->extendedAttributes->{PublicIdentifier});
 
         # Global objects add RuntimeEnabled attributes after creation so do not add them to the static table.
         if ($isInstance && NeedsRuntimeCheck($interface, $attribute)) {

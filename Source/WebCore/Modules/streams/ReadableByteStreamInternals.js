@@ -26,23 +26,6 @@
 // @conditional=ENABLE(STREAMS_API)
 // @internal
 
-function privateInitializeReadableStreamBYOBReader(stream)
-{
-    "use strict";
-
-    if (!@isReadableStream(stream))
-        @throwTypeError("ReadableStreamBYOBReader needs a ReadableStream");
-    if (!@isReadableByteStreamController(@getByIdDirectPrivate(stream, "readableStreamController")))
-        @throwTypeError("ReadableStreamBYOBReader needs a ReadableByteStreamController");
-    if (@isReadableStreamLocked(stream))
-        @throwTypeError("ReadableStream is locked");
-
-    @readableStreamReaderGenericInitialize(this, stream);
-    @putByIdDirectPrivate(this, "readIntoRequests", []);
-
-    return this;
-}
-
 function privateInitializeReadableByteStreamController(stream, underlyingByteSource, highWaterMark)
 {
     "use strict";

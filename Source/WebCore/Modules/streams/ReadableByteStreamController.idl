@@ -29,7 +29,7 @@
 
 [
     Conditional=STREAMS_API,
-    CustomConstructor(ReadableStream stream, any underlyingByteSource, unsigned long highWaterMark),
+    Constructor(ReadableStream stream, any underlyingByteSource, unsigned long highWaterMark),
     Exposed=(Window,Worker),
     JSBuiltin,
     PrivateIdentifier

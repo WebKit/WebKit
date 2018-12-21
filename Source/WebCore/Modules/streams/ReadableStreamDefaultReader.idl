@@ -29,7 +29,8 @@
 
 [
     Conditional=STREAMS_API,
-    CustomConstructor(ReadableStream stream),
+    Constructor(ReadableStream stream),
+    Exposed=(Window,Worker),
     JSBuiltin,
     PrivateIdentifier
 ] interface ReadableStreamDefaultReader {
