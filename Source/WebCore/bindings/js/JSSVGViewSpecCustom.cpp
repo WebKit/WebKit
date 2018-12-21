@@ -1,5 +1,4 @@
 /*
- * Copyright (C) 2007 Eric Seidel <eric@webkit.org>
  * Copyright (C) 2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -21,23 +20,20 @@
  * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-// SVGViewSpec intentionally doesn't inherit from SVGZoomAndPan & SVGFitToViewBox on the IDLs.
-// It would require that any of those classes would be RefCounted, and we want to avoid that.
-[
-    ImplementationLacksVTable,
-    JSCustomMarkFunction,
-    JSGenerateToJSObject,
-] interface SVGViewSpec {
-    readonly attribute SVGTransformList transform;
-    readonly attribute SVGElement viewTarget;
-    readonly attribute DOMString viewBoxString;
-    readonly attribute DOMString preserveAspectRatioString;
-    readonly attribute DOMString transformString;
-    readonly attribute DOMString viewTargetString;
-};
+#include "config.h"
+#include "JSSVGViewSpec.h"
 
-SVGViewSpec implements SVGFitToViewBox;
-SVGViewSpec implements SVGZoomAndPan;
+#include "JSNode.h"
+
+namespace WebCore {
+
+void JSSVGViewSpec::visitAdditionalChildren(JSC::SlotVisitor& visitor)
+{
+    ASSERT(wrapped().contextElementConcurrently().get());
+    visitor.addOpaqueRoot(root(wrapped().contextElementConcurrently().get()));
+}
+
+}

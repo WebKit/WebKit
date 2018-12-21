@@ -49,6 +49,8 @@ public:
     RefPtr<SVGTransformList> transform();
     SVGTransformListValues transformValue() const { return m_transform.value(); }
 
+    const WeakPtr<SVGElement>& contextElementConcurrently() const { return m_contextElement; }
+
 private:
     explicit SVGViewSpec(SVGElement&);
 
@@ -58,7 +60,7 @@ private:
     static AttributeOwnerProxy::AttributeRegistry& attributeRegistry() { return AttributeOwnerProxy::attributeRegistry(); }
     static bool isKnownAttribute(const QualifiedName& attributeName) { return AttributeOwnerProxy::isKnownAttribute(attributeName); }
 
-    SVGElement* m_contextElement;
+    WeakPtr<SVGElement> m_contextElement;
     String m_viewTargetString;
     AttributeOwnerProxy m_attributeOwnerProxy;
     SVGAnimatedTransformListAttribute m_transform;

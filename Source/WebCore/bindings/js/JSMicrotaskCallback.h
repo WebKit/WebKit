@@ -27,6 +27,7 @@
 #pragma once
 
 #include "JSExecState.h"
+#include <JavaScriptCore/VM.h>
 
 namespace WebCore {
 
@@ -40,8 +41,8 @@ public:
     void call()
     {
         auto protectedThis { makeRef(*this) };
-        VM& vm = m_globalObject->vm();
-        JSLockHolder lock(vm);
+        JSC::VM& vm = m_globalObject->vm();
+        JSC::JSLockHolder lock(vm);
         auto scope = DECLARE_THROW_SCOPE(vm);
         JSExecState::runTask(m_globalObject->globalExec(), m_task);
         scope.assertNoException();
@@ -54,7 +55,7 @@ private:
     {
     }
 
-    Strong<JSDOMGlobalObject> m_globalObject;
+    JSC::Strong<JSDOMGlobalObject> m_globalObject;
     Ref<JSC::Microtask> m_task;
 };
 

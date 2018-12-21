@@ -1,6 +1,5 @@
 /*
- * Copyright (C) 2007 Eric Seidel <eric@webkit.org>
- * Copyright (C) 2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2018 Apple Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -21,23 +20,24 @@
  * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-// SVGViewSpec intentionally doesn't inherit from SVGZoomAndPan & SVGFitToViewBox on the IDLs.
-// It would require that any of those classes would be RefCounted, and we want to avoid that.
-[
-    ImplementationLacksVTable,
-    JSCustomMarkFunction,
-    JSGenerateToJSObject,
-] interface SVGViewSpec {
-    readonly attribute SVGTransformList transform;
-    readonly attribute SVGElement viewTarget;
-    readonly attribute DOMString viewBoxString;
-    readonly attribute DOMString preserveAspectRatioString;
-    readonly attribute DOMString transformString;
-    readonly attribute DOMString viewTargetString;
-};
+#pragma once
 
-SVGViewSpec implements SVGFitToViewBox;
-SVGViewSpec implements SVGZoomAndPan;
+#include "config.h"
+#include "SVGAttributeOwnerProxy.h"
+
+namespace WebCore {
+
+SVGAttributeOwnerProxy::SVGAttributeOwnerProxy(SVGElement& element)
+    : m_element(makeWeakPtr(element))
+{
+}
+
+SVGElement& SVGAttributeOwnerProxy::element() const
+{
+    return *m_element;
+}
+
+}
