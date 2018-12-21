@@ -1,3 +1,17 @@
+2018-12-21  Justin Michaud  <justin_michaud@apple.com>
+
+        CSS variables don't work for colors in "border" property
+        https://bugs.webkit.org/show_bug.cgi?id=192922
+
+        Reviewed by Simon Fraser.
+
+        ParseColorFunction no longer consumes anything if the color was not valid.
+
+        Test: css-custom-properties-api/border-variable-parsing.html
+
+        * css/parser/CSSPropertyParserHelpers.cpp:
+        (WebCore::CSSPropertyParserHelpers::parseColorFunction):
+
 2018-12-21  Justin Fan  <justin_fan@apple.com>
 
         [WebGPU] GPUBindGroupLayout refactoring: no HashMap, and failure logging

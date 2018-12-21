@@ -681,7 +681,8 @@ static Color parseColorFunction(CSSParserTokenRange& range, CSSParserMode cssPar
     default:
         return Color();
     }
-    range = colorRange;
+    if (color.isValid())
+        range = colorRange;
     return color;
 }
 
