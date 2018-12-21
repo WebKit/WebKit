@@ -1,3 +1,14 @@
+2018-12-20  Brent Fulgham  <bfulgham@apple.com>
+
+        Show punycode if URL contains Latin small letter dotless i
+        https://bugs.webkit.org/show_bug.cgi?id=192944
+        <rdar://problem/46103047>
+
+        Reviewed by Andy Estes.
+
+        * fast/url/host-expected.txt:
+        * fast/url/host.html:
+
 2018-12-21  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed GTK+ gardening. Remove platform specific files that are exactly the same as the generic expectation.

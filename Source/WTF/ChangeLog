@@ -1,3 +1,19 @@
+2018-12-20  Brent Fulgham  <bfulgham@apple.com>
+
+        Show punycode if URL contains Latin small letter dotless i
+        https://bugs.webkit.org/show_bug.cgi?id=192944
+        <rdar://problem/46103047>
+
+        Reviewed by Andy Estes.
+
+        Revise our "lookalike character" logic to include the small Latin
+        dotless i character.
+
+        Test: fast/url/host.html
+
+        * wtf/cocoa/NSURLExtras.mm:
+        (WTF::isLookalikeCharacter):
+
 2018-12-20  Chris Dumez  <cdumez@apple.com>
 
         Use Optional::hasValue() instead of Optional::has_value()

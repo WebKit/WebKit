@@ -115,6 +115,7 @@ static BOOL isLookalikeCharacter(Optional<UChar32> previousCodePoint, UChar32 ch
         case 0x00BD: /* VULGAR FRACTION ONE HALF */
         case 0x00BE: /* VULGAR FRACTION THREE QUARTERS */
         case 0x00ED: /* LATIN SMALL LETTER I WITH ACUTE */
+        case 0x0131: /* LATIN SMALL LETTER DOTLESS I */
         case 0x01C3: /* LATIN LETTER RETROFLEX CLICK */
         case 0x0251: /* LATIN SMALL LETTER ALPHA */
         case 0x0261: /* LATIN SMALL LETTER SCRIPT G */

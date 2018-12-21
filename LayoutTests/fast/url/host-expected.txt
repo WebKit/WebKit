@@ -49,6 +49,8 @@ PASS canonicalize('http://quip‑apple.com/') is 'http://xn--quipapple-y79d.com/
 PASS canonicalize('http://quip−apple.com/') is 'http://xn--quipapple-tf4e.com/'
 PASS canonicalize('http://iclouꝱ.com/') is 'http://xn--iclou-rl3s.com/'
 PASS canonicalize('http://gọọgle.com/') is 'http://xn--ggle-gx5aa.com/'
+PASS canonicalize('http://ıcloud.com/') is 'http://xn--cloud-m4a.com/'
+PASS canonicalize('http://twıtter.com/') is 'http://xn--twtter-q9a.com/'
 PASS successfullyParsed is true
 
 TEST COMPLETE
