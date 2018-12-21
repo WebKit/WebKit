@@ -26,6 +26,8 @@ namespace WebCore {
 struct LengthSize {
     Length width;
     Length height;
+
+    bool isEmpty() const { return width.isZero() || height.isZero(); }
 };
 
 ALWAYS_INLINE bool operator==(const LengthSize& a, const LengthSize& b)

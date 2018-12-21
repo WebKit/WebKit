@@ -101,6 +101,8 @@ public:
     bool isSizeSet() const { return static_cast<FillSizeType>(m_sizeType) != FillSizeType::None; }
     bool isMaskSourceTypeSet() const { return m_maskSourceTypeSet; }
 
+    bool isEmpty() const { return (sizeType() == FillSizeType::Size && m_sizeLength.isEmpty()) || sizeType() == FillSizeType::None; }
+
     void setImage(RefPtr<StyleImage>&& image) { m_image = WTFMove(image); m_imageSet = true; }
     void setXPosition(Length length) { m_xPosition = WTFMove(length); m_xPosSet = true; }
     void setYPosition(Length length) { m_yPosition = WTFMove(length); m_yPosSet = true; }

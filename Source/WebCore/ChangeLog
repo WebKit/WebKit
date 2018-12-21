@@ -1,3 +1,19 @@
+2018-12-21  Justin Michaud  <justin_michaud@apple.com>
+
+        Repeated background images with zero size should display the background color
+        https://bugs.webkit.org/show_bug.cgi?id=192962
+
+        Reviewed by Antti Koivisto.
+
+        Test: fast/backgrounds/background-repeat-with-zero-size.html
+
+        * platform/LengthSize.h:
+        (WebCore::LengthSize::isEmpty const):
+        * rendering/RenderBoxModelObject.cpp:
+        (WebCore::RenderBoxModelObject::paintFillLayerExtended):
+        * rendering/style/FillLayer.h:
+        (WebCore::FillLayer::isEmpty const):
+
 2018-12-21  Manuel Rego Casasnovas  <rego@igalia.com>
 
         [css-grid] Fix percentages in relative offsets for grid items
