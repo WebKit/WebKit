@@ -28,6 +28,7 @@
 
 #include <WebKit/WKURLCF.h>
 #include <WebKit/WKViewPrivate.h>
+#include <WebKit/WebViewPrivate.h>
 #include <wtf/RetainPtr.h>
 
 @interface FrameLoadDelegate : NSObject <WebFrameLoadDelegate> {
@@ -85,6 +86,12 @@ WebKitAgnosticTest::WebKitAgnosticTest()
 void WebKitAgnosticTest::runWebKit1Test()
 {
     RetainPtr<WebView> webView = adoptNS([[WebView alloc] initWithFrame:viewFrame]);
+#if !TARGET_OS_IPHONE
+    // The tests can be run concurrently. In that case, window can occlude each other and change visibility results.
+    // Occlusion problems also happen from other windows unrelated to WebKit testing.
+    [webView setWindowOcclusionDetectionEnabled:NO];
+#endif
+
     RetainPtr<FrameLoadDelegate> delegate = adoptNS([[FrameLoadDelegate alloc] initWithDidFinishLoadBoolean:&didFinishLoad]);
     [webView.get() setFrameLoadDelegate:delegate.get()];
     initializeView(webView.get());

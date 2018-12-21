@@ -4670,14 +4670,20 @@ IGNORE_WARNINGS_END
 
 - (BOOL)_isViewVisible
 {
-    if (![self window])
+    NSWindow *window = [self window];
+    if (!window)
         return false;
 
-    if (![[self window] isVisible])
+    if (![window isVisible])
         return false;
 
     if ([self isHiddenOrHasHiddenAncestor])
         return false;
+
+#if !PLATFORM(IOS_FAMILY)
+    if (_private->windowOcclusionDetectionEnabled && (window.occlusionState & NSWindowOcclusionStateVisible) != NSWindowOcclusionStateVisible)
+        return false;
+#endif
 
     return true;
 }
@@ -5066,6 +5072,18 @@ static Vector<String> toStringVector(NSArray* patterns)
             _private->page->setIsPrerender();
     }
 }
+
+#if !PLATFORM(IOS_FAMILY)
+- (BOOL)windowOcclusionDetectionEnabled
+{
+    return _private->windowOcclusionDetectionEnabled;
+}
+
+- (void)setWindowOcclusionDetectionEnabled:(BOOL)flag
+{
+    _private->windowOcclusionDetectionEnabled = flag;
+}
+#endif
 
 - (void)_setPaginationBehavesLikeColumns:(BOOL)behavesLikeColumns
 {
@@ -6002,22 +6020,26 @@ static NSString * const backingPropertyOldScaleFactorKey = @"NSBackingPropertyOl
 - (void)addWindowObserversForWindow:(NSWindow *)window
 {
     if (window) {
-        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(windowKeyStateChanged:)
+        NSNotificationCenter *defaultNotificationCenter = [NSNotificationCenter defaultCenter];
+
+        [defaultNotificationCenter addObserver:self selector:@selector(windowKeyStateChanged:)
             name:NSWindowDidBecomeKeyNotification object:window];
-        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(windowKeyStateChanged:)
+        [defaultNotificationCenter addObserver:self selector:@selector(windowKeyStateChanged:)
             name:NSWindowDidResignKeyNotification object:window];
-        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_windowWillOrderOnScreen:)
+        [defaultNotificationCenter addObserver:self selector:@selector(_windowWillOrderOnScreen:)
             name:NSWindowWillOrderOnScreenNotification object:window];
-        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_windowWillOrderOffScreen:)
+        [defaultNotificationCenter addObserver:self selector:@selector(_windowWillOrderOffScreen:)
             name:NSWindowWillOrderOffScreenNotification object:window];
-        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_windowDidChangeBackingProperties:)
+        [defaultNotificationCenter addObserver:self selector:@selector(_windowDidChangeBackingProperties:)
             name:windowDidChangeBackingPropertiesNotification object:window];
-        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_windowDidChangeScreen:)
+        [defaultNotificationCenter addObserver:self selector:@selector(_windowDidChangeScreen:)
             name:NSWindowDidChangeScreenNotification object:window];
-        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_windowVisibilityChanged:) 
+        [defaultNotificationCenter addObserver:self selector:@selector(_windowVisibilityChanged:)
             name:NSWindowDidMiniaturizeNotification object:window];
-        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_windowVisibilityChanged:)
+        [defaultNotificationCenter addObserver:self selector:@selector(_windowVisibilityChanged:)
             name:NSWindowDidDeminiaturizeNotification object:window];
+        [defaultNotificationCenter addObserver:self selector:@selector(_windowDidChangeOcclusionState:)
+            name:NSWindowDidChangeOcclusionStateNotification object:window];
         [_private->windowVisibilityObserver startObserving:window];
     }
 }
@@ -6026,22 +6048,26 @@ static NSString * const backingPropertyOldScaleFactorKey = @"NSBackingPropertyOl
 {
     NSWindow *window = [self window];
     if (window) {
-        [[NSNotificationCenter defaultCenter] removeObserver:self
+        NSNotificationCenter *defaultNotificationCenter = [NSNotificationCenter defaultCenter];
+
+        [defaultNotificationCenter removeObserver:self
             name:NSWindowDidBecomeKeyNotification object:window];
-        [[NSNotificationCenter defaultCenter] removeObserver:self
+        [defaultNotificationCenter removeObserver:self
             name:NSWindowDidResignKeyNotification object:window];
-        [[NSNotificationCenter defaultCenter] removeObserver:self
+        [defaultNotificationCenter removeObserver:self
             name:NSWindowWillOrderOnScreenNotification object:window];
-        [[NSNotificationCenter defaultCenter] removeObserver:self
+        [defaultNotificationCenter removeObserver:self
             name:NSWindowWillOrderOffScreenNotification object:window];
-        [[NSNotificationCenter defaultCenter] removeObserver:self
+        [defaultNotificationCenter removeObserver:self
             name:windowDidChangeBackingPropertiesNotification object:window];
-        [[NSNotificationCenter defaultCenter] removeObserver:self
+        [defaultNotificationCenter removeObserver:self
             name:NSWindowDidChangeScreenNotification object:window];
-        [[NSNotificationCenter defaultCenter] removeObserver:self
+        [defaultNotificationCenter removeObserver:self
             name:NSWindowDidMiniaturizeNotification object:window];
-        [[NSNotificationCenter defaultCenter] removeObserver:self
+        [defaultNotificationCenter removeObserver:self
             name:NSWindowDidDeminiaturizeNotification object:window];
+        [defaultNotificationCenter removeObserver:self
+            name:NSWindowDidChangeOcclusionStateNotification object:window];
         [_private->windowVisibilityObserver stopObserving:window];
     }
 }
@@ -6192,6 +6218,12 @@ static NSString * const backingPropertyOldScaleFactorKey = @"NSBackingPropertyOl
 
     _private->page->setDeviceScaleFactor(newBackingScaleFactor);
 }
+
+- (void)_windowDidChangeOcclusionState:(NSNotification *)notification
+{
+    [self _updateVisibilityState];
+}
+
 #else
 - (void)_wakWindowScreenScaleChanged:(NSNotification *)notification
 {
