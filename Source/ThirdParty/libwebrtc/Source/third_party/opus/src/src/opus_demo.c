@@ -54,9 +54,9 @@ void print_usage( char* argv[] )
     fprintf(stderr, "-d                   : only runs the decoder (reads the bit-stream as input)\n" );
     fprintf(stderr, "-cbr                 : enable constant bitrate; default: variable bitrate\n" );
     fprintf(stderr, "-cvbr                : enable constrained variable bitrate; default: unconstrained\n" );
-    fprintf(stderr, "-variable-duration   : enable frames of variable duration (experts only); default: disabled\n" );
+    fprintf(stderr, "-delayed-decision    : use look-ahead for speech/music detection (experts only); default: disabled\n" );
     fprintf(stderr, "-bandwidth <NB|MB|WB|SWB|FB> : audio bandwidth (from narrowband to fullband); default: sampling rate\n" );
-    fprintf(stderr, "-framesize <2.5|5|10|20|40|60> : frame size in ms; default: 20 \n" );
+    fprintf(stderr, "-framesize <2.5|5|10|20|40|60|80|100|120> : frame size in ms; default: 20 \n" );
     fprintf(stderr, "-max_payload <bytes> : maximum payload size in bytes, default: 1024\n" );
     fprintf(stderr, "-complexity <comp>   : complexity, 0 (lowest) ... 10 (highest); default: 10\n" );
     fprintf(stderr, "-inbandfec           : enable SILK inband FEC\n" );
@@ -253,6 +253,7 @@ int main(int argc, char *argv[])
     opus_uint32 dec_final_range;
     int encode_only=0, decode_only=0;
     int max_frame_size = 48000*2;
+    size_t num_read;
     int curr_read=0;
     int sweep_bps = 0;
     int random_framesize=0, newsize=0, delayed_celt=0;
@@ -382,9 +383,15 @@ int main(int argc, char *argv[])
                 frame_size = sampling_rate/25;
             else if (strcmp(argv[ args + 1 ], "60")==0)
                 frame_size = 3*sampling_rate/50;
+            else if (strcmp(argv[ args + 1 ], "80")==0)
+                frame_size = 4*sampling_rate/50;
+            else if (strcmp(argv[ args + 1 ], "100")==0)
+                frame_size = 5*sampling_rate/50;
+            else if (strcmp(argv[ args + 1 ], "120")==0)
+                frame_size = 6*sampling_rate/50;
             else {
                 fprintf(stderr, "Unsupported frame size: %s ms. "
-                                "Supported are 2.5, 5, 10, 20, 40, 60.\n",
+                                "Supported are 2.5, 5, 10, 20, 40, 60, 80, 100, 120.\n",
                                 argv[ args + 1 ]);
                 return EXIT_FAILURE;
             }
@@ -407,10 +414,6 @@ int main(int argc, char *argv[])
         } else if( strcmp( argv[ args ], "-cvbr" ) == 0 ) {
             check_encoder_option(decode_only, "-cvbr");
             cvbr = 1;
-            args++;
-        } else if( strcmp( argv[ args ], "-variable-duration" ) == 0 ) {
-            check_encoder_option(decode_only, "-variable-duration");
-            variable_duration = OPUS_FRAMESIZE_VARIABLE;
             args++;
         } else if( strcmp( argv[ args ], "-delayed-decision" ) == 0 ) {
             check_encoder_option(decode_only, "-delayed-decision");
@@ -599,22 +602,25 @@ int main(int argc, char *argv[])
     }
     if(delayed_decision)
     {
-       if (variable_duration!=OPUS_FRAMESIZE_VARIABLE)
-       {
-          if (frame_size==sampling_rate/400)
-             variable_duration = OPUS_FRAMESIZE_2_5_MS;
-          else if (frame_size==sampling_rate/200)
-             variable_duration = OPUS_FRAMESIZE_5_MS;
-          else if (frame_size==sampling_rate/100)
-             variable_duration = OPUS_FRAMESIZE_10_MS;
-          else if (frame_size==sampling_rate/50)
-             variable_duration = OPUS_FRAMESIZE_20_MS;
-          else if (frame_size==sampling_rate/25)
-             variable_duration = OPUS_FRAMESIZE_40_MS;
-          else
-             variable_duration = OPUS_FRAMESIZE_60_MS;
-          opus_encoder_ctl(enc, OPUS_SET_EXPERT_FRAME_DURATION(variable_duration));
-       }
+       if (frame_size==sampling_rate/400)
+          variable_duration = OPUS_FRAMESIZE_2_5_MS;
+       else if (frame_size==sampling_rate/200)
+          variable_duration = OPUS_FRAMESIZE_5_MS;
+       else if (frame_size==sampling_rate/100)
+          variable_duration = OPUS_FRAMESIZE_10_MS;
+       else if (frame_size==sampling_rate/50)
+          variable_duration = OPUS_FRAMESIZE_20_MS;
+       else if (frame_size==sampling_rate/25)
+          variable_duration = OPUS_FRAMESIZE_40_MS;
+       else if (frame_size==3*sampling_rate/50)
+          variable_duration = OPUS_FRAMESIZE_60_MS;
+       else if (frame_size==4*sampling_rate/50)
+          variable_duration = OPUS_FRAMESIZE_80_MS;
+       else if (frame_size==5*sampling_rate/50)
+          variable_duration = OPUS_FRAMESIZE_100_MS;
+       else
+          variable_duration = OPUS_FRAMESIZE_120_MS;
+       opus_encoder_ctl(enc, OPUS_SET_EXPERT_FRAME_DURATION(variable_duration));
        frame_size = 2*48000;
     }
     while (!stop)
@@ -652,8 +658,8 @@ int main(int argc, char *argv[])
         if (decode_only)
         {
             unsigned char ch[4];
-            err = fread(ch, 1, 4, fin);
-            if (feof(fin))
+            num_read = fread(ch, 1, 4, fin);
+            if (num_read!=4)
                 break;
             len[toggle] = char_to_int(ch);
             if (len[toggle]>max_payload_bytes || len[toggle]<0)
@@ -661,14 +667,16 @@ int main(int argc, char *argv[])
                 fprintf(stderr, "Invalid payload length: %d\n",len[toggle]);
                 break;
             }
-            err = fread(ch, 1, 4, fin);
+            num_read = fread(ch, 1, 4, fin);
+            if (num_read!=4)
+                break;
             enc_final_range[toggle] = char_to_int(ch);
-            err = fread(data[toggle], 1, len[toggle], fin);
-            if (err<len[toggle])
+            num_read = fread(data[toggle], 1, len[toggle], fin);
+            if (num_read!=(size_t)len[toggle])
             {
                 fprintf(stderr, "Ran out of input, "
                                 "expecting %d bytes got %d\n",
-                                len[toggle],err);
+                                len[toggle],(int)num_read);
                 break;
             }
         } else {
@@ -680,8 +688,8 @@ int main(int argc, char *argv[])
                 opus_encoder_ctl(enc, OPUS_SET_FORCE_CHANNELS(mode_list[curr_mode][3]));
                 frame_size = mode_list[curr_mode][2];
             }
-            err = fread(fbytes, sizeof(short)*channels, frame_size-remaining, fin);
-            curr_read = err;
+            num_read = fread(fbytes, sizeof(short)*channels, frame_size-remaining, fin);
+            curr_read = (int)num_read;
             tot_in += curr_read;
             for(i=0;i<curr_read*channels;i++)
             {
@@ -721,14 +729,8 @@ int main(int argc, char *argv[])
             if (len[toggle] < 0)
             {
                 fprintf (stderr, "opus_encode() returned %d\n", len[toggle]);
-                free(data[0]);
-                if (use_inbandfec)
-                    free(data[1]);
                 fclose(fin);
                 fclose(fout);
-                free(in);
-                free(out);
-                free(fbytes);
                 return EXIT_FAILURE;
             }
             curr_mode_count += frame_size;
@@ -746,14 +748,6 @@ int main(int argc, char *argv[])
            if ((err = opus_packet_pad(data[toggle], len[toggle], new_len)) != OPUS_OK)
            {
               fprintf(stderr, "padding failed: %s\n", opus_strerror(err));
-              free(data[0]);
-              if (use_inbandfec)
-                  free(data[1]);
-              fclose(fin);
-              fclose(fout);
-              free(in);
-              free(out);
-              free(fbytes);
               return EXIT_FAILURE;
            }
            len[toggle] = new_len;
@@ -765,44 +759,20 @@ int main(int argc, char *argv[])
             int_to_char(len[toggle], int_field);
             if (fwrite(int_field, 1, 4, fout) != 4) {
                fprintf(stderr, "Error writing.\n");
-               free(data[0]);
-               if (use_inbandfec)
-                   free(data[1]);
-               fclose(fin);
-               fclose(fout);
-               free(in);
-               free(out);
-               free(fbytes);
                return EXIT_FAILURE;
             }
             int_to_char(enc_final_range[toggle], int_field);
             if (fwrite(int_field, 1, 4, fout) != 4) {
                fprintf(stderr, "Error writing.\n");
-               free(data[0]);
-               if (use_inbandfec)
-                   free(data[1]);
-               fclose(fin);
-               fclose(fout);
-               free(in);
-               free(out);
-               free(fbytes);
                return EXIT_FAILURE;
             }
             if (fwrite(data[toggle], 1, len[toggle], fout) != (unsigned)len[toggle]) {
                fprintf(stderr, "Error writing.\n");
-               free(data[0]);
-               if (use_inbandfec)
-                   free(data[1]);
-               fclose(fin);
-               fclose(fout);
-               free(in);
-               free(out);
-               free(fbytes);
                return EXIT_FAILURE;
             }
             tot_samples += nb_encoded;
         } else {
-            int output_samples;
+            opus_int32 output_samples;
             lost = len[toggle]==0 || (packet_loss_perc>0 && rand()%100 < packet_loss_perc);
             if (lost)
                opus_decoder_ctl(dec, OPUS_GET_LAST_PACKET_DURATION(&output_samples));
@@ -828,7 +798,7 @@ int main(int argc, char *argv[])
                     if (!decode_only && tot_out + output_samples > tot_in)
                     {
                        stop=1;
-                       output_samples  = tot_in-tot_out;
+                       output_samples = (opus_int32)(tot_in - tot_out);
                     }
                     if (output_samples>skip) {
                        int i;
@@ -841,14 +811,6 @@ int main(int argc, char *argv[])
                        }
                        if (fwrite(fbytes, sizeof(short)*channels, output_samples-skip, fout) != (unsigned)(output_samples-skip)){
                           fprintf(stderr, "Error writing.\n");
-                          free(data[0]);
-                          if (use_inbandfec)
-                              free(data[1]);
-                          fclose(fin);
-                          fclose(fout);
-                          free(in);
-                          free(out);
-                          free(fbytes);
                           return EXIT_FAILURE;
                        }
                        tot_out += output_samples-skip;
@@ -875,14 +837,8 @@ int main(int argc, char *argv[])
                          (long)count,
                          (unsigned long)enc_final_range[toggle^use_inbandfec],
                          (unsigned long)dec_final_range);
-            free(data[0]);
-            if (use_inbandfec)
-                free(data[1]);
             fclose(fin);
             fclose(fout);
-            free(in);
-            free(out);
-            free(fbytes);
             return EXIT_FAILURE;
         }
 
@@ -922,8 +878,6 @@ int main(int argc, char *argv[])
                1e-3*bits_act*sampling_rate/(1e-15+frame_size*(double)count_act));
     fprintf (stderr, "bitrate standard deviation:  %7.3f kb/s\n",
             1e-3*sqrt(bits2/count - bits*bits/(count*(double)count))*sampling_rate/frame_size);
-    /* Close any files to which intermediate results were stored */
-    SILK_DEBUG_STORE_CLOSE_FILES
     silk_TimerSave("opus_timing.txt");
     opus_encoder_destroy(enc);
     opus_decoder_destroy(dec);

@@ -36,7 +36,6 @@
 #endif
 #endif
 
-#include <NE10_init.h>
 #include <NE10_dsp.h>
 #include "os_support.h"
 #include "kiss_fft.h"

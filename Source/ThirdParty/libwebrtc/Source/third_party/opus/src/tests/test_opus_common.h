@@ -64,6 +64,8 @@ static opus_uint32 iseed;
 
 #ifdef __GNUC__
 __attribute__((noreturn))
+#elif defined(_MSC_VER)
+__declspec(noreturn)
 #endif
 static OPUS_INLINE void _test_failed(const char *file, int line)
 {
@@ -76,3 +78,5 @@ static OPUS_INLINE void _test_failed(const char *file, int line)
   abort();
 }
 #define test_failed() _test_failed(__FILE__, __LINE__);
+
+void regression_test(void);

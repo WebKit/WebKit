@@ -318,3 +318,18 @@ PREDEFINED             = OPUS_EXPORT= \
                          OPUS_CUSTOM_EXPORT_STATIC= \
                          OPUS_WARN_UNUSED_RESULT= \
                          OPUS_ARG_NONNULL(_x)=
+
+#---------------------------------------------------------------------------
+# Configuration options related to the dot tool
+#---------------------------------------------------------------------------
+
+# If you set the HAVE_DOT tag to YES then doxygen will assume the dot tool is
+# available from the path. This tool is part of Graphviz (see:
+# http://www.graphviz.org/), a graph visualization toolkit from AT&T and Lucent
+# Bell Labs.
+
+# Debian defaults to YES here, while Fedora and Homebrew default to NO.
+# So we set this based on whether the graphviz package is available at
+# configure time.
+#
+HAVE_DOT = @HAVE_DOT@

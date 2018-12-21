@@ -13,11 +13,12 @@ INSTALL_PATH = /usr/local/lib;
 PUBLIC_HEADERS_FOLDER_PATH = /usr/local/include/libwebrtc;
 USE_HEADERMAP = NO;
 WARNING_CFLAGS = -Wno-incompatible-pointer-types $(inherited)
-GCC_PREPROCESSOR_DEFINITIONS = VAR_ARRAYS OPUS_BUILD OPUS_EXPORT= HAVE_LRINT HAVE_LRINTF OPUS_X86_MAY_HAVE_SSE2 $(inherited);
+GCC_PREPROCESSOR_DEFINITIONS = VAR_ARRAYS OPUS_BUILD OPUS_EXPORT= HAVE_LRINT HAVE_LRINTF $(inherited);
 GCC_PREPROCESSOR_DEFINITIONS[arch=arm64*] = $(inherited) OPUS_ARM_PRESUME_AARCH64_NEON_INTR;
-GCC_PREPROCESSOR_DEFINITIONS[arch=x86_64] = $(inherited) $(SSE4_FLAG);
+GCC_PREPROCESSOR_DEFINITIONS[arch=x86_64] = $(inherited) OPUS_X86_MAY_HAVE_SSE2 OPUS_X86_PRESUME_SSE2 $(SSE4_FLAG);
 
-EXCLUDED_SOURCE_FILE_NAMES[sdk=iphone*] = *_sse.c *_sse2.c;
+EXCLUDED_SOURCE_FILE_NAMES[sdk=iphonesimulator*] = *_sse.c *_sse4_1.c x86_silk_map.c;
+EXCLUDED_SOURCE_FILE_NAMES[sdk=iphoneos*] = *_sse.c *_sse2.c *_sse4_1.c x86_silk_map.c;
 EXCLUDED_SOURCE_FILE_NAMES[sdk=macosx*] = $(EXCLUDED_SOURCE_FILE_NAMES_macosx_$(TARGET_MAC_OS_X_VERSION_MAJOR));
 
 // The iOS Simulator can't use SSE4 intrinsics, but macOS can.

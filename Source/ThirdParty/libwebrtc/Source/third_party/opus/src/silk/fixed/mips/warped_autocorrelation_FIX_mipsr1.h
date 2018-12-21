@@ -48,7 +48,8 @@ void silk_warped_autocorrelation_FIX(
     const opus_int16                *input,                                 /* I    Input data to correlate                                                     */
     const opus_int                  warping_Q16,                            /* I    Warping coefficient                                                         */
     const opus_int                  length,                                 /* I    Length of input                                                             */
-    const opus_int                  order                                   /* I    Correlation order (even)                                                    */
+    const opus_int                  order,                                  /* I    Correlation order (even)                                                    */
+    int                             arch                                    /* I    Run-time architecture                                                       */
 )
 {
     opus_int   n, i, lsh;

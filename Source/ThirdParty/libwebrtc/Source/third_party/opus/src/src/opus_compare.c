@@ -238,15 +238,11 @@ int main(int _argc,const char **_argv){
   if(xlength!=ylength*downsample){
     fprintf(stderr,"Sample counts do not match (%lu!=%lu).\n",
      (unsigned long)xlength,(unsigned long)ylength*downsample);
-    free(x);
-    free(y);
     return EXIT_FAILURE;
   }
   if(xlength<TEST_WIN_SIZE){
     fprintf(stderr,"Insufficient sample data (%lu<%i).\n",
      (unsigned long)xlength,TEST_WIN_SIZE);
-    free(x);
-    free(y);
     return EXIT_FAILURE;
   }
   nframes=(xlength-TEST_WIN_SIZE+TEST_WIN_STEP)/TEST_WIN_STEP;
@@ -367,6 +363,9 @@ int main(int _argc,const char **_argv){
     Ef*=Ef;
     err+=Ef*Ef;
   }
+  free(xb);
+  free(X);
+  free(Y);
   err=pow(err/nframes,1.0/16);
   Q=100*(1-0.5*log(1+err)/log(1.13));
   if(Q<0){

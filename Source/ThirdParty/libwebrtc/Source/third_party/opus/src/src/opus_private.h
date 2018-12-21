@@ -92,14 +92,6 @@ int encode_size(int size, unsigned char *data);
 
 opus_int32 frame_size_select(opus_int32 frame_size, int variable_duration, opus_int32 Fs);
 
-opus_int32 compute_frame_size(const void *analysis_pcm, int frame_size,
-      int variable_duration, int C, opus_int32 Fs, int bitrate_bps,
-      int delay_compensation, downmix_func downmix
-#ifndef DISABLE_FLOAT_API
-      , float *subframe_mem
-#endif
-      );
-
 opus_int32 opus_encode_native(OpusEncoder *st, const opus_val16 *pcm, int frame_size,
       unsigned char *data, opus_int32 out_data_bytes, int lsb_depth,
       const void *analysis_pcm, opus_int32 analysis_size, int c1, int c2,

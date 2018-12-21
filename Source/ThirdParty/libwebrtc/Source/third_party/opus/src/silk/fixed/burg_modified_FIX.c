@@ -37,7 +37,7 @@ POSSIBILITY OF SUCH DAMAGE.
 #define MAX_FRAME_SIZE              384             /* subfr_length * nb_subfr = ( 0.005 * 16000 + 16 ) * 4 = 384 */
 
 #define QA                          25
-#define N_BITS_HEAD_ROOM            2
+#define N_BITS_HEAD_ROOM            3
 #define MIN_RSHIFTS                 -16
 #define MAX_RSHIFTS                 (32 - QA)
 

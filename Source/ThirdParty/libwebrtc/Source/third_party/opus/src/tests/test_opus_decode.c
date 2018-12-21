@@ -104,7 +104,7 @@ int test_decoder_code0(int no_fuzz)
       int factor=48000/fsv[t>>1];
       for(fec=0;fec<2;fec++)
       {
-         int dur;
+         opus_int32 dur;
          /*Test PLC on a fresh decoder*/
          out_samples = opus_decode(dec[t], 0, 0, outbuf, 120/factor, fec);
          if(out_samples!=120/factor)test_failed();
@@ -135,7 +135,14 @@ int test_decoder_code0(int no_fuzz)
          outbuf[0]=32749;
          out_samples = opus_decode(dec[t], packet, 0, outbuf, 0, fec);
          if(out_samples>0)test_failed();
+#if !defined(OPUS_BUILD) && (OPUS_GNUC_PREREQ(4, 6) || (defined(__clang_major__) && __clang_major__ >= 3))
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wnonnull"
+#endif
          out_samples = opus_decode(dec[t], packet, 0, 0, 0, fec);
+#if !defined(OPUS_BUILD) && (OPUS_GNUC_PREREQ(4, 6) || (defined(__clang_major__) && __clang_major__ >= 3))
+#pragma GCC diagnostic pop
+#endif
          if(out_samples>0)test_failed();
          if(outbuf[0]!=32749)test_failed();
 
@@ -160,7 +167,7 @@ int test_decoder_code0(int no_fuzz)
    /*Count code 0 tests*/
    for(i=0;i<64;i++)
    {
-      int dur;
+      opus_int32 dur;
       int j,expected[5*2];
       packet[0]=i<<2;
       packet[1]=255;
@@ -314,7 +321,7 @@ int test_decoder_code0(int no_fuzz)
       if(opus_decode(decbak,  0, 0, outbuf, MAX_FRAME_SAMP, 0)<20)test_failed();
       for(t=0;t<5*2;t++)
       {
-         int dur;
+         opus_int32 dur;
          out_samples = opus_decode(dec[t], packet, plen+1, outbuf, MAX_FRAME_SAMP, 0);
          if(out_samples!=expected[t])test_failed();
          if(t==0)dec_final_range2=dec_final_range1;
@@ -384,26 +391,26 @@ void test_soft_clip(void)
    {
       for (j=0;j<1024;j++)
       {
-        x[j]=(i&255)*(1/32.f)-4.f;
+        x[j]=(j&255)*(1/32.f)-4.f;
       }
       opus_pcm_soft_clip(&x[i],1024-i,1,s);
       for (j=i;j<1024;j++)
       {
-        if(x[i]>1.f)test_failed();
-        if(x[i]<-1.f)test_failed();
+        if(x[j]>1.f)test_failed();
+        if(x[j]<-1.f)test_failed();
       }
    }
    for(i=1;i<9;i++)
    {
       for (j=0;j<1024;j++)
       {
-        x[j]=(i&255)*(1/32.f)-4.f;
+        x[j]=(j&255)*(1/32.f)-4.f;
       }
       opus_pcm_soft_clip(x,1024/i,i,s);
       for (j=0;j<(1024/i)*i;j++)
       {
-        if(x[i]>1.f)test_failed();
-        if(x[i]<-1.f)test_failed();
+        if(x[j]>1.f)test_failed();
+        if(x[j]<-1.f)test_failed();
       }
    }
    opus_pcm_soft_clip(x,0,1,s);
@@ -436,7 +443,7 @@ int main(int _argc, char **_argv)
       iseed=atoi(env_seed);
       env_used=1;
    }
-   else iseed=(opus_uint32)time(NULL)^((getpid()&65535)<<16);
+   else iseed=(opus_uint32)time(NULL)^(((opus_uint32)getpid()&65535)<<16);
    Rw=Rz=iseed;
 
    oversion=opus_get_version_string();

@@ -535,6 +535,8 @@
 		414D71141E4AE98C0023E526 /* user_socket.c in Sources */ = {isa = PBXBuildFile; fileRef = 414D71121E4AE9820023E526 /* user_socket.c */; };
 		414D71171E4AEAFB0023E526 /* sctp_indata.c in Sources */ = {isa = PBXBuildFile; fileRef = 414D71151E4AEACD0023E526 /* sctp_indata.c */; };
 		414D71191E4AEB110023E526 /* sctp_userspace.c in Sources */ = {isa = PBXBuildFile; fileRef = 414D71181E4AEB110023E526 /* sctp_userspace.c */; };
+		4153CD2721CC661000C3E188 /* LPC_fit.c in Sources */ = {isa = PBXBuildFile; fileRef = 4100CDE521CACFD000F9B87D /* LPC_fit.c */; };
+		4153CD2821CC664800C3E188 /* vq_sse2.c in Sources */ = {isa = PBXBuildFile; fileRef = 4100CDED21CAD1F500F9B87D /* vq_sse2.c */; };
 		415F1FA621272FBA00064CBF /* adaptive_digital_gain_applier.cc in Sources */ = {isa = PBXBuildFile; fileRef = 41A08BE421272F85001D5D7B /* adaptive_digital_gain_applier.cc */; };
 		415F1FA721272FBA00064CBF /* adaptive_digital_gain_applier.h in Headers */ = {isa = PBXBuildFile; fileRef = 41A08BDB21272F84001D5D7B /* adaptive_digital_gain_applier.h */; };
 		415F1FA821272FBA00064CBF /* adaptive_mode_level_estimator_agc.cc in Sources */ = {isa = PBXBuildFile; fileRef = 41A08BE921272F86001D5D7B /* adaptive_mode_level_estimator_agc.cc */; };
@@ -3246,7 +3248,6 @@
 		5CDD8EEA1E43C9F600621E92 /* find_pred_coefs_FLP.c in Sources */ = {isa = PBXBuildFile; fileRef = 5CDD8EA61E43C9C100621E92 /* find_pred_coefs_FLP.c */; };
 		5CDD8EEB1E43C9F600621E92 /* inner_product_FLP.c in Sources */ = {isa = PBXBuildFile; fileRef = 5CDD8EA71E43C9C100621E92 /* inner_product_FLP.c */; };
 		5CDD8EEC1E43C9F600621E92 /* k2a_FLP.c in Sources */ = {isa = PBXBuildFile; fileRef = 5CDD8EA81E43C9C100621E92 /* k2a_FLP.c */; };
-		5CDD8EED1E43C9F600621E92 /* levinsondurbin_FLP.c in Sources */ = {isa = PBXBuildFile; fileRef = 5CDD8EA91E43C9C100621E92 /* levinsondurbin_FLP.c */; };
 		5CDD8EEE1E43C9F600621E92 /* LPC_analysis_filter_FLP.c in Sources */ = {isa = PBXBuildFile; fileRef = 5CDD8EAA1E43C9C100621E92 /* LPC_analysis_filter_FLP.c */; };
 		5CDD8EEF1E43C9F600621E92 /* LPC_inv_pred_gain_FLP.c in Sources */ = {isa = PBXBuildFile; fileRef = 5CDD8EAB1E43C9C100621E92 /* LPC_inv_pred_gain_FLP.c */; };
 		5CDD8EF01E43C9F600621E92 /* LTP_analysis_filter_FLP.c in Sources */ = {isa = PBXBuildFile; fileRef = 5CDD8EAC1E43C9C100621E92 /* LTP_analysis_filter_FLP.c */; };
@@ -3254,7 +3255,6 @@
 		5CDD8EF21E43C9F600621E92 /* main_FLP.h in Headers */ = {isa = PBXBuildFile; fileRef = 5CDD8EAE1E43C9C100621E92 /* main_FLP.h */; };
 		5CDD8EF31E43C9F600621E92 /* noise_shape_analysis_FLP.c in Sources */ = {isa = PBXBuildFile; fileRef = 5CDD8EAF1E43C9C100621E92 /* noise_shape_analysis_FLP.c */; };
 		5CDD8EF41E43C9F600621E92 /* pitch_analysis_core_FLP.c in Sources */ = {isa = PBXBuildFile; fileRef = 5CDD8EB01E43C9C100621E92 /* pitch_analysis_core_FLP.c */; };
-		5CDD8EF51E43C9F600621E92 /* prefilter_FLP.c in Sources */ = {isa = PBXBuildFile; fileRef = 5CDD8EB11E43C9C100621E92 /* prefilter_FLP.c */; };
 		5CDD8EF61E43C9F600621E92 /* process_gains_FLP.c in Sources */ = {isa = PBXBuildFile; fileRef = 5CDD8EB21E43C9C100621E92 /* process_gains_FLP.c */; };
 		5CDD8EF71E43C9F600621E92 /* regularize_correlations_FLP.c in Sources */ = {isa = PBXBuildFile; fileRef = 5CDD8EB31E43C9C100621E92 /* regularize_correlations_FLP.c */; };
 		5CDD8EF81E43C9F600621E92 /* residual_energy_FLP.c in Sources */ = {isa = PBXBuildFile; fileRef = 5CDD8EB41E43C9C100621E92 /* residual_energy_FLP.c */; };
@@ -3262,7 +3262,6 @@
 		5CDD8EFA1E43C9F600621E92 /* scale_vector_FLP.c in Sources */ = {isa = PBXBuildFile; fileRef = 5CDD8EB61E43C9C100621E92 /* scale_vector_FLP.c */; };
 		5CDD8EFB1E43C9F600621E92 /* schur_FLP.c in Sources */ = {isa = PBXBuildFile; fileRef = 5CDD8EB71E43C9C100621E92 /* schur_FLP.c */; };
 		5CDD8EFC1E43C9F600621E92 /* SigProc_FLP.h in Headers */ = {isa = PBXBuildFile; fileRef = 5CDD8EB81E43C9C100621E92 /* SigProc_FLP.h */; };
-		5CDD8EFD1E43C9F600621E92 /* solve_LS_FLP.c in Sources */ = {isa = PBXBuildFile; fileRef = 5CDD8EB91E43C9C100621E92 /* solve_LS_FLP.c */; };
 		5CDD8EFE1E43C9F600621E92 /* sort_FLP.c in Sources */ = {isa = PBXBuildFile; fileRef = 5CDD8EBA1E43C9C100621E92 /* sort_FLP.c */; };
 		5CDD8EFF1E43C9F600621E92 /* structs_FLP.h in Headers */ = {isa = PBXBuildFile; fileRef = 5CDD8EBB1E43C9C100621E92 /* structs_FLP.h */; };
 		5CDD8F001E43C9F600621E92 /* warped_autocorrelation_FLP.c in Sources */ = {isa = PBXBuildFile; fileRef = 5CDD8EBC1E43C9C100621E92 /* warped_autocorrelation_FLP.c */; };
@@ -3283,14 +3282,12 @@
 		5CDD8F471E43CB1E00621E92 /* main_FIX.h in Headers */ = {isa = PBXBuildFile; fileRef = 5CDD8F101E43CAF900621E92 /* main_FIX.h */; };
 		5CDD8F481E43CB1E00621E92 /* noise_shape_analysis_FIX.c in Sources */ = {isa = PBXBuildFile; fileRef = 5CDD8F121E43CAF900621E92 /* noise_shape_analysis_FIX.c */; };
 		5CDD8F491E43CB1E00621E92 /* pitch_analysis_core_FIX.c in Sources */ = {isa = PBXBuildFile; fileRef = 5CDD8F131E43CAF900621E92 /* pitch_analysis_core_FIX.c */; };
-		5CDD8F4A1E43CB1E00621E92 /* prefilter_FIX.c in Sources */ = {isa = PBXBuildFile; fileRef = 5CDD8F141E43CAF900621E92 /* prefilter_FIX.c */; };
 		5CDD8F4B1E43CB1E00621E92 /* process_gains_FIX.c in Sources */ = {isa = PBXBuildFile; fileRef = 5CDD8F151E43CAF900621E92 /* process_gains_FIX.c */; };
 		5CDD8F4C1E43CB1E00621E92 /* regularize_correlations_FIX.c in Sources */ = {isa = PBXBuildFile; fileRef = 5CDD8F161E43CAF900621E92 /* regularize_correlations_FIX.c */; };
 		5CDD8F4D1E43CB1E00621E92 /* residual_energy_FIX.c in Sources */ = {isa = PBXBuildFile; fileRef = 5CDD8F171E43CAF900621E92 /* residual_energy_FIX.c */; };
 		5CDD8F4E1E43CB1E00621E92 /* residual_energy16_FIX.c in Sources */ = {isa = PBXBuildFile; fileRef = 5CDD8F181E43CAF900621E92 /* residual_energy16_FIX.c */; };
 		5CDD8F4F1E43CB1E00621E92 /* schur_FIX.c in Sources */ = {isa = PBXBuildFile; fileRef = 5CDD8F191E43CAF900621E92 /* schur_FIX.c */; };
 		5CDD8F501E43CB1E00621E92 /* schur64_FIX.c in Sources */ = {isa = PBXBuildFile; fileRef = 5CDD8F1A1E43CAF900621E92 /* schur64_FIX.c */; };
-		5CDD8F511E43CB1E00621E92 /* solve_LS_FIX.c in Sources */ = {isa = PBXBuildFile; fileRef = 5CDD8F1B1E43CAF900621E92 /* solve_LS_FIX.c */; };
 		5CDD8F521E43CB1E00621E92 /* structs_FIX.h in Headers */ = {isa = PBXBuildFile; fileRef = 5CDD8F1C1E43CAF900621E92 /* structs_FIX.h */; };
 		5CDD8F531E43CB1E00621E92 /* vector_ops_FIX.c in Sources */ = {isa = PBXBuildFile; fileRef = 5CDD8F1D1E43CAF900621E92 /* vector_ops_FIX.c */; };
 		5CDD8F541E43CB1E00621E92 /* warped_autocorrelation_FIX.c in Sources */ = {isa = PBXBuildFile; fileRef = 5CDD8F1E1E43CAF900621E92 /* warped_autocorrelation_FIX.c */; };
@@ -3655,6 +3652,15 @@
 /* Begin PBXFileReference section */
 		37119A8020CCB6DD002C6DC9 /* Version.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Version.xcconfig; sourceTree = "<group>"; };
 		37119A8120CCB6DD002C6DC9 /* WebKitTargetConditionals.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = WebKitTargetConditionals.xcconfig; sourceTree = "<group>"; };
+		4100CDE521CACFD000F9B87D /* LPC_fit.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = LPC_fit.c; path = silk/LPC_fit.c; sourceTree = "<group>"; };
+		4100CDE821CAD03300F9B87D /* vq_sse.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = vq_sse.h; path = x86/vq_sse.h; sourceTree = "<group>"; };
+		4100CDEB21CAD1F500F9B87D /* pitch_sse4_1.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = pitch_sse4_1.c; path = x86/pitch_sse4_1.c; sourceTree = "<group>"; };
+		4100CDEC21CAD1F500F9B87D /* celt_lpc_sse.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = celt_lpc_sse.c; path = x86/celt_lpc_sse.c; sourceTree = "<group>"; };
+		4100CDED21CAD1F500F9B87D /* vq_sse2.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = vq_sse2.c; path = x86/vq_sse2.c; sourceTree = "<group>"; };
+		4100CDEE21CAD1F600F9B87D /* pitch_sse.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = pitch_sse.c; path = x86/pitch_sse.c; sourceTree = "<group>"; };
+		4100CDEF21CAD1F600F9B87D /* pitch_sse2.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = pitch_sse2.c; path = x86/pitch_sse2.c; sourceTree = "<group>"; };
+		4100CDF021CAD1F600F9B87D /* celt_lpc_sse.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = celt_lpc_sse.h; path = x86/celt_lpc_sse.h; sourceTree = "<group>"; };
+		4100CDF121CAD1F700F9B87D /* pitch_sse.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = pitch_sse.h; path = x86/pitch_sse.h; sourceTree = "<group>"; };
 		4102F68421273204006AE8D7 /* rtcstatstraversal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = rtcstatstraversal.h; sourceTree = "<group>"; };
 		4102F68521273204006AE8D7 /* jseptransportcontroller.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = jseptransportcontroller.h; sourceTree = "<group>"; };
 		4102F68621273205006AE8D7 /* transportstats.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = transportstats.cc; sourceTree = "<group>"; };
@@ -7159,7 +7165,6 @@
 		5CDD8EA61E43C9C100621E92 /* find_pred_coefs_FLP.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = find_pred_coefs_FLP.c; path = silk/float/find_pred_coefs_FLP.c; sourceTree = "<group>"; };
 		5CDD8EA71E43C9C100621E92 /* inner_product_FLP.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = inner_product_FLP.c; path = silk/float/inner_product_FLP.c; sourceTree = "<group>"; };
 		5CDD8EA81E43C9C100621E92 /* k2a_FLP.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = k2a_FLP.c; path = silk/float/k2a_FLP.c; sourceTree = "<group>"; };
-		5CDD8EA91E43C9C100621E92 /* levinsondurbin_FLP.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = levinsondurbin_FLP.c; path = silk/float/levinsondurbin_FLP.c; sourceTree = "<group>"; };
 		5CDD8EAA1E43C9C100621E92 /* LPC_analysis_filter_FLP.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = LPC_analysis_filter_FLP.c; path = silk/float/LPC_analysis_filter_FLP.c; sourceTree = "<group>"; };
 		5CDD8EAB1E43C9C100621E92 /* LPC_inv_pred_gain_FLP.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = LPC_inv_pred_gain_FLP.c; path = silk/float/LPC_inv_pred_gain_FLP.c; sourceTree = "<group>"; };
 		5CDD8EAC1E43C9C100621E92 /* LTP_analysis_filter_FLP.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = LTP_analysis_filter_FLP.c; path = silk/float/LTP_analysis_filter_FLP.c; sourceTree = "<group>"; };
@@ -7167,7 +7172,6 @@
 		5CDD8EAE1E43C9C100621E92 /* main_FLP.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = main_FLP.h; path = silk/float/main_FLP.h; sourceTree = "<group>"; };
 		5CDD8EAF1E43C9C100621E92 /* noise_shape_analysis_FLP.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = noise_shape_analysis_FLP.c; path = silk/float/noise_shape_analysis_FLP.c; sourceTree = "<group>"; };
 		5CDD8EB01E43C9C100621E92 /* pitch_analysis_core_FLP.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = pitch_analysis_core_FLP.c; path = silk/float/pitch_analysis_core_FLP.c; sourceTree = "<group>"; };
-		5CDD8EB11E43C9C100621E92 /* prefilter_FLP.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = prefilter_FLP.c; path = silk/float/prefilter_FLP.c; sourceTree = "<group>"; };
 		5CDD8EB21E43C9C100621E92 /* process_gains_FLP.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = process_gains_FLP.c; path = silk/float/process_gains_FLP.c; sourceTree = "<group>"; };
 		5CDD8EB31E43C9C100621E92 /* regularize_correlations_FLP.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = regularize_correlations_FLP.c; path = silk/float/regularize_correlations_FLP.c; sourceTree = "<group>"; };
 		5CDD8EB41E43C9C100621E92 /* residual_energy_FLP.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = residual_energy_FLP.c; path = silk/float/residual_energy_FLP.c; sourceTree = "<group>"; };
@@ -7175,7 +7179,6 @@
 		5CDD8EB61E43C9C100621E92 /* scale_vector_FLP.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = scale_vector_FLP.c; path = silk/float/scale_vector_FLP.c; sourceTree = "<group>"; };
 		5CDD8EB71E43C9C100621E92 /* schur_FLP.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = schur_FLP.c; path = silk/float/schur_FLP.c; sourceTree = "<group>"; };
 		5CDD8EB81E43C9C100621E92 /* SigProc_FLP.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SigProc_FLP.h; path = silk/float/SigProc_FLP.h; sourceTree = "<group>"; };
-		5CDD8EB91E43C9C100621E92 /* solve_LS_FLP.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = solve_LS_FLP.c; path = silk/float/solve_LS_FLP.c; sourceTree = "<group>"; };
 		5CDD8EBA1E43C9C100621E92 /* sort_FLP.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = sort_FLP.c; path = silk/float/sort_FLP.c; sourceTree = "<group>"; };
 		5CDD8EBB1E43C9C100621E92 /* structs_FLP.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = structs_FLP.h; path = silk/float/structs_FLP.h; sourceTree = "<group>"; };
 		5CDD8EBC1E43C9C100621E92 /* warped_autocorrelation_FLP.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = warped_autocorrelation_FLP.c; path = silk/float/warped_autocorrelation_FLP.c; sourceTree = "<group>"; };
@@ -7196,14 +7199,12 @@
 		5CDD8F101E43CAF900621E92 /* main_FIX.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = main_FIX.h; path = silk/fixed/main_FIX.h; sourceTree = "<group>"; };
 		5CDD8F121E43CAF900621E92 /* noise_shape_analysis_FIX.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = noise_shape_analysis_FIX.c; path = silk/fixed/noise_shape_analysis_FIX.c; sourceTree = "<group>"; };
 		5CDD8F131E43CAF900621E92 /* pitch_analysis_core_FIX.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = pitch_analysis_core_FIX.c; path = silk/fixed/pitch_analysis_core_FIX.c; sourceTree = "<group>"; };
-		5CDD8F141E43CAF900621E92 /* prefilter_FIX.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = prefilter_FIX.c; path = silk/fixed/prefilter_FIX.c; sourceTree = "<group>"; };
 		5CDD8F151E43CAF900621E92 /* process_gains_FIX.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = process_gains_FIX.c; path = silk/fixed/process_gains_FIX.c; sourceTree = "<group>"; };
 		5CDD8F161E43CAF900621E92 /* regularize_correlations_FIX.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = regularize_correlations_FIX.c; path = silk/fixed/regularize_correlations_FIX.c; sourceTree = "<group>"; };
 		5CDD8F171E43CAF900621E92 /* residual_energy_FIX.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = residual_energy_FIX.c; path = silk/fixed/residual_energy_FIX.c; sourceTree = "<group>"; };
 		5CDD8F181E43CAF900621E92 /* residual_energy16_FIX.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = residual_energy16_FIX.c; path = silk/fixed/residual_energy16_FIX.c; sourceTree = "<group>"; };
 		5CDD8F191E43CAF900621E92 /* schur_FIX.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = schur_FIX.c; path = silk/fixed/schur_FIX.c; sourceTree = "<group>"; };
 		5CDD8F1A1E43CAF900621E92 /* schur64_FIX.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = schur64_FIX.c; path = silk/fixed/schur64_FIX.c; sourceTree = "<group>"; };
-		5CDD8F1B1E43CAF900621E92 /* solve_LS_FIX.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = solve_LS_FIX.c; path = silk/fixed/solve_LS_FIX.c; sourceTree = "<group>"; };
 		5CDD8F1C1E43CAF900621E92 /* structs_FIX.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = structs_FIX.h; path = silk/fixed/structs_FIX.h; sourceTree = "<group>"; };
 		5CDD8F1D1E43CAF900621E92 /* vector_ops_FIX.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = vector_ops_FIX.c; path = silk/fixed/vector_ops_FIX.c; sourceTree = "<group>"; };
 		5CDD8F1E1E43CAF900621E92 /* warped_autocorrelation_FIX.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = warped_autocorrelation_FIX.c; path = silk/fixed/warped_autocorrelation_FIX.c; sourceTree = "<group>"; };
@@ -13033,6 +13034,14 @@
 		5CDD8D131E43C75500621E92 /* x86 */ = {
 			isa = PBXGroup;
 			children = (
+				4100CDEC21CAD1F500F9B87D /* celt_lpc_sse.c */,
+				4100CDF021CAD1F600F9B87D /* celt_lpc_sse.h */,
+				4100CDEE21CAD1F600F9B87D /* pitch_sse.c */,
+				4100CDF121CAD1F700F9B87D /* pitch_sse.h */,
+				4100CDEF21CAD1F600F9B87D /* pitch_sse2.c */,
+				4100CDEB21CAD1F500F9B87D /* pitch_sse4_1.c */,
+				4100CDE821CAD03300F9B87D /* vq_sse.h */,
+				4100CDED21CAD1F500F9B87D /* vq_sse2.c */,
 				5CDD8D1A1E43C76400621E92 /* x86_celt_map.c */,
 				5CDD8D1B1E43C76400621E92 /* x86cpu.c */,
 				5CDD8D1C1E43C76400621E92 /* x86cpu.h */,
@@ -13085,6 +13094,7 @@
 				5CDD8D851E43C7D900621E92 /* log2lin.c */,
 				5CDD8D861E43C7D900621E92 /* LP_variable_cutoff.c */,
 				5CDD8D871E43C7D900621E92 /* LPC_analysis_filter.c */,
+				4100CDE521CACFD000F9B87D /* LPC_fit.c */,
 				5CDD8D881E43C7D900621E92 /* LPC_inv_pred_gain.c */,
 				5CDD8D891E43C7D900621E92 /* MacroCount.h */,
 				5CDD8D8A1E43C7D900621E92 /* MacroDebug.h */,
@@ -13177,7 +13187,6 @@
 				5CDD8EA61E43C9C100621E92 /* find_pred_coefs_FLP.c */,
 				5CDD8EA71E43C9C100621E92 /* inner_product_FLP.c */,
 				5CDD8EA81E43C9C100621E92 /* k2a_FLP.c */,
-				5CDD8EA91E43C9C100621E92 /* levinsondurbin_FLP.c */,
 				5CDD8EAA1E43C9C100621E92 /* LPC_analysis_filter_FLP.c */,
 				5CDD8EAB1E43C9C100621E92 /* LPC_inv_pred_gain_FLP.c */,
 				5CDD8EAC1E43C9C100621E92 /* LTP_analysis_filter_FLP.c */,
@@ -13185,7 +13194,6 @@
 				5CDD8EAE1E43C9C100621E92 /* main_FLP.h */,
 				5CDD8EAF1E43C9C100621E92 /* noise_shape_analysis_FLP.c */,
 				5CDD8EB01E43C9C100621E92 /* pitch_analysis_core_FLP.c */,
-				5CDD8EB11E43C9C100621E92 /* prefilter_FLP.c */,
 				5CDD8EB21E43C9C100621E92 /* process_gains_FLP.c */,
 				5CDD8EB31E43C9C100621E92 /* regularize_correlations_FLP.c */,
 				5CDD8EB41E43C9C100621E92 /* residual_energy_FLP.c */,
@@ -13193,7 +13201,6 @@
 				5CDD8EB61E43C9C100621E92 /* scale_vector_FLP.c */,
 				5CDD8EB71E43C9C100621E92 /* schur_FLP.c */,
 				5CDD8EB81E43C9C100621E92 /* SigProc_FLP.h */,
-				5CDD8EB91E43C9C100621E92 /* solve_LS_FLP.c */,
 				5CDD8EBA1E43C9C100621E92 /* sort_FLP.c */,
 				5CDD8EBB1E43C9C100621E92 /* structs_FLP.h */,
 				5CDD8EBC1E43C9C100621E92 /* warped_autocorrelation_FLP.c */,
@@ -13221,14 +13228,12 @@
 				5CDD8F101E43CAF900621E92 /* main_FIX.h */,
 				5CDD8F121E43CAF900621E92 /* noise_shape_analysis_FIX.c */,
 				5CDD8F131E43CAF900621E92 /* pitch_analysis_core_FIX.c */,
-				5CDD8F141E43CAF900621E92 /* prefilter_FIX.c */,
 				5CDD8F151E43CAF900621E92 /* process_gains_FIX.c */,
 				5CDD8F161E43CAF900621E92 /* regularize_correlations_FIX.c */,
 				5CDD8F181E43CAF900621E92 /* residual_energy16_FIX.c */,
 				5CDD8F171E43CAF900621E92 /* residual_energy_FIX.c */,
 				5CDD8F1A1E43CAF900621E92 /* schur64_FIX.c */,
 				5CDD8F191E43CAF900621E92 /* schur_FIX.c */,
-				5CDD8F1B1E43CAF900621E92 /* solve_LS_FIX.c */,
 				5CDD8F1C1E43CAF900621E92 /* structs_FIX.h */,
 				5CDD8F1D1E43CAF900621E92 /* vector_ops_FIX.c */,
 				5CDD8F1E1E43CAF900621E92 /* warped_autocorrelation_FIX.c */,
@@ -15713,6 +15718,7 @@
 				5C088C1C1E4AA44400403995 /* mediasession.cc in Sources */,
 				5C088C1E1E4AA44400403995 /* rtcpmuxfilter.cc in Sources */,
 				5C088C201E4AA44400403995 /* srtpfilter.cc in Sources */,
+				4100CDF921CAE33400F9B87D /* srtpsession.cc in Sources */,
 				41239B4D2147743A00396F81 /* video_stream_encoder_create.cc in Sources */,
 				4100CDF921CAE33400F9B87D /* srtpsession.cc in Sources */,
 			);
@@ -15817,12 +15823,12 @@
 				5CDD8F441E43CB1E00621E92 /* k2a_Q16_FIX.c in Sources */,
 				5CDD8D461E43C79C00621E92 /* kiss_fft.c in Sources */,
 				5CDD8D481E43C79C00621E92 /* laplace.c in Sources */,
-				5CDD8EED1E43C9F600621E92 /* levinsondurbin_FLP.c in Sources */,
 				5CDD8E5D1E43C80C00621E92 /* lin2log.c in Sources */,
 				5CDD8E5E1E43C80C00621E92 /* log2lin.c in Sources */,
 				5CDD8E5F1E43C80C00621E92 /* LP_variable_cutoff.c in Sources */,
 				5CDD8E601E43C80C00621E92 /* LPC_analysis_filter.c in Sources */,
 				5CDD8EEE1E43C9F600621E92 /* LPC_analysis_filter_FLP.c in Sources */,
+				4153CD2721CC661000C3E188 /* LPC_fit.c in Sources */,
 				5CDD8E611E43C80C00621E92 /* LPC_inv_pred_gain.c in Sources */,
 				5CDD8EEF1E43C9F600621E92 /* LPC_inv_pred_gain_FLP.c in Sources */,
 				5CDD8F451E43CB1E00621E92 /* LTP_analysis_filter_FIX.c in Sources */,
@@ -15859,8 +15865,6 @@
 				5CDD8EF41E43C9F600621E92 /* pitch_analysis_core_FLP.c in Sources */,
 				5CDD8E721E43C80C00621E92 /* pitch_est_tables.c in Sources */,
 				5CDD8E731E43C80C00621E92 /* PLC.c in Sources */,
-				5CDD8F4A1E43CB1E00621E92 /* prefilter_FIX.c in Sources */,
-				5CDD8EF51E43C9F600621E92 /* prefilter_FLP.c in Sources */,
 				5CDD8F4B1E43CB1E00621E92 /* process_gains_FIX.c in Sources */,
 				5CDD8EF61E43C9F600621E92 /* process_gains_FLP.c in Sources */,
 				5CDD8E751E43C80C00621E92 /* process_NLSFs.c in Sources */,
@@ -15888,8 +15892,6 @@
 				5CDD8EFB1E43C9F600621E92 /* schur_FLP.c in Sources */,
 				5CDD8E821E43C80C00621E92 /* shell_coder.c in Sources */,
 				5CDD8E831E43C80C00621E92 /* sigm_Q15.c in Sources */,
-				5CDD8F511E43CB1E00621E92 /* solve_LS_FIX.c in Sources */,
-				5CDD8EFD1E43C9F600621E92 /* solve_LS_FLP.c in Sources */,
 				5CDD8E851E43C80C00621E92 /* sort.c in Sources */,
 				5CDD8EFE1E43C9F600621E92 /* sort_FLP.c in Sources */,
 				5CDD8E861E43C80C00621E92 /* stereo_decode_pred.c in Sources */,
@@ -15911,6 +15913,7 @@
 				5C5F409A1E978FDB00D94279 /* VAD_sse.c in Sources */,
 				5CDD8F531E43CB1E00621E92 /* vector_ops_FIX.c in Sources */,
 				5CDD8D5B1E43C79C00621E92 /* vq.c in Sources */,
+				4153CD2821CC664800C3E188 /* vq_sse2.c in Sources */,
 				5CDD8E9A1E43C80C00621E92 /* VQ_WMat_EC.c in Sources */,
 				5C5F409B1E978FDB00D94279 /* VQ_WMat_EC_sse.c in Sources */,
 				5CDD8F541E43CB1E00621E92 /* warped_autocorrelation_FIX.c in Sources */,

@@ -1,5 +1,15 @@
 2018-12-21  Youenn Fablet  <youenn@apple.com>
 
+        Resync opus to M72
+        https://bugs.webkit.org/show_bug.cgi?id=192867
+
+        Reviewed by Alex Christensen.
+
+        * Configurations/opus.xcconfig: Updated compilation flag.
+        * Source/third_party/opus: Resynced to Chrome M72 branch.
+
+2018-12-21  Youenn Fablet  <youenn@apple.com>
+
         Resync libsrtp to M72
         https://bugs.webkit.org/show_bug.cgi?id=192861
 

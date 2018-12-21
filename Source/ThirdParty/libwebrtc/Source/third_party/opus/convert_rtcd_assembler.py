@@ -45,7 +45,6 @@ def main(argv):
          'sed "s/OPUS_ARM_MAY_HAVE_[A-Z]*/1/g" | '
          'sed "/.include/d" '
          '> %s') % (arm2gnu_script, input_file, output_file)
-  print cmd
   return os.system(cmd)
 
 if __name__ == '__main__':

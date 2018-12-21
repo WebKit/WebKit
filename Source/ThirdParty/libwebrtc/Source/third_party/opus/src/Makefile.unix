@@ -97,7 +97,7 @@ TESTOPUSAPI_OBJS := $(patsubst %.c,%$(OBJSUFFIX),$(TESTOPUSAPI_SRCS_C))
 TESTOPUSDECODE_SRCS_C = tests/test_opus_decode.c
 TESTOPUSDECODE_OBJS := $(patsubst %.c,%$(OBJSUFFIX),$(TESTOPUSDECODE_SRCS_C))
 
-TESTOPUSENCODE_SRCS_C = tests/test_opus_encode.c
+TESTOPUSENCODE_SRCS_C = tests/test_opus_encode.c tests/opus_encode_regressions.c
 TESTOPUSENCODE_OBJS := $(patsubst %.c,%$(OBJSUFFIX),$(TESTOPUSENCODE_SRCS_C))
 
 TESTOPUSPADDING_SRCS_C = tests/test_opus_padding.c

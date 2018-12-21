@@ -61,7 +61,13 @@
 **      the config.h file.
 */
 
-#if (HAVE_LRINTF)
+/* With GCC, when SSE is available, the fastest conversion is cvtss2si. */
+#if defined(__GNUC__) && defined(__SSE__)
+
+#include <xmmintrin.h>
+static OPUS_INLINE opus_int32 float2int(float x) {return _mm_cvt_ss2si(_mm_set_ss(x));}
+
+#elif defined(HAVE_LRINTF)
 
 /*      These defines enable functionality introduced with the 1999 ISO C
 **      standard. They must be defined before the inclusion of math.h to

@@ -1,6 +1,6 @@
 Name: opus
-URL: http://downloads.xiph.org/releases/opus/opus-1.1.3.tar.gz
-Version: 1.1.3
+URL: https://git.xiph.org/?p=opus.git;a=snapshot;h=3fe744ea04fdcc418fb85c2c133d13372ebb019b;sf=tgz
+Version: 3fe744ea04fdcc418fb85c2c133d13372ebb019b
 License: BSD
 License File: src/COPYING
 Security Critical: yes
@@ -14,7 +14,9 @@ encoding/decoding.
 Local changes:
 * copy .gitignore from https://git.xiph.org/?p=opus.git;a=tree
 * set 'x' flags: "chmod 750 win32/genversion.bat"
-* Apply patches from
-  https://git.xiph.org/?p=opus.git;a=commit;h=79e8f527b0344b0897a65be35e77f7885bd99409
-  https://git.xiph.org/?p=opus.git;a=commitdiff;h=e5ad26169502c1f0b067916e782c2b3fdea6fba9
-  https://git.xiph.org/?p=opus.git;a=commitdiff;h=5da0498a3e23339aaceba659a97e935031d5693d
+* Apply https://git.xiph.org/?p=opus.git;a=commitdiff;h=46560534fcb5710a894a341c2f9526db58fd7087#patch1
+* Apply https://github.com/xiph/opus/pull/73
+* Apply https://github.com/xiph/opus/pull/87
+* Make sure HB_gain is not NaN in an attempt to fix chromium:826914
+* Saturate add to avoid int overflow to fix chromium:842528. This should be
+  reverted when updating to v1.3

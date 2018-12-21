@@ -29,38 +29,12 @@
 #include "config.h"
 #endif
 
-#define SKIP_CONFIG_H
-
-#ifndef CUSTOM_MODES
-#define CUSTOM_MODES
-#endif
-
 #include <stdio.h>
 
-#define CELT_C
-#define TEST_UNIT_DFT_C
 #include "stack_alloc.h"
 #include "kiss_fft.h"
-#include "kiss_fft.c"
-#include "mathops.c"
-#include "entcode.c"
-
-#if defined(OPUS_X86_MAY_HAVE_SSE2) || defined(OPUS_X86_MAY_HAVE_SSE4_1)
-# include "x86/x86cpu.c"
-#elif defined(OPUS_ARM_ASM) || defined(OPUS_ARM_MAY_HAVE_NEON_INTR)
-# include "arm/armcpu.c"
-# include "celt_lpc.c"
-# include "pitch.c"
-# if defined(OPUS_ARM_MAY_HAVE_NEON_INTR)
-#  include "arm/celt_neon_intr.c"
-#  if defined(HAVE_ARM_NE10)
-#   include "mdct.c"
-#   include "arm/celt_ne10_fft.c"
-#   include "arm/celt_ne10_mdct.c"
-#  endif
-# endif
-# include "arm/arm_celt_map.c"
-#endif
+#include "mathops.h"
+#include "modes.h"
 
 #ifndef M_PI
 #define M_PI 3.141592653
@@ -112,11 +86,25 @@ void check(kiss_fft_cpx  * in,kiss_fft_cpx  * out,int nfft,int isinverse)
 void test1d(int nfft,int isinverse,int arch)
 {
     size_t buflen = sizeof(kiss_fft_cpx)*nfft;
-
-    kiss_fft_cpx  * in = (kiss_fft_cpx*)malloc(buflen);
-    kiss_fft_cpx  * out= (kiss_fft_cpx*)malloc(buflen);
-    kiss_fft_state *cfg = opus_fft_alloc(nfft,0,0,arch);
+    kiss_fft_cpx *in;
+    kiss_fft_cpx *out;
     int k;
+#ifdef CUSTOM_MODES
+    kiss_fft_state *cfg = opus_fft_alloc(nfft,0,0,arch);
+#else
+    int id;
+    const kiss_fft_state *cfg;
+    CELTMode *mode = opus_custom_mode_create(48000, 960, NULL);
+    if (nfft == 480) id = 0;
+    else if (nfft == 240) id = 1;
+    else if (nfft == 120) id = 2;
+    else if (nfft == 60) id = 3;
+    else return;
+    cfg = mode->mdct.kfft[id];
+#endif
+
+    in = (kiss_fft_cpx*)malloc(buflen);
+    out = (kiss_fft_cpx*)malloc(buflen);
 
     for (k=0;k<nfft;++k) {
         in[k].r = (rand() % 32767) - 16384;
@@ -149,7 +137,9 @@ void test1d(int nfft,int isinverse,int arch)
 
     free(in);
     free(out);
+#ifdef CUSTOM_MODES
     opus_fft_free(cfg, arch);
+#endif
 }
 
 int main(int argc,char ** argv)

@@ -37,43 +37,11 @@
 
 #include <stdio.h>
 #include <stdlib.h>
-#include "vq.c"
-#include "cwrs.c"
-#include "entcode.c"
-#include "entenc.c"
-#include "entdec.c"
-#include "mathops.c"
+#include "vq.h"
 #include "bands.h"
-#include "pitch.c"
-#include "celt_lpc.c"
-#include "celt.c"
+#include "stack_alloc.h"
 #include <math.h>
 
-#if defined(OPUS_X86_MAY_HAVE_SSE) || defined(OPUS_X86_MAY_HAVE_SSE2) || defined(OPUS_X86_MAY_HAVE_SSE4_1)
-# if defined(OPUS_X86_MAY_HAVE_SSE)
-#  include "x86/pitch_sse.c"
-# endif
-# if defined(OPUS_X86_MAY_HAVE_SSE2)
-#  include "x86/pitch_sse2.c"
-# endif
-# if defined(OPUS_X86_MAY_HAVE_SSE4_1)
-#  include "x86/pitch_sse4_1.c"
-#  include "x86/celt_lpc_sse.c"
-# endif
-# include "x86/x86_celt_map.c"
-#elif defined(OPUS_ARM_ASM) || defined(OPUS_ARM_MAY_HAVE_NEON_INTR)
-# include "arm/armcpu.c"
-# if defined(OPUS_ARM_MAY_HAVE_NEON_INTR)
-#  include "arm/celt_neon_intr.c"
-#  if defined(HAVE_ARM_NE10)
-#   include "kiss_fft.c"
-#   include "mdct.c"
-#   include "arm/celt_ne10_fft.c"
-#   include "arm/celt_ne10_mdct.c"
-#  endif
-# endif
-# include "arm/arm_celt_map.c"
-#endif
 
 #define MAX_SIZE 100
 

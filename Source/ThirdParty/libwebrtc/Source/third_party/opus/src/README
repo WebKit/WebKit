@@ -43,25 +43,43 @@ or on the main Opus website:
 
 To build from a distribution tarball, you only need to do the following:
 
-% ./configure
-% make
+    % ./configure
+    % make
 
 To build from the git repository, the following steps are necessary:
 
+0) Set up a development environment:
+
+On an Ubuntu or Debian family Linux distribution:
+
+    % sudo apt-get install git autoconf automake libtool gcc make
+
+On a Fedora/Redhat based Linux:
+
+    % sudo dnf install git autoconf automake libtool gcc make
+
+Or for older Redhat/Centos Linux releases:
+
+    % sudo yum install git autoconf automake libtool gcc make
+
+On Apple macOS, install Xcode and brew.sh, then in the Terminal enter:
+
+    % brew install autoconf automake libtool
+
 1) Clone the repository:
 
-% git clone https://git.xiph.org/opus.git
-% cd opus
+    % git clone https://git.xiph.org/opus.git
+    % cd opus
 
 2) Compiling the source
 
-% ./autogen.sh
-% ./configure
-% make
+    % ./autogen.sh
+    % ./configure
+    % make
 
 3) Install the codec libraries (optional)
 
-% sudo make install
+    % sudo make install
 
 Once you have compiled the codec, there will be a opus_demo executable
 in the top directory.
@@ -102,7 +120,8 @@ which SHOULD be run after compiling the package especially the first
 time it is run on a new platform.
 
 To run the integrated tests:
-% make check
+
+    % make check
 
 There is also collection of standard test vectors which are not
 included in this package for size reasons but can be obtained from:
@@ -110,9 +129,9 @@ https://opus-codec.org/testvectors/opus_testvectors.tar.gz
 
 To run compare the code to these test vectors:
 
-% curl -O https://opus-codec.org/testvectors/opus_testvectors.tar.gz
-% tar -zxf opus_testvectors.tar.gz
-% ./tests/run_vectors.sh ./ opus_testvectors 48000
+    % curl -OL https://opus-codec.org/testvectors/opus_testvectors.tar.gz
+    % tar -zxf opus_testvectors.tar.gz
+    % ./tests/run_vectors.sh ./ opus_testvectors 48000
 
 == Portability notes ==
 

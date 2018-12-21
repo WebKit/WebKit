@@ -9,18 +9,125 @@ import("//testing/test.gni")
 use_opus_fixed_point = current_cpu == "arm" || current_cpu == "arm64"
 
 # If ARM optimizations shall be used to accelerate performance.
-use_opus_arm_optimization = current_cpu == "arm"
+# TODO(scottmg): Disabled on Fuchsia for now, see https://crbug.com/775272.
+use_opus_arm_optimization =
+    current_cpu == "arm" || (current_cpu == "arm64" && is_ios)
+
+# NaCl, unlike Chrome, doesn't target SSE2 minimum, so skip optimizations for
+# the sake of simplicity.
+use_opus_x86_optimization =
+    !is_nacl && (current_cpu == "x86" || current_cpu == "x64")
 
 # If OPUS Run Time CPU Detections (RTCD) shall be used.
 # Based on the conditions in celt/arm/armcpu.c:
 # defined(_MSC_VER) || defined(__linux__).
-use_opus_rtcd = current_cpu == "arm" && (is_win || is_android || is_linux)
+use_opus_arm_rtcd = current_cpu == "arm" && (is_win || is_android || is_linux)
 
 config("opus_config") {
   include_dirs = [ "src/include" ]
 
   if (use_opus_fixed_point) {
     defines = [ "OPUS_FIXED_POINT" ]
+  }
+}
+
+config("opus_private_config") {
+  defines = [
+    "OPUS_BUILD",
+    "OPUS_EXPORT=",
+
+    # Prefer alloca() over variable length arrays which are often inefficient;
+    # the opus code will automatically handle this correctly per-platform.
+    "USE_ALLOCA",
+    "HAVE_ALLOCA_H",
+  ]
+
+  include_dirs = [
+    "src",
+    "src/celt",
+    "src/silk",
+  ]
+
+  cflags = []
+
+  if (is_win) {
+    defines += [ "inline=__inline" ]
+
+    cflags += [
+      "/wd4305",  # Disable truncation warning in celt/pitch.c .
+      "/wd4334",  # Disable 32-bit shift warning in src/opus_encoder.c .
+    ]
+  } else {
+    defines += [
+      "HAVE_LRINT",
+      "HAVE_LRINTF",
+    ]
+  }
+
+  if (is_debug) {
+    # Turn off a warning in opus_decoder.c when compiling without optimization.
+    defines += [ "OPUS_WILL_BE_SLOW" ]
+  }
+
+  if (use_opus_x86_optimization) {
+    defines += [
+      # Run Time CPU Detections (RTCD) is always enabled for x86.
+      "OPUS_HAVE_RTCD",
+      "CPU_INFO_BY_ASM",
+
+      # Chrome always targets SSE2+.
+      "OPUS_X86_MAY_HAVE_SSE",
+      "OPUS_X86_MAY_HAVE_SSE2",
+      "OPUS_X86_PRESUME_SSE",
+      "OPUS_X86_PRESUME_SSE2",
+
+      # Some systems may have SSE4.1+ support.
+      "OPUS_X86_MAY_HAVE_SSE4_1",
+
+      # At present libopus has no AVX functions so no sources are add for this,
+      # if you see linker errors on AVX code the this flag is why.
+      "OPUS_X86_MAY_HAVE_AVX",
+    ]
+  }
+
+  if (use_opus_fixed_point) {
+    defines += [ "FIXED_POINT" ]
+    include_dirs += [ "src/silk/fixed" ]
+  } else {
+    include_dirs += [ "src/silk/float" ]
+  }
+
+  if (use_opus_arm_optimization) {
+    if (current_cpu == "arm") {
+      defines += [
+        "OPUS_ARM_ASM",
+        "OPUS_ARM_INLINE_ASM",
+        "OPUS_ARM_INLINE_EDSP",
+      ]
+    }
+
+    if (use_opus_arm_rtcd) {
+      defines += [
+        "OPUS_ARM_MAY_HAVE_EDSP",
+        "OPUS_ARM_MAY_HAVE_MEDIA",
+        "OPUS_HAVE_RTCD",
+      ]
+    }
+
+    if (arm_use_neon) {
+      defines += [
+        "OPUS_ARM_MAY_HAVE_NEON",
+        "OPUS_ARM_MAY_HAVE_NEON_INTR",
+      ]
+    }
+
+    if (is_ios && current_cpu == "arm64") {
+      # Runtime detection of CPU features not available on iOS.
+      defines += [
+        "OPUS_ARM_PRESUME_NEON_INTR",
+        "OPUS_ARM_PRESUME_AARCH64_NEON_INTR",
+      ]
+    }
   }
 }
 
@@ -41,7 +148,7 @@ config("opus_test_config") {
   }
 }
 
-if (use_opus_rtcd) {
+if (use_opus_arm_rtcd) {
   action("convert_rtcd_assembler") {
     script = "convert_rtcd_assembler.py"
     outputs = [
@@ -56,6 +163,31 @@ if (use_opus_rtcd) {
   }
 }
 
+if (use_opus_x86_optimization) {
+  source_set("opus_sse41") {
+    sources = [
+      "src/celt/x86/pitch_sse4_1.c",
+      "src/silk/x86/NSQ_del_dec_sse.c",
+      "src/silk/x86/NSQ_sse.c",
+      "src/silk/x86/VAD_sse.c",
+    ]
+
+    configs -= [ "//build/config/compiler:chromium_code" ]
+    configs += [ "//build/config/compiler:no_chromium_code" ]
+    configs += [
+      ":opus_private_config",
+      ":opus_config",
+    ]
+
+    if (!is_win || is_clang) {
+      cflags = [ "-msse4.1" ]
+    }
+  }
+  # TODO(dalecurtis): If libopus ever adds AVX support, add an opus_avx block.
+}
+
+# Note: Do not add any defines or include_dirs to this target, those should all
+# go in the opus_private_config so they can be shared with intrinsic targets.
 static_library("opus") {
   sources = [
     "src/celt/_kiss_fft_guts.h",
@@ -115,6 +247,7 @@ static_library("opus") {
     "src/silk/HP_variable_cutoff.c",
     "src/silk/Inlines.h",
     "src/silk/LPC_analysis_filter.c",
+    "src/silk/LPC_fit.c",
     "src/silk/LPC_inv_pred_gain.c",
     "src/silk/LP_variable_cutoff.c",
     "src/silk/MacroCount.h",
@@ -221,52 +354,39 @@ static_library("opus") {
     "src/src/tansig_table.h",
   ]
 
-  defines = [
-    "OPUS_BUILD",
-    "OPUS_EXPORT=",
-  ]
-
-  include_dirs = [
-    "src/celt",
-    "src/silk",
-  ]
-
   configs -= [ "//build/config/compiler:chromium_code" ]
-  configs += [ "//build/config/compiler:no_chromium_code" ]
+  configs += [
+    "//build/config/compiler:no_chromium_code",
+    ":opus_private_config",
+  ]
   public_configs = [ ":opus_config" ]
-  cflags = []
 
-  if (is_win) {
-    defines += [
-      "USE_ALLOCA",
-      "inline=__inline",
-    ]
-
-    cflags += [
-      "/wd4305",  # Disable truncation warning in celt/pitch.c .
-      "/wd4334",  # Disable 32-bit shift warning in src/opus_encoder.c .
-    ]
-  } else {
-    defines += [
-      "HAVE_LRINT",
-      "HAVE_LRINTF",
-      "VAR_ARRAYS",
-    ]
-  }
-
-  if (is_posix && !is_android) {
-    # Suppress a warning given by opus_decoder.c that tells us
-    # optimizations are turned off.
-    cflags += [ "-Wno-#pragma-messages" ]
-  }
-
-  if (!is_debug && is_posix &&
-      (current_cpu == "arm" || current_cpu == "arm64")) {
+  if (!is_debug && (current_cpu == "arm" || current_cpu == "arm64")) {
     configs -= [ "//build/config/compiler:default_optimization" ]
 
     # TODO(crbug.com/621335) Rework this so that we don't have the confusion
     # between "optimize_speed" and "optimize_max".
     configs += [ "//build/config/compiler:optimize_speed" ]
+  }
+
+  deps = []
+
+  if (use_opus_x86_optimization) {
+    sources += [
+      "src/celt/x86/celt_lpc_sse.h",
+      "src/celt/x86/pitch_sse.c",
+      "src/celt/x86/pitch_sse.h",
+      "src/celt/x86/pitch_sse2.c",
+      "src/celt/x86/vq_sse.h",
+      "src/celt/x86/vq_sse2.c",
+      "src/celt/x86/x86_celt_map.c",
+      "src/celt/x86/x86cpu.c",
+      "src/celt/x86/x86cpu.h",
+      "src/silk/x86/SigProc_FIX_sse.h",
+      "src/silk/x86/main_sse.h",
+      "src/silk/x86/x86_silk_map.c",
+    ]
+    deps += [ ":opus_sse41" ]
   }
 
   if (use_opus_fixed_point) {
@@ -287,22 +407,16 @@ static_library("opus") {
       "src/silk/fixed/main_FIX.h",
       "src/silk/fixed/noise_shape_analysis_FIX.c",
       "src/silk/fixed/pitch_analysis_core_FIX.c",
-      "src/silk/fixed/prefilter_FIX.c",
       "src/silk/fixed/process_gains_FIX.c",
       "src/silk/fixed/regularize_correlations_FIX.c",
       "src/silk/fixed/residual_energy16_FIX.c",
       "src/silk/fixed/residual_energy_FIX.c",
       "src/silk/fixed/schur64_FIX.c",
       "src/silk/fixed/schur_FIX.c",
-      "src/silk/fixed/solve_LS_FIX.c",
       "src/silk/fixed/structs_FIX.h",
       "src/silk/fixed/vector_ops_FIX.c",
       "src/silk/fixed/warped_autocorrelation_FIX.c",
     ]
-
-    defines += [ "FIXED_POINT" ]
-
-    include_dirs += [ "src/silk/fixed" ]
   } else {
     sources += [
       "src/silk/float/LPC_analysis_filter_FLP.c",
@@ -323,25 +437,20 @@ static_library("opus") {
       "src/silk/float/find_pred_coefs_FLP.c",
       "src/silk/float/inner_product_FLP.c",
       "src/silk/float/k2a_FLP.c",
-      "src/silk/float/levinsondurbin_FLP.c",
       "src/silk/float/main_FLP.h",
       "src/silk/float/noise_shape_analysis_FLP.c",
       "src/silk/float/pitch_analysis_core_FLP.c",
-      "src/silk/float/prefilter_FLP.c",
       "src/silk/float/process_gains_FLP.c",
       "src/silk/float/regularize_correlations_FLP.c",
       "src/silk/float/residual_energy_FLP.c",
       "src/silk/float/scale_copy_vector_FLP.c",
       "src/silk/float/scale_vector_FLP.c",
       "src/silk/float/schur_FLP.c",
-      "src/silk/float/solve_LS_FLP.c",
       "src/silk/float/sort_FLP.c",
       "src/silk/float/structs_FLP.h",
       "src/silk/float/warped_autocorrelation_FLP.c",
       "src/silk/float/wrappers_FLP.c",
     ]
-
-    include_dirs += [ "src/silk/float" ]
   }
 
   if (use_opus_arm_optimization) {
@@ -359,39 +468,34 @@ static_library("opus") {
       "src/silk/arm/macros_armv5e.h",
     ]
 
-    defines += [
-      "OPUS_ARM_ASM",
-      "OPUS_ARM_INLINE_ASM",
-      "OPUS_ARM_INLINE_EDSP",
-    ]
-
-    if (use_opus_rtcd) {
+    if (use_opus_arm_rtcd) {
       sources += [
         "$target_gen_dir/celt_pitch_xcorr_arm_gnu.S",
         "src/celt/arm/arm_celt_map.c",
         "src/celt/arm/armcpu.c",
         "src/celt/arm/armcpu.h",
-        "src/celt/arm/celt_neon_intr.c",
         "src/celt/arm/fft_arm.h",
         "src/celt/arm/mdct_arm.h",
         "src/celt/arm/pitch_arm.h",
-        "src/silk/arm/NSQ_neon.c",
-        "src/silk/arm/NSQ_neon.h",
         "src/silk/arm/arm_silk_map.c",
       ]
+      deps += [ ":convert_rtcd_assembler" ]
+    }
 
-      include_dirs += [ "src" ]
-
-      defines += [
-        "OPUS_ARM_MAY_HAVE_EDSP",
-        "OPUS_ARM_MAY_HAVE_MEDIA",
-        "OPUS_ARM_MAY_HAVE_NEON",
-        "OPUS_ARM_MAY_HAVE_NEON_INTR",
-        "OPUS_HAVE_RTCD",
-      ]
-
-      deps = [
-        ":convert_rtcd_assembler",
+    if (arm_use_neon) {
+      sources += [
+        "src/celt/arm/celt_neon_intr.c",
+        "src/celt/arm/pitch_neon_intr.c",
+        "src/silk/arm/LPC_inv_pred_gain_arm.h",
+        "src/silk/arm/LPC_inv_pred_gain_neon_intr.c",
+        "src/silk/arm/NSQ_del_dec_arm.h",
+        "src/silk/arm/NSQ_del_dec_neon_intr.c",
+        "src/silk/arm/NSQ_neon.c",
+        "src/silk/arm/NSQ_neon.h",
+        "src/silk/arm/biquad_alt_arm.h",
+        "src/silk/arm/biquad_alt_neon_intr.c",
+        "src/silk/fixed/arm/warped_autocorrelation_FIX_arm.h",
+        "src/silk/fixed/arm/warped_autocorrelation_FIX_neon_intr.c",
       ]
     }
   }
@@ -410,7 +514,6 @@ executable("opus_compare") {
 
   deps = [
     ":opus",
-    "//build/config/sanitizers:deps",
     "//build/win:default_exe_manifest",
   ]
 }
@@ -428,7 +531,6 @@ executable("opus_demo") {
 
   deps = [
     ":opus",
-    "//build/config/sanitizers:deps",
     "//build/win:default_exe_manifest",
   ]
 }
@@ -451,6 +553,7 @@ test("test_opus_api") {
 
 test("test_opus_encode") {
   sources = [
+    "src/tests/opus_encode_regressions.c",
     "src/tests/test_opus_encode.c",
   ]
 
@@ -473,7 +576,7 @@ config("test_opus_decode_config") {
   # marked as requiring a non-null value by the nonnull function attribute,
   # and expects opus_decode() to fail. Disable the -Wnonnull option to avoid
   # a compilation error if -Werror is specified.
-  if (is_posix) {
+  if (is_clang) {
     cflags = [ "-Wno-nonnull" ]
   }
 }

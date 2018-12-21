@@ -107,8 +107,8 @@ void silk_warped_LPC_analysis_filter_FIX_sse4_1(
                 xmm_tempb = _mm_add_epi32( xmm_tempb, xmm_product2 );
                 xmm_tempa = _mm_add_epi32( xmm_tempa, xmm_tempb );
 
-                sum  = (coef_Q13_8 * state_8) >> 16;
-                sum += (coef_Q13_9 * state_9) >> 16;
+                sum  = (opus_int32)((coef_Q13_8 * state_8) >> 16);
+                sum += (opus_int32)((coef_Q13_9 * state_9) >> 16);
 
                 xmm_tempa = _mm_add_epi32( xmm_tempa, _mm_shuffle_epi32( xmm_tempa, _MM_SHUFFLE( 0, 0, 0, 2 ) ) );
                 sum += _mm_cvtsi128_si32( xmm_tempa);

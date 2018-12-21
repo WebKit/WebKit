@@ -2,13 +2,13 @@
 
 setlocal enableextensions enabledelayedexpansion
 
-for /f %%v in ('git --git-dir="%~dp0..\.git" describe --tags --match "v*"') do set version=%%v
+for /f %%v in ('cd "%~dp0.." ^&^& git status ^>NUL 2^>NUL ^&^& git describe --tags --match "v*" --dirty 2^>NUL') do set version=%%v
 
-if not "%version%"=="" goto :gotversion
+if not "%version%"=="" set version=!version:~1! && goto :gotversion
 
-if exist "%~dp0..\version.mk" goto :getversion
+if exist "%~dp0..\package_version" goto :getversion
 
-echo Git cannot be found, nor can version.mk. Generating unknown version.
+echo Git cannot be found, nor can package_version. Generating unknown version.
 
 set version=unknown
 
@@ -16,24 +16,15 @@ goto :gotversion
 
 :getversion
 
-for /f "delims== tokens=2" %%v in (%~dps0..\version.mk) do set version=%%v
-
-set version=!version:^"=!
-set version=!version: =!
+for /f "delims== tokens=2" %%v in (%~dps0..\package_version) do set version=%%v
+set version=!version:"=!
 
 :gotversion
 
+set version=!version: =!
 set version_out=#define %~2 "%version%"
-set version_mk=%~2 = "%version%"
 
 echo %version_out%> "%~1_temp"
-
-if %version%==unknown goto :skipgenerate
-
-echo # static version string; update manually every release.> "%~dp0..\version.mk"
-echo %version_mk%>> "%~dp0..\version.mk"
-
-:skipgenerate
 
 echo n | comp "%~1_temp" "%~1" > NUL 2> NUL
 

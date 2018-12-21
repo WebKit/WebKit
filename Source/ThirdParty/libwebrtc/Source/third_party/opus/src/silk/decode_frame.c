@@ -97,6 +97,7 @@ opus_int silk_decode_frame(
         psDec->first_frame_after_reset = 0;
     } else {
         /* Handle packet loss by extrapolation */
+        psDec->indices.signalType = psDec->prevSignalType;
         silk_PLC( psDec, psDecCtrl, pOut, 1, arch );
     }
 

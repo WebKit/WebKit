@@ -144,7 +144,8 @@ opus_int silk_Encode(                                   /* O    Returns error co
     opus_int                        nSamplesIn,         /* I    Number of samples in input vector               */
     ec_enc                          *psRangeEnc,        /* I/O  Compressor data structure                       */
     opus_int32                      *nBytesOut,         /* I/O  Number of bytes in payload (input: Max bytes)   */
-    const opus_int                  prefillFlag         /* I    Flag to indicate prefilling buffers no coding   */
+    const opus_int                  prefillFlag,        /* I    Flag to indicate prefilling buffers no coding   */
+    opus_int                        activity            /* I    Decision of Opus voice activity detector        */
 )
 {
     opus_int   n, i, nBits, flags, tmp_payloadSize_ms = 0, tmp_complexity = 0, ret = 0;
@@ -233,11 +234,10 @@ opus_int silk_Encode(                                   /* O    Returns error co
         }
     }
 
-    TargetRate_bps = silk_RSHIFT32( encControl->bitRate, encControl->nChannelsInternal - 1 );
     for( n = 0; n < encControl->nChannelsInternal; n++ ) {
         /* Force the side channel to the same rate as the mid */
         opus_int force_fs_kHz = (n==1) ? psEnc->state_Fxx[0].sCmn.fs_kHz : 0;
-        if( ( ret = silk_control_encoder( &psEnc->state_Fxx[ n ], encControl, TargetRate_bps, psEnc->allowBandwidthSwitch, n, force_fs_kHz ) ) != 0 ) {
+        if( ( ret = silk_control_encoder( &psEnc->state_Fxx[ n ], encControl, psEnc->allowBandwidthSwitch, n, force_fs_kHz ) ) != 0 ) {
             silk_assert( 0 );
             RESTORE_STACK;
             return ret;
@@ -416,7 +416,6 @@ opus_int silk_Encode(                                   /* O    Returns error co
                     /* Reset side channel encoder memory for first frame with side coding */
                     if( psEnc->prev_decode_only_middle == 1 ) {
                         silk_memset( &psEnc->state_Fxx[ 1 ].sShape,               0, sizeof( psEnc->state_Fxx[ 1 ].sShape ) );
-                        silk_memset( &psEnc->state_Fxx[ 1 ].sPrefilt,             0, sizeof( psEnc->state_Fxx[ 1 ].sPrefilt ) );
                         silk_memset( &psEnc->state_Fxx[ 1 ].sCmn.sNSQ,            0, sizeof( psEnc->state_Fxx[ 1 ].sCmn.sNSQ ) );
                         silk_memset( psEnc->state_Fxx[ 1 ].sCmn.prev_NLSFq_Q15,   0, sizeof( psEnc->state_Fxx[ 1 ].sCmn.prev_NLSFq_Q15 ) );
                         silk_memset( &psEnc->state_Fxx[ 1 ].sCmn.sLP.In_LP_State, 0, sizeof( psEnc->state_Fxx[ 1 ].sCmn.sLP.In_LP_State ) );
@@ -427,7 +426,7 @@ opus_int silk_Encode(                                   /* O    Returns error co
                         psEnc->state_Fxx[ 1 ].sCmn.sNSQ.prev_gain_Q16      = 65536;
                         psEnc->state_Fxx[ 1 ].sCmn.first_frame_after_reset = 1;
                     }
-                    silk_encode_do_VAD_Fxx( &psEnc->state_Fxx[ 1 ] );
+                    silk_encode_do_VAD_Fxx( &psEnc->state_Fxx[ 1 ], activity );
                 } else {
                     psEnc->state_Fxx[ 1 ].sCmn.VAD_flags[ psEnc->state_Fxx[ 0 ].sCmn.nFramesEncoded ] = 0;
                 }
@@ -442,7 +441,7 @@ opus_int silk_Encode(                                   /* O    Returns error co
                 silk_memcpy( psEnc->state_Fxx[ 0 ].sCmn.inputBuf, psEnc->sStereo.sMid, 2 * sizeof( opus_int16 ) );
                 silk_memcpy( psEnc->sStereo.sMid, &psEnc->state_Fxx[ 0 ].sCmn.inputBuf[ psEnc->state_Fxx[ 0 ].sCmn.frame_length ], 2 * sizeof( opus_int16 ) );
             }
-            silk_encode_do_VAD_Fxx( &psEnc->state_Fxx[ 0 ] );
+            silk_encode_do_VAD_Fxx( &psEnc->state_Fxx[ 0 ], activity );
 
             /* Encode */
             for( n = 0; n < encControl->nChannelsInternal; n++ ) {
@@ -557,6 +556,10 @@ opus_int silk_Encode(                                   /* O    Returns error co
         }
     }
 
+    encControl->signalType = psEnc->state_Fxx[0].sCmn.indices.signalType;
+    encControl->offset = silk_Quantization_Offsets_Q10
+                         [ psEnc->state_Fxx[0].sCmn.indices.signalType >> 1 ]
+                         [ psEnc->state_Fxx[0].sCmn.indices.quantOffsetType ];
     RESTORE_STACK;
     return ret;
 }

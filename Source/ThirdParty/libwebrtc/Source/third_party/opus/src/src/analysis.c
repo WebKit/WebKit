@@ -29,19 +29,26 @@
 #include "config.h"
 #endif
 
+#define ANALYSIS_C
+
+#include <stdio.h>
+
+#include "mathops.h"
 #include "kiss_fft.h"
 #include "celt.h"
 #include "modes.h"
 #include "arch.h"
 #include "quant_bands.h"
-#include <stdio.h>
 #include "analysis.h"
 #include "mlp.h"
 #include "stack_alloc.h"
+#include "float_cast.h"
 
 #ifndef M_PI
 #define M_PI 3.141592653
 #endif
+
+#ifndef DISABLE_FLOAT_API
 
 static const float dct_table[128] = {
         0.250000f, 0.250000f, 0.250000f, 0.250000f, 0.250000f, 0.250000f, 0.250000f, 0.250000f,
@@ -96,52 +103,118 @@ static const float analysis_window[240] = {
 };
 
 static const int tbands[NB_TBANDS+1] = {
-       2,  4,  6,  8, 10, 12, 14, 16, 20, 24, 28, 32, 40, 48, 56, 68, 80, 96, 120
+      4, 8, 12, 16, 20, 24, 28, 32, 40, 48, 56, 64, 80, 96, 112, 136, 160, 192, 240
 };
-
-static const int extra_bands[NB_TOT_BANDS+1] = {
-      1, 2,  4,  6,  8, 10, 12, 14, 16, 20, 24, 28, 32, 40, 48, 56, 68, 80, 96, 120, 160, 200
-};
-
-/*static const float tweight[NB_TBANDS+1] = {
-      .3, .4, .5, .6, .7, .8, .9, 1., 1., 1., 1., 1., 1., 1., .8, .7, .6, .5
-};*/
 
 #define NB_TONAL_SKIP_BANDS 9
 
-#define cA 0.43157974f
-#define cB 0.67848403f
-#define cC 0.08595542f
-#define cE ((float)M_PI/2)
-static OPUS_INLINE float fast_atan2f(float y, float x) {
-   float x2, y2;
-   /* Should avoid underflow on the values we'll get */
-   if (ABS16(x)+ABS16(y)<1e-9f)
-   {
-      x*=1e12f;
-      y*=1e12f;
-   }
-   x2 = x*x;
-   y2 = y*y;
-   if(x2<y2){
-      float den = (y2 + cB*x2) * (y2 + cC*x2);
-      if (den!=0)
-         return -x*y*(y2 + cA*x2) / den + (y<0 ? -cE : cE);
-      else
-         return (y<0 ? -cE : cE);
-   }else{
-      float den = (x2 + cB*y2) * (x2 + cC*y2);
-      if (den!=0)
-         return  x*y*(x2 + cA*y2) / den + (y<0 ? -cE : cE) - (x*y<0 ? -cE : cE);
-      else
-         return (y<0 ? -cE : cE) - (x*y<0 ? -cE : cE);
-   }
+static opus_val32 silk_resampler_down2_hp(
+    opus_val32                  *S,                 /* I/O  State vector [ 2 ]                                          */
+    opus_val32                  *out,               /* O    Output signal [ floor(len/2) ]                              */
+    const opus_val32            *in,                /* I    Input signal [ len ]                                        */
+    int                         inLen               /* I    Number of input samples                                     */
+)
+{
+    int k, len2 = inLen/2;
+    opus_val32 in32, out32, out32_hp, Y, X;
+    opus_val64 hp_ener = 0;
+    /* Internal variables and state are in Q10 format */
+    for( k = 0; k < len2; k++ ) {
+        /* Convert to Q10 */
+        in32 = in[ 2 * k ];
+
+        /* All-pass section for even input sample */
+        Y      = SUB32( in32, S[ 0 ] );
+        X      = MULT16_32_Q15(QCONST16(0.6074371f, 15), Y);
+        out32  = ADD32( S[ 0 ], X );
+        S[ 0 ] = ADD32( in32, X );
+        out32_hp = out32;
+        /* Convert to Q10 */
+        in32 = in[ 2 * k + 1 ];
+
+        /* All-pass section for odd input sample, and add to output of previous section */
+        Y      = SUB32( in32, S[ 1 ] );
+        X      = MULT16_32_Q15(QCONST16(0.15063f, 15), Y);
+        out32  = ADD32( out32, S[ 1 ] );
+        out32  = ADD32( out32, X );
+        S[ 1 ] = ADD32( in32, X );
+
+        Y      = SUB32( -in32, S[ 2 ] );
+        X      = MULT16_32_Q15(QCONST16(0.15063f, 15), Y);
+        out32_hp  = ADD32( out32_hp, S[ 2 ] );
+        out32_hp  = ADD32( out32_hp, X );
+        S[ 2 ] = ADD32( -in32, X );
+
+        hp_ener += out32_hp*(opus_val64)out32_hp;
+        /* Add, convert back to int16 and store to output */
+        out[ k ] = HALF32(out32);
+    }
+#ifdef FIXED_POINT
+    /* len2 can be up to 480, so we shift by 8 more to make it fit. */
+    hp_ener = hp_ener >> (2*SIG_SHIFT + 8);
+#endif
+    return (opus_val32)hp_ener;
 }
 
-void tonality_analysis_init(TonalityAnalysisState *tonal)
+static opus_val32 downmix_and_resample(downmix_func downmix, const void *_x, opus_val32 *y, opus_val32 S[3], int subframe, int offset, int c1, int c2, int C, int Fs)
+{
+   VARDECL(opus_val32, tmp);
+   opus_val32 scale;
+   int j;
+   opus_val32 ret = 0;
+   SAVE_STACK;
+
+   if (subframe==0) return 0;
+   if (Fs == 48000)
+   {
+      subframe *= 2;
+      offset *= 2;
+   } else if (Fs == 16000) {
+      subframe = subframe*2/3;
+      offset = offset*2/3;
+   }
+   ALLOC(tmp, subframe, opus_val32);
+
+   downmix(_x, tmp, subframe, offset, c1, c2, C);
+#ifdef FIXED_POINT
+   scale = (1<<SIG_SHIFT);
+#else
+   scale = 1.f/32768;
+#endif
+   if (c2==-2)
+      scale /= C;
+   else if (c2>-1)
+      scale /= 2;
+   for (j=0;j<subframe;j++)
+      tmp[j] *= scale;
+   if (Fs == 48000)
+   {
+      ret = silk_resampler_down2_hp(S, y, tmp, subframe);
+   } else if (Fs == 24000) {
+      OPUS_COPY(y, tmp, subframe);
+   } else if (Fs == 16000) {
+      VARDECL(opus_val32, tmp3x);
+      ALLOC(tmp3x, 3*subframe, opus_val32);
+      /* Don't do this at home! This resampler is horrible and it's only (barely)
+         usable for the purpose of the analysis because we don't care about all
+         the aliasing between 8 kHz and 12 kHz. */
+      for (j=0;j<subframe;j++)
+      {
+         tmp3x[3*j] = tmp[j];
+         tmp3x[3*j+1] = tmp[j];
+         tmp3x[3*j+2] = tmp[j];
+      }
+      silk_resampler_down2_hp(S, y, tmp3x, 3*subframe);
+   }
+   RESTORE_STACK;
+   return ret;
+}
+
+void tonality_analysis_init(TonalityAnalysisState *tonal, opus_int32 Fs)
 {
   /* Initialize reusable fields. */
   tonal->arch = opus_select_arch();
+  tonal->Fs = Fs;
   /* Clear remaining fields. */
   tonality_analysis_reset(tonal);
 }
@@ -151,6 +224,8 @@ void tonality_analysis_reset(TonalityAnalysisState *tonal)
   /* Clear non-reusable fields. */
   char *start = (char*)&tonal->TONALITY_ANALYSIS_RESET_START;
   OPUS_CLEAR(start, sizeof(TonalityAnalysisState) - (start - (char*)tonal));
+  tonal->music_confidence = .9f;
+  tonal->speech_confidence = .1f;
 }
 
 void tonality_get_info(TonalityAnalysisState *tonal, AnalysisInfo *info_out, int len)
@@ -158,6 +233,9 @@ void tonality_get_info(TonalityAnalysisState *tonal, AnalysisInfo *info_out, int
    int pos;
    int curr_lookahead;
    float psum;
+   float tonality_max;
+   float tonality_avg;
+   int tonality_count;
    int i;
 
    pos = tonal->read_pos;
@@ -165,7 +243,8 @@ void tonality_get_info(TonalityAnalysisState *tonal, AnalysisInfo *info_out, int
    if (curr_lookahead<0)
       curr_lookahead += DETECT_SIZE;
 
-   if (len > 480 && pos != tonal->write_pos)
+   /* On long frames, look at the second analysis window rather than the first. */
+   if (len > tonal->Fs/50 && pos != tonal->write_pos)
    {
       pos++;
       if (pos==DETECT_SIZE)
@@ -176,18 +255,32 @@ void tonality_get_info(TonalityAnalysisState *tonal, AnalysisInfo *info_out, int
    if (pos<0)
       pos = DETECT_SIZE-1;
    OPUS_COPY(info_out, &tonal->info[pos], 1);
-   tonal->read_subframe += len/120;
-   while (tonal->read_subframe>=4)
+   tonality_max = tonality_avg = info_out->tonality;
+   tonality_count = 1;
+   /* If possible, look ahead for a tone to compensate for the delay in the tone detector. */
+   for (i=0;i<3;i++)
    {
-      tonal->read_subframe -= 4;
+      pos++;
+      if (pos==DETECT_SIZE)
+         pos = 0;
+      if (pos == tonal->write_pos)
+         break;
+      tonality_max = MAX32(tonality_max, tonal->info[pos].tonality);
+      tonality_avg += tonal->info[pos].tonality;
+      tonality_count++;
+   }
+   info_out->tonality = MAX32(tonality_avg/tonality_count, tonality_max-.2f);
+   tonal->read_subframe += len/(tonal->Fs/400);
+   while (tonal->read_subframe>=8)
+   {
+      tonal->read_subframe -= 8;
       tonal->read_pos++;
    }
    if (tonal->read_pos>=DETECT_SIZE)
       tonal->read_pos-=DETECT_SIZE;
 
-   /* Compensate for the delay in the features themselves.
-      FIXME: Need a better estimate the 10 I just made up */
-   curr_lookahead = IMAX(curr_lookahead-10, 0);
+   /* The -1 is to compensate for the delay in the features themselves. */
+   curr_lookahead = IMAX(curr_lookahead-1, 0);
 
    psum=0;
    /* Summing the probability of transition patterns that involve music at
@@ -197,10 +290,27 @@ void tonality_get_info(TonalityAnalysisState *tonal, AnalysisInfo *info_out, int
    for (;i<DETECT_SIZE;i++)
       psum += tonal->pspeech[i];
    psum = psum*tonal->music_confidence + (1-psum)*tonal->speech_confidence;
-   /*printf("%f %f %f\n", psum, info_out->music_prob, info_out->tonality);*/
+   /*printf("%f %f %f %f %f\n", psum, info_out->music_prob, info_out->vad_prob, info_out->activity_probability, info_out->tonality);*/
 
    info_out->music_prob = psum;
 }
+
+static const float std_feature_bias[9] = {
+      5.684947f, 3.475288f, 1.770634f, 1.599784f, 3.773215f,
+      2.163313f, 1.260756f, 1.116868f, 1.918795f
+};
+
+#define LEAKAGE_OFFSET 2.5f
+#define LEAKAGE_SLOPE 2.f
+
+#ifdef FIXED_POINT
+/* For fixed-point, the input is +/-2^15 shifted up by SIG_SHIFT, so we need to
+   compensate for that in the energy. */
+#define SCALE_COMPENS (1.f/((opus_int32)1<<(15+SIG_SHIFT)))
+#define SCALE_ENER(e) ((SCALE_COMPENS*SCALE_COMPENS)*(e))
+#else
+#define SCALE_ENER(e) (e)
+#endif
 
 static void tonality_analysis(TonalityAnalysisState *tonal, const CELTMode *celt_mode, const void *x, int len, int offset, int c1, int c2, int C, int lsb_depth, downmix_func downmix)
 {
@@ -235,19 +345,41 @@ static void tonality_analysis(TonalityAnalysisState *tonal, const CELTMode *celt
     float noise_floor;
     int remaining;
     AnalysisInfo *info;
+    float hp_ener;
+    float tonality2[240];
+    float midE[8];
+    float spec_variability=0;
+    float band_log2[NB_TBANDS+1];
+    float leakage_from[NB_TBANDS+1];
+    float leakage_to[NB_TBANDS+1];
     SAVE_STACK;
 
-    tonal->last_transition++;
-    alpha = 1.f/IMIN(20, 1+tonal->count);
-    alphaE = 1.f/IMIN(50, 1+tonal->count);
-    alphaE2 = 1.f/IMIN(1000, 1+tonal->count);
+    alpha = 1.f/IMIN(10, 1+tonal->count);
+    alphaE = 1.f/IMIN(25, 1+tonal->count);
+    alphaE2 = 1.f/IMIN(500, 1+tonal->count);
 
-    if (tonal->count<4)
-       tonal->music_prob = .5;
+    if (tonal->Fs == 48000)
+    {
+       /* len and offset are now at 24 kHz. */
+       len/= 2;
+       offset /= 2;
+    } else if (tonal->Fs == 16000) {
+       len = 3*len/2;
+       offset = 3*offset/2;
+    }
+
+    if (tonal->count<4) {
+       if (tonal->application == OPUS_APPLICATION_VOIP)
+          tonal->music_prob = .1f;
+       else
+          tonal->music_prob = .625f;
+    }
     kfft = celt_mode->mdct.kfft[0];
     if (tonal->count==0)
        tonal->mem_fill = 240;
-    downmix(x, &tonal->inmem[tonal->mem_fill], IMIN(len, ANALYSIS_BUF_SIZE-tonal->mem_fill), offset, c1, c2, C);
+    tonal->hp_ener_accum += (float)downmix_and_resample(downmix, x,
+          &tonal->inmem[tonal->mem_fill], tonal->downmix_state,
+          IMIN(len, ANALYSIS_BUF_SIZE-tonal->mem_fill), offset, c1, c2, C, tonal->Fs);
     if (tonal->mem_fill+len < ANALYSIS_BUF_SIZE)
     {
        tonal->mem_fill += len;
@@ -255,6 +387,7 @@ static void tonality_analysis(TonalityAnalysisState *tonal, const CELTMode *celt
        RESTORE_STACK;
        return;
     }
+    hp_ener = tonal->hp_ener_accum;
     info = &tonal->info[tonal->write_pos++];
     if (tonal->write_pos>=DETECT_SIZE)
        tonal->write_pos-=DETECT_SIZE;
@@ -273,7 +406,9 @@ static void tonality_analysis(TonalityAnalysisState *tonal, const CELTMode *celt
     }
     OPUS_MOVE(tonal->inmem, tonal->inmem+ANALYSIS_BUF_SIZE-240, 240);
     remaining = len - (ANALYSIS_BUF_SIZE-tonal->mem_fill);
-    downmix(x, &tonal->inmem[240], remaining, offset+ANALYSIS_BUF_SIZE-tonal->mem_fill, c1, c2, C);
+    tonal->hp_ener_accum = (float)downmix_and_resample(downmix, x,
+          &tonal->inmem[240], tonal->downmix_state, remaining,
+          offset+ANALYSIS_BUF_SIZE-tonal->mem_fill, c1, c2, C, tonal->Fs);
     tonal->mem_fill = 240 + remaining;
     opus_fft(kfft, in, out, tonal->arch);
 #ifndef FIXED_POINT
@@ -305,24 +440,31 @@ static void tonality_analysis(TonalityAnalysisState *tonal, const CELTMode *celt
        d_angle2 = angle2 - angle;
        d2_angle2 = d_angle2 - d_angle;
 
-       mod1 = d2_angle - (float)floor(.5+d2_angle);
+       mod1 = d2_angle - (float)float2int(d2_angle);
        noisiness[i] = ABS16(mod1);
        mod1 *= mod1;
        mod1 *= mod1;
 
-       mod2 = d2_angle2 - (float)floor(.5+d2_angle2);
+       mod2 = d2_angle2 - (float)float2int(d2_angle2);
        noisiness[i] += ABS16(mod2);
        mod2 *= mod2;
        mod2 *= mod2;
 
-       avg_mod = .25f*(d2A[i]+2.f*mod1+mod2);
+       avg_mod = .25f*(d2A[i]+mod1+2*mod2);
+       /* This introduces an extra delay of 2 frames in the detection. */
        tonality[i] = 1.f/(1.f+40.f*16.f*pi4*avg_mod)-.015f;
+       /* No delay on this detection, but it's less reliable. */
+       tonality2[i] = 1.f/(1.f+40.f*16.f*pi4*mod2)-.015f;
 
        A[i] = angle2;
        dA[i] = d_angle2;
        d2A[i] = mod2;
     }
-
+    for (i=2;i<N2-1;i++)
+    {
+       float tt = MIN32(tonality2[i], MAX32(tonality2[i-1], tonality2[i+1]));
+       tonality[i] = .9f*MAX32(tonality[i], tt-.1f);
+    }
     frame_tonality = 0;
     max_frame_tonality = 0;
     /*tw_sum = 0;*/
@@ -339,6 +481,22 @@ static void tonality_analysis(TonalityAnalysisState *tonal, const CELTMode *celt
     }
     relativeE = 0;
     frame_loudness = 0;
+    /* The energy of the very first band is special because of DC. */
+    {
+       float E = 0;
+       float X1r, X2r;
+       X1r = 2*(float)out[0].r;
+       X2r = 2*(float)out[0].i;
+       E = X1r*X1r + X2r*X2r;
+       for (i=1;i<4;i++)
+       {
+          float binE = out[i].r*(float)out[i].r + out[N-i].r*(float)out[N-i].r
+                     + out[i].i*(float)out[i].i + out[N-i].i*(float)out[N-i].i;
+          E += binE;
+       }
+       E = SCALE_ENER(E);
+       band_log2[0] = .5f*1.442695f*(float)log(E+1e-10f);
+    }
     for (b=0;b<NB_TBANDS;b++)
     {
        float E=0, tE=0, nE=0;
@@ -348,12 +506,9 @@ static void tonality_analysis(TonalityAnalysisState *tonal, const CELTMode *celt
        {
           float binE = out[i].r*(float)out[i].r + out[N-i].r*(float)out[N-i].r
                      + out[i].i*(float)out[i].i + out[N-i].i*(float)out[N-i].i;
-#ifdef FIXED_POINT
-          /* FIXME: It's probably best to change the BFCC filter initial state instead */
-          binE *= 5.55e-17f;
-#endif
+          binE = SCALE_ENER(binE);
           E += binE;
-          tE += binE*tonality[i];
+          tE += binE*MAX32(0, tonality[i]);
           nE += binE*2.f*(.5f-noisiness[i]);
        }
 #ifndef FIXED_POINT
@@ -371,14 +526,27 @@ static void tonality_analysis(TonalityAnalysisState *tonal, const CELTMode *celt
 
        frame_loudness += (float)sqrt(E+1e-10f);
        logE[b] = (float)log(E+1e-10f);
-       tonal->lowE[b] = MIN32(logE[b], tonal->lowE[b]+.01f);
-       tonal->highE[b] = MAX32(logE[b], tonal->highE[b]-.1f);
-       if (tonal->highE[b] < tonal->lowE[b]+1.f)
+       band_log2[b+1] = .5f*1.442695f*(float)log(E+1e-10f);
+       tonal->logE[tonal->E_count][b] = logE[b];
+       if (tonal->count==0)
+          tonal->highE[b] = tonal->lowE[b] = logE[b];
+       if (tonal->highE[b] > tonal->lowE[b] + 7.5)
        {
-          tonal->highE[b]+=.5f;
-          tonal->lowE[b]-=.5f;
+          if (tonal->highE[b] - logE[b] > logE[b] - tonal->lowE[b])
+             tonal->highE[b] -= .01f;
+          else
+             tonal->lowE[b] += .01f;
        }
-       relativeE += (logE[b]-tonal->lowE[b])/(1e-15f+tonal->highE[b]-tonal->lowE[b]);
+       if (logE[b] > tonal->highE[b])
+       {
+          tonal->highE[b] = logE[b];
+          tonal->lowE[b] = MAX32(tonal->highE[b]-15, tonal->lowE[b]);
+       } else if (logE[b] < tonal->lowE[b])
+       {
+          tonal->lowE[b] = logE[b];
+          tonal->highE[b] = MIN32(tonal->lowE[b]+15, tonal->highE[b]);
+       }
+       relativeE += (logE[b]-tonal->lowE[b])/(1e-15f + (tonal->highE[b]-tonal->lowE[b]));
 
        L1=L2=0;
        for (i=0;i<NB_FRAMES;i++)
@@ -410,27 +578,74 @@ static void tonality_analysis(TonalityAnalysisState *tonal, const CELTMode *celt
        tonal->prev_band_tonality[b] = band_tonality[b];
     }
 
+    leakage_from[0] = band_log2[0];
+    leakage_to[0] = band_log2[0] - LEAKAGE_OFFSET;
+    for (b=1;b<NB_TBANDS+1;b++)
+    {
+       float leak_slope = LEAKAGE_SLOPE*(tbands[b]-tbands[b-1])/4;
+       leakage_from[b] = MIN16(leakage_from[b-1]+leak_slope, band_log2[b]);
+       leakage_to[b] = MAX16(leakage_to[b-1]-leak_slope, band_log2[b]-LEAKAGE_OFFSET);
+    }
+    for (b=NB_TBANDS-2;b>=0;b--)
+    {
+       float leak_slope = LEAKAGE_SLOPE*(tbands[b+1]-tbands[b])/4;
+       leakage_from[b] = MIN16(leakage_from[b+1]+leak_slope, leakage_from[b]);
+       leakage_to[b] = MAX16(leakage_to[b+1]-leak_slope, leakage_to[b]);
+    }
+    celt_assert(NB_TBANDS+1 <= LEAK_BANDS);
+    for (b=0;b<NB_TBANDS+1;b++)
+    {
+       /* leak_boost[] is made up of two terms. The first, based on leakage_to[],
+          represents the boost needed to overcome the amount of analysis leakage
+          cause in a weaker band b by louder neighbouring bands.
+          The second, based on leakage_from[], applies to a loud band b for
+          which the quantization noise causes synthesis leakage to the weaker
+          neighbouring bands. */
+       float boost = MAX16(0, leakage_to[b] - band_log2[b]) +
+             MAX16(0, band_log2[b] - (leakage_from[b]+LEAKAGE_OFFSET));
+       info->leak_boost[b] = IMIN(255, (int)floor(.5 + 64.f*boost));
+    }
+    for (;b<LEAK_BANDS;b++) info->leak_boost[b] = 0;
+
+    for (i=0;i<NB_FRAMES;i++)
+    {
+       int j;
+       float mindist = 1e15f;
+       for (j=0;j<NB_FRAMES;j++)
+       {
+          int k;
+          float dist=0;
+          for (k=0;k<NB_TBANDS;k++)
+          {
+             float tmp;
+             tmp = tonal->logE[i][k] - tonal->logE[j][k];
+             dist += tmp*tmp;
+          }
+          if (j!=i)
+             mindist = MIN32(mindist, dist);
+       }
+       spec_variability += mindist;
+    }
+    spec_variability = (float)sqrt(spec_variability/NB_FRAMES/NB_TBANDS);
     bandwidth_mask = 0;
     bandwidth = 0;
     maxE = 0;
     noise_floor = 5.7e-4f/(1<<(IMAX(0,lsb_depth-8)));
-#ifdef FIXED_POINT
-    noise_floor *= 1<<(15+SIG_SHIFT);
-#endif
     noise_floor *= noise_floor;
-    for (b=0;b<NB_TOT_BANDS;b++)
+    for (b=0;b<NB_TBANDS;b++)
     {
        float E=0;
        int band_start, band_end;
        /* Keep a margin of 300 Hz for aliasing */
-       band_start = extra_bands[b];
-       band_end = extra_bands[b+1];
+       band_start = tbands[b];
+       band_end = tbands[b+1];
        for (i=band_start;i<band_end;i++)
        {
           float binE = out[i].r*(float)out[i].r + out[N-i].r*(float)out[N-i].r
                      + out[i].i*(float)out[i].i + out[N-i].i*(float)out[N-i].i;
           E += binE;
        }
+       E = SCALE_ENER(E);
        maxE = MAX32(maxE, E);
        tonal->meanE[b] = MAX32((1-alphaE2)*tonal->meanE[b], E);
        E = MAX32(E, tonal->meanE[b]);
@@ -441,14 +656,36 @@ static void tonality_analysis(TonalityAnalysisState *tonal, const CELTMode *celt
           2) less than 90 dB below the peak band (maximal masking possible considering
              both the ATH and the loudness-dependent slope of the spreading function)
           3) above the PCM quantization noise floor
+          We use b+1 because the first CELT band isn't included in tbands[]
        */
        if (E>.1*bandwidth_mask && E*1e9f > maxE && E > noise_floor*(band_end-band_start))
-          bandwidth = b;
+          bandwidth = b+1;
+    }
+    /* Special case for the last two bands, for which we don't have spectrum but only
+       the energy above 12 kHz. */
+    if (tonal->Fs == 48000) {
+       float ratio;
+       float E = hp_ener*(1.f/(240*240));
+       ratio = tonal->prev_bandwidth==20 ? 0.03f : 0.07f;
+#ifdef FIXED_POINT
+       /* silk_resampler_down2_hp() shifted right by an extra 8 bits. */
+       E *= 256.f*(1.f/Q15ONE)*(1.f/Q15ONE);
+#endif
+       maxE = MAX32(maxE, E);
+       tonal->meanE[b] = MAX32((1-alphaE2)*tonal->meanE[b], E);
+       E = MAX32(E, tonal->meanE[b]);
+       /* Use a simple follower with 13 dB/Bark slope for spreading function */
+       bandwidth_mask = MAX32(.05f*bandwidth_mask, E);
+       if (E>ratio*bandwidth_mask && E*1e9f > maxE && E > noise_floor*160)
+          bandwidth = 20;
+       /* This detector is unreliable, so if the bandwidth is close to SWB, assume it's FB. */
+       if (bandwidth >= 17)
+          bandwidth = 20;
     }
     if (tonal->count<=2)
        bandwidth = 20;
     frame_loudness = 20*(float)log10(frame_loudness);
-    tonal->Etracker = MAX32(tonal->Etracker-.03f, frame_loudness);
+    tonal->Etracker = MAX32(tonal->Etracker-.003f, frame_loudness);
     tonal->lowECount *= (1-alphaE);
     if (frame_loudness < tonal->Etracker-30)
        tonal->lowECount += alphaE;
@@ -460,11 +697,18 @@ static void tonality_analysis(TonalityAnalysisState *tonal, const CELTMode *celt
           sum += dct_table[i*16+b]*logE[b];
        BFCC[i] = sum;
     }
+    for (i=0;i<8;i++)
+    {
+       float sum=0;
+       for (b=0;b<16;b++)
+          sum += dct_table[i*16+b]*.5f*(tonal->highE[b]+tonal->lowE[b]);
+       midE[i] = sum;
+    }
 
     frame_stationarity /= NB_TBANDS;
     relativeE /= NB_TBANDS;
     if (tonal->count<10)
-       relativeE = .5;
+       relativeE = .5f;
     frame_noisiness /= NB_TBANDS;
 #if 1
     info->activity = frame_noisiness + (1-frame_noisiness)*relativeE;
@@ -479,7 +723,7 @@ static void tonality_analysis(TonalityAnalysisState *tonal, const CELTMode *celt
     info->tonality_slope = slope;
 
     tonal->E_count = (tonal->E_count+1)%NB_FRAMES;
-    tonal->count++;
+    tonal->count = IMIN(tonal->count+1, ANALYSIS_COUNT_MAX);
     info->tonality = frame_tonality;
 
     for (i=0;i<4;i++)
@@ -498,6 +742,8 @@ static void tonality_analysis(TonalityAnalysisState *tonal, const CELTMode *celt
        for (i=0;i<9;i++)
           tonal->std[i] = (1-alpha)*tonal->std[i] + alpha*features[i]*features[i];
     }
+    for (i=0;i<4;i++)
+       features[i] = BFCC[i]-midE[i];
 
     for (i=0;i<8;i++)
     {
@@ -507,24 +753,26 @@ static void tonality_analysis(TonalityAnalysisState *tonal, const CELTMode *celt
        tonal->mem[i] = BFCC[i];
     }
     for (i=0;i<9;i++)
-       features[11+i] = (float)sqrt(tonal->std[i]);
-    features[20] = info->tonality;
-    features[21] = info->activity;
-    features[22] = frame_stationarity;
-    features[23] = info->tonality_slope;
-    features[24] = tonal->lowECount;
+       features[11+i] = (float)sqrt(tonal->std[i]) - std_feature_bias[i];
+    features[18] = spec_variability - 0.78f;
+    features[20] = info->tonality - 0.154723f;
+    features[21] = info->activity - 0.724643f;
+    features[22] = frame_stationarity - 0.743717f;
+    features[23] = info->tonality_slope + 0.069216f;
+    features[24] = tonal->lowECount - 0.067930f;
 
-#ifndef DISABLE_FLOAT_API
     mlp_process(&net, features, frame_probs);
     frame_probs[0] = .5f*(frame_probs[0]+1);
     /* Curve fitting between the MLP probability and the actual probability */
-    frame_probs[0] = .01f + 1.21f*frame_probs[0]*frame_probs[0] - .23f*(float)pow(frame_probs[0], 10);
+    /*frame_probs[0] = .01f + 1.21f*frame_probs[0]*frame_probs[0] - .23f*(float)pow(frame_probs[0], 10);*/
     /* Probability of active audio (as opposed to silence) */
     frame_probs[1] = .5f*frame_probs[1]+.5f;
-    /* Consider that silence has a 50-50 probability. */
-    frame_probs[0] = frame_probs[1]*frame_probs[0] + (1-frame_probs[1])*.5f;
+    frame_probs[1] *= frame_probs[1];
 
-    /*printf("%f %f ", frame_probs[0], frame_probs[1]);*/
+    /* Probability of speech or music vs noise */
+    info->activity_probability = frame_probs[1];
+
+    /*printf("%f %f\n", frame_probs[0], frame_probs[1]);*/
     {
        /* Probability of state transition */
        float tau;
@@ -542,12 +790,32 @@ static void tonality_analysis(TonalityAnalysisState *tonal, const CELTMode *celt
        float music0;
        float p, q;
 
+       /* More silence transitions for speech than for music. */
+       tau = .001f*tonal->music_prob + .01f*(1-tonal->music_prob);
+       p = MAX16(.05f,MIN16(.95f,frame_probs[1]));
+       q = MAX16(.05f,MIN16(.95f,tonal->vad_prob));
+       beta = .02f+.05f*ABS16(p-q)/(p*(1-q)+q*(1-p));
+       /* p0 and p1 are the probabilities of speech and music at this frame
+          using only information from previous frame and applying the
+          state transition model */
+       p0 = (1-tonal->vad_prob)*(1-tau) +    tonal->vad_prob *tau;
+       p1 =    tonal->vad_prob *(1-tau) + (1-tonal->vad_prob)*tau;
+       /* We apply the current probability with exponent beta to work around
+          the fact that the probability estimates aren't independent. */
+       p0 *= (float)pow(1-frame_probs[1], beta);
+       p1 *= (float)pow(frame_probs[1], beta);
+       /* Normalise the probabilities to get the Marokv probability of music. */
+       tonal->vad_prob = p1/(p0+p1);
+       info->vad_prob = tonal->vad_prob;
+       /* Consider that silence has a 50-50 probability of being speech or music. */
+       frame_probs[0] = tonal->vad_prob*frame_probs[0] + (1-tonal->vad_prob)*.5f;
+
        /* One transition every 3 minutes of active audio */
-       tau = .00005f*frame_probs[1];
+       tau = .0001f;
        /* Adapt beta based on how "unexpected" the new prob is */
        p = MAX16(.05f,MIN16(.95f,frame_probs[0]));
        q = MAX16(.05f,MIN16(.95f,tonal->music_prob));
-       beta = .01f+.05f*ABS16(p-q)/(p*(1-q)+q*(1-p));
+       beta = .02f+.05f*ABS16(p-q)/(p*(1-q)+q*(1-p));
        /* p0 and p1 are the probabilities of speech and music at this frame
           using only information from previous frame and applying the
           state transition model */
@@ -561,6 +829,7 @@ static void tonality_analysis(TonalityAnalysisState *tonal, const CELTMode *celt
        tonal->music_prob = p1/(p0+p1);
        info->music_prob = tonal->music_prob;
 
+       /*printf("%f %f %f %f\n", frame_probs[0], frame_probs[1], tonal->music_prob, tonal->vad_prob);*/
        /* This chunk of code deals with delayed decision. */
        psum=1e-20f;
        /* Instantaneous probability of speech and music, with beta pre-applied. */
@@ -568,8 +837,11 @@ static void tonality_analysis(TonalityAnalysisState *tonal, const CELTMode *celt
        music0  = (float)pow(frame_probs[0], beta);
        if (tonal->count==1)
        {
-          tonal->pspeech[0]=.5;
-          tonal->pmusic [0]=.5;
+          if (tonal->application == OPUS_APPLICATION_VOIP)
+             tonal->pmusic[0] = .1f;
+          else
+             tonal->pmusic[0] = .625f;
+          tonal->pspeech[0] = 1-tonal->pmusic[0];
        }
        /* Updated probability of having only speech (s0) or only music (m0),
           before considering the new observation. */
@@ -619,24 +891,17 @@ static void tonality_analysis(TonalityAnalysisState *tonal, const CELTMode *celt
              tonal->speech_confidence_count = IMIN(tonal->speech_confidence_count, 500);
              tonal->speech_confidence += adapt*MIN16(.2f,frame_probs[0]-tonal->speech_confidence);
           }
-       } else {
-          if (tonal->music_confidence_count==0)
-             tonal->music_confidence = .9f;
-          if (tonal->speech_confidence_count==0)
-             tonal->speech_confidence = .1f;
        }
     }
-    if (tonal->last_music != (tonal->music_prob>.5f))
-       tonal->last_transition=0;
     tonal->last_music = tonal->music_prob>.5f;
-#else
-    info->music_prob = 0;
-#endif
-    /*for (i=0;i<25;i++)
+#ifdef MLP_TRAINING
+    for (i=0;i<25;i++)
        printf("%f ", features[i]);
-    printf("\n");*/
+    printf("\n");
+#endif
 
     info->bandwidth = bandwidth;
+    tonal->prev_bandwidth = bandwidth;
     /*printf("%d %d\n", info->bandwidth, info->opus_bandwidth);*/
     info->noisiness = frame_noisiness;
     info->valid = 1;
@@ -650,18 +915,19 @@ void run_analysis(TonalityAnalysisState *analysis, const CELTMode *celt_mode, co
    int offset;
    int pcm_len;
 
+   analysis_frame_size -= analysis_frame_size&1;
    if (analysis_pcm != NULL)
    {
       /* Avoid overflow/wrap-around of the analysis buffer */
-      analysis_frame_size = IMIN((DETECT_SIZE-5)*Fs/100, analysis_frame_size);
+      analysis_frame_size = IMIN((DETECT_SIZE-5)*Fs/50, analysis_frame_size);
 
       pcm_len = analysis_frame_size - analysis->analysis_offset;
       offset = analysis->analysis_offset;
-      do {
-         tonality_analysis(analysis, celt_mode, analysis_pcm, IMIN(480, pcm_len), offset, c1, c2, C, lsb_depth, downmix);
-         offset += 480;
-         pcm_len -= 480;
-      } while (pcm_len>0);
+      while (pcm_len>0) {
+         tonality_analysis(analysis, celt_mode, analysis_pcm, IMIN(Fs/50, pcm_len), offset, c1, c2, C, lsb_depth, downmix);
+         offset += Fs/50;
+         pcm_len -= Fs/50;
+      }
       analysis->analysis_offset = analysis_frame_size;
 
       analysis->analysis_offset -= frame_size;
@@ -670,3 +936,5 @@ void run_analysis(TonalityAnalysisState *analysis, const CELTMode *celt_mode, co
    analysis_info->valid = 0;
    tonality_get_info(analysis, analysis_info, frame_size);
 }
+
+#endif /* DISABLE_FLOAT_API */

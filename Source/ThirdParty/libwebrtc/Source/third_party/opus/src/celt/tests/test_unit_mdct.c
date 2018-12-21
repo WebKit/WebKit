@@ -29,38 +29,13 @@
 #include "config.h"
 #endif
 
-#define SKIP_CONFIG_H
-
-#ifndef CUSTOM_MODES
-#define CUSTOM_MODES
-#endif
-
 #include <stdio.h>
 
-#define CELT_C
 #include "mdct.h"
 #include "stack_alloc.h"
-
-#include "kiss_fft.c"
-#include "mdct.c"
-#include "mathops.c"
-#include "entcode.c"
-
-#if defined(OPUS_X86_MAY_HAVE_SSE2) || defined(OPUS_X86_MAY_HAVE_SSE4_1)
-# include "x86/x86cpu.c"
-#elif defined(OPUS_ARM_ASM) || defined(OPUS_ARM_MAY_HAVE_NEON_INTR)
-# include "arm/armcpu.c"
-# include "pitch.c"
-# include "celt_lpc.c"
-# if defined(OPUS_ARM_MAY_HAVE_NEON_INTR)
-#  include "arm/celt_neon_intr.c"
-#  if defined(HAVE_ARM_NE10)
-#   include "arm/celt_ne10_fft.c"
-#   include "arm/celt_ne10_mdct.c"
-#  endif
-# endif
-# include "arm/arm_celt_map.c"
-#endif
+#include "kiss_fft.h"
+#include "mdct.h"
+#include "modes.h"
 
 #ifndef M_PI
 #define M_PI 3.141592653
@@ -130,16 +105,36 @@ void check_inv(kiss_fft_scalar  * in,kiss_fft_scalar  * out,int nfft,int isinver
 
 void test1d(int nfft,int isinverse,int arch)
 {
-    mdct_lookup cfg;
     size_t buflen = sizeof(kiss_fft_scalar)*nfft;
-
-    kiss_fft_scalar  * in = (kiss_fft_scalar*)malloc(buflen);
-    kiss_fft_scalar  * in_copy = (kiss_fft_scalar*)malloc(buflen);
-    kiss_fft_scalar  * out= (kiss_fft_scalar*)malloc(buflen);
-    opus_val16  * window= (opus_val16*)malloc(sizeof(opus_val16)*nfft/2);
+    kiss_fft_scalar *in;
+    kiss_fft_scalar *in_copy;
+    kiss_fft_scalar *out;
+    opus_val16 *window;
     int k;
 
-    clt_mdct_init(&cfg, nfft, 0, arch);
+#ifdef CUSTOM_MODES
+    int shift = 0;
+    const mdct_lookup *cfg;
+    mdct_lookup _cfg;
+    clt_mdct_init(&_cfg, nfft, 0, arch);
+    cfg = &_cfg;
+#else
+    int shift;
+    const mdct_lookup *cfg;
+    CELTMode *mode = opus_custom_mode_create(48000, 960, NULL);
+    if (nfft == 1920) shift = 0;
+    else if (nfft == 960) shift = 1;
+    else if (nfft == 480) shift = 2;
+    else if (nfft == 240) shift = 3;
+    else return;
+    cfg = &mode->mdct;
+#endif
+
+    in = (kiss_fft_scalar*)malloc(buflen);
+    in_copy = (kiss_fft_scalar*)malloc(buflen);
+    out = (kiss_fft_scalar*)malloc(buflen);
+    window = (opus_val16*)malloc(sizeof(opus_val16)*nfft/2);
+
     for (k=0;k<nfft;++k) {
         in[k] = (rand() % 32768) - 16384;
     }
@@ -166,13 +161,13 @@ void test1d(int nfft,int isinverse,int arch)
     {
        for (k=0;k<nfft;++k)
           out[k] = 0;
-       clt_mdct_backward(&cfg,in,out, window, nfft/2, 0, 1, arch);
+       clt_mdct_backward(cfg,in,out, window, nfft/2, shift, 1, arch);
        /* apply TDAC because clt_mdct_backward() no longer does that */
        for (k=0;k<nfft/4;++k)
           out[nfft-k-1] = out[nfft/2+k];
        check_inv(in,out,nfft,isinverse);
     } else {
-       clt_mdct_forward(&cfg,in,out,window, nfft/2, 0, 1, arch);
+       clt_mdct_forward(cfg,in,out,window, nfft/2, shift, 1, arch);
        check(in_copy,out,nfft,isinverse);
     }
     /*for (k=0;k<nfft;++k) printf("%d %d ", out[k].r, out[k].i);printf("\n");*/
@@ -182,7 +177,9 @@ void test1d(int nfft,int isinverse,int arch)
     free(in_copy);
     free(out);
     free(window);
-    clt_mdct_clear(&cfg, arch);
+#ifdef CUSTOM_MODES
+    clt_mdct_clear(&_cfg, arch);
+#endif
 }
 
 int main(int argc,char ** argv)

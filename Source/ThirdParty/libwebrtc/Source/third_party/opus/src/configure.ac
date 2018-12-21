@@ -22,9 +22,9 @@ m4_ifdef([AM_SILENT_RULES], [AM_SILENT_RULES([yes])])
 
 # For libtool.
 dnl Please update these for releases.
-OPUS_LT_CURRENT=5
-OPUS_LT_REVISION=3
-OPUS_LT_AGE=5
+OPUS_LT_CURRENT=6
+OPUS_LT_REVISION=1
+OPUS_LT_AGE=6
 
 AC_SUBST(OPUS_LT_CURRENT)
 AC_SUBST(OPUS_LT_REVISION)
@@ -421,12 +421,12 @@ AC_DEFUN([OPUS_PATH_NE10],
       fi
 
       AC_MSG_CHECKING(for NE10)
-      save_CFLAGS="$CFLAGS"; CFLAGS="$NE10_CFLAGS"
-      save_LIBS="$LIBS"; LIBS="$NE10_LIBS $LIBM"
+      save_CFLAGS="$CFLAGS"; CFLAGS="$CFLAGS $NE10_CFLAGS"
+      save_LIBS="$LIBS"; LIBS="$LIBS $NE10_LIBS $LIBM"
       AC_LINK_IFELSE(
          [
             AC_LANG_PROGRAM(
-               [[#include <NE10_init.h>
+               [[#include <NE10_dsp.h>
                ]],
                [[
                   ne10_fft_cfg_float32_t cfg;
@@ -715,7 +715,7 @@ AS_IF([test x"$enable_intrinsics" = x"yes"],[
             ]])],
             [AC_MSG_RESULT([C method])
                  AC_DEFINE([CPU_INFO_BY_C], [1], [Get CPU Info by c method])],
-            [AC_MSG_ERROR([no supported Get CPU Info method, please disable intrinsics])])])])
+            [AC_MSG_ERROR([no supported Get CPU Info method, please disable run-time CPU capabilities detection or intrinsics])])])])
    ],
    [
       AC_MSG_WARN([No intrinsics support for your architecture])
@@ -767,6 +767,15 @@ AS_IF([test "$enable_fuzzing" = "yes"], [
   AC_DEFINE([FUZZING], [1], [Fuzzing])
 ])
 
+AC_ARG_ENABLE([check-asm],
+    [AS_HELP_STRING([--enable-check-asm],
+                    [enable bit-exactness checks between optimized and c implementations])],,
+    [enable_check_asm=no])
+
+AS_IF([test "$enable_check_asm" = "yes"], [
+  AC_DEFINE([OPUS_CHECK_ASM], [1], [Run bit-exactness checks between optimized and c implementations])
+])
+
 AC_ARG_ENABLE([ambisonics],
     [AS_HELP_STRING([--enable-ambisonics],[enable experimental ambisonic encoding and decoding support])],,
     [enable_ambisonics=no])
@@ -781,6 +790,7 @@ AC_ARG_ENABLE([doc],
 
 AS_IF([test "$enable_doc" = "yes"], [
   AC_CHECK_PROG(HAVE_DOXYGEN, [doxygen], [yes], [no])
+  AC_CHECK_PROG(HAVE_DOT, [dot], [yes], [no])
 ],[
   HAVE_DOXYGEN=no
 ])
@@ -792,6 +802,15 @@ AC_ARG_ENABLE([extra-programs],
     [enable_extra_programs=yes])
 
 AM_CONDITIONAL([EXTRA_PROGRAMS], [test "$enable_extra_programs" = "yes"])
+
+
+AC_ARG_ENABLE([update-draft],
+  AS_HELP_STRING([--enable-update-draft], [Enable bitstream changes from draft-ietf-codec-opus-update]),,
+  [enable_update_draft=no])
+
+AS_IF([test "$enable_update_draft" = "yes"], [
+  AC_DEFINE([ENABLE_UPDATE_DRAFT], [1], [Enable bitstream changes from draft-ietf-codec-opus-update])
+])
 
 
 saved_CFLAGS="$CFLAGS"
@@ -859,7 +878,8 @@ AC_MSG_NOTICE([
       Custom modes: .................. ${enable_custom_modes}
       Assertion checking: ............ ${enable_assertions}
       Fuzzing: ....................... ${enable_fuzzing}
-      Ambisonics support: .............${enable_ambisonics}
+      Check ASM: ..................... ${enable_check_asm}
+      Ambisonics support: ............ ${enable_ambisonics}
 
       API documentation: ............. ${enable_doc}
       Extra programs: ................ ${enable_extra_programs}

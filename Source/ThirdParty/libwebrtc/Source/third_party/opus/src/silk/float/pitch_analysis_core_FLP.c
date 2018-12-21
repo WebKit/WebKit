@@ -159,7 +159,7 @@ opus_int silk_pitch_analysis_core_FLP(      /* O    Voicing estimate: 0 voiced, 
 
     /* Low-pass filter */
     for( i = frame_length_4kHz - 1; i > 0; i-- ) {
-        frame_4kHz[ i ] += frame_4kHz[ i - 1 ];
+        frame_4kHz[ i ] = silk_ADD_SAT16( frame_4kHz[ i ], frame_4kHz[ i - 1 ] );
     }
 
     /******************************************************************************

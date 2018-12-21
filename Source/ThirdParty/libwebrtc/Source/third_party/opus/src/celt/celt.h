@@ -50,6 +50,8 @@ extern "C" {
 #define CELTDecoder OpusCustomDecoder
 #define CELTMode OpusCustomMode
 
+#define LEAK_BANDS 19
+
 typedef struct {
    int valid;
    float tonality;
@@ -57,17 +59,25 @@ typedef struct {
    float noisiness;
    float activity;
    float music_prob;
-   int        bandwidth;
-}AnalysisInfo;
+   float vad_prob;
+   int   bandwidth;
+   float activity_probability;
+   /* Store as Q6 char to save space. */
+   unsigned char leak_boost[LEAK_BANDS];
+} AnalysisInfo;
+
+typedef struct {
+   int signalType;
+   int offset;
+} SILKInfo;
 
 #define __celt_check_mode_ptr_ptr(ptr) ((ptr) + ((ptr) - (const CELTMode**)(ptr)))
 
 #define __celt_check_analysis_ptr(ptr) ((ptr) + ((ptr) - (const AnalysisInfo*)(ptr)))
 
-/* Encoder/decoder Requests */
+#define __celt_check_silkinfo_ptr(ptr) ((ptr) + ((ptr) - (const SILKInfo*)(ptr)))
 
-/* Expose this option again when variable framesize actually works */
-#define OPUS_FRAMESIZE_VARIABLE              5010 /**< Optimize the frame size dynamically */
+/* Encoder/decoder Requests */
 
 
 #define CELT_SET_PREDICTION_REQUEST    10002
@@ -115,6 +125,9 @@ typedef struct {
 
 #define OPUS_SET_ENERGY_MASK_REQUEST    10026
 #define OPUS_SET_ENERGY_MASK(x) OPUS_SET_ENERGY_MASK_REQUEST, __opus_check_val16_ptr(x)
+
+#define CELT_SET_SILK_INFO_REQUEST    10028
+#define CELT_SET_SILK_INFO(x) CELT_SET_SILK_INFO_REQUEST, __celt_check_silkinfo_ptr(x)
 
 /* Encoder stuff */
 
