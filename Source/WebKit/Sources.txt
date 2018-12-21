@@ -218,13 +218,14 @@ Shared/WebsiteData/WebsiteData.cpp
 
 UIProcess/BackgroundProcessResponsivenessTimer.cpp
 UIProcess/ChildProcessProxy.cpp
+UIProcess/DeviceIdHashSaltStorage.cpp
 UIProcess/DrawingAreaProxy.cpp
 UIProcess/FrameLoadState.cpp
 UIProcess/GeolocationPermissionRequestManagerProxy.cpp
 UIProcess/GeolocationPermissionRequestProxy.cpp
 UIProcess/InspectorTargetProxy.cpp
 UIProcess/PageLoadState.cpp
-UIProcess/DeviceIdHashSaltStorage.cpp
+UIProcess/PersistencyUtils.cpp
 UIProcess/ProcessAssertion.cpp
 UIProcess/ProcessThrottler.cpp
 UIProcess/RemoteWebInspectorProxy.cpp

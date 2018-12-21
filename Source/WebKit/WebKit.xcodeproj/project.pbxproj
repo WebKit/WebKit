@@ -77,6 +77,7 @@
 		00B9661A18E25AE100CE1F88 /* FindClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 00B9661818E25AE100CE1F88 /* FindClient.h */; };
 		07297F9F1C17BBEA003F0735 /* UserMediaPermissionCheckProxy.h in Headers */ = {isa = PBXBuildFile; fileRef = 07297F9D1C17BBEA003F0735 /* UserMediaPermissionCheckProxy.h */; };
 		07297F9F1C17BBEA015F0735 /* DeviceIdHashSaltStorage.h in Headers */ = {isa = PBXBuildFile; fileRef = 07297F9D1C17BBEA223F0735 /* DeviceIdHashSaltStorage.h */; };
+		07297F9F1C17AA1A015F0735 /* PersistencyUtils.h in Headers */ = {isa = PBXBuildFile; fileRef = 07321F9D1C17BBEA223F0735 /* PersistencyUtils.h */; };
 		07297FA31C186ADB003F0735 /* WKUserMediaPermissionCheck.h in Headers */ = {isa = PBXBuildFile; fileRef = 07297FA11C186ADB003F0735 /* WKUserMediaPermissionCheck.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		074E75FE1DF2211900D318EC /* UserMediaProcessManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 074E75FB1DF1FD1300D318EC /* UserMediaProcessManager.h */; };
 		076E884E1A13CADF005E90FC /* APIContextMenuClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 076E884D1A13CADF005E90FC /* APIContextMenuClient.h */; };
@@ -1859,6 +1860,8 @@
 		07297F9C1C17BBEA003F0735 /* UserMediaPermissionCheckProxy.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = UserMediaPermissionCheckProxy.cpp; sourceTree = "<group>"; };
 		07297F9D1C17BBEA003F0735 /* UserMediaPermissionCheckProxy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UserMediaPermissionCheckProxy.h; sourceTree = "<group>"; };
 		07297F9D1C17BBEA223F0735 /* DeviceIdHashSaltStorage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DeviceIdHashSaltStorage.h; sourceTree = "<group>"; };
+		0729455C1C1711EA003F0735 /* PersistencyUtils.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PersistencyUtils.cpp; sourceTree = "<group>"; };
+		07321F9D1C17BBEA223F0735 /* PersistencyUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PersistencyUtils.h; sourceTree = "<group>"; };
 		07297FA01C186ADB003F0735 /* WKUserMediaPermissionCheck.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WKUserMediaPermissionCheck.cpp; sourceTree = "<group>"; };
 		07297FA11C186ADB003F0735 /* WKUserMediaPermissionCheck.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKUserMediaPermissionCheck.h; sourceTree = "<group>"; };
 		074E75FB1DF1FD1300D318EC /* UserMediaProcessManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UserMediaProcessManager.h; sourceTree = "<group>"; };
@@ -7313,6 +7316,8 @@
 				1AC7537A183A9FDB0072CB15 /* PageLoadState.h */,
 				832ED1891E2FE13B006BA64A /* PerActivityStateCPUUsageSampler.cpp */,
 				832ED18A1E2FE13B006BA64A /* PerActivityStateCPUUsageSampler.h */,
+				0729455C1C1711EA003F0735 /* PersistencyUtils.cpp */,
+				07321F9D1C17BBEA223F0735 /* PersistencyUtils.h */,
 				37716A59195B910500EE8B1B /* ProcessAssertion.cpp */,
 				86F9536018FF4FD4001DB2EF /* ProcessAssertion.h */,
 				86E67A22190F411800004AB7 /* ProcessThrottler.cpp */,
@@ -9168,6 +9173,7 @@
 				2DC18FB0218912640025A88D /* PencilKitSPI.h in Headers */,
 				5C298DA01C3DF02100470AFE /* PendingDownload.h in Headers */,
 				832ED18C1E2FE157006BA64A /* PerActivityStateCPUUsageSampler.h in Headers */,
+				07297F9F1C17AA1A015F0735 /* PersistencyUtils.h in Headers */,
 				5CE85B201C88E64B0070BFCE /* PingLoad.h in Headers */,
 				0F5E200418E77051003EC3E5 /* PlatformCAAnimationRemote.h in Headers */,
 				2DA049B4180CCCD300AAFA9E /* PlatformCALayerRemote.h in Headers */,

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010, 2011 Apple Inc. All rights reserved.
+ * Copyright (C) 2017-2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,30 +23,13 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "WKBackForwardListItemRef.h"
+#pragma once
 
-#include "WKAPICast.h"
-#include "WebBackForwardListItem.h"
+#include <WebCore/KeyedCoding.h>
 
-using namespace WebKit;
+namespace WebKit {
 
-WKTypeID WKBackForwardListItemGetTypeID()
-{
-    return WebKit::toAPI(WebBackForwardListItem::APIType);
-}
+std::unique_ptr<WebCore::KeyedDecoder> createForFile(const String& path);
+void writeToDisk(std::unique_ptr<WebCore::KeyedEncoder>&&, String&& path);
 
-WKURLRef WKBackForwardListItemCopyURL(WKBackForwardListItemRef itemRef)
-{
-    return WebKit::toCopiedURLAPI(toImpl(itemRef)->url());
-}
-
-WKStringRef WKBackForwardListItemCopyTitle(WKBackForwardListItemRef itemRef)
-{
-    return WebKit::toCopiedAPI(toImpl(itemRef)->title());
-}
-
-WKURLRef WKBackForwardListItemCopyOriginalURL(WKBackForwardListItemRef itemRef)
-{
-    return WebKit::toCopiedURLAPI(toImpl(itemRef)->originalURL());
-}
+} // namespace WebKit

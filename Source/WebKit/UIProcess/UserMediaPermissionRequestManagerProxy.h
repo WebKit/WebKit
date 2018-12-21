@@ -26,6 +26,7 @@
 #include <wtf/HashMap.h>
 #include <wtf/RunLoop.h>
 #include <wtf/Seconds.h>
+#include <wtf/WeakPtr.h>
 
 namespace WebCore {
 class CaptureDevice;
@@ -38,7 +39,7 @@ namespace WebKit {
 
 class WebPageProxy;
 
-class UserMediaPermissionRequestManagerProxy {
+class UserMediaPermissionRequestManagerProxy : public CanMakeWeakPtr<UserMediaPermissionRequestManagerProxy> {
 public:
     explicit UserMediaPermissionRequestManagerProxy(WebPageProxy&);
     ~UserMediaPermissionRequestManagerProxy();

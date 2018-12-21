@@ -65,6 +65,12 @@ String WebsiteDataStore::defaultMediaKeysStorageDirectory()
     return WebCore::FileSystem::pathByAppendingComponent(WebCore::FileSystem::localUserSpecificStorageDirectory(), "MediaKeyStorage");
 }
 
+String WebsiteDataStore::defaultDeviceIdHashSaltsStorageDirectory()
+{
+    // Not Implemented.
+    return String();
+}
+
 String WebsiteDataStore::defaultWebSQLDatabaseDirectory()
 {
     return WebCore::FileSystem::pathByAppendingComponent(WebCore::FileSystem::localUserSpecificStorageDirectory(), "WebSQL");
@@ -118,6 +124,12 @@ String WebsiteDataStore::legacyDefaultMediaCacheDirectory()
 String WebsiteDataStore::legacyDefaultMediaKeysStorageDirectory()
 {
     return WebCore::FileSystem::pathByAppendingComponent(WebCore::FileSystem::localUserSpecificStorageDirectory(), "MediaKeyStorage");
+}
+
+String WebsiteDataStore::legacyDefaultDeviceIdHashSaltsStorageDirectory()
+{
+    // Not Implemented.
+    return String();
 }
 
 String WebsiteDataStore::legacyDefaultJavaScriptConfigurationDirectory()

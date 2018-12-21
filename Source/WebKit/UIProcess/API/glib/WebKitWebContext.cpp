@@ -321,6 +321,7 @@ static inline Ref<WebsiteDataStoreConfiguration> websiteDataStoreConfigurationFo
     configuration->setNetworkCacheDirectory(String(processPoolconfigurarion.diskCacheDirectory()));
     configuration->setWebSQLDatabaseDirectory(String(processPoolconfigurarion.webSQLDatabaseDirectory()));
     configuration->setLocalStorageDirectory(String(processPoolconfigurarion.localStorageDirectory()));
+    configuration->setDeviceIdHashSaltsStorageDirectory(String(processPoolconfigurarion.deviceIdHashSaltsStorageDirectory()));
     configuration->setMediaKeysStorageDirectory(String(processPoolconfigurarion.mediaKeysStorageDirectory()));
     return configuration;
 }

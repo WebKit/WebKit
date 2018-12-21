@@ -95,6 +95,12 @@ WTF::String WebsiteDataStore::defaultMediaKeysStorageDirectory()
     return websiteDataDirectoryFileSystemRepresentation("MediaKeys");
 }
 
+WTF::String WebsiteDataStore::defaultDeviceIdHashSaltsStorageDirectory()
+{
+    // Not implemented.
+    return String();
+}
+
 WTF::String WebsiteDataStore::defaultWebSQLDatabaseDirectory()
 {
     return websiteDataDirectoryFileSystemRepresentation("WebSQL");
@@ -197,6 +203,12 @@ WTF::String WebsiteDataStore::legacyDefaultMediaKeysStorageDirectory()
     if (!mediaKeysStorageDirectory || ![mediaKeysStorageDirectory isKindOfClass:[NSString class]])
         mediaKeysStorageDirectory = @"~/Library/WebKit/MediaKeys";
     return WebKit::stringByResolvingSymlinksInPath([mediaKeysStorageDirectory stringByStandardizingPath]);
+}
+
+WTF::String WebsiteDataStore::legacyDefaultDeviceIdHashSaltsStorageDirectory()
+{
+    // Not implemented.
+    return String();
 }
 
 WTF::String WebsiteDataStore::legacyDefaultJavaScriptConfigurationDirectory()

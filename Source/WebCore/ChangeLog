@@ -1,3 +1,22 @@
+2018-12-21  Alejandro G. Castro  <alex@igalia.com>
+
+        [GTK][WPE] Add DeviceIdHashSaltStorage disk persistence
+        https://bugs.webkit.org/show_bug.cgi?id=190466
+
+        Reviewed by Youenn Fablet.
+
+        Added persistency to the DeviceIdHashSaltStorage.
+
+        * platform/glib/FileSystemGlib.cpp:
+        (WebCore::FileSystem::getFileSize): Implemented this function to
+        allow sharing code with the statistics storage class.
+        * platform/glib/KeyedDecoderGlib.cpp:
+        (WebCore::KeyedDecoderGlib::dictionaryFromGVariant): Added a
+        condition to control situations where the key is empty, it can
+        happen if the user modifies the file in the disk.
+        * Modules/indexeddb/shared/IDBResourceIdentifier.cpp: Add include
+        to make work compilation with debug, unified builds.
+
 2018-12-21  Zalan Bujtas  <zalan@apple.com>
 
         Synchronous media query evaluation could destroy current Frame/FrameView.

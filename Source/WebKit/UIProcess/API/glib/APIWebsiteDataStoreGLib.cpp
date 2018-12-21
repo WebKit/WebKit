@@ -74,6 +74,11 @@ WTF::String WebsiteDataStore::defaultMediaKeysStorageDirectory()
     return websiteDataDirectoryFileSystemRepresentation(BASE_DIRECTORY G_DIR_SEPARATOR_S "mediakeys");
 }
 
+String WebsiteDataStore::defaultDeviceIdHashSaltsStorageDirectory()
+{
+    return websiteDataDirectoryFileSystemRepresentation(BASE_DIRECTORY G_DIR_SEPARATOR_S "deviceidhashsalts");
+}
+
 WTF::String WebsiteDataStore::defaultWebSQLDatabaseDirectory()
 {
     return websiteDataDirectoryFileSystemRepresentation(BASE_DIRECTORY G_DIR_SEPARATOR_S "databases");
@@ -157,6 +162,15 @@ WTF::String WebsiteDataStore::legacyDefaultMediaKeysStorageDirectory()
     return defaultMediaKeysStorageDirectory();
 }
 
+String WebsiteDataStore::legacyDefaultDeviceIdHashSaltsStorageDirectory()
+{
+#if PLATFORM(WPE)
+    GUniquePtr<gchar> deviceIdHashSaltsStorageDirectory(g_build_filename(g_get_user_data_dir(), "wpe", "deviceidhashsalts", nullptr));
+    return WebCore::FileSystem::stringFromFileSystemRepresentation(deviceIdHashSaltsStorageDirectory.get());
+#endif
+    return defaultDeviceIdHashSaltsStorageDirectory();
+}
+
 WTF::String WebsiteDataStore::legacyDefaultJavaScriptConfigurationDirectory()
 {
     GUniquePtr<gchar> javaScriptCoreConfigDirectory(g_build_filename(g_get_user_data_dir(), BASE_DIRECTORY, "JavaScriptCoreDebug", nullptr));
@@ -176,8 +190,10 @@ Ref<WebKit::WebsiteDataStoreConfiguration> WebsiteDataStore::defaultDataStoreCon
     configuration->setLocalStorageDirectory(defaultLocalStorageDirectory());
     configuration->setMediaKeysStorageDirectory(defaultMediaKeysStorageDirectory());
     configuration->setResourceLoadStatisticsDirectory(defaultResourceLoadStatisticsDirectory());
+    configuration->setDeviceIdHashSaltsStorageDirectory(defaultDeviceIdHashSaltsStorageDirectory());
 
     return configuration;
 }
 
 } // namespace API
+

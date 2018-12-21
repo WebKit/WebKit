@@ -62,6 +62,7 @@ public:
     static WTF::String defaultServiceWorkerRegistrationDirectory();
     static WTF::String defaultLocalStorageDirectory();
     static WTF::String defaultMediaKeysStorageDirectory();
+    static WTF::String defaultDeviceIdHashSaltsStorageDirectory();
     static WTF::String defaultWebSQLDatabaseDirectory();
     static WTF::String defaultResourceLoadStatisticsDirectory();
     static WTF::String defaultJavaScriptConfigurationDirectory();
@@ -74,6 +75,7 @@ public:
     static WTF::String legacyDefaultIndexedDBDatabaseDirectory();
     static WTF::String legacyDefaultWebSQLDatabaseDirectory();
     static WTF::String legacyDefaultMediaKeysStorageDirectory();
+    static WTF::String legacyDefaultDeviceIdHashSaltsStorageDirectory();
     static WTF::String legacyDefaultMediaCacheDirectory();
     static WTF::String legacyDefaultJavaScriptConfigurationDirectory();
 

@@ -32,6 +32,7 @@
 #include "IDBConnectionToServer.h"
 #include "IDBRequest.h"
 #include <wtf/MainThread.h>
+#include <wtf/text/StringConcatenateNumbers.h>
 
 namespace WebCore {
 

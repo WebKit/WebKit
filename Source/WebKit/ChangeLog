@@ -1,3 +1,123 @@
+2018-12-21  Alejandro G. Castro  <alex@igalia.com>
+
+        [GTK][WPE] Add DeviceIdHashSaltStorage disk persistence
+        https://bugs.webkit.org/show_bug.cgi?id=190466
+
+        Reviewed by Youenn Fablet.
+
+        Added persistency to the DeviceIdHashSaltStorage. Implemented a
+        decoder and an encoder for the HashSaltForOrigin struct to store
+        it in a file, this allows us to save the lastTimeUsed, the origin
+        and the hash salt. It uses a new directory where it creates a file
+        per hash salt, the name of the file is the hash salt to avoid
+        leaking information in the system. The last time used and the
+        origin are stored inside the file, it also adds a version
+        directory used to change the structure of the file in the future,
+        if we need to do it. In the DeviceIdHashSaltStorage class the disk
+        operations happen in a WorkQueue, but all interactions go in the
+        main thread. We added code to handle the operations when the load
+        still did not finish.
+
+        * Platform/Logging.h:
+        Added channel DiskPersistency..
+        * Sources.txt: Added new files.
+        * UIProcess/API/APIProcessPoolConfiguration.cpp: Added code to set
+        the directory for the deviceIdHashSalts. That way we can use the
+        configuration when creating the DeviceIdHashSaltStorage.
+        (API::ProcessPoolConfiguration::createWithWebsiteDataStoreConfiguration):
+        (API::ProcessPoolConfiguration::ProcessPoolConfiguration):
+        (API::ProcessPoolConfiguration::copy):
+        * UIProcess/API/APIProcessPoolConfiguration.h:
+        * UIProcess/API/APIWebsiteDataStore.cpp:
+        (API::WebsiteDataStore::legacyDefaultDataStoreConfiguration):
+        Added code to set the directory in the disk used to store the
+        information.
+        * UIProcess/API/APIWebsiteDataStore.h: Ditto.
+        * UIProcess/API/Cocoa/APIWebsiteDataStoreCocoa.mm: Added dummy
+        implementation to get the directory in cocoa.
+        (API::WebsiteDataStore::defaultDeviceIdHashSaltsStorageDirectory):
+        (API::WebsiteDataStore::legacyDefaultDeviceIdHashSaltsStorageDirectory):
+        * UIProcess/API/glib/APIWebsiteDataStoreGLib.cpp: Defined the
+        default directories used to store the information in the disk.
+        (API::WebsiteDataStore::defaultDeviceIdHashSaltsStorageDirectory):
+        (API::WebsiteDataStore::legacyDefaultDeviceIdHashSaltsStorageDirectory):
+        (API::WebsiteDataStore::defaultDataStoreConfiguration):
+        * UIProcess/API/glib/WebKitWebsiteDataManager.cpp:
+        (webkitWebsiteDataManagerGetDataStore): Added the directory used
+        to store the information.
+        (webkit_website_data_manager_remove): Modified the way we use to
+        make sure when we remove the cookies we also remove the hash salts.
+        * UIProcess/API/win/APIWebsiteDataStoreWin.cpp: Added dummy
+        implementations to get the directory in windows platform.
+        (API::WebsiteDataStore::defaultDeviceIdHashSaltsStorageDirectory):
+        (API::WebsiteDataStore::legacyDefaultDeviceIdHashSaltsStorageDirectory):
+        * UIProcess/API/C/WKBackForwardListItemRef.cpp: Add namespace, it
+        seems some unified build compilation issue.
+        * UIProcess/DeviceIdHashSaltStorage.cpp:
+        (WebKit::DeviceIdHashSaltStorage::create): Added a create method
+        used to pass the directory and the persistency status of the websitedatastore.
+        (WebKit::DeviceIdHashSaltStorage::completeHandler): Added to share
+        the code copying the origins to complete the get handler.
+        (WebKit::DeviceIdHashSaltStorage::completeDeviceIdHashSaltForOriginCall):
+        Added to share the code when completing the task of getting a new
+        hash salt.
+        (WebKit::DeviceIdHashSaltStorage::DeviceIdHashSaltStorage): Added
+        a new constructor for the create method.
+        (WebKit::getSecurityOriginData): Added to get the
+        SecurityOriginData from a field in the decoder and do all the
+        checks.
+        (WebKit::DeviceIdHashSaltStorage::loadStorageFromDisk): Open the
+        directory and restore all the hash salts from disk to the memory
+        structure.
+        (WebKit::DeviceIdHashSaltStorage::createEncoderFromData const):
+        Creates the decoder to store the HashSaltForOrigin structure.
+        (WebKit::DeviceIdHashSaltStorage::storeHashSaltToDisk): Write to
+        disk a decoder object created from a HashSaltForOrigin
+        structure. It uses the writeEncoderToDisk function.
+        (WebKit::DeviceIdHashSaltStorage::deviceIdHashSaltForOrigin): Make
+        sure we store in disk a new hash salt when it is generated and the
+        WebsiteDataStore is persistent. Add a completionHandler to return
+        the value found or generated, this way we can control if the
+        HashMap is already loaded from disk.
+        (WebKit::DeviceIdHashSaltStorage::getDeviceIdHashSaltOrigins):
+        Make sure we run the get in a queue now that we store information
+        in disk.
+        (WebKit::DeviceIdHashSaltStorage::deleteHashSaltFromDiskIfNeeded):
+        Added code to make sure we remove the files in disk.
+        (WebKit::DeviceIdHashSaltStorage::deleteDeviceIdHashSaltForOrigins):
+        Added code to use the deleteHashSaltFromDiskIfNeeded and remove the files in disk.
+        (WebKit::DeviceIdHashSaltStorage::deleteDeviceIdHashSaltOriginsModifiedSince):
+        Added code to use the deleteHashSaltFromDiskIfNeeded and remove the files in disk.
+        * UIProcess/DeviceIdHashSaltStorage.h: Ditto.
+        * UIProcess/PersistencyUtils.cpp: Added file to share the
+        persistency code with the ResourceLoadStatisticsPersistentStorage class.
+        (WebKit::createDecoderForFile): Ditto.
+        (WebKit::writeEncoderToDisk): Ditto.
+        * UIProcess/PersistencyUtils.h: Ditto.
+        * UIProcess/ResourceLoadStatisticsPersistentStorage.cpp: Use the
+        new PersistencyUtils functions shared with the
+        DeviceIdHashSaltStorage class.
+        (WebKit::ResourceLoadStatisticsPersistentStorage::refreshMemoryStoreFromDisk):
+        (WebKit::ResourceLoadStatisticsPersistentStorage::populateMemoryStoreFromDisk):
+        (WebKit::ResourceLoadStatisticsPersistentStorage::writeMemoryStoreToDisk):
+        * UIProcess/UserMediaPermissionRequestManagerProxy.cpp: After
+        changing the API of the deviceIdHashSaltForOrigin we now use a
+        completionHandler because it could happen the HashMap is not still
+        loaded and we would have to wait for it. We refactored the calls
+        to the method to use this new completionHandler.
+        (WebKit::UserMediaPermissionRequestManagerProxy::userMediaAccessWasGranted):
+        (WebKit::UserMediaPermissionRequestManagerProxy::requestUserMediaPermissionForFrame):
+        (WebKit::UserMediaPermissionRequestManagerProxy::enumerateMediaDevicesForFrame):
+        * UIProcess/WebsiteData/WebsiteDataStore.cpp:
+        (WebKit::WebsiteDataStore::WebsiteDataStore): Create the
+        DeviceIdHashSaltStorage class with the persistency information.
+        (WebKit::WebsiteDataStore::resolveDirectoriesIfNecessary): Make
+        sure we have the directory to store the information.
+        * UIProcess/WebsiteData/WebsiteDataStoreConfiguration.h: Add get
+        and set functions for the deviceHashSaltStorageDirectory.
+        * WebKit.xcodeproj/project.pbxproj: Added PersistencyUtils file to
+        the xcode compilation.
+
 2018-12-20  Alex Christensen  <achristensen@webkit.org>
 
         Remove unused NetworkProcessCreationParameters

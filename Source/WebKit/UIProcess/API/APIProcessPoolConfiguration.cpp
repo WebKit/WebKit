@@ -57,6 +57,7 @@ Ref<ProcessPoolConfiguration> ProcessPoolConfiguration::createWithWebsiteDataSto
     configuration->m_mediaCacheDirectory = legacyConfiguration.mediaCacheDirectory();
     configuration->m_indexedDBDatabaseDirectory = WebsiteDataStore::legacyDefaultIndexedDBDatabaseDirectory();
     configuration->m_localStorageDirectory = legacyConfiguration.localStorageDirectory();
+    configuration->m_deviceIdHashSaltsStorageDirectory = legacyConfiguration.deviceIdHashSaltsStorageDirectory();
     configuration->m_mediaKeysStorageDirectory = legacyConfiguration.mediaKeysStorageDirectory();
     configuration->m_resourceLoadStatisticsDirectory = legacyConfiguration.resourceLoadStatisticsDirectory();
     configuration->m_webSQLDatabaseDirectory = legacyConfiguration.webSQLDatabaseDirectory();
@@ -72,6 +73,7 @@ ProcessPoolConfiguration::ProcessPoolConfiguration()
     , m_mediaCacheDirectory(WebsiteDataStore::defaultMediaCacheDirectory())
     , m_indexedDBDatabaseDirectory(WebsiteDataStore::defaultIndexedDBDatabaseDirectory())
     , m_localStorageDirectory(WebsiteDataStore::defaultLocalStorageDirectory())
+    , m_deviceIdHashSaltsStorageDirectory(WebsiteDataStore::defaultDeviceIdHashSaltsStorageDirectory())
     , m_webSQLDatabaseDirectory(WebsiteDataStore::defaultWebSQLDatabaseDirectory())
     , m_mediaKeysStorageDirectory(WebsiteDataStore::defaultMediaKeysStorageDirectory())
     , m_resourceLoadStatisticsDirectory(WebsiteDataStore::defaultResourceLoadStatisticsDirectory())
@@ -98,6 +100,7 @@ Ref<ProcessPoolConfiguration> ProcessPoolConfiguration::copy()
     copy->m_indexedDBDatabaseDirectory = this->m_indexedDBDatabaseDirectory;
     copy->m_injectedBundlePath = this->m_injectedBundlePath;
     copy->m_localStorageDirectory = this->m_localStorageDirectory;
+    copy->m_deviceIdHashSaltsStorageDirectory = this->m_deviceIdHashSaltsStorageDirectory;
     copy->m_mediaKeysStorageDirectory = this->m_mediaKeysStorageDirectory;
     copy->m_resourceLoadStatisticsDirectory = this->m_resourceLoadStatisticsDirectory;
     copy->m_javaScriptConfigurationDirectory = this->m_javaScriptConfigurationDirectory;

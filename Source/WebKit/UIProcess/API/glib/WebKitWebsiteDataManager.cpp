@@ -730,16 +730,15 @@ void webkit_website_data_manager_remove(WebKitWebsiteDataManager* manager, WebKi
     g_return_if_fail(WEBKIT_IS_WEBSITE_DATA_MANAGER(manager));
     g_return_if_fail(websiteData);
 
+    // We have to remove the hash salts when cookies are removed.
+    if (types & WEBKIT_WEBSITE_DATA_COOKIES)
+        types = static_cast<WebKitWebsiteDataTypes>(types | WEBKIT_WEBSITE_DATA_DEVICE_ID_HASH_SALT);
+
     Vector<WebsiteDataRecord> records;
     for (GList* item = websiteData; item; item = g_list_next(item)) {
         WebKitWebsiteData* data = static_cast<WebKitWebsiteData*>(item->data);
 
-        // We have to remove the hash salts when cookies are removed.
-        auto dataTypes = webkit_website_data_get_types(data);
-        if (dataTypes & WEBKIT_WEBSITE_DATA_DEVICE_ID_HASH_SALT)
-            dataTypes = static_cast<WebKitWebsiteDataTypes>(dataTypes | WEBKIT_WEBSITE_DATA_COOKIES);
-
-        if (dataTypes & types)
+        if (webkit_website_data_get_types(data) & types)
             records.append(webkitWebsiteDataGetRecord(data));
     }
 

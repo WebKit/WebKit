@@ -145,10 +145,14 @@ bool getFileSize(const String& path, long long& resultSize)
     return true;
 }
 
-bool getFileSize(PlatformFileHandle, long long&)
+bool getFileSize(PlatformFileHandle handle, long long& resultSize)
 {
-    notImplemented();
-    return false;
+    auto info = g_file_io_stream_query_info(handle, G_FILE_ATTRIBUTE_STANDARD_SIZE, nullptr, nullptr);
+    if (!info)
+        return false;
+
+    resultSize = g_file_info_get_size(info);
+    return true;
 }
 
 Optional<WallTime> getFileCreationTime(const String&)

@@ -56,8 +56,10 @@ HashMap<String, GRefPtr<GVariant>> KeyedDecoderGlib::dictionaryFromGVariant(GVar
     g_variant_iter_init(&iter, variant);
     const char* key;
     GVariant* value;
-    while (g_variant_iter_loop(&iter, "{&sv}", &key, &value))
-        dictionary.set(String::fromUTF8(key), value);
+    while (g_variant_iter_loop(&iter, "{&sv}", &key, &value)) {
+        if (key)
+            dictionary.set(String::fromUTF8(key), value);
+    }
     return dictionary;
 }
 

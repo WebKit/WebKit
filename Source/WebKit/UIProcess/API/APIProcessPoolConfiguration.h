@@ -96,6 +96,9 @@ public:
     const WTF::String& localStorageDirectory() const { return m_localStorageDirectory; }
     void setLocalStorageDirectory(const WTF::String& localStorageDirectory) { m_localStorageDirectory = localStorageDirectory; }
 
+    const WTF::String& deviceIdHashSaltsStorageDirectory() const { return m_deviceIdHashSaltsStorageDirectory; }
+    void setDeviceIdHashSaltsStorageDirectory(const WTF::String& directory) { m_deviceIdHashSaltsStorageDirectory = directory; }
+
     const WTF::String& webSQLDatabaseDirectory() const { return m_webSQLDatabaseDirectory; }
     void setWebSQLDatabaseDirectory(const WTF::String& webSQLDatabaseDirectory) { m_webSQLDatabaseDirectory = webSQLDatabaseDirectory; }
 
@@ -195,6 +198,7 @@ private:
     WTF::String m_indexedDBDatabaseDirectory;
     WTF::String m_injectedBundlePath;
     WTF::String m_localStorageDirectory;
+    WTF::String m_deviceIdHashSaltsStorageDirectory;
     WTF::String m_webSQLDatabaseDirectory;
     WTF::String m_mediaKeysStorageDirectory;
     WTF::String m_resourceLoadStatisticsDirectory;

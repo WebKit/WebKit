@@ -46,6 +46,7 @@ extern "C" {
     M(CacheStorage) \
     M(ContentObservation) \
     M(ContextMenu) \
+    M(DiskPersistency) \
     M(DragAndDrop) \
     M(Fullscreen) \
     M(Gamepad) \

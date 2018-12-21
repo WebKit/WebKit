@@ -139,6 +139,7 @@ Ref<WebKit::WebsiteDataStoreConfiguration> WebsiteDataStore::legacyDefaultDataSt
     configuration->setNetworkCacheDirectory(legacyDefaultNetworkCacheDirectory());
     configuration->setMediaCacheDirectory(legacyDefaultMediaCacheDirectory());
     configuration->setMediaKeysStorageDirectory(legacyDefaultMediaKeysStorageDirectory());
+    configuration->setDeviceIdHashSaltsStorageDirectory(legacyDefaultDeviceIdHashSaltsStorageDirectory());
     configuration->setIndexedDBDatabaseDirectory(legacyDefaultIndexedDBDatabaseDirectory());
     configuration->setWebSQLDatabaseDirectory(legacyDefaultWebSQLDatabaseDirectory());
     configuration->setLocalStorageDirectory(legacyDefaultLocalStorageDirectory());

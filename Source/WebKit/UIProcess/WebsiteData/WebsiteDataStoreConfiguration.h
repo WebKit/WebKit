@@ -63,7 +63,10 @@ public:
 
     const String& localStorageDirectory() const { return m_localStorageDirectory; }
     void setLocalStorageDirectory(String&& directory) { m_localStorageDirectory = WTFMove(directory); }
-    
+
+    const String& deviceIdHashSaltsStorageDirectory() const { return m_deviceIdHashSaltsStorageDirectory; }
+    void setDeviceIdHashSaltsStorageDirectory(String&& directory) { m_deviceIdHashSaltsStorageDirectory = WTFMove(directory); }
+
     const String& cookieStorageFile() const { return m_cookieStorageFile; }
     void setCookieStorageFile(String&& directory) { m_cookieStorageFile = WTFMove(directory); }
     
