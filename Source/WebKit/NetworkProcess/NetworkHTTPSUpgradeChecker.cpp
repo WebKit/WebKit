@@ -26,8 +26,6 @@
 #include "config.h"
 #include "NetworkHTTPSUpgradeChecker.h"
 
-#if ENABLE(HTTPS_UPGRADE)
-
 #include "Logging.h"
 #include <WebCore/SQLiteDatabase.h>
 #include <WebCore/SQLiteStatement.h>
@@ -95,13 +93,13 @@ void NetworkHTTPSUpgradeChecker::query(String&& host, PAL::SessionID sessionID, 
         ASSERT(m_didSetupCompleteSuccessfully);
 
         int bindTextResult = m_statement->bindText(1, WTFMove(host));
-        ASSERT(bindTextResult == SQLITE_OK);
+        ASSERT_UNUSED(bindTextResult, bindTextResult == SQLITE_OK);
 
         int stepResult = m_statement->step();
         ASSERT(stepResult == SQLITE_ROW || stepResult == SQLITE_DONE);
 
         int resetResult = m_statement->reset();
-        ASSERT(resetResult == SQLITE_OK);
+        ASSERT_UNUSED(resetResult, resetResult == SQLITE_OK);
 
         bool foundHost = (stepResult == SQLITE_ROW);
         RELEASE_LOG_IF_ALLOWED(sessionID, "query - Ran successfully. Result = %s", (foundHost ? "true" : "false"));
@@ -113,4 +111,3 @@ void NetworkHTTPSUpgradeChecker::query(String&& host, PAL::SessionID sessionID, 
 
 } // namespace WebKit
 
-#endif // ENABLE(HTTPS_UPGRADE)

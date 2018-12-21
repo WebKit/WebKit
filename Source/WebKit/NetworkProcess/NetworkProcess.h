@@ -205,9 +205,9 @@ public:
     bool parentProcessHasServiceWorkerEntitlement() const { return true; }
 #endif
 
-#if ENABLE(HTTPS_UPGRADE)
-    NetworkHTTPSUpgradeChecker& networkHTTPSUpgradeChecker() { return m_networkHTTPSUpgradeChecker; };
-#endif // ENABLE(HTTPS_UPGRADE)
+#if PLATFORM(COCOA)
+    NetworkHTTPSUpgradeChecker& networkHTTPSUpgradeChecker() { return m_networkHTTPSUpgradeChecker; }
+#endif
 
 private:
     NetworkProcess();
@@ -398,9 +398,9 @@ private:
     HashMap<WebCore::SWServerConnectionIdentifier, WebSWServerConnection*> m_swServerConnections;
 #endif
 
-#if ENABLE(HTTPS_UPGRADE)
+#if PLATFORM(COCOA)
     NetworkHTTPSUpgradeChecker m_networkHTTPSUpgradeChecker;
-#endif // ENABLE(HTTPS_UPGRADE)
+#endif
 };
 
 } // namespace WebKit

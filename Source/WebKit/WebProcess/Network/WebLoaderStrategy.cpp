@@ -281,6 +281,7 @@ void WebLoaderStrategy::scheduleLoadFromNetworkProcess(ResourceLoader& resourceL
     loadParameters.maximumBufferingTime = maximumBufferingTime;
     loadParameters.options = resourceLoader.options();
     loadParameters.preflightPolicy = resourceLoader.options().preflightPolicy;
+    loadParameters.isHTTPSUpgradeEnabled = resourceLoader.frame() ? resourceLoader.frame()->settings().HTTPSUpgradeEnabled() : false;
 
     auto* document = resourceLoader.frame() ? resourceLoader.frame()->document() : nullptr;
     if (resourceLoader.options().cspResponseHeaders)

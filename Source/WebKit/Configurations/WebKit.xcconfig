@@ -151,11 +151,8 @@ SECTORDER_FLAGS = $(SECTORDER_FLAGS_$(CONFIGURATION));
 SECTORDER_FLAGS_Production[sdk=iphoneos*] = -Wl,-order_file,$(SDKROOT)/AppleInternal/OrderFiles/WebKit.order;
 SECTORDER_FLAGS_Production[sdk=macosx*] = -Wl,-order_file,mac/WebKit2.order;
 
-WK_EXCLUDED_HTTPS_UPGRADE_FILE = $(WK_EXCLUDED_HTTPS_UPGRADE_FILE_$(ENABLE_HTTPS_UPGRADE));
-WK_EXCLUDED_HTTPS_UPGRADE_FILE_ = HTTPSUpgradeList.db;
-
-EXCLUDED_SOURCE_FILE_NAMES = Resources/ios/* $(WK_EXCLUDED_HTTPS_UPGRADE_FILE);
-EXCLUDED_SOURCE_FILE_NAMES[sdk=iphone*] = PluginProcessShim.dylib SecItemShim.dylib WebProcessShim.dylib *.pdf Resources/mac/* com.apple.WebKit.NetworkProcess.sb com.apple.WebProcess.sb com.apple.WebKit.plugin-common.sb PlugInSandboxProfiles/*.sb $(WK_EXCLUDED_HTTPS_UPGRADE_FILE);
+EXCLUDED_SOURCE_FILE_NAMES = Resources/ios/*;
+EXCLUDED_SOURCE_FILE_NAMES[sdk=iphone*] = PluginProcessShim.dylib SecItemShim.dylib WebProcessShim.dylib *.pdf Resources/mac/* com.apple.WebKit.NetworkProcess.sb com.apple.WebProcess.sb com.apple.WebKit.plugin-common.sb PlugInSandboxProfiles/*.sb;
 
 INSTALLHDRS_SCRIPT_PHASE = YES;
 

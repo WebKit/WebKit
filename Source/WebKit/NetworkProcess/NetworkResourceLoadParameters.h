@@ -59,6 +59,7 @@ public:
     WebCore::PreflightPolicy preflightPolicy { WebCore::PreflightPolicy::Consider };
     bool shouldEnableCrossOriginResourcePolicy { false };
     Vector<RefPtr<WebCore::SecurityOrigin>> frameAncestorOrigins;
+    bool isHTTPSUpgradeEnabled { false };
 
 #if ENABLE(CONTENT_EXTENSIONS)
     URL mainDocumentURL;

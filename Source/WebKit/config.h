@@ -79,6 +79,3 @@
 #endif
 #endif
 
-#ifndef ENABLE_HTTPS_UPGRADE
-#define ENABLE_HTTPS_UPGRADE 0
-#endif

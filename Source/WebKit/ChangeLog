@@ -1,3 +1,35 @@
+2018-12-20  Chris Dumez  <cdumez@apple.com>
+
+        Move HTTPS_UPGRADE code behind a runtime flag, off by default
+        https://bugs.webkit.org/show_bug.cgi?id=192937
+
+        Reviewed by Youenn Fablet.
+
+        Move HTTPS_UPGRADE code behind a runtime flag, off by default and drop the build time flag.
+
+        * Configurations/WebKit.xcconfig:
+        * DerivedSources.make:
+        * NetworkProcess/NetworkHTTPSUpgradeChecker.cpp:
+        * NetworkProcess/NetworkHTTPSUpgradeChecker.h:
+        * NetworkProcess/NetworkLoadChecker.cpp:
+        (WebKit::NetworkLoadChecker::NetworkLoadChecker):
+        (WebKit::NetworkLoadChecker::applyHTTPSUpgradeIfNeeded const):
+        (WebKit::NetworkLoadChecker::checkRequest):
+        * NetworkProcess/NetworkLoadChecker.h:
+        * NetworkProcess/NetworkProcess.h:
+        (WebKit::NetworkProcess::networkHTTPSUpgradeChecker):
+        * NetworkProcess/NetworkResourceLoadParameters.cpp:
+        (WebKit::NetworkResourceLoadParameters::encode const):
+        (WebKit::NetworkResourceLoadParameters::decode):
+        * NetworkProcess/NetworkResourceLoadParameters.h:
+        * NetworkProcess/NetworkResourceLoader.cpp:
+        * NetworkProcess/PingLoad.cpp:
+        (WebKit::PingLoad::PingLoad):
+        * Shared/WebPreferences.yaml:
+        * WebProcess/Network/WebLoaderStrategy.cpp:
+        (WebKit::WebLoaderStrategy::scheduleLoadFromNetworkProcess):
+        * config.h:
+
 2018-12-20  Jiewen Tan  <jiewen_tan@apple.com>
 
         [WebAuthN] Add a runtime flag for local authenticator

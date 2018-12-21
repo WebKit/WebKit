@@ -35,6 +35,13 @@ PluginsEnabled:
   type: bool
   defaultValue: false
 
+HTTPSUpgradeEnabled:
+   type: bool
+   defaultValue: false
+   humanReadableName: "Automatic HTTPS upgrade"
+   humanReadableDescription: "Automatic HTTPS upgrade for known supported sites"
+   category: experimental
+
 JavaEnabled:
   type: bool
   defaultValue: false

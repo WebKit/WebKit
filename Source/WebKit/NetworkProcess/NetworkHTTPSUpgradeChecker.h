@@ -25,8 +25,6 @@
 
 #pragma once
 
-#if ENABLE(HTTPS_UPGRADE)
-
 #include <wtf/UniqueRef.h>
 
 namespace WTF {
@@ -64,4 +62,3 @@ private:
 
 } // namespace WebKit
 
-#endif // ENABLE(HTTPS_UPGRADE)

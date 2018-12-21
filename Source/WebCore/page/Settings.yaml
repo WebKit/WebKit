@@ -329,6 +329,9 @@ wantsBalancedSetDefersLoadingBehavior:
 requestAnimationFrameEnabled:
   initial: true
 
+HTTPSUpgradeEnabled:
+  initial: false
+
 cookieEnabled:
   initial: true
 mediaEnabled:
