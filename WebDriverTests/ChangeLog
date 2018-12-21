@@ -1,3 +1,32 @@
+2018-12-21  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. WebDriver: remove deleted tests after r238881.
+
+        Deleted files were not removed from the repository in r238881. Also update the test names in the test
+        expectations file.
+
+        * TestExpectations.json:
+        * imported/w3c/webdriver/tests/actions/__init__.py: Removed.
+        * imported/w3c/webdriver/tests/actions/conftest.py: Removed.
+        * imported/w3c/webdriver/tests/actions/control_click.py: Removed.
+        * imported/w3c/webdriver/tests/actions/key.py: Removed.
+        * imported/w3c/webdriver/tests/actions/key_shortcuts.py: Removed.
+        * imported/w3c/webdriver/tests/actions/modifier_click.py: Removed.
+        * imported/w3c/webdriver/tests/actions/mouse.py: Removed.
+        * imported/w3c/webdriver/tests/actions/mouse_dblclick.py: Removed.
+        * imported/w3c/webdriver/tests/actions/mouse_pause_dblclick.py: Removed.
+        * imported/w3c/webdriver/tests/actions/pointer_origin.py: Removed.
+        * imported/w3c/webdriver/tests/actions/sequence.py: Removed.
+        * imported/w3c/webdriver/tests/actions/special_keys.py: Removed.
+        * imported/w3c/webdriver/tests/actions/support/__init__.py: Removed.
+        * imported/w3c/webdriver/tests/actions/support/keys.py: Removed.
+        * imported/w3c/webdriver/tests/actions/support/mouse.py: Removed.
+        * imported/w3c/webdriver/tests/actions/support/refine.py: Removed.
+        * imported/w3c/webdriver/tests/actions/support/test_actions_wdspec.html: Removed.
+        * imported/w3c/webdriver/tests/page_source/__init__.py: Removed.
+        * imported/w3c/webdriver/tests/page_source/source.py: Removed.
+        * imported/w3c/webdriver/tests/support/wait.py: Removed.
+
 2018-12-04  Brian Burg  <bburg@apple.com>
 
         Unreviewed. Update W3C WebDriver imported tests.
