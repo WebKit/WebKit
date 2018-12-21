@@ -383,7 +383,7 @@ void AppendPipeline::parseDemuxerSrcPadCaps(GstCaps* demuxerSrcPadCaps)
             m_streamType = WebCore::MediaSourceStreamTypeGStreamer::Invalid;
     } else if (doCapsHaveType(m_demuxerSrcPadCaps.get(), GST_VIDEO_CAPS_TYPE_PREFIX)) {
         Optional<FloatSize> size = getVideoResolutionFromCaps(m_demuxerSrcPadCaps.get());
-        if (size.has_value())
+        if (size.hasValue())
             m_presentationSize = size.value();
         else
             m_presentationSize = WebCore::FloatSize();

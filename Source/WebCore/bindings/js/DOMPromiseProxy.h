@@ -145,7 +145,7 @@ inline void DOMPromiseProxy<IDLType>::clear()
 template<typename IDLType>
 inline bool DOMPromiseProxy<IDLType>::isFulfilled() const
 {
-    return m_valueOrException.has_value();
+    return m_valueOrException.hasValue();
 }
 
 template<typename IDLType>
@@ -213,7 +213,7 @@ inline void DOMPromiseProxy<IDLVoid>::clear()
 
 inline bool DOMPromiseProxy<IDLVoid>::isFulfilled() const
 {
-    return m_valueOrException.has_value();
+    return m_valueOrException.hasValue();
 }
 
 inline void DOMPromiseProxy<IDLVoid>::resolve()
@@ -282,7 +282,7 @@ inline void DOMPromiseProxyWithResolveCallback<IDLType>::clear()
 template<typename IDLType>
 inline bool DOMPromiseProxyWithResolveCallback<IDLType>::isFulfilled() const
 {
-    return m_valueOrException.has_value();
+    return m_valueOrException.hasValue();
 }
 
 template<typename IDLType>

@@ -506,7 +506,6 @@ public:
   // 20.5.4.5, Observers
 
   explicit constexpr operator bool() const __NOEXCEPT { return initialized(); }
-  constexpr bool has_value() const __NOEXCEPT { return initialized(); } // FIXME: Remove this.
   constexpr bool hasValue() const __NOEXCEPT { return initialized(); }
 
   constexpr T const* operator ->() const {
@@ -673,7 +672,7 @@ public:
     return ref != nullptr;
   }
 
-  constexpr bool has_value() const __NOEXCEPT {
+  constexpr bool hasValue() const __NOEXCEPT {
     return ref != nullptr;
   }
 

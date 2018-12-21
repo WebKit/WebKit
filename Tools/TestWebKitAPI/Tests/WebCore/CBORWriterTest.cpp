@@ -81,7 +81,7 @@ TEST(CBORWriterTest, TestWriteUint)
 
     for (const UintTestCase& testCase : kUintTestCases) {
         auto cbor = CBORWriter::write(CBORValue(testCase.value));
-        ASSERT_TRUE(cbor.has_value());
+        ASSERT_TRUE(cbor.hasValue());
         EXPECT_TRUE(eq(cbor.value(), testCase.cbor));
     }
 }
@@ -108,7 +108,7 @@ TEST(CBORWriterTest, TestWriteNegativeInteger)
 
     for (const auto& testCase : kNegativeIntTestCases) {
         auto cbor = CBORWriter::write(CBORValue(testCase.negativeInt));
-        ASSERT_TRUE(cbor.has_value());
+        ASSERT_TRUE(cbor.hasValue());
         EXPECT_TRUE(eq(cbor.value(), testCase.cbor));
     }
 }
@@ -127,7 +127,7 @@ TEST(CBORWriterTest, TestWriteBytes)
 
     for (const BytesTestCase& testCase : kBytesTestCases) {
         auto cbor = CBORWriter::write(CBORValue(testCase.bytes));
-        ASSERT_TRUE(cbor.has_value());
+        ASSERT_TRUE(cbor.hasValue());
         EXPECT_TRUE(eq(cbor.value(), testCase.cbor));
     }
 }
@@ -151,7 +151,7 @@ TEST(CBORWriterTest, TestWriteString)
 
     for (const StringTestCase& testCase : kStringTestCases) {
         auto cbor = CBORWriter::write(CBORValue(testCase.string));
-        ASSERT_TRUE(cbor.has_value());
+        ASSERT_TRUE(cbor.hasValue());
         EXPECT_TRUE(eq(cbor.value(), testCase.cbor));
     }
 }
@@ -168,7 +168,7 @@ TEST(CBORWriterTest, TestWriteArray)
     for (int64_t i = 1; i <= 25; i++)
         array.append(CBORValue(i));
     auto cbor = CBORWriter::write(CBORValue(array));
-    ASSERT_TRUE(cbor.has_value());
+    ASSERT_TRUE(cbor.hasValue());
     EXPECT_TRUE(eq(cbor.value(), kArrayTestCaseCbor, sizeof(kArrayTestCaseCbor)));
 }
 
@@ -278,7 +278,7 @@ TEST(CBORWriterTest, TestWriteMapWithMapValue)
     map[CBORValue(int64_t(4294967296))] = CBORValue("i");
     map[CBORValue(std::numeric_limits<int64_t>::max())] = CBORValue("j");
     auto cbor = CBORWriter::write(CBORValue(map));
-    ASSERT_TRUE(cbor.has_value());
+    ASSERT_TRUE(cbor.hasValue());
     EXPECT_TRUE(eq(cbor.value(), kMapTestCaseCbor, sizeof(kMapTestCaseCbor)));
 }
 
@@ -301,7 +301,7 @@ TEST(CBORWriterTest, TestWriteMapWithArray)
     array.append(CBORValue(3));
     map[CBORValue("b")] = CBORValue(array);
     auto cbor = CBORWriter::write(CBORValue(map));
-    ASSERT_TRUE(cbor.has_value());
+    ASSERT_TRUE(cbor.hasValue());
     EXPECT_TRUE(eq(cbor.value(), kMapArrayTestCaseCbor, sizeof(kMapArrayTestCaseCbor)));
 }
 
@@ -327,7 +327,7 @@ TEST(CBORWriterTest, TestWriteNestedMap)
     nestedMap[CBORValue("d")] = CBORValue(3);
     map[CBORValue("b")] = CBORValue(nestedMap);
     auto cbor = CBORWriter::write(CBORValue(map));
-    ASSERT_TRUE(cbor.has_value());
+    ASSERT_TRUE(cbor.hasValue());
     EXPECT_TRUE(eq(cbor.value(), kNestedMapTestCase, sizeof(kNestedMapTestCase)));
 }
 
@@ -345,7 +345,7 @@ TEST(CBORWriterTest, TestWriteSimpleValue)
 
     for (const auto& testCase : kSimpleTestCase) {
         auto cbor = CBORWriter::write(CBORValue(testCase.simpleValue));
-        ASSERT_TRUE(cbor.has_value());
+        ASSERT_TRUE(cbor.hasValue());
         EXPECT_TRUE(eq(cbor.value(), testCase.cbor));
     }
 }
@@ -370,18 +370,18 @@ TEST(CBORWriterTest, TestWriteSingleLayer)
     const CBORValue singleLayerCborMap = CBORValue(simpleMap);
     const CBORValue singleLayerCborArray = CBORValue(simpleArray);
 
-    EXPECT_TRUE(CBORWriter::write(simpleUint, 0).has_value());
-    EXPECT_TRUE(CBORWriter::write(simpleString, 0).has_value());
-    EXPECT_TRUE(CBORWriter::write(simpleBytestring, 0).has_value());
+    EXPECT_TRUE(CBORWriter::write(simpleUint, 0).hasValue());
+    EXPECT_TRUE(CBORWriter::write(simpleString, 0).hasValue());
+    EXPECT_TRUE(CBORWriter::write(simpleBytestring, 0).hasValue());
 
-    EXPECT_TRUE(CBORWriter::write(emptyArrayValue, 0).has_value());
-    EXPECT_TRUE(CBORWriter::write(emptyMapValue, 0).has_value());
+    EXPECT_TRUE(CBORWriter::write(emptyArrayValue, 0).hasValue());
+    EXPECT_TRUE(CBORWriter::write(emptyMapValue, 0).hasValue());
 
-    EXPECT_FALSE(CBORWriter::write(singleLayerCborArray, 0).has_value());
-    EXPECT_TRUE(CBORWriter::write(singleLayerCborArray, 1).has_value());
+    EXPECT_FALSE(CBORWriter::write(singleLayerCborArray, 0).hasValue());
+    EXPECT_TRUE(CBORWriter::write(singleLayerCborArray, 1).hasValue());
 
-    EXPECT_FALSE(CBORWriter::write(singleLayerCborMap, 0).has_value());
-    EXPECT_TRUE(CBORWriter::write(singleLayerCborMap, 1).has_value());
+    EXPECT_FALSE(CBORWriter::write(singleLayerCborMap, 0).hasValue());
+    EXPECT_TRUE(CBORWriter::write(singleLayerCborMap, 1).hasValue());
 }
 
 // Major type 5 nested CBOR map value with following structure.
@@ -396,8 +396,8 @@ TEST(CBORWriterTest, NestedMaps)
     nestedMap[CBORValue("c")] = CBORValue(2);
     nestedMap[CBORValue("d")] = CBORValue(3);
     cborMap[CBORValue("b")] = CBORValue(nestedMap);
-    EXPECT_TRUE(CBORWriter::write(CBORValue(cborMap), 2).has_value());
-    EXPECT_FALSE(CBORWriter::write(CBORValue(cborMap), 1).has_value());
+    EXPECT_TRUE(CBORWriter::write(CBORValue(cborMap), 2).hasValue());
+    EXPECT_FALSE(CBORWriter::write(CBORValue(cborMap), 1).hasValue());
 }
 
 // Testing Write() function for following CBOR structure with depth of 3.
@@ -422,8 +422,8 @@ TEST(CBORWriterTest, UnbalancedNestedContainers)
     cborArray.append(CBORValue(3));
     cborArray.append(CBORValue(cborMap));
 
-    EXPECT_TRUE(CBORWriter::write(CBORValue(cborArray), 3).has_value());
-    EXPECT_FALSE(CBORWriter::write(CBORValue(cborArray), 2).has_value());
+    EXPECT_TRUE(CBORWriter::write(CBORValue(cborArray), 3).hasValue());
+    EXPECT_FALSE(CBORWriter::write(CBORValue(cborArray), 2).hasValue());
 }
 
 // Testing Write() function for following CBOR structure.
@@ -456,8 +456,8 @@ TEST(CBORWriterTest, OverlyNestedCBOR)
     nestedMap[CBORValue("h")] = CBORValue(innerNestedMap);
     map[CBORValue("b")] = CBORValue(nestedMap);
 
-    EXPECT_TRUE(CBORWriter::write(CBORValue(map), 5).has_value());
-    EXPECT_FALSE(CBORWriter::write(CBORValue(map), 4).has_value());
+    EXPECT_TRUE(CBORWriter::write(CBORValue(map), 5).hasValue());
+    EXPECT_FALSE(CBORWriter::write(CBORValue(map), 4).hasValue());
 }
 
 } // namespace TestWebKitAPI

@@ -1,5 +1,16 @@
 2018-12-20  Chris Dumez  <cdumez@apple.com>
 
+        Use Optional::hasValue() instead of Optional::has_value()
+        https://bugs.webkit.org/show_bug.cgi?id=192948
+
+        Reviewed by Tim Horton.
+
+        * wtf/Hasher.h:
+        (WTF::add):
+        * wtf/Optional.h:
+
+2018-12-20  Chris Dumez  <cdumez@apple.com>
+
         Use Optional::valueOr() instead of Optional::value_or()
         https://bugs.webkit.org/show_bug.cgi?id=192933
 

@@ -459,7 +459,7 @@ void webKitMediaSrcUpdatePresentationSize(GstCaps* caps, Stream* stream)
     GST_OBJECT_LOCK(stream->parent);
     if (WebCore::doCapsHaveType(caps, GST_VIDEO_CAPS_TYPE_PREFIX)) {
         Optional<WebCore::FloatSize> size = WebCore::getVideoResolutionFromCaps(caps);
-        if (size.has_value())
+        if (size.hasValue())
             stream->presentationSize = size.value();
         else
             stream->presentationSize = WebCore::FloatSize();

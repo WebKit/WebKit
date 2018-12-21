@@ -594,7 +594,7 @@ void WebAutomationSessionProxy::computeElementLayout(uint64_t pageID, uint64_t f
     bool isObscured = false;
     if (containerElement) {
         Optional<WebCore::FloatPoint> frameInViewCenterPoint = elementInViewClientCenterPoint(*containerElement, isObscured);
-        if (frameInViewCenterPoint.has_value()) {
+        if (frameInViewCenterPoint.hasValue()) {
             WebCore::IntPoint rootInViewCenterPoint = mainView->rootViewToContents(frameView->contentsToRootView(WebCore::IntPoint(frameInViewCenterPoint.value())));
             switch (coordinateSystem) {
             case CoordinateSystem::Page:

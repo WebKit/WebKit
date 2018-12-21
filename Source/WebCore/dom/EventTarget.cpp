@@ -67,7 +67,7 @@ bool EventTarget::addEventListener(const AtomicString& eventType, Ref<EventListe
 {
     auto passive = options.passive;
 
-    if (!passive.has_value() && eventNames().isTouchScrollBlockingEventType(eventType)) {
+    if (!passive.hasValue() && eventNames().isTouchScrollBlockingEventType(eventType)) {
         if (is<DOMWindow>(*this)) {
             auto& window = downcast<DOMWindow>(*this);
             if (auto* document = window.document())

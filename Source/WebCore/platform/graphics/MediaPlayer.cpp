@@ -1061,7 +1061,7 @@ bool MediaPlayer::didPassCORSAccessCheck() const
 bool MediaPlayer::wouldTaintOrigin(const SecurityOrigin& origin) const
 {
     auto wouldTaint = m_private->wouldTaintOrigin(origin);
-    if (wouldTaint.has_value())
+    if (wouldTaint.hasValue())
         return wouldTaint.value();
 
     if (m_url.protocolIsData())

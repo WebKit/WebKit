@@ -721,7 +721,7 @@ void MediaPlayerPrivateGStreamerMSE::trackDetected(RefPtr<AppendPipeline> append
 
     if (doCapsHaveType(caps, GST_VIDEO_CAPS_TYPE_PREFIX)) {
         Optional<FloatSize> size = getVideoResolutionFromCaps(caps);
-        if (size.has_value())
+        if (size.hasValue())
             m_videoSize = size.value();
     }
 

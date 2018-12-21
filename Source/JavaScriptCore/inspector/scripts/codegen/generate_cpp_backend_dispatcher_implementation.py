@@ -169,7 +169,7 @@ class CppBackendDispatcherImplementationGenerator(CppGenerator):
 
             if parameter.is_optional:
                 if CppGenerator.should_use_wrapper_for_return_type(parameter.type):
-                    out_parameter_assignments.append('    if (%(parameterName)s.has_value())' % param_args)
+                    out_parameter_assignments.append('    if (%(parameterName)s.hasValue())' % param_args)
                     out_parameter_assignments.append('        jsonMessage->%(keyedSetMethod)s("%(parameterKey)s"_s, *%(parameterName)s);' % param_args)
                 else:
                     out_parameter_assignments.append('    if (%(parameterName)s)' % param_args)
@@ -264,7 +264,7 @@ class CppBackendDispatcherImplementationGenerator(CppGenerator):
                 out_parameter_declarations.append('    %(parameterType)s out_%(parameterName)s;' % param_args)
                 if parameter.is_optional:
                     if CppGenerator.should_use_wrapper_for_return_type(parameter.type):
-                        out_parameter_assignments.append('        if (out_%(parameterName)s.has_value())' % param_args)
+                        out_parameter_assignments.append('        if (out_%(parameterName)s.hasValue())' % param_args)
                         out_parameter_assignments.append('            result->%(keyedSetMethod)s("%(parameterKey)s"_s, *out_%(parameterName)s);' % param_args)
                     else:
                         out_parameter_assignments.append('        if (out_%(parameterName)s)' % param_args)

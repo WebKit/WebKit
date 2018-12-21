@@ -407,7 +407,7 @@ void RenderListItem::setExplicitValue(Optional<int> value)
         if (m_valueWasSetExplicitly && m_value == value)
             return;
     }
-    m_valueWasSetExplicitly = value.has_value();
+    m_valueWasSetExplicitly = value.hasValue();
     m_value = value;
     explicitValueChanged();
 }

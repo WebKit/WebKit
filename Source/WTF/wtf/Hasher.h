@@ -142,8 +142,8 @@ template<typename T1, typename T2> void add(Hasher& hasher, const std::pair<T1, 
 
 template<typename T> void add(Hasher& hasher, const Optional<T>& optional)
 {
-    add(hasher, optional.has_value());
-    if (optional.has_value())
+    add(hasher, optional.hasValue());
+    if (optional.hasValue())
         add(hasher, optional.value());
 }
 

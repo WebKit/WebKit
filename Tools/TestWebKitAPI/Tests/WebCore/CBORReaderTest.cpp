@@ -64,7 +64,7 @@ TEST(CBORReaderTest, TestReadUint)
 
     for (const UintTestCase& testCase : kUintTestCases) {
         Optional<CBORValue> cbor = CBORReader::read(testCase.cborData);
-        ASSERT_TRUE(cbor.has_value());
+        ASSERT_TRUE(cbor.hasValue());
         ASSERT_TRUE(cbor.value().type() == CBORValue::Type::Unsigned);
         EXPECT_EQ(cbor.value().getInteger(), testCase.value);
     }
@@ -109,7 +109,7 @@ TEST(CBORReaderTest, TestUintEncodedWithNonMinimumByteLength)
     CBORReader::DecoderError errorCode;
     for (const auto& nonMinimalUint : nonMinimalUintEncodings) {
         Optional<CBORValue> cbor = CBORReader::read(nonMinimalUint, &errorCode);
-        EXPECT_FALSE(cbor.has_value());
+        EXPECT_FALSE(cbor.hasValue());
         EXPECT_TRUE(errorCode == CBORReader::DecoderError::NonMinimalCBOREncoding);
     }
 }
@@ -135,7 +135,7 @@ TEST(CBORReaderTest, TestReadNegativeInt)
 
     for (const NegativeIntTestCase& testCase : kNegativeIntTestCases) {
         Optional<CBORValue> cbor = CBORReader::read(testCase.cborData);
-        ASSERT_TRUE(cbor.has_value());
+        ASSERT_TRUE(cbor.hasValue());
         ASSERT_TRUE(cbor.value().type() == CBORValue::Type::Negative);
         EXPECT_EQ(cbor.value().getInteger(), testCase.negativeInt);
     }
@@ -155,7 +155,7 @@ TEST(CBORReaderTest, TestReadBytes)
 
     for (const ByteTestCase& testCase : kByteStringTestCases) {
         Optional<CBORValue> cbor = CBORReader::read(testCase.cborData);
-        ASSERT_TRUE(cbor.has_value());
+        ASSERT_TRUE(cbor.hasValue());
         ASSERT_TRUE(cbor.value().type() == CBORValue::Type::ByteString);
         EXPECT_TRUE(cbor.value().getByteString() == testCase.value);
     }
@@ -180,7 +180,7 @@ TEST(CBORReaderTest, TestReadString)
 
     for (const StringTestCase& testCase : kStringTestCases) {
         Optional<CBORValue> cbor = CBORReader::read(testCase.cborData);
-        ASSERT_TRUE(cbor.has_value());
+        ASSERT_TRUE(cbor.hasValue());
         ASSERT_TRUE(cbor.value().type() == CBORValue::Type::String);
         EXPECT_TRUE(cbor.value().getString() == testCase.value);
     }
@@ -208,7 +208,7 @@ TEST(CBORReaderTest, TestReadStringWithNUL)
 
     for (const auto& testCase : kStringTestCases) {
         Optional<CBORValue> cbor = CBORReader::read(testCase.cborData);
-        ASSERT_TRUE(cbor.has_value());
+        ASSERT_TRUE(cbor.hasValue());
         ASSERT_TRUE(cbor.value().type() == CBORValue::Type::String);
         EXPECT_TRUE(cbor.value().getString() == testCase.value);
     }
@@ -225,7 +225,7 @@ TEST(CBORReaderTest, TestReadStringWithInvalidByteSequenceAfterNUL)
     };
     CBORReader::DecoderError errorCode;
     Optional<CBORValue> cbor = CBORReader::read(stringWithInvalidContinuationByte, &errorCode);
-    EXPECT_FALSE(cbor.has_value());
+    EXPECT_FALSE(cbor.hasValue());
     EXPECT_TRUE(errorCode == CBORReader::DecoderError::InvalidUTF8);
 }
 
@@ -239,7 +239,7 @@ TEST(CBORReaderTest, TestReadArray)
     };
 
     Optional<CBORValue> cbor = CBORReader::read(kArrayTestCaseCBOR);
-    ASSERT_TRUE(cbor.has_value());
+    ASSERT_TRUE(cbor.hasValue());
     const CBORValue cborArray = WTFMove(cbor.value());
     ASSERT_TRUE(cborArray.type() == CBORValue::Type::Array);
     ASSERT_EQ(cborArray.getArray().size(), 25u);
@@ -269,7 +269,7 @@ TEST(CBORReaderTest, TestReadMapWithMapValue)
     };
 
     Optional<CBORValue> cbor = CBORReader::read(kMapTestCaseCBOR);
-    ASSERT_TRUE(cbor.has_value());
+    ASSERT_TRUE(cbor.hasValue());
     const CBORValue cborVal = WTFMove(cbor.value());
     ASSERT_TRUE(cborVal.type() == CBORValue::Type::Map);
     ASSERT_EQ(cborVal.getMap().size(), 4u);
@@ -313,7 +313,7 @@ TEST(CBORReaderTest, TestReadMapWithIntegerKeys)
     };
 
     Optional<CBORValue> cbor = CBORReader::read(kMapWithIntegerKeyCBOR);
-    ASSERT_TRUE(cbor.has_value());
+    ASSERT_TRUE(cbor.hasValue());
     const CBORValue cborVal = WTFMove(cbor.value());
     ASSERT_TRUE(cborVal.type() == CBORValue::Type::Map);
     ASSERT_EQ(cborVal.getMap().size(), 4u);
@@ -353,7 +353,7 @@ TEST(CBORReaderTest, TestReadMapWithArray)
     };
 
     Optional<CBORValue> cbor = CBORReader::read(kMapArrayTestCaseCBOR);
-    ASSERT_TRUE(cbor.has_value());
+    ASSERT_TRUE(cbor.hasValue());
     const CBORValue cborVal = WTFMove(cbor.value());
     ASSERT_TRUE(cborVal.type() == CBORValue::Type::Map);
     ASSERT_EQ(cborVal.getMap().size(), 2u);
@@ -392,7 +392,7 @@ TEST(CBORReaderTest, TestReadNestedMap)
     };
 
     Optional<CBORValue> cbor = CBORReader::read(kNestedMapTestCase);
-    ASSERT_TRUE(cbor.has_value());
+    ASSERT_TRUE(cbor.hasValue());
     const CBORValue cborVal = WTFMove(cbor.value());
     ASSERT_TRUE(cborVal.type() == CBORValue::Type::Map);
     ASSERT_EQ(cborVal.getMap().size(), 2u);
@@ -429,11 +429,11 @@ TEST(CBORReaderTest, TestIntegerRange)
     };
 
     Optional<CBORValue> maxPositiveInt = CBORReader::read(kMaxPositiveInt);
-    ASSERT_TRUE(maxPositiveInt.has_value());
+    ASSERT_TRUE(maxPositiveInt.hasValue());
     EXPECT_EQ(maxPositiveInt.value().getInteger(), INT64_MAX);
 
     Optional<CBORValue> minNegativeInt = CBORReader::read(kMinNegativeInt);
-    ASSERT_TRUE(minNegativeInt.has_value());
+    ASSERT_TRUE(minNegativeInt.hasValue());
     EXPECT_EQ(minNegativeInt.value().getInteger(), INT64_MIN);
 }
 
@@ -471,7 +471,7 @@ TEST(CBORReaderTest, TestReadSimpleValue)
 
     for (const auto& testCase : kSimpleValueTestCases) {
         Optional<CBORValue> cbor = CBORReader::read(testCase.cborData);
-        ASSERT_TRUE(cbor.has_value());
+        ASSERT_TRUE(cbor.hasValue());
         ASSERT_TRUE(cbor.value().type() == CBORValue::Type::SimpleValue);
         ASSERT_TRUE(cbor.value().getSimpleValue() == testCase.value);
     }
@@ -491,7 +491,7 @@ TEST(CBORReaderTest, TestReadUnsupportedFloatingPointNumbers)
     for (const auto& unsupported_floating_point : floatingPointCbors) {
         CBORReader::DecoderError errorCode;
         Optional<CBORValue> cbor = CBORReader::read(unsupported_floating_point, &errorCode);
-        EXPECT_FALSE(cbor.has_value());
+        EXPECT_FALSE(cbor.hasValue());
         EXPECT_TRUE(errorCode == CBORReader::DecoderError::UnsupportedFloatingPointValue);
     }
 }
@@ -517,7 +517,7 @@ TEST(CBORReaderTest, TestIncompleteCBORDataError)
     for (const auto& incomplete_data : incompleteCborList) {
         CBORReader::DecoderError errorCode;
         Optional<CBORValue> cbor = CBORReader::read(incomplete_data, &errorCode);
-        EXPECT_FALSE(cbor.has_value());
+        EXPECT_FALSE(cbor.hasValue());
         EXPECT_TRUE(errorCode == CBORReader::DecoderError::IncompleteCBORData);
     }
 }
@@ -538,7 +538,7 @@ TEST(CBORReaderTest, TestUnsupportedMapKeyFormatError)
 
     CBORReader::DecoderError errorCode;
     Optional<CBORValue> cbor = CBORReader::read(kMapWithUintKey, &errorCode);
-    EXPECT_FALSE(cbor.has_value());
+    EXPECT_FALSE(cbor.hasValue());
     EXPECT_TRUE(errorCode == CBORReader::DecoderError::IncorrectMapKeyType);
 }
 
@@ -567,7 +567,7 @@ TEST(CBORReaderTest, TestUnknownAdditionalInfoError)
     for (const auto& incorrect_cbor : kUnknownAdditionalInfoList) {
         CBORReader::DecoderError errorCode;
         Optional<CBORValue> cbor = CBORReader::read(incorrect_cbor, &errorCode);
-        EXPECT_FALSE(cbor.has_value());
+        EXPECT_FALSE(cbor.hasValue());
         EXPECT_TRUE(errorCode == CBORReader::DecoderError::UnknownAdditionalInfo);
     }
 }
@@ -590,7 +590,7 @@ TEST(CBORReaderTest, TestTooMuchNestingError)
     for (const auto& zeroDepthData : kZeroDepthCBORList) {
         CBORReader::DecoderError errorCode;
         Optional<CBORValue> cbor = CBORReader::read(zeroDepthData, &errorCode, 0);
-        EXPECT_TRUE(cbor.has_value());
+        EXPECT_TRUE(cbor.hasValue());
         EXPECT_TRUE(errorCode == CBORReader::DecoderError::CBORNoError);
     }
 
@@ -610,11 +610,11 @@ TEST(CBORReaderTest, TestTooMuchNestingError)
 
     CBORReader::DecoderError errorCode;
     Optional<CBORValue> cborSingleLayerMax = CBORReader::read(kNestedCBORData, &errorCode, 1);
-    EXPECT_FALSE(cborSingleLayerMax.has_value());
+    EXPECT_FALSE(cborSingleLayerMax.hasValue());
     EXPECT_TRUE(errorCode == CBORReader::DecoderError::TooMuchNesting);
 
     Optional<CBORValue> cborDoubleLayerMax = CBORReader::read(kNestedCBORData, &errorCode, 2);
-    EXPECT_TRUE(cborDoubleLayerMax.has_value());
+    EXPECT_TRUE(cborDoubleLayerMax.hasValue());
     EXPECT_TRUE(errorCode == CBORReader::DecoderError::CBORNoError);
 }
 
@@ -648,7 +648,7 @@ TEST(CBORReaderTest, TestOutOfOrderKeyError)
     for (const auto& unsortedMap : kMapsWithUnsortedKeys) {
         Optional<CBORValue> cbor =
         CBORReader::read(unsortedMap, &errorCode);
-        EXPECT_FALSE(cbor.has_value());
+        EXPECT_FALSE(cbor.hasValue());
         EXPECT_TRUE(errorCode == CBORReader::DecoderError::OutOfOrderKey);
     }
 }
@@ -679,7 +679,7 @@ TEST(CBORReaderTest, TestDuplicateKeyError)
     CBORReader::DecoderError errorCode;
 
     Optional<CBORValue> cbor = CBORReader::read(kMapWithDuplicateKey, &errorCode);
-    EXPECT_FALSE(cbor.has_value());
+    EXPECT_FALSE(cbor.hasValue());
     EXPECT_TRUE(errorCode == CBORReader::DecoderError::DuplicateKey);
 }
 
@@ -699,7 +699,7 @@ TEST(CBORReaderTest, TestIncorrectStringEncodingError)
     CBORReader::DecoderError errorCode;
     for (const auto& cbor_byte : utf8CharacterEncodings) {
         Optional<CBORValue> correctlyEncodedCbor = CBORReader::read(cbor_byte, &errorCode);
-        EXPECT_TRUE(correctlyEncodedCbor.has_value());
+        EXPECT_TRUE(correctlyEncodedCbor.hasValue());
         EXPECT_TRUE(errorCode == CBORReader::DecoderError::CBORNoError);
     }
 
@@ -728,7 +728,7 @@ TEST(CBORReaderTest, TestExtraneousCBORDataError)
     for (const auto& extraneous_cborData : zeroPaddedCborList) {
         CBORReader::DecoderError errorCode;
         Optional<CBORValue> cbor = CBORReader::read(extraneous_cborData, &errorCode);
-        EXPECT_FALSE(cbor.has_value());
+        EXPECT_FALSE(cbor.hasValue());
         EXPECT_TRUE(errorCode == CBORReader::DecoderError::ExtraneousData);
     }
 }
@@ -759,7 +759,7 @@ TEST(CBORReaderTest, TestUnsupportedSimplevalue)
     for (const auto& unsupportedSimpleVal : unsupportedSimpleValues) {
         CBORReader::DecoderError errorCode;
         Optional<CBORValue> cbor = CBORReader::read(unsupportedSimpleVal, &errorCode);
-        EXPECT_FALSE(cbor.has_value());
+        EXPECT_FALSE(cbor.hasValue());
         EXPECT_TRUE(errorCode == CBORReader::DecoderError::UnsupportedSimpleValue);
     }
 }

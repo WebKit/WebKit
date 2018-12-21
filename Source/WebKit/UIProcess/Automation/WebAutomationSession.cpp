@@ -58,7 +58,7 @@ namespace WebKit {
 String AutomationCommandError::toProtocolString()
 {
     String protocolErrorName = Inspector::Protocol::AutomationHelpers::getEnumConstantValue(type);
-    if (!message.has_value())
+    if (!message.hasValue())
         return protocolErrorName;
 
     return makeString(protocolErrorName, errorNameAndDetailsSeparator, message.value());
@@ -784,7 +784,7 @@ void WebAutomationSession::willClosePage(const WebPageProxy& page)
 
     // Then tell the input dispatcher to cancel so timers are stopped, and let it go out of scope.
     Optional<Ref<SimulatedInputDispatcher>> inputDispatcher = m_inputDispatchersByPage.take(page.pageID());
-    if (inputDispatcher.has_value())
+    if (inputDispatcher.hasValue())
         inputDispatcher.value()->cancel();
 }
 
