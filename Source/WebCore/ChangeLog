@@ -1,3 +1,18 @@
+2018-12-21  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Setting the file wrapper and content type of an attachment to a PDF should update its image
+        https://bugs.webkit.org/show_bug.cgi?id=192984
+        <rdar://problem/46798028>
+
+        Reviewed by Tim Horton.
+
+        Allow PDF data to be used to update enclosing image elements when setting the file wrapper for an attachment.
+        Covered by a new API test: WKAttachmentTests.SetFileWrapperForPDFImageAttachment.
+
+        * html/HTMLAttachmentElement.cpp:
+        (WebCore::mimeTypeIsSuitableForInlineImageAttachment):
+        (WebCore::HTMLAttachmentElement::updateEnclosingImageWithData):
+
 2018-12-21  Justin Michaud  <justin_michaud@apple.com>
 
         Repeated background images with zero size should display the background color

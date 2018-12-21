@@ -1505,6 +1505,18 @@ TEST(WKAttachmentTests, AttachmentIdentifierOfClonedAttachment)
     EXPECT_WK_STREQ([attachment uniqueIdentifier], [webView stringByEvaluatingJavaScript:@"document.body.cloneNode(true).querySelector('attachment').uniqueIdentifier"]);
 }
 
+TEST(WKAttachmentTests, SetFileWrapperForPDFImageAttachment)
+{
+    auto webView = webViewForTestingAttachments();
+    [webView evaluateJavaScript:@"document.body.appendChild()" completionHandler:nil];
+    NSString *identifier = [webView stringByEvaluatingJavaScript:@"const i = document.createElement('img'); document.body.appendChild(i); HTMLAttachmentElement.getAttachmentIdentifier(i)"];
+    _WKAttachment *attachment = [webView _attachmentForIdentifier:identifier];
+
+    auto pdfFile = adoptNS([[NSFileWrapper alloc] initRegularFileWithContents:testPDFData()]);
+    [attachment setFileWrapper:pdfFile.get() contentType:(__bridge NSString *)kUTTypePDF completion:nil];
+    [webView waitForImageElementSizeToBecome:CGSizeMake(130, 29)];
+}
+
 #pragma mark - Platform-specific tests
 
 #if PLATFORM(MAC)

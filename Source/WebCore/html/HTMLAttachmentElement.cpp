@@ -226,6 +226,11 @@ void HTMLAttachmentElement::updateAttributes(Optional<uint64_t>&& newFileSize, c
         renderer->invalidate();
 }
 
+static bool mimeTypeIsSuitableForInlineImageAttachment(const String& mimeType)
+{
+    return MIMETypeRegistry::isSupportedImageMIMEType(mimeType) || MIMETypeRegistry::isPDFMIMEType(mimeType);
+}
+
 void HTMLAttachmentElement::updateEnclosingImageWithData(const String& contentType, Ref<SharedBuffer>&& data)
 {
     auto* hostElement = shadowHost();
@@ -238,7 +243,7 @@ void HTMLAttachmentElement::updateEnclosingImageWithData(const String& contentTy
         mimeType = MIMETypeFromUTI(contentType);
 #endif
 
-    if (!MIMETypeRegistry::isSupportedImageMIMEType(mimeType))
+    if (!mimeTypeIsSuitableForInlineImageAttachment(mimeType))
         return;
 
     hostElement->setAttributeWithoutSynchronization(HTMLNames::srcAttr, DOMURL::createObjectURL(document(), Blob::create(WTFMove(data), mimeType)));
