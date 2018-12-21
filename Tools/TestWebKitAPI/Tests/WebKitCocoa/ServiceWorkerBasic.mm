@@ -37,6 +37,7 @@
 #import <WebKit/WebKit.h>
 #import <WebKit/_WKExperimentalFeature.h>
 #import <WebKit/_WKWebsiteDataStoreConfiguration.h>
+#import <WebKit/_WKWebsitePolicies.h>
 #import <wtf/Deque.h>
 #import <wtf/HashMap.h>
 #import <wtf/RetainPtr.h>
@@ -62,7 +63,7 @@ static String retrievedString;
 @implementation SWMessageHandler
 - (void)userContentController:(WKUserContentController *)userContentController didReceiveScriptMessage:(WKScriptMessage *)message
 {
-    EXPECT_TRUE([[message body] isEqualToString:@"Message from worker: ServiceWorker received: Hello from the web page"]);
+    EXPECT_WK_STREQ(@"Message from worker: ServiceWorker received: Hello from the web page", [message body]);
     done = true;
 }
 @end
@@ -117,6 +118,7 @@ static String retrievedString;
 @interface SWSchemes : NSObject <WKURLSchemeHandler> {
 @public
     HashMap<String, ResourceInfo> resources;
+    NSString *expectedUserAgent;
 }
 
 -(size_t)handledRequests;
@@ -133,6 +135,9 @@ static String retrievedString;
 
 - (void)webView:(WKWebView *)webView startURLSchemeTask:(id <WKURLSchemeTask>)task
 {
+    if (expectedUserAgent)
+        EXPECT_WK_STREQ(expectedUserAgent, [[task.request valueForHTTPHeaderField:@"User-Agent"] UTF8String]);
+
     auto entry = resources.find([task.request.URL absoluteString]);
     if (entry == resources.end()) {
         NSLog(@"Did not find resource entry for URL %@", task.request.URL);
@@ -503,6 +508,78 @@ TEST(ServiceWorkers, Basic)
 
         done = true;
     }];
+
+    TestWebKitAPI::Util::run(&done);
+    done = false;
+}
+
+@interface SWCustomUserAgentDelegate : NSObject <WKNavigationDelegate> {
+}
+@end
+
+@implementation SWCustomUserAgentDelegate
+
+- (void)_webView:(WKWebView *)webView decidePolicyForNavigationAction:(WKNavigationAction *)navigationAction userInfo:(id <NSSecureCoding>)userInfo decisionHandler:(void (^)(WKNavigationActionPolicy, _WKWebsitePolicies *))decisionHandler
+{
+    _WKWebsitePolicies *websitePolicies = [[[_WKWebsitePolicies alloc] init] autorelease];
+    if (navigationAction.targetFrame.mainFrame)
+        [websitePolicies setCustomUserAgent:@"Foo Custom UserAgent"];
+
+    decisionHandler(WKNavigationActionPolicyAllow, websitePolicies);
+}
+
+@end
+
+@interface SWUserAgentMessageHandler : NSObject <WKScriptMessageHandler>
+@end
+
+@implementation SWUserAgentMessageHandler
+- (void)userContentController:(WKUserContentController *)userContentController didReceiveScriptMessage:(WKScriptMessage *)message
+{
+    // FIXME: navigator.userAgent currently does not reflect the custom user agent set by the client (https://bugs.webkit.org/show_bug.cgi?id=192951).
+    // EXPECT_WK_STREQ(@"Message from worker: Foo Custom UserAgent", [message body]);
+    done = true;
+}
+@end
+
+static const char* userAgentSWBytes = R"SWRESOURCE(
+
+self.addEventListener("message", (event) => {
+    event.source.postMessage(navigator.userAgent);
+});
+
+)SWRESOURCE";
+
+TEST(ServiceWorkers, UserAgentOverride)
+{
+    [WKWebsiteDataStore _allowWebsiteDataRecordsForAllOrigins];
+
+    // Start with a clean slate data store
+    [[WKWebsiteDataStore defaultDataStore] removeDataOfTypes:[WKWebsiteDataStore allWebsiteDataTypes] modifiedSince:[NSDate distantPast] completionHandler:^() {
+        done = true;
+    }];
+    TestWebKitAPI::Util::run(&done);
+    done = false;
+
+    auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+
+    auto messageHandler = adoptNS([[SWUserAgentMessageHandler alloc] init]);
+    [[configuration userContentController] addScriptMessageHandler:messageHandler.get() name:@"sw"];
+
+    auto handler = adoptNS([[SWSchemes alloc] init]);
+    handler->resources.set("sw://host/main.html", ResourceInfo { @"text/html", mainBytes });
+    handler->resources.set("sw://host/sw.js", ResourceInfo { @"application/javascript", userAgentSWBytes });
+    handler->expectedUserAgent = @"Foo Custom UserAgent";
+    [configuration setURLSchemeHandler:handler.get() forURLScheme:@"SW"];
+
+    RetainPtr<WKWebView> webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
+    [webView.get().configuration.processPool _registerURLSchemeServiceWorkersCanHandle:@"sw"];
+
+    auto delegate = adoptNS([[SWCustomUserAgentDelegate alloc] init]);
+    [webView setNavigationDelegate:delegate.get()];
+
+    NSURLRequest *request = [NSURLRequest requestWithURL:[NSURL URLWithString:@"sw://host/main.html"]];
+    [webView loadRequest:request];
 
     TestWebKitAPI::Util::run(&done);
     done = false;

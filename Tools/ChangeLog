@@ -1,5 +1,18 @@
 2018-12-20  Chris Dumez  <cdumez@apple.com>
 
+        Add API test coverage for customUserAgent client setting and service workers
+        https://bugs.webkit.org/show_bug.cgi?id=192952
+
+        Reviewed by Alex Christensen.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/ServiceWorkerBasic.mm:
+        (-[SWMessageHandler userContentController:didReceiveScriptMessage:]):
+        (-[SWSchemes webView:startURLSchemeTask:]):
+        (-[SWCustomUserAgentDelegate _webView:decidePolicyForNavigationAction:userInfo:decisionHandler:]):
+        (-[SWUserAgentMessageHandler userContentController:didReceiveScriptMessage:]):
+
+2018-12-20  Chris Dumez  <cdumez@apple.com>
+
         Use Optional::hasValue() instead of Optional::has_value()
         https://bugs.webkit.org/show_bug.cgi?id=192948
 
