@@ -2378,6 +2378,26 @@ def check_wtf_move(clean_lines, line_number, file_state, error):
     error(line_number, 'runtime/wtf_move', 4, "Use 'WTFMove()' instead of 'std::move()'.")
 
 
+def check_wtf_optional(clean_lines, line_number, file_state, error):
+    """Looks for use of 'std::optional<>' which should be replaced with 'WTF::Optional<>'.
+
+    Args:
+      clean_lines: A CleansedLines instance containing the file.
+      line_number: The number of the line to check.
+      file_state: A _FileState instance which maintains information about
+                  the state of things in the file.
+      error: The function to call with any errors found.
+    """
+
+    line = clean_lines.elided[line_number]  # Get rid of comments and strings.
+
+    using_std_optional = search(r'\boptional\s*\<', line)
+    if not using_std_optional:
+        return
+
+    error(line_number, 'runtime/wtf_optional', 4, "Use 'WTF::Optional<>' instead of 'std::optional<>'.")
+
+
 def check_ctype_functions(clean_lines, line_number, file_state, error):
     """Looks for use of the standard functions in ctype.h and suggest they be replaced
        by use of equivilent ones in <wtf/ASCIICType.h>?.
@@ -2915,6 +2935,7 @@ def check_style(clean_lines, line_number, file_extension, class_state, file_stat
     check_using_namespace(clean_lines, line_number, file_extension, error)
     check_max_min_macros(clean_lines, line_number, file_state, error)
     check_wtf_move(clean_lines, line_number, file_state, error)
+    check_wtf_optional(clean_lines, line_number, file_state, error)
     check_ctype_functions(clean_lines, line_number, file_state, error)
     check_switch_indentation(clean_lines, line_number, error)
     check_braces(clean_lines, line_number, file_state, error)
@@ -4038,6 +4059,7 @@ class CppChecker(object):
         'runtime/threadsafe_fn',
         'runtime/unsigned',
         'runtime/virtual',
+        'runtime/wtf_optional',
         'runtime/wtf_move',
         'security/assertion',
         'security/printf',

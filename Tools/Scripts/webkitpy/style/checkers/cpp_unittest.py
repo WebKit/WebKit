@@ -5081,6 +5081,29 @@ class WebKitStyleTest(CppStyleTestBase):
             "  [runtime/wtf_move] [4]",
             'foo.mm')
 
+    def test_wtf_optional(self):
+        self.assert_lint(
+             'Optional<int> a;',
+             '',
+             'foo.cpp')
+
+        self.assert_lint(
+             'WTF::Optional<int> a;',
+             '',
+             'foo.cpp')
+
+        self.assert_lint(
+            'std::optional<int> a;',
+            "Use 'WTF::Optional<>' instead of 'std::optional<>'."
+            "  [runtime/wtf_optional] [4]",
+            'foo.cpp')
+
+        self.assert_lint(
+            'optional<int> a;',
+            "Use 'WTF::Optional<>' instead of 'std::optional<>'."
+            "  [runtime/wtf_optional] [4]",
+            'foo.cpp')
+
     def test_ctype_fucntion(self):
         self.assert_lint(
             'int i = isascii(8);',
