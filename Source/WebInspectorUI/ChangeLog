@@ -1,5 +1,23 @@
 2018-12-20  Nikita Vasilyev  <nvasilyev@apple.com>
 
+        Web Inspector: Dark Mode: Type profiler popovers have black text on dark background
+        https://bugs.webkit.org/show_bug.cgi?id=192916
+        <rdar://problem/46863518>
+
+        Reviewed by Devin Rousso.
+
+        * UserInterface/Views/SourceCodeTextEditor.css:
+        (.popover .debugger-popover-content > .body):
+        * UserInterface/Views/TypeTreeElement.css:
+        (.item.type-tree-element.prototype):
+        (.item.type-tree-element.prototype:hover,):
+        * UserInterface/Views/TypeTreeView.css:
+        (.type-tree):
+        * UserInterface/Views/Variables.css:
+        (:root):
+
+2018-12-20  Nikita Vasilyev  <nvasilyev@apple.com>
+
         Web Inspector: Styles: Pressing Esc when editing name/value should select entire property
         https://bugs.webkit.org/show_bug.cgi?id=192919
 

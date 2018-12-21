@@ -37,6 +37,9 @@
     --text-color: black;
     --text-color-active: black;
 
+    /* Dividers, separators, background fills */
+    --text-color-quaternary: hsl(0, 0%, 85%);
+
     --background-color: white;
 
     --background-color-content: white;

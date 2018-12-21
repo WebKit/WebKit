@@ -144,7 +144,7 @@
 }
 
 .popover .debugger-popover-content > .body {
-    border-top: 1px solid hsla(0, 0%, 0%, 0.3);
+    border-top: 1px solid var(--text-color-quaternary);
     overflow: auto;
     padding-top: 2px;
 }

@@ -27,7 +27,7 @@
     position: relative;
     display: block;
 
-    color: black;
+    color: var(--text-color);
     font-family: -webkit-system-font, sans-serif;
     font-size: 12px;
 }

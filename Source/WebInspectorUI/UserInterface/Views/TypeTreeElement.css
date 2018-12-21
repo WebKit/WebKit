@@ -74,8 +74,9 @@ body[dir=rtl] .item.type-tree-element.parent > .disclosure-button {
 .item.type-tree-element.prototype {
     display: inline-block;
 
-    border: 1px solid hsla(0, 0%, 0%, 0.06);
-    background-color: hsla(0, 0%, 0%, 0.03);
+    /* Unusual order of values because of <webkit.org/b/192922>. */
+    border: hsla(0, 0%, var(--foreground-lightness), 0.06) solid 1px;
+    background-color: hsla(0, 0%, var(--foreground-lightness), 0.03);
     border-radius: 3px;
 
     padding-bottom: 1px;
@@ -98,7 +99,7 @@ body[dir=rtl] .item.type-tree-element.prototype {
 
 .item.type-tree-element.prototype:hover,
 .item.type-tree-element.prototype:focus {
-    border-color: hsla(0, 0%, 0%, 0.1);
+    border-color: hsla(0, 0%, var(--foreground-lightness), 0.1);
 }
 
 .item.type-tree-element.prototype + ol {
