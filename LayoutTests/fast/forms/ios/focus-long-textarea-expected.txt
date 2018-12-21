@@ -3,4 +3,4 @@ Tests zooming into a tall textarea on tap.
 
 tap location	{ x: 38.000, y: 664.000 }
 scale	1.455
-visibleRect	{ left: 0.000, top: 506.294, width: 219.979, height: 376.713 }
+visibleRect	{ left: 0.000, top: 498.045, width: 219.979, height: 376.713 }

@@ -24,8 +24,8 @@ editable.addEventListener("click", function(){
 if (window.testRunner) {
     testRunner.dumpAsText();
     jsTestIsAsync = true;
-    UIHelper.activateAndWaitForInputSessionAt(50, 300).then(() => {
-        UIHelper.tapAt(50, 300).then(() => {
+    UIHelper.activateAndWaitForInputSessionAt(50, 200).then(() => {
+        UIHelper.tapAt(50, 200).then(() => {
             shouldBeEqualToString("document.getElementById('clicks').textContent", `${clickCount}`);
             finishJSTest();
         });

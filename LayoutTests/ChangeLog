@@ -1,3 +1,25 @@
+2018-12-20  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [iOS] Some layout tests are failing after r239441
+        https://bugs.webkit.org/show_bug.cgi?id=192957
+        <rdar://problem/46781759>
+
+        Reviewed by Simon Fraser.
+
+        Fix several failing layout tests after r239441.
+
+        * fast/events/ios/click-event-while-editing-node.html:
+
+        This test started failing after r239441 because it taps the bottom of the editable element, and then expects
+        WebKit to scroll the web view up to reveal the touched location. This was exactly the bug that r239441 fixed, so
+        we should just make this test no longer depend on the broken behavior.
+
+        * fast/forms/ios/focus-long-textarea-expected.txt:
+        * fast/forms/ios/zoom-after-input-tap-wide-input-expected.txt:
+
+        Rebaseline a couple of test expectations to account for the change in margin around the selection rect, in
+        -[WKWebView _zoomToFocusRect:…:].
+
 2018-12-20  Jiewen Tan  <jiewen_tan@apple.com>
 
         [WebAuthN] Remove hash from Client Data
