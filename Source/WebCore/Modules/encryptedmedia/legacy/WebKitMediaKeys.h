@@ -31,6 +31,7 @@
 #include "LegacyCDM.h"
 #include <JavaScriptCore/Uint8Array.h>
 #include <wtf/Vector.h>
+#include <wtf/WeakPtr.h>
 
 namespace WebCore {
 
@@ -60,7 +61,7 @@ private:
     WebKitMediaKeys(const String& keySystem, std::unique_ptr<LegacyCDM>&&);
 
     Vector<Ref<WebKitMediaKeySession>> m_sessions;
-    HTMLMediaElement* m_mediaElement { nullptr };
+    WeakPtr<HTMLMediaElement> m_mediaElement;
     String m_keySystem;
     std::unique_ptr<LegacyCDM> m_cdm;
 };

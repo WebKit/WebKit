@@ -1,3 +1,22 @@
+2018-12-21  Jer Noble  <jer.noble@apple.com>
+
+        Convert raw CDMSessionMediaSourceAVFObjC pointer in MediaPlayerPrivateMediaSourceAVFObjC
+        https://bugs.webkit.org/show_bug.cgi?id=192985
+        <rdar://problem/46750743>
+
+        Reviewed by Eric Carlson.
+
+        Make m_session a RefPtr; drive-by fix: make m_mediaElement in WebKitMediaKeys a WeakPtr.
+
+        * Modules/encryptedmedia/legacy/WebKitMediaKeys.cpp:
+        (WebCore::WebKitMediaKeys::setMediaElement):
+        * Modules/encryptedmedia/legacy/WebKitMediaKeys.h:
+        * platform/graphics/avfoundation/objc/CDMSessionMediaSourceAVFObjC.h:
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateMediaSourceAVFObjC.h:
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateMediaSourceAVFObjC.mm:
+        (WebCore::MediaPlayerPrivateMediaSourceAVFObjC::MediaPlayerPrivateMediaSourceAVFObjC):
+        (WebCore::MediaPlayerPrivateMediaSourceAVFObjC::setCDMSession):
+
 2018-12-21  Justin Michaud  <justin_michaud@apple.com>
 
         CSS variables don't work for colors in "border" property
