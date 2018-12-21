@@ -43,31 +43,34 @@
  */
 
 #ifdef HAVE_CONFIG_H
-    #include <config.h>
+#include <config.h>
 #endif
 
 #include "auth.h"
 #include "alloc.h"
-#include "err.h"                /* for srtp_debug */
+#include "err.h" /* for srtp_debug */
 #include <openssl/evp.h>
 #include <openssl/hmac.h>
 
-#define SHA1_DIGEST_SIZE		20
+#define SHA1_DIGEST_SIZE 20
 
 /* the debug module for authentiation */
 
 srtp_debug_module_t srtp_mod_hmac = {
-    0,                /* debugging is off by default */
-    "hmac sha-1 openssl"   /* printable name for module   */
+    0,                   /* debugging is off by default */
+    "hmac sha-1 openssl" /* printable name for module   */
 };
 
-
-static srtp_err_status_t srtp_hmac_alloc (srtp_auth_t **a, int key_len, int out_len)
+static srtp_err_status_t srtp_hmac_alloc(srtp_auth_t **a,
+                                         int key_len,
+                                         int out_len)
 {
     extern const srtp_auth_type_t srtp_hmac;
 
-    debug_print(srtp_mod_hmac, "allocating auth func with key length %d", key_len);
-    debug_print(srtp_mod_hmac, "                          tag length %d", out_len);
+    debug_print(srtp_mod_hmac, "allocating auth func with key length %d",
+                key_len);
+    debug_print(srtp_mod_hmac, "                          tag length %d",
+                out_len);
 
     /* check output length - should be less than 20 bytes */
     if (out_len > SHA1_DIGEST_SIZE) {
@@ -76,24 +79,25 @@ static srtp_err_status_t srtp_hmac_alloc (srtp_auth_t **a, int key_len, int out_
 
 /* OpenSSL 1.1.0 made HMAC_CTX an opaque structure, which must be allocated
    using HMAC_CTX_new.  But this function doesn't exist in OpenSSL 1.0.x. */
-#if OPENSSL_VERSION_NUMBER < 0x10100000L
+#if OPENSSL_VERSION_NUMBER < 0x10100000L || LIBRESSL_VERSION_NUMBER
     {
         /* allocate memory for auth and HMAC_CTX structures */
-        uint8_t* pointer;
+        uint8_t *pointer;
         HMAC_CTX *new_hmac_ctx;
-        pointer = (uint8_t*)srtp_crypto_alloc(sizeof(HMAC_CTX) + sizeof(srtp_auth_t));
+        pointer = (uint8_t *)srtp_crypto_alloc(sizeof(HMAC_CTX) +
+                                               sizeof(srtp_auth_t));
         if (pointer == NULL) {
             return srtp_err_status_alloc_fail;
         }
-        *a = (srtp_auth_t*)pointer;
+        *a = (srtp_auth_t *)pointer;
         (*a)->state = pointer + sizeof(srtp_auth_t);
-        new_hmac_ctx = (HMAC_CTX*)((*a)->state);
+        new_hmac_ctx = (HMAC_CTX *)((*a)->state);
 
         HMAC_CTX_init(new_hmac_ctx);
     }
 
 #else
-    *a = (srtp_auth_t*)srtp_crypto_alloc(sizeof(srtp_auth_t));
+    *a = (srtp_auth_t *)srtp_crypto_alloc(sizeof(srtp_auth_t));
     if (*a == NULL) {
         return srtp_err_status_alloc_fail;
     }
@@ -115,13 +119,13 @@ static srtp_err_status_t srtp_hmac_alloc (srtp_auth_t **a, int key_len, int out_
     return srtp_err_status_ok;
 }
 
-static srtp_err_status_t srtp_hmac_dealloc (srtp_auth_t *a)
+static srtp_err_status_t srtp_hmac_dealloc(srtp_auth_t *a)
 {
     HMAC_CTX *hmac_ctx;
 
-    hmac_ctx = (HMAC_CTX*)a->state;
+    hmac_ctx = (HMAC_CTX *)a->state;
 
-#if OPENSSL_VERSION_NUMBER < 0x10100000L
+#if OPENSSL_VERSION_NUMBER < 0x10100000L || LIBRESSL_VERSION_NUMBER
     HMAC_CTX_cleanup(hmac_ctx);
 
     /* zeroize entire state*/
@@ -140,7 +144,7 @@ static srtp_err_status_t srtp_hmac_dealloc (srtp_auth_t *a)
     return srtp_err_status_ok;
 }
 
-static srtp_err_status_t srtp_hmac_start (void *statev)
+static srtp_err_status_t srtp_hmac_start(void *statev)
 {
     HMAC_CTX *state = (HMAC_CTX *)statev;
 
@@ -150,7 +154,9 @@ static srtp_err_status_t srtp_hmac_start (void *statev)
     return srtp_err_status_ok;
 }
 
-static srtp_err_status_t srtp_hmac_init (void *statev, const uint8_t *key, int key_len)
+static srtp_err_status_t srtp_hmac_init(void *statev,
+                                        const uint8_t *key,
+                                        int key_len)
 {
     HMAC_CTX *state = (HMAC_CTX *)statev;
 
@@ -160,7 +166,9 @@ static srtp_err_status_t srtp_hmac_init (void *statev, const uint8_t *key, int k
     return srtp_err_status_ok;
 }
 
-static srtp_err_status_t srtp_hmac_update (void *statev, const uint8_t *message, int msg_octets)
+static srtp_err_status_t srtp_hmac_update(void *statev,
+                                          const uint8_t *message,
+                                          int msg_octets)
 {
     HMAC_CTX *state = (HMAC_CTX *)statev;
 
@@ -173,8 +181,11 @@ static srtp_err_status_t srtp_hmac_update (void *statev, const uint8_t *message,
     return srtp_err_status_ok;
 }
 
-static srtp_err_status_t srtp_hmac_compute (void *statev, const uint8_t *message,
-              int msg_octets, int tag_len, uint8_t *result)
+static srtp_err_status_t srtp_hmac_compute(void *statev,
+                                           const uint8_t *message,
+                                           int msg_octets,
+                                           int tag_len,
+                                           uint8_t *result)
 {
     HMAC_CTX *state = (HMAC_CTX *)statev;
     uint8_t hash_value[SHA1_DIGEST_SIZE];
@@ -207,52 +218,56 @@ static srtp_err_status_t srtp_hmac_compute (void *statev, const uint8_t *message
     return srtp_err_status_ok;
 }
 
-
 /* begin test case 0 */
-
+/* clang-format off */
 static const uint8_t srtp_hmac_test_case_0_key[SHA1_DIGEST_SIZE] = {
     0x0b, 0x0b, 0x0b, 0x0b, 0x0b, 0x0b, 0x0b, 0x0b,
     0x0b, 0x0b, 0x0b, 0x0b, 0x0b, 0x0b, 0x0b, 0x0b,
     0x0b, 0x0b, 0x0b, 0x0b
 };
+/* clang-format on */
 
+/* clang-format off */
 static const uint8_t srtp_hmac_test_case_0_data[8] = {
     0x48, 0x69, 0x20, 0x54, 0x68, 0x65, 0x72, 0x65 /* "Hi There" */
 };
+/* clang-format on */
 
+/* clang-format off */
 static const uint8_t srtp_hmac_test_case_0_tag[SHA1_DIGEST_SIZE] = {
     0xb6, 0x17, 0x31, 0x86, 0x55, 0x05, 0x72, 0x64,
     0xe2, 0x8b, 0xc0, 0xb6, 0xfb, 0x37, 0x8c, 0x8e,
     0xf1, 0x46, 0xbe, 0x00
 };
+/* clang-format on */
 
 static const srtp_auth_test_case_t srtp_hmac_test_case_0 = {
-    sizeof(srtp_hmac_test_case_0_key),    /* octets in key            */
-    srtp_hmac_test_case_0_key,            /* key                      */
-    sizeof(srtp_hmac_test_case_0_data),   /* octets in data           */
-    srtp_hmac_test_case_0_data,           /* data                     */
-    sizeof(srtp_hmac_test_case_0_tag),    /* octets in tag            */
-    srtp_hmac_test_case_0_tag,            /* tag                      */
-    NULL                             /* pointer to next testcase */
+    sizeof(srtp_hmac_test_case_0_key),  /* octets in key            */
+    srtp_hmac_test_case_0_key,          /* key                      */
+    sizeof(srtp_hmac_test_case_0_data), /* octets in data           */
+    srtp_hmac_test_case_0_data,         /* data                     */
+    sizeof(srtp_hmac_test_case_0_tag),  /* octets in tag            */
+    srtp_hmac_test_case_0_tag,          /* tag                      */
+    NULL                                /* pointer to next testcase */
 };
 
 /* end test case 0 */
 
-static const char srtp_hmac_description[] = "hmac sha-1 authentication function";
+static const char srtp_hmac_description[] =
+    "hmac sha-1 authentication function";
 
 /*
  * srtp_auth_type_t hmac is the hmac metaobject
  */
 
-const srtp_auth_type_t srtp_hmac  = {
-    srtp_hmac_alloc,
-    srtp_hmac_dealloc,
-    srtp_hmac_init,
-    srtp_hmac_compute,
-    srtp_hmac_update,
-    srtp_hmac_start,
-    srtp_hmac_description,
-    &srtp_hmac_test_case_0,
-    SRTP_HMAC_SHA1
+const srtp_auth_type_t srtp_hmac = {
+    srtp_hmac_alloc,        /* */
+    srtp_hmac_dealloc,      /* */
+    srtp_hmac_init,         /* */
+    srtp_hmac_compute,      /* */
+    srtp_hmac_update,       /* */
+    srtp_hmac_start,        /* */
+    srtp_hmac_description,  /* */
+    &srtp_hmac_test_case_0, /* */
+    SRTP_HMAC_SHA1          /* */
 };
-

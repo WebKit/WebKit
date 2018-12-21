@@ -21,6 +21,7 @@
 /* End PBXAggregateTarget section */
 
 /* Begin PBXBuildFile section */
+		4100CDF921CAE33400F9B87D /* srtpsession.cc in Sources */ = {isa = PBXBuildFile; fileRef = 419C82D01FE20E560040C30F /* srtpsession.cc */; };
 		4102F68D21273206006AE8D7 /* rtcstatstraversal.h in Headers */ = {isa = PBXBuildFile; fileRef = 4102F68421273204006AE8D7 /* rtcstatstraversal.h */; };
 		4102F68E21273206006AE8D7 /* jseptransportcontroller.h in Headers */ = {isa = PBXBuildFile; fileRef = 4102F68521273204006AE8D7 /* jseptransportcontroller.h */; };
 		4102F68F21273206006AE8D7 /* transportstats.cc in Sources */ = {isa = PBXBuildFile; fileRef = 4102F68621273205006AE8D7 /* transportstats.cc */; };
@@ -831,7 +832,6 @@
 		419C82DB1FE20E590040C30F /* rtptransportinternaladapter.h in Headers */ = {isa = PBXBuildFile; fileRef = 419C82CD1FE20E550040C30F /* rtptransportinternaladapter.h */; };
 		419C82DC1FE20E590040C30F /* sdputils.cc in Sources */ = {isa = PBXBuildFile; fileRef = 419C82CE1FE20E550040C30F /* sdputils.cc */; };
 		419C82DD1FE20E590040C30F /* sdputils.h in Headers */ = {isa = PBXBuildFile; fileRef = 419C82CF1FE20E560040C30F /* sdputils.h */; };
-		419C82DE1FE20E590040C30F /* srtpsession.cc in Sources */ = {isa = PBXBuildFile; fileRef = 419C82D01FE20E560040C30F /* srtpsession.cc */; };
 		419C82DF1FE20E590040C30F /* srtptransport.cc in Sources */ = {isa = PBXBuildFile; fileRef = 419C82D11FE20E560040C30F /* srtptransport.cc */; };
 		419C82E01FE20E590040C30F /* dtlssrtptransport.h in Headers */ = {isa = PBXBuildFile; fileRef = 419C82D21FE20E570040C30F /* dtlssrtptransport.h */; };
 		419C82E11FE20E590040C30F /* srtpsession.h in Headers */ = {isa = PBXBuildFile; fileRef = 419C82D31FE20E570040C30F /* srtpsession.h */; };
@@ -15714,6 +15714,7 @@
 				5C088C1E1E4AA44400403995 /* rtcpmuxfilter.cc in Sources */,
 				5C088C201E4AA44400403995 /* srtpfilter.cc in Sources */,
 				41239B4D2147743A00396F81 /* video_stream_encoder_create.cc in Sources */,
+				4100CDF921CAE33400F9B87D /* srtpsession.cc in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -17075,7 +17076,6 @@
 				5CDD835F1E43257200621E92 /* sps_parser.cc in Sources */,
 				5CDD83621E43257200621E92 /* sps_vui_rewriter.cc in Sources */,
 				5CDD86721E43B8B500621E92 /* sqrt_of_one_minus_x_squared.c in Sources */,
-				419C82DE1FE20E590040C30F /* srtpsession.cc in Sources */,
 				419C82DF1FE20E590040C30F /* srtptransport.cc in Sources */,
 				419C845E1FE255FA0040C30F /* ssl_aead_ctx.cc in Sources */,
 				419C84741FE255FA0040C30F /* ssl_asn1.cc in Sources */,

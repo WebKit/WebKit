@@ -44,7 +44,6 @@
  *
  */
 
-
 #ifndef NULL_CIPHER_H
 #define NULL_CIPHER_H
 

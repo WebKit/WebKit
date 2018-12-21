@@ -52,11 +52,10 @@
 #include <openssl/aes.h>
 
 typedef struct {
-    v128_t counter;                /* holds the counter value          */
-    v128_t offset;                 /* initial offset value             */
+    v128_t counter; /* holds the counter value          */
+    v128_t offset;  /* initial offset value             */
     int key_size;
-    EVP_CIPHER_CTX* ctx;
+    EVP_CIPHER_CTX *ctx;
 } srtp_aes_icm_ctx_t;
 
 #endif /* AES_ICM_H */
-

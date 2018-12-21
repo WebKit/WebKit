@@ -1,5 +1,3 @@
-
-
 /*
  * srtp_driver.c
  *
@@ -44,7 +42,6 @@
  *
  */
 
-
 #include <string.h>   /* for memcpy()          */
 #include <time.h>     /* for clock()           */
 #include <stdlib.h>   /* for malloc(), free()  */
@@ -55,96 +52,73 @@
 #include "util.h"
 
 #ifdef HAVE_NETINET_IN_H
-# include <netinet/in.h>
+#include <netinet/in.h>
 #elif defined HAVE_WINSOCK2_H
-# include <winsock2.h>
+#include <winsock2.h>
 #endif
 
 #define PRINT_REFERENCE_PACKET 1
 
-srtp_err_status_t
-srtp_validate(void);
+srtp_err_status_t srtp_validate(void);
 
 #ifdef OPENSSL
-srtp_err_status_t
-srtp_validate_gcm(void);
+srtp_err_status_t srtp_validate_gcm(void);
 #endif
 
-srtp_err_status_t
-srtp_validate_encrypted_extensions_headers(void);
+srtp_err_status_t srtp_validate_encrypted_extensions_headers(void);
 
 #ifdef OPENSSL
-srtp_err_status_t
-srtp_validate_encrypted_extensions_headers_gcm(void);
+srtp_err_status_t srtp_validate_encrypted_extensions_headers_gcm(void);
 #endif
 
-srtp_err_status_t
-srtp_validate_aes_256(void);
+srtp_err_status_t srtp_validate_aes_256(void);
 
-srtp_err_status_t
-srtp_create_big_policy(srtp_policy_t **list);
+srtp_err_status_t srtp_create_big_policy(srtp_policy_t **list);
 
-srtp_err_status_t
-srtp_dealloc_big_policy(srtp_policy_t *list);
+srtp_err_status_t srtp_dealloc_big_policy(srtp_policy_t *list);
 
-srtp_err_status_t
-srtp_test_empty_payload(void);
+srtp_err_status_t srtp_test_empty_payload(void);
 
 #ifdef OPENSSL
-srtp_err_status_t
-srtp_test_empty_payload_gcm(void);
+srtp_err_status_t srtp_test_empty_payload_gcm(void);
 #endif
 
-srtp_err_status_t
-srtp_test_remove_stream(void);
+srtp_err_status_t srtp_test_remove_stream(void);
 
-srtp_err_status_t
-srtp_test_update(void);
+srtp_err_status_t srtp_test_update(void);
 
-srtp_err_status_t
-srtp_test_protect_trailer_length(void);
+srtp_err_status_t srtp_test_protect_trailer_length(void);
 
-srtp_err_status_t
-srtp_test_protect_rtcp_trailer_length(void);
+srtp_err_status_t srtp_test_protect_rtcp_trailer_length(void);
 
-srtp_err_status_t
-srtp_test_get_roc(void);
+srtp_err_status_t srtp_test_get_roc(void);
 
-srtp_err_status_t
-srtp_test_set_receiver_roc(void);
+srtp_err_status_t srtp_test_set_receiver_roc(void);
 
-srtp_err_status_t
-srtp_test_set_sender_roc(void);
+srtp_err_status_t srtp_test_set_sender_roc(void);
 
-double
-srtp_bits_per_second(int msg_len_octets, const srtp_policy_t *policy);
+double srtp_bits_per_second(int msg_len_octets, const srtp_policy_t *policy);
 
-double
-srtp_rejections_per_second(int msg_len_octets, const srtp_policy_t *policy);
+double srtp_rejections_per_second(int msg_len_octets,
+                                  const srtp_policy_t *policy);
 
-void
-srtp_do_timing(const srtp_policy_t *policy);
+void srtp_do_timing(const srtp_policy_t *policy);
 
-void
-srtp_do_rejection_timing(const srtp_policy_t *policy);
+void srtp_do_rejection_timing(const srtp_policy_t *policy);
 
-srtp_err_status_t
-srtp_test(const srtp_policy_t *policy, int extension_header, int mki_index);
+srtp_err_status_t srtp_test(const srtp_policy_t *policy,
+                            int extension_header,
+                            int mki_index);
 
-srtp_err_status_t
-srtcp_test(const srtp_policy_t *policy, int mki_index);
+srtp_err_status_t srtcp_test(const srtp_policy_t *policy, int mki_index);
 
-srtp_err_status_t
-srtp_session_print_policy(srtp_t srtp);
+srtp_err_status_t srtp_session_print_policy(srtp_t srtp);
 
-srtp_err_status_t
-srtp_print_policy(const srtp_policy_t *policy);
+srtp_err_status_t srtp_print_policy(const srtp_policy_t *policy);
 
-char *
-srtp_packet_to_string(srtp_hdr_t *hdr, int packet_len);
+char *srtp_packet_to_string(srtp_hdr_t *hdr, int packet_len);
 
-double
-mips_estimate(int num_trials, int *ignore);
+double mips_estimate(int num_trials, int *ignore);
 
 #define TEST_MKI_ID_SIZE 4
 
@@ -153,6 +127,7 @@ extern uint8_t test_key_2[46];
 extern uint8_t test_mki_id[TEST_MKI_ID_SIZE];
 extern uint8_t test_mki_id_2[TEST_MKI_ID_SIZE];
 
+// clang-format off
 srtp_master_key_t master_key_1 = {
     test_key,
     test_mki_id,
@@ -169,9 +144,9 @@ srtp_master_key_t *test_keys[2] = {
     &master_key_1,
     &master_key_2
 };
+// clang-format on
 
-void
-usage (char *prog_name)
+void usage(char *prog_name)
 {
     printf("usage: %s [ -t ][ -c ][ -v ][ -o ][-d <debug_module> ]* [ -l ]\n"
            "  -t         run timing test\n"
@@ -180,19 +155,27 @@ usage (char *prog_name)
            "  -v         run validation tests\n"
            "  -o         output logging to stdout\n"
            "  -d <mod>   turn on debugging module <mod>\n"
-           "  -l         list debugging modules\n", prog_name);
+           "  -l         list debugging modules\n",
+           prog_name);
     exit(1);
 }
 
-void
-log_handler (srtp_log_level_t level, const char * msg, void * data)
+void log_handler(srtp_log_level_t level, const char *msg, void *data)
 {
     char level_char = '?';
-    switch(level) {
-        case srtp_log_level_error: level_char = 'e'; break;
-        case srtp_log_level_warning: level_char = 'w'; break;
-        case srtp_log_level_info: level_char = 'i'; break;
-        case srtp_log_level_debug: level_char = 'd'; break;
+    switch (level) {
+    case srtp_log_level_error:
+        level_char = 'e';
+        break;
+    case srtp_log_level_warning:
+        level_char = 'w';
+        break;
+    case srtp_log_level_info:
+        level_char = 'i';
+        break;
+    case srtp_log_level_debug:
+        level_char = 'd';
+        break;
     }
     printf("SRTP-LOG [%c]: %s\n", level_char, msg);
 }
@@ -203,7 +186,6 @@ log_handler (srtp_log_level_t level, const char * msg, void * data)
  */
 
 extern const srtp_policy_t *policy_array[];
-
 
 /* the wildcard_policy is declared below; it has a wildcard ssrc */
 
@@ -217,20 +199,19 @@ extern const srtp_policy_t wildcard_policy;
  */
 
 srtp_debug_module_t mod_driver = {
-    0,                /* debugging is off by default */
-    "driver"          /* printable name for module   */
+    0,       /* debugging is off by default */
+    "driver" /* printable name for module   */
 };
 
-int
-main (int argc, char *argv[])
+int main(int argc, char *argv[])
 {
     int q;
-    unsigned do_timing_test    = 0;
+    unsigned do_timing_test = 0;
     unsigned do_rejection_test = 0;
-    unsigned do_codec_timing   = 0;
-    unsigned do_validation     = 0;
-    unsigned do_list_mods      = 0;
-    unsigned do_log_stdout     = 0;
+    unsigned do_codec_timing = 0;
+    unsigned do_validation = 0;
+    unsigned do_list_mods = 0;
+    unsigned do_log_stdout = 0;
     srtp_err_status_t status;
 
     /*
@@ -255,7 +236,8 @@ main (int argc, char *argv[])
     status = srtp_crypto_kernel_load_debug_module(&mod_driver);
     if (status) {
         printf("error: load of srtp_driver debug module failed "
-               "with error code %d\n", status);
+               "with error code %d\n",
+               status);
         exit(1);
     }
 
@@ -296,8 +278,8 @@ main (int argc, char *argv[])
         }
     }
 
-    if (!do_validation && !do_timing_test && !do_codec_timing
-        && !do_list_mods && !do_rejection_test) {
+    if (!do_validation && !do_timing_test && !do_codec_timing &&
+        !do_list_mods && !do_rejection_test) {
         usage(argv[0]);
     }
 
@@ -326,51 +308,56 @@ main (int argc, char *argv[])
             printf("testing srtp_protect and srtp_unprotect\n");
             if (srtp_test(*policy, 0, -1) == srtp_err_status_ok) {
                 printf("passed\n\n");
-            } else{
+            } else {
                 printf("failed\n");
                 exit(1);
             }
 
-            printf("testing srtp_protect and srtp_unprotect with encrypted extensions headers\n");
+            printf("testing srtp_protect and srtp_unprotect with encrypted "
+                   "extensions headers\n");
             if (srtp_test(*policy, 1, -1) == srtp_err_status_ok) {
                 printf("passed\n\n");
-            } else{
+            } else {
                 printf("failed\n");
                 exit(1);
             }
             printf("testing srtp_protect_rtcp and srtp_unprotect_rtcp\n");
             if (srtcp_test(*policy, -1) == srtp_err_status_ok) {
                 printf("passed\n\n");
-            } else{
+            } else {
                 printf("failed\n");
                 exit(1);
             }
-            printf("testing srtp_protect_rtp and srtp_unprotect_rtp with MKI index set to 0\n");
+            printf("testing srtp_protect_rtp and srtp_unprotect_rtp with MKI "
+                   "index set to 0\n");
             if (srtp_test(*policy, 0, 0) == srtp_err_status_ok) {
                 printf("passed\n\n");
-            } else{
+            } else {
                 printf("failed\n");
                 exit(1);
             }
-            printf("testing srtp_protect_rtp and srtp_unprotect_rtp with MKI index set to 1\n");
+            printf("testing srtp_protect_rtp and srtp_unprotect_rtp with MKI "
+                   "index set to 1\n");
             if (srtp_test(*policy, 0, 1) == srtp_err_status_ok) {
                 printf("passed\n\n");
-            } else{
+            } else {
                 printf("failed\n");
                 exit(1);
             }
 
-            printf("testing srtp_protect_rtcp and srtp_unprotect_rtcp with MKI index set to 0\n");
+            printf("testing srtp_protect_rtcp and srtp_unprotect_rtcp with MKI "
+                   "index set to 0\n");
             if (srtcp_test(*policy, 0) == srtp_err_status_ok) {
                 printf("passed\n\n");
-            } else{
+            } else {
                 printf("failed\n");
                 exit(1);
             }
-            printf("testing srtp_protect_rtcp and srtp_unprotect_rtcp with MKI index set to 1\n");
+            printf("testing srtp_protect_rtcp and srtp_unprotect_rtcp with MKI "
+                   "index set to 1\n");
             if (srtcp_test(*policy, 1) == srtp_err_status_ok) {
                 printf("passed\n\n");
-            } else{
+            } else {
                 printf("failed\n");
                 exit(1);
             }
@@ -386,14 +373,15 @@ main (int argc, char *argv[])
         printf("testing srtp_protect and srtp_unprotect with big policy\n");
         if (srtp_test(big_policy, 0, -1) == srtp_err_status_ok) {
             printf("passed\n\n");
-        } else{
+        } else {
             printf("failed\n");
             exit(1);
         }
-        printf("testing srtp_protect and srtp_unprotect with big policy and encrypted extensions headers\n");
+        printf("testing srtp_protect and srtp_unprotect with big policy and "
+               "encrypted extensions headers\n");
         if (srtp_test(big_policy, 1, -1) == srtp_err_status_ok) {
             printf("passed\n\n");
-        } else{
+        } else {
             printf("failed\n");
             exit(1);
         }
@@ -408,7 +396,7 @@ main (int argc, char *argv[])
                "wildcard ssrc policy\n");
         if (srtp_test(&wildcard_policy, 0, -1) == srtp_err_status_ok) {
             printf("passed\n\n");
-        } else{
+        } else {
             printf("failed\n");
             exit(1);
         }
@@ -416,7 +404,7 @@ main (int argc, char *argv[])
                "wildcard ssrc policy and encrypted extensions headers\n");
         if (srtp_test(&wildcard_policy, 1, -1) == srtp_err_status_ok) {
             printf("passed\n\n");
-        } else{
+        } else {
             printf("failed\n");
             exit(1);
         }
@@ -429,7 +417,7 @@ main (int argc, char *argv[])
                "reference packet\n");
         if (srtp_validate() == srtp_err_status_ok) {
             printf("passed\n\n");
-        } else{
+        } else {
             printf("failed\n");
             exit(1);
         }
@@ -439,7 +427,7 @@ main (int argc, char *argv[])
                "reference packet using GCM\n");
         if (srtp_validate_gcm() == srtp_err_status_ok) {
             printf("passed\n\n");
-        } else{
+        } else {
             printf("failed\n");
             exit(1);
         }
@@ -457,9 +445,10 @@ main (int argc, char *argv[])
 #ifdef OPENSSL
         printf("testing srtp_protect and srtp_unprotect against "
                "reference packet with encrypted extension headers (GCM)\n");
-        if (srtp_validate_encrypted_extensions_headers_gcm() == srtp_err_status_ok) {
+        if (srtp_validate_encrypted_extensions_headers_gcm() ==
+            srtp_err_status_ok) {
             printf("passed\n\n");
-        } else{
+        } else {
             printf("failed\n");
             exit(1);
         }
@@ -473,7 +462,7 @@ main (int argc, char *argv[])
                "reference packet (AES-256)\n");
         if (srtp_validate_aes_256() == srtp_err_status_ok) {
             printf("passed\n\n");
-        } else{
+        } else {
             printf("failed\n");
             exit(1);
         }
@@ -485,7 +474,7 @@ main (int argc, char *argv[])
                "packet with empty payload\n");
         if (srtp_test_empty_payload() == srtp_err_status_ok) {
             printf("passed\n");
-        } else{
+        } else {
             printf("failed\n");
             exit(1);
         }
@@ -494,7 +483,7 @@ main (int argc, char *argv[])
                "packet with empty payload (GCM)\n");
         if (srtp_test_empty_payload_gcm() == srtp_err_status_ok) {
             printf("passed\n");
-        } else{
+        } else {
             printf("failed\n");
             exit(1);
         }
@@ -506,7 +495,7 @@ main (int argc, char *argv[])
         printf("testing srtp_remove_stream()...");
         if (srtp_test_remove_stream() == srtp_err_status_ok) {
             printf("passed\n");
-        } else{
+        } else {
             printf("failed\n");
             exit(1);
         }
@@ -565,7 +554,6 @@ main (int argc, char *argv[])
             printf("failed\n");
             exit(1);
         }
-
     }
 
     if (do_timing_test) {
@@ -598,7 +586,7 @@ main (int argc, char *argv[])
         memset(&policy, 0, sizeof(policy));
         srtp_crypto_policy_set_rtp_default(&policy.rtp);
         srtp_crypto_policy_set_rtcp_default(&policy.rtcp);
-        policy.ssrc.type  = ssrc_specific;
+        policy.ssrc.type = ssrc_specific;
         policy.ssrc.value = 0xdecafbad;
         policy.key = test_key;
         policy.ekt = NULL;
@@ -612,28 +600,28 @@ main (int argc, char *argv[])
         printf("codec\t\tlength (octets)\t\tsrtp instructions/second\n");
         printf("G.711\t\t%d\t\t\t%e\n", 80,
                (double)mips_value * (80 * 8) /
-               srtp_bits_per_second(80, &policy) / .01 );
+                   srtp_bits_per_second(80, &policy) / .01);
         printf("G.711\t\t%d\t\t\t%e\n", 160,
                (double)mips_value * (160 * 8) /
-               srtp_bits_per_second(160, &policy) / .02);
+                   srtp_bits_per_second(160, &policy) / .02);
         printf("G.726-32\t%d\t\t\t%e\n", 40,
                (double)mips_value * (40 * 8) /
-               srtp_bits_per_second(40, &policy) / .01 );
+                   srtp_bits_per_second(40, &policy) / .01);
         printf("G.726-32\t%d\t\t\t%e\n", 80,
                (double)mips_value * (80 * 8) /
-               srtp_bits_per_second(80, &policy) / .02);
+                   srtp_bits_per_second(80, &policy) / .02);
         printf("G.729\t\t%d\t\t\t%e\n", 10,
                (double)mips_value * (10 * 8) /
-               srtp_bits_per_second(10, &policy) / .01 );
+                   srtp_bits_per_second(10, &policy) / .01);
         printf("G.729\t\t%d\t\t\t%e\n", 20,
                (double)mips_value * (20 * 8) /
-               srtp_bits_per_second(20, &policy) / .02 );
+                   srtp_bits_per_second(20, &policy) / .02);
         printf("Wideband\t%d\t\t\t%e\n", 320,
                (double)mips_value * (320 * 8) /
-               srtp_bits_per_second(320, &policy) / .01 );
+                   srtp_bits_per_second(320, &policy) / .01);
         printf("Wideband\t%d\t\t\t%e\n", 640,
                (double)mips_value * (640 * 8) /
-               srtp_bits_per_second(640, &policy) / .02 );
+                   srtp_bits_per_second(640, &policy) / .02);
     }
 
     status = srtp_shutdown();
@@ -644,8 +632,6 @@ main (int argc, char *argv[])
 
     return 0;
 }
-
-
 
 /*
  * srtp_create_test_packet(len, ssrc) returns a pointer to a
@@ -660,8 +646,9 @@ main (int argc, char *argv[])
  * deallocated with the free() call once it is no longer needed.
  */
 
-srtp_hdr_t *
-srtp_create_test_packet (int pkt_octet_len, uint32_t ssrc)
+srtp_hdr_t *srtp_create_test_packet(int pkt_octet_len,
+                                    uint32_t ssrc,
+                                    int *pkt_len)
 {
     int i;
     uint8_t *buffer;
@@ -669,23 +656,23 @@ srtp_create_test_packet (int pkt_octet_len, uint32_t ssrc)
     int bytes_in_hdr = 12;
 
     /* allocate memory for test packet */
-    hdr = (srtp_hdr_t*)malloc(pkt_octet_len + bytes_in_hdr
-                              + SRTP_MAX_TRAILER_LEN + 4);
+    hdr = (srtp_hdr_t *)malloc(pkt_octet_len + bytes_in_hdr +
+                               SRTP_MAX_TRAILER_LEN + 4);
     if (!hdr) {
         return NULL;
     }
 
-    hdr->version = 2;              /* RTP version two     */
-    hdr->p    = 0;                 /* no padding needed   */
-    hdr->x    = 0;                 /* no header extension */
-    hdr->cc   = 0;                 /* no CSRCs            */
-    hdr->m    = 0;                 /* marker bit          */
-    hdr->pt   = 0xf;               /* payload type        */
-    hdr->seq  = htons(0x1234);     /* sequence number     */
-    hdr->ts   = htonl(0xdecafbad); /* timestamp           */
-    hdr->ssrc = htonl(ssrc);       /* synch. source       */
+    hdr->version = 2;            /* RTP version two     */
+    hdr->p = 0;                  /* no padding needed   */
+    hdr->x = 0;                  /* no header extension */
+    hdr->cc = 0;                 /* no CSRCs            */
+    hdr->m = 0;                  /* marker bit          */
+    hdr->pt = 0xf;               /* payload type        */
+    hdr->seq = htons(0x1234);    /* sequence number     */
+    hdr->ts = htonl(0xdecafbad); /* timestamp           */
+    hdr->ssrc = htonl(ssrc);     /* synch. source       */
 
-    buffer = (uint8_t*)hdr;
+    buffer = (uint8_t *)hdr;
     buffer += bytes_in_hdr;
 
     /* set RTP data to 0xab */
@@ -698,85 +685,91 @@ srtp_create_test_packet (int pkt_octet_len, uint32_t ssrc)
         *buffer++ = 0xff;
     }
 
+    *pkt_len = bytes_in_hdr + pkt_octet_len;
+
     return hdr;
 }
 
-static srtp_hdr_t *
-srtp_create_test_packet_extended (int pkt_octet_len, uint32_t ssrc, uint16_t seq, uint32_t ts)
+static srtp_hdr_t *srtp_create_test_packet_extended(int pkt_octet_len,
+                                                    uint32_t ssrc,
+                                                    uint16_t seq,
+                                                    uint32_t ts,
+                                                    int *pkt_len)
 {
-  srtp_hdr_t *hdr;
+    srtp_hdr_t *hdr;
 
-  hdr = srtp_create_test_packet(pkt_octet_len, ssrc);
-  if (hdr == NULL)
+    hdr = srtp_create_test_packet(pkt_octet_len, ssrc, pkt_len);
+    if (hdr == NULL)
+        return hdr;
+
+    hdr->seq = htons(seq);
+    hdr->ts = htonl(ts);
     return hdr;
-
-  hdr->seq  = htons(seq);
-  hdr->ts   = htonl(ts);
-  return hdr;
 }
 
-srtp_hdr_t *
-srtp_create_test_packet_ext_hdr(int pkt_octet_len, uint32_t ssrc) {
-  int i;
-  uint8_t *buffer;
-  srtp_hdr_t *hdr;
-  int bytes_in_hdr = 12;
-  uint8_t extension_header[12] = {
-    /* one-byte header */
-    0xbe, 0xde,
-    /* size */
-    0x00, 0x02,
-    /* id 1, length 1 (i.e. 2 bytes) */
-    0x11,
-    /* payload */
-    0xca,
-    0xfe,
-    /* padding */
-    0x00,
-    /* id 2, length 0 (i.e. 1 byte) */
-    0x20,
-    /* payload */
-    0xba,
-    /* padding */
-    0x00,
-    0x00
-  };
+srtp_hdr_t *srtp_create_test_packet_ext_hdr(int pkt_octet_len,
+                                            uint32_t ssrc,
+                                            int *pkt_len)
+{
+    int i;
+    uint8_t *buffer;
+    srtp_hdr_t *hdr;
+    int bytes_in_hdr = 12;
+    uint8_t extension_header[12] = { /* one-byte header */
+                                     0xbe, 0xde,
+                                     /* size */
+                                     0x00, 0x02,
+                                     /* id 1, length 1 (i.e. 2 bytes) */
+                                     0x11,
+                                     /* payload */
+                                     0xca, 0xfe,
+                                     /* padding */
+                                     0x00,
+                                     /* id 2, length 0 (i.e. 1 byte) */
+                                     0x20,
+                                     /* payload */
+                                     0xba,
+                                     /* padding */
+                                     0x00, 0x00
+    };
 
-  /* allocate memory for test packet */
-  hdr = (srtp_hdr_t*) malloc(pkt_octet_len + bytes_in_hdr
-           + sizeof(extension_header) + SRTP_MAX_TRAILER_LEN + 4);
-  if (!hdr)
-    return NULL;
+    /* allocate memory for test packet */
+    hdr = (srtp_hdr_t *)malloc(pkt_octet_len + bytes_in_hdr +
+                               sizeof(extension_header) + SRTP_MAX_TRAILER_LEN +
+                               4);
+    if (!hdr)
+        return NULL;
 
-  hdr->version = 2;              /* RTP version two     */
-  hdr->p    = 0;                 /* no padding needed   */
-  hdr->x    = 1;                 /* no header extension */
-  hdr->cc   = 0;                 /* no CSRCs            */
-  hdr->m    = 0;                 /* marker bit          */
-  hdr->pt   = 0xf;               /* payload type        */
-  hdr->seq  = htons(0x1234);     /* sequence number     */
-  hdr->ts   = htonl(0xdecafbad); /* timestamp           */
-  hdr->ssrc = htonl(ssrc);       /* synch. source       */
+    hdr->version = 2;            /* RTP version two     */
+    hdr->p = 0;                  /* no padding needed   */
+    hdr->x = 1;                  /* no header extension */
+    hdr->cc = 0;                 /* no CSRCs            */
+    hdr->m = 0;                  /* marker bit          */
+    hdr->pt = 0xf;               /* payload type        */
+    hdr->seq = htons(0x1234);    /* sequence number     */
+    hdr->ts = htonl(0xdecafbad); /* timestamp           */
+    hdr->ssrc = htonl(ssrc);     /* synch. source       */
 
-  buffer = (uint8_t *)hdr;
-  buffer += bytes_in_hdr;
+    buffer = (uint8_t *)hdr;
+    buffer += bytes_in_hdr;
 
-  memcpy(buffer, extension_header, sizeof(extension_header));
-  buffer += sizeof(extension_header);
+    memcpy(buffer, extension_header, sizeof(extension_header));
+    buffer += sizeof(extension_header);
 
-  /* set RTP data to 0xab */
-  for (i=0; i < pkt_octet_len; i++)
-    *buffer++ = 0xab;
+    /* set RTP data to 0xab */
+    for (i = 0; i < pkt_octet_len; i++)
+        *buffer++ = 0xab;
 
-  /* set post-data value to 0xffff to enable overrun checking */
-  for (i=0; i < SRTP_MAX_TRAILER_LEN+4; i++)
-    *buffer++ = 0xff;
+    /* set post-data value to 0xffff to enable overrun checking */
+    for (i = 0; i < SRTP_MAX_TRAILER_LEN + 4; i++)
+        *buffer++ = 0xff;
 
-  return hdr;
+    *pkt_len = bytes_in_hdr + sizeof(extension_header) + pkt_octet_len;
+
+    return hdr;
 }
 
-void
-srtp_do_timing (const srtp_policy_t *policy)
+void srtp_do_timing(const srtp_policy_t *policy)
 {
     int len;
 
@@ -796,11 +789,9 @@ srtp_do_timing (const srtp_policy_t *policy)
 
     /* these extra linefeeds let gnuplot know that a dataset is done */
     printf("\r\n\r\n");
-
 }
 
-void
-srtp_do_rejection_timing (const srtp_policy_t *policy)
+void srtp_do_rejection_timing(const srtp_policy_t *policy)
 {
     int len;
 
@@ -819,21 +810,18 @@ srtp_do_rejection_timing (const srtp_policy_t *policy)
 
     /* these extra linefeeds let gnuplot know that a dataset is done */
     printf("\r\n\r\n");
-
 }
-
 
 #define MAX_MSG_LEN 1024
 
-double
-srtp_bits_per_second (int msg_len_octets, const srtp_policy_t *policy)
+double srtp_bits_per_second(int msg_len_octets, const srtp_policy_t *policy)
 {
     srtp_t srtp;
     srtp_hdr_t *mesg;
     int i;
     clock_t timer;
     int num_trials = 100000;
-    int len;
+    int input_len, len;
     uint32_t ssrc;
     srtp_err_status_t status;
 
@@ -858,15 +846,13 @@ srtp_bits_per_second (int msg_len_octets, const srtp_policy_t *policy)
     /*
      * create a test packet
      */
-    mesg = srtp_create_test_packet(msg_len_octets, ssrc);
+    mesg = srtp_create_test_packet(msg_len_octets, ssrc, &input_len);
     if (mesg == NULL) {
         return 0.0; /* indicate failure by returning zero */
-
     }
     timer = clock();
     for (i = 0; i < num_trials; i++) {
-        len = msg_len_octets + 12; /* add in rtp header length */
-
+        len = input_len;
         /* srtp protect message */
         status = srtp_protect(srtp, mesg, &len);
         if (status) {
@@ -876,7 +862,8 @@ srtp_bits_per_second (int msg_len_octets, const srtp_policy_t *policy)
 
         /* increment message number */
         {
-            /* hack sequence to avoid problems with macros for htons/ntohs on some systems */
+            /* hack sequence to avoid problems with macros for htons/ntohs on
+             * some systems */
             short new_seq = ntohs(mesg->seq) + 1;
             mesg->seq = htons(new_seq);
         }
@@ -891,12 +878,11 @@ srtp_bits_per_second (int msg_len_octets, const srtp_policy_t *policy)
         exit(1);
     }
 
-    return (double)(msg_len_octets) * 8 *
-           num_trials * CLOCKS_PER_SEC / timer;
+    return (double)(msg_len_octets)*8 * num_trials * CLOCKS_PER_SEC / timer;
 }
 
-double
-srtp_rejections_per_second (int msg_len_octets, const srtp_policy_t *policy)
+double srtp_rejections_per_second(int msg_len_octets,
+                                  const srtp_policy_t *policy)
 {
     srtp_ctx_t *srtp;
     srtp_hdr_t *mesg;
@@ -916,18 +902,16 @@ srtp_rejections_per_second (int msg_len_octets, const srtp_policy_t *policy)
         exit(1);
     }
 
-    mesg = srtp_create_test_packet(msg_len_octets, ssrc);
+    mesg = srtp_create_test_packet(msg_len_octets, ssrc, &len);
     if (mesg == NULL) {
         return 0.0; /* indicate failure by returning zero */
-
     }
-    len = msg_len_octets;
-    srtp_protect(srtp, (srtp_hdr_t*)mesg, &len);
+    srtp_protect(srtp, (srtp_hdr_t *)mesg, &len);
 
     timer = clock();
     for (i = 0; i < num_trials; i++) {
         len = msg_len_octets;
-        srtp_unprotect(srtp, (srtp_hdr_t*)mesg, &len);
+        srtp_unprotect(srtp, (srtp_hdr_t *)mesg, &len);
     }
     timer = clock() - timer;
 
@@ -942,56 +926,67 @@ srtp_rejections_per_second (int msg_len_octets, const srtp_policy_t *policy)
     return (double)num_trials * CLOCKS_PER_SEC / timer;
 }
 
-
-void
-err_check (srtp_err_status_t s)
+void err_check(srtp_err_status_t s)
 {
     if (s == srtp_err_status_ok) {
         return;
-    } else{
+    } else {
         fprintf(stderr, "error: unexpected srtp failure (code %d)\n", s);
     }
     exit(1);
 }
 
-srtp_err_status_t
-srtp_test_call_protect(srtp_t srtp_sender, srtp_hdr_t *hdr, int *len, int mki_index) {
+srtp_err_status_t srtp_test_call_protect(srtp_t srtp_sender,
+                                         srtp_hdr_t *hdr,
+                                         int *len,
+                                         int mki_index)
+{
     if (mki_index == -1) {
-	return srtp_protect(srtp_sender, hdr, len);
+        return srtp_protect(srtp_sender, hdr, len);
     } else {
-	return srtp_protect_mki(srtp_sender, hdr, len, 1, mki_index);
+        return srtp_protect_mki(srtp_sender, hdr, len, 1, mki_index);
     }
 }
 
-srtp_err_status_t
-srtp_test_call_protect_rtcp(srtp_t srtp_sender, srtp_hdr_t *hdr, int *len, int mki_index) {
+srtp_err_status_t srtp_test_call_protect_rtcp(srtp_t srtp_sender,
+                                              srtp_hdr_t *hdr,
+                                              int *len,
+                                              int mki_index)
+{
     if (mki_index == -1) {
-	return srtp_protect_rtcp(srtp_sender, hdr, len);
+        return srtp_protect_rtcp(srtp_sender, hdr, len);
     } else {
-	return srtp_protect_rtcp_mki(srtp_sender, hdr, len, 1, mki_index);
+        return srtp_protect_rtcp_mki(srtp_sender, hdr, len, 1, mki_index);
     }
 }
 
-srtp_err_status_t
-srtp_test_call_unprotect(srtp_t srtp_sender, srtp_hdr_t *hdr, int *len, int use_mki) {
+srtp_err_status_t srtp_test_call_unprotect(srtp_t srtp_sender,
+                                           srtp_hdr_t *hdr,
+                                           int *len,
+                                           int use_mki)
+{
     if (use_mki == -1) {
-	return srtp_unprotect(srtp_sender, hdr, len);
+        return srtp_unprotect(srtp_sender, hdr, len);
     } else {
-	return srtp_unprotect_mki(srtp_sender, hdr, len, use_mki);
+        return srtp_unprotect_mki(srtp_sender, hdr, len, use_mki);
     }
 }
 
-srtp_err_status_t
-srtp_test_call_unprotect_rtcp(srtp_t srtp_sender, srtp_hdr_t *hdr, int *len, int use_mki) {
+srtp_err_status_t srtp_test_call_unprotect_rtcp(srtp_t srtp_sender,
+                                                srtp_hdr_t *hdr,
+                                                int *len,
+                                                int use_mki)
+{
     if (use_mki == -1) {
-	return srtp_unprotect_rtcp(srtp_sender, hdr, len);
+        return srtp_unprotect_rtcp(srtp_sender, hdr, len);
     } else {
-	return srtp_unprotect_rtcp_mki(srtp_sender, hdr, len, use_mki);
+        return srtp_unprotect_rtcp_mki(srtp_sender, hdr, len, use_mki);
     }
 }
 
-srtp_err_status_t
-srtp_test (const srtp_policy_t *policy, int extension_header, int mki_index)
+srtp_err_status_t srtp_test(const srtp_policy_t *policy,
+                            int extension_header,
+                            int mki_index)
 {
     int i;
     srtp_t srtp_sender;
@@ -1000,9 +995,9 @@ srtp_test (const srtp_policy_t *policy, int extension_header, int mki_index)
     srtp_hdr_t *hdr, *hdr2;
     uint8_t hdr_enc[64];
     uint8_t *pkt_end;
-    int msg_len_octets, msg_len_enc;
-    int len;
-    int tag_length = policy->rtp.auth_tag_len;
+    int msg_len_octets, msg_len_enc, msg_len;
+    int len, len2;
+    uint32_t tag_length;
     uint32_t ssrc;
     srtp_policy_t *rcvr_policy;
     srtp_policy_t tmp_policy;
@@ -1010,7 +1005,7 @@ srtp_test (const srtp_policy_t *policy, int extension_header, int mki_index)
     int use_mki = 0;
 
     if (mki_index >= 0)
-	use_mki = 1;
+        use_mki = 1;
 
     if (extension_header) {
         memcpy(&tmp_policy, policy, sizeof(srtp_policy_t));
@@ -1031,17 +1026,20 @@ srtp_test (const srtp_policy_t *policy, int extension_header, int mki_index)
      */
     if (policy->ssrc.type != ssrc_specific) {
         ssrc = 0xdecafbad;
-    } else{
+    } else {
         ssrc = policy->ssrc.value;
     }
     msg_len_octets = 28;
     if (extension_header) {
-        hdr = srtp_create_test_packet_ext_hdr(msg_len_octets, ssrc);
-        hdr2 = srtp_create_test_packet_ext_hdr(msg_len_octets, ssrc);
+        hdr = srtp_create_test_packet_ext_hdr(msg_len_octets, ssrc, &len);
+        hdr2 = srtp_create_test_packet_ext_hdr(msg_len_octets, ssrc, &len2);
     } else {
-        hdr = srtp_create_test_packet(msg_len_octets, ssrc);
-        hdr2 = srtp_create_test_packet(msg_len_octets, ssrc);
+        hdr = srtp_create_test_packet(msg_len_octets, ssrc, &len);
+        hdr2 = srtp_create_test_packet(msg_len_octets, ssrc, &len2);
     }
+
+    /* save original msg len */
+    msg_len = len;
 
     if (hdr == NULL) {
         free(hdr2);
@@ -1052,18 +1050,12 @@ srtp_test (const srtp_policy_t *policy, int extension_header, int mki_index)
         return srtp_err_status_alloc_fail;
     }
 
-    /* set message length */
-    len = msg_len_octets;
-    if (extension_header) {
-        len += 12;
-    }
-
     debug_print(mod_driver, "before protection:\n%s",
                 srtp_packet_to_string(hdr, len));
 
 #if PRINT_REFERENCE_PACKET
     debug_print(mod_driver, "reference packet before protection:\n%s",
-                octet_string_hex_string((uint8_t*)hdr, len));
+                octet_string_hex_string((uint8_t *)hdr, len));
 #endif
     err_check(srtp_test_call_protect(srtp_sender, hdr, &len, mki_index));
 
@@ -1071,7 +1063,7 @@ srtp_test (const srtp_policy_t *policy, int extension_header, int mki_index)
                 srtp_packet_to_string(hdr, len));
 #if PRINT_REFERENCE_PACKET
     debug_print(mod_driver, "after protection:\n%s",
-                octet_string_hex_string((uint8_t*)hdr, len));
+                octet_string_hex_string((uint8_t *)hdr, len));
 #endif
 
     /* save protected message and length */
@@ -1085,16 +1077,14 @@ srtp_test (const srtp_policy_t *policy, int extension_header, int mki_index)
      * data following the packet is different, then we know that the
      * protect function is overwriting the end of the packet.
      */
-    pkt_end = (uint8_t*)hdr + sizeof(srtp_hdr_t)
-              + msg_len_octets + tag_length;
-    if (extension_header) {
-        pkt_end += 12;
-    }
+    err_check(srtp_get_protect_trailer_length(srtp_sender, use_mki, mki_index,
+                                              &tag_length));
+    pkt_end = (uint8_t *)hdr + msg_len + tag_length;
     for (i = 0; i < 4; i++) {
         if (pkt_end[i] != 0xff) {
             fprintf(stdout, "overwrite in srtp_protect() function "
-                    "(expected %x, found %x in trailing octet %d)\n",
-                    0xff, ((uint8_t*)hdr)[i], i);
+                            "(expected %x, found %x in trailing octet %d)\n",
+                    0xff, ((uint8_t *)hdr)[i], i);
             free(hdr);
             free(hdr2);
             return srtp_err_status_algo_fail;
@@ -1114,7 +1104,7 @@ srtp_test (const srtp_policy_t *policy, int extension_header, int mki_index)
         printf("testing that ciphertext is distinct from plaintext...");
         status = srtp_err_status_algo_fail;
         for (i = 12; i < msg_len_octets + 12; i++) {
-            if (((uint8_t*)hdr)[i] != ((uint8_t*)hdr2)[i]) {
+            if (((uint8_t *)hdr)[i] != ((uint8_t *)hdr2)[i]) {
                 status = srtp_err_status_ok;
             }
         }
@@ -1134,7 +1124,7 @@ srtp_test (const srtp_policy_t *policy, int extension_header, int mki_index)
      * we always copy the policy into the rcvr_policy, since otherwise
      * the compiler would fret about the constness of the policy
      */
-    rcvr_policy = (srtp_policy_t*)malloc(sizeof(srtp_policy_t));
+    rcvr_policy = (srtp_policy_t *)malloc(sizeof(srtp_policy_t));
     if (rcvr_policy == NULL) {
         free(hdr);
         free(hdr2);
@@ -1160,8 +1150,8 @@ srtp_test (const srtp_policy_t *policy, int extension_header, int mki_index)
                 srtp_packet_to_string(hdr, len));
 
     /* verify that the unprotected packet matches the origial one */
-    for (i = 0; i < msg_len_octets; i++) {
-        if (((uint8_t*)hdr)[i] != ((uint8_t*)hdr2)[i]) {
+    for (i = 0; i < len; i++) {
+        if (((uint8_t *)hdr)[i] != ((uint8_t *)hdr2)[i]) {
             fprintf(stdout, "mismatch at octet %d\n", i);
             status = srtp_err_status_algo_fail;
         }
@@ -1177,15 +1167,13 @@ srtp_test (const srtp_policy_t *policy, int extension_header, int mki_index)
      * if the policy includes authentication, then test for false positives
      */
     if (policy->rtp.sec_serv & sec_serv_auth) {
-        char *data = ((char*)hdr) + 12;
+        char *data = ((char *)hdr) + (extension_header ? 24 : 12);
 
         printf("testing for false positives in replay check...");
 
-        /* set message length */
-        len = msg_len_enc;
-
         /* unprotect a second time - should fail with a replay error */
-        status = srtp_test_call_unprotect(srtp_rcvr, hdr, &len, use_mki);
+        status =
+            srtp_test_call_unprotect(srtp_rcvr, hdr, &msg_len_enc, use_mki);
         if (status != srtp_err_status_replay_fail) {
             printf("failed with error code %d\n", status);
             free(hdr);
@@ -1201,17 +1189,11 @@ srtp_test (const srtp_policy_t *policy, int extension_header, int mki_index)
         /* increment sequence number in header */
         hdr->seq++;
 
-        /* set message length */
-        len = msg_len_octets;
-        if (extension_header) {
-            len += 12;
-        }
-
         /* apply protection */
         err_check(srtp_test_call_protect(srtp_sender, hdr, &len, mki_index));
 
         /* flip bits in packet */
-        data[extension_header ? 12 : 0] ^= 0xff;
+        data[0] ^= 0xff;
 
         /* unprotect, and check for authentication failure */
         status = srtp_test_call_unprotect(srtp_rcvr, hdr, &len, use_mki);
@@ -1224,7 +1206,6 @@ srtp_test (const srtp_policy_t *policy, int extension_header, int mki_index)
         } else {
             printf("passed\n");
         }
-
     }
 
     err_check(srtp_dealloc(srtp_sender));
@@ -1236,9 +1217,7 @@ srtp_test (const srtp_policy_t *policy, int extension_header, int mki_index)
     return srtp_err_status_ok;
 }
 
-
-srtp_err_status_t
-srtcp_test (const srtp_policy_t *policy, int mki_index)
+srtp_err_status_t srtcp_test(const srtp_policy_t *policy, int mki_index)
 {
     int i;
     srtp_t srtcp_sender;
@@ -1247,9 +1226,9 @@ srtcp_test (const srtp_policy_t *policy, int mki_index)
     srtp_hdr_t *hdr, *hdr2;
     uint8_t hdr_enc[64];
     uint8_t *pkt_end;
-    int msg_len_octets, msg_len_enc;
-    int len;
-    int tag_length = policy->rtp.auth_tag_len;
+    int msg_len_octets, msg_len_enc, msg_len;
+    int len, len2;
+    uint32_t tag_length;
     uint32_t ssrc;
     srtp_policy_t *rcvr_policy;
     int use_mki = 0;
@@ -1269,30 +1248,29 @@ srtcp_test (const srtp_policy_t *policy, int mki_index)
      */
     if (policy->ssrc.type != ssrc_specific) {
         ssrc = 0xdecafbad;
-    } else{
+    } else {
         ssrc = policy->ssrc.value;
     }
     msg_len_octets = 28;
-    hdr = srtp_create_test_packet(msg_len_octets, ssrc);
+    hdr = srtp_create_test_packet(msg_len_octets, ssrc, &len);
+    /* save message len */
+    msg_len = len;
 
     if (hdr == NULL) {
         return srtp_err_status_alloc_fail;
     }
-    hdr2 = srtp_create_test_packet(msg_len_octets, ssrc);
+    hdr2 = srtp_create_test_packet(msg_len_octets, ssrc, &len2);
     if (hdr2 == NULL) {
         free(hdr);
         return srtp_err_status_alloc_fail;
     }
-
-    /* set message length */
-    len = msg_len_octets;
 
     debug_print(mod_driver, "before protection:\n%s",
                 srtp_packet_to_string(hdr, len));
 
 #if PRINT_REFERENCE_PACKET
     debug_print(mod_driver, "reference packet before protection:\n%s",
-                octet_string_hex_string((uint8_t*)hdr, len));
+                octet_string_hex_string((uint8_t *)hdr, len));
 #endif
     err_check(srtp_test_call_protect_rtcp(srtcp_sender, hdr, &len, mki_index));
 
@@ -1300,7 +1278,7 @@ srtcp_test (const srtp_policy_t *policy, int mki_index)
                 srtp_packet_to_string(hdr, len));
 #if PRINT_REFERENCE_PACKET
     debug_print(mod_driver, "after protection:\n%s",
-                octet_string_hex_string((uint8_t*)hdr, len));
+                octet_string_hex_string((uint8_t *)hdr, len));
 #endif
 
     /* save protected message and length */
@@ -1314,13 +1292,14 @@ srtcp_test (const srtp_policy_t *policy, int mki_index)
      * data following the packet is different, then we know that the
      * protect function is overwriting the end of the packet.
      */
-    pkt_end = (uint8_t*)hdr + sizeof(srtp_hdr_t)
-              + msg_len_octets + tag_length;
+    srtp_get_protect_rtcp_trailer_length(srtcp_sender, use_mki, mki_index,
+                                         &tag_length);
+    pkt_end = (uint8_t *)hdr + msg_len + tag_length;
     for (i = 0; i < 4; i++) {
         if (pkt_end[i] != 0xff) {
             fprintf(stdout, "overwrite in srtp_protect_rtcp() function "
-                    "(expected %x, found %x in trailing octet %d)\n",
-                    0xff, ((uint8_t*)hdr)[i], i);
+                            "(expected %x, found %x in trailing octet %d)\n",
+                    0xff, ((uint8_t *)hdr)[i], i);
             free(hdr);
             free(hdr2);
             return srtp_err_status_algo_fail;
@@ -1336,11 +1315,11 @@ srtcp_test (const srtp_policy_t *policy, int mki_index)
      * reason, we skip this check if the plaintext is less than four
      * octets long.
      */
-    if ((policy->rtp.sec_serv & sec_serv_conf) && (msg_len_octets >= 4)) {
+    if ((policy->rtcp.sec_serv & sec_serv_conf) && (msg_len_octets >= 4)) {
         printf("testing that ciphertext is distinct from plaintext...");
         status = srtp_err_status_algo_fail;
         for (i = 12; i < msg_len_octets + 12; i++) {
-            if (((uint8_t*)hdr)[i] != ((uint8_t*)hdr2)[i]) {
+            if (((uint8_t *)hdr)[i] != ((uint8_t *)hdr2)[i]) {
                 status = srtp_err_status_ok;
             }
         }
@@ -1360,7 +1339,7 @@ srtcp_test (const srtp_policy_t *policy, int mki_index)
      * we always copy the policy into the rcvr_policy, since otherwise
      * the compiler would fret about the constness of the policy
      */
-    rcvr_policy = (srtp_policy_t*)malloc(sizeof(srtp_policy_t));
+    rcvr_policy = (srtp_policy_t *)malloc(sizeof(srtp_policy_t));
     if (rcvr_policy == NULL) {
         return srtp_err_status_alloc_fail;
     }
@@ -1377,8 +1356,8 @@ srtcp_test (const srtp_policy_t *policy, int mki_index)
                 srtp_packet_to_string(hdr, len));
 
     /* verify that the unprotected packet matches the origial one */
-    for (i = 0; i < msg_len_octets; i++) {
-        if (((uint8_t*)hdr)[i] != ((uint8_t*)hdr2)[i]) {
+    for (i = 0; i < len; i++) {
+        if (((uint8_t *)hdr)[i] != ((uint8_t *)hdr2)[i]) {
             fprintf(stdout, "mismatch at octet %d\n", i);
             status = srtp_err_status_algo_fail;
         }
@@ -1394,15 +1373,13 @@ srtcp_test (const srtp_policy_t *policy, int mki_index)
      * if the policy includes authentication, then test for false positives
      */
     if (policy->rtp.sec_serv & sec_serv_auth) {
-        char *data = ((char*)hdr) + 12;
+        char *data = ((char *)hdr) + 12;
 
         printf("testing for false positives in replay check...");
 
-        /* set message length */
-        len = msg_len_enc;
-
         /* unprotect a second time - should fail with a replay error */
-        status = srtp_test_call_unprotect_rtcp(srtcp_rcvr, hdr, &len, use_mki);
+        status = srtp_test_call_unprotect_rtcp(srtcp_rcvr, hdr, &msg_len_enc,
+                                               use_mki);
         if (status != srtp_err_status_replay_fail) {
             printf("failed with error code %d\n", status);
             free(hdr);
@@ -1418,11 +1395,9 @@ srtcp_test (const srtp_policy_t *policy, int mki_index)
         /* increment sequence number in header */
         hdr->seq++;
 
-        /* set message length */
-        len = msg_len_octets;
-
         /* apply protection */
-        err_check(srtp_test_call_protect_rtcp(srtcp_sender, hdr, &len, mki_index));
+        err_check(
+            srtp_test_call_protect_rtcp(srtcp_sender, hdr, &len, mki_index));
 
         /* flip bits in packet */
         data[0] ^= 0xff;
@@ -1438,7 +1413,6 @@ srtcp_test (const srtp_policy_t *policy, int mki_index)
         } else {
             printf("passed\n");
         }
-
     }
 
     err_check(srtp_dealloc(srtcp_sender));
@@ -1450,21 +1424,11 @@ srtcp_test (const srtp_policy_t *policy, int mki_index)
     return srtp_err_status_ok;
 }
 
-
-srtp_err_status_t
-srtp_session_print_policy (srtp_t srtp)
+srtp_err_status_t srtp_session_print_policy(srtp_t srtp)
 {
-    char *serv_descr[4] = {
-        "none",
-        "confidentiality",
-        "authentication",
-        "confidentiality and authentication"
-    };
-    char *direction[3] = {
-        "unknown",
-        "outbound",
-        "inbound"
-    };
+    char *serv_descr[4] = { "none", "confidentiality", "authentication",
+                            "confidentiality and authentication" };
+    char *direction[3] = { "unknown", "outbound", "inbound" };
     srtp_stream_t stream;
     srtp_session_keys_t *session_keys = NULL;
 
@@ -1498,7 +1462,7 @@ srtp_session_print_policy (srtp_t srtp)
 
         printf("# Encrypted extension headers: ");
         if (stream->enc_xtn_hdr && stream->enc_xtn_hdr_count > 0) {
-            int* enc_xtn_hdr = stream->enc_xtn_hdr;
+            int *enc_xtn_hdr = stream->enc_xtn_hdr;
             int count = stream->enc_xtn_hdr_count;
             while (count > 0) {
                 printf("%d ", *enc_xtn_hdr);
@@ -1528,8 +1492,7 @@ srtp_session_print_policy (srtp_t srtp)
                "# rtcp services: %s\r\n"
                "# window size:   %lu\r\n"
                "# tx rtx allowed:%s\r\n",
-               stream->ssrc,
-               session_keys->rtp_cipher->type->description,
+               stream->ssrc, session_keys->rtp_cipher->type->description,
                session_keys->rtp_auth->type->description,
                serv_descr[stream->rtp_services],
                session_keys->rtcp_cipher->type->description,
@@ -1540,7 +1503,7 @@ srtp_session_print_policy (srtp_t srtp)
 
         printf("# Encrypted extension headers: ");
         if (stream->enc_xtn_hdr && stream->enc_xtn_hdr_count > 0) {
-            int* enc_xtn_hdr = stream->enc_xtn_hdr;
+            int *enc_xtn_hdr = stream->enc_xtn_hdr;
             int count = stream->enc_xtn_hdr_count;
             while (count > 0) {
                 printf("%d ", *enc_xtn_hdr);
@@ -1558,8 +1521,7 @@ srtp_session_print_policy (srtp_t srtp)
     return srtp_err_status_ok;
 }
 
-srtp_err_status_t
-srtp_print_policy (const srtp_policy_t *policy)
+srtp_err_status_t srtp_print_policy(const srtp_policy_t *policy)
 {
     srtp_err_status_t status;
     srtp_t session;
@@ -1592,11 +1554,10 @@ srtp_print_policy (const srtp_policy_t *policy)
 
 char packet_string[MTU];
 
-char *
-srtp_packet_to_string (srtp_hdr_t *hdr, int pkt_octet_len)
+char *srtp_packet_to_string(srtp_hdr_t *hdr, int pkt_octet_len)
 {
     int octets_in_rtp_header = 12;
-    uint8_t *data = ((uint8_t*)hdr) + octets_in_rtp_header;
+    uint8_t *data = ((uint8_t *)hdr) + octets_in_rtp_header;
     int hex_len = pkt_octet_len - octets_in_rtp_header;
 
     /* sanity checking */
@@ -1605,29 +1566,20 @@ srtp_packet_to_string (srtp_hdr_t *hdr, int pkt_octet_len)
     }
 
     /* write packet into string */
-    sprintf(packet_string,
-            "(s)rtp packet: {\n"
-            "   version:\t%d\n"
-            "   p:\t\t%d\n"
-            "   x:\t\t%d\n"
-            "   cc:\t\t%d\n"
-            "   m:\t\t%d\n"
-            "   pt:\t\t%x\n"
-            "   seq:\t\t%x\n"
-            "   ts:\t\t%x\n"
-            "   ssrc:\t%x\n"
-            "   data:\t%s\n"
-            "} (%d octets in total)\n",
-            hdr->version,
-            hdr->p,
-            hdr->x,
-            hdr->cc,
-            hdr->m,
-            hdr->pt,
-            hdr->seq,
-            hdr->ts,
-            hdr->ssrc,
-            octet_string_hex_string(data, hex_len),
+    sprintf(packet_string, "(s)rtp packet: {\n"
+                           "   version:\t%d\n"
+                           "   p:\t\t%d\n"
+                           "   x:\t\t%d\n"
+                           "   cc:\t\t%d\n"
+                           "   m:\t\t%d\n"
+                           "   pt:\t\t%x\n"
+                           "   seq:\t\t%x\n"
+                           "   ts:\t\t%x\n"
+                           "   ssrc:\t%x\n"
+                           "   data:\t%s\n"
+                           "} (%d octets in total)\n",
+            hdr->version, hdr->p, hdr->x, hdr->cc, hdr->m, hdr->pt, hdr->seq,
+            hdr->ts, hdr->ssrc, octet_string_hex_string(data, hex_len),
             pkt_octet_len);
 
     return packet_string;
@@ -1643,8 +1595,7 @@ srtp_packet_to_string (srtp_hdr_t *hdr, int pkt_octet_len)
  * optimize away the function
  */
 
-double
-mips_estimate (int num_trials, int *ignore)
+double mips_estimate(int num_trials, int *ignore)
 {
     clock_t t;
     volatile int i, sum;
@@ -1656,12 +1607,11 @@ mips_estimate (int num_trials, int *ignore)
     }
     t = clock() - t;
 
-/*   printf("%d\n", sum); */
+    /*   printf("%d\n", sum); */
     *ignore = sum;
 
     return (double)num_trials * CLOCKS_PER_SEC / t;
 }
-
 
 /*
  * srtp_validate() verifies the correctness of libsrtp by comparing
@@ -1669,10 +1619,9 @@ mips_estimate (int num_trials, int *ignore)
  * These packets were made with the default SRTP policy.
  */
 
-
-srtp_err_status_t
-srtp_validate ()
+srtp_err_status_t srtp_validate()
 {
+    // clang-format off
     uint8_t srtp_plaintext_ref[28] = {
         0x80, 0x0f, 0x12, 0x34, 0xde, 0xca, 0xfb, 0xad,
         0xca, 0xfe, 0xba, 0xbe, 0xab, 0xab, 0xab, 0xab,
@@ -1712,6 +1661,8 @@ srtp_validate ()
         0x80, 0x00, 0x00, 0x01, 0x99, 0x3e, 0x08, 0xcd,
         0x54, 0xd6, 0xc1, 0x23, 0x07, 0x98
     };
+    // clang-format on
+
     srtp_t srtp_snd, srtp_recv;
     srtp_err_status_t status;
     int len;
@@ -1724,7 +1675,7 @@ srtp_validate ()
     memset(&policy, 0, sizeof(policy));
     srtp_crypto_policy_set_rtp_default(&policy.rtp);
     srtp_crypto_policy_set_rtcp_default(&policy.rtcp);
-    policy.ssrc.type  = ssrc_specific;
+    policy.ssrc.type = ssrc_specific;
     policy.ssrc.value = 0xcafebabe;
     policy.key = test_key;
     policy.ekt = NULL;
@@ -1826,9 +1777,9 @@ srtp_validate ()
  * srtp_validate_gcm() verifies the correctness of libsrtp by comparing
  * an computed packet against the known ciphertext for the plaintext.
  */
-srtp_err_status_t
-srtp_validate_gcm ()
+srtp_err_status_t srtp_validate_gcm()
 {
+    // clang-format off
     unsigned char test_key_gcm[28] = {
         0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07,
         0x08, 0x09, 0x0a, 0x0b, 0x0c, 0x0d, 0x0e, 0x0f,
@@ -1878,6 +1829,7 @@ srtp_validate_gcm ()
         0xea, 0x31, 0x12, 0x3b, 0xa8, 0x8c, 0xe6, 0x1e,
         0x80, 0x00, 0x00, 0x01
     };
+    // clang-format on
 
     srtp_t srtp_snd, srtp_recv;
     srtp_err_status_t status;
@@ -1891,9 +1843,9 @@ srtp_validate_gcm ()
     memset(&policy, 0, sizeof(policy));
     srtp_crypto_policy_set_aes_gcm_128_16_auth(&policy.rtp);
     srtp_crypto_policy_set_aes_gcm_128_16_auth(&policy.rtcp);
-    policy.ssrc.type  = ssrc_specific;
+    policy.ssrc.type = ssrc_specific;
     policy.ssrc.value = 0xcafebabe;
-    policy.key  = test_key_gcm;
+    policy.key = test_key_gcm;
     policy.ekt = NULL;
     policy.window_size = 128;
     policy.allow_repeat_tx = 0;
@@ -1993,8 +1945,9 @@ srtp_validate_gcm ()
 /*
  * Test vectors taken from RFC 6904, Appendix A
  */
-srtp_err_status_t
-srtp_validate_encrypted_extensions_headers() {
+srtp_err_status_t srtp_validate_encrypted_extensions_headers()
+{
+    // clang-format off
     unsigned char test_key_ext_headers[30] = {
         0xe1, 0xf9, 0x7a, 0x0d, 0x3e, 0x01, 0x8b, 0xe0,
         0xd6, 0x4f, 0xa3, 0x2c, 0x06, 0xde, 0x41, 0x39,
@@ -2032,11 +1985,13 @@ srtp_validate_encrypted_extensions_headers() {
         0x5a, 0x46, 0xb3, 0xca, 0x35, 0xc5, 0x35, 0xa8,
         0x91, 0xc7
     };
+    // clang-format on
+
     srtp_t srtp_snd, srtp_recv;
     srtp_err_status_t status;
     int len;
     srtp_policy_t policy;
-    int headers[3] = {1, 3, 4};
+    int headers[3] = { 1, 3, 4 };
 
     /*
      * create a session with a single stream using the default srtp
@@ -2045,7 +2000,7 @@ srtp_validate_encrypted_extensions_headers() {
     memset(&policy, 0, sizeof(policy));
     srtp_crypto_policy_set_rtp_default(&policy.rtp);
     srtp_crypto_policy_set_rtcp_default(&policy.rtcp);
-    policy.ssrc.type  = ssrc_specific;
+    policy.ssrc.type = ssrc_specific;
     policy.ssrc.value = 0xcafebabe;
     policy.key = test_key_ext_headers;
     policy.ekt = NULL;
@@ -2108,14 +2063,14 @@ srtp_validate_encrypted_extensions_headers() {
     return srtp_err_status_ok;
 }
 
-
 #ifdef OPENSSL
 
 /*
  * Headers of test vectors taken from RFC 6904, Appendix A
  */
-srtp_err_status_t
-srtp_validate_encrypted_extensions_headers_gcm() {
+srtp_err_status_t srtp_validate_encrypted_extensions_headers_gcm()
+{
+    // clang-format off
     unsigned char test_key_ext_headers[30] = {
         0xe1, 0xf9, 0x7a, 0x0d, 0x3e, 0x01, 0x8b, 0xe0,
         0xd6, 0x4f, 0xa3, 0x2c, 0x06, 0xde, 0x41, 0x39,
@@ -2151,11 +2106,13 @@ srtp_validate_encrypted_extensions_headers_gcm() {
         0x6c, 0xd3, 0xd2, 0x88, 0xb4, 0x9f, 0x6c, 0xa9,
         0xf4, 0xb1, 0xb7, 0x59, 0x71, 0x9e, 0xb5, 0xbc
     };
+    // clang-format on
+
     srtp_t srtp_snd, srtp_recv;
     srtp_err_status_t status;
     int len;
     srtp_policy_t policy;
-    int headers[3] = {1, 3, 4};
+    int headers[3] = { 1, 3, 4 };
 
     /*
      * create a session with a single stream using the default srtp
@@ -2164,7 +2121,7 @@ srtp_validate_encrypted_extensions_headers_gcm() {
     memset(&policy, 0, sizeof(policy));
     srtp_crypto_policy_set_aes_gcm_128_8_auth(&policy.rtp);
     srtp_crypto_policy_set_aes_gcm_128_8_auth(&policy.rtcp);
-    policy.ssrc.type  = ssrc_specific;
+    policy.ssrc.type = ssrc_specific;
     policy.ssrc.value = 0xcafebabe;
     policy.key = test_key_ext_headers;
     policy.ekt = NULL;
@@ -2234,10 +2191,9 @@ srtp_validate_encrypted_extensions_headers_gcm() {
  * These packets were made with the AES-CM-256/HMAC-SHA-1-80 policy.
  */
 
-
-srtp_err_status_t
-srtp_validate_aes_256 ()
+srtp_err_status_t srtp_validate_aes_256()
 {
+    // clang-format off
     unsigned char aes_256_test_key[46] = {
         0xf0, 0xf0, 0x49, 0x14, 0xb5, 0x13, 0xf2, 0x76,
         0x3a, 0x1b, 0x1f, 0xa1, 0x30, 0xf1, 0x0e, 0x29,
@@ -2267,6 +2223,8 @@ srtp_validate_aes_256 ()
         0xb0, 0xb4, 0xb4, 0x0d, 0xa0, 0x8d, 0x9d, 0x9a,
         0x5b, 0x3a, 0x55, 0xd8, 0x87, 0x3b
     };
+    // clang-format on
+
     srtp_t srtp_snd, srtp_recv;
     srtp_err_status_t status;
     int len;
@@ -2279,7 +2237,7 @@ srtp_validate_aes_256 ()
     memset(&policy, 0, sizeof(policy));
     srtp_crypto_policy_set_aes_cm_256_hmac_sha1_80(&policy.rtp);
     srtp_crypto_policy_set_aes_cm_256_hmac_sha1_80(&policy.rtcp);
-    policy.ssrc.type  = ssrc_specific;
+    policy.ssrc.type = ssrc_specific;
     policy.ssrc.value = 0xcafebabe;
     policy.key = aes_256_test_key;
     policy.ekt = NULL;
@@ -2345,9 +2303,7 @@ srtp_validate_aes_256 ()
     return srtp_err_status_ok;
 }
 
-
-srtp_err_status_t
-srtp_create_big_policy (srtp_policy_t **list)
+srtp_err_status_t srtp_create_big_policy(srtp_policy_t **list)
 {
     extern const srtp_policy_t *policy_array[];
     srtp_policy_t *p, *tmp;
@@ -2365,7 +2321,7 @@ srtp_create_big_policy (srtp_policy_t **list)
      */
     tmp = NULL;
     while (policy_array[i] != NULL) {
-        p  = (srtp_policy_t*)malloc(sizeof(srtp_policy_t));
+        p = (srtp_policy_t *)malloc(sizeof(srtp_policy_t));
         if (p == NULL) {
             return srtp_err_status_bad_param;
         }
@@ -2381,8 +2337,7 @@ srtp_create_big_policy (srtp_policy_t **list)
     return srtp_err_status_ok;
 }
 
-srtp_err_status_t
-srtp_dealloc_big_policy (srtp_policy_t *list)
+srtp_err_status_t srtp_dealloc_big_policy(srtp_policy_t *list)
 {
     srtp_policy_t *p, *next;
 
@@ -2394,8 +2349,7 @@ srtp_dealloc_big_policy (srtp_policy_t *list)
     return srtp_err_status_ok;
 }
 
-srtp_err_status_t
-srtp_test_empty_payload()
+srtp_err_status_t srtp_test_empty_payload()
 {
     srtp_t srtp_snd, srtp_recv;
     srtp_err_status_t status;
@@ -2410,7 +2364,7 @@ srtp_test_empty_payload()
     memset(&policy, 0, sizeof(policy));
     srtp_crypto_policy_set_rtp_default(&policy.rtp);
     srtp_crypto_policy_set_rtcp_default(&policy.rtcp);
-    policy.ssrc.type  = ssrc_specific;
+    policy.ssrc.type = ssrc_specific;
     policy.ssrc.value = 0xcafebabe;
     policy.key = test_key;
     policy.ekt = NULL;
@@ -2423,12 +2377,11 @@ srtp_test_empty_payload()
         return status;
     }
 
-    mesg = srtp_create_test_packet(0, policy.ssrc.value);
+    mesg = srtp_create_test_packet(0, policy.ssrc.value, &len);
     if (mesg == NULL) {
         return srtp_err_status_fail;
     }
 
-    len = 12;  /* only the header */
     status = srtp_protect(srtp_snd, mesg, &len);
     if (status) {
         return status;
@@ -2472,8 +2425,7 @@ srtp_test_empty_payload()
 }
 
 #ifdef OPENSSL
-srtp_err_status_t
-srtp_test_empty_payload_gcm()
+srtp_err_status_t srtp_test_empty_payload_gcm()
 {
     srtp_t srtp_snd, srtp_recv;
     srtp_err_status_t status;
@@ -2488,7 +2440,7 @@ srtp_test_empty_payload_gcm()
     memset(&policy, 0, sizeof(policy));
     srtp_crypto_policy_set_aes_gcm_128_8_auth(&policy.rtp);
     srtp_crypto_policy_set_aes_gcm_128_8_auth(&policy.rtcp);
-    policy.ssrc.type  = ssrc_specific;
+    policy.ssrc.type = ssrc_specific;
     policy.ssrc.value = 0xcafebabe;
     policy.key = test_key;
     policy.ekt = NULL;
@@ -2501,12 +2453,11 @@ srtp_test_empty_payload_gcm()
         return status;
     }
 
-    mesg = srtp_create_test_packet(0, policy.ssrc.value);
+    mesg = srtp_create_test_packet(0, policy.ssrc.value, &len);
     if (mesg == NULL) {
         return srtp_err_status_fail;
     }
 
-    len = 12;  /* only the header */
     status = srtp_protect(srtp_snd, mesg, &len);
     if (status) {
         return status;
@@ -2548,10 +2499,9 @@ srtp_test_empty_payload_gcm()
 
     return srtp_err_status_ok;
 }
-#endif  // OPENSSL
+#endif // OPENSSL
 
-srtp_err_status_t
-srtp_test_remove_stream ()
+srtp_err_status_t srtp_test_remove_stream()
 {
     srtp_err_status_t status;
     srtp_policy_t *policy_list, policy;
@@ -2564,7 +2514,6 @@ srtp_test_remove_stream ()
      * library
      */
     extern srtp_stream_t srtp_get_stream(srtp_t srtp, uint32_t ssrc);
-
 
     status = srtp_create_big_policy(&policy_list);
     if (status) {
@@ -2616,7 +2565,7 @@ srtp_test_remove_stream ()
     memset(&policy, 0, sizeof(policy));
     srtp_crypto_policy_set_rtp_default(&policy.rtp);
     srtp_crypto_policy_set_rtcp_default(&policy.rtcp);
-    policy.ssrc.type  = ssrc_specific;
+    policy.ssrc.type = ssrc_specific;
     policy.ssrc.value = 0xcafebabe;
     policy.key = test_key;
     policy.ekt = NULL;
@@ -2647,7 +2596,7 @@ srtp_test_remove_stream ()
     return srtp_err_status_ok;
 }
 
-
+// clang-format off
 unsigned char test_alt_key[46] = {
   0xe5, 0x19, 0x6f, 0x01, 0x5e, 0xf1, 0x9b, 0xe1,
   0xd7, 0x47, 0xa7, 0x27, 0x07, 0xd7, 0x47, 0x33,
@@ -2656,6 +2605,7 @@ unsigned char test_alt_key[46] = {
   0xc7, 0x15, 0xe2, 0xea, 0xfe, 0x55, 0x67, 0x96,
   0xb6, 0x96, 0x0b, 0x3a, 0xab, 0xe6
 };
+// clang-format on
 
 /*
  * srtp_test_update() verifies updating/rekeying exsisting streams.
@@ -2664,748 +2614,776 @@ unsigned char test_alt_key[46] = {
  * atempts to prove that srtp_update does not reset the ROC.
  */
 
-srtp_err_status_t
-srtp_test_update() {
+srtp_err_status_t srtp_test_update()
+{
+    srtp_err_status_t status;
+    uint32_t ssrc = 0x12121212;
+    int msg_len_octets = 32;
+    int protected_msg_len_octets;
+    srtp_hdr_t *msg;
+    srtp_t srtp_snd, srtp_recv;
+    srtp_policy_t policy;
 
-  srtp_err_status_t status;
-  uint32_t ssrc = 0x12121212;
-  int msg_len_octets = 32;
-  int protected_msg_len_octets;
-  srtp_hdr_t * msg;
-  srtp_t srtp_snd, srtp_recv;
-  srtp_policy_t policy;
+    memset(&policy, 0, sizeof(policy));
+    srtp_crypto_policy_set_rtp_default(&policy.rtp);
+    srtp_crypto_policy_set_rtcp_default(&policy.rtcp);
+    policy.ekt = NULL;
+    policy.window_size = 128;
+    policy.allow_repeat_tx = 0;
+    policy.next = NULL;
+    policy.ssrc.type = ssrc_any_outbound;
+    policy.key = test_key;
 
-  memset(&policy, 0, sizeof(policy));
-  srtp_crypto_policy_set_rtp_default(&policy.rtp);
-  srtp_crypto_policy_set_rtcp_default(&policy.rtcp);
-  policy.ekt = NULL;
-  policy.window_size = 128;
-  policy.allow_repeat_tx = 0;
-  policy.next = NULL;
-  policy.ssrc.type  = ssrc_any_outbound;
-  policy.key = test_key;
+    /* create a send and recive ctx with defualt profile and test_key */
+    status = srtp_create(&srtp_recv, &policy);
+    if (status)
+        return status;
 
-  /* create a send and recive ctx with defualt profile and test_key */
-  status = srtp_create(&srtp_recv, &policy);
-  if (status)
-    return status;
+    policy.ssrc.type = ssrc_any_inbound;
+    status = srtp_create(&srtp_snd, &policy);
+    if (status)
+        return status;
 
-  policy.ssrc.type  = ssrc_any_inbound;
-  status = srtp_create(&srtp_snd, &policy);
-  if (status)
-    return status;
+    /* protect and unprotect two msg's that will cause the ROC to be equal to 1
+     */
+    msg = srtp_create_test_packet(msg_len_octets, ssrc,
+                                  &protected_msg_len_octets);
+    if (msg == NULL)
+        return srtp_err_status_alloc_fail;
+    msg->seq = htons(65535);
 
-  /* protect and unprotect two msg's that will cause the ROC to be equal to 1 */
-  msg = srtp_create_test_packet(msg_len_octets, ssrc);
-  if (msg == NULL)
-    return srtp_err_status_alloc_fail;
-  msg->seq = htons(65535);
+    status = srtp_protect(srtp_snd, msg, &protected_msg_len_octets);
+    if (status)
+        return srtp_err_status_fail;
 
-  protected_msg_len_octets = msg_len_octets;
-  status = srtp_protect(srtp_snd, msg, &protected_msg_len_octets);
-  if (status)
-    return srtp_err_status_fail;
+    status = srtp_unprotect(srtp_recv, msg, &protected_msg_len_octets);
+    if (status)
+        return status;
 
-  status = srtp_unprotect(srtp_recv, msg, &protected_msg_len_octets);
-  if (status)
-    return status;
+    free(msg);
 
-  free(msg);
+    msg = srtp_create_test_packet(msg_len_octets, ssrc,
+                                  &protected_msg_len_octets);
+    if (msg == NULL)
+        return srtp_err_status_alloc_fail;
+    msg->seq = htons(1);
 
-  msg = srtp_create_test_packet(msg_len_octets, ssrc);
-  if (msg == NULL)
-    return srtp_err_status_alloc_fail;
-  msg->seq = htons(1);
+    status = srtp_protect(srtp_snd, msg, &protected_msg_len_octets);
+    if (status)
+        return srtp_err_status_fail;
 
-  protected_msg_len_octets = msg_len_octets;
-  status = srtp_protect(srtp_snd, msg, &protected_msg_len_octets);
-  if (status)
-    return srtp_err_status_fail;
+    status = srtp_unprotect(srtp_recv, msg, &protected_msg_len_octets);
+    if (status)
+        return status;
 
-  status = srtp_unprotect(srtp_recv, msg, &protected_msg_len_octets);
-  if (status)
-    return status;
+    free(msg);
 
-  free(msg);
+    /* update send ctx with same test_key t verify update works*/
+    policy.ssrc.type = ssrc_any_outbound;
+    policy.key = test_key;
+    status = srtp_update(srtp_snd, &policy);
+    if (status)
+        return status;
 
-  /* update send ctx with same test_key t verify update works*/
-  policy.ssrc.type = ssrc_any_outbound;
-  policy.key = test_key;
-  status = srtp_update(srtp_snd, &policy);
-  if (status)
-    return status;
+    msg = srtp_create_test_packet(msg_len_octets, ssrc,
+                                  &protected_msg_len_octets);
+    if (msg == NULL)
+        return srtp_err_status_alloc_fail;
+    msg->seq = htons(2);
 
-  msg = srtp_create_test_packet(msg_len_octets, ssrc);
-  if (msg == NULL)
-    return srtp_err_status_alloc_fail;
-  msg->seq = htons(2);
+    status = srtp_protect(srtp_snd, msg, &protected_msg_len_octets);
+    if (status)
+        return srtp_err_status_fail;
 
-  protected_msg_len_octets = msg_len_octets;
-  status = srtp_protect(srtp_snd, msg, &protected_msg_len_octets);
-  if (status)
-    return srtp_err_status_fail;
+    status = srtp_unprotect(srtp_recv, msg, &protected_msg_len_octets);
+    if (status)
+        return status;
 
-  status = srtp_unprotect(srtp_recv, msg, &protected_msg_len_octets);
-  if (status)
-    return status;
+    free(msg);
 
-  free(msg);
-
-
-  /* update send ctx to use test_alt_key */
-  policy.ssrc.type = ssrc_any_outbound;
-  policy.key = test_alt_key;
-  status = srtp_update(srtp_snd, &policy);
-  if (status)
-    return status;
-
-  /* create and protect msg with new key and ROC still equal to 1 */
-  msg = srtp_create_test_packet(msg_len_octets, ssrc);
-  if (msg == NULL)
-    return srtp_err_status_alloc_fail;
-  msg->seq = htons(3);
-
-  protected_msg_len_octets = msg_len_octets;
-  status = srtp_protect(srtp_snd, msg, &protected_msg_len_octets);
-  if (status)
-    return srtp_err_status_fail;
-
-  /* verify that recive ctx will fail to unprotect as it still uses test_key */
-  status = srtp_unprotect(srtp_recv, msg, &protected_msg_len_octets);
-  if (status == srtp_err_status_ok)
-    return srtp_err_status_fail;
-
-  /* create a new recvieve ctx with test_alt_key but since it is new it will have ROC equal to 1
-   * and therefore should fail to unprotected */
-  {
-    srtp_t srtp_recv_roc_0;
-
-    policy.ssrc.type  = ssrc_any_inbound;
+    /* update send ctx to use test_alt_key */
+    policy.ssrc.type = ssrc_any_outbound;
     policy.key = test_alt_key;
-    status = srtp_create(&srtp_recv_roc_0, &policy);
+    status = srtp_update(srtp_snd, &policy);
     if (status)
-      return status;
+        return status;
 
-    status = srtp_unprotect(srtp_recv_roc_0, msg, &protected_msg_len_octets);
+    /* create and protect msg with new key and ROC still equal to 1 */
+    msg = srtp_create_test_packet(msg_len_octets, ssrc,
+                                  &protected_msg_len_octets);
+    if (msg == NULL)
+        return srtp_err_status_alloc_fail;
+    msg->seq = htons(3);
+
+    status = srtp_protect(srtp_snd, msg, &protected_msg_len_octets);
+    if (status)
+        return srtp_err_status_fail;
+
+    /* verify that recive ctx will fail to unprotect as it still uses test_key
+     */
+    status = srtp_unprotect(srtp_recv, msg, &protected_msg_len_octets);
     if (status == srtp_err_status_ok)
-      return srtp_err_status_fail;
+        return srtp_err_status_fail;
 
-    status = srtp_dealloc(srtp_recv_roc_0);
+    /* create a new recvieve ctx with test_alt_key but since it is new it will
+     * have ROC equal to 1
+     * and therefore should fail to unprotected */
+    {
+        srtp_t srtp_recv_roc_0;
+
+        policy.ssrc.type = ssrc_any_inbound;
+        policy.key = test_alt_key;
+        status = srtp_create(&srtp_recv_roc_0, &policy);
+        if (status)
+            return status;
+
+        status =
+            srtp_unprotect(srtp_recv_roc_0, msg, &protected_msg_len_octets);
+        if (status == srtp_err_status_ok)
+            return srtp_err_status_fail;
+
+        status = srtp_dealloc(srtp_recv_roc_0);
+        if (status)
+            return status;
+    }
+
+    /* update recive ctx to use test_alt_key */
+    policy.ssrc.type = ssrc_any_inbound;
+    policy.key = test_alt_key;
+    status = srtp_update(srtp_recv, &policy);
     if (status)
-      return status;
-  }
+        return status;
 
-  /* update recive ctx to use test_alt_key */
-  policy.ssrc.type = ssrc_any_inbound;
-  policy.key = test_alt_key;
-  status = srtp_update(srtp_recv, &policy);
-  if (status)
-    return status;
+    /* verify that can still unprotect, therfore key is updated and ROC value is
+     * preserved */
+    status = srtp_unprotect(srtp_recv, msg, &protected_msg_len_octets);
+    if (status)
+        return status;
 
-  /* verify that can still unprotect, therfore key is updated and ROC value is preserved */
-  status = srtp_unprotect(srtp_recv, msg, &protected_msg_len_octets);
-  if (status)
-    return status;
+    free(msg);
 
-  free(msg);
+    status = srtp_dealloc(srtp_snd);
+    if (status)
+        return status;
 
-  status = srtp_dealloc(srtp_snd);
-  if (status)
-    return status;
+    status = srtp_dealloc(srtp_recv);
+    if (status)
+        return status;
 
-  status = srtp_dealloc(srtp_recv);
-  if (status)
-    return status;
-
-  return srtp_err_status_ok;
+    return srtp_err_status_ok;
 }
 
-srtp_err_status_t
-srtp_test_setup_protect_trailer_streams(srtp_t *srtp_send, srtp_t *srtp_send_mki,
-                                        srtp_t *srtp_send_aes_gcm, srtp_t *srtp_send_aes_gcm_mki) {
+srtp_err_status_t srtp_test_setup_protect_trailer_streams(
+    srtp_t *srtp_send,
+    srtp_t *srtp_send_mki,
+    srtp_t *srtp_send_aes_gcm,
+    srtp_t *srtp_send_aes_gcm_mki)
+{
+    srtp_err_status_t status;
+    srtp_policy_t policy;
+    srtp_policy_t policy_mki;
 
-  srtp_err_status_t status;
-  srtp_policy_t policy;
-  srtp_policy_t policy_mki;
 #ifdef OPENSSL
-  srtp_policy_t policy_aes_gcm;
-  srtp_policy_t policy_aes_gcm_mki;
+    srtp_policy_t policy_aes_gcm;
+    srtp_policy_t policy_aes_gcm_mki;
 #endif // OPENSSL
 
-  memset(&policy, 0, sizeof(policy));
-  srtp_crypto_policy_set_rtp_default(&policy.rtp);
-  srtp_crypto_policy_set_rtcp_default(&policy.rtcp);
-  policy.ekt = NULL;
-  policy.window_size = 128;
-  policy.allow_repeat_tx = 0;
-  policy.next = NULL;
-  policy.ssrc.type  = ssrc_any_outbound;
-  policy.key = test_key;
+    memset(&policy, 0, sizeof(policy));
+    srtp_crypto_policy_set_rtp_default(&policy.rtp);
+    srtp_crypto_policy_set_rtcp_default(&policy.rtcp);
+    policy.ekt = NULL;
+    policy.window_size = 128;
+    policy.allow_repeat_tx = 0;
+    policy.next = NULL;
+    policy.ssrc.type = ssrc_any_outbound;
+    policy.key = test_key;
 
-  memset(&policy_mki, 0, sizeof(policy_mki));
-  srtp_crypto_policy_set_rtp_default(&policy_mki.rtp);
-  srtp_crypto_policy_set_rtcp_default(&policy_mki.rtcp);
-  policy_mki.ekt = NULL;
-  policy_mki.window_size = 128;
-  policy_mki.allow_repeat_tx = 0;
-  policy_mki.next = NULL;
-  policy_mki.ssrc.type  = ssrc_any_outbound;
-  policy_mki.key = NULL;
-  policy_mki.keys = test_keys;
-  policy_mki.num_master_keys = 2;
+    memset(&policy_mki, 0, sizeof(policy_mki));
+    srtp_crypto_policy_set_rtp_default(&policy_mki.rtp);
+    srtp_crypto_policy_set_rtcp_default(&policy_mki.rtcp);
+    policy_mki.ekt = NULL;
+    policy_mki.window_size = 128;
+    policy_mki.allow_repeat_tx = 0;
+    policy_mki.next = NULL;
+    policy_mki.ssrc.type = ssrc_any_outbound;
+    policy_mki.key = NULL;
+    policy_mki.keys = test_keys;
+    policy_mki.num_master_keys = 2;
 
 #ifdef OPENSSL
-  memset(&policy_aes_gcm, 0, sizeof(policy_aes_gcm));
-  srtp_crypto_policy_set_aes_gcm_128_16_auth(&policy_aes_gcm.rtp);
-  srtp_crypto_policy_set_aes_gcm_128_16_auth(&policy_aes_gcm.rtcp);
-  policy_aes_gcm.ekt = NULL;
-  policy_aes_gcm.window_size = 128;
-  policy_aes_gcm.allow_repeat_tx = 0;
-  policy_aes_gcm.next = NULL;
-  policy_aes_gcm.ssrc.type  = ssrc_any_outbound;
-  policy_aes_gcm.key = test_key;
+    memset(&policy_aes_gcm, 0, sizeof(policy_aes_gcm));
+    srtp_crypto_policy_set_aes_gcm_128_16_auth(&policy_aes_gcm.rtp);
+    srtp_crypto_policy_set_aes_gcm_128_16_auth(&policy_aes_gcm.rtcp);
+    policy_aes_gcm.ekt = NULL;
+    policy_aes_gcm.window_size = 128;
+    policy_aes_gcm.allow_repeat_tx = 0;
+    policy_aes_gcm.next = NULL;
+    policy_aes_gcm.ssrc.type = ssrc_any_outbound;
+    policy_aes_gcm.key = test_key;
 
-  memset(&policy_aes_gcm_mki, 0, sizeof(policy_aes_gcm_mki));
-  srtp_crypto_policy_set_aes_gcm_128_16_auth(&policy_aes_gcm_mki.rtp);
-  srtp_crypto_policy_set_aes_gcm_128_16_auth(&policy_aes_gcm_mki.rtcp);
-  policy_aes_gcm_mki.ekt = NULL;
-  policy_aes_gcm_mki.window_size = 128;
-  policy_aes_gcm_mki.allow_repeat_tx = 0;
-  policy_aes_gcm_mki.next = NULL;
-  policy_aes_gcm_mki.ssrc.type  = ssrc_any_outbound;
-  policy_aes_gcm_mki.key = NULL;
-  policy_aes_gcm_mki.keys = test_keys;
-  policy_aes_gcm_mki.num_master_keys = 2;
-
+    memset(&policy_aes_gcm_mki, 0, sizeof(policy_aes_gcm_mki));
+    srtp_crypto_policy_set_aes_gcm_128_16_auth(&policy_aes_gcm_mki.rtp);
+    srtp_crypto_policy_set_aes_gcm_128_16_auth(&policy_aes_gcm_mki.rtcp);
+    policy_aes_gcm_mki.ekt = NULL;
+    policy_aes_gcm_mki.window_size = 128;
+    policy_aes_gcm_mki.allow_repeat_tx = 0;
+    policy_aes_gcm_mki.next = NULL;
+    policy_aes_gcm_mki.ssrc.type = ssrc_any_outbound;
+    policy_aes_gcm_mki.key = NULL;
+    policy_aes_gcm_mki.keys = test_keys;
+    policy_aes_gcm_mki.num_master_keys = 2;
 #endif
 
-  /* create a send ctx with defualt profile and test_key */
-  status = srtp_create(srtp_send, &policy);
-  if (status)
-    return status;
+    /* create a send ctx with defualt profile and test_key */
+    status = srtp_create(srtp_send, &policy);
+    if (status)
+        return status;
 
-  status = srtp_create(srtp_send_mki, &policy_mki);
-  if (status)
-    return status;
-
-#ifdef OPENSSL
-  status = srtp_create(srtp_send_aes_gcm, &policy_aes_gcm);
-  if (status)
-    return status;
-
-  status = srtp_create(srtp_send_aes_gcm_mki, &policy_aes_gcm_mki);
-  if (status)
-    return status;
-#endif //OPENSSL
-
-  return srtp_err_status_ok;
-}
-
-srtp_err_status_t
-srtp_test_protect_trailer_length() {
-
-  srtp_t srtp_send;
-  srtp_t srtp_send_mki;
-  srtp_t srtp_send_aes_gcm;
-  srtp_t srtp_send_aes_gcm_mki;
-  uint32_t length = 0;
-  srtp_err_status_t status;
-
-  srtp_test_setup_protect_trailer_streams(&srtp_send, &srtp_send_mki,
-					  &srtp_send_aes_gcm, &srtp_send_aes_gcm_mki);
-
-  status = srtp_get_protect_trailer_length(srtp_send, 0, 0, &length);
-  if (status)
-    return status;
-
-  /*  TAG Length: 10 bytes */
-  if (length != 10)
-    return srtp_err_status_fail;
-
-  status = srtp_get_protect_trailer_length(srtp_send_mki, 1, 1, &length);
-  if (status)
-    return status;
-
-  /*  TAG Length: 10 bytes + MKI length: 4 bytes*/
-  if (length != 14)
-    return srtp_err_status_fail;
+    status = srtp_create(srtp_send_mki, &policy_mki);
+    if (status)
+        return status;
 
 #ifdef OPENSSL
-  status = srtp_get_protect_trailer_length(srtp_send_aes_gcm, 0, 0, &length);
-  if (status)
-    return status;
+    status = srtp_create(srtp_send_aes_gcm, &policy_aes_gcm);
+    if (status)
+        return status;
 
-  /*  TAG Length: 16 bytes */
-  if (length != 16)
-    return srtp_err_status_fail;
+    status = srtp_create(srtp_send_aes_gcm_mki, &policy_aes_gcm_mki);
+    if (status)
+        return status;
+#endif // OPENSSL
 
-
-  status = srtp_get_protect_trailer_length(srtp_send_aes_gcm_mki, 1, 1, &length);
-  if (status)
-    return status;
-
-  /*  TAG Length: 16 bytes + MKI length: 4 bytes*/
-  if (length != 20)
-    return srtp_err_status_fail;
-
-#endif //OPENSSL
-  return srtp_err_status_ok;
+    return srtp_err_status_ok;
 }
 
-srtp_err_status_t
-srtp_test_protect_rtcp_trailer_length() {
+srtp_err_status_t srtp_test_protect_trailer_length()
+{
+    srtp_t srtp_send;
+    srtp_t srtp_send_mki;
+    srtp_t srtp_send_aes_gcm;
+    srtp_t srtp_send_aes_gcm_mki;
+    uint32_t length = 0;
+    srtp_err_status_t status;
 
-  srtp_t srtp_send;
-  srtp_t srtp_send_mki;
-  srtp_t srtp_send_aes_gcm;
-  srtp_t srtp_send_aes_gcm_mki;
-  uint32_t length = 0;
-  srtp_err_status_t status;
+    srtp_test_setup_protect_trailer_streams(
+        &srtp_send, &srtp_send_mki, &srtp_send_aes_gcm, &srtp_send_aes_gcm_mki);
 
-  srtp_test_setup_protect_trailer_streams(&srtp_send, &srtp_send_mki,
-					  &srtp_send_aes_gcm, &srtp_send_aes_gcm_mki);
+    status = srtp_get_protect_trailer_length(srtp_send, 0, 0, &length);
+    if (status)
+        return status;
 
-  status = srtp_get_protect_rtcp_trailer_length(srtp_send, 0, 0, &length);
-  if (status)
-    return status;
+    /*  TAG Length: 10 bytes */
+    if (length != 10)
+        return srtp_err_status_fail;
 
-  /*  TAG Length: 10 bytes + SRTCP Trailer 4 bytes*/
-  if (length != 14)
-    return srtp_err_status_fail;
+    status = srtp_get_protect_trailer_length(srtp_send_mki, 1, 1, &length);
+    if (status)
+        return status;
 
-  status = srtp_get_protect_rtcp_trailer_length(srtp_send_mki, 1, 1, &length);
-  if (status)
-    return status;
-
-  /*  TAG Length: 10 bytes + SRTCP Trailer 4 bytes + MKI 4 bytes*/
-  if (length != 18)
-    return srtp_err_status_fail;
+    /*  TAG Length: 10 bytes + MKI length: 4 bytes*/
+    if (length != 14)
+        return srtp_err_status_fail;
 
 #ifdef OPENSSL
-  status = srtp_get_protect_rtcp_trailer_length(srtp_send_aes_gcm, 0, 0, &length);
-  if (status)
-    return status;
+    status = srtp_get_protect_trailer_length(srtp_send_aes_gcm, 0, 0, &length);
+    if (status)
+        return status;
 
-  /*  TAG Length: 16 bytes + SRTCP Trailer 4 bytes*/
-  if (length != 20)
-    return srtp_err_status_fail;
+    /*  TAG Length: 16 bytes */
+    if (length != 16)
+        return srtp_err_status_fail;
 
+    status =
+        srtp_get_protect_trailer_length(srtp_send_aes_gcm_mki, 1, 1, &length);
+    if (status)
+        return status;
 
-  status = srtp_get_protect_rtcp_trailer_length(srtp_send_aes_gcm_mki, 1, 1, &length);
-  if (status)
-    return status;
+    /*  TAG Length: 16 bytes + MKI length: 4 bytes*/
+    if (length != 20)
+        return srtp_err_status_fail;
+#endif // OPENSSL
 
-  /*  TAG Length: 16 bytes + SRTCP Trailer 4 bytes + MKI 4 bytes*/
-  if (length != 24)
-    return srtp_err_status_fail;
+    srtp_dealloc(srtp_send);
+    srtp_dealloc(srtp_send_mki);
+#ifdef OPENSSL
+    srtp_dealloc(srtp_send_aes_gcm);
+    srtp_dealloc(srtp_send_aes_gcm_mki);
+#endif
 
-#endif //OPENSSL
-  return srtp_err_status_ok;
+    return srtp_err_status_ok;
 }
 
-srtp_err_status_t
-srtp_test_get_roc() {
-  srtp_err_status_t status;
-  srtp_policy_t policy;
-  srtp_t session;
-  srtp_hdr_t *pkt;
-  uint32_t i;
-  uint32_t roc;
-  uint32_t ts;
-  uint16_t seq;
+srtp_err_status_t srtp_test_protect_rtcp_trailer_length()
+{
+    srtp_t srtp_send;
+    srtp_t srtp_send_mki;
+    srtp_t srtp_send_aes_gcm;
+    srtp_t srtp_send_aes_gcm_mki;
+    uint32_t length = 0;
+    srtp_err_status_t status;
 
-  int msg_len_octets = 32;
-  int protected_msg_len_octets;
+    srtp_test_setup_protect_trailer_streams(
+        &srtp_send, &srtp_send_mki, &srtp_send_aes_gcm, &srtp_send_aes_gcm_mki);
 
-  memset(&policy, 0, sizeof(policy));
-  srtp_crypto_policy_set_rtp_default(&policy.rtp);
-  srtp_crypto_policy_set_rtcp_default(&policy.rtcp);
-  policy.ssrc.type  = ssrc_specific;
-  policy.ssrc.value = 0xcafebabe;
-  policy.key = test_key;
-  policy.window_size = 128;
+    status = srtp_get_protect_rtcp_trailer_length(srtp_send, 0, 0, &length);
+    if (status)
+        return status;
 
-  /* Create a sender session */
-  status = srtp_create(&session, &policy);
-  if (status) {
-    return status;
-  }
+    /*  TAG Length: 10 bytes + SRTCP Trailer 4 bytes*/
+    if (length != 14)
+        return srtp_err_status_fail;
 
-  /* Set start sequence so we roll over */
-  seq = 65535;
-  ts = 0;
+    status = srtp_get_protect_rtcp_trailer_length(srtp_send_mki, 1, 1, &length);
+    if (status)
+        return status;
 
-  for (i = 0; i < 2; i++) {
-    pkt = srtp_create_test_packet_extended(msg_len_octets, policy.ssrc.value, seq, ts);
-    protected_msg_len_octets = msg_len_octets;
-    status = srtp_protect(session, pkt, &protected_msg_len_octets);
+    /*  TAG Length: 10 bytes + SRTCP Trailer 4 bytes + MKI 4 bytes*/
+    if (length != 18)
+        return srtp_err_status_fail;
+
+#ifdef OPENSSL
+    status =
+        srtp_get_protect_rtcp_trailer_length(srtp_send_aes_gcm, 0, 0, &length);
+    if (status)
+        return status;
+
+    /*  TAG Length: 16 bytes + SRTCP Trailer 4 bytes*/
+    if (length != 20)
+        return srtp_err_status_fail;
+
+    status = srtp_get_protect_rtcp_trailer_length(srtp_send_aes_gcm_mki, 1, 1,
+                                                  &length);
+    if (status)
+        return status;
+
+    /*  TAG Length: 16 bytes + SRTCP Trailer 4 bytes + MKI 4 bytes*/
+    if (length != 24)
+        return srtp_err_status_fail;
+#endif // OPENSSL
+
+    srtp_dealloc(srtp_send);
+    srtp_dealloc(srtp_send_mki);
+#ifdef OPENSSL
+    srtp_dealloc(srtp_send_aes_gcm);
+    srtp_dealloc(srtp_send_aes_gcm_mki);
+#endif
+
+    return srtp_err_status_ok;
+}
+
+srtp_err_status_t srtp_test_get_roc()
+{
+    srtp_err_status_t status;
+    srtp_policy_t policy;
+    srtp_t session;
+    srtp_hdr_t *pkt;
+    uint32_t i;
+    uint32_t roc;
+    uint32_t ts;
+    uint16_t seq;
+
+    int msg_len_octets = 32;
+    int protected_msg_len_octets;
+
+    memset(&policy, 0, sizeof(policy));
+    srtp_crypto_policy_set_rtp_default(&policy.rtp);
+    srtp_crypto_policy_set_rtcp_default(&policy.rtcp);
+    policy.ssrc.type = ssrc_specific;
+    policy.ssrc.value = 0xcafebabe;
+    policy.key = test_key;
+    policy.window_size = 128;
+
+    /* Create a sender session */
+    status = srtp_create(&session, &policy);
+    if (status) {
+        return status;
+    }
+
+    /* Set start sequence so we roll over */
+    seq = 65535;
+    ts = 0;
+
+    for (i = 0; i < 2; i++) {
+        pkt = srtp_create_test_packet_extended(msg_len_octets,
+                                               policy.ssrc.value, seq, ts,
+                                               &protected_msg_len_octets);
+        status = srtp_protect(session, pkt, &protected_msg_len_octets);
+        free(pkt);
+        if (status) {
+            return status;
+        }
+
+        status = srtp_get_stream_roc(session, policy.ssrc.value, &roc);
+        if (status) {
+            return status;
+        }
+
+        if (roc != i) {
+            return srtp_err_status_fail;
+        }
+
+        seq++;
+        ts++;
+    }
+
+    /* Cleanup */
+    status = srtp_dealloc(session);
+    if (status) {
+        return status;
+    }
+
+    return srtp_err_status_ok;
+}
+
+static srtp_err_status_t test_set_receiver_roc(uint32_t packets,
+                                               uint32_t roc_to_set)
+{
+    srtp_err_status_t status;
+
+    srtp_policy_t sender_policy;
+    srtp_t sender_session;
+
+    srtp_policy_t receiver_policy;
+    srtp_t receiver_session;
+
+    srtp_hdr_t *pkt_1;
+    unsigned char *recv_pkt_1;
+
+    srtp_hdr_t *pkt_2;
+    unsigned char *recv_pkt_2;
+
+    uint32_t i;
+    uint32_t ts;
+    uint16_t seq;
+
+    int msg_len_octets = 32;
+    int protected_msg_len_octets_1;
+    int protected_msg_len_octets_2;
+
+    /* Create sender */
+    memset(&sender_policy, 0, sizeof(sender_policy));
+    srtp_crypto_policy_set_rtp_default(&sender_policy.rtp);
+    srtp_crypto_policy_set_rtcp_default(&sender_policy.rtcp);
+    sender_policy.ssrc.type = ssrc_specific;
+    sender_policy.ssrc.value = 0xcafebabe;
+    sender_policy.key = test_key;
+    sender_policy.window_size = 128;
+
+    status = srtp_create(&sender_session, &sender_policy);
+    if (status) {
+        return status;
+    }
+
+    /* Create and protect packets */
+    seq = 0;
+    ts = 0;
+    for (i = 0; i < packets; i++) {
+        srtp_hdr_t *tmp_pkt;
+        int tmp_len;
+
+        tmp_pkt = srtp_create_test_packet_extended(
+            msg_len_octets, sender_policy.ssrc.value, seq, ts, &tmp_len);
+        status = srtp_protect(sender_session, tmp_pkt, &tmp_len);
+        free(tmp_pkt);
+        if (status) {
+            return status;
+        }
+        seq++;
+        ts++;
+    }
+
+    /* Create the first packet to decrypt and test for ROC change */
+    pkt_1 = srtp_create_test_packet_extended(msg_len_octets,
+                                             sender_policy.ssrc.value, seq, ts,
+                                             &protected_msg_len_octets_1);
+    status = srtp_protect(sender_session, pkt_1, &protected_msg_len_octets_1);
+    if (status) {
+        return status;
+    }
+
+    /* Create the second packet to decrypt and test for ROC change */
+    seq++;
+    ts++;
+    pkt_2 = srtp_create_test_packet_extended(msg_len_octets,
+                                             sender_policy.ssrc.value, seq, ts,
+                                             &protected_msg_len_octets_2);
+    status = srtp_protect(sender_session, pkt_2, &protected_msg_len_octets_2);
+    if (status) {
+        return status;
+    }
+
+    /* Create the receiver */
+    memset(&receiver_policy, 0, sizeof(receiver_policy));
+    srtp_crypto_policy_set_rtp_default(&receiver_policy.rtp);
+    srtp_crypto_policy_set_rtcp_default(&receiver_policy.rtcp);
+    receiver_policy.ssrc.type = ssrc_specific;
+    receiver_policy.ssrc.value = sender_policy.ssrc.value;
+    receiver_policy.key = test_key;
+    receiver_policy.window_size = 128;
+
+    status = srtp_create(&receiver_session, &receiver_policy);
+    if (status) {
+        return status;
+    }
+
+    /* Make a copy of the first sent protected packet */
+    recv_pkt_1 = malloc(protected_msg_len_octets_1);
+    if (recv_pkt_1 == NULL) {
+        return srtp_err_status_fail;
+    }
+    memcpy(recv_pkt_1, pkt_1, protected_msg_len_octets_1);
+
+    /* Make a copy of the second sent protected packet */
+    recv_pkt_2 = malloc(protected_msg_len_octets_2);
+    if (recv_pkt_2 == NULL) {
+        return srtp_err_status_fail;
+    }
+    memcpy(recv_pkt_2, pkt_2, protected_msg_len_octets_2);
+
+    /* Set the ROC to the wanted value */
+    status = srtp_set_stream_roc(receiver_session, receiver_policy.ssrc.value,
+                                 roc_to_set);
+    if (status) {
+        return status;
+    }
+
+    /* Unprotect the first packet */
+    status = srtp_unprotect(receiver_session, recv_pkt_1,
+                            &protected_msg_len_octets_1);
+    if (status) {
+        return status;
+    }
+
+    /* Unprotect the second packet */
+    status = srtp_unprotect(receiver_session, recv_pkt_2,
+                            &protected_msg_len_octets_2);
+    if (status) {
+        return status;
+    }
+
+    /* Cleanup */
+    status = srtp_dealloc(sender_session);
+    if (status) {
+        return status;
+    }
+
+    status = srtp_dealloc(receiver_session);
+    if (status) {
+        return status;
+    }
+
+    free(pkt_1);
+    free(recv_pkt_1);
+    free(pkt_2);
+    free(recv_pkt_2);
+
+    return srtp_err_status_ok;
+}
+
+static srtp_err_status_t test_set_sender_roc(uint16_t seq, uint32_t roc_to_set)
+{
+    srtp_err_status_t status;
+
+    srtp_policy_t sender_policy;
+    srtp_t sender_session;
+
+    srtp_policy_t receiver_policy;
+    srtp_t receiver_session;
+
+    srtp_hdr_t *pkt;
+    unsigned char *recv_pkt;
+
+    uint32_t ts;
+
+    int msg_len_octets = 32;
+    int protected_msg_len_octets;
+
+    /* Create sender */
+    memset(&sender_policy, 0, sizeof(sender_policy));
+    srtp_crypto_policy_set_rtp_default(&sender_policy.rtp);
+    srtp_crypto_policy_set_rtcp_default(&sender_policy.rtcp);
+    sender_policy.ssrc.type = ssrc_specific;
+    sender_policy.ssrc.value = 0xcafebabe;
+    sender_policy.key = test_key;
+    sender_policy.window_size = 128;
+
+    status = srtp_create(&sender_session, &sender_policy);
+    if (status) {
+        return status;
+    }
+
+    /* Set the ROC before encrypting the first packet */
+    status = srtp_set_stream_roc(sender_session, sender_policy.ssrc.value,
+                                 roc_to_set);
+    if (status != srtp_err_status_ok) {
+        return status;
+    }
+
+    /* Create the packet to decrypt */
+    ts = 0;
+    pkt = srtp_create_test_packet_extended(msg_len_octets,
+                                           sender_policy.ssrc.value, seq, ts,
+                                           &protected_msg_len_octets);
+    status = srtp_protect(sender_session, pkt, &protected_msg_len_octets);
+    if (status) {
+        return status;
+    }
+
+    /* Create the receiver */
+    memset(&receiver_policy, 0, sizeof(receiver_policy));
+    srtp_crypto_policy_set_rtp_default(&receiver_policy.rtp);
+    srtp_crypto_policy_set_rtcp_default(&receiver_policy.rtcp);
+    receiver_policy.ssrc.type = ssrc_specific;
+    receiver_policy.ssrc.value = sender_policy.ssrc.value;
+    receiver_policy.key = test_key;
+    receiver_policy.window_size = 128;
+
+    status = srtp_create(&receiver_session, &receiver_policy);
+    if (status) {
+        return status;
+    }
+
+    /* Make a copy of the sent protected packet */
+    recv_pkt = malloc(protected_msg_len_octets);
+    if (recv_pkt == NULL) {
+        return srtp_err_status_fail;
+    }
+    memcpy(recv_pkt, pkt, protected_msg_len_octets);
+
+    /* Set the ROC to the wanted value */
+    status = srtp_set_stream_roc(receiver_session, receiver_policy.ssrc.value,
+                                 roc_to_set);
+    if (status) {
+        return status;
+    }
+
+    status =
+        srtp_unprotect(receiver_session, recv_pkt, &protected_msg_len_octets);
+    if (status) {
+        return status;
+    }
+
+    /* Cleanup */
+    status = srtp_dealloc(sender_session);
+    if (status) {
+        return status;
+    }
+
+    status = srtp_dealloc(receiver_session);
+    if (status) {
+        return status;
+    }
+
     free(pkt);
-    if (status) {
-      return status;
-    }
+    free(recv_pkt);
 
-    status = srtp_get_stream_roc(session, policy.ssrc.value, &roc);
-    if (status) {
-      return status;
-    }
-
-    if (roc != i) {
-      return srtp_err_status_fail;
-    }
-
-    seq++;
-    ts++;
-  }
-
-  /* Cleanup */
-  status = srtp_dealloc(session);
-  if (status) {
-    return status;
-  }
-
-  return srtp_err_status_ok;
+    return srtp_err_status_ok;
 }
 
-static srtp_err_status_t
-test_set_receiver_roc(uint32_t packets, uint32_t roc_to_set)
+srtp_err_status_t srtp_test_set_receiver_roc()
 {
-  srtp_err_status_t status;
+    int packets;
+    uint32_t roc;
+    srtp_err_status_t status;
 
-  srtp_policy_t sender_policy;
-  srtp_t sender_session;
+    /* First test does not rollover */
+    packets = 1;
+    roc = 0;
 
-  srtp_policy_t receiver_policy;
-  srtp_t receiver_session;
-
-  srtp_hdr_t *pkt_1;
-  unsigned char *recv_pkt_1;
-
-  srtp_hdr_t *pkt_2;
-  unsigned char *recv_pkt_2;
-
-  uint32_t i;
-  uint32_t ts;
-  uint16_t seq;
-
-  int msg_len_octets = 32;
-  int protected_msg_len_octets_1;
-  int protected_msg_len_octets_2;
-
-  /* Create sender */
-  memset(&sender_policy, 0, sizeof(sender_policy));
-  srtp_crypto_policy_set_rtp_default(&sender_policy.rtp);
-  srtp_crypto_policy_set_rtcp_default(&sender_policy.rtcp);
-  sender_policy.ssrc.type  = ssrc_specific;
-  sender_policy.ssrc.value = 0xcafebabe;
-  sender_policy.key = test_key;
-  sender_policy.window_size = 128;
-
-  status = srtp_create(&sender_session, &sender_policy);
-  if (status) {
-    return status;
-  }
-
-  /* Create and protect packets */
-  seq = 0;
-  ts = 0;
-  for (i = 0; i < packets; i++) {
-    srtp_hdr_t *tmp_pkt;
-    int tmp_len;
-
-    tmp_pkt = srtp_create_test_packet_extended(msg_len_octets, sender_policy.ssrc.value, seq, ts);
-    tmp_len = msg_len_octets;
-    status = srtp_protect(sender_session, tmp_pkt, &tmp_len);
-    free(tmp_pkt);
+    status = test_set_receiver_roc(packets - 1, roc);
     if (status) {
-      return status;
+        return status;
     }
-    seq++;
-    ts++;
-  }
 
-  /* Create the first packet to decrypt and test for ROC change */
-  pkt_1 = srtp_create_test_packet_extended(msg_len_octets, sender_policy.ssrc.value, seq, ts);
-  protected_msg_len_octets_1 = msg_len_octets;
-  status = srtp_protect(sender_session, pkt_1, &protected_msg_len_octets_1);
-  if (status) {
-    return status;
-  }
+    status = test_set_receiver_roc(packets, roc);
+    if (status) {
+        return status;
+    }
 
-  /* Create the second packet to decrypt and test for ROC change */
-  seq++;
-  ts++;
-  pkt_2 = srtp_create_test_packet_extended(msg_len_octets, sender_policy.ssrc.value, seq, ts);
-  protected_msg_len_octets_2 = msg_len_octets;
-  status = srtp_protect(sender_session, pkt_2, &protected_msg_len_octets_2);
-  if (status) {
-    return status;
-  }
+    status = test_set_receiver_roc(packets + 1, roc);
+    if (status) {
+        return status;
+    }
 
-  /* Create the receiver */
-  memset(&receiver_policy, 0, sizeof(receiver_policy));
-  srtp_crypto_policy_set_rtp_default(&receiver_policy.rtp);
-  srtp_crypto_policy_set_rtcp_default(&receiver_policy.rtcp);
-  receiver_policy.ssrc.type  = ssrc_specific;
-  receiver_policy.ssrc.value = sender_policy.ssrc.value;
-  receiver_policy.key = test_key;
-  receiver_policy.window_size = 128;
+    status = test_set_receiver_roc(packets + 60000, roc);
+    if (status) {
+        return status;
+    }
 
-  status = srtp_create(&receiver_session, &receiver_policy);
-  if (status) {
-    return status;
-  }
+    /* Second test should rollover */
+    packets = 65535;
+    roc = 0;
 
-  /* Make a copy of the first sent protected packet */
-  recv_pkt_1 = malloc(protected_msg_len_octets_1);
-  if (recv_pkt_1 == NULL) {
-    return srtp_err_status_fail;
-  }
-  memcpy(recv_pkt_1, pkt_1, protected_msg_len_octets_1);
+    status = test_set_receiver_roc(packets - 1, roc);
+    if (status) {
+        return status;
+    }
 
-  /* Make a copy of the second sent protected packet */
-  recv_pkt_2 = malloc(protected_msg_len_octets_2);
-  if (recv_pkt_2 == NULL) {
-    return srtp_err_status_fail;
-  }
-  memcpy(recv_pkt_2, pkt_2, protected_msg_len_octets_2);
+    status = test_set_receiver_roc(packets, roc);
+    if (status) {
+        return status;
+    }
 
-  /* Set the ROC to the wanted value */
-  status = srtp_set_stream_roc(receiver_session, receiver_policy.ssrc.value, roc_to_set);
-  if (status) {
-    return status;
-  }
+    /* Now the rollover counter should be 1 */
+    roc = 1;
+    status = test_set_receiver_roc(packets + 1, roc);
+    if (status) {
+        return status;
+    }
 
-  /* Unprotect the first packet */
-  status = srtp_unprotect(receiver_session, recv_pkt_1, &protected_msg_len_octets_1);
-  if (status) {
-    return status;
-  }
+    status = test_set_receiver_roc(packets + 60000, roc);
+    if (status) {
+        return status;
+    }
 
-  /* Unprotect the second packet */
-  status = srtp_unprotect(receiver_session, recv_pkt_2, &protected_msg_len_octets_2);
-  if (status) {
-    return status;
-  }
-
-  /* Cleanup */
-  status = srtp_dealloc(sender_session);
-  if (status) {
-    return status;
-  }
-
-  status = srtp_dealloc(receiver_session);
-  if (status) {
-    return status;
-  }
-
-  free(pkt_1);
-  free(recv_pkt_1);
-  free(pkt_2);
-  free(recv_pkt_2);
-
-  return srtp_err_status_ok;
+    return srtp_err_status_ok;
 }
 
-static srtp_err_status_t
-test_set_sender_roc(uint16_t seq, uint32_t roc_to_set)
+srtp_err_status_t srtp_test_set_sender_roc()
 {
-  srtp_err_status_t status;
+    uint32_t roc;
+    uint16_t seq;
+    srtp_err_status_t status;
 
-  srtp_policy_t sender_policy;
-  srtp_t sender_session;
+    seq = 43210;
+    roc = 0;
+    status = test_set_sender_roc(seq, roc);
+    if (status) {
+        return status;
+    }
 
-  srtp_policy_t receiver_policy;
-  srtp_t receiver_session;
+    roc = 65535;
+    status = test_set_sender_roc(seq, roc);
+    if (status) {
+        return status;
+    }
 
-  srtp_hdr_t *pkt;
-  unsigned char *recv_pkt;
+    roc = 0xffff;
+    status = test_set_sender_roc(seq, roc);
+    if (status) {
+        return status;
+    }
 
-  uint32_t ts;
+    roc = 0xffff00;
+    status = test_set_sender_roc(seq, roc);
+    if (status) {
+        return status;
+    }
 
-  int msg_len_octets = 32;
-  int protected_msg_len_octets;
+    roc = 0xfffffff0;
+    status = test_set_sender_roc(seq, roc);
+    if (status) {
+        return status;
+    }
 
-  /* Create sender */
-  memset(&sender_policy, 0, sizeof(sender_policy));
-  srtp_crypto_policy_set_rtp_default(&sender_policy.rtp);
-  srtp_crypto_policy_set_rtcp_default(&sender_policy.rtcp);
-  sender_policy.ssrc.type  = ssrc_specific;
-  sender_policy.ssrc.value = 0xcafebabe;
-  sender_policy.key = test_key;
-  sender_policy.window_size = 128;
-
-  status = srtp_create(&sender_session, &sender_policy);
-  if (status) {
-    return status;
-  }
-
-  /* Set the ROC before encrypting the first packet */
-  status = srtp_set_stream_roc(sender_session, sender_policy.ssrc.value, roc_to_set);
-  if (status != srtp_err_status_ok) {
-    return status;
-  }
-
-  /* Create the packet to decrypt */
-  ts = 0;
-  pkt = srtp_create_test_packet_extended(msg_len_octets, sender_policy.ssrc.value, seq, ts);
-  protected_msg_len_octets = msg_len_octets;
-  status = srtp_protect(sender_session, pkt, &protected_msg_len_octets);
-  if (status) {
-    return status;
-  }
-
-  /* Create the receiver */
-  memset(&receiver_policy, 0, sizeof(receiver_policy));
-  srtp_crypto_policy_set_rtp_default(&receiver_policy.rtp);
-  srtp_crypto_policy_set_rtcp_default(&receiver_policy.rtcp);
-  receiver_policy.ssrc.type  = ssrc_specific;
-  receiver_policy.ssrc.value = sender_policy.ssrc.value;
-  receiver_policy.key = test_key;
-  receiver_policy.window_size = 128;
-
-  status = srtp_create(&receiver_session, &receiver_policy);
-  if (status) {
-    return status;
-  }
-
-  /* Make a copy of the sent protected packet */
-  recv_pkt = malloc(protected_msg_len_octets);
-  if (recv_pkt == NULL) {
-    return srtp_err_status_fail;
-  }
-  memcpy(recv_pkt, pkt, protected_msg_len_octets);
-
-  /* Set the ROC to the wanted value */
-  status = srtp_set_stream_roc(receiver_session, receiver_policy.ssrc.value, roc_to_set);
-  if (status) {
-    return status;
-  }
-
-  status = srtp_unprotect(receiver_session, recv_pkt, &protected_msg_len_octets);
-  if (status) {
-    return status;
-  }
-
-  /* Cleanup */
-  status = srtp_dealloc(sender_session);
-  if (status) {
-    return status;
-  }
-
-  status = srtp_dealloc(receiver_session);
-  if (status) {
-    return status;
-  }
-
-  free(pkt);
-  free(recv_pkt);
-
-  return srtp_err_status_ok;
-}
-
-srtp_err_status_t
-srtp_test_set_receiver_roc() {
-  int packets;
-  uint32_t roc;
-  srtp_err_status_t status;
-
-  /* First test does not rollover */
-  packets = 1;
-  roc = 0;
-
-  status = test_set_receiver_roc(packets - 1, roc);
-  if (status) {
-    return status;
-  }
-
-  status = test_set_receiver_roc(packets, roc);
-  if (status) {
-    return status;
-  }
-
-  status = test_set_receiver_roc(packets + 1, roc);
-  if (status) {
-    return status;
-  }
-
-  status = test_set_receiver_roc(packets + 60000, roc);
-  if (status) {
-    return status;
-  }
-
-  /* Second test should rollover */
-  packets = 65535;
-  roc = 0;
-
-  status = test_set_receiver_roc(packets - 1, roc);
-  if (status) {
-    return status;
-  }
-
-  status = test_set_receiver_roc(packets, roc);
-  if (status) {
-    return status;
-  }
-
-  /* Now the rollover counter should be 1 */
-  roc = 1;
-  status = test_set_receiver_roc(packets + 1, roc);
-  if (status) {
-    return status;
-  }
-
-  status = test_set_receiver_roc(packets + 60000, roc);
-  if (status) {
-    return status;
-  }
-
-  return srtp_err_status_ok;
-}
-
-srtp_err_status_t
-srtp_test_set_sender_roc() {
-  uint32_t roc;
-  uint16_t seq;
-  srtp_err_status_t status;
-
-  seq = 43210;
-  roc = 0;
-  status = test_set_sender_roc(seq, roc);
-  if (status) {
-    return status;
-  }
-
-  roc = 65535;
-  status = test_set_sender_roc(seq, roc);
-  if (status) {
-    return status;
-  }
-
-  roc = 0xffff;
-  status = test_set_sender_roc(seq, roc);
-  if (status) {
-    return status;
-  }
-
-  roc = 0xffff00;
-  status = test_set_sender_roc(seq, roc);
-  if (status) {
-    return status;
-  }
-
-  roc = 0xfffffff0;
-  status = test_set_sender_roc(seq, roc);
-  if (status) {
-    return status;
-  }
-
-  return srtp_err_status_ok;
+    return srtp_err_status_ok;
 }
 
 /*
  * srtp policy definitions - these definitions are used above
  */
 
+// clang-format off
 unsigned char test_key[46] = {
     0xe1, 0xf9, 0x7a, 0x0d, 0x3e, 0x01, 0x8b, 0xe0,
     0xd6, 0x4f, 0xa3, 0x2c, 0x06, 0xde, 0x41, 0x39,
@@ -3431,241 +3409,253 @@ unsigned char test_mki_id[TEST_MKI_ID_SIZE] = {
 unsigned char test_mki_id_2[TEST_MKI_ID_SIZE] = {
     0xf3, 0xa1, 0x46, 0x71
 };
+// clang-format on
 
 const srtp_policy_t default_policy = {
-    { ssrc_any_outbound, 0 },  /* SSRC                           */
-    {                          /* SRTP policy                    */
-        SRTP_AES_ICM_128,           /* cipher type                 */
+    { ssrc_any_outbound, 0 }, /* SSRC */
+    {
+        /* SRTP policy */
+        SRTP_AES_ICM_128,               /* cipher type                 */
         SRTP_AES_ICM_128_KEY_LEN_WSALT, /* cipher key length in octets */
-        SRTP_HMAC_SHA1,             /* authentication func type    */
-        16,                    /* auth key length in octets   */
-        10,                    /* auth tag length in octets   */
-        sec_serv_conf_and_auth /* security services flag      */
+        SRTP_HMAC_SHA1,                 /* authentication func type    */
+        16,                             /* auth key length in octets   */
+        10,                             /* auth tag length in octets   */
+        sec_serv_conf_and_auth          /* security services flag      */
     },
-    {                          /* SRTCP policy                   */
-        SRTP_AES_ICM_128,           /* cipher type                 */
+    {
+        /* SRTCP policy */
+        SRTP_AES_ICM_128,               /* cipher type                 */
         SRTP_AES_ICM_128_KEY_LEN_WSALT, /* cipher key length in octets */
-        SRTP_HMAC_SHA1,             /* authentication func type    */
-        16,                    /* auth key length in octets   */
-        10,                    /* auth tag length in octets   */
-        sec_serv_conf_and_auth /* security services flag      */
+        SRTP_HMAC_SHA1,                 /* authentication func type    */
+        16,                             /* auth key length in octets   */
+        10,                             /* auth tag length in octets   */
+        sec_serv_conf_and_auth          /* security services flag      */
     },
     NULL,
     (srtp_master_key_t **)test_keys,
-    2,         /* indicates the number of Master keys */
-    NULL,      /* indicates that EKT is not in use */
-    128,       /* replay window size */
-    0,         /* retransmission not allowed */
-    NULL,      /* no encrypted extension headers */
-    0,         /* list of encrypted extension headers is empty */
+    2,    /* indicates the number of Master keys          */
+    NULL, /* indicates that EKT is not in use             */
+    128,  /* replay window size                           */
+    0,    /* retransmission not allowed                   */
+    NULL, /* no encrypted extension headers               */
+    0,    /* list of encrypted extension headers is empty */
     NULL
 };
 
 const srtp_policy_t aes_only_policy = {
     { ssrc_any_outbound, 0 }, /* SSRC                        */
     {
-        SRTP_AES_ICM_128,          /* cipher type                 */
+        SRTP_AES_ICM_128,               /* cipher type                 */
         SRTP_AES_ICM_128_KEY_LEN_WSALT, /* cipher key length in octets */
-        SRTP_NULL_AUTH,            /* authentication func type    */
-        0,                    /* auth key length in octets   */
-        0,                    /* auth tag length in octets   */
-        sec_serv_conf         /* security services flag      */
+        SRTP_NULL_AUTH,                 /* authentication func type    */
+        0,                              /* auth key length in octets   */
+        0,                              /* auth tag length in octets   */
+        sec_serv_conf                   /* security services flag      */
     },
     {
-        SRTP_AES_ICM_128,        /* cipher type                 */
+        SRTP_AES_ICM_128,               /* cipher type                 */
         SRTP_AES_ICM_128_KEY_LEN_WSALT, /* cipher key length in octets */
-        SRTP_NULL_AUTH,          /* authentication func type    */
-        0,                  /* auth key length in octets   */
-        0,                  /* auth tag length in octets   */
-        sec_serv_conf       /* security services flag      */
+        SRTP_NULL_AUTH,                 /* authentication func type    */
+        0,                              /* auth key length in octets   */
+        0,                              /* auth tag length in octets   */
+        sec_serv_conf                   /* security services flag      */
     },
     NULL,
     (srtp_master_key_t **)test_keys,
-    2,         /* indicates the number of Master keys */
-    NULL,      /* indicates that EKT is not in use */
-    128,       /* replay window size */
-    0,         /* retransmission not allowed */
-    NULL,      /* no encrypted extension headers */
-    0,         /* list of encrypted extension headers is empty */
+    2,    /* indicates the number of Master keys          */
+    NULL, /* indicates that EKT is not in use             */
+    128,  /* replay window size                           */
+    0,    /* retransmission not allowed                   */
+    NULL, /* no encrypted extension headers               */
+    0,    /* list of encrypted extension headers is empty */
     NULL
 };
 
 const srtp_policy_t hmac_only_policy = {
-    { ssrc_any_outbound, 0 }, /* SSRC                        */
+    { ssrc_any_outbound, 0 }, /* SSRC */
     {
-        SRTP_NULL_CIPHER,          /* cipher type                 */
-        0,                    /* cipher key length in octets */
-        SRTP_HMAC_SHA1,            /* authentication func type    */
-        20,                   /* auth key length in octets   */
-        4,                    /* auth tag length in octets   */
-        sec_serv_auth         /* security services flag      */
+        SRTP_NULL_CIPHER, /* cipher type                 */
+        0,                /* cipher key length in octets */
+        SRTP_HMAC_SHA1,   /* authentication func type    */
+        20,               /* auth key length in octets   */
+        4,                /* auth tag length in octets   */
+        sec_serv_auth     /* security services flag      */
     },
     {
-        SRTP_NULL_CIPHER,        /* cipher type                 */
-        0,                  /* cipher key length in octets */
-        SRTP_HMAC_SHA1,          /* authentication func type    */
-        20,                 /* auth key length in octets   */
-        4,                  /* auth tag length in octets   */
-        sec_serv_auth       /* security services flag      */
+        SRTP_NULL_CIPHER, /* cipher type                 */
+        0,                /* cipher key length in octets */
+        SRTP_HMAC_SHA1,   /* authentication func type    */
+        20,               /* auth key length in octets   */
+        4,                /* auth tag length in octets   */
+        sec_serv_auth     /* security services flag      */
     },
     NULL,
     (srtp_master_key_t **)test_keys,
-    2,         /* Number of Master keys associated with the policy */
-    NULL,      /* indicates that EKT is not in use */
-    128,       /* replay window size */
-    0,         /* retransmission not allowed */
-    NULL,      /* no encrypted extension headers */
-    0,         /* list of encrypted extension headers is empty */
+    2,    /* Number of Master keys associated with the policy */
+    NULL, /* indicates that EKT is not in use                 */
+    128,  /* replay window size                               */
+    0,    /* retransmission not allowed                       */
+    NULL, /* no encrypted extension headers                   */
+    0,    /* list of encrypted extension headers is empty     */
     NULL
 };
 
 #ifdef OPENSSL
 const srtp_policy_t aes128_gcm_8_policy = {
-    { ssrc_any_outbound, 0 },           /* SSRC                           */
-    {                                   /* SRTP policy                    */
-        SRTP_AES_GCM_128,                    /* cipher type                 */
+    { ssrc_any_outbound, 0 }, /* SSRC */
+    {
+        /* SRTP policy */
+        SRTP_AES_GCM_128,               /* cipher type                 */
         SRTP_AES_GCM_128_KEY_LEN_WSALT, /* cipher key length in octets */
-        SRTP_NULL_AUTH,                      /* authentication func type    */
+        SRTP_NULL_AUTH,                 /* authentication func type    */
         0,                              /* auth key length in octets   */
         8,                              /* auth tag length in octets   */
         sec_serv_conf_and_auth          /* security services flag      */
     },
-    {                                   /* SRTCP policy                   */
-        SRTP_AES_GCM_128,                    /* cipher type                 */
+    {
+        /* SRTCP policy */
+        SRTP_AES_GCM_128,               /* cipher type                 */
         SRTP_AES_GCM_128_KEY_LEN_WSALT, /* cipher key length in octets */
-        SRTP_NULL_AUTH,                      /* authentication func type    */
+        SRTP_NULL_AUTH,                 /* authentication func type    */
         0,                              /* auth key length in octets   */
         8,                              /* auth tag length in octets   */
         sec_serv_conf_and_auth          /* security services flag      */
     },
     NULL,
     (srtp_master_key_t **)test_keys,
-    2,           /* indicates the number of Master keys */
-    NULL,        /* indicates that EKT is not in use */
-    128,         /* replay window size */
-    0,           /* retransmission not allowed */
-    NULL,        /* no encrypted extension headers */
-    0,           /* list of encrypted extension headers is empty */
+    2,    /* indicates the number of Master keys          */
+    NULL, /* indicates that EKT is not in use             */
+    128,  /* replay window size                           */
+    0,    /* retransmission not allowed                   */
+    NULL, /* no encrypted extension headers               */
+    0,    /* list of encrypted extension headers is empty */
     NULL
 };
 
 const srtp_policy_t aes128_gcm_8_cauth_policy = {
-    { ssrc_any_outbound, 0 },           /* SSRC                           */
-    {                                   /* SRTP policy                    */
-        SRTP_AES_GCM_128,                    /* cipher type                 */
+    { ssrc_any_outbound, 0 }, /* SSRC */
+    {
+        /* SRTP policy */
+        SRTP_AES_GCM_128,               /* cipher type                 */
         SRTP_AES_GCM_128_KEY_LEN_WSALT, /* cipher key length in octets */
-        SRTP_NULL_AUTH,                      /* authentication func type    */
+        SRTP_NULL_AUTH,                 /* authentication func type    */
         0,                              /* auth key length in octets   */
         8,                              /* auth tag length in octets   */
         sec_serv_conf_and_auth          /* security services flag      */
     },
-    {                                   /* SRTCP policy                   */
-        SRTP_AES_GCM_128,                    /* cipher type                 */
+    {
+        /* SRTCP policy */
+        SRTP_AES_GCM_128,               /* cipher type                 */
         SRTP_AES_GCM_128_KEY_LEN_WSALT, /* cipher key length in octets */
-        SRTP_NULL_AUTH,                      /* authentication func type    */
+        SRTP_NULL_AUTH,                 /* authentication func type    */
         0,                              /* auth key length in octets   */
         8,                              /* auth tag length in octets   */
         sec_serv_auth                   /* security services flag      */
     },
     NULL,
     (srtp_master_key_t **)test_keys,
-    2,           /* indicates the number of Master keys */
-    NULL,        /* indicates that EKT is not in use */
-    128,         /* replay window size */
-    0,           /* retransmission not allowed */
-    NULL,        /* no encrypted extension headers */
-    0,           /* list of encrypted extension headers is empty */
+    2,    /* indicates the number of Master keys          */
+    NULL, /* indicates that EKT is not in use             */
+    128,  /* replay window size                           */
+    0,    /* retransmission not allowed                   */
+    NULL, /* no encrypted extension headers               */
+    0,    /* list of encrypted extension headers is empty */
     NULL
 };
 
 const srtp_policy_t aes256_gcm_8_policy = {
-    { ssrc_any_outbound, 0 },           /* SSRC                           */
-    {                                   /* SRTP policy                    */
-        SRTP_AES_GCM_256,                    /* cipher type                 */
+    { ssrc_any_outbound, 0 }, /* SSRC */
+    {
+        /* SRTP policy */
+        SRTP_AES_GCM_256,               /* cipher type                 */
         SRTP_AES_GCM_256_KEY_LEN_WSALT, /* cipher key length in octets */
-        SRTP_NULL_AUTH,                      /* authentication func type    */
+        SRTP_NULL_AUTH,                 /* authentication func type    */
         0,                              /* auth key length in octets   */
         8,                              /* auth tag length in octets   */
         sec_serv_conf_and_auth          /* security services flag      */
     },
-    {                                   /* SRTCP policy                   */
-        SRTP_AES_GCM_256,                    /* cipher type                 */
+    {
+        /* SRTCP policy */
+        SRTP_AES_GCM_256,               /* cipher type                 */
         SRTP_AES_GCM_256_KEY_LEN_WSALT, /* cipher key length in octets */
-        SRTP_NULL_AUTH,                      /* authentication func type    */
+        SRTP_NULL_AUTH,                 /* authentication func type    */
         0,                              /* auth key length in octets   */
         8,                              /* auth tag length in octets   */
         sec_serv_conf_and_auth          /* security services flag      */
     },
     NULL,
     (srtp_master_key_t **)test_keys,
-    2,           /* indicates the number of Master keys */
-    NULL,        /* indicates that EKT is not in use */
-    128,         /* replay window size */
-    0,           /* retransmission not allowed */
-    NULL,        /* no encrypted extension headers */
-    0,           /* list of encrypted extension headers is empty */
+    2,    /* indicates the number of Master keys          */
+    NULL, /* indicates that EKT is not in use             */
+    128,  /* replay window size                           */
+    0,    /* retransmission not allowed                   */
+    NULL, /* no encrypted extension headers               */
+    0,    /* list of encrypted extension headers is empty */
     NULL
 };
 
 const srtp_policy_t aes256_gcm_8_cauth_policy = {
-    { ssrc_any_outbound, 0 },           /* SSRC                           */
-    {                                   /* SRTP policy                    */
-        SRTP_AES_GCM_256,                    /* cipher type                 */
+    { ssrc_any_outbound, 0 }, /* SSRC */
+    {
+        /* SRTP policy */
+        SRTP_AES_GCM_256,               /* cipher type                 */
         SRTP_AES_GCM_256_KEY_LEN_WSALT, /* cipher key length in octets */
-        SRTP_NULL_AUTH,                      /* authentication func type    */
+        SRTP_NULL_AUTH,                 /* authentication func type    */
         0,                              /* auth key length in octets   */
         8,                              /* auth tag length in octets   */
         sec_serv_conf_and_auth          /* security services flag      */
     },
-    {                                   /* SRTCP policy                   */
-        SRTP_AES_GCM_256,                    /* cipher type                 */
+    {
+        /* SRTCP policy */
+        SRTP_AES_GCM_256,               /* cipher type                 */
         SRTP_AES_GCM_256_KEY_LEN_WSALT, /* cipher key length in octets */
-        SRTP_NULL_AUTH,                      /* authentication func type    */
+        SRTP_NULL_AUTH,                 /* authentication func type    */
         0,                              /* auth key length in octets   */
         8,                              /* auth tag length in octets   */
         sec_serv_auth                   /* security services flag      */
     },
     NULL,
     (srtp_master_key_t **)test_keys,
-    2,           /* indicates the number of Master keys */
-    NULL,        /* indicates that EKT is not in use */
-    128,         /* replay window size */
-    0,           /* retransmission not allowed */
-    NULL,        /* no encrypted extension headers */
-    0,           /* list of encrypted extension headers is empty */
+    2,    /* indicates the number of Master keys          */
+    NULL, /* indicates that EKT is not in use             */
+    128,  /* replay window size                           */
+    0,    /* retransmission not allowed                   */
+    NULL, /* no encrypted extension headers               */
+    0,    /* list of encrypted extension headers is empty */
     NULL
 };
 #endif
 
 const srtp_policy_t null_policy = {
-    { ssrc_any_outbound, 0 }, /* SSRC                        */
+    { ssrc_any_outbound, 0 }, /* SSRC */
     {
-        SRTP_NULL_CIPHER,          /* cipher type                 */
-        0,                    /* cipher key length in octets */
-        SRTP_NULL_AUTH,            /* authentication func type    */
-        0,                    /* auth key length in octets   */
-        0,                    /* auth tag length in octets   */
-        sec_serv_none         /* security services flag      */
+        SRTP_NULL_CIPHER, /* cipher type                 */
+        0,                /* cipher key length in octets */
+        SRTP_NULL_AUTH,   /* authentication func type    */
+        0,                /* auth key length in octets   */
+        0,                /* auth tag length in octets   */
+        sec_serv_none     /* security services flag      */
     },
     {
-        SRTP_NULL_CIPHER,        /* cipher type                 */
-        0,                  /* cipher key length in octets */
-        SRTP_NULL_AUTH,          /* authentication func type    */
-        0,                  /* auth key length in octets   */
-        0,                  /* auth tag length in octets   */
-        sec_serv_none       /* security services flag      */
+        SRTP_NULL_CIPHER, /* cipher type                 */
+        0,                /* cipher key length in octets */
+        SRTP_NULL_AUTH,   /* authentication func type    */
+        0,                /* auth key length in octets   */
+        0,                /* auth tag length in octets   */
+        sec_serv_none     /* security services flag      */
     },
     NULL,
     (srtp_master_key_t **)test_keys,
-    2,         /* indicates the number of Master keys */
-    NULL,      /* indicates that EKT is not in use */
-    128,       /* replay window size */
-    0,         /* retransmission not allowed */
-    NULL,      /* no encrypted extension headers */
-    0,         /* list of encrypted extension headers is empty */
+    2,    /* indicates the number of Master keys          */
+    NULL, /* indicates that EKT is not in use             */
+    128,  /* replay window size                           */
+    0,    /* retransmission not allowed                   */
+    NULL, /* no encrypted extension headers               */
+    0,    /* list of encrypted extension headers is empty */
     NULL
 };
 
+// clang-format off
 unsigned char test_256_key[46] = {
     0xf0, 0xf0, 0x49, 0x14, 0xb5, 0x13, 0xf2, 0x76,
     0x3a, 0x1b, 0x1f, 0xa1, 0x30, 0xf1, 0x0e, 0x29,
@@ -3701,79 +3691,85 @@ srtp_master_key_t *test_256_keys[2] = {
     &master_key_1,
     &master_key_2
 };
+// clang-format on
 
 const srtp_policy_t aes_256_hmac_policy = {
-    { ssrc_any_outbound, 0 },  /* SSRC                           */
-    {                          /* SRTP policy                    */
+    { ssrc_any_outbound, 0 }, /* SSRC */
+    {
+        /* SRTP policy */
         SRTP_AES_ICM_256,               /* cipher type                 */
         SRTP_AES_ICM_256_KEY_LEN_WSALT, /* cipher key length in octets */
-        SRTP_HMAC_SHA1,             /* authentication func type    */
-        20,                    /* auth key length in octets   */
-        10,                    /* auth tag length in octets   */
-        sec_serv_conf_and_auth /* security services flag      */
+        SRTP_HMAC_SHA1,                 /* authentication func type    */
+        20,                             /* auth key length in octets   */
+        10,                             /* auth tag length in octets   */
+        sec_serv_conf_and_auth          /* security services flag      */
     },
-    {                          /* SRTCP policy                   */
+    {
+        /* SRTCP policy */
         SRTP_AES_ICM_256,               /* cipher type                 */
         SRTP_AES_ICM_256_KEY_LEN_WSALT, /* cipher key length in octets */
-        SRTP_HMAC_SHA1,             /* authentication func type    */
-        20,                    /* auth key length in octets   */
-        10,                    /* auth tag length in octets   */
-        sec_serv_conf_and_auth /* security services flag      */
+        SRTP_HMAC_SHA1,                 /* authentication func type    */
+        20,                             /* auth key length in octets   */
+        10,                             /* auth tag length in octets   */
+        sec_serv_conf_and_auth          /* security services flag      */
     },
     NULL,
     (srtp_master_key_t **)test_256_keys,
-    2,         /* indicates the number of Master keys */
-    NULL,      /* indicates that EKT is not in use */
-    128,       /* replay window size */
-    0,         /* retransmission not allowed */
-    NULL,      /* no encrypted extension headers */
-    0,         /* list of encrypted extension headers is empty */
+    2,    /* indicates the number of Master keys          */
+    NULL, /* indicates that EKT is not in use             */
+    128,  /* replay window size                           */
+    0,    /* retransmission not allowed                   */
+    NULL, /* no encrypted extension headers               */
+    0,    /* list of encrypted extension headers is empty */
     NULL
 };
 
+// clang-format off
 uint8_t ekt_test_key[16] = {
     0x77, 0x26, 0x9d, 0xac, 0x16, 0xa3, 0x28, 0xca,
     0x8e, 0xc9, 0x68, 0x4b, 0xcc, 0xc4, 0xd2, 0x1b
 };
+// clang-format on
 
 #include "ekt.h"
 
+// clang-format off
 srtp_ekt_policy_ctx_t ekt_test_policy = {
     0xa5a5,                     /* SPI */
     SRTP_EKT_CIPHER_AES_128_ECB,
     ekt_test_key,
     NULL
 };
+// clang-format on
 
 const srtp_policy_t hmac_only_with_ekt_policy = {
-    { ssrc_any_outbound, 0 }, /* SSRC                        */
+    { ssrc_any_outbound, 0 }, /* SSRC */
     {
-        SRTP_NULL_CIPHER,          /* cipher type                 */
-        0,                    /* cipher key length in octets */
-        SRTP_HMAC_SHA1,            /* authentication func type    */
-        20,                   /* auth key length in octets   */
-        4,                    /* auth tag length in octets   */
-        sec_serv_auth         /* security services flag      */
+        SRTP_NULL_CIPHER, /* cipher type                 */
+        0,                /* cipher key length in octets */
+        SRTP_HMAC_SHA1,   /* authentication func type    */
+        20,               /* auth key length in octets   */
+        4,                /* auth tag length in octets   */
+        sec_serv_auth     /* security services flag      */
     },
     {
-        SRTP_NULL_CIPHER,        /* cipher type                 */
-        0,                  /* cipher key length in octets */
-        SRTP_HMAC_SHA1,          /* authentication func type    */
-        20,                 /* auth key length in octets   */
-        4,                  /* auth tag length in octets   */
-        sec_serv_auth       /* security services flag      */
+        SRTP_NULL_CIPHER, /* cipher type                 */
+        0,                /* cipher key length in octets */
+        SRTP_HMAC_SHA1,   /* authentication func type    */
+        20,               /* auth key length in octets   */
+        4,                /* auth tag length in octets   */
+        sec_serv_auth     /* security services flag      */
     },
     NULL,
     (srtp_master_key_t **)test_keys,
-    2,                     /* indicates the number of Master keys */
-    &ekt_test_policy,      /* indicates that EKT is not in use */
-    128,                   /* replay window size */
-    0,                     /* retransmission not allowed */
-    NULL,                  /* no encrypted extension headers */
-    0,                     /* list of encrypted extension headers is empty */
+    2,                /* indicates the number of Master keys          */
+    &ekt_test_policy, /* indicates that EKT is not in use             */
+    128,              /* replay window size                           */
+    0,                /* retransmission not allowed                   */
+    NULL,             /* no encrypted extension headers               */
+    0,                /* list of encrypted extension headers is empty */
     NULL
 };
-
 
 /*
  * an array of pointers to the policies listed above
@@ -3785,8 +3781,8 @@ const srtp_policy_t hmac_only_with_ekt_policy = {
  * add to this list, you should do it at the end.
  */
 
-const srtp_policy_t *
-policy_array[] = {
+// clang-format off
+const srtp_policy_t *policy_array[] = {
     &hmac_only_policy,
     &aes_only_policy,
     &default_policy,
@@ -3801,32 +3797,35 @@ policy_array[] = {
     &hmac_only_with_ekt_policy,
     NULL
 };
+// clang-format on
 
 const srtp_policy_t wildcard_policy = {
-    { ssrc_any_outbound, 0 },  /* SSRC                        */
-    {                          /* SRTP policy                    */
-        SRTP_AES_ICM_128,           /* cipher type                 */
+    { ssrc_any_outbound, 0 }, /* SSRC */
+    {
+        /* SRTP policy */
+        SRTP_AES_ICM_128,               /* cipher type                 */
         SRTP_AES_ICM_128_KEY_LEN_WSALT, /* cipher key length in octets */
-        SRTP_HMAC_SHA1,             /* authentication func type    */
-        16,                    /* auth key length in octets   */
-        10,                    /* auth tag length in octets   */
-        sec_serv_conf_and_auth /* security services flag      */
+        SRTP_HMAC_SHA1,                 /* authentication func type    */
+        16,                             /* auth key length in octets   */
+        10,                             /* auth tag length in octets   */
+        sec_serv_conf_and_auth          /* security services flag      */
     },
-    {                          /* SRTCP policy                   */
-        SRTP_AES_ICM_128,           /* cipher type                 */
+    {
+        /* SRTCP policy */
+        SRTP_AES_ICM_128,               /* cipher type                 */
         SRTP_AES_ICM_128_KEY_LEN_WSALT, /* cipher key length in octets */
-        SRTP_HMAC_SHA1,             /* authentication func type    */
-        16,                    /* auth key length in octets   */
-        10,                    /* auth tag length in octets   */
-        sec_serv_conf_and_auth /* security services flag      */
+        SRTP_HMAC_SHA1,                 /* authentication func type    */
+        16,                             /* auth key length in octets   */
+        10,                             /* auth tag length in octets   */
+        sec_serv_conf_and_auth          /* security services flag      */
     },
     test_key,
     NULL,
     0,
     NULL,
-    128,                 /* replay window size */
-    0,                   /* retransmission not allowed */
-    NULL,                /* no encrypted extension headers */
-    0,                   /* list of encrypted extension headers is empty */
+    128,  /* replay window size                           */
+    0,    /* retransmission not allowed                   */
+    NULL, /* no encrypted extension headers               */
+    0,    /* list of encrypted extension headers is empty */
     NULL
 };

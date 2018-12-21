@@ -1,3 +1,6 @@
+[![Build Status](https://travis-ci.org/cisco/libsrtp.svg?branch=master)](https://travis-ci.org/cisco/libsrtp)
+[![Coverity Scan Build Status](https://scan.coverity.com/projects/14274/badge.svg)](https://scan.coverity.com/projects/cisco-libsrtp)
+
 <a name="introduction-to-libsrtp"></a>
 # Introduction to libSRTP
 
@@ -51,6 +54,7 @@ because it does its work behind the scenes.
   - [Supported Features](#supported-features)
   - [Implementation Notes](#implementation-notes)
 - [Installing and Building libSRTP](#installing-and-building-libsrtp)
+  - [Changing Build Configuration](#changing-build-configuration)
 - [Applications](#applications)
   - [Example Code](#example-code)
 - [Credits](#credits)
@@ -291,6 +295,26 @@ OpenBSD (sparc-unknown-openbsd2.7).
 
 --------------------------------------------------------------------------------
 
+<a name="changing-build-configuration"></a>
+## Changing Build Configuration
+
+To build the `./configure` script mentioned above, libSRTP relies on the
+[automake](https://www.gnu.org/software/automake/) toolchain.  Since
+`./configure` is built from `configure.in` by automake, if you make changes in
+how `./configure` works (e.g., to add a new library dependency), you will need
+to rebuild `./configure` and commit the updated version.  In addition to
+automake itself, you will need to have the `pkgconfig` tools installed as well.
+
+For example, on macOS:
+
+```
+brew install automake pkgconfig
+# Edit configure.in
+autoremake -ivf
+```
+
+--------------------------------------------------------------------------------
+
 <a name="applications"></a>
 # Applications
 
@@ -396,6 +420,9 @@ uint8_t key[30] = {0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07,
 
 // initialize libSRTP
 srtp_init();
+
+// default policy values
+memset(&policy, 0x0, sizeof(srtp_policy_t));
 
 // set policy to describe a policy for an SRTP stream
 crypto_policy_set_rtp_default(&policy.rtp);

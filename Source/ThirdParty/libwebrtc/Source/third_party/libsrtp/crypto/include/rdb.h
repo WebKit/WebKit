@@ -7,28 +7,27 @@
  * Cisco Systems, Inc.
  */
 
-
 /*
- *	
+ *
  * Copyright (c) 2001-2017, Cisco Systems, Inc.
  * All rights reserved.
- * 
+ *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
  * are met:
- * 
+ *
  *   Redistributions of source code must retain the above copyright
  *   notice, this list of conditions and the following disclaimer.
- * 
+ *
  *   Redistributions in binary form must reproduce the above
  *   copyright notice, this list of conditions and the following
  *   disclaimer in the documentation and/or other materials provided
  *   with the distribution.
- * 
+ *
  *   Neither the name of the Cisco Systems, Inc. nor the names of its
  *   contributors may be used to endorse or promote products derived
  *   from this software without specific prior written permission.
- * 
+ *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
  * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
  * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS
@@ -47,9 +46,9 @@
 #ifndef REPLAY_DB_H
 #define REPLAY_DB_H
 
-#include "integers.h"         /* for uint32_t     */
-#include "datatypes.h"        /* for v128_t       */
-#include "err.h"              /* for srtp_err_status_t */
+#include "integers.h"  /* for uint32_t     */
+#include "datatypes.h" /* for v128_t       */
+#include "err.h"       /* for srtp_err_status_t */
 
 #ifdef __cplusplus
 extern "C" {
@@ -75,7 +74,6 @@ typedef struct {
  * returns srtp_err_status_ok on success, srtp_err_status_t_fail otherwise
  */
 srtp_err_status_t srtp_rdb_init(srtp_rdb_t *rdb);
-
 
 /*
  * srtp_rdb_check
@@ -103,7 +101,6 @@ srtp_err_status_t srtp_rdb_add_index(srtp_rdb_t *rdb, uint32_t rdb_index);
  * srtp_rdb_t upon which srtp_rdb_add_index is used!
  */
 
-
 /*
  * srtp_rdb_increment(db) increments the sequence number in db, if it is
  * not too high
@@ -120,7 +117,6 @@ srtp_err_status_t srtp_rdb_increment(srtp_rdb_t *rdb);
  * srtp_rdb_get_value(db) returns the current sequence number of db
  */
 uint32_t srtp_rdb_get_value(const srtp_rdb_t *rdb);
-
 
 #ifdef __cplusplus
 }

@@ -1,15 +1,6 @@
 /*
- * stats.h
  *
- * interface to statistical test functions
- *
- * David A. McGrew
- * Cisco Systems, Inc.
- */
-
-/*
- *
- * Copyright(c) 2001-2017, Cisco Systems, Inc.
+ * Copyright(c) 2001-2017 Cisco Systems, Inc.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -43,24 +34,48 @@
  *
  */
 
-#ifndef STAT_H
-#define STAT_H
+#ifndef CIHPER_TYPES_H
+#define CIHPER_TYPES_H
 
-#include "datatypes.h" /* for uint8_t                       */
-#include "err.h"       /* for srtp_err_status_t             */
+#include "cipher.h"
+#include "auth.h"
 
-#ifdef __cplusplus
-extern "C" {
+/*
+ * cipher types that can be included in the kernel
+ */
+
+extern const srtp_cipher_type_t srtp_null_cipher;
+extern const srtp_cipher_type_t srtp_aes_icm_128;
+extern const srtp_cipher_type_t srtp_aes_icm_256;
+#ifdef OPENSSL
+extern const srtp_cipher_type_t srtp_aes_icm_192;
+extern const srtp_cipher_type_t srtp_aes_gcm_128_openssl;
+extern const srtp_cipher_type_t srtp_aes_gcm_256_openssl;
 #endif
 
-srtp_err_status_t stat_test_monobit(uint8_t *data);
+/*
+ * auth func types that can be included in the kernel
+ */
 
-srtp_err_status_t stat_test_poker(uint8_t *data);
+extern const srtp_auth_type_t srtp_null_auth;
+extern const srtp_auth_type_t srtp_hmac;
 
-srtp_err_status_t stat_test_runs(uint8_t *data);
+/*
+ * other generic debug modules that can be included in the kernel
+ */
 
-#ifdef __cplusplus
-}
+extern srtp_debug_module_t srtp_mod_auth;
+extern srtp_debug_module_t srtp_mod_cipher;
+extern srtp_debug_module_t srtp_mod_stat;
+extern srtp_debug_module_t srtp_mod_alloc;
+
+/* debug modules for cipher types */
+extern srtp_debug_module_t srtp_mod_aes_icm;
+#ifdef OPENSSL
+extern srtp_debug_module_t srtp_mod_aes_gcm;
 #endif
 
-#endif /* STAT_H */
+/* debug modules for auth types */
+extern srtp_debug_module_t srtp_mod_hmac;
+
+#endif

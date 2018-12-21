@@ -33,7 +33,7 @@ config("libsrtp_config") {
     "HAVE_UINT64_T",
     "HAVE_UINT8_T",
   ]
-  if (is_posix) {
+  if (is_posix || is_fuchsia) {
     defines += [
       "HAVE_ARPA_INET_H",
       "HAVE_NETINET_IN_H",
@@ -80,6 +80,7 @@ static_library("libsrtp") {
     "crypto/include/alloc.h",
     "crypto/include/auth.h",
     "crypto/include/cipher.h",
+    "crypto/include/cipher_types.h",
     "crypto/include/crypto_kernel.h",
     "crypto/include/crypto_types.h",
     "crypto/include/datatypes.h",

@@ -42,7 +42,6 @@
  *
  */
 
-
 #ifndef ERR_H
 #define ERR_H
 
@@ -61,7 +60,6 @@ extern "C" {
  *
  * @{
  */
-
 
 /**
  * @}
@@ -82,9 +80,11 @@ typedef enum {
 
 srtp_err_status_t srtp_err_reporting_init(void);
 
-typedef void (srtp_err_report_handler_func_t)(srtp_err_reporting_level_t level, const char * msg);
+typedef void(srtp_err_report_handler_func_t)(srtp_err_reporting_level_t level,
+                                             const char *msg);
 
-srtp_err_status_t srtp_install_err_report_handler(srtp_err_report_handler_func_t func);
+srtp_err_status_t srtp_install_err_report_handler(
+    srtp_err_report_handler_func_t func);
 
 /*
  * srtp_err_report reports a 'printf' formatted error
@@ -96,9 +96,7 @@ srtp_err_status_t srtp_install_err_report_handler(srtp_err_report_handler_func_t
  *
  */
 
-void
-srtp_err_report(srtp_err_reporting_level_t level, const char *format, ...);
-
+void srtp_err_report(srtp_err_reporting_level_t level, const char *format, ...);
 
 /*
  * debug_module_t defines a debug module
@@ -111,17 +109,21 @@ typedef struct {
 
 #ifdef ENABLE_DEBUG_LOGGING
 
-#define debug_print(mod, format, arg)                  \
+#define debug_print(mod, format, arg)                                          \
     srtp_err_report(srtp_err_level_debug, ("%s: " format "\n"), mod.name, arg)
-#define debug_print2(mod, format, arg1, arg2)                  \
-    srtp_err_report(srtp_err_level_debug, ("%s: " format "\n"), mod.name, arg1, arg2)
+#define debug_print2(mod, format, arg1, arg2)                                  \
+    srtp_err_report(srtp_err_level_debug, ("%s: " format "\n"), mod.name,      \
+                    arg1, arg2)
 
 #else
 
-#define debug_print(mod, format, arg)                  \
-    if (mod.on) srtp_err_report(srtp_err_level_debug, ("%s: " format "\n"), mod.name, arg)
-#define debug_print2(mod, format, arg1, arg2)                  \
-    if (mod.on) srtp_err_report(srtp_err_level_debug, ("%s: " format "\n"), mod.name, arg1, arg2)
+#define debug_print(mod, format, arg)                                          \
+    if (mod.on)                                                                \
+    srtp_err_report(srtp_err_level_debug, ("%s: " format "\n"), mod.name, arg)
+#define debug_print2(mod, format, arg1, arg2)                                  \
+    if (mod.on)                                                                \
+    srtp_err_report(srtp_err_level_debug, ("%s: " format "\n"), mod.name,      \
+                    arg1, arg2)
 
 #endif
 

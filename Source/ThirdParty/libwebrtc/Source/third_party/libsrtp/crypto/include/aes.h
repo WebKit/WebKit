@@ -70,9 +70,11 @@ srtp_err_status_t srtp_aes_expand_decryption_key(
     int key_len,
     srtp_aes_expanded_key_t *expanded_key);
 
-void srtp_aes_encrypt(v128_t *plaintext, const srtp_aes_expanded_key_t *exp_key);
+void srtp_aes_encrypt(v128_t *plaintext,
+                      const srtp_aes_expanded_key_t *exp_key);
 
-void srtp_aes_decrypt(v128_t *plaintext, const srtp_aes_expanded_key_t *exp_key);
+void srtp_aes_decrypt(v128_t *plaintext,
+                      const srtp_aes_expanded_key_t *exp_key);
 
 #ifdef __cplusplus
 }

@@ -1,5 +1,65 @@
 Changelog
 
+2.2.0-pre (This version)
+
+Major changes
+
+All code has been reformatted to be consistent. A .clang-format file and format.sh script has been added that can be use to verify and enforce consistent formatting. An automated check on code formatting is now part of travis build.
+
+Other changes
+
+PR #409 - Compatibilty with LibreSSL
+
+PR #406 - Fix unprotect when pktlen < (2*mki_size + tag_len)
+
+PR #405 - Prevent potential double free
+
+PR #404 - Add back extern to global variables
+
+PR #403 - Set gcm IV directly with EVP_CipherInit_ex
+
+PR #401 - Fix memory access issue in srtp_get_session_keys()
+
+PR #398 - Fix memory access fixes when invalid profiles where used
+
+PR #391 - Return NULL when allocating memory of size zero
+
+PR #390 - Bitvector of length zero is not valid
+
+PR #385 - Treat warnings as errors on travis builds
+
+PR #388 - Moved externs from crypto_kernel into its own header
+
+PR #379 - Fixed several compiler warnings from Firefox builds
+
+PR #377 - Removed variable init code in rdbx which never gets used
+
+PR #381 - Added error in case the platform is not detected
+
+PR #376 - Add coverity scan to travis builds
+
+PR #374 - Add a big endian build on travis
+
+PR #373 - Fixed buffer size issue in test/srtp_driver.c
+
+PR #372 - Make rtp_decoder compile on MinGW
+
+PR #367 - Rename configure.in to configure.ac
+
+PR #365 - Replace calls to free() with srtp_crypto_free()
+
+PR #364 - Add valgrind to travis and fix leaks in tests
+
+PR #363 - Change smtp_crypto_alloc to initialize memory to zero
+
+PR #354 - Fix potential leak if cloning of stream fails
+
+PR #340 - Fix potential leak in srtp_add_stream()
+
+PR #323 - Fix running test in out of source builds
+
+Issue #316  - Remove VERSION file
+
 2.1.0
 
 Compatibility changes

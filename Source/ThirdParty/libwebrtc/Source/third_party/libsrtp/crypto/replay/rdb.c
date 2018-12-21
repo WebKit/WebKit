@@ -43,13 +43,11 @@
  *
  */
 
-
 #ifdef HAVE_CONFIG_H
-    #include <config.h>
+#include <config.h>
 #endif
 
 #include "rdb.h"
-
 
 /*
  * this implementation of a replay database works as follows:
@@ -61,7 +59,7 @@
  */
 
 /* srtp_rdb_init initalizes rdb */
-srtp_err_status_t srtp_rdb_init (srtp_rdb_t *rdb)
+srtp_err_status_t srtp_rdb_init(srtp_rdb_t *rdb)
 {
     v128_set_to_zero(&rdb->bitmask);
     rdb->window_start = 0;
@@ -71,9 +69,8 @@ srtp_err_status_t srtp_rdb_init (srtp_rdb_t *rdb)
 /*
  * srtp_rdb_check checks to see if index appears in rdb
  */
-srtp_err_status_t srtp_rdb_check (const srtp_rdb_t *rdb, uint32_t p_index)
+srtp_err_status_t srtp_rdb_check(const srtp_rdb_t *rdb, uint32_t p_index)
 {
-
     /* if the index appears after (or at very end of) the window, its good */
     if (p_index >= rdb->window_start + rdb_bits_in_bitmask) {
         return srtp_err_status_ok;
@@ -101,35 +98,32 @@ srtp_err_status_t srtp_rdb_check (const srtp_rdb_t *rdb, uint32_t p_index)
  * indicated that the index does not appear in the rdb, e.g., a mutex
  * should protect the rdb between these calls
  */
-srtp_err_status_t srtp_rdb_add_index (srtp_rdb_t *rdb, uint32_t p_index)
+srtp_err_status_t srtp_rdb_add_index(srtp_rdb_t *rdb, uint32_t p_index)
 {
-    int delta;
+    unsigned int delta;
 
-    /* here we *assume* that p_index > rdb->window_start */
+    if (p_index < rdb->window_start)
+        return srtp_err_status_replay_fail;
 
     delta = (p_index - rdb->window_start);
     if (delta < rdb_bits_in_bitmask) {
-
         /* if the p_index is within the window, set the appropriate bit */
         v128_set_bit(&rdb->bitmask, delta);
 
     } else {
-
         delta -= rdb_bits_in_bitmask - 1;
 
         /* shift the window forward by delta bits*/
         v128_left_shift(&rdb->bitmask, delta);
         v128_set_bit(&rdb->bitmask, rdb_bits_in_bitmask - 1);
         rdb->window_start += delta;
-
     }
 
     return srtp_err_status_ok;
 }
 
-srtp_err_status_t srtp_rdb_increment (srtp_rdb_t *rdb)
+srtp_err_status_t srtp_rdb_increment(srtp_rdb_t *rdb)
 {
-
     if (rdb->window_start >= 0x7fffffff) {
         return srtp_err_status_key_expired;
     }
@@ -137,7 +131,7 @@ srtp_err_status_t srtp_rdb_increment (srtp_rdb_t *rdb)
     return srtp_err_status_ok;
 }
 
-uint32_t srtp_rdb_get_value (const srtp_rdb_t *rdb)
+uint32_t srtp_rdb_get_value(const srtp_rdb_t *rdb)
 {
     return rdb->window_start;
 }

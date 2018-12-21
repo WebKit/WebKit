@@ -43,7 +43,7 @@
  */
 
 #ifdef HAVE_CONFIG_H
-    #include <config.h>
+#include <config.h>
 #endif
 
 #include "err.h"
@@ -54,7 +54,7 @@
 
 static FILE *srtp_err_file = NULL;
 
-srtp_err_status_t srtp_err_reporting_init ()
+srtp_err_status_t srtp_err_reporting_init()
 {
 #ifdef ERR_REPORTING_STDOUT
     srtp_err_file = stdout;
@@ -69,15 +69,16 @@ srtp_err_status_t srtp_err_reporting_init ()
     return srtp_err_status_ok;
 }
 
-static srtp_err_report_handler_func_t * srtp_err_report_handler = NULL;
+static srtp_err_report_handler_func_t *srtp_err_report_handler = NULL;
 
-srtp_err_status_t srtp_install_err_report_handler(srtp_err_report_handler_func_t func)
+srtp_err_status_t srtp_install_err_report_handler(
+    srtp_err_report_handler_func_t func)
 {
     srtp_err_report_handler = func;
     return srtp_err_status_ok;
 }
 
-void srtp_err_report (srtp_err_reporting_level_t level, const char *format, ...)
+void srtp_err_report(srtp_err_reporting_level_t level, const char *format, ...)
 {
     va_list args;
     if (srtp_err_file != NULL) {
@@ -91,12 +92,13 @@ void srtp_err_report (srtp_err_reporting_level_t level, const char *format, ...)
         if (vsnprintf(msg, sizeof(msg), format, args) > 0) {
             /* strip trailing \n, callback should not have one */
             size_t l = strlen(msg);
-            if (l && msg[l-1] == '\n') {
-                msg[l-1] = '\0';
+            if (l && msg[l - 1] == '\n') {
+                msg[l - 1] = '\0';
             }
             srtp_err_report_handler(level, msg);
             /*
-             * NOTE, need to be carefull, there is a potential that octet_string_set_to_zero() could
+             * NOTE, need to be carefull, there is a potential that
+             * octet_string_set_to_zero() could
              * call srtp_err_report() in the future, leading to recursion
              */
             octet_string_set_to_zero(msg, sizeof(msg));

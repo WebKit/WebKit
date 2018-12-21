@@ -43,14 +43,15 @@
  */
 
 #ifdef HAVE_CONFIG_H
-    #include <config.h>
+#include <config.h>
 #endif
 
 #include "key.h"
 
 #define soft_limit 0x10000
 
-srtp_err_status_t srtp_key_limit_set (srtp_key_limit_t key, const srtp_xtd_seq_num_t s)
+srtp_err_status_t srtp_key_limit_set(srtp_key_limit_t key,
+                                     const srtp_xtd_seq_num_t s)
 {
 #ifdef NO_64BIT_MATH
     if (high32(s) == 0 && low32(s) < soft_limit) {
@@ -66,7 +67,8 @@ srtp_err_status_t srtp_key_limit_set (srtp_key_limit_t key, const srtp_xtd_seq_n
     return srtp_err_status_ok;
 }
 
-srtp_err_status_t srtp_key_limit_clone (srtp_key_limit_t original, srtp_key_limit_t *new_key)
+srtp_err_status_t srtp_key_limit_clone(srtp_key_limit_t original,
+                                       srtp_key_limit_t *new_key)
 {
     if (original == NULL) {
         return srtp_err_status_bad_param;
@@ -75,7 +77,7 @@ srtp_err_status_t srtp_key_limit_clone (srtp_key_limit_t original, srtp_key_limi
     return srtp_err_status_ok;
 }
 
-srtp_err_status_t srtp_key_limit_check (const srtp_key_limit_t key)
+srtp_err_status_t srtp_key_limit_check(const srtp_key_limit_t key)
 {
     if (key->state == srtp_key_state_expired) {
         return srtp_err_status_key_expired;
@@ -83,13 +85,14 @@ srtp_err_status_t srtp_key_limit_check (const srtp_key_limit_t key)
     return srtp_err_status_ok;
 }
 
-srtp_key_event_t srtp_key_limit_update (srtp_key_limit_t key)
+srtp_key_event_t srtp_key_limit_update(srtp_key_limit_t key)
 {
 #ifdef NO_64BIT_MATH
     if (low32(key->num_left) == 0) {
         // carry
-        key->num_left = make64(high32(key->num_left) - 1, low32(key->num_left) - 1);
-    }else  {
+        key->num_left =
+            make64(high32(key->num_left) - 1, low32(key->num_left) - 1);
+    } else {
         // no carry
         key->num_left = make64(high32(key->num_left), low32(key->num_left) - 1);
     }
@@ -111,10 +114,9 @@ srtp_key_event_t srtp_key_limit_update (srtp_key_limit_t key)
 #else
     if (key->num_left < 1)
 #endif
-    {   /* we just hit the hard limit */
+    { /* we just hit the hard limit */
         key->state = srtp_key_state_expired;
         return srtp_key_event_hard_limit;
     }
     return srtp_key_event_soft_limit;
 }
-

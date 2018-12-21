@@ -1,5 +1,14 @@
 2018-12-21  Youenn Fablet  <youenn@apple.com>
 
+        Resync libsrtp to M72
+        https://bugs.webkit.org/show_bug.cgi?id=192861
+
+        Reviewed by Eric Carlson.
+
+        * Source/third_party/libsrtp/: Resynced to Chrome M72 branch.
+
+2018-12-21  Youenn Fablet  <youenn@apple.com>
+
         Use kVTCompressionPropertyKey_Usage instead of kVTVideoEncoderSpecification_Usage
         https://bugs.webkit.org/show_bug.cgi?id=192885
 

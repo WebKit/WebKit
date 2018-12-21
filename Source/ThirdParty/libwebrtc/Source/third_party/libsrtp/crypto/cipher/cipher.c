@@ -45,56 +45,61 @@
  */
 
 #ifdef HAVE_CONFIG_H
-    #include <config.h>
+#include <config.h>
 #endif
 
 #include "cipher.h"
 #include "crypto_types.h"
-#include "err.h"                /* for srtp_debug */
-#include "alloc.h"              /* for crypto_alloc(), crypto_free()  */
+#include "err.h"   /* for srtp_debug */
+#include "alloc.h" /* for crypto_alloc(), crypto_free()  */
 
 srtp_debug_module_t srtp_mod_cipher = {
-    0,               /* debugging is off by default */
-    "cipher"         /* printable module name       */
+    0,       /* debugging is off by default */
+    "cipher" /* printable module name       */
 };
 
-srtp_err_status_t srtp_cipher_type_alloc (const srtp_cipher_type_t *ct, srtp_cipher_t **c, int key_len, int tlen)
+srtp_err_status_t srtp_cipher_type_alloc(const srtp_cipher_type_t *ct,
+                                         srtp_cipher_t **c,
+                                         int key_len,
+                                         int tlen)
 {
     if (!ct || !ct->alloc) {
-	return (srtp_err_status_bad_param);
+        return (srtp_err_status_bad_param);
     }
     return ((ct)->alloc((c), (key_len), (tlen)));
 }
 
-srtp_err_status_t srtp_cipher_dealloc (srtp_cipher_t *c)
+srtp_err_status_t srtp_cipher_dealloc(srtp_cipher_t *c)
 {
     if (!c || !c->type) {
-	return (srtp_err_status_bad_param);
+        return (srtp_err_status_bad_param);
     }
     return (((c)->type)->dealloc(c));
 }
 
-srtp_err_status_t srtp_cipher_init (srtp_cipher_t *c, const uint8_t *key)
+srtp_err_status_t srtp_cipher_init(srtp_cipher_t *c, const uint8_t *key)
 {
     if (!c || !c->type || !c->state) {
-	return (srtp_err_status_bad_param);
+        return (srtp_err_status_bad_param);
     }
     return (((c)->type)->init(((c)->state), (key)));
 }
 
-
-srtp_err_status_t srtp_cipher_set_iv (srtp_cipher_t *c, uint8_t *iv, int direction)
+srtp_err_status_t srtp_cipher_set_iv(srtp_cipher_t *c,
+                                     uint8_t *iv,
+                                     int direction)
 {
     if (!c || !c->type || !c->state) {
-	return (srtp_err_status_bad_param);
+        return (srtp_err_status_bad_param);
     }
 
-    return (((c)->type)->set_iv(((c)->state), iv, direction)); 
+    return (((c)->type)->set_iv(((c)->state), iv, direction));
 }
 
-srtp_err_status_t srtp_cipher_output (srtp_cipher_t *c, uint8_t *buffer, uint32_t *num_octets_to_output)
+srtp_err_status_t srtp_cipher_output(srtp_cipher_t *c,
+                                     uint8_t *buffer,
+                                     uint32_t *num_octets_to_output)
 {
-
     /* zeroize the buffer */
     octet_string_set_to_zero(buffer, *num_octets_to_output);
 
@@ -102,43 +107,51 @@ srtp_err_status_t srtp_cipher_output (srtp_cipher_t *c, uint8_t *buffer, uint32_
     return (((c)->type)->encrypt(((c)->state), buffer, num_octets_to_output));
 }
 
-srtp_err_status_t srtp_cipher_encrypt (srtp_cipher_t *c, uint8_t *buffer, uint32_t *num_octets_to_output)
+srtp_err_status_t srtp_cipher_encrypt(srtp_cipher_t *c,
+                                      uint8_t *buffer,
+                                      uint32_t *num_octets_to_output)
 {
     if (!c || !c->type || !c->state) {
-	return (srtp_err_status_bad_param);
+        return (srtp_err_status_bad_param);
     }
 
     return (((c)->type)->encrypt(((c)->state), buffer, num_octets_to_output));
 }
 
-srtp_err_status_t srtp_cipher_decrypt (srtp_cipher_t *c, uint8_t *buffer, uint32_t *num_octets_to_output)
+srtp_err_status_t srtp_cipher_decrypt(srtp_cipher_t *c,
+                                      uint8_t *buffer,
+                                      uint32_t *num_octets_to_output)
 {
     if (!c || !c->type || !c->state) {
-	return (srtp_err_status_bad_param);
+        return (srtp_err_status_bad_param);
     }
 
     return (((c)->type)->decrypt(((c)->state), buffer, num_octets_to_output));
 }
 
-srtp_err_status_t srtp_cipher_get_tag (srtp_cipher_t *c, uint8_t *buffer, uint32_t *tag_len)
+srtp_err_status_t srtp_cipher_get_tag(srtp_cipher_t *c,
+                                      uint8_t *buffer,
+                                      uint32_t *tag_len)
 {
     if (!c || !c->type || !c->state) {
-	return (srtp_err_status_bad_param);
+        return (srtp_err_status_bad_param);
     }
     if (!((c)->type)->get_tag) {
-	return (srtp_err_status_no_such_op);
+        return (srtp_err_status_no_such_op);
     }
 
     return (((c)->type)->get_tag(((c)->state), buffer, tag_len));
 }
 
-srtp_err_status_t srtp_cipher_set_aad (srtp_cipher_t *c, const uint8_t *aad, uint32_t aad_len)
+srtp_err_status_t srtp_cipher_set_aad(srtp_cipher_t *c,
+                                      const uint8_t *aad,
+                                      uint32_t aad_len)
 {
     if (!c || !c->type || !c->state) {
-	return (srtp_err_status_bad_param);
+        return (srtp_err_status_bad_param);
     }
     if (!((c)->type)->set_aad) {
-	return (srtp_err_status_no_such_op);
+        return (srtp_err_status_no_such_op);
     }
 
     return (((c)->type)->set_aad(((c)->state), aad, aad_len));
@@ -146,57 +159,56 @@ srtp_err_status_t srtp_cipher_set_aad (srtp_cipher_t *c, const uint8_t *aad, uin
 
 /* some bookkeeping functions */
 
-int srtp_cipher_get_key_length (const srtp_cipher_t *c)
+int srtp_cipher_get_key_length(const srtp_cipher_t *c)
 {
     return c->key_len;
 }
-
 
 /*
  * A trivial platform independent random source.  The random
  * data is used for some of the cipher self-tests.
  */
-static srtp_err_status_t srtp_cipher_rand (void *dest, uint32_t len) 
+static srtp_err_status_t srtp_cipher_rand(void *dest, uint32_t len)
 {
 #if defined(HAVE_RAND_S)
-  uint8_t *dst = (uint8_t *)dest;
-  while (len)
-  {
-    unsigned int val;
-    errno_t err = rand_s(&val);
+    uint8_t *dst = (uint8_t *)dest;
+    while (len) {
+        unsigned int val;
+        errno_t err = rand_s(&val);
 
-    if (err != 0)
-      return srtp_err_status_fail;
-  
-    *dst++ = val & 0xff;
-    len--;
-  }
+        if (err != 0)
+            return srtp_err_status_fail;
+
+        *dst++ = val & 0xff;
+        len--;
+    }
 #else
-  /* Generic C-library (rand()) version */
-  /* This is a random source of last resort */
-  uint8_t *dst = (uint8_t *)dest;
-  while (len)
-  {
-	  int val = rand();
-	  /* rand() returns 0-32767 (ugh) */
-	  /* Is this a good enough way to get random bytes?
-	     It is if it passes FIPS-140... */
-	  *dst++ = val & 0xff;
-	  len--;
-  }
+    /* Generic C-library (rand()) version */
+    /* This is a random source of last resort */
+    uint8_t *dst = (uint8_t *)dest;
+    while (len) {
+        int val = rand();
+        /* rand() returns 0-32767 (ugh) */
+        /* Is this a good enough way to get random bytes?
+           It is if it passes FIPS-140... */
+        *dst++ = val & 0xff;
+        len--;
+    }
 #endif
-  return srtp_err_status_ok;
+    return srtp_err_status_ok;
 }
- 
+
 #define SELF_TEST_BUF_OCTETS 128
-#define NUM_RAND_TESTS       128
-#define MAX_KEY_LEN          64
+#define NUM_RAND_TESTS 128
+#define MAX_KEY_LEN 64
 /*
  * srtp_cipher_type_test(ct, test_data) tests a cipher of type ct against
  * test cases provided in a list test_data of values of key, salt, iv,
  * plaintext, and ciphertext that is known to be good
  */
-srtp_err_status_t srtp_cipher_type_test (const srtp_cipher_type_t *ct, const srtp_cipher_test_case_t *test_data)
+srtp_err_status_t srtp_cipher_type_test(
+    const srtp_cipher_type_t *ct,
+    const srtp_cipher_test_case_t *test_data)
 {
     const srtp_cipher_test_case_t *test_case = test_data;
     srtp_cipher_t *c;
@@ -206,6 +218,7 @@ srtp_err_status_t srtp_cipher_type_test (const srtp_cipher_type_t *ct, const srt
     uint32_t tag_len;
     unsigned int len;
     int i, j, case_num = 0;
+    unsigned k = 0;
 
     debug_print(srtp_mod_cipher, "running self-test for cipher %s",
                 ct->description);
@@ -224,7 +237,8 @@ srtp_err_status_t srtp_cipher_type_test (const srtp_cipher_type_t *ct, const srt
      */
     while (test_case != NULL) {
         /* allocate cipher */
-        status = srtp_cipher_type_alloc(ct, &c, test_case->key_length_octets, test_case->tag_length_octets);
+        status = srtp_cipher_type_alloc(ct, &c, test_case->key_length_octets,
+                                        test_case->tag_length_octets);
         if (status) {
             return status;
         }
@@ -246,36 +260,39 @@ srtp_err_status_t srtp_cipher_type_test (const srtp_cipher_type_t *ct, const srt
             srtp_cipher_dealloc(c);
             return srtp_err_status_bad_param;
         }
-        for (i = 0; i < test_case->plaintext_length_octets; i++) {
-            buffer[i] = test_case->plaintext[i];
+        for (k = 0; k < test_case->plaintext_length_octets; k++) {
+            buffer[k] = test_case->plaintext[k];
         }
 
         debug_print(srtp_mod_cipher, "plaintext:    %s",
-                    srtp_octet_string_hex_string(buffer,
-                                                 test_case->plaintext_length_octets));
+                    srtp_octet_string_hex_string(
+                        buffer, test_case->plaintext_length_octets));
 
         /* set the initialization vector */
-        status = srtp_cipher_set_iv(c, (uint8_t*)test_case->idx, srtp_direction_encrypt);
+        status = srtp_cipher_set_iv(c, (uint8_t *)test_case->idx,
+                                    srtp_direction_encrypt);
         if (status) {
             srtp_cipher_dealloc(c);
             return status;
         }
 
-        if (c->algorithm == SRTP_AES_GCM_128 || c->algorithm == SRTP_AES_GCM_256) {
+        if (c->algorithm == SRTP_AES_GCM_128 ||
+            c->algorithm == SRTP_AES_GCM_256) {
             debug_print(srtp_mod_cipher, "IV:    %s",
                         srtp_octet_string_hex_string(test_case->idx, 12));
 
             /*
              * Set the AAD
              */
-            status = srtp_cipher_set_aad(c, test_case->aad, test_case->aad_length_octets);
+            status = srtp_cipher_set_aad(c, test_case->aad,
+                                         test_case->aad_length_octets);
             if (status) {
                 srtp_cipher_dealloc(c);
                 return status;
             }
             debug_print(srtp_mod_cipher, "AAD:    %s",
-                        srtp_octet_string_hex_string(test_case->aad,
-                                                     test_case->aad_length_octets));
+                        srtp_octet_string_hex_string(
+                            test_case->aad, test_case->aad_length_octets));
         }
 
         /* encrypt */
@@ -286,7 +303,8 @@ srtp_err_status_t srtp_cipher_type_test (const srtp_cipher_type_t *ct, const srt
             return status;
         }
 
-        if (c->algorithm == SRTP_AES_GCM_128 || c->algorithm == SRTP_AES_GCM_256) {
+        if (c->algorithm == SRTP_AES_GCM_128 ||
+            c->algorithm == SRTP_AES_GCM_256) {
             /*
              * Get the GCM tag
              */
@@ -299,8 +317,8 @@ srtp_err_status_t srtp_cipher_type_test (const srtp_cipher_type_t *ct, const srt
         }
 
         debug_print(srtp_mod_cipher, "ciphertext:   %s",
-                    srtp_octet_string_hex_string(buffer,
-                                                 test_case->ciphertext_length_octets));
+                    srtp_octet_string_hex_string(
+                        buffer, test_case->ciphertext_length_octets));
 
         /* compare the resulting ciphertext with that in the test case */
         if (len != test_case->ciphertext_length_octets) {
@@ -308,22 +326,22 @@ srtp_err_status_t srtp_cipher_type_test (const srtp_cipher_type_t *ct, const srt
             return srtp_err_status_algo_fail;
         }
         status = srtp_err_status_ok;
-        for (i = 0; i < test_case->ciphertext_length_octets; i++) {
-            if (buffer[i] != test_case->ciphertext[i]) {
+        for (k = 0; k < test_case->ciphertext_length_octets; k++) {
+            if (buffer[k] != test_case->ciphertext[k]) {
                 status = srtp_err_status_algo_fail;
                 debug_print(srtp_mod_cipher, "test case %d failed", case_num);
-                debug_print(srtp_mod_cipher, "(failure at byte %d)", i);
+                debug_print(srtp_mod_cipher, "(failure at byte %u)", k);
                 break;
             }
         }
         if (status) {
-
             debug_print(srtp_mod_cipher, "c computed: %s",
-                        srtp_octet_string_hex_string(buffer,
-                                                     2 * test_case->plaintext_length_octets));
+                        srtp_octet_string_hex_string(
+                            buffer, 2 * test_case->plaintext_length_octets));
             debug_print(srtp_mod_cipher, "c expected: %s",
-                        srtp_octet_string_hex_string(test_case->ciphertext,
-                                                     2 * test_case->plaintext_length_octets));
+                        srtp_octet_string_hex_string(
+                            test_case->ciphertext,
+                            2 * test_case->plaintext_length_octets));
 
             srtp_cipher_dealloc(c);
             return srtp_err_status_algo_fail;
@@ -346,33 +364,36 @@ srtp_err_status_t srtp_cipher_type_test (const srtp_cipher_type_t *ct, const srt
             srtp_cipher_dealloc(c);
             return srtp_err_status_bad_param;
         }
-        for (i = 0; i < test_case->ciphertext_length_octets; i++) {
-            buffer[i] = test_case->ciphertext[i];
+        for (k = 0; k < test_case->ciphertext_length_octets; k++) {
+            buffer[k] = test_case->ciphertext[k];
         }
 
         debug_print(srtp_mod_cipher, "ciphertext:    %s",
-                    srtp_octet_string_hex_string(buffer,
-                                                 test_case->plaintext_length_octets));
+                    srtp_octet_string_hex_string(
+                        buffer, test_case->plaintext_length_octets));
 
         /* set the initialization vector */
-        status = srtp_cipher_set_iv(c, (uint8_t*)test_case->idx, srtp_direction_decrypt);
+        status = srtp_cipher_set_iv(c, (uint8_t *)test_case->idx,
+                                    srtp_direction_decrypt);
         if (status) {
             srtp_cipher_dealloc(c);
             return status;
         }
 
-        if (c->algorithm == SRTP_AES_GCM_128 || c->algorithm == SRTP_AES_GCM_256) {
+        if (c->algorithm == SRTP_AES_GCM_128 ||
+            c->algorithm == SRTP_AES_GCM_256) {
             /*
              * Set the AAD
              */
-            status = srtp_cipher_set_aad(c, test_case->aad, test_case->aad_length_octets);
+            status = srtp_cipher_set_aad(c, test_case->aad,
+                                         test_case->aad_length_octets);
             if (status) {
                 srtp_cipher_dealloc(c);
                 return status;
             }
             debug_print(srtp_mod_cipher, "AAD:    %s",
-                        srtp_octet_string_hex_string(test_case->aad,
-                                                     test_case->aad_length_octets));
+                        srtp_octet_string_hex_string(
+                            test_case->aad, test_case->aad_length_octets));
         }
 
         /* decrypt */
@@ -384,8 +405,8 @@ srtp_err_status_t srtp_cipher_type_test (const srtp_cipher_type_t *ct, const srt
         }
 
         debug_print(srtp_mod_cipher, "plaintext:   %s",
-                    srtp_octet_string_hex_string(buffer,
-                                                 test_case->plaintext_length_octets));
+                    srtp_octet_string_hex_string(
+                        buffer, test_case->plaintext_length_octets));
 
         /* compare the resulting plaintext with that in the test case */
         if (len != test_case->plaintext_length_octets) {
@@ -393,21 +414,21 @@ srtp_err_status_t srtp_cipher_type_test (const srtp_cipher_type_t *ct, const srt
             return srtp_err_status_algo_fail;
         }
         status = srtp_err_status_ok;
-        for (i = 0; i < test_case->plaintext_length_octets; i++) {
-            if (buffer[i] != test_case->plaintext[i]) {
+        for (k = 0; k < test_case->plaintext_length_octets; k++) {
+            if (buffer[k] != test_case->plaintext[k]) {
                 status = srtp_err_status_algo_fail;
                 debug_print(srtp_mod_cipher, "test case %d failed", case_num);
-                debug_print(srtp_mod_cipher, "(failure at byte %d)", i);
+                debug_print(srtp_mod_cipher, "(failure at byte %u)", k);
             }
         }
         if (status) {
-
             debug_print(srtp_mod_cipher, "p computed: %s",
-                        srtp_octet_string_hex_string(buffer,
-                                                     2 * test_case->plaintext_length_octets));
+                        srtp_octet_string_hex_string(
+                            buffer, 2 * test_case->plaintext_length_octets));
             debug_print(srtp_mod_cipher, "p expected: %s",
-                        srtp_octet_string_hex_string(test_case->plaintext,
-                                                     2 * test_case->plaintext_length_octets));
+                        srtp_octet_string_hex_string(
+                            test_case->plaintext,
+                            2 * test_case->plaintext_length_octets));
 
             srtp_cipher_dealloc(c);
             return srtp_err_status_algo_fail;
@@ -431,14 +452,15 @@ srtp_err_status_t srtp_cipher_type_test (const srtp_cipher_type_t *ct, const srt
 
     /* allocate cipher, using paramaters from the first test case */
     test_case = test_data;
-    status = srtp_cipher_type_alloc(ct, &c, test_case->key_length_octets, test_case->tag_length_octets);
+    status = srtp_cipher_type_alloc(ct, &c, test_case->key_length_octets,
+                                    test_case->tag_length_octets);
     if (status) {
         return status;
     }
 
     for (j = 0; j < NUM_RAND_TESTS; j++) {
-        unsigned length;
-        int plaintext_len;
+        unsigned int length;
+        unsigned int plaintext_len;
         uint8_t key[MAX_KEY_LEN];
         uint8_t iv[MAX_KEY_LEN];
 
@@ -485,24 +507,27 @@ srtp_err_status_t srtp_cipher_type_test (const srtp_cipher_type_t *ct, const srt
         }
 
         /* set initialization vector */
-        status = srtp_cipher_set_iv(c, (uint8_t*)test_case->idx, srtp_direction_encrypt);
+        status = srtp_cipher_set_iv(c, (uint8_t *)test_case->idx,
+                                    srtp_direction_encrypt);
         if (status) {
             srtp_cipher_dealloc(c);
             return status;
         }
 
-        if (c->algorithm == SRTP_AES_GCM_128 || c->algorithm == SRTP_AES_GCM_256) {
+        if (c->algorithm == SRTP_AES_GCM_128 ||
+            c->algorithm == SRTP_AES_GCM_256) {
             /*
              * Set the AAD
              */
-            status = srtp_cipher_set_aad(c, test_case->aad, test_case->aad_length_octets);
+            status = srtp_cipher_set_aad(c, test_case->aad,
+                                         test_case->aad_length_octets);
             if (status) {
                 srtp_cipher_dealloc(c);
                 return status;
             }
             debug_print(srtp_mod_cipher, "AAD:    %s",
-                        srtp_octet_string_hex_string(test_case->aad,
-                                                     test_case->aad_length_octets));
+                        srtp_octet_string_hex_string(
+                            test_case->aad, test_case->aad_length_octets));
         }
 
         /* encrypt buffer with cipher */
@@ -512,7 +537,8 @@ srtp_err_status_t srtp_cipher_type_test (const srtp_cipher_type_t *ct, const srt
             srtp_cipher_dealloc(c);
             return status;
         }
-        if (c->algorithm == SRTP_AES_GCM_128 || c->algorithm == SRTP_AES_GCM_256) {
+        if (c->algorithm == SRTP_AES_GCM_128 ||
+            c->algorithm == SRTP_AES_GCM_256) {
             /*
              * Get the GCM tag
              */
@@ -535,23 +561,26 @@ srtp_err_status_t srtp_cipher_type_test (const srtp_cipher_type_t *ct, const srt
             srtp_cipher_dealloc(c);
             return status;
         }
-        status = srtp_cipher_set_iv(c, (uint8_t*)test_case->idx, srtp_direction_decrypt);
+        status = srtp_cipher_set_iv(c, (uint8_t *)test_case->idx,
+                                    srtp_direction_decrypt);
         if (status) {
             srtp_cipher_dealloc(c);
             return status;
         }
-        if (c->algorithm == SRTP_AES_GCM_128 || c->algorithm == SRTP_AES_GCM_256) {
+        if (c->algorithm == SRTP_AES_GCM_128 ||
+            c->algorithm == SRTP_AES_GCM_256) {
             /*
              * Set the AAD
              */
-            status = srtp_cipher_set_aad(c, test_case->aad, test_case->aad_length_octets);
+            status = srtp_cipher_set_aad(c, test_case->aad,
+                                         test_case->aad_length_octets);
             if (status) {
                 srtp_cipher_dealloc(c);
                 return status;
             }
             debug_print(srtp_mod_cipher, "AAD:    %s",
-                        srtp_octet_string_hex_string(test_case->aad,
-                                                     test_case->aad_length_octets));
+                        srtp_octet_string_hex_string(
+                            test_case->aad, test_case->aad_length_octets));
         }
         status = srtp_cipher_decrypt(c, buffer, &length);
         if (status) {
@@ -568,18 +597,18 @@ srtp_err_status_t srtp_cipher_type_test (const srtp_cipher_type_t *ct, const srt
             return srtp_err_status_algo_fail;
         }
         status = srtp_err_status_ok;
-        for (i = 0; i < plaintext_len; i++) {
-            if (buffer[i] != buffer2[i]) {
+        for (k = 0; k < plaintext_len; k++) {
+            if (buffer[k] != buffer2[k]) {
                 status = srtp_err_status_algo_fail;
-                debug_print(srtp_mod_cipher, "random test case %d failed", case_num);
-                debug_print(srtp_mod_cipher, "(failure at byte %d)", i);
+                debug_print(srtp_mod_cipher, "random test case %d failed",
+                            case_num);
+                debug_print(srtp_mod_cipher, "(failure at byte %u)", k);
             }
         }
         if (status) {
             srtp_cipher_dealloc(c);
             return srtp_err_status_algo_fail;
         }
-
     }
 
     status = srtp_cipher_dealloc(c);
@@ -590,12 +619,11 @@ srtp_err_status_t srtp_cipher_type_test (const srtp_cipher_type_t *ct, const srt
     return srtp_err_status_ok;
 }
 
-
 /*
- * srtp_cipher_type_self_test(ct) performs srtp_cipher_type_test on ct's internal
- * list of test data.
+ * srtp_cipher_type_self_test(ct) performs srtp_cipher_type_test on ct's
+ * internal list of test data.
  */
-srtp_err_status_t srtp_cipher_type_self_test (const srtp_cipher_type_t *ct)
+srtp_err_status_t srtp_cipher_type_self_test(const srtp_cipher_type_t *ct)
 {
     return srtp_cipher_type_test(ct, ct->test_data);
 }
@@ -610,7 +638,9 @@ srtp_err_status_t srtp_cipher_type_self_test (const srtp_cipher_type_t *ct)
  *
  * if an error is encountered, the value 0 is returned
  */
-uint64_t srtp_cipher_bits_per_second (srtp_cipher_t *c, int octets_in_buffer, int num_trials)
+uint64_t srtp_cipher_bits_per_second(srtp_cipher_t *c,
+                                     int octets_in_buffer,
+                                     int num_trials)
 {
     int i;
     v128_t nonce;
@@ -618,16 +648,16 @@ uint64_t srtp_cipher_bits_per_second (srtp_cipher_t *c, int octets_in_buffer, in
     unsigned char *enc_buf;
     unsigned int len = octets_in_buffer;
 
-    enc_buf = (unsigned char*)srtp_crypto_alloc(octets_in_buffer);
+    enc_buf = (unsigned char *)srtp_crypto_alloc(octets_in_buffer);
     if (enc_buf == NULL) {
         return 0; /* indicate bad parameters by returning null */
-
     }
     /* time repeated trials */
     v128_set_to_zero(&nonce);
     timer = clock();
     for (i = 0; i < num_trials; i++, nonce.v32[3] = i) {
-        if (srtp_cipher_set_iv(c, (uint8_t*)&nonce, srtp_direction_encrypt) != srtp_err_status_ok) {
+        if (srtp_cipher_set_iv(c, (uint8_t *)&nonce, srtp_direction_encrypt) !=
+            srtp_err_status_ok) {
             srtp_crypto_free(enc_buf);
             return 0;
         }
