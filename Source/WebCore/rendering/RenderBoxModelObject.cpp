@@ -401,13 +401,18 @@ LayoutSize RenderBoxModelObject::relativePositionOffset() const
     // in the case of relative positioning using percentages, we can't do this.  The offset should always be resolved using the
     // available width of the containing block.  Therefore we don't use containingBlockLogicalWidthForContent() here, but instead explicitly
     // call availableWidth on our containing block.
-    if (!style().left().isAuto()) {
-        if (!style().right().isAuto() && !containingBlock()->style().isLeftToRightDirection())
-            offset.setWidth(-valueForLength(style().right(), !style().right().isFixed() ? containingBlock()->availableWidth() : 0_lu));
-        else
-            offset.expand(valueForLength(style().left(), !style().left().isFixed() ? containingBlock()->availableWidth() : 0_lu), 0_lu);
-    } else if (!style().right().isAuto()) {
-        offset.expand(-valueForLength(style().right(), !style().right().isFixed() ? containingBlock()->availableWidth() : 0_lu), 0_lu);
+    // However for grid items the containing block is the grid area, so offsets should be resolved against that:
+    // https://drafts.csswg.org/css-grid/#grid-item-sizing
+    if (!style().left().isAuto() || !style().right().isAuto()) {
+        LayoutUnit availableWidth = hasOverrideContainingBlockContentWidth()
+            ? overrideContainingBlockContentWidth().valueOr(LayoutUnit()) : containingBlock()->availableWidth();
+        if (!style().left().isAuto()) {
+            if (!style().right().isAuto() && !containingBlock()->style().isLeftToRightDirection())
+                offset.setWidth(-valueForLength(style().right(), !style().right().isFixed() ? availableWidth : 0_lu));
+            else
+                offset.expand(valueForLength(style().left(), !style().left().isFixed() ? availableWidth : 0_lu), 0_lu);
+        } else if (!style().right().isAuto())
+            offset.expand(-valueForLength(style().right(), !style().right().isFixed() ? availableWidth : 0_lu), 0_lu);
     }
 
     // If the containing block of a relatively positioned element does not
@@ -416,17 +421,29 @@ LayoutSize RenderBoxModelObject::relativePositionOffset() const
     // where <html> and <body> assume the size of the viewport. In this case,
     // calculate the percent offset based on this height.
     // See <https://bugs.webkit.org/show_bug.cgi?id=26396>.
+    // Another exception is a grid item, as the containing block is the grid area:
+    // https://drafts.csswg.org/css-grid/#grid-item-sizing
     if (!style().top().isAuto()
         && (!style().top().isPercentOrCalculated()
             || !containingBlock()->hasAutoHeightOrContainingBlockWithAutoHeight()
-            || containingBlock()->stretchesToViewport()))
-        offset.expand(0_lu, valueForLength(style().top(), !style().top().isFixed() ? containingBlock()->availableHeight() : 0_lu));
-
-    else if (!style().bottom().isAuto()
+            || containingBlock()->stretchesToViewport()
+            || hasOverrideContainingBlockContentHeight())) {
+        // FIXME: The computation of the available height is repeated later for "bottom".
+        // We could refactor this and move it to some common code for both ifs, however moving it outside of the ifs
+        // is not possible as it'd cause performance regressions.
+        offset.expand(0_lu, valueForLength(style().top(), !style().top().isFixed()
+            ? (hasOverrideContainingBlockContentHeight() ? overrideContainingBlockContentHeight().valueOr(0_lu) : containingBlock()->availableHeight())
+            : LayoutUnit()));
+    } else if (!style().bottom().isAuto()
         && (!style().bottom().isPercentOrCalculated()
             || !containingBlock()->hasAutoHeightOrContainingBlockWithAutoHeight()
-            || containingBlock()->stretchesToViewport()))
-        offset.expand(0_lu, -valueForLength(style().bottom(), !style().bottom().isFixed() ? containingBlock()->availableHeight() : 0_lu));
+            || containingBlock()->stretchesToViewport()
+            || hasOverrideContainingBlockContentHeight())) {
+        // FIXME: Check comment above for "top", it applies here too.
+        offset.expand(0_lu, -valueForLength(style().bottom(), !style().bottom().isFixed()
+            ? (hasOverrideContainingBlockContentHeight() ? overrideContainingBlockContentHeight().valueOr(0_lu) : containingBlock()->availableHeight())
+            : LayoutUnit()));
+    }
 
     return offset;
 }

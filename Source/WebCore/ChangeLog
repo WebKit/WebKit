@@ -1,3 +1,32 @@
+2018-12-21  Manuel Rego Casasnovas  <rego@igalia.com>
+
+        [css-grid] Fix percentages in relative offsets for grid items
+        https://bugs.webkit.org/show_bug.cgi?id=190492
+
+        Reviewed by Sergio Villar Senin.
+
+        The method RenderBoxModelObject::relativePositionOffset() was not considering the case of grid items,
+        where the containing block is the grid area.
+        The patch modifies the method so the new code uses overrideContainingBlockContentWidth|Height when required.
+
+        Test: imported/w3c/web-platform-tests/css/css-grid/grid-items/grid-items-relative-offsets-002.html
+
+        * rendering/RenderBox.cpp: Implement the physical versions of the already existent methods.
+        (WebCore::RenderBox::overrideContainingBlockContentWidth const):
+        (WebCore::RenderBox::overrideContainingBlockContentHeight const):
+        (WebCore::RenderBox::hasOverrideContainingBlockContentWidth const):
+        (WebCore::RenderBox::hasOverrideContainingBlockContentHeight const):
+        * rendering/RenderBox.h:
+        * rendering/RenderBoxModelObject.cpp:
+        (WebCore::RenderBoxModelObject::relativePositionOffset const): Modified method
+        to take into account overrideContainingBlockContentWidth|Height for grid items.
+        * rendering/RenderBoxModelObject.h: Added new headers for physical virtual methods
+        that will be overridden in RenderBox.
+        (WebCore::RenderBoxModelObject::overrideContainingBlockContentWidth const):
+        (WebCore::RenderBoxModelObject::overrideContainingBlockContentHeight const):
+        (WebCore::RenderBoxModelObject::hasOverrideContainingBlockContentWidth const):
+        (WebCore::RenderBoxModelObject::hasOverrideContainingBlockContentHeight const):
+
 2018-12-20  Justin Fan  <justin_fan@apple.com>
 
         [WebGPU] Convert WebGPUBindGroups into MTLArgumentEncoders

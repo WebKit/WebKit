@@ -243,7 +243,12 @@ public:
     virtual LayoutRect paintRectToClipOutFromBorder(const LayoutRect&) { return LayoutRect(); };
 
     bool hasRunningAcceleratedAnimations() const;
-    
+
+    virtual Optional<LayoutUnit> overrideContainingBlockContentWidth() const { ASSERT_NOT_REACHED(); return -1_lu; }
+    virtual Optional<LayoutUnit> overrideContainingBlockContentHeight() const { ASSERT_NOT_REACHED(); return -1_lu; }
+    virtual bool hasOverrideContainingBlockContentWidth() const { return false; }
+    virtual bool hasOverrideContainingBlockContentHeight() const { return false; }
+
 protected:
     RenderBoxModelObject(Element&, RenderStyle&&, BaseTypeFlags);
     RenderBoxModelObject(Document&, RenderStyle&&, BaseTypeFlags);

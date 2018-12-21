@@ -314,6 +314,10 @@ public:
     void clearOverrideContentLogicalHeight();
     void clearOverrideContentLogicalWidth();
 
+    Optional<LayoutUnit> overrideContainingBlockContentWidth() const override;
+    Optional<LayoutUnit> overrideContainingBlockContentHeight() const override;
+    bool hasOverrideContainingBlockContentWidth() const override;
+    bool hasOverrideContainingBlockContentHeight() const override;
     Optional<LayoutUnit> overrideContainingBlockContentLogicalWidth() const;
     Optional<LayoutUnit> overrideContainingBlockContentLogicalHeight() const;
     bool hasOverrideContainingBlockContentLogicalWidth() const;

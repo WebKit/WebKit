@@ -98,6 +98,7 @@ static OverrideSizeMap* gOverrideContentLogicalHeightMap = nullptr;
 static OverrideSizeMap* gOverrideContentLogicalWidthMap = nullptr;
 
 // Used by grid elements to properly size their grid items.
+// FIXME: We should store these based on physical direction.
 typedef WTF::HashMap<const RenderBox*, Optional<LayoutUnit>> OverrideOptionalSizeMap;
 static OverrideOptionalSizeMap* gOverrideContainingBlockContentLogicalHeightMap = nullptr;
 static OverrideOptionalSizeMap* gOverrideContainingBlockContentLogicalWidthMap = nullptr;
@@ -1084,6 +1085,44 @@ LayoutUnit RenderBox::overrideContentLogicalHeight() const
 {
     ASSERT(hasOverrideContentLogicalHeight());
     return gOverrideContentLogicalHeightMap->get(this);
+}
+
+Optional<LayoutUnit> RenderBox::overrideContainingBlockContentWidth() const
+{
+    ASSERT(hasOverrideContainingBlockContentWidth());
+    return containingBlock()->style().isHorizontalWritingMode()
+        ? gOverrideContainingBlockContentLogicalWidthMap->get(this)
+        : gOverrideContainingBlockContentLogicalHeightMap->get(this);
+}
+
+Optional<LayoutUnit> RenderBox::overrideContainingBlockContentHeight() const
+{
+    ASSERT(hasOverrideContainingBlockContentHeight());
+    return containingBlock()->style().isHorizontalWritingMode()
+        ? gOverrideContainingBlockContentLogicalHeightMap->get(this)
+        : gOverrideContainingBlockContentLogicalWidthMap->get(this);
+}
+
+bool RenderBox::hasOverrideContainingBlockContentWidth() const
+{
+    RenderBlock* cb = containingBlock();
+    if (!cb)
+        return false;
+
+    return cb->style().isHorizontalWritingMode()
+        ? gOverrideContainingBlockContentLogicalWidthMap && gOverrideContainingBlockContentLogicalWidthMap->contains(this)
+        : gOverrideContainingBlockContentLogicalHeightMap && gOverrideContainingBlockContentLogicalHeightMap->contains(this);
+}
+
+bool RenderBox::hasOverrideContainingBlockContentHeight() const
+{
+    RenderBlock* cb = containingBlock();
+    if (!cb)
+        return false;
+
+    return cb->style().isHorizontalWritingMode()
+        ? gOverrideContainingBlockContentLogicalHeightMap && gOverrideContainingBlockContentLogicalHeightMap->contains(this)
+        : gOverrideContainingBlockContentLogicalHeightMap && gOverrideContainingBlockContentLogicalHeightMap->contains(this);
 }
 
 Optional<LayoutUnit> RenderBox::overrideContainingBlockContentLogicalWidth() const
