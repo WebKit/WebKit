@@ -1,3 +1,11 @@
+2018-12-21  Alex Christensen  <achristensen@webkit.org>
+
+        Revert r239503.
+        https://bugs.webkit.org/show_bug.cgi?id=192944
+
+        * fast/url/host-expected.txt:
+        * fast/url/host.html:
+
 2018-12-21  Truitt Savell  <tsavell@apple.com>
 
         Skipping webgpu/ tests after https://trac.webkit.org/changeset/239495/webkit disabled webgpu on 10.12
