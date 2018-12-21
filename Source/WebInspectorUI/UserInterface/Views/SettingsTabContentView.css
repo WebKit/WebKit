@@ -55,6 +55,7 @@
 
 .content-view.settings > .settings-view > .container {
     display: flex;
+    align-items: center;
     margin-top: 1em;
     font-size: 13px;
 }
@@ -75,7 +76,6 @@
 
 .content-view.settings > .settings-view > .container > .title {
     width: 50%;
-    margin-top: 2px;
     -webkit-margin-end: 6px;
     text-align: end;
 }
