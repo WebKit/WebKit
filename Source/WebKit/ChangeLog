@@ -1,3 +1,18 @@
+2018-12-21  Keith Rollin  <krollin@apple.com>
+
+        Crash in com.apple.WebKit: WebKit::WebResourceLoader::willSendRequest + 223
+        https://bugs.webkit.org/show_bug.cgi?id=192989
+
+        Reviewed by Chris Dumez.
+
+        willSendRequest is calling maybeLoadFallbackForRedirect, which can
+        delete “this”. After that, some new logging code tries to access
+        “this” and causes the crash. Fix this by adjusting the scope of a
+        "protectedThis".
+
+        * WebProcess/Network/WebResourceLoader.cpp:
+        (WebKit::WebResourceLoader::willSendRequest):
+
 2018-12-21  Alejandro G. Castro  <alex@igalia.com>
 
         [GTK][WPE] Add DeviceIdHashSaltStorage disk persistence
