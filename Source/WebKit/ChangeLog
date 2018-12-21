@@ -1,3 +1,22 @@
+2018-12-20  Alex Christensen  <achristensen@webkit.org>
+
+        Remove unused NetworkProcessCreationParameters
+        https://bugs.webkit.org/show_bug.cgi?id=192961
+
+        Reviewed by Andy Estes.
+
+        loadThrottleLatency isn't used since I replaced it with NetworkSessionCreationParameters.loadThrottleLatency in r238654
+        presentingApplicationPID has no effect because that value is only used in the WebProcess in NetworkExtensionContentFilter::initialize
+
+        * NetworkProcess/NetworkProcess.cpp:
+        (WebKit::NetworkProcess::initializeNetworkProcess):
+        * NetworkProcess/NetworkProcessCreationParameters.cpp:
+        (WebKit::NetworkProcessCreationParameters::encode const):
+        (WebKit::NetworkProcessCreationParameters::decode):
+        * NetworkProcess/NetworkProcessCreationParameters.h:
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::WebProcessPool::ensureNetworkProcess):
+
 2018-12-20  Chris Dumez  <cdumez@apple.com>
 
         Use Optional::hasValue() instead of Optional::has_value()

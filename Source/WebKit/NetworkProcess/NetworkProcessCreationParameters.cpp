@@ -64,7 +64,6 @@ void NetworkProcessCreationParameters::encode(IPC::Encoder& encoder) const
     encoder << shouldSuppressMemoryPressureHandler;
     encoder << shouldUseTestingNetworkSession;
     encoder << urlSchemesRegisteredForCustomProtocols;
-    encoder << presentingApplicationPID;
 #if PLATFORM(COCOA)
     encoder << uiProcessBundleIdentifier;
     encoder << uiProcessSDKVersion;
@@ -169,8 +168,6 @@ bool NetworkProcessCreationParameters::decode(IPC::Decoder& decoder, NetworkProc
     if (!decoder.decode(result.shouldUseTestingNetworkSession))
         return false;
     if (!decoder.decode(result.urlSchemesRegisteredForCustomProtocols))
-        return false;
-    if (!decoder.decode(result.presentingApplicationPID))
         return false;
 #if PLATFORM(COCOA)
     if (!decoder.decode(result.uiProcessBundleIdentifier))

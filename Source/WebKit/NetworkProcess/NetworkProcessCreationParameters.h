@@ -73,10 +73,8 @@ struct NetworkProcessCreationParameters {
 #endif
     bool shouldSuppressMemoryPressureHandler { false };
     bool shouldUseTestingNetworkSession { false };
-    Seconds loadThrottleLatency;
 
     Vector<String> urlSchemesRegisteredForCustomProtocols;
-    ProcessID presentingApplicationPID { 0 };
 
 #if PLATFORM(COCOA)
     String uiProcessBundleIdentifier;

@@ -515,7 +515,6 @@ NetworkProcessProxy& WebProcessPool::ensureNetworkProcess(WebsiteDataStore* with
 #endif
 
     parameters.shouldUseTestingNetworkSession = m_shouldUseTestingNetworkSession;
-    parameters.presentingApplicationPID = m_configuration->presentingApplicationPID();
 
     parameters.urlSchemesRegisteredAsSecure = copyToVector(m_schemesToRegisterAsSecure);
     parameters.urlSchemesRegisteredAsBypassingContentSecurityPolicy = copyToVector(m_schemesToRegisterAsBypassingContentSecurityPolicy);
