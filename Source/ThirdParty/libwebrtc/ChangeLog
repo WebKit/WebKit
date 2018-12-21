@@ -1,3 +1,18 @@
+2018-12-21  Youenn Fablet  <youenn@apple.com>
+
+        Use kVTCompressionPropertyKey_Usage instead of kVTVideoEncoderSpecification_Usage
+        https://bugs.webkit.org/show_bug.cgi?id=192885
+
+        Reviewed by Eric Carlson.
+
+        When VCP is enabled, use kVTCompressionPropertyKey_Usage as this is
+        kVTVideoEncoderSpecification_Usage no longer works to activate VCP on iOS.
+        Tested manually.
+
+        * Source/webrtc/sdk/objc/components/video_codec/RTCVideoEncoderH264.mm:
+        (-[RTCSingleVideoEncoderH264 resetCompressionSessionWithPixelFormat:]):
+        (-[RTCSingleVideoEncoderH264 configureCompressionSession]):
+
 2018-12-19  Youenn Fablet  <youenn@apple.com>
 
         Refresh usrsctplib to M72

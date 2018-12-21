@@ -37,8 +37,8 @@
 #import <dlfcn.h>
 #import <objc/runtime.h>
 
-SOFT_LINK_FRAMEWORK_OPTIONAL(VideoToolBox)
-SOFT_LINK_POINTER_OPTIONAL(VideoToolBox, kVTVideoEncoderSpecification_Usage, NSString *)
+VT_EXPORT const CFStringRef kVTVideoEncoderSpecification_Usage;
+VT_EXPORT const CFStringRef kVTCompressionPropertyKey_Usage;
 
 #if !ENABLE_VCP_ENCODER && !defined(WEBRTC_IOS)
 static inline bool isStandardFrameSize(int32_t width, int32_t height)
@@ -619,10 +619,9 @@ CFStringRef ExtractProfile(webrtc::SdpVideoFormat videoFormat) {
   CFDictionarySetValue(encoderSpecs, kVTCompressionPropertyKey_RealTime, kCFBooleanTrue);
 
 #if ENABLE_VCP_ENCODER
-  auto key = getkVTVideoEncoderSpecification_Usage();
   int usageValue = 1;
   auto usage = CFNumberCreate(nullptr, kCFNumberIntType, &usageValue);
-  CFDictionarySetValue(encoderSpecs, (__bridge CFStringRef)key, usage);
+  CFDictionarySetValue(encoderSpecs, kVTCompressionPropertyKey_Usage, usage);
   CFRelease(usage);
 #endif
   OSStatus status =
@@ -671,12 +670,6 @@ CFStringRef ExtractProfile(webrtc::SdpVideoFormat videoFormat) {
       return WEBRTC_VIDEO_CODEC_ERROR;
     }
 
-    if (!getkVTVideoEncoderSpecification_Usage()) {
-      _disableEncoding = true;
-      RTC_LOG(LS_ERROR) << "RTCSingleVideoEncoderH264 cannot create a H264 software encoder";
-      return WEBRTC_VIDEO_CODEC_ERROR;
-    }
-
     CFDictionaryRef ioSurfaceValue = CreateCFTypeDictionary(nullptr, nullptr, 0);
     int64_t pixelFormatType = framePixelFormat;
     CFNumberRef pixelFormat = CFNumberCreate(nullptr, kCFNumberLongType, &pixelFormatType);
@@ -706,7 +699,7 @@ CFStringRef ExtractProfile(webrtc::SdpVideoFormat videoFormat) {
     CFDictionarySetValue(encoderSpecs, kVTVideoEncoderSpecification_EnableHardwareAcceleratedVideoEncoder, kCFBooleanFalse);
     int usageValue = 1;
     CFNumberRef usage = CFNumberCreate(nullptr, kCFNumberIntType, &usageValue);
-    CFDictionarySetValue(encoderSpecs, (__bridge CFStringRef)getkVTVideoEncoderSpecification_Usage(), usage);
+    CFDictionarySetValue(encoderSpecs, kVTVideoEncoderSpecification_Usage, usage);
 
     if (usage) {
       CFRelease(usage);
@@ -756,8 +749,7 @@ CFStringRef ExtractProfile(webrtc::SdpVideoFormat videoFormat) {
   SetVTSessionProperty(_compressionSession, kVTCompressionPropertyKey_ProfileLevel, _profile);
   SetVTSessionProperty(_compressionSession, kVTCompressionPropertyKey_AllowFrameReordering, false);
 #if ENABLE_VCP_ENCODER
-  if (auto key = getkVTVideoEncoderSpecification_Usage())
-      SetVTSessionProperty(_compressionSession, (__bridge CFStringRef)key, 1);
+  SetVTSessionProperty(_compressionSession, kVTCompressionPropertyKey_Usage, 1);
 #endif
   [self setEncoderBitrateBps:_targetBitrateBps];
   // TODO(tkchin): Look at entropy mode and colorspace matrices.
