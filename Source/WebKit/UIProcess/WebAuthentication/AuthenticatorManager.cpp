@@ -30,6 +30,7 @@
 
 #include <WebCore/AuthenticatorTransport.h>
 #include <WebCore/PublicKeyCredentialCreationOptions.h>
+#include <wtf/MonotonicTime.h>
 
 namespace WebKit {
 using namespace WebCore;
@@ -226,15 +227,16 @@ void AuthenticatorManager::initTimeOutTimer(const Optional<unsigned>& timeOutInM
 
     unsigned timeOutInMsValue = std::min(maxTimeOutValue, timeOutInMs.valueOr(maxTimeOutValue));
     // FIXME(192061)
-    LOG_ERROR("Start timer. %d", timeOutInMsValue);
+    LOG_ERROR("Start timer: %d. Current time: %f.", timeOutInMsValue, MonotonicTime::now().secondsSinceEpoch().value());
     m_requestTimeOutTimer.startOneShot(Seconds::fromMilliseconds(timeOutInMsValue));
+    LOG_ERROR("Seconds until fire: %f", m_requestTimeOutTimer.secondsUntilFire().value());
 }
 
 void AuthenticatorManager::timeOutTimerFired()
 {
     ASSERT(m_requestTimeOutTimer.isActive());
     // FIXME(192061)
-    LOG_ERROR("Timer fired.");
+    LOG_ERROR("Timer fired: %f, Current time: %f", m_requestTimeOutTimer.secondsUntilFire().value(), MonotonicTime::now().secondsSinceEpoch().value());
     m_pendingCompletionHandler((ExceptionData { NotAllowedError, "Operation timed out."_s }));
     clearStateAsync();
 }
