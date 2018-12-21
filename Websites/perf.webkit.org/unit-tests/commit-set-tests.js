@@ -170,6 +170,18 @@ function anotherCommitWithGitRevision()
     });
 }
 
+function commitWithTestability()
+{
+    return CommitLog.ensureSingleton(2023, {
+        id: 2023,
+        repository: MockModels.webkitGit,
+        revision: 'f24fc67873a0068fd5a3a9adac595f0036c21315',
+        ownsCommits: false,
+        time: 1456932773000,
+        testability: 'Failed compilation'
+    });
+}
+
 describe('CommitSet', () => {
     MockRemoteAPI.inject(null, BrowserPrivilegedAPI);
     MockModels.inject();
@@ -294,6 +306,15 @@ describe('CommitSet', () => {
         });
     }
 
+    function commitSetWithTestability()
+    {
+        return CommitSet.ensureSingleton(16, {
+            revisionItems: [{ commit: commitWithTestability(), requiresBuild: false },
+                { commit: webkitCommit(), requiresBuild: false }],
+            customRoots: []
+        });
+    }
+
     function oneMeasurementCommitSet()
     {
         return MeasurementCommitSet.ensureSingleton(1, [
@@ -404,6 +425,25 @@ describe('CommitSet', () => {
                 [{'11': { revision: 'webkit-commit-0', ownerRevision: null, patch: null}},
                     {'11': { revision: 'webkit-commit-0', ownerRevision: null, patch: null}, customRoots: [456]},
                     {'11': { revision: 'webkit-commit-0', ownerRevision: null, patch: null}, customRoots: [456, 458]}]);
+        });
+    });
+
+    describe('commitsWithTestability', () => {
+        it('should return commits with testability', () => {
+            const commits = commitSetWithTestability().commitsWithTestability();
+            assert.equal(commits.length, 1);
+            assert.equal(commits[0], commitWithTestability());
+        });
+
+        it('should return empty list if no commit in commit set contains testability', () => {
+            const commits = commitSetWithTwoCommits().commitsWithTestability();
+            assert.equal(commits.length, 0);
+        });
+    });
+
+    describe('commits', () => {
+        it('should return all commits in commit set', () => {
+            assert.equal(commitSetWithTwoCommits().commits().length, 2);
         });
     });
 });
@@ -629,9 +669,7 @@ describe('IntermediateCommitSet', () => {
                 assert(!commitSet.commitForRepository(MockModels.webkit));
             });
         });
-
     });
-
 });
 
 describe('CustomCommitSet', () => {

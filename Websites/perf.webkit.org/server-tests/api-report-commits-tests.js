@@ -6,7 +6,7 @@ const TestServer = require('./resources/test-server.js');
 const addSlaveForReport = require('./resources/common-operations.js').addSlaveForReport;
 const prepareServerTest = require('./resources/common-operations.js').prepareServerTest;
 
-describe("/api/report-commits/", function () {
+describe("/api/report-commits/ with insert=true", function () {
     prepareServerTest(this);
 
     const emptyReport = {
@@ -296,7 +296,7 @@ describe("/api/report-commits/", function () {
                 "message": "WebKit Commit",
             }
         ]
-    }
+    };
 
     it("should distinguish between repositories with the same name but with a different owner.", () => {
         return addSlaveForReport(sameRepositoryNameInOwnedCommitAndMajorCommit).then(() => {
@@ -336,7 +336,7 @@ describe("/api/report-commits/", function () {
                 }
             }
         ]
-    }
+    };
 
     it("should accept inserting one commit with some owned commits", () => {
         const db = TestServer.database();
@@ -589,5 +589,189 @@ describe("/api/report-commits/", function () {
         }).then((response) => {
             assert.equal(response['status'], 'OwnedCommitShouldNotContainTimestamp');
         });
+    });
+});
+
+describe("/api/report-commits/ with insert=false", function () {
+    prepareServerTest(this);
+
+    const subversionCommits = {
+        "slaveName": "someSlave",
+        "slavePassword": "somePassword",
+        "commits": [
+            {
+                "repository": "WebKit",
+                "revision": "210948",
+                "time": "2017-01-20T02:52:34.577Z",
+                "author": {"name": "Zalan Bujtas", "account": "zalan@apple.com"},
+                "message": "a message",
+            },
+            {
+                "repository": "WebKit",
+                "revision": "210949",
+                "time": "2017-01-20T03:23:50.645Z",
+                "author": {"name": "Chris Dumez", "account": "cdumez@apple.com"},
+                "message": "some message",
+            }
+        ],
+        "insert": true,
+    };
+
+    const commitsUpdate = {
+        "slaveName": "someSlave",
+        "slavePassword": "somePassword",
+        "commits": [
+            {
+                "repository": "WebKit",
+                "revision": "210948",
+                "testability": "Breaks builds",
+                "message": "another message",
+                "order": 210948,
+                "time": "2017-01-20T03:52:34.577Z",
+                "author": {"name": "Chris Dumez", "account": "cdumez@apple.com"},
+            },
+            {
+                "repository": "WebKit",
+                "revision": "210949",
+                "previousCommit": "210948",
+                "testability": "Crashes WebKit",
+                "message": "another message",
+                "order": 210949,
+                "time": "2017-01-20T04:23:50.645Z",
+                "author": {"name": "Zalan Bujtas", "account": "zalan@apple.com"},
+            }
+        ],
+        "insert": false,
+    };
+
+
+    const commitsUpdateWithMissingRevision = {
+        "slaveName": "someSlave",
+        "slavePassword": "somePassword",
+        "commits": [
+            {
+                "repository": "WebKit",
+                "testability": "Breaks builds"
+            }
+        ],
+        "insert": false,
+    };
+
+    const commitsUpdateWithMissingRepository = {
+        "slaveName": "someSlave",
+        "slavePassword": "somePassword",
+        "commits": [
+            {
+                "revision": "210948",
+                "testability": "Breaks builds"
+            }
+        ],
+        "insert": false,
+    };
+
+    const commitsUpdateWithoutAnyUpdate = {
+        "slaveName": "someSlave",
+        "slavePassword": "somePassword",
+        "commits": [
+            {
+                "repository": "WebKit",
+                "revision": "210948"
+            }
+        ],
+        "insert": false,
+    };
+
+    const commitsUpdateWithOwnedCommitsUpdate = {
+        "slaveName": "someSlave",
+        "slavePassword": "somePassword",
+        "commits": [
+            {
+                "repository": "WebKit",
+                "revision": "210948",
+                "ownedCommits": [],
+            }
+        ],
+        "insert": false,
+    };
+
+    async function initialReportCommits()
+    {
+        await addSlaveForReport(subversionCommits);
+        await TestServer.remoteAPI().postJSON('/api/report-commits/', subversionCommits);
+        const result = await TestServer.remoteAPI().getJSON('/api/commits/WebKit/');
+        assert.equal(result['status'], 'OK');
+        const commits = result['commits'];
+        assert.equal(commits.length, 2);
+        assert.equal(commits[0].testability, null);
+        assert.equal(commits[1].testability, null);
+
+        return commits;
+    }
+
+    async function setUpTestsWithExpectedStatus(commitsUpdate, expectedStatus)
+    {
+        await initialReportCommits();
+        let result = await TestServer.remoteAPI().postJSON('/api/report-commits/', commitsUpdate);
+        assert.equal(result['status'], expectedStatus);
+        result = await TestServer.remoteAPI().getJSON('/api/commits/WebKit/');
+        return result['commits'];
+    }
+
+    async function testWithExpectedFailure(commitsUpdate, expectedFailureName)
+    {
+        const commits = await setUpTestsWithExpectedStatus(commitsUpdate, expectedFailureName);
+        assert.equal(commits.length, 2);
+        assert.equal(commits[0].testability, null);
+        assert.equal(commits[1].testability, null);
+    }
+
+    it('should fail with "MissingRevision" if commit update does not have commit revision specified', async () => {
+        await testWithExpectedFailure(commitsUpdateWithMissingRevision, 'MissingRevision');
+    });
+
+    it('should fail with "MissingRepositoryName" if commit update does not have commit revision specified', async () => {
+        await testWithExpectedFailure(commitsUpdateWithMissingRepository, 'MissingRepositoryName');
+    });
+
+    it('should fail with "NothingToUpdate" if commit update does not have commit revision specified', async () => {
+        await testWithExpectedFailure(commitsUpdateWithoutAnyUpdate, 'NothingToUpdate');
+    });
+
+    it('should fail with "AttemptToUpdateOwnedCommits" when trying to update owned commits info', async () => {
+        await testWithExpectedFailure(commitsUpdateWithOwnedCommitsUpdate, 'AttemptToUpdateOwnedCommits');
+    });
+
+    it('should not set reported to true if it was not set to true before', async () => {
+        const database = TestServer.database();
+        await initialReportCommits();
+
+        let commits = await database.selectAll('commits');
+        assert.equal(commits[0].reported, true);
+        assert.equal(commits[1].reported, true);
+
+        await database.query('UPDATE commits SET commit_reported=false');
+        let result = await TestServer.remoteAPI().postJSON('/api/report-commits/', commitsUpdate);
+        assert.equal(result['status'], 'OK');
+
+        commits = await database.selectAll('commits');
+        assert.equal(commits[0].reported, false);
+        assert.equal(commits[1].reported, false);
+    });
+
+    it("should be able to update commits message, time, order, author and previous commit", async () => {
+        const commits = await setUpTestsWithExpectedStatus(commitsUpdate, 'OK');
+
+        assert.equal(commits.length, 2);
+        assert.equal(commits[0].testability, 'Breaks builds');
+        assert.equal(commits[1].testability, 'Crashes WebKit');
+        assert.equal(commits[0].message, 'another message');
+        assert.equal(commits[1].message, 'another message');
+        assert.equal(commits[0].authorName, 'Chris Dumez');
+        assert.equal(commits[1].authorName, 'Zalan Bujtas');
+        assert.equal(commits[0].order, 210948);
+        assert.equal(commits[1].order, 210949);
+        assert.equal(commits[0].time, 1484884354577);
+        assert.equal(commits[1].time, 1484886230645);
+        assert.equal(commits[1].previousCommit, commits[0].id);
     });
 });

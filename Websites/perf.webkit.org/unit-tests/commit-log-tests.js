@@ -58,6 +58,18 @@ function osxCommit()
     });
 }
 
+function osxCommitWithTestability()
+{
+    return new CommitLog(5, {
+        id: 5,
+        repository: MockModels.osx,
+        revision: '10.11.4 15E65',
+        time: null,
+        order: 1504065,
+        testability: "Panic on boot"
+    });
+}
+
 function oldOSXCommit()
 {
     return new CommitLog(6, {
@@ -414,6 +426,13 @@ describe('CommitLog', function () {
                 assert.equal(difference.keys().next().value, MockModels.ownedRepository);
             });
 
+        });
+    });
+
+    describe('testability', () => {
+        it('should return "testability" message', () => {
+            const commit = osxCommitWithTestability();
+            assert.equal(commit.testability(), 'Panic on boot');
         });
     });
 

@@ -101,6 +101,7 @@ CREATE TABLE commits (
     commit_committer integer REFERENCES committers ON DELETE CASCADE,
     commit_message text,
     commit_reported boolean NOT NULL DEFAULT FALSE,
+    commit_testability varchar(64) DEFAULT NULL,
     CONSTRAINT commit_in_repository_must_be_unique UNIQUE(commit_repository, commit_revision));
 CREATE INDEX commit_time_index ON commits(commit_time);
 CREATE INDEX commit_order_index ON commits(commit_order);

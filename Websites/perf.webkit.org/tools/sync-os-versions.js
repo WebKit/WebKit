@@ -29,7 +29,7 @@ function syncLoop(options)
     const remoteAPI = new RemoteAPI(serverConfig.server);
 
     const fetchers = osConfigList.map((osConfig) => new OSBuildFetcher(osConfig, remoteAPI, serverConfig.slave, new Subprocess, console));
-    OSBuildFetcher.fetchAndReportAllInOrder(fetchers).catch((error) => {
+    OSBuildFetcher.fetchReportAndUpdateCommits(fetchers).catch((error) => {
         console.error(error);
         if (typeof(error.stack) == 'string') {
             for (let line of error.stack.split('\n'))

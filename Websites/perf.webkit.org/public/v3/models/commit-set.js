@@ -71,6 +71,8 @@ class CommitSet extends DataModelObject {
     ownerCommitForRepository(repository) { return this._repositoryToCommitOwnerMap.get(repository); }
     topLevelRepositories() { return Repository.sortByNamePreferringOnesWithURL(this._repositories.filter((repository) => !this.ownerRevisionForRepository(repository))); }
     ownedRepositoriesForOwnerRepository(repository) { return this._ownerRepositoryToOwnedRepositoriesMap.get(repository); }
+    commitsWithTestability() { return this.commits().filter((commit) => !!commit.testability()); }
+    commits() { return  Array.from(this._repositoryToCommitMap.values()); }
 
     revisionForRepository(repository)
     {
@@ -386,6 +388,9 @@ class IntermediateCommitSet {
             fetchingPromises.push(this._fetchCommitLogAndOwnedCommits(repository, commit.revision()));
         return Promise.all(fetchingPromises);
     }
+
+    commitsWithTestabilityWarnings() { return this.commits().filter((commit) => !!commit.testabilityWarning()); }
+    commits() { return  Array.from(this._commitByRepository.values()); }
 
     _fetchCommitLogAndOwnedCommits(repository, revision)
     {

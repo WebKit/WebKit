@@ -62,6 +62,7 @@ class CommitLogFetcher {
             commit_repository as "repository",
             commit_message as "message",
             commit_order as "order",
+            commit_testability as "testability",
             EXISTS(SELECT * FROM commit_ownerships WHERE commit_owner = commit_id) as "ownsCommits"
             FROM commits LEFT OUTER JOIN committers ON commit_committer = committer_id
             WHERE commit_repository = $1 AND commit_reported = true';
@@ -211,6 +212,7 @@ class CommitLogFetcher {
             'authorName' => $committer_row ? $committer_row['committer_name'] : null,
             'authorEmail' => $committer_row ? $committer_row['committer_account'] : null,
             'message' => $commit_row['commit_message'],
+            'testability' => $commit_row['commit_testability'],
             'ownsCommits' => $owns_commits
         );
     }

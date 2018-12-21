@@ -1,3 +1,45 @@
+2018-12-14  Dewei Zhu  <dewei_zhu@apple.com>
+
+        Extend commits table to contain testability information.
+        https://bugs.webkit.org/show_bug.cgi?id=191557
+
+        Reviewed by Ryosuke Niwa.
+
+        Added the ability to store testability message in commits table.
+        Refactored '/api/report-commits' to support updating commit only.
+        Updated os version syncing script to be able to update testability information.
+
+        * init-database.sql: Added 'commit_testability' field to 'commits' table.
+        * public/api/report-commits.php: Refactor this api to allow only update existing commits.
+        * public/include/commit-log-fetcher.php: Expose testability warning information in this API.
+        * public/include/commit-updater.php: Added 'CommitUpdater' to manage commit insert and update.
+        * public/v3/models/commit-log.js: CommitLog object should expose testability warning information.
+        (CommitLog.prototype.updateSingleton):
+        (CommitLog.prototype.testability):
+        * public/v3/models/commit-set.js: Added 'commitsWithTestability' and 'commits' to CommitSet and
+        IntermediateCommitSet instances.
+        (CommitSet.prototype.commitsWithTestability):
+        (CommitSet.prototype.commits):
+        (IntermediateCommitSet.prototype.commitsWithTestability):
+        (IntermediateCommitSet.prototype.commits):
+        * server-tests/api-report-commits-tests.js: Added unit tests for '/api/report-commits' when `insert=false`.
+        * server-tests/tools-os-build-fetcher-tests.js: Added and updated unit tests.
+        * tools/js/os-build-fetcher.js: Added the ability to update commit testability warnings.
+        (async.fetchReportAndUpdateCommits):
+        (prototype.async.fetchReportAndUpdateBuilds):
+        (prototype.async._fetchAvailableBuilds):
+        (prototype.async._commitsForAvailableBuilds):
+        (prototype._commitsWithinRange):
+        (prototype.async._reportCommits):
+        (fetchAndReportAllInOrder): Deleted.
+        (prototype.fetchAndReportNewBuilds): Deleted.
+        (prototype._fetchAvailableBuilds): Deleted.
+        (prototype._commitsForAvailableBuilds): Deleted.
+        (prototype._submitCommits): Deleted.
+        * tools/sync-os-versions.js:
+        * unit-tests/commit-log-tests.js: Added a unit test for 'testability'.
+        * unit-tests/commit-set-tests.js: Added unit tests for 'commitsWithTestability'.
+
 2018-11-16  Ryosuke Niwa  <rniwa@webkit.org>
 
         Manifest file can contain a test metric which references a non-existent test

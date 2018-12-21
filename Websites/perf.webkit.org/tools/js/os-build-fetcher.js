@@ -22,59 +22,56 @@ class OSBuildFetcher {
         this._maxSubmitCount = osConfig['maxSubmitCount'] || 20;
     }
 
-    static fetchAndReportAllInOrder(fetcherList)
+    static async fetchReportAndUpdateCommits(fetcherList)
     {
-        return mapInSerialPromiseChain(fetcherList, (fetcher) => fetcher.fetchAndReportNewBuilds());
+        for (const fetcher of fetcherList)
+            await fetcher.fetchReportAndUpdateBuilds();
     }
 
-    fetchAndReportNewBuilds()
+    async fetchReportAndUpdateBuilds()
     {
-        return this._fetchAvailableBuilds().then((results) => {
-            this._logger.log(`Submitting ${results.length} builds for ${this._osConfig['name']}`);
-            if (results.length == 0)
-                return this._submitCommits(results);
+        const {newCommitsToReport, commitsToUpdate} = await this._fetchAvailableBuilds();
 
-            const splittedResults = [];
-            for (let startIndex = 0; startIndex < results.length; startIndex += this._maxSubmitCount)
-                splittedResults.push(results.slice(startIndex, startIndex + this._maxSubmitCount));
+        this._logger.log(`Submitting ${newCommitsToReport.length} builds for ${this._osConfig['name']}`);
+        await this._reportCommits(newCommitsToReport, true);
 
-            return mapInSerialPromiseChain(splittedResults, this._submitCommits.bind(this)).then((responses) => {
-                assert(responses.every((response) => response['status'] == 'OK'));
-                assert(responses.length > 0);
-                return responses[0];
-            });
-        });
+        this._logger.log(`Updating ${commitsToUpdate.length} builds for ${this._osConfig['name']}`);
+        await this._reportCommits(commitsToUpdate, false);
     }
 
-    _fetchAvailableBuilds()
+    async _fetchAvailableBuilds()
     {
         const config = this._osConfig;
         const repositoryName = config['name'];
-        let customCommands = config['customCommands'];
+        const newCommitsToReport = [];
+        const commitsToUpdate = [];
+        const  customCommands = config['customCommands'];
 
-        return mapInSerialPromiseChain(customCommands, (command) => {
+        for (const command of customCommands) {
             assert(command['minRevision']);
             assert(command['maxRevision']);
             const minRevisionOrder = this._computeOrder(command['minRevision']);
             const maxRevisionOrder = this._computeOrder(command['maxRevision']);
 
             const url = `/api/commits/${escape(repositoryName)}/last-reported?from=${minRevisionOrder}&to=${maxRevisionOrder}`;
+            const result = await this._remoteAPI.getJSONWithStatus(url);
+            const minOrder = result['commits'].length == 1 ? parseInt(result['commits'][0]['order']) + 1 : minRevisionOrder;
 
-            return this._remoteAPI.getJSONWithStatus(url).then((result) => {
-                const minOrder = result['commits'].length == 1 ? parseInt(result['commits'][0]['order']) + 1 : minRevisionOrder;
-                return this._commitsForAvailableBuilds(repositoryName, command['command'], command['linesToIgnore'], minOrder, maxRevisionOrder);
-            }).then((commits) => {
-                const label = 'name' in command ? `"${command['name']}"` : `"${command['minRevision']}" to "${command['maxRevision']}"`;
-                this._logger.log(`Found ${commits.length} builds for ${label}`);
+            const commitInfo = await this._commitsForAvailableBuilds(command['command'], command['linesToIgnore']);
+            const commits = this._commitsWithinRange(commitInfo.allRevisions, repositoryName, minOrder, maxRevisionOrder);
 
-                if ('ownedCommitCommand' in command) {
-                    this._logger.log(`Resolving ownedCommits for ${label}`);
-                    return this._addOwnedCommitsForBuild(commits, command['ownedCommitCommand']);
-                }
+            const label = 'name' in command ? `"${command['name']}"` : `"${command['minRevision']}" to "${command['maxRevision']}"`;
+            this._logger.log(`Found ${commits.length} builds for ${label}`);
+            if ('ownedCommitCommand' in command) {
+                this._logger.log(`Resolving ownedCommits for ${label}`);
+                await this._addOwnedCommitsForBuild(commits, command['ownedCommitCommand']);
+            }
+            newCommitsToReport.push(...commits);
 
-                return commits;
-            });
-        }).then((results) => [].concat(...results));
+            for (const [revision, testability] of Object.entries(commitInfo.commitsWithTestability))
+                commitsToUpdate.push({repository: repositoryName, revision, testability});
+        }
+        return {newCommitsToReport, commitsToUpdate};
     }
 
     _computeOrder(revision)
@@ -89,17 +86,27 @@ class OSBuildFetcher {
         return ((major * 100 + kind) * 10000 + minor) * 100 + variant;
     }
 
-    _commitsForAvailableBuilds(repository, command, linesToIgnore, minOrder, maxOrder)
+    async _commitsForAvailableBuilds(command, linesToIgnore)
     {
-        return this._subprocess.execute(command).then((output) => {
+        const output = await this._subprocess.execute(command);
+        try {
+            return JSON.parse(output);
+        } catch (error) {
+            if (!(error instanceof SyntaxError))
+                throw error;
             let lines = output.split('\n');
-            if (linesToIgnore){
+            if (linesToIgnore) {
                 const regex = new RegExp(linesToIgnore);
                 lines = lines.filter((line) => !regex.exec(line));
             }
-            return lines.map((revision) => ({repository, revision, 'order': this._computeOrder(revision)}))
-                .filter((commit) => commit['order'] >= minOrder && commit['order'] <= maxOrder);
-        });
+            return {allRevisions: lines, commitsWithTestability: {}};
+        }
+    }
+
+    _commitsWithinRange(revisions, repository, minOrder, maxOrder)
+    {
+        return revisions.map((revision) => ({repository, revision, 'order': this._computeOrder(revision)}))
+            .filter((commit) => commit['order'] >= minOrder && commit['order'] <= maxOrder);
     }
 
     _addOwnedCommitsForBuild(commits, command)
@@ -119,10 +126,16 @@ class OSBuildFetcher {
         });
     }
 
-    _submitCommits(commits)
+    async _reportCommits(commitsToPost, insert)
     {
-        const commitsToReport = {"slaveName": this._slaveAuth['name'], "slavePassword": this._slaveAuth['password'], 'commits': commits};
-        return this._remoteAPI.postJSONWithStatus('/api/report-commits/', commitsToReport);
+        if (!commitsToPost.length)
+            return;
+
+        for(let commitsToSubmit = commitsToPost.splice(0, this._maxSubmitCount); commitsToSubmit.length; commitsToSubmit = commitsToPost.splice(0, this._maxSubmitCount)) {
+            const report = {"slaveName": this._slaveAuth['name'], "slavePassword": this._slaveAuth['password'], 'commits': commitsToSubmit, insert};
+            const response = await this._remoteAPI.postJSONWithStatus('/api/report-commits/', report);
+            assert(response['status'] === 'OK');
+        }
     }
 }
 

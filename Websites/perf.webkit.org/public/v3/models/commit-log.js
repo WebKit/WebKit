@@ -29,11 +29,14 @@ class CommitLog extends DataModelObject {
             this._rawData.ownsCommits = rawData.ownsCommits;
         if (rawData.order)
             this._rawData.order = rawData.order;
+        if (rawData.testability)
+            this._rawData.testability = rawData.testability;
     }
 
     repository() { return this._repository; }
     time() { return new Date(this._rawData['time']); }
     hasCommitTime() { return this._rawData['time'] > 0 && this._rawData['time'] != null; }
+    testability() { return this._rawData['testability']; }
     author() { return this._rawData['authorName']; }
     revision() { return this._rawData['revision']; }
     message() { return this._rawData['message']; }
