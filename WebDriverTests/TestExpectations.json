@@ -1017,5 +1017,8 @@
                 "expected": {"gtk": {"status": ["SKIP"], "bug": "webkit.org/b/188118"}}
             }
         }
+    },
+    "imported/w3c/webdriver/tests/permissions/set.py": {
+        "expected": {"all": {"status": ["SKIP"], "bug": "webkit.org/b/192978"}}
     }
 }

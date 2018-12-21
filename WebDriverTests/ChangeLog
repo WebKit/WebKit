@@ -1,5 +1,13 @@
 2018-12-21  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        Unreviewed gardening. Skip imported/w3c/webdriver/tests/permissions/set.py.
+
+        Permissions command is not implemented yet.
+
+        * TestExpectations.json:
+
+2018-12-21  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         Unreviewed. WebDriver: remove deleted tests after r238881.
 
         Deleted files were not removed from the repository in r238881. Also update the test names in the test
