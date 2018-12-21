@@ -1,5 +1,23 @@
 2018-12-20  Joseph Pecoraro  <pecoraro@apple.com>
 
+        Web Inspector: Charles Proxy errors opening har files exported from Safari (invalid startedDateTime)
+        https://bugs.webkit.org/show_bug.cgi?id=192959
+        <rdar://problem/46863411>
+
+        Reviewed by Brian Burg.
+
+        * UserInterface/Views/NetworkTableContentView.js:
+        (WI.NetworkTableContentView.prototype.tableCellContextMenuClicked):
+        (WI.NetworkTableContentView.prototype._updateExportButton):
+        (WI.NetworkTableContentView.prototype._canExportHAR):
+        Disallow HAR export if we don't have load data, such as the requestSentDate for
+        the main resource or sub-resources.
+
+        (WI.NetworkTableContentView.prototype._HARResources):
+        Only export resources that have load data.
+
+2018-12-20  Joseph Pecoraro  <pecoraro@apple.com>
+
         Web Inspector: Autoformat doesn't work on icloud.com (javascript-packed.js)
         https://bugs.webkit.org/show_bug.cgi?id=192946
         <rdar://problem/42546126>
