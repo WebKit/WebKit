@@ -1,3 +1,27 @@
+2018-12-20  Justin Fan  <justin_fan@apple.com>
+
+        [WebGPU] Convert WebGPUBindGroups into MTLArgumentEncoders
+        https://bugs.webkit.org/show_bug.cgi?id=192956
+
+        Reviewed by Myles Maxfield.
+
+        No testable behavior change. Existing tests cover possible crashing.
+
+        Add GPUBindGroupLayoutMetal.mm:
+        * SourcesCocoa.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+
+        Flesh out GPUBindGroupLayout::create:
+        * platform/graphics/gpu/GPUBindGroupLayout.cpp:
+        * platform/graphics/gpu/GPUBindGroupLayout.h:
+        * platform/graphics/gpu/GPUDevice.cpp:
+        (WebCore::GPUDevice::createBindGroupLayout const):
+        * platform/graphics/gpu/cocoa/GPUBindGroupLayoutMetal.mm: Added.
+        (WebCore::appendArgumentToArrayInMap): Added.
+        (WebCore::GPUBindGroupLayout::create):
+        (WebCore::GPUBindGroupLayout::GPUBindGroupLayout):
+        (WebCore::MTLDataTypeForBindingType): Added.
+
 2018-12-20  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         Unreviewed, remove stray #pragma once added to .cpp file

@@ -48,7 +48,7 @@ RefPtr<GPUBuffer> GPUDevice::createBuffer(GPUBufferDescriptor&& descriptor) cons
 
 Ref<GPUBindGroupLayout> GPUDevice::createBindGroupLayout(GPUBindGroupLayoutDescriptor&& descriptor) const
 {
-    return GPUBindGroupLayout::create(WTFMove(descriptor));
+    return GPUBindGroupLayout::create(*this, WTFMove(descriptor));
 }
 
 Ref<GPUPipelineLayout> GPUDevice::createPipelineLayout(GPUPipelineLayoutDescriptor&& descriptor) const

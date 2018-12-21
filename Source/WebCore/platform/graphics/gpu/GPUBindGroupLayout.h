@@ -29,17 +29,28 @@
 
 #include "GPUBindGroupLayoutDescriptor.h"
 
+#include <wtf/HashMap.h>
 #include <wtf/Ref.h>
 #include <wtf/RefCounted.h>
+#include <wtf/RetainPtr.h>
+#include <wtf/Vector.h>
+
+OBJC_PROTOCOL(MTLArgumentEncoder);
 
 namespace WebCore {
 
+class GPUDevice;
+
 class GPUBindGroupLayout : public RefCounted<GPUBindGroupLayout> {
 public:
-    static Ref<GPUBindGroupLayout> create(GPUBindGroupLayoutDescriptor&&);
+    using ArgumentsMap = HashMap<GPUShaderStageFlags, RetainPtr<MTLArgumentEncoder>>;
+
+    static Ref<GPUBindGroupLayout> create(const GPUDevice&, GPUBindGroupLayoutDescriptor&&);
 
 private:
-    GPUBindGroupLayout(GPUBindGroupLayoutDescriptor&&);
+    GPUBindGroupLayout(ArgumentsMap&&);
+
+    ArgumentsMap m_argumentsMap;
 };
 
 } // namespace WebCore

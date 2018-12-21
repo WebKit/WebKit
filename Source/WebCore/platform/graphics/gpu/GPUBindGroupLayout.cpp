@@ -30,16 +30,6 @@
 
 namespace WebCore {
 
-Ref<GPUBindGroupLayout> GPUBindGroupLayout::create(GPUBindGroupLayoutDescriptor&& descriptor)
-{
-    return adoptRef(*new GPUBindGroupLayout(WTFMove(descriptor)));
-}
-
-GPUBindGroupLayout::GPUBindGroupLayout(GPUBindGroupLayoutDescriptor&&)
-{
-    // FIXME: Stub implementation.
-}
-
 } // namespace WebCore
 
 #endif // ENABLE(WEBGPU)
