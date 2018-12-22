@@ -14,14 +14,18 @@
 video = document.getElementById("video");
 canvas = document.getElementById("canvas");
 
-function testImage()
+function grabFrameData(x, y, w, h)
 {
     canvas.width = video.videoWidth;
     canvas.height = video.videoHeight;
-    canvas.getContext('2d').drawImage(video, 0, 0, canvas.width, canvas.height);
 
-    imageData = canvas.getContext('2d').getImageData(10, 325, 250, 1);
-    data = imageData.data;
+    canvas.getContext('2d').drawImage(video, x, y, w, h, x, y, w, h);
+    return canvas.getContext('2d').getImageData(x, y, w, h).data;
+}
+
+function testImage()
+{
+    const data = grabFrameData(10, 325, 250, 1);
 
     var index = 20;
     assert_true(data[index] < 100);
@@ -72,69 +76,50 @@ promise_test(async (test) => {
     testImage();
 }, "Basic video exchange");
 
-async function getInboundRTPStatsNumberOfDecodedFrames(connection)
+function getCircleImageData()
 {
-    var report = await connection.getStats();
-    var framesDecoded;
-    report.forEach((statItem) => {
-        if (statItem.type === "inbound-rtp")
-            framesDecoded = statItem.framesDecoded;
-    });
-    return framesDecoded;
+    return grabFrameData(450, 100, 150, 100);
 }
 
-async function testFrameDecodedIncreased(connection, count, previousFramesNumber)
+async function checkVideoIsUpdated(shouldBeUpdated, count, referenceData)
 {
-    if (previousFramesNumber === undefined) {
-        let number = await getInboundRTPStatsNumberOfDecodedFrames(connection);
-        await waitFor(1000);
-        return testFrameDecodedIncreased(connection, 0, number);
-    }
+    if (count === undefined)
+        count = 0;
+    else if (count >= 20)
+        return Promise.reject("checkVideoIsUpdated timed out :" + shouldBeUpdated + " " + count);
 
-    var number = await getInboundRTPStatsNumberOfDecodedFrames(connection);
-    if (previousFramesNumber && number > previousFramesNumber)
+    if (referenceData === undefined)
+        referenceData = getCircleImageData();
+
+    await waitFor(200);
+    const newData = getCircleImageData();
+
+    if (shouldBeUpdated === (JSON.stringify(referenceData) !== JSON.stringify(newData)))
         return;
 
-    if (count >= 20)
-        return Promise.reject("test increasing frame encoded timed out");
-
-    await waitFor(1000);
-    return testFrameDecodedIncreased(connection, ++count, previousFramesNumber);
-}
-
-async function testFrameDecodedDidNotIncreased(connection, count, previousFramesNumber)
-{
-    if (previousFramesNumber === undefined) {
-        let number = await getInboundRTPStatsNumberOfDecodedFrames(connection);
-        await waitFor(100);
-        return testFrameDecodedDidNotIncreased(connection, 0, number);
-    }
-
-    var number = await getInboundRTPStatsNumberOfDecodedFrames(connection);
-    if (previousFramesNumber && number == previousFramesNumber)
-        return;
-
-    if (count >= 20)
-        return Promise.reject("test increasing frame encoded timed out");
-
-    await waitFor(100);
-    return testFrameDecodedIncreased(connection, ++count, number);
+    await checkVideoIsUpdated(shouldBeUpdated, ++count, newData);
 }
 
 promise_test(async (test) => {
-   let p = pc1.getSenders()[0].getParameters();
-   p.encodings[0].active = false;
-   await pc1.getSenders()[0].setParameters(p);
+    const sender = pc1.getSenders()[0];
+    let p = sender.getParameters();
+    p.encodings[0].active = false;
+    await sender.setParameters(p);
 
-   await testFrameDecodedDidNotIncreased(pc2);
+    assert_false(sender.getParameters().encodings[0].active, "encodings[0].active should be false");
+
+    await checkVideoIsUpdated(false);
 }, "Call setParameters to disable sending a given encoding");
 
 promise_test(async (test) => {
-   let p = pc1.getSenders()[0].getParameters();
-   p.encodings[0].active = true;
-   await pc1.getSenders()[0].setParameters(p);
+    const sender = pc1.getSenders()[0];
+    let p = sender.getParameters();
+    p.encodings[0].active = true;
+    await sender.setParameters(p);
 
-   await testFrameDecodedIncreased(pc2);
+    assert_true(sender.getParameters().encodings[0].active, "encodings[0].active should be true");
+
+    await checkVideoIsUpdated(true);
 }, "Call setParameters to reenable sending a given encoding");
         </script>
     </body>

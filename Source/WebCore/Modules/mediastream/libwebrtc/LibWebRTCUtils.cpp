@@ -160,10 +160,8 @@ RTCRtpSendParameters toRTCRtpSendParameters(const webrtc::RtpParameters& rtcPara
     return parameters;
 }
 
-void updateRTCRtpSendParameters(const RTCRtpSendParameters& parameters, webrtc::RtpParameters& currentParameters)
+void updateRTCRtpSendParameters(const RTCRtpSendParameters& parameters, webrtc::RtpParameters& rtcParameters)
 {
-    webrtc::RtpParameters rtcParameters = currentParameters;
-
     rtcParameters.transaction_id = parameters.transactionId.utf8().data();
 
     if (parameters.encodings.size() != rtcParameters.encodings.size()) {
