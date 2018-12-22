@@ -1,3 +1,10 @@
+2018-12-21  Dan Bernstein  <mitz@apple.com>
+
+        Fixed building for macOS 10.13 using the macOS 10.14 SDK.
+
+        * wtf/Platform.h: Changed HAVE_AUTHORIZATION_STATUS_FOR_MEDIA_TYPE to depend on the
+          deployment target, not the SDK.
+
 2018-12-20  Yusuke Suzuki  <yusukesuzuki@slowstart.org>
 
         [JSC] Implement "well-formed JSON.stringify" proposal
