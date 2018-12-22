@@ -182,7 +182,7 @@ if (!this.JSON) {
     }
 
     var cx = /[\u0000\u00ad\u0600-\u0604\u070f\u17b4\u17b5\u200c-\u200f\u2028-\u202f\u2060-\u206f\ufeff\ufff0-\uffff]/g,
-        escapable = /[\\\"\x00-\x1f]/g,
+        escapable = /[\\\"\x00-\x1f\ud800-\udbff\udc00-\udfff]/g,
         gap,
         indent,
         meta = {    // table of character substitutions
@@ -196,6 +196,18 @@ if (!this.JSON) {
         },
         rep;
 
+    function isHighSurrogate(code) {
+        return code >= 0xd800 && code <= 0xdbff;
+    }
+
+    function isLowSurrogate(code) {
+        return code >= 0xdc00 && code <= 0xdfff;
+    }
+
+    function isSurrogate(code) {
+        return isHighSurrogate(code) || isLowSurrogate(code);
+    }
+
 
     function quote(string) {
 
@@ -206,10 +218,21 @@ if (!this.JSON) {
 
         escapable.lastIndex = 0;
         return escapable.test(string) ?
-            '"' + string.replace(escapable, function (a) {
+            '"' + string.replace(escapable, function (a, offset) {
                 var c = meta[a];
-                return typeof c === 'string' ? c :
-                    '\\u' + ('0000' + a.charCodeAt(0).toString(16)).slice(-4);
+                if (typeof c === 'string')
+                    return c;
+                var code = a.charCodeAt(0);
+                if (!isSurrogate(code))
+                    return '\\u' + ('0000' + a.charCodeAt(0).toString(16)).slice(-4);
+
+                if (isLowSurrogate(code) && (offset - 1) >= 0 && isHighSurrogate(string.charCodeAt(offset - 1)))
+                    return a;
+
+                if (isHighSurrogate(code) && (offset + 1) < string.length && isLowSurrogate(string.charCodeAt(offset + 1)))
+                    return a;
+
+                return '\\u' + ('0000' + a.charCodeAt(0).toString(16)).slice(-4);
             }) + '"' :
             '"' + string + '"';
     }

@@ -57,20 +57,47 @@ ALWAYS_INLINE static void appendQuotedJSONStringInternal(OutputCharacterType*& o
 {
     for (auto* end = input + length; input != end; ++input) {
         auto character = *input;
-        auto escaped = escapedFormsForJSON[character & 0xFF];
-        if (LIKELY(!escaped || character > 0xFF)) {
+        if (LIKELY(character <= 0xFF)) {
+            auto escaped = escapedFormsForJSON[character];
+            if (LIKELY(!escaped)) {
+                *output++ = character;
+                continue;
+            }
+
+            *output++ = '\\';
+            *output++ = escaped;
+            if (UNLIKELY(escaped == 'u')) {
+                *output++ = '0';
+                *output++ = '0';
+                *output++ = upperNibbleToLowercaseASCIIHexDigit(character);
+                *output++ = lowerNibbleToLowercaseASCIIHexDigit(character);
+            }
+            continue;
+        }
+
+        if (LIKELY(!U16_IS_SURROGATE(character))) {
             *output++ = character;
             continue;
         }
 
-        *output++ = '\\';
-        *output++ = escaped;
-        if (UNLIKELY(escaped == 'u')) {
-            *output++ = '0';
-            *output++ = '0';
-            *output++ = upperNibbleToLowercaseASCIIHexDigit(character);
-            *output++ = lowerNibbleToLowercaseASCIIHexDigit(character);
+        auto next = input + 1;
+        bool isValidSurrogatePair = U16_IS_SURROGATE_LEAD(character) && next != end && U16_IS_TRAIL(*next);
+        if (isValidSurrogatePair) {
+            *output++ = character;
+            *output++ = *next;
+            ++input;
+            continue;
         }
+
+        uint8_t upper = static_cast<uint32_t>(character) >> 8;
+        uint8_t lower = static_cast<uint8_t>(character);
+        *output++ = '\\';
+        *output++ = 'u';
+        *output++ = upperNibbleToLowercaseASCIIHexDigit(upper);
+        *output++ = lowerNibbleToLowercaseASCIIHexDigit(upper);
+        *output++ = upperNibbleToLowercaseASCIIHexDigit(lower);
+        *output++ = lowerNibbleToLowercaseASCIIHexDigit(lower);
+        continue;
     }
 }
 

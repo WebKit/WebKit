@@ -1,3 +1,18 @@
+2018-12-20  Yusuke Suzuki  <yusukesuzuki@slowstart.org>
+
+        [JSC] Implement "well-formed JSON.stringify" proposal
+        https://bugs.webkit.org/show_bug.cgi?id=191677
+
+        Reviewed by Darin Adler.
+
+        * css3/escape-dom-api-expected.txt:
+        * js/dom/webidl-type-mapping-expected.txt:
+        * js/resources/json2-es5-compat.js:
+        (isHighSurrogate):
+        (isLowSurrogate):
+        (isSurrogate):
+        (quote):
+
 2018-12-21  Youenn Fablet  <youenn@apple.com>
 
         RTCRtpSender.setParameters() does set active parameter

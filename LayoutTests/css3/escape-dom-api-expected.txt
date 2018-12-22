@@ -61,8 +61,8 @@ PASS CSS.escape('abcdefghijklmnopqrstuvwxyz') is "abcdefghijklmnopqrstuvwxyz"
 PASS CSS.escape('ABCDEFGHIJKLMNOPQRSTUVWXYZ') is "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
 PASS CSS.escape(' !xy') is "\\ \\!xy"
 PASS CSS.escape('ð') is "ð"
-PASS CSS.escape('í¼') is "í¼"
-PASS CSS.escape('í ´') is "í ´"
+PASS CSS.escape('í¼') is "\udf06"
+PASS CSS.escape('í ´') is "\ud834"
 PASS successfullyParsed is true
 
 TEST COMPLETE
