@@ -20,7 +20,6 @@ import (
 var bulkCipher *string = flag.String("cipher", "", "The bulk cipher to use")
 var mac *string = flag.String("mac", "", "The hash function to use in the MAC")
 var implicitIV *bool = flag.Bool("implicit-iv", false, "If true, generate tests for a cipher using a pre-TLS-1.0 implicit IV")
-var ssl3 *bool = flag.Bool("ssl3", false, "If true, use the SSLv3 MAC and padding rather than TLS")
 
 // rc4Stream produces a deterministic stream of pseudorandom bytes. This is to
 // make this script idempotent.
@@ -84,30 +83,6 @@ func newBlockCipher(name string, key []byte) (cipher.Block, error) {
 	}
 }
 
-var ssl30Pad1 = [48]byte{0x36, 0x36, 0x36, 0x36, 0x36, 0x36, 0x36, 0x36, 0x36, 0x36, 0x36, 0x36, 0x36, 0x36, 0x36, 0x36, 0x36, 0x36, 0x36, 0x36, 0x36, 0x36, 0x36, 0x36, 0x36, 0x36, 0x36, 0x36, 0x36, 0x36, 0x36, 0x36, 0x36, 0x36, 0x36, 0x36, 0x36, 0x36, 0x36, 0x36, 0x36, 0x36, 0x36, 0x36, 0x36, 0x36, 0x36, 0x36}
-
-var ssl30Pad2 = [48]byte{0x5c, 0x5c, 0x5c, 0x5c, 0x5c, 0x5c, 0x5c, 0x5c, 0x5c, 0x5c, 0x5c, 0x5c, 0x5c, 0x5c, 0x5c, 0x5c, 0x5c, 0x5c, 0x5c, 0x5c, 0x5c, 0x5c, 0x5c, 0x5c, 0x5c, 0x5c, 0x5c, 0x5c, 0x5c, 0x5c, 0x5c, 0x5c, 0x5c, 0x5c, 0x5c, 0x5c, 0x5c, 0x5c, 0x5c, 0x5c, 0x5c, 0x5c, 0x5c, 0x5c, 0x5c, 0x5c, 0x5c, 0x5c}
-
-func ssl30MAC(hash crypto.Hash, key, input, ad []byte) []byte {
-	padLength := 48
-	if hash.Size() == 20 {
-		padLength = 40
-	}
-
-	h := hash.New()
-	h.Write(key)
-	h.Write(ssl30Pad1[:padLength])
-	h.Write(ad)
-	h.Write(input)
-	digestBuf := h.Sum(nil)
-
-	h.Reset()
-	h.Write(key)
-	h.Write(ssl30Pad2[:padLength])
-	h.Write(digestBuf)
-	return h.Sum(digestBuf[:0])
-}
-
 type testCase struct {
 	digest     []byte
 	key        []byte
@@ -125,7 +100,7 @@ type testCase struct {
 type options struct {
 	// extraPadding causes an extra block of padding to be added.
 	extraPadding bool
-	// maximalPadding causes 256 bytes of padding to be added.
+	// maximalPadding causes the maximum allowed amount of padding to be added.
 	maximalPadding bool
 	// wrongPadding causes one of the padding bytes to be wrong.
 	wrongPadding bool
@@ -148,12 +123,7 @@ func makeTestCase(length int, options options) (*testCase, error) {
 	input := make([]byte, length)
 	rand.fillBytes(input)
 
-	var adFull []byte
-	if *ssl3 {
-		adFull = make([]byte, 11)
-	} else {
-		adFull = make([]byte, 13)
-	}
+	adFull := make([]byte, 13)
 	ad := adFull[:len(adFull)-2]
 	rand.fillBytes(ad)
 	adFull[len(adFull)-2] = uint8(length >> 8)
@@ -167,18 +137,10 @@ func makeTestCase(length int, options options) (*testCase, error) {
 	macKey := make([]byte, hash.Size())
 	rand.fillBytes(macKey)
 
-	var digest []byte
-	if *ssl3 {
-		if hash != crypto.SHA1 && hash != crypto.MD5 {
-			return nil, fmt.Errorf("invalid hash for SSLv3: '%s'", *mac)
-		}
-		digest = ssl30MAC(hash, macKey, input, adFull)
-	} else {
-		h := hmac.New(hash.New, macKey)
-		h.Write(adFull)
-		h.Write(input)
-		digest = h.Sum(nil)
-	}
+	h := hmac.New(hash.New, macKey)
+	h.Write(adFull)
+	h.Write(input)
+	digest := h.Sum(nil)
 
 	size := getKeySize(*bulkCipher)
 	if size == 0 {
@@ -198,7 +160,7 @@ func makeTestCase(length int, options options) (*testCase, error) {
 
 	iv := make([]byte, block.BlockSize())
 	rand.fillBytes(iv)
-	if *implicitIV || *ssl3 {
+	if *implicitIV {
 		fixedIV = iv
 	} else {
 		nonce = iv
@@ -214,7 +176,7 @@ func makeTestCase(length int, options options) (*testCase, error) {
 	} else {
 		sealed = append(sealed, digest...)
 	}
-	paddingLen := cbc.BlockSize() - (len(sealed) % cbc.BlockSize())
+	paddingLen := cbc.BlockSize() - len(sealed)%cbc.BlockSize()
 	if options.noPadding {
 		if paddingLen != cbc.BlockSize() {
 			return nil, fmt.Errorf("invalid length for noPadding")
@@ -226,37 +188,26 @@ func makeTestCase(length int, options options) (*testCase, error) {
 			if options.extraPadding {
 				paddingLen += cbc.BlockSize()
 			} else {
-				if paddingLen != cbc.BlockSize() {
-					return nil, fmt.Errorf("invalid length for maximalPadding")
+				if 256%cbc.BlockSize() != 0 {
+					panic("256 is not a whole number of blocks")
 				}
-				paddingLen = 256
+				paddingLen = 256 - len(sealed)%cbc.BlockSize()
 			}
 			noSeal = true
-			if *ssl3 {
-				// SSLv3 padding must be minimal.
-				fails = true
-			}
 		}
-		if *ssl3 {
-			sealed = append(sealed, make([]byte, paddingLen-1)...)
-			sealed = append(sealed, byte(paddingLen-1))
-		} else {
-			pad := make([]byte, paddingLen)
-			for i := range pad {
-				pad[i] = byte(paddingLen - 1)
-			}
-			sealed = append(sealed, pad...)
+		pad := make([]byte, paddingLen)
+		for i := range pad {
+			pad[i] = byte(paddingLen - 1)
 		}
+		sealed = append(sealed, pad...)
 		if options.wrongPadding {
 			if options.wrongPaddingOffset >= paddingLen {
 				return nil, fmt.Errorf("invalid wrongPaddingOffset")
 			}
 			sealed[len(sealed)-paddingLen+options.wrongPaddingOffset]++
 			noSeal = true
-			if !*ssl3 {
-				// TLS specifies the all the padding bytes.
-				fails = true
-			}
+			// TLS specifies the all the padding bytes.
+			fails = true
 		}
 	}
 	cbc.CryptBlocks(sealed, sealed)
@@ -314,9 +265,6 @@ func main() {
 	if *implicitIV {
 		commandLine += " -implicit-iv"
 	}
-	if *ssl3 {
-		commandLine += " -ssl3"
-	}
 	fmt.Printf("# Generated by\n")
 	fmt.Printf("#   %s\n", commandLine)
 	fmt.Printf("#\n")
@@ -342,8 +290,16 @@ func main() {
 	fmt.Printf("# Test with no padding.\n")
 	addTestCase(64-hash.Size(), options{noPadding: true})
 
-	fmt.Printf("# Test with maximal padding.\n")
-	addTestCase(64-hash.Size(), options{maximalPadding: true})
+	// Test with maximal padding at all rotations modulo the hash's block
+	// size. Our smallest hash (SHA-1 at 64-byte blocks) exceeds our largest
+	// block cipher (AES at 16-byte blocks), so this is also covers all
+	// block cipher rotations. This is to ensure full coverage of the
+	// kVarianceBlocks value in the constant-time logic.
+	hashBlockSize := hash.New().BlockSize()
+	for i := 0; i < hashBlockSize; i++ {
+		fmt.Printf("# Test with maximal padding (%d mod %d).\n", i, hashBlockSize)
+		addTestCase(hashBlockSize+i, options{maximalPadding: true})
+	}
 
 	fmt.Printf("# Test if the unpadded input is too short for a MAC, but not publicly so.\n")
 	addTestCase(0, options{omitMAC: true, maximalPadding: true})

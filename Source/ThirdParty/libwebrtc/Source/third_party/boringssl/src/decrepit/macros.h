@@ -57,6 +57,8 @@
 #ifndef OPENSSL_HEADER_DECREPIT_MACROS_H
 #define OPENSSL_HEADER_DECREPIT_MACROS_H
 
+#include "../crypto/internal.h"
+
 
 // NOTE - c is not incremented as per n2l
 #define n2ln(c, l1, l2, n)                       \

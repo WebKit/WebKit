@@ -53,6 +53,9 @@
 
 #include <gtest/gtest.h>
 
+#include <openssl/mem.h>
+#include <openssl/rand.h>
+
 
 static uint8_t FromBool8(bool b) {
   return b ? CONSTTIME_TRUE_8 : CONSTTIME_FALSE_8;
@@ -131,6 +134,22 @@ TEST(ConstantTimeTest, Test) {
       SCOPED_TRACE(static_cast<int>(b));
       EXPECT_EQ(a, constant_time_select_8(CONSTTIME_TRUE_8, a, b));
       EXPECT_EQ(b, constant_time_select_8(CONSTTIME_FALSE_8, a, b));
+    }
+  }
+}
+
+TEST(ConstantTimeTest, MemCmp) {
+  uint8_t buf[256], copy[256];
+  RAND_bytes(buf, sizeof(buf));
+
+  OPENSSL_memcpy(copy, buf, sizeof(buf));
+  EXPECT_EQ(0, CRYPTO_memcmp(buf, copy, sizeof(buf)));
+
+  for (size_t i = 0; i < sizeof(buf); i++) {
+    for (uint8_t bit = 1; bit != 0; bit <<= 1) {
+      OPENSSL_memcpy(copy, buf, sizeof(buf));
+      copy[i] ^= bit;
+      EXPECT_NE(0, CRYPTO_memcmp(buf, copy, sizeof(buf)));
     }
   }
 }

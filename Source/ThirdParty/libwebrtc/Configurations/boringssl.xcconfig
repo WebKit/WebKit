@@ -10,6 +10,7 @@ HEADER_SEARCH_PATHS = Source/third_party/boringssl/src/include;
 INSTALL_PATH = /usr/local/lib;
 PUBLIC_HEADERS_FOLDER_PATH = /usr/local/include/libwebrtc;
 USE_HEADERMAP = NO;
+GCC_WARN_UNUSED_FUNCTION = NO;
 
 // FIXME: There's no assembly used in the boringssl build yet :(
 GCC_PREPROCESSOR_DEFINITIONS = OPENSSL_NO_ASM $(inherited);

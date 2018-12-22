@@ -258,3 +258,20 @@ TEST(DigestTest, ASN1) {
   CBS_init(&cbs, kSHA256GarbageParam, sizeof(kSHA256GarbageParam));
   EXPECT_FALSE(EVP_parse_digest_algorithm(&cbs));
 }
+
+TEST(DigestTest, TransformBlocks) {
+  uint8_t blocks[SHA256_CBLOCK * 10];
+  for (size_t i = 0; i < sizeof(blocks); i++) {
+    blocks[i] = i*3;
+  }
+
+  SHA256_CTX ctx1;
+  SHA256_Init(&ctx1);
+  SHA256_Update(&ctx1, blocks, sizeof(blocks));
+
+  SHA256_CTX ctx2;
+  SHA256_Init(&ctx2);
+  SHA256_TransformBlocks(ctx2.h, blocks, sizeof(blocks) / SHA256_CBLOCK);
+
+  EXPECT_TRUE(0 == OPENSSL_memcmp(ctx1.h, ctx2.h, sizeof(ctx1.h)));
+}

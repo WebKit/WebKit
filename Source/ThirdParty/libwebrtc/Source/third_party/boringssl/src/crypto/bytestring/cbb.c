@@ -18,6 +18,7 @@
 #include <limits.h>
 #include <string.h>
 
+#include <openssl/buf.h>
 #include <openssl/mem.h>
 
 #include "../internal.h"
@@ -332,9 +333,9 @@ int CBB_add_u24_length_prefixed(CBB *cbb, CBB *out_contents) {
 // add_base128_integer encodes |v| as a big-endian base-128 integer where the
 // high bit of each byte indicates where there is more data. This is the
 // encoding used in DER for both high tag number form and OID components.
-static int add_base128_integer(CBB *cbb, uint32_t v) {
+static int add_base128_integer(CBB *cbb, uint64_t v) {
   unsigned len_len = 0;
-  unsigned copy = v;
+  uint64_t copy = v;
   while (copy > 0) {
     len_len++;
     copy >>= 7;
@@ -504,11 +505,33 @@ int CBB_add_asn1_uint64(CBB *cbb, uint64_t value) {
   return CBB_flush(cbb);
 }
 
+int CBB_add_asn1_octet_string(CBB *cbb, const uint8_t *data, size_t data_len) {
+  CBB child;
+  if (!CBB_add_asn1(cbb, &child, CBS_ASN1_OCTETSTRING) ||
+      !CBB_add_bytes(&child, data, data_len) ||
+      !CBB_flush(cbb)) {
+    return 0;
+  }
+
+  return 1;
+}
+
+int CBB_add_asn1_bool(CBB *cbb, int value) {
+  CBB child;
+  if (!CBB_add_asn1(cbb, &child, CBS_ASN1_BOOLEAN) ||
+      !CBB_add_u8(&child, value != 0 ? 0xff : 0) ||
+      !CBB_flush(cbb)) {
+    return 0;
+  }
+
+  return 1;
+}
+
 // parse_dotted_decimal parses one decimal component from |cbs|, where |cbs| is
 // an OID literal, e.g., "1.2.840.113554.4.1.72585". It consumes both the
 // component and the dot, so |cbs| may be passed into the function again for the
 // next value.
-static int parse_dotted_decimal(CBS *cbs, uint32_t *out) {
+static int parse_dotted_decimal(CBS *cbs, uint64_t *out) {
   *out = 0;
   int seen_digit = 0;
   for (;;) {
@@ -524,8 +547,8 @@ static int parse_dotted_decimal(CBS *cbs, uint32_t *out) {
         // Forbid stray leading zeros.
         (seen_digit && *out == 0) ||
         // Check for overflow.
-        *out > UINT32_MAX / 10 ||
-        *out * 10 > UINT32_MAX - (u - '0')) {
+        *out > UINT64_MAX / 10 ||
+        *out * 10 > UINT64_MAX - (u - '0')) {
       return 0;
     }
     *out = *out * 10 + (u - '0');
@@ -544,7 +567,7 @@ int CBB_add_asn1_oid_from_text(CBB *cbb, const char *text, size_t len) {
   CBS_init(&cbs, (const uint8_t *)text, len);
 
   // OIDs must have at least two components.
-  uint32_t a, b;
+  uint64_t a, b;
   if (!parse_dotted_decimal(&cbs, &a) ||
       !parse_dotted_decimal(&cbs, &b)) {
     return 0;
@@ -554,8 +577,8 @@ int CBB_add_asn1_oid_from_text(CBB *cbb, const char *text, size_t len) {
   // 0, 1, or 2 and that, when it is 0 or 1, |b| is at most 39.
   if (a > 2 ||
       (a < 2 && b > 39) ||
-      b > UINT32_MAX - 80 ||
-      !add_base128_integer(cbb, 40 * a + b)) {
+      b > UINT64_MAX - 80 ||
+      !add_base128_integer(cbb, 40u * a + b)) {
     return 0;
   }
 
@@ -568,4 +591,78 @@ int CBB_add_asn1_oid_from_text(CBB *cbb, const char *text, size_t len) {
   }
 
   return 1;
+}
+
+static int compare_set_of_element(const void *a_ptr, const void *b_ptr) {
+  // See X.690, section 11.6 for the ordering. They are sorted in ascending
+  // order by their DER encoding.
+  const CBS *a = a_ptr, *b = b_ptr;
+  size_t a_len = CBS_len(a), b_len = CBS_len(b);
+  size_t min_len = a_len < b_len ? a_len : b_len;
+  int ret = OPENSSL_memcmp(CBS_data(a), CBS_data(b), min_len);
+  if (ret != 0) {
+    return ret;
+  }
+  if (a_len == b_len) {
+    return 0;
+  }
+  // If one is a prefix of the other, the shorter one sorts first. (This is not
+  // actually reachable. No DER encoding is a prefix of another DER encoding.)
+  return a_len < b_len ? -1 : 1;
+}
+
+int CBB_flush_asn1_set_of(CBB *cbb) {
+  if (!CBB_flush(cbb)) {
+    return 0;
+  }
+
+  CBS cbs;
+  size_t num_children = 0;
+  CBS_init(&cbs, CBB_data(cbb), CBB_len(cbb));
+  while (CBS_len(&cbs) != 0) {
+    if (!CBS_get_any_asn1_element(&cbs, NULL, NULL, NULL)) {
+      return 0;
+    }
+    num_children++;
+  }
+
+  if (num_children < 2) {
+    return 1;  // Nothing to do. This is the common case for X.509.
+  }
+  if (num_children > ((size_t)-1) / sizeof(CBS)) {
+    return 0;  // Overflow.
+  }
+
+  // Parse out the children and sort. We alias them into a copy of so they
+  // remain valid as we rewrite |cbb|.
+  int ret = 0;
+  size_t buf_len = CBB_len(cbb);
+  uint8_t *buf = BUF_memdup(CBB_data(cbb), buf_len);
+  CBS *children = OPENSSL_malloc(num_children * sizeof(CBS));
+  if (buf == NULL || children == NULL) {
+    goto err;
+  }
+  CBS_init(&cbs, buf, buf_len);
+  for (size_t i = 0; i < num_children; i++) {
+    if (!CBS_get_any_asn1_element(&cbs, &children[i], NULL, NULL)) {
+      goto err;
+    }
+  }
+  qsort(children, num_children, sizeof(CBS), compare_set_of_element);
+
+  // Rewind |cbb| and write the contents back in the new order.
+  cbb->base->len = cbb->offset + cbb->pending_len_len;
+  for (size_t i = 0; i < num_children; i++) {
+    if (!CBB_add_bytes(cbb, CBS_data(&children[i]), CBS_len(&children[i]))) {
+      goto err;
+    }
+  }
+  assert(CBB_len(cbb) == buf_len);
+
+  ret = 1;
+
+err:
+  OPENSSL_free(buf);
+  OPENSSL_free(children);
+  return ret;
 }

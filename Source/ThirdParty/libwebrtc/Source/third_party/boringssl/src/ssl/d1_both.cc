@@ -1,6 +1,6 @@
 /*
  * DTLS implementation written by Nagendra Modadugu
- * (nagendra@cs.stanford.edu) for the OpenSSL project 2005. 
+ * (nagendra@cs.stanford.edu) for the OpenSSL project 2005.
  */
 /* ====================================================================
  * Copyright (c) 1998-2005 The OpenSSL Project.  All rights reserved.
@@ -127,7 +127,7 @@
 #include "internal.h"
 
 
-namespace bssl {
+BSSL_NAMESPACE_BEGIN
 
 // TODO(davidben): 28 comes from the size of IP + UDP header. Is this reasonable
 // for these values? Notably, why is kMinMTU a function of the transport
@@ -536,6 +536,20 @@ bool dtls1_finish_message(SSL *ssl, CBB *cbb, Array<uint8_t> *out_msg) {
   return true;
 }
 
+// ssl_size_t_greater_than_32_bits returns whether |v| exceeds the bounds of a
+// 32-bit value. The obvious thing doesn't work because, in some 32-bit build
+// configurations, the compiler warns that the test is always false and breaks
+// the build.
+static bool ssl_size_t_greater_than_32_bits(size_t v) {
+#if defined(OPENSSL_64_BIT)
+  return v > 0xffffffff;
+#elif defined(OPENSSL_32_BIT)
+  return false;
+#else
+#error "Building for neither 32- nor 64-bits."
+#endif
+}
+
 // add_outgoing adds a new handshake message or ChangeCipherSpec to the current
 // outgoing flight. It returns true on success and false on error.
 static bool add_outgoing(SSL *ssl, bool is_ccs, Array<uint8_t> data) {
@@ -550,7 +564,7 @@ static bool add_outgoing(SSL *ssl, bool is_ccs, Array<uint8_t> data) {
                     (1 << 8 * sizeof(ssl->d1->outgoing_messages_len)),
                 "outgoing_messages_len is too small");
   if (ssl->d1->outgoing_messages_len >= SSL_MAX_HANDSHAKE_FLIGHT ||
-      data.size() > 0xffffffff) {
+      ssl_size_t_greater_than_32_bits(data.size())) {
     assert(false);
     OPENSSL_PUT_ERROR(SSL, ERR_R_INTERNAL_ERROR);
     return false;
@@ -587,15 +601,6 @@ bool dtls1_add_change_cipher_spec(SSL *ssl) {
   return add_outgoing(ssl, true /* ChangeCipherSpec */, Array<uint8_t>());
 }
 
-bool dtls1_add_alert(SSL *ssl, uint8_t level, uint8_t desc) {
-  // The |add_alert| path is only used for warning alerts for now, which DTLS
-  // never sends. This will be implemented later once closure alerts are
-  // converted.
-  assert(false);
-  OPENSSL_PUT_ERROR(SSL, ERR_R_INTERNAL_ERROR);
-  return false;
-}
-
 // dtls1_update_mtu updates the current MTU from the BIO, ensuring it is above
 // the minimum.
 static void dtls1_update_mtu(SSL *ssl) {
@@ -604,12 +609,12 @@ static void dtls1_update_mtu(SSL *ssl) {
   // |SSL_set_mtu|. Does this need to be so complex?
   if (ssl->d1->mtu < dtls1_min_mtu() &&
       !(SSL_get_options(ssl) & SSL_OP_NO_QUERY_MTU)) {
-    long mtu = BIO_ctrl(ssl->wbio, BIO_CTRL_DGRAM_QUERY_MTU, 0, NULL);
+    long mtu = BIO_ctrl(ssl->wbio.get(), BIO_CTRL_DGRAM_QUERY_MTU, 0, NULL);
     if (mtu >= 0 && mtu <= (1 << 30) && (unsigned)mtu >= dtls1_min_mtu()) {
       ssl->d1->mtu = (unsigned)mtu;
     } else {
       ssl->d1->mtu = kDefaultMTU;
-      BIO_ctrl(ssl->wbio, BIO_CTRL_DGRAM_SET_MTU, ssl->d1->mtu, NULL);
+      BIO_ctrl(ssl->wbio.get(), BIO_CTRL_DGRAM_SET_MTU, ssl->d1->mtu, NULL);
     }
   }
 
@@ -789,7 +794,7 @@ static int send_flight(SSL *ssl) {
       goto err;
     }
 
-    int bio_ret = BIO_write(ssl->wbio, packet, packet_len);
+    int bio_ret = BIO_write(ssl->wbio.get(), packet, packet_len);
     if (bio_ret <= 0) {
       // Retry this packet the next time around.
       ssl->d1->outgoing_written = old_written;
@@ -800,7 +805,7 @@ static int send_flight(SSL *ssl) {
     }
   }
 
-  if (BIO_flush(ssl->wbio) <= 0) {
+  if (BIO_flush(ssl->wbio.get()) <= 0) {
     ssl->s3->rwstate = SSL_WRITING;
     goto err;
   }
@@ -834,4 +839,4 @@ unsigned int dtls1_min_mtu(void) {
   return kMinMTU;
 }
 
-}  // namespace bssl
+BSSL_NAMESPACE_END

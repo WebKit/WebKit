@@ -5,6 +5,7 @@ ssl/test/runner/runner
 doc/*.html
 doc/doc.css
 
+util/bot/android_ndk
 util/bot/android_tools
 util/bot/cmake-linux64
 util/bot/cmake-linux64.tar.gz
@@ -14,8 +15,10 @@ util/bot/cmake-win32
 util/bot/cmake-win32.zip
 util/bot/golang
 util/bot/gyp
-util/bot/libFuzzer
+util/bot/libcxx
+util/bot/libcxxabi
 util/bot/llvm-build
+util/bot/nasm-win32.exe
 util/bot/perl-win32
 util/bot/perl-win32.zip
 util/bot/sde-linux64

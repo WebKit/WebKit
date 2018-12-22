@@ -2,23 +2,17 @@
 
 Modern fuzz testers are very effective and we wish to use them to ensure that no silly bugs creep into BoringSSL.
 
-We primarily use Clang's [libFuzzer](http://llvm.org/docs/LibFuzzer.html) for fuzz testing and there are a number of fuzz testing functions in `fuzz/`. They are not built by default because they require libFuzzer at build time.
+We use Clang's [libFuzzer](http://llvm.org/docs/LibFuzzer.html) for fuzz testing and there are a number of fuzz testing functions in `fuzz/`. They are not built by default because they require that the rest of BoringSSL be built with some changes that make fuzzing much more effective, but are completely unsafe for real use.
 
-In order to build the fuzz tests you will need at least Clang 3.7. Pass `-DFUZZ=1` on the CMake command line to enable building BoringSSL with coverage and AddressSanitizer, and to build the fuzz test binaries. You'll probably need to set the `CC` and `CXX` environment variables too, like this:
+In order to build the fuzz tests you will need at least Clang 6.0. Pass `-DFUZZ=1` on the CMake command line to enable building BoringSSL with coverage and AddressSanitizer, and to build the fuzz test binaries. You'll probably need to set the `CC` and `CXX` environment variables too, like this:
 
 ```
+mkdir build
+cd build
 CC=clang CXX=clang++ cmake -GNinja -DFUZZ=1 ..
+ninja
 ```
 
-In order for the fuzz tests to link, the linker needs to find libFuzzer. This is not commonly provided and you may need to download the [Clang source code](http://llvm.org/releases/download.html) and do the following:
-
-```
-svn co http://llvm.org/svn/llvm-project/llvm/trunk/lib/Fuzzer
-clang++ -c -g -O2 -std=c++11 Fuzzer/*.cpp -IFuzzer
-ar ruv libFuzzer.a Fuzzer*.o
-```
-
-Then copy `libFuzzer.a` to the top-level of your BoringSSL source directory.
 
 From the `build/` directory, you can then run the fuzzers. For example:
 
@@ -32,6 +26,7 @@ The recommended values of `max_len` for each test are:
 
 | Test          | `max_len` value |
 |---------------|-----------------|
+| `bn_mod_exp`  | 4096            |
 | `cert`        | 10000           |
 | `client`      | 20000           |
 | `pkcs8`       | 2048            |

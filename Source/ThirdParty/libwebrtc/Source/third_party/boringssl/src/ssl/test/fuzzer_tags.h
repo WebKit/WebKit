@@ -42,4 +42,10 @@ static const uint16_t kRequestClientCert = 2;
 // kTLS13Variant is followed by a u8 denoting the TLS 1.3 variant to configure.
 static const uint16_t kTLS13Variant = 3;
 
+// kHandoffTag is followed by the output of |SSL_serialize_handoff|.
+static const uint16_t kHandoffTag = 4;
+
+// kHandbackTag is followed by te output of |SSL_serialize_handback|.
+static const uint16_t kHandbackTag = 5;
+
 #endif  // HEADER_SSL_TEST_FUZZER_TAGS

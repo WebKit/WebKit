@@ -57,7 +57,7 @@ static int set_privkey(EVP_PKEY *pkey, const uint8_t privkey[64]) {
 }
 
 static int ed25519_pub_decode(EVP_PKEY *out, CBS *params, CBS *key) {
-  // See draft-ietf-curdle-pkix-04, section 4.
+  // See RFC 8410, section 4.
 
   // The parameters must be omitted. Public keys have length 32.
   if (CBS_len(params) != 0 ||
@@ -72,7 +72,7 @@ static int ed25519_pub_decode(EVP_PKEY *out, CBS *params, CBS *key) {
 static int ed25519_pub_encode(CBB *out, const EVP_PKEY *pkey) {
   const ED25519_KEY *key = pkey->pkey.ptr;
 
-  // See draft-ietf-curdle-pkix-04, section 4.
+  // See RFC 8410, section 4.
   CBB spki, algorithm, oid, key_bitstring;
   if (!CBB_add_asn1(out, &spki, CBS_ASN1_SEQUENCE) ||
       !CBB_add_asn1(&spki, &algorithm, CBS_ASN1_SEQUENCE) ||
@@ -96,7 +96,7 @@ static int ed25519_pub_cmp(const EVP_PKEY *a, const EVP_PKEY *b) {
 }
 
 static int ed25519_priv_decode(EVP_PKEY *out, CBS *params, CBS *key) {
-  // See draft-ietf-curdle-pkix-04, section 7.
+  // See RFC 8410, section 7.
 
   // Parameters must be empty. The key is a 32-byte value wrapped in an extra
   // OCTET STRING layer.
@@ -123,7 +123,7 @@ static int ed25519_priv_encode(CBB *out, const EVP_PKEY *pkey) {
     return 0;
   }
 
-  // See draft-ietf-curdle-pkix-04, section 7.
+  // See RFC 8410, section 7.
   CBB pkcs8, algorithm, oid, private_key, inner;
   if (!CBB_add_asn1(out, &pkcs8, CBS_ASN1_SEQUENCE) ||
       !CBB_add_asn1_uint64(&pkcs8, 0 /* version */) ||

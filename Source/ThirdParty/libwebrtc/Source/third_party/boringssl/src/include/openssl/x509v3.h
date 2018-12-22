@@ -57,8 +57,8 @@
 
 #include <openssl/bio.h>
 #include <openssl/conf.h>
-#include <openssl/lhash.h>
 #include <openssl/x509.h>
+#include <openssl/lhash.h>
 
 #ifdef __cplusplus
 extern "C" {
@@ -612,16 +612,17 @@ OPENSSL_EXPORT GENERAL_NAME *v2i_GENERAL_NAME_ex(GENERAL_NAME *out,
 				  X509V3_CTX *ctx, CONF_VALUE *cnf, int is_nc);
 OPENSSL_EXPORT void X509V3_conf_free(CONF_VALUE *val);
 
+// X509V3_EXT_conf_nid contains the only exposed instance of an LHASH in our
+// public headers. The |conf| pointer must be NULL but cryptography.io wraps
+// this function so we cannot, yet, replace the type with a dummy struct.
 OPENSSL_EXPORT X509_EXTENSION *X509V3_EXT_conf_nid(LHASH_OF(CONF_VALUE) *conf, X509V3_CTX *ctx, int ext_nid, char *value);
+
 OPENSSL_EXPORT X509_EXTENSION *X509V3_EXT_nconf_nid(CONF *conf, X509V3_CTX *ctx, int ext_nid, char *value);
 OPENSSL_EXPORT X509_EXTENSION *X509V3_EXT_nconf(CONF *conf, X509V3_CTX *ctx, char *name, char *value);
 OPENSSL_EXPORT int X509V3_EXT_add_nconf_sk(CONF *conf, X509V3_CTX *ctx, char *section, STACK_OF(X509_EXTENSION) **sk);
 OPENSSL_EXPORT int X509V3_EXT_add_nconf(CONF *conf, X509V3_CTX *ctx, char *section, X509 *cert);
 OPENSSL_EXPORT int X509V3_EXT_REQ_add_nconf(CONF *conf, X509V3_CTX *ctx, char *section, X509_REQ *req);
 OPENSSL_EXPORT int X509V3_EXT_CRL_add_nconf(CONF *conf, X509V3_CTX *ctx, char *section, X509_CRL *crl);
-
-OPENSSL_EXPORT int X509V3_EXT_CRL_add_conf(LHASH_OF(CONF_VALUE) *conf, X509V3_CTX *ctx,
-			    char *section, X509_CRL *crl);
 
 OPENSSL_EXPORT int X509V3_add_value_bool_nf(char *name, int asn1_bool,
 			     STACK_OF(CONF_VALUE) **extlist);
@@ -665,10 +666,6 @@ OPENSSL_EXPORT int X509V3_EXT_free(int nid, void *ext_data);
 OPENSSL_EXPORT X509_EXTENSION *X509V3_EXT_i2d(int ext_nid, int crit, void *ext_struc);
 OPENSSL_EXPORT int X509V3_add1_i2d(STACK_OF(X509_EXTENSION) **x, int nid, void *value, int crit, unsigned long flags);
 
-char *hex_to_string(const unsigned char *buffer, long len);
-unsigned char *string_to_hex(const char *str, long *len);
-int name_cmp(const char *name, const char *cmp);
-
 OPENSSL_EXPORT void X509V3_EXT_val_prn(BIO *out, STACK_OF(CONF_VALUE) *val, int indent,
 								 int ml);
 OPENSSL_EXPORT int X509V3_EXT_print(BIO *out, X509_EXTENSION *ext, unsigned long flag, int indent);
@@ -682,6 +679,11 @@ OPENSSL_EXPORT int X509_supported_extension(X509_EXTENSION *ex);
 OPENSSL_EXPORT int X509_PURPOSE_set(int *p, int purpose);
 OPENSSL_EXPORT int X509_check_issued(X509 *issuer, X509 *subject);
 OPENSSL_EXPORT int X509_check_akid(X509 *issuer, AUTHORITY_KEYID *akid);
+
+OPENSSL_EXPORT uint32_t X509_get_extension_flags(X509 *x);
+OPENSSL_EXPORT uint32_t X509_get_key_usage(X509 *x);
+OPENSSL_EXPORT uint32_t X509_get_extended_key_usage(X509 *x);
+
 OPENSSL_EXPORT int X509_PURPOSE_get_count(void);
 OPENSSL_EXPORT X509_PURPOSE * X509_PURPOSE_get0(int idx);
 OPENSSL_EXPORT int X509_PURPOSE_get_by_sname(char *sname);
@@ -746,15 +748,16 @@ DEFINE_STACK_OF(X509_POLICY_NODE)
 
 extern "C++" {
 
-namespace bssl {
+BSSL_NAMESPACE_BEGIN
 
+BORINGSSL_MAKE_DELETER(ACCESS_DESCRIPTION, ACCESS_DESCRIPTION_free)
 BORINGSSL_MAKE_DELETER(AUTHORITY_KEYID, AUTHORITY_KEYID_free)
 BORINGSSL_MAKE_DELETER(BASIC_CONSTRAINTS, BASIC_CONSTRAINTS_free)
 BORINGSSL_MAKE_DELETER(DIST_POINT, DIST_POINT_free)
 BORINGSSL_MAKE_DELETER(GENERAL_NAME, GENERAL_NAME_free)
 BORINGSSL_MAKE_DELETER(POLICYINFO, POLICYINFO_free)
 
-}  // namespace bssl
+BSSL_NAMESPACE_END
 
 }  /* extern C++ */
 #endif

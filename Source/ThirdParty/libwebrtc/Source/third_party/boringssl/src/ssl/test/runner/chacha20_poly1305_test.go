@@ -16,7 +16,6 @@ package runner
 
 import (
 	"bytes"
-	"encoding/hex"
 	"testing"
 )
 
@@ -78,14 +77,6 @@ func TestChaCha20Block(t *testing.T) {
 	if !bytes.Equal(out, expected) {
 		t.Errorf("Got %x, wanted %x", out, expected)
 	}
-}
-
-func decodeHexOrPanic(in string) []byte {
-	out, err := hex.DecodeString(in)
-	if err != nil {
-		panic(err)
-	}
-	return out
 }
 
 var chaCha20Poly1305TestVectors = []struct {

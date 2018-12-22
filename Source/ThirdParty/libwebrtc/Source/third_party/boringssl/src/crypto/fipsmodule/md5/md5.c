@@ -85,10 +85,13 @@ int MD5_Init(MD5_CTX *md5) {
     (defined(OPENSSL_X86_64) || defined(OPENSSL_X86))
 #define MD5_ASM
 #define md5_block_data_order md5_block_asm_data_order
+extern void md5_block_data_order(uint32_t *state, const uint8_t *data,
+                                 size_t num);
+#else
+static void md5_block_data_order(uint32_t *state, const uint8_t *data,
+                                 size_t num);
 #endif
 
-
-void md5_block_data_order(uint32_t *state, const uint8_t *data, size_t num);
 
 #define DATA_ORDER_IS_LITTLE_ENDIAN
 
@@ -151,11 +154,12 @@ void md5_block_data_order(uint32_t *state, const uint8_t *data, size_t num);
     (a) += (b);                            \
   } while (0)
 
-#ifndef md5_block_data_order
+#ifndef MD5_ASM
 #ifdef X
 #undef X
 #endif
-void md5_block_data_order(uint32_t *state, const uint8_t *data, size_t num) {
+static void md5_block_data_order(uint32_t *state, const uint8_t *data,
+                                 size_t num) {
   uint32_t A, B, C, D, l;
   uint32_t XX0, XX1, XX2, XX3, XX4, XX5, XX6, XX7, XX8, XX9, XX10, XX11, XX12,
       XX13, XX14, XX15;

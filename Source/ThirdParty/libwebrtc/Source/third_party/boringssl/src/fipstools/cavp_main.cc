@@ -43,10 +43,12 @@ static TestSuite all_test_suites[] = {
     {"ecdsa2_siggen", &cavp_ecdsa2_siggen_test_main},
     {"ecdsa2_sigver", &cavp_ecdsa2_sigver_test_main},
     {"hmac", &cavp_hmac_test_main},
+    {"kas", &cavp_kas_test_main},
     {"keywrap", &cavp_keywrap_test_main},
     {"rsa2_keygen", &cavp_rsa2_keygen_test_main},
     {"rsa2_siggen", &cavp_rsa2_siggen_test_main},
     {"rsa2_sigver", &cavp_rsa2_sigver_test_main},
+    {"tlskdf", &cavp_tlskdf_test_main},
     {"sha", &cavp_sha_test_main},
     {"sha_monte", &cavp_sha_monte_test_main},
     {"tdes", &cavp_tdes_test_main}

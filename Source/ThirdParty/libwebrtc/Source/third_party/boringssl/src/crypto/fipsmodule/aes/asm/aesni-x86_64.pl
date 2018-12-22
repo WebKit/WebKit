@@ -60,7 +60,7 @@
 # identical to CBC, because CBC-MAC is essentially CBC encrypt without
 # saving output. CCM CTR "stays invisible," because it's neatly
 # interleaved wih CBC-MAC. This provides ~30% improvement over
-# "straghtforward" CCM implementation with CTR and CBC-MAC performed
+# "straightforward" CCM implementation with CTR and CBC-MAC performed
 # disjointly. Parallelizable modes practically achieve the theoretical
 # limit.
 #
@@ -143,14 +143,14 @@
 # asymptotic, if it can be surpassed, isn't it? What happens there?
 # Rewind to CBC paragraph for the answer. Yes, out-of-order execution
 # magic is responsible for this. Processor overlaps not only the
-# additional instructions with AES ones, but even AES instuctions
+# additional instructions with AES ones, but even AES instructions
 # processing adjacent triplets of independent blocks. In the 6x case
 # additional instructions  still claim disproportionally small amount
 # of additional cycles, but in 8x case number of instructions must be
 # a tad too high for out-of-order logic to cope with, and AES unit
 # remains underutilized... As you can see 8x interleave is hardly
 # justifiable, so there no need to feel bad that 32-bit aesni-x86.pl
-# utilizies 6x interleave because of limited register bank capacity.
+# utilizes 6x interleave because of limited register bank capacity.
 #
 # Higher interleave factors do have negative impact on Westmere
 # performance. While for ECB mode it's negligible ~1.5%, other
@@ -188,7 +188,7 @@
 #	incurred by operations on %xmm8-15. As ECB is not considered
 #	critical, nothing was done to mitigate the problem.
 
-$PREFIX="aesni";	# if $PREFIX is set to "AES", the script
+$PREFIX="aes_hw";	# if $PREFIX is set to "AES", the script
 			# generates drop-in replacement for
 			# crypto/aes/asm/aes-x86_64.pl:-)
 
@@ -206,7 +206,7 @@ die "can't locate x86_64-xlate.pl";
 open OUT,"| \"$^X\" \"$xlate\" $flavour \"$output\"";
 *STDOUT=*OUT;
 
-$movkey = $PREFIX eq "aesni" ? "movups" : "movups";
+$movkey = $PREFIX eq "aes_hw" ? "movups" : "movups";
 @_4args=$win64?	("%rcx","%rdx","%r8", "%r9") :	# Win64 order
 		("%rdi","%rsi","%rdx","%rcx");	# Unix order
 
@@ -577,27 +577,27 @@ _aesni_${dir}rypt8:
 .size	_aesni_${dir}rypt8,.-_aesni_${dir}rypt8
 ___
 }
-&aesni_generate2("enc") if ($PREFIX eq "aesni");
+&aesni_generate2("enc") if ($PREFIX eq "aes_hw");
 &aesni_generate2("dec");
-&aesni_generate3("enc") if ($PREFIX eq "aesni");
+&aesni_generate3("enc") if ($PREFIX eq "aes_hw");
 &aesni_generate3("dec");
-&aesni_generate4("enc") if ($PREFIX eq "aesni");
+&aesni_generate4("enc") if ($PREFIX eq "aes_hw");
 &aesni_generate4("dec");
-&aesni_generate6("enc") if ($PREFIX eq "aesni");
+&aesni_generate6("enc") if ($PREFIX eq "aes_hw");
 &aesni_generate6("dec");
-&aesni_generate8("enc") if ($PREFIX eq "aesni");
+&aesni_generate8("enc") if ($PREFIX eq "aes_hw");
 &aesni_generate8("dec");
 
-if ($PREFIX eq "aesni") {
+if ($PREFIX eq "aes_hw") {
 ########################################################################
 # void aesni_ecb_encrypt (const void *in, void *out,
 #			  size_t length, const AES_KEY *key,
 #			  int enc);
 $code.=<<___;
-.globl	aesni_ecb_encrypt
-.type	aesni_ecb_encrypt,\@function,5
+.globl	${PREFIX}_ecb_encrypt
+.type	${PREFIX}_ecb_encrypt,\@function,5
 .align	16
-aesni_ecb_encrypt:
+${PREFIX}_ecb_encrypt:
 ___
 $code.=<<___ if ($win64);
 	lea	-0x58(%rsp),%rsp
@@ -943,7 +943,7 @@ $code.=<<___ if ($win64);
 ___
 $code.=<<___;
 	ret
-.size	aesni_ecb_encrypt,.-aesni_ecb_encrypt
+.size	${PREFIX}_ecb_encrypt,.-${PREFIX}_ecb_encrypt
 ___
 
 {
@@ -964,10 +964,10 @@ my $iv="%xmm6";
 my $bswap_mask="%xmm7";
 
 $code.=<<___;
-.globl	aesni_ccm64_encrypt_blocks
-.type	aesni_ccm64_encrypt_blocks,\@function,6
+.globl	${PREFIX}_ccm64_encrypt_blocks
+.type	${PREFIX}_ccm64_encrypt_blocks,\@function,6
 .align	16
-aesni_ccm64_encrypt_blocks:
+${PREFIX}_ccm64_encrypt_blocks:
 ___
 $code.=<<___ if ($win64);
 	lea	-0x58(%rsp),%rsp
@@ -1050,14 +1050,14 @@ $code.=<<___ if ($win64);
 ___
 $code.=<<___;
 	ret
-.size	aesni_ccm64_encrypt_blocks,.-aesni_ccm64_encrypt_blocks
+.size	${PREFIX}_ccm64_encrypt_blocks,.-${PREFIX}_ccm64_encrypt_blocks
 ___
 ######################################################################
 $code.=<<___;
-.globl	aesni_ccm64_decrypt_blocks
-.type	aesni_ccm64_decrypt_blocks,\@function,6
+.globl	${PREFIX}_ccm64_decrypt_blocks
+.type	${PREFIX}_ccm64_decrypt_blocks,\@function,6
 .align	16
-aesni_ccm64_decrypt_blocks:
+${PREFIX}_ccm64_decrypt_blocks:
 ___
 $code.=<<___ if ($win64);
 	lea	-0x58(%rsp),%rsp
@@ -1157,7 +1157,7 @@ $code.=<<___ if ($win64);
 ___
 $code.=<<___;
 	ret
-.size	aesni_ccm64_decrypt_blocks,.-aesni_ccm64_decrypt_blocks
+.size	${PREFIX}_ccm64_decrypt_blocks,.-${PREFIX}_ccm64_decrypt_blocks
 ___
 }
 ######################################################################
@@ -1178,10 +1178,11 @@ my ($key0,$ctr)=("%ebp","${ivp}d");
 my $frame_size = 0x80 + ($win64?160:0);
 
 $code.=<<___;
-.globl	aesni_ctr32_encrypt_blocks
-.type	aesni_ctr32_encrypt_blocks,\@function,5
+.globl	${PREFIX}_ctr32_encrypt_blocks
+.type	${PREFIX}_ctr32_encrypt_blocks,\@function,5
 .align	16
-aesni_ctr32_encrypt_blocks:
+${PREFIX}_ctr32_encrypt_blocks:
+.cfi_startproc
 	cmp	\$1,$len
 	jne	.Lctr32_bulk
 
@@ -1204,7 +1205,9 @@ $code.=<<___;
 .align	16
 .Lctr32_bulk:
 	lea	(%rsp),$key_			# use $key_ as frame pointer
+.cfi_def_cfa_register	$key_
 	push	%rbp
+.cfi_push	%rbp
 	sub	\$$frame_size,%rsp
 	and	\$-16,%rsp	# Linux kernel stack can be incorrectly seeded
 ___
@@ -1548,7 +1551,7 @@ $code.=<<___;
 	sub	\$8,$len
 	jnc	.Lctr32_loop8			# loop if $len-=8 didn't borrow
 
-	add	\$8,$len			# restore real remainig $len
+	add	\$8,$len			# restore real remaining $len
 	jz	.Lctr32_done			# done if ($len==0)
 	lea	-0x80($key),$key
 
@@ -1665,7 +1668,7 @@ $code.=<<___;
 	movups	$inout2,0x20($out)		# $len was 3, stop store
 
 .Lctr32_done:
-	xorps	%xmm0,%xmm0			# clear regiser bank
+	xorps	%xmm0,%xmm0			# clear register bank
 	xor	$key0,$key0
 	pxor	%xmm1,%xmm1
 	pxor	%xmm2,%xmm2
@@ -1725,10 +1728,13 @@ $code.=<<___ if ($win64);
 ___
 $code.=<<___;
 	mov	-8($key_),%rbp
+.cfi_restore	%rbp
 	lea	($key_),%rsp
+.cfi_def_cfa_register	%rsp
 .Lctr32_epilogue:
 	ret
-.size	aesni_ctr32_encrypt_blocks,.-aesni_ctr32_encrypt_blocks
+.cfi_endproc
+.size	${PREFIX}_ctr32_encrypt_blocks,.-${PREFIX}_ctr32_encrypt_blocks
 ___
 }
 
@@ -1745,12 +1751,15 @@ my $frame_size = 0x70 + ($win64?160:0);
 my $key_ = "%rbp";	# override so that we can use %r11 as FP
 
 $code.=<<___;
-.globl	aesni_xts_encrypt
-.type	aesni_xts_encrypt,\@function,6
+.globl	${PREFIX}_xts_encrypt
+.type	${PREFIX}_xts_encrypt,\@function,6
 .align	16
-aesni_xts_encrypt:
+${PREFIX}_xts_encrypt:
+.cfi_startproc
 	lea	(%rsp),%r11			# frame pointer
+.cfi_def_cfa_register	%r11
 	push	%rbp
+.cfi_push	%rbp
 	sub	\$$frame_size,%rsp
 	and	\$-16,%rsp	# Linux kernel stack can be incorrectly seeded
 ___
@@ -1848,7 +1857,7 @@ $code.=<<___;
 	lea	`16*6`($inp),$inp
 	pxor	$twmask,$inout5
 
-	 pxor	$twres,@tweak[0]		# calclulate tweaks^round[last]
+	 pxor	$twres,@tweak[0]		# calculate tweaks^round[last]
 	aesenc		$rndkey1,$inout4
 	 pxor	$twres,@tweak[1]
 	 movdqa	@tweak[0],`16*0`(%rsp)		# put aside tweaks^round[last]
@@ -2215,19 +2224,25 @@ $code.=<<___ if ($win64);
 ___
 $code.=<<___;
 	mov	-8(%r11),%rbp
+.cfi_restore	%rbp
 	lea	(%r11),%rsp
+.cfi_def_cfa_register	%rsp
 .Lxts_enc_epilogue:
 	ret
-.size	aesni_xts_encrypt,.-aesni_xts_encrypt
+.cfi_endproc
+.size	${PREFIX}_xts_encrypt,.-${PREFIX}_xts_encrypt
 ___
 
 $code.=<<___;
-.globl	aesni_xts_decrypt
-.type	aesni_xts_decrypt,\@function,6
+.globl	${PREFIX}_xts_decrypt
+.type	${PREFIX}_xts_decrypt,\@function,6
 .align	16
-aesni_xts_decrypt:
+${PREFIX}_xts_decrypt:
+.cfi_startproc
 	lea	(%rsp),%r11			# frame pointer
+.cfi_def_cfa_register	%r11
 	push	%rbp
+.cfi_push	%rbp
 	sub	\$$frame_size,%rsp
 	and	\$-16,%rsp	# Linux kernel stack can be incorrectly seeded
 ___
@@ -2328,7 +2343,7 @@ $code.=<<___;
 	lea	`16*6`($inp),$inp
 	pxor	$twmask,$inout5
 
-	 pxor	$twres,@tweak[0]		# calclulate tweaks^round[last]
+	 pxor	$twres,@tweak[0]		# calculate tweaks^round[last]
 	aesdec		$rndkey1,$inout4
 	 pxor	$twres,@tweak[1]
 	 movdqa	@tweak[0],`16*0`(%rsp)		# put aside tweaks^last round key
@@ -2718,10 +2733,13 @@ $code.=<<___ if ($win64);
 ___
 $code.=<<___;
 	mov	-8(%r11),%rbp
+.cfi_restore	%rbp
 	lea	(%r11),%rsp
+.cfi_def_cfa_register	%rsp
 .Lxts_dec_epilogue:
 	ret
-.size	aesni_xts_decrypt,.-aesni_xts_decrypt
+.cfi_endproc
+.size	${PREFIX}_xts_decrypt,.-${PREFIX}_xts_decrypt
 ___
 }
 
@@ -2741,16 +2759,22 @@ my $seventh_arg = $win64 ? 56 : 8;
 my $blocks = $len;
 
 $code.=<<___;
-.globl	aesni_ocb_encrypt
-.type	aesni_ocb_encrypt,\@function,6
+.globl	${PREFIX}_ocb_encrypt
+.type	${PREFIX}_ocb_encrypt,\@function,6
 .align	32
-aesni_ocb_encrypt:
+${PREFIX}_ocb_encrypt:
+.cfi_startproc
 	lea	(%rsp),%rax
 	push	%rbx
+.cfi_push	%rbx
 	push	%rbp
+.cfi_push	%rbp
 	push	%r12
+.cfi_push	%r12
 	push	%r13
+.cfi_push	%r13
 	push	%r14
+.cfi_push	%r14
 ___
 $code.=<<___ if ($win64);
 	lea	-0xa0(%rsp),%rsp
@@ -2945,6 +2969,7 @@ $code.=<<___ if (!$win64);
 	pxor	%xmm14,%xmm14
 	pxor	%xmm15,%xmm15
 	lea	0x28(%rsp),%rax
+.cfi_def_cfa	%rax,8
 ___
 $code.=<<___ if ($win64);
 	movaps	0x00(%rsp),%xmm6
@@ -2972,14 +2997,21 @@ $code.=<<___ if ($win64);
 ___
 $code.=<<___;
 	mov	-40(%rax),%r14
+.cfi_restore	%r14
 	mov	-32(%rax),%r13
+.cfi_restore	%r13
 	mov	-24(%rax),%r12
+.cfi_restore	%r12
 	mov	-16(%rax),%rbp
+.cfi_restore	%rbp
 	mov	-8(%rax),%rbx
+.cfi_restore	%rbx
 	lea	(%rax),%rsp
+.cfi_def_cfa_register	%rsp
 .Locb_enc_epilogue:
 	ret
-.size	aesni_ocb_encrypt,.-aesni_ocb_encrypt
+.cfi_endproc
+.size	${PREFIX}_ocb_encrypt,.-${PREFIX}_ocb_encrypt
 
 .type	__ocb_encrypt6,\@abi-omnipotent
 .align	32
@@ -3187,16 +3219,22 @@ __ocb_encrypt1:
 	ret
 .size	__ocb_encrypt1,.-__ocb_encrypt1
 
-.globl	aesni_ocb_decrypt
-.type	aesni_ocb_decrypt,\@function,6
+.globl	${PREFIX}_ocb_decrypt
+.type	${PREFIX}_ocb_decrypt,\@function,6
 .align	32
-aesni_ocb_decrypt:
+${PREFIX}_ocb_decrypt:
+.cfi_startproc
 	lea	(%rsp),%rax
 	push	%rbx
+.cfi_push	%rbx
 	push	%rbp
+.cfi_push	%rbp
 	push	%r12
+.cfi_push	%r12
 	push	%r13
+.cfi_push	%r13
 	push	%r14
+.cfi_push	%r14
 ___
 $code.=<<___ if ($win64);
 	lea	-0xa0(%rsp),%rsp
@@ -3413,6 +3451,7 @@ $code.=<<___ if (!$win64);
 	pxor	%xmm14,%xmm14
 	pxor	%xmm15,%xmm15
 	lea	0x28(%rsp),%rax
+.cfi_def_cfa	%rax,8
 ___
 $code.=<<___ if ($win64);
 	movaps	0x00(%rsp),%xmm6
@@ -3440,14 +3479,21 @@ $code.=<<___ if ($win64);
 ___
 $code.=<<___;
 	mov	-40(%rax),%r14
+.cfi_restore	%r14
 	mov	-32(%rax),%r13
+.cfi_restore	%r13
 	mov	-24(%rax),%r12
+.cfi_restore	%r12
 	mov	-16(%rax),%rbp
+.cfi_restore	%rbp
 	mov	-8(%rax),%rbx
+.cfi_restore	%rbx
 	lea	(%rax),%rsp
+.cfi_def_cfa_register	%rsp
 .Locb_dec_epilogue:
 	ret
-.size	aesni_ocb_decrypt,.-aesni_ocb_decrypt
+.cfi_endproc
+.size	${PREFIX}_ocb_decrypt,.-${PREFIX}_ocb_decrypt
 
 .type	__ocb_decrypt6,\@abi-omnipotent
 .align	32
@@ -3659,6 +3705,7 @@ $code.=<<___;
 .type	${PREFIX}_cbc_encrypt,\@function,6
 .align	16
 ${PREFIX}_cbc_encrypt:
+.cfi_startproc
 	test	$len,$len		# check length
 	jz	.Lcbc_ret
 
@@ -3735,7 +3782,9 @@ $code.=<<___;
 .align	16
 .Lcbc_decrypt_bulk:
 	lea	(%rsp),%r11		# frame pointer
+.cfi_def_cfa_register	%r11
 	push	%rbp
+.cfi_push	%rbp
 	sub	\$$frame_size,%rsp
 	and	\$-16,%rsp	# Linux kernel stack can be incorrectly seeded
 ___
@@ -4179,9 +4228,12 @@ $code.=<<___ if ($win64);
 ___
 $code.=<<___;
 	mov	-8(%r11),%rbp
+.cfi_restore	%rbp
 	lea	(%r11),%rsp
+.cfi_def_cfa_register	%rsp
 .Lcbc_ret:
 	ret
+.cfi_endproc
 .size	${PREFIX}_cbc_encrypt,.-${PREFIX}_cbc_encrypt
 ___
 } 
@@ -4202,7 +4254,9 @@ $code.=<<___;
 .type	${PREFIX}_set_decrypt_key,\@abi-omnipotent
 .align	16
 ${PREFIX}_set_decrypt_key:
+.cfi_startproc
 	.byte	0x48,0x83,0xEC,0x08	# sub rsp,8
+.cfi_adjust_cfa_offset	8
 	call	__aesni_set_encrypt_key
 	shl	\$4,$bits		# rounds-1 after _aesni_set_encrypt_key
 	test	%eax,%eax
@@ -4235,15 +4289,16 @@ ${PREFIX}_set_decrypt_key:
 	pxor	%xmm0,%xmm0
 .Ldec_key_ret:
 	add	\$8,%rsp
+.cfi_adjust_cfa_offset	-8
 	ret
+.cfi_endproc
 .LSEH_end_set_decrypt_key:
 .size	${PREFIX}_set_decrypt_key,.-${PREFIX}_set_decrypt_key
 ___
 
-# This is based on submission by
-#
-#	Huang Ying <ying.huang@intel.com>
-#	Vinodh Gopal <vinodh.gopal@intel.com>
+# This is based on submission from Intel by
+#	Huang Ying
+#	Vinodh Gopal
 #	Kahraman Akdemir
 #
 # Aggressively optimized in respect to aeskeygenassist's critical path
@@ -4271,7 +4326,9 @@ $code.=<<___;
 .align	16
 ${PREFIX}_set_encrypt_key:
 __aesni_set_encrypt_key:
+.cfi_startproc
 	.byte	0x48,0x83,0xEC,0x08	# sub rsp,8
+.cfi_adjust_cfa_offset	8
 	mov	\$-1,%rax
 	test	$inp,$inp
 	jz	.Lenc_key_ret
@@ -4461,7 +4518,7 @@ __aesni_set_encrypt_key:
 
 .align	16
 .L14rounds:
-	movups	16($inp),%xmm2			# remaning half of *userKey
+	movups	16($inp),%xmm2			# remaining half of *userKey
 	mov	\$13,$bits			# 14 rounds for 256
 	lea	16(%rax),%rax
 	cmp	\$`1<<28`,%r10d			# AVX, but no XOP
@@ -4565,7 +4622,9 @@ __aesni_set_encrypt_key:
 	pxor	%xmm4,%xmm4
 	pxor	%xmm5,%xmm5
 	add	\$8,%rsp
+.cfi_adjust_cfa_offset	-8
 	ret
+.cfi_endproc
 .LSEH_end_set_encrypt_key:
 
 .align	16
@@ -4677,7 +4736,7 @@ $disp="%r9";
 $code.=<<___;
 .extern	__imp_RtlVirtualUnwind
 ___
-$code.=<<___ if ($PREFIX eq "aesni");
+$code.=<<___ if ($PREFIX eq "aes_hw");
 .type	ecb_ccm64_se_handler,\@abi-omnipotent
 .align	16
 ecb_ccm64_se_handler:
@@ -4717,7 +4776,7 @@ ecb_ccm64_se_handler:
 	lea	0x58(%rax),%rax		# adjust stack pointer
 
 	jmp	.Lcommon_seh_tail
-.size	ecb_ccm64_se_handler,.-ecb_ccm64_se_handler
+.size	${PREFIX}_ccm64_se_handler,.-${PREFIX}_ccm64_se_handler
 
 .type	ctr_xts_se_handler,\@abi-omnipotent
 .align	16
@@ -4909,37 +4968,37 @@ cbc_se_handler:
 .section	.pdata
 .align	4
 ___
-$code.=<<___ if ($PREFIX eq "aesni");
-	.rva	.LSEH_begin_aesni_ecb_encrypt
-	.rva	.LSEH_end_aesni_ecb_encrypt
+$code.=<<___ if ($PREFIX eq "aes_hw");
+	.rva	.LSEH_begin_${PREFIX}_ecb_encrypt
+	.rva	.LSEH_end_${PREFIX}_ecb_encrypt
 	.rva	.LSEH_info_ecb
 
-	.rva	.LSEH_begin_aesni_ccm64_encrypt_blocks
-	.rva	.LSEH_end_aesni_ccm64_encrypt_blocks
+	.rva	.LSEH_begin_${PREFIX}_ccm64_encrypt_blocks
+	.rva	.LSEH_end_${PREFIX}_ccm64_encrypt_blocks
 	.rva	.LSEH_info_ccm64_enc
 
-	.rva	.LSEH_begin_aesni_ccm64_decrypt_blocks
-	.rva	.LSEH_end_aesni_ccm64_decrypt_blocks
+	.rva	.LSEH_begin_${PREFIX}_ccm64_decrypt_blocks
+	.rva	.LSEH_end_${PREFIX}_ccm64_decrypt_blocks
 	.rva	.LSEH_info_ccm64_dec
 
-	.rva	.LSEH_begin_aesni_ctr32_encrypt_blocks
-	.rva	.LSEH_end_aesni_ctr32_encrypt_blocks
+	.rva	.LSEH_begin_${PREFIX}_ctr32_encrypt_blocks
+	.rva	.LSEH_end_${PREFIX}_ctr32_encrypt_blocks
 	.rva	.LSEH_info_ctr32
 
-	.rva	.LSEH_begin_aesni_xts_encrypt
-	.rva	.LSEH_end_aesni_xts_encrypt
+	.rva	.LSEH_begin_${PREFIX}_xts_encrypt
+	.rva	.LSEH_end_${PREFIX}_xts_encrypt
 	.rva	.LSEH_info_xts_enc
 
-	.rva	.LSEH_begin_aesni_xts_decrypt
-	.rva	.LSEH_end_aesni_xts_decrypt
+	.rva	.LSEH_begin_${PREFIX}_xts_decrypt
+	.rva	.LSEH_end_${PREFIX}_xts_decrypt
 	.rva	.LSEH_info_xts_dec
 
-	.rva	.LSEH_begin_aesni_ocb_encrypt
-	.rva	.LSEH_end_aesni_ocb_encrypt
+	.rva	.LSEH_begin_${PREFIX}_ocb_encrypt
+	.rva	.LSEH_end_${PREFIX}_ocb_encrypt
 	.rva	.LSEH_info_ocb_enc
 
-	.rva	.LSEH_begin_aesni_ocb_decrypt
-	.rva	.LSEH_end_aesni_ocb_decrypt
+	.rva	.LSEH_begin_${PREFIX}_ocb_decrypt
+	.rva	.LSEH_end_${PREFIX}_ocb_decrypt
 	.rva	.LSEH_info_ocb_dec
 ___
 $code.=<<___;
@@ -4957,7 +5016,7 @@ $code.=<<___;
 .section	.xdata
 .align	8
 ___
-$code.=<<___ if ($PREFIX eq "aesni");
+$code.=<<___ if ($PREFIX eq "aes_hw");
 .LSEH_info_ecb:
 	.byte	9,0,0,0
 	.rva	ecb_ccm64_se_handler

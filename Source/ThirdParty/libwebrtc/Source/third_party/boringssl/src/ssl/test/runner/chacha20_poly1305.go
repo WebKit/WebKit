@@ -20,7 +20,7 @@ import (
 	"encoding/binary"
 	"errors"
 
-	"./poly1305"
+	"boringssl.googlesource.com/boringssl/ssl/test/runner/poly1305"
 )
 
 // See RFC 7539.

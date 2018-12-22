@@ -18,6 +18,7 @@ import (
 	"bufio"
 	"bytes"
 	"encoding/json"
+	"errors"
 	"flag"
 	"fmt"
 	"math/rand"
@@ -29,7 +30,8 @@ import (
 	"strings"
 	"sync"
 	"syscall"
-	"time"
+
+	"boringssl.googlesource.com/boringssl/util/testresult"
 )
 
 // TODO(davidben): Link tests with the malloc shim and port -malloc-test to this runner.
@@ -45,13 +47,19 @@ var (
 	jsonOutput      = flag.String("json-output", "", "The file to output JSON results to.")
 	mallocTest      = flag.Int64("malloc-test", -1, "If non-negative, run each test with each malloc in turn failing from the given number onwards.")
 	mallocTestDebug = flag.Bool("malloc-test-debug", false, "If true, ask each test to abort rather than fail a malloc. This can be used with a specific value for --malloc-test to identity the malloc failing that is causing problems.")
+	simulateARMCPUs = flag.Bool("simulate-arm-cpus", simulateARMCPUsDefault(), "If true, runs tests simulating different ARM CPUs.")
 )
+
+func simulateARMCPUsDefault() bool {
+	return runtime.GOOS == "linux" && (runtime.GOARCH == "arm" || runtime.GOARCH == "arm64")
+}
 
 type test struct {
 	args             []string
 	shard, numShards int
-	// cpu, if not empty, contains an Intel CPU code to simulate. Run
-	// `sde64 -help` to get a list of these codes.
+	// cpu, if not empty, contains a code to simulate. For SDE, run `sde64
+	// -help` to get a list of these codes. For ARM, see gtest_main.cc for
+	// the supported values.
 	cpu string
 }
 
@@ -59,23 +67,6 @@ type result struct {
 	Test   test
 	Passed bool
 	Error  error
-}
-
-// testOutput is a representation of Chromium's JSON test result format. See
-// https://www.chromium.org/developers/the-json-test-results-format
-type testOutput struct {
-	Version           int                   `json:"version"`
-	Interrupted       bool                  `json:"interrupted"`
-	PathDelimiter     string                `json:"path_delimiter"`
-	SecondsSinceEpoch float64               `json:"seconds_since_epoch"`
-	NumFailuresByType map[string]int        `json:"num_failures_by_type"`
-	Tests             map[string]testResult `json:"tests"`
-}
-
-type testResult struct {
-	Actual       string `json:"actual"`
-	Expected     string `json:"expected"`
-	IsUnexpected bool   `json:"is_unexpected"`
 }
 
 // sdeCPUs contains a list of CPU code that we run all tests under when *useSDE
@@ -100,40 +91,10 @@ var sdeCPUs = []string{
 	"knm", // Knights Mill
 }
 
-func newTestOutput() *testOutput {
-	return &testOutput{
-		Version:           3,
-		PathDelimiter:     ".",
-		SecondsSinceEpoch: float64(time.Now().UnixNano()) / float64(time.Second/time.Nanosecond),
-		NumFailuresByType: make(map[string]int),
-		Tests:             make(map[string]testResult),
-	}
-}
-
-func (t *testOutput) addResult(name, result string) {
-	if _, found := t.Tests[name]; found {
-		panic(name)
-	}
-	t.Tests[name] = testResult{
-		Actual:       result,
-		Expected:     "PASS",
-		IsUnexpected: result != "PASS",
-	}
-	t.NumFailuresByType[result]++
-}
-
-func (t *testOutput) writeTo(name string) error {
-	file, err := os.Create(name)
-	if err != nil {
-		return err
-	}
-	defer file.Close()
-	out, err := json.MarshalIndent(t, "", "  ")
-	if err != nil {
-		return err
-	}
-	_, err = file.Write(out)
-	return err
+var armCPUs = []string{
+	"none",   // No support for any ARM extensions.
+	"neon",   // Support for NEON.
+	"crypto", // Support for NEON and crypto extensions.
 }
 
 func valgrindOf(dbAttach bool, path string, args ...string) *exec.Cmd {
@@ -178,17 +139,17 @@ func sdeOf(cpu, path string, args ...string) *exec.Cmd {
 	return exec.Command(*sdePath, sdeArgs...)
 }
 
-type moreMallocsError struct{}
-
-func (moreMallocsError) Error() string {
-	return "child process did not exhaust all allocation calls"
-}
-
-var errMoreMallocs = moreMallocsError{}
+var (
+	errMoreMallocs = errors.New("child process did not exhaust all allocation calls")
+	errTestSkipped = errors.New("test was skipped")
+)
 
 func runTestOnce(test test, mallocNumToFail int64) (passed bool, err error) {
 	prog := path.Join(*buildDir, test.args[0])
 	args := test.args[1:]
+	if *simulateARMCPUs && test.cpu != "" {
+		args = append([]string{"--cpu=" + test.cpu}, args...)
+	}
 	var cmd *exec.Cmd
 	if *useValgrind {
 		cmd = valgrindOf(false, prog, args...)
@@ -218,8 +179,12 @@ func runTestOnce(test test, mallocNumToFail int64) (passed bool, err error) {
 	}
 	if err := cmd.Wait(); err != nil {
 		if exitError, ok := err.(*exec.ExitError); ok {
-			if exitError.Sys().(syscall.WaitStatus).ExitStatus() == 88 {
+			switch exitError.Sys().(syscall.WaitStatus).ExitStatus() {
+			case 88:
 				return false, errMoreMallocs
+			case 89:
+				fmt.Print(string(outBuf.Bytes()))
+				return false, errTestSkipped
 			}
 		}
 		fmt.Print(string(outBuf.Bytes()))
@@ -433,6 +398,15 @@ func main() {
 					testForCPU.cpu = cpu
 					tests <- testForCPU
 				}
+			} else if *simulateARMCPUs {
+				// This mode is run instead of the default path,
+				// so also include the native flow.
+				tests <- test
+				for _, cpu := range armCPUs {
+					testForCPU := test
+					testForCPU.cpu = cpu
+					tests <- testForCPU
+				}
 			} else {
 				shards, err := test.getGTestShards()
 				if err != nil {
@@ -450,31 +424,43 @@ func main() {
 		close(results)
 	}()
 
-	testOutput := newTestOutput()
-	var failed []test
+	testOutput := testresult.NewResults()
+	var failed, skipped []test
 	for testResult := range results {
 		test := testResult.Test
 		args := test.args
 
-		if testResult.Error != nil {
+		if testResult.Error == errTestSkipped {
+			fmt.Printf("%s\n", test.longName())
+			fmt.Printf("%s was skipped\n", args[0])
+			skipped = append(skipped, test)
+			testOutput.AddSkip(test.longName())
+		} else if testResult.Error != nil {
 			fmt.Printf("%s\n", test.longName())
 			fmt.Printf("%s failed to complete: %s\n", args[0], testResult.Error)
 			failed = append(failed, test)
-			testOutput.addResult(test.longName(), "CRASHED")
+			testOutput.AddResult(test.longName(), "CRASH")
 		} else if !testResult.Passed {
 			fmt.Printf("%s\n", test.longName())
 			fmt.Printf("%s failed to print PASS on the last line.\n", args[0])
 			failed = append(failed, test)
-			testOutput.addResult(test.longName(), "FAIL")
+			testOutput.AddResult(test.longName(), "FAIL")
 		} else {
 			fmt.Printf("%s\n", test.shortName())
-			testOutput.addResult(test.longName(), "PASS")
+			testOutput.AddResult(test.longName(), "PASS")
 		}
 	}
 
 	if *jsonOutput != "" {
-		if err := testOutput.writeTo(*jsonOutput); err != nil {
+		if err := testOutput.WriteToFile(*jsonOutput); err != nil {
 			fmt.Fprintf(os.Stderr, "Error: %s\n", err)
+		}
+	}
+
+	if len(skipped) > 0 {
+		fmt.Printf("\n%d of %d tests were skipped:\n", len(skipped), len(testCases))
+		for _, test := range skipped {
+			fmt.Printf("\t%s%s\n", strings.Join(test.args, " "), test.cpuMsg())
 		}
 	}
 

@@ -72,6 +72,11 @@
 #include "../internal.h"
 #include "../test/test_util.h"
 
+#if defined(OPENSSL_THREADS)
+#include <thread>
+#include <vector>
+#endif
+
 
 // kPlaintext is a sample plaintext.
 static const uint8_t kPlaintext[] = "\x54\x85\x9b\x34\x2c\x49\xea\x2a";
@@ -501,12 +506,12 @@ TEST(RSATest, GenerateFIPS) {
   ERR_clear_error();
 
   // Test that we can generate 2048-bit and 3072-bit RSA keys.
-  EXPECT_TRUE(RSA_generate_key_fips(rsa.get(), 2048, nullptr));
+  ASSERT_TRUE(RSA_generate_key_fips(rsa.get(), 2048, nullptr));
   EXPECT_EQ(2048u, BN_num_bits(rsa->n));
 
   rsa.reset(RSA_new());
   ASSERT_TRUE(rsa);
-  EXPECT_TRUE(RSA_generate_key_fips(rsa.get(), 3072, nullptr));
+  ASSERT_TRUE(RSA_generate_key_fips(rsa.get(), 3072, nullptr));
   EXPECT_EQ(3072u, BN_num_bits(rsa->n));
 }
 
@@ -653,22 +658,22 @@ TEST(RSATest, RoundKeyLengths) {
 
   bssl::UniquePtr<RSA> rsa(RSA_new());
   ASSERT_TRUE(rsa);
-  EXPECT_TRUE(RSA_generate_key_ex(rsa.get(), 1025, e.get(), nullptr));
+  ASSERT_TRUE(RSA_generate_key_ex(rsa.get(), 1025, e.get(), nullptr));
   EXPECT_EQ(1024u, BN_num_bits(rsa->n));
 
   rsa.reset(RSA_new());
   ASSERT_TRUE(rsa);
-  EXPECT_TRUE(RSA_generate_key_ex(rsa.get(), 1027, e.get(), nullptr));
+  ASSERT_TRUE(RSA_generate_key_ex(rsa.get(), 1027, e.get(), nullptr));
   EXPECT_EQ(1024u, BN_num_bits(rsa->n));
 
   rsa.reset(RSA_new());
   ASSERT_TRUE(rsa);
-  EXPECT_TRUE(RSA_generate_key_ex(rsa.get(), 1151, e.get(), nullptr));
+  ASSERT_TRUE(RSA_generate_key_ex(rsa.get(), 1151, e.get(), nullptr));
   EXPECT_EQ(1024u, BN_num_bits(rsa->n));
 
   rsa.reset(RSA_new());
   ASSERT_TRUE(rsa);
-  EXPECT_TRUE(RSA_generate_key_ex(rsa.get(), 1152, e.get(), nullptr));
+  ASSERT_TRUE(RSA_generate_key_ex(rsa.get(), 1152, e.get(), nullptr));
   EXPECT_EQ(1152u, BN_num_bits(rsa->n));
 }
 
@@ -706,6 +711,313 @@ TEST(RSATest, DecryptPublic) {
   EXPECT_EQ(RSA_R_VALUE_MISSING, ERR_GET_REASON(err));
 }
 
+TEST(RSATest, CheckKey) {
+  static const char kN[] =
+      "b5a5651bc2e15ce31d789f0984053a2ea0cf8f964a78068c45acfdf078c57fd62d5a287c"
+      "32f3baa879f5dfea27d7a3077c9d3a2a728368c3d90164690c3d82f660ffebc7f13fed45"
+      "4eb5103df943c10dc32ec60b0d9b6e307bfd7f9b943e0dc3901e42501765365f7286eff2"
+      "f1f728774aa6a371e108a3a7dd00d7bcd4c1a186c2865d4b370ea38cc89c0b23b318dbca"
+      "fbd872b4f9b833dfb2a4ca7fcc23298020044e8130bfe930adfb3e5cab8d324547adf4b2"
+      "ce34d7cea4298f0b613d85f2bf1df03da44aee0784a1a20a15ee0c38a0f8e84962f1f61b"
+      "18bd43781c7385f3c2b8e2aebd3c560b4faad208ad3938bad27ddda9ed9e933dba088021"
+      "2dd9e28d";
+  static const char kE[] = "10001";
+  static const char kD[] =
+      "fb9c6afd9568ce5ddac8e6a32bb881eb6cdd962bbc639dce5805548bf0fec2214f18ffd3"
+      "6a50aa520cfe4477f9507d87355a24e3ff537f9f29ccffe5730b11896ebb9142982ed0df"
+      "9c32ba98dddab863f3e5aa764d16ebff4500d3ee11de12fabd7aeca83c7ffa5d242b3ddc"
+      "ecc64bcb5220996e79249a6d3f78975dfde769710569812dee59c0f56e4650d02a939d9c"
+      "853e2cba9b0c2447a8757951ae9a0336dfa64c3d5476df9b20f200cfb52e3fbd2d4e3f34"
+      "200b1171cbac367096f23366e74592025875efb6a7e3b1dd365abb0d86f34ee65ddbfa93"
+      "90460da0d346833d6aa6277c0216b20073ba2f18471549c309e82d12e10714d0e0dbf146"
+      "6fcd1f1";
+  static const char kP[] =
+      "edbe476fe8989f3966e72a20348ec6d8e924f44e1d9fa2c3485ea8a2ffd39f68574a5cef"
+      "ffbb92d6764789ac0f67149127239c2027fbc55b5268a1dac6588de44e614f3bdce00f0a"
+      "56d138800ad772d159a583c6548e37cadbfcf1b4ebfd50d01508986a516f36ed827b94ef"
+      "1f9b4e233bf5762b3a903d2dfbbbce1fba30e9f1";
+  static const char kQ[] =
+      "c398518790a166dbe50498f04940d14c87ded09313fb0f69f69255c688142802ba3d4f9e"
+      "f9425dadc462170635593c06a332cfc5fc9e6e1c05281950a5ce3bad4fd7cc83a38bd4ad"
+      "6865594275af424f47c64c04af1caab2e261e95b975097c887d587dc8150df34cbeccd7d"
+      "0688c392d9f1c617810043c9b93b884bf6ed465d";
+  static const char kDMP1[] =
+      "b44db5d1fa7e1d6ba44e36d59be6988a132f7294f7c484e543b27e84b82e9fdbbb2feb92"
+      "1cc9fe0fe63e54fc07e66e63b3623f5ae7d7fb124a4a8e4de4556eaf327e7c5ff3207e67"
+      "a1f624ba7efe6cd6b6fd5f160034a7bd92df9fd44d919d436260556f74793b181ff867b8"
+      "7ea9033697978e5a349d05b9250c86c3eb2a8391";
+  static const char kDMQ1[] =
+      "7c06d9240265264927a6cba80a7b4c7c9fe77d10d669abb38083f85a24adcb55376d6b50"
+      "9e34241cecdb5a483889f6132b672bf31aa607a242eed3669d4cf1f08b2186f0ae431bc0"
+      "3de38e3f234ad7dc57e1f9103b4e0d3bd36b4cc324671968322207bd9e4e7ecb06c888e0"
+      "cfc4e766f646665b3f14c0e7684ac4b98ec1948d";
+  static const char kIQMP[] =
+      "2887a5cb0c1bf6710e91c25da141dad92134a927431471c2d4a8b78036026d21182990e1"
+      "2c1d70635f07ee551383899365a69b33d4db23e5ff7371ff4244d2c3290ce2b91ac11adc"
+      "a54bb61ea5e64b9423102933ea100c12dad809fbf9589515e9d28e867f6b95c2d307f792"
+      "cac28c6d7d23f441cb5b62798233db29b5cc0348";
+
+  bssl::UniquePtr<RSA> rsa(RSA_new());
+  ASSERT_TRUE(rsa);
+
+  // Missing n or e does not pass.
+  ASSERT_TRUE(BN_hex2bn(&rsa->n, kN));
+  EXPECT_FALSE(RSA_check_key(rsa.get()));
+  ERR_clear_error();
+
+  BN_free(rsa->n);
+  rsa->n = nullptr;
+  ASSERT_TRUE(BN_hex2bn(&rsa->e, kE));
+  EXPECT_FALSE(RSA_check_key(rsa.get()));
+  ERR_clear_error();
+
+  // Public keys pass.
+  ASSERT_TRUE(BN_hex2bn(&rsa->n, kN));
+  EXPECT_TRUE(RSA_check_key(rsa.get()));
+
+  // Configuring d also passes.
+  ASSERT_TRUE(BN_hex2bn(&rsa->d, kD));
+  EXPECT_TRUE(RSA_check_key(rsa.get()));
+
+  // p and q must be provided together.
+  ASSERT_TRUE(BN_hex2bn(&rsa->p, kP));
+  EXPECT_FALSE(RSA_check_key(rsa.get()));
+  ERR_clear_error();
+
+  BN_free(rsa->p);
+  rsa->p = nullptr;
+  ASSERT_TRUE(BN_hex2bn(&rsa->q, kQ));
+  EXPECT_FALSE(RSA_check_key(rsa.get()));
+  ERR_clear_error();
+
+  // Supplying p and q without CRT parameters passes.
+  ASSERT_TRUE(BN_hex2bn(&rsa->p, kP));
+  EXPECT_TRUE(RSA_check_key(rsa.get()));
+
+  // With p and q together, it is sufficient to check d against e.
+  ASSERT_TRUE(BN_add_word(rsa->d, 1));
+  EXPECT_FALSE(RSA_check_key(rsa.get()));
+  ERR_clear_error();
+
+  // Test another invalid d. p-1 is divisible by 3, so there is no valid value
+  // of d here if e = 111. Set d to what extended GCD would have given if it
+  // forgot to check the inverse existed.
+  static const char kDBogus[] =
+      "140be923edb928cf4340a08ada19f23da680ff20275a81e033825ee8605afc3bf6039b87"
+      "f0ddc7ea3b95f214a6fdda1064d0c66b50ac7bfe8cfe6c85d3cd217ae6f5094cd72a39e5"
+      "a17a9ce43eae1ba5d7d8c3fb743d8cbcb3bcd74edd0b75fcca23a0b00bcea119864c0243"
+      "bf9ab32b25a4d73a1e062482f538055bc2258369353647d4325aec7a28dc1a6798e85fae"
+      "85850558868468d60015927cb10b2a893e23aa16b1f9278d4413f64d0a3122218f9000ae"
+      "cd8743b8e9e50bd9de81eebc4e0230d1f4f7bffc1e6f903606afba9ee694c2b40022f171"
+      "a760e7c63e736e31d7c7ff8b77dc206c2a3aa5afd540073060ebb9050bddce1ff1917630"
+      "47fff51d";
+  ASSERT_TRUE(BN_set_word(rsa->e, 111));
+  ASSERT_TRUE(BN_hex2bn(&rsa->d, kDBogus));
+  EXPECT_FALSE(RSA_check_key(rsa.get()));
+  ERR_clear_error();
+  ASSERT_TRUE(BN_hex2bn(&rsa->e, kE));
+
+  // d computed via the Euler totient rather than the Carmichael totient is also
+  // acceptable.
+  static const char kDEuler[] =
+      "3d231ff6ca0ee41ea50ab62c93bcd6aa5f01bd484e643b7ff6eb94c4dd414c17a0481a1c"
+      "4361f94f3f4d5c42098af09a527cf0d8dc96122ae8dd29189a4011d62f2bb40625d2e85f"
+      "4d706fb90c2e9bc9b00a0c2a28384a4c134f6d25c62d64a08fdf3f5e89a14d3daee46fda"
+      "8b4a2eda87cbb2735fd47290cb37bf65150edef854a28927ce5ac36d36107711cffb8ac3"
+      "2b090e409bb822b117744a9aabf878b8b1998d406337ec24cee3877795061c67322ac626"
+      "6c675a2cefe0f85f06b4d24eb6ad8e3fae7f218f5bd8ff2fb8bf8176d8527b0dfdaf8490"
+      "8f9bfaf3f37dcf8aa0211311bac07b1a478c3ed8a6369e5d5fc42b2afa93f5de8f520981"
+      "c62bbe81";
+  ASSERT_TRUE(BN_hex2bn(&rsa->d, kDEuler));
+  EXPECT_TRUE(RSA_check_key(rsa.get()));
+
+  // If d is completely out of range but otherwise valid, it is rejected.
+  static const char kDTooLarge[] =
+      "f2c885128cf04101c283553617c210d8ffd14cde98dc420c3c9892b55606cbedcda24298"
+      "7655b3f7b9433c2c316293a1cf1a2b034f197aeec1de8d81a67d94cc902b9fce1712d5a4"
+      "9c257ff705725cd77338d23535d3b87c8f4cecc15a6b72641ffd81aea106839d216b5fcd"
+      "7d415751d27255e540dd1638a8389721e9d0807d65d24d7b8c2f60e4b2c0bf250544ce68"
+      "b5ddbc1463d5a4638b2816b0f033dacdc0162f329af9e4d142352521fbd2fe14af824ef3"
+      "1601fe843c79cc3efbcb8eafd79262bdd25e2bdf21440f774e26d88ed7df938c5cf6982d"
+      "e9fa635b8ca36ce5c5fbd579a53cbb0348ceae752d4bc5621c5acc922ca2082494633337"
+      "42e770c1";
+  ASSERT_TRUE(BN_hex2bn(&rsa->d, kDTooLarge));
+  EXPECT_FALSE(RSA_check_key(rsa.get()));
+  ERR_clear_error();
+  ASSERT_TRUE(BN_hex2bn(&rsa->d, kD));
+
+  // CRT value must either all be provided or all missing.
+  ASSERT_TRUE(BN_hex2bn(&rsa->dmp1, kDMP1));
+  EXPECT_FALSE(RSA_check_key(rsa.get()));
+  ERR_clear_error();
+  BN_free(rsa->dmp1);
+  rsa->dmp1 = nullptr;
+
+  ASSERT_TRUE(BN_hex2bn(&rsa->dmq1, kDMQ1));
+  EXPECT_FALSE(RSA_check_key(rsa.get()));
+  ERR_clear_error();
+  BN_free(rsa->dmq1);
+  rsa->dmq1 = nullptr;
+
+  ASSERT_TRUE(BN_hex2bn(&rsa->iqmp, kIQMP));
+  EXPECT_FALSE(RSA_check_key(rsa.get()));
+  ERR_clear_error();
+
+  // The full key is accepted.
+  ASSERT_TRUE(BN_hex2bn(&rsa->dmp1, kDMP1));
+  ASSERT_TRUE(BN_hex2bn(&rsa->dmq1, kDMQ1));
+  EXPECT_TRUE(RSA_check_key(rsa.get()));
+
+  // Incorrect CRT values are rejected.
+  ASSERT_TRUE(BN_add_word(rsa->dmp1, 1));
+  EXPECT_FALSE(RSA_check_key(rsa.get()));
+  ERR_clear_error();
+  ASSERT_TRUE(BN_sub_word(rsa->dmp1, 1));
+
+  ASSERT_TRUE(BN_add_word(rsa->dmq1, 1));
+  EXPECT_FALSE(RSA_check_key(rsa.get()));
+  ERR_clear_error();
+  ASSERT_TRUE(BN_sub_word(rsa->dmq1, 1));
+
+  ASSERT_TRUE(BN_add_word(rsa->iqmp, 1));
+  EXPECT_FALSE(RSA_check_key(rsa.get()));
+  ERR_clear_error();
+  ASSERT_TRUE(BN_sub_word(rsa->iqmp, 1));
+
+  // Non-reduced CRT values are rejected.
+  ASSERT_TRUE(BN_add(rsa->dmp1, rsa->dmp1, rsa->p));
+  EXPECT_FALSE(RSA_check_key(rsa.get()));
+  ERR_clear_error();
+  ASSERT_TRUE(BN_sub(rsa->dmp1, rsa->dmp1, rsa->p));
+
+  ASSERT_TRUE(BN_add(rsa->dmq1, rsa->dmq1, rsa->q));
+  EXPECT_FALSE(RSA_check_key(rsa.get()));
+  ERR_clear_error();
+  ASSERT_TRUE(BN_sub(rsa->dmq1, rsa->dmq1, rsa->q));
+
+  ASSERT_TRUE(BN_add(rsa->iqmp, rsa->iqmp, rsa->p));
+  EXPECT_FALSE(RSA_check_key(rsa.get()));
+  ERR_clear_error();
+  ASSERT_TRUE(BN_sub(rsa->iqmp, rsa->iqmp, rsa->p));
+}
+
+TEST(RSATest, KeygenFail) {
+  bssl::UniquePtr<RSA> rsa(RSA_new());
+  ASSERT_TRUE(rsa);
+
+  // Cause RSA key generation after a prime has been generated, to test that
+  // |rsa| is left alone.
+  BN_GENCB cb;
+  BN_GENCB_set(&cb,
+               [](int event, int, BN_GENCB *) -> int { return event != 3; },
+               nullptr);
+
+  bssl::UniquePtr<BIGNUM> e(BN_new());
+  ASSERT_TRUE(e);
+  ASSERT_TRUE(BN_set_word(e.get(), RSA_F4));
+
+  // Key generation should fail.
+  EXPECT_FALSE(RSA_generate_key_ex(rsa.get(), 2048, e.get(), &cb));
+
+  // Failed key generations do not leave garbage in |rsa|.
+  EXPECT_FALSE(rsa->n);
+  EXPECT_FALSE(rsa->e);
+  EXPECT_FALSE(rsa->d);
+  EXPECT_FALSE(rsa->p);
+  EXPECT_FALSE(rsa->q);
+  EXPECT_FALSE(rsa->dmp1);
+  EXPECT_FALSE(rsa->dmq1);
+  EXPECT_FALSE(rsa->iqmp);
+  EXPECT_FALSE(rsa->mont_n);
+  EXPECT_FALSE(rsa->mont_p);
+  EXPECT_FALSE(rsa->mont_q);
+  EXPECT_FALSE(rsa->d_fixed);
+  EXPECT_FALSE(rsa->dmp1_fixed);
+  EXPECT_FALSE(rsa->dmq1_fixed);
+  EXPECT_FALSE(rsa->inv_small_mod_large_mont);
+  EXPECT_FALSE(rsa->private_key_frozen);
+
+  // Failed key generations leave the previous contents alone.
+  EXPECT_TRUE(RSA_generate_key_ex(rsa.get(), 2048, e.get(), nullptr));
+  uint8_t *der;
+  size_t der_len;
+  ASSERT_TRUE(RSA_private_key_to_bytes(&der, &der_len, rsa.get()));
+  bssl::UniquePtr<uint8_t> delete_der(der);
+
+  EXPECT_FALSE(RSA_generate_key_ex(rsa.get(), 2048, e.get(), &cb));
+
+  uint8_t *der2;
+  size_t der2_len;
+  ASSERT_TRUE(RSA_private_key_to_bytes(&der2, &der2_len, rsa.get()));
+  bssl::UniquePtr<uint8_t> delete_der2(der2);
+  EXPECT_EQ(Bytes(der, der_len), Bytes(der2, der2_len));
+
+  // Generating a key over an existing key works, despite any cached state.
+  EXPECT_TRUE(RSA_generate_key_ex(rsa.get(), 2048, e.get(), nullptr));
+  EXPECT_TRUE(RSA_check_key(rsa.get()));
+  uint8_t *der3;
+  size_t der3_len;
+  ASSERT_TRUE(RSA_private_key_to_bytes(&der3, &der3_len, rsa.get()));
+  bssl::UniquePtr<uint8_t> delete_der3(der3);
+  EXPECT_NE(Bytes(der, der_len), Bytes(der3, der3_len));
+}
+
+TEST(RSATest, KeygenFailOnce) {
+  bssl::UniquePtr<RSA> rsa(RSA_new());
+  ASSERT_TRUE(rsa);
+
+  // Cause only the first iteration of RSA key generation to fail.
+  bool failed = false;
+  BN_GENCB cb;
+  BN_GENCB_set(&cb,
+               [](int event, int n, BN_GENCB *cb_ptr) -> int {
+                 bool *failed_ptr = static_cast<bool *>(cb_ptr->arg);
+                 if (*failed_ptr) {
+                   ADD_FAILURE() << "Callback called multiple times.";
+                   return 1;
+                 }
+                 *failed_ptr = true;
+                 return 0;
+               },
+               &failed);
+
+  // Although key generation internally retries, the external behavior of
+  // |BN_GENCB| is preserved.
+  bssl::UniquePtr<BIGNUM> e(BN_new());
+  ASSERT_TRUE(e);
+  ASSERT_TRUE(BN_set_word(e.get(), RSA_F4));
+  EXPECT_FALSE(RSA_generate_key_ex(rsa.get(), 2048, e.get(), &cb));
+}
+
+TEST(RSATest, KeygenInternalRetry) {
+  bssl::UniquePtr<RSA> rsa(RSA_new());
+  ASSERT_TRUE(rsa);
+
+  // Simulate one internal attempt at key generation failing.
+  bool failed = false;
+  BN_GENCB cb;
+  BN_GENCB_set(&cb,
+               [](int event, int n, BN_GENCB *cb_ptr) -> int {
+                 bool *failed_ptr = static_cast<bool *>(cb_ptr->arg);
+                 if (*failed_ptr) {
+                   return 1;
+                 }
+                 *failed_ptr = true;
+                 // This test does not test any public API behavior. It is just
+                 // a hack to exercise the retry codepath and make sure it
+                 // works.
+                 OPENSSL_PUT_ERROR(RSA, RSA_R_TOO_MANY_ITERATIONS);
+                 return 0;
+               },
+               &failed);
+
+  // Key generation internally retries on RSA_R_TOO_MANY_ITERATIONS.
+  bssl::UniquePtr<BIGNUM> e(BN_new());
+  ASSERT_TRUE(e);
+  ASSERT_TRUE(BN_set_word(e.get(), RSA_F4));
+  EXPECT_TRUE(RSA_generate_key_ex(rsa.get(), 2048, e.get(), &cb));
+}
+
 #if !defined(BORINGSSL_SHARED_LIBRARY)
 TEST(RSATest, SqrtTwo) {
   bssl::UniquePtr<BIGNUM> sqrt(BN_new()), pow2(BN_new());
@@ -734,54 +1046,74 @@ TEST(RSATest, SqrtTwo) {
   // Check the kBoringSSLRSASqrtTwo is sized for a 3072-bit RSA key.
   EXPECT_EQ(3072u / 2u, bits);
 }
+#endif  // !BORINGSSL_SHARED_LIBRARY
 
-TEST(RSATest, GreaterThanPow2) {
-  bssl::UniquePtr<BIGNUM> b(BN_new());
-  BN_zero(b.get());
-  EXPECT_FALSE(rsa_greater_than_pow2(b.get(), 0));
-  EXPECT_FALSE(rsa_greater_than_pow2(b.get(), 1));
-  EXPECT_FALSE(rsa_greater_than_pow2(b.get(), 20));
+#if defined(OPENSSL_THREADS)
+TEST(RSATest, Threads) {
+  bssl::UniquePtr<RSA> rsa_template(
+      RSA_private_key_from_bytes(kKey1, sizeof(kKey1) - 1));
+  ASSERT_TRUE(rsa_template);
 
-  ASSERT_TRUE(BN_set_word(b.get(), 1));
-  EXPECT_FALSE(rsa_greater_than_pow2(b.get(), 0));
-  EXPECT_FALSE(rsa_greater_than_pow2(b.get(), 1));
-  EXPECT_FALSE(rsa_greater_than_pow2(b.get(), 20));
+  const uint8_t kDummyHash[32] = {0};
+  uint8_t sig[256];
+  unsigned sig_len = sizeof(sig);
+  ASSERT_LE(RSA_size(rsa_template.get()), sizeof(sig));
+  EXPECT_TRUE(RSA_sign(NID_sha256, kDummyHash, sizeof(kDummyHash), sig,
+                       &sig_len, rsa_template.get()));
 
-  ASSERT_TRUE(BN_set_word(b.get(), 2));
-  EXPECT_TRUE(rsa_greater_than_pow2(b.get(), 0));
-  EXPECT_FALSE(rsa_greater_than_pow2(b.get(), 1));
-  EXPECT_FALSE(rsa_greater_than_pow2(b.get(), 20));
+  // RSA keys may be assembled piece-meal and then used in parallel between
+  // threads, which requires internal locking to create some derived properties.
+  bssl::UniquePtr<RSA> rsa(RSA_new());
+  rsa->n = BN_dup(rsa_template->n);
+  ASSERT_TRUE(rsa->n);
+  rsa->e = BN_dup(rsa_template->e);
+  ASSERT_TRUE(rsa->e);
+  rsa->d = BN_dup(rsa_template->d);
+  ASSERT_TRUE(rsa->d);
+  rsa->p = BN_dup(rsa_template->p);
+  ASSERT_TRUE(rsa->p);
+  rsa->q = BN_dup(rsa_template->q);
+  ASSERT_TRUE(rsa->q);
+  rsa->dmp1 = BN_dup(rsa_template->dmp1);
+  ASSERT_TRUE(rsa->dmp1);
+  rsa->dmq1 = BN_dup(rsa_template->dmq1);
+  ASSERT_TRUE(rsa->dmq1);
+  rsa->iqmp = BN_dup(rsa_template->iqmp);
+  ASSERT_TRUE(rsa->iqmp);
 
-  ASSERT_TRUE(BN_set_word(b.get(), 3));
-  EXPECT_TRUE(rsa_greater_than_pow2(b.get(), 0));
-  EXPECT_TRUE(rsa_greater_than_pow2(b.get(), 1));
-  EXPECT_FALSE(rsa_greater_than_pow2(b.get(), 2));
-  EXPECT_FALSE(rsa_greater_than_pow2(b.get(), 20));
+  // Each of these operations must be safe to do concurrently on different
+  // threads.
+  auto raw_access = [&] { EXPECT_EQ(0, BN_cmp(rsa->d, rsa_template->d)); };
+  auto getter = [&] {
+    const BIGNUM *d;
+    RSA_get0_key(rsa.get(), nullptr, nullptr, &d);
+    EXPECT_EQ(0, BN_cmp(d, rsa_template->d));
+  };
+  auto sign = [&] {
+    uint8_t sig2[256];
+    unsigned sig2_len = sizeof(sig2);
+    ASSERT_LE(RSA_size(rsa.get()), sizeof(sig2));
+    EXPECT_TRUE(RSA_sign(NID_sha256, kDummyHash, sizeof(kDummyHash), sig2,
+                         &sig2_len, rsa.get()));
+    // RSASSA-PKCS1-v1_5 is deterministic.
+    EXPECT_EQ(Bytes(sig, sig_len), Bytes(sig2, sig2_len));
+  };
+  auto verify = [&] {
+    EXPECT_TRUE(RSA_verify(NID_sha256, kDummyHash, sizeof(kDummyHash), sig,
+                           sig_len, rsa.get()));
+  };
 
-  BN_set_negative(b.get(), 1);
-  EXPECT_FALSE(rsa_greater_than_pow2(b.get(), 0));
-  EXPECT_FALSE(rsa_greater_than_pow2(b.get(), 1));
-  EXPECT_FALSE(rsa_greater_than_pow2(b.get(), 2));
-  EXPECT_FALSE(rsa_greater_than_pow2(b.get(), 20));
-
-  // Check all bit lengths mod 64.
-  for (int n = 1024; n < 1024 + 64; n++) {
-    SCOPED_TRACE(n);
-    ASSERT_TRUE(BN_set_word(b.get(), 1));
-    ASSERT_TRUE(BN_lshift(b.get(), b.get(), n));
-    EXPECT_TRUE(rsa_greater_than_pow2(b.get(), n - 1));
-    EXPECT_FALSE(rsa_greater_than_pow2(b.get(), n));
-    EXPECT_FALSE(rsa_greater_than_pow2(b.get(), n + 1));
-
-    ASSERT_TRUE(BN_sub_word(b.get(), 1));
-    EXPECT_TRUE(rsa_greater_than_pow2(b.get(), n - 1));
-    EXPECT_FALSE(rsa_greater_than_pow2(b.get(), n));
-    EXPECT_FALSE(rsa_greater_than_pow2(b.get(), n + 1));
-
-    ASSERT_TRUE(BN_add_word(b.get(), 2));
-    EXPECT_TRUE(rsa_greater_than_pow2(b.get(), n - 1));
-    EXPECT_TRUE(rsa_greater_than_pow2(b.get(), n));
-    EXPECT_FALSE(rsa_greater_than_pow2(b.get(), n + 1));
+  std::vector<std::thread> threads;
+  threads.emplace_back(raw_access);
+  threads.emplace_back(raw_access);
+  threads.emplace_back(getter);
+  threads.emplace_back(getter);
+  threads.emplace_back(sign);
+  threads.emplace_back(sign);
+  threads.emplace_back(verify);
+  threads.emplace_back(verify);
+  for (auto &thread : threads) {
+    thread.join();
   }
 }
-#endif  // !BORINGSSL_SHARED_LIBRARY
+#endif

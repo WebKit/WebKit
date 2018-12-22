@@ -82,7 +82,8 @@ HIDDEN unsigned long OPENSSL_ppc64le_hwcap2 = 0;
 #if defined(OPENSSL_STATIC_ARMCAP)
 
 HIDDEN uint32_t OPENSSL_armcap_P =
-#if defined(OPENSSL_STATIC_ARMCAP_NEON) || defined(__ARM_NEON__)
+#if defined(OPENSSL_STATIC_ARMCAP_NEON) || \
+    (defined(__ARM_NEON__) || defined(__ARM_NEON))
     ARMV7_NEON |
 #endif
 #if defined(OPENSSL_STATIC_ARMCAP_AES) || defined(__ARM_FEATURE_CRYPTO)
@@ -101,6 +102,10 @@ HIDDEN uint32_t OPENSSL_armcap_P =
 
 #else
 HIDDEN uint32_t OPENSSL_armcap_P = 0;
+
+uint32_t *OPENSSL_get_armcap_pointer_for_test(void) {
+  return &OPENSSL_armcap_P;
+}
 #endif
 
 #endif
@@ -164,31 +169,36 @@ int CRYPTO_has_asm(void) {
 #endif
 }
 
-const char *SSLeay_version(int unused) {
-  return "BoringSSL";
+const char *SSLeay_version(int which) { return OpenSSL_version(which); }
+
+const char *OpenSSL_version(int which) {
+  switch (which) {
+    case OPENSSL_VERSION:
+      return "BoringSSL";
+    case OPENSSL_CFLAGS:
+      return "compiler: n/a";
+    case OPENSSL_BUILT_ON:
+      return "built on: n/a";
+    case OPENSSL_PLATFORM:
+      return "platform: n/a";
+    case OPENSSL_DIR:
+      return "OPENSSLDIR: n/a";
+    default:
+      return "not available";
+  }
 }
 
-const char *OpenSSL_version(int unused) {
-  return "BoringSSL";
-}
+unsigned long SSLeay(void) { return OPENSSL_VERSION_NUMBER; }
 
-unsigned long SSLeay(void) {
-  return OPENSSL_VERSION_NUMBER;
-}
+unsigned long OpenSSL_version_num(void) { return OPENSSL_VERSION_NUMBER; }
 
-unsigned long OpenSSL_version_num(void) {
-  return OPENSSL_VERSION_NUMBER;
-}
+int CRYPTO_malloc_init(void) { return 1; }
 
-int CRYPTO_malloc_init(void) {
-  return 1;
-}
+int OPENSSL_malloc_init(void) { return 1; }
 
 void ENGINE_load_builtin_engines(void) {}
 
-int ENGINE_register_all_complete(void) {
-  return 1;
-}
+int ENGINE_register_all_complete(void) { return 1; }
 
 void OPENSSL_load_builtin_modules(void) {}
 
@@ -196,3 +206,5 @@ int OPENSSL_init_crypto(uint64_t opts, const OPENSSL_INIT_SETTINGS *settings) {
   CRYPTO_library_init();
   return 1;
 }
+
+void OPENSSL_cleanup(void) {}

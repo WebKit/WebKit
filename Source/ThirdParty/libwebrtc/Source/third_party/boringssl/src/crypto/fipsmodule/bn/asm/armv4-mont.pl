@@ -97,6 +97,10 @@ $_num="$num,#15*4";	$_bpend=$_num;
 $code=<<___;
 #include <openssl/arm_arch.h>
 
+@ Silence ARMv8 deprecated IT instruction warnings. This file is used by both
+@ ARMv7 and ARMv8 processors and does not use ARMv8 instructions.
+.arch  armv7-a
+
 .text
 #if defined(__thumb2__)
 .syntax	unified
@@ -262,14 +266,15 @@ bn_mul_mont:
 	mov	$tp,sp			@ "rewind" $tp
 	sub	$rp,$rp,$aj		@ "rewind" $rp
 
-	and	$ap,$tp,$nhi
-	bic	$np,$rp,$nhi
-	orr	$ap,$ap,$np		@ ap=borrow?tp:rp
-
-.Lcopy:	ldr	$tj,[$ap],#4		@ copy or in-place refresh
+.Lcopy:	ldr	$tj,[$tp]		@ conditional copy
+	ldr	$aj,[$rp]
 	str	sp,[$tp],#4		@ zap tp
-	str	$tj,[$rp],#4
-	cmp	$tp,$num
+#ifdef	__thumb2__
+	it	cc
+#endif
+	movcc	$aj,$tj
+	str	$aj,[$rp],#4
+	teq	$tp,$num		@ preserve carry
 	bne	.Lcopy
 
 	mov	sp,$num

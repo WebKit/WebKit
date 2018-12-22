@@ -21,14 +21,6 @@
 #include "internal.h"
 
 
-struct FileCloser {
-  void operator()(FILE *file) {
-    fclose(file);
-  }
-};
-
-using ScopedFILE = std::unique_ptr<FILE, FileCloser>;
-
 static const struct argument kArguments[] = {
     {
         "-out-public", kRequiredArgument, "The file to write the public key to",

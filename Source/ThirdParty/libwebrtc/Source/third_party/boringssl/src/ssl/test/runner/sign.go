@@ -18,7 +18,7 @@ import (
 	"fmt"
 	"math/big"
 
-	"./ed25519"
+	"boringssl.googlesource.com/boringssl/ssl/test/runner/ed25519"
 )
 
 type signer interface {

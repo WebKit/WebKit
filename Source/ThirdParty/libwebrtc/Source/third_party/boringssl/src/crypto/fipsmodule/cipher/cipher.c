@@ -496,6 +496,10 @@ int EVP_CIPHER_CTX_nid(const EVP_CIPHER_CTX *ctx) {
   return ctx->cipher->nid;
 }
 
+int EVP_CIPHER_CTX_encrypting(const EVP_CIPHER_CTX *ctx) {
+  return ctx->encrypt;
+}
+
 unsigned EVP_CIPHER_CTX_block_size(const EVP_CIPHER_CTX *ctx) {
   return ctx->cipher->block_size;
 }

@@ -16,22 +16,34 @@ vars = {
   'chromium_git': 'https://chromium.googlesource.com',
 
   'checkout_clang': False,
-  'checkout_fuzzer': False,
   'checkout_sde': False,
+  'checkout_nasm': False,
+  'checkout_libcxx': False,
 }
 
 deps = {
+  'boringssl/util/bot/android_ndk': {
+    'url': Var('chromium_git') + '/android_ndk.git' + '@' + '4e2cea441bfd43f0863d14f57b1e1844260b9884',
+    'condition': 'checkout_android',
+  },
+
   'boringssl/util/bot/android_tools': {
-    'url': Var('chromium_git') + '/android_tools.git' + '@' + 'ca0bd083872ad925881736fe2bedc3ff855e08f5',
+    'url': Var('chromium_git') + '/android_tools.git' + '@' + '130499e25286f4d56acafa252fee09f3cc595c49',
     'condition': 'checkout_android',
   },
 
   'boringssl/util/bot/gyp':
     Var('chromium_git') + '/external/gyp.git' + '@' + 'd61a9397e668fa9843c4aa7da9e79460fe590bfb',
 
-  'boringssl/util/bot/libFuzzer': {
-    'url': Var('chromium_git') + '/chromium/llvm-project/compiler-rt/lib/fuzzer.git' + '@' + '06fb50cc1f0197398c8a70658928a3b91912e68a',
-    'condition': 'checkout_fuzzer',
+  # Update the following revisions from
+  # https://chromium.googlesource.com/chromium/buildtools/+/master/DEPS
+  'boringssl/util/bot/libcxx': {
+    'url': Var('chromium_git') + '/chromium/llvm-project/libcxx.git' + '@' + '85a7702b4cc5d69402791fe685f151cf3076be71',
+    'condition': 'checkout_libcxx',
+  },
+  'boringssl/util/bot/libcxxabi': {
+    'url': Var('chromium_git') + '/chromium/llvm-project/libcxxabi.git' + '@' + '05a73941f3fb177c4a891d4ff2a4ed5785e3b80c',
+    'condition': 'checkout_libcxx',
   },
 }
 
@@ -133,13 +145,25 @@ hooks = [
   {
     'name': 'yasm_win32',
     'pattern': '.',
-    'condition': 'host_os == "win"',
+    'condition': 'host_os == "win" and not checkout_nasm',
     'action': [ 'download_from_google_storage',
                 '--no_resume',
                 '--platform=win32',
                 '--no_auth',
                 '--bucket', 'chromium-tools',
                 '-s', 'boringssl/util/bot/yasm-win32.exe.sha1',
+    ],
+  },
+  {
+    'name': 'nasm_win32',
+    'pattern': '.',
+    'condition': 'host_os == "win" and checkout_nasm',
+    'action': [ 'download_from_google_storage',
+                '--no_resume',
+                '--platform=win32',
+                '--no_auth',
+                '--bucket', 'chromium-tools',
+                '-s', 'boringssl/util/bot/nasm-win32.exe.sha1',
     ],
   },
   {

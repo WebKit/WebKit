@@ -27,8 +27,8 @@ OPENSSL_MSVC_PRAGMA(warning(pop))
 #include <openssl/type_check.h>
 
 
-OPENSSL_COMPILE_ASSERT(sizeof(CRYPTO_MUTEX) >= sizeof(SRWLOCK),
-                       CRYPTO_MUTEX_too_small);
+OPENSSL_STATIC_ASSERT(sizeof(CRYPTO_MUTEX) >= sizeof(SRWLOCK),
+                      "CRYPTO_MUTEX is too small");
 
 static BOOL CALLBACK call_once_init(INIT_ONCE *once, void *arg, void **out) {
   void (**init)(void) = (void (**)(void))arg;
@@ -146,12 +146,18 @@ static void NTAPI thread_local_destructor(PVOID module, DWORD reason,
 // if it's not already there. (E.g. if __declspec(thread) is not used). Force
 // a reference to p_thread_callback_boringssl to prevent whole program
 // optimization from discarding the variable.
+//
+// Note, in the prefixed build, |p_thread_callback_boringssl| may be a macro.
+#define STRINGIFY(x) #x
+#define EXPAND_AND_STRINGIFY(x) STRINGIFY(x)
 #ifdef _WIN64
-#pragma comment(linker, "/INCLUDE:_tls_used")
-#pragma comment(linker, "/INCLUDE:p_thread_callback_boringssl")
+__pragma(comment(linker, "/INCLUDE:_tls_used"))
+__pragma(comment(
+    linker, "/INCLUDE:" EXPAND_AND_STRINGIFY(p_thread_callback_boringssl)))
 #else
-#pragma comment(linker, "/INCLUDE:__tls_used")
-#pragma comment(linker, "/INCLUDE:_p_thread_callback_boringssl")
+__pragma(comment(linker, "/INCLUDE:__tls_used"))
+__pragma(comment(
+    linker, "/INCLUDE:_" EXPAND_AND_STRINGIFY(p_thread_callback_boringssl)))
 #endif
 
 // .CRT$XLA to .CRT$XLZ is an array of PIMAGE_TLS_CALLBACK pointers that are
@@ -190,13 +196,31 @@ PIMAGE_TLS_CALLBACK p_thread_callback_boringssl = thread_local_destructor;
 
 #endif  // _WIN64
 
+static void **get_thread_locals(void) {
+  // |TlsGetValue| clears the last error even on success, so that callers may
+  // distinguish it successfully returning NULL or failing. It is documented to
+  // never fail if the argument is a valid index from |TlsAlloc|, so we do not
+  // need to handle this.
+  //
+  // However, this error-mangling behavior interferes with the caller's use of
+  // |GetLastError|. In particular |SSL_get_error| queries the error queue to
+  // determine whether the caller should look at the OS's errors. To avoid
+  // destroying state, save and restore the Windows error.
+  //
+  // https://msdn.microsoft.com/en-us/library/windows/desktop/ms686812(v=vs.85).aspx
+  DWORD last_error = GetLastError();
+  void **ret = TlsGetValue(g_thread_local_key);
+  SetLastError(last_error);
+  return ret;
+}
+
 void *CRYPTO_get_thread_local(thread_local_data_t index) {
   CRYPTO_once(&g_thread_local_init_once, thread_local_init);
   if (g_thread_local_failed) {
     return NULL;
   }
 
-  void **pointers = TlsGetValue(g_thread_local_key);
+  void **pointers = get_thread_locals();
   if (pointers == NULL) {
     return NULL;
   }
@@ -211,7 +235,7 @@ int CRYPTO_set_thread_local(thread_local_data_t index, void *value,
     return 0;
   }
 
-  void **pointers = TlsGetValue(g_thread_local_key);
+  void **pointers = get_thread_locals();
   if (pointers == NULL) {
     pointers = OPENSSL_malloc(sizeof(void *) * NUM_OPENSSL_THREAD_LOCALS);
     if (pointers == NULL) {

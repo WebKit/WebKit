@@ -12,31 +12,15 @@
  * OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF OR IN
  * CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE. */
 
-#include <openssl/conf.h>
 #include <openssl/x509v3.h>
 
+#include <assert.h>
 
-X509_EXTENSION *X509V3_EXT_conf_nid(LHASH_OF(CONF_VALUE) *conf,
-                                    X509V3_CTX *ctx, int ext_nid, char *value) {
-  CONF *nconf = NULL;
-  LHASH_OF(CONF_VALUE) *orig_data = NULL;
+#include <openssl/conf.h>
 
-  if (conf != NULL) {
-    nconf = NCONF_new(NULL /* no method */);
-    if (nconf == NULL) {
-      return NULL;
-    }
 
-    orig_data = nconf->data;
-    nconf->data = conf;
-  }
-
-  X509_EXTENSION *ret = X509V3_EXT_nconf_nid(nconf, ctx, ext_nid, value);
-
-  if (nconf != NULL) {
-    nconf->data = orig_data;
-    NCONF_free(nconf);
-  }
-
-  return ret;
+X509_EXTENSION *X509V3_EXT_conf_nid(LHASH_OF(CONF_VALUE) *conf, X509V3_CTX *ctx,
+                                    int ext_nid, char *value) {
+  assert(conf == NULL);
+  return X509V3_EXT_nconf_nid(NULL, ctx, ext_nid, value);
 }

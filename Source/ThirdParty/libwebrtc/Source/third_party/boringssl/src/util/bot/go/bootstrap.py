@@ -45,7 +45,7 @@ WORKSPACE = os.path.join(ROOT, 'go')
 EXE_SFX = '.exe' if sys.platform == 'win32' else ''
 
 # Pinned version of Go toolset to download.
-TOOLSET_VERSION = 'go1.9.2'
+TOOLSET_VERSION = 'go1.11'
 
 # Platform dependent portion of a download URL. See http://golang.org/dl/.
 TOOLSET_VARIANTS = {

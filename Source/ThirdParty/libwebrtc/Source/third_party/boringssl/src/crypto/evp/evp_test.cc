@@ -74,11 +74,13 @@ OPENSSL_MSVC_PRAGMA(warning(pop))
 #include <openssl/bytestring.h>
 #include <openssl/crypto.h>
 #include <openssl/digest.h>
+#include <openssl/dsa.h>
 #include <openssl/err.h>
 #include <openssl/rsa.h>
 
 #include "../test/file_test.h"
 #include "../test/test_util.h"
+#include "../test/wycheproof_util.h"
 
 
 // evp_test dispatches between multiple test types. PrivateKey tests take a key
@@ -412,4 +414,164 @@ TEST(EVPTest, TestVectors) {
       ADD_FAILURE() << "Operation unexpectedly failed.";
     }
   });
+}
+
+static void RunWycheproofTest(const char *path) {
+  SCOPED_TRACE(path);
+  FileTestGTest(path, [](FileTest *t) {
+    t->IgnoreInstruction("key.type");
+    // Extra ECDSA fields.
+    t->IgnoreInstruction("key.curve");
+    t->IgnoreInstruction("key.keySize");
+    t->IgnoreInstruction("key.wx");
+    t->IgnoreInstruction("key.wy");
+    t->IgnoreInstruction("key.uncompressed");
+    // Extra RSA fields.
+    t->IgnoreInstruction("e");
+    t->IgnoreInstruction("keyAsn");
+    t->IgnoreInstruction("keysize");
+    t->IgnoreInstruction("n");
+    t->IgnoreAttribute("padding");
+    // Extra EdDSA fields.
+    t->IgnoreInstruction("key.pk");
+    t->IgnoreInstruction("key.sk");
+    // Extra DSA fields.
+    t->IgnoreInstruction("key.g");
+    t->IgnoreInstruction("key.p");
+    t->IgnoreInstruction("key.q");
+    t->IgnoreInstruction("key.y");
+
+    std::vector<uint8_t> der;
+    ASSERT_TRUE(t->GetInstructionBytes(&der, "keyDer"));
+    CBS cbs;
+    CBS_init(&cbs, der.data(), der.size());
+    bssl::UniquePtr<EVP_PKEY> key(EVP_parse_public_key(&cbs));
+    ASSERT_TRUE(key);
+
+    const EVP_MD *md = nullptr;
+    if (t->HasInstruction("sha")) {
+      md = GetWycheproofDigest(t, "sha", true);
+      ASSERT_TRUE(md);
+    }
+
+    bool is_pss = t->HasInstruction("mgf");
+    const EVP_MD *mgf1_md = nullptr;
+    int pss_salt_len = -1;
+    if (is_pss) {
+      ASSERT_EQ("MGF1", t->GetInstructionOrDie("mgf"));
+      mgf1_md = GetWycheproofDigest(t, "mgfSha", true);
+
+      std::string s_len;
+      ASSERT_TRUE(t->GetInstruction(&s_len, "sLen"));
+      pss_salt_len = atoi(s_len.c_str());
+    }
+
+    std::vector<uint8_t> msg;
+    ASSERT_TRUE(t->GetBytes(&msg, "msg"));
+    std::vector<uint8_t> sig;
+    ASSERT_TRUE(t->GetBytes(&sig, "sig"));
+    WycheproofResult result;
+    ASSERT_TRUE(GetWycheproofResult(t, &result));
+
+    if (EVP_PKEY_id(key.get()) == EVP_PKEY_DSA) {
+      // DSA is deprecated and is not usable via EVP.
+      DSA *dsa = EVP_PKEY_get0_DSA(key.get());
+      uint8_t digest[EVP_MAX_MD_SIZE];
+      unsigned digest_len;
+      ASSERT_TRUE(
+          EVP_Digest(msg.data(), msg.size(), digest, &digest_len, md, nullptr));
+      int valid;
+      bool sig_ok = DSA_check_signature(&valid, digest, digest_len, sig.data(),
+                                        sig.size(), dsa) &&
+                    valid;
+      if (result == WycheproofResult::kValid) {
+        EXPECT_TRUE(sig_ok);
+      } else if (result == WycheproofResult::kInvalid) {
+        EXPECT_FALSE(sig_ok);
+      } else {
+        // this is a legacy signature, which may or may not be accepted.
+      }
+    } else {
+      bssl::ScopedEVP_MD_CTX ctx;
+      EVP_PKEY_CTX *pctx;
+      ASSERT_TRUE(
+          EVP_DigestVerifyInit(ctx.get(), &pctx, md, nullptr, key.get()));
+      if (is_pss) {
+        ASSERT_TRUE(EVP_PKEY_CTX_set_rsa_padding(pctx, RSA_PKCS1_PSS_PADDING));
+        ASSERT_TRUE(EVP_PKEY_CTX_set_rsa_mgf1_md(pctx, mgf1_md));
+        ASSERT_TRUE(EVP_PKEY_CTX_set_rsa_pss_saltlen(pctx, pss_salt_len));
+      }
+      int ret = EVP_DigestVerify(ctx.get(), sig.data(), sig.size(), msg.data(),
+                                 msg.size());
+      if (result == WycheproofResult::kValid) {
+        EXPECT_EQ(1, ret);
+      } else if (result == WycheproofResult::kInvalid) {
+        EXPECT_EQ(0, ret);
+      } else {
+        // this is a legacy signature, which may or may not be accepted.
+        EXPECT_TRUE(ret == 1 || ret == 0);
+      }
+    }
+  });
+}
+
+TEST(EVPTest, WycheproofDSA) {
+  RunWycheproofTest("third_party/wycheproof_testvectors/dsa_test.txt");
+}
+
+TEST(EVPTest, WycheproofECDSAP224) {
+  RunWycheproofTest(
+      "third_party/wycheproof_testvectors/ecdsa_secp224r1_sha224_test.txt");
+  RunWycheproofTest(
+      "third_party/wycheproof_testvectors/ecdsa_secp224r1_sha256_test.txt");
+  RunWycheproofTest(
+      "third_party/wycheproof_testvectors/ecdsa_secp224r1_sha512_test.txt");
+}
+
+TEST(EVPTest, WycheproofECDSAP256) {
+  RunWycheproofTest(
+      "third_party/wycheproof_testvectors/ecdsa_secp256r1_sha256_test.txt");
+  RunWycheproofTest(
+      "third_party/wycheproof_testvectors/ecdsa_secp256r1_sha512_test.txt");
+}
+
+TEST(EVPTest, WycheproofECDSAP384) {
+  RunWycheproofTest(
+      "third_party/wycheproof_testvectors/ecdsa_secp384r1_sha384_test.txt");
+}
+
+TEST(EVPTest, WycheproofECDSAP521) {
+  RunWycheproofTest(
+      "third_party/wycheproof_testvectors/ecdsa_secp384r1_sha512_test.txt");
+  RunWycheproofTest(
+      "third_party/wycheproof_testvectors/ecdsa_secp521r1_sha512_test.txt");
+}
+
+TEST(EVPTest, WycheproofEdDSA) {
+  RunWycheproofTest("third_party/wycheproof_testvectors/eddsa_test.txt");
+}
+
+TEST(EVPTest, WycheproofRSAPKCS1) {
+  RunWycheproofTest(
+      "third_party/wycheproof_testvectors/rsa_signature_test.txt");
+}
+
+TEST(EVPTest, WycheproofRSAPSS) {
+  RunWycheproofTest(
+      "third_party/wycheproof_testvectors/rsa_pss_2048_sha1_mgf1_20_test.txt");
+  RunWycheproofTest(
+      "third_party/wycheproof_testvectors/rsa_pss_2048_sha256_mgf1_0_test.txt");
+  RunWycheproofTest(
+      "third_party/wycheproof_testvectors/"
+      "rsa_pss_2048_sha256_mgf1_32_test.txt");
+  RunWycheproofTest(
+      "third_party/wycheproof_testvectors/"
+      "rsa_pss_3072_sha256_mgf1_32_test.txt");
+  RunWycheproofTest(
+      "third_party/wycheproof_testvectors/"
+      "rsa_pss_4096_sha256_mgf1_32_test.txt");
+  RunWycheproofTest(
+      "third_party/wycheproof_testvectors/"
+      "rsa_pss_4096_sha512_mgf1_32_test.txt");
+  RunWycheproofTest("third_party/wycheproof_testvectors/rsa_pss_misc_test.txt");
 }

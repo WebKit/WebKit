@@ -93,6 +93,9 @@ int asn1_generalizedtime_to_tm(struct tm *tm, const ASN1_GENERALIZEDTIME *d);
 void asn1_item_combine_free(ASN1_VALUE **pval, const ASN1_ITEM *it,
                             int combine);
 
+int UTF8_getc(const unsigned char *str, int len, uint32_t *val);
+int UTF8_putc(unsigned char *str, int len, uint32_t value);
+
 
 #if defined(__cplusplus)
 }  /* extern C */

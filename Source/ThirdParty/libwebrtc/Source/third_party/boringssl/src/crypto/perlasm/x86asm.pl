@@ -255,9 +255,29 @@ sub ::asciz
 
 sub ::asm_finish
 {   &file_end();
-    print "#if defined(__i386__)\n" unless $win32;
+    my $comment = "#";
+    $comment = ";" if ($win32 || $netware);
+    print <<___;
+$comment This file is generated from a similarly-named Perl script in the BoringSSL
+$comment source tree. Do not edit by hand.
+
+___
+    if ($win32 || $netware) {
+        print <<___ unless $masm;
+%ifdef BORINGSSL_PREFIX
+%include "boringssl_prefix_symbols_nasm.inc"
+%endif
+___
+    } else {
+        print <<___;
+#if defined(__i386__)
+#if defined(BORINGSSL_PREFIX)
+#include <boringssl_prefix_symbols_asm.h>
+#endif
+___
+    }
     print @out;
-    print "#endif\n" unless $win32;
+    print "#endif\n" unless ($win32 || $netware);
 }
 
 sub ::asm_init
@@ -281,7 +301,7 @@ sub ::asm_init
     #elsif (($type eq "nw-mwasm"))
     #{	$netware=1; $mwerks=1;	require "x86nasm.pl";	}
     elsif (($type eq "win32"))
-    {	$win32=1;		require "x86masm.pl";	}
+    {	$win32=1; $masm=1;	require "x86masm.pl";	}
     elsif (($type eq "macosx"))
     {	$aout=1; $macosx=1;	require "x86gas.pl";	}
     elsif (($type eq "android"))

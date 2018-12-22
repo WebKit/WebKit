@@ -148,152 +148,20 @@
 #include <openssl/nid.h>
 #include <openssl/rand.h>
 
+#include "../crypto/fipsmodule/tls/internal.h"
 #include "../crypto/internal.h"
 #include "internal.h"
 
 
-namespace bssl {
-
-// tls1_P_hash computes the TLS P_<hash> function as described in RFC 5246,
-// section 5. It XORs |out.size()| bytes to |out|, using |md| as the hash and
-// |secret| as the secret. |label|, |seed1|, and |seed2| are concatenated to
-// form the seed parameter. It returns true on success and false on failure.
-static bool tls1_P_hash(Span<uint8_t> out, const EVP_MD *md,
-                        Span<const uint8_t> secret, Span<const char> label,
-                        Span<const uint8_t> seed1, Span<const uint8_t> seed2) {
-  ScopedHMAC_CTX ctx, ctx_tmp, ctx_init;
-  uint8_t A1[EVP_MAX_MD_SIZE];
-  unsigned A1_len;
-  bool ret = false;
-
-  size_t chunk = EVP_MD_size(md);
-
-  if (!HMAC_Init_ex(ctx_init.get(), secret.data(), secret.size(), md,
-                    nullptr) ||
-      !HMAC_CTX_copy_ex(ctx.get(), ctx_init.get()) ||
-      !HMAC_Update(ctx.get(), reinterpret_cast<const uint8_t *>(label.data()),
-                   label.size()) ||
-      !HMAC_Update(ctx.get(), seed1.data(), seed1.size()) ||
-      !HMAC_Update(ctx.get(), seed2.data(), seed2.size()) ||
-      !HMAC_Final(ctx.get(), A1, &A1_len)) {
-    goto err;
-  }
-
-  for (;;) {
-    unsigned len;
-    uint8_t hmac[EVP_MAX_MD_SIZE];
-    if (!HMAC_CTX_copy_ex(ctx.get(), ctx_init.get()) ||
-        !HMAC_Update(ctx.get(), A1, A1_len) ||
-        // Save a copy of |ctx| to compute the next A1 value below.
-        (out.size() > chunk && !HMAC_CTX_copy_ex(ctx_tmp.get(), ctx.get())) ||
-        !HMAC_Update(ctx.get(), reinterpret_cast<const uint8_t *>(label.data()),
-                     label.size()) ||
-        !HMAC_Update(ctx.get(), seed1.data(), seed1.size()) ||
-        !HMAC_Update(ctx.get(), seed2.data(), seed2.size()) ||
-        !HMAC_Final(ctx.get(), hmac, &len)) {
-      goto err;
-    }
-    assert(len == chunk);
-
-    // XOR the result into |out|.
-    if (len > out.size()) {
-      len = out.size();
-    }
-    for (unsigned i = 0; i < len; i++) {
-      out[i] ^= hmac[i];
-    }
-    out = out.subspan(len);
-
-    if (out.empty()) {
-      break;
-    }
-
-    // Calculate the next A1 value.
-    if (!HMAC_Final(ctx_tmp.get(), A1, &A1_len)) {
-      goto err;
-    }
-  }
-
-  ret = true;
-
-err:
-  OPENSSL_cleanse(A1, sizeof(A1));
-  return ret;
-}
+BSSL_NAMESPACE_BEGIN
 
 bool tls1_prf(const EVP_MD *digest, Span<uint8_t> out,
               Span<const uint8_t> secret, Span<const char> label,
               Span<const uint8_t> seed1, Span<const uint8_t> seed2) {
-  if (out.empty()) {
-    return true;
-  }
-
-  OPENSSL_memset(out.data(), 0, out.size());
-
-  if (digest == EVP_md5_sha1()) {
-    // If using the MD5/SHA1 PRF, |secret| is partitioned between MD5 and SHA-1.
-    size_t secret_half = secret.size() - (secret.size() / 2);
-    if (!tls1_P_hash(out, EVP_md5(), secret.subspan(0, secret_half), label,
-                     seed1, seed2)) {
-      return false;
-    }
-
-    // Note that, if |secret.size()| is odd, the two halves share a byte.
-    secret = secret.subspan(secret.size() - secret_half);
-    digest = EVP_sha1();
-  }
-
-  return tls1_P_hash(out, digest, secret, label, seed1, seed2);
-}
-
-static bool ssl3_prf(Span<uint8_t> out, Span<const uint8_t> secret,
-                     Span<const char> label, Span<const uint8_t> seed1,
-                     Span<const uint8_t> seed2) {
-  ScopedEVP_MD_CTX md5;
-  ScopedEVP_MD_CTX sha1;
-  uint8_t buf[16], smd[SHA_DIGEST_LENGTH];
-  uint8_t c = 'A';
-  size_t k = 0;
-  while (!out.empty()) {
-    k++;
-    if (k > sizeof(buf)) {
-      // bug: 'buf' is too small for this ciphersuite
-      OPENSSL_PUT_ERROR(SSL, ERR_R_INTERNAL_ERROR);
-      return false;
-    }
-
-    for (size_t j = 0; j < k; j++) {
-      buf[j] = c;
-    }
-    c++;
-    if (!EVP_DigestInit_ex(sha1.get(), EVP_sha1(), NULL)) {
-      OPENSSL_PUT_ERROR(SSL, ERR_LIB_EVP);
-      return false;
-    }
-    EVP_DigestUpdate(sha1.get(), buf, k);
-    EVP_DigestUpdate(sha1.get(), secret.data(), secret.size());
-    // |label| is ignored for SSLv3.
-    EVP_DigestUpdate(sha1.get(), seed1.data(), seed1.size());
-    EVP_DigestUpdate(sha1.get(), seed2.data(), seed2.size());
-    EVP_DigestFinal_ex(sha1.get(), smd, NULL);
-
-    if (!EVP_DigestInit_ex(md5.get(), EVP_md5(), NULL)) {
-      OPENSSL_PUT_ERROR(SSL, ERR_LIB_EVP);
-      return false;
-    }
-    EVP_DigestUpdate(md5.get(), secret.data(), secret.size());
-    EVP_DigestUpdate(md5.get(), smd, SHA_DIGEST_LENGTH);
-    if (out.size() < MD5_DIGEST_LENGTH) {
-      EVP_DigestFinal_ex(md5.get(), smd, NULL);
-      OPENSSL_memcpy(out.data(), smd, out.size());
-      break;
-    }
-    EVP_DigestFinal_ex(md5.get(), out.data(), NULL);
-    out = out.subspan(MD5_DIGEST_LENGTH);
-  }
-
-  OPENSSL_cleanse(smd, SHA_DIGEST_LENGTH);
-  return true;
+  return 1 == CRYPTO_tls1_prf(digest, out.data(), out.size(), secret.data(),
+                              secret.size(), label.data(), label.size(),
+                              seed1.data(), seed1.size(), seed2.data(),
+                              seed2.size());
 }
 
 static bool get_key_block_lengths(const SSL *ssl, size_t *out_mac_secret_len,
@@ -321,42 +189,26 @@ static bool get_key_block_lengths(const SSL *ssl, size_t *out_mac_secret_len,
   return true;
 }
 
-static bool setup_key_block(SSL_HANDSHAKE *hs) {
-  SSL *const ssl = hs->ssl;
-  if (!hs->key_block.empty()) {
-    return true;
-  }
-
-  size_t mac_secret_len, key_len, fixed_iv_len;
-  Array<uint8_t> key_block;
-  if (!get_key_block_lengths(ssl, &mac_secret_len, &key_len, &fixed_iv_len,
-                             hs->new_cipher) ||
-      !key_block.Init(2 * (mac_secret_len + key_len + fixed_iv_len)) ||
-      !SSL_generate_key_block(ssl, key_block.data(), key_block.size())) {
-    return false;
-  }
-
-  hs->key_block = std::move(key_block);
-  return true;
-}
-
-int tls1_change_cipher_state(SSL_HANDSHAKE *hs,
-                             evp_aead_direction_t direction) {
-  SSL *const ssl = hs->ssl;
-  // Ensure the key block is set up.
+int tls1_configure_aead(SSL *ssl, evp_aead_direction_t direction,
+                        Array<uint8_t> *key_block_cache,
+                        const SSL_CIPHER *cipher,
+                        Span<const uint8_t> iv_override) {
   size_t mac_secret_len, key_len, iv_len;
-  if (!setup_key_block(hs) ||
-      !get_key_block_lengths(ssl, &mac_secret_len, &key_len, &iv_len,
-                             hs->new_cipher)) {
+  if (!get_key_block_lengths(ssl, &mac_secret_len, &key_len, &iv_len, cipher)) {
     return 0;
   }
 
-  if ((mac_secret_len + key_len + iv_len) * 2 != hs->key_block.size()) {
-    OPENSSL_PUT_ERROR(SSL, ERR_R_INTERNAL_ERROR);
-    return 0;
+  // Ensure that |key_block_cache| is set up.
+  const size_t key_block_size = 2 * (mac_secret_len + key_len + iv_len);
+  if (key_block_cache->empty()) {
+    if (!key_block_cache->Init(key_block_size) ||
+        !SSL_generate_key_block(ssl, key_block_cache->data(), key_block_size)) {
+      return 0;
+    }
   }
+  assert(key_block_cache->size() == key_block_size);
 
-  Span<const uint8_t> key_block = hs->key_block;
+  Span<const uint8_t> key_block = *key_block_cache;
   Span<const uint8_t> mac_secret, key, iv;
   if (direction == (ssl->server ? evp_aead_open : evp_aead_seal)) {
     // Use the client write (server read) keys.
@@ -370,9 +222,15 @@ int tls1_change_cipher_state(SSL_HANDSHAKE *hs,
     iv = key_block.subspan(2 * mac_secret_len + 2 * key_len + iv_len, iv_len);
   }
 
-  UniquePtr<SSLAEADContext> aead_ctx =
-      SSLAEADContext::Create(direction, ssl->version, SSL_is_dtls(ssl),
-                             hs->new_cipher, key, mac_secret, iv);
+  if (!iv_override.empty()) {
+    if (iv_override.size() != iv_len) {
+      return 0;
+    }
+    iv = iv_override;
+  }
+
+  UniquePtr<SSLAEADContext> aead_ctx = SSLAEADContext::Create(
+      direction, ssl->version, SSL_is_dtls(ssl), cipher, key, mac_secret, iv);
   if (!aead_ctx) {
     return 0;
   }
@@ -382,6 +240,12 @@ int tls1_change_cipher_state(SSL_HANDSHAKE *hs,
   }
 
   return ssl->method->set_write_state(ssl, std::move(aead_ctx));
+}
+
+int tls1_change_cipher_state(SSL_HANDSHAKE *hs,
+                             evp_aead_direction_t direction) {
+  return tls1_configure_aead(hs->ssl, direction, &hs->key_block,
+                             hs->new_cipher, {});
 }
 
 int tls1_generate_master_secret(SSL_HANDSHAKE *hs, uint8_t *out,
@@ -404,23 +268,16 @@ int tls1_generate_master_secret(SSL_HANDSHAKE *hs, uint8_t *out,
   } else {
     auto label =
         MakeConstSpan(kMasterSecretLabel, sizeof(kMasterSecretLabel) - 1);
-    if (ssl_protocol_version(ssl) == SSL3_VERSION) {
-      if (!ssl3_prf(out_span, premaster, label, ssl->s3->client_random,
-                    ssl->s3->server_random)) {
-        return 0;
-      }
-    } else {
-      if (!tls1_prf(hs->transcript.Digest(), out_span, premaster, label,
-                    ssl->s3->client_random, ssl->s3->server_random)) {
-        return 0;
-      }
+    if (!tls1_prf(hs->transcript.Digest(), out_span, premaster, label,
+                  ssl->s3->client_random, ssl->s3->server_random)) {
+      return 0;
     }
   }
 
   return SSL3_MASTER_SECRET_SIZE;
 }
 
-}  // namespace bssl
+BSSL_NAMESPACE_END
 
 using namespace bssl;
 
@@ -443,11 +300,6 @@ int SSL_generate_key_block(const SSL *ssl, uint8_t *out, size_t out_len) {
   static const char kLabel[] = "key expansion";
   auto label = MakeConstSpan(kLabel, sizeof(kLabel) - 1);
 
-  if (ssl_protocol_version(ssl) == SSL3_VERSION) {
-    return ssl3_prf(out_span, master_key, label, ssl->s3->server_random,
-                    ssl->s3->client_random);
-  }
-
   const EVP_MD *digest = ssl_session_get_digest(session);
   return tls1_prf(digest, out_span, master_key, label, ssl->s3->server_random,
                   ssl->s3->client_random);
@@ -457,18 +309,24 @@ int SSL_export_keying_material(SSL *ssl, uint8_t *out, size_t out_len,
                                const char *label, size_t label_len,
                                const uint8_t *context, size_t context_len,
                                int use_context) {
-  if (!ssl->s3->have_version || ssl->version == SSL3_VERSION) {
-    return 0;
-  }
-
-  // Exporters may not be used in the middle of a renegotiation.
-  if (SSL_in_init(ssl) && !SSL_in_false_start(ssl)) {
+  // Exporters may be used in False Start and server 0-RTT, where the handshake
+  // has progressed enough. Otherwise, they may not be used during a handshake.
+  if (SSL_in_init(ssl) &&
+      !SSL_in_false_start(ssl) &&
+      !(SSL_is_server(ssl) && SSL_in_early_data(ssl))) {
+    OPENSSL_PUT_ERROR(SSL, SSL_R_HANDSHAKE_NOT_COMPLETE);
     return 0;
   }
 
   if (ssl_protocol_version(ssl) >= TLS1_3_VERSION) {
-    return tls13_export_keying_material(ssl, out, out_len, label, label_len,
-                                        context, context_len, use_context);
+    if (!use_context) {
+      context = nullptr;
+      context_len = 0;
+    }
+    return tls13_export_keying_material(
+        ssl, MakeSpan(out, out_len),
+        MakeConstSpan(ssl->s3->exporter_secret, ssl->s3->exporter_secret_len),
+        MakeConstSpan(label, label_len), MakeConstSpan(context, context_len));
   }
 
   size_t seed_len = 2 * SSL3_RANDOM_SIZE;
@@ -500,4 +358,28 @@ int SSL_export_keying_material(SSL *ssl, uint8_t *out, size_t out_len,
       digest, MakeSpan(out, out_len),
       MakeConstSpan(session->master_key, session->master_key_length),
       MakeConstSpan(label, label_len), seed, {});
+}
+
+int SSL_export_early_keying_material(
+    SSL *ssl, uint8_t *out, size_t out_len, const char *label, size_t label_len,
+    const uint8_t *context, size_t context_len) {
+  if (!SSL_in_early_data(ssl) &&
+      (!ssl->s3->have_version ||
+       ssl_protocol_version(ssl) < TLS1_3_VERSION)) {
+    OPENSSL_PUT_ERROR(SSL, SSL_R_WRONG_SSL_VERSION);
+    return 0;
+  }
+
+  // The early exporter only exists if we accepted early data or offered it as
+  // a client.
+  if (!SSL_in_early_data(ssl) && !SSL_early_data_accepted(ssl)) {
+    OPENSSL_PUT_ERROR(SSL, SSL_R_EARLY_DATA_NOT_IN_USE);
+    return 0;
+  }
+
+  return tls13_export_keying_material(
+      ssl, MakeSpan(out, out_len),
+      MakeConstSpan(ssl->s3->early_exporter_secret,
+                    ssl->s3->early_exporter_secret_len),
+      MakeConstSpan(label, label_len), MakeConstSpan(context, context_len));
 }

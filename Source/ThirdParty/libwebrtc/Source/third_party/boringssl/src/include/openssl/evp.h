@@ -80,6 +80,12 @@ extern "C" {
 
 
 // Public key objects.
+//
+// An |EVP_PKEY| object represents a public or private key. A given object may
+// be used concurrently on multiple threads by non-mutating functions, provided
+// no other thread is concurrently calling a mutating function. Unless otherwise
+// documented, functions which take a |const| pointer are non-mutating and
+// functions which take a non-|const| pointer are mutating.
 
 // EVP_PKEY_new creates a new, empty public-key object and returns it or NULL
 // on allocation failure.
@@ -89,7 +95,9 @@ OPENSSL_EXPORT EVP_PKEY *EVP_PKEY_new(void);
 // itself.
 OPENSSL_EXPORT void EVP_PKEY_free(EVP_PKEY *pkey);
 
-// EVP_PKEY_up_ref increments the reference count of |pkey| and returns one.
+// EVP_PKEY_up_ref increments the reference count of |pkey| and returns one. It
+// does not mutate |pkey| for thread-safety purposes and may be used
+// concurrently.
 OPENSSL_EXPORT int EVP_PKEY_up_ref(EVP_PKEY *pkey);
 
 // EVP_PKEY_is_opaque returns one if |pkey| is opaque. Opaque keys are backed by
@@ -121,7 +129,7 @@ OPENSSL_EXPORT int EVP_PKEY_size(const EVP_PKEY *pkey);
 // EVP_PKEY_bits returns the "size", in bits, of |pkey|. For an RSA key, this
 // returns the bit length of the modulus. For an EC key, this returns the bit
 // length of the group order.
-OPENSSL_EXPORT int EVP_PKEY_bits(EVP_PKEY *pkey);
+OPENSSL_EXPORT int EVP_PKEY_bits(const EVP_PKEY *pkey);
 
 // EVP_PKEY_id returns the type of |pkey|, which is one of the |EVP_PKEY_*|
 // values.
@@ -136,26 +144,31 @@ OPENSSL_EXPORT int EVP_PKEY_type(int nid);
 //
 // The following functions get and set the underlying public key in an
 // |EVP_PKEY| object. The |set1| functions take an additional reference to the
-// underlying key and return one on success or zero on error. The |assign|
-// functions adopt the caller's reference. The |get1| functions return a fresh
-// reference to the underlying object or NULL if |pkey| is not of the correct
-// type. The |get0| functions behave the same but return a non-owning
-// pointer.
+// underlying key and return one on success or zero if |key| is NULL. The
+// |assign| functions adopt the caller's reference and return one on success or
+// zero if |key| is NULL. The |get1| functions return a fresh reference to the
+// underlying object or NULL if |pkey| is not of the correct type. The |get0|
+// functions behave the same but return a non-owning pointer.
+//
+// The |get0| and |get1| functions take |const| pointers and are thus
+// non-mutating for thread-safety purposes, but mutating functions on the
+// returned lower-level objects are considered to also mutate the |EVP_PKEY| and
+// may not be called concurrently with other operations on the |EVP_PKEY|.
 
 OPENSSL_EXPORT int EVP_PKEY_set1_RSA(EVP_PKEY *pkey, RSA *key);
 OPENSSL_EXPORT int EVP_PKEY_assign_RSA(EVP_PKEY *pkey, RSA *key);
-OPENSSL_EXPORT RSA *EVP_PKEY_get0_RSA(EVP_PKEY *pkey);
-OPENSSL_EXPORT RSA *EVP_PKEY_get1_RSA(EVP_PKEY *pkey);
+OPENSSL_EXPORT RSA *EVP_PKEY_get0_RSA(const EVP_PKEY *pkey);
+OPENSSL_EXPORT RSA *EVP_PKEY_get1_RSA(const EVP_PKEY *pkey);
 
 OPENSSL_EXPORT int EVP_PKEY_set1_DSA(EVP_PKEY *pkey, DSA *key);
 OPENSSL_EXPORT int EVP_PKEY_assign_DSA(EVP_PKEY *pkey, DSA *key);
-OPENSSL_EXPORT DSA *EVP_PKEY_get0_DSA(EVP_PKEY *pkey);
-OPENSSL_EXPORT DSA *EVP_PKEY_get1_DSA(EVP_PKEY *pkey);
+OPENSSL_EXPORT DSA *EVP_PKEY_get0_DSA(const EVP_PKEY *pkey);
+OPENSSL_EXPORT DSA *EVP_PKEY_get1_DSA(const EVP_PKEY *pkey);
 
 OPENSSL_EXPORT int EVP_PKEY_set1_EC_KEY(EVP_PKEY *pkey, EC_KEY *key);
 OPENSSL_EXPORT int EVP_PKEY_assign_EC_KEY(EVP_PKEY *pkey, EC_KEY *key);
-OPENSSL_EXPORT EC_KEY *EVP_PKEY_get0_EC_KEY(EVP_PKEY *pkey);
-OPENSSL_EXPORT EC_KEY *EVP_PKEY_get1_EC_KEY(EVP_PKEY *pkey);
+OPENSSL_EXPORT EC_KEY *EVP_PKEY_get0_EC_KEY(const EVP_PKEY *pkey);
+OPENSSL_EXPORT EC_KEY *EVP_PKEY_get1_EC_KEY(const EVP_PKEY *pkey);
 
 // EVP_PKEY_new_ed25519_public returns a newly allocated |EVP_PKEY| wrapping an
 // Ed25519 public key, or NULL on allocation error.
@@ -169,18 +182,19 @@ OPENSSL_EXPORT EVP_PKEY *EVP_PKEY_new_ed25519_private(
 
 #define EVP_PKEY_NONE NID_undef
 #define EVP_PKEY_RSA NID_rsaEncryption
+#define EVP_PKEY_RSA_PSS NID_rsassaPss
 #define EVP_PKEY_DSA NID_dsa
 #define EVP_PKEY_EC NID_X9_62_id_ecPublicKey
 #define EVP_PKEY_ED25519 NID_ED25519
 
 // EVP_PKEY_assign sets the underlying key of |pkey| to |key|, which must be of
-// the given type. The |type| argument should be one of the |EVP_PKEY_*|
-// values.
+// the given type. It returns one if successful or zero if the |type| argument
+// is not one of the |EVP_PKEY_*| values or if |key| is NULL.
 OPENSSL_EXPORT int EVP_PKEY_assign(EVP_PKEY *pkey, int type, void *key);
 
-// EVP_PKEY_set_type sets the type of |pkey| to |type|, which should be one of
-// the |EVP_PKEY_*| values. It returns one if successful or zero otherwise. If
-// |pkey| is NULL, it simply reports whether the type is known.
+// EVP_PKEY_set_type sets the type of |pkey| to |type|. It returns one if
+// successful or zero if the |type| argument is not one of the |EVP_PKEY_*|
+// values. If |pkey| is NULL, it simply reports whether the type is known.
 OPENSSL_EXPORT int EVP_PKEY_set_type(EVP_PKEY *pkey, int type);
 
 // EVP_PKEY_cmp_parameters compares the parameters of |a| and |b|. It returns
@@ -195,7 +209,8 @@ OPENSSL_EXPORT int EVP_PKEY_cmp_parameters(const EVP_PKEY *a,
 
 // EVP_parse_public_key decodes a DER-encoded SubjectPublicKeyInfo structure
 // (RFC 5280) from |cbs| and advances |cbs|. It returns a newly-allocated
-// |EVP_PKEY| or NULL on error.
+// |EVP_PKEY| or NULL on error. If the key is an EC key, the curve is guaranteed
+// to be set.
 //
 // The caller must check the type of the parsed public key to ensure it is
 // suitable and validate other desired key properties such as RSA modulus size
@@ -237,6 +252,9 @@ OPENSSL_EXPORT int EVP_marshal_private_key(CBB *cbb, const EVP_PKEY *key);
 // For single-shot signing algorithms which do not use a pre-hash, such as
 // Ed25519, |type| should be NULL. The |EVP_MD_CTX| itself is unused but is
 // present so the API is uniform. See |EVP_DigestSign|.
+//
+// This function does not mutate |pkey| for thread-safety purposes and may be
+// used concurrently with other non-mutating functions on |pkey|.
 //
 // It returns one on success, or zero on error.
 OPENSSL_EXPORT int EVP_DigestSignInit(EVP_MD_CTX *ctx, EVP_PKEY_CTX **pctx,
@@ -290,6 +308,9 @@ OPENSSL_EXPORT int EVP_DigestSign(EVP_MD_CTX *ctx, uint8_t *out_sig,
 // For single-shot signing algorithms which do not use a pre-hash, such as
 // Ed25519, |type| should be NULL. The |EVP_MD_CTX| itself is unused but is
 // present so the API is uniform. See |EVP_DigestVerify|.
+//
+// This function does not mutate |pkey| for thread-safety purposes and may be
+// used concurrently with other non-mutating functions on |pkey|.
 //
 // It returns one on success, or zero on error.
 OPENSSL_EXPORT int EVP_DigestVerifyInit(EVP_MD_CTX *ctx, EVP_PKEY_CTX **pctx,
@@ -351,7 +372,9 @@ OPENSSL_EXPORT int EVP_SignUpdate(EVP_MD_CTX *ctx, const void *data,
 // It returns one on success and zero otherwise.
 //
 // It does not modify |ctx|, thus it's possible to continue to use |ctx| in
-// order to sign a longer message.
+// order to sign a longer message. It also does not mutate |pkey| for
+// thread-safety purposes and may be used concurrently with other non-mutating
+// functions on |pkey|.
 OPENSSL_EXPORT int EVP_SignFinal(const EVP_MD_CTX *ctx, uint8_t *sig,
                                  unsigned int *out_sig_len, EVP_PKEY *pkey);
 
@@ -384,7 +407,9 @@ OPENSSL_EXPORT int EVP_VerifyUpdate(EVP_MD_CTX *ctx, const void *data,
 // It returns one on success and zero otherwise.
 //
 // It does not modify |ctx|, thus it's possible to continue to use |ctx| in
-// order to sign a longer message.
+// order to verify a longer message. It also does not mutate |pkey| for
+// thread-safety purposes and may be used concurrently with other non-mutating
+// functions on |pkey|.
 OPENSSL_EXPORT int EVP_VerifyFinal(EVP_MD_CTX *ctx, const uint8_t *sig,
                                    size_t sig_len, EVP_PKEY *pkey);
 
@@ -415,7 +440,7 @@ OPENSSL_EXPORT int EVP_PKEY_print_params(BIO *out, const EVP_PKEY *pkey,
 
 // PKCS5_PBKDF2_HMAC computes |iterations| iterations of PBKDF2 of |password|
 // and |salt|, using |digest|, and outputs |key_len| bytes to |out_key|. It
-// returns one on success and zero on error.
+// returns one on success and zero on allocation failure or if iterations is 0.
 OPENSSL_EXPORT int PKCS5_PBKDF2_HMAC(const char *password, size_t password_len,
                                      const uint8_t *salt, size_t salt_len,
                                      unsigned iterations, const EVP_MD *digest,
@@ -431,12 +456,20 @@ OPENSSL_EXPORT int PKCS5_PBKDF2_HMAC_SHA1(const char *password,
 
 // EVP_PBE_scrypt expands |password| into a secret key of length |key_len| using
 // scrypt, as described in RFC 7914, and writes the result to |out_key|. It
-// returns one on success and zero on error.
+// returns one on success and zero on allocation failure, if the memory required
+// for the operation exceeds |max_mem|, or if any of the parameters are invalid
+// as described below.
 //
 // |N|, |r|, and |p| are as described in RFC 7914 section 6. They determine the
-// cost of the operation. If the memory required exceeds |max_mem|, the
-// operation will fail instead. If |max_mem| is zero, a defult limit of 32MiB
-// will be used.
+// cost of the operation. If |max_mem| is zero, a defult limit of 32MiB will be
+// used.
+//
+// The parameters are considered invalid under any of the following conditions:
+// - |r| or |p| are zero
+// - |p| > (2^30 - 1) / |r|
+// - |N| is not a power of two
+// - |N| > 2^32
+// - |N| > 2^(128 * |r| / 8)
 OPENSSL_EXPORT int EVP_PBE_scrypt(const char *password, size_t password_len,
                                   const uint8_t *salt, size_t salt_len,
                                   uint64_t N, uint64_t r, uint64_t p,
@@ -757,7 +790,7 @@ OPENSSL_EXPORT void EVP_MD_do_all_sorted(void (*callback)(const EVP_MD *cipher,
 // RSA keys are serialized as a DER-encoded RSAPublicKey (RFC 3447) structure.
 // EC keys are serialized as a DER-encoded ECPrivateKey (RFC 5915) structure.
 //
-// Use |RSA_marshal_private_key| or |EC_marshal_private_key| instead.
+// Use |RSA_marshal_private_key| or |EC_KEY_marshal_private_key| instead.
 OPENSSL_EXPORT int i2d_PrivateKey(const EVP_PKEY *key, uint8_t **outp);
 
 // i2d_PublicKey marshals a public key from |key| to a type-specific format.
@@ -769,7 +802,7 @@ OPENSSL_EXPORT int i2d_PrivateKey(const EVP_PKEY *key, uint8_t **outp);
 // EC keys are serialized as an EC point per SEC 1.
 //
 // Use |RSA_marshal_public_key| or |EC_POINT_point2cbb| instead.
-OPENSSL_EXPORT int i2d_PublicKey(EVP_PKEY *key, uint8_t **outp);
+OPENSSL_EXPORT int i2d_PublicKey(const EVP_PKEY *key, uint8_t **outp);
 
 // d2i_PrivateKey parses an ASN.1, DER-encoded, private key from |len| bytes at
 // |*inp|. If |out| is not NULL then, on exit, a pointer to the result is in
@@ -794,7 +827,24 @@ OPENSSL_EXPORT EVP_PKEY *d2i_AutoPrivateKey(EVP_PKEY **out, const uint8_t **inp,
                                             long len);
 
 // EVP_PKEY_get0_DH returns NULL.
-OPENSSL_EXPORT DH *EVP_PKEY_get0_DH(EVP_PKEY *pkey);
+OPENSSL_EXPORT DH *EVP_PKEY_get0_DH(const EVP_PKEY *pkey);
+
+// EVP_PKEY_get1_DH returns NULL.
+OPENSSL_EXPORT DH *EVP_PKEY_get1_DH(const EVP_PKEY *pkey);
+
+
+// Preprocessor compatibility section (hidden).
+//
+// Historically, a number of APIs were implemented in OpenSSL as macros and
+// constants to 'ctrl' functions. To avoid breaking #ifdefs in consumers, this
+// section defines a number of legacy macros.
+
+// |BORINGSSL_PREFIX| already makes each of these symbols into macros, so there
+// is no need to define conflicting macros.
+#if !defined(BORINGSSL_PREFIX)
+#define EVP_PKEY_CTX_set_rsa_oaep_md EVP_PKEY_CTX_set_rsa_oaep_md
+#define EVP_PKEY_CTX_set0_rsa_oaep_label EVP_PKEY_CTX_set0_rsa_oaep_label
+#endif
 
 
 // Private structures.
@@ -824,12 +874,13 @@ struct evp_pkey_st {
 }  // extern C
 
 extern "C++" {
-namespace bssl {
+BSSL_NAMESPACE_BEGIN
 
 BORINGSSL_MAKE_DELETER(EVP_PKEY, EVP_PKEY_free)
+BORINGSSL_MAKE_UP_REF(EVP_PKEY, EVP_PKEY_up_ref)
 BORINGSSL_MAKE_DELETER(EVP_PKEY_CTX, EVP_PKEY_CTX_free)
 
-}  // namespace bssl
+BSSL_NAMESPACE_END
 
 }  // extern C++
 

@@ -347,40 +347,45 @@ ASN1_INTEGER *d2i_ASN1_UINTEGER(ASN1_INTEGER **a, const unsigned char **pp,
 
 int ASN1_INTEGER_set(ASN1_INTEGER *a, long v)
 {
-    int j, k;
-    unsigned int i;
-    unsigned char buf[sizeof(long) + 1];
-    long d;
-
-    a->type = V_ASN1_INTEGER;
-    if (a->length < (int)(sizeof(long) + 1)) {
-        if (a->data != NULL)
-            OPENSSL_free(a->data);
-        if ((a->data =
-             (unsigned char *)OPENSSL_malloc(sizeof(long) + 1)) != NULL)
-            OPENSSL_memset((char *)a->data, 0, sizeof(long) + 1);
+    if (v >= 0) {
+        return ASN1_INTEGER_set_uint64(a, (uint64_t) v);
     }
-    if (a->data == NULL) {
+
+    if (!ASN1_INTEGER_set_uint64(a, 0 - (uint64_t) v)) {
+        return 0;
+    }
+
+    a->type = V_ASN1_NEG_INTEGER;
+    return 1;
+}
+
+int ASN1_INTEGER_set_uint64(ASN1_INTEGER *out, uint64_t v)
+{
+    uint8_t *const newdata = OPENSSL_malloc(sizeof(uint64_t));
+    if (newdata == NULL) {
         OPENSSL_PUT_ERROR(ASN1, ERR_R_MALLOC_FAILURE);
-        return (0);
-    }
-    d = v;
-    if (d < 0) {
-        d = -d;
-        a->type = V_ASN1_NEG_INTEGER;
+        return 0;
     }
 
-    for (i = 0; i < sizeof(long); i++) {
-        if (d == 0)
+    OPENSSL_free(out->data);
+    out->data = newdata;
+    v = CRYPTO_bswap8(v);
+    memcpy(out->data, &v, sizeof(v));
+
+    out->type = V_ASN1_INTEGER;
+
+    size_t leading_zeros;
+    for (leading_zeros = 0; leading_zeros < sizeof(uint64_t) - 1;
+         leading_zeros++) {
+        if (out->data[leading_zeros] != 0) {
             break;
-        buf[i] = (int)d & 0xff;
-        d >>= 8;
+        }
     }
-    j = 0;
-    for (k = i - 1; k >= 0; k--)
-        a->data[j++] = buf[k];
-    a->length = j;
-    return (1);
+
+    out->length = sizeof(uint64_t) - leading_zeros;
+    OPENSSL_memmove(out->data, out->data + leading_zeros, out->length);
+
+    return 1;
 }
 
 long ASN1_INTEGER_get(const ASN1_INTEGER *a)
@@ -395,8 +400,8 @@ long ASN1_INTEGER_get(const ASN1_INTEGER *a)
     else if (i != V_ASN1_INTEGER)
         return -1;
 
-    OPENSSL_COMPILE_ASSERT(sizeof(uint64_t) >= sizeof(long),
-                           long_larger_than_uint64_t);
+    OPENSSL_STATIC_ASSERT(sizeof(uint64_t) >= sizeof(long),
+                          "long larger than uint64_t");
 
     if (a->length > (int)sizeof(uint64_t)) {
         /* hmm... a bit ugly, return all ones */

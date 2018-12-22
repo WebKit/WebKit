@@ -4,10 +4,12 @@ package main
 
 import (
 	"bufio"
+	"errors"
 	"flag"
 	"fmt"
 	"os"
 	"os/exec"
+	"path"
 	"path/filepath"
 	"runtime"
 	"strings"
@@ -19,6 +21,13 @@ var (
 	oraclePath = flag.String("oracle-bin", "", "Path to the oracle binary")
 	suiteDir   = flag.String("suite-dir", "", "Base directory containing the CAVP test suite")
 	noFAX      = flag.Bool("no-fax", false, "Skip comparing against FAX files")
+	android    = flag.Bool("android", false, "Run tests via ADB")
+)
+
+const (
+	androidTmpPath       = "/data/local/tmp/"
+	androidCAVPPath      = androidTmpPath + "cavp"
+	androidLibCryptoPath = androidTmpPath + "libcrypto.so"
 )
 
 // test describes a single request file.
@@ -34,6 +43,12 @@ type test struct {
 	noFAX bool
 }
 
+// nextLineState can be used by FAX next-line function to store state.
+type nextLineState struct {
+	// State used by the KAS test.
+	nextIsIUTHash bool
+}
+
 // testSuite describes a series of tests that are handled by a single oracle
 // binary.
 type testSuite struct {
@@ -41,10 +56,13 @@ type testSuite struct {
 	directory string
 	// suite names the test suite to pass as the first command-line argument.
 	suite string
-	// faxScanFunc, if not nil, is the function to use instead of
-	// (*bufio.Scanner).Scan. This can be used to skip lines.
-	faxScanFunc func(*bufio.Scanner) bool
-	tests       []test
+	// nextLineFunc, if not nil, is the function used to read the next line
+	// from the FAX file. This can be used to skip lines and/or mutate them
+	// as needed. The second argument can be used by the scanner to store
+	// state, if needed. If isWildcard is true on return then line is not
+	// meaningful and any line from the response file should be accepted.
+	nextLineFunc func(*bufio.Scanner, *nextLineState) (line string, isWildcard, ok bool)
+	tests        []test
 }
 
 func (t *testSuite) getDirectory() string {
@@ -161,10 +179,10 @@ var rsa2SigGenTests = testSuite{
 var rsa2SigVerTests = testSuite{
 	"RSA2",
 	"rsa2_sigver",
-	func(s *bufio.Scanner) bool {
+	func(s *bufio.Scanner, state *nextLineState) (string, bool, bool) {
 		for {
 			if !s.Scan() {
-				return false
+				return "", false, false
 			}
 
 			line := s.Text()
@@ -173,15 +191,13 @@ var rsa2SigVerTests = testSuite{
 			}
 			if strings.HasPrefix(line, "q = ") {
 				// Skip the "q = " line and an additional blank line.
-				if !s.Scan() {
-					return false
-				}
-				if len(strings.TrimSpace(s.Text())) > 0 {
-					return false
+				if !s.Scan() ||
+					len(strings.TrimSpace(s.Text())) > 0 {
+					return "", false, false
 				}
 				continue
 			}
-			return true
+			return line, false, true
 		}
 	},
 	[]test{
@@ -273,7 +289,51 @@ var keyWrapTests = testSuite{
 	},
 }
 
-var allTestSuites = []*testSuite{
+var kasTests = testSuite{
+	"KAS",
+	"kas",
+	func(s *bufio.Scanner, state *nextLineState) (line string, isWildcard, ok bool) {
+		for {
+			// If the response file will include the IUT hash next,
+			// return a wildcard signal because this cannot be
+			// matched against the FAX file.
+			if state.nextIsIUTHash {
+				state.nextIsIUTHash = false
+				return "", true, true
+			}
+
+			if !s.Scan() {
+				return "", false, false
+			}
+
+			line := s.Text()
+			if strings.HasPrefix(line, "deCAVS = ") || strings.HasPrefix(line, "Z = ") {
+				continue
+			}
+			if strings.HasPrefix(line, "CAVSHashZZ = ") {
+				state.nextIsIUTHash = true
+			}
+			return line, false, true
+		}
+	},
+	[]test{
+		{"KASFunctionTest_ECCEphemeralUnified_NOKC_ZZOnly_init", []string{"function"}, true},
+		{"KASFunctionTest_ECCEphemeralUnified_NOKC_ZZOnly_resp", []string{"function"}, true},
+		{"KASValidityTest_ECCEphemeralUnified_NOKC_ZZOnly_init", []string{"validity"}, false},
+		{"KASValidityTest_ECCEphemeralUnified_NOKC_ZZOnly_resp", []string{"validity"}, false},
+	},
+}
+
+var tlsKDFTests = testSuite{
+	"KDF135",
+	"tlskdf",
+	nil,
+	[]test{
+		{"tls", nil, false},
+	},
+}
+
+var testSuites = []*testSuite{
 	&aesGCMTests,
 	&aesTests,
 	&ctrDRBGTests,
@@ -289,6 +349,8 @@ var allTestSuites = []*testSuite{
 	&shaTests,
 	&shaMonteTests,
 	&tdesTests,
+	&kasTests,
+	&tlsKDFTests,
 }
 
 // testInstance represents a specific test in a testSuite.
@@ -317,10 +379,27 @@ func worker(wg *sync.WaitGroup, work <-chan testInstance) {
 	}
 }
 
+func checkAndroidPrereqs() error {
+	// The cavp binary, and a matching libcrypto.so, are required to be placed
+	// in /data/local/tmp before running this script.
+	if err := exec.Command("adb", "shell", "ls", androidCAVPPath).Run(); err != nil {
+		return errors.New("failed to list cavp binary; ensure that adb works and cavp binary is in place: " + err.Error())
+	}
+	if err := exec.Command("adb", "shell", "ls", androidLibCryptoPath).Run(); err != nil {
+		return errors.New("failed to list libcrypto.so; ensure that library is in place: " + err.Error())
+	}
+	return nil
+}
+
 func main() {
 	flag.Parse()
 
-	if len(*oraclePath) == 0 {
+	if *android {
+		if err := checkAndroidPrereqs(); err != nil {
+			fmt.Fprintf(os.Stderr, "%s\n", err)
+			os.Exit(1)
+		}
+	} else if len(*oraclePath) == 0 {
 		fmt.Fprintf(os.Stderr, "Must give -oracle-bin\n")
 		os.Exit(1)
 	}
@@ -328,12 +407,17 @@ func main() {
 	work := make(chan testInstance)
 	var wg sync.WaitGroup
 
-	for i := 0; i < runtime.NumCPU(); i++ {
+	numWorkers := runtime.NumCPU()
+	if *android {
+		numWorkers = 1
+	}
+
+	for i := 0; i < numWorkers; i++ {
 		wg.Add(1)
 		go worker(&wg, work)
 	}
 
-	for _, suite := range allTestSuites {
+	for _, suite := range testSuites {
 		for i := range suite.tests {
 			work <- testInstance{suite, i}
 		}
@@ -344,9 +428,28 @@ func main() {
 }
 
 func doTest(suite *testSuite, test test) error {
-	args := []string{suite.suite}
+	bin := *oraclePath
+	var args []string
+
+	if *android {
+		bin = "adb"
+		args = []string{"shell", "LD_LIBRARY_PATH=" + androidTmpPath, androidCAVPPath}
+	}
+
+	args = append(args, suite.suite)
 	args = append(args, test.args...)
-	args = append(args, filepath.Join(suite.getDirectory(), "req", test.inFile+".req"))
+	reqPath := filepath.Join(suite.getDirectory(), "req", test.inFile+".req")
+	var reqPathOnDevice string
+
+	if *android {
+		reqPathOnDevice = path.Join(androidTmpPath, test.inFile+".req")
+		if err := exec.Command("adb", "push", reqPath, reqPathOnDevice).Run(); err != nil {
+			return errors.New("failed to push request file: " + err.Error())
+		}
+		args = append(args, reqPathOnDevice)
+	} else {
+		args = append(args, reqPath)
+	}
 
 	respDir := filepath.Join(suite.getDirectory(), "resp")
 	if err := os.Mkdir(respDir, 0755); err != nil && !os.IsExist(err) {
@@ -359,17 +462,21 @@ func doTest(suite *testSuite, test test) error {
 	}
 	defer outFile.Close()
 
-	cmd := exec.Command(*oraclePath, args...)
+	cmd := exec.Command(bin, args...)
 	cmd.Stdout = outFile
 	cmd.Stderr = os.Stderr
 
-	cmdLine := strings.Join(append([]string{*oraclePath}, args...), " ")
+	cmdLine := strings.Join(append([]string{bin}, args...), " ")
 	startTime := time.Now()
 	if err := cmd.Run(); err != nil {
 		return fmt.Errorf("cannot run command for %q %q (%s): %s", suite.getDirectory(), test.inFile, cmdLine, err)
 	}
 
 	fmt.Printf("%s (%ds)\n", cmdLine, int(time.Since(startTime).Seconds()))
+
+	if *android {
+		exec.Command("adb", "shell", "rm", reqPathOnDevice).Run()
+	}
 
 	return nil
 }
@@ -385,9 +492,14 @@ func canonicalizeLine(in string) string {
 }
 
 func compareFAX(suite *testSuite, test test) error {
-	faxScanFunc := suite.faxScanFunc
-	if faxScanFunc == nil {
-		faxScanFunc = (*bufio.Scanner).Scan
+	nextLineFunc := suite.nextLineFunc
+	if nextLineFunc == nil {
+		nextLineFunc = func(s *bufio.Scanner, state *nextLineState) (string, bool, bool) {
+			if !s.Scan() {
+				return "", false, false
+			}
+			return s.Text(), false, true
+		}
 	}
 
 	respPath := filepath.Join(suite.getDirectory(), "resp", test.inFile+".rsp")
@@ -406,6 +518,7 @@ func compareFAX(suite *testSuite, test test) error {
 
 	respScanner := bufio.NewScanner(respFile)
 	faxScanner := bufio.NewScanner(faxFile)
+	var nextLineState nextLineState
 
 	lineNo := 0
 	inHeader := true
@@ -414,6 +527,7 @@ func compareFAX(suite *testSuite, test test) error {
 		lineNo++
 		respLine := respScanner.Text()
 		var faxLine string
+		var isWildcard, ok bool
 
 		if inHeader && (len(respLine) == 0 || respLine[0] == '#') {
 			continue
@@ -423,8 +537,10 @@ func compareFAX(suite *testSuite, test test) error {
 			haveFaxLine := false
 
 			if inHeader {
-				for faxScanFunc(faxScanner) {
-					faxLine = faxScanner.Text()
+				for {
+					if faxLine, isWildcard, ok = nextLineFunc(faxScanner, &nextLineState); !ok {
+						break
+					}
 					if len(faxLine) != 0 && faxLine[0] != '#' {
 						haveFaxLine = true
 						break
@@ -433,10 +549,7 @@ func compareFAX(suite *testSuite, test test) error {
 
 				inHeader = false
 			} else {
-				if faxScanFunc(faxScanner) {
-					faxLine = faxScanner.Text()
-					haveFaxLine = true
-				}
+				faxLine, isWildcard, haveFaxLine = nextLineFunc(faxScanner, &nextLineState)
 			}
 
 			if !haveFaxLine {
@@ -454,14 +567,14 @@ func compareFAX(suite *testSuite, test test) error {
 			break
 		}
 
-		if canonicalizeLine(faxLine) == canonicalizeLine(respLine) {
+		if isWildcard || canonicalizeLine(faxLine) == canonicalizeLine(respLine) {
 			continue
 		}
 
 		return fmt.Errorf("resp and fax differ at line %d for %q %q: %q vs %q", lineNo, suite.getDirectory(), test.inFile, respLine, faxLine)
 	}
 
-	if faxScanFunc(faxScanner) {
+	if _, _, ok := nextLineFunc(faxScanner, &nextLineState); ok {
 		return fmt.Errorf("fax file is longer than resp for %q %q", suite.getDirectory(), test.inFile)
 	}
 

@@ -121,7 +121,7 @@
 #include "../crypto/internal.h"
 
 
-namespace bssl {
+BSSL_NAMESPACE_BEGIN
 
 // to_u64_be treats |in| as a 8-byte big-endian integer and returns the value as
 // a |uint64_t|.
@@ -137,13 +137,13 @@ static uint64_t to_u64_be(const uint8_t in[8]) {
 
 // dtls1_bitmap_should_discard returns one if |seq_num| has been seen in
 // |bitmap| or is stale. Otherwise it returns zero.
-static int dtls1_bitmap_should_discard(DTLS1_BITMAP *bitmap,
-                                       const uint8_t seq_num[8]) {
+static bool dtls1_bitmap_should_discard(DTLS1_BITMAP *bitmap,
+                                        const uint8_t seq_num[8]) {
   const unsigned kWindowSize = sizeof(bitmap->map) * 8;
 
   uint64_t seq_num_u = to_u64_be(seq_num);
   if (seq_num_u > bitmap->max_seq_num) {
-    return 0;
+    return false;
   }
   uint64_t idx = bitmap->max_seq_num - seq_num_u;
   return idx >= kWindowSize || (bitmap->map & (((uint64_t)1) << idx));
@@ -219,8 +219,8 @@ enum ssl_open_record_t dtls_open_record(SSL *ssl, uint8_t *out_type,
     return ssl_open_record_discard;
   }
 
-  ssl_do_msg_callback(ssl, 0 /* read */, SSL3_RT_HEADER,
-                      in.subspan(0, DTLS1_RT_HEADER_LENGTH));
+  Span<const uint8_t> header = in.subspan(0, DTLS1_RT_HEADER_LENGTH);
+  ssl_do_msg_callback(ssl, 0 /* read */, SSL3_RT_HEADER, header);
 
   uint16_t epoch = (((uint16_t)sequence[0]) << 8) | sequence[1];
   if (epoch != ssl->d1->r_epoch ||
@@ -235,7 +235,7 @@ enum ssl_open_record_t dtls_open_record(SSL *ssl, uint8_t *out_type,
 
   // discard the body in-place.
   if (!ssl->s3->aead_read_ctx->Open(
-          out, type, version, sequence,
+          out, type, version, sequence, header,
           MakeSpan(const_cast<uint8_t *>(CBS_data(&body)), CBS_len(&body)))) {
     // Bad packets are silently dropped in DTLS. See section 4.2.1 of RFC 6347.
     // Clear the error queue of any errors decryption may have added. Drop the
@@ -291,14 +291,14 @@ size_t dtls_seal_prefix_len(const SSL *ssl, enum dtls1_use_epoch_t use_epoch) {
          get_write_aead(ssl, use_epoch)->ExplicitNonceLen();
 }
 
-int dtls_seal_record(SSL *ssl, uint8_t *out, size_t *out_len, size_t max_out,
-                     uint8_t type, const uint8_t *in, size_t in_len,
-                     enum dtls1_use_epoch_t use_epoch) {
+bool dtls_seal_record(SSL *ssl, uint8_t *out, size_t *out_len, size_t max_out,
+                      uint8_t type, const uint8_t *in, size_t in_len,
+                      enum dtls1_use_epoch_t use_epoch) {
   const size_t prefix = dtls_seal_prefix_len(ssl, use_epoch);
   if (buffers_alias(in, in_len, out, max_out) &&
       (max_out < prefix || out + prefix != in)) {
     OPENSSL_PUT_ERROR(SSL, SSL_R_OUTPUT_ALIASES_INPUT);
-    return 0;
+    return false;
   }
 
   // Determine the parameters for the current epoch.
@@ -314,7 +314,7 @@ int dtls_seal_record(SSL *ssl, uint8_t *out, size_t *out_len, size_t max_out,
 
   if (max_out < DTLS1_RT_HEADER_LENGTH) {
     OPENSSL_PUT_ERROR(SSL, SSL_R_BUFFER_TOO_SMALL);
-    return 0;
+    return false;
   }
 
   out[0] = type;
@@ -328,26 +328,26 @@ int dtls_seal_record(SSL *ssl, uint8_t *out, size_t *out_len, size_t max_out,
   OPENSSL_memcpy(&out[5], &seq[2], 6);
 
   size_t ciphertext_len;
-  if (!aead->Seal(out + DTLS1_RT_HEADER_LENGTH, &ciphertext_len,
-                  max_out - DTLS1_RT_HEADER_LENGTH, type, record_version,
-                  &out[3] /* seq */, in, in_len) ||
-      !ssl_record_sequence_update(&seq[2], 6)) {
-    return 0;
-  }
-
-  if (ciphertext_len >= 1 << 16) {
-    OPENSSL_PUT_ERROR(SSL, ERR_R_OVERFLOW);
-    return 0;
+  if (!aead->CiphertextLen(&ciphertext_len, in_len, 0)) {
+    OPENSSL_PUT_ERROR(SSL, SSL_R_RECORD_TOO_LARGE);
+    return false;
   }
   out[11] = ciphertext_len >> 8;
   out[12] = ciphertext_len & 0xff;
+  Span<const uint8_t> header = MakeConstSpan(out, DTLS1_RT_HEADER_LENGTH);
+
+  size_t len_copy;
+  if (!aead->Seal(out + DTLS1_RT_HEADER_LENGTH, &len_copy,
+                  max_out - DTLS1_RT_HEADER_LENGTH, type, record_version,
+                  &out[3] /* seq */, header, in, in_len) ||
+      !ssl_record_sequence_update(&seq[2], 6)) {
+    return false;
+  }
+  assert(ciphertext_len == len_copy);
 
   *out_len = DTLS1_RT_HEADER_LENGTH + ciphertext_len;
-
-  ssl_do_msg_callback(ssl, 1 /* write */, SSL3_RT_HEADER,
-                      MakeSpan(out, DTLS1_RT_HEADER_LENGTH));
-
-  return 1;
+  ssl_do_msg_callback(ssl, 1 /* write */, SSL3_RT_HEADER, header);
+  return true;
 }
 
-}  // namespace bssl
+BSSL_NAMESPACE_END

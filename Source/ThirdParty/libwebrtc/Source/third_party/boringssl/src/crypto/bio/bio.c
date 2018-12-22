@@ -61,6 +61,7 @@
 #include <limits.h>
 #include <string.h>
 
+#include <openssl/asn1.h>
 #include <openssl/err.h>
 #include <openssl/mem.h>
 #include <openssl/thread.h>
@@ -175,6 +176,19 @@ int BIO_write(BIO *bio, const void *in, int inl) {
     bio->num_write += ret;
   }
   return ret;
+}
+
+int BIO_write_all(BIO *bio, const void *data, size_t len) {
+  const uint8_t *data_u8 = data;
+  while (len > 0) {
+    int ret = BIO_write(bio, data_u8, len > INT_MAX ? INT_MAX : (int)len);
+    if (ret <= 0) {
+      return 0;
+    }
+    data_u8 += ret;
+    len -= ret;
+  }
+  return 1;
 }
 
 int BIO_puts(BIO *bio, const char *in) {
@@ -468,11 +482,28 @@ static int bio_read_all(BIO *bio, uint8_t **out, size_t *out_len,
   }
 }
 
+// For compatibility with existing |d2i_*_bio| callers, |BIO_read_asn1| uses
+// |ERR_LIB_ASN1| errors.
+OPENSSL_DECLARE_ERROR_REASON(ASN1, ASN1_R_DECODE_ERROR)
+OPENSSL_DECLARE_ERROR_REASON(ASN1, ASN1_R_HEADER_TOO_LONG)
+OPENSSL_DECLARE_ERROR_REASON(ASN1, ASN1_R_NOT_ENOUGH_DATA)
+OPENSSL_DECLARE_ERROR_REASON(ASN1, ASN1_R_TOO_LONG)
+
 int BIO_read_asn1(BIO *bio, uint8_t **out, size_t *out_len, size_t max_len) {
   uint8_t header[6];
 
   static const size_t kInitialHeaderLen = 2;
-  if (BIO_read(bio, header, kInitialHeaderLen) != (int) kInitialHeaderLen) {
+  int ret = BIO_read(bio, header, kInitialHeaderLen);
+  if (ret == 0) {
+    // Historically, OpenSSL returned |ASN1_R_HEADER_TOO_LONG| when |d2i_*_bio|
+    // could not read anything. CPython conditions on this to determine if |bio|
+    // was empty.
+    OPENSSL_PUT_ERROR(ASN1, ASN1_R_HEADER_TOO_LONG);
+    return 0;
+  }
+
+  if (ret != (int) kInitialHeaderLen) {
+    OPENSSL_PUT_ERROR(ASN1, ASN1_R_NOT_ENOUGH_DATA);
     return 0;
   }
 
@@ -481,6 +512,7 @@ int BIO_read_asn1(BIO *bio, uint8_t **out, size_t *out_len, size_t max_len) {
 
   if ((tag & 0x1f) == 0x1f) {
     // Long form tags are not supported.
+    OPENSSL_PUT_ERROR(ASN1, ASN1_R_DECODE_ERROR);
     return 0;
   }
 
@@ -494,34 +526,41 @@ int BIO_read_asn1(BIO *bio, uint8_t **out, size_t *out_len, size_t max_len) {
 
     if ((tag & 0x20 /* constructed */) != 0 && num_bytes == 0) {
       // indefinite length.
-      return bio_read_all(bio, out, out_len, header, kInitialHeaderLen,
-                          max_len);
+      if (!bio_read_all(bio, out, out_len, header, kInitialHeaderLen,
+                        max_len)) {
+        OPENSSL_PUT_ERROR(ASN1, ASN1_R_NOT_ENOUGH_DATA);
+        return 0;
+      }
+      return 1;
     }
 
     if (num_bytes == 0 || num_bytes > 4) {
+      OPENSSL_PUT_ERROR(ASN1, ASN1_R_DECODE_ERROR);
       return 0;
     }
 
     if (BIO_read(bio, header + kInitialHeaderLen, num_bytes) !=
         (int)num_bytes) {
+      OPENSSL_PUT_ERROR(ASN1, ASN1_R_NOT_ENOUGH_DATA);
       return 0;
     }
     header_len = kInitialHeaderLen + num_bytes;
 
     uint32_t len32 = 0;
-    unsigned i;
-    for (i = 0; i < num_bytes; i++) {
+    for (unsigned i = 0; i < num_bytes; i++) {
       len32 <<= 8;
       len32 |= header[kInitialHeaderLen + i];
     }
 
     if (len32 < 128) {
       // Length should have used short-form encoding.
+      OPENSSL_PUT_ERROR(ASN1, ASN1_R_DECODE_ERROR);
       return 0;
     }
 
     if ((len32 >> ((num_bytes-1)*8)) == 0) {
       // Length should have been at least one byte shorter.
+      OPENSSL_PUT_ERROR(ASN1, ASN1_R_DECODE_ERROR);
       return 0;
     }
 
@@ -531,6 +570,7 @@ int BIO_read_asn1(BIO *bio, uint8_t **out, size_t *out_len, size_t max_len) {
   if (len + header_len < len ||
       len + header_len > max_len ||
       len > INT_MAX) {
+    OPENSSL_PUT_ERROR(ASN1, ASN1_R_TOO_LONG);
     return 0;
   }
   len += header_len;
@@ -538,11 +578,13 @@ int BIO_read_asn1(BIO *bio, uint8_t **out, size_t *out_len, size_t max_len) {
 
   *out = OPENSSL_malloc(len);
   if (*out == NULL) {
+    OPENSSL_PUT_ERROR(ASN1, ERR_R_MALLOC_FAILURE);
     return 0;
   }
   OPENSSL_memcpy(*out, header, header_len);
   if (BIO_read(bio, (*out) + header_len, len - header_len) !=
       (int) (len - header_len)) {
+    OPENSSL_PUT_ERROR(ASN1, ASN1_R_NOT_ENOUGH_DATA);
     OPENSSL_free(*out);
     return 0;
   }

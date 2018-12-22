@@ -1,7 +1,7 @@
 name: "android-cmake"
 description:
-    "android-cmake is a collection of CMake scripts for building against the "
-    "Android NDK."
+  "android-cmake is a collection of CMake scripts for building against the "
+  "Android NDK."
 
 third_party {
   url {

@@ -165,6 +165,7 @@ STACK_OF(X509_NAME) *SSL_load_client_CA_file(const char *file) {
     }
 
     // Check for duplicates.
+    sk_X509_NAME_sort(sk);
     if (sk_X509_NAME_find(sk, NULL, xn)) {
       continue;
     }
@@ -223,6 +224,7 @@ int SSL_add_file_cert_subjects_to_stack(STACK_OF(X509_NAME) *stack,
     }
 
     // Check for duplicates.
+    sk_X509_NAME_sort(stack);
     if (sk_X509_NAME_find(stack, NULL, xn)) {
       continue;
     }

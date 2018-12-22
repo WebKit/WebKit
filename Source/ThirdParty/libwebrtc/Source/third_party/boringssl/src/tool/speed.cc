@@ -12,11 +12,13 @@
  * OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF OR IN
  * CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE. */
 
+#include <algorithm>
 #include <string>
 #include <functional>
 #include <memory>
 #include <vector>
 
+#include <assert.h>
 #include <stdint.h>
 #include <stdlib.h>
 #include <string.h>
@@ -140,56 +142,142 @@ static bool TimeFunction(TimeResults *results, std::function<bool()> func) {
   return true;
 }
 
-static bool SpeedRSA(const std::string &key_name, RSA *key,
-                     const std::string &selected) {
-  if (!selected.empty() && key_name.find(selected) == std::string::npos) {
+static bool SpeedRSA(const std::string &selected) {
+  if (!selected.empty() && selected.find("RSA") == std::string::npos) {
     return true;
   }
 
-  std::unique_ptr<uint8_t[]> sig(new uint8_t[RSA_size(key)]);
-  const uint8_t fake_sha256_hash[32] = {0};
-  unsigned sig_len;
+  static const struct {
+    const char *name;
+    const uint8_t *key;
+    const size_t key_len;
+  } kRSAKeys[] = {
+    {"RSA 2048", kDERRSAPrivate2048, kDERRSAPrivate2048Len},
+    {"RSA 4096", kDERRSAPrivate4096, kDERRSAPrivate4096Len},
+  };
 
-  TimeResults results;
-  if (!TimeFunction(&results,
-                    [key, &sig, &fake_sha256_hash, &sig_len]() -> bool {
-        // Usually during RSA signing we're using a long-lived |RSA| that has
-        // already had all of its |BN_MONT_CTX|s constructed, so it makes
-        // sense to use |key| directly here.
-        return RSA_sign(NID_sha256, fake_sha256_hash, sizeof(fake_sha256_hash),
-                        sig.get(), &sig_len, key);
-      })) {
-    fprintf(stderr, "RSA_sign failed.\n");
-    ERR_print_errors_fp(stderr);
+  for (unsigned i = 0; i < OPENSSL_ARRAY_SIZE(kRSAKeys); i++) {
+    const std::string name = kRSAKeys[i].name;
+
+    bssl::UniquePtr<RSA> key(
+        RSA_private_key_from_bytes(kRSAKeys[i].key, kRSAKeys[i].key_len));
+    if (key == nullptr) {
+      fprintf(stderr, "Failed to parse %s key.\n", name.c_str());
+      ERR_print_errors_fp(stderr);
+      return false;
+    }
+
+    std::unique_ptr<uint8_t[]> sig(new uint8_t[RSA_size(key.get())]);
+    const uint8_t fake_sha256_hash[32] = {0};
+    unsigned sig_len;
+
+    TimeResults results;
+    if (!TimeFunction(&results,
+                      [&key, &sig, &fake_sha256_hash, &sig_len]() -> bool {
+          // Usually during RSA signing we're using a long-lived |RSA| that has
+          // already had all of its |BN_MONT_CTX|s constructed, so it makes
+          // sense to use |key| directly here.
+          return RSA_sign(NID_sha256, fake_sha256_hash, sizeof(fake_sha256_hash),
+                          sig.get(), &sig_len, key.get());
+        })) {
+      fprintf(stderr, "RSA_sign failed.\n");
+      ERR_print_errors_fp(stderr);
+      return false;
+    }
+    results.Print(name + " signing");
+
+    if (!TimeFunction(&results,
+                      [&key, &fake_sha256_hash, &sig, sig_len]() -> bool {
+          return RSA_verify(
+              NID_sha256, fake_sha256_hash, sizeof(fake_sha256_hash),
+              sig.get(), sig_len, key.get());
+        })) {
+      fprintf(stderr, "RSA_verify failed.\n");
+      ERR_print_errors_fp(stderr);
+      return false;
+    }
+    results.Print(name + " verify (same key)");
+
+    if (!TimeFunction(&results,
+                      [&key, &fake_sha256_hash, &sig, sig_len]() -> bool {
+          // Usually during RSA verification we have to parse an RSA key from a
+          // certificate or similar, in which case we'd need to construct a new
+          // RSA key, with a new |BN_MONT_CTX| for the public modulus. If we
+          // were to use |key| directly instead, then these costs wouldn't be
+          // accounted for.
+          bssl::UniquePtr<RSA> verify_key(RSA_new());
+          if (!verify_key) {
+            return false;
+          }
+          verify_key->n = BN_dup(key->n);
+          verify_key->e = BN_dup(key->e);
+          if (!verify_key->n ||
+              !verify_key->e) {
+            return false;
+          }
+          return RSA_verify(NID_sha256, fake_sha256_hash,
+                            sizeof(fake_sha256_hash), sig.get(), sig_len,
+                            verify_key.get());
+        })) {
+      fprintf(stderr, "RSA_verify failed.\n");
+      ERR_print_errors_fp(stderr);
+      return false;
+    }
+    results.Print(name + " verify (fresh key)");
+  }
+
+  return true;
+}
+
+static bool SpeedRSAKeyGen(const std::string &selected) {
+  // Don't run this by default because it's so slow.
+  if (selected != "RSAKeyGen") {
+    return true;
+  }
+
+  bssl::UniquePtr<BIGNUM> e(BN_new());
+  if (!BN_set_word(e.get(), 65537)) {
     return false;
   }
-  results.Print(key_name + " signing");
 
-  if (!TimeFunction(&results,
-                    [key, &fake_sha256_hash, &sig, sig_len]() -> bool {
-        // Usually during RSA verification we have to parse an RSA key from a
-        // certificate or similar, in which case we'd need to construct a new
-        // RSA key, with a new |BN_MONT_CTX| for the public modulus. If we were
-        // to use |key| directly instead, then these costs wouldn't be
-        // accounted for.
-        bssl::UniquePtr<RSA> verify_key(RSA_new());
-        if (!verify_key) {
-          return false;
-        }
-        verify_key->n = BN_dup(key->n);
-        verify_key->e = BN_dup(key->e);
-        if (!verify_key->n ||
-            !verify_key->e) {
-          return false;
-        }
-        return RSA_verify(NID_sha256, fake_sha256_hash,
-                          sizeof(fake_sha256_hash), sig.get(), sig_len, key);
-      })) {
-    fprintf(stderr, "RSA_verify failed.\n");
-    ERR_print_errors_fp(stderr);
-    return false;
+  const std::vector<int> kSizes = {2048, 3072, 4096};
+  for (int size : kSizes) {
+    const uint64_t start = time_now();
+    unsigned num_calls = 0;
+    unsigned us;
+    std::vector<unsigned> durations;
+
+    for (;;) {
+      bssl::UniquePtr<RSA> rsa(RSA_new());
+
+      const uint64_t iteration_start = time_now();
+      if (!RSA_generate_key_ex(rsa.get(), size, e.get(), nullptr)) {
+        fprintf(stderr, "RSA_generate_key_ex failed.\n");
+        ERR_print_errors_fp(stderr);
+        return false;
+      }
+      const uint64_t iteration_end = time_now();
+
+      num_calls++;
+      durations.push_back(iteration_end - iteration_start);
+
+      us = iteration_end - start;
+      if (us > 30 * 1000000 /* 30 secs */) {
+        break;
+      }
+    }
+
+    std::sort(durations.begin(), durations.end());
+    printf("Did %u RSA %d key-gen operations in %uus (%.1f ops/sec)\n",
+           num_calls, size, us,
+           (static_cast<double>(num_calls) / us) * 1000000);
+    const size_t n = durations.size();
+    assert(n > 0);
+    unsigned median = n & 1 ? durations[n / 2]
+                            : (durations[n / 2 - 1] + durations[n / 2]) / 2;
+    printf("  min: %uus, median: %uus, max: %uus\n", durations[0], median,
+           durations[n - 1]);
   }
-  results.Print(key_name + " verify");
 
   return true;
 }
@@ -220,7 +308,8 @@ static bool SpeedAEADChunk(const EVP_AEAD *aead, const std::string &name,
   // non-scattering seal, hence we add overhead_len to the size of this buffer.
   std::unique_ptr<uint8_t[]> out_storage(
       new uint8_t[chunk_len + overhead_len + kAlignment]);
-  std::unique_ptr<uint8_t[]> in2_storage(new uint8_t[chunk_len + kAlignment]);
+  std::unique_ptr<uint8_t[]> in2_storage(
+      new uint8_t[chunk_len + overhead_len + kAlignment]);
   std::unique_ptr<uint8_t[]> ad(new uint8_t[ad_len]);
   OPENSSL_memset(ad.get(), 0, ad_len);
   std::unique_ptr<uint8_t[]> tag_storage(
@@ -263,15 +352,25 @@ static bool SpeedAEADChunk(const EVP_AEAD *aead, const std::string &name,
     EVP_AEAD_CTX_seal(ctx.get(), out, &out_len, chunk_len + overhead_len,
                       nonce.get(), nonce_len, in, chunk_len, ad.get(), ad_len);
 
+    ctx.Reset();
+    if (!EVP_AEAD_CTX_init_with_direction(ctx.get(), aead, key.get(), key_len,
+                                          EVP_AEAD_DEFAULT_TAG_LENGTH,
+                                          evp_aead_open)) {
+      fprintf(stderr, "Failed to create EVP_AEAD_CTX.\n");
+      ERR_print_errors_fp(stderr);
+      return false;
+    }
+
     if (!TimeFunction(&results,
-                      [chunk_len, nonce_len, ad_len, in2, out, out_len, &ctx,
-                       &nonce, &ad]() -> bool {
+                      [chunk_len, overhead_len, nonce_len, ad_len, in2, out,
+                       out_len, &ctx, &nonce, &ad]() -> bool {
                         size_t in2_len;
                         // N.B. EVP_AEAD_CTX_open_gather is not implemented for
                         // all AEADs.
-                        return EVP_AEAD_CTX_open(
-                            ctx.get(), in2, &in2_len, chunk_len, nonce.get(),
-                            nonce_len, out, out_len, ad.get(), ad_len);
+                        return EVP_AEAD_CTX_open(ctx.get(), in2, &in2_len,
+                                                 chunk_len + overhead_len,
+                                                 nonce.get(), nonce_len, out,
+                                                 out_len, ad.get(), ad_len);
                       })) {
       fprintf(stderr, "EVP_AEAD_CTX_open failed.\n");
       ERR_print_errors_fp(stderr);
@@ -314,7 +413,7 @@ static bool SpeedAEADOpen(const EVP_AEAD *aead, const std::string &name,
 
 static bool SpeedHashChunk(const EVP_MD *md, const std::string &name,
                            size_t chunk_len) {
-  EVP_MD_CTX *ctx = EVP_MD_CTX_create();
+  bssl::ScopedEVP_MD_CTX ctx;
   uint8_t scratch[8192];
 
   if (chunk_len > sizeof(scratch)) {
@@ -322,13 +421,13 @@ static bool SpeedHashChunk(const EVP_MD *md, const std::string &name,
   }
 
   TimeResults results;
-  if (!TimeFunction(&results, [ctx, md, chunk_len, &scratch]() -> bool {
+  if (!TimeFunction(&results, [&ctx, md, chunk_len, &scratch]() -> bool {
         uint8_t digest[EVP_MAX_MD_SIZE];
         unsigned int md_len;
 
-        return EVP_DigestInit_ex(ctx, md, NULL /* ENGINE */) &&
-               EVP_DigestUpdate(ctx, scratch, chunk_len) &&
-               EVP_DigestFinal_ex(ctx, digest, &md_len);
+        return EVP_DigestInit_ex(ctx.get(), md, NULL /* ENGINE */) &&
+               EVP_DigestUpdate(ctx.get(), scratch, chunk_len) &&
+               EVP_DigestFinal_ex(ctx.get(), digest, &md_len);
       })) {
     fprintf(stderr, "EVP_DigestInit_ex failed.\n");
     ERR_print_errors_fp(stderr);
@@ -336,9 +435,6 @@ static bool SpeedHashChunk(const EVP_MD *md, const std::string &name,
   }
 
   results.PrintWithBytes(name, chunk_len);
-
-  EVP_MD_CTX_destroy(ctx);
-
   return true;
 }
 static bool SpeedHash(const EVP_MD *md, const std::string &name,
@@ -387,8 +483,28 @@ static bool SpeedECDHCurve(const std::string &name, int nid,
     return true;
   }
 
+  bssl::UniquePtr<EC_KEY> peer_key(EC_KEY_new_by_curve_name(nid));
+  if (!peer_key ||
+      !EC_KEY_generate_key(peer_key.get())) {
+    return false;
+  }
+
+  size_t peer_value_len = EC_POINT_point2oct(
+      EC_KEY_get0_group(peer_key.get()), EC_KEY_get0_public_key(peer_key.get()),
+      POINT_CONVERSION_UNCOMPRESSED, nullptr, 0, nullptr);
+  if (peer_value_len == 0) {
+    return false;
+  }
+  std::unique_ptr<uint8_t[]> peer_value(new uint8_t[peer_value_len]);
+  peer_value_len = EC_POINT_point2oct(
+      EC_KEY_get0_group(peer_key.get()), EC_KEY_get0_public_key(peer_key.get()),
+      POINT_CONVERSION_UNCOMPRESSED, peer_value.get(), peer_value_len, nullptr);
+  if (peer_value_len == 0) {
+    return false;
+  }
+
   TimeResults results;
-  if (!TimeFunction(&results, [nid]() -> bool {
+  if (!TimeFunction(&results, [nid, peer_value_len, &peer_value]() -> bool {
         bssl::UniquePtr<EC_KEY> key(EC_KEY_new_by_curve_name(nid));
         if (!key ||
             !EC_KEY_generate_key(key.get())) {
@@ -396,14 +512,16 @@ static bool SpeedECDHCurve(const std::string &name, int nid,
         }
         const EC_GROUP *const group = EC_KEY_get0_group(key.get());
         bssl::UniquePtr<EC_POINT> point(EC_POINT_new(group));
+        bssl::UniquePtr<EC_POINT> peer_point(EC_POINT_new(group));
         bssl::UniquePtr<BN_CTX> ctx(BN_CTX_new());
 
         bssl::UniquePtr<BIGNUM> x(BN_new());
         bssl::UniquePtr<BIGNUM> y(BN_new());
 
-        if (!point || !ctx || !x || !y ||
-            !EC_POINT_mul(group, point.get(), NULL,
-                          EC_KEY_get0_public_key(key.get()),
+        if (!point || !peer_point || !ctx || !x || !y ||
+            !EC_POINT_oct2point(group, peer_point.get(), peer_value.get(),
+                                peer_value_len, ctx.get()) ||
+            !EC_POINT_mul(group, point.get(), NULL, peer_point.get(),
                           EC_KEY_get0_private_key(key.get()), ctx.get()) ||
             !EC_POINT_get_affine_coordinates_GFp(group, point.get(), x.get(),
                                                  y.get(), ctx.get())) {
@@ -656,32 +774,6 @@ bool Speed(const std::vector<std::string> &args) {
     g_timeout_seconds = atoi(args_map["-timeout"].c_str());
   }
 
-  bssl::UniquePtr<RSA> key(
-      RSA_private_key_from_bytes(kDERRSAPrivate2048, kDERRSAPrivate2048Len));
-  if (key == nullptr) {
-    fprintf(stderr, "Failed to parse RSA key.\n");
-    ERR_print_errors_fp(stderr);
-    return false;
-  }
-
-  if (!SpeedRSA("RSA 2048", key.get(), selected)) {
-    return false;
-  }
-
-  key.reset(
-      RSA_private_key_from_bytes(kDERRSAPrivate4096, kDERRSAPrivate4096Len));
-  if (key == nullptr) {
-    fprintf(stderr, "Failed to parse 4096-bit RSA key.\n");
-    ERR_print_errors_fp(stderr);
-    return 1;
-  }
-
-  if (!SpeedRSA("RSA 4096", key.get(), selected)) {
-    return false;
-  }
-
-  key.reset();
-
   // kTLSADLen is the number of bytes of additional data that TLS passes to
   // AEADs.
   static const size_t kTLSADLen = 13;
@@ -691,7 +783,8 @@ bool Speed(const std::vector<std::string> &args) {
   // knowledge in them and construct a couple of the AD bytes internally.
   static const size_t kLegacyADLen = kTLSADLen - 2;
 
-  if (!SpeedAEAD(EVP_aead_aes_128_gcm(), "AES-128-GCM", kTLSADLen, selected) ||
+  if (!SpeedRSA(selected) ||
+      !SpeedAEAD(EVP_aead_aes_128_gcm(), "AES-128-GCM", kTLSADLen, selected) ||
       !SpeedAEAD(EVP_aead_aes_256_gcm(), "AES-256-GCM", kTLSADLen, selected) ||
       !SpeedAEAD(EVP_aead_chacha20_poly1305(), "ChaCha20-Poly1305", kTLSADLen,
                  selected) ||
@@ -701,6 +794,10 @@ bool Speed(const std::vector<std::string> &args) {
                  kLegacyADLen, selected) ||
       !SpeedAEAD(EVP_aead_aes_256_cbc_sha1_tls(), "AES-256-CBC-SHA1",
                  kLegacyADLen, selected) ||
+      !SpeedAEADOpen(EVP_aead_aes_128_cbc_sha1_tls(), "AES-128-CBC-SHA1",
+                     kLegacyADLen, selected) ||
+      !SpeedAEADOpen(EVP_aead_aes_256_cbc_sha1_tls(), "AES-256-CBC-SHA1",
+                     kLegacyADLen, selected) ||
       !SpeedAEAD(EVP_aead_aes_128_gcm_siv(), "AES-128-GCM-SIV", kTLSADLen,
                  selected) ||
       !SpeedAEAD(EVP_aead_aes_256_gcm_siv(), "AES-256-GCM-SIV", kTLSADLen,
@@ -709,6 +806,8 @@ bool Speed(const std::vector<std::string> &args) {
                      selected) ||
       !SpeedAEADOpen(EVP_aead_aes_256_gcm_siv(), "AES-256-GCM-SIV", kTLSADLen,
                      selected) ||
+      !SpeedAEAD(EVP_aead_aes_128_ccm_bluetooth(), "AES-128-CCM-Bluetooth",
+                 kTLSADLen, selected) ||
       !SpeedHash(EVP_sha1(), "SHA-1", selected) ||
       !SpeedHash(EVP_sha256(), "SHA-256", selected) ||
       !SpeedHash(EVP_sha512(), "SHA-512", selected) ||
@@ -717,7 +816,8 @@ bool Speed(const std::vector<std::string> &args) {
       !SpeedECDSA(selected) ||
       !Speed25519(selected) ||
       !SpeedSPAKE2(selected) ||
-      !SpeedScrypt(selected)) {
+      !SpeedScrypt(selected) ||
+      !SpeedRSAKeyGen(selected)) {
     return false;
   }
 

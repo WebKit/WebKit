@@ -1,5 +1,12 @@
 This directory consumes tools from other repositories for use on the
-bots. To update to newer revisions, follow these instructions:
+bots. For a similarly-configured local checkout for testing, run:
+
+   mkdir boringssl-gclient
+   cd boringssl-gclient
+   gclient config --unmanaged --deps-file=util/bot/DEPS https://boringssl.googlesource.com/boringssl/
+   gclient sync
+
+To update to newer revisions, follow these instructions:
 
 DEPS: Set all revisions to those used in Chromium, found at
    https://chromium.googlesource.com/chromium/src/+/master/DEPS (Search for the
@@ -28,24 +35,34 @@ cmake-linux64.tar.gz: Download the latest CMake source tarball, found at
         ./bootstrap --prefix=$PWD/cmake-linux64 && make && make install
         tar -czf cmake-linux64.tar.gz cmake-linux64/
 
-    The current revision was built against cmake-3.5.0.tar.gz.
+    The current revision was built against cmake-3.10.0.tar.gz.
 
 cmake-mac.tar.gz: Follow the same instructions as above on a Mac, but replace
     cmake-linux64 with cmake-mac.
 
-    The current revision was built against cmake-3.5.0.tar.gz.
+    The current revision was built against cmake-3.10.0.tar.gz.
 
 cmake-win32.zip: Update to the latest prebuilt release of CMake, found at
-    https://cmake.org/download/. Use the file labeled "Windows ZIP". The
-    download will be named cmake-VERSION-win32-x86.zip.
+    https://cmake.org/download/. Use the file labeled "Windows win64-x64
+    ZIP". The download will be named cmake-VERSION-win64-x64.zip.
 
-    The current revision is cmake-3.5.0-win32-x86.zip.
+    The current revision is cmake-3.11.4-win64-x64.zip
 
-perl-win32.zip: Update to the latest 32-bit prebuilt "Portable" edition of
+nasm-win32.exe: Update to the appropriate release of NASM, found at
+    https://www.nasm.us/. Use the same version as Chromium, found at
+    https://chromium.googlesource.com/chromium/src/+/master/third_party/nasm/README.chromium
+    Extract nasm.exe from the download named nasm-VERSION-win64.zip.
+
+    The current revision is nasm-2.13.03-win64.zip.
+
+    TODO(davidben): The Chromium link currently does not work. It will get
+    filled in in the future. See https://crbug.com/766721.
+
+perl-win32.zip: Update to the latest 64-bit prebuilt "Portable" edition of
     Strawberry Perl, found at http://strawberryperl.com/releases.html. The
-    download will be named strawberry-perl-VERSION-32bit-portable.zip.
+    download will be named strawberry-perl-VERSION-64bit-portable.zip.
 
-    The current revision is strawberry-perl-5.26.1.1-32bit-portable.zip.
+    The current revision is strawberry-perl-5.26.2.1-64bit-portable.zip.
 
 yasm-win32.exe: Update to the appropriate release of Yasm. Use the same version
     as Chromium, found at
@@ -63,3 +80,5 @@ but upload it with the following command. (Note the bucket is different.)
     upload_to_google_storage.py -b chrome-boringssl-sde sde-linux64.tar.bz2
 
 The current revision is sde-external-8.9.0-2017-08-06-lin.tar.bz2.
+
+When adding new files, remember to update .gitignore.

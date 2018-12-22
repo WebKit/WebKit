@@ -44,6 +44,14 @@ OPENSSL_MSVC_PRAGMA(warning(pop))
   #define BORINGSSL_WRITE write
 #endif
 
+struct FileCloser {
+  void operator()(FILE *file) {
+    fclose(file);
+  }
+};
+
+using ScopedFILE = std::unique_ptr<FILE, FileCloser>;
+
 enum ArgumentType {
   kRequiredArgument,
   kOptionalArgument,

@@ -27,7 +27,7 @@
 // coexist.
 #if defined(__linux__) && defined(OPENSSL_GLIBC) && !defined(OPENSSL_ARM) && \
     !defined(OPENSSL_AARCH64) && !defined(OPENSSL_ASAN) &&                   \
-    !defined(OPENSSL_MSAN)
+    !defined(OPENSSL_MSAN) && !defined(OPENSSL_TSAN)
 
 #include <errno.h>
 #include <signal.h>
@@ -140,4 +140,4 @@ void *realloc(void *ptr, size_t size) {
 
 }  // extern "C"
 
-#endif  // defined(linux) && GLIBC && !ARM && !AARCH64 && !ASAN
+#endif  // defined(linux) && GLIBC && !ARM && !AARCH64 && !ASAN && !TSAN

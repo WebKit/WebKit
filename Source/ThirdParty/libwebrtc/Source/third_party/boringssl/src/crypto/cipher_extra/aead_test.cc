@@ -27,6 +27,7 @@
 #include "../internal.h"
 #include "../test/file_test.h"
 #include "../test/test_util.h"
+#include "../test/wycheproof_util.h"
 
 
 struct KnownAEAD {
@@ -35,8 +36,8 @@ struct KnownAEAD {
   const char *test_vectors;
   // limited_implementation indicates that tests that assume a generic AEAD
   // interface should not be performed. For example, the key-wrap AEADs only
-  // handle inputs that are a multiple of eight bytes in length and the
-  // SSLv3/TLS AEADs have the concept of “direction”.
+  // handle inputs that are a multiple of eight bytes in length and the TLS CBC
+  // AEADs have the concept of “direction”.
   bool limited_implementation;
   // truncated_tags is true if the AEAD supports truncating tags to arbitrary
   // lengths.
@@ -62,6 +63,8 @@ static const struct KnownAEAD kAEADs[] = {
 #endif
     {"ChaCha20Poly1305", EVP_aead_chacha20_poly1305,
      "chacha20_poly1305_tests.txt", false, true, 0},
+    {"XChaCha20Poly1305", EVP_aead_xchacha20_poly1305,
+     "xchacha20_poly1305_tests.txt", false, true, 0},
     {"AES_128_CBC_SHA1_TLS", EVP_aead_aes_128_cbc_sha1_tls,
      "aes_128_cbc_sha1_tls_tests.txt", true, false, 11},
     {"AES_128_CBC_SHA1_TLSImplicitIV",
@@ -83,16 +86,14 @@ static const struct KnownAEAD kAEADs[] = {
     {"DES_EDE3_CBC_SHA1_TLSImplicitIV",
      EVP_aead_des_ede3_cbc_sha1_tls_implicit_iv,
      "des_ede3_cbc_sha1_tls_implicit_iv_tests.txt", true, false, 11},
-    {"AES_128_CBC_SHA1_SSL3", EVP_aead_aes_128_cbc_sha1_ssl3,
-     "aes_128_cbc_sha1_ssl3_tests.txt", true, false, 9},
-    {"AES_256_CBC_SHA1_SSL3", EVP_aead_aes_256_cbc_sha1_ssl3,
-     "aes_256_cbc_sha1_ssl3_tests.txt", true, false, 9},
-    {"DES_EDE3_CBC_SHA1_SSL3", EVP_aead_des_ede3_cbc_sha1_ssl3,
-     "des_ede3_cbc_sha1_ssl3_tests.txt", true, false, 9},
     {"AES_128_CTR_HMAC_SHA256", EVP_aead_aes_128_ctr_hmac_sha256,
      "aes_128_ctr_hmac_sha256.txt", false, true, 0},
     {"AES_256_CTR_HMAC_SHA256", EVP_aead_aes_256_ctr_hmac_sha256,
      "aes_256_ctr_hmac_sha256.txt", false, true, 0},
+    {"AES_128_CCM_BLUETOOTH", EVP_aead_aes_128_ccm_bluetooth,
+     "aes_128_ccm_bluetooth_tests.txt", false, false, 0},
+    {"AES_128_CCM_BLUETOOTH_8", EVP_aead_aes_128_ccm_bluetooth_8,
+     "aes_128_ccm_bluetooth_8_tests.txt", false, false, 0},
 };
 
 class PerAEADTest : public testing::TestWithParam<KnownAEAD> {
@@ -650,4 +651,165 @@ TEST(AEADTest, AESGCMEmptyNonce) {
   err = ERR_get_error();
   EXPECT_EQ(ERR_LIB_CIPHER, ERR_GET_LIB(err));
   EXPECT_EQ(CIPHER_R_INVALID_NONCE_SIZE, ERR_GET_REASON(err));
+}
+
+TEST(AEADTest, AESCCMLargeAD) {
+  static const std::vector<uint8_t> kKey(16, 'A');
+  static const std::vector<uint8_t> kNonce(13, 'N');
+  static const std::vector<uint8_t> kAD(65536, 'D');
+  static const std::vector<uint8_t> kPlaintext = {
+      0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07,
+      0x08, 0x09, 0x0a, 0x0b, 0x0c, 0x0d, 0x0e, 0x0f};
+  static const std::vector<uint8_t> kCiphertext = {
+      0xa2, 0x12, 0x3f, 0x0b, 0x07, 0xd5, 0x02, 0xff,
+      0xa9, 0xcd, 0xa0, 0xf3, 0x69, 0x1c, 0x49, 0x0c};
+  static const std::vector<uint8_t> kTag = {0x4a, 0x31, 0x82, 0x96};
+
+  // Test AES-128-CCM-Bluetooth.
+  bssl::ScopedEVP_AEAD_CTX ctx;
+  ASSERT_TRUE(EVP_AEAD_CTX_init(ctx.get(), EVP_aead_aes_128_ccm_bluetooth(),
+                                kKey.data(), kKey.size(),
+                                EVP_AEAD_DEFAULT_TAG_LENGTH, nullptr));
+
+  std::vector<uint8_t> out(kCiphertext.size() + kTag.size());
+  size_t out_len;
+  EXPECT_TRUE(EVP_AEAD_CTX_seal(ctx.get(), out.data(), &out_len, out.size(),
+                                kNonce.data(), kNonce.size(), kPlaintext.data(),
+                                kPlaintext.size(), kAD.data(), kAD.size()));
+
+  ASSERT_EQ(out_len, kCiphertext.size() + kTag.size());
+  EXPECT_EQ(Bytes(kCiphertext), Bytes(out.data(), kCiphertext.size()));
+  EXPECT_EQ(Bytes(kTag), Bytes(out.data() + kCiphertext.size(), kTag.size()));
+
+  EXPECT_TRUE(EVP_AEAD_CTX_open(ctx.get(), out.data(), &out_len, out.size(),
+                                kNonce.data(), kNonce.size(), out.data(),
+                                out.size(), kAD.data(), kAD.size()));
+
+  ASSERT_EQ(out_len, kPlaintext.size());
+  EXPECT_EQ(Bytes(kPlaintext), Bytes(out.data(), kPlaintext.size()));
+}
+
+static void RunWycheproofTestCase(FileTest *t, const EVP_AEAD *aead) {
+  t->IgnoreInstruction("ivSize");
+
+  std::vector<uint8_t> aad, ct, iv, key, msg, tag;
+  ASSERT_TRUE(t->GetBytes(&aad, "aad"));
+  ASSERT_TRUE(t->GetBytes(&ct, "ct"));
+  ASSERT_TRUE(t->GetBytes(&iv, "iv"));
+  ASSERT_TRUE(t->GetBytes(&key, "key"));
+  ASSERT_TRUE(t->GetBytes(&msg, "msg"));
+  ASSERT_TRUE(t->GetBytes(&tag, "tag"));
+  std::string tag_size_str;
+  ASSERT_TRUE(t->GetInstruction(&tag_size_str, "tagSize"));
+  size_t tag_size = static_cast<size_t>(atoi(tag_size_str.c_str()));
+  ASSERT_EQ(0u, tag_size % 8);
+  tag_size /= 8;
+  WycheproofResult result;
+  ASSERT_TRUE(GetWycheproofResult(t, &result));
+
+  std::vector<uint8_t> ct_and_tag = ct;
+  ct_and_tag.insert(ct_and_tag.end(), tag.begin(), tag.end());
+
+  bssl::ScopedEVP_AEAD_CTX ctx;
+  ASSERT_TRUE(EVP_AEAD_CTX_init(ctx.get(), aead, key.data(), key.size(),
+                                tag_size, nullptr));
+  std::vector<uint8_t> out(msg.size());
+  size_t out_len;
+  // Wycheproof tags small AES-GCM IVs as "acceptable" and otherwise does not
+  // use it in AEADs. Any AES-GCM IV that isn't 96 bits is absurd, but our API
+  // supports those, so we treat "acceptable" as "valid" here.
+  if (result != WycheproofResult::kInvalid) {
+    // Decryption should succeed.
+    ASSERT_TRUE(EVP_AEAD_CTX_open(ctx.get(), out.data(), &out_len, out.size(),
+                                  iv.data(), iv.size(), ct_and_tag.data(),
+                                  ct_and_tag.size(), aad.data(), aad.size()));
+    EXPECT_EQ(Bytes(msg), Bytes(out.data(), out_len));
+
+    // Decryption in-place should succeed.
+    out = ct_and_tag;
+    ASSERT_TRUE(EVP_AEAD_CTX_open(ctx.get(), out.data(), &out_len, out.size(),
+                                  iv.data(), iv.size(), out.data(), out.size(),
+                                  aad.data(), aad.size()));
+    EXPECT_EQ(Bytes(msg), Bytes(out.data(), out_len));
+
+    // AEADs are deterministic, so encryption should produce the same result.
+    out.resize(ct_and_tag.size());
+    ASSERT_TRUE(EVP_AEAD_CTX_seal(ctx.get(), out.data(), &out_len, out.size(),
+                                  iv.data(), iv.size(), msg.data(), msg.size(),
+                                  aad.data(), aad.size()));
+    EXPECT_EQ(Bytes(ct_and_tag), Bytes(out.data(), out_len));
+
+    // Encrypt in-place.
+    out = msg;
+    out.resize(ct_and_tag.size());
+    ASSERT_TRUE(EVP_AEAD_CTX_seal(ctx.get(), out.data(), &out_len, out.size(),
+                                  iv.data(), iv.size(), out.data(), msg.size(),
+                                  aad.data(), aad.size()));
+    EXPECT_EQ(Bytes(ct_and_tag), Bytes(out.data(), out_len));
+  } else {
+    // Decryption should fail.
+    EXPECT_FALSE(EVP_AEAD_CTX_open(ctx.get(), out.data(), &out_len, out.size(),
+                                   iv.data(), iv.size(), ct_and_tag.data(),
+                                   ct_and_tag.size(), aad.data(), aad.size()));
+
+    // Decryption in-place should also fail.
+    out = ct_and_tag;
+    EXPECT_FALSE(EVP_AEAD_CTX_open(ctx.get(), out.data(), &out_len, out.size(),
+                                   iv.data(), iv.size(), out.data(), out.size(),
+                                   aad.data(), aad.size()));
+  }
+}
+
+TEST(AEADTest, WycheproofAESGCMSIV) {
+  FileTestGTest("third_party/wycheproof_testvectors/aes_gcm_siv_test.txt",
+                [](FileTest *t) {
+    std::string key_size_str;
+    ASSERT_TRUE(t->GetInstruction(&key_size_str, "keySize"));
+    const EVP_AEAD *aead;
+    switch (atoi(key_size_str.c_str())) {
+      case 128:
+        aead = EVP_aead_aes_128_gcm_siv();
+        break;
+      case 256:
+        aead = EVP_aead_aes_256_gcm_siv();
+        break;
+      default:
+        FAIL() << "Unknown key size: " << key_size_str;
+    }
+
+    RunWycheproofTestCase(t, aead);
+  });
+}
+
+TEST(AEADTest, WycheproofAESGCM) {
+  FileTestGTest("third_party/wycheproof_testvectors/aes_gcm_test.txt",
+                [](FileTest *t) {
+    std::string key_size_str;
+    ASSERT_TRUE(t->GetInstruction(&key_size_str, "keySize"));
+    const EVP_AEAD *aead;
+    switch (atoi(key_size_str.c_str())) {
+      case 128:
+        aead = EVP_aead_aes_128_gcm();
+        break;
+      case 192:
+        // Skip AES-192-GCM tests.
+        t->SkipCurrent();
+        return;
+      case 256:
+        aead = EVP_aead_aes_256_gcm();
+        break;
+      default:
+        FAIL() << "Unknown key size: " << key_size_str;
+    }
+
+    RunWycheproofTestCase(t, aead);
+  });
+}
+
+TEST(AEADTest, WycheproofChaCha20Poly1305) {
+  FileTestGTest("third_party/wycheproof_testvectors/chacha20_poly1305_test.txt",
+                [](FileTest *t) {
+    t->IgnoreInstruction("keySize");
+    RunWycheproofTestCase(t, EVP_aead_chacha20_poly1305());
+  });
 }

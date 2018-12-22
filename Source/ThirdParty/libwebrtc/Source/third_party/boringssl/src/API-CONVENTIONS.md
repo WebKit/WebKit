@@ -98,7 +98,10 @@ objects. `bssl::UniquePtr<T>`, like other types, is forward-declared in
 `openssl/base.h`. Code that needs access to the free functions, such as code
 which destroys a `bssl::UniquePtr`, must include the corresponding module's
 header. (This matches `std::unique_ptr`'s relationship with forward
-declarations.)
+declarations.) Note, despite the name, `bssl::UniquePtr` is also used with
+reference-counted types. It owns a single reference to the object. To take an
+additional reference, use the `bssl::UpRef` function, which will return a
+separate `bssl::UniquePtr`.
 
 
 ### Stack-allocated types
@@ -173,6 +176,67 @@ cleaned up.
 A few types, such as `SHA_CTX`, are data-only types and do not require cleanup.
 These are usually for low-level cryptographic operations. These types may be
 used freely without special cleanup conventions.
+
+
+### Ownership and lifetime
+
+When working with allocated objects, it is important to think about *ownership*
+of each object, or what code is responsible for releasing it. This matches the
+corresponding notion in higher-level languages like C++ and Rust.
+
+Ownership applies to both uniquely-owned types and reference-counted types. For
+the latter, ownership means the code is responsible for releasing one
+reference. Note a *reference* in BoringSSL refers to an increment (and eventual
+decrement) of an object's reference count, not `T&` in C++. Thus, to "take a
+reference" means to increment the reference count and take ownership of
+decrementing it.
+
+As BoringSSL's APIs are primarily in C, ownership and lifetime obligations are
+not rigorously annotated in the type signatures or checked at compile-time.
+Instead, they are described in
+[API documentation](https://commondatastorage.googleapis.com/chromium-boringssl-docs/headers.html).
+This section describes some conventions.
+
+Unless otherwise documented, functions do not take ownership of pointer
+arguments. The pointer typically must remain valid for the duration of the
+function call. The function may internally copy information from the argument or
+take a reference, but the caller is free to release its copy or reference at any
+point after the call completes.
+
+A function may instead be documented to *take* or *transfer* ownership of a
+pointer. The caller must own the object before the function call and, after
+transfer, no longer owns it. As a corollary, the caller may no longer reference
+the object without a separate guarantee on the lifetime. The function may even
+release the object before returning. Callers that wish to independently retain a
+transfered object must therefore take a reference or make a copy before
+transferring. Callers should also take note of whether the function is
+documented to transfer pointers unconditionally or only on success. Unlike C++
+and Rust, functions in BoringSSL typically only transfer on success.
+
+Likewise, output pointers may be owning or non-owning. Unless otherwise
+documented, functions output non-owning pointers. The caller is not responsible
+for releasing the output pointer, but it must not use the pointer beyond its
+lifetime. The pointer may be released when the parent object is released or even
+sooner on state change in the parent object.
+
+If documented to output a *newly-allocated* object or a *reference* or *copy* of
+one, the caller is responsible for releasing the object when it is done.
+
+By convention, functions named `get0` return non-owning pointers. Functions
+named `new` or `get1` return owning pointers. Functions named `set0` take
+ownership of arguments. Functions named `set1` do not. They typically take a
+reference or make a copy internally. These names originally referred to the
+effect on a reference count, but the convention applies equally to
+non-reference-counted types.
+
+API documentation may also describe more complex obligations. For instance, an
+object may borrow a pointer for longer than the duration of a single function
+call, in which case the caller must ensure the lifetime extends accordingly.
+
+Memory errors are one of the most common and dangerous bugs in C and C++, so
+callers are encouraged to make use of tools such as
+[AddressSanitizer](https://clang.llvm.org/docs/AddressSanitizer.html) and
+higher-level languages.
 
 
 ## Thread safety

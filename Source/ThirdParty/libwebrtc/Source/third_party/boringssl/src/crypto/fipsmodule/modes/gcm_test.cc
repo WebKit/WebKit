@@ -46,13 +46,6 @@
  * OF THE POSSIBILITY OF SUCH DAMAGE.
  * ==================================================================== */
 
-// Per C99, various stdint.h and inttypes.h macros (the latter used by
-// internal.h) are unavailable in C++ unless some macros are defined. C++11
-// overruled this decision, but older Android NDKs still require it.
-#if !defined(__STDC_CONSTANT_MACROS)
-#define __STDC_CONSTANT_MACROS
-#endif
-
 #include <stdio.h>
 #include <string.h>
 
@@ -87,7 +80,8 @@ TEST(GCMTest, TestVectors) {
     ASSERT_EQ(0, AES_set_encrypt_key(key.data(), key.size() * 8, &aes_key));
 
     GCM128_CONTEXT ctx;
-    CRYPTO_gcm128_init(&ctx, &aes_key, (block128_f)AES_encrypt, 0);
+    OPENSSL_memset(&ctx, 0, sizeof(ctx));
+    CRYPTO_gcm128_init_key(&ctx.gcm_key, &aes_key, AES_encrypt, 0);
     CRYPTO_gcm128_setiv(&ctx, &aes_key, nonce.data(), nonce.size());
     if (!additional_data.empty()) {
       CRYPTO_gcm128_aad(&ctx, additional_data.data(), additional_data.size());

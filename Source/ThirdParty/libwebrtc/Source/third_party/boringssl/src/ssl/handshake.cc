@@ -116,11 +116,13 @@
 
 #include <utility>
 
+#include <openssl/rand.h>
+
 #include "../crypto/internal.h"
 #include "internal.h"
 
 
-namespace bssl {
+BSSL_NAMESPACE_BEGIN
 
 SSL_HANDSHAKE::SSL_HANDSHAKE(SSL *ssl_arg)
     : ssl(ssl_arg),
@@ -128,7 +130,6 @@ SSL_HANDSHAKE::SSL_HANDSHAKE(SSL *ssl_arg)
       needs_psk_binder(false),
       received_hello_retry_request(false),
       sent_hello_retry_request(false),
-      received_custom_extension(false),
       handshake_finalized(false),
       accept_psk_mode(false),
       cert_request(false),
@@ -143,7 +144,12 @@ SSL_HANDSHAKE::SSL_HANDSHAKE(SSL *ssl_arg)
       next_proto_neg_seen(false),
       ticket_expected(false),
       extended_master_secret(false),
-      pending_private_key_op(false) {
+      pending_private_key_op(false),
+      grease_seeded(false),
+      handback(false),
+      cert_compression_negotiated(false),
+      apply_jdk11_workaround(false) {
+  assert(ssl);
 }
 
 SSL_HANDSHAKE::~SSL_HANDSHAKE() {
@@ -152,8 +158,12 @@ SSL_HANDSHAKE::~SSL_HANDSHAKE() {
 
 UniquePtr<SSL_HANDSHAKE> ssl_handshake_new(SSL *ssl) {
   UniquePtr<SSL_HANDSHAKE> hs = MakeUnique<SSL_HANDSHAKE>(ssl);
-  if (!hs ||
-      !hs->transcript.Init()) {
+  if (!hs || !hs->transcript.Init()) {
+    return nullptr;
+  }
+  hs->config = ssl->config.get();
+  if (!hs->config) {
+    assert(hs->config);
     return nullptr;
   }
   return hs;
@@ -186,7 +196,8 @@ size_t ssl_max_handshake_message_len(const SSL *ssl) {
   static const size_t kMaxMessageLen = 16384;
 
   if (SSL_in_init(ssl)) {
-    if ((!ssl->server || (ssl->verify_mode & SSL_VERIFY_PEER)) &&
+    SSL_CONFIG *config = ssl->config.get();  // SSL_in_init() implies not NULL.
+    if ((!ssl->server || (config->verify_mode & SSL_VERIFY_PEER)) &&
         kMaxMessageLen < ssl->max_cert_list) {
       return ssl->max_cert_list;
     }
@@ -269,16 +280,6 @@ int ssl_parse_extensions(const CBS *cbs, uint8_t *out_alert,
   return 1;
 }
 
-static void set_crypto_buffer(CRYPTO_BUFFER **dest, CRYPTO_BUFFER *src) {
-  // TODO(davidben): Remove this helper once |SSL_SESSION| can use |UniquePtr|
-  // and |UniquePtr| has up_ref helpers.
-  CRYPTO_BUFFER_free(*dest);
-  *dest = src;
-  if (src != nullptr) {
-    CRYPTO_BUFFER_up_ref(src);
-  }
-}
-
 enum ssl_verify_result_t ssl_verify_peer_cert(SSL_HANDSHAKE *hs) {
   SSL *const ssl = hs->ssl;
   const SSL_SESSION *prev_session = ssl->s3->established_session.get();
@@ -288,18 +289,19 @@ enum ssl_verify_result_t ssl_verify_peer_cert(SSL_HANDSHAKE *hs) {
     // so this check is sufficient to ensure the reported peer certificate never
     // changes on renegotiation.
     assert(!ssl->server);
-    if (sk_CRYPTO_BUFFER_num(prev_session->certs) !=
-        sk_CRYPTO_BUFFER_num(hs->new_session->certs)) {
+    if (sk_CRYPTO_BUFFER_num(prev_session->certs.get()) !=
+        sk_CRYPTO_BUFFER_num(hs->new_session->certs.get())) {
       OPENSSL_PUT_ERROR(SSL, SSL_R_SERVER_CERT_CHANGED);
       ssl_send_alert(ssl, SSL3_AL_FATAL, SSL_AD_ILLEGAL_PARAMETER);
       return ssl_verify_invalid;
     }
 
-    for (size_t i = 0; i < sk_CRYPTO_BUFFER_num(hs->new_session->certs); i++) {
+    for (size_t i = 0; i < sk_CRYPTO_BUFFER_num(hs->new_session->certs.get());
+         i++) {
       const CRYPTO_BUFFER *old_cert =
-          sk_CRYPTO_BUFFER_value(prev_session->certs, i);
+          sk_CRYPTO_BUFFER_value(prev_session->certs.get(), i);
       const CRYPTO_BUFFER *new_cert =
-          sk_CRYPTO_BUFFER_value(hs->new_session->certs, i);
+          sk_CRYPTO_BUFFER_value(hs->new_session->certs.get(), i);
       if (CRYPTO_BUFFER_len(old_cert) != CRYPTO_BUFFER_len(new_cert) ||
           OPENSSL_memcmp(CRYPTO_BUFFER_data(old_cert),
                          CRYPTO_BUFFER_data(new_cert),
@@ -314,23 +316,27 @@ enum ssl_verify_result_t ssl_verify_peer_cert(SSL_HANDSHAKE *hs) {
     // certificate. Since we only authenticated the previous one, copy other
     // authentication from the established session and ignore what was newly
     // received.
-    set_crypto_buffer(&hs->new_session->ocsp_response,
-                      prev_session->ocsp_response);
-    set_crypto_buffer(&hs->new_session->signed_cert_timestamp_list,
-                      prev_session->signed_cert_timestamp_list);
+    hs->new_session->ocsp_response = UpRef(prev_session->ocsp_response);
+    hs->new_session->signed_cert_timestamp_list =
+        UpRef(prev_session->signed_cert_timestamp_list);
     hs->new_session->verify_result = prev_session->verify_result;
     return ssl_verify_ok;
   }
 
   uint8_t alert = SSL_AD_CERTIFICATE_UNKNOWN;
   enum ssl_verify_result_t ret;
-  if (ssl->custom_verify_callback != nullptr) {
-    ret = ssl->custom_verify_callback(ssl, &alert);
+  if (hs->config->custom_verify_callback != nullptr) {
+    ret = hs->config->custom_verify_callback(ssl, &alert);
     switch (ret) {
       case ssl_verify_ok:
         hs->new_session->verify_result = X509_V_OK;
         break;
       case ssl_verify_invalid:
+        // If |SSL_VERIFY_NONE|, the error is non-fatal, but we keep the result.
+        if (hs->config->verify_mode == SSL_VERIFY_NONE) {
+          ERR_clear_error();
+          ret = ssl_verify_ok;
+        }
         hs->new_session->verify_result = X509_V_ERR_APPLICATION_VERIFICATION;
         break;
       case ssl_verify_retry:
@@ -338,9 +344,51 @@ enum ssl_verify_result_t ssl_verify_peer_cert(SSL_HANDSHAKE *hs) {
     }
   } else {
     ret = ssl->ctx->x509_method->session_verify_cert_chain(
-              hs->new_session.get(), ssl, &alert)
+              hs->new_session.get(), hs, &alert)
               ? ssl_verify_ok
               : ssl_verify_invalid;
+  }
+
+  if (ret == ssl_verify_invalid) {
+    OPENSSL_PUT_ERROR(SSL, SSL_R_CERTIFICATE_VERIFY_FAILED);
+    ssl_send_alert(ssl, SSL3_AL_FATAL, alert);
+  }
+
+  // Emulate OpenSSL's client OCSP callback. OpenSSL verifies certificates
+  // before it receives the OCSP, so it needs a second callback for OCSP.
+  if (ret == ssl_verify_ok && !ssl->server &&
+      hs->config->ocsp_stapling_enabled &&
+      ssl->ctx->legacy_ocsp_callback != nullptr) {
+    int cb_ret =
+        ssl->ctx->legacy_ocsp_callback(ssl, ssl->ctx->legacy_ocsp_callback_arg);
+    if (cb_ret <= 0) {
+      OPENSSL_PUT_ERROR(SSL, SSL_R_OCSP_CB_ERROR);
+      ssl_send_alert(ssl, SSL3_AL_FATAL,
+                     cb_ret == 0 ? SSL_AD_BAD_CERTIFICATE_STATUS_RESPONSE
+                                 : SSL_AD_INTERNAL_ERROR);
+      ret = ssl_verify_invalid;
+    }
+  }
+
+  return ret;
+}
+
+// Verifies a stored certificate when resuming a session. A few things are
+// different from verify_peer_cert:
+// 1. We can't be renegotiating if we're resuming a session.
+// 2. The session is immutable, so we don't support verify_mode ==
+// SSL_VERIFY_NONE
+// 3. We don't call the OCSP callback.
+// 4. We only support custom verify callbacks.
+enum ssl_verify_result_t ssl_reverify_peer_cert(SSL_HANDSHAKE *hs) {
+  SSL *const ssl = hs->ssl;
+  assert(ssl->s3->established_session == nullptr);
+  assert(hs->config->verify_mode != SSL_VERIFY_NONE);
+
+  uint8_t alert = SSL_AD_CERTIFICATE_UNKNOWN;
+  enum ssl_verify_result_t ret = ssl_verify_invalid;
+  if (hs->config->custom_verify_callback != nullptr) {
+    ret = hs->config->custom_verify_callback(ssl, &alert);
   }
 
   if (ret == ssl_verify_invalid) {
@@ -351,18 +399,19 @@ enum ssl_verify_result_t ssl_verify_peer_cert(SSL_HANDSHAKE *hs) {
   return ret;
 }
 
-uint16_t ssl_get_grease_value(const SSL *ssl, enum ssl_grease_index_t index) {
-  // Use the client_random or server_random for entropy. This both avoids
-  // calling |RAND_bytes| on a single byte repeatedly and ensures the values are
-  // deterministic. This allows the same ClientHello be sent twice for a
-  // HelloRetryRequest or the same group be advertised in both supported_groups
-  // and key_shares.
-  uint16_t ret = ssl->server ? ssl->s3->server_random[index]
-                             : ssl->s3->client_random[index];
-  // The first four bytes of server_random are a timestamp prior to TLS 1.3, but
-  // servers have no fields to GREASE until TLS 1.3.
-  assert(!ssl->server || ssl_protocol_version(ssl) >= TLS1_3_VERSION);
+uint16_t ssl_get_grease_value(SSL_HANDSHAKE *hs,
+                              enum ssl_grease_index_t index) {
+  // Draw entropy for all GREASE values at once. This avoids calling
+  // |RAND_bytes| repeatedly and makes the values consistent within a
+  // connection. The latter is so the second ClientHello matches after
+  // HelloRetryRequest and so supported_groups and key_shares are consistent.
+  if (!hs->grease_seeded) {
+    RAND_bytes(hs->grease_seed, sizeof(hs->grease_seed));
+    hs->grease_seeded = true;
+  }
+
   // This generates a random value of the form 0xωaωa, for all 0 ≤ ω < 16.
+  uint16_t ret = hs->grease_seed[index];
   ret = (ret & 0xf0) | 0x0a;
   ret |= ret << 8;
   return ret;
@@ -399,20 +448,18 @@ enum ssl_hs_wait_t ssl_get_finished(SSL_HANDSHAKE *hs) {
   }
 
   // Copy the Finished so we can use it for renegotiation checks.
-  if (ssl->version != SSL3_VERSION) {
-    if (finished_len > sizeof(ssl->s3->previous_client_finished) ||
-        finished_len > sizeof(ssl->s3->previous_server_finished)) {
-      OPENSSL_PUT_ERROR(SSL, ERR_R_INTERNAL_ERROR);
-      return ssl_hs_error;
-    }
+  if (finished_len > sizeof(ssl->s3->previous_client_finished) ||
+      finished_len > sizeof(ssl->s3->previous_server_finished)) {
+    OPENSSL_PUT_ERROR(SSL, ERR_R_INTERNAL_ERROR);
+    return ssl_hs_error;
+  }
 
-    if (ssl->server) {
-      OPENSSL_memcpy(ssl->s3->previous_client_finished, finished, finished_len);
-      ssl->s3->previous_client_finished_len = finished_len;
-    } else {
-      OPENSSL_memcpy(ssl->s3->previous_server_finished, finished, finished_len);
-      ssl->s3->previous_server_finished_len = finished_len;
-    }
+  if (ssl->server) {
+    OPENSSL_memcpy(ssl->s3->previous_client_finished, finished, finished_len);
+    ssl->s3->previous_client_finished_len = finished_len;
+  } else {
+    OPENSSL_memcpy(ssl->s3->previous_server_finished, finished, finished_len);
+    ssl->s3->previous_server_finished_len = finished_len;
   }
 
   ssl->method->next_message(ssl);
@@ -431,27 +478,24 @@ bool ssl_send_finished(SSL_HANDSHAKE *hs) {
   }
 
   // Log the master secret, if logging is enabled.
-  if (!ssl_log_secret(ssl, "CLIENT_RANDOM",
-                      session->master_key,
+  if (!ssl_log_secret(ssl, "CLIENT_RANDOM", session->master_key,
                       session->master_key_length)) {
     return 0;
   }
 
   // Copy the Finished so we can use it for renegotiation checks.
-  if (ssl->version != SSL3_VERSION) {
-    if (finished_len > sizeof(ssl->s3->previous_client_finished) ||
-        finished_len > sizeof(ssl->s3->previous_server_finished)) {
-      OPENSSL_PUT_ERROR(SSL, ERR_R_INTERNAL_ERROR);
-      return 0;
-    }
+  if (finished_len > sizeof(ssl->s3->previous_client_finished) ||
+      finished_len > sizeof(ssl->s3->previous_server_finished)) {
+    OPENSSL_PUT_ERROR(SSL, ERR_R_INTERNAL_ERROR);
+    return 0;
+  }
 
-    if (ssl->server) {
-      OPENSSL_memcpy(ssl->s3->previous_server_finished, finished, finished_len);
-      ssl->s3->previous_server_finished_len = finished_len;
-    } else {
-      OPENSSL_memcpy(ssl->s3->previous_client_finished, finished, finished_len);
-      ssl->s3->previous_client_finished_len = finished_len;
-    }
+  if (ssl->server) {
+    OPENSSL_memcpy(ssl->s3->previous_server_finished, finished, finished_len);
+    ssl->s3->previous_server_finished_len = finished_len;
+  } else {
+    OPENSSL_memcpy(ssl->s3->previous_client_finished, finished, finished_len);
+    ssl->s3->previous_client_finished_len = finished_len;
   }
 
   ScopedCBB cbb;
@@ -466,12 +510,13 @@ bool ssl_send_finished(SSL_HANDSHAKE *hs) {
   return 1;
 }
 
-bool ssl_output_cert_chain(SSL *ssl) {
+bool ssl_output_cert_chain(SSL_HANDSHAKE *hs) {
   ScopedCBB cbb;
   CBB body;
-  if (!ssl->method->init_message(ssl, cbb.get(), &body, SSL3_MT_CERTIFICATE) ||
-      !ssl_add_cert_chain(ssl, &body) ||
-      !ssl_add_message_cbb(ssl, cbb.get())) {
+  if (!hs->ssl->method->init_message(hs->ssl, cbb.get(), &body,
+                                     SSL3_MT_CERTIFICATE) ||
+      !ssl_add_cert_chain(hs, &body) ||
+      !ssl_add_message_cbb(hs->ssl, cbb.get())) {
     OPENSSL_PUT_ERROR(SSL, ERR_R_INTERNAL_ERROR);
     return false;
   }
@@ -499,6 +544,16 @@ int ssl_run_handshake(SSL_HANDSHAKE *hs, bool *out_early_return) {
       case ssl_hs_read_server_hello:
       case ssl_hs_read_message:
       case ssl_hs_read_change_cipher_spec: {
+        if (ssl->ctx->quic_method) {
+          hs->wait = ssl_hs_ok;
+          // The change cipher spec is omitted in QUIC.
+          if (hs->wait != ssl_hs_read_change_cipher_spec) {
+            ssl->s3->rwstate = SSL_READING;
+            return -1;
+          }
+          break;
+        }
+
         uint8_t alert = SSL_AD_DECODE_ERROR;
         size_t consumed = 0;
         ssl_open_record_t ret;
@@ -549,6 +604,16 @@ int ssl_run_handshake(SSL_HANDSHAKE *hs, bool *out_early_return) {
       case ssl_hs_certificate_selection_pending:
         ssl->s3->rwstate = SSL_CERTIFICATE_SELECTION_PENDING;
         hs->wait = ssl_hs_ok;
+        return -1;
+
+      case ssl_hs_handoff:
+        ssl->s3->rwstate = SSL_HANDOFF;
+        hs->wait = ssl_hs_ok;
+        return -1;
+
+      case ssl_hs_handback:
+        ssl->s3->rwstate = SSL_HANDBACK;
+        hs->wait = ssl_hs_handback;
         return -1;
 
       case ssl_hs_x509_lookup:
@@ -613,4 +678,4 @@ int ssl_run_handshake(SSL_HANDSHAKE *hs, bool *out_early_return) {
   }
 }
 
-}  // namespace bssl
+BSSL_NAMESPACE_END

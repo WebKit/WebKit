@@ -35,6 +35,7 @@ print<<___;
 .type	CRYPTO_rdrand,\@function,1
 .align	16
 CRYPTO_rdrand:
+.cfi_startproc
 	xorq %rax, %rax
 	# This is rdrand %rcx. It sets rcx to a random value and sets the carry
 	# flag on success.
@@ -43,6 +44,7 @@ CRYPTO_rdrand:
 	adcq %rax, %rax
 	movq %rcx, 0(%rdi)
 	retq
+.cfi_endproc
 
 # CRYPTO_rdrand_multiple8_buf fills |len| bytes at |buf| with random data from
 # the hardware RNG. The |len| argument must be a multiple of eight. It returns
@@ -52,6 +54,7 @@ CRYPTO_rdrand:
 .type CRYPTO_rdrand_multiple8_buf,\@function,2
 .align 16
 CRYPTO_rdrand_multiple8_buf:
+.cfi_startproc
 	test %rsi, %rsi
 	jz .Lout
 	movq \$8, %rdx
@@ -70,6 +73,7 @@ CRYPTO_rdrand_multiple8_buf:
 .Lerr:
 	xorq %rax, %rax
 	retq
+.cfi_endproc
 ___
 
 close STDOUT;	# flush

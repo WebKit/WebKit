@@ -68,7 +68,7 @@
 #include "internal.h"
 
 
-namespace bssl {
+BSSL_NAMESPACE_BEGIN
 
 // DTLS1_MTU_TIMEOUTS is the maximum number of timeouts to expire
 // before starting to decrease the MTU.
@@ -171,7 +171,8 @@ bool dtls1_check_timeout_num(SSL *ssl) {
   // Reduce MTU after 2 unsuccessful retransmissions
   if (ssl->d1->num_timeouts > DTLS1_MTU_TIMEOUTS &&
       !(SSL_get_options(ssl) & SSL_OP_NO_QUERY_MTU)) {
-    long mtu = BIO_ctrl(ssl->wbio, BIO_CTRL_DGRAM_GET_FALLBACK_MTU, 0, NULL);
+    long mtu =
+        BIO_ctrl(ssl->wbio.get(), BIO_CTRL_DGRAM_GET_FALLBACK_MTU, 0, nullptr);
     if (mtu >= 0 && mtu <= (1 << 30) && (unsigned)mtu >= dtls1_min_mtu()) {
       ssl->d1->mtu = (unsigned)mtu;
     }
@@ -186,7 +187,7 @@ bool dtls1_check_timeout_num(SSL *ssl) {
   return true;
 }
 
-}  // namespace bssl
+BSSL_NAMESPACE_END
 
 using namespace bssl;
 

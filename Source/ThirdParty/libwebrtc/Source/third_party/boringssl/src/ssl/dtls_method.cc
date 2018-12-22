@@ -1,6 +1,6 @@
 /*
  * DTLS implementation written by Nagendra Modadugu
- * (nagendra@cs.stanford.edu) for the OpenSSL project 2005. 
+ * (nagendra@cs.stanford.edu) for the OpenSSL project 2005.
  */
 /* ====================================================================
  * Copyright (c) 1999-2005 The OpenSSL Project.  All rights reserved.
@@ -121,7 +121,6 @@ static const SSL_PROTOCOL_METHOD kDTLSProtocolMethod = {
     dtls1_finish_message,
     dtls1_add_message,
     dtls1_add_change_cipher_spec,
-    dtls1_add_alert,
     dtls1_flush_flight,
     dtls1_on_handshake_complete,
     dtls1_set_read_state,

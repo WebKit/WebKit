@@ -12,6 +12,12 @@
  * OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF OR IN
  * CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE. */
 
+// Suppress MSVC's STL warnings. It flags |std::copy| calls with a raw output
+// pointer, on grounds that MSVC cannot check them. Unfortunately, there is no
+// way to suppress the warning just on one line. The warning is flagged inside
+// the STL itself, so suppressing at the |std::copy| call does not work.
+#define _SCL_SECURE_NO_WARNINGS
+
 #include <openssl/base.h>
 
 #include <string>
@@ -33,6 +39,14 @@
 #include <sys/socket.h>
 #include <unistd.h>
 #else
+#include <algorithm>
+#include <condition_variable>
+#include <deque>
+#include <memory>
+#include <mutex>
+#include <thread>
+#include <utility>
+
 #include <io.h>
 OPENSSL_MSVC_PRAGMA(warning(push, 3))
 #include <winsock2.h>
@@ -91,6 +105,33 @@ static void SplitHostPort(std::string *out_hostname, std::string *out_port,
   }
 }
 
+static std::string GetLastSocketErrorString() {
+#if defined(OPENSSL_WINDOWS)
+  int error = WSAGetLastError();
+  char *buffer;
+  DWORD len = FormatMessageA(
+      FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_ALLOCATE_BUFFER, 0, error, 0,
+      reinterpret_cast<char *>(&buffer), 0, nullptr);
+  if (len == 0) {
+    char buf[256];
+    snprintf(buf, sizeof(buf), "unknown error (0x%x)", error);
+    return buf;
+  }
+  std::string ret(buffer, len);
+  LocalFree(buffer);
+  return ret;
+#else
+  return strerror(errno);
+#endif
+}
+
+static void PrintSocketError(const char *function) {
+  // On Windows, |perror| and |errno| are part of the C runtime, while sockets
+  // are separate, so we must print errors manually.
+  std::string error = GetLastSocketErrorString();
+  fprintf(stderr, "%s: %s\n", function, error.c_str());
+}
+
 // Connect sets |*out_sock| to be a socket connected to the destination given
 // in |hostname_and_port|, which should be of the form "www.example.com:123".
 // It returns true on success and false otherwise.
@@ -121,7 +162,7 @@ bool Connect(int *out_sock, const std::string &hostname_and_port) {
   *out_sock =
       socket(result->ai_family, result->ai_socktype, result->ai_protocol);
   if (*out_sock < 0) {
-    perror("socket");
+    PrintSocketError("socket");
     goto out;
   }
 
@@ -145,7 +186,7 @@ bool Connect(int *out_sock, const std::string &hostname_and_port) {
   }
 
   if (connect(*out_sock, result->ai_addr, result->ai_addrlen) != 0) {
-    perror("connect");
+    PrintSocketError("connect");
     goto out;
   }
   ok = true;
@@ -188,18 +229,18 @@ bool Listener::Init(const std::string &port) {
 
   server_sock_ = socket(addr.sin6_family, SOCK_STREAM, 0);
   if (server_sock_ < 0) {
-    perror("socket");
+    PrintSocketError("socket");
     return false;
   }
 
   if (setsockopt(server_sock_, SOL_SOCKET, SO_REUSEADDR, (const char *)&enable,
                  sizeof(enable)) < 0) {
-    perror("setsockopt");
+    PrintSocketError("setsockopt");
     return false;
   }
 
   if (bind(server_sock_, (struct sockaddr *)&addr, sizeof(addr)) != 0) {
-    perror("connect");
+    PrintSocketError("connect");
     return false;
   }
 
@@ -215,10 +256,7 @@ bool Listener::Accept(int *out_sock) {
 }
 
 bool VersionFromString(uint16_t *out_version, const std::string &version) {
-  if (version == "ssl3") {
-    *out_version = SSL3_VERSION;
-    return true;
-  } else if (version == "tls1" || version == "tls1.0") {
+  if (version == "tls1" || version == "tls1.0") {
     *out_version = TLS1_VERSION;
     return true;
   } else if (version == "tls1.1") {
@@ -320,70 +358,312 @@ bool SocketSetNonBlocking(int sock, bool is_non_blocking) {
   ok = 0 == fcntl(sock, F_SETFL, flags);
 #endif
   if (!ok) {
-    fprintf(stderr, "Failed to set socket non-blocking.\n");
+    PrintSocketError("Failed to set socket non-blocking");
   }
   return ok;
 }
 
-static bool SocketSelect(int sock, bool stdin_open, bool *socket_ready,
-                         bool *stdin_ready) {
+enum class StdinWait {
+  kStdinRead,
+  kSocketWrite,
+};
+
 #if !defined(OPENSSL_WINDOWS)
-  fd_set read_fds;
-  FD_ZERO(&read_fds);
-  if (stdin_open) {
-    FD_SET(0, &read_fds);
-  }
-  FD_SET(sock, &read_fds);
-  if (select(sock + 1, &read_fds, NULL, NULL, NULL) <= 0) {
-    perror("select");
-    return false;
-  }
 
-  if (FD_ISSET(0, &read_fds)) {
-    *stdin_ready = true;
-  }
-  if (FD_ISSET(sock, &read_fds)) {
+// SocketWaiter abstracts waiting for either the socket or stdin to be readable
+// between Windows and POSIX.
+class SocketWaiter {
+ public:
+  explicit SocketWaiter(int sock) : sock_(sock) {}
+  SocketWaiter(const SocketWaiter &) = delete;
+  SocketWaiter &operator=(const SocketWaiter &) = delete;
+
+  // Init initializes the SocketWaiter. It returns whether it succeeded.
+  bool Init() { return true; }
+
+  // Wait waits for at least on of the socket or stdin or be ready. On success,
+  // it sets |*socket_ready| and |*stdin_ready| to whether the respective
+  // objects are readable and returns true. On error, it returns false. stdin's
+  // readiness may either be the socket being writable or stdin being readable,
+  // depending on |stdin_wait|.
+  bool Wait(StdinWait stdin_wait, bool *socket_ready, bool *stdin_ready) {
     *socket_ready = true;
-  }
+    *stdin_ready = false;
 
-  return true;
-#else
-  WSAEVENT socket_handle = WSACreateEvent();
-  if (socket_handle == WSA_INVALID_EVENT ||
-      WSAEventSelect(sock, socket_handle, FD_READ) != 0) {
-    WSACloseEvent(socket_handle);
-    return false;
-  }
+    fd_set read_fds, write_fds;
+    FD_ZERO(&read_fds);
+    FD_ZERO(&write_fds);
+    if (stdin_wait == StdinWait::kSocketWrite) {
+      FD_SET(sock_, &write_fds);
+    } else if (stdin_open_) {
+      FD_SET(STDIN_FILENO, &read_fds);
+    }
+    FD_SET(sock_, &read_fds);
+    if (select(sock_ + 1, &read_fds, &write_fds, NULL, NULL) <= 0) {
+      perror("select");
+      return false;
+    }
 
-  HANDLE read_fds[2];
-  read_fds[0] = socket_handle;
-  read_fds[1] = GetStdHandle(STD_INPUT_HANDLE);
-
-  switch (
-      WaitForMultipleObjects(stdin_open ? 2 : 1, read_fds, FALSE, INFINITE)) {
-    case WAIT_OBJECT_0 + 0:
-      *socket_ready = true;
-      break;
-    case WAIT_OBJECT_0 + 1:
+    if (FD_ISSET(STDIN_FILENO, &read_fds) || FD_ISSET(sock_, &write_fds)) {
       *stdin_ready = true;
+    }
+    if (FD_ISSET(sock_, &read_fds)) {
+      *socket_ready = true;
+    }
+
+    return true;
+  }
+
+  // ReadStdin reads at most |max_out| bytes from stdin. On success, it writes
+  // them to |out| and sets |*out_len| to the number of bytes written. On error,
+  // it returns false. This method may only be called after |Wait| returned
+  // stdin was ready.
+  bool ReadStdin(void *out, size_t *out_len, size_t max_out) {
+    ssize_t n;
+    do {
+      n = read(STDIN_FILENO, out, max_out);
+    } while (n == -1 && errno == EINTR);
+    if (n <= 0) {
+      stdin_open_ = false;
+    }
+    if (n < 0) {
+      perror("read from stdin");
+      return false;
+    }
+    *out_len = static_cast<size_t>(n);
+    return true;
+  }
+
+ private:
+   bool stdin_open_ = true;
+   int sock_;
+};
+
+#else // OPENSSL_WINDOWs
+
+class ScopedWSAEVENT {
+ public:
+  ScopedWSAEVENT() = default;
+  ScopedWSAEVENT(WSAEVENT event) { reset(event); }
+  ScopedWSAEVENT(const ScopedWSAEVENT &) = delete;
+  ScopedWSAEVENT(ScopedWSAEVENT &&other) { *this = std::move(other); }
+
+  ~ScopedWSAEVENT() { reset(); }
+
+  ScopedWSAEVENT &operator=(const ScopedWSAEVENT &) = delete;
+  ScopedWSAEVENT &operator=(ScopedWSAEVENT &&other) {
+    reset(other.release());
+    return *this;
+  }
+
+  explicit operator bool() const { return event_ != WSA_INVALID_EVENT; }
+  WSAEVENT get() const { return event_; }
+
+  WSAEVENT release() {
+    WSAEVENT ret = event_;
+    event_ = WSA_INVALID_EVENT;
+    return ret;
+  }
+
+  void reset(WSAEVENT event = WSA_INVALID_EVENT) {
+    if (event_ != WSA_INVALID_EVENT) {
+      WSACloseEvent(event_);
+    }
+    event_ = event;
+  }
+
+ private:
+  WSAEVENT event_ = WSA_INVALID_EVENT;
+};
+
+// SocketWaiter, on Windows, is more complicated. While |WaitForMultipleObjects|
+// works for both sockets and stdin, the latter is often a line-buffered
+// console. The |HANDLE| is considered readable if there are any console events
+// available, but reading blocks until a full line is available.
+//
+// So that |Wait| reflects final stdin read, we spawn a stdin reader thread that
+// writes to an in-memory buffer and signals a |WSAEVENT| to coordinate with the
+// socket.
+class SocketWaiter {
+ public:
+  explicit SocketWaiter(int sock) : sock_(sock) {}
+  SocketWaiter(const SocketWaiter &) = delete;
+  SocketWaiter &operator=(const SocketWaiter &) = delete;
+
+  bool Init() {
+    stdin_ = std::make_shared<StdinState>();
+    stdin_->event.reset(WSACreateEvent());
+    if (!stdin_->event) {
+      PrintSocketError("Error in WSACreateEvent");
+      return false;
+    }
+
+    // Spawn a thread to block on stdin.
+    std::shared_ptr<StdinState> state = stdin_;
+    std::thread thread([state]() {
+      for (;;) {
+        uint8_t buf[512];
+        int ret = _read(0 /* stdin */, buf, sizeof(buf));
+        if (ret <= 0) {
+          if (ret < 0) {
+            perror("read from stdin");
+          }
+          // Report the error or EOF to the caller.
+          std::lock_guard<std::mutex> lock(state->lock);
+          state->error = ret < 0;
+          state->open = false;
+          WSASetEvent(state->event.get());
+          return;
+        }
+
+        size_t len = static_cast<size_t>(ret);
+        size_t written = 0;
+        while (written < len) {
+          std::unique_lock<std::mutex> lock(state->lock);
+          // Wait for there to be room in the buffer.
+          state->cond.wait(lock, [&] { return !state->buffer_full(); });
+
+          // Copy what we can and signal to the caller.
+          size_t todo = std::min(len - written, state->buffer_remaining());
+          state->buffer.insert(state->buffer.end(), buf + written,
+                               buf + written + todo);
+          written += todo;
+          WSASetEvent(state->event.get());
+        }
+      }
+    });
+    thread.detach();
+    return true;
+  }
+
+  bool Wait(StdinWait stdin_wait, bool *socket_ready, bool *stdin_ready) {
+    *socket_ready = true;
+    *stdin_ready = false;
+
+    ScopedWSAEVENT sock_read_event(WSACreateEvent());
+    if (!sock_read_event ||
+        WSAEventSelect(sock_, sock_read_event.get(), FD_READ | FD_CLOSE) != 0) {
+      PrintSocketError("Error waiting for socket read");
+      return false;
+    }
+
+    DWORD count = 1;
+    WSAEVENT events[3] = {sock_read_event.get(), WSA_INVALID_EVENT};
+    ScopedWSAEVENT sock_write_event;
+    if (stdin_wait == StdinWait::kSocketWrite) {
+      sock_write_event.reset(WSACreateEvent());
+      if (!sock_write_event || WSAEventSelect(sock_, sock_write_event.get(),
+                                              FD_WRITE | FD_CLOSE) != 0) {
+        PrintSocketError("Error waiting for socket write");
+        return false;
+      }
+      events[1] = sock_write_event.get();
+      count++;
+    } else if (listen_stdin_) {
+      events[1] = stdin_->event.get();
+      count++;
+    }
+
+    switch (WSAWaitForMultipleEvents(count, events, FALSE /* wait all */,
+                                     WSA_INFINITE, FALSE /* alertable */)) {
+      case WSA_WAIT_EVENT_0 + 0:
+        *socket_ready = true;
+        return true;
+      case WSA_WAIT_EVENT_0 + 1:
+        *stdin_ready = true;
+        return true;
+      case WSA_WAIT_TIMEOUT:
+        return true;
+      default:
+        PrintSocketError("Error waiting for events");
+        return false;
+    }
+  }
+
+  bool ReadStdin(void *out, size_t *out_len, size_t max_out) {
+    std::lock_guard<std::mutex> locked(stdin_->lock);
+
+    if (stdin_->buffer.empty()) {
+      // |ReadStdin| may only be called when |Wait| signals it is ready, so
+      // stdin must have reached EOF or error.
+      assert(!stdin_->open);
+      listen_stdin_ = false;
+      if (stdin_->error) {
+        return false;
+      }
+      *out_len = 0;
+      return true;
+    }
+
+    bool was_full = stdin_->buffer_full();
+    // Copy as many bytes as well fit.
+    *out_len = std::min(max_out, stdin_->buffer.size());
+    auto begin = stdin_->buffer.begin();
+    auto end = stdin_->buffer.begin() + *out_len;
+    std::copy(begin, end, static_cast<uint8_t *>(out));
+    stdin_->buffer.erase(begin, end);
+    // Notify the stdin thread if there is more space.
+    if (was_full && !stdin_->buffer_full()) {
+      stdin_->cond.notify_one();
+    }
+    // If stdin is now waiting for input, clear the event.
+    if (stdin_->buffer.empty() && stdin_->open) {
+      WSAResetEvent(stdin_->event.get());
+    }
+    return true;
+  }
+
+ private:
+  struct StdinState {
+    static constexpr size_t kMaxBuffer = 1024;
+
+    StdinState() = default;
+    StdinState(const StdinState &) = delete;
+    StdinState &operator=(const StdinState &) = delete;
+
+    size_t buffer_remaining() const { return kMaxBuffer - buffer.size(); }
+    bool buffer_full() const { return buffer_remaining() == 0; }
+
+    ScopedWSAEVENT event;
+    // lock protects the following fields.
+    std::mutex lock;
+    // cond notifies the stdin thread that |buffer| is no longer full.
+    std::condition_variable cond;
+    std::deque<uint8_t> buffer;
+    bool open = true;
+    bool error = false;
+  };
+
+  int sock_;
+  std::shared_ptr<StdinState> stdin_;
+  // listen_stdin_ is set to false when we have consumed an EOF or error from
+  // |stdin_|. This is separate from |stdin_->open| because the signal may not
+  // have been consumed yet.
+  bool listen_stdin_ = true;
+};
+
+#endif  // OPENSSL_WINDOWS
+
+void PrintSSLError(FILE *file, const char *msg, int ssl_err, int ret) {
+  switch (ssl_err) {
+    case SSL_ERROR_SSL:
+      fprintf(file, "%s: %s\n", msg, ERR_reason_error_string(ERR_peek_error()));
       break;
-    case WAIT_TIMEOUT:
+    case SSL_ERROR_SYSCALL:
+      if (ret == 0) {
+        fprintf(file, "%s: peer closed connection\n", msg);
+      } else {
+        std::string error = GetLastSocketErrorString();
+        fprintf(file, "%s: %s\n", msg, error.c_str());
+      }
+      break;
+    case SSL_ERROR_ZERO_RETURN:
+      fprintf(file, "%s: received close_notify\n", msg);
       break;
     default:
-      WSACloseEvent(socket_handle);
-      return false;
+      fprintf(file, "%s: unknown error type (%d)\n", msg, ssl_err);
   }
-
-  WSACloseEvent(socket_handle);
-  return true;
-#endif
-}
-
-// PrintErrorCallback is a callback function from OpenSSL's
-// |ERR_print_errors_cb| that writes errors to a given |FILE*|.
-int PrintErrorCallback(const char *str, size_t len, void *ctx) {
-  fwrite(str, len, 1, reinterpret_cast<FILE*>(ctx));
-  return 1;
+  ERR_print_errors_fp(file);
 }
 
 bool TransferData(SSL *ssl, int sock) {
@@ -391,81 +671,80 @@ bool TransferData(SSL *ssl, int sock) {
     return false;
   }
 
-  bool stdin_open = true;
+  SocketWaiter waiter(sock);
+  if (!waiter.Init()) {
+    return false;
+  }
+
+  uint8_t pending_write[512];
+  size_t pending_write_len = 0;
   for (;;) {
     bool socket_ready = false;
     bool stdin_ready = false;
-    if (!SocketSelect(sock, stdin_open, &socket_ready, &stdin_ready)) {
+    if (!waiter.Wait(pending_write_len == 0 ? StdinWait::kStdinRead
+                                            : StdinWait::kSocketWrite,
+                     &socket_ready, &stdin_ready)) {
       return false;
     }
 
     if (stdin_ready) {
-      uint8_t buffer[512];
-      ssize_t n;
-
-      do {
-        n = BORINGSSL_READ(0, buffer, sizeof(buffer));
-      } while (n == -1 && errno == EINTR);
-
-      if (n == 0) {
-        stdin_open = false;
-#if !defined(OPENSSL_WINDOWS)
-        shutdown(sock, SHUT_WR);
-#else
-        shutdown(sock, SD_SEND);
-#endif
-        continue;
-      } else if (n < 0) {
-        perror("read from stdin");
-        return false;
+      if (pending_write_len == 0) {
+        if (!waiter.ReadStdin(pending_write, &pending_write_len,
+                              sizeof(pending_write))) {
+          return false;
+        }
+        if (pending_write_len == 0) {
+  #if !defined(OPENSSL_WINDOWS)
+          shutdown(sock, SHUT_WR);
+  #else
+          shutdown(sock, SD_SEND);
+  #endif
+          continue;
+        }
       }
 
-      // On Windows, SocketSelect ends up setting sock to non-blocking.
-#if !defined(OPENSSL_WINDOWS)
-      if (!SocketSetNonBlocking(sock, false)) {
-        return false;
-      }
-#endif
-      int ssl_ret = SSL_write(ssl, buffer, n);
-      if (!SocketSetNonBlocking(sock, true)) {
-        return false;
-      }
-
+      int ssl_ret =
+          SSL_write(ssl, pending_write, static_cast<int>(pending_write_len));
       if (ssl_ret <= 0) {
         int ssl_err = SSL_get_error(ssl, ssl_ret);
-        fprintf(stderr, "Error while writing: %d\n", ssl_err);
-        ERR_print_errors_cb(PrintErrorCallback, stderr);
+        if (ssl_err == SSL_ERROR_WANT_WRITE) {
+          continue;
+        }
+        PrintSSLError(stderr, "Error while writing", ssl_err, ssl_ret);
         return false;
-      } else if (ssl_ret != n) {
+      }
+      if (ssl_ret != static_cast<int>(pending_write_len)) {
         fprintf(stderr, "Short write from SSL_write.\n");
         return false;
       }
+      pending_write_len = 0;
     }
 
     if (socket_ready) {
-      uint8_t buffer[512];
-      int ssl_ret = SSL_read(ssl, buffer, sizeof(buffer));
+      for (;;) {
+        uint8_t buffer[512];
+        int ssl_ret = SSL_read(ssl, buffer, sizeof(buffer));
 
-      if (ssl_ret < 0) {
-        int ssl_err = SSL_get_error(ssl, ssl_ret);
-        if (ssl_err == SSL_ERROR_WANT_READ) {
-          continue;
+        if (ssl_ret < 0) {
+          int ssl_err = SSL_get_error(ssl, ssl_ret);
+          if (ssl_err == SSL_ERROR_WANT_READ) {
+            break;
+          }
+          PrintSSLError(stderr, "Error while reading", ssl_err, ssl_ret);
+          return false;
+        } else if (ssl_ret == 0) {
+          return true;
         }
-        fprintf(stderr, "Error while reading: %d\n", ssl_err);
-        ERR_print_errors_cb(PrintErrorCallback, stderr);
-        return false;
-      } else if (ssl_ret == 0) {
-        return true;
-      }
 
-      ssize_t n;
-      do {
-        n = BORINGSSL_WRITE(1, buffer, ssl_ret);
-      } while (n == -1 && errno == EINTR);
+        ssize_t n;
+        do {
+          n = BORINGSSL_WRITE(1, buffer, ssl_ret);
+        } while (n == -1 && errno == EINTR);
 
-      if (n != ssl_ret) {
-        fprintf(stderr, "Short write to stderr.\n");
-        return false;
+        if (n != ssl_ret) {
+          fprintf(stderr, "Short write to stderr.\n");
+          return false;
+        }
       }
     }
   }

@@ -54,10 +54,6 @@
  * copied and put under another distribution licence
  * [including the GNU Public Licence.] */
 
-#if !defined(__STDC_FORMAT_MACROS)
-#define __STDC_FORMAT_MACROS
-#endif
-
 #include <openssl/obj.h>
 
 #include <inttypes.h>
@@ -75,6 +71,8 @@
 #include "obj_dat.h"
 #include "../internal.h"
 
+
+DEFINE_LHASH_OF(ASN1_OBJECT)
 
 static struct CRYPTO_STATIC_MUTEX global_added_lock = CRYPTO_STATIC_MUTEX_INIT;
 // These globals are protected by |global_added_lock|.
@@ -434,36 +432,6 @@ static int strlcpy_int(char *dst, const char *src, int dst_size) {
   return (int)ret;
 }
 
-static int parse_oid_component(CBS *cbs, uint64_t *out) {
-  uint64_t v = 0;
-  uint8_t b;
-  do {
-    if (!CBS_get_u8(cbs, &b)) {
-      return 0;
-    }
-    if ((v >> (64 - 7)) != 0) {
-      // The component is too large.
-      return 0;
-    }
-    if (v == 0 && b == 0x80) {
-      // The component must be minimally encoded.
-      return 0;
-    }
-    v = (v << 7) | (b & 0x7f);
-
-    // Components end at an octet with the high bit cleared.
-  } while (b & 0x80);
-
-  *out = v;
-  return 1;
-}
-
-static int add_decimal(CBB *out, uint64_t v) {
-  char buf[DECIMAL_SIZE(uint64_t) + 1];
-  BIO_snprintf(buf, sizeof(buf), "%" PRIu64, v);
-  return CBB_add_bytes(out, (const uint8_t *)buf, strlen(buf));
-}
-
 int OBJ_obj2txt(char *out, int out_len, const ASN1_OBJECT *obj,
                 int always_return_oid) {
   // Python depends on the empty OID successfully encoding as the empty
@@ -485,56 +453,19 @@ int OBJ_obj2txt(char *out, int out_len, const ASN1_OBJECT *obj,
     }
   }
 
-  CBB cbb;
-  if (!CBB_init(&cbb, 32)) {
-    goto err;
-  }
-
   CBS cbs;
   CBS_init(&cbs, obj->data, obj->length);
-
-  // The first component is 40 * value1 + value2, where value1 is 0, 1, or 2.
-  uint64_t v;
-  if (!parse_oid_component(&cbs, &v)) {
-    goto err;
-  }
-
-  if (v >= 80) {
-    if (!CBB_add_bytes(&cbb, (const uint8_t *)"2.", 2) ||
-        !add_decimal(&cbb, v - 80)) {
-      goto err;
+  char *txt = CBS_asn1_oid_to_text(&cbs);
+  if (txt == NULL) {
+    if (out_len > 0) {
+      out[0] = '\0';
     }
-  } else if (!add_decimal(&cbb, v / 40) ||
-             !CBB_add_u8(&cbb, '.') ||
-             !add_decimal(&cbb, v % 40)) {
-    goto err;
+    return -1;
   }
 
-  while (CBS_len(&cbs) != 0) {
-    if (!parse_oid_component(&cbs, &v) ||
-        !CBB_add_u8(&cbb, '.') ||
-        !add_decimal(&cbb, v)) {
-      goto err;
-    }
-  }
-
-  uint8_t *txt;
-  size_t txt_len;
-  if (!CBB_add_u8(&cbb, '\0') ||
-      !CBB_finish(&cbb, &txt, &txt_len)) {
-    goto err;
-  }
-
-  int ret = strlcpy_int(out, (const char *)txt, out_len);
+  int ret = strlcpy_int(out, txt, out_len);
   OPENSSL_free(txt);
   return ret;
-
-err:
-  CBB_cleanup(&cbb);
-  if (out_len > 0) {
-    out[0] = '\0';
-  }
-  return -1;
 }
 
 static uint32_t hash_nid(const ASN1_OBJECT *obj) {
@@ -619,3 +550,5 @@ int OBJ_create(const char *oid, const char *short_name, const char *long_name) {
   }
   return op->nid;
 }
+
+void OBJ_cleanup(void) {}

@@ -7,7 +7,7 @@
 
     "DTLSIgnoreBadPackets*": "Fuzzer mode has no bad packets.",
     "TLSFatalBadPackets": "Fuzzer mode has no bad packets.",
-    "*-BadRecord": "Fuzzer mode has no bad packets.",
+    "*-BadRecord*": "Fuzzer mode has no bad packets.",
 
     "BadRSAClientKeyExchange*": "Fuzzer mode does not notice a bad premaster secret.",
 
@@ -22,7 +22,7 @@
     "*Auth-Verify-ECDSA-SHA1-TLS13*": "Fuzzer mode always accepts a signature.",
     "*Auth-Verify-ECDSA-P224-*-TLS13*": "Fuzzer mode always accepts a signature.",
     "Verify-*Auth-SignatureType*": "Fuzzer mode always accepts a signature.",
-    "ECDSACurveMismatch-Verify-TLS13": "Fuzzer mode always accepts a signature.",
+    "ECDSACurveMismatch-Verify-TLS13*": "Fuzzer mode always accepts a signature.",
     "InvalidChannelIDSignature-*": "Fuzzer mode always accepts a signature.",
 
     "Resume-Server-CipherNotPreferred*": "Fuzzer mode does not encrypt tickets.",
@@ -30,7 +30,7 @@
     "Resume-Server-DeclineCrossVersion*": "Fuzzer mode does not encrypt tickets.",
     "TicketCallback-SingleCall-*": "Fuzzer mode does not encrypt tickets.",
     "CorruptTicket-*": "Fuzzer mode does not encrypt tickets.",
-    "ShimTicketRewritable": "Fuzzer mode does not encrypt tickets.",
+    "ShimTicketRewritable*": "Fuzzer mode does not encrypt tickets.",
 
     "Resume-Server-*Binder*": "Fuzzer mode does not check binders.",
 
@@ -44,8 +44,8 @@
     "EarlyData-ALPNOmitted1-Server-*": "Trial decryption does not work with the NULL cipher.",
     "EarlyData-ALPNOmitted2-Server-*": "Trial decryption does not work with the NULL cipher.",
     "*-EarlyData-RejectUnfinishedWrite-Client-*": "Trial decryption does not work with the NULL cipher.",
-    "EarlyData-Reject-Client-*": "Trial decryption does not work with the NULL cipher.",
-    "EarlyData-RejectTicket-Client-*": "Trial decryption does not work with the NULL cipher.",
+    "EarlyData-Reject*-Client-*": "Trial decryption does not work with the NULL cipher.",
+    "CustomExtensions-Server-EarlyDataOffered": "Trial decryption does not work with the NULL cipher.",
 
     "Renegotiate-Client-BadExt*": "Fuzzer mode does not check renegotiation_info.",
 

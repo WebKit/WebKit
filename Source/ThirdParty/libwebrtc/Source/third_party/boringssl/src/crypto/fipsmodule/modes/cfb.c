@@ -54,10 +54,11 @@
 #include "internal.h"
 
 
-OPENSSL_COMPILE_ASSERT((16 % sizeof(size_t)) == 0, bad_size_t_size_cfb);
+OPENSSL_STATIC_ASSERT(16 % sizeof(size_t) == 0,
+                      "block cannot be divided into size_t");
 
 void CRYPTO_cfb128_encrypt(const uint8_t *in, uint8_t *out, size_t len,
-                           const void *key, uint8_t ivec[16], unsigned *num,
+                           const AES_KEY *key, uint8_t ivec[16], unsigned *num,
                            int enc, block128_f block) {
   size_t l = 0;
 
@@ -161,7 +162,7 @@ void CRYPTO_cfb128_encrypt(const uint8_t *in, uint8_t *out, size_t len,
 /* This expects a single block of size nbits for both in and out. Note that
    it corrupts any extra bits in the last byte of out */
 static void cfbr_encrypt_block(const uint8_t *in, uint8_t *out, unsigned nbits,
-                               const void *key, uint8_t ivec[16], int enc,
+                               const AES_KEY *key, uint8_t ivec[16], int enc,
                                block128_f block) {
   int n, rem, num;
   uint8_t ovec[16 * 2 + 1]; /* +1 because we dererefence (but don't use) one
@@ -203,8 +204,8 @@ static void cfbr_encrypt_block(const uint8_t *in, uint8_t *out, unsigned nbits,
 
 // N.B. This expects the input to be packed, MS bit first
 void CRYPTO_cfb128_1_encrypt(const uint8_t *in, uint8_t *out, size_t bits,
-                             const void *key, uint8_t ivec[16], unsigned *num,
-                             int enc, block128_f block) {
+                             const AES_KEY *key, uint8_t ivec[16],
+                             unsigned *num, int enc, block128_f block) {
   size_t n;
   uint8_t c[1], d[1];
 
@@ -220,7 +221,7 @@ void CRYPTO_cfb128_1_encrypt(const uint8_t *in, uint8_t *out, size_t bits,
 }
 
 void CRYPTO_cfb128_8_encrypt(const unsigned char *in, unsigned char *out,
-                             size_t length, const void *key,
+                             size_t length, const AES_KEY *key,
                              unsigned char ivec[16], unsigned *num, int enc,
                              block128_f block) {
   size_t n;

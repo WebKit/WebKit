@@ -17,6 +17,7 @@
 #include <openssl/bytestring.h>
 
 #include <assert.h>
+#include <inttypes.h>
 #include <string.h>
 
 #include "internal.h"
@@ -175,6 +176,33 @@ int CBS_get_u24_length_prefixed(CBS *cbs, CBS *out) {
   return cbs_get_length_prefixed(cbs, out, 3);
 }
 
+// parse_base128_integer reads a big-endian base-128 integer from |cbs| and sets
+// |*out| to the result. This is the encoding used in DER for both high tag
+// number form and OID components.
+static int parse_base128_integer(CBS *cbs, uint64_t *out) {
+  uint64_t v = 0;
+  uint8_t b;
+  do {
+    if (!CBS_get_u8(cbs, &b)) {
+      return 0;
+    }
+    if ((v >> (64 - 7)) != 0) {
+      // The value is too large.
+      return 0;
+    }
+    if (v == 0 && b == 0x80) {
+      // The value must be minimally encoded.
+      return 0;
+    }
+    v = (v << 7) | (b & 0x7f);
+
+    // Values end at an octet with the high bit cleared.
+  } while (b & 0x80);
+
+  *out = v;
+  return 1;
+}
+
 static int parse_asn1_tag(CBS *cbs, unsigned *out) {
   uint8_t tag_byte;
   if (!CBS_get_u8(cbs, &tag_byte)) {
@@ -191,27 +219,15 @@ static int parse_asn1_tag(CBS *cbs, unsigned *out) {
   unsigned tag = ((unsigned)tag_byte & 0xe0) << CBS_ASN1_TAG_SHIFT;
   unsigned tag_number = tag_byte & 0x1f;
   if (tag_number == 0x1f) {
-    tag_number = 0;
-    for (;;) {
-      if (!CBS_get_u8(cbs, &tag_byte) ||
-          ((tag_number << 7) >> 7) != tag_number) {
-        return 0;
-      }
-      tag_number = (tag_number << 7) | (tag_byte & 0x7f);
-      // The tag must be represented in the minimal number of bytes.
-      if (tag_number == 0) {
-        return 0;
-      }
-      if ((tag_byte & 0x80) == 0) {
-        break;
-      }
-    }
-    if (// Check the tag number is within our supported bounds.
-        tag_number > CBS_ASN1_TAG_NUMBER_MASK ||
+    uint64_t v;
+    if (!parse_base128_integer(cbs, &v) ||
+        // Check the tag number is within our supported bounds.
+        v > CBS_ASN1_TAG_NUMBER_MASK ||
         // Small tag numbers should have used low tag number form.
-        tag_number < 0x1f) {
+        v < 0x1f) {
       return 0;
     }
+    tag_number = (unsigned)v;
   }
 
   tag |= tag_number;
@@ -405,6 +421,22 @@ int CBS_get_asn1_uint64(CBS *cbs, uint64_t *out) {
   return 1;
 }
 
+int CBS_get_asn1_bool(CBS *cbs, int *out) {
+  CBS bytes;
+  if (!CBS_get_asn1(cbs, &bytes, CBS_ASN1_BOOLEAN) ||
+      CBS_len(&bytes) != 1) {
+    return 0;
+  }
+
+  const uint8_t value = *CBS_data(&bytes);
+  if (value != 0 && value != 0xff) {
+    return 0;
+  }
+
+  *out = !!value;
+  return 1;
+}
+
 int CBS_get_optional_asn1(CBS *cbs, CBS *out, int *out_present, unsigned tag) {
   int present = 0;
 
@@ -430,6 +462,7 @@ int CBS_get_optional_asn1_octet_string(CBS *cbs, CBS *out, int *out_present,
     return 0;
   }
   if (present) {
+    assert(out);
     if (!CBS_get_asn1(&child, out, CBS_ASN1_OCTETSTRING) ||
         CBS_len(&child) != 0) {
       return 0;
@@ -526,4 +559,56 @@ int CBS_asn1_bitstring_has_bit(const CBS *cbs, unsigned bit) {
   // check.
   return byte_num < CBS_len(cbs) &&
          (CBS_data(cbs)[byte_num] & (1 << bit_num)) != 0;
+}
+
+static int add_decimal(CBB *out, uint64_t v) {
+  char buf[DECIMAL_SIZE(uint64_t) + 1];
+  BIO_snprintf(buf, sizeof(buf), "%" PRIu64, v);
+  return CBB_add_bytes(out, (const uint8_t *)buf, strlen(buf));
+}
+
+char *CBS_asn1_oid_to_text(const CBS *cbs) {
+  CBB cbb;
+  if (!CBB_init(&cbb, 32)) {
+    goto err;
+  }
+
+  CBS copy = *cbs;
+  // The first component is 40 * value1 + value2, where value1 is 0, 1, or 2.
+  uint64_t v;
+  if (!parse_base128_integer(&copy, &v)) {
+    goto err;
+  }
+
+  if (v >= 80) {
+    if (!CBB_add_bytes(&cbb, (const uint8_t *)"2.", 2) ||
+        !add_decimal(&cbb, v - 80)) {
+      goto err;
+    }
+  } else if (!add_decimal(&cbb, v / 40) ||
+             !CBB_add_u8(&cbb, '.') ||
+             !add_decimal(&cbb, v % 40)) {
+    goto err;
+  }
+
+  while (CBS_len(&copy) != 0) {
+    if (!parse_base128_integer(&copy, &v) ||
+        !CBB_add_u8(&cbb, '.') ||
+        !add_decimal(&cbb, v)) {
+      goto err;
+    }
+  }
+
+  uint8_t *txt;
+  size_t txt_len;
+  if (!CBB_add_u8(&cbb, '\0') ||
+      !CBB_finish(&cbb, &txt, &txt_len)) {
+    goto err;
+  }
+
+  return (char *)txt;
+
+err:
+  CBB_cleanup(&cbb);
+  return NULL;
 }

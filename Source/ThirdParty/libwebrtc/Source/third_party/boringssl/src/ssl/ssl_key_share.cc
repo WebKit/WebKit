@@ -31,7 +31,7 @@
 #include "../crypto/internal.h"
 
 
-namespace bssl {
+BSSL_NAMESPACE_BEGIN
 
 namespace {
 
@@ -97,8 +97,10 @@ class ECKeyShare : public SSLKeyShare {
       return false;
     }
 
-    if (!EC_POINT_oct2point(group.get(), peer_point.get(), peer_key.data(),
+    if (peer_key.empty() || peer_key[0] != POINT_CONVERSION_UNCOMPRESSED ||
+        !EC_POINT_oct2point(group.get(), peer_point.get(), peer_key.data(),
                             peer_key.size(), bn_ctx.get())) {
+      OPENSSL_PUT_ERROR(SSL, SSL_R_BAD_ECPOINT);
       *out_alert = SSL_AD_DECODE_ERROR;
       return false;
     }
@@ -120,6 +122,32 @@ class ECKeyShare : public SSLKeyShare {
 
     *out_secret = std::move(secret);
     return true;
+  }
+
+  bool Serialize(CBB *out) override {
+    assert(private_key_);
+    CBB cbb;
+    UniquePtr<EC_GROUP> group(EC_GROUP_new_by_curve_name(nid_));
+    // Padding is added to avoid leaking the length.
+    size_t len = BN_num_bytes(EC_GROUP_get0_order(group.get()));
+    if (!CBB_add_asn1_uint64(out, group_id_) ||
+        !CBB_add_asn1(out, &cbb, CBS_ASN1_OCTETSTRING) ||
+        !BN_bn2cbb_padded(&cbb, len, private_key_.get()) ||
+        !CBB_flush(out)) {
+      return false;
+    }
+    return true;
+  }
+
+  bool Deserialize(CBS *in) override {
+    assert(!private_key_);
+    CBS private_key;
+    if (!CBS_get_asn1(in, &private_key, CBS_ASN1_OCTETSTRING)) {
+      return false;
+    }
+    private_key_.reset(BN_bin2bn(CBS_data(&private_key),
+                                 CBS_len(&private_key), nullptr));
+    return private_key_ != nullptr;
   }
 
  private:
@@ -164,15 +192,26 @@ class X25519KeyShare : public SSLKeyShare {
     return true;
   }
 
+  bool Serialize(CBB *out) override {
+    return (CBB_add_asn1_uint64(out, GroupID()) &&
+            CBB_add_asn1_octet_string(out, private_key_, sizeof(private_key_)));
+  }
+
+  bool Deserialize(CBS *in) override {
+    CBS key;
+    if (!CBS_get_asn1(in, &key, CBS_ASN1_OCTETSTRING) ||
+        CBS_len(&key) != sizeof(private_key_) ||
+        !CBS_copy_bytes(&key, private_key_, sizeof(private_key_))) {
+      return false;
+    }
+    return true;
+  }
+
  private:
   uint8_t private_key_[32];
 };
 
-CONSTEXPR_ARRAY struct {
-  int nid;
-  uint16_t group_id;
-  const char name[8], alias[11];
-} kNamedGroups[] = {
+CONSTEXPR_ARRAY NamedGroup kNamedGroups[] = {
     {NID_secp224r1, SSL_CURVE_SECP224R1, "P-224", "secp224r1"},
     {NID_X9_62_prime256v1, SSL_CURVE_SECP256R1, "P-256", "prime256v1"},
     {NID_secp384r1, SSL_CURVE_SECP384R1, "P-384", "secp384r1"},
@@ -181,6 +220,10 @@ CONSTEXPR_ARRAY struct {
 };
 
 }  // namespace
+
+Span<const NamedGroup> NamedGroups() {
+  return MakeConstSpan(kNamedGroups, OPENSSL_ARRAY_SIZE(kNamedGroups));
+}
 
 UniquePtr<SSLKeyShare> SSLKeyShare::Create(uint16_t group_id) {
   switch (group_id) {
@@ -203,6 +246,19 @@ UniquePtr<SSLKeyShare> SSLKeyShare::Create(uint16_t group_id) {
   }
 }
 
+UniquePtr<SSLKeyShare> SSLKeyShare::Create(CBS *in) {
+  uint64_t group;
+  if (!CBS_get_asn1_uint64(in, &group) || group > 0xffff) {
+    return nullptr;
+  }
+  UniquePtr<SSLKeyShare> key_share = Create(static_cast<uint16_t>(group));
+  if (!key_share || !key_share->Deserialize(in)) {
+    return nullptr;
+  }
+  return key_share;
+}
+
+
 bool SSLKeyShare::Accept(CBB *out_public_key, Array<uint8_t> *out_secret,
                          uint8_t *out_alert, Span<const uint8_t> peer_key) {
   *out_alert = SSL_AD_INTERNAL_ERROR;
@@ -210,33 +266,33 @@ bool SSLKeyShare::Accept(CBB *out_public_key, Array<uint8_t> *out_secret,
          Finish(out_secret, out_alert, peer_key);
 }
 
-int ssl_nid_to_group_id(uint16_t *out_group_id, int nid) {
+bool ssl_nid_to_group_id(uint16_t *out_group_id, int nid) {
   for (const auto &group : kNamedGroups) {
     if (group.nid == nid) {
       *out_group_id = group.group_id;
-      return 1;
+      return true;
     }
   }
-  return 0;
+  return false;
 }
 
-int ssl_name_to_group_id(uint16_t *out_group_id, const char *name, size_t len) {
+bool ssl_name_to_group_id(uint16_t *out_group_id, const char *name, size_t len) {
   for (const auto &group : kNamedGroups) {
     if (len == strlen(group.name) &&
         !strncmp(group.name, name, len)) {
       *out_group_id = group.group_id;
-      return 1;
+      return true;
     }
     if (len == strlen(group.alias) &&
         !strncmp(group.alias, name, len)) {
       *out_group_id = group.group_id;
-      return 1;
+      return true;
     }
   }
-  return 0;
+  return false;
 }
 
-}  // namespace bssl
+BSSL_NAMESPACE_END
 
 using namespace bssl;
 

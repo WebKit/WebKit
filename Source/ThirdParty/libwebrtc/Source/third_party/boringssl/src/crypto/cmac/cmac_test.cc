@@ -15,6 +15,7 @@
 #include <stdio.h>
 
 #include <algorithm>
+#include <vector>
 
 #include <gtest/gtest.h>
 
@@ -22,7 +23,9 @@
 #include <openssl/cmac.h>
 #include <openssl/mem.h>
 
+#include "../test/file_test.h"
 #include "../test/test_util.h"
+#include "../test/wycheproof_util.h"
 
 
 static void test(const char *name, const uint8_t *key, size_t key_len,
@@ -54,6 +57,18 @@ static void test(const char *name, const uint8_t *key, size_t key_len,
     ASSERT_TRUE(CMAC_Final(ctx.get(), out, &out_len));
     EXPECT_EQ(Bytes(expected, sizeof(out)), Bytes(out, out_len));
   }
+
+  // Test that |CMAC_CTX_copy| works.
+  ASSERT_TRUE(CMAC_Reset(ctx.get()));
+  size_t chunk = msg_len / 2;
+  ASSERT_TRUE(CMAC_Update(ctx.get(), msg, chunk));
+  bssl::UniquePtr<CMAC_CTX> ctx2(CMAC_CTX_new());
+  ASSERT_TRUE(ctx2);
+  ASSERT_TRUE(CMAC_CTX_copy(ctx2.get(), ctx.get()));
+  ASSERT_TRUE(CMAC_Update(ctx2.get(), msg + chunk, msg_len - chunk));
+  size_t out_len;
+  ASSERT_TRUE(CMAC_Final(ctx2.get(), out, &out_len));
+  EXPECT_EQ(Bytes(expected, sizeof(out)), Bytes(out, out_len));
 }
 
 TEST(CMACTest, RFC4493TestVectors) {
@@ -103,4 +118,150 @@ TEST(CMACTest, RFC4493TestVectors) {
   test("RFC 4493 #2", kKey, sizeof(kKey), kMsg2, sizeof(kMsg2), kOut2);
   test("RFC 4493 #3", kKey, sizeof(kKey), kMsg3, sizeof(kMsg3), kOut3);
   test("RFC 4493 #4", kKey, sizeof(kKey), kMsg4, sizeof(kMsg4), kOut4);
+}
+
+TEST(CMACTest, Wycheproof) {
+  FileTestGTest("third_party/wycheproof_testvectors/aes_cmac_test.txt",
+                [](FileTest *t) {
+    std::string key_size, tag_size;
+    ASSERT_TRUE(t->GetInstruction(&key_size, "keySize"));
+    ASSERT_TRUE(t->GetInstruction(&tag_size, "tagSize"));
+    WycheproofResult result;
+    ASSERT_TRUE(GetWycheproofResult(t, &result));
+    std::vector<uint8_t> key, msg, tag;
+    ASSERT_TRUE(t->GetBytes(&key, "key"));
+    ASSERT_TRUE(t->GetBytes(&msg, "msg"));
+    ASSERT_TRUE(t->GetBytes(&tag, "tag"));
+
+    const EVP_CIPHER *cipher;
+    switch (atoi(key_size.c_str())) {
+      case 128:
+        cipher = EVP_aes_128_cbc();
+        break;
+      case 192:
+        cipher = EVP_aes_192_cbc();
+        break;
+      case 256:
+        cipher = EVP_aes_256_cbc();
+        break;
+      default:
+        // Some test vectors intentionally give the wrong key size. Our API
+        // requires the caller pick the sized CBC primitive, so these tests
+        // aren't useful for us.
+        EXPECT_EQ(WycheproofResult::kInvalid, result);
+        return;
+    }
+
+    size_t tag_len = static_cast<size_t>(atoi(tag_size.c_str())) / 8;
+
+    uint8_t out[16];
+    bssl::UniquePtr<CMAC_CTX> ctx(CMAC_CTX_new());
+    ASSERT_TRUE(ctx);
+    ASSERT_TRUE(CMAC_Init(ctx.get(), key.data(), key.size(), cipher, NULL));
+    ASSERT_TRUE(CMAC_Update(ctx.get(), msg.data(), msg.size()));
+    size_t out_len;
+    ASSERT_TRUE(CMAC_Final(ctx.get(), out, &out_len));
+    // Truncate the tag, if requested.
+    out_len = std::min(out_len, tag_len);
+
+    if (result == WycheproofResult::kValid) {
+      EXPECT_EQ(Bytes(tag), Bytes(out, out_len));
+
+      // Test the streaming API as well.
+      ASSERT_TRUE(CMAC_Reset(ctx.get()));
+      for (uint8_t b : msg) {
+        ASSERT_TRUE(CMAC_Update(ctx.get(), &b, 1));
+      }
+      ASSERT_TRUE(CMAC_Final(ctx.get(), out, &out_len));
+      out_len = std::min(out_len, tag_len);
+      EXPECT_EQ(Bytes(tag), Bytes(out, out_len));
+    } else {
+      // Wycheproof's invalid tests assume the implementation internally does
+      // the comparison, whereas our API only computes the tag. Check that
+      // they're not equal, but these tests are mostly not useful for us.
+      EXPECT_NE(Bytes(tag), Bytes(out, out_len));
+    }
+  });
+}
+
+static void RunCAVPTest(const char *path, const EVP_CIPHER *cipher,
+                        bool is_3des) {
+  FileTestGTest(path, [&](FileTest *t) {
+    t->IgnoreAttribute("Count");
+    t->IgnoreAttribute("Klen");
+    std::string t_len, m_len, result;
+    ASSERT_TRUE(t->GetAttribute(&t_len, "Tlen"));
+    ASSERT_TRUE(t->GetAttribute(&m_len, "Mlen"));
+    ASSERT_TRUE(t->GetAttribute(&result, "Result"));
+    std::vector<uint8_t> key, msg, mac;
+    if (is_3des) {
+      std::vector<uint8_t> key2, key3;
+      ASSERT_TRUE(t->GetBytes(&key, "Key1"));
+      ASSERT_TRUE(t->GetBytes(&key2, "Key2"));
+      ASSERT_TRUE(t->GetBytes(&key3, "Key3"));
+      key.insert(key.end(), key2.begin(), key2.end());
+      key.insert(key.end(), key3.begin(), key3.end());
+    } else {
+      ASSERT_TRUE(t->GetBytes(&key, "Key"));
+    }
+    ASSERT_TRUE(t->GetBytes(&msg, "Msg"));
+    ASSERT_TRUE(t->GetBytes(&mac, "Mac"));
+
+    // CAVP's uses a non-empty Msg attribute and zero Mlen for the empty string.
+    if (atoi(m_len.c_str()) == 0) {
+      msg.clear();
+    } else {
+      EXPECT_EQ(static_cast<size_t>(atoi(m_len.c_str())), msg.size());
+    }
+
+    size_t tag_len = static_cast<size_t>(atoi(t_len.c_str()));
+
+    uint8_t out[16];
+    bssl::UniquePtr<CMAC_CTX> ctx(CMAC_CTX_new());
+    ASSERT_TRUE(ctx);
+    ASSERT_TRUE(CMAC_Init(ctx.get(), key.data(), key.size(), cipher, NULL));
+    ASSERT_TRUE(CMAC_Update(ctx.get(), msg.data(), msg.size()));
+    size_t out_len;
+    ASSERT_TRUE(CMAC_Final(ctx.get(), out, &out_len));
+    // Truncate the tag, if requested.
+    out_len = std::min(out_len, tag_len);
+
+    ASSERT_FALSE(result.empty());
+    if (result[0] == 'P') {
+      EXPECT_EQ(Bytes(mac), Bytes(out, out_len));
+
+      // Test the streaming API as well.
+      ASSERT_TRUE(CMAC_Reset(ctx.get()));
+      for (uint8_t b : msg) {
+        ASSERT_TRUE(CMAC_Update(ctx.get(), &b, 1));
+      }
+      ASSERT_TRUE(CMAC_Final(ctx.get(), out, &out_len));
+      out_len = std::min(out_len, tag_len);
+      EXPECT_EQ(Bytes(mac), Bytes(out, out_len));
+    } else {
+      // CAVP's invalid tests assume the implementation internally does the
+      // comparison, whereas our API only computes the tag. Check that they're
+      // not equal, but these tests are mostly not useful for us.
+      EXPECT_NE(Bytes(mac), Bytes(out, out_len));
+    }
+  });
+}
+
+TEST(CMACTest, CAVPAES128) {
+  RunCAVPTest("crypto/cmac/cavp_aes128_cmac_tests.txt", EVP_aes_128_cbc(),
+              false);
+}
+
+TEST(CMACTest, CAVPAES192) {
+  RunCAVPTest("crypto/cmac/cavp_aes192_cmac_tests.txt", EVP_aes_192_cbc(),
+              false);
+}
+
+TEST(CMACTest, CAVPAES256) {
+  RunCAVPTest("crypto/cmac/cavp_aes256_cmac_tests.txt", EVP_aes_256_cbc(),
+              false);
+}
+
+TEST(CMACTest, CAVP3DES) {
+  RunCAVPTest("crypto/cmac/cavp_3des_cmac_tests.txt", EVP_des_ede3_cbc(), true);
 }

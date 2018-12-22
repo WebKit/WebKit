@@ -1,6 +1,6 @@
 include_directories(../../include)
 
-if (${ARCH} STREQUAL "x86_64")
+if(${ARCH} STREQUAL "x86_64")
   set(
     BCM_ASM_SOURCES
 
@@ -11,6 +11,7 @@ if (${ARCH} STREQUAL "x86_64")
     ghash-x86_64.${ASM_EXT}
     md5-x86_64.${ASM_EXT}
     p256-x86_64-asm.${ASM_EXT}
+    p256_beeu-x86_64-asm.${ASM_EXT}
     rdrand-x86_64.${ASM_EXT}
     rsaz-avx2.${ASM_EXT}
     sha1-x86_64.${ASM_EXT}
@@ -22,7 +23,7 @@ if (${ARCH} STREQUAL "x86_64")
   )
 endif()
 
-if (${ARCH} STREQUAL "x86")
+if(${ARCH} STREQUAL "x86")
   set(
     BCM_ASM_SOURCES
 
@@ -40,7 +41,7 @@ if (${ARCH} STREQUAL "x86")
   )
 endif()
 
-if (${ARCH} STREQUAL "arm")
+if(${ARCH} STREQUAL "arm")
   set(
     BCM_ASM_SOURCES
 
@@ -56,7 +57,7 @@ if (${ARCH} STREQUAL "arm")
   )
 endif()
 
-if (${ARCH} STREQUAL "aarch64")
+if(${ARCH} STREQUAL "aarch64")
   set(
     BCM_ASM_SOURCES
 
@@ -69,7 +70,7 @@ if (${ARCH} STREQUAL "aarch64")
   )
 endif()
 
-if (${ARCH} STREQUAL "ppc64le")
+if(${ARCH} STREQUAL "ppc64le")
   set(
     BCM_ASM_SOURCES
 
@@ -100,6 +101,7 @@ perlasm(ghash-x86.${ASM_EXT} modes/asm/ghash-x86.pl)
 perlasm(md5-586.${ASM_EXT} md5/asm/md5-586.pl)
 perlasm(md5-x86_64.${ASM_EXT} md5/asm/md5-x86_64.pl)
 perlasm(p256-x86_64-asm.${ASM_EXT} ec/asm/p256-x86_64-asm.pl)
+perlasm(p256_beeu-x86_64-asm.${ASM_EXT} ec/asm/p256_beeu-x86_64-asm.pl)
 perlasm(rdrand-x86_64.${ASM_EXT} rand/asm/rdrand-x86_64.pl)
 perlasm(rsaz-avx2.${ASM_EXT} bn/asm/rsaz-avx2.pl)
 perlasm(sha1-586.${ASM_EXT} sha/asm/sha1-586.pl)
@@ -121,6 +123,13 @@ perlasm(x86_64-mont.${ASM_EXT} bn/asm/x86_64-mont.pl)
 perlasm(x86-mont.${ASM_EXT} bn/asm/x86-mont.pl)
 
 if(FIPS_DELOCATE)
+  if(OPENSSL_NO_ASM)
+    # If OPENSSL_NO_ASM was defined then ASM will not have been enabled, but in
+    # FIPS mode we have to have it because the module build requires going via
+    # textual assembly.
+    enable_language(ASM)
+  endif()
+
   add_library(
     bcm_c_generated_asm
 
@@ -129,24 +138,17 @@ if(FIPS_DELOCATE)
     bcm.c
   )
 
+  add_dependencies(bcm_c_generated_asm global_target)
+
   set_target_properties(bcm_c_generated_asm PROPERTIES COMPILE_OPTIONS "-S")
   set_target_properties(bcm_c_generated_asm PROPERTIES POSITION_INDEPENDENT_CODE ON)
 
-  function(prepend_path values prefix output)
-    set(result)
-    foreach(value ${values})
-      list(APPEND result "${prefix}/${value}")
-    endforeach(value)
-    set(${output} ${result} PARENT_SCOPE)
-  endfunction()
-
-  prepend_path("${BCM_ASM_SOURCES}" "${CMAKE_CURRENT_BINARY_DIR}" DELOCATE_ASM_ARGS)
-
+  go_executable(delocate boringssl.googlesource.com/boringssl/util/fipstools/delocate)
   add_custom_command(
     OUTPUT bcm-delocated.S
-    COMMAND ${GO_EXECUTABLE} run util/fipstools/delocate.go util/fipstools/delocate.peg.go util/fipstools/ar.go util/fipstools/const.go -a $<TARGET_FILE:bcm_c_generated_asm> -o ${CMAKE_CURRENT_BINARY_DIR}/bcm-delocated.S ${DELOCATE_ASM_ARGS}
-    DEPENDS bcm_c_generated_asm ${BCM_ASM_SOURCES} ${CMAKE_SOURCE_DIR}/util/fipstools/delocate.go ${CMAKE_SOURCE_DIR}/util/fipstools/delocate.peg.go ${CMAKE_SOURCE_DIR}/util/fipstools/ar.go ${CMAKE_SOURCE_DIR}/util/fipstools/const.go
-    WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
+    COMMAND ./delocate -a $<TARGET_FILE:bcm_c_generated_asm> -o bcm-delocated.S ${BCM_ASM_SOURCES}
+    DEPENDS bcm_c_generated_asm delocate ${BCM_ASM_SOURCES}
+    WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
   )
 
   add_library(
@@ -157,14 +159,18 @@ if(FIPS_DELOCATE)
     bcm-delocated.S
   )
 
+  add_dependencies(bcm_hashunset global_target)
+
   set_target_properties(bcm_hashunset PROPERTIES POSITION_INDEPENDENT_CODE ON)
   set_target_properties(bcm_hashunset PROPERTIES LINKER_LANGUAGE C)
 
+  go_executable(inject_hash
+	        boringssl.googlesource.com/boringssl/util/fipstools/inject_hash)
   add_custom_command(
     OUTPUT bcm.o
-    COMMAND ${GO_EXECUTABLE} run util/fipstools/inject-hash.go util/fipstools/ar.go util/fipstools/const.go -o ${CMAKE_CURRENT_BINARY_DIR}/bcm.o -in-archive $<TARGET_FILE:bcm_hashunset>
-    DEPENDS bcm_hashunset ${CMAKE_SOURCE_DIR}/util/fipstools/inject-hash.go ${CMAKE_SOURCE_DIR}/util/fipstools/ar.go ${CMAKE_SOURCE_DIR}/util/fipstools/const.go
-    WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
+    COMMAND ./inject_hash -o bcm.o -in-archive $<TARGET_FILE:bcm_hashunset>
+    DEPENDS bcm_hashunset inject_hash
+    WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
   )
 
   # The outputs of add_custom_command cannot be referenced outside of the
@@ -180,6 +186,8 @@ if(FIPS_DELOCATE)
     is_fips.c
   )
 
+  add_dependencies(fipsmodule global_target)
+
   set_target_properties(fipsmodule PROPERTIES LINKER_LANGUAGE C)
 else()
   add_library(
@@ -192,4 +200,6 @@ else()
 
     ${BCM_ASM_SOURCES}
   )
+
+  add_dependencies(fipsmodule global_target)
 endif()

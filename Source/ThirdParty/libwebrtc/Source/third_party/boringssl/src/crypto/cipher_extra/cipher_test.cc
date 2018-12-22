@@ -51,9 +51,11 @@
  * ====================================================================
  */
 
+#include <limits.h>
 #include <stdlib.h>
 #include <string.h>
 
+#include <algorithm>
 #include <string>
 #include <vector>
 
@@ -61,9 +63,11 @@
 
 #include <openssl/cipher.h>
 #include <openssl/err.h>
+#include <openssl/span.h>
 
 #include "../test/file_test.h"
 #include "../test/test_util.h"
+#include "../test/wycheproof_util.h"
 
 
 static const EVP_CIPHER *GetCipher(const std::string &name) {
@@ -97,6 +101,8 @@ static const EVP_CIPHER *GetCipher(const std::string &name) {
     return EVP_aes_192_ctr();
   } else if (name == "AES-192-ECB") {
     return EVP_aes_192_ecb();
+  } else if (name == "AES-192-OFB") {
+    return EVP_aes_192_ofb();
   } else if (name == "AES-256-CBC") {
     return EVP_aes_256_cbc();
   } else if (name == "AES-128-CTR") {
@@ -109,6 +115,38 @@ static const EVP_CIPHER *GetCipher(const std::string &name) {
     return EVP_aes_256_ofb();
   }
   return nullptr;
+}
+
+static bool DoCipher(EVP_CIPHER_CTX *ctx, std::vector<uint8_t> *out,
+                     bssl::Span<const uint8_t> in, size_t chunk) {
+  size_t max_out = in.size();
+  if ((EVP_CIPHER_CTX_flags(ctx) & EVP_CIPH_NO_PADDING) == 0 &&
+      EVP_CIPHER_CTX_encrypting(ctx)) {
+    unsigned block_size = EVP_CIPHER_CTX_block_size(ctx);
+    max_out += block_size - (max_out % block_size);
+  }
+  out->resize(max_out);
+
+  size_t total = 0;
+  int len;
+  while (!in.empty()) {
+    size_t todo = chunk == 0 ? in.size() : std::min(in.size(), chunk);
+    EXPECT_LE(todo, static_cast<size_t>(INT_MAX));
+    if (!EVP_CipherUpdate(ctx, out->data() + total, &len, in.data(),
+                          static_cast<int>(todo))) {
+      return false;
+    }
+    EXPECT_GE(len, 0);
+    total += static_cast<size_t>(len);
+    in = in.subspan(todo);
+  }
+  if (!EVP_CipherFinal_ex(ctx, out->data() + total, &len)) {
+    return false;
+  }
+  EXPECT_GE(len, 0);
+  total += static_cast<size_t>(len);
+  out->resize(total);
+  return true;
 }
 
 static void TestOperation(FileTest *t, const EVP_CIPHER *cipher, bool encrypt,
@@ -134,58 +172,40 @@ static void TestOperation(FileTest *t, const EVP_CIPHER *cipher, bool encrypt,
                          encrypt ? 1 : 0));
   if (t->HasAttribute("IV")) {
     if (is_aead) {
-      ASSERT_TRUE(
-          EVP_CIPHER_CTX_ctrl(ctx.get(), EVP_CTRL_GCM_SET_IVLEN, iv.size(), 0));
+      ASSERT_TRUE(EVP_CIPHER_CTX_ctrl(ctx.get(), EVP_CTRL_AEAD_SET_IVLEN,
+                                      iv.size(), 0));
     } else {
       ASSERT_EQ(iv.size(), EVP_CIPHER_CTX_iv_length(ctx.get()));
     }
   }
   if (is_aead && !encrypt) {
-    ASSERT_TRUE(EVP_CIPHER_CTX_ctrl(ctx.get(), EVP_CTRL_GCM_SET_TAG, tag.size(),
+    ASSERT_TRUE(EVP_CIPHER_CTX_ctrl(ctx.get(), EVP_CTRL_AEAD_SET_TAG,
+                                    tag.size(),
                                     const_cast<uint8_t *>(tag.data())));
   }
   // The ciphers are run with no padding. For each of the ciphers we test, the
   // output size matches the input size.
-  std::vector<uint8_t> result(in->size());
   ASSERT_EQ(in->size(), out->size());
-  int unused, result_len1 = 0, result_len2;
   ASSERT_TRUE(EVP_CIPHER_CTX_set_key_length(ctx.get(), key.size()));
   ASSERT_TRUE(EVP_CipherInit_ex(ctx.get(), nullptr, nullptr, key.data(),
                                 iv.data(), -1));
-  // Note: the deprecated |EVP_CIPHER|-based AES-GCM API is sensitive to whether
+  // Note: the deprecated |EVP_CIPHER|-based AEAD API is sensitive to whether
   // parameters are NULL, so it is important to skip the |in| and |aad|
   // |EVP_CipherUpdate| calls when empty.
   if (!aad.empty()) {
+    int unused;
     ASSERT_TRUE(
         EVP_CipherUpdate(ctx.get(), nullptr, &unused, aad.data(), aad.size()));
   }
   ASSERT_TRUE(EVP_CIPHER_CTX_set_padding(ctx.get(), 0));
-  if (chunk_size != 0) {
-    for (size_t i = 0; i < in->size();) {
-      size_t todo = chunk_size;
-      if (i + todo > in->size()) {
-        todo = in->size() - i;
-      }
-
-      int len;
-      ASSERT_TRUE(EVP_CipherUpdate(ctx.get(), result.data() + result_len1, &len,
-                                   in->data() + i, todo));
-      result_len1 += len;
-      i += todo;
-    }
-  } else if (!in->empty()) {
-    ASSERT_TRUE(EVP_CipherUpdate(ctx.get(), result.data(), &result_len1,
-                                 in->data(), in->size()));
-  }
-  ASSERT_TRUE(
-      EVP_CipherFinal_ex(ctx.get(), result.data() + result_len1, &result_len2));
-  result.resize(result_len1 + result_len2);
+  std::vector<uint8_t> result;
+  ASSERT_TRUE(DoCipher(ctx.get(), &result, *in, chunk_size));
   EXPECT_EQ(Bytes(*out), Bytes(result));
   if (encrypt && is_aead) {
     uint8_t rtag[16];
     ASSERT_LE(tag.size(), sizeof(rtag));
-    ASSERT_TRUE(
-        EVP_CIPHER_CTX_ctrl(ctx.get(), EVP_CTRL_GCM_GET_TAG, tag.size(), rtag));
+    ASSERT_TRUE(EVP_CIPHER_CTX_ctrl(ctx.get(), EVP_CTRL_AEAD_GET_TAG,
+                                    tag.size(), rtag));
     EXPECT_EQ(Bytes(tag), Bytes(rtag, tag.size()));
   }
 }
@@ -284,4 +304,62 @@ TEST(CipherTest, CAVP_TDES_CBC) {
 
 TEST(CipherTest, CAVP_TDES_ECB) {
   FileTestGTest("crypto/cipher_extra/test/nist_cavp/tdes_ecb.txt", TestCipher);
+}
+
+TEST(CipherTest, WycheproofAESCBC) {
+  FileTestGTest("third_party/wycheproof_testvectors/aes_cbc_pkcs5_test.txt",
+                [](FileTest *t) {
+    t->IgnoreInstruction("type");
+    t->IgnoreInstruction("ivSize");
+
+    std::string key_size;
+    ASSERT_TRUE(t->GetInstruction(&key_size, "keySize"));
+    const EVP_CIPHER *cipher;
+    switch (atoi(key_size.c_str())) {
+      case 128:
+        cipher = EVP_aes_128_cbc();
+        break;
+      case 192:
+        cipher = EVP_aes_192_cbc();
+        break;
+      case 256:
+        cipher = EVP_aes_256_cbc();
+        break;
+      default:
+        FAIL() << "Unsupported key size: " << key_size;
+    }
+
+    std::vector<uint8_t> key, iv, msg, ct;
+    ASSERT_TRUE(t->GetBytes(&key, "key"));
+    ASSERT_TRUE(t->GetBytes(&iv, "iv"));
+    ASSERT_TRUE(t->GetBytes(&msg, "msg"));
+    ASSERT_TRUE(t->GetBytes(&ct, "ct"));
+    ASSERT_EQ(EVP_CIPHER_key_length(cipher), key.size());
+    ASSERT_EQ(EVP_CIPHER_iv_length(cipher), iv.size());
+    WycheproofResult result;
+    ASSERT_TRUE(GetWycheproofResult(t, &result));
+
+    bssl::ScopedEVP_CIPHER_CTX ctx;
+    std::vector<uint8_t> out;
+    const std::vector<size_t> chunk_sizes = {0,  1,  2,  5,  7,  8,  9,  15, 16,
+                                             17, 31, 32, 33, 63, 64, 65, 512};
+    for (size_t chunk : chunk_sizes) {
+      SCOPED_TRACE(chunk);
+      if (result == WycheproofResult::kValid) {
+        ASSERT_TRUE(EVP_DecryptInit_ex(ctx.get(), cipher, nullptr, key.data(),
+                                       iv.data()));
+        ASSERT_TRUE(DoCipher(ctx.get(), &out, ct, chunk));
+        EXPECT_EQ(Bytes(msg), Bytes(out));
+
+        ASSERT_TRUE(EVP_EncryptInit_ex(ctx.get(), cipher, nullptr, key.data(),
+                                       iv.data()));
+        ASSERT_TRUE(DoCipher(ctx.get(), &out, msg, chunk));
+        EXPECT_EQ(Bytes(ct), Bytes(out));
+      } else {
+        ASSERT_TRUE(EVP_DecryptInit_ex(ctx.get(), cipher, nullptr, key.data(),
+                                       iv.data()));
+        EXPECT_FALSE(DoCipher(ctx.get(), &out, ct, chunk));
+      }
+    }
+  });
 }

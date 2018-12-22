@@ -316,6 +316,11 @@ static void sha256_block_data_order(uint32_t *state, const uint8_t *data,
 
 #endif  // !SHA256_ASM
 
+void SHA256_TransformBlocks(uint32_t state[8], const uint8_t *data,
+                            size_t num_blocks) {
+  sha256_block_data_order(state, data, num_blocks);
+}
+
 #undef DATA_ORDER_IS_BIG_ENDIAN
 #undef HASH_CTX
 #undef HASH_CBLOCK

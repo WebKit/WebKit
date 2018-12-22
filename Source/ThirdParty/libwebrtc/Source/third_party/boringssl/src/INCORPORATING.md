@@ -37,7 +37,7 @@ updating things more complex.
 
 BoringSSL is designed to work with many different build systems. Currently,
 different projects use [GYP](https://gyp.gsrc.io/),
-[GN](https://chromium.googlesource.com/chromium/src/+/master/tools/gn/docs/quick_start.md),
+[GN](https://gn.googlesource.com/gn/+/master/docs/quick_start.md),
 [Bazel](https://bazel.build/) and [Make](https://www.gnu.org/software/make/)  to
 build BoringSSL, without too much pain.
 

@@ -109,7 +109,7 @@ TEST(RIPEMDTest, RunTest) {
       0x37, 0xf9, 0x7f, 0x68, 0xf0, 0x83, 0x25, 0xdc, 0x15, 0x28};
 
   if (OPENSSL_memcmp(digest, kMillionADigest, sizeof(digest)) != 0) {
-    fprintf(stderr, "Digest incorrect for “million a's” test: ");
+    fprintf(stderr, u8"Digest incorrect for “million a's” test: ");
     hexdump(stderr, "", digest, sizeof(digest));
     ok = 0;
   }

@@ -1,5 +1,10 @@
+# This file is generated from a similarly-named Perl script in the BoringSSL
+# source tree. Do not edit by hand.
+
 #if defined(__i386__)
-.file	"chacha-x86.S"
+#if defined(BORINGSSL_PREFIX)
+#include <boringssl_prefix_symbols_asm.h>
+#endif
 .text
 .globl	ChaCha20_ctr32
 .hidden	ChaCha20_ctr32

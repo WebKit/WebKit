@@ -152,6 +152,9 @@ OPENSSL_EXPORT void ERR_load_ERR_strings(void);
 // ERR_load_crypto_strings does nothing.
 OPENSSL_EXPORT void ERR_load_crypto_strings(void);
 
+// ERR_load_RAND_strings does nothing.
+OPENSSL_EXPORT void ERR_load_RAND_strings(void);
+
 // ERR_free_strings does nothing.
 OPENSSL_EXPORT void ERR_free_strings(void);
 
@@ -261,14 +264,6 @@ OPENSSL_EXPORT void ERR_print_errors_fp(FILE *file);
 
 // ERR_clear_error clears the error queue for the current thread.
 OPENSSL_EXPORT void ERR_clear_error(void);
-
-// ERR_remove_thread_state clears the error queue for the current thread if
-// |tid| is NULL. Otherwise it calls |assert(0)|, because it's no longer
-// possible to delete the error queue for other threads.
-//
-// Error queues are thread-local data and are deleted automatically. You do not
-// need to call this function. Use |ERR_clear_error|.
-OPENSSL_EXPORT void ERR_remove_thread_state(const CRYPTO_THREADID *tid);
 
 // ERR_set_mark "marks" the most recent error for use with |ERR_pop_to_mark|.
 // It returns one if an error was marked and zero if there are no errors.
@@ -382,6 +377,14 @@ enum {
 // ERR_remove_state calls |ERR_clear_error|.
 OPENSSL_EXPORT void ERR_remove_state(unsigned long pid);
 
+// ERR_remove_thread_state clears the error queue for the current thread if
+// |tid| is NULL. Otherwise it calls |assert(0)|, because it's no longer
+// possible to delete the error queue for other threads.
+//
+// Use |ERR_clear_error| instead. Note error queues are deleted automatically on
+// thread exit. You do not need to call this function to release memory.
+OPENSSL_EXPORT void ERR_remove_thread_state(const CRYPTO_THREADID *tid);
+
 // ERR_func_error_string returns the string "OPENSSL_internal".
 OPENSSL_EXPORT const char *ERR_func_error_string(uint32_t packed_error);
 
@@ -395,7 +398,7 @@ OPENSSL_EXPORT const char *ERR_func_error_string(uint32_t packed_error);
 //
 // TODO(fork): remove this function.
 OPENSSL_EXPORT char *ERR_error_string(uint32_t packed_error, char *buf);
-#define ERR_ERROR_STRING_BUF_LEN 256
+#define ERR_ERROR_STRING_BUF_LEN 120
 
 // ERR_GET_FUNC returns zero. BoringSSL errors do not report a function code.
 #define ERR_GET_FUNC(packed_error) 0

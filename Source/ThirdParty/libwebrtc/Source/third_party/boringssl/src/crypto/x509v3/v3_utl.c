@@ -72,6 +72,7 @@
 
 #include "../conf/internal.h"
 #include "../internal.h"
+#include "internal.h"
 
 
 static char *strip_spaces(char *name);
@@ -446,7 +447,7 @@ static char *strip_spaces(char *name)
  * on EBCDIC machines)
  */
 
-char *hex_to_string(const unsigned char *buffer, long len)
+char *x509v3_bytes_to_hex(const unsigned char *buffer, long len)
 {
     char *tmp, *q;
     const unsigned char *p;
@@ -469,11 +470,7 @@ char *hex_to_string(const unsigned char *buffer, long len)
     return tmp;
 }
 
-/*
- * Give a string of hex digits convert to a buffer
- */
-
-unsigned char *string_to_hex(const char *str, long *len)
+unsigned char *x509v3_hex_to_bytes(const char *str, long *len)
 {
     unsigned char *hexbuf, *q;
     unsigned char ch, cl, *p;
@@ -533,11 +530,7 @@ unsigned char *string_to_hex(const char *str, long *len)
 
 }
 
-/*
- * V2I name comparison function: returns zero if 'name' matches cmp or cmp.*
- */
-
-int name_cmp(const char *name, const char *cmp)
+int x509v3_name_cmp(const char *name, const char *cmp)
 {
     int len, ret;
     char c;
@@ -650,6 +643,7 @@ static int append_ia5(STACK_OF(OPENSSL_STRING) **sk, ASN1_IA5STRING *email)
     if (!*sk)
         return 0;
     /* Don't add duplicates */
+    sk_OPENSSL_STRING_sort(*sk);
     if (sk_OPENSSL_STRING_find(*sk, NULL, (char *)email->data))
         return 1;
     emtmp = BUF_strdup((char *)email->data);

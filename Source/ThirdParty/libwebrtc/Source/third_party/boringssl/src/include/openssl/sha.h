@@ -171,6 +171,14 @@ OPENSSL_EXPORT uint8_t *SHA256(const uint8_t *data, size_t len, uint8_t *out);
 // from |block|.
 OPENSSL_EXPORT void SHA256_Transform(SHA256_CTX *sha, const uint8_t *block);
 
+// SHA256_TransformBlocks is a low-level function that takes |num_blocks| *
+// |SHA256_CBLOCK| bytes of data and performs SHA-256 transforms on it to update
+// |state|. You should not use this function unless you are implementing a
+// derivative of SHA-256.
+OPENSSL_EXPORT void SHA256_TransformBlocks(uint32_t state[8],
+                                           const uint8_t *data,
+                                           size_t num_blocks);
+
 struct sha256_state_st {
   uint32_t h[8];
   uint32_t Nl, Nh;
@@ -202,11 +210,6 @@ OPENSSL_EXPORT int SHA384_Final(uint8_t *md, SHA512_CTX *sha);
 // |out|. There must be at least |SHA384_DIGEST_LENGTH| bytes of space in
 // |out|.
 OPENSSL_EXPORT uint8_t *SHA384(const uint8_t *data, size_t len, uint8_t *out);
-
-// SHA384_Transform is a low-level function that performs a single, SHA-384
-// block transformation using the state from |sha| and |SHA384_CBLOCK| bytes
-// from |block|.
-OPENSSL_EXPORT void SHA384_Transform(SHA512_CTX *sha, const uint8_t *block);
 
 
 // SHA-512.

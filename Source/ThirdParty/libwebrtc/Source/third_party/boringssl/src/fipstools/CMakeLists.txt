@@ -1,6 +1,6 @@
 include_directories(../include)
 
-if (FIPS)
+if(FIPS)
   add_executable(
     cavp
 
@@ -14,6 +14,7 @@ if (FIPS)
     cavp_ecdsa2_siggen_test.cc
     cavp_ecdsa2_sigver_test.cc
     cavp_hmac_test.cc
+    cavp_kas_test.cc
     cavp_keywrap_test.cc
     cavp_rsa2_keygen_test.cc
     cavp_rsa2_siggen_test.cc
@@ -21,11 +22,14 @@ if (FIPS)
     cavp_sha_monte_test.cc
     cavp_sha_test.cc
     cavp_tdes_test.cc
+    cavp_tlskdf_test.cc
 
     cavp_test_util.cc
 
     $<TARGET_OBJECTS:test_support>
   )
+
+  add_dependencies(cavp global_target)
 
   add_executable(
     test_fips
@@ -33,6 +37,8 @@ if (FIPS)
     test_fips.c
     $<TARGET_OBJECTS:test_support>
   )
+
+  add_dependencies(test_fips global_target)
 
   target_link_libraries(cavp crypto)
   target_link_libraries(test_fips crypto)

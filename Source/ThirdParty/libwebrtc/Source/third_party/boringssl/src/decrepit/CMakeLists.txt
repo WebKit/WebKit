@@ -1,40 +1,28 @@
 include_directories(../include)
 
-add_subdirectory(bio)
-add_subdirectory(blowfish)
-add_subdirectory(cast)
-add_subdirectory(cfb)
-add_subdirectory(des)
-add_subdirectory(dh)
-add_subdirectory(dsa)
-add_subdirectory(evp)
-add_subdirectory(obj)
-add_subdirectory(rc4)
-add_subdirectory(ripemd)
-add_subdirectory(rsa)
-add_subdirectory(ssl)
-add_subdirectory(x509)
-add_subdirectory(xts)
-
 add_library(
   decrepit
 
-  $<TARGET_OBJECTS:bio_decrepit>
-  $<TARGET_OBJECTS:blowfish>
-  $<TARGET_OBJECTS:cast>
-  $<TARGET_OBJECTS:cfb>
-  $<TARGET_OBJECTS:des_decrepit>
-  $<TARGET_OBJECTS:dh_decrepit>
-  $<TARGET_OBJECTS:dsa_decrepit>
-  $<TARGET_OBJECTS:evp_decrepit>
-  $<TARGET_OBJECTS:obj_decrepit>
-  $<TARGET_OBJECTS:rc4_decrepit>
-  $<TARGET_OBJECTS:ripemd_decrepit>
-  $<TARGET_OBJECTS:rsa_decrepit>
-  $<TARGET_OBJECTS:ssl_decrepit>
-  $<TARGET_OBJECTS:x509_decrepit>
-  $<TARGET_OBJECTS:xts>
+  bio/base64_bio.c
+  blowfish/blowfish.c
+  cast/cast.c
+  cast/cast_tables.c
+  cfb/cfb.c
+  des/cfb64ede.c
+  dh/dh_decrepit.c
+  dsa/dsa_decrepit.c
+  evp/dss1.c
+  evp/evp_do_all.c
+  obj/obj_decrepit.c
+  rc4/rc4_decrepit.c
+  ripemd/ripemd.c
+  rsa/rsa_decrepit.c
+  ssl/ssl_decrepit.c
+  x509/x509_decrepit.c
+  xts/xts.c
 )
+
+add_dependencies(decrepit global_target)
 
 target_link_libraries(decrepit crypto ssl)
 
@@ -44,12 +32,14 @@ add_executable(
   ripemd/ripemd_test.cc
   cfb/cfb_test.cc
 
-  $<TARGET_OBJECTS:gtest_main>
+  $<TARGET_OBJECTS:boringssl_gtest_main>
   $<TARGET_OBJECTS:test_support>
 )
 
-target_link_libraries(decrepit_test crypto decrepit gtest)
-if (WIN32)
+add_dependencies(decrepit_test global_target)
+
+target_link_libraries(decrepit_test crypto decrepit boringssl_gtest)
+if(WIN32)
   target_link_libraries(decrepit_test ws2_32)
 endif()
 add_dependencies(all_tests decrepit_test)

@@ -123,7 +123,7 @@ feature, so BoringSSL rejects peer renegotiations by default.
 
 To enable renegotiation, call `SSL_set_renegotiate_mode` and set it to
 `ssl_renegotiate_once` or `ssl_renegotiate_freely`. Renegotiation is only
-supported as a client in SSL3/TLS and the HelloRequest must be received at a
+supported as a client in TLS and the HelloRequest must be received at a
 quiet point in the application protocol. This is sufficient to support the
 common use of requesting a new client certificate between an HTTP request and
 response in (unpipelined) HTTP/1.1.
@@ -210,7 +210,7 @@ strings and loading algorithms, etc. All of these functions still exist in
 BoringSSL for convenience, but they do nothing and are not necessary.
 
 The one exception is `CRYPTO_library_init`. In `BORINGSSL_NO_STATIC_INITIALIZER`
-builds, it must be called to query CPU capabitilies before the rest of the
+builds, it must be called to query CPU capabilities before the rest of the
 library. In the default configuration, this is done with a static initializer
 and is also unnecessary.
 

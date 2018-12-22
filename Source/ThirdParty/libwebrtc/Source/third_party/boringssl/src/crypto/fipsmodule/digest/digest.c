@@ -166,9 +166,10 @@ int EVP_MD_CTX_copy(EVP_MD_CTX *out, const EVP_MD_CTX *in) {
   return EVP_MD_CTX_copy_ex(out, in);
 }
 
-void EVP_MD_CTX_reset(EVP_MD_CTX *ctx) {
+int EVP_MD_CTX_reset(EVP_MD_CTX *ctx) {
   EVP_MD_CTX_cleanup(ctx);
   EVP_MD_CTX_init(ctx);
+  return 1;
 }
 
 int EVP_DigestInit_ex(EVP_MD_CTX *ctx, const EVP_MD *type, ENGINE *engine) {

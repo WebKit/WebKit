@@ -30,11 +30,15 @@ void hexdump(FILE *fp, const char *msg, const void *in, size_t len) {
 }
 
 std::ostream &operator<<(std::ostream &os, const Bytes &in) {
+  if (in.span_.empty()) {
+    return os << "<empty Bytes>";
+  }
+
   // Print a byte slice as hex.
   static const char hex[] = "0123456789abcdef";
-  for (size_t i = 0; i < in.len; i++) {
-    os << hex[in.data[i] >> 4];
-    os << hex[in.data[i] & 0xf];
+  for (uint8_t b : in.span_) {
+    os << hex[b >> 4];
+    os << hex[b & 0xf];
   }
   return os;
 }

@@ -13,7 +13,3 @@ go run make_legacy_aead_tests.go -cipher aes256 -mac sha384 > aes_256_cbc_sha384
 
 go run make_legacy_aead_tests.go -cipher 3des -mac sha1 > des_ede3_cbc_sha1_tls_tests.txt
 go run make_legacy_aead_tests.go -cipher 3des -mac sha1 -implicit-iv > des_ede3_cbc_sha1_tls_implicit_iv_tests.txt
-
-go run make_legacy_aead_tests.go -cipher aes128 -mac sha1 -ssl3 > aes_128_cbc_sha1_ssl3_tests.txt
-go run make_legacy_aead_tests.go -cipher aes256 -mac sha1 -ssl3 > aes_256_cbc_sha1_ssl3_tests.txt
-go run make_legacy_aead_tests.go -cipher 3des -mac sha1 -ssl3 > des_ede3_cbc_sha1_ssl3_tests.txt

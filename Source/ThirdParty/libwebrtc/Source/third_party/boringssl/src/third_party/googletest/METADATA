@@ -6,15 +6,9 @@ third_party {
     type: HOMEPAGE
     value: "https://github.com/google/googletest"
   }
-  version: "5e7fd50e17b6edf1cadff973d0ec68966cf3265e"
-  last_upgrade_date { year: 2017 month: 1 day: 19 }
+  version: "4371b996edb26f9e61f292285a1d2f71259e72cc"
+  last_upgrade_date { year: 2018 month: 1 day: 6 }
 
   local_modifications:
       "Only googletest, not googlemock, is included."
-      " "
-      "https://github.com/google/googletest/pull/965 was applied."
-      "https://github.com/google/googletest/pull/991 was applied."
-      "https://github.com/google/googletest/pull/1007 was applied."
-      "https://github.com/google/googletest/pull/1109 was applied."
-      "clang-cl fixes in https://boringssl-review.googlesource.com/c/boringssl/+/21204"
 }

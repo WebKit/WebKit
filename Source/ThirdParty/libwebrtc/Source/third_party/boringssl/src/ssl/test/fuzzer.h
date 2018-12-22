@@ -30,8 +30,8 @@
 #include <openssl/ssl.h>
 #include <openssl/x509.h>
 
+#include "../internal.h"
 #include "./fuzzer_tags.h"
-
 
 namespace {
 
@@ -276,6 +276,19 @@ class TLSFuzzer {
     }
   }
 
+  static void MoveBIOs(SSL *dest, SSL *src) {
+    BIO *rbio = SSL_get_rbio(src);
+    BIO_up_ref(rbio);
+    SSL_set0_rbio(dest, rbio);
+
+    BIO *wbio = SSL_get_wbio(src);
+    BIO_up_ref(wbio);
+    SSL_set0_wbio(dest, wbio);
+
+    SSL_set0_rbio(src, nullptr);
+    SSL_set0_wbio(src, nullptr);
+  }
+
   int TestOneInput(const uint8_t *buf, size_t len) {
     RAND_reset_for_fuzzing();
 
@@ -294,19 +307,63 @@ class TLSFuzzer {
       SSL_set_tlsext_host_name(ssl.get(), "hostname");
     }
 
+    // ssl_handoff may or may not be used.
+    bssl::UniquePtr<SSL> ssl_handoff(SSL_new(ctx_.get()));
+    bssl::UniquePtr<SSL> ssl_handback(SSL_new(ctx_.get()));
+    SSL_set_accept_state(ssl_handoff.get());
+
     SSL_set0_rbio(ssl.get(), MakeBIO(CBS_data(&cbs), CBS_len(&cbs)).release());
     SSL_set0_wbio(ssl.get(), BIO_new(BIO_s_mem()));
 
-    if (SSL_do_handshake(ssl.get()) == 1) {
+    SSL *ssl_handshake = ssl.get();
+    bool handshake_successful = false;
+    bool handback_successful = false;
+    for (;;) {
+      int ret = SSL_do_handshake(ssl_handshake);
+      if (ret < 0 && SSL_get_error(ssl_handshake, ret) == SSL_ERROR_HANDOFF) {
+        MoveBIOs(ssl_handoff.get(), ssl.get());
+        // Ordinarily we would call SSL_serialize_handoff(ssl.get().  But for
+        // fuzzing, use the serialized handoff that's getting fuzzed.
+        if (!SSL_apply_handoff(ssl_handoff.get(), handoff_)) {
+          if (debug_) {
+            fprintf(stderr, "Handoff failed.\n");
+          }
+          break;
+        }
+        ssl_handshake = ssl_handoff.get();
+      } else if (ret < 0 &&
+                 SSL_get_error(ssl_handshake, ret) == SSL_ERROR_HANDBACK) {
+        MoveBIOs(ssl_handback.get(), ssl_handoff.get());
+        if (!SSL_apply_handback(ssl_handback.get(), handback_)) {
+          if (debug_) {
+            fprintf(stderr, "Handback failed.\n");
+          }
+          break;
+        }
+        handback_successful = true;
+        ssl_handshake = ssl_handback.get();
+      } else {
+        handshake_successful = ret == 1;
+        break;
+      }
+    }
+
+    if (debug_) {
+      if (!handshake_successful) {
+        fprintf(stderr, "Handshake failed.\n");
+      } else if (handback_successful) {
+        fprintf(stderr, "Handback successful.\n");
+      }
+    }
+
+    if (handshake_successful) {
       // Keep reading application data until error or EOF.
       uint8_t tmp[1024];
       for (;;) {
-        if (SSL_read(ssl.get(), tmp, sizeof(tmp)) <= 0) {
+        if (SSL_read(ssl_handshake, tmp, sizeof(tmp)) <= 0) {
           break;
         }
       }
-    } else if (debug_) {
-      fprintf(stderr, "Handshake failed.\n");
     }
 
     if (debug_) {
@@ -352,11 +409,9 @@ class TLSFuzzer {
     if (!SSL_CTX_set_strict_cipher_list(ctx_.get(), "ALL:NULL-SHA")) {
       return false;
     }
-    if (protocol_ == kTLS) {
-      if (!SSL_CTX_set_max_proto_version(ctx_.get(), TLS1_3_VERSION) ||
-          !SSL_CTX_set_min_proto_version(ctx_.get(), SSL3_VERSION)) {
-        return false;
-      }
+    if (protocol_ == kTLS &&
+        !SSL_CTX_set_max_proto_version(ctx_.get(), TLS1_3_VERSION)) {
+      return false;
     }
 
     SSL_CTX_set_early_data_enabled(ctx_.get(), 1);
@@ -389,6 +444,8 @@ class TLSFuzzer {
     // |ctx| is shared between runs, so we must clear any modifications to it
     // made later on in this function.
     SSL_CTX_flush_sessions(ctx_.get(), 0);
+    handoff_ = {};
+    handback_ = {};
 
     bssl::UniquePtr<SSL> ssl(SSL_new(ctx_.get()));
     if (role_ == kServer) {
@@ -439,6 +496,26 @@ class TLSFuzzer {
           }
           SSL_set_tls13_variant(ssl.get(),
                                 static_cast<tls13_variant_t>(variant));
+          break;
+        }
+
+        case kHandoffTag: {
+          CBS handoff;
+          if (!CBS_get_u24_length_prefixed(cbs, &handoff)) {
+            return nullptr;
+          }
+          handoff_.CopyFrom(handoff);
+          bssl::SSL_set_handoff_mode(ssl.get(), 1);
+          break;
+        }
+
+        case kHandbackTag: {
+          CBS handback;
+          if (!CBS_get_u24_length_prefixed(cbs, &handback)) {
+            return nullptr;
+          }
+          handback_.CopyFrom(handback);
+          bssl::SSL_set_handoff_mode(ssl.get(), 1);
           break;
         }
 
@@ -497,6 +574,7 @@ class TLSFuzzer {
   Protocol protocol_;
   Role role_;
   bssl::UniquePtr<SSL_CTX> ctx_;
+  bssl::Array<uint8_t> handoff_, handback_;
 };
 
 const BIO_METHOD TLSFuzzer::kBIOMethod = {

@@ -24,21 +24,30 @@ extern "C" {
 #endif
 
 
-#if !defined(OPENSSL_NO_ASM) && (defined(OPENSSL_ARM) || defined(OPENSSL_AARCH64))
+#if !defined(OPENSSL_NO_ASM)
+
+#if defined(OPENSSL_X86) || defined(OPENSSL_X86_64)
+#define HWAES
+#define HWAES_ECB
+
+static int hwaes_capable(void) {
+  return (OPENSSL_ia32cap_P[1] & (1 << (57 - 32))) != 0;
+}
+#elif defined(OPENSSL_ARM) || defined(OPENSSL_AARCH64)
 #define HWAES
 
 static int hwaes_capable(void) {
   return CRYPTO_is_ARMv8_AES_capable();
 }
-#endif  // !NO_ASM && (AES || AARCH64)
-
-#if !defined(OPENSSL_NO_ASM) && defined(OPENSSL_PPC64LE)
+#elif defined(OPENSSL_PPC64LE)
 #define HWAES
 
 static int hwaes_capable(void) {
   return CRYPTO_is_PPC64LE_vcrypto_capable();
 }
-#endif  // !NO_ASM && PPC64LE
+#endif
+
+#endif  // !NO_ASM
 
 
 #if defined(HWAES)
@@ -92,6 +101,12 @@ static void aes_hw_ctr32_encrypt_blocks(const uint8_t *in, uint8_t *out,
 }
 
 #endif  // !HWAES
+
+
+#if defined(HWAES_ECB)
+void aes_hw_ecb_encrypt(const uint8_t *in, uint8_t *out, size_t length,
+                        const AES_KEY *key, const int enc);
+#endif
 
 #if defined(__cplusplus)
 }  // extern C

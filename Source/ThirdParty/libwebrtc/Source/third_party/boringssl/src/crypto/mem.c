@@ -59,14 +59,11 @@
 #include <assert.h>
 #include <stdarg.h>
 #include <stdio.h>
-#include <string.h>
 
 #if defined(OPENSSL_WINDOWS)
 OPENSSL_MSVC_PRAGMA(warning(push, 3))
 #include <windows.h>
 OPENSSL_MSVC_PRAGMA(warning(pop))
-#else
-#include <strings.h>
 #endif
 
 #include "internal.h"
@@ -74,6 +71,25 @@ OPENSSL_MSVC_PRAGMA(warning(pop))
 
 #define OPENSSL_MALLOC_PREFIX 8
 
+#if defined(__GNUC__) || defined(__clang__)
+// sdallocx is a sized |free| function. By passing the size (which we happen to
+// always know in BoringSSL), the malloc implementation can save work. We cannot
+// depend on |sdallocx| being available so we declare a wrapper that falls back
+// to |free| as a weak symbol.
+//
+// This will always be safe, but will only be overridden if the malloc
+// implementation is statically linked with BoringSSL. So, if |sdallocx| is
+// provided in, say, libc.so, we still won't use it because that's dynamically
+// linked. This isn't an ideal result, but its helps in some cases.
+void sdallocx(void *ptr, size_t size, int flags);
+
+__attribute((weak, noinline))
+#else
+static
+#endif
+void sdallocx(void *ptr, size_t size, int flags) {
+  free(ptr);
+}
 
 void *OPENSSL_malloc(size_t size) {
   void *ptr = malloc(size + OPENSSL_MALLOC_PREFIX);
@@ -95,7 +111,7 @@ void OPENSSL_free(void *orig_ptr) {
 
   size_t size = *(size_t *)ptr;
   OPENSSL_cleanse(ptr, size + OPENSSL_MALLOC_PREFIX);
-  free(ptr);
+  sdallocx(ptr, size + OPENSSL_MALLOC_PREFIX, 0 /* flags */);
 }
 
 void *OPENSSL_realloc(void *orig_ptr, size_t new_size) {

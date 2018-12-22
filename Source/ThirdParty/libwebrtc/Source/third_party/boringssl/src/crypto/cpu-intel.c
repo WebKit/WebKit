@@ -54,10 +54,6 @@
  * copied and put under another distribution licence
  * [including the GNU Public Licence.] */
 
-#if !defined(__STDC_FORMAT_MACROS)
-#define __STDC_FORMAT_MACROS
-#endif
-
 #include <openssl/cpu.h>
 
 
@@ -170,10 +166,11 @@ void OPENSSL_cpuid_setup(void) {
     }
   }
 
-  uint32_t extended_features = 0;
+  uint32_t extended_features[2] = {0};
   if (num_ids >= 7) {
     OPENSSL_cpuid(&eax, &ebx, &ecx, &edx, 7);
-    extended_features = ebx;
+    extended_features[0] = ebx;
+    extended_features[1] = ecx;
   }
 
   // Determine the number of cores sharing an L1 data cache to adjust the
@@ -241,26 +238,26 @@ void OPENSSL_cpuid_setup(void) {
     //
     // TODO(davidben): Should bits 17 and 26-28 also be cleared? Upstream
     // doesn't clear those.
-    extended_features &=
+    extended_features[0] &=
         ~((1u << 5) | (1u << 16) | (1u << 21) | (1u << 30) | (1u << 31));
   }
   // See Intel manual, volume 1, section 15.2.
   if ((xcr0 & 0xe6) != 0xe6) {
     // Clear AVX512F. Note we don't touch other AVX512 extensions because they
     // can be used with YMM.
-    extended_features &= ~(1u << 16);
+    extended_features[0] &= ~(1u << 16);
   }
 
   // Disable ADX instructions on Knights Landing. See OpenSSL commit
   // 64d92d74985ebb3d0be58a9718f9e080a14a8e7f.
   if ((ecx & (1u << 26)) == 0) {
-    extended_features &= ~(1u << 19);
+    extended_features[0] &= ~(1u << 19);
   }
 
   OPENSSL_ia32cap_P[0] = edx;
   OPENSSL_ia32cap_P[1] = ecx;
-  OPENSSL_ia32cap_P[2] = extended_features;
-  OPENSSL_ia32cap_P[3] = 0;
+  OPENSSL_ia32cap_P[2] = extended_features[0];
+  OPENSSL_ia32cap_P[3] = extended_features[1];
 
   const char *env1, *env2;
   env1 = getenv("OPENSSL_ia32cap");
