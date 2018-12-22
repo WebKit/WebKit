@@ -46,6 +46,7 @@
 #include <pal/avfoundation/MediaTimeAVFoundation.h>
 #include <pal/spi/cf/CoreAudioSPI.h>
 #include <sys/time.h>
+#include <wtf/Algorithms.h>
 #include <wtf/MainThread.h>
 #include <wtf/NeverDestroyed.h>
 #include <pal/cf/CoreMediaSoftLink.h>
@@ -102,7 +103,9 @@ public:
 
     bool hasAudioUnit() const { return m_ioUnit; }
 
-    void setCaptureDeviceID(uint32_t);
+    void setCaptureDevice(String&&, uint32_t);
+
+    void devicesChanged(const Vector<CaptureDevice>&);
 
 private:
     OSStatus configureSpeakerProc();
@@ -116,10 +119,12 @@ private:
     static OSStatus speakerCallback(void*, AudioUnitRenderActionFlags*, const AudioTimeStamp*, UInt32, UInt32, AudioBufferList*);
     OSStatus provideSpeakerData(AudioUnitRenderActionFlags&, const AudioTimeStamp&, UInt32, UInt32, AudioBufferList*);
 
-    void startInternal();
+    OSStatus startInternal();
     void stopInternal();
 
     void verifyIsCapturing();
+    void devicesChanged();
+    void captureFailed();
 
     Vector<std::reference_wrapper<CoreAudioCaptureSource>> m_clients;
 
@@ -162,6 +167,8 @@ private:
     uint64_t m_speakerProcsCalled { 0 };
 #endif
 
+    String m_persistentID;
+
     uint64_t m_microphoneProcsCalled { 0 };
     uint64_t m_microphoneProcsCalledLastTime { 0 };
     Timer m_verifyCapturingTimer;
@@ -197,8 +204,10 @@ void CoreAudioSharedUnit::removeClient(CoreAudioCaptureSource& client)
     });
 }
 
-void CoreAudioSharedUnit::setCaptureDeviceID(uint32_t captureDeviceID)
+void CoreAudioSharedUnit::setCaptureDevice(String&& persistentID, uint32_t captureDeviceID)
 {
+    m_persistentID = WTFMove(persistentID);
+
 #if PLATFORM(MAC)
     if (m_captureDeviceID == captureDeviceID)
         return;
@@ -208,6 +217,17 @@ void CoreAudioSharedUnit::setCaptureDeviceID(uint32_t captureDeviceID)
 #else
     UNUSED_PARAM(captureDeviceID);
 #endif
+}
+
+void CoreAudioSharedUnit::devicesChanged(const Vector<CaptureDevice>& devices)
+{
+    if (!m_ioUnit)
+        return;
+
+    if (WTF::anyOf(devices, [this] (auto& device) { return m_persistentID == device.persistentId(); }))
+        return;
+
+    captureFailed();
 }
 
 void CoreAudioSharedUnit::addEchoCancellationSource(AudioSampleDataSource& source)
@@ -559,7 +579,8 @@ void CoreAudioSharedUnit::startProducingData()
         ASSERT(!m_ioUnit);
     }
 
-    startInternal();
+    if (startInternal())
+        captureFailed();
 }
 
 OSStatus CoreAudioSharedUnit::resume()
@@ -578,7 +599,7 @@ OSStatus CoreAudioSharedUnit::resume()
     return 0;
 }
 
-void CoreAudioSharedUnit::startInternal()
+OSStatus CoreAudioSharedUnit::startInternal()
 {
     OSStatus err;
     if (!m_ioUnit) {
@@ -586,7 +607,7 @@ void CoreAudioSharedUnit::startInternal()
         if (err) {
             cleanupAudioUnit();
             ASSERT(!m_ioUnit);
-            return;
+            return err;
         }
         ASSERT(m_ioUnit);
     }
@@ -598,7 +619,7 @@ void CoreAudioSharedUnit::startInternal()
     err = AudioOutputUnitStart(m_ioUnit);
     if (err) {
         RELEASE_LOG_ERROR(Media, "CoreAudioSharedUnit::start(%p) AudioOutputUnitStart failed with error %d (%.4s)", this, (int)err, (char*)&err);
-        return;
+        return err;
     }
 
     m_ioUnitStarted = true;
@@ -606,6 +627,8 @@ void CoreAudioSharedUnit::startInternal()
     m_verifyCapturingTimer.startRepeating(10_s);
     m_microphoneProcsCalled = 0;
     m_microphoneProcsCalledLastTime = 0;
+
+    return 0;
 }
 
 void CoreAudioSharedUnit::verifyIsCapturing()
@@ -617,8 +640,14 @@ void CoreAudioSharedUnit::verifyIsCapturing()
         return;
     }
 
+    captureFailed();
+}
+
+
+void CoreAudioSharedUnit::captureFailed()
+{
 #if !RELEASE_LOG_DISABLED
-    RELEASE_LOG_ERROR(Media, "CoreAudioSharedUnit::verifyIsCapturing - capture failed\n");
+    RELEASE_LOG_ERROR(Media, "CoreAudioSharedUnit::captureFailed - capture failed\n");
 #endif
     for (CoreAudioCaptureSource& client : m_clients)
         client.captureFailed();
@@ -783,12 +812,17 @@ CaptureDeviceManager& CoreAudioCaptureSourceFactory::audioCaptureDeviceManager()
 #endif
 }
 
-CoreAudioCaptureSource::CoreAudioCaptureSource(String&& deviceID, String&& label, String&& hashSalt, uint32_t persistentID)
+void CoreAudioCaptureSourceFactory::devicesChanged(const Vector<CaptureDevice>& devices)
+{
+    CoreAudioSharedUnit::singleton().devicesChanged(devices);
+}
+
+CoreAudioCaptureSource::CoreAudioCaptureSource(String&& deviceID, String&& label, String&& hashSalt, uint32_t captureDeviceID)
     : RealtimeMediaSource(RealtimeMediaSource::Type::Audio, WTFMove(label), WTFMove(deviceID), WTFMove(hashSalt))
-    , m_captureDeviceID(persistentID)
+    , m_captureDeviceID(captureDeviceID)
 {
     auto& unit = CoreAudioSharedUnit::singleton();
-    unit.setCaptureDeviceID(m_captureDeviceID);
+    unit.setCaptureDevice(String { persistentID() }, m_captureDeviceID);
 
     initializeEchoCancellation(unit.enableEchoCancellation());
     initializeSampleRate(unit.sampleRate());

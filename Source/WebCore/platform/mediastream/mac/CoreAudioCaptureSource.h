@@ -117,6 +117,8 @@ public:
     void endInterruption();
     void scheduleReconfiguration();
 
+    void devicesChanged(const Vector<CaptureDevice>&);
+
 #if PLATFORM(IOS_FAMILY)
     void setCoreAudioActiveSource(CoreAudioCaptureSource& source) { setActiveSource(source); }
     void unsetCoreAudioActiveSource(CoreAudioCaptureSource& source) { unsetActiveSource(source); }

@@ -1,3 +1,38 @@
+2018-12-21  Eric Carlson  <eric.carlson@apple.com>
+
+        'ended' Event doesn't fire on MediaStreamTrack when a USB camera is unplugged
+        https://bugs.webkit.org/show_bug.cgi?id=187896
+        <rdar://problem/42681445>
+
+        Reviewed by Jer Noble.
+
+        No new tests, tested manually.
+
+        * platform/mediastream/mac/AVVideoCaptureSource.h:
+        * platform/mediastream/mac/AVVideoCaptureSource.mm:
+        (WebCore::AVVideoCaptureSource::deviceDisconnected):
+        (-[WebCoreAVVideoCaptureSourceObserver addNotificationObservers]):
+        (-[WebCoreAVVideoCaptureSourceObserver removeNotificationObservers]):
+        (-[WebCoreAVVideoCaptureSourceObserver deviceConnectedDidChange:]):
+        * platform/mediastream/mac/CoreAudioCaptureDeviceManager.cpp:
+        (WebCore::deviceHasInputStreams):
+        (WebCore::isValidCaptureDevice):
+        (WebCore::CoreAudioCaptureDeviceManager::coreAudioCaptureDevices):
+        (WebCore::CoreAudioCaptureDeviceManager::refreshAudioCaptureDevices):
+        (WebCore::CoreAudioCaptureDeviceManager::devicesChanged): Deleted.
+        * platform/mediastream/mac/CoreAudioCaptureDeviceManager.h:
+        * platform/mediastream/mac/CoreAudioCaptureSource.cpp:
+        (WebCore::CoreAudioSharedUnit::setCaptureDevice):
+        (WebCore::CoreAudioSharedUnit::devicesChanged):
+        (WebCore::CoreAudioSharedUnit::startProducingData):
+        (WebCore::CoreAudioSharedUnit::startInternal):
+        (WebCore::CoreAudioSharedUnit::verifyIsCapturing):
+        (WebCore::CoreAudioSharedUnit::captureFailed):
+        (WebCore::CoreAudioCaptureSourceFactory::devicesChanged):
+        (WebCore::CoreAudioCaptureSource::CoreAudioCaptureSource):
+        (WebCore::CoreAudioSharedUnit::setCaptureDeviceID): Deleted.
+        * platform/mediastream/mac/CoreAudioCaptureSource.h:
+
 2018-12-20  Ryosuke Niwa  <rniwa@webkit.org>
 
         REGRESSION(r239353): iOS WK1 Assertion failure in notifyChildNodeRemoved while running

@@ -60,6 +60,7 @@ public:
     enum class InterruptionReason { None, VideoNotAllowedInBackground, AudioInUse, VideoInUse, VideoNotAllowedInSideBySide };
     void captureSessionBeginInterruption(RetainPtr<NSNotification>);
     void captureSessionEndInterruption(RetainPtr<NSNotification>);
+    void deviceDisconnected(RetainPtr<NSNotification>);
 
     AVCaptureSession* session() const { return m_session.get(); }
 

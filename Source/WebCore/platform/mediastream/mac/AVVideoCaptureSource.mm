@@ -78,6 +78,9 @@ SOFT_LINK_CLASS(AVFoundation, AVCaptureSession)
 
 SOFT_LINK_CONSTANT(AVFoundation, AVMediaTypeVideo, NSString *)
 
+SOFT_LINK_CONSTANT(AVFoundation, AVCaptureDeviceWasDisconnectedNotification, NSString *)
+#define AVCaptureDeviceWasDisconnectedNotification getAVCaptureDeviceWasDisconnectedNotification()
+
 #if PLATFORM(IOS_FAMILY)
 SOFT_LINK_POINTER_OPTIONAL(AVFoundation, AVCaptureSessionRuntimeErrorNotification, NSString *)
 SOFT_LINK_POINTER_OPTIONAL(AVFoundation, AVCaptureSessionWasInterruptedNotification, NSString *)
@@ -109,6 +112,7 @@ using namespace PAL;
 -(void)sessionRuntimeError:(NSNotification*)notification;
 -(void)beginSessionInterrupted:(NSNotification*)notification;
 -(void)endSessionInterrupted:(NSNotification*)notification;
+-(void)deviceConnectedDidChange:(NSNotification*)notification;
 #endif
 @end
 
@@ -626,6 +630,13 @@ void AVVideoCaptureSource::captureSessionEndInterruption(RetainPtr<NSNotificatio
 }
 #endif
 
+void AVVideoCaptureSource::deviceDisconnected(RetainPtr<NSNotification> notification)
+{
+    if (this->device() == [notification object])
+        captureFailed();
+}
+
+
 } // namespace WebCore
 
 @implementation WebCoreAVVideoCaptureSourceObserver
@@ -650,12 +661,14 @@ void AVVideoCaptureSource::captureSessionEndInterruption(RetainPtr<NSNotificatio
 
 - (void)addNotificationObservers
 {
-#if PLATFORM(IOS_FAMILY)
     ASSERT(m_callback);
 
     NSNotificationCenter* center = [NSNotificationCenter defaultCenter];
-    AVCaptureSessionType* session = m_callback->session();
 
+    [center addObserver:self selector:@selector(deviceConnectedDidChange:) name:AVCaptureDeviceWasDisconnectedNotification object:nil];
+
+#if PLATFORM(IOS_FAMILY)
+    AVCaptureSessionType* session = m_callback->session();
     [center addObserver:self selector:@selector(sessionRuntimeError:) name:AVCaptureSessionRuntimeErrorNotification object:session];
     [center addObserver:self selector:@selector(beginSessionInterrupted:) name:AVCaptureSessionWasInterruptedNotification object:session];
     [center addObserver:self selector:@selector(endSessionInterrupted:) name:AVCaptureSessionInterruptionEndedNotification object:session];
@@ -664,9 +677,7 @@ void AVVideoCaptureSource::captureSessionEndInterruption(RetainPtr<NSNotificatio
 
 - (void)removeNotificationObservers
 {
-#if PLATFORM(IOS_FAMILY)
     [[NSNotificationCenter defaultCenter] removeObserver:self];
-#endif
 }
 
 - (void)captureOutput:(AVCaptureOutputType*)captureOutput didOutputSampleBuffer:(CMSampleBufferRef)sampleBuffer fromConnection:(AVCaptureConnectionType*)connection
@@ -702,6 +713,14 @@ void AVVideoCaptureSource::captureSessionEndInterruption(RetainPtr<NSNotificatio
         m_callback->captureSessionIsRunningDidChange([newValue boolValue]);
     if (!willChange && [keyPath isEqualToString:@"suspended"])
         m_callback->captureDeviceSuspendedDidChange();
+}
+
+- (void)deviceConnectedDidChange:(NSNotification*)notification
+{
+    LOG(Media, "WebCoreAVVideoCaptureSourceObserver::deviceConnectedDidChange(%p)", self);
+
+    if (m_callback)
+        m_callback->deviceDisconnected(notification);
 }
 
 #if PLATFORM(IOS_FAMILY)
