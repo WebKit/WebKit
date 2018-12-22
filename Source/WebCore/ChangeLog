@@ -1,3 +1,16 @@
+2018-12-22  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [HarfBuzz] Width not correctly reported as 0 for zero font size
+        https://bugs.webkit.org/show_bug.cgi?id=192986
+
+        Reviewed by Michael Catanzaro.
+
+        Fixes test fast/text/font-size-zero.html
+
+        * platform/graphics/harfbuzz/ComplexTextControllerHarfBuzz.cpp:
+        (WebCore::ComplexTextController::ComplexTextRun::ComplexTextRun): Use empty advances for glyphs when the font
+        size is zero.
+
 2018-12-20  Yusuke Suzuki  <yusukesuzuki@slowstart.org>
 
         Use Ref<> as much as possible

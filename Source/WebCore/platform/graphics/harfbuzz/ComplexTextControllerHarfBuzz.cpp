@@ -156,7 +156,7 @@ ComplexTextController::ComplexTextRun::ComplexTextRun(hb_buffer_t* buffer, const
         m_coreTextIndices[i] = glyphInfos[i].cluster;
 
         uint16_t glyph = glyphInfos[i].codepoint;
-        if (m_font.isZeroWidthSpaceGlyph(glyph)) {
+        if (m_font.isZeroWidthSpaceGlyph(glyph) || !m_font.platformData().size()) {
             m_glyphs[i] = glyph;
             m_baseAdvances[i] = { };
             m_glyphOrigins[i] = { };
