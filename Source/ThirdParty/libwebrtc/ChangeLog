@@ -1,3 +1,11 @@
+2018-12-22  Dan Bernstein  <mitz@apple.com>
+
+        Fixed Apple production builds.
+
+        * Configurations/Base.xcconfig: Exclude the Source/third_party/boringssl/src/util
+          subdirectory, which contains binaries, from installsrc. Its contents are not used for
+          building any of the targets in the project.
+
 2018-12-21  Youenn Fablet  <youenn@apple.com> and Alejandro G. Castro  <alex@igalia.com>
 
         Resync BoringSSL to M72

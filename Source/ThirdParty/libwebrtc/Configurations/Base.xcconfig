@@ -94,7 +94,7 @@ OTHER_LDFLAGS = $(ASAN_OTHER_LDFLAGS) -fvisibility=default;
 
 GCC_PREPROCESSOR_DEFINITIONS = $(DEBUG_DEFINES) $(inherited) ABSL_ALLOCATOR_NOTHROW;
 
-EXCLUDED_INSTALLSRC_SUBDIRECTORY_PATTERNS = $(inherited) "$(PROJECT_DIR)/Source/webrtc/examples";
+EXCLUDED_INSTALLSRC_SUBDIRECTORY_PATTERNS = $(inherited) "$(PROJECT_DIR)/Source/webrtc/examples" "$(PROJECT_DIR)/Source/third_party/boringssl/src/util";
 
 NORMAL_WEBCORE_FRAMEWORKS_DIR = $(SYSTEM_LIBRARY_DIR)/PrivateFrameworks;
 NORMAL_WEBCORE_FRAMEWORKS_DIR[sdk=macosx*] = $(SYSTEM_LIBRARY_DIR)/Frameworks/WebKit.framework/Versions/A/Frameworks;
