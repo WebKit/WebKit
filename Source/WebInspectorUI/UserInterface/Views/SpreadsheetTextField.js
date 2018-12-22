@@ -213,6 +213,10 @@ WI.SpreadsheetTextField = class SpreadsheetTextField
         if (!this._editing)
             return;
 
+        // Keep editing after tabbing out of Web Inspector window and back.
+        if (document.activeElement === this._element)
+            return;
+
         this._applyCompletionHint();
         this.discardCompletion();
 

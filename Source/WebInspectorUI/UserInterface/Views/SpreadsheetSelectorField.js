@@ -85,6 +85,10 @@ WI.SpreadsheetSelectorField = class SpreadsheetSelectorField
 
     _handleBlur(event)
     {
+        // Keep editing after tabbing out of Web Inspector window and back.
+        if (document.activeElement === this._element)
+            return;
+
         this.stopEditing();
 
         if (this._delegate && typeof this._delegate.spreadsheetSelectorFieldDidChange === "function")
