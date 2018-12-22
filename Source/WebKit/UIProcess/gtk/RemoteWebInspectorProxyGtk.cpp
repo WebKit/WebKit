@@ -53,18 +53,18 @@ WebPageProxy* RemoteWebInspectorProxy::platformCreateFrontendPageAndWindow()
 {
     ASSERT(!m_webView);
 
-    RefPtr<WebPreferences> preferences = WebPreferences::create(String(), "WebKit2.", "WebKit2.");
+    auto preferences = WebPreferences::create(String(), "WebKit2.", "WebKit2.");
 #if ENABLE(DEVELOPER_MODE)
     // Allow developers to inspect the Web Inspector in debug builds without changing settings.
     preferences->setDeveloperExtrasEnabled(true);
     preferences->setLogsPageMessagesToSystemConsoleEnabled(true);
 #endif
-    RefPtr<WebPageGroup> pageGroup = WebPageGroup::create(inspectorPageGroupIdentifierForPage(nullptr));
+    auto pageGroup = WebPageGroup::create(inspectorPageGroupIdentifierForPage(nullptr));
 
     auto pageConfiguration = API::PageConfiguration::create();
     pageConfiguration->setProcessPool(&inspectorProcessPool(inspectorLevelForPage(nullptr)));
-    pageConfiguration->setPreferences(preferences.get());
-    pageConfiguration->setPageGroup(pageGroup.get());
+    pageConfiguration->setPreferences(preferences.ptr());
+    pageConfiguration->setPageGroup(pageGroup.ptr());
     m_webView = GTK_WIDGET(webkitWebViewBaseCreate(*pageConfiguration.ptr()));
     g_signal_connect_swapped(m_webView, "destroy", G_CALLBACK(inspectorViewDestroyed), this);
     g_object_add_weak_pointer(G_OBJECT(m_webView), reinterpret_cast<void**>(&m_webView));

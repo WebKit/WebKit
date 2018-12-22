@@ -41,7 +41,7 @@ struct WebGPURenderPassDescriptor;
 
 class WebGPUCommandBuffer : public RefCounted<WebGPUCommandBuffer> {
 public:
-    static RefPtr<WebGPUCommandBuffer> create(Ref<GPUCommandBuffer>&&);
+    static Ref<WebGPUCommandBuffer> create(Ref<GPUCommandBuffer>&&);
 
     const GPUCommandBuffer& commandBuffer() const { return m_commandBuffer.get(); }
 

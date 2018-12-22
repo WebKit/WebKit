@@ -40,10 +40,7 @@ Ref<WebGPU> WebGPU::create()
 void WebGPU::requestAdapter(const WebGPUAdapterDescriptor& descriptor, WebGPUAdapterPromise&& deferred) const
 {
     auto adapter = WebGPUAdapter::create(descriptor);
-    if (!adapter)
-        deferred.reject();
-
-    deferred.resolve(*adapter);
+    deferred.resolve(adapter.get());
 }
 
 } // namespace WebCore

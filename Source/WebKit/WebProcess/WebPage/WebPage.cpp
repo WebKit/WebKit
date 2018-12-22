@@ -1431,10 +1431,10 @@ void WebPage::navigateToPDFLinkWithSimulatedClick(const String& url, IntPoint do
     const int singleClick = 1;
     // FIXME: Set modifier keys.
     // FIXME: This should probably set IsSimulated::Yes.
-    RefPtr<MouseEvent> mouseEvent = MouseEvent::create(eventNames().clickEvent, Event::CanBubble::Yes, Event::IsCancelable::Yes, Event::IsComposed::Yes,
+    auto mouseEvent = MouseEvent::create(eventNames().clickEvent, Event::CanBubble::Yes, Event::IsCancelable::Yes, Event::IsComposed::Yes,
         MonotonicTime::now(), nullptr, singleClick, screenPoint, documentPoint, { }, { }, 0, 0, nullptr, 0, WebCore::NoTap, nullptr);
 
-    mainFrame->loader().urlSelected(mainFrameDocument->completeURL(url), emptyString(), mouseEvent.get(), LockHistory::No, LockBackForwardList::No, ShouldSendReferrer::MaybeSendReferrer, ShouldOpenExternalURLsPolicy::ShouldNotAllow);
+    mainFrame->loader().urlSelected(mainFrameDocument->completeURL(url), emptyString(), mouseEvent.ptr(), LockHistory::No, LockBackForwardList::No, ShouldSendReferrer::MaybeSendReferrer, ShouldOpenExternalURLsPolicy::ShouldNotAllow);
 }
 
 void WebPage::stopLoadingFrame(uint64_t frameID)
@@ -3704,7 +3704,7 @@ void WebPage::performDragControllerAction(DragControllerAction action, const Web
 
         m_pendingDropSandboxExtension = SandboxExtension::create(WTFMove(sandboxExtensionHandle));
         for (size_t i = 0; i < sandboxExtensionsHandleArray.size(); i++) {
-            if (RefPtr<SandboxExtension> extension = SandboxExtension::create(WTFMove(sandboxExtensionsHandleArray[i])))
+            if (auto extension = SandboxExtension::create(WTFMove(sandboxExtensionsHandleArray[i])))
                 m_pendingDropExtensionsForFileUpload.append(extension);
         }
 

@@ -97,7 +97,7 @@ static HRESULT getImageCopy(IDirect3DSurface9* systemMemorySurface, RefPtr<Image
 
     CSize surfaceSize(desc.Width, desc.Height);
 
-    RefPtr<Image> image = Image::create(surfaceSize);
+    auto image = Image::create(surfaceSize);
     if (!image)
         return E_FAIL;
 

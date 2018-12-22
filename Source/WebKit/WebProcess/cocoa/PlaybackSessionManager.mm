@@ -202,9 +202,9 @@ void PlaybackSessionManager::invalidate()
 
 PlaybackSessionManager::ModelInterfaceTuple PlaybackSessionManager::createModelAndInterface(uint64_t contextId)
 {
-    RefPtr<PlaybackSessionModelMediaElement> model = PlaybackSessionModelMediaElement::create();
-    RefPtr<PlaybackSessionInterfaceContext> interface = PlaybackSessionInterfaceContext::create(*this, contextId);
-    model->addClient(*interface);
+    auto model = PlaybackSessionModelMediaElement::create();
+    auto interface = PlaybackSessionInterfaceContext::create(*this, contextId);
+    model->addClient(interface.get());
 
     return std::make_tuple(WTFMove(model), WTFMove(interface));
 }

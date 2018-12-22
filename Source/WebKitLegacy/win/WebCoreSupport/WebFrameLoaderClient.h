@@ -49,7 +49,7 @@ public:
     void setWebFrame(WebFrame* webFrame) { m_webFrame = webFrame; }
     WebFrame* webFrame() const { return m_webFrame; }
 
-    void dispatchDidFailToStartPlugin(const WebCore::PluginView*) const;
+    void dispatchDidFailToStartPlugin(const WebCore::PluginView&) const;
 
     Optional<uint64_t> pageID() const final;
     Optional<uint64_t> frameID() const final;

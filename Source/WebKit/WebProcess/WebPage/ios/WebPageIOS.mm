@@ -1821,14 +1821,14 @@ void WebPage::replaceDictatedText(const String& oldText, const String& newText)
         position = position.previous();
     if (position.isNull())
         position = startOfDocument(static_cast<Node*>(frame.document()->documentElement()));
-    RefPtr<Range> range = Range::create(*frame.document(), position, frame.selection().selection().start());
+    auto range = Range::create(*frame.document(), position, frame.selection().selection().start());
 
-    if (plainTextReplacingNoBreakSpace(range.get()) != oldText)
+    if (plainTextReplacingNoBreakSpace(range.ptr()) != oldText)
         return;
 
     // We don't want to notify the client that the selection has changed until we are done inserting the new text.
     frame.editor().setIgnoreSelectionChanges(true);
-    frame.selection().setSelectedRange(range.get(), UPSTREAM, WebCore::FrameSelection::ShouldCloseTyping::Yes);
+    frame.selection().setSelectedRange(range.ptr(), UPSTREAM, WebCore::FrameSelection::ShouldCloseTyping::Yes);
     frame.editor().insertText(newText, 0);
     frame.editor().setIgnoreSelectionChanges(false);
 }
@@ -2137,17 +2137,15 @@ void WebPage::getPositionInformation(const InteractionInformationRequest& reques
                     }
 
                     if (request.includeLinkIndicator) {
-                        RefPtr<Range> linkRange = rangeOfContents(*linkElement);
-                        if (linkRange) {
-                            float deviceScaleFactor = corePage()->deviceScaleFactor();
-                            const float marginInPoints = 4;
+                        auto linkRange = rangeOfContents(*linkElement);
+                        float deviceScaleFactor = corePage()->deviceScaleFactor();
+                        const float marginInPoints = 4;
 
-                            RefPtr<TextIndicator> textIndicator = TextIndicator::createWithRange(*linkRange, TextIndicatorOptionTightlyFitContent | TextIndicatorOptionRespectTextColor | TextIndicatorOptionPaintBackgrounds | TextIndicatorOptionUseBoundingRectAndPaintAllContentForComplexRanges |
-                                TextIndicatorOptionIncludeMarginIfRangeMatchesSelection, TextIndicatorPresentationTransition::None, FloatSize(marginInPoints * deviceScaleFactor, marginInPoints * deviceScaleFactor));
+                        auto textIndicator = TextIndicator::createWithRange(linkRange.get(), TextIndicatorOptionTightlyFitContent | TextIndicatorOptionRespectTextColor | TextIndicatorOptionPaintBackgrounds | TextIndicatorOptionUseBoundingRectAndPaintAllContentForComplexRanges |
+                            TextIndicatorOptionIncludeMarginIfRangeMatchesSelection, TextIndicatorPresentationTransition::None, FloatSize(marginInPoints * deviceScaleFactor, marginInPoints * deviceScaleFactor));
 
-                            if (textIndicator)
-                                info.linkIndicator = textIndicator->data();
-                        }
+                        if (textIndicator)
+                            info.linkIndicator = textIndicator->data();
                     }
 
 #if ENABLE(DATA_DETECTION)
@@ -2157,7 +2155,7 @@ void WebPage::getPositionInformation(const InteractionInformationRequest& reques
                         info.dataDetectorIdentifier = DataDetection::dataDetectorIdentifier(*element);
                         info.dataDetectorResults = element->document().frame()->dataDetectionResults();
                         if (DataDetection::requiresExtendedContext(*element)) {
-                            RefPtr<Range> linkRange = Range::create(element->document());
+                            auto linkRange = Range::create(element->document());
                             linkRange->selectNodeContents(*element);
                             info.textBefore = plainTextReplacingNoBreakSpace(rangeExpandedByCharactersInDirectionAtWordBoundary(linkRange->startPosition(), dataDetectionExtendedContextLength, DirectionBackward).get(), TextIteratorDefaultBehavior, true);
                             info.textAfter = plainTextReplacingNoBreakSpace(rangeExpandedByCharactersInDirectionAtWordBoundary(linkRange->endPosition(), dataDetectionExtendedContextLength, DirectionForward).get(), TextIteratorDefaultBehavior, true);
@@ -2182,7 +2180,7 @@ void WebPage::getPositionInformation(const InteractionInformationRequest& reques
                                     // FIXME: Only select ExtendedColor on images known to need wide gamut
                                     ShareableBitmap::Configuration bitmapConfiguration;
                                     bitmapConfiguration.colorSpace.cgColorSpace = screenColorSpace(m_page->mainFrame().view());
-                                    if (RefPtr<ShareableBitmap> sharedBitmap = ShareableBitmap::createShareable(IntSize(bitmapSize), bitmapConfiguration)) {
+                                    if (auto sharedBitmap = ShareableBitmap::createShareable(IntSize(bitmapSize), bitmapConfiguration)) {
                                         auto graphicsContext = sharedBitmap->createGraphicsContext();
                                         graphicsContext->drawImage(*image, FloatRect(0, 0, bitmapSize.width(), bitmapSize.height()));
                                         info.image = sharedBitmap;

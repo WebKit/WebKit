@@ -192,7 +192,7 @@ WebPageProxy* WebInspectorProxy::platformCreateFrontendPage()
 {
     ASSERT(inspectedPage());
 
-    RefPtr<WebPreferences> preferences = WebPreferences::create(String(), "WebKit2.", "WebKit2.");
+    auto preferences = WebPreferences::create(String(), "WebKit2.", "WebKit2.");
 #if ENABLE(DEVELOPER_MODE)
     // Allow developers to inspect the Web Inspector in debug builds without changing settings.
     preferences->setDeveloperExtrasEnabled(true);
@@ -200,11 +200,11 @@ WebPageProxy* WebInspectorProxy::platformCreateFrontendPage()
 #endif
     preferences->setAllowFileAccessFromFileURLs(true);
     preferences->setJavaScriptRuntimeFlags({ });
-    RefPtr<WebPageGroup> pageGroup = WebPageGroup::create(inspectorPageGroupIdentifierForPage(inspectedPage()));
+    auto pageGroup = WebPageGroup::create(inspectorPageGroupIdentifierForPage(inspectedPage()));
     auto pageConfiguration = API::PageConfiguration::create();
     pageConfiguration->setProcessPool(&inspectorProcessPool(inspectionLevel()));
-    pageConfiguration->setPreferences(preferences.get());
-    pageConfiguration->setPageGroup(pageGroup.get());
+    pageConfiguration->setPreferences(preferences.ptr());
+    pageConfiguration->setPageGroup(pageGroup.ptr());
 
     WKPageNavigationClientV0 navigationClient = {
         { 0, this },

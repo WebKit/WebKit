@@ -53,7 +53,7 @@ protected:
 
 class MockTextTrackPrivate : public InbandTextTrackPrivate {
 public:
-    static RefPtr<MockTextTrackPrivate> create(const MockTrackBox& box) { return adoptRef(new MockTextTrackPrivate(box)); }
+    static Ref<MockTextTrackPrivate> create(const MockTrackBox& box) { return adoptRef(*new MockTextTrackPrivate(box)); }
     virtual ~MockTextTrackPrivate() = default;
 
     virtual AtomicString id() const { return m_id; }
@@ -72,7 +72,7 @@ protected:
 
 class MockVideoTrackPrivate : public VideoTrackPrivate {
 public:
-    static RefPtr<MockVideoTrackPrivate> create(const MockTrackBox& box) { return adoptRef(new MockVideoTrackPrivate(box)); }
+    static Ref<MockVideoTrackPrivate> create(const MockTrackBox& box) { return adoptRef(*new MockVideoTrackPrivate(box)); }
     virtual ~MockVideoTrackPrivate() = default;
 
     virtual AtomicString id() const { return m_id; }

@@ -195,7 +195,7 @@ void WebPlatformStrategies::getPathnamesForType(Vector<String>& pathnames, const
         Messages::WebPasteboardProxy::GetPasteboardPathnamesForType::Reply(pathnames, sandboxExtensionsHandleArray), 0);
     ASSERT(pathnames.size() == sandboxExtensionsHandleArray.size());
     for (size_t i = 0; i < sandboxExtensionsHandleArray.size(); i++) {
-        if (RefPtr<SandboxExtension> extension = SandboxExtension::create(WTFMove(sandboxExtensionsHandleArray[i])))
+        if (auto extension = SandboxExtension::create(WTFMove(sandboxExtensionsHandleArray[i])))
             extension->consumePermanently();
     }
 }

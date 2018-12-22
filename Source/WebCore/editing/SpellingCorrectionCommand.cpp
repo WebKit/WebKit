@@ -124,8 +124,7 @@ String SpellingCorrectionCommand::inputEventData() const
 
 Vector<RefPtr<StaticRange>> SpellingCorrectionCommand::targetRanges() const
 {
-    RefPtr<StaticRange> range = StaticRange::createFromRange(m_rangeToBeCorrected);
-    return { 1, range };
+    return { 1, StaticRange::createFromRange(m_rangeToBeCorrected) };
 }
 
 RefPtr<DataTransfer> SpellingCorrectionCommand::inputEventDataTransfer() const

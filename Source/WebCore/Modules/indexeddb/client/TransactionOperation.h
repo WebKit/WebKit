@@ -181,40 +181,37 @@ public:
     }
 };
 
-inline RefPtr<TransactionOperation> createTransactionOperation(
+inline Ref<TransactionOperation> createTransactionOperation(
     IDBTransaction& transaction,
     void (IDBTransaction::*complete)(const IDBResultData&),
     void (IDBTransaction::*perform)(TransactionOperation&))
 {
-    auto operation = new TransactionOperationImpl<>(transaction, complete, perform);
-    return adoptRef(operation);
+    return adoptRef(*new TransactionOperationImpl<>(transaction, complete, perform));
 }
 
 template<typename MP1, typename P1>
-RefPtr<TransactionOperation> createTransactionOperation(
+Ref<TransactionOperation> createTransactionOperation(
     IDBTransaction& transaction,
     void (IDBTransaction::*complete)(const IDBResultData&),
     void (IDBTransaction::*perform)(TransactionOperation&, MP1),
     const P1& parameter1)
 {
-    auto operation = new TransactionOperationImpl<MP1>(transaction, complete, perform, parameter1);
-    return adoptRef(operation);
+    return adoptRef(*new TransactionOperationImpl<MP1>(transaction, complete, perform, parameter1));
 }
 
 template<typename MP1, typename P1, typename MP2, typename P2>
-RefPtr<TransactionOperation> createTransactionOperation(
+Ref<TransactionOperation> createTransactionOperation(
     IDBTransaction& transaction,
     void (IDBTransaction::*complete)(const IDBResultData&),
     void (IDBTransaction::*perform)(TransactionOperation&, MP1, MP2),
     const P1& parameter1,
     const P2& parameter2)
 {
-    auto operation = new TransactionOperationImpl<MP1, MP2>(transaction, complete, perform, parameter1, parameter2);
-    return adoptRef(operation);
+    return adoptRef(*new TransactionOperationImpl<MP1, MP2>(transaction, complete, perform, parameter1, parameter2));
 }
 
 template<typename MP1, typename P1, typename MP2, typename P2, typename MP3, typename P3>
-RefPtr<TransactionOperation> createTransactionOperation(
+Ref<TransactionOperation> createTransactionOperation(
     IDBTransaction& transaction,
     void (IDBTransaction::*complete)(const IDBResultData&),
     void (IDBTransaction::*perform)(TransactionOperation&, MP1, MP2, MP3),
@@ -222,24 +219,22 @@ RefPtr<TransactionOperation> createTransactionOperation(
     const P2& parameter2,
     const P3& parameter3)
 {
-    auto operation = new TransactionOperationImpl<MP1, MP2, MP3>(transaction, complete, perform, parameter1, parameter2, parameter3);
-    return adoptRef(operation);
+    return adoptRef(*new TransactionOperationImpl<MP1, MP2, MP3>(transaction, complete, perform, parameter1, parameter2, parameter3));
 }
 
 template<typename MP1, typename P1>
-RefPtr<TransactionOperation> createTransactionOperation(
+Ref<TransactionOperation> createTransactionOperation(
     IDBTransaction& transaction,
     IDBRequest& request,
     void (IDBTransaction::*complete)(IDBRequest&, const IDBResultData&),
     void (IDBTransaction::*perform)(TransactionOperation&, MP1),
     const P1& parameter1)
 {
-    auto operation = new TransactionOperationImpl<MP1>(transaction, request, complete, perform, parameter1);
-    return adoptRef(operation);
+    return adoptRef(*new TransactionOperationImpl<MP1>(transaction, request, complete, perform, parameter1));
 }
 
 template<typename MP1, typename P1, typename MP2, typename P2>
-RefPtr<TransactionOperation> createTransactionOperation(
+Ref<TransactionOperation> createTransactionOperation(
     IDBTransaction& transaction,
     IDBRequest& request,
     void (IDBTransaction::*complete)(IDBRequest&, const IDBResultData&),
@@ -247,12 +242,11 @@ RefPtr<TransactionOperation> createTransactionOperation(
     const P1& parameter1,
     const P2& parameter2)
 {
-    auto operation = new TransactionOperationImpl<MP1, MP2>(transaction, request, complete, perform, parameter1, parameter2);
-    return adoptRef(operation);
+    return adoptRef(*new TransactionOperationImpl<MP1, MP2>(transaction, request, complete, perform, parameter1, parameter2));
 }
 
 template<typename MP1, typename MP2, typename MP3, typename P1, typename P2, typename P3>
-RefPtr<TransactionOperation> createTransactionOperation(
+Ref<TransactionOperation> createTransactionOperation(
     IDBTransaction& transaction,
     IDBRequest& request,
     void (IDBTransaction::*complete)(IDBRequest&, const IDBResultData&),
@@ -261,8 +255,7 @@ RefPtr<TransactionOperation> createTransactionOperation(
     const P2& parameter2,
     const P3& parameter3)
 {
-    auto operation = new TransactionOperationImpl<MP1, MP2, MP3>(transaction, request, complete, perform, parameter1, parameter2, parameter3);
-    return adoptRef(operation);
+    return adoptRef(*new TransactionOperationImpl<MP1, MP2, MP3>(transaction, request, complete, perform, parameter1, parameter2, parameter3));
 }
 
 } // namespace IDBClient

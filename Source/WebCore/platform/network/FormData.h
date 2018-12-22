@@ -305,7 +305,7 @@ void FormData::encode(Encoder& encoder) const
 template<typename Decoder>
 RefPtr<FormData> FormData::decode(Decoder& decoder)
 {
-    RefPtr<FormData> data = FormData::create();
+    auto data = FormData::create();
 
     if (!decoder.decode(data->m_alwaysStream))
         return nullptr;
@@ -319,7 +319,7 @@ RefPtr<FormData> FormData::decode(Decoder& decoder)
     if (!decoder.decode(data->m_identifier))
         return nullptr;
 
-    return data;
+    return WTFMove(data);
 }
 
 } // namespace WebCore

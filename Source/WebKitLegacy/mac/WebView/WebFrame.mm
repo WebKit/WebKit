@@ -1746,8 +1746,8 @@ static WebFrameLoadType toWebFrameLoadType(FrameLoadType frameLoadType)
             if (!metadata)
                 continue;
             
-            RefPtr<Range> range = Range::create(*document, node, marker->startOffset(), node, marker->endOffset());
-            DOMRange *domRange = kit(range.get());
+            auto range = Range::create(*document, node, marker->startOffset(), node, marker->endOffset());
+            DOMRange *domRange = kit(range.ptr());
             
             if (metadata != previousMetadata) {
                 [metadatas addObject:metadata];

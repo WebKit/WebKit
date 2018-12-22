@@ -51,7 +51,7 @@ public:
     void paint(GraphicsContext&, const FloatRect&);
 
 #if PLATFORM(WIN)
-    static RefPtr<Icon> create(HICON hIcon) { return adoptRef(new Icon(hIcon)); }
+    static Ref<Icon> create(HICON hIcon) { return adoptRef(*new Icon(hIcon)); }
 #endif
 
 #if PLATFORM(IOS_FAMILY)

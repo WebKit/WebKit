@@ -110,8 +110,7 @@ void MediaDevices::getUserMedia(const StreamConstraints& constraints, Promise&& 
         videoConstraints.setDefaultVideoConstraints();
 
     auto request = UserMediaRequest::create(*document, { MediaStreamRequest::Type::UserMedia, WTFMove(audioConstraints), WTFMove(videoConstraints) }, WTFMove(promise));
-    if (request)
-        request->start();
+    request->start();
 
     return;
 }
@@ -123,8 +122,7 @@ ExceptionOr<void> MediaDevices::getDisplayMedia(const StreamConstraints& constra
         return Exception { InvalidStateError };
 
     auto request = UserMediaRequest::create(*document, { MediaStreamRequest::Type::DisplayMedia, { }, createMediaConstraints(constraints.video) }, WTFMove(promise));
-    if (request)
-        request->start();
+    request->start();
 
     return { };
 }

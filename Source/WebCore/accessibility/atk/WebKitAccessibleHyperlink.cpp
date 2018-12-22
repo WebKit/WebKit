@@ -260,8 +260,8 @@ static gint webkitAccessibleHyperlinkGetStartIndex(AtkHyperlink* link)
     if (!parentNode)
         return 0;
 
-    RefPtr<Range> range = Range::create(node->document(), firstPositionInOrBeforeNode(parentNode), firstPositionInOrBeforeNode(node));
-    return getRangeLengthForObject(coreObject, range.get());
+    auto range = Range::create(node->document(), firstPositionInOrBeforeNode(parentNode), firstPositionInOrBeforeNode(node));
+    return getRangeLengthForObject(coreObject, range.ptr());
 }
 
 static gint webkitAccessibleHyperlinkGetEndIndex(AtkHyperlink* link)
@@ -286,8 +286,8 @@ static gint webkitAccessibleHyperlinkGetEndIndex(AtkHyperlink* link)
     if (!parentNode)
         return 0;
 
-    RefPtr<Range> range = Range::create(node->document(), firstPositionInOrBeforeNode(parentNode), lastPositionInOrAfterNode(node));
-    return getRangeLengthForObject(coreObject, range.get());
+    auto range = Range::create(node->document(), firstPositionInOrBeforeNode(parentNode), lastPositionInOrAfterNode(node));
+    return getRangeLengthForObject(coreObject, range.ptr());
 }
 
 static gboolean webkitAccessibleHyperlinkIsValid(AtkHyperlink* link)

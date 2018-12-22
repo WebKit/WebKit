@@ -57,8 +57,8 @@ public:
 private:
     StorageNamespaceImpl(WebCore::StorageType, const String& path, unsigned quota);
 
-    RefPtr<WebCore::StorageArea> storageArea(const WebCore::SecurityOriginData&) override;
-    RefPtr<StorageNamespace> copy(WebCore::Page* newPage) override;
+    Ref<WebCore::StorageArea> storageArea(const WebCore::SecurityOriginData&) override;
+    Ref<StorageNamespace> copy(WebCore::Page* newPage) override;
 
     typedef HashMap<WebCore::SecurityOriginData, RefPtr<StorageAreaImpl>> StorageAreaMap;
     StorageAreaMap m_storageAreaMap;

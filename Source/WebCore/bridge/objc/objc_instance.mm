@@ -104,16 +104,17 @@ ObjcInstance::ObjcInstance(id instance, RefPtr<RootObject>&& rootObject)
 {
 }
 
-RefPtr<ObjcInstance> ObjcInstance::create(id instance, RefPtr<RootObject>&& rootObject)
+Ref<ObjcInstance> ObjcInstance::create(id instance, RefPtr<RootObject>&& rootObject)
 {
     auto result = wrapperCache().add((__bridge CFTypeRef)instance, nullptr);
     if (result.isNewEntry) {
-        RefPtr<ObjcInstance> wrapper = adoptRef(new ObjcInstance(instance, WTFMove(rootObject)));
-        result.iterator->value = wrapper.get();
+        auto wrapper = adoptRef(*new ObjcInstance(instance, WTFMove(rootObject)));
+        result.iterator->value = wrapper.ptr();
         return wrapper;
     }
 
-    return result.iterator->value;
+    ASSERT(result.iterator->value);
+    return *result.iterator->value;
 }
 
 ObjcInstance::~ObjcInstance() 

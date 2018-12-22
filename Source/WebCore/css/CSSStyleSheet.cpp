@@ -259,11 +259,11 @@ RefPtr<CSSRuleList> CSSStyleSheet::rules()
     if (!canAccessRules())
         return nullptr;
     // IE behavior.
-    RefPtr<StaticCSSRuleList> ruleList = StaticCSSRuleList::create();
+    auto ruleList = StaticCSSRuleList::create();
     unsigned ruleCount = length();
     for (unsigned i = 0; i < ruleCount; ++i)
         ruleList->rules().append(item(i));
-    return ruleList;
+    return WTFMove(ruleList);
 }
 
 ExceptionOr<unsigned> CSSStyleSheet::insertRule(const String& ruleString, unsigned index)

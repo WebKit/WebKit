@@ -191,11 +191,11 @@ static inline FilterOperations blendFilterOperations(const CSSPropertyBlendingCl
         if (blendedOp)
             result.operations().append(blendedOp);
         else {
-            RefPtr<FilterOperation> identityOp = PassthroughFilterOperation::create();
+            auto identityOp = PassthroughFilterOperation::create();
             if (progress > 0.5)
-                result.operations().append(toOp ? toOp : identityOp);
+                result.operations().append(toOp ? toOp : WTFMove(identityOp));
             else
-                result.operations().append(fromOp ? fromOp : identityOp);
+                result.operations().append(fromOp ? fromOp : WTFMove(identityOp));
         }
     }
     return result;

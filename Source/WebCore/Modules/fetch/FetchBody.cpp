@@ -241,9 +241,9 @@ RefPtr<FormData> FetchBody::bodyAsFormData(ScriptExecutionContext& context) cons
     if (isURLSearchParams())
         return FormData::create(UTF8Encoding().encode(urlSearchParamsBody().toString(), UnencodableHandling::Entities));
     if (isBlob()) {
-        RefPtr<FormData> body = FormData::create();
+        auto body = FormData::create();
         body->appendBlob(blobBody().url());
-        return body;
+        return WTFMove(body);
     }
     if (isArrayBuffer())
         return FormData::create(arrayBufferBody().data(), arrayBufferBody().byteLength());
@@ -251,9 +251,9 @@ RefPtr<FormData> FetchBody::bodyAsFormData(ScriptExecutionContext& context) cons
         return FormData::create(arrayBufferViewBody().baseAddress(), arrayBufferViewBody().byteLength());
     if (isFormData()) {
         ASSERT(!context.isWorkerGlobalScope());
-        RefPtr<FormData> body = const_cast<FormData*>(&formDataBody());
+        auto body = makeRef(const_cast<FormData&>(formDataBody()));
         body->generateFiles(&downcast<Document>(context));
-        return body;
+        return WTFMove(body);
     }
     if (auto* data = m_consumer.data())
         return FormData::create(data->data(), data->size());

@@ -85,10 +85,10 @@ RefPtr<JSC::Bindings::Instance> ScriptController::createScriptInstanceForWidget(
         NPObject* npObject = [widgetView createPluginScriptableObject];
         if (!npObject)
             return nullptr;
-        RefPtr<Instance> instance = JSC::Bindings::CInstance::create(npObject, WTFMove(rootObject));
+        auto instance = JSC::Bindings::CInstance::create(npObject, WTFMove(rootObject));
         // -createPluginScriptableObject returns a retained NPObject.  The caller is expected to release it.
         _NPN_ReleaseObject(npObject);
-        return instance;
+        return WTFMove(instance);
 #endif
     }
 

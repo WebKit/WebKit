@@ -59,8 +59,8 @@ inline void StaticPropertyAnalyzer::createThis(RegisterID* dst, InstructionStrea
 
 inline void StaticPropertyAnalyzer::newObject(RegisterID* dst, InstructionStream::MutableRef instructionRef)
 {
-    RefPtr<StaticPropertyAnalysis> analysis = StaticPropertyAnalysis::create(WTFMove(instructionRef));
-    AnalysisMap::AddResult addResult = m_analyses.add(dst->index(), analysis);
+    auto analysis = StaticPropertyAnalysis::create(WTFMove(instructionRef));
+    AnalysisMap::AddResult addResult = m_analyses.add(dst->index(), analysis.copyRef());
     if (!addResult.isNewEntry) {
         kill(addResult.iterator->value.get());
         addResult.iterator->value = WTFMove(analysis);

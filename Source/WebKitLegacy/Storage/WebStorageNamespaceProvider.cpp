@@ -39,9 +39,9 @@ static HashSet<WebStorageNamespaceProvider*>& storageNamespaceProviders()
     return storageNamespaceProviders;
 }
 
-RefPtr<WebStorageNamespaceProvider> WebStorageNamespaceProvider::create(const String& localStorageDatabasePath)
+Ref<WebStorageNamespaceProvider> WebStorageNamespaceProvider::create(const String& localStorageDatabasePath)
 {
-    return adoptRef(new WebStorageNamespaceProvider(localStorageDatabasePath));
+    return adoptRef(*new WebStorageNamespaceProvider(localStorageDatabasePath));
 }
 
 WebStorageNamespaceProvider::WebStorageNamespaceProvider(const String& localStorageDatabasePath)
@@ -96,22 +96,22 @@ void WebStorageNamespaceProvider::syncLocalStorage()
     }
 }
 
-RefPtr<StorageNamespace> WebStorageNamespaceProvider::createSessionStorageNamespace(Page&, unsigned quota)
+Ref<StorageNamespace> WebStorageNamespaceProvider::createSessionStorageNamespace(Page&, unsigned quota)
 {
     return StorageNamespaceImpl::createSessionStorageNamespace(quota);
 }
 
-RefPtr<StorageNamespace> WebStorageNamespaceProvider::createEphemeralLocalStorageNamespace(Page&, unsigned quota)
+Ref<StorageNamespace> WebStorageNamespaceProvider::createEphemeralLocalStorageNamespace(Page&, unsigned quota)
 {
     return StorageNamespaceImpl::createEphemeralLocalStorageNamespace(quota);
 }
 
-RefPtr<StorageNamespace> WebStorageNamespaceProvider::createLocalStorageNamespace(unsigned quota)
+Ref<StorageNamespace> WebStorageNamespaceProvider::createLocalStorageNamespace(unsigned quota)
 {
     return StorageNamespaceImpl::getOrCreateLocalStorageNamespace(m_localStorageDatabasePath, quota);
 }
 
-RefPtr<StorageNamespace> WebStorageNamespaceProvider::createTransientLocalStorageNamespace(SecurityOrigin&, unsigned quota)
+Ref<StorageNamespace> WebStorageNamespaceProvider::createTransientLocalStorageNamespace(SecurityOrigin&, unsigned quota)
 {
     // FIXME: A smarter implementation would create a special namespace type instead of just piggy-backing off
     // SessionStorageNamespace here.

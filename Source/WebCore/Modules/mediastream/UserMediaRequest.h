@@ -48,7 +48,7 @@ class SecurityOrigin;
 
 class UserMediaRequest : public RefCounted<UserMediaRequest>, public ActiveDOMObject {
 public:
-    static RefPtr<UserMediaRequest> create(Document&, MediaStreamRequest&&, DOMPromiseDeferred<IDLInterface<MediaStream>>&&);
+    static Ref<UserMediaRequest> create(Document&, MediaStreamRequest&&, DOMPromiseDeferred<IDLInterface<MediaStream>>&&);
     virtual ~UserMediaRequest();
 
     void start();

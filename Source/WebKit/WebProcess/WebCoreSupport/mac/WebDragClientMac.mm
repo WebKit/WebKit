@@ -132,7 +132,7 @@ void WebDragClient::declareAndWriteDragImage(const String& pasteboardName, Eleme
             title = WTF::userVisibleString(url);
     }
 
-    RefPtr<LegacyWebArchive> archive = LegacyWebArchive::create(element);
+    auto archive = LegacyWebArchive::create(element);
 
     NSURLResponse *response = image->response().nsURLResponse();
     

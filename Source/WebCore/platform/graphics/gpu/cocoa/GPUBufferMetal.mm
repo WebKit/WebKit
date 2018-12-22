@@ -55,11 +55,11 @@ RefPtr<GPUBuffer> GPUBuffer::create(const GPUDevice& device, GPUBufferDescriptor
         return nullptr;
     }
 
-    RefPtr<ArrayBuffer> arrayBuffer = ArrayBuffer::createFromBytes(pageAlignedCopy, descriptor.size, [] (void* ptr) {
+    auto arrayBuffer = ArrayBuffer::createFromBytes(pageAlignedCopy, descriptor.size, [] (void* ptr) {
         Gigacage::alignedFree(Gigacage::Primitive, ptr);
     });
     arrayBuffer->ref();
-    ArrayBuffer* arrayBufferContents = arrayBuffer.get();
+    ArrayBuffer* arrayBufferContents = arrayBuffer.ptr();
     // FIXME: Default this MTLResourceOptions.
     PlatformBufferSmartPtr mtlBuffer = adoptNS([device.platformDevice()
         newBufferWithBytesNoCopy:arrayBuffer->data()

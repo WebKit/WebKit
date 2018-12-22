@@ -43,7 +43,7 @@ struct PluginCreationParameters;
 
 class WebProcessConnection : public RefCounted<WebProcessConnection>, IPC::Connection::Client {
 public:
-    static RefPtr<WebProcessConnection> create(IPC::Connection::Identifier);
+    static Ref<WebProcessConnection> create(IPC::Connection::Identifier);
     virtual ~WebProcessConnection();
 
     IPC::Connection* connection() const { return m_connection.get(); }

@@ -37,9 +37,9 @@
 
 namespace WebCore {
 
-RefPtr<WebGPUCommandBuffer> WebGPUCommandBuffer::create(Ref<GPUCommandBuffer>&& buffer)
+Ref<WebGPUCommandBuffer> WebGPUCommandBuffer::create(Ref<GPUCommandBuffer>&& buffer)
 {
-    return adoptRef(new WebGPUCommandBuffer(WTFMove(buffer)));
+    return adoptRef(*new WebGPUCommandBuffer(WTFMove(buffer)));
 }
 
 WebGPUCommandBuffer::WebGPUCommandBuffer(Ref<GPUCommandBuffer>&& buffer)
@@ -65,8 +65,9 @@ RefPtr<WebGPURenderPassEncoder> WebGPUCommandBuffer::beginRenderPass(WebGPURende
         gpuRenderPassDescriptor.colorAttachments.append(GPURenderPassColorAttachmentDescriptor { colorAttachment.attachment->texture(), colorAttachment.clearColor });
     }
 
-    auto encoder = GPURenderPassEncoder::create(m_commandBuffer.get(), WTFMove(gpuRenderPassDescriptor));
-    return encoder ? WebGPURenderPassEncoder::create(*this, encoder.releaseNonNull()) : nullptr;
+    if (auto encoder = GPURenderPassEncoder::create(m_commandBuffer.get(), WTFMove(gpuRenderPassDescriptor)))
+        return WebGPURenderPassEncoder::create(*this, encoder.releaseNonNull());
+    return nullptr;
 }
 
 } // namespace WebCore

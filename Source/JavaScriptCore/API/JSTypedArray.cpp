@@ -185,7 +185,7 @@ JSObjectRef JSObjectMakeTypedArrayWithBytesNoCopy(JSContextRef ctx, JSTypedArray
 
     unsigned elementByteSize = elementSize(toTypedArrayType(arrayType));
 
-    RefPtr<ArrayBuffer> buffer = ArrayBuffer::createFromBytes(bytes, length, [=](void* p) {
+    auto buffer = ArrayBuffer::createFromBytes(bytes, length, [=](void* p) {
         if (destructor)
             destructor(p, destructorContext);
     });

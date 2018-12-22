@@ -1891,8 +1891,8 @@ bool AVFWrapper::shouldWaitForLoadingOfResource(AVCFAssetResourceLoadingRequestR
         // Create an initData with the following layout:
         // [4 bytes: keyURI size], [keyURI size bytes: keyURI]
         unsigned keyURISize = keyURI.length() * sizeof(UChar);
-        RefPtr<ArrayBuffer> initDataBuffer = ArrayBuffer::create(4 + keyURISize, 1);
-        RefPtr<JSC::DataView> initDataView = JSC::DataView::create(initDataBuffer.copyRef(), 0, initDataBuffer->byteLength());
+        auto initDataBuffer = ArrayBuffer::create(4 + keyURISize, 1);
+        auto initDataView = JSC::DataView::create(initDataBuffer.copyRef(), 0, initDataBuffer->byteLength());
         initDataView->set<uint32_t>(0, keyURISize, true);
 
         auto keyURIArray = Uint16Array::create(initDataBuffer.copyRef(), 4, keyURI.length());
@@ -1908,8 +1908,8 @@ bool AVFWrapper::shouldWaitForLoadingOfResource(AVCFAssetResourceLoadingRequestR
     }
 #endif
 
-    RefPtr<WebCoreAVCFResourceLoader> resourceLoader = WebCoreAVCFResourceLoader::create(m_owner, avRequest);
-    m_owner->m_resourceLoaderMap.add(avRequest, resourceLoader);
+    auto resourceLoader = WebCoreAVCFResourceLoader::create(m_owner, avRequest);
+    m_owner->m_resourceLoaderMap.add(avRequest, resourceLoader.copyRef());
     resourceLoader->startLoading();
     return true;
 }

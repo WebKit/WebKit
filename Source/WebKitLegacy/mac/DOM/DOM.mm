@@ -544,10 +544,10 @@ id <DOMEventTarget> kit(EventTarget* target)
 
     auto& node = *core(self);
 
-    Ref<Range> range = rangeOfContents(node);
+    auto range = rangeOfContents(node);
 
     const float margin = 4 / node.document().page()->pageScaleFactor();
-    RefPtr<TextIndicator> textIndicator = TextIndicator::createWithRange(range, TextIndicatorOptionTightlyFitContent |
+    auto textIndicator = TextIndicator::createWithRange(range, TextIndicatorOptionTightlyFitContent |
         TextIndicatorOptionRespectTextColor |
         TextIndicatorOptionPaintBackgrounds |
         TextIndicatorOptionUseBoundingRectAndPaintAllContentForComplexRanges |

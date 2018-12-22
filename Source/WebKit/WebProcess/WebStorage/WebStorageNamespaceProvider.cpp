@@ -41,14 +41,14 @@ static HashMap<uint64_t, WebStorageNamespaceProvider*>& storageNamespaceProvider
     return storageNamespaceProviders;
 }
 
-RefPtr<WebStorageNamespaceProvider> WebStorageNamespaceProvider::getOrCreate(uint64_t identifier)
+Ref<WebStorageNamespaceProvider> WebStorageNamespaceProvider::getOrCreate(uint64_t identifier)
 {
     auto& slot = storageNamespaceProviders().add(identifier, nullptr).iterator->value;
     if (slot)
-        return slot;
+        return *slot;
 
-    RefPtr<WebStorageNamespaceProvider> storageNamespaceProvider = adoptRef(new WebStorageNamespaceProvider(identifier));
-    slot = storageNamespaceProvider.get();
+    auto storageNamespaceProvider = adoptRef(*new WebStorageNamespaceProvider(identifier));
+    slot = storageNamespaceProvider.ptr();
 
     return storageNamespaceProvider;
 }
@@ -65,22 +65,22 @@ WebStorageNamespaceProvider::~WebStorageNamespaceProvider()
     storageNamespaceProviders().remove(m_identifier);
 }
 
-RefPtr<WebCore::StorageNamespace> WebStorageNamespaceProvider::createSessionStorageNamespace(Page& page, unsigned quota)
+Ref<WebCore::StorageNamespace> WebStorageNamespaceProvider::createSessionStorageNamespace(Page& page, unsigned quota)
 {
     return StorageNamespaceImpl::createSessionStorageNamespace(WebPage::fromCorePage(&page)->pageID(), quota);
 }
 
-RefPtr<WebCore::StorageNamespace> WebStorageNamespaceProvider::createEphemeralLocalStorageNamespace(Page& page, unsigned quota)
+Ref<WebCore::StorageNamespace> WebStorageNamespaceProvider::createEphemeralLocalStorageNamespace(Page& page, unsigned quota)
 {
     return StorageNamespaceImpl::createEphemeralLocalStorageNamespace(WebPage::fromCorePage(&page)->pageID(), quota);
 }
 
-RefPtr<WebCore::StorageNamespace> WebStorageNamespaceProvider::createLocalStorageNamespace(unsigned quota)
+Ref<WebCore::StorageNamespace> WebStorageNamespaceProvider::createLocalStorageNamespace(unsigned quota)
 {
     return StorageNamespaceImpl::createLocalStorageNamespace(m_identifier, quota);
 }
 
-RefPtr<WebCore::StorageNamespace> WebStorageNamespaceProvider::createTransientLocalStorageNamespace(WebCore::SecurityOrigin& topLevelOrigin, unsigned quota)
+Ref<WebCore::StorageNamespace> WebStorageNamespaceProvider::createTransientLocalStorageNamespace(WebCore::SecurityOrigin& topLevelOrigin, unsigned quota)
 {
     return StorageNamespaceImpl::createTransientLocalStorageNamespace(m_identifier, topLevelOrigin, quota);
 }

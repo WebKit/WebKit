@@ -3717,10 +3717,10 @@ void WebPageProxy::didCreateSubframe(uint64_t frameID)
 
     MESSAGE_CHECK(m_process->canCreateFrame(frameID));
     
-    RefPtr<WebFrameProxy> subFrame = WebFrameProxy::create(*this, frameID);
+    auto subFrame = WebFrameProxy::create(*this, frameID);
 
     // Add the frame to the process wide map.
-    m_process->frameCreated(frameID, *subFrame);
+    m_process->frameCreated(frameID, subFrame.get());
 }
 
 void WebPageProxy::didCreateWindow(uint64_t frameID, GlobalWindowIdentifier&& windowIdentifier)

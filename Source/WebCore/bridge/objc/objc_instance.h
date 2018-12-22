@@ -34,7 +34,7 @@ class ObjcClass;
 
 class ObjcInstance : public Instance {
 public:
-    static RefPtr<ObjcInstance> create(ObjectStructPtr, RefPtr<RootObject>&&);
+    static Ref<ObjcInstance> create(ObjectStructPtr, RefPtr<RootObject>&&);
     virtual ~ObjcInstance();
     
     static void setGlobalException(NSString*, JSGlobalObject* exceptionEnvironment = 0); // A null exceptionEnvironment means the exception should propogate to any execution environment.

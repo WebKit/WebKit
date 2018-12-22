@@ -36,7 +36,7 @@ namespace WebCore {
 
 class WebGPUShaderModule : public RefCounted<WebGPUShaderModule> {
 public:
-    static RefPtr<WebGPUShaderModule> create(Ref<GPUShaderModule>&&);
+    static Ref<WebGPUShaderModule> create(Ref<GPUShaderModule>&&);
 
     const GPUShaderModule* module() const { return m_module.ptr(); }
 

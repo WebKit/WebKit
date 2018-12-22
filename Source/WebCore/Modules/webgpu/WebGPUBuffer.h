@@ -36,7 +36,7 @@ namespace WebCore {
 
 class WebGPUBuffer : public RefCounted<WebGPUBuffer> {
 public:
-    static RefPtr<WebGPUBuffer> create(Ref<GPUBuffer>&&);
+    static Ref<WebGPUBuffer> create(Ref<GPUBuffer>&&);
 
     const GPUBuffer& buffer() const { return m_buffer.get(); }
 

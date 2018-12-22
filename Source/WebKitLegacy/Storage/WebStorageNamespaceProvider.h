@@ -35,7 +35,7 @@ namespace WebKit {
 
 class WebStorageNamespaceProvider final : public WebCore::StorageNamespaceProvider {
 public:
-    static RefPtr<WebStorageNamespaceProvider> create(const String& localStorageDatabasePath);
+    static Ref<WebStorageNamespaceProvider> create(const String& localStorageDatabasePath);
     virtual ~WebStorageNamespaceProvider();
 
     static void closeLocalStorage();
@@ -49,10 +49,10 @@ public:
 private:
     explicit WebStorageNamespaceProvider(const String& localStorageDatabasePath);
 
-    RefPtr<WebCore::StorageNamespace> createSessionStorageNamespace(WebCore::Page&, unsigned quota) override;
-    RefPtr<WebCore::StorageNamespace> createEphemeralLocalStorageNamespace(WebCore::Page&, unsigned quota) override;
-    RefPtr<WebCore::StorageNamespace> createLocalStorageNamespace(unsigned quota) override;
-    RefPtr<WebCore::StorageNamespace> createTransientLocalStorageNamespace(WebCore::SecurityOrigin&, unsigned quota) override;
+    Ref<WebCore::StorageNamespace> createSessionStorageNamespace(WebCore::Page&, unsigned quota) override;
+    Ref<WebCore::StorageNamespace> createEphemeralLocalStorageNamespace(WebCore::Page&, unsigned quota) override;
+    Ref<WebCore::StorageNamespace> createLocalStorageNamespace(unsigned quota) override;
+    Ref<WebCore::StorageNamespace> createTransientLocalStorageNamespace(WebCore::SecurityOrigin&, unsigned quota) override;
 
     const String m_localStorageDatabasePath;
 };

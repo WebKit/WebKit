@@ -719,8 +719,8 @@ void NetscapePluginInstanceProxy::evaluateJavaScript(PluginRequest* pluginReques
         // Don't call NPP_NewStream and other stream methods if there is no JS result to deliver. This is what Mozilla does.
         NSData *JSData = [result dataUsingEncoding:NSUTF8StringEncoding];
         
-        RefPtr<HostedNetscapePluginStream> stream = HostedNetscapePluginStream::create(this, pluginRequest->requestID(), pluginRequest->request());
-        m_streams.add(stream->streamID(), stream);
+        auto stream = HostedNetscapePluginStream::create(this, pluginRequest->requestID(), pluginRequest->request());
+        m_streams.add(stream->streamID(), stream.copyRef());
         
         RetainPtr<NSURLResponse> response = adoptNS([[NSURLResponse alloc] initWithURL:URL 
                                                                              MIMEType:@"text/plain" 
@@ -799,10 +799,10 @@ NPError NetscapePluginInstanceProxy::loadRequest(NSURLRequest *request, const ch
         m_pluginRequests.append(WTFMove(pluginRequest));
         m_requestTimer.startOneShot(0_s);
     } else {
-        RefPtr<HostedNetscapePluginStream> stream = HostedNetscapePluginStream::create(this, requestID, request);
+        auto stream = HostedNetscapePluginStream::create(this, requestID, request);
 
         ASSERT(!m_streams.contains(requestID));
-        m_streams.add(requestID, stream);
+        m_streams.add(requestID, stream.copyRef());
         stream->start();
     }
     

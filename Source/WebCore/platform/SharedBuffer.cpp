@@ -119,7 +119,7 @@ SharedBufferDataView SharedBuffer::getSomeData(size_t position) const
 
 RefPtr<ArrayBuffer> SharedBuffer::tryCreateArrayBuffer() const
 {
-    RefPtr<ArrayBuffer> arrayBuffer = ArrayBuffer::createUninitialized(static_cast<unsigned>(size()), sizeof(char));
+    auto arrayBuffer = ArrayBuffer::tryCreateUninitialized(static_cast<unsigned>(size()), sizeof(char));
     if (!arrayBuffer) {
         WTFLogAlways("SharedBuffer::tryCreateArrayBuffer Unable to create buffer. Requested size was %zu x %lu\n", size(), sizeof(char));
         return nullptr;

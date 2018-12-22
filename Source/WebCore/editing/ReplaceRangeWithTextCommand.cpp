@@ -89,8 +89,7 @@ RefPtr<DataTransfer> ReplaceRangeWithTextCommand::inputEventDataTransfer() const
 
 Vector<RefPtr<StaticRange>> ReplaceRangeWithTextCommand::targetRanges() const
 {
-    RefPtr<StaticRange> range = StaticRange::createFromRange(*m_rangeToBeReplaced);
-    return { 1, range };
+    return { 1, StaticRange::createFromRange(*m_rangeToBeReplaced) };
 }
 
 } // namespace WebCore

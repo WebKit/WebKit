@@ -38,7 +38,7 @@ OBJC_CLASS WebView;
 
 class WebViewGroup : public RefCounted<WebViewGroup> {
 public:
-    static RefPtr<WebViewGroup> getOrCreate(const String& name, const String& localStorageDatabasePath);
+    static Ref<WebViewGroup> getOrCreate(const String& name, const String& localStorageDatabasePath);
     ~WebViewGroup();
 
     static WebViewGroup* get(const String& name);

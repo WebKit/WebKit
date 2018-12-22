@@ -281,7 +281,7 @@ void FTPDirectoryDocumentParser::parseAndAppendOneLine(const String& inputLine)
 
 static inline RefPtr<SharedBuffer> createTemplateDocumentData(const Settings& settings)
 {
-    RefPtr<SharedBuffer> buffer = SharedBuffer::createWithContentsOfFile(settings.ftpDirectoryTemplatePath());
+    auto buffer = SharedBuffer::createWithContentsOfFile(settings.ftpDirectoryTemplatePath());
     if (buffer)
         LOG(FTP, "Loaded FTPDirectoryTemplate of length %zu\n", buffer->size());
     return buffer;

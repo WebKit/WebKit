@@ -272,7 +272,7 @@ void PluginView::mediaCanStart(Document&)
 {
     ASSERT(!m_isStarted);
     if (!start())
-        static_cast<WebFrameLoaderClient&>(parentFrame()->loader().client()).dispatchDidFailToStartPlugin(this);
+        static_cast<WebFrameLoaderClient&>(parentFrame()->loader().client()).dispatchDidFailToStartPlugin(*this);
 }
 
 PluginView::~PluginView()
@@ -410,8 +410,8 @@ void PluginView::performRequest(PluginRequest* request)
         // if this is not a targeted request, create a stream for it. otherwise,
         // just pass it off to the loader
         if (targetFrameName.isEmpty()) {
-            RefPtr<PluginStream> stream = PluginStream::create(this, m_parentFrame.get(), request->frameLoadRequest().resourceRequest(), request->sendNotification(), request->notifyData(), plugin()->pluginFuncs(), instance(), m_plugin->quirks());
-            m_streams.add(stream);
+            auto stream = PluginStream::create(this, m_parentFrame.get(), request->frameLoadRequest().resourceRequest(), request->sendNotification(), request->notifyData(), plugin()->pluginFuncs(), instance(), m_plugin->quirks());
+            m_streams.add(stream.copyRef());
             stream->start();
         } else {
             // If the target frame is our frame, we could destroy the
@@ -454,8 +454,8 @@ void PluginView::performRequest(PluginRequest* request)
                 cstr = resultString.utf8();
         }
 
-        RefPtr<PluginStream> stream = PluginStream::create(this, m_parentFrame.get(), request->frameLoadRequest().resourceRequest(), request->sendNotification(), request->notifyData(), plugin()->pluginFuncs(), instance(), m_plugin->quirks());
-        m_streams.add(stream);
+        auto stream = PluginStream::create(this, m_parentFrame.get(), request->frameLoadRequest().resourceRequest(), request->sendNotification(), request->notifyData(), plugin()->pluginFuncs(), instance(), m_plugin->quirks());
+        m_streams.add(stream.copyRef());
         stream->sendJavaScriptStream(requestURL, cstr);
     }
 }
@@ -690,11 +690,11 @@ RefPtr<JSC::Bindings::Instance> PluginView::bindingInstance()
     }
 
     auto root = m_parentFrame->script().createRootObject(this);
-    RefPtr<JSC::Bindings::Instance> instance = JSC::Bindings::CInstance::create(object, WTFMove(root));
+    auto instance = JSC::Bindings::CInstance::create(object, WTFMove(root));
 
     _NPN_ReleaseObject(object);
 
-    return instance;
+    return WTFMove(instance);
 #else
     return nullptr;
 #endif

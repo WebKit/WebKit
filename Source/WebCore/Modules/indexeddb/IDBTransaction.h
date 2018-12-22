@@ -162,7 +162,7 @@ private:
     void finishAbortOrCommit();
     void abortInProgressOperations(const IDBError&);
 
-    void scheduleOperation(RefPtr<IDBClient::TransactionOperation>&&);
+    void scheduleOperation(Ref<IDBClient::TransactionOperation>&&);
     void pendingOperationTimerFired();
     void completedOperationTimerFired();
 

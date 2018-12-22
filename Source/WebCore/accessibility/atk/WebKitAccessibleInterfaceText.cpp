@@ -406,13 +406,13 @@ static void getSelectionOffsetsForObject(AccessibilityObject* coreObject, Visibl
 
     // Calculate position of the selected range inside the object.
     Position parentFirstPosition = firstPositionInOrBeforeNode(node);
-    RefPtr<Range> rangeInParent = Range::create(node->document(), parentFirstPosition, nodeRangeStart);
+    auto rangeInParent = Range::create(node->document(), parentFirstPosition, nodeRangeStart);
 
     // Set values for start offsets and calculate initial range length.
     // These values might be adjusted later to cover special cases.
-    startOffset = webCoreOffsetToAtkOffset(coreObject, TextIterator::rangeLength(rangeInParent.get(), true));
-    RefPtr<Range> nodeRange = Range::create(node->document(), nodeRangeStart, nodeRangeEnd);
-    int rangeLength = TextIterator::rangeLength(nodeRange.get(), true);
+    startOffset = webCoreOffsetToAtkOffset(coreObject, TextIterator::rangeLength(rangeInParent.ptr(), true));
+    auto nodeRange = Range::create(node->document(), nodeRangeStart, nodeRangeEnd);
+    int rangeLength = TextIterator::rangeLength(nodeRange.ptr(), true);
 
     // Special cases that are only relevant when working with *_END boundaries.
     if (selection.affinity() == UPSTREAM) {

@@ -64,9 +64,6 @@ bool ISOTrackEncryptionBox::parse(DataView& view, unsigned& offset)
         return false;
 
     auto keyIDBuffer = buffer->slice(offset, offset + 16);
-    if (!keyIDBuffer)
-        return false;
-
     offset += 16;
 
     m_defaultKID.resize(16);

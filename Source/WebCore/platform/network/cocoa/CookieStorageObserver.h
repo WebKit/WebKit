@@ -37,7 +37,7 @@ namespace WebCore {
 
 class CookieStorageObserver : public ThreadSafeRefCounted<CookieStorageObserver> {
 public:
-    static RefPtr<CookieStorageObserver> create(NSHTTPCookieStorage *);
+    static Ref<CookieStorageObserver> create(NSHTTPCookieStorage *);
     CookieStorageObserver(NSHTTPCookieStorage *);
     ~CookieStorageObserver();
 

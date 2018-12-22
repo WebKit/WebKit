@@ -35,9 +35,9 @@ namespace WebCore {
 
 class GCObservation final : public RefCounted<GCObservation> {
 public:
-    template<typename... Args> static RefPtr<GCObservation> create(Args&&... args)
+    template<typename... Args> static Ref<GCObservation> create(Args&&... args)
     {
-        return adoptRef(new GCObservation(std::forward<Args>(args)...));
+        return adoptRef(*new GCObservation(std::forward<Args>(args)...));
     }
 
     bool wasCollected() const { return !m_observedValue; }

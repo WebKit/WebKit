@@ -36,7 +36,7 @@ public:
     virtual bool enabled();
 
 private:
-    RefPtr<PopupMenuWin> m_popup;
+    Ref<PopupMenuWin> m_popup;
 };
 
 }

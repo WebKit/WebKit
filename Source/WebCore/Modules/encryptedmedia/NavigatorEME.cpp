@@ -68,7 +68,7 @@ void NavigatorEME::requestMediaKeySystemAccess(Navigator&, Document& document, c
         }
 
         // 6.2. Let implementation be the implementation of keySystem.
-        RefPtr<CDM> implementation = CDM::create(document, keySystem);
+        auto implementation = CDM::create(document, keySystem);
         tryNextSupportedConfiguration(WTFMove(implementation), WTFMove(supportedConfigurations), WTFMove(promise));
     });
 }

@@ -36,7 +36,7 @@ namespace WebCore {
 
 class WebGPURenderPipeline : public RefCounted<WebGPURenderPipeline> {
 public:
-    static RefPtr<WebGPURenderPipeline> create(Ref<GPURenderPipeline>&&);
+    static Ref<WebGPURenderPipeline> create(Ref<GPURenderPipeline>&&);
 
     Ref<GPURenderPipeline> renderPipeline() { return m_renderPipeline.copyRef(); }
 

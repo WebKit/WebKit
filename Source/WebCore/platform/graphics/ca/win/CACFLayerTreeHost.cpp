@@ -106,7 +106,7 @@ bool CACFLayerTreeHost::acceleratedCompositingAvailable()
         return available;
     }
 
-    RefPtr<CACFLayerTreeHost> host = CACFLayerTreeHost::create();
+    auto host = CACFLayerTreeHost::create();
 
     if (!host) {
         available = false;
@@ -125,7 +125,7 @@ RefPtr<CACFLayerTreeHost> CACFLayerTreeHost::create()
 {
     if (!acceleratedCompositingAvailable())
         return nullptr;
-    RefPtr<CACFLayerTreeHost> host = WKCACFViewLayerTreeHost::create();
+    auto host = WKCACFViewLayerTreeHost::create();
     if (!host) {
         LOG_ERROR("Failed to create layer tree host for accelerated compositing.");
         return nullptr;

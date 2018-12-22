@@ -1980,8 +1980,8 @@ bool StyleResolver::createFilterOperations(const CSSValue& inValue, FilterOperat
             String cssUrl = primitiveValue.stringValue();
             URL url = document().completeURL(cssUrl);
 
-            RefPtr<ReferenceFilterOperation> operation = ReferenceFilterOperation::create(cssUrl, url.fragmentIdentifier());
-            operations.operations().append(operation);
+            auto operation = ReferenceFilterOperation::create(cssUrl, url.fragmentIdentifier());
+            operations.operations().append(WTFMove(operation));
             continue;
         }
 

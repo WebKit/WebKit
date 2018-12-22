@@ -382,8 +382,7 @@ Vector<RefPtr<StaticRange>> CompositeEditCommand::targetRanges() const
     if (!firstRange)
         return { };
 
-    RefPtr<StaticRange> range = StaticRange::createFromRange(*firstRange);
-    return { 1, range };
+    return { 1, StaticRange::createFromRange(*firstRange) };
 }
 
 Vector<RefPtr<StaticRange>> CompositeEditCommand::targetRangesForBindings() const
@@ -768,15 +767,15 @@ void CompositeEditCommand::replaceTextInNodePreservingMarkers(Text& node, unsign
     DocumentMarkerController& markerController = document().markers();
     auto markers = copyMarkers(markerController.markersInRange(Range::create(document(), &node, offset, &node, offset + count), DocumentMarker::allMarkers()));
     replaceTextInNode(node, offset, count, replacementText);
-    RefPtr<Range> newRange = Range::create(document(), &node, offset, &node, offset + replacementText.length());
+    auto newRange = Range::create(document(), &node, offset, &node, offset + replacementText.length());
     for (const auto& marker : markers) {
 #if PLATFORM(IOS_FAMILY)
         if (marker.isDictation()) {
-            markerController.addMarker(newRange.get(), marker.type(), marker.description(), marker.alternatives(), marker.metadata());
+            markerController.addMarker(newRange.ptr(), marker.type(), marker.description(), marker.alternatives(), marker.metadata());
             continue;
         }
 #endif
-        markerController.addMarker(newRange.get(), marker.type(), marker.description());
+        markerController.addMarker(newRange.ptr(), marker.type(), marker.description());
     }
 }
 
@@ -1414,14 +1413,14 @@ void CompositeEditCommand::moveParagraphs(const VisiblePosition& startOfParagrap
             
             startIndex = 0;
             if (startInParagraph) {
-                RefPtr<Range> startRange = Range::create(document(), startOfParagraphToMove.deepEquivalent().parentAnchoredEquivalent(), visibleStart.deepEquivalent().parentAnchoredEquivalent());
-                startIndex = TextIterator::rangeLength(startRange.get(), true);
+                auto startRange = Range::create(document(), startOfParagraphToMove.deepEquivalent().parentAnchoredEquivalent(), visibleStart.deepEquivalent().parentAnchoredEquivalent());
+                startIndex = TextIterator::rangeLength(startRange.ptr(), true);
             }
 
             endIndex = 0;
             if (endInParagraph) {
-                RefPtr<Range> endRange = Range::create(document(), startOfParagraphToMove.deepEquivalent().parentAnchoredEquivalent(), visibleEnd.deepEquivalent().parentAnchoredEquivalent());
-                endIndex = TextIterator::rangeLength(endRange.get(), true);
+                auto endRange = Range::create(document(), startOfParagraphToMove.deepEquivalent().parentAnchoredEquivalent(), visibleEnd.deepEquivalent().parentAnchoredEquivalent());
+                endIndex = TextIterator::rangeLength(endRange.ptr(), true);
             }
         }
     }
@@ -1437,14 +1436,14 @@ void CompositeEditCommand::moveParagraphs(const VisiblePosition& startOfParagrap
     // start and end can't be used directly to create a Range; they are "editing positions"
     Position startRangeCompliant = start.parentAnchoredEquivalent();
     Position endRangeCompliant = end.parentAnchoredEquivalent();
-    RefPtr<Range> range = Range::create(document(), startRangeCompliant.deprecatedNode(), startRangeCompliant.deprecatedEditingOffset(), endRangeCompliant.deprecatedNode(), endRangeCompliant.deprecatedEditingOffset());
+    auto range = Range::create(document(), startRangeCompliant.deprecatedNode(), startRangeCompliant.deprecatedEditingOffset(), endRangeCompliant.deprecatedNode(), endRangeCompliant.deprecatedEditingOffset());
 
     // FIXME: This is an inefficient way to preserve style on nodes in the paragraph to move. It
     // shouldn't matter though, since moved paragraphs will usually be quite small.
     RefPtr<DocumentFragment> fragment;
     // This used to use a ternary for initialization, but that confused some versions of GCC, see bug 37912
     if (startOfParagraphToMove != endOfParagraphToMove)
-        fragment = createFragmentFromMarkup(document(), serializePreservingVisualAppearance(*range, nullptr, AnnotateForInterchange::No, ConvertBlocksToInlines::Yes), emptyString());
+        fragment = createFragmentFromMarkup(document(), serializePreservingVisualAppearance(range.get(), nullptr, AnnotateForInterchange::No, ConvertBlocksToInlines::Yes), emptyString());
 
     // A non-empty paragraph's style is moved when we copy and move it.  We don't move 
     // anything if we're given an empty paragraph, but an empty paragraph can have style

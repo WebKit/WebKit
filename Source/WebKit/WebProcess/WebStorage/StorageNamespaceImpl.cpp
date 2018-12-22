@@ -40,24 +40,24 @@
 namespace WebKit {
 using namespace WebCore;
 
-RefPtr<StorageNamespaceImpl> StorageNamespaceImpl::createSessionStorageNamespace(uint64_t identifier, unsigned quotaInBytes)
+Ref<StorageNamespaceImpl> StorageNamespaceImpl::createSessionStorageNamespace(uint64_t identifier, unsigned quotaInBytes)
 {
-    return adoptRef(new StorageNamespaceImpl(StorageType::Session, identifier, nullptr, quotaInBytes));
+    return adoptRef(*new StorageNamespaceImpl(StorageType::Session, identifier, nullptr, quotaInBytes));
 }
 
-RefPtr<StorageNamespaceImpl> StorageNamespaceImpl::createEphemeralLocalStorageNamespace(uint64_t identifier, unsigned quotaInBytes)
+Ref<StorageNamespaceImpl> StorageNamespaceImpl::createEphemeralLocalStorageNamespace(uint64_t identifier, unsigned quotaInBytes)
 {
-    return adoptRef(new StorageNamespaceImpl(StorageType::EphemeralLocal, identifier, nullptr, quotaInBytes));
+    return adoptRef(*new StorageNamespaceImpl(StorageType::EphemeralLocal, identifier, nullptr, quotaInBytes));
 }
 
-RefPtr<StorageNamespaceImpl> StorageNamespaceImpl::createLocalStorageNamespace(uint64_t identifier, unsigned quotaInBytes)
+Ref<StorageNamespaceImpl> StorageNamespaceImpl::createLocalStorageNamespace(uint64_t identifier, unsigned quotaInBytes)
 {
-    return adoptRef(new StorageNamespaceImpl(StorageType::Local, identifier, nullptr, quotaInBytes));
+    return adoptRef(*new StorageNamespaceImpl(StorageType::Local, identifier, nullptr, quotaInBytes));
 }
 
-RefPtr<StorageNamespaceImpl> StorageNamespaceImpl::createTransientLocalStorageNamespace(uint64_t identifier, WebCore::SecurityOrigin& topLevelOrigin, uint64_t quotaInBytes)
+Ref<StorageNamespaceImpl> StorageNamespaceImpl::createTransientLocalStorageNamespace(uint64_t identifier, WebCore::SecurityOrigin& topLevelOrigin, uint64_t quotaInBytes)
 {
-    return adoptRef(new StorageNamespaceImpl(StorageType::TransientLocal, identifier, &topLevelOrigin, quotaInBytes));
+    return adoptRef(*new StorageNamespaceImpl(StorageType::TransientLocal, identifier, &topLevelOrigin, quotaInBytes));
 }
 
 StorageNamespaceImpl::StorageNamespaceImpl(WebCore::StorageType storageType, uint64_t storageNamespaceID, WebCore::SecurityOrigin* topLevelOrigin, unsigned quotaInBytes)
@@ -77,7 +77,7 @@ void StorageNamespaceImpl::didDestroyStorageAreaMap(StorageAreaMap& map)
     m_storageAreaMaps.remove(map.securityOrigin().data());
 }
 
-RefPtr<StorageArea> StorageNamespaceImpl::storageArea(const SecurityOriginData& securityOrigin)
+Ref<StorageArea> StorageNamespaceImpl::storageArea(const SecurityOriginData& securityOrigin)
 {
     if (m_storageType == StorageType::EphemeralLocal)
         return ephemeralLocalStorageArea(securityOrigin);
@@ -185,16 +185,16 @@ private:
     RefPtr<StorageMap> m_storageMap;
 };
 
-RefPtr<StorageArea> StorageNamespaceImpl::ephemeralLocalStorageArea(const SecurityOriginData& securityOrigin)
+Ref<StorageArea> StorageNamespaceImpl::ephemeralLocalStorageArea(const SecurityOriginData& securityOrigin)
 {
     auto& slot = m_ephemeralLocalStorageAreas.add(securityOrigin, nullptr).iterator->value;
     if (!slot)
         slot = StorageNamespaceImpl::EphemeralStorageArea::create(securityOrigin, m_quotaInBytes);
-
-    return slot.get();
+    ASSERT(slot);
+    return *slot;
 }
 
-RefPtr<StorageNamespace> StorageNamespaceImpl::copy(Page* newPage)
+Ref<StorageNamespace> StorageNamespaceImpl::copy(Page* newPage)
 {
     ASSERT(m_storageNamespaceID);
 
@@ -202,12 +202,12 @@ RefPtr<StorageNamespace> StorageNamespaceImpl::copy(Page* newPage)
         return createSessionStorageNamespace(WebPage::fromCorePage(newPage)->pageID(), m_quotaInBytes);
 
     ASSERT(m_storageType == StorageType::EphemeralLocal);
-    RefPtr<StorageNamespaceImpl> newNamespace = adoptRef(new StorageNamespaceImpl(m_storageType, m_storageNamespaceID, m_topLevelOrigin.get(), m_quotaInBytes));
+    auto newNamespace = adoptRef(*new StorageNamespaceImpl(m_storageType, m_storageNamespaceID, m_topLevelOrigin.get(), m_quotaInBytes));
 
     for (auto& iter : m_ephemeralLocalStorageAreas)
         newNamespace->m_ephemeralLocalStorageAreas.set(iter.key, iter.value->copy());
 
-    return newNamespace;
+    return WTFMove(newNamespace);
 }
 
 } // namespace WebKit

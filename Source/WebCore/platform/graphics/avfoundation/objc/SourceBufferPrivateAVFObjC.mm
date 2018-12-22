@@ -430,7 +430,7 @@ using namespace PAL;
 
 class MediaDescriptionAVFObjC final : public MediaDescription {
 public:
-    static RefPtr<MediaDescriptionAVFObjC> create(AVAssetTrack* track) { return adoptRef(new MediaDescriptionAVFObjC(track)); }
+    static Ref<MediaDescriptionAVFObjC> create(AVAssetTrack* track) { return adoptRef(*new MediaDescriptionAVFObjC(track)); }
     virtual ~MediaDescriptionAVFObjC() { }
 
     AtomicString codec() const override { return m_codec; }
@@ -484,9 +484,9 @@ static void bufferWasConsumedCallback(CMNotificationCenterRef, const void*, CFSt
         sourceBuffer->bufferWasConsumed();
 }
 
-RefPtr<SourceBufferPrivateAVFObjC> SourceBufferPrivateAVFObjC::create(MediaSourcePrivateAVFObjC* parent)
+Ref<SourceBufferPrivateAVFObjC> SourceBufferPrivateAVFObjC::create(MediaSourcePrivateAVFObjC* parent)
 {
-    return adoptRef(new SourceBufferPrivateAVFObjC(parent));
+    return adoptRef(*new SourceBufferPrivateAVFObjC(parent));
 }
 
 SourceBufferPrivateAVFObjC::SourceBufferPrivateAVFObjC(MediaSourcePrivateAVFObjC* parent)
@@ -551,16 +551,16 @@ void SourceBufferPrivateAVFObjC::didParseStreamDataAsAsset(AVAsset* asset)
 
         if ([track hasMediaCharacteristic:AVMediaCharacteristicVisual]) {
             SourceBufferPrivateClient::InitializationSegment::VideoTrackInformation info;
-            RefPtr<VideoTrackPrivateMediaSourceAVFObjC> videoTrack = VideoTrackPrivateMediaSourceAVFObjC::create(track, this);
-            info.track = videoTrack;
-            m_videoTracks.append(videoTrack);
+            auto videoTrack = VideoTrackPrivateMediaSourceAVFObjC::create(track, this);
+            info.track = videoTrack.copyRef();
+            m_videoTracks.append(WTFMove(videoTrack));
             info.description = MediaDescriptionAVFObjC::create(track);
             segment.videoTracks.append(info);
         } else if ([track hasMediaCharacteristic:AVMediaCharacteristicAudible]) {
             SourceBufferPrivateClient::InitializationSegment::AudioTrackInformation info;
-            RefPtr<AudioTrackPrivateMediaSourceAVFObjC> audioTrack = AudioTrackPrivateMediaSourceAVFObjC::create(track, this);
-            info.track = audioTrack;
-            m_audioTracks.append(audioTrack);
+            auto audioTrack = AudioTrackPrivateMediaSourceAVFObjC::create(track, this);
+            info.track = audioTrack.copyRef();
+            m_audioTracks.append(WTFMove(audioTrack));
             info.description = MediaDescriptionAVFObjC::create(track);
             segment.audioTracks.append(info);
         }

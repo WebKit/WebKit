@@ -86,7 +86,7 @@ private:
 
     CellBorders cellBorders() const;
 
-    RefPtr<StyleProperties> createSharedCellStyle();
+    Ref<StyleProperties> createSharedCellStyle();
 
     HTMLTableSectionElement* lastBody() const;
 

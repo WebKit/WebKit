@@ -314,9 +314,9 @@ void VideoFullscreenModelContext::didExitPictureInPicture()
 
 #pragma mark - VideoFullscreenManagerProxy
 
-RefPtr<VideoFullscreenManagerProxy> VideoFullscreenManagerProxy::create(WebPageProxy& page, PlaybackSessionManagerProxy& playbackSessionManagerProxy)
+Ref<VideoFullscreenManagerProxy> VideoFullscreenManagerProxy::create(WebPageProxy& page, PlaybackSessionManagerProxy& playbackSessionManagerProxy)
 {
-    return adoptRef(new VideoFullscreenManagerProxy(page, playbackSessionManagerProxy));
+    return adoptRef(*new VideoFullscreenManagerProxy(page, playbackSessionManagerProxy));
 }
 
 VideoFullscreenManagerProxy::VideoFullscreenManagerProxy(WebPageProxy& page, PlaybackSessionManagerProxy& playbackSessionManagerProxy)

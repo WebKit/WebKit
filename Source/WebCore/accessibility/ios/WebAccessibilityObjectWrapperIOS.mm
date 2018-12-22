@@ -2401,12 +2401,12 @@ static void AXAttributedStringAppendText(NSMutableAttributedString* attrString, 
     if (&range->endContainer() != scope && !range->endContainer().isDescendantOf(scope))
         return NSMakeRange(NSNotFound, 0);
 
-    RefPtr<Range> testRange = Range::create(scope->document(), scope, 0, &range->startContainer(), range->startOffset());
+    auto testRange = Range::create(scope->document(), scope, 0, &range->startContainer(), range->startOffset());
     ASSERT(&testRange->startContainer() == scope);
-    int startPosition = TextIterator::rangeLength(testRange.get());
+    int startPosition = TextIterator::rangeLength(testRange.ptr());
     testRange->setEnd(range->endContainer(), range->endOffset());
     ASSERT(&testRange->startContainer() == scope);
-    int endPosition = TextIterator::rangeLength(testRange.get());
+    int endPosition = TextIterator::rangeLength(testRange.ptr());
     return NSMakeRange(startPosition, endPosition - startPosition);
 }
 

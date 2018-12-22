@@ -74,9 +74,9 @@
 
 namespace WebCore {
 
-RefPtr<CookieStorageObserver> CookieStorageObserver::create(NSHTTPCookieStorage *cookieStorage)
+Ref<CookieStorageObserver> CookieStorageObserver::create(NSHTTPCookieStorage *cookieStorage)
 {
-    return adoptRef(new CookieStorageObserver(cookieStorage));
+    return adoptRef(*new CookieStorageObserver(cookieStorage));
 }
 
 CookieStorageObserver::CookieStorageObserver(NSHTTPCookieStorage *cookieStorage)

@@ -131,16 +131,16 @@ void MHTMLParser::addResourceToArchive(ArchiveResource* resource, MHTMLArchive* 
         return;
     }
 
-    RefPtr<MHTMLArchive> subframe = MHTMLArchive::create();
+    auto subframe = MHTMLArchive::create();
     subframe->setMainResource(*resource);
-    m_frames.append(subframe);
+    m_frames.append(WTFMove(subframe));
 }
 
 RefPtr<ArchiveResource> MHTMLParser::parseNextPart(const MIMEHeader& mimeHeader, const String& endOfPartBoundary, const String& endOfDocumentBoundary, bool& endOfArchiveReached)
 {
     ASSERT(endOfPartBoundary.isEmpty() == endOfDocumentBoundary.isEmpty());
 
-    RefPtr<SharedBuffer> content = SharedBuffer::create();
+    auto content = SharedBuffer::create();
     const bool checkBoundary = !endOfPartBoundary.isEmpty();
     bool endOfPartReached = false;
     if (mimeHeader.contentTransferEncoding() == MIMEHeader::Binary) {
@@ -211,7 +211,7 @@ RefPtr<ArchiveResource> MHTMLParser::parseNextPart(const MIMEHeader& mimeHeader,
         LOG_ERROR("Invalid encoding for MHTML part.");
         return nullptr;
     }
-    RefPtr<SharedBuffer> contentBuffer = SharedBuffer::create(WTFMove(data));
+    auto contentBuffer = SharedBuffer::create(WTFMove(data));
     // FIXME: the URL in the MIME header could be relative, we should resolve it if it is.
     // The specs mentions 5 ways to resolve a URL: http://tools.ietf.org/html/rfc2557#section-5
     // IE and Firefox (UNMht) seem to generate only absolute URLs.

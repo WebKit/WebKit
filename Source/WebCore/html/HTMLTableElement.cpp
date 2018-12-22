@@ -473,9 +473,9 @@ HTMLTableElement::CellBorders HTMLTableElement::cellBorders() const
     return NoBorders;
 }
 
-RefPtr<StyleProperties> HTMLTableElement::createSharedCellStyle()
+Ref<StyleProperties> HTMLTableElement::createSharedCellStyle()
 {
-    RefPtr<MutableStyleProperties> style = MutableStyleProperties::create();
+    auto style = MutableStyleProperties::create();
 
     auto& cssValuePool = CSSValuePool::singleton();
     switch (cellBorders()) {
@@ -511,7 +511,7 @@ RefPtr<StyleProperties> HTMLTableElement::createSharedCellStyle()
     if (m_padding)
         style->setProperty(CSSPropertyPadding, cssValuePool.createValue(m_padding, CSSPrimitiveValue::CSS_PX));
 
-    return style;
+    return WTFMove(style);
 }
 
 const StyleProperties* HTMLTableElement::additionalCellStyle()

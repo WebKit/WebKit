@@ -44,10 +44,10 @@ public:
     WEBCORE_EXPORT StorageNamespaceProvider();
     WEBCORE_EXPORT virtual ~StorageNamespaceProvider();
 
-    virtual RefPtr<StorageNamespace> createSessionStorageNamespace(Page&, unsigned quota) = 0;
-    virtual RefPtr<StorageNamespace> createEphemeralLocalStorageNamespace(Page&, unsigned quota) = 0;
+    virtual Ref<StorageNamespace> createSessionStorageNamespace(Page&, unsigned quota) = 0;
+    virtual Ref<StorageNamespace> createEphemeralLocalStorageNamespace(Page&, unsigned quota) = 0;
 
-    RefPtr<StorageArea> localStorageArea(Document&);
+    Ref<StorageArea> localStorageArea(Document&);
 
     void addPage(Page&);
     void removePage(Page&);
@@ -59,8 +59,8 @@ private:
     StorageNamespace& localStorageNamespace();
     StorageNamespace& transientLocalStorageNamespace(SecurityOrigin&);
 
-    virtual RefPtr<StorageNamespace> createLocalStorageNamespace(unsigned quota) = 0;
-    virtual RefPtr<StorageNamespace> createTransientLocalStorageNamespace(SecurityOrigin&, unsigned quota) = 0;
+    virtual Ref<StorageNamespace> createLocalStorageNamespace(unsigned quota) = 0;
+    virtual Ref<StorageNamespace> createTransientLocalStorageNamespace(SecurityOrigin&, unsigned quota) = 0;
 
     HashSet<Page*> m_pages;
 

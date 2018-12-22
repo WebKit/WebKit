@@ -265,8 +265,8 @@ void TypingCommand::insertText(Document& document, const String& text, const Vis
         return;
     }
 
-    RefPtr<TypingCommand> cmd = TypingCommand::create(document, InsertText, newText, options, compositionType);
-    applyTextInsertionCommand(frame.get(), *cmd, selectionForInsertion, currentSelection);
+    auto cmd = TypingCommand::create(document, InsertText, newText, options, compositionType);
+    applyTextInsertionCommand(frame.get(), cmd.get(), selectionForInsertion, currentSelection);
 }
 
 void TypingCommand::insertLineBreak(Document& document, Options options)
@@ -499,8 +499,7 @@ bool TypingCommand::willAddTypingToOpenCommand(ETypingCommand commandType, TextG
     if (!range || isEditingTextAreaOrTextInput())
         return frame().editor().willApplyEditing(*this, CompositeEditCommand::targetRangesForBindings());
 
-    RefPtr<StaticRange> staticRange = StaticRange::createFromRange(*range);
-    return frame().editor().willApplyEditing(*this, { 1, staticRange });
+    return frame().editor().willApplyEditing(*this, { 1, StaticRange::createFromRange(*range) });
 }
 
 void TypingCommand::typingAddedToOpenCommand(ETypingCommand commandTypeForAddedTyping)

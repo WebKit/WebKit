@@ -84,8 +84,8 @@ PluginProcessConnection* PluginProcessConnectionManager::getPluginProcessConnect
     if (!IPC::Connection::identifierIsValid(connectionIdentifier))
         return nullptr;
 
-    RefPtr<PluginProcessConnection> pluginProcessConnection = PluginProcessConnection::create(this, pluginProcessToken, connectionIdentifier, supportsAsynchronousInitialization);
-    m_pluginProcessConnections.append(pluginProcessConnection);
+    auto pluginProcessConnection = PluginProcessConnection::create(this, pluginProcessToken, connectionIdentifier, supportsAsynchronousInitialization);
+    m_pluginProcessConnections.append(pluginProcessConnection.copyRef());
 
     {
         LockHolder locker(m_tokensAndConnectionsMutex);
@@ -94,7 +94,7 @@ PluginProcessConnection* PluginProcessConnectionManager::getPluginProcessConnect
         m_tokensAndConnections.set(pluginProcessToken, pluginProcessConnection->connection());
     }
 
-    return pluginProcessConnection.get();
+    return pluginProcessConnection.ptr();
 }
 
 void PluginProcessConnectionManager::removePluginProcessConnection(PluginProcessConnection* pluginProcessConnection)

@@ -97,11 +97,11 @@ MockInitializationBox::MockInitializationBox(ArrayBuffer* data)
     size_t offset = 16;
 
     while (offset < m_length) {
-        RefPtr<ArrayBuffer> subBuffer = data->slice(offset);
-        if (MockBox::peekType(subBuffer.get()) != MockTrackBox::type())
+        auto subBuffer = data->slice(offset);
+        if (MockBox::peekType(subBuffer.ptr()) != MockTrackBox::type())
             break;
 
-        MockTrackBox trackBox(subBuffer.get());
+        MockTrackBox trackBox(subBuffer.ptr());
         offset += trackBox.length();
         m_tracks.append(trackBox);
     }

@@ -84,8 +84,8 @@ public:
     }
 
     // FIXME: There shouldn't be any need for the null parent version.
-    RefPtr<CSSRule> createCSSOMWrapper(CSSStyleSheet* parentSheet = nullptr) const;
-    RefPtr<CSSRule> createCSSOMWrapper(CSSRule* parentRule) const;
+    Ref<CSSRule> createCSSOMWrapper(CSSStyleSheet* parentSheet = nullptr) const;
+    Ref<CSSRule> createCSSOMWrapper(CSSRule* parentRule) const;
 
 protected:
     StyleRuleBase(Type type, bool hasDocumentSecurityOrigin = false)
@@ -108,7 +108,7 @@ protected:
 private:
     WEBCORE_EXPORT void destroy();
     
-    RefPtr<CSSRule> createCSSOMWrapper(CSSStyleSheet* parentSheet, CSSRule* parentRule) const;
+    Ref<CSSRule> createCSSOMWrapper(CSSStyleSheet* parentSheet, CSSRule* parentRule) const;
 
     unsigned m_type : 5;
     // This is only needed to support getMatchedCSSRules.

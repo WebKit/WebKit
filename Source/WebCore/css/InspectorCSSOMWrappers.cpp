@@ -79,9 +79,9 @@ void InspectorCSSOMWrappers::collectFromStyleSheetContents(StyleSheetContents* s
 {
     if (!styleSheet)
         return;
-    RefPtr<CSSStyleSheet> styleSheetWrapper = CSSStyleSheet::create(*styleSheet);
-    m_styleSheetCSSOMWrapperSet.add(styleSheetWrapper);
-    collect(styleSheetWrapper.get());
+    auto styleSheetWrapper = CSSStyleSheet::create(*styleSheet);
+    m_styleSheetCSSOMWrapperSet.add(styleSheetWrapper.copyRef());
+    collect(styleSheetWrapper.ptr());
 }
 
 void InspectorCSSOMWrappers::collectFromStyleSheets(const Vector<RefPtr<CSSStyleSheet>>& sheets)

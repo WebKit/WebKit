@@ -1061,7 +1061,7 @@ ObjectContentType WebFrameLoaderClient::objectContentType(const URL& url, const 
     return WebCore::ObjectContentType::None;
 }
 
-void WebFrameLoaderClient::dispatchDidFailToStartPlugin(const PluginView* pluginView) const
+void WebFrameLoaderClient::dispatchDidFailToStartPlugin(const PluginView& pluginView) const
 {
     WebView* webView = m_webFrame->webView();
 
@@ -1072,23 +1072,23 @@ void WebFrameLoaderClient::dispatchDidFailToStartPlugin(const PluginView* plugin
     RetainPtr<CFMutableDictionaryRef> userInfo = adoptCF(CFDictionaryCreateMutable(0, 0, &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks));
 
     Frame* frame = core(m_webFrame);
-    ASSERT(frame == pluginView->parentFrame());
+    ASSERT(frame == pluginView.parentFrame());
 
-    if (!pluginView->pluginsPage().isNull()) {
-        URL pluginPageURL = frame->document()->completeURL(stripLeadingAndTrailingHTMLSpaces(pluginView->pluginsPage()));
+    if (!pluginView.pluginsPage().isNull()) {
+        URL pluginPageURL = frame->document()->completeURL(stripLeadingAndTrailingHTMLSpaces(pluginView.pluginsPage()));
         if (pluginPageURL.protocolIsInHTTPFamily()) {
             static CFStringRef key = MarshallingHelpers::LPCOLESTRToCFStringRef(WebKitErrorPlugInPageURLStringKey);
             CFDictionarySetValue(userInfo.get(), key, pluginPageURL.string().createCFString().get());
         }
     }
 
-    if (!pluginView->mimeType().isNull()) {
+    if (!pluginView.mimeType().isNull()) {
         static CFStringRef key = MarshallingHelpers::LPCOLESTRToCFStringRef(WebKitErrorMIMETypeKey);
-        CFDictionarySetValue(userInfo.get(), key, pluginView->mimeType().createCFString().get());
+        CFDictionarySetValue(userInfo.get(), key, pluginView.mimeType().createCFString().get());
     }
 
-    if (pluginView->plugin()) {
-        String pluginName = pluginView->plugin()->name();
+    if (pluginView.plugin()) {
+        String pluginName = pluginView.plugin()->name();
         if (!pluginName.isNull()) {
             static CFStringRef key = MarshallingHelpers::LPCOLESTRToCFStringRef(WebKitErrorPlugInNameKey);
             CFDictionarySetValue(userInfo.get(), key, pluginName.createCFString().get());
@@ -1100,7 +1100,7 @@ void WebFrameLoaderClient::dispatchDidFailToStartPlugin(const PluginView* plugin
  
     int errorCode = 0;
     String description;
-    switch (pluginView->status()) {
+    switch (pluginView.status()) {
         case PluginStatusCanNotFindPlugin:
             errorCode = WebKitErrorCannotFindPlugIn;
             description = WEB_UI_STRING("The plug-in can\xE2\x80\x99t be found", "WebKitErrorCannotFindPlugin description");
@@ -1113,7 +1113,7 @@ void WebFrameLoaderClient::dispatchDidFailToStartPlugin(const PluginView* plugin
             ASSERT_NOT_REACHED();
     }
 
-    ResourceError resourceError(String(WebKitErrorDomain), errorCode, pluginView->url(), String());
+    ResourceError resourceError(String(WebKitErrorDomain), errorCode, pluginView.url(), String());
     COMPtr<IWebError> error(AdoptCOM, WebError::createInstance(resourceError, userInfoBag.get()));
      
     resourceLoadDelegate->plugInFailedWithError(webView, error.get(), getWebDataSource(frame->loader().documentLoader()));
@@ -1158,7 +1158,7 @@ RefPtr<Widget> WebFrameLoaderClient::createPlugin(const IntSize& pluginSize, HTM
 
 #if ENABLE(NETSCAPE_PLUGIN_API)
     Frame* frame = core(m_webFrame);
-    RefPtr<PluginView> pluginView = PluginView::create(frame, pluginSize, &element, url, paramNames, paramValues, mimeType, loadManually);
+    auto pluginView = PluginView::create(frame, pluginSize, &element, url, paramNames, paramValues, mimeType, loadManually);
 
     if (pluginView->status() == PluginStatusLoadedSuccessfully)
         return pluginView;
@@ -1180,7 +1180,7 @@ void WebFrameLoaderClient::redirectDataToPlugin(Widget& pluginWidget)
 RefPtr<Widget> WebFrameLoaderClient::createJavaAppletWidget(const IntSize& pluginSize, HTMLAppletElement& element, const URL& /*baseURL*/, const Vector<String>& paramNames, const Vector<String>& paramValues)
 {
 #if ENABLE(NETSCAPE_PLUGIN_API)
-    RefPtr<PluginView> pluginView = PluginView::create(core(m_webFrame), pluginSize, &element, URL(), paramNames, paramValues, "application/x-java-applet", false);
+    auto pluginView = PluginView::create(core(m_webFrame), pluginSize, &element, URL(), paramNames, paramValues, "application/x-java-applet", false);
 
     // Check if the plugin can be loaded successfully
     if (pluginView->plugin() && pluginView->plugin()->load())

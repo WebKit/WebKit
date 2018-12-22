@@ -39,7 +39,7 @@ struct WebGPUAdapterDescriptor;
 
 class WebGPUAdapter : public RefCounted<WebGPUAdapter> {
 public:
-    static RefPtr<WebGPUAdapter> create(const WebGPUAdapterDescriptor&);
+    static Ref<WebGPUAdapter> create(const WebGPUAdapterDescriptor&);
 
     RefPtr<WebGPUDevice> createDevice();
 

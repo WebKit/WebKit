@@ -161,9 +161,7 @@ static void updateRenderedRectsForMarker(RenderedDocumentMarker& marker, Node& n
     ASSERT(!node.document().view() || !node.document().view()->needsLayout());
 
     // FIXME: We should refactor this so that we don't use Range (because we only have one Node), but still share code with absoluteTextQuads().
-    RefPtr<Range> markerRange = Range::create(node.document(), &node, marker.startOffset(), &node, marker.endOffset());
-    if (!markerRange)
-        return;
+    auto markerRange = Range::create(node.document(), &node, marker.startOffset(), &node, marker.endOffset());
     Vector<FloatQuad> absoluteMarkerQuads;
     markerRange->absoluteTextQuads(absoluteMarkerQuads, true);
 

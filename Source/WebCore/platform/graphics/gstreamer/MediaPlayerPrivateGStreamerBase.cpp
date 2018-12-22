@@ -878,7 +878,7 @@ void MediaPlayerPrivateGStreamerBase::paint(GraphicsContext& context, const Floa
     if (m_renderingCanBeAccelerated)
         paintingOptions.m_orientationDescription.setImageOrientationEnum(m_videoSourceOrientation);
 
-    RefPtr<ImageGStreamer> gstImage = ImageGStreamer::createImage(m_sample.get());
+    auto gstImage = ImageGStreamer::createImage(m_sample.get());
     if (!gstImage)
         return;
 

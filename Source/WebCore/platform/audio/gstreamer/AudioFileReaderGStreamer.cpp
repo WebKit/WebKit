@@ -352,7 +352,7 @@ RefPtr<AudioBus> AudioFileReader::createBus(float sampleRate, bool mixToMono)
     if (m_errorOccurred)
         return nullptr;
 
-    RefPtr<AudioBus> audioBus = AudioBus::create(m_channels, m_channelSize, true);
+    auto audioBus = AudioBus::create(m_channels, m_channelSize, true);
     audioBus->setSampleRate(m_sampleRate);
 
     copyGstreamerBuffersToAudioChannel(m_frontLeftBuffers.get(), audioBus->channel(0));

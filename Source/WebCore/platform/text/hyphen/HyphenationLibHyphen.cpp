@@ -169,14 +169,14 @@ public:
 
     virtual ~HyphenationDictionary() = default;
 
-    static RefPtr<HyphenationDictionary> createNull()
+    static Ref<HyphenationDictionary> createNull()
     {
-        return adoptRef(new HyphenationDictionary());
+        return adoptRef(*new HyphenationDictionary());
     }
 
-    static RefPtr<HyphenationDictionary> create(const CString& dictPath)
+    static Ref<HyphenationDictionary> create(const CString& dictPath)
     {
-        return adoptRef(new HyphenationDictionary(dictPath));
+        return adoptRef(*new HyphenationDictionary(dictPath));
     }
 
     HyphenDict* libhyphenDictionary() const

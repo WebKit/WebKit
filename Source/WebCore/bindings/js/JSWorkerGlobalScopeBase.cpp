@@ -133,9 +133,9 @@ void JSWorkerGlobalScopeBase::queueTaskToEventLoop(JSGlobalObject& object, Ref<J
 {
     JSWorkerGlobalScopeBase& thisObject = static_cast<JSWorkerGlobalScopeBase&>(object);
 
-    RefPtr<JSMicrotaskCallback> callback = JSMicrotaskCallback::create(thisObject, WTFMove(task));
+    auto callback = JSMicrotaskCallback::create(thisObject, WTFMove(task));
     auto& context = thisObject.wrapped();
-    auto microtask = std::make_unique<ActiveDOMCallbackMicrotask>(context.microtaskQueue(), context, [callback]() mutable {
+    auto microtask = std::make_unique<ActiveDOMCallbackMicrotask>(context.microtaskQueue(), context, [callback = WTFMove(callback)]() mutable {
         callback->call();
     });
 

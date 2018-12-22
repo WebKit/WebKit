@@ -44,9 +44,6 @@ bool ISOProtectionSystemSpecificHeaderBox::parse(DataView& view, unsigned& offse
     if (!buffer)
         return false;
     auto systemID = buffer->slice(offset, offset + 16);
-    if (!systemID)
-        return false;
-
     offset += 16;
 
     m_systemID.resize(16);
@@ -63,8 +60,6 @@ bool ISOProtectionSystemSpecificHeaderBox::parse(DataView& view, unsigned& offse
             auto& currentKeyID = m_keyIDs[keyID];
             currentKeyID.resize(16);
             auto parsedKeyID = buffer->slice(offset, offset + 16);
-            if (!parsedKeyID)
-                return false;
             offset += 16;
             memcpy(currentKeyID.data(), parsedKeyID->data(), 16);
         }
@@ -76,9 +71,6 @@ bool ISOProtectionSystemSpecificHeaderBox::parse(DataView& view, unsigned& offse
     if (buffer->byteLength() - offset < dataSize)
         return false;
     auto parsedData = buffer->slice(offset, offset + dataSize);
-    if (!parsedData)
-        return false;
-
     offset += dataSize;
 
     m_data.resize(dataSize);

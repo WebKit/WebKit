@@ -78,8 +78,8 @@ private:
 JSGlobalObjectTask::JSGlobalObjectTask(JSDOMGlobalObject& globalObject, Ref<Microtask>&& task)
     : ScriptExecutionContext::Task({ })
 {
-    RefPtr<JSGlobalObjectCallback> callback = JSGlobalObjectCallback::create(globalObject, WTFMove(task));
-    m_task = [callback] (ScriptExecutionContext&) {
+    auto callback = JSGlobalObjectCallback::create(globalObject, WTFMove(task));
+    m_task = [callback = WTFMove(callback)] (ScriptExecutionContext&) {
         callback->call();
     };
 }

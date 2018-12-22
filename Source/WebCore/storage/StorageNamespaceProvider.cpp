@@ -60,7 +60,7 @@ void StorageNamespaceProvider::removePage(Page& page)
     m_pages.remove(&page);
 }
 
-RefPtr<StorageArea> StorageNamespaceProvider::localStorageArea(Document& document)
+Ref<StorageArea> StorageNamespaceProvider::localStorageArea(Document& document)
 {
     // This StorageNamespaceProvider was retrieved from the Document's Page,
     // so the Document had better still actually have a Page.

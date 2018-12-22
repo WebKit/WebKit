@@ -53,7 +53,7 @@ class WebCoreDecompressionSession;
 
 class MediaSourcePrivateAVFObjC final : public MediaSourcePrivate {
 public:
-    static RefPtr<MediaSourcePrivateAVFObjC> create(MediaPlayerPrivateMediaSourceAVFObjC*, MediaSourcePrivateClient*);
+    static Ref<MediaSourcePrivateAVFObjC> create(MediaPlayerPrivateMediaSourceAVFObjC*, MediaSourcePrivateClient*);
     virtual ~MediaSourcePrivateAVFObjC();
 
     MediaPlayerPrivateMediaSourceAVFObjC* player() const { return m_player; }

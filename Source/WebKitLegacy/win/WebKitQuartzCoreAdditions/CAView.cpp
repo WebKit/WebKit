@@ -187,9 +187,9 @@ CAView::~CAView()
     messageWindow = nullptr;
 }
 
-RefPtr<CAView> CAView::create(DrawingDestination destination)
+Ref<CAView> CAView::create(DrawingDestination destination)
 {
-    return adoptRef(new CAView(destination));
+    return adoptRef(*new CAView(destination));
 }
 
 void CAView::setContextDidChangeCallback(ContextDidChangeCallbackFunction function, void* info)

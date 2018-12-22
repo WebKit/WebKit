@@ -37,17 +37,16 @@
 
 namespace WebCore {
 
-Ref<Storage> Storage::create(DOMWindow& window, RefPtr<StorageArea>&& storageArea)
+Ref<Storage> Storage::create(DOMWindow& window, Ref<StorageArea>&& storageArea)
 {
     return adoptRef(*new Storage(window, WTFMove(storageArea)));
 }
 
-Storage::Storage(DOMWindow& window, RefPtr<StorageArea>&& storageArea)
+Storage::Storage(DOMWindow& window, Ref<StorageArea>&& storageArea)
     : DOMWindowProperty(&window)
     , m_storageArea(WTFMove(storageArea))
 {
     ASSERT(frame());
-    ASSERT(m_storageArea);
 
     m_storageArea->incrementAccessCount();
 }

@@ -50,8 +50,8 @@
 
 - (id)initWithDocument:(WKDOMDocument *)document
 {
-    RefPtr<WebCore::Range> range = WebCore::Range::create(*WebKit::toWebCoreDocument(document));
-    self = [self _initWithImpl:range.get()];
+    auto range = WebCore::Range::create(*WebKit::toWebCoreDocument(document));
+    self = [self _initWithImpl:range.ptr()];
     if (!self)
         return nil;
 

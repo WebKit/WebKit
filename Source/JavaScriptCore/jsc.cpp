@@ -1777,7 +1777,7 @@ EncodedJSValue JSC_HOST_CALL functionDollarAgentReceiveBroadcast(ExecState* exec
         message = Worker::current().dequeue();
     }
     
-    RefPtr<ArrayBuffer> nativeBuffer = ArrayBuffer::create(message->releaseContents());
+    auto nativeBuffer = ArrayBuffer::create(message->releaseContents());
     ArrayBufferSharingMode sharingMode = nativeBuffer->sharingMode();
     JSArrayBuffer* jsBuffer = JSArrayBuffer::create(vm, exec->lexicalGlobalObject()->arrayBufferStructure(sharingMode), WTFMove(nativeBuffer));
     

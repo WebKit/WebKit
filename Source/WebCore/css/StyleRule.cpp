@@ -45,12 +45,12 @@ struct SameSizeAsStyleRuleBase : public WTF::RefCountedBase {
 
 COMPILE_ASSERT(sizeof(StyleRuleBase) == sizeof(SameSizeAsStyleRuleBase), StyleRuleBase_should_stay_small);
 
-RefPtr<CSSRule> StyleRuleBase::createCSSOMWrapper(CSSStyleSheet* parentSheet) const
+Ref<CSSRule> StyleRuleBase::createCSSOMWrapper(CSSStyleSheet* parentSheet) const
 {
     return createCSSOMWrapper(parentSheet, nullptr);
 }
 
-RefPtr<CSSRule> StyleRuleBase::createCSSOMWrapper(CSSRule* parentRule) const
+Ref<CSSRule> StyleRuleBase::createCSSOMWrapper(CSSRule* parentRule) const
 { 
     return createCSSOMWrapper(nullptr, parentRule);
 }
@@ -131,7 +131,7 @@ Ref<StyleRuleBase> StyleRuleBase::copy() const
     CRASH();
 }
 
-RefPtr<CSSRule> StyleRuleBase::createCSSOMWrapper(CSSStyleSheet* parentSheet, CSSRule* parentRule) const
+Ref<CSSRule> StyleRuleBase::createCSSOMWrapper(CSSStyleSheet* parentSheet, CSSRule* parentRule) const
 {
     RefPtr<CSSRule> rule;
     StyleRuleBase& self = const_cast<StyleRuleBase&>(*this);
@@ -169,11 +169,13 @@ RefPtr<CSSRule> StyleRuleBase::createCSSOMWrapper(CSSStyleSheet* parentSheet, CS
     case Charset:
     case Keyframe:
         ASSERT_NOT_REACHED();
-        return nullptr;
+        break;
     }
+    ASSERT(rule);
+
     if (parentRule)
         rule->setParentRule(parentRule);
-    return rule;
+    return rule.releaseNonNull();
 }
 
 unsigned StyleRule::averageSizeInBytes()

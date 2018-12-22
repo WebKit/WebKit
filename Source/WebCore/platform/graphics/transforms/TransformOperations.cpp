@@ -87,11 +87,11 @@ TransformOperations TransformOperations::blendByMatchingOperations(const Transfo
         if (blendedOperation)
             result.operations().append(blendedOperation);
         else {
-            RefPtr<TransformOperation> identityOperation = IdentityTransformOperation::create();
+            auto identityOperation = IdentityTransformOperation::create();
             if (progress > 0.5)
-                result.operations().append(toOperation ? toOperation : identityOperation);
+                result.operations().append(toOperation ? toOperation : WTFMove(identityOperation));
             else
-                result.operations().append(fromOperation ? fromOperation : identityOperation);
+                result.operations().append(fromOperation ? fromOperation : WTFMove(identityOperation));
         }
     }
 

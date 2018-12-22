@@ -199,7 +199,7 @@ public:
 
 protected:
     void loadHTMLString(_In_ BSTR string, _In_ BSTR baseURL, _In_ BSTR unreachableURL);
-    void loadData(RefPtr<WebCore::SharedBuffer>&&, BSTR mimeType, BSTR textEncodingName, BSTR baseURL, BSTR failingURL);
+    void loadData(Ref<WebCore::SharedBuffer>&&, BSTR mimeType, BSTR textEncodingName, BSTR baseURL, BSTR failingURL);
     const Vector<WebCore::IntRect>& computePageRects(HDC printDC);
     void setPrinting(bool printing, const WebCore::FloatSize& pageSize, const WebCore::FloatSize& originalPageSize, float maximumShrinkRatio, WebCore::AdjustViewSizeOrNot);
     void headerAndFooterHeights(float*, float*);

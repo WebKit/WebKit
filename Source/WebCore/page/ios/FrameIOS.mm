@@ -81,14 +81,14 @@ void Frame::initWithSimpleHTMLDocument(const String& style, const URL& url)
 {
     m_loader->initForSynthesizedDocument(url);
 
-    RefPtr<HTMLDocument> document = HTMLDocument::createSynthesizedDocument(this, url);
+    auto document = HTMLDocument::createSynthesizedDocument(this, url);
     document->setCompatibilityMode(DocumentCompatibilityMode::LimitedQuirksMode);
     document->createDOMWindow();
-    setDocument(document);
+    setDocument(document.copyRef());
 
-    auto rootElement = HTMLHtmlElement::create(*document);
+    auto rootElement = HTMLHtmlElement::create(document.get());
 
-    auto body = HTMLBodyElement::create(*document);
+    auto body = HTMLBodyElement::create(document.get());
     if (!style.isEmpty())
         body->setAttribute(HTMLNames::styleAttr, style);
 
@@ -629,16 +629,16 @@ NSArray *Frame::interpretationsForCurrentRoot() const
         for (auto* marker : document()->markers().markersFor(*node, DocumentMarker::DictationPhraseWithAlternatives)) {
             // First, add text that precede the marker.
             if (precedingTextStartPosition != createLegacyEditingPosition(node, marker->startOffset())) {
-                RefPtr<Range> precedingTextRange = Range::create(*document(), precedingTextStartPosition, createLegacyEditingPosition(node, marker->startOffset()));
-                String precedingText = plainText(precedingTextRange.get());
+                auto precedingTextRange = Range::create(*document(), precedingTextStartPosition, createLegacyEditingPosition(node, marker->startOffset()));
+                String precedingText = plainText(precedingTextRange.ptr());
                 if (!precedingText.isEmpty()) {
                     for (auto& interpretation : interpretations)
                         append(interpretation, precedingText);
                 }
             }
 
-            RefPtr<Range> rangeForMarker = Range::create(*document(), createLegacyEditingPosition(node, marker->startOffset()), createLegacyEditingPosition(node, marker->endOffset()));
-            String visibleTextForMarker = plainText(rangeForMarker.get());
+            auto rangeForMarker = Range::create(*document(), createLegacyEditingPosition(node, marker->startOffset()), createLegacyEditingPosition(node, marker->endOffset()));
+            String visibleTextForMarker = plainText(rangeForMarker.ptr());
             size_t interpretationsCountForCurrentMarker = marker->alternatives().size() + 1;
             for (size_t i = 0; i < interpretationsCount; ++i) {
                 // Determine text for the ith interpretation. It will either be the visible text, or one of its
@@ -658,8 +658,8 @@ NSArray *Frame::interpretationsForCurrentRoot() const
     }
 
     // Finally, add any text after the last marker.
-    RefPtr<Range> afterLastMarkerRange = Range::create(*document(), precedingTextStartPosition, createLegacyEditingPosition(root, rootChildCount));
-    String textAfterLastMarker = plainText(afterLastMarkerRange.get());
+    auto afterLastMarkerRange = Range::create(*document(), precedingTextStartPosition, createLegacyEditingPosition(root, rootChildCount));
+    String textAfterLastMarker = plainText(afterLastMarkerRange.ptr());
     if (!textAfterLastMarker.isEmpty()) {
         for (auto& interpretation : interpretations)
             append(interpretation, textAfterLastMarker);

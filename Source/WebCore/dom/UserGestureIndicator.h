@@ -46,9 +46,9 @@ enum class UserGestureType { EscapeKey, Other };
 
 class UserGestureToken : public RefCounted<UserGestureToken> {
 public:
-    static RefPtr<UserGestureToken> create(ProcessingUserGestureState state, UserGestureType gestureType)
+    static Ref<UserGestureToken> create(ProcessingUserGestureState state, UserGestureType gestureType)
     {
-        return adoptRef(new UserGestureToken(state, gestureType));
+        return adoptRef(*new UserGestureToken(state, gestureType));
     }
 
     WEBCORE_EXPORT ~UserGestureToken();

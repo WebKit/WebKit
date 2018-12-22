@@ -67,8 +67,8 @@ void DictationCommandIOS::doApply()
     Element* root = afterResults.rootEditableElement();
 
     // FIXME: Add the result marker using a Position cached before results are inserted, instead of relying on TextIterators.
-    RefPtr<Range> rangeToEnd = Range::create(document(), createLegacyEditingPosition((Node *)root, 0), afterResults.deepEquivalent());
-    int endIndex = TextIterator::rangeLength(rangeToEnd.get(), true);
+    auto rangeToEnd = Range::create(document(), createLegacyEditingPosition((Node *)root, 0), afterResults.deepEquivalent());
+    int endIndex = TextIterator::rangeLength(rangeToEnd.ptr(), true);
     int startIndex = endIndex - resultLength;
 
     if (startIndex >= 0) {

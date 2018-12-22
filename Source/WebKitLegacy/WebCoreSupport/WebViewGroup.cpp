@@ -42,18 +42,22 @@ static HashMap<String, RefPtr<WebViewGroup>>& webViewGroups()
     return webViewGroups;
 }
 
-RefPtr<WebViewGroup> WebViewGroup::getOrCreate(const String& name, const String& localStorageDatabasePath)
+Ref<WebViewGroup> WebViewGroup::getOrCreate(const String& name, const String& localStorageDatabasePath)
 {
     if (name.isEmpty())
-        return adoptRef(new WebViewGroup(String(), localStorageDatabasePath));
+        return adoptRef(*new WebViewGroup(String(), localStorageDatabasePath));
 
     auto& webViewGroup = webViewGroups().add(name, nullptr).iterator->value;
-    if (!webViewGroup)
-        webViewGroup = adoptRef(new WebViewGroup(name, localStorageDatabasePath));
-    else if (!webViewGroup->m_storageNamespaceProvider && webViewGroup->m_localStorageDatabasePath.isEmpty() && !localStorageDatabasePath.isEmpty())
+    if (!webViewGroup) {
+        auto result = adoptRef(*new WebViewGroup(name, localStorageDatabasePath));
+        webViewGroup = result.copyRef();
+        return result;
+    }
+
+    if (!webViewGroup->m_storageNamespaceProvider && webViewGroup->m_localStorageDatabasePath.isEmpty() && !localStorageDatabasePath.isEmpty())
         webViewGroup->m_localStorageDatabasePath = localStorageDatabasePath;
 
-    return webViewGroup;
+    return *webViewGroup;
 }
 
 WebViewGroup* WebViewGroup::get(const String& name)

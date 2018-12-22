@@ -132,7 +132,7 @@ void SincResampler::consumeSource(float* buffer, unsigned numberOfSourceFrames)
         return;
     
     // Wrap the provided buffer by an AudioBus for use by the source provider.
-    RefPtr<AudioBus> bus = AudioBus::create(1, numberOfSourceFrames, false);
+    auto bus = AudioBus::create(1, numberOfSourceFrames, false);
 
     // FIXME: Find a way to make the following const-correct:
     bus->setChannelMemory(0, buffer, numberOfSourceFrames);

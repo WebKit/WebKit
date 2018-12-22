@@ -433,8 +433,8 @@ static inline SelectionDirection toSelectionDirection(WebTextAdjustmentDirection
             for (size_t j = 0; j < markerAlternatives.size(); j++)
                 [(NSMutableArray *)*alternatives addObject:(NSString *)(markerAlternatives[j])];
                 
-            RefPtr<Range> range = Range::create(document, node, marker->startOffset(), node, marker->endOffset());
-            return kit(range.get());
+            auto range = Range::create(document, node, marker->startOffset(), node, marker->endOffset());
+            return kit(range.ptr());
         }
     }
         
@@ -462,8 +462,8 @@ static inline SelectionDirection toSelectionDirection(WebTextAdjustmentDirection
     for (size_t i = 0; i < markers.size(); i++) {
         const DocumentMarker* marker = markers[i];
         if (marker->startOffset() <= offset && marker->endOffset() >= offset) {
-            RefPtr<Range> range = Range::create(document, node, marker->startOffset(), node, marker->endOffset());
-            return kit(range.get());
+            auto range = Range::create(document, node, marker->startOffset(), node, marker->endOffset());
+            return kit(range.ptr());
         }
     }
     

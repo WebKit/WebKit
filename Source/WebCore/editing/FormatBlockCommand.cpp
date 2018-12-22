@@ -68,14 +68,14 @@ void FormatBlockCommand::formatRange(const Position& start, const Position& end,
     RefPtr<Node> outerBlock = (start.deprecatedNode() == nodeToSplitTo) ? start.deprecatedNode() : splitTreeToNode(*start.deprecatedNode(), *nodeToSplitTo);
     RefPtr<Node> nodeAfterInsertionPosition = outerBlock;
 
-    RefPtr<Range> range = Range::create(document(), start, endOfSelection);
+    auto range = Range::create(document(), start, endOfSelection);
     Element* refNode = enclosingBlockFlowElement(end);
     Element* root = editableRootForPosition(start);
     // Root is null for elements with contenteditable=false.
     if (!root || !refNode)
         return;
     if (isElementForFormatBlock(refNode->tagQName()) && start == startOfBlock(start)
-        && (end == endOfBlock(end) || isNodeVisiblyContainedWithin(*refNode, *range))
+        && (end == endOfBlock(end) || isNodeVisiblyContainedWithin(*refNode, range.get()))
         && refNode != root && !root->isDescendantOf(*refNode)) {
         // Already in a block element that only contains the current paragraph
         if (refNode->hasTagName(tagName()))

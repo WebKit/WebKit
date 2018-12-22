@@ -34,10 +34,10 @@
 
 namespace WebCore {
 
-RefPtr<WebGPUAdapter> WebGPUAdapter::create(const WebGPUAdapterDescriptor& descriptor)
+Ref<WebGPUAdapter> WebGPUAdapter::create(const WebGPUAdapterDescriptor& descriptor)
 {
     // FIXME: Validation on descriptor.
-    return adoptRef(new WebGPUAdapter(descriptor));
+    return adoptRef(*new WebGPUAdapter(descriptor));
 }
 
 WebGPUAdapter::WebGPUAdapter(const WebGPUAdapterDescriptor& descriptor)

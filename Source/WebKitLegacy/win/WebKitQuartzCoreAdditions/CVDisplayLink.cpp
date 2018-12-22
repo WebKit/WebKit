@@ -44,9 +44,9 @@ CVDisplayLink::~CVDisplayLink()
     ::CloseHandle(m_wakeupEvent);
 }
 
-RefPtr<CVDisplayLink> CVDisplayLink::create(CVDisplayLinkClient* client)
+Ref<CVDisplayLink> CVDisplayLink::create(CVDisplayLinkClient* client)
 {
-    return adoptRef(new CVDisplayLink(client));
+    return adoptRef(*new CVDisplayLink(client));
 }
 
 void CVDisplayLink::start()

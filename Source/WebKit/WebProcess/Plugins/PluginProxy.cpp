@@ -247,8 +247,7 @@ RefPtr<ShareableBitmap> PluginProxy::snapshot()
     if (snapshotStoreHandle.isNull())
         return nullptr;
 
-    RefPtr<ShareableBitmap> snapshotBuffer = ShareableBitmap::create(snapshotStoreHandle);
-    return snapshotBuffer;
+    return ShareableBitmap::create(snapshotStoreHandle);
 }
 
 bool PluginProxy::isTransparent()

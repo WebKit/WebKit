@@ -79,7 +79,7 @@ void IsoCellSet::forEachMarkedCell(const Func& func)
 }
 
 template<typename Func>
-RefPtr<SharedTask<void(SlotVisitor&)>> IsoCellSet::forEachMarkedCellInParallel(const Func& func)
+Ref<SharedTask<void(SlotVisitor&)>> IsoCellSet::forEachMarkedCellInParallel(const Func& func)
 {
     class Task : public SharedTask<void(SlotVisitor&)> {
     public:
@@ -106,12 +106,12 @@ RefPtr<SharedTask<void(SlotVisitor&)>> IsoCellSet::forEachMarkedCellInParallel(c
         
     private:
         IsoCellSet& m_set;
-        RefPtr<SharedTask<MarkedBlock::Handle*()>> m_blockSource;
+        Ref<SharedTask<MarkedBlock::Handle*()>> m_blockSource;
         Func m_func;
         Lock m_lock;
     };
     
-    return adoptRef(new Task(*this, func));
+    return adoptRef(*new Task(*this, func));
 }
 
 template<typename Func>

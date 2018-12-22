@@ -119,7 +119,7 @@ private:
 
 class VideoFullscreenManagerProxy : public RefCounted<VideoFullscreenManagerProxy>, private IPC::MessageReceiver {
 public:
-    static RefPtr<VideoFullscreenManagerProxy> create(WebPageProxy&, PlaybackSessionManagerProxy&);
+    static Ref<VideoFullscreenManagerProxy> create(WebPageProxy&, PlaybackSessionManagerProxy&);
     virtual ~VideoFullscreenManagerProxy();
 
     void invalidate();

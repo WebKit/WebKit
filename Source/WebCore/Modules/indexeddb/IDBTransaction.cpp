@@ -372,13 +372,13 @@ void IDBTransaction::removeRequest(IDBRequest& request)
     m_openRequests.remove(&request);
 }
 
-void IDBTransaction::scheduleOperation(RefPtr<IDBClient::TransactionOperation>&& operation)
+void IDBTransaction::scheduleOperation(Ref<IDBClient::TransactionOperation>&& operation)
 {
     ASSERT(!m_transactionOperationMap.contains(operation->identifier()));
     ASSERT(&m_database->originThread() == &Thread::current());
 
     auto identifier = operation->identifier();
-    m_pendingTransactionOperationQueue.append(operation);
+    m_pendingTransactionOperationQueue.append(operation.copyRef());
     m_transactionOperationMap.set(identifier, WTFMove(operation));
 
     schedulePendingOperationTimer();

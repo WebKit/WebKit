@@ -139,7 +139,7 @@ void Editor::writeSelection(PasteboardWriterData& pasteboardWriterData)
 
 RefPtr<SharedBuffer> Editor::selectionInWebArchiveFormat()
 {
-    RefPtr<LegacyWebArchive> archive = LegacyWebArchive::createFromSelection(&m_frame);
+    auto archive = LegacyWebArchive::createFromSelection(&m_frame);
     if (!archive)
         return nullptr;
     return SharedBuffer::create(archive->rawDataRepresentation().get());

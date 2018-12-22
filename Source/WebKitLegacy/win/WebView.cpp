@@ -6912,8 +6912,6 @@ HRESULT WebView::addUserScriptToGroup(_In_ BSTR groupName, _In_opt_ IWebScriptWo
         return E_FAIL;
 
     auto viewGroup = WebViewGroup::getOrCreate(group, String());
-    if (!viewGroup)
-        return E_FAIL;
 
     if (!iWorld)
         return E_POINTER;
@@ -6941,8 +6939,6 @@ HRESULT WebView::addUserStyleSheetToGroup(_In_ BSTR groupName, _In_opt_ IWebScri
         return E_FAIL;
 
     auto viewGroup = WebViewGroup::getOrCreate(group, String());
-    if (!viewGroup)
-        return E_FAIL;
 
     if (!iWorld)
         return E_POINTER;

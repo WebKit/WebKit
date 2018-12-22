@@ -383,14 +383,14 @@ class EmptyStorageNamespaceProvider final : public StorageNamespaceProvider {
     };
 
     struct EmptyStorageNamespace final : public StorageNamespace {
-        RefPtr<StorageArea> storageArea(const SecurityOriginData&) final { return adoptRef(*new EmptyStorageArea); }
-        RefPtr<StorageNamespace> copy(Page*) final { return adoptRef(*new EmptyStorageNamespace); }
+        Ref<StorageArea> storageArea(const SecurityOriginData&) final { return adoptRef(*new EmptyStorageArea); }
+        Ref<StorageNamespace> copy(Page*) final { return adoptRef(*new EmptyStorageNamespace); }
     };
 
-    RefPtr<StorageNamespace> createSessionStorageNamespace(Page&, unsigned) final;
-    RefPtr<StorageNamespace> createLocalStorageNamespace(unsigned) final;
-    RefPtr<StorageNamespace> createEphemeralLocalStorageNamespace(Page&, unsigned) final;
-    RefPtr<StorageNamespace> createTransientLocalStorageNamespace(SecurityOrigin&, unsigned) final;
+    Ref<StorageNamespace> createSessionStorageNamespace(Page&, unsigned) final;
+    Ref<StorageNamespace> createLocalStorageNamespace(unsigned) final;
+    Ref<StorageNamespace> createEphemeralLocalStorageNamespace(Page&, unsigned) final;
+    Ref<StorageNamespace> createTransientLocalStorageNamespace(SecurityOrigin&, unsigned) final;
 };
 
 class EmptyUserContentProvider final : public UserContentProvider {
@@ -513,22 +513,22 @@ void EmptyEditorClient::registerRedoStep(UndoStep&)
 {
 }
 
-RefPtr<StorageNamespace> EmptyStorageNamespaceProvider::createSessionStorageNamespace(Page&, unsigned)
+Ref<StorageNamespace> EmptyStorageNamespaceProvider::createSessionStorageNamespace(Page&, unsigned)
 {
     return adoptRef(*new EmptyStorageNamespace);
 }
 
-RefPtr<StorageNamespace> EmptyStorageNamespaceProvider::createLocalStorageNamespace(unsigned)
+Ref<StorageNamespace> EmptyStorageNamespaceProvider::createLocalStorageNamespace(unsigned)
 {
     return adoptRef(*new EmptyStorageNamespace);
 }
 
-RefPtr<StorageNamespace> EmptyStorageNamespaceProvider::createEphemeralLocalStorageNamespace(Page&, unsigned)
+Ref<StorageNamespace> EmptyStorageNamespaceProvider::createEphemeralLocalStorageNamespace(Page&, unsigned)
 {
     return adoptRef(*new EmptyStorageNamespace);
 }
 
-RefPtr<StorageNamespace> EmptyStorageNamespaceProvider::createTransientLocalStorageNamespace(SecurityOrigin&, unsigned)
+Ref<StorageNamespace> EmptyStorageNamespaceProvider::createTransientLocalStorageNamespace(SecurityOrigin&, unsigned)
 {
     return adoptRef(*new EmptyStorageNamespace);
 }

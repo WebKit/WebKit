@@ -1795,9 +1795,9 @@ void Editor::setBaseWritingDirection(WritingDirection direction)
         return;
     }
 
-    RefPtr<MutableStyleProperties> style = MutableStyleProperties::create();
+    auto style = MutableStyleProperties::create();
     style->setProperty(CSSPropertyDirection, direction == WritingDirection::LeftToRight ? "ltr" : direction == WritingDirection::RightToLeft ? "rtl" : "inherit", false);
-    applyParagraphStyleToSelection(style.get(), EditAction::SetWritingDirection);
+    applyParagraphStyleToSelection(style.ptr(), EditAction::SetWritingDirection);
 }
 
 WritingDirection Editor::baseWritingDirectionForSelectionStart() const
@@ -2023,8 +2023,8 @@ void Editor::setComposition(const String& text, const Vector<CompositionUnderlin
 
             unsigned start = std::min(baseOffset + selectionStart, extentOffset);
             unsigned end = std::min(std::max(start, baseOffset + selectionEnd), extentOffset);
-            RefPtr<Range> selectedRange = Range::create(baseNode->document(), baseNode, start, baseNode, end);
-            m_frame.selection().setSelectedRange(selectedRange.get(), DOWNSTREAM, FrameSelection::ShouldCloseTyping::No);
+            auto selectedRange = Range::create(baseNode->document(), baseNode, start, baseNode, end);
+            m_frame.selection().setSelectedRange(selectedRange.ptr(), DOWNSTREAM, FrameSelection::ShouldCloseTyping::No);
         }
     }
 

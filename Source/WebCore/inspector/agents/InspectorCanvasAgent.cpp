@@ -438,8 +438,8 @@ void InspectorCanvasAgent::didCreateCanvasRenderingContext(CanvasRenderingContex
 
     context.canvasBase().addObserver(*this);
 
-    RefPtr<InspectorCanvas> inspectorCanvas = InspectorCanvas::create(context);
-    m_identifierToInspectorCanvas.set(inspectorCanvas->identifier(), inspectorCanvas);
+    auto inspectorCanvas = InspectorCanvas::create(context);
+    m_identifierToInspectorCanvas.set(inspectorCanvas->identifier(), inspectorCanvas.copyRef());
 
     if (!m_enabled)
         return;
@@ -450,7 +450,7 @@ void InspectorCanvasAgent::didCreateCanvasRenderingContext(CanvasRenderingContex
     if (m_recordingAutoCaptureFrameCount) {
         RecordingOptions recordingOptions;
         recordingOptions.frameCount = m_recordingAutoCaptureFrameCount.value();
-        startRecording(*inspectorCanvas, Inspector::Protocol::Recording::Initiator::AutoCapture, WTFMove(recordingOptions));
+        startRecording(inspectorCanvas.get(), Inspector::Protocol::Recording::Initiator::AutoCapture, WTFMove(recordingOptions));
     }
 }
 

@@ -48,7 +48,7 @@ static RefPtr<CSSPrimitiveValue> glyphOrientationToCSSPrimitiveValue(GlyphOrient
     RELEASE_ASSERT_NOT_REACHED();
 }
 
-static RefPtr<CSSValue> strokeDashArrayToCSSValueList(const Vector<SVGLengthValue>& dashes)
+static Ref<CSSValue> strokeDashArrayToCSSValueList(const Vector<SVGLengthValue>& dashes)
 {
     if (dashes.isEmpty())
         return CSSPrimitiveValue::createIdentifier(CSSValueNone);
@@ -60,10 +60,10 @@ static RefPtr<CSSValue> strokeDashArrayToCSSValueList(const Vector<SVGLengthValu
     return WTFMove(list);
 }
 
-RefPtr<CSSValue> ComputedStyleExtractor::adjustSVGPaintForCurrentColor(SVGPaintType paintType, const String& url, const Color& color, const Color& currentColor) const
+Ref<CSSValue> ComputedStyleExtractor::adjustSVGPaintForCurrentColor(SVGPaintType paintType, const String& url, const Color& color, const Color& currentColor) const
 {
     if (paintType >= SVGPaintType::URINone) {
-        RefPtr<CSSValueList> values = CSSValueList::createSpaceSeparated();
+        auto values = CSSValueList::createSpaceSeparated();
         values->append(CSSPrimitiveValue::create(url, CSSPrimitiveValue::UnitType::CSS_URI));
         if (paintType == SVGPaintType::URINone)
             values->append(CSSPrimitiveValue::createIdentifier(CSSValueNone));
@@ -71,7 +71,7 @@ RefPtr<CSSValue> ComputedStyleExtractor::adjustSVGPaintForCurrentColor(SVGPaintT
             values->append(CSSPrimitiveValue::create(currentColor));
         else if (paintType == SVGPaintType::URIRGBColor)
             values->append(CSSPrimitiveValue::create(color));
-        return values;
+        return WTFMove(values);
     }
     if (paintType == SVGPaintType::None)
         return CSSPrimitiveValue::createIdentifier(CSSValueNone);

@@ -128,8 +128,8 @@ public:
 
     inline size_t gcSizeEstimateInBytes() const;
 
-    JS_EXPORT_PRIVATE RefPtr<ArrayBuffer> slice(double begin, double end) const;
-    JS_EXPORT_PRIVATE RefPtr<ArrayBuffer> slice(double begin) const;
+    JS_EXPORT_PRIVATE Ref<ArrayBuffer> slice(double begin, double end) const;
+    JS_EXPORT_PRIVATE Ref<ArrayBuffer> slice(double begin) const;
     
     inline void pin();
     inline void unpin();
@@ -154,7 +154,7 @@ private:
     static Ref<ArrayBuffer> createInternal(ArrayBufferContents&&, const void*, unsigned);
     static RefPtr<ArrayBuffer> tryCreate(unsigned numElements, unsigned elementByteSize, ArrayBufferContents::InitializationPolicy);
     ArrayBuffer(ArrayBufferContents&&);
-    RefPtr<ArrayBuffer> sliceImpl(unsigned begin, unsigned end) const;
+    Ref<ArrayBuffer> sliceImpl(unsigned begin, unsigned end) const;
     inline unsigned clampIndex(double index) const;
     static inline unsigned clampValue(double x, unsigned left, unsigned right);
 

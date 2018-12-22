@@ -54,7 +54,7 @@ public:
     // IDBDatabase IDL
     const String name() const;
     uint64_t version() const;
-    RefPtr<DOMStringList> objectStoreNames() const;
+    Ref<DOMStringList> objectStoreNames() const;
 
     struct ObjectStoreParameters {
         Optional<IDBKeyPath> keyPath;

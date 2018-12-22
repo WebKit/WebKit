@@ -2823,7 +2823,7 @@ private:
             }
             IntSize imageSize(width, height);
             RELEASE_ASSERT(!length || (imageSize.area() * 4).unsafeGet() <= length);
-            RefPtr<ImageData> result = ImageData::create(imageSize);
+            auto result = ImageData::create(imageSize);
             if (!result) {
                 fail();
                 return JSValue();
@@ -2958,7 +2958,7 @@ private:
             }
             
             RELEASE_ASSERT(m_sharedBuffers->at(index));
-            RefPtr<ArrayBuffer> buffer = ArrayBuffer::create(WTFMove(m_sharedBuffers->at(index)));
+            auto buffer = ArrayBuffer::create(WTFMove(m_sharedBuffers->at(index)));
             JSValue result = getJSValue(buffer.get());
             m_gcBuffer.appendWithCrashOnOverflow(result);
             return result;
@@ -3484,7 +3484,7 @@ RefPtr<SerializedScriptValue> SerializedScriptValue::create(JSContextRef originC
     auto scope = DECLARE_CATCH_SCOPE(vm);
 
     JSValue value = toJS(exec, apiValue);
-    RefPtr<SerializedScriptValue> serializedValue = SerializedScriptValue::create(*exec, value);
+    auto serializedValue = SerializedScriptValue::create(*exec, value);
     if (UNLIKELY(scope.exception())) {
         if (exception)
             *exception = toRef(exec, scope.exception()->value());

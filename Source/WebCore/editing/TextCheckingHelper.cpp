@@ -337,8 +337,8 @@ String TextCheckingHelper::findFirstMisspellingOrBadGrammar(bool checkGrammar, b
         if (inSameParagraph(paragraphRange->startPosition(), m_range->endPosition())) {
             // Determine the character offset from the end of the original search range to the end of the paragraph,
             // since we will want to ignore results in this area.
-            RefPtr<Range> endOffsetAsRange = Range::create(paragraphRange->startContainer().document(), paragraphRange->startPosition(), m_range->endPosition());
-            currentEndOffset = TextIterator::rangeLength(endOffsetAsRange.get());
+            auto endOffsetAsRange = Range::create(paragraphRange->startContainer().document(), paragraphRange->startPosition(), m_range->endPosition());
+            currentEndOffset = TextIterator::rangeLength(endOffsetAsRange.ptr());
             lastIteration = true;
         }
         if (currentStartOffset < currentEndOffset) {
@@ -397,8 +397,8 @@ String TextCheckingHelper::findFirstMisspellingOrBadGrammar(bool checkGrammar, b
                 if (!misspelledWord.isEmpty() && (!checkGrammar || badGrammarPhrase.isEmpty() || spellingLocation <= grammarDetailLocation)) {
                     int spellingOffset = spellingLocation - currentStartOffset;
                     if (!firstIteration) {
-                        RefPtr<Range> paragraphOffsetAsRange = Range::create(paragraphRange->startContainer().document(), m_range->startPosition(), paragraphRange->startPosition());
-                        spellingOffset += TextIterator::rangeLength(paragraphOffsetAsRange.get());
+                        auto paragraphOffsetAsRange = Range::create(paragraphRange->startContainer().document(), m_range->startPosition(), paragraphRange->startPosition());
+                        spellingOffset += TextIterator::rangeLength(paragraphOffsetAsRange.ptr());
                     }
                     outIsSpelling = true;
                     outFirstFoundOffset = spellingOffset;
@@ -408,8 +408,8 @@ String TextCheckingHelper::findFirstMisspellingOrBadGrammar(bool checkGrammar, b
                 if (checkGrammar && !badGrammarPhrase.isEmpty()) {
                     int grammarPhraseOffset = grammarPhraseLocation - currentStartOffset;
                     if (!firstIteration) {
-                        RefPtr<Range> paragraphOffsetAsRange = Range::create(paragraphRange->startContainer().document(), m_range->startPosition(), paragraphRange->startPosition());
-                        grammarPhraseOffset += TextIterator::rangeLength(paragraphOffsetAsRange.get());
+                        auto paragraphOffsetAsRange = Range::create(paragraphRange->startContainer().document(), m_range->startPosition(), paragraphRange->startPosition());
+                        grammarPhraseOffset += TextIterator::rangeLength(paragraphOffsetAsRange.ptr());
                     }
                     outIsSpelling = false;
                     outFirstFoundOffset = grammarPhraseOffset;

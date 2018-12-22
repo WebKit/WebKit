@@ -487,8 +487,8 @@ private:
     WebProcessProxy& createNewWebProcess(WebsiteDataStore&, WebProcessProxy::IsPrewarmed = WebProcessProxy::IsPrewarmed::No);
     void initializeNewWebProcess(WebProcessProxy&, WebsiteDataStore&);
 
-    void requestWebContentStatistics(StatisticsRequest*);
-    void requestNetworkingStatistics(StatisticsRequest*);
+    void requestWebContentStatistics(StatisticsRequest&);
+    void requestNetworkingStatistics(StatisticsRequest&);
 
     void platformInitializeNetworkProcess(NetworkProcessCreationParameters&);
 

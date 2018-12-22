@@ -97,11 +97,11 @@ uint64_t IDBDatabase::version() const
     return m_info.version();
 }
 
-RefPtr<DOMStringList> IDBDatabase::objectStoreNames() const
+Ref<DOMStringList> IDBDatabase::objectStoreNames() const
 {
     ASSERT(&originThread() == &Thread::current());
 
-    RefPtr<DOMStringList> objectStoreNames = DOMStringList::create();
+    auto objectStoreNames = DOMStringList::create();
     for (auto& name : m_info.objectStoreNames())
         objectStoreNames->append(name);
     objectStoreNames->sort();

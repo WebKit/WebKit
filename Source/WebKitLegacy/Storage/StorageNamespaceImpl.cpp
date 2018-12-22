@@ -93,31 +93,30 @@ StorageNamespaceImpl::~StorageNamespaceImpl()
         close();
 }
 
-RefPtr<StorageNamespace> StorageNamespaceImpl::copy(Page*)
+Ref<StorageNamespace> StorageNamespaceImpl::copy(Page*)
 {
     ASSERT(isMainThread());
     ASSERT(!m_isShutdown);
     ASSERT(m_storageType == StorageType::Session || m_storageType == StorageType::EphemeralLocal);
 
-    RefPtr<StorageNamespaceImpl> newNamespace = adoptRef(new StorageNamespaceImpl(m_storageType, m_path, m_quota));
+    auto newNamespace = adoptRef(*new StorageNamespaceImpl(m_storageType, m_path, m_quota));
     for (auto& iter : m_storageAreaMap)
         newNamespace->m_storageAreaMap.set(iter.key, iter.value->copy());
 
-    return newNamespace;
+    return WTFMove(newNamespace);
 }
 
-RefPtr<StorageArea> StorageNamespaceImpl::storageArea(const SecurityOriginData& origin)
+Ref<StorageArea> StorageNamespaceImpl::storageArea(const SecurityOriginData& origin)
 {
     ASSERT(isMainThread());
     ASSERT(!m_isShutdown);
 
-    RefPtr<StorageAreaImpl> storageArea;
-    if ((storageArea = m_storageAreaMap.get(origin)))
-        return storageArea;
+    if (RefPtr<StorageAreaImpl> storageArea = m_storageAreaMap.get(origin))
+        return storageArea.releaseNonNull();
 
-    storageArea = StorageAreaImpl::create(m_storageType, origin, m_syncManager.get(), m_quota);
-    m_storageAreaMap.set(origin, storageArea.get());
-    return storageArea;
+    auto storageArea = StorageAreaImpl::create(m_storageType, origin, m_syncManager.get(), m_quota);
+    m_storageAreaMap.set(origin, storageArea.ptr());
+    return WTFMove(storageArea);
 }
 
 void StorageNamespaceImpl::close()

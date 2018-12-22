@@ -39,10 +39,10 @@ class WebPage;
 
 class StorageNamespaceImpl : public WebCore::StorageNamespace {
 public:
-    static RefPtr<StorageNamespaceImpl> createSessionStorageNamespace(uint64_t identifier, unsigned quotaInBytes);
-    static RefPtr<StorageNamespaceImpl> createEphemeralLocalStorageNamespace(uint64_t identifier, unsigned quotaInBytes);
-    static RefPtr<StorageNamespaceImpl> createLocalStorageNamespace(uint64_t identifier, unsigned quotaInBytes);
-    static RefPtr<StorageNamespaceImpl> createTransientLocalStorageNamespace(uint64_t identifier, WebCore::SecurityOrigin& topLevelOrigin, uint64_t quotaInBytes);
+    static Ref<StorageNamespaceImpl> createSessionStorageNamespace(uint64_t identifier, unsigned quotaInBytes);
+    static Ref<StorageNamespaceImpl> createEphemeralLocalStorageNamespace(uint64_t identifier, unsigned quotaInBytes);
+    static Ref<StorageNamespaceImpl> createLocalStorageNamespace(uint64_t identifier, unsigned quotaInBytes);
+    static Ref<StorageNamespaceImpl> createTransientLocalStorageNamespace(uint64_t identifier, WebCore::SecurityOrigin& topLevelOrigin, uint64_t quotaInBytes);
 
     virtual ~StorageNamespaceImpl();
 
@@ -56,10 +56,10 @@ public:
 private:
     explicit StorageNamespaceImpl(WebCore::StorageType, uint64_t storageNamespaceID, WebCore::SecurityOrigin* topLevelOrigin, unsigned quotaInBytes);
 
-    RefPtr<WebCore::StorageArea> storageArea(const WebCore::SecurityOriginData&) override;
-    RefPtr<WebCore::StorageNamespace> copy(WebCore::Page*) override;
+    Ref<WebCore::StorageArea> storageArea(const WebCore::SecurityOriginData&) override;
+    Ref<WebCore::StorageNamespace> copy(WebCore::Page*) override;
 
-    RefPtr<WebCore::StorageArea> ephemeralLocalStorageArea(const WebCore::SecurityOriginData&);
+    Ref<WebCore::StorageArea> ephemeralLocalStorageArea(const WebCore::SecurityOriginData&);
 
     const WebCore::StorageType m_storageType;
     const uint64_t m_storageNamespaceID;

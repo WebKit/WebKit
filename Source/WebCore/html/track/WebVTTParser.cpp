@@ -502,14 +502,14 @@ Ref<DocumentFragment> WebVTTParser::createDocumentFragmentFromCueText(Document& 
 
 void WebVTTParser::createNewCue()
 {
-    RefPtr<WebVTTCueData> cue = WebVTTCueData::create();
+    auto cue = WebVTTCueData::create();
     cue->setStartTime(m_currentStartTime);
     cue->setEndTime(m_currentEndTime);
     cue->setContent(m_currentContent.toString());
     cue->setId(m_currentId);
     cue->setSettings(m_currentSettings);
 
-    m_cuelist.append(cue);
+    m_cuelist.append(WTFMove(cue));
     if (m_client)
         m_client->newCuesParsed();
 }

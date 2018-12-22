@@ -434,7 +434,7 @@ void AppendPipeline::appsinkNewSample(GRefPtr<GstSample>&& sample)
         return;
     }
 
-    RefPtr<MediaSampleGStreamer> mediaSample = WebCore::MediaSampleGStreamer::create(WTFMove(sample), m_presentationSize, trackId());
+    auto mediaSample = WebCore::MediaSampleGStreamer::create(WTFMove(sample), m_presentationSize, trackId());
 
     GST_TRACE("append: trackId=%s PTS=%s DTS=%s DUR=%s presentationSize=%.0fx%.0f",
         mediaSample->trackID().string().utf8().data(),
@@ -456,7 +456,7 @@ void AppendPipeline::appsinkNewSample(GRefPtr<GstSample>&& sample)
         mediaSample->applyPtsOffset(MediaTime::zeroTime());
     }
 
-    m_sourceBufferPrivate->didReceiveSample(*mediaSample);
+    m_sourceBufferPrivate->didReceiveSample(mediaSample.get());
 }
 
 void AppendPipeline::didReceiveInitializationSegment()

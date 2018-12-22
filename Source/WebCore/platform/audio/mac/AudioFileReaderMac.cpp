@@ -180,7 +180,7 @@ RefPtr<AudioBus> AudioFileReader::createBus(float sampleRate, bool mixToMono)
     size_t busChannelCount = mixToMono ? 1 : numberOfChannels;
 
     // Create AudioBus where we'll put the PCM audio data
-    RefPtr<AudioBus> audioBus = AudioBus::create(busChannelCount, numberOfFrames);
+    auto audioBus = AudioBus::create(busChannelCount, numberOfFrames);
     audioBus->setSampleRate(narrowPrecisionToFloat(m_clientDataFormat.mSampleRate)); // save for later
 
     // Only allocated in the mixToMono case

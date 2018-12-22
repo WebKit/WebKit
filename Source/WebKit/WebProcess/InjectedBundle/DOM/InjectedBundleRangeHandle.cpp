@@ -138,7 +138,7 @@ RefPtr<WebImage> InjectedBundleRangeHandle::renderedImage(SnapshotOptions option
     IntSize backingStoreSize = paintRect.size();
     backingStoreSize.scale(scaleFactor);
 
-    RefPtr<ShareableBitmap> backingStore = ShareableBitmap::createShareable(backingStoreSize, { });
+    auto backingStore = ShareableBitmap::createShareable(backingStoreSize, { });
     if (!backingStore)
         return nullptr;
 

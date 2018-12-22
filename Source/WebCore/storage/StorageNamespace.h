@@ -37,8 +37,8 @@ struct SecurityOriginData;
 class StorageNamespace : public RefCounted<StorageNamespace> {
 public:
     virtual ~StorageNamespace() = default;
-    virtual RefPtr<StorageArea> storageArea(const SecurityOriginData&) = 0;
-    virtual RefPtr<StorageNamespace> copy(Page* newPage) = 0;
+    virtual Ref<StorageArea> storageArea(const SecurityOriginData&) = 0;
+    virtual Ref<StorageNamespace> copy(Page* newPage) = 0;
 };
 
 } // namespace WebCore

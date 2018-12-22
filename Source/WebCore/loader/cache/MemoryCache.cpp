@@ -216,11 +216,8 @@ bool MemoryCache::addImageToCache(NativeImagePtr&& image, const URL& url, const 
     PAL::SessionID sessionID = PAL::SessionID::defaultSessionID();
     removeImageFromCache(url, domainForCachePartition); // Remove cache entry if it already exists.
 
-    RefPtr<BitmapImage> bitmapImage = BitmapImage::create(WTFMove(image), nullptr);
-    if (!bitmapImage)
-        return false;
-
-    auto cachedImage = std::make_unique<CachedImage>(url, bitmapImage.get(), sessionID, domainForCachePartition);
+    auto bitmapImage = BitmapImage::create(WTFMove(image), nullptr);
+    auto cachedImage = std::make_unique<CachedImage>(url, bitmapImage.ptr(), sessionID, domainForCachePartition);
 
     cachedImage->addClient(dummyCachedImageClient());
     cachedImage->setDecodedSize(bitmapImage->decodedSize());
@@ -541,7 +538,7 @@ void MemoryCache::removeResourcesWithOrigin(SecurityOrigin& origin)
                 resourcesWithOrigin.append(&resource);
                 continue;
             }
-            RefPtr<SecurityOrigin> resourceOrigin = SecurityOrigin::create(resource.url());
+            auto resourceOrigin = SecurityOrigin::create(resource.url());
             if (resourceOrigin->equal(&origin))
                 resourcesWithOrigin.append(&resource);
         }

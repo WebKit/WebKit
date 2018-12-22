@@ -1,3 +1,45 @@
+2018-12-20  Yusuke Suzuki  <yusukesuzuki@slowstart.org>
+
+        Use Ref<> as much as possible
+        https://bugs.webkit.org/show_bug.cgi?id=192808
+
+        Reviewed by Alex Christensen.
+
+        * API/JSTypedArray.cpp:
+        (JSObjectMakeTypedArrayWithBytesNoCopy):
+        * API/JSWeakObjectMapRefPrivate.cpp:
+        * bytecompiler/StaticPropertyAnalyzer.h:
+        (JSC::StaticPropertyAnalyzer::newObject):
+        * dfg/DFGDesiredWatchpoints.cpp:
+        (JSC::DFG::ArrayBufferViewWatchpointAdaptor::add):
+        * heap/Heap.cpp:
+        (JSC::Heap::Heap):
+        (JSC::Heap::sweeper):
+        * heap/Heap.h:
+        * heap/IsoCellSet.cpp:
+        (JSC::IsoCellSet::parallelNotEmptyMarkedBlockSource):
+        * heap/IsoCellSet.h:
+        * heap/IsoCellSetInlines.h:
+        (JSC::IsoCellSet::forEachMarkedCellInParallel):
+        * heap/Subspace.cpp:
+        (JSC::Subspace::parallelDirectorySource):
+        (JSC::Subspace::parallelNotEmptyMarkedBlockSource):
+        * heap/Subspace.h:
+        * heap/SubspaceInlines.h:
+        (JSC::Subspace::forEachMarkedCellInParallel):
+        * jsc.cpp:
+        (functionDollarAgentReceiveBroadcast):
+        * runtime/ArrayBuffer.cpp:
+        (JSC::ArrayBuffer::slice const):
+        (JSC::ArrayBuffer::sliceImpl const):
+        * runtime/ArrayBuffer.h:
+        * runtime/ArrayBufferNeuteringWatchpoint.cpp:
+        (JSC::ArrayBufferNeuteringWatchpoint::ArrayBufferNeuteringWatchpoint):
+        (JSC::ArrayBufferNeuteringWatchpoint::fireAll):
+        * runtime/ArrayBufferNeuteringWatchpoint.h:
+        * runtime/JSArrayBufferPrototype.cpp:
+        (JSC::arrayBufferProtoFuncSlice):
+
 2018-12-21  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Crashes seen under Inspector::ScriptCallFrame::~ScriptCallFrame

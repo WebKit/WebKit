@@ -46,7 +46,7 @@ IsoCellSet::~IsoCellSet()
         BasicRawSentinelNode<IsoCellSet>::remove();
 }
 
-RefPtr<SharedTask<MarkedBlock::Handle*()>> IsoCellSet::parallelNotEmptyMarkedBlockSource()
+Ref<SharedTask<MarkedBlock::Handle*()>> IsoCellSet::parallelNotEmptyMarkedBlockSource()
 {
     class Task : public SharedTask<MarkedBlock::Handle*()> {
     public:
@@ -78,7 +78,7 @@ RefPtr<SharedTask<MarkedBlock::Handle*()>> IsoCellSet::parallelNotEmptyMarkedBlo
         bool m_done { false };
     };
     
-    return adoptRef(new Task(*this));
+    return adoptRef(*new Task(*this));
 }
 
 NEVER_INLINE Bitmap<MarkedBlock::atomsPerBlock>* IsoCellSet::addSlow(size_t blockIndex)

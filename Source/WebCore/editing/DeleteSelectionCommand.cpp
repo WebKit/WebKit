@@ -693,9 +693,9 @@ void DeleteSelectionCommand::mergeParagraphs()
         return;
     }
     
-    RefPtr<Range> range = Range::create(document(), startOfParagraphToMove.deepEquivalent().parentAnchoredEquivalent(), endOfParagraphToMove.deepEquivalent().parentAnchoredEquivalent());
-    RefPtr<Range> rangeToBeReplaced = Range::create(document(), mergeDestination.deepEquivalent().parentAnchoredEquivalent(), mergeDestination.deepEquivalent().parentAnchoredEquivalent());
-    if (!frame().editor().client()->shouldMoveRangeAfterDelete(range.get(), rangeToBeReplaced.get()))
+    auto range = Range::create(document(), startOfParagraphToMove.deepEquivalent().parentAnchoredEquivalent(), endOfParagraphToMove.deepEquivalent().parentAnchoredEquivalent());
+    auto rangeToBeReplaced = Range::create(document(), mergeDestination.deepEquivalent().parentAnchoredEquivalent(), mergeDestination.deepEquivalent().parentAnchoredEquivalent());
+    if (!frame().editor().client()->shouldMoveRangeAfterDelete(range.ptr(), rangeToBeReplaced.ptr()))
         return;
     
     // moveParagraphs will insert placeholders if it removes blocks that would require their use, don't let block

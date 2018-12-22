@@ -49,7 +49,7 @@ public:
         bool isPrimary { false };
     };
 
-    static RefPtr<PointerEvent> create(const AtomicString& type, Init&& initializer)
+    static Ref<PointerEvent> create(const AtomicString& type, Init&& initializer)
     {
         return adoptRef(*new PointerEvent(type, WTFMove(initializer)));
     }

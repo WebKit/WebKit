@@ -734,9 +734,9 @@ void MediaPlayerPrivateGStreamer::updateTracks()
             CREATE_TRACK(video, Video)
         } else if (type & GST_STREAM_TYPE_TEXT && !useMediaSource) {
 #if ENABLE(VIDEO_TRACK)
-            RefPtr<InbandTextTrackPrivateGStreamer> track = InbandTextTrackPrivateGStreamer::create(textTrackIndex++, stream);
-            m_textTracks.add(streamId, track);
-            m_player->addTextTrack(*track);
+            auto track = InbandTextTrackPrivateGStreamer::create(textTrackIndex++, stream);
+            m_textTracks.add(streamId, track.copyRef());
+            m_player->addTextTrack(track.get());
 #endif
         } else
             GST_WARNING("Unknown track type found for stream %s", streamId.utf8().data());
@@ -894,10 +894,10 @@ void MediaPlayerPrivateGStreamer::notifyPlayerOfVideo()
             }
         }
 
-        RefPtr<VideoTrackPrivateGStreamer> track = VideoTrackPrivateGStreamer::create(makeWeakPtr(*this), i, pad);
+        auto track = VideoTrackPrivateGStreamer::create(makeWeakPtr(*this), i, pad);
         ASSERT(streamId == track->id());
-        m_videoTracks.add(streamId, track);
-        m_player->addVideoTrack(*track);
+        m_videoTracks.add(streamId, track.copyRef());
+        m_player->addVideoTrack(track.get());
     }
 
     purgeInvalidVideoTracks(validVideoStreams);
@@ -968,7 +968,7 @@ void MediaPlayerPrivateGStreamer::notifyPlayerOfAudio()
             }
         }
 
-        RefPtr<AudioTrackPrivateGStreamer> track = AudioTrackPrivateGStreamer::create(makeWeakPtr(*this), i, pad);
+        auto track = AudioTrackPrivateGStreamer::create(makeWeakPtr(*this), i, pad);
         ASSERT(streamId == track->id());
         m_audioTracks.add(streamId, track);
         m_player->addAudioTrack(*track);
@@ -1029,9 +1029,9 @@ void MediaPlayerPrivateGStreamer::notifyPlayerOfText()
             }
         }
 
-        RefPtr<InbandTextTrackPrivateGStreamer> track = InbandTextTrackPrivateGStreamer::create(i, pad);
-        m_textTracks.add(streamId, track);
-        m_player->addTextTrack(*track);
+        auto track = InbandTextTrackPrivateGStreamer::create(i, pad);
+        m_textTracks.add(streamId, track.copyRef());
+        m_player->addTextTrack(track.get());
     }
 
     purgeInvalidTextTracks(validTextStreams);
@@ -1298,7 +1298,7 @@ void MediaPlayerPrivateGStreamer::handleMessage(GstMessage* message)
     case GST_MESSAGE_ELEMENT:
         if (gst_is_missing_plugin_message(message)) {
             if (gst_install_plugins_supported()) {
-                RefPtr<MediaPlayerRequestInstallMissingPluginsCallback> missingPluginCallback = MediaPlayerRequestInstallMissingPluginsCallback::create([weakThis = makeWeakPtr(*this)](uint32_t result, MediaPlayerRequestInstallMissingPluginsCallback& missingPluginCallback) {
+                auto missingPluginCallback = MediaPlayerRequestInstallMissingPluginsCallback::create([weakThis = makeWeakPtr(*this)](uint32_t result, MediaPlayerRequestInstallMissingPluginsCallback& missingPluginCallback) {
                     if (!weakThis) {
                         GST_INFO("got missing pluging installation callback in destroyed player with result %u", result);
                         return;
@@ -1313,10 +1313,10 @@ void MediaPlayerPrivateGStreamer::handleMessage(GstMessage* message)
                     weakThis->changePipelineState(GST_STATE_READY);
                     weakThis->changePipelineState(GST_STATE_PAUSED);
                 });
-                m_missingPluginCallbacks.append(missingPluginCallback);
+                m_missingPluginCallbacks.append(missingPluginCallback.copyRef());
                 GUniquePtr<char> detail(gst_missing_plugin_message_get_installer_detail(message));
                 GUniquePtr<char> description(gst_missing_plugin_message_get_description(message));
-                m_player->client().requestInstallMissingPlugins(String::fromUTF8(detail.get()), String::fromUTF8(description.get()), *missingPluginCallback);
+                m_player->client().requestInstallMissingPlugins(String::fromUTF8(detail.get()), String::fromUTF8(description.get()), missingPluginCallback.get());
             }
         }
 #if ENABLE(VIDEO_TRACK) && USE(GSTREAMER_MPEGTS)
@@ -1448,7 +1448,7 @@ void MediaPlayerPrivateGStreamer::processMpegTsSection(GstMpegtsSection* section
             const GstMpegtsPMTStream* stream = static_cast<const GstMpegtsPMTStream*>(g_ptr_array_index(pmt->streams, i));
             if (stream->stream_type == 0x05 || stream->stream_type >= 0x80) {
                 AtomicString pid = String::number(stream->pid);
-                RefPtr<InbandMetadataTextTrackPrivateGStreamer> track = InbandMetadataTextTrackPrivateGStreamer::create(
+                auto track = InbandMetadataTextTrackPrivateGStreamer::create(
                     InbandTextTrackPrivate::Metadata, InbandTextTrackPrivate::Data, pid);
 
                 // 4.7.10.12.2 Sourcing in-band text tracks
@@ -2133,7 +2133,7 @@ bool MediaPlayerPrivateGStreamer::loadNextLocation()
         URL newUrl = URL(baseUrl, newLocation);
         convertToInternalProtocol(newUrl);
 
-        RefPtr<SecurityOrigin> securityOrigin = SecurityOrigin::create(m_url);
+        auto securityOrigin = SecurityOrigin::create(m_url);
         if (securityOrigin->canRequest(newUrl)) {
             GST_INFO_OBJECT(pipeline(), "New media url: %s", newUrl.string().utf8().data());
 

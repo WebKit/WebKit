@@ -36,7 +36,7 @@ class CVDisplayLinkClient;
 // FIXME 8769181: Replace this with CVDisplayLinkRef
 class CVDisplayLink : public ThreadSafeRefCounted<CVDisplayLink> {
 public:
-    static RefPtr<CVDisplayLink> create(CVDisplayLinkClient*);
+    static Ref<CVDisplayLink> create(CVDisplayLinkClient*);
     ~CVDisplayLink();
 
     void start();

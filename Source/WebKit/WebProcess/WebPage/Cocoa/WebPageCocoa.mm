@@ -164,7 +164,7 @@ DictionaryPopupInfo WebPage::dictionaryPopupInfoForRange(Frame& frame, Range& ra
     if (presentationTransition == TextIndicatorPresentationTransition::BounceAndCrossfade)
         indicatorOptions |= TextIndicatorOptionIncludeSnapshotWithSelectionHighlight;
     
-    RefPtr<TextIndicator> textIndicator = TextIndicator::createWithRange(range, indicatorOptions, presentationTransition);
+    auto textIndicator = TextIndicator::createWithRange(range, indicatorOptions, presentationTransition);
     if (!textIndicator) {
         editor.setIsGettingDictionaryPopupInfo(false);
         return dictionaryPopupInfo;

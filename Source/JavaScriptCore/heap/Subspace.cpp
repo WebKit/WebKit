@@ -89,7 +89,7 @@ MarkedBlock::Handle* Subspace::findEmptyBlockToSteal()
     return nullptr;
 }
 
-RefPtr<SharedTask<BlockDirectory*()>> Subspace::parallelDirectorySource()
+Ref<SharedTask<BlockDirectory*()>> Subspace::parallelDirectorySource()
 {
     class Task : public SharedTask<BlockDirectory*()> {
     public:
@@ -112,10 +112,10 @@ RefPtr<SharedTask<BlockDirectory*()>> Subspace::parallelDirectorySource()
         Lock m_lock;
     };
     
-    return adoptRef(new Task(m_firstDirectory));
+    return adoptRef(*new Task(m_firstDirectory));
 }
 
-RefPtr<SharedTask<MarkedBlock::Handle*()>> Subspace::parallelNotEmptyMarkedBlockSource()
+Ref<SharedTask<MarkedBlock::Handle*()>> Subspace::parallelNotEmptyMarkedBlockSource()
 {
     return createParallelSourceAdapter<BlockDirectory*, MarkedBlock::Handle*>(
         parallelDirectorySource(),

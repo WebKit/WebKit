@@ -171,7 +171,7 @@ private:
 
 class PlaybackSessionManagerProxy : public RefCounted<PlaybackSessionManagerProxy>, private IPC::MessageReceiver {
 public:
-    static RefPtr<PlaybackSessionManagerProxy> create(WebPageProxy&);
+    static Ref<PlaybackSessionManagerProxy> create(WebPageProxy&);
     virtual ~PlaybackSessionManagerProxy();
 
     void invalidate();

@@ -79,7 +79,7 @@ public:
 
 class SourceBufferPrivateAVFObjC final : public SourceBufferPrivate {
 public:
-    static RefPtr<SourceBufferPrivateAVFObjC> create(MediaSourcePrivateAVFObjC*);
+    static Ref<SourceBufferPrivateAVFObjC> create(MediaSourcePrivateAVFObjC*);
     virtual ~SourceBufferPrivateAVFObjC();
 
     void clearMediaSource() { m_mediaSource = nullptr; }

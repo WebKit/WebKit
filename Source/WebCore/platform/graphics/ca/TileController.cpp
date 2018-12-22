@@ -724,9 +724,9 @@ int TileController::rightMarginWidth() const
     return (m_marginSize * m_marginEdges.right()) / tileGrid().scale();
 }
 
-RefPtr<PlatformCALayer> TileController::createTileLayer(const IntRect& tileRect, TileGrid& grid)
+Ref<PlatformCALayer> TileController::createTileLayer(const IntRect& tileRect, TileGrid& grid)
 {
-    RefPtr<PlatformCALayer> layer = m_tileCacheLayer->createCompatibleLayerOrTakeFromPool(PlatformCALayer::LayerTypeTiledBackingTileLayer, &grid, tileRect.size());
+    auto layer = m_tileCacheLayer->createCompatibleLayerOrTakeFromPool(PlatformCALayer::LayerTypeTiledBackingTileLayer, &grid, tileRect.size());
 
     layer->setAnchorPoint(FloatPoint3D());
     layer->setPosition(tileRect.location());

@@ -44,10 +44,10 @@ namespace WebCore {
 #pragma mark -
 #pragma mark MediaSourcePrivateAVFObjC
 
-RefPtr<MediaSourcePrivateAVFObjC> MediaSourcePrivateAVFObjC::create(MediaPlayerPrivateMediaSourceAVFObjC* parent, MediaSourcePrivateClient* client)
+Ref<MediaSourcePrivateAVFObjC> MediaSourcePrivateAVFObjC::create(MediaPlayerPrivateMediaSourceAVFObjC* parent, MediaSourcePrivateClient* client)
 {
-    RefPtr<MediaSourcePrivateAVFObjC> mediaSourcePrivate = adoptRef(new MediaSourcePrivateAVFObjC(parent, client));
-    client->setPrivateAndOpen(*mediaSourcePrivate);
+    auto mediaSourcePrivate = adoptRef(*new MediaSourcePrivateAVFObjC(parent, client));
+    client->setPrivateAndOpen(mediaSourcePrivate.copyRef());
     return mediaSourcePrivate;
 }
 
@@ -76,7 +76,7 @@ MediaSourcePrivate::AddStatus MediaSourcePrivateAVFObjC::addSourceBuffer(const C
 #if ENABLE(ENCRYPTED_MEDIA)
     newSourceBuffer->setCDMInstance(m_cdmInstance.get());
 #endif
-    outPrivate = newSourceBuffer;
+    outPrivate = newSourceBuffer.copyRef();
     m_sourceBuffers.append(WTFMove(newSourceBuffer));
 
     return Ok;

@@ -42,9 +42,9 @@ class SourceBufferPrivateAVFObjC;
 class VideoTrackPrivateMediaSourceAVFObjC final : public VideoTrackPrivateAVF {
     WTF_MAKE_NONCOPYABLE(VideoTrackPrivateMediaSourceAVFObjC)
 public:
-    static RefPtr<VideoTrackPrivateMediaSourceAVFObjC> create(AVAssetTrack* track, SourceBufferPrivateAVFObjC* parent)
+    static Ref<VideoTrackPrivateMediaSourceAVFObjC> create(AVAssetTrack* track, SourceBufferPrivateAVFObjC* parent)
     {
-        return adoptRef(new VideoTrackPrivateMediaSourceAVFObjC(track, parent));
+        return adoptRef(*new VideoTrackPrivateMediaSourceAVFObjC(track, parent));
     }
 
     bool selected() const override;

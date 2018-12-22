@@ -317,7 +317,7 @@ namespace WebCore {
 
         Vector<bool, 4> m_popupStateStack;
 
-        HashSet<RefPtr<PluginStream> > m_streams;
+        HashSet<RefPtr<PluginStream>> m_streams;
         Vector<std::unique_ptr<PluginRequest>> m_requests;
 
         bool m_isWindowed;

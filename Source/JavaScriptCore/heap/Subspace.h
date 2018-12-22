@@ -70,7 +70,7 @@ public:
     template<typename Func>
     void forEachDirectory(const Func&);
     
-    RefPtr<SharedTask<BlockDirectory*()>> parallelDirectorySource();
+    Ref<SharedTask<BlockDirectory*()>> parallelDirectorySource();
     
     template<typename Func>
     void forEachMarkedBlock(const Func&);
@@ -78,7 +78,7 @@ public:
     template<typename Func>
     void forEachNotEmptyMarkedBlock(const Func&);
     
-    JS_EXPORT_PRIVATE RefPtr<SharedTask<MarkedBlock::Handle*()>> parallelNotEmptyMarkedBlockSource();
+    JS_EXPORT_PRIVATE Ref<SharedTask<MarkedBlock::Handle*()>> parallelNotEmptyMarkedBlockSource();
     
     template<typename Func>
     void forEachLargeAllocation(const Func&);
@@ -87,7 +87,7 @@ public:
     void forEachMarkedCell(const Func&);
     
     template<typename Func>
-    RefPtr<SharedTask<void(SlotVisitor&)>> forEachMarkedCellInParallel(const Func&);
+    Ref<SharedTask<void(SlotVisitor&)>> forEachMarkedCellInParallel(const Func&);
 
     template<typename Func>
     void forEachLiveCell(const Func&);

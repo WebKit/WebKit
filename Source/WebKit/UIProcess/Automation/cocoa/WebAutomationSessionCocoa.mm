@@ -39,7 +39,7 @@ using namespace WebCore;
 
 Optional<String> WebAutomationSession::platformGetBase64EncodedPNGData(const ShareableBitmap::Handle& imageDataHandle)
 {
-    RefPtr<ShareableBitmap> bitmap = ShareableBitmap::create(imageDataHandle, SharedMemory::Protection::ReadOnly);
+    auto bitmap = ShareableBitmap::create(imageDataHandle, SharedMemory::Protection::ReadOnly);
     if (!bitmap)
         return WTF::nullopt;
 

@@ -150,12 +150,12 @@ void VideoFullscreenManager::invalidate()
 
 VideoFullscreenManager::ModelInterfaceTuple VideoFullscreenManager::createModelAndInterface(uint64_t contextId)
 {
-    RefPtr<VideoFullscreenModelVideoElement> model = VideoFullscreenModelVideoElement::create();
-    RefPtr<VideoFullscreenInterfaceContext> interface = VideoFullscreenInterfaceContext::create(*this, contextId);
+    auto model = VideoFullscreenModelVideoElement::create();
+    auto interface = VideoFullscreenInterfaceContext::create(*this, contextId);
     m_playbackSessionManager->addClientForContext(contextId);
 
     interface->setLayerHostingContext(LayerHostingContext::createForExternalHostingProcess());
-    model->addClient(*interface);
+    model->addClient(interface.get());
 
     return std::make_tuple(WTFMove(model), WTFMove(interface));
 }

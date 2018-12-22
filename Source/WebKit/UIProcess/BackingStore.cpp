@@ -48,7 +48,7 @@ void BackingStore::incorporateUpdate(const UpdateInfo& updateInfo)
 {
     ASSERT(m_size == updateInfo.viewSize);
     
-    RefPtr<ShareableBitmap> bitmap = ShareableBitmap::create(updateInfo.bitmapHandle);
+    auto bitmap = ShareableBitmap::create(updateInfo.bitmapHandle);
     if (!bitmap)
         return;
 

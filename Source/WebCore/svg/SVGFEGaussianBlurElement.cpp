@@ -124,9 +124,9 @@ RefPtr<FilterEffect> SVGFEGaussianBlurElement::build(SVGFilterBuilder* filterBui
     if (stdDeviationX() < 0 || stdDeviationY() < 0)
         return nullptr;
 
-    RefPtr<FilterEffect> effect = FEGaussianBlur::create(filter, stdDeviationX(), stdDeviationY(), edgeMode());
+    auto effect = FEGaussianBlur::create(filter, stdDeviationX(), stdDeviationY(), edgeMode());
     effect->inputEffects().append(input1);
-    return effect;
+    return WTFMove(effect);
 }
 
 }

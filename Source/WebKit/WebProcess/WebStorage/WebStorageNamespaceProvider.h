@@ -31,16 +31,16 @@ namespace WebKit {
 
 class WebStorageNamespaceProvider final : public WebCore::StorageNamespaceProvider {
 public:
-    static RefPtr<WebStorageNamespaceProvider> getOrCreate(uint64_t identifier);
+    static Ref<WebStorageNamespaceProvider> getOrCreate(uint64_t identifier);
     virtual ~WebStorageNamespaceProvider();
 
 private:
     explicit WebStorageNamespaceProvider(uint64_t identifier);
 
-    RefPtr<WebCore::StorageNamespace> createSessionStorageNamespace(WebCore::Page&, unsigned quota) override;
-    RefPtr<WebCore::StorageNamespace> createEphemeralLocalStorageNamespace(WebCore::Page&, unsigned quota) override;
-    RefPtr<WebCore::StorageNamespace> createLocalStorageNamespace(unsigned quota) override;
-    RefPtr<WebCore::StorageNamespace> createTransientLocalStorageNamespace(WebCore::SecurityOrigin&, unsigned quota) override;
+    Ref<WebCore::StorageNamespace> createSessionStorageNamespace(WebCore::Page&, unsigned quota) override;
+    Ref<WebCore::StorageNamespace> createEphemeralLocalStorageNamespace(WebCore::Page&, unsigned quota) override;
+    Ref<WebCore::StorageNamespace> createLocalStorageNamespace(unsigned quota) override;
+    Ref<WebCore::StorageNamespace> createTransientLocalStorageNamespace(WebCore::SecurityOrigin&, unsigned quota) override;
 
     const uint64_t m_identifier;
 };

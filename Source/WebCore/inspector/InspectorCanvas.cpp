@@ -475,7 +475,7 @@ Ref<Inspector::Protocol::Recording::InitialState> InspectorCanvas::buildInitialS
     if (is<CanvasRenderingContext2D>(m_context)) {
         auto& context2d = downcast<CanvasRenderingContext2D>(m_context);
         for (auto& state : context2d.stateStack()) {
-            RefPtr<JSON::Object> statePayload = JSON::Object::create();
+            auto statePayload = JSON::Object::create();
 
             statePayload->setArray(stringIndexForKey("setTransform"_s), buildArrayForAffineTransform(state.transform));
             statePayload->setDouble(stringIndexForKey("globalAlpha"_s), context2d.globalAlpha());
@@ -533,7 +533,7 @@ Ref<Inspector::Protocol::Recording::InitialState> InspectorCanvas::buildInitialS
     else if (is<WebGLRenderingContextBase>(m_context)) {
         WebGLRenderingContextBase& contextWebGLBase = downcast<WebGLRenderingContextBase>(m_context);
         if (Optional<WebGLContextAttributes> webGLContextAttributes = contextWebGLBase.getContextAttributes()) {
-            RefPtr<JSON::Object> webGLContextAttributesPayload = JSON::Object::create();
+            auto webGLContextAttributesPayload = JSON::Object::create();
             webGLContextAttributesPayload->setBoolean("alpha"_s, webGLContextAttributes->alpha);
             webGLContextAttributesPayload->setBoolean("depth"_s, webGLContextAttributes->depth);
             webGLContextAttributesPayload->setBoolean("stencil"_s, webGLContextAttributes->stencil);
@@ -643,8 +643,8 @@ Ref<JSON::ArrayOf<JSON::Value>> InspectorCanvas::buildAction(const String& name,
     action->addItem(WTFMove(parametersData));
     action->addItem(WTFMove(swizzleTypes));
 
-    RefPtr<ScriptCallStack> trace = Inspector::createScriptCallStack(JSExecState::currentState(), Inspector::ScriptCallStack::maxCallStackSizeToCapture);
-    action->addItem(indexForData(WTFMove(trace)));
+    auto trace = Inspector::createScriptCallStack(JSExecState::currentState(), Inspector::ScriptCallStack::maxCallStackSizeToCapture);
+    action->addItem(indexForData(trace.ptr()));
 
     return action;
 }

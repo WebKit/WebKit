@@ -35,9 +35,9 @@
 
 namespace WebCore {
 
-RefPtr<WebGPURenderPassEncoder> WebGPURenderPassEncoder::create(Ref<WebGPUCommandBuffer>&& commandBuffer, Ref<GPURenderPassEncoder>&& encoder)
+Ref<WebGPURenderPassEncoder> WebGPURenderPassEncoder::create(Ref<WebGPUCommandBuffer>&& commandBuffer, Ref<GPURenderPassEncoder>&& encoder)
 {
-    return adoptRef(new WebGPURenderPassEncoder(WTFMove(commandBuffer), WTFMove(encoder)));
+    return adoptRef(*new WebGPURenderPassEncoder(WTFMove(commandBuffer), WTFMove(encoder)));
 }
 
 WebGPURenderPassEncoder::WebGPURenderPassEncoder(Ref<WebGPUCommandBuffer>&& creator, Ref<GPURenderPassEncoder>&& encoder)

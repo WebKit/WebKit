@@ -32,9 +32,9 @@
 
 namespace WebCore {
 
-RefPtr<WebGPURenderPipeline> WebGPURenderPipeline::create(Ref<GPURenderPipeline>&& pipeline)
+Ref<WebGPURenderPipeline> WebGPURenderPipeline::create(Ref<GPURenderPipeline>&& pipeline)
 {
-    return adoptRef(new WebGPURenderPipeline(WTFMove(pipeline)));
+    return adoptRef(*new WebGPURenderPipeline(WTFMove(pipeline)));
 }
 
 WebGPURenderPipeline::WebGPURenderPipeline(Ref<GPURenderPipeline>&& pipeline)

@@ -134,7 +134,7 @@ public:
 
     void updateTileCoverageMap();
 
-    RefPtr<PlatformCALayer> createTileLayer(const IntRect&, TileGrid&);
+    Ref<PlatformCALayer> createTileLayer(const IntRect&, TileGrid&);
 
     const TileGrid& tileGrid() const { return *m_tileGrid; }
 

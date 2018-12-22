@@ -84,7 +84,7 @@ void Subspace::forEachMarkedCell(const Func& func)
 }
 
 template<typename Func>
-RefPtr<SharedTask<void(SlotVisitor&)>> Subspace::forEachMarkedCellInParallel(const Func& func)
+Ref<SharedTask<void(SlotVisitor&)>> Subspace::forEachMarkedCellInParallel(const Func& func)
 {
     class Task : public SharedTask<void(SlotVisitor&)> {
     public:
@@ -121,13 +121,13 @@ RefPtr<SharedTask<void(SlotVisitor&)>> Subspace::forEachMarkedCellInParallel(con
         
     private:
         Subspace& m_subspace;
-        RefPtr<SharedTask<MarkedBlock::Handle*()>> m_blockSource;
+        Ref<SharedTask<MarkedBlock::Handle*()>> m_blockSource;
         Func m_func;
         Lock m_lock;
         bool m_needToVisitLargeAllocations { true };
     };
     
-    return adoptRef(new Task(*this, func));
+    return adoptRef(*new Task(*this, func));
 }
 
 template<typename Func>

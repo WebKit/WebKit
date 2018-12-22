@@ -373,7 +373,7 @@ String FontFace::unicodeRange() const
     m_backing->updateStyleIfNeeded();
     if (!m_backing->ranges().size())
         return "U+0-10FFFF"_s;
-    RefPtr<CSSValueList> values = CSSValueList::createCommaSeparated();
+    auto values = CSSValueList::createCommaSeparated();
     for (auto& range : m_backing->ranges())
         values->append(CSSUnicodeRangeValue::create(range.from, range.to));
     return values->cssText();
@@ -390,7 +390,7 @@ String FontFace::featureSettings() const
     m_backing->updateStyleIfNeeded();
     if (!m_backing->featureSettings().size())
         return "normal"_s;
-    RefPtr<CSSValueList> list = CSSValueList::createCommaSeparated();
+    auto list = CSSValueList::createCommaSeparated();
     for (auto& feature : m_backing->featureSettings())
         list->append(CSSFontFeatureValue::create(FontTag(feature.tag()), feature.value()));
     return list->cssText();

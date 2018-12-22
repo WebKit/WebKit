@@ -64,7 +64,7 @@ public:
     const String& name() const;
     ExceptionOr<void> setName(const String&);
     const Optional<IDBKeyPath>& keyPath() const;
-    RefPtr<DOMStringList> indexNames() const;
+    Ref<DOMStringList> indexNames() const;
     IDBTransaction& transaction();
     bool autoIncrement() const;
 

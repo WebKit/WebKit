@@ -1178,8 +1178,8 @@ void PluginView::performURLRequest(URLRequest* request)
     }
 
     // This request is to load a URL and create a stream.
-    RefPtr<Stream> stream = PluginView::Stream::create(this, request->requestID(), request->request());
-    addStream(stream.get());
+    auto stream = PluginView::Stream::create(this, request->requestID(), request->request());
+    addStream(stream.ptr());
     stream->start();
 }
 

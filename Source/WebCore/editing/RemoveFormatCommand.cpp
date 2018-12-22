@@ -83,13 +83,13 @@ void RemoveFormatCommand::doApply()
     // Get the default style for this editable root, it's the style that we'll give the
     // content that we're operating on.
     Node* root = endingSelection().rootEditableElement();
-    RefPtr<EditingStyle> defaultStyle = EditingStyle::create(root);
+    auto defaultStyle = EditingStyle::create(root);
 
     // We want to remove everything but transparent background.
     // FIXME: We shouldn't access style().
     defaultStyle->style()->setProperty(CSSPropertyBackgroundColor, CSSValueTransparent);
 
-    applyCommandToComposite(ApplyStyleCommand::create(document(), defaultStyle.get(), isElementForRemoveFormatCommand, editingAction()));
+    applyCommandToComposite(ApplyStyleCommand::create(document(), defaultStyle.ptr(), isElementForRemoveFormatCommand, editingAction()));
 }
 
 }

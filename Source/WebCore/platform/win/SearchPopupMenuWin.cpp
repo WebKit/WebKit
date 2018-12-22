@@ -27,13 +27,13 @@
 namespace WebCore {
 
 SearchPopupMenuWin::SearchPopupMenuWin(PopupMenuClient* client)
-    : m_popup(adoptRef(new PopupMenuWin(client)))
+    : m_popup(adoptRef(*new PopupMenuWin(client)))
 {
 }
 
 PopupMenu* SearchPopupMenuWin::popupMenu()
 {
-    return m_popup.get();
+    return m_popup.ptr();
 }
 
 bool SearchPopupMenuWin::enabled()

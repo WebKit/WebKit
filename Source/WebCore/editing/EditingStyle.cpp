@@ -714,7 +714,7 @@ void EditingStyle::removeStyleConflictingWithStyleOfNode(Node& node)
         return;
 
     RefPtr<MutableStyleProperties> parentStyle = copyPropertiesFromComputedStyle(node.parentNode(), EditingPropertiesInEffect);
-    RefPtr<EditingStyle> nodeStyle = EditingStyle::create(&node, EditingPropertiesInEffect);
+    auto nodeStyle = EditingStyle::create(&node, EditingPropertiesInEffect);
     nodeStyle->removeEquivalentProperties(*parentStyle);
 
     MutableStyleProperties* style = nodeStyle->style();
@@ -828,8 +828,8 @@ bool EditingStyle::conflictsWithInlineStyleOfElement(StyledElement& element, Ref
     bool shouldRemoveStrikeThrough = strikeThroughChange() == TextDecorationChange::Remove;
     if (shouldRemoveUnderline || shouldRemoveStrikeThrough) {
         if (RefPtr<CSSValueList> valueList = textDecorationValueList(*inlineStyle)) {
-            RefPtr<CSSValueList> newValueList = valueList->copy();
-            RefPtr<CSSValueList> extractedValueList = CSSValueList::createSpaceSeparated();
+            auto newValueList = valueList->copy();
+            auto extractedValueList = CSSValueList::createSpaceSeparated();
 
             Ref<CSSPrimitiveValue> underline = CSSValuePool::singleton().createIdentifierValue(CSSValueUnderline);
             if (shouldRemoveUnderline && valueList->hasValue(underline.ptr())) {
@@ -850,7 +850,7 @@ bool EditingStyle::conflictsWithInlineStyleOfElement(StyledElement& element, Ref
             if (extractedValueList->length()) {
                 conflicts = true;
                 if (newValueList->length())
-                    newInlineStyle->setProperty(CSSPropertyTextDecoration, newValueList);
+                    newInlineStyle->setProperty(CSSPropertyTextDecoration, WTFMove(newValueList));
                 else
                     newInlineStyle->removeProperty(CSSPropertyTextDecoration);
 
@@ -1071,7 +1071,7 @@ void EditingStyle::prepareToApplyAt(const Position& position, ShouldPreserveWrit
     // ReplaceSelectionCommand::handleStyleSpans() requires that this function only removes the editing style.
     // If this function was modified in the future to delete all redundant properties, then add a boolean value to indicate
     // which one of editingStyleAtPosition or computedStyle is called.
-    RefPtr<EditingStyle> editingStyleAtPosition = EditingStyle::create(position, EditingPropertiesInEffect);
+    auto editingStyleAtPosition = EditingStyle::create(position, EditingPropertiesInEffect);
     StyleProperties* styleAtPosition = editingStyleAtPosition->m_mutableStyle.get();
 
     RefPtr<CSSValue> unicodeBidi;
@@ -1158,7 +1158,7 @@ static RefPtr<MutableStyleProperties> extractEditingProperties(const StyleProper
 
 void EditingStyle::mergeInlineAndImplicitStyleOfElement(StyledElement& element, CSSPropertyOverrideMode mode, PropertiesToInclude propertiesToInclude)
 {
-    RefPtr<EditingStyle> styleFromRules = EditingStyle::create();
+    auto styleFromRules = EditingStyle::create();
     styleFromRules->mergeStyleFromRulesForSerialization(element);
 
     if (element.inlineStyle())
@@ -1288,7 +1288,7 @@ void EditingStyle::mergeStyleFromRulesForSerialization(StyledElement& element)
     // The property value, if it's a percentage, may not reflect the actual computed value.  
     // For example: style="height: 1%; overflow: visible;" in quirksmode
     // FIXME: There are others like this, see <rdar://problem/5195123> Slashdot copy/paste fidelity problem
-    RefPtr<MutableStyleProperties> fromComputedStyle = MutableStyleProperties::create();
+    auto fromComputedStyle = MutableStyleProperties::create();
     ComputedStyleExtractor computedStyle(&element);
 
     {
@@ -1304,7 +1304,7 @@ void EditingStyle::mergeStyleFromRulesForSerialization(StyledElement& element)
             }
         }
     }
-    m_mutableStyle->mergeAndOverrideOnConflict(*fromComputedStyle);
+    m_mutableStyle->mergeAndOverrideOnConflict(fromComputedStyle.get());
 }
 
 static void removePropertiesInStyle(MutableStyleProperties* styleToRemovePropertiesFrom, MutableStyleProperties* style)
@@ -1328,7 +1328,7 @@ void EditingStyle::removeStyleFromRulesAndContext(StyledElement& element, Node* 
         m_mutableStyle = getPropertiesNotIn(*m_mutableStyle, *styleFromMatchedRules);
 
     // 2. Remove style present in context and not overridden by matched rules.
-    RefPtr<EditingStyle> computedStyle = EditingStyle::create(context, EditingPropertiesInEffect);
+    auto computedStyle = EditingStyle::create(context, EditingPropertiesInEffect);
     if (computedStyle->m_mutableStyle) {
         if (!computedStyle->m_mutableStyle->getPropertyCSSValue(CSSPropertyBackgroundColor))
             computedStyle->m_mutableStyle->setProperty(CSSPropertyBackgroundColor, CSSValueTransparent);
@@ -1802,7 +1802,7 @@ static bool fontWeightIsBold(T& style)
 template<typename T>
 static Ref<MutableStyleProperties> extractPropertiesNotIn(StyleProperties& styleWithRedundantProperties, T& baseStyle)
 {
-    RefPtr<EditingStyle> result = EditingStyle::create(&styleWithRedundantProperties);
+    auto result = EditingStyle::create(&styleWithRedundantProperties);
     result->removeEquivalentProperties(baseStyle);
     ASSERT(result->style());
     Ref<MutableStyleProperties> mutableStyle = *result->style();

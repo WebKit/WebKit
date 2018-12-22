@@ -141,7 +141,7 @@ bool PluginDatabase::refresh()
             remove(oldPackage.get());
         }
 
-        RefPtr<PluginPackage> package = PluginPackage::createPackage(*it, lastModified);
+        auto package = PluginPackage::createPackage(*it, lastModified);
         if (package && add(package.releaseNonNull()))
             pluginSetChanged = true;
     }

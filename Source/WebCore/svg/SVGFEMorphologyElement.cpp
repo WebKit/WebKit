@@ -145,9 +145,9 @@ RefPtr<FilterEffect> SVGFEMorphologyElement::build(SVGFilterBuilder* filterBuild
     if (xRadius < 0 || yRadius < 0)
         return nullptr;
 
-    RefPtr<FilterEffect> effect = FEMorphology::create(filter, svgOperator(), xRadius, yRadius);
+    auto effect = FEMorphology::create(filter, svgOperator(), xRadius, yRadius);
     effect->inputEffects().append(input1);
-    return effect;
+    return WTFMove(effect);
 }
 
 } // namespace WebCore

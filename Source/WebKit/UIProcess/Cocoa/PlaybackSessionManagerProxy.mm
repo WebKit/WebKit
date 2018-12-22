@@ -292,9 +292,9 @@ void PlaybackSessionModelContext::pictureInPictureActiveChanged(bool active)
 
 #pragma mark - PlaybackSessionManagerProxy
 
-RefPtr<PlaybackSessionManagerProxy> PlaybackSessionManagerProxy::create(WebPageProxy& page)
+Ref<PlaybackSessionManagerProxy> PlaybackSessionManagerProxy::create(WebPageProxy& page)
 {
-    return adoptRef(new PlaybackSessionManagerProxy(page));
+    return adoptRef(*new PlaybackSessionManagerProxy(page));
 }
 
 PlaybackSessionManagerProxy::PlaybackSessionManagerProxy(WebPageProxy& page)

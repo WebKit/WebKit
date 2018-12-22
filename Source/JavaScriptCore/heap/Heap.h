@@ -629,8 +629,8 @@ private:
     
     RefPtr<FullGCActivityCallback> m_fullActivityCallback;
     RefPtr<GCActivityCallback> m_edenActivityCallback;
-    RefPtr<IncrementalSweeper> m_sweeper;
-    RefPtr<StopIfNecessaryTimer> m_stopIfNecessaryTimer;
+    Ref<IncrementalSweeper> m_sweeper;
+    Ref<StopIfNecessaryTimer> m_stopIfNecessaryTimer;
 
     Vector<HeapObserver*> m_observers;
     

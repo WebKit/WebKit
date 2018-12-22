@@ -1016,7 +1016,7 @@ RefPtr<DeprecatedCSSOMValue> SVGElement::getPresentationAttribute(const String& 
     if (!attribute)
         return 0;
 
-    RefPtr<MutableStyleProperties> style = MutableStyleProperties::create(SVGAttributeMode);
+    auto style = MutableStyleProperties::create(SVGAttributeMode);
     CSSPropertyID propertyID = cssPropertyIdForSVGAttributeName(attribute->name());
     style->setProperty(propertyID, attribute->value());
     auto cssValue = style->getPropertyCSSValue(propertyID);

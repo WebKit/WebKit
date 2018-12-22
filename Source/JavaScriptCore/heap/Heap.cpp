@@ -306,8 +306,8 @@ Heap::Heap(VM* vm, HeapType heapType)
     , m_lastEdenGCLength(0.01)
     , m_fullActivityCallback(GCActivityCallback::tryCreateFullTimer(this))
     , m_edenActivityCallback(GCActivityCallback::tryCreateEdenTimer(this))
-    , m_sweeper(adoptRef(new IncrementalSweeper(this)))
-    , m_stopIfNecessaryTimer(adoptRef(new StopIfNecessaryTimer(vm)))
+    , m_sweeper(adoptRef(*new IncrementalSweeper(this)))
+    , m_stopIfNecessaryTimer(adoptRef(*new StopIfNecessaryTimer(vm)))
     , m_deferralDepth(0)
 #if USE(FOUNDATION)
     , m_delayedReleaseRecursionCount(0)
@@ -2339,7 +2339,7 @@ GCActivityCallback* Heap::edenActivityCallback()
 
 IncrementalSweeper& Heap::sweeper()
 {
-    return *m_sweeper;
+    return m_sweeper.get();
 }
 
 void Heap::setGarbageCollectionTimerEnabled(bool enable)

@@ -4737,8 +4737,6 @@ static Vector<String> toStringVector(NSArray* patterns)
         return;
 
     auto viewGroup = WebViewGroup::getOrCreate(groupName, String());
-    if (!viewGroup)
-        return;
 
     if (!world)
         return;
@@ -4762,8 +4760,6 @@ static Vector<String> toStringVector(NSArray* patterns)
         return;
 
     auto viewGroup = WebViewGroup::getOrCreate(groupName, String());
-    if (!viewGroup)
-        return;
 
     if (!world)
         return;

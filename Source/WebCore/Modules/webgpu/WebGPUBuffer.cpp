@@ -30,9 +30,9 @@
 
 namespace WebCore {
 
-RefPtr<WebGPUBuffer> WebGPUBuffer::create(Ref<GPUBuffer>&& buffer)
+Ref<WebGPUBuffer> WebGPUBuffer::create(Ref<GPUBuffer>&& buffer)
 {
-    return adoptRef(new WebGPUBuffer(WTFMove(buffer)));
+    return adoptRef(*new WebGPUBuffer(WTFMove(buffer)));
 }
 
 WebGPUBuffer::WebGPUBuffer(Ref<GPUBuffer>&& buffer)

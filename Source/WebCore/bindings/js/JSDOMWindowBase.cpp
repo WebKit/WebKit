@@ -209,8 +209,8 @@ void JSDOMWindowBase::queueTaskToEventLoop(JSGlobalObject& object, Ref<JSC::Micr
 {
     JSDOMWindowBase& thisObject = static_cast<JSDOMWindowBase&>(object);
 
-    RefPtr<JSMicrotaskCallback> callback = JSMicrotaskCallback::create(thisObject, WTFMove(task));
-    auto microtask = std::make_unique<ActiveDOMCallbackMicrotask>(MicrotaskQueue::mainThreadQueue(), *thisObject.scriptExecutionContext(), [callback]() mutable {
+    auto callback = JSMicrotaskCallback::create(thisObject, WTFMove(task));
+    auto microtask = std::make_unique<ActiveDOMCallbackMicrotask>(MicrotaskQueue::mainThreadQueue(), *thisObject.scriptExecutionContext(), [callback = WTFMove(callback)]() mutable {
         callback->call();
     });
 

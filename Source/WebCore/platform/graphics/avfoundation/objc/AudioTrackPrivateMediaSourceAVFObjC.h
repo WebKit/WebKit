@@ -39,9 +39,9 @@ class SourceBufferPrivateAVFObjC;
 class AudioTrackPrivateMediaSourceAVFObjC final : public AudioTrackPrivateAVF {
     WTF_MAKE_NONCOPYABLE(AudioTrackPrivateMediaSourceAVFObjC)
 public:
-    static RefPtr<AudioTrackPrivateMediaSourceAVFObjC> create(AVAssetTrack *track, SourceBufferPrivateAVFObjC* parent)
+    static Ref<AudioTrackPrivateMediaSourceAVFObjC> create(AVAssetTrack *track, SourceBufferPrivateAVFObjC* parent)
     {
-        return adoptRef(new AudioTrackPrivateMediaSourceAVFObjC(track, parent));
+        return adoptRef(*new AudioTrackPrivateMediaSourceAVFObjC(track, parent));
     }
 
     void setEnabled(bool) final;

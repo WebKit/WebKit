@@ -431,7 +431,7 @@ void RemoteLayerTreeDrawingArea::flushLayers()
     m_pendingBackingStoreFlusher = backingStoreFlusher;
 
     uint64_t pageID = m_webPage.pageID();
-    dispatch_async(m_commitQueue, [backingStoreFlusher, pageID] {
+    dispatch_async(m_commitQueue, [backingStoreFlusher = WTFMove(backingStoreFlusher), pageID] {
         backingStoreFlusher->flush();
 
         MonotonicTime timestamp = MonotonicTime::now();

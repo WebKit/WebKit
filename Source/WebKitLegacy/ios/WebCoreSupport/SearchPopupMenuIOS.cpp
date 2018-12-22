@@ -26,13 +26,13 @@
 using namespace WebCore;
 
 SearchPopupMenuIOS::SearchPopupMenuIOS(PopupMenuClient* client)
-    : m_popup(adoptRef(new PopupMenuIOS(client)))
+    : m_popup(adoptRef(*new PopupMenuIOS(client)))
 {
 }
 
 PopupMenu* SearchPopupMenuIOS::popupMenu()
 {
-    return m_popup.get();
+    return m_popup.ptr();
 }
 
 void SearchPopupMenuIOS::saveRecentSearches(const AtomicString&, const Vector<RecentSearch>& /*searchItems*/)

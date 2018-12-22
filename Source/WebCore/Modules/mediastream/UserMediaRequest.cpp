@@ -49,9 +49,9 @@
 
 namespace WebCore {
 
-RefPtr<UserMediaRequest> UserMediaRequest::create(Document& document, MediaStreamRequest&& request, DOMPromiseDeferred<IDLInterface<MediaStream>>&& promise)
+Ref<UserMediaRequest> UserMediaRequest::create(Document& document, MediaStreamRequest&& request, DOMPromiseDeferred<IDLInterface<MediaStream>>&& promise)
 {
-    auto result = adoptRef(new UserMediaRequest(document, WTFMove(request), WTFMove(promise)));
+    auto result = adoptRef(*new UserMediaRequest(document, WTFMove(request), WTFMove(promise)));
     result->suspendIfNeeded();
     return result;
 }

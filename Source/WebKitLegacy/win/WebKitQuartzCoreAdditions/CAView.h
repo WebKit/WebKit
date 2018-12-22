@@ -48,7 +48,7 @@ public:
 
     class Handle;
 
-    static RefPtr<CAView> create(DrawingDestination);
+    static Ref<CAView> create(DrawingDestination);
     ~CAView();
 
     typedef void (*ContextDidChangeCallbackFunction)(CAView*, void* info);

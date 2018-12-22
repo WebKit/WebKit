@@ -103,8 +103,8 @@ static void setUpClient(WKConnection *wrapper, WebKit::WebConnection& connection
 
 - (void)sendMessageWithName:(NSString *)messageName body:(id)messageBody
 {
-    RefPtr<WebKit::ObjCObjectGraph> wkMessageBody = WebKit::ObjCObjectGraph::create(messageBody);
-    self._connection.postMessage(messageName, wkMessageBody.get());
+    auto wkMessageBody = WebKit::ObjCObjectGraph::create(messageBody);
+    self._connection.postMessage(messageName, wkMessageBody.ptr());
 }
 
 - (WebKit::WebConnection&)_connection

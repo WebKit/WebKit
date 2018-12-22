@@ -46,12 +46,12 @@ DownloadProxyMap::~DownloadProxyMap()
 
 DownloadProxy* DownloadProxyMap::createDownloadProxy(WebProcessPool& processPool, const WebCore::ResourceRequest& resourceRequest)
 {
-    RefPtr<DownloadProxy> downloadProxy = DownloadProxy::create(*this, processPool, resourceRequest);
-    m_downloads.set(downloadProxy->downloadID(), downloadProxy);
+    auto downloadProxy = DownloadProxy::create(*this, processPool, resourceRequest);
+    m_downloads.set(downloadProxy->downloadID(), downloadProxy.copyRef());
 
-    m_process->addMessageReceiver(Messages::DownloadProxy::messageReceiverName(), downloadProxy->downloadID().downloadID(), *downloadProxy);
+    m_process->addMessageReceiver(Messages::DownloadProxy::messageReceiverName(), downloadProxy->downloadID().downloadID(), downloadProxy.get());
 
-    return downloadProxy.get();
+    return downloadProxy.ptr();
 }
 
 void DownloadProxyMap::downloadFinished(DownloadProxy* downloadProxy)

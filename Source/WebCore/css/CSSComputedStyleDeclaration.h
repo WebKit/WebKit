@@ -87,14 +87,14 @@ private:
     RenderElement* styledRenderer() const;
 
     RefPtr<CSSValue> svgPropertyValue(CSSPropertyID, EUpdateLayout);
-    RefPtr<CSSValue> adjustSVGPaintForCurrentColor(SVGPaintType, const String& url, const Color&, const Color& currentColor) const;
+    Ref<CSSValue> adjustSVGPaintForCurrentColor(SVGPaintType, const String& url, const Color&, const Color& currentColor) const;
     static Ref<CSSValue> valueForShadow(const ShadowData*, CSSPropertyID, const RenderStyle&, AdjustPixelValuesForComputedStyle = AdjustPixelValues);
-    RefPtr<CSSPrimitiveValue> currentColorOrValidColor(const RenderStyle*, const Color&) const;
+    Ref<CSSPrimitiveValue> currentColorOrValidColor(const RenderStyle*, const Color&) const;
 
-    RefPtr<CSSValueList> getCSSPropertyValuesForShorthandProperties(const StylePropertyShorthand&);
+    Ref<CSSValueList> getCSSPropertyValuesForShorthandProperties(const StylePropertyShorthand&);
     RefPtr<CSSValueList> getCSSPropertyValuesForSidesShorthand(const StylePropertyShorthand&);
     Ref<CSSValueList> getBackgroundShorthandValue();
-    RefPtr<CSSValueList> getCSSPropertyValuesForGridShorthand(const StylePropertyShorthand&);
+    Ref<CSSValueList> getCSSPropertyValuesForGridShorthand(const StylePropertyShorthand&);
 
     RefPtr<Element> m_element;
     PseudoId m_pseudoElementSpecifier;

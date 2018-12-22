@@ -145,7 +145,7 @@ bool SQLStatement::execute(Database& db)
         }
     }
 
-    RefPtr<SQLResultSet> resultSet = SQLResultSet::create();
+    auto resultSet = SQLResultSet::create();
 
     // Step so we can fetch the column names.
     result = statement.step();
@@ -193,7 +193,7 @@ bool SQLStatement::execute(Database& db)
     // For now, this seems sufficient
     resultSet->setRowsAffected(database.lastChanges());
 
-    m_resultSet = resultSet;
+    m_resultSet = WTFMove(resultSet);
     return true;
 }
 

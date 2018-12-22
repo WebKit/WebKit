@@ -1893,10 +1893,10 @@ int distanceBetweenPositions(const VisiblePosition& vp, const VisiblePosition& o
     bool thisIsStart = (vp < other);
 
     // Start must come first in the Range constructor.
-    RefPtr<Range> range = Range::create(vp.deepEquivalent().deprecatedNode()->document(),
+    auto range = Range::create(vp.deepEquivalent().deprecatedNode()->document(),
                                         (thisIsStart ? vp : other),
                                         (thisIsStart ? other : vp));
-    int distance = TextIterator::rangeLength(range.get());
+    int distance = TextIterator::rangeLength(range.ptr());
 
     return (thisIsStart ? -distance : distance);
 }

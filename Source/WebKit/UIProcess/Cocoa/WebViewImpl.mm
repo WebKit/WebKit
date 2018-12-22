@@ -4387,10 +4387,10 @@ RefPtr<ViewSnapshot> WebViewImpl::takeViewSnapshot()
     if (!surface)
         return nullptr;
 
-    RefPtr<ViewSnapshot> snapshot = ViewSnapshot::create(WTFMove(surface));
+    auto snapshot = ViewSnapshot::create(WTFMove(surface));
     snapshot->setVolatile(true);
 
-    return snapshot;
+    return WTFMove(snapshot);
 }
 
 void WebViewImpl::saveBackForwardSnapshotForCurrentItem()

@@ -170,9 +170,8 @@ void CSSFontFaceSource::load(CSSFontSelector* fontSelector)
         if (m_immediateSource) {
             ASSERT(!m_immediateFontCustomPlatformData);
             bool wrapping;
-            RefPtr<SharedBuffer> buffer = SharedBuffer::create(static_cast<const char*>(m_immediateSource->baseAddress()), m_immediateSource->byteLength());
-            ASSERT(buffer);
-            m_immediateFontCustomPlatformData = CachedFont::createCustomFontData(*buffer, String(), wrapping);
+            auto buffer = SharedBuffer::create(static_cast<const char*>(m_immediateSource->baseAddress()), m_immediateSource->byteLength());
+            m_immediateFontCustomPlatformData = CachedFont::createCustomFontData(buffer.get(), String(), wrapping);
             success = static_cast<bool>(m_immediateFontCustomPlatformData);
         } else {
             // We are only interested in whether or not fontForFamily() returns null or not. Luckily, none of

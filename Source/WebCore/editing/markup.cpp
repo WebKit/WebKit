@@ -764,9 +764,9 @@ static RefPtr<EditingStyle> styleFromMatchedRulesAndInlineDecl(Node& node)
         return nullptr;
 
     auto& element = downcast<HTMLElement>(node);
-    RefPtr<EditingStyle> style = EditingStyle::create(element.inlineStyle());
+    auto style = EditingStyle::create(element.inlineStyle());
     style->mergeStyleFromRules(element);
-    return style;
+    return WTFMove(style);
 }
 
 static bool isElementPresentational(const Node* node)
@@ -1211,8 +1211,8 @@ RefPtr<DocumentFragment> createFragmentForTransformToFragment(Document& outputDo
         // Based on the documentation I can find, it looks like we want to start parsing the fragment in the InBody insertion mode.
         // Unfortunately, that's an implementation detail of the parser.
         // We achieve that effect here by passing in a fake body element as context for the fragment.
-        RefPtr<HTMLBodyElement> fakeBody = HTMLBodyElement::create(outputDoc);
-        fragment->parseHTML(sourceString, fakeBody.get());
+        auto fakeBody = HTMLBodyElement::create(outputDoc);
+        fragment->parseHTML(sourceString, fakeBody.ptr());
     } else if (sourceMIMEType == "text/plain")
         fragment->parserAppendChild(Text::create(outputDoc, sourceString));
     else {

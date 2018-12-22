@@ -122,11 +122,11 @@ const Optional<IDBKeyPath>& IDBObjectStore::keyPath() const
     return m_info.keyPath();
 }
 
-RefPtr<DOMStringList> IDBObjectStore::indexNames() const
+Ref<DOMStringList> IDBObjectStore::indexNames() const
 {
     ASSERT(&m_transaction.database().originThread() == &Thread::current());
 
-    RefPtr<DOMStringList> indexNames = DOMStringList::create();
+    auto indexNames = DOMStringList::create();
 
     if (!m_deleted) {
         for (auto& name : m_info.indexNames())

@@ -1117,9 +1117,9 @@ VisiblePosition visiblePositionForIndexUsingCharacterIterator(Node& node, int in
     if (index <= 0)
         return { firstPositionInOrBeforeNode(&node), DOWNSTREAM };
 
-    RefPtr<Range> range = Range::create(node.document());
+    auto range = Range::create(node.document());
     range->selectNodeContents(node);
-    CharacterIterator it(*range);
+    CharacterIterator it(range.get());
     it.advance(index - 1);
     return { it.atEnd() ? range->endPosition() : it.range()->endPosition(), UPSTREAM };
 }

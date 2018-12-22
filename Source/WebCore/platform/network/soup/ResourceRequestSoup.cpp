@@ -52,7 +52,7 @@ static uint64_t appendEncodedBlobItemToSoupMessageBody(SoupMessage* soupMessage,
         if (fileModificationTime->secondsSinceEpoch().secondsAs<time_t>() != blobItem.file()->expectedModificationTime()->secondsSinceEpoch().secondsAs<time_t>())
             return 0;
 
-        if (RefPtr<SharedBuffer> buffer = SharedBuffer::createWithContentsOfFile(blobItem.file()->path())) {
+        if (auto buffer = SharedBuffer::createWithContentsOfFile(blobItem.file()->path())) {
             if (buffer->isEmpty())
                 return 0;
 
@@ -82,7 +82,7 @@ void ResourceRequest::updateSoupMessageBody(SoupMessage* soupMessage) const
                 bodySize += bytes.size();
                 soup_message_body_append(soupMessage->request_body, SOUP_MEMORY_TEMPORARY, bytes.data(), bytes.size());
             }, [&] (const FormDataElement::EncodedFileData& fileData) {
-                if (RefPtr<SharedBuffer> buffer = SharedBuffer::createWithContentsOfFile(fileData.filename)) {
+                if (auto buffer = SharedBuffer::createWithContentsOfFile(fileData.filename)) {
                     if (buffer->isEmpty())
                         return;
                     
