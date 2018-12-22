@@ -117,6 +117,9 @@ void RenderFileUploadControl::paintObject(PaintInfo& paintInfo, const LayoutPoin
     if (style().visibility() != Visibility::Visible)
         return;
     
+    if (paintInfo.context().paintingDisabled())
+        return;
+
     // Push a clip.
     GraphicsContextStateSaver stateSaver(paintInfo.context(), false);
     if (paintInfo.phase == PaintPhase::Foreground || paintInfo.phase == PaintPhase::ChildBlockBackgrounds) {
