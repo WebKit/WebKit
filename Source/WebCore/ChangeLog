@@ -1,3 +1,17 @@
+2018-12-21  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Update status of some WebCore features in features.json
+        https://bugs.webkit.org/show_bug.cgi?id=192998
+
+        Reviewed by Tim Horton.
+
+        * features.json:
+        - Variation Fonts: Supported
+        - Conic Gradients: Supported in Preview
+        - Web Share: Supported in Preview
+        - <datalist>: Supported in Preview
+        - Intersection Observers: Supported in Preview
+
 2018-12-21  Zalan Bujtas  <zalan@apple.com>
 
         [iOS] Using file upload can trigger a crash under RenderThemeIOS::paintFileUploadIconDecorations()

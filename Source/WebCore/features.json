@@ -414,11 +414,11 @@
     {
         "name": "Intersection Observer",
         "status": {
-            "status": "In Development"
+            "status": "Supported in Preview"
         },
         "url": "https://wicg.github.io/IntersectionObserver/",
         "webkit-url": "https://bugs.webkit.org/show_bug.cgi?id=159475",
-        "keywords": ["intersection", "intersection observer"],
+        "keywords": ["intersection", "intersection observer", "intersectionobserver"],
         "description": "An API that can be used to understand the visibility and position of DOM elements relative to a containing element or to the top-level viewport."
     },
     {
@@ -461,7 +461,7 @@
             "enabled-by-default": true
         },
         "url": "https://w3c.github.io/performance-timeline/",
-        "keywords": ["performance", "performance observer", "performance timeline"],
+        "keywords": ["performance", "performance observer", "performanceobserver", "performance timeline"],
         "description": "An API to observe performance timeline entries at idle times.",
         "contact": {
             "name": "Joseph Pecoraro",
@@ -845,7 +845,7 @@
     {
         "name": "Conic Gradients",
         "status": {
-            "status": "In Development"
+            "status": "Supported in Preview"
         },
         "url": "https://www.w3.org/TR/css4-images/#conic-gradients",
         "specification": "CSS Image Values and Replaced Content Module Level 4",
@@ -871,6 +871,22 @@
         }
     },
     {
+        "name": "Datalist Element",
+        "status": {
+            "status": "Supported in Preview"
+        },
+        "url": "https://html.spec.whatwg.org/multipage/form-elements.html#the-datalist-element",
+        "webkit-url": "https://bugs.webkit.org/show_bug.cgi?id=27247",
+        "specification": "HTML5",
+        "category": "html",
+        "description": "The datalist element represents a set of option elements that represent predefined options for other controls.",
+        "contact": {
+            "name": "Jon Davis",
+            "twitter": "@jonathandavis",
+            "email": "web-evangelist@apple.com"
+        }
+    },
+    {
         "name": "Download Attribute",
         "status": {
             "status": "Supported"
@@ -878,6 +894,7 @@
         "url": "https://html.spec.whatwg.org/multipage/semantics.html#downloading-resources",
         "webkit-url": "https://bugs.webkit.org/show_bug.cgi?id=156056",
         "specification": "HTML5",
+        "category": "html",
         "description": "An attribute to an anchor or area element to indicate that a resource is intended to be downloaded for use later rather than immediately.",
         "contact": {
             "name": "Brent Fulgham",
@@ -1059,6 +1076,7 @@
         "url": "https://html.spec.whatwg.org/multipage/embedded-content.html#the-picture-element",
         "webkit-url": "https://bugs.webkit.org/show_bug.cgi?id=116963",
         "specification": "HTML5",
+        "category": "html",
         "description": "Enable handling the art-direction responsive images use-case by defining multiple image sources in markup",
         "contact": {
             "name": "Yoav Weiss",
@@ -1213,7 +1231,7 @@
     {
         "name": "Variation Fonts",
         "status": {
-            "status": "In Development",
+            "status": "Supported",
             "enabled-by-default": false
         },
         "url": "https://drafts.csswg.org/css-fonts-4/",
@@ -1287,7 +1305,7 @@
     {
         "name": "Web Share",
         "status": {
-            "status": "In Development"
+            "status": "Supported in Preview"
         },
         "url": "https://github.com/WICG/web-share/blob/master/docs/interface.md",
         "webkit-url": "https://bugs.webkit.org/show_bug.cgi?id=171100",
