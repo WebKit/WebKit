@@ -630,12 +630,6 @@
     <None Include="..\UserInterface\Images\StepOver.svg" />
     <None Include="..\UserInterface\Images\Stopwatch%402x.png" />
     <None Include="..\UserInterface\Images\Stopwatch.png" />
-    <None Include="..\UserInterface\Images\StyleRuleAuthor.svg" />
-    <None Include="..\UserInterface\Images\StyleRuleInherited.svg" />
-    <None Include="..\UserInterface\Images\StyleRuleInheritedElement.svg" />
-    <None Include="..\UserInterface\Images\StyleRuleInspector.svg" />
-    <None Include="..\UserInterface\Images\StyleRuleUser.svg" />
-    <None Include="..\UserInterface\Images\StyleRuleUserAgent.svg" />
     <None Include="..\UserInterface\Images\Time.svg" />
     <None Include="..\UserInterface\Images\TimelineBarBlue%402x.png" />
     <None Include="..\UserInterface\Images\TimelineBarBlue.png" />
@@ -779,7 +773,6 @@
     <None Include="..\UserInterface\SourceMapResourceTreeElement.js" />
     <None Include="..\UserInterface\StorageTreeElement.js" />
     <None Include="..\UserInterface\StyleDetailsPanel.js" />
-    <None Include="..\UserInterface\StyleRuleIcons.css" />
     <None Include="..\UserInterface\SyntaxHighlightingDefaultTheme.css" />
     <None Include="..\UserInterface\SyntaxHighlightingSupport.js" />
     <None Include="..\UserInterface\TextContentView.css" />

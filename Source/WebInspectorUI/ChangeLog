@@ -1,3 +1,20 @@
+2018-12-21  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: Styles Redesign: remove unused CSS style icons
+        https://bugs.webkit.org/show_bug.cgi?id=192999
+        <rdar://problem/46912094>
+
+        Reviewed by Matt Baker.
+
+        * UserInterface/Main.html:
+        * UserInterface/Views/StyleRuleIcons.css: Removed.
+        * UserInterface/Images/StyleRule.svg: Removed.
+        * UserInterface/Images/StyleRuleInheritedElement.svg: Removed.
+        * UserInterface/Images/StyleRulePseudoElement.svg: Removed.
+
+        * WebInspectorUI.vcxproj/WebInspectorUI.vcxproj:
+        * WebInspectorUI.vcxproj/WebInspectorUI.vcxproj.filters:
+
 2018-12-21  Nikita Vasilyev  <nvasilyev@apple.com>
 
         Web Inspector: Styles: editing focus lost when inspector is blurred

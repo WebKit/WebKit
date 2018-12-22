@@ -933,9 +933,6 @@
     <None Include="..\UserInterface\StyleDetailsPanel.js">
       <Filter>UserInterface</Filter>
     </None>
-    <None Include="..\UserInterface\StyleRuleIcons.css">
-      <Filter>UserInterface</Filter>
-    </None>
     <None Include="..\UserInterface\SyntaxHighlightingDefaultTheme.css">
       <Filter>UserInterface</Filter>
     </None>
@@ -1645,24 +1642,6 @@
       <Filter>Images</Filter>
     </None>
     <None Include="..\UserInterface\Images\Stopwatch%402x.png">
-      <Filter>Images</Filter>
-    </None>
-    <None Include="..\UserInterface\Images\StyleRuleAuthor.svg">
-      <Filter>Images</Filter>
-    </None>
-    <None Include="..\UserInterface\Images\StyleRuleInherited.svg">
-      <Filter>Images</Filter>
-    </None>
-    <None Include="..\UserInterface\Images\StyleRuleInheritedElement.svg">
-      <Filter>Images</Filter>
-    </None>
-    <None Include="..\UserInterface\Images\StyleRuleInspector.svg">
-      <Filter>Images</Filter>
-    </None>
-    <None Include="..\UserInterface\Images\StyleRuleUser.svg">
-      <Filter>Images</Filter>
-    </None>
-    <None Include="..\UserInterface\Images\StyleRuleUserAgent.svg">
       <Filter>Images</Filter>
     </None>
     <None Include="..\UserInterface\Images\Time.svg">
