@@ -88,7 +88,7 @@ static void notifyNodeInsertedIntoTree(ContainerNode& parentOfInsertedTree, Node
 
 NodeVector notifyChildNodeInserted(ContainerNode& parentOfInsertedTree, Node& node)
 {
-    ASSERT(!ScriptDisallowedScope::InMainThread::isScriptAllowed());
+    ASSERT(ScriptDisallowedScope::InMainThread::hasDisallowedScope());
 
     InspectorInstrumentation::didInsertDOMNode(node.document(), node);
 
@@ -152,7 +152,7 @@ static void notifyNodeRemovedFromTree(ContainerNode& oldParentOfRemovedTree, Tre
 void notifyChildNodeRemoved(ContainerNode& oldParentOfRemovedTree, Node& child)
 {
     // Assert that the caller of this function has an instance of ScriptDisallowedScope.
-    ASSERT(!isMainThread() || !ScriptDisallowedScope::InMainThread::isScriptAllowed());
+    ASSERT(!isMainThread() || ScriptDisallowedScope::InMainThread::hasDisallowedScope());
     ContainerChildRemovalScope removalScope(oldParentOfRemovedTree, child);
 
     // Tree scope has changed if the container node from which "node" is removed is in a document or a shadow root.

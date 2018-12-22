@@ -863,7 +863,7 @@ void HTMLFormElement::finishParsingChildren()
 
 const Vector<FormAssociatedElement*>& HTMLFormElement::unsafeAssociatedElements() const
 {
-    ASSERT(!ScriptDisallowedScope::InMainThread::isScriptAllowed());
+    ASSERT(ScriptDisallowedScope::InMainThread::hasDisallowedScope());
     return m_associatedElements;
 }
 

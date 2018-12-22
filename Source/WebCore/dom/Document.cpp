@@ -4358,7 +4358,7 @@ void Document::updateRangesAfterChildrenChanged(ContainerNode& container)
 
 void Document::nodeChildrenWillBeRemoved(ContainerNode& container)
 {
-    ASSERT(!ScriptDisallowedScope::InMainThread::isScriptAllowed());
+    ASSERT(ScriptDisallowedScope::InMainThread::hasDisallowedScope());
 
     adjustFocusedNodeOnNodeRemoval(container, NodeRemoval::ChildrenOfNode);
     adjustFocusNavigationNodeOnNodeRemoval(container, NodeRemoval::ChildrenOfNode);
@@ -4391,7 +4391,7 @@ void Document::nodeChildrenWillBeRemoved(ContainerNode& container)
 
 void Document::nodeWillBeRemoved(Node& node)
 {
-    ASSERT(!ScriptDisallowedScope::InMainThread::isScriptAllowed());
+    ASSERT(ScriptDisallowedScope::InMainThread::hasDisallowedScope());
 
     adjustFocusedNodeOnNodeRemoval(node);
     adjustFocusNavigationNodeOnNodeRemoval(node);

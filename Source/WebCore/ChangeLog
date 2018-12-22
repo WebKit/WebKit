@@ -1,3 +1,31 @@
+2018-12-20  Ryosuke Niwa  <rniwa@webkit.org>
+
+        REGRESSION(r239353): iOS WK1 Assertion failure in notifyChildNodeRemoved while running
+        TestWebKitAPI.QuickLook.LegacyQuickLookContent
+        https://bugs.webkit.org/show_bug.cgi?id=192859
+        <rdar://problem/46887237>
+
+        Reviewed by Antti Koivisto.
+
+        After r239353, ScriptDisallowedScope::InMainThread::isScriptAllowed() may return false when the web thread
+        is inside a delegate callback even when there is a ScriptDisallowedScope defined.
+
+        Replace the existign debug assertions which assert !ScriptDisallowedScope::InMainThread::isScriptAllowed()
+        by a newly added ScriptDisallowedScope::InMainThread::hasDisallowedScope to avoid hitting this assertion.
+
+        Tests: TestWebKitAPI.QuickLook.LegacyQuickLookContent
+
+        * dom/ContainerNodeAlgorithms.cpp:
+        (WebCore::notifyChildNodeInserted):
+        (WebCore::notifyChildNodeRemoved):
+        * dom/Document.cpp:
+        (WebCore::Document::nodeChildrenWillBeRemoved):
+        (WebCore::Document::nodeWillBeRemoved):
+        * dom/ScriptDisallowedScope.h:
+        (WebCore::ScriptDisallowedScope::InMainThread::hasDisallowedScope):
+        * html/HTMLFormElement.cpp:
+        (WebCore:: const):
+
 2018-12-21  Joseph Pecoraro  <pecoraro@apple.com>
 
         Update status of some WebCore features in features.json

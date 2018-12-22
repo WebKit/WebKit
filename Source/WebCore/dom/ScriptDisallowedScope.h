@@ -87,6 +87,12 @@ public:
 #endif
         }
 
+        static bool hasDisallowedScope()
+        {
+            ASSERT(isMainThread());
+            return s_count;
+        }
+
         static bool isScriptAllowed()
         {
             ASSERT(isMainThread());
