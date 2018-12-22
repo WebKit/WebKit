@@ -1,3 +1,16 @@
+2018-12-22  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        WebDriver: warn about non existing tests when parsing expectations
+        https://bugs.webkit.org/show_bug.cgi?id=192979
+
+        Reviewed by Michael Catanzaro.
+
+        It's common to update web driver tests and forget updating the test expectations in case of tests removed or
+        renamed.
+
+        * Scripts/webkitpy/webdriver_tests/webdriver_test_runner.py:
+        (WebDriverTestRunner.__init__):
+
 2018-12-21  Chris Dumez  <cdumez@apple.com>
 
         navigator.userAgent in service workers does not reflect customUserAgent set by client
