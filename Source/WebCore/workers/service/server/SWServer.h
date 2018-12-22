@@ -141,6 +141,7 @@ public:
 
     WEBCORE_EXPORT SWServerWorker* workerByID(ServiceWorkerIdentifier) const;
     Optional<ServiceWorkerClientData> serviceWorkerClientWithOriginByID(const ClientOrigin&, const ServiceWorkerClientIdentifier&) const;
+    String serviceWorkerClientUserAgent(const ClientOrigin&) const;
     WEBCORE_EXPORT SWServerWorker* activeWorkerFromRegistrationID(ServiceWorkerRegistrationIdentifier);
 
     WEBCORE_EXPORT void markAllWorkersForOriginAsTerminated(const SecurityOriginData&);
@@ -163,7 +164,7 @@ public:
     
     WEBCORE_EXPORT static HashSet<SWServer*>& allServers();
 
-    WEBCORE_EXPORT void registerServiceWorkerClient(ClientOrigin&&, ServiceWorkerClientData&&, const Optional<ServiceWorkerRegistrationIdentifier>&);
+    WEBCORE_EXPORT void registerServiceWorkerClient(ClientOrigin&&, ServiceWorkerClientData&&, const Optional<ServiceWorkerRegistrationIdentifier>&, String&& userAgent);
     WEBCORE_EXPORT void unregisterServiceWorkerClient(const ClientOrigin&, ServiceWorkerClientIdentifier);
 
     using RunServiceWorkerCallback = WTF::Function<void(SWServerToContextConnection*)>;
@@ -220,6 +221,7 @@ private:
     struct Clients {
         Vector<ServiceWorkerClientIdentifier> identifiers;
         std::unique_ptr<Timer> terminateServiceWorkersTimer;
+        String userAgent;
     };
     HashMap<ClientOrigin, Clients> m_clientIdentifiersPerOrigin;
     HashMap<ServiceWorkerClientIdentifier, ServiceWorkerClientData> m_clientsById;

@@ -93,7 +93,7 @@ private:
     void matchRegistration(uint64_t registrationMatchRequestIdentifier, const WebCore::SecurityOriginData& topOrigin, const URL& clientURL);
     void getRegistrations(uint64_t registrationMatchRequestIdentifier, const WebCore::SecurityOriginData& topOrigin, const URL& clientURL);
 
-    void registerServiceWorkerClient(WebCore::SecurityOriginData&& topOrigin, WebCore::ServiceWorkerClientData&&, const Optional<WebCore::ServiceWorkerRegistrationIdentifier>&);
+    void registerServiceWorkerClient(WebCore::SecurityOriginData&& topOrigin, WebCore::ServiceWorkerClientData&&, const Optional<WebCore::ServiceWorkerRegistrationIdentifier>&, String&& userAgent);
     void unregisterServiceWorkerClient(const WebCore::ServiceWorkerClientIdentifier&);
 
     IPC::Connection* messageSenderConnection() final { return m_contentConnection.ptr(); }

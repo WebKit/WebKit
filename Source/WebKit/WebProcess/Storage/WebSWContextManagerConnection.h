@@ -76,7 +76,7 @@ private:
 
     // IPC messages.
     void serviceWorkerStartedWithMessage(Optional<WebCore::ServiceWorkerJobDataIdentifier>, WebCore::ServiceWorkerIdentifier, const String& exceptionMessage) final;
-    void installServiceWorker(const WebCore::ServiceWorkerContextData&, PAL::SessionID);
+    void installServiceWorker(const WebCore::ServiceWorkerContextData&, PAL::SessionID, String&& userAgent);
     void startFetch(WebCore::SWServerConnectionIdentifier, WebCore::ServiceWorkerIdentifier, WebCore::FetchIdentifier, WebCore::ResourceRequest&&, WebCore::FetchOptions&&, IPC::FormDataReference&&, String&& referrer);
     void cancelFetch(WebCore::SWServerConnectionIdentifier, WebCore::ServiceWorkerIdentifier, WebCore::FetchIdentifier);
     void postMessageToServiceWorker(WebCore::ServiceWorkerIdentifier destinationIdentifier, WebCore::MessageWithMessagePorts&&, WebCore::ServiceWorkerOrClientData&& sourceData);

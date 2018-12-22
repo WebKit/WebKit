@@ -109,9 +109,10 @@ public:
     WEBCORE_EXPORT const SecurityOriginData& securityOrigin() const;
 
     WEBCORE_EXPORT SWServerToContextConnection* contextConnection();
+    String userAgent() const;
 
 private:
-    SWServerWorker(SWServer&, SWServerRegistration&, const URL&, const String& script, const ContentSecurityPolicyResponseHeaders&,  WorkerType, ServiceWorkerIdentifier, HashMap<URL, ServiceWorkerContextData::ImportedScript>&&);
+    SWServerWorker(SWServer&, SWServerRegistration&, const URL&, const String& script, const ContentSecurityPolicyResponseHeaders&, WorkerType, ServiceWorkerIdentifier, HashMap<URL, ServiceWorkerContextData::ImportedScript>&&);
 
     void callWhenActivatedHandler(bool success);
 

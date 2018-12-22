@@ -1,3 +1,25 @@
+2018-12-21  Chris Dumez  <cdumez@apple.com>
+
+        navigator.userAgent in service workers does not reflect customUserAgent set by client
+        https://bugs.webkit.org/show_bug.cgi?id=192951
+
+        Reviewed by Youenn Fablet.
+
+        * NetworkProcess/ServiceWorker/WebSWServerConnection.cpp:
+        (WebKit::WebSWServerConnection::registerServiceWorkerClient):
+        * NetworkProcess/ServiceWorker/WebSWServerConnection.h:
+        * NetworkProcess/ServiceWorker/WebSWServerConnection.messages.in:
+        * NetworkProcess/ServiceWorker/WebSWServerToContextConnection.cpp:
+        (WebKit::WebSWServerToContextConnection::installServiceWorkerContext):
+        * NetworkProcess/ServiceWorker/WebSWServerToContextConnection.h:
+        * WebProcess/Storage/WebSWClientConnection.cpp:
+        (WebKit::WebSWClientConnection::registerServiceWorkerClient):
+        * WebProcess/Storage/WebSWClientConnection.h:
+        * WebProcess/Storage/WebSWContextManagerConnection.cpp:
+        (WebKit::WebSWContextManagerConnection::installServiceWorker):
+        * WebProcess/Storage/WebSWContextManagerConnection.h:
+        * WebProcess/Storage/WebSWContextManagerConnection.messages.in:
+
 2018-12-21  Alex Christensen  <achristensen@webkit.org>
 
         Expand use of sourceApplicationAuditData

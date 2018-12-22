@@ -80,7 +80,7 @@ public:
     virtual bool mayHaveServiceWorkerRegisteredForOrigin(const SecurityOriginData&) const = 0;
     virtual void syncTerminateWorker(ServiceWorkerIdentifier) = 0;
 
-    virtual void registerServiceWorkerClient(const SecurityOrigin& topOrigin, const ServiceWorkerClientData&, const Optional<ServiceWorkerRegistrationIdentifier>&) = 0;
+    virtual void registerServiceWorkerClient(const SecurityOrigin& topOrigin, const ServiceWorkerClientData&, const Optional<ServiceWorkerRegistrationIdentifier>&, const String& userAgent) = 0;
     virtual void unregisterServiceWorkerClient(DocumentIdentifier) = 0;
 
     virtual void finishFetchingScriptInServer(const ServiceWorkerFetchResult&) = 0;

@@ -1791,7 +1791,7 @@ void DocumentLoader::registerTemporaryServiceWorkerClient(const URL& url)
         topOrigin = SecurityOrigin::create(url);
     else
         topOrigin = &m_frame->mainFrame().document()->topOrigin();
-    m_temporaryServiceWorkerClient->serviceWorkerConnection->registerServiceWorkerClient(*topOrigin, WTFMove(data), m_serviceWorkerRegistrationData->identifier);
+    m_temporaryServiceWorkerClient->serviceWorkerConnection->registerServiceWorkerClient(*topOrigin, WTFMove(data), m_serviceWorkerRegistrationData->identifier, m_frame->loader().userAgent(url));
 #else
     UNUSED_PARAM(url);
 #endif

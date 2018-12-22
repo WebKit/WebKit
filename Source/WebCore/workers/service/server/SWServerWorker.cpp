@@ -136,6 +136,11 @@ void SWServerWorker::matchAll(const ServiceWorkerClientQueryOptions& options, Se
     return m_server.matchAll(*this, options, WTFMove(callback));
 }
 
+String SWServerWorker::userAgent() const
+{
+    return m_server.serviceWorkerClientUserAgent(origin());
+}
+
 void SWServerWorker::claim()
 {
     return m_server.claim(*this);

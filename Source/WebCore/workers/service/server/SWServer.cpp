@@ -92,6 +92,14 @@ Optional<ServiceWorkerClientData> SWServer::serviceWorkerClientWithOriginByID(co
     return clientIterator->value;
 }
 
+String SWServer::serviceWorkerClientUserAgent(const ClientOrigin& clientOrigin) const
+{
+    auto iterator = m_clientIdentifiersPerOrigin.find(clientOrigin);
+    if (iterator == m_clientIdentifiersPerOrigin.end())
+        return String();
+    return iterator->value.userAgent;
+}
+
 SWServerWorker* SWServer::activeWorkerFromRegistrationID(ServiceWorkerRegistrationIdentifier identifier)
 {
     auto* registration = m_registrationsByID.get(identifier);
@@ -548,10 +556,11 @@ void SWServer::installContextData(const ServiceWorkerContextData& data)
 
     registration->setPreInstallationWorker(worker.ptr());
     worker->setState(SWServerWorker::State::Running);
+    auto userAgent = worker->userAgent();
     auto result = m_runningOrTerminatingWorkers.add(data.serviceWorkerIdentifier, WTFMove(worker));
     ASSERT_UNUSED(result, result.isNewEntry);
 
-    connection->installServiceWorkerContext(data, m_sessionID);
+    connection->installServiceWorkerContext(data, m_sessionID, userAgent);
 }
 
 void SWServer::runServiceWorkerIfNecessary(ServiceWorkerIdentifier identifier, RunServiceWorkerCallback&& callback)
@@ -602,7 +611,7 @@ bool SWServer::runServiceWorker(ServiceWorkerIdentifier identifier)
     auto* contextConnection = worker->contextConnection();
     ASSERT(contextConnection);
 
-    contextConnection->installServiceWorkerContext(worker->contextData(), m_sessionID);
+    contextConnection->installServiceWorkerContext(worker->contextData(), m_sessionID, worker->userAgent());
 
     return true;
 }
@@ -731,7 +740,7 @@ SWServerRegistration* SWServer::registrationFromServiceWorkerIdentifier(ServiceW
     return m_registrations.get(iterator->value->registrationKey());
 }
 
-void SWServer::registerServiceWorkerClient(ClientOrigin&& clientOrigin, ServiceWorkerClientData&& data, const Optional<ServiceWorkerRegistrationIdentifier>& controllingServiceWorkerRegistrationIdentifier)
+void SWServer::registerServiceWorkerClient(ClientOrigin&& clientOrigin, ServiceWorkerClientData&& data, const Optional<ServiceWorkerRegistrationIdentifier>& controllingServiceWorkerRegistrationIdentifier, String&& userAgent)
 {
     auto clientIdentifier = data.identifier;
 
@@ -744,6 +753,11 @@ void SWServer::registerServiceWorkerClient(ClientOrigin&& clientOrigin, ServiceW
 
     ASSERT(!clientIdentifiersForOrigin.identifiers.contains(clientIdentifier));
     clientIdentifiersForOrigin.identifiers.append(clientIdentifier);
+
+    if (!clientIdentifiersForOrigin.userAgent.isNull() && clientIdentifiersForOrigin.userAgent != userAgent)
+        RELEASE_LOG_ERROR(ServiceWorker, "%p - SWServer::registerServiceWorkerClient: Service worker has clients using different user agents", this);
+    clientIdentifiersForOrigin.userAgent = WTFMove(userAgent);
+
     clientIdentifiersForOrigin.terminateServiceWorkersTimer = nullptr;
 
     m_clientsBySecurityOrigin.ensure(clientOrigin.clientOrigin, [] {

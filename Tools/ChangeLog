@@ -1,3 +1,18 @@
+2018-12-21  Chris Dumez  <cdumez@apple.com>
+
+        navigator.userAgent in service workers does not reflect customUserAgent set by client
+        https://bugs.webkit.org/show_bug.cgi?id=192951
+
+        Reviewed by Youenn Fablet.
+
+        Extend API test coverage.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/ServiceWorkerBasic.mm:
+        (-[SWCustomUserAgentDelegate initWithUserAgent:]):
+        (-[SWCustomUserAgentDelegate _webView:decidePolicyForNavigationAction:userInfo:decisionHandler:]):
+        (-[SWUserAgentMessageHandler initWithExpectedMessage:]):
+        (-[SWUserAgentMessageHandler userContentController:didReceiveScriptMessage:]):
+
 2018-12-21  Jiewen Tan  <jiewen_tan@apple.com>
 
         [WebAuthN] userPresence should always be true

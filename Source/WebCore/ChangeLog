@@ -1,3 +1,30 @@
+2018-12-21  Chris Dumez  <cdumez@apple.com>
+
+        navigator.userAgent in service workers does not reflect customUserAgent set by client
+        https://bugs.webkit.org/show_bug.cgi?id=192951
+
+        Reviewed by Youenn Fablet.
+
+        Whenever a service worker client registers itself, also pass its effective user agent.
+        In the network process, for each origin, we store the latest client's user agent and
+        use it when starting the service worker.
+
+        * dom/Document.cpp:
+        (WebCore::Document::setServiceWorkerConnection):
+        * loader/DocumentLoader.cpp:
+        (WebCore::DocumentLoader::registerTemporaryServiceWorkerClient):
+        * workers/service/SWClientConnection.h:
+        * workers/service/server/SWServer.cpp:
+        (WebCore::SWServer::serviceWorkerClientUserAgent const):
+        (WebCore::SWServer::installContextData):
+        (WebCore::SWServer::runServiceWorker):
+        (WebCore::SWServer::registerServiceWorkerClient):
+        * workers/service/server/SWServer.h:
+        * workers/service/server/SWServerToContextConnection.h:
+        * workers/service/server/SWServerWorker.cpp:
+        (WebCore::SWServerWorker::userAgent const):
+        * workers/service/server/SWServerWorker.h:
+
 2018-12-21  Youenn Fablet  <youenn@apple.com>
 
         RTCRtpSender.setParameters() does set active parameter

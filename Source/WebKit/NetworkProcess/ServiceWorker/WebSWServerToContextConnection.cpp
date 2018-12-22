@@ -57,9 +57,9 @@ void WebSWServerToContextConnection::connectionClosed()
     // FIXME: Do what here...?
 }
 
-void WebSWServerToContextConnection::installServiceWorkerContext(const ServiceWorkerContextData& data, PAL::SessionID sessionID)
+void WebSWServerToContextConnection::installServiceWorkerContext(const ServiceWorkerContextData& data, PAL::SessionID sessionID, const String& userAgent)
 {
-    send(Messages::WebSWContextManagerConnection::InstallServiceWorker { data, sessionID });
+    send(Messages::WebSWContextManagerConnection::InstallServiceWorker { data, sessionID, userAgent });
 }
 
 void WebSWServerToContextConnection::fireInstallEvent(ServiceWorkerIdentifier serviceWorkerIdentifier)
