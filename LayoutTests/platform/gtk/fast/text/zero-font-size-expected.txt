@@ -8,8 +8,8 @@ layer at (0,0) size 800x600
           text run at (0,0) width 770: "Test that text with 0px font size is not displayed, even if a non-zero minimum font size setting is specified. On success, this"
           text run at (0,18) width 336: "paragraph should be the only text visible on the page."
       RenderBlock {DIV} at (0,52) size 784x0 [color=#FF0000]
-        RenderText {#text} at (0,0) size 3x0
-          text run at (0,0) width 3: "FAIL"
+        RenderText {#text} at (0,0) size 0x0
+          text run at (0,0) width 0: "FAIL"
       RenderBlock {DIV} at (0,52) size 784x0 [color=#FF0000]
-        RenderText {#text} at (0,0) size 3x0
-          text run at (0,0) width 3: "FAIL"
+        RenderText {#text} at (0,0) size 0x0
+          text run at (0,0) width 0: "FAIL"

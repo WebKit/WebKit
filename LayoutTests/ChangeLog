@@ -1,3 +1,9 @@
+2018-12-23  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed GTK+ gardening. Rebaseline fast/text/zero-font-size.html after r239539.
+
+        * platform/gtk/fast/text/zero-font-size-expected.txt:
+
 2018-12-13  Yusuke Suzuki  <yusukesuzuki@slowstart.org>
 
         [BigInt] Support BigInt in JSON.stringify
