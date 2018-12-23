@@ -4476,7 +4476,8 @@ static const double minimumFocusedElementAreaForSuppressingSelectionAssistant = 
     else
         [self _stopSuppressingSelectionAssistantForReason:WebKit::FocusedElementIsTransparent];
 
-    if (information.elementRect.area() < minimumFocusedElementAreaForSuppressingSelectionAssistant)
+    auto elementArea = information.elementRect.area<RecordOverflow>();
+    if (!elementArea.hasOverflowed() && elementArea < minimumFocusedElementAreaForSuppressingSelectionAssistant)
         [self _beginSuppressingSelectionAssistantForReason:WebKit::FocusedElementIsTooSmall];
     else
         [self _stopSuppressingSelectionAssistantForReason:WebKit::FocusedElementIsTooSmall];
@@ -5013,7 +5014,8 @@ static const double minimumFocusedElementAreaForSuppressingSelectionAssistant = 
         else
             [self _stopSuppressingSelectionAssistantForReason:WebKit::FocusedElementIsTransparent];
 
-        if (postLayoutData.focusedElementRect.area() < minimumFocusedElementAreaForSuppressingSelectionAssistant)
+        auto elementArea = postLayoutData.focusedElementRect.area<RecordOverflow>();
+        if (!elementArea.hasOverflowed() && elementArea < minimumFocusedElementAreaForSuppressingSelectionAssistant)
             [self _beginSuppressingSelectionAssistantForReason:WebKit::FocusedElementIsTooSmall];
         else
             [self _stopSuppressingSelectionAssistantForReason:WebKit::FocusedElementIsTooSmall];

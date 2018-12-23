@@ -1,3 +1,17 @@
+2018-12-23  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Fix fast/ruby/ruby-base-merge-block-children-crash-2.html after r239543
+        https://bugs.webkit.org/show_bug.cgi?id=193015
+        <rdar://problem/46583527>
+
+        Reviewed by Tim Horton.
+
+        Fix the crash by gracefully handling integer overflow when computing the area of a very large editable element.
+
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView _elementDidFocus:userIsInteracting:blurPreviousNode:changingActivityState:userObject:]):
+        (-[WKContentView _updateChangedSelection:]):
+
 2018-12-22  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [iOS] Suppress native selection behaviors when focusing a very small editable element
