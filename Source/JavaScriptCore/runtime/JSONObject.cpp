@@ -27,6 +27,7 @@
 #include "JSONObject.h"
 
 #include "ArrayConstructor.h"
+#include "BigIntObject.h"
 #include "BooleanObject.h"
 #include "Error.h"
 #include "ExceptionHelpers.h"
@@ -110,8 +111,8 @@ private:
 
     friend class Holder;
 
-    JSValue toJSON(JSObject*, const PropertyNameForFunctionCall&);
-    JSValue toJSONImpl(VM&, JSObject*, JSValue toJSONFunction, const PropertyNameForFunctionCall&);
+    JSValue toJSON(JSValue, const PropertyNameForFunctionCall&);
+    JSValue toJSONImpl(VM&, JSValue, JSValue toJSONFunction, const PropertyNameForFunctionCall&);
 
     enum StringifyResult { StringifyFailed, StringifySucceeded, StringifyFailedDueToUndefinedOrSymbolValue };
     StringifyResult appendStringifiedValue(StringBuilder&, JSValue, const Holder&, const PropertyNameForFunctionCall&);
@@ -148,8 +149,8 @@ static inline JSValue unwrapBoxedPrimitive(ExecState* exec, JSValue value)
         return jsNumber(object->toNumber(exec));
     if (object->inherits<StringObject>(vm))
         return object->toString(exec);
-    if (object->inherits<BooleanObject>(vm))
-        return object->toPrimitive(exec);
+    if (object->inherits<BooleanObject>(vm) || object->inherits<BigIntObject>(vm))
+        return jsCast<JSWrapperObject*>(object)->internalValue();
 
     // Do not unwrap SymbolObject to Symbol. It is not performed in the spec.
     // http://www.ecma-international.org/ecma-262/6.0/#sec-serializejsonproperty
@@ -286,34 +287,34 @@ JSValue Stringifier::stringify(JSValue value)
     RELEASE_AND_RETURN(scope, jsString(m_exec, result.toString()));
 }
 
-ALWAYS_INLINE JSValue Stringifier::toJSON(JSObject* object, const PropertyNameForFunctionCall& propertyName)
+ALWAYS_INLINE JSValue Stringifier::toJSON(JSValue baseValue, const PropertyNameForFunctionCall& propertyName)
 {
     VM& vm = m_exec->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
     scope.assertNoException();
 
-    PropertySlot slot(object, PropertySlot::InternalMethodType::Get);
-    bool hasProperty = object->getPropertySlot(m_exec, vm.propertyNames->toJSON, slot);
+    PropertySlot slot(baseValue, PropertySlot::InternalMethodType::Get);
+    bool hasProperty = baseValue.getPropertySlot(m_exec, vm.propertyNames->toJSON, slot);
     EXCEPTION_ASSERT(!scope.exception() || !hasProperty);
     if (!hasProperty)
-        return object;
+        return baseValue;
 
     JSValue toJSONFunction = slot.getValue(m_exec, vm.propertyNames->toJSON);
     RETURN_IF_EXCEPTION(scope, { });
-    RELEASE_AND_RETURN(scope, toJSONImpl(vm, object, toJSONFunction, propertyName));
+    RELEASE_AND_RETURN(scope, toJSONImpl(vm, baseValue, toJSONFunction, propertyName));
 }
 
-JSValue Stringifier::toJSONImpl(VM& vm, JSObject* object, JSValue toJSONFunction, const PropertyNameForFunctionCall& propertyName)
+JSValue Stringifier::toJSONImpl(VM& vm, JSValue baseValue, JSValue toJSONFunction, const PropertyNameForFunctionCall& propertyName)
 {
     CallType callType;
     CallData callData;
     if (!toJSONFunction.isCallable(vm, callType, callData))
-        return object;
+        return baseValue;
 
     MarkedArgumentBuffer args;
     args.append(propertyName.value(m_exec));
     ASSERT(!args.hasOverflowed());
-    return call(m_exec, asObject(toJSONFunction), callType, callData, object, args);
+    return call(m_exec, asObject(toJSONFunction), callType, callData, baseValue, args);
 }
 
 Stringifier::StringifyResult Stringifier::appendStringifiedValue(StringBuilder& builder, JSValue value, const Holder& holder, const PropertyNameForFunctionCall& propertyName)
@@ -322,8 +323,8 @@ Stringifier::StringifyResult Stringifier::appendStringifiedValue(StringBuilder& 
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     // Call the toJSON function.
-    if (value.isObject()) {
-        value = toJSON(asObject(value), propertyName);
+    if (value.isObject() || value.isBigInt()) {
+        value = toJSON(value, propertyName);
         RETURN_IF_EXCEPTION(scope, StringifyFailed);
     }
 
@@ -376,6 +377,11 @@ Stringifier::StringifyResult Stringifier::appendStringifiedValue(StringBuilder& 
                 builder.appendECMAScriptNumber(number);
         }
         return StringifySucceeded;
+    }
+
+    if (value.isBigInt()) {
+        throwTypeError(m_exec, scope, "JSON.stringify cannot serialize BigInt."_s);
+        return StringifyFailed;
     }
 
     if (!value.isObject())

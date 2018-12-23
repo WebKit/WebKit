@@ -1,3 +1,19 @@
+2018-12-13  Yusuke Suzuki  <yusukesuzuki@slowstart.org>
+
+        [BigInt] Support BigInt in JSON.stringify
+        https://bugs.webkit.org/show_bug.cgi?id=192624
+
+        Reviewed by Saam Barati.
+
+        * stress/big-int-json-stringify-to-json.js: Added.
+        (shouldBe):
+        (shouldThrow):
+        (BigInt.prototype.toJSON):
+        (shouldBe.JSON.stringify):
+        * stress/big-int-json-stringify.js: Added.
+        (shouldBe):
+        (shouldThrow):
+
 2018-12-20  Yusuke Suzuki  <yusukesuzuki@slowstart.org>
 
         [JSC] Implement "well-formed JSON.stringify" proposal

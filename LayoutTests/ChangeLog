@@ -1,3 +1,18 @@
+2018-12-13  Yusuke Suzuki  <yusukesuzuki@slowstart.org>
+
+        [BigInt] Support BigInt in JSON.stringify
+        https://bugs.webkit.org/show_bug.cgi?id=192624
+
+        Reviewed by Saam Barati.
+
+        The test is wrong according to the spec[1]. valueOf of Boolean object won't be called.
+
+        [1]: https://tc39.github.io/ecma262/#sec-serializejsonproperty
+
+        * js/resources/JSON-stringify.js:
+        * js/resources/json2-es5-compat.js:
+        (str):
+
 2018-12-22  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [iOS] Suppress native selection behaviors when focusing a very small editable element

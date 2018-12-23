@@ -267,8 +267,10 @@ if (!this.JSON) {
 // What happens next depends on the value's type.
 
         if (value && ((typeof value) === "object")) {
-            if (value.constructor === String || value.constructor === Number || value.constructor === Boolean)
+            if (value.constructor === String || value.constructor === Number)
                 value = value.valueOf();
+            else if (value.constructor === Boolean)
+                value = Boolean.prototype.valueOf.call(value);
         }
 
         switch (typeof value) {

@@ -1,3 +1,20 @@
+2018-12-13  Yusuke Suzuki  <yusukesuzuki@slowstart.org>
+
+        [BigInt] Support BigInt in JSON.stringify
+        https://bugs.webkit.org/show_bug.cgi?id=192624
+
+        Reviewed by Saam Barati.
+
+        This patch adds BigInt support to JSON.stringify, specified in [1].
+
+        [1]: https://tc39.github.io/proposal-bigint/#sec-serializejsonproperty
+
+        * runtime/JSONObject.cpp:
+        (JSC::unwrapBoxedPrimitive):
+        (JSC::Stringifier::toJSON):
+        (JSC::Stringifier::toJSONImpl):
+        (JSC::Stringifier::appendStringifiedValue):
+
 2018-12-21  Yusuke Suzuki  <yusukesuzuki@slowstart.org>
 
         [JSC] Use appendUnbarriered for cached own keys

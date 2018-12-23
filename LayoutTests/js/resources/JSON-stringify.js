@@ -69,7 +69,7 @@ function createTests() {
         value.valueOf = function() { return 2; }
         return jsonObject.stringify(value);
     });
-    result[result.length - 1].expected = '2';
+    result[result.length - 1].expected = 'true';
     result.push(function(jsonObject){
         var value = new String("fail");
         value.toString = function() { return "converted string"; }
