@@ -112,7 +112,7 @@ void EditorState::PostLayoutData::encode(IPC::Encoder& encoder) const
     encoder << caretRectAtStart;
 #endif
 #if PLATFORM(IOS_FAMILY) || PLATFORM(MAC)
-    encoder << selectionClipRect;
+    encoder << focusedElementRect;
     encoder << selectedTextLength;
     encoder << textAlignment;
     encoder << textColor;
@@ -153,7 +153,7 @@ bool EditorState::PostLayoutData::decode(IPC::Decoder& decoder, PostLayoutData& 
         return false;
 #endif
 #if PLATFORM(IOS_FAMILY) || PLATFORM(MAC)
-    if (!decoder.decode(result.selectionClipRect))
+    if (!decoder.decode(result.focusedElementRect))
         return false;
     if (!decoder.decode(result.selectedTextLength))
         return false;
@@ -262,8 +262,8 @@ TextStream& operator<<(TextStream& ts, const EditorState& editorState)
         ts.dumpProperty("caretRectAtStart", editorState.postLayoutData().caretRectAtStart);
 #endif
 #if PLATFORM(IOS_FAMILY) || PLATFORM(MAC)
-    if (editorState.postLayoutData().selectionClipRect != IntRect())
-        ts.dumpProperty("selectionClipRect", editorState.postLayoutData().selectionClipRect);
+    if (editorState.postLayoutData().focusedElementRect != IntRect())
+        ts.dumpProperty("focusedElementRect", editorState.postLayoutData().focusedElementRect);
     if (editorState.postLayoutData().selectedTextLength)
         ts.dumpProperty("selectedTextLength", editorState.postLayoutData().selectedTextLength);
     if (editorState.postLayoutData().textAlignment != NoAlignment)

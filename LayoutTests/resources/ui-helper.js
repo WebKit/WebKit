@@ -346,6 +346,12 @@ window.UIHelper = class UIHelper {
         });
     }
 
+    static zoomToScale(scale)
+    {
+        const uiScript = `uiController.zoomToScale(${scale}, () => uiController.uiScriptComplete())`;
+        return new Promise(resolve => testRunner.runUIScript(uiScript, resolve));
+    }
+
     static typeCharacter(characterString)
     {
         if (!this.isWebKit2() || !this.isIOS()) {

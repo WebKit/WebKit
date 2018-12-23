@@ -163,7 +163,8 @@ namespace WebKit {
 
 enum SuppressSelectionAssistantReason : uint8_t {
     FocusedElementIsTransparent = 1 << 0,
-    DropAnimationIsRunning = 1 << 1
+    FocusedElementIsTooSmall = 1 << 1,
+    DropAnimationIsRunning = 1 << 2
 };
 
 struct WKSelectionDrawingInfo {

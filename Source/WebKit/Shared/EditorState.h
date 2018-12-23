@@ -89,7 +89,7 @@ struct EditorState {
         WebCore::IntRect caretRectAtStart;
 #endif
 #if PLATFORM(IOS_FAMILY) || PLATFORM(MAC)
-        WebCore::IntRect selectionClipRect;
+        WebCore::IntRect focusedElementRect;
         uint64_t selectedTextLength { 0 };
         uint32_t textAlignment { NoAlignment };
         WebCore::Color textColor { WebCore::Color::black };

@@ -241,7 +241,7 @@ void WebPage::platformEditorState(Frame& frame, EditorState& result, IncludePost
     postLayoutData.insideFixedPosition = startNodeIsInsideFixedPosition || endNodeIsInsideFixedPosition;
     if (!selection.isNone()) {
         if (m_focusedElement && m_focusedElement->renderer()) {
-            postLayoutData.selectionClipRect = view->contentsToRootView(m_focusedElement->renderer()->absoluteBoundingBoxRect());
+            postLayoutData.focusedElementRect = view->contentsToRootView(m_focusedElement->renderer()->absoluteBoundingBoxRect());
             postLayoutData.caretColor = m_focusedElement->renderer()->style().caretColor();
             postLayoutData.elementIsTransparent = m_focusedElement->renderer()->isTransparentRespectingParentFrames();
         }

@@ -151,11 +151,11 @@ void WebPage::platformEditorState(Frame& frame, EditorState& result, IncludePost
     Vector<FloatQuad> quads;
     selectedRange->absoluteTextQuads(quads);
     if (!quads.isEmpty())
-        postLayoutData.selectionClipRect = frame.view()->contentsToWindow(quads[0].enclosingBoundingBox());
+        postLayoutData.focusedElementRect = frame.view()->contentsToWindow(quads[0].enclosingBoundingBox());
     else {
         // Range::absoluteTextQuads() will be empty at the start of a paragraph.
         if (selection.isCaret())
-            postLayoutData.selectionClipRect = frame.view()->contentsToWindow(frame.selection().absoluteCaretBounds());
+            postLayoutData.focusedElementRect = frame.view()->contentsToWindow(frame.selection().absoluteCaretBounds());
     }
 }
 

@@ -1398,7 +1398,7 @@ static NSValue *nsSizeForTapHighlightBorderRadius(WebCore::IntSize borderRadius,
 
 - (void)_zoomToRevealFocusedElement
 {
-    if (_suppressSelectionAssistantReasons.contains(WebKit::FocusedElementIsTransparent))
+    if (_suppressSelectionAssistantReasons.contains(WebKit::FocusedElementIsTransparent) || _suppressSelectionAssistantReasons.contains(WebKit::FocusedElementIsTooSmall))
         return;
 
     SetForScope<BOOL> isZoomingToRevealFocusedElementForScope { _isZoomingToRevealFocusedElement, YES };
@@ -1465,7 +1465,7 @@ static NSValue *nsSizeForTapHighlightBorderRadius(WebCore::IntSize borderRadius,
 {
     if (!hasFocusedElement(_focusedElementInformation))
         return CGRectNull;
-    return _page->editorState().postLayoutData().selectionClipRect;
+    return _page->editorState().postLayoutData().focusedElementRect;
 }
 
 - (BOOL)gestureRecognizer:(UIGestureRecognizer *)preventingGestureRecognizer canPreventGestureRecognizer:(UIGestureRecognizer *)preventedGestureRecognizer
@@ -4446,6 +4446,8 @@ static bool isAssistableInputType(WebKit::InputType type)
     return false;
 }
 
+static const double minimumFocusedElementAreaForSuppressingSelectionAssistant = 4;
+
 - (void)_elementDidFocus:(const WebKit::FocusedElementInformation&)information userIsInteracting:(BOOL)userIsInteracting blurPreviousNode:(BOOL)blurPreviousNode changingActivityState:(BOOL)changingActivityState userObject:(NSObject <NSSecureCoding> *)userObject
 {
     SetForScope<BOOL> isChangingFocusForScope { _isChangingFocus, hasFocusedElement(_focusedElementInformation) };
@@ -4473,6 +4475,11 @@ static bool isAssistableInputType(WebKit::InputType type)
         [self _beginSuppressingSelectionAssistantForReason:WebKit::FocusedElementIsTransparent];
     else
         [self _stopSuppressingSelectionAssistantForReason:WebKit::FocusedElementIsTransparent];
+
+    if (information.elementRect.area() < minimumFocusedElementAreaForSuppressingSelectionAssistant)
+        [self _beginSuppressingSelectionAssistantForReason:WebKit::FocusedElementIsTooSmall];
+    else
+        [self _stopSuppressingSelectionAssistantForReason:WebKit::FocusedElementIsTooSmall];
 
     switch (startInputSessionPolicy) {
     case _WKFocusStartsInputSessionPolicyAuto:
@@ -5000,11 +5007,16 @@ static bool isAssistableInputType(WebKit::InputType type)
         return;
 
     auto& postLayoutData = state.postLayoutData();
-    if (hasFocusedElement(_focusedElementInformation)) {
+    if (!state.selectionIsNone && hasFocusedElement(_focusedElementInformation)) {
         if (postLayoutData.elementIsTransparent)
             [self _beginSuppressingSelectionAssistantForReason:WebKit::FocusedElementIsTransparent];
         else
             [self _stopSuppressingSelectionAssistantForReason:WebKit::FocusedElementIsTransparent];
+
+        if (postLayoutData.focusedElementRect.area() < minimumFocusedElementAreaForSuppressingSelectionAssistant)
+            [self _beginSuppressingSelectionAssistantForReason:WebKit::FocusedElementIsTooSmall];
+        else
+            [self _stopSuppressingSelectionAssistantForReason:WebKit::FocusedElementIsTooSmall];
     }
 
     WebKit::WKSelectionDrawingInfo selectionDrawingInfo(_page->editorState());

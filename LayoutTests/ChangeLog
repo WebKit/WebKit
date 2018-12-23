@@ -1,3 +1,19 @@
+2018-12-22  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [iOS] Suppress native selection behaviors when focusing a very small editable element
+        https://bugs.webkit.org/show_bug.cgi?id=193005
+        <rdar://problem/46583527>
+
+        Reviewed by Tim Horton.
+
+        Add a new layout test to verify that native selection UI is suppressed when focusing a tiny (1px by 1px)
+        editable element.
+
+        * editing/selection/ios/hide-selection-in-tiny-contenteditable-expected.txt: Added.
+        * editing/selection/ios/hide-selection-in-tiny-contenteditable.html: Added.
+        * resources/ui-helper.js:
+        (window.UIHelper.zoomToScale):
+
 2018-12-20  Yusuke Suzuki  <yusukesuzuki@slowstart.org>
 
         [JSC] Implement "well-formed JSON.stringify" proposal

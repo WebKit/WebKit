@@ -1,3 +1,55 @@
+2018-12-22  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [iOS] Suppress native selection behaviors when focusing a very small editable element
+        https://bugs.webkit.org/show_bug.cgi?id=193005
+        <rdar://problem/46583527>
+
+        Reviewed by Tim Horton.
+
+        In r238146, I added a mechanism to detect when the selection is hidden within transparent editable elements, and
+        used this to suppress native selection on iOS (such as selection handles, highlight, callout bar, etc.) to avoid
+        conflicts between the page's editing UI and the platform.
+
+        However, one additional technique observed on some websites involves hiding the selection by moving it into a
+        tiny (1x1) editable element. Here, we currently still present a callout bar with editing actions, as well as
+        show a selection caret or handles on iOS. To fix this, we extend the mechanism added in r238146 by also
+        suppressing the selection assistant in the case where the editable element's area is beneath a tiny minimum
+        threshold.
+
+        Test: editing/selection/ios/hide-selection-in-tiny-contenteditable.html
+
+        * Shared/EditorState.cpp:
+        (WebKit::EditorState::PostLayoutData::encode const):
+        (WebKit::EditorState::PostLayoutData::decode):
+        (WebKit::operator<<):
+        * Shared/EditorState.h:
+
+        Rename selectionClipRect to focusedElementRect. We currently propagate the bounds of the focused element to the
+        UI process through EditorState updates, but only for the purpose of returning it in the computed selection clip
+        rect; instead, rename this member to something more general-purpose, so we can also use it when determining
+        whether to suppress the selection assistant.
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _candidateRect]):
+        * UIProcess/Cocoa/WebViewImpl.mm:
+        (WebKit::WebViewImpl::handleRequestedCandidates):
+        * UIProcess/ios/WKContentViewInteraction.h:
+
+        Add a new SuppressSelectionAssistantReason that corresponds to focusing tiny editable elements.
+
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView _zoomToRevealFocusedElement]):
+        (-[WKContentView _selectionClipRect]):
+        (-[WKContentView _elementDidFocus:userIsInteracting:blurPreviousNode:changingActivityState:userObject:]):
+        (-[WKContentView _updateChangedSelection:]):
+
+        Check the size of the focused element, and begin or stop suppressing the selection assistant accordingly.
+
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::platformEditorState const):
+        * WebProcess/WebPage/mac/WebPageMac.mm:
+        (WebKit::WebPage::platformEditorState const):
+
 2018-12-20  Yusuke Suzuki  <yusukesuzuki@slowstart.org>
 
         Use Ref<> as much as possible
