@@ -1,3 +1,27 @@
+2018-12-24  Simon Fraser  <simon.fraser@apple.com>
+
+        Change ScrollingNodeType to an enum class
+        https://bugs.webkit.org/show_bug.cgi?id=193009
+
+        Reviewed by Zalan Bujtas.
+
+        Change the ScrollingNodeType enum to an enum class.
+        
+        No behavior change.
+
+        * Shared/RemoteLayerTree/RemoteScrollingCoordinatorTransaction.cpp:
+        (WebKit::encodeNodeAndDescendants):
+        (WebKit::RemoteScrollingCoordinatorTransaction::decode):
+        (WebKit::dump):
+        * UIProcess/RemoteLayerTree/RemoteScrollingCoordinatorProxy.cpp:
+        (WebKit::RemoteScrollingCoordinatorProxy::connectStateNodeLayers):
+        * UIProcess/RemoteLayerTree/RemoteScrollingTree.cpp:
+        (WebKit::RemoteScrollingTree::createScrollingTreeNode):
+        * UIProcess/RemoteLayerTree/ios/RemoteScrollingCoordinatorProxyIOS.mm:
+        (WebKit::RemoteScrollingCoordinatorProxy::connectStateNodeLayers):
+        * UIProcess/RemoteLayerTree/ios/ScrollingTreeScrollingNodeDelegateIOS.mm:
+        (WebKit::ScrollingTreeScrollingNodeDelegateIOS::updateChildNodesAfterScroll):
+
 2018-12-23  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [iOS] Remove some unnecessary editing SPI after <rdar://problem/46047546>

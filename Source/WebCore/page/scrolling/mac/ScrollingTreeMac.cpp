@@ -47,15 +47,15 @@ ScrollingTreeMac::ScrollingTreeMac(AsyncScrollingCoordinator& scrollingCoordinat
 Ref<ScrollingTreeNode> ScrollingTreeMac::createScrollingTreeNode(ScrollingNodeType nodeType, ScrollingNodeID nodeID)
 {
     switch (nodeType) {
-    case MainFrameScrollingNode:
-    case SubframeScrollingNode:
+    case ScrollingNodeType::MainFrame:
+    case ScrollingNodeType::Subframe:
         return ScrollingTreeFrameScrollingNodeMac::create(*this, nodeType, nodeID);
-    case OverflowScrollingNode:
+    case ScrollingNodeType::Overflow:
         ASSERT_NOT_REACHED();
         break;
-    case FixedNode:
+    case ScrollingNodeType::Fixed:
         return ScrollingTreeFixedNode::create(*this, nodeID);
-    case StickyNode:
+    case ScrollingNodeType::Sticky:
         return ScrollingTreeStickyNode::create(*this, nodeID);
     }
     ASSERT_NOT_REACHED();

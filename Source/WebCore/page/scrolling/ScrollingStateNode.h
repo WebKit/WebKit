@@ -196,11 +196,11 @@ public:
     
     ScrollingNodeType nodeType() const { return m_nodeType; }
 
-    bool isFixedNode() const { return m_nodeType == FixedNode; }
-    bool isStickyNode() const { return m_nodeType == StickyNode; }
+    bool isFixedNode() const { return m_nodeType == ScrollingNodeType::Fixed; }
+    bool isStickyNode() const { return m_nodeType == ScrollingNodeType::Sticky; }
     bool isScrollingNode() const { return isFrameScrollingNode() || isOverflowScrollingNode(); }
-    bool isFrameScrollingNode() const { return m_nodeType == MainFrameScrollingNode || m_nodeType == SubframeScrollingNode; }
-    bool isOverflowScrollingNode() const { return m_nodeType == OverflowScrollingNode; }
+    bool isFrameScrollingNode() const { return m_nodeType == ScrollingNodeType::MainFrame || m_nodeType == ScrollingNodeType::Subframe; }
+    bool isOverflowScrollingNode() const { return m_nodeType == ScrollingNodeType::Overflow; }
 
     virtual Ref<ScrollingStateNode> clone(ScrollingStateTree& adoptiveTree) = 0;
     Ref<ScrollingStateNode> cloneAndReset(ScrollingStateTree& adoptiveTree);

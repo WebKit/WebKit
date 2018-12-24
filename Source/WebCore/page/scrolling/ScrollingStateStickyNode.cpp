@@ -41,7 +41,7 @@ Ref<ScrollingStateStickyNode> ScrollingStateStickyNode::create(ScrollingStateTre
 }
 
 ScrollingStateStickyNode::ScrollingStateStickyNode(ScrollingStateTree& tree, ScrollingNodeID nodeID)
-    : ScrollingStateNode(StickyNode, tree, nodeID)
+    : ScrollingStateNode(ScrollingNodeType::Sticky, tree, nodeID)
 {
 }
 

@@ -47,11 +47,11 @@ public:
     ScrollingNodeType nodeType() const { return m_nodeType; }
     ScrollingNodeID scrollingNodeID() const { return m_nodeID; }
     
-    bool isFixedNode() const { return nodeType() == FixedNode; }
-    bool isStickyNode() const { return nodeType() == StickyNode; }
+    bool isFixedNode() const { return nodeType() == ScrollingNodeType::Fixed; }
+    bool isStickyNode() const { return nodeType() == ScrollingNodeType::Sticky; }
     bool isScrollingNode() const { return isFrameScrollingNode() || isOverflowScrollingNode(); }
-    bool isFrameScrollingNode() const { return nodeType() == MainFrameScrollingNode || nodeType() == SubframeScrollingNode; }
-    bool isOverflowScrollingNode() const { return nodeType() == OverflowScrollingNode; }
+    bool isFrameScrollingNode() const { return nodeType() == ScrollingNodeType::MainFrame || nodeType() == ScrollingNodeType::Subframe; }
+    bool isOverflowScrollingNode() const { return nodeType() == ScrollingNodeType::Overflow; }
 
     virtual void commitStateBeforeChildren(const ScrollingStateNode&) = 0;
     virtual void commitStateAfterChildren(const ScrollingStateNode&) { }

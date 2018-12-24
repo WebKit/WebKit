@@ -3806,19 +3806,19 @@ void RenderLayerCompositor::reattachSubframeScrollLayers()
         if (!parentNodeID)
             continue;
 
-        scrollingCoordinator->attachToStateTree(child->isMainFrame() ? MainFrameScrollingNode : SubframeScrollingNode, frameScrollingNodeID, parentNodeID);
+        scrollingCoordinator->attachToStateTree(child->isMainFrame() ? ScrollingNodeType::MainFrame : ScrollingNodeType::Subframe, frameScrollingNodeID, parentNodeID);
     }
 }
 
 static inline LayerScrollCoordinationRole scrollCoordinationRoleForNodeType(ScrollingNodeType nodeType)
 {
     switch (nodeType) {
-    case MainFrameScrollingNode:
-    case SubframeScrollingNode:
-    case OverflowScrollingNode:
+    case ScrollingNodeType::MainFrame:
+    case ScrollingNodeType::Subframe:
+    case ScrollingNodeType::Overflow:
         return Scrolling;
-    case FixedNode:
-    case StickyNode:
+    case ScrollingNodeType::Fixed:
+    case ScrollingNodeType::Sticky:
         return ViewportConstrained;
     }
     ASSERT_NOT_REACHED();
@@ -3874,7 +3874,7 @@ void RenderLayerCompositor::updateScrollCoordinationForThisFrame(ScrollingNodeID
     FrameView& frameView = m_renderView.frameView();
     ASSERT(scrollingCoordinator->coordinatesScrollingForFrameView(frameView));
 
-    ScrollingNodeID nodeID = attachScrollingNode(*m_renderView.layer(), m_renderView.frame().isMainFrame() ? MainFrameScrollingNode : SubframeScrollingNode, parentNodeID);
+    ScrollingNodeID nodeID = attachScrollingNode(*m_renderView.layer(), m_renderView.frame().isMainFrame() ? ScrollingNodeType::MainFrame : ScrollingNodeType::Subframe, parentNodeID);
     ScrollingCoordinator::ScrollingGeometry scrollingGeometry;
     // FIXME(https://webkit.org/b/172917): Pass parentRelativeScrollableRect?
     scrollingGeometry.scrollOrigin = frameView.scrollOrigin();
@@ -3918,11 +3918,11 @@ void RenderLayerCompositor::updateScrollCoordinatedLayer(RenderLayer& layer, Opt
     // Always call this even if the backing is already attached because the parent may have changed.
     // If a node plays both roles, fixed/sticky is always the ancestor node of scrolling.
     if (reasons & ViewportConstrained) {
-        ScrollingNodeType nodeType = MainFrameScrollingNode;
+        ScrollingNodeType nodeType = ScrollingNodeType::MainFrame;
         if (layer.renderer().isFixedPositioned())
-            nodeType = FixedNode;
+            nodeType = ScrollingNodeType::Fixed;
         else if (layer.renderer().style().position() == PositionType::Sticky)
-            nodeType = StickyNode;
+            nodeType = ScrollingNodeType::Sticky;
         else
             ASSERT_NOT_REACHED();
 
@@ -3937,15 +3937,15 @@ void RenderLayerCompositor::updateScrollCoordinatedLayer(RenderLayer& layer, Opt
 
         if (changes & ScrollingNodeChangeFlags::LayerGeometry) {
             switch (nodeType) {
-            case FixedNode:
+            case ScrollingNodeType::Fixed:
                 scrollingCoordinator->updateNodeViewportConstraints(nodeID, computeFixedViewportConstraints(layer));
                 break;
-            case StickyNode:
+            case ScrollingNodeType::Sticky:
                 scrollingCoordinator->updateNodeViewportConstraints(nodeID, computeStickyViewportConstraints(layer));
                 break;
-            case MainFrameScrollingNode:
-            case SubframeScrollingNode:
-            case OverflowScrollingNode:
+            case ScrollingNodeType::MainFrame:
+            case ScrollingNodeType::Subframe:
+            case ScrollingNodeType::Overflow:
                 break;
             }
         }
@@ -3958,7 +3958,7 @@ void RenderLayerCompositor::updateScrollCoordinatedLayer(RenderLayer& layer, Opt
         if (isRenderViewLayer)
             updateScrollCoordinationForThisFrame(parentNodeID);
         else {
-            ScrollingNodeType nodeType = OverflowScrollingNode;
+            ScrollingNodeType nodeType = ScrollingNodeType::Overflow;
             ScrollingNodeID nodeID = attachScrollingNode(layer, nodeType, parentNodeID);
             if (!nodeID)
                 return;

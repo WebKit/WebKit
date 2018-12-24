@@ -39,7 +39,7 @@ Ref<ScrollingStateOverflowScrollingNode> ScrollingStateOverflowScrollingNode::cr
 }
 
 ScrollingStateOverflowScrollingNode::ScrollingStateOverflowScrollingNode(ScrollingStateTree& stateTree, ScrollingNodeID nodeID)
-    : ScrollingStateScrollingNode(stateTree, OverflowScrollingNode, nodeID)
+    : ScrollingStateScrollingNode(stateTree, ScrollingNodeType::Overflow, nodeID)
 {
 }
 

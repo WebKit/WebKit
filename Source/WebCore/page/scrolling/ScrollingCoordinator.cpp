@@ -417,19 +417,19 @@ TextStream& operator<<(TextStream& ts, ScrollableAreaParameters scrollableAreaPa
 TextStream& operator<<(TextStream& ts, ScrollingNodeType nodeType)
 {
     switch (nodeType) {
-    case MainFrameScrollingNode:
+    case ScrollingNodeType::MainFrame:
         ts << "main-frame-scrolling";
         break;
-    case SubframeScrollingNode:
+    case ScrollingNodeType::Subframe:
         ts << "subframe-scrolling";
         break;
-    case OverflowScrollingNode:
+    case ScrollingNodeType::Overflow:
         ts << "overflow-scrolling";
         break;
-    case FixedNode:
+    case ScrollingNodeType::Fixed:
         ts << "fixed";
         break;
-    case StickyNode:
+    case ScrollingNodeType::Sticky:
         ts << "sticky";
         break;
     }

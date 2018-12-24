@@ -49,15 +49,15 @@ ScrollingTreeCoordinatedGraphics::ScrollingTreeCoordinatedGraphics(AsyncScrollin
 Ref<ScrollingTreeNode> ScrollingTreeCoordinatedGraphics::createScrollingTreeNode(ScrollingNodeType nodeType, ScrollingNodeID nodeID)
 {
     switch (nodeType) {
-    case MainFrameScrollingNode:
-    case SubframeScrollingNode:
+    case ScrollingNodeType::MainFrame:
+    case ScrollingNodeType::Subframe:
         return ScrollingTreeFrameScrollingNodeCoordinatedGraphics::create(*this, nodeType, nodeID);
-    case OverflowScrollingNode:
+    case ScrollingNodeType::Overflow:
         // Should not be reached -- caught by ASSERT_NOT_REACHED() below.
         break;
-    case FixedNode:
+    case ScrollingNodeType::Fixed:
         return ScrollingTreeFixedNode::create(*this, nodeID);
-    case StickyNode:
+    case ScrollingNodeType::Sticky:
         return ScrollingTreeStickyNode::create(*this, nodeID);
     }
 

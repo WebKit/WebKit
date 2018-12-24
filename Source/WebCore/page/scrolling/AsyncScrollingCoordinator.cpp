@@ -510,7 +510,7 @@ void AsyncScrollingCoordinator::ensureRootStateNodeForFrameView(FrameView& frame
     // For non-main frames, it is only possible to arrive in this function from
     // RenderLayerCompositor::updateBacking where the node has already been created.
     ASSERT(frameView.frame().isMainFrame());
-    attachToStateTree(MainFrameScrollingNode, frameView.scrollLayerID(), 0, 0);
+    attachToStateTree(ScrollingNodeType::MainFrame, frameView.scrollLayerID(), 0, 0);
 }
 
 void AsyncScrollingCoordinator::updateFrameScrollingNode(ScrollingNodeID nodeID, GraphicsLayer* layer, GraphicsLayer* scrolledContentsLayer, GraphicsLayer* counterScrollingLayer, GraphicsLayer* insetClipLayer, const ScrollingGeometry& scrollingGeometry)

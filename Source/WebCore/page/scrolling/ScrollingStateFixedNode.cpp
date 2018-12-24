@@ -41,7 +41,7 @@ Ref<ScrollingStateFixedNode> ScrollingStateFixedNode::create(ScrollingStateTree&
 }
 
 ScrollingStateFixedNode::ScrollingStateFixedNode(ScrollingStateTree& tree, ScrollingNodeID nodeID)
-    : ScrollingStateNode(FixedNode, tree, nodeID)
+    : ScrollingStateNode(ScrollingNodeType::Fixed, tree, nodeID)
 {
 }
 

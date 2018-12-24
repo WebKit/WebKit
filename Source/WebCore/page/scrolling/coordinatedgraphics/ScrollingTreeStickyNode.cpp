@@ -40,7 +40,7 @@ Ref<ScrollingTreeStickyNode> ScrollingTreeStickyNode::create(ScrollingTree& scro
 }
 
 ScrollingTreeStickyNode::ScrollingTreeStickyNode(ScrollingTree& scrollingTree, ScrollingNodeID nodeID)
-    : ScrollingTreeNode(scrollingTree, StickyNode, nodeID)
+    : ScrollingTreeNode(scrollingTree, ScrollingNodeType::Sticky, nodeID)
 {
     scrollingTree.fixedOrStickyNodeAdded();
 }

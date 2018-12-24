@@ -68,15 +68,15 @@ void ScrollingStateTree::setHasChangedProperties(bool changedProperties)
 Ref<ScrollingStateNode> ScrollingStateTree::createNode(ScrollingNodeType nodeType, ScrollingNodeID nodeID)
 {
     switch (nodeType) {
-    case FixedNode:
-        return ScrollingStateFixedNode::create(*this, nodeID);
-    case StickyNode:
-        return ScrollingStateStickyNode::create(*this, nodeID);
-    case MainFrameScrollingNode:
-    case SubframeScrollingNode:
+    case ScrollingNodeType::MainFrame:
+    case ScrollingNodeType::Subframe:
         return ScrollingStateFrameScrollingNode::create(*this, nodeType, nodeID);
-    case OverflowScrollingNode:
+    case ScrollingNodeType::Overflow:
         return ScrollingStateOverflowScrollingNode::create(*this, nodeID);
+    case ScrollingNodeType::Fixed:
+        return ScrollingStateFixedNode::create(*this, nodeID);
+    case ScrollingNodeType::Sticky:
+        return ScrollingStateStickyNode::create(*this, nodeID);
     }
     ASSERT_NOT_REACHED();
     return ScrollingStateFixedNode::create(*this, nodeID);
@@ -132,7 +132,7 @@ ScrollingNodeID ScrollingStateTree::attachNode(ScrollingNodeType nodeType, Scrol
         // If we're resetting the root node, we should clear the HashMap and destroy the current children.
         clear();
 
-        setRootStateNode(ScrollingStateFrameScrollingNode::create(*this, MainFrameScrollingNode, newNodeID));
+        setRootStateNode(ScrollingStateFrameScrollingNode::create(*this, ScrollingNodeType::MainFrame, newNodeID));
         newNode = rootStateNode();
         m_hasNewRootStateNode = true;
     } else {
@@ -142,7 +142,7 @@ ScrollingNodeID ScrollingStateTree::attachNode(ScrollingNodeType nodeType, Scrol
             return 0;
         }
 
-        if (nodeType == SubframeScrollingNode && parentID) {
+        if (nodeType == ScrollingNodeType::Subframe && parentID) {
             if (auto orphanedNode = m_orphanedSubframeNodes.take(newNodeID)) {
                 newNode = orphanedNode.get();
                 if (childIndex == notFound)

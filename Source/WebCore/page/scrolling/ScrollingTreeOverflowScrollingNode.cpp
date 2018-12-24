@@ -34,7 +34,7 @@
 namespace WebCore {
 
 ScrollingTreeOverflowScrollingNode::ScrollingTreeOverflowScrollingNode(ScrollingTree& scrollingTree, ScrollingNodeID nodeID)
-    : ScrollingTreeScrollingNode(scrollingTree, OverflowScrollingNode, nodeID)
+    : ScrollingTreeScrollingNode(scrollingTree, ScrollingNodeType::Overflow, nodeID)
 {
 }
 

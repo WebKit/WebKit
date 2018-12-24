@@ -54,7 +54,13 @@ namespace WebCore {
 typedef unsigned SynchronousScrollingReasons;
 typedef uint64_t ScrollingNodeID;
 
-enum ScrollingNodeType { MainFrameScrollingNode, SubframeScrollingNode, OverflowScrollingNode, FixedNode, StickyNode };
+enum class ScrollingNodeType : uint8_t {
+    MainFrame,
+    Subframe,
+    Overflow,
+    Fixed,
+    Sticky
+};
 
 enum ScrollingStateTreeAsTextBehaviorFlags {
     ScrollingStateTreeAsTextBehaviorNormal                  = 0,

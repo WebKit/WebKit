@@ -103,8 +103,8 @@ void RemoteScrollingCoordinatorProxy::connectStateNodeLayers(ScrollingStateTree&
             currNode->setLayer(layerTreeHost.layerForID(currNode->layer()));
 
         switch (currNode->nodeType()) {
-        case MainFrameScrollingNode:
-        case SubframeScrollingNode: {
+        case ScrollingNodeType::MainFrame:
+        case ScrollingNodeType::Subframe: {
             ScrollingStateFrameScrollingNode& scrollingStateNode = downcast<ScrollingStateFrameScrollingNode>(*currNode);
             
             if (scrollingStateNode.hasChangedProperty(ScrollingStateScrollingNode::ScrolledContentsLayer))
@@ -127,15 +127,15 @@ void RemoteScrollingCoordinatorProxy::connectStateNodeLayers(ScrollingStateTree&
                 scrollingStateNode.setFooterLayer(layerTreeHost.layerForID(scrollingStateNode.footerLayer()));
             break;
         }
-        case OverflowScrollingNode: {
+        case ScrollingNodeType::Overflow: {
             ScrollingStateOverflowScrollingNode& scrollingStateNode = downcast<ScrollingStateOverflowScrollingNode>(*currNode);
 
             if (scrollingStateNode.hasChangedProperty(ScrollingStateScrollingNode::ScrolledContentsLayer))
                 scrollingStateNode.setScrolledContentsLayer(layerTreeHost.layerForID(scrollingStateNode.scrolledContentsLayer()));
             break;
         }
-        case FixedNode:
-        case StickyNode:
+        case ScrollingNodeType::Fixed:
+        case ScrollingNodeType::Sticky:
             break;
         }
     }

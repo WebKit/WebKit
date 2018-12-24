@@ -333,17 +333,17 @@ static void encodeNodeAndDescendants(IPC::Encoder& encoder, const ScrollingState
     ++encodedNodeCount;
 
     switch (stateNode.nodeType()) {
-    case MainFrameScrollingNode:
-    case SubframeScrollingNode:
+    case ScrollingNodeType::MainFrame:
+    case ScrollingNodeType::Subframe:
         encoder << downcast<ScrollingStateFrameScrollingNode>(stateNode);
         break;
-    case OverflowScrollingNode:
+    case ScrollingNodeType::Overflow:
         encoder << downcast<ScrollingStateOverflowScrollingNode>(stateNode);
         break;
-    case FixedNode:
+    case ScrollingNodeType::Fixed:
         encoder << downcast<ScrollingStateFixedNode>(stateNode);
         break;
-    case StickyNode:
+    case ScrollingNodeType::Sticky:
         encoder << downcast<ScrollingStateStickyNode>(stateNode);
         break;
     }
@@ -418,20 +418,20 @@ bool RemoteScrollingCoordinatorTransaction::decode(IPC::Decoder& decoder)
         ASSERT(!parentNodeID || newNode->parent());
         
         switch (nodeType) {
-        case MainFrameScrollingNode:
-        case SubframeScrollingNode:
+        case ScrollingNodeType::MainFrame:
+        case ScrollingNodeType::Subframe:
             if (!decoder.decode(downcast<ScrollingStateFrameScrollingNode>(*newNode)))
                 return false;
             break;
-        case OverflowScrollingNode:
+        case ScrollingNodeType::Overflow:
             if (!decoder.decode(downcast<ScrollingStateOverflowScrollingNode>(*newNode)))
                 return false;
             break;
-        case FixedNode:
+        case ScrollingNodeType::Fixed:
             if (!decoder.decode(downcast<ScrollingStateFixedNode>(*newNode)))
                 return false;
             break;
-        case StickyNode:
+        case ScrollingNodeType::Sticky:
             if (!decoder.decode(downcast<ScrollingStateStickyNode>(*newNode)))
                 return false;
             break;
@@ -562,17 +562,17 @@ static void dump(TextStream& ts, const ScrollingStateNode& node, bool changedPro
         ts.dumpProperty("layer", static_cast<GraphicsLayer::PlatformLayerID>(node.layer()));
     
     switch (node.nodeType()) {
-    case MainFrameScrollingNode:
-    case SubframeScrollingNode:
+    case ScrollingNodeType::MainFrame:
+    case ScrollingNodeType::Subframe:
         dump(ts, downcast<ScrollingStateFrameScrollingNode>(node), changedPropertiesOnly);
         break;
-    case OverflowScrollingNode:
+    case ScrollingNodeType::Overflow:
         dump(ts, downcast<ScrollingStateOverflowScrollingNode>(node), changedPropertiesOnly);
         break;
-    case FixedNode:
+    case ScrollingNodeType::Fixed:
         dump(ts, downcast<ScrollingStateFixedNode>(node), changedPropertiesOnly);
         break;
-    case StickyNode:
+    case ScrollingNodeType::Sticky:
         dump(ts, downcast<ScrollingStateStickyNode>(node), changedPropertiesOnly);
         break;
     }
