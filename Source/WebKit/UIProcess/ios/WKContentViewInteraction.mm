@@ -2453,21 +2453,6 @@ WEBCORE_COMMAND_FOR_WEBVIEW(pasteAndMatchStyle);
     [self _toggleStrikeThroughForWebView:sender];
 }
 
-- (void)setFontForWebView:(UIFont *)font sender:(id)sender
-{
-    [self _setFontForWebView:font sender:sender];
-}
-
-- (void)setFontSizeForWebView:(CGFloat)fontSize sender:(id)sender
-{
-    [self _setFontSizeForWebView:fontSize sender:sender];
-}
-
-- (void)setTextColorForWebView:(UIColor *)color sender:(id)sender
-{
-    [self _setTextColorForWebView:color sender:sender];
-}
-
 - (NSDictionary *)textStylingAtPosition:(UITextPosition *)position inDirection:(UITextStorageDirection)direction
 {
     if (!position || !_page->editorState().isContentRichlyEditable)
@@ -2561,11 +2546,7 @@ WEBCORE_COMMAND_FOR_WEBVIEW(pasteAndMatchStyle);
         || action == @selector(_setTextColor:sender:) || action == @selector(_setFont:sender:) || action == @selector(_setFontSize:sender:)
         || action == @selector(_insertOrderedList:) || action == @selector(_insertUnorderedList:) || action == @selector(_insertNestedOrderedList:) || action == @selector(_insertNestedUnorderedList:)
         || action == @selector(_increaseListLevel:) || action == @selector(_decreaseListLevel:) || action == @selector(_changeListType:) || action == @selector(_indent:) || action == @selector(_outdent:)
-        || action == @selector(increaseSize:) || action == @selector(decreaseSize:)
-        || action == @selector(toggleStrikeThrough:) || action == @selector(insertOrderedList:) || action == @selector(insertUnorderedList:) || action == @selector(indent:) || action == @selector(outdent:)
-        || action == @selector(alignLeft:) || action == @selector(alignRight:) || action == @selector(alignCenter:) || action == @selector(alignJustified:)
-        || action == @selector(setTextColor:sender:) || action == @selector(setFont:sender:) || action == @selector(setFontSize:sender:)
-        || action == @selector(makeTextWritingDirectionNatural:)) {
+        || action == @selector(increaseSize:) || action == @selector(decreaseSize:) || action == @selector(makeTextWritingDirectionNatural:)) {
         // FIXME: This should be more nuanced in the future, rather than returning YES for all richly editable areas. For instance, outdent: should be disabled when the selection is already
         // at the outermost indentation level.
         return editorState.isContentRichlyEditable;

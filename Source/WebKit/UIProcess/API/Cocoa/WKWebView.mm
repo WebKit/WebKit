@@ -1445,9 +1445,6 @@ FOR_EACH_WKCONTENTVIEW_ACTION(FORWARD_ACTION_TO_WKCONTENTVIEW)
 
     FOR_EACH_WKCONTENTVIEW_ACTION(FORWARD_CANPERFORMACTION_TO_WKCONTENTVIEW)
     FOR_EACH_PRIVATE_WKCONTENTVIEW_ACTION(FORWARD_CANPERFORMACTION_TO_WKCONTENTVIEW)
-    FORWARD_CANPERFORMACTION_TO_WKCONTENTVIEW(setTextColor:sender)
-    FORWARD_CANPERFORMACTION_TO_WKCONTENTVIEW(setFontSize:sender)
-    FORWARD_CANPERFORMACTION_TO_WKCONTENTVIEW(setFont:sender)
     FORWARD_CANPERFORMACTION_TO_WKCONTENTVIEW(_setTextColor:sender)
     FORWARD_CANPERFORMACTION_TO_WKCONTENTVIEW(_setFontSize:sender)
     FORWARD_CANPERFORMACTION_TO_WKCONTENTVIEW(_setFont:sender)
@@ -1465,9 +1462,6 @@ FOR_EACH_WKCONTENTVIEW_ACTION(FORWARD_ACTION_TO_WKCONTENTVIEW)
 
     FOR_EACH_WKCONTENTVIEW_ACTION(FORWARD_TARGETFORACTION_TO_WKCONTENTVIEW)
     FOR_EACH_PRIVATE_WKCONTENTVIEW_ACTION(FORWARD_TARGETFORACTION_TO_WKCONTENTVIEW)
-    FORWARD_TARGETFORACTION_TO_WKCONTENTVIEW(setTextColor:sender)
-    FORWARD_TARGETFORACTION_TO_WKCONTENTVIEW(setFontSize:sender)
-    FORWARD_TARGETFORACTION_TO_WKCONTENTVIEW(setFont:sender)
     FORWARD_TARGETFORACTION_TO_WKCONTENTVIEW(_setTextColor:sender)
     FORWARD_TARGETFORACTION_TO_WKCONTENTVIEW(_setFontSize:sender)
     FORWARD_TARGETFORACTION_TO_WKCONTENTVIEW(_setFont:sender)
@@ -1475,21 +1469,6 @@ FOR_EACH_WKCONTENTVIEW_ACTION(FORWARD_ACTION_TO_WKCONTENTVIEW)
     #undef FORWARD_TARGETFORACTION_TO_WKCONTENTVIEW
 
     return [super targetForAction:action withSender:sender];
-}
-
-- (void)setFont:(UIFont *)font sender:(id)sender
-{
-    [_contentView setFontForWebView:font sender:sender];
-}
-
-- (void)setTextColor:(UIColor *)color sender:(id)sender
-{
-    [_contentView setTextColorForWebView:color sender:sender];
-}
-
-- (void)setFontSize:(CGFloat)fontSize sender:(id)sender
-{
-    [_contentView setFontSizeForWebView:fontSize sender:sender];
 }
 
 static inline CGFloat floorToDevicePixel(CGFloat input, float deviceScaleFactor)
@@ -4432,19 +4411,19 @@ FOR_EACH_PRIVATE_WKCONTENTVIEW_ACTION(FORWARD_ACTION_TO_WKCONTENTVIEW)
 - (void)_setFont:(UIFont *)font sender:(id)sender
 {
     if (self.usesStandardContentView)
-        [_contentView setFontForWebView:font sender:sender];
+        [_contentView _setFontForWebView:font sender:sender];
 }
 
 - (void)_setFontSize:(CGFloat)fontSize sender:(id)sender
 {
     if (self.usesStandardContentView)
-        [_contentView setFontSizeForWebView:fontSize sender:sender];
+        [_contentView _setFontSizeForWebView:fontSize sender:sender];
 }
 
 - (void)_setTextColor:(UIColor *)color sender:(id)sender
 {
     if (self.usesStandardContentView)
-        [_contentView setTextColorForWebView:color sender:sender];
+        [_contentView _setTextColorForWebView:color sender:sender];
 }
 
 #endif // PLATFORM(IOS_FAMILY)

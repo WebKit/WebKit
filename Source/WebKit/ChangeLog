@@ -1,5 +1,35 @@
 2018-12-23  Wenson Hsieh  <wenson_hsieh@apple.com>
 
+        [iOS] Remove some unnecessary editing SPI after <rdar://problem/46047546>
+        https://bugs.webkit.org/show_bug.cgi?id=193019
+
+        Reviewed by Dan Bernstein.
+
+        Remove these SPI method declarations, as well as method forwarding in WKContentView. Mail was the only adoptee
+        of these methods; after <rdar://problem/46047546>, they have moved to the underscore-prefixed versions, so we
+        we have no need for these erroneously-named SPI methods anymore. There is no change in behavior; verified this
+        through existing API tests (WKWebViewEditActions), as well as building iOS Mail against WebKit with these
+        changes to WKWebViewPrivate.h.
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView canPerformAction:withSender:]):
+        (-[WKWebView targetForAction:withSender:]):
+        (-[WKWebView _setFont:sender:]):
+        (-[WKWebView _setFontSize:sender:]):
+        (-[WKWebView _setTextColor:sender:]):
+        (-[WKWebView setFont:sender:]): Deleted.
+        (-[WKWebView setTextColor:sender:]): Deleted.
+        (-[WKWebView setFontSize:sender:]): Deleted.
+        * UIProcess/API/Cocoa/WKWebViewPrivate.h:
+        * UIProcess/ios/WKContentViewInteraction.h:
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView canPerformActionForWebView:withSender:]):
+        (-[WKContentView setFontForWebView:sender:]): Deleted.
+        (-[WKContentView setFontSizeForWebView:sender:]): Deleted.
+        (-[WKContentView setTextColorForWebView:sender:]): Deleted.
+
+2018-12-23  Wenson Hsieh  <wenson_hsieh@apple.com>
+
         Fix fast/ruby/ruby-base-merge-block-children-crash-2.html after r239543
         https://bugs.webkit.org/show_bug.cgi?id=193015
         <rdar://problem/46583527>
