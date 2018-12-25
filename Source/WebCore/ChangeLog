@@ -1,3 +1,43 @@
+2018-12-24  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        Remove "using namespace std;"
+        https://bugs.webkit.org/show_bug.cgi?id=192973
+
+        Reviewed by Alex Christensen.
+
+        Removed "using namespace std" statement, and use std:: prefix.
+
+        No new tests since no behavior changes.
+
+        * accessibility/win/AXObjectCacheWin.cpp:
+        * platform/graphics/GraphicsContext3DPrivate.cpp:
+        * platform/graphics/cairo/ImageBufferCairo.cpp:
+        * platform/graphics/win/FontPlatformDataCairoWin.cpp:
+        * platform/graphics/win/FontWin.cpp:
+        (WebCore::FontCascade::floatWidthForComplexText const):
+        * platform/graphics/win/GraphicsContextCGWin.cpp:
+        * platform/graphics/win/GraphicsContextCairoWin.cpp:
+        * platform/graphics/win/GraphicsContextDirect2D.cpp:
+        * platform/graphics/win/GraphicsContextWin.cpp:
+        * platform/graphics/win/SimpleFontDataCGWin.cpp:
+        * platform/graphics/win/UniscribeController.cpp:
+        (WebCore::UniscribeController::UniscribeController):
+        (WebCore::UniscribeController::shapeAndPlaceItem):
+        * platform/image-decoders/ScalableImageDecoder.cpp:
+        * platform/text/LocaleICU.cpp:
+        * platform/text/win/LocaleWin.cpp:
+        * platform/win/ScrollbarThemeWin.cpp:
+        * rendering/RenderRubyRun.cpp:
+        (WebCore::RenderRubyRun::layoutBlock):
+        * rendering/RenderThemeWin.cpp:
+        (WebCore::RenderThemeWin::adjustMenuListButtonStyle const):
+        (WebCore::RenderThemeWin::paintSearchFieldCancelButton):
+        (WebCore::RenderThemeWin::adjustSearchFieldCancelButtonStyle const):
+        (WebCore::RenderThemeWin::adjustSearchFieldResultsDecorationPartStyle const):
+        (WebCore::RenderThemeWin::paintSearchFieldResultsDecorationPart):
+        (WebCore::RenderThemeWin::adjustSearchFieldResultsButtonStyle const):
+        (WebCore::RenderThemeWin::paintSearchFieldResultsButton):
+
 2018-12-24  Simon Fraser  <simon.fraser@apple.com>
 
         Change ScrollingNodeType to an enum class

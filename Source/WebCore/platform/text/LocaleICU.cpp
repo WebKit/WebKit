@@ -41,7 +41,6 @@
 
 namespace WebCore {
 using namespace icu;
-using namespace std;
 
 std::unique_ptr<Locale> Locale::create(const AtomicString& locale)
 {

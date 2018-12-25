@@ -63,7 +63,6 @@
 
 
 namespace WebCore {
-using namespace std;
 
 static HANDLE scrollbarTheme;
 static bool runningVista;

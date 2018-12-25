@@ -36,7 +36,6 @@
 
 
 namespace WebCore {
-using namespace std;
 
 void FontPlatformData::platformDataInit(HFONT font, float size, HDC hdc, WCHAR* faceName)
 {

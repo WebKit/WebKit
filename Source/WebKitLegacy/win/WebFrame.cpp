@@ -123,7 +123,6 @@ extern "C" {
 
 using namespace WebCore;
 using namespace HTMLNames;
-using namespace std;
 
 using JSC::JSGlobalObject;
 using JSC::JSLock;
@@ -1574,7 +1573,7 @@ void WebFrame::drawHeader(PlatformGraphicsContext* pctx, IWebUIDelegate* ui, con
 void WebFrame::drawFooter(PlatformGraphicsContext* pctx, IWebUIDelegate* ui, const IntRect& pageRect, UINT page, UINT pageCount, float headerHeight, float footerHeight)
 {
     int x = pageRect.x();
-    int y = max((int)headerHeight+pageRect.height(), m_pageHeight-static_cast<int>(footerHeight));
+    int y = std::max((int)headerHeight+pageRect.height(), m_pageHeight-static_cast<int>(footerHeight));
     RECT footerRect = {x, y, x+pageRect.width(), y+static_cast<int>(footerHeight)};
     ui->drawFooterInRect(d->webView, &footerRect, reinterpret_cast<ULONG_PTR>(pctx), page + 1, pageCount);
 }
@@ -1655,7 +1654,7 @@ void WebFrame::drawFooter(PlatformGraphicsContext* pctx, IWebUIDelegate* ui, con
     HDC hdc = hdcFromContext(pctx);
     
     int x = pageRect.x();
-    int y = max(static_cast<int>(headerHeight) + pageRect.height(), m_pageHeight  -static_cast<int>(footerHeight));
+    int y = std::max(static_cast<int>(headerHeight) + pageRect.height(), m_pageHeight  -static_cast<int>(footerHeight));
     RECT footerRect = {x, y, x + pageRect.width(), y + static_cast<int>(footerHeight)};
 
     ui->drawFooterInRect(d->webView, &footerRect, reinterpret_cast<ULONG_PTR>(hdc), page+1, pageCount);

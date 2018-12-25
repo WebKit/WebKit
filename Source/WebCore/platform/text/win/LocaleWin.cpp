@@ -44,7 +44,6 @@
 #include <wtf/text/win/WCharStringExtras.h>
 
 namespace WebCore {
-using namespace std;
 
 typedef HashMap<String, LCID, ASCIICaseInsensitiveHash> NameToLCIDMap;
 

@@ -42,7 +42,6 @@
 
 
 namespace WebCore {
-using namespace std;
 
 GraphicsContext::GraphicsContext(HDC hdc, bool hasAlpha)
 {

@@ -41,8 +41,6 @@
 
 typedef HRESULT (CALLBACK *LPFNDLL_Direct3DCreate9Ex)(UINT, void **);
 
-using namespace std;
-
 namespace WKQCA {
 
 static const DWORD customVertexFormat = D3DFVF_XYZRHW | D3DFVF_TEX1;
@@ -418,7 +416,7 @@ CAD3DRenderer::RenderResult CAD3DRenderer::renderAndPresent(const CGRect& bounds
     setDeviceIsLost(true);
 
     // We can't render until the device is reset, which the caller will have to take care of.
-    nextRenderTime = numeric_limits<CFTimeInterval>::infinity();
+    nextRenderTime = std::numeric_limits<CFTimeInterval>::infinity();
 
     return DeviceBecameLost;
 }
@@ -464,7 +462,7 @@ CAD3DRenderer::RenderResult CAD3DRenderer::renderToImage(const CGRect& bounds, I
     setDeviceIsLost(true);
 
     // We can't render until the device is reset, which the caller will have to take care of.
-    nextRenderTime = numeric_limits<CFTimeInterval>::infinity();
+    nextRenderTime = std::numeric_limits<CFTimeInterval>::infinity();
 
     return DeviceBecameLost;
 }
@@ -498,7 +496,7 @@ CAD3DRenderer::RenderResult CAD3DRenderer::renderInternal(const CGRect& bounds, 
     ASSERT(m_d3dDevice);
     ASSERT(m_renderOGLContext);
 
-    nextRenderTime = numeric_limits<CFTimeInterval>::infinity();
+    nextRenderTime = std::numeric_limits<CFTimeInterval>::infinity();
 
     if (m_deviceIsLost)
         return DeviceIsLost;

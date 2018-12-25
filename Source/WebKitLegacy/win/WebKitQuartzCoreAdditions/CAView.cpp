@@ -38,8 +38,6 @@
 #include <wtf/Vector.h>
 #include <wtf/win/GDIObject.h>
 
-using namespace std;
-
 namespace WKQCA {
 
 class CAView::Handle : public ThreadSafeRefCounted<Handle> {
@@ -250,7 +248,7 @@ void CAView::update(CWindow window, const CGRect& bounds)
             m_swapChain = nullptr;
             // If we don't have a window, we can't draw, so there's no point in having the display
             // link fire.
-            scheduleNextDraw(numeric_limits<CFTimeInterval>::infinity());
+            scheduleNextDraw(std::numeric_limits<CFTimeInterval>::infinity());
         } else {
             // FIXME: We might be able to get better resizing performance by allocating swap chains in
             // multiples of some size (say, 256x256) and only reallocating when our window size passes into
@@ -263,10 +261,10 @@ void CAView::update(CWindow window, const CGRect& bounds)
                 m_drawingProhibited = true;
                 // There's no point in allowing the display link to fire until drawing becomes
                 // allowed again (at which time we'll restart the display link).
-                scheduleNextDraw(numeric_limits<CFTimeInterval>::infinity());
+                scheduleNextDraw(std::numeric_limits<CFTimeInterval>::infinity());
             } else if (m_destination == DrawingDestinationImage) {
                 // It is the caller's responsibility to ask us to draw sometime later.
-                scheduleNextDraw(numeric_limits<CFTimeInterval>::infinity());
+                scheduleNextDraw(std::numeric_limits<CFTimeInterval>::infinity());
             } else {
                 // We should draw into the new window and/or swap chain as soon as possible.
                 scheduleNextDraw(0);
@@ -306,7 +304,7 @@ void CAView::drawToWindowInternal()
     if (willDraw(unusedWillUpdateSoon))
         didDraw(CAD3DRenderer::shared().renderAndPresent(m_bounds, m_swapChain, m_d3dPostProcessingContext.get(), m_context.get(), nextDrawTime), unusedWillUpdateSoon);
     else
-        nextDrawTime = numeric_limits<CFTimeInterval>::infinity();
+        nextDrawTime = std::numeric_limits<CFTimeInterval>::infinity();
     scheduleNextDraw(nextDrawTime);
 }
 
@@ -315,7 +313,7 @@ RefPtr<Image> CAView::drawToImage(CGPoint& imageOrigin, CFTimeInterval& nextDraw
     ASSERT(m_destination == DrawingDestinationImage);
 
     imageOrigin = CGPointZero;
-    nextDrawTime = numeric_limits<CFTimeInterval>::infinity();
+    nextDrawTime = std::numeric_limits<CFTimeInterval>::infinity();
 
     auto locker = holdLock(m_lock);
 
@@ -473,7 +471,7 @@ void CAView::scheduleNextDraw(CFTimeInterval mediaTime)
 
     // We use !< here to ensure that we bail out when mediaTime is NaN.
     // (Comparisons with NaN always yield false.)
-    if (!(m_nextDrawTime < numeric_limits<CFTimeInterval>::infinity())) {
+    if (!(m_nextDrawTime < std::numeric_limits<CFTimeInterval>::infinity())) {
         if (m_displayLink)
             m_displayLink->setPaused(true);
         return;

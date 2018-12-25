@@ -160,7 +160,6 @@ static const unsigned vistaMenuListButtonOutset = 1;
 
 
 namespace WebCore {
-using namespace std;
 
 // This is the fixed width IE and Firefox use for buttons on dropdown menus
 static const int dropDownButtonWidth = 17;
@@ -775,7 +774,7 @@ void RenderThemeWin::adjustMenuListButtonStyle(StyleResolver& styleResolver, Ren
 
     // Calculate our min-height
     int minHeight = style.fontMetrics().height();
-    minHeight = max(minHeight, dropDownBoxMinHeight);
+    minHeight = std::max(minHeight, dropDownBoxMinHeight);
 
     style.setMinHeight(Length(minHeight, Fixed));
 
@@ -880,7 +879,7 @@ bool RenderThemeWin::paintSearchFieldCancelButton(const RenderBox& o, const Pain
     IntRect parentBox = downcast<RenderBox>(*o.parent()).absoluteContentBox();
     
     // Make sure the scaled button stays square and will fit in its parent's box
-    bounds.setHeight(min(parentBox.width(), min(parentBox.height(), bounds.height())));
+    bounds.setHeight(std::min(parentBox.width(), std::min(parentBox.height(), bounds.height())));
     bounds.setWidth(bounds.height());
 
     // Center the button vertically.  Round up though, so if it has to be one pixel off-center, it will
@@ -897,7 +896,7 @@ void RenderThemeWin::adjustSearchFieldCancelButtonStyle(StyleResolver&, RenderSt
 {
     // Scale the button size based on the font size
     float fontScale = style.computedFontPixelSize() / defaultControlFontPixelSize;
-    int cancelButtonSize = lroundf(min(max(minCancelButtonSize, defaultCancelButtonSize * fontScale), maxCancelButtonSize));
+    int cancelButtonSize = lroundf(std::min(std::max(minCancelButtonSize, defaultCancelButtonSize * fontScale), maxCancelButtonSize));
     style.setWidth(Length(cancelButtonSize, Fixed));
     style.setHeight(Length(cancelButtonSize, Fixed));
 }
@@ -913,7 +912,7 @@ void RenderThemeWin::adjustSearchFieldResultsDecorationPartStyle(StyleResolver&,
 {
     // Scale the decoration size based on the font size
     float fontScale = style.computedFontPixelSize() / defaultControlFontPixelSize;
-    int magnifierSize = lroundf(min(max(minSearchFieldResultsDecorationSize, defaultSearchFieldResultsDecorationSize * fontScale), 
+    int magnifierSize = lroundf(std::min(std::max(minSearchFieldResultsDecorationSize, defaultSearchFieldResultsDecorationSize * fontScale), 
                                      maxSearchFieldResultsDecorationSize));
     style.setWidth(Length(magnifierSize, Fixed));
     style.setHeight(Length(magnifierSize, Fixed));
@@ -929,7 +928,7 @@ bool RenderThemeWin::paintSearchFieldResultsDecorationPart(const RenderBox& o, c
     IntRect parentBox = downcast<RenderBox>(*o.parent()).absoluteContentBox();
     
     // Make sure the scaled decoration stays square and will fit in its parent's box
-    bounds.setHeight(min(parentBox.width(), min(parentBox.height(), bounds.height())));
+    bounds.setHeight(std::min(parentBox.width(), std::min(parentBox.height(), bounds.height())));
     bounds.setWidth(bounds.height());
 
     // Center the decoration vertically.  Round up though, so if it has to be one pixel off-center, it will
@@ -945,7 +944,7 @@ void RenderThemeWin::adjustSearchFieldResultsButtonStyle(StyleResolver&, RenderS
 {
     // Scale the button size based on the font size
     float fontScale = style.computedFontPixelSize() / defaultControlFontPixelSize;
-    int magnifierHeight = lroundf(min(max(minSearchFieldResultsDecorationSize, defaultSearchFieldResultsDecorationSize * fontScale), 
+    int magnifierHeight = lroundf(std::min(std::max(minSearchFieldResultsDecorationSize, defaultSearchFieldResultsDecorationSize * fontScale), 
                                    maxSearchFieldResultsDecorationSize));
     int magnifierWidth = lroundf(magnifierHeight * defaultSearchFieldResultsButtonWidth / defaultSearchFieldResultsDecorationSize);
     style.setWidth(Length(magnifierWidth, Fixed));
@@ -964,8 +963,8 @@ bool RenderThemeWin::paintSearchFieldResultsButton(const RenderBox& o, const Pai
     IntRect parentBox = downcast<RenderBox>(*o.parent()).absoluteContentBox();
     
     // Make sure the scaled decoration will fit in its parent's box
-    bounds.setHeight(min(parentBox.height(), bounds.height()));
-    bounds.setWidth(min<int>(parentBox.width(), bounds.height() * defaultSearchFieldResultsButtonWidth / defaultSearchFieldResultsDecorationSize));
+    bounds.setHeight(std::min(parentBox.height(), bounds.height()));
+    bounds.setWidth(std::min<int>(parentBox.width(), bounds.height() * defaultSearchFieldResultsButtonWidth / defaultSearchFieldResultsDecorationSize));
 
     // Center the button vertically.  Round up though, so if it has to be one pixel off-center, it will
     // be one pixel closer to the bottom of the field.  This tends to look better with the text.

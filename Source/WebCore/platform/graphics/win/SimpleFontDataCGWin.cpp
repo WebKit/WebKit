@@ -49,8 +49,6 @@
 
 namespace WebCore {
 
-using namespace std;
-
 void Font::platformInit()
 {
     m_syntheticBoldOffset = m_platformData.syntheticBold() ? 1.0f : 0.f;

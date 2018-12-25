@@ -34,9 +34,7 @@
 
 
 namespace WebCore {
-using namespace WTF;
-using namespace Unicode;
-using namespace std;
+using namespace WTF::Unicode;
 
 // FIXME: Rearchitect this to be more like WidthIterator in Font.cpp.  Have an advance() method
 // that does stuff in that method instead of doing everything in the constructor.  Have advance()
@@ -46,10 +44,10 @@ UniscribeController::UniscribeController(const FontCascade* font, const TextRun&
     : m_font(*font)
     , m_run(run)
     , m_fallbackFonts(fallbackFonts)
-    , m_minGlyphBoundingBoxX(numeric_limits<float>::max())
-    , m_maxGlyphBoundingBoxX(numeric_limits<float>::min())
-    , m_minGlyphBoundingBoxY(numeric_limits<float>::max())
-    , m_maxGlyphBoundingBoxY(numeric_limits<float>::min())
+    , m_minGlyphBoundingBoxX(std::numeric_limits<float>::max())
+    , m_maxGlyphBoundingBoxX(std::numeric_limits<float>::min())
+    , m_minGlyphBoundingBoxY(std::numeric_limits<float>::max())
+    , m_maxGlyphBoundingBoxY(std::numeric_limits<float>::min())
     , m_currentCharacter(0)
     , m_end(run.length())
     , m_runWidthSoFar(0)
@@ -374,10 +372,10 @@ bool UniscribeController::shapeAndPlaceItem(const UChar* cp, unsigned i, const F
 
         FloatRect glyphBounds = fontData->boundsForGlyph(glyph);
         glyphBounds.move(m_glyphOrigin.x(), m_glyphOrigin.y());
-        m_minGlyphBoundingBoxX = min(m_minGlyphBoundingBoxX, glyphBounds.x());
-        m_maxGlyphBoundingBoxX = max(m_maxGlyphBoundingBoxX, glyphBounds.maxX());
-        m_minGlyphBoundingBoxY = min(m_minGlyphBoundingBoxY, glyphBounds.y());
-        m_maxGlyphBoundingBoxY = max(m_maxGlyphBoundingBoxY, glyphBounds.maxY());
+        m_minGlyphBoundingBoxX = std::min(m_minGlyphBoundingBoxX, glyphBounds.x());
+        m_maxGlyphBoundingBoxX = std::max(m_maxGlyphBoundingBoxX, glyphBounds.maxX());
+        m_minGlyphBoundingBoxY = std::min(m_minGlyphBoundingBoxY, glyphBounds.y());
+        m_maxGlyphBoundingBoxY = std::max(m_maxGlyphBoundingBoxY, glyphBounds.maxY());
         m_glyphOrigin.move(advance + offsetX, -offsetY);
 
         // Mutate the glyph array to contain our altered advances.

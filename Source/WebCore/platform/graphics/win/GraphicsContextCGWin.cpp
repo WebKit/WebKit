@@ -38,7 +38,6 @@
 
 
 namespace WebCore {
-using namespace std;
 
 static CGContextRef CGContextWithHDC(HDC hdc, bool hasAlpha)
 {

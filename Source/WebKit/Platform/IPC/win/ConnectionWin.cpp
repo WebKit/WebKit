@@ -30,8 +30,6 @@
 #include <wtf/RandomNumber.h>
 #include <wtf/text/WTFString.h>
 
-using namespace std;
-
 namespace IPC {
 
 // FIXME: Rename this or use a different constant on windows.

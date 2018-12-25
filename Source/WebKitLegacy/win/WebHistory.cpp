@@ -52,7 +52,6 @@
 #endif
 
 using namespace WebCore;
-using namespace std;
 
 static bool areEqualOrClose(double d1, double d2)
 {

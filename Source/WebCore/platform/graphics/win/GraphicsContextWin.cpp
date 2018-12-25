@@ -44,7 +44,6 @@
 
 
 namespace WebCore {
-using namespace std;
 
 static void fillWithClearColor(HBITMAP bitmap)
 {

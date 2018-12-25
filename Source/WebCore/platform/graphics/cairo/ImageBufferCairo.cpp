@@ -77,7 +77,6 @@
 
 
 namespace WebCore {
-using namespace std;
 
 ImageBufferData::ImageBufferData(const IntSize& size, RenderingMode renderingMode)
     : m_platformContext(0)

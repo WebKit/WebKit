@@ -47,7 +47,6 @@
 #include <WebCore/PlatformCALayerWin.h>
 #endif
 
-using namespace std;
 using namespace WebCore;
 
 static const Seconds timerInterval { 33_ms };
@@ -171,7 +170,7 @@ void HUDSlider::drag(const IntPoint& point, bool start)
             m_dragStartOffset = m_rect.location().x() + m_buttonSize / 2;
     }
 
-    m_buttonPosition = max(0, min(m_rect.width() - m_buttonSize, point.x() - m_dragStartOffset));
+    m_buttonPosition = std::max(0, std::min(m_rect.width() - m_buttonSize, point.x() - m_dragStartOffset));
 }
 
 #if USE(CA)

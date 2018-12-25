@@ -40,7 +40,6 @@
 
 
 namespace WebCore {
-using namespace std;
 
 void AXObjectCache::detachWrapper(AccessibilityObject* obj, AccessibilityDetachmentType)
 {
