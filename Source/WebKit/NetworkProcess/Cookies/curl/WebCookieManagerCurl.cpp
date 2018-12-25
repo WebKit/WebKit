@@ -31,9 +31,9 @@
 #include <WebCore/NetworkStorageSession.h>
 #include <wtf/text/CString.h>
 
-using namespace WebCore;
-
 namespace WebKit {
+
+using namespace WebCore;
 
 void WebCookieManager::platformSetHTTPCookieAcceptPolicy(HTTPCookieAcceptPolicy)
 {

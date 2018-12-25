@@ -34,9 +34,9 @@
 #include <windowsx.h>
 #include <wtf/ASCIICType.h>
 
-using namespace WebCore;
-
 namespace WebKit {
+
+using namespace WebCore;
 
 static inline LPARAM relativeCursorPosition(HWND hwnd)
 {

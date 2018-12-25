@@ -29,9 +29,9 @@
 
 #include "WebEventFactory.h"
 
-using namespace WebCore;
-
 namespace WebKit {
+
+using namespace WebCore;
 
 NativeWebKeyboardEvent::NativeWebKeyboardEvent(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
     : WebKeyboardEvent(WebEventFactory::createWebKeyboardEvent(hwnd, message, wParam, lParam))

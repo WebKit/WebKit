@@ -35,9 +35,9 @@
 #include <WebCore/ResourceResponse.h>
 #include <wtf/text/CString.h>
 
-using namespace WebCore;
-
 namespace IPC {
+
+using namespace WebCore;
 
 void ArgumentCoder<ResourceRequest>::encodePlatformData(Encoder& encoder, const ResourceRequest& resourceRequest)
 {

@@ -1,5 +1,28 @@
 2018-12-24  Fujii Hironori  <Hironori.Fujii@sony.com>
 
+        [WebKit][Win] Remove using namespace in the global scope
+        https://bugs.webkit.org/show_bug.cgi?id=192968
+
+        Reviewed by Alex Christensen.
+
+        Moved using namespace statements in the global scope to inside
+        namespaces.
+        <https://webkit.org/code-style-guidelines/#using-position>
+
+        * NetworkProcess/Cookies/curl/WebCookieManagerCurl.cpp:
+        * NetworkProcess/curl/NetworkDataTaskCurl.cpp:
+        * NetworkProcess/curl/NetworkProcessCurl.cpp:
+        * NetworkProcess/curl/NetworkSessionCurl.cpp:
+        * NetworkProcess/curl/RemoteNetworkingContextCurl.cpp:
+        * Shared/Plugins/Netscape/NetscapePluginModuleNone.cpp:
+        * Shared/WebWheelEvent.cpp:
+        * Shared/curl/WebCoreArgumentCodersCurl.cpp:
+        * Shared/win/NativeWebKeyboardEventWin.cpp:
+        * Shared/win/WebEventFactory.cpp:
+        * UIProcess/Automation/WebAutomationSession.cpp:
+
+2018-12-24  Fujii Hironori  <Hironori.Fujii@sony.com>
+
         Remove "using namespace std;"
         https://bugs.webkit.org/show_bug.cgi?id=192973
 

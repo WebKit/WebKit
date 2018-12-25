@@ -30,9 +30,9 @@
 #include <WebCore/CurlContext.h>
 #include <WebCore/NetworkStorageSession.h>
 
-using namespace WebCore;
-
 namespace WebKit {
+
+using namespace WebCore;
 
 NetworkSessionCurl::NetworkSessionCurl(NetworkSessionCreationParameters&& parameters)
     : NetworkSession(parameters.sessionID)

@@ -51,9 +51,9 @@
 #include <wtf/UUID.h>
 #include <wtf/text/StringConcatenate.h>
 
-using namespace Inspector;
-
 namespace WebKit {
+
+using namespace Inspector;
 
 String AutomationCommandError::toProtocolString()
 {

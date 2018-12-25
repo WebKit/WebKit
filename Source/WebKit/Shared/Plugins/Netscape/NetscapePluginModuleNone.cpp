@@ -29,9 +29,9 @@
 
 #include "NetscapePluginModule.h"
 
-using namespace WebCore;
-
 namespace WebKit {
+
+using namespace WebCore;
 
 bool NetscapePluginModule::getPluginInfo(const String&, PluginModuleInfo&)
 {
