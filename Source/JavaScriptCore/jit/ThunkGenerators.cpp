@@ -90,7 +90,7 @@ static void slowPathFor(CCallHelpers& jit, VM* vm, Sprt_JITOperation_ECli slowPa
     // Other argument values are shift by 1. Use space on the stack for our two return values.
     // Moving the stack down maxFrameExtentForSlowPathCall bytes gives us room for our 3 arguments
     // and space for the 16 byte return area.
-    jit.addPtr(CCallHelpers::TrustedImm32(-maxFrameExtentForSlowPathCall), CCallHelpers::stackPointerRegister);
+    jit.addPtr(CCallHelpers::TrustedImm32(-static_cast<int32_t>(maxFrameExtentForSlowPathCall)), CCallHelpers::stackPointerRegister);
     jit.move(GPRInfo::regT2, GPRInfo::argumentGPR2);
     jit.addPtr(CCallHelpers::TrustedImm32(32), CCallHelpers::stackPointerRegister, GPRInfo::argumentGPR0);
     jit.move(GPRInfo::callFrameRegister, GPRInfo::argumentGPR1);

@@ -387,7 +387,7 @@ void JITCompiler::compile()
     emitStoreCodeOrigin(CodeOrigin(0));
 
     if (maxFrameExtentForSlowPathCall)
-        addPtr(TrustedImm32(-maxFrameExtentForSlowPathCall), stackPointerRegister);
+        addPtr(TrustedImm32(-static_cast<int32_t>(maxFrameExtentForSlowPathCall)), stackPointerRegister);
 
     m_speculative->callOperationWithCallFrameRollbackOnException(operationThrowStackOverflowError, m_codeBlock);
 
@@ -463,7 +463,7 @@ void JITCompiler::compileFunction()
     emitStoreCodeOrigin(CodeOrigin(0));
 
     if (maxFrameExtentForSlowPathCall)
-        addPtr(TrustedImm32(-maxFrameExtentForSlowPathCall), stackPointerRegister);
+        addPtr(TrustedImm32(-static_cast<int32_t>(maxFrameExtentForSlowPathCall)), stackPointerRegister);
 
     m_speculative->callOperationWithCallFrameRollbackOnException(operationThrowStackOverflowError, m_codeBlock);
     
@@ -483,7 +483,7 @@ void JITCompiler::compileFunction()
         branch32(AboveOrEqual, GPRInfo::regT1, TrustedImm32(m_codeBlock->numParameters())).linkTo(fromArityCheck, this);
         emitStoreCodeOrigin(CodeOrigin(0));
         if (maxFrameExtentForSlowPathCall)
-            addPtr(TrustedImm32(-maxFrameExtentForSlowPathCall), stackPointerRegister);
+            addPtr(TrustedImm32(-static_cast<int32_t>(maxFrameExtentForSlowPathCall)), stackPointerRegister);
         m_speculative->callOperationWithCallFrameRollbackOnException(m_codeBlock->m_isConstructor ? operationConstructArityCheck : operationCallArityCheck, GPRInfo::regT0);
         if (maxFrameExtentForSlowPathCall)
             addPtr(TrustedImm32(maxFrameExtentForSlowPathCall), stackPointerRegister);

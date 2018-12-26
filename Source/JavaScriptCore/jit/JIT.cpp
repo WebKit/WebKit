@@ -729,7 +729,7 @@ void JIT::compileWithoutLinking(JITCompilationEffort effort)
     stackOverflow.link(this);
     m_bytecodeOffset = 0;
     if (maxFrameExtentForSlowPathCall)
-        addPtr(TrustedImm32(-maxFrameExtentForSlowPathCall), stackPointerRegister);
+        addPtr(TrustedImm32(-static_cast<int32_t>(maxFrameExtentForSlowPathCall)), stackPointerRegister);
     callOperationWithCallFrameRollbackOnException(operationThrowStackOverflowError, m_codeBlock);
 
     // If the number of parameters is 1, we never require arity fixup.
@@ -746,7 +746,7 @@ void JIT::compileWithoutLinking(JITCompilationEffort effort)
         m_bytecodeOffset = 0;
 
         if (maxFrameExtentForSlowPathCall)
-            addPtr(TrustedImm32(-maxFrameExtentForSlowPathCall), stackPointerRegister);
+            addPtr(TrustedImm32(-static_cast<int32_t>(maxFrameExtentForSlowPathCall)), stackPointerRegister);
         callOperationWithCallFrameRollbackOnException(m_codeBlock->m_isConstructor ? operationConstructArityCheck : operationCallArityCheck);
         if (maxFrameExtentForSlowPathCall)
             addPtr(TrustedImm32(maxFrameExtentForSlowPathCall), stackPointerRegister);

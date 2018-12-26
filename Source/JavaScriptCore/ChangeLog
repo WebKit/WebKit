@@ -1,3 +1,22 @@
+2018-12-25  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [JSC][Win][Clang] warning: implicit conversion from 'size_t' (aka 'unsigned long long') to 'int32_t' (aka 'int') changes value from 18446744073709551552 to -64 [-Wconstant-conversion]
+        https://bugs.webkit.org/show_bug.cgi?id=193035
+
+        Reviewed by Yusuke Suzuki.
+
+        Clang-cl reports a compilation warning for implicit conversion
+        from -64 size_t to int. Replaced '-maxFrameExtentForSlowPathCall'
+        with '-static_cast<int32_t>(maxFrameExtentForSlowPathCall)'.
+
+        * dfg/DFGJITCompiler.cpp:
+        (JSC::DFG::JITCompiler::compile):
+        (JSC::DFG::JITCompiler::compileFunction):
+        * jit/JIT.cpp:
+        (JSC::JIT::compileWithoutLinking):
+        * jit/ThunkGenerators.cpp:
+        (JSC::slowPathFor):
+
 2018-12-13  Yusuke Suzuki  <yusukesuzuki@slowstart.org>
 
         [BigInt] Support BigInt in JSON.stringify
