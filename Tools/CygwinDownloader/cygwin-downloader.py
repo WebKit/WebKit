@@ -46,12 +46,10 @@ def download_package(package, message):
         download_url_to_file(package_mirror_url + package["path"], package["path"], message)
 
 required_packages = frozenset(["bc",
-                               "bison",
                                "curl",
                                "diffutils",
                                "e2fsprogs",
                                "emacs",
-                               "flex",
                                "gcc-g++",
                                "gperf",
                                "keychain",

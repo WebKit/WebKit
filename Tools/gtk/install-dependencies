@@ -54,10 +54,8 @@ function installDependenciesWithBrew {
 
     brew install autoconf \
          automake \
-         bison \
          cmake \
          enchant \
-         flex \
          gettext \
          gobject-introspection \
          intltool \
@@ -93,10 +91,8 @@ function installDependenciesWithApt {
         automake \
         autopoint \
         autotools-dev \
-        bison \
         bubblewrap \
         cmake \
-        flex \
         gawk \
         geoclue-2.0 \
         gnome-common \
@@ -243,14 +239,12 @@ function installDependenciesWithPacman {
         alsa-lib \
         autoconf \
         automake \
-        bison \
         bubblewrap \
         cmake \
         libedit \
         libffi \
         file \
         findutils \
-        flex \
         gawk \
         gcc \
         gettext \
@@ -418,12 +412,10 @@ function installDependenciesWithDnf {
         alsa-lib-devel \
         autoconf \
         automake \
-        bison \
         bubblewrap \
         cairo-devel \
         cmake \
         enchant-devel \
-        flex \
         gcc-c++ \
         geoclue2-devel \
         gettext-devel \

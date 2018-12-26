@@ -5,9 +5,7 @@ binutils-gold
 python-mechanize
 libqt4-dev
 gperf
-bison
 fakeroot
-flex
 g++
 g++-multilib
 gperf
@@ -48,8 +46,6 @@ libgnome-keyring-dev
 libcurl4-gnutls-dev
 libcupsys2-dev
 gperf
-bison
-flex
 libjpeg62-dev
 libpng12-dev
 libxt-dev

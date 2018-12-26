@@ -272,7 +272,7 @@ sub shouldIgnoreLine($$)
     return 1 if $line =~ /created by an unsupported XCDependencyGraph build$/;
 
     if ($platform eq "win") {
-        return 1 if $line =~ /^\s*(touch|perl|cat|rm -f|bison|del|flex|python|\/usr\/bin\/g\+\+|gperf|echo|sed|if \[ \-f|WebCore\/generate-export-file) /;
+        return 1 if $line =~ /^\s*(touch|perl|cat|rm -f|del|python|\/usr\/bin\/g\+\+|gperf|echo|sed|if \[ \-f|WebCore\/generate-export-file) /;
         return 1 if $line =~ /^\s*(if not exist \"|if errorlevel 1)/;
         return 1 if $line =~ /(^\s*|MSB3073:\s+)(set |REM |cmd \/c)/;
         return 1 if $line =~ /^\s*[cC]:\\[pP]rogram [fF]iles.*\\.*\\(CL|midl)\.exe /;
@@ -290,7 +290,7 @@ sub shouldIgnoreLine($$)
         return 1 if $line =~ /MSB3073:\s+if not exist/;
         return 1 if $line =~ /which.exe bash/;
     } else {
-        return 1 if $line =~ /^(touch|perl|cat|rm -f|bison|flex|python|\/usr\/bin\/g\+\+|\/bin\/ln|gperf|echo|sed|if \[ \-f|WebCore\/generate-export-file|write-file|chmod) /;
+        return 1 if $line =~ /^(touch|perl|cat|rm -f|python|\/usr\/bin\/g\+\+|\/bin\/ln|gperf|echo|sed|if \[ \-f|WebCore\/generate-export-file|write-file|chmod) /;
         return 1 if $line =~ /^    / && !shouldShowSubsequentLine($previousLine);
         return 1 if $line =~ /^printf /;
         return 1 if $line =~ /^offlineasm: Nothing changed/;

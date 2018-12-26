@@ -58,9 +58,7 @@ function installDependenciesWithApt {
         automake \
         autopoint \
         autotools-dev \
-        bison \
         cmake \
-        flex \
         g++ \
         gawk \
         gcc \
@@ -148,11 +146,9 @@ function installDependenciesWithPacman {
         alsa-lib \
         autoconf \
         automake \
-        bison \
         cmake \
         file \
         findutils \
-        flex \
         gawk \
         gcc \
         gnutls \
@@ -248,9 +244,7 @@ function installDependenciesWithDnf {
         autoconf \
         automake \
         alsa-lib-devel \
-        bison \
         cmake \
-        flex \
         gcc-c++ \
         gnutls-devel \
         gperf \
