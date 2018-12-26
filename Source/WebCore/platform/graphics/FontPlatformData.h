@@ -168,7 +168,9 @@ public:
 #endif
 
 #if USE(FREETYPE)
+#if USE(HARFBUZZ) && !ENABLE(OPENTYPE_MATH)
     HbUniquePtr<hb_font_t> createOpenTypeMathHarfBuzzFont() const;
+#endif
     bool hasCompatibleCharmap() const;
     FcPattern* fcPattern() const;
     bool isFixedWidth() const { return m_fixedWidth; }
