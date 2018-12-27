@@ -79,7 +79,7 @@ NetworkHTTPSUpgradeChecker::NetworkHTTPSUpgradeChecker()
     });
 }
 
-NO_RETURN_DUE_TO_ASSERT NetworkHTTPSUpgradeChecker::~NetworkHTTPSUpgradeChecker()
+NetworkHTTPSUpgradeChecker::~NetworkHTTPSUpgradeChecker()
 {
     // This object should be owned by a singleton object.
     ASSERT_NOT_REACHED();

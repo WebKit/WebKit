@@ -45,7 +45,7 @@ namespace WebKit {
 class NetworkHTTPSUpgradeChecker {
 public:
     NetworkHTTPSUpgradeChecker();
-    ~NetworkHTTPSUpgradeChecker();
+    NO_RETURN_DUE_TO_ASSERT ~NetworkHTTPSUpgradeChecker();
 
     // Returns `true` after internal setup is successfully completed. If there is an error with setup, or if setup is in-progress, it will return `false`.
     bool didSetupCompleteSuccessfully() const { return m_didSetupCompleteSuccessfully; };

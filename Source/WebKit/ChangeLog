@@ -1,3 +1,21 @@
+2018-12-26  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [MSVC] error C2381: 'WebKit::NetworkHTTPSUpgradeChecker::~NetworkHTTPSUpgradeChecker': redefinition; '__declspec(noreturn)' or '[[noreturn]]' differs
+        https://bugs.webkit.org/show_bug.cgi?id=193030
+
+        Reviewed by Ross Kirsling.
+
+        Windows Debug builds are failing to compile due to
+        NO_RETURN_DUE_TO_ASSERT inconsistency of
+        NetworkHTTPSUpgradeChecker destructor's definition and
+        declaration.
+
+        * NetworkProcess/NetworkHTTPSUpgradeChecker.h: Added
+        NO_RETURN_DUE_TO_ASSERT to NetworkHTTPSUpgradeChecker destructor
+        declaration.
+        * NetworkProcess/NetworkHTTPSUpgradeChecker.cpp: Removed
+        NO_RETURN_DUE_TO_ASSERT from the definition.
+
 2018-12-24  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         [WebKit][Win] Remove using namespace in the global scope
