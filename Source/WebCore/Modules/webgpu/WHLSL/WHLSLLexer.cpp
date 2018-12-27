@@ -25,10 +25,10 @@
 
 #pragma once
 
-#if ENABLE(WEBGPU)
-
 #include "config.h"
 #include "WHLSLLexer.h"
+
+#if ENABLE(WEBGPU)
 
 namespace WebCore {
 

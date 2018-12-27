@@ -26,12 +26,13 @@
 #if PLATFORM(MAC)
 
 #import <wtf/RetainPtr.h>
+#import <wtf/WeakObjCPtr.h>
 
 WEBCORE_EXPORT @interface WebCoreFullScreenPlaceholderView : NSView {
 @private
     RetainPtr<NSVisualEffectView> _effectView;
     RetainPtr<NSTextField> _exitWarning;
-    __weak NSResponder *_target;
+    WeakObjCPtr<NSResponder> _target;
 }
 @property (nullable, strong) id contents;
 @property (nullable, weak) NSResponder *target;

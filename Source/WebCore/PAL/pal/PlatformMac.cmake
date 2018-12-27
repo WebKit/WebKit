@@ -16,6 +16,7 @@ list(APPEND PAL_PUBLIC_HEADERS
     spi/cg/ImageIOSPI.h
 
     spi/cocoa/AVKitSPI.h
+    spi/cocoa/AudioToolboxSPI.h
     spi/cocoa/CFNSURLConnectionSPI.h
     spi/cocoa/CoreTextSPI.h
     spi/cocoa/DataDetectorsCoreSPI.h
@@ -47,7 +48,11 @@ list(APPEND PAL_PUBLIC_HEADERS
     spi/cocoa/WebFilterEvaluatorSPI.h
     spi/cocoa/pthreadSPI.h
 
+    spi/ios/DataDetectorsUISPI.h
+    spi/ios/GraphicsServicesSPI.h
+
     spi/mac/AVFoundationSPI.h
+    spi/mac/CoreUISPI.h
     spi/mac/DataDetectorsSPI.h
     spi/mac/HIServicesSPI.h
     spi/mac/HIToolboxSPI.h
@@ -55,11 +60,13 @@ list(APPEND PAL_PUBLIC_HEADERS
     spi/mac/MediaRemoteSPI.h
     spi/mac/MetadataSPI.h
     spi/mac/NSAccessibilitySPI.h
+    spi/mac/NSAppearanceSPI.h
     spi/mac/NSApplicationSPI.h
     spi/mac/NSCellSPI.h
     spi/mac/NSEventSPI.h
     spi/mac/NSFontSPI.h
     spi/mac/NSGraphicsSPI.h
+    spi/mac/NSImageSPI.h
     spi/mac/NSImmediateActionGestureRecognizerSPI.h
     spi/mac/NSMenuSPI.h
     spi/mac/NSPasteboardSPI.h
@@ -97,7 +104,6 @@ list(APPEND PAL_SOURCES
     cf/CoreMediaSoftLink.cpp
 
     cocoa/FileSizeFormatterCocoa.mm
-    cocoa/LoggingCocoa.mm
     cocoa/PassKitSoftLink.mm
 
     crypto/commoncrypto/CryptoDigestCommonCrypto.cpp
@@ -115,6 +121,7 @@ list(APPEND PAL_SOURCES
 )
 
 list(APPEND PAL_PRIVATE_INCLUDE_DIRECTORIES
+    "${DERIVED_SOURCES_WTF_DIR}"
     "${PAL_DIR}/pal/avfoundation"
     "${PAL_DIR}/pal/cf"
     "${PAL_DIR}/pal/cocoa"

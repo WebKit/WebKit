@@ -25,7 +25,6 @@ list(APPEND TestWebKitAPI_LIBRARIES
 )
 
 set(bundle_harness_SOURCES
-    ${TESTWEBKITAPI_DIR}/cocoa/InstanceMethodSwizzler.mm
     ${TESTWEBKITAPI_DIR}/cocoa/PlatformUtilitiesCocoa.mm
     ${TESTWEBKITAPI_DIR}/cocoa/UtilitiesCocoa.mm
     ${TESTWEBKITAPI_DIR}/mac/InjectedBundleControllerMac.mm

@@ -26,10 +26,10 @@
 #import "config.h"
 #import <wtf/URL.h>
 
-#import "CFURLExtras.h"
-#import "NSURLExtras.h"
 #import <wtf/ObjCRuntimeExtras.h>
 #import <wtf/URLParser.h>
+#import <wtf/cf/CFURLExtras.h>
+#import <wtf/cocoa/NSURLExtras.h>
 #import <wtf/text/CString.h>
 
 @interface NSString (WTFNSURLExtras)

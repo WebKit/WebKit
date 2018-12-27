@@ -26,9 +26,9 @@
 #include "config.h"
 #include <wtf/URL.h>
 
-#include "CFURLExtras.h"
-#include "URLParser.h"
 #include <CoreFoundation/CFURL.h>
+#include <wtf/URLParser.h>
+#include <wtf/cf/CFURLExtras.h>
 #include <wtf/text/CString.h>
 
 namespace WTF {

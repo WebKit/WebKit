@@ -1,3 +1,12 @@
+2018-12-27  Alex Christensen  <achristensen@webkit.org>
+
+        Resurrect Mac CMake build
+        https://bugs.webkit.org/show_bug.cgi?id=192658
+
+        Reviewed by Yusuke Suzuki.
+
+        * pal/PlatformMac.cmake:
+
 2018-12-21  Eric Carlson  <eric.carlson@apple.com>
 
         'ended' Event doesn't fire on MediaStreamTrack when a USB camera is unplugged

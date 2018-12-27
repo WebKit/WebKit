@@ -81,7 +81,15 @@
     return self;
 }
 
-@synthesize target = _target;
+- (NSResponder *)target
+{
+    return _target.get().get();
+}
+
+- (void)setTarget:(NSResponder *)target
+{
+    _target = target;
+}
 
 @dynamic contents;
 

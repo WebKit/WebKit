@@ -30,16 +30,16 @@
 #import <Foundation/Foundation.h>
 #import "NSURLExtras.h"
 
-#import "CFURLExtras.h"
-#import "URLParser.h"
+#import <unicode/uchar.h>
+#import <unicode/uidna.h>
+#import <unicode/uscript.h>
 #import <wtf/Function.h>
 #import <wtf/HexNumber.h>
 #import <wtf/ObjCRuntimeExtras.h>
 #import <wtf/RetainPtr.h>
+#import <wtf/URLParser.h>
 #import <wtf/Vector.h>
-#import <unicode/uchar.h>
-#import <unicode/uidna.h>
-#import <unicode/uscript.h>
+#import <wtf/cf/CFURLExtras.h>
 
 // Needs to be big enough to hold an IDN-encoded name.
 // For host names bigger than this, we won't do IDN encoding, which is almost certainly OK.

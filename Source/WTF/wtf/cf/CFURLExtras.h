@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef CFURLExtras_h
-#define CFURLExtras_h
+#pragma once
 
 #include <wtf/Forward.h>
 #include <wtf/RetainPtr.h>
@@ -42,5 +41,3 @@ WTF_EXPORT_PRIVATE void getURLBytes(CFURLRef, CString&);
 bool isCFURLSameOrigin(CFURLRef, const URL&);
 
 }
-
-#endif // CFURLExtras_h

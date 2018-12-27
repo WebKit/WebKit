@@ -24,7 +24,7 @@
  */
 
 #include "config.h"
-#include "CFURLExtras.h"
+#include <wtf/cf/CFURLExtras.h>
 
 #include <wtf/URL.h>
 #include <wtf/text/CString.h>

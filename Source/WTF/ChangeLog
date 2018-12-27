@@ -1,3 +1,18 @@
+2018-12-27  Alex Christensen  <achristensen@webkit.org>
+
+        Resurrect Mac CMake build
+        https://bugs.webkit.org/show_bug.cgi?id=192658
+
+        Reviewed by Yusuke Suzuki.
+
+        * wtf/PlatformMac.cmake:
+        * wtf/cf/CFURLExtras.cpp:
+        * wtf/cf/CFURLExtras.h:
+        * wtf/cf/URLCF.cpp:
+        * wtf/cocoa/NSURLExtras.h:
+        * wtf/cocoa/NSURLExtras.mm:
+        * wtf/cocoa/URLCocoa.mm:
+
 2018-12-21  Dan Bernstein  <mitz@apple.com>
 
         Fixed building for macOS 10.13 using the macOS 10.14 SDK.

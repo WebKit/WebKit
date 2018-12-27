@@ -1,3 +1,12 @@
+2018-12-27  Alex Christensen  <achristensen@webkit.org>
+
+        Resurrect Mac CMake build
+        https://bugs.webkit.org/show_bug.cgi?id=192658
+
+        Reviewed by Yusuke Suzuki.
+
+        * PlatformMac.cmake:
+
 2018-12-25  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         [JSC][Win][Clang] warning: implicit conversion from 'size_t' (aka 'unsigned long long') to 'int32_t' (aka 'int') changes value from 18446744073709551552 to -64 [-Wconstant-conversion]
