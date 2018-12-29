@@ -77,6 +77,17 @@ String DebuggerScope::className(const JSObject* object, VM& vm)
     return thisObject->methodTable(vm)->className(thisObject, vm);
 }
 
+String DebuggerScope::toStringName(const JSObject* object, ExecState* exec)
+{
+    const DebuggerScope* scope = jsCast<const DebuggerScope*>(object);
+    // We cannot assert that scope->isValid() because the TypeProfiler may encounter an invalidated
+    // DebuggerScope in its log entries. We just need to handle it appropriately as below.
+    if (!scope->isValid())
+        return String();
+    JSObject* thisObject = JSScope::objectAtScope(scope->jsScope());
+    return thisObject->methodTable(exec->vm())->toStringName(thisObject, exec);
+}
+
 bool DebuggerScope::getOwnPropertySlot(JSObject* object, ExecState* exec, PropertyName propertyName, PropertySlot& slot)
 {
     DebuggerScope* scope = jsCast<DebuggerScope*>(object);

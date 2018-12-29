@@ -1,3 +1,26 @@
+2018-12-28  Yusuke Suzuki  <yusukesuzuki@slowstart.org>
+
+        [JSC] Remove one indirection in JSObject::toStringName
+        https://bugs.webkit.org/show_bug.cgi?id=193037
+
+        Reviewed by Keith Miller.
+
+        We should not have additional one-level indirection in JSObject::toStringName.
+        JSObject::toStringName is dispatched through methodTable. Even after that, we
+        need to call JSObject::className function through methodTable again. But className
+        function is rarely defined. So instead of introducing this indirection here,
+        classes having className functions should have toStringName function too. This can
+        remove one-level indirection in toStringName in major cases.
+
+        * API/JSCallbackObject.h:
+        * API/JSCallbackObjectFunctions.h:
+        (JSC::JSCallbackObject<Parent>::toStringName):
+        * debugger/DebuggerScope.cpp:
+        (JSC::DebuggerScope::toStringName):
+        * debugger/DebuggerScope.h:
+        * runtime/JSObject.cpp:
+        (JSC::JSObject::toStringName):
+
 2018-12-27  Alex Christensen  <achristensen@webkit.org>
 
         Resurrect Mac CMake build

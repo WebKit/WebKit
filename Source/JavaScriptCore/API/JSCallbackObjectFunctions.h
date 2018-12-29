@@ -140,6 +140,15 @@ String JSCallbackObject<Parent>::className(const JSObject* object, VM& vm)
 }
 
 template <class Parent>
+String JSCallbackObject<Parent>::toStringName(const JSObject* object, ExecState* exec)
+{
+    VM& vm = exec->vm();
+    const ClassInfo* info = object->classInfo(vm);
+    ASSERT(info);
+    return info->methodTable.className(object, vm);
+}
+
+template <class Parent>
 bool JSCallbackObject<Parent>::getOwnPropertySlot(JSObject* object, ExecState* exec, PropertyName propertyName, PropertySlot& slot)
 {
     VM& vm = exec->vm();

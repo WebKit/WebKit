@@ -519,7 +519,7 @@ String JSObject::toStringName(const JSObject* object, ExecState* exec)
     VM& vm = exec->vm();
     const ClassInfo* info = object->classInfo(vm);
     ASSERT(info);
-    return info->methodTable.className(object, vm);
+    return info->className;
 }
 
 String JSObject::calculatedClassName(JSObject* object)

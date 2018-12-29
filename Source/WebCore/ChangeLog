@@ -1,3 +1,18 @@
+2018-12-28  Yusuke Suzuki  <yusukesuzuki@slowstart.org>
+
+        [JSC] Remove one indirection in JSObject::toStringName
+        https://bugs.webkit.org/show_bug.cgi?id=193037
+
+        Reviewed by Keith Miller.
+
+        Use old JSObject::toStringName function here.
+
+        * bindings/js/JSDOMConstructorBase.cpp:
+        (WebCore::JSDOMConstructorBase::className):
+        (WebCore::JSDOMConstructorBase::toStringName):
+        * bindings/js/JSDOMConstructorBase.h:
+        (WebCore::JSDOMConstructorBase::className): Deleted.
+
 2018-12-27  Alex Christensen  <achristensen@webkit.org>
 
         Resurrect Mac CMake build

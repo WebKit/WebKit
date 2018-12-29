@@ -187,6 +187,7 @@ public:
 
 private:
     static String className(const JSObject*, VM&);
+    static String toStringName(const JSObject*, ExecState*);
 
     static JSValue defaultValue(const JSObject*, ExecState*, PreferredPrimitiveType);
 

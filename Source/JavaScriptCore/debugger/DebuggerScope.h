@@ -42,6 +42,7 @@ public:
 
     static void visitChildren(JSCell*, SlotVisitor&);
     static String className(const JSObject*, VM&);
+    static String toStringName(const JSObject*, ExecState*);
     static bool getOwnPropertySlot(JSObject*, ExecState*, PropertyName, PropertySlot&);
     static bool put(JSCell*, ExecState*, PropertyName, JSValue, PutPropertySlot&);
     static bool deleteProperty(JSCell*, ExecState*, PropertyName);

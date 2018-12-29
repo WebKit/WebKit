@@ -43,4 +43,17 @@ CallType JSDOMConstructorBase::getCallData(JSCell*, CallData& callData)
     return CallType::Host;
 }
 
+String JSDOMConstructorBase::className(const JSObject*, JSC::VM&)
+{
+    return "Function"_s;
+}
+
+String JSDOMConstructorBase::toStringName(const JSObject* object, JSC::ExecState* exec)
+{
+    VM& vm = exec->vm();
+    const ClassInfo* info = object->classInfo(vm);
+    ASSERT(info);
+    return info->methodTable.className(object, vm);
+}
+
 } // namespace WebCore
