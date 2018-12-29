@@ -738,6 +738,7 @@
 		2EA7B3D12026CEF8009CE5AC /* WKNumberPadViewController.h in Headers */ = {isa = PBXBuildFile; fileRef = 2EA7B3CF2026CEF8009CE5AC /* WKNumberPadViewController.h */; };
 		2EA7B3D52026CF23009CE5AC /* WKNumberPadView.h in Headers */ = {isa = PBXBuildFile; fileRef = 2EA7B3D32026CF23009CE5AC /* WKNumberPadView.h */; };
 		2EB6FC01203021960017E619 /* WKTimePickerViewController.h in Headers */ = {isa = PBXBuildFile; fileRef = 2EB6FBFF203021960017E619 /* WKTimePickerViewController.h */; };
+		2ECF66CE21D6B77E009E5C3F /* WKEditCommand.h in Headers */ = {isa = PBXBuildFile; fileRef = 2ECF66CC21D6B77E009E5C3F /* WKEditCommand.h */; };
 		2F8336861FA139DF00C6E080 /* TouchBarMenuData.h in Headers */ = {isa = PBXBuildFile; fileRef = 2FD43B911FA006A10083F51C /* TouchBarMenuData.h */; };
 		310999C7146C9E3D0029DEB9 /* WebNotificationClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 31099968146C71F50029DEB9 /* WebNotificationClient.h */; };
 		312C0C4A146DDC8A0016C911 /* WKNotificationProvider.h in Headers */ = {isa = PBXBuildFile; fileRef = 312C0C49146DDC8A0016C911 /* WKNotificationProvider.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -2818,6 +2819,8 @@
 		2EA7B3D42026CF23009CE5AC /* WKNumberPadView.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; name = WKNumberPadView.mm; path = ios/forms/WKNumberPadView.mm; sourceTree = "<group>"; };
 		2EB6FBFF203021960017E619 /* WKTimePickerViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = WKTimePickerViewController.h; path = ios/forms/WKTimePickerViewController.h; sourceTree = "<group>"; };
 		2EB6FC00203021960017E619 /* WKTimePickerViewController.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; name = WKTimePickerViewController.mm; path = ios/forms/WKTimePickerViewController.mm; sourceTree = "<group>"; };
+		2ECF66CC21D6B77E009E5C3F /* WKEditCommand.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WKEditCommand.h; sourceTree = "<group>"; };
+		2ECF66CD21D6B77E009E5C3F /* WKEditCommand.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = WKEditCommand.mm; sourceTree = "<group>"; };
 		2F809DD51FBD1BC9005FE63A /* TouchBarMenuItemData.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = TouchBarMenuItemData.cpp; sourceTree = "<group>"; };
 		2F809DD91FBD1BF2005FE63A /* TouchBarMenuItemData.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TouchBarMenuItemData.h; sourceTree = "<group>"; };
 		2FD43B911FA006A10083F51C /* TouchBarMenuData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TouchBarMenuData.h; sourceTree = "<group>"; };
@@ -5340,6 +5343,8 @@
 				51D124321E6DE521002B2820 /* WebURLSchemeHandlerCocoa.mm */,
 				2DFC7DB91BCCC19500C1548C /* WebViewImpl.h */,
 				2DFC7DBA1BCCC19500C1548C /* WebViewImpl.mm */,
+				2ECF66CC21D6B77E009E5C3F /* WKEditCommand.h */,
+				2ECF66CD21D6B77E009E5C3F /* WKEditCommand.mm */,
 				E1AEA22D14687BDB00804569 /* WKFullKeyboardAccessWatcher.h */,
 				E1AEA22E14687BDB00804569 /* WKFullKeyboardAccessWatcher.mm */,
 				1AD01BCB1905D54900C9C45F /* WKReloadFrameErrorRecoveryAttempter.h */,
@@ -9654,6 +9659,7 @@
 				637281A221ADC744009E0DE6 /* WKDownloadProgress.h in Headers */,
 				F409BA181E6E64BC009DA28E /* WKDragDestinationAction.h in Headers */,
 				2DC18FAD218910490025A88D /* WKDrawingView.h in Headers */,
+				2ECF66CE21D6B77E009E5C3F /* WKEditCommand.h in Headers */,
 				1AF4592F19464B2000F9D4A2 /* WKError.h in Headers */,
 				BCFD548C132D82680055D816 /* WKErrorCF.h in Headers */,
 				37B5045219EEF31300CE2CF8 /* WKErrorPrivate.h in Headers */,

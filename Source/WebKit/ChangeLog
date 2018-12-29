@@ -1,3 +1,58 @@
+2018-12-28  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Move WKEditCommandObjC and WKEditorUndoTargetObjC into a separate file
+        https://bugs.webkit.org/show_bug.cgi?id=193049
+
+        Reviewed by Sam Weinig.
+
+        Pull common code (WKEditCommandObjC and WKEditorUndoTargetObjC) on iOS and macOS out into a separate file. No
+        change in behavior.
+
+        * SourcesCocoa.txt:
+        * UIProcess/Cocoa/WKEditCommand.h: Added.
+        * UIProcess/Cocoa/WKEditCommand.mm: Added.
+
+        Rename WKEditCommandObjC to WKEditCommand, and WKEditorUndoTargetObjC to WKEditorUndoTarget. The ObjC suffix in
+        the name seems to diverge from the common naming scheme in other parts of WebKit, where most WK- and _WK-
+        prefixed names already refer to Objective-C objects. Additionally, mark -[WKEditCommand init] as unavailable.
+
+        (-[WKEditCommand initWithWebEditCommandProxy:]):
+
+        Make the return type instancetype instead of id, and also make this take a Ref<WebEditCommandProxy>&& instead
+        of a RefPtr.
+
+        (-[WKEditCommand command]):
+
+        Make this return a reference to the WebEditCommandProxy, rather than a pointer, since the WebEditCommandProxy
+        should always be non-null.
+
+        (-[WKEditorUndoTarget undoEditing:]):
+        (-[WKEditorUndoTarget redoEditing:]):
+        * UIProcess/Cocoa/WebViewImpl.h:
+        * UIProcess/Cocoa/WebViewImpl.mm:
+        (WebKit::WebViewImpl::WebViewImpl):
+        (WebKit::WebViewImpl::registerEditCommand):
+
+        Use WTFMove instead of copying the Ref when creating a WKEditCommand.
+
+        (-[WKEditCommandObjC initWithWebEditCommandProxy:]): Deleted.
+        (-[WKEditCommandObjC command]): Deleted.
+        (-[WKEditorUndoTargetObjC undoEditing:]): Deleted.
+        (-[WKEditorUndoTargetObjC redoEditing:]): Deleted.
+        * UIProcess/ios/PageClientImplIOS.h:
+        * UIProcess/ios/PageClientImplIOS.mm:
+        (WebKit::PageClientImpl::PageClientImpl):
+        (WebKit::PageClientImpl::registerEditCommand):
+
+        Use WTFMove instead of creating a new RefPtr when creating a WKEditCommand.
+
+        (-[WKEditCommandObjC initWithWebEditCommandProxy:]): Deleted.
+        (-[WKEditCommandObjC command]): Deleted.
+        (-[WKEditorUndoTargetObjC undoEditing:]): Deleted.
+        (-[WKEditorUndoTargetObjC redoEditing:]): Deleted.
+        * UIProcess/mac/PageClientImplMac.h:
+        * WebKit.xcodeproj/project.pbxproj:
+
 2018-12-27  Alex Christensen  <achristensen@webkit.org>
 
         Resurrect Mac CMake build

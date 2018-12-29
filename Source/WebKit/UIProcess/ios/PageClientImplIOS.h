@@ -32,7 +32,7 @@
 #import <wtf/RetainPtr.h>
 
 OBJC_CLASS WKContentView;
-OBJC_CLASS WKEditorUndoTargetObjC;
+OBJC_CLASS WKEditorUndoTarget;
 
 namespace WebCore {
 struct PromisedAttachmentInfo;
@@ -229,7 +229,7 @@ private:
     void didFinishProcessingAllPendingMouseEvents() final { }
 
     WKContentView *m_contentView;
-    RetainPtr<WKEditorUndoTargetObjC> m_undoTarget;
+    RetainPtr<WKEditorUndoTarget> m_undoTarget;
 };
 } // namespace WebKit
 

@@ -32,7 +32,7 @@
 #include "WebFullScreenManagerProxy.h"
 #include <wtf/RetainPtr.h>
 
-@class WKEditorUndoTargetObjC;
+@class WKEditorUndoTarget;
 @class WKView;
 
 namespace WebCore {
