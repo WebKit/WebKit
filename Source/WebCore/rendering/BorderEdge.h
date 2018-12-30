@@ -67,13 +67,13 @@ public:
 private:
     inline float borderWidthInDevicePixel(int logicalPixels) const { return LayoutUnit(logicalPixels / m_devicePixelRatio).toFloat(); }
 
-    LayoutUnit m_width;
     Color m_color;
+    LayoutUnit m_width;
+    float m_flooredToDevicePixelWidth { 0 };
+    float m_devicePixelRatio { 1 };
     BorderStyle m_style { BorderStyle::Hidden };
     bool m_isTransparent { false };
     bool m_isPresent { false };
-    float m_flooredToDevicePixelWidth { 0 };
-    float m_devicePixelRatio { 1 };
 };
 
 inline bool edgesShareColor(const BorderEdge& firstEdge, const BorderEdge& secondEdge) { return firstEdge.color() == secondEdge.color(); }

@@ -1,3 +1,17 @@
+2018-12-30  David Kilzer  <ddkilzer@apple.com>
+
+        clang-tidy: Save 8 padding bytes on WebCore::BorderEdge
+        <https://webkit.org/b/193058>
+        <rdar://problem/46979275>
+
+        Reviewed by Yusuke Suzuki.
+
+        * rendering/BorderEdge.cpp:
+        (WebCore::BorderEdge::BorderEdge): Reorder initialization to
+        match new instance variable order.
+        * rendering/BorderEdge.h: Reorder instance variables to save
+        8 padding bytes.
+
 2018-12-28  Yusuke Suzuki  <yusukesuzuki@slowstart.org>
 
         [JSC] Remove one indirection in JSObject::toStringName
