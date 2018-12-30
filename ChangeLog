@@ -1,3 +1,17 @@
+2018-12-30  Yusuke Suzuki  <yusukesuzuki@slowstart.org>
+
+        gperf is only used in WebCore
+        https://bugs.webkit.org/show_bug.cgi?id=193061
+
+        Reviewed by Don Olmstead.
+
+        gperf is only used in WebCore. So if the port does not have WebCore,
+        it is not necessary. For example, JSCOnly port does not require it.
+        This patch removes gperf dependency in these ports by checking
+        ENABLE_WEBCORE.
+
+        * Source/cmake/WebKitCommon.cmake:
+
 2018-12-28  Yusuke Suzuki  <yusukesuzuki@slowstart.org>
 
         Add ENABLE_UNIFIED_BUILDS option to cmake ports

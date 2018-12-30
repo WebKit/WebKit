@@ -13,9 +13,6 @@ if (NOT HAS_RUN_WEBKIT_COMMON)
         list(APPEND CMAKE_PROGRAM_PATH $ENV{SystemDrive}/cygwin/bin)
     endif ()
 
-    # TODO Enforce version requirement for gperf
-    find_package(Gperf 3.0.1 REQUIRED)
-
     # TODO Enforce version requirement for perl
     find_package(Perl 5.10.0 REQUIRED)
     find_package(PerlModules COMPONENTS JSON::PP REQUIRED)
@@ -57,6 +54,13 @@ if (NOT HAS_RUN_WEBKIT_COMMON)
 
     include(OptionsCommon)
     include(Options${PORT})
+
+    # Check gperf after including OptionsXXX.cmake since gperf is required only when ENABLE_WEBCORE is true,
+    # and ENABLE_WEBCORE is configured in OptionsXXX.cmake.
+    if (ENABLE_WEBCORE)
+        # TODO Enforce version requirement for gperf
+        find_package(Gperf 3.0.1 REQUIRED)
+    endif ()
 
     # -----------------------------------------------------------------------------
     # Job pool to avoid running too many memory hungry linker processes
