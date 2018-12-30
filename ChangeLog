@@ -1,3 +1,17 @@
+2018-12-28  Yusuke Suzuki  <yusukesuzuki@slowstart.org>
+
+        Add ENABLE_UNIFIED_BUILDS option to cmake ports
+        https://bugs.webkit.org/show_bug.cgi?id=193045
+
+        Reviewed by Don Olmstead.
+
+        This patch adds ENABLE_UNIFIED_BUILDS option to cmake ports, which allows us to disable Unified Builds in WebKit.
+        This makes `compile_commands.json` sane when the unified builds is disabled, and various tools can use this
+        compilation database. For example, YouCompleteMe completion server can use it.
+
+        * Source/cmake/WebKitFeatures.cmake:
+        * Source/cmake/WebKitMacros.cmake:
+
 2018-12-27  Alex Christensen  <achristensen@webkit.org>
 
         Resurrect Mac CMake build
