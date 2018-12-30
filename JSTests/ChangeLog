@@ -1,3 +1,9 @@
+2018-12-30  Yusuke Suzuki  <yusukesuzuki@slowstart.org>
+
+        Unreviewed, JSTests gardening with memoryLimited
+
+        * stress/string-overflow-createError.js:
+
 2018-12-30  Ross Kirsling  <ross.kirsling@sony.com>
 
         [JSC] Identifier validity should be based on ID_Start / ID_Continue properties

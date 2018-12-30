@@ -1,3 +1,4 @@
+//@ skip if $memoryLimited
 var exception;
 try {
     bar = '2.3023e-320'
