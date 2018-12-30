@@ -1,6 +1,6 @@
 S7.6_A5.2_T9
 
-FAIL SputnikError: #1369 
+PASS 
 
 TEST COMPLETE
 

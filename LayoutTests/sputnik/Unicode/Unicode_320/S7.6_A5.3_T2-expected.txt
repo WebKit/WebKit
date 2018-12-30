@@ -1,6 +1,6 @@
 S7.6_A5.3_T2
 
-FAIL SputnikError: #0221 
+FAIL SputnikError: #00B7 
 
 TEST COMPLETE
 

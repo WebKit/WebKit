@@ -1,3 +1,25 @@
+2018-12-30  Ross Kirsling  <ross.kirsling@sony.com>
+
+        [JSC] Identifier validity should be based on ID_Start / ID_Continue properties
+        https://bugs.webkit.org/show_bug.cgi?id=193050
+
+        Reviewed by Yusuke Suzuki.
+
+        From https://tc39.github.io/ecma262/#sec-names-and-keywords:
+            UnicodeIDStart::
+                any Unicode code point with the Unicode property "ID_Start"
+            UnicodeIDContinue::
+                any Unicode code point with the Unicode property "ID_Continue"
+
+        * parser/Lexer.cpp:
+        (JSC::Lexer<T>::Lexer):
+        (JSC::isNonLatin1IdentStart):
+        (JSC::isNonLatin1IdentPart):
+        (JSC::isIdentPart):
+        (JSC::Lexer<T>::lex):
+        Ensure identifier start / part is based on ID_Start / ID_Continue.
+        (Implies a special case for U+00B7, which is Latin-1 but Other_ID_Continue.)
+
 2018-12-28  Yusuke Suzuki  <yusukesuzuki@slowstart.org>
 
         [JSC] Remove one indirection in JSObject::toStringName

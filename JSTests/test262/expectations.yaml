@@ -6953,33 +6953,9 @@ test/language/global-code/script-decl-func-err-non-extensible.js:
 test/language/global-code/script-decl-var-err.js:
   default: 'Test262Error: Expected a TypeError to be thrown but no exception was thrown at all'
   strict mode: 'Test262Error: Expected a TypeError to be thrown but no exception was thrown at all'
-test/language/identifiers/other_id_continue-escaped.js:
-  default: "SyntaxError: Invalid unicode escape in identifier: 'a\\u2118'"
-  strict mode: "SyntaxError: Invalid unicode escape in identifier: 'a\\u2118'"
-test/language/identifiers/other_id_continue.js:
-  default: "SyntaxError: Invalid character '\\u2118'"
-  strict mode: "SyntaxError: Invalid character '\\u2118'"
-test/language/identifiers/other_id_start-escaped.js:
-  default: "SyntaxError: Invalid unicode escape in identifier: '\\u2118'"
-  strict mode: "SyntaxError: Invalid unicode escape in identifier: '\\u2118'"
-test/language/identifiers/other_id_start.js:
-  default: "SyntaxError: Invalid character '\\u2118'"
-  strict mode: "SyntaxError: Invalid character '\\u2118'"
 test/language/identifiers/val-yield-strict.js:
   default: 'Test262: This statement should not be evaluated.'
   strict mode: "SyntaxError: Cannot use 'yield' as a variable name in strict mode."
-test/language/identifiers/vertical-tilde-continue-escaped.js:
-  default: 'Test262: This statement should not be evaluated.'
-  strict mode: 'Test262: This statement should not be evaluated.'
-test/language/identifiers/vertical-tilde-continue.js:
-  default: 'Test262: This statement should not be evaluated.'
-  strict mode: 'Test262: This statement should not be evaluated.'
-test/language/identifiers/vertical-tilde-start-escaped.js:
-  default: 'Test262: This statement should not be evaluated.'
-  strict mode: 'Test262: This statement should not be evaluated.'
-test/language/identifiers/vertical-tilde-start.js:
-  default: 'Test262: This statement should not be evaluated.'
-  strict mode: 'Test262: This statement should not be evaluated.'
 test/language/literals/numeric/numeric-separator-literal-bil-bd-nsl-bd.js:
   default: 'SyntaxError: No space between binary literal and identifier'
   strict mode: 'SyntaxError: No space between binary literal and identifier'

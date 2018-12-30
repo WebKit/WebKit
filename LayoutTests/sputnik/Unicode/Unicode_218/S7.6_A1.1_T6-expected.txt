@@ -1,6 +1,6 @@
 S7.6_A1.1_T6
 
-FAIL SputnikError: #2160 
+PASS 
 
 TEST COMPLETE
 

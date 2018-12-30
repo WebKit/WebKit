@@ -1,3 +1,39 @@
+2018-12-30  Ross Kirsling  <ross.kirsling@sony.com>
+
+        [JSC] Identifier validity should be based on ID_Start / ID_Continue properties
+        https://bugs.webkit.org/show_bug.cgi?id=193050
+
+        Reviewed by Yusuke Suzuki.
+
+        * sputnik/Unicode/Unicode_218/S7.6_A1.1_T2-expected.txt:
+        * sputnik/Unicode/Unicode_218/S7.6_A1.1_T6-expected.txt:
+        * sputnik/Unicode/Unicode_218/S7.6_A5.2_T2-expected.txt:
+        * sputnik/Unicode/Unicode_218/S7.6_A5.2_T6-expected.txt:
+        * sputnik/Unicode/Unicode_218/S7.6_A5.3_T1-expected.txt:
+        * sputnik/Unicode/Unicode_218/S7.6_A5.3_T2-expected.txt:
+        * sputnik/Unicode/Unicode_320/S7.6_A1.1_T6-expected.txt:
+        * sputnik/Unicode/Unicode_320/S7.6_A2.3-expected.txt:
+        * sputnik/Unicode/Unicode_320/S7.6_A3.1-expected.txt:
+        * sputnik/Unicode/Unicode_320/S7.6_A5.2_T6-expected.txt:
+        * sputnik/Unicode/Unicode_320/S7.6_A5.2_T9-expected.txt:
+        * sputnik/Unicode/Unicode_320/S7.6_A5.3_T1-expected.txt:
+        * sputnik/Unicode/Unicode_320/S7.6_A5.3_T2-expected.txt:
+        * sputnik/Unicode/Unicode_410/S7.6_A1.1_T6-expected.txt:
+        * sputnik/Unicode/Unicode_410/S7.6_A3.1-expected.txt:
+        * sputnik/Unicode/Unicode_410/S7.6_A5.2_T6-expected.txt:
+        * sputnik/Unicode/Unicode_410/S7.6_A5.3_T1-expected.txt:
+        * sputnik/Unicode/Unicode_410/S7.6_A5.3_T2-expected.txt:
+        * sputnik/Unicode/Unicode_500/S7.6_A1.1_T6-expected.txt:
+        * sputnik/Unicode/Unicode_500/S7.6_A3.1-expected.txt:
+        * sputnik/Unicode/Unicode_500/S7.6_A5.2_T6-expected.txt:
+        * sputnik/Unicode/Unicode_500/S7.6_A5.3_T1-expected.txt:
+        * sputnik/Unicode/Unicode_500/S7.6_A5.3_T2-expected.txt:
+        * sputnik/Unicode/Unicode_510/S7.6_A1.1_T4-expected.txt:
+        * sputnik/Unicode/Unicode_510/S7.6_A1.1_T6-expected.txt:
+        * sputnik/Unicode/Unicode_510/S7.6_A5.2_T4-expected.txt:
+        * sputnik/Unicode/Unicode_510/S7.6_A5.2_T6-expected.txt:
+        Update expectations for outdated tests.
+
 2018-12-23  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed GTK+ gardening. Rebaseline fast/text/zero-font-size.html after r239539.

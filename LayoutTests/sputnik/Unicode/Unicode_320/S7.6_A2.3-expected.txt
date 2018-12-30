@@ -1,6 +1,6 @@
 S7.6_A2.3
 
-FAIL SputnikError: #1369 
+PASS 
 
 TEST COMPLETE
 

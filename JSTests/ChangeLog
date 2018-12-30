@@ -1,3 +1,14 @@
+2018-12-30  Ross Kirsling  <ross.kirsling@sony.com>
+
+        [JSC] Identifier validity should be based on ID_Start / ID_Continue properties
+        https://bugs.webkit.org/show_bug.cgi?id=193050
+
+        Reviewed by Yusuke Suzuki.
+
+        * test262.yaml:
+        * test262/expectations.yaml:
+        Mark 16 tests as passing.
+
 2018-12-13  Yusuke Suzuki  <yusukesuzuki@slowstart.org>
 
         [BigInt] Support BigInt in JSON.stringify

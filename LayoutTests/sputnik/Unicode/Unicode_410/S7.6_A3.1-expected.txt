@@ -1,6 +1,6 @@
 S7.6_A3.1
 
-FAIL SputnikError: #0242-024F 
+FAIL SputnikError: #00B7 
 
 TEST COMPLETE
 
