@@ -8,3 +8,4 @@ PASS [INPUT in COLOR status] The value attribute is empty
 PASS [INPUT in COLOR status] The value attribute is a valid sample color 
 PASS [INPUT in COLOR status] The value attribute is not a valid lowercase sample color 
 PASS [INPUT in COLOR status] The value attribute cannot convert to a valid sample color 
+

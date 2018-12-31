@@ -45,3 +45,4 @@ FAIL input type submit should not support variable-length selections Type error
 FAIL input type image should not support variable-length selections Type error
 FAIL input type reset should not support variable-length selections Type error
 FAIL input type button should not support variable-length selections Type error
+

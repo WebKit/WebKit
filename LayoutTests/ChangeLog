@@ -1,3 +1,23 @@
+2018-12-31  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed GTK+ gardening. Rebaseline several tests after r238730.
+
+        innerText works differently when using complex text path.
+        See https://bugs.webkit.org/show_bug.cgi?id=192750.
+
+        * platform/gtk/fast/events/nested-window-event-expected.txt: Added.
+        * platform/gtk/fast/events/window-events-bubble-expected.txt: Added.
+        * platform/gtk/fast/events/window-events-bubble2-expected.txt: Added.
+        * platform/gtk/fast/tokenizer/script_extra_close-expected.txt: Added.
+        * platform/gtk/imported/w3c/web-platform-tests/css/css-grid/alignment/grid-row-axis-alignment-positioned-items-015-expected.txt: Added.
+        * platform/gtk/imported/w3c/web-platform-tests/css/css-grid/alignment/grid-row-axis-alignment-positioned-items-016-expected.txt: Added.
+        * platform/gtk/imported/w3c/web-platform-tests/html/semantics/forms/constraints/form-validation-validity-badInput-expected.txt:
+        * platform/gtk/imported/w3c/web-platform-tests/html/semantics/forms/constraints/form-validation-willValidate-expected.txt:
+        * platform/gtk/imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/selection-expected.txt:
+        * platform/gtk/legacy-animation-engine/animations/lineheight-animation-expected.txt: Added.
+        * platform/gtk/legacy-animation-engine/animations/simultaneous-start-transform-expected.txt: Added.
+        * platform/gtk/legacy-animation-engine/animations/width-using-ems-expected.txt: Added.
+
 2018-12-30  Ross Kirsling  <ross.kirsling@sony.com>
 
         [JSC] Identifier validity should be based on ID_Start / ID_Continue properties
