@@ -9,7 +9,7 @@ layer at (0,0) size 800x187
       RenderBlock {div} at (18,61) size 732x15
         RenderText {#text} at (0,0) size 385x14
           text run at (0,0) width 385: "error on line 4 at column 13: Entity 'fnof' not defined"
-          text run at (385,0) width 0: " "
+          text run at (384,0) width 1: " "
       RenderBlock {h3} at (18,94) size 732x23
         RenderText {#text} at (0,0) size 427x21
           text run at (0,0) width 427: "Below is a rendering of the page up to the first error."

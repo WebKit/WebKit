@@ -1,5 +1,24 @@
 2018-12-31  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        Unreviewed GTK+ gardening. Rebaseline several tests after r239156.
+
+        * platform/gtk/fast/frames/onlyCommentInIFrame-expected.txt:
+        * platform/gtk/fast/invalid/junk-data-expected.txt:
+        * platform/gtk/fast/invalid/missing-end-tag-expected.txt:
+        * platform/gtk/fast/parser/xhtml-alternate-entities-expected.txt:
+        * platform/gtk/fast/sub-pixel/selection/selection-rect-in-sub-pixel-table-expected.png:
+        * platform/gtk/fast/sub-pixel/selection/selection-rect-in-sub-pixel-table-expected.txt:
+        * platform/gtk/fast/xsl/xslt-extra-content-at-end-expected.txt:
+        * platform/gtk/fast/xsl/xslt-missing-namespace-in-xslt-expected.txt:
+        * platform/gtk/svg/custom/bug45331-expected.txt:
+        * platform/gtk/svg/custom/junk-data-expected.txt:
+        * platform/gtk/svg/custom/missing-xlink-expected.txt:
+        * platform/gtk/svg/custom/path-bad-data-expected.txt:
+        * platform/gtk/svg/custom/use-font-face-crash-expected.txt:
+        * platform/gtk/svg/hixie/error/012-expected.txt:
+
+2018-12-31  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         Unreviewed GTK+ gardening. Rebaseline several tests after r238730.
 
         innerText works differently when using complex text path.
