@@ -1,3 +1,12 @@
+2018-12-31  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Support PHP 7.3 in Debian.
+
+        Add 7.3 to the list of php versions supported in Debian.
+
+        * Scripts/webkitpy/port/base.py:
+        (Port._debian_php_version):
+
 2018-12-27  Alex Christensen  <achristensen@webkit.org>
 
         Resurrect Mac CMake build

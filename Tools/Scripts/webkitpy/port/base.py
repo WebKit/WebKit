@@ -1274,7 +1274,7 @@ class Port(object):
 
     def _debian_php_version(self):
         prefix = "/usr/lib/apache2/modules/"
-        for version in ("7.0", "7.1", "7.2"):
+        for version in ("7.0", "7.1", "7.2", "7.3"):
             if self._filesystem.exists("%s/libphp%s.so" % (prefix, version)):
                 return "-php%s" % version
         _log.error("No libphp7.x.so found in %s" % prefix)
