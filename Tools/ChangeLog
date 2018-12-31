@@ -1,3 +1,21 @@
+2018-12-29  Yusuke Suzuki  <yusukesuzuki@slowstart.org>
+
+        .ycm_extra_conf.py should handle XXXInlines.h
+        https://bugs.webkit.org/show_bug.cgi?id=193055
+
+        Reviewed by Carlos Garcia Campos.
+
+        compile_commands.json database only records flags and options for cpp source files.
+        So, when we open headers, this database does not have any information for that.
+        Our .ycm_extra_conf.py alleviates this by using XXX.cpp's configuration for XXX.h.
+        But this mitigation does not handle XXXInlines.h well since we do not have XXXInlines.cpp.
+        This patch adds support for XXXInlines.h in .ycm_extra_conf.py. When XXXInlines.h is queried,
+        we attempt to find XXX.cpp and use the configuration if it exists.
+
+        * gtk/ycm_extra_conf.py:
+        (getImplementationFilename):
+        (FlagsForFile):
+
 2018-12-31  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed. Support PHP 7.3 in Debian.

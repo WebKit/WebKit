@@ -81,6 +81,15 @@ def get_build_path():
     return release_build_path if release_mtime >= debug_mtime else debug_build_path
 
 
+def getImplementationFilename(filename):
+    alternative_extensions = ['.cpp', '.c']
+    for alternative_extension in alternative_extensions:
+        alternative_filename = filename[:-2] + alternative_extension
+        if os.path.exists(alternative_filename):
+            return alternative_filename
+    return None
+
+
 def FlagsForFile(filename, **kwargs):
     """This is the main entry point for YCM. Its interface is fixed.
 
@@ -97,14 +106,16 @@ def FlagsForFile(filename, **kwargs):
 
     # Headers can't be built, so we get the source file flags instead.
     if filename.endswith('.h'):
-        alternative_extensions = ['.cpp', '.c']
-        for alternative_extension in alternative_extensions:
-            alternative_filename = filename[:-2] + alternative_extension
-            if os.path.exists(alternative_filename):
-                filename = alternative_filename
-                break
+        implementationFilename = getImplementationFilename(filename)
+        if implementationFilename:
+            filename = implementationFilename
         else:
-            return result
+            if not filename.endswith('Inlines.h'):
+                return result
+            implementationFilename = getImplementationFilename(filename[:-len('Inlines.h')] + '.h')
+            if not implementationFilename:
+                return result
+            filename = implementationFilename
         # Force config.h file inclusion, for GLib macros.
         result['flags'].append("-includeconfig.h")
 
