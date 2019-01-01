@@ -1,3 +1,12 @@
+2019-01-01  Jeff Miller  <jeffm@apple.com>
+
+        Update user-visible copyright strings to include 2019
+        https://bugs.webkit.org/show_bug.cgi?id=192811
+
+        Reviewed by Mark Lam.
+
+        * Info.plist:
+
 2018-12-30  David Kilzer  <ddkilzer@apple.com>
 
         clang-tidy: Save 8 padding bytes on WebCore::BorderEdge
