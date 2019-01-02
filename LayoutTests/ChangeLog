@@ -1,3 +1,49 @@
+2019-01-02  Simon Fraser  <simon.fraser@apple.com>
+
+        Support css-color-4 rgb functions
+        https://bugs.webkit.org/show_bug.cgi?id=192321
+
+        Reviewed by Zalan Bujtas.
+
+        * TestExpectations: Unskip most of the WPT css-color rgb tests. Skip old imported WPT canvas tests.
+        * canvas/philip/tests/2d.fillStyle.parse.invalid.rgb-1-expected.txt: Removed.
+        * canvas/philip/tests/2d.fillStyle.parse.invalid.rgb-1.html: Removed.
+        * canvas/philip/tests/2d.fillStyle.parse.invalid.rgb-2-expected.txt: Removed.
+        * canvas/philip/tests/2d.fillStyle.parse.invalid.rgb-2.html: Removed.
+        * canvas/philip/tests/2d.fillStyle.parse.invalid.rgb-5-expected.txt: Removed.
+        * canvas/philip/tests/2d.fillStyle.parse.invalid.rgb-5.html: Removed.
+        * canvas/philip/tests/2d.fillStyle.parse.invalid.rgb-7-expected.txt: Removed.
+        * canvas/philip/tests/2d.fillStyle.parse.invalid.rgb-7.html: Removed.
+        * canvas/philip/tests/2d.fillStyle.parse.invalid.rgba-1-expected.txt: Removed.
+        * canvas/philip/tests/2d.fillStyle.parse.invalid.rgba-1.html: Removed.
+        * canvas/philip/tests/2d.fillStyle.parse.invalid.rgba-2-expected.txt: Removed.
+        * canvas/philip/tests/2d.fillStyle.parse.invalid.rgba-2.html: Removed.
+        * canvas/philip/tests/2d.fillStyle.parse.invalid.rgba-4-expected.txt: Removed.
+        * canvas/philip/tests/2d.fillStyle.parse.invalid.rgba-4.html: Removed.
+        * css3/calc/color-rgb-expected.txt:
+        * fast/canvas/gradient-addColorStop-with-invalid-color-expected.txt:
+        * fast/canvas/gradient-addColorStop-with-invalid-color.html: Remove a test that is no longer invalid.
+        * fast/css/rgb-float.html: Removed. This test is no longer value, since rgb() accepts floating point values.
+        * platform/gtk/css2.1/t040306-syntax-01-f-expected.txt:
+        * platform/gtk/fast/css/rgb-float-expected.png: Removed.
+        * platform/gtk/fast/css/rgb-float-expected.txt: Removed.
+        * platform/gtk/svg/hixie/perf/007-expected.txt:
+        * platform/ios/css2.1/t040306-syntax-01-f-expected.txt:
+        * platform/ios/fast/css/rgb-float-expected.txt: Removed.
+        * platform/mac/css2.1/t040306-syntax-01-f-expected.txt:
+        * platform/mac/fast/css/rgb-float-expected.png: Removed.
+        * platform/mac/fast/css/rgb-float-expected.txt: Removed.
+        * platform/mac/svg/hixie/perf/007-expected.txt:
+        * platform/win-future/svg/hixie/perf/007-expected.txt:
+        * platform/win/css2.1/t040306-syntax-01-f-expected.txt:
+        * platform/win/svg/hixie/perf/007-expected.txt:
+        * platform/wincairo/css2.1/t040306-syntax-01-f-expected.txt:
+        * platform/wincairo/fast/css/rgb-float-expected.txt: Removed.
+        * platform/wpe/css2.1/t040306-syntax-01-f-expected.txt:
+        * platform/wpe/fast/css/rgb-float-expected.txt: Removed.
+        * platform/wpe/svg/hixie/perf/007-expected.txt:
+        * svg/hixie/perf/007-expected.txt:
+
 2019-01-02  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         REGRESSION (r239441): [iOS] Selection UI sometimes doesn't change after tapping "select all" in the callout bar

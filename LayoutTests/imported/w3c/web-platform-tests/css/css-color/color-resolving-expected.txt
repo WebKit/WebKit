@@ -43,13 +43,13 @@ PASS Lack of whitespace should not affect parsing: rgb(0,51,255)
 PASS Whitespace should not affect parsing: rgb(0	,  51 ,255) 
 PASS Comments should be allowed within function: rgb(/* R */0, /* G */51, /* B */255) 
 PASS Invalid values should be clamped to 0 and 255 respectively: rgb(-51, 306, 0) 
-FAIL Valid percentages should be parsed: rgb(42%, 3%, 50%) assert_equals: expected "rgb(107, 8, 128)" but got "rgb(107, 7, 128)"
+PASS Valid percentages should be parsed: rgb(42%, 3%, 50%) 
 PASS Capitalization should not affect parsing: RGB(100%, 100%, 100%) 
 PASS Capitalization should not affect parsing: rgB(0%, 0%, 0%) 
-FAIL Capitalization should not affect parsing: rgB(10%, 20%, 30%) assert_equals: expected "rgb(26, 51, 77)" but got "rgb(25, 51, 76)"
-FAIL Whitespace should not affect parsing: rgb(10%,20%,30%) assert_equals: expected "rgb(26, 51, 77)" but got "rgb(25, 51, 76)"
-FAIL Whitespace should not affect parsing: rgb(10%	,  20% ,30%) assert_equals: expected "rgb(26, 51, 77)" but got "rgb(25, 51, 76)"
-FAIL Comments should not affect parsing: rgb(/* R */ 10%, /* G */ 20%, /* B */ 30%) assert_equals: expected "rgb(26, 51, 77)" but got "rgb(25, 51, 76)"
+PASS Capitalization should not affect parsing: rgB(10%, 20%, 30%) 
+PASS Whitespace should not affect parsing: rgb(10%,20%,30%) 
+PASS Whitespace should not affect parsing: rgb(10%	,  20% ,30%) 
+PASS Comments should not affect parsing: rgb(/* R */ 10%, /* G */ 20%, /* B */ 30%) 
 PASS Invalid values should be clamped to 0 and 255 respectively: rgb(-12%, 110%, 1400%) 
 PASS Values must be all numbers or all percentages: rgb(10%, 50%, 0) 
 PASS Values must be all numbers or all percentages: rgb(255, 50%, 0%) 
@@ -61,9 +61,9 @@ PASS The rgb function requires 3 or 4 arguments: rgb(0)
 PASS The rgb function requires 3 or 4 arguments: rgb(0, 0) 
 PASS The rgb function requires 3 or 4 arguments: rgb(0%) 
 PASS The rgb function requires 3 or 4 arguments: rgb(0%, 0%) 
-FAIL RGB and RGBA are synonyms: rgb(0, 0, 0, 0) assert_equals: expected "rgba(0, 0, 0, 0)" but got "rgb(12, 34, 223)"
-FAIL RGB and RGBA are synonyms: rgb(0%, 0%, 0%, 0%) assert_equals: expected "rgba(0, 0, 0, 0)" but got "rgb(12, 34, 223)"
-FAIL RGB and RGBA are synonyms: rgb(0%, 0%, 0%, 0) assert_equals: expected "rgba(0, 0, 0, 0)" but got "rgb(12, 34, 223)"
+PASS RGB and RGBA are synonyms: rgb(0, 0, 0, 0) 
+PASS RGB and RGBA are synonyms: rgb(0%, 0%, 0%, 0%) 
+PASS RGB and RGBA are synonyms: rgb(0%, 0%, 0%, 0) 
 PASS Valid numbers should be parsed: rgba(0, 0, 0, 0) 
 FAIL Valid numbers should be parsed: rgba(204, 0, 102, 0.3) assert_equals: expected "rgba(204, 0, 102, 0.3)" but got "rgba(204, 0, 102, 0.298039)"
 PASS Capitalization should not affect parsing: RGBA(255, 255, 255, 0) 
@@ -75,7 +75,7 @@ PASS Valid numbers should be parsed: rgba(0, 51, 255, 0)
 PASS Invalid alpha values should be clamped to 0 and 1 respectively: rgba(0, 51, 255, -0.1) 
 PASS Invalid alpha values should be clamped to 0 and 1 respectively: rgba(0, 51, 255, -139) 
 PASS Capitalization should not affect parsing: RGBA(100%, 100%, 100%, 0) 
-FAIL Valid percentages should be parsed: rgba(42%, 3%, 50%, 0.3) assert_equals: expected "rgba(107, 8, 128, 0.3)" but got "rgba(107, 7, 128, 0.298039)"
+FAIL Valid percentages should be parsed: rgba(42%, 3%, 50%, 0.3) assert_equals: expected "rgba(107, 8, 128, 0.3)" but got "rgba(107, 8, 128, 0.298039)"
 PASS Capitalization should not affect parsing: rgBA(0%, 20%, 100%, 1) 
 PASS Invalid alpha values should be clamped to 0 and 1 respectively: rgba(0%, 20%, 100%, 1.1) 
 PASS Invalid alpha values should be clamped to 0 and 1 respectively: rgba(0%, 20%, 100%, 37) 
@@ -83,10 +83,10 @@ FAIL Valid percentages should be parsed: rgba(0%, 20%, 100%, 0.42) assert_equals
 PASS Valid percentages should be parsed: rgba(0%, 20%, 100%, 0) 
 PASS Invalid alpha values should be clamped to 0 and 1 respectively: rgba(0%, 20%, 100%, -0.1) 
 PASS Invalid alpha values should be clamped to 0 and 1 respectively: rgba(0%, 20%, 100%, -139) 
-FAIL Percent alpha values are accepted in rgb/rgba: rgba(255, 255, 255, 0%) assert_equals: expected "rgba(255, 255, 255, 0)" but got "rgb(12, 34, 223)"
-FAIL Percent alpha values are accepted in rgb/rgba: rgba(0%, 0%, 0%, 0%) assert_equals: expected "rgba(0, 0, 0, 0)" but got "rgb(12, 34, 223)"
-FAIL RGB and RGBA are synonyms: rgba(0%, 0%, 0%) assert_equals: expected "rgb(0, 0, 0)" but got "rgb(12, 34, 223)"
-FAIL RGB and RGBA are synonyms: rgba(0, 0, 0) assert_equals: expected "rgb(0, 0, 0)" but got "rgb(12, 34, 223)"
+PASS Percent alpha values are accepted in rgb/rgba: rgba(255, 255, 255, 0%) 
+PASS Percent alpha values are accepted in rgb/rgba: rgba(0%, 0%, 0%, 0%) 
+PASS RGB and RGBA are synonyms: rgba(0%, 0%, 0%) 
+PASS RGB and RGBA are synonyms: rgba(0, 0, 0) 
 PASS Values must be all numbers or all percentages: rgba(10%, 50%, 0, 1) 
 PASS Values must be all numbers or all percentages: rgba(255, 50%, 0%, 1) 
 PASS Comma optional syntax requires no commas at all: rgba(0, 0, 0 0) 

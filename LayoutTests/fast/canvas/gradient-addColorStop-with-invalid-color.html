@@ -14,7 +14,6 @@ var gradient = document.createElement('canvas').getContext('2d').createLinearGra
 shouldThrowErrorName("gradient.addColorStop(0, '')", "SyntaxError");
 shouldThrowErrorName("gradient.addColorStop(0, '#cc')", "SyntaxError");
 shouldThrowErrorName("gradient.addColorStop(0, 'rgb(257, 0)')", "SyntaxError");
-shouldThrowErrorName("gradient.addColorStop(0, 'rgb(257, 0, 5, 0)')", "SyntaxError");
 </script>
 <script src="../../resources/js-test-post.js"></script>
 </body>

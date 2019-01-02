@@ -488,46 +488,76 @@ RefPtr<CSSPrimitiveValue> consumeUrl(CSSParserTokenRange& range)
 static int clampRGBComponent(const CSSPrimitiveValue& value)
 {
     double result = value.doubleValue();
-    // FIXME: Multiply by 2.55 and round instead of floor.
     if (value.isPercentage())
-        result *= 2.56;
-    return clampTo<int>(result, 0, 255);
+        result = result / 100.0 * 255.0;
+
+    return clampTo<int>(round(result), 0, 255);
 }
 
-static Color parseRGBParameters(CSSParserTokenRange& range, bool parseAlpha)
+static Color parseRGBParameters(CSSParserTokenRange& range)
 {
     ASSERT(range.peek().functionId() == CSSValueRgb || range.peek().functionId() == CSSValueRgba);
     Color result;
     CSSParserTokenRange args = consumeFunction(range);
-    RefPtr<CSSPrimitiveValue> colorParameter = consumeInteger(args);
+    RefPtr<CSSPrimitiveValue> colorParameter = consumeNumber(args, ValueRangeAll);
     if (!colorParameter)
         colorParameter = consumePercent(args, ValueRangeAll);
     if (!colorParameter)
         return Color();
+
     const bool isPercent = colorParameter->isPercentage();
+
+    enum class ColorSyntax {
+        Commas,
+        WhitespaceSlash,
+    };
+
+    ColorSyntax syntax = ColorSyntax::Commas;
+    auto consumeSeparator = [&] {
+        if (syntax == ColorSyntax::Commas)
+            return consumeCommaIncludingWhitespace(args);
+        
+        return true;
+    };
+
     int colorArray[3];
     colorArray[0] = clampRGBComponent(*colorParameter);
     for (int i = 1; i < 3; i++) {
-        if (!consumeCommaIncludingWhitespace(args))
+        if (i == 1)
+            syntax = consumeCommaIncludingWhitespace(args) ? ColorSyntax::Commas : ColorSyntax::WhitespaceSlash;
+        else if (!consumeSeparator())
             return Color();
-        colorParameter = isPercent ? consumePercent(args, ValueRangeAll) : consumeInteger(args);
+
+        colorParameter = isPercent ? consumePercent(args, ValueRangeAll) : consumeNumber(args, ValueRangeAll);
         if (!colorParameter)
             return Color();
         colorArray[i] = clampRGBComponent(*colorParameter);
     }
-    if (parseAlpha) {
-        if (!consumeCommaIncludingWhitespace(args))
-            return Color();
+
+    // Historically, alpha was only parsed for rgba(), but css-color-4 specifies that rgba() is a simple alias for rgb().
+    auto consumeAlphaSeparator = [&] {
+        if (syntax == ColorSyntax::Commas)
+            return consumeCommaIncludingWhitespace(args);
+        
+        return consumeSlashIncludingWhitespace(args);
+    };
+
+    int alphaComponent = 255;
+    if (consumeAlphaSeparator()) {
         double alpha;
-        if (!consumeNumberRaw(args, alpha))
-            return Color();
+        if (!consumeNumberRaw(args, alpha)) {
+            auto alphaPercent = consumePercent(args, ValueRangeAll);
+            if (!alphaPercent)
+                return Color();
+            alpha = alphaPercent->doubleValue() / 100.0;
+        }
+
         // Convert the floating pointer number of alpha to an integer in the range [0, 256),
         // with an equal distribution across all 256 values.
-        int alphaComponent = static_cast<int>(clampTo<double>(alpha, 0.0, 1.0) * nextafter(256.0, 0.0));
-        result = Color(makeRGBA(colorArray[0], colorArray[1], colorArray[2], alphaComponent));
-    } else {
-        result = Color(makeRGB(colorArray[0], colorArray[1], colorArray[2]));
-    }
+        alphaComponent = static_cast<int>(clampTo<double>(alpha, 0.0, 1.0) * nextafter(256.0, 0.0));
+    };
+
+    result = Color(makeRGBA(colorArray[0], colorArray[1], colorArray[2], alphaComponent));
 
     if (!args.atEnd())
         return Color();
@@ -674,7 +704,7 @@ static Color parseColorFunction(CSSParserTokenRange& range, CSSParserMode cssPar
     switch (functionId) {
     case CSSValueRgb:
     case CSSValueRgba:
-        color = parseRGBParameters(colorRange, functionId == CSSValueRgba);
+        color = parseRGBParameters(colorRange);
         break;
     case CSSValueHsl:
     case CSSValueHsla:

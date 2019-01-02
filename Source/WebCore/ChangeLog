@@ -1,5 +1,32 @@
 2019-01-02  Simon Fraser  <simon.fraser@apple.com>
 
+        Support css-color-4 rgb functions
+        https://bugs.webkit.org/show_bug.cgi?id=192321
+
+        Reviewed by Zalan Bujtas.
+        
+        Support the new rgb()/rgba() syntax described in https://drafts.csswg.org/css-color/#rgb-functions.
+        The differences are:
+        1. There is a new comma-free syntax, where the optional alpha is separated by a slash:
+            rgb(128 34 56)
+            rgb(128 34 56 / 50%)
+        2. Floating point values are allowed, and rounded:
+            rgb(128.5 34.2 56.5) becomes rgb(129 34 57)
+        3. rgba() is a pure alias for rgb(), so these are equivalent:
+            rgb(128 34 56 / 50%)
+            rgba(128 34 56 / 50%)
+            
+        hsl()/hsla() parsing was already updated to this new syntax in r230861.
+
+        Tested by tests in imported/w3c/web-platform-tests/css/css-color/
+
+        * css/parser/CSSPropertyParserHelpers.cpp:
+        (WebCore::CSSPropertyParserHelpers::clampRGBComponent):
+        (WebCore::CSSPropertyParserHelpers::parseRGBParameters):
+        (WebCore::CSSPropertyParserHelpers::parseColorFunction):
+
+2019-01-02  Simon Fraser  <simon.fraser@apple.com>
+
         Handle calc() expressions in gradient color stops
         https://bugs.webkit.org/show_bug.cgi?id=193066
         rdar://problem/46961985

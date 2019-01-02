@@ -1285,31 +1285,19 @@ imported/w3c/web-platform-tests/css/css-color/lch-005.html [ Skip ]
 imported/w3c/web-platform-tests/css/css-color/lch-006.html [ Skip ]
 imported/w3c/web-platform-tests/css/css-color/lch-007.html [ Skip ]
 
-# New rgb/rgba syntax not supported
-webkit.org/b/180209 imported/w3c/web-platform-tests/css/css-color/rgb-001.html [ Skip ]
-webkit.org/b/180209 imported/w3c/web-platform-tests/css/css-color/rgb-002.html [ Skip ]
-webkit.org/b/180209 imported/w3c/web-platform-tests/css/css-color/rgb-003.html [ Skip ]
-webkit.org/b/180209 imported/w3c/web-platform-tests/css/css-color/rgb-004.html [ Skip ]
-webkit.org/b/180209 imported/w3c/web-platform-tests/css/css-color/rgb-005.html [ Skip ]
-webkit.org/b/180209 imported/w3c/web-platform-tests/css/css-color/rgb-006.html [ Skip ]
-webkit.org/b/180209 imported/w3c/web-platform-tests/css/css-color/rgb-007.html [ Skip ]
-webkit.org/b/180209 imported/w3c/web-platform-tests/css/css-color/rgb-008.html [ Skip ]
-webkit.org/b/180209 imported/w3c/web-platform-tests/css/css-color/rgba-001.html [ Skip ]
-webkit.org/b/180209 imported/w3c/web-platform-tests/css/css-color/rgba-002.html [ Skip ]
-webkit.org/b/180209 imported/w3c/web-platform-tests/css/css-color/rgba-003.html [ Skip ]
-webkit.org/b/180209 imported/w3c/web-platform-tests/css/css-color/rgba-004.html [ Skip ]
-webkit.org/b/180209 imported/w3c/web-platform-tests/css/css-color/rgba-005.html [ Skip ]
-webkit.org/b/180209 imported/w3c/web-platform-tests/css/css-color/rgba-006.html [ Skip ]
-webkit.org/b/180209 imported/w3c/web-platform-tests/css/css-color/rgba-007.html [ Skip ]
-webkit.org/b/180209 imported/w3c/web-platform-tests/css/css-color/rgba-008.html [ Skip ]
-
 # Initial failures on the import of css-color
 imported/w3c/web-platform-tests/css/css-color/currentcolor-002.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-color/t31-color-text-a.xht [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-color/t32-opacity-offscreen-with-alpha-c.xht [ ImageOnlyFailure Pass ]
-imported/w3c/web-platform-tests/css/css-color/t421-rgb-values-meaning-b.xht [ ImageOnlyFailure Pass ]
-imported/w3c/web-platform-tests/css/css-color/t425-hsla-values-b.xht [ ImageOnlyFailure Pass ]
 imported/w3c/web-platform-tests/css/css-color/t44-currentcolor-inherited-c.xht [ ImageOnlyFailure ]
+
+# Need to re-import canvas tests
+webkit.org/b/193042 imported/w3c/canvas/2d.fillStyle.parse.invalid.rgb-1.html [ Failure ]
+webkit.org/b/193042 imported/w3c/canvas/2d.fillStyle.parse.invalid.rgb-2.html [ Failure ]
+webkit.org/b/193042 imported/w3c/canvas/2d.fillStyle.parse.invalid.rgb-5.html [ Failure ]
+webkit.org/b/193042 imported/w3c/canvas/2d.fillStyle.parse.invalid.rgb-7.html [ Failure ]
+webkit.org/b/193042 imported/w3c/canvas/2d.fillStyle.parse.invalid.rgba-1.html [ Failure ]
+webkit.org/b/193042 imported/w3c/canvas/2d.fillStyle.parse.invalid.rgba-2.html [ Failure ]
+webkit.org/b/193042 imported/w3c/canvas/2d.fillStyle.parse.invalid.rgba-4.html [ Failure ]
 
 # Many CSS WG multicol-1 tests fail with 1px differences
 webkit.org/b/148806 imported/w3c/web-platform-tests/css/css-multicol/multicol-count-large-001.xht [ ImageOnlyFailure ]

@@ -4,10 +4,10 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 
 
 PASS getComputedStyle(document.getElementById("simple"), null).color is "rgb(10, 180, 30)"
-PASS getComputedStyle(document.getElementById("percentsimple"), null).color is "rgb(25, 243, 76)"
+PASS getComputedStyle(document.getElementById("percentsimple"), null).color is "rgb(26, 242, 77)"
 FAIL getComputedStyle(document.getElementById("percentnumber"), null).color should be rgb(26, 240, 80). Was rgb(0, 0, 0).
 PASS getComputedStyle(document.getElementById("alpha"), null).color is "rgba(10, 180, 30, 0.701961)"
-PASS getComputedStyle(document.getElementById("percentalpha"), null).color is "rgba(25, 243, 76, 0.701961)"
+PASS getComputedStyle(document.getElementById("percentalpha"), null).color is "rgba(26, 242, 77, 0.701961)"
 FAIL getComputedStyle(document.getElementById("percentnumberalpha"), null).color should be rgba(26, 240, 80, 0.498039). Was rgb(0, 0, 0).
 PASS successfullyParsed is true
 
