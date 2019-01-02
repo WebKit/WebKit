@@ -150,7 +150,7 @@ void ScheduledAction::execute(WorkerGlobalScope& workerGlobalScope)
         JSWorkerGlobalScope* contextWrapper = scriptController->workerGlobalScopeWrapper();
         executeFunctionInContext(contextWrapper, contextWrapper, workerGlobalScope);
     } else {
-        ScriptSourceCode code(m_code, workerGlobalScope.url());
+        ScriptSourceCode code(m_code, URL(workerGlobalScope.url()));
         scriptController->evaluate(code);
     }
 }

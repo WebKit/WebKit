@@ -1,3 +1,47 @@
+2018-12-31  Keith Miller  <keith_miller@apple.com>
+
+        SourceProviders should use an actual URL instead of a string
+        https://bugs.webkit.org/show_bug.cgi?id=192734
+
+        Reviewed by Yusuke Suzuki.
+
+        Remove ScriptSourceCode's URL member and make the url() method
+        reference the URL on the SourceProvider. Also, avoid some
+        ref count churn.
+
+        Additionally, this patch fixes an existing bug in
+        WorkletGlobalScope() that would use a ScriptSourceCode after
+        WTFMoving it.
+
+        * bindings/js/CachedScriptSourceProvider.h:
+        (WebCore::CachedScriptSourceProvider::CachedScriptSourceProvider):
+        * bindings/js/ScheduledAction.cpp:
+        (WebCore::ScheduledAction::execute):
+        * bindings/js/ScriptController.cpp:
+        (WebCore::ScriptController::executeScriptInWorld):
+        (WebCore::ScriptController::executeScript):
+        * bindings/js/ScriptSourceCode.h:
+        (WebCore::ScriptSourceCode::ScriptSourceCode):
+        (WebCore::ScriptSourceCode::m_code):
+        (WebCore::ScriptSourceCode::url const):
+        (WebCore::ScriptSourceCode::m_url): Deleted.
+        * dom/ScriptElement.cpp:
+        (WebCore::ScriptElement::prepareScript):
+        (WebCore::ScriptElement::requestModuleScript):
+        (WebCore::ScriptElement::executePendingScript):
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::ensureMediaControlsInjectedScript):
+        * page/Frame.cpp:
+        (WebCore::Frame::injectUserScriptImmediately):
+        * workers/WorkerGlobalScope.cpp:
+        (WebCore::WorkerGlobalScope::importScripts):
+        * workers/WorkerThread.cpp:
+        (WebCore::WorkerThread::workerThread):
+        * worklets/WorkletGlobalScope.cpp:
+        (WebCore::WorkletGlobalScope::WorkletGlobalScope):
+        * xml/parser/XMLDocumentParserLibxml2.cpp:
+        (WebCore::XMLDocumentParser::endElementNs):
+
 2019-01-01  Jeff Miller  <jeffm@apple.com>
 
         Update user-visible copyright strings to include 2019

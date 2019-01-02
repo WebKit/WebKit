@@ -87,6 +87,7 @@
 #include <wtf/MonotonicTime.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/StringPrintStream.h>
+#include <wtf/URL.h>
 #include <wtf/WallTime.h>
 #include <wtf/text/StringBuilder.h>
 
@@ -457,13 +458,6 @@ template<typename Vector>
 static inline String stringFromUTF(const Vector& utf8)
 {
     return String::fromUTF8WithLatin1Fallback(utf8.data(), utf8.size());
-}
-
-template<typename Vector>
-static inline SourceCode jscSource(const Vector& utf8, const SourceOrigin& sourceOrigin, const String& filename)
-{
-    String str = stringFromUTF(utf8);
-    return makeSource(str, sourceOrigin, filename);
 }
 
 class GlobalObject : public JSGlobalObject {
@@ -957,6 +951,14 @@ static bool fetchScriptFromLocalFileSystem(const String& fileName, Vector<char>&
 }
 
 template<typename Vector>
+static inline SourceCode jscSource(const Vector& utf8, const SourceOrigin& sourceOrigin, const String& filename)
+{
+    // FIXME: This should use an absolute file URL https://bugs.webkit.org/show_bug.cgi?id=193077
+    String str = stringFromUTF(utf8);
+    return makeSource(str, sourceOrigin, URL({ }, filename));
+}
+
+template<typename Vector>
 static bool fetchModuleFromLocalFileSystem(const String& fileName, Vector& buffer)
 {
     // We assume that fileName is always an absolute path.
@@ -1019,11 +1021,13 @@ JSInternalPromise* GlobalObject::moduleLoaderFetch(JSGlobalObject* globalObject,
     if (!fetchModuleFromLocalFileSystem(moduleKey, buffer))
         return reject(createError(exec, makeString("Could not open file '", moduleKey, "'.")));
 
+
+    URL moduleURL = URL({ }, moduleKey);
 #if ENABLE(WEBASSEMBLY)
     // FileSystem does not have mime-type header. The JSC shell recognizes WebAssembly's magic header.
     if (buffer.size() >= 4) {
         if (buffer[0] == '\0' && buffer[1] == 'a' && buffer[2] == 's' && buffer[3] == 'm') {
-            auto source = SourceCode(WebAssemblySourceProvider::create(WTFMove(buffer), SourceOrigin { moduleKey }, moduleKey));
+            auto source = SourceCode(WebAssemblySourceProvider::create(WTFMove(buffer), SourceOrigin { moduleKey }, WTFMove(moduleURL)));
             catchScope.releaseAssertNoException();
             auto sourceCode = JSSourceCode::create(vm, WTFMove(source));
             catchScope.releaseAssertNoException();
@@ -1034,7 +1038,7 @@ JSInternalPromise* GlobalObject::moduleLoaderFetch(JSGlobalObject* globalObject,
     }
 #endif
 
-    auto sourceCode = JSSourceCode::create(vm, makeSource(stringFromUTF(buffer), SourceOrigin { moduleKey }, moduleKey, TextPosition(), SourceProviderSourceType::Module));
+    auto sourceCode = JSSourceCode::create(vm, makeSource(stringFromUTF(buffer), SourceOrigin { moduleKey }, WTFMove(moduleURL), TextPosition(), SourceProviderSourceType::Module));
     catchScope.releaseAssertNoException();
     auto result = deferred->resolve(exec, sourceCode);
     catchScope.clearException();
@@ -2081,7 +2085,7 @@ EncodedJSValue JSC_HOST_CALL functionCheckModuleSyntax(ExecState* exec)
     stopWatch.start();
 
     ParserError error;
-    bool validSyntax = checkModuleSyntax(exec, makeSource(source, { }, String(), TextPosition(), SourceProviderSourceType::Module), error);
+    bool validSyntax = checkModuleSyntax(exec, makeSource(source, { }, URL(), TextPosition(), SourceProviderSourceType::Module), error);
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
     stopWatch.stop();
 
@@ -2440,8 +2444,10 @@ static void runWithOptions(GlobalObject* globalObject, CommandLine& options, boo
 
         bool isLastFile = i == scripts.size() - 1;
         if (isModule) {
-            if (!promise)
-                promise = loadAndEvaluateModule(globalObject->globalExec(), makeSource(stringFromUTF(scriptBuffer), SourceOrigin { absolutePath(fileName) }, fileName, TextPosition(), SourceProviderSourceType::Module), jsUndefined());
+            if (!promise) {
+                // FIXME: This should use an absolute file URL https://bugs.webkit.org/show_bug.cgi?id=193077
+                promise = loadAndEvaluateModule(globalObject->globalExec(), makeSource(stringFromUTF(scriptBuffer), SourceOrigin { absolutePath(fileName) }, URL({ }, fileName), TextPosition(), SourceProviderSourceType::Module), jsUndefined());
+            }
             scope.clearException();
 
             JSFunction* fulfillHandler = JSNativeStdFunction::create(vm, globalObject, 1, String(), [&success, &options, isLastFile](ExecState* exec) {

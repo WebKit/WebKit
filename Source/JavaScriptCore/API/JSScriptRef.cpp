@@ -41,9 +41,9 @@ using namespace JSC;
 
 struct OpaqueJSScript : public SourceProvider {
 public:
-    static WTF::Ref<OpaqueJSScript> create(VM& vm, const SourceOrigin& sourceOrigin, const String& url, int startingLineNumber, const String& source)
+    static WTF::Ref<OpaqueJSScript> create(VM& vm, const SourceOrigin& sourceOrigin, URL&& url, int startingLineNumber, const String& source)
     {
-        return WTF::adoptRef(*new OpaqueJSScript(vm, sourceOrigin, url, startingLineNumber, source));
+        return WTF::adoptRef(*new OpaqueJSScript(vm, sourceOrigin, WTFMove(url), startingLineNumber, source));
     }
 
     unsigned hash() const override
@@ -59,8 +59,8 @@ public:
     VM& vm() const { return m_vm; }
 
 private:
-    OpaqueJSScript(VM& vm, const SourceOrigin& sourceOrigin, const String& url, int startingLineNumber, const String& source)
-        : SourceProvider(sourceOrigin, url, TextPosition(OrdinalNumber::fromOneBasedInt(startingLineNumber), OrdinalNumber()), SourceProviderSourceType::Program)
+    OpaqueJSScript(VM& vm, const SourceOrigin& sourceOrigin, URL&& url, int startingLineNumber, const String& source)
+        : SourceProvider(sourceOrigin, WTFMove(url), TextPosition(OrdinalNumber::fromOneBasedInt(startingLineNumber), OrdinalNumber()), SourceProviderSourceType::Program)
         , m_vm(vm)
         , m_source(source.isNull() ? *StringImpl::empty() : *source.impl())
     {
@@ -94,7 +94,7 @@ JSScriptRef JSScriptCreateReferencingImmortalASCIIText(JSContextGroupRef context
     startingLineNumber = std::max(1, startingLineNumber);
 
     auto sourceURLString = url ? url->string() : String();
-    auto result = OpaqueJSScript::create(vm, SourceOrigin { sourceURLString }, sourceURLString, startingLineNumber, String(StringImpl::createFromLiteral(source, length)));
+    auto result = OpaqueJSScript::create(vm, SourceOrigin { sourceURLString }, URL({ }, sourceURLString), startingLineNumber, String(StringImpl::createFromLiteral(source, length)));
 
     ParserError error;
     if (!parseScript(vm, SourceCode(result.copyRef()), error)) {
@@ -116,7 +116,7 @@ JSScriptRef JSScriptCreateFromString(JSContextGroupRef contextGroup, JSStringRef
     startingLineNumber = std::max(1, startingLineNumber);
 
     auto sourceURLString = url ? url->string() : String();
-    auto result = OpaqueJSScript::create(vm, SourceOrigin { sourceURLString }, sourceURLString, startingLineNumber, source->string());
+    auto result = OpaqueJSScript::create(vm, SourceOrigin { sourceURLString }, URL({ }, sourceURLString), startingLineNumber, source->string());
 
     ParserError error;
     if (!parseScript(vm, SourceCode(result.copyRef()), error)) {

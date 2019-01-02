@@ -945,7 +945,7 @@ JSCCheckSyntaxResult jsc_context_check_syntax(JSCContext* context, const char* c
 
     String sourceURLString = uri ? String::fromUTF8(uri) : String();
     JSC::SourceCode source = JSC::makeSource(String::fromUTF8(code, length < 0 ? strlen(code) : length), JSC::SourceOrigin { sourceURLString },
-        sourceURLString, TextPosition(OrdinalNumber::fromOneBasedInt(lineNumber), OrdinalNumber()));
+        URL({ }, sourceURLString), TextPosition(OrdinalNumber::fromOneBasedInt(lineNumber), OrdinalNumber()));
     bool success = false;
     JSC::ParserError error;
     switch (mode) {

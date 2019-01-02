@@ -61,7 +61,7 @@ WorkletGlobalScope::WorkletGlobalScope(Document& document, ScriptSourceCode&& co
     ASSERT(document.page());
 
     setSecurityOriginPolicy(SecurityOriginPolicy::create(m_topOrigin.copyRef()));
-    setContentSecurityPolicy(std::make_unique<ContentSecurityPolicy>(URL { code.url() }, *this));
+    setContentSecurityPolicy(std::make_unique<ContentSecurityPolicy>(URL { m_code.url() }, *this));
 }
 
 WorkletGlobalScope::~WorkletGlobalScope()

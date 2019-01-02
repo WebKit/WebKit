@@ -35,7 +35,7 @@ class CodeProfile {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     CodeProfile(const SourceCode& source, CodeProfile* parent)
-        : m_file(source.provider()->url().utf8())
+        : m_file(String(source.provider()->url()).utf8())
         , m_lineNumber(source.firstLine().oneBasedInt())
         , m_parent(parent)
     {
