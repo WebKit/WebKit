@@ -705,13 +705,10 @@ class WTFOptionSetProvider:
     def has_children(self):
         return bool(self._elements)
 
-    #  Metadata is stored at indices greater than or equal to the number of elements in the set.
     def num_children(self):
-        return len(self._elements) + 1
+        return len(self._elements)
 
     def get_child_index(self, name):
-        if name == 'm_storage':
-            return self.num_children()
         try:
             return int(name.lstrip('[').rstrip(']'))
         except:
@@ -720,8 +717,6 @@ class WTFOptionSetProvider:
     def get_child_at_index(self, index):
         if index < 0 or not self.valobj.IsValid():
             return None
-        if index == self.num_children():
-            return self.storage
         if index < len(self._elements):
             (name, value) = self._elements[index]
             return self.valobj.CreateValueFromExpression(name, str(value))

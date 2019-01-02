@@ -1,3 +1,20 @@
+2019-01-02  Daniel Bates  <dabates@apple.com>
+
+        [lldb-webkit] Remove broken code to print WTF::OptionSet::m_storage
+        https://bugs.webkit.org/show_bug.cgi?id=193023
+
+        Reviewed by Simon Fraser.
+
+        The code to print WTF::OptionSet::m_storage as an item in the set never worked and does
+        not seem meaningful to fix because WTF::OptionSet::m_storage is just the sum of the printed
+        enumerator values. We should just remove this code.
+
+        * lldb/lldb_webkit.py:
+        (WTFOptionSetProvider.has_children):
+        (WTFOptionSetProvider.num_children):
+        (WTFOptionSetProvider.get_child_index):
+        (WTFOptionSetProvider.get_child_at_index):
+
 2018-12-29  Yusuke Suzuki  <yusukesuzuki@slowstart.org>
 
         .ycm_extra_conf.py should handle XXXInlines.h
