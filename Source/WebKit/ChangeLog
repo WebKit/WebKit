@@ -1,3 +1,49 @@
+2019-01-02  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        REGRESSION (r239441): [iOS] Selection UI sometimes doesn't change after tapping "select all" in the callout bar
+        https://bugs.webkit.org/show_bug.cgi?id=193070
+        <rdar://problem/46921508>
+
+        Reviewed by Tim Horton.
+
+        r239441 added logic to include an EditorState in the next layer tree commit when refocusing an element; this was
+        done to ensure that after tapping an element that has already been programmatically focused, we still send up-
+        to-date editor information to the UI process for the purposes of zooming to the selection rect, even if the
+        selection in the DOM is unchanged, since other aspects of the editor state may have changed since the element
+        was initially focused.
+
+        We currently try to flag the next layer tree commit by setting `m_hasPendingEditorStateUpdate` to `true`.
+        However, this is problematic since we aren't guaranteed in all cases that a compositing flush has been
+        scheduled. In the case where it hasn't, we'll end up in a state where the editor state update flag has been set,
+        yet the update will not make it over to the UI process until something happens that forces a layer tree commit
+        (e.g. scrolling, pinch zooming). Worse still, if the selection is then programmatically changed from the web
+        process, we will bail from sending a subsequent editor state update to the UI process because `WebPage` thinks
+        that a pending editor state has already been scheduled. This manifests in selection UI not updating after
+        tapping "Select All" in the callout bar, if the callout bar was brought up by tapping near the selection (since
+        this refocuses the element).
+
+        To fix this, we adjust this logic in `WebPage::elementDidRefocus` so that it sets the flag and then schedules a
+        compositing flush, but only if the user is actually interacting with the focused element (i.e., if the page
+        calls `focus` repeatedly, we won't continue to schedule compositing flushes).
+
+        Test: editing/selection/ios/change-selection-after-tapping-focused-element.html
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::elementDidRefocus):
+        (WebKit::WebPage::sendEditorStateUpdate):
+        (WebKit::WebPage::scheduleFullEditorStateUpdate):
+
+        Add a private helper method to schedule an editor state update by setting `m_hasPendingEditorStateUpdate` to
+        `true` and then scheduling a compositing layer flush. Also, add a FIXME aluding to the fact that scheduling an
+        entire compositing layer flush to send an editor state update is somewhat wasteful, and should be replaced by
+        just scheduling this work to be done before the next frame (see: <rdar://problem/36523583> for more detail).
+
+        We also use this helper method in a few places where we currently turn on the editor state flag and schedule a
+        subsequent compositing flush.
+
+        (WebKit::WebPage::sendPartialEditorStateAndSchedulePostLayoutUpdate):
+        * WebProcess/WebPage/WebPage.h:
+
 2019-01-02  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r239524.

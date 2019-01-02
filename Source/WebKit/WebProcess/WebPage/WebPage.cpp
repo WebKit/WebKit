@@ -5281,7 +5281,9 @@ void WebPage::resetFocusedElementForFrame(WebFrame* frame)
 void WebPage::elementDidRefocus(WebCore::Element& element)
 {
     elementDidFocus(element);
-    m_hasPendingEditorStateUpdate = true;
+
+    if (m_isFocusingElementDueToUserInteraction)
+        scheduleFullEditorStateUpdate();
 }
 
 void WebPage::elementDidFocus(WebCore::Element& element)
@@ -5874,10 +5876,19 @@ void WebPage::sendEditorStateUpdate()
     auto state = editorState();
     send(Messages::WebPageProxy::EditorStateChanged(state), pageID());
 
-    if (state.isMissingPostLayoutData) {
-        m_hasPendingEditorStateUpdate = true;
-        m_drawingArea->scheduleCompositingLayerFlush();
-    }
+    if (state.isMissingPostLayoutData)
+        scheduleFullEditorStateUpdate();
+}
+
+void WebPage::scheduleFullEditorStateUpdate()
+{
+    if (m_hasPendingEditorStateUpdate)
+        return;
+
+    m_hasPendingEditorStateUpdate = true;
+    // FIXME: Scheduling a compositing layer flush here can be more expensive than necessary.
+    // Instead, we should just compute and send post-layout editor state during the next frame.
+    m_drawingArea->scheduleCompositingLayerFlush();
 }
 
 #if PLATFORM(COCOA)
@@ -5909,13 +5920,7 @@ void WebPage::sendPartialEditorStateAndSchedulePostLayoutUpdate()
         return;
 
     send(Messages::WebPageProxy::EditorStateChanged(editorState(IncludePostLayoutDataHint::No)), pageID());
-
-    if (m_hasPendingEditorStateUpdate)
-        return;
-
-    // Flag the next layer flush to compute and propagate an EditorState to the UI process.
-    m_hasPendingEditorStateUpdate = true;
-    m_drawingArea->scheduleCompositingLayerFlush();
+    scheduleFullEditorStateUpdate();
 }
 
 void WebPage::flushPendingEditorStateUpdate()

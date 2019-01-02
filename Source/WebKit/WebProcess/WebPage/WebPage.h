@@ -1147,6 +1147,7 @@ private:
     void platformDetach();
     void platformEditorState(WebCore::Frame&, EditorState& result, IncludePostLayoutDataHint) const;
     void sendEditorStateUpdate();
+    void scheduleFullEditorStateUpdate();
 
 #if PLATFORM(COCOA)
     void sendTouchBarMenuDataAddedUpdate(WebCore::HTMLMenuElement&);

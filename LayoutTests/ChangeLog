@@ -1,3 +1,17 @@
+2019-01-02  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        REGRESSION (r239441): [iOS] Selection UI sometimes doesn't change after tapping "select all" in the callout bar
+        https://bugs.webkit.org/show_bug.cgi?id=193070
+        <rdar://problem/46921508>
+
+        Reviewed by Tim Horton.
+
+        Add a test to ensure that selection UI is shown after tapping on a focused element and then changing the
+        selection programmatically.
+
+        * editing/selection/ios/change-selection-after-tapping-focused-element-expected.txt: Added.
+        * editing/selection/ios/change-selection-after-tapping-focused-element.html: Added.
+
 2019-01-02  Simon Fraser  <simon.fraser@apple.com>
 
         Handle calc() expressions in gradient color stops
