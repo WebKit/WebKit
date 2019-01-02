@@ -1,3 +1,13 @@
+2019-01-02  Brent Fulgham  <bfulgham@apple.com>
+
+        Remove temporary workaround for CVMS code signing objects
+        https://bugs.webkit.org/show_bug.cgi?id=193079
+        <rdar://problem/40139202>
+
+        Reviewed by Alexey Proskuryakov.
+
+        * WebProcess/com.apple.WebProcess.sb.in:
+
 2019-01-02  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         REGRESSION (r239441): [iOS] Selection UI sometimes doesn't change after tapping "select all" in the callout bar

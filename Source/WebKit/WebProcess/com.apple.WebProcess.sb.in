@@ -105,9 +105,6 @@
     (allow mach-lookup
         (global-name "com.apple.cvmsServ"))
 #if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101400
-    ;; Needed by <rdar://problem/40093461>, remove when <rdar://problem/39402555> is fixed.
-    (allow file-read* file-write-unlink
-        (prefix "/private/tmp/cvmsCodeSignObj"))
     (allow file-read*
         (prefix "/private/var/db/CVMS/cvmsCodeSignObj"))
 #endif
