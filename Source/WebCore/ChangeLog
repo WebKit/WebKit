@@ -1,3 +1,26 @@
+2019-01-02  Simon Fraser  <simon.fraser@apple.com>
+
+        Handle calc() expressions in gradient color stops
+        https://bugs.webkit.org/show_bug.cgi?id=193066
+        rdar://problem/46961985
+
+        Reviewed by Sam Weinig.
+        
+        Fix two issues that prevented calc() expressions from working in conic-gradient color stops,
+        for the angle or percent value. First, consumeAngleOrPercent() needs to look for CalculationCategory::Percent
+        calc values as well as angle ones.
+
+        Second, CSSPrimitiveValue::isAngle() needs to use primitiveType() (which takes calc into account),
+        just as isPx() etc do.
+
+        Test: fast/gradients/conic-calc-stop-position.html
+
+        * css/CSSPrimitiveValue.h:
+        (WebCore::CSSPrimitiveValue::isAngle const):
+        * css/parser/CSSPropertyParserHelpers.cpp:
+        (WebCore::CSSPropertyParserHelpers::consumeAngleOrPercent):
+        (WebCore::CSSPropertyParserHelpers::consumeGradientColorStops):
+
 2018-12-31  Keith Miller  <keith_miller@apple.com>
 
         SourceProviders should use an actual URL instead of a string

@@ -77,7 +77,6 @@ CSSParserTokenRange consumeFunction(CSSParserTokenRange& range)
 
 // FIXME: consider pulling in the parsing logic from CSSCalculationValue.cpp.
 class CalcParser {
-
 public:
     explicit CalcParser(CSSParserTokenRange& range, CalculationCategory destinationCategory, ValueRange valueRange = ValueRangeAll)
         : m_sourceRange(range)
@@ -376,10 +375,16 @@ static RefPtr<CSSPrimitiveValue> consumeAngleOrPercent(CSSParserTokenRange& rang
     if (token.type() == PercentageToken)
         return consumePercent(range, valueRange);
 
-    CalcParser calcParser(range, CalculationCategory::Angle, valueRange);
-    if (const CSSCalcValue* calculation = calcParser.value()) {
+    CalcParser angleCalcParser(range, CalculationCategory::Angle, valueRange);
+    if (const CSSCalcValue* calculation = angleCalcParser.value()) {
         if (calculation->category() == CalculationCategory::Angle)
-            return calcParser.consumeValue();
+            return angleCalcParser.consumeValue();
+    }
+
+    CalcParser percentCalcParser(range, CalculationCategory::Percent, valueRange);
+    if (const CSSCalcValue* calculation = percentCalcParser.value()) {
+        if (calculation->category() == CalculationCategory::Percent)
+            return percentCalcParser.consumeValue();
     }
     return nullptr;
 }
@@ -967,7 +972,7 @@ static bool consumeGradientColorStops(CSSParserTokenRange& range, CSSParserMode 
 {
     bool supportsColorHints = gradient.gradientType() == CSSLinearGradient || gradient.gradientType() == CSSRadialGradient || gradient.gradientType() == CSSConicGradient;
     
-    bool isAngularGradient = gradient.gradientType() == CSSConicGradient;
+    bool isConicGradient = gradient.gradientType() == CSSConicGradient;
 
     // The first color stop cannot be a color hint.
     bool previousStopWasColorHint = true;
@@ -983,7 +988,7 @@ static bool consumeGradientColorStops(CSSParserTokenRange& range, CSSParserMode 
         // FIXME-NEWPARSER: This boolean could be removed. Null checking color would be sufficient.
         stop.isMidpoint = !stop.m_color;
 
-        if (isAngularGradient)
+        if (isConicGradient)
             stop.m_position = consumeAngleOrPercent(range, cssParserMode, ValueRangeAll, UnitlessQuirk::Forbid);
         else
             stop.m_position = consumeLengthOrPercent(range, cssParserMode, ValueRangeAll);
@@ -994,7 +999,7 @@ static bool consumeGradientColorStops(CSSParserTokenRange& range, CSSParserMode 
         
         // See if there is a second color hint, which is optional.
         CSSGradientColorStop secondStop;
-        if (isAngularGradient)
+        if (isConicGradient)
             secondStop.m_position = consumeAngleOrPercent(range, cssParserMode, ValueRangeAll, UnitlessQuirk::Forbid);
         else
             secondStop.m_position = consumeLengthOrPercent(range, cssParserMode, ValueRangeAll);

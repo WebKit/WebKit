@@ -1,3 +1,14 @@
+2019-01-02  Simon Fraser  <simon.fraser@apple.com>
+
+        Handle calc() expressions in gradient color stops
+        https://bugs.webkit.org/show_bug.cgi?id=193066
+        rdar://problem/46961985
+
+        Reviewed by Sam Weinig.
+
+        * fast/gradients/conic-calc-stop-position-expected.html: Added.
+        * fast/gradients/conic-calc-stop-position.html: Added.
+
 2018-12-31  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed. Support PHP 7.3 in Debian.

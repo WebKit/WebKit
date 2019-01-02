@@ -352,10 +352,11 @@ private:
 
 inline bool CSSPrimitiveValue::isAngle() const
 {
-    return m_primitiveUnitType == CSS_DEG
-        || m_primitiveUnitType == CSS_RAD
-        || m_primitiveUnitType == CSS_GRAD
-        || m_primitiveUnitType == CSS_TURN;
+    auto primitiveType = this->primitiveType();
+    return primitiveType == CSS_DEG
+        || primitiveType == CSS_RAD
+        || primitiveType == CSS_GRAD
+        || primitiveType == CSS_TURN;
 }
 
 inline bool CSSPrimitiveValue::isFontRelativeLength(UnitType type)
