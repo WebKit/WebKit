@@ -3662,15 +3662,15 @@ static bool canCoordinateScrollingForLayer(const RenderLayer& layer)
 
 void RenderLayerCompositor::updateScrollCoordinatedStatus(RenderLayer& layer, OptionSet<ScrollingNodeChangeFlags> changes)
 {
-    OptionSet<LayerScrollCoordinationRole> coordinationRoles;
+    OptionSet<ScrollCoordinationRole> coordinationRoles;
     if (isViewportConstrainedFixedOrStickyLayer(layer))
-        coordinationRoles.add(ViewportConstrained);
+        coordinationRoles.add(ScrollCoordinationRole::ViewportConstrained);
 
     if (useCoordinatedScrollingForLayer(layer))
-        coordinationRoles.add(Scrolling);
+        coordinationRoles.add(ScrollCoordinationRole::Scrolling);
 
     if (layer.isComposited())
-        layer.backing()->setIsScrollCoordinatedWithViewportConstrainedRole(coordinationRoles.contains(ViewportConstrained));
+        layer.backing()->setIsScrollCoordinatedWithViewportConstrainedRole(coordinationRoles.contains(ScrollCoordinationRole::ViewportConstrained));
 
     if (coordinationRoles && canCoordinateScrollingForLayer(layer)) {
         if (m_scrollCoordinatedLayers.add(&layer).isNewEntry)
@@ -3691,7 +3691,7 @@ void RenderLayerCompositor::removeFromScrollCoordinatedLayers(RenderLayer& layer
     m_scrollCoordinatedLayers.remove(&layer);
     m_scrollCoordinatedLayersNeedingUpdate.remove(&layer);
 
-    detachScrollCoordinatedLayer(layer, { Scrolling, ViewportConstrained });
+    detachScrollCoordinatedLayer(layer, { ScrollCoordinationRole::Scrolling, ScrollCoordinationRole::ViewportConstrained });
 }
 
 FixedPositionViewportConstraints RenderLayerCompositor::computeFixedViewportConstraints(RenderLayer& layer) const
@@ -3810,19 +3810,19 @@ void RenderLayerCompositor::reattachSubframeScrollLayers()
     }
 }
 
-static inline LayerScrollCoordinationRole scrollCoordinationRoleForNodeType(ScrollingNodeType nodeType)
+static inline ScrollCoordinationRole scrollCoordinationRoleForNodeType(ScrollingNodeType nodeType)
 {
     switch (nodeType) {
     case ScrollingNodeType::MainFrame:
     case ScrollingNodeType::Subframe:
     case ScrollingNodeType::Overflow:
-        return Scrolling;
+        return ScrollCoordinationRole::Scrolling;
     case ScrollingNodeType::Fixed:
     case ScrollingNodeType::Sticky:
-        return ViewportConstrained;
+        return ScrollCoordinationRole::ViewportConstrained;
     }
     ASSERT_NOT_REACHED();
-    return Scrolling;
+    return ScrollCoordinationRole::Scrolling;
 }
 
 ScrollingNodeID RenderLayerCompositor::attachScrollingNode(RenderLayer& layer, ScrollingNodeType nodeType, ScrollingNodeID parentNodeID)
@@ -3834,7 +3834,7 @@ ScrollingNodeID RenderLayerCompositor::attachScrollingNode(RenderLayer& layer, S
     if (!backing)
         return 0;
 
-    LayerScrollCoordinationRole role = scrollCoordinationRoleForNodeType(nodeType);
+    ScrollCoordinationRole role = scrollCoordinationRoleForNodeType(nodeType);
     ScrollingNodeID nodeID = backing->scrollingNodeIDForRole(role);
     if (!nodeID)
         nodeID = scrollingCoordinator->uniqueScrollingNodeID();
@@ -3849,19 +3849,19 @@ ScrollingNodeID RenderLayerCompositor::attachScrollingNode(RenderLayer& layer, S
     return nodeID;
 }
 
-void RenderLayerCompositor::detachScrollCoordinatedLayer(RenderLayer& layer, OptionSet<LayerScrollCoordinationRole> roles)
+void RenderLayerCompositor::detachScrollCoordinatedLayer(RenderLayer& layer, OptionSet<ScrollCoordinationRole> roles)
 {
     auto* backing = layer.backing();
     if (!backing)
         return;
 
-    if (roles & Scrolling) {
-        if (ScrollingNodeID nodeID = backing->scrollingNodeIDForRole(Scrolling))
+    if (roles.contains(ScrollCoordinationRole::Scrolling)) {
+        if (ScrollingNodeID nodeID = backing->scrollingNodeIDForRole(ScrollCoordinationRole::Scrolling))
             m_scrollingNodeToLayerMap.remove(nodeID);
     }
 
-    if (roles & ViewportConstrained) {
-        if (ScrollingNodeID nodeID = backing->scrollingNodeIDForRole(ViewportConstrained))
+    if (roles.contains(ScrollCoordinationRole::ViewportConstrained)) {
+        if (ScrollingNodeID nodeID = backing->scrollingNodeIDForRole(ScrollCoordinationRole::ViewportConstrained))
             m_scrollingNodeToLayerMap.remove(nodeID);
     }
 
@@ -3888,7 +3888,7 @@ void RenderLayerCompositor::updateScrollCoordinationForThisFrame(ScrollingNodeID
     scrollingCoordinator->updateFrameScrollingNode(nodeID, m_scrollLayer.get(), m_rootContentLayer.get(), fixedRootBackgroundLayer(), clipLayer(), scrollingGeometry);
 }
 
-void RenderLayerCompositor::updateScrollCoordinatedLayer(RenderLayer& layer, OptionSet<LayerScrollCoordinationRole> reasons, OptionSet<ScrollingNodeChangeFlags> changes)
+void RenderLayerCompositor::updateScrollCoordinatedLayer(RenderLayer& layer, OptionSet<ScrollCoordinationRole> roles, OptionSet<ScrollingNodeChangeFlags> changes)
 {
     bool isRenderViewLayer = layer.isRenderViewLayer();
 
@@ -3905,7 +3905,7 @@ void RenderLayerCompositor::updateScrollCoordinatedLayer(RenderLayer& layer, Opt
             return;
 
         updateScrollCoordinationForThisFrame(parentDocumentHostingNodeID);
-        if (!(reasons & ViewportConstrained) && isRenderViewLayer)
+        if (!(roles.contains(ScrollCoordinationRole::ViewportConstrained)) && isRenderViewLayer)
             return;
     }
 
@@ -3917,7 +3917,7 @@ void RenderLayerCompositor::updateScrollCoordinatedLayer(RenderLayer& layer, Opt
 
     // Always call this even if the backing is already attached because the parent may have changed.
     // If a node plays both roles, fixed/sticky is always the ancestor node of scrolling.
-    if (reasons & ViewportConstrained) {
+    if (roles.contains(ScrollCoordinationRole::ViewportConstrained)) {
         ScrollingNodeType nodeType = ScrollingNodeType::MainFrame;
         if (layer.renderer().isFixedPositioned())
             nodeType = ScrollingNodeType::Fixed;
@@ -3952,9 +3952,9 @@ void RenderLayerCompositor::updateScrollCoordinatedLayer(RenderLayer& layer, Opt
         
         parentNodeID = nodeID;
     } else
-        detachScrollCoordinatedLayer(layer, ViewportConstrained);
+        detachScrollCoordinatedLayer(layer, ScrollCoordinationRole::ViewportConstrained);
         
-    if (reasons & Scrolling) {
+    if (roles.contains(ScrollCoordinationRole::Scrolling)) {
         if (isRenderViewLayer)
             updateScrollCoordinationForThisFrame(parentNodeID);
         else {
@@ -3988,7 +3988,7 @@ void RenderLayerCompositor::updateScrollCoordinatedLayer(RenderLayer& layer, Opt
             scrollingCoordinator->updateOverflowScrollingNode(nodeID, backing->scrollingLayer(), backing->scrollingContentsLayer(), scrollingGeometry);
         }
     } else
-        detachScrollCoordinatedLayer(layer, Scrolling);
+        detachScrollCoordinatedLayer(layer, ScrollCoordinationRole::Scrolling);
 }
 
 ScrollableArea* RenderLayerCompositor::scrollableAreaForScrollLayerID(ScrollingNodeID nodeID) const
@@ -4070,7 +4070,7 @@ void RenderLayerCompositor::unregisterAllScrollingLayers()
 void RenderLayerCompositor::willRemoveScrollingLayerWithBacking(RenderLayer& layer, RenderLayerBacking& backing)
 {
     if (auto* scrollingCoordinator = this->scrollingCoordinator()) {
-        backing.detachFromScrollingCoordinator(Scrolling);
+        backing.detachFromScrollingCoordinator(ScrollCoordinationRole::Scrolling);
 
         // For Coordinated Graphics.
         scrollingCoordinator->scrollableAreaScrollLayerDidChange(layer);

@@ -244,7 +244,7 @@ RenderLayerBacking::~RenderLayerBacking()
     updateBackgroundLayer(false);
     updateMaskingLayer(false, false);
     updateScrollingLayers(false);
-    detachFromScrollingCoordinator({ Scrolling, ViewportConstrained });
+    detachFromScrollingCoordinator({ ScrollCoordinationRole::Scrolling, ScrollCoordinationRole::ViewportConstrained });
     destroyGraphicsLayers();
 }
 
@@ -1772,7 +1772,7 @@ bool RenderLayerBacking::updateScrollingLayers(bool needsScrollingLayers)
     return true;
 }
 
-void RenderLayerBacking::detachFromScrollingCoordinator(OptionSet<LayerScrollCoordinationRole> roles)
+void RenderLayerBacking::detachFromScrollingCoordinator(OptionSet<ScrollCoordinationRole> roles)
 {
     if (!m_scrollingNodeID && !m_viewportConstrainedNodeID)
         return;
@@ -1781,13 +1781,13 @@ void RenderLayerBacking::detachFromScrollingCoordinator(OptionSet<LayerScrollCoo
     if (!scrollingCoordinator)
         return;
 
-    if ((roles & Scrolling) && m_scrollingNodeID) {
+    if ((roles.contains(ScrollCoordinationRole::Scrolling)) && m_scrollingNodeID) {
         LOG(Compositing, "Detaching Scrolling node %" PRIu64, m_scrollingNodeID);
         scrollingCoordinator->detachFromStateTree(m_scrollingNodeID);
         m_scrollingNodeID = 0;
     }
     
-    if ((roles & ViewportConstrained) && m_viewportConstrainedNodeID) {
+    if ((roles.contains(ScrollCoordinationRole::ViewportConstrained)) && m_viewportConstrainedNodeID) {
         LOG(Compositing, "Detaching ViewportConstrained node %" PRIu64, m_viewportConstrainedNodeID);
         scrollingCoordinator->detachFromStateTree(m_viewportConstrainedNodeID);
         m_viewportConstrainedNodeID = 0;
@@ -3082,9 +3082,9 @@ TextStream& operator<<(TextStream& ts, const RenderLayerBacking& backing)
         ts << " paintsIntoCompositedAncestor";
 
     ts << " primary layer ID " << backing.graphicsLayer()->primaryLayerID();
-    if (auto nodeID = backing.scrollingNodeIDForRole(ViewportConstrained))
+    if (auto nodeID = backing.scrollingNodeIDForRole(ScrollCoordinationRole::ViewportConstrained))
         ts << " viewport constrained scrolling node " << nodeID;
-    if (auto nodeID = backing.scrollingNodeIDForRole(Scrolling))
+    if (auto nodeID = backing.scrollingNodeIDForRole(ScrollCoordinationRole::Scrolling))
         ts << " scrolling node " << nodeID;
     return ts;
 }

@@ -107,11 +107,6 @@ enum ShouldApplyRootOffsetToFragments {
     IgnoreRootOffsetForFragments
 };
 
-enum LayerScrollCoordinationRole {
-    ViewportConstrained = 1 << 0,
-    Scrolling           = 1 << 1
-};
-
 enum class RequestState {
     Unknown,
     DontCare,

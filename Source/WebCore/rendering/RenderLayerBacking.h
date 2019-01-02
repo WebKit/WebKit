@@ -30,6 +30,7 @@
 #include "GraphicsLayer.h"
 #include "GraphicsLayerClient.h"
 #include "RenderLayer.h"
+#include "RenderLayerCompositor.h"
 #include "ScrollingCoordinator.h"
 
 namespace WebCore {
@@ -104,26 +105,26 @@ public:
     GraphicsLayer* scrollingLayer() const { return m_scrollingLayer.get(); }
     GraphicsLayer* scrollingContentsLayer() const { return m_scrollingContentsLayer.get(); }
 
-    void detachFromScrollingCoordinator(OptionSet<LayerScrollCoordinationRole>);
+    void detachFromScrollingCoordinator(OptionSet<ScrollCoordinationRole>);
     
-    ScrollingNodeID scrollingNodeIDForRole(LayerScrollCoordinationRole role) const
+    ScrollingNodeID scrollingNodeIDForRole(ScrollCoordinationRole role) const
     {
         switch (role) {
-        case Scrolling:
+        case ScrollCoordinationRole::Scrolling:
             return m_scrollingNodeID;
-        case ViewportConstrained:
+        case ScrollCoordinationRole::ViewportConstrained:
             return m_viewportConstrainedNodeID;
         }
         return 0;
     }
     
-    void setScrollingNodeIDForRole(ScrollingNodeID nodeID, LayerScrollCoordinationRole role)
+    void setScrollingNodeIDForRole(ScrollingNodeID nodeID, ScrollCoordinationRole role)
     {
         switch (role) {
-        case Scrolling:
+        case ScrollCoordinationRole::Scrolling:
             m_scrollingNodeID = nodeID;
             break;
-        case ViewportConstrained:
+        case ScrollCoordinationRole::ViewportConstrained:
             m_viewportConstrainedNodeID = nodeID;
             setIsScrollCoordinatedWithViewportConstrainedRole(nodeID);
             break;

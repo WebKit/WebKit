@@ -83,6 +83,11 @@ enum class CompositingReason {
     EmbeddedView                           = 1 << 26,
 };
 
+enum class ScrollCoordinationRole {
+    ViewportConstrained = 1 << 0,
+    Scrolling           = 1 << 1
+};
+
 // RenderLayerCompositor manages the hierarchy of
 // composited RenderLayers. It determines which RenderLayers
 // become compositing, and creates and maintains a hierarchy of
@@ -446,8 +451,8 @@ private:
 
     void updateScrollCoordinationForThisFrame(ScrollingNodeID);
     ScrollingNodeID attachScrollingNode(RenderLayer&, ScrollingNodeType, ScrollingNodeID parentNodeID);
-    void updateScrollCoordinatedLayer(RenderLayer&, OptionSet<LayerScrollCoordinationRole>, OptionSet<ScrollingNodeChangeFlags>);
-    void detachScrollCoordinatedLayer(RenderLayer&, OptionSet<LayerScrollCoordinationRole>);
+    void updateScrollCoordinatedLayer(RenderLayer&, OptionSet<ScrollCoordinationRole>, OptionSet<ScrollingNodeChangeFlags>);
+    void detachScrollCoordinatedLayer(RenderLayer&, OptionSet<ScrollCoordinationRole>);
     void reattachSubframeScrollLayers();
     
     FixedPositionViewportConstraints computeFixedViewportConstraints(RenderLayer&) const;
@@ -466,6 +471,7 @@ private:
     bool hasCoordinatedScrolling() const;
     bool useCoordinatedScrollingForLayer(const RenderLayer&) const;
 
+    // FIXME: make the coordinated/async terminology consistent.
     bool isAsyncScrollableStickyLayer(const RenderLayer&, const RenderLayer** enclosingAcceleratedOverflowLayer = nullptr) const;
     bool isViewportConstrainedFixedOrStickyLayer(const RenderLayer&) const;
     

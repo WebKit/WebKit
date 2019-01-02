@@ -1,5 +1,33 @@
 2019-01-02  Simon Fraser  <simon.fraser@apple.com>
 
+        Rename LayerScrollCoordinationRole to ScrollCoordinationRole and make an enum class
+        https://bugs.webkit.org/show_bug.cgi?id=193010
+
+        Reviewed by Zalan Bujtas.
+
+        Move the enum LayerScrollCoordinationRole from RenderLayer.h to RenderLayerCompositor.h,
+        and make it an enum class.
+
+        * page/FrameView.cpp:
+        (WebCore::FrameView::scrollLayerID const):
+        * rendering/RenderLayer.h:
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::~RenderLayerBacking):
+        (WebCore::RenderLayerBacking::detachFromScrollingCoordinator):
+        (WebCore::operator<<):
+        * rendering/RenderLayerBacking.h:
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::updateScrollCoordinatedStatus):
+        (WebCore::RenderLayerCompositor::removeFromScrollCoordinatedLayers):
+        (WebCore::scrollCoordinationRoleForNodeType):
+        (WebCore::RenderLayerCompositor::attachScrollingNode):
+        (WebCore::RenderLayerCompositor::detachScrollCoordinatedLayer):
+        (WebCore::RenderLayerCompositor::updateScrollCoordinatedLayer):
+        (WebCore::RenderLayerCompositor::willRemoveScrollingLayerWithBacking):
+        * rendering/RenderLayerCompositor.h:
+
+2019-01-02  Simon Fraser  <simon.fraser@apple.com>
+
         Don't spin up a CalcParser if the current token is not a function token
         https://bugs.webkit.org/show_bug.cgi?id=193067
 
