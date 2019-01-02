@@ -1,5 +1,29 @@
 2019-01-02  Simon Fraser  <simon.fraser@apple.com>
 
+        Don't spin up a CalcParser if the current token is not a function token
+        https://bugs.webkit.org/show_bug.cgi?id=193067
+
+        Reviewed by Zalan Bujtas.
+
+        Various functions in CSSPropertyParserHelpers fall back to trying to parse
+        a calc expression if the normal parsing fails. Don't do this unless the
+        current token is a function token, which should be slightly more efficient.
+
+        * css/parser/CSSPropertyParserHelpers.cpp:
+        (WebCore::CSSPropertyParserHelpers::consumeInteger):
+        (WebCore::CSSPropertyParserHelpers::consumePositiveIntegerRaw):
+        (WebCore::CSSPropertyParserHelpers::consumeNumberRaw):
+        (WebCore::CSSPropertyParserHelpers::consumeNumber):
+        (WebCore::CSSPropertyParserHelpers::consumeFontWeightNumber):
+        (WebCore::CSSPropertyParserHelpers::consumeLength):
+        (WebCore::CSSPropertyParserHelpers::consumePercent):
+        (WebCore::CSSPropertyParserHelpers::consumeLengthOrPercent):
+        (WebCore::CSSPropertyParserHelpers::consumeAngle):
+        (WebCore::CSSPropertyParserHelpers::consumeAngleOrPercent):
+        (WebCore::CSSPropertyParserHelpers::consumeTime):
+
+2019-01-02  Simon Fraser  <simon.fraser@apple.com>
+
         Support css-color-4 rgb functions
         https://bugs.webkit.org/show_bug.cgi?id=192321
 

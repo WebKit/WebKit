@@ -138,6 +138,10 @@ RefPtr<CSSPrimitiveValue> consumeInteger(CSSParserTokenRange& range, double mini
             return nullptr;
         return CSSValuePool::singleton().createValue(range.consumeIncludingWhitespace().numericValue(), CSSPrimitiveValue::UnitType::CSS_NUMBER);
     }
+
+    if (token.type() != FunctionToken)
+        return nullptr;
+
     CalcParser calcParser(range, CalculationCategory::Number);
     if (const CSSCalcValue* calculation = calcParser.value()) {
         if (calculation->category() != CalculationCategory::Number || !calculation->isInt())
@@ -147,6 +151,7 @@ RefPtr<CSSPrimitiveValue> consumeInteger(CSSParserTokenRange& range, double mini
             return nullptr;
         return calcParser.consumeNumber();
     }
+
     return nullptr;
 }
 
@@ -164,16 +169,25 @@ bool consumePositiveIntegerRaw(CSSParserTokenRange& range, int& result)
         result = range.consumeIncludingWhitespace().numericValue();
         return true;
     }
+
+    if (token.type() != FunctionToken)
+        return false;
+
     CalcParser calcParser(range, CalculationCategory::Number);
     return calcParser.consumePositiveIntegerRaw(result);
 }
     
 bool consumeNumberRaw(CSSParserTokenRange& range, double& result)
 {
-    if (range.peek().type() == NumberToken) {
+    const CSSParserToken& token = range.peek();
+    if (token.type() == NumberToken) {
         result = range.consumeIncludingWhitespace().numericValue();
         return true;
     }
+
+    if (token.type() != FunctionToken)
+        return false;
+
     CalcParser calcParser(range, CalculationCategory::Number, ValueRangeAll);
     return calcParser.consumeNumberRaw(result);
 }
@@ -187,6 +201,10 @@ RefPtr<CSSPrimitiveValue> consumeNumber(CSSParserTokenRange& range, ValueRange v
             return nullptr;
         return CSSValuePool::singleton().createValue(range.consumeIncludingWhitespace().numericValue(), token.unitType());
     }
+
+    if (token.type() != FunctionToken)
+        return nullptr;
+
     CalcParser calcParser(range, CalculationCategory::Number, ValueRangeAll);
     if (const CSSCalcValue* calculation = calcParser.value()) {
         // FIXME: Calcs should not be subject to parse time range checks.
@@ -195,6 +213,7 @@ RefPtr<CSSPrimitiveValue> consumeNumber(CSSParserTokenRange& range, ValueRange v
             return nullptr;
         return calcParser.consumeNumber();
     }
+
     return nullptr;
 }
 
@@ -215,6 +234,9 @@ RefPtr<CSSPrimitiveValue> consumeFontWeightNumber(CSSParserTokenRange& range)
 #endif
     )
         return consumeNumber(range, ValueRangeAll);
+
+    if (token.type() != FunctionToken)
+        return nullptr;
 
     // "[For calc()], the used value resulting from an expression must be clamped to the range allowed in the target context."
     CalcParser calcParser(range, CalculationCategory::Number, ValueRangeAll);
@@ -279,9 +301,14 @@ RefPtr<CSSPrimitiveValue> consumeLength(CSSParserTokenRange& range, CSSParserMod
         CSSPrimitiveValue::UnitType unitType = CSSPrimitiveValue::UnitType::CSS_PX;
         return CSSValuePool::singleton().createValue(range.consumeIncludingWhitespace().numericValue(), unitType);
     }
+
+    if (token.type() != FunctionToken)
+        return nullptr;
+
     CalcParser calcParser(range, CalculationCategory::Length, valueRange);
     if (calcParser.value() && calcParser.value()->category() == CalculationCategory::Length)
         return calcParser.consumeValue();
+
     return nullptr;
 }
 
@@ -293,6 +320,10 @@ RefPtr<CSSPrimitiveValue> consumePercent(CSSParserTokenRange& range, ValueRange 
             return nullptr;
         return CSSValuePool::singleton().createValue(range.consumeIncludingWhitespace().numericValue(), CSSPrimitiveValue::UnitType::CSS_PERCENTAGE);
     }
+
+    if (token.type() != FunctionToken)
+        return nullptr;
+
     CalcParser calcParser(range, CalculationCategory::Percent, valueRange);
     if (const CSSCalcValue* calculation = calcParser.value()) {
         if (calculation->category() == CalculationCategory::Percent)
@@ -322,6 +353,10 @@ RefPtr<CSSPrimitiveValue> consumeLengthOrPercent(CSSParserTokenRange& range, CSS
         return consumeLength(range, cssParserMode, valueRange, unitless);
     if (token.type() == PercentageToken)
         return consumePercent(range, valueRange);
+
+    if (token.type() != FunctionToken)
+        return nullptr;
+
     CalcParser calcParser(range, CalculationCategory::Length, valueRange);
     if (const CSSCalcValue* calculation = calcParser.value()) {
         if (canConsumeCalcValue(calculation->category(), cssParserMode))
@@ -344,9 +379,12 @@ RefPtr<CSSPrimitiveValue> consumeAngle(CSSParserTokenRange& range, CSSParserMode
             return nullptr;
         }
     }
-    if (token.type() == NumberToken && shouldAcceptUnitlessValue(token.numericValue(), cssParserMode, unitless)) {
+
+    if (token.type() == NumberToken && shouldAcceptUnitlessValue(token.numericValue(), cssParserMode, unitless))
         return CSSValuePool::singleton().createValue(range.consumeIncludingWhitespace().numericValue(), CSSPrimitiveValue::UnitType::CSS_DEG);
-    }
+
+    if (token.type() != FunctionToken)
+        return nullptr;
 
     CalcParser calcParser(range, CalculationCategory::Angle, ValueRangeAll);
     if (const CSSCalcValue* calculation = calcParser.value()) {
@@ -372,8 +410,12 @@ static RefPtr<CSSPrimitiveValue> consumeAngleOrPercent(CSSParserTokenRange& rang
     }
     if (token.type() == NumberToken && shouldAcceptUnitlessValue(token.numericValue(), cssParserMode, unitless))
         return CSSValuePool::singleton().createValue(range.consumeIncludingWhitespace().numericValue(), CSSPrimitiveValue::UnitType::CSS_DEG);
+
     if (token.type() == PercentageToken)
         return consumePercent(range, valueRange);
+
+     if (token.type() != FunctionToken)
+         return nullptr;
 
     CalcParser angleCalcParser(range, CalculationCategory::Angle, valueRange);
     if (const CSSCalcValue* calculation = angleCalcParser.value()) {
@@ -389,7 +431,6 @@ static RefPtr<CSSPrimitiveValue> consumeAngleOrPercent(CSSParserTokenRange& rang
     return nullptr;
 }
 
-
 RefPtr<CSSPrimitiveValue> consumeTime(CSSParserTokenRange& range, CSSParserMode cssParserMode, ValueRange valueRange, UnitlessQuirk unitless)
 {
     const CSSParserToken& token = range.peek();
@@ -404,6 +445,10 @@ RefPtr<CSSPrimitiveValue> consumeTime(CSSParserTokenRange& range, CSSParserMode 
             return CSSValuePool::singleton().createValue(range.consumeIncludingWhitespace().numericValue(), unit);
         return nullptr;
     }
+
+    if (token.type() != FunctionToken)
+        return nullptr;
+
     CalcParser calcParser(range, CalculationCategory::Time, valueRange);
     if (const CSSCalcValue* calculation = calcParser.value()) {
         if (calculation->category() == CalculationCategory::Time)
