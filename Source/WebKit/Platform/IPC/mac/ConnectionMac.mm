@@ -603,14 +603,13 @@ IPC::Connection::Identifier Connection::identifier() const
     return Identifier(m_isServer ? m_receivePort : m_sendPort, m_xpcConnection);
 }
 
-Optional<audit_token_t> Connection::getAuditToken()
+bool Connection::getAuditToken(audit_token_t& auditToken)
 {
     if (!m_xpcConnection)
-        return WTF::nullopt;
+        return false;
     
-    audit_token_t auditToken;
     xpc_connection_get_audit_token(m_xpcConnection.get(), &auditToken);
-    return WTFMove(auditToken);
+    return true;
 }
 
 bool Connection::kill()
