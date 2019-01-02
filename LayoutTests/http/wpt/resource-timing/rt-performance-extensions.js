@@ -102,7 +102,7 @@ promise_test(function(t) {
         assert_equals(entries.length, 2, "context should have observed 1 resource");
         assert_equals(performance.getEntriesByType("resource").length, 1, "context global buffer should be full at 1 resource");
         assert_equals(bufferFullEvent.target, performance, "event should dispatch at the performance object");
-        assert_true(bufferFullEvent.bubbles, "event should bubble");
+        assert_false(bufferFullEvent.bubbles, "event should not bubble");
     });
 }, "resourcetimingbufferfull event properties", {timeout: 3000});
 

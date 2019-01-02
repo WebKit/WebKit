@@ -216,7 +216,7 @@ void Performance::resourceTimingBufferFullTimerFired()
         ASSERT(m_backupResourceTimingBuffer.isEmpty());
 
         m_resourceTimingBufferFullFlag = true;
-        dispatchEvent(Event::create(eventNames().resourcetimingbufferfullEvent, Event::CanBubble::Yes, Event::IsCancelable::No));
+        dispatchEvent(Event::create(eventNames().resourcetimingbufferfullEvent, Event::CanBubble::No, Event::IsCancelable::No));
 
         if (m_resourceTimingBufferFullFlag) {
             for (auto& entry : backupBuffer)

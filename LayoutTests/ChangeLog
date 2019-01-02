@@ -1,3 +1,13 @@
+2019-01-02  Charles Vazac  <cvazac@gmail.com>
+
+        Fix resourcetimingbufferfull bubbles attribute
+        https://bugs.webkit.org/show_bug.cgi?id=193087
+
+        Reviewed by Chris Dumez.
+
+        * http/wpt/resource-timing/rt-performance-extensions.js:
+        (promise_test):
+
 2019-01-02  Simon Fraser  <simon.fraser@apple.com>
 
         Support css-color-4 rgb functions
