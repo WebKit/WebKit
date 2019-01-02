@@ -1,4 +1,4 @@
-; Copyright (C) 2010-2018 Apple Inc. All rights reserved.
+; Copyright (C) 2010-2019 Apple Inc. All rights reserved.
 ;
 ; Redistribution and use in source and binary forms, with or without
 ; modification, are permitted provided that the following conditions
@@ -234,9 +234,6 @@
 
 ;; <rdar://problem/9404009>
 (mobile-preferences-read "kCFPreferencesAnyApplication")
-
-;; <rdar://problem/10266866>
-(marco-logging-client)
 
 ;; <rdar://problem/12250145>
 (mobile-preferences-read "com.apple.mediaaccessibility")
