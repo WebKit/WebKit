@@ -1,3 +1,17 @@
+2019-01-03  Brent Fulgham  <bfulgham@apple.com>
+
+        Remove logic handling DNT header during redirects
+        https://bugs.webkit.org/show_bug.cgi?id=193082
+        <rdar://problem/45555965>
+
+        Reviewed by Chris Dumez.
+
+        Revise test case to reflect fact that we no longer include the DNT
+        header in redirects.
+
+        * http/wpt/fetch/dnt-header-after-redirection-expected.txt:
+        * http/wpt/fetch/dnt-header-after-redirection.html:
+
 2019-01-02  Simon Fraser  <simon.fraser@apple.com>
 
         REGRESSION (r239306): Don't disable font smoothing in transparent layers on macOS Mojave and later

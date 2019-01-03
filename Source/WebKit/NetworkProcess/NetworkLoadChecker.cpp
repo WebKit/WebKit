@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2018-2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -84,19 +84,7 @@ void NetworkLoadChecker::check(ResourceRequest&& request, ContentSecurityPolicyC
         m_loadInformation.request = request;
 
     m_firstRequestHeaders = request.httpHeaderFields();
-    // FIXME: We should not get this information from the request but directly from some NetworkProcess setting.
-    m_dntHeaderValue = m_firstRequestHeaders.get(HTTPHeaderName::DNT);
-    if (m_dntHeaderValue.isNull() && m_sessionID.isEphemeral()) {
-        m_dntHeaderValue = "1";
-        request.setHTTPHeaderField(HTTPHeaderName::DNT, m_dntHeaderValue);
-    }
     checkRequest(WTFMove(request), client, WTFMove(handler));
-}
-
-void NetworkLoadChecker::prepareRedirectedRequest(ResourceRequest& request)
-{
-    if (!m_dntHeaderValue.isNull())
-        request.setHTTPHeaderField(HTTPHeaderName::DNT, m_dntHeaderValue);
 }
 
 static inline NetworkLoadChecker::RedirectionRequestOrError redirectionError(const ResourceResponse& redirectResponse, String&& errorMessage)

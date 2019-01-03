@@ -38,8 +38,8 @@ promise_test(async (test) => {
     const finalURL = "dnt-status.py?store&token=" + token;
     video.src = "resources/redirect.py?location=" + encodeURIComponent(finalURL);
 
-    assert_true(await checkDNTHeader(test, token), "DNT header is there");
-}, "video load with DNT");
+    assert_false(await checkDNTHeader(test, token), "DNT header is not there");
+}, "video load without DNT");
 
 promise_test(async (test) => {
     const token = self.token();
@@ -50,8 +50,8 @@ promise_test(async (test) => {
     xhr.send();
 
     const response = await fetch("resources/dnt-status.py?read&token=" + token);
-    assert_equals(await response.text(), "1", "DNT header");
-}, "Sync XHR with DNT");
+    assert_equals(await response.text(), "-1", "DNT header");
+}, "Sync XHR without DNT");
 
 promise_test(async (test) => {
     const token = self.token();
@@ -59,8 +59,8 @@ promise_test(async (test) => {
 
     navigator.sendBeacon("resources/redirect.py?location=" + encodeURIComponent(finalURL), "");
 
-    assert_true(await checkDNTHeader(test, token), "DNT header is there");
-}, "Beacon with DNT");
+    assert_false(await checkDNTHeader(test, token), "DNT header is not there");
+}, "Beacon without DNT");
     </script>
 </body>
 </html>

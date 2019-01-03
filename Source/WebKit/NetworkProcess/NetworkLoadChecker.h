@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2018-2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -68,8 +68,6 @@ public:
     using RedirectionRequestOrError = Expected<RedirectionTriplet, WebCore::ResourceError>;
     using RedirectionValidationHandler = CompletionHandler<void(RedirectionRequestOrError&&)>;
     void checkRedirection(WebCore::ResourceRequest&& request, WebCore::ResourceRequest&& redirectRequest, WebCore::ResourceResponse&& redirectResponse, WebCore::ContentSecurityPolicyClient*, RedirectionValidationHandler&&);
-
-    void prepareRedirectedRequest(WebCore::ResourceRequest&);
 
     WebCore::ResourceError validateResponse(WebCore::ResourceResponse&);
 
@@ -143,7 +141,6 @@ private:
     size_t m_redirectCount { 0 };
     URL m_previousURL;
     WebCore::PreflightPolicy m_preflightPolicy;
-    String m_dntHeaderValue;
     String m_referrer;
     bool m_checkContentExtensions { false };
     bool m_shouldCaptureExtraNetworkLoadMetrics { false };
