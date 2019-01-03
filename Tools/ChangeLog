@@ -1,3 +1,13 @@
+2019-01-02  Alex Christensen  <achristensen@webkit.org>
+
+        Homograph with LATIN SMALL LETTER R WITH FISHHOOK
+        https://bugs.webkit.org/show_bug.cgi?id=192944
+
+        Reviewed by Tim Horton.
+
+        * TestWebKitAPI/Tests/WTF/cocoa/URLExtras.mm:
+        (TestWebKitAPI::TEST):
+
 2019-01-02  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Add support for using the current text selection as the find string on iOS
