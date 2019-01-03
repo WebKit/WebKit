@@ -1,3 +1,17 @@
+2019-01-03  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [iOS] REGRESSION (r239441): Tab cycling to offscreen <select> may not scroll it into view
+        https://bugs.webkit.org/show_bug.cgi?id=193084
+        <rdar://problem/47006882>
+
+        Reviewed by Simon Fraser.
+
+        Add a layout test to verify that focusing a select element by tapping outside of it scrolls to reveal the
+        focused select element.
+
+        * fast/forms/ios/scroll-to-reveal-focused-select-expected.txt: Added.
+        * fast/forms/ios/scroll-to-reveal-focused-select.html: Added.
+
 2019-01-02  Devin Rousso  <webkit@devinrousso.com>
 
         Web Inspector: Implement `queryObjects` Command Line API

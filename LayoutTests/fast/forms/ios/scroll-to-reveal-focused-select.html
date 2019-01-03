@@ -1,0 +1,79 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ useFlexibleViewport=true ] -->
+
+<html>
+<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+<head>
+<script src="../../../resources/ui-helper.js"></script>
+<script src="../../../resources/js-test.js"></script>
+<style>
+select {
+    width: 100%;
+    height: 80px;
+}
+
+#bottom {
+    margin-top: 1300px;
+}
+
+#tapToFocus {
+    width: 100%;
+    height: 80px;
+    background: tomato;
+    border-radius: 20px;
+    color: white;
+    font-size: 2em;
+    text-align: center;
+    cursor: pointer;
+}
+</style>
+<script>
+jsTestIsAsync = true;
+
+async function tapAtLocationAndWaitForScrollingToEnd(x, y)
+{
+    const uiScript = `
+    let doneCount = 0;
+    function checkDone() {
+        if (++doneCount == 2)
+            uiController.uiScriptComplete();
+    }
+    uiController.didEndZoomingCallback = checkDone;
+    uiController.singleTapAtPoint(${x}, ${y}, checkDone);`;
+    return new Promise(resolve => testRunner.runUIScript(uiScript, resolve));
+}
+
+async function run()
+{
+    description("Verifies that focusing a select element after user interaction scrolls to reveal the select element. "
+        + "To manually test, focus the top select element and tap the red box to focus the bottom select element. The "
+        + "bottom select element should be scrolled into view.");
+
+    if (!window.testRunner)
+        return;
+
+    await UIHelper.activateAndWaitForInputSessionAt(160, 40);
+    await tapAtLocationAndWaitForScrollingToEnd(160, 120);
+
+    shouldBe("document.activeElement", "document.getElementById('bottom')");
+    shouldBeGreaterThanOrEqual("pageYOffset", "1000");
+
+    document.activeElement.blur();
+    await UIHelper.waitForKeyboardToHide();
+    tapToFocus.remove();
+    finishJSTest();
+}
+</script>
+</head>
+<body onload=run()>
+    <div>
+        <select id="top"><option selected>First</option><option>Second</option></select>
+    </div>
+    <div id="tapToFocus" onclick="bottom.focus()">Tap to focus the<br>bottom select</div>
+    <div id="description"></div>
+    <div id="console"></div>
+    <select id="bottom">
+        <option selected>Third</option>
+        <option>Fourth</option>
+    </select>
+</body>
+</html>

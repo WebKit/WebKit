@@ -4369,7 +4369,10 @@ static bool shouldZoomToRevealSelectionRect(WebKit::InputType type)
 
 static WebCore::FloatRect rectToRevealWhenZoomingToFocusedElement(const WebKit::FocusedElementInformation& elementInfo, const WebKit::EditorState& editorState)
 {
-    WebCore::IntRect elementInteractionRect(elementInfo.elementInteractionLocation, { 1, 1 });
+    WebCore::IntRect elementInteractionRect;
+    if (elementInfo.elementRect.contains(elementInfo.lastInteractionLocation))
+        elementInteractionRect = { elementInfo.lastInteractionLocation, { 1, 1 } };
+
     if (!shouldZoomToRevealSelectionRect(elementInfo.elementType))
         return elementInteractionRect;
 

@@ -2362,7 +2362,7 @@ void WebPage::getFocusedElementInformation(FocusedElementInformation& informatio
 {
     layoutIfNeeded();
 
-    information.elementInteractionLocation = m_lastInteractionLocation;
+    information.lastInteractionLocation = m_lastInteractionLocation;
 
     if (auto* renderer = m_focusedElement->renderer()) {
         auto& elementFrame = m_page->focusController().focusedOrMainFrame();
@@ -2381,13 +2381,6 @@ void WebPage::getFocusedElementInformation(FocusedElementInformation& informatio
             frameView->setCustomFixedPositionLayoutRect(frameView->renderView()->documentRect());
             information.elementRect = frameView->contentsToRootView(renderer->absoluteBoundingBoxRect());
             frameView->setCustomFixedPositionLayoutRect(currentFixedPositionRect);
-            
-            if (!information.elementRect.contains(m_lastInteractionLocation))
-                information.elementInteractionLocation = information.elementRect.location();
-        } else {
-            // Don't use the selection rect if interaction was outside the element rect.
-            if (!information.elementRect.contains(m_lastInteractionLocation))
-                information.elementInteractionLocation = { };
         }
     } else
         information.elementRect = IntRect();

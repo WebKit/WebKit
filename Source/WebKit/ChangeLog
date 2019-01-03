@@ -1,5 +1,58 @@
 2019-01-03  Wenson Hsieh  <wenson_hsieh@apple.com>
 
+        [iOS] REGRESSION (r239441): Tab cycling to offscreen <select> may not scroll it into view
+        https://bugs.webkit.org/show_bug.cgi?id=193084
+        <rdar://problem/47006882>
+
+        Reviewed by Simon Fraser.
+
+        In `WKWebView.mm`, `-_zoomToFocusRect:` will ignore the given selection rect if it is of size `{ 0, 0 }` and at
+        the origin. Prior to r239441, when using the tab key to move focus between non-editable form controls (or any
+        other method that doesn't involve tapping on the focused select element, with the exception of the next and
+        previous buttons in the input accessory view), we would compute a selection rect of `{{ 0, 0 }, { 0, 0 }}`, and
+        subsequently try to scroll the focused element to the center of the visible area, without taking the selection
+        rect into account.
+
+        However, after r239441, the web process sends the element interaction location to the UI process, which then
+        computes the selection rect by taking this location and adding a size of `{ 1, 1 }` (before r239441, this was
+        done in `WebPage::getAssistedNodeInformation`). However, our new implementation doesn't take into account the
+        case where the element interaction rect is null, which happens when the last interaction location is outside of
+        the bounding rect of the element. In this case, we set the element interaction location to { 0, 0 } and end up
+        computing a selection rect of `{{ 0, 0 }, { 1, 1 }}` instead of `{{ 0, 0 }, { 0, 0 }}` as we would have
+        previously done. This causes us to scroll up to the origin, instead of revealing the focused element.
+
+        To fix this, we restore the pre-r239441 behavior. See additional comments below for details.
+
+        Test: fast/forms/ios/scroll-to-reveal-focused-select.html
+
+        * Shared/FocusedElementInformation.cpp:
+        (WebKit::FocusedElementInformation::encode const):
+        (WebKit::FocusedElementInformation::decode):
+        * Shared/FocusedElementInformation.h:
+
+        Rename `elementInteractionLocation` to `lastInteractionLocation`. This was previously
+        `elementInteractionLocation` due to existing logic that tries to move the interaction location into the bounding
+        rect of the element in the case where visual viewports are disabled; however, since this feature has long been
+        enabled by default for all modern WebKit clients (internal and external), it's simpler to just use always send
+        the last interaction location over to the UI process, and have the UI process use `{{ 0, 0 }, { 0, 0 }}` if
+        the interaction location is outside of the element rect.
+
+        In the very unlikely event that any modern WebKit client disables visual viewports, this will still behave
+        reasonably, since we'll just use `{{ 0, 0 }, { 0, 0 }}` as the target rect and scroll to reveal the entire
+        element rather than the top left corner of the element.
+
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (rectToRevealWhenZoomingToFocusedElement):
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+
+        Move the check for whether the interaction location is inside the element's bounding rect from the web process
+        to the UI process. This relocates the logic to determine whether the selection rect should be a 1 by 1 fallback
+        interaction rect or the zero rect (`{{ 0, 0 }, { 0, 0 }}`) closer to the code that actually uses this rect.
+
+        (WebKit::WebPage::getFocusedElementInformation):
+
+2019-01-03  Wenson Hsieh  <wenson_hsieh@apple.com>
+
         WebUndoStep's monotonically increasing identifier should be a WebUndoStepID instead of uint64_t
         https://bugs.webkit.org/show_bug.cgi?id=193100
 

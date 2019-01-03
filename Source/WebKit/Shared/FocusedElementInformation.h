@@ -97,7 +97,7 @@ using FocusedElementIdentifier = uint64_t;
 
 struct FocusedElementInformation {
     WebCore::IntRect elementRect;
-    WebCore::IntPoint elementInteractionLocation;
+    WebCore::IntPoint lastInteractionLocation;
     double minimumScaleFactor { -INFINITY };
     double maximumScaleFactor { INFINITY };
     double maximumScaleFactorIgnoringAlwaysScalable { INFINITY };
