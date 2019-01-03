@@ -1,3 +1,16 @@
+2019-01-03  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        UserMedia test should use WKPageNavigationClient
+        https://bugs.webkit.org/show_bug.cgi?id=192913
+
+        Reviewed by Youenn Fablet.
+
+        The test currently uses the deprecated WKPageLoaderClient. It should use
+        WKPageNavigationClient instead, which provides the same callback under a similar name.
+
+        * TestWebKitAPI/Tests/WebKit/UserMedia.cpp:
+        (TestWebKitAPI::TEST):
+
 2019-01-02  Alex Christensen  <achristensen@webkit.org>
 
         Homograph with LATIN SMALL LETTER R WITH FISHHOOK

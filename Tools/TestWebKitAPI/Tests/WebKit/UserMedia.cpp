@@ -132,11 +132,11 @@ TEST(WebKit, OnDeviceChangeCrash)
     // Load a second page in same process.
     PlatformWebView webView2(context.get(), pageGroup.get());
     WKPageSetPageUIClient(webView2.page(), &uiClient.base);
-    WKPageLoaderClientV0 loaderClient;
-    memset(&loaderClient, 0, sizeof(loaderClient));
-    loaderClient.base.version = 0;
-    loaderClient.processDidCrash = didCrashCallback;
-    WKPageSetPageLoaderClient(webView2.page(), &loaderClient.base);
+    WKPageNavigationClientV0 navigationClient;
+    memset(&navigationClient, 0, sizeof(navigationClient));
+    navigationClient.base.version = 0;
+    navigationClient.webProcessDidCrash = didCrashCallback;
+    WKPageSetPageNavigationClient(webView2.page(), &navigationClient.base);
 
     wasPrompted = false;
     url = adoptWK(Util::createURLForResource("getUserMedia", "html"));
