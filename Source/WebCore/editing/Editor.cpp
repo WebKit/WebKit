@@ -4256,4 +4256,10 @@ RefPtr<HTMLImageElement> Editor::insertEditableImage()
     return InsertEditableImageCommand::insertEditableImage(document());
 }
 
+bool Editor::canCopyExcludingStandaloneImages() const
+{
+    auto& selection = m_frame.selection().selection();
+    return selection.isRange() && !selection.isInPasswordField();
+}
+
 } // namespace WebCore

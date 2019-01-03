@@ -37,6 +37,7 @@
 #import "FindClient.h"
 #import "FrontBoardServicesSPI.h"
 #import "FullscreenClient.h"
+#import "GlobalFindInPageState.h"
 #import "IconLoadingDelegate.h"
 #import "LegacySessionStateCoding.h"
 #import "Logging.h"
@@ -4442,6 +4443,25 @@ FOR_EACH_PRIVATE_WKCONTENTVIEW_ACTION(FORWARD_ACTION_TO_WKCONTENTVIEW)
 #endif
 }
 
+- (void)_takeFindStringFromSelection:(id)sender
+{
+#if PLATFORM(MAC)
+    [self takeFindStringFromSelection:sender];
+#else
+    _page->executeEditCommand("TakeFindStringFromSelection"_s);
+#endif
+}
+
++ (NSString *)_stringForFind
+{
+    return WebKit::stringForFind();
+}
+
++ (void)_setStringForFind:(NSString *)findString
+{
+    WebKit::updateStringForFind(findString);
+}
+
 - (_WKRemoteObjectRegistry *)_remoteObjectRegistry
 {
 #if PLATFORM(MAC)
@@ -5177,6 +5197,11 @@ static inline WebKit::FindOptions toFindOptions(_WKFindOptions wkFindOptions)
 - (void)_findString:(NSString *)string options:(_WKFindOptions)options maxCount:(NSUInteger)maxCount
 {
 #if PLATFORM(IOS_FAMILY)
+    // While AppKit contains logic in NSBarTextFinder to automatically update the find pasteboard
+    // when the find string changes, this (along with the find pasteboard itself) are both missing
+    // from iOS; thus, on iOS, we update the current find-in-page string here.
+    WebKit::updateStringForFind(string);
+
     if (_customContentView) {
         [_customContentView web_findString:string options:options maxCount:maxCount];
         return;

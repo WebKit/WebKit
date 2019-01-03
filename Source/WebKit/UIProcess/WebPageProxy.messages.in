@@ -416,6 +416,8 @@ messages -> WebPageProxy {
 
     EnableInspectorNodeSearch()
     DisableInspectorNodeSearch()
+
+    UpdateStringForFind(String findString)
 #endif
 
     DidChangeInspectorFrontendCount(uint64_t count)

@@ -45,8 +45,11 @@
 #import "HTMLConverter.h"
 #import "HTMLImageElement.h"
 #import "HTMLSpanElement.h"
+#import "LegacyNSPasteboardTypes.h"
 #import "LegacyWebArchive.h"
 #import "Pasteboard.h"
+#import "PasteboardStrategy.h"
+#import "PlatformStrategies.h"
 #import "RenderElement.h"
 #import "RenderStyle.h"
 #import "Settings.h"
@@ -55,6 +58,7 @@
 #import "markup.h"
 #import <pal/spi/cocoa/NSAttributedStringSPI.h>
 #import <pal/spi/cocoa/NSKeyedArchiverSPI.h>
+#import <pal/system/Sound.h>
 #import <wtf/BlockObjCExceptions.h>
 #import <wtf/cocoa/NSURLExtras.h>
 
@@ -221,6 +225,30 @@ RefPtr<DocumentFragment> Editor::webContentFromPasteboard(Pasteboard& pasteboard
     pasteboard.read(reader);
     chosePlainText = reader.madeFragmentFromPlainText;
     return WTFMove(reader.fragment);
+}
+
+void Editor::takeFindStringFromSelection()
+{
+    if (!canCopyExcludingStandaloneImages()) {
+        PAL::systemBeep();
+        return;
+    }
+
+    auto stringFromSelection = m_frame.displayStringModifiedByEncoding(selectedTextForDataTransfer());
+#if PLATFORM(MAC)
+    Vector<String> types;
+    types.append(String(legacyStringPasteboardType()));
+    ALLOW_DEPRECATED_DECLARATIONS_BEGIN
+    platformStrategies()->pasteboardStrategy()->setTypes(types, NSFindPboard);
+    platformStrategies()->pasteboardStrategy()->setStringForType(WTFMove(stringFromSelection), legacyStringPasteboardType(), NSFindPboard);
+    ALLOW_DEPRECATED_DECLARATIONS_END
+#else
+    if (auto* client = this->client()) {
+        // Since the find pasteboard doesn't exist on iOS, WebKit maintains its own notion of the latest find string,
+        // which SPI clients may respect when presenting find-in-page UI.
+        client->updateStringForFind(stringFromSelection);
+    }
+#endif
 }
 
 }

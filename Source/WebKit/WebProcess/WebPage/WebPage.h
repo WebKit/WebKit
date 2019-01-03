@@ -939,6 +939,8 @@ public:
     const WebCore::ViewportConfiguration& viewportConfiguration() const { return m_viewportConfiguration; }
 
     void hardwareKeyboardAvailabilityChanged();
+
+    void updateStringForFind(const String&);
 #endif
 
 #if ENABLE(IOS_TOUCH_EVENTS)

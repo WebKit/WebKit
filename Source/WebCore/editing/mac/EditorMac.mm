@@ -55,7 +55,6 @@
 #import "WebNSAttributedStringExtras.h"
 #import "markup.h"
 #import <AppKit/AppKit.h>
-#import <pal/system/Sound.h>
 #import <wtf/cocoa/NSURLExtras.h>
 
 namespace WebCore {
@@ -96,27 +95,6 @@ void Editor::pasteWithPasteboard(Pasteboard* pasteboard, OptionSet<PasteOption> 
         pasteAsFragment(fragment.releaseNonNull(), canSmartReplaceWithPasteboard(*pasteboard), false, options.contains(PasteOption::IgnoreMailBlockquote) ? MailBlockquoteHandling::IgnoreBlockquote : MailBlockquoteHandling::RespectBlockquote );
 
     client()->setInsertionPasteboard(String());
-}
-
-bool Editor::canCopyExcludingStandaloneImages()
-{
-    const VisibleSelection& selection = m_frame.selection().selection();
-    return selection.isRange() && !selection.isInPasswordField();
-}
-
-void Editor::takeFindStringFromSelection()
-{
-    if (!canCopyExcludingStandaloneImages()) {
-        PAL::systemBeep();
-        return;
-    }
-
-    Vector<String> types;
-    types.append(String(legacyStringPasteboardType()));
-    ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-    platformStrategies()->pasteboardStrategy()->setTypes(types, NSFindPboard);
-    platformStrategies()->pasteboardStrategy()->setStringForType(m_frame.displayStringModifiedByEncoding(selectedTextForDataTransfer()), legacyStringPasteboardType(), NSFindPboard);
-    ALLOW_DEPRECATED_DECLARATIONS_END
 }
 
 void Editor::readSelectionFromPasteboard(const String& pasteboardName)

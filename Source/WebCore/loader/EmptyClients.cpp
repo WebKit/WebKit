@@ -215,6 +215,7 @@ private:
     int getPasteboardItemsCount() final { return 0; }
     RefPtr<DocumentFragment> documentFragmentFromDelegate(int) final { return nullptr; }
     bool performsTwoStepPaste(DocumentFragment*) final { return false; }
+    void updateStringForFind(const String&) final { }
 #endif
 
     bool performTwoStepDrop(DocumentFragment&, Range&, bool) final { return false; }

@@ -1,3 +1,63 @@
+2019-01-02  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Add support for using the current text selection as the find string on iOS
+        https://bugs.webkit.org/show_bug.cgi?id=193034
+        <rdar://problem/45138739>
+
+        Reviewed by Tim Horton.
+
+        * SourcesCocoa.txt:
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _takeFindStringFromSelection:]):
+
+        Provides a way to set the find string on iOS and macOS (an aside: takeFindStringFromSelection: already exists on
+        macOS, but there is no equivalent protocol method on iOS, so this new SPI acts as a cross-platform way for
+        WebKit clients to take the find string from the selection across all Cocoa platforms).
+
+        (+[WKWebView _stringForFind]):
+        (+[WKWebView _setStringForFind:]):
+
+        Call into find-in-page helper functions.
+
+        (-[WKWebView _findString:options:maxCount:]):
+
+        On iOS, additionally update the find-in-page string when exercising the _findString:options:maxCount: SPI. This
+        mirrors macOS behavior of updating the find pasteboard every time the find string changes; however, on macOS,
+        this is implemented by the platform (in AppKit), whereas there's no platform find pasteboard on iOS, let alone
+        logic to update it in UIKit. As such, we directly drive updates to the find string within WebKit.
+
+        * UIProcess/API/Cocoa/WKWebViewPrivate.h:
+
+        Add some new cross-platform find-in-page SPI. See above for more details.
+
+        * UIProcess/Cocoa/GlobalFindInPageState.h: Added.
+        * UIProcess/Cocoa/GlobalFindInPageState.mm: Added.
+        (WebKit::findPasteboard):
+        (WebKit::globalStringForFind):
+
+        Fetch the string to use when finding text in the page. On macOS, this accesses the AppKit find pasteboard; on
+        iOS, this instead returns the current global find string.
+
+        (WebKit::updateStringForFind):
+
+        Sets the global find string. Uses the find pasteboard on macOS, and sets the global find string on iOS.
+
+        (WebKit::stringForFind):
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPageProxy.messages.in:
+
+        Add plumbing to allow WebEditorClient to deliver the update the global find string in the UI process.
+
+        * UIProcess/ios/WebPageProxyIOS.mm:
+        (WebKit::WebPageProxy::updateStringForFind):
+        * WebKit.xcodeproj/project.pbxproj:
+        * WebProcess/WebCoreSupport/WebEditorClient.h:
+        * WebProcess/WebCoreSupport/ios/WebEditorClientIOS.mm:
+        (WebKit::WebEditorClient::updateStringForFind):
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::updateStringForFind):
+
 2019-01-02  Brent Fulgham  <bfulgham@apple.com>
 
         Allow WebContent process access to some drawing-related IOKit properties

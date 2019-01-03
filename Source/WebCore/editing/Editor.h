@@ -485,15 +485,16 @@ public:
 #if PLATFORM(COCOA)
     WEBCORE_EXPORT String stringSelectionForPasteboard();
     String stringSelectionForPasteboardWithImageAltText();
-#if !PLATFORM(IOS_FAMILY)
-    bool canCopyExcludingStandaloneImages();
     void takeFindStringFromSelection();
+#if !PLATFORM(IOS_FAMILY)
     WEBCORE_EXPORT void readSelectionFromPasteboard(const String& pasteboardName);
     WEBCORE_EXPORT void replaceNodeFromPasteboard(Node*, const String& pasteboardName);
     WEBCORE_EXPORT RefPtr<SharedBuffer> dataSelectionForPasteboard(const String& pasteboardName);
 #endif // !PLATFORM(IOS_FAMILY)
     WEBCORE_EXPORT void replaceSelectionWithAttributedString(NSAttributedString *, MailBlockquoteHandling = MailBlockquoteHandling::RespectBlockquote);
 #endif
+
+    bool canCopyExcludingStandaloneImages() const;
 
     String clientReplacementURLForResource(Ref<SharedBuffer>&& resourceData, const String& mimeType);
 

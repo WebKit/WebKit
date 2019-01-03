@@ -1,3 +1,40 @@
+2019-01-02  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Add support for using the current text selection as the find string on iOS
+        https://bugs.webkit.org/show_bug.cgi?id=193034
+        <rdar://problem/45138739>
+
+        Reviewed by Tim Horton.
+
+        Add support for "TakeFindStringFromSelection" on iOS. Unlike macOS, iOS does not have a notion of a "find
+        pasteboard" like macOS; instead, we handle this editing command by sending the selection string to the UI
+        process, where it is exposed via WebKit SPI so that clients that present find-in-page UI (i.e. MobileSafari) are
+        able to trigger find-in-page with this string.
+
+        Test: WebKit.UseSelectionAsFindString
+
+        * editing/Editor.cpp:
+        (WebCore::Editor::canCopyExcludingStandaloneImages const):
+
+        Make this helper function cross-platform.
+
+        * editing/Editor.h:
+        * editing/EditorCommand.cpp:
+        (WebCore::createCommandMap):
+        * editing/cocoa/EditorCocoa.mm:
+        (WebCore::Editor::takeFindStringFromSelection):
+
+        Move this from EditorMac to EditorCocoa, and implement it on iOS by calling into the editor client to update the
+        find string (see WebKit/ChangeLog for more details).
+
+        * editing/mac/EditorMac.mm:
+        (WebCore::Editor::canCopyExcludingStandaloneImages): Deleted.
+        (WebCore::Editor::takeFindStringFromSelection): Deleted.
+        * loader/EmptyClients.cpp:
+        * page/EditorClient.h:
+
+        Add a new editor client method to send the string for find-in-page to the UI process.
+
 2019-01-02  Devin Rousso  <webkit@devinrousso.com>
 
         Web Inspector: Implement `queryObjects` Command Line API

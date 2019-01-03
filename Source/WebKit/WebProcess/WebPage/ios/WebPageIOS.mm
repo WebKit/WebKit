@@ -3125,6 +3125,11 @@ void WebPage::hardwareKeyboardAvailabilityChanged()
         focusedFrame->eventHandler().capsLockStateMayHaveChanged();
 }
 
+void WebPage::updateStringForFind(const String& findString)
+{
+    send(Messages::WebPageProxy::UpdateStringForFind(findString));
+}
+
 #if USE(QUICK_LOOK)
 void WebPage::didReceivePasswordForQuickLookDocument(const String& password)
 {

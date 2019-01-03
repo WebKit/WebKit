@@ -31,6 +31,7 @@
 #import "APIUIClient.h"
 #import "DataReference.h"
 #import "EditingRange.h"
+#import "GlobalFindInPageState.h"
 #import "InteractionInformationAtPosition.h"
 #import "Logging.h"
 #import "NativeWebKeyboardEvent.h"
@@ -224,6 +225,14 @@ void WebPageProxy::updateVisibleContentRects(const VisibleContentRectUpdateInfo&
 void WebPageProxy::resendLastVisibleContentRects()
 {
     m_process->send(Messages::ViewUpdateDispatcher::VisibleContentRectUpdate(m_pageID, m_lastVisibleContentRectUpdate), 0);
+}
+
+void WebPageProxy::updateStringForFind(const String& string)
+{
+    if (!isValid())
+        return;
+
+    WebKit::updateStringForFind(string);
 }
 
 static inline float adjustedUnexposedEdge(float documentEdge, float exposedRectEdge, float factor)

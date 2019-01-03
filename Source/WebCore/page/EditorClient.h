@@ -134,6 +134,7 @@ public:
     virtual int getPasteboardItemsCount() = 0;
     virtual RefPtr<DocumentFragment> documentFragmentFromDelegate(int index) = 0;
     virtual bool performsTwoStepPaste(DocumentFragment*) = 0;
+    virtual void updateStringForFind(const String&) = 0;
 #endif
 
 #if PLATFORM(COCOA)

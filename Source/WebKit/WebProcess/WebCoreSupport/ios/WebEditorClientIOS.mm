@@ -86,6 +86,11 @@ bool WebEditorClient::performsTwoStepPaste(WebCore::DocumentFragment*)
     return false;
 }
 
+void WebEditorClient::updateStringForFind(const String& findString)
+{
+    m_page->updateStringForFind(findString);
+}
+
 void WebEditorClient::overflowScrollPositionChanged()
 {
     m_page->didChangeSelection();

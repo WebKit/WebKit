@@ -1,3 +1,17 @@
+2019-01-02  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Add support for using the current text selection as the find string on iOS
+        https://bugs.webkit.org/show_bug.cgi?id=193034
+        <rdar://problem/45138739>
+
+        Reviewed by Tim Horton.
+
+        Add a new API test to verify that the new WebKit SPI (_stringForFind, _takeFindStringFromSelection:, and
+        _setStringForFind) works as expected.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WebKitCocoa/UseSelectionAsFindString.mm: Added.
+
 2019-01-02  Aakash Jain  <aakash_jain@apple.com>
 
         [ews-build] Use git on OpenSource EWS bots
