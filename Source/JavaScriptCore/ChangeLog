@@ -1,3 +1,18 @@
+2019-01-03  Michael Saboff  <msaboff@apple.com>
+
+        DFG IntegerRangeOptimization phase exceeding loop limit shouldn't ASSERT
+        https://bugs.webkit.org/show_bug.cgi?id=193094
+
+        Reviewed by Saam Barati.
+
+        Removed this debug only ASSERT as one can construct test cases that will exceed the giveUpThreshold
+        amount.   This can be done with a large switch statement with at least one const or variable case
+        clause.  Such code bytecompiles to compare / jtrue sequences.  Increasing the giveUpThreshold count
+        doesn't help with the eventual code generated as B3 has optimizations to coalesce compare / branch
+        code sequences even when we don't run the IntegerRangeOptimization phase.
+
+        * dfg/DFGIntegerRangeOptimizationPhase.cpp:
+
 2019-01-02  Devin Rousso  <webkit@devinrousso.com>
 
         Web Inspector: Implement `queryObjects` Command Line API

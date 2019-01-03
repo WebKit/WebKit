@@ -1092,13 +1092,12 @@ public:
             ++m_iterations;
             if (m_iterations >= giveUpThreshold) {
                 // This case is not necessarily wrong but it can be a sign that this phase
-                // does not converge.
-                // If you hit this assertion for a legitimate case, update the giveUpThreshold
+                // does not converge. The value giveUpThreshold was chosen emperically based on
+                // current tests and real world JS.
+                // If you hit this case for a legitimate reason, update the giveUpThreshold
                 // to the smallest values that converges.
-                ASSERT_NOT_REACHED();
 
-                // In release, do not risk holding the thread for too long since this phase
-                // is really slow.
+                // Do not risk holding the thread for too long since this phase is really slow.
                 return false;
             }
 
