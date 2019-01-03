@@ -1,3 +1,14 @@
+2019-01-02  Aakash Jain  <aakash_jain@apple.com>
+
+        [ews-build] Use git on OpenSource EWS bots
+        https://bugs.webkit.org/show_bug.cgi?id=193092
+
+        Reviewed by Lucas Forschler.
+
+        * BuildSlaveSupport/ews-build/steps.py:
+        (CheckOutSource): Use git instead of svn.
+        (CheckOutSource.__init__): Use timeout of 2 hours since the initial checkout might take a long time.
+
 2019-01-02  Daniel Bates  <dabates@apple.com>
 
         [lldb-webkit] Remove broken code to print WTF::OptionSet::m_storage

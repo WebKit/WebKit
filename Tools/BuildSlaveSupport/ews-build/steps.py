@@ -23,7 +23,7 @@
 from buildbot.process import buildstep, logobserver, properties
 from buildbot.process.results import Results, SUCCESS, FAILURE, WARNINGS, SKIPPED, EXCEPTION, RETRY
 from buildbot.steps import master, shell, transfer
-from buildbot.steps.source import svn
+from buildbot.steps.source import git
 from twisted.internet import defer
 
 import re
@@ -90,14 +90,15 @@ class ConfigureBuild(buildstep.BuildStep):
         return '{}show_bug.cgi?id={}'.format(BUG_SERVER_URL, bug_id)
 
 
-class CheckOutSource(svn.SVN):
+class CheckOutSource(git.Git):
     CHECKOUT_DELAY_AND_MAX_RETRIES_PAIR = (0, 2)
 
     def __init__(self, **kwargs):
-        self.repourl = 'https://svn.webkit.org/repository/webkit/trunk'
+        self.repourl = 'https://git.webkit.org/git/WebKit.git'
         super(CheckOutSource, self).__init__(repourl=self.repourl,
                                                 retry=self.CHECKOUT_DELAY_AND_MAX_RETRIES_PAIR,
-                                                preferLastChangedRev=True,
+                                                timeout=2 * 60 * 60,
+                                                progress=True,
                                                 **kwargs)
 
 
