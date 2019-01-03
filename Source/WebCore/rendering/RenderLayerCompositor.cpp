@@ -1806,6 +1806,9 @@ void RenderLayerCompositor::frameViewDidChangeLocation(const IntPoint& contentsO
 
 void RenderLayerCompositor::frameViewDidChangeSize()
 {
+    if (auto* layer = m_renderView.layer())
+        layer->setNeedsCompositingGeometryUpdate();
+
     if (m_clipLayer) {
         const FrameView& frameView = m_renderView.frameView();
         m_clipLayer->setSize(frameView.sizeForVisibleContent());

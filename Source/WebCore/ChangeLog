@@ -1,3 +1,21 @@
+2019-01-03  Simon Fraser  <simon.fraser@apple.com>
+
+        REGRESSION (r238090): After showing the Find banner or tab bar, hit tests are vertically offset (or painting is not offset)
+        https://bugs.webkit.org/show_bug.cgi?id=193124
+        rdar://problem/46755409
+
+        Reviewed by Tim Horton.
+
+        Top content inset feeds into scrolling tree geometry, so when it changes we need to trigger
+        an update of the root scrolling node, which happens via RenderLayerBacking::updateGeometry().
+        So set a dirty bit on the root layer in frameViewDidChangeSize(), which is called from the code
+        path that runs when top content inset changes.
+
+        Find banner behavior is not easily testable. platform/mac/fast/events/content-inset-hit-testing.html did not detect the regression.
+
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::frameViewDidChangeSize):
+
 2019-01-03  Chris Dumez  <cdumez@apple.com>
 
         Potential infinite recursion in isFrameFamiliarWith(Frame&, Frame&)
