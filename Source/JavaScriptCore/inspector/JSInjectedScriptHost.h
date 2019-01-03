@@ -71,6 +71,7 @@ public:
     JSC::JSValue weakSetSize(JSC::ExecState*);
     JSC::JSValue weakSetEntries(JSC::ExecState*);
     JSC::JSValue iteratorEntries(JSC::ExecState*);
+    JSC::JSValue queryObjects(JSC::ExecState*);
 
 protected:
     void finishCreation(JSC::VM&);

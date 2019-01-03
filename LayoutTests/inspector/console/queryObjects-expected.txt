@@ -1,0 +1,342 @@
+Tests for the `queryObjects` function in the Command Line API.
+
+
+== Running test suite: CommandLineAPI.queryObjects
+-- Running test case: CommandLineAPI.queryObjects.Instances.ClassA
+PASS: The result should be an object.
+PASS: The result should be an array object.
+PASS: The result should have 0 items.
+
+-- Running test case: CommandLineAPI.queryObjects.ClassA
+PASS: The result should be an object.
+PASS: The result should be an array object.
+PASS: The result should have 5 items.
+[ClassA, ClassB, ClassB, ClassC, ClassC]
+
+-- Running test case: CommandLineAPI.queryObjects.ClassA.prototype
+PASS: The result should be an object.
+PASS: The result should be an array object.
+PASS: The result should have 5 items.
+[ClassA, ClassB, ClassB, ClassC, ClassC]
+
+-- Running test case: CommandLineAPI.queryObjects.Instances.ClassB
+PASS: The result should be an object.
+PASS: The result should be an array object.
+PASS: The result should have 0 items.
+
+-- Running test case: CommandLineAPI.queryObjects.ClassB
+PASS: The result should be an object.
+PASS: The result should be an array object.
+PASS: The result should have 3 items.
+[ClassB, ClassC, ClassC]
+
+-- Running test case: CommandLineAPI.queryObjects.ClassB.prototype
+PASS: The result should be an object.
+PASS: The result should be an array object.
+PASS: The result should have 3 items.
+[ClassB, ClassC, ClassC]
+
+-- Running test case: CommandLineAPI.queryObjects.Instances.ClassC
+PASS: The result should be an object.
+PASS: The result should be an array object.
+PASS: The result should have 0 items.
+
+-- Running test case: CommandLineAPI.queryObjects.ClassC
+PASS: The result should be an object.
+PASS: The result should be an array object.
+PASS: The result should have 1 items.
+[ClassC]
+
+-- Running test case: CommandLineAPI.queryObjects.ClassC.prototype
+PASS: The result should be an object.
+PASS: The result should be an array object.
+PASS: The result should have 1 items.
+[ClassC]
+
+-- Running test case: CommandLineAPI.queryObjects.HTMLDocument
+PASS: The result should be an object.
+PASS: The result should be an array object.
+PASS: The result should have 1 items.
+[#document]
+
+-- Running test case: CommandLineAPI.queryObjects.HTMLBodyElement
+PASS: The result should be an object.
+PASS: The result should be an array object.
+PASS: The result should have 1 items.
+[<body>]
+
+-- Running test case: CommandLineAPI.queryObjects.HTMLImageElement
+PASS: The result should be an object.
+PASS: The result should be an array object.
+PASS: The result should have 0 items.
+
+-- Running test case: CommandLineAPI.queryObjects.objectWithDisallowedPrototypeGetter
+PASS: The result should be an object.
+PASS: The result should be an array object.
+PASS: The result should have 0 items.
+
+-- Running test case: CommandLineAPI.queryObjects.objectWithErrorPrototypeGetter
+PASS: The result should be an object.
+PASS: The result should be an array object.
+PASS: The result should have 0 items.
+
+-- Running test case: CommandLineAPI.queryObjects.undefined
+PASS: Calling "queryObjects" with "undefined" should throw an exception.
+TypeError: queryObjects first argument must be an object.
+
+-- Running test case: CommandLineAPI.queryObjects.null
+PASS: Calling "queryObjects" with "null" should throw an exception.
+TypeError: queryObjects first argument must be an object.
+
+-- Running test case: CommandLineAPI.queryObjects.Infinity
+PASS: Calling "queryObjects" with "Infinity" should throw an exception.
+TypeError: queryObjects first argument must be an object.
+
+-- Running test case: CommandLineAPI.queryObjects.NaN
+PASS: Calling "queryObjects" with "NaN" should throw an exception.
+TypeError: queryObjects first argument must be an object.
+
+-- Running test case: CommandLineAPI.queryObjects.1
+PASS: Calling "queryObjects" with "1" should throw an exception.
+TypeError: queryObjects first argument must be an object.
+
+-- Running test case: CommandLineAPI.queryObjects.true
+PASS: Calling "queryObjects" with "true" should throw an exception.
+TypeError: queryObjects first argument must be an object.
+
+-- Running test case: CommandLineAPI.queryObjects."test"
+PASS: Calling "queryObjects" with ""test"" should throw an exception.
+TypeError: queryObjects first argument must be an object.
+
+-- Running test case: CommandLineAPI.queryObjects.Instances.Symbol
+PASS: Calling "queryObjects" with "Instances.Symbol" should throw an exception.
+TypeError: queryObjects first argument must be an object.
+
+-- Running test case: CommandLineAPI.queryObjects.Symbol
+PASS: The result should be an object.
+PASS: The result should be an array object.
+PASS: The result should have 0 items.
+
+-- Running test case: CommandLineAPI.queryObjects.Symbol.prototype
+PASS: The result should be an object.
+PASS: The result should be an array object.
+PASS: The result should have 0 items.
+
+-- Running test case: CommandLineAPI.queryObjects.Proxies.constructor
+PASS: The result should be an object.
+PASS: The result should be an array object.
+PASS: The result should have 0 items.
+
+-- Running test case: CommandLineAPI.queryObjects.Proxies.basic
+PASS: Calling "queryObjects" with "Proxies.basic" should throw an exception.
+TypeError: queryObjects cannot be called with a Proxy.
+
+-- Running test case: CommandLineAPI.queryObjects.Proxies.object
+PASS: Calling "queryObjects" with "Proxies.object" should throw an exception.
+TypeError: queryObjects cannot be called with a Proxy.
+
+-- Running test case: CommandLineAPI.queryObjects.Proxies.tricky
+PASS: Calling "queryObjects" with "Proxies.tricky" should throw an exception.
+TypeError: queryObjects cannot be called with a Proxy.
+
+-- Running test case: CommandLineAPI.queryObjects.Instances.Object
+PASS: The result should be an object.
+PASS: The result should be an array object.
+PASS: The result should have 0 items.
+
+-- Running test case: CommandLineAPI.queryObjects.Object
+PASS: Calling "queryObjects" with "Object" should throw an exception.
+TypeError: queryObjects cannot be called with Object.
+
+-- Running test case: CommandLineAPI.queryObjects.Object.prototype
+PASS: Calling "queryObjects" with "Object.prototype" should throw an exception.
+TypeError: queryObjects cannot be called with Object.
+
+-- Running test case: CommandLineAPI.queryObjects.Instances.Function
+PASS: The result should be an object.
+PASS: The result should be an array object.
+PASS: The result should have 0 items.
+
+-- Running test case: CommandLineAPI.queryObjects.Function
+PASS: Calling "queryObjects" with "Function" should throw an exception.
+TypeError: queryObjects cannot be called with Function.
+
+-- Running test case: CommandLineAPI.queryObjects.Function.prototype
+PASS: Calling "queryObjects" with "Function.prototype" should throw an exception.
+TypeError: queryObjects cannot be called with Function.
+
+-- Running test case: CommandLineAPI.queryObjects.Instances.Array
+PASS: The result should be an object.
+PASS: The result should be an array object.
+PASS: The result should have 0 items.
+
+-- Running test case: CommandLineAPI.queryObjects.Array
+PASS: Calling "queryObjects" with "Array" should throw an exception.
+TypeError: queryObjects cannot be called with Array.
+
+-- Running test case: CommandLineAPI.queryObjects.Array.prototype
+PASS: Calling "queryObjects" with "Array.prototype" should throw an exception.
+TypeError: queryObjects cannot be called with Array.
+
+-- Running test case: CommandLineAPI.queryObjects.Instances.Map
+PASS: The result should be an object.
+PASS: The result should be an array object.
+PASS: The result should have 0 items.
+
+-- Running test case: CommandLineAPI.queryObjects.Map
+PASS: Calling "queryObjects" with "Map" should throw an exception.
+TypeError: queryObjects cannot be called with Map.
+
+-- Running test case: CommandLineAPI.queryObjects.Map.prototype
+PASS: Calling "queryObjects" with "Map.prototype" should throw an exception.
+TypeError: queryObjects cannot be called with Map.
+
+-- Running test case: CommandLineAPI.queryObjects.Instances.Set
+PASS: The result should be an object.
+PASS: The result should be an array object.
+PASS: The result should have 0 items.
+
+-- Running test case: CommandLineAPI.queryObjects.Set
+PASS: Calling "queryObjects" with "Set" should throw an exception.
+TypeError: queryObjects cannot be called with Set.
+
+-- Running test case: CommandLineAPI.queryObjects.Set.prototype
+PASS: Calling "queryObjects" with "Set.prototype" should throw an exception.
+TypeError: queryObjects cannot be called with Set.
+
+-- Running test case: CommandLineAPI.queryObjects.Instances.Promise
+PASS: The result should be an object.
+PASS: The result should be an array object.
+PASS: The result should have 0 items.
+
+-- Running test case: CommandLineAPI.queryObjects.Promise
+PASS: Calling "queryObjects" with "Promise" should throw an exception.
+TypeError: queryObjects cannot be called with Promise.
+
+-- Running test case: CommandLineAPI.queryObjects.Promise.prototype
+PASS: Calling "queryObjects" with "Promise.prototype" should throw an exception.
+TypeError: queryObjects cannot be called with Promise.
+
+-- Running test case: CommandLineAPI.queryObjects.FunctionPrototypeReplacement
+PASS: Calling "queryObjects" with "FunctionPrototypeReplacement" should throw an exception.
+TypeError: queryObjects cannot be called with Function.
+
+-- Running test case: CommandLineAPI.queryObjects.FunctionPrototypeReplacement.prototype
+PASS: Calling "queryObjects" with "FunctionPrototypeReplacement.prototype" should throw an exception.
+TypeError: queryObjects cannot be called with Function.
+
+-- Running test case: CommandLineAPI.queryObjects.ArrayPrototypeReplacement
+PASS: Calling "queryObjects" with "ArrayPrototypeReplacement" should throw an exception.
+TypeError: queryObjects cannot be called with Array.
+
+-- Running test case: CommandLineAPI.queryObjects.ArrayPrototypeReplacement.prototype
+PASS: Calling "queryObjects" with "ArrayPrototypeReplacement.prototype" should throw an exception.
+TypeError: queryObjects cannot be called with Array.
+
+-- Running test case: CommandLineAPI.queryObjects.MapPrototypeReplacement
+PASS: Calling "queryObjects" with "MapPrototypeReplacement" should throw an exception.
+TypeError: queryObjects cannot be called with Map.
+
+-- Running test case: CommandLineAPI.queryObjects.MapPrototypeReplacement.prototype
+PASS: Calling "queryObjects" with "MapPrototypeReplacement.prototype" should throw an exception.
+TypeError: queryObjects cannot be called with Map.
+
+-- Running test case: CommandLineAPI.queryObjects.SetPrototypeReplacement
+PASS: Calling "queryObjects" with "SetPrototypeReplacement" should throw an exception.
+TypeError: queryObjects cannot be called with Set.
+
+-- Running test case: CommandLineAPI.queryObjects.SetPrototypeReplacement.prototype
+PASS: Calling "queryObjects" with "SetPrototypeReplacement.prototype" should throw an exception.
+TypeError: queryObjects cannot be called with Set.
+
+-- Running test case: CommandLineAPI.queryObjects.PromisePrototypeReplacement
+PASS: Calling "queryObjects" with "PromisePrototypeReplacement" should throw an exception.
+TypeError: queryObjects cannot be called with Promise.
+
+-- Running test case: CommandLineAPI.queryObjects.PromisePrototypeReplacement.prototype
+PASS: Calling "queryObjects" with "PromisePrototypeReplacement.prototype" should throw an exception.
+TypeError: queryObjects cannot be called with Promise.
+
+-- Running test case: CommandLineAPI.queryObjects.Instances.Boolean
+PASS: The result should be an object.
+PASS: The result should be an array object.
+PASS: The result should have 0 items.
+
+-- Running test case: CommandLineAPI.queryObjects.Boolean
+PASS: The result should be an object.
+PASS: The result should be an array object.
+PASS: The result should have at least 1 item.
+
+-- Running test case: CommandLineAPI.queryObjects.Boolean.prototype
+PASS: The result should be an object.
+PASS: The result should be an array object.
+PASS: The result should have at least 1 item.
+
+-- Running test case: CommandLineAPI.queryObjects.Instances.String
+PASS: The result should be an object.
+PASS: The result should be an array object.
+PASS: The result should have 0 items.
+
+-- Running test case: CommandLineAPI.queryObjects.String
+PASS: The result should be an object.
+PASS: The result should be an array object.
+PASS: The result should have at least 1 item.
+
+-- Running test case: CommandLineAPI.queryObjects.String.prototype
+PASS: The result should be an object.
+PASS: The result should be an array object.
+PASS: The result should have at least 1 item.
+
+-- Running test case: CommandLineAPI.queryObjects.Instances.Number
+PASS: The result should be an object.
+PASS: The result should be an array object.
+PASS: The result should have 0 items.
+
+-- Running test case: CommandLineAPI.queryObjects.Number
+PASS: The result should be an object.
+PASS: The result should be an array object.
+PASS: The result should have at least 1 item.
+
+-- Running test case: CommandLineAPI.queryObjects.Number.prototype
+PASS: The result should be an object.
+PASS: The result should be an array object.
+PASS: The result should have at least 1 item.
+
+-- Running test case: CommandLineAPI.queryObjects.Instances.Date
+PASS: The result should be an object.
+PASS: The result should be an array object.
+PASS: The result should have 0 items.
+
+-- Running test case: CommandLineAPI.queryObjects.Date
+PASS: The result should be an object.
+PASS: The result should be an array object.
+PASS: The result should have at least 1 item.
+
+-- Running test case: CommandLineAPI.queryObjects.Date.prototype
+PASS: The result should be an object.
+PASS: The result should be an array object.
+PASS: The result should have at least 1 item.
+
+-- Running test case: CommandLineAPI.queryObjects.Instances.RegExp
+PASS: The result should be an object.
+PASS: The result should be an array object.
+PASS: The result should have 0 items.
+
+-- Running test case: CommandLineAPI.queryObjects.RegExp
+PASS: The result should be an object.
+PASS: The result should be an array object.
+PASS: The result should have at least 1 item.
+
+-- Running test case: CommandLineAPI.queryObjects.RegExp.prototype
+PASS: The result should be an object.
+PASS: The result should be an array object.
+PASS: The result should have at least 1 item.
+
+-- Running test case: CommandLineAPI.queryObjects.GC
+PASS: Should be 1 ClassC instance.
+Clearing instances...
+PASS: Should now be 0 ClassC instances.
+
+-- Running test case: CommandLineAPI.queryObjects.NoParameter
+PASS: The result should be undefined.
+

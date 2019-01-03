@@ -1,3 +1,48 @@
+2019-01-02  Devin Rousso  <webkit@devinrousso.com>
+
+        Web Inspector: Implement `queryObjects` Command Line API
+        https://bugs.webkit.org/show_bug.cgi?id=176766
+        <rdar://problem/34890689>
+
+        Reviewed by Joseph Pecoraro.
+
+        Introduces a new Command Line function called `queryObjects` that will return an array of
+        object that have the given constructor/prototype argument in their prototype chain.
+         - `queryObjects(Promise)` will return an array of all Promises.
+         - `queryObjects(Foo)` will return all objects created with the constructor `Foo`.
+
+        Currently, an error is thrown if the first argument is one of the following:
+         - Object
+         - Object.prototype
+         - Function
+         - Function.prototype
+         - Array
+         - Array.prototype
+         - Map
+         - Map.prototype
+         - Set
+         - Set.prototype
+         - Proxy
+
+        The reason for this is that we don't want to expose any internal/builtin objects, as some of
+        them are highly sensitive and undefined behaviour can occur if they are modified.
+
+        * inspector/JSInjectedScriptHost.h:
+        * inspector/JSInjectedScriptHost.cpp:
+        (Inspector::checkForbiddenPrototype): Added.
+        (Inspector::JSInjectedScriptHost::queryObjects): Added.
+        Does a GC and then iterates over all live JSCell in the heap to find these objects.
+
+        * inspector/JSInjectedScriptHostPrototype.cpp:
+        (Inspector::JSInjectedScriptHostPrototype::finishCreation):
+        (Inspector::jsInjectedScriptHostPrototypeFunctionQueryObjects): Added.
+
+        * inspector/InjectedScriptSource.js:
+        (queryObjects): Added.
+
+        * runtime/JSGlobalObject.h:
+        (JSC::JSGlobalObject::promisePrototype): Added.
+
 2018-12-31  Keith Miller  <keith_miller@apple.com>
 
         SourceProviders should use an actual URL instead of a string

@@ -1,0 +1,215 @@
+<!doctype html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script>
+class ClassA { }
+class ClassB extends ClassA { }
+class ClassC extends ClassB { }
+
+var Instances = {
+    ClassA: new ClassA,
+    ClassB: new ClassB,
+    ClassC: new ClassC,
+    Object: new Object,
+    Function: new Function,
+    Array: new Array,
+    Boolean: new Boolean,
+    String: new String,
+    Symbol: Symbol(),
+    Number: new Number,
+    Date: new Date,
+    RegExp: new RegExp,
+    Map: new Map,
+    Set: new Set,
+    Promise: new Promise(function() {}),
+};
+
+var Proxies = {
+    constructor: Proxy,
+    basic: new Proxy({}, {}),
+    object: new Proxy({}, { get() { return Object.prototype; } }),
+    tricky: new Proxy({}, { get() { return this.count++ === 0 ? ClassA : Object.prototype; } }),
+};
+
+var objectWithDisallowedPrototypeGetter = {
+    get prototype() { return Object.prototype; },
+};
+
+var objectWithErrorPrototypeGetter = {
+    get prototype() { throw 42; },
+};
+
+class FunctionPrototypeReplacement { };
+Function.prototype.__proto__ = FunctionPrototypeReplacement.prototype;
+
+class ArrayPrototypeReplacement { };
+Array.prototype.__proto__ = ArrayPrototypeReplacement.prototype;
+
+class MapPrototypeReplacement { };
+Map.prototype.__proto__ = MapPrototypeReplacement.prototype;
+
+class SetPrototypeReplacement { };
+Set.prototype.__proto__ = SetPrototypeReplacement.prototype;
+
+class PromisePrototypeReplacement { };
+Promise.prototype.__proto__ = PromisePrototypeReplacement.prototype;
+
+function clearInstances() {
+    Instances = {};
+}
+
+function test() {
+    function queryObjects(prototypeOrConstructor, callback) {
+        WI.runtimeManager.evaluateInInspectedWindow(`queryObjects(${prototypeOrConstructor})`, {objectGroup: "test", includeCommandLineAPI: true, generatePreview: true}, callback);
+    }
+
+    let suite = InspectorTest.createAsyncSuite("CommandLineAPI.queryObjects");
+
+    let cases = [
+        {prototypeOrConstructor: `Instances.ClassA`, resultCount: 0},
+        {prototypeOrConstructor: `ClassA`, resultCount: 5},
+        {prototypeOrConstructor: `ClassA.prototype`, resultCount: 5},
+
+        {prototypeOrConstructor: `Instances.ClassB`, resultCount: 0},
+        {prototypeOrConstructor: `ClassB`, resultCount: 3},
+        {prototypeOrConstructor: `ClassB.prototype`, resultCount: 3},
+
+        {prototypeOrConstructor: `Instances.ClassC`, resultCount: 0},
+        {prototypeOrConstructor: `ClassC`, resultCount: 1},
+        {prototypeOrConstructor: `ClassC.prototype`, resultCount: 1},
+
+        {prototypeOrConstructor: `HTMLDocument`, resultCount: 1},
+        {prototypeOrConstructor: `HTMLBodyElement`, resultCount: 1},
+        {prototypeOrConstructor: `HTMLImageElement`, resultCount: 0},
+
+        {prototypeOrConstructor: `objectWithDisallowedPrototypeGetter`, resultCount: 0},
+        {prototypeOrConstructor: `objectWithErrorPrototypeGetter`, resultCount: 0},
+
+        {prototypeOrConstructor: `undefined`, shouldThrow: true},
+        {prototypeOrConstructor: `null`, shouldThrow: true},
+        {prototypeOrConstructor: `Infinity`, shouldThrow: true},
+        {prototypeOrConstructor: `NaN`, shouldThrow: true},
+        {prototypeOrConstructor: `1`, shouldThrow: true},
+        {prototypeOrConstructor: `true`, shouldThrow: true},
+        {prototypeOrConstructor: `"test"`, shouldThrow: true},
+
+        {prototypeOrConstructor: `Instances.Symbol`, shouldThrow: true},
+        {prototypeOrConstructor: `Symbol`, resultCount: 0},
+        {prototypeOrConstructor: `Symbol.prototype`, resultCount: 0},
+
+        {prototypeOrConstructor: `Proxies.constructor`, resultCount: 0},
+        {prototypeOrConstructor: `Proxies.basic`, shouldThrow: true},
+        {prototypeOrConstructor: `Proxies.object`, shouldThrow: true},
+        {prototypeOrConstructor: `Proxies.tricky`, shouldThrow: true},
+    ];
+
+    for (let type of ["Object", "Function", "Array", "Map", "Set", "Promise"]) {
+        cases.push({prototypeOrConstructor: `Instances.${type}`, resultCount: 0});
+        cases.push({prototypeOrConstructor: type, shouldThrow: true});
+        cases.push({prototypeOrConstructor: `${type}.prototype`, shouldThrow: true});
+    }
+
+    for (let type of ["FunctionPrototypeReplacement", "ArrayPrototypeReplacement", "MapPrototypeReplacement", "SetPrototypeReplacement", "PromisePrototypeReplacement"]) {
+        cases.push({prototypeOrConstructor: type, shouldThrow: true});
+        cases.push({prototypeOrConstructor: `${type}.prototype`, shouldThrow: true});
+    }
+
+    for (let type of ["Boolean", "String", "Number", "Date", "RegExp"]) {
+        cases.push({prototypeOrConstructor: `Instances.${type}`, resultCount: 0});
+        cases.push({prototypeOrConstructor: type});
+        cases.push({prototypeOrConstructor: `${type}.prototype`});
+    }
+
+    for (let {prototypeOrConstructor, resultCount, shouldThrow} of cases) {
+        suite.addTestCase({
+            name: `CommandLineAPI.queryObjects.${prototypeOrConstructor}`,
+            test(resolve, reject) {
+                queryObjects(prototypeOrConstructor, (remoteObject, wasThrown, savedResultIndex) => {
+                    if (shouldThrow) {
+                        InspectorTest.expectThat(wasThrown, `Calling "queryObjects" with "${prototypeOrConstructor}" should throw an exception.`);
+                        InspectorTest.log(remoteObject.description);
+                        if (wasThrown) {
+                            resolve();
+                            return;
+                        }
+                    } else if (wasThrown) {
+                        InspectorTest.fail("An exception was thrown.");
+                        InspectorTest.log(remoteObject.description);
+                        resolve();
+                        return;
+                    }
+
+                    InspectorTest.expectEqual(remoteObject.type, "object", "The result should be an object.");
+                    InspectorTest.expectEqual(remoteObject.subtype, "array", "The result should be an array object.");
+
+                    if (resultCount === undefined)
+                        InspectorTest.expectGreaterThan(remoteObject.size, 0, `The result should have at least 1 item.`);
+                    else {
+                        InspectorTest.expectEqual(remoteObject.size, resultCount, `The result should have ${resultCount} items.`);
+                        if (remoteObject.size) {
+                            let propertyPreviews = remoteObject.preview.propertyPreviews.map((preview) => preview.value);
+                            propertyPreviews.sort();
+                            InspectorTest.log("[" + propertyPreviews.join(", ") + "]");
+                        }
+                    }
+
+                    resolve();
+                });
+            }
+        });
+    }
+
+    suite.addTestCase({
+        name: "CommandLineAPI.queryObjects.GC",
+        test(resolve, reject) {
+            queryObjects(`ClassC`, (remoteObject, wasThrown, savedResultIndex) => {
+                InspectorTest.assert(!wasThrown);
+                if (wasThrown)
+                    InspectorTest.log(remoteObject.description);
+
+                InspectorTest.expectEqual(remoteObject.size, 1, `Should be 1 ClassC instance.`);
+
+                InspectorTest.log("Clearing instances...");
+
+                RuntimeAgent.releaseObjectGroup("test");
+                InspectorTest.evaluateInPage(`clearInstances()`);
+
+                queryObjects(`ClassC`, (remoteObject, wasThrown, savedResultIndex) => {
+                    InspectorTest.assert(!wasThrown);
+                    if (wasThrown)
+                        InspectorTest.log(remoteObject.description);
+
+                    InspectorTest.expectEqual(remoteObject.size, 0, `Should now be 0 ClassC instances.`);
+                    resolve();
+                });
+            });
+        }
+    });
+
+    suite.addTestCase({
+        name: "CommandLineAPI.queryObjects.NoParameter",
+        test(resolve, reject) {
+            const prototypeOrConstructor = "";
+            queryObjects(prototypeOrConstructor, (remoteObject, wasThrown, savedResultIndex) => {
+                if (wasThrown) {
+                    InspectorTest.fail("An exception was thrown.");
+                    InspectorTest.log(remoteObject.description);
+                    reject();
+                    return;
+                }
+
+                InspectorTest.expectEqual(remoteObject.type, "undefined", "The result should be undefined.");
+                resolve();
+            });
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="runTest()">
+    <p>Tests for the `queryObjects` function in the Command Line API.</p>
+</body>
+</html>

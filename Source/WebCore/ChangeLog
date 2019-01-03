@@ -1,3 +1,17 @@
+2019-01-02  Devin Rousso  <webkit@devinrousso.com>
+
+        Web Inspector: Implement `queryObjects` Command Line API
+        https://bugs.webkit.org/show_bug.cgi?id=176766
+        <rdar://problem/34890689>
+
+        Reviewed by Joseph Pecoraro.
+
+        Test: inspector/console/queryObjects.html
+
+        * inspector/CommandLineAPIModuleSource.js:
+        (CommandLineAPI):
+        (CommandLineAPIImpl.prototype.queryObjects): Added.
+
 2019-01-02  Charles Vazac  <cvazac@gmail.com>
 
         Fix resourcetimingbufferfull bubbles attribute

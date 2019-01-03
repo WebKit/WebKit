@@ -27,11 +27,14 @@
 #include "JSInjectedScriptHost.h"
 
 #include "ArrayIteratorPrototype.h"
+#include "ArrayPrototype.h"
 #include "BuiltinNames.h"
 #include "Completion.h"
 #include "DateInstance.h"
 #include "DirectArguments.h"
 #include "Error.h"
+#include "FunctionPrototype.h"
+#include "HeapIterationScope.h"
 #include "InjectedScriptHost.h"
 #include "IterationKind.h"
 #include "IteratorOperations.h"
@@ -44,6 +47,7 @@
 #include "JSInjectedScriptHostPrototype.h"
 #include "JSMap.h"
 #include "JSPromise.h"
+#include "JSPromisePrototype.h"
 #include "JSSet.h"
 #include "JSStringIterator.h"
 #include "JSTypedArrays.h"
@@ -51,11 +55,15 @@
 #include "JSWeakSet.h"
 #include "JSWithScope.h"
 #include "MapIteratorPrototype.h"
+#include "MapPrototype.h"
+#include "MarkedSpaceInlines.h"
 #include "ObjectConstructor.h"
+#include "ObjectPrototype.h"
 #include "ProxyObject.h"
 #include "RegExpObject.h"
 #include "ScopedArguments.h"
 #include "SetIteratorPrototype.h"
+#include "SetPrototype.h"
 #include "SourceCode.h"
 #include "TypedArrayInlines.h"
 
@@ -616,6 +624,89 @@ JSValue JSInjectedScriptHost::iteratorEntries(ExecState* exec)
             iteratorClose(exec, iterationRecord);
             break;
         }
+    }
+
+    return array;
+}
+
+static bool checkForbiddenPrototype(ExecState* exec, JSValue value, JSValue proto)
+{
+    if (value == proto)
+        return true;
+
+    // Check that the prototype chain of proto hasn't been modified to include value.
+    return JSObject::defaultHasInstance(exec, proto, value);
+}
+
+JSValue JSInjectedScriptHost::queryObjects(ExecState* exec)
+{
+    if (exec->argumentCount() < 1)
+        return jsUndefined();
+
+    VM& vm = exec->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    JSValue prototypeOrConstructor = exec->uncheckedArgument(0);
+    if (!prototypeOrConstructor.isObject())
+        return throwTypeError(exec, scope, "queryObjects first argument must be an object."_s);
+
+    JSObject* object = asObject(prototypeOrConstructor);
+    if (object->inherits<ProxyObject>(vm))
+        return throwTypeError(exec, scope, "queryObjects cannot be called with a Proxy."_s);
+
+    JSValue prototype = object;
+
+    PropertySlot prototypeSlot(object, PropertySlot::InternalMethodType::VMInquiry);
+    if (object->getPropertySlot(exec, vm.propertyNames->prototype, prototypeSlot)) {
+        RETURN_IF_EXCEPTION(scope, { });
+        if (prototypeSlot.isValue()) {
+            JSValue prototypeValue = prototypeSlot.getValue(exec, vm.propertyNames->prototype);
+            if (prototypeValue.isObject()) {
+                prototype = prototypeValue;
+                object = asObject(prototype);
+            }
+        }
+    }
+
+    if (object->inherits<ProxyObject>(vm) || prototype.inherits<ProxyObject>(vm))
+        return throwTypeError(exec, scope, "queryObjects cannot be called with a Proxy."_s);
+
+    // FIXME: implement a way of distinguishing between internal and user-created objects.
+    JSGlobalObject* lexicalGlobalObject = exec->lexicalGlobalObject();
+    if (checkForbiddenPrototype(exec, object, lexicalGlobalObject->objectPrototype()))
+        return throwTypeError(exec, scope, "queryObjects cannot be called with Object."_s);
+    if (checkForbiddenPrototype(exec, object, lexicalGlobalObject->functionPrototype()))
+        return throwTypeError(exec, scope, "queryObjects cannot be called with Function."_s);
+    if (checkForbiddenPrototype(exec, object, lexicalGlobalObject->arrayPrototype()))
+        return throwTypeError(exec, scope, "queryObjects cannot be called with Array."_s);
+    if (checkForbiddenPrototype(exec, object, lexicalGlobalObject->mapPrototype()))
+        return throwTypeError(exec, scope, "queryObjects cannot be called with Map."_s);
+    if (checkForbiddenPrototype(exec, object, lexicalGlobalObject->jsSetPrototype()))
+        return throwTypeError(exec, scope, "queryObjects cannot be called with Set."_s);
+    if (checkForbiddenPrototype(exec, object, lexicalGlobalObject->promisePrototype()))
+        return throwTypeError(exec, scope, "queryObjects cannot be called with Promise."_s);
+
+    sanitizeStackForVM(&vm);
+    vm.heap.collectNow(Sync, CollectionScope::Full);
+
+    JSArray* array = constructEmptyArray(exec, nullptr);
+    RETURN_IF_EXCEPTION(scope, { });
+
+    {
+        HeapIterationScope iterationScope(vm.heap);
+        vm.heap.objectSpace().forEachLiveCell(iterationScope, [&] (HeapCell* cell, HeapCell::Kind kind) {
+            if (!isJSCellKind(kind))
+                return IterationStatus::Continue;
+
+            JSValue value(static_cast<JSCell*>(cell));
+            if (value.inherits<ProxyObject>(vm))
+                return IterationStatus::Continue;
+
+            if (JSObject::defaultHasInstance(exec, value, prototype))
+                array->putDirectIndex(exec, array->length(), value);
+
+            return IterationStatus::Continue;
+        });
     }
 
     return array;

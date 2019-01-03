@@ -1,3 +1,16 @@
+2019-01-02  Devin Rousso  <webkit@devinrousso.com>
+
+        Web Inspector: Implement `queryObjects` Command Line API
+        https://bugs.webkit.org/show_bug.cgi?id=176766
+        <rdar://problem/34890689>
+
+        Reviewed by Joseph Pecoraro.
+
+        * inspector/console/queryObjects-expected.html: Added.
+        * inspector/console/queryObjects.html: Added.
+
+        * http/tests/inspector/console/cross-domain-inspected-node-access-expected.txt:
+
 2019-01-02  Charles Vazac  <cvazac@gmail.com>
 
         Fix resourcetimingbufferfull bubbles attribute

@@ -1,3 +1,15 @@
+2019-01-02  Devin Rousso  <webkit@devinrousso.com>
+
+        Web Inspector: Implement `queryObjects` Command Line API
+        https://bugs.webkit.org/show_bug.cgi?id=176766
+        <rdar://problem/34890689>
+
+        Reviewed by Joseph Pecoraro.
+
+        * UserInterface/Controllers/JavaScriptRuntimeCompletionProvider.js:
+        (WI.JavaScriptRuntimeCompletionProvider.completionControllerCompletionsNeeded.receivedPropertyNames):
+        Add `queryObjects` to the list of command line functions.
+
 2018-12-21  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: Styles Redesign: remove unused CSS style icons

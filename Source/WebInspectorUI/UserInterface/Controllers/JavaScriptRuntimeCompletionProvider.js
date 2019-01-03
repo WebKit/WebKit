@@ -218,14 +218,14 @@ WI.JavaScriptRuntimeCompletionProvider = class JavaScriptRuntimeCompletionProvid
             WI.runtimeManager.activeExecutionContext.target.RuntimeAgent.releaseObjectGroup("completion");
 
             if (!base) {
-                var commandLineAPI = ["$", "$$", "$x", "dir", "dirxml", "keys", "values", "profile", "profileEnd", "monitorEvents", "unmonitorEvents", "inspect", "copy", "clear", "getEventListeners", "$0", "$_"];
+                let commandLineAPI = WI.JavaScriptRuntimeCompletionProvider._commandLineAPI.slice(0);
                 if (WI.debuggerManager.paused) {
                     let targetData = WI.debuggerManager.dataForTarget(WI.runtimeManager.activeExecutionContext.target);
                     if (targetData.pauseReason === WI.DebuggerManager.PauseReason.Exception)
                         commandLineAPI.push("$exception");
                 }
-                for (var i = 0; i < commandLineAPI.length; ++i)
-                    propertyNames[commandLineAPI[i]] = true;
+                for (let name of commandLineAPI)
+                    propertyNames[name] = true;
 
                 // FIXME: Due to caching, sometimes old $n values show up as completion results even though they are not available. We should clear that proactively.
                 for (var i = 1; i <= WI.ConsoleCommandResultMessage.maximumSavedResultIndex; ++i)
@@ -301,3 +301,25 @@ WI.JavaScriptRuntimeCompletionProvider = class JavaScriptRuntimeCompletionProvid
         this._lastPropertyNames = null;
     }
 };
+
+WI.JavaScriptRuntimeCompletionProvider._commandLineAPI = [
+    "$",
+    "$$",
+    "$0",
+    "$_",
+    "$x",
+    "clear",
+    "copy",
+    "dir",
+    "dirxml",
+    "getEventListeners",
+    "inspect",
+    "keys",
+    "monitorEvents",
+    "profile",
+    "profileEnd",
+    "queryObjects",
+    "table",
+    "unmonitorEvents",
+    "values",
+];

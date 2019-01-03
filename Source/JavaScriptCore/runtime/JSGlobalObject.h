@@ -616,6 +616,7 @@ public:
     MapPrototype* mapPrototype() const { return m_mapPrototype.get(); }
     // Workaround for the name conflict between JSCell::setPrototype.
     SetPrototype* jsSetPrototype() const { return m_setPrototype.get(); }
+    JSPromisePrototype* promisePrototype() const { return m_promisePrototype.get(); }
     AsyncGeneratorPrototype* asyncGeneratorPrototype() const { return m_asyncGeneratorPrototype.get(); }
     AsyncGeneratorFunctionPrototype* asyncGeneratorFunctionPrototype() const { return m_asyncGeneratorFunctionPrototype.get(); }
 
