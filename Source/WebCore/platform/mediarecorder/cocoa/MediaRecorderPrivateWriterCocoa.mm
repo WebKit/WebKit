@@ -196,7 +196,7 @@ bool MediaRecorderPrivateWriter::setAudioInput()
     return true;
 }
 
-static inline CMSampleBufferRef copySampleBufferWithCurrentTimeStamp(CMSampleBufferRef originalBuffer)
+static inline RetainPtr<CMSampleBufferRef> copySampleBufferWithCurrentTimeStamp(CMSampleBufferRef originalBuffer)
 {
     CMTime startTime = CMClockGetTime(CMClockGetHostTimeClock());
     CMItemCount count = 0;
@@ -210,9 +210,11 @@ static inline CMSampleBufferRef copySampleBufferWithCurrentTimeStamp(CMSampleBuf
         timeInfo[i].presentationTimeStamp = startTime;
     }
     
-    CMSampleBufferRef newBuffer;
-    CMSampleBufferCreateCopyWithNewTiming(kCFAllocatorDefault, originalBuffer, count, timeInfo.data(), &newBuffer);
-    return newBuffer;
+    CMSampleBufferRef newBuffer = nullptr;
+    auto error = CMSampleBufferCreateCopyWithNewTiming(kCFAllocatorDefault, originalBuffer, count, timeInfo.data(), &newBuffer);
+    if (error)
+        return nullptr;
+    return adoptCF(newBuffer);
 }
 
 void MediaRecorderPrivateWriter::appendVideoSampleBuffer(CMSampleBufferRef sampleBuffer)
@@ -249,9 +251,32 @@ void MediaRecorderPrivateWriter::appendVideoSampleBuffer(CMSampleBufferRef sampl
         }];
         return;
     }
-    CMSampleBufferRef bufferWithCurrentTime = copySampleBufferWithCurrentTimeStamp(sampleBuffer);
+    auto bufferWithCurrentTime = copySampleBufferWithCurrentTimeStamp(sampleBuffer);
+    if (!bufferWithCurrentTime)
+        return;
+
     auto locker = holdLock(m_videoLock);
-    m_videoBufferPool.append(retainPtr(bufferWithCurrentTime));
+    m_videoBufferPool.append(WTFMove(bufferWithCurrentTime));
+}
+
+static inline RetainPtr<CMFormatDescriptionRef> createAudioFormatDescription(const AudioStreamDescription& description)
+{
+    auto basicDescription = WTF::get<const AudioStreamBasicDescription*>(description.platformDescription().description);
+    CMFormatDescriptionRef format = nullptr;
+    auto error = CMAudioFormatDescriptionCreate(kCFAllocatorDefault, basicDescription, 0, NULL, 0, NULL, NULL, &format);
+    if (error)
+        return nullptr;
+    return adoptCF(format);
+}
+
+static inline RetainPtr<CMSampleBufferRef> createAudioSampleBufferWithPacketDescriptions(CMFormatDescriptionRef format, size_t sampleCount)
+{
+    CMTime startTime = CMClockGetTime(CMClockGetHostTimeClock());
+    CMSampleBufferRef sampleBuffer = nullptr;
+    auto error = CMAudioSampleBufferCreateWithPacketDescriptions(kCFAllocatorDefault, NULL, false, NULL, NULL, format, sampleCount, startTime, NULL, &sampleBuffer);
+    if (error)
+        return nullptr;
+    return adoptCF(sampleBuffer);
 }
 
 void MediaRecorderPrivateWriter::appendAudioSampleBuffer(const PlatformAudioData& data, const AudioStreamDescription& description, const WTF::MediaTime&, size_t sampleCount)
@@ -259,11 +284,9 @@ void MediaRecorderPrivateWriter::appendAudioSampleBuffer(const PlatformAudioData
     ASSERT(m_audioInput);
     if ((!m_hasStartedWriting && m_videoInput) || m_isStopped)
         return;
-    CMSampleBufferRef sampleBuffer;
-    CMFormatDescriptionRef format;
-    OSStatus error;
-    auto& basicDescription = *WTF::get<const AudioStreamBasicDescription*>(description.platformDescription().description);
-    error = CMAudioFormatDescriptionCreate(kCFAllocatorDefault, &basicDescription, 0, NULL, 0, NULL, NULL, &format);
+    auto format = createAudioFormatDescription(description);
+    if (!format)
+        return;
     if (m_isFirstAudioSample) {
         if (!m_videoInput) {
             // audio-only recording.
@@ -293,17 +316,16 @@ void MediaRecorderPrivateWriter::appendAudioSampleBuffer(const PlatformAudioData
             }
         }];
     }
-    CMTime startTime = CMClockGetTime(CMClockGetHostTimeClock());
 
-    error = CMAudioSampleBufferCreateWithPacketDescriptions(kCFAllocatorDefault, NULL, false, NULL, NULL, format, sampleCount, startTime, NULL, &sampleBuffer);
-    if (error)
+    auto sampleBuffer = createAudioSampleBufferWithPacketDescriptions(format.get(), sampleCount);
+    if (!sampleBuffer)
         return;
-    error = CMSampleBufferSetDataBufferFromAudioBufferList(sampleBuffer, kCFAllocatorDefault, kCFAllocatorDefault, 0, downcast<WebAudioBufferList>(data).list());
+    auto error = CMSampleBufferSetDataBufferFromAudioBufferList(sampleBuffer.get(), kCFAllocatorDefault, kCFAllocatorDefault, 0, downcast<WebAudioBufferList>(data).list());
     if (error)
         return;
 
     auto locker = holdLock(m_audioLock);
-    m_audioBufferPool.append(retainPtr(sampleBuffer));
+    m_audioBufferPool.append(WTFMove(sampleBuffer));
 }
 
 void MediaRecorderPrivateWriter::stopRecording()

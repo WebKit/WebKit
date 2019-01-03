@@ -1,3 +1,36 @@
+2019-01-02  David Kilzer  <ddkilzer@apple.com>
+
+        Leak of CMSampleBuffer (752 bytes) in com.apple.WebKit.WebContent running WebKit layout tests
+        <https://webkit.org/b/193016>
+        <rdar://problem/46925703>
+
+        Reviewed by Simon Fraser.
+
+        * platform/mediarecorder/cocoa/MediaRecorderPrivateWriterCocoa.mm:
+        (WebCore::copySampleBufferWithCurrentTimeStamp):
+        - Change to return RetainPtr<CMSampleBufferRef>.
+        - Check return value of CMSampleBufferCreateCopyWithNewTiming().
+        (WebCore::MediaRecorderPrivateWriter::appendVideoSampleBuffer):
+        - Check return value of copySampleBufferWithCurrentTimeStamp().
+        - Fix leak by using RetainPtr<CMSampleBufferRef> returned from
+          copySampleBufferWithCurrentTimeStamp() instead of leaking
+          `bufferWithCurrentTime` by using retainPtr().
+        (WebCore::createAudioFormatDescription):
+        - Extract method from appendAudioSampleBuffer() to return
+          RetainPtr<CMFormatDescriptionRef> after calling
+          CMAudioFormatDescriptionCreate().
+        - Check return value of CMAudioFormatDescriptionCreate().
+        (WebCore::createAudioSampleBufferWithPacketDescriptions):
+        - Extract method from appendAudioSampleBuffer() to return
+          RetainPtr<CMSampleBufferRef> after calling
+          CMAudioSampleBufferCreateWithPacketDescriptions().
+        (WebCore::MediaRecorderPrivateWriter::appendAudioSampleBuffer):
+        - Check return values of createAudioFormatDescription() and
+          createAudioSampleBufferWithPacketDescriptions().
+        - Fix leaks by extracting code into helper methods that return
+          RetainPtr<> objects instead of leaking CMFormatDescriptionRef
+          directly or leaking `sampleBuffer` by using retainPtr().
+
 2019-01-02  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Add support for using the current text selection as the find string on iOS
