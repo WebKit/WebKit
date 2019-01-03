@@ -1,3 +1,17 @@
+2019-01-02  Simon Fraser  <simon.fraser@apple.com>
+
+        REGRESSION (r239306): Don't disable font smoothing in transparent layers on macOS Mojave and later
+        https://bugs.webkit.org/show_bug.cgi?id=193095
+        <rdar://problem/47014944>
+
+        Reviewed by Zalan Bujtas.
+        
+        A ref test that compares the rendering of layer and non-layer text with smoothing and antialiasing.
+
+        * compositing/contents-format/subpixel-antialiased-text-expected.html: Added.
+        * compositing/contents-format/subpixel-antialiased-text.html: Added.
+        * platform/mac/TestExpectations:
+
 2019-01-03  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [iOS] REGRESSION (r239441): Tab cycling to offscreen <select> may not scroll it into view

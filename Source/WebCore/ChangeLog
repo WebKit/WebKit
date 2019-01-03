@@ -1,3 +1,22 @@
+2019-01-02  Simon Fraser  <simon.fraser@apple.com>
+
+        REGRESSION (r239306): Don't disable font smoothing in transparent layers on macOS Mojave and later
+        https://bugs.webkit.org/show_bug.cgi?id=193095
+        <rdar://problem/47014944>
+
+        Reviewed by Zalan Bujtas.
+        
+        In r239306 we stopped making CALayers for font-smoothed text when not necessary on macOS Mojave
+        and later. However, we still turned off smoothing for non-opaque layers (setShouldSmoothFonts(false)),
+        which continues to affect the appearance of text.
+        
+        Fix by only calling setShouldSmoothFonts(false) when the OS supports font smoothing.
+
+        Test: compositing/contents-format/subpixel-antialiased-text.html
+
+        * platform/graphics/ca/cocoa/PlatformCALayerCocoa.mm:
+        (WebCore::PlatformCALayer::drawLayerContents):
+
 2019-01-02  David Kilzer  <ddkilzer@apple.com>
 
         Leak of CMSampleBuffer (752 bytes) in com.apple.WebKit.WebContent running WebKit layout tests
