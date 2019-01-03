@@ -32,12 +32,12 @@ function test()
         }
     }
 
-    let suite = InspectorTest.createAsyncSuite("WI.Color");
+    let suite = InspectorTest.createSyncSuite("WI.Color");
 
     suite.addTestCase({
         name: "WI.Color.fromString",
         description: "Test we can detect colors from strings.",
-        test(resolve, reject) {
+        test() {
             function testGood(string, expectedFormat) {
                 let color = WI.Color.fromString(string);
                 InspectorTest.expectThat(color instanceof WI.Color, `'${string}' should be detected`);
@@ -107,14 +107,14 @@ function test()
             // testBad("hsl(0, 0, 50)"); // missing %s
             // testBad("hsla(0, 0, 50, 1)"); // missing %s
 
-            resolve();
+            return true;
         }
     });
 
     suite.addTestCase({
         name: "WI.Color properties",
         description: "Test different color properties.",
-        test(resolve, reject) {
+        test() {
             let color;
 
             color = WI.Color.fromString("red");
@@ -142,7 +142,7 @@ function test()
             InspectorTest.expectThat(color.simple === false, "'#11122233' should be not be simple.");
             InspectorTest.expectThat(color.isKeyword() === false, "'#11122233' should not be a keyword.");
             InspectorTest.expectShallowEqual(color.rgba, [17, 18, 34, 0.2], "'#11122233' has rgba of [17, 18, 34, 0.2].");
-            InspectorTest.expectShallowEqual(color.hsla, [236, 33, 10, 0.2], "'#11122233' has hsla of [236, 33, 10, 0.2].");
+            InspectorTest.expectShallowEqual(color.hsla.map((value) => value.maxDecimals(2)), [236.47, 33.33, 10, 0.2], "'#11122233' has hsla of [236.47, 33.33, 10, 0.2].");
             InspectorTest.expectThat(color.canBeSerializedAsShortHEX() === false, "'#11122233' should not be serializable as a short Hex");
 
             color = WI.Color.fromString("#11223344");
@@ -151,19 +151,19 @@ function test()
             color = WI.Color.fromString("#11223345");
             InspectorTest.expectThat(color.canBeSerializedAsShortHEX() === false, "'#11223345' should not be serializable as a short Hex");
 
-            resolve();
+            return true;
         }
     });
 
     suite.addTestCase({
         name: "WI.Color from components",
         description: "Test different three- and four-component colors.",
-        test(resolve, reject) {
+        test() {
             function test(color, components) {
                 InspectorTest.log(`Check components for color '${color.toString()}'.`);
                 for (let key in components) {
                     let value = components[key];
-                    InspectorTest.expectShallowEqual(color[key], value, `Should have ${key} of ${JSON.stringify(value)}.`);
+                    InspectorTest.expectShallowEqual(color[key].map((value) => value.maxDecimals(2)), value, `Should have ${key} of ${JSON.stringify(value)}.`);
                 }
             }
 
@@ -177,32 +177,32 @@ function test()
             test(new WI.Color(WI.Color.Format.RGBA, [128, 128, 128, 0.5]), {
                 rgb: [128, 128, 128],
                 rgba: [128, 128, 128, 0.5],
-                hsl: [0, 0, 50],
-                hsla: [0, 0, 50, 0.5],
+                hsl: [0, 0, 50.2],
+                hsla: [0, 0, 50.2, 0.5],
             });
 
             test(new WI.Color(WI.Color.Format.HSL, [0, 0, 50]), {
-                rgb: [128, 128, 128],
-                rgba: [128, 128, 128, 1],
+                rgb: [127.5, 127.5, 127.5],
+                rgba: [127.5, 127.5, 127.5, 1],
                 hsl: [0, 0, 50],
                 hsla: [0, 0, 50, 1],
             });
 
             test(new WI.Color(WI.Color.Format.HSLA, [0, 0, 50, 0.5]), {
-                rgb: [128, 128, 128],
-                rgba: [128, 128, 128, 0.5],
+                rgb: [127.5, 127.5, 127.5],
+                rgba: [127.5, 127.5, 127.5, 0.5],
                 hsl: [0, 0, 50],
                 hsla: [0, 0, 50, 0.5],
             });
 
-            resolve();
+            return true;
         }
     });
 
     suite.addTestCase({
         name: "WI.Color.prototype.nextFormat",
         description: "Test we can cycle through color formats for different colors.",
-        test(resolve, reject) {
+        test() {
             function test(string, phases) {
                 let color = WI.Color.fromString(string);
                 color.format = WI.Color.Format.Original;
@@ -250,14 +250,14 @@ function test()
                 WI.Color.Format.HEXAlpha,
             ]);
 
-            resolve();
+            return true;
         }
     });
 
     suite.addTestCase({
         name: "WI.Color.prototype.toString",
         description: "Test the different toString outputs.",
-        test(resolve, reject) {
+        test() {
             let color;
             function test(expected, format) {
                 let pass = color.toString(format) === expected;
@@ -288,13 +288,13 @@ function test()
             test("#64c8ff80", WI.Color.Format.HEXAlpha);
             test("rgba(100, 200, 255, 0.5)", WI.Color.Format.RGB); // fallback (rgba)
             test("rgba(100, 200, 255, 0.5)", WI.Color.Format.RGBA);
-            test("hsla(201, 100%, 70%, 0.5)", WI.Color.Format.HSL); // fallback (hsla)
-            test("hsla(201, 100%, 70%, 0.5)", WI.Color.Format.HSLA);
+            test("hsla(201.29, 100%, 69.61%, 0.5)", WI.Color.Format.HSL); // fallback (hsla)
+            test("hsla(201.29, 100%, 69.61%, 0.5)", WI.Color.Format.HSLA);
 
             // FIXME: Should we clamp rgb(300, 300, 300) => rgb(255, 255, 255) in toStrings?
             // FIXME: Should we always stash the original string, no matter how poor?
 
-            resolve();
+            return true;
         }
     });
 
@@ -304,28 +304,47 @@ function test()
     }
 
     suite.addTestCase({
-        name: "WI.Color.rgb2hsv",
-        description: "Test conversion from RGB to HSV.",
-        test(resolve, reject) {
-            testColorConversion(WI.Color.rgb2hsv, [0, 0, 0], [0, 0, 0]);
-            testColorConversion(WI.Color.rgb2hsv, [255, 255, 255], [0, 0, 1]);
-            testColorConversion(WI.Color.rgb2hsv, [255, 0, 0], [0, 1, 1]);
-            testColorConversion(WI.Color.rgb2hsv, [0, 255, 0], [120, 1, 1]);
-            testColorConversion(WI.Color.rgb2hsv, [0, 0, 255], [240, 1, 1]);
+        name: "WI.Color.rgb2hsl",
+        description: "Test conversion from RGB to HSL.",
+        test() {
+            testColorConversion(WI.Color.rgb2hsl, [0, 0, 0], [0, 0, 0]);
+            testColorConversion(WI.Color.rgb2hsl, [255, 255, 255], [0, 0, 100]);
+            testColorConversion(WI.Color.rgb2hsl, [255, 0, 0], [0, 100, 50]);
+            testColorConversion(WI.Color.rgb2hsl, [0, 255, 0], [120, 100, 50]);
+            testColorConversion(WI.Color.rgb2hsl, [0, 0, 255], [240, 100, 50]);
 
             // Out-of-bounds and floating point inputs.
-            testColorConversion(WI.Color.rgb2hsv, [-1, -1, -1], [0, 0, 0]);
-            testColorConversion(WI.Color.rgb2hsv, [256, 256, 256], [0, 0, 1]);
-            testColorConversion(WI.Color.rgb2hsv, [254.9, 0, 0], [0, 1, 1]);
+            testColorConversion(WI.Color.rgb2hsl, [-1, -1, -1], [0, 0, 0]);
+            testColorConversion(WI.Color.rgb2hsl, [256, 256, 256], [0, 0, 100]);
+            testColorConversion(WI.Color.rgb2hsl, [254.9, 0, 0], [0, 100, 50]);
 
-            resolve();
+            return true;
+        }
+    });
+
+    suite.addTestCase({
+        name: "WI.Color.hsl2rgb",
+        description: "Test conversion from HSL to RGB.",
+        test() {
+            testColorConversion(WI.Color.hsl2rgb, [0, 0, 0], [0, 0, 0]);
+            testColorConversion(WI.Color.hsl2rgb, [0, 0, 100], [255, 255, 255]);
+            testColorConversion(WI.Color.hsl2rgb, [0, 100, 50], [255, 0, 0]);
+            testColorConversion(WI.Color.hsl2rgb, [120, 100, 50], [0, 255, 0]);
+            testColorConversion(WI.Color.hsl2rgb, [240, 100, 50], [0, 0, 255]);
+
+            // Out-of-bounds.
+            testColorConversion(WI.Color.hsl2rgb, [-1, -1, -1], [0, 0, 0]);
+            testColorConversion(WI.Color.hsl2rgb, [361, 101, 50], [255, 0, 0]);
+            testColorConversion(WI.Color.hsl2rgb, [361, 101, 101], [255, 255, 255]);
+
+            return true;
         }
     });
 
     suite.addTestCase({
         name: "WI.Color.cmyk2rgb",
         description: "Test conversion from CMYK to RGB.",
-        test(resolve, reject) {
+        test() {
             testColorConversion(WI.Color.cmyk2rgb, [0, 0, 0, 1], [0, 0, 0]);
             testColorConversion(WI.Color.cmyk2rgb, [1, 0, 0, 0], [0, 255, 255]);
             testColorConversion(WI.Color.cmyk2rgb, [0, 1, 0, 0], [255, 0, 255]);
@@ -336,14 +355,14 @@ function test()
             testColorConversion(WI.Color.cmyk2rgb, [2, 0, 0, 0], [0, 255, 255]);
             testColorConversion(WI.Color.cmyk2rgb, [-1, 0, 0, 0], [255, 255, 255]);
 
-            resolve();
+            return true;
         }
     });
 
     suite.addTestCase({
         name: "WI.Color.normalized2rgb",
         description: "Test conversion from normalized RGB to RGB.",
-        test(resolve, reject) {
+        test() {
             testColorConversion(WI.Color.normalized2rgb, [0, 0, 0], [0, 0, 0]);
             testColorConversion(WI.Color.normalized2rgb, [1, 1, 1], [255, 255, 255]);
             testColorConversion(WI.Color.normalized2rgb, [0.24, 0.25, 0.26], [61, 64, 66]); // Values chosen to test round up/down behavior.
@@ -352,7 +371,7 @@ function test()
             testColorConversion(WI.Color.normalized2rgb, [2, 0, 0], [255, 0, 0]);
             testColorConversion(WI.Color.normalized2rgb, [-1, 0, 0], [0, 0, 0]);
 
-            resolve();
+            return true;
         }
     });
 

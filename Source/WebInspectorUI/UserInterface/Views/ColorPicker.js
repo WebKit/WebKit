@@ -29,9 +29,7 @@ WI.ColorPicker = class ColorPicker extends WI.Object
     {
         super();
 
-        this._colorWheel = WI.ColorPicker.supportsConicGradient() ? new WI.ColorWheel : new WI.LegacyColorWheel;
-        this._colorWheel.delegate = this;
-        this._colorWheel.dimension = 200;
+        this._colorWheel = new WI.ColorWheel(this, 200);
 
         this._brightnessSlider = new WI.Slider;
         this._brightnessSlider.delegate = this;
@@ -90,24 +88,6 @@ WI.ColorPicker = class ColorPicker extends WI.Object
         this._enableColorComponentInputs = true;
     }
 
-    // Static
-
-    static supportsConicGradient()
-    {
-        if (WI.ColorPicker._supportsConicGradient === undefined) {
-            const property = "background-image";
-            const conicGradient = "conic-gradient(black, white)";
-
-            let element = document.body.appendChild(document.createElement("div"));
-            element.style.setProperty(property, conicGradient);
-
-            WI.ColorPicker._supportsConicGradient = window.getComputedStyle(element).getPropertyValue(property).includes(conicGradient);
-
-            element.remove();
-        }
-        return WI.ColorPicker._supportsConicGradient;
-    }
-
     // Public
 
     get element()
@@ -156,7 +136,7 @@ WI.ColorPicker = class ColorPicker extends WI.Object
         this._color = color;
 
         this._colorWheel.tintedColor = this._color;
-        this._brightnessSlider.value = this._colorWheel.brightness;
+        this._brightnessSlider.value = this._colorWheel.brightness / 100;
 
         this._opacitySlider.value = this._color.alpha;
         this._updateSliders(this._colorWheel.rawColor, this._color);
@@ -187,7 +167,7 @@ WI.ColorPicker = class ColorPicker extends WI.Object
         if (slider === this._opacitySlider)
             this.opacity = value;
         else if (slider === this._brightnessSlider)
-            this.brightness = value;
+            this.brightness = value * 100;
     }
 
     // Private
@@ -229,12 +209,7 @@ WI.ColorPicker = class ColorPicker extends WI.Object
         var opaque = new WI.Color(WI.Color.Format.RGBA, rgb.concat(1)).toString();
         var transparent = new WI.Color(WI.Color.Format.RGBA, rgb.concat(0)).toString();
 
-        let brightnessGradient = "";
-        if (WI.ColorPicker.supportsConicGradient())
-            brightnessGradient = `linear-gradient(90deg, black, ${rawColor}, white)`;
-        else
-            brightnessGradient = `linear-gradient(90deg, black, ${rawColor})`;
-        this._brightnessSlider.element.style.setProperty("background-image", brightnessGradient);
+        this._brightnessSlider.element.style.setProperty("background-image", `linear-gradient(90deg, black, ${rawColor}, white)`);
 
         this._opacitySlider.element.style.setProperty("background-image", "linear-gradient(90deg, " + transparent + ", " + opaque + "), " + this._opacityPattern);
     }
@@ -277,17 +252,17 @@ WI.ColorPicker = class ColorPicker extends WI.Object
         case WI.Color.Format.ShortHEXAlpha:
         case WI.Color.Format.Keyword:
             var [r, g, b] = this._color.rgb;
-            updateColorInput.call(this, "R", r);
-            updateColorInput.call(this, "G", g);
-            updateColorInput.call(this, "B", b);
+            updateColorInput.call(this, "R", Math.round(r));
+            updateColorInput.call(this, "G", Math.round(g));
+            updateColorInput.call(this, "B", Math.round(b));
             break;
 
         case WI.Color.Format.HSL:
         case WI.Color.Format.HSLA:
             var [h, s, l] = this._color.hsl;
-            updateColorInput.call(this, "H", h);
-            updateColorInput.call(this, "S", s);
-            updateColorInput.call(this, "L", l);
+            updateColorInput.call(this, "H", h.maxDecimals(2));
+            updateColorInput.call(this, "S", s.maxDecimals(2));
+            updateColorInput.call(this, "L", l.maxDecimals(2));
             break;
 
         default:

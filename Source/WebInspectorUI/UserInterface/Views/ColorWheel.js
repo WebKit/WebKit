@@ -25,21 +25,28 @@
 
 WI.ColorWheel = class ColorWheel extends WI.Object
 {
-    constructor()
+    constructor(delegate, dimension)
     {
+        console.assert(!isNaN(dimension));
+
         super();
 
-        this._brightness = 0.5;
+        this._delegate = delegate;
+
+        this._brightness = 50;
 
         this._element = document.createElement("div");
         this._element.className = "color-wheel";
 
-        this._gradientElement = this._element.appendChild(document.createElement("div"));
-        this._gradientElement.classList.add("gradient");
-        this._gradientElement.addEventListener("mousedown", this);
+        this._canvasElement = this._element.appendChild(document.createElement("canvas"));
+        this._canvasElement.addEventListener("mousedown", this);
+
+        this._canvasContext = this._canvasElement.getContext("2d");
 
         this._crosshairElement = this._element.appendChild(document.createElement("div"));
         this._crosshairElement.className = "crosshair";
+
+        this.dimension = dimension;
     }
 
     // Public
@@ -48,14 +55,18 @@ WI.ColorWheel = class ColorWheel extends WI.Object
 
     set dimension(dimension)
     {
+        if (dimension === this._dimension)
+            return;
+
         this._dimension = dimension;
 
         this._element.style.width = this.element.style.height = `${this._dimension}px`;
+        this._canvasElement.width = this._canvasElement.height = this._dimension * window.devicePixelRatio;
 
         let center = this._dimension / 2;
         this._setCrosshairPosition(new WI.Point(center, center));
 
-        this._updateGradient();
+        this._updateCanvas();
     }
 
     get brightness()
@@ -65,14 +76,18 @@ WI.ColorWheel = class ColorWheel extends WI.Object
 
     set brightness(brightness)
     {
+        if (brightness === this._brightness)
+            return;
+
         this._brightness = brightness;
-        this._updateGradient();
+
+        this._updateCanvas();
     }
 
     get tintedColor()
     {
         if (this._crosshairPosition)
-            return new WI.Color(WI.Color.Format.HSL, [this._hue, this._saturation, this._brightness * 100]);
+            return new WI.Color(WI.Color.Format.HSL, [this._hue, this._saturation, this._brightness]);
         return new WI.Color(WI.Color.Format.HSLA, [0, 0, 0, 0]);
     }
 
@@ -87,7 +102,7 @@ WI.ColorWheel = class ColorWheel extends WI.Object
         let y = center - (cosHue * hsl[1]);
         this._setCrosshairPosition(new WI.Point(x, y));
 
-        this.brightness = hsl[2] / 100;
+        this.brightness = hsl[2];
     }
 
     get rawColor()
@@ -154,12 +169,12 @@ WI.ColorWheel = class ColorWheel extends WI.Object
 
     _updateColorForMouseEvent(event)
     {
-        var point = window.webkitConvertPointFromPageToNode(this._gradientElement, new WebKitPoint(event.pageX, event.pageY));
+        var point = window.webkitConvertPointFromPageToNode(this._canvasElement, new WebKitPoint(event.pageX, event.pageY));
 
         this._setCrosshairPosition(point);
 
-        if (this.delegate && typeof this.delegate.colorWheelColorDidChange === "function")
-            this.delegate.colorWheelColorDidChange(this);
+        if (this._delegate && typeof this._delegate.colorWheelColorDidChange === "function")
+            this._delegate.colorWheelColorDidChange(this);
     }
 
     _setCrosshairPosition(point)
@@ -177,12 +192,34 @@ WI.ColorWheel = class ColorWheel extends WI.Object
         this._crosshairElement.style.setProperty("transform", "translate(" + Math.round(point.x) + "px, " + Math.round(point.y) + "px)");
     }
 
-    _updateGradient()
+    _updateCanvas()
     {
-        let stops = [];
-        for (let i = 0; i <= 360; i += 60)
-            stops.push(`hsl(${i}, 100%, ${this._brightness * 100}%)`);
+        let dimension = this._dimension * window.devicePixelRatio;
+        let center = dimension / 2;
 
-        this._gradientElement.style.setProperty("background-image", `conic-gradient(${stops.join(",")})`);
+        let imageData = this._canvasContext.createImageData(dimension, dimension);
+        for (let y = 0; y < dimension; ++y) {
+            for (let x = 0; x < dimension; ++x) {
+                let xDis = (x - center) / center;
+                let yDis = (y - center) / center;
+                let saturation = Math.sqrt(Math.pow(xDis, 2) + Math.pow(yDis, 2)) * 100;
+                if (saturation > 100)
+                    continue;
+
+                let hue = Math.atan2(x - center, center - y) * 180 / Math.PI;
+                if (hue < 0)
+                    hue += 360;
+
+                let rgb = WI.Color.hsl2rgb(hue, saturation, this._brightness);
+
+                let index = ((y * dimension) + x) * 4;
+                imageData.data[index] = rgb[0];
+                imageData.data[index + 1] = rgb[1];
+                imageData.data[index + 2] = rgb[2];
+                imageData.data[index + 3] = 255;
+            }
+        }
+
+        this._canvasContext.putImageData(imageData, 0, 0);
     }
 };

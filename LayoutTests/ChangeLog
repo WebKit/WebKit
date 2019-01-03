@@ -1,3 +1,14 @@
+2019-01-03  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: conic-gradient color picker doesn't accurately show color when saturation value is not 100%
+        https://bugs.webkit.org/show_bug.cgi?id=192729
+        <rdar://problem/46746815>
+
+        Reviewed by Joseph Pecoraro.
+
+        * inspector/model/color.html:
+        * inspector/model/color-expected.txt:
+
 2019-01-03  Brent Fulgham  <bfulgham@apple.com>
 
         Remove logic handling DNT header during redirects

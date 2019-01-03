@@ -98,7 +98,7 @@ PASS: '#11122233' should not have alpha of 0.
 PASS: '#11122233' should be not be simple.
 PASS: '#11122233' should not be a keyword.
 PASS: '#11122233' has rgba of [17, 18, 34, 0.2].
-PASS: '#11122233' has hsla of [236, 33, 10, 0.2].
+PASS: '#11122233' has hsla of [236.47, 33.33, 10, 0.2].
 PASS: '#11122233' should not be serializable as a short Hex
 PASS: '#11223344' should be serializable as a short Hex
 PASS: '#11223345' should not be serializable as a short Hex
@@ -112,16 +112,16 @@ PASS: Should have hsla of [0,100,50,1].
 Check components for color 'rgba(128, 128, 128, 0.5)'.
 PASS: Should have rgb of [128,128,128].
 PASS: Should have rgba of [128,128,128,0.5].
-PASS: Should have hsl of [0,0,50].
-PASS: Should have hsla of [0,0,50,0.5].
+PASS: Should have hsl of [0,0,50.2].
+PASS: Should have hsla of [0,0,50.2,0.5].
 Check components for color 'hsl(0, 0%, 50%)'.
-PASS: Should have rgb of [128,128,128].
-PASS: Should have rgba of [128,128,128,1].
+PASS: Should have rgb of [127.5,127.5,127.5].
+PASS: Should have rgba of [127.5,127.5,127.5,1].
 PASS: Should have hsl of [0,0,50].
 PASS: Should have hsla of [0,0,50,1].
 Check components for color 'hsla(0, 0%, 50%, 0.5)'.
-PASS: Should have rgb of [128,128,128].
-PASS: Should have rgba of [128,128,128,0.5].
+PASS: Should have rgb of [127.5,127.5,127.5].
+PASS: Should have rgba of [127.5,127.5,127.5,0.5].
 PASS: Should have hsl of [0,0,50].
 PASS: Should have hsla of [0,0,50,0.5].
 
@@ -150,18 +150,28 @@ PASS: Color as 'Short HEX with Alpha' should be '#64c8ff80'
 PASS: Color as 'HEX with Alpha' should be '#64c8ff80'
 PASS: Color as 'RGB' should be 'rgba(100, 200, 255, 0.5)'
 PASS: Color as 'RGBA' should be 'rgba(100, 200, 255, 0.5)'
-PASS: Color as 'HSL' should be 'hsla(201, 100%, 70%, 0.5)'
-PASS: Color as 'HSLA' should be 'hsla(201, 100%, 70%, 0.5)'
+PASS: Color as 'HSL' should be 'hsla(201.29, 100%, 69.61%, 0.5)'
+PASS: Color as 'HSLA' should be 'hsla(201.29, 100%, 69.61%, 0.5)'
 
--- Running test case: WI.Color.rgb2hsv
+-- Running test case: WI.Color.rgb2hsl
 PASS: Should convert [0,0,0] to [0,0,0].
-PASS: Should convert [255,255,255] to [0,0,1].
-PASS: Should convert [255,0,0] to [0,1,1].
-PASS: Should convert [0,255,0] to [120,1,1].
-PASS: Should convert [0,0,255] to [240,1,1].
+PASS: Should convert [255,255,255] to [0,0,100].
+PASS: Should convert [255,0,0] to [0,100,50].
+PASS: Should convert [0,255,0] to [120,100,50].
+PASS: Should convert [0,0,255] to [240,100,50].
 PASS: Should convert [-1,-1,-1] to [0,0,0].
-PASS: Should convert [256,256,256] to [0,0,1].
-PASS: Should convert [254.9,0,0] to [0,1,1].
+PASS: Should convert [256,256,256] to [0,0,100].
+PASS: Should convert [254.9,0,0] to [0,100,50].
+
+-- Running test case: WI.Color.hsl2rgb
+PASS: Should convert [0,0,0] to [0,0,0].
+PASS: Should convert [0,0,100] to [255,255,255].
+PASS: Should convert [0,100,50] to [255,0,0].
+PASS: Should convert [120,100,50] to [0,255,0].
+PASS: Should convert [240,100,50] to [0,0,255].
+PASS: Should convert [-1,-1,-1] to [0,0,0].
+PASS: Should convert [361,101,50] to [255,0,0].
+PASS: Should convert [361,101,101] to [255,255,255].
 
 -- Running test case: WI.Color.cmyk2rgb
 PASS: Should convert [0,0,0,1] to [0,0,0].

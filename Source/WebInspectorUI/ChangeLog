@@ -1,3 +1,56 @@
+2019-01-03  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: conic-gradient color picker doesn't accurately show color when saturation value is not 100%
+        https://bugs.webkit.org/show_bug.cgi?id=192729
+        <rdar://problem/46746815>
+
+        Reviewed by Joseph Pecoraro.
+
+        Rework `WI.ColorWheel` to use similar canvas drawing logic as `WI.LegacyColorWheel` so that
+        it's able to adjust the saturation value as the pixels gets closer to the center.
+
+        * UserInterface/Models/Color.js:
+        (WI.Color.rgb2hsl): Added.
+        (WI.Color.hsl2rgb): Added.
+        (WI.Color.cmyk2rgb):
+        (WI.Color.prototype.isKeyword):
+        (WI.Color.prototype._toRGBString):
+        (WI.Color.prototype._toRGBAString):
+        (WI.Color.prototype._toHSLString):
+        (WI.Color.prototype._toHSLAString):
+        (WI.Color.prototype._rgbaToHSLA):
+        (WI.Color.prototype._hslaToRGBA):
+        (WI.Color.rgb2hsv): Deleted.
+        (WI.Color.hsv2rgb): Deleted.
+        (WI.Color.prototype._rgbToHSL): Deleted.
+        (WI.Color.prototype._hslToRGB): Deleted.
+        Adjust the conversion functions of `WI.Color` to be more accurate.
+
+        * UserInterface/Views/ColorWheel.js:
+        (WI.ColorWheel):
+        (WI.ColorWheel.prototype.set dimension):
+        (WI.ColorWheel.prototype.set brightness):
+        (WI.ColorWheel.prototype.get tintedColor):
+        (WI.ColorWheel.prototype.set tintedColor):
+        (WI.ColorWheel.prototype._updateColorForMouseEvent):
+        (WI.ColorWheel.prototype._updateCanvas): Added.
+        (WI.ColorWheel.prototype._updateGradient): Deleted.
+        * UserInterface/Views/ColorWheel.css:
+        (.color-wheel > canvas): Added.
+        (.color-wheel > .gradient): Deleted.
+
+        * UserInterface/Views/ColorPicker.js:
+        (WI.ColorPicker):
+        (WI.ColorPicker.prototype.set color):
+        (WI.ColorPicker.prototype.sliderValueDidChange):
+        (WI.ColorPicker.prototype._updateSliders):
+        (WI.ColorPicker.prototype._showColorComponentInputs):
+        (WI.ColorPicker.supportsConicGradient): Deleted.
+
+        * UserInterface/Main.html:
+
+        * UserInterface/Views/LegacyColorWheel.js: Removed.
+
 2019-01-02  Nikita Vasilyev  <nvasilyev@apple.com>
 
         Web Inspector: Styles: selection lost when inspector is blurred
