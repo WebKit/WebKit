@@ -1,3 +1,15 @@
+2019-01-02  Nikita Vasilyev  <nvasilyev@apple.com>
+
+        Web Inspector: Styles: it shouldn't be possible to delete read-only properties
+        https://bugs.webkit.org/show_bug.cgi?id=193099
+        <rdar://problem/47016335>
+
+        Reviewed by Devin Rousso.
+
+        * UserInterface/Views/SpreadsheetCSSStyleDeclarationEditor.js:
+        (WI.SpreadsheetCSSStyleDeclarationEditor):
+        Drive-by: Forward Delete should work the same way as Delete (Backspace).
+
 2019-01-02  Devin Rousso  <webkit@devinrousso.com>
 
         Web Inspector: Implement `queryObjects` Command Line API

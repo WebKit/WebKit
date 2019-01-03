@@ -533,7 +533,10 @@ WI.SpreadsheetCSSStyleDeclarationEditor = class SpreadsheetCSSStyleDeclarationEd
                 event.stop();
                 property.startEditingName();
             }
-        } else if (event.key === "Backspace") {
+        } else if (event.key === "Backspace" || event.key === "Delete") {
+            if (!this.style.editable)
+                return;
+
             let [startIndex, endIndex] = this.selectionRange;
 
             let propertyIndexToSelect = NaN;
