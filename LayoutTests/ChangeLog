@@ -1,3 +1,21 @@
+2019-01-03  Chris Dumez  <cdumez@apple.com>
+
+        Potential infinite recursion in isFrameFamiliarWith(Frame&, Frame&)
+        https://bugs.webkit.org/show_bug.cgi?id=192997
+        <rdar://problem/46217271>
+
+        Reviewed by Antti Koivisto.
+
+        Add layout test coverage.
+
+        * fast/dom/Window/resources/window-open-opener-cycle2.html: Added.
+        * fast/dom/Window/resources/window-open-opener-cycle3.html: Added.
+        * fast/dom/Window/resources/window-opens-self.html: Added.
+        * fast/dom/Window/window-open-opener-cycle-expected.txt: Added.
+        * fast/dom/Window/window-open-opener-cycle.html: Added.
+        * fast/dom/Window/window-open-self-as-opener-expected.txt: Added.
+        * fast/dom/Window/window-open-self-as-opener.html: Added.
+
 2019-01-03  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: conic-gradient color picker doesn't accurately show color when saturation value is not 100%

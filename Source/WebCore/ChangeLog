@@ -1,3 +1,27 @@
+2019-01-03  Chris Dumez  <cdumez@apple.com>
+
+        Potential infinite recursion in isFrameFamiliarWith(Frame&, Frame&)
+        https://bugs.webkit.org/show_bug.cgi?id=192997
+        <rdar://problem/46217271>
+
+        Reviewed by Antti Koivisto.
+
+        isFrameFamiliarWith(Frame&, Frame&) was called recursively using the passed frames' openers.
+        The issue is that a Frame can be its opener. There could also be a cycle in the opener chain.
+
+        To address the issue, simplify isFrameFamiliarWith() so that it is no longer recursive. We now
+        only check if the frames belong to the same pages or if their openers do. We no longer check
+        openers' opener and up.
+
+        Note that this function is used to check if a frame is allowed to target another. In practice,
+        it is unlikely to be useful to navigate an opener's opener and an openee's openee.
+
+        Tests: fast/dom/Window/window-open-opener-cycle.html
+               fast/dom/Window/window-open-self-as-opener.html
+
+        * page/FrameTree.cpp:
+        (WebCore::isFrameFamiliarWith):
+
 2019-01-02  Simon Fraser  <simon.fraser@apple.com>
 
         REGRESSION (r239306): Don't disable font smoothing in transparent layers on macOS Mojave and later

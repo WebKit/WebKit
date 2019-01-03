@@ -215,13 +215,9 @@ static bool isFrameFamiliarWith(Frame& frameA, Frame& frameB)
     if (frameA.page() == frameB.page())
         return true;
 
-    if (auto* frameAOpener = frameA.mainFrame().loader().opener())
-        return isFrameFamiliarWith(*frameAOpener, frameB);
-
-    if (auto* frameBOpener = frameB.mainFrame().loader().opener())
-        return isFrameFamiliarWith(frameA, *frameBOpener);
-
-    return false;
+    auto* frameAOpener = frameA.mainFrame().loader().opener();
+    auto* frameBOpener = frameB.mainFrame().loader().opener();
+    return (frameAOpener && frameAOpener->page() == frameB.page()) || (frameBOpener && frameBOpener->page() == frameA.page()) || (frameAOpener && frameBOpener && frameAOpener->page() == frameBOpener->page());
 }
 
 Frame* FrameTree::find(const AtomicString& name, Frame& activeFrame) const
