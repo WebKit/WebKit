@@ -133,6 +133,10 @@
     background-color: var(--background-color-selected);
 }
 
+body:matches(.window-docked-inactive, .window-inactive) .spreadsheet-style-declaration-editor .property.selected {
+    background-color: var(--selected-background-color-unfocused);
+}
+
 .spreadsheet-style-declaration-editor .property.selected:focus {
     border-left-color: var(--border-color-selected);
 }

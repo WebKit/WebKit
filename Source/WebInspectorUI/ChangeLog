@@ -1,5 +1,19 @@
 2019-01-02  Nikita Vasilyev  <nvasilyev@apple.com>
 
+        Web Inspector: Styles: selection lost when inspector is blurred
+        https://bugs.webkit.org/show_bug.cgi?id=192124
+        <rdar://problem/46800965>
+
+        Reviewed by Devin Rousso.
+
+        * UserInterface/Views/SpreadsheetCSSStyleDeclarationEditor.css:
+        (body:matches(.window-docked-inactive, .window-inactive) .spreadsheet-style-declaration-editor .property.selected):
+        Selection should be gray when Web Inspector window isn't focused.
+
+        * UserInterface/Views/SpreadsheetStyleProperty.js:
+
+2019-01-02  Nikita Vasilyev  <nvasilyev@apple.com>
+
         Web Inspector: Styles: it shouldn't be possible to delete read-only properties
         https://bugs.webkit.org/show_bug.cgi?id=193099
         <rdar://problem/47016335>

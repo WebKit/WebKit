@@ -54,6 +54,10 @@ WI.SpreadsheetStyleProperty = class SpreadsheetStyleProperty extends WI.Object
             this._element.tabIndex = -1;
 
             this._element.addEventListener("blur", (event) => {
+                // Keep selection after tabbing out of Web Inspector window and back.
+                if (document.activeElement === this._element)
+                    return;
+
                 if (this._delegate.spreadsheetStylePropertyBlur)
                     this._delegate.spreadsheetStylePropertyBlur(event, this);
             });
