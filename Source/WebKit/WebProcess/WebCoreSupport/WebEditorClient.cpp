@@ -310,10 +310,11 @@ void WebEditorClient::registerUndoStep(UndoStep& step)
         return;
 
     auto webStep = WebUndoStep::create(step);
+    auto stepID = webStep->stepID();
     auto editAction = static_cast<uint32_t>(webStep->step().editingAction());
 
-    m_page->addWebUndoStep(webStep->stepID(), webStep.ptr());
-    m_page->send(Messages::WebPageProxy::RegisterEditCommandForUndo(webStep->stepID(), editAction), m_page->pageID(), IPC::SendOption::DispatchMessageEvenWhenWaitingForSyncReply);
+    m_page->addWebUndoStep(stepID, WTFMove(webStep));
+    m_page->send(Messages::WebPageProxy::RegisterEditCommandForUndo(stepID, editAction), m_page->pageID(), IPC::SendOption::DispatchMessageEvenWhenWaitingForSyncReply);
 }
 
 void WebEditorClient::registerRedoStep(UndoStep&)

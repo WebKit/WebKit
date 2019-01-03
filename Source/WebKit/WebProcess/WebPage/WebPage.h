@@ -50,6 +50,7 @@
 #include "UserData.h"
 #include "WebBackForwardListProxy.h"
 #include "WebURLSchemeHandler.h"
+#include "WebUndoStepID.h"
 #include "WebUserContentController.h"
 #include "WebsitePoliciesData.h"
 #include <JavaScriptCore/InspectorFrontendChannel.h>
@@ -355,9 +356,9 @@ public:
 
     const String& overrideContentSecurityPolicy() const { return m_overrideContentSecurityPolicy; }
 
-    WebUndoStep* webUndoStep(uint64_t);
-    void addWebUndoStep(uint64_t, WebUndoStep*);
-    void removeWebEditCommand(uint64_t);
+    WebUndoStep* webUndoStep(WebUndoStepID);
+    void addWebUndoStep(WebUndoStepID, Ref<WebUndoStep>&&);
+    void removeWebEditCommand(WebUndoStepID);
     bool isInRedo() const { return m_isInRedo; }
 
     bool isAlwaysOnLoggingAllowed() const;
@@ -1324,9 +1325,9 @@ private:
 
     void setMainFrameIsScrollable(bool);
 
-    void unapplyEditCommand(uint64_t commandID);
-    void reapplyEditCommand(uint64_t commandID);
-    void didRemoveEditCommand(uint64_t commandID);
+    void unapplyEditCommand(WebUndoStepID commandID);
+    void reapplyEditCommand(WebUndoStepID commandID);
+    void didRemoveEditCommand(WebUndoStepID commandID);
 
     void findString(const String&, uint32_t findOptions, uint32_t maxMatchCount);
     void findStringMatches(const String&, uint32_t findOptions, uint32_t maxMatchCount);
@@ -1574,7 +1575,7 @@ private:
     RunLoop::Timer<WebPage> m_setCanStartMediaTimer;
     bool m_mayStartMediaWhenInWindow { false };
 
-    HashMap<uint64_t, RefPtr<WebUndoStep>> m_undoStepMap;
+    HashMap<WebUndoStepID, RefPtr<WebUndoStep>> m_undoStepMap;
 
 #if ENABLE(CONTEXT_MENUS)
     std::unique_ptr<API::InjectedBundle::PageContextMenuClient> m_contextMenuClient;

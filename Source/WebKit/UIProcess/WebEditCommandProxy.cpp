@@ -36,7 +36,7 @@
 namespace WebKit {
 using namespace WebCore;
 
-WebEditCommandProxy::WebEditCommandProxy(uint64_t commandID, WebCore::EditAction editAction, WebPageProxy* page)
+WebEditCommandProxy::WebEditCommandProxy(WebUndoStepID commandID, WebCore::EditAction editAction, WebPageProxy* page)
     : m_commandID(commandID)
     , m_editAction(editAction)
     , m_page(page)

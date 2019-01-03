@@ -5340,7 +5340,7 @@ void WebPageProxy::compositionWasCanceled()
 
 // Undo management
 
-void WebPageProxy::registerEditCommandForUndo(uint64_t commandID, uint32_t editAction)
+void WebPageProxy::registerEditCommandForUndo(WebUndoStepID commandID, uint32_t editAction)
 {
     registerEditCommand(WebEditCommandProxy::create(commandID, static_cast<EditAction>(editAction), this), UndoOrRedo::Undo);
 }

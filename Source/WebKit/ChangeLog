@@ -1,3 +1,49 @@
+2019-01-03  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        WebUndoStep's monotonically increasing identifier should be a WebUndoStepID instead of uint64_t
+        https://bugs.webkit.org/show_bug.cgi?id=193100
+
+        Reviewed by Simon Fraser.
+
+        Add a type alias, WebUndoStepID, to represent the monotonically increasing undo step ID for each undoable
+        editing command, and use this type alias in lieu of `uint64_t`. No change in behavior.
+
+        * UIProcess/WebEditCommandProxy.cpp:
+        (WebKit::WebEditCommandProxy::WebEditCommandProxy):
+        * UIProcess/WebEditCommandProxy.h:
+        (WebKit::WebEditCommandProxy::create):
+        (WebKit::WebEditCommandProxy::commandID const):
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::registerEditCommandForUndo):
+        * UIProcess/WebPageProxy.h:
+        * WebKit.xcodeproj/project.pbxproj:
+        * WebProcess/WebCoreSupport/WebEditorClient.cpp:
+        (WebKit::WebEditorClient::registerUndoStep):
+
+        Store the step ID in a temporary variable, since `webUndoStep` is now moved when calling `addWebUndoStep`.
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::webUndoStep):
+        (WebKit::WebPage::addWebUndoStep):
+
+        Make this take a `Ref<WebUndoStep>&&` instead of a `WebUndoStep*`, and use move semantics to transfer the
+        given `Ref` to the table.
+
+        (WebKit::WebPage::removeWebEditCommand):
+        (WebKit::WebPage::unapplyEditCommand):
+        (WebKit::WebPage::reapplyEditCommand):
+
+        Use `auto*` in a couple of places.
+
+        (WebKit::WebPage::didRemoveEditCommand):
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/WebUndoStep.cpp:
+        (WebKit::generateUndoStep):
+        * WebProcess/WebPage/WebUndoStep.h:
+        (WebKit::WebUndoStep::stepID const):
+        (WebKit::WebUndoStep::WebUndoStep):
+        * WebProcess/WebPage/WebUndoStepID.h: Copied from Source/WebKit/WebProcess/WebPage/WebUndoStep.cpp.
+
 2019-01-02  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Add support for using the current text selection as the find string on iOS

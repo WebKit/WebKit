@@ -65,6 +65,7 @@
 #include "WebPageProxyMessages.h"
 #include "WebPopupMenuProxy.h"
 #include "WebProcessLifetimeTracker.h"
+#include "WebUndoStepID.h"
 #include "WebsitePoliciesData.h"
 #include <WebCore/ActivityState.h>
 #include <WebCore/AutoplayEvent.h>
@@ -1615,7 +1616,7 @@ private:
     void backForwardClear();
 
     // Undo management
-    void registerEditCommandForUndo(uint64_t commandID, uint32_t editAction);
+    void registerEditCommandForUndo(WebUndoStepID commandID, uint32_t editAction);
     void registerInsertionUndoGrouping();
     void clearAllEditCommands();
     void canUndoRedo(UndoOrRedo, bool& result);

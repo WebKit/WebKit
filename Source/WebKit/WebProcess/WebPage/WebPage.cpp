@@ -3765,17 +3765,17 @@ void WebPage::dragCancelled()
     
 #endif // ENABLE(DRAG_SUPPORT)
 
-WebUndoStep* WebPage::webUndoStep(uint64_t stepID)
+WebUndoStep* WebPage::webUndoStep(WebUndoStepID stepID)
 {
     return m_undoStepMap.get(stepID);
 }
 
-void WebPage::addWebUndoStep(uint64_t stepID, WebUndoStep* entry)
+void WebPage::addWebUndoStep(WebUndoStepID stepID, Ref<WebUndoStep>&& entry)
 {
-    m_undoStepMap.set(stepID, entry);
+    m_undoStepMap.set(stepID, WTFMove(entry));
 }
 
-void WebPage::removeWebEditCommand(uint64_t stepID)
+void WebPage::removeWebEditCommand(WebUndoStepID stepID)
 {
     m_undoStepMap.remove(stepID);
 }
@@ -3785,18 +3785,18 @@ bool WebPage::isAlwaysOnLoggingAllowed() const
     return corePage() && corePage()->isAlwaysOnLoggingAllowed();
 }
 
-void WebPage::unapplyEditCommand(uint64_t stepID)
+void WebPage::unapplyEditCommand(WebUndoStepID stepID)
 {
-    WebUndoStep* step = webUndoStep(stepID);
+    auto* step = webUndoStep(stepID);
     if (!step)
         return;
 
     step->step().unapply();
 }
 
-void WebPage::reapplyEditCommand(uint64_t stepID)
+void WebPage::reapplyEditCommand(WebUndoStepID stepID)
 {
-    WebUndoStep* step = webUndoStep(stepID);
+    auto* step = webUndoStep(stepID);
     if (!step)
         return;
 
@@ -3805,7 +3805,7 @@ void WebPage::reapplyEditCommand(uint64_t stepID)
     m_isInRedo = false;
 }
 
-void WebPage::didRemoveEditCommand(uint64_t commandID)
+void WebPage::didRemoveEditCommand(WebUndoStepID commandID)
 {
     removeWebEditCommand(commandID);
 }

@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include "WebUndoStepID.h"
 #include <WebCore/UndoStep.h>
 #include <wtf/Ref.h>
 
@@ -36,17 +37,17 @@ public:
     ~WebUndoStep();
 
     WebCore::UndoStep& step() const { return m_step.get(); }
-    uint64_t stepID() const { return m_stepID; }
+    WebUndoStepID stepID() const { return m_stepID; }
 
 private:
-    WebUndoStep(Ref<WebCore::UndoStep>&& step, uint64_t stepID)
+    WebUndoStep(Ref<WebCore::UndoStep>&& step, WebUndoStepID stepID)
         : m_step(WTFMove(step))
         , m_stepID(stepID)
     {
     }
 
     Ref<WebCore::UndoStep> m_step;
-    uint64_t m_stepID;
+    WebUndoStepID m_stepID;
 };
 
 } // namespace WebKit

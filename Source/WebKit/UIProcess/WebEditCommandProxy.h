@@ -26,6 +26,7 @@
 #pragma once
 
 #include "APIObject.h"
+#include "WebUndoStepID.h"
 #include <WebCore/EditAction.h>
 #include <wtf/Forward.h>
 #include <wtf/RefCounted.h>
@@ -37,13 +38,13 @@ class WebPageProxy;
 
 class WebEditCommandProxy : public API::ObjectImpl<API::Object::Type::EditCommandProxy> {
 public:
-    static Ref<WebEditCommandProxy> create(uint64_t commandID, WebCore::EditAction editAction, WebPageProxy* page)
+    static Ref<WebEditCommandProxy> create(WebUndoStepID commandID, WebCore::EditAction editAction, WebPageProxy* page)
     {
         return adoptRef(*new WebEditCommandProxy(commandID, editAction, page));
     }
     ~WebEditCommandProxy();
 
-    uint64_t commandID() const { return m_commandID; }
+    WebUndoStepID commandID() const { return m_commandID; }
     WebCore::EditAction editAction() const { return m_editAction; }
 
     void invalidate() { m_page = 0; }
@@ -54,9 +55,9 @@ public:
     static String nameForEditAction(WebCore::EditAction);
 
 private:
-    WebEditCommandProxy(uint64_t commandID, WebCore::EditAction, WebPageProxy*);
+    WebEditCommandProxy(WebUndoStepID commandID, WebCore::EditAction, WebPageProxy*);
 
-    uint64_t m_commandID;
+    WebUndoStepID m_commandID;
     WebCore::EditAction m_editAction;
     WebPageProxy* m_page;
 };
