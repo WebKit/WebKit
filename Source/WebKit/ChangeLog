@@ -1,3 +1,16 @@
+2019-01-03  Chris Dumez  <cdumez@apple.com>
+
+        Add release logging to help debug HTTPS upgrade issues
+        https://bugs.webkit.org/show_bug.cgi?id=193075
+
+        Reviewed by Alex Christensen.
+
+        Add release logging to help debug HTTPS upgrade issues like Bug 193026.
+
+        * NetworkProcess/NetworkHTTPSUpgradeChecker.cpp:
+        (WebKit::NetworkHTTPSUpgradeChecker::NetworkHTTPSUpgradeChecker):
+        (WebKit::NetworkHTTPSUpgradeChecker::query):
+
 2019-01-03  Alex Christensen  <achristensen@webkit.org>
 
         NetworkProcess should initialize its default NetworkSession with parameters from the UIProcess

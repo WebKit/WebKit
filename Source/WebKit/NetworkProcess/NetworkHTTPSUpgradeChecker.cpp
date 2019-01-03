@@ -36,6 +36,7 @@
 #include <wtf/WorkQueue.h>
 
 #define RELEASE_LOG_IF_ALLOWED(sessionID, fmt, ...) RELEASE_LOG_IF(sessionID.isAlwaysOnLoggingAllowed(), Network, "%p - NetworkHTTPSUpgradeChecker::" fmt, this, ##__VA_ARGS__)
+#define RELEASE_LOG_ERROR_IF_ALLOWED(sessionID, fmt, ...) RELEASE_LOG_ERROR_IF(sessionID.isAlwaysOnLoggingAllowed(), Network, "%p - NetworkHTTPSUpgradeChecker::" fmt, this, ##__VA_ARGS__)
 
 namespace WebKit {
 
@@ -63,9 +64,11 @@ NetworkHTTPSUpgradeChecker::NetworkHTTPSUpgradeChecker()
         ASSERT(path);
 
         bool isDatabaseOpen = m_database->open(path);
-        ASSERT(isDatabaseOpen);
-        if (!isDatabaseOpen)
+        if (!isDatabaseOpen) {
+            RELEASE_LOG_ERROR(Network, "%p - NetworkHTTPSUpgradeChecker::open failed, error message: %{public}s, database path: %{public}s", this, m_database->lastErrorMsg(), path.utf8().data());
+            ASSERT_NOT_REACHED();
             return;
+        }
 
         // Since we are using a workerQueue, the sequential dispatch blocks may be called by different threads.
         m_database->disableThreadingChecks();
@@ -96,7 +99,14 @@ void NetworkHTTPSUpgradeChecker::query(String&& host, PAL::SessionID sessionID, 
         ASSERT_UNUSED(bindTextResult, bindTextResult == SQLITE_OK);
 
         int stepResult = m_statement->step();
-        ASSERT(stepResult == SQLITE_ROW || stepResult == SQLITE_DONE);
+        if (stepResult != SQLITE_ROW && stepResult != SQLITE_DONE) {
+            RELEASE_LOG_ERROR_IF_ALLOWED(sessionID, "step failed with error code %d, error message: %{public}s, database path: %{public}s", stepResult, m_database->lastErrorMsg(), networkHTTPSUpgradeCheckerDatabasePath().utf8().data());
+            ASSERT_NOT_REACHED();
+            RunLoop::main().dispatch([callback = WTFMove(callback)] () mutable {
+                callback(false);
+            });
+            return;
+        }
 
         int resetResult = m_statement->reset();
         ASSERT_UNUSED(resetResult, resetResult == SQLITE_OK);
