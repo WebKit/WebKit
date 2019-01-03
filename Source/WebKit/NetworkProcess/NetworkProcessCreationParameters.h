@@ -27,6 +27,7 @@
 
 #include "CacheModel.h"
 #include "SandboxExtension.h"
+#include "WebsiteDataStoreParameters.h"
 #include <WebCore/Cookie.h>
 #include <wtf/ProcessID.h>
 #include <wtf/Vector.h>
@@ -62,7 +63,6 @@ struct NetworkProcessCreationParameters {
 #if PLATFORM(MAC)
     Vector<uint8_t> uiProcessCookieStorageIdentifier;
 #endif
-    Vector<WebCore::Cookie> defaultSessionPendingCookies;
 #if PLATFORM(IOS_FAMILY)
     SandboxExtension::Handle cookieStorageDirectoryExtensionHandle;
     SandboxExtension::Handle containerCachesDirectoryExtensionHandle;
@@ -82,13 +82,13 @@ struct NetworkProcessCreationParameters {
 #if PLATFORM(IOS_FAMILY)
     String ctDataConnectionServiceType;
 #endif
-    String httpProxy;
-    String httpsProxy;
     RetainPtr<CFDataRef> networkATSContext;
     bool storageAccessAPIEnabled;
     bool suppressesConnectionTerminationOnSystemChange;
 #endif
 
+    WebsiteDataStoreParameters defaultDataStoreParameters;
+    
 #if USE(SOUP)
     String cookiePersistentStoragePath;
     uint32_t cookiePersistentStorageType { 0 };

@@ -298,12 +298,8 @@ void NetworkProcess::initializeNetworkProcess(NetworkProcessCreationParameters&&
     if (parameters.shouldUseTestingNetworkSession)
         NetworkStorageSession::switchToNewTestingSession();
 
-    NetworkSessionCreationParameters sessionCreationParameters { };
-#if PLATFORM(COCOA)
-    sessionCreationParameters.httpProxy = URL(URL(), parameters.httpProxy);
-    sessionCreationParameters.httpsProxy = URL(URL(), parameters.httpsProxy);
-#endif
-    SessionTracker::setSession(PAL::SessionID::defaultSessionID(), NetworkSession::create(WTFMove(sessionCreationParameters)));
+    auto sessionID = parameters.defaultDataStoreParameters.networkSessionParameters.sessionID;
+    SessionTracker::setSession(sessionID, NetworkSession::create(WTFMove(parameters.defaultDataStoreParameters.networkSessionParameters)));
 
 #if ENABLE(INDEXED_DATABASE)
     addIndexedDatabaseSession(PAL::SessionID::defaultSessionID(), parameters.indexedDatabaseDirectory, parameters.indexedDatabaseDirectoryExtensionHandle);
@@ -321,7 +317,7 @@ void NetworkProcess::initializeNetworkProcess(NetworkProcessCreationParameters&&
 #endif
 
     auto* defaultSession = SessionTracker::networkSession(PAL::SessionID::defaultSessionID());
-    for (const auto& cookie : parameters.defaultSessionPendingCookies)
+    for (const auto& cookie : parameters.defaultDataStoreParameters.pendingCookies)
         defaultSession->networkStorageSession().setCookie(cookie);
 
     for (auto& supplement : m_supplements.values())

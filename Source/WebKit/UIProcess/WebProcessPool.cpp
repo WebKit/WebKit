@@ -476,7 +476,7 @@ NetworkProcessProxy& WebProcessPool::ensureNetworkProcess(WebsiteDataStore* with
     NetworkProcessCreationParameters parameters;
 
     if (m_websiteDataStore) {
-        parameters.defaultSessionPendingCookies = copyToVector(m_websiteDataStore->websiteDataStore().pendingCookies());
+        parameters.defaultDataStoreParameters.pendingCookies = copyToVector(m_websiteDataStore->websiteDataStore().pendingCookies());
         m_websiteDataStore->websiteDataStore().clearPendingCookies();
     }
 

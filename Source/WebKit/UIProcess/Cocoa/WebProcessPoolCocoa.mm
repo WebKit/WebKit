@@ -264,8 +264,8 @@ void WebProcessPool::platformInitializeNetworkProcess(NetworkProcessCreationPara
         isSafari = WebCore::MacApplication::isSafari();
 #endif
         if (isSafari) {
-            parameters.httpProxy = [defaults stringForKey:(NSString *)WebKit2HTTPProxyDefaultsKey];
-            parameters.httpsProxy = [defaults stringForKey:(NSString *)WebKit2HTTPSProxyDefaultsKey];
+            parameters.defaultDataStoreParameters.networkSessionParameters.httpProxy = URL(URL(), [defaults stringForKey:(NSString *)WebKit2HTTPProxyDefaultsKey]);
+            parameters.defaultDataStoreParameters.networkSessionParameters.httpsProxy = URL(URL(), [defaults stringForKey:(NSString *)WebKit2HTTPSProxyDefaultsKey]);
         }
     }
 

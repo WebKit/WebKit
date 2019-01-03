@@ -52,7 +52,6 @@ void NetworkProcessCreationParameters::encode(IPC::Encoder& encoder) const
 #if PLATFORM(MAC)
     encoder << uiProcessCookieStorageIdentifier;
 #endif
-    encoder << defaultSessionPendingCookies;
 #if PLATFORM(IOS_FAMILY)
     encoder << cookieStorageDirectoryExtensionHandle;
     encoder << containerCachesDirectoryExtensionHandle;
@@ -70,12 +69,11 @@ void NetworkProcessCreationParameters::encode(IPC::Encoder& encoder) const
 #if PLATFORM(IOS_FAMILY)
     encoder << ctDataConnectionServiceType;
 #endif
-    encoder << httpProxy;
-    encoder << httpsProxy;
     IPC::encode(encoder, networkATSContext.get());
     encoder << storageAccessAPIEnabled;
     encoder << suppressesConnectionTerminationOnSystemChange;
 #endif
+    encoder << defaultDataStoreParameters;
 #if USE(SOUP)
     encoder << cookiePersistentStoragePath;
     encoder << cookiePersistentStorageType;
@@ -134,8 +132,6 @@ bool NetworkProcessCreationParameters::decode(IPC::Decoder& decoder, NetworkProc
     if (!decoder.decode(result.uiProcessCookieStorageIdentifier))
         return false;
 #endif
-    if (!decoder.decode(result.defaultSessionPendingCookies))
-        return false;
 #if PLATFORM(IOS_FAMILY)
     Optional<SandboxExtension::Handle> cookieStorageDirectoryExtensionHandle;
     decoder >> cookieStorageDirectoryExtensionHandle;
@@ -178,10 +174,6 @@ bool NetworkProcessCreationParameters::decode(IPC::Decoder& decoder, NetworkProc
     if (!decoder.decode(result.ctDataConnectionServiceType))
         return false;
 #endif
-    if (!decoder.decode(result.httpProxy))
-        return false;
-    if (!decoder.decode(result.httpsProxy))
-        return false;
     if (!IPC::decode(decoder, result.networkATSContext))
         return false;
     if (!decoder.decode(result.storageAccessAPIEnabled))
@@ -189,6 +181,12 @@ bool NetworkProcessCreationParameters::decode(IPC::Decoder& decoder, NetworkProc
     if (!decoder.decode(result.suppressesConnectionTerminationOnSystemChange))
         return false;
 #endif
+
+    Optional<WebsiteDataStoreParameters> defaultDataStoreParameters;
+    decoder >> defaultDataStoreParameters;
+    if (!defaultDataStoreParameters)
+        return false;
+    result.defaultDataStoreParameters = WTFMove(*defaultDataStoreParameters);
 
 #if USE(SOUP)
     if (!decoder.decode(result.cookiePersistentStoragePath))
