@@ -90,6 +90,8 @@ String URLUtils<T>::origin() const
 template <typename T>
 String URLUtils<T>::protocol() const
 {
+    if (WTF::protocolIsJavaScript(href()))
+        return "javascript:"_s;
     return makeString(href().protocol(), ':');
 }
 

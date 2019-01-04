@@ -1,3 +1,20 @@
+2019-01-04  Brent Fulgham  <bfulgham@apple.com>
+
+        Parsed protocol of javascript URLs with embedded newlines and carriage returns do not match parsed protocol in Chrome and Firefox
+        https://bugs.webkit.org/show_bug.cgi?id=193155
+        <rdar://problem/40230982>
+
+        Reviewed by Chris Dumez.
+
+        Test: fast/loader/comment-only-javascript-url.html
+
+        Make a special case for URLs beginning with 'javascript:'. We should always
+        treat these as JS URLs, even if the content contained within the URL
+        string might match other parts of the URL parsing spec.
+
+        * html/URLUtils.h:
+        (WebCore::URLUtils<T>::protocol const):
+
 2019-01-04  Jer Noble  <jer.noble@apple.com>
 
         [WebKitLegacy] Media playback pauses on scroll
