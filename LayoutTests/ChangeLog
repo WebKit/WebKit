@@ -1,3 +1,15 @@
+2019-01-04  Chris Fleizach  <cfleizach@apple.com>
+
+        AX: String check: "Rule" does not reflect the meaning of the <hr> html tag
+        https://bugs.webkit.org/show_bug.cgi?id=193041
+        <rdar://problem/46954090>
+
+        Reviewed by Zalan Bujtas.
+
+        * accessibility/mac/hr-element-expected.txt:
+        * platform/mac/accessibility/roles-exposed-expected.txt:
+        * platform/mac-wk2/accessibility/roles-exposed-expected.txt:
+
 2019-01-04  Frederic Wang  <fwang@igalia.com>
 
         Flaky Test: http/wpt/css/css-animations/start-animation-001.html

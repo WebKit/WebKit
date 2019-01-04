@@ -230,7 +230,7 @@ String AXARIAContentGroupText(const String& ariaType)
 
 String AXHorizontalRuleDescriptionText()
 {
-    return WEB_UI_STRING("rule", "accessibility role description for a horizontal rule [<hr>]");
+    return WEB_UI_STRING("separator", "accessibility role description for a horizontal rule [<hr>]");
 }
 
 String AXMarkText()

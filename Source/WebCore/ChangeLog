@@ -1,3 +1,15 @@
+2019-01-04  Chris Fleizach  <cfleizach@apple.com>
+
+        AX: String check: "Rule" does not reflect the meaning of the <hr> html tag
+        https://bugs.webkit.org/show_bug.cgi?id=193041
+        <rdar://problem/46954090>
+
+        Reviewed by Zalan Bujtas.
+
+        * en.lproj/Localizable.strings:
+        * platform/cocoa/LocalizedStringsCocoa.mm:
+        (WebCore::AXHorizontalRuleDescriptionText):
+
 2019-01-04  Zalan Bujtas  <zalan@apple.com>
 
         [LFC] ComputedHorizontalMargin should have optional members

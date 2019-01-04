@@ -182,7 +182,7 @@ h6
 hr
       AXRole: AXSplitter
       AXSubrole: AXContentSeparator
-      AXRoleDescription: rule
+      AXRoleDescription: separator
       
 i
       AXRole: 

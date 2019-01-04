@@ -1250,7 +1250,7 @@
 "return to realtime" = "return to realtime";
 
 /* accessibility role description for a horizontal rule [<hr>] */
-"rule" = "rule";
+"separator" = "separator";
 
 /* An ARIA accessibility group that contains a search feature of a website. */
 "search" = "search";
