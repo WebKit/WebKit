@@ -106,6 +106,7 @@ static void didCrashCallback(WKPageRef, const void*)
 TEST(WebKit, OnDeviceChangeCrash)
 {
     auto context = adoptWK(WKContextCreateWithConfiguration(nullptr));
+    WKContextSetMaximumNumberOfProcesses(context.get(), 1);
 
     WKRetainPtr<WKPageGroupRef> pageGroup(AdoptWK, WKPageGroupCreateWithIdentifier(Util::toWK("GetUserMedia").get()));
     WKPreferencesRef preferences = WKPageGroupGetPreferences(pageGroup.get());
