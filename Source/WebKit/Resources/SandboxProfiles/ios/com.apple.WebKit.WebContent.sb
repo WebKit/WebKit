@@ -155,6 +155,12 @@
     "com.apple.lookup.shared" ; Needed for DataDetector (Spotlight) support
 )
 
+;; Silently deny unnecessary accesses caused by MessageUI framework.
+;; This can be removed once <rdar://problem/47038102> is resolved.
+(deny file-read*
+    (home-literal "/Library/Preferences/com.apple.mobilemail.plist")
+    (with no-log))
+
 ;; <rdar://problem/12985925> Need read access to /var/mobile/Library/Fonts to all apps
 (allow file-read*
     (home-subpath "/Library/Fonts"))
