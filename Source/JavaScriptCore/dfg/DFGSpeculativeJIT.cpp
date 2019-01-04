@@ -12453,6 +12453,63 @@ void SpeculativeJIT::compileObjectKeys(Node* node)
     }
 }
 
+void SpeculativeJIT::compileObjectToString(Node* node)
+{
+    switch (node->child1().useKind()) {
+    case OtherUse: {
+        JSValueOperand source(this, node->child1(), ManualOperandSpeculation);
+        GPRTemporary result(this);
+
+        JSValueRegs sourceRegs = source.jsValueRegs();
+        GPRReg resultGPR = result.gpr();
+
+        speculateOther(node->child1(), sourceRegs);
+
+        auto isUndefined = m_jit.branchIfUndefined(sourceRegs);
+        m_jit.move(TrustedImmPtr::weakPointer(m_jit.graph(), m_jit.vm()->smallStrings.nullObjectString()), resultGPR);
+        auto done = m_jit.jump();
+        isUndefined.link(&m_jit);
+        m_jit.move(TrustedImmPtr::weakPointer(m_jit.graph(), m_jit.vm()->smallStrings.undefinedObjectString()), resultGPR);
+        done.link(&m_jit);
+
+        cellResult(resultGPR, node);
+        return;
+    }
+    case UntypedUse: {
+        JSValueOperand source(this, node->child1());
+
+        JSValueRegs sourceRegs = source.jsValueRegs();
+
+        GPRTemporary structure(this);
+        GPRTemporary scratch(this);
+
+        GPRReg structureGPR = structure.gpr();
+        GPRReg scratchGPR = scratch.gpr();
+
+        CCallHelpers::JumpList slowCases;
+        slowCases.append(m_jit.branchIfNotCell(sourceRegs));
+        slowCases.append(m_jit.branchIfNotObject(sourceRegs.payloadGPR()));
+
+        m_jit.emitLoadStructure(*m_jit.vm(), sourceRegs.payloadGPR(), structureGPR, scratchGPR);
+        m_jit.loadPtr(CCallHelpers::Address(structureGPR, Structure::previousOrRareDataOffset()), scratchGPR);
+
+        slowCases.append(m_jit.branchTestPtr(CCallHelpers::Zero, scratchGPR));
+        slowCases.append(m_jit.branch32(CCallHelpers::Equal, CCallHelpers::Address(scratchGPR, JSCell::structureIDOffset()), TrustedImm32(bitwise_cast<int32_t>(m_jit.vm()->structureStructure->structureID()))));
+
+        m_jit.loadPtr(CCallHelpers::Address(scratchGPR, StructureRareData::offsetOfObjectToStringValue()), scratchGPR);
+        slowCases.append(m_jit.branchTestPtr(CCallHelpers::Zero, scratchGPR));
+
+        addSlowPathGenerator(slowPathCall(slowCases, this, operationObjectToString, scratchGPR, sourceRegs));
+
+        cellResult(scratchGPR, node);
+        return;
+    }
+    default:
+        DFG_CRASH(m_graph, node, "Bad use kind");
+        return;
+    }
+}
+
 void SpeculativeJIT::compileObjectCreate(Node* node)
 {
     switch (node->child1().useKind()) {

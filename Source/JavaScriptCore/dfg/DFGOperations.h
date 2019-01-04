@@ -205,6 +205,7 @@ JSString* JIT_OPERATION operationSingleCharacterString(ExecState*, int32_t);
 JSCell* JIT_OPERATION operationStringSubstr(ExecState*, JSCell*, int32_t, int32_t);
 JSString* JIT_OPERATION operationStringValueOf(ExecState*, EncodedJSValue);
 JSString* JIT_OPERATION operationToLowerCase(ExecState*, JSString*, uint32_t);
+JSString* JIT_OPERATION operationObjectToString(ExecState*, EncodedJSValue);
 
 char* JIT_OPERATION operationInt32ToString(ExecState*, int32_t, int32_t);
 char* JIT_OPERATION operationInt52ToString(ExecState*, int64_t, int32_t);

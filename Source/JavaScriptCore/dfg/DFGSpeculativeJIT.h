@@ -1480,6 +1480,7 @@ public:
     void compileNewTypedArray(Node*);
     void compileToThis(Node*);
     void compileObjectKeys(Node*);
+    void compileObjectToString(Node*);
     void compileObjectCreate(Node*);
     void compileCreateThis(Node*);
     void compileNewObject(Node*);

@@ -81,6 +81,11 @@ public:
     void setSharedPolyProtoWatchpoint(Box<InlineWatchpointSet>&& sharedPolyProtoWatchpoint) { m_polyProtoWatchpoint = WTFMove(sharedPolyProtoWatchpoint); }
     bool hasSharedPolyProtoWatchpoint() const { return static_cast<bool>(m_polyProtoWatchpoint); }
 
+    static ptrdiff_t offsetOfObjectToStringValue()
+    {
+        return OBJECT_OFFSETOF(StructureRareData, m_objectToStringValue);
+    }
+
     static JSImmutableButterfly* cachedOwnKeysSentinel() { return bitwise_cast<JSImmutableButterfly*>(static_cast<uintptr_t>(1)); }
 
     static ptrdiff_t offsetOfCachedOwnKeys()

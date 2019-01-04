@@ -1,3 +1,76 @@
+2019-01-02  Yusuke Suzuki  <yusukesuzuki@slowstart.org>
+
+        [JSC] Optimize Object.prototype.toString
+        https://bugs.webkit.org/show_bug.cgi?id=193031
+
+        Reviewed by Saam Barati.
+
+        Object.prototype.toString is frequently used for type checking.
+        It is called many times in wtb-lebab.js. This patch optimizes
+        Object.prototype.toString by the following two optimizations.
+
+        1. We should emit code looking up cached to string in DFG and FTL.
+
+        toString's result is cached in the Structure. We emit a fast path code
+        in DFG and FTL to lookup this cache.
+
+        2. We should not create objects for primitive values in major cases.
+
+        When Object.prototype.toString(primitive) is called, this primitive is converted
+        to an object by calling ToObject. But if the result is appropriately cached in
+        the Structure, we should get it in the fast path without creating this object.
+        When converting primitives to objects, Structures used in these newly created objects
+        are known (Structure for StringObject etc.). So we can first query the cached string
+        before actually converting primitives to objects.
+
+        This patch improves wtb-lebab.js by roughly 2%.
+
+            before:    lebab:  8.90 runs/s
+            after :    lebab:  9.09 runs/s
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * dfg/DFGAbstractInterpreterInlines.h:
+        (JSC::DFG::AbstractInterpreter<AbstractStateType>::executeEffects):
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::handleIntrinsicCall):
+        * dfg/DFGClobberize.h:
+        (JSC::DFG::clobberize):
+        * dfg/DFGDoesGC.cpp:
+        (JSC::DFG::doesGC):
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::fixupNode):
+        (JSC::DFG::FixupPhase::fixupObjectToString):
+        * dfg/DFGNodeType.h:
+        * dfg/DFGOperations.cpp:
+        * dfg/DFGOperations.h:
+        * dfg/DFGPredictionPropagationPhase.cpp:
+        * dfg/DFGSafeToExecute.h:
+        (JSC::DFG::safeToExecute):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileObjectToString):
+        * dfg/DFGSpeculativeJIT.h:
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * ftl/FTLAbstractHeapRepository.h:
+        * ftl/FTLCapabilities.cpp:
+        (JSC::FTL::canCompile):
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::compileNode):
+        (JSC::FTL::DFG::LowerDFGToB3::compileObjectToString):
+        * runtime/Intrinsic.cpp:
+        (JSC::intrinsicName):
+        * runtime/Intrinsic.h:
+        * runtime/ObjectPrototype.cpp:
+        (JSC::ObjectPrototype::finishCreation):
+        (JSC::objectProtoFuncToString):
+        * runtime/ObjectPrototype.h:
+        * runtime/ObjectPrototypeInlines.h: Added.
+        (JSC::structureForPrimitiveValue):
+        (JSC::objectToString):
+        * runtime/StructureRareData.h:
+
 2019-01-03  Michael Saboff  <msaboff@apple.com>
 
         DFG IntegerRangeOptimization phase exceeding loop limit shouldn't ASSERT

@@ -1,3 +1,28 @@
+2019-01-02  Yusuke Suzuki  <yusukesuzuki@slowstart.org>
+
+        [JSC] Optimize Object.prototype.toString
+        https://bugs.webkit.org/show_bug.cgi?id=193031
+
+        Reviewed by Saam Barati.
+
+        * stress/object-tostring-changed-proto.js: Added.
+        (shouldBe):
+        (test):
+        * stress/object-tostring-changed.js: Added.
+        (shouldBe):
+        (test):
+        * stress/object-tostring-misc.js: Added.
+        (shouldBe):
+        (test):
+        (i.switch):
+        * stress/object-tostring-other.js: Added.
+        (shouldBe):
+        (test):
+        * stress/object-tostring-untyped.js: Added.
+        (shouldBe):
+        (test):
+        (i.switch):
+
 2019-01-03  Ross Kirsling  <ross.kirsling@sony.com>
 
         test262-runner misbehaves when test file YAML has a trailing space

@@ -45,6 +45,4 @@ private:
     ObjectPrototype(VM&, Structure*);
 };
 
-JS_EXPORT_PRIVATE EncodedJSValue JSC_HOST_CALL objectProtoFuncToString(ExecState*);
-
 } // namespace JSC

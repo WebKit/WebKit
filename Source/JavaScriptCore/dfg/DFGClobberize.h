@@ -681,6 +681,20 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
         write(Heap);
         return;
 
+    case ObjectToString:
+        switch (node->child1().useKind()) {
+        case OtherUse:
+            def(PureValue(node));
+            return;
+        case UntypedUse:
+            read(World);
+            write(Heap);
+            return;
+        default:
+            RELEASE_ASSERT_NOT_REACHED();
+            return;
+        }
+
     case AtomicsAdd:
     case AtomicsAnd:
     case AtomicsCompareExchange:

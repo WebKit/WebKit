@@ -63,6 +63,7 @@
 #include "JSWeakSet.h"
 #include "NumberConstructor.h"
 #include "ObjectConstructor.h"
+#include "ObjectPrototypeInlines.h"
 #include "Operations.h"
 #include "ParseInt.h"
 #include "RegExpConstructor.h"
@@ -71,6 +72,7 @@
 #include "Repatch.h"
 #include "ScopedArguments.h"
 #include "StringConstructor.h"
+#include "StructureRareDataInlines.h"
 #include "SuperSampler.h"
 #include "Symbol.h"
 #include "TypeProfilerLog.h"
@@ -2152,6 +2154,13 @@ JSString* JIT_OPERATION operationStringValueOf(ExecState* exec, EncodedJSValue e
 
     throwVMTypeError(exec, scope);
     return nullptr;
+}
+
+JSString* JIT_OPERATION operationObjectToString(ExecState* exec, EncodedJSValue source)
+{
+    VM& vm = exec->vm();
+    NativeCallFrameTracer tracer(&vm, exec);
+    return objectToString(exec, JSValue::decode(source));
 }
 
 JSCell* JIT_OPERATION operationStringSubstr(ExecState* exec, JSCell* cell, int32_t from, int32_t span)

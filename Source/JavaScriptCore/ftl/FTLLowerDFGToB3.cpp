@@ -937,6 +937,9 @@ private:
         case StringFromCharCode:
             compileStringFromCharCode();
             break;
+        case ObjectToString:
+            compileObjectToString();
+            break;
         case GetByOffset:
         case GetGetterSetterByOffset:
             compileGetByOffset();
@@ -6417,6 +6420,61 @@ private:
         default:
             DFG_CRASH(m_graph, m_node, "Bad use kind");
             break;
+        }
+    }
+
+    void compileObjectToString()
+    {
+        switch (m_node->child1().useKind()) {
+        case OtherUse: {
+            speculate(m_node->child1());
+            LValue source = lowJSValue(m_node->child1(), ManualOperandSpeculation);
+            LValue result = m_out.select(m_out.equal(source, m_out.constInt64(ValueUndefined)),
+                weakPointer(vm().smallStrings.undefinedObjectString()), weakPointer(vm().smallStrings.nullObjectString()));
+            setJSValue(result);
+            return;
+        }
+        case UntypedUse: {
+            LBasicBlock cellCase = m_out.newBlock();
+            LBasicBlock objectCase = m_out.newBlock();
+            LBasicBlock notNullCase = m_out.newBlock();
+            LBasicBlock rareDataCase = m_out.newBlock();
+            LBasicBlock slowCase = m_out.newBlock();
+            LBasicBlock continuation = m_out.newBlock();
+
+            LValue source = lowJSValue(m_node->child1());
+            m_out.branch(isCell(source, provenType(m_node->child1())), unsure(cellCase), unsure(slowCase));
+
+            LBasicBlock lastNext = m_out.appendTo(cellCase, objectCase);
+            m_out.branch(isObject(source, provenType(m_node->child1()) & SpecCell), unsure(objectCase), unsure(slowCase));
+
+            m_out.appendTo(objectCase, notNullCase);
+            LValue structure = loadStructure(source);
+            LValue previousOrRareData = m_out.loadPtr(structure, m_heaps.Structure_previousOrRareData);
+            m_out.branch(m_out.notNull(previousOrRareData), unsure(notNullCase), unsure(slowCase));
+
+            m_out.appendTo(notNullCase, rareDataCase);
+            m_out.branch(
+                m_out.notEqual(m_out.load32(previousOrRareData, m_heaps.JSCell_structureID), m_out.constInt32(m_graph.m_vm.structureStructure->structureID())),
+                unsure(rareDataCase), unsure(slowCase));
+
+            m_out.appendTo(rareDataCase, slowCase);
+            LValue objectToStringValue = m_out.loadPtr(previousOrRareData, m_heaps.StructureRareData_objectToStringValue);
+            ValueFromBlock fastResult = m_out.anchor(objectToStringValue);
+            m_out.branch(m_out.isNull(objectToStringValue), unsure(slowCase), unsure(continuation));
+
+            m_out.appendTo(slowCase, continuation);
+            LValue slowResultValue = vmCall(pointerType(), m_out.operation(operationObjectToString), m_callFrame, source);
+            ValueFromBlock slowResult = m_out.anchor(slowResultValue);
+            m_out.jump(continuation);
+
+            m_out.appendTo(continuation, lastNext);
+            setJSValue(m_out.phi(pointerType(), fastResult, slowResult));
+            return;
+        }
+        default:
+            DFG_CRASH(m_graph, m_node, "Bad use kind");
+            return;
         }
     }
     

@@ -333,6 +333,7 @@ inline CapabilityLevel canCompile(Node* node)
     case StringValueOf:
     case StringSlice:
     case ToLowerCase:
+    case ObjectToString:
     case NumberToStringWithRadix:
     case NumberToStringWithValidRadixConstant:
     case CheckSubClass:

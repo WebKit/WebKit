@@ -2147,6 +2147,11 @@ private:
             break;
         }
 
+        case ObjectToString: {
+            fixupObjectToString(node);
+            break;
+        }
+
         case StringSlice: {
             fixEdge<StringUse>(node->child1());
             fixEdge<Int32Use>(node->child2());
@@ -2926,6 +2931,15 @@ private:
             fixEdge<StringOrStringObjectUse>(node->child1());
             node->convertToToString();
             // It does not need to look up a toString property for the StringObject case. So we can clear NodeMustGenerate.
+            node->clearFlags(NodeMustGenerate);
+            return;
+        }
+    }
+
+    void fixupObjectToString(Node* node)
+    {
+        if (node->child1()->shouldSpeculateOther()) {
+            fixEdge<OtherUse>(node->child1());
             node->clearFlags(NodeMustGenerate);
             return;
         }
