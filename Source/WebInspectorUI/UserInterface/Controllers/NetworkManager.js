@@ -108,6 +108,9 @@ WI.NetworkManager = class NetworkManager extends WI.Object
 
     downloadSourceMap(sourceMapURL, baseURL, originalSourceCode)
     {
+        if (!WI.settings.sourceMapsEnabled.value)
+            return;
+
         // The baseURL could have come from a "//# sourceURL". Attempt to get a
         // reasonable absolute URL for the base by using the main resource's URL.
         if (WI.networkManager.mainFrame)

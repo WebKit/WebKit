@@ -114,6 +114,7 @@ WI.settings = {
     indentWithTabs: new WI.Setting("indent-with-tabs", false),
     resourceCachingDisabled: new WI.Setting("disable-resource-caching", false),
     selectedNetworkDetailContentViewIdentifier: new WI.Setting("network-detail-content-view-identifier", "preview"),
+    sourceMapsEnabled: new WI.Setting("source-maps-enabled", true),
     showAllRequestsBreakpoint: new WI.Setting("show-all-requests-breakpoint", true),
     showAssertionFailuresBreakpoint: new WI.Setting("show-assertion-failures-breakpoint", true),
     showCanvasPath: new WI.Setting("show-canvas-path", false),

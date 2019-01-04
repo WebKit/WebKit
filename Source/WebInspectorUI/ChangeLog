@@ -1,5 +1,23 @@
 2019-01-04  Joseph Pecoraro  <pecoraro@apple.com>
 
+        Web Inspector: Add a Setting Toggle for Source Maps
+        https://bugs.webkit.org/show_bug.cgi?id=193148
+
+        Reviewed by Devin Rousso.
+
+        * UserInterface/Controllers/NetworkManager.js:
+        (WI.NetworkManager.prototype.downloadSourceMap):
+        Don't download source maps if the setting is disabled.
+
+        * UserInterface/Base/Setting.js:
+        * UserInterface/Views/SettingsTabContentView.js:
+        (WI.SettingsTabContentView.prototype._createGeneralSettingsView):
+        Settings toggle for source maps. Enabled by default.
+
+        * Localizations/en.lproj/localizedStrings.js:
+
+2019-01-04  Joseph Pecoraro  <pecoraro@apple.com>
+
         Web Inspector: Include `globalThis` in default JavaScript completions
         https://bugs.webkit.org/show_bug.cgi?id=193147
 

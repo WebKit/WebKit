@@ -207,6 +207,7 @@ WI.SettingsTabContentView = class SettingsTabContentView extends WI.TabContentVi
         generalSettingsView.addSeparator();
 
         generalSettingsView.addSetting(WI.UIString("Debugger:"), WI.settings.showScopeChainOnPause, WI.UIString("Show Scope Chain on pause"));
+        generalSettingsView.addSetting(WI.UIString("Source maps:"), WI.settings.sourceMapsEnabled, WI.UIString("Enable source maps"));
 
         generalSettingsView.addSeparator();
 
