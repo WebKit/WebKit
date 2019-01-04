@@ -67,9 +67,6 @@ struct NetworkProcessCreationParameters {
     SandboxExtension::Handle cookieStorageDirectoryExtensionHandle;
     SandboxExtension::Handle containerCachesDirectoryExtensionHandle;
     SandboxExtension::Handle parentBundleDirectoryExtensionHandle;
-#if ENABLE(INDEXED_DATABASE)
-    SandboxExtension::Handle indexedDatabaseTempBlobDirectoryExtensionHandle;
-#endif
 #endif
     bool shouldSuppressMemoryPressureHandler { false };
     bool shouldUseTestingNetworkSession { false };
@@ -108,11 +105,6 @@ struct NetworkProcessCreationParameters {
 
 #if ENABLE(PROXIMITY_NETWORKING)
     unsigned wirelessContextIdentifier { 0 };
-#endif
-
-#if ENABLE(INDEXED_DATABASE)
-    String indexedDatabaseDirectory;
-    SandboxExtension::Handle indexedDatabaseDirectoryExtensionHandle;
 #endif
 
 #if ENABLE(SERVICE_WORKER)

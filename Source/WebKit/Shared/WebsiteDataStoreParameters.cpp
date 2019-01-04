@@ -44,6 +44,9 @@ void WebsiteDataStoreParameters::encode(IPC::Encoder& encoder) const
 
 #if ENABLE(INDEXED_DATABASE)
     encoder << indexedDatabaseDirectory << indexedDatabaseDirectoryExtensionHandle;
+#if PLATFORM(IOS_FAMILY)
+    encoder << indexedDatabaseTempBlobDirectoryExtensionHandle;
+#endif
 #endif
 
 #if ENABLE(SERVICE_WORKER)
@@ -91,6 +94,14 @@ Optional<WebsiteDataStoreParameters> WebsiteDataStoreParameters::decode(IPC::Dec
     if (!indexedDatabaseDirectoryExtensionHandle)
         return WTF::nullopt;
     parameters.indexedDatabaseDirectoryExtensionHandle = WTFMove(*indexedDatabaseDirectoryExtensionHandle);
+
+#if PLATFORM(IOS_FAMILY)
+    Optional<SandboxExtension::Handle> indexedDatabaseTempBlobDirectoryExtensionHandle;
+    decoder >> indexedDatabaseTempBlobDirectoryExtensionHandle;
+    if (!indexedDatabaseTempBlobDirectoryExtensionHandle)
+        return WTF::nullopt;
+    parameters.indexedDatabaseTempBlobDirectoryExtensionHandle = WTFMove(*indexedDatabaseTempBlobDirectoryExtensionHandle);
+#endif
 #endif
 
 #if ENABLE(SERVICE_WORKER)
@@ -116,6 +127,9 @@ WebsiteDataStoreParameters WebsiteDataStoreParameters::privateSessionParameters(
     return { { }, { }, { }, NetworkSessionCreationParameters::privateSessionParameters(sessionID)
 #if ENABLE(INDEXED_DATABASE)
         , { }, { }
+#if PLATFORM(IOS_FAMILY)
+        , { }
+#endif
 #endif
 #if ENABLE(SERVICE_WORKER)
         , { }, { }

@@ -59,6 +59,9 @@ struct WebsiteDataStoreParameters {
 #if ENABLE(INDEXED_DATABASE)
     String indexedDatabaseDirectory;
     SandboxExtension::Handle indexedDatabaseDirectoryExtensionHandle;
+#if PLATFORM(IOS_FAMILY)
+    SandboxExtension::Handle indexedDatabaseTempBlobDirectoryExtensionHandle;
+#endif
 #endif
 
 #if ENABLE(SERVICE_WORKER)

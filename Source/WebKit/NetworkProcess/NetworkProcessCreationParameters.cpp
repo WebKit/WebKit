@@ -56,9 +56,6 @@ void NetworkProcessCreationParameters::encode(IPC::Encoder& encoder) const
     encoder << cookieStorageDirectoryExtensionHandle;
     encoder << containerCachesDirectoryExtensionHandle;
     encoder << parentBundleDirectoryExtensionHandle;
-#if ENABLE(INDEXED_DATABASE)
-    encoder << indexedDatabaseTempBlobDirectoryExtensionHandle;
-#endif
 #endif
     encoder << shouldSuppressMemoryPressureHandler;
     encoder << shouldUseTestingNetworkSession;
@@ -93,10 +90,6 @@ void NetworkProcessCreationParameters::encode(IPC::Encoder& encoder) const
 
 #if ENABLE(PROXIMITY_NETWORKING)
     encoder << wirelessContextIdentifier;
-#endif
-
-#if ENABLE(INDEXED_DATABASE)
-    encoder << indexedDatabaseDirectory << indexedDatabaseDirectoryExtensionHandle;
 #endif
 
 #if ENABLE(SERVICE_WORKER)
@@ -148,14 +141,6 @@ bool NetworkProcessCreationParameters::decode(IPC::Decoder& decoder, NetworkProc
     if (!parentBundleDirectoryExtensionHandle)
         return false;
     result.parentBundleDirectoryExtensionHandle = WTFMove(*parentBundleDirectoryExtensionHandle);
-
-#if ENABLE(INDEXED_DATABASE)
-    Optional<SandboxExtension::Handle> indexedDatabaseTempBlobDirectoryExtensionHandle;
-    decoder >> indexedDatabaseTempBlobDirectoryExtensionHandle;
-    if (!indexedDatabaseTempBlobDirectoryExtensionHandle)
-        return false;
-    result.indexedDatabaseTempBlobDirectoryExtensionHandle = WTFMove(*indexedDatabaseTempBlobDirectoryExtensionHandle);
-#endif
 #endif
     if (!decoder.decode(result.shouldSuppressMemoryPressureHandler))
         return false;
@@ -219,17 +204,6 @@ bool NetworkProcessCreationParameters::decode(IPC::Decoder& decoder, NetworkProc
 #if ENABLE(PROXIMITY_NETWORKING)
     if (!decoder.decode(result.wirelessContextIdentifier))
         return false;
-#endif
-
-#if ENABLE(INDEXED_DATABASE)
-    if (!decoder.decode(result.indexedDatabaseDirectory))
-        return false;
-    
-    Optional<SandboxExtension::Handle> indexedDatabaseDirectoryExtensionHandle;
-    decoder >> indexedDatabaseDirectoryExtensionHandle;
-    if (!indexedDatabaseDirectoryExtensionHandle)
-        return false;
-    result.indexedDatabaseDirectoryExtensionHandle = WTFMove(*indexedDatabaseDirectoryExtensionHandle);
 #endif
 
 #if ENABLE(SERVICE_WORKER)

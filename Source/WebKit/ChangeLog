@@ -1,5 +1,21 @@
 2019-01-04  Alex Christensen  <achristensen@webkit.org>
 
+        Use WebsiteDataStoreParameters instead of NetworkProcessCreationParameters for IndexedDB directories
+        https://bugs.webkit.org/show_bug.cgi?id=193114
+
+        Reviewed by Brady Eidson.
+
+        * NetworkProcess/NetworkProcess.cpp:
+        (WebKit::NetworkProcess::initializeNetworkProcess):
+        * NetworkProcess/NetworkProcessCreationParameters.cpp:
+        (WebKit::NetworkProcessCreationParameters::encode const):
+        (WebKit::NetworkProcessCreationParameters::decode):
+        * NetworkProcess/NetworkProcessCreationParameters.h:
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::WebProcessPool::ensureNetworkProcess):
+
+2019-01-04  Alex Christensen  <achristensen@webkit.org>
+
         Deprecate WKContextCreate
         https://bugs.webkit.org/show_bug.cgi?id=193118
 
