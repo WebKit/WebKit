@@ -1,3 +1,15 @@
+2019-01-04  Per Arne Vollan  <pvollan@apple.com>
+
+        [iOS] Enable logging for services in sandbox
+        https://bugs.webkit.org/show_bug.cgi?id=192705
+
+        Reviewed by Brent Fulgham.
+
+        When running layout tests, we didn’t see 107 services being looked up through launchd. We should
+        add logging to these services to determine which services we actually need in the sandbox.
+
+        * Resources/SandboxProfiles/ios/com.apple.WebKit.WebContent.sb:
+
 2019-01-04  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r239603.
