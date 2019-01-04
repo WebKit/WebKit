@@ -1049,9 +1049,6 @@ test/built-ins/Object/defineProperties/15.2.3.7-5-a-16.js:
 test/built-ins/Object/defineProperties/15.2.3.7-5-b-248.js:
   default: 'TypeError: Property description must be an object.'
   strict mode: 'TypeError: Property description must be an object.'
-test/built-ins/Object/defineProperty/15.2.3.6-4-289-1.js:
-  default: "ReferenceError: Can't find variable: verifyEqualTo"
-  strict mode: "ReferenceError: Can't find variable: verifyEqualTo"
 test/built-ins/Object/internals/DefineOwnProperty/consistent-value-function-arguments.js:
   default: 'Test262Error: Expected SameValue(Â«nullÂ», Â«[object Arguments]Â») to be true'
 test/built-ins/Object/internals/DefineOwnProperty/consistent-value-function-caller.js:
@@ -6782,18 +6779,6 @@ test/language/expressions/object/method-definition/yield-as-function-expression-
   strict mode: "SyntaxError: Cannot use 'yield' as a function name in strict mode."
 test/language/expressions/object/method-definition/yield-as-identifier-in-nested-function.js:
   strict mode: "SyntaxError: Unexpected keyword 'yield'. Cannot use yield expression out of generator."
-test/language/expressions/object/method-definition/yield-as-logical-or-expression.js:
-  default: "SyntaxError: Unexpected token '?'"
-  strict mode: "SyntaxError: Unexpected token '?'"
-test/language/expressions/object/method-definition/yield-as-parameter.js:
-  default: "SyntaxError: Cannot use 'yield' as a parameter name in a generator function."
-  strict mode: "SyntaxError: Cannot use 'yield' as a parameter name in strict mode."
-test/language/expressions/object/method-definition/yield-star-after-newline.js:
-  default: "SyntaxError: Unexpected token '*'"
-  strict mode: "SyntaxError: Unexpected token '*'"
-test/language/expressions/object/method-definition/yield-weak-binding.js:
-  default: "SyntaxError: Unexpected number '3'"
-  strict mode: "SyntaxError: Unexpected number '3'"
 test/language/expressions/object/scope-gen-meth-body-lex-distinct.js:
   default: 'Test262Error: Expected a SyntaxError to be thrown but no exception was thrown at all'
 test/language/expressions/object/scope-gen-meth-param-elem-var-close.js:
@@ -6953,9 +6938,6 @@ test/language/global-code/script-decl-func-err-non-extensible.js:
 test/language/global-code/script-decl-var-err.js:
   default: 'Test262Error: Expected a TypeError to be thrown but no exception was thrown at all'
   strict mode: 'Test262Error: Expected a TypeError to be thrown but no exception was thrown at all'
-test/language/identifiers/val-yield-strict.js:
-  default: 'Test262: This statement should not be evaluated.'
-  strict mode: "SyntaxError: Cannot use 'yield' as a variable name in strict mode."
 test/language/literals/numeric/numeric-separator-literal-bil-bd-nsl-bd.js:
   default: 'SyntaxError: No space between binary literal and identifier'
   strict mode: 'SyntaxError: No space between binary literal and identifier'
@@ -7158,8 +7140,7 @@ test/language/module-code/instn-resolve-order-depth.js:
 test/language/module-code/instn-resolve-order-src.js:
   module: "SyntaxError: 'break' is only valid inside a switch or loop statement."
 test/language/module-code/instn-star-as-props-dflt-skip.js:
-  default: "SyntaxError: Unexpected token '{'. import call expects exactly one argument."
-  strict mode: "SyntaxError: Unexpected token '{'. import call expects exactly one argument."
+  module: "SyntaxError: Unexpected identifier 'as'. Expected 'from' before exported module name."
 test/language/module-code/instn-star-props-nrml.js:
   module: "SyntaxError: Unexpected identifier 'as'. Expected 'from' before exported module name."
 test/language/module-code/namespace/internals/define-own-property.js:
@@ -7193,24 +7174,6 @@ test/language/statements/class/class-name-ident-static.js:
 test/language/statements/class/classelementname-abrupt-completion.js:
   default: "SyntaxError: Unexpected token '}'. Expected an opening '(' before a method's parameter list."
   strict mode: "SyntaxError: Unexpected token '}'. Expected an opening '(' before a method's parameter list."
-test/language/statements/class/definition/methods-gen-yield-as-function-expression-binding-identifier.js:
-  default: "SyntaxError: Cannot use 'yield' as a function name in strict mode."
-  strict mode: "SyntaxError: Cannot use 'yield' as a function name in strict mode."
-test/language/statements/class/definition/methods-gen-yield-as-identifier-in-nested-function.js:
-  default: "SyntaxError: Unexpected keyword 'yield'. Cannot use yield expression out of generator."
-  strict mode: "SyntaxError: Unexpected keyword 'yield'. Cannot use yield expression out of generator."
-test/language/statements/class/definition/methods-gen-yield-as-logical-or-expression.js:
-  default: "SyntaxError: Unexpected token '?'"
-  strict mode: "SyntaxError: Unexpected token '?'"
-test/language/statements/class/definition/methods-gen-yield-as-parameter.js:
-  default: "SyntaxError: Cannot use 'yield' as a parameter name in strict mode."
-  strict mode: "SyntaxError: Cannot use 'yield' as a parameter name in strict mode."
-test/language/statements/class/definition/methods-gen-yield-star-after-newline.js:
-  default: "SyntaxError: Unexpected token '*'"
-  strict mode: "SyntaxError: Unexpected token '*'"
-test/language/statements/class/definition/methods-gen-yield-weak-binding.js:
-  default: "SyntaxError: Unexpected number '3'"
-  strict mode: "SyntaxError: Unexpected number '3'"
 test/language/statements/class/dstr-private-gen-meth-ary-init-iter-close.js:
   default: "SyntaxError: Invalid character: '#'"
   strict mode: "SyntaxError: Invalid character: '#'"
@@ -11072,9 +11035,6 @@ test/language/statements/labeled/value-await-non-module-escaped.js:
 test/language/statements/labeled/value-yield-non-strict-escaped.js:
   default: "SyntaxError: Unexpected escaped characters in keyword token: 'yi\\u0065ld'"
 test/language/statements/labeled/value-yield-non-strict.js:
-  strict mode: "SyntaxError: Cannot use 'yield' as a label in strict mode."
-test/language/statements/labeled/value-yield-strict.js:
-  default: 'Test262: This statement should not be evaluated.'
   strict mode: "SyntaxError: Cannot use 'yield' as a label in strict mode."
 test/language/statements/let/block-local-closure-set-before-initialization.js:
   default: 'Test262Error: Expected a ReferenceError to be thrown but no exception was thrown at all'

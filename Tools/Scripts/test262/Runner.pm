@@ -871,7 +871,7 @@ sub parseData {
 
     my $parsed;
     my $found = '';
-    if ($contents =~ /\/\*(---[\r\n]+[\S\s]*)[\r\n]+---\*\//m) {
+    if ($contents =~ /\/\*(---[\r\n]+[\S\s]*)[\r\n]+\s*---\*\//m) {
         $found = $1;
     };
 

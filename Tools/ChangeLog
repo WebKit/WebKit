@@ -1,3 +1,14 @@
+2019-01-03  Ross Kirsling  <ross.kirsling@sony.com>
+
+        test262-runner misbehaves when test file YAML has a trailing space
+        https://bugs.webkit.org/show_bug.cgi?id=193053
+
+        Reviewed by Yusuke Suzuki.
+
+        * Scripts/test262/Runner.pm:
+        (parseData):
+        Accept trailing space when parsing a test file's YAML block.
+
 2019-01-03  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         UserMedia test should use WKPageNavigationClient

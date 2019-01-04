@@ -1,3 +1,13 @@
+2019-01-03  Ross Kirsling  <ross.kirsling@sony.com>
+
+        test262-runner misbehaves when test file YAML has a trailing space
+        https://bugs.webkit.org/show_bug.cgi?id=193053
+
+        Reviewed by Yusuke Suzuki.
+
+        * test262/expectations.yaml:
+        Mark two dozen tests as passing (and correct the output of another).
+
 2018-12-30  Yusuke Suzuki  <yusukesuzuki@slowstart.org>
 
         Unreviewed, JSTests gardening with memoryLimited
