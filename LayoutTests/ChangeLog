@@ -1,3 +1,17 @@
+2019-01-04  Youenn Fablet  <youenn@apple.com>
+
+        CSP violation reports should bypass CSP checks
+        https://bugs.webkit.org/show_bug.cgi?id=192857
+        <rdar://problem/46887236>
+
+        Reviewed by Chris Dumez.
+
+        * http/wpt/fetch/csp-reports-bypass-csp-checks-expected.txt: Added.
+        * http/wpt/fetch/csp-reports-bypass-csp-checks.html: Added.
+        * http/wpt/fetch/csp-reports-bypass-csp-checks.html.headers: Added.
+        * http/wpt/fetch/resources/store-csp-report.py: Added.
+        (main):
+
 2019-01-04  Chris Fleizach  <cfleizach@apple.com>
 
         AX: String check: "Rule" does not reflect the meaning of the <hr> html tag

@@ -1,3 +1,30 @@
+2019-01-04  Youenn Fablet  <youenn@apple.com>
+
+        CSP violation reports should bypass CSP checks
+        https://bugs.webkit.org/show_bug.cgi?id=192857
+        <rdar://problem/46887236>
+
+        Reviewed by Chris Dumez.
+
+        For ping loads, pass the option to do CSP checks from PingLoader to LoaderStrategy.
+        This new option is unused by WebKit Legacy.
+        It is used by WebKit loader strategy to only send any CSP response header to network process
+        in case CSP checks should be done.
+
+        This option is used to disable CSP checks for Ping Loads that report CSP violations.
+
+        Test: http/wpt/fetch/csp-reports-bypass-csp-checks.html
+
+        * loader/LoaderStrategy.h:
+        * loader/PingLoader.cpp:
+        (WebCore::PingLoader::loadImage):
+        (WebCore::PingLoader::sendPing):
+        (WebCore::PingLoader::sendViolationReport):
+        (WebCore::PingLoader::startPingLoad):
+        * loader/PingLoader.h:
+        * loader/cache/CachedResource.cpp:
+        (WebCore::CachedResource::load):
+
 2019-01-04  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [Cocoa] Merge WebEditCommandProxy::nameForEditAction and undoNameForEditAction into a single function

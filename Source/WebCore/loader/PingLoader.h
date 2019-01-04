@@ -47,6 +47,8 @@ enum class ViolationReportType {
     XSSAuditor,
 };
 
+enum class ContentSecurityPolicyImposition : uint8_t;
+
 class PingLoader {
 public:
     static void loadImage(Frame&, const URL&);
@@ -55,7 +57,7 @@ public:
 
 private:
     enum class ShouldFollowRedirects { No, Yes };
-    static void startPingLoad(Frame&, ResourceRequest&, HTTPHeaderMap&& originalRequestHeaders, ShouldFollowRedirects);
+    static void startPingLoad(Frame&, ResourceRequest&, HTTPHeaderMap&& originalRequestHeaders, ShouldFollowRedirects, ContentSecurityPolicyImposition);
 };
 
 } // namespace WebCore
