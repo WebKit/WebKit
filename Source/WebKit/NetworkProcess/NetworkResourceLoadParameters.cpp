@@ -36,6 +36,7 @@ void NetworkResourceLoadParameters::encode(IPC::Encoder& encoder) const
     encoder << identifier;
     encoder << webPageID;
     encoder << webFrameID;
+    encoder << parentPID;
     encoder << sessionID;
     encoder << request;
 
@@ -111,6 +112,9 @@ bool NetworkResourceLoadParameters::decode(IPC::Decoder& decoder, NetworkResourc
         return false;
 
     if (!decoder.decode(result.webFrameID))
+        return false;
+
+    if (!decoder.decode(result.parentPID))
         return false;
 
     if (!decoder.decode(result.sessionID))

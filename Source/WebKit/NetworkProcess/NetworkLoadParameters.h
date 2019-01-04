@@ -30,6 +30,7 @@
 #include <WebCore/ResourceLoaderOptions.h>
 #include <WebCore/ResourceRequest.h>
 #include <pal/SessionID.h>
+#include <wtf/ProcessID.h>
 
 namespace WebKit {
 
@@ -39,6 +40,7 @@ class NetworkLoadParameters {
 public:
     uint64_t webPageID { 0 };
     uint64_t webFrameID { 0 };
+    WTF::ProcessID parentPID { 0 };
     PAL::SessionID sessionID { PAL::SessionID::emptySessionID() };
     WebCore::ResourceRequest request;
     WebCore::ContentSniffingPolicy contentSniffingPolicy { WebCore::ContentSniffingPolicy::SniffContent };

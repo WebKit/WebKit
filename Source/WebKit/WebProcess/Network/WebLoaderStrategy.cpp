@@ -61,6 +61,7 @@
 #include <WebCore/PlatformStrategies.h>
 #include <WebCore/ReferrerPolicy.h>
 #include <WebCore/ResourceLoader.h>
+#include <WebCore/RuntimeApplicationChecks.h>
 #include <WebCore/RuntimeEnabledFeatures.h>
 #include <WebCore/SecurityOrigin.h>
 #include <WebCore/Settings.h>
@@ -268,6 +269,7 @@ void WebLoaderStrategy::scheduleLoadFromNetworkProcess(ResourceLoader& resourceL
     loadParameters.identifier = identifier;
     loadParameters.webPageID = trackingParameters.pageID;
     loadParameters.webFrameID = trackingParameters.frameID;
+    loadParameters.parentPID = presentingApplicationPID();
     loadParameters.sessionID = sessionID;
     loadParameters.request = request;
     loadParameters.contentSniffingPolicy = contentSniffingPolicy;
@@ -531,6 +533,7 @@ void WebLoaderStrategy::loadResourceSynchronously(FrameLoader& frameLoader, unsi
     loadParameters.identifier = resourceLoadIdentifier;
     loadParameters.webPageID = pageID;
     loadParameters.webFrameID = frameID;
+    loadParameters.parentPID = presentingApplicationPID();
     loadParameters.sessionID = sessionID;
     loadParameters.request = request;
     loadParameters.contentSniffingPolicy = ContentSniffingPolicy::SniffContent;
@@ -585,6 +588,7 @@ void WebLoaderStrategy::startPingLoad(Frame& frame, ResourceRequest& request, co
     loadParameters.identifier = generateLoadIdentifier();
     loadParameters.request = request;
     loadParameters.sourceOrigin = &document->securityOrigin();
+    loadParameters.parentPID = presentingApplicationPID();
     loadParameters.sessionID = frame.page() ? frame.page()->sessionID() : PAL::SessionID::defaultSessionID();
     loadParameters.storedCredentialsPolicy = options.credentials == FetchOptions::Credentials::Omit ? StoredCredentialsPolicy::DoNotUse : StoredCredentialsPolicy::Use;
     loadParameters.options = options;
@@ -644,6 +648,7 @@ void WebLoaderStrategy::preconnectTo(FrameLoader& frameLoader, const URL& url, S
     parameters.request = ResourceRequest { url };
     parameters.webPageID = webPage ? webPage->pageID() : 0;
     parameters.webFrameID = webFrame ? webFrame->frameID() : 0;
+    parameters.parentPID = presentingApplicationPID();
     parameters.sessionID = webPage ? webPage->sessionID() : PAL::SessionID::defaultSessionID();
     parameters.storedCredentialsPolicy = storedCredentialsPolicy;
     parameters.shouldPreconnectOnly = PreconnectOnly::Yes;
