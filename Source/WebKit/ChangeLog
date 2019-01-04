@@ -1,3 +1,10 @@
+2019-01-04  Tim Horton  <timothy_horton@apple.com>
+
+        Remove some nonexistent files from the WebKit Xcode project
+
+        * WebKit.xcodeproj/project.pbxproj:
+        r238468 and r237205 forgot to remove some files from the project.
+
 2019-01-04  Youenn Fablet  <youenn@apple.com>
 
         CSP violation reports should bypass CSP checks
