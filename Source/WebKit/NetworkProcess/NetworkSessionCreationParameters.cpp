@@ -45,7 +45,7 @@ NetworkSessionCreationParameters NetworkSessionCreationParameters::privateSessio
         , { }, { }, { }, false, { }, { }, { }
 #endif
 #if USE(CURL)
-        , { }
+        , { }, { }
 #endif
     };
 }
@@ -65,6 +65,7 @@ void NetworkSessionCreationParameters::encode(IPC::Encoder& encoder) const
     encoder << httpsProxy;
 #endif
 #if USE(CURL)
+    encoder << cookiePersistentStorageFile;
     encoder << proxySettings;
 #endif
 }
@@ -122,6 +123,11 @@ Optional<NetworkSessionCreationParameters> NetworkSessionCreationParameters::dec
 #endif
     
 #if USE(CURL)
+    Optional<String> cookiePersistentStorageFile;
+    decoder >> cookiePersistentStorageFile;
+    if (!cookiePersistentStorageFile)
+        return WTF::nullopt;
+
     Optional<WebCore::CurlProxySettings> proxySettings;
     decoder >> proxySettings;
     if (!proxySettings)
@@ -142,6 +148,7 @@ Optional<NetworkSessionCreationParameters> NetworkSessionCreationParameters::dec
         , WTFMove(*httpsProxy)
 #endif
 #if USE(CURL)
+        , WTFMove(*cookiePersistentStorageFile)
         , WTFMove(*proxySettings)
 #endif
     }};

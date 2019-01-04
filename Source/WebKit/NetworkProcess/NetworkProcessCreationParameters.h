@@ -96,8 +96,6 @@ struct NetworkProcessCreationParameters {
     bool ignoreTLSErrors { false };
     Vector<String> languages;
     WebCore::SoupNetworkProxySettings proxySettings;
-#elif USE(CURL)
-    String cookiePersistentStorageFile;
 #endif
 
     Vector<String> urlSchemesRegisteredAsSecure;

@@ -81,8 +81,6 @@ void NetworkProcessCreationParameters::encode(IPC::Encoder& encoder) const
     encoder << ignoreTLSErrors;
     encoder << languages;
     encoder << proxySettings;
-#elif USE(CURL)
-    encoder << cookiePersistentStorageFile;
 #endif
 
     encoder << urlSchemesRegisteredAsSecure;
@@ -200,9 +198,6 @@ bool NetworkProcessCreationParameters::decode(IPC::Decoder& decoder, NetworkProc
     if (!decoder.decode(result.languages))
         return false;
     if (!decoder.decode(result.proxySettings))
-        return false;
-#elif USE(CURL)
-    if (!decoder.decode(result.cookiePersistentStorageFile))
         return false;
 #endif
 

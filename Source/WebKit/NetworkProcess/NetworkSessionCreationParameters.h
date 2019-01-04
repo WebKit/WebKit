@@ -66,6 +66,7 @@ struct NetworkSessionCreationParameters {
     URL httpsProxy;
 #endif
 #if USE(CURL)
+    String cookiePersistentStorageFile;
     WebCore::CurlProxySettings proxySettings;
 #endif
 };

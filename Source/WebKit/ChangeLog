@@ -1,3 +1,29 @@
+2019-01-04  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [curl] Move cookiePersistentStorageFile from NetworkProcessCreationParameters to NetworkSessionCreationParameters
+        https://bugs.webkit.org/show_bug.cgi?id=192970
+
+        Reviewed by Alex Christensen.
+
+        * NetworkProcess/NetworkProcessCreationParameters.cpp:
+        (WebKit::NetworkProcessCreationParameters::encode const): Removed code for cookiePersistentStorageFile.
+        (WebKit::NetworkProcessCreationParameters::decode): Ditto.
+        * NetworkProcess/NetworkProcessCreationParameters.h: Ditto.
+        * NetworkProcess/curl/NetworkProcessCurl.cpp:
+        (WebKit::NetworkProcess::platformInitializeNetworkProcess): Ditto.
+
+        * NetworkProcess/NetworkSessionCreationParameters.cpp:
+        (WebKit::NetworkSessionCreationParameters::privateSessionParameters): Added code for cookiePersistentStorageFile.
+        (WebKit::NetworkSessionCreationParameters::encode const): Ditto.
+        (WebKit::NetworkSessionCreationParameters::decode): Ditto.
+        * NetworkProcess/NetworkSessionCreationParameters.h: Ditto.
+        * NetworkProcess/curl/NetworkSessionCurl.cpp:
+        (WebKit::NetworkSessionCurl::NetworkSessionCurl): Ditto.
+
+        * NetworkProcess/Cookies/WebCookieManager.h: Removed setCookiePersistentStorage method of curl port extension.
+        * NetworkProcess/Cookies/curl/WebCookieManagerCurl.cpp:
+        (WebKit::WebCookieManager::setCookiePersistentStorage): Deleted.
+
 2019-01-04  Chris Dumez  <cdumez@apple.com>
 
         [PSON] Calling history.back() from inside the load event handler prevents process-swapping
