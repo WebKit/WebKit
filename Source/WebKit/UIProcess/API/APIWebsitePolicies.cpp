@@ -56,7 +56,7 @@ WebKit::WebsitePoliciesData WebsitePolicies::data()
     Optional<WebKit::WebsiteDataStoreParameters> parameters;
     if (m_websiteDataStore)
         parameters = m_websiteDataStore->websiteDataStore().parameters();
-    return { contentBlockersEnabled(), allowedAutoplayQuirks(), autoplayPolicy(), customHeaderFields(), popUpPolicy(), WTFMove(parameters), m_customUserAgent, m_customNavigatorPlatform };
+    return { contentBlockersEnabled(), deviceOrientationEventEnabled(), allowedAutoplayQuirks(), autoplayPolicy(), customHeaderFields(), popUpPolicy(), WTFMove(parameters), m_customUserAgent, m_customNavigatorPlatform };
 }
 
 }

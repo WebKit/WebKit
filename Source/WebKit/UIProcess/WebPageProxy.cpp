@@ -8472,6 +8472,11 @@ void WebPageProxy::willAcquireUniversalFileReadSandboxExtension()
     process().willAcquireUniversalFileReadSandboxExtension();
 }
 
+void WebPageProxy::simulateDeviceOrientationChange(double alpha, double beta, double gamma)
+{
+    m_process->send(Messages::WebPage::SimulateDeviceOrientationChange(alpha, beta, gamma), m_pageID);
+}
+
 #if ENABLE(DATA_DETECTION)
 
 void WebPageProxy::detectDataInAllFrames(WebCore::DataDetectorTypes types, CompletionHandler<void(const DataDetectionResult&)>&& completionHandler)

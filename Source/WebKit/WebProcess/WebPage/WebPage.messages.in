@@ -543,4 +543,5 @@ messages -> WebPage LegacyReceiver {
     SetDefersLoading(bool defersLoading)
 
     UpdateCurrentModifierState(OptionSet<WebCore::PlatformEvent::Modifier> modifiers)
+    SimulateDeviceOrientationChange(double alpha, double beta, double gamma)
 }

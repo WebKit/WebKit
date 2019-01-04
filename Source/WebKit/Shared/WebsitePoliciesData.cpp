@@ -37,6 +37,7 @@ namespace WebKit {
 void WebsitePoliciesData::encode(IPC::Encoder& encoder) const
 {
     encoder << contentBlockersEnabled;
+    encoder << deviceOrientationEventEnabled;
     encoder << autoplayPolicy;
     encoder << allowedAutoplayQuirks;
     encoder << customHeaderFields;
@@ -51,6 +52,11 @@ Optional<WebsitePoliciesData> WebsitePoliciesData::decode(IPC::Decoder& decoder)
     Optional<bool> contentBlockersEnabled;
     decoder >> contentBlockersEnabled;
     if (!contentBlockersEnabled)
+        return WTF::nullopt;
+
+    Optional<bool> deviceOrientationEventEnabled;
+    decoder >> deviceOrientationEventEnabled;
+    if (!deviceOrientationEventEnabled)
         return WTF::nullopt;
     
     Optional<WebsiteAutoplayPolicy> autoplayPolicy;
@@ -90,6 +96,7 @@ Optional<WebsitePoliciesData> WebsitePoliciesData::decode(IPC::Decoder& decoder)
     
     return { {
         WTFMove(*contentBlockersEnabled),
+        WTFMove(*deviceOrientationEventEnabled),
         WTFMove(*allowedAutoplayQuirks),
         WTFMove(*autoplayPolicy),
         WTFMove(*customHeaderFields),
@@ -105,6 +112,7 @@ void WebsitePoliciesData::applyToDocumentLoader(WebsitePoliciesData&& websitePol
     documentLoader.setCustomHeaderFields(WTFMove(websitePolicies.customHeaderFields));
     documentLoader.setCustomUserAgent(websitePolicies.customUserAgent);
     documentLoader.setCustomNavigatorPlatform(websitePolicies.customNavigatorPlatform);
+    documentLoader.setDeviceOrientationEventEnabled(websitePolicies.deviceOrientationEventEnabled);
     
     // Only setUserContentExtensionsEnabled if it hasn't already been disabled by reloading without content blockers.
     if (documentLoader.userContentExtensionsEnabled())

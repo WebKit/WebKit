@@ -1,5 +1,38 @@
 2019-01-04  Chris Dumez  <cdumez@apple.com>
 
+        Add support for toggling device orientation API support per site
+        https://bugs.webkit.org/show_bug.cgi?id=193143
+        <rdar://problem/46605724>
+
+        Reviewed by Alex Christensen.
+
+        Add support for toggling device orientation API support per site via _WKWebsitePolicies.
+
+        * Shared/WebsitePoliciesData.cpp:
+        (WebKit::WebsitePoliciesData::encode const):
+        (WebKit::WebsitePoliciesData::decode):
+        (WebKit::WebsitePoliciesData::applyToDocumentLoader):
+        * Shared/WebsitePoliciesData.h:
+        * UIProcess/API/APIWebsitePolicies.cpp:
+        (API::WebsitePolicies::data):
+        * UIProcess/API/APIWebsitePolicies.h:
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _simulateDeviceOrientationChangeWithAlpha:beta:gamma:]):
+        * UIProcess/API/Cocoa/WKWebViewPrivate.h:
+        * UIProcess/API/Cocoa/_WKWebsitePolicies.h:
+        * UIProcess/API/Cocoa/_WKWebsitePolicies.mm:
+        (-[_WKWebsitePolicies setDeviceOrientationEventEnabled:]):
+        (-[_WKWebsitePolicies deviceOrientationEventEnabled]):
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::simulateDeviceOrientationChange):
+        * UIProcess/WebPageProxy.h:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::simulateDeviceOrientationChange):
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/WebPage.messages.in:
+
+2019-01-04  Chris Dumez  <cdumez@apple.com>
+
         Crash under WebPageProxy::continueNavigationInNewProcess()
         https://bugs.webkit.org/show_bug.cgi?id=193113
         <rdar://problem/46938686>

@@ -1459,6 +1459,8 @@ private:
     void didReceivePasswordForQuickLookDocument(const String&);
 #endif
 
+    void simulateDeviceOrientationChange(double alpha, double beta, double gamma);
+
     void frameBecameRemote(uint64_t frameID, WebCore::GlobalFrameIdentifier&& remoteFrameIdentifier, WebCore::GlobalWindowIdentifier&& remoteWindowIdentifier);
 
     void registerURLSchemeHandler(uint64_t identifier, const String& scheme);

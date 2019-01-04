@@ -1839,9 +1839,9 @@ bool DOMWindow::addEventListener(const AtomicString& eventType, Ref<EventListene
 #endif
 
 #if ENABLE(DEVICE_ORIENTATION)
-    if (frame() && frame()->settings().deviceOrientationEventEnabled()) {
+    if (frame() && frame()->settings().deviceOrientationEventEnabled() && document() && document()->loader() && document()->loader()->deviceOrientationEventEnabled()) {
 #if PLATFORM(IOS_FAMILY)
-        if ((eventType == eventNames().devicemotionEvent || eventType == eventNames().deviceorientationEvent) && document()) {
+        if ((eventType == eventNames().devicemotionEvent || eventType == eventNames().deviceorientationEvent)) {
             if (isSameSecurityOriginAsMainFrame() && isSecureContext()) {
                 if (eventType == eventNames().deviceorientationEvent)
                     document()->deviceOrientationController()->addDeviceEventListener(this);
@@ -1859,13 +1859,13 @@ bool DOMWindow::addEventListener(const AtomicString& eventType, Ref<EventListene
             if (isSameSecurityOriginAsMainFrame() && isSecureContext()) {
                 if (DeviceMotionController* controller = DeviceMotionController::from(page()))
                     controller->addDeviceEventListener(this);
-            } else if (document())
+            } else
                 document()->addConsoleMessage(MessageSource::JS, MessageLevel::Warning, "Blocked attempt to add a device motion listener from child frame that wasn't the same security origin as the main page."_s);
         } else if (eventType == eventNames().deviceorientationEvent) {
             if (isSameSecurityOriginAsMainFrame() && isSecureContext()) {
                 if (DeviceOrientationController* controller = DeviceOrientationController::from(page()))
                     controller->addDeviceEventListener(this);
-            } else if (document()) {
+            } else {
                 if (isSecureContext())
                     document()->addConsoleMessage(MessageSource::JS, MessageLevel::Warning, "Blocked attempt to add a device orientation listener from child frame that wasn't the same security origin as the main page."_s);
                 else

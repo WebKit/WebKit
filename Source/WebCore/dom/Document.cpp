@@ -6230,6 +6230,12 @@ DeviceOrientationController* Document::deviceOrientationController() const
     return m_deviceOrientationController.get();
 }
 
+void Document::simulateDeviceOrientationChange(double alpha, double beta, double gamma)
+{
+    auto orientation = DeviceOrientationData::create(alpha, beta, gamma, WTF::nullopt, WTF::nullopt);
+    deviceOrientationController()->didChangeDeviceOrientation(orientation.ptr());
+}
+
 #endif
 
 #if ENABLE(FULLSCREEN_API)

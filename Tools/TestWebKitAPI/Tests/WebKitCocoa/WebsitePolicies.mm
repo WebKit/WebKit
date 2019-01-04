@@ -38,6 +38,7 @@
 #import <WebKit/_WKUserContentExtensionStorePrivate.h>
 #import <WebKit/_WKWebsiteDataStoreConfiguration.h>
 #import <WebKit/_WKWebsitePolicies.h>
+#import <wtf/Function.h>
 #import <wtf/HashMap.h>
 #import <wtf/MainThread.h>
 #import <wtf/RetainPtr.h>
@@ -908,8 +909,10 @@ static unsigned loadCount;
 
 @interface DataMappingSchemeHandler : NSObject <WKURLSchemeHandler> {
     HashMap<String, RetainPtr<NSData *>> _dataMappings;
+    Function<void(id <WKURLSchemeTask>)> _taskHandler;
 }
 - (void)addMappingFromURLString:(NSString *)urlString toData:(const char*)data;
+- (void)setTaskHandler:(Function<void(id <WKURLSchemeTask>)>&&)handler;
 @end
 
 @implementation DataMappingSchemeHandler
@@ -919,12 +922,18 @@ static unsigned loadCount;
     _dataMappings.set(urlString, [NSData dataWithBytesNoCopy:(void*)data length:strlen(data) freeWhenDone:NO]);
 }
 
+- (void)setTaskHandler:(Function<void(id <WKURLSchemeTask>)>&&)handler
+{
+    _taskHandler = WTFMove(handler);
+}
+
 - (void)webView:(WKWebView *)webView startURLSchemeTask:(id <WKURLSchemeTask>)task
 {
     NSURL *finalURL = task.request.URL;
 
     ++loadCount;
-    EXPECT_STREQ("Foo Custom UserAgent", [[task.request valueForHTTPHeaderField:@"User-Agent"] UTF8String]);
+    if (_taskHandler)
+        _taskHandler(task);
 
     auto response = adoptNS([[NSURLResponse alloc] initWithURL:finalURL MIMEType:@"text/html" expectedContentLength:1 textEncodingName:nil]);
     [task didReceiveResponse:response.get()];
@@ -997,6 +1006,9 @@ TEST(WebKit, WebsitePoliciesCustomUserAgent)
     auto schemeHandler = adoptNS([[DataMappingSchemeHandler alloc] init]);
     [schemeHandler addMappingFromURLString:@"test://www.webkit.org/main.html" toData:customUserAgentMainFrameTestBytes];
     [schemeHandler addMappingFromURLString:@"test://www.apple.com/subframe.html" toData:customUserAgentSubFrameTestBytes];
+    [schemeHandler setTaskHandler:[](id <WKURLSchemeTask> task) {
+        EXPECT_STREQ("Foo Custom UserAgent", [[task.request valueForHTTPHeaderField:@"User-Agent"] UTF8String]);
+    }];
     [configuration setURLSchemeHandler:schemeHandler.get() forURLScheme:@"test"];
 
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
@@ -1065,6 +1077,90 @@ TEST(WebKit, WebsitePoliciesCustomNavigatorPlatform)
     EXPECT_STREQ("Test Custom Platform", [[webView stringByEvaluatingJavaScript:@"navigator.platform"] UTF8String]);
 }
 
+#if PLATFORM(IOS_FAMILY)
+
+static const char* deviceOrientationEventTestBytes = R"TESTRESOURCE(
+<script>
+addEventListener("deviceorientation", (event) => {
+    webkit.messageHandlers.testHandler.postMessage("received-device-orientation-event");
+});
+</script>
+)TESTRESOURCE";
+
+@interface WebsitePoliciesDeviceOrientationDelegate : NSObject <WKNavigationDelegate> {
+    BOOL _deviceOrientationEventEnabled;
+}
+- (instancetype)initWithDeviceOrientationEventEnabled:(BOOL)enabled;
+@end
+
+@implementation WebsitePoliciesDeviceOrientationDelegate
+
+- (instancetype)initWithDeviceOrientationEventEnabled:(BOOL)enabled
+{
+    self = [super init];
+    _deviceOrientationEventEnabled = enabled;
+    return self;
+}
+
+- (void)_webView:(WKWebView *)webView decidePolicyForNavigationAction:(WKNavigationAction *)navigationAction userInfo:(id <NSSecureCoding>)userInfo decisionHandler:(void (^)(WKNavigationActionPolicy, _WKWebsitePolicies *))decisionHandler
+{
+    _WKWebsitePolicies *websitePolicies = [[[_WKWebsitePolicies alloc] init] autorelease];
+    [websitePolicies setDeviceOrientationEventEnabled:_deviceOrientationEventEnabled];
+
+    decisionHandler(WKNavigationActionPolicyAllow, websitePolicies);
+}
+
+- (void)webView:(WKWebView *)webView didFinishNavigation:(WKNavigation *)navigation
+{
+    finishedNavigation = true;
+}
+
+@end
+
+static void runWebsitePoliciesDeviceOrientationEventTest(bool websitePolicyValue)
+{
+    auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+
+    auto schemeHandler = adoptNS([[DataMappingSchemeHandler alloc] init]);
+    [schemeHandler addMappingFromURLString:@"test://localhost/main.html" toData:deviceOrientationEventTestBytes];
+    [configuration setURLSchemeHandler:schemeHandler.get() forURLScheme:@"test"];
+
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
+
+    auto delegate = adoptNS([[WebsitePoliciesDeviceOrientationDelegate alloc] initWithDeviceOrientationEventEnabled:websitePolicyValue]);
+    [webView setNavigationDelegate:delegate.get()];
+
+    NSURLRequest *request = [NSURLRequest requestWithURL:[NSURL URLWithString:@"test://localhost/main.html"]];
+    [webView loadRequest:request];
+    TestWebKitAPI::Util::run(&finishedNavigation);
+    finishedNavigation = false;
+
+    __block bool didReceiveMessage = false;
+    [webView performAfterReceivingMessage:@"received-device-orientation-event" action:^{
+        didReceiveMessage = true;
+    }];
+
+    [webView _simulateDeviceOrientationChangeWithAlpha:1.0 beta:2.0 gamma:3.0];
+
+    if (websitePolicyValue)
+        TestWebKitAPI::Util::run(&didReceiveMessage);
+    else {
+        TestWebKitAPI::Util::sleep(0.1);
+        EXPECT_FALSE(didReceiveMessage);
+    }
+}
+
+TEST(WebKit, WebsitePoliciesDeviceOrientationEventEnabled)
+{
+    runWebsitePoliciesDeviceOrientationEventTest(true);
+}
+
+TEST(WebKit, WebsitePoliciesDeviceOrientationEventDisabled)
+{
+    runWebsitePoliciesDeviceOrientationEventTest(false);
+}
+
+#endif // PLATFORM(IOS_FAMILY)
 
 @interface PopUpPoliciesDelegate : NSObject <WKNavigationDelegate, WKUIDelegatePrivate>
 @property (nonatomic, copy) _WKWebsitePopUpPolicy(^popUpPolicyForURL)(NSURL *);

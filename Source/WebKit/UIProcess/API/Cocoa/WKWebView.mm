@@ -4806,6 +4806,11 @@ FOR_EACH_PRIVATE_WKCONTENTVIEW_ACTION(FORWARD_ACTION_TO_WKCONTENTVIEW)
     return nil;
 }
 
+- (void)_simulateDeviceOrientationChangeWithAlpha:(double)alpha beta:(double)beta gamma:(double)gamma
+{
+    _page->simulateDeviceOrientationChange(alpha, beta, gamma);
+}
+
 + (BOOL)_handlesSafeBrowsing
 {
     return true;

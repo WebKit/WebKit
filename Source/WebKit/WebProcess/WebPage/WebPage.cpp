@@ -6385,6 +6385,17 @@ void WebPage::didCompleteShareSheet(bool wasGranted, ShareSheetCallbackID callba
     callback(wasGranted);
 }
 
+void WebPage::simulateDeviceOrientationChange(double alpha, double beta, double gamma)
+{
+#if ENABLE(DEVICE_ORIENTATION) && PLATFORM(IOS_FAMILY)
+    auto* frame = mainFrame();
+    if (!frame || !frame->document())
+        return;
+
+    frame->document()->simulateDeviceOrientationChange(alpha, beta, gamma);
+#endif
+}
+
 #if ENABLE(ATTACHMENT_ELEMENT)
 
 void WebPage::insertAttachment(const String& identifier, Optional<uint64_t>&& fileSize, const String& fileName, const String& contentType, CallbackID callbackID)

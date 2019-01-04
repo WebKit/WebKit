@@ -1,3 +1,22 @@
+2019-01-04  Chris Dumez  <cdumez@apple.com>
+
+        Add support for toggling device orientation API support per site
+        https://bugs.webkit.org/show_bug.cgi?id=193143
+        <rdar://problem/46605724>
+
+        Reviewed by Alex Christensen.
+
+        Add support for toggling device orientation API support per site via _WKWebsitePolicies.
+
+        * dom/Document.cpp:
+        (WebCore::Document::simulateDeviceOrientationChange):
+        * dom/Document.h:
+        * loader/DocumentLoader.h:
+        (WebCore::DocumentLoader::deviceOrientationEventEnabled const):
+        (WebCore::DocumentLoader::setDeviceOrientationEventEnabled):
+        * page/DOMWindow.cpp:
+        (WebCore::DOMWindow::addEventListener):
+
 2019-01-04  Jer Noble  <jer.noble@apple.com>
 
         Web Content process main thread blocked beneath ImageDecoderAVFObjC::readSamples for many seconds on imgur.com

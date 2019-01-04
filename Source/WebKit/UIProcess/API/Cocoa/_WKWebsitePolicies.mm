@@ -59,6 +59,16 @@
     return _websitePolicies->contentBlockersEnabled();
 }
 
+- (void)setDeviceOrientationEventEnabled:(BOOL)deviceOrientationEventEnabled
+{
+    _websitePolicies->setDeviceOrientationEventEnabled(deviceOrientationEventEnabled);
+}
+
+- (BOOL)deviceOrientationEventEnabled
+{
+    return _websitePolicies->deviceOrientationEventEnabled();
+}
+
 - (void)setAllowedAutoplayQuirks:(_WKWebsiteAutoplayQuirk)allowedQuirks
 {
     OptionSet<WebKit::WebsiteAutoplayQuirk> quirks;

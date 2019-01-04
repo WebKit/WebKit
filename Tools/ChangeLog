@@ -1,3 +1,20 @@
+2019-01-04  Chris Dumez  <cdumez@apple.com>
+
+        Add support for toggling device orientation API support per site
+        https://bugs.webkit.org/show_bug.cgi?id=193143
+        <rdar://problem/46605724>
+
+        Reviewed by Alex Christensen.
+
+        Add API test coverage.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/WebsitePolicies.mm:
+        (-[DataMappingSchemeHandler setTaskHandler:]):
+        (-[DataMappingSchemeHandler webView:startURLSchemeTask:]):
+        (-[WebsitePoliciesDeviceOrientationDelegate initWithDeviceOrientationEventEnabled:]):
+        (-[WebsitePoliciesDeviceOrientationDelegate _webView:decidePolicyForNavigationAction:userInfo:decisionHandler:]):
+        (-[WebsitePoliciesDeviceOrientationDelegate webView:didFinishNavigation:]):
+
 2019-01-04  Aakash Jain  <aakash_jain@apple.com>
 
         [ews-build] use svn-apply script to apply the patches
