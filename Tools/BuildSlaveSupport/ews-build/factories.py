@@ -30,9 +30,11 @@ Property = properties.Property
 
 
 class Factory(factory.BuildFactory):
-    def __init__(self, platform, configuration=None, architectures=None, buildOnly=True, additionalArguments=None, **kwargs):
+    def __init__(self, platform, configuration=None, architectures=None, buildOnly=True, additionalArguments=None, checkRelevance=False, **kwargs):
         factory.BuildFactory.__init__(self)
         self.addStep(ConfigureBuild(platform, configuration, architectures, buildOnly, additionalArguments))
+        if checkRelevance:
+            self.addStep(CheckPatchRelevance())
         self.addStep(CheckOutSource())
 
 
@@ -44,8 +46,7 @@ class StyleFactory(Factory):
 
 class BindingsFactory(Factory):
     def __init__(self, platform, configuration=None, architectures=None, additionalArguments=None, **kwargs):
-        Factory.__init__(self, platform, configuration, architectures, False, additionalArguments)
-        self.addStep(CheckPatchRelevance())
+        Factory.__init__(self, platform, configuration, architectures, False, additionalArguments, checkRelevance=True)
         self.addStep(RunBindingsTests())
 
 
@@ -57,8 +58,7 @@ class WebKitPerlFactory(Factory):
 
 class WebKitPyFactory(Factory):
     def __init__(self, platform, configuration=None, architectures=None, additionalArguments=None, **kwargs):
-        Factory.__init__(self, platform, configuration, architectures, False, additionalArguments)
-        self.addStep(CheckPatchRelevance())
+        Factory.__init__(self, platform, configuration, architectures, False, additionalArguments, checkRelevance=True)
         self.addStep(RunWebKitPyTests())
 
 
@@ -104,8 +104,7 @@ class TestFactory(Factory):
 
 class JSCTestsFactory(Factory):
     def __init__(self, platform, configuration='release', architectures=None, additionalArguments=None, **kwargs):
-        Factory.__init__(self, platform, configuration, architectures, False, additionalArguments)
-        self.addStep(CheckPatchRelevance())
+        Factory.__init__(self, platform, configuration, architectures, False, additionalArguments, checkRelevance=True)
         self.addStep(CompileJSCOnly())
         self.addStep(UnApplyPatchIfRequired())
         self.addStep(CompileJSCOnlyToT())

@@ -1,5 +1,15 @@
 2019-01-04  Aakash Jain  <aakash_jain@apple.com>
 
+        [ews-build] Check patch relevance before applying the patch
+        https://bugs.webkit.org/show_bug.cgi?id=193102
+
+        Reviewed by Lucas Forschler.
+
+        * BuildSlaveSupport/ews-build/factories.py:
+        (Factory.__init__): Moved CheckPatchRelevance step to base class.
+
+2019-01-04  Aakash Jain  <aakash_jain@apple.com>
+
         [ews-build] Check patch relevance step should print patch id
         https://bugs.webkit.org/show_bug.cgi?id=193137
 
