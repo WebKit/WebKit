@@ -1,3 +1,16 @@
+2019-01-04  Frederic Wang  <fwang@igalia.com>
+
+        Flaky Test: http/wpt/css/css-animations/start-animation-001.html
+        https://bugs.webkit.org/show_bug.cgi?id=190903
+
+        This patch modifies start-animation-001.html to rely on the square positions returned by the
+        Web Process in order to know when they are supposed to be rendered behind the covering rect.
+        This should make it more robust while still testing the original bug 186129.
+
+        Reviewed by Antonio Gomes.
+
+        * http/wpt/css/css-animations/start-animation-001.html:
+
 2019-01-03  Zalan Bujtas  <zalan@apple.com>
 
         REGRESSION: -webkit-appearance test case crashes
