@@ -118,7 +118,7 @@ static void didGetImageForMatchResult(WKPageRef page, WKImageRef image, uint32_t
 
 TEST(WebKit, FindMatches)
 {
-    WKRetainPtr<WKContextRef> context(AdoptWK, WKContextCreate());
+    WKRetainPtr<WKContextRef> context(AdoptWK, WKContextCreateWithConfiguration(nullptr));
     PlatformWebView webView(context.get());
     
     WKPageNavigationClientV0 loaderClient;

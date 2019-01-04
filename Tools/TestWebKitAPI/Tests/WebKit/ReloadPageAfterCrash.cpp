@@ -65,7 +65,7 @@ static void didCrash(WKPageRef page, const void*)
 
 TEST(WebKit, ReloadPageAfterCrash)
 {
-    WKRetainPtr<WKContextRef> context(AdoptWK, WKContextCreate());
+    WKRetainPtr<WKContextRef> context(AdoptWK, WKContextCreateWithConfiguration(nullptr));
     PlatformWebView webView(context.get());
 
     WKPageNavigationClientV0 loaderClient;

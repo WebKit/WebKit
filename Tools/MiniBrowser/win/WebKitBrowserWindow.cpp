@@ -98,7 +98,7 @@ WebKitBrowserWindow::WebKitBrowserWindow(HWND mainWnd, HWND urlBarWnd)
     WKPreferencesSetDeveloperExtrasEnabled(prefs, true);
     WKPageConfigurationSetPreferences(conf.get(), prefs);
 
-    m_context = adoptWK(WKContextCreate());
+    m_context = adoptWK(WKContextCreateWithConfiguration(nullptr));
     WKPageConfigurationSetContext(conf.get(), m_context.get());
 
     m_view = adoptWK(WKViewCreate(rect, conf.get(), mainWnd));

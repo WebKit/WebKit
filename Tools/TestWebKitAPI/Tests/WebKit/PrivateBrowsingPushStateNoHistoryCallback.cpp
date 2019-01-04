@@ -51,7 +51,7 @@ static void didNavigateWithNavigationData(WKContextRef context, WKPageRef page, 
 
 TEST(WebKit, PrivateBrowsingPushStateNoHistoryCallback)
 {
-    WKRetainPtr<WKContextRef> context(AdoptWK, WKContextCreate());
+    WKRetainPtr<WKContextRef> context(AdoptWK, WKContextCreateWithConfiguration(nullptr));
 
     WKContextHistoryClientV0 historyClient;
     memset(&historyClient, 0, sizeof(historyClient));

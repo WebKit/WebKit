@@ -167,7 +167,7 @@ TEST(WebKit, WKContextRegisterURLSchemeAsCanDisplayOnlyIfCanRequest_SameOriginLo
         [NSURLProtocol registerClass:[EchoURLProtocol class]];
         [WKBrowsingContextController registerSchemeForCustomProtocol:echoScheme];
 
-        WKRetainPtr<WKContextRef> context = adoptWK(WKContextCreate());
+        WKRetainPtr<WKContextRef> context = adoptWK(WKContextCreateWithConfiguration(nullptr));
         WKContextRegisterURLSchemeAsCanDisplayOnlyIfCanRequest(context.get(), Util::toWK(echoScheme.UTF8String).get());
 
         PlatformWebView webView { context.get() };
@@ -190,7 +190,7 @@ TEST(WebKit, WKContextRegisterURLSchemeAsCanDisplayOnlyIfCanRequest_CrossOriginL
         [NSURLProtocol registerClass:[EchoURLProtocol class]];
         [WKBrowsingContextController registerSchemeForCustomProtocol:echoScheme];
 
-        WKRetainPtr<WKContextRef> context = adoptWK(WKContextCreate());
+        WKRetainPtr<WKContextRef> context = adoptWK(WKContextCreateWithConfiguration(nullptr));
         WKContextRegisterURLSchemeAsCanDisplayOnlyIfCanRequest(context.get(), Util::toWK(echoScheme.UTF8String).get());
 
         PlatformWebView webView { context.get() };

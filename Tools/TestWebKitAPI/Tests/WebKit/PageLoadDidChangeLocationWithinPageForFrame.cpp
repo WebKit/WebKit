@@ -56,7 +56,7 @@ static void didSameDocumentNavigation(WKPageRef, WKNavigationRef, WKSameDocument
 
 TEST(WebKit, PageLoadDidChangeLocationWithinPage)
 {
-    WKRetainPtr<WKContextRef> context(AdoptWK, WKContextCreate());
+    WKRetainPtr<WKContextRef> context(AdoptWK, WKContextCreateWithConfiguration(nullptr));
     PlatformWebView webView(context.get());
 
     WKPageNavigationClientV0 loaderClient;

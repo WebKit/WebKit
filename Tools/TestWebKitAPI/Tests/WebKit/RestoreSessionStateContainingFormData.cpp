@@ -72,7 +72,7 @@ static WKRetainPtr<WKDataRef> createSessionStateDataContainingFormData(WKContext
 
 TEST(WebKit, RestoreSessionStateContainingFormData)
 {
-    WKRetainPtr<WKContextRef> context(AdoptWK, WKContextCreate());
+    WKRetainPtr<WKContextRef> context(AdoptWK, WKContextCreateWithConfiguration(nullptr));
 
     // FIXME: Once <rdar://problem/8708435> is fixed, we can move the creation of this
     // PlatformWebView after the call to createSessionStaetContainingFormData. Until then, it must

@@ -64,7 +64,7 @@ static void setClients(WKPageRef page)
 
 TEST(WebKit, EventModifiers)
 {
-    WKRetainPtr<WKContextRef> context = adoptWK(WKContextCreate());
+    WKRetainPtr<WKContextRef> context = adoptWK(WKContextCreateWithConfiguration(nullptr));
     
     PlatformWebView webView(context.get());
     setClients(webView.page());

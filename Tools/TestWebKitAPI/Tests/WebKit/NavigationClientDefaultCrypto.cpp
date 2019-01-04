@@ -56,7 +56,7 @@ static void decidePolicyForNavigationResponse(WKPageRef, WKNavigationResponseRef
 
 TEST(WebKit, NavigationClientDefaultCrypto)
 {
-    auto context = adoptWK(WKContextCreate());
+    auto context = adoptWK(WKContextCreateWithConfiguration(nullptr));
     PlatformWebView webView(context.get());
 
     // The navigationClient quite explicitly does *not* have a copyWebCryptoMasterKey callback,

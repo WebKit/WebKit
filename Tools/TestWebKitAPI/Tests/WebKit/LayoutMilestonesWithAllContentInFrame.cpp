@@ -53,7 +53,7 @@ static void didFinishNavigation(WKPageRef page, WKNavigationRef navigation, WKTy
 
 TEST(WebKit, LayoutMilestonesWithAllContentInFrame)
 {
-    WKRetainPtr<WKContextRef> context(AdoptWK, WKContextCreate());
+    WKRetainPtr<WKContextRef> context(AdoptWK, WKContextCreateWithConfiguration(nullptr));
     PlatformWebView webView(context.get());
 
     WKPageNavigationClientV3 loaderClient;
@@ -74,7 +74,7 @@ TEST(WebKit, LayoutMilestonesWithAllContentInFrame)
 
 TEST(WebKit, FirstVisuallyNonEmptyLayoutAfterPageCacheRestore)
 {
-    WKRetainPtr<WKContextRef> context(AdoptWK, WKContextCreate());
+    WKRetainPtr<WKContextRef> context(AdoptWK, WKContextCreateWithConfiguration(nullptr));
 
     WKContextSetCacheModel(context.get(), kWKCacheModelPrimaryWebBrowser); // Enables the Page Cache.
 

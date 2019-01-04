@@ -108,7 +108,7 @@ TEST(WebKit, PageLoadBasic)
 {
     State state;
 
-    WKRetainPtr<WKContextRef> context(AdoptWK, WKContextCreate());
+    WKRetainPtr<WKContextRef> context(AdoptWK, WKContextCreateWithConfiguration(nullptr));
     PlatformWebView webView(context.get());
 
     WKPageNavigationClientV0 loaderClient;
@@ -140,7 +140,7 @@ TEST(WebKit, PageLoadBasic)
 
 TEST(WebKit, PageReload)
 {
-    WKRetainPtr<WKContextRef> context(AdoptWK, WKContextCreate());
+    WKRetainPtr<WKContextRef> context(AdoptWK, WKContextCreateWithConfiguration(nullptr));
     PlatformWebView webView(context.get());
 
     // Reload test before url loading.
@@ -160,7 +160,7 @@ TEST(WebKit, PageReload)
 
 TEST(WebKit, PageLoadTwiceAndReload)
 {
-    WKRetainPtr<WKContextRef> context(AdoptWK, WKContextCreate());
+    WKRetainPtr<WKContextRef> context(AdoptWK, WKContextCreateWithConfiguration(nullptr));
     PlatformWebView webView(context.get());
 
     test1Done = false;

@@ -53,7 +53,7 @@ TEST(WebKit, EphemeralSessionPushStateNoHistoryCallback)
 {
     auto configuration = adoptWK(WKPageConfigurationCreate());
 
-    auto context = adoptWK(WKContextCreate());
+    auto context = adoptWK(WKContextCreateWithConfiguration(nullptr));
     WKPageConfigurationSetContext(configuration.get(), context.get());
 
     auto websiteDataStore = adoptWK(WKWebsiteDataStoreCreateNonPersistentDataStore());

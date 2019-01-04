@@ -75,7 +75,7 @@ static void didCrash(WKPageRef page, const void* clientInfo)
 
 TEST(WebKit, ResizeWindowAfterCrash)
 {
-    WKRetainPtr<WKContextRef> context(AdoptWK, WKContextCreate());
+    WKRetainPtr<WKContextRef> context(AdoptWK, WKContextCreateWithConfiguration(nullptr));
     TestStatesData states(context.get());
 
     WKPageNavigationClientV0 loaderClient;

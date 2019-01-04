@@ -65,7 +65,7 @@ static WKRetainPtr<WKSessionStateRef> createSessionState(WKContextRef context)
 
 TEST(WebKit, WKPageGetScaleFactorNotZero)
 {
-    WKRetainPtr<WKContextRef> context(AdoptWK, WKContextCreate());
+    WKRetainPtr<WKContextRef> context(AdoptWK, WKContextCreateWithConfiguration(nullptr));
 
     PlatformWebView webView(context.get());
     setPageLoaderClient(webView.page());

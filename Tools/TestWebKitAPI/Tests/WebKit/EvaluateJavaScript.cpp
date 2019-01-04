@@ -51,7 +51,7 @@ static void didRunJavaScript(WKSerializedScriptValueRef resultSerializedScriptVa
 
 TEST(WebKit, EvaluateJavaScriptThatThrowsAnException)
 {
-    WKRetainPtr<WKContextRef> context(AdoptWK, WKContextCreate());
+    WKRetainPtr<WKContextRef> context(AdoptWK, WKContextCreateWithConfiguration(nullptr));
     PlatformWebView webView(context.get());
 
     WKRetainPtr<WKStringRef> javaScriptString(AdoptWK, WKStringCreateWithUTF8CString("throw 'Hello'"));

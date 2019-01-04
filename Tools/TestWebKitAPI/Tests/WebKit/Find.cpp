@@ -51,7 +51,7 @@ static void didCountStringMatches(WKPageRef page, WKStringRef string, unsigned n
 
 TEST(WebKit, Find)
 {
-    WKRetainPtr<WKContextRef> context(AdoptWK, WKContextCreate());
+    WKRetainPtr<WKContextRef> context(AdoptWK, WKContextCreateWithConfiguration(nullptr));
     PlatformWebView webView(context.get());
     
     WKPageNavigationClientV0 loaderClient;

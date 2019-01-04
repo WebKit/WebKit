@@ -38,7 +38,7 @@ static bool done;
 
 TEST(WebKit, PendingAPIRequestURL)
 {
-    WKRetainPtr<WKContextRef> context(AdoptWK, WKContextCreate());
+    WKRetainPtr<WKContextRef> context(AdoptWK, WKContextCreateWithConfiguration(nullptr));
     PlatformWebView webView(context.get());
 
     WKPageNavigationClientV0 loaderClient;

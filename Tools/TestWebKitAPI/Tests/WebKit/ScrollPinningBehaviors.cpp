@@ -71,7 +71,7 @@ static void didFinishNavigation(WKPageRef page, WKNavigationRef, WKTypeRef userD
 
 TEST(WebKit, ScrollPinningBehaviors)
 {
-    WKRetainPtr<WKContextRef> context(AdoptWK, WKContextCreate());
+    WKRetainPtr<WKContextRef> context(AdoptWK, WKContextCreateWithConfiguration(nullptr));
 
     // Turn off threaded scrolling; synchronously waiting for the main thread scroll position to
     // update using WKPageForceRepaint would be better, but for some reason doesn't block until

@@ -53,7 +53,7 @@ static void setPageLoaderClient(WKPageRef page)
 
 static void buildAndPerformTest(WKEventMouseButton button, WKEventModifiers modifiers, const char* expectedButton, const char* expectedMenuType)
 {
-    WKRetainPtr<WKContextRef> context(AdoptWK, WKContextCreate());
+    WKRetainPtr<WKContextRef> context(AdoptWK, WKContextCreateWithConfiguration(nullptr));
     PlatformWebView webView(context.get());
     setPageLoaderClient(webView.page());
 

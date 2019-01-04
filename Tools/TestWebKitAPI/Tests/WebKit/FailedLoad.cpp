@@ -51,7 +51,7 @@ static void didFailProvisionalNavigation(WKPageRef page, WKNavigationRef, WKErro
 
 TEST(WebKit, FailedLoad)
 {
-    WKRetainPtr<WKContextRef> context(AdoptWK, WKContextCreate());
+    WKRetainPtr<WKContextRef> context(AdoptWK, WKContextCreateWithConfiguration(nullptr));
     PlatformWebView webView(context.get());
 
     WKPageNavigationClientV0 loaderClient;

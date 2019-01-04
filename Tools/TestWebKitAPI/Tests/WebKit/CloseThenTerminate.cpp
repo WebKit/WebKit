@@ -44,7 +44,7 @@ static void didFinishNavigation(WKPageRef page, WKNavigationRef, WKTypeRef userD
 
 TEST(WebKit, CloseThenTerminate)
 {
-    WKRetainPtr<WKContextRef> context = adoptWK(WKContextCreate());
+    WKRetainPtr<WKContextRef> context = adoptWK(WKContextCreateWithConfiguration(nullptr));
     PlatformWebView webView(context.get());
 
     WKPageNavigationClientV0 loaderClient;

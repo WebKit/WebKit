@@ -161,7 +161,7 @@ struct GeolocationBasicStateTracker : GeolocationStateTracker {
 
 TEST(WebKit, GeolocationBasic)
 {
-    WKRetainPtr<WKContextRef> context(AdoptWK, WKContextCreate());
+    WKRetainPtr<WKContextRef> context(AdoptWK, WKContextCreateWithConfiguration(nullptr));
 
     GeolocationBasicStateTracker stateTracker;
     setupGeolocationProvider(context.get(), &stateTracker);
@@ -203,7 +203,7 @@ struct GeolocationBasicWithHighAccuracyStateTracker : GeolocationStateTracker {
 
 TEST(WebKit, GeolocationBasicWithHighAccuracy)
 {
-    WKRetainPtr<WKContextRef> context(AdoptWK, WKContextCreate());
+    WKRetainPtr<WKContextRef> context(AdoptWK, WKContextCreateWithConfiguration(nullptr));
 
     GeolocationBasicWithHighAccuracyStateTracker stateTracker;
     setupGeolocationProvider(context.get(), &stateTracker);
@@ -256,7 +256,7 @@ struct GeolocationTransitionToHighAccuracyStateTracker : GeolocationStateTracker
 
 TEST(WebKit, GeolocationTransitionToHighAccuracy)
 {
-    WKRetainPtr<WKContextRef> context(AdoptWK, WKContextCreate());
+    WKRetainPtr<WKContextRef> context(AdoptWK, WKContextCreateWithConfiguration(nullptr));
 
     GeolocationTransitionToHighAccuracyStateTracker stateTracker;
     setupGeolocationProvider(context.get(), &stateTracker);
@@ -322,7 +322,7 @@ static void runJavaScriptAlert(WKPageRef page, WKStringRef alertText, WKFrameRef
 
 TEST(WebKit, GeolocationTransitionToLowAccuracy)
 {
-    WKRetainPtr<WKContextRef> context(AdoptWK, WKContextCreate());
+    WKRetainPtr<WKContextRef> context(AdoptWK, WKContextCreateWithConfiguration(nullptr));
 
     GeolocationTransitionToLowAccuracyStateTracker stateTracker;
     setupGeolocationProvider(context.get(), &stateTracker);

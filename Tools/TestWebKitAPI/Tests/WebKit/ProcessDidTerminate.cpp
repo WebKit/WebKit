@@ -78,7 +78,7 @@ static void webProcessCrashed(WKPageRef page, WKProcessTerminationReason reason,
 
 TEST(WebKit, ProcessDidTerminateRequestedByClient)
 {
-    WKRetainPtr<WKContextRef> context(AdoptWK, WKContextCreate());
+    WKRetainPtr<WKContextRef> context(AdoptWK, WKContextCreateWithConfiguration(nullptr));
     PlatformWebView webView(context.get());
 
     WKPageNavigationClientV1 navigationClient;
@@ -102,7 +102,7 @@ TEST(WebKit, ProcessDidTerminateRequestedByClient)
 
 TEST(WebKit, ProcessDidTerminateWithReasonCrash)
 {
-    WKRetainPtr<WKContextRef> context(AdoptWK, WKContextCreate());
+    WKRetainPtr<WKContextRef> context(AdoptWK, WKContextCreateWithConfiguration(nullptr));
     PlatformWebView webView(context.get());
 
     WKPageNavigationClientV1 navigationClient;

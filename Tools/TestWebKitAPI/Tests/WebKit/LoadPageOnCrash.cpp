@@ -39,7 +39,7 @@ static void didFinishLoad(WKPageRef, WKNavigationRef, WKTypeRef, const void*);
 class WebKit2CrashLoader {
 public:
     WebKit2CrashLoader()
-        : context(AdoptWK, WKContextCreate())
+        : context(AdoptWK, WKContextCreateWithConfiguration(nullptr))
         , webView(context.get())
         , url(adoptWK(WKURLCreateWithUTF8CString("about:blank")))
         , firstSuccessfulLoad(false)

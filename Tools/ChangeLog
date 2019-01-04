@@ -1,3 +1,117 @@
+2019-01-04  Alex Christensen  <achristensen@webkit.org>
+
+        Deprecate WKContextCreate
+        https://bugs.webkit.org/show_bug.cgi?id=193118
+
+        Reviewed by Brady Eidson.
+
+        * MiniBrowser/win/WebKitBrowserWindow.cpp:
+        (WebKitBrowserWindow::WebKitBrowserWindow):
+        * TestWebKitAPI/Tests/WebKit/AboutBlankLoad.cpp:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WebKit/CloseFromWithinCreatePage.cpp:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WebKit/CloseThenTerminate.cpp:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WebKit/CookieManager.cpp:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WebKit/DownloadDecideDestinationCrash.cpp:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WebKit/EnumerateMediaDevices.cpp:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WebKit/EphemeralSessionPushStateNoHistoryCallback.cpp:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WebKit/EvaluateJavaScript.cpp:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WebKit/EventModifiers.cpp:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WebKit/FailedLoad.cpp:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WebKit/Find.cpp:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WebKit/FindMatches.mm:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WebKit/ForceRepaint.cpp:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WebKit/FrameHandle.cpp:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WebKit/FrameMIMETypeHTML.cpp:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WebKit/FrameMIMETypePNG.cpp:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WebKit/Geolocation.cpp:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WebKit/LayoutMilestonesWithAllContentInFrame.cpp:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WebKit/LoadAlternateHTMLStringWithNonDirectoryURL.cpp:
+        (TestWebKitAPI::loadAlternateHTMLString):
+        * TestWebKitAPI/Tests/WebKit/LoadPageOnCrash.cpp:
+        (TestWebKitAPI::WebKit2CrashLoader::WebKit2CrashLoader):
+        * TestWebKitAPI/Tests/WebKit/MenuTypesForMouseEvents.cpp:
+        (TestWebKitAPI::buildAndPerformTest):
+        * TestWebKitAPI/Tests/WebKit/ModalAlertsSPI.cpp:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WebKit/NavigationClientDefaultCrypto.cpp:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WebKit/PageGroup.cpp:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WebKit/PageLoadBasic.cpp:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WebKit/PageLoadDidChangeLocationWithinPageForFrame.cpp:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WebKit/PendingAPIRequestURL.cpp:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WebKit/PreventEmptyUserAgent.cpp:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WebKit/PrivateBrowsingPushStateNoHistoryCallback.cpp:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WebKit/ProcessDidTerminate.cpp:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WebKit/ReloadPageAfterCrash.cpp:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WebKit/ResizeReversePaginatedWebView.cpp:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WebKit/ResizeWindowAfterCrash.cpp:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WebKit/RestoreSessionState.cpp:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WebKit/RestoreSessionStateContainingFormData.cpp:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WebKit/ScrollPinningBehaviors.cpp:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WebKit/ShouldKeepCurrentBackForwardListItemInList.cpp:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WebKit/TerminateTwice.cpp:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WebKit/UserMedia.cpp:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WebKit/WKPageConfiguration.cpp:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WebKit/WKPageCopySessionStateWithFiltering.cpp:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WebKit/WKPageGetScaleFactorNotZero.cpp:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WebKit/WKPageIsPlayingAudio.cpp:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WebKit/WKThumbnailView.mm:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WebKit/WebCoreStatisticsWithNoWebProcess.cpp:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WebKit/mac/GetPIDAfterAbortedProcessLaunch.cpp:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WebKit/mac/RestoreStateAfterTermination.mm:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WebKitCocoa/CommandBackForward.mm:
+        (WebKit2_CommandBackForwardTestWKView::SetUp):
+        * TestWebKitAPI/Tests/WebKitCocoa/FullscreenDelegate.mm:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WebKitCocoa/PictureInPictureDelegate.mm:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WebKitCocoa/SchemeRegistry.mm:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/mac/WebKitAgnosticTest.mm:
+        (TestWebKitAPI::WebKitAgnosticTest::runWebKit2Test):
+
 2019-01-03  Matt Rajca  <mrajca@apple.com>
 
         Make DidPlayMediaPreventedFromPlaying autoplay event more generic.

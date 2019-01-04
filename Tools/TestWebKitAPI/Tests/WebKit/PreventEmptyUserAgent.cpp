@@ -60,7 +60,7 @@ static void didRunJavaScript(WKSerializedScriptValueRef resultSerializedScriptVa
 
 TEST(WebKit, PreventEmptyUserAgent)
 {
-    WKRetainPtr<WKContextRef> context(AdoptWK, WKContextCreate());
+    WKRetainPtr<WKContextRef> context(AdoptWK, WKContextCreateWithConfiguration(nullptr));
     PlatformWebView webView(context.get());
 
     WKPageSetCustomUserAgent(webView.page(), WKStringCreateWithUTF8CString(""));

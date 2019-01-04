@@ -63,7 +63,7 @@ static WKPageRef createNewPage(WKPageRef page, WKURLRequestRef urlRequest, WKDic
 
 TEST(WebKit, CloseFromWithinCreatePage)
 {
-    WKRetainPtr<WKContextRef> context(AdoptWK, WKContextCreate());
+    WKRetainPtr<WKContextRef> context(AdoptWK, WKContextCreateWithConfiguration(nullptr));
 
     PlatformWebView webView(context.get());
 

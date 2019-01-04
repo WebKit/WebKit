@@ -72,7 +72,7 @@ static void didFinishNavigation(WKPageRef, WKNavigationRef, WKTypeRef, const voi
 
 TEST(WebKit, CookieManager)
 {
-    wkContext.adopt(WKContextCreate());
+    wkContext.adopt(WKContextCreateWithConfiguration(nullptr));
     PlatformWebView webView(wkContext.get());
 
     WKPageNavigationClientV0 loaderClient;

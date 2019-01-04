@@ -40,7 +40,7 @@ namespace TestWebKitAPI {
 TEST(PageGroup, DefaultUserContentController)
 {
     auto pageConfiguration = adoptWK(WKPageConfigurationCreate());
-    auto context = adoptWK(WKContextCreate());
+    auto context = adoptWK(WKContextCreateWithConfiguration(nullptr));
     WKPageConfigurationSetContext(pageConfiguration.get(), context.get());
     auto pageGroup = adoptWK(WKPageGroupCreateWithIdentifier(Util::toWK("TestPageGroup").get()));
     WKPageConfigurationSetPageGroup(pageConfiguration.get(), pageGroup.get());
@@ -58,7 +58,7 @@ TEST(PageGroup, DefaultUserContentController)
 TEST(PageGroup, CustomUserContentController)
 {
     auto pageConfiguration = adoptWK(WKPageConfigurationCreate());
-    auto context = adoptWK(WKContextCreate());
+    auto context = adoptWK(WKContextCreateWithConfiguration(nullptr));
     WKPageConfigurationSetContext(pageConfiguration.get(), context.get());
     auto pageGroup = adoptWK(WKPageGroupCreateWithIdentifier(Util::toWK("TestPageGroup").get()));
     WKPageConfigurationSetPageGroup(pageConfiguration.get(), pageGroup.get());

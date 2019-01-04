@@ -200,7 +200,7 @@ TEST(PictureInPicture, AudioCannotTogglePictureInPicture)
 
 TEST(PictureInPicture, WKPageUIClient)
 {
-    WKRetainPtr<WKContextRef> context = adoptWK(WKContextCreate());
+    WKRetainPtr<WKContextRef> context = adoptWK(WKContextCreateWithConfiguration(nullptr));
     WKRetainPtr<WKPageGroupRef> pageGroup(AdoptWK, WKPageGroupCreateWithIdentifier(Util::toWK("PictureInPicture").get()));
     WKPreferencesRef preferences = WKPageGroupGetPreferences(pageGroup.get());
     WKPreferencesSetFullScreenEnabled(preferences, true);

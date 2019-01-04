@@ -104,7 +104,7 @@ void WebKitAgnosticTest::runWebKit1Test()
 
 void WebKitAgnosticTest::runWebKit2Test()
 {
-    WKRetainPtr<WKContextRef> context = adoptWK(WKContextCreate());
+    WKRetainPtr<WKContextRef> context = adoptWK(WKContextCreateWithConfiguration(nullptr));
     WKRetainPtr<WKPageGroupRef> pageGroup = adoptWK(WKPageGroupCreateWithIdentifier(Util::toWK("WebKitAgnosticTest").get()));
     RetainPtr<WKView> view = adoptNS([[WKView alloc] initWithFrame:viewFrame contextRef:context.get() pageGroupRef:pageGroup.get()]);
     setPageLoaderClient([view.get() pageRef], &didFinishLoad);

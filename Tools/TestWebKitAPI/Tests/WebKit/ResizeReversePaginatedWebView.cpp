@@ -61,7 +61,7 @@ static void didLayout(WKPageRef page, WKPageRenderingProgressEvents milestones, 
 
 TEST(WebKit, ResizeReversePaginatedWebView)
 {
-    WKRetainPtr<WKContextRef> context(AdoptWK, WKContextCreate());
+    WKRetainPtr<WKContextRef> context(AdoptWK, WKContextCreateWithConfiguration(nullptr));
     PlatformWebView webView(context.get());
 
     WKPageNavigationClientV3 loaderClient;

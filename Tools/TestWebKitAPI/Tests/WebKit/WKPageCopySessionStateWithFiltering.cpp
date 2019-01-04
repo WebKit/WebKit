@@ -105,7 +105,7 @@ static void createSessionStates(WKContextRef context)
 
 TEST(WebKit, WKPageCopySessionStateWithFiltering)
 {
-    WKRetainPtr<WKContextRef> context(AdoptWK, WKContextCreate());
+    WKRetainPtr<WKContextRef> context(AdoptWK, WKContextCreateWithConfiguration(nullptr));
 
     createSessionStates(context.get());
 

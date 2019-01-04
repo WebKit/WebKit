@@ -42,7 +42,7 @@ static void didFinishNavigation(WKPageRef page, WKNavigationRef, WKTypeRef userD
 
 TEST(WebKit, GetPIDAfterAbortedProcessLaunch)
 {
-    WKRetainPtr<WKContextRef> context(AdoptWK, WKContextCreate());
+    WKRetainPtr<WKContextRef> context(AdoptWK, WKContextCreateWithConfiguration(nullptr));
 
     PlatformWebView webView(context.get());
 

@@ -69,7 +69,7 @@ static void checkUserMediaPermissionCallback(WKPageRef, WKFrameRef, WKSecurityOr
 
 TEST(WebKit, UserMediaBasic)
 {
-    auto context = adoptWK(WKContextCreate());
+    auto context = adoptWK(WKContextCreateWithConfiguration(nullptr));
 
     WKRetainPtr<WKPageGroupRef> pageGroup(AdoptWK, WKPageGroupCreateWithIdentifier(Util::toWK("GetUserMedia").get()));
     WKPreferencesRef preferences = WKPageGroupGetPreferences(pageGroup.get());
@@ -105,7 +105,7 @@ static void didCrashCallback(WKPageRef, const void*)
 
 TEST(WebKit, OnDeviceChangeCrash)
 {
-    auto context = adoptWK(WKContextCreate());
+    auto context = adoptWK(WKContextCreateWithConfiguration(nullptr));
 
     WKRetainPtr<WKPageGroupRef> pageGroup(AdoptWK, WKPageGroupCreateWithIdentifier(Util::toWK("GetUserMedia").get()));
     WKPreferencesRef preferences = WKPageGroupGetPreferences(pageGroup.get());

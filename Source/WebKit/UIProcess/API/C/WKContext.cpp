@@ -81,7 +81,10 @@ WKContextRef WKContextCreateWithInjectedBundlePath(WKStringRef pathRef)
 
 WKContextRef WKContextCreateWithConfiguration(WKContextConfigurationRef configuration)
 {
-    return WebKit::toAPI(&WebKit::WebProcessPool::create(*WebKit::toImpl(configuration)).leakRef());
+    RefPtr<API::ProcessPoolConfiguration> apiConfiguration = WebKit::toImpl(configuration);
+    if (!apiConfiguration)
+        apiConfiguration = API::ProcessPoolConfiguration::create();
+    return WebKit::toAPI(&WebKit::WebProcessPool::create(*apiConfiguration).leakRef());
 }
 
 void WKContextSetClient(WKContextRef contextRef, const WKContextClientBase* wkClient)

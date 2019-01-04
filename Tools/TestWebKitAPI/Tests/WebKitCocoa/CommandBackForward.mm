@@ -116,7 +116,7 @@ public:
     {
         WebKit2_CommandBackForwardTest::SetUp();
 
-        WKRetainPtr<WKContextRef> context = adoptWK(WKContextCreate());
+        WKRetainPtr<WKContextRef> context = adoptWK(WKContextCreateWithConfiguration(nullptr));
         WKRetainPtr<WKPageConfigurationRef> configuration = adoptWK(WKPageConfigurationCreate());        
         WKPageConfigurationSetContext(configuration.get(), context.get());
 

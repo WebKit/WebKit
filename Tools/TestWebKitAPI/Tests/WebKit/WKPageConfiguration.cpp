@@ -67,7 +67,7 @@ static void setPageLoaderClient(WKPageRef page)
 TEST(WebKit, WKPageConfigurationBasic)
 {
     WKRetainPtr<WKPageConfigurationRef> configuration = adoptWK(WKPageConfigurationCreate());
-    WKRetainPtr<WKContextRef> context = adoptWK(WKContextCreate());
+    WKRetainPtr<WKContextRef> context = adoptWK(WKContextCreateWithConfiguration(nullptr));
     WKPageConfigurationSetContext(configuration.get(), context.get());
     
     PlatformWebView webView(configuration.get());
@@ -86,7 +86,7 @@ TEST(WebKit, WKPageConfigurationBasic)
 TEST(WebKit, WKPageConfigurationBasicWithDataStore)
 {
     WKRetainPtr<WKPageConfigurationRef> configuration = adoptWK(WKPageConfigurationCreate());
-    WKRetainPtr<WKContextRef> context = adoptWK(WKContextCreate());
+    WKRetainPtr<WKContextRef> context = adoptWK(WKContextCreateWithConfiguration(nullptr));
     WKPageConfigurationSetContext(configuration.get(), context.get());
     WKRetainPtr<WKWebsiteDataStoreRef> websiteDataStore = WKWebsiteDataStoreGetDefaultDataStore();
     WKPageConfigurationSetWebsiteDataStore(configuration.get(), websiteDataStore.get());
@@ -108,7 +108,7 @@ TEST(WebKit, WKPageConfigurationBasicWithDataStore)
 TEST(WebKit, WKPageConfigurationBasicWithNonPersistentDataStore)
 {
     WKRetainPtr<WKPageConfigurationRef> configuration = adoptWK(WKPageConfigurationCreate());
-    WKRetainPtr<WKContextRef> context = adoptWK(WKContextCreate());
+    WKRetainPtr<WKContextRef> context = adoptWK(WKContextCreateWithConfiguration(nullptr));
     WKPageConfigurationSetContext(configuration.get(), context.get());
     WKRetainPtr<WKWebsiteDataStoreRef> websiteDataStore = adoptWK(WKWebsiteDataStoreCreateNonPersistentDataStore());
     WKPageConfigurationSetWebsiteDataStore(configuration.get(), websiteDataStore.get());

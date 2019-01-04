@@ -71,7 +71,7 @@ static void setPagePolicyClient(WKPageRef page)
 
 TEST(WebKit, DownloadDecideDestinationCrash)
 {
-    WKRetainPtr<WKContextRef> context = adoptWK(WKContextCreate());
+    WKRetainPtr<WKContextRef> context = adoptWK(WKContextCreateWithConfiguration(nullptr));
     setContextDownloadClient(context.get());
 
     PlatformWebView webView(context.get());

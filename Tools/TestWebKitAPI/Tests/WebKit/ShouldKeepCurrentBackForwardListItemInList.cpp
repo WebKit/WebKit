@@ -123,7 +123,7 @@ static void setPageLoaderClient(WKPageRef page)
 
 TEST(WebKit, ShouldKeepCurrentBackForwardListItemInList)
 {
-    WKRetainPtr<WKContextRef> context(AdoptWK, WKContextCreate());
+    WKRetainPtr<WKContextRef> context(AdoptWK, WKContextCreateWithConfiguration(nullptr));
 
     PlatformWebView webView(context.get());
     setPageLoaderClient(webView.page());
