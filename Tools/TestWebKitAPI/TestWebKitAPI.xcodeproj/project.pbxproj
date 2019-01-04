@@ -734,7 +734,10 @@
 		C9BF06EF1E9C132500595E3E /* autoplay-muted-with-controls.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = C9BF06EE1E9C130400595E3E /* autoplay-muted-with-controls.html */; };
 		C9C60E651E53A9DC006DA181 /* autoplay-check-frame.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = C9C60E631E53A9BA006DA181 /* autoplay-check-frame.html */; };
 		C9C60E661E53A9DC006DA181 /* autoplay-check-in-iframe.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = C9C60E641E53A9BA006DA181 /* autoplay-check-in-iframe.html */; };
+		C9C9A91B21DED28700FDE96E /* audio-with-play-button.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = C9C9A91A21DED24D00FDE96E /* audio-with-play-button.html */; };
+		C9C9A91D21DED7A000FDE96E /* video-with-play-button.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = C9C9A91C21DED79400FDE96E /* video-with-play-button.html */; };
 		C9E6DD351EA97D0800DD78AA /* FirstResponderSuppression.mm in Sources */ = {isa = PBXBuildFile; fileRef = C9E6DD311EA972D800DD78AA /* FirstResponderSuppression.mm */; };
+		C9E8EE7521DED94300797765 /* long-test.mp4 in Copy Resources */ = {isa = PBXBuildFile; fileRef = C9E8EE7421DED91E00797765 /* long-test.mp4 */; };
 		CA38459620AE17A900990D3B /* LocalStorageDatabaseTracker.mm in Sources */ = {isa = PBXBuildFile; fileRef = CA38459520AE012E00990D3B /* LocalStorageDatabaseTracker.mm */; };
 		CA5B94D22190C0F40059FE38 /* IndexedDBTempFileSize-1.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = CA5B94D02190C0E00059FE38 /* IndexedDBTempFileSize-1.html */; };
 		CA5B94D32190C0F40059FE38 /* IndexedDBTempFileSize-2.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = CA5B94D12190C0E00059FE38 /* IndexedDBTempFileSize-2.html */; };
@@ -975,6 +978,8 @@
 			dstPath = TestWebKitAPI.resources;
 			dstSubfolderSpec = 7;
 			files = (
+				C9C9A91D21DED7A000FDE96E /* video-with-play-button.html in Copy Resources */,
+				C9C9A91B21DED28700FDE96E /* audio-with-play-button.html in Copy Resources */,
 				55A817FF2181021A0004A39A /* 100x100-red.tga in Copy Resources */,
 				1A9E52C913E65EF4006917F5 /* 18-characters.html in Copy Resources */,
 				55A81800218102210004A39A /* 400x400-green.png in Copy Resources */,
@@ -1161,6 +1166,7 @@
 				46C519E71D3563FD00DAA51A /* LocalStorageNullEntries.localstorage in Copy Resources */,
 				46C519E81D3563FD00DAA51A /* LocalStorageNullEntries.localstorage-shm in Copy Resources */,
 				7A6A2C721DCCFB5200C0D085 /* LocalStorageQuirkEnabled.html in Copy Resources */,
+				C9E8EE7521DED94300797765 /* long-test.mp4 in Copy Resources */,
 				9361002914DC95A70061379D /* lots-of-iframes.html in Copy Resources */,
 				93AF4ED11506F130007FD57E /* lots-of-images.html in Copy Resources */,
 				2DD7D3AF178227B30026E1E3 /* lots-of-text-vertical-lr.html in Copy Resources */,
@@ -2012,7 +2018,10 @@
 		C9BF06EE1E9C130400595E3E /* autoplay-muted-with-controls.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = "autoplay-muted-with-controls.html"; sourceTree = "<group>"; };
 		C9C60E631E53A9BA006DA181 /* autoplay-check-frame.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = "autoplay-check-frame.html"; sourceTree = "<group>"; };
 		C9C60E641E53A9BA006DA181 /* autoplay-check-in-iframe.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = "autoplay-check-in-iframe.html"; sourceTree = "<group>"; };
+		C9C9A91A21DED24D00FDE96E /* audio-with-play-button.html */ = {isa = PBXFileReference; lastKnownFileType = text.html; name = "audio-with-play-button.html"; path = "Tests/WebKitCocoa/audio-with-play-button.html"; sourceTree = SOURCE_ROOT; };
+		C9C9A91C21DED79400FDE96E /* video-with-play-button.html */ = {isa = PBXFileReference; lastKnownFileType = text.html; name = "video-with-play-button.html"; path = "Tests/WebKitCocoa/video-with-play-button.html"; sourceTree = SOURCE_ROOT; };
 		C9E6DD311EA972D800DD78AA /* FirstResponderSuppression.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = FirstResponderSuppression.mm; sourceTree = "<group>"; };
+		C9E8EE7421DED91E00797765 /* long-test.mp4 */ = {isa = PBXFileReference; lastKnownFileType = file; path = "long-test.mp4"; sourceTree = "<group>"; };
 		CA38459520AE012E00990D3B /* LocalStorageDatabaseTracker.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = LocalStorageDatabaseTracker.mm; sourceTree = "<group>"; };
 		CA5B94D02190C0E00059FE38 /* IndexedDBTempFileSize-1.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = "IndexedDBTempFileSize-1.html"; sourceTree = "<group>"; };
 		CA5B94D12190C0E00059FE38 /* IndexedDBTempFileSize-2.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = "IndexedDBTempFileSize-2.html"; sourceTree = "<group>"; };
@@ -3230,6 +3239,7 @@
 				1C2B81851C89252300A5529F /* Ahem.ttf */,
 				93D3D19B17B1A7B000C7C415 /* all-content-in-one-iframe.html */,
 				F6B7BE9617469B7E008A3445 /* associate-form-controls.html */,
+				C9C9A91A21DED24D00FDE96E /* audio-with-play-button.html */,
 				76E182DE15475A8300F1FADD /* auto-submitting-form.html */,
 				C9C60E631E53A9BA006DA181 /* autoplay-check-frame.html */,
 				C9C60E641E53A9BA006DA181 /* autoplay-check-in-iframe.html */,
@@ -3266,6 +3276,7 @@
 				8361F1771E610B2100759B25 /* link-with-download-attribute-with-slashes.html */,
 				8349D3C31DB9724F004A9F65 /* link-with-download-attribute.html */,
 				378E647816326FDF00B6C676 /* link-with-title.html */,
+				C9E8EE7421DED91E00797765 /* long-test.mp4 */,
 				9361002814DC957B0061379D /* lots-of-iframes.html */,
 				93AF4ECF1506F123007FD57E /* lots-of-images.html */,
 				2DD7D3AE178227AC0026E1E3 /* lots-of-text-vertical-lr.html */,
@@ -3298,6 +3309,7 @@
 				524BBCA019E30C63002F1AF1 /* test.mp4 */,
 				7AE9E5081AE5AE8B00CF874B /* test.pdf */,
 				07CD32F72065B72A0064A4BE /* video.html */,
+				C9C9A91C21DED79400FDE96E /* video-with-play-button.html */,
 				1C2B81841C8924A200A5529F /* webfont.html */,
 			);
 			name = Resources;

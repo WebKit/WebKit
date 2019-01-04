@@ -1,3 +1,25 @@
+2019-01-03  Matt Rajca  <mrajca@apple.com>
+
+        Make DidPlayMediaPreventedFromPlaying autoplay event more generic.
+        https://bugs.webkit.org/show_bug.cgi?id=193128
+        rdar://34554231
+
+        Reviewed by Jer Noble.
+
+        Today, the "DidPlayMediaPreventedFromPlaying" autoplay event is only sent for
+        media prevented from autoplaying. It could be generalized to a "DidPlayMediaWithUserGesture"
+        event along with a flag that indicates whether or not autoplay was actually prevented.
+
+        Tests: existing API tests were updated to reflect the new names. New API tests
+        were added for the new case in which the "DidPlayMediaWithUserGesture" event is sent.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WebKit/long-test.mp4: Added.
+        * TestWebKitAPI/Tests/WebKitCocoa/WebsitePolicies.mm:
+        (TEST):
+        * TestWebKitAPI/Tests/WebKitCocoa/audio-with-play-button.html: Added.
+        * TestWebKitAPI/Tests/WebKitCocoa/video-with-play-button.html: Added.
+
 2019-01-04  Chris Dumez  <cdumez@apple.com>
 
         [PSON] Calling history.back() from inside the load event handler prevents process-swapping

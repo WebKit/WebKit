@@ -61,6 +61,7 @@ static const Seconds elementMainContentCheckInterval { 250_ms };
 
 static bool isElementRectMostlyInMainFrame(const HTMLMediaElement&);
 static bool isElementLargeEnoughForMainContent(const HTMLMediaElement&, MediaSessionMainContentPurpose);
+static bool isElementMainContentForPurposesOfAutoplay(const HTMLMediaElement&, bool shouldHitTestMainFrame);
 
 #if !RELEASE_LOG_DISABLED
 static String restrictionNames(MediaElementSession::BehaviorRestrictions restriction)
@@ -518,6 +519,11 @@ bool MediaElementSession::isLargeEnoughForMainContent(MediaSessionMainContentPur
     return isElementLargeEnoughForMainContent(m_element, purpose);
 }
 
+bool MediaElementSession::isMainContentForPurposesOfAutoplayEvents() const
+{
+    return isElementMainContentForPurposesOfAutoplay(m_element, false);
+}
+
 MonotonicTime MediaElementSession::mostRecentUserInteractionTime() const
 {
     return m_mostRecentUserInteractionTime;
@@ -797,7 +803,7 @@ size_t MediaElementSession::maximumMediaSourceBufferSize(const SourceBuffer& buf
 }
 #endif
 
-static bool isMainContentForPurposesOfAutoplay(const HTMLMediaElement& element)
+static bool isElementMainContentForPurposesOfAutoplay(const HTMLMediaElement& element, bool shouldHitTestMainFrame)
 {
     Document& document = element.document();
     if (!document.hasLivingRenderTree() || document.activeDOMObjectsAreStopped() || element.isSuspended() || !element.hasAudio() || !element.hasVideo())
@@ -826,6 +832,9 @@ static bool isMainContentForPurposesOfAutoplay(const HTMLMediaElement& element)
     auto& mainFrame = document.frame()->mainFrame();
     if (!mainFrame.view() || !mainFrame.view()->renderView())
         return false;
+
+    if (!shouldHitTestMainFrame)
+        return true;
 
     RenderView& mainRenderView = *mainFrame.view()->renderView();
 
@@ -930,7 +939,7 @@ bool MediaElementSession::updateIsMainContent() const
         return false;
 
     bool wasMainContent = m_isMainContent;
-    m_isMainContent = isMainContentForPurposesOfAutoplay(m_element);
+    m_isMainContent = isElementMainContentForPurposesOfAutoplay(m_element, true);
 
     if (m_isMainContent != wasMainContent)
         m_element.updateShouldPlay();

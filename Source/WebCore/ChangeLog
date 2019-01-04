@@ -1,3 +1,63 @@
+2019-01-03  Matt Rajca  <mrajca@apple.com>
+
+        Make DidPlayMediaPreventedFromPlaying autoplay event more generic.
+        https://bugs.webkit.org/show_bug.cgi?id=193128
+        rdar://34554231
+
+        Reviewed by Jer Noble.
+
+        Today, the "DidPlayMediaPreventedFromPlaying" autoplay event is only sent for
+        media prevented from autoplaying. It could be generalized to a "DidPlayMediaWithUserGesture"
+        event along with a flag that indicates whether or not autoplay was actually prevented.
+        Moreover, we can include a flag that indicates whether the media element in question
+        is main content. Clients will then know in more cases when media was played with a user
+        gesture, whether or not it has audio, as well as its main content status. While the main
+        content heuristics may not be perfect, they covered the top 20 video-centric websites that
+        this was tested with and are meant to be used by clients for data evaluation purposes.
+
+        As part of this, the PlaybackWithoutUserGesture enum was renamed to AutoplayEventPlaybackState
+        since it now also applies to cases where there is a user gesture. The
+        `m_playbackWithoutUserGestureStartedTime` member variable was also removed in favor of
+        `playbackStartedTime` which also covers all the cases we care about.
+
+        Tests: existing API tests were updated to reflect the new names. New API tests
+        were added for the new case in which the "DidPlayMediaWithUserGesture" event is sent.
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::convertEnumerationToString): Update to new enum cases.
+        (WebCore::HTMLMediaElement::setReadyState): Ditto.
+        (WebCore::HTMLMediaElement::play): Ditto.
+        (WebCore::HTMLMediaElement::playInternal): Also cover the case where
+         playback was not prevented but there was a user gesture.
+        (WebCore::HTMLMediaElement::pauseInternal): Use new name.
+        (WebCore::HTMLMediaElement::setVolume): Use new name.
+        (WebCore::HTMLMediaElement::playbackProgressTimerFired): Dispatch the
+         DidPlayMediaWithUserGesture event when playback was started with a user
+         gesture as well.
+        (WebCore::HTMLMediaElement::mediaPlayerDidAddAudioTrack): Use new name.
+        (WebCore::HTMLMediaElement::mediaPlayerTimeChanged): Ditto.
+        (WebCore::HTMLMediaElement::mediaPlayerCharacteristicChanged): Ditto.
+        (WebCore::HTMLMediaElement::stopWithoutDestroyingMediaPlayer): Ditto.
+        (WebCore::HTMLMediaElement::handleAutoplayEvent): Pass along new media state.
+        (WebCore::HTMLMediaElement::userDidInterfereWithAutoplay): Use new name.
+        (WebCore::HTMLMediaElement::setAutoplayEventPlaybackState): Stop setting
+         m_playbackWithoutUserGestureStartedTime in favor of using playbackStartedTime.
+        (WebCore::HTMLMediaElement::updateShouldPlay): Use new name.
+        (WebCore::HTMLMediaElement::setPlaybackWithoutUserGesture): Renamed.
+        * html/HTMLMediaElement.h:
+        (WTF::LogArgument<WebCore::HTMLMediaElement::AutoplayEventPlaybackState>::toString): Renamed from...
+        (WTF::LogArgument<WebCore::HTMLMediaElement::PlaybackWithoutUserGesture>::toString):
+        * html/MediaElementSession.cpp:
+        (WebCore::MediaElementSession::isMainContentForPurposesOfAutoplayEvents const): Don't
+         do the hit testing check for the purposes of autoplay events. It seems to fail on the
+         basic Vimeo player due to overlapping divs.
+        (WebCore::isElementMainContentForPurposesOfAutoplay):
+        (WebCore::MediaElementSession::updateIsMainContent const): Keep the existing behavior
+         here of hit testing.
+        (WebCore::isMainContentForPurposesOfAutoplay): Renamed.
+        * html/MediaElementSession.h:
+        * page/AutoplayEvent.h:
+
 2019-01-04  Youenn Fablet  <youenn@apple.com>
 
         Crash in WebCore::ServiceWorkerGlobalScope

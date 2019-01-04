@@ -760,7 +760,7 @@ template<> struct EnumTraits<WebCore::AutoplayEvent> {
     using values = EnumValues<
         WebCore::AutoplayEvent,
         WebCore::AutoplayEvent::DidPreventMediaFromPlaying,
-        WebCore::AutoplayEvent::DidPlayMediaPreventedFromPlaying,
+        WebCore::AutoplayEvent::DidPlayMediaWithUserGesture,
         WebCore::AutoplayEvent::DidAutoplayMediaPastThresholdWithoutUserInterference,
         WebCore::AutoplayEvent::UserDidInterfereWithPlayback
     >;

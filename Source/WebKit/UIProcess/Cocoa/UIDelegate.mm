@@ -717,6 +717,10 @@ static _WKAutoplayEventFlags toWKAutoplayEventFlags(OptionSet<WebCore::AutoplayE
     _WKAutoplayEventFlags wkFlags = _WKAutoplayEventFlagsNone;
     if (flags.contains(WebCore::AutoplayEventFlags::HasAudio))
         wkFlags |= _WKAutoplayEventFlagsHasAudio;
+    if (flags.contains(WebCore::AutoplayEventFlags::PlaybackWasPrevented))
+        wkFlags |= _WKAutoplayEventFlagsPlaybackWasPrevented;
+    if (flags.contains(WebCore::AutoplayEventFlags::MediaIsMainContent))
+        wkFlags |= _WKAutoplayEventFlagsMediaIsMainContent;
     
     return wkFlags;
 }
@@ -726,15 +730,15 @@ static _WKAutoplayEvent toWKAutoplayEvent(WebCore::AutoplayEvent event)
     switch (event) {
     case WebCore::AutoplayEvent::DidPreventMediaFromPlaying:
         return _WKAutoplayEventDidPreventFromAutoplaying;
-    case WebCore::AutoplayEvent::DidPlayMediaPreventedFromPlaying:
-        return _WKAutoplayEventDidPlayMediaPreventedFromAutoplaying;
+    case WebCore::AutoplayEvent::DidPlayMediaWithUserGesture:
+        return _WKAutoplayEventDidPlayMediaWithUserGesture;
     case WebCore::AutoplayEvent::DidAutoplayMediaPastThresholdWithoutUserInterference:
         return _WKAutoplayEventDidAutoplayMediaPastThresholdWithoutUserInterference;
     case WebCore::AutoplayEvent::UserDidInterfereWithPlayback:
         return _WKAutoplayEventUserDidInterfereWithPlayback;
     }
     ASSERT_NOT_REACHED();
-    return _WKAutoplayEventDidPlayMediaPreventedFromAutoplaying;
+    return _WKAutoplayEventDidPlayMediaWithUserGesture;
 }
 
 void UIDelegate::UIClient::toolbarsAreVisible(WebPageProxy&, Function<void(bool)>&& completionHandler)

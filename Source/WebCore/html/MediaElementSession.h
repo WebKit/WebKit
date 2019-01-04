@@ -141,6 +141,7 @@ public:
     enum class PlaybackControlsPurpose { ControlsManager, NowPlaying };
     bool canShowControlsManager(PlaybackControlsPurpose) const;
     bool isLargeEnoughForMainContent(MediaSessionMainContentPurpose) const;
+    bool isMainContentForPurposesOfAutoplayEvents() const;
     MonotonicTime mostRecentUserInteractionTime() const;
 
     bool allowsPlaybackControlsForAutoplayingAudio() const;

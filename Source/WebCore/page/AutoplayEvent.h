@@ -29,13 +29,15 @@ namespace WebCore {
 
 enum class AutoplayEvent : uint8_t {
     DidPreventMediaFromPlaying,
-    DidPlayMediaPreventedFromPlaying,
+    DidPlayMediaWithUserGesture,
     DidAutoplayMediaPastThresholdWithoutUserInterference,
     UserDidInterfereWithPlayback,
 };
 
 enum class AutoplayEventFlags {
     HasAudio = 1 << 0,
+    PlaybackWasPrevented = 1 << 1,
+    MediaIsMainContent = 1 << 2,
 };
 
 } // namespace WebCore

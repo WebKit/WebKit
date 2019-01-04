@@ -1,3 +1,27 @@
+2019-01-03  Matt Rajca  <mrajca@apple.com>
+
+        Make DidPlayMediaPreventedFromPlaying autoplay event more generic.
+        https://bugs.webkit.org/show_bug.cgi?id=193128
+        rdar://34554231
+
+        Reviewed by Jer Noble.
+
+        Today, the "DidPlayMediaPreventedFromPlaying" autoplay event is only sent for
+        media prevented from autoplaying. It could be generalized to a "DidPlayMediaWithUserGesture"
+        event along with a flag that indicates whether or not autoplay was actually prevented.
+
+        Tests: existing API tests were updated to reflect the new names. New API tests
+        were added for the new case in which the "DidPlayMediaWithUserGesture" event is sent.
+
+        * Shared/WebCoreArgumentCoders.h: Take into account new flags.
+        * UIProcess/API/C/WKPage.cpp: Ditto.
+        (WKPageSetPageUIClient):
+        * UIProcess/API/C/WKPageUIClient.h: Ditto.
+        * UIProcess/API/Cocoa/WKUIDelegatePrivate.h: Ditto.
+        * UIProcess/Cocoa/UIDelegate.mm: Ditto.
+        (WebKit::toWKAutoplayEventFlags):
+        (WebKit::toWKAutoplayEvent):
+
 2019-01-04  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         [curl] Move cookiePersistentStorageFile from NetworkProcessCreationParameters to NetworkSessionCreationParameters

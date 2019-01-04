@@ -49,7 +49,7 @@
 #else
 typedef NS_ENUM(NSInteger, _WKAutoplayEvent) {
     _WKAutoplayEventDidPreventFromAutoplaying,
-    _WKAutoplayEventDidPlayMediaPreventedFromAutoplaying,
+    _WKAutoplayEventDidPlayMediaWithUserGesture,
     _WKAutoplayEventDidAutoplayMediaPastThresholdWithoutUserInterference,
     _WKAutoplayEventUserDidInterfereWithPlayback,
 } WK_API_AVAILABLE(macosx(10.13.4));
@@ -68,6 +68,8 @@ typedef NS_ENUM(NSInteger, _WKPlugInUnavailabilityReason) {
 typedef NS_OPTIONS(NSUInteger, _WKAutoplayEventFlags) {
     _WKAutoplayEventFlagsNone = 0,
     _WKAutoplayEventFlagsHasAudio = 1 << 0,
+    _WKAutoplayEventFlagsPlaybackWasPrevented = 1 << 1,
+    _WKAutoplayEventFlagsMediaIsMainContent = 1 << 2,
 } WK_API_AVAILABLE(macosx(10.13.4));
 #endif
 

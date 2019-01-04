@@ -1,0 +1,28 @@
+<html>
+    <head>
+        <script>
+            function pageLoaded() {
+                try {
+                    window.webkit.messageHandlers.testHandler.postMessage("loaded");
+                } catch(e) { }
+            }
+
+            function beganPlaying() {
+                try {
+                    window.webkit.messageHandlers.testHandler.postMessage("played");
+                } catch(e) { }
+            }
+
+            function play() {
+                let audio = document.getElementById("audio");
+                audio.playbackRate = 5; // Speeds up the test.
+                audio.play();
+            }
+        </script>
+    </head>
+    <body onload="pageLoaded()">
+        <button onclick="play()">Play</button>
+        <br />
+        <audio controls id="audio" onplaying="beganPlaying()" src="silence-long.m4a" />
+    </body>
+</html>

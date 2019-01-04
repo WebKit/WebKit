@@ -571,7 +571,7 @@ public:
     WEBCORE_EXPORT void didBecomeFullscreenElement() override;
     WEBCORE_EXPORT void willExitFullscreen();
 
-    enum class PlaybackWithoutUserGesture { None, Started, Prevented };
+    enum class AutoplayEventPlaybackState { None, PreventedAutoplay, StartedWithUserGesture, StartedWithoutUserGesture };
 
 protected:
     HTMLMediaElement(const QualifiedName&, Document&, bool createdByParser);
@@ -822,7 +822,7 @@ private:
     void dispatchPlayPauseEventsIfNeedsQuirks();
     SuccessOr<MediaPlaybackDenialReason> canTransitionFromAutoplayToPlay() const;
 
-    void setPlaybackWithoutUserGesture(PlaybackWithoutUserGesture);
+    void setAutoplayEventPlaybackState(AutoplayEventPlaybackState);
     void userDidInterfereWithAutoplay();
     void handleAutoplayEvent(AutoplayEvent);
 
@@ -1117,8 +1117,7 @@ private:
     bool m_haveVisibleTextTrack : 1;
     bool m_processingPreferenceChange : 1;
 
-    PlaybackWithoutUserGesture m_playbackWithoutUserGesture { PlaybackWithoutUserGesture::None };
-    Optional<MediaTime> m_playbackWithoutUserGestureStartedTime;
+    AutoplayEventPlaybackState m_autoplayEventPlaybackState { AutoplayEventPlaybackState::None };
 
     String m_subtitleTrackLanguage;
     MediaTime m_lastTextTrackUpdateTime { -1, 1 };
@@ -1197,15 +1196,15 @@ private:
     bool m_playingOnSecondScreen { false };
 };
 
-String convertEnumerationToString(HTMLMediaElement::PlaybackWithoutUserGesture);
+String convertEnumerationToString(HTMLMediaElement::AutoplayEventPlaybackState);
 
 } // namespace WebCore
 
 namespace WTF {
 
 template <>
-struct LogArgument<WebCore::HTMLMediaElement::PlaybackWithoutUserGesture> {
-    static String toString(const WebCore::HTMLMediaElement::PlaybackWithoutUserGesture reason)
+struct LogArgument<WebCore::HTMLMediaElement::AutoplayEventPlaybackState> {
+    static String toString(const WebCore::HTMLMediaElement::AutoplayEventPlaybackState reason)
     {
         return convertEnumerationToString(reason);
     }

@@ -362,8 +362,9 @@ TEST(WebKit, WebsitePoliciesPlayAfterPreventedAutoplay)
 
     [webView mouseDownAtPoint:playButtonClickPoint simulatePressure:NO];
     [webView mouseUpAtPoint:playButtonClickPoint];
-    runUntilReceivesAutoplayEvent(kWKAutoplayEventDidPlayMediaPreventedFromAutoplaying);
+    runUntilReceivesAutoplayEvent(kWKAutoplayEventDidPlayMediaWithUserGesture);
     ASSERT_TRUE(*receivedAutoplayEventFlags & kWKAutoplayEventFlagsHasAudio);
+    ASSERT_TRUE(*receivedAutoplayEventFlags & kWKAutoplayEventFlagsPlaybackWasPrevented);
 
     receivedAutoplayEvent = WTF::nullopt;
     [webView loadHTMLString:@"" baseURL:nil];
@@ -376,8 +377,9 @@ TEST(WebKit, WebsitePoliciesPlayAfterPreventedAutoplay)
 
     [webView mouseDownAtPoint:playButtonClickPoint simulatePressure:NO];
     [webView mouseUpAtPoint:playButtonClickPoint];
-    runUntilReceivesAutoplayEvent(kWKAutoplayEventDidPlayMediaPreventedFromAutoplaying);
+    runUntilReceivesAutoplayEvent(kWKAutoplayEventDidPlayMediaWithUserGesture);
     ASSERT_TRUE(*receivedAutoplayEventFlags & kWKAutoplayEventFlagsHasAudio);
+    ASSERT_TRUE(*receivedAutoplayEventFlags & kWKAutoplayEventFlagsPlaybackWasPrevented);
 
     receivedAutoplayEvent = WTF::nullopt;
     [webView loadHTMLString:@"" baseURL:nil];
@@ -404,8 +406,48 @@ TEST(WebKit, WebsitePoliciesPlayAfterPreventedAutoplay)
 
     [webView mouseDownAtPoint:playButtonClickPoint simulatePressure:NO];
     [webView mouseUpAtPoint:playButtonClickPoint];
-    runUntilReceivesAutoplayEvent(kWKAutoplayEventDidPlayMediaPreventedFromAutoplaying);
+    runUntilReceivesAutoplayEvent(kWKAutoplayEventDidPlayMediaWithUserGesture);
     ASSERT_TRUE(*receivedAutoplayEventFlags & kWKAutoplayEventFlagsHasAudio);
+    ASSERT_TRUE(*receivedAutoplayEventFlags & kWKAutoplayEventFlagsPlaybackWasPrevented);
+}
+
+TEST(WebKit, WebsitePoliciesPlayingWithUserGesture)
+{
+    auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
+
+    auto delegate = adoptNS([[AutoplayPoliciesDelegate alloc] init]);
+    [delegate setAutoplayPolicyForURL:^(NSURL *) {
+        return _WKWebsiteAutoplayPolicyAllow;
+    }];
+    [webView setNavigationDelegate:delegate.get()];
+    [webView setUIDelegate:delegate.get()];
+
+    receivedAutoplayEvent = WTF::nullopt;
+
+    NSPoint playButtonClickPoint = NSMakePoint(20, 580);
+
+    NSURLRequest *request = [NSURLRequest requestWithURL:[[NSBundle mainBundle] URLForResource:@"audio-with-play-button" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"]];
+    [webView loadRequest:request];
+    [webView waitForMessage:@"loaded"];
+    [webView mouseDownAtPoint:playButtonClickPoint simulatePressure:NO];
+    [webView mouseUpAtPoint:playButtonClickPoint];
+
+    runUntilReceivesAutoplayEvent(kWKAutoplayEventDidPlayMediaWithUserGesture);
+    ASSERT_TRUE(*receivedAutoplayEventFlags & kWKAutoplayEventFlagsHasAudio);
+    ASSERT_FALSE(*receivedAutoplayEventFlags & kWKAutoplayEventFlagsMediaIsMainContent);
+
+    receivedAutoplayEvent = WTF::nullopt;
+
+    request = [NSURLRequest requestWithURL:[[NSBundle mainBundle] URLForResource:@"video-with-play-button" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"]];
+    [webView loadRequest:request];
+    [webView waitForMessage:@"loaded"];
+    [webView mouseDownAtPoint:playButtonClickPoint simulatePressure:NO];
+    [webView mouseUpAtPoint:playButtonClickPoint];
+
+    runUntilReceivesAutoplayEvent(kWKAutoplayEventDidPlayMediaWithUserGesture);
+    ASSERT_TRUE(*receivedAutoplayEventFlags & kWKAutoplayEventFlagsHasAudio);
+    ASSERT_TRUE(*receivedAutoplayEventFlags & kWKAutoplayEventFlagsMediaIsMainContent);
 }
 
 TEST(WebKit, WebsitePoliciesPlayingWithoutInterference)

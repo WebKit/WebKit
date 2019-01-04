@@ -2018,6 +2018,10 @@ void WKPageSetPageUIClient(WKPageRef pageRef, const WKPageUIClientBase* wkClient
             WKAutoplayEventFlags wkFlags = kWKAutoplayEventFlagsNone;
             if (flags.contains(WebCore::AutoplayEventFlags::HasAudio))
                 wkFlags |= kWKAutoplayEventFlagsHasAudio;
+            if (flags.contains(WebCore::AutoplayEventFlags::PlaybackWasPrevented))
+                wkFlags |= kWKAutoplayEventFlagsPlaybackWasPrevented;
+            if (flags.contains(WebCore::AutoplayEventFlags::MediaIsMainContent))
+                wkFlags |= kWKAutoplayEventFlagsMediaIsMainContent;
 
             return wkFlags;
         }
@@ -2027,8 +2031,8 @@ void WKPageSetPageUIClient(WKPageRef pageRef, const WKPageUIClientBase* wkClient
             switch (event) {
             case WebCore::AutoplayEvent::DidAutoplayMediaPastThresholdWithoutUserInterference:
                 return kWKAutoplayEventDidAutoplayMediaPastThresholdWithoutUserInterference;
-            case WebCore::AutoplayEvent::DidPlayMediaPreventedFromPlaying:
-                return kWKAutoplayEventDidPlayMediaPreventedFromAutoplaying;
+            case WebCore::AutoplayEvent::DidPlayMediaWithUserGesture:
+                return kWKAutoplayEventDidPlayMediaWithUserGesture;
             case WebCore::AutoplayEvent::DidPreventMediaFromPlaying:
                 return kWKAutoplayEventDidPreventFromAutoplaying;
             case WebCore::AutoplayEvent::UserDidInterfereWithPlayback:
