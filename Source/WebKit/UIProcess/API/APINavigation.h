@@ -97,7 +97,6 @@ public:
 
     bool currentRequestIsRedirect() const { return m_lastNavigationAction.isRedirect; }
 
-    void setTargetItem(WebKit::WebBackForwardListItem& item) { m_targetItem = &item; }
     WebKit::WebBackForwardListItem* targetItem() const { return m_targetItem.get(); }
     WebKit::WebBackForwardListItem* fromItem() const { return m_fromItem.get(); }
     Optional<WebCore::FrameLoadType> backForwardFrameLoadType() const { return m_backForwardFrameLoadType; }

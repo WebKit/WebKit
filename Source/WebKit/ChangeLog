@@ -1,3 +1,41 @@
+2019-01-04  Chris Dumez  <cdumez@apple.com>
+
+        Crash under WebPageProxy::continueNavigationInNewProcess()
+        https://bugs.webkit.org/show_bug.cgi?id=193113
+        <rdar://problem/46938686>
+
+        Reviewed by Brady Eidson.
+
+        The crash was happening in continueNavigationInNewProcess() when dereferencing
+        the Optional<> value returned by API::Navigation::backForwardFrameLoadType(), after verifying
+        that API::Navigation::targetItem() is not null.
+
+        When constructing an API::Navigation object with a targetItem, you HAVE to pass
+        in a backForwardFrameLoadType as well so this normally is not possible. However,
+        it can happen because API::Navigation::setTargetItem() can get called later on and
+        set a target item on a Navigation object which potentially does not have a
+        backForwardFrameLoadType. This setter was only called in one place in
+        decidePolicyForNavigationAction() to update an existing Navigation object using
+        the targetItem provided by a NavigationAction. This logic was added with PSON
+        support.
+
+        Because I was unable to write a test case reproducing this and because I do not know
+        how it can happen in practice that we'd have a NavigationAction with a targetItem
+        even though the Navigation object itself is not for a back/forward navigation, I have
+        chosen to drop the unsafe API::Navigation::setTargetItem() setter and the call site.
+        When the call site was added, with ProcessSwap.NavigateToDataURLThenBack API test,
+        the intention was to create a back/forward navigation object instead of a standard load
+        navigation one if there is currently no existing Navigation object in the UIProcess.
+        This can happen when the back/forward navigation is triggered by the WebProcess via
+        JS (e.g. history.back()) and this is what the API test covers. The part of the logic
+        that updates an existing Navigation object with a targetItem coming from the
+        NavigationAction is untested and I have no evidence it does anything useful. However,
+        we DO have evidence that it can cause crashes.
+
+        * UIProcess/API/APINavigation.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::decidePolicyForNavigationAction):
+
 2019-01-04  Tim Horton  <timothy_horton@apple.com>
 
         Remove some nonexistent files from the WebKit Xcode project

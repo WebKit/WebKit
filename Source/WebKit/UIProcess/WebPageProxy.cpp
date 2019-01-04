@@ -4379,17 +4379,14 @@ void WebPageProxy::decidePolicyForNavigationAction(WebFrameProxy& frame, WebCore
         frameSecurityOrigin = navigation->destinationFrameSecurityOrigin();
     }
 
-    if (auto targetBackForwardItemIdentifier = navigationActionData.targetBackForwardItemIdentifier) {
-        if (auto* item = m_backForwardList->itemForID(*navigationActionData.targetBackForwardItemIdentifier)) {
-            if (!navigation)
+    if (!navigation) {
+        if (auto targetBackForwardItemIdentifier = navigationActionData.targetBackForwardItemIdentifier) {
+            if (auto* item = m_backForwardList->itemForID(*targetBackForwardItemIdentifier))
                 navigation = m_navigationState->createBackForwardNavigation(*item, m_backForwardList->currentItem(), FrameLoadType::IndexedBackForward);
-            else
-                navigation->setTargetItem(*item);
         }
+        if (!navigation)
+            navigation = m_navigationState->createLoadRequestNavigation(ResourceRequest(request), m_backForwardList->currentItem());
     }
-
-    if (!navigation)
-        navigation = m_navigationState->createLoadRequestNavigation(ResourceRequest(request), m_backForwardList->currentItem());
 
     uint64_t newNavigationID = navigation->navigationID();
     navigation->setCurrentRequest(ResourceRequest(request), m_process->coreProcessIdentifier());
