@@ -1,3 +1,19 @@
+2019-01-03  Zalan Bujtas  <zalan@apple.com>
+
+        REGRESSION: -webkit-appearance test case crashes
+        https://bugs.webkit.org/show_bug.cgi?id=189302
+        <rdar://problem/44143049>
+
+        Reviewed by Wenson Hsieh.
+
+        The painting and the layout positions of the cancel button need to match in order to be able to interact with it.
+        This patch removes the previous position inlining attempts.
+
+        Test: fast/forms/webkit-appearance-searchfield-cancel-button-crash.html
+
+        * rendering/RenderThemeMac.mm:
+        (WebCore::RenderThemeMac::paintSearchFieldCancelButton):
+
 2019-01-03  David Kilzer  <ddkilzer@apple.com>
 
         Leak of WebCore::LibWebRTCCertificateGenerator::RTCCertificateGeneratorCallback (48 bytes) in com.apple.WebKit.WebContent running WebKit layout tests

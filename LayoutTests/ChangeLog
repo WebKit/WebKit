@@ -1,3 +1,14 @@
+2019-01-03  Zalan Bujtas  <zalan@apple.com>
+
+        REGRESSION: -webkit-appearance test case crashes
+        https://bugs.webkit.org/show_bug.cgi?id=189302
+        <rdar://problem/44143049>
+
+        Reviewed by Wenson Hsieh.
+
+        * fast/forms/webkit-appearance-searchfield-cancel-button-crash-expected.txt: Added.
+        * fast/forms/webkit-appearance-searchfield-cancel-button-crash.html: Added.
+
 2019-01-03  Chris Dumez  <cdumez@apple.com>
 
         Potential infinite recursion in isFrameFamiliarWith(Frame&, Frame&)

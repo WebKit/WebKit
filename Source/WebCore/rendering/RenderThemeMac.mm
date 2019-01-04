@@ -2076,27 +2076,13 @@ bool RenderThemeMac::paintSearchFieldCancelButton(const RenderBox& box, const Pa
         [[search cancelButtonCell] setHighlighted:NO];
 
     GraphicsContextStateSaver stateSaver(paintInfo.context());
-
-    float zoomLevel = box.style().effectiveZoom();
-
     FloatRect localBounds = adjustedCancelButtonRect([search cancelButtonRectForBounds:NSRect(snappedIntRect(inputBox.contentBoxRect()))]);
-
-    // Adjust position based on the content direction.
-    float adjustedXPosition;
-
-    if (is<HTMLInputElement>(*input)) {
-        RenderBox* cancelButtonBox = downcast<RenderBox>(downcast<HTMLInputElement>(*input).cancelButtonElement()->renderer());
-        // The cancel button won't always be the rightmost element.
-        adjustedXPosition = inputBox.contentBoxRect().x() + (cancelButtonBox->absoluteContentBox().x() - inputBox.absoluteContentBox().x());
-    } else if (box.style().direction() == TextDirection::RTL)
-        adjustedXPosition = inputBox.contentBoxRect().x();
-    else
-        adjustedXPosition = inputBox.contentBoxRect().maxX() - localBounds.size().width();
-    
-    localBounds.setX(adjustedXPosition);
+    // Set the original horizontal position back (cancelButtonRectForBounds() moves it based on the system direction).
+    localBounds.setX(inputBox.contentBoxRect().x() + box.x());
     FloatPoint paintingPos = convertToPaintingPosition(inputBox, box, localBounds.location(), r.location());
 
     FloatRect unzoomedRect(paintingPos, localBounds.size());
+    auto zoomLevel = box.style().effectiveZoom();
     if (zoomLevel != 1.0f) {
         unzoomedRect.setSize(unzoomedRect.size() / zoomLevel);
         paintInfo.context().translate(unzoomedRect.location());
