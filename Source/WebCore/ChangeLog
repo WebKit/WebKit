@@ -1,3 +1,57 @@
+2019-01-04  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC][BFC] Use computedValue and usedValue consistently
+        https://bugs.webkit.org/show_bug.cgi?id=193059
+
+        Reviewed by Antti Koivisto.
+
+        https://www.w3.org/TR/CSS22/cascade.html#value-stages
+
+        6.1.2 Computed values
+        Specified values are resolved to computed values during the cascade; for example URIs are made absolute and 'em' and 'ex' units
+        are computed to pixel or absolute lengths. Computing a value never requires the user agent to render the document...
+
+        6.1.3 Used values
+        Computed values are processed as far as possible without formatting the document. Some values, however, can only be determined when the document
+        is being laid out. For example, if the width of an element is set to be a certain percentage of its containing block, the width cannot be determined
+        until the width of the containing block has been determined. The used value is the result of taking the computed value and resolving any remaining
+        dependencies into an absolute value.
+
+        * layout/FormattingContext.cpp:
+        (WebCore::Layout::FormattingContext::computeOutOfFlowHorizontalGeometry const):
+        * layout/FormattingContextGeometry.cpp:
+        (WebCore::Layout::FormattingContext::Geometry::outOfFlowNonReplacedHorizontalGeometry):
+        (WebCore::Layout::FormattingContext::Geometry::outOfFlowReplacedVerticalGeometry):
+        (WebCore::Layout::FormattingContext::Geometry::outOfFlowReplacedHorizontalGeometry):
+        (WebCore::Layout::FormattingContext::Geometry::complicatedCases):
+        (WebCore::Layout::FormattingContext::Geometry::inlineReplacedWidthAndMargin):
+        * layout/LayoutState.cpp:
+        (WebCore::Layout::LayoutState::LayoutState):
+        * layout/LayoutUnits.h:
+        * layout/Verification.cpp:
+        (WebCore::Layout::outputMismatchingBlockBoxInformationIfNeeded):
+        * layout/blockformatting/BlockFormattingContext.cpp:
+        (WebCore::Layout::BlockFormattingContext::computeWidthAndMargin const):
+        * layout/blockformatting/BlockFormattingContextGeometry.cpp:
+        (WebCore::Layout::BlockFormattingContext::Geometry::inFlowNonReplacedWidthAndMargin):
+        (WebCore::Layout::BlockFormattingContext::Geometry::inFlowReplacedWidthAndMargin):
+        * layout/displaytree/DisplayBox.cpp:
+        (WebCore::Display::Box::Box):
+        * layout/displaytree/DisplayBox.h:
+        (WebCore::Display::Box::setHasValidHorizontalComputedMargin):
+        (WebCore::Display::Box::setHorizontalComputedMargin):
+        (WebCore::Display::Box::computedMarginStart const):
+        (WebCore::Display::Box::computedMarginEnd const):
+        (WebCore::Display::Box::setHasValidHorizontalNonComputedMargin): Deleted.
+        (WebCore::Display::Box::setHorizontalNonComputedMargin): Deleted.
+        (WebCore::Display::Box::nonComputedMarginStart const): Deleted.
+        (WebCore::Display::Box::nonComputedMarginEnd const): Deleted.
+        * layout/floats/FloatAvoider.h:
+        (WebCore::Layout::FloatAvoider::marginStart const):
+        (WebCore::Layout::FloatAvoider::marginEnd const):
+        * layout/inlineformatting/InlineFormattingContext.cpp:
+        (WebCore::Layout::InlineFormattingContext::computeWidthAndMargin const):
+
 2019-01-03  Zalan Bujtas  <zalan@apple.com>
 
         REGRESSION: -webkit-appearance test case crashes

@@ -146,8 +146,8 @@ public:
 
     LayoutUnit nonCollapsedMarginBefore() const;
     LayoutUnit nonCollapsedMarginAfter() const;
-    LayoutUnit nonComputedMarginStart() const;
-    LayoutUnit nonComputedMarginEnd() const;
+    LayoutUnit computedMarginStart() const;
+    LayoutUnit computedMarginEnd() const;
 
     Optional<LayoutUnit> estimatedMarginBefore() const { return m_estimatedMarginBefore; }
 
@@ -193,7 +193,7 @@ private:
 
     void setHorizontalMargin(Layout::HorizontalMargin);
     void setVerticalMargin(Layout::VerticalMargin);
-    void setHorizontalNonComputedMargin(Layout::HorizontalMargin);
+    void setHorizontalComputedMargin(Layout::HorizontalMargin);
     void setEstimatedMarginBefore(LayoutUnit marginBefore) { m_estimatedMarginBefore = marginBefore; }
 
     void setBorder(Layout::Edges);
@@ -208,7 +208,7 @@ private:
     void setHasValidLeft() { m_hasValidLeft = true; }
     void setHasValidVerticalMargin() { m_hasValidVerticalMargin = true; }
     void setHasValidVerticalNonCollapsedMargin() { m_hasValidVerticalNonCollapsedMargin = true; }
-    void setHasValidHorizontalNonComputedMargin() { m_hasValidHorizontalNonComputedMargin = true; }
+    void setHasValidHorizontalComputedMargin() { m_hasValidHorizontalComputedMargin = true; }
     void setHasValidHorizontalMargin() { m_hasValidHorizontalMargin = true; }
 
     void setHasValidBorder() { m_hasValidBorder = true; }
@@ -226,7 +226,7 @@ private:
 
     Layout::HorizontalMargin m_horizontalMargin;
     Layout::VerticalMargin m_verticalMargin;
-    Layout::HorizontalMargin m_horizontalNonComputedMargin;
+    Layout::HorizontalMargin m_horizontalComputedMargin;
     Optional<LayoutUnit> m_estimatedMarginBefore;
 
     Layout::Edges m_border;
@@ -238,7 +238,7 @@ private:
     bool m_hasValidHorizontalMargin { false };
     bool m_hasValidVerticalMargin { false };
     bool m_hasValidVerticalNonCollapsedMargin { false };
-    bool m_hasValidHorizontalNonComputedMargin { false };
+    bool m_hasValidHorizontalComputedMargin { false };
     bool m_hasValidBorder { false };
     bool m_hasValidPadding { false };
     bool m_hasValidContentHeight { false };
@@ -525,12 +525,12 @@ inline void Box::setVerticalMargin(Layout::VerticalMargin margin)
     m_verticalMargin = margin;
 }
 
-inline void Box::setHorizontalNonComputedMargin(Layout::HorizontalMargin margin)
+inline void Box::setHorizontalComputedMargin(Layout::HorizontalMargin margin)
 {
 #if !ASSERT_DISABLED
-    setHasValidHorizontalNonComputedMargin();
+    setHasValidHorizontalComputedMargin();
 #endif
-    m_horizontalNonComputedMargin = margin;
+    m_horizontalComputedMargin = margin;
 }
 
 inline void Box::setBorder(Layout::Edges border)
@@ -591,16 +591,16 @@ inline LayoutUnit Box::nonCollapsedMarginAfter() const
     return m_verticalMargin.nonCollapsedValues().after;
 }
 
-inline LayoutUnit Box::nonComputedMarginStart() const
+inline LayoutUnit Box::computedMarginStart() const
 {
-    ASSERT(m_hasValidHorizontalNonComputedMargin);
-    return m_horizontalNonComputedMargin.start;
+    ASSERT(m_hasValidHorizontalComputedMargin);
+    return m_horizontalComputedMargin.start;
 }
 
-inline LayoutUnit Box::nonComputedMarginEnd() const
+inline LayoutUnit Box::computedMarginEnd() const
 {
-    ASSERT(m_hasValidHorizontalNonComputedMargin);
-    return m_horizontalNonComputedMargin.end;
+    ASSERT(m_hasValidHorizontalComputedMargin);
+    return m_horizontalComputedMargin.end;
 }
 
 inline Optional<LayoutUnit> Box::paddingTop() const

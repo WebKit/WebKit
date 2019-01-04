@@ -87,10 +87,10 @@ void FormattingContext::computeOutOfFlowHorizontalGeometry(const Box& layoutBox)
     }
 
     auto& displayBox = layoutState.displayBoxForLayoutBox(layoutBox);
-    displayBox.setLeft(horizontalGeometry.left + horizontalGeometry.widthAndMargin.margin.start);
+    displayBox.setLeft(horizontalGeometry.left + horizontalGeometry.widthAndMargin.usedMargin.start);
     displayBox.setContentBoxWidth(horizontalGeometry.widthAndMargin.width);
-    displayBox.setHorizontalMargin(horizontalGeometry.widthAndMargin.margin);
-    displayBox.setHorizontalNonComputedMargin(horizontalGeometry.widthAndMargin.nonComputedMargin);
+    displayBox.setHorizontalMargin(horizontalGeometry.widthAndMargin.usedMargin);
+    displayBox.setHorizontalComputedMargin(horizontalGeometry.widthAndMargin.computedMargin);
 }
 
 void FormattingContext::computeOutOfFlowVerticalGeometry(const Box& layoutBox) const

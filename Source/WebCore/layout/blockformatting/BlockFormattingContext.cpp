@@ -331,9 +331,9 @@ void BlockFormattingContext::computeWidthAndMargin(const Box& layoutBox) const
 
     auto& displayBox = layoutState.displayBoxForLayoutBox(layoutBox);
     displayBox.setContentBoxWidth(widthAndMargin.width);
-    displayBox.moveHorizontally(widthAndMargin.margin.start);
-    displayBox.setHorizontalMargin(widthAndMargin.margin);
-    displayBox.setHorizontalNonComputedMargin(widthAndMargin.nonComputedMargin);
+    displayBox.moveHorizontally(widthAndMargin.usedMargin.start);
+    displayBox.setHorizontalMargin(widthAndMargin.usedMargin);
+    displayBox.setHorizontalComputedMargin(widthAndMargin.computedMargin);
 }
 
 void BlockFormattingContext::computeHeightAndMargin(const Box& layoutBox) const
