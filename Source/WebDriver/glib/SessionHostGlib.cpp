@@ -108,7 +108,8 @@ void SessionHost::connectToBrowser(Function<void (Optional<String> error)>&& com
 
 bool SessionHost::isConnected() const
 {
-    return !!m_browser;
+    // Session is connected when launching or when dbus connection hasn't been closed.
+    return m_browser && (!m_dbusConnection || !g_dbus_connection_is_closed(m_dbusConnection.get()));
 }
 
 struct ConnectToBrowserAsyncData {

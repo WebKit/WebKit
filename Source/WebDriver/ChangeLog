@@ -1,3 +1,19 @@
+2019-01-04  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GLIB] WebDriver: browser close not correctly detected on session close in some cases
+        https://bugs.webkit.org/show_bug.cgi?id=193104
+
+        Reviewed by Michael Catanzaro.
+
+        This happens when the dbus connection is closed right before the response to SendMessageToBackend message is
+        going to be sent. In that case, g_dbus_connection_call async ready handler generates an error before the close
+        signal is emitted. Then, the close commands try to handle the error checking if SessionHost::isConnected(), but
+        it still returns true, because the browser is still alive, but the dbus connection has been closed.
+
+        * glib/SessionHostGlib.cpp:
+        (WebDriver::SessionHost::isConnected const): Session is connected when launching or when dbus connection hasn't
+        been closed.
+
 2018-12-21  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GLIB] WebDriver: dbusConnectionClosedCallback can be called after SessionHost has been deleted
