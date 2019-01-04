@@ -189,7 +189,7 @@ class CheckPatchRelevance(buildstep.BuildStep):
         self._addToLog('stdio', 'This patch does not have relevant changes.')
         self.finished(FAILURE)
         self.build.results = SKIPPED
-        self.build.buildFinished(['Patch doesn\'t have relevant changes'], SKIPPED)
+        self.build.buildFinished(['Patch {} doesn\'t have relevant changes'.format(self.getProperty('patch_id', ''))], SKIPPED)
         return None
 
 

@@ -1,3 +1,13 @@
+2019-01-04  Aakash Jain  <aakash_jain@apple.com>
+
+        [ews-build] Check patch relevance step should print patch id
+        https://bugs.webkit.org/show_bug.cgi?id=193137
+
+        Reviewed by Lucas Forschler.
+
+        * BuildSlaveSupport/ews-build/steps.py:
+        (CheckPatchRelevance.start): Update the status to include patch id.
+
 2019-01-04  Jonathan Bedard  <jbedard@apple.com>
 
         webkitpy: Increase simulator teardown timeout
