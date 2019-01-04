@@ -849,7 +849,9 @@ static inline bool hasFocusedElement(WebKit::FocusedElementInformation focusedEl
     [_keyboardScrollingAnimator invalidate];
     _keyboardScrollingAnimator = nil;
 
+#if HAVE(PENCILKIT)
     _drawingCoordinator = nil;
+#endif
 
 #if ENABLE(DATALIST_ELEMENT)
     _dataListTextSuggestionsInputView = nil;
