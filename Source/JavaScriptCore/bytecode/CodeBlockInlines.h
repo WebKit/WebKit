@@ -51,9 +51,6 @@ void CodeBlock::forEachValueProfile(const Functor& func)
 template<typename Functor>
 void CodeBlock::forEachArrayProfile(const Functor& func)
 {
-    for (auto& arrayProfile : m_arrayProfiles)
-        func(arrayProfile);
-
     if (m_metadata) {
         m_metadata->forEach<OpGetById>([&] (auto& metadata) {
             if (metadata.mode == GetByIdMode::ArrayLength)

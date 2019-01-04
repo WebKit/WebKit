@@ -354,11 +354,6 @@ inline void JIT::emitArrayProfilingSiteWithCell(RegisterID cell, RegisterID inde
     load8(Address(cell, JSCell::indexingTypeAndMiscOffset()), indexingType);
 }
 
-inline void JIT::emitArrayProfilingSiteForBytecodeIndexWithCell(RegisterID cell, RegisterID indexingType, unsigned bytecodeIndex)
-{
-    emitArrayProfilingSiteWithCell(cell, indexingType, m_codeBlock->getOrAddArrayProfile(bytecodeIndex));
-}
-
 inline void JIT::emitArrayProfileStoreToHoleSpecialCase(ArrayProfile* arrayProfile)
 {
     store8(TrustedImm32(1), arrayProfile->addressOfMayStoreToHole());

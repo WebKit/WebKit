@@ -571,6 +571,7 @@ void JIT::emitSlow_op_get_by_id_direct(const Instruction* currentInstruction, Ve
 void JIT::emit_op_get_by_id(const Instruction* currentInstruction)
 {
     auto bytecode = currentInstruction->as<OpGetById>();
+    auto& metadata = bytecode.metadata(m_codeBlock);
     int dst = bytecode.dst.offset();
     int base = bytecode.base.offset();
     const Identifier* ident = &(m_codeBlock->identifier(bytecode.property));
@@ -578,8 +579,11 @@ void JIT::emit_op_get_by_id(const Instruction* currentInstruction)
     emitLoad(base, regT1, regT0);
     emitJumpSlowCaseIfNotJSCell(base, regT1);
 
-    if (*ident == m_vm->propertyNames->length && shouldEmitProfiling())
-        emitArrayProfilingSiteForBytecodeIndexWithCell(regT0, regT2, m_bytecodeOffset);
+    if (*ident == m_vm->propertyNames->length && shouldEmitProfiling()) {
+        Jump notArrayLengthMode = branch8(NotEqual, AbsoluteAddress(&metadata.mode), TrustedImm32(static_cast<uint8_t>(GetByIdMode::ArrayLength)));
+        emitArrayProfilingSiteWithCell(regT0, regT2, &metadata.modeMetadata.arrayLengthMode.arrayProfile);
+        notArrayLengthMode.link(this);
+    }
 
     JITGetByIdGenerator gen(
         m_codeBlock, CodeOrigin(m_bytecodeOffset), CallSiteIndex(currentInstruction), RegisterSet::stubUnavailableRegisters(),

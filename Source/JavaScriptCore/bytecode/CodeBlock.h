@@ -464,14 +464,8 @@ public:
 
     bool couldTakeSpecialFastCase(InstructionStream::Offset bytecodeOffset);
 
-    unsigned numberOfArrayProfiles() const { return m_arrayProfiles.size(); }
-    const ArrayProfileVector& arrayProfiles() { return m_arrayProfiles; }
-    ArrayProfile* addArrayProfile(const ConcurrentJSLocker&, unsigned bytecodeOffset);
-    ArrayProfile* addArrayProfile(unsigned bytecodeOffset);
     ArrayProfile* getArrayProfile(const ConcurrentJSLocker&, unsigned bytecodeOffset);
     ArrayProfile* getArrayProfile(unsigned bytecodeOffset);
-    ArrayProfile* getOrAddArrayProfile(const ConcurrentJSLocker&, unsigned bytecodeOffset);
-    ArrayProfile* getOrAddArrayProfile(unsigned bytecodeOffset);
 
     // Exception handling support
 
@@ -987,7 +981,6 @@ private:
     RefCountedArray<ValueProfile> m_argumentValueProfiles;
     Vector<std::unique_ptr<ValueProfileAndOperandBuffer>> m_catchProfiles;
     SegmentedVector<RareCaseProfile, 8> m_rareCaseProfiles;
-    ArrayProfileVector m_arrayProfiles;
 
     // Constant Pool
     COMPILE_ASSERT(sizeof(Register) == sizeof(WriteBarrier<Unknown>), Register_must_be_same_size_as_WriteBarrier_Unknown);

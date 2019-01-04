@@ -1,3 +1,43 @@
+2019-01-04  Tadeu Zagallo  <tzagallo@apple.com>
+
+        Baseline version of get_by_id may corrupt metadata
+        https://bugs.webkit.org/show_bug.cgi?id=193085
+        <rdar://problem/23453006>
+
+        Reviewed by Saam Barati.
+
+        The Baseline version of get_by_id unconditionally calls `emitArrayProfilingSiteForBytecodeIndexWithCell`
+        if the property is `length`. However, since the bytecode rewrite, get_by_id only has an ArrayProfile entry
+        in the metadata if its mode is `GetByIdMode::ArrayLength`. That might result in one of two bad things:
+        1) get_by_id's mode is not ArrayLength, and a duplicate, out-of-line ArrayProfile entry will be created by
+        `CodeBlock::getOrAddArrayProfile`.
+        2) get_by_id's mode *is* ArrayLength and we generate the array profiling code pointing to the ArrayProfile
+        that lives in the metadata table. This works fine as long as get_by_id does not change modes. If that happens,
+        the JIT code will write into the metadata table, overwriting the 'GetByIdModeMetadata` for another mode.
+
+        Add a check to the Baseline version of get_by_id so that we only do the ArrayProfiling if the get_by_id's
+        mode is ArrayLength
+
+        * bytecode/BytecodeList.rb:
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::getArrayProfile):
+        (JSC::CodeBlock::addArrayProfile): Deleted.
+        (JSC::CodeBlock::getOrAddArrayProfile): Deleted.
+        * bytecode/CodeBlock.h:
+        (JSC::CodeBlock::numberOfArrayProfiles const): Deleted.
+        (JSC::CodeBlock::arrayProfiles): Deleted.
+        * bytecode/CodeBlockInlines.h:
+        (JSC::CodeBlock::forEachArrayProfile):
+        * jit/JIT.h:
+        * jit/JITInlines.h:
+        (JSC::JIT::emitArrayProfilingSiteForBytecodeIndexWithCell): Deleted.
+        * jit/JITPropertyAccess.cpp:
+        (JSC::JIT::emit_op_get_by_id):
+        * jit/JITPropertyAccess32_64.cpp:
+        (JSC::JIT::emit_op_get_by_id):
+        * llint/LLIntSlowPaths.cpp:
+        (JSC::LLInt::LLINT_SLOW_PATH_DECL):
+
 2019-01-02  Yusuke Suzuki  <yusukesuzuki@slowstart.org>
 
         [JSC] Optimize Object.prototype.toString

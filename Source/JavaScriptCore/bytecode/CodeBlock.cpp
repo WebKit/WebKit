@@ -2498,16 +2498,11 @@ ArrayProfile* CodeBlock::getArrayProfile(const ConcurrentJSLocker&, unsigned byt
             return &metadata.modeMetadata.arrayLengthMode.arrayProfile;
         break;
     }
-
     default:
         break;
     }
 
-    for (auto& m_arrayProfile : m_arrayProfiles) {
-        if (m_arrayProfile.bytecodeOffset() == bytecodeOffset)
-            return &m_arrayProfile;
-    }
-    return 0;
+    return nullptr;
 }
 
 ArrayProfile* CodeBlock::getArrayProfile(unsigned bytecodeOffset)
@@ -2515,33 +2510,6 @@ ArrayProfile* CodeBlock::getArrayProfile(unsigned bytecodeOffset)
     ConcurrentJSLocker locker(m_lock);
     return getArrayProfile(locker, bytecodeOffset);
 }
-
-ArrayProfile* CodeBlock::addArrayProfile(const ConcurrentJSLocker&, unsigned bytecodeOffset)
-{
-    m_arrayProfiles.append(ArrayProfile(bytecodeOffset));
-    return &m_arrayProfiles.last();
-}
-
-ArrayProfile* CodeBlock::addArrayProfile(unsigned bytecodeOffset)
-{
-    ConcurrentJSLocker locker(m_lock);
-    return addArrayProfile(locker, bytecodeOffset);
-}
-
-ArrayProfile* CodeBlock::getOrAddArrayProfile(const ConcurrentJSLocker& locker, unsigned bytecodeOffset)
-{
-    ArrayProfile* result = getArrayProfile(locker, bytecodeOffset);
-    if (result)
-        return result;
-    return addArrayProfile(locker, bytecodeOffset);
-}
-
-ArrayProfile* CodeBlock::getOrAddArrayProfile(unsigned bytecodeOffset)
-{
-    ConcurrentJSLocker locker(m_lock);
-    return getOrAddArrayProfile(locker, bytecodeOffset);
-}
-
 
 #if ENABLE(DFG_JIT)
 Vector<CodeOrigin, 0, UnsafeVectorOverflow>& CodeBlock::codeOrigins()

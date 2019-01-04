@@ -825,6 +825,7 @@ LLINT_SLOW_PATH_DECL(slow_path_get_by_id)
         && isJSArray(baseValue)
         && ident == vm.propertyNames->length) {
         metadata.mode = GetByIdMode::ArrayLength;
+        new (&metadata.modeMetadata.arrayLengthMode.arrayProfile) ArrayProfile(codeBlock->bytecodeOffset(pc));
         metadata.modeMetadata.arrayLengthMode.arrayProfile.observeStructure(baseValue.asCell()->structure(vm));
 
         // Prevent the prototype cache from ever happening.

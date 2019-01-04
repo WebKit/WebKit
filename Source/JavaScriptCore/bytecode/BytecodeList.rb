@@ -413,8 +413,8 @@ op :get_by_id,
     },
     metadata: {
         mode: GetByIdMode,
-        modeMetadata: GetByIdModeMetadata,
         hitCountForLLIntCaching: unsigned,
+        modeMetadata: GetByIdModeMetadata,
         profile: ValueProfile,
     }
 
@@ -473,8 +473,8 @@ op :put_by_id,
         oldStructure: StructureID,
         offset: unsigned,
         newStructure: StructureID,
-        structureChain: WriteBarrierBase[StructureChain],
         flags: PutByIdFlags,
+        structureChain: WriteBarrierBase[StructureChain],
     },
     metadata_initializers: {
         flags: :flags

@@ -1,3 +1,14 @@
+2019-01-04  Tadeu Zagallo  <tzagallo@apple.com>
+
+        Baseline version of get_by_id may corrupt metadata
+        https://bugs.webkit.org/show_bug.cgi?id=193085
+        <rdar://problem/23453006>
+
+        Reviewed by Saam Barati.
+
+        * stress/get-by-id-change-mode.js: Added.
+        (forEach):
+
 2019-01-02  Yusuke Suzuki  <yusukesuzuki@slowstart.org>
 
         [JSC] Optimize Object.prototype.toString

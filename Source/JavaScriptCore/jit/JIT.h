@@ -365,7 +365,6 @@ namespace JSC {
         emitValueProfilingSiteIfProfiledOpcode(Op bytecode);
 
         void emitArrayProfilingSiteWithCell(RegisterID cell, RegisterID indexingType, ArrayProfile*);
-        void emitArrayProfilingSiteForBytecodeIndexWithCell(RegisterID cell, RegisterID indexingType, unsigned bytecodeIndex);
         void emitArrayProfileStoreToHoleSpecialCase(ArrayProfile*);
         void emitArrayProfileOutOfBoundsSpecialCase(ArrayProfile*);
         
