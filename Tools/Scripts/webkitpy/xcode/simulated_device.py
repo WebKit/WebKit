@@ -442,7 +442,7 @@ class SimulatedDeviceManager(object):
         SimulatedDeviceManager._wait_until_device_is_usable(device, max(0, deadline - time.time()))
 
     @staticmethod
-    def tear_down(host=SystemHost(), timeout=60):
+    def tear_down(host=SystemHost(), timeout=SIMULATOR_BOOT_TIMEOUT):
         if SimulatedDeviceManager._managing_simulator_app:
             host.executive.run_command(['killall', '-9', 'Simulator'], return_exit_code=True)
             SimulatedDeviceManager._managing_simulator_app = False

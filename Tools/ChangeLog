@@ -1,3 +1,14 @@
+2019-01-04  Jonathan Bedard  <jbedard@apple.com>
+
+        webkitpy: Increase simulator teardown timeout
+        https://bugs.webkit.org/show_bug.cgi?id=193141
+        <rdar://problem/46174217>
+
+        Rubber-stamped by Aakash Jain.
+
+        * Scripts/webkitpy/xcode/simulated_device.py:
+        (SimulatedDeviceManager.tear_down): Use SIMULATOR_BOOT_TIMEOUT.
+
 2019-01-03  Ross Kirsling  <ross.kirsling@sony.com>
 
         test262-runner misbehaves when test file YAML has a trailing space
