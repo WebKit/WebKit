@@ -62,7 +62,8 @@ void ServiceWorkerGlobalScope::skipWaiting(Ref<DeferredPromise>&& promise)
 
     callOnMainThread([workerThread = makeRef(thread()), requestIdentifier]() mutable {
         if (auto* connection = SWContextManager::singleton().connection()) {
-            connection->skipWaiting(workerThread->identifier(), [workerThread = WTFMove(workerThread), requestIdentifier] {
+            auto identifier = workerThread->identifier();
+            connection->skipWaiting(identifier, [workerThread = WTFMove(workerThread), requestIdentifier] {
                 workerThread->runLoop().postTask([requestIdentifier](auto& context) {
                     auto& scope = downcast<ServiceWorkerGlobalScope>(context);
                     if (auto promise = scope.m_pendingSkipWaitingPromises.take(requestIdentifier))

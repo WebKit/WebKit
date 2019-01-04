@@ -1,3 +1,16 @@
+2019-01-04  Youenn Fablet  <youenn@apple.com>
+
+        Crash in WebCore::ServiceWorkerGlobalScope
+        https://bugs.webkit.org/show_bug.cgi?id=192513
+        <rdar://problem/46563880>
+
+        Reviewed by Alex Christensen.
+
+        Store the identifier in its own variable to make sure we do not use workerThread after being moved.
+
+        * workers/service/ServiceWorkerGlobalScope.cpp:
+        (WebCore::ServiceWorkerGlobalScope::skipWaiting):
+
 2019-01-04  Chris Fleizach  <cfleizach@apple.com>
 
         AX: String check: "Rule" does not reflect the meaning of the <hr> html tag
