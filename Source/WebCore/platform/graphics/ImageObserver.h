@@ -42,6 +42,7 @@ public:
     virtual String mimeType() const = 0;
     virtual long long expectedContentLength() const = 0;
 
+    virtual void encodedDataStatusChanged(const Image&, EncodedDataStatus) { };
     virtual void decodedSizeChanged(const Image&, long long delta) = 0;
 
     virtual void didDraw(const Image&) = 0;

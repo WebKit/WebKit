@@ -35,7 +35,6 @@
 
 OBJC_CLASS AVAssetTrack;
 OBJC_CLASS AVAssetReader;
-OBJC_CLASS AVAssetReaderTrackOutput;
 OBJC_CLASS AVURLAsset;
 OBJC_CLASS WebCoreSharedBufferResourceLoaderDelegate;
 typedef struct opaqueCMSampleBuffer* CMSampleBufferRef;
@@ -66,6 +65,7 @@ public:
 
     const String& mimeType() const { return m_mimeType; }
 
+    void setEncodedDataStatusChangeCallback(WTF::Function<void(EncodedDataStatus)>&&) final;
     EncodedDataStatus encodedDataStatus() const final;
     IntSize size() const final;
     size_t frameCount() const final;
@@ -109,6 +109,7 @@ private:
     void setTrack(AVAssetTrack *);
 
     const ImageDecoderAVFObjCSample* sampleAtIndex(size_t) const;
+    bool sampleIsComplete(const ImageDecoderAVFObjCSample&) const;
 
     String m_mimeType;
     String m_uti;
@@ -118,6 +119,7 @@ private:
     RetainPtr<VTImageRotationSessionRef> m_rotationSession;
     RetainPtr<CVPixelBufferPoolRef> m_rotationPool;
     Ref<WebCoreDecompressionSession> m_decompressionSession;
+    WTF::Function<void(EncodedDataStatus)> m_encodedDataStatusChangedCallback;
 
     SampleMap m_sampleData;
     DecodeOrderSampleMap::iterator m_cursor;

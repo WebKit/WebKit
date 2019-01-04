@@ -371,6 +371,12 @@ CachedImage::CachedImageObserver::CachedImageObserver(CachedImage& image)
     m_cachedImages.add(&image);
 }
 
+void CachedImage::CachedImageObserver::encodedDataStatusChanged(const Image& image, EncodedDataStatus status)
+{
+    for (auto cachedImage : m_cachedImages)
+        cachedImage->encodedDataStatusChanged(image, status);
+}
+
 void CachedImage::CachedImageObserver::decodedSizeChanged(const Image& image, long long delta)
 {
     for (auto cachedImage : m_cachedImages)
@@ -580,6 +586,14 @@ void CachedImage::destroyDecodedData()
         setDecodedSize(0);
     } else if (m_image && !errorOccurred())
         m_image->destroyDecodedData();
+}
+
+void CachedImage::encodedDataStatusChanged(const Image& image, EncodedDataStatus)
+{
+    if (&image != m_image)
+        return;
+
+    notifyObservers();
 }
 
 void CachedImage::decodedSizeChanged(const Image& image, long long delta)

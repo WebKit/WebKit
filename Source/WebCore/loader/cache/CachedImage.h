@@ -143,6 +143,7 @@ private:
         String mimeType() const override { return !m_cachedImages.isEmpty() ? (*m_cachedImages.begin())->mimeType() : emptyString(); }
         long long expectedContentLength() const override { return !m_cachedImages.isEmpty() ? (*m_cachedImages.begin())->expectedContentLength() : 0; }
 
+        void encodedDataStatusChanged(const Image&, EncodedDataStatus) final;
         void decodedSizeChanged(const Image&, long long delta) final;
         void didDraw(const Image&) final;
 
@@ -153,6 +154,7 @@ private:
         HashSet<CachedImage*> m_cachedImages;
     };
 
+    void encodedDataStatusChanged(const Image&, EncodedDataStatus);
     void decodedSizeChanged(const Image&, long long delta);
     void didDraw(const Image&);
     bool canDestroyDecodedData(const Image&);

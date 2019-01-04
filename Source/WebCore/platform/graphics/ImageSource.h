@@ -30,6 +30,7 @@
 #include <wtf/Forward.h>
 #include <wtf/Optional.h>
 #include <wtf/SynchronizedFixedQueue.h>
+#include <wtf/WeakPtr.h>
 #include <wtf/WorkQueue.h>
 #include <wtf/text/TextStream.h>
 
@@ -39,7 +40,7 @@ class BitmapImage;
 class GraphicsContext;
 class ImageDecoder;
 
-class ImageSource : public ThreadSafeRefCounted<ImageSource> {
+class ImageSource : public ThreadSafeRefCounted<ImageSource>, public CanMakeWeakPtr<ImageSource> {
     friend class BitmapImage;
 public:
     ~ImageSource();
@@ -142,6 +143,7 @@ private:
     void decodedSizeIncreased(unsigned decodedSize);
     void decodedSizeDecreased(unsigned decodedSize);
     void decodedSizeReset(unsigned decodedSize);
+    void encodedDataStatusChanged(EncodedDataStatus);
 
     void setNativeImage(NativeImagePtr&&);
     void cacheMetadataAtIndex(size_t, SubsamplingLevel, DecodingStatus = DecodingStatus::Invalid);

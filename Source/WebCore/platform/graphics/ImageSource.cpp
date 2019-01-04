@@ -76,6 +76,10 @@ bool ImageSource::ensureDecoderAvailable(SharedBuffer* data)
         return true;
 
     m_decoder = ImageDecoder::create(*data, mimeType(), m_alphaOption, m_gammaAndColorProfileOption);
+    m_decoder->setEncodedDataStatusChangeCallback([weakThis = makeWeakPtr(this)] (auto status) {
+        if (weakThis)
+            weakThis->encodedDataStatusChanged(status);
+    });
     if (!isDecoderAvailable())
         return false;
 
@@ -152,6 +156,20 @@ void ImageSource::clearFrameBufferCache(size_t beforeFrame)
     if (!isDecoderAvailable())
         return;
     m_decoder->clearFrameBufferCache(beforeFrame);
+}
+
+void ImageSource::encodedDataStatusChanged(EncodedDataStatus status)
+{
+    if (status == m_encodedDataStatus)
+        return;
+
+    m_encodedDataStatus = status;
+
+    if (status >= EncodedDataStatus::SizeAvailable)
+        growFrames();
+
+    if (m_image && m_image->imageObserver())
+        m_image->imageObserver()->encodedDataStatusChanged(*m_image, status);
 }
 
 void ImageSource::decodedSizeChanged(long long decodedSize)
@@ -595,7 +613,7 @@ bool ImageSource::frameIsBeingDecodedAndIsCompatibleWithOptionsAtIndex(size_t in
 
 DecodingStatus ImageSource::frameDecodingStatusAtIndex(size_t index)
 {
-    return frameMetadataAtIndex<DecodingStatus>(index, (&ImageFrame::decodingStatus));
+    return frameMetadataAtIndexCacheIfNeeded<DecodingStatus>(index, (&ImageFrame::decodingStatus), nullptr, ImageFrame::Caching::Metadata);
 }
 
 bool ImageSource::frameHasAlphaAtIndex(size_t index)

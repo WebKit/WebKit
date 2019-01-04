@@ -1,3 +1,15 @@
+2019-01-04  Jer Noble  <jer.noble@apple.com>
+
+        Web Content process main thread blocked beneath ImageDecoderAVFObjC::readSamples for many seconds on imgur.com
+        https://bugs.webkit.org/show_bug.cgi?id=191806
+        <rdar://problem/46151477>
+
+        Reviewed by Dean Jackson.
+
+        * http/tests/images/mp4-partial-load-expected.txt: Added.
+        * http/tests/images/mp4-partial-load.html: Added.
+        * platform/win/http/tests/mp4-partial-load-expected.txt: Added.
+
 2019-01-04  Youenn Fablet  <youenn@apple.com>
 
         CSP violation reports should bypass CSP checks

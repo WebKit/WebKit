@@ -1,3 +1,50 @@
+2019-01-04  Jer Noble  <jer.noble@apple.com>
+
+        Web Content process main thread blocked beneath ImageDecoderAVFObjC::readSamples for many seconds on imgur.com
+        https://bugs.webkit.org/show_bug.cgi?id=191806
+        <rdar://problem/46151477>
+
+        Reviewed by Dean Jackson.
+
+        Test: http/tests/images/mp4-partial-load.html
+
+        Rather than use an AVAssetReaderTrackOutput, which will load both sample metadata and sample data
+        synchronously when a sample is requested, use AVAssetReaderSampleReferenceOutput, which only loads
+        sample metadata, including the byte offset and byte length of the sample data. By waiting until the
+        AVAsset signals that it's own metadata is loaded, we can safely parse all the sample metadata without
+        blocking on network loads. Once enough data is loaded, we can replace the byte reference and offset
+        attachements in the sample with actual data, and mark the sample as "complete".
+
+        Because the existing ImageSource assumes that image data parsing will occur synchronously, and that
+        synchronous parsing could cause a hang if the metadata is not loaded, add a new callback method which
+        allows the ImageSource to be notified when the encodedDataStatus changes. The ImageSource notifies the
+        CacheImage, which notifies the RenderImage, and thus the asynchronous parsing will kick off the
+        renderer's animation loop.
+
+        * loader/cache/CachedImage.cpp:
+        (WebCore::CachedImage::CachedImageObserver::encodedDataStatusChanged):
+        (WebCore::CachedImage::encodedDataStatusChanged):
+        * loader/cache/CachedImage.h:
+        * platform/graphics/ImageDecoder.h:
+        (WebCore::ImageDecoder::setEncodedDataStatusChangeCallback):
+        * platform/graphics/ImageObserver.h:
+        (WebCore::ImageObserver::encodedDataStatusChanged):
+        * platform/graphics/ImageSource.cpp:
+        (WebCore::ImageSource::ensureDecoderAvailable):
+        (WebCore::ImageSource::encodedDataStatusChanged):
+        (WebCore::ImageSource::frameDecodingStatusAtIndex):
+        * platform/graphics/ImageSource.h:
+        * platform/graphics/avfoundation/objc/ImageDecoderAVFObjC.h:
+        * platform/graphics/avfoundation/objc/ImageDecoderAVFObjC.mm:
+        (-[WebCoreSharedBufferResourceLoaderDelegate data]):
+        (WebCore::ImageDecoderAVFObjCSample::byteRange const):
+        (WebCore::ImageDecoderAVFObjC::readSamples):
+        (WebCore::ImageDecoderAVFObjC::setEncodedDataStatusChangeCallback):
+        (WebCore::ImageDecoderAVFObjC::encodedDataStatus const):
+        (WebCore::ImageDecoderAVFObjC::frameIsCompleteAtIndex const):
+        (WebCore::ImageDecoderAVFObjC::createFrameImageAtIndex):
+        (WebCore::ImageDecoderAVFObjC::sampleIsComplete const):
+
 2019-01-04  Youenn Fablet  <youenn@apple.com>
 
         CSP violation reports should bypass CSP checks

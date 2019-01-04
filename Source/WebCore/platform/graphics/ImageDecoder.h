@@ -55,6 +55,7 @@ public:
     virtual size_t bytesDecodedToDetermineProperties() const = 0;
 
     virtual EncodedDataStatus encodedDataStatus() const = 0;
+    virtual void setEncodedDataStatusChangeCallback(WTF::Function<void(EncodedDataStatus)>&&) { }
     virtual bool isSizeAvailable() const { return encodedDataStatus() >= EncodedDataStatus::SizeAvailable; }
     virtual IntSize size() const = 0;
     virtual size_t frameCount() const = 0;

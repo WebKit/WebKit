@@ -1,3 +1,14 @@
+2019-01-04  Jer Noble  <jer.noble@apple.com>
+
+        Web Content process main thread blocked beneath ImageDecoderAVFObjC::readSamples for many seconds on imgur.com
+        https://bugs.webkit.org/show_bug.cgi?id=191806
+        <rdar://problem/46151477>
+
+        Reviewed by Dean Jackson.
+
+        * pal/cf/CoreMediaSoftLink.cpp:
+        * pal/cf/CoreMediaSoftLink.h:
+
 2018-12-27  Alex Christensen  <achristensen@webkit.org>
 
         Resurrect Mac CMake build
