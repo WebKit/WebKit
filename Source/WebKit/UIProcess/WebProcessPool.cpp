@@ -2256,6 +2256,9 @@ void WebProcessPool::processForNavigationInternal(WebPageProxy& page, const API:
 
 void WebProcessPool::addSuspendedPage(std::unique_ptr<SuspendedPageProxy>&& suspendedPage)
 {
+    if (!m_maxSuspendedPageCount)
+        return;
+
     if (m_suspendedPages.size() >= m_maxSuspendedPageCount)
         m_suspendedPages.removeFirst();
 

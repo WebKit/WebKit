@@ -1,3 +1,14 @@
+2019-01-04  Chris Dumez  <cdumez@apple.com>
+
+        Crash under WebProcessPool::addSuspendedPage()
+        https://bugs.webkit.org/show_bug.cgi?id=193110
+
+        Reviewed by Youenn Fablet.
+
+        Add API test coverage.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/ProcessSwapOnNavigation.mm:
+
 2019-01-04  Aakash Jain  <aakash_jain@apple.com>
 
         [ews-build] Check patch relevance before applying the patch
