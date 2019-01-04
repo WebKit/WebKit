@@ -42,6 +42,7 @@
 #import "UIKitSPI.h"
 #import "WKActionSheetAssistant.h"
 #import "WKDatePickerViewController.h"
+#import "WKDrawingCoordinator.h"
 #import "WKError.h"
 #import "WKFocusedFormControlView.h"
 #import "WKFormInputControl.h"
@@ -847,6 +848,8 @@ static inline bool hasFocusedElement(WebKit::FocusedElementInformation focusedEl
     
     [_keyboardScrollingAnimator invalidate];
     _keyboardScrollingAnimator = nil;
+
+    _drawingCoordinator = nil;
 
 #if ENABLE(DATALIST_ELEMENT)
     _dataListTextSuggestionsInputView = nil;
@@ -4497,7 +4500,7 @@ static const double minimumFocusedElementAreaForSuppressingSelectionAssistant = 
 
 #if HAVE(PENCILKIT)
     if (information.elementType == WebKit::InputType::Drawing)
-        [self _installInkPickerForDrawingViewWithID:information.embeddedViewID];
+        [_drawingCoordinator installInkPickerForDrawing:information.embeddedViewID];
 #endif
 
     if (!shouldShowKeyboard)
@@ -4589,8 +4592,7 @@ static const double minimumFocusedElementAreaForSuppressingSelectionAssistant = 
     SetForScope<BOOL> isBlurringFocusedNodeForScope { _isBlurringFocusedNode, YES };
 
 #if HAVE(PENCILKIT)
-    if (_inkPicker)
-        [self _uninstallInkPicker];
+    [_drawingCoordinator uninstallInkPicker];
 #endif
 
     [_formInputSession invalidate];
@@ -6293,27 +6295,12 @@ static NSArray<NSItemProvider *> *extractItemProvidersFromDropSession(id <UIDrop
 #endif
 
 #if HAVE(PENCILKIT)
-- (void)_installInkPickerForDrawingViewWithID:(WebCore::GraphicsLayer::EmbeddedViewID)embeddedViewID
+- (WKDrawingCoordinator *)_drawingCoordinator
 {
-    _inkPicker = adoptNS([[WKInkPickerView alloc] initWithDrawingView:_page->editableImageController().editableImage(embeddedViewID)->drawingView.get()]);
-    [_inkPicker sizeToFit];
-    [_inkPicker setTranslatesAutoresizingMaskIntoConstraints:NO];
-    [_webView addSubview:_inkPicker.get()];
-
-    [NSLayoutConstraint activateConstraints:@[
-        [[_inkPicker heightAnchor] constraintEqualToConstant:[_inkPicker frame].size.height],
-        [[_inkPicker bottomAnchor] constraintEqualToAnchor:_webView.safeAreaLayoutGuide.bottomAnchor],
-        [[_inkPicker leftAnchor] constraintEqualToAnchor:_webView.safeAreaLayoutGuide.leftAnchor],
-        [[_inkPicker rightAnchor] constraintEqualToAnchor:_webView.safeAreaLayoutGuide.rightAnchor],
-    ]];
+    if (!_drawingCoordinator)
+        _drawingCoordinator = adoptNS([[WKDrawingCoordinator alloc] initWithContentView:self]);
+    return _drawingCoordinator.get();
 }
-
-- (void)_uninstallInkPicker
-{
-    [_inkPicker removeFromSuperview];
-    _inkPicker = nil;
-}
-
 #endif // HAVE(PENCILKIT)
 
 @end

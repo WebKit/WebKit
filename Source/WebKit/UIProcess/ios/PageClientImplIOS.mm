@@ -41,6 +41,7 @@
 #import "ViewSnapshotStore.h"
 #import "WKContentView.h"
 #import "WKContentViewInteraction.h"
+#import "WKDrawingView.h"
 #import "WKEditCommand.h"
 #import "WKGeolocationProviderIOS.h"
 #import "WKPasswordView.h"
@@ -814,6 +815,13 @@ void PageClientImpl::requestPasswordForQuickLookDocument(const String& fileName,
 
     [m_webView _showPasswordViewWithDocumentName:fileName passwordHandler:passwordHandler.get()];
     NavigationState::fromWebPage(*m_webView.get()->_page).didRequestPasswordForQuickLookDocument();
+}
+#endif
+
+#if HAVE(PENCILKIT)
+RetainPtr<WKDrawingView> PageClientImpl::createDrawingView(WebCore::GraphicsLayer::EmbeddedViewID embeddedViewID)
+{
+    return adoptNS([[WKDrawingView alloc] initWithEmbeddedViewID:embeddedViewID contentView:m_contentView]);
 }
 #endif
 

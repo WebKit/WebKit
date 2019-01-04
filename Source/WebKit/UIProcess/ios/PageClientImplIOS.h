@@ -228,6 +228,10 @@ private:
 
     void didFinishProcessingAllPendingMouseEvents() final { }
 
+#if HAVE(PENCILKIT)
+    RetainPtr<WKDrawingView> createDrawingView(WebCore::GraphicsLayer::EmbeddedViewID) override;
+#endif
+
     WKContentView *m_contentView;
     RetainPtr<WKEditorUndoTarget> m_undoTarget;
 };

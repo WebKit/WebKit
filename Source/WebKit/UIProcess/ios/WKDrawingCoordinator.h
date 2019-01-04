@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,22 +25,26 @@
 
 #if HAVE(PENCILKIT)
 
-#import <UIKit/UIKit.h>
+#import <WebCore/GraphicsLayer.h>
 
 OBJC_CLASS PKInk;
 OBJC_CLASS WKContentView;
+OBJC_CLASS WKInkPickerView;
 
-@interface WKInkPickerView : UIView
+@interface WKDrawingCoordinator : NSObject
 
 - (instancetype)init NS_UNAVAILABLE;
-- (instancetype)initWithFrame:(CGRect)frame NS_UNAVAILABLE;
-- (instancetype)initWithCoder:(NSCoder *)coder NS_UNAVAILABLE;
+- (instancetype)initWithContentView:(WKContentView *)contentView;
 
-- (instancetype)initWithContentView:(WKContentView *)contentView NS_DESIGNATED_INITIALIZER;
+- (void)installInkPickerForDrawing:(WebCore::GraphicsLayer::EmbeddedViewID)embeddedViewID;
+- (void)uninstallInkPicker;
 
-@property (nonatomic) BOOL rulerEnabled;
-@property (nonatomic, retain) PKInk *ink;
+- (void)didChangeRulerState:(BOOL)rulerEnabled;
+- (void)didChangeInk:(PKInk *)ink;
+
+@property (nonatomic, readonly, retain) WKInkPickerView *inkPicker;
 
 @end
+
 
 #endif // HAVE(PENCILKIT)

@@ -29,9 +29,11 @@
 #if HAVE(PENCILKIT)
 
 #import "EditableImageController.h"
-#import "PencilKitSoftLink.h"
+#import "WKInkPickerView.h"
 #import <wtf/OSObjectPtr.h>
 #import <wtf/RetainPtr.h>
+
+#import "PencilKitSoftLink.h"
 
 @interface WKDrawingView () <PKCanvasViewDelegate>
 @end
@@ -44,16 +46,16 @@
     RetainPtr<PKImageRenderer> _renderer;
 #endif
 
-    WeakPtr<WebKit::WebPageProxy> _webPageProxy;
+    __weak WKContentView *_contentView;
 }
 
-- (instancetype)initWithEmbeddedViewID:(WebCore::GraphicsLayer::EmbeddedViewID)embeddedViewID webPageProxy:(WebKit::WebPageProxy&)webPageProxy
+- (instancetype)initWithEmbeddedViewID:(WebCore::GraphicsLayer::EmbeddedViewID)embeddedViewID contentView:(WKContentView *)contentView
 {
     self = [super initWithEmbeddedViewID:embeddedViewID];
     if (!self)
         return nil;
 
-    _webPageProxy = makeWeakPtr(webPageProxy);
+    _contentView = contentView;
 
     _pencilView = adoptNS([WebKit::allocPKCanvasViewInstance() initWithFrame:CGRectZero]);
 
@@ -61,6 +63,7 @@
     [_pencilView setUserInteractionEnabled:YES];
     [_pencilView setOpaque:NO];
     [_pencilView setDelegate:self];
+    [_pencilView setRulerHostingDelegate:_contentView._drawingCoordinator];
 
     [self addSubview:_pencilView.get()];
 
@@ -165,18 +168,28 @@ static UIImage *emptyImage()
     [self invalidateAttachment];
 }
 
+- (void)_canvasViewWillBeginDrawing:(PKCanvasView *)canvasView
+{
+    [_pencilView setInk:_contentView._drawingCoordinator.inkPicker.ink];
+}
+
 - (void)invalidateAttachment
 {
-    if (!_webPageProxy)
+    if (!_contentView.page)
         return;
-    auto& page = *_webPageProxy;
+    auto& page = *_contentView.page;
 
     page.editableImageController().invalidateAttachmentForEditableImage(self.embeddedViewID);
 }
 
-- (PKCanvasView *)canvasView
+- (void)didChangeRulerState:(BOOL)rulerEnabled
 {
-    return _pencilView.get();
+    [_pencilView setRulerEnabled:rulerEnabled];
+}
+
+- (void)didChangeInk:(PKInk *)ink
+{
+    [_pencilView setInk:ink];
 }
 
 @end

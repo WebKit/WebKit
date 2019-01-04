@@ -93,10 +93,10 @@ class WebPageProxy;
 @class UIHoverGestureRecognizer;
 @class WebEvent;
 @class WKActionSheetAssistant;
+@class WKDrawingCoordinator;
 @class WKFocusedFormControlView;
 @class WKFormInputControl;
 @class WKFormInputSession;
-@class WKInkPickerView;
 @class WKInspectorNodeSearchGestureRecognizer;
 
 typedef void (^UIWKAutocorrectionCompletionHandler)(UIWKAutocorrectionRects *rectsForInput);
@@ -278,7 +278,7 @@ struct WKAutoCorrectionData {
 #endif
 
 #if HAVE(PENCILKIT)
-    RetainPtr<WKInkPickerView> _inkPicker;
+    RetainPtr<WKDrawingCoordinator> _drawingCoordinator;
 #endif
 
     BOOL _isEditable;
@@ -438,6 +438,10 @@ FOR_EACH_PRIVATE_WKCONTENTVIEW_ACTION(DECLARE_WKCONTENTVIEW_ACTION_FOR_WEB_VIEW)
 
 #if ENABLE(DATALIST_ELEMENT)
 - (void)updateTextSuggestionsForInputDelegate;
+#endif
+
+#if HAVE(PENCILKIT)
+- (WKDrawingCoordinator *)_drawingCoordinator;
 #endif
 
 @end

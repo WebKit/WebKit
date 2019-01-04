@@ -28,7 +28,7 @@
 
 #if HAVE(PENCILKIT)
 
-#import "WKDrawingView.h"
+#import "WKContentViewInteraction.h"
 
 #import "PencilKitSoftLink.h"
 
@@ -37,21 +37,19 @@
 
 @implementation WKInkPickerView {
     RetainPtr<PKInlineInkPicker> _inlinePicker;
-    RetainPtr<WKDrawingView> _drawingView;
+    __weak WKContentView *_contentView;
 }
 
-- (instancetype)initWithDrawingView:(WKDrawingView *)drawingView
+- (instancetype)initWithContentView:(WKContentView *)contentView
 {
     self = [super initWithFrame:CGRectZero];
     if (!self)
         return nil;
 
     _inlinePicker = adoptNS([WebKit::allocPKInlineInkPickerInstance() init]);
-    [_inlinePicker setSelectedInk:[drawingView canvasView].ink animated:NO];
-    [_inlinePicker addTarget:self action:@selector(didPickInk) forControlEvents:UIControlEventValueChanged];
     [_inlinePicker setDelegate:self];
 
-    _drawingView = drawingView;
+    _contentView = contentView;
     [self addSubview:_inlinePicker.get()];
 
     return self;
@@ -59,12 +57,13 @@
 
 - (void)didPickInk
 {
-    [_drawingView canvasView].ink = [_inlinePicker selectedInk];
+    [_contentView._drawingCoordinator didChangeInk:[_inlinePicker selectedInk]];
 }
 
 - (void)inlineInkPickerDidToggleRuler:(PKInlineInkPicker *)inlineInkPicker
 {
-    [_drawingView canvasView].rulerEnabled = ![_drawingView canvasView].rulerEnabled;
+    _rulerEnabled = !_rulerEnabled;
+    [_contentView._drawingCoordinator didChangeRulerState:_rulerEnabled];
 }
 
 - (void)inlineInkPicker:(PKInlineInkPicker *)inlineInkPicker didSelectTool:(PKInkIdentifier)identifer
@@ -97,7 +96,17 @@
 
 - (UIViewController *)viewControllerForPopoverPresentationFromInlineInkPicker:(PKInlineInkPicker *)inlineInkPicker
 {
-    return [UIViewController _viewControllerForFullScreenPresentationFromView:_drawingView.get()];
+    return [UIViewController _viewControllerForFullScreenPresentationFromView:_contentView];
+}
+
+- (void)setInk:(PKInk *)ink
+{
+    [_inlinePicker setSelectedInk:ink];
+}
+
+- (PKInk *)ink
+{
+    return [_inlinePicker selectedInk];
 }
 
 @end

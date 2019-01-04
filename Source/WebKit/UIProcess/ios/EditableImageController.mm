@@ -30,6 +30,7 @@
 
 #import "APIAttachment.h"
 #import "EditableImageControllerMessages.h"
+#import "PageClientImplIOS.h"
 #import "PencilKitSPI.h"
 #import "WKDrawingView.h"
 #import "WebPageProxy.h"
@@ -56,7 +57,7 @@ EditableImage& EditableImageController::ensureEditableImage(WebCore::GraphicsLay
 {
     auto result = m_editableImages.ensure(embeddedViewID, [&] {
         std::unique_ptr<EditableImage> image = std::make_unique<EditableImage>();
-        image->drawingView = adoptNS([[WKDrawingView alloc] initWithEmbeddedViewID:embeddedViewID webPageProxy:*m_webPageProxy]);
+        image->drawingView = m_webPageProxy->pageClient().createDrawingView(embeddedViewID);
         return image;
     });
     return *result.iterator->value;
