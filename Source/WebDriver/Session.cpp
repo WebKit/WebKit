@@ -1520,41 +1520,47 @@ void Session::elementClick(const String& elementID, Function<void (CommandResult
         return;
     }
 
-    OptionSet<ElementLayoutOption> options = { ElementLayoutOption::ScrollIntoViewIfNeeded, ElementLayoutOption::UseViewportCoordinates };
-    computeElementLayout(elementID, options, [this, protectedThis = makeRef(*this), elementID, completionHandler = WTFMove(completionHandler)](Optional<Rect>&& rect, Optional<Point>&& inViewCenter, bool isObscured, RefPtr<JSON::Object>&& error) mutable {
-        if (!rect || error) {
-            completionHandler(CommandResult::fail(WTFMove(error)));
+    handleUserPrompts([this, elementID, completionHandler = WTFMove(completionHandler)](CommandResult&& result) mutable {
+        if (result.isError()) {
+            completionHandler(WTFMove(result));
             return;
         }
-        if (isObscured) {
-            completionHandler(CommandResult::fail(CommandResult::ErrorCode::ElementClickIntercepted));
-            return;
-        }
-        if (!inViewCenter) {
-            completionHandler(CommandResult::fail(CommandResult::ErrorCode::ElementNotInteractable));
-            return;
-        }
-
-        getElementTagName(elementID, [this, elementID, inViewCenter = WTFMove(inViewCenter), completionHandler = WTFMove(completionHandler)](CommandResult&& result) mutable {
-            bool isOptionElement = false;
-            if (!result.isError()) {
-                String tagName;
-                if (result.result()->asString(tagName))
-                    isOptionElement = tagName == "option";
+        OptionSet<ElementLayoutOption> options = { ElementLayoutOption::ScrollIntoViewIfNeeded, ElementLayoutOption::UseViewportCoordinates };
+        computeElementLayout(elementID, options, [this, protectedThis = makeRef(*this), elementID, completionHandler = WTFMove(completionHandler)](Optional<Rect>&& rect, Optional<Point>&& inViewCenter, bool isObscured, RefPtr<JSON::Object>&& error) mutable {
+            if (!rect || error) {
+                completionHandler(CommandResult::fail(WTFMove(error)));
+                return;
+            }
+            if (isObscured) {
+                completionHandler(CommandResult::fail(CommandResult::ErrorCode::ElementClickIntercepted));
+                return;
+            }
+            if (!inViewCenter) {
+                completionHandler(CommandResult::fail(CommandResult::ErrorCode::ElementNotInteractable));
+                return;
             }
 
-            Function<void (CommandResult&&)> continueAfterClickFunction = [this, completionHandler = WTFMove(completionHandler)](CommandResult&& result) mutable {
-                if (result.isError()) {
-                    completionHandler(WTFMove(result));
-                    return;
+            getElementTagName(elementID, [this, elementID, inViewCenter = WTFMove(inViewCenter), completionHandler = WTFMove(completionHandler)](CommandResult&& result) mutable {
+                bool isOptionElement = false;
+                if (!result.isError()) {
+                    String tagName;
+                    if (result.result()->asString(tagName))
+                        isOptionElement = tagName == "option";
                 }
 
-                waitForNavigationToComplete(WTFMove(completionHandler));
-            };
-            if (isOptionElement)
-                selectOptionElement(elementID, WTFMove(continueAfterClickFunction));
-            else
-                performMouseInteraction(inViewCenter.value().x, inViewCenter.value().y, MouseButton::Left, MouseInteraction::SingleClick, WTFMove(continueAfterClickFunction));
+                Function<void (CommandResult&&)> continueAfterClickFunction = [this, completionHandler = WTFMove(completionHandler)](CommandResult&& result) mutable {
+                    if (result.isError()) {
+                        completionHandler(WTFMove(result));
+                        return;
+                    }
+
+                    waitForNavigationToComplete(WTFMove(completionHandler));
+                };
+                if (isOptionElement)
+                    selectOptionElement(elementID, WTFMove(continueAfterClickFunction));
+                else
+                    performMouseInteraction(inViewCenter.value().x, inViewCenter.value().y, MouseButton::Left, MouseInteraction::SingleClick, WTFMove(continueAfterClickFunction));
+            });
         });
     });
 }
