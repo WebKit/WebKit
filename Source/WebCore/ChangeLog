@@ -1,3 +1,22 @@
+2019-01-03  David Kilzer  <ddkilzer@apple.com>
+
+        Leak of WebCore::LibWebRTCCertificateGenerator::RTCCertificateGeneratorCallback (48 bytes) in com.apple.WebKit.WebContent running WebKit layout tests
+        <https://webkit.org/b/193122>
+        <rdar://problem/47022987>
+
+        Reviewed by Youenn Fablet.
+
+        * Modules/mediastream/libwebrtc/LibWebRTCCertificateGenerator.cpp:
+        (WebCore::LibWebRTCCertificateGenerator::RTCCertificateGeneratorCallback::AddRef const):
+        (WebCore::LibWebRTCCertificateGenerator::RTCCertificateGeneratorCallback::Release const):
+        - Remove `final` keyword so that
+          `new rtc::RefCountedObject<RTCCertificateGeneratorCallback>()`
+          can be called.
+        (WebCore::LibWebRTCCertificateGenerator::generateCertificate):
+        - To fix the leak call
+          `new rtc::RefCountedObject<RTCCertificateGeneratorCallback>()`
+          to create the object.
+
 2019-01-03  Simon Fraser  <simon.fraser@apple.com>
 
         REGRESSION (r238090): After showing the Find banner or tab bar, hit tests are vertically offset (or painting is not offset)

@@ -53,8 +53,8 @@ public:
     {
     }
 
-    void AddRef() const final { ref(); }
-    rtc::RefCountReleaseStatus Release() const final
+    void AddRef() const { ref(); }
+    rtc::RefCountReleaseStatus Release() const
     {
         auto result = refCount() - 1;
         deref();
@@ -106,7 +106,7 @@ static inline rtc::KeyParams keyParamsFromCertificateType(const PeerConnectionBa
 
 void generateCertificate(Ref<SecurityOrigin>&& origin, LibWebRTCProvider& provider, const PeerConnectionBackend::CertificateInformation& info, DOMPromiseDeferred<IDLInterface<RTCCertificate>>&& promise)
 {
-    rtc::scoped_refptr<RTCCertificateGeneratorCallback> callback(new RTCCertificateGeneratorCallback(WTFMove(origin), WTFMove(promise)));
+    rtc::scoped_refptr<RTCCertificateGeneratorCallback> callback(new rtc::RefCountedObject<RTCCertificateGeneratorCallback>(WTFMove(origin), WTFMove(promise)));
 
     absl::optional<uint64_t> expiresMs;
     if (info.expires)
