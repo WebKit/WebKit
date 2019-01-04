@@ -1,3 +1,13 @@
+2019-01-04  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Include `globalThis` in default JavaScript completions
+        https://bugs.webkit.org/show_bug.cgi?id=193147
+
+        Reviewed by Devin Rousso.
+
+        * UserInterface/Controllers/CodeMirrorCompletionController.js:
+        Add `globalThis` which is a new global value.
+
 2019-01-03  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: conic-gradient color picker doesn't accurately show color when saturation value is not 100%

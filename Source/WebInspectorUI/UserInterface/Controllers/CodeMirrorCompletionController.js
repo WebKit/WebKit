@@ -661,7 +661,7 @@ WI.CodeMirrorCompletionController = class CodeMirrorCompletionController extends
             "return", "static", "super", "switch", "this", "throw", "true", "try",
             "typeof", "undefined", "var", "void", "while", "with", "yield"
         ];
-        var valueKeywords = ["false", "Infinity", "NaN", "null", "this", "true", "undefined"];
+        var valueKeywords = ["false", "Infinity", "NaN", "null", "this", "true", "undefined", "globalThis"];
 
         var allowedKeywordsInsideBlocks = allKeywords.keySet();
         var allowedKeywordsWhenDeclaringVariable = valueKeywords.keySet();
