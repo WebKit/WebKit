@@ -4529,6 +4529,21 @@ FOR_EACH_PRIVATE_WKCONTENTVIEW_ACTION(FORWARD_ACTION_TO_WKCONTENTVIEW)
 #endif
 }
 
+- (void)_stopAllMediaPlayback
+{
+    _page->stopAllMediaPlayback();
+}
+
+- (void)_suspendAllMediaPlayback
+{
+    _page->suspendAllMediaPlayback();
+}
+
+- (void)_resumeAllMediaPlayback
+{
+    _page->resumeAllMediaPlayback();
+}
+
 - (NSURL *)_unreachableURL
 {
     return [NSURL _web_URLWithWTFString:_page->pageLoadState().unreachableURL()];

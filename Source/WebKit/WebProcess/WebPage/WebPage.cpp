@@ -656,6 +656,21 @@ void WebPage::enableEnumeratingAllNetworkInterfaces()
 #endif
 #endif
 
+void WebPage::stopAllMediaPlayback()
+{
+    m_page->stopAllMediaPlayback();
+}
+
+void WebPage::suspendAllMediaPlayback()
+{
+    m_page->suspendAllMediaPlayback();
+}
+
+void WebPage::resumeAllMediaPlayback()
+{
+    m_page->resumeAllMediaPlayback();
+}
+
 void WebPage::reinitializeWebPage(WebPageCreationParameters&& parameters)
 {
     ASSERT(m_drawingArea);

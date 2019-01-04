@@ -405,7 +405,9 @@ typedef NS_OPTIONS(NSUInteger, _WKRectEdge) {
 @property (nonatomic, readonly) BOOL _isPictureInPictureActive;
 - (void)_updateMediaPlaybackControlsManager;
 - (void)_togglePictureInPicture;
-
+- (void)_stopAllMediaPlayback;
+- (void)_suspendAllMediaPlayback;
+- (void)_resumeAllMediaPlayback;
 @end
 
 #if TARGET_OS_IPHONE

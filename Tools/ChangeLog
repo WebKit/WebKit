@@ -1,3 +1,19 @@
+2019-01-04  Jer Noble  <jer.noble@apple.com>
+
+        [WebKitLegacy] Media playback pauses on scroll
+        https://bugs.webkit.org/show_bug.cgi?id=192829
+
+        Reviewed by Eric Carlson.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WebKitCocoa/StopSuspendResumeAllMedia.mm: Added.
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WebKitLegacy/ios/ScrollingDoesNotPauseMedia.mm: Added.
+        (-[ScrollingDoesNotPauseMediaDelegate webViewDidFinishLoad:]):
+        (-[ScrollingDoesNotPauseMediaDelegate uiWebView:didCommitLoadForFrame:]):
+        (-[ScrollingDoesNotPauseMediaDelegate handleEvent:]):
+        (TestWebKitAPI::TEST):
+
 2019-01-04  Chris Dumez  <cdumez@apple.com>
 
         Add support for toggling device orientation API support per site

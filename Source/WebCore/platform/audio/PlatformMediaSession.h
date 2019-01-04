@@ -85,6 +85,7 @@ public:
         SuspendedUnderLock,
         InvisibleAutoplay,
         ProcessInactive,
+        PlaybackSuspended,
     };
     InterruptionType interruptionType() const { return m_interruptionType; }
 

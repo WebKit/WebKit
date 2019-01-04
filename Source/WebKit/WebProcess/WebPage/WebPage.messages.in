@@ -356,6 +356,10 @@ messages -> WebPage LegacyReceiver {
     DisableEnumeratingAllNetworkInterfaces()
 #endif
 
+    StopAllMediaPlayback();
+    SuspendAllMediaPlayback();
+    ResumeAllMediaPlayback();
+
     # Notification
     DidReceiveNotificationPermissionDecision(uint64_t notificationID, bool allowed)
 

@@ -77,6 +77,9 @@ public:
     void stopAllMediaPlaybackForDocument(const Document*);
     WEBCORE_EXPORT void stopAllMediaPlaybackForProcess();
 
+    void suspendAllMediaPlaybackForDocument(const Document&);
+    void resumeAllMediaPlaybackForDocument(const Document&);
+
     enum SessionRestrictionFlags {
         NoRestrictions = 0,
         ConcurrentPlaybackNotPermitted = 1 << 0,

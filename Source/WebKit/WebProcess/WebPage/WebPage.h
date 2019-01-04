@@ -1385,6 +1385,10 @@ private:
     void enableEnumeratingAllNetworkInterfaces();
 #endif
 
+    void stopAllMediaPlayback();
+    void suspendAllMediaPlayback();
+    void resumeAllMediaPlayback();
+
     void advanceToNextMisspelling(bool startBeforeSelection);
     void changeSpellingToWord(const String& word);
 

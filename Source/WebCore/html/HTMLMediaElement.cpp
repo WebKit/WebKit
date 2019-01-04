@@ -467,7 +467,6 @@ HTMLMediaElement::HTMLMediaElement(const QualifiedName& tagName, Document& docum
     , m_haveSetUpCaptionContainer(false)
 #endif
     , m_isScrubbingRemotely(false)
-    , m_shouldUnpauseInternalOnResume(false)
 #if ENABLE(VIDEO_TRACK)
     , m_tracksAreReady(true)
     , m_haveVisibleTextTrack(false)
@@ -920,6 +919,8 @@ void HTMLMediaElement::didFinishInsertingNode()
 {
     Ref<HTMLMediaElement> protectedThis(*this); // prepareForLoad may result in a 'beforeload' event, which can make arbitrary DOM mutations.
 
+    INFO_LOG(LOGIDENTIFIER);
+
     if (m_inActiveDocument && m_networkState == NETWORK_EMPTY && !attributeWithoutSynchronization(srcAttr).isEmpty())
         prepareForLoad();
 
@@ -1131,6 +1132,7 @@ void HTMLMediaElement::setSrcObject(MediaProvider&& mediaProvider)
     // 4.7.14.2. Location of the media resource
     // srcObject: On setting, it must set the element’s assigned media provider object to the new
     // value, and then invoke the element’s media element load algorithm.
+    INFO_LOG(LOGIDENTIFIER);
     m_mediaProvider = WTFMove(mediaProvider);
     prepareForLoad();
 }
@@ -1763,10 +1765,16 @@ void HTMLMediaElement::updateActiveTextTrackCues(const MediaTime& movieTime)
     if (nextCue)
         nextInterestingTime = std::min(nextInterestingTime, nextCue->low());
 
+    INFO_LOG(LOGIDENTIFIER, "nextInterestingTime:", nextInterestingTime);
+
     if (nextInterestingTime.isValid() && m_player) {
-        m_player->performTaskAtMediaTime([weakThis = makeWeakPtr(this), nextInterestingTime] {
-            if (weakThis)
-                weakThis->updateActiveTextTrackCues(weakThis->currentMediaTime());
+        m_player->performTaskAtMediaTime([this, weakThis = makeWeakPtr(this), nextInterestingTime] {
+            if (!weakThis)
+                return;
+
+            auto currentMediaTime = weakThis->currentMediaTime();
+            INFO_LOG(LOGIDENTIFIER, " - lambda, currentMediaTime:", currentMediaTime);
+            weakThis->updateActiveTextTrackCues(currentMediaTime);
         }, nextInterestingTime);
     }
 
@@ -5731,11 +5739,6 @@ void HTMLMediaElement::suspend(ReasonForSuspension reason)
         m_mediaSession->addBehaviorRestriction(MediaElementSession::RequirePageConsentToResumeMedia);
         break;
     case ReasonForSuspension::PageWillBeSuspended:
-        if (!m_pausedInternal) {
-            m_shouldUnpauseInternalOnResume = true;
-            setPausedInternal(true);
-        }
-        break;
     case ReasonForSuspension::JavaScriptDebuggerPaused:
     case ReasonForSuspension::WillDeferLoading:
         // Do nothing, we don't pause media playback in these cases.
@@ -5750,11 +5753,6 @@ void HTMLMediaElement::resume()
     setInActiveDocument(true);
 
     m_asyncEventQueue.resume();
-
-    if (m_shouldUnpauseInternalOnResume) {
-        m_shouldUnpauseInternalOnResume = false;
-        setPausedInternal(false);
-    }
 
     setShouldBufferData(true);
 
@@ -5938,6 +5936,12 @@ void HTMLMediaElement::setShouldPlayToPlaybackTarget(bool shouldPlay)
 }
 
 #endif // ENABLE(WIRELESS_PLAYBACK_TARGET)
+
+bool HTMLMediaElement::webkitCurrentPlaybackTargetIsWireless() const
+{
+    INFO_LOG(LOGIDENTIFIER, m_isPlayingToWirelessTarget);
+    return m_isPlayingToWirelessTarget;
+}
 
 void HTMLMediaElement::setPlayingOnSecondScreen(bool value)
 {

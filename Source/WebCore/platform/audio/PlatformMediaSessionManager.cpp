@@ -413,6 +413,22 @@ void PlatformMediaSessionManager::stopAllMediaPlaybackForProcess()
     });
 }
 
+void PlatformMediaSessionManager::suspendAllMediaPlaybackForDocument(const Document& document)
+{
+    forEachSession([&] (PlatformMediaSession& session, size_t) {
+        if (session.client().hostingDocument() == &document)
+            session.beginInterruption(PlatformMediaSession::PlaybackSuspended);
+    });
+}
+
+void PlatformMediaSessionManager::resumeAllMediaPlaybackForDocument(const Document& document)
+{
+    forEachSession([&] (PlatformMediaSession& session, size_t) {
+        if (session.client().hostingDocument() == &document)
+            session.endInterruption(PlatformMediaSession::MayResumePlaying);
+    });
+}
+
 void PlatformMediaSessionManager::forEachSession(const Function<void(PlatformMediaSession&, size_t)>& predicate) const
 {
     ++m_iteratingOverSessions;

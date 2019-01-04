@@ -1,3 +1,32 @@
+2019-01-04  Jer Noble  <jer.noble@apple.com>
+
+        [WebKitLegacy] Media playback pauses on scroll
+        https://bugs.webkit.org/show_bug.cgi?id=192829
+
+        Reviewed by Eric Carlson.
+
+        Add a new WebPage, WebPageProxy, & WKWebView SPI to stop, suspend, and resume all
+        existing media playback in the page.
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _stopAllMediaPlayback]):
+        (-[WKWebView _suspendAllMediaPlayback]):
+        (-[WKWebView _resumeAllMediaPlayback]):
+        * UIProcess/API/Cocoa/WKWebViewPrivate.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::stopAllMediaPlayback):
+        (WebKit::WebPageProxy::suspendAllMediaPlayback):
+        (WebKit::WebPageProxy::resumeAllMediaPlayback):
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/ios/fullscreen/WKFullScreenViewController.mm:
+        (-[WKFullScreenViewController _showPhishingAlert]):
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::stopAllMediaPlayback):
+        (WebKit::WebPage::suspendAllMediaPlayback):
+        (WebKit::WebPage::resumeAllMediaPlayback):
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/WebPage.messages.in:
+
 2019-01-04  Chris Dumez  <cdumez@apple.com>
 
         Add support for toggling device orientation API support per site

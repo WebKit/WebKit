@@ -1716,6 +1716,41 @@ void Page::stopMediaCapture()
 #endif
 }
 
+void Page::stopAllMediaPlayback()
+{
+    for (Frame* frame = &mainFrame(); frame; frame = frame->tree().traverseNext()) {
+        if (auto* document = frame->document())
+            document->stopAllMediaPlayback();
+    }
+}
+
+void Page::suspendAllMediaPlayback()
+{
+    ASSERT(!m_mediaPlaybackIsSuspended);
+    if (m_mediaPlaybackIsSuspended)
+        return;
+
+    for (Frame* frame = &mainFrame(); frame; frame = frame->tree().traverseNext()) {
+        if (auto* document = frame->document())
+            document->suspendAllMediaPlayback();
+    }
+
+    m_mediaPlaybackIsSuspended = true;
+}
+
+void Page::resumeAllMediaPlayback()
+{
+    ASSERT(m_mediaPlaybackIsSuspended);
+    if (!m_mediaPlaybackIsSuspended)
+        return;
+    m_mediaPlaybackIsSuspended = false;
+
+    for (Frame* frame = &mainFrame(); frame; frame = frame->tree().traverseNext()) {
+        if (auto* document = frame->document())
+            document->resumeAllMediaPlayback();
+    }
+}
+
 #if ENABLE(MEDIA_SESSION)
 void Page::handleMediaEvent(MediaEventType eventType)
 {

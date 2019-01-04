@@ -263,6 +263,10 @@ SuccessOr<MediaPlaybackDenialReason> MediaElementSession::playbackPermitted() co
     }
 
     auto& document = m_element.document();
+    auto* page = document.page();
+    if (!page || page->mediaPlaybackIsSuspended())
+        return MediaPlaybackDenialReason::PageConsentRequired;
+
     if (document.isMediaDocument() && !document.ownerElement())
         return { };
 
