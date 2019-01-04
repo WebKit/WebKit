@@ -141,10 +141,8 @@ WidthAndMargin BlockFormattingContext::Geometry::inFlowNonReplacedWidthAndMargin
         auto& displayBox = layoutState.displayBoxForLayoutBox(layoutBox);
 
         auto width = computedValueIfNotAuto(usedWidth ? Length { usedWidth.value(), Fixed } : style.logicalWidth(), containingBlockWidth);
-        auto computedMarginStart = computedValueIfNotAuto(style.marginStart(), containingBlockWidth);
-        auto computedMarginEnd = computedValueIfNotAuto(style.marginEnd(), containingBlockWidth);
-        auto usedMarginStart = computedMarginStart;
-        auto usedMarginEnd = computedMarginEnd;
+        auto computedHorizontalMargin = Geometry::computedHorizontalMargin(layoutState, layoutBox);
+        UsedHorizontalMargin usedHorizontalMargin;
         auto borderLeft = displayBox.borderLeft();
         auto borderRight = displayBox.borderRight();
         auto paddingLeft = displayBox.paddingLeft().valueOr(0);
@@ -152,47 +150,49 @@ WidthAndMargin BlockFormattingContext::Geometry::inFlowNonReplacedWidthAndMargin
 
         // #1
         if (width) {
-            auto horizontalSpaceForMargin = containingBlockWidth - (usedMarginStart.valueOr(0) + borderLeft + paddingLeft + *width + paddingRight + borderRight + usedMarginEnd.valueOr(0));
-            if (horizontalSpaceForMargin < 0) {
-                usedMarginStart = usedMarginStart.valueOr(0);
-                usedMarginEnd = usedMarginEnd.valueOr(0);
-            }
+            auto horizontalSpaceForMargin = containingBlockWidth - (computedHorizontalMargin.start.valueOr(0) + borderLeft + paddingLeft + *width + paddingRight + borderRight + computedHorizontalMargin.end.valueOr(0));
+            if (horizontalSpaceForMargin < 0)
+                usedHorizontalMargin = { computedHorizontalMargin.start.valueOr(0), computedHorizontalMargin.end.valueOr(0) };
         }
 
         // #2
-        if (width && usedMarginStart && usedMarginEnd) {
-            if (containingBlock->style().isLeftToRightDirection())
-                usedMarginEnd = containingBlockWidth - (*usedMarginStart + borderLeft + paddingLeft  + *width + paddingRight + borderRight);
-            else
-                usedMarginStart = containingBlockWidth - (borderLeft + paddingLeft + *width + paddingRight + borderRight + *usedMarginEnd);
+        if (width && computedHorizontalMargin.start && computedHorizontalMargin.end) {
+            if (containingBlock->style().isLeftToRightDirection()) {
+                usedHorizontalMargin.start = *computedHorizontalMargin.start;
+                usedHorizontalMargin.end = containingBlockWidth - (usedHorizontalMargin.start + borderLeft + paddingLeft  + *width + paddingRight + borderRight);
+            } else {
+                usedHorizontalMargin.end = *computedHorizontalMargin.end;
+                usedHorizontalMargin.start = containingBlockWidth - (borderLeft + paddingLeft + *width + paddingRight + borderRight + usedHorizontalMargin.end);
+            }
         }
 
         // #3
-        if (!usedMarginStart && width && usedMarginEnd)
-            usedMarginStart = containingBlockWidth - (borderLeft + paddingLeft  + *width + paddingRight + borderRight + *usedMarginEnd);
-        else if (usedMarginStart && !width && usedMarginEnd)
-            width = containingBlockWidth - (*usedMarginStart + borderLeft + paddingLeft + paddingRight + borderRight + *usedMarginEnd);
-        else if (usedMarginStart && width && !usedMarginEnd)
-            usedMarginEnd = containingBlockWidth - (*usedMarginStart + borderLeft + paddingLeft + *width + paddingRight + borderRight);
+        if (!computedHorizontalMargin.start && width && computedHorizontalMargin.end) {
+            usedHorizontalMargin.end = *computedHorizontalMargin.end;
+            usedHorizontalMargin.start = containingBlockWidth - (borderLeft + paddingLeft  + *width + paddingRight + borderRight + usedHorizontalMargin.end);
+        } else if (computedHorizontalMargin.start && !width && computedHorizontalMargin.end) {
+            usedHorizontalMargin = { *computedHorizontalMargin.start, *computedHorizontalMargin.end };
+            width = containingBlockWidth - (usedHorizontalMargin.start + borderLeft + paddingLeft + paddingRight + borderRight + usedHorizontalMargin.end);
+        } else if (computedHorizontalMargin.start && width && !computedHorizontalMargin.end) {
+            usedHorizontalMargin.start = *computedHorizontalMargin.start;
+            usedHorizontalMargin.end = containingBlockWidth - (usedHorizontalMargin.start + borderLeft + paddingLeft + *width + paddingRight + borderRight);
+        }
 
         // #4
         if (!width) {
-            usedMarginStart = usedMarginStart.valueOr(0);
-            usedMarginEnd = usedMarginEnd.valueOr(0);
-            width = containingBlockWidth - (*usedMarginStart + borderLeft + paddingLeft + paddingRight + borderRight + *usedMarginEnd);
+            usedHorizontalMargin = { computedHorizontalMargin.start.valueOr(0), computedHorizontalMargin.end.valueOr(0) };
+            width = containingBlockWidth - (usedHorizontalMargin.start + borderLeft + paddingLeft + paddingRight + borderRight + usedHorizontalMargin.end);
         }
 
         // #5
-        if (!usedMarginStart && !usedMarginEnd) {
+        if (!computedHorizontalMargin.start && !computedHorizontalMargin.end) {
             auto horizontalSpaceForMargin = containingBlockWidth - (borderLeft + paddingLeft  + *width + paddingRight + borderRight);
-            usedMarginStart = usedMarginEnd = horizontalSpaceForMargin / 2;
+            usedHorizontalMargin = { horizontalSpaceForMargin / 2, horizontalSpaceForMargin / 2 };
         }
 
         ASSERT(width);
-        ASSERT(usedMarginStart);
-        ASSERT(usedMarginEnd);
 
-        return WidthAndMargin { *width, { *usedMarginStart, *usedMarginEnd }, { computedMarginStart.valueOr(0), computedMarginEnd.valueOr(0) } };
+        return WidthAndMargin { *width, usedHorizontalMargin, computedHorizontalMargin };
     };
 
     auto widthAndMargin = compute();

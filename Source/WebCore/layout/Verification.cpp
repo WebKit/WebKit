@@ -247,8 +247,8 @@ static bool outputMismatchingBlockBoxInformationIfNeeded(TextStream& stream, con
 
         return Display::Box::Rect {
             borderBox.top() - displayBox.nonCollapsedMarginBefore(),
-            borderBox.left() - displayBox.computedMarginStart(),
-            displayBox.computedMarginStart() + borderBox.width() + displayBox.computedMarginEnd(),
+            borderBox.left() - displayBox.computedMarginStart().valueOr(0),
+            displayBox.computedMarginStart().valueOr(0) + borderBox.width() + displayBox.computedMarginEnd().valueOr(0),
             displayBox.nonCollapsedMarginBefore() + borderBox.height() + displayBox.nonCollapsedMarginAfter()
         };
     };

@@ -73,8 +73,8 @@ protected:
     LayoutUnit marginBefore() const { return displayBox().marginBefore(); }
     LayoutUnit marginAfter() const { return displayBox().marginAfter(); }
     // Do not use the used values here because they computed as if this box was not a float avoider.
-    LayoutUnit marginStart() const { return displayBox().computedMarginStart(); }
-    LayoutUnit marginEnd() const { return displayBox().computedMarginEnd(); }
+    LayoutUnit marginStart() const { return displayBox().computedMarginStart().valueOr(0); }
+    LayoutUnit marginEnd() const { return displayBox().computedMarginEnd().valueOr(0); }
 
     LayoutUnit marginBoxWidth() const { return marginStart() + displayBox().width() + marginEnd(); }
 

@@ -56,7 +56,12 @@ private:
     Optional<CollapsedValues> m_collapsed;
 };
 
-struct HorizontalMargin {
+struct ComputedHorizontalMargin {
+    Optional<LayoutUnit> start;
+    Optional<LayoutUnit> end;
+};
+
+struct UsedHorizontalMargin {
     LayoutUnit start;
     LayoutUnit end;
 };

@@ -60,9 +60,9 @@ WidthAndMargin InlineFormattingContext::Geometry::inlineBlockWidthAndMargin(Layo
         width = shrinkToFitWidth(layoutState, formattingContextRoot);
 
     // #2
-    auto margin = computedNonCollapsedHorizontalMarginValue(layoutState, formattingContextRoot);
+    auto computedHorizontalMargin = Geometry::computedHorizontalMargin(layoutState, formattingContextRoot);
 
-    return WidthAndMargin { *width, margin, margin };
+    return WidthAndMargin { *width, { computedHorizontalMargin.start.valueOr(0_lu), computedHorizontalMargin.end.valueOr(0_lu) }, computedHorizontalMargin };
 }
 
 HeightAndMargin InlineFormattingContext::Geometry::inlineBlockHeightAndMargin(const LayoutState& layoutState, const Box& layoutBox)

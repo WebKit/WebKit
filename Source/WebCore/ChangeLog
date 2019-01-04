@@ -1,5 +1,43 @@
 2019-01-04  Zalan Bujtas  <zalan@apple.com>
 
+        [LFC] ComputedHorizontalMargin should have optional members
+        https://bugs.webkit.org/show_bug.cgi?id=193131
+
+        Reviewed by Antti Koivisto.
+
+        Split HorizontalMargin into UsedHorizontalMargin and ComputedHorizontalMargin. ComputedHorizontalMargin's members are optional.
+        (see computed vs used values)
+
+        * layout/FormattingContext.h:
+        * layout/FormattingContextGeometry.cpp:
+        (WebCore::Layout::FormattingContext::Geometry::outOfFlowNonReplacedHorizontalGeometry):
+        (WebCore::Layout::FormattingContext::Geometry::outOfFlowReplacedHorizontalGeometry):
+        (WebCore::Layout::FormattingContext::Geometry::floatingNonReplacedWidthAndMargin):
+        (WebCore::Layout::FormattingContext::Geometry::floatingReplacedWidthAndMargin):
+        (WebCore::Layout::FormattingContext::Geometry::inlineReplacedWidthAndMargin):
+        (WebCore::Layout::FormattingContext::Geometry::computedHorizontalMargin):
+        (WebCore::Layout::FormattingContext::Geometry::computedNonCollapsedHorizontalMarginValue): Deleted.
+        * layout/LayoutUnits.h:
+        * layout/MarginTypes.h:
+        * layout/Verification.cpp:
+        (WebCore::Layout::outputMismatchingBlockBoxInformationIfNeeded):
+        * layout/blockformatting/BlockFormattingContextGeometry.cpp:
+        (WebCore::Layout::BlockFormattingContext::Geometry::inFlowNonReplacedWidthAndMargin):
+        * layout/displaytree/DisplayBox.h:
+        (WebCore::Display::Box::setHorizontalMargin):
+        (WebCore::Display::Box::setHorizontalComputedMargin):
+        (WebCore::Display::Box::computedMarginStart const):
+        (WebCore::Display::Box::computedMarginEnd const):
+        * layout/floats/FloatAvoider.h:
+        (WebCore::Layout::FloatAvoider::marginStart const):
+        (WebCore::Layout::FloatAvoider::marginEnd const):
+        * layout/inlineformatting/InlineFormattingContext.cpp:
+        (WebCore::Layout::InlineFormattingContext::collectInlineContentForSubtree const):
+        * layout/inlineformatting/InlineFormattingContextGeometry.cpp:
+        (WebCore::Layout::InlineFormattingContext::Geometry::inlineBlockWidthAndMargin):
+
+2019-01-04  Zalan Bujtas  <zalan@apple.com>
+
         [LFC][BFC] Use computedValue and usedValue consistently
         https://bugs.webkit.org/show_bug.cgi?id=193059
 

@@ -146,8 +146,8 @@ public:
 
     LayoutUnit nonCollapsedMarginBefore() const;
     LayoutUnit nonCollapsedMarginAfter() const;
-    LayoutUnit computedMarginStart() const;
-    LayoutUnit computedMarginEnd() const;
+    Optional<LayoutUnit> computedMarginStart() const;
+    Optional<LayoutUnit> computedMarginEnd() const;
 
     Optional<LayoutUnit> estimatedMarginBefore() const { return m_estimatedMarginBefore; }
 
@@ -191,9 +191,9 @@ private:
     void setContentBoxHeight(LayoutUnit);
     void setContentBoxWidth(LayoutUnit);
 
-    void setHorizontalMargin(Layout::HorizontalMargin);
+    void setHorizontalMargin(Layout::UsedHorizontalMargin);
     void setVerticalMargin(Layout::VerticalMargin);
-    void setHorizontalComputedMargin(Layout::HorizontalMargin);
+    void setHorizontalComputedMargin(Layout::ComputedHorizontalMargin);
     void setEstimatedMarginBefore(LayoutUnit marginBefore) { m_estimatedMarginBefore = marginBefore; }
 
     void setBorder(Layout::Edges);
@@ -224,9 +224,9 @@ private:
     LayoutUnit m_contentWidth;
     LayoutUnit m_contentHeight;
 
-    Layout::HorizontalMargin m_horizontalMargin;
+    Layout::UsedHorizontalMargin m_horizontalMargin;
     Layout::VerticalMargin m_verticalMargin;
-    Layout::HorizontalMargin m_horizontalComputedMargin;
+    Layout::ComputedHorizontalMargin m_horizontalComputedMargin;
     Optional<LayoutUnit> m_estimatedMarginBefore;
 
     Layout::Edges m_border;
@@ -507,7 +507,7 @@ inline LayoutUnit Box::contentBoxWidth() const
     return m_contentWidth;
 }
 
-inline void Box::setHorizontalMargin(Layout::HorizontalMargin margin)
+inline void Box::setHorizontalMargin(Layout::UsedHorizontalMargin margin)
 {
 #if !ASSERT_DISABLED
     setHasValidHorizontalMargin();
@@ -525,7 +525,7 @@ inline void Box::setVerticalMargin(Layout::VerticalMargin margin)
     m_verticalMargin = margin;
 }
 
-inline void Box::setHorizontalComputedMargin(Layout::HorizontalMargin margin)
+inline void Box::setHorizontalComputedMargin(Layout::ComputedHorizontalMargin margin)
 {
 #if !ASSERT_DISABLED
     setHasValidHorizontalComputedMargin();
@@ -591,13 +591,13 @@ inline LayoutUnit Box::nonCollapsedMarginAfter() const
     return m_verticalMargin.nonCollapsedValues().after;
 }
 
-inline LayoutUnit Box::computedMarginStart() const
+inline Optional<LayoutUnit> Box::computedMarginStart() const
 {
     ASSERT(m_hasValidHorizontalComputedMargin);
     return m_horizontalComputedMargin.start;
 }
 
-inline LayoutUnit Box::computedMarginEnd() const
+inline Optional<LayoutUnit> Box::computedMarginEnd() const
 {
     ASSERT(m_hasValidHorizontalComputedMargin);
     return m_horizontalComputedMargin.end;
