@@ -36,6 +36,7 @@ class Factory(factory.BuildFactory):
         if checkRelevance:
             self.addStep(CheckPatchRelevance())
         self.addStep(CheckOutSource())
+        self.addStep(ApplyPatch())
 
 
 class StyleFactory(Factory):

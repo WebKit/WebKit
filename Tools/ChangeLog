@@ -1,3 +1,19 @@
+2019-01-04  Aakash Jain  <aakash_jain@apple.com>
+
+        [ews-build] use svn-apply script to apply the patches
+        https://bugs.webkit.org/show_bug.cgi?id=193138
+
+        Reviewed by Lucas Forschler.
+
+        * BuildSlaveSupport/ews-build/factories.py:
+        (Factory.__init__): Add the ApplyPatch step.
+        * BuildSlaveSupport/ews-build/steps.py:
+        (CheckOutSource): Added step name.
+        (CheckOutSource.__init__): Used alwaysUseLatest so that it doesn't apply patch.
+        (ApplyPatch): Build step to apply patch using svn-apply script.
+        (UnApplyPatchIfRequired):
+        (UnApplyPatchIfRequired.__init__): Deleted, since the alwaysUseLatest parameter is now in base class.
+
 2019-01-04  Alex Christensen  <achristensen@webkit.org>
 
         Deprecate WKContextCreate
