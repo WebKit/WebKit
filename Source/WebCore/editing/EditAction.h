@@ -25,6 +25,10 @@
 
 #pragma once
 
+namespace WTF {
+class String;
+}
+
 namespace WebCore {
 
 enum class EditAction : uint8_t {
@@ -90,5 +94,7 @@ enum class EditAction : uint8_t {
     Outdent,
     InsertEditableImage
 };
+
+WEBCORE_EXPORT WTF::String nameForUndoRedo(EditAction);
 
 } // namespace WebCore

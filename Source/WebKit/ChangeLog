@@ -1,3 +1,31 @@
+2019-01-04  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [Cocoa] Merge WebEditCommandProxy::nameForEditAction and undoNameForEditAction into a single function
+        https://bugs.webkit.org/show_bug.cgi?id=193129
+
+        Reviewed by Tim Horton.
+
+        Remove WebEditCommandProxy::nameForEditAction and use WebCore::nameForUndoRedo instead.
+
+        * UIProcess/Cocoa/WebViewImpl.mm:
+        (WebKit::WebViewImpl::registerEditCommand):
+        * UIProcess/WebEditCommandProxy.cpp:
+        (WebKit::WebEditCommandProxy::WebEditCommandProxy):
+        (WebKit::WebEditCommandProxy::~WebEditCommandProxy):
+        (WebKit::WebEditCommandProxy::nameForEditAction): Deleted.
+        * UIProcess/WebEditCommandProxy.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::addEditCommand):
+        (WebKit::WebPageProxy::removeEditCommand):
+        (WebKit::WebPageProxy::isValidEditCommand): Deleted.
+
+        Bit of drive-by refactoring: remove an unused function, and make addEditCommand and removeEditCommand take
+        references instead of pointers, since these are assumed to be nonnull.
+
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/ios/PageClientImplIOS.mm:
+        (WebKit::PageClientImpl::registerEditCommand):
+
 2019-01-03  Matt Rajca  <mrajca@apple.com>
 
         Make DidPlayMediaPreventedFromPlaying autoplay event more generic.

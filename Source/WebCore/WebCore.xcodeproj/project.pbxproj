@@ -14935,6 +14935,7 @@
 		F48D2AA32159740D00C6752B /* ColorCocoa.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ColorCocoa.h; sourceTree = "<group>"; };
 		F48D2AA42159740D00C6752B /* ColorCocoa.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = ColorCocoa.mm; sourceTree = "<group>"; };
 		F49786871FF45FA500E060AB /* PasteboardItemInfo.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PasteboardItemInfo.h; sourceTree = "<group>"; };
+		F49E98E421DEE6C1009AE55E /* EditAction.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = EditAction.cpp; sourceTree = "<group>"; };
 		F4D43D64218802E600ECECAC /* SerializedAttachmentData.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SerializedAttachmentData.h; sourceTree = "<group>"; };
 		F4D9817D2195FBF6008230FC /* ChangeListTypeCommand.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ChangeListTypeCommand.h; sourceTree = "<group>"; };
 		F4D9817E2195FBF6008230FC /* ChangeListTypeCommand.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = ChangeListTypeCommand.cpp; sourceTree = "<group>"; };
@@ -20780,6 +20781,7 @@
 				CECADFC4153778FF00E37068 /* DictationCommand.cpp */,
 				CECADFC5153778FF00E37068 /* DictationCommand.h */,
 				2D5646AF1B8F8493003C4994 /* DictionaryPopupInfo.h */,
+				F49E98E421DEE6C1009AE55E /* EditAction.cpp */,
 				93309D93099E64910056E581 /* EditAction.h */,
 				93309D94099E64910056E581 /* EditCommand.cpp */,
 				93309D95099E64910056E581 /* EditCommand.h */,

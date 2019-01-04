@@ -52,8 +52,6 @@ public:
     void unapply();
     void reapply();
 
-    static String nameForEditAction(WebCore::EditAction);
-
 private:
     WebEditCommandProxy(WebUndoStepID commandID, WebCore::EditAction, WebPageProxy*);
 

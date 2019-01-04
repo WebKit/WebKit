@@ -5711,18 +5711,18 @@ void WebPageProxy::registerEditCommand(Ref<WebEditCommandProxy>&& commandProxy, 
     pageClient().registerEditCommand(WTFMove(commandProxy), undoOrRedo);
 }
 
-void WebPageProxy::addEditCommand(WebEditCommandProxy* command)
+void WebPageProxy::addEditCommand(WebEditCommandProxy& command)
 {
-    m_editCommandSet.add(command);
+    m_editCommandSet.add(&command);
 }
 
-void WebPageProxy::removeEditCommand(WebEditCommandProxy* command)
+void WebPageProxy::removeEditCommand(WebEditCommandProxy& command)
 {
-    m_editCommandSet.remove(command);
+    m_editCommandSet.remove(&command);
 
     if (!isValid())
         return;
-    m_process->send(Messages::WebPage::DidRemoveEditCommand(command->commandID()), m_pageID);
+    m_process->send(Messages::WebPage::DidRemoveEditCommand(command.commandID()), m_pageID);
 }
 
 bool WebPageProxy::canUndo()
@@ -5733,11 +5733,6 @@ bool WebPageProxy::canUndo()
 bool WebPageProxy::canRedo()
 {
     return pageClient().canUndoRedo(UndoOrRedo::Redo);
-}
-
-bool WebPageProxy::isValidEditCommand(WebEditCommandProxy* command)
-{
-    return m_editCommandSet.find(command) != m_editCommandSet.end();
 }
 
 SpellDocumentTag WebPageProxy::spellDocumentTag()

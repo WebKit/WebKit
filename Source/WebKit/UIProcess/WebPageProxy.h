@@ -1007,9 +1007,8 @@ public:
     virtual void exitAcceleratedCompositingMode();
     virtual void updateAcceleratedCompositingMode(const LayerTreeContext&);
 
-    void addEditCommand(WebEditCommandProxy*);
-    void removeEditCommand(WebEditCommandProxy*);
-    bool isValidEditCommand(WebEditCommandProxy*);
+    void addEditCommand(WebEditCommandProxy&);
+    void removeEditCommand(WebEditCommandProxy&);
     void registerEditCommand(Ref<WebEditCommandProxy>&&, UndoOrRedo);
 
     bool canUndo();

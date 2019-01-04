@@ -1,3 +1,19 @@
+2019-01-04  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [Cocoa] Merge WebEditCommandProxy::nameForEditAction and undoNameForEditAction into a single function
+        https://bugs.webkit.org/show_bug.cgi?id=193129
+
+        Reviewed by Tim Horton.
+
+        Adds a new helper function that returns the undo/redo name for a given EditAction. No change in behavior.
+
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * editing/EditAction.cpp: Copied from Source/WebKit/UIProcess/WebEditCommandProxy.cpp.
+        (WebCore::nameForUndoRedo):
+        * editing/EditAction.h:
+        * editing/Editor.cpp:
+
 2019-01-03  Matt Rajca  <mrajca@apple.com>
 
         Make DidPlayMediaPreventedFromPlaying autoplay event more generic.

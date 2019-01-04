@@ -2677,7 +2677,7 @@ void WebViewImpl::executeEditCommandForSelector(SEL selector, const String& argu
 
 void WebViewImpl::registerEditCommand(Ref<WebEditCommandProxy>&& command, UndoOrRedo undoOrRedo)
 {
-    auto actionName = WebEditCommandProxy::nameForEditAction(command->editAction());
+    auto actionName = WebCore::nameForUndoRedo(command->editAction());
     auto commandObjC = adoptNS([[WKEditCommand alloc] initWithWebEditCommandProxy:WTFMove(command)]);
 
     NSUndoManager *undoManager = [m_view undoManager];
