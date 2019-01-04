@@ -2172,25 +2172,18 @@ void WebProcessPool::processForNavigationInternal(WebPageProxy& page, const API:
     if (navigation.hasOpenedFrames())
         return completionHandler(page.process(), nullptr, "Browsing context has opened other windows"_s);
 
-    if (auto* backForwardListItem = navigation.targetItem()) {
-        if (auto* suspendedPage = backForwardListItem->suspendedPage()) {
+    if (auto* targetItem = navigation.targetItem()) {
+        if (auto* suspendedPage = targetItem->suspendedPage()) {
             return suspendedPage->waitUntilReadyToUnsuspend([createNewProcess = WTFMove(createNewProcess), completionHandler = WTFMove(completionHandler)](SuspendedPageProxy* suspendedPage) mutable {
                 if (!suspendedPage)
                     return completionHandler(createNewProcess(), nullptr, "Using new process because target back/forward item's suspended page is not reusable"_s);
                 Ref<WebProcessProxy> process = suspendedPage->process();
-                completionHandler(WTFMove(process), suspendedPage, "Using target back/forward item's process"_s);
+                completionHandler(WTFMove(process), suspendedPage, "Using target back/forward item's process and suspended page"_s);
             });
         }
 
-        // If the target back/forward item and the current back/forward item originated
-        // in the same WebProcess then we should reuse the current WebProcess.
-        if (auto* fromItem = navigation.fromItem()) {
-            auto uiProcessIdentifier = Process::identifier();
-            // In case of session restore, the item's process identifier is the UIProcess' identifier, in which case we do not want to do this check
-            // or we'd never swap after a session restore.
-            if (fromItem->itemID().processIdentifier == backForwardListItem->itemID().processIdentifier && backForwardListItem->itemID().processIdentifier != uiProcessIdentifier)
-                return completionHandler(page.process(), nullptr, "Source and target back/forward item originated in the same process"_s);
-        }
+        if (auto* process = WebProcessProxy::processForIdentifier(targetItem->itemID().processIdentifier))
+            return completionHandler(*process, nullptr, "Using target back/forward item's process"_s);
     }
 
     if (navigation.treatAsSameOriginNavigation())

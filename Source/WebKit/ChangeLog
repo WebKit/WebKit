@@ -1,3 +1,26 @@
+2019-01-04  Chris Dumez  <cdumez@apple.com>
+
+        [PSON] Calling history.back() from inside the load event handler prevents process-swapping
+        https://bugs.webkit.org/show_bug.cgi?id=193120
+
+        Reviewed by Alex Christensen.
+
+        A HistoryItem is created only *after* we've fired the load event. As a result, if you call
+        history.back() in JS from inside the load event handler, the current HistoryItem and and
+        the target HistoryItem will be the same. This is normally not an issue. However, there was
+        logic inside of WebProcessPool::processForNavigationInternal() which would compare the
+        processID of the source and destination BackForwardListItems and which would force a process
+        reuse if both BackForwardListItems came from the same WebContent process. So even though
+        we swapped when doing a standard load from site A to site B, we would fail to swap if site
+        B called history.back() from inside its load event handler.
+
+        To address the issue, stop relying on the source backforward item's processID. Instead, just
+        use the WebContent process matching the destination backforward item's processID if it still
+        exists.
+
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::WebProcessPool::processForNavigationInternal):
+
 2019-01-04  Keith Rollin  <krollin@apple.com>
 
         Bring back parent processID for logging

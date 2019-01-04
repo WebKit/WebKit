@@ -2810,6 +2810,62 @@ TEST(ProcessSwap, APIControlledProcessSwapping)
     EXPECT_NE(pid1, pid3);
 }
 
+static const char* navigateToCrossSiteThenBackFromJSBytes = R"PSONRESOURCE(
+<script>
+onpageshow = function(event) {
+    // Location changes need to happen outside the onload handler to generate history entries.
+    setTimeout(function() {
+      window.location.href = "pson://www.apple.com/main.html";
+    }, 0);
+}
+
+</script>
+)PSONRESOURCE";
+
+static const char* navigateBackFromJSBytes = R"PSONRESOURCE(
+<body onload='history.back()'></body>
+)PSONRESOURCE";
+
+TEST(ProcessSwap, NavigateToCrossSiteThenBackFromJS)
+{
+    auto processPoolConfiguration = adoptNS([[_WKProcessPoolConfiguration alloc] init]);
+    processPoolConfiguration.get().processSwapsOnNavigation = YES;
+    processPoolConfiguration.get().pageCacheEnabled = NO;
+    auto processPool = adoptNS([[WKProcessPool alloc] _initWithConfiguration:processPoolConfiguration.get()]);
+
+    auto webViewConfiguration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    [webViewConfiguration setProcessPool:processPool.get()];
+    auto handler = adoptNS([[PSONScheme alloc] init]);
+    [handler addMappingFromURLString:@"pson://www.webkit.org/main.html" toData:navigateToCrossSiteThenBackFromJSBytes]; // Navigates to "pson://www.apple.com/main.html".
+    [handler addMappingFromURLString:@"pson://www.apple.com/main.html" toData:navigateBackFromJSBytes];
+    [webViewConfiguration setURLSchemeHandler:handler.get() forURLScheme:@"PSON"];
+
+    auto webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:webViewConfiguration.get()]);
+    auto navigationDelegate = adoptNS([[PSONNavigationDelegate alloc] init]);
+    [webView setNavigationDelegate:navigationDelegate.get()];
+
+    numberOfDecidePolicyCalls = 0;
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"pson://www.webkit.org/main.html"]]];
+    TestWebKitAPI::Util::run(&done);
+    done = false;
+    auto webkitPID = [webView _webProcessIdentifier];
+
+    TestWebKitAPI::Util::run(&done);
+    done = false;
+    auto applePID = [webView _webProcessIdentifier];
+    EXPECT_NE(webkitPID, applePID); // Should have process-swapped when going from webkit.org to apple.com.
+
+    // Page now calls history.back() to navigate back to webkit.org.
+    TestWebKitAPI::Util::run(&done);
+    done = false;
+
+    EXPECT_EQ(3, numberOfDecidePolicyCalls);
+
+    // Should have process-swapped when going from apple.com to webkit.org.
+    // PID is not necessarily webkitPID because PageCache is disabled.
+    EXPECT_NE(applePID, [webView _webProcessIdentifier]);
+}
+
 #if PLATFORM(MAC)
 
 static const char* saveOpenerTestBytes = R"PSONRESOURCE(
