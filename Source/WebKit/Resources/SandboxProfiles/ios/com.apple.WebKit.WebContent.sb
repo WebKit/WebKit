@@ -169,7 +169,7 @@
 (allow file-read*
     (well-known-system-group-container-subpath "/systemgroup.com.apple.lsd.iconscache"))
 (allow mach-lookup
-    (xpc-service-name "com.apple.iconservices"))
+    (xpc-service-name "com.apple.lsdiconservice"))
 
 ;; Common mach services needed by UIKit.
 (allow mach-lookup
