@@ -170,7 +170,7 @@ WebFixedPositionContentData::~WebFixedPositionContentData()
     });
 }
 
-- (void)setViewportConstrainedLayers:(WTF::HashMap<CALayer *, std::unique_ptr<WebCore::ViewportConstraints>>&)layerMap stickyContainerMap:(WTF::HashMap<CALayer*, CALayer*>&)stickyContainers
+- (void)setViewportConstrainedLayers:(WTF::HashMap<CALayer *, std::unique_ptr<WebCore::ViewportConstraints>>&)layerMap stickyContainerMap:(const WTF::HashMap<CALayer*, CALayer*>&)stickyContainers
 {
     auto locker = holdLock(webFixedPositionContentDataLock);
 

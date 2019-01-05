@@ -275,6 +275,10 @@ RenderLayerCompositor::RenderLayerCompositor(RenderView& renderView)
     , m_updateCompositingLayersTimer(*this, &RenderLayerCompositor::updateCompositingLayersTimerFired)
     , m_layerFlushTimer(*this, &RenderLayerCompositor::layerFlushTimerFired)
 {
+#if PLATFORM(IOS_FAMILY)
+    if (m_renderView.frameView().platformWidget())
+        m_legacyScrollingLayerCoordinator = std::make_unique<LegacyWebKitScrollingLayerCoordinator>(page().chrome().client(), isMainFrameCompositor());
+#endif
 }
 
 RenderLayerCompositor::~RenderLayerCompositor()
@@ -522,40 +526,13 @@ void RenderLayerCompositor::updateScrollCoordinatedLayersAfterFlush()
         updateScrollCoordinatedStatus(*layer, ScrollingNodeChangeFlags::Layer);
 }
 
-#if PLATFORM(IOS_FAMILY)
-static bool scrollbarHasDisplayNone(Scrollbar* scrollbar)
-{
-    if (!scrollbar || !scrollbar->isCustomScrollbar())
-        return false;
-
-    std::unique_ptr<RenderStyle> scrollbarStyle = static_cast<RenderScrollbar*>(scrollbar)->getScrollbarPseudoStyle(ScrollbarBGPart, PseudoId::Scrollbar);
-    return scrollbarStyle && scrollbarStyle->display() == DisplayType::None;
-}
-
-// FIXME: Can we make |layer| const RenderLayer&?
-static void updateScrollingLayerWithClient(RenderLayer& layer, ChromeClient& client)
-{
-    auto* backing = layer.backing();
-    ASSERT(backing);
-
-    bool allowHorizontalScrollbar = !scrollbarHasDisplayNone(layer.horizontalScrollbar());
-    bool allowVerticalScrollbar = !scrollbarHasDisplayNone(layer.verticalScrollbar());
-    client.addOrUpdateScrollingLayer(layer.renderer().element(), backing->scrollingLayer()->platformLayer(), backing->scrollingContentsLayer()->platformLayer(),
-        layer.scrollableContentsSize(), allowHorizontalScrollbar, allowVerticalScrollbar);
-}
-#endif
-
 void RenderLayerCompositor::updateCustomLayersAfterFlush()
 {
 #if PLATFORM(IOS_FAMILY)
-    registerAllViewportConstrainedLayers();
-
-    if (!m_scrollingLayersNeedingUpdate.isEmpty()) {
-        for (auto* layer : m_scrollingLayersNeedingUpdate)
-            updateScrollingLayerWithClient(*layer, page().chrome().client());
-        m_scrollingLayersNeedingUpdate.clear();
+    if (m_legacyScrollingLayerCoordinator) {
+        m_legacyScrollingLayerCoordinator->registerAllViewportConstrainedLayers(*this, m_scrollCoordinatedLayers);
+        m_legacyScrollingLayerCoordinator->registerScrollingLayersNeedingUpdate();
     }
-    m_scrollingLayersNeedingUpdate.clear();
 #endif
 }
 
@@ -565,8 +542,8 @@ void RenderLayerCompositor::didFlushChangesForLayer(RenderLayer& layer, const Gr
         m_scrollCoordinatedLayersNeedingUpdate.add(&layer);
 
 #if PLATFORM(IOS_FAMILY)
-    if (m_scrollingLayers.contains(&layer))
-        m_scrollingLayersNeedingUpdate.add(&layer);
+    if (m_legacyScrollingLayerCoordinator)
+        m_legacyScrollingLayerCoordinator->didFlushChangesForLayer(layer);
 #endif
 
     auto* backing = layer.backing();
@@ -2038,8 +2015,10 @@ void RenderLayerCompositor::setIsInWindow(bool isInWindow)
         RootLayerAttachment attachment = isMainFrameCompositor() ? RootLayerAttachedViaChromeClient : RootLayerAttachedViaEnclosingFrame;
         attachRootLayer(attachment);
 #if PLATFORM(IOS_FAMILY)
-        registerAllViewportConstrainedLayers();
-        registerAllScrollingLayers();
+        if (m_legacyScrollingLayerCoordinator) {
+            m_legacyScrollingLayerCoordinator->registerAllViewportConstrainedLayers(*this, m_scrollCoordinatedLayers);
+            m_legacyScrollingLayerCoordinator->registerAllScrollingLayers();
+        }
 #endif
     } else {
         if (m_rootLayerAttachment == RootLayerUnattached)
@@ -2047,8 +2026,10 @@ void RenderLayerCompositor::setIsInWindow(bool isInWindow)
 
         detachRootLayer();
 #if PLATFORM(IOS_FAMILY)
-        unregisterAllViewportConstrainedLayers();
-        unregisterAllScrollingLayers();
+        if (m_legacyScrollingLayerCoordinator) {
+            m_legacyScrollingLayerCoordinator->unregisterAllViewportConstrainedLayers();
+            m_legacyScrollingLayerCoordinator->unregisterAllScrollingLayers();
+        }
 #endif
     }
 }
@@ -4002,74 +3983,6 @@ ScrollableArea* RenderLayerCompositor::scrollableAreaForScrollLayerID(ScrollingN
     return m_scrollingNodeToLayerMap.get(nodeID);
 }
 
-#if PLATFORM(IOS_FAMILY)
-typedef HashMap<PlatformLayer*, std::unique_ptr<ViewportConstraints>> LayerMap;
-typedef HashMap<PlatformLayer*, PlatformLayer*> StickyContainerMap;
-
-void RenderLayerCompositor::registerAllViewportConstrainedLayers()
-{
-    // Only the main frame should register fixed/sticky layers.
-    if (!isMainFrameCompositor())
-        return;
-
-    if (scrollingCoordinator())
-        return;
-
-    LayerMap layerMap;
-    StickyContainerMap stickyContainerMap;
-
-    for (auto* layer : m_scrollCoordinatedLayers) {
-        ASSERT(layer->isComposited());
-
-        std::unique_ptr<ViewportConstraints> constraints;
-        if (layer->renderer().isStickilyPositioned()) {
-            constraints = std::make_unique<StickyPositionViewportConstraints>(computeStickyViewportConstraints(*layer));
-            const RenderLayer* enclosingTouchScrollableLayer = nullptr;
-            if (isAsyncScrollableStickyLayer(*layer, &enclosingTouchScrollableLayer) && enclosingTouchScrollableLayer) {
-                ASSERT(enclosingTouchScrollableLayer->isComposited());
-                stickyContainerMap.add(layer->backing()->graphicsLayer()->platformLayer(), enclosingTouchScrollableLayer->backing()->scrollingLayer()->platformLayer());
-            }
-        } else if (layer->renderer().isFixedPositioned())
-            constraints = std::make_unique<FixedPositionViewportConstraints>(computeFixedViewportConstraints(*layer));
-        else
-            continue;
-
-        layerMap.add(layer->backing()->graphicsLayer()->platformLayer(), WTFMove(constraints));
-    }
-    
-    page().chrome().client().updateViewportConstrainedLayers(layerMap, stickyContainerMap);
-}
-
-void RenderLayerCompositor::unregisterAllViewportConstrainedLayers()
-{
-    // Only the main frame should register fixed/sticky layers.
-    if (!isMainFrameCompositor())
-        return;
-
-    if (scrollingCoordinator())
-        return;
-
-    LayerMap layerMap;
-    StickyContainerMap stickyContainerMap;
-    page().chrome().client().updateViewportConstrainedLayers(layerMap, stickyContainerMap);
-}
-
-void RenderLayerCompositor::registerAllScrollingLayers()
-{
-    for (auto* layer : m_scrollingLayers)
-        updateScrollingLayerWithClient(*layer, page().chrome().client());
-}
-
-void RenderLayerCompositor::unregisterAllScrollingLayers()
-{
-    for (auto* layer : m_scrollingLayers) {
-        auto* backing = layer->backing();
-        ASSERT(backing);
-        page().chrome().client().removeScrollingLayer(layer->renderer().element(), backing->scrollingLayer()->platformLayer(), backing->scrollingContentsLayer()->platformLayer());
-    }
-}
-#endif
-
 void RenderLayerCompositor::willRemoveScrollingLayerWithBacking(RenderLayer& layer, RenderLayerBacking& backing)
 {
     if (auto* scrollingCoordinator = this->scrollingCoordinator()) {
@@ -4081,15 +3994,9 @@ void RenderLayerCompositor::willRemoveScrollingLayerWithBacking(RenderLayer& lay
     }
 
 #if PLATFORM(IOS_FAMILY)
-    m_scrollingLayersNeedingUpdate.remove(&layer);
-    m_scrollingLayers.remove(&layer);
-
-    if (m_renderView.document().pageCacheState() != Document::NotInPageCache)
-        return;
-
-    auto* scrollingLayer = backing.scrollingLayer()->platformLayer();
-    auto* contentsLayer = backing.scrollingContentsLayer()->platformLayer();
-    page().chrome().client().removeScrollingLayer(layer.renderer().element(), scrollingLayer, contentsLayer);
+    ASSERT(m_renderView.document().pageCacheState() == Document::NotInPageCache);
+    if (m_legacyScrollingLayerCoordinator)
+        m_legacyScrollingLayerCoordinator->removeScrollingLayer(layer, backing);
 #endif
 }
 
@@ -4105,7 +4012,8 @@ void RenderLayerCompositor::didAddScrollingLayer(RenderLayer& layer)
 
 #if PLATFORM(IOS_FAMILY)
     ASSERT(m_renderView.document().pageCacheState() == Document::NotInPageCache);
-    m_scrollingLayers.add(&layer);
+    if (m_legacyScrollingLayerCoordinator)
+        m_legacyScrollingLayerCoordinator->addScrollingLayer(layer);
 #endif
 }
 
@@ -4221,6 +4129,115 @@ TextStream& operator<<(TextStream& ts, CompositingPolicy compositingPolicy)
     }
     return ts;
 }
+
+#if PLATFORM(IOS_FAMILY)
+typedef HashMap<PlatformLayer*, std::unique_ptr<ViewportConstraints>> LayerMap;
+typedef HashMap<PlatformLayer*, PlatformLayer*> StickyContainerMap;
+
+void LegacyWebKitScrollingLayerCoordinator::registerAllViewportConstrainedLayers(RenderLayerCompositor& compositor, const HashSet<RenderLayer*>& layers)
+{
+    if (!m_coordinateViewportConstainedLayers)
+        return;
+
+    LayerMap layerMap;
+    StickyContainerMap stickyContainerMap;
+
+    for (auto* layer : layers) {
+        ASSERT(layer->isComposited());
+
+        std::unique_ptr<ViewportConstraints> constraints;
+        if (layer->renderer().isStickilyPositioned()) {
+            constraints = std::make_unique<StickyPositionViewportConstraints>(compositor.computeStickyViewportConstraints(*layer));
+            const RenderLayer* enclosingTouchScrollableLayer = nullptr;
+            if (compositor.isAsyncScrollableStickyLayer(*layer, &enclosingTouchScrollableLayer) && enclosingTouchScrollableLayer) {
+                ASSERT(enclosingTouchScrollableLayer->isComposited());
+                stickyContainerMap.add(layer->backing()->graphicsLayer()->platformLayer(), enclosingTouchScrollableLayer->backing()->scrollingLayer()->platformLayer());
+            }
+        } else if (layer->renderer().isFixedPositioned())
+            constraints = std::make_unique<FixedPositionViewportConstraints>(compositor.computeFixedViewportConstraints(*layer));
+        else
+            continue;
+
+        layerMap.add(layer->backing()->graphicsLayer()->platformLayer(), WTFMove(constraints));
+    }
+    
+    m_chromeClient.updateViewportConstrainedLayers(layerMap, stickyContainerMap);
+}
+
+void LegacyWebKitScrollingLayerCoordinator::unregisterAllViewportConstrainedLayers()
+{
+    if (!m_coordinateViewportConstainedLayers)
+        return;
+
+    LayerMap layerMap;
+    m_chromeClient.updateViewportConstrainedLayers(layerMap, { });
+}
+
+static bool scrollbarHasDisplayNone(Scrollbar* scrollbar)
+{
+    if (!scrollbar || !scrollbar->isCustomScrollbar())
+        return false;
+
+    std::unique_ptr<RenderStyle> scrollbarStyle = static_cast<RenderScrollbar*>(scrollbar)->getScrollbarPseudoStyle(ScrollbarBGPart, PseudoId::Scrollbar);
+    return scrollbarStyle && scrollbarStyle->display() == DisplayType::None;
+}
+
+void LegacyWebKitScrollingLayerCoordinator::updateScrollingLayer(RenderLayer& layer)
+{
+    auto* backing = layer.backing();
+    ASSERT(backing);
+
+    bool allowHorizontalScrollbar = !scrollbarHasDisplayNone(layer.horizontalScrollbar());
+    bool allowVerticalScrollbar = !scrollbarHasDisplayNone(layer.verticalScrollbar());
+    m_chromeClient.addOrUpdateScrollingLayer(layer.renderer().element(), backing->scrollingLayer()->platformLayer(), backing->scrollingContentsLayer()->platformLayer(),
+        layer.scrollableContentsSize(), allowHorizontalScrollbar, allowVerticalScrollbar);
+}
+
+void LegacyWebKitScrollingLayerCoordinator::registerAllScrollingLayers()
+{
+    for (auto* layer : m_scrollingLayers)
+        updateScrollingLayer(*layer);
+}
+
+void LegacyWebKitScrollingLayerCoordinator::registerScrollingLayersNeedingUpdate()
+{
+    for (auto* layer : m_scrollingLayersNeedingUpdate)
+        updateScrollingLayer(*layer);
+    
+    m_scrollingLayersNeedingUpdate.clear();
+}
+
+void LegacyWebKitScrollingLayerCoordinator::unregisterAllScrollingLayers()
+{
+    for (auto* layer : m_scrollingLayers) {
+        auto* backing = layer->backing();
+        ASSERT(backing);
+        m_chromeClient.removeScrollingLayer(layer->renderer().element(), backing->scrollingLayer()->platformLayer(), backing->scrollingContentsLayer()->platformLayer());
+    }
+}
+
+void LegacyWebKitScrollingLayerCoordinator::addScrollingLayer(RenderLayer& layer)
+{
+    m_scrollingLayers.add(&layer);
+}
+
+void LegacyWebKitScrollingLayerCoordinator::removeScrollingLayer(RenderLayer& layer, RenderLayerBacking& backing)
+{
+    m_scrollingLayersNeedingUpdate.remove(&layer);
+    m_scrollingLayers.remove(&layer);
+
+    auto* scrollingLayer = backing.scrollingLayer()->platformLayer();
+    auto* contentsLayer = backing.scrollingContentsLayer()->platformLayer();
+    m_chromeClient.removeScrollingLayer(layer.renderer().element(), scrollingLayer, contentsLayer);
+}
+
+void LegacyWebKitScrollingLayerCoordinator::didFlushChangesForLayer(RenderLayer& layer)
+{
+    if (m_scrollingLayers.contains(&layer))
+        m_scrollingLayersNeedingUpdate.add(&layer);
+}
+
+#endif
 
 } // namespace WebCore
 

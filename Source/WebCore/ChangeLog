@@ -1,3 +1,48 @@
+2019-01-04  Simon Fraser  <simon.fraser@apple.com>
+
+        Factor legacy WK1 code for fixed and scrolling layers into their own helper class
+        https://bugs.webkit.org/show_bug.cgi?id=193165
+
+        Reviewed by Frédéric Wang.
+
+        RenderLayerCompositor has some code to handle registration of viewport-constrained
+        and scrolling layers which is specific to iOS WK1. To reduce pollution, move this
+        into its own helper class called LegacyWebKitScrollingLayerCoordinator, which is only
+        allocated for iOS WK1.
+        
+        iOS WK1 never has a ScrollingCoordinator, so rather than the check for scrollingCoordinator(),
+        we know that we only made a LegacyWebKitScrollingLayerCoordinator when there's a platform widget
+        (i.e. WK1).
+        
+        * page/ChromeClient.h:
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::RenderLayerCompositor):
+        (WebCore::RenderLayerCompositor::updateCustomLayersAfterFlush):
+        (WebCore::RenderLayerCompositor::didFlushChangesForLayer):
+        (WebCore::RenderLayerCompositor::setIsInWindow):
+        (WebCore::RenderLayerCompositor::willRemoveScrollingLayerWithBacking): No longer check the page cache state; now we
+        destroy the render tree of pages in the page cache, so we should never hit this code path.
+        (WebCore::RenderLayerCompositor::didAddScrollingLayer):
+        (WebCore::LegacyWebKitScrollingLayerCoordinator::registerAllViewportConstrainedLayers):
+        (WebCore::LegacyWebKitScrollingLayerCoordinator::unregisterAllViewportConstrainedLayers):
+        (WebCore::scrollbarHasDisplayNone):
+        (WebCore::LegacyWebKitScrollingLayerCoordinator::updateScrollingLayer):
+        (WebCore::LegacyWebKitScrollingLayerCoordinator::registerAllScrollingLayers):
+        (WebCore::LegacyWebKitScrollingLayerCoordinator::registerScrollingLayersNeedingUpdate):
+        (WebCore::LegacyWebKitScrollingLayerCoordinator::unregisterAllScrollingLayers):
+        (WebCore::LegacyWebKitScrollingLayerCoordinator::addScrollingLayer):
+        (WebCore::LegacyWebKitScrollingLayerCoordinator::removeScrollingLayer):
+        (WebCore::LegacyWebKitScrollingLayerCoordinator::didFlushChangesForLayer):
+        (WebCore::updateScrollingLayerWithClient): Deleted.
+        (WebCore::RenderLayerCompositor::registerAllViewportConstrainedLayers): Deleted.
+        (WebCore::RenderLayerCompositor::unregisterAllViewportConstrainedLayers): Deleted.
+        (WebCore::RenderLayerCompositor::registerAllScrollingLayers): Deleted.
+        (WebCore::RenderLayerCompositor::unregisterAllScrollingLayers): Deleted.
+        * rendering/RenderLayerCompositor.h:
+        (WebCore::LegacyWebKitScrollingLayerCoordinator::LegacyWebKitScrollingLayerCoordinator):
+        * workers/service/ServiceWorkerContainer.cpp:
+        (WebCore::ServiceWorkerContainer::~ServiceWorkerContainer):
+
 2019-01-05  Zalan Bujtas  <zalan@apple.com>
 
         [LFC] VerticalMargin should only have the used values.
