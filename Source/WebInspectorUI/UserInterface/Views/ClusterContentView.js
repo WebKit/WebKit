@@ -61,6 +61,11 @@ WI.ClusterContentView = class ClusterContentView extends WI.ContentView
         return super.supportsSplitContentBrowser;
     }
 
+    get shouldSaveStateWhenHidden()
+    {
+        return true;
+    }
+
     shown()
     {
         super.shown();

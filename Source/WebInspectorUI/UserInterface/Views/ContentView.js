@@ -355,6 +355,11 @@ WI.ContentView = class ContentView extends WI.View
         return false;
     }
 
+    get shouldSaveStateWhenHidden()
+    {
+        return false;
+    }
+
     get selectionPathComponents()
     {
         // Implemented by subclasses.

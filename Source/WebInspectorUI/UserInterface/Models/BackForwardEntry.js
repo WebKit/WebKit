@@ -93,6 +93,11 @@ WI.BackForwardEntry = class BackForwardEntry
         this.contentView.hidden();
 
         this._saveScrollPositions();
+
+        if (this._contentView.shouldSaveStateWhenHidden) {
+            this._cookie = {};
+            this._contentView.saveToCookie(this._cookie);
+        }
     }
 
     isEqual(other)

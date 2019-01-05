@@ -1,3 +1,21 @@
+2019-01-04  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: subclasses of WI.ClusterContentView don't save/restore content views after the initial view
+        https://bugs.webkit.org/show_bug.cgi?id=192451
+        <rdar://problem/46800958>
+
+        Reviewed by Devin Rousso.
+
+        * UserInterface/Models/BackForwardEntry.js:
+        (WI.BackForwardEntry.prototype.prepareToHide):
+        * UserInterface/Views/ClusterContentView.js:
+        (WI.ClusterContentView.prototype.get shouldSaveStateOnHide):
+        * UserInterface/Views/ContentView.js:
+        (WI.ContentView.prototype.get shouldSaveStateOnHide):
+        Allow ClusterContentViews to save its state whenever its hidden,
+        this means it can be properly restored to the last state it had
+        instead of the initial state it was shown with.
+
 2019-01-04  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: Audit: disable breakpoints when running Audit
