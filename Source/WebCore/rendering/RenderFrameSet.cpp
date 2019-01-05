@@ -494,6 +494,18 @@ void RenderFrameSet::layout()
     clearNeedsLayout();
 }
 
+static void resetFrameRendererAndDescendents(RenderBox* frameSetChild, RenderFrameSet& parentFrameSet)
+{
+    if (!frameSetChild)
+        return;
+
+    for (auto* descendant = frameSetChild; descendant; descendant = downcast<RenderBox>(RenderObjectTraversal::next(*descendant, &parentFrameSet))) {
+        descendant->setWidth(0);
+        descendant->setHeight(0);
+        descendant->clearNeedsLayout();
+    }
+}
+
 void RenderFrameSet::positionFrames()
 {
     RenderBox* child = firstChildBox();
@@ -534,12 +546,7 @@ void RenderFrameSet::positionFrames()
         yPos += height + borderThickness;
     }
 
-    // all the remaining frames are hidden to avoid ugly spurious unflowed frames
-    for (auto* descendant = child; descendant; descendant = downcast<RenderBox>(RenderObjectTraversal::next(*descendant, this))) {
-        descendant->setWidth(0);
-        descendant->setHeight(0);
-        descendant->clearNeedsLayout();
-    }
+    resetFrameRendererAndDescendents(child, *this);
 }
 
 void RenderFrameSet::positionFramesWithFlattening()
@@ -642,12 +649,7 @@ void RenderFrameSet::positionFramesWithFlattening()
     if (repaintNeeded)
         repaint();
 
-    // all the remaining frames are hidden to avoid ugly spurious unflowed frames
-    for (; child; child = child->nextSiblingBox()) {
-        child->setWidth(0);
-        child->setHeight(0);
-        child->clearNeedsLayout();
-    }
+    resetFrameRendererAndDescendents(child, *this);
 }
 
 bool RenderFrameSet::flattenFrameSet() const

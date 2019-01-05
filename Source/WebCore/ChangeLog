@@ -1,3 +1,20 @@
+2019-01-04  Zalan Bujtas  <zalan@apple.com>
+
+        [iOS] ERROR: post-layout: dirty renderer(s) in WebCore::RenderTreeNeedsLayoutChecker::~RenderTreeNeedsLayoutChecker()
+        https://bugs.webkit.org/show_bug.cgi?id=189608
+        <rdar://problem/44473299>
+
+        Reviewed by Simon Fraser.
+
+        When a frameset/iframe is hidden and we skip layout, clear the dirty flag on its subtree as well.
+
+        Covered by fast/frames/invalid-frameset.html.
+
+        * rendering/RenderFrameSet.cpp:
+        (WebCore::clearSiblingSubtrees):
+        (WebCore::RenderFrameSet::positionFrames):
+        (WebCore::RenderFrameSet::positionFramesWithFlattening):
+
 2019-01-04  Youenn Fablet  <youenn@apple.com>
 
         [Fetch API] Implement abortable fetch
