@@ -287,7 +287,7 @@ class ValidatePatch(buildstep.BuildStep):
             self._addToLog('stdio', 'Unable to fetch patch {}.\n'.format(patch_id))
             return -1
 
-        if patch_json.get('id') != self.getProperty('patch_id', ''):
+        if str(patch_json.get('id')) != self.getProperty('patch_id', ''):
             self._addToLog('stdio', 'Fetched patch id {} does not match with requested patch id {}. Unable to validate.\n'.format(patch_json.get('id'), self.getProperty('patch_id', '')))
             return -1
 
