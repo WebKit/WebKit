@@ -69,6 +69,10 @@ static inline UniqueRef<Page> createPageForServiceWorker(PageConfiguration&& con
     document->setSiteForCookies(topOriginURL(origin));
     document->setFirstPartyForCookies(data.scriptURL);
     document->setDomainForCachePartition(origin->domainForCachePartition());
+
+    if (auto policy = parseReferrerPolicy(data.referrerPolicy, ReferrerPolicySource::HTTPHeader))
+        document->setReferrerPolicy(*policy);
+
     mainFrame.setDocument(WTFMove(document));
     return page;
 }

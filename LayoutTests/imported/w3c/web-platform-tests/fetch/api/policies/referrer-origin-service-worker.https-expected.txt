@@ -1,5 +1,5 @@
 
 PASS Fetch in service worker: referrer with no-referrer policy 
-FAIL Request's referrer is origin assert_equals: request's referrer is https://localhost:9443/ expected "https://localhost:9443/" but got "https://localhost:9443/fetch/api/policies/referrer-origin.js?pipe=sub"
-FAIL Cross-origin referrer is overridden by client origin assert_equals: request's referrer is https://localhost:9443/ expected "https://localhost:9443/" but got "https://localhost:9443/fetch/api/policies/referrer-origin.js?pipe=sub"
+PASS Request's referrer is origin 
+PASS Cross-origin referrer is overridden by client origin 
 

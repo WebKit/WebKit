@@ -75,6 +75,7 @@ struct ServiceWorkerContextData {
     ServiceWorkerIdentifier serviceWorkerIdentifier;
     String script;
     ContentSecurityPolicyResponseHeaders contentSecurityPolicy;
+    String referrerPolicy;
     URL scriptURL;
     WorkerType workerType;
     PAL::SessionID sessionID;
@@ -90,7 +91,7 @@ struct ServiceWorkerContextData {
 template<class Encoder>
 void ServiceWorkerContextData::encode(Encoder& encoder) const
 {
-    encoder << jobDataIdentifier << registration << serviceWorkerIdentifier << script << contentSecurityPolicy << scriptURL << workerType << sessionID << loadedFromDisk;
+    encoder << jobDataIdentifier << registration << serviceWorkerIdentifier << script << contentSecurityPolicy << referrerPolicy << scriptURL << workerType << sessionID << loadedFromDisk;
     encoder << scriptResourceMap;
 }
 
@@ -119,6 +120,10 @@ Optional<ServiceWorkerContextData> ServiceWorkerContextData::decode(Decoder& dec
     if (!decoder.decode(contentSecurityPolicy))
         return WTF::nullopt;
 
+    String referrerPolicy;
+    if (!decoder.decode(referrerPolicy))
+        return WTF::nullopt;
+
     URL scriptURL;
     if (!decoder.decode(scriptURL))
         return WTF::nullopt;
@@ -139,7 +144,7 @@ Optional<ServiceWorkerContextData> ServiceWorkerContextData::decode(Decoder& dec
     if (!decoder.decode(scriptResourceMap))
         return WTF::nullopt;
 
-    return {{ WTFMove(*jobDataIdentifier), WTFMove(*registration), WTFMove(*serviceWorkerIdentifier), WTFMove(script), WTFMove(contentSecurityPolicy), WTFMove(scriptURL), workerType, sessionID, loadedFromDisk, WTFMove(scriptResourceMap) }};
+    return {{ WTFMove(*jobDataIdentifier), WTFMove(*registration), WTFMove(*serviceWorkerIdentifier), WTFMove(script), WTFMove(contentSecurityPolicy), WTFMove(referrerPolicy), WTFMove(scriptURL), workerType, sessionID, loadedFromDisk, WTFMove(scriptResourceMap) }};
 }
 
 } // namespace WebCore

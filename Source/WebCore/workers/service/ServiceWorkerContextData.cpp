@@ -33,7 +33,7 @@ namespace WebCore {
 
 ServiceWorkerContextData ServiceWorkerContextData::isolatedCopy() const
 {
-    return { jobDataIdentifier, registration.isolatedCopy(), serviceWorkerIdentifier, script.isolatedCopy(), contentSecurityPolicy.isolatedCopy(), scriptURL.isolatedCopy(), workerType, sessionID, loadedFromDisk, crossThreadCopy(scriptResourceMap) };
+    return { jobDataIdentifier, registration.isolatedCopy(), serviceWorkerIdentifier, script.isolatedCopy(), contentSecurityPolicy.isolatedCopy(), referrerPolicy.isolatedCopy(), scriptURL.isolatedCopy(), workerType, sessionID, loadedFromDisk, crossThreadCopy(scriptResourceMap) };
 }
 
 } // namespace WebCore

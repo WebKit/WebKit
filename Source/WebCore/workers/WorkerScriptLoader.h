@@ -61,6 +61,7 @@ public:
 
     String script();
     const ContentSecurityPolicyResponseHeaders& contentSecurityPolicy() const { return m_contentSecurityPolicy; }
+    const String& referrerPolicy() const { return m_referrerPolicy; }
     const URL& url() const { return m_url; }
     const URL& responseURL() const;
     const String& responseMIMEType() const { return m_responseMIMEType; }
@@ -94,6 +95,7 @@ private:
     String m_responseMIMEType;
     FetchOptions::Destination m_destination;
     ContentSecurityPolicyResponseHeaders m_contentSecurityPolicy;
+    String m_referrerPolicy;
     unsigned long m_identifier { 0 };
     bool m_failed { false };
     bool m_finishing { false };

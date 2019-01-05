@@ -2,6 +2,6 @@
 
 PASS Initialize global state (service worker registration) 
 FAIL Referrer for a main resource redirected with referrer-policy (origin) should only have origin. assert_equals: expected "https://localhost:9443/" but got "https://localhost:9443/service-workers/service-worker/referrer-policy-header.https.html"
-FAIL Referrer for fetch requests initiated from a service worker with referrer-policy (origin) should only have origin. assert_equals: expected "finish" but got "failure:Referer for request-headers.py?url=request-headers.py must be https://localhost:9443/ but got https://localhost:9443/service-workers/service-worker/resources/fetch-rewrite-worker-referrer-policy.js"
+PASS Referrer for fetch requests initiated from a service worker with referrer-policy (origin) should only have origin. 
 PASS Remove registration as a cleanup 
 

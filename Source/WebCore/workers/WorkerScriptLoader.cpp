@@ -177,6 +177,7 @@ void WorkerScriptLoader::didReceiveResponse(unsigned long identifier, const Reso
     m_responseMIMEType = response.mimeType();
     m_responseEncoding = response.textEncodingName();
     m_contentSecurityPolicy = ContentSecurityPolicyResponseHeaders { response };
+    m_referrerPolicy = response.httpHeaderField(HTTPHeaderName::ReferrerPolicy);
     if (m_client)
         m_client->didReceiveResponse(identifier, response);
 }
