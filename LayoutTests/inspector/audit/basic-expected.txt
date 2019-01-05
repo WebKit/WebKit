@@ -126,3 +126,8 @@ PASS: Result should be "error".
   errors:
    - rejected
 
+-- Running test case: Audit.Basic.Debugger
+Testing `debugger`...
+PASS: Should not pause on the debugger statement.
+PASS: Result should be "pass".
+

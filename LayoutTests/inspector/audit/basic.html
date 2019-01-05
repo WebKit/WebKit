@@ -45,6 +45,43 @@ function test()
     InspectorTest.Audit.addPromiseTest("Audit.Basic.Error.Promise.Resolved", `setTimeout(resolve, 0)`, WI.AuditTestCaseResult.Level.Error);
     InspectorTest.Audit.addPromiseTest("Audit.Basic.Error.Promise.Rejected", `setTimeout(reject, 0, "rejected")`, WI.AuditTestCaseResult.Level.Error);
 
+    suite.addTestCase({
+        name: "Audit.Basic.Debugger",
+        description: "Test that a debugger statement doesn't pause when running an audit.",
+        test(resolve, reject) {
+            const level = "pass";
+            let audit = new WI.AuditTestCase("Audit.Basic.Debugger", `function() { debugger; return "${level}"; }`);
+
+            let paused = false;
+            let pausedListener = WI.debuggerManager.singleFireEventListener(WI.DebuggerManager.Event.Paused, (event) => {
+                paused = true;
+
+                WI.debuggerManager.resume();
+            });
+
+            WI.auditManager.awaitEvent(WI.AuditManager.Event.TestCompleted).then((event) => {
+                InspectorTest.expectFalse(paused, "Should not pause on the debugger statement.");
+
+                let results = WI.auditManager.results.lastValue;
+                InspectorTest.assert(results.length === 1, "There should be 1 result.");
+
+                let result = results[0];
+                InspectorTest.assert(result instanceof WI.AuditTestCaseResult, "Result should be a WI.AuditTestCaseResult.");
+                if (!result)
+                    return;
+
+                InspectorTest.expectEqual(result.level, level, `Result should be "${level}".`);
+
+                WI.debuggerManager.removeEventListener(WI.DebuggerManager.Event.Paused, pausedListener);
+            });
+
+            InspectorTest.log("Testing `debugger`...");
+
+            WI.auditManager.start([audit])
+            .then(resolve, reject);
+        },
+    });
+
     suite.runTestCasesAndFinish();
 }
 </script>

@@ -57,12 +57,12 @@ WI.loaded = function()
         WI.heapManager = new WI.HeapManager,
         WI.memoryManager = new WI.MemoryManager,
         WI.timelineManager = new WI.TimelineManager,
+        WI.auditManager = new WI.AuditManager,
         WI.debuggerManager = new WI.DebuggerManager,
         WI.layerTreeManager = new WI.LayerTreeManager,
         WI.workerManager = new WI.WorkerManager,
         WI.domDebuggerManager = new WI.DOMDebuggerManager,
         WI.canvasManager = new WI.CanvasManager,
-        WI.auditManager = new WI.AuditManager,
     ];
 
     // Register for events.

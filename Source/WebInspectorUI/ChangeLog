@@ -1,3 +1,36 @@
+2019-01-04  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: Audit: disable breakpoints when running Audit
+        https://bugs.webkit.org/show_bug.cgi?id=193158
+        <rdar://problem/47057083>
+
+        Reviewed by Joseph Pecoraro.
+
+        * UserInterface/Controllers/DebuggerManager.js:
+        (WI.DebuggerManager):
+        (WI.DebuggerManager.prototype._startDisablingBreakpointsTemporarily):
+        (WI.DebuggerManager.prototype._stopDisablingBreakpointsTemporarily):
+        (WI.DebuggerManager.prototype._handleAuditManagerTestScheduled): Added.
+        (WI.DebuggerManager.prototype._handleAuditManagerTestCompleted): Added.
+
+        * UserInterface/Views/DebuggerSidebarPanel.js:
+        (WI.DebuggerSidebarPanel.prototype._timelineCapturingWillStart):
+        (WI.DebuggerSidebarPanel.prototype._timelineCapturingStopped):
+        (WI.DebuggerSidebarPanel.prototype._handleAuditManagerTestScheduled): Added.
+        (WI.DebuggerSidebarPanel.prototype._handleAuditManagerTestCompleted): Added.
+        (WI.DebuggerSidebarPanel.prototype._updateBreakpointsDisabledBanner):
+        * UserInterface/Views/DebuggerSidebarPanel.css:
+        (.sidebar > .panel.navigation.debugger .warning-banner + .warning-banner): Added.
+
+        * UserInterface/Base/Main.js:
+        (WI.loaded):
+        * UserInterface/Test/Test.js:
+        (WI.loaded):
+        Move `WI.auditManager` higher in the managers list so that it can be used in
+        `WI.DebuggerManager`'s constructor.
+
+        * Localizations/en.lproj/localizedStrings.js:
+
 2019-01-04  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Add a Setting Toggle for Source Maps

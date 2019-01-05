@@ -58,15 +58,25 @@ WI.DebuggerSidebarPanel = class DebuggerSidebarPanel extends WI.NavigationSideba
         WI.timelineManager.addEventListener(WI.TimelineManager.Event.CapturingWillStart, this._timelineCapturingWillStart, this);
         WI.timelineManager.addEventListener(WI.TimelineManager.Event.CapturingStopped, this._timelineCapturingStopped, this);
 
+        WI.auditManager.addEventListener(WI.AuditManager.Event.TestScheduled, this._handleAuditManagerTestScheduled, this);
+        WI.auditManager.addEventListener(WI.AuditManager.Event.TestCompleted, this._handleAuditManagerTestCompleted, this);
+
         WI.targetManager.addEventListener(WI.TargetManager.Event.TargetAdded, this._targetAdded, this);
         WI.targetManager.addEventListener(WI.TargetManager.Event.TargetRemoved, this._targetRemoved, this);
 
         this._timelineRecordingWarningElement = document.createElement("div");
         this._timelineRecordingWarningElement.classList.add("warning-banner");
-        this._timelineRecordingWarningElement.append(WI.UIString("Debugger disabled during Timeline recording"), " ");
-        let stopRecordingLink = this._timelineRecordingWarningElement.appendChild(document.createElement("a"));
-        stopRecordingLink.textContent = WI.UIString("Stop recording");
-        stopRecordingLink.addEventListener("click", () => { WI.timelineManager.stopCapturing(); });
+        this._timelineRecordingWarningElement.append(WI.UIString("Debugger disabled during Timeline recording"), document.createElement("br"));
+        let timelineStopRecordingLink = this._timelineRecordingWarningElement.appendChild(document.createElement("a"));
+        timelineStopRecordingLink.textContent = WI.UIString("Stop recording");
+        timelineStopRecordingLink.addEventListener("click", () => { WI.timelineManager.stopCapturing(); });
+
+        this._auditTestWarningElement = document.createElement("div");
+        this._auditTestWarningElement.classList.add("warning-banner");
+        this._auditTestWarningElement.append(WI.UIString("Debugger disabled during Audit"), document.createElement("br"));
+        let auditStopRecordingLink = this._auditTestWarningElement.appendChild(document.createElement("a"));
+        auditStopRecordingLink.textContent = WI.UIString("Stop Audit");
+        auditStopRecordingLink.addEventListener("click", () => { WI.auditManager.stop(); });
 
         this._breakpointsDisabledWarningElement = document.createElement("div");
         this._breakpointsDisabledWarningElement.classList.add("warning-banner");
@@ -622,8 +632,7 @@ WI.DebuggerSidebarPanel = class DebuggerSidebarPanel extends WI.NavigationSideba
 
     _timelineCapturingWillStart(event)
     {
-        this._debuggerBreakpointsButtonItem.enabled = false;
-        this._debuggerPauseResumeButtonItem.enabled = false;
+        this._updateTemporarilyDisabledBreakpointsButtons();
 
         this.contentView.element.insertBefore(this._timelineRecordingWarningElement, this.contentView.element.firstChild);
         this._updateBreakpointsDisabledBanner();
@@ -631,19 +640,42 @@ WI.DebuggerSidebarPanel = class DebuggerSidebarPanel extends WI.NavigationSideba
 
     _timelineCapturingStopped(event)
     {
-        this._debuggerBreakpointsButtonItem.enabled = true;
-        this._debuggerPauseResumeButtonItem.enabled = true;
+        this._updateTemporarilyDisabledBreakpointsButtons();
 
         this._timelineRecordingWarningElement.remove();
         this._updateBreakpointsDisabledBanner();
+    }
+
+    _handleAuditManagerTestScheduled(event)
+    {
+        this._updateTemporarilyDisabledBreakpointsButtons();
+
+        this.contentView.element.insertBefore(this._auditTestWarningElement, this.contentView.element.firstChild);
+        this._updateBreakpointsDisabledBanner();
+    }
+
+    _handleAuditManagerTestCompleted(event)
+    {
+        this._updateTemporarilyDisabledBreakpointsButtons();
+
+        this._auditTestWarningElement.remove();
+        this._updateBreakpointsDisabledBanner();
+    }
+
+    _updateTemporarilyDisabledBreakpointsButtons()
+    {
+        let breakpointsDisabledTemporarily = WI.debuggerManager.breakpointsDisabledTemporarily;
+        this._debuggerBreakpointsButtonItem.enabled = !breakpointsDisabledTemporarily;
+        this._debuggerPauseResumeButtonItem.enabled = !breakpointsDisabledTemporarily;
     }
 
     _updateBreakpointsDisabledBanner()
     {
         let breakpointsEnabled = WI.debuggerManager.breakpointsEnabled;
         let timelineWarningShowing = !!this._timelineRecordingWarningElement.parentElement;
+        let auditWarningShowing = !!this._auditTestWarningElement.parentElement;
 
-        if (!breakpointsEnabled && !timelineWarningShowing)
+        if (!breakpointsEnabled && !timelineWarningShowing && !auditWarningShowing)
             this.contentView.element.insertBefore(this._breakpointsDisabledWarningElement, this.contentView.element.firstChild);
         else
             this._breakpointsDisabledWarningElement.remove();

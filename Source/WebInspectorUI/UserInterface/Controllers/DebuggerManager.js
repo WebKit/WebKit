@@ -41,6 +41,9 @@ WI.DebuggerManager = class DebuggerManager extends WI.Object
         WI.timelineManager.addEventListener(WI.TimelineManager.Event.CapturingWillStart, this._timelineCapturingWillStart, this);
         WI.timelineManager.addEventListener(WI.TimelineManager.Event.CapturingStopped, this._timelineCapturingStopped, this);
 
+        WI.auditManager.addEventListener(WI.AuditManager.Event.TestScheduled, this._handleAuditManagerTestScheduled, this);
+        WI.auditManager.addEventListener(WI.AuditManager.Event.TestCompleted, this._handleAuditManagerTestCompleted, this);
+
         WI.targetManager.addEventListener(WI.TargetManager.Event.TargetRemoved, this._targetRemoved, this);
 
         WI.settings.pauseForInternalScripts.addEventListener(WI.Setting.Event.Changed, this._pauseForInternalScriptsDidChange, this);
@@ -93,6 +96,7 @@ WI.DebuggerManager = class DebuggerManager extends WI.Object
             this._breakpointsEnabledSetting.value = this._temporarilyDisabledBreakpointsRestoreSetting.value;
             this._temporarilyDisabledBreakpointsRestoreSetting.value = null;
         }
+        this._temporarilyDisableBreakpointsRequestCount = 0;
 
         this._ignoreBreakpointDisplayLocationDidChangeEvent = false;
 
@@ -1110,9 +1114,13 @@ WI.DebuggerManager = class DebuggerManager extends WI.Object
 
     _startDisablingBreakpointsTemporarily()
     {
+        if (++this._temporarilyDisableBreakpointsRequestCount > 1)
+            return;
+
         console.assert(!this.breakpointsDisabledTemporarily, "Already temporarily disabling breakpoints.");
         if (this.breakpointsDisabledTemporarily)
             return;
+
 
         this._temporarilyDisabledBreakpointsRestoreSetting.value = this._breakpointsEnabledSetting.value;
 
@@ -1121,6 +1129,10 @@ WI.DebuggerManager = class DebuggerManager extends WI.Object
 
     _stopDisablingBreakpointsTemporarily()
     {
+        this._temporarilyDisableBreakpointsRequestCount = Math.max(0, this._temporarilyDisableBreakpointsRequestCount - 1);
+        if (this._temporarilyDisableBreakpointsRequestCount > 0)
+            return;
+
         console.assert(this.breakpointsDisabledTemporarily, "Was not temporarily disabling breakpoints.");
         if (!this.breakpointsDisabledTemporarily)
             return;
@@ -1140,6 +1152,19 @@ WI.DebuggerManager = class DebuggerManager extends WI.Object
     }
 
     _timelineCapturingStopped(event)
+    {
+        this._stopDisablingBreakpointsTemporarily();
+    }
+
+    _handleAuditManagerTestScheduled(event)
+    {
+        this._startDisablingBreakpointsTemporarily();
+
+        if (this.paused)
+            this.resume();
+    }
+
+    _handleAuditManagerTestCompleted(event)
     {
         this._stopDisablingBreakpointsTemporarily();
     }

@@ -58,8 +58,7 @@ TestPage.registerInitializer(() => {
                         logArray("domAttributes", data.domAttributes);
                     if (data.errors)
                         logArray("errors", data.errors);
-                })
-                .then(resolve, reject);
+                });
 
                 InspectorTest.log("Testing" + (logs.beforeStart || "") + "...");
 

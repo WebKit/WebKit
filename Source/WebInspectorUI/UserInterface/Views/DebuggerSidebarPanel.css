@@ -62,6 +62,10 @@
     background-color: hsl(50, 100%, 94%);
 }
 
+.sidebar > .panel.navigation.debugger .warning-banner + .warning-banner {
+    display: none;
+}
+
 .sidebar > .panel.navigation.debugger .tree-outline.single-thread > .item.thread {
     display: none;
 }
