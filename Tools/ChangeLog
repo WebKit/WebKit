@@ -1,5 +1,14 @@
 2019-01-04  Alex Christensen  <achristensen@webkit.org>
 
+        Progress towards fixing Mac CMake build
+        https://bugs.webkit.org/show_bug.cgi?id=193105
+
+        Reviewed by Don Olmstead.
+
+        * TestWebKitAPI/PlatformMac.cmake:
+
+2019-01-04  Alex Christensen  <achristensen@webkit.org>
+
         Fix API test after r239631
         https://bugs.webkit.org/show_bug.cgi?id=193118
 

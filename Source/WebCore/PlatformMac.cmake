@@ -1,3 +1,4 @@
+find_library(ACCELERATE_LIBRARY Accelerate)
 find_library(APPLICATIONSERVICES_LIBRARY ApplicationServices)
 find_library(AVFOUNDATION_LIBRARY AVFoundation)
 find_library(AUDIOTOOLBOX_LIBRARY AudioToolbox)
@@ -25,6 +26,7 @@ list(APPEND WebCore_UNIFIED_SOURCE_LIST_FILES
 )
 
 list(APPEND WebCore_LIBRARIES
+    ${ACCELERATE_LIBRARY}
     ${AUDIOTOOLBOX_LIBRARY}
     ${AUDIOUNIT_LIBRARY}
     ${AVFOUNDATION_LIBRARY}
@@ -52,6 +54,11 @@ add_definitions(-iframework ${AVFOUNDATION_LIBRARY}/Versions/Current/Frameworks)
 add_definitions(-iframework ${CARBON_LIBRARY}/Versions/Current/Frameworks)
 add_definitions(-iframework ${CORESERVICES_LIBRARY}/Versions/Current/Frameworks)
 add_definitions(-iframework ${QUARTZ_LIBRARY}/Frameworks)
+
+find_library(COREUI_FRAMEWORK CoreUI HINTS /System/Library/PrivateFrameworks)
+if (NOT COREUI_FRAMEWORK-NOTFOUND)
+    list(APPEND WebCore_LIBRARIES ${COREUI_FRAMEWORK})
+endif ()
 
 find_library(DATADETECTORSCORE_FRAMEWORK DataDetectorsCore HINTS /System/Library/PrivateFrameworks)
 if (NOT DATADETECTORSCORE_FRAMEWORK-NOTFOUND)

@@ -249,6 +249,7 @@ platform/graphics/avfoundation/objc/MediaPlayerPrivateMediaSourceAVFObjC.mm @no-
 platform/graphics/avfoundation/objc/MediaSampleAVFObjC.mm @no-unify
 platform/graphics/avfoundation/objc/MediaSourcePrivateAVFObjC.mm @no-unify
 platform/graphics/avfoundation/objc/SourceBufferPrivateAVFObjC.mm @no-unify
+platform/graphics/avfoundation/objc/VideoFullscreenLayerManagerObjC.mm @no-unify
 platform/graphics/avfoundation/objc/VideoTrackPrivateAVFObjC.cpp @no-unify
 platform/graphics/avfoundation/objc/VideoTrackPrivateMediaSourceAVFObjC.mm @no-unify
 platform/graphics/avfoundation/objc/WebCoreAVFResourceLoader.mm @no-unify
@@ -278,6 +279,7 @@ platform/graphics/cg/GraphicsContextCG.cpp
 platform/graphics/cg/IOSurfacePool.cpp
 platform/graphics/cg/ImageBufferCG.cpp
 platform/graphics/cg/ImageBufferDataCG.cpp
+platform/graphics/cg/ImageBufferUtilitiesCG.cpp
 platform/graphics/cg/ImageDecoderCG.cpp
 platform/graphics/cg/ImageSourceCGMac.mm
 platform/graphics/cg/IntPointCG.cpp
@@ -352,6 +354,7 @@ platform/graphics/mac/IntRectMac.mm
 platform/graphics/mac/IntSizeMac.mm
 platform/graphics/mac/PDFDocumentImageMac.mm
 platform/graphics/mac/SimpleFontDataCoreText.cpp
+platform/graphics/mac/SwitchingGPUClient.cpp
 platform/graphics/mac/WebLayer.mm
 platform/graphics/mac/WebKitNSImageExtras.mm
 
@@ -446,6 +449,7 @@ platform/mac/FileSystemMac.mm
 platform/mac/KeyEventMac.mm @no-unify
 platform/mac/PlaybackSessionInterfaceMac.mm @no-unify
 platform/mac/LocalCurrentGraphicsContext.mm
+platform/mac/LocalDefaultSystemAppearance.mm
 platform/mac/LoggingMac.mm
 platform/mac/MediaRemoteSoftLink.cpp
 platform/mac/NSScrollerImpDetails.mm

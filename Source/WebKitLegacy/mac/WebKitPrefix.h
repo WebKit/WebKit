@@ -28,6 +28,9 @@
 
 #if defined(HAVE_CONFIG_H) && HAVE_CONFIG_H && defined(BUILDING_WITH_CMAKE)
 #include "cmakeconfig.h"
+#ifndef JSC_API_AVAILABLE
+#define JSC_API_AVAILABLE(...)
+#endif
 #endif
 
 #include <TargetConditionals.h>

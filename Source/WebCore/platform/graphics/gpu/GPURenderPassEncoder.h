@@ -28,6 +28,7 @@
 #if ENABLE(WEBGPU)
 
 #include "GPUProgrammablePassEncoder.h"
+#include "GPURenderPipeline.h"
 
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
@@ -40,7 +41,6 @@ namespace WebCore {
 
 class GPUBuffer;
 class GPUCommandBuffer;
-class GPURenderPipeline;
 
 struct GPURenderPassDescriptor;
 
