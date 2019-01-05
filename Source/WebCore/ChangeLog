@@ -1,3 +1,19 @@
+2019-01-04  Daniel Bates  <dabates@apple.com>
+
+        REGRESSION (r238522): Erratic scrolling on Google flights search result page and vrbo.com
+        https://bugs.webkit.org/show_bug.cgi?id=192996
+        <rdar://problem/46573552>
+
+        Reviewed by Simon Fraser.
+
+        Only scroll a text field if its inner text size changes and it is the currently active and
+        focused element on the page.
+
+        Test: fast/scrolling/page-should-not-scroll-on-unfocused-text-field-layout.html
+
+        * rendering/RenderTextControlSingleLine.cpp:
+        (WebCore::RenderTextControlSingleLine::layout):
+
 2019-01-04  Alex Christensen  <achristensen@webkit.org>
 
         Progress towards fixing Mac CMake build

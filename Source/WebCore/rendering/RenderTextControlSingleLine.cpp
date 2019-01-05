@@ -212,7 +212,7 @@ void RenderTextControlSingleLine::layout()
     if (inputElement().isSearchField())
         RenderThemeIOS::adjustRoundBorderRadius(mutableStyle(), *this);
 #endif
-    if (innerTextSizeChanged) {
+    if (innerTextSizeChanged && frame().selection().isFocusedAndActive() && document().focusedElement() == &inputElement()) {
         // The caps lock indicator was hidden or shown. If it is now visible then it may be occluding
         // the current selection (say, the caret was after the last character in the text field).
         // Schedule an update and reveal of the current selection.
