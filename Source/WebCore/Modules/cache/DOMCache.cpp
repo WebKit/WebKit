@@ -321,8 +321,8 @@ void DOMCache::put(RequestInfo&& info, Ref<FetchResponse>&& response, DOMPromise
     }
     auto request = requestOrException.releaseReturnValue();
 
-    if (response->loadingError()) {
-        promise.reject(Exception { TypeError, response->loadingError()->localizedDescription() });
+    if (auto exception = response->loadingException()) {
+        promise.reject(*exception);
         return;
     }
 

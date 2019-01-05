@@ -159,6 +159,9 @@ ExceptionOr<void> FetchRequest::initializeWith(const String& url, Init&& init)
     if (optionsResult.hasException())
         return optionsResult.releaseException();
 
+    if (init.signal && init.signal.value())
+        m_signal->follow(*init.signal.value());
+
     if (init.headers) {
         auto fillResult = m_headers->fill(*init.headers);
         if (fillResult.hasException())
@@ -187,6 +190,12 @@ ExceptionOr<void> FetchRequest::initializeWith(FetchRequest& input, Init&& init)
     auto optionsResult = initializeOptions(init);
     if (optionsResult.hasException())
         return optionsResult.releaseException();
+
+    if (init.signal) {
+        if (init.signal.value())
+            m_signal->follow(*init.signal.value());
+    } else
+        m_signal->follow(input.m_signal);
 
     if (init.headers) {
         auto fillResult = m_headers->fill(*init.headers);
@@ -293,6 +302,7 @@ ExceptionOr<Ref<FetchRequest>> FetchRequest::clone(ScriptExecutionContext& conte
 
     auto clone = adoptRef(*new FetchRequest(context, WTF::nullopt, FetchHeaders::create(m_headers.get()), ResourceRequest { m_request }, FetchOptions { m_options}, String { m_referrer }));
     clone->cloneBody(*this);
+    clone->m_signal->follow(m_signal);
     return WTFMove(clone);
 }
 

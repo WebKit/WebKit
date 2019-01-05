@@ -53,8 +53,9 @@ static void processResponse(Ref<Client>&& client, Expected<Ref<FetchResponse>, R
 
     client->didReceiveResponse(response->resourceResponse());
 
-    if (response->loadingError()) {
-        client->didFail(*response->loadingError());
+    auto loadingError = response->loadingError();
+    if (!loadingError.isNull()) {
+        client->didFail(loadingError);
         return;
     }
 

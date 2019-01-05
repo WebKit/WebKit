@@ -37,7 +37,6 @@ Ref<AbortSignal> AbortSignal::create(ScriptExecutionContext& context)
     return adoptRef(*new AbortSignal(context));
 }
 
-
 AbortSignal::AbortSignal(ScriptExecutionContext& context)
     : ContextDestructionObserver(&context)
 {
@@ -52,13 +51,32 @@ void AbortSignal::abort()
     
     // 2. Set signal’s aborted flag.
     m_aborted = true;
-    
-    // 3. For each algorithm in signal's abort algorithms: run algorithm.
-    // 4. Empty signal's abort algorithms.
-    // FIXME: Add support for 'abort algorithms' - https://dom.spec.whatwg.org/#abortsignal-abort-algorithms
+
+    auto protectedThis = makeRef(*this);
+    auto algorithms = WTFMove(m_algorithms);
+    for (auto& algorithm : algorithms)
+        algorithm();
 
     // 5. Fire an event named abort at signal.
     dispatchEvent(Event::create(eventNames().abortEvent, Event::CanBubble::No, Event::IsCancelable::No));
+}
+
+// https://dom.spec.whatwg.org/#abortsignal-follow
+void AbortSignal::follow(AbortSignal& signal)
+{
+    if (aborted())
+        return;
+
+    if (signal.aborted()) {
+        abort();
+        return;
+    }
+
+    signal.addAlgorithm([weakThis = makeWeakPtr(this)] {
+        if (!weakThis)
+            return;
+        weakThis->abort();
+    });
 }
 
 }

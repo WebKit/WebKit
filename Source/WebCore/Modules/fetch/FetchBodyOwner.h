@@ -66,6 +66,10 @@ public:
     virtual void cancel() { }
 #endif
 
+    bool hasLoadingError() const;
+    ResourceError loadingError() const;
+    Optional<Exception> loadingException() const;
+
 protected:
     const FetchBody& body() const { return *m_body; }
     FetchBody& body() { return *m_body; }
@@ -87,6 +91,9 @@ protected:
 
     void setBodyAsOpaque() { m_isBodyOpaque = true; }
     bool isBodyOpaque() const { return m_isBodyOpaque; }
+
+    void setLoadingError(Exception&&);
+    void setLoadingError(ResourceError&&);
 
 private:
     // Blob loading routines
@@ -116,11 +123,12 @@ protected:
     RefPtr<FetchBodySource> m_readableStreamSource;
 #endif
     Ref<FetchHeaders> m_headers;
-    Optional<ResourceError> m_loadingError;
 
 private:
     Optional<BlobLoader> m_blobLoader;
     bool m_isBodyOpaque { false };
+
+    Variant<std::nullptr_t, Exception, ResourceError> m_loadingError;
 };
 
 } // namespace WebCore

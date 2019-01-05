@@ -44,7 +44,7 @@ public:
 
     bool enqueue(RefPtr<JSC::ArrayBuffer>&& chunk) { return controller().enqueue(WTFMove(chunk)); }
     void close();
-    void error(const String&);
+    void error(const Exception&);
 
     bool isCancelling() const { return m_isCancelling; }
 

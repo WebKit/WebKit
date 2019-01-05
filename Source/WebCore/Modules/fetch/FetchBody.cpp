@@ -186,7 +186,7 @@ void FetchBody::consumeAsStream(FetchBodyOwner& owner, FetchBodySource& source)
         owner.loadBlob(blobBody(), nullptr);
         m_data = nullptr;
     } else if (isFormData())
-        source.error("not implemented"_s);
+        source.error(Exception { NotSupportedError, "Not implemented"_s });
     else if (m_consumer.hasData())
         closeStream = source.enqueue(m_consumer.takeAsArrayBuffer());
     else
@@ -224,9 +224,9 @@ void FetchBody::consumeBlob(FetchBodyOwner& owner, Ref<DeferredPromise>&& promis
     m_data = nullptr;
 }
 
-void FetchBody::loadingFailed()
+void FetchBody::loadingFailed(const Exception& exception)
 {
-    m_consumer.loadingFailed();
+    m_consumer.loadingFailed(exception);
 }
 
 void FetchBody::loadingSucceeded()

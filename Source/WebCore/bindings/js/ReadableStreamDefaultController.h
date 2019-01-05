@@ -49,8 +49,7 @@ public:
 
     bool enqueue(RefPtr<JSC::ArrayBuffer>&&);
 
-    template<class ResolveResultType>
-    void error(const ResolveResultType&);
+    void error(const Exception&);
 
     void close() { invoke(*globalObject().globalExec(), jsController(), "close", JSC::jsUndefined()); }
 
@@ -104,12 +103,11 @@ inline bool ReadableStreamDefaultController::enqueue(RefPtr<JSC::ArrayBuffer>&& 
     return true;
 }
 
-template<>
-inline void ReadableStreamDefaultController::error<String>(const String& errorMessage)
+inline void ReadableStreamDefaultController::error(const Exception& exception)
 {
     JSC::ExecState& state = globalExec();
     JSC::JSLockHolder locker(&state);
-    error(state, JSC::createTypeError(&state, errorMessage));
+    error(state, createDOMException(&state, exception.code(), exception.message()));
 }
 
 } // namespace WebCore

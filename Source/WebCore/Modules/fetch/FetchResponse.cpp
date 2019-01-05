@@ -179,23 +179,61 @@ ExceptionOr<Ref<FetchResponse>> FetchResponse::clone(ScriptExecutionContext& con
         m_internalResponse.setHTTPHeaderFields(HTTPHeaderMap { headers().internalHeaders() });
 
     auto clone = FetchResponse::create(context, WTF::nullopt, headers().guard(), ResourceResponse { m_internalResponse });
-    clone->m_loadingError = m_loadingError;
     clone->cloneBody(*this);
     clone->m_opaqueLoadIdentifier = m_opaqueLoadIdentifier;
     clone->m_bodySizeWithPadding = m_bodySizeWithPadding;
     return WTFMove(clone);
 }
 
+void FetchResponse::addAbortSteps(Ref<AbortSignal>&& signal)
+{
+    m_abortSignal = WTFMove(signal);
+    m_abortSignal->addAlgorithm([this, weakThis = makeWeakPtr(this)] {
+        // FIXME: Cancel request body if it is a stream.
+        if (!weakThis)
+            return;
+
+        m_abortSignal = nullptr;
+
+        setLoadingError(Exception { AbortError, "Fetch is aborted"_s });
+
+        if (m_bodyLoader) {
+            if (auto callback = m_bodyLoader->takeNotificationCallback())
+                callback(Exception { AbortError, "Fetch is aborted"_s });
+        }
+
+        if (m_readableStreamSource) {
+            if (!m_readableStreamSource->isCancelling())
+                m_readableStreamSource->error(*loadingException());
+            m_readableStreamSource = nullptr;
+        }
+        if (m_body)
+            m_body->loadingFailed(*loadingException());
+
+        if (m_bodyLoader) {
+            m_bodyLoader->stop();
+            m_bodyLoader = WTF::nullopt;
+        }
+    });
+}
+
 void FetchResponse::fetch(ScriptExecutionContext& context, FetchRequest& request, NotificationCallback&& responseCallback)
 {
+    if (request.signal().aborted()) {
+        responseCallback(Exception { AbortError, "Request signal is aborted"_s });
+        // FIXME: Cancel request body if it is a stream.
+        return;
+    }
+
     if (request.hasReadableStreamBody()) {
-        if (responseCallback)
-            responseCallback(Exception { NotSupportedError, "ReadableStream uploading is not supported" });
+        responseCallback(Exception { NotSupportedError, "ReadableStream uploading is not supported"_s });
         return;
     }
     auto response = adoptRef(*new FetchResponse(context, FetchBody { }, FetchHeaders::create(FetchHeaders::Guard::Immutable), { }));
 
     response->body().consumer().setAsLoading();
+
+    response->addAbortSteps(request.signal());
 
     response->m_bodyLoader.emplace(response.get(), WTFMove(responseCallback));
     if (!response->m_bodyLoader->start(context, request))
@@ -245,7 +283,7 @@ void FetchResponse::BodyLoader::didFail(const ResourceError& error)
 {
     ASSERT(m_response.hasPendingActivity());
 
-    m_response.m_loadingError = error;
+    m_response.setLoadingError(ResourceError { error });
 
     if (auto responseCallback = WTFMove(m_responseCallback))
         responseCallback(Exception { TypeError, error.localizedDescription() });
@@ -256,7 +294,7 @@ void FetchResponse::BodyLoader::didFail(const ResourceError& error)
 #if ENABLE(STREAMS_API)
     if (m_response.m_readableStreamSource) {
         if (!m_response.m_readableStreamSource->isCancelling())
-            m_response.m_readableStreamSource->error(makeString("Loading failed: "_s, error.localizedDescription()));
+            m_response.m_readableStreamSource->error(*m_response.loadingException());
         m_response.m_readableStreamSource = nullptr;
     }
 #endif

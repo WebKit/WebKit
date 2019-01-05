@@ -212,15 +212,15 @@ void FetchBodyConsumer::setSource(Ref<FetchBodySource>&& source)
     }
 }
 
-void FetchBodyConsumer::loadingFailed()
+void FetchBodyConsumer::loadingFailed(const Exception& exception)
 {
     m_isLoading = false;
     if (m_consumePromise) {
-        m_consumePromise->reject();
+        m_consumePromise->reject(exception);
         m_consumePromise = nullptr;
     }
     if (m_source) {
-        m_source->error("Loading failed"_s);
+        m_source->error(exception);
         m_source = nullptr;
     }
 }

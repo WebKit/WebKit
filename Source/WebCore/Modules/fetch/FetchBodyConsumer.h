@@ -66,7 +66,7 @@ public:
     void resolve(Ref<DeferredPromise>&&, ReadableStream*);
     void resolveWithData(Ref<DeferredPromise>&&, const unsigned char*, unsigned);
 
-    void loadingFailed();
+    void loadingFailed(const Exception&);
     void loadingSucceeded();
 
     void setConsumePromise(Ref<DeferredPromise>&&);

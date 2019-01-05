@@ -55,6 +55,7 @@ typedef (Blob or BufferSource or DOMFormData or URLSearchParams or ReadableStrea
     readonly attribute FetchRequestRedirect redirect;
     readonly attribute DOMString integrity;
     [EnabledAtRuntime=FetchAPIKeepAlive] readonly attribute boolean keepalive;
+    readonly attribute AbortSignal signal;
 
     [CallWith=ScriptExecutionContext, MayThrowException, NewObject] FetchRequest clone();
 };

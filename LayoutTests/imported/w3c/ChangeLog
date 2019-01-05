@@ -1,3 +1,22 @@
+2019-01-04  Youenn Fablet  <youenn@apple.com>
+
+        [Fetch API] Implement abortable fetch
+        https://bugs.webkit.org/show_bug.cgi?id=174980
+        <rdar://problem/46861402>
+
+        Reviewed by Chris Dumez.
+
+        Fixed tests to run in WebKit CI.
+        Also fixed a bug in a test where the fetch response body is not actually empty.
+
+        * web-platform-tests/fetch/api/abort/cache.https-expected.txt:
+        * web-platform-tests/fetch/api/abort/general-serviceworker.https-expected.txt:
+        * web-platform-tests/fetch/api/abort/general.any-expected.txt:
+        * web-platform-tests/fetch/api/abort/general.any.js:
+        * web-platform-tests/fetch/api/abort/general.any.worker-expected.txt:
+        * web-platform-tests/fetch/api/abort/serviceworker-intercepted.https-expected.txt:
+        * web-platform-tests/fetch/api/response/response-consume-stream-expected.txt:
+
 2019-01-02  Simon Fraser  <simon.fraser@apple.com>
 
         Support css-color-4 rgb functions

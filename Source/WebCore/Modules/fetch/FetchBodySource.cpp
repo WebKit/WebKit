@@ -88,7 +88,7 @@ void FetchBodySource::close()
     m_bodyOwner = nullptr;
 }
 
-void FetchBodySource::error(const String& value)
+void FetchBodySource::error(const Exception& value)
 {
     controller().error(value);
     clean();

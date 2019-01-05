@@ -1,3 +1,73 @@
+2019-01-04  Youenn Fablet  <youenn@apple.com>
+
+        [Fetch API] Implement abortable fetch
+        https://bugs.webkit.org/show_bug.cgi?id=174980
+        <rdar://problem/46861402>
+
+        Reviewed by Chris Dumez.
+
+        Add an AbortSignal to FetchRequest.
+
+        Add support for AbortSignal algorithm.
+        The fetch request signal is added an algorithm to abort the fetch.
+        Update clone algorithm to let signal of the cloned request be following the origin request.
+
+        Update ReadableStream error handling to return an exception instead of a string.
+        This allows passing an AbortError instead of a TypeError as previously done.
+
+        Update FetchBodyOwner to store a loading error either as an exception or as a resource error.
+        The latter is used for passing the error from service worker back to the page.
+        The former is used to pass it to ReadableStream or body accessors.
+
+        Covered by enabled tests.
+
+        * Modules/cache/DOMCache.cpp:
+        (WebCore::DOMCache::put):
+        * Modules/fetch/FetchBody.cpp:
+        (WebCore::FetchBody::consumeAsStream):
+        (WebCore::FetchBody::loadingFailed):
+        * Modules/fetch/FetchBody.h:
+        * Modules/fetch/FetchBodyConsumer.cpp:
+        (WebCore::FetchBodyConsumer::loadingFailed):
+        * Modules/fetch/FetchBodyConsumer.h:
+        * Modules/fetch/FetchBodyOwner.cpp:
+        (WebCore::FetchBodyOwner::arrayBuffer):
+        (WebCore::FetchBodyOwner::blob):
+        (WebCore::FetchBodyOwner::cloneBody):
+        (WebCore::FetchBodyOwner::formData):
+        (WebCore::FetchBodyOwner::json):
+        (WebCore::FetchBodyOwner::text):
+        (WebCore::FetchBodyOwner::loadBlob):
+        (WebCore::FetchBodyOwner::blobLoadingFailed):
+        (WebCore::FetchBodyOwner::consumeBodyAsStream):
+        (WebCore::FetchBodyOwner::setLoadingError):
+        * Modules/fetch/FetchBodyOwner.h:
+        (WebCore::FetchBodyOwner::loadingError const):
+        (WebCore::FetchBodyOwner::loadingException const):
+        * Modules/fetch/FetchBodySource.cpp:
+        (WebCore::FetchBodySource::error):
+        * Modules/fetch/FetchBodySource.h:
+        * Modules/fetch/FetchRequest.cpp:
+        (WebCore::FetchRequest::initializeWith):
+        (WebCore::FetchRequest::clone):
+        * Modules/fetch/FetchRequest.h:
+        (WebCore::FetchRequest::FetchRequest):
+        * Modules/fetch/FetchRequest.idl:
+        * Modules/fetch/FetchRequestInit.h:
+        (WebCore::FetchRequestInit::hasMembers const):
+        * Modules/fetch/FetchRequestInit.idl:
+        * Modules/fetch/FetchResponse.cpp:
+        (WebCore::FetchResponse::clone):
+        (WebCore::FetchResponse::fetch):
+        (WebCore::FetchResponse::BodyLoader::didFail):
+        * Modules/fetch/FetchResponse.h:
+        * bindings/js/ReadableStreamDefaultController.h:
+        (WebCore::ReadableStreamDefaultController::error):
+        * dom/AbortSignal.cpp:
+        (WebCore::AbortSignal::abort):
+        (WebCore::AbortSignal::follow):
+        * dom/AbortSignal.h:
+
 2019-01-04  Brent Fulgham  <bfulgham@apple.com>
 
         Parsed protocol of javascript URLs with embedded newlines and carriage returns do not match parsed protocol in Chrome and Firefox

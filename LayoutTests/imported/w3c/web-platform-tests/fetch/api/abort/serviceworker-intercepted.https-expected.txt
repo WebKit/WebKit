@@ -1,9 +1,10 @@
 
-FAIL Already aborted request does not land in service worker assert_unreached: Should have rejected: undefined Reached unreachable code
-FAIL response.arrayBuffer() rejects if already aborted promise_test: Unhandled rejection with value: object "Error: wait_for_state must be passed a ServiceWorker"
-FAIL response.blob() rejects if already aborted promise_test: Unhandled rejection with value: object "Error: wait_for_state must be passed a ServiceWorker"
-FAIL response.formData() rejects if already aborted promise_test: Unhandled rejection with value: object "Error: wait_for_state must be passed a ServiceWorker"
-FAIL response.json() rejects if already aborted promise_test: Unhandled rejection with value: object "Error: wait_for_state must be passed a ServiceWorker"
-FAIL response.text() rejects if already aborted promise_test: Unhandled rejection with value: object "Error: wait_for_state must be passed a ServiceWorker"
-FAIL Stream errors once aborted. promise_test: Unhandled rejection with value: object "Error: wait_for_state must be passed a ServiceWorker"
+
+PASS Already aborted request does not land in service worker 
+PASS response.arrayBuffer() rejects if already aborted 
+PASS response.blob() rejects if already aborted 
+PASS response.formData() rejects if already aborted 
+PASS response.json() rejects if already aborted 
+PASS response.text() rejects if already aborted 
+FAIL Stream errors once aborted. assert_unreached: Should have rejected: undefined Reached unreachable code
 

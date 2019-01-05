@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include "AbortSignal.h"
 #include "FetchBody.h"
 #include "FetchHeaders.h"
 #include "FetchOptions.h"
@@ -46,9 +47,10 @@ struct FetchRequestInit {
     Optional<FetchOptions::Redirect> redirect;
     String integrity;
     Optional<bool> keepalive;
+    Optional<AbortSignal*> signal;
     JSC::JSValue window;
 
-    bool hasMembers() const { return !method.isEmpty() || headers || body || !referrer.isEmpty() || referrerPolicy || mode || credentials || cache || redirect || !integrity.isEmpty() || keepalive || !window.isUndefined(); }
+    bool hasMembers() const { return !method.isEmpty() || headers || body || !referrer.isEmpty() || referrerPolicy || mode || credentials || cache || redirect || !integrity.isEmpty() || keepalive || !window.isUndefined() || signal; }
 };
 
 }

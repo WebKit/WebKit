@@ -33,6 +33,7 @@
 #include "ReadableStreamSink.h"
 #include "ResourceResponse.h"
 #include <JavaScriptCore/TypedArrays.h>
+#include <wtf/WeakPtr.h>
 
 namespace JSC {
 class ExecState;
@@ -41,11 +42,12 @@ class JSValue;
 
 namespace WebCore {
 
+class AbortSignal;
 class FetchRequest;
 struct ReadableStreamChunk;
 class ReadableStreamSource;
 
-class FetchResponse final : public FetchBodyOwner {
+class FetchResponse final : public FetchBodyOwner, public CanMakeWeakPtr<FetchResponse> {
 public:
     using Type = ResourceResponse::Type;
 
@@ -107,8 +109,6 @@ public:
 
     void initializeOpaqueLoadIdentifierForTesting() { m_opaqueLoadIdentifier = 1; }
 
-    const Optional<ResourceError>& loadingError() const { return m_loadingError; }
-
     const HTTPHeaderMap& internalResponseHeaders() const { return m_internalResponse.httpHeaderFields(); }
 
 private:
@@ -124,6 +124,8 @@ private:
     void closeStream();
 #endif
 
+    void addAbortSteps(Ref<AbortSignal>&&);
+
     class BodyLoader final : public FetchLoaderClient {
     public:
         BodyLoader(FetchResponse&, NotificationCallback&&);
@@ -137,6 +139,7 @@ private:
 #if ENABLE(STREAMS_API)
         RefPtr<SharedBuffer> startStreaming();
 #endif
+        NotificationCallback takeNotificationCallback() { return WTFMove(m_responseCallback); }
 
     private:
         // FetchLoaderClient API
@@ -158,6 +161,7 @@ private:
     // Opaque responses will padd their body size when used with Cache API.
     uint64_t m_bodySizeWithPadding { 0 };
     uint64_t m_opaqueLoadIdentifier { 0 };
+    RefPtr<AbortSignal> m_abortSignal;
 };
 
 } // namespace WebCore

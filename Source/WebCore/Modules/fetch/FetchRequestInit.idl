@@ -39,5 +39,6 @@ dictionary FetchRequestInit {
     FetchRequestRedirect redirect;
     DOMString integrity;
     boolean keepalive;
+    AbortSignal? signal;
     any window; // can only be set to null
 };

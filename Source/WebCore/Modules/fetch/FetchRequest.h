@@ -28,6 +28,7 @@
 
 #pragma once
 
+#include "AbortSignal.h"
 #include "ExceptionOr.h"
 #include "FetchBodyOwner.h"
 #include "FetchOptions.h"
@@ -68,6 +69,7 @@ public:
     Cache cache() const { return m_options.cache; }
     Redirect redirect() const { return m_options.redirect; }
     bool keepalive() const { return m_options.keepAlive; };
+    AbortSignal& signal() { return m_signal.get(); }
 
     const String& integrity() const { return m_options.integrity; }
 
@@ -96,6 +98,7 @@ private:
     FetchOptions m_options;
     String m_referrer;
     mutable String m_requestURL;
+    Ref<AbortSignal> m_signal;
 };
 
 inline FetchRequest::FetchRequest(ScriptExecutionContext& context, Optional<FetchBody>&& body, Ref<FetchHeaders>&& headers, ResourceRequest&& request, FetchOptions&& options, String&& referrer)
@@ -103,6 +106,7 @@ inline FetchRequest::FetchRequest(ScriptExecutionContext& context, Optional<Fetc
     , m_request(WTFMove(request))
     , m_options(WTFMove(options))
     , m_referrer(WTFMove(referrer))
+    , m_signal(AbortSignal::create(context))
 {
     updateContentType();
 }

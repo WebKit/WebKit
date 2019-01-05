@@ -1,4 +1,4 @@
 
-FAIL Signals are not stored in the cache API promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'cachedRequest.signal.aborted')"
-FAIL Signals are not stored in the cache API, even if they're already aborted promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'cachedRequest.signal.aborted')"
+PASS Signals are not stored in the cache API 
+PASS Signals are not stored in the cache API, even if they're already aborted 
 
