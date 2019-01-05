@@ -57,13 +57,10 @@ HeightAndMargin BlockFormattingContext::Geometry::inFlowNonReplacedHeightAndMarg
         // Only children in the normal flow are taken into account (i.e., floating boxes and absolutely positioned boxes are ignored,
         // and relatively positioned boxes are considered without their offset). Note that the child box may be an anonymous block box.
 
-        auto& style = layoutBox.style();
-        auto containingBlockWidth = layoutState.displayBoxForLayoutBox(*layoutBox.containingBlock()).contentBoxWidth();
         auto& displayBox = layoutState.displayBoxForLayoutBox(layoutBox);
-
-        auto nonCollapsedMargin = VerticalMargin::ComputedValues { computedValueIfNotAuto(style.marginBefore(), containingBlockWidth).valueOr(0),
-            computedValueIfNotAuto(style.marginAfter(), containingBlockWidth).valueOr(0) }; 
-        auto collapsedMargin = VerticalMargin::CollapsedValues { MarginCollapse::marginBefore(layoutState, layoutBox), MarginCollapse::marginAfter(layoutState, layoutBox) };
+        auto computedVerticalMargin = Geometry::computedVerticalMargin(layoutState, layoutBox);
+        auto nonCollapsedMargin = UsedVerticalMargin::NonCollapsedValues { computedVerticalMargin.before.valueOr(0), computedVerticalMargin.after.valueOr(0) }; 
+        auto collapsedMargin = UsedVerticalMargin::CollapsedValues { MarginCollapse::marginBefore(layoutState, layoutBox), MarginCollapse::marginAfter(layoutState, layoutBox) };
         auto borderAndPaddingTop = displayBox.borderTop() + displayBox.paddingTop().valueOr(0);
 
         auto height = usedHeight ? usedHeight.value() : computedHeightValue(layoutState, layoutBox, HeightType::Normal);
@@ -104,7 +101,7 @@ HeightAndMargin BlockFormattingContext::Geometry::inFlowNonReplacedHeightAndMarg
 
     auto heightAndMargin = compute();
 
-    LOG_WITH_STREAM(FormattingContextLayout, stream << "[Height][Margin] -> inflow non-replaced -> height(" << heightAndMargin.height << "px) margin(" << heightAndMargin.margin.usedValues().before << "px, " << heightAndMargin.margin.usedValues().after << "px) -> layoutBox(" << &layoutBox << ")");
+    LOG_WITH_STREAM(FormattingContextLayout, stream << "[Height][Margin] -> inflow non-replaced -> height(" << heightAndMargin.height << "px) margin(" << heightAndMargin.usedMargin.before() << "px, " << heightAndMargin.usedMargin.after() << "px) -> layoutBox(" << &layoutBox << ")");
     return heightAndMargin;
 }
 
@@ -263,7 +260,7 @@ HeightAndMargin BlockFormattingContext::Geometry::inFlowHeightAndMargin(const La
 
     heightAndMargin = Quirks::stretchedHeight(layoutState, layoutBox, heightAndMargin);
 
-    LOG_WITH_STREAM(FormattingContextLayout, stream << "[Height][Margin] -> inflow non-replaced -> streched to viewport -> height(" << heightAndMargin.height << "px) margin(" << heightAndMargin.margin.usedValues().before << "px, " << heightAndMargin.margin.usedValues().after << "px) -> layoutBox(" << &layoutBox << ")");
+    LOG_WITH_STREAM(FormattingContextLayout, stream << "[Height][Margin] -> inflow non-replaced -> streched to viewport -> height(" << heightAndMargin.height << "px) margin(" << heightAndMargin.usedMargin.before() << "px, " << heightAndMargin.usedMargin.after() << "px) -> layoutBox(" << &layoutBox << ")");
     return heightAndMargin;
 }
 

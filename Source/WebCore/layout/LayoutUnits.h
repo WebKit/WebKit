@@ -109,7 +109,7 @@ struct WidthAndMargin {
 
 struct HeightAndMargin {
     LayoutUnit height;
-    VerticalMargin margin;
+    UsedVerticalMargin usedMargin;
 };
 
 struct HorizontalGeometry {

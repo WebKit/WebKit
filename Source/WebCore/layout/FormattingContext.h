@@ -97,7 +97,7 @@ protected:
         static Optional<Edges> computedPadding(const LayoutState&, const Box&);
 
         static ComputedHorizontalMargin computedHorizontalMargin(const LayoutState&, const Box&);
-        static VerticalMargin::ComputedValues computedNonCollapsedVerticalMarginValue(const LayoutState&, const Box&);
+        static ComputedVerticalMargin computedVerticalMargin(const LayoutState&, const Box&);
 
         static Optional<LayoutUnit> computedValueIfNotAuto(const Length& geometryProperty, LayoutUnit containingBlockWidth);
         static Optional<LayoutUnit> fixedValue(const Length& geometryProperty);

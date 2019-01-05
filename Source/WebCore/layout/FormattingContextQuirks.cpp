@@ -51,10 +51,10 @@ LayoutUnit FormattingContext::Quirks::heightValueOfNearestContainingBlockWithFix
         if (containingBlock->isBodyBox() || containingBlock->isDocumentBox()) {
             auto& displayBox = layoutState.displayBoxForLayoutBox(*containingBlock);
 
-            auto verticalMargin = FormattingContext::Geometry::computedNonCollapsedVerticalMarginValue(layoutState, *containingBlock);
+            auto verticalMargin = Geometry::computedVerticalMargin(layoutState, *containingBlock);
             auto verticalPadding = displayBox.paddingTop().valueOr(0) + displayBox.paddingBottom().valueOr(0);
             auto verticalBorder = displayBox.borderTop() + displayBox.borderBottom();
-            bodyAndDocumentVerticalMarginPaddingAndBorder += verticalMargin.before + verticalMargin.after + verticalPadding + verticalBorder;
+            bodyAndDocumentVerticalMarginPaddingAndBorder += verticalMargin.before.valueOr(0) + verticalMargin.after.valueOr(0) + verticalPadding + verticalBorder;
         }
 
         containingBlock = containingBlock->containingBlock();

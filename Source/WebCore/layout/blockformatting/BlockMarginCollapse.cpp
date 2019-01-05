@@ -107,14 +107,14 @@ LayoutUnit BlockFormattingContext::Geometry::MarginCollapse::computedNonCollapse
 {
     ASSERT(layoutBox.isBlockLevelBox());
 
-    return computedNonCollapsedVerticalMarginValue(layoutState, layoutBox).before;
+    return computedVerticalMargin(layoutState, layoutBox).before.valueOr(0);
 }
 
 LayoutUnit BlockFormattingContext::Geometry::MarginCollapse::computedNonCollapsedMarginAfter(const LayoutState& layoutState, const Box& layoutBox)
 {
     ASSERT(layoutBox.isBlockLevelBox());
 
-    return computedNonCollapsedVerticalMarginValue(layoutState, layoutBox).after;
+    return computedVerticalMargin(layoutState, layoutBox).after.valueOr(0);
 }
 
 LayoutUnit BlockFormattingContext::Geometry::MarginCollapse::nonCollapsedMarginBefore(const LayoutState& layoutState, const Box& layoutBox)

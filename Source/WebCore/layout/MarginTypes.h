@@ -32,28 +32,36 @@
 namespace WebCore {
 namespace Layout {
 
-struct VerticalMargin {
-    struct ComputedValues {
+struct ComputedVerticalMargin {
+    Optional<LayoutUnit> before;
+    Optional<LayoutUnit> after;
+};
+
+struct UsedVerticalMargin {
+    LayoutUnit before() const { return m_collapsedValues.before.valueOr(m_nonCollapsedValues.before); }
+    LayoutUnit after() const { return m_collapsedValues.after.valueOr(m_nonCollapsedValues.after); }
+
+    struct NonCollapsedValues {
         LayoutUnit before;
         LayoutUnit after;
     };
-    ComputedValues usedValues() const;
-    ComputedValues nonCollapsedValues() const { return m_nonCollapsed; }
-    
+    NonCollapsedValues nonCollapsedValues() const { return m_nonCollapsedValues; }
+
     struct CollapsedValues {
         Optional<LayoutUnit> before;
         Optional<LayoutUnit> after;
     };
-    Optional<CollapsedValues> collapsedValues() const { return m_collapsed; }
-    void setCollapsedValues(CollapsedValues collapsedValues) { m_collapsed = collapsedValues; }
+    CollapsedValues collapsedValues() const { return m_collapsedValues; }
+    bool hasCollapsedValues() const { return m_collapsedValues.before || m_collapsedValues.after; }
+    void setCollapsedValues(CollapsedValues collapsedValues) { m_collapsedValues = collapsedValues; }
 
-    VerticalMargin(ComputedValues nonCollapsed, Optional<CollapsedValues>);
+    UsedVerticalMargin(NonCollapsedValues, CollapsedValues);
 
-    VerticalMargin() = default;
-    ~VerticalMargin() = default;
+    UsedVerticalMargin() = default;
+    ~UsedVerticalMargin() = default;
 private:
-    ComputedValues m_nonCollapsed;
-    Optional<CollapsedValues> m_collapsed;
+    NonCollapsedValues m_nonCollapsedValues;
+    CollapsedValues m_collapsedValues;
 };
 
 struct ComputedHorizontalMargin {
@@ -75,18 +83,10 @@ struct PositiveAndNegativeVerticalMargin {
     Values after;
 };
 
-inline VerticalMargin::VerticalMargin(VerticalMargin::ComputedValues nonCollapsed, Optional<VerticalMargin::CollapsedValues> collapsed)
-    : m_nonCollapsed(nonCollapsed)
-    , m_collapsed(collapsed)
+inline UsedVerticalMargin::UsedVerticalMargin(UsedVerticalMargin::NonCollapsedValues nonCollapsedValues, UsedVerticalMargin::CollapsedValues collapsedValues)
+    : m_nonCollapsedValues(nonCollapsedValues)
+    , m_collapsedValues(collapsedValues)
 {
-}
-
-inline VerticalMargin::ComputedValues VerticalMargin::usedValues() const
-{
-    if (!m_collapsed)
-        return m_nonCollapsed;
-    return { m_collapsed->before.valueOr(m_nonCollapsed.before),
-        m_collapsed->after.valueOr(m_nonCollapsed.after) };
 }
 
 }

@@ -1,3 +1,61 @@
+2019-01-05  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC] VerticalMargin should only have the used values.
+        https://bugs.webkit.org/show_bug.cgi?id=193168
+
+        Reviewed by Antti Koivisto.
+
+        Split VerticalMargin into ComputedVerticalMargin and UsedVerticalMargin.
+        ComputedVerticalMargin holds the computed (optional) values while UsedVerticalMargin holds both the
+        collapsed (optional) and the non-collapsed values.
+
+        * layout/FormattingContext.cpp:
+        (WebCore::Layout::FormattingContext::computeOutOfFlowVerticalGeometry const):
+        * layout/FormattingContext.h:
+        * layout/FormattingContextGeometry.cpp:
+        (WebCore::Layout::FormattingContext::Geometry::outOfFlowNonReplacedVerticalGeometry):
+        (WebCore::Layout::FormattingContext::Geometry::outOfFlowReplacedVerticalGeometry):
+        (WebCore::Layout::FormattingContext::Geometry::complicatedCases):
+        (WebCore::Layout::FormattingContext::Geometry::inlineReplacedHeightAndMargin):
+        (WebCore::Layout::FormattingContext::Geometry::inlineReplacedWidthAndMargin):
+        (WebCore::Layout::FormattingContext::Geometry::computedVerticalMargin):
+        (WebCore::Layout::FormattingContext::Geometry::computedNonCollapsedVerticalMarginValue): Deleted.
+        * layout/FormattingContextQuirks.cpp:
+        (WebCore::Layout::FormattingContext::Quirks::heightValueOfNearestContainingBlockWithFixedHeight):
+        * layout/LayoutUnits.h:
+        * layout/MarginTypes.h:
+        (WebCore::Layout::UsedVerticalMargin::before const):
+        (WebCore::Layout::UsedVerticalMargin::after const):
+        (WebCore::Layout::UsedVerticalMargin::nonCollapsedValues const):
+        (WebCore::Layout::UsedVerticalMargin::collapsedValues const):
+        (WebCore::Layout::UsedVerticalMargin::hasCollapsedValues const):
+        (WebCore::Layout::UsedVerticalMargin::setCollapsedValues):
+        (WebCore::Layout::UsedVerticalMargin::UsedVerticalMargin):
+        (WebCore::Layout::VerticalMargin::nonCollapsedValues const): Deleted.
+        (WebCore::Layout::VerticalMargin::collapsedValues const): Deleted.
+        (WebCore::Layout::VerticalMargin::setCollapsedValues): Deleted.
+        (WebCore::Layout::VerticalMargin::VerticalMargin): Deleted.
+        (WebCore::Layout::VerticalMargin::usedValues const): Deleted.
+        * layout/blockformatting/BlockFormattingContext.cpp:
+        (WebCore::Layout::BlockFormattingContext::computeHeightAndMargin const):
+        * layout/blockformatting/BlockFormattingContextGeometry.cpp:
+        (WebCore::Layout::BlockFormattingContext::Geometry::inFlowNonReplacedHeightAndMargin):
+        (WebCore::Layout::BlockFormattingContext::Geometry::inFlowHeightAndMargin):
+        * layout/blockformatting/BlockFormattingContextQuirks.cpp:
+        (WebCore::Layout::BlockFormattingContext::Quirks::stretchedHeight):
+        * layout/blockformatting/BlockMarginCollapse.cpp:
+        (WebCore::Layout::BlockFormattingContext::Geometry::MarginCollapse::computedNonCollapsedMarginBefore):
+        (WebCore::Layout::BlockFormattingContext::Geometry::MarginCollapse::computedNonCollapsedMarginAfter):
+        * layout/displaytree/DisplayBox.h:
+        (WebCore::Display::Box::setVerticalMargin):
+        (WebCore::Display::Box::verticalMargin const):
+        (WebCore::Display::Box::marginBefore const):
+        (WebCore::Display::Box::marginAfter const):
+        * layout/floats/FloatingContext.cpp:
+        (WebCore::Layout::FloatingContext::verticalPositionWithClearance const):
+        * layout/inlineformatting/InlineFormattingContext.cpp:
+        (WebCore::Layout::InlineFormattingContext::computeHeightAndMargin const):
+
 2019-01-04  Daniel Bates  <dabates@apple.com>
 
         REGRESSION (r238522): Erratic scrolling on Google flights search result page and vrbo.com

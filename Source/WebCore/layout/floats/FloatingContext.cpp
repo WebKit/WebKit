@@ -193,14 +193,14 @@ Optional<Position> FloatingContext::verticalPositionWithClearance(const Box& lay
 
             // Reset previous bottom and current top margins to non-collapsing.
             auto previousVerticalMargin = previousInFlowDisplayBox.verticalMargin();
-            if (previousVerticalMargin.collapsedValues() && previousVerticalMargin.collapsedValues()->after) {
-                previousVerticalMargin.setCollapsedValues({ previousVerticalMargin.collapsedValues()->before, { } });
+            if (previousVerticalMargin.collapsedValues().after) {
+                previousVerticalMargin.setCollapsedValues({ previousVerticalMargin.collapsedValues().before, { } });
                 previousInFlowDisplayBox.setVerticalMargin(previousVerticalMargin);
             }
             // FIXME: check if collapsing through has anything to do with this.
             auto verticalMargin = displayBox.verticalMargin();
-            if (verticalMargin.collapsedValues() && verticalMargin.collapsedValues()->before) {
-                verticalMargin.setCollapsedValues({ { }, verticalMargin.collapsedValues()->after });
+            if (verticalMargin.collapsedValues().before) {
+                verticalMargin.setCollapsedValues({ { }, verticalMargin.collapsedValues().after });
                 displayBox.setVerticalMargin(verticalMargin);
             }
 

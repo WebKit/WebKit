@@ -138,7 +138,7 @@ public:
     Rect rect() const { return { top(), left(), width(), height() }; }
     Rect rectWithMargin() const { return { top() - marginBefore(), left() - marginStart(), marginStart() + width() + marginEnd(), marginBefore() + height() + marginAfter() }; }
 
-    Layout::VerticalMargin verticalMargin() const;
+    Layout::UsedVerticalMargin verticalMargin() const;
     LayoutUnit marginBefore() const;
     LayoutUnit marginStart() const;
     LayoutUnit marginAfter() const;
@@ -192,7 +192,7 @@ private:
     void setContentBoxWidth(LayoutUnit);
 
     void setHorizontalMargin(Layout::UsedHorizontalMargin);
-    void setVerticalMargin(Layout::VerticalMargin);
+    void setVerticalMargin(Layout::UsedVerticalMargin);
     void setHorizontalComputedMargin(Layout::ComputedHorizontalMargin);
     void setEstimatedMarginBefore(LayoutUnit marginBefore) { m_estimatedMarginBefore = marginBefore; }
 
@@ -225,7 +225,7 @@ private:
     LayoutUnit m_contentHeight;
 
     Layout::UsedHorizontalMargin m_horizontalMargin;
-    Layout::VerticalMargin m_verticalMargin;
+    Layout::UsedVerticalMargin m_verticalMargin;
     Layout::ComputedHorizontalMargin m_horizontalComputedMargin;
     Optional<LayoutUnit> m_estimatedMarginBefore;
 
@@ -515,13 +515,13 @@ inline void Box::setHorizontalMargin(Layout::UsedHorizontalMargin margin)
     m_horizontalMargin = margin;
 }
 
-inline void Box::setVerticalMargin(Layout::VerticalMargin margin)
+inline void Box::setVerticalMargin(Layout::UsedVerticalMargin margin)
 {
 #if !ASSERT_DISABLED
     setHasValidVerticalMargin();
     setHasValidVerticalNonCollapsedMargin();
 #endif
-    ASSERT(!m_estimatedMarginBefore || *m_estimatedMarginBefore == margin.usedValues().before);
+    ASSERT(!m_estimatedMarginBefore || *m_estimatedMarginBefore == margin.before());
     m_verticalMargin = margin;
 }
 
@@ -549,7 +549,7 @@ inline void Box::setPadding(Optional<Layout::Edges> padding)
     m_padding = padding;
 }
 
-inline Layout::VerticalMargin Box::verticalMargin() const
+inline Layout::UsedVerticalMargin Box::verticalMargin() const
 {
     ASSERT(m_hasValidVerticalMargin);
     return m_verticalMargin;
@@ -558,7 +558,7 @@ inline Layout::VerticalMargin Box::verticalMargin() const
 inline LayoutUnit Box::marginBefore() const
 {
     ASSERT(m_hasValidVerticalMargin);
-    return m_verticalMargin.usedValues().before;
+    return m_verticalMargin.before();
 }
 
 inline LayoutUnit Box::marginStart() const
@@ -570,7 +570,7 @@ inline LayoutUnit Box::marginStart() const
 inline LayoutUnit Box::marginAfter() const
 {
     ASSERT(m_hasValidVerticalMargin);
-    return m_verticalMargin.usedValues().after;
+    return m_verticalMargin.after();
 }
 
 inline LayoutUnit Box::marginEnd() const
