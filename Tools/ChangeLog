@@ -1,3 +1,79 @@
+2019-01-04  Daniel Bates  <dabates@apple.com>
+
+        [lldb-webkit]: Add support for pretty-printing raw bitmask types
+        https://bugs.webkit.org/show_bug.cgi?id=193024
+
+        Reviewed by Jer Noble.
+
+        Add support infrastructure to pretty-print a raw bitmask type. Included is a pretty-printer
+        for the bitmask type WebEventFlags as an example.
+
+        Exposed a new function lldb_webkit.addSummaryAndSyntheticFormattersForRawBitmaskType()
+        that can be used to register summary and synthetic child formatters for a bitmask type.
+        For example, consider the following enum and bitmask typedefs:
+
+        typedef enum {
+            A = 1 << 0,
+            B = 1 << 1,
+            C = 1 << 2,
+        } SpecialFlagValues;
+        typedef unsigned SpecialFlags;
+
+        To teach lldb-webkit how to pretty print SpecialFlags types, add the following code inside
+        __lldb_init_module():
+
+            addSummaryAndSyntheticFormattersForRawBitmaskType(debugger, "SpecialFlags", {
+                    1 << 0: "A",
+                    1 << 1: "B",
+                    1 << 2: "C",
+            })
+
+        * lldb/lldb_webkit.py:
+        (addSummaryAndSyntheticFormattersForRawBitmaskType):
+        (addSummaryAndSyntheticFormattersForRawBitmaskType.GeneratedRawBitmaskProvider):
+        (addSummaryAndSyntheticFormattersForRawBitmaskType.raw_bitmask_summary_provider):
+        (addSummaryAndSyntheticFormattersForRawBitmaskType.lldb_webkit):
+        A convenience function to dynamically creaste a synthetic formatter class and summary
+        string function for the specified bitmask type and enumerator value to name map. This
+        function register the dynamically created class and function with LLDB.
+
+        (__lldb_init_module):
+        (FlagEnumerationProvider):
+        (FlagEnumerationProvider._enumerator_value_to_name_map):
+        (FlagEnumerationProvider._bitmask):
+        (FlagEnumerationProvider._update):
+        (FlagEnumerationProvider.has_children):
+        (FlagEnumerationProvider.num_children):
+        (FlagEnumerationProvider.get_child_index):
+        (FlagEnumerationProvider.get_child_at_index):
+        (FlagEnumerationProvider.update):
+        Extract out provider logic from WTFOptionSetProvider into a base class that can be shared.
+
+        (WTFOptionSetProvider):
+        (WTFOptionSetProvider._enumerator_value_to_name_map):
+        (WTFOptionSetProvider._bitmask):
+        (WTFOptionSetProvider._update):
+        Write in terms of the base class.
+
+        (RawBitmaskProviderBase):
+        (RawBitmaskProviderBase._enumerator_value_to_name_map):
+        (RawBitmaskProviderBase._bitmask):
+        Added. Base synthetic formatter class for a raw bitmask type. Derived classes are expected to
+        override the class variable ENUMERATOR_VALUE_TO_NAME_MAP with a dictionary of the form:
+        {
+            1 << 0: "A",
+            1 << 1: "B",
+            1 << 2: "C",
+        }
+        It is not necessary to instantiate such a derived class directory. Instead use the convenience
+        function addSummaryAndSyntheticFormattersForRawBitmaskType.
+
+        (WTFOptionSetProvider.has_children): Deleted.
+        (WTFOptionSetProvider.num_children): Deleted.
+        (WTFOptionSetProvider.get_child_index): Deleted.
+        (WTFOptionSetProvider.get_child_at_index): Deleted.
+        (WTFOptionSetProvider.update): Deleted.
+
 2019-01-04  Aakash Jain  <aakash_jain@apple.com>
 
         [ews-build] Add build step to validate the patch before processing it

@@ -33,6 +33,26 @@ import lldb
 import string
 import struct
 
+
+def addSummaryAndSyntheticFormattersForRawBitmaskType(debugger, type_name, enumerator_value_to_name_map):
+    class GeneratedRawBitmaskProvider(RawBitmaskProviderBase):
+        ENUMERATOR_VALUE_TO_NAME_MAP = enumerator_value_to_name_map.copy()
+
+    def raw_bitmask_summary_provider(valobj, dict):
+        provider = GeneratedRawBitmaskProvider(valobj, dict)
+        return "{ size = %d }" % provider.size
+
+    # Add the provider class and summary function to the global scope so that LLDB
+    # can find them.
+    synthetic_provider_class_name = type_name + 'Provider'
+    summary_provider_function_name = type_name + '_SummaryProvider'
+    globals()[synthetic_provider_class_name] = GeneratedRawBitmaskProvider
+    globals()[summary_provider_function_name] = raw_bitmask_summary_provider
+
+    debugger.HandleCommand('type summary add --expand -F lldb_webkit.%s "%s"' % (summary_provider_function_name, type_name))
+    debugger.HandleCommand('type synthetic add %s --python-class lldb_webkit.%s' % (type_name, synthetic_provider_class_name))
+
+
 def __lldb_init_module(debugger, dict):
     debugger.HandleCommand('command script add -f lldb_webkit.btjs btjs')
     debugger.HandleCommand('type summary add --expand -F lldb_webkit.WTFString_SummaryProvider WTF::String')
@@ -70,6 +90,18 @@ def __lldb_init_module(debugger, dict):
     debugger.HandleCommand('type synthetic add -x "^WTF::Vector<.+>$" --python-class lldb_webkit.WTFVectorProvider')
     debugger.HandleCommand('type synthetic add -x "^WTF::HashTable<.+>$" --python-class lldb_webkit.WTFHashTableProvider')
     debugger.HandleCommand('type synthetic add -x "^WTF::OptionSet<.+>$" --python-class lldb_webkit.WTFOptionSetProvider')
+
+    addSummaryAndSyntheticFormattersForRawBitmaskType(debugger, "WebEventFlags", {
+        0x00010000: "WebEventFlagMaskLeftCommandKey",
+        0x00020000: "WebEventFlagMaskLeftShiftKey",
+        0x00040000: "WebEventFlagMaskLeftCapsLockKey",
+        0x00080000: "WebEventFlagMaskLeftOptionKey",
+        0x00100000: "WebEventFlagMaskLeftControlKey",
+        0x00800000: "WebEventFlagMaskRightControlKey",
+        0x00200000: "WebEventFlagMaskRightShiftKey",
+        0x00400000: "WebEventFlagMaskRightOptionKey",
+        0x01000000: "WebEventFlagMaskRightCommandKey",
+    })
 
 
 def WTFString_SummaryProvider(valobj, dict):
@@ -697,10 +729,23 @@ class WebCoreDocumentProvider:
         return WebCoreFrameProvider(frame_ptr, dict())
 
 
-class WTFOptionSetProvider:
+class FlagEnumerationProvider(object):
     def __init__(self, valobj, internal_dict):
         self.valobj = valobj
         self.update()
+
+    # Subclasses must override this to return a dictionary that maps emumerator values to names.
+    def _enumerator_value_to_name_map(self):
+        pass
+
+    # Subclasses must override this to return the bitmask.
+    def _bitmask(self):
+        pass
+
+    # Subclasses can override this to perform any computations when LLDB needs to refresh
+    # this provider.
+    def _update(self):
+        pass
 
     def has_children(self):
         return bool(self._elements)
@@ -723,21 +768,17 @@ class WTFOptionSetProvider:
         return None
 
     def update(self):
-        self.storage = self.valobj.GetChildMemberWithName('m_storage')  # May be an invalid value.
+        self._update()
+
         self._elements = []
         self.size = 0
 
-        template_argument_sbType = self.valobj.GetType().GetTemplateArgumentType(0)
-        enumerator_value_to_name_map = {}
-        for sbTypeEnumMember in template_argument_sbType.get_enum_members_array():
-            enumerator_value = sbTypeEnumMember.GetValueAsUnsigned()
-            if enumerator_value not in enumerator_value_to_name_map:
-                enumerator_value_to_name_map[enumerator_value] = sbTypeEnumMember.GetName()
+        enumerator_value_to_name_map = self._enumerator_value_to_name_map()
         if not enumerator_value_to_name_map:
             return
 
         bitmask_with_all_options_set = sum(enumerator_value_to_name_map)
-        bitmask = self.storage.GetValueAsUnsigned(0)
+        bitmask = self._bitmask()
         if bitmask > bitmask_with_all_options_set:
             return  # Since this is an invalid value, return so the raw hex form is written out.
 
@@ -750,6 +791,33 @@ class WTFOptionSetProvider:
             bitmask = bitmask & (bitmask - 1)  # Turn off the rightmost set bit.
         self._elements = elements
         self.size = len(elements)
+
+
+class WTFOptionSetProvider(FlagEnumerationProvider):
+    def _enumerator_value_to_name_map(self):
+        template_argument_sbType = self.valobj.GetType().GetTemplateArgumentType(0)
+        enumerator_value_to_name_map = {}
+        for sbTypeEnumMember in template_argument_sbType.get_enum_members_array():
+            enumerator_value = sbTypeEnumMember.GetValueAsUnsigned()
+            if enumerator_value not in enumerator_value_to_name_map:
+                enumerator_value_to_name_map[enumerator_value] = sbTypeEnumMember.GetName()
+        return enumerator_value_to_name_map
+
+    def _bitmask(self):
+        return self.storage.GetValueAsUnsigned(0)
+
+    def _update(self):
+        self.storage = self.valobj.GetChildMemberWithName('m_storage')  # May be an invalid value.
+
+
+class RawBitmaskProviderBase(FlagEnumerationProvider):
+    ENUMERATOR_VALUE_TO_NAME_MAP = {}
+
+    def _enumerator_value_to_name_map(self):
+        return self.ENUMERATOR_VALUE_TO_NAME_MAP
+
+    def _bitmask(self):
+        return self.valobj.GetValueAsUnsigned(0)
 
 
 class WTFVectorProvider:
