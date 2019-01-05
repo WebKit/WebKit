@@ -35,6 +35,7 @@ class Factory(factory.BuildFactory):
         self.addStep(ConfigureBuild(platform, configuration, architectures, buildOnly, additionalArguments))
         if checkRelevance:
             self.addStep(CheckPatchRelevance())
+        self.addStep(ValidatePatch())
         self.addStep(CheckOutSource())
         self.addStep(ApplyPatch())
 

@@ -28,6 +28,7 @@ from buildbot.steps.worker import CompositeStepMixin
 from twisted.internet import defer
 
 import re
+import requests
 
 BUG_SERVER_URL = 'https://bugs.webkit.org/'
 EWS_URL = 'http://ews-build.webkit-uat.org/'
@@ -218,6 +219,137 @@ class CheckPatchRelevance(buildstep.BuildStep):
         self.finished(FAILURE)
         self.build.results = SKIPPED
         self.build.buildFinished(['Patch {} doesn\'t have relevant changes'.format(self.getProperty('patch_id', ''))], SKIPPED)
+        return None
+
+
+class ValidatePatch(buildstep.BuildStep):
+    name = 'validate-patch'
+    description = ['validate-patch running']
+    descriptionDone = ['validate-patch']
+    flunkOnFailure = True
+    haltOnFailure = True
+    bug_open_statuses = ["UNCONFIRMED", "NEW", "ASSIGNED", "REOPENED"]
+    bug_closed_statuses = ["RESOLVED", "VERIFIED", "CLOSED"]
+
+    @defer.inlineCallbacks
+    def _addToLog(self, logName, message):
+        try:
+            log = self.getLog(logName)
+        except KeyError:
+            log = yield self.addLog(logName)
+        log.addStdout(message)
+
+    def fetch_data_from_url(self, url):
+        response = None
+        try:
+            response = requests.get(url)
+        except Exception as e:
+            if response:
+                self._addToLog('stdio', 'Failed to access {url} with status code {status_code}.\n'.format(url=url, status_code=response.status_code))
+            else:
+                self._addToLog('stdio', 'Failed to access {url} with exception: {exception}\n'.format(url=url, exception=e))
+            return None
+        if response.status_code != 200:
+            self._addToLog('stdio', 'Accessed {url} with unexpected status code {status_code}.\n'.format(url=url, status_code=response.status_code))
+            return None
+        return response
+
+    def get_patch_json(self, patch_id):
+        patch_url = '{}rest/bug/attachment/{}'.format(BUG_SERVER_URL, patch_id)
+        patch = self.fetch_data_from_url(patch_url)
+        if not patch:
+            return None
+        patch_json = patch.json().get('attachments')
+        if not patch_json or len(patch_json) == 0:
+            return None
+        return patch_json.get(str(patch_id))
+
+    def get_bug_json(self, bug_id):
+        bug_url = '{}rest/bug/{}'.format(BUG_SERVER_URL, bug_id)
+        bug = self.fetch_data_from_url(bug_url)
+        if not bug:
+            return None
+        bugs_json = bug.json().get('bugs')
+        if not bugs_json or len(bugs_json) == 0:
+            return None
+        return bugs_json[0]
+
+    def get_bug_id_from_patch(self, patch_id):
+        patch_json = self.get_patch_json(patch_id)
+        if not patch_json:
+            self._addToLog('stdio', 'Unable to fetch patch {}.\n'.format(patch_id))
+            return -1
+        return patch_json.get('bug_id')
+
+    def _is_patch_obsolete(self, patch_id):
+        patch_json = self.get_patch_json(patch_id)
+        if not patch_json:
+            self._addToLog('stdio', 'Unable to fetch patch {}.\n'.format(patch_id))
+            return -1
+
+        if patch_json.get('id') != self.getProperty('patch_id', ''):
+            self._addToLog('stdio', 'Fetched patch id {} does not match with requested patch id {}. Unable to validate.\n'.format(patch_json.get('id'), self.getProperty('patch_id', '')))
+            return -1
+
+        return patch_json.get('is_obsolete')
+
+    def _is_patch_review_denied(self, patch_id):
+        patch_json = self.get_patch_json(patch_id)
+        if not patch_json:
+            self._addToLog('stdio', 'Unable to fetch patch {}.\n'.format(patch_id))
+            return -1
+
+        for flag in patch_json.get('flags', []):
+            if flag.get('name') == 'review' and flag.get('status') == '-':
+                return 1
+        return 0
+
+    def _is_bug_closed(self, bug_id):
+        bug_json = self.get_bug_json(bug_id)
+        if not bug_json or not bug_json.get('status'):
+            self._addToLog('stdio', 'Unable to fetch bug {}.\n'.format(bug_id))
+            return -1
+
+        if bug_json.get('status') in self.bug_closed_statuses:
+            return 1
+        return 0
+
+    def skip_build(self, reason):
+        self._addToLog('stdio', reason)
+        self.finished(FAILURE)
+        self.build.results = SKIPPED
+        self.build.buildFinished([reason], SKIPPED)
+
+    def start(self):
+        patch_id = self.getProperty('patch_id', '')
+        if not patch_id:
+            self._addToLog('stdio', 'No patch_id found. Unable to proceed without patch_id.\n')
+            self.finished(FAILURE)
+            return None
+
+        bug_id = self.getProperty('bug_id', self.get_bug_id_from_patch(patch_id))
+
+        bug_closed = self._is_bug_closed(bug_id)
+        if bug_closed == 1:
+            self.skip_build('Bug {} is already closed'.format(bug_id))
+            return None
+
+        obsolete = self._is_patch_obsolete(patch_id)
+        if obsolete == 1:
+            self.skip_build('Patch {} is obsolete'.format(patch_id))
+            return None
+
+        review_denied = self._is_patch_review_denied(patch_id)
+        if review_denied == 1:
+            self.skip_build('Patch {} is marked r-'.format(patch_id))
+            return None
+
+        if obsolete == -1 or review_denied == -1 or bug_closed == -1:
+            self.finished(WARNINGS)
+            return None
+
+        self._addToLog('stdio', 'Bug is open.\nPatch is not obsolete.\nPatch is not marked r-.\n')
+        self.finished(SUCCESS)
         return None
 
 
