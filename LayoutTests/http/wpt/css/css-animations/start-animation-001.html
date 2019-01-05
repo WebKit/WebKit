@@ -53,33 +53,18 @@
       }
     </style>
     <script>
-      function squareLeft(id) {
-          var element = document.getElementById(id);
-          if (id === "squareNonAccelerated")
-              return element.getBoundingClientRect().left;
-          var transform = window.getComputedStyle(element).getPropertyValue("transform");
-          var match = /matrix\(1, 0, 0, 1, (.*), 0\)/.exec(transform);
-          return match ? parseFloat(match[1]) : 0;
+      function runTest() {
+        if (!window.testRunner)
+          return;
+        // We wait a bit after the squares are moved behind the blue rectangle. For discontinuous
+        // transforms we have 5000px / 100 steps = 5px/step. Hence this happens after 20 steps i.e.
+        // 20/100*10s = 200ms.
+        testRunner.waitUntilDone();
+        setTimeout(() => { testRunner.notifyDone(); }, 300);
       }
-      function shouldBeHiddenByCoveringRect(id) {
-          var coveringRectLeft = document.getElementById("coveringRect").getBoundingClientRect().left;
-          return squareLeft(id) > coveringRectLeft;
-      }
-      // We wait until all the squares are moved behind the blue rectangle.
-      if (window.testRunner)
-          testRunner.waitUntilDone();
-      function step() {
-          if (["squareLinear", "squareSteps", "squareNonAccelerated"].every(shouldBeHiddenByCoveringRect)) {
-              if (window.testRunner)
-                  testRunner.notifyDone();
-              return;
-          }
-          window.requestAnimationFrame(step);
-      }
-      window.requestAnimationFrame(step);
     </script>
   </head>
-  <body>
+  <body onload="runTest()">
     <p>This test passes if green squares are moved behind the blue rectangle.</p>
     <div id="container">
       <div id="squareLinear"><tt>transform</tt> (linear)</div>
