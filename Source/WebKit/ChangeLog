@@ -1,3 +1,16 @@
+2019-01-04  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Use save sheet instead of dialog where possible
+        https://bugs.webkit.org/show_bug.cgi?id=193160
+        <rdar://problem/37399759>
+
+        Reviewed by Devin Rousso.
+
+        * UIProcess/mac/RemoteWebInspectorProxyMac.mm:
+        (WebKit::RemoteWebInspectorProxy::platformSave):
+        * UIProcess/mac/WebInspectorProxyMac.mm:
+        (WebKit::WebInspectorProxy::platformSave):
+
 2019-01-04  Jer Noble  <jer.noble@apple.com>
 
         [WebKitLegacy] Media playback pauses on scroll

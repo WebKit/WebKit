@@ -494,8 +494,9 @@ void WebInspectorProxy::platformSave(const String& suggestedURL, const String& c
         saveToURL(panel.URL);
     };
 
-    if (m_inspectorWindow)
-        [panel beginSheetModalForWindow:m_inspectorWindow.get() completionHandler:completionHandler];
+    NSWindow *window = m_inspectorWindow ? m_inspectorWindow.get() : [NSApp keyWindow];
+    if (window)
+        [panel beginSheetModalForWindow:window completionHandler:completionHandler];
     else
         completionHandler([panel runModal]);
 }

@@ -374,8 +374,9 @@ void WebInspectorFrontendClient::save(const String& suggestedURL, const String& 
     };
 
     NSWindow *frontendWindow = [[m_frontendWindowController frontendWebView] window];
-    if (frontendWindow)
-        [panel beginSheetModalForWindow:frontendWindow completionHandler:completionHandler];
+    NSWindow *window = frontendWindow ? frontendWindow : [NSApp keyWindow];
+    if (window)
+        [panel beginSheetModalForWindow:window completionHandler:completionHandler];
     else
         completionHandler([panel runModal]);
 }

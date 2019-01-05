@@ -180,8 +180,9 @@ void RemoteWebInspectorProxy::platformSave(const String& suggestedURL, const Str
         saveToURL(panel.URL);
     };
 
-    if (m_window)
-        [panel beginSheetModalForWindow:m_window.get() completionHandler:completionHandler];
+    NSWindow *window = m_window ? m_window.get() : [NSApp keyWindow];
+    if (window)
+        [panel beginSheetModalForWindow:window completionHandler:completionHandler];
     else
         completionHandler([panel runModal]);
 }
