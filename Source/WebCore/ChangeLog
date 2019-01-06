@@ -1,3 +1,15 @@
+2019-01-06  Pablo Saavedra  <psaavedra@igalia.com>
+
+        [WPE][GTK] Building with ENABLE_VIDEO=OFF fails trying to use Document MediaPlayback functions.
+        https://bugs.webkit.org/show_bug.cgi?id=193174
+
+        Reviewed by Michael Catanzaro.
+
+        * page/Page.cpp:
+        (WebCore::Page::stopAllMediaPlayback):
+        (WebCore::Page::suspendAllMediaPlayback):
+        (WebCore::Page::resumeAllMediaPlayback):
+
 2019-01-05  David Kilzer  <ddkilzer@apple.com>
 
         Leak of two CCRSACryptorRef (4.0 Kbytes/1 page each) in com.apple.WebKit.WebContent running WebKit layout tests

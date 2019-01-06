@@ -1718,14 +1718,17 @@ void Page::stopMediaCapture()
 
 void Page::stopAllMediaPlayback()
 {
+#if ENABLE(VIDEO)
     for (Frame* frame = &mainFrame(); frame; frame = frame->tree().traverseNext()) {
         if (auto* document = frame->document())
             document->stopAllMediaPlayback();
     }
+#endif
 }
 
 void Page::suspendAllMediaPlayback()
 {
+#if ENABLE(VIDEO)
     ASSERT(!m_mediaPlaybackIsSuspended);
     if (m_mediaPlaybackIsSuspended)
         return;
@@ -1736,10 +1739,12 @@ void Page::suspendAllMediaPlayback()
     }
 
     m_mediaPlaybackIsSuspended = true;
+#endif
 }
 
 void Page::resumeAllMediaPlayback()
 {
+#if ENABLE(VIDEO)
     ASSERT(m_mediaPlaybackIsSuspended);
     if (!m_mediaPlaybackIsSuspended)
         return;
@@ -1749,6 +1754,7 @@ void Page::resumeAllMediaPlayback()
         if (auto* document = frame->document())
             document->resumeAllMediaPlayback();
     }
+#endif
 }
 
 #if ENABLE(MEDIA_SESSION)
