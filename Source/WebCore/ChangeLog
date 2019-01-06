@@ -1,3 +1,24 @@
+2019-01-05  Zalan Bujtas  <zalan@apple.com>
+
+        Incorrect clipping across compositing boundary.
+        https://bugs.webkit.org/show_bug.cgi?id=193172
+        <rdar://problem/44693008>
+
+        Reviewed by Simon Fraser.
+
+        Use temporary cliprect type when crossing compositing boundary to prevent cliprect caching.
+
+        The issue here is that RenderLayer::backgroundClipRect() could cross compositing boundary by calling parentClipRects() which triggers
+        clip rect update using the wrong painting root. This happens when the layer hierarchy and the compositing context do not match.
+        For clip rect computation, we need to climb up on the layer hierarchy (calling parent layer's cliprect functions)
+        but we also need to make sure that the computed cliprects on any given layer are cached only when the painting root is correct.
+        It ensures that when we paint a layer (with the painting root as entry point), the cached cliprects are always based on its onw painting root. 
+
+        Test: compositing/clipping/cached-cliprect-with-compositing-boundary.html
+
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::calculateClipRects const):
+
 2019-01-05  Youenn Fablet  <youenn@apple.com>
 
         Service Worker fetch should obey its referrer policy

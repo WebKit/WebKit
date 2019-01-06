@@ -1,3 +1,14 @@
+2019-01-05  Zalan Bujtas  <zalan@apple.com>
+
+        Incorrect clipping across compositing boundary.
+        https://bugs.webkit.org/show_bug.cgi?id=193172
+        <rdar://problem/44693008>
+
+        Reviewed by Simon Fraser.
+
+        * compositing/clipping/cached-cliprect-with-compositing-boundary-expected.html: Added.
+        * compositing/clipping/cached-cliprect-with-compositing-boundary.html: Added.
+
 2019-01-05  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r239607.

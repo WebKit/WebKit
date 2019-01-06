@@ -5478,16 +5478,18 @@ static inline ClipRect backgroundClipRectForPosition(const ClipRects& parentRect
 ClipRect RenderLayer::backgroundClipRect(const ClipRectsContext& clipRectsContext) const
 {
     ASSERT(parent());
-    auto computeParentRects = [this, &clipRectsContext] () {
-        // If we cross into a different pagination context, then we can't rely on the cache.
-        // Just switch over to using TemporaryClipRects.
-        if (clipRectsContext.clipRectsType != TemporaryClipRects
-            && parent()->enclosingPaginationLayer(IncludeCompositedPaginatedLayers) != enclosingPaginationLayer(IncludeCompositedPaginatedLayers)) {
-            ClipRectsContext tempContext(clipRectsContext);
-            tempContext.clipRectsType = TemporaryClipRects;
-            return parentClipRects(tempContext);
-        }
-        return parentClipRects(clipRectsContext);
+    auto computeParentRects = [&] {
+        if (clipRectsContext.clipRectsType == TemporaryClipRects)
+            return parentClipRects(clipRectsContext);
+        // If we cross into a different composition/pagination context, then we can't rely on the cache since the root layer differs.
+        bool crossesPaginationBoundary = parent()->enclosingPaginationLayer(IncludeCompositedPaginatedLayers) != enclosingPaginationLayer(IncludeCompositedPaginatedLayers);
+        bool crossesCompositingBoundary = parent()->enclosingCompositingLayerForRepaint() != enclosingCompositingLayerForRepaint();
+        if (!crossesPaginationBoundary && !crossesCompositingBoundary)
+            return parentClipRects(clipRectsContext);
+
+        ClipRectsContext tempContext(clipRectsContext);
+        tempContext.clipRectsType = TemporaryClipRects;
+        return parentClipRects(tempContext);
     };
     
     auto parentRects = computeParentRects();
