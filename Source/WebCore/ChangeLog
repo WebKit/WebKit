@@ -1,3 +1,45 @@
+2019-01-05  David Kilzer  <ddkilzer@apple.com>
+
+        Leak of two CCRSACryptorRef (4.0 Kbytes/1 page each) in com.apple.WebKit.WebContent running WebKit layout tests
+        <https://webkit.org/b/193154>
+        <rdar://problem/47052993>
+
+        Reviewed by Brent Fulgham.
+
+        Broadly:
+        - Fix leaks by switching from using raw pointers to using
+          std::unique_ptr<>.
+        - Introduce PlatformRSAKeyContainer type to handle different
+          std::unique_ptr<> on each platform.
+        - Get rid of custom CryptoKeyRSA destructors since the
+          std::unique_ptr<> handles that with a Deleter.
+        - Initialize stack variables to nullptr.
+
+        * crypto/gcrypt/CryptoKeyRSAGCrypt.cpp:
+        (WebCore::CryptoKeyRSA::create):
+        (WebCore::CryptoKeyRSA::CryptoKeyRSA):
+        (WebCore::CryptoKeyRSA::keySizeInBits const):
+        (WebCore::CryptoKeyRSA::generatePair):
+        (WebCore::CryptoKeyRSA::importSpki):
+        (WebCore::CryptoKeyRSA::importPkcs8):
+        (WebCore::CryptoKeyRSA::exportSpki const):
+        (WebCore::CryptoKeyRSA::exportPkcs8 const):
+        (WebCore::CryptoKeyRSA::algorithm const):
+        (WebCore::CryptoKeyRSA::exportData const):
+        (WebCore::CryptoKeyRSA::~CryptoKeyRSA): Deleted.
+        * crypto/keys/CryptoKeyRSA.h:
+        (WebCore::CCRSACryptorRefDeleter::operator() const):
+        * crypto/mac/CryptoKeyRSAMac.cpp:
+        (WebCore::getPublicKeyComponents):
+        (WebCore::getPrivateKeyComponents):
+        (WebCore::CryptoKeyRSA::CryptoKeyRSA):
+        (WebCore::CryptoKeyRSA::create):
+        (WebCore::CryptoKeyRSA::exportData const):
+        (WebCore::CryptoKeyRSA::generatePair):
+        (WebCore::CryptoKeyRSA::importSpki):
+        (WebCore::CryptoKeyRSA::importPkcs8):
+        (WebCore::CryptoKeyRSA::~CryptoKeyRSA): Deleted.
+
 2019-01-05  Zalan Bujtas  <zalan@apple.com>
 
         Incorrect clipping across compositing boundary.

@@ -36,7 +36,6 @@
 #include <JavaScriptCore/GenericTypedArrayViewInlines.h>
 #include <JavaScriptCore/HeapInlines.h>
 #include <JavaScriptCore/JSGenericTypedArrayViewInlines.h>
-#include <pal/crypto/gcrypt/Handle.h>
 #include <pal/crypto/gcrypt/Utilities.h>
 #include <pal/crypto/tasn1/Utilities.h>
 
@@ -145,21 +144,15 @@ RefPtr<CryptoKeyRSA> CryptoKeyRSA::create(CryptoAlgorithmIdentifier identifier, 
         }
     }
 
-    return adoptRef(new CryptoKeyRSA(identifier, hash, hasHash, keyType, keySexp.release(), extractable, usages));
+    return adoptRef(new CryptoKeyRSA(identifier, hash, hasHash, keyType, PlatformRSAKeyContainer(keySexp.release()), extractable, usages));
 }
 
-CryptoKeyRSA::CryptoKeyRSA(CryptoAlgorithmIdentifier identifier, CryptoAlgorithmIdentifier hash, bool hasHash, CryptoKeyType type, PlatformRSAKey platformKey, bool extractable, CryptoKeyUsageBitmap usage)
+CryptoKeyRSA::CryptoKeyRSA(CryptoAlgorithmIdentifier identifier, CryptoAlgorithmIdentifier hash, bool hasHash, CryptoKeyType type, PlatformRSAKeyContainer&& platformKey, bool extractable, CryptoKeyUsageBitmap usage)
     : CryptoKey(identifier, type, extractable, usage)
-    , m_platformKey(platformKey)
+    , m_platformKey(WTFMove(platformKey))
     , m_restrictedToSpecificHash(hasHash)
     , m_hash(hash)
 {
-}
-
-CryptoKeyRSA::~CryptoKeyRSA()
-{
-    if (m_platformKey)
-        PAL::GCrypt::HandleDeleter<gcry_sexp_t>()(m_platformKey);
 }
 
 bool CryptoKeyRSA::isRestrictedToHash(CryptoAlgorithmIdentifier& identifier) const
@@ -173,7 +166,7 @@ bool CryptoKeyRSA::isRestrictedToHash(CryptoAlgorithmIdentifier& identifier) con
 
 size_t CryptoKeyRSA::keySizeInBits() const
 {
-    return getRSAModulusLength(m_platformKey);
+    return getRSAModulusLength(m_platformKey.get());
 }
 
 // Convert the exponent vector to a 32-bit value, if possible.
@@ -232,9 +225,9 @@ void CryptoKeyRSA::generatePair(CryptoAlgorithmIdentifier algorithm, CryptoAlgor
     }
 
     context->postTask(
-        [algorithm, hash, hasHash, extractable, usage, publicKeySexp = publicKeySexp.release(), privateKeySexp = privateKeySexp.release(), callback = WTFMove(callback)](auto&) mutable {
-            auto publicKey = CryptoKeyRSA::create(algorithm, hash, hasHash, CryptoKeyType::Public, publicKeySexp, true, usage);
-            auto privateKey = CryptoKeyRSA::create(algorithm, hash, hasHash, CryptoKeyType::Private, privateKeySexp, extractable, usage);
+        [algorithm, hash, hasHash, extractable, usage, publicKeySexp = PlatformRSAKeyContainer(publicKeySexp.release()), privateKeySexp = PlatformRSAKeyContainer(privateKeySexp.release()), callback = WTFMove(callback)](auto&) mutable {
+            auto publicKey = CryptoKeyRSA::create(algorithm, hash, hasHash, CryptoKeyType::Public, WTFMove(publicKeySexp), true, usage);
+            auto privateKey = CryptoKeyRSA::create(algorithm, hash, hasHash, CryptoKeyType::Private, WTFMove(privateKeySexp), extractable, usage);
 
             callback(CryptoKeyPair { WTFMove(publicKey), WTFMove(privateKey) });
         });
@@ -313,7 +306,7 @@ RefPtr<CryptoKeyRSA> CryptoKeyRSA::importSpki(CryptoAlgorithmIdentifier identifi
         }
     }
 
-    return adoptRef(new CryptoKeyRSA(identifier, hash.valueOr(CryptoAlgorithmIdentifier::SHA_1), !!hash, CryptoKeyType::Public, platformKey.release(), extractable, usages));
+    return adoptRef(new CryptoKeyRSA(identifier, hash.valueOr(CryptoAlgorithmIdentifier::SHA_1), !!hash, CryptoKeyType::Public, PlatformRSAKeyContainer(platformKey.release()), extractable, usages));
 }
 
 RefPtr<CryptoKeyRSA> CryptoKeyRSA::importPkcs8(CryptoAlgorithmIdentifier identifier, Optional<CryptoAlgorithmIdentifier> hash, Vector<uint8_t>&& keyData, bool extractable, CryptoKeyUsageBitmap usages)
@@ -408,7 +401,7 @@ RefPtr<CryptoKeyRSA> CryptoKeyRSA::importPkcs8(CryptoAlgorithmIdentifier identif
         }
     }
 
-    return adoptRef(new CryptoKeyRSA(identifier, hash.valueOr(CryptoAlgorithmIdentifier::SHA_1), !!hash, CryptoKeyType::Private, platformKey.release(), extractable, usages));
+    return adoptRef(new CryptoKeyRSA(identifier, hash.valueOr(CryptoAlgorithmIdentifier::SHA_1), !!hash, CryptoKeyType::Private, PlatformRSAKeyContainer(platformKey.release()), extractable, usages));
 }
 
 ExceptionOr<Vector<uint8_t>> CryptoKeyRSA::exportSpki() const
@@ -423,8 +416,8 @@ ExceptionOr<Vector<uint8_t>> CryptoKeyRSA::exportSpki() const
             return Exception { OperationError };
 
         // Retrieve the modulus and public exponent s-expressions.
-        PAL::GCrypt::Handle<gcry_sexp_t> modulusSexp(gcry_sexp_find_token(m_platformKey, "n", 0));
-        PAL::GCrypt::Handle<gcry_sexp_t> publicExponentSexp(gcry_sexp_find_token(m_platformKey, "e", 0));
+        PAL::GCrypt::Handle<gcry_sexp_t> modulusSexp(gcry_sexp_find_token(m_platformKey.get(), "n", 0));
+        PAL::GCrypt::Handle<gcry_sexp_t> publicExponentSexp(gcry_sexp_find_token(m_platformKey.get(), "e", 0));
         if (!modulusSexp || !publicExponentSexp)
             return Exception { OperationError };
 
@@ -498,11 +491,11 @@ ExceptionOr<Vector<uint8_t>> CryptoKeyRSA::exportPkcs8() const
 
         // Retrieve the `n`, `e`, `d`, `q` and `p` s-expression tokens. libgcrypt swaps the usage of
         // the p and q primes internally, so we adjust the lookup accordingly.
-        PAL::GCrypt::Handle<gcry_sexp_t> nSexp(gcry_sexp_find_token(m_platformKey, "n", 0));
-        PAL::GCrypt::Handle<gcry_sexp_t> eSexp(gcry_sexp_find_token(m_platformKey, "e", 0));
-        PAL::GCrypt::Handle<gcry_sexp_t> dSexp(gcry_sexp_find_token(m_platformKey, "d", 0));
-        PAL::GCrypt::Handle<gcry_sexp_t> pSexp(gcry_sexp_find_token(m_platformKey, "q", 0));
-        PAL::GCrypt::Handle<gcry_sexp_t> qSexp(gcry_sexp_find_token(m_platformKey, "p", 0));
+        PAL::GCrypt::Handle<gcry_sexp_t> nSexp(gcry_sexp_find_token(m_platformKey.get(), "n", 0));
+        PAL::GCrypt::Handle<gcry_sexp_t> eSexp(gcry_sexp_find_token(m_platformKey.get(), "e", 0));
+        PAL::GCrypt::Handle<gcry_sexp_t> dSexp(gcry_sexp_find_token(m_platformKey.get(), "d", 0));
+        PAL::GCrypt::Handle<gcry_sexp_t> pSexp(gcry_sexp_find_token(m_platformKey.get(), "q", 0));
+        PAL::GCrypt::Handle<gcry_sexp_t> qSexp(gcry_sexp_find_token(m_platformKey.get(), "p", 0));
         if (!nSexp || !eSexp || !dSexp || !pSexp || !qSexp)
             return Exception { OperationError };
 
@@ -622,8 +615,8 @@ ExceptionOr<Vector<uint8_t>> CryptoKeyRSA::exportPkcs8() const
 
 auto CryptoKeyRSA::algorithm() const -> KeyAlgorithm
 {
-    auto modulusLength = getRSAModulusLength(m_platformKey);
-    auto publicExponent = getRSAKeyParameter(m_platformKey, "e");
+    auto modulusLength = getRSAModulusLength(m_platformKey.get());
+    auto publicExponent = getRSAKeyParameter(m_platformKey.get(), "e");
 
     if (m_restrictedToSpecificHash) {
         CryptoRsaHashedKeyAlgorithm result;
@@ -645,7 +638,7 @@ std::unique_ptr<CryptoKeyRSAComponents> CryptoKeyRSA::exportData() const
 {
     switch (type()) {
     case CryptoKeyType::Public:
-        return CryptoKeyRSAComponents::createPublic(getRSAKeyParameter(m_platformKey, "n"), getRSAKeyParameter(m_platformKey, "e"));
+        return CryptoKeyRSAComponents::createPublic(getRSAKeyParameter(m_platformKey.get(), "n"), getRSAKeyParameter(m_platformKey.get(), "e"));
     case CryptoKeyType::Private: {
         auto parameterMPI =
             [](gcry_sexp_t sexp, const char* name) -> gcry_mpi_t {
@@ -655,11 +648,11 @@ std::unique_ptr<CryptoKeyRSAComponents> CryptoKeyRSA::exportData() const
                 return gcry_sexp_nth_mpi(paramSexp, 1, GCRYMPI_FMT_USG);
             };
 
-        PAL::GCrypt::Handle<gcry_mpi_t> dMPI(parameterMPI(m_platformKey, "d"));
+        PAL::GCrypt::Handle<gcry_mpi_t> dMPI(parameterMPI(m_platformKey.get(), "d"));
         // libgcrypt internally uses p and q such that p < q, while usually it's q < p.
         // Switch the two primes here and continue with assuming the latter.
-        PAL::GCrypt::Handle<gcry_mpi_t> pMPI(parameterMPI(m_platformKey, "q"));
-        PAL::GCrypt::Handle<gcry_mpi_t> qMPI(parameterMPI(m_platformKey, "p"));
+        PAL::GCrypt::Handle<gcry_mpi_t> pMPI(parameterMPI(m_platformKey.get(), "q"));
+        PAL::GCrypt::Handle<gcry_mpi_t> qMPI(parameterMPI(m_platformKey.get(), "p"));
         if (!dMPI || !pMPI || !qMPI)
             return nullptr;
 
@@ -707,7 +700,7 @@ std::unique_ptr<CryptoKeyRSAComponents> CryptoKeyRSA::exportData() const
             privateExponent = WTFMove(data.value());
 
         return CryptoKeyRSAComponents::createPrivateWithAdditionalData(
-            getRSAKeyParameter(m_platformKey, "n"), getRSAKeyParameter(m_platformKey, "e"), WTFMove(privateExponent),
+            getRSAKeyParameter(m_platformKey.get(), "n"), getRSAKeyParameter(m_platformKey.get(), "e"), WTFMove(privateExponent),
             WTFMove(firstPrimeInfo), WTFMove(secondPrimeInfo), Vector<CryptoKeyRSAComponents::PrimeInfo> { });
     }
     default:
