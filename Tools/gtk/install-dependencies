@@ -173,6 +173,8 @@ function installDependenciesWithApt {
 
     # These are dependencies necessary for building the jhbuild.
     packages="$packages \
+        bison \
+        flex \
         git \
         gobject-introspection \
         gsettings-desktop-schemas-dev \
@@ -198,6 +200,7 @@ function installDependenciesWithApt {
         libpsl-dev \
         libssl-dev \
         libtiff5-dev \
+        libunistring-dev \
         libv4l-dev \
         libxcb-composite0-dev \
         libxcb-xfixes0-dev \
@@ -209,6 +212,7 @@ function installDependenciesWithApt {
         libudev-dev \
         libxml-libxml-perl \
         python-dev \
+        python3-setuptools \
         ragel \
         x11proto-bigreqs-dev \
         x11proto-composite-dev \
@@ -334,7 +338,9 @@ function installDependenciesWithPacman {
     # These are dependencies necessary for building the jhbuild.
     # Note: Could not find libegl-mesa
     packages="$packages \
+        bison \
         expat \
+        flex \
         git \
         gnutls \
         gobject-introspection \
@@ -352,6 +358,7 @@ function installDependenciesWithPacman {
         libproxy \
         libpsl \
         libtiff \
+        libunistring-dev \
         libxfixes \
         libxfont2 \
         libxcb \
@@ -362,6 +369,7 @@ function installDependenciesWithPacman {
         perl-xml-libxml\
         python2 \
         python2-lxml \
+        python3-setuptools \
         ragel \
         bigreqsproto \
         compositeproto \
@@ -497,9 +505,11 @@ function installDependenciesWithDnf {
 
     # These are dependencies necessary for building the jhbuild.
     packages="$packages \
+        bison \
         cups-devel \
         docbook-utils \
         expat-devel \
+        flex \
         git \
         gnutls-devel \
         gobject-introspection \
@@ -518,6 +528,7 @@ function installDependenciesWithDnf {
         libproxy-devel \
         libpsl-devel \
         libtiff-devel \
+        libunistring-dev \
         libxcb-devel \
         libxkbfile-devel \
         libxkbcommon-x11-devel \
@@ -525,6 +536,7 @@ function installDependenciesWithDnf {
         mtdev-devel \
         orc-devel \
         perl-XML-LibXML \
+        python3-setuptools \
         ragel \
         systemd-devel \
         xorg-x11-font-utils \
