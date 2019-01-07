@@ -2815,6 +2815,7 @@ http/tests/resourceLoadStatistics/cap-cache-max-age-for-prevalent-resource.html 
 # Skipped in general expectations since they only work on iOS and Mac, WK2.
 http/tests/security/strip-referrer-to-origin-for-third-party-redirects-in-private-mode.html [ Pass ]
 http/tests/security/strip-referrer-to-origin-for-third-party-requests-in-private-mode.html [ Pass ]
+media/deactivate-audio-session.html [ Pass ]
 
 webkit.org/b/175273 imported/w3c/web-platform-tests/html/browsers/windows/noreferrer-window-name.html [ Failure ]
 

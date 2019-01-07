@@ -1,3 +1,14 @@
+2019-01-07  Eric Carlson  <eric.carlson@apple.com>
+
+        Deactivate audio session whenever possible
+        https://bugs.webkit.org/show_bug.cgi?id=193188
+        <rdar://problem/42678977>
+
+        Reviewed by Jer Noble.
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::WebPage):
+
 2019-01-07  Joseph Pecoraro  <pecoraro@apple.com>
 
         [Cocoa] Add SPI to check if a WKWebView has an inspector frontend

@@ -161,6 +161,7 @@ fast/media/mq-prefers-reduced-motion-live-update.html [ Skip ]
 http/tests/loading/basic-auth-remove-credentials.html [ Skip ]
 http/tests/security/strip-referrer-to-origin-for-third-party-redirects-in-private-mode.html [ Skip ]
 http/tests/security/strip-referrer-to-origin-for-third-party-requests-in-private-mode.html [ Skip ]
+media/deactivate-audio-session.html [ Skip ]
 
 # ApplePay is only available on iOS (greater than iOS 10) and macOS (greater than macOS 10.12) and only for WebKit2.
 http/tests/ssl/applepay/ [ Skip ]

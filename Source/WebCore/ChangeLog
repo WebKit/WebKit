@@ -1,3 +1,39 @@
+2019-01-07  Eric Carlson  <eric.carlson@apple.com>
+
+        Deactivate audio session whenever possible
+        https://bugs.webkit.org/show_bug.cgi?id=193188
+        <rdar://problem/42678977>
+
+        Reviewed by Jer Noble.
+
+        Test: media/deactivate-audio-session.html
+
+        * platform/audio/AudioSession.cpp:
+        (WebCore::AudioSession::tryToSetActive):
+        (WebCore::AudioSession::tryToSetActiveInternal):
+        * platform/audio/AudioSession.h:
+        (WebCore::AudioSession::isActive const):
+
+        * platform/audio/PlatformMediaSessionManager.cpp:
+        (WebCore::PlatformMediaSessionManager::removeSession):
+        (WebCore::deactivateAudioSession):
+        (WebCore::PlatformMediaSessionManager::shouldDeactivateAudioSession):
+        (WebCore::PlatformMediaSessionManager::setShouldDeactivateAudioSession):
+        * platform/audio/PlatformMediaSessionManager.h:
+
+        * platform/audio/ios/AudioSessionIOS.mm:
+        (WebCore::AudioSession::tryToSetActiveInternal):
+        (WebCore::AudioSession::tryToSetActive): Deleted.
+
+        * platform/audio/mac/AudioSessionMac.cpp:
+        (WebCore::AudioSession::tryToSetActiveInternal):
+        (WebCore::AudioSession::tryToSetActive): Deleted.
+
+        * testing/Internals.cpp:
+        (WebCore::Internals::audioSessionActive const):
+        * testing/Internals.h:
+        * testing/Internals.idl:
+
 2019-01-07  David Kilzer  <ddkilzer@apple.com>
 
         PlatformECKey should use a std::unique_ptr

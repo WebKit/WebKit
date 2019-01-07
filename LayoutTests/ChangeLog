@@ -1,3 +1,17 @@
+2019-01-07  Eric Carlson  <eric.carlson@apple.com>
+
+        Deactivate audio session whenever possible
+        https://bugs.webkit.org/show_bug.cgi?id=193188
+        <rdar://problem/42678977>
+
+        Reviewed by Jer Noble.
+
+        * TestExpectations: Skip the new test.
+        * media/deactivate-audio-session-expected.txt: Added.
+        * media/deactivate-audio-session.html: Added.
+        * platform/ios/TestExpectations: Run the new test.
+        * platform/mac-wk2/TestExpectations: Ditto.
+
 2019-01-07  Youenn Fablet  <youenn@apple.com>
 
         Resync WPT fetch tests to 834eac4

@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2012 Google Inc. All rights reserved.
- * Copyright (C) 2013-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -693,6 +693,7 @@ public:
 
     String audioSessionCategory() const;
     double preferredAudioBufferSize() const;
+    bool audioSessionActive() const;
 
     void clearCacheStorageMemoryRepresentation(DOMPromiseDeferred<void>&&);
     void cacheStorageEngineRepresentation(DOMPromiseDeferred<IDLDOMString>&&);

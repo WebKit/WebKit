@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2010-2019 Apple Inc. All rights reserved.
  * Copyright (C) 2012 Intel Corporation. All rights reserved.
  * Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies)
  *
@@ -188,6 +188,7 @@
 #include <WebCore/PageConfiguration.h>
 #include <WebCore/PingLoader.h>
 #include <WebCore/PlatformKeyboardEvent.h>
+#include <WebCore/PlatformMediaSessionManager.h>
 #include <WebCore/PluginDocument.h>
 #include <WebCore/PrintContext.h>
 #include <WebCore/PromisedAttachmentInfo.h>
@@ -629,6 +630,10 @@ WebPage::WebPage(uint64_t pageID, WebPageCreationParameters&& parameters)
 #if PLATFORM(IOS_FAMILY)
     setViewportConfigurationViewLayoutSize(parameters.viewportConfigurationViewLayoutSize, parameters.viewportConfigurationLayoutSizeScaleFactor, 0);
     setMaximumUnobscuredSize(parameters.maximumUnobscuredSize);
+#endif
+
+#if USE(AUDIO_SESSION)
+    PlatformMediaSessionManager::setShouldDeactivateAudioSession(true);
 #endif
 }
 
