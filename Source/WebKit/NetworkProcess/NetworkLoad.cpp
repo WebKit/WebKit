@@ -52,6 +52,7 @@ struct NetworkLoad::Throttle {
 
 NetworkLoad::NetworkLoad(NetworkLoadClient& client, NetworkLoadParameters&& parameters, NetworkSession& networkSession)
     : m_client(client)
+    , m_networkProcess(networkSession.networkProcess())
     , m_parameters(WTFMove(parameters))
     , m_loadThrottleLatency(networkSession.loadThrottleLatency())
     , m_currentRequest(m_parameters.request)
@@ -133,7 +134,7 @@ void NetworkLoad::convertTaskToDownload(PendingDownload& pendingDownload, const 
     m_currentRequest = updatedRequest;
     m_task->setPendingDownload(pendingDownload);
     
-    NetworkProcess::singleton().findPendingDownloadLocation(*m_task.get(), WTFMove(completionHandler), response);
+    m_networkProcess->findPendingDownloadLocation(*m_task.get(), WTFMove(completionHandler), response);
 }
 
 void NetworkLoad::setPendingDownloadID(DownloadID downloadID)
@@ -188,9 +189,9 @@ void NetworkLoad::didReceiveChallenge(AuthenticationChallenge&& challenge, Chall
     }
     
     if (auto* pendingDownload = m_task->pendingDownload())
-        NetworkProcess::singleton().authenticationManager().didReceiveAuthenticationChallenge(*pendingDownload, challenge, WTFMove(completionHandler));
+        m_networkProcess->authenticationManager().didReceiveAuthenticationChallenge(*pendingDownload, challenge, WTFMove(completionHandler));
     else
-        NetworkProcess::singleton().authenticationManager().didReceiveAuthenticationChallenge(m_parameters.webPageID, m_parameters.webFrameID, challenge, WTFMove(completionHandler));
+        m_networkProcess->authenticationManager().didReceiveAuthenticationChallenge(m_parameters.webPageID, m_parameters.webFrameID, challenge, WTFMove(completionHandler));
 }
 
 void NetworkLoad::didReceiveResponse(ResourceResponse&& response, ResponseCompletionHandler&& completionHandler)
@@ -199,7 +200,7 @@ void NetworkLoad::didReceiveResponse(ResourceResponse&& response, ResponseComple
     ASSERT(!m_throttle);
 
     if (m_task && m_task->isDownload()) {
-        NetworkProcess::singleton().findPendingDownloadLocation(*m_task.get(), WTFMove(completionHandler), response);
+        m_networkProcess->findPendingDownloadLocation(*m_task.get(), WTFMove(completionHandler), response);
         return;
     }
 

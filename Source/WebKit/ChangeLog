@@ -1,5 +1,26 @@
 2019-01-07  Alex Christensen  <achristensen@webkit.org>
 
+        Remove use of NetworkProcess::singleton in NetworkLoad/NetworkDataTask code
+        https://bugs.webkit.org/show_bug.cgi?id=193212
+
+        Reviewed by Andy Estes.
+
+        * NetworkProcess/NetworkDataTaskBlob.cpp:
+        (WebKit::NetworkDataTaskBlob::NetworkDataTaskBlob):
+        (WebKit::NetworkDataTaskBlob::download):
+        (WebKit::NetworkDataTaskBlob::writeDownload):
+        (WebKit::NetworkDataTaskBlob::didFailDownload):
+        (WebKit::NetworkDataTaskBlob::didFinishDownload):
+        * NetworkProcess/NetworkDataTaskBlob.h:
+        * NetworkProcess/NetworkLoad.cpp:
+        (WebKit::NetworkLoad::NetworkLoad):
+        (WebKit::NetworkLoad::convertTaskToDownload):
+        (WebKit::NetworkLoad::didReceiveChallenge):
+        (WebKit::NetworkLoad::didReceiveResponse):
+        * NetworkProcess/NetworkLoad.h:
+
+2019-01-07  Alex Christensen  <achristensen@webkit.org>
+
         Remove use of NetworkProcess::singleton for downloads
         https://bugs.webkit.org/show_bug.cgi?id=193207
 

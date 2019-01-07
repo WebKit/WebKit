@@ -35,6 +35,8 @@
 
 namespace WebKit {
 
+class NetworkProcess;
+
 class NetworkLoad final : private NetworkDataTaskClient {
     WTF_MAKE_FAST_ALLOCATED;
 public:
@@ -79,6 +81,7 @@ private:
     void throttleDelayCompleted();
 
     std::reference_wrapper<NetworkLoadClient> m_client;
+    Ref<NetworkProcess> m_networkProcess;
     const NetworkLoadParameters m_parameters;
     CompletionHandler<void(WebCore::ResourceRequest&&)> m_redirectCompletionHandler;
     RefPtr<NetworkDataTask> m_task;

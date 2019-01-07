@@ -44,6 +44,8 @@ class BlobDataItem;
 
 namespace WebKit {
 
+class NetworkProcess;
+
 class NetworkDataTaskBlob final : public NetworkDataTask, public WebCore::FileStreamClient {
 public:
     static Ref<NetworkDataTask> create(NetworkSession& session, NetworkDataTaskClient& client, const WebCore::ResourceRequest& request, WebCore::ContentSniffingPolicy shouldContentSniff, const Vector<RefPtr<WebCore::BlobDataFileReference>>& fileReferences)
@@ -115,6 +117,7 @@ private:
 
     Vector<RefPtr<WebCore::BlobDataFileReference>> m_fileReferences;
     RefPtr<SandboxExtension> m_sandboxExtension;
+    Ref<NetworkProcess> m_networkProcess;
 };
 
 } // namespace WebKit
