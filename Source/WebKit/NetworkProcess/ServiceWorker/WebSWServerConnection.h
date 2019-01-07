@@ -48,9 +48,11 @@ struct ServiceWorkerClientData;
 
 namespace WebKit {
 
+class NetworkProcess;
+
 class WebSWServerConnection : public WebCore::SWServer::Connection, public IPC::MessageSender, public IPC::MessageReceiver {
 public:
-    WebSWServerConnection(WebCore::SWServer&, IPC::Connection&, PAL::SessionID);
+    WebSWServerConnection(NetworkProcess&, WebCore::SWServer&, IPC::Connection&, PAL::SessionID);
     WebSWServerConnection(const WebSWServerConnection&) = delete;
     ~WebSWServerConnection() final;
 
@@ -103,6 +105,7 @@ private:
 
     PAL::SessionID m_sessionID;
     Ref<IPC::Connection> m_contentConnection;
+    Ref<NetworkProcess> m_networkProcess;
     HashMap<WebCore::ServiceWorkerClientIdentifier, WebCore::ClientOrigin> m_clientOrigins;
 };
 

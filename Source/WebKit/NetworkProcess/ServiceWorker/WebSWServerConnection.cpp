@@ -60,17 +60,18 @@ using namespace WebCore;
 #define SWSERVERCONNECTION_RELEASE_LOG_IF_ALLOWED(fmt, ...) RELEASE_LOG_IF(m_sessionID.isAlwaysOnLoggingAllowed(), ServiceWorker, "%p - WebSWServerConnection::" fmt, this, ##__VA_ARGS__)
 #define SWSERVERCONNECTION_RELEASE_LOG_ERROR_IF_ALLOWED(fmt, ...) RELEASE_LOG_ERROR_IF(m_sessionID.isAlwaysOnLoggingAllowed(), ServiceWorker, "%p - WebSWServerConnection::" fmt, this, ##__VA_ARGS__)
 
-WebSWServerConnection::WebSWServerConnection(SWServer& server, IPC::Connection& connection, SessionID sessionID)
+WebSWServerConnection::WebSWServerConnection(NetworkProcess& networkProcess, SWServer& server, IPC::Connection& connection, SessionID sessionID)
     : SWServer::Connection(server)
     , m_sessionID(sessionID)
     , m_contentConnection(connection)
+    , m_networkProcess(networkProcess)
 {
-    NetworkProcess::singleton().registerSWServerConnection(*this);
+    networkProcess.registerSWServerConnection(*this);
 }
 
 WebSWServerConnection::~WebSWServerConnection()
 {
-    NetworkProcess::singleton().unregisterSWServerConnection(*this);
+    m_networkProcess->unregisterSWServerConnection(*this);
     for (const auto& keyValue : m_clientOrigins)
         server().unregisterServiceWorkerClient(keyValue.value, keyValue.key);
 }
@@ -165,7 +166,7 @@ void WebSWServerConnection::startFetch(ServiceWorkerRegistrationIdentifier servi
         }
 
         if (!worker->contextConnection())
-            NetworkProcess::singleton().createServerToContextConnection(worker->securityOrigin(), server().sessionID());
+            m_networkProcess->createServerToContextConnection(worker->securityOrigin(), server().sessionID());
 
         server().runServiceWorkerIfNecessary(serviceWorkerIdentifier, [weakThis = WTFMove(weakThis), this, fetchIdentifier, serviceWorkerIdentifier, request = WTFMove(request), options = WTFMove(options), formData = WTFMove(formData), referrer = WTFMove(referrer)](auto* contextConnection) {
             if (!weakThis)
@@ -208,7 +209,7 @@ void WebSWServerConnection::postMessageToServiceWorker(ServiceWorkerIdentifier d
         return;
 
     if (!destinationWorker->contextConnection())
-        NetworkProcess::singleton().createServerToContextConnection(destinationWorker->securityOrigin(), server().sessionID());
+        m_networkProcess->createServerToContextConnection(destinationWorker->securityOrigin(), server().sessionID());
 
     // It's possible this specific worker cannot be re-run (e.g. its registration has been removed)
     server().runServiceWorkerIfNecessary(destinationIdentifier, [destinationIdentifier, message = WTFMove(message), sourceData = WTFMove(*sourceData)](auto* contextConnection) mutable {
@@ -220,8 +221,8 @@ void WebSWServerConnection::postMessageToServiceWorker(ServiceWorkerIdentifier d
 void WebSWServerConnection::scheduleJobInServer(ServiceWorkerJobData&& jobData)
 {
     auto securityOrigin = SecurityOriginData::fromURL(jobData.scriptURL);
-    if (!NetworkProcess::singleton().serverToContextConnectionForOrigin(securityOrigin))
-        NetworkProcess::singleton().createServerToContextConnection(securityOrigin, server().sessionID());
+    if (!m_networkProcess->serverToContextConnectionForOrigin(securityOrigin))
+        m_networkProcess->createServerToContextConnection(securityOrigin, server().sessionID());
 
     SWSERVERCONNECTION_RELEASE_LOG_IF_ALLOWED("Scheduling ServiceWorker job %s in server", jobData.identifier().loggingString().utf8().data());
     ASSERT(identifier() == jobData.connectionIdentifier());
