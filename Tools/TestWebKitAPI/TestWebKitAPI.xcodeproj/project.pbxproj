@@ -259,6 +259,7 @@
 		5714ECBB1CA8BFE400051AC8 /* DownloadRequestOriginalURLFrame.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 5714ECBA1CA8BFD100051AC8 /* DownloadRequestOriginalURLFrame.html */; };
 		5714ECBD1CA8C22A00051AC8 /* DownloadRequestOriginalURL2.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 5714ECBC1CA8C21800051AC8 /* DownloadRequestOriginalURL2.html */; };
 		57152B5E21CC2045000C37CA /* ApduTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 57152B5D21CC2045000C37CA /* ApduTest.cpp */; };
+		57152B7821DD4E8D000C37CA /* U2fCommandConstructorTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 57D1D75E21DCB7A80093E86A /* U2fCommandConstructorTest.cpp */; };
 		571F7FD01F2961FB00946648 /* IndexedDBStructuredCloneBackwardCompatibility.sqlite3-wal in Copy Resources */ = {isa = PBXBuildFile; fileRef = 571F7FCF1F2961E100946648 /* IndexedDBStructuredCloneBackwardCompatibility.sqlite3-wal */; };
 		572B403421769A88000AD43E /* CtapRequestTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 572B403321769A88000AD43E /* CtapRequestTest.cpp */; };
 		572B404421781B43000AD43E /* CtapResponseTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 572B404321781B42000AD43E /* CtapResponseTest.cpp */; };
@@ -1639,6 +1640,7 @@
 		5797FE2F1EB15A5F00B2F4A0 /* NavigationClientDefaultCrypto.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = NavigationClientDefaultCrypto.cpp; sourceTree = "<group>"; };
 		5797FE321EB15A8900B2F4A0 /* navigation-client-default-crypto.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = "navigation-client-default-crypto.html"; sourceTree = "<group>"; };
 		5798E2AF1CAF5C2800C5CBA0 /* ProvisionalURLNotChange.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ProvisionalURLNotChange.mm; sourceTree = "<group>"; };
+		57D1D75E21DCB7A80093E86A /* U2fCommandConstructorTest.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = U2fCommandConstructorTest.cpp; sourceTree = "<group>"; };
 		57F10D921C7E7B3800ECDF30 /* IsNavigationActionTrusted.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = IsNavigationActionTrusted.mm; sourceTree = "<group>"; };
 		57F4AA9F208FA83D00A68E9E /* SSLKeyGenerator.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = SSLKeyGenerator.mm; sourceTree = "<group>"; };
 		57F56A5B1C7F8A4000F31D7E /* IsNavigationActionTrusted.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = IsNavigationActionTrusted.html; sourceTree = "<group>"; };
@@ -2685,6 +2687,7 @@
 				93A258981F92FF15003E510C /* TextCodec.cpp */,
 				CDC2C7141797089D00E627FB /* TimeRanges.cpp */,
 				7AD3FE8D1D75FB8D00B169A4 /* TransformationMatrix.cpp */,
+				57D1D75E21DCB7A80093E86A /* U2fCommandConstructorTest.cpp */,
 				E3A1E77E21B25B39008C6007 /* URLParserTextEncoding.cpp */,
 				9C64DC311D76198A004B598E /* YouTubePluginReplacement.cpp */,
 			);
@@ -4203,6 +4206,7 @@
 				CE3524F91B1441C40028A7C5 /* TextFieldDidBeginAndEndEditing.cpp in Sources */,
 				7CCE7EDD1A411A9200447C4C /* TimeRanges.cpp in Sources */,
 				7CCE7ED31A411A7E00447C4C /* TypingStyleCrash.mm in Sources */,
+				57152B7821DD4E8D000C37CA /* U2fCommandConstructorTest.cpp in Sources */,
 				5CB40B4E1F4B98D3007DC7B9 /* UIDelegate.mm in Sources */,
 				F46849BE1EEF58E400B937FE /* UIPasteboardTests.mm in Sources */,
 				E3A1E77F21B25B39008C6007 /* URLParserTextEncoding.cpp in Sources */,

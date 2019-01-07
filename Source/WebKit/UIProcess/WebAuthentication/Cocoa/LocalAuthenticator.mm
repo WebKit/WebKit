@@ -30,11 +30,12 @@
 
 #import <Security/SecItem.h>
 #import <WebCore/CBORWriter.h>
-#import <WebCore/COSEConstants.h>
 #import <WebCore/ExceptionData.h>
 #import <WebCore/PublicKeyCredentialCreationOptions.h>
 #import <WebCore/PublicKeyCredentialData.h>
 #import <WebCore/PublicKeyCredentialRequestOptions.h>
+#import <WebCore/WebAuthenticationConstants.h>
+#import <WebCore/WebAuthenticationUtils.h>
 #import <pal/crypto/CryptoDigest.h>
 #import <wtf/HashSet.h>
 #import <wtf/RetainPtr.h>
@@ -50,50 +51,10 @@ namespace LocalAuthenticatorInternal {
 // See https://www.w3.org/TR/webauthn/#flags.
 const uint8_t makeCredentialFlags = 0b01000101; // UP, UV and AT are set.
 const uint8_t getAssertionFlags = 0b00000101; // UP and UV are set.
-// FIXME(rdar://problem/38320512): Define Apple AAGUID.
-const uint8_t AAGUID[] = {0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00}; // 16 bytes
 // Credential ID is currently SHA-1 of the corresponding public key.
-// FIXME(183534): Assume little endian here.
-const union {
-    uint16_t integer;
-    uint8_t bytes[2];
-} credentialIdLength = {0x0014};
-const size_t ES256KeySizeInBytes = 32;
-const size_t authDataPrefixFixedSize = 37; // hash(32) + flags(1) + counter(4)
+const uint16_t credentialIdLength = 20;
 
 #if PLATFORM(IOS_FAMILY)
-// https://www.w3.org/TR/webauthn/#sec-authenticator-data
-static Vector<uint8_t> buildAuthData(const String& rpId, const uint8_t flags, uint32_t counter, const Vector<uint8_t>& optionalAttestedCredentialData)
-{
-    Vector<uint8_t> authData;
-    authData.reserveInitialCapacity(authDataPrefixFixedSize + optionalAttestedCredentialData.size());
-
-    // RP ID hash
-    auto crypto = PAL::CryptoDigest::create(PAL::CryptoDigest::Algorithm::SHA_256);
-    // FIXME(183534): Test IDN.
-    ASSERT(rpId.isAllASCII());
-    auto asciiRpId = rpId.ascii();
-    crypto->addBytes(asciiRpId.data(), asciiRpId.length());
-    authData = crypto->computeHash();
-
-    // FLAGS
-    authData.append(flags);
-
-    // COUNTER
-    // FIXME(183534): Assume little endian here.
-    union {
-        uint32_t integer;
-        uint8_t bytes[4];
-    } counterUnion;
-    counterUnion.integer = counter;
-    authData.append(counterUnion.bytes, sizeof(counterUnion.bytes));
-
-    // ATTESTED CRED. DATA
-    authData.appendVector(optionalAttestedCredentialData);
-
-    return authData;
-}
-
 static inline bool emptyTransportsOrContain(const Vector<AuthenticatorTransport>& transports, AuthenticatorTransport target)
 {
     return transports.isEmpty() ? true : transports.contains(target);
@@ -105,7 +66,7 @@ static inline HashSet<String> produceHashSet(const Vector<PublicKeyCredentialDes
     for (auto& credentialDescriptor : credentialDescriptors) {
         if (emptyTransportsOrContain(credentialDescriptor.transports, AuthenticatorTransport::Internal)
             && credentialDescriptor.type == PublicKeyCredentialType::PublicKey
-            && credentialDescriptor.idVector.size() == credentialIdLength.integer)
+            && credentialDescriptor.idVector.size() == credentialIdLength)
             result.add(String(reinterpret_cast<const char*>(credentialDescriptor.idVector.data()), credentialDescriptor.idVector.size()));
     }
     return result;
@@ -307,22 +268,10 @@ void LocalAuthenticator::continueMakeCredentialAfterAttested(SecKeyRef privateKe
     // FIXME(183533): store the counter.
     uint32_t counter = 0;
 
-    // FIXME(183534): attestedCredentialData could throttle.
     // Step 11. https://www.w3.org/TR/webauthn/#attested-credential-data
-    Vector<uint8_t> attestedCredentialData;
+    // credentialPublicKey
+    Vector<uint8_t> cosePublicKey;
     {
-        // aaguid
-        attestedCredentialData.append(AAGUID, sizeof(AAGUID));
-
-        // credentialIdLength
-        ASSERT(credentialId.size() == credentialIdLength.integer);
-        // FIXME(183534): Assume little endian here.
-        attestedCredentialData.append(credentialIdLength.bytes, sizeof(uint16_t));
-
-        // credentialId
-        attestedCredentialData.appendVector(credentialId);
-
-        // credentialPublicKey
         RetainPtr<CFDataRef> publicKeyDataRef;
         {
             auto publicKey = adoptCF(SecKeyCopyPublicKey(privateKey));
@@ -334,29 +283,18 @@ void LocalAuthenticator::continueMakeCredentialAfterAttested(SecKeyRef privateKe
                 receiveRespond(ExceptionData { UnknownError, "Unknown internal error."_s });
                 return;
             }
-            ASSERT(((NSData *)publicKeyDataRef.get()).length == (1 + 2 * ES256KeySizeInBytes)); // 04 | X | Y
+            ASSERT(((NSData *)publicKeyDataRef.get()).length == (1 + 2 * ES256FieldElementLength)); // 04 | X | Y
         }
 
         // COSE Encoding
-        // FIXME(183535): Improve CBOR encoder to work with bytes directly.
-        Vector<uint8_t> x(ES256KeySizeInBytes);
-        [(NSData *)publicKeyDataRef.get() getBytes: x.data() range:NSMakeRange(1, ES256KeySizeInBytes)];
-        Vector<uint8_t> y(ES256KeySizeInBytes);
-        [(NSData *)publicKeyDataRef.get() getBytes: y.data() range:NSMakeRange(1 + ES256KeySizeInBytes, ES256KeySizeInBytes)];
-        cbor::CBORValue::MapValue publicKeyMap;
-        publicKeyMap[cbor::CBORValue(COSE::kty)] = cbor::CBORValue(COSE::EC2);
-        publicKeyMap[cbor::CBORValue(COSE::alg)] = cbor::CBORValue(COSE::ES256);
-        publicKeyMap[cbor::CBORValue(COSE::crv)] = cbor::CBORValue(COSE::P_256);
-        publicKeyMap[cbor::CBORValue(COSE::x)] = cbor::CBORValue(WTFMove(x));
-        publicKeyMap[cbor::CBORValue(COSE::y)] = cbor::CBORValue(WTFMove(y));
-        auto cosePublicKey = cbor::CBORWriter::write(cbor::CBORValue(WTFMove(publicKeyMap)));
-        if (!cosePublicKey) {
-            LOG_ERROR("Couldn't encode the public key into COSE binaries.");
-            receiveRespond(ExceptionData { UnknownError, "Unknown internal error."_s });
-            return;
-        }
-        attestedCredentialData.appendVector(cosePublicKey.value());
+        Vector<uint8_t> x(ES256FieldElementLength);
+        [(NSData *)publicKeyDataRef.get() getBytes: x.data() range:NSMakeRange(1, ES256FieldElementLength)];
+        Vector<uint8_t> y(ES256FieldElementLength);
+        [(NSData *)publicKeyDataRef.get() getBytes: y.data() range:NSMakeRange(1 + ES256FieldElementLength, ES256FieldElementLength)];
+        cosePublicKey = encodeES256PublicKeyAsCBOR(WTFMove(x), WTFMove(y));
     }
+    // FIXME(rdar://problem/38320512): Define Apple AAGUID.
+    auto attestedCredentialData = buildAttestedCredentialData(Vector<uint8_t>(aaguidLength, 0), credentialId, cosePublicKey);
 
     // Step 12.
     auto authData = buildAuthData(requestData().creationOptions.rp.id, makeCredentialFlags, counter, attestedCredentialData);
@@ -386,19 +324,9 @@ void LocalAuthenticator::continueMakeCredentialAfterAttested(SecKeyRef privateKe
             cborArray.append(cbor::CBORValue(toVector((NSData *)adoptCF(SecCertificateCopyData((__bridge SecCertificateRef)certificates[i])).get())));
         attestationStatementMap[cbor::CBORValue("x5c")] = cbor::CBORValue(WTFMove(cborArray));
     }
+    auto attestationObject = buildAttestationObject(WTFMove(authData), "Apple", WTFMove(attestationStatementMap));
 
-    cbor::CBORValue::MapValue attestationObjectMap;
-    attestationObjectMap[cbor::CBORValue("authData")] = cbor::CBORValue(authData);
-    attestationObjectMap[cbor::CBORValue("fmt")] = cbor::CBORValue("Apple");
-    attestationObjectMap[cbor::CBORValue("attStmt")] = cbor::CBORValue(WTFMove(attestationStatementMap));
-    auto attestationObject = cbor::CBORWriter::write(cbor::CBORValue(WTFMove(attestationObjectMap)));
-    if (!attestationObject) {
-        LOG_ERROR("Couldn't encode the attestation object.");
-        receiveRespond(ExceptionData { UnknownError, "Unknown internal error."_s });
-        return;
-    }
-
-    receiveRespond(PublicKeyCredentialData { ArrayBuffer::create(credentialId.data(), credentialId.size()), true, nullptr, ArrayBuffer::create(attestationObject.value().data(), attestationObject.value().size()), nullptr, nullptr, nullptr });
+    receiveRespond(PublicKeyCredentialData { ArrayBuffer::create(credentialId.data(), credentialId.size()), true, nullptr, ArrayBuffer::create(attestationObject.data(), attestationObject.size()), nullptr, nullptr, nullptr });
 #endif // !PLATFORM(IOS_FAMILY)
 }
 

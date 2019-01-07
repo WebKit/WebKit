@@ -35,6 +35,7 @@
 #include "AuthenticatorSupportedOptions.h"
 #include "CBORReader.h"
 #include "CBORWriter.h"
+#include "WebAuthenticationConstants.h"
 #include <wtf/StdSet.h>
 #include <wtf/Vector.h>
 
@@ -65,17 +66,17 @@ CtapDeviceResponseCode getResponseCode(const Vector<uint8_t>& buffer)
 
 static Vector<uint8_t> getCredentialId(const Vector<uint8_t>& authenticatorData)
 {
-    const size_t credentialIdLengthOffset = kRpIdHashLength + kFlagsLength + kSignCounterLength + kAaguidLength;
+    const size_t credentialIdLengthOffset = rpIdHashLength + flagsLength + signCounterLength + aaguidLength;
 
-    if (authenticatorData.size() < credentialIdLengthOffset + kCredentialIdLengthLength)
+    if (authenticatorData.size() < credentialIdLengthOffset + credentialIdLengthLength)
         return { };
     size_t credentialIdLength = (static_cast<size_t>(authenticatorData[credentialIdLengthOffset]) << 8) | static_cast<size_t>(authenticatorData[credentialIdLengthOffset + 1]);
 
-    if (authenticatorData.size() < credentialIdLengthOffset + kCredentialIdLengthLength + credentialIdLength)
+    if (authenticatorData.size() < credentialIdLengthOffset + credentialIdLengthLength + credentialIdLength)
         return { };
     Vector<uint8_t> credentialId;
     credentialId.reserveInitialCapacity(credentialIdLength);
-    auto beginIt = authenticatorData.begin() + credentialIdLengthOffset + kCredentialIdLengthLength;
+    auto beginIt = authenticatorData.begin() + credentialIdLengthOffset + credentialIdLengthLength;
     credentialId.appendRange(beginIt, beginIt + credentialIdLength);
     return credentialId;
 }
@@ -205,7 +206,7 @@ Optional<AuthenticatorGetInfoResponse> readCTAPGetInfoResponse(const Vector<uint
         return WTF::nullopt;
 
     it = responseMap.find(CBOR(3));
-    if (it == responseMap.end() || !it->second.isByteString() || it->second.getByteString().size() != kAaguidLength)
+    if (it == responseMap.end() || !it->second.isByteString() || it->second.getByteString().size() != aaguidLength)
         return WTF::nullopt;
 
     AuthenticatorGetInfoResponse response(WTFMove(protocolVersions), Vector<uint8_t>(it->second.getByteString()));

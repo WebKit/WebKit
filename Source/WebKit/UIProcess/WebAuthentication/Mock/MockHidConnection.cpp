@@ -31,6 +31,7 @@
 #include <WebCore/AuthenticatorGetInfoResponse.h>
 #include <WebCore/CBORReader.h>
 #include <WebCore/FidoConstants.h>
+#include <WebCore/WebAuthenticationConstants.h>
 #include <wtf/BlockPtr.h>
 #include <wtf/CryptographicallyRandomNumber.h>
 #include <wtf/RunLoop.h>
@@ -202,7 +203,7 @@ void MockHidConnection::feedReports()
 
     Optional<FidoHidMessage> message;
     if (m_stage == Mock::Stage::Info && m_subStage == Mock::SubStage::Msg) {
-        auto infoData = encodeAsCBOR(AuthenticatorGetInfoResponse({ ProtocolVersion::kCtap }, Vector<uint8_t>(kAaguidLength, 0u)));
+        auto infoData = encodeAsCBOR(AuthenticatorGetInfoResponse({ ProtocolVersion::kCtap }, Vector<uint8_t>(aaguidLength, 0u)));
         infoData.insert(0, static_cast<uint8_t>(CtapDeviceResponseCode::kSuccess)); // Prepend status code.
         if (stagesMatch() && m_configuration.hid->error == Mock::Error::WrongChannelId)
             message = FidoHidMessage::create(m_currentChannel - 1, FidoHidDeviceCommand::kCbor, infoData);

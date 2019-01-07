@@ -31,6 +31,7 @@
 #include "GPUCommandBuffer.h"
 #include "GPURenderPassDescriptor.h"
 #include "GPURenderPassEncoder.h"
+#include "GPURenderPipeline.h"
 #include "Logging.h"
 #include "WebGPURenderPassDescriptor.h"
 #include "WebGPURenderPassEncoder.h"

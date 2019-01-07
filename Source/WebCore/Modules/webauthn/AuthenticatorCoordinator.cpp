@@ -73,7 +73,6 @@ static Ref<ArrayBuffer> produceClientDataJson(ClientDataType type, const BufferS
 
 static Vector<uint8_t> produceClientDataJsonHash(const ArrayBuffer& clientDataJson)
 {
-    // FIXME: This might be platform dependent.
     auto crypto = PAL::CryptoDigest::create(PAL::CryptoDigest::Algorithm::SHA_256);
     crypto->addBytes(clientDataJson.data(), clientDataJson.byteLength());
     return crypto->computeHash();

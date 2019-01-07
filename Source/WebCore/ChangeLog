@@ -1,3 +1,65 @@
+2019-01-06  Jiewen Tan  <jiewen_tan@apple.com>
+
+        [WebAuthN] Import U2F command/response converters from Chromium
+        https://bugs.webkit.org/show_bug.cgi?id=193150
+        <rdar://problem/47054028>
+
+        Reviewed by Brent Fulgham.
+
+        This patch imports Chromium's U2F command/response converters:
+        https://fidoalliance.org/specs/fido-v2.0-id-20180227/fido-client-to-authenticator-protocol-v2.0-id-20180227.html#u2f-interoperability
+        1. It directly imports the following files and suit them to WebKit's coding style:
+        https://cs.chromium.org/chromium/src/device/fido/u2f_command_constructor.cc?l=1&rcl=db624110317d01efa78cd32e7be1524190e1beb0
+        https://cs.chromium.org/chromium/src/device/fido/u2f_command_constructor.h?rcl=db624110317d01efa78cd32e7be1524190e1beb0
+        https://cs.chromium.org/chromium/src/device/fido/u2f_command_constructor_unittest.cc?rcl=db624110317d01efa78cd32e7be1524190e1beb0
+        2. It gathers the following methods into U2fResponseConverter:
+        AuthenticatorMakeCredentialResponse::CreateFromU2fRegisterResponse()
+        AuthenticatorGetAssertionResponse::CreateFromU2fSignResponse()
+        3. It also updates FidoConstants.h, FidoTestData.h and CtapResponseTest.cpp accordingly.
+
+        Besides importing stuff from Chroimum, it also gathers a bunch of constants and helper functions into WebAuthenticationConstants.h
+        and WebAuthenticationUtils.h. It also fixes Bug 183534: 2) and 7).
+
+        Covered by API tests.
+
+        * Modules/webauthn/AuthenticatorCoordinator.cpp:
+        (WebCore::AuthenticatorCoordinatorInternal::produceClientDataJsonHash):
+        * Modules/webauthn/WebAuthenticationConstants.h: Copied from Source/WebCore/Modules/webauthn/COSEConstants.h.
+        * Modules/webauthn/WebAuthenticationUtils.cpp: Added.
+        (WebCore::convertBytesToVector):
+        (WebCore::produceRpIdHash):
+        (WebCore::encodeES256PublicKeyAsCBOR):
+        (WebCore::buildAttestedCredentialData):
+        (WebCore::buildAuthData):
+        (WebCore::buildAttestationObject):
+        * Modules/webauthn/WebAuthenticationUtils.h: Renamed from Source/WebCore/Modules/webauthn/COSEConstants.h.
+        * Modules/webauthn/fido/DeviceResponseConverter.cpp:
+        (fido::getCredentialId):
+        (fido::readCTAPGetInfoResponse):
+        * Modules/webauthn/fido/FidoConstants.h:
+        * Modules/webauthn/fido/U2fCommandConstructor.cpp: Added.
+        (fido::WebCore::constructU2fRegisterCommand):
+        (fido::WebCore::constructU2fSignCommand):
+        (fido::isConvertibleToU2fRegisterCommand):
+        (fido::isConvertibleToU2fSignCommand):
+        (fido::convertToU2fRegisterCommand):
+        (fido::convertToU2fCheckOnlySignCommand):
+        (fido::convertToU2fSignCommand):
+        (fido::constructBogusU2fRegistrationCommand):
+        * Modules/webauthn/fido/U2fCommandConstructor.h: Added.
+        * Modules/webauthn/fido/U2fResponseConverter.cpp: Added.
+        (fido::WebCore::extractECPublicKeyFromU2fRegistrationResponse):
+        (fido::WebCore::extractCredentialIdFromU2fRegistrationResponse):
+        (fido::WebCore::createAttestedCredentialDataFromU2fRegisterResponse):
+        (fido::WebCore::parseX509Length):
+        (fido::WebCore::createFidoAttestationStatementFromU2fRegisterResponse):
+        (fido::readU2fRegisterResponse):
+        (fido::readFromU2fSignResponse):
+        * Modules/webauthn/fido/U2fResponseConverter.h: Added.
+        * Modules/webgpu/WebGPUCommandBuffer.cpp:
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+
 2019-01-06  David Kilzer  <ddkilzer@apple.com>
 
         Leak of WTF::Function objects in WebCore::CryptoKeyRSA::generatePair() (64-80 bytes each) in com.apple.WebKit.WebContent running WebKit layout tests

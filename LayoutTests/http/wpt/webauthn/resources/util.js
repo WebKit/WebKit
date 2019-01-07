@@ -134,7 +134,7 @@ function hexStringToUint8Array(hexString)
     return arrayBuffer;
 }
 
-function decodeAuthData(authDataUint8Array, littleEndian = true)
+function decodeAuthData(authDataUint8Array)
 {
     let authDataObject = { };
     let pos = 0;
@@ -158,10 +158,7 @@ function decodeAuthData(authDataUint8Array, littleEndian = true)
     size = 4;
     if (pos + size > authDataUint8Array.byteLength)
         return { };
-    if (littleEndian)
-        authDataObject.counter = new Uint32Array(authDataUint8Array.slice(pos, pos + size))[0];
-    else
-        authDataObject.counter = (authDataUint8Array[pos] << 24) + (authDataUint8Array[pos + 1] << 16) + (authDataUint8Array[pos + 2] << 8) + authDataUint8Array[pos + 3];
+    authDataObject.counter = (authDataUint8Array[pos] << 24) + (authDataUint8Array[pos + 1] << 16) + (authDataUint8Array[pos + 2] << 8) + authDataUint8Array[pos + 3];
     pos = pos + size;
 
     if (pos == authDataUint8Array.byteLength)
@@ -178,10 +175,7 @@ function decodeAuthData(authDataUint8Array, littleEndian = true)
     size = 2;
     if (pos + size > authDataUint8Array.byteLength)
         return { };
-    if (littleEndian)
-        authDataObject.l = new Uint16Array(authDataUint8Array.slice(pos, pos + size))[0];
-    else
-        authDataObject.l = (authDataUint8Array[pos] << 8) + authDataUint8Array[pos + 1];
+    authDataObject.l = (authDataUint8Array[pos] << 8) + authDataUint8Array[pos + 1];
     pos = pos + size;
 
     // Credential ID

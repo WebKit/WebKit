@@ -1782,6 +1782,9 @@
 		571252691E524EB1008FF369 /* CryptoAlgorithmAES_CFB.h in Headers */ = {isa = PBXBuildFile; fileRef = 571252681E524EB1008FF369 /* CryptoAlgorithmAES_CFB.h */; };
 		57152B5A21CB3E88000C37CA /* ApduCommand.h in Headers */ = {isa = PBXBuildFile; fileRef = 57152B5821CB2E3B000C37CA /* ApduCommand.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		57152B5C21CC1902000C37CA /* ApduResponse.h in Headers */ = {isa = PBXBuildFile; fileRef = 57152B5621CB2E3A000C37CA /* ApduResponse.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		57152B6E21CD995D000C37CA /* U2fCommandConstructor.h in Headers */ = {isa = PBXBuildFile; fileRef = 57152B6C21CD995C000C37CA /* U2fCommandConstructor.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		57152B7C21DD8BA1000C37CA /* U2fResponseConverter.h in Headers */ = {isa = PBXBuildFile; fileRef = 57152B7A21DD8BA1000C37CA /* U2fResponseConverter.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		57152B8021DDA581000C37CA /* WebAuthenticationUtils.h in Headers */ = {isa = PBXBuildFile; fileRef = 57152B7E21DDA581000C37CA /* WebAuthenticationUtils.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		571F21891DA57C54005C9EFD /* JSSubtleCrypto.h in Headers */ = {isa = PBXBuildFile; fileRef = 571F21881DA57C54005C9EFD /* JSSubtleCrypto.h */; };
 		572093D31DDCEB9A00310AB0 /* CryptoAlgorithmAesCbcCfbParams.h in Headers */ = {isa = PBXBuildFile; fileRef = 572093D21DDCEB9A00310AB0 /* CryptoAlgorithmAesCbcCfbParams.h */; };
 		5721A9871ECE53B10081295A /* CryptoDigestAlgorithm.h in Headers */ = {isa = PBXBuildFile; fileRef = 5721A9861ECE53B10081295A /* CryptoDigestAlgorithm.h */; };
@@ -1815,8 +1818,8 @@
 		573489391DAC6B6E00DC0667 /* CryptoAlgorithmParameters.h in Headers */ = {isa = PBXBuildFile; fileRef = 573489381DAC6B6D00DC0667 /* CryptoAlgorithmParameters.h */; };
 		5739E12F1DAC7F7800E14383 /* JSCryptoAlgorithmParameters.h in Headers */ = {isa = PBXBuildFile; fileRef = 5739E12E1DAC7F7800E14383 /* JSCryptoAlgorithmParameters.h */; };
 		573F5332216806E10045587A /* FidoHidMessage.h in Headers */ = {isa = PBXBuildFile; fileRef = 57BAF28A2167D303008E954E /* FidoHidMessage.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		573F533721680D150045587A /* FidoParsingUtils.h in Headers */ = {isa = PBXBuildFile; fileRef = 573F533521680D140045587A /* FidoParsingUtils.h */; };
-		574F55E1204F3B23002948C6 /* COSEConstants.h in Headers */ = {isa = PBXBuildFile; fileRef = 574F55DC204F3732002948C6 /* COSEConstants.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		573F533721680D150045587A /* FidoParsingUtils.h in Headers */ = {isa = PBXBuildFile; fileRef = 573F533521680D140045587A /* FidoParsingUtils.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		574F55E1204F3B23002948C6 /* WebAuthenticationConstants.h in Headers */ = {isa = PBXBuildFile; fileRef = 574F55DC204F3732002948C6 /* WebAuthenticationConstants.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		5750A9751E68D00000705C4A /* CryptoKeyEC.h in Headers */ = {isa = PBXBuildFile; fileRef = 5750A9731E68D00000705C4A /* CryptoKeyEC.h */; };
 		5750A97E1E6A13EF00705C4A /* CryptoAlgorithmEcKeyParams.h in Headers */ = {isa = PBXBuildFile; fileRef = 5750A97D1E6A13EF00705C4A /* CryptoAlgorithmEcKeyParams.h */; };
 		5750A9821E6A150800705C4A /* JSEcKeyParams.h in Headers */ = {isa = PBXBuildFile; fileRef = 5750A9801E6A150800705C4A /* JSEcKeyParams.h */; };
@@ -8588,6 +8591,12 @@
 		57152B5621CB2E3A000C37CA /* ApduResponse.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ApduResponse.h; path = Modules/webauthn/apdu/ApduResponse.h; sourceTree = SOURCE_ROOT; };
 		57152B5721CB2E3A000C37CA /* ApduCommand.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ApduCommand.cpp; path = Modules/webauthn/apdu/ApduCommand.cpp; sourceTree = SOURCE_ROOT; };
 		57152B5821CB2E3B000C37CA /* ApduCommand.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ApduCommand.h; path = Modules/webauthn/apdu/ApduCommand.h; sourceTree = SOURCE_ROOT; };
+		57152B6A21CD995C000C37CA /* U2fCommandConstructor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = U2fCommandConstructor.cpp; sourceTree = "<group>"; };
+		57152B6C21CD995C000C37CA /* U2fCommandConstructor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = U2fCommandConstructor.h; sourceTree = "<group>"; };
+		57152B7A21DD8BA1000C37CA /* U2fResponseConverter.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = U2fResponseConverter.h; sourceTree = "<group>"; };
+		57152B7B21DD8BA1000C37CA /* U2fResponseConverter.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = U2fResponseConverter.cpp; sourceTree = "<group>"; };
+		57152B7E21DDA581000C37CA /* WebAuthenticationUtils.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebAuthenticationUtils.h; sourceTree = "<group>"; };
+		57152B7F21DDA581000C37CA /* WebAuthenticationUtils.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = WebAuthenticationUtils.cpp; sourceTree = "<group>"; };
 		571F21881DA57C54005C9EFD /* JSSubtleCrypto.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSSubtleCrypto.h; sourceTree = "<group>"; };
 		571F218A1DA57C7A005C9EFD /* JSSubtleCrypto.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSSubtleCrypto.cpp; sourceTree = "<group>"; };
 		572093D11DDCEA4B00310AB0 /* AesCbcCfbParams.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = AesCbcCfbParams.idl; sourceTree = "<group>"; };
@@ -8654,7 +8663,7 @@
 		573F533621680D150045587A /* FidoParsingUtils.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FidoParsingUtils.cpp; sourceTree = "<group>"; };
 		574AC7531DAC367D00E9744C /* CryptoAlgorithmParameters.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = CryptoAlgorithmParameters.idl; sourceTree = "<group>"; };
 		574D42791D594FF6002CF50E /* GlobalCrypto.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = GlobalCrypto.idl; sourceTree = "<group>"; };
-		574F55DC204F3732002948C6 /* COSEConstants.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = COSEConstants.h; sourceTree = "<group>"; };
+		574F55DC204F3732002948C6 /* WebAuthenticationConstants.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebAuthenticationConstants.h; sourceTree = "<group>"; };
 		574F55E2204F3CBF002948C6 /* LocalAuthentication.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = LocalAuthentication.framework; path = System/Library/Frameworks/LocalAuthentication.framework; sourceTree = SDKROOT; };
 		5750A9721E68D00000705C4A /* CryptoKeyEC.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CryptoKeyEC.cpp; sourceTree = "<group>"; };
 		5750A9731E68D00000705C4A /* CryptoKeyEC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CryptoKeyEC.h; sourceTree = "<group>"; };
@@ -19317,6 +19326,10 @@
 				578A4C0A2167D29600D08F34 /* FidoHidPacket.h */,
 				573F533621680D150045587A /* FidoParsingUtils.cpp */,
 				573F533521680D140045587A /* FidoParsingUtils.h */,
+				57152B6A21CD995C000C37CA /* U2fCommandConstructor.cpp */,
+				57152B6C21CD995C000C37CA /* U2fCommandConstructor.h */,
+				57152B7B21DD8BA1000C37CA /* U2fResponseConverter.cpp */,
+				57152B7A21DD8BA1000C37CA /* U2fResponseConverter.h */,
 			);
 			path = fido;
 			sourceTree = "<group>";
@@ -19376,7 +19389,6 @@
 				57303BD120087A8300355965 /* AuthenticatorResponse.idl */,
 				57DCED8C21487EDB0016B847 /* AuthenticatorTransport.h */,
 				57DCED8E21487EDB0016B847 /* AuthenticatorTransport.idl */,
-				574F55DC204F3732002948C6 /* COSEConstants.h */,
 				57D8462C1FEAF68F00CA3682 /* PublicKeyCredential.cpp */,
 				57D8462B1FEAF68F00CA3682 /* PublicKeyCredential.h */,
 				57D8462D1FEAF68F00CA3682 /* PublicKeyCredential.idl */,
@@ -19391,6 +19403,9 @@
 				57303BF02009846100355965 /* PublicKeyCredentialType.idl */,
 				572B402321768D85000AD43E /* UserVerificationRequirement.h */,
 				572B402521768D85000AD43E /* UserVerificationRequirement.idl */,
+				574F55DC204F3732002948C6 /* WebAuthenticationConstants.h */,
+				57152B7F21DDA581000C37CA /* WebAuthenticationUtils.cpp */,
+				57152B7E21DDA581000C37CA /* WebAuthenticationUtils.h */,
 			);
 			path = webauthn;
 			sourceTree = "<group>";
@@ -28244,7 +28259,6 @@
 				3F8020371E9E47C500DEC61D /* CoreAudioCaptureDeviceManager.h in Headers */,
 				07AFF4221EFB144900B545B3 /* CoreAudioCaptureSourceIOS.h in Headers */,
 				CD7D33481C7A16BF00041293 /* CoreVideoSoftLink.h in Headers */,
-				574F55E1204F3B23002948C6 /* COSEConstants.h in Headers */,
 				862F129E18C1576F005C54AF /* CountedUserActivity.h in Headers */,
 				A80E6D040A1989CA007FB8C5 /* Counter.h in Headers */,
 				BC5EB9790E82069200B25965 /* CounterContent.h in Headers */,
@@ -31628,6 +31642,8 @@
 				4BAFD0E1219242A000C0AB64 /* TypedOMCSSUnitValue.h in Headers */,
 				4BAFD0D921921EA000C0AB64 /* TypedOMCSSUnparsedValue.h in Headers */,
 				93309E1A099E64920056E581 /* TypingCommand.h in Headers */,
+				57152B6E21CD995D000C37CA /* U2fCommandConstructor.h in Headers */,
+				57152B7C21DD8BA1000C37CA /* U2fResponseConverter.h in Headers */,
 				85031B4E0A44EFC700F992E0 /* UIEvent.h in Headers */,
 				83FE7CA71DA9F1A70037237C /* UIEventInit.h in Headers */,
 				85031B4F0A44EFC700F992E0 /* UIEventWithKeyState.h in Headers */,
@@ -31734,6 +31750,8 @@
 				417F7AEE2139BF6800FBA7EC /* WebAudioBufferList.h in Headers */,
 				41B2A6261EF1BF6D002B9D7A /* WebAudioSourceProvider.h in Headers */,
 				07D637401BB0B11300256CE9 /* WebAudioSourceProviderAVFObjC.h in Headers */,
+				574F55E1204F3B23002948C6 /* WebAuthenticationConstants.h in Headers */,
+				57152B8021DDA581000C37CA /* WebAuthenticationUtils.h in Headers */,
 				1F36EA9C1E21BA1700621E25 /* WebBackgroundTaskController.h in Headers */,
 				A5B81CB51FAA44620037D1E6 /* WebConsoleAgent.h in Headers */,
 				9BBA2CAB1F679E0C00FD1C1E /* WebContentReader.h in Headers */,

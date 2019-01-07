@@ -256,6 +256,7 @@ Modules/webaudio/WaveShaperProcessor.cpp
 Modules/webauthn/AuthenticatorCoordinator.cpp
 Modules/webauthn/AuthenticatorCoordinatorClient.cpp
 Modules/webauthn/PublicKeyCredential.cpp
+Modules/webauthn/WebAuthenticationUtils.cpp
 Modules/webauthn/apdu/ApduCommand.cpp
 Modules/webauthn/apdu/ApduResponse.cpp
 Modules/webauthn/cbor/CBORReader.cpp
@@ -269,6 +270,8 @@ Modules/webauthn/fido/FidoConstants.cpp
 Modules/webauthn/fido/FidoHidMessage.cpp
 Modules/webauthn/fido/FidoHidPacket.cpp
 Modules/webauthn/fido/FidoParsingUtils.cpp
+Modules/webauthn/fido/U2fCommandConstructor.cpp
+Modules/webauthn/fido/U2fResponseConverter.cpp
 
 Modules/webdatabase/ChangeVersionWrapper.cpp
 Modules/webdatabase/DOMWindowWebDatabase.cpp

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,19 +25,29 @@
 
 #pragma once
 
-namespace COSE {
+#if ENABLE(WEB_AUTHN)
 
-// See RFC 8152 - CBOR Object Signing and Encryption <https://tools.ietf.org/html/rfc8152>
-// Labels
-const int64_t alg = 3;
-const int64_t crv = -1;
-const int64_t kty = 1;
-const int64_t x = -2;
-const int64_t y = -3;
+#include "CBORValue.h"
+#include <wtf/Forward.h>
 
-// Values
-const int64_t EC2 = 2;
-const int64_t ES256 = -7;
-const int64_t P_256 = 1;
+namespace WebCore {
 
-} // namespace COSE
+WEBCORE_EXPORT Vector<uint8_t> convertBytesToVector(const uint8_t byteArray[], const size_t length);
+
+// Produce a SHA-256 hash of the given RP ID.
+WEBCORE_EXPORT Vector<uint8_t> produceRpIdHash(const String& rpId);
+
+WEBCORE_EXPORT Vector<uint8_t> encodeES256PublicKeyAsCBOR(Vector<uint8_t>&& x, Vector<uint8_t>&& y);
+
+// https://www.w3.org/TR/webauthn/#attested-credential-data
+WEBCORE_EXPORT Vector<uint8_t> buildAttestedCredentialData(const Vector<uint8_t>& aaguid, const Vector<uint8_t>& credentialId, const Vector<uint8_t>& coseKey);
+
+// https://www.w3.org/TR/webauthn/#sec-authenticator-data
+WEBCORE_EXPORT Vector<uint8_t> buildAuthData(const String& rpId, const uint8_t flags, const uint32_t counter, const Vector<uint8_t>& optionalAttestedCredentialData);
+
+// https://www.w3.org/TR/webauthn/#attestation-object
+WEBCORE_EXPORT Vector<uint8_t> buildAttestationObject(Vector<uint8_t>&& authData, String&& format, cbor::CBORValue::MapValue&& statementMap);
+
+} // namespace WebCore
+
+#endif // ENABLE(WEB_AUTHN)

@@ -41,25 +41,14 @@ enum class ProtocolVersion {
     kUnknown,
 };
 
-// Length of the SHA-256 hash of the RP ID asssociated with the credential:
-// https://www.w3.org/TR/webauthn/#sec-authenticator-data
-constexpr size_t kRpIdHashLength = 32;
-
-// Length of the flags:
-// https://www.w3.org/TR/webauthn/#sec-authenticator-data
-constexpr size_t kFlagsLength = 1;
-
-// Length of the signature counter, 32-bit unsigned big-endian integer:
-// https://www.w3.org/TR/webauthn/#sec-authenticator-data
-constexpr size_t kSignCounterLength = 4;
-
-// Length of the AAGUID of the authenticator:
-// https://www.w3.org/TR/webauthn/#sec-attested-credential-data
-constexpr size_t kAaguidLength = 16;
-
-// Length of the byte length L of Credential ID, 16-bit unsigned big-endian
-// integer: https://www.w3.org/TR/webauthn/#sec-attested-credential-data
-constexpr size_t kCredentialIdLengthLength = 2;
+// Length of the U2F challenge/application parameter:
+// https://fidoalliance.org/specs/fido-u2f-v1.2-ps-20170411/fido-u2f-raw-message-formats-v1.2-ps-20170411.html#registration-request-message---u2f_register
+constexpr size_t kU2fChallengeParamLength = 32;
+constexpr size_t kU2fApplicationParamLength = 32;
+// https://fidoalliance.org/specs/fido-u2f-v1.2-ps-20170411/fido-u2f-raw-message-formats-v1.2-ps-20170411.html#registration-response-message-success
+constexpr size_t kReservedLength = 1;
+constexpr size_t kU2fKeyHandleLengthOffset = 66;
+constexpr size_t kU2fKeyHandleOffset = 67;
 
 // CTAP protocol device response code, as specified in
 // https://fidoalliance.org/specs/fido-v2.0-ps-20170927/fido-client-to-authenticator-protocol-v2.0-ps-20170927.html#error-responses
@@ -134,6 +123,19 @@ enum class FidoHidDeviceCommand : uint8_t {
 
 bool isFidoHidDeviceCommand(FidoHidDeviceCommand);
 
+// Parameters for fake U2F registration used to check for user presence.
+const uint8_t kBogusAppParam[] = {
+    0x41, 0x41, 0x41, 0x41, 0x41, 0x41, 0x41, 0x41, 0x41, 0x41, 0x41,
+    0x41, 0x41, 0x41, 0x41, 0x41, 0x41, 0x41, 0x41, 0x41, 0x41, 0x41,
+    0x41, 0x41, 0x41, 0x41, 0x41, 0x41, 0x41, 0x41, 0x41, 0x41
+};
+
+const uint8_t kBogusChallenge[] = {
+    0x42, 0x42, 0x42, 0x42, 0x42, 0x42, 0x42, 0x42, 0x42, 0x42, 0x42,
+    0x42, 0x42, 0x42, 0x42, 0x42, 0x42, 0x42, 0x42, 0x42, 0x42, 0x42,
+    0x42, 0x42, 0x42, 0x42, 0x42, 0x42, 0x42, 0x42, 0x42, 0x42
+};
+
 // String key values for CTAP request optional parameters and
 // AuthenticatorGetInfo response.
 const char kResidentKeyMapKey[] = "rk";
@@ -170,6 +172,15 @@ const size_t kHidMaxMessageSize = 7609;
 // CTAP/U2F devices only provide a single report so specify a report ID of 0 here.
 const uint8_t kHidReportId = 0x00;
 
+// U2F APDU encoding constants, as specified in
+// https://fidoalliance.org/specs/fido-u2f-v1.2-ps-20170411/fido-u2f-raw-message-formats-v1.2-ps-20170411.html#authentication-messages
+
+// P1 instructions.
+constexpr uint8_t kP1EnforceUserPresenceAndSign = 0x03;
+constexpr uint8_t kP1CheckOnly = 0x07;
+
+constexpr size_t kMaxKeyHandleLength = 255;
+
 // Authenticator API commands supported by CTAP devices, as specified in
 // https://fidoalliance.org/specs/fido-v2.0-rd-20170927/fido-client-to-authenticator-protocol-v2.0-rd-20170927.html#authenticator-api
 enum class CtapRequestCommand : uint8_t {
@@ -179,6 +190,16 @@ enum class CtapRequestCommand : uint8_t {
     kAuthenticatorGetInfo = 0x04,
     kAuthenticatorClientPin = 0x06,
     kAuthenticatorReset = 0x07,
+};
+
+// APDU instruction code for U2F request encoding.
+// https://fidoalliance.org/specs/fido-u2f-v1.2-ps-20170411/fido-u2f-raw-message-formats-v1.2-ps-20170411.html#command-and-parameter-values
+enum class U2fApduInstruction : uint8_t {
+    kRegister = 0x01,
+    kSign = 0x02,
+    kVersion = 0x03,
+    kVendorFirst = 0x40,
+    kVenderLast = 0xBF,
 };
 
 // String key values for attestation object as a response to MakeCredential
