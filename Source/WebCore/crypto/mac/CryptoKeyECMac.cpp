@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2017-2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -29,7 +29,6 @@
 #if ENABLE(WEB_CRYPTO)
 
 #include "CommonCryptoDERUtilities.h"
-#include "CommonCryptoUtilities.h"
 #include "JsonWebKey.h"
 #include <wtf/text/Base64.h>
 
@@ -95,14 +94,9 @@ static size_t getKeySizeFromNamedCurve(CryptoKeyEC::NamedCurve curve)
     return 0;
 }
 
-CryptoKeyEC::~CryptoKeyEC()
-{
-    CCECCryptorRelease(m_platformKey);
-}
-
 size_t CryptoKeyEC::keySizeInBits() const
 {
-    int result = CCECGetKeySize(m_platformKey);
+    int result = CCECGetKeySize(m_platformKey.get());
     return result ? result : 0;
 }
 
@@ -114,13 +108,13 @@ bool CryptoKeyEC::platformSupportedCurve(NamedCurve curve)
 Optional<CryptoKeyPair> CryptoKeyEC::platformGeneratePair(CryptoAlgorithmIdentifier identifier, NamedCurve curve, bool extractable, CryptoKeyUsageBitmap usages)
 {
     size_t size = getKeySizeFromNamedCurve(curve);
-    CCECCryptorRef ccPublicKey;
-    CCECCryptorRef ccPrivateKey;
+    CCECCryptorRef ccPublicKey = nullptr;
+    CCECCryptorRef ccPrivateKey = nullptr;
     if (CCECCryptorGeneratePair(size, &ccPublicKey, &ccPrivateKey))
         return WTF::nullopt;
 
-    auto publicKey = CryptoKeyEC::create(identifier, curve, CryptoKeyType::Public, ccPublicKey, true, usages);
-    auto privateKey = CryptoKeyEC::create(identifier, curve, CryptoKeyType::Private, ccPrivateKey, extractable, usages);
+    auto publicKey = CryptoKeyEC::create(identifier, curve, CryptoKeyType::Public, PlatformECKeyContainer(ccPublicKey), true, usages);
+    auto privateKey = CryptoKeyEC::create(identifier, curve, CryptoKeyType::Private, PlatformECKeyContainer(ccPrivateKey), extractable, usages);
     return CryptoKeyPair { WTFMove(publicKey), WTFMove(privateKey) };
 }
 
@@ -129,11 +123,11 @@ RefPtr<CryptoKeyEC> CryptoKeyEC::platformImportRaw(CryptoAlgorithmIdentifier ide
     if (!doesUncompressedPointMatchNamedCurve(curve, keyData.size()))
         return nullptr;
 
-    CCECCryptorRef ccPublicKey;
+    CCECCryptorRef ccPublicKey = nullptr;
     if (CCECCryptorImportKey(kCCImportKeyBinary, keyData.data(), keyData.size(), ccECKeyPublic, &ccPublicKey))
         return nullptr;
 
-    return create(identifier, curve, CryptoKeyType::Public, ccPublicKey, extractable, usages);
+    return create(identifier, curve, CryptoKeyType::Public, PlatformECKeyContainer(ccPublicKey), extractable, usages);
 }
 
 Vector<uint8_t> CryptoKeyEC::platformExportRaw() const
@@ -141,7 +135,7 @@ Vector<uint8_t> CryptoKeyEC::platformExportRaw() const
     size_t expectedSize = keySizeInBits() / 4 + 1; // Per Section 2.3.4 of http://www.secg.org/sec1-v2.pdf
     Vector<uint8_t> result(expectedSize);
     size_t size = result.size();
-    if (UNLIKELY(CCECCryptorExportKey(kCCImportKeyBinary, result.data(), &size, ccECKeyPublic, m_platformKey) || size != expectedSize))
+    if (UNLIKELY(CCECCryptorExportKey(kCCImportKeyBinary, result.data(), &size, ccECKeyPublic, m_platformKey.get()) || size != expectedSize))
         return { };
     return result;
 }
@@ -152,11 +146,11 @@ RefPtr<CryptoKeyEC> CryptoKeyEC::platformImportJWKPublic(CryptoAlgorithmIdentifi
         return nullptr;
 
     size_t size = getKeySizeFromNamedCurve(curve);
-    CCECCryptorRef ccPublicKey;
+    CCECCryptorRef ccPublicKey = nullptr;
     if (CCECCryptorCreateFromData(size, x.data(), x.size(), y.data(), y.size(), &ccPublicKey))
         return nullptr;
 
-    return create(identifier, curve, CryptoKeyType::Public, ccPublicKey, extractable, usages);
+    return create(identifier, curve, CryptoKeyType::Public, PlatformECKeyContainer(ccPublicKey), extractable, usages);
 }
 
 RefPtr<CryptoKeyEC> CryptoKeyEC::platformImportJWKPrivate(CryptoAlgorithmIdentifier identifier, NamedCurve curve, Vector<uint8_t>&& x, Vector<uint8_t>&& y, Vector<uint8_t>&& d, bool extractable, CryptoKeyUsageBitmap usages)
@@ -172,11 +166,11 @@ RefPtr<CryptoKeyEC> CryptoKeyEC::platformImportJWKPrivate(CryptoAlgorithmIdentif
     binaryInput.appendVector(y);
     binaryInput.appendVector(d);
 
-    CCECCryptorRef ccPrivateKey;
+    CCECCryptorRef ccPrivateKey = nullptr;
     if (CCECCryptorImportKey(kCCImportKeyBinary, binaryInput.data(), binaryInput.size(), ccECKeyPrivate, &ccPrivateKey))
         return nullptr;
 
-    return create(identifier, curve, CryptoKeyType::Private, ccPrivateKey, extractable, usages);
+    return create(identifier, curve, CryptoKeyType::Private, PlatformECKeyContainer(ccPrivateKey), extractable, usages);
 }
 
 bool CryptoKeyEC::platformAddFieldElements(JsonWebKey& jwk) const
@@ -189,11 +183,11 @@ bool CryptoKeyEC::platformAddFieldElements(JsonWebKey& jwk) const
     size_t size = result.size();
     switch (type()) {
     case CryptoKeyType::Public:
-        if (UNLIKELY(CCECCryptorExportKey(kCCImportKeyBinary, result.data(), &size, ccECKeyPublic, m_platformKey)))
+        if (UNLIKELY(CCECCryptorExportKey(kCCImportKeyBinary, result.data(), &size, ccECKeyPublic, m_platformKey.get())))
             return false;
         break;
     case CryptoKeyType::Private:
-        if (UNLIKELY(CCECCryptorExportKey(kCCImportKeyBinary, result.data(), &size, ccECKeyPrivate, m_platformKey)))
+        if (UNLIKELY(CCECCryptorExportKey(kCCImportKeyBinary, result.data(), &size, ccECKeyPrivate, m_platformKey.get())))
             return false;
         break;
     default:
@@ -269,11 +263,11 @@ RefPtr<CryptoKeyEC> CryptoKeyEC::platformImportSpki(CryptoAlgorithmIdentifier id
     if (!doesUncompressedPointMatchNamedCurve(curve, keyData.size() - index))
         return nullptr;
 
-    CCECCryptorRef ccPublicKey;
+    CCECCryptorRef ccPublicKey = nullptr;
     if (CCECCryptorImportKey(kCCImportKeyBinary, keyData.data() + index, keyData.size() - index, ccECKeyPublic, &ccPublicKey))
         return nullptr;
 
-    return create(identifier, curve, CryptoKeyType::Public, ccPublicKey, extractable, usages);
+    return create(identifier, curve, CryptoKeyType::Public, PlatformECKeyContainer(ccPublicKey), extractable, usages);
 }
 
 Vector<uint8_t> CryptoKeyEC::platformExportSpki() const
@@ -281,7 +275,7 @@ Vector<uint8_t> CryptoKeyEC::platformExportSpki() const
     size_t expectedKeySize = keySizeInBits() / 4 + 1; // Per Section 2.3.4 of http://www.secg.org/sec1-v2.pdf
     Vector<uint8_t> keyBytes(expectedKeySize);
     size_t keySize = keyBytes.size();
-    if (UNLIKELY(CCECCryptorExportKey(kCCImportKeyBinary, keyBytes.data(), &keySize, ccECKeyPublic, m_platformKey) || keySize != expectedKeySize))
+    if (UNLIKELY(CCECCryptorExportKey(kCCImportKeyBinary, keyBytes.data(), &keySize, ccECKeyPublic, m_platformKey.get()) || keySize != expectedKeySize))
         return { };
 
     // The following addes SPKI header to a raw EC public key.
@@ -366,11 +360,11 @@ RefPtr<CryptoKeyEC> CryptoKeyEC::platformImportPkcs8(CryptoAlgorithmIdentifier i
         return nullptr;
     keyBinary.append(keyData.data() + privateKeyPos, getKeySizeFromNamedCurve(curve) / 8);
 
-    CCECCryptorRef ccPrivateKey;
+    CCECCryptorRef ccPrivateKey = nullptr;
     if (CCECCryptorImportKey(kCCImportKeyBinary, keyBinary.data(), keyBinary.size(), ccECKeyPrivate, &ccPrivateKey))
         return nullptr;
 
-    return create(identifier, curve, CryptoKeyType::Private, ccPrivateKey, extractable, usages);
+    return create(identifier, curve, CryptoKeyType::Private, PlatformECKeyContainer(ccPrivateKey), extractable, usages);
 }
 
 Vector<uint8_t> CryptoKeyEC::platformExportPkcs8() const
@@ -379,7 +373,7 @@ Vector<uint8_t> CryptoKeyEC::platformExportPkcs8() const
     size_t expectedKeySize = keySizeInBytes * 3 + 1; // 04 + X + Y + D
     Vector<uint8_t> keyBytes(expectedKeySize);
     size_t keySize = keyBytes.size();
-    if (UNLIKELY(CCECCryptorExportKey(kCCImportKeyBinary, keyBytes.data(), &keySize, ccECKeyPrivate, m_platformKey) || keySize != expectedKeySize))
+    if (UNLIKELY(CCECCryptorExportKey(kCCImportKeyBinary, keyBytes.data(), &keySize, ccECKeyPrivate, m_platformKey.get()) || keySize != expectedKeySize))
         return { };
 
     // The following addes PKCS8 header to a raw EC private key.

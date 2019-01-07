@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2017-2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -31,7 +31,6 @@
 #include "CryptoKeyPair.h"
 #include "GCryptUtilities.h"
 #include "JsonWebKey.h"
-#include <pal/crypto/gcrypt/Handle.h>
 #include <pal/crypto/gcrypt/Utilities.h>
 #include <pal/crypto/tasn1/Utilities.h>
 #include <wtf/text/Base64.h>
@@ -103,16 +102,10 @@ static unsigned curveUncompressedPointSize(CryptoKeyEC::NamedCurve curve)
     return 2 * curveUncompressedFieldElementSize(curve) + 1;
 }
 
-CryptoKeyEC::~CryptoKeyEC()
-{
-    if (m_platformKey)
-        PAL::GCrypt::HandleDeleter<gcry_sexp_t>()(m_platformKey);
-}
-
 size_t CryptoKeyEC::keySizeInBits() const
 {
     size_t size = curveSize(m_curve);
-    ASSERT(size == gcry_pk_get_nbits(m_platformKey));
+    ASSERT(size == gcry_pk_get_nbits(m_platformKey.get()));
     return size;
 }
 
@@ -142,8 +135,8 @@ Optional<CryptoKeyPair> CryptoKeyEC::platformGeneratePair(CryptoAlgorithmIdentif
     if (!publicKeySexp || !privateKeySexp)
         return WTF::nullopt;
 
-    auto publicKey = CryptoKeyEC::create(identifier, curve, CryptoKeyType::Public, publicKeySexp.release(), true, usages);
-    auto privateKey = CryptoKeyEC::create(identifier, curve, CryptoKeyType::Private, privateKeySexp.release(), extractable, usages);
+    auto publicKey = CryptoKeyEC::create(identifier, curve, CryptoKeyType::Public, PlatformECKeyContainer(publicKeySexp.release()), true, usages);
+    auto privateKey = CryptoKeyEC::create(identifier, curve, CryptoKeyType::Private, PlatformECKeyContainer(privateKeySexp.release()), extractable, usages);
     return CryptoKeyPair { WTFMove(publicKey), WTFMove(privateKey) };
 }
 
@@ -160,7 +153,7 @@ RefPtr<CryptoKeyEC> CryptoKeyEC::platformImportRaw(CryptoAlgorithmIdentifier ide
         return nullptr;
     }
 
-    return create(identifier, curve, CryptoKeyType::Public, platformKey.release(), extractable, usages);
+    return create(identifier, curve, CryptoKeyType::Public, PlatformECKeyContainer(platformKey.release()), extractable, usages);
 }
 
 RefPtr<CryptoKeyEC> CryptoKeyEC::platformImportJWKPublic(CryptoAlgorithmIdentifier identifier, NamedCurve curve, Vector<uint8_t>&& x, Vector<uint8_t>&& y, bool extractable, CryptoKeyUsageBitmap usages)
@@ -184,7 +177,7 @@ RefPtr<CryptoKeyEC> CryptoKeyEC::platformImportJWKPublic(CryptoAlgorithmIdentifi
         return nullptr;
     }
 
-    return create(identifier, curve, CryptoKeyType::Public, platformKey.release(), extractable, usages);
+    return create(identifier, curve, CryptoKeyType::Public, PlatformECKeyContainer(platformKey.release()), extractable, usages);
 }
 
 RefPtr<CryptoKeyEC> CryptoKeyEC::platformImportJWKPrivate(CryptoAlgorithmIdentifier identifier, NamedCurve curve, Vector<uint8_t>&& x, Vector<uint8_t>&& y, Vector<uint8_t>&& d, bool extractable, CryptoKeyUsageBitmap usages)
@@ -208,7 +201,7 @@ RefPtr<CryptoKeyEC> CryptoKeyEC::platformImportJWKPrivate(CryptoAlgorithmIdentif
         return nullptr;
     }
 
-    return create(identifier, curve, CryptoKeyType::Private, platformKey.release(), extractable, usages);
+    return create(identifier, curve, CryptoKeyType::Private, PlatformECKeyContainer(platformKey.release()), extractable, usages);
 }
 
 static bool supportedAlgorithmIdentifier(CryptoAlgorithmIdentifier keyIdentifier, const Vector<uint8_t>& identifier)
@@ -345,7 +338,7 @@ RefPtr<CryptoKeyEC> CryptoKeyEC::platformImportSpki(CryptoAlgorithmIdentifier id
     }
 
     // Finally create a new CryptoKeyEC object, transferring to it ownership of the `public-key` s-expression.
-    return create(identifier, curve, CryptoKeyType::Public, platformKey.release(), extractable, usages);
+    return create(identifier, curve, CryptoKeyType::Public, PlatformECKeyContainer(platformKey.release()), extractable, usages);
 }
 
 RefPtr<CryptoKeyEC> CryptoKeyEC::platformImportPkcs8(CryptoAlgorithmIdentifier identifier, NamedCurve curve, Vector<uint8_t>&& keyData, bool extractable, CryptoKeyUsageBitmap usages)
@@ -490,13 +483,13 @@ RefPtr<CryptoKeyEC> CryptoKeyEC::platformImportPkcs8(CryptoAlgorithmIdentifier i
             return nullptr;
     }
 
-    return create(identifier, curve, CryptoKeyType::Private, platformKey.release(), extractable, usages);
+    return create(identifier, curve, CryptoKeyType::Private, PlatformECKeyContainer(platformKey.release()), extractable, usages);
 }
 
 Vector<uint8_t> CryptoKeyEC::platformExportRaw() const
 {
     PAL::GCrypt::Handle<gcry_ctx_t> context;
-    gcry_error_t error = gcry_mpi_ec_new(&context, m_platformKey, nullptr);
+    gcry_error_t error = gcry_mpi_ec_new(&context, m_platformKey.get(), nullptr);
     if (error != GPG_ERR_NO_ERROR) {
         PAL::GCrypt::logError(error);
         return { };
@@ -516,7 +509,7 @@ Vector<uint8_t> CryptoKeyEC::platformExportRaw() const
 bool CryptoKeyEC::platformAddFieldElements(JsonWebKey& jwk) const
 {
     PAL::GCrypt::Handle<gcry_ctx_t> context;
-    gcry_error_t error = gcry_mpi_ec_new(&context, m_platformKey, nullptr);
+    gcry_error_t error = gcry_mpi_ec_new(&context, m_platformKey.get(), nullptr);
     if (error != GPG_ERR_NO_ERROR) {
         PAL::GCrypt::logError(error);
         return false;
@@ -595,7 +588,7 @@ Vector<uint8_t> CryptoKeyEC::platformExportSpki() const
         }
 
         // Retrieve the `q` s-expression, which should contain the public key data.
-        PAL::GCrypt::Handle<gcry_sexp_t> qSexp(gcry_sexp_find_token(m_platformKey, "q", 0));
+        PAL::GCrypt::Handle<gcry_sexp_t> qSexp(gcry_sexp_find_token(m_platformKey.get(), "q", 0));
         if (!qSexp)
             return { };
 
@@ -649,7 +642,7 @@ Vector<uint8_t> CryptoKeyEC::platformExportPkcs8() const
 
         // Construct the EC context that we'll use to retrieve private and public key data.
         PAL::GCrypt::Handle<gcry_ctx_t> context;
-        gcry_error_t error = gcry_mpi_ec_new(&context, m_platformKey, nullptr);
+        gcry_error_t error = gcry_mpi_ec_new(&context, m_platformKey.get(), nullptr);
         if (error != GPG_ERR_NO_ERROR)
             return { };
 

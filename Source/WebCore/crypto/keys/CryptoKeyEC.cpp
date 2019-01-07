@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2017-2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -50,9 +50,9 @@ static Optional<CryptoKeyEC::NamedCurve> toNamedCurve(const String& curve)
     return WTF::nullopt;
 }
 
-CryptoKeyEC::CryptoKeyEC(CryptoAlgorithmIdentifier identifier, NamedCurve curve, CryptoKeyType type, PlatformECKey platformKey, bool extractable, CryptoKeyUsageBitmap usages)
+CryptoKeyEC::CryptoKeyEC(CryptoAlgorithmIdentifier identifier, NamedCurve curve, CryptoKeyType type, PlatformECKeyContainer&& platformKey, bool extractable, CryptoKeyUsageBitmap usages)
     : CryptoKey(identifier, type, extractable, usages)
-    , m_platformKey(platformKey)
+    , m_platformKey(WTFMove(platformKey))
     , m_curve(curve)
 {
     // Only CryptoKeyEC objects for supported curves should be created.

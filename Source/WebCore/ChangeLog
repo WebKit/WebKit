@@ -1,3 +1,50 @@
+2019-01-07  David Kilzer  <ddkilzer@apple.com>
+
+        PlatformECKey should use a std::unique_ptr
+        <https://webkit.org/b/193170>
+
+        Reviewed by Brent Fulgham.
+
+        Broadly:
+        - Switch from using raw pointers to using std::unique_ptr<> to
+          hold PlatformECKey.
+        - Introduce PlatformECKeyContainer type to handle different
+          std::unique_ptr<> types on each platform.
+        - Get rid of custom CryptoKeyEC destructors since the
+          std::unique_ptr<> handles that with a Deleter.
+        - Initialize stack variables to nullptr.
+
+        * crypto/gcrypt/CryptoKeyECGCrypt.cpp:
+        (WebCore::CryptoKeyEC::keySizeInBits const):
+        (WebCore::CryptoKeyEC::platformGeneratePair):
+        (WebCore::CryptoKeyEC::platformImportRaw):
+        (WebCore::CryptoKeyEC::platformImportJWKPublic):
+        (WebCore::CryptoKeyEC::platformImportJWKPrivate):
+        (WebCore::CryptoKeyEC::platformImportSpki):
+        (WebCore::CryptoKeyEC::platformImportPkcs8):
+        (WebCore::CryptoKeyEC::platformExportRaw const):
+        (WebCore::CryptoKeyEC::platformAddFieldElements const):
+        (WebCore::CryptoKeyEC::platformExportSpki const):
+        (WebCore::CryptoKeyEC::platformExportPkcs8 const):
+        (WebCore::CryptoKeyEC::~CryptoKeyEC): Deleted.
+        * crypto/keys/CryptoKeyEC.cpp:
+        (WebCore::CryptoKeyEC::CryptoKeyEC):
+        * crypto/keys/CryptoKeyEC.h:
+        (WebCore::CCECCryptorRefDeleter::operator() const):
+        * crypto/mac/CryptoKeyECMac.cpp:
+        (WebCore::CryptoKeyEC::keySizeInBits const):
+        (WebCore::CryptoKeyEC::platformGeneratePair):
+        (WebCore::CryptoKeyEC::platformImportRaw):
+        (WebCore::CryptoKeyEC::platformExportRaw const):
+        (WebCore::CryptoKeyEC::platformImportJWKPublic):
+        (WebCore::CryptoKeyEC::platformImportJWKPrivate):
+        (WebCore::CryptoKeyEC::platformAddFieldElements const):
+        (WebCore::CryptoKeyEC::platformImportSpki):
+        (WebCore::CryptoKeyEC::platformExportSpki const):
+        (WebCore::CryptoKeyEC::platformImportPkcs8):
+        (WebCore::CryptoKeyEC::platformExportPkcs8 const):
+        (WebCore::CryptoKeyEC::~CryptoKeyEC): Deleted.
+
 2019-01-07  Antti Koivisto  <antti@apple.com>
 
         UI process side scrollbars for UI side compositing on Mac
