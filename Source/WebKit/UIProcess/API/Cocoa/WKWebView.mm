@@ -6957,6 +6957,11 @@ static WebCore::UserInterfaceLayoutDirection toUserInterfaceLayoutDirection(UISe
     _resolutionForShareSheetImmediateCompletionForTesting = resolved;
 }
 
+- (BOOL)_hasInspectorFrontend
+{
+    return _page && _page->hasInspectorFrontend();
+}
+
 - (_WKInspector *)_inspector
 {
     if (auto* inspector = _page->inspector())

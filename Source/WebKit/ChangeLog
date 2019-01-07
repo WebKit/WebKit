@@ -1,3 +1,17 @@
+2019-01-07  Joseph Pecoraro  <pecoraro@apple.com>
+
+        [Cocoa] Add SPI to check if a WKWebView has an inspector frontend
+        https://bugs.webkit.org/show_bug.cgi?id=193162
+        <rdar://problem/24267143>
+
+        Reviewed by Alex Christensen.
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _hasInspectorFrontend]):
+        * UIProcess/API/Cocoa/WKWebViewPrivate.h:
+        * UIProcess/WebPageProxy.h:
+        (WebKit::WebPageProxy::hasInspectorFrontend const):
+
 2019-01-07  Antti Koivisto  <antti@apple.com>
 
         UI process side scrollbars for UI side compositing on Mac
