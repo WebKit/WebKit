@@ -744,7 +744,10 @@ Bug(GTK) plugins/quicktime-plugin-replacement.html [ Skip ]
 css3/scroll-snap [ Skip ]
 
 # ENABLE(CSS_TYPED_OM) is disabled.
-css-typedom [ Skip ]
+webkit.org/b/192875 css-typedom [ Skip ]
+
+# ENABLE(CSS_PAINTING_API) is disabled.
+webkit.org/b/190710 fast/css-custom-paint [ Skip ]
 
 # ENABLE(DARK_MODE_CSS) is disabled.
 css-dark-mode [ Skip ]
@@ -3570,9 +3573,6 @@ webkit.org/b/190708 css3/blending/repaint/blend-mode-turn-off-isolation-no-effec
 
 webkit.org/b/190709 editing/pasteboard/emacs-ctrl-a-k-y.html [ Failure ]
 
-webkit.org/b/190710 fast/css-custom-paint/basic.html [ Failure ]
-webkit.org/b/190710 fast/css-custom-paint/registerPaintBindings.html [ Failure ]
-
 webkit.org/b/190990 fast/block/basic/inline-content-with-floating-image.html [ Failure Missing ]
 
 # Regressions from EME enablement
@@ -3647,13 +3647,11 @@ webkit.org/b/192432 compositing/tiling/tile-coverage-on-scroll.html [ Failure ]
 webkit.org/b/192433 compositing/iframes/remove-reinsert-webview-with-iframe.html [ Failure ]
 webkit.org/b/192434 fast/inline/inline-content-with-float-and-margin.html [ Failure ]
 webkit.org/b/166536 fast/canvas/webgl/hide-some-renderer-info.html [ Failure ]
-webkit.org/b/192435 fast/css-custom-paint/leaks.html [ Failure ]
 
 webkit.org/b/162815 fast/text/variations/font-face-clamp.html [ ImageOnlyFailure ]
 webkit.org/b/162815 fast/text/variations/font-selection-properties.html [ ImageOnlyFailure ]
 webkit.org/b/162815 fast/text/variations/skia-postscript-name.html [ ImageOnlyFailure ]
 
-webkit.org/b/192875 css-typedom/attributeStyleMap.html [ Failure ]
 webkit.org/b/192875 imported/w3c/web-platform-tests/css/css-properties-values-api/unit-cycles.html [ Failure ]
 
 webkit.org/b/192883 fast/cookies/cookie-averse-document.html [ Failure ]

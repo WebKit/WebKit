@@ -1,5 +1,15 @@
 2019-01-07  Claudio Saavedra  <csaavedra@igalia.com>
 
+        [WPE][GTK] Skip css-painting-api tests
+
+        Unreviewed gardening. CSS_PAINTING_API is disabled by default.
+        Also remove a few tests that were individually marked as failing
+        for css-typedom since we already skipped the whole directory.
+        * platform/gtk/TestExpectations:
+        * platform/wpe/TestExpectations:
+
+2019-01-07  Claudio Saavedra  <csaavedra@igalia.com>
+
         [WPE][GTK] Skip css-typedom tests
 
         Unreviewed gardening. CSS_TYPED_OM is disabled by default.

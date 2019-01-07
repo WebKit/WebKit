@@ -191,7 +191,10 @@ fast/events/touch/gesture/resources/drag-inside-nested-iframes3.html [ Skip ]
 css-dark-mode [ Skip ]
 
 # ENABLE(CSS_TYPED_OM) is disabled.
-css-typedom [ Skip ]
+webkit.org/b/192875 css-typedom [ Skip ]
+
+# ENABLE(CSS_PAINTING_API) is disabled
+webkit.org/b/190710 fast/css-custom-paint [ Skip ]
 
 # Tests below are copied from wk2 expectations, because we've marked
 #  as passing the whole fast/events directory.
@@ -1521,8 +1524,6 @@ webkit.org/b/163979 fast/css/will-change/will-change-creates-stacking-context.ht
 
 webkit.org/b/191006 webrtc/simulcast-h264.html [ Failure ]
 
-webkit.org/b/190710 fast/css-custom-paint/basic.html [ Failure ]
-
 webkit.org/b/190707 css-custom-properties-api/length2.html [ Failure ]
 
 webkit.org/b/191249 animations/stop-animation-on-suspend.html [ Failure ]
@@ -1534,7 +1535,6 @@ webkit.org/b/191250 fast/mediastream/getUserMedia-deny-persistency3.html [ Failu
 webkit.org/b/189343 imported/w3c/web-platform-tests/xhr/sync-no-timeout.any.html [ Failure ]
 webkit.org/b/189343 imported/w3c/web-platform-tests/xhr/sync-no-timeout.any.worker.html [ Failure ]
 
-webkit.org/b/192875 css-typedom/attributeStyleMap.html [ Failure ]
 webkit.org/b/192875 imported/w3c/web-platform-tests/css/css-properties-values-api/unit-cycles.html [ Failure ]
 
 webkit.org/b/192883 fast/cookies/cookie-averse-document.html [ Failure ]
