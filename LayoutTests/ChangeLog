@@ -1,3 +1,12 @@
+2019-01-07  Truitt Savell  <tsavell@apple.com>
+
+        Mark compositing/masks/compositing-clip-path-change-no-repaint.html flakey for Mojave WK1
+        https://bugs.webkit.org/show_bug.cgi?id=189753
+
+        Unreviewed Test Gardening
+
+        * platform/mac-wk1/TestExpectations:
+
 2019-01-07  Claudio Saavedra  <csaavedra@igalia.com>
 
         [WPE][GTK] Skip css-painting-api tests
