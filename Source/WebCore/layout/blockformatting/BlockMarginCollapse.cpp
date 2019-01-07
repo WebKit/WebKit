@@ -103,21 +103,21 @@ static LayoutUnit marginValue(LayoutUnit currentMarginValue, LayoutUnit candidat
     return currentMarginValue + candidateMarginValue;
 }
 
-LayoutUnit BlockFormattingContext::Geometry::MarginCollapse::computedNonCollapsedMarginBefore(const LayoutState& layoutState, const Box& layoutBox)
+LayoutUnit BlockFormattingContext::MarginCollapse::computedNonCollapsedMarginBefore(const LayoutState& layoutState, const Box& layoutBox)
 {
     ASSERT(layoutBox.isBlockLevelBox());
 
-    return computedVerticalMargin(layoutState, layoutBox).before.valueOr(0);
+    return Geometry::computedVerticalMargin(layoutState, layoutBox).before.valueOr(0);
 }
 
-LayoutUnit BlockFormattingContext::Geometry::MarginCollapse::computedNonCollapsedMarginAfter(const LayoutState& layoutState, const Box& layoutBox)
+LayoutUnit BlockFormattingContext::MarginCollapse::computedNonCollapsedMarginAfter(const LayoutState& layoutState, const Box& layoutBox)
 {
     ASSERT(layoutBox.isBlockLevelBox());
 
-    return computedVerticalMargin(layoutState, layoutBox).after.valueOr(0);
+    return Geometry::computedVerticalMargin(layoutState, layoutBox).after.valueOr(0);
 }
 
-LayoutUnit BlockFormattingContext::Geometry::MarginCollapse::nonCollapsedMarginBefore(const LayoutState& layoutState, const Box& layoutBox)
+LayoutUnit BlockFormattingContext::MarginCollapse::nonCollapsedMarginBefore(const LayoutState& layoutState, const Box& layoutBox)
 {
     ASSERT(layoutBox.isBlockLevelBox());
 
@@ -125,7 +125,7 @@ LayoutUnit BlockFormattingContext::Geometry::MarginCollapse::nonCollapsedMarginB
     return marginValue(computedNonCollapsedMarginBefore(layoutState, layoutBox), collapsedMarginBeforeFromFirstChild(layoutState, layoutBox));
 }
 
-LayoutUnit BlockFormattingContext::Geometry::MarginCollapse::nonCollapsedMarginAfter(const LayoutState& layoutState, const Box& layoutBox)
+LayoutUnit BlockFormattingContext::MarginCollapse::nonCollapsedMarginAfter(const LayoutState& layoutState, const Box& layoutBox)
 {
     ASSERT(layoutBox.isBlockLevelBox());
 
@@ -133,7 +133,7 @@ LayoutUnit BlockFormattingContext::Geometry::MarginCollapse::nonCollapsedMarginA
     return marginValue(computedNonCollapsedMarginAfter(layoutState, layoutBox), collapsedMarginAfterFromLastChild(layoutState, layoutBox));
 }
 
-LayoutUnit BlockFormattingContext::Geometry::MarginCollapse::collapsedMarginBeforeFromFirstChild(const LayoutState& layoutState, const Box& layoutBox)
+LayoutUnit BlockFormattingContext::MarginCollapse::collapsedMarginBeforeFromFirstChild(const LayoutState& layoutState, const Box& layoutBox)
 {
     ASSERT(layoutBox.isBlockLevelBox());
 
@@ -153,7 +153,7 @@ LayoutUnit BlockFormattingContext::Geometry::MarginCollapse::collapsedMarginBefo
     return marginValue(computedNonCollapsedMarginBefore(layoutState, firstInFlowChild), collapsedMarginBeforeFromFirstChild(layoutState, firstInFlowChild));
 }
 
-LayoutUnit BlockFormattingContext::Geometry::MarginCollapse::collapsedMarginAfterFromLastChild(const LayoutState& layoutState, const Box& layoutBox)
+LayoutUnit BlockFormattingContext::MarginCollapse::collapsedMarginAfterFromLastChild(const LayoutState& layoutState, const Box& layoutBox)
 {
     ASSERT(layoutBox.isBlockLevelBox());
 
@@ -174,7 +174,7 @@ LayoutUnit BlockFormattingContext::Geometry::MarginCollapse::collapsedMarginAfte
     return marginValue(computedNonCollapsedMarginAfter(layoutState, lastInFlowChild), collapsedMarginAfterFromLastChild(layoutState, lastInFlowChild));
 }
 
-bool BlockFormattingContext::Geometry::MarginCollapse::marginBeforeCollapsesWithParentMarginAfter(const LayoutState& layoutState, const Box& layoutBox)
+bool BlockFormattingContext::MarginCollapse::marginBeforeCollapsesWithParentMarginAfter(const LayoutState& layoutState, const Box& layoutBox)
 {
     // 1. This is the last in-flow child and its margins collapse through and the margin after collapses with parent's margin after or
     // 2. This box's margin after collapses with the next sibling's margin before and that sibling collapses through and
@@ -192,7 +192,7 @@ bool BlockFormattingContext::Geometry::MarginCollapse::marginBeforeCollapsesWith
     return false;
 }
 
-bool BlockFormattingContext::Geometry::MarginCollapse::marginBeforeCollapsesWithParentMarginBefore(const LayoutState& layoutState, const Box& layoutBox)
+bool BlockFormattingContext::MarginCollapse::marginBeforeCollapsesWithParentMarginBefore(const LayoutState& layoutState, const Box& layoutBox)
 {
     // The first inflow child could propagate its top margin to parent.
     // https://www.w3.org/TR/CSS21/box.html#collapsing-margins
@@ -238,7 +238,7 @@ bool BlockFormattingContext::Geometry::MarginCollapse::marginBeforeCollapsesWith
     return true;
 }
 
-bool BlockFormattingContext::Geometry::MarginCollapse::marginAfterCollapsesWithSiblingMarginBeforeWithClearance(const LayoutState& layoutState, const Box& layoutBox)
+bool BlockFormattingContext::MarginCollapse::marginAfterCollapsesWithSiblingMarginBeforeWithClearance(const LayoutState& layoutState, const Box& layoutBox)
 {
     // If the top and bottom margins of an element with clearance are adjoining, its margins collapse with the adjoining margins
     // of following siblings but that resulting margin does not collapse with the bottom margin of the parent block.
@@ -254,7 +254,7 @@ bool BlockFormattingContext::Geometry::MarginCollapse::marginAfterCollapsesWithS
     return false;
 }
 
-bool BlockFormattingContext::Geometry::MarginCollapse::marginAfterCollapsesWithParentMarginBefore(const LayoutState& layoutState, const Box& layoutBox)
+bool BlockFormattingContext::MarginCollapse::marginAfterCollapsesWithParentMarginBefore(const LayoutState& layoutState, const Box& layoutBox)
 {
     // 1. This is the first in-flow child and its margins collapse through and the margin before collapses with parent's margin before or
     // 2. This box's margin before collapses with the previous sibling's margin after and that sibling collapses through and
@@ -272,7 +272,7 @@ bool BlockFormattingContext::Geometry::MarginCollapse::marginAfterCollapsesWithP
     return false;
 }
 
-bool BlockFormattingContext::Geometry::MarginCollapse::marginAfterCollapsesWithParentMarginAfter(const LayoutState& layoutState, const Box& layoutBox)
+bool BlockFormattingContext::MarginCollapse::marginAfterCollapsesWithParentMarginAfter(const LayoutState& layoutState, const Box& layoutBox)
 {
     if (layoutBox.isAnonymous())
         return false;
@@ -324,7 +324,7 @@ bool BlockFormattingContext::Geometry::MarginCollapse::marginAfterCollapsesWithP
     return true;
 }
 
-bool BlockFormattingContext::Geometry::MarginCollapse::marginBeforeCollapsesWithPreviousSibling(const Box& layoutBox)
+bool BlockFormattingContext::MarginCollapse::marginBeforeCollapsesWithPreviousSibling(const Box& layoutBox)
 {
     ASSERT(layoutBox.isBlockLevelBox());
 
@@ -354,7 +354,7 @@ bool BlockFormattingContext::Geometry::MarginCollapse::marginBeforeCollapsesWith
     return true;
 }
 
-bool BlockFormattingContext::Geometry::MarginCollapse::marginAfterCollapsesWithNextSibling(const Box& layoutBox)
+bool BlockFormattingContext::MarginCollapse::marginAfterCollapsesWithNextSibling(const Box& layoutBox)
 {
     ASSERT(layoutBox.isBlockLevelBox());
 
@@ -364,7 +364,7 @@ bool BlockFormattingContext::Geometry::MarginCollapse::marginAfterCollapsesWithN
     return marginBeforeCollapsesWithPreviousSibling(*layoutBox.nextInFlowSibling());
 }
 
-bool BlockFormattingContext::Geometry::MarginCollapse::marginsCollapseThrough(const LayoutState& layoutState, const Box& layoutBox)
+bool BlockFormattingContext::MarginCollapse::marginsCollapseThrough(const LayoutState& layoutState, const Box& layoutBox)
 {
     ASSERT(layoutBox.isBlockLevelBox());
 
@@ -400,7 +400,7 @@ bool BlockFormattingContext::Geometry::MarginCollapse::marginsCollapseThrough(co
     return true;
 }
 
-LayoutUnit BlockFormattingContext::Geometry::MarginCollapse::marginBefore(const LayoutState& layoutState, const Box& layoutBox)
+LayoutUnit BlockFormattingContext::MarginCollapse::marginBefore(const LayoutState& layoutState, const Box& layoutBox)
 {
     if (layoutBox.isAnonymous())
         return 0;
@@ -435,7 +435,7 @@ LayoutUnit BlockFormattingContext::Geometry::MarginCollapse::marginBefore(const 
     return marginValue(marginBefore, previousSiblingMarginAfter);
 }
 
-LayoutUnit BlockFormattingContext::Geometry::MarginCollapse::marginAfter(const LayoutState& layoutState, const Box& layoutBox)
+LayoutUnit BlockFormattingContext::MarginCollapse::marginAfter(const LayoutState& layoutState, const Box& layoutBox)
 {
     if (layoutBox.isAnonymous())
         return 0;

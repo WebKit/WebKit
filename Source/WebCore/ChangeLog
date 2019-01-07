@@ -1,3 +1,50 @@
+2019-01-07  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC][BFC] Move MarginCollapse from BlockFormattingContext::Geometry to BlockFormattingContext
+        https://bugs.webkit.org/show_bug.cgi?id=193181
+
+        Reviewed by Antti Koivisto.
+
+        This is in preparation to share margin collapsing across all boxes in block formatting context.
+
+        * layout/blockformatting/BlockFormattingContext.h:
+        (WebCore::Layout::BlockFormattingContext::Geometry::inFlowNonReplacedHeightAndMargin):
+        (WebCore::Layout::BlockFormattingContext::Geometry::inFlowNonReplacedWidthAndMargin):
+        (WebCore::Layout::BlockFormattingContext::Geometry::inFlowReplacedWidthAndMargin):
+        * layout/blockformatting/BlockMarginCollapse.cpp:
+        (WebCore::Layout::BlockFormattingContext::MarginCollapse::computedNonCollapsedMarginBefore):
+        (WebCore::Layout::BlockFormattingContext::MarginCollapse::computedNonCollapsedMarginAfter):
+        (WebCore::Layout::BlockFormattingContext::MarginCollapse::nonCollapsedMarginBefore):
+        (WebCore::Layout::BlockFormattingContext::MarginCollapse::nonCollapsedMarginAfter):
+        (WebCore::Layout::BlockFormattingContext::MarginCollapse::collapsedMarginBeforeFromFirstChild):
+        (WebCore::Layout::BlockFormattingContext::MarginCollapse::collapsedMarginAfterFromLastChild):
+        (WebCore::Layout::BlockFormattingContext::MarginCollapse::marginBeforeCollapsesWithParentMarginAfter):
+        (WebCore::Layout::BlockFormattingContext::MarginCollapse::marginBeforeCollapsesWithParentMarginBefore):
+        (WebCore::Layout::BlockFormattingContext::MarginCollapse::marginAfterCollapsesWithSiblingMarginBeforeWithClearance):
+        (WebCore::Layout::BlockFormattingContext::MarginCollapse::marginAfterCollapsesWithParentMarginBefore):
+        (WebCore::Layout::BlockFormattingContext::MarginCollapse::marginAfterCollapsesWithParentMarginAfter):
+        (WebCore::Layout::BlockFormattingContext::MarginCollapse::marginBeforeCollapsesWithPreviousSibling):
+        (WebCore::Layout::BlockFormattingContext::MarginCollapse::marginAfterCollapsesWithNextSibling):
+        (WebCore::Layout::BlockFormattingContext::MarginCollapse::marginsCollapseThrough):
+        (WebCore::Layout::BlockFormattingContext::MarginCollapse::marginBefore):
+        (WebCore::Layout::BlockFormattingContext::MarginCollapse::marginAfter):
+        (WebCore::Layout::BlockFormattingContext::Geometry::MarginCollapse::computedNonCollapsedMarginBefore): Deleted.
+        (WebCore::Layout::BlockFormattingContext::Geometry::MarginCollapse::computedNonCollapsedMarginAfter): Deleted.
+        (WebCore::Layout::BlockFormattingContext::Geometry::MarginCollapse::nonCollapsedMarginBefore): Deleted.
+        (WebCore::Layout::BlockFormattingContext::Geometry::MarginCollapse::nonCollapsedMarginAfter): Deleted.
+        (WebCore::Layout::BlockFormattingContext::Geometry::MarginCollapse::collapsedMarginBeforeFromFirstChild): Deleted.
+        (WebCore::Layout::BlockFormattingContext::Geometry::MarginCollapse::collapsedMarginAfterFromLastChild): Deleted.
+        (WebCore::Layout::BlockFormattingContext::Geometry::MarginCollapse::marginBeforeCollapsesWithParentMarginAfter): Deleted.
+        (WebCore::Layout::BlockFormattingContext::Geometry::MarginCollapse::marginBeforeCollapsesWithParentMarginBefore): Deleted.
+        (WebCore::Layout::BlockFormattingContext::Geometry::MarginCollapse::marginAfterCollapsesWithSiblingMarginBeforeWithClearance): Deleted.
+        (WebCore::Layout::BlockFormattingContext::Geometry::MarginCollapse::marginAfterCollapsesWithParentMarginBefore): Deleted.
+        (WebCore::Layout::BlockFormattingContext::Geometry::MarginCollapse::marginAfterCollapsesWithParentMarginAfter): Deleted.
+        (WebCore::Layout::BlockFormattingContext::Geometry::MarginCollapse::marginBeforeCollapsesWithPreviousSibling): Deleted.
+        (WebCore::Layout::BlockFormattingContext::Geometry::MarginCollapse::marginAfterCollapsesWithNextSibling): Deleted.
+        (WebCore::Layout::BlockFormattingContext::Geometry::MarginCollapse::marginsCollapseThrough): Deleted.
+        (WebCore::Layout::BlockFormattingContext::Geometry::MarginCollapse::marginBefore): Deleted.
+        (WebCore::Layout::BlockFormattingContext::Geometry::MarginCollapse::marginAfter): Deleted.
+
 2019-01-07  Zan Dobersek  <zdobersek@igalia.com>
 
         [WPE] Use Widget bounds for PlatformScreen rectangle information

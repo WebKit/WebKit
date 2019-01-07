@@ -83,37 +83,37 @@ private:
         static LayoutUnit estimatedMarginAfter(const LayoutState&, const Box&);
 
     private:
-        // This class implements margin collapsing for block formatting context.
-        class MarginCollapse {
-        public:
-            static LayoutUnit marginBefore(const LayoutState&, const Box&);
-            static LayoutUnit marginAfter(const LayoutState&, const Box&);
-
-            static bool marginBeforeCollapsesWithParentMarginAfter(const LayoutState&, const Box&);
-            static bool marginAfterCollapsesWithParentMarginAfter(const LayoutState&, const Box&);
-
-        private:
-            static LayoutUnit collapsedMarginAfterFromLastChild(const LayoutState&, const Box&);
-            static LayoutUnit nonCollapsedMarginAfter(const LayoutState&, const Box&);
-
-            static LayoutUnit computedNonCollapsedMarginBefore(const LayoutState&, const Box&);
-            static LayoutUnit computedNonCollapsedMarginAfter(const LayoutState&, const Box&);
-
-            static LayoutUnit collapsedMarginBeforeFromFirstChild(const LayoutState&, const Box&);
-            static LayoutUnit nonCollapsedMarginBefore(const LayoutState&, const Box&);
-
-            static bool marginBeforeCollapsesWithParentMarginBefore(const LayoutState&, const Box&);
-            static bool marginBeforeCollapsesWithPreviousSibling(const Box&);
-            static bool marginAfterCollapsesWithNextSibling(const Box&);
-            static bool marginAfterCollapsesWithSiblingMarginBeforeWithClearance(const LayoutState&, const Box&);
-            static bool marginAfterCollapsesWithParentMarginBefore(const LayoutState&, const Box&);
-            static bool marginsCollapseThrough(const LayoutState&, const Box&);
-        };
-
         static HeightAndMargin inFlowNonReplacedHeightAndMargin(const LayoutState&, const Box&, Optional<LayoutUnit> usedHeight = { });
         static WidthAndMargin inFlowNonReplacedWidthAndMargin(const LayoutState&, const Box&, Optional<LayoutUnit> usedWidth = { });
         static WidthAndMargin inFlowReplacedWidthAndMargin(const LayoutState&, const Box&, Optional<LayoutUnit> usedWidth = { });
         static Point staticPositionForOutOfFlowPositioned(const LayoutState&, const Box&);
+    };
+
+    // This class implements margin collapsing for block formatting context.
+    class MarginCollapse {
+    public:
+        static LayoutUnit marginBefore(const LayoutState&, const Box&);
+        static LayoutUnit marginAfter(const LayoutState&, const Box&);
+
+        static bool marginBeforeCollapsesWithParentMarginAfter(const LayoutState&, const Box&);
+        static bool marginAfterCollapsesWithParentMarginAfter(const LayoutState&, const Box&);
+
+    private:
+        static LayoutUnit collapsedMarginAfterFromLastChild(const LayoutState&, const Box&);
+        static LayoutUnit nonCollapsedMarginAfter(const LayoutState&, const Box&);
+
+        static LayoutUnit computedNonCollapsedMarginBefore(const LayoutState&, const Box&);
+        static LayoutUnit computedNonCollapsedMarginAfter(const LayoutState&, const Box&);
+
+        static LayoutUnit collapsedMarginBeforeFromFirstChild(const LayoutState&, const Box&);
+        static LayoutUnit nonCollapsedMarginBefore(const LayoutState&, const Box&);
+
+        static bool marginBeforeCollapsesWithParentMarginBefore(const LayoutState&, const Box&);
+        static bool marginBeforeCollapsesWithPreviousSibling(const Box&);
+        static bool marginAfterCollapsesWithNextSibling(const Box&);
+        static bool marginAfterCollapsesWithSiblingMarginBeforeWithClearance(const LayoutState&, const Box&);
+        static bool marginAfterCollapsesWithParentMarginBefore(const LayoutState&, const Box&);
+        static bool marginsCollapseThrough(const LayoutState&, const Box&);
     };
 
     class Quirks {
