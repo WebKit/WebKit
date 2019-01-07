@@ -3,6 +3,15 @@
     "description": "Security domain allows the frontend to query for information relating to the security of the page (e.g. HTTPS info, TLS info, user activity, etc.).",
     "types": [
         {
+            "id": "Connection",
+            "type": "object",
+            "description": "Information about a SSL connection to display in the frontend.",
+            "properties": [
+                { "name": "protocol", "type": "string", "optional": true },
+                { "name": "cipher", "type": "string", "optional": true }
+            ]
+        },
+        {
             "id": "Certificate",
             "type": "object",
             "description": "Information about a SSL certificate to display in the frontend.",
@@ -19,6 +28,7 @@
             "type": "object",
             "description": "Security information for a given Network.Response.",
             "properties": [
+                { "name": "connection", "$ref": "Connection", "optional": true },
                 { "name": "certificate", "$ref": "Certificate", "optional": true }
             ]
         }

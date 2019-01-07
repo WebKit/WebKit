@@ -93,7 +93,8 @@
                 { "name": "requestBodyBytesSent", "type": "number", "optional": true, "description": "Total HTTP request body bytes sent over the network." },
                 { "name": "responseHeaderBytesReceived", "type": "number", "optional": true, "description": "Total HTTP response header bytes received over the network." },
                 { "name": "responseBodyBytesReceived", "type": "number", "optional": true, "description": "Total HTTP response body bytes received over the network." },
-                { "name": "responseBodyDecodedSize", "type": "number", "optional": true, "description": "Total decoded response body size in bytes." }
+                { "name": "responseBodyDecodedSize", "type": "number", "optional": true, "description": "Total decoded response body size in bytes." },
+                { "name": "securityConnection", "$ref": "Security.Connection", "optional": true, "description": "Connection information for the completed request." }
             ]
         },
         {

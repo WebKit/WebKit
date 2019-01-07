@@ -70,7 +70,7 @@ WI.Resource = class Resource extends WI.SourceCode
         this._failureReasonText = null;
         this._receivedNetworkLoadMetrics = false;
         this._responseSource = WI.Resource.ResponseSource.Unknown;
-        this._responseSecurity = null;
+        this._security = null;
         this._timingData = new WI.ResourceTimingData(this);
         this._protocol = null;
         this._priority = WI.Resource.NetworkPriority.Unknown;
@@ -307,7 +307,7 @@ WI.Resource = class Resource extends WI.SourceCode
     get statusCode() { return this._statusCode; }
     get statusText() { return this._statusText; }
     get responseSource() { return this._responseSource; }
-    get responseSecurity() { return this._responseSecurity; }
+    get security() { return this._security; }
     get timingData() { return this._timingData; }
     get protocol() { return this._protocol; }
     get priority() { return this._priority; }
@@ -715,8 +715,7 @@ WI.Resource = class Resource extends WI.SourceCode
         if (source)
             this._responseSource = WI.Resource.responseSourceFromPayload(source);
 
-        if (security)
-            this._responseSecurity = security;
+        this._security = security || {};
 
         const headerBaseSize = 12; // Length of "HTTP/1.1 ", " ", and "\r\n".
         const headerPad = 4; // Length of ": " and "\r\n".
@@ -791,6 +790,12 @@ WI.Resource = class Resource extends WI.SourceCode
 
             this.dispatchEventToListeners(WI.Resource.Event.SizeDidChange, {previousSize: this._estimatedSize});
             this.dispatchEventToListeners(WI.Resource.Event.TransferSizeDidChange);
+        }
+
+        if (metrics.securityConnection) {
+            if (!this._security)
+                this._security = {};
+            this._security.connection = metrics.securityConnection;
         }
 
         this.dispatchEventToListeners(WI.Resource.Event.MetricsDidChange);

@@ -1110,6 +1110,7 @@ webkit.org/b/158006 inspector/console/console-time.html [ Pass Timeout ]
 webkit.org/b/183880 [ Debug ] inspector/console/messageAdded-from-named-evaluations.html [ Slow ]
 webkit.org/b/156634 inspector/formatting/formatting-javascript.html [ Pass Timeout ]
 webkit.org/b/158948 inspector/timeline [ Pass Timeout ]
+webkit.org/b/191539 http/tests/inspector/network/resource-security-connection.html [ Skip ]
 
 webkit.org/b/187622 [ Debug ] inspector/view/asynchronous-layout.html [ Pass Timeout ]
 

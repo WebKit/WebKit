@@ -264,6 +264,17 @@ Ref<Inspector::Protocol::Network::Metrics> InspectorNetworkAgent::buildObjectFor
     if (networkLoadMetrics.responseBodyDecodedSize != std::numeric_limits<uint64_t>::max())
         metrics->setResponseBodyDecodedSize(networkLoadMetrics.responseBodyDecodedSize);
 
+    auto connectionPayload = Inspector::Protocol::Security::Connection::create()
+        .release();
+
+    if (!networkLoadMetrics.tlsProtocol.isEmpty())
+        connectionPayload->setProtocol(networkLoadMetrics.tlsProtocol);
+
+    if (!networkLoadMetrics.tlsCipher.isEmpty())
+        connectionPayload->setCipher(networkLoadMetrics.tlsCipher);
+
+    metrics->setSecurityConnection(WTFMove(connectionPayload));
+
     return metrics;
 }
 

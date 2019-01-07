@@ -71,6 +71,8 @@ public:
         copy.remoteAddress = remoteAddress.isolatedCopy();
         copy.connectionIdentifier = connectionIdentifier.isolatedCopy();
         copy.priority = priority;
+        copy.tlsProtocol = tlsProtocol.isolatedCopy();
+        copy.tlsCipher = tlsCipher.isolatedCopy();
         copy.requestHeaders = requestHeaders.isolatedCopy();
 
         copy.requestHeaderBytesSent = requestHeaderBytesSent;
@@ -102,6 +104,8 @@ public:
         remoteAddress = String();
         connectionIdentifier = String();
         priority = NetworkLoadPriority::Unknown;
+        tlsProtocol = String();
+        tlsCipher = String();
         requestHeaders.clear();
         requestHeaderBytesSent = std::numeric_limits<uint32_t>::max();
         requestBodyBytesSent = std::numeric_limits<uint64_t>::max();
@@ -125,6 +129,8 @@ public:
             && remoteAddress == other.remoteAddress
             && connectionIdentifier == other.connectionIdentifier
             && priority == other.priority
+            && tlsProtocol == other.tlsProtocol
+            && tlsCipher == other.tlsCipher
             && requestHeaders == other.requestHeaders
             && requestHeaderBytesSent == other.requestHeaderBytesSent
             && requestBodyBytesSent == other.requestBodyBytesSent
@@ -162,6 +168,9 @@ public:
     String connectionIdentifier;
     NetworkLoadPriority priority;
 
+    String tlsProtocol;
+    String tlsCipher;
+
     // Whether or not all of the properties (0 or otherwise) have been set.
     bool complete { false };
 
@@ -198,6 +207,8 @@ void NetworkLoadMetrics::encode(Encoder& encoder) const
     encoder << remoteAddress;
     encoder << connectionIdentifier;
     encoder << priority;
+    encoder << tlsProtocol;
+    encoder << tlsCipher;
     encoder << requestHeaders;
     encoder << requestHeaderBytesSent;
     encoder << requestBodyBytesSent;
@@ -222,6 +233,8 @@ bool NetworkLoadMetrics::decode(Decoder& decoder, NetworkLoadMetrics& metrics)
         && decoder.decode(metrics.remoteAddress)
         && decoder.decode(metrics.connectionIdentifier)
         && decoder.decode(metrics.priority)
+        && decoder.decode(metrics.tlsProtocol)
+        && decoder.decode(metrics.tlsCipher)
         && decoder.decode(metrics.requestHeaders)
         && decoder.decode(metrics.requestHeaderBytesSent)
         && decoder.decode(metrics.requestBodyBytesSent)

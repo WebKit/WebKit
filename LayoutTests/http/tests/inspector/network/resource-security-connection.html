@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<script src="../resources/inspector-test.js"></script>
+<script>
+let requestCount = 0;
+
+function createSecureRequest() {
+    let img = document.createElement("img");
+    img.src = "https://localhost:8443/resources/square100.png?" + (++requestCount);
+    document.body.appendChild(img);
+}
+
+function test()
+{
+    let suite = InspectorTest.createAsyncSuite("Resource.Security.Connection");
+
+    suite.addTestCase({
+        name: "Resource.Security.Connection.Basic",
+        description: "Check if a resource has security connection information.",
+        test(resolve, reject) {
+            WI.Resource.awaitEvent(WI.Resource.Event.ResponseReceived)
+            .then((event) => {
+                let resource = event.target;
+                InspectorTest.expectThat(resource.loadedSecurely, "Resource should have been loaded securely.");
+
+                let security = resource.security;
+                InspectorTest.expectNotNull(security, "Resource should have security information.");
+
+                let connection = security.connection;
+                InspectorTest.expectNotNull(connection, "Security information should include connection information.");
+                InspectorTest.expectGreaterThan(connection.protocol.length, 0, "Connection should have protocol.");
+                InspectorTest.expectGreaterThan(connection.cipher.length, 0, "Connection should have cipher.");
+            })
+            .then(resolve, reject);
+
+            InspectorTest.evaluateInPage(`createSecureRequest()`)
+            .catch(reject);
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="runTest()">
+    <p>Tests for resource security connection information.</p>
+</body>
+</html>

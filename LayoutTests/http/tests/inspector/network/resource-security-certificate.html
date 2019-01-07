@@ -4,18 +4,20 @@
 <meta charset="utf-8">
 <script src="../resources/inspector-test.js"></script>
 <script>
+let requestCount = 0;
+
 function createSecureRequest() {
     let img = document.createElement("img");
-    img.src = "https://localhost:8443/resources/square100.png";
+    img.src = "https://localhost:8443/resources/square100.png?" + (++requestCount);
     document.body.appendChild(img);
 }
 
 function test()
 {
-    let suite = InspectorTest.createAsyncSuite("Resource.Security");
+    let suite = InspectorTest.createAsyncSuite("Resource.Security.Certificate");
 
     suite.addTestCase({
-        name: "Resource.Security.Certificate",
+        name: "Resource.Security.Certificate.Basic",
         description: "Check if a resource has security certificate information.",
         test(resolve, reject) {
             WI.Resource.awaitEvent(WI.Resource.Event.ResponseReceived)
@@ -23,12 +25,12 @@ function test()
                 let resource = event.target;
                 InspectorTest.expectThat(resource.loadedSecurely, "Resource should have been loaded securely.");
 
-                let responseSecurity = resource.responseSecurity;
-                InspectorTest.expectNotNull(responseSecurity, "Resource should have security information.");
+                let security = resource.security;
+                InspectorTest.expectNotNull(security, "Resource should have security information.");
 
-                let certificate = responseSecurity.certificate;
+                let certificate = security.certificate;
                 InspectorTest.expectNotNull(certificate, "Security information should include certificate information.");
-                InspectorTest.expectGreaterThan(certificate.subject.length, 0, "Certificate should have subject");
+                InspectorTest.expectGreaterThan(certificate.subject.length, 0, "Certificate should have subject.");
                 InspectorTest.expectGreaterThan(certificate.validFrom, 0, "Certificate should have a validFrom date.");
                 InspectorTest.expectGreaterThan(certificate.validUntil, 0, "Certificate should have a validUntil date.");
             })
@@ -44,6 +46,6 @@ function test()
 </script>
 </head>
 <body onload="runTest()">
-    <p>Tests that a resource has security information.</p>
+    <p>Tests for resource security certificate information.</p>
 </body>
 </html>

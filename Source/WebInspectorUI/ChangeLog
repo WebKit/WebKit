@@ -1,3 +1,33 @@
+2019-01-07  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: Network: show secure connection details per-request
+        https://bugs.webkit.org/show_bug.cgi?id=191539
+        <rdar://problem/45979891>
+
+        Reviewed by Joseph Pecoraro.
+
+        * UserInterface/Models/Resource.js:
+        (WI.Resource):
+        (WI.Resource.prototype.get security): Added.
+        (WI.Resource.prototype.updateForResponse):
+        (WI.Resource.prototype.updateWithMetrics):
+        (WI.Resource.prototype.get responseSecurity): Deleted.
+
+        * UserInterface/Views/ResourceSecurityContentView.js:
+        (WI.ResourceSecurityContentView):
+        (WI.ResourceSecurityContentView.prototype.initialLayout):
+        (WI.ResourceSecurityContentView.prototype.layout):
+        (WI.ResourceSecurityContentView.prototype._refreshConnectionSection): Added.
+        (WI.ResourceSecurityContentView.prototype._refreshCetificateSection):
+        (WI.ResourceSecurityContentView.prototype._handleResourceMetricsDidChange): Added.
+        * UserInterface/Views/ResourceSecurityContentView.css:
+        (body[dir] .resource-security > section:matches(.connection, .certificate) > .details): Added.
+        (@media (prefers-dark-interface) body[dir] .resource-security > section:matches(.connection, .certificate) > .details): Added.
+        (body[dir] .resource-security > section.certificate > .details): Deleted.
+        (@media (prefers-dark-interface) body[dir] .resource-security > section.certificate > .details): Deleted.
+
+        * Localizations/en.lproj/localizedStrings.js:
+
 2019-01-07  Nikita Vasilyev  <nvasilyev@apple.com>
 
         Web Inspector: "white" isn't recognized as a color keyword

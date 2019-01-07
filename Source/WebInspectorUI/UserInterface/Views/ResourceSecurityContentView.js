@@ -34,6 +34,7 @@ WI.ResourceSecurityContentView = class ResourceSecurityContentView extends WI.Co
         this._resource = resource;
 
         this._insecureMessageElement = null;
+        this._needsConnectionRefresh = true;
         this._needsCertificateRefresh = true;
 
         this._searchQuery = null;
@@ -52,10 +53,14 @@ WI.ResourceSecurityContentView = class ResourceSecurityContentView extends WI.Co
     {
         super.initialLayout();
 
+        this._connectionSection = new WI.ResourceDetailsSection(WI.UIString("Connection"), "connection");
+        this.element.appendChild(this._connectionSection.element);
+
         this._certificateSection = new WI.ResourceDetailsSection(WI.UIString("Certificate"), "certificate");
         this.element.appendChild(this._certificateSection.element);
 
         this._resource.addEventListener(WI.Resource.Event.ResponseReceived, this._handleResourceResponseReceived, this);
+        this._resource.addEventListener(WI.Resource.Event.MetricsDidChange, this._handleResourceMetricsDidChange, this);
     }
 
     layout()
@@ -67,6 +72,11 @@ WI.ResourceSecurityContentView = class ResourceSecurityContentView extends WI.Co
                 this._insecureMessageElement = WI.createMessageTextView(WI.UIString("The resource was requested insecurely."), true);
             this.element.appendChild(this._insecureMessageElement);
             return;
+        }
+
+        if (this._needsConnectionRefresh) {
+            this._needsConnectionRefresh = false;
+            this._refreshConnectionSection();
         }
 
         if (this._needsCertificateRefresh) {
@@ -166,20 +176,41 @@ WI.ResourceSecurityContentView = class ResourceSecurityContentView extends WI.Co
 
     // Private
 
+    _refreshConnectionSection()
+    {
+        let detailsElement = this._connectionSection.detailsElement;
+        detailsElement.removeChildren();
+
+        let security = this._resource.security;
+        if (isEmptyObject(security)) {
+            this._connectionSection.markIncompleteSectionWithMessage(WI.UIString("No connection security information."));
+            return;
+        }
+
+        let connection = security.connection;
+        if (isEmptyObject(connection) || Object.values(connection).every((value) => !value)) {
+            this._connectionSection.markIncompleteSectionWithMessage(WI.UIString("No connection security information."));
+            return;
+        }
+
+        this._connectionSection.appendKeyValuePair(WI.UIString("Protocol"), connection.protocol || emDash);
+        this._connectionSection.appendKeyValuePair(WI.UIString("Cipher"), connection.cipher || emDash);
+    }
+
     _refreshCetificateSection()
     {
         let detailsElement = this._certificateSection.detailsElement;
         detailsElement.removeChildren();
 
-        let responseSecurity = this._resource.responseSecurity;
-        if (!responseSecurity) {
-            this._certificateSection.markIncompleteSectionWithMessage(WI.UIString("No response security information."));
+        let security = this._resource.security;
+        if (isEmptyObject(security)) {
+            this._certificateSection.markIncompleteSectionWithMessage(WI.UIString("No certificate security information."));
             return;
         }
 
-        let certificate = responseSecurity.certificate;
-        if (!certificate) {
-            this._certificateSection.markIncompleteSectionWithMessage(WI.UIString("No response security certificate."));
+        let certificate = security.certificate;
+        if (isEmptyObject(certificate) || Object.values(certificate).every((value) => !value)) {
+            this._certificateSection.markIncompleteSectionWithMessage(WI.UIString("No certificate security information."));
             return;
         }
 
@@ -207,7 +238,7 @@ WI.ResourceSecurityContentView = class ResourceSecurityContentView extends WI.Co
             pairElement.classList.add("show-certificate");
         }
 
-        this._certificateSection.appendKeyValuePair(WI.UIString("Subject"), certificate.subject);
+        this._certificateSection.appendKeyValuePair(WI.UIString("Subject"), certificate.subject || emDash);
 
         let appendFormattedDate = (key, timestamp) => {
             if (isNaN(timestamp))
@@ -307,6 +338,12 @@ WI.ResourceSecurityContentView = class ResourceSecurityContentView extends WI.Co
     _handleResourceResponseReceived(event)
     {
         this._needsCertificateRefresh = true;
+        this.needsLayout();
+    }
+
+    _handleResourceMetricsDidChange(event)
+    {
+        this._needsConnectionRefresh = true;
         this.needsLayout();
     }
 };
