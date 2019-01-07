@@ -1,3 +1,16 @@
+2019-01-07  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Remote inspector can crash if attempting to navigate inspector page
+        https://bugs.webkit.org/show_bug.cgi?id=193204
+        <rdar://problem/45550428>
+
+        Reviewed by Devin Rousso.
+
+        * UIProcess/mac/RemoteWebInspectorProxyMac.mm:
+        (WebKit::RemoteWebInspectorProxy::platformCreateFrontendPageAndWindow):
+        * UIProcess/mac/WKInspectorViewController.mm:
+        (-[WKInspectorViewController webView:decidePolicyForNavigationAction:decisionHandler:]):
+
 2019-01-07  Eric Carlson  <eric.carlson@apple.com>
 
         Deactivate audio session whenever possible
