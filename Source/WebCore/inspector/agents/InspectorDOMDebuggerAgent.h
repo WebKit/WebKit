@@ -57,8 +57,8 @@ public:
     virtual ~InspectorDOMDebuggerAgent();
 
     // DOMDebugger API
-    void setXHRBreakpoint(ErrorString&, const String& url, const bool* optionalIsRegex) final;
-    void removeXHRBreakpoint(ErrorString&, const String& url) final;
+    void setURLBreakpoint(ErrorString&, const String& url, const bool* optionalIsRegex) final;
+    void removeURLBreakpoint(ErrorString&, const String& url) final;
     void setEventBreakpoint(ErrorString&, const String& breakpointType, const String& eventName) final;
     void removeEventBreakpoint(ErrorString&, const String& breakpointType, const String& eventName) final;
     void setDOMBreakpoint(ErrorString&, int nodeId, const String& type) final;
@@ -72,6 +72,7 @@ public:
     void didRemoveDOMNode(Node&);
     void willModifyDOMAttr(Element&);
     void willSendXMLHttpRequest(const String& url);
+    void willFetch(const String& url);
     void frameDocumentUpdated(Frame&);
     void willHandleEvent(const Event&, const RegisteredEventListener&);
     void willFireTimer(bool oneShot);
@@ -87,6 +88,9 @@ private:
     void debuggerWasEnabled() final;
     void debuggerWasDisabled() final;
     void disable();
+
+    enum class URLBreakpointSource { Fetch, XHR };
+    void breakOnURLIfNeeded(const String& url, URLBreakpointSource);
 
     void descriptionForDOMEvent(Node& target, int breakpointType, bool insertion, JSON::Object& description);
     void updateSubtreeBreakpoints(Node*, uint32_t rootMask, bool set);
@@ -105,10 +109,9 @@ private:
         WTF::PairHashTraits<WTF::StrongEnumHashTraits<EventBreakpointType>, WTF::HashTraits<String>>
     > m_eventBreakpoints;
 
-    enum class XHRBreakpointType { Text, RegularExpression };
-
-    HashMap<String, XHRBreakpointType> m_xhrBreakpoints;
-    bool m_pauseOnAllXHRsEnabled { false };
+    enum class URLBreakpointType { RegularExpression, Text };
+    HashMap<String, URLBreakpointType> m_urlBreakpoints;
+    bool m_pauseOnAllURLsEnabled { false };
 };
 
 } // namespace WebCore

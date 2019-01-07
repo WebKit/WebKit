@@ -1,5 +1,21 @@
 2019-01-07  Devin Rousso  <drousso@apple.com>
 
+        Web Inspector: extend XHR breakpoints to work with fetch
+        https://bugs.webkit.org/show_bug.cgi?id=185843
+        <rdar://problem/40431027>
+
+        Reviewed by Matt Baker.
+
+        * inspector/dom-debugger/url-breakpoints.html: Copied from LayoutTests/inspector/dom-debugger/xhr-breakpoints.html.
+        * inspector/dom-debugger/url-breakpoints-expected.txt: Copied from LayoutTests/inspector/dom-debugger/xhr-breakpoints-expected.txt.
+
+        * inspector/dom-debugger/xhr-breakpoints.html: Deleted.
+        * inspector/dom-debugger/xhr-breakpoints-expected.txt: Deleted.
+
+        * inspector/dom-debugger/resources/dataFetch.json: Added.
+
+2019-01-07  Devin Rousso  <drousso@apple.com>
+
         Web Inspector: Network: show secure connection details per-request
         https://bugs.webkit.org/show_bug.cgi?id=191539
         <rdar://problem/45979891>

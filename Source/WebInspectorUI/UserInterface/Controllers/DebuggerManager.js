@@ -858,6 +858,8 @@ WI.DebuggerManager = class DebuggerManager extends WI.Object
             return WI.DebuggerManager.PauseReason.EventListener;
         case DebuggerAgent.PausedReason.Exception:
             return WI.DebuggerManager.PauseReason.Exception;
+        case DebuggerAgent.PausedReason.Fetch:
+            return WI.DebuggerManager.PauseReason.Fetch;
         case DebuggerAgent.PausedReason.PauseOnNextStatement:
             return WI.DebuggerManager.PauseReason.PauseOnNextStatement;
         case DebuggerAgent.PausedReason.Timer:
@@ -1389,6 +1391,7 @@ WI.DebuggerManager.PauseReason = {
     DOM: "DOM",
     EventListener: "event-listener",
     Exception: "exception",
+    Fetch: "fetch",
     PauseOnNextStatement: "pause-on-next-statement",
     Timer: "timer",
     XHR: "xhr",

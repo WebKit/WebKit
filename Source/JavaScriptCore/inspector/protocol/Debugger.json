@@ -340,7 +340,7 @@
             "description": "Fired when the virtual machine stopped on breakpoint or exception or any other stop criteria.",
             "parameters": [
                 { "name": "callFrames", "type": "array", "items": { "$ref": "CallFrame" }, "description": "Call stack the virtual machine stopped on." },
-                { "name": "reason", "type": "string", "enum": ["XHR", "DOM", "AnimationFrame", "EventListener", "Timer", "exception", "assert", "CSPViolation", "DebuggerStatement", "Breakpoint", "PauseOnNextStatement", "other"], "description": "Pause reason." },
+                { "name": "reason", "type": "string", "enum": ["XHR", "Fetch", "DOM", "AnimationFrame", "EventListener", "Timer", "exception", "assert", "CSPViolation", "DebuggerStatement", "Breakpoint", "PauseOnNextStatement", "other"], "description": "Pause reason." },
                 { "name": "data", "type": "object", "optional": true, "description": "Object containing break-specific auxiliary properties." },
                 { "name": "asyncStackTrace", "$ref": "Console.StackTrace", "optional": true, "description": "Linked list of asynchronous StackTraces." }
             ]

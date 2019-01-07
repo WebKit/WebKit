@@ -50,18 +50,18 @@
             ]
         },
         {
-            "name": "setXHRBreakpoint",
-            "description": "Sets breakpoint on XMLHttpRequest.",
+            "name": "setURLBreakpoint",
+            "description": "Sets breakpoint on network activity for the given URL.",
             "parameters": [
-                { "name": "url", "type": "string", "description": "Resource URL substring or regular expression. All XHRs having this substring in the URL will get stopped upon. An empty string will pause on all XHRs." },
+                { "name": "url", "type": "string", "description": "Resource URL substring or regular expression. All requests having this substring in the URL will get stopped upon. An empty string will pause on all requests." },
                 { "name": "isRegex", "type": "boolean", "optional": true, "description": "Whether the URL string is a regular expression." }
             ]
         },
         {
-            "name": "removeXHRBreakpoint",
-            "description": "Removes breakpoint from XMLHttpRequest.",
+            "name": "removeURLBreakpoint",
+            "description": "Removes breakpoint from network activity for the given URL.",
             "parameters": [
-                { "name": "url", "type": "string", "description": "Resource URL substring. An empty string will stop pausing on all XHRs." }
+                { "name": "url", "type": "string", "description": "Resource URL substring. An empty string will stop pausing on all requests." }
             ]
         }
     ]

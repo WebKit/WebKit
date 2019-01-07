@@ -43,6 +43,21 @@ WI.Setting = class Setting extends WI.Object
         this._defaultValue = defaultValue;
     }
 
+    // Static
+
+    static migrateValue(key)
+    {
+        let value = undefined;
+        if (!window.InspectorTest && window.localStorage && key in window.localStorage) {
+            try {
+                value = JSON.parse(window.localStorage[key]);
+            } catch { }
+
+            window.localStorage.removeItem(key);
+        }
+        return value;
+    }
+
     // Public
 
     get name()

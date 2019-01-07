@@ -92,6 +92,9 @@ void InspectorDOMDebuggerAgent::disable()
 {
     m_instrumentingAgents.setInspectorDOMDebuggerAgent(nullptr);
     discardBindings();
+    m_eventBreakpoints.clear();
+    m_urlBreakpoints.clear();
+    m_pauseOnAllURLsEnabled = false;
 }
 
 void InspectorDOMDebuggerAgent::didCreateFrontendAndBackend(Inspector::FrontendRouter*, Inspector::BackendDispatcher*)
@@ -120,7 +123,6 @@ void InspectorDOMDebuggerAgent::frameDocumentUpdated(Frame& frame)
 void InspectorDOMDebuggerAgent::discardBindings()
 {
     m_domBreakpoints.clear();
-    m_xhrBreakpoints.clear();
 }
 
 void InspectorDOMDebuggerAgent::setEventBreakpoint(ErrorString& error, const String& breakpointTypeString, const String& eventName)
@@ -408,39 +410,39 @@ void InspectorDOMDebuggerAgent::willFireAnimationFrame()
     m_debuggerAgent->schedulePauseOnNextStatement(Inspector::DebuggerFrontendDispatcher::Reason::AnimationFrame, WTFMove(eventData));
 }
 
-void InspectorDOMDebuggerAgent::setXHRBreakpoint(ErrorString&, const String& url, const bool* optionalIsRegex)
+void InspectorDOMDebuggerAgent::setURLBreakpoint(ErrorString&, const String& url, const bool* optionalIsRegex)
 {
     if (url.isEmpty()) {
-        m_pauseOnAllXHRsEnabled = true;
+        m_pauseOnAllURLsEnabled = true;
         return;
     }
 
     bool isRegex = optionalIsRegex ? *optionalIsRegex : false;
-    m_xhrBreakpoints.set(url, isRegex ? XHRBreakpointType::RegularExpression : XHRBreakpointType::Text);
+    m_urlBreakpoints.set(url, isRegex ? URLBreakpointType::RegularExpression : URLBreakpointType::Text);
 }
 
-void InspectorDOMDebuggerAgent::removeXHRBreakpoint(ErrorString&, const String& url)
+void InspectorDOMDebuggerAgent::removeURLBreakpoint(ErrorString&, const String& url)
 {
     if (url.isEmpty()) {
-        m_pauseOnAllXHRsEnabled = false;
+        m_pauseOnAllURLsEnabled = false;
         return;
     }
 
-    m_xhrBreakpoints.remove(url);
+    m_urlBreakpoints.remove(url);
 }
 
-void InspectorDOMDebuggerAgent::willSendXMLHttpRequest(const String& url)
+void InspectorDOMDebuggerAgent::breakOnURLIfNeeded(const String& url, URLBreakpointSource source)
 {
     if (!m_debuggerAgent->breakpointsActive())
         return;
 
     String breakpointURL;
-    if (m_pauseOnAllXHRsEnabled)
+    if (m_pauseOnAllURLsEnabled)
         breakpointURL = emptyString();
     else {
-        for (auto& entry : m_xhrBreakpoints) {
+        for (auto& entry : m_urlBreakpoints) {
             const auto& query = entry.key;
-            bool isRegex = entry.value == XHRBreakpointType::RegularExpression;
+            bool isRegex = entry.value == URLBreakpointType::RegularExpression;
             auto regex = ContentSearchUtilities::createSearchRegex(query, false, isRegex);
             if (regex.match(url) != -1) {
                 breakpointURL = query;
@@ -452,10 +454,30 @@ void InspectorDOMDebuggerAgent::willSendXMLHttpRequest(const String& url)
     if (breakpointURL.isNull())
         return;
 
+    Inspector::DebuggerFrontendDispatcher::Reason breakReason;
+    if (source == URLBreakpointSource::Fetch)
+        breakReason = Inspector::DebuggerFrontendDispatcher::Reason::Fetch;
+    else if (source == URLBreakpointSource::XHR)
+        breakReason = Inspector::DebuggerFrontendDispatcher::Reason::XHR;
+    else {
+        ASSERT_NOT_REACHED();
+        breakReason = Inspector::DebuggerFrontendDispatcher::Reason::Other;
+    }
+
     Ref<JSON::Object> eventData = JSON::Object::create();
     eventData->setString("breakpointURL", breakpointURL);
     eventData->setString("url", url);
-    m_debuggerAgent->breakProgram(Inspector::DebuggerFrontendDispatcher::Reason::XHR, WTFMove(eventData));
+    m_debuggerAgent->breakProgram(breakReason, WTFMove(eventData));
+}
+
+void InspectorDOMDebuggerAgent::willSendXMLHttpRequest(const String& url)
+{
+    breakOnURLIfNeeded(url, URLBreakpointSource::XHR);
+}
+
+void InspectorDOMDebuggerAgent::willFetch(const String& url)
+{
+    breakOnURLIfNeeded(url, URLBreakpointSource::Fetch);
 }
 
 } // namespace WebCore

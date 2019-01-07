@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,60 +23,6 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WI.XHRBreakpoint = class XHRBreakpoint extends WI.Object
-{
-    constructor(type, url, disabled)
-    {
-        super();
-
-        this._type = type || WI.XHRBreakpoint.Type.Text;
-        this._url = url || "";
-        this._disabled = disabled || false;
-    }
-
-    // Public
-
-    get type() { return this._type; }
-    get url() { return this._url; }
-
-    get disabled()
-    {
-        return this._disabled;
-    }
-
-    set disabled(disabled)
-    {
-        if (this._disabled === disabled)
-            return;
-
-        this._disabled = disabled;
-
-        this.dispatchEventToListeners(WI.XHRBreakpoint.Event.DisabledStateDidChange);
-    }
-
-    get serializableInfo()
-    {
-        let info = {type: this._type, url: this._url};
-        if (this._disabled)
-            info.disabled = true;
-
-        return info;
-    }
-
-    saveIdentityToCookie(cookie)
-    {
-        cookie[WI.XHRBreakpoint.URLCookieKey] = this._url;
-    }
-};
-
-WI.XHRBreakpoint.URLCookieKey = "xhr-breakpoint-url";
-
-WI.XHRBreakpoint.Event = {
-    DisabledStateDidChange: "xhr-breakpoint-disabled-state-did-change",
-    ResolvedStateDidChange: "xhr-breakpoint-resolved-state-did-change",
-};
-
-WI.XHRBreakpoint.Type = {
-    Text: "text",
-    RegularExpression: "regex",
-};
+.breakpoint.url .subtitle {
+    font-family: Menlo, monospace;
+}

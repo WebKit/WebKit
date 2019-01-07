@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,11 +23,11 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WI.XHRBreakpointTreeElement = class XHRBreakpointTreeElement extends WI.GeneralTreeElement
+WI.URLBreakpointTreeElement = class URLBreakpointTreeElement extends WI.GeneralTreeElement
 {
     constructor(breakpoint, {className, title} = {})
     {
-        console.assert(breakpoint instanceof WI.XHRBreakpoint);
+        console.assert(breakpoint instanceof WI.URLBreakpoint);
 
         if (!className)
             className = WI.BreakpointTreeElement.GenericLineIconStyleClassName;
@@ -35,20 +35,20 @@ WI.XHRBreakpointTreeElement = class XHRBreakpointTreeElement extends WI.GeneralT
         let subtitle;
         if (!title) {
             title = WI.UIString("URL");
-            if (breakpoint.type === WI.XHRBreakpoint.Type.Text)
+            if (breakpoint.type === WI.URLBreakpoint.Type.Text)
                 subtitle = doubleQuotedString(breakpoint.url);
             else
                 subtitle = "/" + breakpoint.url + "/";
         }
 
-        super(["breakpoint", "xhr", className], title, subtitle, breakpoint);
+        super(["breakpoint", "url", className], title, subtitle, breakpoint);
 
         this.status = document.createElement("img");
         this.status.classList.add("status-image", "resolved");
 
         this.tooltipHandledSeparately = true;
 
-        breakpoint.addEventListener(WI.XHRBreakpoint.Event.DisabledStateDidChange, this._updateStatus, this);
+        breakpoint.addEventListener(WI.URLBreakpoint.Event.DisabledStateDidChange, this._updateStatus, this);
 
         this._updateStatus();
     }
@@ -88,7 +88,7 @@ WI.XHRBreakpointTreeElement = class XHRBreakpointTreeElement extends WI.GeneralT
         // within the TreeOutline or from outside it (e.g. TextEditor).
         this.__deletedViaDeleteKeyboardShortcut = true;
 
-        WI.domDebuggerManager.removeXHRBreakpoint(this.representedObject);
+        WI.domDebuggerManager.removeURLBreakpoint(this.representedObject);
         return true;
     }
 
@@ -113,7 +113,7 @@ WI.XHRBreakpointTreeElement = class XHRBreakpointTreeElement extends WI.GeneralT
         contextMenu.appendSeparator();
 
         contextMenu.appendItem(WI.UIString("Delete Breakpoint"), () => {
-            WI.domDebuggerManager.removeXHRBreakpoint(breakpoint);
+            WI.domDebuggerManager.removeURLBreakpoint(breakpoint);
         });
     }
 

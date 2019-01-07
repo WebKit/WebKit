@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,7 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WI.XHRBreakpointPopover = class XHRBreakpointPopover extends WI.Popover
+WI.URLBreakpointPopover = class URLBreakpointPopover extends WI.Popover
 {
     constructor(delegate)
     {
@@ -48,7 +48,7 @@ WI.XHRBreakpointPopover = class XHRBreakpointPopover extends WI.Popover
         this._preferredEdges = preferredEdges;
 
         let contentElement = document.createElement("div");
-        contentElement.classList.add("xhr-breakpoint-content");
+        contentElement.classList.add("url-breakpoint-content");
 
         let label = document.createElement("div");
         label.classList.add("label");
@@ -65,10 +65,10 @@ WI.XHRBreakpointPopover = class XHRBreakpointPopover extends WI.Popover
             optionElement.value = value;
         };
 
-        createOption(WI.UIString("Containing"), WI.XHRBreakpoint.Type.Text);
-        createOption(WI.UIString("Matching"), WI.XHRBreakpoint.Type.RegularExpression);
+        createOption(WI.UIString("Containing"), WI.URLBreakpoint.Type.Text);
+        createOption(WI.UIString("Matching"), WI.URLBreakpoint.Type.RegularExpression);
 
-        this._typeSelectElement.value = WI.XHRBreakpoint.Type.Text;
+        this._typeSelectElement.value = WI.URLBreakpoint.Type.Text;
         this._typeSelectElement.addEventListener("change", (event) => {
             this._updateEditor();
             this._codeMirror.focus();
@@ -87,7 +87,7 @@ WI.XHRBreakpointPopover = class XHRBreakpointPopover extends WI.Popover
         let type = this._typeSelectElement.value;
         let url = this._codeMirror.getValue();
         if (type && url)
-            this._breakpoint = new WI.XHRBreakpoint(type, url);
+            this._breakpoint = new WI.URLBreakpoint(type, url);
 
         super.dismiss();
     }
@@ -124,7 +124,7 @@ WI.XHRBreakpointPopover = class XHRBreakpointPopover extends WI.Popover
     {
         let placeholder;
         let mimeType;
-        if (this._typeSelectElement.value === WI.XHRBreakpoint.Type.Text) {
+        if (this._typeSelectElement.value === WI.URLBreakpoint.Type.Text) {
             placeholder = WI.UIString("Text");
             mimeType = "text/plain";
         } else {

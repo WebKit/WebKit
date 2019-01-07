@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,48 +23,58 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-.popover .xhr-breakpoint-content {
-    padding: 5px;
-    margin: 2px;
-}
+WI.URLBreakpoint = class URLBreakpoint extends WI.Object
+{
+    constructor(type, url, disabled)
+    {
+        super();
 
-.popover .xhr-breakpoint-content > .editor-wrapper {
-    margin-top: 4px;
-    display: flex;
-    flex-direction: row;
-}
-
-.popover .xhr-breakpoint-content > .editor-wrapper > .editor {
-    width: 180px;
-    padding: 4px 0 2px 0;
-    -webkit-appearance: textfield;
-    border: 1px solid hsl(0, 0%, 78%);
-    background: var(--background-color-code);
-
-    --editor-margin-start: 4px;
-}
-
-body[dir=ltr] .popover .xhr-breakpoint-content > .editor-wrapper > .editor {
-    margin-left: var(--editor-margin-start);
-}
-
-body[dir=rtl] .popover .xhr-breakpoint-content > .editor-wrapper > .editor {
-    margin-right: var(--editor-margin-start);
-}
-
-.popover .xhr-breakpoint-content > .editor-wrapper > .editor > .CodeMirror {
-    width: calc(100% - 2px);
-    height: auto;
-}
-
-.popover .xhr-breakpoint-content > .editor-wrapper > .editor > .CodeMirror-scroll {
-    width: calc(100% - 2px);
-    overflow: hidden;
-}
-
-@media (prefers-dark-interface) {
-    .popover .xhr-breakpoint-content > .editor-wrapper > .editor {
-        -webkit-appearance: unset;
-        border-color: var(--text-color-quaternary);
+        this._type = type || WI.URLBreakpoint.Type.Text;
+        this._url = url || "";
+        this._disabled = disabled || false;
     }
-}
+
+    // Public
+
+    get type() { return this._type; }
+    get url() { return this._url; }
+
+    get disabled()
+    {
+        return this._disabled;
+    }
+
+    set disabled(disabled)
+    {
+        if (this._disabled === disabled)
+            return;
+
+        this._disabled = disabled;
+
+        this.dispatchEventToListeners(WI.URLBreakpoint.Event.DisabledStateDidChange);
+    }
+
+    get serializableInfo()
+    {
+        let info = {type: this._type, url: this._url};
+        if (this._disabled)
+            info.disabled = true;
+
+        return info;
+    }
+
+    saveIdentityToCookie(cookie)
+    {
+        cookie["url-breakpoint-url"] = this._url;
+    }
+};
+
+WI.URLBreakpoint.Event = {
+    DisabledStateDidChange: "url-breakpoint-disabled-state-did-change",
+    ResolvedStateDidChange: "url-breakpoint-resolved-state-did-change",
+};
+
+WI.URLBreakpoint.Type = {
+    Text: "text",
+    RegularExpression: "regex",
+};

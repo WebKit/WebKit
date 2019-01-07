@@ -1,5 +1,64 @@
 2019-01-07  Devin Rousso  <drousso@apple.com>
 
+        Web Inspector: extend XHR breakpoints to work with fetch
+        https://bugs.webkit.org/show_bug.cgi?id=185843
+        <rdar://problem/40431027>
+
+        Reviewed by Matt Baker.
+
+        * UserInterface/Controllers/DOMDebuggerManager.js:
+        (WI.DOMDebuggerManager):
+        (WI.DOMDebuggerManager.supportsURLBreakpoints): Added.
+        (WI.DOMDebuggerManager.prototype.get urlBreakpoints): Added.
+        (WI.DOMDebuggerManager.prototype.urlBreakpointForURL): Added.
+        (WI.DOMDebuggerManager.prototype.addURLBreakpoint): Added.
+        (WI.DOMDebuggerManager.prototype.removeURLBreakpoint): Added.
+        (WI.DOMDebuggerManager.prototype._speculativelyResolveBreakpoints):
+        (WI.DOMDebuggerManager.prototype._updateURLBreakpoint): Added.
+        (WI.DOMDebuggerManager.prototype._resolveURLBreakpoint): Added.
+        (WI.DOMDebuggerManager.prototype._saveURLBreakpoints): Added.
+        (WI.DOMDebuggerManager.prototype._urlBreakpointDisabledStateDidChange): Added.
+        (WI.DOMDebuggerManager.prototype.get xhrBreakpoints): Deleted.
+        (WI.DOMDebuggerManager.prototype.xhrBreakpointForURL): Deleted.
+        (WI.DOMDebuggerManager.prototype.addXHRBreakpoint): Deleted.
+        (WI.DOMDebuggerManager.prototype.removeXHRBreakpoint): Deleted.
+        (WI.DOMDebuggerManager.prototype._updateXHRBreakpoint.breakpointUpdated): Deleted.
+        (WI.DOMDebuggerManager.prototype._updateXHRBreakpoint): Deleted.
+        (WI.DOMDebuggerManager.prototype._resolveXHRBreakpoint): Deleted.
+        (WI.DOMDebuggerManager.prototype._saveXHRBreakpoints): Deleted.
+        (WI.DOMDebuggerManager.prototype._xhrBreakpointDisabledStateDidChange): Deleted.
+
+        * UserInterface/Controllers/DebuggerManager.js:
+        (WI.DebuggerManager.prototype._pauseReasonFromPayload):
+
+        * UserInterface/Views/DebuggerSidebarPanel.js:
+        (WI.DebuggerSidebarPanel):
+        (WI.DebuggerSidebarPanel.prototype.willDismissPopover):
+        (WI.DebuggerSidebarPanel.prototype._addBreakpoint):
+        (WI.DebuggerSidebarPanel.prototype._treeSelectionDidChange):
+        (WI.DebuggerSidebarPanel.prototype._addTreeElement):
+        (WI.DebuggerSidebarPanel.prototype._updatePauseReasonSection):
+        (WI.DebuggerSidebarPanel.prototype._handleCreateBreakpointClicked):
+
+        * UserInterface/Views/NavigationSidebarPanel.js:
+        (WI.NavigationSidebarPanel.prototype._isTreeElementWithoutRepresentedObject):
+
+        * UserInterface/Models/URLBreakpoint.js: Renamed from Source/WebInspectorUI/UserInterface/Models/XHRBreakpoint.js.
+        * UserInterface/Views/URLBreakpointPopover.css: Renamed from Source/WebInspectorUI/UserInterface/Views/XHRBreakpointPopover.css.
+        * UserInterface/Views/URLBreakpointPopover.js: Renamed from Source/WebInspectorUI/UserInterface/Views/XHRBreakpointPopover.js.
+        * UserInterface/Views/URLBreakpointTreeElement.css: Renamed from Source/WebInspectorUI/UserInterface/Views/XHRBreakpointTreeElement.css.
+        * UserInterface/Views/URLBreakpointTreeElement.js: Renamed from Source/WebInspectorUI/UserInterface/Views/XHRBreakpointTreeElement.js.
+
+        * UserInterface/Base/Setting.js:
+        (WI.Setting.migrateValue): Added.
+
+        * UserInterface/Main.html:
+        * UserInterface/Test.html:
+
+        * Localizations/en.lproj/localizedStrings.js:
+
+2019-01-07  Devin Rousso  <drousso@apple.com>
+
         Web Inspector: Network: show secure connection details per-request
         https://bugs.webkit.org/show_bug.cgi?id=191539
         <rdar://problem/45979891>
