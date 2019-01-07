@@ -420,8 +420,12 @@ WI.SpreadsheetStyleProperty = class SpreadsheetStyleProperty extends WI.Object
 
         if (this._property.enabled) {
             // FIXME: <https://webkit.org/b/178636> Web Inspector: Styles: Make inline widgets work with CSS functions (var(), calc(), etc.)
-            tokens = this._addGradientTokens(tokens);
-            tokens = this._addColorTokens(tokens);
+
+            // CSS variables may contain color - display color picker for them.
+            if (this._property.variable || WI.CSSKeywordCompletions.isColorAwareProperty(this._property.name)) {
+                tokens = this._addGradientTokens(tokens);
+                tokens = this._addColorTokens(tokens);
+            }
             tokens = this._addTimingFunctionTokens(tokens, "cubic-bezier");
             tokens = this._addTimingFunctionTokens(tokens, "spring");
             tokens = this._addVariableTokens(tokens);
@@ -562,7 +566,7 @@ WI.SpreadsheetStyleProperty = class SpreadsheetStyleProperty extends WI.Object
             } else if (WI.Color.FunctionNames.has(token.value) && token.type && (token.type.includes("atom") || token.type.includes("keyword"))) {
                 // Color Function start
                 colorFunctionStartIndex = i;
-            } else if (isNaN(colorFunctionStartIndex) && token.type && token.type.includes("keyword")) {
+            } else if (isNaN(colorFunctionStartIndex) && token.type && (token.type.includes("atom") || token.type.includes("keyword"))) {
                 // Color keyword
                 pushPossibleColorToken(token.value, token);
             } else if (!isNaN(colorFunctionStartIndex)) {
