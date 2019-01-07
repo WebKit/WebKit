@@ -124,6 +124,7 @@ NetworkProcess::NetworkProcess()
     , m_cacheModel(CacheModel::DocumentViewer)
     , m_diskCacheIsDisabledForTesting(false)
     , m_canHandleHTTPSServerTrustEvaluation(true)
+    , m_downloadManager(*this)
 #if PLATFORM(COCOA)
     , m_clearCacheDispatchGroup(0)
 #endif
@@ -165,8 +166,7 @@ AuthenticationManager& NetworkProcess::authenticationManager()
 
 DownloadManager& NetworkProcess::downloadManager()
 {
-    static NeverDestroyed<DownloadManager> downloadManager(*this);
-    return downloadManager;
+    return m_downloadManager;
 }
 
 #if ENABLE(PROXIMITY_NETWORKING)

@@ -26,6 +26,7 @@
 #include "config.h"
 #include "NetworkLoadChecker.h"
 
+#include "Download.h"
 #include "Logging.h"
 #include "NetworkCORSPreflightChecker.h"
 #include "NetworkProcess.h"

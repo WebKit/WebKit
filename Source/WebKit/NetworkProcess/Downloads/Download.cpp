@@ -52,6 +52,7 @@ using namespace WebCore;
 Download::Download(DownloadManager& downloadManager, DownloadID downloadID, NetworkDataTask& download, const PAL::SessionID& sessionID, const String& suggestedName)
     : m_downloadManager(downloadManager)
     , m_downloadID(downloadID)
+    , m_client(downloadManager.client())
     , m_download(&download)
     , m_sessionID(sessionID)
     , m_suggestedName(suggestedName)
@@ -65,6 +66,7 @@ Download::Download(DownloadManager& downloadManager, DownloadID downloadID, Netw
 Download::Download(DownloadManager& downloadManager, DownloadID downloadID, NSURLSessionDownloadTask* download, const PAL::SessionID& sessionID, const String& suggestedName)
     : m_downloadManager(downloadManager)
     , m_downloadID(downloadID)
+    , m_client(downloadManager.client())
     , m_downloadTask(download)
     , m_sessionID(sessionID)
     , m_suggestedName(suggestedName)
@@ -98,7 +100,7 @@ void Download::didReceiveChallenge(const WebCore::AuthenticationChallenge& chall
         return;
     }
 
-    NetworkProcess::singleton().authenticationManager().didReceiveAuthenticationChallenge(*this, challenge, WTFMove(completionHandler));
+    m_client->downloadsAuthenticationManager().didReceiveAuthenticationChallenge(*this, challenge, WTFMove(completionHandler));
 }
 
 void Download::didCreateDestination(const String& path)

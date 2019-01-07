@@ -26,6 +26,7 @@
 #pragma once
 
 #include "DownloadID.h"
+#include "DownloadManager.h"
 #include "MessageSender.h"
 #include "NetworkDataTask.h"
 #include "SandboxExtension.h"
@@ -57,7 +58,6 @@ class ResourceResponse;
 
 namespace WebKit {
 
-class DownloadManager;
 class NetworkDataTask;
 class NetworkSession;
 class WebPage;
@@ -101,6 +101,7 @@ private:
 
     DownloadManager& m_downloadManager;
     DownloadID m_downloadID;
+    Ref<DownloadManager::Client> m_client;
 
     Vector<RefPtr<WebCore::BlobDataFileReference>> m_blobFileReferences;
     RefPtr<SandboxExtension> m_sandboxExtension;

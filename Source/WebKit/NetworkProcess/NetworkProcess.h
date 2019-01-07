@@ -94,7 +94,6 @@ class NetworkProcess : public ChildProcess, private DownloadManager::Client, pub
 #endif
 {
     WTF_MAKE_NONCOPYABLE(NetworkProcess);
-    friend NeverDestroyed<DownloadManager>;
 public:
     ~NetworkProcess();
     static NetworkProcess& singleton();
@@ -211,6 +210,9 @@ public:
 
     const String& uiProcessBundleIdentifier() const { return m_uiProcessBundleIdentifier; }
 
+    void ref() const override { ThreadSafeRefCounted<NetworkProcess>::ref(); }
+    void deref() const override { ThreadSafeRefCounted<NetworkProcess>::deref(); }
+    
 private:
     NetworkProcess();
 
@@ -247,6 +249,7 @@ private:
     void didCreateDownload() override;
     void didDestroyDownload() override;
     IPC::Connection* downloadProxyConnection() override;
+    IPC::Connection* parentProcessConnectionForDownloads() override { return parentProcessConnection(); }
     AuthenticationManager& downloadsAuthenticationManager() override;
     void pendingDownloadCanceled(DownloadID) override;
 
@@ -354,6 +357,7 @@ private:
     bool m_diskCacheIsDisabledForTesting;
     bool m_canHandleHTTPSServerTrustEvaluation;
     String m_uiProcessBundleIdentifier;
+    DownloadManager m_downloadManager;
 
     RefPtr<NetworkCache::Cache> m_cache;
 
