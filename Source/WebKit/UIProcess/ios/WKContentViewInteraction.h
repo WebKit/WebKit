@@ -153,7 +153,7 @@ typedef std::pair<WebKit::InteractionInformationRequest, InteractionInformationC
 namespace WebKit {
 
 enum SuppressSelectionAssistantReason : uint8_t {
-    FocusedElementIsTransparent = 1 << 0,
+    FocusedElementIsTransparentOrFullyClipped = 1 << 0,
     FocusedElementIsTooSmall = 1 << 1,
     DropAnimationIsRunning = 1 << 2
 };

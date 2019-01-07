@@ -107,7 +107,7 @@ struct EditorState {
         bool isStableStateUpdate { false };
         bool insideFixedPosition { false };
         bool hasPlainText { false };
-        bool elementIsTransparent { false };
+        bool elementIsTransparentOrFullyClipped { false };
         WebCore::Color caretColor;
 #endif
 #if PLATFORM(MAC)

@@ -1,3 +1,55 @@
+2019-01-07  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Native caret shows up alongside the page's caret when requesting desktop site on jsfiddle.net
+        https://bugs.webkit.org/show_bug.cgi?id=193180
+        <rdar://problem/45971041>
+
+        Reviewed by Tim Horton.
+
+        JSFiddle uses CodeMirror; CodeMirror's editor works by capturing keystrokes and input in a hidden textarea
+        element, and then drawing its own selection caret using web content. This textarea is hidden by being placed
+        underneath an empty div with `overflow: hidden;`.
+
+        When requesting desktop site on iOS, both CodeMirror's caret and the native iOS caret are shown because iOS
+        selection UI consists of native views overlaid on the page, whereas on macOS, the entire textarea (along with
+        the caret) are occluded by the hidden overflow container. Additionally, various iOS behaviors related to
+        selection and editing, such as zooming to reveal the focused element and showing the platform callout bar, are
+        active when focusing this hidden editable area; these don't work as intended, and just interfere with the page's
+        custom editing UI.
+
+        To fix this, we augment the text interaction suppression mechanism added in r238146 to detect when the focused
+        element is in an empty `overflow: hidden` container, and bail out of native text editing behaviors.
+
+        * Shared/EditorState.cpp:
+        (WebKit::EditorState::PostLayoutData::encode const):
+        (WebKit::EditorState::PostLayoutData::decode):
+        * Shared/EditorState.h:
+
+        Rename elementIsTransparent to elementIsTransparentOrFullyClipped.
+
+        * Shared/FocusedElementInformation.cpp:
+        (WebKit::FocusedElementInformation::encode const):
+        (WebKit::FocusedElementInformation::decode):
+        * Shared/FocusedElementInformation.h:
+        * UIProcess/ios/WKContentViewInteraction.h:
+
+        Rename FocusedElementIsTransparent to FocusedElementIsTransparentOrFullyClipped.
+
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView _zoomToRevealFocusedElement]):
+        (-[WKContentView _elementDidFocus:userIsInteracting:blurPreviousNode:changingActivityState:userObject:]):
+        (-[WKContentView _elementDidBlur]):
+
+        Make an additional tweak here to only stop suppressing text interaction assistant in `-_elementDidBlur` if we're
+        not also in the middle of changing the focused element. Without this, focusing a hidden editable element while
+        another hidden editable element is currently focused causes us to zoom to reveal the newly focused hidden
+        editable element, when we should be avoiding this behavior.
+
+        (-[WKContentView _updateChangedSelection:]):
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::platformEditorState const):
+        (WebKit::WebPage::getFocusedElementInformation):
+
 2019-01-07  Alex Christensen  <achristensen@webkit.org>
 
         Move identifierBase from SessionTracker to NetworkProcess/WebProcess

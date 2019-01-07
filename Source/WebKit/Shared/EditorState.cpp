@@ -130,7 +130,7 @@ void EditorState::PostLayoutData::encode(IPC::Encoder& encoder) const
     encoder << isStableStateUpdate;
     encoder << insideFixedPosition;
     encoder << hasPlainText;
-    encoder << elementIsTransparent;
+    encoder << elementIsTransparentOrFullyClipped;
     encoder << caretColor;
 #endif
 #if PLATFORM(MAC)
@@ -187,7 +187,7 @@ bool EditorState::PostLayoutData::decode(IPC::Decoder& decoder, PostLayoutData& 
         return false;
     if (!decoder.decode(result.hasPlainText))
         return false;
-    if (!decoder.decode(result.elementIsTransparent))
+    if (!decoder.decode(result.elementIsTransparentOrFullyClipped))
         return false;
     if (!decoder.decode(result.caretColor))
         return false;

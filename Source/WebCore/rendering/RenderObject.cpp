@@ -1514,7 +1514,7 @@ void RenderObject::destroy()
     delete this;
 }
 
-bool RenderObject::isTransparentRespectingParentFrames() const
+bool RenderObject::isTransparentOrFullyClippedRespectingParentFrames() const
 {
     static const double minimumVisibleOpacity = 0.01;
 
@@ -1522,7 +1522,13 @@ bool RenderObject::isTransparentRespectingParentFrames() const
     auto* layer = enclosingLayer();
     while (layer) {
         auto& layerRenderer = layer->renderer();
-        currentOpacity *= layerRenderer.style().opacity();
+        auto& style = layerRenderer.style();
+        if (auto* box = layer->renderBox()) {
+            bool isOverflowHidden = style.overflowX() == Overflow::Hidden || style.overflowY() == Overflow::Hidden;
+            if (isOverflowHidden && !box->isDocumentElementRenderer() && box->contentSize().isEmpty())
+                return true;
+        }
+        currentOpacity *= style.opacity();
         if (currentOpacity < minimumVisibleOpacity)
             return true;
 

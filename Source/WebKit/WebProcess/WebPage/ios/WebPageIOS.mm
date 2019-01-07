@@ -243,7 +243,7 @@ void WebPage::platformEditorState(Frame& frame, EditorState& result, IncludePost
         if (m_focusedElement && m_focusedElement->renderer()) {
             postLayoutData.focusedElementRect = view->contentsToRootView(m_focusedElement->renderer()->absoluteBoundingBoxRect());
             postLayoutData.caretColor = m_focusedElement->renderer()->style().caretColor();
-            postLayoutData.elementIsTransparent = m_focusedElement->renderer()->isTransparentRespectingParentFrames();
+            postLayoutData.elementIsTransparentOrFullyClipped = m_focusedElement->renderer()->isTransparentOrFullyClippedRespectingParentFrames();
         }
         computeEditableRootHasContentAndPlainText(selection, postLayoutData);
     }
@@ -2368,7 +2368,7 @@ void WebPage::getFocusedElementInformation(FocusedElementInformation& informatio
         auto& elementFrame = m_page->focusController().focusedOrMainFrame();
         information.elementRect = elementRectInRootViewCoordinates(*m_focusedElement, elementFrame);
         information.nodeFontSize = renderer->style().fontDescription().computedSize();
-        information.elementIsTransparent = renderer->isTransparentRespectingParentFrames();
+        information.elementIsTransparentOrFullyClipped = renderer->isTransparentOrFullyClippedRespectingParentFrames();
 
         bool inFixed = false;
         renderer->localToContainerPoint(FloatPoint(), nullptr, UseTransforms, &inFixed);

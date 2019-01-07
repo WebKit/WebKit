@@ -1403,7 +1403,7 @@ static NSValue *nsSizeForTapHighlightBorderRadius(WebCore::IntSize borderRadius,
 
 - (void)_zoomToRevealFocusedElement
 {
-    if (_suppressSelectionAssistantReasons.contains(WebKit::FocusedElementIsTransparent) || _suppressSelectionAssistantReasons.contains(WebKit::FocusedElementIsTooSmall))
+    if (_suppressSelectionAssistantReasons.contains(WebKit::FocusedElementIsTransparentOrFullyClipped) || _suppressSelectionAssistantReasons.contains(WebKit::FocusedElementIsTooSmall))
         return;
 
     SetForScope<BOOL> isZoomingToRevealFocusedElementForScope { _isZoomingToRevealFocusedElement, YES };
@@ -4460,10 +4460,10 @@ static const double minimumFocusedElementAreaForSuppressingSelectionAssistant = 
     if ([inputDelegate respondsToSelector:@selector(_webView:decidePolicyForFocusedElement:)])
         startInputSessionPolicy = [inputDelegate _webView:_webView decidePolicyForFocusedElement:focusedElementInfo.get()];
 
-    if (information.elementIsTransparent)
-        [self _beginSuppressingSelectionAssistantForReason:WebKit::FocusedElementIsTransparent];
+    if (information.elementIsTransparentOrFullyClipped)
+        [self _beginSuppressingSelectionAssistantForReason:WebKit::FocusedElementIsTransparentOrFullyClipped];
     else
-        [self _stopSuppressingSelectionAssistantForReason:WebKit::FocusedElementIsTransparent];
+        [self _stopSuppressingSelectionAssistantForReason:WebKit::FocusedElementIsTransparentOrFullyClipped];
 
     auto elementArea = information.elementRect.area<RecordOverflow>();
     if (!elementArea.hasOverflowed() && elementArea < minimumFocusedElementAreaForSuppressingSelectionAssistant)
@@ -4628,10 +4628,10 @@ static const double minimumFocusedElementAreaForSuppressingSelectionAssistant = 
 
     [_webView didEndFormControlInteraction];
 
-    [self _stopSuppressingSelectionAssistantForReason:WebKit::FocusedElementIsTransparent];
-
-    if (!_isChangingFocus)
+    if (!_isChangingFocus) {
+        [self _stopSuppressingSelectionAssistantForReason:WebKit::FocusedElementIsTransparentOrFullyClipped];
         _didAccessoryTabInitiateFocus = NO;
+    }
 }
 
 - (void)_didReceiveEditorStateUpdateAfterFocus
@@ -4997,10 +4997,10 @@ static const double minimumFocusedElementAreaForSuppressingSelectionAssistant = 
 
     auto& postLayoutData = state.postLayoutData();
     if (!state.selectionIsNone && hasFocusedElement(_focusedElementInformation)) {
-        if (postLayoutData.elementIsTransparent)
-            [self _beginSuppressingSelectionAssistantForReason:WebKit::FocusedElementIsTransparent];
+        if (postLayoutData.elementIsTransparentOrFullyClipped)
+            [self _beginSuppressingSelectionAssistantForReason:WebKit::FocusedElementIsTransparentOrFullyClipped];
         else
-            [self _stopSuppressingSelectionAssistantForReason:WebKit::FocusedElementIsTransparent];
+            [self _stopSuppressingSelectionAssistantForReason:WebKit::FocusedElementIsTransparentOrFullyClipped];
 
         auto elementArea = postLayoutData.focusedElementRect.area<RecordOverflow>();
         if (!elementArea.hasOverflowed() && elementArea < minimumFocusedElementAreaForSuppressingSelectionAssistant)

@@ -1,0 +1,13 @@
+Verifies that native selection UI is not suppressed when the document element has overflow: hidden; and is empty, but the editable element is otherwise still visible. To manually test, tap on the top button and then tap on the bottom button. In both cases, the platform selection UI should be shown.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+Caret view rect became {{ 8, 165 }, { 2, 14 }}
+PASS document.activeElement.id is "editor"
+Caret view rect became {{ 18, 218 }, { 2, 14 }}
+PASS document.activeElement.id is "frame"
+PASS frame.contentWindow.document.activeElement.id is "editor"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

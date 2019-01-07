@@ -91,7 +91,7 @@ void FocusedElementInformation::encode(IPC::Encoder& encoder) const
     encoder << title;
     encoder << acceptsAutofilledLoginCredentials;
     encoder << isAutofillableUsernameField;
-    encoder << elementIsTransparent;
+    encoder << elementIsTransparentOrFullyClipped;
     encoder << representingPageURL;
     encoder.encodeEnum(autofillFieldName);
     encoder << placeholder;
@@ -193,7 +193,7 @@ bool FocusedElementInformation::decode(IPC::Decoder& decoder, FocusedElementInfo
     if (!decoder.decode(result.isAutofillableUsernameField))
         return false;
 
-    if (!decoder.decode(result.elementIsTransparent))
+    if (!decoder.decode(result.elementIsTransparentOrFullyClipped))
         return false;
 
     if (!decoder.decode(result.representingPageURL))

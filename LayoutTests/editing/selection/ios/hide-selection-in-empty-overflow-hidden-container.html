@@ -1,0 +1,84 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ useFlexibleViewport=true ] -->
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="../../../resources/js-test.js"></script>
+<script src="../../../resources/ui-helper.js"></script>
+<style>
+body {
+    width: 100%;
+    height: 100%;
+    margin: 0;
+}
+
+button {
+    width: 320px;
+    height: 80px;
+    display: block;
+}
+
+
+#container {
+    width: 30px;
+    height: 0px;
+    font-size: 6px;
+    overflow: hidden;
+}
+</style>
+<script>
+addEventListener("load", runTest);
+jsTestIsAsync = true;
+
+async function runTest() {
+    description("Verifies that native selection UI is suppressed when focusing a textarea that is completely hidden "
+        + "underneath an empty container with <code>overflow: hidden;</code>. To manually test, tap the top button, "
+        + "and then tap on the bottom button. In both cases, there should be no platform selection shown.");
+
+    if (!window.testRunner)
+        return;
+
+    frame = document.getElementById("frame");
+    caretViewRect = null;
+
+    function caretViewRectShouldBeNull() {
+        shouldBeNull("caretViewRect.top");
+        shouldBeNull("caretViewRect.left");
+        shouldBe("caretViewRect.width", "0");
+        shouldBe("caretViewRect.height", "0");
+    }
+
+    await UIHelper.activateAndWaitForInputSessionAt(160, 40);
+    await UIHelper.ensurePresentationUpdate();
+    caretViewRect = await UIHelper.getUICaretViewRect();
+    caretViewRectShouldBeNull();
+    shouldBeEqualToString("document.activeElement.id", "editor");
+
+    document.activeElement.blur();
+    await UIHelper.waitForKeyboardToHide();
+    await UIHelper.activateAndWaitForInputSessionAt(160, 120);
+    await UIHelper.ensurePresentationUpdate();
+    caretViewRect = await UIHelper.getUICaretViewRect();
+    caretViewRectShouldBeNull();
+    shouldBeEqualToString("document.activeElement.id", "frame");
+    shouldBeEqualToString("frame.contentWindow.document.activeElement.id", "editor");
+
+    frame.contentWindow.document.activeElement.blur();
+    await UIHelper.waitForKeyboardToHide();
+    document.querySelectorAll("button, #container").forEach(element => element.remove())
+    finishJSTest();
+}
+</script>
+</head>
+<body>
+<button onclick="document.getElementById('editor').focus()">Focus hidden textarea</button>
+<button onclick="frame.contentWindow.document.getElementById('editor').focus()">
+    Focus hidden textarea (in subframe)
+</button>
+<div id="container">
+    <textarea id="editor"></textarea>
+    <iframe id="frame" srcdoc="<textarea id='editor'></textarea>" onload="runTest()"></iframe>
+</div>
+<div id="description"></div>
+<div id="console"></div>
+</body>
+</html>

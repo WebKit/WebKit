@@ -797,7 +797,7 @@ public:
     void initializeFragmentedFlowStateOnInsertion();
     virtual void insertedIntoTree();
 
-    WEBCORE_EXPORT bool isTransparentRespectingParentFrames() const;
+    WEBCORE_EXPORT bool isTransparentOrFullyClippedRespectingParentFrames() const;
 
 protected:
     //////////////////////////////////////////

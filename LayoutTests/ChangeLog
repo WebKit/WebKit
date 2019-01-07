@@ -1,3 +1,23 @@
+2019-01-07  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Native caret shows up alongside the page's caret when requesting desktop site on jsfiddle.net
+        https://bugs.webkit.org/show_bug.cgi?id=193180
+        <rdar://problem/45971041>
+
+        Reviewed by Tim Horton.
+
+        * editing/selection/ios/hide-selection-in-empty-overflow-hidden-container-expected.txt: Added.
+        * editing/selection/ios/hide-selection-in-empty-overflow-hidden-container.html: Added.
+
+        Add a layout test to verify that focusing a hidden editable element underneath an empty container with
+        `overflow: hidden` doesn't cause platform selection UI to appear.
+
+        * editing/selection/ios/show-selection-in-empty-overflow-hidden-document-expected.txt: Added.
+        * editing/selection/ios/show-selection-in-empty-overflow-hidden-document.html: Added.
+
+        Add a layout test to verify that native selection UI shows up when the document element is made empty with
+        `overflow: hidden`, but the focused elements are still visible.
+
 2019-01-07  Truitt Savell  <tsavell@apple.com>
 
         Mark compositing/masks/compositing-clip-path-change-no-repaint.html flakey for Mojave WK1
