@@ -446,6 +446,10 @@ fast/web-share [ Skip ]
 # This test was created to test a mac-wk2 bugfix
 fast/animation/request-animation-frame-in-two-pages.html [ Skip ]
 
+# Only supported on iOS
+imported/w3c/web-platform-tests/pointerevents [ Skip ]
+pointerevents [ Skip ]
+
 #//////////////////////////////////////////////////////////////////////////////////////////
 # End platform-specific tests.
 #//////////////////////////////////////////////////////////////////////////////////////////

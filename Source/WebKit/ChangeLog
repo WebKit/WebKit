@@ -1,3 +1,16 @@
+2019-01-07  Dean Jackson  <dino@apple.com>
+
+        Turn on Pointer Events by default for iOS
+        https://bugs.webkit.org/show_bug.cgi?id=193214
+        <rdar://problem/46974878>
+
+        Reviewed by Wenson Hsieh.
+
+        Turn on Pointer Events.
+
+        * Shared/WebPreferences.yaml:
+        * Shared/WebPreferencesDefaultValues.h: Make a new #define for iOS.
+
 2019-01-07  Alex Christensen  <achristensen@webkit.org>
 
         Remove use of NetworkProcess::singleton in ServiceWorker code

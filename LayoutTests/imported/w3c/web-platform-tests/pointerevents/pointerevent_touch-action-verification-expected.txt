@@ -5,29 +5,29 @@ Test Description: Test will automatically check parsing behaviour of various tou
 touch-action: basic verification
 
 
-FAIL default assert_equals: expected (undefined) undefined but got (string) "auto"
-FAIL stylesheet-none assert_equals: expected (undefined) undefined but got (string) "none"
-FAIL explicit-auto assert_equals: expected (undefined) undefined but got (string) "auto"
-FAIL explicit-pan-x assert_equals: expected (undefined) undefined but got (string) "pan-x"
-FAIL explicit-pan-y assert_equals: expected (undefined) undefined but got (string) "pan-y"
-FAIL explicit-pan-x-pan-y assert_equals: expected (undefined) undefined but got (string) "pan-x pan-y"
-FAIL explicit-pan-y-pan-x assert_equals: expected (undefined) undefined but got (string) "pan-x pan-y"
-FAIL explicit-manipulation assert_equals: expected (undefined) undefined but got (string) "manipulation"
-FAIL explicit-none assert_equals: expected (undefined) undefined but got (string) "none"
-FAIL explicit-invalid-1 assert_equals: expected (undefined) undefined but got (string) "auto"
-FAIL explicit-invalid-2 assert_equals: expected (undefined) undefined but got (string) "none"
-FAIL explicit-invalid-3 assert_equals: expected (undefined) undefined but got (string) "auto"
-FAIL explicit-invalid-4 assert_equals: expected (undefined) undefined but got (string) "auto"
-FAIL explicit-invalid-5 assert_equals: expected (undefined) undefined but got (string) "auto"
-FAIL explicit-invalid-6 assert_equals: expected (undefined) undefined but got (string) "auto"
-FAIL explicit-invalid-7 assert_equals: expected (undefined) undefined but got (string) "auto"
-FAIL explicit-invalid-8 assert_equals: expected (undefined) undefined but got (string) "auto"
-FAIL explicit-invalid-9 assert_equals: expected (undefined) undefined but got (string) "auto"
-FAIL explicit-invalid-10 assert_equals: expected (undefined) undefined but got (string) "auto"
-FAIL explicit-invalid-11 assert_equals: expected (undefined) undefined but got (string) "auto"
-FAIL explicit-invalid-12 assert_equals: expected (undefined) undefined but got (string) "auto"
-FAIL explicit-invalid-13 assert_equals: expected (undefined) undefined but got (string) "auto"
-FAIL not-inherited assert_equals: expected (undefined) undefined but got (string) "auto"
-FAIL inherit assert_equals: expected (undefined) undefined but got (string) "none"
-FAIL initial assert_equals: expected (undefined) undefined but got (string) "auto"
+PASS default 
+FAIL stylesheet-none assert_equals: expected "auto" but got "none"
+PASS explicit-auto 
+FAIL explicit-pan-x assert_equals: expected "auto" but got "pan-x"
+FAIL explicit-pan-y assert_equals: expected "auto" but got "pan-y"
+FAIL explicit-pan-x-pan-y assert_equals: expected "auto" but got "pan-x pan-y"
+FAIL explicit-pan-y-pan-x assert_equals: expected "auto" but got "pan-x pan-y"
+PASS explicit-manipulation 
+FAIL explicit-none assert_equals: expected "auto" but got "none"
+PASS explicit-invalid-1 
+FAIL explicit-invalid-2 assert_equals: expected "auto" but got "none"
+PASS explicit-invalid-3 
+PASS explicit-invalid-4 
+PASS explicit-invalid-5 
+PASS explicit-invalid-6 
+PASS explicit-invalid-7 
+PASS explicit-invalid-8 
+PASS explicit-invalid-9 
+PASS explicit-invalid-10 
+PASS explicit-invalid-11 
+PASS explicit-invalid-12 
+PASS explicit-invalid-13 
+PASS not-inherited 
+FAIL inherit assert_equals: expected "auto" but got "none"
+PASS initial 
 

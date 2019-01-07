@@ -1,3 +1,18 @@
+2019-01-07  Dean Jackson  <dino@apple.com>
+
+        Turn on Pointer Events by default for iOS
+        https://bugs.webkit.org/show_bug.cgi?id=193214
+        <rdar://problem/46974878>
+
+        Reviewed by Wenson Hsieh.
+
+        Skip the pointer events tests everywhere but iOS.
+
+        * TestExpectations:
+        * platform/ios-wk1/TestExpectations:
+        * platform/ios-wk2/TestExpectations:
+        * platform/mac-wk1/TestExpectations:
+
 2019-01-07  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: extend XHR breakpoints to work with fetch

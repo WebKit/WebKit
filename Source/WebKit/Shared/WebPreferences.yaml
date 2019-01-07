@@ -1240,7 +1240,7 @@ VisualViewportAPIEnabled:
 
 PointerEventsEnabled:
   type: bool
-  defaultValue: false
+  defaultValue: DEFAULT_POINTER_EVENTS_ENABLED
   humanReadableName: "Pointer Events"
   humanReadableDescription: "Enable Pointer Events"
   webcoreBinding: RuntimeEnabledFeatures

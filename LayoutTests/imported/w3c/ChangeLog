@@ -1,3 +1,17 @@
+2019-01-07  Dean Jackson  <dino@apple.com>
+
+        Turn on Pointer Events by default for iOS
+        https://bugs.webkit.org/show_bug.cgi?id=193214
+        <rdar://problem/46974878>
+
+        Reviewed by Wenson Hsieh.
+
+        Update expected results.
+
+        * web-platform-tests/pointerevents/extension/pointerevent_touch-action-verification-expected.txt:
+        * web-platform-tests/pointerevents/pointerevent_touch-action-illegal-expected.txt:
+        * web-platform-tests/pointerevents/pointerevent_touch-action-verification-expected.txt:
+
 2019-01-07  Youenn Fablet  <youenn@apple.com>
 
         Resync WPT fetch tests to 834eac4
