@@ -351,7 +351,7 @@ VerticalGeometry FormattingContext::Geometry::outOfFlowNonReplacedVerticalGeomet
     ASSERT(height);
 
     LOG_WITH_STREAM(FormattingContextLayout, stream << "[Position][Height][Margin] -> out-of-flow non-replaced -> top(" << *top << "px) bottom("  << *bottom << "px) height(" << *height << "px) margin(" << usedVerticalMargin.before << "px, "  << usedVerticalMargin.after << "px) layoutBox(" << &layoutBox << ")");
-    return { *top, *bottom, { *height, { usedVerticalMargin, { } } } };
+    return { *top, *bottom, { *height, usedVerticalMargin } };
 }
 
 HorizontalGeometry FormattingContext::Geometry::outOfFlowNonReplacedHorizontalGeometry(LayoutState& layoutState, const Box& layoutBox, Optional<LayoutUnit> usedWidth)
@@ -558,7 +558,7 @@ VerticalGeometry FormattingContext::Geometry::outOfFlowReplacedVerticalGeometry(
         bottom = containingBlockHeight - (*top + usedVerticalMargin.before + borderTop + paddingTop + height + paddingBottom + borderBottom + usedVerticalMargin.after); 
 
     LOG_WITH_STREAM(FormattingContextLayout, stream << "[Position][Height][Margin] -> out-of-flow replaced -> top(" << *top << "px) bottom("  << *bottom << "px) height(" << height << "px) margin(" << usedVerticalMargin.before << "px, "  << usedVerticalMargin.after << "px) layoutBox(" << &layoutBox << ")");
-    return { *top, *bottom, { height, { usedVerticalMargin, { } } } };
+    return { *top, *bottom, { height, usedVerticalMargin } };
 }
 
 HorizontalGeometry FormattingContext::Geometry::outOfFlowReplacedHorizontalGeometry(const LayoutState& layoutState, const Box& layoutBox, Optional<LayoutUnit> usedWidth)
@@ -682,7 +682,7 @@ HeightAndMargin FormattingContext::Geometry::complicatedCases(const LayoutState&
     ASSERT(height);
 
     LOG_WITH_STREAM(FormattingContextLayout, stream << "[Height][Margin] -> floating non-replaced -> height(" << *height << "px) margin(" << usedVerticalMargin.before << "px, " << usedVerticalMargin.after << "px) -> layoutBox(" << &layoutBox << ")");
-    return HeightAndMargin { *height, { usedVerticalMargin, { } } };
+    return HeightAndMargin { *height, usedVerticalMargin };
 }
 
 WidthAndMargin FormattingContext::Geometry::floatingNonReplacedWidthAndMargin(LayoutState& layoutState, const Box& layoutBox, Optional<LayoutUnit> usedWidth)
@@ -696,16 +696,17 @@ WidthAndMargin FormattingContext::Geometry::floatingNonReplacedWidthAndMargin(La
 
     auto& containingBlock = *layoutBox.containingBlock();
     auto containingBlockWidth = layoutState.displayBoxForLayoutBox(containingBlock).contentBoxWidth();
+    auto computedHorizontalMargin = Geometry::computedHorizontalMargin(layoutState, layoutBox);
 
     // #1
-    auto computedHorizontalMargin = Geometry::computedHorizontalMargin(layoutState, layoutBox);
+    auto usedHorizontallMargin = UsedHorizontalMargin { computedHorizontalMargin.start.valueOr(0), computedHorizontalMargin.end.valueOr(0) };
     // #2
     auto width = computedValueIfNotAuto(usedWidth ? Length { usedWidth.value(), Fixed } : layoutBox.style().logicalWidth(), containingBlockWidth);
     if (!width)
         width = shrinkToFitWidth(layoutState, layoutBox);
 
-    LOG_WITH_STREAM(FormattingContextLayout, stream << "[Width][Margin] -> floating non-replaced -> width(" << *width << "px) margin(" << computedHorizontalMargin.start.valueOr(0_lu) << "px, " << computedHorizontalMargin.end.valueOr(0_lu) << "px) -> layoutBox(" << &layoutBox << ")");
-    return WidthAndMargin { *width, { computedHorizontalMargin.start.valueOr(0_lu), computedHorizontalMargin.end.valueOr(0_lu) }, computedHorizontalMargin };
+    LOG_WITH_STREAM(FormattingContextLayout, stream << "[Width][Margin] -> floating non-replaced -> width(" << *width << "px) margin(" << usedHorizontallMargin.start << "px, " << usedHorizontallMargin.end << "px) -> layoutBox(" << &layoutBox << ")");
+    return WidthAndMargin { *width, usedHorizontallMargin, computedHorizontalMargin };
 }
 
 HeightAndMargin FormattingContext::Geometry::floatingReplacedHeightAndMargin(const LayoutState& layoutState, const Box& layoutBox, Optional<LayoutUnit> usedHeight)
@@ -810,7 +811,7 @@ HeightAndMargin FormattingContext::Geometry::inlineReplacedHeightAndMargin(const
     ASSERT(height);
 
     LOG_WITH_STREAM(FormattingContextLayout, stream << "[Height][Margin] -> inflow replaced -> height(" << *height << "px) margin(" << usedVerticalMargin.before << "px, " << usedVerticalMargin.after << "px) -> layoutBox(" << &layoutBox << ")");
-    return { *height, { usedVerticalMargin, { } } };
+    return { *height, usedVerticalMargin };
 }
 
 WidthAndMargin FormattingContext::Geometry::inlineReplacedWidthAndMargin(const LayoutState& layoutState, const Box& layoutBox,

@@ -358,7 +358,7 @@ void BlockFormattingContext::computeHeightAndMargin(const Box& layoutBox) const
             auto maxHeightAndMargin = compute(maxHeight);
             // Used height should remain the same.
             ASSERT((layoutState.inQuirksMode() && (layoutBox.isBodyBox() || layoutBox.isDocumentBox())) || maxHeightAndMargin.height == *maxHeight);
-            heightAndMargin = { *maxHeight, maxHeightAndMargin.usedMargin };
+            heightAndMargin = { *maxHeight, maxHeightAndMargin.nonCollapsedMargin };
         }
     }
 
@@ -367,17 +367,19 @@ void BlockFormattingContext::computeHeightAndMargin(const Box& layoutBox) const
             auto minHeightAndMargin = compute(minHeight);
             // Used height should remain the same.
             ASSERT((layoutState.inQuirksMode() && (layoutBox.isBodyBox() || layoutBox.isDocumentBox())) || minHeightAndMargin.height == *minHeight);
-            heightAndMargin = { *minHeight, minHeightAndMargin.usedMargin };
+            heightAndMargin = { *minHeight, minHeightAndMargin.nonCollapsedMargin };
         }
     }
 
+    auto collapsedMargin = UsedVerticalMargin::CollapsedValues { MarginCollapse::marginBefore(layoutState, layoutBox), MarginCollapse::marginAfter(layoutState, layoutBox) };
+    auto verticalMargin = UsedVerticalMargin { heightAndMargin.nonCollapsedMargin, collapsedMargin };
     auto& displayBox = layoutState.displayBoxForLayoutBox(layoutBox);
     displayBox.setContentBoxHeight(heightAndMargin.height);
-    displayBox.setVerticalMargin(heightAndMargin.usedMargin);
+    displayBox.setVerticalMargin(verticalMargin);
 
     // If this box has already been moved by the estimated vertical margin, no need to move it again.
     if (layoutBox.isFloatingPositioned() || !displayBox.estimatedMarginBefore())
-        displayBox.moveVertically(heightAndMargin.usedMargin.before());
+        displayBox.moveVertically(verticalMargin.before());
 }
 
 FormattingContext::InstrinsicWidthConstraints BlockFormattingContext::instrinsicWidthConstraints() const

@@ -362,7 +362,7 @@ void InlineFormattingContext::computeHeightAndMargin(const Box& layoutBox) const
 
     auto& displayBox = layoutState.displayBoxForLayoutBox(layoutBox);
     displayBox.setContentBoxHeight(heightAndMargin.height);
-    displayBox.setVerticalMargin(heightAndMargin.usedMargin);
+    displayBox.setVerticalMargin({ heightAndMargin.nonCollapsedMargin, { } });
 }
 
 void InlineFormattingContext::layoutFormattingContextRoot(const Box& root) const

@@ -1,5 +1,31 @@
 2019-01-07  Zalan Bujtas  <zalan@apple.com>
 
+        [LFC][BFC] Margin collapsing should not be limited to in-flow non-replaced boxes.
+        https://bugs.webkit.org/show_bug.cgi?id=193183
+
+        Reviewed by Antti Koivisto.
+
+        * layout/FormattingContext.cpp:
+        (WebCore::Layout::FormattingContext::computeOutOfFlowVerticalGeometry const):
+        * layout/FormattingContextGeometry.cpp:
+        (WebCore::Layout::FormattingContext::Geometry::outOfFlowNonReplacedVerticalGeometry):
+        (WebCore::Layout::FormattingContext::Geometry::outOfFlowReplacedVerticalGeometry):
+        (WebCore::Layout::FormattingContext::Geometry::complicatedCases):
+        (WebCore::Layout::FormattingContext::Geometry::floatingNonReplacedWidthAndMargin):
+        (WebCore::Layout::FormattingContext::Geometry::inlineReplacedHeightAndMargin):
+        * layout/LayoutUnits.h:
+        * layout/blockformatting/BlockFormattingContext.cpp:
+        (WebCore::Layout::BlockFormattingContext::computeHeightAndMargin const):
+        * layout/blockformatting/BlockFormattingContextGeometry.cpp:
+        (WebCore::Layout::BlockFormattingContext::Geometry::inFlowNonReplacedHeightAndMargin):
+        (WebCore::Layout::BlockFormattingContext::Geometry::inFlowHeightAndMargin):
+        * layout/blockformatting/BlockFormattingContextQuirks.cpp:
+        (WebCore::Layout::BlockFormattingContext::Quirks::stretchedHeight):
+        * layout/inlineformatting/InlineFormattingContext.cpp:
+        (WebCore::Layout::InlineFormattingContext::computeHeightAndMargin const):
+
+2019-01-07  Zalan Bujtas  <zalan@apple.com>
+
         [LFC][BFC] Move MarginCollapse from BlockFormattingContext::Geometry to BlockFormattingContext
         https://bugs.webkit.org/show_bug.cgi?id=193181
 

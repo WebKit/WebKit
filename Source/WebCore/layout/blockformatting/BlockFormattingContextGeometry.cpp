@@ -60,22 +60,21 @@ HeightAndMargin BlockFormattingContext::Geometry::inFlowNonReplacedHeightAndMarg
         auto& displayBox = layoutState.displayBoxForLayoutBox(layoutBox);
         auto computedVerticalMargin = Geometry::computedVerticalMargin(layoutState, layoutBox);
         auto nonCollapsedMargin = UsedVerticalMargin::NonCollapsedValues { computedVerticalMargin.before.valueOr(0), computedVerticalMargin.after.valueOr(0) }; 
-        auto collapsedMargin = UsedVerticalMargin::CollapsedValues { MarginCollapse::marginBefore(layoutState, layoutBox), MarginCollapse::marginAfter(layoutState, layoutBox) };
         auto borderAndPaddingTop = displayBox.borderTop() + displayBox.paddingTop().valueOr(0);
 
         auto height = usedHeight ? usedHeight.value() : computedHeightValue(layoutState, layoutBox, HeightType::Normal);
         if (height)
-            return { height.value(), { nonCollapsedMargin, collapsedMargin } };
+            return { height.value(), nonCollapsedMargin };
 
         if (!is<Container>(layoutBox) || !downcast<Container>(layoutBox).hasInFlowChild())
-            return { 0, { nonCollapsedMargin, collapsedMargin } };
+            return { 0, nonCollapsedMargin };
 
         // 1. the bottom edge of the last line box, if the box establishes a inline formatting context with one or more lines
         if (layoutBox.establishesInlineFormattingContext()) {
             // This is temp and will be replaced by the correct display box once inline runs move over to the display tree.
             auto& inlineRuns = downcast<InlineFormattingState>(layoutState.establishedFormattingState(layoutBox)).inlineRuns();
             auto bottomEdge = inlineRuns.isEmpty() ? LayoutUnit() : inlineRuns.last().logicalBottom();
-            return { bottomEdge, { nonCollapsedMargin, collapsedMargin } };
+            return { bottomEdge, nonCollapsedMargin };
         }
 
         // 2. the bottom edge of the bottom (possibly collapsed) margin of its last in-flow child, if the child's bottom margin...
@@ -83,7 +82,7 @@ HeightAndMargin BlockFormattingContext::Geometry::inFlowNonReplacedHeightAndMarg
         ASSERT(lastInFlowChild);
         if (!MarginCollapse::marginAfterCollapsesWithParentMarginAfter(layoutState, *lastInFlowChild)) {
             auto& lastInFlowDisplayBox = layoutState.displayBoxForLayoutBox(*lastInFlowChild);
-            return { lastInFlowDisplayBox.bottom() + lastInFlowDisplayBox.marginAfter() - borderAndPaddingTop, { nonCollapsedMargin, collapsedMargin } };
+            return { lastInFlowDisplayBox.bottom() + lastInFlowDisplayBox.marginAfter() - borderAndPaddingTop, nonCollapsedMargin };
         }
 
         // 3. the bottom border edge of the last in-flow child whose top margin doesn't collapse with the element's bottom margin
@@ -92,16 +91,16 @@ HeightAndMargin BlockFormattingContext::Geometry::inFlowNonReplacedHeightAndMarg
             inFlowChild = inFlowChild->previousInFlowSibling();
         if (inFlowChild) {
             auto& inFlowDisplayBox = layoutState.displayBoxForLayoutBox(*inFlowChild);
-            return { inFlowDisplayBox.top() + inFlowDisplayBox.borderBox().height() - borderAndPaddingTop, { nonCollapsedMargin, collapsedMargin } };
+            return { inFlowDisplayBox.top() + inFlowDisplayBox.borderBox().height() - borderAndPaddingTop, nonCollapsedMargin };
         }
 
         // 4. zero, otherwise
-        return { 0, { nonCollapsedMargin, collapsedMargin } };
+        return { 0, nonCollapsedMargin };
     };
 
     auto heightAndMargin = compute();
 
-    LOG_WITH_STREAM(FormattingContextLayout, stream << "[Height][Margin] -> inflow non-replaced -> height(" << heightAndMargin.height << "px) margin(" << heightAndMargin.usedMargin.before() << "px, " << heightAndMargin.usedMargin.after() << "px) -> layoutBox(" << &layoutBox << ")");
+    LOG_WITH_STREAM(FormattingContextLayout, stream << "[Height][Margin] -> inflow non-replaced -> height(" << heightAndMargin.height << "px) margin(" << heightAndMargin.nonCollapsedMargin.before << "px, " << heightAndMargin.nonCollapsedMargin.after << "px) -> layoutBox(" << &layoutBox << ")");
     return heightAndMargin;
 }
 
@@ -260,7 +259,7 @@ HeightAndMargin BlockFormattingContext::Geometry::inFlowHeightAndMargin(const La
 
     heightAndMargin = Quirks::stretchedHeight(layoutState, layoutBox, heightAndMargin);
 
-    LOG_WITH_STREAM(FormattingContextLayout, stream << "[Height][Margin] -> inflow non-replaced -> streched to viewport -> height(" << heightAndMargin.height << "px) margin(" << heightAndMargin.usedMargin.before() << "px, " << heightAndMargin.usedMargin.after() << "px) -> layoutBox(" << &layoutBox << ")");
+    LOG_WITH_STREAM(FormattingContextLayout, stream << "[Height][Margin] -> inflow non-replaced -> streched to viewport -> height(" << heightAndMargin.height << "px) margin(" << heightAndMargin.nonCollapsedMargin.before << "px, " << heightAndMargin.nonCollapsedMargin.after << "px) -> layoutBox(" << &layoutBox << ")");
     return heightAndMargin;
 }
 
