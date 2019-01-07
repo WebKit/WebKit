@@ -1,0 +1,68 @@
+Blocked access to external URL http://www1.localhost:8800/fetch/nosniff/resources/image.py
+Blocked access to external URL http://www1.localhost:8800/fetch/nosniff/resources/image.py?type=
+Blocked access to external URL http://www1.localhost:8800/fetch/nosniff/resources/image.py?type=x
+Blocked access to external URL http://www1.localhost:8800/fetch/nosniff/resources/image.py?type=x%2Fx
+Blocked access to external URL http://www1.localhost:8800/fetch/nosniff/resources/image.py?type=image%2Fgif
+Blocked access to external URL http://www1.localhost:8800/fetch/nosniff/resources/image.py?type=image%2Fpng
+Blocked access to external URL http://www1.localhost:8800/fetch/nosniff/resources/image.py?type=image%2Fpng%3Bblah
+Blocked access to external URL http://www1.localhost:8800/fetch/nosniff/resources/image.py?type=image%2Fsvg%2Bxml
+Blocked access to external URL http://www1.localhost:8800/fetch/nosniff/resources/image.py?type=application%2Fjavascript
+Blocked access to external URL http://www1.localhost:8800/fetch/nosniff/resources/image.py?type=application%2Fjsonp
+Blocked access to external URL http://www1.localhost:8800/fetch/nosniff/resources/image.py?type=image%2Fgif%3BHI%3DTHERE
+Blocked access to external URL http://www1.localhost:8800/fetch/nosniff/resources/image.py?type=text%2Fx-json
+Blocked access to external URL http://www1.localhost:8800/fetch/nosniff/resources/image.py?type=text%2Fjson%2Bblah
+Blocked access to external URL http://www1.localhost:8800/fetch/nosniff/resources/image.py?type=application%2Fjson%2Bblah
+Blocked access to external URL http://www1.localhost:8800/fetch/nosniff/resources/image.py?type=text%2Fxml%2Bblah
+Blocked access to external URL http://www1.localhost:8800/fetch/nosniff/resources/image.py?type=application%2Fxml%2Bblah
+Blocked access to external URL http://www1.localhost:8800/fetch/nosniff/resources/image.py?type=application%2Fblahjson
+Blocked access to external URL http://www1.localhost:8800/fetch/nosniff/resources/image.py?type=text%2Fblahxml
+Blocked access to external URL http://www1.localhost:8800/fetch/nosniff/resources/image.py?type=text%2Fhtml
+Blocked access to external URL http://www1.localhost:8800/fetch/nosniff/resources/image.py?type=text%2Fjson
+Blocked access to external URL http://www1.localhost:8800/fetch/nosniff/resources/image.py?type=application%2Fjson
+Blocked access to external URL http://www1.localhost:8800/fetch/nosniff/resources/image.py?type=text%2Fxml
+Blocked access to external URL http://www1.localhost:8800/fetch/nosniff/resources/image.py?type=application%2Fxml
+Blocked access to external URL http://www1.localhost:8800/fetch/nosniff/resources/image.py?type=application%2Fblah%2Bjson
+Blocked access to external URL http://www1.localhost:8800/fetch/nosniff/resources/image.py?type=text%2Fblah%2Bjson
+Blocked access to external URL http://www1.localhost:8800/fetch/nosniff/resources/image.py?type=application%2Fblah%2Bxml
+Blocked access to external URL http://www1.localhost:8800/fetch/nosniff/resources/image.py?type=text%2Fblah%2Bxml
+Blocked access to external URL http://www1.localhost:8800/fetch/nosniff/resources/image.py?type=TEXT%2FHTML
+Blocked access to external URL http://www1.localhost:8800/fetch/nosniff/resources/image.py?type=TEXT%2FJSON
+Blocked access to external URL http://www1.localhost:8800/fetch/nosniff/resources/image.py?type=TEXT%2FBLAH%2BJSON
+Blocked access to external URL http://www1.localhost:8800/fetch/nosniff/resources/image.py?type=APPLICATION%2FBLAH%2BXML
+Blocked access to external URL http://www1.localhost:8800/fetch/nosniff/resources/image.py?type=text%2Fjson%3Bdoes%3Dit%3Bmatter
+Blocked access to external URL http://www1.localhost:8800/fetch/nosniff/resources/image.py?type=text%2FHTML%3BNO%3Dit%3Bdoes%3DNOT
+
+FAIL CORB should allow the response if Content-Type is: 'null'.   assert_unreached: Unexpected error event Reached unreachable code
+FAIL CORB should allow the response if Content-Type is: ''.   assert_unreached: Unexpected error event Reached unreachable code
+FAIL CORB should allow the response if Content-Type is: 'x'.   assert_unreached: Unexpected error event Reached unreachable code
+FAIL CORB should allow the response if Content-Type is: 'x/x'.   assert_unreached: Unexpected error event Reached unreachable code
+FAIL CORB should allow the response if Content-Type is: 'image/gif'.   assert_unreached: Unexpected error event Reached unreachable code
+FAIL CORB should allow the response if Content-Type is: 'image/png'.   assert_unreached: Unexpected error event Reached unreachable code
+FAIL CORB should allow the response if Content-Type is: 'image/png;blah'.   assert_unreached: Unexpected error event Reached unreachable code
+FAIL CORB should allow the response if Content-Type is: 'image/svg+xml'.   assert_unreached: Unexpected error event Reached unreachable code
+FAIL CORB should allow the response if Content-Type is: 'application/javascript'.   assert_unreached: Unexpected error event Reached unreachable code
+FAIL CORB should allow the response if Content-Type is: 'application/jsonp'.   assert_unreached: Unexpected error event Reached unreachable code
+FAIL CORB should allow the response if Content-Type is: 'image/gif;HI=THERE'.   assert_unreached: Unexpected error event Reached unreachable code
+FAIL CORB should allow the response if Content-Type is: 'text/x-json'.   assert_unreached: Unexpected error event Reached unreachable code
+FAIL CORB should allow the response if Content-Type is: 'text/json+blah'.   assert_unreached: Unexpected error event Reached unreachable code
+FAIL CORB should allow the response if Content-Type is: 'application/json+blah'.   assert_unreached: Unexpected error event Reached unreachable code
+FAIL CORB should allow the response if Content-Type is: 'text/xml+blah'.   assert_unreached: Unexpected error event Reached unreachable code
+FAIL CORB should allow the response if Content-Type is: 'application/xml+blah'.   assert_unreached: Unexpected error event Reached unreachable code
+FAIL CORB should allow the response if Content-Type is: 'application/blahjson'.   assert_unreached: Unexpected error event Reached unreachable code
+FAIL CORB should allow the response if Content-Type is: 'text/blahxml'.   assert_unreached: Unexpected error event Reached unreachable code
+PASS CORB should block the response if Content-Type is: 'text/html'.   
+PASS CORB should block the response if Content-Type is: 'text/json'.   
+PASS CORB should block the response if Content-Type is: 'application/json'.   
+PASS CORB should block the response if Content-Type is: 'text/xml'.   
+PASS CORB should block the response if Content-Type is: 'application/xml'.   
+PASS CORB should block the response if Content-Type is: 'application/blah+json'.   
+PASS CORB should block the response if Content-Type is: 'text/blah+json'.   
+PASS CORB should block the response if Content-Type is: 'application/blah+xml'.   
+PASS CORB should block the response if Content-Type is: 'text/blah+xml'.   
+PASS CORB should block the response if Content-Type is: 'TEXT/HTML'.   
+PASS CORB should block the response if Content-Type is: 'TEXT/JSON'.   
+PASS CORB should block the response if Content-Type is: 'TEXT/BLAH+JSON'.   
+PASS CORB should block the response if Content-Type is: 'APPLICATION/BLAH+XML'.   
+PASS CORB should block the response if Content-Type is: 'text/json;does=it;matter'.   
+PASS CORB should block the response if Content-Type is: 'text/HTML;NO=it;does=NOT'.   
+

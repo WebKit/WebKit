@@ -1,6 +1,7 @@
 
-PASS HTTP cache updates returned headers from a Last-Modified 304. 
-PASS HTTP cache updates stored headers from a Last-Modified 304. 
-PASS HTTP cache updates returned headers from a ETag 304. 
-PASS HTTP cache updates stored headers from a ETag 304. 
+PASS HTTP cache updates returned headers from a Last-Modified 304 
+PASS HTTP cache updates stored headers from a Last-Modified 304 
+PASS HTTP cache updates returned headers from a ETag 304 
+PASS HTTP cache updates stored headers from a ETag 304 
+FAIL Content-* header assert_equals: Response 2 header Content-Test-Header is "A", not "B" expected "B" but got "A"
 

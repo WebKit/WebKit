@@ -1,3 +1,30 @@
+2019-01-07  Youenn Fablet  <youenn@apple.com>
+
+        Resync WPT fetch tests to 834eac4
+        https://bugs.webkit.org/show_bug.cgi?id=193125
+
+        Reviewed by Chris Dumez.
+
+        * TestExpectations:
+        * platform/gtk/TestExpectations:
+        * platform/ios-simulator/imported/w3c/web-platform-tests/fetch/content-type/response.window-expected.txt: Added.
+        * platform/ios-wk1/TestExpectations:
+        * platform/ios/TestExpectations:
+        * platform/mac-wk1/imported/w3c/web-platform-tests/fetch/api/abort/serviceworker-intercepted.https-expected.txt:
+        * platform/mac-wk1/imported/w3c/web-platform-tests/fetch/api/request/request-init-stream.any-expected.txt: Added.
+        * platform/mac-wk1/imported/w3c/web-platform-tests/fetch/api/request/request-reset-attributes.https-expected.txt: Added.
+        * platform/mac-wk1/imported/w3c/web-platform-tests/fetch/content-type/script.window-expected.txt: Added.
+        * platform/mac-wk1/imported/w3c/web-platform-tests/fetch/http-cache/304-update-expected.txt:
+        * platform/mac-wk1/imported/w3c/web-platform-tests/fetch/http-cache/cc-request-expected.txt:
+        * platform/mac-wk1/imported/w3c/web-platform-tests/fetch/http-cache/heuristic-expected.txt:
+        * platform/mac-wk1/imported/w3c/web-platform-tests/fetch/http-cache/invalidate-expected.txt:
+        * platform/mac-wk1/imported/w3c/web-platform-tests/fetch/http-cache/status-expected.txt:
+        * platform/mac-wk1/imported/w3c/web-platform-tests/fetch/sec-metadata/embed.tentative.https.sub-expected.txt: Added.
+        * platform/mac-wk1/imported/w3c/web-platform-tests/fetch/sec-metadata/object.tentative.https.sub-expected.txt: Added.
+        * platform/mac-wk1/imported/w3c/web-platform-tests/fetch/sec-metadata/serviceworker.tentative.https.sub-expected.txt: Added.
+        * platform/mac/TestExpectations:
+        * tests-options.json:
+
 2019-01-07  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Native caret shows up alongside the page's caret when requesting desktop site on jsfiddle.net

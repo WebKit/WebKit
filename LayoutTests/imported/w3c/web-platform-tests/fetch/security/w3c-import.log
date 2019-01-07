@@ -1,7 +1,7 @@
 The tests in this directory were imported from the W3C repository.
 Do NOT modify these tests directly in WebKit.
 Instead, create a pull request on the WPT github:
-	https://github.com/w3c/web-platform-tests
+	https://github.com/web-platform-tests/wpt
 
 Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
 
@@ -17,3 +17,4 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/fetch/security/dangling-markup-mitigation-data-url.tentative.sub.html
 /LayoutTests/imported/w3c/web-platform-tests/fetch/security/dangling-markup-mitigation.tentative.html
 /LayoutTests/imported/w3c/web-platform-tests/fetch/security/embedded-credentials.tentative.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/fetch/security/redirect-to-url-with-credentials.https.html

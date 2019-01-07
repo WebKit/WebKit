@@ -1,0 +1,9 @@
+Blocked access to external URL http://www1.localhost:8800/fetch/corb/resources/html-correctly-labeled.html
+Blocked access to external URL http://www1.localhost:8800/fetch/corb/resources/html-correctly-labeled.html
+Header example
+
+Paragraph body
+
+
+PASS Untitled 
+

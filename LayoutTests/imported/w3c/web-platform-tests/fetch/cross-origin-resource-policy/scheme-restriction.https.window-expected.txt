@@ -1,5 +1,7 @@
-CONSOLE MESSAGE: line 1489: The page at https://localhost:9443/fetch/cross-origin-resource-policy/scheme-restriction.https.window.html was allowed to display insecure content from http://localhost:8800/fetch/cross-origin-resource-policy/resources/image.py?corp=same-site.
+CONSOLE MESSAGE: line 1489: The page at https://localhost:9443/fetch/cross-origin-resource-policy/scheme-restriction.https.window.html was allowed to display insecure content from http://127.0.0.1:8800/fetch/cross-origin-resource-policy/resources/image.py?corp=same-site.
 
+CONSOLE MESSAGE: Cancelled load to http://127.0.0.1:8800/fetch/cross-origin-resource-policy/resources/image.py?corp=same-site because it violates the resource's Cross-Origin-Resource-Policy response header.
+CONSOLE MESSAGE: Cannot load image http://127.0.0.1:8800/fetch/cross-origin-resource-policy/resources/image.py?corp=same-site due to access control checks.
 
-PASS Cross-Origin-Resource-Policy does not block Mixed Content <img> 
+FAIL Cross-Origin-Resource-Policy does not block Mixed Content <img> promise_test: Unhandled rejection with value: object "[object Event]"
 

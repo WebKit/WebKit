@@ -1,0 +1,10 @@
+Blocked access to external URL http://www1.localhost:8800/fetch/corb/resources/css-with-json-parser-breaker.css
+Blocked access to external URL http://www1.localhost:8800/fetch/corb/resources/css-with-json-parser-breaker.css
+CONSOLE MESSAGE: line 2659: Error: assert_equals: expected "rgb(255, 0, 0)" but got "rgb(0, 128, 0)"
+Header example
+
+Paragraph body
+
+
+FAIL Untitled Error: assert_equals: expected "rgb(255, 0, 0)" but got "rgb(0, 128, 0)"
+

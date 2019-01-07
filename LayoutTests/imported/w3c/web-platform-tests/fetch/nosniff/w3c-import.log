@@ -1,7 +1,7 @@
 The tests in this directory were imported from the W3C repository.
 Do NOT modify these tests directly in WebKit.
 Instead, create a pull request on the WPT github:
-	https://github.com/w3c/web-platform-tests
+	https://github.com/web-platform-tests/wpt
 
 Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
 
@@ -17,7 +17,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/fetch/nosniff/image.html
 /LayoutTests/imported/w3c/web-platform-tests/fetch/nosniff/importscripts.html
 /LayoutTests/imported/w3c/web-platform-tests/fetch/nosniff/importscripts.js
-/LayoutTests/imported/w3c/web-platform-tests/fetch/nosniff/parsing-nosniff.html
+/LayoutTests/imported/w3c/web-platform-tests/fetch/nosniff/parsing-nosniff.window.js
 /LayoutTests/imported/w3c/web-platform-tests/fetch/nosniff/script.html
 /LayoutTests/imported/w3c/web-platform-tests/fetch/nosniff/stylesheet.html
 /LayoutTests/imported/w3c/web-platform-tests/fetch/nosniff/worker.html

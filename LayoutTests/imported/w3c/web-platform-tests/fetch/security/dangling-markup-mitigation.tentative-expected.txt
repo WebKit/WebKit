@@ -24,11 +24,11 @@ PASS <img id="dangling" src="/images/green-1x1.png?img=&lt;b">
 PASS <img id="dangling" src="/images/green-1x1.png?img=&#10;b"> 
 PASS <img id="dangling" src="/images/green-1x1.png?img=&amp;#10;b"> 
 PASS <img id="dangling" src="/images/green-1x1.png?img=&amp;lt;b"> 
-FAIL <img id="dangling" src="/images/green-1x1.png?img=&amp;#10;b&amp;lt;c"> assert_equals: Height expected 1 but got 0
+PASS <img id="dangling" src="/images/green-1x1.png?img=&amp;#10;b&amp;lt;c"> 
 PASS \n      <img id="dangling" src="\n        /images/green-1x1.png?img=\n      ">\n     
 PASS \n      <img id="dangling" src="\n        /images/green-1x1.png?img=&amp;lt;\n      ">\n     
-FAIL \n      <img id="dangling" src="\n        /images/green-1x1.png?img=&amp;#10;\n      ">\n     assert_equals: Height expected 1 but got 0
+PASS \n      <img id="dangling" src="\n        /images/green-1x1.png?img=&amp;#10;\n      ">\n     
 FAIL <img id="dangling" src="/images/green-1x1.png?img=&#10;&lt;b"> assert_equals: Height expected 0 but got 1
-PASS <img id="dangling" src="/images/green-1x1.png?img=&lt;&#10;b"> 
+FAIL <img id="dangling" src="/images/green-1x1.png?img=&lt;&#10;b"> assert_equals: Height expected 0 but got 1
 FAIL \n      <img id="dangling" src="/images/green-1x1.png?img=\n        &lt;\n        &#10;b\n      ">\n     assert_equals: Height expected 0 but got 1
 

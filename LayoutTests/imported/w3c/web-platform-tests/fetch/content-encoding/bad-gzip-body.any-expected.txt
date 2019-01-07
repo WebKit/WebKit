@@ -1,0 +1,8 @@
+
+PASS Fetching a resource with bad gzip content should still resolve 
+PASS Consuming the body of a resource with bad gzip content with arrayBuffer() should reject 
+PASS Consuming the body of a resource with bad gzip content with blob() should reject 
+PASS Consuming the body of a resource with bad gzip content with formData() should reject 
+PASS Consuming the body of a resource with bad gzip content with json() should reject 
+PASS Consuming the body of a resource with bad gzip content with text() should reject 
+

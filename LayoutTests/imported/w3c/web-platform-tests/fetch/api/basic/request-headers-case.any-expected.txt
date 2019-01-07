@@ -1,0 +1,4 @@
+
+PASS Multiple headers with the same name, different case (THIS-is-A-test first) 
+PASS Multiple headers with the same name, different case (THIS-IS-A-TEST first) 
+

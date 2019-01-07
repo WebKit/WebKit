@@ -1,0 +1,6 @@
+Blocked access to external URL http://www1.localhost:8800/fetch/corb/resources/html-correctly-labeled.html
+
+Harness Error (TIMEOUT), message = null
+
+TIMEOUT CORB-blocked script has no syntax errors Test timed out
+

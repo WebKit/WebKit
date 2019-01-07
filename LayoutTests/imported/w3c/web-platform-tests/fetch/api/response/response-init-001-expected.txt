@@ -3,7 +3,7 @@ PASS Check default value for type attribute
 PASS Check default value for url attribute 
 PASS Check default value for ok attribute 
 PASS Check default value for status attribute 
-PASS Check default value for statusText attribute 
+FAIL Check default value for statusText attribute assert_equals: Expect default response.statusText is  expected "" but got "OK"
 PASS Check default value for body attribute 
 PASS Check status init values and associated getter 
 PASS Check statusText init values and associated getter 

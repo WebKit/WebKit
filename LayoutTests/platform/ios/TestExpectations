@@ -218,6 +218,7 @@ fast/history/page-cache-media-source-closed-2.html [ Skip ]
 fast/history/page-cache-media-source-closed.html [ Skip ]
 fast/history/page-cache-media-source-opened.html [ Skip ]
 fast/history/page-cache-removed-source-buffer.html [ Skip ]
+imported/w3c/web-platform-tests/fetch/api/basic/mediasource.window.html [ Skip ]
 
 # Quota API is not supported on iOS
 storage/domstorage/quota.html
@@ -2687,10 +2688,6 @@ webkit.org/b/168215 imported/w3c/web-platform-tests/html/semantics/embedded-cont
 # <rdar://problem/30610988>
 imported/w3c/web-platform-tests/fetch/api/redirect/redirect-count-cross-origin-worker.html [ Failure ]
 imported/w3c/web-platform-tests/fetch/api/redirect/redirect-count-cross-origin.html [ Failure ]
-imported/w3c/web-platform-tests/fetch/api/redirect/redirect-count-worker.html [ Failure ]
-imported/w3c/web-platform-tests/fetch/api/redirect/redirect-count.html [ Failure ]
-imported/w3c/web-platform-tests/fetch/api/redirect/redirect-location-worker.html [ Failure ]
-imported/w3c/web-platform-tests/fetch/api/redirect/redirect-location.html [ Failure ]
 
 # rdar://problem/23643423
 [ Debug ] fast/frames/exponential-frames.html [ Skip ]

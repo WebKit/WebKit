@@ -1,0 +1,17 @@
+CONSOLE MESSAGE: Cross-origin redirection to data:text/plain;base64,cmVzcG9uc2UncyBib2R5 denied by Cross-Origin Resource Sharing policy: URL is either a non-HTTP URL or contains credentials.
+CONSOLE MESSAGE: Fetch API cannot load http://localhost:8800/fetch/api/resources/redirect.py?cors&location=data%3Atext%2Fplain%3Bbase64%2CcmVzcG9uc2UncyBib2R5 due to access control checks.
+CONSOLE MESSAGE: Redirection to URL with a scheme that is not HTTP(S).
+CONSOLE MESSAGE: Fetch API cannot load data:text/plain;base64,cmVzcG9uc2UncyBib2R5 due to access control checks.
+CONSOLE MESSAGE: Unsafe attempt to load URL data:text/plain;base64,cmVzcG9uc2UncyBib2R5 from origin http://localhost:8800. Domains, protocols and ports must match.
+
+CONSOLE MESSAGE: Cross-origin redirection to data:text/plain;base64,cmVzcG9uc2UncyBib2R5 denied by Cross-Origin Resource Sharing policy: URL is either a non-HTTP URL or contains credentials.
+CONSOLE MESSAGE: Fetch API cannot load http://127.0.0.1:8800/fetch/api/resources/redirect.py?cors&location=data%3Atext%2Fplain%3Bbase64%2CcmVzcG9uc2UncyBib2R5 due to access control checks.
+CONSOLE MESSAGE: Redirection to URL with a scheme that is not HTTP(S).
+CONSOLE MESSAGE: Fetch API cannot load data:text/plain;base64,cmVzcG9uc2UncyBib2R5 due to access control checks.
+
+PASS Testing data URL loading after same-origin redirection (cors mode) 
+PASS Testing data URL loading after same-origin redirection (no-cors mode) 
+PASS Testing data URL loading after same-origin redirection (same-origin mode) 
+PASS Testing data URL loading after cross-origin redirection (cors mode) 
+PASS Testing data URL loading after cross-origin redirection (no-cors mode) 
+

@@ -1,6 +1,7 @@
 
-PASS HTTP cache updates returned headers from a Last-Modified 304. 
-FAIL HTTP cache updates stored headers from a Last-Modified 304. assert_less_than: Response used expected a number less than 3 but got 3
-PASS HTTP cache updates returned headers from a ETag 304. 
-FAIL HTTP cache updates stored headers from a ETag 304. assert_less_than: Response used expected a number less than 3 but got 3
+PASS HTTP cache updates returned headers from a Last-Modified 304 
+FAIL HTTP cache updates stored headers from a Last-Modified 304 assert_less_than: Response 3 does not come from cache expected a number less than 3 but got 3
+PASS HTTP cache updates returned headers from a ETag 304 
+FAIL HTTP cache updates stored headers from a ETag 304 assert_less_than: Response 3 does not come from cache expected a number less than 3 but got 3
+FAIL Content-* header assert_less_than: Response 3 does not come from cache expected a number less than 3 but got 3
 

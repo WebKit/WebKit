@@ -335,6 +335,7 @@ PASS atob("ab=c")
 PASS atob("ab=c=") 
 PASS atob("abc=d") 
 PASS atob("abc=d=") 
+FAIL atob("ab\vcd") assert_throws: function "() => window.atob(input)" did not throw
 PASS atob("ab\tcd") 
 PASS atob("ab\ncd") 
 PASS atob("ab\fcd") 

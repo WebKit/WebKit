@@ -1,0 +1,87 @@
+CONSOLE MESSAGE: Not allowed to follow a redirection while loading http://localhost:8800/fetch/api/resources/redirect.py?redirect_status=301&location=cors-top.txt
+CONSOLE MESSAGE: No-Cors mode requires follow redirect mode
+CONSOLE MESSAGE: No-Cors mode requires follow redirect mode
+CONSOLE MESSAGE: Not allowed to follow a redirection while loading http://localhost:8800/fetch/api/resources/redirect.py?redirect_status=302&location=cors-top.txt
+CONSOLE MESSAGE: No-Cors mode requires follow redirect mode
+CONSOLE MESSAGE: No-Cors mode requires follow redirect mode
+CONSOLE MESSAGE: Not allowed to follow a redirection while loading http://localhost:8800/fetch/api/resources/redirect.py?redirect_status=303&location=cors-top.txt
+CONSOLE MESSAGE: No-Cors mode requires follow redirect mode
+CONSOLE MESSAGE: No-Cors mode requires follow redirect mode
+CONSOLE MESSAGE: Not allowed to follow a redirection while loading http://localhost:8800/fetch/api/resources/redirect.py?redirect_status=307&location=cors-top.txt
+CONSOLE MESSAGE: No-Cors mode requires follow redirect mode
+CONSOLE MESSAGE: No-Cors mode requires follow redirect mode
+CONSOLE MESSAGE: Not allowed to follow a redirection while loading http://localhost:8800/fetch/api/resources/redirect.py?redirect_status=308&location=cors-top.txt
+CONSOLE MESSAGE: No-Cors mode requires follow redirect mode
+CONSOLE MESSAGE: No-Cors mode requires follow redirect mode
+CONSOLE MESSAGE: No-Cors mode requires follow redirect mode
+CONSOLE MESSAGE: No-Cors mode requires follow redirect mode
+CONSOLE MESSAGE: No-Cors mode requires follow redirect mode
+CONSOLE MESSAGE: No-Cors mode requires follow redirect mode
+CONSOLE MESSAGE: No-Cors mode requires follow redirect mode
+CONSOLE MESSAGE: No-Cors mode requires follow redirect mode
+CONSOLE MESSAGE: No-Cors mode requires follow redirect mode
+CONSOLE MESSAGE: No-Cors mode requires follow redirect mode
+CONSOLE MESSAGE: No-Cors mode requires follow redirect mode
+CONSOLE MESSAGE: No-Cors mode requires follow redirect mode
+
+PASS same-origin redirect 301 in error redirect and cors mode 
+PASS same-origin redirect 301 in error redirect and no-cors mode 
+PASS same-origin redirect 301 in manual redirect and cors mode 
+FAIL same-origin redirect 301 in manual redirect and no-cors mode promise_test: Unhandled rejection with value: object "TypeError: Not allowed to request resource"
+PASS same-origin redirect 301 in follow redirect and cors mode 
+PASS same-origin redirect 301 in follow redirect and no-cors mode 
+PASS same-origin redirect 302 in error redirect and cors mode 
+PASS same-origin redirect 302 in error redirect and no-cors mode 
+PASS same-origin redirect 302 in manual redirect and cors mode 
+FAIL same-origin redirect 302 in manual redirect and no-cors mode promise_test: Unhandled rejection with value: object "TypeError: Not allowed to request resource"
+PASS same-origin redirect 302 in follow redirect and cors mode 
+PASS same-origin redirect 302 in follow redirect and no-cors mode 
+PASS same-origin redirect 303 in error redirect and cors mode 
+PASS same-origin redirect 303 in error redirect and no-cors mode 
+PASS same-origin redirect 303 in manual redirect and cors mode 
+FAIL same-origin redirect 303 in manual redirect and no-cors mode promise_test: Unhandled rejection with value: object "TypeError: Not allowed to request resource"
+PASS same-origin redirect 303 in follow redirect and cors mode 
+PASS same-origin redirect 303 in follow redirect and no-cors mode 
+PASS same-origin redirect 307 in error redirect and cors mode 
+PASS same-origin redirect 307 in error redirect and no-cors mode 
+PASS same-origin redirect 307 in manual redirect and cors mode 
+FAIL same-origin redirect 307 in manual redirect and no-cors mode promise_test: Unhandled rejection with value: object "TypeError: Not allowed to request resource"
+PASS same-origin redirect 307 in follow redirect and cors mode 
+PASS same-origin redirect 307 in follow redirect and no-cors mode 
+PASS same-origin redirect 308 in error redirect and cors mode 
+PASS same-origin redirect 308 in error redirect and no-cors mode 
+PASS same-origin redirect 308 in manual redirect and cors mode 
+FAIL same-origin redirect 308 in manual redirect and no-cors mode promise_test: Unhandled rejection with value: object "TypeError: Not allowed to request resource"
+PASS same-origin redirect 308 in follow redirect and cors mode 
+PASS same-origin redirect 308 in follow redirect and no-cors mode 
+PASS cross-origin redirect 301 in error redirect and cors mode 
+PASS cross-origin redirect 301 in error redirect and no-cors mode 
+FAIL cross-origin redirect 301 in manual redirect and cors mode promise_test: Unhandled rejection with value: object "TypeError: Could not connect to the server."
+PASS cross-origin redirect 301 in manual redirect and no-cors mode 
+FAIL cross-origin redirect 301 in follow redirect and cors mode promise_test: Unhandled rejection with value: object "TypeError: Could not connect to the server."
+FAIL cross-origin redirect 301 in follow redirect and no-cors mode promise_test: Unhandled rejection with value: object "TypeError: Could not connect to the server."
+PASS cross-origin redirect 302 in error redirect and cors mode 
+PASS cross-origin redirect 302 in error redirect and no-cors mode 
+FAIL cross-origin redirect 302 in manual redirect and cors mode promise_test: Unhandled rejection with value: object "TypeError: Could not connect to the server."
+PASS cross-origin redirect 302 in manual redirect and no-cors mode 
+FAIL cross-origin redirect 302 in follow redirect and cors mode promise_test: Unhandled rejection with value: object "TypeError: Could not connect to the server."
+FAIL cross-origin redirect 302 in follow redirect and no-cors mode promise_test: Unhandled rejection with value: object "TypeError: Could not connect to the server."
+PASS cross-origin redirect 303 in error redirect and cors mode 
+PASS cross-origin redirect 303 in error redirect and no-cors mode 
+FAIL cross-origin redirect 303 in manual redirect and cors mode promise_test: Unhandled rejection with value: object "TypeError: Could not connect to the server."
+PASS cross-origin redirect 303 in manual redirect and no-cors mode 
+FAIL cross-origin redirect 303 in follow redirect and cors mode promise_test: Unhandled rejection with value: object "TypeError: Could not connect to the server."
+FAIL cross-origin redirect 303 in follow redirect and no-cors mode promise_test: Unhandled rejection with value: object "TypeError: Could not connect to the server."
+PASS cross-origin redirect 307 in error redirect and cors mode 
+PASS cross-origin redirect 307 in error redirect and no-cors mode 
+FAIL cross-origin redirect 307 in manual redirect and cors mode promise_test: Unhandled rejection with value: object "TypeError: Could not connect to the server."
+PASS cross-origin redirect 307 in manual redirect and no-cors mode 
+FAIL cross-origin redirect 307 in follow redirect and cors mode promise_test: Unhandled rejection with value: object "TypeError: Could not connect to the server."
+FAIL cross-origin redirect 307 in follow redirect and no-cors mode promise_test: Unhandled rejection with value: object "TypeError: Could not connect to the server."
+PASS cross-origin redirect 308 in error redirect and cors mode 
+PASS cross-origin redirect 308 in error redirect and no-cors mode 
+FAIL cross-origin redirect 308 in manual redirect and cors mode promise_test: Unhandled rejection with value: object "TypeError: Could not connect to the server."
+PASS cross-origin redirect 308 in manual redirect and no-cors mode 
+FAIL cross-origin redirect 308 in follow redirect and cors mode promise_test: Unhandled rejection with value: object "TypeError: Could not connect to the server."
+FAIL cross-origin redirect 308 in follow redirect and no-cors mode promise_test: Unhandled rejection with value: object "TypeError: Could not connect to the server."
+

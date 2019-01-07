@@ -1,9 +1,10 @@
 
 PASS Initialize Request with headers values 
-PASS Initialize Request's body with undefined 
-PASS Initialize Request's body with null 
-PASS Initialize Request's body with application/octet-binary 
-FAIL Initialize Request's body with multipart/form-data promise_test: Unhandled rejection with value: object "NotSupportedError: The operation is not supported."
-PASS Initialize Request's body with text/plain;charset=UTF-8 
-PASS Initialize Request's body with application/x-www-form-urlencoded;charset=UTF-8 
+PASS Initialize Request's body with "undefined", undefined 
+PASS Initialize Request's body with "null", null 
+PASS Initialize Request's body with "[object Blob]", application/octet-binary 
+FAIL Initialize Request's body with "[object FormData]", multipart/form-data promise_test: Unhandled rejection with value: object "NotSupportedError: The operation is not supported."
+PASS Initialize Request's body with "This is a USVString", text/plain;charset=UTF-8 
+PASS Initialize Request's body with "hi!", text/plain;charset=UTF-8 
+PASS Initialize Request's body with "name=value", application/x-www-form-urlencoded;charset=UTF-8 
 

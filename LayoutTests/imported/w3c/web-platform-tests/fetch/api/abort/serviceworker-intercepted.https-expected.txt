@@ -1,5 +1,4 @@
 
-
 PASS Already aborted request does not land in service worker 
 PASS response.arrayBuffer() rejects if already aborted 
 PASS response.blob() rejects if already aborted 

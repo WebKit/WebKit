@@ -1,5 +1,5 @@
 
-PASS Check Response's clone with default values, without body 
+FAIL Check Response's clone with default values, without body assert_equals: Expect default response.statusText is  expected "" but got "OK"
 PASS Check Response's clone has the expected attribute values 
 PASS Check orginal response's body after cloning 
 PASS Check cloned response's body 

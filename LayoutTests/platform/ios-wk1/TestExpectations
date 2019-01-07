@@ -1469,7 +1469,6 @@ http/tests/navigation/page-cache-iframe-provisional-load.html [ Crash Pass Failu
 imported/blink/editing/execCommand/4128080-2.html [ Crash Failure ]
 imported/blink/editing/undo/crash-redo-with-iframes.html [ Crash Pass ]
 imported/blink/paint/deprecatedpaintlayer/non-self-painting-layer-overrides-visibility.html [ Crash Pass ]
-imported/w3c/web-platform-tests/fetch/api/redirect/redirect-location.html [ Crash Pass ]
 platform/ios/ios/fast/coordinates/document-elementFromPoint.html [ Timeout Failure ]
 platform/ios/ios/fast/coordinates/touch-event-zoomed.html [ Crash Timeout ]
 platform/ios/ios/fast/coordinates/touch-event.html [ Crash Timeout ]
@@ -1926,7 +1925,6 @@ imported/blink/imported/csswg-test/css-writing-modes-3/bidi-override-001.html [ 
 imported/blink/imported/csswg-test/css-writing-modes-3/bidi-plaintext-004.html [ Pass ImageOnlyFailure ]
 imported/blink/imported/csswg-test/css-writing-modes-3/bidi-unset-007.html [ Pass ImageOnlyFailure ]
 imported/blink/imported/csswg-test/css-writing-modes-3/block-embed-001.html [ Pass ImageOnlyFailure ]
-imported/w3c/web-platform-tests/fetch/api/redirect/redirect-count.html [ Crash Pass ]
 imported/mozilla/svg/text/clipPath-content.svg [ Pass ImageOnlyFailure ]
 
 # Skipping timeouts that are impacting testing

@@ -16,5 +16,6 @@ None
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/fetch/api/request/destination/fetch-destination-iframe.https.html
 /LayoutTests/imported/w3c/web-platform-tests/fetch/api/request/destination/fetch-destination-no-load-event.https.html
+/LayoutTests/imported/w3c/web-platform-tests/fetch/api/request/destination/fetch-destination-prefetch.https.html
 /LayoutTests/imported/w3c/web-platform-tests/fetch/api/request/destination/fetch-destination-worker.https.html
 /LayoutTests/imported/w3c/web-platform-tests/fetch/api/request/destination/fetch-destination.https.html

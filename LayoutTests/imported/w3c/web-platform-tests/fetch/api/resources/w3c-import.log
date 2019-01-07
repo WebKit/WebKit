@@ -1,7 +1,7 @@
 The tests in this directory were imported from the W3C repository.
 Do NOT modify these tests directly in WebKit.
 Instead, create a pull request on the WPT github:
-	https://github.com/w3c/web-platform-tests
+	https://github.com/web-platform-tests/wpt
 
 Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
 
@@ -19,14 +19,19 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/fetch/api/resources/basic.html
 /LayoutTests/imported/w3c/web-platform-tests/fetch/api/resources/cache.py
 /LayoutTests/imported/w3c/web-platform-tests/fetch/api/resources/clean-stash.py
+/LayoutTests/imported/w3c/web-platform-tests/fetch/api/resources/cors-top.txt
+/LayoutTests/imported/w3c/web-platform-tests/fetch/api/resources/cors-top.txt.headers
 /LayoutTests/imported/w3c/web-platform-tests/fetch/api/resources/data.json
 /LayoutTests/imported/w3c/web-platform-tests/fetch/api/resources/echo-content.py
 /LayoutTests/imported/w3c/web-platform-tests/fetch/api/resources/empty.txt
 /LayoutTests/imported/w3c/web-platform-tests/fetch/api/resources/infinite-slow-response.py
 /LayoutTests/imported/w3c/web-platform-tests/fetch/api/resources/inspect-headers.py
+/LayoutTests/imported/w3c/web-platform-tests/fetch/api/resources/keepalive-iframe.html
 /LayoutTests/imported/w3c/web-platform-tests/fetch/api/resources/method.py
 /LayoutTests/imported/w3c/web-platform-tests/fetch/api/resources/preflight.py
+/LayoutTests/imported/w3c/web-platform-tests/fetch/api/resources/redirect-empty-location.py
 /LayoutTests/imported/w3c/web-platform-tests/fetch/api/resources/redirect.py
+/LayoutTests/imported/w3c/web-platform-tests/fetch/api/resources/sandboxed-iframe.html
 /LayoutTests/imported/w3c/web-platform-tests/fetch/api/resources/script-with-header.py
 /LayoutTests/imported/w3c/web-platform-tests/fetch/api/resources/stash-put.py
 /LayoutTests/imported/w3c/web-platform-tests/fetch/api/resources/stash-take.py

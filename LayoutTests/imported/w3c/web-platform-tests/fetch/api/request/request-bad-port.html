@@ -4,6 +4,7 @@
 <script src="/resources/testharness.js"></script>
 <script src="/resources/testharnessreport.js"></script>
 <script>
+
     // list of bad ports according to
     // https://fetch.spec.whatwg.org/#port-blocking
     var BLOCKED_PORTS_LIST = [
@@ -75,6 +76,7 @@
         6669, // irc (alternate)
         6697, // irc+tls
     ];
+
     BLOCKED_PORTS_LIST.map(function(a){
     	promise_test(function(t){
             return promise_rejects(t, new TypeError(), fetch("http://example.com:" + a))

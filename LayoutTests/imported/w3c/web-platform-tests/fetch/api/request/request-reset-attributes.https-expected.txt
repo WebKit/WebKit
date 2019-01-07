@@ -1,0 +1,5 @@
+
+FAIL Request.isReloadNavigation is reset with non-empty RequestInit assert_equals: expected "old: false, new: false" but got "old: undefined, new: undefined"
+FAIL Request.isHistoryNavigation is reset with non-empty RequestInit assert_equals: expected "old: false, new: false" but got "old: undefined, new: undefined"
+PASS Request.mode is reset with non-empty RequestInit when it's "navigate" 
+

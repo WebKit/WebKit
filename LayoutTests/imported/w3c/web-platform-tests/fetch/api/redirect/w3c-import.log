@@ -1,7 +1,7 @@
 The tests in this directory were imported from the W3C repository.
 Do NOT modify these tests directly in WebKit.
 Instead, create a pull request on the WPT github:
-	https://github.com/w3c/web-platform-tests
+	https://github.com/web-platform-tests/wpt
 
 Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
 
@@ -14,25 +14,13 @@ Property values requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
 List of files:
-/LayoutTests/imported/w3c/web-platform-tests/fetch/api/redirect/redirect-count-worker.html
-/LayoutTests/imported/w3c/web-platform-tests/fetch/api/redirect/redirect-count.html
-/LayoutTests/imported/w3c/web-platform-tests/fetch/api/redirect/redirect-count.js
-/LayoutTests/imported/w3c/web-platform-tests/fetch/api/redirect/redirect-location-worker.html
-/LayoutTests/imported/w3c/web-platform-tests/fetch/api/redirect/redirect-location.html
-/LayoutTests/imported/w3c/web-platform-tests/fetch/api/redirect/redirect-location.js
-/LayoutTests/imported/w3c/web-platform-tests/fetch/api/redirect/redirect-method-worker.html
-/LayoutTests/imported/w3c/web-platform-tests/fetch/api/redirect/redirect-method.html
-/LayoutTests/imported/w3c/web-platform-tests/fetch/api/redirect/redirect-method.js
-/LayoutTests/imported/w3c/web-platform-tests/fetch/api/redirect/redirect-mode-worker.html
-/LayoutTests/imported/w3c/web-platform-tests/fetch/api/redirect/redirect-mode.html
-/LayoutTests/imported/w3c/web-platform-tests/fetch/api/redirect/redirect-mode.js
-/LayoutTests/imported/w3c/web-platform-tests/fetch/api/redirect/redirect-origin-worker.html
-/LayoutTests/imported/w3c/web-platform-tests/fetch/api/redirect/redirect-origin.html
-/LayoutTests/imported/w3c/web-platform-tests/fetch/api/redirect/redirect-origin.js
-/LayoutTests/imported/w3c/web-platform-tests/fetch/api/redirect/redirect-referrer-worker.html
-/LayoutTests/imported/w3c/web-platform-tests/fetch/api/redirect/redirect-referrer.html
-/LayoutTests/imported/w3c/web-platform-tests/fetch/api/redirect/redirect-referrer.js
+/LayoutTests/imported/w3c/web-platform-tests/fetch/api/redirect/redirect-back-to-original-origin.any.js
+/LayoutTests/imported/w3c/web-platform-tests/fetch/api/redirect/redirect-count.any.js
+/LayoutTests/imported/w3c/web-platform-tests/fetch/api/redirect/redirect-empty-location.any.js
+/LayoutTests/imported/w3c/web-platform-tests/fetch/api/redirect/redirect-location.any.js
+/LayoutTests/imported/w3c/web-platform-tests/fetch/api/redirect/redirect-method.any.js
+/LayoutTests/imported/w3c/web-platform-tests/fetch/api/redirect/redirect-mode.any.js
+/LayoutTests/imported/w3c/web-platform-tests/fetch/api/redirect/redirect-origin.any.js
+/LayoutTests/imported/w3c/web-platform-tests/fetch/api/redirect/redirect-referrer.any.js
 /LayoutTests/imported/w3c/web-platform-tests/fetch/api/redirect/redirect-schemes.html
-/LayoutTests/imported/w3c/web-platform-tests/fetch/api/redirect/redirect-to-dataurl-worker.html
-/LayoutTests/imported/w3c/web-platform-tests/fetch/api/redirect/redirect-to-dataurl.html
-/LayoutTests/imported/w3c/web-platform-tests/fetch/api/redirect/redirect-to-dataurl.js
+/LayoutTests/imported/w3c/web-platform-tests/fetch/api/redirect/redirect-to-dataurl.any.js

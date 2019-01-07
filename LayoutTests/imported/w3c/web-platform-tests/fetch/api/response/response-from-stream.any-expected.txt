@@ -1,0 +1,5 @@
+
+FAIL Constructing a Response with a stream on which getReader() is called assert_throws: function "() => new Response(stream)" did not throw
+FAIL Constructing a Response with a stream on which read() is called assert_throws: function "() => new Response(stream)" did not throw
+FAIL Constructing a Response with a stream on which read() and releaseLock() are called assert_throws: function "() => new Response(stream)" did not throw
+

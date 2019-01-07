@@ -1,0 +1,10 @@
+
+Harness Error (TIMEOUT), message = null
+
+PASS Fetching a resource with bad gzip content should still resolve 
+TIMEOUT Consuming the body of a resource with bad gzip content with arrayBuffer() should reject Test timed out
+NOTRUN Consuming the body of a resource with bad gzip content with blob() should reject 
+NOTRUN Consuming the body of a resource with bad gzip content with formData() should reject 
+NOTRUN Consuming the body of a resource with bad gzip content with json() should reject 
+NOTRUN Consuming the body of a resource with bad gzip content with text() should reject 
+

@@ -1,7 +1,7 @@
 The tests in this directory were imported from the W3C repository.
 Do NOT modify these tests directly in WebKit.
 Instead, create a pull request on the WPT github:
-	https://github.com/w3c/web-platform-tests
+	https://github.com/web-platform-tests/wpt
 
 Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
 
@@ -18,31 +18,26 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/fetch/api/basic/block-mime-as-script.html
 /LayoutTests/imported/w3c/web-platform-tests/fetch/api/basic/conditional-get.html
 /LayoutTests/imported/w3c/web-platform-tests/fetch/api/basic/error-after-response.html
-/LayoutTests/imported/w3c/web-platform-tests/fetch/api/basic/integrity-sharedworker.html
-/LayoutTests/imported/w3c/web-platform-tests/fetch/api/basic/integrity-worker.html
-/LayoutTests/imported/w3c/web-platform-tests/fetch/api/basic/integrity.html
-/LayoutTests/imported/w3c/web-platform-tests/fetch/api/basic/integrity.js
-/LayoutTests/imported/w3c/web-platform-tests/fetch/api/basic/mode-no-cors-worker.html
-/LayoutTests/imported/w3c/web-platform-tests/fetch/api/basic/mode-no-cors.html
-/LayoutTests/imported/w3c/web-platform-tests/fetch/api/basic/mode-no-cors.js
+/LayoutTests/imported/w3c/web-platform-tests/fetch/api/basic/header-value-combining.any.js
+/LayoutTests/imported/w3c/web-platform-tests/fetch/api/basic/header-value-null-byte.any.js
+/LayoutTests/imported/w3c/web-platform-tests/fetch/api/basic/integrity.sub.any.js
+/LayoutTests/imported/w3c/web-platform-tests/fetch/api/basic/keepalive.html
+/LayoutTests/imported/w3c/web-platform-tests/fetch/api/basic/mediasource.window.js
+/LayoutTests/imported/w3c/web-platform-tests/fetch/api/basic/mode-no-cors.sub.any.js
 /LayoutTests/imported/w3c/web-platform-tests/fetch/api/basic/mode-same-origin.any.js
 /LayoutTests/imported/w3c/web-platform-tests/fetch/api/basic/referrer.any.js
 /LayoutTests/imported/w3c/web-platform-tests/fetch/api/basic/request-forbidden-headers.any.js
 /LayoutTests/imported/w3c/web-platform-tests/fetch/api/basic/request-head.any.js
+/LayoutTests/imported/w3c/web-platform-tests/fetch/api/basic/request-headers-case.any.js
 /LayoutTests/imported/w3c/web-platform-tests/fetch/api/basic/request-headers.any.js
 /LayoutTests/imported/w3c/web-platform-tests/fetch/api/basic/request-referrer-redirected-worker.html
 /LayoutTests/imported/w3c/web-platform-tests/fetch/api/basic/request-referrer.any.js
 /LayoutTests/imported/w3c/web-platform-tests/fetch/api/basic/request-upload.any.js
-/LayoutTests/imported/w3c/web-platform-tests/fetch/api/basic/response-url-worker.html
-/LayoutTests/imported/w3c/web-platform-tests/fetch/api/basic/response-url.html
-/LayoutTests/imported/w3c/web-platform-tests/fetch/api/basic/response-url.js
+/LayoutTests/imported/w3c/web-platform-tests/fetch/api/basic/response-url.sub.any.js
 /LayoutTests/imported/w3c/web-platform-tests/fetch/api/basic/scheme-about.any.js
-/LayoutTests/imported/w3c/web-platform-tests/fetch/api/basic/scheme-blob-worker.html
-/LayoutTests/imported/w3c/web-platform-tests/fetch/api/basic/scheme-blob.html
-/LayoutTests/imported/w3c/web-platform-tests/fetch/api/basic/scheme-blob.js
+/LayoutTests/imported/w3c/web-platform-tests/fetch/api/basic/scheme-blob.sub.any.js
 /LayoutTests/imported/w3c/web-platform-tests/fetch/api/basic/scheme-data.any.js
-/LayoutTests/imported/w3c/web-platform-tests/fetch/api/basic/scheme-others-worker.html
-/LayoutTests/imported/w3c/web-platform-tests/fetch/api/basic/scheme-others.html
-/LayoutTests/imported/w3c/web-platform-tests/fetch/api/basic/scheme-others.js
+/LayoutTests/imported/w3c/web-platform-tests/fetch/api/basic/scheme-others.sub.any.js
 /LayoutTests/imported/w3c/web-platform-tests/fetch/api/basic/stream-response.any.js
+/LayoutTests/imported/w3c/web-platform-tests/fetch/api/basic/stream-safe-creation.any.js
 /LayoutTests/imported/w3c/web-platform-tests/fetch/api/basic/text-utf8.html

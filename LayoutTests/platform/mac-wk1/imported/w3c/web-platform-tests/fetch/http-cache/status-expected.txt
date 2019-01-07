@@ -1,28 +1,28 @@
 
-PASS HTTP cache goes to the network if it has a stale 200 response. 
-PASS HTTP cache avoids going to the network if it has a fresh 200 response. 
-PASS HTTP cache goes to the network if it has a stale 203 response. 
-PASS HTTP cache avoids going to the network if it has a fresh 203 response. 
-PASS HTTP cache goes to the network if it has a stale 204 response. 
-FAIL HTTP cache avoids going to the network if it has a fresh 204 response. assert_less_than: Response used expected a number less than 2 but got 2
-PASS HTTP cache goes to the network if it has a stale 299 response. 
-FAIL HTTP cache avoids going to the network if it has a fresh 299 response. assert_less_than: Response used expected a number less than 2 but got 2
-PASS HTTP cache goes to the network if it has a stale 400 response. 
-FAIL HTTP cache avoids going to the network if it has a fresh 400 response. assert_less_than: Response used expected a number less than 2 but got 2
-PASS HTTP cache goes to the network if it has a stale 404 response. 
-PASS HTTP cache avoids going to the network if it has a fresh 404 response. 
-PASS HTTP cache goes to the network if it has a stale 410 response. 
-PASS HTTP cache avoids going to the network if it has a fresh 410 response. 
-PASS HTTP cache goes to the network if it has a stale 499 response. 
-FAIL HTTP cache avoids going to the network if it has a fresh 499 response. assert_less_than: Response used expected a number less than 2 but got 2
-PASS HTTP cache goes to the network if it has a stale 500 response. 
-FAIL HTTP cache avoids going to the network if it has a fresh 500 response. assert_less_than: Response used expected a number less than 2 but got 2
-PASS HTTP cache goes to the network if it has a stale 502 response. 
-FAIL HTTP cache avoids going to the network if it has a fresh 502 response. assert_less_than: Response used expected a number less than 2 but got 2
-PASS HTTP cache goes to the network if it has a stale 503 response. 
-FAIL HTTP cache avoids going to the network if it has a fresh 503 response. assert_less_than: Response used expected a number less than 2 but got 2
-PASS HTTP cache goes to the network if it has a stale 504 response. 
-FAIL HTTP cache avoids going to the network if it has a fresh 504 response. assert_less_than: Response used expected a number less than 2 but got 2
-PASS HTTP cache goes to the network if it has a stale 599 response. 
-FAIL HTTP cache avoids going to the network if it has a fresh 599 response. assert_less_than: Response used expected a number less than 2 but got 2
+PASS HTTP cache goes to the network if it has a stale 200 response 
+PASS HTTP cache avoids going to the network if it has a fresh 200 response 
+PASS HTTP cache goes to the network if it has a stale 203 response 
+PASS HTTP cache avoids going to the network if it has a fresh 203 response 
+PASS HTTP cache goes to the network if it has a stale 204 response 
+FAIL HTTP cache avoids going to the network if it has a fresh 204 response assert_less_than: Response 2 does not come from cache expected a number less than 2 but got 2
+PASS HTTP cache goes to the network if it has a stale 299 response 
+FAIL HTTP cache avoids going to the network if it has a fresh 299 response assert_less_than: Response 2 does not come from cache expected a number less than 2 but got 2
+PASS HTTP cache goes to the network if it has a stale 400 response 
+FAIL HTTP cache avoids going to the network if it has a fresh 400 response assert_less_than: Response 2 does not come from cache expected a number less than 2 but got 2
+PASS HTTP cache goes to the network if it has a stale 404 response 
+PASS HTTP cache avoids going to the network if it has a fresh 404 response 
+PASS HTTP cache goes to the network if it has a stale 410 response 
+PASS HTTP cache avoids going to the network if it has a fresh 410 response 
+PASS HTTP cache goes to the network if it has a stale 499 response 
+FAIL HTTP cache avoids going to the network if it has a fresh 499 response assert_less_than: Response 2 does not come from cache expected a number less than 2 but got 2
+PASS HTTP cache goes to the network if it has a stale 500 response 
+FAIL HTTP cache avoids going to the network if it has a fresh 500 response assert_less_than: Response 2 does not come from cache expected a number less than 2 but got 2
+PASS HTTP cache goes to the network if it has a stale 502 response 
+FAIL HTTP cache avoids going to the network if it has a fresh 502 response assert_less_than: Response 2 does not come from cache expected a number less than 2 but got 2
+PASS HTTP cache goes to the network if it has a stale 503 response 
+FAIL HTTP cache avoids going to the network if it has a fresh 503 response assert_less_than: Response 2 does not come from cache expected a number less than 2 but got 2
+PASS HTTP cache goes to the network if it has a stale 504 response 
+FAIL HTTP cache avoids going to the network if it has a fresh 504 response assert_less_than: Response 2 does not come from cache expected a number less than 2 but got 2
+PASS HTTP cache goes to the network if it has a stale 599 response 
+FAIL HTTP cache avoids going to the network if it has a fresh 599 response assert_less_than: Response 2 does not come from cache expected a number less than 2 but got 2
 

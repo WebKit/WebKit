@@ -1,10 +1,10 @@
 
-PASS HTTP cache stores partial content and reuses it. 
-FAIL HTTP cache stores complete response and serves smaller ranges from it(byte-range-spec). assert_less_than: Response used expected a number less than 2 but got 2
-FAIL HTTP cache stores complete response and serves smaller ranges from it(absent last-byte-pos). assert_less_than: Response used expected a number less than 2 but got 2
-FAIL HTTP cache stores complete response and serves smaller ranges from it(suffix-byte-range-spec). assert_less_than: Response used expected a number less than 2 but got 2
-FAIL HTTP cache stores partial response and serves smaller ranges from it(byte-range-spec). assert_less_than: Response used expected a number less than 2 but got 2
-FAIL HTTP cache stores partial response and serves smaller ranges from it(absent last-byte-pos). assert_less_than: Response used expected a number less than 2 but got 2
-FAIL HTTP cache stores partial response and serves smaller ranges from it(suffix-byte-range-spec). assert_less_than: Response used expected a number less than 2 but got 2
-FAIL HTTP cache stores partial content and completes it. assert_equals: expected (string) "bytes=5-" but got (undefined) undefined
+PASS HTTP cache stores partial content and reuses it 
+FAIL HTTP cache stores complete response and serves smaller ranges from it (byte-range-spec) assert_less_than: Response 2 does not come from cache expected a number less than 2 but got 2
+FAIL HTTP cache stores complete response and serves smaller ranges from it (absent last-byte-pos) assert_less_than: Response 2 does not come from cache expected a number less than 2 but got 2
+FAIL HTTP cache stores complete response and serves smaller ranges from it (suffix-byte-range-spec) assert_less_than: Response 2 does not come from cache expected a number less than 2 but got 2
+FAIL HTTP cache stores partial response and serves smaller ranges from it (byte-range-spec) assert_less_than: Response 2 does not come from cache expected a number less than 2 but got 2
+FAIL HTTP cache stores partial response and serves smaller ranges from it (absent last-byte-pos) assert_less_than: Response 2 does not come from cache expected a number less than 2 but got 2
+FAIL HTTP cache stores partial response and serves smaller ranges from it (suffix-byte-range-spec) assert_less_than: Response 2 does not come from cache expected a number less than 2 but got 2
+FAIL HTTP cache stores partial content and completes it assert_equals: request 2 header range value is "undefined", not "bytes=5-" expected (string) "bytes=5-" but got (undefined) undefined
 

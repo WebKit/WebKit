@@ -1127,6 +1127,9 @@
     "imported/w3c/web-platform-tests/fetch/api/request/request-keepalive-quota.html": [
         "slow"
     ],
+    "imported/w3c/web-platform-tests/fetch/http-cache/304-update.html": [
+        "slow"
+    ],
     "imported/w3c/web-platform-tests/fetch/http-cache/cc-request.html": [
         "slow"
     ],
@@ -1134,6 +1137,9 @@
         "slow"
     ],
     "imported/w3c/web-platform-tests/fetch/http-cache/heuristic.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/fetch/http-cache/invalidate.html": [
         "slow"
     ],
     "imported/w3c/web-platform-tests/fetch/http-cache/partial.html": [

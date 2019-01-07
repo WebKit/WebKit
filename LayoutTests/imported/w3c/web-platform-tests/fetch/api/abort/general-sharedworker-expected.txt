@@ -1,4 +1,0 @@
-CONSOLE MESSAGE: line 11: ReferenceError: Can't find variable: SharedWorker
-
-FAIL General fetch abort tests - shared worker ReferenceError: Can't find variable: SharedWorker
-

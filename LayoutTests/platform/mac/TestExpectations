@@ -368,6 +368,8 @@ editing/mac/pasteboard/dataTransfer-set-data-file-url.html [ Skip ]
 webkit.org/b/147674 editing/mac/pasteboard/5583362.html [ Skip ]
 
 # Assorted failures that need investigation
+[ Debug ] imported/w3c/web-platform-tests/fetch/api/redirect/redirect-method.any.worker.html [ Skip ]
+[ Debug ] imported/w3c/web-platform-tests/fetch/api/redirect/redirect-method.any.html [ Skip ]
 
 webkit.org/b/184060 [ Debug ] imported/w3c/web-platform-tests/html/browsers/history/the-location-interface/location-protocol-setter-non-broken.html [ Pass Failure ]
 webkit.org/b/107118 fast/canvas/canvas-quadratic-same-endpoint.html [ Failure ]
@@ -1343,13 +1345,6 @@ webkit.org/b/168087 media/video-zoom.html [ Pass Failure ]
 webkit.org/b/168094 imported/w3c/web-platform-tests/media-source/SourceBuffer-abort.html [ Pass Failure ]
 webkit.org/b/167975 imported/w3c/web-platform-tests/media-source/SourceBuffer-abort-removed.html [ Pass Failure ]
 
-# <rdar://problem/30610988>
-[ Sierra+ ] imported/w3c/web-platform-tests/fetch/api/redirect/redirect-count-cross-origin.html [ Failure ]
-[ Sierra+ ] imported/w3c/web-platform-tests/fetch/api/redirect/redirect-count-worker.html [ Failure ]
-[ Sierra+ ] imported/w3c/web-platform-tests/fetch/api/redirect/redirect-count.html [ Failure ]
-[ Sierra+ ] imported/w3c/web-platform-tests/fetch/api/redirect/redirect-location-worker.html [ Failure ]
-[ Sierra+ ] imported/w3c/web-platform-tests/fetch/api/redirect/redirect-location.html [ Failure ]
-
 [ Debug ] imported/w3c/web-platform-tests/IndexedDB/interfaces.any.html [ Slow ]
 [ Debug ] imported/w3c/web-platform-tests/IndexedDB/interfaces.any.worker.html [ Slow ]
 [ Debug ] imported/w3c/web-platform-tests/hr-time/idlharness.html [ Slow ]
@@ -1684,9 +1679,6 @@ webkit.org/b/183764 fast/css/apple-system-control-colors.html [ Pass ]
 webkit.org/b/184116 imported/w3c/web-platform-tests/IndexedDB/idbobjectstore_createIndex7-event_order.htm [ Pass Failure ]
 
 webkit.org/b/177616 [ HighSierra+ ] http/tests/media/video-buffered-range-contains-currentTime.html [ Pass Timeout ]
-
-webkit.org/b/184365 [ Debug ] imported/w3c/web-platform-tests/fetch/api/redirect/redirect-method-worker.html [ Skip ]
-webkit.org/b/184365 [ Debug ] imported/w3c/web-platform-tests/fetch/api/redirect/redirect-method.html [ Skip ]
 
 webkit.org/b/184610 media/video-volume-slider-drag.html [ Pass Timeout ]
 

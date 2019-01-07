@@ -252,7 +252,7 @@
     "web-platform-tests/infrastructure": "import", 
     "web-platform-tests/innerText": "import", 
     "web-platform-tests/input-events": "skip", 
-    "web-platform-tests/interfaces": "skip", 
+    "web-platform-tests/interfaces": "import", 
     "web-platform-tests/intersection-observer": "import", 
     "web-platform-tests/js": "skip", 
     "web-platform-tests/keyboard-lock": "skip", 

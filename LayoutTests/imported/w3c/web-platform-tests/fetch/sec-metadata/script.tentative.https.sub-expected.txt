@@ -1,0 +1,9 @@
+Blocked access to external URL https://www.localhost:9443/fetch/sec-metadata/resources/echo-as-script.py
+Blocked access to external URL https://www.not-web-platform.test:9443/fetch/sec-metadata/resources/echo-as-script.py
+Blocked access to external URL https://www.localhost:9443/fetch/sec-metadata/resources/echo-as-script.py
+Blocked access to external URL https://www.not-web-platform.test:9443/fetch/sec-metadata/resources/echo-as-script.py
+
+FAIL Same-origin script assert_not_equals: Empty Sec-Metadata header. got disallowed value ""
+FAIL Same-site script null is not an object (evaluating 'value.split')
+FAIL Cross-site script null is not an object (evaluating 'value.split')
+

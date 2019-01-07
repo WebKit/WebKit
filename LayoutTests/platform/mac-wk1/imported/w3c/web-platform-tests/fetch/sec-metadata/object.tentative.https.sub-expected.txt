@@ -1,0 +1,8 @@
+Blocked access to external URL https://www.localhost:9443/fetch/sec-metadata/resources/record-header.py?file=object-same-site
+Blocked access to external URL https://www.not-web-platform.test:9443/fetch/sec-metadata/resources/record-header.py?file=object-cross-site
+ 
+
+FAIL Same-Origin object assert_not_equals: Empty Sec-Metadata header. got disallowed value ""
+FAIL Same-Site object assert_equals: destination expected (string) "object" but got (undefined) undefined
+FAIL Cross-Site object assert_equals: destination expected (string) "object" but got (undefined) undefined
+

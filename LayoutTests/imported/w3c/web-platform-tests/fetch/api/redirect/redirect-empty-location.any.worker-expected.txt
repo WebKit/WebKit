@@ -1,0 +1,4 @@
+
+FAIL redirect response with empty Location, follow mode assert_unreached: Should have rejected: undefined Reached unreachable code
+FAIL redirect response with empty Location, manual mode assert_equals: expected "opaqueredirect" but got "basic"
+

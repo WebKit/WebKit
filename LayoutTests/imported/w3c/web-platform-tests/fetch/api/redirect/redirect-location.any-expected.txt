@@ -1,0 +1,52 @@
+CONSOLE MESSAGE: Cross-origin redirection to invalidurl: denied by Cross-Origin Resource Sharing policy: URL is either a non-HTTP URL or contains credentials.
+CONSOLE MESSAGE: Fetch API cannot load http://localhost:8800/fetch/api/resources/redirect.py?redirect_status=301&location=invalidurl%3A due to access control checks.
+CONSOLE MESSAGE: Cross-origin redirection to data:,data%20url denied by Cross-Origin Resource Sharing policy: URL is either a non-HTTP URL or contains credentials.
+CONSOLE MESSAGE: Fetch API cannot load http://localhost:8800/fetch/api/resources/redirect.py?redirect_status=301&location=data%3A%2Cdata%2520url due to access control checks.
+CONSOLE MESSAGE: Cross-origin redirection to invalidurl: denied by Cross-Origin Resource Sharing policy: URL is either a non-HTTP URL or contains credentials.
+CONSOLE MESSAGE: Fetch API cannot load http://localhost:8800/fetch/api/resources/redirect.py?redirect_status=302&location=invalidurl%3A due to access control checks.
+CONSOLE MESSAGE: Cross-origin redirection to data:,data%20url denied by Cross-Origin Resource Sharing policy: URL is either a non-HTTP URL or contains credentials.
+CONSOLE MESSAGE: Fetch API cannot load http://localhost:8800/fetch/api/resources/redirect.py?redirect_status=302&location=data%3A%2Cdata%2520url due to access control checks.
+CONSOLE MESSAGE: Cross-origin redirection to invalidurl: denied by Cross-Origin Resource Sharing policy: URL is either a non-HTTP URL or contains credentials.
+CONSOLE MESSAGE: Fetch API cannot load http://localhost:8800/fetch/api/resources/redirect.py?redirect_status=303&location=invalidurl%3A due to access control checks.
+CONSOLE MESSAGE: Cross-origin redirection to data:,data%20url denied by Cross-Origin Resource Sharing policy: URL is either a non-HTTP URL or contains credentials.
+CONSOLE MESSAGE: Fetch API cannot load http://localhost:8800/fetch/api/resources/redirect.py?redirect_status=303&location=data%3A%2Cdata%2520url due to access control checks.
+CONSOLE MESSAGE: Cross-origin redirection to invalidurl: denied by Cross-Origin Resource Sharing policy: URL is either a non-HTTP URL or contains credentials.
+CONSOLE MESSAGE: Fetch API cannot load http://localhost:8800/fetch/api/resources/redirect.py?redirect_status=307&location=invalidurl%3A due to access control checks.
+CONSOLE MESSAGE: Cross-origin redirection to data:,data%20url denied by Cross-Origin Resource Sharing policy: URL is either a non-HTTP URL or contains credentials.
+CONSOLE MESSAGE: Fetch API cannot load http://localhost:8800/fetch/api/resources/redirect.py?redirect_status=307&location=data%3A%2Cdata%2520url due to access control checks.
+CONSOLE MESSAGE: Cross-origin redirection to invalidurl: denied by Cross-Origin Resource Sharing policy: URL is either a non-HTTP URL or contains credentials.
+CONSOLE MESSAGE: Fetch API cannot load http://localhost:8800/fetch/api/resources/redirect.py?redirect_status=308&location=invalidurl%3A due to access control checks.
+CONSOLE MESSAGE: Cross-origin redirection to data:,data%20url denied by Cross-Origin Resource Sharing policy: URL is either a non-HTTP URL or contains credentials.
+CONSOLE MESSAGE: Fetch API cannot load http://localhost:8800/fetch/api/resources/redirect.py?redirect_status=308&location=data%3A%2Cdata%2520url due to access control checks.
+
+PASS Redirect 301 in "follow" mode without location 
+FAIL Redirect 301 in "manual" mode without location assert_equals: Response's status is 0 expected 0 but got 301
+PASS Redirect 301 in "follow" mode with invalid location 
+PASS Redirect 301 in "manual" mode with invalid location 
+PASS Redirect 301 in "follow" mode with data location 
+PASS Redirect 301 in "manual" mode with data location 
+PASS Redirect 302 in "follow" mode without location 
+FAIL Redirect 302 in "manual" mode without location assert_equals: Response's status is 0 expected 0 but got 302
+PASS Redirect 302 in "follow" mode with invalid location 
+PASS Redirect 302 in "manual" mode with invalid location 
+PASS Redirect 302 in "follow" mode with data location 
+PASS Redirect 302 in "manual" mode with data location 
+PASS Redirect 303 in "follow" mode without location 
+FAIL Redirect 303 in "manual" mode without location assert_equals: Response's status is 0 expected 0 but got 303
+PASS Redirect 303 in "follow" mode with invalid location 
+PASS Redirect 303 in "manual" mode with invalid location 
+PASS Redirect 303 in "follow" mode with data location 
+PASS Redirect 303 in "manual" mode with data location 
+PASS Redirect 307 in "follow" mode without location 
+FAIL Redirect 307 in "manual" mode without location assert_equals: Response's status is 0 expected 0 but got 307
+PASS Redirect 307 in "follow" mode with invalid location 
+PASS Redirect 307 in "manual" mode with invalid location 
+PASS Redirect 307 in "follow" mode with data location 
+PASS Redirect 307 in "manual" mode with data location 
+PASS Redirect 308 in "follow" mode without location 
+FAIL Redirect 308 in "manual" mode without location assert_equals: Response's status is 0 expected 0 but got 308
+PASS Redirect 308 in "follow" mode with invalid location 
+PASS Redirect 308 in "manual" mode with invalid location 
+PASS Redirect 308 in "follow" mode with data location 
+PASS Redirect 308 in "manual" mode with data location 
+

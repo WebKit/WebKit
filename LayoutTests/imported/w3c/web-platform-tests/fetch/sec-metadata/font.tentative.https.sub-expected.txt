@@ -1,0 +1,10 @@
+Blocked access to external URL https://www.localhost:9443/fetch/sec-metadata/resources/record-header.py?file=font-same-site
+Blocked access to external URL https://www.not-web-platform.test:9443/fetch/sec-metadata/resources/record-header.py?file=font-cross-site
+1
+2
+3
+
+FAIL Same-Origin font assert_equals: destination expected (string) "font" but got (undefined) undefined
+FAIL Same-Site font assert_equals: destination expected (string) "font" but got (undefined) undefined
+FAIL Cross-Site font assert_equals: destination expected (string) "font" but got (undefined) undefined
+

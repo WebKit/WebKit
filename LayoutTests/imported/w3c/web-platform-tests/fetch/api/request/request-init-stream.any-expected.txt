@@ -1,0 +1,8 @@
+
+FAIL Constructing a Request with a stream on which getReader() is called assert_throws: new Request() function "() => new Request(input, init)" did not throw
+FAIL Constructing a Request with a stream on which read() is called assert_throws: new Request() function "() => new Request(input, init)" did not throw
+FAIL Constructing a Request with a stream on which read() and releaseLock() are called assert_throws: new Request() function "() => new Request(input, init)" did not throw
+FAIL Constructing a Request with a Request on which body.getReader() is called assert_throws: fetch() function "async () => await fetch(input, init)" did not throw
+FAIL Constructing a Request with a Request on which body.getReader().read() is called assert_throws: fetch() function "async () => await fetch(input, init)" did not throw
+FAIL Constructing a Request with a Request on which read() and releaseLock() are called assert_throws: fetch() function "async () => await fetch(input, init)" did not throw
+

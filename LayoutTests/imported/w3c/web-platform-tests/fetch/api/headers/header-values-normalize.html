@@ -10,7 +10,7 @@ for(let i = 0; i < 0x21; i++) {
   let fail = false,
       strip = false
 
-  // REMOVE 0x0B/0x0C exception once https://github.com/w3c/wptserve/issues/111 is fixed
+  // REMOVE 0x0B/0x0C exception once https://github.com/web-platform-tests/wpt/issues/8372 is fixed
   if(i === 0x0B || i === 0x0C)
     continue
 
@@ -56,9 +56,9 @@ for(let i = 0; i < 0x21; i++) {
   promise_test((t) => {
     if(fail) {
       return Promise.all([
-        promise_rejects(t, new TypeError(), fetch("about:blank", { headers: {"val1": val1} })),
-        promise_rejects(t, new TypeError(), fetch("about:blank", { headers: {"val2": val2} })),
-        promise_rejects(t, new TypeError(), fetch("about:blank", { headers: {"val3": val3} }))
+        promise_rejects(t, new TypeError(), fetch(url, { headers: {"val1": val1} })),
+        promise_rejects(t, new TypeError(), fetch(url, { headers: {"val2": val2} })),
+        promise_rejects(t, new TypeError(), fetch(url, { headers: {"val3": val3} }))
       ])
     } else {
       return fetch(url, { headers: {"val1": val1, "val2": val2, "val3": val3} }).then((res) => {

@@ -1,9 +1,9 @@
 
-FAIL Already aborted request does not land in service worker promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'navigator.serviceWorker.getRegistration')"
-FAIL response.arrayBuffer() rejects if already aborted promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'navigator.serviceWorker.getRegistration')"
-FAIL response.blob() rejects if already aborted promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'navigator.serviceWorker.getRegistration')"
-FAIL response.formData() rejects if already aborted promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'navigator.serviceWorker.getRegistration')"
-FAIL response.json() rejects if already aborted promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'navigator.serviceWorker.getRegistration')"
-FAIL response.text() rejects if already aborted promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'navigator.serviceWorker.getRegistration')"
-FAIL Stream errors once aborted. promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'navigator.serviceWorker.getRegistration')"
+FAIL Already aborted request does not land in service worker promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'navigator.serviceWorker.register')"
+FAIL response.arrayBuffer() rejects if already aborted promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'navigator.serviceWorker.register')"
+FAIL response.blob() rejects if already aborted promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'navigator.serviceWorker.register')"
+FAIL response.formData() rejects if already aborted promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'navigator.serviceWorker.register')"
+FAIL response.json() rejects if already aborted promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'navigator.serviceWorker.register')"
+FAIL response.text() rejects if already aborted promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'navigator.serviceWorker.register')"
+FAIL Stream errors once aborted. promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'navigator.serviceWorker.register')"
 

@@ -1,7 +1,7 @@
 The tests in this directory were imported from the W3C repository.
 Do NOT modify these tests directly in WebKit.
 Instead, create a pull request on the WPT github:
-	https://github.com/w3c/web-platform-tests
+	https://github.com/web-platform-tests/wpt
 
 Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
 
@@ -30,11 +30,13 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/fetch/api/request/request-error.html
 /LayoutTests/imported/w3c/web-platform-tests/fetch/api/request/request-error.js
 /LayoutTests/imported/w3c/web-platform-tests/fetch/api/request/request-headers.html
-/LayoutTests/imported/w3c/web-platform-tests/fetch/api/request/request-idl.html
 /LayoutTests/imported/w3c/web-platform-tests/fetch/api/request/request-init-001.sub.html
 /LayoutTests/imported/w3c/web-platform-tests/fetch/api/request/request-init-002.html
 /LayoutTests/imported/w3c/web-platform-tests/fetch/api/request/request-init-003.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/fetch/api/request/request-init-stream.any.js
 /LayoutTests/imported/w3c/web-platform-tests/fetch/api/request/request-keepalive-quota.html
+/LayoutTests/imported/w3c/web-platform-tests/fetch/api/request/request-keepalive.html
+/LayoutTests/imported/w3c/web-platform-tests/fetch/api/request/request-reset-attributes.https.html
 /LayoutTests/imported/w3c/web-platform-tests/fetch/api/request/request-structure.html
 /LayoutTests/imported/w3c/web-platform-tests/fetch/api/request/request-type-attribute-historical.html
 /LayoutTests/imported/w3c/web-platform-tests/fetch/api/request/url-encoding.html
