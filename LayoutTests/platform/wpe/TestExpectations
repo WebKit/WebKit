@@ -190,6 +190,9 @@ fast/events/touch/gesture/resources/drag-inside-nested-iframes3.html [ Skip ]
 # ENABLE_DARK_MODE_CSS is OFF in WPE.
 css-dark-mode [ Skip ]
 
+# ENABLE(CSS_TYPED_OM) is disabled.
+css-typedom [ Skip ]
+
 # Tests below are copied from wk2 expectations, because we've marked
 #  as passing the whole fast/events directory.
 

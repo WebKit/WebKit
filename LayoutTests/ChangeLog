@@ -1,3 +1,11 @@
+2019-01-07  Claudio Saavedra  <csaavedra@igalia.com>
+
+        [WPE][GTK] Skip css-typedom tests
+
+        Unreviewed gardening. CSS_TYPED_OM is disabled by default.
+        * platform/gtk/TestExpectations:
+        * platform/wpe/TestExpectations:
+
 2019-01-06  Jiewen Tan  <jiewen_tan@apple.com>
 
         [WebAuthN] Import U2F command/response converters from Chromium
