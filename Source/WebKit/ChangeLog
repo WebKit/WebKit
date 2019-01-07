@@ -1,5 +1,33 @@
 2019-01-07  Alex Christensen  <achristensen@webkit.org>
 
+        Move identifierBase from SessionTracker to NetworkProcess/WebProcess
+        https://bugs.webkit.org/show_bug.cgi?id=193201
+
+        Reviewed by Tim Horton.
+
+        No change in behavior.  This just reduces process-global state.
+
+        * NetworkProcess/NetworkProcess.h:
+        (WebKit::NetworkProcess::uiProcessBundleIdentifier const):
+        * NetworkProcess/cocoa/NetworkProcessCocoa.mm:
+        (WebKit::NetworkProcess::platformInitializeNetworkProcessCocoa):
+        * NetworkProcess/mac/RemoteNetworkingContext.mm:
+        (WebKit::RemoteNetworkingContext::ensureWebsiteDataStoreSession):
+        * Shared/SessionTracker.cpp:
+        (WebKit::identifierBase): Deleted.
+        (WebKit::SessionTracker::getIdentifierBase): Deleted.
+        (WebKit::SessionTracker::setIdentifierBase): Deleted.
+        * Shared/SessionTracker.h:
+        * WebProcess/WebCoreSupport/mac/WebFrameNetworkingContext.mm:
+        (WebKit::WebFrameNetworkingContext::ensureWebsiteDataStoreSession):
+        (WebKit::WebFrameNetworkingContext::sourceApplicationIdentifier const):
+        * WebProcess/WebProcess.h:
+        (WebKit::WebProcess::uiProcessBundleIdentifier const):
+        * WebProcess/cocoa/WebProcessCocoa.mm:
+        (WebKit::WebProcess::platformInitializeWebProcess):
+
+2019-01-07  Alex Christensen  <achristensen@webkit.org>
+
         Reduce use of NetworkProcess::singleton
         https://bugs.webkit.org/show_bug.cgi?id=193197
 

@@ -50,11 +50,9 @@ void WebFrameNetworkingContext::ensureWebsiteDataStoreSession(WebsiteDataStorePa
     if (NetworkStorageSession::storageSession(sessionID))
         return;
 
-    String base;
-    if (SessionTracker::getIdentifierBase().isNull())
+    String base = WebProcess::singleton().uiProcessBundleIdentifier();
+    if (base.isNull())
         base = [[NSBundle mainBundle] bundleIdentifier];
-    else
-        base = SessionTracker::getIdentifierBase();
 
     NetworkStorageSession::ensureSession(sessionID, base + '.' + String::number(sessionID.sessionID()));
 }
@@ -78,7 +76,7 @@ RetainPtr<CFDataRef> WebFrameNetworkingContext::sourceApplicationAuditData() con
 
 String WebFrameNetworkingContext::sourceApplicationIdentifier() const
 {
-    return SessionTracker::getIdentifierBase();
+    return WebProcess::singleton().uiProcessBundleIdentifier();
 }
 
 ResourceError WebFrameNetworkingContext::blockedError(const ResourceRequest& request) const

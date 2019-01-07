@@ -48,11 +48,9 @@ void RemoteNetworkingContext::ensureWebsiteDataStoreSession(NetworkProcess& netw
     if (NetworkStorageSession::storageSession(sessionID))
         return;
 
-    String base;
-    if (SessionTracker::getIdentifierBase().isNull())
+    String base = networkProcess.uiProcessBundleIdentifier();
+    if (base.isNull())
         base = [[NSBundle mainBundle] bundleIdentifier];
-    else
-        base = SessionTracker::getIdentifierBase();
 
     if (!sessionID.isEphemeral())
         SandboxExtension::consumePermanently(parameters.cookieStoragePathExtensionHandle);

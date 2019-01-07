@@ -209,6 +209,8 @@ public:
     NetworkHTTPSUpgradeChecker& networkHTTPSUpgradeChecker() { return m_networkHTTPSUpgradeChecker; }
 #endif
 
+    const String& uiProcessBundleIdentifier() const { return m_uiProcessBundleIdentifier; }
+
 private:
     NetworkProcess();
 
@@ -351,6 +353,7 @@ private:
     bool m_suppressMemoryPressureHandler { false };
     bool m_diskCacheIsDisabledForTesting;
     bool m_canHandleHTTPSServerTrustEvaluation;
+    String m_uiProcessBundleIdentifier;
 
     RefPtr<NetworkCache::Cache> m_cache;
 

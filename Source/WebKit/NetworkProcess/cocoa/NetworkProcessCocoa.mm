@@ -86,7 +86,7 @@ void NetworkProcess::platformInitializeNetworkProcessCocoa(const NetworkProcessC
 
     _CFNetworkSetATSContext(parameters.networkATSContext.get());
 
-    SessionTracker::setIdentifierBase(parameters.uiProcessBundleIdentifier);
+    m_uiProcessBundleIdentifier = parameters.uiProcessBundleIdentifier;
 
 #if PLATFORM(IOS_FAMILY)
     NetworkSessionCocoa::setCTDataConnectionServiceType(parameters.ctDataConnectionServiceType);

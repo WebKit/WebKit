@@ -42,9 +42,6 @@ class NetworkSession;
 class SessionTracker {
     WTF_MAKE_NONCOPYABLE(SessionTracker);
 public:
-    static const String& getIdentifierBase();
-    static void setIdentifierBase(const String&);
-    
     static void setSession(PAL::SessionID, Ref<NetworkSession>&&);
     static NetworkSession* networkSession(PAL::SessionID);
     static void destroySession(PAL::SessionID);

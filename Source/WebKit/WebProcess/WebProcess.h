@@ -191,6 +191,8 @@ public:
     void destroyRenderingResources();
 #endif
 
+    const String& uiProcessBundleIdentifier() const { return m_uiProcessBundleIdentifier; }
+
     void updateActivePages();
     void getActivePagesOriginsForTesting(CompletionHandler<void(Vector<String>&&)>&&);
     void pageActivityStateDidChange(uint64_t pageID, OptionSet<WebCore::ActivityState::Flag> changed);
@@ -432,6 +434,7 @@ private:
 
     TextCheckerState m_textCheckerState;
 
+    String m_uiProcessBundleIdentifier;
     RefPtr<NetworkProcessConnection> m_networkProcessConnection;
     WebLoaderStrategy& m_webLoaderStrategy;
 

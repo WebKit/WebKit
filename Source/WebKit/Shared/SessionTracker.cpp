@@ -34,26 +34,6 @@
 namespace WebKit {
 using namespace WebCore;
 
-static String& identifierBase()
-{
-    ASSERT(RunLoop::isMain());
-
-    static NeverDestroyed<String> base;
-    return base;
-}
-
-const String& SessionTracker::getIdentifierBase()
-{
-    return identifierBase();
-}
-
-void SessionTracker::setIdentifierBase(const String& identifier)
-{
-    ASSERT(RunLoop::isMain());
-
-    identifierBase() = identifier;
-}
-
 static HashMap<PAL::SessionID, RefPtr<NetworkSession>>& staticSessionMap()
 {
     ASSERT(RunLoop::isMain());
