@@ -1,3 +1,33 @@
+2019-01-07  Brian Burg  <bburg@apple.com>
+
+        Unwanted page navigation after showing & dismissing contextual menu with control-click
+        https://bugs.webkit.org/show_bug.cgi?id=192912
+        <rdar://problem/46318508>
+
+        Reviewed by Timothy Hatcher.
+
+        After the conversion to use a mouse event queue, this behavior was observed rarely, especially
+        when CPU is under load and lots of things are going on in the page. In other words, it's racy.
+
+        Based on NSEvent logging, it seems that when the system is under load, we simply take too long
+        to enter the nested runloop that AppKit uses to handle events when the context menu is present.
+        AppKit doesn't care whether or not the MouseDown triggered a nested runloop; on my machine it delivers
+        the MouseUp event about 130ms after the MouseDown event. If we haven't show the context menu in
+        that time, then the MouseUp is enqueued as a normal mouse event. If the Ctrl-click is on a link,
+        then the MouseUp will be interpreted by EventHandler as a click event, which in the simplest case
+        will initiate a main frame navigation. When the context menu is dismissed and the nested runloop
+        is torn down, the navigation IPC message is handled in UIProcess and the page navigates away.
+
+        We can't do much to change AppKit's inherently racy behavior, but we can avoid processing
+        mouse events that are delivered whilst we are processing the context menu-initiating event.
+        From the WebProcess point of view, there is no race anymore because it does not receive the
+        MouseUp event.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::showContextMenu):
+        If new events come in, drop them on the floor. Based on testing, the nested runloop will discard
+        the unpaired MouseUp event anyway, so this does not cause a change in behavior.
+
 2019-01-07  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Native caret shows up alongside the page's caret when requesting desktop site on jsfiddle.net
