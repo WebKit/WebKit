@@ -1,3 +1,14 @@
+2019-01-07  Eric Carlson  <eric.carlson@apple.com>
+
+        A MediaTime timescale must never be zero
+        https://bugs.webkit.org/show_bug.cgi?id=193156
+        <rdar://problem/32504501>
+
+        Reviewed by Jer Noble.
+
+        * TestWebKitAPI/Tests/WTF/MediaTime.cpp:
+        (TestWebKitAPI::TEST): Add tests for zero timescale.
+
 2019-01-07  Youenn Fablet  <youenn@apple.com>
 
         API test broken: TestWebKitAPI.WebKit.CustomDataStorePathsVersusCompletionHandlers

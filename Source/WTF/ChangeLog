@@ -1,3 +1,18 @@
+2019-01-07  Eric Carlson  <eric.carlson@apple.com>
+
+        A MediaTime timescale must never be zero
+        https://bugs.webkit.org/show_bug.cgi?id=193156
+        <rdar://problem/32504501>
+
+        Reviewed by Jer Noble.
+
+        * wtf/MediaTime.cpp:
+        (WTF::greatestCommonDivisor): ASSERT if either parameter or return value is zero.
+        (WTF::MediaTime::MediaTime): Create +/- infinity if passed zero timescale.
+        (WTF::MediaTime::createWithFloat): Ditto.
+        (WTF::MediaTime::createWithDouble): Ditto.
+        (WTF::MediaTime::setTimeScale): Ditto.
+
 2019-01-02  Alex Christensen  <achristensen@webkit.org>
 
         Homograph with LATIN SMALL LETTER R WITH FISHHOOK
