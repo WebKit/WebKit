@@ -104,7 +104,9 @@ WebKitBrowserWindow::WebKitBrowserWindow(HWND mainWnd, HWND urlBarWnd)
     m_view = adoptWK(WKViewCreate(rect, conf.get(), mainWnd));
     auto page = WKViewGetPage(m_view.get());
 
-    WKPageNavigationClientV0 navigationClient = {{ 0, this }};
+    WKPageNavigationClientV0 navigationClient = { };
+    navigationClient.base.version = 0;
+    navigationClient.base.clientInfo = this;
     navigationClient.didFinishNavigation = didFinishNavigation;
     navigationClient.didCommitNavigation = didCommitNavigation;
     navigationClient.didReceiveAuthenticationChallenge = didReceiveAuthenticationChallenge;

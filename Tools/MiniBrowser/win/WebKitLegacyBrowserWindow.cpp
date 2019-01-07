@@ -612,7 +612,7 @@ static HDC getPrinterDC()
     return pdlg.hDC;
 }
 
-static void initDocStruct(DOCINFO* di, TCHAR* docname)
+static void initDocStruct(DOCINFO* di, const wchar_t* docname)
 {
     memset(di, 0, sizeof(DOCINFO));
     di->cbSize = sizeof(DOCINFO);

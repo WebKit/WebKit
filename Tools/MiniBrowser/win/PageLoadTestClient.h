@@ -127,8 +127,8 @@ private:
     void clearPageLoadState();
     bool shouldConsiderPageLoadEnded() const;
 
-    virtual void pageLoadStartedAtTime(CFAbsoluteTime);
-    virtual void pageLoadEndedAtTime(CFAbsoluteTime);
+    void pageLoadStartedAtTime(CFAbsoluteTime);
+    void pageLoadEndedAtTime(CFAbsoluteTime);
     void dumpRunStatistics();
 
     WebKitLegacyBrowserWindow* m_host;
@@ -146,7 +146,6 @@ private:
     double m_geometricMeanProductSum { 1.0 };
     unsigned m_frames { 0 };
     unsigned m_onLoadEvents { 0 };
-    unsigned m_currentURLIndex { 0 };
     unsigned m_currentRepetition { 0 };
     unsigned m_pagesTimed { 0 };
     unsigned m_repetitions;

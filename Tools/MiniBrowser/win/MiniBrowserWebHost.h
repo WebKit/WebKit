@@ -77,8 +77,6 @@ protected:
     HRESULT updateAddressBar(IWebView&);
 
 private:
-    HWND m_hURLBarWnd { 0 };
-    HGDIOBJ m_URLBarFont { 0 };
-    HGDIOBJ m_oldFont { 0 };
     WebKitLegacyBrowserWindow* m_client { nullptr };
+    HWND m_hURLBarWnd { 0 };
 };

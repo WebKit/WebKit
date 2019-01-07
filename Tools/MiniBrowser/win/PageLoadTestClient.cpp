@@ -37,8 +37,8 @@ static const CFTimeInterval waitForNewResourceLoadDuration = 0.1;
 
 PageLoadTestClient::PageLoadTestClient(WebKitLegacyBrowserWindow* host, bool pageLoadTesting)
     : m_host(host)
-    , m_repetitions(pageLoadTesting ? 20 : 1)
     , m_waitForLoadToReallyEnd(this, &PageLoadTestClient::endPageLoad)
+    , m_repetitions(pageLoadTesting ? 20 : 1)
     , m_pageLoadTesting(pageLoadTesting)
 {
 }
