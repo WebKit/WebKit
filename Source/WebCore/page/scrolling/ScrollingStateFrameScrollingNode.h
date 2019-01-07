@@ -57,6 +57,8 @@ public:
         FooterHeight,
         HeaderLayer,
         FooterLayer,
+        VerticalScrollbarLayer,
+        HorizontalScrollbarLayer,
         PainterForScrollbar,
         BehaviorForFixedElements,
         TopContentInset,
@@ -119,6 +121,12 @@ public:
     const LayerRepresentation& footerLayer() const { return m_footerLayer; }
     WEBCORE_EXPORT void setFooterLayer(const LayerRepresentation&);
 
+    const LayerRepresentation& verticalScrollbarLayer() const { return m_verticalScrollbarLayer; }
+    WEBCORE_EXPORT void setVerticalScrollbarLayer(const LayerRepresentation&);
+
+    const LayerRepresentation& horizontalScrollbarLayer() const { return m_horizontalScrollbarLayer; }
+    WEBCORE_EXPORT void setHorizontalScrollbarLayer(const LayerRepresentation&);
+
     bool fixedElementsLayoutRelativeToFrame() const { return m_fixedElementsLayoutRelativeToFrame; }
     WEBCORE_EXPORT void setFixedElementsLayoutRelativeToFrame(bool);
 
@@ -142,6 +150,8 @@ private:
     LayerRepresentation m_contentShadowLayer;
     LayerRepresentation m_headerLayer;
     LayerRepresentation m_footerLayer;
+    LayerRepresentation m_verticalScrollbarLayer;
+    LayerRepresentation m_horizontalScrollbarLayer;
 
 #if PLATFORM(MAC)
     RetainPtr<NSScrollerImp> m_verticalScrollerImp;

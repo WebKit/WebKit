@@ -446,6 +446,10 @@ UIProcess/Plugins/mac/PluginInfoStoreMac.mm
 UIProcess/Plugins/mac/PluginProcessManagerMac.mm
 UIProcess/Plugins/mac/PluginProcessProxyMac.mm
 
+UIProcess/RemoteLayerTree/mac/ScrollerMac.mm
+UIProcess/RemoteLayerTree/mac/ScrollerPairMac.mm
+UIProcess/RemoteLayerTree/mac/ScrollingTreeFrameScrollingNodeRemoteMac.cpp
+
 UIProcess/RemoteLayerTree/ios/RemoteLayerTreeHostIOS.mm
 UIProcess/RemoteLayerTree/ios/RemoteScrollingCoordinatorProxyIOS.mm
 UIProcess/RemoteLayerTree/ios/ScrollingTreeOverflowScrollingNodeIOS.mm

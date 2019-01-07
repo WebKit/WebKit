@@ -1,3 +1,113 @@
+2019-01-07  Antti Koivisto  <antti@apple.com>
+
+        UI process side scrollbars for UI side compositing on Mac
+        https://bugs.webkit.org/show_bug.cgi?id=193106
+
+        Reviewed by Tim Horton.
+
+        This patch implements Mac scrollbars on UI process side using the low level NSScrollerImp/NSScrollerPairImp
+        SPIs. With this patch scrollbars mostly work for the main frame and also render (but can't be interacted with)
+        for the subframes.
+
+        This is based on the similar code for web process side scrollbars in ScrollAnimatorMac. There is quite a bit of
+        copy code as there is no way to share nicely. One of these will eventually go away anyway.
+
+        * Shared/RemoteLayerTree/RemoteScrollingCoordinatorTransaction.cpp:
+        (ArgumentCoder<ScrollingStateFrameScrollingNode>::encode):
+        (ArgumentCoder<ScrollingStateFrameScrollingNode>::decode):
+        * Shared/WebCoreArgumentCoders.cpp:
+        (IPC::ArgumentCoder<ScrollableAreaParameters>::encode):
+        (IPC::ArgumentCoder<ScrollableAreaParameters>::decode):
+        * UIProcess/RemoteLayerTree/RemoteLayerTreeNode.h:
+        * UIProcess/RemoteLayerTree/RemoteScrollingCoordinatorProxy.cpp:
+        (WebKit::RemoteScrollingCoordinatorProxy::connectStateNodeLayers):
+        (WebKit::RemoteScrollingCoordinatorProxy::handleMouseEvent):
+        * UIProcess/RemoteLayerTree/RemoteScrollingCoordinatorProxy.h:
+        * UIProcess/RemoteLayerTree/RemoteScrollingTree.cpp:
+        (WebKit::RemoteScrollingTree::createScrollingTreeNode):
+        (WebKit::RemoteScrollingTree::handleMouseEvent):
+        * UIProcess/RemoteLayerTree/RemoteScrollingTree.h:
+        * UIProcess/RemoteLayerTree/mac: Added.
+        * UIProcess/RemoteLayerTree/mac/ScrollerMac.h: Added.
+
+        Wraps NSScrollerImp for vertical or horizontal scrollbar.
+
+        (WebKit::ScrollerMac::pair):
+        (WebKit::ScrollerMac::orientation const):
+        (WebKit::ScrollerMac::hostLayer const):
+        (WebKit::ScrollerMac::scrollerImp):
+        * UIProcess/RemoteLayerTree/mac/ScrollerMac.mm: Added.
+        (-[WKScrollbarPartAnimation initWithScroller:featureToAnimate:animateFrom:animateTo:duration:]):
+        (-[WKScrollbarPartAnimation startAnimation]):
+        (-[WKScrollbarPartAnimation setStartValue:]):
+        (-[WKScrollbarPartAnimation setEndValue:]):
+        (-[WKScrollbarPartAnimation setCurrentProgress:]):
+        (-[WKScrollbarPartAnimation invalidate]):
+        (-[WKScrollerImpDelegate initWithScroller:]):
+        (-[WKScrollerImpDelegate cancelAnimations]):
+        (-[WKScrollerImpDelegate scrollerPair]):
+        (-[WKScrollerImpDelegate convertRectToBacking:]):
+        (-[WKScrollerImpDelegate convertRectFromBacking:]):
+        (-[WKScrollerImpDelegate layer]):
+        (-[WKScrollerImpDelegate mouseLocationInScrollerForScrollerImp:]):
+        (-[WKScrollerImpDelegate convertRectToLayer:]):
+        (-[WKScrollerImpDelegate shouldUseLayerPerPartForScrollerImp:]):
+        (-[WKScrollerImpDelegate effectiveAppearanceForScrollerImp:]):
+        (-[WKScrollerImpDelegate setUpAlphaAnimation:scrollerPainter:part:animateAlphaTo:duration:]):
+        (-[WKScrollerImpDelegate scrollerImp:animateKnobAlphaTo:duration:]):
+        (-[WKScrollerImpDelegate scrollerImp:animateTrackAlphaTo:duration:]):
+        (-[WKScrollerImpDelegate scrollerImp:animateUIStateTransitionWithDuration:]):
+        (-[WKScrollerImpDelegate scrollerImp:animateExpansionTransitionWithDuration:]):
+        (-[WKScrollerImpDelegate scrollerImp:overlayScrollerStateChangedTo:]):
+        (-[WKScrollerImpDelegate invalidate]):
+        (WebKit::ScrollerMac::ScrollerMac):
+        (WebKit::ScrollerMac::~ScrollerMac):
+        (WebKit::ScrollerMac::attach):
+        (WebKit::ScrollerMac::setHostLayer):
+        (WebKit::ScrollerMac::updatePosition):
+        (WebKit::ScrollerMac::convertFromContent const):
+        * UIProcess/RemoteLayerTree/mac/ScrollerPairMac.h: Added.
+        (WebKit::ScrollerPairMac::verticalScroller):
+        (WebKit::ScrollerPairMac::horizontalScroller):
+        (WebKit::ScrollerPairMac::scrollerImpPair):
+        (WebKit::ScrollerPairMac::lastKnownMousePosition const):
+        * UIProcess/RemoteLayerTree/mac/ScrollerPairMac.mm: Added.
+
+        Wraps NSScrollerPairImp and owns the vertical and horizontal scrollers.
+
+        (-[WKScrollerImpPairDelegate initWithScrollerPair:]):
+        (-[WKScrollerImpPairDelegate invalidate]):
+        (-[WKScrollerImpPairDelegate contentAreaRectForScrollerImpPair:]):
+        (-[WKScrollerImpPairDelegate inLiveResizeForScrollerImpPair:]):
+        (-[WKScrollerImpPairDelegate mouseLocationInContentAreaForScrollerImpPair:]):
+        (-[WKScrollerImpPairDelegate scrollerImpPair:convertContentPoint:toScrollerImp:]):
+        (-[WKScrollerImpPairDelegate scrollerImpPair:setContentAreaNeedsDisplayInRect:]):
+        (-[WKScrollerImpPairDelegate scrollerImpPair:updateScrollerStyleForNewRecommendedScrollerStyle:]):
+        (WebKit::ScrollerPairMac::ScrollerPairMac):
+        (WebKit::ScrollerPairMac::~ScrollerPairMac):
+        (WebKit::ScrollerPairMac::handleWheelEvent):
+        (WebKit::ScrollerPairMac::handleMouseEvent):
+        (WebKit::ScrollerPairMac::updatePositions):
+        (WebKit::ScrollerPairMac::contentsSize const):
+        (WebKit::ScrollerPairMac::visibleContentsRect const):
+        (WebKit::ScrollerPairMac::useDarkAppearance const):
+        * UIProcess/RemoteLayerTree/mac/ScrollingTreeFrameScrollingNodeRemoteMac.cpp: Added.
+
+        Special node for UI side Mac scrolling. Owns ScrollerPairMac instance.
+
+        (WebKit::ScrollingTreeFrameScrollingNodeRemoteMac::ScrollingTreeFrameScrollingNodeRemoteMac):
+        (WebKit::ScrollingTreeFrameScrollingNodeRemoteMac::~ScrollingTreeFrameScrollingNodeRemoteMac):
+        (WebKit::ScrollingTreeFrameScrollingNodeRemoteMac::create):
+        (WebKit::ScrollingTreeFrameScrollingNodeRemoteMac::commitStateBeforeChildren):
+        (WebKit::ScrollingTreeFrameScrollingNodeRemoteMac::setScrollLayerPosition):
+        (WebKit::ScrollingTreeFrameScrollingNodeRemoteMac::handleWheelEvent):
+        (WebKit::ScrollingTreeFrameScrollingNodeRemoteMac::handleMouseEvent):
+        (WebKit::ScrollingTreeFrameScrollingNodeRemoteMac::scrollingTree const):
+        * UIProcess/RemoteLayerTree/mac/ScrollingTreeFrameScrollingNodeRemoteMac.h: Added.
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::handleMouseEvent):
+        * WebKit.xcodeproj/project.pbxproj:
+
 2019-01-07  Brian Burg  <bburg@apple.com>
 
         Unwanted page navigation after showing & dismissing contextual menu with control-click

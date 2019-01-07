@@ -47,7 +47,7 @@ bool LocalService::isAvailable()
 #if !PLATFORM(IOS_FAMILY)
     return false;
 #else
-    if (!RuntimeEnabledFeatures::sharedFeatures().webAuthenticationLocalAuthenticatorEnabled())
+    if (!WebCore::RuntimeEnabledFeatures::sharedFeatures().webAuthenticationLocalAuthenticatorEnabled())
         return false;
 
     auto context = adoptNS([allocLAContextInstance() init]);

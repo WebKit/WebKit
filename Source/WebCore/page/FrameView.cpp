@@ -3958,10 +3958,8 @@ void FrameView::paintScrollCorner(GraphicsContext& context, const IntRect& corne
     }
 
 #if PLATFORM(MAC)
-    // If dark appearance is used or the overlay style is light (because of a dark page background), set the dark apppearance.
     // Keep this in sync with ScrollAnimatorMac's effectiveAppearanceForScrollerImp:.
-    bool useDarkAppearance = this->useDarkAppearance() || scrollbarOverlayStyle() == WebCore::ScrollbarOverlayStyleLight;
-    LocalDefaultSystemAppearance localAppearance(useDarkAppearance);
+    LocalDefaultSystemAppearance localAppearance(useDarkAppearanceForScrollbars());
 #endif
 
     ScrollView::paintScrollCorner(context, cornerRect);

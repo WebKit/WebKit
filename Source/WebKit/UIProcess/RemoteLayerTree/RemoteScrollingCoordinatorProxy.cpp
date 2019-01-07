@@ -125,6 +125,12 @@ void RemoteScrollingCoordinatorProxy::connectStateNodeLayers(ScrollingStateTree&
 
             if (scrollingStateNode.hasChangedProperty(ScrollingStateFrameScrollingNode::FooterLayer))
                 scrollingStateNode.setFooterLayer(layerTreeHost.layerForID(scrollingStateNode.footerLayer()));
+
+            if (scrollingStateNode.hasChangedProperty(ScrollingStateFrameScrollingNode::VerticalScrollbarLayer))
+                scrollingStateNode.setVerticalScrollbarLayer(layerTreeHost.layerForID(scrollingStateNode.verticalScrollbarLayer()));
+
+            if (scrollingStateNode.hasChangedProperty(ScrollingStateFrameScrollingNode::HorizontalScrollbarLayer))
+                scrollingStateNode.setHorizontalScrollbarLayer(layerTreeHost.layerForID(scrollingStateNode.horizontalScrollbarLayer()));
             break;
         }
         case ScrollingNodeType::Overflow: {
@@ -146,6 +152,11 @@ bool RemoteScrollingCoordinatorProxy::handleWheelEvent(const PlatformWheelEvent&
 {
     ScrollingTree::EventResult result = m_scrollingTree->tryToHandleWheelEvent(event);
     return result == ScrollingTree::DidHandleEvent; // FIXME: handle other values.
+}
+
+void RemoteScrollingCoordinatorProxy::handleMouseEvent(const WebCore::PlatformMouseEvent& event)
+{
+    m_scrollingTree->handleMouseEvent(event);
 }
 
 TrackingType RemoteScrollingCoordinatorProxy::eventTrackingTypeForPoint(const AtomicString& eventName, IntPoint p) const

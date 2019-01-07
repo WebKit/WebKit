@@ -2198,6 +2198,11 @@ void WebPageProxy::handleMouseEvent(const NativeWebMouseEvent& event)
     if (!isValid())
         return;
 
+#if ENABLE(ASYNC_SCROLLING) && PLATFORM(COCOA)
+    if (m_scrollingCoordinatorProxy)
+        m_scrollingCoordinatorProxy->handleMouseEvent(platform(event));
+#endif
+
     // If we receive multiple mousemove or mouseforcechanged events and the most recent mousemove or mouseforcechanged event
     // (respectively) has not yet been sent to WebProcess for processing, remove the pending mouse event and insert the new
     // event in the queue.

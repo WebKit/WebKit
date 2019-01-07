@@ -37,7 +37,7 @@
 #include "ScrollingTreeOverflowScrollingNodeIOS.h"
 #include <WebCore/ScrollingTreeFrameScrollingNodeIOS.h>
 #else
-#include <WebCore/ScrollingTreeFrameScrollingNodeMac.h>
+#include "ScrollingTreeFrameScrollingNodeRemoteMac.h"
 #endif
 
 namespace WebKit {
@@ -117,7 +117,7 @@ Ref<ScrollingTreeNode> RemoteScrollingTree::createScrollingTreeNode(ScrollingNod
 #if PLATFORM(IOS_FAMILY)
         return ScrollingTreeFrameScrollingNodeIOS::create(*this, nodeType, nodeID);
 #else
-        return ScrollingTreeFrameScrollingNodeMac::create(*this, nodeType, nodeID);
+        return ScrollingTreeFrameScrollingNodeRemoteMac::create(*this, nodeType, nodeID);
 #endif
     case ScrollingNodeType::Overflow:
 #if PLATFORM(IOS_FAMILY)
@@ -138,6 +138,15 @@ Ref<ScrollingTreeNode> RemoteScrollingTree::createScrollingTreeNode(ScrollingNod
 void RemoteScrollingTree::currentSnapPointIndicesDidChange(ScrollingNodeID nodeID, unsigned horizontal, unsigned vertical)
 {
     m_scrollingCoordinatorProxy.currentSnapPointIndicesDidChange(nodeID, horizontal, vertical);
+}
+
+void RemoteScrollingTree::handleMouseEvent(const WebCore::PlatformMouseEvent& event)
+{
+#if ENABLE(ASYNC_SCROLLING) && PLATFORM(MAC)
+    static_cast<ScrollingTreeFrameScrollingNodeRemoteMac&>(*rootNode()).handleMouseEvent(event);
+#else
+    UNUSED_PARAM(event);
+#endif
 }
 
 } // namespace WebKit

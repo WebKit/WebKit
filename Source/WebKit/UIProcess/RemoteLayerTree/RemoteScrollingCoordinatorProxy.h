@@ -66,7 +66,8 @@ public:
 
     // FIXME: expose the tree and pass this to that?
     bool handleWheelEvent(const WebCore::PlatformWheelEvent&);
-    
+    void handleMouseEvent(const WebCore::PlatformMouseEvent&);
+
     WebCore::ScrollingNodeID rootScrollingNodeID() const;
 
     const RemoteLayerTreeHost* layerTreeHost() const;

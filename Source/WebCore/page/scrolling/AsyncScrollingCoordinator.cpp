@@ -136,7 +136,7 @@ void AsyncScrollingCoordinator::frameViewLayoutUpdated(FrameView& frameView)
     auto* verticalScrollbar = frameView.verticalScrollbar();
     auto* horizontalScrollbar = frameView.horizontalScrollbar();
     node->setScrollerImpsFromScrollbars(verticalScrollbar, horizontalScrollbar);
-    
+
     node->setFrameScaleFactor(frameView.frame().frameScaleFactor());
     node->setHeaderHeight(frameView.headerHeight());
     node->setFooterHeight(frameView.footerHeight());
@@ -174,6 +174,7 @@ void AsyncScrollingCoordinator::frameViewLayoutUpdated(FrameView& frameView)
     scrollParameters.hasEnabledVerticalScrollbar = verticalScrollbar && verticalScrollbar->enabled();
     scrollParameters.horizontalScrollbarMode = frameView.horizontalScrollbarMode();
     scrollParameters.verticalScrollbarMode = frameView.verticalScrollbarMode();
+    scrollParameters.useDarkAppearanceForScrollbars = frameView.useDarkAppearanceForScrollbars();
 
     node->setScrollableAreaParameters(scrollParameters);
 }
@@ -228,6 +229,8 @@ void AsyncScrollingCoordinator::frameViewRootLayerDidChange(FrameView& frameView
     node->setHeaderLayer(headerLayerForFrameView(frameView));
     node->setFooterLayer(footerLayerForFrameView(frameView));
     node->setScrollBehaviorForFixedElements(frameView.scrollBehaviorForFixedElements());
+    node->setVerticalScrollbarLayer(frameView.layerForVerticalScrollbar());
+    node->setHorizontalScrollbarLayer(frameView.layerForHorizontalScrollbar());
 }
 
 bool AsyncScrollingCoordinator::requestScrollPositionUpdate(FrameView& frameView, const IntPoint& scrollPosition)
@@ -465,13 +468,22 @@ void AsyncScrollingCoordinator::scrollableAreaScrollbarLayerDidChange(Scrollable
     ASSERT(isMainThread());
     ASSERT(m_page);
 
-    if (&scrollableArea != static_cast<ScrollableArea*>(m_page->mainFrame().view()))
-        return;
+    auto* node = m_scrollingStateTree->stateNodeForID(scrollableArea.scrollLayerID());
+    if (is<ScrollingStateFrameScrollingNode>(node)) {
+        auto& scrollingNode = downcast<ScrollingStateFrameScrollingNode>(*node);
+        if (orientation == VerticalScrollbar)
+            scrollingNode.setVerticalScrollbarLayer(scrollableArea.layerForVerticalScrollbar());
+        else
+            scrollingNode.setHorizontalScrollbarLayer(scrollableArea.layerForHorizontalScrollbar());
 
-    if (orientation == VerticalScrollbar)
-        scrollableArea.verticalScrollbarLayerDidChange();
-    else
-        scrollableArea.horizontalScrollbarLayerDidChange();
+    }
+
+    if (&scrollableArea == m_page->mainFrame().view()) {
+        if (orientation == VerticalScrollbar)
+            scrollableArea.verticalScrollbarLayerDidChange();
+        else
+            scrollableArea.horizontalScrollbarLayerDidChange();
+    }
 }
 
 ScrollingNodeID AsyncScrollingCoordinator::attachToStateTree(ScrollingNodeType nodeType, ScrollingNodeID newNodeID, ScrollingNodeID parentID, size_t childIndex)

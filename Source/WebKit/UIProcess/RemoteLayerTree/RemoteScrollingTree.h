@@ -31,6 +31,10 @@
 #include <WebCore/ScrollingConstraints.h>
 #include <WebCore/ScrollingTree.h>
 
+namespace WebCore {
+class PlatformMouseEvent;
+};
+
 namespace WebKit {
 
 class RemoteScrollingCoordinatorProxy;
@@ -42,6 +46,8 @@ public:
 
     bool isRemoteScrollingTree() const override { return true; }
     EventResult tryToHandleWheelEvent(const WebCore::PlatformWheelEvent&) override;
+
+    void handleMouseEvent(const WebCore::PlatformMouseEvent&);
 
     const RemoteScrollingCoordinatorProxy& scrollingCoordinatorProxy() const { return m_scrollingCoordinatorProxy; }
 

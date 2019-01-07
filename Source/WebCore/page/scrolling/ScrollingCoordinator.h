@@ -91,24 +91,16 @@ enum class ScrollingLayerPositionAction {
 };
 
 struct ScrollableAreaParameters {
-    ScrollElasticity horizontalScrollElasticity;
-    ScrollElasticity verticalScrollElasticity;
+    ScrollElasticity horizontalScrollElasticity { ScrollElasticityNone };
+    ScrollElasticity verticalScrollElasticity { ScrollElasticityNone };
 
-    ScrollbarMode horizontalScrollbarMode;
-    ScrollbarMode verticalScrollbarMode;
+    ScrollbarMode horizontalScrollbarMode { ScrollbarAuto };
+    ScrollbarMode verticalScrollbarMode { ScrollbarAuto };
 
-    bool hasEnabledHorizontalScrollbar;
-    bool hasEnabledVerticalScrollbar;
-    
-    ScrollableAreaParameters()
-        : horizontalScrollElasticity(ScrollElasticityNone)
-        , verticalScrollElasticity(ScrollElasticityNone)
-        , horizontalScrollbarMode(ScrollbarAuto)
-        , verticalScrollbarMode(ScrollbarAuto)
-        , hasEnabledHorizontalScrollbar(false)
-        , hasEnabledVerticalScrollbar(false)
-    {
-    }
+    bool hasEnabledHorizontalScrollbar { false };
+    bool hasEnabledVerticalScrollbar { false };
+
+    bool useDarkAppearanceForScrollbars { false };
 
     bool operator==(const ScrollableAreaParameters& other) const
     {
@@ -117,7 +109,8 @@ struct ScrollableAreaParameters {
             && horizontalScrollbarMode == other.horizontalScrollbarMode
             && verticalScrollbarMode == other.verticalScrollbarMode
             && hasEnabledHorizontalScrollbar == other.hasEnabledHorizontalScrollbar
-            && hasEnabledVerticalScrollbar == other.hasEnabledVerticalScrollbar;
+            && hasEnabledVerticalScrollbar == other.hasEnabledVerticalScrollbar
+            && useDarkAppearanceForScrollbars == other.useDarkAppearanceForScrollbars;
     }
 };
 

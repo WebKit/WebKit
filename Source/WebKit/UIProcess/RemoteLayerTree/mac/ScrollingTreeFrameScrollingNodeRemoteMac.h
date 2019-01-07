@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,46 +25,31 @@
 
 #pragma once
 
-#include <WebCore/GraphicsLayer.h>
-#include <wtf/RetainPtr.h>
+#if ENABLE(ASYNC_SCROLLING) && PLATFORM(MAC)
 
-OBJC_CLASS CALayer;
-#if PLATFORM(IOS_FAMILY)
-OBJC_CLASS UIView;
-#endif
+#include <WebCore/ScrollingTreeFrameScrollingNodeMac.h>
 
 namespace WebKit {
 
-class RemoteLayerTreeScrollbars;
+class ScrollerPairMac;
 
-class RemoteLayerTreeNode {
-    WTF_MAKE_FAST_ALLOCATED;
+class ScrollingTreeFrameScrollingNodeRemoteMac : public WebCore::ScrollingTreeFrameScrollingNodeMac {
 public:
-    RemoteLayerTreeNode(WebCore::GraphicsLayer::PlatformLayerID, RetainPtr<CALayer>);
-#if PLATFORM(IOS_FAMILY)
-    RemoteLayerTreeNode(WebCore::GraphicsLayer::PlatformLayerID, RetainPtr<UIView>);
-#endif
-    ~RemoteLayerTreeNode();
+    WEBCORE_EXPORT static Ref<ScrollingTreeFrameScrollingNodeRemoteMac> create(WebCore::ScrollingTree&, WebCore::ScrollingNodeType, WebCore::ScrollingNodeID);
+    virtual ~ScrollingTreeFrameScrollingNodeRemoteMac();
 
-    static std::unique_ptr<RemoteLayerTreeNode> createWithPlainLayer(WebCore::GraphicsLayer::PlatformLayerID);
-
-    CALayer *layer() const { return m_layer.get(); }
-#if PLATFORM(IOS_FAMILY)
-    UIView *uiView() const { return m_uiView.get(); }
-#endif
-
-    void detachFromParent();
-
-    static WebCore::GraphicsLayer::PlatformLayerID layerID(CALayer *);
-    static NSString *appendLayerDescription(NSString *description, CALayer *);
+    void handleMouseEvent(const WebCore::PlatformMouseEvent&);
 
 private:
-    void setLayerID(WebCore::GraphicsLayer::PlatformLayerID);
+    ScrollingTreeFrameScrollingNodeRemoteMac(WebCore::ScrollingTree&, WebCore::ScrollingNodeType, WebCore::ScrollingNodeID);
 
-    RetainPtr<CALayer> m_layer;
-#if PLATFORM(IOS_FAMILY)
-    RetainPtr<UIView> m_uiView;
-#endif
+    void commitStateBeforeChildren(const WebCore::ScrollingStateNode&) override;
+    void handleWheelEvent(const WebCore::PlatformWheelEvent&) override;
+    void setScrollLayerPosition(const WebCore::FloatPoint& position, const WebCore::FloatRect& layoutViewport) override;
+
+    std::unique_ptr<ScrollerPairMac> m_scrollerPair;
 };
 
 }
+
+#endif // ENABLE(ASYNC_SCROLLING) && PLATFORM(MAC)

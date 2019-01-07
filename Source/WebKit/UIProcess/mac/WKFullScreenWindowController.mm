@@ -91,7 +91,7 @@ enum FullScreenState : NSInteger {
     ExitingFullScreen,
 };
 
-@interface NSWindow (WebNSWindowDetails)
+@interface NSWindow (WebNSWindowFullScreenDetails)
 - (void)exitFullScreenMode:(id)sender;
 - (void)enterFullScreenMode:(id)sender;
 @end

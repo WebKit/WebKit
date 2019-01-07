@@ -29,6 +29,8 @@
 
 #if PLATFORM(MAC)
 
+OBJC_CLASS CALayer;
+
 namespace WebCore {
 
 class ScrollbarThemeMac : public ScrollbarThemeComposite {

@@ -37,12 +37,12 @@ OBJC_CLASS CALayer;
 
 namespace WebCore {
 
-class ScrollingTreeFrameScrollingNodeMac : public ScrollingTreeFrameScrollingNode, private ScrollControllerClient {
+class WEBCORE_EXPORT ScrollingTreeFrameScrollingNodeMac : public ScrollingTreeFrameScrollingNode, private ScrollControllerClient {
 public:
-    WEBCORE_EXPORT static Ref<ScrollingTreeFrameScrollingNode> create(ScrollingTree&, ScrollingNodeType, ScrollingNodeID);
+    static Ref<ScrollingTreeFrameScrollingNode> create(ScrollingTree&, ScrollingNodeType, ScrollingNodeID);
     virtual ~ScrollingTreeFrameScrollingNodeMac();
 
-private:
+protected:
     ScrollingTreeFrameScrollingNodeMac(ScrollingTree&, ScrollingNodeType, ScrollingNodeID);
 
     void releaseReferencesToScrollerImpsOnTheMainThread();
@@ -96,6 +96,7 @@ private:
 
     unsigned exposedUnfilledArea() const;
 
+private:
     ScrollController m_scrollController;
 
     RetainPtr<CALayer> m_scrollLayer;

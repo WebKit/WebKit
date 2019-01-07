@@ -535,9 +535,8 @@ enum FeatureToAnimate {
     if (!_scrollbar)
         return [NSAppearance currentAppearance];
 
-    // If dark appearance is used or the overlay style is light (because of a dark page background), return the dark apppearance.
     // Keep this in sync with FrameView::paintScrollCorner.
-    bool useDarkAppearance = _scrollbar->scrollableArea().useDarkAppearance() || _scrollbar->scrollableArea().scrollbarOverlayStyle() == WebCore::ScrollbarOverlayStyleLight;
+    bool useDarkAppearance = _scrollbar->scrollableArea().useDarkAppearanceForScrollbars();
     return [NSAppearance appearanceNamed:useDarkAppearance ? NSAppearanceNameDarkAqua : NSAppearanceNameAqua];
 }
 #endif

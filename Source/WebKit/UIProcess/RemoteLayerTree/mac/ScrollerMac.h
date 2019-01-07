@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,46 +25,51 @@
 
 #pragma once
 
-#include <WebCore/GraphicsLayer.h>
+#if PLATFORM(MAC)
+
+#include <WebCore/FloatPoint.h>
 #include <wtf/RetainPtr.h>
 
 OBJC_CLASS CALayer;
-#if PLATFORM(IOS_FAMILY)
-OBJC_CLASS UIView;
-#endif
+OBJC_CLASS NSScrollerImp;
+OBJC_CLASS WKScrollerImpDelegate;
 
 namespace WebKit {
 
-class RemoteLayerTreeScrollbars;
+class ScrollerPairMac;
 
-class RemoteLayerTreeNode {
-    WTF_MAKE_FAST_ALLOCATED;
+class ScrollerMac {
 public:
-    RemoteLayerTreeNode(WebCore::GraphicsLayer::PlatformLayerID, RetainPtr<CALayer>);
-#if PLATFORM(IOS_FAMILY)
-    RemoteLayerTreeNode(WebCore::GraphicsLayer::PlatformLayerID, RetainPtr<UIView>);
-#endif
-    ~RemoteLayerTreeNode();
+    enum class Orientation { Vertical, Horizontal };
+    
+    ScrollerMac(ScrollerPairMac&, Orientation);
 
-    static std::unique_ptr<RemoteLayerTreeNode> createWithPlainLayer(WebCore::GraphicsLayer::PlatformLayerID);
+    ~ScrollerMac();
 
-    CALayer *layer() const { return m_layer.get(); }
-#if PLATFORM(IOS_FAMILY)
-    UIView *uiView() const { return m_uiView.get(); }
-#endif
+    void attach();
 
-    void detachFromParent();
+    ScrollerPairMac& pair() { return m_pair; }
 
-    static WebCore::GraphicsLayer::PlatformLayerID layerID(CALayer *);
-    static NSString *appendLayerDescription(NSString *description, CALayer *);
+    Orientation orientation() const { return m_orientation; }
+
+    CALayer *hostLayer() const { return m_hostLayer.get(); }
+    void setHostLayer(CALayer *);
+
+    NSScrollerImp *scrollerImp() { return m_scrollerImp.get(); }
+
+    WebCore::FloatPoint convertFromContent(const WebCore::FloatPoint&) const;
+
+    void updateValues();
 
 private:
-    void setLayerID(WebCore::GraphicsLayer::PlatformLayerID);
+    ScrollerPairMac& m_pair;
+    const Orientation m_orientation;
 
-    RetainPtr<CALayer> m_layer;
-#if PLATFORM(IOS_FAMILY)
-    RetainPtr<UIView> m_uiView;
-#endif
+    RetainPtr<CALayer> m_hostLayer;
+    RetainPtr<NSScrollerImp> m_scrollerImp;
+    RetainPtr<WKScrollerImpDelegate> m_scrollerImpDelegate;
 };
 
 }
+
+#endif

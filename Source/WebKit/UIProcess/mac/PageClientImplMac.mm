@@ -94,7 +94,7 @@
 @end
 
 #if HAVE(OUT_OF_PROCESS_LAYER_HOSTING)
-@interface NSWindow (WebNSWindowDetails)
+@interface NSWindow (WebNSWindowLayerHostingDetails)
 - (BOOL)_hostsLayersInWindowServer;
 @end
 #endif

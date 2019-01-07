@@ -80,7 +80,7 @@ protected:
     ScrollBehaviorForFixedElements scrollBehaviorForFixedElements() const { return m_behaviorForFixed; }
 
 private:
-    void dumpProperties(WTF::TextStream&, ScrollingStateTreeAsTextBehavior) const override;
+    WEBCORE_EXPORT void dumpProperties(WTF::TextStream&, ScrollingStateTreeAsTextBehavior) const override;
 
     FloatRect m_layoutViewport;
     FloatPoint m_minLayoutViewportOrigin;

@@ -141,6 +141,9 @@ public:
     bool hasOverlayScrollbars() const;
     WEBCORE_EXPORT virtual void setScrollbarOverlayStyle(ScrollbarOverlayStyle);
     ScrollbarOverlayStyle scrollbarOverlayStyle() const { return static_cast<ScrollbarOverlayStyle>(m_scrollbarOverlayStyle); }
+    bool useDarkAppearanceForScrollbars() const;
+
+    virtual uint64_t scrollLayerID() const { return 0; }
 
     // This getter will create a ScrollAnimator if it doesn't already exist.
     WEBCORE_EXPORT ScrollAnimator& scrollAnimator() const;
@@ -279,7 +282,7 @@ public:
 
     // Computes the double value for the scrollbar's current position and the current overhang amount.
     // This function is static so that it can be called from the main thread or the scrolling thread.
-    static void computeScrollbarValueAndOverhang(float currentPosition, float totalSize, float visibleSize, float& doubleValue, float& overhangAmount);
+    WEBCORE_EXPORT static void computeScrollbarValueAndOverhang(float currentPosition, float totalSize, float visibleSize, float& doubleValue, float& overhangAmount);
 
     // Let subclasses provide a way of asking for and servicing scroll
     // animations.

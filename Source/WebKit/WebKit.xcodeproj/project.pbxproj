@@ -4456,6 +4456,12 @@
 		E1E552C316AE065E004ED653 /* SandboxInitializationParameters.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SandboxInitializationParameters.h; sourceTree = "<group>"; };
 		E1EE53DC11F8CF9F00CCBEE4 /* InjectedBundlePageEditorClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InjectedBundlePageEditorClient.h; sourceTree = "<group>"; };
 		E1EE53E611F8CFFB00CCBEE4 /* InjectedBundlePageEditorClient.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = InjectedBundlePageEditorClient.cpp; sourceTree = "<group>"; };
+		E404907021DE65F70037F0DB /* ScrollerPairMac.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScrollerPairMac.h; sourceTree = "<group>"; };
+		E404907121DE65F70037F0DB /* ScrollingTreeFrameScrollingNodeRemoteMac.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ScrollingTreeFrameScrollingNodeRemoteMac.cpp; sourceTree = "<group>"; };
+		E404907221DE65F70037F0DB /* ScrollerPairMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ScrollerPairMac.mm; sourceTree = "<group>"; };
+		E404907321DE65F70037F0DB /* ScrollingTreeFrameScrollingNodeRemoteMac.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScrollingTreeFrameScrollingNodeRemoteMac.h; sourceTree = "<group>"; };
+		E404907421DE65F70037F0DB /* ScrollerMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ScrollerMac.mm; sourceTree = "<group>"; };
+		E404907521DE65F70037F0DB /* ScrollerMac.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScrollerMac.h; sourceTree = "<group>"; };
 		E413F59B1AC1ADB600345360 /* NetworkCacheEntry.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NetworkCacheEntry.h; sourceTree = "<group>"; };
 		E413F59E1AC1AF9D00345360 /* NetworkCacheEntry.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = NetworkCacheEntry.cpp; sourceTree = "<group>"; };
 		E42E060B1AA7440D00B11699 /* NetworkCacheIOChannel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NetworkCacheIOChannel.h; sourceTree = "<group>"; };
@@ -5509,6 +5515,7 @@
 		2D1551A91F5A9B420006E3FE /* RemoteLayerTree */ = {
 			isa = PBXGroup;
 			children = (
+				E404906F21DE65D70037F0DB /* mac */,
 				2D1551AA1F5A9BA70006E3FE /* ios */,
 				1AB16AE01648656D00290D62 /* RemoteLayerTreeDrawingAreaProxy.h */,
 				0FF24A2F1879E4FE003ABF0C /* RemoteLayerTreeDrawingAreaProxy.messages.in */,
@@ -8700,6 +8707,19 @@
 				2D2ADF0616362DC700197E47 /* PDFPluginTextAnnotation.mm */,
 			);
 			name = PDF;
+			sourceTree = "<group>";
+		};
+		E404906F21DE65D70037F0DB /* mac */ = {
+			isa = PBXGroup;
+			children = (
+				E404907521DE65F70037F0DB /* ScrollerMac.h */,
+				E404907421DE65F70037F0DB /* ScrollerMac.mm */,
+				E404907021DE65F70037F0DB /* ScrollerPairMac.h */,
+				E404907221DE65F70037F0DB /* ScrollerPairMac.mm */,
+				E404907121DE65F70037F0DB /* ScrollingTreeFrameScrollingNodeRemoteMac.cpp */,
+				E404907321DE65F70037F0DB /* ScrollingTreeFrameScrollingNodeRemoteMac.h */,
+			);
+			path = mac;
 			sourceTree = "<group>";
 		};
 		E489D2821A0A2BE80078C06A /* cache */ = {

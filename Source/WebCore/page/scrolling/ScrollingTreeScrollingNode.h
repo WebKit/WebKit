@@ -63,6 +63,8 @@ public:
     virtual void updateLayersAfterDelegatedScroll(const FloatPoint&) { }
 
     virtual FloatPoint scrollPosition() const = 0;
+    const FloatSize& scrollableAreaSize() const { return m_scrollableAreaSize; }
+    const FloatSize& totalContentsSize() const { return m_totalContentsSize; }
 
 #if ENABLE(CSS_SCROLL_SNAP)
     const Vector<float>& horizontalSnapOffsets() const { return m_snapOffsetsInfo.horizontalSnapOffsets; }
@@ -75,6 +77,8 @@ public:
     void setCurrentVerticalSnapPointIndex(unsigned index) { m_currentVerticalSnapPointIndex = index; }
 #endif
 
+    bool useDarkAppearanceForScrollbars() const { return m_scrollableAreaParameters.useDarkAppearanceForScrollbars; }
+
 protected:
     ScrollingTreeScrollingNode(ScrollingTree&, ScrollingNodeType, ScrollingNodeID);
 
@@ -84,8 +88,6 @@ protected:
     virtual void setScrollLayerPosition(const FloatPoint&, const FloatRect& layoutViewport) = 0;
 
     FloatPoint lastCommittedScrollPosition() const { return m_lastCommittedScrollPosition; }
-    const FloatSize& scrollableAreaSize() const { return m_scrollableAreaSize; }
-    const FloatSize& totalContentsSize() const { return m_totalContentsSize; }
     const FloatSize& reachableContentsSize() const { return m_reachableContentsSize; }
     const LayoutRect& parentRelativeScrollableRect() const { return m_parentRelativeScrollableRect; }
     const IntPoint& scrollOrigin() const { return m_scrollOrigin; }

@@ -164,6 +164,12 @@ void ArgumentCoder<ScrollingStateFrameScrollingNode>::encode(Encoder& encoder, c
 
     if (node.hasChangedProperty(ScrollingStateFrameScrollingNode::ContentShadowLayer))
         encoder << static_cast<GraphicsLayer::PlatformLayerID>(node.contentShadowLayer());
+
+    if (node.hasChangedProperty(ScrollingStateFrameScrollingNode::VerticalScrollbarLayer))
+        encoder << static_cast<GraphicsLayer::PlatformLayerID>(node.verticalScrollbarLayer());
+
+    if (node.hasChangedProperty(ScrollingStateFrameScrollingNode::HorizontalScrollbarLayer))
+        encoder << static_cast<GraphicsLayer::PlatformLayerID>(node.horizontalScrollbarLayer());
 }
 
 void ArgumentCoder<ScrollingStateOverflowScrollingNode>::encode(Encoder& encoder, const ScrollingStateOverflowScrollingNode& node)
@@ -267,6 +273,20 @@ bool ArgumentCoder<ScrollingStateFrameScrollingNode>::decode(Decoder& decoder, S
         if (!decoder.decode(layerID))
             return false;
         node.setContentShadowLayer(layerID);
+    }
+
+    if (node.hasChangedProperty(ScrollingStateFrameScrollingNode::VerticalScrollbarLayer)) {
+        GraphicsLayer::PlatformLayerID layerID;
+        if (!decoder.decode(layerID))
+            return false;
+        node.setVerticalScrollbarLayer(layerID);
+    }
+
+    if (node.hasChangedProperty(ScrollingStateFrameScrollingNode::HorizontalScrollbarLayer)) {
+        GraphicsLayer::PlatformLayerID layerID;
+        if (!decoder.decode(layerID))
+            return false;
+        node.setHorizontalScrollbarLayer(layerID);
     }
 
     return true;

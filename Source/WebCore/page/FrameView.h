@@ -154,7 +154,7 @@ public:
 
     // In the future when any ScrollableArea can have a node in th ScrollingTree, this should
     // become a virtual function on ScrollableArea.
-    uint64_t scrollLayerID() const;
+    uint64_t scrollLayerID() const override;
     ScrollableArea* scrollableAreaForScrollLayerID(uint64_t) const;
 
     WEBCORE_EXPORT void enterCompositingMode();
@@ -653,6 +653,9 @@ public:
     void invalidateControlTints() { traverseForPaintInvalidation(GraphicsContext::PaintInvalidationReasons::InvalidatingControlTints); }
     void invalidateImagesWithAsyncDecodes() { traverseForPaintInvalidation(GraphicsContext::PaintInvalidationReasons::InvalidatingImagesWithAsyncDecodes); }
 
+    GraphicsLayer* layerForHorizontalScrollbar() const final;
+    GraphicsLayer* layerForVerticalScrollbar() const final;
+
 protected:
     bool scrollContentsFastPath(const IntSize& scrollDelta, const IntRect& rectToScroll, const IntRect& clipRect) final;
     void scrollContentsSlowPath(const IntRect& updateRect) final;
@@ -724,8 +727,6 @@ private:
     IntRect scrollableAreaBoundingBox(bool* = nullptr) const final;
     bool scrollAnimatorEnabled() const final;
     GraphicsLayer* layerForScrolling() const final;
-    GraphicsLayer* layerForHorizontalScrollbar() const final;
-    GraphicsLayer* layerForVerticalScrollbar() const final;
     GraphicsLayer* layerForScrollCorner() const final;
 #if ENABLE(RUBBER_BANDING)
     GraphicsLayer* layerForOverhangAreas() const final;

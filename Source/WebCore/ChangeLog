@@ -1,3 +1,45 @@
+2019-01-07  Antti Koivisto  <antti@apple.com>
+
+        UI process side scrollbars for UI side compositing on Mac
+        https://bugs.webkit.org/show_bug.cgi?id=193106
+
+        Reviewed by Tim Horton.
+
+        * page/FrameView.cpp:
+        (WebCore::FrameView::paintScrollCorner):
+        * page/scrolling/AsyncScrollingCoordinator.cpp:
+        (WebCore::AsyncScrollingCoordinator::frameViewLayoutUpdated):
+
+        Pass scrollbar host layers and the dark appearance bit to the scrolling tree.
+
+        * page/scrolling/ScrollingCoordinator.cpp:
+        (WebCore::ScrollingCoordinator::verticalScrollbarLayerForFrameView):
+        (WebCore::ScrollingCoordinator::horizontalScrollbarLayerForFrameView):
+        * page/scrolling/ScrollingCoordinator.h:
+        (WebCore::ScrollableAreaParameters::ScrollableAreaParameters):
+        (WebCore::ScrollableAreaParameters::operator== const):
+        * page/scrolling/ScrollingStateFrameScrollingNode.cpp:
+        (WebCore::ScrollingStateFrameScrollingNode::ScrollingStateFrameScrollingNode):
+        (WebCore::ScrollingStateFrameScrollingNode::setScrollbarLayers):
+        * page/scrolling/ScrollingStateFrameScrollingNode.h:
+        * page/scrolling/ScrollingTreeFrameScrollingNode.h:
+        * page/scrolling/ScrollingTreeScrollingNode.h:
+        (WebCore::ScrollingTreeScrollingNode::scrollableAreaSize const):
+        (WebCore::ScrollingTreeScrollingNode::totalContentsSize const):
+        (WebCore::ScrollingTreeScrollingNode::useDarkAppearanceForScrollbars const):
+        (WebCore::ScrollingTreeScrollingNode::lastCommittedScrollPosition const):
+        * page/scrolling/mac/ScrollingTreeFrameScrollingNodeMac.h:
+        * platform/ScrollableArea.cpp:
+        (WebCore::ScrollableArea::useDarkAppearanceForScrollbars const):
+
+        Factor into a function as this is used in several places.
+
+        * platform/ScrollableArea.h:
+        * platform/mac/NSScrollerImpDetails.h:
+        * platform/mac/ScrollAnimatorMac.mm:
+        (-[WebScrollerImpDelegate effectiveAppearanceForScrollerImp:]):
+        * platform/mac/ScrollbarThemeMac.h:
+
 2019-01-07  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Native caret shows up alongside the page's caret when requesting desktop site on jsfiddle.net
