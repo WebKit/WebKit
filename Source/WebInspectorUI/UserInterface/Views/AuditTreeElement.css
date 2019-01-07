@@ -35,7 +35,7 @@
     height: 100%;
 }
 
-.tree-outline .item.audit:matches(.test-case, .test-group) > .status:hover > img {
+.tree-outline .item.audit:matches(.test-case, .test-group):not(.manager-active) > .status:hover > img {
     width: 75%;
     height: 75%;
     margin: 0 auto;
@@ -47,6 +47,7 @@
     opacity: 0;
 }
 
+.tree-outline .item.audit.manager-active > .status > img.show-on-hover,
 .tree-outline .item.audit.test-group.expanded > .status:hover > :not(img),
 .tree-outline .item.audit.test-group-result.expanded > .status {
     display: none;
