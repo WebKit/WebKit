@@ -76,12 +76,13 @@ bool ImageSource::ensureDecoderAvailable(SharedBuffer* data)
         return true;
 
     m_decoder = ImageDecoder::create(*data, mimeType(), m_alphaOption, m_gammaAndColorProfileOption);
+    if (!isDecoderAvailable())
+        return false;
+
     m_decoder->setEncodedDataStatusChangeCallback([weakThis = makeWeakPtr(this)] (auto status) {
         if (weakThis)
             weakThis->encodedDataStatusChanged(status);
     });
-    if (!isDecoderAvailable())
-        return false;
 
     if (auto expectedContentSize = expectedContentLength())
         m_decoder->setExpectedContentSize(expectedContentSize);
