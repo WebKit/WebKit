@@ -279,15 +279,15 @@
 
 - (BOOL)pageCacheEnabled
 {
-    return _processPoolConfiguration->cacheModel() != WebKit::CacheModelDocumentViewer;
+    return _processPoolConfiguration->cacheModel() != WebKit::CacheModel::DocumentViewer;
 }
 
 - (void)setPageCacheEnabled:(BOOL)enabled
 {
     if (!enabled)
-        _processPoolConfiguration->setCacheModel(WebKit::CacheModelDocumentViewer);
+        _processPoolConfiguration->setCacheModel(WebKit::CacheModel::DocumentViewer);
     else if (![self pageCacheEnabled])
-        _processPoolConfiguration->setCacheModel(WebKit::CacheModelPrimaryWebBrowser);
+        _processPoolConfiguration->setCacheModel(WebKit::CacheModel::PrimaryWebBrowser);
 }
 
 - (BOOL)suppressesConnectionTerminationOnSystemChange

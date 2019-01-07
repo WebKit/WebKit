@@ -189,7 +189,7 @@ private:
 
     unsigned m_maximumProcessCount { 0 };
     bool m_diskCacheSpeculativeValidationEnabled { false };
-    WebKit::CacheModel m_cacheModel { WebKit::CacheModelPrimaryWebBrowser };
+    WebKit::CacheModel m_cacheModel { WebKit::CacheModel::PrimaryWebBrowser };
 
     WTF::String m_applicationCacheDirectory;
     WTF::String m_applicationCacheFlatFileSubdirectoryName;

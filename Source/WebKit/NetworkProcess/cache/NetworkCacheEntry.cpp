@@ -160,10 +160,6 @@ void Entry::capMaxAge(const Seconds seconds)
 #if ENABLE(SHAREABLE_RESOURCE)
 void Entry::initializeShareableResourceHandleFromStorageRecord() const
 {
-    auto* cache = NetworkProcess::singleton().cache();
-    if (!cache)
-        return;
-
     auto sharedMemory = m_sourceStorageRecord.body.tryCreateSharedMemory();
     if (!sharedMemory)
         return;

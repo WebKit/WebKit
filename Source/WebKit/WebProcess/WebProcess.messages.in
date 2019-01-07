@@ -30,7 +30,7 @@ messages -> WebProcess LegacyReceiver {
     PrewarmWithDomainInformation(struct WebCore::PrewarmInformation prewarmInformation)
 
     # Global preferences.
-    SetCacheModel(uint32_t cacheModel)
+    SetCacheModel(enum:uint8_t WebKit::CacheModel cacheModel)
 
     RegisterURLSchemeAsEmptyDocument(String scheme)
     RegisterURLSchemeAsSecure(String scheme)

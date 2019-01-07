@@ -49,9 +49,10 @@ void NetworkProcess::clearCacheForAllOrigins(uint32_t cachesToClear)
     notImplemented();
 }
 
-void NetworkProcess::clearDiskCache(WallTime, Function<void()>&&)
+void NetworkProcess::clearDiskCache(WallTime, CompletionHandler<void()>&& completionHandler)
 {
     notImplemented();
+    completionHandler();
 }
 
 void NetworkProcess::platformTerminate()

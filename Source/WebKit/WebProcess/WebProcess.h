@@ -175,7 +175,7 @@ public:
 
     LibWebRTCNetwork& libWebRTCNetwork();
 
-    void setCacheModel(uint32_t);
+    void setCacheModel(CacheModel);
 
     void ensureLegacyPrivateBrowsingSessionInNetworkProcess();
     void addWebsiteDataStore(WebsiteDataStoreParameters&&);
@@ -417,7 +417,7 @@ private:
     HashSet<String> m_plugInAutoStartOrigins;
 
     bool m_hasSetCacheModel { false };
-    CacheModel m_cacheModel { CacheModelDocumentViewer };
+    CacheModel m_cacheModel { CacheModel::DocumentViewer };
 
 #if PLATFORM(COCOA)
     WTF::MachSendRight m_compositingRenderServerPort;

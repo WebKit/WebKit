@@ -174,18 +174,21 @@ void NetworkProcess::clearHSTSCache(WebCore::NetworkStorageSession& session, Wal
     _CFNetworkResetHSTSHostsSinceDate(session.platformSession(), (__bridge CFDateRef)date);
 }
 
-void NetworkProcess::clearDiskCache(WallTime modifiedSince, Function<void ()>&& completionHandler)
+void NetworkProcess::clearDiskCache(WallTime modifiedSince, CompletionHandler<void()>&& completionHandler)
 {
     if (!m_clearCacheDispatchGroup)
         m_clearCacheDispatchGroup = dispatch_group_create();
 
-    if (auto* cache = NetworkProcess::singleton().cache()) {
-        auto group = m_clearCacheDispatchGroup;
-        dispatch_group_async(group, dispatch_get_main_queue(), makeBlockPtr([cache, modifiedSince, completionHandler = WTFMove(completionHandler)] () mutable {
-            cache->clear(modifiedSince, [completionHandler = WTFMove(completionHandler)] () mutable {
-            });
-        }).get());
+    auto* cache = NetworkProcess::singleton().cache();
+    if (!cache) {
+        completionHandler();
+        return;
     }
+
+    auto group = m_clearCacheDispatchGroup;
+    dispatch_group_async(group, dispatch_get_main_queue(), makeBlockPtr([cache, modifiedSince, completionHandler = WTFMove(completionHandler)] () mutable {
+        cache->clear(modifiedSince, WTFMove(completionHandler));
+    }).get());
 }
 
 #if PLATFORM(MAC)

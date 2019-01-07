@@ -26,17 +26,31 @@
 #pragma once
 
 #include <stdint.h>
+#include <wtf/Forward.h>
 #include <wtf/Seconds.h>
 
 namespace WebKit {
 
-enum CacheModel {
-    CacheModelDocumentViewer,
-    CacheModelDocumentBrowser,
-    CacheModelPrimaryWebBrowser
+enum class CacheModel : uint8_t {
+    DocumentViewer,
+    DocumentBrowser,
+    PrimaryWebBrowser
 };
 
 void calculateMemoryCacheSizes(CacheModel, unsigned& cacheTotalCapacity, unsigned& cacheMinDeadCapacity, unsigned& cacheMaxDeadCapacity, Seconds& deadDecodedDataDeletionInterval, unsigned& pageCacheCapacity);
 void calculateURLCacheSizes(CacheModel, uint64_t diskFreeSize, unsigned& urlCacheMemoryCapacity, uint64_t& urlCacheDiskCapacity);
 
 } // namespace WebKit
+
+namespace WTF {
+
+template<> struct EnumTraits<WebKit::CacheModel> {
+    using values = EnumValues<
+    WebKit::CacheModel,
+    WebKit::CacheModel::DocumentViewer,
+    WebKit::CacheModel::DocumentBrowser,
+    WebKit::CacheModel::PrimaryWebBrowser
+    >;
+};
+
+} // namespace WTF

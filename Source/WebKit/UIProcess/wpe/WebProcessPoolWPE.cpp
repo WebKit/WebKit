@@ -86,7 +86,7 @@ void WebProcessPool::platformInitialize()
 
 void WebProcessPool::platformInitializeWebProcess(WebProcessCreationParameters& parameters)
 {
-    parameters.memoryCacheDisabled = m_memoryCacheDisabled || cacheModel() == CacheModelDocumentViewer;
+    parameters.memoryCacheDisabled = m_memoryCacheDisabled || cacheModel() == CacheModel::DocumentViewer;
 
     const char* disableMemoryPressureMonitor = getenv("WEBKIT_DISABLE_MEMORY_PRESSURE_MONITOR");
     if (disableMemoryPressureMonitor && !strcmp(disableMemoryPressureMonitor, "1"))

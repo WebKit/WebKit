@@ -328,7 +328,7 @@ void WebProcess::initializeWebProcess(WebProcessCreationParameters&& parameters)
         WebCore::HTMLMediaElement::setMediaCacheDirectory(parameters.mediaCacheDirectory);
 #endif
 
-    setCacheModel(static_cast<uint32_t>(parameters.cacheModel));
+    setCacheModel(parameters.cacheModel);
 
     if (!parameters.languages.isEmpty())
         overrideUserPreferredLanguages(parameters.languages);
@@ -562,10 +562,8 @@ PluginProcessConnectionManager& WebProcess::pluginProcessConnectionManager()
 }
 #endif
 
-void WebProcess::setCacheModel(uint32_t cm)
+void WebProcess::setCacheModel(CacheModel cacheModel)
 {
-    CacheModel cacheModel = static_cast<CacheModel>(cm);
-
     if (m_hasSetCacheModel && (cacheModel == m_cacheModel))
         return;
 
@@ -781,7 +779,7 @@ void WebProcess::clearResourceCaches(ResourceCachesToClear resourceCachesToClear
     // Toggling the cache model like this forces the cache to evict all its in-memory resources.
     // FIXME: We need a better way to do this.
     CacheModel cacheModel = m_cacheModel;
-    setCacheModel(CacheModelDocumentViewer);
+    setCacheModel(CacheModel::DocumentViewer);
     setCacheModel(cacheModel);
 
     MemoryCache::singleton().evictResources();

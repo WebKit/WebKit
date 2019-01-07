@@ -1,3 +1,48 @@
+2019-01-07  Alex Christensen  <achristensen@webkit.org>
+
+        Modernize CacheModel and disk cache fetching and clearing
+        https://bugs.webkit.org/show_bug.cgi?id=193164
+
+        Reviewed by Joseph Pecoraro.
+
+        fetchDiskCacheEntries and clearDiskCacheEntries now use an early-return model.
+        CacheModel is now an enum class.
+
+        * NetworkProcess/NetworkProcess.cpp:
+        (WebKit::NetworkProcess::NetworkProcess):
+        (WebKit::NetworkProcess::initializeNetworkProcess):
+        (WebKit::fetchDiskCacheEntries):
+        (WebKit::NetworkProcess::fetchWebsiteData):
+        (WebKit::clearDiskCacheEntries):
+        (WebKit::NetworkProcess::setCacheModel):
+        * NetworkProcess/NetworkProcess.h:
+        * NetworkProcess/NetworkProcess.messages.in:
+        * NetworkProcess/NetworkProcessCreationParameters.h:
+        * NetworkProcess/cache/NetworkCacheEntry.cpp:
+        (WebKit::NetworkCache::Entry::initializeShareableResourceHandleFromStorageRecord const):
+        * NetworkProcess/cocoa/NetworkProcessCocoa.mm:
+        (WebKit::NetworkProcess::clearDiskCache):
+        * Shared/CacheModel.cpp:
+        (WebKit::calculateMemoryCacheSizes):
+        (WebKit::calculateURLCacheSizes):
+        * Shared/CacheModel.h:
+        (): Deleted.
+        * UIProcess/API/APIProcessPoolConfiguration.cpp:
+        (API::ProcessPoolConfiguration::createWithLegacyOptions):
+        * UIProcess/API/APIProcessPoolConfiguration.h:
+        * UIProcess/API/C/WKAPICast.h:
+        (WebKit::toCacheModel):
+        (WebKit::toAPI):
+        * UIProcess/API/Cocoa/_WKProcessPoolConfiguration.mm:
+        (-[_WKProcessPoolConfiguration pageCacheEnabled]):
+        (-[_WKProcessPoolConfiguration setPageCacheEnabled:]):
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::initializeWebProcess):
+        (WebKit::WebProcess::setCacheModel):
+        (WebKit::WebProcess::clearResourceCaches):
+        * WebProcess/WebProcess.h:
+        * WebProcess/WebProcess.messages.in:
+
 2019-01-06  Jiewen Tan  <jiewen_tan@apple.com>
 
         [WebAuthN] Import U2F command/response converters from Chromium

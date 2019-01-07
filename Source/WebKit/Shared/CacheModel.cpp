@@ -38,7 +38,7 @@ void calculateMemoryCacheSizes(CacheModel cacheModel, unsigned& cacheTotalCapaci
     uint64_t memorySize = ramSize() / MB;
 
     switch (cacheModel) {
-    case CacheModelDocumentViewer: {
+    case CacheModel::DocumentViewer: {
         // Page cache capacity (in pages)
         pageCacheCapacity = 0;
 
@@ -59,7 +59,7 @@ void calculateMemoryCacheSizes(CacheModel cacheModel, unsigned& cacheTotalCapaci
 
         break;
     }
-    case CacheModelDocumentBrowser: {
+    case CacheModel::DocumentBrowser: {
         // Page cache capacity (in pages)
         if (memorySize >= 512)
             pageCacheCapacity = 2;
@@ -85,7 +85,7 @@ void calculateMemoryCacheSizes(CacheModel cacheModel, unsigned& cacheTotalCapaci
 
         break;
     }
-    case CacheModelPrimaryWebBrowser: {
+    case CacheModel::PrimaryWebBrowser: {
         // Page cache capacity (in pages)
         if (memorySize >= 512)
             pageCacheCapacity = 2;
@@ -128,7 +128,7 @@ void calculateMemoryCacheSizes(CacheModel cacheModel, unsigned& cacheTotalCapaci
 void calculateURLCacheSizes(CacheModel cacheModel, uint64_t diskFreeSize, unsigned& urlCacheMemoryCapacity, uint64_t& urlCacheDiskCapacity)
 {
     switch (cacheModel) {
-    case CacheModelDocumentViewer: {
+    case CacheModel::DocumentViewer: {
         // Foundation memory cache capacity (in bytes)
         urlCacheMemoryCapacity = 0;
 
@@ -137,7 +137,7 @@ void calculateURLCacheSizes(CacheModel cacheModel, uint64_t diskFreeSize, unsign
 
         break;
     }
-    case CacheModelDocumentBrowser: {
+    case CacheModel::DocumentBrowser: {
         uint64_t memorySize = ramSize() / MB;
 
         // Foundation memory cache capacity (in bytes)
@@ -162,7 +162,7 @@ void calculateURLCacheSizes(CacheModel cacheModel, uint64_t diskFreeSize, unsign
 
         break;
     }
-    case CacheModelPrimaryWebBrowser: {
+    case CacheModel::PrimaryWebBrowser: {
         uint64_t memorySize = ramSize() / MB;
 
 #if PLATFORM(IOS_FAMILY)

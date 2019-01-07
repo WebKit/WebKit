@@ -720,13 +720,13 @@ void webkit_web_context_set_cache_model(WebKitWebContext* context, WebKitCacheMo
 
     switch (model) {
     case WEBKIT_CACHE_MODEL_DOCUMENT_VIEWER:
-        cacheModel = CacheModelDocumentViewer;
+        cacheModel = CacheModel::DocumentViewer;
         break;
     case WEBKIT_CACHE_MODEL_WEB_BROWSER:
-        cacheModel = CacheModelPrimaryWebBrowser;
+        cacheModel = CacheModel::PrimaryWebBrowser;
         break;
     case WEBKIT_CACHE_MODEL_DOCUMENT_BROWSER:
-        cacheModel = CacheModelDocumentBrowser;
+        cacheModel = CacheModel::DocumentBrowser;
         break;
     default:
         g_assert_not_reached();
@@ -751,11 +751,11 @@ WebKitCacheModel webkit_web_context_get_cache_model(WebKitWebContext* context)
     g_return_val_if_fail(WEBKIT_IS_WEB_CONTEXT(context), WEBKIT_CACHE_MODEL_WEB_BROWSER);
 
     switch (context->priv->processPool->cacheModel()) {
-    case CacheModelDocumentViewer:
+    case CacheModel::DocumentViewer:
         return WEBKIT_CACHE_MODEL_DOCUMENT_VIEWER;
-    case CacheModelPrimaryWebBrowser:
+    case CacheModel::PrimaryWebBrowser:
         return WEBKIT_CACHE_MODEL_WEB_BROWSER;
-    case CacheModelDocumentBrowser:
+    case CacheModel::DocumentBrowser:
         return WEBKIT_CACHE_MODEL_DOCUMENT_BROWSER;
     default:
         g_assert_not_reached();

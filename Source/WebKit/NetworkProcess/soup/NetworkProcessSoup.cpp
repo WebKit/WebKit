@@ -151,10 +151,12 @@ void NetworkProcess::clearCacheForAllOrigins(uint32_t cachesToClear)
     clearDiskCache(-WallTime::infinity(), [] { });
 }
 
-void NetworkProcess::clearDiskCache(WallTime modifiedSince, Function<void ()>&& completionHandler)
+void NetworkProcess::clearDiskCache(WallTime modifiedSince, CompletionHandler<void()>&& completionHandler)
 {
-    if (!m_cache)
+    if (!m_cache) {
+        completionHandler();
         return;
+    }
     m_cache->clear(modifiedSince, WTFMove(completionHandler));
 }
 

@@ -264,7 +264,7 @@ private:
     void setCacheStorageParameters(PAL::SessionID, uint64_t quota, String&& cacheStorageDirectory, SandboxExtension::Handle&&);
 
     // FIXME: This should take a session ID so we can identify which disk cache to delete.
-    void clearDiskCache(WallTime modifiedSince, Function<void ()>&& completionHandler);
+    void clearDiskCache(WallTime modifiedSince, CompletionHandler<void()>&&);
 
     void downloadRequest(PAL::SessionID, DownloadID, const WebCore::ResourceRequest&, const String& suggestedFilename);
     void resumeDownload(PAL::SessionID, DownloadID, const IPC::DataReference& resumeData, const String& path, SandboxExtension::Handle&&);
@@ -275,7 +275,7 @@ private:
     void continueWillSendRequest(DownloadID, WebCore::ResourceRequest&&);
     void continueDecidePendingDownloadDestination(DownloadID, String destination, SandboxExtension::Handle&&, bool allowOverwrite);
 
-    void setCacheModel(uint32_t);
+    void setCacheModel(CacheModel);
     void allowSpecificHTTPSCertificateForHost(const WebCore::CertificateInfo&, const String& host);
     void setCanHandleHTTPSServerTrustEvaluation(bool);
     void getNetworkProcessStatistics(uint64_t callbackID);

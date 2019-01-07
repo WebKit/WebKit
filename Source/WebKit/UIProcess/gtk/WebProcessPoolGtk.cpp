@@ -79,7 +79,7 @@ void WebProcessPool::platformInitialize()
 
 void WebProcessPool::platformInitializeWebProcess(WebProcessCreationParameters& parameters)
 {
-    parameters.memoryCacheDisabled = m_memoryCacheDisabled || cacheModel() == CacheModelDocumentViewer;
+    parameters.memoryCacheDisabled = m_memoryCacheDisabled || cacheModel() == CacheModel::DocumentViewer;
     parameters.proxySettings = m_networkProxySettings;
 
     parameters.shouldAlwaysUseComplexTextCodePath = true;

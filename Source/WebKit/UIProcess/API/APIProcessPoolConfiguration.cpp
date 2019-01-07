@@ -42,7 +42,7 @@ Ref<ProcessPoolConfiguration> ProcessPoolConfiguration::createWithLegacyOptions(
 
     configuration->m_shouldHaveLegacyDataStore = true;
     configuration->m_maximumProcessCount = 1;
-    configuration->m_cacheModel = WebKit::CacheModelDocumentViewer;
+    configuration->m_cacheModel = WebKit::CacheModel::DocumentViewer;
 
     return configuration;
 }

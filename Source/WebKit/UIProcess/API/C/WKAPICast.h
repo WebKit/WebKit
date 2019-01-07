@@ -204,25 +204,25 @@ inline CacheModel toCacheModel(WKCacheModel wkCacheModel)
 {
     switch (wkCacheModel) {
     case kWKCacheModelDocumentViewer:
-        return CacheModelDocumentViewer;
+        return CacheModel::DocumentViewer;
     case kWKCacheModelDocumentBrowser:
-        return CacheModelDocumentBrowser;
+        return CacheModel::DocumentBrowser;
     case kWKCacheModelPrimaryWebBrowser:
-        return CacheModelPrimaryWebBrowser;
+        return CacheModel::PrimaryWebBrowser;
     }
 
     ASSERT_NOT_REACHED();
-    return CacheModelDocumentViewer;
+    return CacheModel::DocumentViewer;
 }
 
 inline WKCacheModel toAPI(CacheModel cacheModel)
 {
     switch (cacheModel) {
-    case CacheModelDocumentViewer:
+    case CacheModel::DocumentViewer:
         return kWKCacheModelDocumentViewer;
-    case CacheModelDocumentBrowser:
+    case CacheModel::DocumentBrowser:
         return kWKCacheModelDocumentBrowser;
-    case CacheModelPrimaryWebBrowser:
+    case CacheModel::PrimaryWebBrowser:
         return kWKCacheModelPrimaryWebBrowser;
     }
     
