@@ -119,7 +119,7 @@ public:
 
     // CG needs to transform the gradient at draw time.
     void setGradientSpaceTransform(const AffineTransform& gradientSpaceTransformation);
-    const AffineTransform& gradientSpaceTransform() { return m_gradientSpaceTransformation; }
+    const AffineTransform& gradientSpaceTransform() const { return m_gradientSpaceTransformation; }
 
     void fill(GraphicsContext&, const FloatRect&);
     void adjustParametersForTiledDrawing(FloatSize&, FloatRect&, const FloatSize& spacing);

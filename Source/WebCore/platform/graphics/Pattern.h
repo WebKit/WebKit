@@ -65,7 +65,7 @@ public:
     PlatformPatternPtr createPlatformPattern(const GraphicsContext&, float alpha, const AffineTransform& userSpaceTransformation) const;
 #endif
     void setPatternSpaceTransform(const AffineTransform& patternSpaceTransformation);
-    const AffineTransform& patternSpaceTransform() { return m_patternSpaceTransformation; };
+    const AffineTransform& patternSpaceTransform() const { return m_patternSpaceTransformation; };
     bool repeatX() const { return m_repeatX; }
     bool repeatY() const { return m_repeatY; }
 

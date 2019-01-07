@@ -1,5 +1,23 @@
 2019-01-07  Zan Dobersek  <zdobersek@igalia.com>
 
+        Make Gradient::gradientSpaceTransform(), Pattern::patternSpaceTransform() methods const
+        https://bugs.webkit.org/show_bug.cgi?id=193189
+
+        Reviewed by Philippe Normand.
+
+        The transform getter methods on the Gradient and Pattern classes both
+        return const references to the transform objects, and don't modify any
+        internal state. They should be marked const accordingly, allowing
+        invocations of these two methods through const references to Gradient
+        and Pattern objects.
+
+        * platform/graphics/Gradient.h:
+        (WebCore::Gradient::gradientSpaceTransform): Now const.
+        * platform/graphics/Pattern.h:
+        (WebCore::Pattern::patternSpaceTransform): Now const.
+
+2019-01-07  Zan Dobersek  <zdobersek@igalia.com>
+
         REGRESSION(r239636): ImageDecoder::setEncodedDataStatusChangeCallback() can be called on a null decoder
         https://bugs.webkit.org/show_bug.cgi?id=193187
 
