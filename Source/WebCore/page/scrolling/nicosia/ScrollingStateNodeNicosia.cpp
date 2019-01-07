@@ -28,9 +28,8 @@
 
 #include "GraphicsLayer.h"
 #include "NotImplemented.h"
-#include "ScrollingStateTree.h"
 
-#if USE(COORDINATED_GRAPHICS)
+#if ENABLE(ASYNC_SCROLLING) && USE(NICOSIA)
 
 namespace WebCore {
 
@@ -56,4 +55,4 @@ void* LayerRepresentation::makePlatformLayerTypeless(PlatformLayer* layer)
 
 } // namespace WebCore
 
-#endif // USE(COORDINATED_GRAPHICS)
+#endif // ENABLE(ASYNC_SCROLLING) && USE(NICOSIA)

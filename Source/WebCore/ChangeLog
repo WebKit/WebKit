@@ -1,3 +1,32 @@
+2019-01-06  Zan Dobersek  <zdobersek@igalia.com>
+
+        [Nicosia] Take over CoordinatedGraphics-named implementation of async scrolling classes
+        https://bugs.webkit.org/show_bug.cgi?id=193133
+
+        Reviewed by Michael Catanzaro.
+
+        Move the CoordinatedGraphics-specific files under
+        page/scrolling/coordinatedgraphics/ to page/scrolling/nicosia/, along
+        with renaming the files and classes accordingly. Implementation will
+        only depend on the Nicosia-specific layer structure and is not specific
+        to the CoordinatedGraphics system.
+
+        * PlatformPlayStation.cmake:
+        * SourcesGTK.txt:
+        * SourcesWPE.txt:
+        * page/scrolling/nicosia/ScrollingCoordinatorNicosia.cpp: Renamed from Source/WebCore/page/scrolling/coordinatedgraphics/ScrollingCoordinatorCoordinatedGraphics.cpp.
+        * page/scrolling/nicosia/ScrollingCoordinatorNicosia.h: Renamed from Source/WebCore/page/scrolling/coordinatedgraphics/ScrollingCoordinatorCoordinatedGraphics.h.
+        * page/scrolling/nicosia/ScrollingStateNodeNicosia.cpp: Renamed from Source/WebCore/page/scrolling/coordinatedgraphics/ScrollingStateNodeCoordinatedGraphics.cpp.
+        * page/scrolling/nicosia/ScrollingTreeFixedNode.cpp: Renamed from Source/WebCore/page/scrolling/coordinatedgraphics/ScrollingTreeFixedNode.cpp.
+        * page/scrolling/nicosia/ScrollingTreeFixedNode.h: Renamed from Source/WebCore/page/scrolling/coordinatedgraphics/ScrollingTreeFixedNode.h.
+        * page/scrolling/nicosia/ScrollingTreeFrameScrollingNodeNicosia.cpp: Renamed from Source/WebCore/page/scrolling/coordinatedgraphics/ScrollingTreeFrameScrollingNodeCoordinatedGraphics.cpp.
+        * page/scrolling/nicosia/ScrollingTreeFrameScrollingNodeNicosia.h: Renamed from Source/WebCore/page/scrolling/coordinatedgraphics/ScrollingTreeFrameScrollingNodeCoordinatedGraphics.h.
+        * page/scrolling/nicosia/ScrollingTreeNicosia.cpp: Renamed from Source/WebCore/page/scrolling/coordinatedgraphics/ScrollingTreeCoordinatedGraphics.cpp.
+        * page/scrolling/nicosia/ScrollingTreeNicosia.h: Renamed from Source/WebCore/page/scrolling/coordinatedgraphics/ScrollingTreeCoordinatedGraphics.h.
+        * page/scrolling/nicosia/ScrollingTreeStickyNode.cpp: Renamed from Source/WebCore/page/scrolling/coordinatedgraphics/ScrollingTreeStickyNode.cpp.
+        * page/scrolling/nicosia/ScrollingTreeStickyNode.h: Renamed from Source/WebCore/page/scrolling/coordinatedgraphics/ScrollingTreeStickyNode.h.
+        * platform/TextureMapper.cmake:
+
 2019-01-06  Jiewen Tan  <jiewen_tan@apple.com>
 
         [WebAuthN] Import U2F command/response converters from Chromium

@@ -26,49 +26,49 @@
  */
 
 #include "config.h"
-#include "ScrollingTreeFrameScrollingNodeCoordinatedGraphics.h"
+#include "ScrollingTreeFrameScrollingNodeNicosia.h"
 
-#if ENABLE(ASYNC_SCROLLING) && USE(COORDINATED_GRAPHICS)
+#if ENABLE(ASYNC_SCROLLING) && USE(NICOSIA)
 
 namespace WebCore {
 
-Ref<ScrollingTreeFrameScrollingNode> ScrollingTreeFrameScrollingNodeCoordinatedGraphics::create(ScrollingTree& scrollingTree, ScrollingNodeType nodeType, ScrollingNodeID nodeID)
+Ref<ScrollingTreeFrameScrollingNode> ScrollingTreeFrameScrollingNodeNicosia::create(ScrollingTree& scrollingTree, ScrollingNodeType nodeType, ScrollingNodeID nodeID)
 {
-    return adoptRef(*new ScrollingTreeFrameScrollingNodeCoordinatedGraphics(scrollingTree, nodeType, nodeID));
+    return adoptRef(*new ScrollingTreeFrameScrollingNodeNicosia(scrollingTree, nodeType, nodeID));
 }
 
-ScrollingTreeFrameScrollingNodeCoordinatedGraphics::ScrollingTreeFrameScrollingNodeCoordinatedGraphics(ScrollingTree& scrollingTree, ScrollingNodeType nodeType, ScrollingNodeID nodeID)
+ScrollingTreeFrameScrollingNodeNicosia::ScrollingTreeFrameScrollingNodeNicosia(ScrollingTree& scrollingTree, ScrollingNodeType nodeType, ScrollingNodeID nodeID)
     : ScrollingTreeFrameScrollingNode(scrollingTree, nodeType, nodeID)
 {
 }
 
-ScrollingTreeFrameScrollingNodeCoordinatedGraphics::~ScrollingTreeFrameScrollingNodeCoordinatedGraphics() = default;
+ScrollingTreeFrameScrollingNodeNicosia::~ScrollingTreeFrameScrollingNodeNicosia() = default;
 
-void ScrollingTreeFrameScrollingNodeCoordinatedGraphics::handleWheelEvent(const PlatformWheelEvent&)
+void ScrollingTreeFrameScrollingNodeNicosia::handleWheelEvent(const PlatformWheelEvent&)
 {
 }
 
-FloatPoint ScrollingTreeFrameScrollingNodeCoordinatedGraphics::scrollPosition() const
+FloatPoint ScrollingTreeFrameScrollingNodeNicosia::scrollPosition() const
 {
     return { };
 }
 
-void ScrollingTreeFrameScrollingNodeCoordinatedGraphics::setScrollPosition(const FloatPoint&)
+void ScrollingTreeFrameScrollingNodeNicosia::setScrollPosition(const FloatPoint&)
 {
 }
 
-void ScrollingTreeFrameScrollingNodeCoordinatedGraphics::setScrollPositionWithoutContentEdgeConstraints(const FloatPoint&)
+void ScrollingTreeFrameScrollingNodeNicosia::setScrollPositionWithoutContentEdgeConstraints(const FloatPoint&)
 {
 }
 
-void ScrollingTreeFrameScrollingNodeCoordinatedGraphics::setScrollLayerPosition(const FloatPoint&, const FloatRect&)
+void ScrollingTreeFrameScrollingNodeNicosia::setScrollLayerPosition(const FloatPoint&, const FloatRect&)
 {
 }
 
-void ScrollingTreeFrameScrollingNodeCoordinatedGraphics::updateLayersAfterViewportChange(const FloatRect&, double)
+void ScrollingTreeFrameScrollingNodeNicosia::updateLayersAfterViewportChange(const FloatRect&, double)
 {
 }
 
 } // namespace WebCore
 
-#endif // ENABLE(ASYNC_SCROLLING) && USE(COORDINATED_GRAPHICS)
+#endif // ENABLE(ASYNC_SCROLLING) && USE(NICOSIA)

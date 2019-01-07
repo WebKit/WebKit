@@ -25,39 +25,32 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "ScrollingTreeFixedNode.h"
+#pragma once
 
-#if ENABLE(ASYNC_SCROLLING) && USE(COORDINATED_GRAPHICS)
+#if ENABLE(ASYNC_SCROLLING) && USE(NICOSIA)
 
-#include "ScrollingTree.h"
+#include "ScrollingTreeFrameScrollingNode.h"
 
 namespace WebCore {
 
-Ref<ScrollingTreeFixedNode> ScrollingTreeFixedNode::create(ScrollingTree& scrollingTree, ScrollingNodeID nodeID)
-{
-    return adoptRef(*new ScrollingTreeFixedNode(scrollingTree, nodeID));
-}
+class ScrollingTreeFrameScrollingNodeNicosia final : public ScrollingTreeFrameScrollingNode {
+public:
+    static Ref<ScrollingTreeFrameScrollingNode> create(ScrollingTree&, ScrollingNodeType, ScrollingNodeID);
+    virtual ~ScrollingTreeFrameScrollingNodeNicosia();
 
-ScrollingTreeFixedNode::ScrollingTreeFixedNode(ScrollingTree& scrollingTree, ScrollingNodeID nodeID)
-    : ScrollingTreeNode(scrollingTree, ScrollingNodeType::Fixed, nodeID)
-{
-    scrollingTree.fixedOrStickyNodeAdded();
-}
+private:
+    ScrollingTreeFrameScrollingNodeNicosia(ScrollingTree&, ScrollingNodeType, ScrollingNodeID);
 
-ScrollingTreeFixedNode::~ScrollingTreeFixedNode()
-{
-    scrollingTree().fixedOrStickyNodeRemoved();
-}
+    void handleWheelEvent(const PlatformWheelEvent&) override;
 
-void ScrollingTreeFixedNode::commitStateBeforeChildren(const ScrollingStateNode&)
-{
-}
+    FloatPoint scrollPosition() const override;
+    void setScrollPosition(const FloatPoint&) override;
+    void setScrollPositionWithoutContentEdgeConstraints(const FloatPoint&) override;
+    void setScrollLayerPosition(const FloatPoint&, const FloatRect&) override;
 
-void ScrollingTreeFixedNode::updateLayersAfterAncestorChange(const ScrollingTreeNode&, const FloatRect&, const FloatSize&)
-{
-}
+    void updateLayersAfterViewportChange(const FloatRect&, double) override;
+};
 
 } // namespace WebCore
 
-#endif // ENABLE(ASYNC_SCROLLING) && USE(COORDINATED_GRAPHICS)
+#endif // ENABLE(ASYNC_SCROLLING) && USE(NICOSIA)

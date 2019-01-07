@@ -18,12 +18,12 @@ list(APPEND WebCore_INCLUDE_DIRECTORIES
 list(APPEND WebCore_SOURCES
     editing/libwpe/EditorLibWPE.cpp
 
-    page/scrolling/coordinatedgraphics/ScrollingCoordinatorCoordinatedGraphics.cpp
-    page/scrolling/coordinatedgraphics/ScrollingStateNodeCoordinatedGraphics.cpp
-    page/scrolling/coordinatedgraphics/ScrollingTreeCoordinatedGraphics.cpp
-    page/scrolling/coordinatedgraphics/ScrollingTreeFixedNode.cpp
-    page/scrolling/coordinatedgraphics/ScrollingTreeFrameScrollingNodeCoordinatedGraphics.cpp
-    page/scrolling/coordinatedgraphics/ScrollingTreeStickyNode.cpp
+    page/scrolling/nicosia/ScrollingCoordinatorNicosia.cpp
+    page/scrolling/nicosia/ScrollingStateNodeNicosia.cpp
+    page/scrolling/nicosia/ScrollingTreeFixedNode.cpp
+    page/scrolling/nicosia/ScrollingTreeFrameScrollingNodeNicosia.cpp
+    page/scrolling/nicosia/ScrollingTreeNicosia.cpp
+    page/scrolling/nicosia/ScrollingTreeStickyNode.cpp
 
     page/scrolling/generic/ScrollingThreadGeneric.cpp
 

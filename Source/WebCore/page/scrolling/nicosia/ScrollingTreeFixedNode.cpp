@@ -25,35 +25,39 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#include "config.h"
+#include "ScrollingTreeFixedNode.h"
 
-#if ENABLE(ASYNC_SCROLLING) && USE(COORDINATED_GRAPHICS)
+#if ENABLE(ASYNC_SCROLLING) && USE(NICOSIA)
 
-#include "AsyncScrollingCoordinator.h"
-
-#include <wtf/RunLoop.h>
+#include "ScrollingTree.h"
 
 namespace WebCore {
 
-class ScrollingCoordinatorCoordinatedGraphics final : public AsyncScrollingCoordinator {
-public:
-    explicit ScrollingCoordinatorCoordinatedGraphics(Page*);
-    virtual ~ScrollingCoordinatorCoordinatedGraphics();
+Ref<ScrollingTreeFixedNode> ScrollingTreeFixedNode::create(ScrollingTree& scrollingTree, ScrollingNodeID nodeID)
+{
+    return adoptRef(*new ScrollingTreeFixedNode(scrollingTree, nodeID));
+}
 
-    void pageDestroyed() override;
+ScrollingTreeFixedNode::ScrollingTreeFixedNode(ScrollingTree& scrollingTree, ScrollingNodeID nodeID)
+    : ScrollingTreeNode(scrollingTree, ScrollingNodeType::Fixed, nodeID)
+{
+    scrollingTree.fixedOrStickyNodeAdded();
+}
 
-    void commitTreeStateIfNeeded() override;
+ScrollingTreeFixedNode::~ScrollingTreeFixedNode()
+{
+    scrollingTree().fixedOrStickyNodeRemoved();
+}
 
-    bool handleWheelEvent(FrameView&, const PlatformWheelEvent&) override;
+void ScrollingTreeFixedNode::commitStateBeforeChildren(const ScrollingStateNode&)
+{
+}
 
-private:
-    void scheduleTreeStateCommit() override;
-
-    void commitTreeState();
-
-    RunLoop::Timer<ScrollingCoordinatorCoordinatedGraphics> m_scrollingStateTreeCommitterTimer;
-};
+void ScrollingTreeFixedNode::updateLayersAfterAncestorChange(const ScrollingTreeNode&, const FloatRect&, const FloatSize&)
+{
+}
 
 } // namespace WebCore
 
-#endif // ENABLE(ASYNC_SCROLLING) && USE(COORDINATED_GRAPHICS)
+#endif // ENABLE(ASYNC_SCROLLING) && USE(NICOSIA)

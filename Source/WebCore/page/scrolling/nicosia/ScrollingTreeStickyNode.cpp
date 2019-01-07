@@ -25,24 +25,39 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#include "config.h"
+#include "ScrollingTreeStickyNode.h"
 
-#if ENABLE(ASYNC_SCROLLING) && USE(COORDINATED_GRAPHICS)
+#if ENABLE(ASYNC_SCROLLING) && USE(NICOSIA)
 
-#include "ThreadedScrollingTree.h"
+#include "ScrollingTree.h"
 
 namespace WebCore {
 
-class ScrollingTreeCoordinatedGraphics final : public ThreadedScrollingTree {
-public:
-    static Ref<ScrollingTreeCoordinatedGraphics> create(AsyncScrollingCoordinator&);
+Ref<ScrollingTreeStickyNode> ScrollingTreeStickyNode::create(ScrollingTree& scrollingTree, ScrollingNodeID nodeID)
+{
+    return adoptRef(*new ScrollingTreeStickyNode(scrollingTree, nodeID));
+}
 
-private:
-    explicit ScrollingTreeCoordinatedGraphics(AsyncScrollingCoordinator&);
+ScrollingTreeStickyNode::ScrollingTreeStickyNode(ScrollingTree& scrollingTree, ScrollingNodeID nodeID)
+    : ScrollingTreeNode(scrollingTree, ScrollingNodeType::Sticky, nodeID)
+{
+    scrollingTree.fixedOrStickyNodeAdded();
+}
 
-    Ref<ScrollingTreeNode> createScrollingTreeNode(ScrollingNodeType, ScrollingNodeID) override;
-};
+ScrollingTreeStickyNode::~ScrollingTreeStickyNode()
+{
+    scrollingTree().fixedOrStickyNodeRemoved();
+}
+
+void ScrollingTreeStickyNode::commitStateBeforeChildren(const ScrollingStateNode&)
+{
+}
+
+void ScrollingTreeStickyNode::updateLayersAfterAncestorChange(const ScrollingTreeNode&, const FloatRect&, const FloatSize&)
+{
+}
 
 } // namespace WebCore
 
-#endif // ENABLE(ASYNC_SCROLLING) && USE(COORDINATED_GRAPHICS)
+#endif // ENABLE(ASYNC_SCROLLING) && USE(NICOSIA)

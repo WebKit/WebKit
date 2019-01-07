@@ -27,30 +27,22 @@
 
 #pragma once
 
-#if ENABLE(ASYNC_SCROLLING) && USE(COORDINATED_GRAPHICS)
+#if ENABLE(ASYNC_SCROLLING) && USE(NICOSIA)
 
-#include "ScrollingTreeFrameScrollingNode.h"
+#include "ThreadedScrollingTree.h"
 
 namespace WebCore {
 
-class ScrollingTreeFrameScrollingNodeCoordinatedGraphics final : public ScrollingTreeFrameScrollingNode {
+class ScrollingTreeNicosia final : public ThreadedScrollingTree {
 public:
-    static Ref<ScrollingTreeFrameScrollingNode> create(ScrollingTree&, ScrollingNodeType, ScrollingNodeID);
-    virtual ~ScrollingTreeFrameScrollingNodeCoordinatedGraphics();
+    static Ref<ScrollingTreeNicosia> create(AsyncScrollingCoordinator&);
 
 private:
-    ScrollingTreeFrameScrollingNodeCoordinatedGraphics(ScrollingTree&, ScrollingNodeType, ScrollingNodeID);
+    explicit ScrollingTreeNicosia(AsyncScrollingCoordinator&);
 
-    void handleWheelEvent(const PlatformWheelEvent&) override;
-
-    FloatPoint scrollPosition() const override;
-    void setScrollPosition(const FloatPoint&) override;
-    void setScrollPositionWithoutContentEdgeConstraints(const FloatPoint&) override;
-    void setScrollLayerPosition(const FloatPoint&, const FloatRect&) override;
-
-    void updateLayersAfterViewportChange(const FloatRect&, double) override;
+    Ref<ScrollingTreeNode> createScrollingTreeNode(ScrollingNodeType, ScrollingNodeID) override;
 };
 
 } // namespace WebCore
 
-#endif // ENABLE(ASYNC_SCROLLING) && USE(COORDINATED_GRAPHICS)
+#endif // ENABLE(ASYNC_SCROLLING) && USE(NICOSIA)

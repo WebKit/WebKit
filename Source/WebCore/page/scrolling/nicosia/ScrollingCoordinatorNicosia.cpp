@@ -26,33 +26,33 @@
  */
 
 #include "config.h"
-#include "ScrollingCoordinatorCoordinatedGraphics.h"
+#include "ScrollingCoordinatorNicosia.h"
 
-#if ENABLE(ASYNC_SCROLLING) && USE(COORDINATED_GRAPHICS)
+#if ENABLE(ASYNC_SCROLLING) && USE(NICOSIA)
 
 #include "ScrollingThread.h"
-#include "ScrollingTreeCoordinatedGraphics.h"
+#include "ScrollingTreeNicosia.h"
 
 namespace WebCore {
 
 Ref<ScrollingCoordinator> ScrollingCoordinator::create(Page* page)
 {
-    return adoptRef(*new ScrollingCoordinatorCoordinatedGraphics(page));
+    return adoptRef(*new ScrollingCoordinatorNicosia(page));
 }
 
-ScrollingCoordinatorCoordinatedGraphics::ScrollingCoordinatorCoordinatedGraphics(Page* page)
+ScrollingCoordinatorNicosia::ScrollingCoordinatorNicosia(Page* page)
     : AsyncScrollingCoordinator(page)
-    , m_scrollingStateTreeCommitterTimer(RunLoop::main(), this, &ScrollingCoordinatorCoordinatedGraphics::commitTreeState)
+    , m_scrollingStateTreeCommitterTimer(RunLoop::main(), this, &ScrollingCoordinatorNicosia::commitTreeState)
 {
-    setScrollingTree(ScrollingTreeCoordinatedGraphics::create(*this));
+    setScrollingTree(ScrollingTreeNicosia::create(*this));
 }
 
-ScrollingCoordinatorCoordinatedGraphics::~ScrollingCoordinatorCoordinatedGraphics()
+ScrollingCoordinatorNicosia::~ScrollingCoordinatorNicosia()
 {
     ASSERT(!scrollingTree());
 }
 
-void ScrollingCoordinatorCoordinatedGraphics::pageDestroyed()
+void ScrollingCoordinatorNicosia::pageDestroyed()
 {
     AsyncScrollingCoordinator::pageDestroyed();
 
@@ -61,24 +61,24 @@ void ScrollingCoordinatorCoordinatedGraphics::pageDestroyed()
     releaseScrollingTree();
 }
 
-void ScrollingCoordinatorCoordinatedGraphics::commitTreeStateIfNeeded()
+void ScrollingCoordinatorNicosia::commitTreeStateIfNeeded()
 {
     commitTreeState();
     m_scrollingStateTreeCommitterTimer.stop();
 }
 
-bool ScrollingCoordinatorCoordinatedGraphics::handleWheelEvent(FrameView&, const PlatformWheelEvent&)
+bool ScrollingCoordinatorNicosia::handleWheelEvent(FrameView&, const PlatformWheelEvent&)
 {
     return false;
 }
 
-void ScrollingCoordinatorCoordinatedGraphics::scheduleTreeStateCommit()
+void ScrollingCoordinatorNicosia::scheduleTreeStateCommit()
 {
     if (!m_scrollingStateTreeCommitterTimer.isActive())
         m_scrollingStateTreeCommitterTimer.startOneShot(0_s);
 }
 
-void ScrollingCoordinatorCoordinatedGraphics::commitTreeState()
+void ScrollingCoordinatorNicosia::commitTreeState()
 {
     if (!scrollingStateTree()->hasChangedProperties())
         return;
@@ -93,4 +93,4 @@ void ScrollingCoordinatorCoordinatedGraphics::commitTreeState()
 
 } // namespace WebCore
 
-#endif // ENABLE(ASYNC_SCROLLING) && USE(COORDINATED_GRAPHICS)
+#endif // ENABLE(ASYNC_SCROLLING) && USE(NICOSIA)

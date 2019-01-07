@@ -26,32 +26,32 @@
  */
 
 #include "config.h"
-#include "ScrollingTreeCoordinatedGraphics.h"
+#include "ScrollingTreeNicosia.h"
 
-#if ENABLE(ASYNC_SCROLLING) && USE(COORDINATED_GRAPHICS)
+#if ENABLE(ASYNC_SCROLLING) && USE(NICOSIA)
 
 #include "ScrollingTreeFixedNode.h"
-#include "ScrollingTreeFrameScrollingNodeCoordinatedGraphics.h"
+#include "ScrollingTreeFrameScrollingNodeNicosia.h"
 #include "ScrollingTreeStickyNode.h"
 
 namespace WebCore {
 
-Ref<ScrollingTreeCoordinatedGraphics> ScrollingTreeCoordinatedGraphics::create(AsyncScrollingCoordinator& scrollingCoordinator)
+Ref<ScrollingTreeNicosia> ScrollingTreeNicosia::create(AsyncScrollingCoordinator& scrollingCoordinator)
 {
-    return adoptRef(*new ScrollingTreeCoordinatedGraphics(scrollingCoordinator));
+    return adoptRef(*new ScrollingTreeNicosia(scrollingCoordinator));
 }
 
-ScrollingTreeCoordinatedGraphics::ScrollingTreeCoordinatedGraphics(AsyncScrollingCoordinator& scrollingCoordinator)
+ScrollingTreeNicosia::ScrollingTreeNicosia(AsyncScrollingCoordinator& scrollingCoordinator)
     : ThreadedScrollingTree(scrollingCoordinator)
 {
 }
 
-Ref<ScrollingTreeNode> ScrollingTreeCoordinatedGraphics::createScrollingTreeNode(ScrollingNodeType nodeType, ScrollingNodeID nodeID)
+Ref<ScrollingTreeNode> ScrollingTreeNicosia::createScrollingTreeNode(ScrollingNodeType nodeType, ScrollingNodeID nodeID)
 {
     switch (nodeType) {
     case ScrollingNodeType::MainFrame:
     case ScrollingNodeType::Subframe:
-        return ScrollingTreeFrameScrollingNodeCoordinatedGraphics::create(*this, nodeType, nodeID);
+        return ScrollingTreeFrameScrollingNodeNicosia::create(*this, nodeType, nodeID);
     case ScrollingNodeType::Overflow:
         // Should not be reached -- caught by ASSERT_NOT_REACHED() below.
         break;
@@ -66,4 +66,4 @@ Ref<ScrollingTreeNode> ScrollingTreeCoordinatedGraphics::createScrollingTreeNode
 
 } // namespace WebCore
 
-#endif // ENABLE(ASYNC_SCROLLING) && USE(COORDINATED_GRAPHICS)
+#endif // ENABLE(ASYNC_SCROLLING) && USE(NICOSIA)
