@@ -115,8 +115,8 @@ static void callExitSoon(IPC::Connection*)
 
 NetworkProcess& NetworkProcess::singleton()
 {
-    static NeverDestroyed<NetworkProcess> networkProcess;
-    return networkProcess;
+    static NeverDestroyed<Ref<NetworkProcess>> networkProcess(adoptRef(*new NetworkProcess));
+    return networkProcess.get();
 }
 
 NetworkProcess::NetworkProcess()
@@ -299,7 +299,7 @@ void NetworkProcess::initializeNetworkProcess(NetworkProcessCreationParameters&&
         NetworkStorageSession::switchToNewTestingSession();
 
     auto sessionID = parameters.defaultDataStoreParameters.networkSessionParameters.sessionID;
-    SessionTracker::setSession(sessionID, NetworkSession::create(WTFMove(parameters.defaultDataStoreParameters.networkSessionParameters)));
+    SessionTracker::setSession(sessionID, NetworkSession::create(*this, WTFMove(parameters.defaultDataStoreParameters.networkSessionParameters)));
 
 #if ENABLE(INDEXED_DATABASE)
     addIndexedDatabaseSession(sessionID, parameters.defaultDataStoreParameters.indexedDatabaseDirectory, parameters.defaultDataStoreParameters.indexedDatabaseDirectoryExtensionHandle);
@@ -364,7 +364,7 @@ void NetworkProcess::createNetworkConnectionToWebProcess(bool isServiceWorkerPro
 #if USE(UNIX_DOMAIN_SOCKETS)
     IPC::Connection::SocketPair socketPair = IPC::Connection::createPlatformConnection();
 
-    auto connection = NetworkConnectionToWebProcess::create(socketPair.server);
+    auto connection = NetworkConnectionToWebProcess::create(*this, socketPair.server);
     m_webProcessConnections.append(WTFMove(connection));
 
     IPC::Attachment clientSocket(socketPair.client);
@@ -383,7 +383,7 @@ void NetworkProcess::createNetworkConnectionToWebProcess(bool isServiceWorkerPro
     }
 
     // Create a listening connection.
-    auto connection = NetworkConnectionToWebProcess::create(IPC::Connection::Identifier(listeningPort));
+    auto connection = NetworkConnectionToWebProcess::create(*this, IPC::Connection::Identifier(listeningPort));
     m_webProcessConnections.append(WTFMove(connection));
 
     IPC::Attachment clientPort(listeningPort, MACH_MSG_TYPE_MAKE_SEND);
@@ -395,7 +395,7 @@ void NetworkProcess::createNetworkConnectionToWebProcess(bool isServiceWorkerPro
         CRASH();
     }
 
-    auto connection = NetworkConnectionToWebProcess::create(serverIdentifier);
+    auto connection = NetworkConnectionToWebProcess::create(*this, serverIdentifier);
     m_webProcessConnections.append(WTFMove(connection));
 
     IPC::Attachment clientSocket(clientIdentifier);
@@ -446,7 +446,7 @@ void NetworkProcess::addWebsiteDataStore(WebsiteDataStoreParameters&& parameters
         addServiceWorkerSession(parameters.networkSessionParameters.sessionID, parameters.serviceWorkerRegistrationDirectory, parameters.serviceWorkerRegistrationDirectoryExtensionHandle);
 #endif
 
-    RemoteNetworkingContext::ensureWebsiteDataStoreSession(WTFMove(parameters));
+    RemoteNetworkingContext::ensureWebsiteDataStoreSession(*this, WTFMove(parameters));
 }
 
 void NetworkProcess::destroySession(PAL::SessionID sessionID)
@@ -567,9 +567,8 @@ void NetworkProcess::setSessionIsControlledByAutomation(PAL::SessionID sessionID
         m_sessionsControlledByAutomation.remove(sessionID);
 }
 
-static void fetchDiskCacheEntries(PAL::SessionID sessionID, OptionSet<WebsiteDataFetchOption> fetchOptions, CompletionHandler<void(Vector<WebsiteData::Entry>)>&& completionHandler)
+static void fetchDiskCacheEntries(NetworkCache::Cache* cache, PAL::SessionID sessionID, OptionSet<WebsiteDataFetchOption> fetchOptions, CompletionHandler<void(Vector<WebsiteData::Entry>)>&& completionHandler)
 {
-    auto* cache = NetworkProcess::singleton().cache();
     if (!cache) {
         RunLoop::main().dispatch([completionHandler = WTFMove(completionHandler)] () mutable {
             completionHandler({ });
@@ -672,7 +671,7 @@ void NetworkProcess::fetchWebsiteData(PAL::SessionID sessionID, OptionSet<Websit
 #endif
 
     if (websiteDataTypes.contains(WebsiteDataType::DiskCache)) {
-        fetchDiskCacheEntries(sessionID, fetchOptions, [callbackAggregator = WTFMove(callbackAggregator)](auto entries) mutable {
+        fetchDiskCacheEntries(cache(), sessionID, fetchOptions, [callbackAggregator = WTFMove(callbackAggregator)](auto entries) mutable {
             callbackAggregator->m_websiteData.entries.appendVector(entries);
         });
     }
@@ -718,9 +717,8 @@ void NetworkProcess::deleteWebsiteData(PAL::SessionID sessionID, OptionSet<Websi
         clearDiskCache(modifiedSince, [clearTasksHandler = WTFMove(clearTasksHandler)] { });
 }
 
-static void clearDiskCacheEntries(const Vector<SecurityOriginData>& origins, CompletionHandler<void()>&& completionHandler)
+static void clearDiskCacheEntries(NetworkCache::Cache* cache, const Vector<SecurityOriginData>& origins, CompletionHandler<void()>&& completionHandler)
 {
-    auto* cache = NetworkProcess::singleton().cache();
     if (!cache) {
         RunLoop::main().dispatch(WTFMove(completionHandler));
         return;
@@ -780,7 +778,7 @@ void NetworkProcess::deleteWebsiteDataForOrigins(PAL::SessionID sessionID, Optio
 #endif
 
     if (websiteDataTypes.contains(WebsiteDataType::DiskCache) && !sessionID.isEphemeral())
-        clearDiskCacheEntries(originDatas, [clearTasksHandler = WTFMove(clearTasksHandler)] { });
+        clearDiskCacheEntries(cache(), originDatas, [clearTasksHandler = WTFMove(clearTasksHandler)] { });
 }
 
 void NetworkProcess::downloadRequest(PAL::SessionID sessionID, DownloadID downloadID, const ResourceRequest& request, const String& suggestedFilename)
@@ -869,9 +867,8 @@ void NetworkProcess::getNetworkProcessStatistics(uint64_t callbackID)
 {
     StatisticsData data;
 
-    auto& networkProcess = NetworkProcess::singleton();
-    data.statisticsNumbers.set("DownloadsActiveCount", networkProcess.downloadManager().activeDownloadCount());
-    data.statisticsNumbers.set("OutstandingAuthenticationChallengesCount", networkProcess.authenticationManager().outstandingAuthenticationChallengeCount());
+    data.statisticsNumbers.set("DownloadsActiveCount", downloadManager().activeDownloadCount());
+    data.statisticsNumbers.set("OutstandingAuthenticationChallengesCount", authenticationManager().outstandingAuthenticationChallengeCount());
 
     parentProcessConnection()->send(Messages::WebProcessPool::DidGetStatistics(data, callbackID), 0);
 }
@@ -1079,7 +1076,7 @@ IDBServer::IDBServer& NetworkProcess::idbServer(PAL::SessionID sessionID)
     // If there's not, then where did this PAL::SessionID come from?
     ASSERT(!path.isEmpty());
     
-    addResult.iterator->value = IDBServer::IDBServer::create(path, NetworkProcess::singleton());
+    addResult.iterator->value = IDBServer::IDBServer::create(path, *this);
     addResult.iterator->value->setPerOriginQuota(m_idbPerOriginQuota);
     return *addResult.iterator->value;
 }

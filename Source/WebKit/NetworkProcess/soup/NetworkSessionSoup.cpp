@@ -36,8 +36,8 @@
 namespace WebKit {
 using namespace WebCore;
 
-NetworkSessionSoup::NetworkSessionSoup(NetworkSessionCreationParameters&& parameters)
-    : NetworkSession(parameters.sessionID)
+NetworkSessionSoup::NetworkSessionSoup(NetworkProcess& networkProcess, NetworkSessionCreationParameters&& parameters)
+    : NetworkSession(networkProcess, parameters.sessionID)
 {
     networkStorageSession().setCookieObserverHandler([this] {
         NetworkProcess::singleton().supplement<WebCookieManager>()->notifyCookiesDidChange(m_sessionID);

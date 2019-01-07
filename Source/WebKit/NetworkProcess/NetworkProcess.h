@@ -88,15 +88,15 @@ namespace NetworkCache {
 class Cache;
 }
 
-class NetworkProcess : public ChildProcess, private DownloadManager::Client
+class NetworkProcess : public ChildProcess, private DownloadManager::Client, public ThreadSafeRefCounted<NetworkProcess>
 #if ENABLE(INDEXED_DATABASE)
     , public WebCore::IDBServer::IDBBackingStoreTemporaryFileHandler
 #endif
 {
     WTF_MAKE_NONCOPYABLE(NetworkProcess);
-    friend NeverDestroyed<NetworkProcess>;
     friend NeverDestroyed<DownloadManager>;
 public:
+    ~NetworkProcess();
     static NetworkProcess& singleton();
     static constexpr ProcessType processType = ProcessType::Network;
 
@@ -211,7 +211,6 @@ public:
 
 private:
     NetworkProcess();
-    ~NetworkProcess();
 
     void platformInitializeNetworkProcess(const NetworkProcessCreationParameters&);
 

@@ -37,8 +37,8 @@ namespace WebKit {
 
 using namespace WebCore;
 
-NetworkSessionCurl::NetworkSessionCurl(NetworkSessionCreationParameters&& parameters)
-    : NetworkSession(parameters.sessionID)
+NetworkSessionCurl::NetworkSessionCurl(NetworkProcess& networkProcess, NetworkSessionCreationParameters&& parameters)
+    : NetworkSession(networkProcess, parameters.sessionID)
 {
     if (!parameters.cookiePersistentStorageFile.isEmpty())
         networkStorageSession().setCookieDatabase(makeUniqueRef<CookieJarDB>(parameters.cookiePersistentStorageFile));

@@ -41,16 +41,16 @@
 namespace WebKit {
 using namespace WebCore;
 
-Ref<NetworkSession> NetworkSession::create(NetworkSessionCreationParameters&& parameters)
+Ref<NetworkSession> NetworkSession::create(NetworkProcess& networkProcess, NetworkSessionCreationParameters&& parameters)
 {
 #if PLATFORM(COCOA)
-    return NetworkSessionCocoa::create(WTFMove(parameters));
+    return NetworkSessionCocoa::create(networkProcess, WTFMove(parameters));
 #endif
 #if USE(SOUP)
-    return NetworkSessionSoup::create(WTFMove(parameters));
+    return NetworkSessionSoup::create(networkProcess, WTFMove(parameters));
 #endif
 #if USE(CURL)
-    return NetworkSessionCurl::create(WTFMove(parameters));
+    return NetworkSessionCurl::create(networkProcess, WTFMove(parameters));
 #endif
 }
 
@@ -61,8 +61,9 @@ NetworkStorageSession& NetworkSession::networkStorageSession() const
     return *storageSession;
 }
 
-NetworkSession::NetworkSession(PAL::SessionID sessionID)
+NetworkSession::NetworkSession(NetworkProcess& networkProcess, PAL::SessionID sessionID)
     : m_sessionID(sessionID)
+    , m_networkProcess(networkProcess)
 {
 }
 

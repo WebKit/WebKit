@@ -51,7 +51,6 @@ void WebFrameNetworkingContext::ensureWebsiteDataStoreSession(WebsiteDataStorePa
         return;
 
     NetworkStorageSession::ensureSession(sessionID, String::number(sessionID.sessionID()));
-    SessionTracker::setSession(sessionID, NetworkSession::create(WTFMove(parameters.networkSessionParameters)));
 }
 
 WebFrameNetworkingContext::WebFrameNetworkingContext(WebFrame* frame)

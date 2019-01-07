@@ -35,16 +35,16 @@ struct NetworkSessionCreationParameters;
 
 class NetworkSessionSoup final : public NetworkSession {
 public:
-    static Ref<NetworkSession> create(NetworkSessionCreationParameters&& parameters)
+    static Ref<NetworkSession> create(NetworkProcess& networkProcess, NetworkSessionCreationParameters&& parameters)
     {
-        return adoptRef(*new NetworkSessionSoup(WTFMove(parameters)));
+        return adoptRef(*new NetworkSessionSoup(networkProcess, WTFMove(parameters)));
     }
     ~NetworkSessionSoup();
 
     SoupSession* soupSession() const;
 
 private:
-    NetworkSessionSoup(NetworkSessionCreationParameters&&);
+    NetworkSessionSoup(NetworkProcess&, NetworkSessionCreationParameters&&);
 
     void clearCredentials() override;
 };

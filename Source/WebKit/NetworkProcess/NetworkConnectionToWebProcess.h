@@ -50,6 +50,7 @@ enum class IncludeSecureCookies : bool;
 
 namespace WebKit {
 
+class NetworkProcess;
 class NetworkResourceLoader;
 class NetworkSocketStream;
 class WebIDBConnectionToClient;
@@ -62,10 +63,11 @@ struct DataKey;
 
 class NetworkConnectionToWebProcess : public RefCounted<NetworkConnectionToWebProcess>, IPC::Connection::Client {
 public:
-    static Ref<NetworkConnectionToWebProcess> create(IPC::Connection::Identifier);
+    static Ref<NetworkConnectionToWebProcess> create(NetworkProcess&, IPC::Connection::Identifier);
     virtual ~NetworkConnectionToWebProcess();
 
     IPC::Connection& connection() { return m_connection.get(); }
+    NetworkProcess& networkProcess() { return m_networkProcess.get(); }
 
     void didCleanupResourceLoader(NetworkResourceLoader&);
     void setOnLineState(bool);
@@ -120,7 +122,7 @@ public:
     void stopTrackingResourceLoad(ResourceLoadIdentifier resourceID, NetworkActivityTracker::CompletionCode);
 
 private:
-    NetworkConnectionToWebProcess(IPC::Connection::Identifier);
+    NetworkConnectionToWebProcess(NetworkProcess&, IPC::Connection::Identifier);
 
     void didFinishPreconnection(uint64_t preconnectionIdentifier, const WebCore::ResourceError&);
 
@@ -227,6 +229,7 @@ private:
     size_t findNetworkActivityTracker(ResourceLoadIdentifier resourceID);
 
     Ref<IPC::Connection> m_connection;
+    Ref<NetworkProcess> m_networkProcess;
 
     HashMap<uint64_t, RefPtr<NetworkSocketStream>> m_networkSocketStreams;
     HashMap<ResourceLoadIdentifier, Ref<NetworkResourceLoader>> m_networkResourceLoaders;

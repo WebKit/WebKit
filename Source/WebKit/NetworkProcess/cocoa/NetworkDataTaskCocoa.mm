@@ -203,7 +203,7 @@ NetworkDataTaskCocoa::NetworkDataTaskCocoa(NetworkSession& session, NetworkDataT
     NSURLRequest *nsRequest = request.nsURLRequest(WebCore::HTTPBodyUpdatePolicy::UpdateHTTPBody);
     applySniffingPoliciesAndBindRequestToInferfaceIfNeeded(nsRequest, shouldContentSniff == WebCore::ContentSniffingPolicy::SniffContent && !url.isLocalFile(), shouldContentEncodingSniff == WebCore::ContentEncodingSniffingPolicy::Sniff);
 #if ENABLE(PROXIMITY_NETWORKING)
-    NetworkProcess::singleton().proximityManager().applyProperties(request, *this, nsRequest);
+    m_session->networkProcess().proximityManager().applyProperties(request, *this, nsRequest);
 #endif
 
     auto& cocoaSession = static_cast<NetworkSessionCocoa&>(m_session.get());
@@ -497,7 +497,7 @@ WebCore::Credential serverTrustCredential(const WebCore::AuthenticationChallenge
 
 bool NetworkDataTaskCocoa::isAlwaysOnLoggingAllowed() const
 {
-    if (NetworkProcess::singleton().sessionIsControlledByAutomation(m_session->sessionID()))
+    if (m_session->networkProcess().sessionIsControlledByAutomation(m_session->sessionID()))
         return true;
 
     return m_session->sessionID().isAlwaysOnLoggingAllowed();

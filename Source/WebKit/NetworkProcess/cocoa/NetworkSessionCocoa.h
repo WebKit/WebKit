@@ -44,7 +44,7 @@ class LegacyCustomProtocolManager;
 class NetworkSessionCocoa final : public NetworkSession {
     friend class NetworkDataTaskCocoa;
 public:
-    static Ref<NetworkSession> create(NetworkSessionCreationParameters&&);
+    static Ref<NetworkSession> create(NetworkProcess&, NetworkSessionCreationParameters&&);
     ~NetworkSessionCocoa();
 
     // Must be called before any NetworkSession has been created.
@@ -63,7 +63,7 @@ public:
     static bool allowsSpecificHTTPSCertificateForHost(const WebCore::AuthenticationChallenge&);
 
 private:
-    NetworkSessionCocoa(NetworkSessionCreationParameters&&);
+    NetworkSessionCocoa(NetworkProcess&, NetworkSessionCreationParameters&&);
 
     void invalidateAndCancel() override;
     void clearCredentials() override;

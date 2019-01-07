@@ -63,13 +63,14 @@
 namespace WebKit {
 using namespace WebCore;
 
-Ref<NetworkConnectionToWebProcess> NetworkConnectionToWebProcess::create(IPC::Connection::Identifier connectionIdentifier)
+Ref<NetworkConnectionToWebProcess> NetworkConnectionToWebProcess::create(NetworkProcess& networkProcess, IPC::Connection::Identifier connectionIdentifier)
 {
-    return adoptRef(*new NetworkConnectionToWebProcess(connectionIdentifier));
+    return adoptRef(*new NetworkConnectionToWebProcess(networkProcess, connectionIdentifier));
 }
 
-NetworkConnectionToWebProcess::NetworkConnectionToWebProcess(IPC::Connection::Identifier connectionIdentifier)
+NetworkConnectionToWebProcess::NetworkConnectionToWebProcess(NetworkProcess& networkProcess, IPC::Connection::Identifier connectionIdentifier)
     : m_connection(IPC::Connection::createServerConnection(connectionIdentifier, *this))
+    , m_networkProcess(networkProcess)
 #if ENABLE(WEB_RTC)
     , m_mdnsRegister(*this)
 #endif
@@ -132,7 +133,7 @@ void NetworkConnectionToWebProcess::didReceiveMessage(IPC::Connection& connectio
     }
 
     if (decoder.messageReceiverName() == Messages::NetworkProcess::messageReceiverName()) {
-        NetworkProcess::singleton().didReceiveNetworkProcessMessage(connection, decoder);
+        m_networkProcess->didReceiveNetworkProcessMessage(connection, decoder);
         return;
     }
 
@@ -180,7 +181,7 @@ void NetworkConnectionToWebProcess::didReceiveMessage(IPC::Connection& connectio
     }
     
     if (decoder.messageReceiverName() == Messages::WebSWServerToContextConnection::messageReceiverName()) {
-        if (auto* contextConnection = NetworkProcess::singleton().connectionToContextProcessFromIPCConnection(connection)) {
+        if (auto* contextConnection = m_networkProcess->connectionToContextProcessFromIPCConnection(connection)) {
             contextConnection->didReceiveMessage(connection, decoder);
             return;
         }
@@ -227,9 +228,9 @@ void NetworkConnectionToWebProcess::didReceiveSyncMessage(IPC::Connection& conne
 void NetworkConnectionToWebProcess::didClose(IPC::Connection& connection)
 {
 #if ENABLE(SERVICE_WORKER)
-    if (RefPtr<WebSWServerToContextConnection> serverToContextConnection = NetworkProcess::singleton().connectionToContextProcessFromIPCConnection(connection)) {
+    if (RefPtr<WebSWServerToContextConnection> serverToContextConnection = m_networkProcess->connectionToContextProcessFromIPCConnection(connection)) {
         // Service Worker process exited.
-        NetworkProcess::singleton().connectionToContextProcessWasClosed(serverToContextConnection.releaseNonNull());
+        m_networkProcess->connectionToContextProcessWasClosed(serverToContextConnection.releaseNonNull());
         return;
     }
 #else
@@ -248,7 +249,7 @@ void NetworkConnectionToWebProcess::didClose(IPC::Connection& connection)
     stopAllNetworkActivityTracking();
 
     NetworkBlobRegistry::singleton().connectionToWebProcessDidClose(this);
-    NetworkProcess::singleton().removeNetworkConnectionToWebProcess(this);
+    m_networkProcess->removeNetworkConnectionToWebProcess(this);
 
 #if USE(LIBWEBRTC)
     if (m_rtcProvider) {
@@ -279,7 +280,7 @@ void NetworkConnectionToWebProcess::createSocketStream(URL&& url, PAL::SessionID
     ASSERT(!m_networkSocketStreams.contains(identifier));
     WebCore::SourceApplicationAuditToken token = { };
 #if PLATFORM(COCOA)
-    token = { NetworkProcess::singleton().sourceApplicationAuditData() };
+    token = { m_networkProcess->sourceApplicationAuditData() };
 #endif
     m_networkSocketStreams.set(identifier, NetworkSocketStream::create(WTFMove(url), sessionID, cachePartition, identifier, m_connection, WTFMove(token)));
 }
@@ -384,7 +385,7 @@ void NetworkConnectionToWebProcess::setDefersLoading(ResourceLoadIdentifier iden
 
 void NetworkConnectionToWebProcess::prefetchDNS(const String& hostname)
 {
-    NetworkProcess::singleton().prefetchDNS(hostname);
+    m_networkProcess->prefetchDNS(hostname);
 }
 
 void NetworkConnectionToWebProcess::preconnectTo(uint64_t preconnectionIdentifier, NetworkResourceLoadParameters&& parameters)
@@ -423,17 +424,16 @@ static NetworkStorageSession& storageSession(PAL::SessionID sessionID)
 
 void NetworkConnectionToWebProcess::startDownload(PAL::SessionID sessionID, DownloadID downloadID, const ResourceRequest& request, const String& suggestedName)
 {
-    NetworkProcess::singleton().downloadManager().startDownload(this, sessionID, downloadID, request, suggestedName);
+    m_networkProcess->downloadManager().startDownload(this, sessionID, downloadID, request, suggestedName);
 }
 
 void NetworkConnectionToWebProcess::convertMainResourceLoadToDownload(PAL::SessionID sessionID, uint64_t mainResourceLoadIdentifier, DownloadID downloadID, const ResourceRequest& request, const ResourceResponse& response)
 {
     RELEASE_ASSERT(RunLoop::isMain());
 
-    auto& networkProcess = NetworkProcess::singleton();
     // In case a response is served from service worker, we do not have yet the ability to convert the load.
     if (!mainResourceLoadIdentifier || response.source() == ResourceResponse::Source::ServiceWorker) {
-        networkProcess.downloadManager().startDownload(this, sessionID, downloadID, request);
+        m_networkProcess->downloadManager().startDownload(this, sessionID, downloadID, request);
         return;
     }
 
@@ -552,7 +552,7 @@ void NetworkConnectionToWebProcess::setCaptureExtraNetworkLoadMetricsEnabled(boo
 
 void NetworkConnectionToWebProcess::ensureLegacyPrivateBrowsingSession()
 {
-    NetworkProcess::singleton().addWebsiteDataStore(WebsiteDataStoreParameters::legacyPrivateSessionParameters());
+    m_networkProcess->addWebsiteDataStore(WebsiteDataStoreParameters::legacyPrivateSessionParameters());
 }
 
 void NetworkConnectionToWebProcess::removeStorageAccessForFrame(PAL::SessionID sessionID, uint64_t frameID, uint64_t pageID)
@@ -702,7 +702,7 @@ void NetworkConnectionToWebProcess::establishIDBConnectionToServer(PAL::SessionI
     LOG(IndexedDB, "NetworkConnectionToWebProcess::establishIDBConnectionToServer - %" PRIu64, serverConnectionIdentifier);
     ASSERT(!m_webIDBConnections.contains(serverConnectionIdentifier));
     
-    m_webIDBConnections.set(serverConnectionIdentifier, WebIDBConnectionToClient::create(*this, serverConnectionIdentifier, sessionID));
+    m_webIDBConnections.set(serverConnectionIdentifier, WebIDBConnectionToClient::create(m_networkProcess, *this, serverConnectionIdentifier, sessionID));
 }
 
 void NetworkConnectionToWebProcess::removeIDBConnectionToServer(uint64_t serverConnectionIdentifier)
@@ -726,7 +726,7 @@ void NetworkConnectionToWebProcess::unregisterSWConnections()
 
 void NetworkConnectionToWebProcess::establishSWServerConnection(PAL::SessionID sessionID, SWServerConnectionIdentifier& serverConnectionIdentifier)
 {
-    auto& server = NetworkProcess::singleton().swServerForSession(sessionID);
+    auto& server = m_networkProcess->swServerForSession(sessionID);
     auto connection = std::make_unique<WebSWServerConnection>(server, m_connection.get(), sessionID);
     
     serverConnectionIdentifier = connection->identifier();

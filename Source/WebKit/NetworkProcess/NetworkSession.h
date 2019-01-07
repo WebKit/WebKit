@@ -38,11 +38,12 @@ class NetworkStorageSession;
 namespace WebKit {
 
 class NetworkDataTask;
+class NetworkProcess;
 struct NetworkSessionCreationParameters;
 
 class NetworkSession : public RefCounted<NetworkSession> {
 public:
-    static Ref<NetworkSession> create(NetworkSessionCreationParameters&&);
+    static Ref<NetworkSession> create(NetworkProcess&, NetworkSessionCreationParameters&&);
     virtual ~NetworkSession();
 
     virtual void invalidateAndCancel();
@@ -51,16 +52,17 @@ public:
     virtual Seconds loadThrottleLatency() const { return { }; }
 
     PAL::SessionID sessionID() const { return m_sessionID; }
+    NetworkProcess& networkProcess() { return m_networkProcess; }
     WebCore::NetworkStorageSession& networkStorageSession() const;
 
     void registerNetworkDataTask(NetworkDataTask& task) { m_dataTaskSet.add(&task); }
     void unregisterNetworkDataTask(NetworkDataTask& task) { m_dataTaskSet.remove(&task); }
 
 protected:
-    NetworkSession(PAL::SessionID);
+    NetworkSession(NetworkProcess&, PAL::SessionID);
 
     PAL::SessionID m_sessionID;
-
+    Ref<NetworkProcess> m_networkProcess;
     HashSet<NetworkDataTask*> m_dataTaskSet;
 };
 

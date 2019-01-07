@@ -30,12 +30,13 @@
 
 namespace WebKit {
 
+class NetworkProcess;
 struct WebsiteDataStoreParameters;
 
 class RemoteNetworkingContext {
 public:
     // FIXME: Remove platform-specific code and use SessionTracker.
-    static void ensureWebsiteDataStoreSession(WebsiteDataStoreParameters&&);
+    static void ensureWebsiteDataStoreSession(NetworkProcess&, WebsiteDataStoreParameters&&);
 };
 
 }

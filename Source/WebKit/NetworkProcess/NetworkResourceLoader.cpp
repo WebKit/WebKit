@@ -96,7 +96,7 @@ NetworkResourceLoader::NetworkResourceLoader(NetworkResourceLoadParameters&& par
     , m_defersLoading { parameters.defersLoading }
     , m_isAllowedToAskUserForCredentials { m_parameters.clientCredentialPolicy == ClientCredentialPolicy::MayAskClientForCredentials }
     , m_bufferingTimer { *this, &NetworkResourceLoader::bufferingTimerFired }
-    , m_cache { sessionID().isEphemeral() ? nullptr : NetworkProcess::singleton().cache() }
+    , m_cache { sessionID().isEphemeral() ? nullptr : connection.networkProcess().cache() }
 {
     ASSERT(RunLoop::isMain());
     // FIXME: This is necessary because of the existence of EmptyFrameLoaderClient in WebCore.
@@ -286,13 +286,13 @@ void NetworkResourceLoader::startNetworkLoad(ResourceRequest&& request, FirstLoa
 
     auto* networkSession = SessionTracker::networkSession(parameters.sessionID);
     if (!networkSession && parameters.sessionID.isEphemeral()) {
-        NetworkProcess::singleton().addWebsiteDataStore(WebsiteDataStoreParameters::privateSessionParameters(parameters.sessionID));
+        m_connection->networkProcess().addWebsiteDataStore(WebsiteDataStoreParameters::privateSessionParameters(parameters.sessionID));
         networkSession = SessionTracker::networkSession(parameters.sessionID);
     }
     if (!networkSession) {
         WTFLogAlways("Attempted to create a NetworkLoad with a session (id=%" PRIu64 ") that does not exist.", parameters.sessionID.sessionID());
         RELEASE_LOG_ERROR_IF_ALLOWED("startNetworkLoad: Attempted to create a NetworkLoad with a session that does not exist (pageID = %" PRIu64 ", frameID = %" PRIu64 ", resourceID = %" PRIu64 ", sessionID=%" PRIu64 ")", m_parameters.webPageID, m_parameters.webFrameID, m_parameters.identifier, parameters.sessionID.sessionID());
-        NetworkProcess::singleton().logDiagnosticMessage(m_parameters.webPageID, WebCore::DiagnosticLoggingKeys::internalErrorKey(), WebCore::DiagnosticLoggingKeys::invalidSessionIDKey(), WebCore::ShouldSample::No);
+        m_connection->networkProcess().logDiagnosticMessage(m_parameters.webPageID, WebCore::DiagnosticLoggingKeys::internalErrorKey(), WebCore::DiagnosticLoggingKeys::invalidSessionIDKey(), WebCore::ShouldSample::No);
         didFailLoading(internalError(request.url()));
         return;
     }
@@ -353,13 +353,13 @@ void NetworkResourceLoader::convertToDownload(DownloadID downloadID, const Resou
 {
     // This can happen if the resource came from the disk cache.
     if (!m_networkLoad) {
-        NetworkProcess::singleton().downloadManager().startDownload(m_connection.ptr(), m_parameters.sessionID, downloadID, request);
+        m_connection->networkProcess().downloadManager().startDownload(m_connection.ptr(), m_parameters.sessionID, downloadID, request);
         abort();
         return;
     }
 
     ASSERT(m_responseCompletionHandler);
-    NetworkProcess::singleton().downloadManager().convertNetworkLoadToDownload(downloadID, std::exchange(m_networkLoad, nullptr), WTFMove(m_responseCompletionHandler), WTFMove(m_fileReferences), request, response);
+    m_connection->networkProcess().downloadManager().convertNetworkLoadToDownload(downloadID, std::exchange(m_networkLoad, nullptr), WTFMove(m_responseCompletionHandler), WTFMove(m_fileReferences), request, response);
 }
 
 void NetworkResourceLoader::abort()
@@ -937,7 +937,7 @@ void NetworkResourceLoader::invalidateSandboxExtensions()
 
 bool NetworkResourceLoader::isAlwaysOnLoggingAllowed() const
 {
-    if (NetworkProcess::singleton().sessionIsControlledByAutomation(sessionID()))
+    if (m_connection->networkProcess().sessionIsControlledByAutomation(sessionID()))
         return true;
 
     return sessionID().isAlwaysOnLoggingAllowed();

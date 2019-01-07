@@ -179,7 +179,7 @@ void NetworkProcess::clearDiskCache(WallTime modifiedSince, CompletionHandler<vo
     if (!m_clearCacheDispatchGroup)
         m_clearCacheDispatchGroup = dispatch_group_create();
 
-    auto* cache = NetworkProcess::singleton().cache();
+    auto* cache = this->cache();
     if (!cache) {
         completionHandler();
         return;

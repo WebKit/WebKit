@@ -326,7 +326,7 @@ static NSURLRequest* updateIgnoreStrictTransportSecuritySettingIfNecessary(NSURL
             return completionHandler(NSURLSessionAuthChallengeUseCredential, [NSURLCredential credentialForTrust:challenge.protectionSpace.serverTrust]);
 
         // Handle server trust evaluation at platform-level if requested, for performance reasons and to use ATS defaults.
-        if (!NetworkProcess::singleton().canHandleHTTPSServerTrustEvaluation())
+        if (!_session->networkProcess().canHandleHTTPSServerTrustEvaluation())
             return completionHandler(NSURLSessionAuthChallengeRejectProtectionSpace, nil);
     }
 
@@ -366,7 +366,7 @@ static NSURLRequest* updateIgnoreStrictTransportSecuritySettingIfNecessary(NSURL
     } else {
         auto downloadID = _session->downloadID(taskIdentifier);
         if (downloadID.downloadID()) {
-            if (auto* download = WebKit::NetworkProcess::singleton().downloadManager().download(downloadID)) {
+            if (auto* download = _session->networkProcess().downloadManager().download(downloadID)) {
                 // Received an authentication challenge for a download being resumed.
                 WebCore::AuthenticationChallenge authenticationChallenge { challenge };
                 auto completionHandlerCopy = Block_copy(completionHandler);
@@ -394,7 +394,7 @@ static NSURLRequest* updateIgnoreStrictTransportSecuritySettingIfNecessary(NSURL
     else if (error) {
         auto downloadID = _session->takeDownloadID(task.taskIdentifier);
         if (downloadID.downloadID()) {
-            if (auto* download = WebKit::NetworkProcess::singleton().downloadManager().download(downloadID)) {
+            if (auto* download = _session->networkProcess().downloadManager().download(downloadID)) {
                 NSData *resumeData = nil;
                 if (id userInfo = error.userInfo) {
                     if ([userInfo isKindOfClass:[NSDictionary class]])
@@ -525,7 +525,7 @@ static NSURLRequest* updateIgnoreStrictTransportSecuritySettingIfNecessary(NSURL
         return;
 
     auto downloadID = _session->takeDownloadID([downloadTask taskIdentifier]);
-    if (auto* download = WebKit::NetworkProcess::singleton().downloadManager().download(downloadID))
+    if (auto* download = _session->networkProcess().downloadManager().download(downloadID))
         download->didFinish();
 }
 
@@ -537,7 +537,7 @@ static NSURLRequest* updateIgnoreStrictTransportSecuritySettingIfNecessary(NSURL
     ASSERT_WITH_MESSAGE(![self existingTask:downloadTask], "The NetworkDataTask should be destroyed immediately after didBecomeDownloadTask returns");
 
     auto downloadID = _session->downloadID([downloadTask taskIdentifier]);
-    if (auto* download = WebKit::NetworkProcess::singleton().downloadManager().download(downloadID))
+    if (auto* download = _session->networkProcess().downloadManager().download(downloadID))
         download->didReceiveData(bytesWritten);
 }
 
@@ -554,7 +554,7 @@ static NSURLRequest* updateIgnoreStrictTransportSecuritySettingIfNecessary(NSURL
     if (auto* networkDataTask = [self existingTask:dataTask]) {
         Ref<NetworkDataTaskCocoa> protectedNetworkDataTask(*networkDataTask);
         auto downloadID = networkDataTask->pendingDownloadID();
-        auto& downloadManager = WebKit::NetworkProcess::singleton().downloadManager();
+        auto& downloadManager = _session->networkProcess().downloadManager();
         auto download = std::make_unique<WebKit::Download>(downloadManager, downloadID, downloadTask, _session->sessionID(), networkDataTask->suggestedFilename());
         networkDataTask->transferSandboxExtensionToDownload(*download);
         ASSERT(WebCore::FileSystem::fileExists(networkDataTask->pendingDownloadLocation()));
@@ -599,9 +599,9 @@ void NetworkSessionCocoa::setCTDataConnectionServiceType(const String& type)
 }
 #endif
 
-Ref<NetworkSession> NetworkSessionCocoa::create(NetworkSessionCreationParameters&& parameters)
+Ref<NetworkSession> NetworkSessionCocoa::create(NetworkProcess& networkProcess, NetworkSessionCreationParameters&& parameters)
 {
-    return adoptRef(*new NetworkSessionCocoa(WTFMove(parameters)));
+    return adoptRef(*new NetworkSessionCocoa(networkProcess, WTFMove(parameters)));
 }
 
 static NSDictionary *proxyDictionary(const URL& httpProxy, const URL& httpsProxy)
@@ -627,8 +627,8 @@ static NSDictionary *proxyDictionary(const URL& httpProxy, const URL& httpsProxy
     ALLOW_DEPRECATED_DECLARATIONS_END
 }
 
-NetworkSessionCocoa::NetworkSessionCocoa(NetworkSessionCreationParameters&& parameters)
-    : NetworkSession(parameters.sessionID)
+NetworkSessionCocoa::NetworkSessionCocoa(NetworkProcess& networkProcess, NetworkSessionCreationParameters&& parameters)
+    : NetworkSession(networkProcess, parameters.sessionID)
     , m_boundInterfaceIdentifier(parameters.boundInterfaceIdentifier)
     , m_proxyConfiguration(parameters.proxyConfiguration)
     , m_shouldLogCookieInformation(parameters.shouldLogCookieInformation)
@@ -655,7 +655,7 @@ NetworkSessionCocoa::NetworkSessionCocoa(NetworkSessionCreationParameters&& para
     // The WebKit network cache was already queried.
     configuration.URLCache = nil;
 
-    if (auto data = NetworkProcess::singleton().sourceApplicationAuditData())
+    if (auto data = networkProcess.sourceApplicationAuditData())
         configuration._sourceApplicationAuditTokenData = (__bridge NSData *)data.get();
 
     if (!parameters.sourceApplicationBundleIdentifier.isEmpty()) {
@@ -675,7 +675,7 @@ NetworkSessionCocoa::NetworkSessionCocoa(NetworkSessionCreationParameters&& para
 #endif
 
 #if ENABLE(LEGACY_CUSTOM_PROTOCOL_MANAGER)
-    NetworkProcess::singleton().supplement<LegacyCustomProtocolManager>()->registerProtocolClass(configuration);
+    networkProcess.supplement<LegacyCustomProtocolManager>()->registerProtocolClass(configuration);
 #endif
 
 #if HAVE(TIMINGDATAOPTIONS)
@@ -686,7 +686,7 @@ NetworkSessionCocoa::NetworkSessionCocoa(NetworkSessionCreationParameters&& para
 
 #if (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101400) || (PLATFORM(IOS_FAMILY) && __IPHONE_OS_VERSION_MIN_REQUIRED >= 120000)
     // FIXME: Replace @"kCFStreamPropertyAutoErrorOnSystemChange" with a constant from the SDK once rdar://problem/40650244 is in a build.
-    if (NetworkProcess::singleton().suppressesConnectionTerminationOnSystemChange())
+    if (networkProcess.suppressesConnectionTerminationOnSystemChange())
         configuration._socketStreamProperties = @{ @"kCFStreamPropertyAutoErrorOnSystemChange" : @(NO) };
 #endif
 
