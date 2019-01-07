@@ -301,34 +301,25 @@ void CryptoKeyRSA::generatePair(CryptoAlgorithmIdentifier algorithm, CryptoAlgor
         return;
     }
 
-    // We only use the callback functions when back on the main/worker thread, but captured variables are copied on a secondary thread too.
-    KeyPairCallback* localCallback = new KeyPairCallback(WTFMove(callback));
-    VoidCallback* localFailureCallback = new VoidCallback(WTFMove(failureCallback));
+    __block auto blockCallback(WTFMove(callback));
+    __block auto blockFailureCallback(WTFMove(failureCallback));
     auto contextIdentifier = context->contextIdentifier();
-
-    // FIXME: There is a risk that localCallback and localFailureCallback are never freed.
-    // Fix this by using unique pointers and move them from one lambda to the other.
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
         CCRSACryptorRef ccPublicKey = nullptr;
         CCRSACryptorRef ccPrivateKey = nullptr;
         CCCryptorStatus status = CCRSACryptorGeneratePair(modulusLength, e, &ccPublicKey, &ccPrivateKey);
         if (status) {
             WTFLogAlways("Could not generate a key pair, status %d", status);
-            ScriptExecutionContext::postTaskTo(contextIdentifier, [localCallback, localFailureCallback](auto&) {
-                (*localFailureCallback)();
-                delete localCallback;
-                delete localFailureCallback;
+            ScriptExecutionContext::postTaskTo(contextIdentifier, [callback = WTFMove(blockCallback), failureCallback = WTFMove(blockFailureCallback)](auto&) {
+                failureCallback();
             });
             return;
         }
-        ScriptExecutionContext::postTaskTo(contextIdentifier, [algorithm, hash, hasHash, extractable, usage, localCallback, localFailureCallback, ccPublicKey = PlatformRSAKeyContainer(ccPublicKey), ccPrivateKey = PlatformRSAKeyContainer(ccPrivateKey)](auto&) mutable {
+        ScriptExecutionContext::postTaskTo(contextIdentifier, [algorithm, hash, hasHash, extractable, usage, callback = WTFMove(blockCallback), failureCallback = WTFMove(blockFailureCallback), ccPublicKey = PlatformRSAKeyContainer(ccPublicKey), ccPrivateKey = PlatformRSAKeyContainer(ccPrivateKey)](auto&) mutable {
             auto publicKey = CryptoKeyRSA::create(algorithm, hash, hasHash, CryptoKeyType::Public, WTFMove(ccPublicKey), true, usage);
             auto privateKey = CryptoKeyRSA::create(algorithm, hash, hasHash, CryptoKeyType::Private, WTFMove(ccPrivateKey), extractable, usage);
 
-            (*localCallback)(CryptoKeyPair { WTFMove(publicKey), WTFMove(privateKey) });
-
-            delete localCallback;
-            delete localFailureCallback;
+            callback(CryptoKeyPair { WTFMove(publicKey), WTFMove(privateKey) });
         });
     });
 }

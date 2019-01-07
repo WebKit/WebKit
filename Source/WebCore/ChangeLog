@@ -1,3 +1,25 @@
+2019-01-06  David Kilzer  <ddkilzer@apple.com>
+
+        Leak of WTF::Function objects in WebCore::CryptoKeyRSA::generatePair() (64-80 bytes each) in com.apple.WebKit.WebContent running WebKit layout tests
+        <https://webkit.org/b/193177>
+        <rdar://problem/47072196>
+
+        Reviewed by Saam Barati.
+
+        * crypto/mac/CryptoKeyRSAMac.cpp:
+        (WebCore::CryptoKeyRSA::generatePair): Fix the leak by changing
+        raw pointers to heap-allocated __block variables to hold the
+        WTF::Function objects until they are consumed within the block
+        passed to dispatch_async().  The __block variables act like
+        captured variables in a C++ lambda and have the same lifetime as
+        the block that they are captured in.  Note that we would have to
+        convert the source file from C++ to Objective-C++ to use a C++
+        lambda functor with dispatch_async(), which creates its own
+        issue because the comipiler requires a copy constructor to
+        convert the C++ lambda to a block functor, but the copy
+        constructor for the C++ lambda is implicitly deleted because the
+        WTF::Function copy constructor is explicitly deleted.  Whew!
+
 2019-01-06  Pablo Saavedra  <psaavedra@igalia.com>
 
         [WPE][GTK] Building with ENABLE_VIDEO=OFF fails trying to use Document MediaPlayback functions.
