@@ -1,3 +1,17 @@
+2019-01-07  Youenn Fablet  <youenn@apple.com>
+
+        API test broken: TestWebKitAPI.WebKit.CustomDataStorePathsVersusCompletionHandlers
+        https://bugs.webkit.org/show_bug.cgi?id=193175
+
+        Reviewed by Chris Dumez.
+
+        Updated API test as we bumped the SW schema to version 4.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WebKitCocoa/SimpleServiceWorkerRegistrations-4.sqlite3: Renamed from Tools/TestWebKitAPI/Tests/WebKitCocoa/SimpleServiceWorkerRegistrations-3.sqlite3.
+        * TestWebKitAPI/Tests/WebKitCocoa/WebsiteDataStoreCustomPaths.mm:
+        (TEST):
+
 2019-01-06  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         [Win][Clang] Fix compilation warnings of MiniBrowser
