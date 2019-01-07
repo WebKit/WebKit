@@ -1,5 +1,25 @@
 2019-01-07  Zan Dobersek  <zdobersek@igalia.com>
 
+        [WPE] Use Widget bounds for PlatformScreen rectangle information
+        https://bugs.webkit.org/show_bug.cgi?id=193190
+
+        Reviewed by Philippe Normand.
+
+        Provide a better screen area estimate in screenRect() and
+        screenAvailableRect() return values than the current 1240x640 value by
+        using the Widget's bounds rectangle.
+
+        This approach is only factually correct when the Widget-associated view
+        is displayed in fullscreen, but it provides a better estimate even when
+        displayed in any other case as well. WPE doesn't provide specific API
+        that could enable the embedding environment to provide this information.
+
+        * platform/wpe/PlatformScreenWPE.cpp:
+        (WebCore::screenRect): Return bounds of the Widget object.
+        (WebCore::screenAvailableRect): Relay the call to screenRect().
+
+2019-01-07  Zan Dobersek  <zdobersek@igalia.com>
+
         Make Gradient::gradientSpaceTransform(), Pattern::patternSpaceTransform() methods const
         https://bugs.webkit.org/show_bug.cgi?id=193189
 
