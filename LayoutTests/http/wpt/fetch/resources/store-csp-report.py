@@ -23,6 +23,11 @@ def main(request, response):
       value = request.server.stash.take(testId)
       response.writer.write(value)
     except (KeyError, ValueError) as e:
+      response.headers.set("Access-Control-Allow-Origin", "*")
+      response.headers.set("Cache-Control", "no-cache, no-store, must-revalidate")
+      response.headers.set("Pragma", "no-cache")
+      response.headers.set("Expires", "0")
+      response.writer.end_headers()
       response.writer.write("No report has been recorded " + str(e))
       pass
 

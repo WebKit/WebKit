@@ -1,3 +1,18 @@
+2019-01-07  Youenn Fablet  <youenn@apple.com>
+
+        LayoutTests/http/wpt/fetch/csp-reports-bypass-csp-checks.html is flaky
+        https://bugs.webkit.org/show_bug.cgi?id=193178
+
+        Reviewed by Chris Dumez.
+
+        Test was flaky as the ping load CSP report request might be sent after the
+        fetch that grabs the report.
+        To overcome that issue, fetch the report several times until receiving a report.
+
+        * http/wpt/fetch/csp-reports-bypass-csp-checks.html:
+        * http/wpt/fetch/resources/store-csp-report.py:
+        (main):
+
 2019-01-07  Dean Jackson  <dino@apple.com>
 
         Turn on Pointer Events by default for iOS
