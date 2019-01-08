@@ -36,11 +36,14 @@
 namespace WebKit {
 using namespace WebCore;
 
-WebSWServerToContextConnection::WebSWServerToContextConnection(const SecurityOriginData& securityOrigin, Ref<IPC::Connection>&& connection)
+WebSWServerToContextConnection::WebSWServerToContextConnection(NetworkProcess& networkProcess, const SecurityOriginData& securityOrigin, Ref<IPC::Connection>&& connection)
     : SWServerToContextConnection(securityOrigin)
     , m_ipcConnection(WTFMove(connection))
+    , m_networkProcess(networkProcess)
 {
 }
+
+WebSWServerToContextConnection::~WebSWServerToContextConnection() = default;
 
 IPC::Connection* WebSWServerToContextConnection::messageSenderConnection()
 {
@@ -104,7 +107,7 @@ void WebSWServerToContextConnection::didFinishSkipWaiting(uint64_t callbackID)
 
 void WebSWServerToContextConnection::connectionMayNoLongerBeNeeded()
 {
-    NetworkProcess::singleton().swContextConnectionMayNoLongerBeNeeded(*this);
+    m_networkProcess->swContextConnectionMayNoLongerBeNeeded(*this);
 }
 
 void WebSWServerToContextConnection::terminate()

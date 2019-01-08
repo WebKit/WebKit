@@ -172,7 +172,7 @@ public:
     bool sessionIsControlledByAutomation(PAL::SessionID) const;
 
 #if ENABLE(CONTENT_EXTENSIONS)
-    NetworkContentRuleListManager& networkContentRuleListManager() { return m_NetworkContentRuleListManager; }
+    NetworkContentRuleListManager& networkContentRuleListManager() { return m_networkContentRuleListManager; }
 #endif
 
 #if ENABLE(INDEXED_DATABASE)
@@ -391,7 +391,7 @@ private:
 #endif
 
 #if ENABLE(CONTENT_EXTENSIONS)
-    NetworkContentRuleListManager m_NetworkContentRuleListManager;
+    NetworkContentRuleListManager m_networkContentRuleListManager;
 #endif
 
     Ref<WorkQueue> m_storageTaskQueue;

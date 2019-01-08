@@ -40,8 +40,9 @@ namespace WebKit {
 
 using namespace WebCore;
 
-NetworkCORSPreflightChecker::NetworkCORSPreflightChecker(Parameters&& parameters, bool shouldCaptureExtraNetworkLoadMetrics, CompletionCallback&& completionCallback)
+NetworkCORSPreflightChecker::NetworkCORSPreflightChecker(NetworkProcess& networkProcess, Parameters&& parameters, bool shouldCaptureExtraNetworkLoadMetrics, CompletionCallback&& completionCallback)
     : m_parameters(WTFMove(parameters))
+    , m_networkProcess(networkProcess)
     , m_completionCallback(WTFMove(completionCallback))
     , m_shouldCaptureExtraNetworkLoadMetrics(shouldCaptureExtraNetworkLoadMetrics)
 {
@@ -101,7 +102,7 @@ void NetworkCORSPreflightChecker::didReceiveChallenge(WebCore::AuthenticationCha
         return;
     }
 
-    NetworkProcess::singleton().authenticationManager().didReceiveAuthenticationChallenge(m_parameters.pageID, m_parameters.frameID, challenge, WTFMove(completionHandler));
+    m_networkProcess->authenticationManager().didReceiveAuthenticationChallenge(m_parameters.pageID, m_parameters.frameID, challenge, WTFMove(completionHandler));
 }
 
 void NetworkCORSPreflightChecker::didReceiveResponse(WebCore::ResourceResponse&& response, ResponseCompletionHandler&& completionHandler)

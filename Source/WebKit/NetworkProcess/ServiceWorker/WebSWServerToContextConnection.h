@@ -33,6 +33,8 @@
 
 namespace WebKit {
 
+class NetworkProcess;
+
 class WebSWServerToContextConnection : public WebCore::SWServerToContextConnection, public IPC::MessageSender, public IPC::MessageReceiver {
 public:
     template <typename... Args> static Ref<WebSWServerToContextConnection> create(Args&&... args)
@@ -50,7 +52,8 @@ public:
     void terminate();
 
 private:
-    WebSWServerToContextConnection(const WebCore::SecurityOriginData&, Ref<IPC::Connection>&&);
+    WebSWServerToContextConnection(NetworkProcess&, const WebCore::SecurityOriginData&, Ref<IPC::Connection>&&);
+    ~WebSWServerToContextConnection();
 
     // IPC::MessageSender
     IPC::Connection* messageSenderConnection() final;
@@ -70,6 +73,7 @@ private:
     void connectionMayNoLongerBeNeeded() final;
 
     Ref<IPC::Connection> m_ipcConnection;
+    Ref<NetworkProcess> m_networkProcess;
     
 }; // class WebSWServerToContextConnection
 

@@ -128,6 +128,9 @@ NetworkProcess::NetworkProcess()
 #if PLATFORM(COCOA)
     , m_clearCacheDispatchGroup(0)
 #endif
+#if ENABLE(CONTENT_EXTENSIONS)
+    , m_networkContentRuleListManager(*this)
+#endif
     , m_storageTaskQueue(WorkQueue::create("com.apple.WebKit.StorageTask"))
 #if ENABLE(INDEXED_DATABASE)
     , m_idbPerOriginQuota(IDBServer::defaultPerOriginQuota)
@@ -202,7 +205,7 @@ void NetworkProcess::didReceiveMessage(IPC::Connection& connection, IPC::Decoder
 
 #if ENABLE(CONTENT_EXTENSIONS)
     if (decoder.messageReceiverName() == Messages::NetworkContentRuleListManager::messageReceiverName()) {
-        m_NetworkContentRuleListManager.didReceiveMessage(connection, decoder);
+        m_networkContentRuleListManager.didReceiveMessage(connection, decoder);
         return;
     }
 #endif
@@ -411,7 +414,7 @@ void NetworkProcess::createNetworkConnectionToWebProcess(bool isServiceWorkerPro
     if (isServiceWorkerProcess && !m_webProcessConnections.isEmpty()) {
         ASSERT(parentProcessHasServiceWorkerEntitlement());
         ASSERT(m_waitingForServerToContextProcessConnection);
-        auto contextConnection = WebSWServerToContextConnection::create(securityOrigin, m_webProcessConnections.last()->connection());
+        auto contextConnection = WebSWServerToContextConnection::create(*this, securityOrigin, m_webProcessConnections.last()->connection());
         auto addResult = m_serverToContextConnections.add(WTFMove(securityOrigin), contextConnection.copyRef());
         ASSERT_UNUSED(addResult, addResult.isNewEntry);
 

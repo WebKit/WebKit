@@ -38,9 +38,11 @@ class Decoder;
 
 namespace WebKit {
 
+class NetworkProcess;
+
 class NetworkContentRuleListManager {
 public:
-    NetworkContentRuleListManager();
+    NetworkContentRuleListManager(NetworkProcess&);
     ~NetworkContentRuleListManager();
 
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&);
@@ -56,6 +58,7 @@ private:
 
     HashMap<UserContentControllerIdentifier, std::unique_ptr<WebCore::ContentExtensions::ContentExtensionsBackend>> m_contentExtensionBackends;
     HashMap<UserContentControllerIdentifier, Vector<BackendCallback>> m_pendingCallbacks;
+    NetworkProcess& m_networkProcess;
 };
 
 } // namespace WebKit

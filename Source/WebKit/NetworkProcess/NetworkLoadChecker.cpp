@@ -47,9 +47,10 @@ static inline bool isSameOrigin(const URL& url, const SecurityOrigin* origin)
     return url.protocolIsData() || url.protocolIsBlob() || !origin || origin->canRequest(url);
 }
 
-NetworkLoadChecker::NetworkLoadChecker(FetchOptions&& options, PAL::SessionID sessionID, uint64_t pageID, uint64_t frameID, HTTPHeaderMap&& originalRequestHeaders, URL&& url, RefPtr<SecurityOrigin>&& sourceOrigin, PreflightPolicy preflightPolicy, String&& referrer, bool isHTTPSUpgradeEnabled, bool shouldCaptureExtraNetworkLoadMetrics, LoadType requestLoadType)
+NetworkLoadChecker::NetworkLoadChecker(NetworkProcess& networkProcess, FetchOptions&& options, PAL::SessionID sessionID, uint64_t pageID, uint64_t frameID, HTTPHeaderMap&& originalRequestHeaders, URL&& url, RefPtr<SecurityOrigin>&& sourceOrigin, PreflightPolicy preflightPolicy, String&& referrer, bool isHTTPSUpgradeEnabled, bool shouldCaptureExtraNetworkLoadMetrics, LoadType requestLoadType)
     : m_options(WTFMove(options))
     , m_sessionID(sessionID)
+    , m_networkProcess(networkProcess)
     , m_pageID(pageID)
     , m_frameID(frameID)
     , m_originalRequestHeaders(WTFMove(originalRequestHeaders))
@@ -197,7 +198,7 @@ void NetworkLoadChecker::applyHTTPSUpgradeIfNeeded(ResourceRequest&& request, Co
         return;
     }
 
-    auto& httpsUpgradeChecker = NetworkProcess::singleton().networkHTTPSUpgradeChecker();
+    auto& httpsUpgradeChecker = m_networkProcess->networkHTTPSUpgradeChecker();
 
     // Do not wait for httpsUpgradeChecker to complete its setup.
     if (!httpsUpgradeChecker.didSetupCompleteSuccessfully()) {
@@ -407,7 +408,7 @@ void NetworkLoadChecker::checkCORSRequestWithPreflight(ResourceRequest&& request
         m_frameID,
         m_storedCredentialsPolicy
     };
-    m_corsPreflightChecker = std::make_unique<NetworkCORSPreflightChecker>(WTFMove(parameters), m_shouldCaptureExtraNetworkLoadMetrics, [this, request = WTFMove(request), handler = WTFMove(handler), isRedirected = isRedirected()](auto&& error) mutable {
+    m_corsPreflightChecker = std::make_unique<NetworkCORSPreflightChecker>(m_networkProcess.get(), WTFMove(parameters), m_shouldCaptureExtraNetworkLoadMetrics, [this, request = WTFMove(request), handler = WTFMove(handler), isRedirected = isRedirected()](auto&& error) mutable {
         RELEASE_LOG_IF_ALLOWED("checkCORSRequestWithPreflight - makeCrossOriginAccessRequestWithPreflight preflight complete, success: %d forRedirect? %d", error.isNull(), isRedirected);
 
         if (!error.isNull()) {
@@ -456,7 +457,7 @@ void NetworkLoadChecker::processContentExtensionRulesForLoad(ResourceRequest&& r
         return;
     }
 
-    NetworkProcess::singleton().networkContentRuleListManager().contentExtensionsBackend(*m_userContentControllerIdentifier, [this, weakThis = makeWeakPtr(this), request = WTFMove(request), callback = WTFMove(callback)](auto& backend) mutable {
+    m_networkProcess->networkContentRuleListManager().contentExtensionsBackend(*m_userContentControllerIdentifier, [this, weakThis = makeWeakPtr(this), request = WTFMove(request), callback = WTFMove(callback)](auto& backend) mutable {
         if (!weakThis) {
             callback(makeUnexpected(ResourceError { ResourceError::Type::Cancellation }));
             return;

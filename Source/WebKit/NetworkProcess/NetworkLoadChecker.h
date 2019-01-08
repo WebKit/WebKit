@@ -47,12 +47,13 @@ enum class StoredCredentialsPolicy : bool;
 namespace WebKit {
 
 class NetworkCORSPreflightChecker;
+class NetworkProcess;
 
 class NetworkLoadChecker : public CanMakeWeakPtr<NetworkLoadChecker> {
 public:
     enum class LoadType : bool { MainFrame, Other };
 
-    NetworkLoadChecker(WebCore::FetchOptions&&, PAL::SessionID, uint64_t pageID, uint64_t frameID, WebCore::HTTPHeaderMap&&, URL&&, RefPtr<WebCore::SecurityOrigin>&&, WebCore::PreflightPolicy, String&& referrer, bool isHTTPSUpgradeEnabled = false, bool shouldCaptureExtraNetworkLoadMetrics = false, LoadType requestLoadType = LoadType::Other);
+    NetworkLoadChecker(NetworkProcess&, WebCore::FetchOptions&&, PAL::SessionID, uint64_t pageID, uint64_t frameID, WebCore::HTTPHeaderMap&&, URL&&, RefPtr<WebCore::SecurityOrigin>&&, WebCore::PreflightPolicy, String&& referrer, bool isHTTPSUpgradeEnabled = false, bool shouldCaptureExtraNetworkLoadMetrics = false, LoadType requestLoadType = LoadType::Other);
     ~NetworkLoadChecker();
 
     struct RedirectionTriplet {
@@ -122,6 +123,7 @@ private:
     WebCore::FetchOptions m_options;
     WebCore::StoredCredentialsPolicy m_storedCredentialsPolicy;
     PAL::SessionID m_sessionID;
+    Ref<NetworkProcess> m_networkProcess;
     uint64_t m_pageID;
     uint64_t m_frameID;
     WebCore::HTTPHeaderMap m_originalRequestHeaders; // Needed for CORS checks.
