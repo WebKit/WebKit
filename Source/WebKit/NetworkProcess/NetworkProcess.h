@@ -84,6 +84,10 @@ struct WebsiteDataStoreParameters;
 class WebSWOriginStore;
 #endif
 
+namespace CacheStorage {
+class Engine;
+}
+
 namespace NetworkCache {
 class Cache;
 }
@@ -212,6 +216,10 @@ public:
 
     void ref() const override { ThreadSafeRefCounted<NetworkProcess>::ref(); }
     void deref() const override { ThreadSafeRefCounted<NetworkProcess>::deref(); }
+    
+    CacheStorage::Engine* findCacheEngine(const PAL::SessionID&);
+    CacheStorage::Engine& ensureCacheEngine(const PAL::SessionID&, Function<Ref<CacheStorage::Engine>()>&&);
+    void removeCacheEngine(const PAL::SessionID&);
     
 private:
     NetworkProcess();
@@ -358,6 +366,8 @@ private:
     bool m_canHandleHTTPSServerTrustEvaluation;
     String m_uiProcessBundleIdentifier;
     DownloadManager m_downloadManager;
+
+    HashMap<PAL::SessionID, Ref<CacheStorage::Engine>> m_cacheEngines;
 
     RefPtr<NetworkCache::Cache> m_cache;
 

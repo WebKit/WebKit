@@ -46,13 +46,6 @@ namespace CacheStorage {
 using namespace WebCore::DOMCacheEngine;
 using namespace NetworkCache;
 
-static HashMap<PAL::SessionID, RefPtr<Engine>>& globalEngineMap()
-{
-    static NeverDestroyed<HashMap<PAL::SessionID, RefPtr<Engine>>> map;
-
-    return map;
-}
-
 String Engine::cachesRootPath(const WebCore::ClientOrigin& origin)
 {
     if (!shouldPersist())
@@ -80,119 +73,117 @@ Engine::~Engine()
         callback(Data { }, 1);
 }
 
-void Engine::from(PAL::SessionID sessionID, Function<void(Engine&)>&& callback)
+void Engine::from(NetworkProcess& networkProcess, PAL::SessionID sessionID, CompletionHandler<void(Engine&)>&& callback)
 {
-    auto iterator = globalEngineMap().find(sessionID);
-    if (iterator != globalEngineMap().end()) {
-        callback(*iterator->value);
+    if (auto* engine = networkProcess.findCacheEngine(sessionID)) {
+        callback(*engine);
         return;
     }
 
     if (sessionID.isEphemeral())
         sessionID = PAL::SessionID::legacyPrivateSessionID();
 
-    NetworkProcess::singleton().cacheStorageParameters(sessionID, [sessionID, callback = WTFMove(callback)](auto&& rootPath, auto quota) {
-        auto addResult = globalEngineMap().add(sessionID, nullptr);
-        if (addResult.isNewEntry)
-            addResult.iterator->value = adoptRef(*new Engine { String { rootPath }, quota });
-        callback(*addResult.iterator->value);
+    networkProcess.cacheStorageParameters(sessionID, [networkProcess = makeRef(networkProcess), sessionID, callback = WTFMove(callback)] (auto&& rootPath, auto quota) mutable {
+        callback(networkProcess->ensureCacheEngine(sessionID, [&] {
+            return adoptRef(*new Engine { String { rootPath }, quota });
+        }));
     });
 }
 
-void Engine::destroyEngine(PAL::SessionID sessionID)
+void Engine::destroyEngine(NetworkProcess& networkProcess, PAL::SessionID sessionID)
 {
     ASSERT(sessionID != PAL::SessionID::defaultSessionID());
-    globalEngineMap().remove(sessionID);
+    networkProcess.removeCacheEngine(sessionID);
 }
 
-void Engine::fetchEntries(PAL::SessionID sessionID, bool shouldComputeSize, CompletionHandler<void(Vector<WebsiteData::Entry>)>&& completionHandler)
+void Engine::fetchEntries(NetworkProcess& networkProcess, PAL::SessionID sessionID, bool shouldComputeSize, CompletionHandler<void(Vector<WebsiteData::Entry>)>&& completionHandler)
 {
-    from(sessionID, [shouldComputeSize, completionHandler = WTFMove(completionHandler)] (auto& engine) mutable {
+    from(networkProcess, sessionID, [shouldComputeSize, completionHandler = WTFMove(completionHandler)] (auto& engine) mutable {
         engine.fetchEntries(shouldComputeSize, WTFMove(completionHandler));
     });
 }
 
-void Engine::open(PAL::SessionID sessionID, WebCore::ClientOrigin&& origin, String&& cacheName, WebCore::DOMCacheEngine::CacheIdentifierCallback&& callback)
+void Engine::open(NetworkProcess& networkProcess, PAL::SessionID sessionID, WebCore::ClientOrigin&& origin, String&& cacheName, WebCore::DOMCacheEngine::CacheIdentifierCallback&& callback)
 {
-    from(sessionID, [origin = WTFMove(origin), cacheName = WTFMove(cacheName), callback = WTFMove(callback)](auto& engine) mutable {
+    from(networkProcess, sessionID, [origin = WTFMove(origin), cacheName = WTFMove(cacheName), callback = WTFMove(callback)](auto& engine) mutable {
         engine.open(origin, cacheName, WTFMove(callback));
     });
 }
 
-void Engine::remove(PAL::SessionID sessionID, uint64_t cacheIdentifier, WebCore::DOMCacheEngine::CacheIdentifierCallback&& callback)
+void Engine::remove(NetworkProcess& networkProcess, PAL::SessionID sessionID, uint64_t cacheIdentifier, WebCore::DOMCacheEngine::CacheIdentifierCallback&& callback)
 {
-    from(sessionID, [cacheIdentifier, callback = WTFMove(callback)](auto& engine) mutable {
+    from(networkProcess, sessionID, [cacheIdentifier, callback = WTFMove(callback)](auto& engine) mutable {
         engine.remove(cacheIdentifier, WTFMove(callback));
     });
 }
 
-void Engine::retrieveCaches(PAL::SessionID sessionID, WebCore::ClientOrigin&& origin, uint64_t updateCounter, WebCore::DOMCacheEngine::CacheInfosCallback&& callback)
+void Engine::retrieveCaches(NetworkProcess& networkProcess, PAL::SessionID sessionID, WebCore::ClientOrigin&& origin, uint64_t updateCounter, WebCore::DOMCacheEngine::CacheInfosCallback&& callback)
 {
-    from(sessionID, [origin = WTFMove(origin), updateCounter, callback = WTFMove(callback)](auto& engine) mutable {
+    from(networkProcess, sessionID, [origin = WTFMove(origin), updateCounter, callback = WTFMove(callback)](auto& engine) mutable {
         engine.retrieveCaches(origin, updateCounter, WTFMove(callback));
     });
 }
 
 
-void Engine::retrieveRecords(PAL::SessionID sessionID, uint64_t cacheIdentifier, URL&& url, WebCore::DOMCacheEngine::RecordsCallback&& callback)
+void Engine::retrieveRecords(NetworkProcess& networkProcess, PAL::SessionID sessionID, uint64_t cacheIdentifier, URL&& url, WebCore::DOMCacheEngine::RecordsCallback&& callback)
 {
-    from(sessionID, [cacheIdentifier, url = WTFMove(url), callback = WTFMove(callback)](auto& engine) mutable {
+    from(networkProcess, sessionID, [cacheIdentifier, url = WTFMove(url), callback = WTFMove(callback)](auto& engine) mutable {
         engine.retrieveRecords(cacheIdentifier, WTFMove(url), WTFMove(callback));
     });
 }
 
-void Engine::putRecords(PAL::SessionID sessionID, uint64_t cacheIdentifier, Vector<WebCore::DOMCacheEngine::Record>&& records, WebCore::DOMCacheEngine::RecordIdentifiersCallback&& callback)
+void Engine::putRecords(NetworkProcess& networkProcess, PAL::SessionID sessionID, uint64_t cacheIdentifier, Vector<WebCore::DOMCacheEngine::Record>&& records, WebCore::DOMCacheEngine::RecordIdentifiersCallback&& callback)
 {
-    from(sessionID, [cacheIdentifier, records = WTFMove(records), callback = WTFMove(callback)](auto& engine) mutable {
+    from(networkProcess, sessionID, [cacheIdentifier, records = WTFMove(records), callback = WTFMove(callback)](auto& engine) mutable {
         engine.putRecords(cacheIdentifier, WTFMove(records), WTFMove(callback));
     });
 }
 
-void Engine::deleteMatchingRecords(PAL::SessionID sessionID, uint64_t cacheIdentifier, WebCore::ResourceRequest&& request, WebCore::CacheQueryOptions&& options, WebCore::DOMCacheEngine::RecordIdentifiersCallback&& callback)
+void Engine::deleteMatchingRecords(NetworkProcess& networkProcess, PAL::SessionID sessionID, uint64_t cacheIdentifier, WebCore::ResourceRequest&& request, WebCore::CacheQueryOptions&& options, WebCore::DOMCacheEngine::RecordIdentifiersCallback&& callback)
 {
-    from(sessionID, [cacheIdentifier, request = WTFMove(request), options = WTFMove(options), callback = WTFMove(callback)](auto& engine) mutable {
+    from(networkProcess, sessionID, [cacheIdentifier, request = WTFMove(request), options = WTFMove(options), callback = WTFMove(callback)](auto& engine) mutable {
         engine.deleteMatchingRecords(cacheIdentifier, WTFMove(request), WTFMove(options), WTFMove(callback));
     });
 }
 
-void Engine::lock(PAL::SessionID sessionID, uint64_t cacheIdentifier)
+void Engine::lock(NetworkProcess& networkProcess, PAL::SessionID sessionID, uint64_t cacheIdentifier)
 {
-    from(sessionID, [cacheIdentifier](auto& engine) mutable {
+    from(networkProcess, sessionID, [cacheIdentifier](auto& engine) mutable {
         engine.lock(cacheIdentifier);
     });
 }
 
-void Engine::unlock(PAL::SessionID sessionID, uint64_t cacheIdentifier)
+void Engine::unlock(NetworkProcess& networkProcess, PAL::SessionID sessionID, uint64_t cacheIdentifier)
 {
-    from(sessionID, [cacheIdentifier](auto& engine) mutable {
+    from(networkProcess, sessionID, [cacheIdentifier](auto& engine) mutable {
         engine.unlock(cacheIdentifier);
     });
 }
 
-void Engine::clearMemoryRepresentation(PAL::SessionID sessionID, WebCore::ClientOrigin&& origin, WebCore::DOMCacheEngine::CompletionCallback&& callback)
+void Engine::clearMemoryRepresentation(NetworkProcess& networkProcess, PAL::SessionID sessionID, WebCore::ClientOrigin&& origin, WebCore::DOMCacheEngine::CompletionCallback&& callback)
 {
-    from(sessionID, [origin = WTFMove(origin), callback = WTFMove(callback)](auto& engine) mutable {
+    from(networkProcess, sessionID, [origin = WTFMove(origin), callback = WTFMove(callback)](auto& engine) mutable {
         engine.clearMemoryRepresentation(origin, WTFMove(callback));
     });
 }
 
-void Engine::representation(PAL::SessionID sessionID, CompletionHandler<void(String&&)>&& callback)
+void Engine::representation(NetworkProcess& networkProcess, PAL::SessionID sessionID, CompletionHandler<void(String&&)>&& callback)
 {
-    from(sessionID, [callback = WTFMove(callback)](auto& engine) mutable {
+    from(networkProcess, sessionID, [callback = WTFMove(callback)](auto& engine) mutable {
         callback(engine.representation());
     });
 }
 
-void Engine::clearAllCaches(PAL::SessionID sessionID, CompletionHandler<void()>&& completionHandler)
+void Engine::clearAllCaches(NetworkProcess& networkProcess, PAL::SessionID sessionID, CompletionHandler<void()>&& completionHandler)
 {
-    from(sessionID, [completionHandler = WTFMove(completionHandler)](auto& engine) mutable {
+    from(networkProcess, sessionID, [completionHandler = WTFMove(completionHandler)](auto& engine) mutable {
         engine.clearAllCaches(WTFMove(completionHandler));
     });
 }
 
-void Engine::clearCachesForOrigin(PAL::SessionID sessionID, WebCore::SecurityOriginData&& originData, CompletionHandler<void()>&& completionHandler)
+void Engine::clearCachesForOrigin(NetworkProcess& networkProcess, PAL::SessionID sessionID, WebCore::SecurityOriginData&& originData, CompletionHandler<void()>&& completionHandler)
 {
-    from(sessionID, [originData = WTFMove(originData), completionHandler = WTFMove(completionHandler)](auto& engine) mutable {
+    from(networkProcess, sessionID, [originData = WTFMove(originData), completionHandler = WTFMove(completionHandler)](auto& engine) mutable {
         engine.clearCachesForOrigin(originData, WTFMove(completionHandler));
     });
 }
