@@ -96,6 +96,7 @@ function installDependenciesWithApt {
         gdb \
         libapache2-mod-bw \
         libapache2-mod-php \
+        php-json \
         libcgi-pm-perl \
         psmisc \
         pulseaudio-utils \
@@ -282,6 +283,7 @@ function installDependenciesWithDnf {
         mod_ssl \
         perl-CGI \
         php \
+        php-json \
         psmisc \
         pulseaudio-utils \
         python2-psutil \
