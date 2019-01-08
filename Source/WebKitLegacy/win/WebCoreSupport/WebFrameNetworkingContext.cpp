@@ -99,12 +99,12 @@ ResourceError WebFrameNetworkingContext::blockedError(const ResourceRequest& req
     return frame()->loader().client().blockedError(request);
 }
 
-NetworkStorageSession& WebFrameNetworkingContext::storageSession() const
+NetworkStorageSession* WebFrameNetworkingContext::storageSession() const
 {
     ASSERT(isMainThread());
 
     if (frame() && frame()->page()->usesEphemeralSession())
-        return *NetworkStorageSession::storageSession(PAL::SessionID::legacyPrivateSessionID());
+        return NetworkStorageSession::storageSession(PAL::SessionID::legacyPrivateSessionID());
 
-    return NetworkStorageSession::defaultStorageSession();
+    return &NetworkStorageSession::defaultStorageSession();
 }

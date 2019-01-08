@@ -357,7 +357,6 @@ void InjectedBundle::setPrivateBrowsingEnabled(WebPageGroupProxy* pageGroup, boo
     ASSERT(!hasProcessPrivilege(ProcessPrivilege::CanAccessRawCookies));
     if (enabled) {
         WebProcess::singleton().ensureLegacyPrivateBrowsingSessionInNetworkProcess();
-        WebFrameNetworkingContext::ensureWebsiteDataStoreSession(WebsiteDataStoreParameters::legacyPrivateSessionParameters());
     } else
         SessionTracker::destroySession(PAL::SessionID::legacyPrivateSessionID());
 

@@ -161,11 +161,8 @@ void WebsitePoliciesData::applyToDocumentLoader(WebsitePoliciesData&& websitePol
 
     if (websitePolicies.websiteDataStoreParameters) {
         if (auto* frame = documentLoader.frame()) {
-            if (auto* page = frame->page()) {
-                auto sessionID = websitePolicies.websiteDataStoreParameters->networkSessionParameters.sessionID;
-                WebProcess::singleton().addWebsiteDataStore(WTFMove(*websitePolicies.websiteDataStoreParameters));
-                page->setSessionID(sessionID);
-            }
+            if (auto* page = frame->page())
+                page->setSessionID(websitePolicies.websiteDataStoreParameters->networkSessionParameters.sessionID);
         }
     }
 }

@@ -48,13 +48,12 @@ private:
     WebCore::BlobRegistry* createBlobRegistry() override;
 
     // WebCore::CookiesStrategy
-    std::pair<String, bool> cookiesForDOM(const WebCore::NetworkStorageSession&, const URL& firstParty, const WebCore::SameSiteInfo&, const URL&, Optional<uint64_t> frameID, Optional<uint64_t> pageID, WebCore::IncludeSecureCookies) override;
-    void setCookiesFromDOM(const WebCore::NetworkStorageSession&, const URL& firstParty, const WebCore::SameSiteInfo&, const URL&, Optional<uint64_t> frameID, Optional<uint64_t> pageID, const String&) override;
-    bool cookiesEnabled(const WebCore::NetworkStorageSession&) override;
-    std::pair<String, bool> cookieRequestHeaderFieldValue(const WebCore::NetworkStorageSession&, const URL& firstParty, const WebCore::SameSiteInfo&, const URL&, Optional<uint64_t> frameID, Optional<uint64_t> pageID, WebCore::IncludeSecureCookies) override;
-    std::pair<String, bool> cookieRequestHeaderFieldValue(PAL::SessionID, const URL& firstParty, const WebCore::SameSiteInfo&, const URL&, Optional<uint64_t> frameID, Optional<uint64_t> pageID, WebCore::IncludeSecureCookies) override;
-    bool getRawCookies(const WebCore::NetworkStorageSession&, const URL& firstParty, const WebCore::SameSiteInfo&, const URL&, Optional<uint64_t> frameID, Optional<uint64_t> pageID, Vector<WebCore::Cookie>&) override;
-    void deleteCookie(const WebCore::NetworkStorageSession&, const URL&, const String&) override;
+    std::pair<String, bool> cookiesForDOM(const PAL::SessionID&, const URL& firstParty, const WebCore::SameSiteInfo&, const URL&, Optional<uint64_t> frameID, Optional<uint64_t> pageID, WebCore::IncludeSecureCookies) override;
+    void setCookiesFromDOM(const PAL::SessionID&, const URL& firstParty, const WebCore::SameSiteInfo&, const URL&, Optional<uint64_t> frameID, Optional<uint64_t> pageID, const String&) override;
+    bool cookiesEnabled(const PAL::SessionID&) override;
+    std::pair<String, bool> cookieRequestHeaderFieldValue(const PAL::SessionID&, const URL& firstParty, const WebCore::SameSiteInfo&, const URL&, Optional<uint64_t> frameID, Optional<uint64_t> pageID, WebCore::IncludeSecureCookies) override;
+    bool getRawCookies(const PAL::SessionID&, const URL& firstParty, const WebCore::SameSiteInfo&, const URL&, Optional<uint64_t> frameID, Optional<uint64_t> pageID, Vector<WebCore::Cookie>&) override;
+    void deleteCookie(const PAL::SessionID&, const URL&, const String&) override;
 
     // WebCore::PasteboardStrategy
 #if PLATFORM(IOS_FAMILY)

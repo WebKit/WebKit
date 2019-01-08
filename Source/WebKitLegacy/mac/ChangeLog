@@ -1,5 +1,27 @@
 2019-01-08  Alex Christensen  <achristensen@webkit.org>
 
+        Stop using NetworkStorageSession in WebProcess
+        https://bugs.webkit.org/show_bug.cgi?id=193236
+
+        Reviewed by Don Olmstead.
+
+        * WebCoreSupport/WebFrameNetworkingContext.h:
+        * WebCoreSupport/WebFrameNetworkingContext.mm:
+        (WebFrameNetworkingContext::storageSession const):
+        * WebCoreSupport/WebPlatformStrategies.h:
+        * WebCoreSupport/WebPlatformStrategies.mm:
+        (WebPlatformStrategies::cookiesForDOM):
+        (WebPlatformStrategies::setCookiesFromDOM):
+        (WebPlatformStrategies::cookiesEnabled):
+        (WebPlatformStrategies::cookieRequestHeaderFieldValue):
+        (WebPlatformStrategies::getRawCookies):
+        (WebPlatformStrategies::deleteCookie):
+        * WebView/WebView.mm:
+        (-[WebView _cachedResponseForURL:]):
+        (-[WebView _clearCredentials]):
+
+2019-01-08  Alex Christensen  <achristensen@webkit.org>
+
         Unreviewed, rolling out r239727.
 
         Broke API tests

@@ -3043,8 +3043,6 @@ void WebPage::setLayerHostingMode(LayerHostingMode layerHostingMode)
 
 void WebPage::setSessionID(PAL::SessionID sessionID)
 {
-    if (sessionID.isEphemeral())
-        WebProcess::singleton().addWebsiteDataStore(WebsiteDataStoreParameters::privateSessionParameters(sessionID));
     m_page->setSessionID(sessionID);
 }
 

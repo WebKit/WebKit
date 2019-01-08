@@ -26,6 +26,7 @@
 #include "config.h"
 #include "NetworkStorageSession.h"
 
+#include "RuntimeApplicationChecks.h"
 #include <pal/SessionID.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/ProcessPrivilege.h>

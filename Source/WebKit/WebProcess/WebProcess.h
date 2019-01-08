@@ -178,8 +178,6 @@ public:
     void setCacheModel(CacheModel);
 
     void ensureLegacyPrivateBrowsingSessionInNetworkProcess();
-    void addWebsiteDataStore(WebsiteDataStoreParameters&&);
-    void destroySession(PAL::SessionID);
 
     void pageDidEnterWindow(uint64_t pageID);
     void pageWillLeaveWindow(uint64_t pageID);

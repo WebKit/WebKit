@@ -3668,7 +3668,7 @@ IGNORE_WARNINGS_END
     if (!_private->page)
         return nil;
 
-    if (CFURLStorageSessionRef storageSession = _private->page->mainFrame().loader().networkingContext()->storageSession().platformSession())
+    if (auto storageSession = _private->page->mainFrame().loader().networkingContext()->storageSession()->platformSession())
         cachedResponse = cachedResponseForRequest(storageSession, request.get());
     else
         cachedResponse = [[NSURLCache sharedURLCache] cachedResponseForRequest:request.get()];
@@ -9251,7 +9251,7 @@ FORWARD(toggleUnderline)
     if (!networkingContext)
         return;
 
-    networkingContext->storageSession().credentialStorage().clearCredentials();
+    networkingContext->storageSession()->credentialStorage().clearCredentials();
 }
 
 - (BOOL)_needsOneShotDrawingSynchronization

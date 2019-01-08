@@ -124,7 +124,6 @@ struct WebProcessCreationParameters {
 
     double defaultRequestTimeoutInterval { INT_MAX };
 
-    bool shouldUseTestingNetworkSession { false };
     bool shouldAlwaysUseComplexTextCodePath { false };
     bool shouldEnableMemoryPressureReliefLogging { false };
     bool shouldSuppressMemoryPressureHandler { false };

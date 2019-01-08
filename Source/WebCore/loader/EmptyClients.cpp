@@ -287,7 +287,7 @@ private:
     EmptyFrameNetworkingContext();
 
     bool shouldClearReferrerOnHTTPSToHTTPRedirect() const { return true; }
-    NetworkStorageSession& storageSession() const final { return NetworkStorageSession::defaultStorageSession(); }
+    NetworkStorageSession* storageSession() const final { return &NetworkStorageSession::defaultStorageSession(); }
 
 #if PLATFORM(COCOA)
     bool localFileContentSniffingEnabled() const { return false; }
