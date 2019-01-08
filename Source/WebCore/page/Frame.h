@@ -172,6 +172,9 @@ public:
 
     bool documentIsBeingReplaced() const { return m_documentIsBeingReplaced; }
 
+    bool hasHadUserInteraction() const { return m_hasHadUserInteraction; }
+    void setHasHadUserInteraction() { m_hasHadUserInteraction = true; }
+
 // ======== All public functions below this point are candidates to move out of Frame into another class. ========
 
     WEBCORE_EXPORT void injectUserScripts(UserScriptInjectionTime);
@@ -348,6 +351,7 @@ private:
     bool m_documentIsBeingReplaced { false };
     unsigned m_navigationDisableCount { 0 };
     unsigned m_selfOnlyRefCount { 0 };
+    bool m_hasHadUserInteraction { false };
 
 protected:
     UniqueRef<EventHandler> m_eventHandler;

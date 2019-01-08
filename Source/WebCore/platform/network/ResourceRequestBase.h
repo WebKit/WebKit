@@ -260,7 +260,10 @@ bool equalIgnoringHeaderFields(const ResourceRequestBase&, const ResourceRequest
 // FIXME: Find a better place for these functions.
 inline String toRegistrableDomain(const URL& a)
 {
-    return ResourceRequestBase::partitionName(a.host().toString());
+    auto host = a.host().toString();
+    auto registrableDomain = ResourceRequestBase::partitionName(host);
+    // Fall back to the host if we cannot determine the registrable domain.
+    return registrableDomain.isEmpty() ? host : registrableDomain;
 }
 
 inline bool registrableDomainsAreEqual(const URL& a, const URL& b)

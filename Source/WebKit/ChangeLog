@@ -1,3 +1,15 @@
+2019-01-08  Chris Dumez  <cdumez@apple.com>
+
+        Prevent cross-site top-level navigations from third-party iframes
+        https://bugs.webkit.org/show_bug.cgi?id=193076
+        <rdar://problem/36074736>
+
+        Reviewed by Alex Christensen.
+
+        Add experimental feature flag, on by default.
+
+        * Shared/WebPreferences.yaml:
+
 2019-01-08  Alex Christensen  <achristensen@webkit.org>
 
         Remove more use of NetworkProcess::singleton

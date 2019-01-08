@@ -2103,7 +2103,7 @@ void DOMWindow::finishedLoading()
     }
 }
 
-void DOMWindow::setLocation(DOMWindow& activeWindow, DOMWindow& firstWindow, const String& urlString, SetLocationLocking locking)
+void DOMWindow::setLocation(DOMWindow& activeWindow, const URL& completedURL, SetLocationLocking locking)
 {
     if (!isCurrentlyDisplayedInFrame())
         return;
@@ -2113,15 +2113,7 @@ void DOMWindow::setLocation(DOMWindow& activeWindow, DOMWindow& firstWindow, con
         return;
 
     auto* frame = this->frame();
-    if (!activeDocument->canNavigate(frame))
-        return;
-
-    Frame* firstFrame = firstWindow.frame();
-    if (!firstFrame)
-        return;
-
-    URL completedURL = firstFrame->document()->completeURL(urlString);
-    if (completedURL.isNull())
+    if (!activeDocument->canNavigate(frame, completedURL))
         return;
 
     if (isInsecureScriptAccess(activeWindow, completedURL))

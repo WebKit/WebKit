@@ -1,3 +1,39 @@
+2019-01-08  Chris Dumez  <cdumez@apple.com>
+
+        Prevent cross-site top-level navigations from third-party iframes
+        https://bugs.webkit.org/show_bug.cgi?id=193076
+        <rdar://problem/36074736>
+
+        Reviewed by Alex Christensen.
+
+        Prevent cross-site top-level navigations from third-party iframes if the following conditions are met:
+        1. Its tries to navigate the top-level page cross-site (different eTDL+1)
+        2. The user has never interacted with the third-party iframe or any of its subframes
+
+        This experiment's intent is to block suspicious main-frame navigations by third-party content. The feature
+        is behind a runtime experimental feature flag, on by default.
+
+        Tests: http/tests/security/allow-top-level-navigations-by-third-party-iframes-to-same-origin.html
+               http/tests/security/allow-top-level-navigations-by-third-party-iframes-with-previous-user-activation.html
+               http/tests/security/allow-top-level-navigations-by-third-party-iframes-with-user-activation.html
+               http/tests/security/block-top-level-navigations-by-third-party-iframes.html
+
+        * dom/Document.cpp:
+        (WebCore::printNavigationErrorMessage):
+        (WebCore::Document::canNavigate):
+        (WebCore::Document::canNavigateInternal):
+        (WebCore::Document::isNavigationBlockedByThirdPartyIFrameRedirectBlocking):
+        * dom/Document.h:
+        * dom/UserGestureIndicator.cpp:
+        * page/DOMWindow.cpp:
+        (WebCore::DOMWindow::setLocation):
+        * page/DOMWindow.h:
+        * page/Frame.h:
+        * page/Location.cpp:
+        (WebCore::Location::replace):
+        (WebCore::Location::setLocation):
+        * page/Settings.yaml:
+
 2019-01-08  Alex Christensen  <achristensen@webkit.org>
 
         Stop using NetworkStorageSession in WebProcess
