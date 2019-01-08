@@ -794,12 +794,12 @@ void NetworkResourceLoader::tryStoreAsCacheEntry()
     if (!m_bufferedDataForCache)
         return;
 
-    m_cache->store(m_networkLoad->currentRequest(), m_response, WTFMove(m_bufferedDataForCache), [loader = makeRef(*this)](auto& mappedBody) mutable {
+    m_cache->store(m_networkLoad->currentRequest(), m_response, WTFMove(m_bufferedDataForCache), [loader = makeRef(*this)](auto* mappedBody) mutable {
 #if ENABLE(SHAREABLE_RESOURCE)
-        if (mappedBody.shareableResourceHandle.isNull())
+        if (!mappedBody || mappedBody->shareableResourceHandle.isNull())
             return;
         LOG(NetworkCache, "(NetworkProcess) sending DidCacheResource");
-        loader->send(Messages::NetworkProcessConnection::DidCacheResource(loader->originalRequest(), mappedBody.shareableResourceHandle, loader->sessionID()));
+        loader->send(Messages::NetworkProcessConnection::DidCacheResource(loader->originalRequest(), mappedBody->shareableResourceHandle, loader->sessionID()));
 #endif
     });
 }

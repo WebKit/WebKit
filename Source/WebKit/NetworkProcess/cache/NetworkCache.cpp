@@ -371,7 +371,7 @@ std::unique_ptr<Entry> Cache::makeRedirectEntry(const WebCore::ResourceRequest& 
     return std::make_unique<Entry>(makeCacheKey(request), response, redirectRequest, WebCore::collectVaryingRequestHeaders(request, response));
 }
 
-std::unique_ptr<Entry> Cache::store(const WebCore::ResourceRequest& request, const WebCore::ResourceResponse& response, RefPtr<WebCore::SharedBuffer>&& responseData, CompletionHandler<void(MappedBody&)>&& completionHandler)
+std::unique_ptr<Entry> Cache::store(const WebCore::ResourceRequest& request, const WebCore::ResourceResponse& response, RefPtr<WebCore::SharedBuffer>&& responseData, CompletionHandler<void(MappedBody*)>&& completionHandler)
 {
     ASSERT(responseData);
 
@@ -391,6 +391,7 @@ std::unique_ptr<Entry> Cache::store(const WebCore::ResourceRequest& request, con
         if (m_statistics)
             m_statistics->recordNotCachingResponse(key, storeDecision);
 
+        completionHandler(nullptr);
         return nullptr;
     }
 
@@ -406,7 +407,7 @@ std::unique_ptr<Entry> Cache::store(const WebCore::ResourceRequest& request, con
             mappedBody.shareableResource->createHandle(mappedBody.shareableResourceHandle);
         }
 #endif
-        completionHandler(mappedBody);
+        completionHandler(&mappedBody);
         LOG(NetworkCache, "(NetworkProcess) stored");
     });
 

@@ -1,3 +1,20 @@
+2019-01-08  Alex Christensen  <achristensen@webkit.org>
+
+        Always call CompletionHandler in Cache::store
+        https://bugs.webkit.org/show_bug.cgi?id=193237
+
+        Reviewed by Chris Dumez.
+
+        No change in behavior. This just fixes an assertion introduced in r239710 when the speculative loader finishes.
+
+        * NetworkProcess/NetworkResourceLoader.cpp:
+        (WebKit::NetworkResourceLoader::tryStoreAsCacheEntry):
+        * NetworkProcess/cache/NetworkCache.cpp:
+        (WebKit::NetworkCache::Cache::store):
+        * NetworkProcess/cache/NetworkCache.h:
+        * NetworkProcess/cache/NetworkCacheSpeculativeLoad.cpp:
+        (WebKit::NetworkCache::SpeculativeLoad::didFinishLoading):
+
 2019-01-08  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed. Update OptionsGTK.cmake and NEWS for 2.23.2 release

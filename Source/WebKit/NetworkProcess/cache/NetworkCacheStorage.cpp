@@ -884,8 +884,10 @@ void Storage::store(const Record& record, MappedBodyHandler&& mappedBodyHandler,
     ASSERT(RunLoop::isMain());
     ASSERT(!record.key.isNull());
 
-    if (!m_capacity)
+    if (!m_capacity) {
+        completionHandler(0);
         return;
+    }
 
     auto writeOperation = std::make_unique<WriteOperation>(*this, record, WTFMove(mappedBodyHandler), WTFMove(completionHandler));
     m_pendingWriteOperations.prepend(WTFMove(writeOperation));
