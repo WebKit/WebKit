@@ -3134,6 +3134,7 @@ bool FrameLoader::shouldPerformFragmentNavigation(bool isFormSubmission, const S
     return (!isFormSubmission || equalLettersIgnoringASCIICase(httpMethod, "get"))
         && !isReload(loadType)
         && loadType != FrameLoadType::Same
+        && m_frame.document()->pageCacheState() != Document::InPageCache
         && !shouldReload(m_frame.document()->url(), url)
         // We don't want to just scroll if a link from within a
         // frameset is trying to reload the frameset into _top.

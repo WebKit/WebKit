@@ -1,3 +1,24 @@
+2019-01-08  Chris Dumez  <cdumez@apple.com>
+
+        Regression(PSON-r239182): Blank view when navigating back and forth between google.com and stack overflow
+        https://bugs.webkit.org/show_bug.cgi?id=193224
+        <rdar://problem/47097726>
+
+        Reviewed by Alex Christensen.
+
+        Since r239182, pages get suspended in-place when we suspend the old process after a process-swap on navigation.
+        When we return to a suspended page, we load the current history item again and it normally properly restores
+        the page from PageCache, even though we load the same history item and the current one and even though the
+        page is suspended in-place (i.e. we did not navigate away, which is the usual case for page cache).
+
+        The issue is that if the page URL contains a fragment, FrameLoader::shouldPerformFragmentNavigation() would
+        return true because both the source and destination URLs (which are the same) contains a fragment. To address
+        the issue, update FrameLoader::shouldPerformFragmentNavigation() to return false if the current page is
+        suspended.
+
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::shouldPerformFragmentNavigation):
+
 2019-01-08  Alex Christensen  <achristensen@webkit.org>
 
         Move Windows-specific code from NetworkStorageSessionCFNet.cpp to its own file

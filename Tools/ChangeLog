@@ -1,3 +1,15 @@
+2019-01-08  Chris Dumez  <cdumez@apple.com>
+
+        Regression(PSON-r239182): Blank view when navigating back and forth between google.com and stack overflow
+        https://bugs.webkit.org/show_bug.cgi?id=193224
+        <rdar://problem/47097726>
+
+        Reviewed by Alex Christensen.
+
+        Add API test coverage.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/ProcessSwapOnNavigation.mm:
+
 2019-01-07  David Kilzer  <ddkilzer@apple.com>
 
         Leak of ScrollCompletionCallbackData (16 bytes) in com.apple.WebKit.WebContent running WebKit layout tests
