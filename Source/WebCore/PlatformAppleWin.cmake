@@ -54,6 +54,7 @@ list(APPEND WebCore_SOURCES
     platform/network/cf/FormDataStreamCFNet.cpp
     platform/network/cf/LoaderRunLoopCF.cpp
     platform/network/cf/NetworkStorageSessionCFNet.cpp
+    platform/network/cf/NetworkStorageSessionCFNetWin.cpp
     platform/network/cf/ProtectionSpaceCFNet.cpp
     platform/network/cf/ProxyServerCFNet.cpp
     platform/network/cf/ResourceErrorCF.cpp

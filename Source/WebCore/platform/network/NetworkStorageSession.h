@@ -210,6 +210,8 @@ private:
 
 #if PLATFORM(COCOA)
 WEBCORE_EXPORT CFURLStorageSessionRef createPrivateStorageSession(CFStringRef identifier);
+#elif USE(CFURLCONNECTION)
+CFURLStorageSessionRef createPrivateStorageSession(CFStringRef identifier, CFURLStorageSessionRef defaultStorageSession);
 #endif
 
 }
