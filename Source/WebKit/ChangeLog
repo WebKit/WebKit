@@ -1,3 +1,13 @@
+2019-01-08  Alex Christensen  <achristensen@webkit.org>
+
+        Fix more assertions after r239710
+        https://bugs.webkit.org/show_bug.cgi?id=193237
+
+        * NetworkProcess/cache/NetworkCacheStorage.h:
+        (WebKit::NetworkCache::Storage::store):
+        Make default parameter an empty lambda instead of a null CompletionHandler.
+        This way it can be called once instead of thinking it has already been called.
+
 2019-01-08  Brent Fulgham  <bfulgham@apple.com>
 
         Move ResourceLoadStatistics files from UIProcess to NetworkProcess
