@@ -1,3 +1,12 @@
+2019-01-07  Don Olmstead  <don.olmstead@sony.com>
+
+        [CMake] Add ENABLE_CSS_TYPED_OM option
+        https://bugs.webkit.org/show_bug.cgi?id=193216
+
+        Reviewed by Michael Catanzaro.
+
+        * Scripts/webkitperl/FeatureList.pm:
+
 2019-01-07  David Kilzer  <ddkilzer@apple.com>
 
         Prefer RetainPtr<NSObject> to RetainPtr<NSObject *>

@@ -74,6 +74,7 @@ my (
     $cssScrollSnapSupport,
     $cssSelectorsLevel4Support,
     $cssTrailingWordSupport,
+    $cssTypedOMSupport,
     $cursorVisibilitySupport,
     $customSchemeHandlerSupport,
     $darkModeCSSSupport,
@@ -260,6 +261,9 @@ my @features = (
 
     { option => "css-trailing-word", desc => "Toggle CSS trailing word support",
       define => "ENABLE_CSS_TRAILING_WORD", value => \$cssTrailingWordSupport },
+
+    { option => "css-typed-om", desc => "Toggle CSS Typed OM support",
+      define => "ENABLE_CSS_TYPED_OM", value => \$cssTypedOMSupport },
 
     { option => "cursor-visibility", desc => "Toggle cursor visibility support",
       define => "ENABLE_CURSOR_VISIBILITY", value => \$cursorVisibilitySupport },
