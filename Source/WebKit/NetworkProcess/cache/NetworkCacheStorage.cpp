@@ -112,6 +112,13 @@ public:
         , mappedBodyHandler(WTFMove(mappedBodyHandler))
         , completionHandler(WTFMove(completionHandler))
     { }
+
+    ~WriteOperation()
+    {
+        if (completionHandler)
+            completionHandler(0);
+    }
+
     Ref<Storage> storage;
 
     const Record record;

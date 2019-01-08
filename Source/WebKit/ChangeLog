@@ -1,5 +1,17 @@
 2019-01-08  Alex Christensen  <achristensen@webkit.org>
 
+        Call CompletionHandler when destroying a NetworkCache::Storage::WriteOperation
+        https://bugs.webkit.org/show_bug.cgi?id=193251
+
+        Reviewed by Chris Dumez.
+
+        This fixes another assertion introduced in r239710.
+
+        * NetworkProcess/cache/NetworkCacheStorage.cpp:
+        (WebKit::NetworkCache::Storage::WriteOperation::~WriteOperation):
+
+2019-01-08  Alex Christensen  <achristensen@webkit.org>
+
         Stop using NetworkStorageSession in WebProcess
         https://bugs.webkit.org/show_bug.cgi?id=193236
 
