@@ -1008,7 +1008,7 @@ void KeyframeEffect::apply(RenderStyle& targetStyle)
 
     updateAcceleratedAnimationState();
 
-    auto progress = iterationProgress();
+    auto progress = getComputedTiming().progress;
     if (!progress)
         return;
 
@@ -1042,7 +1042,7 @@ void KeyframeEffect::getAnimatedStyle(std::unique_ptr<RenderStyle>& animatedStyl
     if (!m_target || !animation())
         return;
 
-    auto progress = iterationProgress();
+    auto progress = getComputedTiming().progress;
     if (!progress)
         return;
 

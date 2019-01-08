@@ -27,6 +27,7 @@
 #pragma once
 
 #include "CSSValue.h"
+#include "ComputedEffectTiming.h"
 #include "RenderStyle.h"
 #include "WebAnimation.h"
 #include <wtf/Forward.h>

@@ -25,20 +25,8 @@
 
 #pragma once
 
-#include "AnimationEffectPhase.h"
-#include "EffectTiming.h"
-#include <wtf/Optional.h>
-
 namespace WebCore {
 
-struct ComputedEffectTiming : EffectTiming {
-    AnimationEffectPhase phase { AnimationEffectPhase::Idle };
-    double endTime;
-    double activeDuration;
-    Optional<double> localTime;
-    Optional<double> simpleIterationProgress;
-    Optional<double> progress;
-    Optional<double> currentIteration;
-};
+enum class AnimationEffectPhase : uint8_t { Before, Active, After, Idle };
 
 } // namespace WebCore

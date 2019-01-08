@@ -198,8 +198,10 @@ void DeclarativeAnimation::setTimeline(RefPtr<AnimationTimeline>&& newTimeline)
 void DeclarativeAnimation::cancel()
 {
     auto cancelationTime = 0_s;
-    if (auto animationEffect = effect())
-        cancelationTime = animationEffect->activeTime().valueOr(0_s);
+    if (auto* animationEffect = effect()) {
+        if (auto activeTime = animationEffect->getBasicTiming().activeTime)
+            cancelationTime = *activeTime;
+    }
 
     WebAnimation::cancel();
 
@@ -212,17 +214,17 @@ void DeclarativeAnimation::cancelFromStyle()
     disassociateFromOwningElement();
 }
 
-AnimationEffect::Phase DeclarativeAnimation::phaseWithoutEffect() const
+AnimationEffectPhase DeclarativeAnimation::phaseWithoutEffect() const
 {
     // This shouldn't be called if we actually have an effect.
     ASSERT(!effect());
 
     auto animationCurrentTime = currentTime();
     if (!animationCurrentTime)
-        return AnimationEffect::Phase::Idle;
+        return AnimationEffectPhase::Idle;
 
     // Since we don't have an effect, the duration will be zero so the phase is 'before' if the current time is less than zero.
-    return animationCurrentTime.value() < 0_s ? AnimationEffect::Phase::Before : AnimationEffect::Phase::After;
+    return *animationCurrentTime < 0_s ? AnimationEffectPhase::Before : AnimationEffectPhase::After;
 }
 
 void DeclarativeAnimation::invalidateDOMEvents(Seconds elapsedTime)
@@ -230,27 +232,38 @@ void DeclarativeAnimation::invalidateDOMEvents(Seconds elapsedTime)
     if (!m_owningElement)
         return;
     
-    auto* animationEffect = effect();
-
     auto isPending = pending();
     if (isPending && m_wasPending)
         return;
 
-    auto iteration = animationEffect ? animationEffect->currentIteration().valueOr(0) : 0;
-    auto currentPhase = animationEffect ? animationEffect->phase() : phaseWithoutEffect();
+    double iteration;
+    AnimationEffectPhase currentPhase;
+    Seconds intervalStart;
+    Seconds intervalEnd;
 
-    bool wasActive = m_previousPhase == AnimationEffect::Phase::Active;
-    bool wasAfter = m_previousPhase == AnimationEffect::Phase::After;
-    bool wasBefore = m_previousPhase == AnimationEffect::Phase::Before;
-    bool wasIdle = m_previousPhase == AnimationEffect::Phase::Idle;
+    auto* animationEffect = effect();
+    if (animationEffect) {
+        auto timing = animationEffect->getComputedTiming();
+        iteration = timing.currentIteration.valueOr(0);
+        currentPhase = timing.phase;
+        intervalStart = std::max(0_s, Seconds::fromMilliseconds(std::min(-timing.delay, timing.activeDuration)));
+        intervalEnd = std::max(0_s, Seconds::fromMilliseconds(std::min(timing.endTime - timing.delay, timing.activeDuration)));
+    } else {
+        iteration = 0;
+        currentPhase = phaseWithoutEffect();
+        intervalStart = 0_s;
+        intervalEnd = 0_s;
+    }
 
-    bool isActive = currentPhase == AnimationEffect::Phase::Active;
-    bool isAfter = currentPhase == AnimationEffect::Phase::After;
-    bool isBefore = currentPhase == AnimationEffect::Phase::Before;
-    bool isIdle = currentPhase == AnimationEffect::Phase::Idle;
+    bool wasActive = m_previousPhase == AnimationEffectPhase::Active;
+    bool wasAfter = m_previousPhase == AnimationEffectPhase::After;
+    bool wasBefore = m_previousPhase == AnimationEffectPhase::Before;
+    bool wasIdle = m_previousPhase == AnimationEffectPhase::Idle;
 
-    auto intervalStart = animationEffect ? std::max(0_s, std::min(-animationEffect->delay(), animationEffect->activeDuration())) : 0_s;
-    auto intervalEnd = animationEffect ? std::max(0_s, std::min(animationEffect->endTime() - animationEffect->delay(), animationEffect->activeDuration())) : 0_s;
+    bool isActive = currentPhase == AnimationEffectPhase::Active;
+    bool isAfter = currentPhase == AnimationEffectPhase::After;
+    bool isBefore = currentPhase == AnimationEffectPhase::Before;
+    bool isIdle = currentPhase == AnimationEffectPhase::Idle;
 
     if (is<CSSAnimation>(this)) {
         // https://drafts.csswg.org/css-animations-2/#events

@@ -538,7 +538,7 @@ Seconds WebAnimation::effectEndTime() const
 {
     // The target effect end of an animation is equal to the end time of the animation's target effect.
     // If the animation has no target effect, the target effect end is zero.
-    return m_effect ? m_effect->endTime() : 0_s;
+    return m_effect ? m_effect->getBasicTiming().endTime : 0_s;
 }
 
 void WebAnimation::cancel()
@@ -1173,8 +1173,10 @@ bool WebAnimation::computeRelevance()
     if (!m_effect)
         return false;
 
+    auto timing = m_effect->getBasicTiming();
+
     // An animation effect is in effect if its active time is not unresolved.
-    if (m_effect->activeTime())
+    if (timing.activeTime)
         return true;
 
     // An animation effect is current if either of the following conditions is true:
@@ -1184,8 +1186,7 @@ bool WebAnimation::computeRelevance()
     // An animation effect is in play if all of the following conditions are met:
     // - the animation effect is in the active phase, and
     // - the animation effect is associated with an animation that is not finished.
-    auto phase = m_effect->phase();
-    return phase == AnimationEffect::Phase::Before || (phase == AnimationEffect::Phase::Active && playState() != PlayState::Finished);
+    return timing.phase == AnimationEffectPhase::Before || (timing.phase == AnimationEffectPhase::Active && playState() != PlayState::Finished);
 }
 
 Seconds WebAnimation::timeToNextTick() const
@@ -1202,9 +1203,11 @@ Seconds WebAnimation::timeToNextTick() const
     // CSS Animations dispatch events for each iteration, so compute the time until
     // the end of this iteration. Any other animation only cares about remaning total time.
     if (isCSSAnimation()) {
+        auto* animationEffect = effect();
+        auto timing = animationEffect->getComputedTiming();
         // If we're actively running, we need the time until the next iteration.
-        if (auto iterationProgress = effect()->simpleIterationProgress())
-            return effect()->iterationDuration() * (1 - iterationProgress.value());
+        if (auto iterationProgress = timing.simpleIterationProgress)
+            return animationEffect->iterationDuration() * (1 - *iterationProgress);
 
         // Otherwise we're probably in the before phase waiting to reach our start time.
         if (auto animationCurrentTime = currentTime()) {
@@ -1214,11 +1217,11 @@ Seconds WebAnimation::timeToNextTick() const
             auto localTime = animationCurrentTime.value();
             if (localTime < 0_s)
                 return -localTime;
-            if (localTime < effect()->delay())
-                return effect()->delay() - localTime;
+            if (localTime < animationEffect->delay())
+                return animationEffect->delay() - localTime;
         }
     } else if (auto animationCurrentTime = currentTime())
-        return effect()->endTime() - animationCurrentTime.value();
+        return effect()->getBasicTiming().endTime - *animationCurrentTime;
 
     ASSERT_NOT_REACHED();
     return Seconds::infinity();

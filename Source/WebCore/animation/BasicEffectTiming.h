@@ -26,19 +26,17 @@
 #pragma once
 
 #include "AnimationEffectPhase.h"
-#include "EffectTiming.h"
-#include <wtf/Optional.h>
+#include <wtf/Markable.h>
+#include <wtf/Seconds.h>
 
 namespace WebCore {
 
-struct ComputedEffectTiming : EffectTiming {
-    AnimationEffectPhase phase { AnimationEffectPhase::Idle };
-    double endTime;
-    double activeDuration;
-    Optional<double> localTime;
-    Optional<double> simpleIterationProgress;
-    Optional<double> progress;
-    Optional<double> currentIteration;
+struct BasicEffectTiming {
+    Markable<Seconds, Seconds::MarkableTraits> localTime;
+    Markable<Seconds, Seconds::MarkableTraits> activeTime;
+    Seconds endTime;
+    Seconds activeDuration;
+    AnimationEffectPhase phase;
 };
 
 } // namespace WebCore

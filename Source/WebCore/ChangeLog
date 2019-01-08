@@ -1,3 +1,67 @@
+2018-12-19  Antoine Quint  <graouts@apple.com>
+
+        [Web Animations] Compute animation effect timing properties in batch
+        https://bugs.webkit.org/show_bug.cgi?id=192850
+
+        Reviewed by Dean Jackson.
+
+        We remove a host of functions from AnimationEffect that would allow the computation of various timing properties
+        defined by the Web Animations specification: phase, progress, current iteration, etc. Indeed, a lot of these functions
+        would call each other in a chain, and we would re-compute a lot of the earlier properties in those chains several times
+        when doing something like querying the animation progress. Additionally, some functions, such as WebAnimation::computeRelevance()
+        and WebAnimation::timeToNextTick() would yield the computation of several such properties numerous times. All of those
+        functions are called during each animation frame and are ripe for optimizations.
+
+        We now compute all timing properties across two functions:
+        
+        1. the new AnimationEffect::getBasicTiming() which computes the local time, end time, active duration, active time and phase,
+        2. the existing AnimationEffect::getComputedTiming() which now also exposes the phase and simple iteration progress.
+
+        To support this we introduce a new BasicEffectTiming struct to contain the values computed in AnimationEffect::getBasicTiming()
+        and spun the AnimationEffect::Phase struct as AnimationEffectPhase so that it may be used across BasicEffectTiming and
+        ComputedEffectTiming.
+
+        No new test since there is no user-observable change.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * animation/AnimationEffect.cpp:
+        (WebCore::AnimationEffect::getTiming const):
+        (WebCore::AnimationEffect::getBasicTiming const):
+        (WebCore::AnimationEffect::getComputedTiming const):
+        (WebCore::AnimationEffect::localTime const): Deleted.
+        (WebCore::AnimationEffect::phase const): Deleted.
+        (WebCore::AnimationEffect::activeTime const): Deleted.
+        (WebCore::AnimationEffect::overallProgress const): Deleted.
+        (WebCore::AnimationEffect::simpleIterationProgress const): Deleted.
+        (WebCore::AnimationEffect::currentIteration const): Deleted.
+        (WebCore::AnimationEffect::currentDirection const): Deleted.
+        (WebCore::AnimationEffect::directedProgress const): Deleted.
+        (WebCore::AnimationEffect::transformedProgress const): Deleted.
+        (WebCore::AnimationEffect::iterationProgress const): Deleted.
+        (WebCore::AnimationEffect::getTiming): Deleted.
+        (WebCore::AnimationEffect::getComputedTiming): Deleted.
+        (WebCore::AnimationEffect::endTime const): Deleted.
+        (WebCore::AnimationEffect::activeDuration const): Deleted.
+        * animation/AnimationEffect.h:
+        * animation/AnimationEffectPhase.h: Copied from Source/WebCore/animation/ComputedEffectTiming.h.
+        * animation/AnimationTimeline.cpp:
+        (WebCore::AnimationTimeline::updateCSSTransitionsForElement):
+        * animation/AnimationTimeline.h:
+        * animation/BasicEffectTiming.h: Copied from Source/WebCore/animation/ComputedEffectTiming.h.
+        * animation/ComputedEffectTiming.h:
+        * animation/DeclarativeAnimation.cpp:
+        (WebCore::DeclarativeAnimation::cancel):
+        (WebCore::DeclarativeAnimation::phaseWithoutEffect const):
+        (WebCore::DeclarativeAnimation::invalidateDOMEvents):
+        * animation/DeclarativeAnimation.h:
+        * animation/KeyframeEffect.cpp:
+        (WebCore::KeyframeEffect::apply):
+        (WebCore::KeyframeEffect::getAnimatedStyle):
+        * animation/WebAnimation.cpp:
+        (WebCore::WebAnimation::effectEndTime const):
+        (WebCore::WebAnimation::computeRelevance):
+        (WebCore::WebAnimation::timeToNextTick const):
+
 2019-01-07  Youenn Fablet  <youenn@apple.com>
 
         Crash in SWServer::Connection::resolveRegistrationReadyRequests
