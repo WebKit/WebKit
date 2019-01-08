@@ -1,3 +1,11 @@
+2019-01-08  Mark Lam  <mark.lam@apple.com>
+
+        Fix some typos in comments.
+
+        Not reviewed.
+
+        * dfg/DFGIntegerRangeOptimizationPhase.cpp:
+
 2019-01-08  Tadeu Zagallo  <tzagallo@apple.com>
 
         LLInt put_by_id uses the wrong load instruction for loading flags from the metadata

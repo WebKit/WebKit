@@ -1043,7 +1043,7 @@ public:
         //
         // We merge two lists by merging each relationship in one list with each relationship
         // in the other list. Merging two relationships will yield a relationship list; as with
-        // all such lists it is an intersction. Merging relationships over different variables
+        // all such lists it is an intersection. Merging relationships over different variables
         // always yields the empty list (i.e. TOP). This merge style is sound because if we
         // have:
         //
@@ -1085,7 +1085,7 @@ public:
         // TOP relationship (i.e. no relationships in the relationship list). The merge rule
         // when between the current relationshipsAtHead and the relationships being propagated
         // from a predecessor ensures monotonicity by converting disagreements into one of a
-        // small set of "general" relationships. There are 12 such relationshis, plus TOP. See
+        // small set of "general" relationships. There are 12 such relationships, plus TOP. See
         // the comment above Relationship::merge() for details.
         bool changed = true;
         while (changed) {
