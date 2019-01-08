@@ -23,6 +23,10 @@ webrtc [ Skip ]
 # Not supported on WK1
 media/no-fullscreen-when-hidden.html [ Skip ]
 
+# Skip pointerevents on WK1
+pointerevents [ Skip ]
+imported/w3c/web-platform-tests/pointerevents [ Skip ]
+
 # Datalist is unsupported in WK1
 fast/forms/datalist [ WontFix ]
 imported/w3c/web-platform-tests/html/semantics/forms/the-datalist-element [ WontFix ]

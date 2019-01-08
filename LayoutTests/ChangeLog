@@ -1,3 +1,13 @@
+2019-01-08  Truitt Savell  <tsavell@apple.com>
+
+        Revert expectation changes to pointerevents in iOS after https://trac.webkit.org/changeset/239704/webkit
+        https://bugs.webkit.org/show_bug.cgi?id=193214
+
+        Unreviewed Test Gardening
+
+        * platform/ios-wk1/TestExpectations:
+        * platform/ios-wk2/TestExpectations:
+
 2019-01-07  Youenn Fablet  <youenn@apple.com>
 
         LayoutTests/http/wpt/fetch/csp-reports-bypass-csp-checks.html is flaky
