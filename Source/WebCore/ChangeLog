@@ -1,3 +1,16 @@
+2019-01-07  Alan Coon  <alancoon@apple.com>
+
+        Apply patch. rdar://problem/46941524
+
+    2019-01-07  Per Arne Vollan  <pvollan@apple.com>
+
+            [Win] Compile error: 'setAgeCapForClientSideCookies': is not a member of 'WebCore::NetworkStorageSession
+            https://bugs.webkit.org/show_bug.cgi?id=193203
+
+            Protect implementation with same macro protecting the declaration of the method.
+
+            * platform/network/NetworkStorageSession.cpp:
+
 2018-12-19  Alan Coon  <alancoon@apple.com>
 
         Apply patch. rdar://problem/46848447

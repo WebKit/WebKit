@@ -74,6 +74,7 @@ void NetworkStorageSession::permitProcessToUseCookieAPI(bool value)
         removeProcessPrivilege(ProcessPrivilege::CanAccessRawCookies);
 }
 
+#if HAVE(CFNETWORK_STORAGE_PARTITIONING)
 void NetworkStorageSession::setAgeCapForClientSideCookies(std::optional<Seconds> seconds)
 {
     m_ageCapForClientSideCookies = seconds;
@@ -83,5 +84,6 @@ std::optional<Seconds> NetworkStorageSession::ageCapForClientSideCookies() const
 {
     return m_ageCapForClientSideCookies;
 }
+#endif
 
 }
