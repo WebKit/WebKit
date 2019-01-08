@@ -339,6 +339,7 @@ class Manager(object):
         exit_code = -1
         if not self._options.dry_run:
             self._port.print_leaks_summary()
+            self._output_perf_metrics(end_time - start_time, initial_results)
             self._upload_json_files(summarized_results, initial_results, results_including_passes, start_time, end_time)
 
             results_path = self._filesystem.join(self._results_directory, "results.html")
@@ -430,6 +431,11 @@ class Manager(object):
                    ((result.type != test_expectations.PASS) and
                     (result.type != test_expectations.MISSING) and
                     (result.type != test_expectations.CRASH or include_crashes))]
+
+    def _output_perf_metrics(self, run_time, initial_results):
+        perf_metrics_json = json_results_generator.perf_metrics_for_test(run_time, initial_results.results_by_name.values())
+        perf_metrics_path = self._filesystem.join(self._results_directory, "layout_test_perf_metrics.json")
+        self._filesystem.write_text_file(perf_metrics_path, json.dumps(perf_metrics_json))
 
     def _upload_json_files(self, summarized_results, initial_results, results_including_passes=None, start_time=None, end_time=None):
         """Writes the results of the test run as JSON files into the results
@@ -569,7 +575,7 @@ class Manager(object):
     def _print_expectation_line_for_test(self, format_string, test):
         line = self._expectations.model().get_expectation_line(test)
         print(format_string.format(test, line.expected_behavior, self._expectations.readable_filename_and_line_number(line), line.original_string or ''))
-    
+
     def _print_expectations_for_subset(self, device_type, test_col_width, tests_to_run, tests_to_skip={}):
         format_string = '{{:{width}}} {{}} {{}} {{}}'.format(width=test_col_width)
         if tests_to_skip:

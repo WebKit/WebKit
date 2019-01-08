@@ -1,3 +1,31 @@
+2019-01-08  Zhifei Fang  <zhifei_fang@apple.com>
+  
+        Layout test will generate a perf metric file to results dir.
+        https://bugs.webkit.org/show_bug.cgi?id=192030
+        <rdar://problem/32779516>
+
+        Reviewed by Aakash Jain.
+
+        Layout test running time will be collected to a perf metric file.
+        For now, instead of outputing running time of all tests (which is huge),
+        we aggregate them by test directories which are at most two level deep. 
+
+        * Scripts/webkitpy/layout_tests/controllers/manager.py:
+        (Manager._end_test_run):
+        (Manager._output_perf_metrics):
+        (Manager._print_expectation_line_for_test):
+        * Scripts/webkitpy/layout_tests/layout_package/json_results_generator.py:
+        (add_test_perf_metric):
+        (test_perf_metrics):
+        * Scripts/webkitpy/layout_tests/layout_package/json_results_generator_unittest.py:
+        (JSONGeneratorTest.test_test_timings_trie):
+        (JSONGeneratorTest):
+        (JSONGeneratorTest.test_test_perf_metrics):
+        * Scripts/webkitpy/layout_tests/run_webkit_tests_integrationtest.py:
+        (RebaselineTest.test_reset_results):
+        (RebaselineTest.test_missing_results):
+        (RebaselineTest.test_new_baseline):
+
 2019-01-08  Patrick Griffis  <pgriffis@igalia.com>
 
         [WPE][GTK] Add php-json to install-dependencies

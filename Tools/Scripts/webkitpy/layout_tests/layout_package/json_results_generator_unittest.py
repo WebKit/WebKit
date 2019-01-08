@@ -226,3 +226,42 @@ class JSONGeneratorTest(unittest.TestCase):
         }
 
         self.assertEqual(json.dumps(trie), json.dumps(expected_trie))
+
+    def test_perf_metrics_for_test(self):
+        individual_test_timings = []
+        individual_test_timings.append(json_results_generator.TestResult('foo/bar/baz.html', elapsed_time=1.2))
+        individual_test_timings.append(json_results_generator.TestResult('foo/bar/ba.html', elapsed_time=1.4))
+        individual_test_timings.append(json_results_generator.TestResult('bar.html', elapsed_time=0.0001))
+        metrics = json_results_generator.perf_metrics_for_test(1200, individual_test_timings)
+
+        expected_metrics = {
+            "layout_tests": {
+                "metrics": {
+                    "Time": ["Total", "Arithmetic"],
+                },
+                "tests": {
+                    "foo": {
+                        "metrics": {
+                            "Time": ["Total", "Arithmetic"],
+                        },
+                        "tests": {
+                            "bar":  {
+                                "metrics": {
+                                    "Time": {"current": [2600]},
+                                }
+                            }
+                        }
+                    },
+                    "bar.html": {
+                        "metrics": {
+                            "Time": {"current": [0]},
+                        }
+                    }
+                }
+            },
+            "layout_tests_run_time": {
+                "metrics": {
+                    "Time": {"current": [1200]},
+                }
+            }}
+        self.assertEqual(json.dumps(metrics), json.dumps(expected_metrics))

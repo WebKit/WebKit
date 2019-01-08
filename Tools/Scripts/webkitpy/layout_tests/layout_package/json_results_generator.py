@@ -114,10 +114,72 @@ def test_timings_trie(port, individual_test_timings):
     trie = {}
     for test_result in individual_test_timings:
         test = test_result.test_name
-
         add_path_to_trie(test, int(1000 * test_result.test_run_time), trie)
 
     return trie
+
+
+def _add_perf_metric_for_test(path, time, tests, depth, depth_limit):
+    """
+    Aggregate test time to result for a given test at a specified depth_limit.
+    """
+    if not "/" in path:
+        tests["tests"][path] = {
+            "metrics": {
+                "Time": {
+                    "current": [time],
+                }}}
+        return
+
+    directory, slash, rest = path.partition("/")
+    if depth == depth_limit:
+        if directory not in tests["tests"]:
+            tests["tests"][directory] = {
+                "metrics": {
+                    "Time": {
+                        "current": [time],
+                    }}}
+        else:
+            tests["tests"][directory]["metrics"]["Time"]["current"][0] += time
+        return
+    else:
+        if directory not in tests["tests"]:
+            tests["tests"][directory] = {
+                "metrics": {
+                    "Time": ["Total", "Arithmetic"],
+                },
+                "tests": {}
+            }
+        _add_perf_metric_for_test(rest, time, tests["tests"][directory], depth + 1, depth_limit)
+
+
+def perf_metrics_for_test(run_time, individual_test_timings):
+    """
+    Output two performace metrics
+    1. run time, which is how much time consumed by the layout tests script
+    2. run time of first-level and second-level of test directories
+    """
+    total_run_time = 0
+
+    for test_result in individual_test_timings:
+        total_run_time += int(1000 * test_result.test_run_time)
+
+    perf_metric = {
+        "layout_tests": {
+            "metrics": {
+                "Time": ["Total", "Arithmetic"],
+            },
+            "tests": {}
+        },
+        "layout_tests_run_time": {
+            "metrics": {
+                "Time": {"current": [run_time]},
+            }}}
+    for test_result in individual_test_timings:
+        test = test_result.test_name
+        # for now, we only send two levels of directories
+        _add_perf_metric_for_test(test, int(1000 * test_result.test_run_time), perf_metric["layout_tests"], 1, 2)
+    return perf_metric
 
 
 # FIXME: We already have a TestResult class in test_results.py
