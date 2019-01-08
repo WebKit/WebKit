@@ -604,10 +604,10 @@ static void executeCallback(void* context)
     if (!context)
         return;
 
-    std::unique_ptr<ScrollCompletionCallbackData> callBackData(reinterpret_cast<ScrollCompletionCallbackData*>(context));
+    std::unique_ptr<ScrollCompletionCallbackData> callbackData(reinterpret_cast<ScrollCompletionCallbackData*>(context));
 
-    JSObjectCallAsFunction(callBackData->m_context, callBackData->m_function, nullptr, 0, nullptr, nullptr);
-    JSValueUnprotect(callBackData->m_context, callBackData->m_function);
+    JSObjectCallAsFunction(callbackData->m_context, callbackData->m_function, nullptr, 0, nullptr, nullptr);
+    JSValueUnprotect(callbackData->m_context, callbackData->m_function);
 }
 
 void EventSendingController::callAfterScrollingCompletes(JSValueRef functionCallback)
@@ -626,8 +626,12 @@ void EventSendingController::callAfterScrollingCompletes(JSValueRef functionCall
     JSValueProtect(context, functionCallbackObject);
 
     auto scrollCompletionCallbackData = std::make_unique<ScrollCompletionCallbackData>(context, functionCallbackObject);
-
-    WKBundlePageRegisterScrollOperationCompletionCallback(page, executeCallback, scrollCompletionCallbackData.release());
+    auto scrollCompletionCallbackDataPtr = scrollCompletionCallbackData.release();
+    bool callbackWillBeCalled = WKBundlePageRegisterScrollOperationCompletionCallback(page, executeCallback, scrollCompletionCallbackDataPtr);
+    if (!callbackWillBeCalled) {
+        // Reassign raw pointer to std::unique_ptr<> so it will not be leaked.
+        scrollCompletionCallbackData.reset(scrollCompletionCallbackDataPtr);
+    }
 }
 
 #if ENABLE(TOUCH_EVENTS)

@@ -1,3 +1,19 @@
+2019-01-07  David Kilzer  <ddkilzer@apple.com>
+
+        Leak of ScrollCompletionCallbackData (16 bytes) in com.apple.WebKit.WebContent running WebKit layout tests
+        <https://webkit.org/b/193222>
+        <rdar://problem/46862309>
+
+        Reviewed by Joseph Pecoraro.
+
+        * WebProcess/InjectedBundle/API/c/WKBundlePage.cpp:
+        (WKBundlePageRegisterScrollOperationCompletionCallback): Change
+        to return true if callback will be called, else false.
+        * WebProcess/InjectedBundle/API/c/WKBundlePage.h:
+        (WKBundlePageRegisterScrollOperationCompletionCallback): Change
+        to return `bool` value to denote whether callback will be called
+        (true) or not called (false).
+
 2019-01-07  Alex Christensen  <achristensen@webkit.org>
 
         Remove use of NetworkProcess::singleton from CacheStorage::Engine::from

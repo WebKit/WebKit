@@ -1,3 +1,18 @@
+2019-01-07  David Kilzer  <ddkilzer@apple.com>
+
+        Leak of ScrollCompletionCallbackData (16 bytes) in com.apple.WebKit.WebContent running WebKit layout tests
+        <https://webkit.org/b/193222>
+        <rdar://problem/46862309>
+
+        Reviewed by Joseph Pecoraro.
+
+        * WebKitTestRunner/InjectedBundle/EventSendingController.cpp:
+        (WTR::executeCallback): Fix camel case of variable name.
+        (WTR::EventSendingController::callAfterScrollingCompletes): If
+        WKBundlePageRegisterScrollOperationCompletionCallback() returns
+        false, make sure to release the ScrollCompletionCallbackData
+        object.  This fixes the leak.
+
 2019-01-07  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         [Win] EWS: wincairo-ews cannot apply a patch with *.png
