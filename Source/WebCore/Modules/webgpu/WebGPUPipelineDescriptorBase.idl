@@ -28,5 +28,5 @@
     Conditional=WEBGPU,
     EnabledAtRuntime=WebGPU
 ] dictionary WebGPUPipelineDescriptorBase {
-    // WebGPUPipelineLayout layout;
+    WebGPUPipelineLayout layout;
 };

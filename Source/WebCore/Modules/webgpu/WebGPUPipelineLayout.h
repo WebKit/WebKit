@@ -38,6 +38,8 @@ class WebGPUPipelineLayout : public RefCounted<WebGPUPipelineLayout> {
 public:
     static Ref<WebGPUPipelineLayout> create(Ref<GPUPipelineLayout>&&);
 
+    RefPtr<GPUPipelineLayout> pipelineLayout() { return m_pipelineLayout.copyRef(); }
+
 private:
     explicit WebGPUPipelineLayout(Ref<GPUPipelineLayout>&&);
 

@@ -40,6 +40,8 @@ public:
 
 private:
     explicit GPUPipelineLayout(GPUPipelineLayoutDescriptor&&);
+
+    Vector<RefPtr<const GPUBindGroupLayout>> m_bindGroupLayouts;
 };
 
 } // namespace WebCore

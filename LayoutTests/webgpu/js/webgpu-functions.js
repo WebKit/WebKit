@@ -12,18 +12,19 @@ function createBasicContext(canvas, device) {
     return context;
 }
 
-function createBasicPipeline(shaderModule, device, inputStateDescriptor) {
-    vertexStageDescriptor = {
+function createBasicPipeline(shaderModule, device, pipelineLayout, inputStateDescriptor) {
+    const vertexStageDescriptor = {
         module: shaderModule,
         entryPoint: "vertex_main" 
     };
 
-    fragmentStageDescriptor = {
+    const fragmentStageDescriptor = {
         module: shaderModule,
         entryPoint: "fragment_main"
     };
 
-    pipelineDescriptor = {
+    const pipelineDescriptor = {
+        layout: pipelineLayout,
         vertexStage: vertexStageDescriptor,
         fragmentStage: fragmentStageDescriptor,
         primitiveTopology: "triangleStrip",

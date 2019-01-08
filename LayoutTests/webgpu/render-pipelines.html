@@ -1,55 +1,98 @@
 <!DOCTYPE html>
 <html>
-<script src="../resources/js-test-pre.js"></script>
-<script src="js/basic-webgpu-functions.js"></script>
+<script src="js/webgpu-functions.js"></script>
+<script src="../resources/testharness.js"></script>
+<script src="../resources/testharnessreport.js"></script>
 <script>
-if (window.testRunner)
-    window.testRunner.dumpAsText();
+const shaderCode = `
+#include <metal_stdlib>
+    
+using namespace metal;
 
-function checkBadRenderPipeline(descriptor, testSubjectName) {
-    let pipeline = defaultDevice.createRenderPipeline(descriptor);
+struct Vertex
+{
+    float4 position [[position]];
+};
 
-    if (pipeline)
-        testFailed(`WebGPURenderPipeline was created with an invalid ${testSubjectName}!`);
-    else
-        testPassed(`WebGPURenderPipeline with invalid ${testSubjectName} was not created.`);
+vertex Vertex vertex_main(uint vid [[vertex_id]])
+{
+    Vertex v;
+    switch (vid) {
+    case 0:
+        v.position = float4(-1, 1, 0, 1);
+        break;
+    case 1:
+        v.position = float4(-1, -1, 0, 1);
+        break;
+    case 2:
+        v.position = float4(1, 1, 0, 1);
+        break;
+    default:
+        v.position = float4(1, -1, 0, 1);
+    }
+    return v;
 }
 
-function setUpBadPipelines() {
-    checkBadRenderPipeline({}, "WebGPURenderPipelineDescriptor");
+fragment float4 fragment_main(Vertex vertexIn [[stage_in]])
+{
+    return float4(0.0, 1.0, 0.0, 1.0);
+}
+`
 
-    let noModuleVertexDescriptor = {
+promise_test(async () => {
+    const device = await getBasicDevice();
+    const shaderModule = device.createShaderModule({ code: shaderCode });
+
+    const layoutBinding = { binding: 0, visibility: WebGPUShaderStageBit.VERTEX, type: "storageBuffer" };
+    const bindGroupLayout = device.createBindGroupLayout({ bindings: [layoutBinding] });
+    const pipelineLayout = device.createPipelineLayout({ bindGroupLayouts: [bindGroupLayout] });
+
+    const pipeline = createBasicPipeline(shaderModule, device, pipelineLayout);
+    assert_true(pipeline instanceof WebGPURenderPipeline, "Successfully created WebGPURenderPipeline");
+}, "Create basic WebGPURenderPipeline");
+
+function checkBadRenderPipeline(device, descriptor, testSubjectName) {
+    assert_true(!device.createRenderPipeline(descriptor), `WebGPURenderPipeline with invalid ${testSubjectName} was not created.`);
+}
+
+promise_test(async() => {
+    const device = await getBasicDevice();
+    const shaderModule = device.createShaderModule({ code: shaderCode });
+    checkBadRenderPipeline(device, {}, "WebGPURenderPipelineDescriptor");
+
+    const noModuleVertexDescriptor = {
         entryPoint: "vertex_main"
     }
-    let noModulePipelineDescriptor = {
+
+    const fragmentStageDescriptor = {
+        module: shaderModule,
+        entryPoint: "fragment_main"
+    };
+
+    const noModulePipelineDescriptor = {
         vertexStage: noModuleVertexDescriptor, 
         fragmentStage: fragmentStageDescriptor,
         primitiveTopology: "triangleList"
     }
-    checkBadRenderPipeline(noModulePipelineDescriptor, "shader module");
+    checkBadRenderPipeline(device, noModulePipelineDescriptor, "shader module");
 
     // A (Metal) renderpipeline must have a vertex function.
-    let noVertexPipelineDescriptor = {
+    const noVertexPipelineDescriptor = {
         fragmentStage: fragmentStageDescriptor,
         primitiveTopology: "triangleList"
     }
-    checkBadRenderPipeline(noVertexPipelineDescriptor, "vertex shader stage")
+    checkBadRenderPipeline(device, noVertexPipelineDescriptor, "vertex shader stage")
 
-    let badEntryPointDescriptor = { 
+    const badEntryPointDescriptor = { 
         module: shaderModule,
         entryPoint: "Vertex_Main" 
     };
-    let badEntryPointPipelineDescsriptor = {
+    const badEntryPointPipelineDescsriptor = {
         vertexStage: badEntryPointDescriptor, 
         fragmentStage: fragmentStageDescriptor,
         primitiveTopology: "triangleList"
     }
-    checkBadRenderPipeline(badEntryPointPipelineDescsriptor, "vertex shader entry point");
-}
-
-runWebGPUTests([setUpPipeline, setUpBadPipelines]);
-
-successfullyParsed = true;
+    checkBadRenderPipeline(device, badEntryPointPipelineDescsriptor, "vertex shader entry point");
+}, "Bad pipelines were not created");
 </script>
-<script src="../resources/js-test-post.js"></script>
 </html>

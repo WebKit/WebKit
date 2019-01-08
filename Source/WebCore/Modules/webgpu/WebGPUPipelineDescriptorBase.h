@@ -27,10 +27,12 @@
 
 #if ENABLE(WEBGPU)
 
+#include "WebGPUPipelineLayout.h"
+
 namespace WebCore {
 
 struct WebGPUPipelineDescriptorBase {
-    // WebGPUPipelineLayout layout;
+    RefPtr<WebGPUPipelineLayout> layout;
 };
 
 } // namespace WebCore

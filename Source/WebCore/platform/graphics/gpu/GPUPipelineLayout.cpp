@@ -35,9 +35,9 @@ Ref<GPUPipelineLayout> GPUPipelineLayout::create(GPUPipelineLayoutDescriptor&& d
     return adoptRef(*new GPUPipelineLayout(WTFMove(descriptor)));
 }
 
-GPUPipelineLayout::GPUPipelineLayout(GPUPipelineLayoutDescriptor&&)
+GPUPipelineLayout::GPUPipelineLayout(GPUPipelineLayoutDescriptor&& descriptor)
+    : m_bindGroupLayouts(descriptor.bindGroupLayouts)
 {
-    // FIXME: Stub implementation.
 }
 
 } // namespace WebCore

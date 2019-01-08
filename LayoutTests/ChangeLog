@@ -1,3 +1,17 @@
+2019-01-08  Justin Fan  <justin_fan@apple.com>
+
+        [WebGPU] Update createRenderPipeline for WebGPUPipelineLayout
+        https://bugs.webkit.org/show_bug.cgi?id=193247
+
+        Reviewed by Dean Jackson.
+
+        Update render-pipelines.html to WPT form and to accomodate WebGPUPipelineLayouts.
+
+        * webgpu/js/webgpu-functions.js:
+        (createBasicPipeline): Added option to include a WebGPUPipelineLayout.
+        * webgpu/render-pipelines-expected.txt:
+        * webgpu/render-pipelines.html:
+
 2019-01-08  Chris Dumez  <cdumez@apple.com>
 
         Prevent cross-site top-level navigations from third-party iframes

@@ -1,10 +1,4 @@
-PASS [object WebGPU] is defined.
-PASS WebGPURenderPipeline with invalid WebGPURenderPipelineDescriptor was not created.
-PASS WebGPURenderPipeline with invalid shader module was not created.
-PASS WebGPURenderPipeline with invalid vertex shader stage was not created.
-PASS WebGPURenderPipeline with invalid vertex shader entry point was not created.
-All tests complete.
-PASS successfullyParsed is true
 
-TEST COMPLETE
+PASS Create basic WebGPURenderPipeline 
+PASS Bad pipelines were not created 
 

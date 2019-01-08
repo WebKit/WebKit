@@ -1,3 +1,27 @@
+2019-01-08  Justin Fan  <justin_fan@apple.com>
+
+        [WebGPU] Update createRenderPipeline for WebGPUPipelineLayout
+        https://bugs.webkit.org/show_bug.cgi?id=193247
+
+        Reviewed by Dean Jackson.
+
+        Add WebGPUPipelineLayout to WebGPURenderPipeline via WebGPUPipelineDescriptorBase.
+
+        Test: Updated render-pipelines.html to test new functionality.
+
+        * Modules/webgpu/WebGPUDevice.cpp:
+        (WebCore::WebGPUDevice::createRenderPipeline const): Convert WebGPUPipelineLayout to GPUPipelineLayout.
+        * Modules/webgpu/WebGPUPipelineDescriptorBase.h:
+        * Modules/webgpu/WebGPUPipelineDescriptorBase.idl: Add layout field.
+        * Modules/webgpu/WebGPUPipelineLayout.h: 
+        (WebCore::WebGPUPipelineLayout::pipelineLayout): Added. Getter.
+        * platform/graphics/gpu/GPUPipelineDescriptorBase.h: Updated from out-of-date version.
+        * platform/graphics/gpu/GPUPipelineLayout.cpp:
+        (WebCore::GPUPipelineLayout::GPUPipelineLayout): Now retains bindGroupLayouts from descriptor.
+        * platform/graphics/gpu/GPUPipelineLayout.h:
+        * platform/graphics/gpu/GPURenderPipelineDescriptor.h: Now inherits from GPUPipelineDescriptorBase.
+        (WebCore::GPURenderPipelineDescriptor::GPURenderPipelineDescriptor): Custom constructor for non-aggregate struct.
+
 2019-01-08  Chris Dumez  <cdumez@apple.com>
 
         Prevent cross-site top-level navigations from third-party iframes

@@ -103,6 +103,8 @@ static Optional<GPUPipelineStageDescriptor> validateAndConvertPipelineStage(cons
 
 RefPtr<WebGPURenderPipeline> WebGPUDevice::createRenderPipeline(WebGPURenderPipelineDescriptor&& descriptor) const
 {
+    auto pipelineLayout = descriptor.layout ? descriptor.layout->pipelineLayout() : nullptr;
+
     auto vertexStage = validateAndConvertPipelineStage(descriptor.vertexStage);
     auto fragmentStage = validateAndConvertPipelineStage(descriptor.fragmentStage);
 
@@ -111,7 +113,7 @@ RefPtr<WebGPURenderPipeline> WebGPUDevice::createRenderPipeline(WebGPURenderPipe
         return nullptr;
     }
 
-    if (auto pipeline = m_device->createRenderPipeline(GPURenderPipelineDescriptor { WTFMove(*vertexStage), WTFMove(*fragmentStage), descriptor.primitiveTopology, descriptor.inputState }))
+    if (auto pipeline = m_device->createRenderPipeline(GPURenderPipelineDescriptor { WTFMove(pipelineLayout), WTFMove(*vertexStage), WTFMove(*fragmentStage), descriptor.primitiveTopology, WTFMove(descriptor.inputState) }))
         return WebGPURenderPipeline::create(pipeline.releaseNonNull());
     return nullptr;
 }
