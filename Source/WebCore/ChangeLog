@@ -1,3 +1,25 @@
+2019-01-08  Alex Christensen  <achristensen@webkit.org>
+
+        Stop using NetworkStorageSession in WebProcess
+        https://bugs.webkit.org/show_bug.cgi?id=193236
+
+        Reviewed by Don Olmstead.
+
+        No change in behavior.  Some code was only used for ResourceHandle, which isn't used in modern WebKit,
+        and for cookies, which are handled in the NetworkProcess in modern WebKit.
+
+        * loader/CookieJar.cpp:
+        (WebCore::storageSession):
+        * loader/EmptyClients.cpp:
+        * platform/network/NetworkingContext.h:
+        * platform/network/mac/ResourceHandleMac.mm:
+        (WebCore::ResourceHandle::createNSURLConnection):
+        (WebCore::ResourceHandle::start):
+        (WebCore::ResourceHandle::platformLoadResourceSynchronously):
+        (WebCore::ResourceHandle::willSendRequest):
+        (WebCore::ResourceHandle::tryHandlePasswordBasedAuthentication):
+        (WebCore::ResourceHandle::receivedCredential):
+
 2019-01-08  Chris Dumez  <cdumez@apple.com>
 
         Regression(PSON-r239182): Blank view when navigating back and forth between google.com and stack overflow

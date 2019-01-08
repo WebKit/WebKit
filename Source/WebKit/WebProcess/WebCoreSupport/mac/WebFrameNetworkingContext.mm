@@ -43,20 +43,6 @@
 namespace WebKit {
 using namespace WebCore;
 
-void WebFrameNetworkingContext::ensureWebsiteDataStoreSession(WebsiteDataStoreParameters&& parameters)
-{
-    ASSERT(!hasProcessPrivilege(ProcessPrivilege::CanAccessRawCookies));
-    auto sessionID = parameters.networkSessionParameters.sessionID;
-    if (NetworkStorageSession::storageSession(sessionID))
-        return;
-
-    String base = WebProcess::singleton().uiProcessBundleIdentifier();
-    if (base.isNull())
-        base = [[NSBundle mainBundle] bundleIdentifier];
-
-    NetworkStorageSession::ensureSession(sessionID, base + '.' + String::number(sessionID.sessionID()));
-}
-
 bool WebFrameNetworkingContext::localFileContentSniffingEnabled() const
 {
     return frame() && frame()->settings().localFileContentSniffingEnabled();
@@ -82,19 +68,6 @@ String WebFrameNetworkingContext::sourceApplicationIdentifier() const
 ResourceError WebFrameNetworkingContext::blockedError(const ResourceRequest& request) const
 {
     return frame()->loader().client().blockedError(request);
-}
-
-NetworkStorageSession& WebFrameNetworkingContext::storageSession() const
-{
-    ASSERT(RunLoop::isMain());
-    ASSERT(!hasProcessPrivilege(ProcessPrivilege::CanAccessRawCookies));
-    if (frame()) {
-        if (auto* storageSession = WebCore::NetworkStorageSession::storageSession(frame()->page()->sessionID()))
-            return *storageSession;
-        // Some requests may still be coming shortly after WebProcess was told to destroy its session.
-        LOG_ERROR("WEB Invalid session ID. Please file a bug unless you just disabled private browsing, in which case it's an expected race.");
-    }
-    return NetworkStorageSession::defaultStorageSession();
 }
 
 WebFrameLoaderClient* WebFrameNetworkingContext::webFrameLoaderClient() const

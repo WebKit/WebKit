@@ -58,15 +58,6 @@ WebFrameNetworkingContext::WebFrameNetworkingContext(WebFrame* frame)
 {
 }
 
-NetworkStorageSession& WebFrameNetworkingContext::storageSession() const
-{
-    if (frame()) {
-        if (auto* storageSession = NetworkStorageSession::storageSession(frame()->page()->sessionID()))
-            return *storageSession;
-    }
-    return NetworkStorageSession::defaultStorageSession();
-}
-
 WebFrameLoaderClient* WebFrameNetworkingContext::webFrameLoaderClient() const
 {
     if (!frame())

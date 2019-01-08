@@ -54,7 +54,7 @@ static NetworkingContext* networkingContext(const Document& document)
 inline NetworkStorageSession& storageSession(const Document& document)
 {
     NetworkingContext* context = networkingContext(document);
-    return context ? context->storageSession() : NetworkStorageSession::defaultStorageSession();
+    return context ? *context->storageSession() : NetworkStorageSession::defaultStorageSession();
 }
 
 static IncludeSecureCookies shouldIncludeSecureCookies(const Document& document, const URL& url)
