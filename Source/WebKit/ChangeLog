@@ -1,3 +1,33 @@
+2019-01-07  Chris Dumez  <cdumez@apple.com>
+
+        Cannot scoll for 5 seconds after swiping back on quoteunquoteapps.com
+        https://bugs.webkit.org/show_bug.cgi?id=193215
+        <rdar://problem/45108222>
+
+        Reviewed by Tim Horton.
+
+        When doing the history navigation, if the source and destination history
+        items are clones then we will not trigger a main frame load. We may
+        however trigger loads in subframes if needed. This was an issue for the
+        ViewGestureController because it was expecting a main frame load after
+        calling WebPageProxy::goToBackForwardItem() in order to determine when
+        taking down the view snapshot is appropriate.
+
+        To address the problem, the ViewGestureController now takes the snapshot
+        down as soon as the swipe gesture ends when the source and destination
+        items are clones.
+
+        * Shared/WebBackForwardListItem.cpp:
+        (WebKit::childItemWithTarget):
+        (WebKit::WebBackForwardListItem::itemIsInSameDocument const):
+        (WebKit::hasSameFrames):
+        (WebKit::WebBackForwardListItem::itemIsClone):
+        * Shared/WebBackForwardListItem.h:
+        * UIProcess/ios/ViewGestureControllerIOS.mm:
+        (WebKit::ViewGestureController::endSwipeGesture):
+        * UIProcess/mac/ViewGestureControllerMac.mm:
+        (WebKit::ViewGestureController::endSwipeGesture):
+
 2019-01-07  David Kilzer  <ddkilzer@apple.com>
 
         Leak of ScrollCompletionCallbackData (16 bytes) in com.apple.WebKit.WebContent running WebKit layout tests

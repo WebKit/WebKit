@@ -300,6 +300,13 @@ void ViewGestureController::endSwipeGesture(WebBackForwardListItem* targetItem, 
         return;
     }
 
+    auto* currentItem = m_webPageProxyForBackForwardListForCurrentSwipe->backForwardList().currentItem();
+    // The main frame will not be navigated so hide the snapshot right away.
+    if (currentItem && currentItem->itemIsClone(*targetItem)) {
+        removeSwipeSnapshot();
+        return;
+    }
+
     // FIXME: Should we wait for VisuallyNonEmptyLayout like we do on Mac?
     m_snapshotRemovalTracker.start(SnapshotRemovalTracker::RenderTreeSizeThreshold
         | SnapshotRemovalTracker::RepaintAfterNavigation

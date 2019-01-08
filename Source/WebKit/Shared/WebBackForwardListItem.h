@@ -64,6 +64,7 @@ public:
     const String& title() const { return m_itemState.pageState.title; }
 
     bool itemIsInSameDocument(const WebBackForwardListItem&) const;
+    bool itemIsClone(const WebBackForwardListItem&);
 
 #if PLATFORM(COCOA)
     ViewSnapshot* snapshot() const { return m_itemState.snapshot.get(); }
