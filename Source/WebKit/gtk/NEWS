@@ -1,4 +1,18 @@
 =================
+WebKitGTK+ 2.23.2
+=================
+
+What's new in WebKitGTK+ 2.23.2?
+
+  - Fix rendering artifacts in some websites with accelerated compositing enabled.
+  - Add initial support for variation fonts.
+  - Add new API to convert a URI to a format for display.
+  - Make scrollbars follow gtk-primary-button-warps-slider setting.
+  - Fix crashes when closing the WebDriver session.
+  - Fix the build with OpenGL disabled.
+  - Fix several crashes and rendering issues.
+
+=================
 WebKitGTK+ 2.23.1
 =================
 
