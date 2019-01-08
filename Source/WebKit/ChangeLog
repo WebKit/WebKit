@@ -1,3 +1,16 @@
+2019-01-08  Patrick Griffis  <pgriffis@igalia.com>
+
+        [GTK][WPE] Remove DConf permissions from sandbox
+        https://bugs.webkit.org/show_bug.cgi?id=193021
+
+        Reviewed by Michael Catanzaro.
+
+        The latest development releases of xdg-desktop-portal and gtk3 use a
+        new portal for settings on Wayland org.freedesktop.portal.Settings.
+
+        * UIProcess/Launcher/glib/BubblewrapLauncher.cpp:
+        (WebKit::bubblewrapSpawn):
+
 2019-01-08  Alex Christensen  <achristensen@webkit.org>
 
         Stop using NetworkStorageSession in WebProcess

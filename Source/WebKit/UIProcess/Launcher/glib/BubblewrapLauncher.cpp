@@ -308,22 +308,6 @@ static void bindX11(Vector<CString>& args)
         bindIfExists(args, xauth);
 }
 
-static void bindDconf(Vector<CString>& args)
-{
-    const char* runtimeDir = g_get_user_runtime_dir();
-    GUniquePtr<char> dconfRuntimeDir(g_build_filename(runtimeDir, "dconf", nullptr));
-    args.appendVector(Vector<CString>({ "--bind", dconfRuntimeDir.get(), dconfRuntimeDir.get() }));
-
-    const char* dconfDir = g_getenv("DCONF_USER_CONFIG_DIR");
-    if (dconfDir)
-        bindIfExists(args, dconfDir);
-    else {
-        const char* configDir = g_get_user_config_dir();
-        GUniquePtr<char> dconfConfigDir(g_build_filename(configDir, "dconf", nullptr));
-        bindIfExists(args, dconfConfigDir.get(), BindFlags::ReadWrite);
-    }
-}
-
 #if PLATFORM(WAYLAND) && USE(EGL)
 static void bindWayland(Vector<CString>& args)
 {
@@ -795,8 +779,6 @@ GRefPtr<GSubprocess> bubblewrapSpawn(GSubprocessLauncher* launcher, const Proces
         }
 
         bindDBusSession(sandboxArgs, proxy);
-        // FIXME: This needs to be restricted, upstream is working on it.
-        bindDconf(sandboxArgs);
         // FIXME: We should move to Pipewire as soon as viable, Pulse doesn't restrict clients atm.
         bindPulse(sandboxArgs);
         bindFonts(sandboxArgs);
@@ -811,8 +793,6 @@ GRefPtr<GSubprocess> bubblewrapSpawn(GSubprocessLauncher* launcher, const Proces
 
         if (!proxy.isRunning()) {
             Vector<CString> permissions = {
-                // FIXME: Used by GTK on Wayland.
-                "--talk=ca.desrt.dconf",
                 // GStreamers plugin install helper.
                 "--call=org.freedesktop.PackageKit=org.freedesktop.PackageKit.Modify2.InstallGStreamerResources@/org/freedesktop/PackageKit"
             };
