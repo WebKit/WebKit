@@ -262,15 +262,6 @@ JS_EXPORT JSValueRef JSValueMakeNumber(JSContextRef ctx, double number);
 
 /*!
 @function
-@abstract            Creates a JavaScript value of the symbol type.
-@param ctx           The execution context to use.
-@param description   A description of the newly created symbol value.
-@result              A unique JSValue of the symbol type, whose description matches the one provided.
-*/
-JS_EXPORT JSValueRef JSValueMakeSymbol(JSContextRef ctx, JSStringRef description) JSC_API_AVAILABLE(macosx(JSC_MAC_TBA), ios(JSC_IOS_TBA));
-
-/*!
-@function
 @abstract       Creates a JavaScript value of the string type.
 @param ctx  The execution context to use.
 @param string   The JSString to assign to the newly created JSValue. The
