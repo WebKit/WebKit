@@ -1,3 +1,30 @@
+2019-01-08  Brian Burg  <bburg@apple.com>
+
+        Remove WKPageRef-based SPI in _WKAutomationSessionDelegate
+        https://bugs.webkit.org/show_bug.cgi?id=193202
+        <rdar://problem/37408718>
+
+        Reviewed by Alex Christensen.
+
+        This code is no longer used, it should be deleted.
+
+        * UIProcess/API/Cocoa/_WKAutomationSessionDelegate.h:
+        * UIProcess/Cocoa/AutomationSessionClient.h:
+        * UIProcess/Cocoa/AutomationSessionClient.mm:
+        (WebKit::AutomationSessionClient::AutomationSessionClient):
+        (WebKit::AutomationSessionClient::requestNewPageWithOptions):
+        (WebKit::AutomationSessionClient::requestSwitchToPage):
+        (WebKit::AutomationSessionClient::requestHideWindowOfPage):
+        (WebKit::AutomationSessionClient::requestRestoreWindowOfPage):
+        (WebKit::AutomationSessionClient::requestMaximizeWindowOfPage):
+        (WebKit::AutomationSessionClient::isShowingJavaScriptDialogOnPage):
+        (WebKit::AutomationSessionClient::dismissCurrentJavaScriptDialogOnPage):
+        (WebKit::AutomationSessionClient::acceptCurrentJavaScriptDialogOnPage):
+        (WebKit::AutomationSessionClient::messageOfCurrentJavaScriptDialogOnPage):
+        (WebKit::AutomationSessionClient::setUserInputForCurrentJavaScriptPromptOnPage):
+        (WebKit::AutomationSessionClient::typeOfCurrentJavaScriptDialogOnPage):
+        Clean up the delegate bridging methods now that only one delegate implementation is possible.
+
 2019-01-08  Patrick Griffis  <pgriffis@igalia.com>
 
         [GTK][WPE] Remove DConf permissions from sandbox

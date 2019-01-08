@@ -74,19 +74,6 @@ private:
         bool messageOfCurrentJavaScriptDialogForWebView : 1;
         bool setUserInputForCurrentJavaScriptPromptForWebView : 1;
         bool typeOfCurrentJavaScriptDialogForWebView : 1;
-
-        // FIXME 37408718: these delegate methods should be removed.
-        bool requestNewPageWithOptions : 1;
-        bool requestSwitchToPage : 1;
-        bool requestHideWindowOfPage : 1;
-        bool requestRestoreWindowOfPage : 1;
-        bool requestMaximizeWindowOfPage : 1;
-        bool isShowingJavaScriptDialogOnPage : 1;
-        bool dismissCurrentJavaScriptDialogOnPage : 1;
-        bool acceptCurrentJavaScriptDialogOnPage : 1;
-        bool messageOfCurrentJavaScriptDialogOnPage : 1;
-        bool setUserInputForCurrentJavaScriptPromptOnPage : 1;
-        bool typeOfCurrentJavaScriptDialogOnPage : 1;
     } m_delegateMethods;
 };
 
