@@ -58,7 +58,7 @@ public:
 
     virtual String sourceApplicationIdentifier() const { return emptyString(); }
 
-    virtual NetworkStorageSession* storageSession() const = 0;
+    virtual NetworkStorageSession& storageSession() const = 0;
 
 #if PLATFORM(WIN)
     virtual ResourceError blockedError(const ResourceRequest&) const = 0;

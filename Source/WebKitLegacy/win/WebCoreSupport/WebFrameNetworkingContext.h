@@ -47,5 +47,5 @@ private:
     }
 
     WebCore::ResourceError blockedError(const WebCore::ResourceRequest&) const override;
-    WebCore::NetworkStorageSession* storageSession() const override;
+    WebCore::NetworkStorageSession& storageSession() const override;
 };

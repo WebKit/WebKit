@@ -56,7 +56,7 @@ private:
     RetainPtr<CFDataRef> sourceApplicationAuditData() const override;
     String sourceApplicationIdentifier() const override;
     WebCore::ResourceError blockedError(const WebCore::ResourceRequest&) const override;
-    WebCore::NetworkStorageSession* storageSession() const override { return nullptr; }
+    WebCore::NetworkStorageSession& storageSession() const override;
 };
 
 }

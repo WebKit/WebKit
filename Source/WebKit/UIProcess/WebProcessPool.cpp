@@ -689,8 +689,10 @@ void WebProcessPool::setAnyPageGroupMightHavePrivateBrowsingEnabled(bool private
 {
     if (privateBrowsingEnabled) {
         sendToNetworkingProcess(Messages::NetworkProcess::AddWebsiteDataStore(WebsiteDataStoreParameters::legacyPrivateSessionParameters()));
+        sendToAllProcesses(Messages::WebProcess::AddWebsiteDataStore(WebsiteDataStoreParameters::legacyPrivateSessionParameters()));
     } else {
         networkProcess()->removeSession(PAL::SessionID::legacyPrivateSessionID());
+        sendToAllProcesses(Messages::WebProcess::DestroySession(PAL::SessionID::legacyPrivateSessionID()));
     }
 }
 
@@ -763,6 +765,8 @@ RefPtr<WebProcessProxy> WebProcessPool::tryTakePrewarmedProcess(WebsiteDataStore
 
     ASSERT(m_prewarmedProcess->isPrewarmed());
     m_prewarmedProcess->markIsNoLongerInPrewarmedPool();
+    if (&m_prewarmedProcess->websiteDataStore() != &websiteDataStore)
+        m_prewarmedProcess->send(Messages::WebProcess::AddWebsiteDataStore(websiteDataStore.parameters()), 0);
 
     return std::exchange(m_prewarmedProcess, nullptr);
 }
@@ -850,6 +854,8 @@ void WebProcessPool::initializeNewWebProcess(WebProcessProxy& process, WebsiteDa
             SandboxExtension::createHandleWithoutResolvingPath(parameters.javaScriptConfigurationDirectory, SandboxExtension::Type::ReadWrite, parameters.javaScriptConfigurationDirectoryExtensionHandle);
     }
 
+    parameters.shouldUseTestingNetworkSession = m_shouldUseTestingNetworkSession;
+
     parameters.cacheModel = cacheModel();
     parameters.languages = userPreferredLanguages();
 
@@ -935,6 +941,9 @@ void WebProcessPool::initializeNewWebProcess(WebProcessProxy& process, WebsiteDa
 #if PLATFORM(COCOA)
     process.send(Messages::WebProcess::SetQOS(webProcessLatencyQOS(), webProcessThroughputQOS()), 0);
 #endif
+
+    if (WebPreferences::anyPagesAreUsingPrivateBrowsing())
+        process.send(Messages::WebProcess::AddWebsiteDataStore(WebsiteDataStoreParameters::legacyPrivateSessionParameters()), 0);
 
     if (m_automationSession)
         process.send(Messages::WebProcess::EnsureAutomationSessionProxy(m_automationSession->sessionIdentifier()), 0);
@@ -1179,10 +1188,12 @@ void WebProcessPool::pageBeginUsingWebsiteDataStore(WebPageProxy& page)
         ASSERT(page.websiteDataStore().parameters().networkSessionParameters.sessionID == sessionID);
         if (m_networkProcess)
             m_networkProcess->addSession(makeRef(page.websiteDataStore()));
+        page.process().send(Messages::WebProcess::AddWebsiteDataStore(WebsiteDataStoreParameters::privateSessionParameters(sessionID)), 0);
         page.websiteDataStore().clearPendingCookies();
     } else if (sessionID != PAL::SessionID::defaultSessionID()) {
         if (m_networkProcess)
             m_networkProcess->addSession(makeRef(page.websiteDataStore()));
+        page.process().send(Messages::WebProcess::AddWebsiteDataStore(page.websiteDataStore().parameters()), 0);
         page.websiteDataStore().clearPendingCookies();
     }
 
@@ -1213,6 +1224,7 @@ void WebProcessPool::pageEndUsingWebsiteDataStore(WebPageProxy& page)
         // The last user of this non-default PAL::SessionID is gone, so clean it up in the child processes.
         if (networkProcess())
             networkProcess()->removeSession(sessionID);
+        page.process().send(Messages::WebProcess::DestroySession(sessionID), 0);
     }
 }
 
@@ -2225,6 +2237,9 @@ void WebProcessPool::processForNavigationInternal(WebPageProxy& page, const API:
         // multiple WebPages with the same ID in a given WebProcess currently (https://bugs.webkit.org/show_bug.cgi?id=191166).
         if (&(*it)->page() == &page)
             m_suspendedPages.remove(it);
+
+        if (&process->websiteDataStore() != &page.websiteDataStore())
+            process->send(Messages::WebProcess::AddWebsiteDataStore(page.websiteDataStore().parameters()), 0);
 
         return completionHandler(WTFMove(process), nullptr, reason);
     }
