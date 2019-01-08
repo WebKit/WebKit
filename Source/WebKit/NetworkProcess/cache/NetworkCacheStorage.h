@@ -78,7 +78,7 @@ public:
     };
 
     // This may call completion handler synchronously on failure.
-    using RetrieveCompletionHandler = Function<bool (std::unique_ptr<Record>, const Timings&)>;
+    using RetrieveCompletionHandler = CompletionHandler<bool(std::unique_ptr<Record>, const Timings&)>;
     void retrieve(const Key&, unsigned priority, RetrieveCompletionHandler&&);
 
     using MappedBodyHandler = Function<void (const Data& mappedBody)>;

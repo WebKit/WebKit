@@ -1,5 +1,36 @@
 2019-01-08  Alex Christensen  <achristensen@webkit.org>
 
+        Stop using NetworkProcess::singleton in NetworkCache code
+        https://bugs.webkit.org/show_bug.cgi?id=193243
+
+        Reviewed by Brent Fulgham.
+
+        * NetworkProcess/cache/NetworkCache.cpp:
+        (WebKit::NetworkCache::Cache::open):
+        (WebKit::NetworkCache::Cache::Cache):
+        * NetworkProcess/cache/NetworkCache.h:
+        (WebKit::NetworkCache::Cache::networkProcess):
+        * NetworkProcess/cache/NetworkCacheSpeculativeLoadManager.cpp:
+        (WebKit::NetworkCache::logSpeculativeLoadingDiagnosticMessage):
+        (WebKit::NetworkCache::SpeculativeLoadManager::canRetrieve const):
+        (WebKit::NetworkCache::SpeculativeLoadManager::addPreloadedEntry):
+        (WebKit::NetworkCache::SpeculativeLoadManager::revalidateSubresource):
+        (WebKit::NetworkCache::SpeculativeLoadManager::preloadEntry):
+        (WebKit::NetworkCache::SpeculativeLoadManager::startSpeculativeRevalidation):
+        * NetworkProcess/cache/NetworkCacheStatistics.cpp:
+        (WebKit::NetworkCache::Statistics::recordRetrievalRequest):
+        (WebKit::NetworkCache::Statistics::recordNotUsingCacheForRequest):
+        (WebKit::NetworkCache::Statistics::recordRetrievalFailure):
+        (WebKit::NetworkCache::Statistics::recordRetrievedCachedEntry):
+        (WebKit::NetworkCache::Statistics::recordRevalidationSuccess):
+        * NetworkProcess/cache/NetworkCacheStorage.cpp:
+        (WebKit::NetworkCache::retrieveFromMemory):
+        * NetworkProcess/cache/NetworkCacheStorage.h:
+        * NetworkProcess/cocoa/NetworkProcessCocoa.mm:
+        (WebKit::NetworkProcess::platformInitializeNetworkProcessCocoa):
+
+2019-01-08  Alex Christensen  <achristensen@webkit.org>
+
         Call CompletionHandler when destroying a NetworkCache::Storage::WriteOperation
         https://bugs.webkit.org/show_bug.cgi?id=193251
 

@@ -122,7 +122,7 @@ void NetworkProcess::platformInitializeNetworkProcessCocoa(const NetworkProcessC
         cacheOptions.add(NetworkCache::Cache::Option::SpeculativeRevalidation);
 #endif
 
-    m_cache = NetworkCache::Cache::open(m_diskCacheDirectory, cacheOptions);
+    m_cache = NetworkCache::Cache::open(*this, m_diskCacheDirectory, cacheOptions);
     if (!m_cache)
         RELEASE_LOG_ERROR(NetworkCache, "Failed to initialize the WebKit network disk cache");
 

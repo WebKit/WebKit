@@ -41,6 +41,9 @@ class SharedBuffer;
 }
 
 namespace WebKit {
+
+class NetworkProcess;
+
 namespace NetworkCache {
 
 class Cache;
@@ -97,7 +100,7 @@ public:
         SpeculativeRevalidation = 1 << 3,
 #endif
     };
-    static RefPtr<Cache> open(const String& cachePath, OptionSet<Option>);
+    static RefPtr<Cache> open(NetworkProcess&, const String& cachePath, OptionSet<Option>);
 
     void setCapacity(size_t);
 
@@ -143,10 +146,12 @@ public:
     SpeculativeLoadManager* speculativeLoadManager() { return m_speculativeLoadManager.get(); }
 #endif
 
+    NetworkProcess& networkProcess() { return m_networkProcess.get(); }
+
     ~Cache();
 
 private:
-    Cache(Ref<Storage>&&, OptionSet<Option> options);
+    Cache(NetworkProcess&, Ref<Storage>&&, OptionSet<Option> options);
 
     Key makeCacheKey(const WebCore::ResourceRequest&);
 
@@ -158,6 +163,7 @@ private:
     Optional<Seconds> maxAgeCap(Entry&, const WebCore::ResourceRequest&, PAL::SessionID);
 
     Ref<Storage> m_storage;
+    Ref<NetworkProcess> m_networkProcess;
 
 #if ENABLE(NETWORK_CACHE_SPECULATIVE_REVALIDATION)
     std::unique_ptr<WebCore::LowPowerModeNotifier> m_lowPowerModeNotifier;
@@ -168,5 +174,5 @@ private:
     unsigned m_traverseCount { 0 };
 };
 
-}
-}
+} // namespace NetworkCache
+} // namespace WebKit

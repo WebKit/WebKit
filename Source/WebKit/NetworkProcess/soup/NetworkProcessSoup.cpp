@@ -119,7 +119,7 @@ void NetworkProcess::platformInitializeNetworkProcess(const NetworkProcessCreati
         cacheOptions.add(NetworkCache::Cache::Option::SpeculativeRevalidation);
 #endif
 
-    m_cache = NetworkCache::Cache::open(m_diskCacheDirectory, cacheOptions);
+    m_cache = NetworkCache::Cache::open(*this, m_diskCacheDirectory, cacheOptions);
 
     if (!parameters.cookiePersistentStoragePath.isEmpty()) {
         supplement<WebCookieManager>()->setCookiePersistentStorage(parameters.cookiePersistentStoragePath,
