@@ -1,3 +1,11 @@
+2019-01-08  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        Unreviewed, silence -Wformat warnings
+
+        * NetworkProcess/NetworkHTTPSUpgradeChecker.cpp:
+        (WebKit::NetworkHTTPSUpgradeChecker::NetworkHTTPSUpgradeChecker):
+        (WebKit::NetworkHTTPSUpgradeChecker::query):
+
 2019-01-08  Alex Christensen  <achristensen@webkit.org>
 
         Unreviewed, rolling out r239727.
