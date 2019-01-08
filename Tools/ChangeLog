@@ -1,3 +1,16 @@
+2019-01-07  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [Win] EWS: wincairo-ews cannot apply a patch with *.png
+        https://bugs.webkit.org/show_bug.cgi?id=193044
+
+        Reviewed by Daniel Bates.
+
+        WinCairo EWS bots are using Windows Perl. Binary files should be
+        opened as binary mode.
+
+        * Scripts/svn-apply:
+        (handleGitBinaryChange): Use 'binmode' for binary file handles.
+
 2019-01-07  Don Olmstead  <don.olmstead@sony.com>
 
         [CMake] Add ENABLE_CSS_TYPED_OM option

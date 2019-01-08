@@ -264,6 +264,7 @@ sub handleGitBinaryChange($$)
     if (open FILE, $fullPath) {
         die "$fullPath already exists" if $isFileAddition;
 
+        binmode(FILE);
         $originalContents = join("", <FILE>);
         close FILE;
     }
@@ -286,6 +287,7 @@ sub handleGitBinaryChange($$)
             die "Original content of $fullPath mismatches" if $originalContents ne applyGitBinaryPatchDelta($reverseBinaryChunk, $out);
         }
         open FILE, ">", $fullPath or die "Failed to open $fullPath.";
+        binmode(FILE);
         print FILE $out;
         close FILE;
         if ($isFileAddition) {
