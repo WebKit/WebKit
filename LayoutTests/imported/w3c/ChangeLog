@@ -1,3 +1,13 @@
+2019-01-08  Youenn Fablet  <youenn@apple.com>
+
+        service worker fetch handler results in bad referrer
+        https://bugs.webkit.org/show_bug.cgi?id=188248
+        <rdar://problem/47050478>
+
+        Reviewed by Alex Christensen.
+
+        * web-platform-tests/service-workers/service-worker/referrer-policy-header.https-expected.txt:
+
 2019-01-07  Dean Jackson  <dino@apple.com>
 
         Turn on Pointer Events by default for iOS

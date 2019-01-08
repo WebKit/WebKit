@@ -567,18 +567,17 @@ bool SubresourceLoader::checkRedirectionCrossOriginAccessControl(const ResourceR
 
     ASSERT(options().mode != FetchOptions::Mode::SameOrigin || !m_resource->isCrossOrigin());
 
-    if (options().mode != FetchOptions::Mode::Cors)
-        return true;
+    // Implementing https://fetch.spec.whatwg.org/#concept-http-redirect-fetch step 7 & 8.
+    if (options().mode == FetchOptions::Mode::Cors) {
+        if (m_resource->isCrossOrigin() && !isValidCrossOriginRedirectionURL(newRequest.url())) {
+            errorMessage = "URL is either a non-HTTP URL or contains credentials."_s;
+            return false;
+        }
 
-    // Implementing https://fetch.spec.whatwg.org/#concept-http-redirect-fetch step 8 & 9.
-    if (m_resource->isCrossOrigin() && !isValidCrossOriginRedirectionURL(newRequest.url())) {
-        errorMessage = "URL is either a non-HTTP URL or contains credentials."_s;
-        return false;
+        ASSERT(m_origin);
+        if (crossOriginFlag && !passesAccessControlCheck(redirectResponse, options().storedCredentialsPolicy, *m_origin, errorMessage))
+            return false;
     }
-
-    ASSERT(m_origin);
-    if (crossOriginFlag && !passesAccessControlCheck(redirectResponse, options().storedCredentialsPolicy, *m_origin, errorMessage))
-        return false;
 
     bool redirectingToNewOrigin = false;
     if (m_resource->isCrossOrigin()) {
@@ -592,9 +591,10 @@ bool SubresourceLoader::checkRedirectionCrossOriginAccessControl(const ResourceR
     if (crossOriginFlag && redirectingToNewOrigin)
         m_origin = SecurityOrigin::createUnique();
 
+    // Implementing https://fetch.spec.whatwg.org/#concept-http-redirect-fetch step 14.
     updateReferrerPolicy(redirectResponse.httpHeaderField(HTTPHeaderName::ReferrerPolicy));
     
-    if (redirectingToNewOrigin) {
+    if (options().mode == FetchOptions::Mode::Cors && redirectingToNewOrigin) {
         cleanHTTPRequestHeadersForAccessControl(newRequest, options().httpHeadersToKeep);
         updateRequestForAccessControl(newRequest, *m_origin, options().storedCredentialsPolicy);
     }

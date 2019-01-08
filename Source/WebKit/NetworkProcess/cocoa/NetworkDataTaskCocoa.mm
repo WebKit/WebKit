@@ -197,8 +197,7 @@ NetworkDataTaskCocoa::NetworkDataTaskCocoa(NetworkSession& session, NetworkDataT
 #if ENABLE(RESOURCE_LOAD_STATISTICS)
     shouldBlockCookies = session.networkStorageSession().shouldBlockCookies(request, frameID, pageID);
 #endif
-    if (shouldBlockCookies || (m_session->sessionID().isEphemeral() && isThirdPartyRequest(request)))
-        request.setExistingHTTPReferrerToOriginString();
+    restrictRequestReferrerToOriginIfNeeded(request, shouldBlockCookies);
 
     NSURLRequest *nsRequest = request.nsURLRequest(WebCore::HTTPBodyUpdatePolicy::UpdateHTTPBody);
     applySniffingPoliciesAndBindRequestToInferfaceIfNeeded(nsRequest, shouldContentSniff == WebCore::ContentSniffingPolicy::SniffContent && !url.isLocalFile(), shouldContentEncodingSniff == WebCore::ContentEncodingSniffingPolicy::Sniff);
@@ -263,6 +262,12 @@ NetworkDataTaskCocoa::~NetworkDataTaskCocoa()
         ASSERT(cocoaSession.m_dataTaskMapWithoutState.get([m_task taskIdentifier]) == this);
         cocoaSession.m_dataTaskMapWithoutState.remove([m_task taskIdentifier]);
     }
+}
+
+void NetworkDataTaskCocoa::restrictRequestReferrerToOriginIfNeeded(ResourceRequest& request, bool shouldBlockCookies)
+{
+    if (shouldBlockCookies || (m_session->sessionID().isEphemeral() && isThirdPartyRequest(request)))
+        request.setExistingHTTPReferrerToOriginString();
 }
 
 void NetworkDataTaskCocoa::didSendData(uint64_t totalBytesSent, uint64_t totalBytesExpectedToSend)
@@ -355,9 +360,6 @@ void NetworkDataTaskCocoa::willPerformHTTPRedirection(WebCore::ResourceResponse&
 #endif
 #endif
 
-    if (shouldBlockCookies || (m_session->sessionID().isEphemeral() && isThirdPartyRequest(request)))
-        request.setExistingHTTPReferrerToOriginString();
-
 #if ENABLE(RESOURCE_LOAD_STATISTICS)
     // Always apply the policy since blocking may need to be turned on or off in a redirect.
     applyCookieBlockingPolicy(shouldBlockCookies);
@@ -375,7 +377,13 @@ void NetworkDataTaskCocoa::willPerformHTTPRedirection(WebCore::ResourceResponse&
     updateTaskWithFirstPartyForSameSiteCookies(m_task.get(), request);
 
     if (m_client)
-        m_client->willPerformHTTPRedirection(WTFMove(redirectResponse), WTFMove(request), WTFMove(completionHandler));
+        m_client->willPerformHTTPRedirection(WTFMove(redirectResponse), WTFMove(request), [completionHandler = WTFMove(completionHandler), this, protectedThis = makeRef(*this)] (auto&& request) mutable {
+            if (!request.isNull()) {
+                bool shouldBlockCookies = m_session->networkStorageSession().shouldBlockCookies(request, m_frameID, m_pageID);
+                restrictRequestReferrerToOriginIfNeeded(request, shouldBlockCookies);
+            }
+            completionHandler(WTFMove(request));
+        });
     else {
         ASSERT_NOT_REACHED();
         completionHandler({ });

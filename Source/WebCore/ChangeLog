@@ -1,5 +1,25 @@
 2019-01-08  Youenn Fablet  <youenn@apple.com>
 
+        service worker fetch handler results in bad referrer
+        https://bugs.webkit.org/show_bug.cgi?id=188248
+        <rdar://problem/47050478>
+
+        Reviewed by Alex Christensen.
+
+        Response sanitization was removing the ReferrerPolicy header from opaque redirect responses.
+        Reduce sanitization of opaque redirect responses to opaque responses and allow Location header.
+        Make sure referrer policy is updated for all load redirections, not only CORS loads.
+
+        Test: http/tests/security/referrer-policy-redirect-link-downgrade.html
+
+        * loader/SubresourceLoader.cpp:
+        (WebCore::SubresourceLoader::checkRedirectionCrossOriginAccessControl):
+        * platform/network/ResourceResponseBase.cpp:
+        (WebCore::isSafeCrossOriginResponseHeader):
+        (WebCore::ResourceResponseBase::sanitizeHTTPHeaderFieldsAccordingToTainting):
+
+2019-01-08  Youenn Fablet  <youenn@apple.com>
+
         IDB storage of Crypto keys does not work in private browsing mode
         https://bugs.webkit.org/show_bug.cgi?id=193219
 

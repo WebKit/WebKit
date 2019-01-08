@@ -355,6 +355,7 @@ http/tests/security/javascriptURL/xss-ALLOWED-to-javascript-url-window-open.html
 http/tests/security/mixedContent/about-blank-iframe-in-main-frame.html
 http/tests/security/mixedContent/redirect-http-to-https-iframe-in-main-frame.html
 http/tests/security/referrer-policy-redirect-link.html
+http/tests/security/referrer-policy-redirect-link-downgrade.html
 http/tests/security/referrer-policy-rel-noreferrer.html
 http/tests/security/video-cross-origin-accessfailure.html
 http/tests/security/video-cross-origin-accesssameorigin.html

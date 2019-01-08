@@ -1,3 +1,22 @@
+2019-01-08  Youenn Fablet  <youenn@apple.com>
+
+        service worker fetch handler results in bad referrer
+        https://bugs.webkit.org/show_bug.cgi?id=188248
+        <rdar://problem/47050478>
+
+        Reviewed by Alex Christensen.
+
+        NetworkDataTaskCocoa is sometimes updating the referrer on its own.
+        Instead of updating the referrer when sending the request to WebProcess for evaluation,
+        Update the referrer once the web process decides to follow the redirection.
+        This ensures that any referrer that the WebProcess will set will be updated by NetworkDataTaskCocoa.
+
+        * NetworkProcess/cocoa/NetworkDataTaskCocoa.h:
+        * NetworkProcess/cocoa/NetworkDataTaskCocoa.mm:
+        (WebKit::NetworkDataTaskCocoa::NetworkDataTaskCocoa):
+        (WebKit::NetworkDataTaskCocoa::restrictRequestReferrerToOriginIfNeeded):
+        (WebKit::NetworkDataTaskCocoa::willPerformHTTPRedirection):
+
 2019-01-08  Alex Christensen  <achristensen@webkit.org>
 
         Fix more assertions after r239710

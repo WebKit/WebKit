@@ -401,6 +401,7 @@ static bool isSafeCrossOriginResponseHeader(HTTPHeaderName name)
         || name == HTTPHeaderName::LastEventID
         || name == HTTPHeaderName::LastModified
         || name == HTTPHeaderName::Link
+        || name == HTTPHeaderName::Location
         || name == HTTPHeaderName::Pragma
         || name == HTTPHeaderName::Range
         || name == HTTPHeaderName::ReferrerPolicy
@@ -441,7 +442,8 @@ void ResourceResponseBase::sanitizeHTTPHeaderFieldsAccordingToTainting()
         m_httpHeaderFields = WTFMove(filteredHeaders);
         return;
     }
-    case ResourceResponse::Tainting::Opaque: {
+    case ResourceResponse::Tainting::Opaque:
+    case ResourceResponse::Tainting::Opaqueredirect: {
         HTTPHeaderMap filteredHeaders;
         for (auto& header : m_httpHeaderFields.commonHeaders()) {
             if (isSafeCrossOriginResponseHeader(header.key))
@@ -449,11 +451,6 @@ void ResourceResponseBase::sanitizeHTTPHeaderFieldsAccordingToTainting()
         }
         m_httpHeaderFields = WTFMove(filteredHeaders);
         return;
-    }
-    case ResourceResponse::Tainting::Opaqueredirect: {
-        auto location = httpHeaderField(HTTPHeaderName::Location);
-        m_httpHeaderFields.clear();
-        m_httpHeaderFields.add(HTTPHeaderName::Location, WTFMove(location));
     }
     }
 }
