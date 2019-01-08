@@ -1,3 +1,15 @@
+2019-01-08  Youenn Fablet  <youenn@apple.com>
+
+        IDB storage of Crypto keys does not work in private browsing mode
+        https://bugs.webkit.org/show_bug.cgi?id=193219
+
+        Reviewed by Brady Eidson.
+
+        Activate private browsing mode for these two tests.
+
+        * crypto/subtle/rsa-indexeddb-non-exportable-private.html:
+        * crypto/subtle/rsa-indexeddb-private.html:
+
 2019-01-08  Justin Fan  <justin_fan@apple.com>
 
         [WebGPU] Update createRenderPipeline for WebGPUPipelineLayout

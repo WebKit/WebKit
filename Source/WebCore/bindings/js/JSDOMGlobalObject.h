@@ -53,8 +53,6 @@ protected:
     void finishCreation(JSC::VM&, JSC::JSObject*);
 
 public:
-    static JSDOMGlobalObject* create(JSC::VM&, JSC::Structure*, Ref<DOMWrapperWorld>&&);
-
     Lock& gcLock() { return m_gcLock; }
 
     JSDOMStructureMap& structures(const AbstractLocker&) { return m_structures; }

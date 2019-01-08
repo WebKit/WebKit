@@ -1,3 +1,29 @@
+2019-01-08  Youenn Fablet  <youenn@apple.com>
+
+        IDB storage of Crypto keys does not work in private browsing mode
+        https://bugs.webkit.org/show_bug.cgi?id=193219
+
+        Reviewed by Brady Eidson.
+
+        https://trac.webkit.org/changeset/238677 moved from using a JSGlobalObject to a JSDOMGlobalObject for serialization/deserialization.
+        This does not work for crypto keys as they require not only a JSDOMGlobalObject but either a window or worker global object.
+
+        To fix the issue, revert 238677, and fix it by checking whether the dumping of an ArrayBuffer happens for a JSDOMGlobalObject or a JSGlobalObject.
+        If it is the latter, use JSC routines instead of toJS() which requires a JSDOMGlobalObject.
+
+        Covered by updated test.
+
+        * Modules/indexeddb/server/UniqueIDBDatabase.cpp:
+        (WebCore::IDBServer::UniqueIDBDatabase::databaseThreadVM):
+        (WebCore::IDBServer::UniqueIDBDatabase::databaseThreadExecState):
+        * bindings/js/JSDOMGlobalObject.cpp:
+        * bindings/js/JSDOMGlobalObject.h:
+        * bindings/js/JSDOMWrapper.cpp:
+        (WebCore::JSDOMObject::JSDOMObject):
+        * bindings/js/SerializedScriptValue.cpp:
+        (WebCore::CloneSerializer::dumpArrayBufferView):
+        (WebCore::CloneSerializer::toJSArrayBuffer):
+
 2019-01-08  Justin Fan  <justin_fan@apple.com>
 
         [WebGPU] Update createRenderPipeline for WebGPUPipelineLayout
