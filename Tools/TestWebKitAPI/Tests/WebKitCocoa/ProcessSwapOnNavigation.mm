@@ -685,6 +685,63 @@ TEST(ProcessSwap, Back)
         EXPECT_EQ(5u, seenPIDs.size());
 }
 
+static const char* pageWithFragmentTestBytes = R"PSONRESOURCE(
+<div id="foo">TEST</div>
+)PSONRESOURCE";
+
+TEST(ProcessSwap, HistoryNavigationToFragmentURL)
+{
+    auto processPoolConfiguration = adoptNS([[_WKProcessPoolConfiguration alloc] init]);
+    processPoolConfiguration.get().processSwapsOnNavigation = YES;
+    auto processPool = adoptNS([[WKProcessPool alloc] _initWithConfiguration:processPoolConfiguration.get()]);
+
+    auto webViewConfiguration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    [webViewConfiguration setProcessPool:processPool.get()];
+    auto handler = adoptNS([[PSONScheme alloc] init]);
+    [handler addMappingFromURLString:@"pson://www.apple.com/main.html#foo" toData:pageWithFragmentTestBytes];
+    [webViewConfiguration setURLSchemeHandler:handler.get() forURLScheme:@"PSON"];
+
+    auto webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:webViewConfiguration.get()]);
+    auto delegate = adoptNS([[PSONNavigationDelegate alloc] init]);
+    [webView setNavigationDelegate:delegate.get()];
+
+    NSURLRequest *request = [NSURLRequest requestWithURL:[NSURL URLWithString:@"pson://www.webkit.org/main.html"]];
+    [webView loadRequest:request];
+
+    TestWebKitAPI::Util::run(&done);
+    done = false;
+
+    auto webkitPID = [webView _webProcessIdentifier];
+
+    request = [NSURLRequest requestWithURL:[NSURL URLWithString:@"pson://www.apple.com/main.html#foo"]];
+    [webView loadRequest:request];
+
+    TestWebKitAPI::Util::run(&done);
+    done = false;
+
+    auto applePID = [webView _webProcessIdentifier];
+
+    [webView goBack];
+    TestWebKitAPI::Util::run(&done);
+    done = false;
+
+    EXPECT_EQ(webkitPID, [webView _webProcessIdentifier]);
+
+    [webView goForward];
+    TestWebKitAPI::Util::run(&done);
+    done = false;
+
+    EXPECT_EQ(applePID, [webView _webProcessIdentifier]);
+
+    bool finishedRunningScript = false;
+    [webView evaluateJavaScript:@"document.getElementById('foo').innerText" completionHandler: [&] (id result, NSError *error) {
+        NSString *innerText = (NSString *)result;
+        EXPECT_WK_STREQ(@"TEST", innerText);
+        finishedRunningScript = true;
+    }];
+    TestWebKitAPI::Util::run(&finishedRunningScript);
+}
+
 TEST(ProcessSwap, SuspendedPageDiesAfterBackForwardListItemIsGone)
 {
     auto processPoolConfiguration = adoptNS([[_WKProcessPoolConfiguration alloc] init]);
