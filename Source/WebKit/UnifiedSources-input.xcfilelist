@@ -1,4 +1,8 @@
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/EditableImageControllerMessageReceiver.cpp
+$(SRCROOT)/NetworkProcess/Classifier/ResourceLoadStatisticsMemoryStore.cpp
+$(SRCROOT)/NetworkProcess/Classifier/ResourceLoadStatisticsPersistentStorage.cpp
+$(SRCROOT)/NetworkProcess/Classifier/WebResourceLoadStatisticsStore.cpp
+$(SRCROOT)/NetworkProcess/Classifier/WebResourceLoadStatisticsTelemetry.cpp
 $(SRCROOT)/NetworkProcess/Cookies/WebCookieManager.cpp
 $(SRCROOT)/NetworkProcess/Cookies/mac/WebCookieManagerMac.mm
 $(SRCROOT)/NetworkProcess/CustomProtocols/Cocoa/LegacyCustomProtocolManagerCocoa.mm
@@ -550,8 +554,6 @@ $(SRCROOT)/UIProcess/RemoteLayerTree/ios/RemoteScrollingCoordinatorProxyIOS.mm
 $(SRCROOT)/UIProcess/RemoteLayerTree/ios/ScrollingTreeOverflowScrollingNodeIOS.mm
 $(SRCROOT)/UIProcess/RemoteLayerTree/ios/ScrollingTreeScrollingNodeDelegateIOS.mm
 $(SRCROOT)/UIProcess/RemoteWebInspectorProxy.cpp
-$(SRCROOT)/UIProcess/ResourceLoadStatisticsMemoryStore.cpp
-$(SRCROOT)/UIProcess/ResourceLoadStatisticsPersistentStorage.cpp
 $(SRCROOT)/UIProcess/ResponsivenessTimer.cpp
 $(SRCROOT)/UIProcess/ServiceWorkerProcessProxy.cpp
 $(SRCROOT)/UIProcess/StatisticsRequest.cpp
@@ -620,8 +622,6 @@ $(SRCROOT)/UIProcess/WebProcessLifetimeObserver.cpp
 $(SRCROOT)/UIProcess/WebProcessLifetimeTracker.cpp
 $(SRCROOT)/UIProcess/WebProcessPool.cpp
 $(SRCROOT)/UIProcess/WebProcessProxy.cpp
-$(SRCROOT)/UIProcess/WebResourceLoadStatisticsStore.cpp
-$(SRCROOT)/UIProcess/WebResourceLoadStatisticsTelemetry.cpp
 $(SRCROOT)/UIProcess/WebStorage/LocalStorageDatabase.cpp
 $(SRCROOT)/UIProcess/WebStorage/LocalStorageDatabaseTracker.cpp
 $(SRCROOT)/UIProcess/WebStorage/StorageManager.cpp

@@ -38,10 +38,7 @@
 #include <wtf/CallbackAggregator.h>
 #include <wtf/DateMath.h>
 #include <wtf/MathExtras.h>
-
-#if !RELEASE_LOG_DISABLED
 #include <wtf/text/StringBuilder.h>
-#endif
 
 namespace WebKit {
 using namespace WebCore;
@@ -1074,7 +1071,7 @@ void ResourceLoadStatisticsMemoryStore::updateCookieBlocking(CompletionHandler<v
     }
 
     if (m_debugLoggingEnabled && !domainsToBlock.isEmpty())
-            debugLogDomainsInBatches("block", domainsToBlock);
+        debugLogDomainsInBatches("block", domainsToBlock);
 
     RunLoop::main().dispatch([weakThis = makeWeakPtr(*this), store = makeRef(m_store), domainsToBlock = crossThreadCopy(domainsToBlock), completionHandler = WTFMove(completionHandler)] () mutable {
         store->callUpdatePrevalentDomainsToBlockCookiesForHandler(domainsToBlock, [weakThis = WTFMove(weakThis), store = store.copyRef(), completionHandler = WTFMove(completionHandler)]() mutable {

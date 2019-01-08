@@ -41,6 +41,9 @@ NetworkProcess/NetworkSocketStream.cpp
 NetworkProcess/PingLoad.cpp
 NetworkProcess/PreconnectTask.cpp
 
+NetworkProcess/Classifier/ResourceLoadStatisticsMemoryStore.cpp
+NetworkProcess/Classifier/ResourceLoadStatisticsPersistentStorage.cpp
+
 NetworkProcess/Cookies/WebCookieManager.cpp
 
 NetworkProcess/Downloads/Download.cpp
@@ -107,6 +110,7 @@ Shared/FrameInfoData.cpp
 Shared/LayerTreeContext.cpp
 Shared/LoadParameters.cpp
 Shared/NavigationActionData.cpp
+Shared/PersistencyUtils.cpp
 Shared/PlatformPopupMenuData.cpp
 Shared/PrintInfo.cpp
 Shared/RTCNetwork.cpp
@@ -225,12 +229,9 @@ UIProcess/GeolocationPermissionRequestManagerProxy.cpp
 UIProcess/GeolocationPermissionRequestProxy.cpp
 UIProcess/InspectorTargetProxy.cpp
 UIProcess/PageLoadState.cpp
-UIProcess/PersistencyUtils.cpp
 UIProcess/ProcessAssertion.cpp
 UIProcess/ProcessThrottler.cpp
 UIProcess/RemoteWebInspectorProxy.cpp
-UIProcess/ResourceLoadStatisticsMemoryStore.cpp
-UIProcess/ResourceLoadStatisticsPersistentStorage.cpp
 UIProcess/ResponsivenessTimer.cpp
 UIProcess/ServiceWorkerProcessProxy.cpp
 UIProcess/StatisticsRequest.cpp

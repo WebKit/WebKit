@@ -27,6 +27,7 @@
 
 #include "MessageSender.h"
 #include "NetworkLoadClient.h"
+#include "SandboxExtension.h"
 
 namespace IPC {
 class Connection;
@@ -43,7 +44,7 @@ class DownloadID;
 class NetworkLoad;
 class NetworkLoadParameters;
 class NetworkSession;
-    
+
 class PendingDownload : public NetworkLoadClient, public IPC::MessageSender {
     WTF_MAKE_FAST_ALLOCATED;
 public:

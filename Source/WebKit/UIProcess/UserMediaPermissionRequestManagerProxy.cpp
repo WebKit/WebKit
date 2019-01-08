@@ -29,7 +29,9 @@
 #include "WebPageMessages.h"
 #include "WebPageProxy.h"
 #include "WebProcess.h"
+#include "WebProcessPool.h"
 #include "WebProcessProxy.h"
+#include "WebsiteDataStore.h"
 #include <WebCore/MediaConstraints.h>
 #include <WebCore/MockRealtimeMediaSourceCenter.h>
 #include <WebCore/RealtimeMediaSource.h>

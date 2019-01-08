@@ -27,6 +27,7 @@
 #include "ResourceLoadStatisticsPersistentStorage.h"
 
 #include "Logging.h"
+#include "PersistencyUtils.h"
 #include "ResourceLoadStatisticsMemoryStore.h"
 #include "WebResourceLoadStatisticsStore.h"
 #include <WebCore/FileMonitor.h>

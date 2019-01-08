@@ -27,6 +27,7 @@
 #include "PendingDownload.h"
 
 #include "DataReference.h"
+#include "Download.h"
 #include "DownloadProxyMessages.h"
 #include "NetworkLoad.h"
 #include "NetworkProcess.h"

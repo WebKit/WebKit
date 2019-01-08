@@ -26,6 +26,8 @@
 #include "config.h"
 #include "WebDataListSuggestionsDropdown.h"
 
+#include "WebPageProxy.h"
+
 #if ENABLE(DATALIST_ELEMENT)
 
 namespace WebKit {

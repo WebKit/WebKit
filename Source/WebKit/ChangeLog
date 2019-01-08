@@ -1,3 +1,45 @@
+2019-01-08  Brent Fulgham  <bfulgham@apple.com>
+
+        Move ResourceLoadStatistics files from UIProcess to NetworkProcess
+        https://bugs.webkit.org/show_bug.cgi?id=193252
+        <rdar://problem/47125401>
+
+        Reviewed by Alex Christensen.
+
+        This patch is the first part of a refactoring to move the ResourceLoadStatistics logic from the UIProcess to the NetworkProcess.
+
+        This patch moves code into different folders and adjusts necessary build files, but does not change where the code executes. These
+        changes have no impact on behavior or test results.
+
+        I also modified a few files to add missing include files uncovered by the unified build system.
+
+        * NetworkProcess/Classifier/ResourceLoadStatisticsMemoryStore.cpp: Renamed from Source/WebKit/UIProcess/ResourceLoadStatisticsMemoryStore.cpp.
+        * NetworkProcess/Classifier/ResourceLoadStatisticsMemoryStore.h: Renamed from Source/WebKit/UIProcess/ResourceLoadStatisticsMemoryStore.h.
+        * NetworkProcess/Classifier/ResourceLoadStatisticsPersistentStorage.cpp: Renamed from Source/WebKit/UIProcess/ResourceLoadStatisticsPersistentStorage.cpp.
+        * NetworkProcess/Classifier/ResourceLoadStatisticsPersistentStorage.h: Renamed from Source/WebKit/UIProcess/ResourceLoadStatisticsPersistentStorage.h.
+        * NetworkProcess/Classifier/WebResourceLoadStatisticsStore.cpp: Renamed from Source/WebKit/UIProcess/WebResourceLoadStatisticsStore.cpp.
+        * NetworkProcess/Classifier/WebResourceLoadStatisticsStore.h: Renamed from Source/WebKit/UIProcess/WebResourceLoadStatisticsStore.h.
+        * NetworkProcess/Classifier/WebResourceLoadStatisticsTelemetry.cpp: Renamed from Source/WebKit/UIProcess/WebResourceLoadStatisticsTelemetry.cpp.
+        * NetworkProcess/Classifier/WebResourceLoadStatisticsTelemetry.h: Renamed from Source/WebKit/UIProcess/WebResourceLoadStatisticsTelemetry.h.
+        * NetworkProcess/Downloads/PendingDownload.cpp:
+        * NetworkProcess/Downloads/PendingDownload.h:
+        * CMakeLists.txt:
+        * PlatformMac.cmake:
+        * PlatformWin.cmake:
+        * Shared/PersistencyUtils.cpp: Renamed from Source/WebKit/UIProcess/PersistencyUtils.cpp.
+        * Shared/PersistencyUtils.h: Renamed from Source/WebKit/UIProcess/PersistencyUtils.h.
+        * Sources.txt:
+        * SourcesCocoa.txt:
+        * SourcesGTK.txt:
+        * SourcesWPE.txt:
+        * UIProcess/API/C/WKWebsiteDataStoreRef.cpp:
+        (WKWebsiteDataStoreSetWebAuthenticationMockConfiguration): Add missing WebKit:: scope.
+        * UIProcess/UserMediaPermissionRequestManagerProxy.cpp: Add missing include.
+        * UIProcess/WebDataListSuggestionsDropdown.cpp: Ditto.
+        * UIProcess/mac/DisplayLink.cpp:
+        * UnifiedSources-input.xcfilelist:
+        * WebKit.xcodeproj/project.pbxproj:
+
 2019-01-08  Chris Dumez  <cdumez@apple.com>
 
         Mark SuspendedPageProxy as fast allocated

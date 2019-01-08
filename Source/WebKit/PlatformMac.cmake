@@ -19,6 +19,9 @@ if (NOT AVFAUDIO_LIBRARY-NOTFOUND)
 endif ()
 
 list(APPEND WebKit_SOURCES
+    NetworkProcess/Classifier/WebResourceLoadStatisticsStore.cpp
+    NetworkProcess/Classifier/WebResourceLoadStatisticsTelemetry.cpp
+
     NetworkProcess/Cookies/mac/WebCookieManagerMac.mm
 
     NetworkProcess/CustomProtocols/LegacyCustomProtocolManager.cpp
@@ -158,8 +161,6 @@ list(APPEND WebKit_SOURCES
 
     UIProcess/HighPerformanceGraphicsUsageSampler.cpp
     UIProcess/PerActivityStateCPUUsageSampler.cpp
-    UIProcess/WebResourceLoadStatisticsStore.cpp
-    UIProcess/WebResourceLoadStatisticsTelemetry.cpp
 
     UIProcess/Automation/WebAutomationSession.cpp
 
