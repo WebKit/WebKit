@@ -297,8 +297,8 @@ static NSArray *dragAndDropEventNames()
     RetainPtr<MockDropSession> _dropSession;
     RetainPtr<NSMutableArray> _observedEventNames;
     RetainPtr<NSArray> _externalItemProviders;
-    RetainPtr<NSArray *> _sourceItemProviders;
-    RetainPtr<NSArray *> _finalSelectionRects;
+    RetainPtr<NSArray> _sourceItemProviders;
+    RetainPtr<NSArray> _finalSelectionRects;
     CGPoint _startLocation;
     CGPoint _endLocation;
     CGRect _lastKnownDragCaretRect;

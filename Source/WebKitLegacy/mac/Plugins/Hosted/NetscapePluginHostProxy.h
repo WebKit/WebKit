@@ -92,7 +92,7 @@ private:
     RetainPtr<CFMachPortRef> m_deadNameNotificationPort;
     
     RetainPtr<id> m_activationObserver;
-    RetainPtr<WebPlaceholderModalWindow *> m_placeholderWindow;
+    RetainPtr<WebPlaceholderModalWindow> m_placeholderWindow;
     unsigned m_isModal;
     bool m_menuBarIsVisible;
     bool m_fullscreenWindowIsShowing;

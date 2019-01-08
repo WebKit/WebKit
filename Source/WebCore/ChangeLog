@@ -1,3 +1,26 @@
+2019-01-07  David Kilzer  <ddkilzer@apple.com>
+
+        Prefer RetainPtr<NSObject> to RetainPtr<NSObject *>
+        <https://webkit.org/b/193056>
+
+        Reviewed by Alex Christensen.
+
+        * platform/graphics/avfoundation/objc/SourceBufferPrivateAVFObjC.mm:
+        (-[WebAVStreamDataParserListener streamDataParser:didParseStreamDataAsAsset:]):
+        (-[WebAVStreamDataParserListener streamDataParser:didParseStreamDataAsAsset:withDiscontinuity:]):
+        * platform/network/cf/AuthenticationChallenge.h:
+        - Remove '*' from RetainPtr<> type.
+
+        * platform/network/cocoa/NetworkStorageSessionCocoa.mm:
+        (WebCore::cookiesForURL):
+        - Once retainPtr() was changed to return RetainPtr<NSArray>
+          instead of RetainPtr<NSArray *> here, that forced the type of
+          `cookiesPtr` to change as well since
+          Optional<RetainPtr<NSArray>> is not assignable to
+          Optional<RetainPtr<NSArray *>> without further template
+          specialization, which didn't seem useful since
+          Optional<RetainPtr<>> variable types are rarely used.
+
 2019-01-07  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: extend XHR breakpoints to work with fetch

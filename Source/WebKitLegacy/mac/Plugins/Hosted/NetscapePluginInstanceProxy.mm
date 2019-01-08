@@ -101,8 +101,8 @@ private:
     }
     
     uint32_t m_requestID;
-    RetainPtr<NSURLRequest*> m_request;
-    RetainPtr<NSString*> m_frameName;
+    RetainPtr<NSURLRequest> m_request;
+    RetainPtr<NSString> m_frameName;
     bool m_allowPopups;
 };
 
@@ -1277,7 +1277,7 @@ bool NetscapePluginInstanceProxy::enumerate(uint32_t objectID, data_t& resultDat
     PropertyNameArray propertyNames(&vm, PropertyNameMode::Strings, PrivateSymbolMode::Exclude);
     object->methodTable(vm)->getPropertyNames(object, exec, propertyNames, EnumerationMode());
 
-    RetainPtr<NSMutableArray*> array = adoptNS([[NSMutableArray alloc] init]);
+    RetainPtr<NSMutableArray> array = adoptNS([[NSMutableArray alloc] init]);
     for (unsigned i = 0; i < propertyNames.size(); i++) {
         uint64_t methodName = reinterpret_cast<uint64_t>(_NPN_GetStringIdentifier(propertyNames[i].string().utf8().data()));
 
@@ -1346,7 +1346,7 @@ void NetscapePluginInstanceProxy::addValueToArray(NSMutableArray *array, ExecSta
 
 void NetscapePluginInstanceProxy::marshalValue(ExecState* exec, JSValue value, data_t& resultData, mach_msg_type_number_t& resultLength)
 {
-    RetainPtr<NSMutableArray*> array = adoptNS([[NSMutableArray alloc] init]);
+    RetainPtr<NSMutableArray> array = adoptNS([[NSMutableArray alloc] init]);
     
     addValueToArray(array.get(), exec, value);
 
@@ -1359,9 +1359,9 @@ void NetscapePluginInstanceProxy::marshalValue(ExecState* exec, JSValue value, d
     memcpy(resultData, data.bytes, resultLength);
 }
 
-RetainPtr<NSData *> NetscapePluginInstanceProxy::marshalValues(ExecState* exec, const ArgList& args)
+RetainPtr<NSData> NetscapePluginInstanceProxy::marshalValues(ExecState* exec, const ArgList& args)
 {
-    RetainPtr<NSMutableArray*> array = adoptNS([[NSMutableArray alloc] init]);
+    RetainPtr<NSMutableArray> array = adoptNS([[NSMutableArray alloc] init]);
 
     for (unsigned i = 0; i < args.size(); i++)
         addValueToArray(array.get(), exec, args.at(i));
@@ -1426,7 +1426,7 @@ bool NetscapePluginInstanceProxy::demarshalValueFromArray(ExecState* exec, NSArr
 
 JSValue NetscapePluginInstanceProxy::demarshalValue(ExecState* exec, const char* valueData, mach_msg_type_number_t valueLength)
 {
-    RetainPtr<NSData*> data = adoptNS([[NSData alloc] initWithBytesNoCopy:(void*)valueData length:valueLength freeWhenDone:NO]);
+    RetainPtr<NSData> data = adoptNS([[NSData alloc] initWithBytesNoCopy:(void*)valueData length:valueLength freeWhenDone:NO]);
 
     NSArray *array = [NSPropertyListSerialization propertyListWithData:data.get() options:NSPropertyListImmutable format:nullptr error:nullptr];
 
@@ -1440,7 +1440,7 @@ JSValue NetscapePluginInstanceProxy::demarshalValue(ExecState* exec, const char*
 
 void NetscapePluginInstanceProxy::demarshalValues(ExecState* exec, data_t valuesData, mach_msg_type_number_t valuesLength, MarkedArgumentBuffer& result)
 {
-    RetainPtr<NSData*> data = adoptNS([[NSData alloc] initWithBytesNoCopy:valuesData length:valuesLength freeWhenDone:NO]);
+    RetainPtr<NSData> data = adoptNS([[NSData alloc] initWithBytesNoCopy:valuesData length:valuesLength freeWhenDone:NO]);
 
     NSArray *array = [NSPropertyListSerialization propertyListWithData:data.get() options:NSPropertyListImmutable format:nullptr error:nullptr];
 

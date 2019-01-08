@@ -188,7 +188,7 @@ static RetainPtr<WKWebView> createdWebView;
 @interface PSONScheme : NSObject <WKURLSchemeHandler> {
     const char* _bytes;
     HashMap<String, String> _redirects;
-    HashMap<String, RetainPtr<NSData *>> _dataMappings;
+    HashMap<String, RetainPtr<NSData>> _dataMappings;
 }
 - (instancetype)initWithBytes:(const char*)bytes;
 - (void)addRedirectFromURLString:(NSString *)sourceURLString toURLString:(NSString *)destinationURLString;

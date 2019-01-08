@@ -130,7 +130,7 @@ int XPCServiceMain(int, const char**)
             @autoreleasepool {
                 NSDictionary *existingArguments = [[NSUserDefaults standardUserDefaults] volatileDomainForName:NSArgumentDomain];
                 NSMutableDictionary *newArguments = [existingArguments mutableCopy];
-                RetainPtr<NSMutableArray *> newLanguages = adoptNS([[NSMutableArray alloc] init]);
+                RetainPtr<NSMutableArray> newLanguages = adoptNS([[NSMutableArray alloc] init]);
                 xpc_array_apply(languages, ^(size_t index, xpc_object_t value) {
                     [newLanguages addObject:[NSString stringWithCString:xpc_string_get_string_ptr(value) encoding:NSUTF8StringEncoding]];
                     return true;

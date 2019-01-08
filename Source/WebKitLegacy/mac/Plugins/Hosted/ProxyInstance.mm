@@ -146,7 +146,7 @@ JSValue ProxyInstance::invoke(JSC::ExecState* exec, InvokeType type, uint64_t id
     if (!m_instanceProxy)
         return jsUndefined();
 
-    RetainPtr<NSData*> arguments(m_instanceProxy->marshalValues(exec, args));
+    RetainPtr<NSData> arguments(m_instanceProxy->marshalValues(exec, args));
 
     uint32_t requestID = m_instanceProxy->nextRequestID();
 

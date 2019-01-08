@@ -1,3 +1,27 @@
+2019-01-07  David Kilzer  <ddkilzer@apple.com>
+
+        Prefer RetainPtr<NSObject> to RetainPtr<NSObject *>
+        <https://webkit.org/b/193056>
+
+        Reviewed by Alex Christensen.
+
+        * Plugins/Hosted/NetscapePluginHostProxy.h:
+        * Plugins/Hosted/NetscapePluginInstanceProxy.h:
+        * Plugins/Hosted/NetscapePluginInstanceProxy.mm:
+        (WebKit::NetscapePluginInstanceProxy::enumerate):
+        (WebKit::NetscapePluginInstanceProxy::marshalValue):
+        (WebKit::NetscapePluginInstanceProxy::marshalValues):
+        (WebKit::NetscapePluginInstanceProxy::demarshalValue):
+        (WebKit::NetscapePluginInstanceProxy::demarshalValues):
+        * Plugins/Hosted/ProxyInstance.mm:
+        (WebKit::ProxyInstance::invoke):
+        * WebCoreSupport/WebGeolocationClient.mm:
+        * WebView/WebDataSource.mm:
+        (-[WebDataSource _receivedData:]):
+        * WebView/WebView.mm:
+        (-[WebView _cachedResponseForURL:]):
+        - Remove '*' from RetainPtr<> type.
+
 2019-01-04  Alex Christensen  <achristensen@webkit.org>
 
         Progress towards fixing Mac CMake build

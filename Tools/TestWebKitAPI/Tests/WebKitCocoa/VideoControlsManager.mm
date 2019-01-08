@@ -117,7 +117,7 @@
 
 namespace TestWebKitAPI {
 
-RetainPtr<VideoControlsManagerTestWebView*> setUpWebViewForTestingVideoControlsManager(NSRect frame)
+RetainPtr<VideoControlsManagerTestWebView> setUpWebViewForTestingVideoControlsManager(NSRect frame)
 {
     RetainPtr<WKWebViewConfiguration> configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
     configuration.get().mediaTypesRequiringUserActionForPlayback = WKAudiovisualMediaTypeNone;
@@ -126,7 +126,7 @@ RetainPtr<VideoControlsManagerTestWebView*> setUpWebViewForTestingVideoControlsM
 
 TEST(VideoControlsManager, VideoControlsManagerSingleLargeVideo)
 {
-    RetainPtr<VideoControlsManagerTestWebView*> webView = setUpWebViewForTestingVideoControlsManager(NSMakeRect(0, 0, 100, 100));
+    RetainPtr<VideoControlsManagerTestWebView> webView = setUpWebViewForTestingVideoControlsManager(NSMakeRect(0, 0, 100, 100));
 
     // A large video with audio should have a controls manager even if it is played via script like this video.
     // So the expectation is YES.
@@ -136,7 +136,7 @@ TEST(VideoControlsManager, VideoControlsManagerSingleLargeVideo)
 
 TEST(VideoControlsManager, VideoControlsManagerSingleSmallVideo)
 {
-    RetainPtr<VideoControlsManagerTestWebView*> webView = setUpWebViewForTestingVideoControlsManager(NSMakeRect(0, 0, 100, 100));
+    RetainPtr<VideoControlsManagerTestWebView> webView = setUpWebViewForTestingVideoControlsManager(NSMakeRect(0, 0, 100, 100));
 
     // A small video will not have a controls manager unless it started playing because of a user gesture. Since this
     // video is started with a script, the expectation is NO.
@@ -146,7 +146,7 @@ TEST(VideoControlsManager, VideoControlsManagerSingleSmallVideo)
 
 TEST(VideoControlsManager, VideoControlsManagerMultipleVideosWithAudio)
 {
-    RetainPtr<VideoControlsManagerTestWebView*> webView = setUpWebViewForTestingVideoControlsManager(NSMakeRect(0, 0, 100, 100));
+    RetainPtr<VideoControlsManagerTestWebView> webView = setUpWebViewForTestingVideoControlsManager(NSMakeRect(0, 0, 100, 100));
 
     [webView loadTestPageNamed:@"large-videos-with-audio"];
     [webView waitForPageToLoadWithAutoplayingVideos:0];
@@ -157,7 +157,7 @@ TEST(VideoControlsManager, VideoControlsManagerMultipleVideosWithAudio)
 // FIXME: Re-enable this test once <webkit.org/b/175143> is resolved.
 TEST(VideoControlsManager, DISABLED_VideoControlsManagerMultipleVideosWithAudioAndAutoplay)
 {
-    RetainPtr<VideoControlsManagerTestWebView*> webView = setUpWebViewForTestingVideoControlsManager(NSMakeRect(0, 0, 100, 100));
+    RetainPtr<VideoControlsManagerTestWebView> webView = setUpWebViewForTestingVideoControlsManager(NSMakeRect(0, 0, 100, 100));
 
     [webView loadTestPageNamed:@"large-videos-with-audio-autoplay"];
     [webView waitForPageToLoadWithAutoplayingVideos:1];
@@ -168,7 +168,7 @@ TEST(VideoControlsManager, DISABLED_VideoControlsManagerMultipleVideosWithAudioA
 
 TEST(VideoControlsManager, VideoControlsManagerMultipleVideosScrollPausedVideoOutOfView)
 {
-    RetainPtr<VideoControlsManagerTestWebView*> webView = setUpWebViewForTestingVideoControlsManager(NSMakeRect(0, 0, 500, 500));
+    RetainPtr<VideoControlsManagerTestWebView> webView = setUpWebViewForTestingVideoControlsManager(NSMakeRect(0, 0, 500, 500));
 
     [webView loadTestPageNamed:@"large-videos-paused-video-hides-controls"];
     [webView waitForPageToLoadWithAutoplayingVideos:1];
@@ -179,7 +179,7 @@ TEST(VideoControlsManager, VideoControlsManagerMultipleVideosScrollPausedVideoOu
 
 TEST(VideoControlsManager, VideoControlsManagerMultipleVideosScrollPlayingVideoWithSoundOutOfView)
 {
-    RetainPtr<VideoControlsManagerTestWebView*> webView = setUpWebViewForTestingVideoControlsManager(NSMakeRect(0, 0, 500, 500));
+    RetainPtr<VideoControlsManagerTestWebView> webView = setUpWebViewForTestingVideoControlsManager(NSMakeRect(0, 0, 500, 500));
 
     [webView loadTestPageNamed:@"large-videos-playing-video-keeps-controls"];
     [webView waitForPageToLoadWithAutoplayingVideos:1];
@@ -190,7 +190,7 @@ TEST(VideoControlsManager, VideoControlsManagerMultipleVideosScrollPlayingVideoW
 
 TEST(VideoControlsManager, VideoControlsManagerMultipleVideosScrollPlayingMutedVideoOutOfView)
 {
-    RetainPtr<VideoControlsManagerTestWebView*> webView = setUpWebViewForTestingVideoControlsManager(NSMakeRect(0, 0, 500, 500));
+    RetainPtr<VideoControlsManagerTestWebView> webView = setUpWebViewForTestingVideoControlsManager(NSMakeRect(0, 0, 500, 500));
 
     [webView loadTestPageNamed:@"large-videos-playing-muted-video-hides-controls"];
     [webView waitForPageToLoadWithAutoplayingVideos:1];
@@ -201,7 +201,7 @@ TEST(VideoControlsManager, VideoControlsManagerMultipleVideosScrollPlayingMutedV
 
 TEST(VideoControlsManager, VideoControlsManagerMultipleVideosShowControlsForLastInteractedVideo)
 {
-    RetainPtr<VideoControlsManagerTestWebView*> webView = setUpWebViewForTestingVideoControlsManager(NSMakeRect(0, 0, 800, 600));
+    RetainPtr<VideoControlsManagerTestWebView> webView = setUpWebViewForTestingVideoControlsManager(NSMakeRect(0, 0, 800, 600));
     NSPoint clickPoint = NSMakePoint(400, 300);
 
     [webView loadTestPageNamed:@"large-videos-autoplaying-click-to-pause"];
@@ -228,7 +228,7 @@ TEST(VideoControlsManager, VideoControlsManagerMultipleVideosShowControlsForLast
 // FIXME: Re-enable this test once <webkit.org/b/175909> is resolved.
 TEST(VideoControlsManager, DISABLED_VideoControlsManagerMultipleVideosSwitchControlledVideoWhenScrolling)
 {
-    RetainPtr<VideoControlsManagerTestWebView*> webView = setUpWebViewForTestingVideoControlsManager(NSMakeRect(0, 0, 800, 600));
+    RetainPtr<VideoControlsManagerTestWebView> webView = setUpWebViewForTestingVideoControlsManager(NSMakeRect(0, 0, 800, 600));
 
     [webView loadTestPageNamed:@"large-videos-autoplaying-scroll-to-video"];
     [webView waitForPageToLoadWithAutoplayingVideos:2];
@@ -241,7 +241,7 @@ TEST(VideoControlsManager, DISABLED_VideoControlsManagerMultipleVideosSwitchCont
 
 TEST(VideoControlsManager, VideoControlsManagerMultipleVideosScrollOnlyLargeVideoOutOfView)
 {
-    RetainPtr<VideoControlsManagerTestWebView*> webView = setUpWebViewForTestingVideoControlsManager(NSMakeRect(0, 0, 500, 500));
+    RetainPtr<VideoControlsManagerTestWebView> webView = setUpWebViewForTestingVideoControlsManager(NSMakeRect(0, 0, 500, 500));
 
     [webView loadTestPageNamed:@"large-video-playing-scroll-away"];
     [webView waitForPageToLoadWithAutoplayingVideos:1];
@@ -251,7 +251,7 @@ TEST(VideoControlsManager, VideoControlsManagerMultipleVideosScrollOnlyLargeVide
 
 TEST(VideoControlsManager, VideoControlsManagerSingleSmallAutoplayingVideo)
 {
-    RetainPtr<VideoControlsManagerTestWebView*> webView = setUpWebViewForTestingVideoControlsManager(NSMakeRect(0, 0, 100, 100));
+    RetainPtr<VideoControlsManagerTestWebView> webView = setUpWebViewForTestingVideoControlsManager(NSMakeRect(0, 0, 100, 100));
 
     [webView loadTestPageNamed:@"autoplaying-video-with-audio"];
     [webView waitForPageToLoadWithAutoplayingVideos:1];
@@ -262,7 +262,7 @@ TEST(VideoControlsManager, VideoControlsManagerSingleSmallAutoplayingVideo)
 
 TEST(VideoControlsManager, VideoControlsManagerLargeAutoplayingVideoSeeksAfterEnding)
 {
-    RetainPtr<VideoControlsManagerTestWebView*> webView = setUpWebViewForTestingVideoControlsManager(NSMakeRect(0, 0, 100, 100));
+    RetainPtr<VideoControlsManagerTestWebView> webView = setUpWebViewForTestingVideoControlsManager(NSMakeRect(0, 0, 100, 100));
 
     [webView loadTestPageNamed:@"large-video-seek-after-ending"];
 
@@ -275,7 +275,7 @@ TEST(VideoControlsManager, VideoControlsManagerLargeAutoplayingVideoSeeksAfterEn
 
 TEST(VideoControlsManager, VideoControlsManagerLargeAutoplayingVideoSeeksAndPlaysAfterEnding)
 {
-    RetainPtr<VideoControlsManagerTestWebView*> webView = setUpWebViewForTestingVideoControlsManager(NSMakeRect(0, 0, 100, 100));
+    RetainPtr<VideoControlsManagerTestWebView> webView = setUpWebViewForTestingVideoControlsManager(NSMakeRect(0, 0, 100, 100));
 
     // Since the video is still playing, the expectation is YES even if the video has ended once.
     [webView loadTestPageNamed:@"large-video-seek-to-beginning-and-play-after-ending"];
@@ -284,7 +284,7 @@ TEST(VideoControlsManager, VideoControlsManagerLargeAutoplayingVideoSeeksAndPlay
 
 TEST(VideoControlsManager, VideoControlsManagerLargeAutoplayingVideoAfterSeekingToEnd)
 {
-    RetainPtr<VideoControlsManagerTestWebView*> webView = setUpWebViewForTestingVideoControlsManager(NSMakeRect(0, 0, 100, 100));
+    RetainPtr<VideoControlsManagerTestWebView> webView = setUpWebViewForTestingVideoControlsManager(NSMakeRect(0, 0, 100, 100));
 
     [webView loadTestPageNamed:@"large-video-hides-controls-after-seek-to-end"];
     [webView waitForPageToLoadWithAutoplayingVideos:1];
@@ -297,7 +297,7 @@ TEST(VideoControlsManager, VideoControlsManagerLargeAutoplayingVideoAfterSeeking
 
 TEST(VideoControlsManager, VideoControlsManagerSingleLargeVideoWithoutAudio)
 {
-    RetainPtr<VideoControlsManagerTestWebView*> webView = setUpWebViewForTestingVideoControlsManager(NSMakeRect(0, 0, 100, 100));
+    RetainPtr<VideoControlsManagerTestWebView> webView = setUpWebViewForTestingVideoControlsManager(NSMakeRect(0, 0, 100, 100));
 
     // A large video with no audio will not have a controls manager unless it started playing because of a user gesture. Since this
     // video is started with a script, the expectation is NO.
@@ -307,7 +307,7 @@ TEST(VideoControlsManager, VideoControlsManagerSingleLargeVideoWithoutAudio)
 
 TEST(VideoControlsManager, VideoControlsManagerAudioElementStartedWithScript)
 {
-    RetainPtr<VideoControlsManagerTestWebView*> webView = setUpWebViewForTestingVideoControlsManager(NSMakeRect(0, 0, 100, 100));
+    RetainPtr<VideoControlsManagerTestWebView> webView = setUpWebViewForTestingVideoControlsManager(NSMakeRect(0, 0, 100, 100));
 
     // An audio element MUST be started with a user gesture in order to have a controls manager, so the expectation is NO.
     [webView loadTestPageNamed:@"audio-only"];
@@ -316,7 +316,7 @@ TEST(VideoControlsManager, VideoControlsManagerAudioElementStartedWithScript)
 
 TEST(VideoControlsManager, VideoControlsManagerAudioElementStartedByInteraction)
 {
-    RetainPtr<VideoControlsManagerTestWebView*> webView = setUpWebViewForTestingVideoControlsManager(NSMakeRect(0, 0, 400, 400));
+    RetainPtr<VideoControlsManagerTestWebView> webView = setUpWebViewForTestingVideoControlsManager(NSMakeRect(0, 0, 400, 400));
 
     [webView loadTestPageNamed:@"play-audio-on-click"];
     [webView waitForPageToLoadWithAutoplayingVideos:0];
@@ -329,7 +329,7 @@ TEST(VideoControlsManager, VideoControlsManagerAudioElementStartedByInteraction)
 
 TEST(VideoControlsManager, DISABLED_VideoControlsManagerAudioElementFollowingUserInteraction)
 {
-    RetainPtr<VideoControlsManagerTestWebView*> webView = setUpWebViewForTestingVideoControlsManager(NSMakeRect(0, 0, 400, 400));
+    RetainPtr<VideoControlsManagerTestWebView> webView = setUpWebViewForTestingVideoControlsManager(NSMakeRect(0, 0, 400, 400));
 
     [webView loadTestPageNamed:@"play-audio-on-click"];
     [webView waitForPageToLoadWithAutoplayingVideos:0];
@@ -354,7 +354,7 @@ TEST(VideoControlsManager, DISABLED_VideoControlsManagerAudioElementFollowingUse
 
 TEST(VideoControlsManager, VideoControlsManagerTearsDownMediaControlsOnDealloc)
 {
-    RetainPtr<VideoControlsManagerTestWebView*> webView = setUpWebViewForTestingVideoControlsManager(NSMakeRect(0, 0, 100, 100));
+    RetainPtr<VideoControlsManagerTestWebView> webView = setUpWebViewForTestingVideoControlsManager(NSMakeRect(0, 0, 100, 100));
 
     NSURL *urlOfVideo = [[NSBundle mainBundle] URLForResource:@"video-with-audio" withExtension:@"mp4" subdirectory:@"TestWebKitAPI.resources"];
     [webView loadFileURL:urlOfVideo allowingReadAccessToURL:[urlOfVideo URLByDeletingLastPathComponent]];
@@ -374,7 +374,7 @@ TEST(VideoControlsManager, VideoControlsManagerTearsDownMediaControlsOnDealloc)
 
 TEST(VideoControlsManager, VideoControlsManagerDoesNotShowMediaControlsForOffscreenVideo)
 {
-    RetainPtr<VideoControlsManagerTestWebView*> webView = setUpWebViewForTestingVideoControlsManager(NSMakeRect(0, 0, 1024, 768));
+    RetainPtr<VideoControlsManagerTestWebView> webView = setUpWebViewForTestingVideoControlsManager(NSMakeRect(0, 0, 1024, 768));
 
     [webView loadTestPageNamed:@"large-video-offscreen"];
     [webView waitForMediaControlsToHide];
@@ -382,7 +382,7 @@ TEST(VideoControlsManager, VideoControlsManagerDoesNotShowMediaControlsForOffscr
 
 TEST(VideoControlsManager, VideoControlsManagerKeepsControlsStableDuringSrcChangeOnClick)
 {
-    RetainPtr<VideoControlsManagerTestWebView*> webView = setUpWebViewForTestingVideoControlsManager(NSMakeRect(0, 0, 800, 600));
+    RetainPtr<VideoControlsManagerTestWebView> webView = setUpWebViewForTestingVideoControlsManager(NSMakeRect(0, 0, 800, 600));
 
     [webView loadTestPageNamed:@"change-video-source-on-click"];
     [webView waitForPageToLoadWithAutoplayingVideos:1];
@@ -393,7 +393,7 @@ TEST(VideoControlsManager, VideoControlsManagerKeepsControlsStableDuringSrcChang
 
 TEST(VideoControlsManager, VideoControlsManagerKeepsControlsStableDuringSrcChangeOnEnd)
 {
-    RetainPtr<VideoControlsManagerTestWebView*> webView = setUpWebViewForTestingVideoControlsManager(NSMakeRect(0, 0, 800, 600));
+    RetainPtr<VideoControlsManagerTestWebView> webView = setUpWebViewForTestingVideoControlsManager(NSMakeRect(0, 0, 800, 600));
 
     [webView loadTestPageNamed:@"change-video-source-on-end"];
     [webView expectControlsManager:YES afterReceivingMessage:@"changed"];
@@ -401,7 +401,7 @@ TEST(VideoControlsManager, VideoControlsManagerKeepsControlsStableDuringSrcChang
 
 TEST(VideoControlsManager, VideoControlsManagerSmallVideoInMediaDocument)
 {
-    RetainPtr<VideoControlsManagerTestWebView*> webView = setUpWebViewForTestingVideoControlsManager(NSMakeRect(0, 0, 100, 100));
+    RetainPtr<VideoControlsManagerTestWebView> webView = setUpWebViewForTestingVideoControlsManager(NSMakeRect(0, 0, 100, 100));
 
     __block bool finishedLoad = false;
     [webView performAfterLoading:^ {
@@ -419,7 +419,7 @@ TEST(VideoControlsManager, VideoControlsManagerSmallVideoInMediaDocument)
     
 TEST(VideoControlsManager, VideoControlsManagerOffscreenIframeMediaDocument)
 {
-    RetainPtr<VideoControlsManagerTestWebView*> webView = setUpWebViewForTestingVideoControlsManager(NSMakeRect(0, 0, 800, 600));
+    RetainPtr<VideoControlsManagerTestWebView> webView = setUpWebViewForTestingVideoControlsManager(NSMakeRect(0, 0, 800, 600));
     [webView loadTestPageNamed:@"offscreen-iframe-of-media-document"];
     
     // We do not expect a controls manager becuase the media document is in an iframe.
@@ -428,7 +428,7 @@ TEST(VideoControlsManager, VideoControlsManagerOffscreenIframeMediaDocument)
 
 TEST(VideoControlsManager, VideoControlsManagerLongSkinnyVideoInWideMainFrame)
 {
-    RetainPtr<VideoControlsManagerTestWebView*> webView = setUpWebViewForTestingVideoControlsManager(NSMakeRect(0, 0, 1600, 800));
+    RetainPtr<VideoControlsManagerTestWebView> webView = setUpWebViewForTestingVideoControlsManager(NSMakeRect(0, 0, 1600, 800));
 
     [webView loadTestPageNamed:@"skinny-autoplaying-video-with-audio"];
     [webView expectControlsManager:NO afterReceivingMessage:@"playing"];
@@ -436,7 +436,7 @@ TEST(VideoControlsManager, VideoControlsManagerLongSkinnyVideoInWideMainFrame)
 
 TEST(VideoControlsManager, VideoControlsManagerWideMediumSizedVideoInWideMainFrame)
 {
-    RetainPtr<VideoControlsManagerTestWebView*> webView = setUpWebViewForTestingVideoControlsManager(NSMakeRect(0, 0, 1600, 800));
+    RetainPtr<VideoControlsManagerTestWebView> webView = setUpWebViewForTestingVideoControlsManager(NSMakeRect(0, 0, 1600, 800));
 
     [webView loadTestPageNamed:@"wide-autoplaying-video-with-audio"];
     [webView expectControlsManager:YES afterReceivingMessage:@"playing"];
@@ -444,7 +444,7 @@ TEST(VideoControlsManager, VideoControlsManagerWideMediumSizedVideoInWideMainFra
 
 TEST(VideoControlsManager, VideoControlsManagerFullSizeVideoInWideMainFrame)
 {
-    RetainPtr<VideoControlsManagerTestWebView*> webView = setUpWebViewForTestingVideoControlsManager(NSMakeRect(0, 0, 1600, 800));
+    RetainPtr<VideoControlsManagerTestWebView> webView = setUpWebViewForTestingVideoControlsManager(NSMakeRect(0, 0, 1600, 800));
 
     [webView loadTestPageNamed:@"full-size-autoplaying-video-with-audio"];
     [webView expectControlsManager:YES afterReceivingMessage:@"playing"];
@@ -452,7 +452,7 @@ TEST(VideoControlsManager, VideoControlsManagerFullSizeVideoInWideMainFrame)
 
 TEST(VideoControlsManager, VideoControlsManagerVideoMutesOnPlaying)
 {
-    RetainPtr<VideoControlsManagerTestWebView*> webView = setUpWebViewForTestingVideoControlsManager(NSMakeRect(0, 0, 500, 500));
+    RetainPtr<VideoControlsManagerTestWebView> webView = setUpWebViewForTestingVideoControlsManager(NSMakeRect(0, 0, 500, 500));
 
     [webView loadTestPageNamed:@"large-video-mutes-onplaying"];
     [webView expectControlsManager:NO afterReceivingMessage:@"playing"];
@@ -460,7 +460,7 @@ TEST(VideoControlsManager, VideoControlsManagerVideoMutesOnPlaying)
 
 TEST(VideoControlsManager, VideoControlsManagerPageWithEnormousVideo)
 {
-    RetainPtr<VideoControlsManagerTestWebView*> webView = setUpWebViewForTestingVideoControlsManager(NSMakeRect(0, 0, 500, 500));
+    RetainPtr<VideoControlsManagerTestWebView> webView = setUpWebViewForTestingVideoControlsManager(NSMakeRect(0, 0, 500, 500));
 
     [webView loadTestPageNamed:@"enormous-video-with-sound"];
     [webView expectControlsManager:NO afterReceivingMessage:@"playing"];

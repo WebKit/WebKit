@@ -73,7 +73,7 @@ private:
     RetainPtr<CFURLAuthChallengeRef> m_cfChallenge;
 #else
     RetainPtr<id> m_sender;
-    RetainPtr<NSURLAuthenticationChallenge *> m_nsChallenge;
+    RetainPtr<NSURLAuthenticationChallenge> m_nsChallenge;
 #endif
 };
 

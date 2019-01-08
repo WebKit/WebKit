@@ -151,7 +151,7 @@ private:
 #if PLATFORM(MAC)
     uint64_t m_showPaymentUIRequestSeed { 0 };
     RetainPtr<NSWindow> m_sheetWindow;
-    RetainPtr<NSObject *> m_sheetWindowWillCloseObserver;
+    RetainPtr<NSObject> m_sheetWindowWillCloseObserver;
 #endif
     
 #if defined(WEBPAYMENTCOORDINATORPROXY_ADDITIONS)

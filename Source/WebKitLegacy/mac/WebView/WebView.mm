@@ -3661,7 +3661,7 @@ IGNORE_WARNINGS_END
 
 - (NSCachedURLResponse *)_cachedResponseForURL:(NSURL *)URL
 {
-    RetainPtr<NSMutableURLRequest *> request = adoptNS([[NSMutableURLRequest alloc] initWithURL:URL]);
+    RetainPtr<NSMutableURLRequest> request = adoptNS([[NSMutableURLRequest alloc] initWithURL:URL]);
     [request _web_setHTTPUserAgent:[self userAgentForURL:URL]];
     NSCachedURLResponse *cachedResponse;
 

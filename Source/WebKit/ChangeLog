@@ -1,3 +1,22 @@
+2019-01-07  David Kilzer  <ddkilzer@apple.com>
+
+        Prefer RetainPtr<NSObject> to RetainPtr<NSObject *>
+        <https://webkit.org/b/193056>
+
+        Reviewed by Alex Christensen.
+
+        * Shared/EntryPointUtilities/mac/XPCService/XPCServiceMain.mm:
+        (WebKit::XPCServiceMain):
+        * UIProcess/API/Cocoa/_WKThumbnailView.mm:
+        * UIProcess/ApplePay/WebPaymentCoordinatorProxy.h:
+        * UIProcess/Cocoa/VideoFullscreenManagerProxy.h:
+        * UIProcess/Plugins/PluginProcessProxy.h:
+        * UIProcess/RemoteLayerTree/ios/RemoteLayerTreeHostIOS.mm:
+        (WebKit::RemoteLayerTreeHost::createEmbeddedView):
+        * WebProcess/WebPage/RemoteLayerTree/PlatformCALayerRemoteCustom.mm:
+        (WebKit::PlatformCALayerRemoteCustom::clone const):
+        - Remove '*' from RetainPtr<> type.
+
 2019-01-07  Dean Jackson  <dino@apple.com>
 
         Turn on Pointer Events by default for iOS

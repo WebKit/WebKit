@@ -37,7 +37,7 @@ void InjectedBundle::platformInitialize(WKTypeRef)
     // Language was set up earlier in main(). Don't clobber it.
     NSArray *languages = [[[NSUserDefaults standardUserDefaults] volatileDomainForName:NSArgumentDomain] valueForKey:@"AppleLanguages"];
 
-    RetainPtr<NSMutableDictionary *> dict = adoptNS([[NSMutableDictionary alloc] init]);
+    RetainPtr<NSMutableDictionary> dict = adoptNS([[NSMutableDictionary alloc] init]);
     if (languages)
         [dict setObject:languages forKey:@"AppleLanguages"];
 

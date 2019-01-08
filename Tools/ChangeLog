@@ -1,3 +1,81 @@
+2019-01-07  David Kilzer  <ddkilzer@apple.com>
+
+        Prefer RetainPtr<NSObject> to RetainPtr<NSObject *>
+        <https://webkit.org/b/193056>
+
+        Reviewed by Alex Christensen.
+
+        * Scripts/webkitpy/style/checker.py:
+        - Ignore use of new runtime/retainptr check in
+          Tools/TestWebKitAPI/Tests/WTF/ns/RetainPtr.mm since it
+          contains tests to ensure RetainPtr<NSObject *> is compatible
+          with RetainPtr<NSObject>.
+
+        * Scripts/webkitpy/style/checkers/cpp.py:
+        (check_language):
+        (CppChecker):
+        - Add checker for use of '*' in RetainPtr<> type.  A for loop
+          was used instead of a single regex so that angle brackets
+          could be matched up when checking the type contained within
+          the RetainPtr<> type.
+
+        * Scripts/webkitpy/style/checkers/cpp_unittest.py:
+        (CppStyleTest):
+        - Add unit test for new runtime/retainptr check.
+
+        * TestRunnerShared/EventSerialization/mac/EventSerializerMac.h:
+        * TestWebKitAPI/EditingTestHarness.h:
+        - Remove '*' from RetainPtr<> type.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        - Add cf/RetainPtr.cpp back to TestWTFLibrary target!  This
+          regressed in r201938.
+
+        * TestWebKitAPI/Tests/WTF/cf/RetainPtr.cpp:
+        (TestWebKitAPI::TEST):
+        - Update tests to match RetainPtr.mm tests (except for the
+          `*SimilarNSType` tests since there is no CF equivalent of
+          RetainPtr<NSString> and RetainPtr<NSString *>).
+
+        * TestWebKitAPI/Tests/WTF/ns/RetainPtr.mm:
+        (TestWebKitAPI::TEST):
+        - Update tests to:
+          - Not conflict by name with equivalent CF tests in
+            RetainPtr.cpp.
+          - Add test cases for RetainPtr<NSObject>,
+            RetainPtr<NSObject *> and RetainPtr<id> were appropriate.
+          - Add `*SimilarNSType` tests for converting between
+            RetainPtr<NSObject> and RetainPtr<NSObject *>.
+          - Change `0` to `nil` as appropriate.
+          - Re-alphabetize the tests by name.
+          - Add Optional<RetainPtr<>> tests.
+          - Add retainPtr() tests.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/DownloadProgress.mm:
+        (-[DownloadProgressTestRunner _download:decideDestinationWithSuggestedFilename:completionHandler:]):
+        * TestWebKitAPI/Tests/WebKitCocoa/IconLoadingDelegate.mm:
+        (TEST):
+        - Remove '*' from RetainPtr<> type.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/JITEnabled.mm:
+        (TEST(WebKit, JITEnabled)):
+        - Add missing WTFMove().  Apparently a temporary was being
+          created before in the argument list due to mismatched
+          RetainPtr<> types.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/ProcessSwapOnNavigation.mm:
+        * TestWebKitAPI/Tests/WebKitCocoa/VideoControlsManager.mm:
+        (TestWebKitAPI::setUpWebViewForTestingVideoControlsManager):
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WebKitCocoa/WebsitePolicies.mm:
+        * TestWebKitAPI/ios/DragAndDropSimulatorIOS.mm:
+        * WebKitTestRunner/InjectedBundle/cocoa/ActivateFontsCocoa.mm:
+        (WTR::resourcesDirectoryURL):
+        * WebKitTestRunner/InjectedBundle/ios/InjectedBundleIOS.mm:
+        (WTR::InjectedBundle::platformInitialize):
+        * WebKitTestRunner/cocoa/TestRunnerWKWebView.mm:
+        - Remove '*' from RetainPtr<> type.
+
 2019-01-07  Eric Carlson  <eric.carlson@apple.com>
 
         A MediaTime timescale must never be zero

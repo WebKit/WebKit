@@ -31,8 +31,8 @@
 #import <WebKit/WKUIDelegatePrivate.h>
 
 @interface EditingTestHarness : NSObject<WKUIDelegatePrivate> {
-    RetainPtr<NSMutableArray<NSDictionary *> *> _editorStateHistory;
-    RetainPtr<TestWKWebView *> _webView;
+    RetainPtr<NSMutableArray<NSDictionary *>> _editorStateHistory;
+    RetainPtr<TestWKWebView> _webView;
 }
 
 - (instancetype)initWithWebView:(TestWKWebView *)webView;

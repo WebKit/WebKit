@@ -111,7 +111,7 @@ private:
     VideoFullscreenManagerProxy* m_manager;
     Ref<PlaybackSessionModelContext> m_playbackSessionModel;
     uint64_t m_contextId;
-    RetainPtr<PlatformView *> m_layerHostView;
+    RetainPtr<PlatformView> m_layerHostView;
     HashSet<WebCore::VideoFullscreenModelClient*> m_clients;
     WebCore::FloatSize m_videoDimensions;
     bool m_hasVideo { false };

@@ -57,7 +57,7 @@
     CGFloat _lastSnapshotScale;
     CGSize _lastSnapshotMaximumSize;
 
-    RetainPtr<NSColor *> _overrideBackgroundColor;
+    RetainPtr<NSColor> _overrideBackgroundColor;
 }
 
 @synthesize snapshotSize=_snapshotSize;

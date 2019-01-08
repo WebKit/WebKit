@@ -38,8 +38,8 @@
 @end
 
 @interface EventStreamPlayer : NSObject {
-    RetainPtr<NSMutableArray *> _remainingEventDictionaries;
-    RetainPtr<NSWindow *> _window;
+    RetainPtr<NSMutableArray> _remainingEventDictionaries;
+    RetainPtr<NSWindow> _window;
     BlockPtr<void ()> _completionHandler;
     uint64_t _startTime;
 }

@@ -47,7 +47,7 @@ namespace WTR {
 
 static NSURL *resourcesDirectoryURL()
 {
-    static NeverDestroyed<RetainPtr<NSURL *>> resourcesDirectory([[NSBundle bundleForClass:[WKTRFontActivatorDummyClass class]] resourceURL]);
+    static NeverDestroyed<RetainPtr<NSURL>> resourcesDirectory([[NSBundle bundleForClass:[WKTRFontActivatorDummyClass class]] resourceURL]);
     return resourcesDirectory.get().get();
 }
 

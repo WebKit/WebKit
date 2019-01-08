@@ -1667,6 +1667,27 @@ class CppStyleTest(CppStyleTestBase):
             '  [runtime/dispatch_set_target_queue] [5]')
         self.assert_lint('globalQueue = dispatch_queue_create_with_target("My Serial Queue", DISPATCH_QUEUE_SERIAL, dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0));', '')
 
+    def test_retainptr_pointer(self):
+        self.assert_lint(
+            '''RetainPtr<CFRunLoopRef*> m_cfRunLoop;''',
+            'RetainPtr<> should never contain a type with \'*\'. Correct: RetainPtr<NSString>, RetainPtr<CFStringRef>.'
+            '  [runtime/retainptr] [5]')
+        self.assert_lint('RetainPtr<CFRunLoopRef> m_cfRunLoop;', '')
+        self.assert_lint(
+            '''RetainPtr<NSRunLoop*> m_nsRunLoop;''',
+            'RetainPtr<> should never contain a type with \'*\'. Correct: RetainPtr<NSString>, RetainPtr<CFStringRef>.'
+            '  [runtime/retainptr] [5]')
+        self.assert_lint('RetainPtr<NSRunLoop> m_nsRunLoop;', '')
+        self.assert_lint(
+            '''RetainPtr<NSMutableArray<NSDictionary *> *> m_editorStateHistory;''',
+            'RetainPtr<> should never contain a type with \'*\'. Correct: RetainPtr<NSString>, RetainPtr<CFStringRef>.'
+            '  [runtime/retainptr] [5]')
+        self.assert_lint(
+            '''RetainPtr<NSDictionary<NSString *, NSArray<NSString *>> *> dictionary;''',
+            'RetainPtr<> should never contain a type with \'*\'. Correct: RetainPtr<NSString>, RetainPtr<CFStringRef>.'
+            '  [runtime/retainptr] [5]')
+        self.assert_lint('''RetainPtr<NSDictionary<NSString *, NSArray<NSString *>>> dictionary;''', '')
+
     # Variable-length arrays are not permitted.
     def test_variable_length_array_detection(self):
         errmsg = ('Do not use variable-length arrays.  Use an appropriately named '

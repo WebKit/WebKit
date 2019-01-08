@@ -63,7 +63,7 @@ private:
 
 #if PLATFORM(COCOA)
     WTF_EXPORT_PRIVATE SchedulePair(NSRunLoop*, CFStringRef);
-    RetainPtr<NSRunLoop*> m_nsRunLoop;
+    RetainPtr<NSRunLoop> m_nsRunLoop;
 #endif
 
     RetainPtr<CFRunLoopRef> m_runLoop;

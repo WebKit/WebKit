@@ -143,7 +143,7 @@ SOFT_LINK_CONSTANT(AVFoundation, AVSampleBufferDisplayLayerFailedToDecodeNotific
 {
     ASSERT_UNUSED(streamDataParser, streamDataParser == _parser);
 
-    RetainPtr<AVAsset*> protectedAsset = asset;
+    RetainPtr<AVAsset> protectedAsset = asset;
     callOnMainThread([parent = _parent, protectedAsset = WTFMove(protectedAsset)] {
         if (parent)
             parent->didParseStreamDataAsAsset(protectedAsset.get());
@@ -155,7 +155,7 @@ SOFT_LINK_CONSTANT(AVFoundation, AVSampleBufferDisplayLayerFailedToDecodeNotific
     UNUSED_PARAM(discontinuity);
     ASSERT_UNUSED(streamDataParser, streamDataParser == _parser);
 
-    RetainPtr<AVAsset*> protectedAsset = asset;
+    RetainPtr<AVAsset> protectedAsset = asset;
     callOnMainThread([parent = _parent, protectedAsset = WTFMove(protectedAsset)] {
         if (parent)
             parent->didParseStreamDataAsAsset(protectedAsset.get());

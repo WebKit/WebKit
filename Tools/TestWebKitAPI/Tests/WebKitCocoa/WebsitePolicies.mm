@@ -908,7 +908,7 @@ TEST(WebKit, CustomHeaderFields)
 static unsigned loadCount;
 
 @interface DataMappingSchemeHandler : NSObject <WKURLSchemeHandler> {
-    HashMap<String, RetainPtr<NSData *>> _dataMappings;
+    HashMap<String, RetainPtr<NSData>> _dataMappings;
     Function<void(id <WKURLSchemeTask>)> _taskHandler;
 }
 - (void)addMappingFromURLString:(NSString *)urlString toData:(const char*)data;

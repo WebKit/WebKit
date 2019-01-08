@@ -128,7 +128,7 @@ RetainPtr<WKEmbeddedView> RemoteLayerTreeHost::createEmbeddedView(const RemoteLa
     if (m_isDebugLayerTreeHost)
         return adoptNS([[UIView alloc] init]);
 
-    auto result = m_embeddedViews.ensure(properties.embeddedViewID, [&]() -> RetainPtr<UIView *> {
+    auto result = m_embeddedViews.ensure(properties.embeddedViewID, [&]() -> RetainPtr<UIView> {
         switch (properties.type) {
 #if HAVE(PENCILKIT)
         case PlatformCALayer::LayerTypeEditableImageLayer: {

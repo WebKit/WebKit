@@ -205,7 +205,7 @@ TEST(IconLoading, AlreadyCachedIcon)
     RetainPtr<IconLoadingSchemeHandler> handler = adoptNS([[IconLoadingSchemeHandler alloc] initWithData:mainData]);
 
     NSURL *url = [[NSBundle mainBundle] URLForResource:@"large-red-square-image" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"];
-    RetainPtr<NSData *> iconDataFromDisk = [NSData dataWithContentsOfURL:url];
+    RetainPtr<NSData> iconDataFromDisk = [NSData dataWithContentsOfURL:url];
     [handler.get() setFaviconData:iconDataFromDisk.get()];
 
     [configuration setURLSchemeHandler:handler.get() forURLScheme:@"testing"];

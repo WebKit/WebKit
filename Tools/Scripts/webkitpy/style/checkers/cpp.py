@@ -3313,6 +3313,25 @@ def check_language(filename, clean_lines, line_number, file_extension, include_s
         error(line_number, 'runtime/dispatch_set_target_queue', 5,
               'Never use dispatch_set_target_queue.  Use dispatch_queue_create_with_target instead.')
 
+    matched = search(r'\b(RetainPtr<.*)', line)
+    if matched:
+        match_line = matched.group(1)
+        nested_angle_bracket_count = 1
+        previous_closing_angle_bracket_index = -1
+        closing_angle_bracket_index = 9 # Used if only one pair of angle brackets.
+        for i in xrange(10, len(match_line) - 1):
+            if match_line[i] == '<':
+                nested_angle_bracket_count += 1
+            if match_line[i] == '>':
+                nested_angle_bracket_count -= 1
+                previous_closing_angle_bracket_index = closing_angle_bracket_index
+                closing_angle_bracket_index = i
+            if nested_angle_bracket_count == 0:
+                if "*" in match_line[previous_closing_angle_bracket_index:closing_angle_bracket_index]:
+                    error(line_number, 'runtime/retainptr', 5,
+                          'RetainPtr<> should never contain a type with \'*\'. Correct: RetainPtr<NSString>, RetainPtr<CFStringRef>.')
+                break
+
     # Check for suspicious usage of "if" like
     # } if (a == b) {
     if search(r'\}\s*if\s*\(', line):
@@ -4052,6 +4071,7 @@ class CppChecker(object):
         'runtime/printf',
         'runtime/printf_format',
         'runtime/references',
+        'runtime/retainptr',
         'runtime/rtti',
         'runtime/sizeof',
         'runtime/soft-linked-alloc',

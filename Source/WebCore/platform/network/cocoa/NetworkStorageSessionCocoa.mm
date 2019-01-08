@@ -202,7 +202,7 @@ static RetainPtr<NSDictionary> policyProperties(const SameSiteInfo& sameSiteInfo
 static NSArray *cookiesForURL(NSHTTPCookieStorage *storage, NSURL *url, NSURL *mainDocumentURL, const Optional<SameSiteInfo>& sameSiteInfo, NSString *partition = nullptr)
 {
     // The _getCookiesForURL: method calls the completionHandler synchronously. We use Optional<> to ensure this invariant.
-    Optional<RetainPtr<NSArray *>> cookiesPtr;
+    Optional<RetainPtr<NSArray>> cookiesPtr;
     auto completionHandler = [&cookiesPtr] (NSArray *cookies) {
         cookiesPtr = retainPtr(cookies);
     };

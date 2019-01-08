@@ -100,7 +100,7 @@ uint32_t PlatformCALayerRemoteCustom::hostingContextID()
 
 Ref<WebCore::PlatformCALayer> PlatformCALayerRemoteCustom::clone(PlatformCALayerClient* owner) const
 {
-    RetainPtr<CALayer *> clonedLayer;
+    RetainPtr<CALayer> clonedLayer;
     bool copyContents = true;
 
     if (layerType() == LayerTypeAVPlayerLayer) {

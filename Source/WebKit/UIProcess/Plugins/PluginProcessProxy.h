@@ -173,7 +173,7 @@ private:
 
 #if PLATFORM(COCOA)
     RetainPtr<NSObject> m_activationObserver;
-    RetainPtr<WKPlaceholderModalWindow *> m_placeholderWindow;
+    RetainPtr<WKPlaceholderModalWindow> m_placeholderWindow;
     bool m_modalWindowIsShowing;
     bool m_fullscreenWindowIsShowing;
     unsigned m_preFullscreenAppPresentationOptions;

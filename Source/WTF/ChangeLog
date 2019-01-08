@@ -1,3 +1,30 @@
+2019-01-07  David Kilzer  <ddkilzer@apple.com>
+
+        Prefer RetainPtr<NSObject> to RetainPtr<NSObject *>
+        <https://webkit.org/b/193056>
+
+        Reviewed by Alex Christensen.
+
+        * wtf/RetainPtr.h:
+        (WTF::RetainPtr<T>::HelperPtrType):
+        - Use C++ template metaprogramming to define a shared return
+          type for adoptNS() and retainPtr() that uses
+          RetainPtr<NSObject> instead of RetainPtr<NSObject *>.  The
+          non-Objective-C typedef is used with retainPtr() for CFTypeRef
+          objects.
+        (WTF::adoptNS):
+        - Only make declarations available when compilng with
+          Objective-C.  The inline implementation is only available for
+          Objective-C, so this makes the declarations consistent.
+        - Change return type to remove '*' from NS types using
+          RetainPtr<T>::HelperPtrType.
+        (WTF::retainPtr):
+        - Change return type to remove '*' from NS types using
+          RetainPtr<T>::HelperPtrType.
+
+        * wtf/SchedulePair.h:
+        - Remove '*' from RetainPtr<> type.
+
 2019-01-07  Eric Carlson  <eric.carlson@apple.com>
 
         A MediaTime timescale must never be zero

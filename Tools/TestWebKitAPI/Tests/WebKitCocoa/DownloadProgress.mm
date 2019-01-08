@@ -381,7 +381,7 @@ static void* progressObservingContext = &progressObservingContext;
     EXPECT_EQ(download, m_download.get());
 
     WebCore::FileSystem::PlatformFileHandle fileHandle;
-    RetainPtr<NSString *> path = (NSString *)WebCore::FileSystem::openTemporaryFile("TestWebKitAPI", fileHandle);
+    RetainPtr<NSString> path = (NSString *)WebCore::FileSystem::openTemporaryFile("TestWebKitAPI", fileHandle);
     EXPECT_TRUE(fileHandle != WebCore::FileSystem::invalidPlatformFileHandle);
     WebCore::FileSystem::closeFile(fileHandle);
 
