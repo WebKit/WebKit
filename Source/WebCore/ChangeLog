@@ -1,3 +1,18 @@
+2019-01-07  Youenn Fablet  <youenn@apple.com>
+
+        Crash in SWServer::Connection::resolveRegistrationReadyRequests
+        https://bugs.webkit.org/show_bug.cgi?id=193217
+
+        Reviewed by Chris Dumez.
+
+        As can be seen from the traces, SWServer might clear its connections HashMap in its destructor.
+        This might then trigger calling SWServer::resolveRegistrationReadyRequests.
+        This method is iterating on the connections HashMap which is being cleared.
+        To remove this problem, move the HashMap in a temporary variable and clear the temporary variable.
+
+        * workers/service/server/SWServer.cpp:
+        (WebCore::SWServer::~SWServer):
+
 2019-01-07  Jer Noble  <jer.noble@apple.com>
 
         REGRESSION (r239519): ASSERTION FAILED: !m_adoptionIsRequired in com.apple.WebCore: void WTF::refIfNotNull<WebCore::CDMSessionMediaSourceAVFObjC> + 53
