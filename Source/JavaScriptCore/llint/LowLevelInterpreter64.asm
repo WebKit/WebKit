@@ -1341,7 +1341,7 @@ llintOpWithMetadata(op_put_by_id, OpPutById, macro (size, get, dispatch, metadat
     get(value, t1)
     loadConstantOrVariable(size, t1, t3)
 
-    loadp OpPutById::Metadata::flags[t5], t1
+    loadi OpPutById::Metadata::flags[t5], t1
 
     # At this point, we have:
     # t0 -> object base

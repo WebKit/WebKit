@@ -1,3 +1,16 @@
+2019-01-08  Tadeu Zagallo  <tzagallo@apple.com>
+
+        LLInt put_by_id uses the wrong load instruction for loading flags from the metadata
+        https://bugs.webkit.org/show_bug.cgi?id=193221
+
+        Reviewed by Mark Lam.
+
+        The flags are only 4 bytes, but were loaded with loadp. It used to work,
+        since the flags were followed by a 4-byte padding, but it broke after the
+        struct was compacted in r239626.
+
+        * llint/LowLevelInterpreter64.asm:
+
 2019-01-07  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: extend XHR breakpoints to work with fetch

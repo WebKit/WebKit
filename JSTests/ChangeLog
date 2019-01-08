@@ -1,3 +1,15 @@
+2019-01-08  Tadeu Zagallo  <tzagallo@apple.com>
+
+        LLInt put_by_id uses the wrong load instruction for loading flags from the metadata
+        https://bugs.webkit.org/show_bug.cgi?id=193221
+
+        Reviewed by Mark Lam.
+
+        * stress/put-by-id-flags.js: Added.
+        (f):
+        (g):
+        (numberOfDFGCompiles):
+
 2019-01-04  Tadeu Zagallo  <tzagallo@apple.com>
 
         Baseline version of get_by_id may corrupt metadata
