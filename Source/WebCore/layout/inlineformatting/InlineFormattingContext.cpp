@@ -157,7 +157,6 @@ void InlineFormattingContext::splitInlineRunIfNeeded(const InlineRun& inlineRun,
         splitRuns.append(run);
 
         contentStart += runWidth + uncommitted->lastInlineItem->nonBreakableEnd();
-        remaningLength -= uncommitted->length;
 
         startPosition = 0;
         uncommitted = { };
@@ -183,7 +182,9 @@ void InlineFormattingContext::splitInlineRunIfNeeded(const InlineRun& inlineRun,
         // #1
         if (detachingRules.containsAll({ InlineItem::DetachingRule::BreakAtStart, InlineItem::DetachingRule::BreakAtEnd })) {
             commit();
-            uncommitted = Uncommitted { &inlineItem, &inlineItem, currentLength() };
+            auto contentLength = currentLength();
+            uncommitted = Uncommitted { &inlineItem, &inlineItem, contentLength };
+            remaningLength -= contentLength;
             commit();
             continue;
         }
@@ -194,10 +195,12 @@ void InlineFormattingContext::splitInlineRunIfNeeded(const InlineRun& inlineRun,
 
         // Add current inline item to uncommitted.
         // #3 and #4
+        auto contentLength = currentLength();
         if (!uncommitted)
             uncommitted = Uncommitted { &inlineItem, &inlineItem, 0 };
-        uncommitted->length += currentLength();
+        uncommitted->length += contentLength;
         uncommitted->lastInlineItem = &inlineItem;
+        remaningLength -= contentLength;
 
         // #3
         if (detachingRules.contains(InlineItem::DetachingRule::BreakAtEnd))
@@ -441,11 +444,12 @@ void InlineFormattingContext::collectInlineContentForSubtree(const Box& root, In
     if (root.establishesFormattingContext() && &root != &(this->root())) {
         createAndAppendInlineItem();
         auto& inlineRun = *inlineFormattingState.inlineContent().last();
+        auto computedHorizontalMargin = Geometry::computedHorizontalMargin(layoutState(), root);
+        auto horizontalMargin = UsedHorizontalMargin { computedHorizontalMargin.start.valueOr(0), computedHorizontalMargin.end.valueOr(0) };
 
-        auto horizontalMargin = Geometry::computedHorizontalMargin(layoutState(), root);
         inlineRun.addDetachingRule({ InlineItem::DetachingRule::BreakAtStart, InlineItem::DetachingRule::BreakAtEnd });
-        inlineRun.addNonBreakableStart(horizontalMargin.start.valueOr(0));
-        inlineRun.addNonBreakableEnd(horizontalMargin.end.valueOr(0));
+        inlineRun.addNonBreakableStart(horizontalMargin.start);
+        inlineRun.addNonBreakableEnd(horizontalMargin.end);
         // Skip formatting root subtree. They are not part of this inline formatting context.
         return;
     }
@@ -465,7 +469,9 @@ void InlineFormattingContext::collectInlineContentForSubtree(const Box& root, In
     // FIXME: Revisit this when we figured out how inline boxes fit the display tree.
     auto padding = Geometry::computedPadding(layoutState(), root);
     auto border = Geometry::computedBorder(layoutState(), root);
-    auto horizontalMargin = Geometry::computedHorizontalMargin(layoutState(), root);
+    auto computedHorizontalMargin = Geometry::computedHorizontalMargin(layoutState(), root);
+    auto horizontalMargin = UsedHorizontalMargin { computedHorizontalMargin.start.valueOr(0), computedHorizontalMargin.end.valueOr(0) };
+
     // Setup breaking boundaries for this subtree.
     auto* lastDescendantInlineBox = inlineFormattingState.lastInlineItem();
     // Empty container?
@@ -496,7 +502,7 @@ void InlineFormattingContext::collectInlineContentForSubtree(const Box& root, In
 
         ASSERT(firstDescendantInlineBox);
         firstDescendantInlineBox->addDetachingRule(InlineItem::DetachingRule::BreakAtStart);
-        auto startOffset = border.horizontal.left + horizontalMargin.start.valueOr(0);
+        auto startOffset = border.horizontal.left + horizontalMargin.start;
         if (padding)
             startOffset += padding->horizontal.left;
         firstDescendantInlineBox->addNonBreakableStart(startOffset);
@@ -504,7 +510,7 @@ void InlineFormattingContext::collectInlineContentForSubtree(const Box& root, In
 
     if (rootBreaksAtEnd()) {
         lastDescendantInlineBox->addDetachingRule(InlineItem::DetachingRule::BreakAtEnd);
-        auto endOffset = border.horizontal.right + horizontalMargin.end.valueOr(0);
+        auto endOffset = border.horizontal.right + horizontalMargin.end;
         if (padding)
             endOffset += padding->horizontal.right;
         lastDescendantInlineBox->addNonBreakableEnd(endOffset);

@@ -75,6 +75,7 @@ public:
 
     FormattingState& formattingStateForBox(const Box&) const;
     FormattingState& establishedFormattingState(const Box& formattingRoot) const;
+    bool hasFormattingState(const Box& formattingRoot) const { return m_formattingStates.contains(&formattingRoot); }
     FormattingState& createFormattingStateForFormattingRootIfNeeded(const Box& formattingRoot);
 
     Display::Box& displayBoxForLayoutBox(const Box& layoutBox) const;

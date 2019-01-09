@@ -183,34 +183,32 @@ Optional<Position> FloatingContext::verticalPositionWithClearance(const Box& lay
         if (clearance <= 0)
             return { };
 
+        displayBox.setHasClearance();
         // Clearance inhibits margin collapsing. Let's reset the relevant adjoining margins.
         if (auto* previousInFlowSibling = layoutBox.previousInFlowSibling()) {
             auto& previousInFlowDisplayBox = layoutState.displayBoxForLayoutBox(*previousInFlowSibling);
+            // Does this box with clearance actually collapse its margin before with the previous inflow box's margin after? 
+            auto verticalMargin = displayBox.verticalMargin();
+            if (verticalMargin.hasCollapsedValues() && verticalMargin.collapsedValues().before) {
+                // Reset previous bottom after and current margin before to non-collapsing.
+                auto previousVerticalMargin = previousInFlowDisplayBox.verticalMargin();
+                ASSERT(previousVerticalMargin.hasCollapsedValues() && previousVerticalMargin.collapsedValues().after);
 
-            // Since the previous inflow sibling has already been laid out, its margin is collapsed by now.
-            ASSERT(!previousInFlowDisplayBox.marginAfter());
-            auto collapsedMargin = displayBox.marginBefore();
-
-            // Reset previous bottom and current top margins to non-collapsing.
-            auto previousVerticalMargin = previousInFlowDisplayBox.verticalMargin();
-            if (previousVerticalMargin.collapsedValues().after) {
+                auto collapsedMargin = *verticalMargin.collapsedValues().before;
                 previousVerticalMargin.setCollapsedValues({ previousVerticalMargin.collapsedValues().before, { } });
                 previousInFlowDisplayBox.setVerticalMargin(previousVerticalMargin);
-            }
-            // FIXME: check if collapsing through has anything to do with this.
-            auto verticalMargin = displayBox.verticalMargin();
-            if (verticalMargin.collapsedValues().before) {
+
                 verticalMargin.setCollapsedValues({ { }, verticalMargin.collapsedValues().after });
                 displayBox.setVerticalMargin(verticalMargin);
+
+                auto nonCollapsedMargin = previousVerticalMargin.after() + verticalMargin.before();
+                auto marginDifference = nonCollapsedMargin - collapsedMargin;
+                // Move the box to the position where it would be with non-collapsed margins.
+                rootRelativeTop += marginDifference;
+
+                // Having negative clearance is also normal. It just means that the box with the non-collapsed margins is now lower than it needs to be.
+                clearance -= marginDifference;
             }
-
-            auto nonCollapsedMargin = previousInFlowDisplayBox.marginAfter() + displayBox.marginBefore();
-            auto marginOffset = nonCollapsedMargin - collapsedMargin;
-            // Move the box to the position where it would be with non-collapsed margins.
-            rootRelativeTop += marginOffset;
-
-            // Having negative clearance is also normal. It just means that the box with the non-collapsed margins is now lower than it needs to be.
-            clearance -= marginOffset;
         }
         // Now adjust the box's position with the clearance.
         rootRelativeTop += clearance;

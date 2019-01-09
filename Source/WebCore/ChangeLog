@@ -1,3 +1,89 @@
+2019-01-09  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC][BFC][MarginCollapsing] Add support for peculiar cases.
+        https://bugs.webkit.org/show_bug.cgi?id=192625
+
+        Reviewed by Antti Koivisto.
+
+        Implement some of the more peculiar cases like margin collpasing through multiple boxes etc.
+        Add ~100 new passing cases.
+
+        * layout/FormattingContextGeometry.cpp:
+        (WebCore::Layout::FormattingContext::Geometry::inlineReplacedHeightAndMargin):
+        * layout/LayoutState.h:
+        (WebCore::Layout::LayoutState::hasFormattingState const):
+        * layout/MarginTypes.h:
+        * layout/blockformatting/BlockFormattingContext.cpp:
+        (WebCore::Layout::BlockFormattingContext::computeEstimatedMarginBefore const):
+        (WebCore::Layout::BlockFormattingContext::computeEstimatedMarginBeforeForAncestors const):
+        (WebCore::Layout::hasPrecomputedMarginBefore):
+        (WebCore::Layout::BlockFormattingContext::computeFloatingPosition const):
+        (WebCore::Layout::BlockFormattingContext::computePositionToAvoidFloats const):
+        (WebCore::Layout::BlockFormattingContext::computeVerticalPositionForFloatClear const):
+        (WebCore::Layout::BlockFormattingContext::computeHeightAndMargin const):
+        (WebCore::Layout::BlockFormattingContext::adjustedVerticalPositionAfterMarginCollapsing const):
+        * layout/blockformatting/BlockFormattingContext.h:
+        (WebCore::Layout::BlockFormattingContext::blockFormattingState const):
+        * layout/blockformatting/BlockFormattingContextGeometry.cpp:
+        (WebCore::Layout::BlockFormattingContext::Geometry::inFlowNonReplacedHeightAndMargin):
+        (WebCore::Layout::BlockFormattingContext::Geometry::inFlowHeightAndMargin):
+        (WebCore::Layout::BlockFormattingContext::Geometry::estimatedMarginBefore): Deleted.
+        (WebCore::Layout::BlockFormattingContext::Geometry::estimatedMarginAfter): Deleted.
+        * layout/blockformatting/BlockFormattingContextQuirks.cpp:
+        (WebCore::Layout::BlockFormattingContext::Quirks::stretchedInFlowHeight):
+        (WebCore::Layout::BlockFormattingContext::Quirks::shouldIgnoreMarginAfter):
+        (WebCore::Layout::BlockFormattingContext::Quirks::stretchedHeight): Deleted.
+        * layout/blockformatting/BlockFormattingState.h:
+        (WebCore::Layout::BlockFormattingState::setPositiveAndNegativeVerticalMargin):
+        (WebCore::Layout::BlockFormattingState::hasPositiveAndNegativeVerticalMargin const):
+        (WebCore::Layout::BlockFormattingState::positiveAndNegativeVerticalMargin const):
+        (WebCore::Layout::BlockFormattingState::setHasEstimatedMarginBefore):
+        (WebCore::Layout::BlockFormattingState::clearHasEstimatedMarginBefore):
+        (WebCore::Layout::BlockFormattingState::hasEstimatedMarginBefore const):
+        * layout/blockformatting/BlockMarginCollapse.cpp:
+        (WebCore::Layout::hasClearance):
+        (WebCore::Layout::BlockFormattingContext::MarginCollapse::marginBeforeCollapsesWithParentMarginAfter):
+        (WebCore::Layout::BlockFormattingContext::MarginCollapse::marginBeforeCollapsesWithParentMarginBefore):
+        (WebCore::Layout::BlockFormattingContext::MarginCollapse::marginBeforeCollapsesWithPreviousSiblingMarginAfter):
+        (WebCore::Layout::BlockFormattingContext::MarginCollapse::marginBeforeCollapsesWithFirstInFlowChildMarginBefore):
+        (WebCore::Layout::BlockFormattingContext::MarginCollapse::marginAfterCollapsesWithSiblingMarginBeforeWithClearance):
+        (WebCore::Layout::BlockFormattingContext::MarginCollapse::marginAfterCollapsesWithParentMarginBefore):
+        (WebCore::Layout::BlockFormattingContext::MarginCollapse::marginAfterCollapsesWithLastInFlowChildMarginAfter):
+        (WebCore::Layout::BlockFormattingContext::MarginCollapse::marginAfterCollapsesWithNextSiblingMarginBefore):
+        (WebCore::Layout::BlockFormattingContext::MarginCollapse::marginsCollapseThrough):
+        (WebCore::Layout::computedPositiveAndNegativeMargin):
+        (WebCore::Layout::marginValue):
+        (WebCore::Layout::BlockFormattingContext::MarginCollapse::updateCollapsedMarginAfter):
+        (WebCore::Layout::BlockFormattingContext::MarginCollapse::positiveNegativeValues):
+        (WebCore::Layout::BlockFormattingContext::MarginCollapse::positiveNegativeMarginBefore):
+        (WebCore::Layout::BlockFormattingContext::MarginCollapse::positiveNegativeMarginAfter):
+        (WebCore::Layout::BlockFormattingContext::MarginCollapse::estimatedMarginBefore):
+        (WebCore::Layout::BlockFormattingContext::MarginCollapse::collapsedVerticalValues):
+        (WebCore::Layout::BlockFormattingContext::MarginCollapse::computedNonCollapsedMarginBefore): Deleted.
+        (WebCore::Layout::BlockFormattingContext::MarginCollapse::computedNonCollapsedMarginAfter): Deleted.
+        (WebCore::Layout::BlockFormattingContext::MarginCollapse::nonCollapsedMarginBefore): Deleted.
+        (WebCore::Layout::BlockFormattingContext::MarginCollapse::nonCollapsedMarginAfter): Deleted.
+        (WebCore::Layout::BlockFormattingContext::MarginCollapse::collapsedMarginBeforeFromFirstChild): Deleted.
+        (WebCore::Layout::BlockFormattingContext::MarginCollapse::collapsedMarginAfterFromLastChild): Deleted.
+        (WebCore::Layout::BlockFormattingContext::MarginCollapse::marginBeforeCollapsesWithPreviousSibling): Deleted.
+        (WebCore::Layout::BlockFormattingContext::MarginCollapse::marginAfterCollapsesWithNextSibling): Deleted.
+        (WebCore::Layout::BlockFormattingContext::MarginCollapse::marginBefore): Deleted.
+        (WebCore::Layout::BlockFormattingContext::MarginCollapse::marginAfter): Deleted.
+        * layout/displaytree/DisplayBox.cpp:
+        (WebCore::Display::Box::Box):
+        * layout/displaytree/DisplayBox.h:
+        (WebCore::Display::Box::hasClearance const):
+        (WebCore::Display::Box::setEstimatedMarginBefore):
+        (WebCore::Display::Box::estimatedMarginBefore const):
+        (WebCore::Display::Box::setHasClearance):
+        (WebCore::Display::Box::invalidateEstimatedMarginBefore):
+        (WebCore::Display::Box::setVerticalMargin):
+        (WebCore::Display::Box::rectWithMargin const):
+        * layout/floats/FloatingContext.cpp:
+        (WebCore::Layout::FloatingContext::verticalPositionWithClearance const):
+        * layout/inlineformatting/InlineFormattingContext.cpp:
+        (WebCore::Layout::InlineFormattingContext::collectInlineContentForSubtree const):
+
 2019-01-09  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         REGRESSION(r239156): [FreeType] fixed width, and synthetic bold/italic not correctly applied since r239156

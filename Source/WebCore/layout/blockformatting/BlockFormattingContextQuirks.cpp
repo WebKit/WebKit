@@ -55,7 +55,6 @@ static bool hasMarginBeforeQuirkValue(const Box& layoutBox)
 
 bool BlockFormattingContext::Quirks::needsStretching(const LayoutState& layoutState, const Box& layoutBox)
 {
-    ASSERT(layoutBox.isInFlow());
     // In quirks mode, body stretches to html and html to the initial containing block (height: auto only).
     if (!layoutState.inQuirksMode())
         return false;
@@ -66,8 +65,9 @@ bool BlockFormattingContext::Quirks::needsStretching(const LayoutState& layoutSt
     return layoutBox.style().logicalHeight().isAuto();
 }
 
-HeightAndMargin BlockFormattingContext::Quirks::stretchedHeight(const LayoutState& layoutState, const Box& layoutBox, HeightAndMargin heightAndMargin)
+HeightAndMargin BlockFormattingContext::Quirks::stretchedInFlowHeight(const LayoutState& layoutState, const Box& layoutBox, HeightAndMargin heightAndMargin)
 {
+    ASSERT(layoutBox.isInFlow());
     ASSERT(layoutBox.isDocumentBox() || layoutBox.isBodyBox());
 
     auto& documentBox = layoutBox.isDocumentBox() ? layoutBox : *layoutBox.parent();
@@ -87,11 +87,12 @@ HeightAndMargin BlockFormattingContext::Quirks::stretchedHeight(const LayoutStat
         // Here is the quirky part for body box:
         // Stretch the body using the initial containing block's height and shrink it with document box's margin/border/padding.
         // This looks extremely odd when html has non-auto height.
-        auto verticalMargin = Geometry::estimatedMarginBefore(layoutState, documentBox) + Geometry::estimatedMarginAfter(layoutState, documentBox);
-        strechedHeight -= verticalMargin;
+        auto documentBoxVerticalMargin = Geometry::computedVerticalMargin(layoutState, documentBox);
+        strechedHeight -= (documentBoxVerticalMargin.before.valueOr(0) + documentBoxVerticalMargin.after.valueOr(0));
 
-        auto nonCollapsedValues = heightAndMargin.nonCollapsedMargin;
-        totalVerticalMargin = nonCollapsedValues.before + nonCollapsedValues.after;
+        auto nonCollapsedMargin = heightAndMargin.nonCollapsedMargin;
+        auto collapsedMargin = MarginCollapse::collapsedVerticalValues(layoutState, layoutBox, nonCollapsedMargin);
+        totalVerticalMargin = collapsedMargin.before.valueOr(nonCollapsedMargin.before) + collapsedMargin.after.valueOr(nonCollapsedMargin.after);
     }
 
     // Stretch but never overstretch with the margins.
@@ -107,6 +108,20 @@ bool BlockFormattingContext::Quirks::shouldIgnoreMarginBefore(const LayoutState&
         return false;
 
     return layoutState.inQuirksMode() && isQuirkContainer(*layoutBox.parent()) && hasMarginBeforeQuirkValue(layoutBox);
+}
+
+bool BlockFormattingContext::Quirks::shouldIgnoreMarginAfter(const LayoutState& layoutState, const Box& layoutBox)
+{
+    // Ignore maring after when the ignored margin before collapses through.
+    if (!shouldIgnoreMarginBefore(layoutState, layoutBox))
+        return false;
+
+    ASSERT(layoutBox.parent());
+    auto& parent = *layoutBox.parent();
+    if (parent.firstInFlowOrFloatingChild() != &layoutBox || parent.firstInFlowOrFloatingChild() != parent.lastInFlowOrFloatingChild())
+        return false;
+
+    return MarginCollapse::marginsCollapseThrough(layoutState, layoutBox);
 }
 
 }

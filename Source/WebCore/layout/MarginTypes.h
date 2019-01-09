@@ -50,15 +50,15 @@ struct UsedVerticalMargin {
     struct CollapsedValues {
         Optional<LayoutUnit> before;
         Optional<LayoutUnit> after;
+        bool isCollapsedThrough { false };
     };
     CollapsedValues collapsedValues() const { return m_collapsedValues; }
     bool hasCollapsedValues() const { return m_collapsedValues.before || m_collapsedValues.after; }
     void setCollapsedValues(CollapsedValues collapsedValues) { m_collapsedValues = collapsedValues; }
 
     UsedVerticalMargin(NonCollapsedValues, CollapsedValues);
-
     UsedVerticalMargin() = default;
-    ~UsedVerticalMargin() = default;
+
 private:
     NonCollapsedValues m_nonCollapsedValues;
     CollapsedValues m_collapsedValues;
@@ -72,6 +72,10 @@ struct ComputedHorizontalMargin {
 struct UsedHorizontalMargin {
     LayoutUnit start;
     LayoutUnit end;
+};
+
+struct EstimatedMarginBefore {
+    LayoutUnit usedValue;
 };
 
 struct PositiveAndNegativeVerticalMargin {

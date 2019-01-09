@@ -99,7 +99,6 @@ HeightAndMargin BlockFormattingContext::Geometry::inFlowNonReplacedHeightAndMarg
     };
 
     auto heightAndMargin = compute();
-
     LOG_WITH_STREAM(FormattingContextLayout, stream << "[Height][Margin] -> inflow non-replaced -> height(" << heightAndMargin.height << "px) margin(" << heightAndMargin.nonCollapsedMargin.before << "px, " << heightAndMargin.nonCollapsedMargin.after << "px) -> layoutBox(" << &layoutBox << ")");
     return heightAndMargin;
 }
@@ -257,7 +256,7 @@ HeightAndMargin BlockFormattingContext::Geometry::inFlowHeightAndMargin(const La
     if (!Quirks::needsStretching(layoutState, layoutBox))
         return heightAndMargin;
 
-    heightAndMargin = Quirks::stretchedHeight(layoutState, layoutBox, heightAndMargin);
+    heightAndMargin = Quirks::stretchedInFlowHeight(layoutState, layoutBox, heightAndMargin);
 
     LOG_WITH_STREAM(FormattingContextLayout, stream << "[Height][Margin] -> inflow non-replaced -> streched to viewport -> height(" << heightAndMargin.height << "px) margin(" << heightAndMargin.nonCollapsedMargin.before << "px, " << heightAndMargin.nonCollapsedMargin.after << "px) -> layoutBox(" << &layoutBox << ")");
     return heightAndMargin;
@@ -316,30 +315,6 @@ FormattingContext::InstrinsicWidthConstraints BlockFormattingContext::Geometry::
     }
 
     return { minimumIntrinsicWidth, maximumIntrinsicWidth };
-}
-
-LayoutUnit BlockFormattingContext::Geometry::estimatedMarginBefore(const LayoutState& layoutState, const Box& layoutBox)
-{
-    ASSERT(layoutBox.isBlockLevelBox());
-    // Can't estimate vertical margins for out of flow boxes (and we shouldn't need to do it for float boxes).
-    ASSERT(layoutBox.isInFlow());
-    // Can't cross block formatting context boundary.
-    ASSERT(!layoutBox.establishesBlockFormattingContext());
-
-    // Let's just use the normal path for now.
-    return MarginCollapse::marginBefore(layoutState, layoutBox);
-}
-
-LayoutUnit BlockFormattingContext::Geometry::estimatedMarginAfter(const LayoutState& layoutState, const Box& layoutBox)
-{
-    ASSERT(layoutBox.isBlockLevelBox());
-    // Can't estimate vertical margins for out of flow boxes (and we shouldn't need to do it for float boxes).
-    ASSERT(layoutBox.isInFlow());
-    // Can't cross block formatting context boundary.
-    ASSERT(!layoutBox.establishesBlockFormattingContext());
-
-    // Let's just use the normal path for now.
-    return MarginCollapse::marginAfter(layoutState, layoutBox);
 }
 
 }
