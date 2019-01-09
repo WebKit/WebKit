@@ -627,7 +627,7 @@ class ArchiveBuiltProduct(shell.ShellCommand):
 class UploadBuiltProduct(transfer.FileUpload):
     name = 'upload-built-product'
     workersrc = WithProperties('WebKitBuild/%(configuration)s.zip')
-    masterdest = WithProperties('public_html/archives/%(fullPlatform)s-%(architecture)s-%(configuration)s/%(ewspatchid)s.zip')
+    masterdest = WithProperties('public_html/archives/%(fullPlatform)s-%(architecture)s-%(configuration)s/%(patch_id)s.zip')
     haltOnFailure = True
 
     def __init__(self, **kwargs):
@@ -641,7 +641,7 @@ class UploadBuiltProduct(transfer.FileUpload):
 class DownloadBuiltProduct(shell.ShellCommand):
     command = ['python', 'Tools/BuildSlaveSupport/download-built-product',
         WithProperties('--platform=%(platform)s'), WithProperties('--%(configuration)s'),
-        WithProperties(EWS_URL + 'archives/%(fullPlatform)s-%(architecture)s-%(configuration)s/%(ewspatchid)s.zip')]
+        WithProperties(EWS_URL + 'archives/%(fullPlatform)s-%(architecture)s-%(configuration)s/%(patch_id)s.zip')]
     name = 'download-built-product'
     description = ['downloading built product']
     descriptionDone = ['downloaded built product']
@@ -694,7 +694,7 @@ class ArchiveTestResults(shell.ShellCommand):
 class UploadTestResults(transfer.FileUpload):
     name = 'upload-test-results'
     workersrc = 'layout-test-results.zip'
-    masterdest = Interpolate('public_html/results/%(prop:buildername)s/r%(prop:ewspatchid)s-%(prop:buildnumber)s.zip')
+    masterdest = Interpolate('public_html/results/%(prop:buildername)s/r%(prop:patch_id)s-%(prop:buildnumber)s.zip')
     haltOnFailure = True
 
     def __init__(self, **kwargs):
@@ -707,8 +707,8 @@ class UploadTestResults(transfer.FileUpload):
 
 class ExtractTestResults(master.MasterShellCommand):
     name = 'extract-test-results'
-    zipFile = Interpolate('public_html/results/%(prop:buildername)s/r%(prop:ewspatchid)s-%(prop:buildnumber)s.zip')
-    resultDirectory = Interpolate('public_html/results/%(prop:buildername)s/r%(prop:ewspatchid)s-%(prop:buildnumber)s')
+    zipFile = Interpolate('public_html/results/%(prop:buildername)s/r%(prop:patch_id)s-%(prop:buildnumber)s.zip')
+    resultDirectory = Interpolate('public_html/results/%(prop:buildername)s/r%(prop:patch_id)s-%(prop:buildnumber)s')
 
     descriptionDone = ['uploaded results']
     command = ['unzip', zipFile, '-d', resultDirectory]

@@ -1,3 +1,14 @@
+2019-01-09  Aakash Jain  <aakash_jain@apple.com>
+
+        [ews-build] use patch_id instead of ewspatchid
+        https://bugs.webkit.org/show_bug.cgi?id=193235
+
+        Reviewed by Lucas Forschler.
+
+        * BuildSlaveSupport/ews-build/factories.py: Replaced ewspatchid with patch_id.
+        * BuildSlaveSupport/ews-build/steps.py: Ditto.
+        * BuildSlaveSupport/ews-build/steps_unittest.py: Ditto.
+
 2019-01-09  Zalan Bujtas  <zalan@apple.com>
 
         [LFC][BFC][MarginCollapsing] Add support for peculiar cases.

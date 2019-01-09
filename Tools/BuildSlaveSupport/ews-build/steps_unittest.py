@@ -872,7 +872,7 @@ class TestUploadBuiltProduct(BuildStepMixinAdditions, unittest.TestCase):
         self.setProperty('fullPlatform', 'mac-sierra')
         self.setProperty('configuration', 'release')
         self.setProperty('architecture', 'x86_64')
-        self.setProperty('ewspatchid', '1234')
+        self.setProperty('patch_id', '1234')
         self.expectHidden(False)
         self.expectRemoteCommands(
             Expect('uploadFile', dict(
@@ -1180,7 +1180,7 @@ class TestUploadTestResults(BuildStepMixinAdditions, unittest.TestCase):
         self.setupStep(UploadTestResults())
         self.setProperty('configuration', 'release')
         self.setProperty('architecture', 'x86_64')
-        self.setProperty('ewspatchid', '1234')
+        self.setProperty('patch_id', '1234')
         self.setProperty('buildername', 'macOS-Sierra-Release-WK2-Tests-EWS')
         self.setProperty('buildnumber', '12')
         self.expectHidden(False)
@@ -1210,7 +1210,7 @@ class TestExtractTestResults(BuildStepMixinAdditions, unittest.TestCase):
     def test_success(self):
         self.setupStep(ExtractTestResults())
         self.setProperty('configuration', 'release')
-        self.setProperty('ewspatchid', '1234')
+        self.setProperty('patch_id', '1234')
         self.setProperty('buildername', 'macOS-Sierra-Release-WK2-Tests-EWS')
         self.setProperty('buildnumber', '12')
         self.expectLocalCommands(
@@ -1228,7 +1228,7 @@ class TestExtractTestResults(BuildStepMixinAdditions, unittest.TestCase):
     def test_failure(self):
         self.setupStep(ExtractTestResults())
         self.setProperty('configuration', 'debug')
-        self.setProperty('ewspatchid', '1234')
+        self.setProperty('patch_id', '1234')
         self.setProperty('buildername', 'macOS-Sierra-Release-WK2-Tests-EWS')
         self.setProperty('buildnumber', '12')
         self.expectLocalCommands(
