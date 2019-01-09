@@ -1,5 +1,20 @@
 2019-01-08  Jiewen Tan  <jiewen_tan@apple.com>
 
+        [Mac] Layout Test http/wpt/webauthn/public-key-credential-create-success-hid.https.html and http/wpt/webauthn/public-key-credential-get-success-hid.https.html are flaky
+        https://bugs.webkit.org/show_bug.cgi?id=192061
+
+        Reviewed by Dewei Zhu.
+
+        Part 6.
+
+        Add some additional temporary logging info to determine if data is actually sent.
+        Once the bug is determined and fixed, we should remove all logging added in this patch.
+
+        * UIProcess/WebAuthentication/Mock/MockHidConnection.cpp:
+        (WebKit::MockHidConnection::send):
+
+2019-01-08  Jiewen Tan  <jiewen_tan@apple.com>
+
         [WebAuthN] Support U2F HID Authenticators on macOS
         https://bugs.webkit.org/show_bug.cgi?id=191535
         <rdar://problem/47102027>
