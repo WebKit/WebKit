@@ -1,3 +1,21 @@
+2019-01-08  Jiewen Tan  <jiewen_tan@apple.com>
+
+        [WebAuthN] Support U2F HID Authenticators on macOS
+        https://bugs.webkit.org/show_bug.cgi?id=191535
+        <rdar://problem/47102027>
+
+        Reviewed by Brent Fulgham.
+
+        This patch:
+        1) adds support for U2F mocking mechanism;
+        2) updates tests to reflect U2fCommandConstructor changes.
+
+        * TestWebKitAPI/Tests/WebCore/CtapResponseTest.cpp:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WebCore/FidoTestData.h:
+        * WebKitTestRunner/InjectedBundle/TestRunner.cpp:
+        (WTR::TestRunner::setWebAuthenticationMockConfiguration):
+
 2019-01-08  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [iOS] Dispatch a synthetic mousedown event prior to starting drags

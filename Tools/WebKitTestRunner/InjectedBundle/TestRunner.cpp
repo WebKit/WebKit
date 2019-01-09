@@ -2509,10 +2509,36 @@ void TestRunner::setWebAuthenticationMockConfiguration(JSValueRef configurationV
         JSRetainPtr<JSStringRef> payloadBase64PropertyName(Adopt, JSStringCreateWithUTF8CString("payloadBase64"));
         JSValueRef payloadBase64Value = JSObjectGetProperty(context, hid, payloadBase64PropertyName.get(), 0);
         if (!JSValueIsUndefined(context, payloadBase64Value) && !JSValueIsNull(context, payloadBase64Value)) {
-            if (!JSValueIsString(context, payloadBase64Value))
+            if (!JSValueIsArray(context, payloadBase64Value))
                 return;
+
+            JSObjectRef payloadBase64 = JSValueToObject(context, payloadBase64Value, nullptr);
+            static auto lengthProperty = adopt(JSStringCreateWithUTF8CString("length"));
+            JSValueRef payloadBase64LengthValue = JSObjectGetProperty(context, payloadBase64, lengthProperty.get(), nullptr);
+            if (!JSValueIsNumber(context, payloadBase64LengthValue))
+                return;
+
+            auto payloadBase64s = adoptWK(WKMutableArrayCreate());
+            auto payloadBase64Length = static_cast<size_t>(JSValueToNumber(context, payloadBase64LengthValue, nullptr));
+            for (size_t i = 0; i < payloadBase64Length; ++i) {
+                JSValueRef payloadBase64Value = JSObjectGetPropertyAtIndex(context, payloadBase64, i, nullptr);
+                if (!JSValueIsString(context, payloadBase64Value))
+                    continue;
+                WKArrayAppendItem(payloadBase64s.get(), toWK(adopt(JSValueToStringCopy(context, payloadBase64Value, 0)).get()).get());
+            }
+
             hidKeys.append({ AdoptWK, WKStringCreateWithUTF8CString("PayloadBase64") });
-            hidValues.append(toWK(adopt(JSValueToStringCopy(context, payloadBase64Value, 0)).get()));
+            hidValues.append(payloadBase64s);
+        }
+
+        JSRetainPtr<JSStringRef> isU2fPropertyName(Adopt, JSStringCreateWithUTF8CString("isU2f"));
+        JSValueRef isU2fValue = JSObjectGetProperty(context, hid, isU2fPropertyName.get(), 0);
+        if (!JSValueIsUndefined(context, isU2fValue) && !JSValueIsNull(context, isU2fValue)) {
+            if (!JSValueIsBoolean(context, isU2fValue))
+                return;
+            bool isU2f = JSValueToBoolean(context, isU2fValue);
+            hidKeys.append({ AdoptWK, WKStringCreateWithUTF8CString("IsU2f") });
+            hidValues.append(adoptWK(WKBooleanCreate(isU2f)).get());
         }
 
         JSRetainPtr<JSStringRef> keepAlivePropertyName(Adopt, JSStringCreateWithUTF8CString("keepAlive"));

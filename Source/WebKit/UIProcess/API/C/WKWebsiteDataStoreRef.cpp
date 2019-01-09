@@ -627,8 +627,11 @@ void WKWebsiteDataStoreSetWebAuthenticationMockConfiguration(WKWebsiteDataStoreR
         if (error == "wrong-nonce")
             hid.error = WebKit::MockWebAuthenticationConfiguration::Hid::Error::WrongNonce;
 
-        if (auto payloadBase64 = static_cast<WKStringRef>(WKDictionaryGetItemForKey(hidRef, adoptWK(WKStringCreateWithUTF8CString("PayloadBase64")).get())))
-            hid.payloadBase64 = WebKit::toImpl(payloadBase64)->string();
+        if (auto payloadBase64 = static_cast<WKArrayRef>(WKDictionaryGetItemForKey(hidRef, adoptWK(WKStringCreateWithUTF8CString("PayloadBase64")).get())))
+            hid.payloadBase64 = WebKit::toImpl(payloadBase64)->toStringVector();
+
+        if (auto isU2f = static_cast<WKBooleanRef>(WKDictionaryGetItemForKey(hidRef, adoptWK(WKStringCreateWithUTF8CString("IsU2f")).get())))
+            hid.isU2f = WKBooleanGetValue(isU2f);
 
         if (auto keepAlive = static_cast<WKBooleanRef>(WKDictionaryGetItemForKey(hidRef, adoptWK(WKStringCreateWithUTF8CString("KeepAlive")).get())))
             hid.keepAlive = WKBooleanGetValue(keepAlive);

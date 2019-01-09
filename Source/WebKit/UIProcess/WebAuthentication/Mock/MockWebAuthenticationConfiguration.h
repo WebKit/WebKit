@@ -61,10 +61,11 @@ struct MockWebAuthenticationConfiguration {
             WrongNonce
         };
 
-        String payloadBase64;
+        Vector<String> payloadBase64;
         Stage stage { Stage::Info };
         SubStage subStage { SubStage::Init };
         Error error { Error::Success };
+        bool isU2f { false };
         bool keepAlive { false };
         bool fastDataArrival { false };
         bool continueAfterErrorData { false };

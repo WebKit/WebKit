@@ -1325,6 +1325,12 @@ http/wpt/webauthn/public-key-credential-create-success-hid.https.html [ Skip ]
 http/wpt/webauthn/public-key-credential-get-failure-hid-silent.https.html [ Skip ]
 http/wpt/webauthn/public-key-credential-get-failure-hid.https.html [ Skip ]
 http/wpt/webauthn/public-key-credential-get-success-hid.https.html [ Skip ]
+http/wpt/webauthn/public-key-credential-create-failure-u2f-silent.https.html [ Skip ]
+http/wpt/webauthn/public-key-credential-create-failure-u2f.https.html [ Skip ]
+http/wpt/webauthn/public-key-credential-create-success-u2f.https.html [ Skip ]
+http/wpt/webauthn/public-key-credential-get-failure-u2f-silent.https.html [ Skip ]
+http/wpt/webauthn/public-key-credential-get-failure-u2f.https.html [ Skip ]
+http/wpt/webauthn/public-key-credential-get-success-u2f.https.html [ Skip ]
 
 # FIXME: Unskip these tests once we have the fix for <rdar://problem/44930119>.
 fast/forms/auto-fill-button/caps-lock-indicator-should-be-visible-after-hiding-auto-fill-strong-password-button.html [ Skip ]

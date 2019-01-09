@@ -1,3 +1,52 @@
+2019-01-08  Jiewen Tan  <jiewen_tan@apple.com>
+
+        [WebAuthN] Support U2F HID Authenticators on macOS
+        https://bugs.webkit.org/show_bug.cgi?id=191535
+        <rdar://problem/47102027>
+
+        Reviewed by Brent Fulgham.
+
+        This patch implements the support for U2F authenticators, and enables it for hid devices.
+        It follows the CTAP spec to map WebAuthN requests to U2F commands and return the responses:
+        https://fidoalliance.org/specs/fido-v2.0-id-20180227/fido-client-to-authenticator-protocol-v2.0-id-20180227.html#u2f-interoperability
+        Most of the parts are done before this patch, this patch focues on: 7.2.2 and 7.3.2.
+
+        Besides implementing the U2fHidAuthenticator, this patch also adds support in the mocking
+        environment for U2F authenticators. It is done by extending the stages in MockHidConnection
+        from 4 to indefinite as multi-round communications are expected to map WebAuthN requests
+        to U2F requests.
+
+        * Sources.txt:
+        * UIProcess/API/C/WKWebsiteDataStoreRef.cpp:
+        (WKWebsiteDataStoreSetWebAuthenticationMockConfiguration):
+        * UIProcess/WebAuthentication/Cocoa/HidService.mm:
+        (WebKit::HidService::continueAddDeviceAfterGetInfo):
+        * UIProcess/WebAuthentication/fido/CtapHidDriver.cpp:
+        (WebKit::CtapHidDriver::continueAfterChannelAllocated):
+        * UIProcess/WebAuthentication/fido/CtapHidDriver.h:
+        (WebKit::CtapHidDriver::setProtocol):
+        * UIProcess/WebAuthentication/fido/U2fHidAuthenticator.cpp: Added.
+        (WebKit::U2fHidAuthenticator::U2fHidAuthenticator):
+        (WebKit::U2fHidAuthenticator::makeCredential):
+        (WebKit::U2fHidAuthenticator::checkExcludeList):
+        (WebKit::U2fHidAuthenticator::issueRegisterCommand):
+        (WebKit::U2fHidAuthenticator::getAssertion):
+        (WebKit::U2fHidAuthenticator::issueSignCommand):
+        (WebKit::U2fHidAuthenticator::issueNewCommand):
+        (WebKit::U2fHidAuthenticator::issueCommand):
+        (WebKit::U2fHidAuthenticator::responseReceived):
+        (WebKit::U2fHidAuthenticator::continueRegisterCommandAfterResponseReceived):
+        (WebKit::U2fHidAuthenticator::continueCheckOnlyCommandAfterResponseReceived):
+        (WebKit::U2fHidAuthenticator::continueBogusCommandAfterResponseReceived):
+        (WebKit::U2fHidAuthenticator::continueSignCommandAfterResponseReceived):
+        * UIProcess/WebAuthentication/fido/U2fHidAuthenticator.h: Added.
+        * UIProcess/WebAuthentication/Mock/MockHidConnection.cpp:
+        (WebKit::MockHidConnection::parseRequest):
+        (WebKit::MockHidConnection::feedReports):
+        * UIProcess/WebAuthentication/Mock/MockHidConnection.h:
+        * UIProcess/WebAuthentication/Mock/MockWebAuthenticationConfiguration.h:
+        * WebKit.xcodeproj/project.pbxproj:
+
 2019-01-08  Youenn Fablet  <youenn@apple.com>
 
         service worker fetch handler results in bad referrer

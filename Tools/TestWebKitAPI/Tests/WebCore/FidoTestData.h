@@ -51,7 +51,7 @@ constexpr char kRelyingPartyId[] = "acme.com";
 
 constexpr uint8_t kU2fRegisterCommandApdu[] = {
     // CLA, INS, P1, P2 APDU instructions
-    0x00, 0x01, 0x00, 0x00,
+    0x00, 0x01, 0x03, 0x00,
     // Data length in 3 bytes in big endian order.
     0x00, 0x00, 0x40,
     // Challenge parameter -- see kClientDataHash
@@ -141,7 +141,7 @@ constexpr uint8_t kU2fCheckOnlySignCommandApdu[] = {
 
 constexpr uint8_t kU2fFakeRegisterCommand[] = {
     // CLA, INS, P1, P2 APDU instructions
-    0x00, 0x01, 0x00, 0x00,
+    0x00, 0x01, 0x03, 0x00,
     // Data length in 3 bytes in big endian order.
     0x00, 0x00, 0x40,
     // Bogus challenge parameter

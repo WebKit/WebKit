@@ -42,7 +42,7 @@ WEBCORE_EXPORT Optional<WebCore::PublicKeyCredentialData> readU2fRegisterRespons
 
 // Converts a U2F authentication response to WebAuthN getAssertion response.
 // https://fidoalliance.org/specs/fido-v2.0-id-20180227/fido-client-to-authenticator-protocol-v2.0-id-20180227.html#u2f-authenticatorGetAssertion-interoperability
-WEBCORE_EXPORT Optional<WebCore::PublicKeyCredentialData> readFromU2fSignResponse(const String& rpId, const Vector<uint8_t>& keyHandle, const Vector<uint8_t>& u2fData);
+WEBCORE_EXPORT Optional<WebCore::PublicKeyCredentialData> readU2fSignResponse(const String& rpId, const Vector<uint8_t>& keyHandle, const Vector<uint8_t>& u2fData);
 
 } // namespace fido
 

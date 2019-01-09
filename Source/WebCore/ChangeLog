@@ -1,3 +1,30 @@
+2019-01-08  Jiewen Tan  <jiewen_tan@apple.com>
+
+        [WebAuthN] Support U2F HID Authenticators on macOS
+        https://bugs.webkit.org/show_bug.cgi?id=191535
+        <rdar://problem/47102027>
+
+        Reviewed by Brent Fulgham.
+
+        This patch changes U2fCommandConstructor to produce register commands with
+        enforcing test of user presence. Otherwise, authenticators would silently
+        generate credentials. It also renames readFromU2fSignResponse to
+        readU2fSignResponse.
+
+        Tests: http/wpt/webauthn/public-key-credential-create-failure-u2f-silent.https.html
+               http/wpt/webauthn/public-key-credential-create-failure-u2f.https.html
+               http/wpt/webauthn/public-key-credential-create-success-u2f.https.html
+               http/wpt/webauthn/public-key-credential-get-failure-u2f-silent.https.html
+               http/wpt/webauthn/public-key-credential-get-failure-u2f.https.html
+               http/wpt/webauthn/public-key-credential-get-success-u2f.https.html
+
+        * Modules/webauthn/fido/U2fCommandConstructor.cpp:
+        (fido::WebCore::constructU2fRegisterCommand):
+        * Modules/webauthn/fido/U2fResponseConverter.cpp:
+        (fido::readU2fSignResponse):
+        (fido::readFromU2fSignResponse): Deleted.
+        * Modules/webauthn/fido/U2fResponseConverter.h:
+
 2019-01-08  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [iOS] Dispatch a synthetic mousedown event prior to starting drags

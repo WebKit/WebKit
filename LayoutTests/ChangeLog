@@ -1,3 +1,37 @@
+2019-01-08  Jiewen Tan  <jiewen_tan@apple.com>
+
+        [WebAuthN] Support U2F HID Authenticators on macOS
+        https://bugs.webkit.org/show_bug.cgi?id=191535
+        <rdar://problem/47102027>
+
+        Reviewed by Brent Fulgham.
+
+        Besiding adding tests for U2F authenticators, it also changes payloadBase64 from
+        a string to a vector of strings. New tests are skipped for iOS.
+
+        * http/wpt/webauthn/ctap-hid-failure.https.html:
+        * http/wpt/webauthn/ctap-hid-success.https.html:
+        * http/wpt/webauthn/public-key-credential-create-failure-hid-silent.https.html:
+        * http/wpt/webauthn/public-key-credential-create-failure-hid.https.html:
+        * http/wpt/webauthn/public-key-credential-create-failure-u2f-silent.https-expected.txt: Added.
+        * http/wpt/webauthn/public-key-credential-create-failure-u2f-silent.https.html: Added.
+        * http/wpt/webauthn/public-key-credential-create-failure-u2f.https-expected.txt: Added.
+        * http/wpt/webauthn/public-key-credential-create-failure-u2f.https.html: Added.
+        * http/wpt/webauthn/public-key-credential-create-success-hid.https.html:
+        * http/wpt/webauthn/public-key-credential-create-success-u2f.https-expected.txt: Added.
+        * http/wpt/webauthn/public-key-credential-create-success-u2f.https.html: Copied from LayoutTests/http/wpt/webauthn/public-key-credential-create-success-hid.https.html.
+        * http/wpt/webauthn/public-key-credential-get-failure-hid-silent.https.html:
+        * http/wpt/webauthn/public-key-credential-get-failure-hid.https.html:
+        * http/wpt/webauthn/public-key-credential-get-failure-u2f-silent.https-expected.txt: Added.
+        * http/wpt/webauthn/public-key-credential-get-failure-u2f-silent.https.html: Added.
+        * http/wpt/webauthn/public-key-credential-get-failure-u2f.https-expected.txt: Added.
+        * http/wpt/webauthn/public-key-credential-get-failure-u2f.https.html: Added.
+        * http/wpt/webauthn/public-key-credential-get-success-hid.https.html:
+        * http/wpt/webauthn/public-key-credential-get-success-u2f.https-expected.txt: Added.
+        * http/wpt/webauthn/public-key-credential-get-success-u2f.https.html: Added.
+        * http/wpt/webauthn/resources/util.js:
+        * platform/ios-wk2/TestExpectations:
+
 2019-01-08  Youenn Fablet  <youenn@apple.com>
 
         service worker fetch handler results in bad referrer
