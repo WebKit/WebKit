@@ -1,5 +1,17 @@
 2019-01-09  Aakash Jain  <aakash_jain@apple.com>
 
+        [ews-build] Add link to bug along with bug title
+        https://bugs.webkit.org/show_bug.cgi?id=193293
+
+        Reviewed by Lucas Forschler.
+
+        * BuildSlaveSupport/ews-build/steps.py:
+        (ValidatePatch._is_bug_closed): Fetch bug title from Bugzilla and add it to the build.
+        (ConfigureBuild.add_bug_id_url): Deleted.
+        (ConfigureBuild.getBugURL): Deleted.
+
+2019-01-09  Aakash Jain  <aakash_jain@apple.com>
+
         [ews-build] Use https for ews-build server
         https://bugs.webkit.org/show_bug.cgi?id=193193
 

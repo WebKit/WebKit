@@ -67,7 +67,6 @@ class ConfigureBuild(buildstep.BuildStep):
             self.setProperty("additionalArguments", self.additionalArguments, 'config.json')
 
         self.add_patch_id_url()
-        self.add_bug_id_url()
         self.finished(SUCCESS)
         return defer.succeed(None)
 
@@ -76,20 +75,10 @@ class ConfigureBuild(buildstep.BuildStep):
         if patch_id:
             self.addURL('Patch {}'.format(patch_id), self.getPatchURL(patch_id))
 
-    def add_bug_id_url(self):
-        bug_id = self.getProperty('bug_id', '')
-        if bug_id:
-            self.addURL('Bug {}'.format(bug_id), self.getBugURL(bug_id))
-
     def getPatchURL(self, patch_id):
         if not patch_id:
             return None
         return '{}attachment.cgi?id={}'.format(BUG_SERVER_URL, patch_id)
-
-    def getBugURL(self, bug_id):
-        if not bug_id:
-            return None
-        return '{}show_bug.cgi?id={}'.format(BUG_SERVER_URL, bug_id)
 
 
 class CheckOutSource(git.Git):
@@ -310,6 +299,8 @@ class ValidatePatch(buildstep.BuildStep):
             self._addToLog('stdio', 'Unable to fetch bug {}.\n'.format(bug_id))
             return -1
 
+        bug_title = bug_json.get('summary')
+        self.addURL('Bug {} {}'.format(bug_id, bug_title), '{}show_bug.cgi?id={}'.format(BUG_SERVER_URL, bug_id))
         if bug_json.get('status') in self.bug_closed_statuses:
             return 1
         return 0
