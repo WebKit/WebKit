@@ -119,7 +119,13 @@ WI.LoggingProtocolTracer = class LoggingProtocolTracer extends WI.ProtocolTracer
             let targetId = connection && connection.target ? connection.target.identifier : "unknown";
             if (this._filterMultiplexingBackend && targetId === "multi")
                 return;
-            this._logToConsole(`${entry.type} (${targetId}): ${JSON.stringify(entry.message)}`);
+
+            let prefix = `${entry.type} (${targetId})`;
+            if (!window.InspectorTest && InspectorFrontendHost.isBeingInspected())
+                this._logToConsole(prefix, entry.message);
+            else
+                this._logToConsole(`${prefix}: ${JSON.stringify(entry.message)}`);
+
             if (entry.exception) {
                 this._logToConsole(entry.exception);
                 if (entry.exception.stack)

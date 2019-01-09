@@ -445,6 +445,15 @@ void InspectorFrontendHost::inspectInspector()
         m_frontendPage->inspectorController().show();
 }
 
+bool InspectorFrontendHost::isBeingInspected()
+{
+    if (!m_frontendPage)
+        return false;
+
+    InspectorController& inspectorController = m_frontendPage->inspectorController();
+    return inspectorController.hasLocalFrontend() || inspectorController.hasRemoteFrontend();
+}
+
 bool InspectorFrontendHost::supportsShowCertificate() const
 {
 #if PLATFORM(COCOA)

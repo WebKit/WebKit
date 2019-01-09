@@ -81,6 +81,7 @@
 
     void beep();
     void inspectInspector();
+    boolean isBeingInspected();
 };
 
 dictionary ContextMenuItem {

@@ -109,6 +109,7 @@ public:
 
     void beep();
     void inspectInspector();
+    bool isBeingInspected();
 
 private:
 #if ENABLE(CONTEXT_MENUS)
