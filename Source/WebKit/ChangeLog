@@ -1,3 +1,15 @@
+2019-01-09  Chris Dumez  <cdumez@apple.com>
+
+        WebKit Networking process crashes if the HTTPSUpgradeList is not found in the bundle
+        https://bugs.webkit.org/show_bug.cgi?id=193285
+        <rdar://problem/47147610>
+
+        Reviewed by Geoffrey Garen.
+
+        * NetworkProcess/NetworkHTTPSUpgradeChecker.cpp:
+        (WebKit::networkHTTPSUpgradeCheckerDatabasePath):
+        (WebKit::NetworkHTTPSUpgradeChecker::NetworkHTTPSUpgradeChecker):
+
 2019-01-09  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         [GTK] Add missing autocleanups
