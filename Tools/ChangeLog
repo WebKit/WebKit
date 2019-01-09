@@ -1,3 +1,20 @@
+2019-01-08  Dean Jackson  <dino@apple.com>
+
+        Blob references for System Previews don't get a correct file extension
+        https://bugs.webkit.org/show_bug.cgi?id=193268
+        <rdar://problem/47133037>
+
+        Reviewed by Tim Horton.
+
+        New test that a Blob download of a USDZ file gets named correctly.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WebKitCocoa/Download.mm:
+        (-[BlobWithUSDZExtensionDownloadDelegate _download:decideDestinationWithSuggestedFilename:completionHandler:]):
+        (-[BlobWithUSDZExtensionDownloadDelegate _downloadDidFinish:]):
+        (TEST):
+        * TestWebKitAPI/Tests/WebKitCocoa/SystemPreviewBlobNaming.html: Added.
+
 2019-01-08  Jiewen Tan  <jiewen_tan@apple.com>
 
         [WebAuthN] Support U2F HID Authenticators on macOS

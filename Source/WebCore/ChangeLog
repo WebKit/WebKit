@@ -1,3 +1,28 @@
+2019-01-08  Dean Jackson  <dino@apple.com>
+
+        Blob references for System Previews don't get a correct file extension
+        https://bugs.webkit.org/show_bug.cgi?id=193268
+        <rdar://problem/47133037>
+
+        Reviewed by Tim Horton.
+
+        Apple platforms don't yet have a mapping from the USD MIME type to
+        file extensions (and we support some non-standard MIME types), which
+        means that downloads from Blob references don't get correctly named.
+
+        Fix this by adding an explicit mapping between System Preview types
+        and ".usdz".
+
+        WebKit API test: _WKDownload.SystemPreviewUSDZBlobNaming
+
+        * platform/MIMETypeRegistry.cpp:
+        (WebCore::MIMETypeRegistry::isSystemPreviewMIMEType): Remove USE(SYSTEM_PREVIEW) since
+        this applies to macOS and iOS now.
+        * platform/MIMETypeRegistry.h:
+        * platform/cocoa/MIMETypeRegistryCocoa.mm:
+        (WebCore::MIMETypeRegistry::getPreferredExtensionForMIMEType): Add a mapping
+        for USDZ.
+
 2019-01-08  Tim Horton  <timothy_horton@apple.com>
 
         Editable images sometimes don't become focused when tapped
