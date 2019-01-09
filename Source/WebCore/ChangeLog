@@ -1,3 +1,33 @@
+2019-01-08  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [iOS] Dispatch a synthetic mousedown event prior to starting drags
+        https://bugs.webkit.org/show_bug.cgi?id=193229
+        <rdar://problem/46717097>
+
+        Reviewed by Tim Horton.
+
+        Tweaks some drag initiation logic on iOS to actually send a "mousedown" event to the page prior to drag start.
+        This improves drag and drop compatibility with web pages that expect a mousedown to always precede dragging.
+        Additionally, ensure that preventing the "mousedown" event also prevents "dragstart", which matches macOS
+        behavior.
+
+        Test: DragAndDropTests.PreventingMouseDownShouldPreventDragStart
+
+        * page/EventHandler.cpp:
+
+        Make the text drag delay 0 on iOS. This was introduced on iOS when originally bringing up drag and drop, and was
+        made to simply match macOS. However, it doesn't make sense to respect the delay here, since the purpose of this
+        delay is to disambiguate between making a text selection and starting a drag when pressing on text that is
+        already selected; on iOS (including iOSMac), this gesture conflict is already resolved by platform gesture
+        recognizers in the client layer, so there is always no delay between mouse down and drag here.
+
+        * page/ios/EventHandlerIOS.mm:
+
+        Dispatch a mousedown and inspect the value of `m_mouseDownMayStartDrag` when starting a drag on iOS. This brings
+        our behavior closer in line with macOS.
+
+        (WebCore::EventHandler::tryToBeginDataInteractionAtPoint):
+
 2019-01-08  Youenn Fablet  <youenn@apple.com>
 
         service worker fetch handler results in bad referrer

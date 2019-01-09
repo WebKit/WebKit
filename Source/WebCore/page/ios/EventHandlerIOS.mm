@@ -676,17 +676,14 @@ bool EventHandler::tryToBeginDataInteractionAtPoint(const IntPoint& clientPositi
     if (subframe && subframe->eventHandler().tryToBeginDataInteractionAtPoint(adjustedClientPosition, adjustedGlobalPosition))
         return true;
 
-    // FIXME: This needs to be refactored, along with handleMousePressEvent and handleMouseMoveEvent, so that state associated only with dragging
-    // lives solely in the DragController, and so that we don't need to pretend that a mouse press and mouse move have already occurred here.
-    m_mouseDownMayStartDrag = eventMayStartDrag(syntheticMousePressEvent);
-    if (!m_mouseDownMayStartDrag)
+    if (!eventMayStartDrag(syntheticMousePressEvent))
         return false;
 
-    SetForScope<bool> mousePressed(m_mousePressed, true);
-    dragState().source = nullptr;
-    m_mouseDownPos = protectedFrame->view()->windowToContents(syntheticMouseMoveEvent.position());
-
-    return handleMouseDraggedEvent(hitTestedMouseEvent, DontCheckDragHysteresis);
+    handleMousePressEvent(syntheticMousePressEvent);
+    bool handledDrag = m_mouseDownMayStartDrag && handleMouseDraggedEvent(hitTestedMouseEvent, DontCheckDragHysteresis);
+    // Reset this bit to prevent autoscrolling from updating the selection with the last mouse location.
+    m_mouseDownMayStartSelect = false;
+    return handledDrag;
 }
 
 #endif

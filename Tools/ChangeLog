@@ -1,3 +1,19 @@
+2019-01-08  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [iOS] Dispatch a synthetic mousedown event prior to starting drags
+        https://bugs.webkit.org/show_bug.cgi?id=193229
+        <rdar://problem/46717097>
+
+        Reviewed by Tim Horton.
+
+        Add a cross-platform drag and drop test to verify that calling `preventDefault()` on the mousedown event
+        prevents a drag from starting.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/DragAndDropTests.mm:
+        * TestWebKitAPI/Tests/WebKitCocoa/link-and-target-div.html:
+
+        Tweak this test to make it robust when dragging the link to the target element multiple times in a single test.
+
 2019-01-08  Zhifei Fang  <zhifei_fang@apple.com>
   
         Layout test will generate a perf metric file to results dir.

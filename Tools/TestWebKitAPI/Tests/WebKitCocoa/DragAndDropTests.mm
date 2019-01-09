@@ -116,6 +116,25 @@ TEST(DragAndDropTests, ExposeMultipleURLsInDataTransfer)
     EXPECT_WK_STREQ("https://webkit.org/\nhttps://apple.com/", [webView stringByEvaluatingJavaScript:@"urlData.textContent"]);
 }
 
+TEST(DragAndDropTests, PreventingMouseDownShouldPreventDragStart)
+{
+    auto simulator = adoptNS([[DragAndDropSimulator alloc] initWithWebViewFrame:CGRectMake(0, 0, 320, 500)]);
+    auto webView = [simulator webView];
+    WKPreferencesSetCustomPasteboardDataEnabled((__bridge WKPreferencesRef)[webView configuration].preferences, true);
+    [webView synchronouslyLoadTestPageNamed:@"link-and-target-div"];
+    [simulator runFrom:CGPointMake(160, 100) to:CGPointMake(160, 300)];
+    EXPECT_WK_STREQ("PASS", [webView stringByEvaluatingJavaScript:@"target.textContent"]);
+    EXPECT_WK_STREQ("dragstart dragend", [webView stringByEvaluatingJavaScript:@"output.textContent"]);
+
+    // Now verify that preventing default on the 'mousedown' event cancels the drag altogether.
+    [webView evaluateJavaScript:@"target.textContent = output.textContent = ''" completionHandler:nil];
+    [webView evaluateJavaScript:@"source.addEventListener('mousedown', event => { event.preventDefault(); window.observedMousedown = true; })" completionHandler:nil];
+    [simulator runFrom:CGPointMake(160, 100) to:CGPointMake(160, 300)];
+    EXPECT_WK_STREQ("", [webView stringByEvaluatingJavaScript:@"target.textContent"]);
+    EXPECT_WK_STREQ("", [webView stringByEvaluatingJavaScript:@"output.textContent"]);
+    EXPECT_TRUE([webView stringByEvaluatingJavaScript:@"observedMousedown"].boolValue);
+}
+
 #if ENABLE(INPUT_TYPE_COLOR)
 
 TEST(DragAndDropTests, ColorInputToColorInput)
@@ -188,6 +207,6 @@ TEST(DragAndDropTests, ColorInputEvents)
     TestWebKitAPI::Util::run(&changeEventFired);
 }
 
-#endif
+#endif // ENABLE(INPUT_TYPE_COLOR)
 
 #endif // WK_API_ENABLED && ENABLE(DRAG_SUPPORT)

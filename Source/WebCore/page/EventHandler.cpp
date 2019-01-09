@@ -138,7 +138,7 @@ const int ImageDragHysteresis = 5;
 const int TextDragHysteresis = 3;
 const int ColorDragHystersis = 3;
 const int GeneralDragHysteresis = 3;
-#if PLATFORM(COCOA)
+#if PLATFORM(MAC)
 const Seconds EventHandler::TextDragDelay { 150_ms };
 #else
 const Seconds EventHandler::TextDragDelay { 0_s };
