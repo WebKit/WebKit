@@ -85,47 +85,43 @@ UnlinkedFunctionExecutable* createBuiltinExecutable(VM& vm, const SourceCode& co
 
 UnlinkedFunctionExecutable* BuiltinExecutables::createExecutable(VM& vm, const SourceCode& source, const Identifier& name, ConstructorKind constructorKind, ConstructAbility constructAbility)
 {
+    // FIXME: Can we just make MetaData computation be constexpr and have the compiler do this for us?
+    // https://bugs.webkit.org/show_bug.cgi?id=193272
     // Someone should get mad at me for writing this code. But, it prevents us from recursing into
     // the parser, and hence, from throwing stack overflow when parsing a builtin.
     StringView view = source.view();
     RELEASE_ASSERT(!view.isNull());
     RELEASE_ASSERT(view.is8Bit());
     auto* characters = view.characters8();
-    RELEASE_ASSERT(view.length() >= 15); // strlen("(function (){})") == 15
-    RELEASE_ASSERT(characters[0] ==  '(');
-    RELEASE_ASSERT(characters[1] ==  'f');
-    RELEASE_ASSERT(characters[2] ==  'u');
-    RELEASE_ASSERT(characters[3] ==  'n');
-    RELEASE_ASSERT(characters[4] ==  'c');
-    RELEASE_ASSERT(characters[5] ==  't');
-    RELEASE_ASSERT(characters[6] ==  'i');
-    RELEASE_ASSERT(characters[7] ==  'o');
-    RELEASE_ASSERT(characters[8] ==  'n');
-    RELEASE_ASSERT(characters[9] ==  ' ');
-    RELEASE_ASSERT(characters[10] == '(');
+    const char* regularFunctionBegin = "(function (";
+    const char* asyncFunctionBegin = "(async function (";
+    RELEASE_ASSERT(view.length() >= strlen("(function (){})"));
+    bool isAsyncFunction = view.length() >= strlen("(async function (){})") && !memcmp(characters, asyncFunctionBegin, strlen(asyncFunctionBegin));
+    RELEASE_ASSERT(isAsyncFunction || !memcmp(characters, regularFunctionBegin, strlen(regularFunctionBegin)));
 
+    unsigned asyncOffset = isAsyncFunction ? strlen("async ") : 0;
+    unsigned parametersStart = strlen("function (") + asyncOffset;
     JSTokenLocation start;
     start.line = -1;
     start.lineStartOffset = std::numeric_limits<unsigned>::max();
-    start.startOffset = 10;
+    start.startOffset = parametersStart;
     start.endOffset = std::numeric_limits<unsigned>::max();
 
     JSTokenLocation end;
     end.line = 1;
     end.lineStartOffset = 0;
-    end.startOffset = 1;
+    end.startOffset = strlen("(") + asyncOffset;
     end.endOffset = std::numeric_limits<unsigned>::max();
 
-    unsigned startColumn = 10; // strlen("function (") == 10
-    int functionKeywordStart = 1; // (f
-    int functionNameStart = 10;
-    int parametersStart = 10;
+    unsigned startColumn = parametersStart;
+    int functionKeywordStart = strlen("(") + asyncOffset;
+    int functionNameStart = parametersStart;
     bool isInStrictContext = false;
     bool isArrowFunctionBodyExpression = false;
 
     unsigned parameterCount;
     {
-        unsigned i = 11;
+        unsigned i = parametersStart + 1;
         unsigned commas = 0;
         bool sawOneParam = false;
         bool hasRestParam = false;
@@ -199,14 +195,15 @@ UnlinkedFunctionExecutable* BuiltinExecutables::createExecutable(VM& vm, const S
     positionBeforeLastNewline.offset = offsetOfLastNewline;
     positionBeforeLastNewline.lineStartOffset = positionBeforeLastNewlineLineStartOffset;
 
-    SourceCode newSource = source.subExpression(10, view.length() - closeBraceOffsetFromEnd, 0, 10);
+    SourceCode newSource = source.subExpression(parametersStart, view.length() - closeBraceOffsetFromEnd, 0, parametersStart);
     bool isBuiltinDefaultClassConstructor = constructorKind != ConstructorKind::None;
     UnlinkedFunctionKind kind = isBuiltinDefaultClassConstructor ? UnlinkedNormalFunction : UnlinkedBuiltinFunction;
 
+    SourceParseMode parseMode = isAsyncFunction ? SourceParseMode::AsyncFunctionMode : SourceParseMode::NormalFunctionMode;
     FunctionMetadataNode metadata(
         start, end, startColumn, endColumn, functionKeywordStart, functionNameStart, parametersStart,
         isInStrictContext, constructorKind, constructorKind == ConstructorKind::Extends ? SuperBinding::Needed : SuperBinding::NotNeeded,
-        parameterCount, SourceParseMode::NormalFunctionMode, isArrowFunctionBodyExpression);
+        parameterCount, parseMode, isArrowFunctionBodyExpression);
 
     metadata.finishParsing(newSource, Identifier(), FunctionMode::FunctionExpression);
     metadata.overrideName(name);
@@ -242,6 +239,14 @@ UnlinkedFunctionExecutable* BuiltinExecutables::createExecutable(VM& vm, const S
             metadataFromParser->setEndPosition(positionBeforeLastNewlineFromParser);
 
             if (metadata != *metadataFromParser || positionBeforeLastNewlineFromParser != positionBeforeLastNewline) {
+                dataLogLn("Expected Metadata:\n", metadata);
+                dataLogLn("Metadata from parser:\n", *metadataFromParser);
+                dataLogLn("positionBeforeLastNewlineFromParser.line ", positionBeforeLastNewlineFromParser.line);
+                dataLogLn("positionBeforeLastNewlineFromParser.offset ", positionBeforeLastNewlineFromParser.offset);
+                dataLogLn("positionBeforeLastNewlineFromParser.lineStartOffset ", positionBeforeLastNewlineFromParser.lineStartOffset);
+                dataLogLn("positionBeforeLastNewline.line ", positionBeforeLastNewline.line);
+                dataLogLn("positionBeforeLastNewline.offset ", positionBeforeLastNewline.offset);
+                dataLogLn("positionBeforeLastNewline.lineStartOffset ", positionBeforeLastNewline.lineStartOffset);
                 WTFLogAlways("Metadata of parser and hand rolled parser don't match\n");
                 CRASH();
             }

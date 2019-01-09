@@ -42,14 +42,15 @@ _FRAMEWORK_CONFIG_MAP = {
     },
 }
 
-functionHeadRegExp = re.compile(r"(?:@[\w|=\[\] \"\.]+\s*\n)*function\s+\w+\s*\(.*?\)", re.MULTILINE | re.DOTALL)
+functionHeadRegExp = re.compile(r"(?:@[\w|=\[\] \"\.]+\s*\n)*(?:async\s+)?function\s+\w+\s*\(.*?\)", re.MULTILINE | re.DOTALL)
 functionGlobalPrivateRegExp = re.compile(r".*^@globalPrivate", re.MULTILINE | re.DOTALL)
 functionIntrinsicRegExp = re.compile(r".*^@intrinsic=(\w+)", re.MULTILINE | re.DOTALL)
 functionIsConstructorRegExp = re.compile(r".*^@constructor", re.MULTILINE | re.DOTALL)
 functionIsGetterRegExp = re.compile(r".*^@getter", re.MULTILINE | re.DOTALL)
+functionIsAsyncRegExp = re.compile(r"(async)?\s*function", re.MULTILINE | re.DOTALL)
 functionNameRegExp = re.compile(r"function\s+(\w+)\s*\(", re.MULTILINE | re.DOTALL)
 functionOverriddenNameRegExp = re.compile(r".*^@overriddenName=(\".+\")$", re.MULTILINE | re.DOTALL)
-functionParameterFinder = re.compile(r"^function\s+(?:\w+)\s*\(((?:\s*\w+)?\s*(?:\s*,\s*\w+)*)?\s*\)", re.MULTILINE | re.DOTALL)
+functionParameterFinder = re.compile(r"^(?:async\s+)?function\s+(?:\w+)\s*\(((?:\s*\w+)?\s*(?:\s*,\s*\w+)*)?\s*\)", re.MULTILINE | re.DOTALL)
 
 multilineCommentRegExp = re.compile(r"\/\*.*?\*\/", re.MULTILINE | re.DOTALL)
 singleLineCommentRegExp = re.compile(r"\/\/.*?\n", re.MULTILINE | re.DOTALL)
@@ -100,10 +101,11 @@ class BuiltinObject:
 
 
 class BuiltinFunction:
-    def __init__(self, function_name, function_source, parameters, is_constructor, is_global_private, intrinsic, overridden_name):
+    def __init__(self, function_name, function_source, parameters, is_async, is_constructor, is_global_private, intrinsic, overridden_name):
         self.function_name = function_name
         self.function_source = function_source
         self.parameters = parameters
+        self.is_async = is_async
         self.is_constructor = is_constructor
         self.is_global_private = is_global_private
         self.intrinsic = intrinsic
@@ -133,6 +135,8 @@ class BuiltinFunction:
             function_source = multipleEmptyLinesRegExp.sub("\n", function_source)
 
         function_name = functionNameRegExp.findall(function_source)[0]
+        async_match = functionIsAsyncRegExp.match(function_source)
+        is_async = async_match != None and async_match.group(1) == "async"
         is_constructor = functionIsConstructorRegExp.match(function_source) != None
         is_getter = functionIsGetterRegExp.match(function_source) != None
         is_global_private = functionGlobalPrivateRegExp.match(function_source) != None
@@ -146,12 +150,15 @@ class BuiltinFunction:
         if not overridden_name:
             overridden_name = "static_cast<const char*>(nullptr)"
 
-        return BuiltinFunction(function_name, function_source, parameters, is_constructor, is_global_private, intrinsic, overridden_name)
+        return BuiltinFunction(function_name, function_source, parameters, is_async, is_constructor, is_global_private, intrinsic, overridden_name)
 
     def __str__(self):
         interface = "%s(%s)" % (self.function_name, ', '.join(self.parameters))
         if self.is_constructor:
             interface = interface + " [Constructor]"
+
+        if self.is_async:
+            interface = "async " + interface
 
         return interface
 

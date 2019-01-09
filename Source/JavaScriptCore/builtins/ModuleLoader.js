@@ -187,32 +187,32 @@ function requestInstantiate(entry, parameters, fetcher)
     if (entry.instantiate)
         return entry.instantiate;
 
-    var instantiatePromise = this.requestFetch(entry, parameters, fetcher).then((source) => {
+    var instantiatePromise = (async () => {
+        var source = await this.requestFetch(entry, parameters, fetcher);
         // https://html.spec.whatwg.org/#fetch-a-single-module-script
         // Now fetching request succeeds. Then even if instantiation fails, we should cache it.
         // Instantiation won't be retried.
         if (entry.instantiate)
-            return entry.instantiate;
+            return await entry.instantiate;
         entry.instantiate = instantiatePromise;
 
         var key = entry.key;
-        return this.parseModule(key, source).then((moduleRecord) => {
-            var dependenciesMap = moduleRecord.dependenciesMap;
-            var requestedModules = this.requestedModules(moduleRecord);
-            var dependencies = @newArrayWithSize(requestedModules.length);
-            for (var i = 0, length = requestedModules.length; i < length; ++i) {
-                var depName = requestedModules[i];
-                var depKey = this.resolveSync(depName, key, fetcher);
-                var depEntry = this.ensureRegistered(depKey);
-                @putByValDirect(dependencies, i, depEntry);
-                dependenciesMap.@set(depName, depEntry);
-            }
-            entry.dependencies = dependencies;
-            entry.module = moduleRecord;
-            @setStateToMax(entry, @ModuleSatisfy);
-            return entry;
-        });
-    });
+        var moduleRecord = await this.parseModule(key, source);
+        var dependenciesMap = moduleRecord.dependenciesMap;
+        var requestedModules = this.requestedModules(moduleRecord);
+        var dependencies = @newArrayWithSize(requestedModules.length);
+        for (var i = 0, length = requestedModules.length; i < length; ++i) {
+            var depName = requestedModules[i];
+            var depKey = this.resolveSync(depName, key, fetcher);
+            var depEntry = this.ensureRegistered(depKey);
+            @putByValDirect(dependencies, i, depEntry);
+            dependenciesMap.@set(depName, depEntry);
+        }
+        entry.dependencies = dependencies;
+        entry.module = moduleRecord;
+        @setStateToMax(entry, @ModuleSatisfy);
+        return entry;
+    })();
     return instantiatePromise;
 }
 
@@ -328,7 +328,7 @@ function provideFetch(key, value)
     this.fulfillFetch(entry, value);
 }
 
-function loadModule(moduleName, parameters, fetcher)
+async function loadModule(moduleName, parameters, fetcher)
 {
     "use strict";
 
@@ -336,11 +336,9 @@ function loadModule(moduleName, parameters, fetcher)
     // resolve: moduleName => Promise(moduleKey)
     // Take the name and resolve it to the unique identifier for the resource location.
     // For example, take the "jquery" and return the URL for the resource.
-    return this.resolve(moduleName, @undefined, fetcher).then((key) => {
-        return this.requestSatisfy(this.ensureRegistered(key), parameters, fetcher, new @Set);
-    }).then((entry) => {
-        return entry.key;
-    });
+    let key = await this.resolve(moduleName, @undefined, fetcher);
+    let entry = await this.requestSatisfy(this.ensureRegistered(key), parameters, fetcher, new @Set);
+    return entry.key;
 }
 
 function linkAndEvaluateModule(key, fetcher)
@@ -355,21 +353,19 @@ function linkAndEvaluateModule(key, fetcher)
     return this.moduleEvaluation(entry, fetcher);
 }
 
-function loadAndEvaluateModule(moduleName, parameters, fetcher)
+async function loadAndEvaluateModule(moduleName, parameters, fetcher)
 {
     "use strict";
 
-    return this.loadModule(moduleName, parameters, fetcher).then((key) => {
-        return this.linkAndEvaluateModule(key, fetcher);
-    });
+    let key = await this.loadModule(moduleName, parameters, fetcher);
+    return await this.linkAndEvaluateModule(key, fetcher);
 }
 
-function requestImportModule(key, parameters, fetcher)
+async function requestImportModule(key, parameters, fetcher)
 {
     "use strict";
 
-    return this.requestSatisfy(this.ensureRegistered(key), parameters, fetcher, new @Set).then((entry) => {
-        this.linkAndEvaluateModule(entry.key, fetcher);
-        return this.getModuleNamespaceObject(entry.module);
-    });
+    let entry = await this.requestSatisfy(this.ensureRegistered(key), parameters, fetcher, new @Set);
+    this.linkAndEvaluateModule(entry.key, fetcher);
+    return this.getModuleNamespaceObject(entry.module);
 }

@@ -692,7 +692,8 @@ BytecodeGenerator::BytecodeGenerator(VM& vm, FunctionNode* functionNode, Unlinke
         CallArguments args(*this, nullptr, 1);
         emitLoad(args.thisRegister(), jsUndefined());
 
-        auto varPromiseConstructor = variable(propertyNames().builtinNames().PromisePrivateName());
+        auto& builtinNames = propertyNames().builtinNames();
+        auto varPromiseConstructor = variable(m_isBuiltinFunction ? builtinNames.InternalPromisePrivateName() : builtinNames.PromisePrivateName());
         move(scope.get(), emitResolveScope(scope.get(), varPromiseConstructor));
         emitGetFromScope(args.argumentRegister(0), scope.get(), varPromiseConstructor, ThrowIfNotFound);
 

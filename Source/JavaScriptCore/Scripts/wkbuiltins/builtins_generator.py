@@ -114,7 +114,11 @@ class BuiltinsGenerator:
     def generate_embedded_code_string_section_for_function(self, function):
         text = function.function_source
         # Wrap it in parens to avoid adding to global scope.
-        text = "(function " + text[text.index("("):] + ")"
+        function_type_string = "function "
+        if function.is_async:
+            function_type_string = "async " + function_type_string
+
+        text = "(" + function_type_string + text[text.index("("):] + ")"
         embeddedSourceLength = len(text) + 1  # For extra \n.
         # Lazy way to escape quotes, I think?
         textLines = json.dumps(text)[1:-1].split("\\n")
