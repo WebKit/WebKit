@@ -79,6 +79,7 @@ CString BytecodeDumper<Block>::constantName(int index) const
 template<class Block>
 void BytecodeDumper<Block>::printLocationAndOp(InstructionStream::Offset location, const char* op)
 {
+    m_currentLocation = location;
     m_out.printf("[%4u] %-18s ", location, op);
 }
 

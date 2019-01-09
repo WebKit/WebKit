@@ -1,5 +1,22 @@
 2019-01-09  Mark Lam  <mark.lam@apple.com>
 
+        Restore bytecode dumper's ability to dump jump target as offset#(->targetBytecodeIndex#).
+        https://bugs.webkit.org/show_bug.cgi?id=193300
+
+        Reviewed by Saam Barati.
+
+        For example, instead of:
+            [  95] jtrue              loc11, 9
+        We can now again (as before the bytecode format rewrite) have:
+            [  95] jtrue              loc11, 9(->104)
+
+        * bytecode/BytecodeDumper.cpp:
+        (JSC::BytecodeDumper<Block>::printLocationAndOp):
+        * bytecode/BytecodeDumper.h:
+        (JSC::BytecodeDumper::dumpValue):
+
+2019-01-09  Mark Lam  <mark.lam@apple.com>
+
         Gigacage disabling checks should handle the GIGACAGE_ALLOCATION_CAN_FAIL case properly.
         https://bugs.webkit.org/show_bug.cgi?id=193292
         <rdar://problem/46485450>

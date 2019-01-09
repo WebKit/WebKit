@@ -53,7 +53,11 @@ public:
     }
 
     void dumpValue(VirtualRegister reg) { m_out.printf("%s", registerName(reg.offset()).data()); }
-    void dumpValue(BoundLabel label) { m_out.print(label.target()); }
+    void dumpValue(BoundLabel label)
+    {
+        InstructionStream::Offset targetOffset = label.target() + m_currentLocation;
+        m_out.print(label.target(), "(->", targetOffset, ")");
+    }
     template<typename T>
     void dumpValue(T v) { m_out.print(v); }
 
@@ -83,6 +87,7 @@ private:
 
     Block* m_block;
     PrintStream& m_out;
+    InstructionStream::Offset m_currentLocation { 0 };
 };
 
 }
