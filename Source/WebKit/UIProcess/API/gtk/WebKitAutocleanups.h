@@ -34,6 +34,7 @@
 #ifndef __GI_SCANNER__
 
 G_DEFINE_AUTOPTR_CLEANUP_FUNC (WebKitAuthenticationRequest, g_object_unref)
+G_DEFINE_AUTOPTR_CLEANUP_FUNC (WebKitAutomationSession, g_object_unref)
 G_DEFINE_AUTOPTR_CLEANUP_FUNC (WebKitBackForwardList, g_object_unref)
 G_DEFINE_AUTOPTR_CLEANUP_FUNC (WebKitBackForwardListItem, g_object_unref)
 G_DEFINE_AUTOPTR_CLEANUP_FUNC (WebKitColorChooserRequest, g_object_unref)
@@ -52,6 +53,7 @@ G_DEFINE_AUTOPTR_CLEANUP_FUNC (WebKitInstallMissingMediaPluginsPermissionRequest
 G_DEFINE_AUTOPTR_CLEANUP_FUNC (WebKitNavigationPolicyDecision, g_object_unref)
 G_DEFINE_AUTOPTR_CLEANUP_FUNC (WebKitNotification, g_object_unref)
 G_DEFINE_AUTOPTR_CLEANUP_FUNC (WebKitNotificationPermissionRequest, g_object_unref)
+G_DEFINE_AUTOPTR_CLEANUP_FUNC (WebKitOptionMenu, g_object_unref)
 G_DEFINE_AUTOPTR_CLEANUP_FUNC (WebKitPermissionRequest, g_object_unref)
 G_DEFINE_AUTOPTR_CLEANUP_FUNC (WebKitPlugin, g_object_unref)
 G_DEFINE_AUTOPTR_CLEANUP_FUNC (WebKitPolicyDecision, g_object_unref)
@@ -72,6 +74,7 @@ G_DEFINE_AUTOPTR_CLEANUP_FUNC (WebKitWebView, g_object_unref)
 G_DEFINE_AUTOPTR_CLEANUP_FUNC (WebKitWebsiteDataManager, g_object_unref)
 G_DEFINE_AUTOPTR_CLEANUP_FUNC (WebKitWindowProperties, g_object_unref)
 
+G_DEFINE_AUTOPTR_CLEANUP_FUNC (WebKitApplicationInfo, webkit_application_info_unref)
 G_DEFINE_AUTOPTR_CLEANUP_FUNC (WebKitCredential, webkit_credential_free)
 G_DEFINE_AUTOPTR_CLEANUP_FUNC (WebKitJavascriptResult, webkit_javascript_result_unref)
 G_DEFINE_AUTOPTR_CLEANUP_FUNC (WebKitMimeInfo, webkit_mime_info_unref)

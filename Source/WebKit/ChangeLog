@@ -1,3 +1,12 @@
+2019-01-09  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        [GTK] Add missing autocleanups
+        https://bugs.webkit.org/show_bug.cgi?id=193068
+
+        Reviewed by Carlos Garcia Campos.
+
+        * UIProcess/API/gtk/WebKitAutocleanups.h:
+
 2019-01-08  Alex Christensen  <achristensen@webkit.org>
 
         Fix CompletionHandler assertions introduced today.
