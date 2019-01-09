@@ -46,7 +46,9 @@ static const String& networkHTTPSUpgradeCheckerDatabasePath()
 #if PLATFORM(COCOA)
     if (networkHTTPSUpgradeCheckerDatabasePath.get().isNull()) {
         CFBundleRef webKitBundle = CFBundleGetBundleWithIdentifier(CFSTR("com.apple.WebKit"));
-        networkHTTPSUpgradeCheckerDatabasePath.get() = CFURLGetString(adoptCF(CFBundleCopyResourceURL(webKitBundle, CFSTR("HTTPSUpgradeList"), CFSTR("db"), nullptr)).get());
+        auto resourceURL = adoptCF(CFBundleCopyResourceURL(webKitBundle, CFSTR("HTTPSUpgradeList"), CFSTR("db"), nullptr));
+        if (resourceURL)
+            networkHTTPSUpgradeCheckerDatabasePath.get() = CFURLGetString(resourceURL.get());
     }
 #endif // PLATFORM(COCOA)
     return networkHTTPSUpgradeCheckerDatabasePath;
@@ -61,7 +63,10 @@ NetworkHTTPSUpgradeChecker::NetworkHTTPSUpgradeChecker()
 
     m_workQueue->dispatch([this] {
         auto path = networkHTTPSUpgradeCheckerDatabasePath();
-        ASSERT(path);
+        if (path.isEmpty()) {
+            RELEASE_LOG_ERROR(Network, "%p - NetworkHTTPSUpgradeChecker failed to initialize because the database path is empty", this);
+            return;
+        }
 
         bool isDatabaseOpen = m_database->open(path);
         if (!isDatabaseOpen) {
