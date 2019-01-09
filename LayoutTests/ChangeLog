@@ -1,3 +1,16 @@
+2019-01-09  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed, rolling out r239565.
+
+        Rebaseline was not correct, changes were due to
+        webkit.org/b/193276
+
+        Reverted changeset:
+
+        "Unreviewed GTK+ gardening. Rebaseline several tests after
+        r239156."
+        https://trac.webkit.org/changeset/239565
+
 2019-01-08  Joseph Pecoraro  <pecoraro@apple.com>
 
         ASSERT when paused in debugger and console evaluation causes exception

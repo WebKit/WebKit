@@ -11,4 +11,4 @@ layer at (8,2) size 321x43
           RenderBlock {PRE} at (1,12) size 315x15
             RenderText {#text} at (0,0) size 315x14
               text run at (0,0) width 315: "There should be no selection artifacts below."
-              text run at (314,0) width 1: " "
+              text run at (315,0) width 0: " "
