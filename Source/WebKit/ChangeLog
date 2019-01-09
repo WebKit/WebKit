@@ -1,3 +1,17 @@
+2019-01-09  Brent Fulgham  <bfulgham@apple.com>
+
+        [iOS] Update sandbox profile to use iconservices instead of lsdiconservice
+        https://bugs.webkit.org/show_bug.cgi?id=193115
+        <rdar://problem/44867379>
+
+        Reviewed by Eric Carlson.
+
+        Add access to the 'com.apple.iconservices' endpoint. We will remove access to
+        the older name ('com.apple.lsdiconservices') once existing clients have completed
+        the switch.
+
+        * Resources/SandboxProfiles/ios/com.apple.WebKit.WebContent.sb:
+
 2019-01-09  Antti Koivisto  <antti@apple.com>
 
         [PSON] Flash of blank content while transitioning from page A to page B.
