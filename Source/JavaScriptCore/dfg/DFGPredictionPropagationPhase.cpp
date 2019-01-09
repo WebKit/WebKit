@@ -930,6 +930,7 @@ private:
         case InstanceOfCustom:
         case IsEmpty:
         case IsUndefined:
+        case IsUndefinedOrNull:
         case IsBoolean:
         case IsNumber:
         case NumberIsInteger:

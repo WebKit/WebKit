@@ -790,6 +790,16 @@ equalNullComparisonOp(op_neq_null, OpNeqNull,
     macro (value) xorq ValueTrue, value end)
 
 
+llintOpWithReturn(op_is_undefined_or_null, OpIsUndefinedOrNull, macro (size, get, dispatch, return)
+    get(operand, t0)
+    loadq [cfr, t0, 8], t0
+    andq ~TagBitUndefined, t0
+    cqeq t0, ValueNull, t0
+    orq ValueFalse, t0
+    return(t0)
+end)
+
+
 macro strictEqOp(name, op, equalityOperation)
     llintOpWithReturn(op_%name%, op, macro (size, get, dispatch, return)
         get(rhs, t0)

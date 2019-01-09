@@ -29,7 +29,7 @@ function match(regexp)
 {
     "use strict";
 
-    if (this == null)
+    if (@isUndefinedOrNull(this))
         @throwTypeError("String.prototype.match requires that |this| not be null or undefined");
 
     if (regexp != null) {
@@ -101,7 +101,7 @@ function repeat(count)
 {
     "use strict";
 
-    if (this == null)
+    if (@isUndefinedOrNull(this))
         @throwTypeError("String.prototype.repeat requires that |this| not be null or undefined");
 
     var string = @toString(this);
@@ -120,7 +120,7 @@ function padStart(maxLength/*, fillString*/)
 {
     "use strict";
 
-    if (this == null)
+    if (@isUndefinedOrNull(this))
         @throwTypeError("String.prototype.padStart requires that |this| not be null or undefined");
 
     var string = @toString(this);
@@ -157,7 +157,7 @@ function padEnd(maxLength/*, fillString*/)
 {
     "use strict";
 
-    if (this == null)
+    if (@isUndefinedOrNull(this))
         @throwTypeError("String.prototype.padEnd requires that |this| not be null or undefined");
 
     var string = @toString(this);
@@ -221,7 +221,7 @@ function replace(search, replace)
 {
     "use strict";
 
-    if (this == null)
+    if (@isUndefinedOrNull(this))
         @throwTypeError("String.prototype.replace requires that |this| not be null or undefined");
 
     if (search != null) {
@@ -254,7 +254,7 @@ function localeCompare(that/*, locales, options */)
     // http://ecma-international.org/publications/standards/Ecma-402.htm
 
     // 1. Let O be RequireObjectCoercible(this value).
-    if (this == null)
+    if (@isUndefinedOrNull(this))
         @throwTypeError("String.prototype.localeCompare requires that |this| not be null or undefined");
 
     // 2. Let S be ToString(O).
@@ -283,7 +283,7 @@ function search(regexp)
 {
     "use strict";
 
-    if (this == null)
+    if (@isUndefinedOrNull(this))
         @throwTypeError("String.prototype.search requires that |this| not be null or undefined");
 
     if (regexp != null) {
@@ -301,7 +301,7 @@ function split(separator, limit)
 {
     "use strict";
     
-    if (this == null)
+    if (@isUndefinedOrNull(this))
         @throwTypeError("String.prototype.split requires that |this| not be null or undefined");
     
     if (separator != null) {
@@ -328,7 +328,7 @@ function concat(arg /* ... */)
 {
     "use strict";
 
-    if (this == null)
+    if (@isUndefinedOrNull(this))
         @throwTypeError("String.prototype.concat requires that |this| not be null or undefined");
 
     if (@argumentCount() === 1)
@@ -340,7 +340,7 @@ function concat(arg /* ... */)
 function createHTML(func, string, tag, attribute, value)
 {
     "use strict";
-    if (string == null)
+    if (@isUndefinedOrNull(string))
         @throwTypeError(`${func} requires that |this| not be null or undefined`);
     let S = @toString(string);
     let p1 = "<" + tag;

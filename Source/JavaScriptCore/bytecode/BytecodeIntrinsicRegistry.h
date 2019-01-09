@@ -50,6 +50,7 @@ class Identifier;
     macro(isRegExpObject) \
     macro(isMap) \
     macro(isSet) \
+    macro(isUndefinedOrNull) \
     macro(tailCallForwardArguments) \
     macro(throwTypeError) \
     macro(throwRangeError) \

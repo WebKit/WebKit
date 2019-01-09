@@ -4193,6 +4193,12 @@ RegisterID* BytecodeGenerator::emitIsUndefined(RegisterID* dst, RegisterID* src)
     return dst;
 }
 
+RegisterID* BytecodeGenerator::emitIsUndefinedOrNull(RegisterID* dst, RegisterID* src)
+{
+    OpIsUndefinedOrNull::emit(this, dst, src);
+    return dst;
+}
+
 RegisterID* BytecodeGenerator::emitIsEmpty(RegisterID* dst, RegisterID* src)
 {
     OpIsEmpty::emit(this, dst, src);

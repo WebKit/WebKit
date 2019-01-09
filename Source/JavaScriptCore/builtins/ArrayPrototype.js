@@ -761,7 +761,7 @@ function arraySpeciesCreate(array, length)
 
     if (@isObject(constructor)) {
         constructor = constructor.@speciesSymbol;
-        if (constructor == null)
+        if (@isUndefinedOrNull(constructor))
             return @newArrayWithSize(length);
     }
 

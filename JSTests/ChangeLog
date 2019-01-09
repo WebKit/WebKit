@@ -1,3 +1,16 @@
+2019-01-08  Yusuke Suzuki  <yusukesuzuki@slowstart.org>
+
+        Array.prototype.flat/flatMap have a minor bug in ArraySpeciesCreate
+        https://bugs.webkit.org/show_bug.cgi?id=193127
+
+        Reviewed by Saam Barati.
+
+        * stress/array-species-create-should-handle-masquerader.js: Added.
+        (shouldThrow):
+        * stress/is-undefined-or-null-builtin.js: Added.
+        (shouldBe):
+        (isUndefinedOrNull.vm.createBuiltin):
+
 2019-01-08  Tadeu Zagallo  <tzagallo@apple.com>
 
         LLInt put_by_id uses the wrong load instruction for loading flags from the metadata

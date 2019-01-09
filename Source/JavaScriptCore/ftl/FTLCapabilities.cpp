@@ -236,6 +236,7 @@ inline CapabilityLevel canCompile(Node* node)
     case WeakMapSet:
     case IsEmpty:
     case IsUndefined:
+    case IsUndefinedOrNull:
     case IsBoolean:
     case IsNumber:
     case NumberIsInteger:

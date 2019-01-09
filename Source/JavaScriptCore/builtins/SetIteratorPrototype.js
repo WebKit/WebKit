@@ -45,7 +45,7 @@ function next()
 {
     "use strict";
 
-    if (this == null)
+    if (@isUndefinedOrNull(this))
         @throwTypeError("%SetIteratorPrototype%.next requires that |this| not be null or undefined");
 
     var bucket = @getByIdDirectPrivate(this, "setBucket");

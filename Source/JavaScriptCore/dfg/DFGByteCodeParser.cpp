@@ -5197,6 +5197,12 @@ void ByteCodeParser::parseBlock(unsigned limit)
             set(bytecode.dst, addToGraph(IsUndefined, value));
             NEXT_OPCODE(op_is_undefined);
         }
+        case op_is_undefined_or_null: {
+            auto bytecode = currentInstruction->as<OpIsUndefinedOrNull>();
+            Node* value = get(bytecode.operand);
+            set(bytecode.dst, addToGraph(IsUndefinedOrNull, value));
+            NEXT_OPCODE(op_is_undefined_or_null);
+        }
 
         case op_is_boolean: {
             auto bytecode = currentInstruction->as<OpIsBoolean>();

@@ -3873,6 +3873,21 @@ void SpeculativeJIT::compile(Node* node)
         jsValueResult(result.gpr(), node, DataFormatJSBoolean);
         break;
     }
+
+    case IsUndefinedOrNull: {
+        JSValueOperand value(this, node->child1());
+        GPRTemporary result(this, Reuse, value);
+
+        GPRReg valueGPR = value.gpr();
+        GPRReg resultGPR = result.gpr();
+
+        m_jit.move(valueGPR, resultGPR);
+        m_jit.and64(CCallHelpers::TrustedImm32(~TagBitUndefined), resultGPR);
+        m_jit.compare64(CCallHelpers::Equal, resultGPR, CCallHelpers::TrustedImm32(ValueNull), resultGPR);
+
+        unblessedBooleanResult(resultGPR, node);
+        break;
+    }
         
     case IsBoolean: {
         JSValueOperand value(this, node->child1());

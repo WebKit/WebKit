@@ -252,6 +252,19 @@ void JIT::emit_op_is_undefined(const Instruction* currentInstruction)
     emitStoreBool(dst, regT0);
 }
 
+void JIT::emit_op_is_undefined_or_null(const Instruction* currentInstruction)
+{
+    auto bytecode = currentInstruction->as<OpIsUndefinedOrNull>();
+    int dst = bytecode.dst.offset();
+    int value = bytecode.operand.offset();
+
+    emitLoadTag(value, regT0);
+    static_assert((JSValue::UndefinedTag + 1 == JSValue::NullTag) && (JSValue::NullTag & 0x1), "");
+    or32(TrustedImm32(1), regT0);
+    compare32(Equal, regT0, TrustedImm32(JSValue::NullTag), regT0);
+    emitStoreBool(dst, regT0);
+}
+
 void JIT::emit_op_is_boolean(const Instruction* currentInstruction)
 {
     auto bytecode = currentInstruction->as<OpIsBoolean>();

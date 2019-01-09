@@ -27,7 +27,7 @@ function next()
 {
     "use strict";
 
-    if (this == null)
+    if (@isUndefinedOrNull(this))
         @throwTypeError("%StringIteratorPrototype%.next requires that |this| not be null or undefined");
 
     var position = @getByIdDirectPrivate(this, "stringIteratorNextIndex");

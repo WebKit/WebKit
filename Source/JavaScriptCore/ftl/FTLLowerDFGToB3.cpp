@@ -1117,6 +1117,9 @@ private:
         case IsUndefined:
             compileIsUndefined();
             break;
+        case IsUndefinedOrNull:
+            compileIsUndefinedOrNull();
+            break;
         case IsBoolean:
             compileIsBoolean();
             break;
@@ -9322,6 +9325,11 @@ private:
     void compileIsUndefined()
     {
         setBoolean(equalNullOrUndefined(m_node->child1(), AllCellsAreFalse, EqualUndefined));
+    }
+
+    void compileIsUndefinedOrNull()
+    {
+        setBoolean(isOther(lowJSValue(m_node->child1()), provenType(m_node->child1())));
     }
     
     void compileIsBoolean()

@@ -2356,6 +2356,7 @@ private:
         case IsTypedArrayView:
         case IsEmpty:
         case IsUndefined:
+        case IsUndefinedOrNull:
         case IsBoolean:
         case IsNumber:
         case IsObjectOrNull:

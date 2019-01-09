@@ -28,7 +28,7 @@ function next()
 {
     "use strict";
 
-    if (this == null)
+    if (@isUndefinedOrNull(this))
         @throwTypeError("%ArrayIteratorPrototype%.next requires that |this| not be null or undefined");
 
     let next = @getByIdDirectPrivate(this, "arrayIteratorNext");

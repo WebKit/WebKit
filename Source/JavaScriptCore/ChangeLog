@@ -1,3 +1,95 @@
+2019-01-08  Yusuke Suzuki  <yusukesuzuki@slowstart.org>
+
+        Array.prototype.flat/flatMap have a minor bug in ArraySpeciesCreate
+        https://bugs.webkit.org/show_bug.cgi?id=193127
+
+        Reviewed by Saam Barati.
+
+        `== null` is frequently used idiom to check `null` or `undefined` in JS.
+        However, it has a problem in terms of the builtin JS implementation: it
+        returns true if masquerade-as-undefined objects (e.g. document.all) come.
+
+        In this patch, we introduce a convenient builtin intrinsic @isUndefinedOrNull,
+        which is equivalent to C++ `JSValue::isUndefinedOrNull`. It does not consider
+        about masquerade-as-undefined objects, so that we can use it instead of
+        `value === null || value === @undefined`. We introduce is_undefined_or_null
+        bytecode, IsUndefinedOrNull DFG node and its DFG and FTL backends. Since
+        Null and Undefined have some bit patterns, we can implement this query
+        very efficiently.
+
+        * builtins/ArrayIteratorPrototype.js:
+        (next):
+        * builtins/ArrayPrototype.js:
+        (globalPrivate.arraySpeciesCreate):
+        * builtins/GlobalOperations.js:
+        (globalPrivate.speciesConstructor):
+        (globalPrivate.copyDataProperties):
+        (globalPrivate.copyDataPropertiesNoExclusions):
+        * builtins/MapIteratorPrototype.js:
+        (next):
+        * builtins/SetIteratorPrototype.js:
+        (next):
+        * builtins/StringIteratorPrototype.js:
+        (next):
+        * builtins/StringPrototype.js:
+        (match):
+        (repeat):
+        (padStart):
+        (padEnd):
+        (intrinsic.StringPrototypeReplaceIntrinsic.replace):
+        (search):
+        (split):
+        (concat):
+        (globalPrivate.createHTML):
+        * builtins/TypedArrayPrototype.js:
+        (globalPrivate.typedArraySpeciesConstructor):
+        (map):
+        (filter):
+        * bytecode/BytecodeIntrinsicRegistry.h:
+        * bytecode/BytecodeList.rb:
+        * bytecode/BytecodeUseDef.h:
+        (JSC::computeUsesForBytecodeOffset):
+        (JSC::computeDefsForBytecodeOffset):
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::emitIsUndefinedOrNull):
+        * bytecompiler/BytecodeGenerator.h:
+        * bytecompiler/NodesCodegen.cpp:
+        (JSC::BytecodeIntrinsicNode::emit_intrinsic_isUndefinedOrNull):
+        * dfg/DFGAbstractInterpreterInlines.h:
+        (JSC::DFG::AbstractInterpreter<AbstractStateType>::executeEffects):
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::parseBlock):
+        * dfg/DFGCapabilities.cpp:
+        (JSC::DFG::capabilityLevel):
+        * dfg/DFGClobberize.h:
+        (JSC::DFG::clobberize):
+        * dfg/DFGDoesGC.cpp:
+        (JSC::DFG::doesGC):
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::fixupNode):
+        * dfg/DFGNodeType.h:
+        * dfg/DFGPredictionPropagationPhase.cpp:
+        * dfg/DFGSafeToExecute.h:
+        (JSC::DFG::safeToExecute):
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * ftl/FTLCapabilities.cpp:
+        (JSC::FTL::canCompile):
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::compileNode):
+        (JSC::FTL::DFG::LowerDFGToB3::compileIsUndefinedOrNull):
+        * jit/JIT.cpp:
+        (JSC::JIT::privateCompileMainPass):
+        * jit/JIT.h:
+        * jit/JITOpcodes.cpp:
+        (JSC::JIT::emit_op_is_undefined_or_null):
+        * jit/JITOpcodes32_64.cpp:
+        (JSC::JIT::emit_op_is_undefined_or_null):
+        * llint/LowLevelInterpreter32_64.asm:
+        * llint/LowLevelInterpreter64.asm:
+
 2019-01-08  David Kilzer  <ddkilzer@apple.com>
 
         Leak of VectorBufferBase.m_buffer (16-64 bytes) under JSC::CompactVariableEnvironment in com.apple.WebKit.WebContent running layout tests

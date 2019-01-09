@@ -327,6 +327,7 @@ bool safeToExecute(AbstractStateType& state, Graph& graph, Node* node, bool igno
     case InstanceOfCustom:
     case IsEmpty:
     case IsUndefined:
+    case IsUndefinedOrNull:
     case IsBoolean:
     case IsNumber:
     case NumberIsInteger:

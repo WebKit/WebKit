@@ -243,6 +243,21 @@ void JIT::emit_op_is_undefined(const Instruction* currentInstruction)
     emitPutVirtualRegister(dst);
 }
 
+void JIT::emit_op_is_undefined_or_null(const Instruction* currentInstruction)
+{
+    auto bytecode = currentInstruction->as<OpIsUndefinedOrNull>();
+    int dst = bytecode.dst.offset();
+    int value = bytecode.operand.offset();
+
+    emitGetVirtualRegister(value, regT0);
+
+    and64(TrustedImm32(~TagBitUndefined), regT0);
+    compare64(Equal, regT0, TrustedImm32(ValueNull), regT0);
+
+    boxBoolean(regT0, JSValueRegs { regT0 });
+    emitPutVirtualRegister(dst);
+}
+
 void JIT::emit_op_is_boolean(const Instruction* currentInstruction)
 {
     auto bytecode = currentInstruction->as<OpIsBoolean>();
