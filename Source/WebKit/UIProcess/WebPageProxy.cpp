@@ -772,7 +772,7 @@ bool WebPageProxy::suspendCurrentPageIfPossible(API::Navigation& navigation, Opt
     return true;
 }
 
-void WebPageProxy::swapToWebProcess(Ref<WebProcessProxy>&& process, std::unique_ptr<SuspendedPageProxy>&& destinationSuspendedPage, ShouldDelayAttachingDrawingArea shouldDelayAttachingDrawingArea)
+void WebPageProxy::swapToWebProcess(Ref<WebProcessProxy>&& process, std::unique_ptr<SuspendedPageProxy>&& destinationSuspendedPage, IsSwapFromSuspended isSwapFromSuspended)
 {
     ASSERT(!m_isClosed);
     RELEASE_LOG_IF_ALLOWED(Loading, "swapToWebProcess: webPID = %i, pageID = %" PRIu64, m_process->processIdentifier(), m_pageID);
@@ -800,10 +800,10 @@ void WebPageProxy::swapToWebProcess(Ref<WebProcessProxy>&& process, std::unique_
     m_process->addExistingWebPage(*this, m_pageID, WebProcessProxy::BeginsUsingDataStore::No);
     m_process->addMessageReceiver(Messages::WebPageProxy::messageReceiverName(), m_pageID, *this);
 
-    finishAttachingToWebProcess(shouldDelayAttachingDrawingArea);
+    finishAttachingToWebProcess(isSwapFromSuspended);
 }
 
-void WebPageProxy::finishAttachingToWebProcess(ShouldDelayAttachingDrawingArea shouldDelayAttachingDrawingArea)
+void WebPageProxy::finishAttachingToWebProcess(IsSwapFromSuspended isSwapFromSuspended)
 {
     ASSERT(m_process->state() != ChildProcessProxy::State::Terminated);
 
@@ -839,7 +839,7 @@ void WebPageProxy::finishAttachingToWebProcess(ShouldDelayAttachingDrawingArea s
     m_editableImageController = std::make_unique<EditableImageController>(*this);
 #endif
 
-    initializeWebPage(shouldDelayAttachingDrawingArea);
+    initializeWebPage(isSwapFromSuspended);
 
     m_inspector->updateForNewPageProcess(this);
 
@@ -904,7 +904,7 @@ RefPtr<API::Navigation> WebPageProxy::reattachToWebProcessWithItem(WebBackForwar
     return WTFMove(navigation);
 }
 
-void WebPageProxy::initializeWebPage(ShouldDelayAttachingDrawingArea shouldDelayAttachingDrawingArea)
+void WebPageProxy::initializeWebPage(IsSwapFromSuspended isSwapFromSuspended)
 {
     ASSERT(isValid());
 
@@ -922,11 +922,7 @@ void WebPageProxy::initializeWebPage(ShouldDelayAttachingDrawingArea shouldDelay
 #endif
 
     auto parameters = creationParameters();
-#if PLATFORM(MAC)
-    parameters.shouldDelayAttachingDrawingArea = shouldDelayAttachingDrawingArea == ShouldDelayAttachingDrawingArea::Yes;
-#else
-    UNUSED_PARAM(shouldDelayAttachingDrawingArea);
-#endif
+    parameters.isSwapFromSuspended = isSwapFromSuspended == IsSwapFromSuspended::Yes;
 
 #if ENABLE(SERVICE_WORKER)
     parameters.hasRegisteredServiceWorkers = process().processPool().mayHaveRegisteredServiceWorkers(m_websiteDataStore);
@@ -2768,7 +2764,7 @@ void WebPageProxy::continueNavigationInNewProcess(API::Navigation& navigation, s
     bool didSuspendPreviousPage = suspendCurrentPageIfPossible(navigation, mainFrameIDInPreviousProcess, processSwapRequestedByClient);
     m_process->removeWebPage(*this, m_pageID, WebProcessProxy::EndsUsingDataStore::No);
 
-    swapToWebProcess(WTFMove(process), WTFMove(suspendedPageProxy), didSuspendPreviousPage ? ShouldDelayAttachingDrawingArea::Yes : ShouldDelayAttachingDrawingArea::No);
+    swapToWebProcess(WTFMove(process), WTFMove(suspendedPageProxy), didSuspendPreviousPage ? IsSwapFromSuspended::Yes : IsSwapFromSuspended::No);
 
     if (auto* item = navigation.targetItem()) {
         LOG(Loading, "WebPageProxy %p continueNavigationInNewProcess to back item URL %s", this, item->url().utf8().data());

@@ -1,3 +1,46 @@
+2019-01-09  Antti Koivisto  <antti@apple.com>
+
+        [PSON] Flash of blank content while transitioning from page A to page B.
+        https://bugs.webkit.org/show_bug.cgi?id=193283
+
+        Reviewed by Chris Dumez.
+
+        Layer tree is not frozen during WebPage construction. If the flush timer (started for the initial
+        empty document) manages to run before the actual page load starts, we'll get a flash.
+
+        * Shared/WebPageCreationParameters.cpp:
+        (WebKit::WebPageCreationParameters::encode const):
+        (WebKit::WebPageCreationParameters::decode):
+        * Shared/WebPageCreationParameters.h:
+
+        Rename shouldDelayAttachingDrawingArea bit to isSwapFromSuspended and make it available on all platforms.
+
+        * UIProcess/RemoteLayerTree/mac/ScrollerMac.h: Removed.
+        * UIProcess/RemoteLayerTree/mac/ScrollerMac.mm: Removed.
+        * UIProcess/RemoteLayerTree/mac/ScrollerPairMac.h: Removed.
+        * UIProcess/RemoteLayerTree/mac/ScrollerPairMac.mm: Removed.
+        * UIProcess/RemoteLayerTree/mac/ScrollingTreeFrameScrollingNodeRemoteMac.cpp: Removed.
+        * UIProcess/RemoteLayerTree/mac/ScrollingTreeFrameScrollingNodeRemoteMac.h: Removed.
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::swapToWebProcess):
+        (WebKit::WebPageProxy::finishAttachingToWebProcess):
+        (WebKit::WebPageProxy::initializeWebPage):
+        (WebKit::WebPageProxy::continueNavigationInNewProcess):
+        * UIProcess/WebPageProxy.h:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::m_shouldAttachDrawingAreaOnPageTransition):
+
+        Freeze the layer tree in WebPage constructor if this is a swap from a suspended process.
+
+        (WebKit::WebPage::reinitializeWebPage):
+        (WebKit::WebPage::didCompletePageTransition):
+
+        Unfreeze on first non-initial empty document page transition.
+
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/mac/TiledCoreAnimationDrawingArea.mm:
+        (WebKit::TiledCoreAnimationDrawingArea::TiledCoreAnimationDrawingArea):
+
 2019-01-09  Chris Dumez  <cdumez@apple.com>
 
         WebKit Networking process crashes if the HTTPSUpgradeList is not found in the bundle
