@@ -81,6 +81,7 @@
 } while (0)
 
 #define RELEASE_BASSERT(x) BASSERT_IMPL(x)
+#define RELEASE_BASSERT_NOT_REACHED() BCRASH()
 
 #if BUSE(OS_LOG)
 #define BMALLOC_LOGGING_PREFIX "bmalloc: "

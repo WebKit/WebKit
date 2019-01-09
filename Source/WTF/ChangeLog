@@ -1,3 +1,15 @@
+2019-01-09  Mark Lam  <mark.lam@apple.com>
+
+        Gigacage disabling checks should handle the GIGACAGE_ALLOCATION_CAN_FAIL case properly.
+        https://bugs.webkit.org/show_bug.cgi?id=193292
+        <rdar://problem/46485450>
+
+        Reviewed by Yusuke Suzuki.
+
+        Update the USE_SYSTEM_MALLOC version of Gigacage.h to match the bmalloc version.
+
+        * wtf/Gigacage.h:
+
 2019-01-07  David Kilzer  <ddkilzer@apple.com>
 
         Prefer RetainPtr<NSObject> to RetainPtr<NSObject *>

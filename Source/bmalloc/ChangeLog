@@ -1,3 +1,51 @@
+2019-01-09  Mark Lam  <mark.lam@apple.com>
+
+        Gigacage disabling checks should handle the GIGACAGE_ALLOCATION_CAN_FAIL case properly.
+        https://bugs.webkit.org/show_bug.cgi?id=193292
+        <rdar://problem/46485450>
+
+        Reviewed by Yusuke Suzuki.
+
+        Previously, when GIGACAGE_ALLOCATION_CAN_FAIL is true, we allow the Gigacage to
+        be disabled if we fail to allocate memory for it.  However, Gigacage::primitiveGigacageDisabled()
+        still always assumes that the Gigacage is always enabled after ensureGigacage() is
+        called.
+
+        This patch updates Gigacage::primitiveGigacageDisabled() to allow the Gigacage to
+        already be disabled if GIGACAGE_ALLOCATION_CAN_FAIL is true and wasEnabled() is
+        false.
+
+        In this patch, we also put the wasEnabled flag in the 0th slot of the
+        g_gigacageBasePtrs buffer to ensure that it is also protected against writes just
+        like the Gigacage base pointers.
+
+        To achieve this, we do the following:
+        1. Added a reservedForFlags field in struct BasePtrs.
+        2. Added a ReservedForFlagsAndNotABasePtr Gigacage::Kind.
+        3. Added assertions to ensure that the BasePtrs::primitive is at the offset
+           matching the offset computed from Gigacage::Primitive.  Ditto for
+           BasePtrs::jsValue and Gigacage::JSValue.
+        4. Added assertions to ensure that Gigacage::ReservedForFlagsAndNotABasePtr is not
+           used for fetching a Gigacage base pointer.
+        5. Added RELEASE_BASSERT_NOT_REACHED() to implement such assertions in bmalloc.
+
+        No test added because this issue requires Gigacage allocation to fail in order to
+        manifest.  I've tested it manually by modifying the code locally to force an
+        allocation failure.
+
+        * bmalloc/BAssert.h:
+        * bmalloc/Gigacage.cpp:
+        (Gigacage::ensureGigacage):
+        (Gigacage::primitiveGigacageDisabled):
+        * bmalloc/Gigacage.h:
+        (Gigacage::wasEnabled):
+        (Gigacage::setWasEnabled):
+        (Gigacage::name):
+        (Gigacage::basePtr):
+        (Gigacage::size):
+        * bmalloc/HeapKind.h:
+        (bmalloc::heapKind):
+
 2018-12-15  Yusuke Suzuki  <yusukesuzuki@slowstart.org>
 
         Unreviewed, suppress warnings in Linux
