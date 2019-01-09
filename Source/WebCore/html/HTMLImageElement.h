@@ -121,6 +121,8 @@ public:
     WEBCORE_EXPORT GraphicsLayer::EmbeddedViewID editableImageViewID() const;
     WEBCORE_EXPORT bool hasEditableImageAttribute() const;
 
+    void defaultEventHandler(Event&) final;
+
 protected:
     HTMLImageElement(const QualifiedName&, Document&, HTMLFormElement* = 0);
 

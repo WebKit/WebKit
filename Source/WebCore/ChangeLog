@@ -1,3 +1,23 @@
+2019-01-08  Tim Horton  <timothy_horton@apple.com>
+
+        Editable images sometimes don't become focused when tapped
+        https://bugs.webkit.org/show_bug.cgi?id=193259
+        <rdar://problem/47038424>
+
+        Reviewed by Wenson Hsieh.
+
+        Often when tapping an editable image inside an editable text area, the
+        text area's selection will change instead of focusing the editable image.
+
+        No new tests; I have had no luck writing a test that reliably failed 
+        beforehand (the "sometimes" is a problem).
+
+        * html/HTMLImageElement.cpp:
+        (WebCore::HTMLImageElement::defaultEventHandler):
+        * html/HTMLImageElement.h:
+        Override mousedown on editable images, focus the image, and prevent
+        the default behavior.
+
 2019-01-08  Jiewen Tan  <jiewen_tan@apple.com>
 
         [WebAuthN] Support U2F HID Authenticators on macOS

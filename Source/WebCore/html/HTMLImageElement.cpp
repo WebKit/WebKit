@@ -31,6 +31,7 @@
 #include "EditableImageReference.h"
 #include "Editor.h"
 #include "ElementIterator.h"
+#include "EventNames.h"
 #include "FrameView.h"
 #include "HTMLAnchorElement.h"
 #include "HTMLAttachmentElement.h"
@@ -46,6 +47,7 @@
 #include "MediaList.h"
 #include "MediaQueryEvaluator.h"
 #include "NodeTraversal.h"
+#include "PlatformMouseEvent.h"
 #include "RenderImage.h"
 #include "RenderView.h"
 #include "RuntimeEnabledFeatures.h"
@@ -837,6 +839,16 @@ void HTMLImageElement::copyNonAttributePropertiesFromElement(const Element& sour
 #endif
     m_editableImage = sourceImage.m_editableImage;
     Element::copyNonAttributePropertiesFromElement(source);
+}
+
+void HTMLImageElement::defaultEventHandler(Event& event)
+{
+    if (hasEditableImageAttribute() && event.type() == eventNames().mousedownEvent && is<MouseEvent>(event) && downcast<MouseEvent>(event).button() == LeftButton) {
+        focus();
+        event.setDefaultHandled();
+        return;
+    }
+    HTMLElement::defaultEventHandler(event);
 }
 
 }
