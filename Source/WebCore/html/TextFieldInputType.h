@@ -124,6 +124,7 @@ private:
     void createAutoFillButton(AutoFillButtonType);
 
 #if ENABLE(DATALIST_ELEMENT)
+    void createDataListDropdownIndicator();
     bool isPresentingAttachedView() const final;
     void listAttributeTargetChanged() final;
     void displaySuggestions(DataListSuggestionActivationType);

@@ -1,3 +1,14 @@
+2019-01-09  Zalan Bujtas  <zalan@apple.com>
+
+        [Datalist] Crash when input with datalist is dynamically added.
+        https://bugs.webkit.org/show_bug.cgi?id=193012
+        <rdar://problem/45923457>
+
+        Reviewed by Brent Fulgham.
+
+        * fast/forms/datalist/datalist-crash-when-dynamic-expected.txt: Added.
+        * fast/forms/datalist/datalist-crash-when-dynamic.html: Added.
+
 2019-01-09  Justin Fan  <justin_fan@apple.com>
 
         [WebGPU] Fix vertex-buffer-triangle-strip test and small update to GPURenderPipeline
