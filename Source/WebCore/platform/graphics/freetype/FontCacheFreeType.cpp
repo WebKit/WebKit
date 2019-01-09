@@ -429,7 +429,7 @@ std::unique_ptr<FontPlatformData> FontCache::createFontPlatformData(const FontDe
         return nullptr;
 
     bool fixedWidth, syntheticBold, syntheticOblique;
-    getFontPropertiesFromPattern(pattern.get(), fontDescription, fixedWidth, syntheticBold, syntheticOblique);
+    getFontPropertiesFromPattern(resultPattern.get(), fontDescription, fixedWidth, syntheticBold, syntheticOblique);
 
     RefPtr<cairo_font_face_t> fontFace = adoptRef(cairo_ft_font_face_create_for_pattern(resultPattern.get()));
 #if ENABLE(VARIATION_FONTS)

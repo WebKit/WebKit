@@ -1,3 +1,16 @@
+2019-01-09  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        REGRESSION(r239156): [FreeType] fixed width, and synthetic bold/italic not correctly applied since r239156
+        https://bugs.webkit.org/show_bug.cgi?id=193276
+
+        Reviewed by Žan Doberšek.
+
+        FontCache::createFontPlatformData() is calling getFontPropertiesFromPattern() with the configure pattern instead
+        of the result one after the match.
+
+        * platform/graphics/freetype/FontCacheFreeType.cpp:
+        (WebCore::FontCache::createFontPlatformData):
+
 2019-01-08  Dean Jackson  <dino@apple.com>
 
         Blob references for System Previews don't get a correct file extension
