@@ -56,7 +56,7 @@
     height: var(--disclosure-button-size);
 }
 
-@media (prefers-dark-interface) {
+@media (prefers-color-scheme: dark) {
     .computed-with-traces .details-section.computed-style-properties:not(.collapsed) > :matches(.header, .content) {
         background-color: var(--background-color);
     }

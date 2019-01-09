@@ -66,7 +66,7 @@
     pointer-events: all;
 }
 
-@media (prefers-dark-interface) {
+@media (prefers-color-scheme: dark) {
     .hover-menu > svg > :matches(path, rect) {
         stroke: hsla(0, 0%, 100%, 0.3);
     }

@@ -41,7 +41,7 @@
     opacity: 0.5;
 }
 
-@media (prefers-dark-interface) {
+@media (prefers-color-scheme: dark) {
     .item.shader-program .status > img {
         filter: invert();
     }

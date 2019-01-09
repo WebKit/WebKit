@@ -62,7 +62,7 @@ body[dir=rtl] .popover .url-breakpoint-content > .editor-wrapper > .editor {
     overflow: hidden;
 }
 
-@media (prefers-dark-interface) {
+@media (prefers-color-scheme: dark) {
     .popover .url-breakpoint-content > .editor-wrapper > .editor {
         -webkit-appearance: unset;
         border-color: var(--text-color-quaternary);

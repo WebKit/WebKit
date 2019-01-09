@@ -73,7 +73,7 @@
     color: var(--glyph-color-disabled);
 }
 
-@media (prefers-dark-interface) {
+@media (prefers-color-scheme: dark) {
     .navigation-bar .item.button {
         color: var(--text-color-secondary);
     }

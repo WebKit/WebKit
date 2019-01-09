@@ -157,7 +157,7 @@ body.window-inactive * {
     --border-color-dark: hsl(0, 0%, 72%);
 }
 
-@media (prefers-dark-interface) {
+@media (prefers-color-scheme: dark) {
 
     :root {
         color: var(--text-color);

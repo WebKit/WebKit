@@ -48,7 +48,7 @@
     vertical-align: -1px;
 }
 
-@media (prefers-dark-interface) {
+@media (prefers-color-scheme: dark) {
     .sidebar > .panel.details.recording-state > .content .data-grid tr.modified {
         color: var(--green-highlight-text-color);
     }

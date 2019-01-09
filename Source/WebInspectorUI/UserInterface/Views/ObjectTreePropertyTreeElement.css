@@ -151,7 +151,7 @@
     color: red;
 }
 
-@media (prefers-dark-interface) {
+@media (prefers-color-scheme: dark) {
     .object-tree-property .getter,
     .object-tree-property .setter {
         filter: invert();

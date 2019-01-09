@@ -150,7 +150,7 @@ body[dir=rtl] .bezier-editor > .number-input-container > input {
     padding-right: var(--bezier-editor-number-input-padding-start);
 }
 
-@media (prefers-dark-interface) {
+@media (prefers-color-scheme: dark) {
     .bezier-editor > .bezier-preview-timing {
         border-top-color: var(--text-color-tertiary);
     }

@@ -216,7 +216,7 @@ body[dir=rtl] .open-resource-dialog > .tree-outline .item {
     color: hsla(0, 0%, 100%, 0.9);
 }
 
-@media (prefers-dark-interface) {
+@media (prefers-color-scheme: dark) {
     .open-resource-dialog {
         background-color: var(--overlay-background);
         border-color: hsla(0, 0%, var(--foreground-lightness), 0.2);

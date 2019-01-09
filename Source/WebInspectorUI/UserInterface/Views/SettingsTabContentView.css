@@ -127,7 +127,7 @@ body[dir=rtl] .content-view.settings > .settings-view > .container > .editor-gro
     margin-right: var(--settings-input-number-margin-start);
 }
 
-@media (prefers-dark-interface) {
+@media (prefers-color-scheme: dark) {
     .content-view.settings .navigation-bar {
         background-color: var(--background-color-content);
     }

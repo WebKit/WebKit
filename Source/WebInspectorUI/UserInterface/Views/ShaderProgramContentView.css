@@ -61,7 +61,7 @@ body[dir=rtl] .content-view.shader-program > .text-editor.shader + .text-editor.
     top: 18px;
 }
 
-@media (prefers-dark-interface) {
+@media (prefers-color-scheme: dark) {
     .content-view.shader-program > .text-editor.shader {
         --border-start-style: 1px solid var(--text-color-quaternary);
     }

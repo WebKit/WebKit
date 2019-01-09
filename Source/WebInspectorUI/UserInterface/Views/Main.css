@@ -27,6 +27,10 @@
     box-sizing: border-box;
 }
 
+:root {
+    supported-color-schemes: light dark;
+}
+
 body {
     font-family: -webkit-system-font, sans-serif;
     font-size: 11px;
@@ -383,7 +387,7 @@ body[dir=rtl] .go-to-arrow {
     background-position: 10px 10px, 10px 0px, 0 0, 0 10px;
 }
 
-@media (prefers-dark-interface) {
+@media (prefers-color-scheme: dark) {
     .go-to-arrow {
         filter: invert();
     }

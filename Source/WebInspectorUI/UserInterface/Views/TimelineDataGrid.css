@@ -55,7 +55,7 @@
     top: 2px;
 }
 
-@media (prefers-dark-interface) {
+@media (prefers-color-scheme: dark) {
     .data-grid th:matches(.sort-ascending, .sort-descending) {
         background: var(--background-color-selected);
     }

@@ -53,7 +53,7 @@ body[dir] .resource-security > section:matches(.connection, .certificate) > .det
     color: var(--text-color);
 }
 
-@media (prefers-dark-interface) {
+@media (prefers-color-scheme: dark) {
     body[dir] .resource-security > section:matches(.connection, .certificate) > .details {
         border-color: var(--network-pseudo-header-color);
     }

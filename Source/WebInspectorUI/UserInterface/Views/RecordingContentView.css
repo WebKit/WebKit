@@ -87,7 +87,7 @@
     z-index: 10;
 }
 
-@media (prefers-dark-interface) {
+@media (prefers-color-scheme: dark) {
     .content-view:not(.tab).recording {
         background-color: unset;
     }

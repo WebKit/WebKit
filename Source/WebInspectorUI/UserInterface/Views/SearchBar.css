@@ -53,7 +53,7 @@
     background-color: white;
 }
 
-@media (prefers-dark-interface) {
+@media (prefers-color-scheme: dark) {
     :matches(.search-bar, .filter-bar) > input[type="search"],
     .search-bar > input[type="search"]:not(:placeholder-shown) {
         border-color: var(--background-color-selected);

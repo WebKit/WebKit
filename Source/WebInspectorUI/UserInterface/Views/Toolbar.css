@@ -223,7 +223,7 @@ body.latest-mac.window-inactive .toolbar .dashboard-container {
     }
 }
 
-@media (prefers-dark-interface) {
+@media (prefers-color-scheme: dark) {
     body .toolbar {
         background-image: linear-gradient(to bottom, hsl(0, 0%, 25%), hsl(0, 0%, 22%));
         box-shadow: none;

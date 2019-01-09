@@ -52,7 +52,7 @@
     display: none;
 }
 
-@media (prefers-dark-interface) {
+@media (prefers-color-scheme: dark) {
     .editing {
         background-color: var(--background-color-secondary);
         outline-color: var(--text-color-tertiary) !important;

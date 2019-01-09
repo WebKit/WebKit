@@ -52,7 +52,7 @@
     display: none;
 }
 
-@media (prefers-dark-interface) {
+@media (prefers-color-scheme: dark) {
     .sidebar > .panel.details.css-style > .content > .rules .section-header {
         color: var(--text-color-secondary);
         border-bottom-color: hsla(0, 0%, var(--foreground-lightness), 0.2);

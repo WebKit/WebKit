@@ -329,7 +329,7 @@ body[dir=rtl] .details-section > .content > .group > .row.simple > .value .go-to
     }
 }
 
-@media (prefers-dark-interface) {
+@media (prefers-color-scheme: dark) {
     .details-section > .header {
         color: var(--text-color);
     }

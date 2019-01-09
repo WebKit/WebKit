@@ -96,7 +96,7 @@
     display: none;
 }
 
-@media (prefers-dark-interface) {
+@media (prefers-color-scheme: dark) {
     .content-view.audit-test {
         --audit-test-header-background-color: hsla(0, 0%, 23%, 0.7);
     }

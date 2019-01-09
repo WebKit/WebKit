@@ -89,7 +89,7 @@ body[dir=rtl] :matches(#edit-breakpoint-popover-ignore, #edit-breakpoint-popover
     margin-left: var(--edit-breakpoint-popover-option-margin-end);
 }
 
-@media (prefers-dark-interface) {
+@media (prefers-color-scheme: dark) {
     .popover .edit-breakpoint-popover-content > table > tr > th {
         color: var(--text-color-secondary);
     }

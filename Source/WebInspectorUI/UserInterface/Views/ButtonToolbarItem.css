@@ -62,7 +62,7 @@ body.window-inactive .toolbar .item.button.disabled {
     opacity: 0.35 !important;
 }
 
-@media (prefers-dark-interface) {
+@media (prefers-color-scheme: dark) {
     .toolbar .item.button {
         color: var(--color-button);
     }

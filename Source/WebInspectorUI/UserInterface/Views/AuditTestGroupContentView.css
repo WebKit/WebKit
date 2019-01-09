@@ -145,7 +145,7 @@
     margin-bottom: var(--audit-test-vertical-space);
 }
 
-@media (prefers-dark-interface) {
+@media (prefers-color-scheme: dark) {
     .content-view.audit-test-group > header > .percentage-pass {
         /* FIXME: Use CSS4 color blend functions once they're available. */
         color: hsla(0, 0%, 88%, 0.5);

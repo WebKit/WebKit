@@ -78,7 +78,7 @@
     right: -2px;
 }
 
-@media (prefers-dark-interface) {
+@media (prefers-color-scheme: dark) {
     .formatted-object,
     .formatted-node,
     .formatted-error,

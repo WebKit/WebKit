@@ -285,7 +285,7 @@ body[dir=rtl] .console-message.expandable .console-top-level-message::before {
     display: inline-block;
 }
 
-@media (prefers-dark-interface) {
+@media (prefers-color-scheme: dark) {
     .console-message .syntax-highlighted {
         background-color: unset;
     }

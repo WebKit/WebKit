@@ -64,7 +64,7 @@
     top: 1px;
 }
 
-@media (prefers-dark-interface) {
+@media (prefers-color-scheme: dark) {
     .watch-expression-editor {
         background-color: var(--background-color-code);
     }

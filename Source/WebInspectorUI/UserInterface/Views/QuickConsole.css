@@ -108,7 +108,7 @@
     opacity: 1;
 }
 
-@media (prefers-dark-interface) {
+@media (prefers-color-scheme: dark) {
     .CodeMirror .jump-to-symbol-highlight,
     .meta-key-pressed .spreadsheet-css-declaration:not(.locked) :matches(.name, .value):not(.editing):hover {
         color: var(--syntax-highlight-link-color) !important;

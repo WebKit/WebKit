@@ -76,7 +76,7 @@
     color: white;
 }
 
-@media (prefers-dark-interface) {
+@media (prefers-color-scheme: dark) {
     .completion-suggestions {
         background-color: var(--overlay-background);
     }

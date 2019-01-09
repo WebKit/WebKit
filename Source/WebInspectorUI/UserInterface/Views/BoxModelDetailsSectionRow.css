@@ -109,7 +109,7 @@ body[dir=rtl] .details-section .row.box-model .label {
     vertical-align: middle;
 }
 
-@media (prefers-dark-interface) {
+@media (prefers-color-scheme: dark) {
     .details-section .row.box-model {
         color: var(--text-color);
     }

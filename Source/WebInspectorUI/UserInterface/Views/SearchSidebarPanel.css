@@ -79,7 +79,7 @@ body[dir=rtl] .sidebar > .panel.navigation.search .item.source-code-match {
     top: calc(var(--navigation-bar-height) + 40px - 1px);
 }
 
-@media (prefers-dark-interface) {
+@media (prefers-color-scheme: dark) {
     .sidebar > .panel.navigation.search.changed > .banner {
         background-color: var(--yellow-highlight-background-color);
         color: var(--yellow-highlight-text-color);

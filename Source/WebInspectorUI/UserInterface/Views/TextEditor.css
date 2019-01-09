@@ -130,7 +130,7 @@
     to { background-color: hsla(0, 0%, 0%, 0.1); }
 }
 
-@media (prefers-dark-interface) {
+@media (prefers-color-scheme: dark) {
     .text-editor > .CodeMirror .execution-line {
         background-color: hsla(89, 100%, 51%, 0.25) !important;
     }

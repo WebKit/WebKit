@@ -429,7 +429,7 @@ body:not(.window-inactive, .window-docked-inactive) .data-grid:focus tr.editable
     color: var(--selected-foreground-color);
 }
 
-@media (prefers-dark-interface) {
+@media (prefers-color-scheme: dark) {
     .data-grid td .subtitle {
         color: var(--selected-secondary-text-color);
     }

@@ -182,7 +182,7 @@ body[dir=rtl] .toolbar .dashboard.default > .item > div {
     50% { opacity: 0.6; }
 }
 
-@media (prefers-dark-interface) {
+@media (prefers-color-scheme: dark) {
     .toolbar .dashboard.default > .item > div {
         /* FIXME: introduce a variable for opacity and use it for both text and icons */
         color: hsla(0, 100%, 100%, 0.2);

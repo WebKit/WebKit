@@ -255,7 +255,7 @@ body[dir=rtl] .tree-outline .item .status {
     content: "\00A0\2014\00A0"; /* &nbsp;&mdash;&nbsp; */;
 }
 
-@media (prefers-dark-interface) {
+@media (prefers-color-scheme: dark) {
     .tree-outline .item .subtitle {
         color: var(--text-color-secondary);
     }

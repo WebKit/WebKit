@@ -112,7 +112,7 @@ body[dir=rtl] .breakpoint-action-block-body > .description {
     overflow: hidden;
 }
 
-@media (prefers-dark-interface) {
+@media (prefers-color-scheme: dark) {
     .breakpoint-action-block-body {
         border-color: var(--text-color-quaternary);
         background-color: unset;

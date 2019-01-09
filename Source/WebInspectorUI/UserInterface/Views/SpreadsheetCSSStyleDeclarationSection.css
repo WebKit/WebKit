@@ -133,7 +133,7 @@
     padding-left: var(--css-declaration-horizontal-padding);
 }
 
-@media (prefers-dark-interface) {
+@media (prefers-color-scheme: dark) {
     .spreadsheet-css-declaration {
         background: var(--background-color-code);
         color: var(--text-color-tertiary);

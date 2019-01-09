@@ -111,7 +111,7 @@ body[dir=rtl] .sidebar > .panel.navigation.debugger .tree-outline.single-thread 
     border-bottom: none;
 }
 
-@media (prefers-dark-interface) {
+@media (prefers-color-scheme: dark) {
     .sidebar > .panel.navigation.debugger .warning-banner {
         background-color: var(--yellow-highlight-background-color);
         color: var(--yellow-highlight-text-color);

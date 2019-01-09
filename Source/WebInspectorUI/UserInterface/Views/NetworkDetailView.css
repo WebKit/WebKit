@@ -72,7 +72,7 @@
     bottom: 0;
 }
 
-@media (prefers-dark-interface) {
+@media (prefers-color-scheme: dark) {
     .network-detail {
         background-color: var(--background-color);
     }

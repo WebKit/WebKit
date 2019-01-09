@@ -48,7 +48,7 @@
     line-height: 16px;
 }
 
-@media (prefers-dark-interface) {
+@media (prefers-color-scheme: dark) {
     .object-preview .name {
         color: var(--syntax-highlight-boolean-color);
     }

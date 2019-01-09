@@ -125,7 +125,7 @@
     color: rgb(201, 192, 166);
 }
 
-@media (prefers-dark-interface) {
+@media (prefers-color-scheme: dark) {
     .CodeMirror {
         color: var(--text-color);
     }

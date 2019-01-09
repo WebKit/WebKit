@@ -43,7 +43,7 @@
     content: image-set(url(../Images/DocumentGL.png) 1x, url(../Images/DocumentGL@2x.png) 2x);
 }
 
-@media (prefers-dark-interface) {
+@media (prefers-color-scheme: dark) {
     .content-view.tab.canvas .navigation-bar > .item .canvas-overview .icon {
         filter: invert(88%);
     }

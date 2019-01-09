@@ -304,7 +304,7 @@ body[dir=rtl] .waterfall .block {
     background-color: var(--network-response-color);
 }
 
-@media (prefers-dark-interface) {
+@media (prefers-color-scheme: dark) {
     .network-table .cell.domain > .lock {
         filter: var(--filter-invert);
     }

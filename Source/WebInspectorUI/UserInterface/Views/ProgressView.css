@@ -55,7 +55,7 @@
     margin: 0 auto;
 }
 
-@media (prefers-dark-interface) {
+@media (prefers-color-scheme: dark) {
     .progress-view > .titles > .title {
         color: var(--text-color-secondary);
     }

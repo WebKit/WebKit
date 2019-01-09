@@ -215,7 +215,7 @@ body[dir=rtl] .sidebar > .panel.details.css-style > .content ~ .class-list-conta
     opacity: 0.5;
 }
 
-@media (prefers-dark-interface) {
+@media (prefers-color-scheme: dark) {
     .sidebar > .panel.details.css-style > .content > .pseudo-classes > .group > label {
         color: var(--text-color-secondary);
     }

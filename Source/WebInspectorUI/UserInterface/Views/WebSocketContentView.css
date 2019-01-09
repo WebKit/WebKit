@@ -80,7 +80,7 @@ body[dir=rtl] .web-socket.content-view .icon {
     color: hsl(3, 96%, 27%);
 }
 
-@media (prefers-dark-interface) {
+@media (prefers-color-scheme: dark) {
     .web-socket.content-view .data-grid table.data tr.revealed {
         border-bottom-color: hsla(0, 0%, var(--foreground-lightness), 0.1);
     }

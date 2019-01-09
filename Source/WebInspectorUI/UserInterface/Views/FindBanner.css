@@ -307,7 +307,7 @@ body[dir=rtl] .find-banner.console-find-banner > input[type="search"]::-webkit-t
     background-color: white;
 }
 
-@media (prefers-dark-interface) {
+@media (prefers-color-scheme: dark) {
     .find-banner > button.segmented {
         background: transparent !important;
     }

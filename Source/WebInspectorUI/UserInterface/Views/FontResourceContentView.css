@@ -109,7 +109,7 @@ body[dir=rtl] .content-view.resource.font .preview > .line > .metric {
     background-color: lightgrey;
 }
 
-@media (prefers-dark-interface) {
+@media (prefers-color-scheme: dark) {
     .content-view.resource.font .preview > .line {
         border-left-color: var(--text-color-quaternary);
         border-right-color: var(--text-color-quaternary);

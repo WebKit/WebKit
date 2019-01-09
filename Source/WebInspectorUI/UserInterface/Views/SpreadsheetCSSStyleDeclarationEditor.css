@@ -179,7 +179,7 @@ body:matches(.window-docked-inactive, .window-inactive) .spreadsheet-style-decla
     pointer-events: none;
 }
 
-@media (prefers-dark-interface) {
+@media (prefers-color-scheme: dark) {
     .spreadsheet-style-declaration-editor {
         --background-color-selected: hsl(230, 51%, 36%);
         --border-color-selected: hsl(216, 98%, 67%);

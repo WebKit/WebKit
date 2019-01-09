@@ -157,7 +157,7 @@ body[dir=rtl] .computed-style-section .computed-property-item .disclosure-button
     display: block;
 }
 
-@media (prefers-dark-interface) {
+@media (prefers-color-scheme: dark) {
     .computed-style-section .computed-property-item.expanded {
         background-color: var(--background-color-code);
     }

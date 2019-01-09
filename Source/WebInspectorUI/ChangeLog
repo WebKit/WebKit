@@ -1,3 +1,162 @@
+2019-01-08  Nikita Vasilyev  <nvasilyev@apple.com>
+
+        Web Inspector: Use prefers-color-scheme instead of prefers-dark-interface
+        https://bugs.webkit.org/show_bug.cgi?id=193265
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Views/AuditTestContentView.css:
+        (@media (prefers-color-scheme: dark)):
+        * UserInterface/Views/AuditTestGroupContentView.css:
+        (@media (prefers-color-scheme: dark)):
+        * UserInterface/Views/BezierEditor.css:
+        (@media (prefers-color-scheme: dark)):
+        * UserInterface/Views/BoxModelDetailsSectionRow.css:
+        (@media (prefers-color-scheme: dark)):
+        * UserInterface/Views/BreakpointActionView.css:
+        (@media (prefers-color-scheme: dark)):
+        * UserInterface/Views/BreakpointPopoverController.css:
+        (@media (prefers-color-scheme: dark)):
+        * UserInterface/Views/ButtonNavigationItem.css:
+        (@media (prefers-color-scheme: dark)):
+        * UserInterface/Views/ButtonToolbarItem.css:
+        (@media (prefers-color-scheme: dark)):
+        * UserInterface/Views/CallFrameView.css:
+        (@media (prefers-color-scheme: dark)):
+        * UserInterface/Views/CanvasContentView.css:
+        (@media (prefers-color-scheme: dark)):
+        * UserInterface/Views/CanvasOverviewContentView.css:
+        (@media (prefers-color-scheme: dark)):
+        * UserInterface/Views/CanvasSidebarPanel.css:
+        (@media (prefers-color-scheme: dark)):
+        * UserInterface/Views/CanvasTabContentView.css:
+        (@media (prefers-color-scheme: dark)):
+        * UserInterface/Views/CodeMirrorOverrides.css:
+        (@media (prefers-color-scheme: dark)):
+        * UserInterface/Views/CompletionSuggestionsView.css:
+        (@media (prefers-color-scheme: dark)):
+        * UserInterface/Views/ComputedStyleDetailsPanel.css:
+        (@media (prefers-color-scheme: dark)):
+        * UserInterface/Views/ComputedStyleSection.css:
+        (@media (prefers-color-scheme: dark)):
+        * UserInterface/Views/ConsoleMessageView.css:
+        (@media (prefers-color-scheme: dark)):
+        * UserInterface/Views/ConsolePrompt.css:
+        (@media (prefers-color-scheme: dark)):
+        * UserInterface/Views/DOMNodeDetailsSidebarPanel.css:
+        (@media (prefers-color-scheme: dark)):
+        * UserInterface/Views/DOMTreeOutline.css:
+        (@media (prefers-color-scheme: dark)):
+        * UserInterface/Views/DataGrid.css:
+        (@media (prefers-color-scheme: dark)):
+        * UserInterface/Views/DebuggerDashboardView.css:
+        (@media (prefers-color-scheme: dark)):
+        * UserInterface/Views/DebuggerSidebarPanel.css:
+        (@media (prefers-color-scheme: dark)):
+        * UserInterface/Views/DefaultDashboardView.css:
+        (@media (prefers-color-scheme: dark)):
+        * UserInterface/Views/DetailsSection.css:
+        (@media (prefers-color-scheme: dark)):
+        * UserInterface/Views/DividerNavigationItem.css:
+        (@media (prefers-color-scheme: dark)):
+        * UserInterface/Views/Editing.css:
+        (@media (prefers-color-scheme: dark)):
+        * UserInterface/Views/FindBanner.css:
+        (@media (prefers-color-scheme: dark)):
+        * UserInterface/Views/FontResourceContentView.css:
+        (@media (prefers-color-scheme: dark)):
+        * UserInterface/Views/FormattedValue.css:
+        (@media (prefers-color-scheme: dark)):
+        * UserInterface/Views/GeneralStyleDetailsSidebarPanel.css:
+        (@media (prefers-color-scheme: dark)):
+        * UserInterface/Views/HoverMenu.css:
+        (@media (prefers-color-scheme: dark)):
+        * UserInterface/Views/ImageResourceContentView.css:
+        (@media (prefers-color-scheme: dark)):
+        * UserInterface/Views/IndexedDatabaseObjectStoreContentView.css:
+        (@media (prefers-color-scheme: dark)):
+        * UserInterface/Views/LogContentView.css:
+        (@media (prefers-color-scheme: dark)):
+
+        * UserInterface/Views/Main.css:
+        (:root):
+
+        (@media (prefers-color-scheme: dark)):
+        * UserInterface/Views/NetworkDetailView.css:
+        (@media (prefers-color-scheme: dark)):
+        * UserInterface/Views/NetworkTableContentView.css:
+        (@media (prefers-color-scheme: dark)):
+        * UserInterface/Views/NewTabContentView.css:
+        (@media (prefers-color-scheme: dark)):
+        * UserInterface/Views/ObjectPreviewView.css:
+        (@media (prefers-color-scheme: dark)):
+        * UserInterface/Views/ObjectTreePropertyTreeElement.css:
+        (@media (prefers-color-scheme: dark)):
+        * UserInterface/Views/OpenResourceDialog.css:
+        (@media (prefers-color-scheme: dark)):
+        * UserInterface/Views/ProgressView.css:
+        (@media (prefers-color-scheme: dark)):
+        * UserInterface/Views/QuickConsole.css:
+        (@media (prefers-color-scheme: dark)):
+        * UserInterface/Views/RecordingActionTreeElement.css:
+        (@media (prefers-color-scheme: dark)):
+        * UserInterface/Views/RecordingContentView.css:
+        (@media (prefers-color-scheme: dark)):
+        * UserInterface/Views/RecordingStateDetailsSidebarPanel.css:
+        (@media (prefers-color-scheme: dark)):
+        * UserInterface/Views/ResourceSecurityContentView.css:
+        (@media (prefers-color-scheme: dark)):
+        * UserInterface/Views/ResourceSizesContentView.css:
+        (@media (prefers-color-scheme: dark)):
+        * UserInterface/Views/ResourceTimingBreakdownView.css:
+        (@media (prefers-color-scheme: dark)):
+        * UserInterface/Views/ScopeBar.css:
+        (@media (prefers-color-scheme: dark)):
+        * UserInterface/Views/ScopeChainDetailsSidebarPanel.css:
+        (@media (prefers-color-scheme: dark)):
+        * UserInterface/Views/SearchBar.css:
+        (@media (prefers-color-scheme: dark)):
+        * UserInterface/Views/SearchSidebarPanel.css:
+        (@media (prefers-color-scheme: dark)):
+        * UserInterface/Views/SettingsTabContentView.css:
+        (@media (prefers-color-scheme: dark)):
+        * UserInterface/Views/ShaderProgramContentView.css:
+        (@media (prefers-color-scheme: dark)):
+        * UserInterface/Views/ShaderProgramTreeElement.css:
+        (@media (prefers-color-scheme: dark)):
+        * UserInterface/Views/SourceCodeTextEditor.css:
+        (@media (prefers-color-scheme: dark)):
+        * UserInterface/Views/SpreadsheetCSSStyleDeclarationEditor.css:
+        (@media (prefers-color-scheme: dark)):
+        * UserInterface/Views/SpreadsheetCSSStyleDeclarationSection.css:
+        (@media (prefers-color-scheme: dark)):
+        * UserInterface/Views/SpreadsheetRulesStyleDetailsPanel.css:
+        (@media (prefers-color-scheme: dark)):
+        * UserInterface/Views/SyntaxHighlightingDefaultTheme.css:
+        (@media (prefers-color-scheme: dark)):
+        * UserInterface/Views/TabBar.css:
+        (@media (prefers-color-scheme: dark)):
+        * UserInterface/Views/Table.css:
+        (@media (prefers-color-scheme: dark)):
+        * UserInterface/Views/TextEditor.css:
+        (@media (prefers-color-scheme: dark)):
+        * UserInterface/Views/TimelineDataGrid.css:
+        (@media (prefers-color-scheme: dark)):
+        * UserInterface/Views/TimelineIcons.css:
+        (@media (prefers-color-scheme: dark)):
+        * UserInterface/Views/TimelineOverview.css:
+        (@media (prefers-color-scheme: dark)):
+        * UserInterface/Views/Toolbar.css:
+        (@media (prefers-color-scheme: dark)):
+        * UserInterface/Views/TreeOutline.css:
+        (@media (prefers-color-scheme: dark)):
+        * UserInterface/Views/URLBreakpointPopover.css:
+        (@media (prefers-color-scheme: dark)):
+        * UserInterface/Views/Variables.css:
+        (@media (prefers-color-scheme: dark)):
+        * UserInterface/Views/WebSocketContentView.css:
+        (@media (prefers-color-scheme: dark)):
+
 2019-01-07  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: Audit: run arrow shouldn't be visible when running tests

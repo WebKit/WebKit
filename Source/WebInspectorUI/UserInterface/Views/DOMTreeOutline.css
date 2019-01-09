@@ -312,7 +312,7 @@ body[dir=rtl] .tree-outline.dom li.parent.shadow::after {
     border-bottom: 1px solid hsl(47, 82%, 60%);
 }
 
-@media (prefers-dark-interface) {
+@media (prefers-color-scheme: dark) {
     .tree-outline.dom li.elements-drag-over .selection-area {
         border-top-color: var(--selected-background-color);
     }

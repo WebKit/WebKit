@@ -117,7 +117,7 @@
     -webkit-margin-start: 3px;
 }
 
-@media (prefers-dark-interface) {
+@media (prefers-color-scheme: dark) {
     .resource-sizes > .content .label {
         color: var(--text-color-secondary);
     }

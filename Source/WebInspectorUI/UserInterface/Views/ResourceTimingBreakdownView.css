@@ -68,7 +68,7 @@
     height: 14px;
 }
 
-@media (prefers-dark-interface) {
+@media (prefers-color-scheme: dark) {
     .resource-timing-breakdown > table > tr.header:not(.total-row) > td {
         color: var(--text-color);
     }

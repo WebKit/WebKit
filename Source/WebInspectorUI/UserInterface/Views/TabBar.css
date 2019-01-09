@@ -358,7 +358,7 @@ body.window-inactive .tab-bar.animating.closing-tab > .item.selected {
     pointer-events: none;
 }
 
-@media (prefers-dark-interface) {
+@media (prefers-color-scheme: dark) {
     .tab-bar {
         background-image: none;
         background-color: hsl(0, 0%, 23%);

@@ -61,7 +61,7 @@ body[dir=rtl] .sidebar > .panel.dom-node-details .details-section.dom-node-event
     -webkit-appearance: none;
 }
 
-@media (prefers-dark-interface) {
+@media (prefers-color-scheme: dark) {
     .sidebar > .panel.dom-node-details .details-section.dom-node-event-listeners > .header > .filter:hover {
         filter: brightness(1.25);
     }

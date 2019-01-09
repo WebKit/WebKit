@@ -191,7 +191,7 @@
     -webkit-appearance: none;
 }
 
-@media (prefers-dark-interface) {
+@media (prefers-color-scheme: dark) {
     .content-view.canvas-overview {
         background-color: unset;
     }

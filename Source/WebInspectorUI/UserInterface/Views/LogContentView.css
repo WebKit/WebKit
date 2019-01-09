@@ -254,7 +254,7 @@ body[dir=rtl] .console-group-title::before {
         alt: attr(data-labelprefix);
 }
 
-@media (prefers-dark-interface) {
+@media (prefers-color-scheme: dark) {
     .console-messages {
         background-color: var(--background-color-code);
     }

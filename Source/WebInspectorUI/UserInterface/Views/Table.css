@@ -177,7 +177,7 @@ body[dir=rtl] .table .cell:first-child {
     text-align: center;
 }
 
-@media (prefers-dark-interface) {
+@media (prefers-color-scheme: dark) {
     .table > .header > .sortable:active {
         background-color: hsla(0, 0%, var(--foreground-lightness), 0.2);
     }

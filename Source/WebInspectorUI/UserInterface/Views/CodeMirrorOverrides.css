@@ -118,7 +118,7 @@
     display: initial;
 }
 
-@media (prefers-dark-interface) {
+@media (prefers-color-scheme: dark) {
     .CodeMirror-cursor {
         border-left-color: hsl(0, 0%, var(--foreground-lightness));
     }

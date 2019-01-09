@@ -234,7 +234,7 @@ body[dir=rtl] .tree-outline:not(.hide-disclosure-buttons) .item.action:not(.init
     margin-top: 2px;
 }
 
-@media (prefers-dark-interface) {
+@media (prefers-color-scheme: dark) {
     .item.action:not(.initial-state)::before {
         color: unset;
         opacity: 0.4;

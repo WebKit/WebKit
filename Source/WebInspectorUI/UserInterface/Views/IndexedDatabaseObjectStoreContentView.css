@@ -48,7 +48,7 @@
     top: 2px;
 }
 
-@media (prefers-dark-interface) {
+@media (prefers-color-scheme: dark) {
     .content-view.indexed-database-object-store > .data-grid tr.selected {
         background-color: hsl(210, 0%, 30%) !important;
     }

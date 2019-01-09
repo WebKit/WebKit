@@ -133,7 +133,7 @@
     content: url(../Images/LowPower.svg);
 }
 
-@media (prefers-dark-interface) {
+@media (prefers-color-scheme: dark) {
     .time-icon .icon {
         filter: invert();
     }

@@ -201,7 +201,7 @@ body[dir=rtl] .dashboard.debugger > .location :matches(.function-icon, .event-li
     height: 14px;
 }
 
-@media (prefers-dark-interface) {
+@media (prefers-color-scheme: dark) {
     .toolbar .dashboard.debugger {
         color: var(--text-color);
     }

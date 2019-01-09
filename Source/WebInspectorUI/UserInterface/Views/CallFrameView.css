@@ -79,7 +79,7 @@ body[dir=rtl] .call-frame .icon {
     color: hsla(0, 0%, 0%, 0.2);
 }
 
-@media (prefers-dark-interface) {
+@media (prefers-color-scheme: dark) {
     .call-frame .subtitle,
     .call-frame .subtitle .source-link {
         color: hsla(0, 0%, var(--foreground-lightness), 0.6);

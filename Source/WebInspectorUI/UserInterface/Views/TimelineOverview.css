@@ -234,7 +234,7 @@ body[dir=rtl] .timeline-overview > .scroll-container > .scroll-width-sizer {
     right: 0;
 }
 
-@media (prefers-dark-interface) {
+@media (prefers-color-scheme: dark) {
     .timeline-overview:not(.frames) > .graphs-container > .timeline-overview-graph:nth-child(even) {
         background: var(--background-color-alternate);
     }

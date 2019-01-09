@@ -98,7 +98,7 @@
     margin-bottom: 4px;
 }
 
-@media (prefers-dark-interface) {
+@media (prefers-color-scheme: dark) {
     .sidebar > .panel.navigation.canvas > .navigation-bar > .item.record-start-stop.disabled {
         filter: grayscale() invert();
     }
