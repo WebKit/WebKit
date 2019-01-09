@@ -82,7 +82,7 @@ public:
     void retrieve(const Key&, unsigned priority, RetrieveCompletionHandler&&);
 
     using MappedBodyHandler = Function<void (const Data& mappedBody)>;
-    void store(const Record&, MappedBodyHandler&&, CompletionHandler<void(int)>&& = [] (int) { });
+    void store(const Record&, MappedBodyHandler&&, CompletionHandler<void(int)>&& = { });
 
     void remove(const Key&);
     void remove(const Vector<Key>&, CompletionHandler<void()>&&);

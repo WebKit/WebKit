@@ -73,7 +73,7 @@ Engine::~Engine()
         callback(Data { }, 1);
 }
 
-void Engine::from(NetworkProcess& networkProcess, PAL::SessionID sessionID, CompletionHandler<void(Engine&)>&& callback)
+void Engine::from(NetworkProcess& networkProcess, PAL::SessionID sessionID, Function<void(Engine&)>&& callback)
 {
     if (auto* engine = networkProcess.findCacheEngine(sessionID)) {
         callback(*engine);

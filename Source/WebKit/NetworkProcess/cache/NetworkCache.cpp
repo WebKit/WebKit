@@ -372,7 +372,7 @@ std::unique_ptr<Entry> Cache::makeRedirectEntry(const WebCore::ResourceRequest& 
     return std::make_unique<Entry>(makeCacheKey(request), response, redirectRequest, WebCore::collectVaryingRequestHeaders(request, response));
 }
 
-std::unique_ptr<Entry> Cache::store(const WebCore::ResourceRequest& request, const WebCore::ResourceResponse& response, RefPtr<WebCore::SharedBuffer>&& responseData, CompletionHandler<void(MappedBody*)>&& completionHandler)
+std::unique_ptr<Entry> Cache::store(const WebCore::ResourceRequest& request, const WebCore::ResourceResponse& response, RefPtr<WebCore::SharedBuffer>&& responseData, Function<void(MappedBody&)>&& completionHandler)
 {
     ASSERT(responseData);
 
@@ -392,7 +392,6 @@ std::unique_ptr<Entry> Cache::store(const WebCore::ResourceRequest& request, con
         if (m_statistics)
             m_statistics->recordNotCachingResponse(key, storeDecision);
 
-        completionHandler(nullptr);
         return nullptr;
     }
 
@@ -408,7 +407,7 @@ std::unique_ptr<Entry> Cache::store(const WebCore::ResourceRequest& request, con
             mappedBody.shareableResource->createHandle(mappedBody.shareableResourceHandle);
         }
 #endif
-        completionHandler(&mappedBody);
+        completionHandler(mappedBody);
         LOG(NetworkCache, "(NetworkProcess) stored");
     });
 
@@ -475,12 +474,12 @@ void Cache::remove(const WebCore::ResourceRequest& request)
     remove(makeCacheKey(request));
 }
 
-void Cache::remove(const Vector<Key>& keys, CompletionHandler<void()>&& completionHandler)
+void Cache::remove(const Vector<Key>& keys, Function<void()>&& completionHandler)
 {
     m_storage->remove(keys, WTFMove(completionHandler));
 }
 
-void Cache::traverse(CompletionHandler<void(const TraversalEntry*)>&& traverseHandler)
+void Cache::traverse(Function<void(const TraversalEntry*)>&& traverseHandler)
 {
     // Protect against clients making excessive traversal requests.
     const unsigned maximumTraverseCount = 3;
@@ -579,7 +578,7 @@ void Cache::deleteDumpFile()
     });
 }
 
-void Cache::clear(WallTime modifiedSince, CompletionHandler<void()>&& completionHandler)
+void Cache::clear(WallTime modifiedSince, Function<void()>&& completionHandler)
 {
     LOG(NetworkCache, "(NetworkProcess) clearing cache");
 
@@ -602,7 +601,7 @@ String Cache::recordsPath() const
     return m_storage->recordsPath();
 }
 
-void Cache::retrieveData(const DataKey& dataKey, CompletionHandler<void(const uint8_t*, size_t)> completionHandler)
+void Cache::retrieveData(const DataKey& dataKey, Function<void(const uint8_t*, size_t)> completionHandler)
 {
     Key key { dataKey, m_storage->salt() };
     m_storage->retrieve(key, 4, [completionHandler = WTFMove(completionHandler)] (auto record, auto) mutable {

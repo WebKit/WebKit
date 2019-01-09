@@ -1,3 +1,31 @@
+2019-01-08  Alex Christensen  <achristensen@webkit.org>
+
+        Fix CompletionHandler assertions introduced today.
+        https://bugs.webkit.org/show_bug.cgi?id=193237
+
+        This reverts part of r239710 and all of r239725, r239738, and r239748 which unsuccessfully tried to fix all the assertions.
+        This code is a mess that will have to be cleaned up later.
+
+        * NetworkProcess/NetworkResourceLoader.cpp:
+        (WebKit::NetworkResourceLoader::tryStoreAsCacheEntry):
+        * NetworkProcess/cache/CacheStorageEngine.cpp:
+        (WebKit::CacheStorage::Engine::from):
+        * NetworkProcess/cache/CacheStorageEngine.h:
+        * NetworkProcess/cache/NetworkCache.cpp:
+        (WebKit::NetworkCache::Cache::store):
+        (WebKit::NetworkCache::Cache::remove):
+        (WebKit::NetworkCache::Cache::traverse):
+        (WebKit::NetworkCache::Cache::clear):
+        (WebKit::NetworkCache::Cache::retrieveData):
+        * NetworkProcess/cache/NetworkCache.h:
+        * NetworkProcess/cache/NetworkCacheSpeculativeLoad.cpp:
+        (WebKit::NetworkCache::SpeculativeLoad::didFinishLoading):
+        * NetworkProcess/cache/NetworkCacheStorage.cpp:
+        (WebKit::NetworkCache::Storage::store):
+        (WebKit::NetworkCache::Storage::WriteOperation::~WriteOperation): Deleted.
+        * NetworkProcess/cache/NetworkCacheStorage.h:
+        (WebKit::NetworkCache::Storage::store):
+
 2019-01-08  Jiewen Tan  <jiewen_tan@apple.com>
 
         [Mac] Layout Test http/wpt/webauthn/public-key-credential-create-success-hid.https.html and http/wpt/webauthn/public-key-credential-get-success-hid.https.html are flaky

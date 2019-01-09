@@ -59,7 +59,7 @@ class Engine : public RefCounted<Engine>, public CanMakeWeakPtr<Engine> {
 public:
     ~Engine();
 
-    static void from(NetworkProcess&, PAL::SessionID, CompletionHandler<void(Engine&)>&&);
+    static void from(NetworkProcess&, PAL::SessionID, Function<void(Engine&)>&&);
     static void destroyEngine(NetworkProcess&, PAL::SessionID);
     static void fetchEntries(NetworkProcess&, PAL::SessionID, bool shouldComputeSize, CompletionHandler<void(Vector<WebsiteData::Entry>)>&&);
 
@@ -120,11 +120,11 @@ private:
     void initialize(WebCore::DOMCacheEngine::CompletionCallback&&);
 
     using CachesOrError = Expected<std::reference_wrapper<Caches>, WebCore::DOMCacheEngine::Error>;
-    using CachesCallback = CompletionHandler<void(CachesOrError&&)>;
+    using CachesCallback = Function<void(CachesOrError&&)>;
     void readCachesFromDisk(const WebCore::ClientOrigin&, CachesCallback&&);
 
     using CacheOrError = Expected<std::reference_wrapper<Cache>, WebCore::DOMCacheEngine::Error>;
-    using CacheCallback = CompletionHandler<void(CacheOrError&&)>;
+    using CacheCallback = Function<void(CacheOrError&&)>;
     void readCache(uint64_t cacheIdentifier, CacheCallback&&);
 
     Cache* cache(uint64_t cacheIdentifier);
