@@ -1,3 +1,19 @@
+2019-01-08  David Kilzer  <ddkilzer@apple.com>
+
+        Leak of VectorBufferBase.m_buffer (16-64 bytes) under JSC::CompactVariableEnvironment in com.apple.WebKit.WebContent running layout tests
+        <https://webkit.org/b/193264>
+        <rdar://problem/46651026>
+
+        Reviewed by Yusuke Suzuki.
+
+        * parser/VariableEnvironment.cpp:
+        (JSC::CompactVariableMap::Handle::~Handle): Call delete on
+        m_environment instead of fastFree() to make sure the destructors
+        for the Vector instance variables are run.  This fixes the leaks
+        because calling fastFree() would only free the
+        CompactVariableEnvironment object, but not the heap-based
+        buffers allocated for the Vector instance variables.
+
 2019-01-08  Joseph Pecoraro  <pecoraro@apple.com>
 
         ASSERT when paused in debugger and console evaluation causes exception
