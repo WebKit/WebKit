@@ -1,3 +1,26 @@
+2019-01-08  Joseph Pecoraro  <pecoraro@apple.com>
+
+        ASSERT when paused in debugger and console evaluation causes exception
+        https://bugs.webkit.org/show_bug.cgi?id=193246
+
+        Reviewed by Mark Lam.
+
+        * runtime/VM.cpp:
+        (JSC::VM::throwException):
+        Improve assertion to allow for the debugger's evaluate on call frame condition.
+
+        * runtime/JSGlobalObject.h:
+        (JSC::JSGlobalObject::callFrameAtDebuggerEntry const):
+        (JSC::JSGlobalObject::setCallFrameAtDebuggerEntry):
+        Debugger call frame only used by assertions.
+
+        * debugger/DebuggerCallFrame.cpp:
+        (JSC::DebuggerCallFrame::evaluateWithScopeExtension):
+        * debugger/DebuggerEvalEnabler.h:
+        (JSC::DebuggerEvalEnabler::DebuggerEvalEnabler):
+        (JSC::DebuggerEvalEnabler::~DebuggerEvalEnabler):
+        When evaluating on a call frame, set a debug GlobalObject state.
+
 2019-01-08  Keith Miller  <keith_miller@apple.com>
 
         Move JSValueMakeSymbol to private header

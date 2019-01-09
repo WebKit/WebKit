@@ -232,7 +232,7 @@ JSValue DebuggerCallFrame::evaluateWithScopeExtension(const String& script, JSOb
     if (!codeBlock)
         return jsUndefined();
     
-    DebuggerEvalEnabler evalEnabler(callFrame);
+    DebuggerEvalEnabler evalEnabler(callFrame, DebuggerEvalEnabler::Mode::EvalOnCallFrameAtDebuggerEntry);
 
     EvalContextType evalContextType;
     

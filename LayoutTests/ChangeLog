@@ -1,3 +1,17 @@
+2019-01-08  Joseph Pecoraro  <pecoraro@apple.com>
+
+        ASSERT when paused in debugger and console evaluation causes exception
+        https://bugs.webkit.org/show_bug.cgi?id=193246
+
+        Reviewed by Mark Lam.
+
+        * inspector/debugger/evaluateOnCallFrame-CommandLineAPI.html:
+        Correct a typo.
+
+        * inspector/debugger/evaluateOnCallFrame-exception-expected.txt: Added.
+        * inspector/debugger/evaluateOnCallFrame-exception.html: Added.
+        New test that would have asserted before.
+
 2019-01-08  Jiewen Tan  <jiewen_tan@apple.com>
 
         [WebAuthN] Support U2F HID Authenticators on macOS

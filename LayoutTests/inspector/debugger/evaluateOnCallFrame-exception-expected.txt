@@ -1,0 +1,9 @@
+Tests exceptions with Debugger.evaluateOnCallFrame.
+
+
+== Running test suite: Debugger.evaluateOnCallFrame.Exception
+-- Running test case: Debugger.evaluateOnCallFrame.Exception
+PASS: Should be a runtime error.
+
+-- Running test case: Complete
+

@@ -830,7 +830,7 @@ void VM::clearSourceProviderCaches()
 
 void VM::throwException(ExecState* exec, Exception* exception)
 {
-    ASSERT(exec == topCallFrame || exec->isGlobalExec());
+    ASSERT(exec == topCallFrame || exec->isGlobalExec() || exec == exec->lexicalGlobalObject()->callFrameAtDebuggerEntry());
     CallFrame* throwOriginFrame = exec->isGlobalExec() ? exec : topJSCallFrame();
 
     if (Options::breakOnThrow()) {

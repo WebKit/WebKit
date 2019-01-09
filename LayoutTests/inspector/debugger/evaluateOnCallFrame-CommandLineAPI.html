@@ -76,7 +76,7 @@ function test()
 
     suite.addTestCase({
         name: "ValidateCallFrames",
-        description: "Test6 evaluate can access CommandLineAPI methods.",
+        description: "Test evaluate can access CommandLineAPI methods.",
         test(resolve, reject) {
             let targetData = WI.debuggerManager.dataForTarget(WI.debuggerManager.activeCallFrame.target);
             InspectorTest.expectThat(WI.debuggerManager.activeCallFrame.functionName === "bar", "Strict call frame is `bar`.");

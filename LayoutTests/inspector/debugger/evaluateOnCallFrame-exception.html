@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script>
+function triggerPause() {
+    debugger;
+}
+
+function test()
+{
+    const objectGroup = "test";
+    const includeCommandLineAPI = true;
+    const returnByValue = true;
+
+    InspectorTest.debug();
+    let suite = InspectorTest.createAsyncSuite("Debugger.evaluateOnCallFrame.Exception");
+
+    suite.addTestCase({
+        name: "Debugger.evaluateOnCallFrame.Exception",
+        description: "Test exception from evaluateOnCallFrame.",
+        test(resolve, reject) {
+            let callFrame = WI.debuggerManager.activeCallFrame;
+            let targetData = WI.debuggerManager.dataForTarget(callFrame.target);
+            let callFrameId = callFrame.id;
+            let expression = "{}.x";
+            DebuggerAgent.evaluateOnCallFrame.invoke({callFrameId, expression, objectGroup, includeCommandLineAPI, returnByValue}, (error, resultValue, wasThrown) => {
+                InspectorTest.assert(!error, "Should not be a protocol error.");
+                InspectorTest.expectTrue(wasThrown, "Should be a runtime error.");
+                resolve();
+            });
+        }
+    });
+
+    suite.addTestCase({
+        name: "Complete",
+        test(resolve, reject) {
+            WI.debuggerManager.resume();
+            resolve();
+        }
+    })
+
+    InspectorTest.evaluateInPage("triggerPause()");
+    WI.debuggerManager.singleFireEventListener(WI.DebuggerManager.Event.Paused, (event) => {
+        suite.runTestCasesAndFinish();
+    });
+}
+</script>
+</head>
+<body onload="runTest()">
+<p>Tests exceptions with Debugger.evaluateOnCallFrame.</p>
+</body>
+</html>
