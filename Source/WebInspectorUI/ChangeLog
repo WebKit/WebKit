@@ -1,5 +1,21 @@
 2019-01-08  Nikita Vasilyev  <nvasilyev@apple.com>
 
+        Web Inspector: Styles: Undo reverts all changes at once
+        https://bugs.webkit.org/show_bug.cgi?id=177676
+        <rdar://problem/34745031>
+
+        Reviewed by Devin Rousso.
+
+        Command-Z used to revert all changes at once because Web Inspector never
+        set any history checkpoints in the style editor.
+
+        * UserInterface/Views/SpreadsheetStyleProperty.js:
+        (WI.SpreadsheetStyleProperty.prototype.spreadsheetTextFieldDidBlur):
+        * UserInterface/Views/SpreadsheetTextField.js:
+        (WI.SpreadsheetTextField.prototype._handleBlur):
+
+2019-01-08  Nikita Vasilyev  <nvasilyev@apple.com>
+
         Web Inspector: Use prefers-color-scheme instead of prefers-dark-interface
         https://bugs.webkit.org/show_bug.cgi?id=193265
 
