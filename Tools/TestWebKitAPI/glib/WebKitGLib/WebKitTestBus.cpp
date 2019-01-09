@@ -48,11 +48,11 @@ GDBusConnection* WebKitTestBus::getOrCreateConnection()
     if (m_connection)
         return m_connection.get();
 
-    g_assert(!m_address.isNull());
+    g_assert_false(m_address.isNull());
     m_connection = adoptGRef(g_dbus_connection_new_for_address_sync(m_address.data(),
         static_cast<GDBusConnectionFlags>(G_DBUS_CONNECTION_FLAGS_AUTHENTICATION_CLIENT | G_DBUS_CONNECTION_FLAGS_MESSAGE_BUS_CONNECTION),
         nullptr, nullptr, nullptr));
-    g_assert(m_connection.get());
+    g_assert_nonnull(m_connection.get());
     return m_connection.get();
 }
 
@@ -76,6 +76,6 @@ GDBusProxy* WebKitTestBus::createProxy(const char* serviceName, const char* obje
         interfaceName,
         nullptr, // GCancellable
         nullptr);
-    g_assert(proxy);
+    g_assert_nonnull(proxy);
     return proxy;
 }

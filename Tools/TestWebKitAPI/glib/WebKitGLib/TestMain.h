@@ -85,9 +85,9 @@ public:
 
     static GRefPtr<WebKitWebView> adoptView(gpointer view)
     {
-        g_assert(WEBKIT_IS_WEB_VIEW(view));
+        g_assert_true(WEBKIT_IS_WEB_VIEW(view));
 #if PLATFORM(GTK)
-        g_assert(g_object_is_floating(view));
+        g_assert_true(g_object_is_floating(view));
         return GRefPtr<WebKitWebView>(WEBKIT_WEB_VIEW(view));
 #elif PLATFORM(WPE)
         return adoptGRef(WEBKIT_WEB_VIEW(view));
@@ -130,7 +130,7 @@ public:
             g_print(" %s(%p)", g_type_name_from_instance(reinterpret_cast<GTypeInstance*>(*it)), *it);
         g_print("\n");
 
-        g_assert(m_watchedObjects.isEmpty());
+        g_assert_true(m_watchedObjects.isEmpty());
     }
 
     virtual void initializeWebExtensions()

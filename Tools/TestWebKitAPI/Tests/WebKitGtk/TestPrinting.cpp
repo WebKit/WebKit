@@ -31,8 +31,8 @@ static void testPrintOperationPrintSettings(WebViewTest* test, gconstpointer)
     GRefPtr<WebKitPrintOperation> printOperation = adoptGRef(webkit_print_operation_new(test->m_webView));
     test->assertObjectIsDeletedWhenTestFinishes(G_OBJECT(printOperation.get()));
 
-    g_assert(!webkit_print_operation_get_print_settings(printOperation.get()));
-    g_assert(!webkit_print_operation_get_page_setup(printOperation.get()));
+    g_assert_null(webkit_print_operation_get_print_settings(printOperation.get()));
+    g_assert_null(webkit_print_operation_get_page_setup(printOperation.get()));
 
     GRefPtr<GtkPrintSettings> printSettings = adoptGRef(gtk_print_settings_new());
     test->assertObjectIsDeletedWhenTestFinishes(G_OBJECT(printSettings.get()));
@@ -43,19 +43,19 @@ static void testPrintOperationPrintSettings(WebViewTest* test, gconstpointer)
     webkit_print_operation_set_print_settings(printOperation.get(), printSettings.get());
     webkit_print_operation_set_page_setup(printOperation.get(), pageSetup.get());
 
-    g_assert(webkit_print_operation_get_print_settings(printOperation.get()) == printSettings.get());
-    g_assert(webkit_print_operation_get_page_setup(printOperation.get()) == pageSetup.get());
+    g_assert_true(webkit_print_operation_get_print_settings(printOperation.get()) == printSettings.get());
+    g_assert_true(webkit_print_operation_get_page_setup(printOperation.get()) == pageSetup.get());
 }
 
 static gboolean webViewPrintCallback(WebKitWebView* webView, WebKitPrintOperation* printOperation, WebViewTest* test)
 {
-    g_assert(webView == test->m_webView);
+    g_assert_true(webView == test->m_webView);
 
-    g_assert(WEBKIT_IS_PRINT_OPERATION(printOperation));
+    g_assert_true(WEBKIT_IS_PRINT_OPERATION(printOperation));
     test->assertObjectIsDeletedWhenTestFinishes(G_OBJECT(printOperation));
 
-    g_assert(!webkit_print_operation_get_print_settings(printOperation));
-    g_assert(!webkit_print_operation_get_page_setup(printOperation));
+    g_assert_null(webkit_print_operation_get_print_settings(printOperation));
+    g_assert_null(webkit_print_operation_get_page_setup(printOperation));
 
     g_main_loop_quit(test->m_mainLoop);
 
@@ -98,9 +98,9 @@ public:
 
     static void printFailedCallback(WebKitPrintOperation*, GError* error, PrintTest* test)
     {
-        g_assert(test->m_expectedError);
-        g_assert(error);
-        g_assert(g_error_matches(error, WEBKIT_PRINT_ERROR, test->m_expectedError));
+        g_assert_cmpuint(test->m_expectedError, !=, 0);
+        g_assert_nonnull(error);
+        g_assert_error(error, WEBKIT_PRINT_ERROR, test->m_expectedError);
     }
 
     PrintTest()
@@ -147,7 +147,7 @@ static void testPrintOperationPrint(PrintTest* test, gconstpointer)
     GRefPtr<GFileInfo> fileInfo = adoptGRef(g_file_query_info(outputFile.get(),
         G_FILE_ATTRIBUTE_STANDARD_SIZE "," G_FILE_ATTRIBUTE_STANDARD_CONTENT_TYPE,
         static_cast<GFileQueryInfoFlags>(0), 0, 0));
-    g_assert(fileInfo.get());
+    g_assert_nonnull(fileInfo.get());
     g_assert_cmpint(g_file_info_get_size(fileInfo.get()), >, 0);
     g_assert_cmpstr(g_file_info_get_content_type(fileInfo.get()), ==, "application/pdf");
 
@@ -263,7 +263,7 @@ public:
     {
         m_printFinished = true;
         m_printOperation = nullptr;
-        g_assert(m_outputFile);
+        g_assert_nonnull(m_outputFile);
         g_file_delete(m_outputFile.get(), 0, 0);
         m_outputFile = nullptr;
         if (m_webViewClosed)
@@ -305,7 +305,7 @@ public:
 
     static void updateCallback(WebKitPrintCustomWidget* customWidget, GtkPageSetup*, GtkPrintSettings*, PrintCustomWidgetTest* test)
     {
-        g_assert(test->m_widget == webkit_print_custom_widget_get_widget(customWidget));
+        g_assert_true(test->m_widget == webkit_print_custom_widget_get_widget(customWidget));
 
         test->m_updateEmitted = true;
         // Would be nice to avoid the 1 second timeout here - but I didn't found
@@ -315,8 +315,8 @@ public:
 
     static void widgetRealizeCallback(GtkWidget* widget, PrintCustomWidgetTest* test)
     {
-        g_assert(GTK_IS_LABEL(widget));
-        g_assert(!g_strcmp0(gtk_label_get_text(GTK_LABEL(widget)), "Label"));
+        g_assert_true(GTK_IS_LABEL(widget));
+        g_assert_cmpstr(gtk_label_get_text(GTK_LABEL(widget)), ==, "Label");
 
         test->m_widgetRealized = true;
         test->startPrinting();
@@ -359,7 +359,7 @@ public:
 
     void printFinished()
     {
-        g_assert(m_outputFile);
+        g_assert_nonnull(m_outputFile);
         g_file_delete(m_outputFile.get(), nullptr, nullptr);
         m_outputFile = nullptr;
         g_main_loop_quit(m_mainLoop);
@@ -368,7 +368,7 @@ public:
     void createWebKitPrintOperation()
     {
         m_printOperation = adoptGRef(webkit_print_operation_new(m_webView));
-        g_assert(m_printOperation);
+        g_assert_nonnull(m_printOperation);
         assertObjectIsDeletedWhenTestFinishes(G_OBJECT(m_printOperation.get()));
 
         g_signal_connect(m_printOperation.get(), "create-custom-widget", G_CALLBACK(createCustomWidgetCallback), this);
@@ -444,11 +444,11 @@ static void testPrintCustomWidget(PrintCustomWidgetTest* test, gconstpointer)
 
     test->openDialogMoveThroughItAndWaitUntilClosed();
 
-    g_assert(test->m_response == WEBKIT_PRINT_OPERATION_RESPONSE_PRINT);
-    g_assert(test->m_createEmitted);
-    g_assert(test->m_widgetRealized);
-    g_assert(test->m_updateEmitted);
-    g_assert(test->m_applyEmitted);
+    g_assert_cmpuint(test->m_response, ==, WEBKIT_PRINT_OPERATION_RESPONSE_PRINT);
+    g_assert_true(test->m_createEmitted);
+    g_assert_true(test->m_widgetRealized);
+    g_assert_true(test->m_updateEmitted);
+    g_assert_true(test->m_applyEmitted);
 }
 #endif // HAVE_GTK_UNIX_PRINTING
 

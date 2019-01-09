@@ -25,105 +25,105 @@
 static void testSecurityOriginBasicConstructor(Test*, gconstpointer)
 {
     WebKitSecurityOrigin* origin = webkit_security_origin_new("http", "127.0.0.1", 1234);
-    g_assert(origin);
+    g_assert_nonnull(origin);
     GUniquePtr<char> asString(webkit_security_origin_to_string(origin));
     g_assert_cmpstr(asString.get(), ==, "http://127.0.0.1:1234");
     g_assert_cmpstr(webkit_security_origin_get_protocol(origin), ==, "http");
     g_assert_cmpstr(webkit_security_origin_get_host(origin), ==, "127.0.0.1");
     g_assert_cmpint(webkit_security_origin_get_port(origin), ==, 1234);
-    g_assert(!webkit_security_origin_is_opaque(origin));
+    g_assert_false(webkit_security_origin_is_opaque(origin));
     webkit_security_origin_unref(origin);
 }
 
 static void testSecurityOriginURIConstructor(Test*, gconstpointer)
 {
     WebKitSecurityOrigin* origin = webkit_security_origin_new_for_uri("http://127.0.0.1:1234");
-    g_assert(origin);
+    g_assert_nonnull(origin);
     GUniquePtr<char> asString(webkit_security_origin_to_string(origin));
     g_assert_cmpstr(asString.get(), ==, "http://127.0.0.1:1234");
     g_assert_cmpstr(webkit_security_origin_get_protocol(origin), ==, "http");
     g_assert_cmpstr(webkit_security_origin_get_host(origin), ==, "127.0.0.1");
     g_assert_cmpint(webkit_security_origin_get_port(origin), ==, 1234);
-    g_assert(!webkit_security_origin_is_opaque(origin));
+    g_assert_false(webkit_security_origin_is_opaque(origin));
     webkit_security_origin_unref(origin);
 
     origin = webkit_security_origin_new_for_uri("http://127.0.0.1:1234/this/path/?should=be#ignored");
-    g_assert(origin);
+    g_assert_nonnull(origin);
     asString.reset(webkit_security_origin_to_string(origin));
     g_assert_cmpstr(asString.get(), ==, "http://127.0.0.1:1234");
     g_assert_cmpstr(webkit_security_origin_get_protocol(origin), ==, "http");
     g_assert_cmpstr(webkit_security_origin_get_host(origin), ==, "127.0.0.1");
     g_assert_cmpint(webkit_security_origin_get_port(origin), ==, 1234);
-    g_assert(!webkit_security_origin_is_opaque(origin));
+    g_assert_false(webkit_security_origin_is_opaque(origin));
     webkit_security_origin_unref(origin);
 }
 
 static void testSecurityOriginDefaultPort(Test*, gconstpointer)
 {
     WebKitSecurityOrigin* origin = webkit_security_origin_new("http", "127.0.0.1", 0);
-    g_assert(origin);
+    g_assert_nonnull(origin);
     GUniquePtr<char> asString(webkit_security_origin_to_string(origin));
     g_assert_cmpstr(asString.get(), ==, "http://127.0.0.1");
     g_assert_cmpstr(webkit_security_origin_get_protocol(origin), ==, "http");
     g_assert_cmpstr(webkit_security_origin_get_host(origin), ==, "127.0.0.1");
     g_assert_cmpint(webkit_security_origin_get_port(origin), ==, 0);
-    g_assert(!webkit_security_origin_is_opaque(origin));
+    g_assert_false(webkit_security_origin_is_opaque(origin));
     webkit_security_origin_unref(origin);
 
     origin = webkit_security_origin_new("http", "127.0.0.1", 80);
-    g_assert(origin);
+    g_assert_nonnull(origin);
     asString.reset(webkit_security_origin_to_string(origin));
     g_assert_cmpstr(asString.get(), ==, "http://127.0.0.1");
     g_assert_cmpstr(webkit_security_origin_get_protocol(origin), ==, "http");
     g_assert_cmpstr(webkit_security_origin_get_host(origin), ==, "127.0.0.1");
     g_assert_cmpint(webkit_security_origin_get_port(origin), ==, 0);
-    g_assert(!webkit_security_origin_is_opaque(origin));
+    g_assert_false(webkit_security_origin_is_opaque(origin));
     webkit_security_origin_unref(origin);
 
     origin = webkit_security_origin_new_for_uri("http://127.0.0.1");
-    g_assert(origin);
+    g_assert_nonnull(origin);
     asString.reset(webkit_security_origin_to_string(origin));
     g_assert_cmpstr(asString.get(), ==, "http://127.0.0.1");
     g_assert_cmpstr(webkit_security_origin_get_protocol(origin), ==, "http");
     g_assert_cmpstr(webkit_security_origin_get_host(origin), ==, "127.0.0.1");
     g_assert_cmpint(webkit_security_origin_get_port(origin), ==, 0);
-    g_assert(!webkit_security_origin_is_opaque(origin));
+    g_assert_false(webkit_security_origin_is_opaque(origin));
     webkit_security_origin_unref(origin);
 
     origin = webkit_security_origin_new_for_uri("http://127.0.0.1:80");
-    g_assert(origin);
+    g_assert_nonnull(origin);
     asString.reset(webkit_security_origin_to_string(origin));
     g_assert_cmpstr(asString.get(), ==, "http://127.0.0.1");
     g_assert_cmpstr(webkit_security_origin_get_protocol(origin), ==, "http");
     g_assert_cmpstr(webkit_security_origin_get_host(origin), ==, "127.0.0.1");
     g_assert_cmpint(webkit_security_origin_get_port(origin), ==, 0);
-    g_assert(!webkit_security_origin_is_opaque(origin));
+    g_assert_false(webkit_security_origin_is_opaque(origin));
     webkit_security_origin_unref(origin);
 }
 
 static void testSecurityOriginFileURI(Test*, gconstpointer)
 {
     WebKitSecurityOrigin* origin = webkit_security_origin_new_for_uri("file:///abcdefg");
-    g_assert(origin);
+    g_assert_nonnull(origin);
     GUniquePtr<char> asString(webkit_security_origin_to_string(origin));
     g_assert_cmpstr(asString.get(), ==, "file://");
     g_assert_cmpstr(webkit_security_origin_get_protocol(origin), ==, "file");
-    g_assert(!webkit_security_origin_get_host(origin));
+    g_assert_null(webkit_security_origin_get_host(origin));
     g_assert_cmpint(webkit_security_origin_get_port(origin), ==, 0);
-    g_assert(!webkit_security_origin_is_opaque(origin));
+    g_assert_false(webkit_security_origin_is_opaque(origin));
     webkit_security_origin_unref(origin);
 }
 
 static void testOpaqueSecurityOrigin(Test*, gconstpointer)
 {
     WebKitSecurityOrigin* origin = webkit_security_origin_new_for_uri("data:Lali ho!");
-    g_assert(origin);
+    g_assert_nonnull(origin);
     GUniquePtr<char> asString(webkit_security_origin_to_string(origin));
-    g_assert(!asString);
-    g_assert(!webkit_security_origin_get_protocol(origin));
-    g_assert(!webkit_security_origin_get_host(origin));
+    g_assert_null(asString);
+    g_assert_null(webkit_security_origin_get_protocol(origin));
+    g_assert_null(webkit_security_origin_get_host(origin));
     g_assert_cmpint(webkit_security_origin_get_port(origin), ==, 0);
-    g_assert(webkit_security_origin_is_opaque(origin));
+    g_assert_true(webkit_security_origin_is_opaque(origin));
     webkit_security_origin_unref(origin);
 }
 

@@ -79,7 +79,7 @@ public:
     WebsiteDataTest()
         : m_manager(webkit_web_context_get_website_data_manager(webkit_web_view_get_context(m_webView)))
     {
-        g_assert(WEBKIT_IS_WEBSITE_DATA_MANAGER(m_manager));
+        g_assert_true(WEBKIT_IS_WEBSITE_DATA_MANAGER(m_manager));
         assertObjectIsDeletedWhenTestFinishes(G_OBJECT(m_manager));
         // WebsiteDataStore creates a new WebProcessPool when used before any secondary process has been created.
         // Ensure we have a web process by always loading about:blank here.
@@ -111,7 +111,7 @@ public:
     {
         webkit_website_data_manager_remove(m_manager, types, dataList, nullptr, [](GObject*, GAsyncResult* result, gpointer userData) {
             WebsiteDataTest* test = static_cast<WebsiteDataTest*>(userData);
-            g_assert(webkit_website_data_manager_remove_finish(test->m_manager, result, nullptr));
+            g_assert_true(webkit_website_data_manager_remove_finish(test->m_manager, result, nullptr));
             test->quitMainLoop();
         }, this);
         g_main_loop_run(m_mainLoop);
@@ -121,7 +121,7 @@ public:
     {
         webkit_website_data_manager_clear(m_manager, types, timeSpan, nullptr, [](GObject*, GAsyncResult* result, gpointer userData) {
             WebsiteDataTest* test = static_cast<WebsiteDataTest*>(userData);
-            g_assert(webkit_website_data_manager_clear_finish(test->m_manager, result, nullptr));
+            g_assert_true(webkit_website_data_manager_clear_finish(test->m_manager, result, nullptr));
             test->quitMainLoop();
         }, this);
         g_main_loop_run(m_mainLoop);
@@ -134,24 +134,24 @@ public:
 static void testWebsiteDataConfiguration(WebsiteDataTest* test, gconstpointer)
 {
     // Base directories are not used by TestMain.
-    g_assert(!webkit_website_data_manager_get_base_data_directory(test->m_manager));
-    g_assert(!webkit_website_data_manager_get_base_cache_directory(test->m_manager));
+    g_assert_null(webkit_website_data_manager_get_base_data_directory(test->m_manager));
+    g_assert_null(webkit_website_data_manager_get_base_cache_directory(test->m_manager));
 
     GUniquePtr<char> localStorageDirectory(g_build_filename(Test::dataDirectory(), "local-storage", nullptr));
     g_assert_cmpstr(localStorageDirectory.get(), ==, webkit_website_data_manager_get_local_storage_directory(test->m_manager));
-    g_assert(g_file_test(localStorageDirectory.get(), G_FILE_TEST_IS_DIR));
+    g_assert_true(g_file_test(localStorageDirectory.get(), G_FILE_TEST_IS_DIR));
 
     test->loadURI(kServer->getURIForPath("/empty").data());
     test->waitUntilLoadFinished();
     test->runJavaScriptAndWaitUntilFinished("window.indexedDB.open('TestDatabase');", nullptr);
     GUniquePtr<char> indexedDBDirectory(g_build_filename(Test::dataDirectory(), "indexeddb", nullptr));
     g_assert_cmpstr(indexedDBDirectory.get(), ==, webkit_website_data_manager_get_indexeddb_directory(test->m_manager));
-    g_assert(g_file_test(indexedDBDirectory.get(), G_FILE_TEST_IS_DIR));
+    g_assert_true(g_file_test(indexedDBDirectory.get(), G_FILE_TEST_IS_DIR));
 
     GUniquePtr<char> webSQLDirectory(g_build_filename(Test::dataDirectory(), "websql", nullptr));
     g_assert_cmpstr(webSQLDirectory.get(), ==, webkit_website_data_manager_get_websql_directory(test->m_manager));
     test->runJavaScriptAndWaitUntilFinished("db = openDatabase(\"TestDatabase\", \"1.0\", \"TestDatabase\", 1);", nullptr);
-    g_assert(g_file_test(webSQLDirectory.get(), G_FILE_TEST_IS_DIR));
+    g_assert_true(g_file_test(webSQLDirectory.get(), G_FILE_TEST_IS_DIR));
 
     test->loadURI(kServer->getURIForPath("/appcache").data());
     test->waitUntilLoadFinished();
@@ -161,22 +161,22 @@ static void testWebsiteDataConfiguration(WebsiteDataTest* test, gconstpointer)
     unsigned triesCount = 4;
     while (!g_file_test(applicationCacheDatabase.get(), G_FILE_TEST_IS_REGULAR) && --triesCount)
         test->wait(0.25);
-    g_assert(triesCount);
+    g_assert_cmpuint(triesCount, >, 0);
 
     GUniquePtr<char> diskCacheDirectory(g_build_filename(Test::dataDirectory(), "disk-cache", nullptr));
     g_assert_cmpstr(diskCacheDirectory.get(), ==, webkit_website_data_manager_get_disk_cache_directory(test->m_manager));
-    g_assert(g_file_test(diskCacheDirectory.get(), G_FILE_TEST_IS_DIR));
+    g_assert_true(g_file_test(diskCacheDirectory.get(), G_FILE_TEST_IS_DIR));
 
     // Clear all persistent caches, since the data dir is common to all test cases.
     static const WebKitWebsiteDataTypes persistentCaches = static_cast<WebKitWebsiteDataTypes>(WEBKIT_WEBSITE_DATA_DISK_CACHE | WEBKIT_WEBSITE_DATA_LOCAL_STORAGE
         | WEBKIT_WEBSITE_DATA_WEBSQL_DATABASES | WEBKIT_WEBSITE_DATA_INDEXEDDB_DATABASES | WEBKIT_WEBSITE_DATA_OFFLINE_APPLICATION_CACHE | WEBKIT_WEBSITE_DATA_DEVICE_ID_HASH_SALT);
     test->clear(persistentCaches, 0);
-    g_assert(!test->fetch(persistentCaches));
+    g_assert_null(test->fetch(persistentCaches));
 
     // The default context should have a different manager with different configuration.
     WebKitWebsiteDataManager* defaultManager = webkit_web_context_get_website_data_manager(webkit_web_context_get_default());
-    g_assert(WEBKIT_IS_WEBSITE_DATA_MANAGER(defaultManager));
-    g_assert(test->m_manager != defaultManager);
+    g_assert_true(WEBKIT_IS_WEBSITE_DATA_MANAGER(defaultManager));
+    g_assert_true(test->m_manager != defaultManager);
     g_assert_cmpstr(webkit_website_data_manager_get_local_storage_directory(test->m_manager), !=, webkit_website_data_manager_get_local_storage_directory(defaultManager));
     g_assert_cmpstr(webkit_website_data_manager_get_indexeddb_directory(test->m_manager), !=, webkit_website_data_manager_get_indexeddb_directory(defaultManager));
     g_assert_cmpstr(webkit_website_data_manager_get_disk_cache_directory(test->m_manager), !=, webkit_website_data_manager_get_disk_cache_directory(defaultManager));
@@ -185,7 +185,7 @@ static void testWebsiteDataConfiguration(WebsiteDataTest* test, gconstpointer)
 
     // Using Test::dataDirectory() we get the default configuration but for a differrent prefix.
     GRefPtr<WebKitWebsiteDataManager> baseDataManager = adoptGRef(webkit_website_data_manager_new("base-data-directory", Test::dataDirectory(), "base-cache-directory", Test::dataDirectory(), nullptr));
-    g_assert(WEBKIT_IS_WEBSITE_DATA_MANAGER(baseDataManager.get()));
+    g_assert_true(WEBKIT_IS_WEBSITE_DATA_MANAGER(baseDataManager.get()));
 
     localStorageDirectory.reset(g_build_filename(Test::dataDirectory(), "localstorage", nullptr));
     g_assert_cmpstr(webkit_website_data_manager_get_local_storage_directory(baseDataManager.get()), ==, localStorageDirectory.get());
@@ -225,26 +225,26 @@ static void ephemeralViewloadChanged(WebKitWebView* webView, WebKitLoadEvent loa
 static void testWebsiteDataEphemeral(WebViewTest* test, gconstpointer)
 {
     GRefPtr<WebKitWebsiteDataManager> manager = adoptGRef(webkit_website_data_manager_new_ephemeral());
-    g_assert(webkit_website_data_manager_is_ephemeral(manager.get()));
-    g_assert(!webkit_website_data_manager_get_base_data_directory(manager.get()));
-    g_assert(!webkit_website_data_manager_get_base_cache_directory(manager.get()));
-    g_assert(!webkit_website_data_manager_get_local_storage_directory(manager.get()));
-    g_assert(!webkit_website_data_manager_get_disk_cache_directory(manager.get()));
-    g_assert(!webkit_website_data_manager_get_offline_application_cache_directory(manager.get()));
-    g_assert(!webkit_website_data_manager_get_indexeddb_directory(manager.get()));
-    g_assert(!webkit_website_data_manager_get_websql_directory(manager.get()));
+    g_assert_true(webkit_website_data_manager_is_ephemeral(manager.get()));
+    g_assert_null(webkit_website_data_manager_get_base_data_directory(manager.get()));
+    g_assert_null(webkit_website_data_manager_get_base_cache_directory(manager.get()));
+    g_assert_null(webkit_website_data_manager_get_local_storage_directory(manager.get()));
+    g_assert_null(webkit_website_data_manager_get_disk_cache_directory(manager.get()));
+    g_assert_null(webkit_website_data_manager_get_offline_application_cache_directory(manager.get()));
+    g_assert_null(webkit_website_data_manager_get_indexeddb_directory(manager.get()));
+    g_assert_null(webkit_website_data_manager_get_websql_directory(manager.get()));
 
     // Configuration is ignored when is-ephemeral is used.
     manager = adoptGRef(WEBKIT_WEBSITE_DATA_MANAGER(g_object_new(WEBKIT_TYPE_WEBSITE_DATA_MANAGER, "base-data-directory", Test::dataDirectory(), "is-ephemeral", TRUE, nullptr)));
-    g_assert(webkit_website_data_manager_is_ephemeral(manager.get()));
-    g_assert(!webkit_website_data_manager_get_base_data_directory(manager.get()));
+    g_assert_true(webkit_website_data_manager_is_ephemeral(manager.get()));
+    g_assert_null(webkit_website_data_manager_get_base_data_directory(manager.get()));
 
     // Non persistent data can be queried in an ephemeral manager.
     GRefPtr<WebKitWebContext> webContext = adoptGRef(webkit_web_context_new_with_website_data_manager(manager.get()));
-    g_assert(webkit_web_context_is_ephemeral(webContext.get()));
+    g_assert_true(webkit_web_context_is_ephemeral(webContext.get()));
     auto webView = Test::adoptView(Test::createWebView(webContext.get()));
-    g_assert(webkit_web_view_is_ephemeral(webView.get()));
-    g_assert(webkit_web_view_get_website_data_manager(webView.get()) == manager.get());
+    g_assert_true(webkit_web_view_is_ephemeral(webView.get()));
+    g_assert_true(webkit_web_view_get_website_data_manager(webView.get()) == manager.get());
 
     g_signal_connect(webView.get(), "load-changed", G_CALLBACK(ephemeralViewloadChanged), test);
     webkit_web_view_load_uri(webView.get(), kServer->getURIForPath("/empty").data());
@@ -253,10 +253,10 @@ static void testWebsiteDataEphemeral(WebViewTest* test, gconstpointer)
     webkit_website_data_manager_fetch(manager.get(), WEBKIT_WEBSITE_DATA_MEMORY_CACHE, nullptr, [](GObject* manager, GAsyncResult* result, gpointer userData) {
         auto* test = static_cast<WebViewTest*>(userData);
         GList* dataList = webkit_website_data_manager_fetch_finish(WEBKIT_WEBSITE_DATA_MANAGER(manager), result, nullptr);
-        g_assert(dataList);
+        g_assert_nonnull(dataList);
         g_assert_cmpuint(g_list_length(dataList), ==, 1);
         WebKitWebsiteData* data = static_cast<WebKitWebsiteData*>(dataList->data);
-        g_assert(data);
+        g_assert_nonnull(data);
         WebKitSecurityOrigin* origin = webkit_security_origin_new_for_uri(kServer->getURIForPath("/").data());
         g_assert_cmpstr(webkit_website_data_get_name(data), ==, webkit_security_origin_get_host(origin));
         webkit_security_origin_unref(origin);
@@ -270,7 +270,7 @@ static void testWebsiteDataCache(WebsiteDataTest* test, gconstpointer)
 {
     static const WebKitWebsiteDataTypes cacheTypes = static_cast<WebKitWebsiteDataTypes>(WEBKIT_WEBSITE_DATA_MEMORY_CACHE | WEBKIT_WEBSITE_DATA_DISK_CACHE);
     GList* dataList = test->fetch(cacheTypes);
-    g_assert(!dataList);
+    g_assert_null(dataList);
 
     test->loadURI(kServer->getURIForPath("/empty").data());
     test->waitUntilLoadFinished();
@@ -281,10 +281,10 @@ static void testWebsiteDataCache(WebsiteDataTest* test, gconstpointer)
     test->wait(1);
 
     dataList = test->fetch(cacheTypes);
-    g_assert(dataList);
+    g_assert_nonnull(dataList);
     g_assert_cmpuint(g_list_length(dataList), ==, 1);
     WebKitWebsiteData* data = static_cast<WebKitWebsiteData*>(dataList->data);
-    g_assert(data);
+    g_assert_nonnull(data);
     WebKitSecurityOrigin* origin = webkit_security_origin_new_for_uri(kServer->getURIForPath("/").data());
     g_assert_cmpstr(webkit_website_data_get_name(data), ==, webkit_security_origin_get_host(origin));
     webkit_security_origin_unref(origin);
@@ -295,12 +295,12 @@ static void testWebsiteDataCache(WebsiteDataTest* test, gconstpointer)
 
     // Try again but only getting disk cache.
     dataList = test->fetch(WEBKIT_WEBSITE_DATA_DISK_CACHE);
-    g_assert(dataList);
+    g_assert_nonnull(dataList);
     g_assert_cmpuint(g_list_length(dataList), ==, 1);
     data = static_cast<WebKitWebsiteData*>(dataList->data);
-    g_assert(data);
-    g_assert(webkit_website_data_get_types(data) & WEBKIT_WEBSITE_DATA_DISK_CACHE);
-    g_assert(!(webkit_website_data_get_types(data) & WEBKIT_WEBSITE_DATA_MEMORY_CACHE));
+    g_assert_nonnull(data);
+    g_assert_true(webkit_website_data_get_types(data) & WEBKIT_WEBSITE_DATA_DISK_CACHE);
+    g_assert_false(webkit_website_data_get_types(data) & WEBKIT_WEBSITE_DATA_MEMORY_CACHE);
 
     GUniquePtr<char> fileURL(g_strdup_printf("file://%s/simple.html", Test::getResourcesDir(Test::WebKit2Resources).data()));
     test->loadURI(fileURL.get());
@@ -312,24 +312,24 @@ static void testWebsiteDataCache(WebsiteDataTest* test, gconstpointer)
 
     // Local files are grouped.
     dataList = test->fetch(cacheTypes);
-    g_assert(dataList);
+    g_assert_nonnull(dataList);
     g_assert_cmpuint(g_list_length(dataList), ==, 2);
     GList* itemList = g_list_find_custom(dataList, nullptr, [](gconstpointer item, gconstpointer) -> int {
         WebKitWebsiteData* data = static_cast<WebKitWebsiteData*>(const_cast<gpointer>(item));
         return g_strcmp0(webkit_website_data_get_name(data), "Local files");
     });
-    g_assert(itemList);
+    g_assert_nonnull(itemList);
     data = static_cast<WebKitWebsiteData*>(itemList->data);
-    g_assert(data);
-    g_assert(webkit_website_data_get_types(data) & WEBKIT_WEBSITE_DATA_MEMORY_CACHE);
+    g_assert_nonnull(data);
+    g_assert_true(webkit_website_data_get_types(data) & WEBKIT_WEBSITE_DATA_MEMORY_CACHE);
     // Local files are never stored in disk cache.
-    g_assert(!(webkit_website_data_get_types(data) & WEBKIT_WEBSITE_DATA_DISK_CACHE));
+    g_assert_false(webkit_website_data_get_types(data) & WEBKIT_WEBSITE_DATA_DISK_CACHE);
 
     // Clear data modified since the last microsecond should not clear anything.
     // Use disk-cache because memory cache ignores the modified since.
     test->clear(WEBKIT_WEBSITE_DATA_DISK_CACHE, 1);
     dataList = test->fetch(cacheTypes);
-    g_assert(dataList);
+    g_assert_nonnull(dataList);
     g_assert_cmpuint(g_list_length(dataList), ==, 2);
 
     // Remove memory cache only for local files.
@@ -337,26 +337,26 @@ static void testWebsiteDataCache(WebsiteDataTest* test, gconstpointer)
         WebKitWebsiteData* data = static_cast<WebKitWebsiteData*>(const_cast<gpointer>(item));
         return g_strcmp0(webkit_website_data_get_name(data), "Local files");
     });
-    g_assert(itemList);
+    g_assert_nonnull(itemList);
     GList removeList = { itemList->data, nullptr, nullptr };
     test->remove(WEBKIT_WEBSITE_DATA_MEMORY_CACHE, &removeList);
     dataList = test->fetch(cacheTypes);
-    g_assert(dataList);
+    g_assert_nonnull(dataList);
     g_assert_cmpuint(g_list_length(dataList), ==, 1);
     data = static_cast<WebKitWebsiteData*>(dataList->data);
-    g_assert(webkit_website_data_get_types(data) & WEBKIT_WEBSITE_DATA_DISK_CACHE);
+    g_assert_true(webkit_website_data_get_types(data) & WEBKIT_WEBSITE_DATA_DISK_CACHE);
 
     // Clear all.
     test->clear(cacheTypes, 0);
     dataList = test->fetch(cacheTypes);
-    g_assert(!dataList);
+    g_assert_null(dataList);
 }
 
 static void testWebsiteDataStorage(WebsiteDataTest* test, gconstpointer)
 {
     static const WebKitWebsiteDataTypes storageTypes = static_cast<WebKitWebsiteDataTypes>(WEBKIT_WEBSITE_DATA_SESSION_STORAGE | WEBKIT_WEBSITE_DATA_LOCAL_STORAGE);
     GList* dataList = test->fetch(storageTypes);
-    g_assert(!dataList);
+    g_assert_null(dataList);
 
     test->loadURI(kServer->getURIForPath("/sessionstorage").data());
     test->waitUntilLoadFinished();
@@ -368,10 +368,10 @@ static void testWebsiteDataStorage(WebsiteDataTest* test, gconstpointer)
     test->wait(1);
 
     dataList = test->fetch(storageTypes);
-    g_assert(dataList);
+    g_assert_nonnull(dataList);
     g_assert_cmpuint(g_list_length(dataList), ==, 1);
     WebKitWebsiteData* data = static_cast<WebKitWebsiteData*>(dataList->data);
-    g_assert(data);
+    g_assert_nonnull(data);
     WebKitSecurityOrigin* origin = webkit_security_origin_new_for_uri(kServer->getURIForPath("/").data());
     g_assert_cmpstr(webkit_website_data_get_name(data), ==, webkit_security_origin_get_host(origin));
     webkit_security_origin_unref(origin);
@@ -383,52 +383,52 @@ static void testWebsiteDataStorage(WebsiteDataTest* test, gconstpointer)
     // Get also cached data, and clear it.
     static const WebKitWebsiteDataTypes cacheAndStorageTypes = static_cast<WebKitWebsiteDataTypes>(storageTypes | WEBKIT_WEBSITE_DATA_MEMORY_CACHE | WEBKIT_WEBSITE_DATA_DISK_CACHE);
     dataList = test->fetch(cacheAndStorageTypes);
-    g_assert(dataList);
+    g_assert_nonnull(dataList);
     g_assert_cmpuint(g_list_length(dataList), ==, 1);
     data = static_cast<WebKitWebsiteData*>(dataList->data);
-    g_assert(data);
+    g_assert_nonnull(data);
     g_assert_cmpuint(webkit_website_data_get_types(data), ==, cacheAndStorageTypes);
     test->clear(static_cast<WebKitWebsiteDataTypes>(WEBKIT_WEBSITE_DATA_MEMORY_CACHE | WEBKIT_WEBSITE_DATA_DISK_CACHE), 0);
 
     // Get all types again, but only storage is retrieved now.
     dataList = test->fetch(cacheAndStorageTypes);
-    g_assert(dataList);
+    g_assert_nonnull(dataList);
     g_assert_cmpuint(g_list_length(dataList), ==, 1);
     data = static_cast<WebKitWebsiteData*>(dataList->data);
-    g_assert(data);
+    g_assert_nonnull(data);
     g_assert_cmpuint(webkit_website_data_get_types(data), ==, storageTypes);
 
     // Remove the session storage.
     GList removeList = { data, nullptr, nullptr };
     test->remove(WEBKIT_WEBSITE_DATA_SESSION_STORAGE, &removeList);
     dataList = test->fetch(storageTypes);
-    g_assert(dataList);
+    g_assert_nonnull(dataList);
     g_assert_cmpuint(g_list_length(dataList), ==, 1);
     data = static_cast<WebKitWebsiteData*>(dataList->data);
-    g_assert(!(webkit_website_data_get_types(data) & WEBKIT_WEBSITE_DATA_SESSION_STORAGE));
-    g_assert(webkit_website_data_get_types(data) & WEBKIT_WEBSITE_DATA_LOCAL_STORAGE);
+    g_assert_false(webkit_website_data_get_types(data) & WEBKIT_WEBSITE_DATA_SESSION_STORAGE);
+    g_assert_true(webkit_website_data_get_types(data) & WEBKIT_WEBSITE_DATA_LOCAL_STORAGE);
 
     // Clear all.
     test->clear(cacheAndStorageTypes, 0);
     dataList = test->fetch(cacheAndStorageTypes);
-    g_assert(!dataList);
+    g_assert_null(dataList);
 }
 
 static void testWebsiteDataDatabases(WebsiteDataTest* test, gconstpointer)
 {
     static const WebKitWebsiteDataTypes databaseTypes = static_cast<WebKitWebsiteDataTypes>(WEBKIT_WEBSITE_DATA_WEBSQL_DATABASES | WEBKIT_WEBSITE_DATA_INDEXEDDB_DATABASES);
     GList* dataList = test->fetch(databaseTypes);
-    g_assert(!dataList);
+    g_assert_null(dataList);
 
     test->loadURI(kServer->getURIForPath("/empty").data());
     test->waitUntilLoadFinished();
     test->runJavaScriptAndWaitUntilFinished("window.indexedDB.open('TestDatabase');", nullptr);
 
     dataList = test->fetch(databaseTypes);
-    g_assert(dataList);
+    g_assert_nonnull(dataList);
     g_assert_cmpuint(g_list_length(dataList), ==, 1);
     WebKitWebsiteData* data = static_cast<WebKitWebsiteData*>(dataList->data);
-    g_assert(data);
+    g_assert_nonnull(data);
     WebKitSecurityOrigin* origin = webkit_security_origin_new_for_uri(kServer->getURIForPath("/").data());
     g_assert_cmpstr(webkit_website_data_get_name(data), ==, webkit_security_origin_get_host(origin));
     webkit_security_origin_unref(origin);
@@ -438,10 +438,10 @@ static void testWebsiteDataDatabases(WebsiteDataTest* test, gconstpointer)
 
     test->runJavaScriptAndWaitUntilFinished("db = openDatabase(\"TestDatabase\", \"1.0\", \"TestDatabase\", 1);", nullptr);
     dataList = test->fetch(databaseTypes);
-    g_assert(dataList);
+    g_assert_nonnull(dataList);
     g_assert_cmpuint(g_list_length(dataList), ==, 1);
     data = static_cast<WebKitWebsiteData*>(dataList->data);
-    g_assert(data);
+    g_assert_nonnull(data);
     g_assert_cmpuint(webkit_website_data_get_types(data), ==, databaseTypes);
     // Database sizes are unknown.
     g_assert_cmpuint(webkit_website_data_get_size(data, WEBKIT_WEBSITE_DATA_INDEXEDDB_DATABASES), ==, 0);
@@ -451,29 +451,29 @@ static void testWebsiteDataDatabases(WebsiteDataTest* test, gconstpointer)
     GList removeList = { data, nullptr, nullptr };
     test->remove(databaseTypes, &removeList);
     dataList = test->fetch(databaseTypes);
-    g_assert(!dataList);
+    g_assert_null(dataList);
 
     // Clear all.
     static const WebKitWebsiteDataTypes cacheAndDatabaseTypes = static_cast<WebKitWebsiteDataTypes>(databaseTypes | WEBKIT_WEBSITE_DATA_MEMORY_CACHE | WEBKIT_WEBSITE_DATA_DISK_CACHE);
     test->clear(cacheAndDatabaseTypes, 0);
     dataList = test->fetch(cacheAndDatabaseTypes);
-    g_assert(!dataList);
+    g_assert_null(dataList);
 }
 
 static void testWebsiteDataAppcache(WebsiteDataTest* test, gconstpointer)
 {
     GList* dataList = test->fetch(WEBKIT_WEBSITE_DATA_OFFLINE_APPLICATION_CACHE);
-    g_assert(!dataList);
+    g_assert_null(dataList);
 
     test->loadURI(kServer->getURIForPath("/appcache").data());
     test->waitUntilLoadFinished();
 
     test->wait(1);
     dataList = test->fetch(WEBKIT_WEBSITE_DATA_OFFLINE_APPLICATION_CACHE);
-    g_assert(dataList);
+    g_assert_nonnull(dataList);
     g_assert_cmpuint(g_list_length(dataList), ==, 1);
     WebKitWebsiteData* data = static_cast<WebKitWebsiteData*>(dataList->data);
-    g_assert(data);
+    g_assert_nonnull(data);
     WebKitSecurityOrigin* origin = webkit_security_origin_new_for_uri(kServer->getURIForPath("/").data());
     g_assert_cmpstr(webkit_website_data_get_name(data), ==, webkit_security_origin_get_host(origin));
     webkit_security_origin_unref(origin);
@@ -484,28 +484,28 @@ static void testWebsiteDataAppcache(WebsiteDataTest* test, gconstpointer)
     GList removeList = { data, nullptr, nullptr };
     test->remove(WEBKIT_WEBSITE_DATA_OFFLINE_APPLICATION_CACHE, &removeList);
     dataList = test->fetch(WEBKIT_WEBSITE_DATA_OFFLINE_APPLICATION_CACHE);
-    g_assert(!dataList);
+    g_assert_null(dataList);
 
     // Clear all.
     static const WebKitWebsiteDataTypes cacheAndAppcacheTypes = static_cast<WebKitWebsiteDataTypes>(WEBKIT_WEBSITE_DATA_OFFLINE_APPLICATION_CACHE | WEBKIT_WEBSITE_DATA_MEMORY_CACHE | WEBKIT_WEBSITE_DATA_DISK_CACHE);
     test->clear(cacheAndAppcacheTypes, 0);
     dataList = test->fetch(cacheAndAppcacheTypes);
-    g_assert(!dataList);
+    g_assert_null(dataList);
 }
 
 static void testWebsiteDataCookies(WebsiteDataTest* test, gconstpointer)
 {
     GList* dataList = test->fetch(WEBKIT_WEBSITE_DATA_COOKIES);
-    g_assert(!dataList);
+    g_assert_null(dataList);
 
     test->loadURI(kServer->getURIForPath("/empty").data());
     test->waitUntilLoadFinished();
 
     dataList = test->fetch(WEBKIT_WEBSITE_DATA_COOKIES);
-    g_assert(dataList);
+    g_assert_nonnull(dataList);
     g_assert_cmpuint(g_list_length(dataList), ==, 1);
     WebKitWebsiteData* data = static_cast<WebKitWebsiteData*>(dataList->data);
-    g_assert(data);
+    g_assert_nonnull(data);
     g_assert_cmpstr(webkit_website_data_get_name(data), ==, "127.0.0.1");
     g_assert_cmpuint(webkit_website_data_get_types(data), ==, WEBKIT_WEBSITE_DATA_COOKIES);
     // Cookies size is unknown.
@@ -514,13 +514,13 @@ static void testWebsiteDataCookies(WebsiteDataTest* test, gconstpointer)
     GList removeList = { data, nullptr, nullptr };
     test->remove(WEBKIT_WEBSITE_DATA_COOKIES, &removeList);
     dataList = test->fetch(WEBKIT_WEBSITE_DATA_COOKIES);
-    g_assert(!dataList);
+    g_assert_null(dataList);
 
     // Clear all.
     static const WebKitWebsiteDataTypes cacheAndCookieTypes = static_cast<WebKitWebsiteDataTypes>(WEBKIT_WEBSITE_DATA_COOKIES | WEBKIT_WEBSITE_DATA_MEMORY_CACHE | WEBKIT_WEBSITE_DATA_DISK_CACHE);
     test->clear(cacheAndCookieTypes, 0);
     dataList = test->fetch(cacheAndCookieTypes);
-    g_assert(!dataList);
+    g_assert_null(dataList);
 }
 
 static void testWebsiteDataDeviceIdHashSalt(WebsiteDataTest* test, gconstpointer)
@@ -532,17 +532,17 @@ static void testWebsiteDataDeviceIdHashSalt(WebsiteDataTest* test, gconstpointer
     test->clear(WEBKIT_WEBSITE_DATA_DEVICE_ID_HASH_SALT, 0);
 
     GList* dataList = test->fetch(WEBKIT_WEBSITE_DATA_DEVICE_ID_HASH_SALT);
-    g_assert(!dataList);
+    g_assert_null(dataList);
 
     test->loadURI(kServer->getURIForPath("/enumeratedevices").data());
     test->waitUntilTitleChangedTo("Finished");
 
     dataList = test->fetch(WEBKIT_WEBSITE_DATA_DEVICE_ID_HASH_SALT);
-    g_assert(dataList);
+    g_assert_nonnull(dataList);
 
     g_assert_cmpuint(g_list_length(dataList), ==, 1);
     WebKitWebsiteData* data = static_cast<WebKitWebsiteData*>(dataList->data);
-    g_assert(data);
+    g_assert_nonnull(data);
     WebKitSecurityOrigin* origin = webkit_security_origin_new_for_uri(kServer->getURIForPath("/").data());
     g_assert_cmpstr(webkit_website_data_get_name(data), ==, webkit_security_origin_get_host(origin));
     webkit_security_origin_unref(origin);
@@ -551,27 +551,27 @@ static void testWebsiteDataDeviceIdHashSalt(WebsiteDataTest* test, gconstpointer
     GList removeList = { data, nullptr, nullptr };
     test->remove(WEBKIT_WEBSITE_DATA_DEVICE_ID_HASH_SALT, &removeList);
     dataList = test->fetch(WEBKIT_WEBSITE_DATA_DEVICE_ID_HASH_SALT);
-    g_assert(!dataList);
+    g_assert_null(dataList);
 
     // Test removing the cookies.
     test->loadURI(kServer->getURIForPath("/enumeratedevices").data());
     test->waitUntilTitleChangedTo("Finished");
 
     dataList = test->fetch(WEBKIT_WEBSITE_DATA_DEVICE_ID_HASH_SALT);
-    g_assert(dataList);
+    g_assert_nonnull(dataList);
     data = static_cast<WebKitWebsiteData*>(dataList->data);
-    g_assert(data);
+    g_assert_nonnull(data);
 
     GList removeCookieList = { data, nullptr, nullptr };
     test->remove(WEBKIT_WEBSITE_DATA_COOKIES, &removeCookieList);
     dataList = test->fetch(WEBKIT_WEBSITE_DATA_DEVICE_ID_HASH_SALT);
-    g_assert(!dataList);
+    g_assert_null(dataList);
 
     // Clear all.
     static const WebKitWebsiteDataTypes cacheAndAppcacheTypes = static_cast<WebKitWebsiteDataTypes>(WEBKIT_WEBSITE_DATA_DEVICE_ID_HASH_SALT);
     test->clear(cacheAndAppcacheTypes, 0);
     dataList = test->fetch(cacheAndAppcacheTypes);
-    g_assert(!dataList);
+    g_assert_null(dataList);
 
     webkit_settings_set_enable_media_stream(settings, enabled);
 }

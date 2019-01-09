@@ -65,7 +65,7 @@ public:
     static void viewFaviconChangedCallback(WebKitWebView* webView, GParamSpec* pspec, gpointer data)
     {
         FaviconDatabaseTest* test = static_cast<FaviconDatabaseTest*>(data);
-        g_assert(test->m_webView == webView);
+        g_assert_true(test->m_webView == webView);
         test->m_faviconNotificationReceived = true;
         test->quitMainLoop();
     }
@@ -101,7 +101,7 @@ public:
 
     void waitUntilFaviconURIChanged()
     {
-        g_assert(!m_waitingForFaviconURI);
+        g_assert_false(m_waitingForFaviconURI);
         m_faviconURI = CString();
         m_waitingForFaviconURI = true;
         g_main_loop_run(m_mainLoop);
@@ -154,8 +154,8 @@ static void testNotInitialized(FaviconDatabaseTest* test)
 {
     // Try to retrieve a valid favicon from a not initialized database.
     test->getFaviconForPageURIAndWaitUntilReady(kServer->getURIForPath("/foo").data());
-    g_assert(!test->m_favicon);
-    g_assert(test->m_error);
+    g_assert_null(test->m_favicon);
+    g_assert_nonnull(test->m_error);
     g_assert_cmpint(test->m_error->code, ==, WEBKIT_FAVICON_DATABASE_ERROR_NOT_INITIALIZED);
 }
 #endif
@@ -173,7 +173,7 @@ static void testClearDatabase(FaviconDatabaseTest* test)
     webkit_favicon_database_clear(database);
 
     GUniquePtr<char> iconURI(webkit_favicon_database_get_favicon_uri(database, kServer->getURIForPath("/foo").data()));
-    g_assert(!iconURI);
+    g_assert_null(iconURI);
 }
 
 static void ephemeralViewLoadChanged(WebKitWebView* webView, WebKitLoadEvent loadEvent, WebViewTest* test)
@@ -196,8 +196,8 @@ static void testPrivateBrowsing(FaviconDatabaseTest* test)
 
     // An ephemeral web view should not write to the database.
     test->getFaviconForPageURIAndWaitUntilReady(kServer->getURIForPath("/foo").data());
-    g_assert(!test->m_favicon);
-    g_assert(test->m_error);
+    g_assert_null(test->m_favicon);
+    g_assert_nonnull(test->m_error);
 }
 
 static void testGetFavicon(FaviconDatabaseTest* test)
@@ -210,9 +210,9 @@ static void testGetFavicon(FaviconDatabaseTest* test)
 
     // Check the API retrieving a valid favicon.
     test->getFaviconForPageURIAndWaitUntilReady(kServer->getURIForPath("/foo").data());
-    g_assert(test->m_favicon);
+    g_assert_nonnull(test->m_favicon);
     g_assert_cmpstr(test->m_faviconURI.data(), ==, faviconURI.data());
-    g_assert(!test->m_error);
+    g_assert_no_error(test->m_error.get());
 
     // Check that width and height match those from blank.ico (16x16 favicon).
     g_assert_cmpint(cairo_image_surface_get_width(test->m_favicon), ==, 16);
@@ -226,10 +226,10 @@ static void testGetFavicon(FaviconDatabaseTest* test)
     test->waitUntilFaviconChanged();
     test->waitUntilFaviconChanged();
     test->getFaviconForPageURIAndWaitUntilReady(kServer->getURIForPath("/bar").data());
-    g_assert(test->m_favicon);
+    g_assert_nonnull(test->m_favicon);
     g_assert_cmpstr(test->m_faviconURI.data(), ==, faviconURI.data());
-    g_assert(test->m_favicon == favicon);
-    g_assert(!test->m_error);
+    g_assert_true(test->m_favicon == favicon);
+    g_assert_no_error(test->m_error.get());
     cairo_surface_destroy(favicon);
 
     // Check the API retrieving an invalid favicon. Favicon changes only once to reset it, then
@@ -239,8 +239,8 @@ static void testGetFavicon(FaviconDatabaseTest* test)
     test->waitUntilFaviconURIChanged();
 
     test->getFaviconForPageURIAndWaitUntilReady(kServer->getURIForPath("/nofavicon").data());
-    g_assert(!test->m_favicon);
-    g_assert(test->m_error);
+    g_assert_null(test->m_favicon);
+    g_assert_nonnull(test->m_error);
 }
 
 static void testGetFaviconURI(FaviconDatabaseTest* test)
@@ -257,17 +257,17 @@ static void testWebViewFavicon(FaviconDatabaseTest* test)
     test->m_faviconURI = CString();
 
     cairo_surface_t* iconFromWebView = webkit_web_view_get_favicon(test->m_webView);
-    g_assert(!iconFromWebView);
+    g_assert_null(iconFromWebView);
 
     test->loadURI(kServer->getURIForPath("/foo").data());
     test->waitUntilFaviconChanged();
-    g_assert(test->m_faviconNotificationReceived);
+    g_assert_true(test->m_faviconNotificationReceived);
     // The icon is known and hasn't changed in the database, so notify::favicon is emitted
     // but WebKitFaviconDatabase::icon-changed isn't.
-    g_assert(test->m_faviconURI.isNull());
+    g_assert_true(test->m_faviconURI.isNull());
 
     iconFromWebView = webkit_web_view_get_favicon(test->m_webView);
-    g_assert(iconFromWebView);
+    g_assert_nonnull(iconFromWebView);
     g_assert_cmpuint(cairo_image_surface_get_width(iconFromWebView), ==, 16);
     g_assert_cmpuint(cairo_image_surface_get_height(iconFromWebView), ==, 16);
 }

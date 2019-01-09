@@ -98,7 +98,7 @@ static void testFindControllerTextFound(FindControllerTest* test, gconstpointer)
     test->find("testing", WEBKIT_FIND_OPTIONS_NONE, 1);
     test->waitUntilFindFinished();
 
-    g_assert(test->m_textFound);
+    g_assert_true(test->m_textFound);
 }
 
 static void testFindControllerTextNotFound(FindControllerTest* test, gconstpointer)
@@ -109,7 +109,7 @@ static void testFindControllerTextNotFound(FindControllerTest* test, gconstpoint
     test->find("notFound", WEBKIT_FIND_OPTIONS_NONE, 1);
     test->waitUntilFindFinished();
 
-    g_assert(!test->m_textFound);
+    g_assert_false(test->m_textFound);
 }
 
 static void testFindControllerMatchCount(FindControllerTest* test, gconstpointer)
@@ -120,8 +120,8 @@ static void testFindControllerMatchCount(FindControllerTest* test, gconstpointer
     test->find("testing", WEBKIT_FIND_OPTIONS_NONE, 2);
     test->waitUntilFindFinished();
 
-    g_assert(test->m_matchCount == 2);
-    g_assert(test->m_textFound);
+    g_assert_cmpuint(test->m_matchCount, ==, 2);
+    g_assert_true(test->m_textFound);
 }
 
 static void testFindControllerMaxMatchCount(FindControllerTest* test, gconstpointer)
@@ -132,8 +132,8 @@ static void testFindControllerMaxMatchCount(FindControllerTest* test, gconstpoin
     test->find("testing", WEBKIT_FIND_OPTIONS_NONE, 1);
     test->waitUntilFindFinished();
 
-    g_assert(test->m_matchCount == G_MAXUINT);
-    g_assert(test->m_textFound);
+    g_assert_cmpuint(test->m_matchCount, ==, G_MAXUINT);
+    g_assert_true(test->m_textFound);
 }
 
 static void testFindControllerNext(FindControllerTest* test, gconstpointer)
@@ -144,22 +144,22 @@ static void testFindControllerNext(FindControllerTest* test, gconstpointer)
     test->find("testing", WEBKIT_FIND_OPTIONS_NONE, 2);
     test->waitUntilFindFinished();
 
-    g_assert(test->m_textFound);
-    g_assert(test->m_matchCount == 2);
+    g_assert_true(test->m_textFound);
+    g_assert_cmpuint(test->m_matchCount, ==, 2);
 
     webkit_find_controller_search_next(test->m_findController.get());
     test->waitUntilFindFinished();
 
-    g_assert(test->m_textFound);
-    g_assert(test->m_matchCount == 1);
-    g_assert(!(webkit_find_controller_get_options(test->m_findController.get()) & WEBKIT_FIND_OPTIONS_BACKWARDS));
+    g_assert_true(test->m_textFound);
+    g_assert_cmpuint(test->m_matchCount, ==, 1);
+    g_assert_false(webkit_find_controller_get_options(test->m_findController.get()) & WEBKIT_FIND_OPTIONS_BACKWARDS);
 
     webkit_find_controller_search_next(test->m_findController.get());
     test->waitUntilFindFinished();
 
-    g_assert(!test->m_textFound);
-    g_assert(test->m_matchCount == 1);
-    g_assert(!(webkit_find_controller_get_options(test->m_findController.get()) & WEBKIT_FIND_OPTIONS_BACKWARDS));
+    g_assert_false(test->m_textFound);
+    g_assert_cmpuint(test->m_matchCount, ==, 1);
+    g_assert_false(webkit_find_controller_get_options(test->m_findController.get()) & WEBKIT_FIND_OPTIONS_BACKWARDS);
 }
 
 static void testFindControllerPrevious(FindControllerTest* test, gconstpointer)
@@ -170,22 +170,22 @@ static void testFindControllerPrevious(FindControllerTest* test, gconstpointer)
     test->find("testing", WEBKIT_FIND_OPTIONS_NONE, 2);
     test->waitUntilFindFinished();
 
-    g_assert(test->m_matchCount == 2);
-    g_assert(test->m_textFound);
+    g_assert_cmpuint(test->m_matchCount, ==, 2);
+    g_assert_true(test->m_textFound);
 
     webkit_find_controller_search_next(test->m_findController.get());
     test->waitUntilFindFinished();
 
-    g_assert(test->m_textFound);
-    g_assert(test->m_matchCount == 1);
-    g_assert(!(webkit_find_controller_get_options(test->m_findController.get()) & WEBKIT_FIND_OPTIONS_BACKWARDS));
+    g_assert_true(test->m_textFound);
+    g_assert_cmpuint(test->m_matchCount, ==, 1);
+    g_assert_false(webkit_find_controller_get_options(test->m_findController.get()) & WEBKIT_FIND_OPTIONS_BACKWARDS);
 
     webkit_find_controller_search_previous(test->m_findController.get());
     test->waitUntilFindFinished();
 
-    g_assert(test->m_textFound);
-    g_assert(test->m_matchCount == 1);
-    g_assert(webkit_find_controller_get_options(test->m_findController.get()) & WEBKIT_FIND_OPTIONS_BACKWARDS);
+    g_assert_true(test->m_textFound);
+    g_assert_cmpuint(test->m_matchCount, ==, 1);
+    g_assert_true(webkit_find_controller_get_options(test->m_findController.get()) & WEBKIT_FIND_OPTIONS_BACKWARDS);
 }
 
 static void testFindControllerCountedMatches(FindControllerTest* test, gconstpointer)
@@ -196,17 +196,17 @@ static void testFindControllerCountedMatches(FindControllerTest* test, gconstpoi
     test->count("testing", WEBKIT_FIND_OPTIONS_NONE, 2);
     test->waitUntilFindFinished();
 
-    g_assert(test->m_matchCount == 2);
+    g_assert_cmpuint(test->m_matchCount, ==, 2);
 
     test->count("first", WEBKIT_FIND_OPTIONS_NONE, 2);
     test->waitUntilFindFinished();
 
-    g_assert(test->m_matchCount == 1);
+    g_assert_cmpuint(test->m_matchCount, ==, 1);
 
     test->count("notFound", WEBKIT_FIND_OPTIONS_NONE, 2);
     test->waitUntilFindFinished();
 
-    g_assert(!test->m_matchCount);
+    g_assert_cmpuint(test->m_matchCount, ==, 0);
 }
 
 static void testFindControllerOptions(FindControllerTest* test, gconstpointer)
@@ -217,44 +217,44 @@ static void testFindControllerOptions(FindControllerTest* test, gconstpointer)
     test->find("Testing", WEBKIT_FIND_OPTIONS_NONE, 2);
     test->waitUntilFindFinished();
 
-    g_assert(!test->m_textFound);
+    g_assert_false(test->m_textFound);
 
     test->find("Testing", WEBKIT_FIND_OPTIONS_CASE_INSENSITIVE, 2);
     test->waitUntilFindFinished();
 
-    g_assert(test->m_textFound);
+    g_assert_true(test->m_textFound);
 
     test->find("esting", WEBKIT_FIND_OPTIONS_NONE, 2);
     test->waitUntilFindFinished();
 
-    g_assert(test->m_textFound);
+    g_assert_true(test->m_textFound);
 
     test->find("esting", WEBKIT_FIND_OPTIONS_AT_WORD_STARTS, 2);
     test->waitUntilFindFinished();
 
-    g_assert(!test->m_textFound);
+    g_assert_false(test->m_textFound);
 
     test->find("Half", WEBKIT_FIND_OPTIONS_AT_WORD_STARTS, 2);
     test->waitUntilFindFinished();
 
-    g_assert(!test->m_textFound);
+    g_assert_false(test->m_textFound);
 
     test->find("Half", WEBKIT_FIND_OPTIONS_AT_WORD_STARTS | WEBKIT_FIND_OPTIONS_TREAT_MEDIAL_CAPITAL_AS_WORD_START, 2);
     test->waitUntilFindFinished();
 
-    g_assert(test->m_textFound);
+    g_assert_true(test->m_textFound);
 
     test->find("testing", WEBKIT_FIND_OPTIONS_WRAP_AROUND, 3);
     test->waitUntilFindFinished();
-    g_assert(test->m_textFound);
+    g_assert_true(test->m_textFound);
 
     webkit_find_controller_search_next(test->m_findController.get());
     test->waitUntilFindFinished();
-    g_assert(test->m_textFound);
+    g_assert_true(test->m_textFound);
 
     webkit_find_controller_search_next(test->m_findController.get());
     test->waitUntilFindFinished();
-    g_assert(test->m_textFound);
+    g_assert_true(test->m_textFound);
 }
 
 // TODO: Rewrite this test to avoid using snapshots so it can be re-enabled
@@ -269,16 +269,16 @@ static void testFindControllerHide(FindControllerTest* test, gconstpointer)
 
     cairo_surface_t* originalSurface = cairo_surface_reference(
         test->getSnapshotAndWaitUntilReady(WEBKIT_SNAPSHOT_REGION_FULL_DOCUMENT, WEBKIT_SNAPSHOT_OPTIONS_NONE));
-    g_assert(originalSurface);
+    g_assert_nonnull(originalSurface);
 
     test->find("testing", WEBKIT_FIND_OPTIONS_NONE, 1);
     test->waitUntilFindFinished();
-    g_assert(test->m_textFound);
+    g_assert_true(test->m_textFound);
 
     cairo_surface_t* highlightSurface = cairo_surface_reference(
         test->getSnapshotAndWaitUntilReady(WEBKIT_SNAPSHOT_REGION_FULL_DOCUMENT, WEBKIT_SNAPSHOT_OPTIONS_NONE));
-    g_assert(highlightSurface);
-    g_assert(!Test::cairoSurfacesEqual(originalSurface, highlightSurface));
+    g_assert_nonnull(highlightSurface);
+    g_assert_false(Test::cairoSurfacesEqual(originalSurface, highlightSurface));
 
     WebKitFindController* findController = webkit_web_view_get_find_controller(test->m_webView);
     webkit_find_controller_search_finish(findController);
@@ -286,8 +286,8 @@ static void testFindControllerHide(FindControllerTest* test, gconstpointer)
 
     cairo_surface_t* unhighlightSurface = cairo_surface_reference(
         test->getSnapshotAndWaitUntilReady(WEBKIT_SNAPSHOT_REGION_FULL_DOCUMENT, WEBKIT_SNAPSHOT_OPTIONS_NONE));
-    g_assert(unhighlightSurface);
-    g_assert(Test::cairoSurfacesEqual(originalSurface, unhighlightSurface));
+    g_assert_nonnull(unhighlightSurface);
+    g_assert_true(Test::cairoSurfacesEqual(originalSurface, unhighlightSurface));
 
     cairo_surface_destroy(originalSurface);
     cairo_surface_destroy(highlightSurface);
@@ -300,7 +300,7 @@ static void testFindControllerInstance(FindControllerTest* test, gconstpointer)
     WebKitFindController* findController1 = webkit_web_view_get_find_controller(test->m_webView);
     WebKitFindController* findController2 = webkit_web_view_get_find_controller(test->m_webView);
 
-    g_assert(findController1 == findController2);
+    g_assert_true(findController1 == findController2);
 }
 
 static void testFindControllerGetters(FindControllerTest* test, gconstpointer)
@@ -311,10 +311,10 @@ static void testFindControllerGetters(FindControllerTest* test, gconstpointer)
     WebKitFindController* findController = webkit_web_view_get_find_controller(test->m_webView);
 
     webkit_find_controller_search(findController, searchText, findOptions, maxMatchCount);
-    g_assert(webkit_find_controller_get_web_view(findController) == test->m_webView);
-    g_assert(!g_strcmp0(webkit_find_controller_get_search_text(findController), searchText));
-    g_assert(webkit_find_controller_get_max_match_count(findController) == maxMatchCount);
-    g_assert(webkit_find_controller_get_options(findController) == findOptions);
+    g_assert_true(webkit_find_controller_get_web_view(findController) == test->m_webView);
+    g_assert_cmpstr(webkit_find_controller_get_search_text(findController), ==, searchText);
+    g_assert_cmpuint(webkit_find_controller_get_max_match_count(findController), ==, maxMatchCount);
+    g_assert_cmpuint(webkit_find_controller_get_options(findController), ==, findOptions);
 }
 
 void beforeAll()

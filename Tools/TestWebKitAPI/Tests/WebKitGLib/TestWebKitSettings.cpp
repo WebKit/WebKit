@@ -42,64 +42,64 @@ static void testWebKitSettings(Test*, gconstpointer)
     WebKitSettings* settings = webkit_settings_new();
 
     // JavaScript is enabled by default.
-    g_assert(webkit_settings_get_enable_javascript(settings));
+    g_assert_true(webkit_settings_get_enable_javascript(settings));
     webkit_settings_set_enable_javascript(settings, FALSE);
-    g_assert(!webkit_settings_get_enable_javascript(settings));
+    g_assert_false(webkit_settings_get_enable_javascript(settings));
 
     // By default auto-load-image is true.
-    g_assert(webkit_settings_get_auto_load_images(settings));
+    g_assert_true(webkit_settings_get_auto_load_images(settings));
     webkit_settings_set_auto_load_images(settings, FALSE);
-    g_assert(!webkit_settings_get_auto_load_images(settings));
+    g_assert_false(webkit_settings_get_auto_load_images(settings));
 
     // load-icons-ignoring-image-load-setting is false by default.
-    g_assert(!webkit_settings_get_load_icons_ignoring_image_load_setting(settings));
+    g_assert_false(webkit_settings_get_load_icons_ignoring_image_load_setting(settings));
     webkit_settings_set_load_icons_ignoring_image_load_setting(settings, TRUE);
-    g_assert(webkit_settings_get_load_icons_ignoring_image_load_setting(settings));
+    g_assert_true(webkit_settings_get_load_icons_ignoring_image_load_setting(settings));
     
     // Offline application cache is true by default.
-    g_assert(webkit_settings_get_enable_offline_web_application_cache(settings));
+    g_assert_true(webkit_settings_get_enable_offline_web_application_cache(settings));
     webkit_settings_set_enable_offline_web_application_cache(settings, FALSE);
-    g_assert(!webkit_settings_get_enable_offline_web_application_cache(settings));
+    g_assert_false(webkit_settings_get_enable_offline_web_application_cache(settings));
 
     // Local storage is enable by default.
-    g_assert(webkit_settings_get_enable_html5_local_storage(settings));
+    g_assert_true(webkit_settings_get_enable_html5_local_storage(settings));
     webkit_settings_set_enable_html5_local_storage(settings, FALSE);
-    g_assert(!webkit_settings_get_enable_html5_local_storage(settings));
+    g_assert_false(webkit_settings_get_enable_html5_local_storage(settings));
 
     // HTML5 database is enabled by default.
-    g_assert(webkit_settings_get_enable_html5_database(settings));
+    g_assert_true(webkit_settings_get_enable_html5_database(settings));
     webkit_settings_set_enable_html5_database(settings, FALSE);
-    g_assert(!webkit_settings_get_enable_html5_database(settings));
+    g_assert_false(webkit_settings_get_enable_html5_database(settings));
 
     // XSS Auditor is enabled by default.
-    g_assert(webkit_settings_get_enable_xss_auditor(settings));
+    g_assert_true(webkit_settings_get_enable_xss_auditor(settings));
     webkit_settings_set_enable_xss_auditor(settings, FALSE);
-    g_assert(!webkit_settings_get_enable_xss_auditor(settings));
+    g_assert_false(webkit_settings_get_enable_xss_auditor(settings));
 
     // Frame flattening is disabled by default.
-    g_assert(!webkit_settings_get_enable_frame_flattening(settings));
+    g_assert_false(webkit_settings_get_enable_frame_flattening(settings));
     webkit_settings_set_enable_frame_flattening(settings, TRUE);
-    g_assert(webkit_settings_get_enable_frame_flattening(settings));
+    g_assert_true(webkit_settings_get_enable_frame_flattening(settings));
 
     // Plugins are enabled by default.
-    g_assert(webkit_settings_get_enable_plugins(settings));
+    g_assert_true(webkit_settings_get_enable_plugins(settings));
     webkit_settings_set_enable_plugins(settings, FALSE);
-    g_assert(!webkit_settings_get_enable_plugins(settings));
+    g_assert_false(webkit_settings_get_enable_plugins(settings));
 
     // Java is enabled by default.
-    g_assert(webkit_settings_get_enable_java(settings));
+    g_assert_true(webkit_settings_get_enable_java(settings));
     webkit_settings_set_enable_java(settings, FALSE);
-    g_assert(!webkit_settings_get_enable_java(settings));
+    g_assert_false(webkit_settings_get_enable_java(settings));
 
     // By default, JavaScript can open windows automatically is disabled.
-    g_assert(!webkit_settings_get_javascript_can_open_windows_automatically(settings));
+    g_assert_false(webkit_settings_get_javascript_can_open_windows_automatically(settings));
     webkit_settings_set_javascript_can_open_windows_automatically(settings, TRUE);
-    g_assert(webkit_settings_get_javascript_can_open_windows_automatically(settings));
+    g_assert_true(webkit_settings_get_javascript_can_open_windows_automatically(settings));
 
     // By default hyper link auditing is disabled.
-    g_assert(!webkit_settings_get_enable_hyperlink_auditing(settings));
+    g_assert_false(webkit_settings_get_enable_hyperlink_auditing(settings));
     webkit_settings_set_enable_hyperlink_auditing(settings, TRUE);
-    g_assert(webkit_settings_get_enable_hyperlink_auditing(settings));
+    g_assert_true(webkit_settings_get_enable_hyperlink_auditing(settings));
 
     // Default font family is "sans-serif".
     g_assert_cmpstr(webkit_settings_get_default_font_family(settings), ==, "sans-serif");
@@ -202,142 +202,142 @@ static void testWebKitSettings(Test*, gconstpointer)
 
 #if PLATFORM(GTK)
     G_GNUC_BEGIN_IGNORE_DEPRECATIONS;
-    g_assert(!webkit_settings_get_enable_private_browsing(settings));
+    g_assert_false(webkit_settings_get_enable_private_browsing(settings));
     webkit_settings_set_enable_private_browsing(settings, TRUE);
-    g_assert(webkit_settings_get_enable_private_browsing(settings));
+    g_assert_true(webkit_settings_get_enable_private_browsing(settings));
     G_GNUC_END_IGNORE_DEPRECATIONS;
 #endif
 
-    g_assert(!webkit_settings_get_enable_developer_extras(settings));
+    g_assert_false(webkit_settings_get_enable_developer_extras(settings));
     webkit_settings_set_enable_developer_extras(settings, TRUE);
-    g_assert(webkit_settings_get_enable_developer_extras(settings));
+    g_assert_true(webkit_settings_get_enable_developer_extras(settings));
 
-    g_assert(webkit_settings_get_enable_resizable_text_areas(settings));
+    g_assert_true(webkit_settings_get_enable_resizable_text_areas(settings));
     webkit_settings_set_enable_resizable_text_areas(settings, FALSE);
-    g_assert(!webkit_settings_get_enable_resizable_text_areas(settings));
+    g_assert_false(webkit_settings_get_enable_resizable_text_areas(settings));
 
-    g_assert(webkit_settings_get_enable_tabs_to_links(settings));
+    g_assert_true(webkit_settings_get_enable_tabs_to_links(settings));
     webkit_settings_set_enable_tabs_to_links(settings, FALSE);
-    g_assert(!webkit_settings_get_enable_tabs_to_links(settings));
+    g_assert_false(webkit_settings_get_enable_tabs_to_links(settings));
 
-    g_assert(!webkit_settings_get_enable_dns_prefetching(settings));
+    g_assert_false(webkit_settings_get_enable_dns_prefetching(settings));
     webkit_settings_set_enable_dns_prefetching(settings, TRUE);
-    g_assert(webkit_settings_get_enable_dns_prefetching(settings));
+    g_assert_true(webkit_settings_get_enable_dns_prefetching(settings));
 
     // Caret browsing is disabled by default.
-    g_assert(!webkit_settings_get_enable_caret_browsing(settings));
+    g_assert_false(webkit_settings_get_enable_caret_browsing(settings));
     webkit_settings_set_enable_caret_browsing(settings, TRUE);
-    g_assert(webkit_settings_get_enable_caret_browsing(settings));
+    g_assert_true(webkit_settings_get_enable_caret_browsing(settings));
 
     // Fullscreen JavaScript API is enabled by default.
-    g_assert(webkit_settings_get_enable_fullscreen(settings));
+    g_assert_true(webkit_settings_get_enable_fullscreen(settings));
     webkit_settings_set_enable_fullscreen(settings, FALSE);
-    g_assert(!webkit_settings_get_enable_fullscreen(settings));
+    g_assert_false(webkit_settings_get_enable_fullscreen(settings));
 
     // Print backgrounds is enabled by default
-    g_assert(webkit_settings_get_print_backgrounds(settings));
+    g_assert_true(webkit_settings_get_print_backgrounds(settings));
     webkit_settings_set_print_backgrounds(settings, FALSE);
-    g_assert(!webkit_settings_get_print_backgrounds(settings));
+    g_assert_false(webkit_settings_get_print_backgrounds(settings));
 
     // WebAudio is disabled by default.
-    g_assert(!webkit_settings_get_enable_webaudio(settings));
+    g_assert_false(webkit_settings_get_enable_webaudio(settings));
     webkit_settings_set_enable_webaudio(settings, TRUE);
-    g_assert(webkit_settings_get_enable_webaudio(settings));
+    g_assert_true(webkit_settings_get_enable_webaudio(settings));
 
     // WebGL is disabled by default.
-    g_assert(!webkit_settings_get_enable_webgl(settings));
+    g_assert_false(webkit_settings_get_enable_webgl(settings));
     webkit_settings_set_enable_webgl(settings, TRUE);
-    g_assert(webkit_settings_get_enable_webgl(settings));
+    g_assert_true(webkit_settings_get_enable_webgl(settings));
 
     // Allow Modal Dialogs is disabled by default.
-    g_assert(!webkit_settings_get_allow_modal_dialogs(settings));
+    g_assert_false(webkit_settings_get_allow_modal_dialogs(settings));
     webkit_settings_set_allow_modal_dialogs(settings, TRUE);
-    g_assert(webkit_settings_get_allow_modal_dialogs(settings));
+    g_assert_true(webkit_settings_get_allow_modal_dialogs(settings));
 
     // Zoom text only is disabled by default.
-    g_assert(!webkit_settings_get_zoom_text_only(settings));
+    g_assert_false(webkit_settings_get_zoom_text_only(settings));
     webkit_settings_set_zoom_text_only(settings, TRUE);
-    g_assert(webkit_settings_get_zoom_text_only(settings));
+    g_assert_true(webkit_settings_get_zoom_text_only(settings));
 
     // By default, JavaScript cannot access the clipboard.
-    g_assert(!webkit_settings_get_javascript_can_access_clipboard(settings));
+    g_assert_false(webkit_settings_get_javascript_can_access_clipboard(settings));
     webkit_settings_set_javascript_can_access_clipboard(settings, TRUE);
-    g_assert(webkit_settings_get_javascript_can_access_clipboard(settings));
+    g_assert_true(webkit_settings_get_javascript_can_access_clipboard(settings));
 
     // By default, media playback doesn't require user gestures.
-    g_assert(!webkit_settings_get_media_playback_requires_user_gesture(settings));
+    g_assert_false(webkit_settings_get_media_playback_requires_user_gesture(settings));
     webkit_settings_set_media_playback_requires_user_gesture(settings, TRUE);
-    g_assert(webkit_settings_get_media_playback_requires_user_gesture(settings));
+    g_assert_true(webkit_settings_get_media_playback_requires_user_gesture(settings));
 
     // By default, inline media playback is allowed
-    g_assert(webkit_settings_get_media_playback_allows_inline(settings));
+    g_assert_true(webkit_settings_get_media_playback_allows_inline(settings));
     webkit_settings_set_media_playback_allows_inline(settings, FALSE);
-    g_assert(!webkit_settings_get_media_playback_allows_inline(settings));
+    g_assert_false(webkit_settings_get_media_playback_allows_inline(settings));
 
     // By default, debug indicators are disabled.
-    g_assert(!webkit_settings_get_draw_compositing_indicators(settings));
+    g_assert_false(webkit_settings_get_draw_compositing_indicators(settings));
     webkit_settings_set_draw_compositing_indicators(settings, TRUE);
-    g_assert(webkit_settings_get_draw_compositing_indicators(settings));
+    g_assert_true(webkit_settings_get_draw_compositing_indicators(settings));
 
     // By default, site specific quirks are enabled.
-    g_assert(webkit_settings_get_enable_site_specific_quirks(settings));
+    g_assert_true(webkit_settings_get_enable_site_specific_quirks(settings));
     webkit_settings_set_enable_site_specific_quirks(settings, FALSE);
-    g_assert(!webkit_settings_get_enable_site_specific_quirks(settings));
+    g_assert_false(webkit_settings_get_enable_site_specific_quirks(settings));
 
     // By default, page cache is enabled.
-    g_assert(webkit_settings_get_enable_page_cache(settings));
+    g_assert_true(webkit_settings_get_enable_page_cache(settings));
     webkit_settings_set_enable_page_cache(settings, FALSE);
-    g_assert(!webkit_settings_get_enable_page_cache(settings));
+    g_assert_false(webkit_settings_get_enable_page_cache(settings));
 
     // By default, smooth scrolling is disabled.
-    g_assert(!webkit_settings_get_enable_smooth_scrolling(settings));
+    g_assert_false(webkit_settings_get_enable_smooth_scrolling(settings));
     webkit_settings_set_enable_smooth_scrolling(settings, TRUE);
-    g_assert(webkit_settings_get_enable_smooth_scrolling(settings));
+    g_assert_true(webkit_settings_get_enable_smooth_scrolling(settings));
 
     // By default, accelerated 2D canvas is disabled.
-    g_assert(!webkit_settings_get_enable_accelerated_2d_canvas(settings));
+    g_assert_false(webkit_settings_get_enable_accelerated_2d_canvas(settings));
     webkit_settings_set_enable_accelerated_2d_canvas(settings, TRUE);
-    g_assert(webkit_settings_get_enable_accelerated_2d_canvas(settings));
+    g_assert_true(webkit_settings_get_enable_accelerated_2d_canvas(settings));
 
     // By default, writing of console messages to stdout is disabled.
-    g_assert(!webkit_settings_get_enable_write_console_messages_to_stdout(settings));
+    g_assert_false(webkit_settings_get_enable_write_console_messages_to_stdout(settings));
     webkit_settings_set_enable_write_console_messages_to_stdout(settings, TRUE);
-    g_assert(webkit_settings_get_enable_write_console_messages_to_stdout(settings));
+    g_assert_true(webkit_settings_get_enable_write_console_messages_to_stdout(settings));
 
     // MediaStream is disabled by default.
-    g_assert(!webkit_settings_get_enable_media_stream(settings));
+    g_assert_false(webkit_settings_get_enable_media_stream(settings));
     webkit_settings_set_enable_media_stream(settings, TRUE);
-    g_assert(webkit_settings_get_enable_media_stream(settings));
+    g_assert_true(webkit_settings_get_enable_media_stream(settings));
 
     // By default, SpatialNavigation is disabled
-    g_assert(!webkit_settings_get_enable_spatial_navigation(settings));
+    g_assert_false(webkit_settings_get_enable_spatial_navigation(settings));
     webkit_settings_set_enable_spatial_navigation(settings, TRUE);
-    g_assert(webkit_settings_get_enable_spatial_navigation(settings));
+    g_assert_true(webkit_settings_get_enable_spatial_navigation(settings));
 
     // MediaSource is enabled by default
-    g_assert(webkit_settings_get_enable_mediasource(settings));
+    g_assert_true(webkit_settings_get_enable_mediasource(settings));
     webkit_settings_set_enable_mediasource(settings, FALSE);
-    g_assert(!webkit_settings_get_enable_mediasource(settings));
+    g_assert_false(webkit_settings_get_enable_mediasource(settings));
 
     // EncryptedMedia is disabled by default
-    g_assert(!webkit_settings_get_enable_encrypted_media(settings));
+    g_assert_false(webkit_settings_get_enable_encrypted_media(settings));
     webkit_settings_set_enable_encrypted_media(settings, TRUE);
-    g_assert(webkit_settings_get_enable_encrypted_media(settings));
+    g_assert_true(webkit_settings_get_enable_encrypted_media(settings));
 
     // MediaCapabilities is disabled by default
-    g_assert(!webkit_settings_get_enable_media_capabilities(settings));
+    g_assert_false(webkit_settings_get_enable_media_capabilities(settings));
     webkit_settings_set_enable_media_capabilities(settings, TRUE);
-    g_assert(webkit_settings_get_enable_media_capabilities(settings));
+    g_assert_true(webkit_settings_get_enable_media_capabilities(settings));
 
     // File access from file URLs is not allowed by default.
-    g_assert(!webkit_settings_get_allow_file_access_from_file_urls(settings));
+    g_assert_false(webkit_settings_get_allow_file_access_from_file_urls(settings));
     webkit_settings_set_allow_file_access_from_file_urls(settings, TRUE);
-    g_assert(webkit_settings_get_allow_file_access_from_file_urls(settings));
+    g_assert_true(webkit_settings_get_allow_file_access_from_file_urls(settings));
 
     // Universal access from file URLs is not allowed by default.
-    g_assert(!webkit_settings_get_allow_universal_access_from_file_urls(settings));
+    g_assert_false(webkit_settings_get_allow_universal_access_from_file_urls(settings));
     webkit_settings_set_allow_universal_access_from_file_urls(settings, TRUE);
-    g_assert(webkit_settings_get_allow_universal_access_from_file_urls(settings));
+    g_assert_true(webkit_settings_get_allow_universal_access_from_file_urls(settings));
 
 #if PLATFORM(GTK)
     // Ondemand is the default hardware acceleration policy.
@@ -361,9 +361,9 @@ void testWebKitSettingsNewWithSettings(Test* test, gconstpointer)
         "load-icons-ignoring-image-load-setting", TRUE,
         nullptr));
     test->assertObjectIsDeletedWhenTestFinishes(G_OBJECT(settings.get()));
-    g_assert(!webkit_settings_get_enable_javascript(settings.get()));
-    g_assert(!webkit_settings_get_auto_load_images(settings.get()));
-    g_assert(webkit_settings_get_load_icons_ignoring_image_load_setting(settings.get()));
+    g_assert_false(webkit_settings_get_enable_javascript(settings.get()));
+    g_assert_false(webkit_settings_get_auto_load_images(settings.get()));
+    g_assert_true(webkit_settings_get_load_icons_ignoring_image_load_setting(settings.get()));
 }
 
 #if PLATFORM(GTK)
@@ -387,8 +387,8 @@ static void testWebKitSettingsUserAgent(WebViewTest* test, gconstpointer)
     CString defaultUserAgent = webkit_settings_get_user_agent(settings.get());
     webkit_web_view_set_settings(test->m_webView, settings.get());
 
-    g_assert(g_strstr_len(defaultUserAgent.data(), -1, "AppleWebKit"));
-    g_assert(g_strstr_len(defaultUserAgent.data(), -1, "Safari"));
+    g_assert_nonnull(g_strstr_len(defaultUserAgent.data(), -1, "AppleWebKit"));
+    g_assert_nonnull(g_strstr_len(defaultUserAgent.data(), -1, "Safari"));
 
     webkit_settings_set_user_agent(settings.get(), 0);
     g_assert_cmpstr(defaultUserAgent.data(), ==, webkit_settings_get_user_agent(settings.get()));
@@ -405,15 +405,15 @@ static void testWebKitSettingsUserAgent(WebViewTest* test, gconstpointer)
     webkit_settings_set_user_agent_with_application_details(settings.get(), "WebKitGTK+", 0);
     const char* userAgentWithNullVersion = webkit_settings_get_user_agent(settings.get());
     g_assert_cmpstr(g_strstr_len(userAgentWithNullVersion, -1, defaultUserAgent.data()), ==, userAgentWithNullVersion);
-    g_assert(g_strstr_len(userAgentWithNullVersion, -1, "WebKitGTK+"));
+    g_assert_nonnull(g_strstr_len(userAgentWithNullVersion, -1, "WebKitGTK+"));
 
     webkit_settings_set_user_agent_with_application_details(settings.get(), "WebKitGTK+", "");
     g_assert_cmpstr(webkit_settings_get_user_agent(settings.get()), ==, userAgentWithNullVersion);
 
     webkit_settings_set_user_agent_with_application_details(settings.get(), "WebCatGTK+", "3.4.5");
     const char* newUserAgent = webkit_settings_get_user_agent(settings.get());
-    g_assert(g_strstr_len(newUserAgent, -1, "3.4.5"));
-    g_assert(g_strstr_len(newUserAgent, -1, "WebCatGTK+"));
+    g_assert_nonnull(g_strstr_len(newUserAgent, -1, "3.4.5"));
+    g_assert_nonnull(g_strstr_len(newUserAgent, -1, "WebCatGTK+"));
 
     GUniquePtr<char> applicationUserAgent(g_strdup_printf("%s %s", defaultUserAgent.data(), "WebCatGTK+/3.4.5"));
     g_assert_cmpstr(applicationUserAgent.get(), ==, webkit_settings_get_user_agent(settings.get()));

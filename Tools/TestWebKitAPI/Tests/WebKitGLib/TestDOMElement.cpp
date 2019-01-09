@@ -24,7 +24,7 @@
 static void testWebKitDOMElementAutoFill(WebViewTest* test, gconstpointer)
 {
     static const gchar* testHTML = "<html><body><form action='#'><input id='auto-fill'></input></form></body></html>";
-    g_assert(test->runWebProcessTest("WebKitDOMElement", "auto-fill", testHTML));
+    g_assert_true(test->runWebProcessTest("WebKitDOMElement", "auto-fill", testHTML));
 }
 
 void beforeAll()

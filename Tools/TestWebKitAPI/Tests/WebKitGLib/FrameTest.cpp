@@ -31,8 +31,8 @@ private:
     bool testMainFrame(WebKitWebPage* page)
     {
         WebKitFrame* frame = webkit_web_page_get_main_frame(page);
-        g_assert(WEBKIT_IS_FRAME(frame));
-        g_assert(webkit_frame_is_main_frame(frame));
+        g_assert_true(WEBKIT_IS_FRAME(frame));
+        g_assert_true(webkit_frame_is_main_frame(frame));
 
         return true;
     }
@@ -40,7 +40,7 @@ private:
     bool testURI(WebKitWebPage* page)
     {
         WebKitFrame* frame = webkit_web_page_get_main_frame(page);
-        g_assert(WEBKIT_IS_FRAME(frame));
+        g_assert_true(WEBKIT_IS_FRAME(frame));
         g_assert_cmpstr(webkit_web_page_get_uri(page), ==, webkit_frame_get_uri(frame));
 
         return true;
@@ -49,15 +49,15 @@ private:
     bool testJavaScriptContext(WebKitWebPage* page)
     {
         WebKitFrame* frame = webkit_web_page_get_main_frame(page);
-        g_assert(WEBKIT_IS_FRAME(frame));
+        g_assert_true(WEBKIT_IS_FRAME(frame));
 #if PLATFORM(GTK)
         G_GNUC_BEGIN_IGNORE_DEPRECATIONS;
-        g_assert(webkit_frame_get_javascript_global_context(frame));
+        g_assert_nonnull(webkit_frame_get_javascript_global_context(frame));
         G_GNUC_END_IGNORE_DEPRECATIONS;
 #endif
 
         GRefPtr<JSCContext> jsContext = adoptGRef(webkit_frame_get_js_context(frame));
-        g_assert(JSC_IS_CONTEXT(jsContext.get()));
+        g_assert_true(JSC_IS_CONTEXT(jsContext.get()));
         assertObjectIsDeletedWhenTestFinishes(G_OBJECT(jsContext.get()));
 
         return true;
@@ -66,65 +66,65 @@ private:
     bool testJavaScriptValues(WebKitWebPage* page)
     {
         WebKitFrame* frame = webkit_web_page_get_main_frame(page);
-        g_assert(WEBKIT_IS_FRAME(frame));
+        g_assert_true(WEBKIT_IS_FRAME(frame));
 
         GRefPtr<JSCContext> jsContext = adoptGRef(webkit_frame_get_js_context(frame));
-        g_assert(JSC_IS_CONTEXT(jsContext.get()));
+        g_assert_true(JSC_IS_CONTEXT(jsContext.get()));
         assertObjectIsDeletedWhenTestFinishes(G_OBJECT(jsContext.get()));
 
         WebKitDOMDocument* document = webkit_web_page_get_dom_document(page);
-        g_assert(WEBKIT_DOM_IS_DOCUMENT(document));
+        g_assert_true(WEBKIT_DOM_IS_DOCUMENT(document));
         assertObjectIsDeletedWhenTestFinishes(G_OBJECT(document));
 
         GRefPtr<JSCValue> jsDocument = adoptGRef(webkit_frame_get_js_value_for_dom_object(frame, WEBKIT_DOM_OBJECT(document)));
-        g_assert(JSC_IS_VALUE(jsDocument.get()));
+        g_assert_true(JSC_IS_VALUE(jsDocument.get()));
         assertObjectIsDeletedWhenTestFinishes(G_OBJECT(jsDocument.get()));
-        g_assert(jsc_value_get_context(jsDocument.get()) == jsContext.get());
+        g_assert_true(jsc_value_get_context(jsDocument.get()) == jsContext.get());
 
         GRefPtr<JSCValue> value = adoptGRef(jsc_context_get_value(jsContext.get(), "document"));
-        g_assert(value.get() == jsDocument.get());
+        g_assert_true(value.get() == jsDocument.get());
 
 #if PLATFORM(GTK)
         G_GNUC_BEGIN_IGNORE_DEPRECATIONS;
         WebKitDOMElement* p = webkit_dom_document_get_element_by_id(document, "paragraph");
         G_GNUC_END_IGNORE_DEPRECATIONS;
-        g_assert(WEBKIT_DOM_IS_ELEMENT(p));
+        g_assert_true(WEBKIT_DOM_IS_ELEMENT(p));
         assertObjectIsDeletedWhenTestFinishes(G_OBJECT(p));
 
         GRefPtr<JSCValue> jsP = adoptGRef(webkit_frame_get_js_value_for_dom_object(frame, WEBKIT_DOM_OBJECT(p)));
 #else
         GRefPtr<JSCValue> jsP = adoptGRef(jsc_value_object_invoke_method(jsDocument.get(), "getElementById", G_TYPE_STRING, "paragraph", G_TYPE_NONE));
 #endif
-        g_assert(JSC_IS_VALUE(jsP.get()));
+        g_assert_true(JSC_IS_VALUE(jsP.get()));
         assertObjectIsDeletedWhenTestFinishes(G_OBJECT(jsP.get()));
-        g_assert(jsc_value_is_object(jsP.get()));
-        g_assert(jsc_value_get_context(jsP.get()) == jsContext.get());
+        g_assert_true(jsc_value_is_object(jsP.get()));
+        g_assert_true(jsc_value_get_context(jsP.get()) == jsContext.get());
 
         value = adoptGRef(jsc_context_evaluate(jsContext.get(), "document.getElementById('paragraph')", -1));
-        g_assert(value.get() == jsP.get());
+        g_assert_true(value.get() == jsP.get());
 #if PLATFORM(GTK)
         value = adoptGRef(jsc_value_object_invoke_method(jsDocument.get(), "getElementById", G_TYPE_STRING, "paragraph", G_TYPE_NONE));
-        g_assert(value.get() == jsP.get());
+        g_assert_true(value.get() == jsP.get());
 #endif
 
         value = adoptGRef(jsc_value_object_get_property(jsP.get(), "innerText"));
-        g_assert(JSC_IS_VALUE(value.get()));
+        g_assert_true(JSC_IS_VALUE(value.get()));
         assertObjectIsDeletedWhenTestFinishes(G_OBJECT(value.get()));
-        g_assert(jsc_value_is_string(value.get()));
+        g_assert_true(jsc_value_is_string(value.get()));
         GUniquePtr<char> strValue(jsc_value_to_string(value.get()));
         g_assert_cmpstr(strValue.get(), ==, "This is a test");
 
         GRefPtr<JSCValue> jsImage = adoptGRef(jsc_value_object_invoke_method(jsDocument.get(), "getElementById", G_TYPE_STRING, "image", G_TYPE_NONE));
-        g_assert(JSC_IS_VALUE(jsImage.get()));
+        g_assert_true(JSC_IS_VALUE(jsImage.get()));
         assertObjectIsDeletedWhenTestFinishes(G_OBJECT(jsImage.get()));
-        g_assert(jsc_value_is_object(jsImage.get()));
+        g_assert_true(jsc_value_is_object(jsImage.get()));
 
         WebKitDOMNode* image = webkit_dom_node_for_js_value(jsImage.get());
-        g_assert(WEBKIT_DOM_IS_ELEMENT(image));
+        g_assert_true(WEBKIT_DOM_IS_ELEMENT(image));
         assertObjectIsDeletedWhenTestFinishes(G_OBJECT(image));
 #if PLATFORM(GTK)
         G_GNUC_BEGIN_IGNORE_DEPRECATIONS;
-        g_assert(webkit_dom_document_get_element_by_id(document, "image") == WEBKIT_DOM_ELEMENT(image));
+        g_assert_true(webkit_dom_document_get_element_by_id(document, "image") == WEBKIT_DOM_ELEMENT(image));
         G_GNUC_END_IGNORE_DEPRECATIONS;
 #endif
 

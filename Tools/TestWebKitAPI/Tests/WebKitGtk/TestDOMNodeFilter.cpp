@@ -28,12 +28,12 @@ static const char* testHTML = "<html id='root'><head><title>DOMNodeTreeWalker</t
 
 static void testWebKitDOMNodeFilterTreeWalker(WebViewTest* test, gconstpointer)
 {
-    g_assert(test->runWebProcessTest("WebKitDOMNodeFilter", "tree-walker", testHTML));
+    g_assert_true(test->runWebProcessTest("WebKitDOMNodeFilter", "tree-walker", testHTML));
 }
 
 static void testWebKitDOMNodeFilterNodeIterator(WebViewTest* test, gconstpointer)
 {
-    g_assert(test->runWebProcessTest("WebKitDOMNodeFilter", "node-iterator", testHTML));
+    g_assert_true(test->runWebProcessTest("WebKitDOMNodeFilter", "node-iterator", testHTML));
 }
 
 void beforeAll()

@@ -34,46 +34,46 @@ static WebKitTestServer* kServer;
 static void testWebContextDefault(Test* test, gconstpointer)
 {
     // Check there's a single instance of the default web context.
-    g_assert(webkit_web_context_get_default() == webkit_web_context_get_default());
-    g_assert(webkit_web_context_get_default() != test->m_webContext.get());
+    g_assert_true(webkit_web_context_get_default() == webkit_web_context_get_default());
+    g_assert_true(webkit_web_context_get_default() != test->m_webContext.get());
 }
 
 static void testWebContextEphemeral(Test* test, gconstpointer)
 {
     // By default web contexts are not ephemeral.
-    g_assert(!webkit_web_context_is_ephemeral(webkit_web_context_get_default()));
-    g_assert(!webkit_web_context_is_ephemeral(test->m_webContext.get()));
+    g_assert_false(webkit_web_context_is_ephemeral(webkit_web_context_get_default()));
+    g_assert_false(webkit_web_context_is_ephemeral(test->m_webContext.get()));
 
     WebKitWebsiteDataManager* manager = webkit_web_context_get_website_data_manager(webkit_web_context_get_default());
-    g_assert(WEBKIT_IS_WEBSITE_DATA_MANAGER(manager));
-    g_assert(!webkit_website_data_manager_is_ephemeral(manager));
+    g_assert_true(WEBKIT_IS_WEBSITE_DATA_MANAGER(manager));
+    g_assert_false(webkit_website_data_manager_is_ephemeral(manager));
     manager = webkit_web_context_get_website_data_manager(test->m_webContext.get());
-    g_assert(WEBKIT_IS_WEBSITE_DATA_MANAGER(manager));
-    g_assert(!webkit_website_data_manager_is_ephemeral(manager));
+    g_assert_true(WEBKIT_IS_WEBSITE_DATA_MANAGER(manager));
+    g_assert_false(webkit_website_data_manager_is_ephemeral(manager));
 
     auto webView = Test::adoptView(Test::createWebView());
-    g_assert(!webkit_web_view_is_ephemeral(webView.get()));
-    g_assert(webkit_web_view_get_website_data_manager(webView.get()) == webkit_web_context_get_website_data_manager(webkit_web_context_get_default()));
+    g_assert_false(webkit_web_view_is_ephemeral(webView.get()));
+    g_assert_true(webkit_web_view_get_website_data_manager(webView.get()) == webkit_web_context_get_website_data_manager(webkit_web_context_get_default()));
 
     webView = Test::adoptView(Test::createWebView(test->m_webContext.get()));
-    g_assert(!webkit_web_view_is_ephemeral(webView.get()));
-    g_assert(webkit_web_view_get_website_data_manager(webView.get()) == manager);
+    g_assert_false(webkit_web_view_is_ephemeral(webView.get()));
+    g_assert_true(webkit_web_view_get_website_data_manager(webView.get()) == manager);
 
     GRefPtr<WebKitWebContext> context = adoptGRef(webkit_web_context_new_ephemeral());
-    g_assert(webkit_web_context_is_ephemeral(context.get()));
+    g_assert_true(webkit_web_context_is_ephemeral(context.get()));
     manager = webkit_web_context_get_website_data_manager(context.get());
-    g_assert(WEBKIT_IS_WEBSITE_DATA_MANAGER(manager));
-    g_assert(webkit_website_data_manager_is_ephemeral(manager));
-    g_assert(webkit_web_view_get_website_data_manager(webView.get()) != manager);
+    g_assert_true(WEBKIT_IS_WEBSITE_DATA_MANAGER(manager));
+    g_assert_true(webkit_website_data_manager_is_ephemeral(manager));
+    g_assert_true(webkit_web_view_get_website_data_manager(webView.get()) != manager);
 
     webView = Test::adoptView(Test::createWebView(context.get()));
-    g_assert(webkit_web_view_is_ephemeral(webView.get()));
-    g_assert(webkit_web_view_get_website_data_manager(webView.get()) == manager);
+    g_assert_true(webkit_web_view_is_ephemeral(webView.get()));
+    g_assert_true(webkit_web_view_get_website_data_manager(webView.get()) == manager);
 
     GRefPtr<WebKitWebsiteDataManager> ephemeralManager = adoptGRef(webkit_website_data_manager_new_ephemeral());
-    g_assert(webkit_website_data_manager_is_ephemeral(ephemeralManager.get()));
+    g_assert_true(webkit_website_data_manager_is_ephemeral(ephemeralManager.get()));
     context = adoptGRef(webkit_web_context_new_with_website_data_manager(ephemeralManager.get()));
-    g_assert(webkit_web_context_is_ephemeral(context.get()));
+    g_assert_true(webkit_web_context_is_ephemeral(context.get()));
 }
 
 #if ENABLE(NETSCAPE_PLUGIN_API)
@@ -115,7 +115,7 @@ public:
 static void testWebContextGetPlugins(PluginsTest* test, gconstpointer)
 {
     GList* plugins = test->getPlugins();
-    g_assert(plugins);
+    g_assert_nonnull(plugins);
 
     GRefPtr<WebKitPlugin> testPlugin;
     for (GList* item = plugins; item; item = g_list_next(item)) {
@@ -126,22 +126,22 @@ static void testWebContextGetPlugins(PluginsTest* test, gconstpointer)
             break;
         }
     }
-    g_assert(WEBKIT_IS_PLUGIN(testPlugin.get()));
+    g_assert_true(WEBKIT_IS_PLUGIN(testPlugin.get()));
 
     char normalizedPath[PATH_MAX];
-    g_assert(realpath(WEBKIT_TEST_PLUGIN_DIR, normalizedPath));
+    g_assert_nonnull(realpath(WEBKIT_TEST_PLUGIN_DIR, normalizedPath));
     GUniquePtr<char> pluginPath(g_build_filename(normalizedPath, "libTestNetscapePlugIn.so", nullptr));
     g_assert_cmpstr(webkit_plugin_get_path(testPlugin.get()), ==, pluginPath.get());
     g_assert_cmpstr(webkit_plugin_get_description(testPlugin.get()), ==, "Simple Netscape® plug-in that handles test content for WebKit");
     GList* mimeInfoList = webkit_plugin_get_mime_info_list(testPlugin.get());
-    g_assert(mimeInfoList);
+    g_assert_nonnull(mimeInfoList);
     g_assert_cmpuint(g_list_length(mimeInfoList), ==, 2);
 
     WebKitMimeInfo* mimeInfo = static_cast<WebKitMimeInfo*>(mimeInfoList->data);
     g_assert_cmpstr(webkit_mime_info_get_mime_type(mimeInfo), ==, "image/png");
     g_assert_cmpstr(webkit_mime_info_get_description(mimeInfo), ==, "png image");
     const gchar* const* extensions = webkit_mime_info_get_extensions(mimeInfo);
-    g_assert(extensions);
+    g_assert_nonnull(extensions);
     g_assert_cmpstr(extensions[0], ==, "png");
 
     mimeInfoList = g_list_next(mimeInfoList);
@@ -149,7 +149,7 @@ static void testWebContextGetPlugins(PluginsTest* test, gconstpointer)
     g_assert_cmpstr(webkit_mime_info_get_mime_type(mimeInfo), ==, "application/x-webkit-test-netscape");
     g_assert_cmpstr(webkit_mime_info_get_description(mimeInfo), ==, "test netscape content");
     extensions = webkit_mime_info_get_extensions(mimeInfo);
-    g_assert(extensions);
+    g_assert_nonnull(extensions);
     g_assert_cmpstr(extensions[0], ==, "testnetscape");
 }
 #endif // ENABLE(NETSCAPE_PLUGIN_API)
@@ -191,11 +191,11 @@ public:
         test->m_uriSchemeRequest = request;
         test->assertObjectIsDeletedWhenTestFinishes(G_OBJECT(request));
 
-        g_assert(webkit_uri_scheme_request_get_web_view(request) == test->m_webView);
+        g_assert_true(webkit_uri_scheme_request_get_web_view(request) == test->m_webView);
 
         const char* scheme = webkit_uri_scheme_request_get_scheme(request);
-        g_assert(scheme);
-        g_assert(test->m_handlersMap.contains(String::fromUTF8(scheme)));
+        g_assert_nonnull(scheme);
+        g_assert_true(test->m_handlersMap.contains(String::fromUTF8(scheme)));
 
         const URISchemeHandler& handler = test->m_handlersMap.get(String::fromUTF8(scheme));
 
@@ -297,7 +297,7 @@ static void testWebContextURIScheme(URISchemeTest* test, gconstpointer)
     size_t mainResourceDataSize = 0;
     const char* mainResourceData = test->mainResourceData(mainResourceDataSize);
     g_assert_cmpint(mainResourceDataSize, ==, strlen(kBarHTML));
-    g_assert(!strncmp(mainResourceData, kBarHTML, mainResourceDataSize));
+    g_assert_cmpint(strncmp(mainResourceData, kBarHTML, mainResourceDataSize), ==, 0);
 
     test->registerURISchemeHandler("echo", kEchoHTMLFormat, -1, "text/html");
     test->loadURI("echo:hello-world");
@@ -306,7 +306,7 @@ static void testWebContextURIScheme(URISchemeTest* test, gconstpointer)
     mainResourceDataSize = 0;
     mainResourceData = test->mainResourceData(mainResourceDataSize);
     g_assert_cmpint(mainResourceDataSize, ==, strlen(echoHTML.get()));
-    g_assert(!strncmp(mainResourceData, echoHTML.get(), mainResourceDataSize));
+    g_assert_cmpint(strncmp(mainResourceData, echoHTML.get(), mainResourceDataSize), ==, 0);
 
     test->loadURI("echo:with#fragment");
     test->waitUntilLoadFinished();
@@ -316,20 +316,20 @@ static void testWebContextURIScheme(URISchemeTest* test, gconstpointer)
     mainResourceDataSize = 0;
     mainResourceData = test->mainResourceData(mainResourceDataSize);
     g_assert_cmpint(mainResourceDataSize, ==, strlen(echoHTML.get()));
-    g_assert(!strncmp(mainResourceData, echoHTML.get(), mainResourceDataSize));
+    g_assert_cmpint(strncmp(mainResourceData, echoHTML.get(), mainResourceDataSize), ==, 0);
 
     test->registerURISchemeHandler("nomime", kBarHTML, -1, 0);
     test->m_loadEvents.clear();
     test->loadURI("nomime:foo-bar");
     test->waitUntilLoadFinished();
-    g_assert(test->m_loadEvents.contains(LoadTrackingTest::ProvisionalLoadFailed));
+    g_assert_true(test->m_loadEvents.contains(LoadTrackingTest::ProvisionalLoadFailed));
 
     test->registerURISchemeHandler("empty", 0, 0, "text/html");
     test->m_loadEvents.clear();
     test->loadURI("empty:nothing");
     test->waitUntilLoadFinished();
-    g_assert(!test->m_loadEvents.contains(LoadTrackingTest::ProvisionalLoadFailed));
-    g_assert(!test->m_loadEvents.contains(LoadTrackingTest::LoadFailed));
+    g_assert_false(test->m_loadEvents.contains(LoadTrackingTest::ProvisionalLoadFailed));
+    g_assert_false(test->m_loadEvents.contains(LoadTrackingTest::LoadFailed));
 
     // Anything over 8192 bytes will get multiple calls to g_input_stream_read_async in
     // WebKitURISchemeRequest when reading data, but we still need way more than that to
@@ -339,25 +339,25 @@ static void testWebContextURIScheme(URISchemeTest* test, gconstpointer)
     test->m_loadEvents.clear();
     test->loadURI("error:error");
     test->waitUntilLoadFinished();
-    g_assert(test->m_loadEvents.contains(LoadTrackingTest::ProvisionalLoadFailed));
-    g_assert(test->m_loadFailed);
+    g_assert_true(test->m_loadEvents.contains(LoadTrackingTest::ProvisionalLoadFailed));
+    g_assert_true(test->m_loadFailed);
     g_assert_error(test->m_error.get(), g_quark_from_string(errorDomain), errorCode);
     g_assert_cmpstr(test->m_error->message, ==, genericErrorMessage);
 
     test->m_loadEvents.clear();
     test->loadURI("error:before-response");
     test->waitUntilLoadFinished();
-    g_assert(test->m_loadEvents.contains(LoadTrackingTest::ProvisionalLoadFailed));
-    g_assert(test->m_loadFailed);
+    g_assert_true(test->m_loadEvents.contains(LoadTrackingTest::ProvisionalLoadFailed));
+    g_assert_true(test->m_loadFailed);
     g_assert_error(test->m_error.get(), g_quark_from_string(errorDomain), errorCode);
     g_assert_cmpstr(test->m_error->message, ==, beforeReceiveResponseErrorMessage);
 
     test->m_loadEvents.clear();
     test->loadURI("error:after-first-chunk");
     test->finishOnCommittedAndWaitUntilLoadFinished();
-    g_assert(!test->m_loadEvents.contains(LoadTrackingTest::ProvisionalLoadFailed));
-    g_assert(test->m_loadEvents.contains(LoadTrackingTest::LoadFailed));
-    g_assert(test->m_loadFailed);
+    g_assert_false(test->m_loadEvents.contains(LoadTrackingTest::ProvisionalLoadFailed));
+    g_assert_true(test->m_loadEvents.contains(LoadTrackingTest::LoadFailed));
+    g_assert_true(test->m_loadFailed);
     g_assert_error(test->m_error.get(), g_quark_from_string(errorDomain), errorCode);
     g_assert_cmpstr(test->m_error->message, ==, afterInitialChunkErrorMessage);
 
@@ -365,8 +365,8 @@ static void testWebContextURIScheme(URISchemeTest* test, gconstpointer)
     test->m_loadEvents.clear();
     test->loadURI("closed:input-stream");
     test->waitUntilLoadFinished();
-    g_assert(test->m_loadEvents.contains(LoadTrackingTest::ProvisionalLoadFailed));
-    g_assert(test->m_loadFailed);
+    g_assert_true(test->m_loadEvents.contains(LoadTrackingTest::ProvisionalLoadFailed));
+    g_assert_true(test->m_loadFailed);
     g_assert_error(test->m_error.get(), G_IO_ERROR, G_IO_ERROR_CLOSED);
 }
 
@@ -377,7 +377,7 @@ static void testWebContextSpellChecker(Test* test, gconstpointer)
 
     // Check what happens if no spell checking language has been set.
     const gchar* const* currentLanguage = webkit_web_context_get_spell_checking_languages(webContext);
-    g_assert(!currentLanguage);
+    g_assert_null(currentLanguage);
 
     // Set the language to a specific one.
     GRefPtr<GPtrArray> languages = adoptGRef(g_ptr_array_new());
@@ -415,13 +415,13 @@ static void testWebContextSpellChecker(Test* test, gconstpointer)
     g_ptr_array_add(languages.get(), 0);
     webkit_web_context_set_spell_checking_languages(webContext, reinterpret_cast<const char* const*>(languages->pdata));
     currentLanguage = webkit_web_context_get_spell_checking_languages(webContext);
-    g_assert(!currentLanguage);
+    g_assert_null(currentLanguage);
 
     // Check disabling and re-enabling spell checking.
     webkit_web_context_set_spell_checking_enabled(webContext, FALSE);
-    g_assert(!webkit_web_context_get_spell_checking_enabled(webContext));
+    g_assert_false(webkit_web_context_get_spell_checking_enabled(webContext));
     webkit_web_context_set_spell_checking_enabled(webContext, TRUE);
-    g_assert(webkit_web_context_get_spell_checking_enabled(webContext));
+    g_assert_true(webkit_web_context_get_spell_checking_enabled(webContext));
 }
 #endif // PLATFORM(GTK)
 
@@ -433,7 +433,7 @@ static void testWebContextLanguages(WebViewTest* test, gconstpointer)
     size_t mainResourceDataSize = 0;
     const char* mainResourceData = test->mainResourceData(mainResourceDataSize);
     g_assert_cmpuint(mainResourceDataSize, ==, strlen(expectedDefaultLanguage));
-    g_assert(!strncmp(mainResourceData, expectedDefaultLanguage, mainResourceDataSize));
+    g_assert_cmpint(strncmp(mainResourceData, expectedDefaultLanguage, mainResourceDataSize), ==, 0);
 
     GRefPtr<GPtrArray> languages = adoptGRef(g_ptr_array_new());
     g_ptr_array_add(languages.get(), const_cast<gpointer>(static_cast<const void*>("en")));
@@ -448,15 +448,15 @@ static void testWebContextLanguages(WebViewTest* test, gconstpointer)
     mainResourceDataSize = 0;
     mainResourceData = test->mainResourceData(mainResourceDataSize);
     g_assert_cmpuint(mainResourceDataSize, ==, strlen(expectedLanguages));
-    g_assert(!strncmp(mainResourceData, expectedLanguages, mainResourceDataSize));
+    g_assert_cmpint(strncmp(mainResourceData, expectedLanguages, mainResourceDataSize), ==, 0);
 
     // When using the C locale, en-US should be used as default.
     const char* cLanguage[] = { "C", nullptr };
     webkit_web_context_set_preferred_languages(test->m_webContext.get(), cLanguage);
     GUniqueOutPtr<GError> error;
     WebKitJavascriptResult* javascriptResult = test->runJavaScriptAndWaitUntilFinished("Intl.DateTimeFormat().resolvedOptions().locale", &error.outPtr());
-    g_assert(javascriptResult);
-    g_assert(!error);
+    g_assert_nonnull(javascriptResult);
+    g_assert_no_error(error.get());
     GUniquePtr<char> locale(WebViewTest::javascriptResultToCString(javascriptResult));
     g_assert_cmpstr(locale.get(), ==, expectedDefaultLanguage);
 
@@ -464,8 +464,8 @@ static void testWebContextLanguages(WebViewTest* test, gconstpointer)
     const char* posixLanguage[] = { "POSIX", nullptr };
     webkit_web_context_set_preferred_languages(test->m_webContext.get(), posixLanguage);
     javascriptResult = test->runJavaScriptAndWaitUntilFinished("Intl.DateTimeFormat().resolvedOptions().locale", &error.outPtr());
-    g_assert(javascriptResult);
-    g_assert(!error);
+    g_assert_nonnull(javascriptResult);
+    g_assert_no_error(error.get());
     locale.reset(WebViewTest::javascriptResultToCString(javascriptResult));
     g_assert_cmpstr(locale.get(), ==, expectedDefaultLanguage);
 
@@ -473,7 +473,7 @@ static void testWebContextLanguages(WebViewTest* test, gconstpointer)
     const char* invalidLanguage[] = { "A", nullptr };
     webkit_web_context_set_preferred_languages(test->m_webContext.get(), invalidLanguage);
     javascriptResult = test->runJavaScriptAndWaitUntilFinished("Intl.DateTimeFormat().resolvedOptions().locale", &error.outPtr());
-    g_assert(!javascriptResult);
+    g_assert_nonnull(javascriptResult);
     g_assert_error(error.get(), WEBKIT_JAVASCRIPT_ERROR, WEBKIT_JAVASCRIPT_ERROR_SCRIPT_FAILED);
 }
 
@@ -524,29 +524,29 @@ public:
     void verifyThatSchemeMatchesPolicy(const char* scheme, unsigned policy)
     {
         if (policy & Local)
-            g_assert(webkit_security_manager_uri_scheme_is_local(m_manager, scheme));
+            g_assert_true(webkit_security_manager_uri_scheme_is_local(m_manager, scheme));
         else
-            g_assert(!webkit_security_manager_uri_scheme_is_local(m_manager, scheme));
+            g_assert_false(webkit_security_manager_uri_scheme_is_local(m_manager, scheme));
         if (policy & NoAccess)
-            g_assert(webkit_security_manager_uri_scheme_is_no_access(m_manager, scheme));
+            g_assert_true(webkit_security_manager_uri_scheme_is_no_access(m_manager, scheme));
         else
-            g_assert(!webkit_security_manager_uri_scheme_is_no_access(m_manager, scheme));
+            g_assert_false(webkit_security_manager_uri_scheme_is_no_access(m_manager, scheme));
         if (policy & DisplayIsolated)
-            g_assert(webkit_security_manager_uri_scheme_is_display_isolated(m_manager, scheme));
+            g_assert_true(webkit_security_manager_uri_scheme_is_display_isolated(m_manager, scheme));
         else
-            g_assert(!webkit_security_manager_uri_scheme_is_display_isolated(m_manager, scheme));
+            g_assert_false(webkit_security_manager_uri_scheme_is_display_isolated(m_manager, scheme));
         if (policy & Secure)
-            g_assert(webkit_security_manager_uri_scheme_is_secure(m_manager, scheme));
+            g_assert_true(webkit_security_manager_uri_scheme_is_secure(m_manager, scheme));
         else
-            g_assert(!webkit_security_manager_uri_scheme_is_secure(m_manager, scheme));
+            g_assert_false(webkit_security_manager_uri_scheme_is_secure(m_manager, scheme));
         if (policy & CORSEnabled)
-            g_assert(webkit_security_manager_uri_scheme_is_cors_enabled(m_manager, scheme));
+            g_assert_true(webkit_security_manager_uri_scheme_is_cors_enabled(m_manager, scheme));
         else
-            g_assert(!webkit_security_manager_uri_scheme_is_cors_enabled(m_manager, scheme));
+            g_assert_false(webkit_security_manager_uri_scheme_is_cors_enabled(m_manager, scheme));
         if (policy & EmptyDocument)
-            g_assert(webkit_security_manager_uri_scheme_is_empty_document(m_manager, scheme));
+            g_assert_true(webkit_security_manager_uri_scheme_is_empty_document(m_manager, scheme));
         else
-            g_assert(!webkit_security_manager_uri_scheme_is_empty_document(m_manager, scheme));
+            g_assert_false(webkit_security_manager_uri_scheme_is_empty_document(m_manager, scheme));
     }
 
     WebKitSecurityManager* m_manager;
@@ -582,8 +582,8 @@ static void testWebContextSecurityPolicy(SecurityPolicyTest* test, gconstpointer
 
 static void consoleMessageReceivedCallback(WebKitUserContentManager*, WebKitJavascriptResult* message, Vector<WebKitJavascriptResult*>* result)
 {
-    g_assert(message);
-    g_assert(result);
+    g_assert_nonnull(message);
+    g_assert_nonnull(result);
     result->append(webkit_javascript_result_ref(message));
 }
 
@@ -603,18 +603,18 @@ static void testWebContextSecurityFileXHR(WebViewTest* test, gconstpointer)
     // By default file access is not allowed, this will show a console message with a cross-origin error.
     GUniqueOutPtr<GError> error;
     WebKitJavascriptResult* javascriptResult = test->runJavaScriptAndWaitUntilFinished(xhr.get(), &error.outPtr());
-    g_assert(javascriptResult);
-    g_assert(!error);
+    g_assert_nonnull(javascriptResult);
+    g_assert_no_error(error.get());
     g_assert_cmpuint(consoleMessages.size(), ==, 2);
     Vector<GUniquePtr<char>, 2> expectedMessages;
     expectedMessages.append(g_strdup("Cross origin requests are only supported for HTTP."));
     expectedMessages.append(g_strdup_printf("XMLHttpRequest cannot load %s due to access control checks.", jsonURL.get()));
     unsigned i = 0;
     for (auto* consoleMessage : consoleMessages) {
-        g_assert(consoleMessage);
+        g_assert_nonnull(consoleMessage);
         GUniquePtr<char> messageString(WebViewTest::javascriptResultToCString(consoleMessage));
         GRefPtr<GVariant> variant = g_variant_parse(G_VARIANT_TYPE("(uusus)"), messageString.get(), nullptr, nullptr, nullptr);
-        g_assert(variant.get());
+        g_assert_nonnull(variant.get());
         unsigned level;
         const char* messageText;
         g_variant_get(variant.get(), "(uu&su&s)", nullptr, &level, &messageText, nullptr, nullptr);
@@ -629,21 +629,21 @@ static void testWebContextSecurityFileXHR(WebViewTest* test, gconstpointer)
     test->loadURI(fileURL.get());
     test->waitUntilLoadFinished();
     javascriptResult = test->runJavaScriptAndWaitUntilFinished(xhr.get(), &error.outPtr());
-    g_assert(javascriptResult);
-    g_assert(!error);
+    g_assert_nonnull(javascriptResult);
+    g_assert_no_error(error.get());
 
     // It isn't still possible to load file from an HTTP URL.
     test->loadURI(kServer->getURIForPath("/").data());
     test->waitUntilLoadFinished();
     javascriptResult = test->runJavaScriptAndWaitUntilFinished(xhr.get(), &error.outPtr());
-    g_assert(javascriptResult);
-    g_assert(!error);
+    g_assert_nonnull(javascriptResult);
+    g_assert_no_error(error.get());
     i = 0;
     for (auto* consoleMessage : consoleMessages) {
-        g_assert(consoleMessage);
+        g_assert_nonnull(consoleMessage);
         GUniquePtr<char> messageString(WebViewTest::javascriptResultToCString(consoleMessage));
         GRefPtr<GVariant> variant = g_variant_parse(G_VARIANT_TYPE("(uusus)"), messageString.get(), nullptr, nullptr, nullptr);
-        g_assert(variant.get());
+        g_assert_nonnull(variant.get());
         unsigned level;
         const char* messageText;
         g_variant_get(variant.get(), "(uu&su&s)", nullptr, &level, &messageText, nullptr, nullptr);
@@ -684,10 +684,10 @@ public:
         // actually a proxy server. We're testing whether the proxy settings
         // work, not whether we can write a soup proxy server.
         m_proxyServer.run(serverCallback);
-        g_assert(m_proxyServer.baseURI());
+        g_assert_nonnull(m_proxyServer.baseURI());
 #if SOUP_CHECK_VERSION(2, 61, 90)
         m_proxyServer.addWebSocketHandler(webSocketProxyServerCallback, this);
-        g_assert(m_proxyServer.baseWebSocketURI());
+        g_assert_nonnull(m_proxyServer.baseWebSocketURI());
 #endif
     }
 
@@ -756,7 +756,7 @@ static void testWebContextProxySettings(ProxyTest* test, gconstpointer)
     // WebSocket requests should also be received by kServer.
     kServer->addWebSocketHandler(webSocketServerCallback, test);
     auto serverType = test->createWebSocketAndWaitUntilConnected();
-    g_assert(serverType == ProxyTest::WebSocketServerType::NoProxy);
+    g_assert_true(serverType == ProxyTest::WebSocketServerType::NoProxy);
 #endif
 
     // Set default proxy URI to point to proxyServer. Requests to kServer should be received by proxyServer instead.
@@ -771,7 +771,7 @@ static void testWebContextProxySettings(ProxyTest* test, gconstpointer)
 #if SOUP_CHECK_VERSION(2, 61, 90)
     // WebSocket requests should also be received by proxyServer.
     serverType = test->createWebSocketAndWaitUntilConnected();
-    g_assert(serverType == ProxyTest::WebSocketServerType::Proxy);
+    g_assert_true(serverType == ProxyTest::WebSocketServerType::Proxy);
 #endif
 
     // Proxy settings also affect ephemeral web views.
@@ -782,18 +782,18 @@ static void testWebContextProxySettings(ProxyTest* test, gconstpointer)
         "web-context", test->m_webContext.get(),
         "is-ephemeral", TRUE,
         nullptr));
-    g_assert(webkit_web_view_is_ephemeral(webView.get()));
-    g_assert(!webkit_web_context_is_ephemeral(webkit_web_view_get_context(webView.get())));
+    g_assert_true(webkit_web_view_is_ephemeral(webView.get()));
+    g_assert_false(webkit_web_context_is_ephemeral(webkit_web_view_get_context(webView.get())));
 
     g_signal_connect(webView.get(), "load-changed", G_CALLBACK(ephemeralViewloadChanged), test);
     webkit_web_view_load_uri(webView.get(), kServer->getURIForPath("/echoPort").data());
     g_main_loop_run(test->m_mainLoop);
     WebKitWebResource* resource = webkit_web_view_get_main_resource(webView.get());
-    g_assert(WEBKIT_IS_WEB_RESOURCE(resource));
+    g_assert_true(WEBKIT_IS_WEB_RESOURCE(resource));
     webkit_web_resource_get_data(resource, nullptr, [](GObject* object, GAsyncResult* result, gpointer userData) {
         size_t dataSize;
         GUniquePtr<char> data(reinterpret_cast<char*>(webkit_web_resource_get_data_finish(WEBKIT_WEB_RESOURCE(object), result, &dataSize, nullptr)));
-        g_assert(data);
+        g_assert_nonnull(data);
         auto* test = static_cast<ProxyTest*>(userData);
         GUniquePtr<char> proxyServerPortAsString = test->proxyServerPortAsString();
         ASSERT_CMP_CSTRING(CString(data.get(), dataSize), ==, proxyServerPortAsString.get());

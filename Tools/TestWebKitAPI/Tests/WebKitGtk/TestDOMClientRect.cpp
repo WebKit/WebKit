@@ -30,12 +30,12 @@ static const char* testHTML = "<html><head></head><body>"
 
 static void testWebKitDOMClientRectDivBoundingClientRectPosition(WebViewTest* test, gconstpointer)
 {
-    g_assert(test->runWebProcessTest("WebKitDOMClientRect", "div-bounding-client-rect-position", testHTML));
+    g_assert_true(test->runWebProcessTest("WebKitDOMClientRect", "div-bounding-client-rect-position", testHTML));
 }
 
 static void testWebKitDOMClientRectDivClientRectsPositionAndLength(WebViewTest* test, gconstpointer)
 {
-    g_assert(test->runWebProcessTest("WebKitDOMClientRect", "div-client-rects-position-and-length", testHTML));
+    g_assert_true(test->runWebProcessTest("WebKitDOMClientRect", "div-client-rects-position-and-length", testHTML));
 }
 
 void beforeAll()

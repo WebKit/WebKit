@@ -24,7 +24,7 @@
 static void testWebKitWebEditorSelectionChanged(WebViewTest* test, gconstpointer)
 {
     static const gchar* testHTML = "<html><body>All work and no play make Jack a dull boy.</body></html>";
-    g_assert(test->runWebProcessTest("WebKitWebEditor", "selection-changed", testHTML));
+    g_assert_true(test->runWebProcessTest("WebKitWebEditor", "selection-changed", testHTML));
 }
 
 void beforeAll()

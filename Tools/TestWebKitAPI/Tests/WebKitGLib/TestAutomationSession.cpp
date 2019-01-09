@@ -117,7 +117,7 @@ public:
 
     void setConnection(GRefPtr<GDBusConnection>&& connection)
     {
-        g_assert(G_IS_DBUS_CONNECTION(connection.get()));
+        g_assert_true(G_IS_DBUS_CONNECTION(connection.get()));
         m_connection = WTFMove(connection);
         registerDBusObject();
         g_main_loop_quit(m_mainLoop.get());
@@ -135,8 +135,8 @@ public:
 
     void receivedMessage(guint64 connectionID, guint64 targetID, const char* message)
     {
-        g_assert(connectionID == m_connectionID);
-        g_assert(targetID == m_target.id);
+        g_assert_cmpuint(connectionID, ==, m_connectionID);
+        g_assert_cmpuint(targetID, ==, m_target.id);
         m_message = message;
         g_main_loop_quit(m_mainLoop.get());
     }
@@ -170,19 +170,19 @@ public:
     {
         m_session = session;
         assertObjectIsDeletedWhenTestFinishes(G_OBJECT(m_session));
-        g_assert(!webkit_automation_session_get_application_info(session));
+        g_assert_null(webkit_automation_session_get_application_info(session));
         WebKitApplicationInfo* info = webkit_application_info_new();
         webkit_application_info_set_name(info, "AutomationTestBrowser");
         webkit_application_info_set_version(info, WEBKIT_MAJOR_VERSION, WEBKIT_MINOR_VERSION, WEBKIT_MICRO_VERSION);
         webkit_automation_session_set_application_info(session, info);
         webkit_application_info_unref(info);
-        g_assert(webkit_automation_session_get_application_info(session) == info);
+        g_assert_true(webkit_automation_session_get_application_info(session) == info);
     }
 
     static void automationStartedCallback(WebKitWebContext* webContext, WebKitAutomationSession* session, AutomationTest* test)
     {
-        g_assert(webContext == test->m_webContext.get());
-        g_assert(WEBKIT_IS_AUTOMATION_SESSION(session));
+        g_assert_true(webContext == test->m_webContext.get());
+        g_assert_true(WEBKIT_IS_AUTOMATION_SESSION(session));
         test->automationStarted(session);
     }
 
@@ -208,7 +208,7 @@ public:
                     return;
 
                 GRefPtr<GVariant> capabilities = adoptGRef(g_dbus_connection_call_finish(G_DBUS_CONNECTION(source), result, nullptr));
-                g_assert(capabilities.get());
+                g_assert_nonnull(capabilities.get());
                 const char* browserName;
                 const char* browserVersion;
                 g_variant_get(capabilities.get(), "(&s&s)", &browserName, &browserVersion);
@@ -234,11 +234,11 @@ public:
     {
         if (m_target.isPaired)
             return;
-        g_assert(m_target.id);
+        g_assert_cmpuint(m_target.id, !=, 0);
         g_dbus_connection_call(m_connection.get(), nullptr, "/org/webkit/Inspector", "org.webkit.Inspector",
             "Setup", g_variant_new("(tt)", m_connectionID, m_target.id), nullptr, G_DBUS_CALL_FLAGS_NO_AUTO_START, -1, nullptr, nullptr, nullptr);
         g_main_loop_run(m_mainLoop.get());
-        g_assert(m_target.isPaired);
+        g_assert_true(m_target.isPaired);
     }
 
     bool createTopLevelBrowsingContext(WebKitWebView* webView)
@@ -251,8 +251,8 @@ public:
         sendCommandToBackend("createBrowsingContext");
         g_main_loop_run(m_mainLoop.get());
         g_signal_handler_disconnect(m_session, signalID);
-        g_assert(m_createWebViewWasCalled);
-        g_assert(!m_message.isNull());
+        g_assert_true(m_createWebViewWasCalled);
+        g_assert_false(m_message.isNull());
         m_webViewForAutomation = nullptr;
 
         if (strstr(m_message.data(), "The remote session failed to create a new browsing context"))
@@ -277,33 +277,33 @@ static void testAutomationSessionRequestSession(AutomationTest* test, gconstpoin
 {
     String sessionID = createCanonicalUUIDString();
     // WebKitAutomationSession::automation-started is never emitted if automation is not enabled.
-    g_assert(!webkit_web_context_is_automation_allowed(test->m_webContext.get()));
+    g_assert_false(webkit_web_context_is_automation_allowed(test->m_webContext.get()));
     auto* session = test->requestSession(sessionID.utf8().data());
-    g_assert(!session);
+    g_assert_null(session);
 
     webkit_web_context_set_automation_allowed(test->m_webContext.get(), TRUE);
-    g_assert(webkit_web_context_is_automation_allowed(test->m_webContext.get()));
+    g_assert_true(webkit_web_context_is_automation_allowed(test->m_webContext.get()));
 
     // There can't be more than one context with automation enabled
     GRefPtr<WebKitWebContext> otherContext = adoptGRef(webkit_web_context_new());
     test->removeLogFatalFlag(G_LOG_LEVEL_WARNING);
     webkit_web_context_set_automation_allowed(otherContext.get(), TRUE);
     test->addLogFatalFlag(G_LOG_LEVEL_WARNING);
-    g_assert(!webkit_web_context_is_automation_allowed(otherContext.get()));
+    g_assert_false(webkit_web_context_is_automation_allowed(otherContext.get()));
 
     session = test->requestSession(sessionID.utf8().data());
     g_assert_cmpstr(webkit_automation_session_get_id(session), ==, sessionID.utf8().data());
     g_assert_cmpuint(test->m_target.id, >, 0);
     ASSERT_CMP_CSTRING(test->m_target.name, ==, sessionID.utf8());
-    g_assert(!test->m_target.isPaired);
+    g_assert_false(test->m_target.isPaired);
 
     // Will fail to create a browsing context when not creating a web view (or not handling the signal).
-    g_assert(!test->createTopLevelBrowsingContext(nullptr));
+    g_assert_false(test->createTopLevelBrowsingContext(nullptr));
 
     // Will also fail if the web view is not controlled by automation.
     auto webView = Test::adoptView(Test::createWebView(test->m_webContext.get()));
-    g_assert(!webkit_web_view_is_controlled_by_automation(webView.get()));
-    g_assert(!test->createTopLevelBrowsingContext(webView.get()));
+    g_assert_false(webkit_web_view_is_controlled_by_automation(webView.get()));
+    g_assert_false(test->createTopLevelBrowsingContext(webView.get()));
 
     // And will work with a proper web view.
     webView = Test::adoptView(g_object_new(WEBKIT_TYPE_WEB_VIEW,
@@ -313,8 +313,8 @@ static void testAutomationSessionRequestSession(AutomationTest* test, gconstpoin
         "web-context", test->m_webContext.get(),
         "is-controlled-by-automation", TRUE,
         nullptr));
-    g_assert(webkit_web_view_is_controlled_by_automation(webView.get()));
-    g_assert(test->createTopLevelBrowsingContext(webView.get()));
+    g_assert_true(webkit_web_view_is_controlled_by_automation(webView.get()));
+    g_assert_true(test->createTopLevelBrowsingContext(webView.get()));
 
     webkit_web_context_set_automation_allowed(test->m_webContext.get(), FALSE);
 }

@@ -72,19 +72,18 @@ static void testSSL(SSLTest* test, gconstpointer)
 
     test->loadURI(kHttpsServer->getURIForPath("/").data());
     test->waitUntilLoadFinished();
-    g_assert(test->m_certificate);
+    g_assert_nonnull(test->m_certificate);
     // Self-signed certificate has a nullptr issuer.
-    g_assert(!g_tls_certificate_get_issuer(test->m_certificate.get()));
+    g_assert_null(g_tls_certificate_get_issuer(test->m_certificate.get()));
     // We always expect errors because we are using a self-signed certificate,
     // but only G_TLS_CERTIFICATE_UNKNOWN_CA flags should be present.
-    g_assert(test->m_tlsErrors);
     g_assert_cmpuint(test->m_tlsErrors, ==, G_TLS_CERTIFICATE_UNKNOWN_CA);
 
     // Non HTTPS loads shouldn't have a certificate nor errors.
     test->loadHtml(indexHTML, 0);
     test->waitUntilLoadFinished();
-    g_assert(!test->m_certificate);
-    g_assert(!test->m_tlsErrors);
+    g_assert_null(test->m_certificate);
+    g_assert_cmpuint(test->m_tlsErrors, ==, 0);
 
     webkit_web_context_set_tls_errors_policy(context, originalPolicy);
 }
@@ -102,7 +101,7 @@ public:
 
     static void insecureContentDetectedCallback(WebKitWebView* webView, WebKitInsecureContentEvent event, InsecureContentTest* test)
     {
-        g_assert(webView == test->m_webView);
+        g_assert_true(webView == test->m_webView);
 
         if (event == WEBKIT_INSECURE_CONTENT_RUN)
             test->m_insecureContentRun = true;
@@ -124,10 +123,10 @@ static void testInsecureContent(InsecureContentTest* test, gconstpointer)
     test->loadURI(kHttpsServer->getURIForPath("/insecure-content/").data());
     test->waitUntilLoadFinished();
 
-    g_assert(!test->m_insecureContentRun);
+    g_assert_false(test->m_insecureContentRun);
     // Images are currently always displayed, even bypassing mixed content settings. Check
     // https://bugs.webkit.org/show_bug.cgi?id=142469
-    g_assert(test->m_insecureContentDisplayed);
+    g_assert_true(test->m_insecureContentDisplayed);
 
     webkit_web_context_set_tls_errors_policy(context, originalPolicy);
 }
@@ -138,26 +137,26 @@ static void testTLSErrorsPolicy(SSLTest* test, gconstpointer)
 {
     WebKitWebContext* context = webkit_web_view_get_context(test->m_webView);
     // TLS errors are treated as transport failures by default.
-    g_assert(webkit_web_context_get_tls_errors_policy(context) == WEBKIT_TLS_ERRORS_POLICY_FAIL);
+    g_assert_cmpint(webkit_web_context_get_tls_errors_policy(context), ==, WEBKIT_TLS_ERRORS_POLICY_FAIL);
 
     assertIfSSLRequestProcessed = true;
     test->loadURI(kHttpsServer->getURIForPath("/").data());
     test->waitUntilLoadFinished();
-    g_assert(test->m_loadFailed);
-    g_assert(test->m_loadEvents.contains(LoadTrackingTest::ProvisionalLoadFailed));
-    g_assert(!test->m_loadEvents.contains(LoadTrackingTest::LoadCommitted));
+    g_assert_true(test->m_loadFailed);
+    g_assert_true(test->m_loadEvents.contains(LoadTrackingTest::ProvisionalLoadFailed));
+    g_assert_false(test->m_loadEvents.contains(LoadTrackingTest::LoadCommitted));
     assertIfSSLRequestProcessed = false;
 
     webkit_web_context_set_tls_errors_policy(context, WEBKIT_TLS_ERRORS_POLICY_IGNORE);
-    g_assert(webkit_web_context_get_tls_errors_policy(context) == WEBKIT_TLS_ERRORS_POLICY_IGNORE);
+    g_assert_cmpint(webkit_web_context_get_tls_errors_policy(context), ==, WEBKIT_TLS_ERRORS_POLICY_IGNORE);
 
     test->m_loadFailed = false;
     test->loadURI(kHttpsServer->getURIForPath("/").data());
     test->waitUntilLoadFinished();
-    g_assert(!test->m_loadFailed);
+    g_assert_false(test->m_loadFailed);
 
     webkit_web_context_set_tls_errors_policy(context, WEBKIT_TLS_ERRORS_POLICY_FAIL);
-    g_assert(webkit_web_context_get_tls_errors_policy(context) == WEBKIT_TLS_ERRORS_POLICY_FAIL);
+    g_assert_cmpint(webkit_web_context_get_tls_errors_policy(context), ==, WEBKIT_TLS_ERRORS_POLICY_FAIL);
 }
 
 static void testTLSErrorsRedirect(SSLTest* test, gconstpointer)
@@ -169,9 +168,9 @@ static void testTLSErrorsRedirect(SSLTest* test, gconstpointer)
     assertIfSSLRequestProcessed = true;
     test->loadURI(kHttpsServer->getURIForPath("/redirect").data());
     test->waitUntilLoadFinished();
-    g_assert(test->m_loadFailed);
-    g_assert(test->m_loadEvents.contains(LoadTrackingTest::ProvisionalLoadFailed));
-    g_assert(!test->m_loadEvents.contains(LoadTrackingTest::LoadCommitted));
+    g_assert_true(test->m_loadFailed);
+    g_assert_true(test->m_loadEvents.contains(LoadTrackingTest::ProvisionalLoadFailed));
+    g_assert_false(test->m_loadEvents.contains(LoadTrackingTest::LoadCommitted));
     assertIfSSLRequestProcessed = false;
 
     webkit_web_context_set_tls_errors_policy(context, originalPolicy);
@@ -194,9 +193,9 @@ static void testTLSErrorsHTTPAuth(SSLTest* test, gconstpointer)
     g_signal_connect(test->m_webView, "authenticate", G_CALLBACK(webViewAuthenticationCallback), NULL);
     test->loadURI(kHttpsServer->getURIForPath("/auth").data());
     test->waitUntilLoadFinished();
-    g_assert(test->m_loadFailed);
-    g_assert(test->m_loadEvents.contains(LoadTrackingTest::ProvisionalLoadFailed));
-    g_assert(!test->m_loadEvents.contains(LoadTrackingTest::LoadCommitted));
+    g_assert_true(test->m_loadFailed);
+    g_assert_true(test->m_loadEvents.contains(LoadTrackingTest::ProvisionalLoadFailed));
+    g_assert_false(test->m_loadEvents.contains(LoadTrackingTest::LoadCommitted));
     assertIfSSLRequestProcessed = false;
 
     webkit_web_context_set_tls_errors_policy(context, originalPolicy);
@@ -251,7 +250,7 @@ static void testLoadFailedWithTLSErrors(TLSErrorsTest* test, gconstpointer)
     // The load-failed-with-tls-errors signal should be emitted when there is a TLS failure.
     test->loadURI(kHttpsServer->getURIForPath("/test-tls/").data());
     test->waitUntilLoadFinished();
-    g_assert(G_IS_TLS_CERTIFICATE(test->certificate()));
+    g_assert_true(G_IS_TLS_CERTIFICATE(test->certificate()));
     g_assert_cmpuint(test->tlsErrors(), ==, G_TLS_CERTIFICATE_UNKNOWN_CA);
     g_assert_cmpstr(test->host(), ==, soup_uri_get_host(kHttpsServer->baseURI()));
     g_assert_cmpint(test->m_loadEvents[0], ==, LoadTrackingTest::ProvisionalLoadStarted);
@@ -335,7 +334,7 @@ static void testSubresourceLoadFailedWithTLSErrors(TLSSubresourceTest* test, gco
     assertIfSSLRequestProcessed = true;
     test->loadURI(kHttpServer->getURIForPath("/").data());
     test->waitUntilSubresourceLoadFail();
-    g_assert(G_IS_TLS_CERTIFICATE(test->m_certificate.get()));
+    g_assert_true(G_IS_TLS_CERTIFICATE(test->m_certificate.get()));
     g_assert_cmpuint(test->m_tlsErrors, ==, G_TLS_CERTIFICATE_UNKNOWN_CA);
     assertIfSSLRequestProcessed = false;
 }
@@ -449,7 +448,7 @@ static void httpsServerCallback(SoupServer* server, SoupMessage* message, const 
         return;
     }
 
-    g_assert(!assertIfSSLRequestProcessed);
+    g_assert_false(assertIfSSLRequestProcessed);
 
     if (g_str_equal(path, "/")) {
         soup_message_set_status(message, SOUP_STATUS_OK);

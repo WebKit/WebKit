@@ -32,8 +32,8 @@ void WebViewTest::platformDestroy()
 
 void WebViewTest::platformInitializeWebView()
 {
-    g_assert(WEBKIT_WEB_VIEW(m_webView));
-    g_assert(g_object_is_floating(m_webView));
+    g_assert_true(WEBKIT_WEB_VIEW(m_webView));
+    g_assert_true(g_object_is_floating(m_webView));
     g_object_ref_sink(m_webView);
 }
 
@@ -70,7 +70,7 @@ static gboolean parentWindowMapped(GtkWidget* widget, GdkEvent*, WebViewTest* te
 
 void WebViewTest::showInWindow(GtkWindowType windowType)
 {
-    g_assert(!m_parentWindow);
+    g_assert_null(m_parentWindow);
     m_parentWindow = gtk_window_new(windowType);
     gtk_container_add(GTK_CONTAINER(m_parentWindow), GTK_WIDGET(m_webView));
     gtk_widget_show(GTK_WIDGET(m_webView));
@@ -79,7 +79,7 @@ void WebViewTest::showInWindow(GtkWindowType windowType)
 
 void WebViewTest::showInWindowAndWaitUntilMapped(GtkWindowType windowType, int width, int height)
 {
-    g_assert(!m_parentWindow);
+    g_assert_null(m_parentWindow);
     m_parentWindow = gtk_window_new(windowType);
     if (width && height)
         gtk_window_resize(GTK_WINDOW(m_parentWindow), width, height);
@@ -93,9 +93,9 @@ void WebViewTest::showInWindowAndWaitUntilMapped(GtkWindowType windowType, int w
 
 void WebViewTest::mouseMoveTo(int x, int y, unsigned mouseModifiers)
 {
-    g_assert(m_parentWindow);
+    g_assert_nonnull(m_parentWindow);
     GtkWidget* viewWidget = GTK_WIDGET(m_webView);
-    g_assert(gtk_widget_get_realized(viewWidget));
+    g_assert_true(gtk_widget_get_realized(viewWidget));
 
     GUniquePtr<GdkEvent> event(gdk_event_new(GDK_MOTION_NOTIFY));
     event->motion.x = x;
@@ -124,7 +124,7 @@ void WebViewTest::clickMouseButton(int x, int y, unsigned button, unsigned mouse
 void WebViewTest::emitPopupMenuSignal()
 {
     GtkWidget* viewWidget = GTK_WIDGET(m_webView);
-    g_assert(gtk_widget_get_realized(viewWidget));
+    g_assert_true(gtk_widget_get_realized(viewWidget));
 
     gboolean handled;
     g_signal_emit_by_name(viewWidget, "popup-menu", &handled);
@@ -132,9 +132,9 @@ void WebViewTest::emitPopupMenuSignal()
 
 void WebViewTest::keyStroke(unsigned keyVal, unsigned keyModifiers)
 {
-    g_assert(m_parentWindow);
+    g_assert_nonnull(m_parentWindow);
     GtkWidget* viewWidget = GTK_WIDGET(m_webView);
-    g_assert(gtk_widget_get_realized(viewWidget));
+    g_assert_true(gtk_widget_get_realized(viewWidget));
 
     GUniquePtr<GdkEvent> event(gdk_event_new(GDK_KEY_PRESS));
     event->key.keyval = keyVal;
@@ -158,9 +158,9 @@ void WebViewTest::keyStroke(unsigned keyVal, unsigned keyModifiers)
 
 void WebViewTest::doMouseButtonEvent(GdkEventType eventType, int x, int y, unsigned button, unsigned mouseModifiers)
 {
-    g_assert(m_parentWindow);
+    g_assert_nonnull(m_parentWindow);
     GtkWidget* viewWidget = GTK_WIDGET(m_webView);
-    g_assert(gtk_widget_get_realized(viewWidget));
+    g_assert_true(gtk_widget_get_realized(viewWidget));
 
     GUniquePtr<GdkEvent> event(gdk_event_new(eventType));
     event->button.window = gtk_widget_get_window(viewWidget);

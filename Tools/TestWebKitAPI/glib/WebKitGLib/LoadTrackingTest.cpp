@@ -24,38 +24,38 @@ static void loadChangedCallback(WebKitWebView* webView, WebKitLoadEvent loadEven
 {
     switch (loadEvent) {
     case WEBKIT_LOAD_STARTED:
-        g_assert(webkit_web_view_is_loading(webView));
+        g_assert_true(webkit_web_view_is_loading(webView));
         g_assert_cmpstr(test->m_activeURI.data(), ==, webkit_web_view_get_uri(webView));
         test->provisionalLoadStarted();
         break;
     case WEBKIT_LOAD_REDIRECTED:
-        g_assert(webkit_web_view_is_loading(webView));
+        g_assert_true(webkit_web_view_is_loading(webView));
         test->m_activeURI = webkit_web_view_get_uri(webView);
         if (!test->m_redirectURI.isNull())
             g_assert_cmpstr(test->m_redirectURI.data(), ==, test->m_activeURI.data());
         test->provisionalLoadReceivedServerRedirect();
         break;
     case WEBKIT_LOAD_COMMITTED: {
-        g_assert(webkit_web_view_is_loading(webView));
+        g_assert_true(webkit_web_view_is_loading(webView));
         test->m_activeURI = webkit_web_view_get_uri(webView);
 
         // Check that on committed we always have a main resource with a response.
         WebKitWebResource* resource = webkit_web_view_get_main_resource(webView);
-        g_assert(resource);
-        g_assert(webkit_web_resource_get_response(resource));
+        g_assert_nonnull(resource);
+        g_assert_nonnull(webkit_web_resource_get_response(resource));
 
         test->loadCommitted();
         break;
     }
     case WEBKIT_LOAD_FINISHED:
         if (!test->m_loadFailed) {
-            g_assert(!webkit_web_view_is_loading(webView));
+            g_assert_false(webkit_web_view_is_loading(webView));
             g_assert_cmpstr(test->m_activeURI.data(), ==, webkit_web_view_get_uri(webView));
         } else if (!g_error_matches(test->m_error.get(), WEBKIT_NETWORK_ERROR, WEBKIT_NETWORK_ERROR_CANCELLED)) {
             // When a new load is started before the previous one has finished, we receive the load-finished signal
             // of the ongoing load while we already have a provisional URL for the new load. This is the only case
             // where isloading is true when the load has finished.
-            g_assert(!webkit_web_view_is_loading(webView));
+            g_assert_false(webkit_web_view_is_loading(webView));
         }
         test->loadFinished();
         break;
@@ -68,14 +68,14 @@ static void loadFailedCallback(WebKitWebView* webView, WebKitLoadEvent loadEvent
 {
     test->m_loadFailed = true;
 
-    g_assert(error);
+    g_assert_nonnull(error);
     test->m_error.reset(g_error_copy(error));
 
     if (!g_error_matches(error, WEBKIT_NETWORK_ERROR, WEBKIT_NETWORK_ERROR_CANCELLED)) {
         // When a new load is started before the previous one has finished, we receive the load-failed signal
         // of the ongoing load while we already have a provisional URL for the new load. This is the only case
         // where is-loading is true when the load has failed.
-        g_assert(!webkit_web_view_is_loading(webView));
+        g_assert_false(webkit_web_view_is_loading(webView));
     }
 
     switch (loadEvent) {
@@ -95,10 +95,10 @@ static void loadFailedCallback(WebKitWebView* webView, WebKitLoadEvent loadEvent
 static gboolean loadFailedWithTLSErrorsCallback(WebKitWebView* webView, const char* failingURI, GTlsCertificate* certificate, GTlsCertificateFlags tlsErrors, LoadTrackingTest* test)
 {
     test->m_loadFailed = true;
-    g_assert(!webkit_web_view_is_loading(webView));
+    g_assert_false(webkit_web_view_is_loading(webView));
     g_assert_cmpstr(test->m_activeURI.data(), ==, failingURI);
-    g_assert(G_IS_TLS_CERTIFICATE(certificate));
-    g_assert(tlsErrors);
+    g_assert_true(G_IS_TLS_CERTIFICATE(certificate));
+    g_assert_cmpuint(tlsErrors, !=, 0);
     return test->loadFailedWithTLSErrors(failingURI, certificate, tlsErrors);
 }
 
@@ -116,7 +116,7 @@ LoadTrackingTest::LoadTrackingTest()
     g_signal_connect(m_webView, "load-failed-with-tls-errors", G_CALLBACK(loadFailedWithTLSErrorsCallback), this);
     g_signal_connect(m_webView, "notify::estimated-load-progress", G_CALLBACK(estimatedProgressChangedCallback), this);
 
-    g_assert(!webkit_web_view_get_uri(m_webView));
+    g_assert_null(webkit_web_view_get_uri(m_webView));
 }
 
 LoadTrackingTest::~LoadTrackingTest()

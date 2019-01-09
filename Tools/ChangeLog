@@ -1,3 +1,350 @@
+2019-01-09  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        [WPE][GTK] Purge use of g_assert() under TestWebKitAPI
+        https://bugs.webkit.org/show_bug.cgi?id=192841
+
+        Reviewed by Carlos Garcia Campos.
+
+        There are separate g_assert_*() macros for use in tests, which we use inconsistently
+        currently. Use them always. We'll get nicer error messages now when tests fail, and the
+        assertions will now run during tests even if G_DISABLE_ASSERT is used when building.
+
+        Note that the documentation of g_assert() says that it is not to be used when writing tests.
+
+        * TestWebKitAPI/Tests/JavaScriptCore/glib/TestJSC.cpp:
+        * TestWebKitAPI/Tests/WebKitGLib/EditorTest.cpp:
+        (WebKitWebEditorTest::testSelectionChanged):
+        * TestWebKitAPI/Tests/WebKitGLib/FrameTest.cpp:
+        (WebKitFrameTest::testMainFrame):
+        (WebKitFrameTest::testURI):
+        (WebKitFrameTest::testJavaScriptContext):
+        (WebKitFrameTest::testJavaScriptValues):
+        * TestWebKitAPI/Tests/WebKitGLib/TestAuthentication.cpp:
+        (testWebViewAuthenticationRequest):
+        (testWebViewAuthenticationLoadCancelled):
+        (testWebViewAuthenticationFailure):
+        (testWebViewAuthenticationStorage):
+        (ProxyAuthenticationTest::ProxyAuthenticationTest):
+        (testWebViewAuthenticationProxy):
+        (testWebViewAuthenticationProxyHTTPS):
+        * TestWebKitAPI/Tests/WebKitGLib/TestAutomationSession.cpp:
+        (testAutomationSessionRequestSession):
+        * TestWebKitAPI/Tests/WebKitGLib/TestBackForwardList.cpp:
+        (testBackForwardListNavigation):
+        (testWebKitWebViewSessionState):
+        (testWebKitWebViewSessionStateWithFormData):
+        * TestWebKitAPI/Tests/WebKitGLib/TestConsoleMessage.cpp:
+        (ConsoleMessageTest::consoleMessageReceivedCallback):
+        (testWebKitConsoleMessageConsoleAPI):
+        (testWebKitConsoleMessageJavaScriptException):
+        (testWebKitConsoleMessageNetworkError):
+        (testWebKitConsoleMessageSecurityError):
+        * TestWebKitAPI/Tests/WebKitGLib/TestCookieManager.cpp:
+        (testCookieManagerAcceptPolicy):
+        (testCookieManagerCookiesChanged):
+        (testCookieManagerPersistentStorage):
+        (testCookieManagerPersistentStorageDeleteAll):
+        (testCookieManagerEphemeral):
+        * TestWebKitAPI/Tests/WebKitGLib/TestDOMElement.cpp:
+        (testWebKitDOMElementAutoFill):
+        * TestWebKitAPI/Tests/WebKitGLib/TestDownloads.cpp:
+        (downloadLocalFileSuccessfully):
+        (createFileAtDestination):
+        (testDownloadOverwriteDestinationDisallowed):
+        (testDownloadLocalFileError):
+        (testDownloadRemoteFile):
+        (testDownloadRemoteFileError):
+        (testWebViewDownloadURI):
+        (testPolicyResponseDownload):
+        (testPolicyResponseDownloadCancel):
+        (testDownloadMIMEType):
+        (contextMenuCallback):
+        (testContextMenuDownloadActions):
+        (testBlobDownload):
+        * TestWebKitAPI/Tests/WebKitGLib/TestEditor.cpp:
+        (testWebKitWebEditorSelectionChanged):
+        * TestWebKitAPI/Tests/WebKitGLib/TestFrame.cpp:
+        (testWebKitFrameMainFrame):
+        (testWebKitFrameURI):
+        (testWebKitFrameJavaScriptContext):
+        (testWebKitFrameJavaScriptValues):
+        * TestWebKitAPI/Tests/WebKitGLib/TestLoaderClient.cpp:
+        (LoadStopTrackingTest::loadFailed):
+        (testWebViewTitle):
+        (testURIRequestHTTPHeaders):
+        (testURIRequestHTTPMethod):
+        (testURIResponseHTTPHeaders):
+        (testRedirectToDataURI):
+        * TestWebKitAPI/Tests/WebKitGLib/TestMultiprocess.cpp:
+        (testProcessPerWebView):
+        (testWebProcessLimit):
+        * TestWebKitAPI/Tests/WebKitGLib/TestResources.cpp:
+        (testWebViewResources):
+        (testWebResourceLoading):
+        (testWebResourceSuggestedFilename):
+        (testWebResourceGetData):
+        (testWebResourceGetDataError):
+        (testWebViewResourcesHistoryCache):
+        (testWebResourceSendRequest):
+        * TestWebKitAPI/Tests/WebKitGLib/TestSSL.cpp:
+        (testSSL):
+        (testInsecureContent):
+        (testTLSErrorsPolicy):
+        (testTLSErrorsRedirect):
+        (testTLSErrorsHTTPAuth):
+        (testLoadFailedWithTLSErrors):
+        (testSubresourceLoadFailedWithTLSErrors):
+        (httpsServerCallback):
+        * TestWebKitAPI/Tests/WebKitGLib/TestUIClient.cpp:
+        (testWebViewCreateNavigationData):
+        (testWebViewJavaScriptDialogs):
+        (testWebViewWindowProperties):
+        (testWebViewMouseTarget):
+        (testWebViewFileChooserRequest):
+        (testWebViewColorChooserRequest):
+        * TestWebKitAPI/Tests/WebKitGLib/TestWebExtensions.cpp:
+        (testWebExtensionGetTitle):
+        (testDocumentLoadedSignal):
+        (testWebKitWebViewProcessCrashed):
+        (testWebExtensionWindowObjectCleared):
+        (testWebExtensionIsolatedWorld):
+        (permissionRequestCallback):
+        (didAssociateFormControlsCallback):
+        (testWebExtensionFormControlsAssociated):
+        (FormSubmissionTest::FormSubmissionTest):
+        (FormSubmissionTest::testFormSubmissionResult):
+        (testWebExtensionFormSubmissionSteps):
+        * TestWebKitAPI/Tests/WebKitGLib/TestWebKitFaviconDatabase.cpp:
+        (testNotInitialized):
+        (testClearDatabase):
+        (testPrivateBrowsing):
+        (testGetFavicon):
+        (testWebViewFavicon):
+        * TestWebKitAPI/Tests/WebKitGLib/TestWebKitFindController.cpp:
+        (testFindControllerTextFound):
+        (testFindControllerTextNotFound):
+        (testFindControllerMatchCount):
+        (testFindControllerMaxMatchCount):
+        (testFindControllerNext):
+        (testFindControllerPrevious):
+        (testFindControllerCountedMatches):
+        (testFindControllerOptions):
+        (testFindControllerHide):
+        (testFindControllerInstance):
+        (testFindControllerGetters):
+        * TestWebKitAPI/Tests/WebKitGLib/TestWebKitPolicyClient.cpp:
+        (testNavigationPolicy):
+        (testResponsePolicy):
+        (testNewWindowPolicy):
+        * TestWebKitAPI/Tests/WebKitGLib/TestWebKitSecurityOrigin.cpp:
+        (testSecurityOriginBasicConstructor):
+        (testSecurityOriginURIConstructor):
+        (testSecurityOriginDefaultPort):
+        (testSecurityOriginFileURI):
+        (testOpaqueSecurityOrigin):
+        * TestWebKitAPI/Tests/WebKitGLib/TestWebKitSettings.cpp:
+        (testWebKitSettings):
+        (testWebKitSettingsNewWithSettings):
+        (testWebKitSettingsUserAgent):
+        * TestWebKitAPI/Tests/WebKitGLib/TestWebKitUserContentManager.cpp:
+        (testWebViewNewWithUserContentManager):
+        (isStyleSheetInjectedForURLAtPath):
+        (isScriptInjectedForURLAtPath):
+        (testUserContentManagerInjectedStyleSheet):
+        (testUserContentManagerInjectedScript):
+        (UserScriptMessageTest::scriptMessageReceived):
+        (UserScriptMessageTest::waitUntilMessageReceived):
+        (UserScriptMessageTest::runJavaScriptFinished):
+        (testUserContentManagerScriptMessageReceived):
+        (testUserContentManagerScriptMessageInWorldReceived):
+        (testUserContentManagerScriptMessageFromDOMBindings):
+        * TestWebKitAPI/Tests/WebKitGLib/TestWebKitWebContext.cpp:
+        (testWebContextDefault):
+        (testWebContextEphemeral):
+        (testWebContextGetPlugins):
+        (testWebContextURIScheme):
+        (testWebContextSpellChecker):
+        (testWebContextLanguages):
+        (consoleMessageReceivedCallback):
+        (testWebContextSecurityFileXHR):
+        (ProxyTest::ProxyTest):
+        (testWebContextProxySettings):
+        * TestWebKitAPI/Tests/WebKitGLib/TestWebKitWebView.cpp:
+        (testWebViewWebContext):
+        (testWebViewWebBackend):
+        (testWebViewEphemeral):
+        (testWebViewCustomCharset):
+        (testWebViewSettings):
+        (testWebViewRunJavaScript):
+        (testWebViewCanShowMIMEType):
+        (testWebViewSubmitForm):
+        (testWebViewSave):
+        (testWebViewPageVisibility):
+        (testWebViewSnapshot):
+        (testWebViewNotification):
+        (testWebViewNotificationInitialPermissionAllowed):
+        (testWebViewNotificationInitialPermissionDisallowed):
+        (testWebViewIsPlayingAudio):
+        * TestWebKitAPI/Tests/WebKitGLib/TestWebsiteData.cpp:
+        (WebsiteDataTest::WebsiteDataTest):
+        (WebsiteDataTest::remove):
+        (WebsiteDataTest::clear):
+        (testWebsiteDataConfiguration):
+        (testWebsiteDataEphemeral):
+        (testWebsiteDataCache):
+        (testWebsiteDataStorage):
+        (testWebsiteDataDatabases):
+        (testWebsiteDataAppcache):
+        (testWebsiteDataCookies):
+        (testWebsiteDataDeviceIdHashSalt):
+        * TestWebKitAPI/Tests/WebKitGLib/WebExtensionTest.cpp:
+        (emitDocumentLoaded):
+        (emitURIChanged):
+        (sendRequestCallback):
+        (contextMenuCallback):
+        (consoleMessageSentCallback):
+        (emitFormControlsAssociated):
+        (formControlsAssociatedCallback):
+        (emitFormSubmissionEvent):
+        (willSubmitFormCallback):
+        (windowObjectCleared):
+        (methodCallCallback):
+        (registerGResource):
+        (webkit_web_extension_initialize_with_user_data):
+        * TestWebKitAPI/Tests/WebKitGLib/WebProcessTest.cpp:
+        (checkLeaks):
+        (WebProcessTest::create):
+        (runTest):
+        * TestWebKitAPI/Tests/WebKitGtk/AutocleanupsTest.cpp:
+        (AutocleanupsTest::testWebProcessAutocleanups):
+        * TestWebKitAPI/Tests/WebKitGtk/DOMClientRectTest.cpp:
+        (WebKitDOMClientRectTest::testDivBoundingClientRectPosition):
+        (WebKitDOMClientRectTest::testDivClientRectsPositionAndLength):
+        * TestWebKitAPI/Tests/WebKitGtk/DOMDOMWindowTest.cpp:
+        (WebKitDOMDOMWindowTest::testSignals):
+        (WebKitDOMDOMWindowTest::testDispatchEvent):
+        (WebKitDOMDOMWindowTest::testGetComputedStyle):
+        * TestWebKitAPI/Tests/WebKitGtk/DOMNodeFilterTest.cpp:
+        (WebKitDOMNodeFilterTest::testTreeWalker):
+        (WebKitDOMNodeFilterTest::testNodeIterator):
+        * TestWebKitAPI/Tests/WebKitGtk/DOMNodeTest.cpp:
+        (WebKitDOMNodeTest::testHierarchyNavigation):
+        (WebKitDOMNodeTest::testInsertion):
+        (WebKitDOMNodeTest::testTagNamesNodeList):
+        (WebKitDOMNodeTest::testTagNamesHTMLCollection):
+        (WebKitDOMNodeTest::testDOMCache):
+        * TestWebKitAPI/Tests/WebKitGtk/DOMXPathNSResolverTest.cpp:
+        (WebKitDOMXPathNSResolverTest::evaluateFooChildTextAndCheckResult):
+        (WebKitDOMXPathNSResolverTest::testXPathNSResolverNative):
+        (WebKitDOMXPathNSResolverTest::testXPathNSResolverCustom):
+        * TestWebKitAPI/Tests/WebKitGtk/TestAutocleanups.cpp:
+        (testUIProcessAutocleanups):
+        (testWebProcessAutocleanups):
+        * TestWebKitAPI/Tests/WebKitGtk/TestContextMenu.cpp:
+        (testContextMenuPopulateMenu):
+        (testContextMenuDismissed):
+        * TestWebKitAPI/Tests/WebKitGtk/TestDOMClientRect.cpp:
+        (testWebKitDOMClientRectDivBoundingClientRectPosition):
+        (testWebKitDOMClientRectDivClientRectsPositionAndLength):
+        * TestWebKitAPI/Tests/WebKitGtk/TestDOMDOMWindow.cpp:
+        (testWebKitDOMDOMWindowSignals):
+        (testWebKitDOMDOMWindowDispatchEvent):
+        (testWebKitDOMDOMWindowGetComputedStyle):
+        * TestWebKitAPI/Tests/WebKitGtk/TestDOMNode.cpp:
+        (testWebKitDOMNodeHierarchyNavigation):
+        (testWebKitDOMNodeInsertion):
+        (testWebKitDOMNodeTagNamesNodeList):
+        (testWebKitDOMNodeTagNamesHTMLCollection):
+        (testWebKitDOMObjectCache):
+        * TestWebKitAPI/Tests/WebKitGtk/TestDOMNodeFilter.cpp:
+        (testWebKitDOMNodeFilterTreeWalker):
+        (testWebKitDOMNodeFilterNodeIterator):
+        * TestWebKitAPI/Tests/WebKitGtk/TestDOMXPathNSResolver.cpp:
+        (testWebKitDOMXPathNSResolverNative):
+        (testWebKitDOMXPathNSResolverCustom):
+        * TestWebKitAPI/Tests/WebKitGtk/TestInspector.cpp:
+        (testInspectorDefault):
+        (testInspectorManualAttachDetach):
+        (testInspectorCustomContainerDestroyed):
+        * TestWebKitAPI/Tests/WebKitGtk/TestInspectorServer.cpp:
+        (startTestServer):
+        (testInspectorServerPageList):
+        * TestWebKitAPI/Tests/WebKitGtk/TestOptionMenu.cpp:
+        (OptionMenuTest::showOptionMenuCallback):
+        (OptionMenuTest::menuCloseCallback):
+        (OptionMenuTest::close):
+        (OptionMenuTest::activateItem):
+        (OptionMenuTest::selectItem):
+        (testOptionMenuSimple):
+        (testOptionMenuGroups):
+        (testOptionMenuActivate):
+        (testOptionMenuSelect):
+        * TestWebKitAPI/Tests/WebKitGtk/TestPrinting.cpp:
+        (testPrintOperationPrintSettings):
+        (webViewPrintCallback):
+        (testPrintOperationPrint):
+        (testPrintCustomWidget):
+        * TestWebKitAPI/Tests/WebKitGtk/TestWebKitAccessibility.cpp:
+        (checkAtspiAccessible):
+        (testAtspiBasicHierarchy):
+        * TestWebKitAPI/Tests/WebKitGtk/TestWebKitVersion.cpp:
+        (testWebKitCheckVersion):
+        * TestWebKitAPI/Tests/WebKitGtk/TestWebViewEditor.cpp:
+        (testWebViewEditorCutCopyPasteNonEditable):
+        (testWebViewEditorCutCopyPasteEditable):
+        (testWebViewEditorSelectAllNonEditable):
+        (testWebViewEditorSelectAllEditable):
+        (loadContentsAndTryToCutSelection):
+        (testWebViewEditorNonEditable):
+        (testWebViewEditorEditable):
+        (testWebViewEditorEditorStateTypingAttributes):
+        (testWebViewEditorInsertImage):
+        (testWebViewEditorCreateLink):
+        * TestWebKitAPI/glib/WebKitGLib/LoadTrackingTest.cpp:
+        (loadChangedCallback):
+        (loadFailedCallback):
+        (loadFailedWithTLSErrorsCallback):
+        (LoadTrackingTest::LoadTrackingTest):
+        * TestWebKitAPI/glib/WebKitGLib/TestMain.cpp:
+        (registerGResource):
+        (removeNonEmptyDirectory):
+        * TestWebKitAPI/glib/WebKitGLib/TestMain.h:
+        (Test::adoptView):
+        (Test::~Test):
+        * TestWebKitAPI/glib/WebKitGLib/WebKitTestBus.cpp:
+        (WebKitTestBus::getOrCreateConnection):
+        (WebKitTestBus::createProxy):
+        * TestWebKitAPI/glib/WebKitGLib/WebKitTestServer.cpp:
+        (WebKitTestServer::getWebSocketURIForPath const):
+        * TestWebKitAPI/glib/WebKitGLib/WebViewTest.cpp:
+        (WebViewTest::initializeWebView):
+        (WebViewTest::loadURI):
+        (WebViewTest::loadHtml):
+        (WebViewTest::loadPlainText):
+        (WebViewTest::loadBytes):
+        (WebViewTest::loadRequest):
+        (WebViewTest::loadAlternateHTML):
+        (WebViewTest::goBack):
+        (WebViewTest::goForward):
+        (WebViewTest::goToBackForwardListItem):
+        (resourceGetDataCallback):
+        (WebViewTest::mainResourceData):
+        (WebViewTest::javascriptResultToCString):
+        (WebViewTest::javascriptResultToNumber):
+        (WebViewTest::javascriptResultToBoolean):
+        (WebViewTest::javascriptResultIsNull):
+        (WebViewTest::javascriptResultIsUndefined):
+        (onSnapshotReady):
+        (WebViewTest::runWebProcessTest):
+        * TestWebKitAPI/glib/WebKitGLib/gtk/WebViewTestGtk.cpp:
+        (WebViewTest::platformInitializeWebView):
+        (WebViewTest::showInWindow):
+        (WebViewTest::showInWindowAndWaitUntilMapped):
+        (WebViewTest::mouseMoveTo):
+        (WebViewTest::emitPopupMenuSignal):
+        (WebViewTest::keyStroke):
+        (WebViewTest::doMouseButtonEvent):
+
 2019-01-09  Philippe Normand  <pnormand@igalia.com>
 
         [WPE] API tests can't run in flatpak environment

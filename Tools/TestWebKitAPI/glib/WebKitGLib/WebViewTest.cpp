@@ -47,7 +47,7 @@ WebViewTest::~WebViewTest()
 
 void WebViewTest::initializeWebView()
 {
-    g_assert(!m_webView);
+    g_assert_null(m_webView);
 
     m_webView = WEBKIT_WEB_VIEW(g_object_new(WEBKIT_TYPE_WEB_VIEW,
 #if PLATFORM(WPE)
@@ -76,7 +76,7 @@ void WebViewTest::loadURI(const char* uri)
 {
     m_activeURI = uri;
     webkit_web_view_load_uri(m_webView, uri);
-    g_assert(webkit_web_view_is_loading(m_webView));
+    g_assert_true(webkit_web_view_is_loading(m_webView));
     g_assert_cmpstr(webkit_web_view_get_uri(m_webView), ==, m_activeURI.data());
 }
 
@@ -87,7 +87,7 @@ void WebViewTest::loadHtml(const char* html, const char* baseURI)
     else
         m_activeURI = baseURI;
     webkit_web_view_load_html(m_webView, html, baseURI);
-    g_assert(webkit_web_view_is_loading(m_webView));
+    g_assert_true(webkit_web_view_is_loading(m_webView));
     g_assert_cmpstr(webkit_web_view_get_uri(m_webView), ==, m_activeURI.data());
 }
 
@@ -95,7 +95,7 @@ void WebViewTest::loadPlainText(const char* plainText)
 {
     m_activeURI = "about:blank";
     webkit_web_view_load_plain_text(m_webView, plainText);
-    g_assert(webkit_web_view_is_loading(m_webView));
+    g_assert_true(webkit_web_view_is_loading(m_webView));
     g_assert_cmpstr(webkit_web_view_get_uri(m_webView), ==, m_activeURI.data());
 }
 
@@ -106,7 +106,7 @@ void WebViewTest::loadBytes(GBytes* bytes, const char* mimeType, const char* enc
     else
         m_activeURI = baseURI;
     webkit_web_view_load_bytes(m_webView, bytes, mimeType, encoding, baseURI);
-    g_assert(webkit_web_view_is_loading(m_webView));
+    g_assert_true(webkit_web_view_is_loading(m_webView));
     g_assert_cmpstr(webkit_web_view_get_uri(m_webView), ==, m_activeURI.data());
 }
 
@@ -114,7 +114,7 @@ void WebViewTest::loadRequest(WebKitURIRequest* request)
 {
     m_activeURI = webkit_uri_request_get_uri(request);
     webkit_web_view_load_request(m_webView, request);
-    g_assert(webkit_web_view_is_loading(m_webView));
+    g_assert_true(webkit_web_view_is_loading(m_webView));
     g_assert_cmpstr(webkit_web_view_get_uri(m_webView), ==, m_activeURI.data());
 }
 
@@ -122,7 +122,7 @@ void WebViewTest::loadAlternateHTML(const char* html, const char* contentURI, co
 {
     m_activeURI = contentURI;
     webkit_web_view_load_alternate_html(m_webView, html, contentURI, baseURI);
-    g_assert(webkit_web_view_is_loading(m_webView));
+    g_assert_true(webkit_web_view_is_loading(m_webView));
     g_assert_cmpstr(webkit_web_view_get_uri(m_webView), ==, m_activeURI.data());
 }
 
@@ -138,7 +138,7 @@ void WebViewTest::goBack()
     // Call go_back even when can_go_back returns FALSE to check nothing happens.
     webkit_web_view_go_back(m_webView);
     if (canGoBack) {
-        g_assert(webkit_web_view_is_loading(m_webView));
+        g_assert_true(webkit_web_view_is_loading(m_webView));
         g_assert_cmpstr(webkit_web_view_get_uri(m_webView), ==, m_activeURI.data());
     }
 }
@@ -155,7 +155,7 @@ void WebViewTest::goForward()
     // Call go_forward even when can_go_forward returns FALSE to check nothing happens.
     webkit_web_view_go_forward(m_webView);
     if (canGoForward) {
-        g_assert(webkit_web_view_is_loading(m_webView));
+        g_assert_true(webkit_web_view_is_loading(m_webView));
         g_assert_cmpstr(webkit_web_view_get_uri(m_webView), ==, m_activeURI.data());
     }
 }
@@ -164,7 +164,7 @@ void WebViewTest::goToBackForwardListItem(WebKitBackForwardListItem* item)
 {
     m_activeURI = webkit_back_forward_list_item_get_original_uri(item);
     webkit_web_view_go_to_back_forward_list_item(m_webView, item);
-    g_assert(webkit_web_view_is_loading(m_webView));
+    g_assert_true(webkit_web_view_is_loading(m_webView));
     g_assert_cmpstr(webkit_web_view_get_uri(m_webView), ==, m_activeURI.data());
 }
 
@@ -238,7 +238,7 @@ static void resourceGetDataCallback(GObject* object, GAsyncResult* result, gpoin
     size_t dataSize;
     GUniqueOutPtr<GError> error;
     unsigned char* data = webkit_web_resource_get_data_finish(WEBKIT_WEB_RESOURCE(object), result, &dataSize, &error.outPtr());
-    g_assert(data);
+    g_assert_nonnull(data);
 
     WebViewTest* test = static_cast<WebViewTest*>(userData);
     test->m_resourceData.reset(reinterpret_cast<char*>(data));
@@ -251,7 +251,7 @@ const char* WebViewTest::mainResourceData(size_t& mainResourceDataSize)
     m_resourceDataSize = 0;
     m_resourceData.reset();
     WebKitWebResource* resource = webkit_web_view_get_main_resource(m_webView);
-    g_assert(resource);
+    g_assert_nonnull(resource);
 
     webkit_web_resource_get_data(resource, 0, resourceGetDataCallback, this);
     g_main_loop_run(m_mainLoop);
@@ -317,38 +317,38 @@ WebKitJavascriptResult* WebViewTest::runJavaScriptInWorldAndWaitUntilFinished(co
 char* WebViewTest::javascriptResultToCString(WebKitJavascriptResult* javascriptResult)
 {
     auto* value = webkit_javascript_result_get_js_value(javascriptResult);
-    g_assert(JSC_IS_VALUE(value));
-    g_assert(jsc_value_is_string(value));
+    g_assert_true(JSC_IS_VALUE(value));
+    g_assert_true(jsc_value_is_string(value));
     return jsc_value_to_string(value);
 }
 
 double WebViewTest::javascriptResultToNumber(WebKitJavascriptResult* javascriptResult)
 {
     auto* value = webkit_javascript_result_get_js_value(javascriptResult);
-    g_assert(JSC_IS_VALUE(value));
-    g_assert(jsc_value_is_number(value));
+    g_assert_true(JSC_IS_VALUE(value));
+    g_assert_true(jsc_value_is_number(value));
     return jsc_value_to_double(value);
 }
 
 bool WebViewTest::javascriptResultToBoolean(WebKitJavascriptResult* javascriptResult)
 {
     auto* value = webkit_javascript_result_get_js_value(javascriptResult);
-    g_assert(JSC_IS_VALUE(value));
-    g_assert(jsc_value_is_boolean(value));
+    g_assert_true(JSC_IS_VALUE(value));
+    g_assert_true(jsc_value_is_boolean(value));
     return jsc_value_to_boolean(value);
 }
 
 bool WebViewTest::javascriptResultIsNull(WebKitJavascriptResult* javascriptResult)
 {
     auto* value = webkit_javascript_result_get_js_value(javascriptResult);
-    g_assert(JSC_IS_VALUE(value));
+    g_assert_true(JSC_IS_VALUE(value));
     return jsc_value_is_null(value);
 }
 
 bool WebViewTest::javascriptResultIsUndefined(WebKitJavascriptResult* javascriptResult)
 {
     auto* value = webkit_javascript_result_get_js_value(javascriptResult);
-    g_assert(JSC_IS_VALUE(value));
+    g_assert_true(JSC_IS_VALUE(value));
     return jsc_value_is_undefined(value);
 }
 
@@ -357,7 +357,7 @@ static void onSnapshotReady(WebKitWebView* web_view, GAsyncResult* res, WebViewT
 {
     GUniqueOutPtr<GError> error;
     test->m_surface = webkit_web_view_get_snapshot_finish(web_view, res, &error.outPtr());
-    g_assert(!test->m_surface || !error.get());
+    g_assert_true(!test->m_surface || !error.get());
     if (error)
         g_assert_error(error.get(), WEBKIT_SNAPSHOT_ERROR, WEBKIT_SNAPSHOT_ERROR_FAILED_TO_CREATE);
     test->quitMainLoop();
@@ -388,7 +388,7 @@ bool WebViewTest::runWebProcessTest(const char* suiteName, const char* testName,
     GUniquePtr<char> script(g_strdup_printf("WebProcessTestRunner.runTest('%s/%s');", suiteName, testName));
     GUniqueOutPtr<GError> error;
     WebKitJavascriptResult* javascriptResult = runJavaScriptAndWaitUntilFinished(script.get(), &error.outPtr());
-    g_assert(!error);
+    g_assert_no_error(error.get());
     loadURI("about:blank");
     waitUntilLoadFinished();
     return javascriptResultToBoolean(javascriptResult);

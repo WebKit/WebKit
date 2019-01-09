@@ -655,7 +655,7 @@ static void testJSCEvaluateInObject()
 
         GRefPtr<JSCValue> rootFoo = adoptGRef(jsc_value_object_get_property(globalObject.get(), "foo"));
         checker.watch(rootFoo.get());
-        g_assert(jsc_value_is_function(rootFoo.get()));
+        g_assert_true(jsc_value_is_function(rootFoo.get()));
         result = adoptGRef(jsc_value_function_call(rootFoo.get(), G_TYPE_NONE));
         checker.watch(result.get());
         g_assert_true(jsc_value_is_number(result.get()));

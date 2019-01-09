@@ -54,12 +54,12 @@ private:
         notify("ready", "");
 
         WebKitWebPage* page = webkit_web_extension_get_page(extension, webPageFromArgs(args));
-        g_assert(WEBKIT_IS_WEB_PAGE(page));
+        g_assert_true(WEBKIT_IS_WEB_PAGE(page));
         WebKitDOMDocument* document = webkit_web_page_get_dom_document(page);
-        g_assert(WEBKIT_DOM_IS_DOCUMENT(document));
+        g_assert_true(WEBKIT_DOM_IS_DOCUMENT(document));
 
         WebKitDOMDOMWindow* domWindow = webkit_dom_document_get_default_view(document);
-        g_assert(domWindow);
+        g_assert_nonnull(domWindow);
 
         // The "load" WebKitDOMDOMWindow signal is issued before this test is
         // called. There's no way to capture it here. We simply assume that
@@ -77,10 +77,10 @@ private:
         RunLoop::run();
 
         document = webkit_web_page_get_dom_document(page);
-        g_assert(WEBKIT_DOM_IS_DOCUMENT(document));
+        g_assert_true(WEBKIT_DOM_IS_DOCUMENT(document));
 
         WebKitDOMElement* element = webkit_dom_document_get_element_by_id(document, "test");
-        g_assert(element);
+        g_assert_nonnull(element);
 
         webkit_dom_event_target_add_event_listener(
             WEBKIT_DOM_EVENT_TARGET(element),
@@ -102,12 +102,12 @@ private:
         notify("ready", "");
 
         WebKitWebPage* page = webkit_web_extension_get_page(extension, webPageFromArgs(args));
-        g_assert(WEBKIT_IS_WEB_PAGE(page));
+        g_assert_true(WEBKIT_IS_WEB_PAGE(page));
         WebKitDOMDocument* document = webkit_web_page_get_dom_document(page);
-        g_assert(WEBKIT_DOM_IS_DOCUMENT(document));
+        g_assert_true(WEBKIT_DOM_IS_DOCUMENT(document));
 
         WebKitDOMDOMWindow* domWindow = webkit_dom_document_get_default_view(document);
-        g_assert(domWindow);
+        g_assert_nonnull(domWindow);
 
         // The "load" WebKitDOMDOMWindow signal is issued before this test is
         // called. There's no way to capture it here. We simply assume that
@@ -125,15 +125,15 @@ private:
         RunLoop::run();
 
         document = webkit_web_page_get_dom_document(page);
-        g_assert(WEBKIT_DOM_IS_DOCUMENT(document));
+        g_assert_true(WEBKIT_DOM_IS_DOCUMENT(document));
 
         WebKitDOMElement* element = webkit_dom_document_get_element_by_id(document, "test");
-        g_assert(element);
+        g_assert_nonnull(element);
 
         WebKitDOMEvent* event = webkit_dom_document_create_event(document, "MouseEvent", 0);
-        g_assert(event);
-        g_assert(WEBKIT_DOM_IS_EVENT(event));
-        g_assert(WEBKIT_DOM_IS_MOUSE_EVENT(event));
+        g_assert_nonnull(event);
+        g_assert_true(WEBKIT_DOM_IS_EVENT(event));
+        g_assert_true(WEBKIT_DOM_IS_MOUSE_EVENT(event));
 
         glong clientX, clientY;
         clientX = webkit_dom_element_get_client_left(element);
@@ -163,14 +163,14 @@ private:
     bool testGetComputedStyle(WebKitWebExtension* extension, GVariant* args)
     {
         WebKitWebPage* page = webkit_web_extension_get_page(extension, webPageFromArgs(args));
-        g_assert(WEBKIT_IS_WEB_PAGE(page));
+        g_assert_true(WEBKIT_IS_WEB_PAGE(page));
         WebKitDOMDocument* document = webkit_web_page_get_dom_document(page);
-        g_assert(WEBKIT_DOM_IS_DOCUMENT(document));
+        g_assert_true(WEBKIT_DOM_IS_DOCUMENT(document));
         WebKitDOMDOMWindow* domWindow = webkit_dom_document_get_default_view(document);
-        g_assert(domWindow);
+        g_assert_nonnull(domWindow);
         WebKitDOMElement* element = webkit_dom_document_get_element_by_id(document, "test");
-        g_assert(element);
-        g_assert(WEBKIT_DOM_IS_ELEMENT(element));
+        g_assert_nonnull(element);
+        g_assert_true(WEBKIT_DOM_IS_ELEMENT(element));
         WebKitDOMCSSStyleDeclaration* cssStyle = webkit_dom_dom_window_get_computed_style(domWindow, element, 0);
         gchar* fontSize = webkit_dom_css_style_declaration_get_property_value(cssStyle, "font-size");
         g_assert_cmpstr(fontSize, ==, "16px");

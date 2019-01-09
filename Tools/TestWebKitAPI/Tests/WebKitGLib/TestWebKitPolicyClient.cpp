@@ -122,7 +122,7 @@ static void testNavigationPolicy(PolicyClientTest* test, gconstpointer)
     g_assert_cmpint(webkit_navigation_action_get_mouse_button(navigationAction), ==, 0);
     g_assert_cmpint(webkit_navigation_action_get_modifiers(navigationAction), ==, 0);
     g_assert_false(webkit_navigation_action_is_redirect(navigationAction));
-    g_assert(!webkit_navigation_policy_decision_get_frame_name(decision));
+    g_assert_null(webkit_navigation_policy_decision_get_frame_name(decision));
     WebKitURIRequest* request = webkit_navigation_action_get_request(navigationAction);
     g_assert_cmpstr(webkit_uri_request_get_uri(request), ==, "http://webkitgtk.org/");
 
@@ -141,7 +141,7 @@ static void testNavigationPolicy(PolicyClientTest* test, gconstpointer)
     decision = WEBKIT_NAVIGATION_POLICY_DECISION(test->m_previousPolicyDecision.get());
     navigationAction = webkit_navigation_policy_decision_get_navigation_action(decision);
     g_assert_true(webkit_navigation_action_is_redirect(navigationAction));
-    g_assert(!webkit_navigation_policy_decision_get_frame_name(decision));
+    g_assert_null(webkit_navigation_policy_decision_get_frame_name(decision));
     request = webkit_navigation_action_get_request(navigationAction);
     g_assert_cmpstr(webkit_uri_request_get_uri(request), ==, kServer->getURIForPath("/").data());
 
@@ -174,12 +174,12 @@ static void testResponsePolicy(PolicyClientTest* test, gconstpointer)
 
     WebKitResponsePolicyDecision* decision = WEBKIT_RESPONSE_POLICY_DECISION(test->m_previousPolicyDecision.get());
     WebKitURIRequest* request = webkit_response_policy_decision_get_request(decision);
-    g_assert(WEBKIT_IS_URI_REQUEST(request));
+    g_assert_true(WEBKIT_IS_URI_REQUEST(request));
     ASSERT_CMP_CSTRING(webkit_uri_request_get_uri(request), ==, kServer->getURIForPath("/"));
     WebKitURIResponse* response = webkit_response_policy_decision_get_response(decision);
-    g_assert(WEBKIT_IS_URI_RESPONSE(response));
+    g_assert_true(WEBKIT_IS_URI_RESPONSE(response));
     ASSERT_CMP_CSTRING(webkit_uri_response_get_uri(response), ==, kServer->getURIForPath("/"));
-    g_assert(webkit_web_view_can_show_mime_type(test->m_webView, webkit_uri_response_get_mime_type(response)) ==
+    g_assert_cmpint(webkit_web_view_can_show_mime_type(test->m_webView, webkit_uri_response_get_mime_type(response)), ==,
         webkit_response_policy_decision_is_mime_type_supported(decision));
 
     test->m_respondToPolicyDecisionAsynchronously = true;
@@ -235,7 +235,7 @@ static void testNewWindowPolicy(PolicyClientTest* test, gconstpointer)
     test->m_policyDecisionResponse = PolicyClientTest::Use;
     test->loadHtml(windowOpeningHTML, "http://webkitgtk.org/");
     test->wait(1);
-    g_assert(data.triedToOpenWindow);
+    g_assert_true(data.triedToOpenWindow);
 
     WebKitNavigationPolicyDecision* decision = WEBKIT_NAVIGATION_POLICY_DECISION(test->m_previousPolicyDecision.get());
     g_assert_cmpstr(webkit_navigation_policy_decision_get_frame_name(decision), ==, "_blank");
@@ -247,7 +247,7 @@ static void testNewWindowPolicy(PolicyClientTest* test, gconstpointer)
     test->m_policyDecisionResponse = PolicyClientTest::Ignore;
     test->loadHtml(windowOpeningHTML, "http://webkitgtk.org/");
     test->wait(.2);
-    g_assert(!data.triedToOpenWindow);
+    g_assert_false(data.triedToOpenWindow);
 }
 
 static void serverCallback(SoupServer* server, SoupMessage* message, const char* path, GHashTable*, SoupClientContext*, gpointer)

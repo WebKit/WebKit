@@ -26,13 +26,13 @@
 static void testWebKitDOMXPathNSResolverNative(WebViewTest* test, gconstpointer)
 {
     static const char* nativeXML = "<root xmlns:foo='http://www.example.org'><foo:child>SUCCESS</foo:child></root>";
-    g_assert(test->runWebProcessTest("WebKitDOMXPathNSResolver", "native", nativeXML, "text/xml"));
+    g_assert_true(test->runWebProcessTest("WebKitDOMXPathNSResolver", "native", nativeXML, "text/xml"));
 }
 
 static void testWebKitDOMXPathNSResolverCustom(WebViewTest* test, gconstpointer)
 {
     static const char* customXML = "<root xmlns='http://www.example.com'><child>SUCCESS</child></root>";
-    g_assert(test->runWebProcessTest("WebKitDOMXPathNSResolver", "custom", customXML, "text/xml"));
+    g_assert_true(test->runWebProcessTest("WebKitDOMXPathNSResolver", "custom", customXML, "text/xml"));
 }
 
 void beforeAll()

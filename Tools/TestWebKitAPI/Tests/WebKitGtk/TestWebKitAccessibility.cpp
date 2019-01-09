@@ -122,7 +122,7 @@ static void startTestServer()
 
 static void checkAtspiAccessible(AtspiAccessible* accessible, const char* targetName, AtspiRole targetRole)
 {
-    g_assert(ATSPI_IS_ACCESSIBLE(accessible));
+    g_assert_true(ATSPI_IS_ACCESSIBLE(accessible));
 
     GUniquePtr<char> name(atspi_accessible_get_name(accessible, 0));
     g_assert_cmpstr(targetName, ==, name.get());
@@ -150,58 +150,58 @@ static void testAtspiBasicHierarchy(WebViewTest* test, gconstpointer)
 {
     // The test server's accessibility object (UI Process).
     GRefPtr<AtspiAccessible> testServerApp = findTestServerApplication();
-    g_assert(ATSPI_IS_ACCESSIBLE(testServerApp.get()));
+    g_assert_true(ATSPI_IS_ACCESSIBLE(testServerApp.get()));
     checkAtspiAccessible(testServerApp.get(), "AccessibilityTestServer", ATSPI_ROLE_APPLICATION);
 
     // The main window's accessibility object (UI Process).
     GRefPtr<AtspiAccessible> currentParent = testServerApp;
     GRefPtr<AtspiAccessible> currentChild = adoptGRef(atspi_accessible_get_child_at_index(currentParent.get(), 0, 0));
-    g_assert(ATSPI_IS_ACCESSIBLE(currentChild.get()));
+    g_assert_true(ATSPI_IS_ACCESSIBLE(currentChild.get()));
     checkAtspiAccessible(currentChild.get(), "", ATSPI_ROLE_FRAME);
 
     // The WebView's accessibility object (UI Process).
     currentParent = currentChild;
     currentChild = atspi_accessible_get_child_at_index(currentParent.get(), 0, 0);
-    g_assert(ATSPI_IS_ACCESSIBLE(currentChild.get()));
+    g_assert_true(ATSPI_IS_ACCESSIBLE(currentChild.get()));
     checkAtspiAccessible(currentChild.get(), "", ATSPI_ROLE_FILLER);
 
     // The WebPage's accessibility object (Web Process).
     currentParent = currentChild;
     currentChild = atspi_accessible_get_child_at_index(currentParent.get(), 0, 0);
-    g_assert(ATSPI_IS_ACCESSIBLE(currentChild.get()));
+    g_assert_true(ATSPI_IS_ACCESSIBLE(currentChild.get()));
     checkAtspiAccessible(currentChild.get(), "", ATSPI_ROLE_FILLER);
 
     // HTML root element's accessible element (Web Process).
     currentParent = currentChild;
     currentChild = atspi_accessible_get_child_at_index(currentParent.get(), 0, 0);
-    g_assert(ATSPI_IS_ACCESSIBLE(currentChild.get()));
+    g_assert_true(ATSPI_IS_ACCESSIBLE(currentChild.get()));
 
     // HTML body's accessible element (Web Process).
     currentParent = currentChild;
     currentChild = atspi_accessible_get_child_at_index(currentParent.get(), 0, 0);
-    g_assert(ATSPI_IS_ACCESSIBLE(currentChild.get()));
+    g_assert_true(ATSPI_IS_ACCESSIBLE(currentChild.get()));
     checkAtspiAccessible(currentChild.get(), "", ATSPI_ROLE_DOCUMENT_WEB);
 
     // HTML H1's accessible element (Web Process).
     currentParent = currentChild;
     currentChild = atspi_accessible_get_child_at_index(currentParent.get(), 0, 0);
-    g_assert(ATSPI_IS_ACCESSIBLE(currentChild.get()));
+    g_assert_true(ATSPI_IS_ACCESSIBLE(currentChild.get()));
     checkAtspiAccessible(currentChild.get(), "This is a test", ATSPI_ROLE_HEADING);
 
     // HTML first paragraph's accessible element (Web Process).
     currentChild = atspi_accessible_get_child_at_index(currentParent.get(), 1, 0);
-    g_assert(ATSPI_IS_ACCESSIBLE(currentChild.get()));
+    g_assert_true(ATSPI_IS_ACCESSIBLE(currentChild.get()));
     checkAtspiAccessible(currentChild.get(), "", ATSPI_ROLE_PARAGRAPH);
 
     // HTML second paragraph's accessible element (Web Process).
     currentChild = atspi_accessible_get_child_at_index(currentParent.get(), 2, 0);
-    g_assert(ATSPI_IS_ACCESSIBLE(currentChild.get()));
+    g_assert_true(ATSPI_IS_ACCESSIBLE(currentChild.get()));
     checkAtspiAccessible(currentChild.get(), "", ATSPI_ROLE_PARAGRAPH);
 
     // HTML link's accessible element (Web Process).
     currentParent = currentChild;
     currentChild = atspi_accessible_get_child_at_index(currentParent.get(), 0, 0);
-    g_assert(ATSPI_IS_ACCESSIBLE(currentChild.get()));
+    g_assert_true(ATSPI_IS_ACCESSIBLE(currentChild.get()));
     checkAtspiAccessible(currentChild.get(), "a link", ATSPI_ROLE_LINK);
 }
 

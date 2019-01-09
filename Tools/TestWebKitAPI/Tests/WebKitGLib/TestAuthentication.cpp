@@ -103,9 +103,9 @@ static void testWebViewAuthenticationRequest(AuthenticationTest* test, gconstpoi
     g_assert_cmpstr(webkit_authentication_request_get_host(request), ==, soup_uri_get_host(kServer->baseURI()));
     g_assert_cmpuint(webkit_authentication_request_get_port(request), ==, soup_uri_get_port(kServer->baseURI()));
     g_assert_cmpstr(webkit_authentication_request_get_realm(request), ==, "my realm");
-    g_assert(webkit_authentication_request_get_scheme(request) == WEBKIT_AUTHENTICATION_SCHEME_HTTP_BASIC);
-    g_assert(!webkit_authentication_request_is_for_proxy(request));
-    g_assert(!webkit_authentication_request_is_retry(request));
+    g_assert_cmpint(webkit_authentication_request_get_scheme(request), ==, WEBKIT_AUTHENTICATION_SCHEME_HTTP_BASIC);
+    g_assert_false(webkit_authentication_request_is_for_proxy(request));
+    g_assert_false(webkit_authentication_request_is_retry(request));
 }
 
 static void testWebViewAuthenticationCancel(AuthenticationTest* test, gconstpointer)
@@ -132,7 +132,7 @@ static void testWebViewAuthenticationLoadCancelled(AuthenticationTest* test, gco
     webkit_web_view_stop_loading(test->m_webView);
     // Expect empty page.
     test->waitUntilLoadFinished();
-    g_assert(test->authenticationCancelledReceived);
+    g_assert_true(test->authenticationCancelledReceived);
 
     g_assert_cmpint(test->m_loadEvents.size(), ==, 3);
     g_assert_cmpint(test->m_loadEvents[0], ==, LoadTrackingTest::ProvisionalLoadStarted);
@@ -147,13 +147,13 @@ static void testWebViewAuthenticationFailure(AuthenticationTest* test, gconstpoi
     // Test authentication failures.
     test->loadURI(kServer->getURIForPath("/auth-test.html").data());
     WebKitAuthenticationRequest* request = test->waitForAuthenticationRequest();
-    g_assert(!webkit_authentication_request_is_retry(request));
+    g_assert_false(webkit_authentication_request_is_retry(request));
     WebKitCredential* credential = webkit_credential_new(authTestUsername, "wrongpassword", WEBKIT_CREDENTIAL_PERSISTENCE_NONE);
     webkit_authentication_request_authenticate(request, credential);
     webkit_credential_free(credential);
     // Expect a second authentication request.
     request = test->waitForAuthenticationRequest();
-    g_assert(webkit_authentication_request_is_retry(request));
+    g_assert_true(webkit_authentication_request_is_retry(request));
     // Test second failure.
     credential = webkit_credential_new(authTestUsername, "wrongpassword2", WEBKIT_CREDENTIAL_PERSISTENCE_NONE);
     webkit_authentication_request_authenticate(request, credential);
@@ -194,8 +194,8 @@ static void testWebViewAuthenticationStorage(AuthenticationTest* test, gconstpoi
     G_GNUC_END_IGNORE_DEPRECATIONS;
     test->loadURI(kServer->getURIForPath("/auth-test.html").data());
     WebKitAuthenticationRequest* request = test->waitForAuthenticationRequest();
-    g_assert(!webkit_authentication_request_get_proposed_credential(request));
-    g_assert(!webkit_authentication_request_can_save_credentials(request));
+    g_assert_null(webkit_authentication_request_get_proposed_credential(request));
+    g_assert_false(webkit_authentication_request_can_save_credentials(request));
 
     // If WebKit has been compiled with libsecret, and private browsing is disabled
     // then check that credentials can be saved.
@@ -205,8 +205,8 @@ static void testWebViewAuthenticationStorage(AuthenticationTest* test, gconstpoi
     G_GNUC_END_IGNORE_DEPRECATIONS;
     test->loadURI(kServer->getURIForPath("/auth-test.html").data());
     request = test->waitForAuthenticationRequest();
-    g_assert(!webkit_authentication_request_get_proposed_credential(request));
-    g_assert(webkit_authentication_request_can_save_credentials(request));
+    g_assert_null(webkit_authentication_request_get_proposed_credential(request));
+    g_assert_true(webkit_authentication_request_can_save_credentials(request));
 #endif
 }
 #endif
@@ -357,7 +357,7 @@ public:
     ProxyAuthenticationTest()
     {
         m_proxyServer.run(serverCallback);
-        g_assert(m_proxyServer.baseURI());
+        g_assert_nonnull(m_proxyServer.baseURI());
         gProxyServerPort = soup_uri_get_port(m_proxyServer.baseURI());
         GUniquePtr<char> proxyURI(soup_uri_to_string(m_proxyServer.baseURI(), FALSE));
         WebKitNetworkProxySettings* settings = webkit_network_proxy_settings_new(proxyURI.get(), nullptr);
@@ -387,9 +387,9 @@ static void testWebViewAuthenticationProxy(ProxyAuthenticationTest* test, gconst
     g_assert_cmpstr(webkit_authentication_request_get_host(request), ==, soup_uri_get_host(kServer->baseURI()));
     g_assert_cmpuint(webkit_authentication_request_get_port(request), ==, soup_uri_get_port(kServer->baseURI()));
     g_assert_cmpstr(webkit_authentication_request_get_realm(request), ==, "Proxy realm");
-    g_assert(webkit_authentication_request_get_scheme(request) == WEBKIT_AUTHENTICATION_SCHEME_HTTP_BASIC);
-    g_assert(webkit_authentication_request_is_for_proxy(request));
-    g_assert(!webkit_authentication_request_is_retry(request));
+    g_assert_cmpint(webkit_authentication_request_get_scheme(request), ==, WEBKIT_AUTHENTICATION_SCHEME_HTTP_BASIC);
+    g_assert_true(webkit_authentication_request_is_for_proxy(request));
+    g_assert_false(webkit_authentication_request_is_retry(request));
 }
 
 static void testWebViewAuthenticationProxyHTTPS(ProxyAuthenticationTest* test, gconstpointer)
@@ -403,9 +403,9 @@ static void testWebViewAuthenticationProxyHTTPS(ProxyAuthenticationTest* test, g
     g_assert_cmpstr(webkit_authentication_request_get_host(request), ==, soup_uri_get_host(httpsServer->baseURI()));
     g_assert_cmpuint(webkit_authentication_request_get_port(request), ==, soup_uri_get_port(httpsServer->baseURI()));
     g_assert_cmpstr(webkit_authentication_request_get_realm(request), ==, "Proxy realm");
-    g_assert(webkit_authentication_request_get_scheme(request) == WEBKIT_AUTHENTICATION_SCHEME_HTTP_BASIC);
-    g_assert(webkit_authentication_request_is_for_proxy(request));
-    g_assert(!webkit_authentication_request_is_retry(request));
+    g_assert_cmpint(webkit_authentication_request_get_scheme(request), ==, WEBKIT_AUTHENTICATION_SCHEME_HTTP_BASIC);
+    g_assert_true(webkit_authentication_request_is_for_proxy(request));
+    g_assert_false(webkit_authentication_request_is_retry(request));
 }
 
 void beforeAll()

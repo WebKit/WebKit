@@ -58,7 +58,7 @@ public:
         : WebViewTest()
         , m_cookieManager(webkit_web_context_get_cookie_manager(webkit_web_view_get_context(m_webView)))
     {
-        g_assert(webkit_website_data_manager_get_cookie_manager(webkit_web_context_get_website_data_manager(webkit_web_view_get_context(m_webView))) == m_cookieManager);
+        g_assert_true(webkit_website_data_manager_get_cookie_manager(webkit_web_context_get_website_data_manager(webkit_web_view_get_context(m_webView))) == m_cookieManager);
         g_signal_connect(m_cookieManager, "changed", G_CALLBACK(cookiesChangedCallback), this);
     }
 
@@ -98,7 +98,7 @@ public:
     {
         GUniqueOutPtr<GError> error;
         WebKitCookieAcceptPolicy policy = webkit_cookie_manager_get_accept_policy_finish(WEBKIT_COOKIE_MANAGER(object), result, &error.outPtr());
-        g_assert(!error.get());
+        g_assert_no_error(error.get());
 
         CookieManagerTest* test = static_cast<CookieManagerTest*>(userData);
         test->m_acceptPolicy = policy;
@@ -118,8 +118,8 @@ public:
     {
         GUniqueOutPtr<GError> error;
         bool added = webkit_cookie_manager_add_cookie_finish(WEBKIT_COOKIE_MANAGER(object), result, &error.outPtr());
-        g_assert(!error.get());
-        g_assert(added);
+        g_assert_no_error(error.get());
+        g_assert_true(added);
 
         CookieManagerTest* test = static_cast<CookieManagerTest*>(userData);
         g_main_loop_quit(test->m_mainLoop);
@@ -135,7 +135,7 @@ public:
     {
         GUniqueOutPtr<GError> error;
         GList* cookies = webkit_cookie_manager_get_cookies_finish(WEBKIT_COOKIE_MANAGER(object), result, &error.outPtr());
-        g_assert(!error.get());
+        g_assert_no_error(error.get());
 
         CookieManagerTest* test = static_cast<CookieManagerTest*>(userData);
         test->m_cookies = cookies;
@@ -156,8 +156,8 @@ public:
     {
         GUniqueOutPtr<GError> error;
         bool deleted = webkit_cookie_manager_delete_cookie_finish(WEBKIT_COOKIE_MANAGER(object), result, &error.outPtr());
-        g_assert(!error.get());
-        g_assert(deleted);
+        g_assert_no_error(error.get());
+        g_assert_true(deleted);
 
         CookieManagerTest* test = static_cast<CookieManagerTest*>(userData);
         g_main_loop_quit(test->m_mainLoop);
@@ -180,7 +180,7 @@ public:
         G_GNUC_BEGIN_IGNORE_DEPRECATIONS;
         char** domains = webkit_cookie_manager_get_domains_with_cookies_finish(WEBKIT_COOKIE_MANAGER(object), result, &error.outPtr());
         G_GNUC_END_IGNORE_DEPRECATIONS;
-        g_assert(!error.get());
+        g_assert_no_error(error.get());
 
         CookieManagerTest* test = static_cast<CookieManagerTest*>(userData);
         test->m_domains = domains;
@@ -252,7 +252,7 @@ static void testCookieManagerAcceptPolicy(CookieManagerTest* test, gconstpointer
     test->loadURI(kServer->getURIForPath("/index.html").data());
     test->waitUntilLoadFinished();
     char** domains = test->getDomains();
-    g_assert(domains);
+    g_assert_nonnull(domains);
     g_assert_cmpint(g_strv_length(domains), ==, 1);
     g_assert_cmpstr(domains[0], ==, kFirstPartyDomain);
     test->deleteAllCookies();
@@ -262,10 +262,10 @@ static void testCookieManagerAcceptPolicy(CookieManagerTest* test, gconstpointer
     test->loadURI(kServer->getURIForPath("/index.html").data());
     test->waitUntilLoadFinished();
     domains = test->getDomains();
-    g_assert(domains);
+    g_assert_nonnull(domains);
     g_assert_cmpint(g_strv_length(domains), ==, 2);
-    g_assert(test->hasDomain(kFirstPartyDomain));
-    g_assert(test->hasDomain(kThirdPartyDomain));
+    g_assert_true(test->hasDomain(kFirstPartyDomain));
+    g_assert_true(test->hasDomain(kThirdPartyDomain));
     test->deleteAllCookies();
 
     test->setAcceptPolicy(WEBKIT_COOKIE_POLICY_ACCEPT_NEVER);
@@ -273,7 +273,7 @@ static void testCookieManagerAcceptPolicy(CookieManagerTest* test, gconstpointer
     test->loadURI(kServer->getURIForPath("/index.html").data());
     test->waitUntilLoadFinished();
     domains = test->getDomains();
-    g_assert(domains);
+    g_assert_nonnull(domains);
     g_assert_cmpint(g_strv_length(domains), ==, 0);
 }
 
@@ -520,19 +520,19 @@ static void testCookieManagerDeleteCookies(CookieManagerTest* test, gconstpointe
 
 static void testCookieManagerCookiesChanged(CookieManagerTest* test, gconstpointer)
 {
-    g_assert(!test->m_cookiesChanged);
+    g_assert_false(test->m_cookiesChanged);
     test->setAcceptPolicy(WEBKIT_COOKIE_POLICY_ACCEPT_ALWAYS);
     test->loadURI(kServer->getURIForPath("/index.html").data());
     test->waitUntilLoadFinished();
-    g_assert(test->m_cookiesChanged);
+    g_assert_true(test->m_cookiesChanged);
 
     test->deleteCookiesForDomain(kFirstPartyDomain);
     test->waitUntilCookiesChanged();
-    g_assert(test->m_cookiesChanged);
+    g_assert_true(test->m_cookiesChanged);
 
     test->deleteAllCookies();
     test->waitUntilCookiesChanged();
-    g_assert(test->m_cookiesChanged);
+    g_assert_true(test->m_cookiesChanged);
 }
 
 static void testCookieManagerPersistentStorage(CookieManagerTest* test, gconstpointer)
@@ -542,34 +542,34 @@ static void testCookieManagerPersistentStorage(CookieManagerTest* test, gconstpo
     // Text storage using a new file.
     test->setPersistentStorage(WEBKIT_COOKIE_PERSISTENT_STORAGE_TEXT);
     char** domains = test->getDomains();
-    g_assert(domains);
+    g_assert_nonnull(domains);
     g_assert_cmpint(g_strv_length(domains), ==, 0);
 
     test->loadURI(kServer->getURIForPath("/index.html").data());
     test->waitUntilLoadFinished();
-    g_assert(test->m_cookiesChanged);
+    g_assert_true(test->m_cookiesChanged);
     domains = test->getDomains();
-    g_assert(domains);
+    g_assert_nonnull(domains);
     g_assert_cmpint(g_strv_length(domains), ==, 2);
 
 
     // SQLite storage using a new file.
     test->setPersistentStorage(WEBKIT_COOKIE_PERSISTENT_STORAGE_SQLITE);
     domains = test->getDomains();
-    g_assert(domains);
+    g_assert_nonnull(domains);
     g_assert_cmpint(g_strv_length(domains), ==, 0);
 
     test->loadURI(kServer->getURIForPath("/index.html").data());
     test->waitUntilLoadFinished();
-    g_assert(test->m_cookiesChanged);
+    g_assert_true(test->m_cookiesChanged);
     domains = test->getDomains();
-    g_assert(domains);
+    g_assert_nonnull(domains);
     g_assert_cmpint(g_strv_length(domains), ==, 2);
 
     // Text storage using an existing file.
     test->setPersistentStorage(WEBKIT_COOKIE_PERSISTENT_STORAGE_TEXT);
     domains = test->getDomains();
-    g_assert(domains);
+    g_assert_nonnull(domains);
     g_assert_cmpint(g_strv_length(domains), ==, 2);
     test->deleteAllCookies();
     g_assert_cmpint(g_strv_length(test->getDomains()), ==, 0);
@@ -577,7 +577,7 @@ static void testCookieManagerPersistentStorage(CookieManagerTest* test, gconstpo
     // SQLite storage with an existing file.
     test->setPersistentStorage(WEBKIT_COOKIE_PERSISTENT_STORAGE_SQLITE);
     domains = test->getDomains();
-    g_assert(domains);
+    g_assert_nonnull(domains);
     g_assert_cmpint(g_strv_length(domains), ==, 2);
     test->deleteAllCookies();
     g_assert_cmpint(g_strv_length(test->getDomains()), ==, 0);
@@ -591,7 +591,7 @@ static void testCookieManagerPersistentStorageDeleteAll(CookieManagerTest* test,
     time_t expires = time(nullptr) + 60;
     GUniquePtr<char> cookiesFileContents(g_strdup_printf(cookiesFileFormat, expires, expires));
     GUniquePtr<char> cookiesFile(g_build_filename(Test::dataDirectory(), "cookies.txt", nullptr));
-    g_assert(g_file_set_contents(cookiesFile.get(), cookiesFileContents.get(), -1, nullptr));
+    g_assert_true(g_file_set_contents(cookiesFile.get(), cookiesFileContents.get(), -1, nullptr));
 
     test->setPersistentStorage(WEBKIT_COOKIE_PERSISTENT_STORAGE_TEXT);
     test->deleteAllCookies();
@@ -602,9 +602,9 @@ static void testCookieManagerPersistentStorageDeleteAll(CookieManagerTest* test,
     test->m_cookiesChanged = false;
     test->loadURI(kServer->getURIForPath("/no-cookies.html").data());
     test->waitUntilLoadFinished();
-    g_assert(!test->m_cookiesChanged);
+    g_assert_false(test->m_cookiesChanged);
     char** domains = test->getDomains();
-    g_assert(domains);
+    g_assert_nonnull(domains);
     g_assert_cmpint(g_strv_length(domains), ==, 0);
 }
 
@@ -621,7 +621,7 @@ static void testCookieManagerEphemeral(CookieManagerTest* test, gconstpointer)
     test->setAcceptPolicy(WEBKIT_COOKIE_POLICY_ACCEPT_ALWAYS);
     test->setPersistentStorage(WEBKIT_COOKIE_PERSISTENT_STORAGE_TEXT);
     char** domains = test->getDomains();
-    g_assert(domains);
+    g_assert_nonnull(domains);
     g_assert_cmpint(g_strv_length(domains), ==, 0);
 
     auto webView = Test::adoptView(g_object_new(WEBKIT_TYPE_WEB_VIEW,
@@ -631,30 +631,30 @@ static void testCookieManagerEphemeral(CookieManagerTest* test, gconstpointer)
         "web-context", webkit_web_view_get_context(test->m_webView),
         "is-ephemeral", TRUE,
         nullptr));
-    g_assert(webkit_web_view_is_ephemeral(webView.get()));
-    g_assert(!webkit_web_context_is_ephemeral(webkit_web_view_get_context(webView.get())));
+    g_assert_true(webkit_web_view_is_ephemeral(webView.get()));
+    g_assert_false(webkit_web_context_is_ephemeral(webkit_web_view_get_context(webView.get())));
 
     g_signal_connect(webView.get(), "load-changed", G_CALLBACK(ephemeralViewloadChanged), test);
     webkit_web_view_load_uri(webView.get(), kServer->getURIForPath("/index.html").data());
     g_main_loop_run(test->m_mainLoop);
 
     domains = test->getDomains();
-    g_assert(domains);
+    g_assert_nonnull(domains);
     g_assert_cmpint(g_strv_length(domains), ==, 0);
 
     auto* viewDataManager = webkit_web_view_get_website_data_manager(webView.get());
-    g_assert(WEBKIT_IS_WEBSITE_DATA_MANAGER(viewDataManager));
+    g_assert_true(WEBKIT_IS_WEBSITE_DATA_MANAGER(viewDataManager));
     test->assertObjectIsDeletedWhenTestFinishes(G_OBJECT(viewDataManager));
-    g_assert(viewDataManager != webkit_web_context_get_website_data_manager(webkit_web_view_get_context(test->m_webView)));
+    g_assert_true(viewDataManager != webkit_web_context_get_website_data_manager(webkit_web_view_get_context(test->m_webView)));
     auto* cookieManager = webkit_website_data_manager_get_cookie_manager(viewDataManager);
-    g_assert(WEBKIT_IS_COOKIE_MANAGER(cookieManager));
+    g_assert_true(WEBKIT_IS_COOKIE_MANAGER(cookieManager));
     test->assertObjectIsDeletedWhenTestFinishes(G_OBJECT(cookieManager));
-    g_assert(cookieManager != test->m_cookieManager);
+    g_assert_true(cookieManager != test->m_cookieManager);
     G_GNUC_BEGIN_IGNORE_DEPRECATIONS;
     webkit_cookie_manager_get_domains_with_cookies(cookieManager, nullptr, [](GObject* object, GAsyncResult* result, gpointer userData) {
         auto* test = static_cast<CookieManagerTest*>(userData);
         GUniquePtr<char*> domains(webkit_cookie_manager_get_domains_with_cookies_finish(WEBKIT_COOKIE_MANAGER(object), result, nullptr));
-        g_assert(domains);
+        g_assert_nonnull(domains);
         g_assert_cmpint(g_strv_length(domains.get()), ==, 1);
         g_assert_cmpstr(domains.get()[0], ==, kFirstPartyDomain);
         test->quitMainLoop();

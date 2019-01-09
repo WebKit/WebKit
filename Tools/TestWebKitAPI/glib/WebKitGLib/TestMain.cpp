@@ -42,7 +42,7 @@ static void registerGResource(void)
 {
     GUniquePtr<char> resourcesPath(g_build_filename(WEBKIT_TEST_RESOURCES_DIR, "webkitglib-tests-resources.gresource", nullptr));
     GResource* resource = g_resource_load(resourcesPath.get(), nullptr);
-    g_assert(resource);
+    g_assert_nonnull(resource);
 
     g_resources_register(resource);
     g_resource_unref(resource);
@@ -51,7 +51,7 @@ static void registerGResource(void)
 static void removeNonEmptyDirectory(const char* directoryPath)
 {
     GDir* directory = g_dir_open(directoryPath, 0, 0);
-    g_assert(directory);
+    g_assert_nonnull(directory);
     const char* fileName;
     while ((fileName = g_dir_read_name(directory))) {
         GUniquePtr<char> filePath(g_build_filename(directoryPath, fileName, nullptr));

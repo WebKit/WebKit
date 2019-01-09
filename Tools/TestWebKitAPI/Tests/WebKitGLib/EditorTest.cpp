@@ -36,12 +36,12 @@ private:
         bool selectionChanged = false;
 
         WebKitWebEditor* editor = webkit_web_page_get_editor(page);
-        g_assert(WEBKIT_IS_WEB_EDITOR(editor));
+        g_assert_true(WEBKIT_IS_WEB_EDITOR(editor));
         assertObjectIsDeletedWhenTestFinishes(G_OBJECT(editor));
         g_signal_connect_swapped(editor, "selection-changed", G_CALLBACK(selectionChangedCallback), &selectionChanged);
 
         GRefPtr<JSCContext> jsContext = adoptGRef(webkit_frame_get_js_context(webkit_web_page_get_main_frame(page)));
-        g_assert(JSC_IS_CONTEXT(jsContext.get()));
+        g_assert_true(JSC_IS_CONTEXT(jsContext.get()));
         assertObjectIsDeletedWhenTestFinishes(G_OBJECT(jsContext.get()));
 
         static const char* steps[] = {
@@ -56,10 +56,10 @@ private:
         GRefPtr<JSCValue> result;
         unsigned i = 0;
         while (const char* command = steps[i++]) {
-            g_assert(!selectionChanged);
+            g_assert_false(selectionChanged);
             result = adoptGRef(jsc_context_evaluate(jsContext.get(), command, -1));
-            g_assert(JSC_IS_VALUE(result.get()));
-            g_assert(selectionChanged);
+            g_assert_true(JSC_IS_VALUE(result.get()));
+            g_assert_true(selectionChanged);
             selectionChanged = false;
         }
 

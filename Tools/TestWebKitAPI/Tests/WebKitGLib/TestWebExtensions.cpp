@@ -46,7 +46,7 @@ static void testWebExtensionGetTitle(WebViewTest* test, gconstpointer)
         g_variant_new("(t)", webkit_web_view_get_page_id(test->m_webView)),
         G_DBUS_CALL_FLAGS_NONE,
         -1, 0, 0));
-    g_assert(result);
+    g_assert_nonnull(result);
 
     const char* title;
     g_variant_get(result.get(), "(&s)", &title);
@@ -128,7 +128,7 @@ static void testDocumentLoadedSignal(WebViewTest* test, gconstpointer)
         reinterpret_cast<GDBusSignalCallback>(documentLoadedCallback),
         test,
         0);
-    g_assert(id);
+    g_assert_cmpuint(id, !=, 0);
 
     test->loadHtml("<html><head><title>WebKitGTK+ Web Extensions Test</title></head><body></body></html>", 0);
     g_main_loop_run(test->m_mainLoop);
@@ -163,7 +163,7 @@ static void testWebKitWebViewProcessCrashed(WebViewTest* test, gconstpointer)
         0,
         G_DBUS_CALL_FLAGS_NONE,
         -1, 0, 0));
-    g_assert(!result);
+    g_assert_null(result);
     g_main_loop_run(test->m_mainLoop);
     test->m_expectedWebProcessCrash = false;
 }
@@ -175,8 +175,8 @@ static void testWebExtensionWindowObjectCleared(WebViewTest* test, gconstpointer
 
     GUniqueOutPtr<GError> error;
     WebKitJavascriptResult* javascriptResult = test->runJavaScriptAndWaitUntilFinished("window.echo('Foo');", &error.outPtr());
-    g_assert(javascriptResult);
-    g_assert(!error.get());
+    g_assert_nonnull(javascriptResult);
+    g_assert_no_error(error.get());
     GUniquePtr<char> valueString(WebViewTest::javascriptResultToCString(javascriptResult));
     g_assert_cmpstr(valueString.get(), ==, "Foo");
 }
@@ -210,7 +210,7 @@ static void testWebExtensionIsolatedWorld(WebViewTest* test, gconstpointer)
     g_assert_cmpstr(scriptDialogResult.get(), ==, "Main World");
 
     WebKitJavascriptResult* javascriptResult = test->runJavaScriptAndWaitUntilFinished("document.getElementById('console').innerHTML", 0);
-    g_assert(javascriptResult);
+    g_assert_nonnull(javascriptResult);
     GUniquePtr<char> valueString(WebViewTest::javascriptResultToCString(javascriptResult));
     g_assert_cmpstr(valueString.get(), ==, "Foo");
 
@@ -233,7 +233,7 @@ static void testWebExtensionIsolatedWorld(WebViewTest* test, gconstpointer)
 
     // Check that 'top.foo' defined in main world is not visible in isolated world.
     javascriptResult = test->runJavaScriptAndWaitUntilFinished("document.getElementById('console').innerHTML", 0);
-    g_assert(javascriptResult);
+    g_assert_nonnull(javascriptResult);
     valueString.reset(WebViewTest::javascriptResultToCString(javascriptResult));
     g_assert_cmpstr(valueString.get(), ==, "undefined");
 
@@ -248,7 +248,7 @@ static gboolean permissionRequestCallback(WebKitWebView*, WebKitPermissionReques
 
     test->assertObjectIsDeletedWhenTestFinishes(G_OBJECT(request));
     WebKitInstallMissingMediaPluginsPermissionRequest* missingPluginsRequest = WEBKIT_INSTALL_MISSING_MEDIA_PLUGINS_PERMISSION_REQUEST(request);
-    g_assert(webkit_install_missing_media_plugins_permission_request_get_description(missingPluginsRequest));
+    g_assert_nonnull(webkit_install_missing_media_plugins_permission_request_get_description(missingPluginsRequest));
     webkit_permission_request_deny(request);
     test->quitMainLoop();
 
@@ -278,7 +278,7 @@ static void didAssociateFormControlsCallback(GDBusConnection*, const char*, cons
 {
     const char* formIds;
     g_variant_get(result, "(&s)", &formIds);
-    g_assert(!g_strcmp0(formIds, FORM_ID FORM2_ID) || !g_strcmp0(formIds, FORM2_ID FORM_ID) || !g_strcmp0(formIds, INPUT_ID));
+    g_assert_true(!g_strcmp0(formIds, FORM_ID FORM2_ID) || !g_strcmp0(formIds, FORM2_ID FORM_ID) || !g_strcmp0(formIds, INPUT_ID));
 
     test->quitMainLoop();
 }
@@ -299,7 +299,7 @@ static void testWebExtensionFormControlsAssociated(WebViewTest* test, gconstpoin
         reinterpret_cast<GDBusSignalCallback>(didAssociateFormControlsCallback),
         test,
         nullptr);
-    g_assert(id);
+    g_assert_cmpuint(id, !=, 0);
 
     test->loadHtml("<!DOCTYPE html><head><title>WebKitGTK+ Web Extensions Test</title></head><div id=\"placeholder\"/>", 0);
     test->waitUntilLoadFinished();
@@ -354,7 +354,7 @@ public:
             reinterpret_cast<GDBusSignalCallback>(willSendDOMEventCallback),
             this,
             nullptr);
-        g_assert(m_willSendDOMEventCallbackID);
+        g_assert_cmpuint(m_willSendDOMEventCallbackID, !=, 0);
 
         m_willCompleteCallbackID = g_dbus_connection_signal_subscribe(connection,
             nullptr,
@@ -366,7 +366,7 @@ public:
             reinterpret_cast<GDBusSignalCallback>(willCompleteCallback),
             this,
             nullptr);
-        g_assert(m_willCompleteCallbackID);
+        g_assert_cmpuint(m_willCompleteCallbackID, !=, 0);
     }
 
     ~FormSubmissionTest()
@@ -388,8 +388,8 @@ public:
         g_assert_cmpstr(formID, ==, FORM_SUBMISSION_TEST_ID);
         g_assert_cmpstr(concatenatedTextFieldNames, ==, "foo,bar,");
         g_assert_cmpstr(concatenatedTextFieldValues, ==, "first,second,");
-        g_assert(!targetFrameIsMainFrame);
-        g_assert(sourceFrameIsMainFrame);
+        g_assert_false(targetFrameIsMainFrame);
+        g_assert_true(sourceFrameIsMainFrame);
     }
 
     static void willSendDOMEventCallback(GDBusConnection*, const char*, const char*, const char*, const char*, GVariant* result, FormSubmissionTest* test)
@@ -434,16 +434,16 @@ static void testWebExtensionFormSubmissionSteps(FormSubmissionTest* test, gconst
     test->runJavaScriptAndWaitUntilFormSubmitted(submitFormScript);
     // Submit must not be emitted when the form is submitted via JS.
     // https://developer.mozilla.org/en-US/docs/Web/API/HTMLFormElement/submit
-    g_assert(!test->m_willSendDOMEventCallbackExecuted);
-    g_assert(test->m_willCompleteCallbackExecuted);
+    g_assert_false(test->m_willSendDOMEventCallbackExecuted);
+    g_assert_true(test->m_willCompleteCallbackExecuted);
     test->m_willCompleteCallbackExecuted = false;
 
     static const char* manuallySubmitFormScript =
         "var button = document.getElementById(\"submit_button\");"
         "button.click();";
     test->runJavaScriptAndWaitUntilFormSubmitted(manuallySubmitFormScript);
-    g_assert(test->m_willSendDOMEventCallbackExecuted);
-    g_assert(test->m_willCompleteCallbackExecuted);
+    g_assert_true(test->m_willSendDOMEventCallbackExecuted);
+    g_assert_true(test->m_willCompleteCallbackExecuted);
     test->m_willSendDOMEventCallbackExecuted = false;
     test->m_willCompleteCallbackExecuted = false;
 

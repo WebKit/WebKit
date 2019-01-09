@@ -32,7 +32,7 @@ public:
 
     void checkContextMenuEvent(GdkEvent* event)
     {
-        g_assert(event);
+        g_assert_nonnull(event);
         g_assert_cmpint(event->type, ==, m_expectedEventType);
 
         switch (m_expectedEventType) {
@@ -55,10 +55,10 @@ public:
 
     static gboolean contextMenuCallback(WebKitWebView* webView, WebKitContextMenu* contextMenu, GdkEvent* event, WebKitHitTestResult* hitTestResult, ContextMenuTest* test)
     {
-        g_assert(WEBKIT_IS_CONTEXT_MENU(contextMenu));
+        g_assert_true(WEBKIT_IS_CONTEXT_MENU(contextMenu));
         test->assertObjectIsDeletedWhenTestFinishes(G_OBJECT(contextMenu));
         test->checkContextMenuEvent(event);
-        g_assert(WEBKIT_IS_HIT_TEST_RESULT(hitTestResult));
+        g_assert_true(WEBKIT_IS_HIT_TEST_RESULT(hitTestResult));
         test->assertObjectIsDeletedWhenTestFinishes(G_OBJECT(hitTestResult));
 
         return test->contextMenu(contextMenu, event, hitTestResult);
@@ -111,38 +111,38 @@ public:
     void checkActionState(GtkAction* action, unsigned state)
     {
         if (state & Visible)
-            g_assert(gtk_action_get_visible(action));
+            g_assert_true(gtk_action_get_visible(action));
         else
-            g_assert(!gtk_action_get_visible(action));
+            g_assert_false(gtk_action_get_visible(action));
 
         if (state & Enabled)
-            g_assert(gtk_action_get_sensitive(action));
+            g_assert_true(gtk_action_get_sensitive(action));
         else
-            g_assert(!gtk_action_get_sensitive(action));
+            g_assert_false(gtk_action_get_sensitive(action));
 
         if (GTK_IS_TOGGLE_ACTION(action)) {
             if (state & Checked)
-                g_assert(gtk_toggle_action_get_active(GTK_TOGGLE_ACTION(action)));
+                g_assert_true(gtk_toggle_action_get_active(GTK_TOGGLE_ACTION(action)));
             else
-                g_assert(!gtk_toggle_action_get_active(GTK_TOGGLE_ACTION(action)));
+                g_assert_false(gtk_toggle_action_get_active(GTK_TOGGLE_ACTION(action)));
         }
     }
 
     GList* checkCurrentItemIsStockActionAndGetNext(GList* items, WebKitContextMenuAction stockAction, unsigned state)
     {
-        g_assert(items);
-        g_assert(WEBKIT_IS_CONTEXT_MENU_ITEM(items->data));
+        g_assert_nonnull(items);
+        g_assert_true(WEBKIT_IS_CONTEXT_MENU_ITEM(items->data));
 
         WebKitContextMenuItem* item = WEBKIT_CONTEXT_MENU_ITEM(items->data);
         assertObjectIsDeletedWhenTestFinishes(G_OBJECT(item));
 
         G_GNUC_BEGIN_IGNORE_DEPRECATIONS;
         GtkAction* action = webkit_context_menu_item_get_action(item);
-        g_assert(GTK_IS_ACTION(action));
+        g_assert_true(GTK_IS_ACTION(action));
         G_GNUC_END_IGNORE_DEPRECATIONS;
 
         GAction* gAction = webkit_context_menu_item_get_gaction(item);
-        g_assert(G_IS_ACTION(gAction));
+        g_assert_true(G_IS_ACTION(gAction));
 
         g_assert_cmpint(webkit_context_menu_item_get_stock_action(item), ==, stockAction);
 
@@ -153,27 +153,27 @@ public:
 
     GList* checkCurrentItemIsCustomActionAndGetNext(GList* items, const char* label, unsigned state)
     {
-        g_assert(items);
-        g_assert(WEBKIT_IS_CONTEXT_MENU_ITEM(items->data));
+        g_assert_nonnull(items);
+        g_assert_true(WEBKIT_IS_CONTEXT_MENU_ITEM(items->data));
 
         WebKitContextMenuItem* item = WEBKIT_CONTEXT_MENU_ITEM(items->data);
         assertObjectIsDeletedWhenTestFinishes(G_OBJECT(item));
 
         G_GNUC_BEGIN_IGNORE_DEPRECATIONS;
         GtkAction* action = webkit_context_menu_item_get_action(item);
-        g_assert(GTK_IS_ACTION(action));
+        g_assert_true(GTK_IS_ACTION(action));
         G_GNUC_END_IGNORE_DEPRECATIONS;
 
         GAction* gAction = webkit_context_menu_item_get_gaction(item);
-        g_assert(G_IS_ACTION(gAction));
+        g_assert_true(G_IS_ACTION(gAction));
         g_assert_cmpstr(gtk_action_get_name(action), ==, g_action_get_name(gAction));
-        g_assert(gtk_action_get_sensitive(action) == g_action_get_enabled(gAction));
+        g_assert_cmpint(gtk_action_get_sensitive(action), ==, g_action_get_enabled(gAction));
         if (GTK_IS_TOGGLE_ACTION(action)) {
-            g_assert(g_variant_type_equal(g_action_get_state_type(gAction), G_VARIANT_TYPE_BOOLEAN));
+            g_assert_true(g_variant_type_equal(g_action_get_state_type(gAction), G_VARIANT_TYPE_BOOLEAN));
             GRefPtr<GVariant> state = adoptGRef(g_action_get_state(gAction));
-            g_assert(gtk_toggle_action_get_active(GTK_TOGGLE_ACTION(action)) == g_variant_get_boolean(state.get()));
+            g_assert_cmpint(gtk_toggle_action_get_active(GTK_TOGGLE_ACTION(action)), ==, g_variant_get_boolean(state.get()));
         } else
-            g_assert(!g_action_get_state_type(gAction));
+            g_assert_null(g_action_get_state_type(gAction));
 
         g_assert_cmpint(webkit_context_menu_item_get_stock_action(item), ==, WEBKIT_CONTEXT_MENU_ACTION_CUSTOM);
         g_assert_cmpstr(gtk_action_get_label(action), ==, label);
@@ -185,25 +185,25 @@ public:
 
     GList* checkCurrentItemIsSubMenuAndGetNext(GList* items, const char* label, unsigned state, GList** subMenuIter)
     {
-        g_assert(items);
-        g_assert(WEBKIT_IS_CONTEXT_MENU_ITEM(items->data));
+        g_assert_nonnull(items);
+        g_assert_true(WEBKIT_IS_CONTEXT_MENU_ITEM(items->data));
 
         WebKitContextMenuItem* item = WEBKIT_CONTEXT_MENU_ITEM(items->data);
         assertObjectIsDeletedWhenTestFinishes(G_OBJECT(item));
 
         G_GNUC_BEGIN_IGNORE_DEPRECATIONS;
         GtkAction* action = webkit_context_menu_item_get_action(item);
-        g_assert(GTK_IS_ACTION(action));
+        g_assert_true(GTK_IS_ACTION(action));
         g_assert_cmpstr(gtk_action_get_label(action), ==, label);
         G_GNUC_END_IGNORE_DEPRECATIONS;
 
         GAction* gAction = webkit_context_menu_item_get_gaction(item);
-        g_assert(G_IS_ACTION(gAction));
+        g_assert_true(G_IS_ACTION(gAction));
 
         checkActionState(action, state);
 
         WebKitContextMenu* subMenu = webkit_context_menu_item_get_submenu(item);
-        g_assert(WEBKIT_IS_CONTEXT_MENU(subMenu));
+        g_assert_true(WEBKIT_IS_CONTEXT_MENU(subMenu));
         if (subMenuIter)
             *subMenuIter = webkit_context_menu_get_items(subMenu);
 
@@ -212,11 +212,11 @@ public:
 
     GList* checkCurrentItemIsSeparatorAndGetNext(GList* items)
     {
-        g_assert(items);
-        g_assert(WEBKIT_IS_CONTEXT_MENU_ITEM(items->data));
+        g_assert_nonnull(items);
+        g_assert_true(WEBKIT_IS_CONTEXT_MENU_ITEM(items->data));
 
         WebKitContextMenuItem* item = WEBKIT_CONTEXT_MENU_ITEM(items->data);
-        g_assert(webkit_context_menu_item_is_separator(item));
+        g_assert_true(webkit_context_menu_item_is_separator(item));
 
         return g_list_next(items);
     }
@@ -310,44 +310,44 @@ public:
 
         switch (m_expectedMenuType) {
         case Navigation:
-            g_assert(!webkit_hit_test_result_context_is_link(hitTestResult));
-            g_assert(!webkit_hit_test_result_context_is_image(hitTestResult));
-            g_assert(!webkit_hit_test_result_context_is_media(hitTestResult));
-            g_assert(!webkit_hit_test_result_context_is_editable(hitTestResult));
-            g_assert(!webkit_hit_test_result_context_is_selection(hitTestResult));
+            g_assert_false(webkit_hit_test_result_context_is_link(hitTestResult));
+            g_assert_false(webkit_hit_test_result_context_is_image(hitTestResult));
+            g_assert_false(webkit_hit_test_result_context_is_media(hitTestResult));
+            g_assert_false(webkit_hit_test_result_context_is_editable(hitTestResult));
+            g_assert_false(webkit_hit_test_result_context_is_selection(hitTestResult));
             iter = checkCurrentItemIsStockActionAndGetNext(iter, WEBKIT_CONTEXT_MENU_ACTION_GO_BACK, Visible);
             iter = checkCurrentItemIsStockActionAndGetNext(iter, WEBKIT_CONTEXT_MENU_ACTION_GO_FORWARD, Visible);
             iter = checkCurrentItemIsStockActionAndGetNext(iter, WEBKIT_CONTEXT_MENU_ACTION_STOP, Visible);
             iter = checkCurrentItemIsStockActionAndGetNext(iter, WEBKIT_CONTEXT_MENU_ACTION_RELOAD, Visible | Enabled);
             break;
         case Link:
-            g_assert(webkit_hit_test_result_context_is_link(hitTestResult));
-            g_assert(!webkit_hit_test_result_context_is_image(hitTestResult));
-            g_assert(!webkit_hit_test_result_context_is_media(hitTestResult));
-            g_assert(!webkit_hit_test_result_context_is_editable(hitTestResult));
-            g_assert(!webkit_hit_test_result_context_is_selection(hitTestResult));
+            g_assert_true(webkit_hit_test_result_context_is_link(hitTestResult));
+            g_assert_false(webkit_hit_test_result_context_is_image(hitTestResult));
+            g_assert_false(webkit_hit_test_result_context_is_media(hitTestResult));
+            g_assert_false(webkit_hit_test_result_context_is_editable(hitTestResult));
+            g_assert_false(webkit_hit_test_result_context_is_selection(hitTestResult));
             iter = checkCurrentItemIsStockActionAndGetNext(iter, WEBKIT_CONTEXT_MENU_ACTION_OPEN_LINK, Visible | Enabled);
             iter = checkCurrentItemIsStockActionAndGetNext(iter, WEBKIT_CONTEXT_MENU_ACTION_OPEN_LINK_IN_NEW_WINDOW, Visible | Enabled);
             iter = checkCurrentItemIsStockActionAndGetNext(iter, WEBKIT_CONTEXT_MENU_ACTION_DOWNLOAD_LINK_TO_DISK, Visible | Enabled);
             iter = checkCurrentItemIsStockActionAndGetNext(iter, WEBKIT_CONTEXT_MENU_ACTION_COPY_LINK_TO_CLIPBOARD, Visible | Enabled);
             break;
         case Image:
-            g_assert(!webkit_hit_test_result_context_is_link(hitTestResult));
-            g_assert(webkit_hit_test_result_context_is_image(hitTestResult));
-            g_assert(!webkit_hit_test_result_context_is_media(hitTestResult));
-            g_assert(!webkit_hit_test_result_context_is_editable(hitTestResult));
-            g_assert(!webkit_hit_test_result_context_is_selection(hitTestResult));
+            g_assert_false(webkit_hit_test_result_context_is_link(hitTestResult));
+            g_assert_true(webkit_hit_test_result_context_is_image(hitTestResult));
+            g_assert_false(webkit_hit_test_result_context_is_media(hitTestResult));
+            g_assert_false(webkit_hit_test_result_context_is_editable(hitTestResult));
+            g_assert_false(webkit_hit_test_result_context_is_selection(hitTestResult));
             iter = checkCurrentItemIsStockActionAndGetNext(iter, WEBKIT_CONTEXT_MENU_ACTION_OPEN_IMAGE_IN_NEW_WINDOW, Visible | Enabled);
             iter = checkCurrentItemIsStockActionAndGetNext(iter, WEBKIT_CONTEXT_MENU_ACTION_DOWNLOAD_IMAGE_TO_DISK, Visible | Enabled);
             iter = checkCurrentItemIsStockActionAndGetNext(iter, WEBKIT_CONTEXT_MENU_ACTION_COPY_IMAGE_TO_CLIPBOARD, Visible | Enabled);
             iter = checkCurrentItemIsStockActionAndGetNext(iter, WEBKIT_CONTEXT_MENU_ACTION_COPY_IMAGE_URL_TO_CLIPBOARD, Visible | Enabled);
             break;
         case LinkImage:
-            g_assert(webkit_hit_test_result_context_is_link(hitTestResult));
-            g_assert(webkit_hit_test_result_context_is_image(hitTestResult));
-            g_assert(!webkit_hit_test_result_context_is_media(hitTestResult));
-            g_assert(!webkit_hit_test_result_context_is_editable(hitTestResult));
-            g_assert(!webkit_hit_test_result_context_is_selection(hitTestResult));
+            g_assert_true(webkit_hit_test_result_context_is_link(hitTestResult));
+            g_assert_true(webkit_hit_test_result_context_is_image(hitTestResult));
+            g_assert_false(webkit_hit_test_result_context_is_media(hitTestResult));
+            g_assert_false(webkit_hit_test_result_context_is_editable(hitTestResult));
+            g_assert_false(webkit_hit_test_result_context_is_selection(hitTestResult));
             iter = checkCurrentItemIsStockActionAndGetNext(iter, WEBKIT_CONTEXT_MENU_ACTION_OPEN_LINK, Visible | Enabled);
             iter = checkCurrentItemIsStockActionAndGetNext(iter, WEBKIT_CONTEXT_MENU_ACTION_OPEN_LINK_IN_NEW_WINDOW, Visible | Enabled);
             iter = checkCurrentItemIsStockActionAndGetNext(iter, WEBKIT_CONTEXT_MENU_ACTION_DOWNLOAD_LINK_TO_DISK, Visible | Enabled);
@@ -359,11 +359,11 @@ public:
             iter = checkCurrentItemIsStockActionAndGetNext(iter, WEBKIT_CONTEXT_MENU_ACTION_COPY_IMAGE_URL_TO_CLIPBOARD, Visible | Enabled);
             break;
         case Video:
-            g_assert(!webkit_hit_test_result_context_is_link(hitTestResult));
-            g_assert(!webkit_hit_test_result_context_is_image(hitTestResult));
-            g_assert(webkit_hit_test_result_context_is_media(hitTestResult));
-            g_assert(!webkit_hit_test_result_context_is_editable(hitTestResult));
-            g_assert(!webkit_hit_test_result_context_is_selection(hitTestResult));
+            g_assert_false(webkit_hit_test_result_context_is_link(hitTestResult));
+            g_assert_false(webkit_hit_test_result_context_is_image(hitTestResult));
+            g_assert_true(webkit_hit_test_result_context_is_media(hitTestResult));
+            g_assert_false(webkit_hit_test_result_context_is_editable(hitTestResult));
+            g_assert_false(webkit_hit_test_result_context_is_selection(hitTestResult));
             iter = checkCurrentItemIsStockActionAndGetNext(iter, WEBKIT_CONTEXT_MENU_ACTION_MEDIA_PLAY, Visible | Enabled);
             iter = checkCurrentItemIsStockActionAndGetNext(iter, WEBKIT_CONTEXT_MENU_ACTION_MEDIA_MUTE, Visible);
             iter = checkCurrentItemIsStockActionAndGetNext(iter, WEBKIT_CONTEXT_MENU_ACTION_TOGGLE_MEDIA_CONTROLS, Visible | Enabled | Checked);
@@ -375,11 +375,11 @@ public:
             iter = checkCurrentItemIsStockActionAndGetNext(iter, WEBKIT_CONTEXT_MENU_ACTION_DOWNLOAD_VIDEO_TO_DISK, Visible | Enabled);
             break;
         case Audio:
-            g_assert(!webkit_hit_test_result_context_is_link(hitTestResult));
-            g_assert(!webkit_hit_test_result_context_is_image(hitTestResult));
-            g_assert(webkit_hit_test_result_context_is_media(hitTestResult));
-            g_assert(!webkit_hit_test_result_context_is_editable(hitTestResult));
-            g_assert(!webkit_hit_test_result_context_is_selection(hitTestResult));
+            g_assert_false(webkit_hit_test_result_context_is_link(hitTestResult));
+            g_assert_false(webkit_hit_test_result_context_is_image(hitTestResult));
+            g_assert_true(webkit_hit_test_result_context_is_media(hitTestResult));
+            g_assert_false(webkit_hit_test_result_context_is_editable(hitTestResult));
+            g_assert_false(webkit_hit_test_result_context_is_selection(hitTestResult));
             iter = checkCurrentItemIsStockActionAndGetNext(iter, WEBKIT_CONTEXT_MENU_ACTION_MEDIA_PLAY, Visible | Enabled);
             iter = checkCurrentItemIsStockActionAndGetNext(iter, WEBKIT_CONTEXT_MENU_ACTION_MEDIA_MUTE, Visible);
             iter = checkCurrentItemIsStockActionAndGetNext(iter, WEBKIT_CONTEXT_MENU_ACTION_TOGGLE_MEDIA_CONTROLS, Visible | Enabled | Checked);
@@ -391,11 +391,11 @@ public:
             iter = checkCurrentItemIsStockActionAndGetNext(iter, WEBKIT_CONTEXT_MENU_ACTION_DOWNLOAD_AUDIO_TO_DISK, Visible | Enabled);
             break;
         case Editable:
-            g_assert(!webkit_hit_test_result_context_is_link(hitTestResult));
-            g_assert(!webkit_hit_test_result_context_is_image(hitTestResult));
-            g_assert(!webkit_hit_test_result_context_is_media(hitTestResult));
-            g_assert(webkit_hit_test_result_context_is_editable(hitTestResult));
-            g_assert(!webkit_hit_test_result_context_is_selection(hitTestResult));
+            g_assert_false(webkit_hit_test_result_context_is_link(hitTestResult));
+            g_assert_false(webkit_hit_test_result_context_is_image(hitTestResult));
+            g_assert_false(webkit_hit_test_result_context_is_media(hitTestResult));
+            g_assert_true(webkit_hit_test_result_context_is_editable(hitTestResult));
+            g_assert_false(webkit_hit_test_result_context_is_selection(hitTestResult));
             iter = checkCurrentItemIsStockActionAndGetNext(iter, WEBKIT_CONTEXT_MENU_ACTION_CUT, Visible);
             iter = checkCurrentItemIsStockActionAndGetNext(iter, WEBKIT_CONTEXT_MENU_ACTION_COPY, Visible);
             iter = checkCurrentItemIsStockActionAndGetNext(iter, WEBKIT_CONTEXT_MENU_ACTION_PASTE, Visible | Enabled);
@@ -406,11 +406,11 @@ public:
             iter = checkCurrentItemIsStockActionAndGetNext(iter, WEBKIT_CONTEXT_MENU_ACTION_UNICODE, Visible | Enabled);
             break;
         case Selection:
-            g_assert(!webkit_hit_test_result_context_is_link(hitTestResult));
-            g_assert(!webkit_hit_test_result_context_is_image(hitTestResult));
-            g_assert(!webkit_hit_test_result_context_is_media(hitTestResult));
-            g_assert(!webkit_hit_test_result_context_is_editable(hitTestResult));
-            g_assert(webkit_hit_test_result_context_is_selection(hitTestResult));
+            g_assert_false(webkit_hit_test_result_context_is_link(hitTestResult));
+            g_assert_false(webkit_hit_test_result_context_is_image(hitTestResult));
+            g_assert_false(webkit_hit_test_result_context_is_media(hitTestResult));
+            g_assert_false(webkit_hit_test_result_context_is_editable(hitTestResult));
+            g_assert_true(webkit_hit_test_result_context_is_selection(hitTestResult));
             iter = checkCurrentItemIsStockActionAndGetNext(iter, WEBKIT_CONTEXT_MENU_ACTION_COPY, Visible | Enabled);
             break;
         default:
@@ -421,7 +421,7 @@ public:
             iter = checkCurrentItemIsSeparatorAndGetNext(iter);
             iter = checkCurrentItemIsStockActionAndGetNext(iter, WEBKIT_CONTEXT_MENU_ACTION_INSPECT_ELEMENT, Visible | Enabled);
         }
-        g_assert(!iter);
+        g_assert_null(iter);
 
         quitMainLoop();
 
@@ -550,7 +550,7 @@ public:
 
     void activateMenuItem()
     {
-        g_assert(m_itemToActivateLabel);
+        g_assert_nonnull(m_itemToActivateLabel);
         GtkMenu* menu = getPopupMenu();
         GtkMenuItem* item = getMenuItem(menu, m_itemToActivateLabel);
         gtk_menu_shell_activate_item(GTK_MENU_SHELL(menu), GTK_WIDGET(item), TRUE);
@@ -586,9 +586,9 @@ public:
             } else {
                 test->m_activated = true;
                 if (test->m_expectedTarget)
-                    g_assert(g_variant_equal(test->m_expectedTarget.get(), target));
+                    g_assert_true(g_variant_equal(test->m_expectedTarget.get(), target));
                 else
-                    g_assert(!target);
+                    g_assert_null(target);
             }
         } else
             test->m_activated = true;
@@ -642,39 +642,39 @@ static void testContextMenuPopulateMenu(ContextMenuCustomTest* test, gconstpoint
     test->setAction(action.get());
     test->showContextMenuAndWaitUntilFinished();
     test->activateCustomMenuItemAndWaitUntilActivated(gtk_action_get_label(action.get()));
-    g_assert(test->m_activated);
-    g_assert(!test->m_toggled);
+    g_assert_true(test->m_activated);
+    g_assert_false(test->m_toggled);
 
     // Create a custom toggle menu item.
     GRefPtr<GtkAction> toggleAction = adoptGRef(GTK_ACTION(gtk_toggle_action_new("WebKitGTK+CustomToggleAction", "Custom _Toggle Action", nullptr, nullptr)));
     test->setAction(toggleAction.get());
     test->showContextMenuAndWaitUntilFinished();
     test->toggleCustomMenuItemAndWaitUntilToggled(gtk_action_get_label(toggleAction.get()));
-    g_assert(!test->m_activated);
-    g_assert(test->m_toggled);
+    g_assert_false(test->m_activated);
+    g_assert_true(test->m_toggled);
 
     // Create a custom menu item using GAction.
     GRefPtr<GAction> gAction = adoptGRef(G_ACTION(g_simple_action_new("WebKitGTK+CustomGAction", nullptr)));
     test->setAction(gAction.get(), "Custom _GAction");
     test->showContextMenuAndWaitUntilFinished();
     test->activateCustomMenuItemAndWaitUntilActivated("Custom _GAction");
-    g_assert(test->m_activated);
-    g_assert(!test->m_toggled);
+    g_assert_true(test->m_activated);
+    g_assert_false(test->m_toggled);
 
     // Create a custom toggle menu item using GAction.
     GRefPtr<GAction> toggleGAction = adoptGRef(G_ACTION(g_simple_action_new_stateful("WebKitGTK+CustomToggleGAction", nullptr, g_variant_new_boolean(FALSE))));
     test->setAction(toggleGAction.get(), "Custom _Toggle GAction");
     test->showContextMenuAndWaitUntilFinished();
     test->toggleCustomMenuItemAndWaitUntilToggled("Custom _Toggle GAction");
-    g_assert(!test->m_activated);
-    g_assert(test->m_toggled);
+    g_assert_false(test->m_activated);
+    g_assert_true(test->m_toggled);
 
     // Create a custom menu item using GAction with a target.
     gAction = adoptGRef(G_ACTION(g_simple_action_new("WebKitGTK+CustomGActionWithTarget", G_VARIANT_TYPE_STRING)));
     test->setAction(gAction.get(), "Custom _GAction With Target", g_variant_new_string("WebKitGTK+CustomGActionTarget"));
     test->showContextMenuAndWaitUntilFinished();
     test->activateCustomMenuItemAndWaitUntilActivated("Custom _GAction With Target");
-    g_assert(test->m_activated);
+    g_assert_true(test->m_activated);
 }
 
 class ContextMenuCustomFullTest: public ContextMenuTest {
@@ -743,7 +743,7 @@ public:
         iter = checkCurrentItemIsSeparatorAndGetNext(iter);
         iter = checkCurrentItemIsCustomActionAndGetNext(iter, "Custom _GAction", Visible);
         iter = checkCurrentItemIsCustomActionAndGetNext(iter, "Custom T_oggle GAction", Visible | Enabled | Checked);
-        g_assert(!iter);
+        g_assert_null(iter);
 
         quitMainLoop();
 
@@ -834,23 +834,23 @@ public:
         GRefPtr<WebKitContextMenuItem> item = webkit_context_menu_item_new_from_stock_action(WEBKIT_CONTEXT_MENU_ACTION_OPEN_LINK);
 
         // Add submenu to newly created item.
-        g_assert(!webkit_context_menu_item_get_submenu(item.get()));
+        g_assert_null(webkit_context_menu_item_get_submenu(item.get()));
         webkit_context_menu_item_set_submenu(item.get(), subMenu2.get());
-        g_assert(webkit_context_menu_item_get_submenu(item.get()) == subMenu2.get());
+        g_assert_true(webkit_context_menu_item_get_submenu(item.get()) == subMenu2.get());
 
         // Replace the submenu.
         webkit_context_menu_item_set_submenu(item.get(), 0);
-        g_assert(!webkit_context_menu_item_get_submenu(item.get()));
+        g_assert_null(webkit_context_menu_item_get_submenu(item.get()));
 
         // Try to add a submenu already added to another item.
         removeLogFatalFlag(G_LOG_LEVEL_WARNING);
         webkit_context_menu_item_set_submenu(item.get(), subMenu.get());
         addLogFatalFlag(G_LOG_LEVEL_WARNING);
-        g_assert(!webkit_context_menu_item_get_submenu(item.get()));
+        g_assert_null(webkit_context_menu_item_get_submenu(item.get()));
 
         // A removed submenu shouldn't have a parent.
         webkit_context_menu_item_set_submenu(item.get(), subMenu2.get());
-        g_assert(webkit_context_menu_item_get_submenu(item.get()) == subMenu2.get());
+        g_assert_true(webkit_context_menu_item_get_submenu(item.get()) == subMenu2.get());
 
         quitMainLoop();
 
@@ -907,7 +907,7 @@ static void testContextMenuDismissed(ContextMenuDismissedTest* test, gconstpoint
     test->waitUntilLoadFinished();
 
     test->showContextMenuAndWaitUntilDismissed();
-    g_assert(test->m_dismissed);
+    g_assert_true(test->m_dismissed);
 }
 
 class ContextMenuWebExtensionTest: public ContextMenuTest {

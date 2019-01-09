@@ -135,7 +135,7 @@ public:
     }
     virtual void loadFailed(const gchar* failingURI, GError* error)
     {
-        g_assert(g_error_matches(error, WEBKIT_NETWORK_ERROR, WEBKIT_NETWORK_ERROR_CANCELLED));
+        g_assert_error(error, WEBKIT_NETWORK_ERROR, WEBKIT_NETWORK_ERROR_CANCELLED);
         LoadTrackingTest::loadFailed(failingURI, error);
     }
 };
@@ -155,7 +155,7 @@ static void testLoadCancelled(LoadStopTrackingTest* test, gconstpointer)
 
 static void testWebViewTitle(LoadTrackingTest* test, gconstpointer)
 {
-    g_assert(!webkit_web_view_get_title(test->m_webView));
+    g_assert_null(webkit_web_view_get_title(test->m_webView));
     test->loadHtml("<html><head><title>Welcome to WebKit-GTK+!</title></head></html>", 0);
     test->waitUntilLoadFinished();
     g_assert_cmpstr(webkit_web_view_get_title(test->m_webView), ==, "Welcome to WebKit-GTK+!");
@@ -253,7 +253,7 @@ public:
     ViewURITrackingTest()
         : m_currentURI(webkit_web_view_get_uri(m_webView))
     {
-        g_assert(m_currentURI.isNull());
+        g_assert_true(m_currentURI.isNull());
         m_currentURIList.grow(m_currentURIList.capacity());
         g_signal_connect(m_webView, "notify::uri", G_CALLBACK(uriChanged), this);
     }
@@ -292,7 +292,7 @@ public:
         if (path)
             ASSERT_CMP_CSTRING(m_currentURIList[state], ==, kServer->getURIForPath(path));
         else
-            g_assert(m_currentURIList[state].isNull());
+            g_assert_true(m_currentURIList[state].isNull());
     }
 
 private:
@@ -362,16 +362,16 @@ public:
     void beginLoad()
     {
         // New load, load-started hasn't been emitted yet.
-        g_assert(m_loadEvents.isEmpty());
+        g_assert_true(m_loadEvents.isEmpty());
         g_assert_cmpstr(webkit_web_view_get_uri(m_webView), ==, m_activeURI.data());
     }
 
     void endLoad()
     {
         // Load finish, load-finished and load-failed haven't been emitted yet.
-        g_assert(!m_loadEvents.isEmpty());
-        g_assert(!m_loadEvents.contains(LoadTrackingTest::LoadFinished));
-        g_assert(!m_loadEvents.contains(LoadTrackingTest::LoadFailed));
+        g_assert_false(m_loadEvents.isEmpty());
+        g_assert_false(m_loadEvents.contains(LoadTrackingTest::LoadFinished));
+        g_assert_false(m_loadEvents.contains(LoadTrackingTest::LoadFailed));
     }
 };
 
@@ -430,7 +430,7 @@ public:
             reinterpret_cast<GDBusSignalCallback>(webPageURIChangedCallback),
             this,
             0);
-        g_assert(m_uriChangedSignalID);
+        g_assert_cmpuint(m_uriChangedSignalID, !=, 0);
 
         g_signal_connect(m_webView, "notify::uri", G_CALLBACK(webViewURIChanged), this);
     }
@@ -498,9 +498,9 @@ static void testWebPageURI(WebPageURITest* test, gconstpointer)
 static void testURIRequestHTTPHeaders(WebViewTest* test, gconstpointer)
 {
     GRefPtr<WebKitURIRequest> uriRequest = adoptGRef(webkit_uri_request_new("file:///foo/bar"));
-    g_assert(uriRequest.get());
+    g_assert_nonnull(uriRequest.get());
     g_assert_cmpstr(webkit_uri_request_get_uri(uriRequest.get()), ==, "file:///foo/bar");
-    g_assert(!webkit_uri_request_get_http_headers(uriRequest.get()));
+    g_assert_null(webkit_uri_request_get_http_headers(uriRequest.get()));
 
     // Load a request with no Do Not Track header.
     webkit_uri_request_set_uri(uriRequest.get(), kServer->getURIForPath("/do-not-track-header").data());
@@ -510,18 +510,18 @@ static void testURIRequestHTTPHeaders(WebViewTest* test, gconstpointer)
     size_t mainResourceDataSize = 0;
     const char* mainResourceData = test->mainResourceData(mainResourceDataSize);
     g_assert_cmpint(mainResourceDataSize, ==, strlen(kDNTHeaderNotPresent));
-    g_assert(!strncmp(mainResourceData, kDNTHeaderNotPresent, mainResourceDataSize));
+    g_assert_cmpint(strncmp(mainResourceData, kDNTHeaderNotPresent, mainResourceDataSize), ==, 0);
 
     // Add the Do Not Track header and load the request again.
     SoupMessageHeaders* headers = webkit_uri_request_get_http_headers(uriRequest.get());
-    g_assert(headers);
+    g_assert_nonnull(headers);
     soup_message_headers_append(headers, "DNT", "1");
     test->loadRequest(uriRequest.get());
     test->waitUntilLoadFinished();
 
     mainResourceData = test->mainResourceData(mainResourceDataSize);
     g_assert_cmpint(mainResourceDataSize, ==, 1);
-    g_assert(!strncmp(mainResourceData, "1", mainResourceDataSize));
+    g_assert_cmpint(strncmp(mainResourceData, "1", mainResourceDataSize), ==, 0);
 
     // Load a URI for which the web extension will add the Do Not Track header.
     test->loadURI(kServer->getURIForPath("/add-do-not-track-header").data());
@@ -529,15 +529,15 @@ static void testURIRequestHTTPHeaders(WebViewTest* test, gconstpointer)
 
     mainResourceData = test->mainResourceData(mainResourceDataSize);
     g_assert_cmpint(mainResourceDataSize, ==, 1);
-    g_assert(!strncmp(mainResourceData, "1", mainResourceDataSize));
+    g_assert_cmpint(strncmp(mainResourceData, "1", mainResourceDataSize), ==, 0);
 }
 
 static void testURIRequestHTTPMethod(WebViewTest* test, gconstpointer)
 {
     GRefPtr<WebKitURIRequest> uriRequest = adoptGRef(webkit_uri_request_new("file:///foo/bar"));
-    g_assert(uriRequest.get());
+    g_assert_nonnull(uriRequest.get());
     g_assert_cmpstr(webkit_uri_request_get_uri(uriRequest.get()), ==, "file:///foo/bar");
-    g_assert(!webkit_uri_request_get_http_method(uriRequest.get()));
+    g_assert_null(webkit_uri_request_get_http_method(uriRequest.get()));
 
     webkit_uri_request_set_uri(uriRequest.get(), kServer->getURIForPath("/http-get-method").data());
     test->loadRequest(uriRequest.get());
@@ -551,19 +551,19 @@ static void testURIResponseHTTPHeaders(WebViewTest* test, gconstpointer)
     test->loadHtml("<html><body>No HTTP headers</body></html>", "file:///");
     test->waitUntilLoadFinished();
     WebKitWebResource* resource = webkit_web_view_get_main_resource(test->m_webView);
-    g_assert(WEBKIT_IS_WEB_RESOURCE(resource));
+    g_assert_true(WEBKIT_IS_WEB_RESOURCE(resource));
     WebKitURIResponse* response = webkit_web_resource_get_response(resource);
-    g_assert(WEBKIT_IS_URI_RESPONSE(response));
-    g_assert(!webkit_uri_response_get_http_headers(response));
+    g_assert_true(WEBKIT_IS_URI_RESPONSE(response));
+    g_assert_null(webkit_uri_response_get_http_headers(response));
 
     test->loadURI(kServer->getURIForPath("/headers").data());
     test->waitUntilLoadFinished();
     resource = webkit_web_view_get_main_resource(test->m_webView);
-    g_assert(WEBKIT_IS_WEB_RESOURCE(resource));
+    g_assert_true(WEBKIT_IS_WEB_RESOURCE(resource));
     response = webkit_web_resource_get_response(resource);
-    g_assert(WEBKIT_IS_URI_RESPONSE(response));
+    g_assert_true(WEBKIT_IS_URI_RESPONSE(response));
     SoupMessageHeaders* headers = webkit_uri_response_get_http_headers(response);
-    g_assert(headers);
+    g_assert_nonnull(headers);
     g_assert_cmpstr(soup_message_headers_get_one(headers, "Foo"), ==, "bar");
 }
 
@@ -576,7 +576,7 @@ static void testRedirectToDataURI(WebViewTest* test, gconstpointer)
     size_t mainResourceDataSize = 0;
     const char* mainResourceData = test->mainResourceData(mainResourceDataSize);
     g_assert_cmpint(mainResourceDataSize, ==, strlen(expectedData));
-    g_assert(!strncmp(mainResourceData, expectedData, mainResourceDataSize));
+    g_assert_cmpint(strncmp(mainResourceData, expectedData, mainResourceDataSize), ==, 0);
 }
 
 static void serverCallback(SoupServer* server, SoupMessage* message, const char* path, GHashTable*, SoupClientContext*, gpointer)

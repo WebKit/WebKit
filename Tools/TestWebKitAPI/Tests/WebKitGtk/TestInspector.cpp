@@ -140,7 +140,7 @@ public:
             g_signal_handler_disconnect(m_inspector, handler);
         }
 
-        g_assert(webkit_web_inspector_get_can_attach(m_inspector));
+        g_assert_true(webkit_web_inspector_get_can_attach(m_inspector));
         webkit_web_inspector_attach(m_inspector);
     }
 
@@ -175,11 +175,11 @@ static void testInspectorDefault(InspectorTest* test, gconstpointer)
     test->show();
     // We don't add the view to a container, so consume the weak ref with GRefPtr.
     GRefPtr<WebKitWebViewBase> inspectorView = webkit_web_inspector_get_web_view(test->m_inspector);
-    g_assert(inspectorView.get());
+    g_assert_nonnull(inspectorView.get());
     test->assertObjectIsDeletedWhenTestFinishes(G_OBJECT(inspectorView.get()));
-    g_assert(!webkit_web_inspector_is_attached(test->m_inspector));
+    g_assert_false(webkit_web_inspector_is_attached(test->m_inspector));
     g_assert_cmpuint(webkit_web_inspector_get_attached_height(test->m_inspector), ==, 0);
-    g_assert(!webkit_web_inspector_get_can_attach(test->m_inspector));
+    g_assert_false(webkit_web_inspector_get_can_attach(test->m_inspector));
     Vector<InspectorTest::InspectorEvents>& events = test->m_events;
     g_assert_cmpint(events.size(), ==, 1);
     g_assert_cmpint(events[0], ==, InspectorTest::OpenWindow);
@@ -192,7 +192,7 @@ static void testInspectorDefault(InspectorTest* test, gconstpointer)
     test->m_events.clear();
 
     test->resizeViewAndAttach();
-    g_assert(webkit_web_inspector_is_attached(test->m_inspector));
+    g_assert_true(webkit_web_inspector_is_attached(test->m_inspector));
     g_assert_cmpuint(webkit_web_inspector_get_attached_height(test->m_inspector), >=, InspectorTest::gMinimumAttachedInspectorHeight);
     events = test->m_events;
     g_assert_cmpint(events.size(), ==, 1);
@@ -200,7 +200,7 @@ static void testInspectorDefault(InspectorTest* test, gconstpointer)
     test->m_events.clear();
 
     test->detachAndWaitUntilWindowOpened();
-    g_assert(!webkit_web_inspector_is_attached(test->m_inspector));
+    g_assert_false(webkit_web_inspector_is_attached(test->m_inspector));
     events = test->m_events;
     g_assert_cmpint(events.size(), ==, 2);
     g_assert_cmpint(events[0], ==, InspectorTest::Detach);
@@ -232,10 +232,10 @@ public:
 
     bool openWindow()
     {
-        g_assert(!m_inspectorWindow);
+        g_assert_null(m_inspectorWindow);
         m_inspectorWindow = gtk_window_new(GTK_WINDOW_TOPLEVEL);
         WebKitWebViewBase* inspectorView = webkit_web_inspector_get_web_view(m_inspector);
-        g_assert(inspectorView);
+        g_assert_nonnull(inspectorView);
         gtk_container_add(GTK_CONTAINER(m_inspectorWindow), GTK_WIDGET(inspectorView));
         gtk_widget_show_all(m_inspectorWindow);
 
@@ -281,14 +281,14 @@ public:
     {
         GRefPtr<WebKitWebViewBase> inspectorView = webkit_web_inspector_get_web_view(m_inspector);
         GtkWidget* pane = gtk_bin_get_child(GTK_BIN(m_parentWindow));
-        g_assert(GTK_IS_PANED(pane));
+        g_assert_true(GTK_IS_PANED(pane));
         gtk_container_remove(GTK_CONTAINER(pane), GTK_WIDGET(inspectorView.get()));
         return InspectorTest::detach();
     }
 
     void destroyWindow()
     {
-        g_assert(m_inspectorWindow);
+        g_assert_nonnull(m_inspectorWindow);
         gtk_widget_destroy(m_inspectorWindow);
         m_inspectorWindow = 0;
     }
@@ -305,14 +305,14 @@ static void testInspectorManualAttachDetach(CustomInspectorTest* test, gconstpoi
 
     test->show();
     test->assertObjectIsDeletedWhenTestFinishes(G_OBJECT(webkit_web_inspector_get_web_view(test->m_inspector)));
-    g_assert(!webkit_web_inspector_is_attached(test->m_inspector));
+    g_assert_false(webkit_web_inspector_is_attached(test->m_inspector));
     Vector<InspectorTest::InspectorEvents>& events = test->m_events;
     g_assert_cmpint(events.size(), ==, 1);
     g_assert_cmpint(events[0], ==, InspectorTest::OpenWindow);
     test->m_events.clear();
 
     test->resizeViewAndAttach();
-    g_assert(webkit_web_inspector_is_attached(test->m_inspector));
+    g_assert_true(webkit_web_inspector_is_attached(test->m_inspector));
     g_assert_cmpuint(webkit_web_inspector_get_attached_height(test->m_inspector), >=, InspectorTest::gMinimumAttachedInspectorHeight);
     events = test->m_events;
     g_assert_cmpint(events.size(), ==, 1);
@@ -320,7 +320,7 @@ static void testInspectorManualAttachDetach(CustomInspectorTest* test, gconstpoi
     test->m_events.clear();
 
     test->detachAndWaitUntilWindowOpened();
-    g_assert(!webkit_web_inspector_is_attached(test->m_inspector));
+    g_assert_false(webkit_web_inspector_is_attached(test->m_inspector));
     events = test->m_events;
     g_assert_cmpint(events.size(), ==, 2);
     g_assert_cmpint(events[0], ==, InspectorTest::Detach);
@@ -328,7 +328,7 @@ static void testInspectorManualAttachDetach(CustomInspectorTest* test, gconstpoi
     test->m_events.clear();
 
     test->resizeViewAndAttach();
-    g_assert(webkit_web_inspector_is_attached(test->m_inspector));
+    g_assert_true(webkit_web_inspector_is_attached(test->m_inspector));
     test->m_events.clear();
     test->close();
     events = test->m_events;
@@ -347,7 +347,7 @@ static void testInspectorCustomContainerDestroyed(CustomInspectorTest* test, gco
 
     test->show();
     test->assertObjectIsDeletedWhenTestFinishes(G_OBJECT(webkit_web_inspector_get_web_view(test->m_inspector)));
-    g_assert(!webkit_web_inspector_is_attached(test->m_inspector));
+    g_assert_false(webkit_web_inspector_is_attached(test->m_inspector));
 
     test->m_events.clear();
     test->destroyWindow();

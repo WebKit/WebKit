@@ -101,8 +101,8 @@ void WebKitTestServer::removeWebSocketHandler()
 
 CString WebKitTestServer::getWebSocketURIForPath(const char* path) const
 {
-    g_assert(m_baseWebSocketURI);
-    g_assert(path && *path == '/');
+    g_assert_nonnull(m_baseWebSocketURI);
+    g_assert_true(path && *path == '/');
     SoupURI* uri = soup_uri_new_with_base(m_baseWebSocketURI, path + 1); // Ignore the leading slash.
     GUniquePtr<gchar> uriString(soup_uri_to_string(uri, FALSE));
     soup_uri_free(uri);

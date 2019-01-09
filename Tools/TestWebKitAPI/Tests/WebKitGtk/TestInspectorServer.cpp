@@ -99,7 +99,7 @@ static void startTestServer()
     testServerArgv[0] = testServerPath.get();
     testServerArgv[1] = nullptr;
 
-    g_assert(g_spawn_async(nullptr, testServerArgv, nullptr, G_SPAWN_DEFAULT, nullptr, nullptr, &gChildProcessPid, nullptr));
+    g_assert_true(g_spawn_async(nullptr, testServerArgv, nullptr, G_SPAWN_DEFAULT, nullptr, nullptr, &gChildProcessPid, nullptr));
 
     waitUntilInspectorServerIsReady();
     if (!gServerIsReady)
@@ -117,7 +117,7 @@ public:
         for (unsigned i = 0; i < 5; ++i) {
             size_t mainResourceDataSize = 0;
             const char* mainResourceData = this->mainResourceData(mainResourceDataSize);
-            g_assert(mainResourceData);
+            g_assert_nonnull(mainResourceData);
             if (g_strrstr_len(mainResourceData, mainResourceDataSize, "No targets found"))
                 wait(0.1);
             else if (g_strrstr_len(mainResourceData, mainResourceDataSize, "Inspectable targets"))
@@ -135,17 +135,17 @@ static void testInspectorServerPageList(InspectorServerTest* test, gconstpointer
     GUniqueOutPtr<GError> error;
 
     test->showInWindowAndWaitUntilMapped(GTK_WINDOW_TOPLEVEL);
-    g_assert(test->getPageList());
+    g_assert_true(test->getPageList());
 
     WebKitJavascriptResult* javascriptResult = test->runJavaScriptAndWaitUntilFinished("document.getElementsByClassName('targetname').length;", &error.outPtr());
-    g_assert(javascriptResult);
-    g_assert(!error.get());
+    g_assert_nonnull(javascriptResult);
+    g_assert_no_error(error.get());
     g_assert_cmpint(WebViewTest::javascriptResultToNumber(javascriptResult), ==, 1);
 
     GUniquePtr<char> valueString;
     javascriptResult = test->runJavaScriptAndWaitUntilFinished("document.getElementsByClassName('targeturl')[0].innerText;", &error.outPtr());
-    g_assert(javascriptResult);
-    g_assert(!error.get());
+    g_assert_nonnull(javascriptResult);
+    g_assert_no_error(error.get());
     valueString.reset(WebViewTest::javascriptResultToCString(javascriptResult));
     g_assert_cmpstr(valueString.get(), ==, "http://127.0.0.1:2999/");
 }

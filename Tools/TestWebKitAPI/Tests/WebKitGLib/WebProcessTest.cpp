@@ -46,7 +46,7 @@ static void checkLeaks()
         g_print(" %s(%p)", g_type_name_from_instance(reinterpret_cast<GTypeInstance*>(object)), object);
     g_print("\n");
 
-    g_assert(s_watchedObjects.isEmpty());
+    g_assert_true(s_watchedObjects.isEmpty());
 }
 
 void WebProcessTest::add(const String& testName, std::function<std::unique_ptr<WebProcessTest> ()> closure)
@@ -64,15 +64,15 @@ void WebProcessTest::assertObjectIsDeletedWhenTestFinishes(GObject* object)
 
 std::unique_ptr<WebProcessTest> WebProcessTest::create(const String& testName)
 {
-    g_assert(testsMap().contains(testName));
+    g_assert_true(testsMap().contains(testName));
     return testsMap().get(testName)();
 }
 
 static gboolean runTest(WebKitWebPage* webPage, const char* testPath)
 {
-    g_assert(WEBKIT_IS_WEB_PAGE(webPage));
+    g_assert_true(WEBKIT_IS_WEB_PAGE(webPage));
     WebProcessTest::assertObjectIsDeletedWhenTestFinishes(G_OBJECT(webPage));
-    g_assert(testPath);
+    g_assert_nonnull(testPath);
 
     std::unique_ptr<WebProcessTest> test = WebProcessTest::create(String::fromUTF8(testPath));
     return test->runTest(g_strrstr(testPath, "/") + 1, webPage);

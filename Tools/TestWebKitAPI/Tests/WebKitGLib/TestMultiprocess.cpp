@@ -81,7 +81,7 @@ public:
             nullptr,
             G_DBUS_CALL_FLAGS_NONE,
             -1, nullptr, nullptr));
-        g_assert(result);
+        g_assert_nonnull(result);
 
         guint32 identifier = 0;
         g_variant_get(result.get(), "(u)", &identifier);
@@ -122,8 +122,8 @@ static void testProcessPerWebView(MultiprocessTest* test, gconstpointer)
 
     for (unsigned i = 0; i < numViews; i++) {
         test->loadWebViewAndWaitUntilLoaded(i);
-        g_assert(WEBKIT_IS_WEB_VIEW(test->m_webViews[i].get()));
-        g_assert(test->m_webViewBusNames[i]);
+        g_assert_true(WEBKIT_IS_WEB_VIEW(test->m_webViews[i].get()));
+        g_assert_nonnull(test->m_webViewBusNames[i]);
     }
 
     g_assert_cmpuint(test->m_initializeWebExtensionsSignalCount, ==, numViews);
@@ -193,7 +193,7 @@ public:
 
     WebKitWebView* viewCreate(WebKitWebView* webView)
     {
-        g_assert(webView == m_webView);
+        g_assert_true(webView == m_webView);
 
         auto* newWebView = Test::createWebView(webView);
 #if PLATFORM(GTK)
@@ -210,13 +210,13 @@ public:
 
     void viewReadyToShow(WebKitWebView* webView)
     {
-        g_assert(m_webView != webView);
+        g_assert_true(m_webView != webView);
         m_webViewEvents.append(ReadyToShow);
     }
 
     void viewClose(WebKitWebView* webView)
     {
-        g_assert(m_webView != webView);
+        g_assert_true(m_webView != webView);
 
         m_webViewEvents.append(Close);
         g_object_unref(webView);
@@ -258,7 +258,7 @@ static void testWebProcessLimit(MultiprocessTest* test, gconstpointer)
     // Create two web views but there should be only one web process.
     for (unsigned i = 0; i < numViews; i++) {
         test->loadWebViewAndWaitUntilLoaded(i);
-        g_assert(WEBKIT_IS_WEB_VIEW(test->m_webViews[i].get()));
+        g_assert_true(WEBKIT_IS_WEB_VIEW(test->m_webViews[i].get()));
     }
 
     g_assert_cmpuint(test->m_initializeWebExtensionsSignalCount, ==, 1);
