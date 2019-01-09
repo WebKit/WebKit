@@ -1,3 +1,16 @@
+2019-01-09  Justin Fan  <justin_fan@apple.com>
+
+        [WebGPU] Fix vertex-buffer-triangle-strip test and small update to GPURenderPipeline
+        https://bugs.webkit.org/show_bug.cgi?id=193289
+
+        Reviewed by Dean Jackson.
+
+        Fix broken test after pipeline layouts were added.
+
+        * webgpu/js/webgpu-functions.js: 
+        (createBasicPipeline): Ensure pipeline layout is actually optional.
+        * webgpu/vertex-buffer-triangle-strip.html: 
+
 2019-01-09  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [iOS] editing/selection/ios/show-selection-in-empty-overflow-hidden-document.html often times out in internal automation

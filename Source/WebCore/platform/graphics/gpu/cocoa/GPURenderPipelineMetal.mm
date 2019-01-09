@@ -208,7 +208,8 @@ RefPtr<GPURenderPipeline> GPURenderPipeline::create(const GPUDevice& device, GPU
 
 GPURenderPipeline::GPURenderPipeline(PlatformRenderPipelineSmartPtr&& pipeline, GPURenderPipelineDescriptor&& descriptor)
     : m_platformRenderPipeline(WTFMove(pipeline))
-    , m_descriptor(WTFMove(descriptor))
+    , m_layout(WTFMove(descriptor.layout))
+    , m_primitiveTopology(descriptor.primitiveTopology)
 {
 }
 

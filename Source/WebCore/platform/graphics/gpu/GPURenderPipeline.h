@@ -49,13 +49,14 @@ public:
 
     PlatformRenderPipeline* platformRenderPipeline() const { return m_platformRenderPipeline.get(); }
 
-    PrimitiveTopology primitiveTopology() const { return m_descriptor.primitiveTopology; }
+    PrimitiveTopology primitiveTopology() const { return m_primitiveTopology; }
 
 private:
     GPURenderPipeline(PlatformRenderPipelineSmartPtr&&, GPURenderPipelineDescriptor&&);
 
     PlatformRenderPipelineSmartPtr m_platformRenderPipeline;
-    GPURenderPipelineDescriptor m_descriptor;
+    RefPtr<GPUPipelineLayout> m_layout;
+    PrimitiveTopology m_primitiveTopology;
 };
 
 } // namespace WebCore

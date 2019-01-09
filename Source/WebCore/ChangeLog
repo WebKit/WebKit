@@ -1,3 +1,18 @@
+2019-01-09  Justin Fan  <justin_fan@apple.com>
+
+        [WebGPU] Fix vertex-buffer-triangle-strip test and small update to GPURenderPipeline
+        https://bugs.webkit.org/show_bug.cgi?id=193289
+
+        Reviewed by Dean Jackson.
+
+        Fix broken test after pipeline layouts were added, and a small refactoring to GPURenderPipeline to avoid
+        retaining its descriptor after creation.
+
+        * platform/graphics/gpu/GPURenderPipeline.h:
+        (WebCore::GPURenderPipeline::primitiveTopology const):
+        * platform/graphics/gpu/cocoa/GPURenderPipelineMetal.mm:
+        (WebCore::GPURenderPipeline::GPURenderPipeline):
+
 2019-01-09  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: Protocol Logging: log messages as objects if inspector^2 is open

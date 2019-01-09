@@ -24,12 +24,14 @@ function createBasicPipeline(shaderModule, device, pipelineLayout, inputStateDes
     };
 
     const pipelineDescriptor = {
-        layout: pipelineLayout,
         vertexStage: vertexStageDescriptor,
         fragmentStage: fragmentStageDescriptor,
         primitiveTopology: "triangleStrip",
         inputState: inputStateDescriptor
     };
+
+    if (pipelineLayout)
+        pipelineDescriptor.layout = pipelineLayout;
 
     return device.createRenderPipeline(pipelineDescriptor);
 }
