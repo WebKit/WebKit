@@ -234,7 +234,7 @@ ERROR: Source/WebCore/layout/Verification.cpp:88:  Missing space before ( in whi
 Total errors found: 8 in 48 files''')
             + 2,
         )
-        self.expectOutcome(result=FAILURE, state_string='check-webkit-style (failure)')
+        self.expectOutcome(result=FAILURE, state_string='8 style errors (failure)')
         return self.runStep()
 
     def test_failures_no_style_issues(self):

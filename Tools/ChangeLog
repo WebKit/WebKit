@@ -1,5 +1,16 @@
 2019-01-09  Aakash Jain  <aakash_jain@apple.com>
 
+        [ews-build] Parse and display number of style failures
+        https://bugs.webkit.org/show_bug.cgi?id=193280
+
+        Reviewed by Lucas Forschler.
+
+        * BuildSlaveSupport/ews-build/steps.py:
+        (CheckStyle): Use TestWithFailureCount as base class.
+        (CheckStyle.countFailures): Count the number of style failures.
+
+2019-01-09  Aakash Jain  <aakash_jain@apple.com>
+
         [ews-build] use patch_id instead of ewspatchid
         https://bugs.webkit.org/show_bug.cgi?id=193235
 

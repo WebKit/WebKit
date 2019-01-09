@@ -363,14 +363,6 @@ class UnApplyPatchIfRequired(CheckOutSource):
         return not self.doStepIf(step)
 
 
-class CheckStyle(shell.ShellCommand):
-    name = 'check-webkit-style'
-    description = ['check-webkit-style running']
-    descriptionDone = ['check-webkit-style']
-    flunkOnFailure = True
-    command = ['Tools/Scripts/check-webkit-style']
-
-
 class TestWithFailureCount(shell.Test):
     failedTestsFormatString = "%d test%s failed"
     failedTestCount = 0
@@ -407,6 +399,23 @@ class TestWithFailureCount(shell.Test):
             status += u' ({})'.format(Results[self.results])
 
         return {u'step': status}
+
+
+class CheckStyle(TestWithFailureCount):
+    name = 'check-webkit-style'
+    description = ['check-webkit-style running']
+    descriptionDone = ['check-webkit-style']
+    flunkOnFailure = True
+    failedTestsFormatString = '%d style error%s'
+    command = ['Tools/Scripts/check-webkit-style']
+
+    def countFailures(self, cmd):
+        log_text = self.log_observer.getStdout() + self.log_observer.getStderr()
+
+        match = re.search(r'Total errors found: (?P<errors>\d+) in (?P<files>\d+) files', log_text)
+        if not match:
+            return 0
+        return int(match.group('errors'))
 
 
 class RunBindingsTests(shell.ShellCommand):
