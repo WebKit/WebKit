@@ -44,7 +44,7 @@ class WPETestRunner(TestRunner):
 
 
 if __name__ == "__main__":
-    flatpakutils.run_in_sandbox_if_available(sys.argv)
+    flatpakutils.run_in_sandbox_if_available([sys.argv[0], "--wpe"] + sys.argv[1:])
     if not flatpakutils.is_sandboxed() and not jhbuildutils.enter_jhbuild_environment_if_available("wpe"):
         print '***'
         print '*** Warning: jhbuild environment not present and not running in flatpak.'
@@ -55,7 +55,11 @@ if __name__ == "__main__":
     add_options(option_parser);
     option_parser.add_option('--display-server', choices=['headless', 'wayland'], default='headless',
                              help='"headless": Use headless view backend. "wayland": Use the current wayland session.'),
-    options, args = option_parser.parse_args()
+
+    args = sys.argv[1:]
+    if flatpakutils.is_sandboxed():
+        args = [ arg for arg in args if arg != "--wpe" ]
+    options, args = option_parser.parse_args(args)
 
     logging.basicConfig(level=logging.INFO, format="%(message)s")
 

@@ -23,8 +23,6 @@ import sys
 
 top_level_dir = None
 build_dir = None
-library_build_dir = None
-binary_build_dir = None
 build_types = ('Release', 'Debug')
 
 
@@ -41,17 +39,11 @@ def set_build_types(new_build_types):
 
 
 def library_build_path(*args):
-    global library_build_dir
-    if not library_build_dir:
-        library_build_dir = build_path('lib', *args)
-    return library_build_dir
+    return build_path('lib', *args)
 
 
 def binary_build_path(*args):
-    global binary_build_dir
-    if not binary_build_dir:
-        binary_build_dir = build_path('bin', *args)
-    return binary_build_dir
+    return build_path('bin', *args)
 
 
 def get_build_path(fatal=True):
