@@ -31,7 +31,7 @@ import re
 import requests
 
 BUG_SERVER_URL = 'https://bugs.webkit.org/'
-EWS_URL = 'http://ews-build.webkit-uat.org/'
+EWS_URL = 'https://ews-build.webkit-uat.org/'
 WithProperties = properties.WithProperties
 Interpolate = properties.Interpolate
 
