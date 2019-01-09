@@ -1128,7 +1128,7 @@ def check_os_version_checks(filename, clean_lines, line_number, error):
         return
 
     if _RE_PATTERN_XCODE_VERSION_MACRO.match(line):
-        error(line_number, 'build/version_check', 5, 'Misplaced OS version check. Please use a named macro in wtf/Platform.h or wtf/FeatureDefines.h.')
+        error(line_number, 'build/version_check', 5, 'Misplaced OS version check. Please use a named macro in wtf/Platform.h, wtf/FeatureDefines.h, or an appropriate internal file.')
 
 class _ClassInfo(object):
     """Stores information about a class."""

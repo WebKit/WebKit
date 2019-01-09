@@ -1,3 +1,15 @@
+2019-01-09  Alexey Proskuryakov  <ap@apple.com>
+
+        Tweak wording for build/version_check style checker error
+        https://bugs.webkit.org/show_bug.cgi?id=193256
+
+        Reviewed by Tim Horton.
+
+        * Scripts/webkitpy/style/checkers/cpp.py:
+        (check_os_version_checks):
+        * Scripts/webkitpy/style/checkers/cpp_unittest.py:
+        (WebKitStyleTest.test_os_version_checks):
+
 2019-01-09  Aakash Jain  <aakash_jain@apple.com>
 
         [ews-build] Add link to bug along with bug title
