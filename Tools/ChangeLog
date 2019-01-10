@@ -1,3 +1,36 @@
+2019-01-09  Kocsen Chung  <kocsen_chung@apple.com>
+
+        Cherry-pick r239676. rdar://problem/47158606
+
+    API test broken: TestWebKitAPI.WebKit.CustomDataStorePathsVersusCompletionHandlers
+    https://bugs.webkit.org/show_bug.cgi?id=193175
+    
+    Reviewed by Chris Dumez.
+    
+    Updated API test as we bumped the SW schema to version 4.
+    
+    * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+    * TestWebKitAPI/Tests/WebKitCocoa/SimpleServiceWorkerRegistrations-4.sqlite3: Renamed from Tools/TestWebKitAPI/Tests/WebKitCocoa/SimpleServiceWorkerRegistrations-3.sqlite3.
+    * TestWebKitAPI/Tests/WebKitCocoa/WebsiteDataStoreCustomPaths.mm:
+    (TEST):
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@239676 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2019-01-07  Youenn Fablet  <youenn@apple.com>
+
+            API test broken: TestWebKitAPI.WebKit.CustomDataStorePathsVersusCompletionHandlers
+            https://bugs.webkit.org/show_bug.cgi?id=193175
+
+            Reviewed by Chris Dumez.
+
+            Updated API test as we bumped the SW schema to version 4.
+
+            * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+            * TestWebKitAPI/Tests/WebKitCocoa/SimpleServiceWorkerRegistrations-4.sqlite3: Renamed from Tools/TestWebKitAPI/Tests/WebKitCocoa/SimpleServiceWorkerRegistrations-3.sqlite3.
+            * TestWebKitAPI/Tests/WebKitCocoa/WebsiteDataStoreCustomPaths.mm:
+            (TEST):
+
 2019-01-08  Alan Coon  <alancoon@apple.com>
 
         Cherry-pick r239726. rdar://problem/47097726

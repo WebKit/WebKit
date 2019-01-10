@@ -280,14 +280,14 @@ TEST(WebKit, WebsiteDataStoreCustomPathsWithPrewarming)
 TEST(WebKit, CustomDataStorePathsVersusCompletionHandlers)
 {
     // Copy the baked database files to the database directory
-    NSURL *url1 = [[NSBundle mainBundle] URLForResource:@"SimpleServiceWorkerRegistrations-3" withExtension:@"sqlite3" subdirectory:@"TestWebKitAPI.resources"];
+    NSURL *url1 = [[NSBundle mainBundle] URLForResource:@"SimpleServiceWorkerRegistrations-4" withExtension:@"sqlite3" subdirectory:@"TestWebKitAPI.resources"];
 
     NSURL *swPath = [NSURL fileURLWithPath:[@"~/Library/Caches/TestWebKitAPI/WebKit/ServiceWorkers/" stringByExpandingTildeInPath]];
     [[NSFileManager defaultManager] removeItemAtURL:swPath error:nil];
     EXPECT_FALSE([[NSFileManager defaultManager] fileExistsAtPath:swPath.path]);
 
     [[NSFileManager defaultManager] createDirectoryAtURL:swPath withIntermediateDirectories:YES attributes:nil error:nil];
-    [[NSFileManager defaultManager] copyItemAtURL:url1 toURL:[swPath URLByAppendingPathComponent:@"ServiceWorkerRegistrations-3.sqlite3"] error:nil];
+    [[NSFileManager defaultManager] copyItemAtURL:url1 toURL:[swPath URLByAppendingPathComponent:@"ServiceWorkerRegistrations-4.sqlite3"] error:nil];
 
     auto websiteDataStoreConfiguration = adoptNS([[_WKWebsiteDataStoreConfiguration alloc] init]);
     websiteDataStoreConfiguration.get()._serviceWorkerRegistrationDirectory = swPath;
