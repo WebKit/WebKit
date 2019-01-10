@@ -5555,6 +5555,12 @@ void WebPageProxy::showContextMenu(ContextMenuContextData&& contextMenuContextDa
     // Showing a context menu runs a nested runloop, which can handle messages that cause |this| to get closed.
     Ref<WebPageProxy> protect(*this);
 
+    // Discard any enqueued mouse events that have been delivered to the UIProcess whilst the WebProcess is still processing the
+    // MouseDown event that triggered this ShowContextMenu message. This can happen if we take too long to enter the nested runloop.
+    ASSERT(isProcessingMouseEvents());
+    while (m_mouseEventQueue.size() > 1)
+        m_mouseEventQueue.takeLast();
+
     m_activeContextMenuContextData = contextMenuContextData;
 
     m_activeContextMenu = pageClient().createContextMenuProxy(*this, WTFMove(contextMenuContextData), userData);
