@@ -1,5 +1,72 @@
 2019-01-09  Kocsen Chung  <kocsen_chung@apple.com>
 
+        Cherry-pick r239758. rdar://problem/47158613
+
+    Blob references for System Previews don't get a correct file extension
+    https://bugs.webkit.org/show_bug.cgi?id=193268
+    <rdar://problem/47133037>
+    
+    Reviewed by Tim Horton.
+    
+    Source/WebCore:
+    
+    Apple platforms don't yet have a mapping from the USD MIME type to
+    file extensions (and we support some non-standard MIME types), which
+    means that downloads from Blob references don't get correctly named.
+    
+    Fix this by adding an explicit mapping between System Preview types
+    and ".usdz".
+    
+    WebKit API test: _WKDownload.SystemPreviewUSDZBlobNaming
+    
+    * platform/MIMETypeRegistry.cpp:
+    (WebCore::MIMETypeRegistry::isSystemPreviewMIMEType): Remove USE(SYSTEM_PREVIEW) since
+    this applies to macOS and iOS now.
+    * platform/MIMETypeRegistry.h:
+    * platform/cocoa/MIMETypeRegistryCocoa.mm:
+    (WebCore::MIMETypeRegistry::getPreferredExtensionForMIMEType): Add a mapping
+    for USDZ.
+    
+    Tools:
+    
+    New test that a Blob download of a USDZ file gets named correctly.
+    
+    * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+    * TestWebKitAPI/Tests/WebKitCocoa/Download.mm:
+    (-[BlobWithUSDZExtensionDownloadDelegate _download:decideDestinationWithSuggestedFilename:completionHandler:]):
+    (-[BlobWithUSDZExtensionDownloadDelegate _downloadDidFinish:]):
+    (TEST):
+    * TestWebKitAPI/Tests/WebKitCocoa/SystemPreviewBlobNaming.html: Added.
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@239758 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2019-01-08  Dean Jackson  <dino@apple.com>
+
+            Blob references for System Previews don't get a correct file extension
+            https://bugs.webkit.org/show_bug.cgi?id=193268
+            <rdar://problem/47133037>
+
+            Reviewed by Tim Horton.
+
+            Apple platforms don't yet have a mapping from the USD MIME type to
+            file extensions (and we support some non-standard MIME types), which
+            means that downloads from Blob references don't get correctly named.
+
+            Fix this by adding an explicit mapping between System Preview types
+            and ".usdz".
+
+            WebKit API test: _WKDownload.SystemPreviewUSDZBlobNaming
+
+            * platform/MIMETypeRegistry.cpp:
+            (WebCore::MIMETypeRegistry::isSystemPreviewMIMEType): Remove USE(SYSTEM_PREVIEW) since
+            this applies to macOS and iOS now.
+            * platform/MIMETypeRegistry.h:
+            * platform/cocoa/MIMETypeRegistryCocoa.mm:
+            (WebCore::MIMETypeRegistry::getPreferredExtensionForMIMEType): Add a mapping
+            for USDZ.
+
+2019-01-09  Kocsen Chung  <kocsen_chung@apple.com>
+
         Cherry-pick r239746. rdar://problem/47158728
 
     IDB storage of Crypto keys does not work in private browsing mode

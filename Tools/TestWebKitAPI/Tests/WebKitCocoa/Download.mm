@@ -621,5 +621,38 @@ TEST(_WKDownload, DownloadCanceledWhileDecidingDestination)
     [TestProtocol unregister];
 }
 
+@interface BlobWithUSDZExtensionDownloadDelegate : NSObject <_WKDownloadDelegate>
+@end
+
+@implementation BlobWithUSDZExtensionDownloadDelegate {
+    String _destinationPath;
+}
+
+- (void)_download:(_WKDownload *)download decideDestinationWithSuggestedFilename:(NSString *)filename completionHandler:(void (^)(BOOL allowOverwrite, NSString *destination))completionHandler
+{
+    EXPECT_TRUE([filename hasSuffix:@".usdz"]);
+
+    WebCore::FileSystem::PlatformFileHandle fileHandle;
+    _destinationPath = WebCore::FileSystem::openTemporaryFile(filename, fileHandle);
+    EXPECT_TRUE(fileHandle != WebCore::FileSystem::invalidPlatformFileHandle);
+    WebCore::FileSystem::closeFile(fileHandle);
+
+    completionHandler(YES, _destinationPath);
+}
+
+- (void)_downloadDidFinish:(_WKDownload *)download
+{
+    WebCore::FileSystem::deleteFile(_destinationPath);
+    isDone = true;
+}
+
+@end
+
+TEST(_WKDownload, SystemPreviewUSDZBlobNaming)
+{
+    NSURL *originalURL = [[NSBundle mainBundle] URLForResource:@"SystemPreviewBlobNaming" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"];
+    runTest(adoptNS([[DownloadBlobURLNavigationDelegate alloc] init]).get(), adoptNS([[BlobWithUSDZExtensionDownloadDelegate alloc] init]).get(), originalURL);
+}
+
 #endif
 #endif

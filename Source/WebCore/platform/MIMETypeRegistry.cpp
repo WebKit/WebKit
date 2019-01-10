@@ -651,7 +651,6 @@ const String& defaultMIMEType()
     return defaultMIMEType;
 }
 
-#if USE(SYSTEM_PREVIEW)
 const HashSet<String, ASCIICaseInsensitiveHash>& MIMETypeRegistry::systemPreviewMIMETypes()
 {
     static NeverDestroyed<HashSet<String, ASCIICaseInsensitiveHash>> systemPreviewMIMETypes = std::initializer_list<String> {
@@ -670,7 +669,6 @@ bool MIMETypeRegistry::isSystemPreviewMIMEType(const String& mimeType)
         return false;
     return systemPreviewMIMETypes().contains(mimeType);
 }
-#endif
 
 #if !USE(CURL)
 
