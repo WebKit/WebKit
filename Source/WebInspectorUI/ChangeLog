@@ -1,5 +1,42 @@
 2019-01-09  Kocsen Chung  <kocsen_chung@apple.com>
 
+        Cherry-pick r239766. rdar://problem/47158780
+
+    Web Inspector: Styles: clicking on property that soon to be discarded shouldn't start selection
+    https://bugs.webkit.org/show_bug.cgi?id=193218
+    <rdar://problem/47098303>
+    
+    Reviewed by Devin Rousso.
+    
+    * UserInterface/Views/SpreadsheetCSSStyleDeclarationSection.js:
+    (WI.SpreadsheetCSSStyleDeclarationSection.prototype._handleMouseDown):
+    A style property may get removed on blur event, so propertyElement may get removed from the DOM right when mousedown event happens.
+    
+    (WI.SpreadsheetCSSStyleDeclarationSection.prototype._handleWindowClick):
+    (WI.SpreadsheetCSSStyleDeclarationSection.prototype._handleClick):
+    (WI.SpreadsheetCSSStyleDeclarationSection.prototype._stopSelection):
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@239766 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2019-01-09  Nikita Vasilyev  <nvasilyev@apple.com>
+
+            Web Inspector: Styles: clicking on property that soon to be discarded shouldn't start selection
+            https://bugs.webkit.org/show_bug.cgi?id=193218
+            <rdar://problem/47098303>
+
+            Reviewed by Devin Rousso.
+
+            * UserInterface/Views/SpreadsheetCSSStyleDeclarationSection.js:
+            (WI.SpreadsheetCSSStyleDeclarationSection.prototype._handleMouseDown):
+            A style property may get removed on blur event, so propertyElement may get removed from the DOM right when mousedown event happens.
+
+            (WI.SpreadsheetCSSStyleDeclarationSection.prototype._handleWindowClick):
+            (WI.SpreadsheetCSSStyleDeclarationSection.prototype._handleClick):
+            (WI.SpreadsheetCSSStyleDeclarationSection.prototype._stopSelection):
+
+2019-01-09  Kocsen Chung  <kocsen_chung@apple.com>
+
         Cherry-pick r239762. rdar://problem/47158734
 
     Web Inspector: Styles: Undo reverts all changes at once
