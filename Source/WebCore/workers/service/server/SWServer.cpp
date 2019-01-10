@@ -66,7 +66,8 @@ SWServer::~SWServer()
 {
     // Destroy the remaining connections before the SWServer gets destroyed since they have a raw pointer
     // to the server and since they try to unregister clients from the server in their destructor.
-    m_connections.clear();
+    auto connections = WTFMove(m_connections);
+    connections.clear();
 
     allServers().remove(this);
 }
