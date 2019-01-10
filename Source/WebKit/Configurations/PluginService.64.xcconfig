@@ -27,7 +27,7 @@ VALID_ARCHS_macosx_NO = x86_64;
 
 PRODUCT_NAME = com.apple.WebKit.Plugin.64;
 PRODUCT_BUNDLE_IDENTIFIER = $(PRODUCT_NAME);
-INFOPLIST_FILE = PluginProcess/EntryPoint/mac/XPCService/PluginService.32-64.Info.plist;
+INFOPLIST_FILE = PluginProcess/EntryPoint/mac/XPCService/PluginService.64.Info.plist;
 
 WK_APPKIT_LDFLAGS = $(WK_APPKIT_LDFLAGS_$(WK_PLATFORM_NAME));
 WK_APPKIT_LDFLAGS_macosx = -framework AppKit;
