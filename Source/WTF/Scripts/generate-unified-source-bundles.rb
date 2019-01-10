@@ -21,6 +21,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
 # THE POSSIBILITY OF SUCH DAMAGE.
 
+require 'digest'
 require 'fileutils'
 require 'pathname'
 require 'getoptlong'
@@ -52,8 +53,8 @@ def usage(message)
     puts "--feature-flags                 (-f) Space or semicolon separated list of enabled feature flags"
     puts
     puts "Generation options:"
-    puts "--max-cpp-bundle-count               Sets the limit on the number of cpp bundles that can be generated"
-    puts "--max-obj-c-bundle-count             Sets the limit on the number of Obj-C bundles that can be generated"
+    puts "--max-cpp-bundle-count               Use global sequential numbers for cpp bundle filenames and set the limit on the number"
+    puts "--max-obj-c-bundle-count             Use global sequential numbers for Obj-C bundle filenames and set the limit on the number"
     exit 1
 end
 
@@ -183,7 +184,7 @@ class SourceFile
 end
 
 class BundleManager
-    attr_reader :bundleCount, :extension, :fileCount, :currentBundleText, :maxCount
+    attr_reader :bundleCount, :extension, :fileCount, :currentBundleText, :maxCount, :extraFiles
 
     def initialize(extension, max)
         @extension = extension
@@ -191,6 +192,8 @@ class BundleManager
         @bundleCount = 0
         @currentBundleText = ""
         @maxCount = max
+        @extraFiles = []
+        @currentDirectory = nil
     end
 
     def writeFile(file, text)
@@ -205,17 +208,23 @@ class BundleManager
         end
     end
 
-    def bundleFileName(number)
-        @extension == "cpp" ? "UnifiedSource#{number}.#{extension}" : "UnifiedSource#{number}-#{extension}.#{extension}"
+    def bundleFileName()
+        id =
+            if @maxCount
+                @bundleCount.to_s
+            else
+                # The dash makes the filenames more clear when using a hash.
+                hash = Digest::SHA1.hexdigest(@currentDirectory.to_s)[0..7]
+                "-#{hash}-#{@bundleCount}"
+            end
+        @extension == "cpp" ? "UnifiedSource#{id}.#{extension}" : "UnifiedSource#{id}-#{extension}.#{extension}"
     end
 
     def flush
-        # No point in writing an empty bundle file
-        return if @currentBundleText == ""
-
         @bundleCount += 1
-        bundleFile = bundleFileName(@bundleCount)
+        bundleFile = bundleFileName
         $generatedSources << $unifiedSourceOutputPath + bundleFile
+        @extraFiles << bundleFile if @maxCount and @bundleCount > @maxCount
 
         writeFile(bundleFile, @currentBundleText)
         @currentBundleText = ""
@@ -224,15 +233,20 @@ class BundleManager
 
     def flushToMax
         raise if !@maxCount
-        ((@bundleCount+1)..@maxCount).each {
-            | index |
-            writeFile(bundleFileName(index), "")
-        }
+        while @bundleCount < @maxCount
+            flush
+        end
     end
 
     def addFile(sourceFile)
         path = sourceFile.path
         raise "wrong extension: #{path.extname} expected #{@extension}" unless path.extname == ".#{@extension}"
+        if (TopLevelDirectoryForPath(@currentDirectory) != TopLevelDirectoryForPath(path.dirname))
+            log("Flushing because new top level directory; old: #{@currentDirectory}, new: #{path.dirname}")
+            flush
+            @currentDirectory = path.dirname
+            @bundleCount = 0 unless @maxCount
+        end
         if @fileCount == MAX_BUNDLE_SIZE
             log("Flushing because new bundle is full (#{@fileCount} sources)")
             flush
@@ -255,11 +269,6 @@ end
 def ProcessFileForUnifiedSourceGeneration(sourceFile)
     path = sourceFile.path
     $inputSources << sourceFile.to_s
-    if (TopLevelDirectoryForPath($currentDirectory) != TopLevelDirectoryForPath(path.dirname))
-        log("Flushing because new top level directory; old: #{$currentDirectory}, new: #{path.dirname}")
-        $bundleManagers.each_value { |x| x.flush }
-        $currentDirectory = path.dirname
-    end
 
     bundle = $bundleManagers[path.extname]
     if !bundle
@@ -342,10 +351,11 @@ $bundleManagers.each_value {
     next if !maxCount
 
     manager.flushToMax
-    bundleCount = manager.bundleCount
-    extension = manager.extension
-    if bundleCount > maxCount
-        filesToAdd = ((maxCount+1)..bundleCount).map { |x| manager.bundleFileName(x) }.join(", ")
+
+    unless manager.extraFiles.empty?
+        extension = manager.extension
+        bundleCount = manager.bundleCount
+        filesToAdd = manager.extraFiles.join(", ")
         raise "number of bundles for #{extension} sources, #{bundleCount}, exceeded limit, #{maxCount}. Please add #{filesToAdd} to Xcode then update UnifiedSource#{extension.capitalize}FileCount"
     end
 }

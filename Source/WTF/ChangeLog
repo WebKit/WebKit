@@ -1,3 +1,28 @@
+2019-01-09  Carlos Eduardo Ramalho  <cadubentzen@gmail.com> and Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        Use directory local sequential numbers for Unified Sources filenames instead of global sequential numbers for CMake
+        https://bugs.webkit.org/show_bug.cgi?id=192391
+
+        Reviewed by Don Olmstead.
+
+        Unified Source Builds are using global sequential numbers for
+        bundle filenames UnifiedSource{sequential-number}.cpp. As the
+        result, every new source file added would shift the next ones and
+        prevent compiler caches from speeding up consecutive builds e.g.
+        in git-bisect sessions.
+
+        Changed it to directory local sequential numbers,
+        UnifiedSource-{hash-of-dir-name}-{sequential-number-within-the-dir}.cpp.
+
+        This is affecting only CMake builds which is where no
+        '--max-cpp-bundle-count' nor '--max-obj-c-bundle-count' options
+        are set. Xcode builds still use the old convention.
+
+        * Scripts/generate-unified-source-bundles.rb: Add new instance
+        variables @currentDirectory and @extraFiles to BundleManager.
+        Still use global sequential numbers if --max-cpp-bundle-count or
+        --max-obj-c-bundle-count is given.
+
 2019-01-09  Alex Christensen  <achristensen@webkit.org>
 
         Expand use of sourceApplicationAuditData
