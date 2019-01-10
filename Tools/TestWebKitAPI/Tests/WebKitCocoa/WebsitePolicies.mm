@@ -741,6 +741,69 @@ TEST(WebKit, WebsitePoliciesAutoplayQuirks)
     [webView waitForMessage:@"playing"];
 }
 
+TEST(WebKit, WebsitePoliciesPerDocumentAutoplayBehaviorQuirks)
+{
+    auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
+
+    auto delegate = adoptNS([[AutoplayPoliciesDelegate alloc] init]);
+    [webView setNavigationDelegate:delegate.get()];
+
+    WKRetainPtr<WKPreferencesRef> preferences(AdoptWK, WKPreferencesCreate());
+    WKPreferencesSetNeedsSiteSpecificQuirks(preferences.get(), true);
+    WKPageGroupSetPreferences(WKPageGetPageGroup([webView _pageForTesting]), preferences.get());
+
+    receivedAutoplayEvent = WTF::nullopt;
+
+    NSURLRequest *requestWithMultipleMediaElements = [NSURLRequest requestWithURL:[[NSBundle mainBundle] URLForResource:@"autoplaying-multiple-media-elements" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"]];
+
+    [delegate setAllowedAutoplayQuirksForURL:^_WKWebsiteAutoplayQuirk(NSURL *url) {
+        return _WKWebsiteAutoplayQuirkPerDocumentAutoplayBehavior;
+    }];
+    [delegate setAutoplayPolicyForURL:^(NSURL *) {
+        return _WKWebsiteAutoplayPolicyDeny;
+    }];
+    [webView loadRequest:requestWithMultipleMediaElements];
+    [webView waitForMessage:@"loaded"];
+
+    // We should not be allowed to play without a user gesture.
+    [webView _evaluateJavaScriptWithoutUserGesture:@"playVideo('video1')" completionHandler:nil];
+    [webView waitForMessage:@"did-not-play-video1"];
+
+    // Now try again with a user gesture...
+    const NSPoint playButtonClickPoint = NSMakePoint(20, 580);
+    [webView mouseDownAtPoint:playButtonClickPoint simulatePressure:NO];
+    [webView mouseUpAtPoint:playButtonClickPoint];
+    [webView waitForMessage:@"did-play-video1"];
+
+    // Now video2 should also be allowed to autoplay without a user gesture because of the quirk.
+    [webView _evaluateJavaScriptWithoutUserGesture:@"playVideo('video2')" completionHandler:nil];
+    [webView waitForMessage:@"did-play-video2"];
+
+    // Now let's test this without the quirk.
+    [webView loadHTMLString:@"" baseURL:nil];
+    receivedAutoplayEvent = WTF::nullopt;
+
+    [delegate setAllowedAutoplayQuirksForURL:^_WKWebsiteAutoplayQuirk(NSURL *url) {
+        return 0;
+    }];
+    [webView loadRequest:requestWithMultipleMediaElements];
+    [webView waitForMessage:@"loaded"];
+
+    // We should not be allowed to play without a user gesture.
+    [webView _evaluateJavaScriptWithoutUserGesture:@"playVideo('video1')" completionHandler:nil];
+    [webView waitForMessage:@"did-not-play-video1"];
+
+    // Now try again with a user gesture...
+    [webView mouseDownAtPoint:playButtonClickPoint simulatePressure:NO];
+    [webView mouseUpAtPoint:playButtonClickPoint];
+    [webView waitForMessage:@"did-play-video1"];
+
+    // Now video2 should not be allowed to autoplay without a user gesture.
+    [webView _evaluateJavaScriptWithoutUserGesture:@"playVideo('video2')" completionHandler:nil];
+    [webView waitForMessage:@"did-not-play-video2"];
+}
+
 TEST(WebKit, WebsitePoliciesAutoplayQuirksAsyncPolicyDelegate)
 {
     auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);

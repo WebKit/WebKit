@@ -255,6 +255,15 @@ static bool needsArbitraryUserGestureAutoplayQuirk(const Document& document)
 }
 #endif // PLATFORM(MAC)
 
+static bool needsPerDocumentAutoplayBehaviorQuirk(const Document& document)
+{
+    if (!document.settings().needsSiteSpecificQuirks())
+        return false;
+
+    auto loader = makeRefPtr(document.loader());
+    return loader && loader->allowedAutoplayQuirks().contains(AutoplayQuirk::PerDocumentAutoplayBehavior);
+}
+
 SuccessOr<MediaPlaybackDenialReason> MediaElementSession::playbackPermitted() const
 {
     if (m_element.isSuspended()) {
@@ -290,12 +299,11 @@ SuccessOr<MediaPlaybackDenialReason> MediaElementSession::playbackPermitted() co
     }
 #endif
 
-#if PLATFORM(MAC)
-    // FIXME <https://webkit.org/b/175856>: Make this dependent on a runtime flag for desktop autoplay restrictions.
     const auto& topDocument = document.topDocument();
-    if (topDocument.mediaState() & MediaProducer::HasUserInteractedWithMediaElement && topDocument.settings().needsSiteSpecificQuirks())
+    if (topDocument.mediaState() & MediaProducer::HasUserInteractedWithMediaElement && needsPerDocumentAutoplayBehaviorQuirk(topDocument))
         return { };
 
+#if PLATFORM(MAC)
     if (document.hasHadUserInteraction() && needsArbitraryUserGestureAutoplayQuirk(document))
         return { };
 #endif

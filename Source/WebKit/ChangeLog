@@ -1,3 +1,25 @@
+2019-01-09  Matt Rajca  <mrajca@apple.com>
+
+        Put per-document autoplay behavior behind runtime website policies quirk instead of a compile time flag
+        https://bugs.webkit.org/show_bug.cgi?id=193301
+
+        Reviewed by Jer Noble.
+
+        Register a new quirk that can be configured per-load for per-document media
+        autoplay behaviors.
+
+        * Shared/WebsiteAutoplayQuirk.h:
+        * Shared/WebsitePoliciesData.cpp:
+        (WebKit::WebsitePoliciesData::applyToDocumentLoader):
+        * UIProcess/API/C/WKWebsitePolicies.cpp:
+        (WKWebsitePoliciesSetAllowedAutoplayQuirks):
+        (WKWebsitePoliciesGetAllowedAutoplayQuirks):
+        * UIProcess/API/C/WKWebsitePolicies.h:
+        * UIProcess/API/Cocoa/_WKWebsitePolicies.h:
+        * UIProcess/API/Cocoa/_WKWebsitePolicies.mm:
+        (-[_WKWebsitePolicies setAllowedAutoplayQuirks:]):
+        (-[_WKWebsitePolicies allowedAutoplayQuirks]):
+
 2019-01-10  Tim Horton  <timothy_horton@apple.com>
 
         Rename some entitlements files to be more clear about their target platform

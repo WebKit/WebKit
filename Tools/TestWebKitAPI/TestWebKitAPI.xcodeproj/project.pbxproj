@@ -739,6 +739,7 @@
 		C9C60E661E53A9DC006DA181 /* autoplay-check-in-iframe.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = C9C60E641E53A9BA006DA181 /* autoplay-check-in-iframe.html */; };
 		C9C9A91B21DED28700FDE96E /* audio-with-play-button.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = C9C9A91A21DED24D00FDE96E /* audio-with-play-button.html */; };
 		C9C9A91D21DED7A000FDE96E /* video-with-play-button.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = C9C9A91C21DED79400FDE96E /* video-with-play-button.html */; };
+		C9C9CD4321E6A6860019DB96 /* autoplaying-multiple-media-elements.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = C9C9CD4221E6A6670019DB96 /* autoplaying-multiple-media-elements.html */; };
 		C9E6DD351EA97D0800DD78AA /* FirstResponderSuppression.mm in Sources */ = {isa = PBXBuildFile; fileRef = C9E6DD311EA972D800DD78AA /* FirstResponderSuppression.mm */; };
 		C9E8EE7521DED94300797765 /* long-test.mp4 in Copy Resources */ = {isa = PBXBuildFile; fileRef = C9E8EE7421DED91E00797765 /* long-test.mp4 */; };
 		CA38459620AE17A900990D3B /* LocalStorageDatabaseTracker.mm in Sources */ = {isa = PBXBuildFile; fileRef = CA38459520AE012E00990D3B /* LocalStorageDatabaseTracker.mm */; };
@@ -1015,6 +1016,7 @@
 				C95984F51E36BC6B002C0D45 /* autoplay-no-audio-check.html in Copy Resources */,
 				C99B675C1E39721A00FC6C80 /* autoplay-with-controls.html in Copy Resources */,
 				C99BDF891E80980400C7170E /* autoplay-zero-volume-check.html in Copy Resources */,
+				C9C9CD4321E6A6860019DB96 /* autoplaying-multiple-media-elements.html in Copy Resources */,
 				2E14A5291D3FE96B0010F35B /* autoplaying-video-with-audio.html in Copy Resources */,
 				F41AB9A01EF4696B0083FA08 /* background-image-link-and-input.html in Copy Resources */,
 				2DE71B001D49C3ED00904094 /* blinking-div.html in Copy Resources */,
@@ -2028,6 +2030,7 @@
 		C9C60E641E53A9BA006DA181 /* autoplay-check-in-iframe.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = "autoplay-check-in-iframe.html"; sourceTree = "<group>"; };
 		C9C9A91A21DED24D00FDE96E /* audio-with-play-button.html */ = {isa = PBXFileReference; lastKnownFileType = text.html; name = "audio-with-play-button.html"; path = "Tests/WebKitCocoa/audio-with-play-button.html"; sourceTree = SOURCE_ROOT; };
 		C9C9A91C21DED79400FDE96E /* video-with-play-button.html */ = {isa = PBXFileReference; lastKnownFileType = text.html; name = "video-with-play-button.html"; path = "Tests/WebKitCocoa/video-with-play-button.html"; sourceTree = SOURCE_ROOT; };
+		C9C9CD4221E6A6670019DB96 /* autoplaying-multiple-media-elements.html */ = {isa = PBXFileReference; lastKnownFileType = text.html; path = "autoplaying-multiple-media-elements.html"; sourceTree = "<group>"; };
 		C9E6DD311EA972D800DD78AA /* FirstResponderSuppression.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = FirstResponderSuppression.mm; sourceTree = "<group>"; };
 		C9E8EE7421DED91E00797765 /* long-test.mp4 */ = {isa = PBXFileReference; lastKnownFileType = file; path = "long-test.mp4"; sourceTree = "<group>"; };
 		CA38459520AE012E00990D3B /* LocalStorageDatabaseTracker.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = LocalStorageDatabaseTracker.mm; sourceTree = "<group>"; };
@@ -2788,6 +2791,7 @@
 				CD57779A211CE6B7001B371E /* audio-with-web-audio.html */,
 				F41AB9981EF4692C0083FA08 /* autofocus-contenteditable.html */,
 				93CFA8661CEB9DE1000565A8 /* autofocused-text-input.html */,
+				C9C9CD4221E6A6670019DB96 /* autoplaying-multiple-media-elements.html */,
 				2E14A5281D3FE8B80010F35B /* autoplaying-video-with-audio.html */,
 				F41AB9971EF4692C0083FA08 /* background-image-link-and-input.html */,
 				2DE71AFF1D49C2F000904094 /* blinking-div.html */,

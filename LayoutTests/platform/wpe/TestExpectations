@@ -298,9 +298,6 @@ Bug(WPE) js/stringimpl-to-jsstring-on-large-strings-3.html [ Skip ]
 fast/canvas/webmetal [ Skip ]
 webgpu [ Skip ]
 
-# This test relies on Mac-specific quirks
-media/document-level-media-user-gesture-quirk.html [ Skip ]
-
 # Skipped due to untestable DRM key system. ClearKey counterparts are tested instead.
 imported/w3c/web-platform-tests/encrypted-media/drm-check-initdata-type.https.html [ Skip ]
 imported/w3c/web-platform-tests/encrypted-media/drm-events.https.html [ Skip ]

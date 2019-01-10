@@ -31,6 +31,7 @@ enum class WebsiteAutoplayQuirk {
     SynthesizedPauseEvents = 1 << 0,
     InheritedUserGestures = 1 << 1,
     ArbitraryUserGestures = 1 << 2,
+    PerDocumentAutoplayBehavior = 1 << 3,
 };
 
 }

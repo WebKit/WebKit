@@ -944,9 +944,6 @@ media/video-seek-to-current-time.html [ Skip ]
 # Media controls tests are OS X only
 media/controls [ Skip ]
 
-# This test relies on Mac-specific quirks
-media/document-level-media-user-gesture-quirk.html [ Skip ]
-
 # WIRELESS_PLAYBACK_TARGET not enabled.
 media/airplay-target-availability.html
 

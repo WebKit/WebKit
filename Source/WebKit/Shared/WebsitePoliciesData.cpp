@@ -130,6 +130,9 @@ void WebsitePoliciesData::applyToDocumentLoader(WebsitePoliciesData&& websitePol
     if (allowedQuirks.contains(WebsiteAutoplayQuirk::ArbitraryUserGestures))
         quirks.add(WebCore::AutoplayQuirk::ArbitraryUserGestures);
 
+    if (allowedQuirks.contains(WebsiteAutoplayQuirk::PerDocumentAutoplayBehavior))
+        quirks.add(WebCore::AutoplayQuirk::PerDocumentAutoplayBehavior);
+
     documentLoader.setAllowedAutoplayQuirks(quirks);
 
     switch (websitePolicies.autoplayPolicy) {

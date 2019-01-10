@@ -45,6 +45,7 @@ enum {
     kWKWebsiteAutoplayQuirkSynthesizedPauseEvents = 1 << 0,
     kWKWebsiteAutoplayQuirkInheritedUserGestures = 1 << 1,
     kWKWebsiteAutoplayQuirkArbitraryUserGestures = 1 << 2,
+    kWKWebsiteAutoplayQuirkPerDocumentAutoplayBehavior = 1 << 3,
 };
 
 enum WKWebsitePopUpPolicy {

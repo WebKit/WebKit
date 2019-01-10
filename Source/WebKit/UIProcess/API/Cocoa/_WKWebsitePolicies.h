@@ -38,6 +38,7 @@ typedef NS_OPTIONS(NSUInteger, _WKWebsiteAutoplayQuirk) {
     _WKWebsiteAutoplayQuirkSynthesizedPauseEvents = 1 << 0,
     _WKWebsiteAutoplayQuirkInheritedUserGestures = 1 << 1,
     _WKWebsiteAutoplayQuirkArbitraryUserGestures = 1 << 2,
+    _WKWebsiteAutoplayQuirkPerDocumentAutoplayBehavior = 1 << 3,
 } WK_API_AVAILABLE(macosx(10.13), ios(11.0));
 
 typedef NS_OPTIONS(NSUInteger, _WKWebsitePopUpPolicy) {

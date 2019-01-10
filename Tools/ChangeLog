@@ -1,3 +1,17 @@
+2019-01-09  Matt Rajca  <mrajca@apple.com>
+
+        Put per-document autoplay behavior behind runtime website policies quirk instead of a compile time flag
+        https://bugs.webkit.org/show_bug.cgi?id=193301
+
+        Reviewed by Jer Noble.
+        
+        Added API tests.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WebKitCocoa/WebsitePolicies.mm:
+        (TEST):
+        * TestWebKitAPI/Tests/WebKitCocoa/autoplaying-multiple-media-elements.html: Added.
+
 2019-01-10  Zalan Bujtas  <zalan@apple.com>
 
         [LFC][BFC][MarginCollapsing] Take collapsed through siblings into account when computing vertical position
