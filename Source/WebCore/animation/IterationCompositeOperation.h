@@ -27,6 +27,6 @@
 
 namespace WebCore {
 
-enum class IterationCompositeOperation { Replace, Accumulate };
+enum class IterationCompositeOperation : uint8_t { Replace, Accumulate };
 
 } // namespace WebCore

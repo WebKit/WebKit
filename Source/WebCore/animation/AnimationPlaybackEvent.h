@@ -25,8 +25,9 @@
 
 #pragma once
 
-#include "Event.h"
 #include "AnimationPlaybackEventInit.h"
+#include "Event.h"
+#include <wtf/Markable.h>
 
 namespace WebCore {
 
@@ -55,8 +56,8 @@ private:
     AnimationPlaybackEvent(const AtomicString&, Optional<Seconds>, Optional<Seconds>);
     AnimationPlaybackEvent(const AtomicString&, const AnimationPlaybackEventInit&, IsTrusted);
 
-    Optional<Seconds> m_currentTime;
-    Optional<Seconds> m_timelineTime;
+    Markable<Seconds, Seconds::MarkableTraits> m_currentTime;
+    Markable<Seconds, Seconds::MarkableTraits> m_timelineTime;
 };
 
 }

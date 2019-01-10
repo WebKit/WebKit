@@ -25,8 +25,12 @@
 
 #pragma once
 
+#include <wtf/Markable.h>
+
 namespace WebCore {
 
-enum class FillMode { None, Forwards, Backwards, Both, Auto };
+enum class FillMode : uint8_t { None, Forwards, Backwards, Both, Auto };
+
+using OptionalFillMode = Markable<FillMode, EnumMarkableTraits<FillMode>>;
 
 } // namespace WebCore

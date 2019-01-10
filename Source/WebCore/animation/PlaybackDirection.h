@@ -25,8 +25,12 @@
 
 #pragma once
 
+#include <wtf/Markable.h>
+
 namespace WebCore {
 
-enum class PlaybackDirection { Normal, Reverse, Alternate, AlternateReverse };
+enum class PlaybackDirection : uint8_t { Normal, Reverse, Alternate, AlternateReverse };
+
+using OptionalPlaybackDirection = Markable<PlaybackDirection, EnumMarkableTraits<PlaybackDirection>>;
 
 } // namespace WebCore

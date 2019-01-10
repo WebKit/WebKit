@@ -115,8 +115,10 @@ static inline void computeMissingKeyframeOffsets(Vector<KeyframeEffect::ParsedKe
     // In our implementation, we only set non-null values to avoid making computedOffset Optional<double>. Instead, we'll know
     // that a keyframe hasn't had a computed offset by checking if it has a null offset and a 0 computedOffset, since the first
     // keyframe will already have a 0 computedOffset.
-    for (auto& keyframe : keyframes)
-        keyframe.computedOffset = keyframe.offset.valueOr(0);
+    for (auto& keyframe : keyframes) {
+        auto computedOffset = keyframe.offset;
+        keyframe.computedOffset = computedOffset ? *computedOffset : 0;
+    }
 
     // 2. If keyframes contains more than one keyframe and the computed keyframe offset of the first keyframe in keyframes is null,
     //    set the computed keyframe offset of the first keyframe to 0.
@@ -472,17 +474,16 @@ ExceptionOr<Ref<KeyframeEffect>> KeyframeEffect::create(ExecState& state, Elemen
         } else {
             auto keyframeEffectOptions = WTF::get<KeyframeEffectOptions>(optionsValue);
             timing = {
+                keyframeEffectOptions.duration,
+                keyframeEffectOptions.iterations,
                 keyframeEffectOptions.delay,
                 keyframeEffectOptions.endDelay,
-                keyframeEffectOptions.fill,
                 keyframeEffectOptions.iterationStart,
-                keyframeEffectOptions.iterations,
-                keyframeEffectOptions.duration,
-                keyframeEffectOptions.direction,
-                keyframeEffectOptions.easing
+                keyframeEffectOptions.easing,
+                keyframeEffectOptions.fill,
+                keyframeEffectOptions.direction
             };
         }
-
         auto updateTimingResult = keyframeEffect->updateTiming(timing);
         if (updateTimingResult.hasException())
             return updateTimingResult.releaseException();
@@ -509,7 +510,6 @@ Ref<KeyframeEffect> KeyframeEffect::create(const Element& target)
 
 KeyframeEffect::KeyframeEffect(Element* target)
     : m_target(target)
-    , m_blendingKeyframes(emptyString())
 {
 }
 

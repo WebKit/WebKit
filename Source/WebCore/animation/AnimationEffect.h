@@ -94,17 +94,20 @@ protected:
     explicit AnimationEffect();
 
 private:
-    enum class ComputedDirection { Forwards, Reverse };
+    enum class ComputedDirection : uint8_t { Forwards, Reverse };
+
+    FillMode m_fill { FillMode::Auto };
+    PlaybackDirection m_direction { PlaybackDirection::Normal };
+
+    WeakPtr<WebAnimation> m_animation;
+    RefPtr<TimingFunction> m_timingFunction;
+
+    double m_iterationStart { 0 };
+    double m_iterations { 1 };
 
     Seconds m_delay { 0_s };
     Seconds m_endDelay { 0_s };
-    FillMode m_fill { FillMode::Auto };
-    double m_iterationStart { 0 };
-    double m_iterations { 1 };
     Seconds m_iterationDuration { 0_s };
-    PlaybackDirection m_direction { PlaybackDirection::Normal };
-    RefPtr<TimingFunction> m_timingFunction;
-    WeakPtr<WebAnimation> m_animation;
 };
 
 } // namespace WebCore

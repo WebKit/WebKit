@@ -33,14 +33,14 @@
 namespace WebCore {
 
 struct EffectTiming {
+    Variant<double, String> duration { "auto" };
     double delay { 0 };
     double endDelay { 0 };
-    FillMode fill { FillMode::Auto };
     double iterationStart { 0 };
     double iterations { 1 };
-    Variant<double, String> duration { "auto" };
-    PlaybackDirection direction { PlaybackDirection::Normal };
     String easing { "linear" };
+    FillMode fill { FillMode::Auto };
+    PlaybackDirection direction { PlaybackDirection::Normal };
 };
 
 } // namespace WebCore

@@ -27,6 +27,6 @@
 
 namespace WebCore {
 
-enum class CompositeOperationOrAuto { Replace, Add, Accumulate, Auto };
+enum class CompositeOperationOrAuto : uint8_t { Replace, Add, Accumulate, Auto };
 
 } // namespace WebCore

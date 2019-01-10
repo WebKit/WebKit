@@ -1,3 +1,70 @@
+2019-01-09  Antoine Quint  <graouts@apple.com>
+
+        [Web Animations] Audit Web Animations classes for memory reduction
+        https://bugs.webkit.org/show_bug.cgi?id=193195
+
+        Reviewed by Simon Fraser and Yusuke Suzuki.
+
+        The classes, enums and structs added to support Web Animations were not as memory-efficient as they could be. We now order
+        members in a way that reduces padding, use Markable<T, Traits> instead of Optional<T> where applicable, declare enums as uint8_t
+        and removed unnecessary members.
+
+        As a result, classes and structs have shrunk as follows:
+
+        WebAnimation: 256 > 216
+        DeclarativeAnimation: 392 > 344
+        CSSAnimation: 416 > 368
+        CSSTransition: 440 > 392
+        AnimationEffect: 88 > 72
+        KeyframeEffect: 208 > 184
+        AnimationPlaybackEvent: 104 > 88
+        EffectTiming: 72 > 64
+        ComputedEffectTiming: 136 > 112
+        AnimationTimeline: 264 > 248
+        DocumentTimeline: 496 > 464
+        OptionalEffectTiming: 112 > 80
+        BaseKeyframe: 32 > 24
+        ParsedKeyframe: 80 > 72
+        BaseComputedKeyframe: 40 > 32
+
+        * animation/AnimationEffect.h: Order members in decreasing size, except for m_fill and m_direction, which we put at the top to
+        save 8 bytes (2 bytes of padding instead of 4 before m_animation and saving 6 bytes of padding at the end).
+        * animation/AnimationPlaybackEvent.cpp:
+        (WebCore::AnimationPlaybackEvent::AnimationPlaybackEvent):
+        * animation/AnimationPlaybackEvent.h:
+        * animation/AnimationPlaybackEventInit.h:
+        * animation/AnimationTimeline.cpp:
+        (WebCore::AnimationTimeline::AnimationTimeline):
+        (WebCore::AnimationTimeline::updateCSSTransitionsForElement):
+        * animation/AnimationTimeline.h: We remove the m_classType member and instead make isDocumentTimeline() virtual.
+        (WebCore::AnimationTimeline::isDocumentTimeline const):
+        (): Deleted.
+        (WebCore::AnimationTimeline::classType const): Deleted.
+        * animation/CompositeOperation.h:
+        * animation/CompositeOperationOrAuto.h:
+        * animation/ComputedEffectTiming.h:
+        * animation/DeclarativeAnimation.cpp:
+        (WebCore::DeclarativeAnimation::DeclarativeAnimation):
+        (WebCore::DeclarativeAnimation::invalidateDOMEvents):
+        * animation/DeclarativeAnimation.h: We keep m_wasPending and m_previousPhase at the top to save some padding at the end.
+        * animation/DocumentTimeline.cpp:
+        (WebCore::DocumentTimeline::DocumentTimeline):
+        * animation/DocumentTimeline.h:
+        * animation/EffectTiming.h:
+        * animation/FillMode.h:
+        * animation/IterationCompositeOperation.h:
+        * animation/KeyframeEffect.cpp:
+        (WebCore::computeMissingKeyframeOffsets):
+        (WebCore::KeyframeEffect::create):
+        (WebCore::KeyframeEffect::KeyframeEffect):
+        * animation/KeyframeEffect.h:
+        * animation/OptionalEffectTiming.h:
+        * animation/PlaybackDirection.h:
+        * animation/WebAnimation.h:
+        * animation/WebAnimationUtilities.h:
+        (WebCore::WebAnimationsMarkableDoubleTraits::isEmptyValue):
+        (WebCore::WebAnimationsMarkableDoubleTraits::emptyValue):
+
 2019-01-09  Ryosuke Niwa  <rniwa@webkit.org>
 
         ThreadTimers should not store a raw pointer in its heap

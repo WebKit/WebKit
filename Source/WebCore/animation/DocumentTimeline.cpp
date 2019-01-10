@@ -60,13 +60,13 @@ Ref<DocumentTimeline> DocumentTimeline::create(Document& document, DocumentTimel
 }
 
 DocumentTimeline::DocumentTimeline(Document& document, Seconds originTime)
-    : AnimationTimeline(DocumentTimelineClass)
-    , m_document(&document)
-    , m_originTime(originTime)
-    , m_tickScheduleTimer(*this, &DocumentTimeline::scheduleAnimationResolutionIfNeeded)
+    : AnimationTimeline()
 #if !USE(REQUEST_ANIMATION_FRAME_DISPLAY_MONITOR)
     , m_animationResolutionTimer(*this, &DocumentTimeline::animationResolutionTimerFired)
 #endif
+    , m_tickScheduleTimer(*this, &DocumentTimeline::scheduleAnimationResolutionIfNeeded)
+    , m_document(&document)
+    , m_originTime(originTime)
 {
     if (m_document && m_document->page() && !m_document->page()->isVisible())
         suspendAnimations();

@@ -26,13 +26,13 @@
 #pragma once
 
 #include "EventInit.h"
-#include <wtf/Optional.h>
+#include "WebAnimationUtilities.h"
 
 namespace WebCore {
 
 struct AnimationPlaybackEventInit : EventInit {
-    Optional<double> currentTime;
-    Optional<double> timelineTime;
+    MarkableDouble currentTime;
+    MarkableDouble timelineTime;
 };
 
 }

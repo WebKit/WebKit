@@ -29,6 +29,7 @@
 #include "DocumentTimelineOptions.h"
 #include "GenericTaskQueue.h"
 #include "Timer.h"
+#include <wtf/Markable.h>
 #include <wtf/Ref.h>
 
 namespace WebCore {
@@ -42,6 +43,8 @@ public:
     static Ref<DocumentTimeline> create(Document&);
     static Ref<DocumentTimeline> create(Document&, DocumentTimelineOptions&&);
     ~DocumentTimeline();
+
+    bool isDocumentTimeline() const final { return true; }
 
     Vector<RefPtr<WebAnimation>> getAnimations() const;
 
@@ -100,23 +103,23 @@ private:
     void transitionDidComplete(RefPtr<CSSTransition>);
     void scheduleNextTick();
 
-    RefPtr<Document> m_document;
-    Seconds m_originTime;
-    bool m_isSuspended { false };
-    bool m_waitingOnVMIdle { false };
-    bool m_isUpdatingAnimations { false };
-    Optional<Seconds> m_cachedCurrentTime;
-    GenericTaskQueue<Timer> m_currentTimeClearingTaskQueue;
-    HashSet<RefPtr<WebAnimation>> m_acceleratedAnimationsPendingRunningStateChange;
-    Vector<Ref<AnimationPlaybackEvent>> m_pendingAnimationEvents;
-    unsigned m_numberOfAnimationTimelineInvalidationsForTesting { 0 };
-    HashSet<Element*> m_elementsWithRunningAcceleratedAnimations;
-    Timer m_tickScheduleTimer;
-
 #if !USE(REQUEST_ANIMATION_FRAME_DISPLAY_MONITOR)
     void animationResolutionTimerFired();
     Timer m_animationResolutionTimer;
 #endif
+
+    Timer m_tickScheduleTimer;
+    GenericTaskQueue<Timer> m_currentTimeClearingTaskQueue;
+    HashSet<RefPtr<WebAnimation>> m_acceleratedAnimationsPendingRunningStateChange;
+    HashSet<Element*> m_elementsWithRunningAcceleratedAnimations;
+    Vector<Ref<AnimationPlaybackEvent>> m_pendingAnimationEvents;
+    RefPtr<Document> m_document;
+    Markable<Seconds, Seconds::MarkableTraits> m_cachedCurrentTime;
+    Seconds m_originTime;
+    unsigned m_numberOfAnimationTimelineInvalidationsForTesting { 0 };
+    bool m_isSuspended { false };
+    bool m_waitingOnVMIdle { false };
+    bool m_isUpdatingAnimations { false };
 };
 
 } // namespace WebCore

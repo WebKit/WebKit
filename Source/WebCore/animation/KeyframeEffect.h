@@ -36,6 +36,7 @@
 #include "KeyframeList.h"
 #include "RenderStyle.h"
 #include "StyleProperties.h"
+#include "WebAnimationUtilities.h"
 #include <wtf/Ref.h>
 
 namespace WebCore {
@@ -60,7 +61,7 @@ public:
     };
 
     struct BaseKeyframe {
-        Optional<double> offset;
+        MarkableDouble offset;
         String easing { "linear" };
         CompositeOperationOrAuto composite { CompositeOperationOrAuto::Auto };
     };
@@ -76,7 +77,7 @@ public:
     };
 
     struct ParsedKeyframe {
-        Optional<double> offset;
+        MarkableDouble offset;
         double computedOffset;
         CompositeOperationOrAuto composite { CompositeOperationOrAuto::Auto };
         String easing;
@@ -91,7 +92,7 @@ public:
     };
 
     struct BaseComputedKeyframe {
-        Optional<double> offset;
+        MarkableDouble offset;
         double computedOffset;
         String easing { "linear" };
         CompositeOperationOrAuto composite { CompositeOperationOrAuto::Auto };
@@ -139,7 +140,7 @@ public:
 private:
     KeyframeEffect(Element*);
 
-    enum class AcceleratedAction { Play, Pause, Seek, Stop };
+    enum class AcceleratedAction : uint8_t { Play, Pause, Seek, Stop };
 
     void copyPropertiesFromSource(Ref<KeyframeEffect>&&);
     ExceptionOr<void> processKeyframes(JSC::ExecState&, JSC::Strong<JSC::JSObject>&&);
@@ -157,14 +158,20 @@ private:
     void setBlendingKeyframes(KeyframeList&);
     void checkForMatchingTransformFunctionLists();
     void checkForMatchingFilterFunctionLists();
+    void checkForMatchingColorFilterFunctionLists();
+    bool checkForMatchingFilterFunctionLists(CSSPropertyID, const std::function<const FilterOperations& (const RenderStyle&)>&) const;
 #if ENABLE(FILTERS_LEVEL_2)
     void checkForMatchingBackdropFilterFunctionLists();
 #endif
-    void checkForMatchingColorFilterFunctionLists();
 
-    bool checkForMatchingFilterFunctionLists(CSSPropertyID, const std::function<const FilterOperations& (const RenderStyle&)>&) const;
+    KeyframeList m_blendingKeyframes { emptyString() };
+    Vector<ParsedKeyframe> m_parsedKeyframes;
+    Vector<AcceleratedAction> m_pendingAcceleratedActions;
+    RefPtr<Element> m_target;
 
     AcceleratedAction m_lastRecordedAcceleratedAction { AcceleratedAction::Stop };
+    IterationCompositeOperation m_iterationCompositeOperation { IterationCompositeOperation::Replace };
+    CompositeOperation m_compositeOperation { CompositeOperation::Replace };
     bool m_shouldRunAccelerated { false };
     bool m_needsForcedLayout { false };
     bool m_triggersStackingContext { false };
@@ -174,14 +181,6 @@ private:
     bool m_backdropFilterFunctionListsMatch { false };
 #endif
     bool m_colorFilterFunctionListsMatch { false };
-
-    RefPtr<Element> m_target;
-    KeyframeList m_blendingKeyframes;
-    Vector<ParsedKeyframe> m_parsedKeyframes;
-    IterationCompositeOperation m_iterationCompositeOperation { IterationCompositeOperation::Replace };
-    CompositeOperation m_compositeOperation { CompositeOperation::Replace };
-
-    Vector<AcceleratedAction> m_pendingAcceleratedActions;
 };
 
 } // namespace WebCore

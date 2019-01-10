@@ -38,9 +38,9 @@ namespace WebCore {
 
 DeclarativeAnimation::DeclarativeAnimation(Element& owningElement, const Animation& backingAnimation)
     : WebAnimation(owningElement.document())
+    , m_eventQueue(owningElement)
     , m_owningElement(&owningElement)
     , m_backingAnimation(const_cast<Animation&>(backingAnimation))
-    , m_eventQueue(owningElement)
 {
 }
 
@@ -236,7 +236,7 @@ void DeclarativeAnimation::invalidateDOMEvents(Seconds elapsedTime)
     if (isPending && m_wasPending)
         return;
 
-    double iteration;
+    double iteration = 0;
     AnimationEffectPhase currentPhase;
     Seconds intervalStart;
     Seconds intervalEnd;
@@ -244,7 +244,8 @@ void DeclarativeAnimation::invalidateDOMEvents(Seconds elapsedTime)
     auto* animationEffect = effect();
     if (animationEffect) {
         auto timing = animationEffect->getComputedTiming();
-        iteration = timing.currentIteration.valueOr(0);
+        if (auto computedIteration = timing.currentIteration)
+            iteration = *computedIteration;
         currentPhase = timing.phase;
         intervalStart = std::max(0_s, Seconds::fromMilliseconds(std::min(-timing.delay, timing.activeDuration)));
         intervalEnd = std::max(0_s, Seconds::fromMilliseconds(std::min(timing.endTime - timing.delay, timing.activeDuration)));

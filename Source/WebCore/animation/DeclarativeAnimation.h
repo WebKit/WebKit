@@ -84,12 +84,14 @@ private:
     void resume() final;
     void stop() final;
 
-    Element* m_owningElement;
-    Ref<Animation> m_backingAnimation;
     bool m_wasPending { false };
     AnimationEffectPhase m_previousPhase { AnimationEffectPhase::Idle };
-    double m_previousIteration;
+
     GenericEventQueue m_eventQueue;
+
+    Element* m_owningElement;
+    Ref<Animation> m_backingAnimation;
+    double m_previousIteration;
 };
 
 } // namespace WebCore
