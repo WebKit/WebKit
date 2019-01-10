@@ -696,6 +696,7 @@ public:
         ProcessSuspended        = 1 << 2,
         PageSuspended           = 1 << 3,
         Printing                = 1 << 4,
+        SwapFromSuspended       = 1 << 5,
     };
     void freezeLayerTree(LayerTreeFreezeReason);
     void unfreezeLayerTree(LayerTreeFreezeReason);
