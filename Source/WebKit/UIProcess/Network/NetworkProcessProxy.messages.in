@@ -40,6 +40,7 @@ messages -> NetworkProcessProxy LegacyReceiver {
     LogDiagnosticMessageWithValue(uint64_t pageID, String message, String description, double value, unsigned significantFigures, enum:bool WebCore::ShouldSample shouldSample)
 
 #if ENABLE(RESOURCE_LOAD_STATISTICS)
+    DidLogUserInteraction(uint64_t callbackId)
     DidUpdateBlockCookies(uint64_t callbackId)
     DidSetAgeCapForClientSideCookies(uint64_t callbackId)
     StorageAccessRequestResult(bool wasGranted, uint64_t contextId)

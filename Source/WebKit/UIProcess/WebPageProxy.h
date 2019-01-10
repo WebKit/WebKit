@@ -1907,6 +1907,10 @@ private:
     void setNeedsFontAttributes(bool);
     void updateFontAttributesAfterEditorStateChange();
 
+#if ENABLE(RESOURCE_LOAD_STATISTICS)
+    void logFrameNavigation(const WebFrameProxy&, const URL& pageURL, const WebCore::ResourceRequest&, const URL& redirectURL);
+#endif
+
     WeakPtr<PageClient> m_pageClient;
     Ref<API::PageConfiguration> m_configuration;
 

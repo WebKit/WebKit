@@ -1,3 +1,77 @@
+2019-01-09  Brent Fulgham  <bfulgham@apple.com>
+
+        Create a WebResourceLoadStatisticsStore attached to the NetworkSession
+        https://bugs.webkit.org/show_bug.cgi?id=193261
+        <rdar://problem/47158616>
+
+        Reviewed by Alex Christensen.
+
+        This patch modifies NetworkSession so that it owns a WebResourceLoadStatisticsStore
+        object. This object is only created if the ResourceLoadStatistics feature is turned on.
+
+        The patch also modifies WebResourceLoadStatisticsStore so that it can be constructed
+        with an owning NetworkSession as an alternative to the current practice of using a
+        WebsiteDataStore object.
+
+        Two initial messages from the WebContent process are added (logFrameNavigation and
+        logUserNavigation) that notify the network process of these actions. Currently they
+        are called in addition the calls to the WebsiteDataStore object. These redundant calls
+        will be removed in a future patch.
+
+        This patch forces the ResourceLoadStatistics code in the NetworkSession to be off by
+        default, so there should be no change in behavior with this patch.
+
+        * NetworkProcess/Classifier/ResourceLoadStatisticsMemoryStore.cpp:
+        (WebKit::ResourceLoadStatisticsMemoryStore::updateClientSideCookiesAgeCap):
+        * NetworkProcess/Classifier/WebResourceLoadStatisticsStore.cpp:
+        (WebKit::WebResourceLoadStatisticsStore::WebResourceLoadStatisticsStore):
+        (WebKit::WebResourceLoadStatisticsStore::hasStorageAccessForFrame):
+        (WebKit::WebResourceLoadStatisticsStore::callHasStorageAccessForFrameHandler):
+        (WebKit::WebResourceLoadStatisticsStore::grantStorageAccess):
+        (WebKit::WebResourceLoadStatisticsStore::callGrantStorageAccessHandler):
+        (WebKit::WebResourceLoadStatisticsStore::removeAllStorageAccess):
+        (WebKit::WebResourceLoadStatisticsStore::logFrameNavigation):
+        (WebKit::WebResourceLoadStatisticsStore::logUserInteraction):
+        (WebKit::WebResourceLoadStatisticsStore::setCacheMaxAgeCapForPrevalentResources):
+        (WebKit::WebResourceLoadStatisticsStore::setCacheMaxAgeCap):
+        (WebKit::WebResourceLoadStatisticsStore::updatePrevalentDomainsToBlockCookiesFor):
+        (WebKit::WebResourceLoadStatisticsStore::callUpdatePrevalentDomainsToBlockCookiesForHandler):
+        (WebKit::WebResourceLoadStatisticsStore::removePrevalentDomains):
+        (WebKit::WebResourceLoadStatisticsStore::callRemoveDomainsHandler):
+        * NetworkProcess/Classifier/WebResourceLoadStatisticsStore.h:
+        * NetworkProcess/NetworkProcess.cpp:
+        (WebKit::NetworkProcess::initializeNetworkProcess):
+        (WebKit::NetworkProcess::logFrameNavigation):
+        (WebKit::NetworkProcess::logUserInteraction):
+        * NetworkProcess/NetworkProcess.h:
+        * NetworkProcess/NetworkProcess.messages.in:
+        * NetworkProcess/NetworkSession.cpp:
+        (WebKit::NetworkSession::enableResourceLoadStatistics):
+        * NetworkProcess/NetworkSession.h:
+        (WebKit::NetworkSession::resourceLoadStatistics const):
+        * NetworkProcess/NetworkSessionCreationParameters.cpp:
+        (WebKit::NetworkSessionCreationParameters::privateSessionParameters):
+        (WebKit::NetworkSessionCreationParameters::encode const):
+        (WebKit::NetworkSessionCreationParameters::decode):
+        * NetworkProcess/NetworkSessionCreationParameters.h:
+        * NetworkProcess/cocoa/NetworkSessionCocoa.mm:
+        (WebKit::NetworkSessionCocoa::NetworkSessionCocoa):
+        * UIProcess/Cocoa/WebProcessPoolCocoa.mm:
+        (WebKit::WebProcessPool::platformInitializeNetworkProcess):
+        * UIProcess/Network/NetworkProcessProxy.cpp:
+        (WebKit::NetworkProcessProxy::didLogUserInteraction):
+        * UIProcess/Network/NetworkProcessProxy.h:
+        * UIProcess/Network/NetworkProcessProxy.messages.in:
+        * UIProcess/WebsiteData/Cocoa/WebsiteDataStoreCocoa.mm:
+        (WebsiteDataStore::parameters):
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::decidePolicyForNavigationAction):
+        (WebKit::WebPageProxy::logFrameNavigation):
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::WebProcessPool::ensureNetworkProcess):
+        (WebKit::WebProcessPool::initializeNewWebProcess):
+
 2019-01-09  Alex Christensen  <achristensen@webkit.org>
 
         Replace SessionTracker with HashMap member of NetworkProcess

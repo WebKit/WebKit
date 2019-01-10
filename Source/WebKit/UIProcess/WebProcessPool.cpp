@@ -548,6 +548,15 @@ NetworkProcessProxy& WebProcessPool::ensureNetworkProcess(WebsiteDataStore* with
     parameters.shouldDisableServiceWorkerProcessTerminationDelay = m_shouldDisableServiceWorkerProcessTerminationDelay;
 #endif
 
+    if (m_websiteDataStore)
+        parameters.defaultDataStoreParameters.networkSessionParameters.resourceLoadStatisticsDirectory = m_websiteDataStore->websiteDataStore().resolvedResourceLoadStatisticsDirectory();
+    if (parameters.defaultDataStoreParameters.networkSessionParameters.resourceLoadStatisticsDirectory.isEmpty())
+        parameters.defaultDataStoreParameters.networkSessionParameters.resourceLoadStatisticsDirectory = API::WebsiteDataStore::defaultResourceLoadStatisticsDirectory();
+
+    SandboxExtension::createHandleForReadWriteDirectory(parameters.defaultDataStoreParameters.networkSessionParameters.resourceLoadStatisticsDirectory, parameters.defaultDataStoreParameters.networkSessionParameters.resourceLoadStatisticsDirectoryExtensionHandle);
+
+    parameters.defaultDataStoreParameters.networkSessionParameters.enableResourceLoadStatistics = false; // FIXME(193297): Turn on when the feature is on.
+
     // Add any platform specific parameters
     platformInitializeNetworkProcess(parameters);
 

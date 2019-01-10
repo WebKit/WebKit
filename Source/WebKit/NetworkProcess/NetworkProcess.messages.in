@@ -90,6 +90,8 @@ messages -> NetworkProcess LegacyReceiver {
     HasStorageAccessForFrame(PAL::SessionID sessionID, String resourceDomain, String firstPartyDomain, uint64_t frameID, uint64_t pageID, uint64_t contextId)
     GetAllStorageAccessEntries(PAL::SessionID sessionID, uint64_t contextId)
     GrantStorageAccess(PAL::SessionID sessionID, String resourceDomain, String firstPartyDomain, Optional<uint64_t> frameID, uint64_t pageID, uint64_t contextId)
+    LogFrameNavigation(PAL::SessionID sessionID, String targetPrimaryDomain, String mainFramePrimaryDomain, String sourcePrimaryDomain, String targetHost, String mainFrameHost, bool isRedirect, bool isMainFrame)
+    LogUserInteraction(PAL::SessionID sessionID, String targetPrimaryDomain, uint64_t contextId)
     RemoveAllStorageAccess(PAL::SessionID sessionID, uint64_t contextId)
     RemovePrevalentDomains(PAL::SessionID sessionID, Vector<String> domainsWithInteraction)
     SetCacheMaxAgeCapForPrevalentResources(PAL::SessionID sessionID, Seconds seconds, uint64_t contextId)

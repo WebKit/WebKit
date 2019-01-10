@@ -931,6 +931,10 @@ NetworkSessionCocoa::NetworkSessionCocoa(NetworkProcess& networkProcess, Network
 
     m_statelessSessionDelegate = adoptNS([[WKNetworkSessionDelegate alloc] initWithNetworkSession:*this withCredentials:false]);
     m_statelessSession = [NSURLSession sessionWithConfiguration:configuration delegate:static_cast<id>(m_statelessSessionDelegate.get()) delegateQueue:[NSOperationQueue mainQueue]];
+
+    m_resourceLoadStatisticsDirectory = parameters.resourceLoadStatisticsDirectory;
+    if (parameters.enableResourceLoadStatistics)
+        enableResourceLoadStatistics();
 }
 
 NetworkSessionCocoa::~NetworkSessionCocoa()

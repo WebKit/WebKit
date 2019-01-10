@@ -142,6 +142,7 @@ private:
     void logDiagnosticMessageWithResult(uint64_t pageID, const String& message, const String& description, uint32_t result, WebCore::ShouldSample);
     void logDiagnosticMessageWithValue(uint64_t pageID, const String& message, const String& description, double value, unsigned significantFigures, WebCore::ShouldSample);
 #if ENABLE(RESOURCE_LOAD_STATISTICS)
+    void didLogUserInteraction(uint64_t contextId);
     void didUpdateBlockCookies(uint64_t contextId);
     void didSetAgeCapForClientSideCookies(uint64_t contextId);
     void storageAccessRequestResult(bool wasGranted, uint64_t contextId);

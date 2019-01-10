@@ -53,6 +53,7 @@
 #include "WebCookieManager.h"
 #include "WebPageProxyMessages.h"
 #include "WebProcessPoolMessages.h"
+#include "WebResourceLoadStatisticsStore.h"
 #include "WebSWOriginStore.h"
 #include "WebSWServerConnection.h"
 #include "WebSWServerToContextConnection.h"
@@ -300,6 +301,8 @@ void NetworkProcess::initializeNetworkProcess(NetworkProcessCreationParameters&&
     if (parameters.shouldUseTestingNetworkSession)
         NetworkStorageSession::switchToNewTestingSession();
 
+    SandboxExtension::consumePermanently(parameters.defaultDataStoreParameters.networkSessionParameters.resourceLoadStatisticsDirectoryExtensionHandle);
+
     auto sessionID = parameters.defaultDataStoreParameters.networkSessionParameters.sessionID;
     setSession(sessionID, NetworkSession::create(*this, WTFMove(parameters.defaultDataStoreParameters.networkSessionParameters)));
 
@@ -532,6 +535,27 @@ void NetworkProcess::grantStorageAccess(PAL::SessionID sessionID, const String& 
         ASSERT_NOT_REACHED();
 
     parentProcessConnection()->send(Messages::NetworkProcessProxy::StorageAccessRequestResult(isStorageGranted, contextId), 0);
+}
+
+void NetworkProcess::logFrameNavigation(PAL::SessionID sessionID, const String& targetPrimaryDomain, const String& mainFramePrimaryDomain, const String& sourcePrimaryDomain, const String& targetHost, const String& mainFrameHost, bool isRedirect, bool isMainFrame)
+{
+    if (auto* networkSession = SessionTracker::networkSession(sessionID)) {
+        if (auto* resourceLoadStatistics = networkSession->resourceLoadStatistics())
+            resourceLoadStatistics->logFrameNavigation(targetPrimaryDomain, mainFramePrimaryDomain, sourcePrimaryDomain, targetHost, mainFrameHost, isRedirect, isMainFrame);
+    } else
+        ASSERT_NOT_REACHED();
+}
+
+void NetworkProcess::logUserInteraction(PAL::SessionID sessionID, const String& targetPrimaryDomain, uint64_t contextId)
+{
+    if (auto* networkSession = SessionTracker::networkSession(sessionID)) {
+        if (auto* resourceLoadStatistics = networkSession->resourceLoadStatistics()) {
+            resourceLoadStatistics->logUserInteraction(targetPrimaryDomain, [this, contextId] {
+                parentProcessConnection()->send(Messages::NetworkProcessProxy::DidLogUserInteraction(contextId), 0);
+            });        
+        }
+    } else
+        ASSERT_NOT_REACHED();
 }
 
 void NetworkProcess::removeAllStorageAccess(PAL::SessionID sessionID, uint64_t contextId)

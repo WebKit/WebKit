@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016-2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,6 +27,7 @@
 #include "WebResourceLoadStatisticsStore.h"
 
 #include "Logging.h"
+#include "NetworkSession.h"
 #include "ResourceLoadStatisticsMemoryStore.h"
 #include "ResourceLoadStatisticsPersistentStorage.h"
 #include "WebFrameProxy.h"
@@ -37,6 +38,7 @@
 #include "WebResourceLoadStatisticsTelemetry.h"
 #include "WebsiteDataFetchOption.h"
 #include "WebsiteDataStore.h"
+#include <WebCore/NetworkStorageSession.h>
 #include <WebCore/ResourceLoadStatistics.h>
 #include <wtf/CallbackAggregator.h>
 #include <wtf/CrossThreadCopier.h>
@@ -118,6 +120,21 @@ WebResourceLoadStatisticsStore::WebResourceLoadStatisticsStore(WebsiteDataStore&
         m_persistentStorage = std::make_unique<ResourceLoadStatisticsPersistentStorage>(*m_memoryStore, m_statisticsQueue, resourceLoadStatisticsDirectory);
     });
 
+    m_dailyTasksTimer.startRepeating(24_h);
+}
+
+WebResourceLoadStatisticsStore::WebResourceLoadStatisticsStore(NetworkSession& networkSession, const String& resourceLoadStatisticsDirectory)
+    : m_networkSession(makeWeakPtr(networkSession))
+    , m_statisticsQueue(WorkQueue::create("WebResourceLoadStatisticsStore Process Data Queue", WorkQueue::Type::Serial, WorkQueue::QOS::Utility))
+    , m_dailyTasksTimer(RunLoop::main(), this, &WebResourceLoadStatisticsStore::performDailyTasks)
+{
+    ASSERT(RunLoop::isMain());
+    
+    postTask([this, resourceLoadStatisticsDirectory = resourceLoadStatisticsDirectory.isolatedCopy()] {
+        m_memoryStore = std::make_unique<ResourceLoadStatisticsMemoryStore>(*this, m_statisticsQueue);
+        m_persistentStorage = std::make_unique<ResourceLoadStatisticsPersistentStorage>(*m_memoryStore, m_statisticsQueue, resourceLoadStatisticsDirectory);
+    });
+    
     m_dailyTasksTimer.startRepeating(24_h);
 }
 
@@ -236,6 +253,13 @@ void WebResourceLoadStatisticsStore::hasStorageAccess(String&& subFrameHost, Str
     });
 }
 
+#if ENABLE(RESOURCE_LOAD_STATISTICS)
+bool WebResourceLoadStatisticsStore::hasStorageAccessForFrame(const String& resourceDomain, const String& firstPartyDomain, uint64_t frameID, uint64_t pageID)
+{
+    return m_networkSession ? m_networkSession->networkStorageSession().hasStorageAccess(resourceDomain, firstPartyDomain, frameID, pageID) : false;
+}
+#endif
+
 void WebResourceLoadStatisticsStore::callHasStorageAccessForFrameHandler(const String& resourceDomain, const String& firstPartyDomain, uint64_t frameID, uint64_t pageID, CompletionHandler<void(bool hasAccess)>&& callback)
 {
     ASSERT(RunLoop::isMain());
@@ -243,6 +267,9 @@ void WebResourceLoadStatisticsStore::callHasStorageAccessForFrameHandler(const S
 #if ENABLE(RESOURCE_LOAD_STATISTICS)
     if (m_websiteDataStore) {
         m_websiteDataStore->hasStorageAccessForFrameHandler(resourceDomain, firstPartyDomain, frameID, pageID, WTFMove(callback));
+        return;
+    } else {
+        callback(hasStorageAccessForFrame(resourceDomain, firstPartyDomain, frameID, pageID));
         return;
     }
 #endif
@@ -309,6 +336,21 @@ void WebResourceLoadStatisticsStore::grantStorageAccess(String&& subFrameHost, S
     });
 }
 
+#if ENABLE(RESOURCE_LOAD_STATISTICS)
+bool WebResourceLoadStatisticsStore::grantStorageAccess(const String& resourceDomain, const String& firstPartyDomain, Optional<uint64_t> frameID, uint64_t pageID)
+{
+    bool isStorageGranted = false;
+
+    if (m_networkSession) {
+        m_networkSession->networkStorageSession().grantStorageAccess(resourceDomain, firstPartyDomain, frameID, pageID);
+        ASSERT(m_networkSession->networkStorageSession().hasStorageAccess(resourceDomain, firstPartyDomain, frameID, pageID));
+        isStorageGranted = true;
+    }
+
+    return isStorageGranted;
+}
+#endif
+
 void WebResourceLoadStatisticsStore::callGrantStorageAccessHandler(const String& subFramePrimaryDomain, const String& topFramePrimaryDomain, Optional<uint64_t> frameID, uint64_t pageID, CompletionHandler<void(bool)>&& callback)
 {
     ASSERT(RunLoop::isMain());
@@ -316,6 +358,9 @@ void WebResourceLoadStatisticsStore::callGrantStorageAccessHandler(const String&
 #if ENABLE(RESOURCE_LOAD_STATISTICS)
     if (m_websiteDataStore) {
         m_websiteDataStore->grantStorageAccessHandler(subFramePrimaryDomain, topFramePrimaryDomain, frameID, pageID, WTFMove(callback));
+        return;
+    } else {
+        callback(grantStorageAccess(subFramePrimaryDomain, topFramePrimaryDomain, frameID, pageID));
         return;
     }
 #endif
@@ -333,18 +378,26 @@ void WebResourceLoadStatisticsStore::didCreateNetworkProcess()
     });
 }
 
+#if ENABLE(RESOURCE_LOAD_STATISTICS)
+void WebResourceLoadStatisticsStore::removeAllStorageAccess()
+{
+    if (m_networkSession)
+        m_networkSession->networkStorageSession().removeAllStorageAccess();
+}
+#endif
+
 void WebResourceLoadStatisticsStore::removeAllStorageAccess(CompletionHandler<void()>&& completionHandler)
 {
     ASSERT(RunLoop::isMain());
 
 #if ENABLE(RESOURCE_LOAD_STATISTICS)
-    if (m_websiteDataStore)
+    if (m_websiteDataStore) {
         m_websiteDataStore->removeAllStorageAccessHandler(WTFMove(completionHandler));
-    else
-        completionHandler();
-#else
-    completionHandler();
+        return;
+    }
+    removeAllStorageAccess();
 #endif
+    completionHandler();
 }
 
 void WebResourceLoadStatisticsStore::applicationWillTerminate()
@@ -402,7 +455,12 @@ void WebResourceLoadStatisticsStore::logFrameNavigation(const WebFrameProxy& fra
     auto mainFramePrimaryDomain = ResourceLoadStatistics::primaryDomain(pageURL);
     auto sourcePrimaryDomain = ResourceLoadStatistics::primaryDomain(sourceURL);
 
-    postTask([this, targetPrimaryDomain = targetPrimaryDomain.isolatedCopy(), mainFramePrimaryDomain = mainFramePrimaryDomain.isolatedCopy(), sourcePrimaryDomain = sourcePrimaryDomain.isolatedCopy(), targetHost = targetHost.toString().isolatedCopy(), mainFrameHost = mainFrameHost.toString().isolatedCopy(), isRedirect, isMainFrame = frame.isMainFrame()] {
+    logFrameNavigation(targetPrimaryDomain, mainFramePrimaryDomain, sourcePrimaryDomain, targetHost.toString(), mainFrameHost.toString(), isRedirect, frame.isMainFrame());
+}
+
+void WebResourceLoadStatisticsStore::logFrameNavigation(const String& targetPrimaryDomain, const String& mainFramePrimaryDomain, const String& sourcePrimaryDomain, const String& targetHost, const String& mainFrameHost, bool isRedirect, bool isMainFrame)
+{
+    postTask([this, targetPrimaryDomain = targetPrimaryDomain.isolatedCopy(), mainFramePrimaryDomain = mainFramePrimaryDomain.isolatedCopy(), sourcePrimaryDomain = sourcePrimaryDomain.isolatedCopy(), targetHost = targetHost.isolatedCopy(), mainFrameHost = mainFrameHost.isolatedCopy(), isRedirect, isMainFrame] {
         
         if (m_memoryStore)
             m_memoryStore->logFrameNavigation(targetPrimaryDomain, mainFramePrimaryDomain, sourcePrimaryDomain, targetHost, mainFrameHost, isRedirect, isMainFrame);
@@ -418,7 +476,14 @@ void WebResourceLoadStatisticsStore::logUserInteraction(const URL& url, Completi
         return;
     }
 
-    postTask([this, primaryDomain = isolatedPrimaryDomain(url), completionHandler = WTFMove(completionHandler)]() mutable {
+    logUserInteraction(isolatedPrimaryDomain(url), WTFMove(completionHandler));
+}
+
+void WebResourceLoadStatisticsStore::logUserInteraction(const String& targetPrimaryDomain, CompletionHandler<void()>&& completionHandler)
+{
+    ASSERT(RunLoop::isMain());
+
+    postTask([this, primaryDomain = targetPrimaryDomain.isolatedCopy(), completionHandler = WTFMove(completionHandler)]() mutable {
         if (m_memoryStore)
             m_memoryStore->logUserInteraction(primaryDomain);
         postTaskReply(WTFMove(completionHandler));
@@ -823,6 +888,14 @@ void WebResourceLoadStatisticsStore::setGrandfatheringTime(Seconds seconds)
     });
 }
 
+#if ENABLE(RESOURCE_LOAD_STATISTICS)
+void WebResourceLoadStatisticsStore::setCacheMaxAgeCapForPrevalentResources(Seconds seconds)
+{
+    if (m_networkSession)
+        m_networkSession->networkStorageSession().setCacheMaxAgeCapForPrevalentResources(seconds);
+}
+#endif
+
 void WebResourceLoadStatisticsStore::setCacheMaxAgeCap(Seconds seconds, CompletionHandler<void()>&& completionHandler)
 {
     ASSERT(RunLoop::isMain());
@@ -833,9 +906,18 @@ void WebResourceLoadStatisticsStore::setCacheMaxAgeCap(Seconds seconds, Completi
         m_websiteDataStore->setCacheMaxAgeCapForPrevalentResources(seconds, WTFMove(completionHandler));
         return;
     }
+    setCacheMaxAgeCapForPrevalentResources(seconds);
 #endif
     completionHandler();
 }
+
+#if ENABLE(RESOURCE_LOAD_STATISTICS)
+void WebResourceLoadStatisticsStore::updatePrevalentDomainsToBlockCookiesFor(const Vector<String>& domainsToBlock)
+{
+    if (m_networkSession)
+        m_networkSession->networkStorageSession().setPrevalentDomainsToBlockCookiesFor(domainsToBlock);
+}
+#endif
 
 void WebResourceLoadStatisticsStore::callUpdatePrevalentDomainsToBlockCookiesForHandler(const Vector<String>& domainsToBlock, CompletionHandler<void()>&& completionHandler)
 {
@@ -846,9 +928,18 @@ void WebResourceLoadStatisticsStore::callUpdatePrevalentDomainsToBlockCookiesFor
         m_websiteDataStore->updatePrevalentDomainsToBlockCookiesFor(domainsToBlock, WTFMove(completionHandler));
         return;
     }
+    updatePrevalentDomainsToBlockCookiesFor(domainsToBlock);
 #endif
     completionHandler();
 }
+
+#if ENABLE(RESOURCE_LOAD_STATISTICS)
+void WebResourceLoadStatisticsStore::removePrevalentDomains(const Vector<String>& domains)
+{
+    if (m_networkSession)
+        m_networkSession->networkStorageSession().removePrevalentDomains(domains);
+}
+#endif
 
 void WebResourceLoadStatisticsStore::callRemoveDomainsHandler(const Vector<String>& domains)
 {
@@ -857,6 +948,7 @@ void WebResourceLoadStatisticsStore::callRemoveDomainsHandler(const Vector<Strin
 #if ENABLE(RESOURCE_LOAD_STATISTICS)
     if (m_websiteDataStore)
         m_websiteDataStore->removePrevalentDomains(domains);
+    removePrevalentDomains(domains);
 #endif
 }
     

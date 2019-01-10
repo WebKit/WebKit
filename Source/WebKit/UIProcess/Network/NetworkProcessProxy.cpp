@@ -419,6 +419,12 @@ void NetworkProcessProxy::didUpdateBlockCookies(uint64_t callbackId)
     m_updateBlockCookiesCallbackMap.take(callbackId)();
 }
 
+void NetworkProcessProxy::didLogUserInteraction(uint64_t contextId)
+{
+    // FIXME(193297): Implement when activating automated test cases.
+    UNUSED_PARAM(contextId);
+}
+
 void NetworkProcessProxy::setAgeCapForClientSideCookies(PAL::SessionID sessionID, Optional<Seconds> seconds, CompletionHandler<void()>&& completionHandler)
 {
     if (!canSendMessage()) {

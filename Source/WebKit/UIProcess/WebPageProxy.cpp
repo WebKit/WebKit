@@ -221,10 +221,6 @@
 #include "WebAuthenticatorCoordinatorProxy.h"
 #endif
 
-#if ENABLE(RESOURCE_LOAD_STATISTICS)
-#include "WebResourceLoadStatisticsStore.h"
-#endif
-
 #if ENABLE(REMOTE_INSPECTOR)
 #include <JavaScriptCore/RemoteInspector.h>
 #endif
@@ -4451,8 +4447,11 @@ void WebPageProxy::decidePolicyForNavigationAction(WebFrameProxy& frame, WebCore
     API::Navigation* mainFrameNavigation = frame.isMainFrame() ? navigation.get() : nullptr;
     WebFrameProxy* originatingFrame = m_process->webFrame(originatingFrameInfoData.frameID);
 
+#if ENABLE(RESOURCE_LOAD_STATISTICS)
     if (auto* resourceLoadStatisticsStore = websiteDataStore().resourceLoadStatistics())
         resourceLoadStatisticsStore->logFrameNavigation(frame, URL(URL(), m_pageLoadState.url()), request, redirectResponse.url());
+    logFrameNavigation(frame, URL(URL(), m_pageLoadState.url()), request, redirectResponse.url());
+#endif
 
     if (m_policyClient)
         m_policyClient->decidePolicyForNavigationAction(*this, &frame, WTFMove(navigationActionData), originatingFrame, originalRequest, WTFMove(request), WTFMove(listener), m_process->transformHandlesToObjects(userData.object()).get());
@@ -4474,6 +4473,38 @@ void WebPageProxy::decidePolicyForNavigationAction(WebFrameProxy& frame, WebCore
 
     m_shouldSuppressAppLinksInNextNavigationPolicyDecision = false;
 }
+
+#if ENABLE(RESOURCE_LOAD_STATISTICS)
+void WebPageProxy::logFrameNavigation(const WebFrameProxy& frame, const URL& pageURL, const WebCore::ResourceRequest& request, const URL& redirectURL)
+{
+    ASSERT(RunLoop::isMain());
+    
+    auto sourceURL = redirectURL;
+    bool isRedirect = !redirectURL.isNull();
+    if (!isRedirect) {
+        sourceURL = frame.url();
+        if (sourceURL.isNull())
+            sourceURL = pageURL;
+    }
+    
+    auto& targetURL = request.url();
+    
+    if (!targetURL.isValid() || !pageURL.isValid())
+        return;
+    
+    auto targetHost = targetURL.host();
+    auto mainFrameHost = pageURL.host();
+    
+    if (targetHost.isEmpty() || mainFrameHost.isEmpty() || targetHost == sourceURL.host())
+        return;
+    
+    auto targetPrimaryDomain = ResourceLoadStatistics::primaryDomain(targetURL);
+    auto mainFramePrimaryDomain = ResourceLoadStatistics::primaryDomain(pageURL);
+    auto sourcePrimaryDomain = ResourceLoadStatistics::primaryDomain(sourceURL);
+
+    m_process->processPool().sendToNetworkingProcess(Messages::NetworkProcess::LogFrameNavigation(m_websiteDataStore->sessionID(), targetPrimaryDomain, mainFramePrimaryDomain, sourcePrimaryDomain, targetHost.toString(), mainFrameHost.toString(), isRedirect, frame.isMainFrame()));
+}
+#endif
 
 void WebPageProxy::decidePolicyForNavigationActionSync(uint64_t frameID, bool isMainFrame, WebCore::SecurityOriginData&& frameSecurityOrigin, uint64_t navigationID, NavigationActionData&& navigationActionData, FrameInfoData&& frameInfoData, uint64_t originatingPageID, const WebCore::ResourceRequest& originalRequest, WebCore::ResourceRequest&& request, IPC::FormDataReference&& requestBody, WebCore::ResourceResponse&& redirectResponse, const UserData& userData, Messages::WebPageProxy::DecidePolicyForNavigationActionSync::DelayedReply&& reply)
 {

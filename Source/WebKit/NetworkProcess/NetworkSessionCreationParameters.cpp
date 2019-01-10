@@ -47,6 +47,7 @@ NetworkSessionCreationParameters NetworkSessionCreationParameters::privateSessio
 #if USE(CURL)
         , { }, { }
 #endif
+        , { }, { }, false
     };
 }
 
@@ -68,6 +69,9 @@ void NetworkSessionCreationParameters::encode(IPC::Encoder& encoder) const
     encoder << cookiePersistentStorageFile;
     encoder << proxySettings;
 #endif
+    encoder << resourceLoadStatisticsDirectory;
+    encoder << resourceLoadStatisticsDirectoryExtensionHandle;
+    encoder << enableResourceLoadStatistics;
 }
 
 Optional<NetworkSessionCreationParameters> NetworkSessionCreationParameters::decode(IPC::Decoder& decoder)
@@ -133,7 +137,22 @@ Optional<NetworkSessionCreationParameters> NetworkSessionCreationParameters::dec
     if (!proxySettings)
         return WTF::nullopt;
 #endif
-    
+
+    Optional<String> resourceLoadStatisticsDirectory;
+    decoder >> resourceLoadStatisticsDirectory;
+    if (!resourceLoadStatisticsDirectory)
+        return WTF::nullopt;
+
+    Optional<SandboxExtension::Handle> resourceLoadStatisticsDirectoryExtensionHandle;
+    decoder >> resourceLoadStatisticsDirectoryExtensionHandle;
+    if (!resourceLoadStatisticsDirectoryExtensionHandle)
+        return WTF::nullopt;
+
+    Optional<bool> enableResourceLoadStatistics;
+    decoder >> enableResourceLoadStatistics;
+    if (!enableResourceLoadStatistics)
+        return WTF::nullopt;
+
     return {{
         sessionID
         , WTFMove(*boundInterfaceIdentifier)
@@ -151,6 +170,9 @@ Optional<NetworkSessionCreationParameters> NetworkSessionCreationParameters::dec
         , WTFMove(*cookiePersistentStorageFile)
         , WTFMove(*proxySettings)
 #endif
+        , WTFMove(*resourceLoadStatisticsDirectory)
+        , WTFMove(*resourceLoadStatisticsDirectoryExtensionHandle)
+        , WTFMove(*enableResourceLoadStatistics)
     }};
 }
 

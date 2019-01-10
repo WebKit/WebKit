@@ -83,6 +83,11 @@ WebsiteDataStoreParameters WebsiteDataStore::parameters()
     if (!httpsProxy.isValid() && isSafari)
         httpsProxy = URL(URL(), [defaults stringForKey:(NSString *)WebKit2HTTPSProxyDefaultsKey]);
 
+    auto resourceLoadStatisticsDirectory = m_configuration->resourceLoadStatisticsDirectory();
+    SandboxExtension::Handle resourceLoadStatisticsDirectoryHandle;
+    if (!resourceLoadStatisticsDirectory.isEmpty())
+        SandboxExtension::createHandleForReadWriteDirectory(resourceLoadStatisticsDirectory, resourceLoadStatisticsDirectoryHandle);
+
     WebsiteDataStoreParameters parameters;
     parameters.networkSessionParameters = {
         m_sessionID,
@@ -95,6 +100,9 @@ WebsiteDataStoreParameters WebsiteDataStore::parameters()
         Seconds { [defaults integerForKey:WebKitNetworkLoadThrottleLatencyMillisecondsDefaultsKey] / 1000. },
         WTFMove(httpProxy),
         WTFMove(httpsProxy),
+        WTFMove(resourceLoadStatisticsDirectory),
+        WTFMove(resourceLoadStatisticsDirectoryHandle),
+        false // FIXME(193297): Switch to m_configuration->resourceLoadStatisticsEnabled()
     };
 
     auto cookieFile = resolvedCookieStorageFile();

@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include "SandboxExtension.h"
 #include <pal/SessionID.h>
 #include <wtf/Seconds.h>
 #include <wtf/URL.h>
@@ -69,6 +70,9 @@ struct NetworkSessionCreationParameters {
     String cookiePersistentStorageFile;
     WebCore::CurlProxySettings proxySettings;
 #endif
+    String resourceLoadStatisticsDirectory;
+    SandboxExtension::Handle resourceLoadStatisticsDirectoryExtensionHandle;
+    bool enableResourceLoadStatistics { false };
 };
 
 } // namespace WebKit

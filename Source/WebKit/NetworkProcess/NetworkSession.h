@@ -30,6 +30,8 @@
 #include <wtf/Ref.h>
 #include <wtf/RefCounted.h>
 #include <wtf/Seconds.h>
+#include <wtf/WeakPtr.h>
+#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 class NetworkStorageSession;
@@ -39,9 +41,10 @@ namespace WebKit {
 
 class NetworkDataTask;
 class NetworkProcess;
+class WebResourceLoadStatisticsStore;
 struct NetworkSessionCreationParameters;
 
-class NetworkSession : public RefCounted<NetworkSession> {
+class NetworkSession : public RefCounted<NetworkSession>, public CanMakeWeakPtr<NetworkSession> {
 public:
     static Ref<NetworkSession> create(NetworkProcess&, NetworkSessionCreationParameters&&);
     virtual ~NetworkSession();
@@ -58,12 +61,17 @@ public:
     void registerNetworkDataTask(NetworkDataTask& task) { m_dataTaskSet.add(&task); }
     void unregisterNetworkDataTask(NetworkDataTask& task) { m_dataTaskSet.remove(&task); }
 
+    WebResourceLoadStatisticsStore* resourceLoadStatistics() const { return m_resourceLoadStatistics.get(); }
+    void enableResourceLoadStatistics();
+    
 protected:
     NetworkSession(NetworkProcess&, PAL::SessionID);
 
     PAL::SessionID m_sessionID;
     Ref<NetworkProcess> m_networkProcess;
     HashSet<NetworkDataTask*> m_dataTaskSet;
+    String m_resourceLoadStatisticsDirectory;
+    RefPtr<WebResourceLoadStatisticsStore> m_resourceLoadStatistics;
 };
 
 } // namespace WebKit

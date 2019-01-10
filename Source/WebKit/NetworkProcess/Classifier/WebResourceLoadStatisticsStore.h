@@ -46,6 +46,7 @@ struct ResourceLoadStatistics;
 
 namespace WebKit {
 
+class NetworkSession;
 class ResourceLoadStatisticsMemoryStore;
 class ResourceLoadStatisticsPersistentStorage;
 class WebFrameProxy;
@@ -63,6 +64,11 @@ public:
     static Ref<WebResourceLoadStatisticsStore> create(WebsiteDataStore& websiteDataStore)
     {
         return adoptRef(*new WebResourceLoadStatisticsStore(websiteDataStore));
+    }
+
+    static Ref<WebResourceLoadStatisticsStore> create(NetworkSession& networkSession, const String& resourceLoadStatisticsDirectory)
+    {
+        return adoptRef(*new WebResourceLoadStatisticsStore(networkSession, resourceLoadStatisticsDirectory));
     }
 
     ~WebResourceLoadStatisticsStore();
@@ -83,9 +89,13 @@ public:
     void applicationWillTerminate();
 
     void logFrameNavigation(const WebFrameProxy&, const URL& pageURL, const WebCore::ResourceRequest&, const URL& redirectURL);
+    void logFrameNavigation(const String& targetPrimaryDomain, const String& mainFramePrimaryDomain, const String& sourcePrimaryDomain, const String& targetHost, const String& mainFrameHost, bool isRedirect, bool isMainFrame);
     void logUserInteraction(const URL&, CompletionHandler<void()>&&);
+    void logUserInteraction(const String& targetPrimaryDomain, CompletionHandler<void()>&&);
     void clearUserInteraction(const URL&, CompletionHandler<void()>&&);
+    bool grantStorageAccess(const String& resourceDomain, const String& firstPartyDomain, Optional<uint64_t> frameID, uint64_t pageID);
     void hasHadUserInteraction(const URL&, CompletionHandler<void(bool)>&&);
+    bool hasStorageAccessForFrame(const String& resourceDomain, const String& firstPartyDomain, uint64_t frameID, uint64_t pageID);
     void setLastSeen(const URL&, Seconds, CompletionHandler<void()>&&);
     void setPrevalentResource(const URL&, CompletionHandler<void()>&&);
     void setVeryPrevalentResource(const URL&, CompletionHandler<void()>&&);
@@ -98,6 +108,9 @@ public:
     void clearPrevalentResource(const URL&, CompletionHandler<void()>&&);
     void setGrandfathered(const URL&, bool);
     void isGrandfathered(const URL&, CompletionHandler<void(bool)>&&);
+    void removeAllStorageAccess();
+    void removePrevalentDomains(const Vector<String>& domainsToBlock);
+    void setCacheMaxAgeCapForPrevalentResources(Seconds);
     void setSubframeUnderTopFrameOrigin(const URL& subframe, const URL& topFrame);
     void setSubresourceUnderTopFrameOrigin(const URL& subresource, const URL& topFrame);
     void setSubresourceUniqueRedirectTo(const URL& subresource, const URL& hostNameRedirectedTo);
@@ -109,6 +122,7 @@ public:
     void scheduleClearBlockingStateForDomains(const Vector<String>& domains, CompletionHandler<void()>&&);
     void scheduleStatisticsAndDataRecordsProcessing();
     void submitTelemetry();
+    void updatePrevalentDomainsToBlockCookiesFor(const Vector<String>& domainsToBlock);
 
     enum class ShouldGrandfather {
         No,
@@ -140,9 +154,11 @@ public:
     void didCreateNetworkProcess();
 
     WebsiteDataStore* websiteDataStore() { return m_websiteDataStore.get(); }
+    NetworkSession* networkSession() { return m_networkSession.get(); }
 
 private:
     explicit WebResourceLoadStatisticsStore(WebsiteDataStore&);
+    explicit WebResourceLoadStatisticsStore(NetworkSession&, const String&);
 
     void postTask(WTF::Function<void()>&&);
     static void postTaskReply(WTF::Function<void()>&&);
@@ -161,6 +177,7 @@ private:
     void flushAndDestroyPersistentStore();
 
     WeakPtr<WebsiteDataStore> m_websiteDataStore;
+    WeakPtr<NetworkSession> m_networkSession;
     Ref<WorkQueue> m_statisticsQueue;
     std::unique_ptr<ResourceLoadStatisticsMemoryStore> m_memoryStore;
     std::unique_ptr<ResourceLoadStatisticsPersistentStorage> m_persistentStorage;

@@ -27,6 +27,7 @@
 #include "ResourceLoadStatisticsMemoryStore.h"
 
 #include "Logging.h"
+#include "NetworkSession.h"
 #include "PluginProcessManager.h"
 #include "PluginProcessProxy.h"
 #include "ResourceLoadStatisticsPersistentStorage.h"
@@ -34,6 +35,7 @@
 #include "WebResourceLoadStatisticsTelemetry.h"
 #include "WebsiteDataStore.h"
 #include <WebCore/KeyedCoding.h>
+#include <WebCore/NetworkStorageSession.h>
 #include <WebCore/ResourceLoadStatistics.h>
 #include <wtf/CallbackAggregator.h>
 #include <wtf/DateMath.h>
@@ -862,6 +864,8 @@ void ResourceLoadStatisticsMemoryStore::updateClientSideCookiesAgeCap()
     RunLoop::main().dispatch([store = makeRef(m_store), seconds = m_parameters.clientSideCookiesAgeCapTime] () {
         if (auto* websiteDataStore = store->websiteDataStore())
             websiteDataStore->setAgeCapForClientSideCookies(seconds, [] { });
+        if (auto* networkSession = store->networkSession())
+            networkSession->networkStorageSession().setAgeCapForClientSideCookies(seconds);
     });
 #endif
 }

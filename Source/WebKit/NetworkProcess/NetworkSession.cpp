@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,6 +26,7 @@
 #include "config.h"
 #include "NetworkSession.h"
 
+#include "WebResourceLoadStatisticsStore.h"
 #include <WebCore/NetworkStorageSession.h>
 
 #if PLATFORM(COCOA)
@@ -75,6 +76,14 @@ void NetworkSession::invalidateAndCancel()
 {
     for (auto* task : m_dataTaskSet)
         task->invalidateAndCancel();
+}
+
+void NetworkSession::enableResourceLoadStatistics()
+{
+    if (m_resourceLoadStatistics)
+        return;
+
+    m_resourceLoadStatistics = WebResourceLoadStatisticsStore::create(*this, m_resourceLoadStatisticsDirectory);
 }
 
 } // namespace WebKit
