@@ -1020,5 +1020,11 @@
     },
     "imported/w3c/webdriver/tests/permissions/set.py": {
         "expected": {"all": {"status": ["SKIP"], "bug": "webkit.org/b/192978"}}
+    },
+    "imported/w3c/webdriver/tests/take_screenshot/user_prompts.py": {
+        "expected": {"all": {"status": ["FAIL"]}}
+    },
+    "imported/w3c/webdriver/tests/take_element_screenshot/user_prompts.py": {
+        "expected": {"all": {"status": ["FAIL"]}}
     }
 }

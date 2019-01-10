@@ -1,3 +1,12 @@
+2019-01-10  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed gardening. Mark user prompts tests in take screenshot commands as failure
+
+        Tests don't expect user prompts to be handled in take screenshot commands, but that's going to change in the
+        spec soon, see https://github.com/w3c/webdriver/issues/1359.
+
+        * TestExpectations.json:
+
 2018-12-21  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed gardening. Skip imported/w3c/webdriver/tests/permissions/set.py.
