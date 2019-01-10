@@ -911,7 +911,7 @@ void MediaPlayerPrivateMediaSourceAVFObjC::setCDMSession(LegacyCDMSession* sessi
     if (session == m_session)
         return;
 
-    m_session = toCDMSessionMediaSourceAVFObjC(session);
+    m_session = makeWeakPtr(toCDMSessionMediaSourceAVFObjC(session));
 
     if (CDMSessionAVStreamSession* cdmStreamSession = toCDMSessionAVStreamSession(m_session.get()))
         cdmStreamSession->setStreamSession(streamSession());

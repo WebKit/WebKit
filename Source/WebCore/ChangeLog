@@ -1,5 +1,42 @@
 2019-01-09  Kocsen Chung  <kocsen_chung@apple.com>
 
+        Cherry-pick r239711. rdar://problem/47158701
+
+    REGRESSION (r239519): ASSERTION FAILED: !m_adoptionIsRequired in com.apple.WebCore: void WTF::refIfNotNull<WebCore::CDMSessionMediaSourceAVFObjC> + 53
+    https://bugs.webkit.org/show_bug.cgi?id=193211
+    <rdar://problem/46937412>
+    
+    Reviewed by Eric Carlson.
+    
+    Make CDMSessionMediaSourceAVFObjC a CanMakeWeakPtr rather than RefCounted, as CDMSessions are stored in
+    std::unique_ptrs, and not in Ref or RefPtr.
+    
+    * platform/graphics/avfoundation/objc/CDMSessionMediaSourceAVFObjC.h:
+    * platform/graphics/avfoundation/objc/MediaPlayerPrivateMediaSourceAVFObjC.h:
+    * platform/graphics/avfoundation/objc/MediaPlayerPrivateMediaSourceAVFObjC.mm:
+    (WebCore::MediaPlayerPrivateMediaSourceAVFObjC::setCDMSession):
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@239711 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2019-01-07  Jer Noble  <jer.noble@apple.com>
+
+            REGRESSION (r239519): ASSERTION FAILED: !m_adoptionIsRequired in com.apple.WebCore: void WTF::refIfNotNull<WebCore::CDMSessionMediaSourceAVFObjC> + 53
+            https://bugs.webkit.org/show_bug.cgi?id=193211
+            <rdar://problem/46937412>
+
+            Reviewed by Eric Carlson.
+
+            Make CDMSessionMediaSourceAVFObjC a CanMakeWeakPtr rather than RefCounted, as CDMSessions are stored in
+            std::unique_ptrs, and not in Ref or RefPtr.
+
+            * platform/graphics/avfoundation/objc/CDMSessionMediaSourceAVFObjC.h:
+            * platform/graphics/avfoundation/objc/MediaPlayerPrivateMediaSourceAVFObjC.h:
+            * platform/graphics/avfoundation/objc/MediaPlayerPrivateMediaSourceAVFObjC.mm:
+            (WebCore::MediaPlayerPrivateMediaSourceAVFObjC::setCDMSession):
+
+2019-01-09  Kocsen Chung  <kocsen_chung@apple.com>
+
         Cherry-pick r239702. rdar://problem/47158664
 
     Cleanup AudioTrackPrivateMediaStreamCocoa

@@ -282,7 +282,7 @@ private:
     Deque<RetainPtr<id>> m_sizeChangeObservers;
     Timer m_seekTimer;
 #if ENABLE(LEGACY_ENCRYPTED_MEDIA)
-    RefPtr<CDMSessionMediaSourceAVFObjC> m_session;
+    WeakPtr<CDMSessionMediaSourceAVFObjC> m_session;
 #endif
     MediaPlayer::NetworkState m_networkState;
     MediaPlayer::ReadyState m_readyState;
