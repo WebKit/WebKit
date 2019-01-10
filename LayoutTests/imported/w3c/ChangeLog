@@ -1,3 +1,76 @@
+2019-01-10  cathie chen  <cathiechen@igalia.com>
+
+        Import css-lists testcases from WPT.
+        https://bugs.webkit.org/show_bug.cgi?id=193273
+
+        Reviewed by Daniel Bates.
+
+        * resources/import-expectations.json:
+        * resources/resource-files.json:
+        * web-platform-tests/css/css-lists/META.yml: Added.
+        * web-platform-tests/css/css-lists/add-inline-child-after-marker-001-expected.html: Added.
+        * web-platform-tests/css/css-lists/add-inline-child-after-marker-001.html: Added.
+        * web-platform-tests/css/css-lists/content-property/marker-text-matches-armenian-expected.html: Added.
+        * web-platform-tests/css/css-lists/content-property/marker-text-matches-armenian.html: Added.
+        * web-platform-tests/css/css-lists/content-property/marker-text-matches-circle-expected.html: Added.
+        * web-platform-tests/css/css-lists/content-property/marker-text-matches-circle.html: Added.
+        * web-platform-tests/css/css-lists/content-property/marker-text-matches-decimal-expected.html: Added.
+        * web-platform-tests/css/css-lists/content-property/marker-text-matches-decimal-leading-zero-expected.html: Added.
+        * web-platform-tests/css/css-lists/content-property/marker-text-matches-decimal-leading-zero.html: Added.
+        * web-platform-tests/css/css-lists/content-property/marker-text-matches-decimal.html: Added.
+        * web-platform-tests/css/css-lists/content-property/marker-text-matches-disc-expected.html: Added.
+        * web-platform-tests/css/css-lists/content-property/marker-text-matches-disc.html: Added.
+        * web-platform-tests/css/css-lists/content-property/marker-text-matches-georgian-expected.html: Added.
+        * web-platform-tests/css/css-lists/content-property/marker-text-matches-georgian.html: Added.
+        * web-platform-tests/css/css-lists/content-property/marker-text-matches-lower-greek-expected.html: Added.
+        * web-platform-tests/css/css-lists/content-property/marker-text-matches-lower-greek.html: Added.
+        * web-platform-tests/css/css-lists/content-property/marker-text-matches-lower-latin-expected.html: Added.
+        * web-platform-tests/css/css-lists/content-property/marker-text-matches-lower-latin.html: Added.
+        * web-platform-tests/css/css-lists/content-property/marker-text-matches-lower-roman-expected.html: Added.
+        * web-platform-tests/css/css-lists/content-property/marker-text-matches-lower-roman.html: Added.
+        * web-platform-tests/css/css-lists/content-property/marker-text-matches-square-expected.html: Added.
+        * web-platform-tests/css/css-lists/content-property/marker-text-matches-square.html: Added.
+        * web-platform-tests/css/css-lists/content-property/marker-text-matches-upper-latin-expected.html: Added.
+        * web-platform-tests/css/css-lists/content-property/marker-text-matches-upper-latin.html: Added.
+        * web-platform-tests/css/css-lists/content-property/marker-text-matches-upper-roman-expected.html: Added.
+        * web-platform-tests/css/css-lists/content-property/marker-text-matches-upper-roman.html: Added.
+        * web-platform-tests/css/css-lists/content-property/w3c-import.log: Added.
+        * web-platform-tests/css/css-lists/counter-increment-inside-display-contents-expected.html: Added.
+        * web-platform-tests/css/css-lists/counter-increment-inside-display-contents.html: Added.
+        * web-platform-tests/css/css-lists/counter-invalid-expected.html: Added.
+        * web-platform-tests/css/css-lists/counter-invalid.htm: Added.
+        * web-platform-tests/css/css-lists/counter-reset-increment-display-contents-expected.html: Added.
+        * web-platform-tests/css/css-lists/counter-reset-increment-display-contents.html: Added.
+        * web-platform-tests/css/css-lists/counter-reset-increment-display-none-expected.html: Added.
+        * web-platform-tests/css/css-lists/counter-reset-increment-display-none.html: Added.
+        * web-platform-tests/css/css-lists/counter-reset-inside-display-contents-expected.html: Added.
+        * web-platform-tests/css/css-lists/counter-reset-inside-display-contents.html: Added.
+        * web-platform-tests/css/css-lists/inheritance-expected.txt: Added.
+        * web-platform-tests/css/css-lists/inheritance.html: Added.
+        * web-platform-tests/css/css-lists/li-with-height-001-expected.html: Added.
+        * web-platform-tests/css/css-lists/li-with-height-001.html: Added.
+        * web-platform-tests/css/css-lists/li-with-overflow-hidden-change-list-style-position-001-expected.html: Added.
+        * web-platform-tests/css/css-lists/li-with-overflow-hidden-change-list-style-position-001.html: Added.
+        * web-platform-tests/css/css-lists/list-and-block-textarea-001-expected.txt: Added.
+        * web-platform-tests/css/css-lists/list-and-block-textarea-001.html: Added.
+        * web-platform-tests/css/css-lists/list-and-flex-001-expected.html: Added.
+        * web-platform-tests/css/css-lists/list-and-flex-001.html: Added.
+        * web-platform-tests/css/css-lists/list-and-grid-001-expected.html: Added.
+        * web-platform-tests/css/css-lists/list-and-grid-001.html: Added.
+        * web-platform-tests/css/css-lists/list-and-margin-collapse-001-expected.txt: Added.
+        * web-platform-tests/css/css-lists/list-and-margin-collapse-001.html: Added.
+        * web-platform-tests/css/css-lists/list-and-writing-mode-001-expected.txt: Added.
+        * web-platform-tests/css/css-lists/list-and-writing-mode-001.html: Added.
+        * web-platform-tests/css/css-lists/list-marker-with-lineheight-and-overflow-hidden-001-expected.html: Added.
+        * web-platform-tests/css/css-lists/list-marker-with-lineheight-and-overflow-hidden-001.html: Added.
+        * web-platform-tests/css/css-lists/list-style-type-armenian-002.xht: Added.
+        * web-platform-tests/css/css-lists/list-style-type-armenian-003.xht: Added.
+        * web-platform-tests/css/css-lists/list-with-image-display-changed-001-expected.html: Added.
+        * web-platform-tests/css/css-lists/list-with-image-display-changed-001.html: Added.
+        * web-platform-tests/css/css-lists/resources/w3c-import.log: Added.
+        * web-platform-tests/css/css-lists/resources/white.gif: Added.
+        * web-platform-tests/css/css-lists/w3c-import.log: Added.
+
 2019-01-08  Youenn Fablet  <youenn@apple.com>
 
         service worker fetch handler results in bad referrer

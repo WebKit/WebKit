@@ -1,3 +1,15 @@
+2019-01-10  cathie chen  <cathiechen@igalia.com>
+
+        Import css-lists testcases from WPT.
+        https://bugs.webkit.org/show_bug.cgi?id=193273
+
+        Reviewed by Daniel Bates.
+
+        * TestExpectations:
+        * platform/gtk/TestExpectations:
+        * platform/ios-simulator/TestExpectations:
+        * platform/ios-simulator/imported/w3c/web-platform-tests/css/css-lists/list-and-writing-mode-001-expected.txt: Added.
+
 2019-01-09  Zalan Bujtas  <zalan@apple.com>
 
         [Datalist] Crash when input with datalist is dynamically added.

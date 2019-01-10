@@ -1,0 +1,47 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/css/css-lists/META.yml
+/LayoutTests/imported/w3c/web-platform-tests/css/css-lists/add-inline-child-after-marker-001-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-lists/add-inline-child-after-marker-001.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-lists/counter-increment-inside-display-contents-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-lists/counter-increment-inside-display-contents.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-lists/counter-invalid-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-lists/counter-invalid.htm
+/LayoutTests/imported/w3c/web-platform-tests/css/css-lists/counter-reset-increment-display-contents-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-lists/counter-reset-increment-display-contents.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-lists/counter-reset-increment-display-none-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-lists/counter-reset-increment-display-none.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-lists/counter-reset-inside-display-contents-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-lists/counter-reset-inside-display-contents.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-lists/inheritance.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-lists/li-with-height-001-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-lists/li-with-height-001.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-lists/li-with-overflow-hidden-change-list-style-position-001-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-lists/li-with-overflow-hidden-change-list-style-position-001.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-lists/list-and-block-textarea-001.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-lists/list-and-flex-001-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-lists/list-and-flex-001.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-lists/list-and-grid-001-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-lists/list-and-grid-001.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-lists/list-and-margin-collapse-001.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-lists/list-and-writing-mode-001.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-lists/list-marker-with-lineheight-and-overflow-hidden-001-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-lists/list-marker-with-lineheight-and-overflow-hidden-001.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-lists/list-style-type-armenian-002.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/css-lists/list-style-type-armenian-003.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/css-lists/list-with-image-display-changed-001-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-lists/list-with-image-display-changed-001.html

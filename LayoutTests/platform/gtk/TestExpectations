@@ -3657,6 +3657,9 @@ webkit.org/b/192900 imported/w3c/web-platform-tests/eventsource/format-mime-bogu
 
 webkit.org/b/192902 js/dom/modules/import-mjs-module.html [ Failure ]
 
+imported/w3c/web-platform-tests/css/css-lists/content-property/marker-text-matches-georgian.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-lists/content-property/marker-text-matches-armenian.html [ ImageOnlyFailure ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of non-crashing, non-flaky tests failing
 #////////////////////////////////////////////////////////////////////////////////////////
@@ -3735,6 +3738,9 @@ imported/w3c/web-platform-tests/web-animations/interfaces/Animatable/animate.htm
 imported/w3c/web-platform-tests/web-animations/timing-model/animations/current-time.html [ Pass ]
 
 imported/mozilla/svg/dynamic-textPath-02.svg [ Pass ]
+
+imported/w3c/web-platform-tests/css/css-lists/content-property/marker-text-matches-lower-greek.html [ Pass ]
+imported/w3c/web-platform-tests/css/css-lists/content-property/marker-text-matches-lower-latin.html [ Pass ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of PASSING tests. See top of file where to put new expectations.

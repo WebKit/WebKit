@@ -110,3 +110,8 @@ webkit.org/b/189686 webgl/2.0.0/conformance2/renderbuffers/multisampled-renderbu
 webkit.org/b/189686 webgl/2.0.0/conformance/reading/read-pixels-test.html [ Slow ]
 # Crashes
 webkit.org/b/189686 webgl/2.0.0/conformance2/buffers/one-large-uniform-buffer.html [ Skip ]
+
+imported/w3c/web-platform-tests/css/css-lists/content-property/marker-text-matches-armenian.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-lists/content-property/marker-text-matches-georgian.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-lists/content-property/marker-text-matches-lower-greek.html [ Pass ]
+imported/w3c/web-platform-tests/css/css-lists/list-and-writing-mode-001.html [ Failure ]

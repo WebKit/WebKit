@@ -2920,3 +2920,13 @@ webkit.org/b/190032 imported/w3c/web-platform-tests/css/css-scoping/keyframes-00
 fast/mediacapturefromelement/CanvasCaptureMediaStream-imagebitmaprenderingcontext.html [ Skip ]
 fast/mediacapturefromelement/CanvasCaptureMediaStream-framerate-0.html [ Skip ]
 fast/mediacapturefromelement/CanvasCaptureMediaStream-capture-out-of-DOM-element.html [ Skip ]
+
+imported/w3c/web-platform-tests/css/css-lists/content-property/marker-text-matches-circle.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-lists/content-property/marker-text-matches-disc.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-lists/content-property/marker-text-matches-lower-greek.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-lists/content-property/marker-text-matches-lower-latin.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-lists/content-property/marker-text-matches-square.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-lists/counter-increment-inside-display-contents.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-lists/counter-reset-inside-display-contents.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-lists/list-marker-with-lineheight-and-overflow-hidden-001.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-lists/list-with-image-display-changed-001.html [ ImageOnlyFailure ]
