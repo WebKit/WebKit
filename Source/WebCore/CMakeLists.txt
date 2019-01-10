@@ -464,10 +464,13 @@ set(WebCore_NON_SVG_IDL_FILES
     Modules/webgpu/WebGPU.idl
     Modules/webgpu/WebGPUAdapter.idl
     Modules/webgpu/WebGPUAdapterDescriptor.idl
+    Modules/webgpu/WebGPUBindGroupBinding.idl
+    Modules/webgpu/WebGPUBindGroupDescriptor.idl
     Modules/webgpu/WebGPUBindGroupLayout.idl
     Modules/webgpu/WebGPUBindGroupLayoutBinding.idl
     Modules/webgpu/WebGPUBindGroupLayoutDescriptor.idl
     Modules/webgpu/WebGPUBuffer.idl
+    Modules/webgpu/WebGPUBufferBinding.idl
     Modules/webgpu/WebGPUBufferDescriptor.idl
     Modules/webgpu/WebGPUBufferUsage.idl
     Modules/webgpu/WebGPUColor.idl

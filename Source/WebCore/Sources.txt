@@ -3235,10 +3235,13 @@ JSWebAnimation.cpp
 JSWebGPU.cpp
 JSWebGPUAdapter.cpp
 JSWebGPUAdapterDescriptor.cpp
+JSWebGPUBindGroupBinding.cpp
+JSWebGPUBindGroupDescriptor.cpp
 JSWebGPUBindGroupLayout.cpp
 JSWebGPUBindGroupLayoutBinding.cpp
 JSWebGPUBindGroupLayoutDescriptor.cpp
 JSWebGPUBuffer.cpp
+JSWebGPUBufferBinding.cpp
 JSWebGPUBufferDescriptor.cpp
 JSWebGPUBufferUsage.cpp
 JSWebGPUCommandBuffer.cpp

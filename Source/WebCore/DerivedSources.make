@@ -375,10 +375,13 @@ JS_BINDING_IDLS = \
     $(WebCore)/Modules/webgpu/WebGPU.idl \
     $(WebCore)/Modules/webgpu/WebGPUAdapter.idl \
     $(WebCore)/Modules/webgpu/WebGPUAdapterDescriptor.idl \
+    $(WebCore)/Modules/webgpu/WebGPUBindGroupBinding.idl \
+    $(WebCore)/Modules/webgpu/WebGPUBindGroupDescriptor.idl \
     $(WebCore)/Modules/webgpu/WebGPUBindGroupLayout.idl \
     $(WebCore)/Modules/webgpu/WebGPUBindGroupLayoutBinding.idl \
     $(WebCore)/Modules/webgpu/WebGPUBindGroupLayoutDescriptor.idl \
     $(WebCore)/Modules/webgpu/WebGPUBuffer.idl \
+	$(WebCore)/Modules/webgpu/WebGPUBufferBinding.idl \
     $(WebCore)/Modules/webgpu/WebGPUBufferDescriptor.idl \
     $(WebCore)/Modules/webgpu/WebGPUBufferUsage.idl \
     $(WebCore)/Modules/webgpu/WebGPUColor.idl \

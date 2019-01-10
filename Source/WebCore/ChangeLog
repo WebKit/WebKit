@@ -1,3 +1,41 @@
+2019-01-10  Justin Fan  <justin_fan@apple.com>
+
+        [WebGPU] Add BindGroupBinding, BindGroupDescriptor, and BufferBinding dictionaries from API
+        https://bugs.webkit.org/show_bug.cgi?id=193298
+
+        Reviewed by Dean Jackson.
+
+        No new tests. No change in behavior.
+
+        * CMakeLists.txt:
+        * DerivedSources.make:
+        * Modules/webgpu/WebGPUBindGroupBinding.h: Added.
+        * Modules/webgpu/WebGPUBindGroupBinding.idl: Added.
+        * Modules/webgpu/WebGPUBindGroupDescriptor.h: Added.
+        * Modules/webgpu/WebGPUBindGroupDescriptor.idl: Added.
+        * Modules/webgpu/WebGPUBufferBinding.h: Added.
+        * Modules/webgpu/WebGPUBufferBinding.idl: Added.
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * platform/graphics/gpu/GPUBindGroupBinding.h: Added.
+        * platform/graphics/gpu/GPUBindGroupDescriptor.h: Added.
+        * platform/graphics/gpu/GPUBufferBinding.h: Added.
+
+2019-01-09  Justin Fan  <justin_fan@apple.com>
+
+        [WebGPU] Fix vertex-buffer-triangle-strip test and small update to GPURenderPipeline
+        https://bugs.webkit.org/show_bug.cgi?id=193289
+
+        Reviewed by Dean Jackson.
+
+        Fix broken test after pipeline layouts were added, and a small refactoring to GPURenderPipeline to avoid
+        retaining its descriptor after creation.
+
+        * platform/graphics/gpu/GPURenderPipeline.h:
+        (WebCore::GPURenderPipeline::primitiveTopology const):
+        * platform/graphics/gpu/cocoa/GPURenderPipelineMetal.mm:
+        (WebCore::GPURenderPipeline::GPURenderPipeline):
+
 2019-01-09  Dean Jackson  <dino@apple.com>
 
         Safari Crashing in Version 12.0.1 (14606.2.104.1.1) WebCore::GraphicsLayerCA::updateBackdropFilters
