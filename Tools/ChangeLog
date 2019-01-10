@@ -1,3 +1,19 @@
+2019-01-09  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [Win][MiniBrowser] wchar_t strings shouldn't be treated as BSTR
+        https://bugs.webkit.org/show_bug.cgi?id=193271
+
+        Reviewed by Brent Fulgham.
+
+        BSTR is a special data structure created by SysAllocString, not a
+        wchar_t null-terminated string.
+
+        * DumpRenderTree/win/TestRunnerWin.cpp:
+        (TestRunner::setDatabaseQuota): Use L"" instead of "" for _bstr_t.
+        * MiniBrowser/win/MiniBrowserWebHost.cpp:
+        (MiniBrowserWebHost::didFinishLoadForFrame): Use _bstr_t to create
+        BSTR from wide string literals.
+
 2019-01-09  Alexey Proskuryakov  <ap@apple.com>
 
         Tweak wording for build/version_check style checker error

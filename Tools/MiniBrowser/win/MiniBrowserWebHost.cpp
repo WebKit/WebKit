@@ -167,7 +167,8 @@ HRESULT MiniBrowserWebHost::didFinishLoadForFrame(_In_opt_ IWebView* webView, _I
         m_client->showLastVisitedSites(*webView);
 
     // The following is for the test page:
-    HRESULT hr = doc->getElementById(L"webkit logo", &element.GetInterfacePtr());
+    static _bstr_t id = L"webkit logo";
+    HRESULT hr = doc->getElementById(id, &element.GetInterfacePtr());
     if (!SUCCEEDED(hr))
         return hr;
 
@@ -175,7 +176,9 @@ HRESULT MiniBrowserWebHost::didFinishLoadForFrame(_In_opt_ IWebView* webView, _I
     if (!SUCCEEDED(hr))
         return hr;
 
-    hr = target->addEventListener(L"click", new SimpleEventListener (L"webkit logo click"), FALSE);
+    static _bstr_t eventName = L"click";
+    static _bstr_t eventType = L"webkit logo click";
+    hr = target->addEventListener(eventName, new SimpleEventListener(eventType), FALSE);
     if (!SUCCEEDED(hr))
         return hr;
 
