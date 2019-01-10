@@ -157,12 +157,14 @@ void ResourceHandle::createNSURLConnection(id delegate, bool shouldUseCredential
         if (d->m_user.isEmpty() && d->m_pass.isEmpty()) {
             // <rdar://problem/7174050> - For URLs that match the paths of those previously challenged for HTTP Basic authentication, 
             // try and reuse the credential preemptively, as allowed by RFC 2617.
-            d->m_initialCredential = d->m_context->storageSession()->credentialStorage().get(firstRequest().cachePartition(), firstRequest().url());
+            if (auto* networkStorageSession = d->m_context->storageSession())
+                d->m_initialCredential = networkStorageSession->credentialStorage().get(firstRequest().cachePartition(), firstRequest().url());
         } else {
             // If there is already a protection space known for the URL, update stored credentials before sending a request.
             // This makes it possible to implement logout by sending an XMLHttpRequest with known incorrect credentials, and aborting it immediately
             // (so that an authentication dialog doesn't pop up).
-            d->m_context->storageSession()->credentialStorage().set(firstRequest().cachePartition(), Credential(d->m_user, d->m_pass, CredentialPersistenceNone), firstRequest().url());
+            if (auto* networkStorageSession = d->m_context->storageSession())
+                networkStorageSession->credentialStorage().set(firstRequest().cachePartition(), Credential(d->m_user, d->m_pass, CredentialPersistenceNone), firstRequest().url());
         }
     }
         
@@ -240,7 +242,8 @@ bool ResourceHandle::start()
     if (!d->m_context->isValid())
         return false;
 
-    d->m_storageSession = d->m_context->storageSession()->platformSession();
+    if (auto* networkStorageSession = d->m_context->storageSession())
+        d->m_storageSession = networkStorageSession->platformSession();
 
     // FIXME: Do not use the sync version of shouldUseCredentialStorage when the client returns true from usesAsyncCallbacks.
     bool shouldUseCredentialStorage = !client() || client()->shouldUseCredentialStorage(this);
@@ -449,7 +452,9 @@ void ResourceHandle::willSendRequest(ResourceRequest&& request, ResourceResponse
         // Only consider applying authentication credentials if this is actually a redirect and the redirect
         // URL didn't include credentials of its own.
         if (d->m_user.isEmpty() && d->m_pass.isEmpty() && !redirectResponse.isNull()) {
-            Credential credential = d->m_context->storageSession()->credentialStorage().get(request.cachePartition(), request.url());
+            Credential credential;
+            if (auto* networkStorageSession = d->m_context->storageSession())
+                credential = networkStorageSession->credentialStorage().get(request.cachePartition(), request.url());
             if (!credential.isEmpty()) {
                 d->m_initialCredential = credential;
                 
@@ -540,16 +545,20 @@ bool ResourceHandle::tryHandlePasswordBasedAuthentication(const AuthenticationCh
             // The stored credential wasn't accepted, stop using it.
             // There is a race condition here, since a different credential might have already been stored by another ResourceHandle,
             // but the observable effect should be very minor, if any.
-            d->m_context->storageSession()->credentialStorage().remove(d->m_partition, challenge.protectionSpace());
+            if (auto* networkStorageSession = d->m_context->storageSession())
+                networkStorageSession->credentialStorage().remove(d->m_partition, challenge.protectionSpace());
         }
 
         if (!challenge.previousFailureCount()) {
-            Credential credential = d->m_context->storageSession()->credentialStorage().get(d->m_partition, challenge.protectionSpace());
+            Credential credential;
+            if (auto* networkStorageSession = d->m_context->storageSession())
+                credential = networkStorageSession->credentialStorage().get(d->m_partition, challenge.protectionSpace());
             if (!credential.isEmpty() && credential != d->m_initialCredential) {
                 ASSERT(credential.persistence() == CredentialPersistenceNone);
                 if (challenge.failureResponse().httpStatusCode() == 401) {
                     // Store the credential back, possibly adding it as a default for this directory.
-                    d->m_context->storageSession()->credentialStorage().set(d->m_partition, credential, challenge.protectionSpace(), challenge.failureResponse().url());
+                    if (auto* networkStorageSession = d->m_context->storageSession())
+                        networkStorageSession->credentialStorage().set(d->m_partition, credential, challenge.protectionSpace(), challenge.failureResponse().url());
                 }
                 [challenge.sender() useCredential:credential.nsCredential() forAuthenticationChallenge:mac(challenge)];
                 return true;
@@ -591,7 +600,8 @@ void ResourceHandle::receivedCredential(const AuthenticationChallenge& challenge
         URL urlToStore;
         if (challenge.failureResponse().httpStatusCode() == 401)
             urlToStore = challenge.failureResponse().url();
-        d->m_context->storageSession()->credentialStorage().set(d->m_partition, webCredential, ProtectionSpace([d->m_currentMacChallenge protectionSpace]), urlToStore);
+        if (auto* networkStorageSession = d->m_context->storageSession())
+            networkStorageSession->credentialStorage().set(d->m_partition, webCredential, ProtectionSpace([d->m_currentMacChallenge protectionSpace]), urlToStore);
         [[d->m_currentMacChallenge sender] useCredential:webCredential.nsCredential() forAuthenticationChallenge:d->m_currentMacChallenge];
     } else
         [[d->m_currentMacChallenge sender] useCredential:credential.nsCredential() forAuthenticationChallenge:d->m_currentMacChallenge];

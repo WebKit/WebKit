@@ -1,3 +1,20 @@
+2019-01-09  Alex Christensen  <achristensen@webkit.org>
+
+        REGRESSION(239737) iOS quicklook tests should not dereference null
+        https://bugs.webkit.org/show_bug.cgi?id=193307
+
+        Reviewed by Brent Fulgham.
+
+        The quicklook tests rely on ResourceHandle on iOS for some reason.
+        This is a problem we'll fix later, but for now keep them working by not crashing.
+
+        * platform/network/mac/ResourceHandleMac.mm:
+        (WebCore::ResourceHandle::createNSURLConnection):
+        (WebCore::ResourceHandle::start):
+        (WebCore::ResourceHandle::willSendRequest):
+        (WebCore::ResourceHandle::tryHandlePasswordBasedAuthentication):
+        (WebCore::ResourceHandle::receivedCredential):
+
 2019-01-09  Zalan Bujtas  <zalan@apple.com>
 
         [Datalist] Crash when input with datalist is dynamically added.
