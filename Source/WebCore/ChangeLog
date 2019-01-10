@@ -1,3 +1,26 @@
+2019-01-09  Dean Jackson  <dino@apple.com>
+
+        Safari Crashing in Version 12.0.1 (14606.2.104.1.1) WebCore::GraphicsLayerCA::updateBackdropFilters
+        https://bugs.webkit.org/show_bug.cgi?id=193309
+        <rdar://problem/45279224>
+
+        Reviewed by Antoine Quint.
+
+        A speculative fix for a CheckedArithmetic crash triggered in updateBackdropFilters.
+
+        The crash log indicates we crash in a Checked<> class that is not recording
+        overflow i.e. it is crashing due to an overflow. The only place in this function
+        where that could happen is when we convert the FloatRect for the backdrop
+        region into a Checked<unsigned> for width and height. This suggests that either
+        the width or height are negative, or the float values are too large for integers,
+        or the product of the two overflows.
+
+        Avoid this by using RecordOverflow, but also changing the code a little to
+        bail if the rectangle is incorrect.
+
+        * platform/graphics/ca/GraphicsLayerCA.cpp:
+        (WebCore::GraphicsLayerCA::updateBackdropFilters):
+
 2019-01-10  Oriol Brufau  <obrufau@igalia.com>
 
         [css-grid] Let abspos items reference implicit grid lines

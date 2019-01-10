@@ -2147,18 +2147,22 @@ void GraphicsLayerCA::updateFilters()
 
 void GraphicsLayerCA::updateBackdropFilters(CommitState& commitState)
 {
+    using CheckedUnsigned = Checked<unsigned, RecordOverflow>;
+
     bool canHaveBackdropFilters = needsBackdrop();
 
     if (canHaveBackdropFilters) {
-        Checked<unsigned, RecordOverflow> backdropFilterArea = Checked<unsigned>(static_cast<int>(m_backdropFiltersRect.rect().width())) * Checked<unsigned>(static_cast<int>(m_backdropFiltersRect.rect().height()));
-        if (backdropFilterArea.hasOverflowed())
-            canHaveBackdropFilters = false;
-        else {
-            Checked<unsigned, RecordOverflow> newTotalBackdropFilterArea = Checked<unsigned, RecordOverflow>(commitState.totalBackdropFilterArea) + backdropFilterArea;
-            if (newTotalBackdropFilterArea.hasOverflowed() || newTotalBackdropFilterArea.unsafeGet() > cMaxTotalBackdropFilterArea)
-                canHaveBackdropFilters = false;
-            else
-                commitState.totalBackdropFilterArea = newTotalBackdropFilterArea.unsafeGet();
+        canHaveBackdropFilters = false;
+        IntRect backdropFilterRect = enclosingIntRect(m_backdropFiltersRect.rect());
+        if (backdropFilterRect.width() > 0 && backdropFilterRect.height() > 0) {
+            CheckedUnsigned backdropFilterArea = CheckedUnsigned(backdropFilterRect.width()) * CheckedUnsigned(backdropFilterRect.height());
+            if (!backdropFilterArea.hasOverflowed()) {
+                CheckedUnsigned newTotalBackdropFilterArea = CheckedUnsigned(commitState.totalBackdropFilterArea) + backdropFilterArea;
+                if (!newTotalBackdropFilterArea.hasOverflowed() && newTotalBackdropFilterArea.unsafeGet() <= cMaxTotalBackdropFilterArea) {
+                    commitState.totalBackdropFilterArea = newTotalBackdropFilterArea.unsafeGet();
+                    canHaveBackdropFilters = true;
+                }
+            }
         }
     }
 
