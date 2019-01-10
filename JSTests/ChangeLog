@@ -1,3 +1,15 @@
+2019-01-10  Dominik Infuehr  <dinfuehr@igalia.com>
+
+        Enable DFG on ARM/Linux again
+        https://bugs.webkit.org/show_bug.cgi?id=192496
+
+        Reviewed by Yusuke Suzuki.
+
+        Test wasn't really skipped before moving the line with skip
+        to the top.
+
+        * stress/regress-192717.js:
+
 2019-01-08  Yusuke Suzuki  <yusukesuzuki@slowstart.org>
 
         Array.prototype.flat/flatMap have a minor bug in ArraySpeciesCreate

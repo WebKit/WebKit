@@ -34,7 +34,7 @@ require "risc"
 #  x2 => t2, a2, r2
 #  x3 => t3, a3, r3
 #  x6 =>            (callee-save scratch)
-#  x7 => cfr        (ARMv7 only)
+#  x7 => cfr
 #  x8 => t4         (callee-save)
 #  x9 => t5         (callee-save)
 # x10 =>            (callee-save scratch)
@@ -54,15 +54,6 @@ require "risc"
 # d5 => ft5
 # d6 =>              (scratch)
 # d7 =>              (scratch)
-
-def isARMv7
-    case $activeBackend
-    when "ARMv7"
-        true
-    else
-        raise "bad value for $activeBackend: #{$activeBackend}"
-    end
-end
 
 class Node
     def armSingle
@@ -91,13 +82,11 @@ def armMoveImmediate(value, register)
         $asm.puts "mov #{register.armOperand}, \##{value}"
     elsif (~value) >= 0 && (~value) < 256
         $asm.puts "mvn #{register.armOperand}, \##{~value}"
-    elsif isARMv7
+    else
         $asm.puts "movw #{register.armOperand}, \##{value & 0xffff}"
         if (value & 0xffff0000) != 0
             $asm.puts "movt #{register.armOperand}, \##{(value >> 16) & 0xffff}"
         end
-    else
-        $asm.puts "ldr #{register.armOperand}, =#{value}"
     end
 end
 
@@ -119,7 +108,7 @@ class RegisterID
         when "t5"
             "r9"
         when "cfr"
-            isARMv7 ?  "r7" : "r11"
+            "r7"
         when "csr0"
             "r11"
         when "lr"
@@ -609,9 +598,6 @@ class Instruction
             else
                 $asm.puts "mov pc, #{operands[0].armOperand}"
             end
-            if not isARMv7 and not isARMv7Traditional
-                $asm.puts ".ltorg"
-            end
         when "call"
             if operands[0].label?
                 if OS_DARWIN
@@ -692,7 +678,7 @@ class Instruction
             $asm.puts "add #{dest.armOperand}, pc, #{dest.armOperand}"
             $asm.puts "ldr #{dest.armOperand}, [#{dest.armOperand}, #{temp.armOperand}]"
 
-            offset = $activeBackend == "ARMv7" ? 4 : 8
+            offset = 4
 
             $asm.deferNextLabelAction {
                 $asm.puts "#{gotLabel}:"

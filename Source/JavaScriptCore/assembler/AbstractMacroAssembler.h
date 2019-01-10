@@ -749,7 +749,7 @@ public:
             m_jumps.append(other.m_jumps.begin(), other.m_jumps.size());
         }
 
-        bool empty()
+        bool empty() const
         {
             return !m_jumps.size();
         }
