@@ -1,3 +1,24 @@
+2019-01-10  Simon Fraser  <simon.fraser@apple.com>
+
+        Fix rare crash under ScrollbarThemeMac::paintScrollCorner()
+        https://bugs.webkit.org/show_bug.cgi?id=193337
+        rdar://problem/47179993
+
+        Reviewed by Zalan Bujtas.
+        
+        Async image decoding can trigger a FrameView::traverseForPaintInvalidation() fake paint,
+        which creates a GraphicsContext with no platform context. However, we could hit ScrollView::paintScrollbars()
+        which tried to get at the platform context, and then crashed.
+        
+        So protect two functions in ScrollbarThemeMac with if (context.paintingDisabled()) checks. I verified
+        that other scrollbar-related painting code paths were already protected.
+
+        Hard to test because it depends on async image decoding timing.
+
+        * platform/mac/ScrollbarThemeMac.mm:
+        (WebCore::ScrollbarThemeMac::paint):
+        (WebCore::ScrollbarThemeMac::paintScrollCorner):
+
 2019-01-10  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [WHLSL] Implement parser AST nodes

@@ -550,6 +550,9 @@ static void scrollerImpPaint(NSScrollerImp *scrollerImp, bool enabled)
 
 bool ScrollbarThemeMac::paint(Scrollbar& scrollbar, GraphicsContext& context, const IntRect& damageRect)
 {
+    if (context.paintingDisabled())
+        return false;
+
     setPaintCharacteristicsForScrollbar(scrollbar);
 
     if (scrollbar.supportsUpdateOnSecondaryThread())
@@ -568,6 +571,9 @@ bool ScrollbarThemeMac::paint(Scrollbar& scrollbar, GraphicsContext& context, co
 
 void ScrollbarThemeMac::paintScrollCorner(GraphicsContext& context, const IntRect& cornerRect)
 {
+    if (context.paintingDisabled())
+        return;
+
     LocalCurrentGraphicsContext localContext(context);
 
     auto cornerDrawingOptions = @{ (__bridge NSString *)kCUIWidgetKey: (__bridge NSString *)kCUIWidgetScrollBarTrackCorner,
