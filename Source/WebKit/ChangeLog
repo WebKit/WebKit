@@ -1,3 +1,29 @@
+2019-01-10  Zalan Bujtas  <zalan@apple.com>
+
+        REGRESSION (r237658): Tap highlight limits cause the highlight to no longer show with legitimate button sizes
+        https://bugs.webkit.org/show_bug.cgi?id=193294
+        <rdar://problem/46006678>
+
+        Reviewed by Simon Fraser.
+
+        Input type elements should always paint tap highlight (ignore size heuristic). 
+
+        * UIProcess/PageClient.h:
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPageProxy.messages.in:
+        * UIProcess/ios/PageClientImplIOS.h:
+        * UIProcess/ios/PageClientImplIOS.mm:
+        (WebKit::PageClientImpl::didGetTapHighlightGeometries):
+        * UIProcess/ios/WKContentViewInteraction.h:
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView _showTapHighlight]):
+        (-[WKContentView _didGetTapHighlightForRequest:color:quads:topLeftRadius:topRightRadius:bottomLeftRadius:bottomRightRadius:nodeHasBuiltInClickHandling:]):
+        (-[WKContentView _didGetTapHighlightForRequest:color:quads:topLeftRadius:topRightRadius:bottomLeftRadius:bottomRightRadius:]): Deleted.
+        * UIProcess/ios/WebPageProxyIOS.mm:
+        (WebKit::WebPageProxy::didGetTapHighlightGeometries):
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::sendTapHighlightForNodeIfNecessary):
+
 2019-01-10  Alexey Proskuryakov  <ap@apple.com>
 
         Remove unneeded XPCService variant for plugin service
