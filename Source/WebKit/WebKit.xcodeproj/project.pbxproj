@@ -2899,8 +2899,8 @@
 		370F34A41829BEA3009027C8 /* WKNavigationDataInternal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKNavigationDataInternal.h; sourceTree = "<group>"; };
 		370F34A61829CFF3009027C8 /* WKBrowsingContextHistoryDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKBrowsingContextHistoryDelegate.h; sourceTree = "<group>"; };
 		37119A7C20CCB64E002C6DC9 /* WebKitTargetConditionals.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = WebKitTargetConditionals.xcconfig; sourceTree = "<group>"; };
-		37119A7D20CCB64E002C6DC9 /* Network-iOS-minimalsimulator.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = "Network-iOS-minimalsimulator.entitlements"; sourceTree = "<group>"; };
-		37119A7E20CCB64E002C6DC9 /* WebContent-iOS-minimalsimulator.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = "WebContent-iOS-minimalsimulator.entitlements"; sourceTree = "<group>"; };
+		37119A7D20CCB64E002C6DC9 /* Network-iOSMac.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = "Network-iOSMac.entitlements"; sourceTree = "<group>"; };
+		37119A7E20CCB64E002C6DC9 /* WebContent-iOSMac.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = "WebContent-iOSMac.entitlements"; sourceTree = "<group>"; };
 		37183D54182F4E700080C811 /* WKNSURLExtras.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WKNSURLExtras.mm; sourceTree = "<group>"; };
 		37183D55182F4E700080C811 /* WKNSURLExtras.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKNSURLExtras.h; sourceTree = "<group>"; };
 		371A193F1824D29300F32A5E /* WKNSDictionary.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WKNSDictionary.mm; sourceTree = "<group>"; };
@@ -4836,8 +4836,8 @@
 				A7BD9863194653D400D35698 /* Databases-iOS.entitlements */,
 				1A4F976B100E7B6600637A18 /* DebugRelease.xcconfig */,
 				1A4F976C100E7B6600637A18 /* FeatureDefines.xcconfig */,
-				37119A7D20CCB64E002C6DC9 /* Network-iOS-minimalsimulator.entitlements */,
 				7C0BB9A918DCDF5A0006C086 /* Network-iOS.entitlements */,
+				37119A7D20CCB64E002C6DC9 /* Network-iOSMac.entitlements */,
 				5C6F4EED21E5B11300BC8380 /* Network-OSX-restricted.entitlements */,
 				41D0FC7D20E43A5100076AE8 /* Network-OSX-sandbox.entitlements */,
 				5C7ACFD1218DD8BD004CBB59 /* Network-OSX.entitlements */,
@@ -4850,8 +4850,8 @@
 				A1EDD2DC1884B9B500BBFE98 /* SecItemShim.xcconfig */,
 				5183B3931379F85C00E8754E /* Shim.xcconfig */,
 				1A4F976E100E7B6600637A18 /* Version.xcconfig */,
-				37119A7E20CCB64E002C6DC9 /* WebContent-iOS-minimalsimulator.entitlements */,
 				7C0BB9A818DCDE890006C086 /* WebContent-iOS.entitlements */,
+				37119A7E20CCB64E002C6DC9 /* WebContent-iOSMac.entitlements */,
 				37B418EB1C9624F20031E63B /* WebContent-or-Plugin-OSX-restricted.entitlements */,
 				4188C158211378520012ABCD /* WebContent-OSX-sandbox.entitlements */,
 				7AF66E1120C07CB6007828EA /* WebContent-OSX.entitlements */,
@@ -10369,16 +10369,16 @@
 				"$(SRCROOT)/Configurations/Databases-iOS.entitlements",
 				"$(SRCROOT)/Configurations/Network-iOS.entitlements",
 				"$(SRCROOT)/Configurations/WebContent-iOS.entitlements",
-				"$(SRCROOT)/Configurations/Network-iOS-minimalsimulator.entitlements",
-				"$(SRCROOT)/Configurations/WebContent-iOS-minimalsimulator.entitlements",
+				"$(SRCROOT)/Configurations/Network-iOSMac.entitlements",
+				"$(SRCROOT)/Configurations/WebContent-iOSMac.entitlements",
 			);
 			name = "Derive Entitlements for Manual Sandboxing";
 			outputPaths = (
 				"$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/Databases-iOS-no-sandbox.entitlements",
 				"$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/Network-iOS-no-sandbox.entitlements",
 				"$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/WebContent-iOS-no-sandbox.entitlements",
-				"$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/Network-iOS-minimalsimulator-no-sandbox.entitlements",
-				"$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/WebContent-iOS-minimalsimulator-no-sandbox.entitlements",
+				"$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/Network-iOSMac-no-sandbox.entitlements",
+				"$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/WebContent-iOSMac-no-sandbox.entitlements",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
