@@ -1,3 +1,13 @@
+2019-01-09  Alan Coon  <alancoon@apple.com>
+
+        Apply patch. rdar://problem/47158817
+
+    2019-01-09  Keith Miller  <keith_miller@apple.com>
+
+            Mark kJSTypeSymbol as available in mid year update of the OS.
+
+            * API/JSValueRef.h:
+
 2019-01-04  Tadeu Zagallo  <tzagallo@apple.com>
 
         Baseline version of get_by_id may corrupt metadata

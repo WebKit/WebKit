@@ -51,7 +51,7 @@ typedef enum {
     kJSTypeNumber,
     kJSTypeString,
     kJSTypeObject,
-    kJSTypeSymbol JSC_API_AVAILABLE(macosx(JSC_MAC_TBA), ios(JSC_IOS_TBA))
+    kJSTypeSymbol JSC_API_AVAILABLE(macosx(10.14.4), ios(12.3))
 } JSType;
 
 /*!
