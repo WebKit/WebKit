@@ -25,7 +25,10 @@
 #include "JSTestStandaloneDictionary.h"
 
 #include "JSDOMConvertBoolean.h"
+#include "JSDOMConvertCallbacks.h"
 #include "JSDOMConvertStrings.h"
+#include "JSDOMGlobalObject.h"
+#include "JSVoidCallback.h"
 #include <JavaScriptCore/JSCInlines.h>
 #include <JavaScriptCore/JSString.h>
 #include <wtf/NeverDestroyed.h>
@@ -56,6 +59,17 @@ template<> DictionaryImplName convertDictionary<DictionaryImplName>(ExecState& s
     }
     if (!boolMemberValue.isUndefined()) {
         result.boolMember = convert<IDLBoolean>(state, boolMemberValue);
+        RETURN_IF_EXCEPTION(throwScope, { });
+    }
+    JSValue callbackMemberValue;
+    if (isNullOrUndefined)
+        callbackMemberValue = jsUndefined();
+    else {
+        callbackMemberValue = object->get(&state, Identifier::fromString(&state, "callbackMember"));
+        RETURN_IF_EXCEPTION(throwScope, { });
+    }
+    if (!callbackMemberValue.isUndefined()) {
+        result.callbackMember = convert<IDLCallbackFunction<JSVoidCallback>>(state, callbackMemberValue, *jsCast<JSDOMGlobalObject*>(state.lexicalGlobalObject()));
         RETURN_IF_EXCEPTION(throwScope, { });
     }
     JSValue enumMemberValue;

@@ -1,3 +1,27 @@
+2019-01-10  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Bindings generator emits incorrect code when using VoidCallback as an IDL dictionary attribute
+        https://bugs.webkit.org/show_bug.cgi?id=193328
+
+        Reviewed by Chris Dumez.
+
+        Currently, when generating the function body of `convertDictionary`, our bindings generator does not pass in an
+        argument to use as the `$globalObjectReference` in `JSValueToNative`, when generating code to convert a wrapped
+        attribute value to the native value. As a result, if the generated IDL type returns `true` from
+        `JSValueToNativeDOMConvertNeedsGlobalObject` (i.e. for callback function types), we will end up using the empty
+        string as the generated expression for the global object. This emits syntactically incorrect code:
+
+            `convert<IDLCallbackFunction<JSVoidCallback>>(state, someValue, );`
+
+        To fix this, we pass in a string to use as the global object, which uses the given ExecState to grab the global
+        object. Tested by augmenting TestStandaloneDictionary.idl and its generated expectation.
+
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GenerateDictionaryImplementationContent):
+        * bindings/scripts/test/JS/JSTestStandaloneDictionary.cpp:
+        (WebCore::convertDictionary<DictionaryImplName>):
+        * bindings/scripts/test/TestStandaloneDictionary.idl:
+
 2019-01-10  Eric Carlson  <eric.carlson@apple.com>
 
         Define page media state flags for display capture.

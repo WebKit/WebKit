@@ -36,4 +36,5 @@ enum TestEnumInStandaloneDictionaryFile { "enumValue1", "enumValue2" };
     boolean boolMember;
     DOMString stringMember;
     TestEnumInStandaloneDictionaryFile enumMember;
+    VoidCallback callbackMember;
 };

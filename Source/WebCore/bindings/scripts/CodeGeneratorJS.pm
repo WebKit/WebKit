@@ -2348,7 +2348,7 @@ sub GenerateDictionaryImplementationContent
             # 4.3. If value is not undefined, then:
             $result .= "    if (!${key}Value.isUndefined()) {\n";
 
-            my $nativeValue = JSValueToNative($typeScope, $member, "${key}Value", $member->extendedAttributes->{Conditional}, "&state", "state");
+            my $nativeValue = JSValueToNative($typeScope, $member, "${key}Value", $member->extendedAttributes->{Conditional}, "&state", "state", "", "*jsCast<JSDOMGlobalObject*>(state.lexicalGlobalObject())");
             $result .= "        result.$implementedAsKey = $nativeValue;\n";
             $result .= "        RETURN_IF_EXCEPTION(throwScope, { });\n";
 
