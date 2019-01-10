@@ -1,3 +1,21 @@
+2019-01-10  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC][BFC][MarginCollapsing] Take collapsed through siblings into account when computing vertical position
+        https://bugs.webkit.org/show_bug.cgi?id=193310
+
+        Reviewed by Antti Koivisto.
+
+        If the block inflow element has previous siblings with collapsed through vertical margins,
+        then this box's before margin could _indirectly_ collapse with the parent. Use the previous siblings
+        to check for margin collapsing.
+
+        Test: fast/block/block-only/collapsed-through-siblings.html
+
+        * layout/blockformatting/BlockFormattingContext.cpp:
+        (WebCore::Layout::BlockFormattingContext::adjustedVerticalPositionAfterMarginCollapsing const):
+        * page/FrameViewLayoutContext.cpp:
+        (WebCore::layoutUsingFormattingContext):
+
 2019-01-10  Alicia Boya García  <aboya@igalia.com>
 
         [MSE][GStreamer] Use GRefPtr in AppendPipeline::pushNewBuffer()

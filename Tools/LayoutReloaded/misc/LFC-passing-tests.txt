@@ -63,6 +63,7 @@ fast/block/block-only/margin-left-right-sizing.html
 fast/block/block-only/margin-propagation-simple-content-height.html
 fast/block/block-only/margin-sibling-collapse-propagated.html
 fast/block/block-only/margin-simple.html
+fast/block/block-only/collapsed-through-siblings.html
 fast/block/block-only/min-max-height-percentage.html
 fast/block/block-only/negative-margin-simple.html
 fast/block/block-only/padding-nested.html

@@ -477,8 +477,13 @@ LayoutUnit BlockFormattingContext::adjustedVerticalPositionAfterMarginCollapsing
         currentLayoutBox = &previousInFlowSibling;
     }
 
-    auto containingBlockContentBoxTop = layoutState.displayBoxForLayoutBox(*layoutBox.containingBlock()).contentBoxTop();
-    if (MarginCollapse::marginBeforeCollapsesWithParentMarginBefore(layoutState, layoutBox) || MarginCollapse::marginBeforeCollapsesWithParentMarginAfter(layoutState, layoutBox))
+    auto& containingBlock = *layoutBox.containingBlock();
+    auto containingBlockContentBoxTop = layoutState.displayBoxForLayoutBox(containingBlock).contentBoxTop();
+    // If we reached the parent through collapsed sibling(s), this box (may) collapses the before margin indirectly with the parent.  
+    auto* collapsingCandidate = layoutBox.previousInFlowSibling() ? containingBlock.firstInFlowChild() : &layoutBox;
+    auto marginBeforeCollapsesWithParent = MarginCollapse::marginBeforeCollapsesWithParentMarginBefore(layoutState, *collapsingCandidate) 
+        || MarginCollapse::marginBeforeCollapsesWithParentMarginAfter(layoutState, *collapsingCandidate);
+    if (marginBeforeCollapsesWithParent)
         return containingBlockContentBoxTop;
 
     return containingBlockContentBoxTop + marginBefore;
