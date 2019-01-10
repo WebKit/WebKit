@@ -539,7 +539,7 @@ void NetworkProcess::grantStorageAccess(PAL::SessionID sessionID, const String& 
 
 void NetworkProcess::logFrameNavigation(PAL::SessionID sessionID, const String& targetPrimaryDomain, const String& mainFramePrimaryDomain, const String& sourcePrimaryDomain, const String& targetHost, const String& mainFrameHost, bool isRedirect, bool isMainFrame)
 {
-    if (auto* networkSession = SessionTracker::networkSession(sessionID)) {
+    if (auto* networkSession = this->networkSession(sessionID)) {
         if (auto* resourceLoadStatistics = networkSession->resourceLoadStatistics())
             resourceLoadStatistics->logFrameNavigation(targetPrimaryDomain, mainFramePrimaryDomain, sourcePrimaryDomain, targetHost, mainFrameHost, isRedirect, isMainFrame);
     } else
@@ -548,7 +548,7 @@ void NetworkProcess::logFrameNavigation(PAL::SessionID sessionID, const String& 
 
 void NetworkProcess::logUserInteraction(PAL::SessionID sessionID, const String& targetPrimaryDomain, uint64_t contextId)
 {
-    if (auto* networkSession = SessionTracker::networkSession(sessionID)) {
+    if (auto* networkSession = this->networkSession(sessionID)) {
         if (auto* resourceLoadStatistics = networkSession->resourceLoadStatistics()) {
             resourceLoadStatistics->logUserInteraction(targetPrimaryDomain, [this, contextId] {
                 parentProcessConnection()->send(Messages::NetworkProcessProxy::DidLogUserInteraction(contextId), 0);
