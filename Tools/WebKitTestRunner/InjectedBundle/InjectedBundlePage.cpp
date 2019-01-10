@@ -1372,10 +1372,11 @@ WKBundlePagePolicyAction InjectedBundlePage::decidePolicyForNavigationAction(WKB
     stringBuilder.appendLiteral(" with navigation type \'");
     stringBuilder.append(toWTFString(NavigationTypeToString(WKBundleNavigationActionGetNavigationType(navigationAction))));
     stringBuilder.appendLiteral("\'");
-    WKBundleHitTestResultRef hitTestResultRef = WKBundleNavigationActionCopyHitTestResult(navigationAction);
+    WKRetainPtr<WKBundleHitTestResultRef> hitTestResultRef = adoptWK(WKBundleNavigationActionCopyHitTestResult(navigationAction));
     if (hitTestResultRef) {
+        WKRetainPtr<WKBundleNodeHandleRef> nodeHandleRef = adoptWK(WKBundleHitTestResultCopyNodeHandle(hitTestResultRef.get()));
         stringBuilder.appendLiteral(" originating from ");
-        stringBuilder.append(dumpPath(m_page, m_world.get(), WKBundleHitTestResultCopyNodeHandle(hitTestResultRef)));
+        stringBuilder.append(dumpPath(m_page, m_world.get(), nodeHandleRef.get()));
     }
 
     stringBuilder.append('\n');
