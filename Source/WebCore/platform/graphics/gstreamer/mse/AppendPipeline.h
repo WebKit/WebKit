@@ -49,7 +49,7 @@ public:
     AppendPipeline(Ref<MediaSourceClientGStreamerMSE>, Ref<SourceBufferPrivateGStreamer>, MediaPlayerPrivateGStreamerMSE&);
     virtual ~AppendPipeline();
 
-    GstFlowReturn pushNewBuffer(GstBuffer*);
+    GstFlowReturn pushNewBuffer(GRefPtr<GstBuffer>&&);
     void resetParserState();
     Ref<SourceBufferPrivateGStreamer> sourceBufferPrivate() { return m_sourceBufferPrivate.get(); }
     GstCaps* appsinkCaps() { return m_appsinkCaps.get(); }

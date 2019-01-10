@@ -141,13 +141,13 @@ bool MediaSourceClientGStreamerMSE::append(RefPtr<SourceBufferPrivateGStreamer> 
     // Wrap the whole Vector object in case the data is stored in the inlined buffer.
     auto* bufferData = data.data();
     auto bufferLength = data.size();
-    GstBuffer* buffer = gst_buffer_new_wrapped_full(static_cast<GstMemoryFlags>(0), bufferData, bufferLength, 0, bufferLength, new Vector<unsigned char>(WTFMove(data)),
+    GRefPtr<GstBuffer> buffer = adoptGRef(gst_buffer_new_wrapped_full(static_cast<GstMemoryFlags>(0), bufferData, bufferLength, 0, bufferLength, new Vector<unsigned char>(WTFMove(data)),
         [](gpointer data)
         {
             delete static_cast<Vector<unsigned char>*>(data);
-        });
+        }));
 
-    return appendPipeline->pushNewBuffer(buffer) == GST_FLOW_OK;
+    return appendPipeline->pushNewBuffer(WTFMove(buffer)) == GST_FLOW_OK;
 }
 
 void MediaSourceClientGStreamerMSE::markEndOfStream(MediaSourcePrivate::EndOfStreamStatus status)

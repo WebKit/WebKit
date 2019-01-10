@@ -552,10 +552,10 @@ void AppendPipeline::resetParserState()
 #endif
 }
 
-GstFlowReturn AppendPipeline::pushNewBuffer(GstBuffer* buffer)
+GstFlowReturn AppendPipeline::pushNewBuffer(GRefPtr<GstBuffer>&& buffer)
 {
-    GST_TRACE_OBJECT(m_pipeline.get(), "pushing data buffer %" GST_PTR_FORMAT, buffer);
-    GstFlowReturn pushDataBufferRet = gst_app_src_push_buffer(GST_APP_SRC(m_appsrc.get()), buffer);
+    GST_TRACE_OBJECT(m_pipeline.get(), "pushing data buffer %" GST_PTR_FORMAT, buffer.get());
+    GstFlowReturn pushDataBufferRet = gst_app_src_push_buffer(GST_APP_SRC(m_appsrc.get()), buffer.leakRef());
     // Pushing buffers to appsrc can only fail if the appsrc is flushing, in EOS or stopped. Neither of these should
     // be true at this point.
     g_return_val_if_fail(pushDataBufferRet == GST_FLOW_OK, GST_FLOW_ERROR);

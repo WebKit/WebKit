@@ -1,3 +1,16 @@
+2019-01-10  Alicia Boya García  <aboya@igalia.com>
+
+        [MSE][GStreamer] Use GRefPtr in AppendPipeline::pushNewBuffer()
+        https://bugs.webkit.org/show_bug.cgi?id=192934
+
+        Reviewed by Xabier Rodriguez-Calvar.
+
+        * platform/graphics/gstreamer/mse/AppendPipeline.cpp:
+        (WebCore::AppendPipeline::pushNewBuffer):
+        * platform/graphics/gstreamer/mse/AppendPipeline.h:
+        * platform/graphics/gstreamer/mse/MediaSourceClientGStreamerMSE.cpp:
+        (WebCore::MediaSourceClientGStreamerMSE::append):
+
 2019-01-10  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [FreeType] Color emoji not properly supported
