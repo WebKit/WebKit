@@ -1,3 +1,13 @@
+2019-01-10  Brian Burg  <bburg@apple.com>
+
+        Rebaseline inspector generator test results after recent changes.
+
+        Unreviewed test gardening.
+
+        * inspector/scripts/tests/generic/expected/commands-with-async-attribute.json-result:
+        * inspector/scripts/tests/generic/expected/commands-with-optional-call-return-parameters.json-result:
+        * inspector/scripts/tests/generic/expected/fail-on-domain-availability-value.json-error:
+
 2019-01-10  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r239825.

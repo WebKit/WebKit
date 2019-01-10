@@ -309,23 +309,23 @@ void DatabaseBackendDispatcher::executeSQLSyncOptionalReturnValues(long requestI
     if (!error.length()) {
         if (out_columnNames)
             result->setArray("columnNames"_s, out_columnNames);
-        if (out_notes.has_value())
+        if (out_notes.hasValue())
             result->setString("notes"_s, *out_notes);
-        if (out_timestamp.has_value())
+        if (out_timestamp.hasValue())
             result->setDouble("timestamp"_s, *out_timestamp);
-        if (out_values.has_value())
+        if (out_values.hasValue())
             result->setObject("values"_s, *out_values);
-        if (out_payload.has_value())
+        if (out_payload.hasValue())
             result->setValue("payload"_s, *out_payload);
-        if (out_databaseId.has_value())
+        if (out_databaseId.hasValue())
             result->setInteger("databaseId"_s, *out_databaseId);
         if (out_sqlError)
             result->setObject("sqlError"_s, out_sqlError);
-        if (out_screenColor.has_value())
+        if (out_screenColor.hasValue())
             result->setString("screenColor"_s, *out_screenColor);
         if (out_alternateColors)
             result->setArray("alternateColors"_s, out_alternateColors);
-        if (out_printColor.has_value())
+        if (out_printColor.hasValue())
             result->setString("printColor"_s, *out_printColor);
     }
     if (!error.length())
@@ -341,23 +341,23 @@ void DatabaseBackendDispatcherHandler::ExecuteSQLAsyncOptionalReturnValuesCallba
     Ref<JSON::Object> jsonMessage = JSON::Object::create();
     if (columnNames)
         jsonMessage->setArray("columnNames"_s, columnNames);
-    if (notes.has_value())
+    if (notes.hasValue())
         jsonMessage->setString("notes"_s, *notes);
-    if (timestamp.has_value())
+    if (timestamp.hasValue())
         jsonMessage->setDouble("timestamp"_s, *timestamp);
-    if (values.has_value())
+    if (values.hasValue())
         jsonMessage->setObject("values"_s, *values);
-    if (payload.has_value())
+    if (payload.hasValue())
         jsonMessage->setValue("payload"_s, *payload);
-    if (databaseId.has_value())
+    if (databaseId.hasValue())
         jsonMessage->setInteger("databaseId"_s, *databaseId);
     if (sqlError)
         jsonMessage->setObject("sqlError"_s, sqlError);
-    if (screenColor.has_value())
+    if (screenColor.hasValue())
         jsonMessage->setString("screenColor"_s, *screenColor);
     if (alternateColors)
         jsonMessage->setArray("alternateColors"_s, alternateColors);
-    if (printColor.has_value())
+    if (printColor.hasValue())
         jsonMessage->setString("printColor"_s, *printColor);
     CallbackBase::sendSuccess(WTFMove(jsonMessage));
 }
