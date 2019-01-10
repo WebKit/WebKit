@@ -502,10 +502,10 @@ public:
     {
     }
 
-    CharacterFallbackMapKey(const AtomicString& locale, UChar32 character, bool isForPlatformFont)
+    CharacterFallbackMapKey(const AtomicString& locale, UChar32 character, IsForPlatformFont isForPlatformFont)
         : locale(locale)
         , character(character)
-        , isForPlatformFont(isForPlatformFont)
+        , isForPlatformFont(isForPlatformFont == IsForPlatformFont::Yes)
     {
     }
 
@@ -560,13 +560,13 @@ static SystemFallbackCache& systemFallbackCache()
     return map.get();
 }
 
-RefPtr<Font> Font::systemFallbackFontForCharacter(UChar32 character, const FontDescription& description, bool isForPlatformFont) const
+RefPtr<Font> Font::systemFallbackFontForCharacter(UChar32 character, const FontDescription& description, IsForPlatformFont isForPlatformFont) const
 {
     auto fontAddResult = systemFallbackCache().add(this, CharacterFallbackMap());
 
     if (!character) {
         UChar codeUnit = 0;
-        return FontCache::singleton().systemFallbackForCharacters(description, this, isForPlatformFont, &codeUnit, 1);
+        return FontCache::singleton().systemFallbackForCharacters(description, this, isForPlatformFont, FontCache::PreferColoredFont::No, &codeUnit, 1);
     }
 
     auto key = CharacterFallbackMapKey(description.locale(), character, isForPlatformFont);
@@ -586,7 +586,7 @@ RefPtr<Font> Font::systemFallbackFontForCharacter(UChar32 character, const FontD
             codeUnitsLength = 2;
         }
 
-        fallbackFont = FontCache::singleton().systemFallbackForCharacters(description, this, isForPlatformFont, codeUnits, codeUnitsLength).get();
+        fallbackFont = FontCache::singleton().systemFallbackForCharacters(description, this, isForPlatformFont, FontCache::PreferColoredFont::No, codeUnits, codeUnitsLength).get();
         if (fallbackFont)
             fallbackFont->m_isUsedInSystemFallbackCache = true;
     }
@@ -612,7 +612,7 @@ void Font::removeFromSystemFallbackCache()
     }
 }
 
-#if !PLATFORM(COCOA)
+#if !PLATFORM(COCOA) && !USE(FREETYPE)
 bool Font::variantCapsSupportsCharacterForSynthesis(FontVariantCaps fontVariantCaps, UChar32) const
 {
     switch (fontVariantCaps) {

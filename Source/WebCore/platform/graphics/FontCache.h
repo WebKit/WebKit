@@ -60,6 +60,7 @@ class FontPlatformData;
 class FontSelector;
 class OpenTypeVerticalData;
 class Font;
+enum class IsForPlatformFont : uint8_t;
 
 #if PLATFORM(WIN)
 #if USE(IMLANG_FONT_LINK2)
@@ -190,7 +191,8 @@ public:
     WEBCORE_EXPORT static FontCache& singleton();
 
     // These methods are implemented by the platform.
-    RefPtr<Font> systemFallbackForCharacters(const FontDescription&, const Font* originalFontData, bool isPlatformFont, const UChar* characters, unsigned length);
+    enum class PreferColoredFont : uint8_t { No, Yes };
+    RefPtr<Font> systemFallbackForCharacters(const FontDescription&, const Font* originalFontData, IsForPlatformFont, PreferColoredFont, const UChar* characters, unsigned length);
     Vector<String> systemFontFamilies();
     void platformInit();
 

@@ -65,6 +65,7 @@ struct WidthIterator;
 
 enum FontVariant { AutoVariant, NormalVariant, SmallCapsVariant, EmphasisMarkVariant, BrokenIdeographVariant };
 enum Pitch { UnknownPitch, FixedPitch, VariablePitch };
+enum class IsForPlatformFont : uint8_t { No, Yes };
 
 class Font : public RefCounted<Font> {
 public:
@@ -176,7 +177,7 @@ public:
     bool supportsCodePoint(UChar32) const;
     bool platformSupportsCodePoint(UChar32) const;
 
-    RefPtr<Font> systemFallbackFontForCharacter(UChar32, const FontDescription&, bool isForPlatformFont) const;
+    RefPtr<Font> systemFallbackFontForCharacter(UChar32, const FontDescription&, IsForPlatformFont) const;
 
     const GlyphPage* glyphPage(unsigned pageNumber) const;
 

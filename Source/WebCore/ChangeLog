@@ -1,3 +1,44 @@
+2019-01-10  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [FreeType] Color emoji not properly supported
+        https://bugs.webkit.org/show_bug.cgi?id=191976
+
+        Reviewed by Michael Catanzaro.
+
+        Always try to fallback to a colored font for emojis.
+
+        Test: platform/gtk/fonts/font-emoji-system-fallback.html
+
+        * platform/graphics/ComplexTextController.cpp:
+        (WebCore::advanceByCombiningCharacterSequence): Group regional indicators in pairs.
+        * platform/graphics/Font.cpp:
+        (WebCore::CharacterFallbackMapKey::CharacterFallbackMapKey):
+        (WebCore::Font::systemFallbackFontForCharacter const): Pass PreferColoredFont::No to FontCache::systemFallbackForCharacters.
+        * platform/graphics/Font.h: Add IsForPlatformFont enum to replace the bool parameter in systemFallbackFontForCharacter().
+        * platform/graphics/FontCache.h:
+        * platform/graphics/FontCascadeFonts.cpp:
+        (WebCore::FontCascadeFonts::glyphDataForSystemFallback):
+        * platform/graphics/cairo/FontCairoHarfbuzzNG.cpp:
+        (WebCore::characterSequenceIsEmoji): Check whether the character sequence is an emoji.
+        (WebCore::FontCascade::fontForCombiningCharacterSequence const): In case of emojis try to fallback to a colored
+        font even if base font can render the emoji in black and white.
+        * platform/graphics/cocoa/FontCacheCoreText.cpp:
+        (WebCore::FontCache::systemFallbackForCharacters): Add PreferColoredFont parameter that is ignored.
+        * platform/graphics/freetype/FontCacheFreeType.cpp:
+        (WebCore::FontCache::systemFallbackForCharacters): Add PreferColoredFont parameter.
+        * platform/graphics/freetype/FontPlatformDataFreeType.cpp:
+        (WebCore::FontPlatformData::FontPlatformData): Initialize m_isColorBitmapFont.
+        * platform/graphics/freetype/SimpleFontDataFreeType.cpp:
+        (WebCore::Font::variantCapsSupportsCharacterForSynthesis const): Moved from cross-platform file.
+        (WebCore::Font::platformSupportsCodePoint const): Add freetype implementation.
+        * platform/graphics/win/FontCacheWin.cpp:
+        (WebCore::FontCache::systemFallbackForCharacters): Add PreferColoredFont parameter that is ignored.
+        * platform/text/CharacterProperties.h:
+        (WebCore::isEmojiKeycapBase):
+        (WebCore::isEmojiRegionalIndicator):
+        (WebCore::isEmojiWithPresentationByDefault):
+        (WebCore::isEmojiModifierBase):
+
 2019-01-09  Antoine Quint  <graouts@apple.com>
 
         [Web Animations] Audit Web Animations classes for memory reduction

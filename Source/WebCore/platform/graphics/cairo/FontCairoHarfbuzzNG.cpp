@@ -29,6 +29,7 @@
 
 #if USE(CAIRO)
 
+#include "CharacterProperties.h"
 #include "FontCache.h"
 #include "SurrogatePairAwareTextIterator.h"
 #include <unicode/normlzr.h>
@@ -42,6 +43,60 @@ bool FontCascade::canReturnFallbackFontsForComplexText()
 
 bool FontCascade::canExpandAroundIdeographsInComplexText()
 {
+    return false;
+}
+
+static bool characterSequenceIsEmoji(const Vector<UChar, 4>& normalizedCharacters, int32_t normalizedLength)
+{
+    UChar32 character;
+    unsigned clusterLength = 0;
+    SurrogatePairAwareTextIterator iterator(normalizedCharacters.data(), 0, normalizedLength, normalizedLength);
+    if (!iterator.consume(character, clusterLength))
+        return false;
+
+    if (isEmojiKeycapBase(character)) {
+        iterator.advance(clusterLength);
+        UChar32 nextCharacter;
+        if (!iterator.consume(nextCharacter, clusterLength))
+            return false;
+
+        if (nextCharacter == combiningEnclosingKeycap)
+            return true;
+
+        // Variation selector 16.
+        if (nextCharacter == 0xFE0F) {
+            iterator.advance(clusterLength);
+            if (!iterator.consume(nextCharacter, clusterLength))
+                return false;
+
+            if (nextCharacter == combiningEnclosingKeycap)
+                return true;
+        }
+
+        return false;
+    }
+
+    // Regional indicator.
+    if (isEmojiRegionalIndicator(character)) {
+        iterator.advance(clusterLength);
+        UChar32 nextCharacter;
+        if (!iterator.consume(nextCharacter, clusterLength))
+            return false;
+
+        if (isEmojiRegionalIndicator(nextCharacter))
+            return true;
+
+        return false;
+    }
+
+    if (character == combiningEnclosingKeycap)
+        return true;
+
+    if (isEmojiWithPresentationByDefault(character)
+        || isEmojiModifierBase(character)
+        || isEmojiFitzpatrickModifier(character))
+        return true;
+
     return false;
 }
 
@@ -61,8 +116,12 @@ const Font* FontCascade::fontForCombiningCharacterSequence(const UChar* characte
     if (!iterator.consume(character, clusterLength))
         return nullptr;
 
+    bool isEmoji = characterSequenceIsEmoji(normalizedCharacters, normalizedLength);
+
     const Font* baseFont = glyphDataForCharacter(character, false, NormalVariant).font;
-    if (baseFont && (static_cast<int32_t>(clusterLength) == normalizedLength || baseFont->canRenderCombiningCharacterSequence(characters, length)))
+    if (baseFont
+        && (static_cast<int32_t>(clusterLength) == normalizedLength || baseFont->canRenderCombiningCharacterSequence(characters, length))
+        && (!isEmoji || baseFont->platformData().isColorBitmapFont()))
         return baseFont;
 
     for (unsigned i = 0; !fallbackRangesAt(i).isNull(); ++i) {
@@ -70,12 +129,12 @@ const Font* FontCascade::fontForCombiningCharacterSequence(const UChar* characte
         if (!fallbackFont || fallbackFont == baseFont)
             continue;
 
-        if (fallbackFont->canRenderCombiningCharacterSequence(characters, length))
+        if (fallbackFont->canRenderCombiningCharacterSequence(characters, length) && (!isEmoji || fallbackFont->platformData().isColorBitmapFont()))
             return fallbackFont;
     }
 
-    if (auto systemFallback = FontCache::singleton().systemFallbackForCharacters(m_fontDescription, baseFont, false, characters, length)) {
-        if (systemFallback->canRenderCombiningCharacterSequence(characters, length))
+    if (auto systemFallback = FontCache::singleton().systemFallbackForCharacters(m_fontDescription, baseFont, IsForPlatformFont::No, isEmoji ? FontCache::PreferColoredFont::Yes : FontCache::PreferColoredFont::No, characters, length)) {
+        if (systemFallback->canRenderCombiningCharacterSequence(characters, length) && (!isEmoji || systemFallback->platformData().isColorBitmapFont()))
             return systemFallback.get();
     }
 

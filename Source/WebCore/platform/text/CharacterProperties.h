@@ -76,4 +76,34 @@ inline bool isVariationSelector(UChar32 character)
     return character >= 0xFE00 && character <= 0xFE0F;
 }
 
+inline bool isEmojiKeycapBase(UChar32 character)
+{
+    return (character >= '0' && character <= '9') || character == '#' || character == '*';
+}
+
+inline bool isEmojiRegionalIndicator(UChar32 character)
+{
+    return character >= 0x1F1E6 && character <= 0x1F1FF;
+}
+
+inline bool isEmojiWithPresentationByDefault(UChar32 character)
+{
+#if U_ICU_VERSION_MAJOR_NUM >= 57
+    return u_hasBinaryProperty(character, UCHAR_EMOJI_PRESENTATION);
+#else
+    UNUSED_PARAM(character);
+    return false;
+#endif
+}
+
+inline bool isEmojiModifierBase(UChar32 character)
+{
+#if U_ICU_VERSION_MAJOR_NUM >= 57
+    return u_hasBinaryProperty(character, UCHAR_EMOJI_MODIFIER_BASE);
+#else
+    UNUSED_PARAM(character);
+    return false;
+#endif
+}
+
 }

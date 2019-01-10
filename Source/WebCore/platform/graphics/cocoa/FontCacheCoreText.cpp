@@ -1354,7 +1354,7 @@ static RetainPtr<CTFontRef> lookupFallbackFont(CTFontRef font, FontSelectionValu
     return result;
 }
 
-RefPtr<Font> FontCache::systemFallbackForCharacters(const FontDescription& description, const Font* originalFontData, bool isPlatformFont, const UChar* characters, unsigned length)
+RefPtr<Font> FontCache::systemFallbackForCharacters(const FontDescription& description, const Font* originalFontData, IsForPlatformFont isForPlatformFont, PreferColoredFont, const UChar* characters, unsigned length)
 {
 #if PLATFORM(IOS_FAMILY)
     if (length && requiresCustomFallbackFont(*characters)) {
@@ -1383,7 +1383,7 @@ RefPtr<Font> FontCache::systemFallbackForCharacters(const FontDescription& descr
     CTFontRef substituteFont = fallbackDedupSet().add(result).iterator->get();
 
     bool syntheticBold, syntheticOblique;
-    std::tie(syntheticBold, syntheticOblique) = computeNecessarySynthesis(substituteFont, description, isPlatformFont).boldObliquePair();
+    std::tie(syntheticBold, syntheticOblique) = computeNecessarySynthesis(substituteFont, description, isForPlatformFont == IsForPlatformFont::Yes).boldObliquePair();
 
     FontPlatformData alternateFont(substituteFont, platformData.size(), syntheticBold, syntheticOblique, platformData.orientation(), platformData.widthVariant(), platformData.textRenderingMode());
 

@@ -32,6 +32,7 @@
 #include <cairo-ft.h>
 #include <fontconfig/fcfreetype.h>
 #include <ft2build.h>
+#include FT_FREETYPE_H
 #include FT_TRUETYPE_TABLES_H
 #include <hb-ft.h>
 #include <hb-ot.h>
@@ -117,6 +118,12 @@ FontPlatformData::FontPlatformData(cairo_font_face_t* fontFace, FcPattern* patte
     m_fixedWidth = fixedWidth;
 
     buildScaledFont(fontFace);
+
+#ifdef FT_HAS_COLOR
+    CairoFtFaceLocker cairoFtFaceLocker(m_scaledFont.get());
+    if (FT_Face ftFace = cairoFtFaceLocker.ftFace())
+        m_isColorBitmapFont = FT_HAS_COLOR(ftFace);
+#endif
 }
 
 FontPlatformData::FontPlatformData(const FontPlatformData& other)

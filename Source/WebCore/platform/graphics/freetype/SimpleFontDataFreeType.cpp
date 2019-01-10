@@ -188,4 +188,27 @@ float Font::platformWidthForGlyph(Glyph glyph) const
     return width ? width : m_spaceWidth;
 }
 
+bool Font::variantCapsSupportsCharacterForSynthesis(FontVariantCaps fontVariantCaps, UChar32) const
+{
+    switch (fontVariantCaps) {
+    case FontVariantCaps::Small:
+    case FontVariantCaps::Petite:
+    case FontVariantCaps::AllSmall:
+    case FontVariantCaps::AllPetite:
+        return false;
+    default:
+        // Synthesis only supports the variant-caps values listed above.
+        return true;
+    }
+}
+
+bool Font::platformSupportsCodePoint(UChar32 character) const
+{
+    CairoFtFaceLocker cairoFtFaceLocker(m_platformData.scaledFont());
+    if (FT_Face face = cairoFtFaceLocker.ftFace())
+        return !!FcFreeTypeCharIndex(face, character);
+
+    return false;
+}
+
 }

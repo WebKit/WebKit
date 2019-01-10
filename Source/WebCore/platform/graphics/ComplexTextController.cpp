@@ -286,6 +286,7 @@ static bool advanceByCombiningCharacterSequence(const UChar*& iterator, const UC
     // Consume marks.
     bool sawEmojiGroupCandidate = isEmojiGroupCandidate(baseCharacter);
     bool sawJoiner = false;
+    bool sawRegionalIndicator = isEmojiRegionalIndicator(baseCharacter);
     while (iterator < end) {
         UChar32 nextCharacter;
         unsigned markLength = 0;
@@ -295,6 +296,11 @@ static bool advanceByCombiningCharacterSequence(const UChar*& iterator, const UC
 
         if (isVariationSelector(nextCharacter) || isEmojiFitzpatrickModifier(nextCharacter))
             shouldContinue = true;
+
+        if (sawRegionalIndicator && isEmojiRegionalIndicator(nextCharacter)) {
+            shouldContinue = true;
+            sawRegionalIndicator = false;
+        }
 
         if (sawJoiner && isEmojiGroupCandidate(nextCharacter))
             shouldContinue = true;

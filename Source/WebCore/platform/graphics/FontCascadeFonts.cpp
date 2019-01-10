@@ -345,7 +345,7 @@ GlyphData FontCascadeFonts::glyphDataForSystemFallback(UChar32 character, const 
     if (!font)
         font = &realizeFallbackRangesAt(description, 0).fontForFirstRange();
 
-    auto systemFallbackFont = font->systemFallbackFontForCharacter(character, description, m_isForPlatformFont);
+    auto systemFallbackFont = font->systemFallbackFontForCharacter(character, description, m_isForPlatformFont ? IsForPlatformFont::Yes : IsForPlatformFont::No);
     if (!systemFallbackFont)
         return GlyphData();
 

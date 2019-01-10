@@ -1,3 +1,15 @@
+2019-01-10  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [FreeType] Color emoji not properly supported
+        https://bugs.webkit.org/show_bug.cgi?id=191976
+
+        Reviewed by Michael Catanzaro.
+
+        Add new test to ensure we fallback to noto color emoji for emojis.
+
+        * platform/gtk/fonts/font-emoji-system-fallback-expected.html: Added.
+        * platform/gtk/fonts/font-emoji-system-fallback.html: Added.
+
 2019-01-10  cathie chen  <cathiechen@igalia.com>
 
         Import css-lists testcases from WPT.
