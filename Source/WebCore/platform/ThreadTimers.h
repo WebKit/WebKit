@@ -29,36 +29,100 @@
 
 #include <wtf/MonotonicTime.h>
 #include <wtf/Noncopyable.h>
+#include <wtf/RefCounted.h>
+#include <wtf/ThreadSafeRefCounted.h>
 #include <wtf/Vector.h>
 
 namespace WebCore {
 
-    class SharedTimer;
-    class TimerBase;
+class SharedTimer;
+class ThreadTimers;
+class TimerBase;
 
-    // A collection of timers per thread. Kept in ThreadGlobalData.
-    class ThreadTimers {
-        WTF_MAKE_NONCOPYABLE(ThreadTimers); WTF_MAKE_FAST_ALLOCATED;
-    public:
-        ThreadTimers();
+struct ThreadTimerHeapItem;
+typedef Vector<RefPtr<ThreadTimerHeapItem>> ThreadTimerHeap;
+    
+// A collection of timers per thread. Kept in ThreadGlobalData.
+class ThreadTimers {
+    WTF_MAKE_NONCOPYABLE(ThreadTimers); WTF_MAKE_FAST_ALLOCATED;
+public:
+    ThreadTimers();
 
-        // On a thread different then main, we should set the thread's instance of the SharedTimer.
-        void setSharedTimer(SharedTimer*);
+    // On a thread different then main, we should set the thread's instance of the SharedTimer.
+    void setSharedTimer(SharedTimer*);
 
-        Vector<TimerBase*>& timerHeap() { return m_timerHeap; }
+    ThreadTimerHeap& timerHeap() { return m_timerHeap; }
 
-        void updateSharedTimer();
-        void fireTimersInNestedEventLoop();
+    void updateSharedTimer();
+    void fireTimersInNestedEventLoop();
 
-    private:
-        void sharedTimerFiredInternal();
-        void fireTimersInNestedEventLoopInternal();
+private:
+    void sharedTimerFiredInternal();
+    void fireTimersInNestedEventLoopInternal();
 
-        Vector<TimerBase*> m_timerHeap;
-        SharedTimer* m_sharedTimer { nullptr }; // External object, can be a run loop on a worker thread. Normally set/reset by worker thread.
-        bool m_firingTimers { false }; // Reentrancy guard.
-        MonotonicTime m_pendingSharedTimerFireTime;
-    };
+    ThreadTimerHeap m_timerHeap;
+    SharedTimer* m_sharedTimer { nullptr }; // External object, can be a run loop on a worker thread. Normally set/reset by worker thread.
+    bool m_firingTimers { false }; // Reentrancy guard.
+    MonotonicTime m_pendingSharedTimerFireTime;
+};
+
+struct ThreadTimerHeapItem : ThreadSafeRefCounted<ThreadTimerHeapItem> {
+    static RefPtr<ThreadTimerHeapItem> create(TimerBase&, MonotonicTime, unsigned);
+
+    bool hasTimer() const { return m_timer; }
+    TimerBase& timer();
+    void clearTimer();
+
+    ThreadTimerHeap& timerHeap() const;
+
+    unsigned heapIndex() const;
+    void setHeapIndex(unsigned newIndex);
+    void setNotInHeap() { m_heapIndex = invalidHeapIndex; }
+
+    bool isInHeap() const { return m_heapIndex != invalidHeapIndex; }
+    bool isFirstInHeap() const { return !m_heapIndex; }
+
+    MonotonicTime time;
+    unsigned insertionOrder { 0 };
+
+private:
+    ThreadTimers& m_threadTimers;
+    TimerBase* m_timer { nullptr };
+    unsigned m_heapIndex { invalidHeapIndex };
+
+    static const unsigned invalidHeapIndex = static_cast<unsigned>(-1);
+
+    ThreadTimerHeapItem(TimerBase&, MonotonicTime, unsigned);
+};
+
+inline TimerBase& ThreadTimerHeapItem::timer()
+{
+    ASSERT(m_timer);
+    return *m_timer;
+}
+
+inline void ThreadTimerHeapItem::clearTimer()
+{
+    ASSERT(!isInHeap());
+    m_timer = nullptr;
+}
+
+inline unsigned ThreadTimerHeapItem::heapIndex() const
+{
+    ASSERT(m_heapIndex != invalidHeapIndex);
+    return static_cast<unsigned>(m_heapIndex);
+}
+
+inline void ThreadTimerHeapItem::setHeapIndex(unsigned newIndex)
+{
+    ASSERT(newIndex != invalidHeapIndex);
+    m_heapIndex = newIndex;
+}
+
+inline ThreadTimerHeap& ThreadTimerHeapItem::timerHeap() const
+{
+    return m_threadTimers.timerHeap();
+}
 
 }
 

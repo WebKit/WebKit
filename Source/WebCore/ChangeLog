@@ -1,3 +1,101 @@
+2019-01-09  Ryosuke Niwa  <rniwa@webkit.org>
+
+        ThreadTimers should not store a raw pointer in its heap
+        https://bugs.webkit.org/show_bug.cgi?id=192975
+        <rdar://problem/46893946>
+
+        Reviewed by Geoffrey Garen.
+
+        Right now, ThreadTimers's heap data structure stores a raw pointer to TimerBase. In order to harden the timer code,
+        this patch replaces it with ThreadTimerHeapItem, a newly introduced struct, which effectively acks like
+        WeakReference<TimerBase*> as the timer heap and TimerBase both store RefPtr to it, and TimerBase's destructor clears
+        the raw pointer back to TimerBase*.
+
+        This approach was taken instead of an out-right adoptation of WeakPtr since the heap data structure requires each node
+        in the heap to have a fixed "priority" yet WeakPtr with no valid pointer back to TimerBase would effectively lose its
+        "priority" thereby corrupting the heap data structure. That is, each item in the heap must remember its fire time and
+        insertion order even when the underlying TimerBase had gone away (this should never happen but the whole point of this
+        hardening is to make it work even in the precense of such a bug).
+
+        This patch also moves the heap index in TimerBase to ThreadTimerHeapItem, and replaces the pointer to the heap vector
+        in TimerBase by a reference to ThreadTimers in ThreadTimerHeapItem. Note that ThreadTimers is a per-thread singleton.
+
+        The correctness of this hardening was tested by commenting out the call to stop() and !isInHeap() assertion in
+        TimerBase::~TimerBase() as well as the !isInHeap() assertion in ThreadTimerHeapItem::clearTimer() and observing that
+        layout tests run successfully without hitting any debug assertions.
+
+        No new tests since there should be no observable behavior difference.
+
+        * WebCore.xcodeproj/project.pbxproj: Export ThreadTimers.h as a private header since it's now included in Timer.h
+        * platform/ThreadTimers.cpp:
+        (WebCore::ThreadTimers::updateSharedTimer): Delete ThreadTimerHeapItem's with nullptr TimerBase* (TimerBase had
+        already been deleted). This should only happen when TimerBase's destructor failed to remove itself from the timer heap,
+        which should never happen.
+        (WebCore::ThreadTimers::sharedTimerFiredInternal): Ditto. Also removed the redundant code which had removed the timer
+        from the heap since setNextFireTime does the removal already.
+        * platform/ThreadTimers.h: Outdented the whole file.
+        (WebCore::ThreadTimers::timerHeap): We use Vector<RefPtr<ThreadTimerHeapItem>> instead of Vector<Ref<~>> since Ref<~>
+        doesn't have a copy constructor which is used by std::push_heap.
+        (WebCore::ThreadTimerHeapItem): Added.
+        (WebCore::ThreadTimerHeapItem::hasTimer const): Added.
+        (WebCore::ThreadTimerHeapItem::setNotInHeap): Added. ThreadTimerHeapItem uses unsigned -1 as the single value which
+        signifies the item not being in the heap instead of all negative values as in the old code in TimerBase.
+        (WebCore::ThreadTimerHeapItem::isInHeap const): Added.
+        (WebCore::ThreadTimerHeapItem::isFirstInHeap const): Added.
+        (WebCore::ThreadTimerHeapItem::timer): Added.
+        (WebCore::ThreadTimerHeapItem::clearTimer): Added.
+        (WebCore::ThreadTimerHeapItem::heapIndex const): Added.
+        (WebCore::ThreadTimerHeapItem::setHeapIndex): Added.
+        (WebCore::ThreadTimerHeapItem::timerHeap const): Added.
+        * platform/Timer.cpp:
+        (WebCore::threadGlobalTimerHeap): This function is now only used in assertions.
+        (WebCore::ThreadTimerHeapItem::ThreadTimerHeapItem): Added.
+        (WebCore::ThreadTimerHeapItem::create): Added.
+        (WebCore::TimerHeapPointer::TimerHeapPointer):
+        (WebCore::TimerHeapPointer::operator-> const):
+        (WebCore::TimerHeapReference::TimerHeapReference): Added a copy constructor.
+        (WebCore::TimerHeapReference::copyRef const): Added.
+        (WebCore::TimerHeapReference::operator RefPtr<ThreadTimerHeapItem>& const):
+        (WebCore::TimerHeapPointer::operator* const):
+        (WebCore::TimerHeapReference::operator=): Use move assignment operator.
+        (WebCore::TimerHeapReference::swapWith):
+        (WebCore::TimerHeapReference::updateHeapIndex): Extracted to share code between two verions of operator=.
+        (WebCore::swap):
+        (WebCore::TimerHeapIterator::TimerHeapIterator):
+        (WebCore::TimerHeapIterator::operator-> const):
+        (WebCore::TimerHeapLessThanFunction::compare): Added variants which take RefPtr<ThreadTimerHeapItem>.
+        (WebCore::TimerHeapLessThanFunction::operator() const):
+        (WebCore::TimerBase::TimerBase):
+        (WebCore::TimerBase::~TimerBase):Clear the raw pointer in ThreadTimerHeapItem.
+        (WebCore::TimerBase::stop):
+        (WebCore::TimerBase::nextFireInterval const):
+        (WebCore::TimerBase::checkHeapIndex const): Added the consistency check for other items in the heap.
+        (WebCore::TimerBase::checkConsistency const):
+        (WebCore::TimerBase::heapDecreaseKey):
+        (WebCore::TimerBase::heapDelete):
+        (WebCore::TimerBase::heapDeleteMin):
+        (WebCore::TimerBase::heapIncreaseKey):
+        (WebCore::TimerBase::heapInsert):
+        (WebCore::TimerBase::heapPop):
+        (WebCore::TimerBase::heapPopMin):
+        (WebCore::TimerBase::heapDeleteNullMin): Added. Used to delete ThreadTimerHeapItem which no longer has a valid TimerBase.
+        (WebCore::parentHeapPropertyHolds):
+        (WebCore::childHeapPropertyHolds):
+        (WebCore::TimerBase::hasValidHeapPosition const):
+        (WebCore::TimerBase::updateHeapIfNeeded): Tweaked the heap index assertion as heapIndex() itself would assert when called
+        on an item with an invalid (-1) heap index.
+        (WebCore::TimerBase::setNextFireTime): Create ThreadTimerHeapItem. Note m_heapItem is never cleared until this TimerBase
+        is deleted.
+        (WebCore::TimerHeapReference::operator TimerBase* const): Deleted.
+        * platform/Timer.h:
+        (WebCore::TimerBase): Replaced m_nextFireTime, m_heapIndex, m_heapInsertionOrder, and m_cachedThreadGlobalTimerHeap
+        by m_heapItem, RefPtr to an ThreadTimerHeapItem.
+        (WebCore::TimerBase::augmentFireInterval):
+        (WebCore::TimerBase::inHeap const):
+        (WebCore::TimerBase::nextFireTime const):
+        (WebCore::TimerBase::isActive const):
+        (WebCore::TimerBase:: const): Deleted.
+
 2019-01-09  Alex Christensen  <achristensen@webkit.org>
 
         REGRESSION(239737) iOS quicklook tests should not dereference null
