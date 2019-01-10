@@ -3448,6 +3448,7 @@
 		5C62FDF81EFC263C00CE072E /* WKURLSchemeTaskPrivate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WKURLSchemeTaskPrivate.h; sourceTree = "<group>"; };
 		5C6CE6D01F59BC460007C6CB /* PageClientImplCocoa.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = PageClientImplCocoa.mm; sourceTree = "<group>"; };
 		5C6CE6D31F59EA350007C6CB /* PageClientImplCocoa.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PageClientImplCocoa.h; sourceTree = "<group>"; };
+		5C6F4EED21E5B11300BC8380 /* Network-OSX-restricted.entitlements */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.entitlements; path = "Network-OSX-restricted.entitlements"; sourceTree = "<group>"; };
 		5C74300E21500492004BFA17 /* WKWebProcess.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKWebProcess.h; sourceTree = "<group>"; };
 		5C74300F21500492004BFA17 /* WKWebProcess.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WKWebProcess.cpp; sourceTree = "<group>"; };
 		5C7706731D111D8B0012700F /* WebSocketProvider.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = WebSocketProvider.cpp; path = Network/WebSocketProvider.cpp; sourceTree = "<group>"; };
@@ -4840,6 +4841,7 @@
 				1A4F976C100E7B6600637A18 /* FeatureDefines.xcconfig */,
 				37119A7D20CCB64E002C6DC9 /* Network-iOS-minimalsimulator.entitlements */,
 				7C0BB9A918DCDF5A0006C086 /* Network-iOS.entitlements */,
+				5C6F4EED21E5B11300BC8380 /* Network-OSX-restricted.entitlements */,
 				41D0FC7D20E43A5100076AE8 /* Network-OSX-sandbox.entitlements */,
 				5C7ACFD1218DD8BD004CBB59 /* Network-OSX.entitlements */,
 				BC8283AB16B4BEAD00A278FE /* NetworkService.xcconfig */,

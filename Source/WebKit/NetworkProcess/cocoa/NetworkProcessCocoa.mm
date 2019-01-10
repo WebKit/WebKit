@@ -133,12 +133,14 @@ void NetworkProcess::platformInitializeNetworkProcessCocoa(const NetworkProcessC
 
 RetainPtr<CFDataRef> NetworkProcess::sourceApplicationAuditData() const
 {
-#if PLATFORM(IOS_FAMILY) && !PLATFORM(IOSMAC)
-    audit_token_t auditToken;
+#if USE(SOURCE_APPLICATION_AUDIT_DATA)
     ASSERT(parentProcessConnection());
-    if (!parentProcessConnection() || !parentProcessConnection()->getAuditToken(auditToken))
+    if (!parentProcessConnection())
         return nullptr;
-    return adoptCF(CFDataCreate(nullptr, (const UInt8*)&auditToken, sizeof(auditToken)));
+    Optional<audit_token_t> auditToken = parentProcessConnection()->getAuditToken();
+    if (!auditToken)
+        return nullptr;
+    return adoptCF(CFDataCreate(nullptr, (const UInt8*)&*auditToken, sizeof(*auditToken)));
 #else
     return nullptr;
 #endif
