@@ -1,3 +1,458 @@
+2019-01-10  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [WHLSL] Implement parser AST nodes
+        https://bugs.webkit.org/show_bug.cgi?id=192991
+
+        Reviewed by Alex Christensen.
+
+        This patch creates all the AST nodes which will be the result of running the parser.
+        This patch used to be a part of the "create a WHLSL parser" patch but I split them
+        out in order to aid reviewing.
+
+        The classes were mechanically created to match the result of the parser. There are
+        nodes for things like ForLoops, LogicalNotExpressions, DereferenceExpressions,
+        StructureDefinitions, and things like that. The classes don't actually have any logic
+        in them - they are currently just containers to hold the structure of the parsed
+        program. Some of these nodes (like constexprs) are just Variants of the various things
+        they can in the form of.
+
+        No new tests because the parser doesn't exist to create the new AST nodes yet.
+
+        * Modules/webgpu/WHLSL/AST/WHLSLArrayReferenceType.h: Added.
+        (WebCore::WHLSL::AST::ArrayReferenceType::ArrayReferenceType):
+        * Modules/webgpu/WHLSL/AST/WHLSLArrayType.h: Added.
+        (WebCore::WHLSL::AST::ArrayType::ArrayType):
+        (WebCore::WHLSL::AST::ArrayType::type const):
+        (WebCore::WHLSL::AST::ArrayType::type):
+        (WebCore::WHLSL::AST::ArrayType::numElements const):
+        * Modules/webgpu/WHLSL/AST/WHLSLAssignmentExpression.h: Added.
+        (WebCore::WHLSL::AST::AssignmentExpression::AssignmentExpression):
+        (WebCore::WHLSL::AST::AssignmentExpression::left):
+        (WebCore::WHLSL::AST::AssignmentExpression::right):
+        * Modules/webgpu/WHLSL/AST/WHLSLBaseFunctionAttribute.h: Added.
+        (WebCore::WHLSL::AST::BaseFunctionAttribute::BaseFunctionAttribute):
+        * Modules/webgpu/WHLSL/AST/WHLSLBaseSemantic.h: Added.
+        (WebCore::WHLSL::AST::BaseSemantic::BaseSemantic):
+        * Modules/webgpu/WHLSL/AST/WHLSLBlock.h: Added.
+        (WebCore::WHLSL::AST::Block::Block):
+        (WebCore::WHLSL::AST::Block::statements):
+        * Modules/webgpu/WHLSL/AST/WHLSLBooleanLiteral.h: Added.
+        (WebCore::WHLSL::AST::BooleanLiteral::BooleanLiteral):
+        (WebCore::WHLSL::AST::BooleanLiteral::value const):
+        (WebCore::WHLSL::AST::BooleanLiteral::clone const):
+        * Modules/webgpu/WHLSL/AST/WHLSLBreak.h: Added.
+        (WebCore::WHLSL::AST::Break::Break):
+        * Modules/webgpu/WHLSL/AST/WHLSLBuiltInSemantic.cpp: Added.
+        (WebCore::WHLSL::AST::BuiltInSemantic::isAcceptableType const):
+        (WebCore::WHLSL::AST::BuiltInSemantic::isAcceptableForShaderItemDirection const):
+        * Modules/webgpu/WHLSL/AST/WHLSLBuiltInSemantic.h: Added.
+        (WebCore::WHLSL::AST::BuiltInSemantic::BuiltInSemantic):
+        (WebCore::WHLSL::AST::BuiltInSemantic::variable const):
+        (WebCore::WHLSL::AST::BuiltInSemantic::operator== const):
+        (WebCore::WHLSL::AST::BuiltInSemantic::operator!= const):
+        * Modules/webgpu/WHLSL/AST/WHLSLCallExpression.h: Added.
+        (WebCore::WHLSL::AST::CallExpression::CallExpression):
+        (WebCore::WHLSL::AST::CallExpression::arguments):
+        (WebCore::WHLSL::AST::CallExpression::name):
+        (WebCore::WHLSL::AST::CallExpression::setCastData):
+        (WebCore::WHLSL::AST::CallExpression::isCast):
+        (WebCore::WHLSL::AST::CallExpression::castReturnType):
+        (WebCore::WHLSL::AST::CallExpression::hasOverloads const):
+        (WebCore::WHLSL::AST::CallExpression::overloads):
+        (WebCore::WHLSL::AST::CallExpression::setOverloads):
+        (WebCore::WHLSL::AST::CallExpression::setFunction):
+        * Modules/webgpu/WHLSL/AST/WHLSLCommaExpression.h: Added.
+        (WebCore::WHLSL::AST::CommaExpression::CommaExpression):
+        (WebCore::WHLSL::AST::CommaExpression::list):
+        * Modules/webgpu/WHLSL/AST/WHLSLConstantExpression.h: Added.
+        (WebCore::WHLSL::AST::ConstantExpression::ConstantExpression):
+        (WebCore::WHLSL::AST::ConstantExpression::integerLiteral):
+        (WebCore::WHLSL::AST::ConstantExpression::visit):
+        (WebCore::WHLSL::AST::ConstantExpression::visit const):
+        (WebCore::WHLSL::AST::ConstantExpression::clone const):
+        (WebCore::WHLSL::AST::ConstantExpression::matches const):
+        * Modules/webgpu/WHLSL/AST/WHLSLConstantExpressionEnumerationMemberReference.h: Added.
+        (WebCore::WHLSL::AST::ConstantExpressionEnumerationMemberReference::ConstantExpressionEnumerationMemberReference):
+        (WebCore::WHLSL::AST::ConstantExpressionEnumerationMemberReference::left const):
+        (WebCore::WHLSL::AST::ConstantExpressionEnumerationMemberReference::right const):
+        (WebCore::WHLSL::AST::ConstantExpressionEnumerationMemberReference::clone const):
+        (WebCore::WHLSL::AST::ConstantExpressionEnumerationMemberReference::enumerationDefinition):
+        (WebCore::WHLSL::AST::ConstantExpressionEnumerationMemberReference::enumerationDefinition const):
+        (WebCore::WHLSL::AST::ConstantExpressionEnumerationMemberReference::enumerationMember):
+        (WebCore::WHLSL::AST::ConstantExpressionEnumerationMemberReference::enumerationMember const):
+        (WebCore::WHLSL::AST::ConstantExpressionEnumerationMemberReference::setEnumerationMember):
+        * Modules/webgpu/WHLSL/AST/WHLSLContinue.h: Added.
+        (WebCore::WHLSL::AST::Continue::Continue):
+        * Modules/webgpu/WHLSL/AST/WHLSLDereferenceExpression.h: Added.
+        (WebCore::WHLSL::AST::DereferenceExpression::DereferenceExpression):
+        (WebCore::WHLSL::AST::DereferenceExpression::pointer):
+        * Modules/webgpu/WHLSL/AST/WHLSLDoWhileLoop.h: Added.
+        (WebCore::WHLSL::AST::DoWhileLoop::DoWhileLoop):
+        (WebCore::WHLSL::AST::DoWhileLoop::body):
+        (WebCore::WHLSL::AST::DoWhileLoop::conditional):
+        * Modules/webgpu/WHLSL/AST/WHLSLDotExpression.h: Added.
+        (WebCore::WHLSL::AST::DotExpression::DotExpression):
+        (WebCore::WHLSL::AST::DotExpression::fieldName):
+        * Modules/webgpu/WHLSL/AST/WHLSLEffectfulExpressionStatement.h: Added.
+        (WebCore::WHLSL::AST::EffectfulExpressionStatement::EffectfulExpressionStatement):
+        (WebCore::WHLSL::AST::EffectfulExpressionStatement::effectfulExpression):
+        * Modules/webgpu/WHLSL/AST/WHLSLEnumerationDefinition.h: Added.
+        (WebCore::WHLSL::AST::EnumerationDefinition::EnumerationDefinition):
+        (WebCore::WHLSL::AST::EnumerationDefinition::type):
+        (WebCore::WHLSL::AST::EnumerationDefinition::add):
+        (WebCore::WHLSL::AST::EnumerationDefinition::memberByName):
+        (WebCore::WHLSL::AST::EnumerationDefinition::enumerationMembers):
+        * Modules/webgpu/WHLSL/AST/WHLSLEnumerationMember.h: Added.
+        (WebCore::WHLSL::AST::EnumerationMember::EnumerationMember):
+        (WebCore::WHLSL::AST::EnumerationMember::origin const):
+        (WebCore::WHLSL::AST::EnumerationMember::name):
+        (WebCore::WHLSL::AST::EnumerationMember::value):
+        (WebCore::WHLSL::AST::EnumerationMember::setValue):
+        * Modules/webgpu/WHLSL/AST/WHLSLEnumerationMemberLiteral.h: Added.
+        (WebCore::WHLSL::AST::EnumerationMemberLiteral::EnumerationMemberLiteral):
+        (WebCore::WHLSL::AST::EnumerationMemberLiteral::enumerationMember):
+        * Modules/webgpu/WHLSL/AST/WHLSLExpression.h: Added.
+        (WebCore::WHLSL::AST::Expression::Expression):
+        (WebCore::WHLSL::AST::Expression::origin const):
+        (WebCore::WHLSL::AST::Expression::isAssignmentExpression const):
+        (WebCore::WHLSL::AST::Expression::isBooleanLiteral const):
+        (WebCore::WHLSL::AST::Expression::isCallExpression const):
+        (WebCore::WHLSL::AST::Expression::isCommaExpression const):
+        (WebCore::WHLSL::AST::Expression::isDereferenceExpression const):
+        (WebCore::WHLSL::AST::Expression::isDotExpression const):
+        (WebCore::WHLSL::AST::Expression::isFloatLiteral const):
+        (WebCore::WHLSL::AST::Expression::isIndexExpression const):
+        (WebCore::WHLSL::AST::Expression::isIntegerLiteral const):
+        (WebCore::WHLSL::AST::Expression::isLogicalExpression const):
+        (WebCore::WHLSL::AST::Expression::isLogicalNotExpression const):
+        (WebCore::WHLSL::AST::Expression::isMakeArrayReferenceExpression const):
+        (WebCore::WHLSL::AST::Expression::isMakePointerExpression const):
+        (WebCore::WHLSL::AST::Expression::isNullLiteral const):
+        (WebCore::WHLSL::AST::Expression::isPropertyAccessExpression const):
+        (WebCore::WHLSL::AST::Expression::isReadModifyWriteExpression const):
+        (WebCore::WHLSL::AST::Expression::isTernaryExpression const):
+        (WebCore::WHLSL::AST::Expression::isUnsignedIntegerLiteral const):
+        (WebCore::WHLSL::AST::Expression::isVariableReference const):
+        (WebCore::WHLSL::AST::Expression::isEnumerationMemberLiteral const):
+        * Modules/webgpu/WHLSL/AST/WHLSLFallthrough.h: Added.
+        (WebCore::WHLSL::AST::Fallthrough::Fallthrough):
+        * Modules/webgpu/WHLSL/AST/WHLSLFloatLiteral.h: Added.
+        (WebCore::WHLSL::AST::FloatLiteral::FloatLiteral):
+        (WebCore::WHLSL::AST::FloatLiteral::type):
+        (WebCore::WHLSL::AST::FloatLiteral::value const):
+        (WebCore::WHLSL::AST::FloatLiteral::clone const):
+        * Modules/webgpu/WHLSL/AST/WHLSLFloatLiteralType.cpp: Added.
+        (WebCore::WHLSL::AST::FloatLiteralType::FloatLiteralType):
+        (WebCore::WHLSL::AST::FloatLiteralType::canResolve const):
+        (WebCore::WHLSL::AST::FloatLiteralType::conversionCost const):
+        * Modules/webgpu/WHLSL/AST/WHLSLFloatLiteralType.h: Added.
+        (WebCore::WHLSL::AST::FloatLiteralType::preferredType):
+        * Modules/webgpu/WHLSL/AST/WHLSLForLoop.h: Added.
+        (WebCore::WHLSL::AST::ForLoop::ForLoop):
+        (WebCore::WHLSL::AST::ForLoop::~ForLoop):
+        (WebCore::WHLSL::AST::ForLoop::initialization):
+        (WebCore::WHLSL::AST::ForLoop::condition):
+        (WebCore::WHLSL::AST::ForLoop::increment):
+        (WebCore::WHLSL::AST::ForLoop::body):
+        * Modules/webgpu/WHLSL/AST/WHLSLFunctionAttribute.h: Added.
+        * Modules/webgpu/WHLSL/AST/WHLSLFunctionDeclaration.h: Added.
+        (WebCore::WHLSL::AST::FunctionDeclaration::FunctionDeclaration):
+        (WebCore::WHLSL::AST::FunctionDeclaration::isFunctionDefinition const):
+        (WebCore::WHLSL::AST::FunctionDeclaration::isNativeFunctionDeclaration const):
+        (WebCore::WHLSL::AST::FunctionDeclaration::attributeBlock):
+        (WebCore::WHLSL::AST::FunctionDeclaration::entryPointType const):
+        (WebCore::WHLSL::AST::FunctionDeclaration::type const):
+        (WebCore::WHLSL::AST::FunctionDeclaration::type):
+        (WebCore::WHLSL::AST::FunctionDeclaration::name const):
+        (WebCore::WHLSL::AST::FunctionDeclaration::isCast const):
+        (WebCore::WHLSL::AST::FunctionDeclaration::parameters const):
+        (WebCore::WHLSL::AST::FunctionDeclaration::parameters):
+        (WebCore::WHLSL::AST::FunctionDeclaration::semantic):
+        (WebCore::WHLSL::AST::FunctionDeclaration::isOperator const):
+        * Modules/webgpu/WHLSL/AST/WHLSLFunctionDefinition.h: Added.
+        (WebCore::WHLSL::AST::FunctionDefinition::FunctionDefinition):
+        (WebCore::WHLSL::AST::FunctionDefinition::block):
+        (WebCore::WHLSL::AST::FunctionDefinition::restricted const):
+        * Modules/webgpu/WHLSL/AST/WHLSLIfStatement.h: Added.
+        (WebCore::WHLSL::AST::IfStatement::IfStatement):
+        (WebCore::WHLSL::AST::IfStatement::conditional):
+        (WebCore::WHLSL::AST::IfStatement::body):
+        (WebCore::WHLSL::AST::IfStatement::elseBody):
+        * Modules/webgpu/WHLSL/AST/WHLSLIndexExpression.h: Added.
+        (WebCore::WHLSL::AST::IndexExpression::IndexExpression):
+        (WebCore::WHLSL::AST::IndexExpression::indexExpression):
+        * Modules/webgpu/WHLSL/AST/WHLSLIntegerLiteral.cpp: Added.
+        (WebCore::WHLSL::AST::IntegerLiteral::valueForSelectedType const):
+        * Modules/webgpu/WHLSL/AST/WHLSLIntegerLiteral.h: Added.
+        (WebCore::WHLSL::AST::IntegerLiteral::IntegerLiteral):
+        (WebCore::WHLSL::AST::IntegerLiteral::type):
+        (WebCore::WHLSL::AST::IntegerLiteral::value const):
+        (WebCore::WHLSL::AST::IntegerLiteral::clone const):
+        * Modules/webgpu/WHLSL/AST/WHLSLIntegerLiteralType.cpp: Added.
+        (WebCore::WHLSL::AST::IntegerLiteralType::IntegerLiteralType):
+        (WebCore::WHLSL::AST::IntegerLiteralType::canResolve const):
+        (WebCore::WHLSL::AST::IntegerLiteralType::conversionCost const):
+        * Modules/webgpu/WHLSL/AST/WHLSLIntegerLiteralType.h: Added.
+        (WebCore::WHLSL::AST::IntegerLiteralType::preferredType):
+        * Modules/webgpu/WHLSL/AST/WHLSLLogicalExpression.h: Added.
+        (WebCore::WHLSL::AST::LogicalExpression::LogicalExpression):
+        (WebCore::WHLSL::AST::LogicalExpression::type const):
+        (WebCore::WHLSL::AST::LogicalExpression::left):
+        (WebCore::WHLSL::AST::LogicalExpression::right):
+        * Modules/webgpu/WHLSL/AST/WHLSLLogicalNotExpression.h: Added.
+        (WebCore::WHLSL::AST::LogicalNotExpression::LogicalNotExpression):
+        (WebCore::WHLSL::AST::LogicalNotExpression::operand):
+        * Modules/webgpu/WHLSL/AST/WHLSLMakeArrayReferenceExpression.h: Added.
+        (WebCore::WHLSL::AST::MakeArrayReferenceExpression::MakeArrayReferenceExpression):
+        (WebCore::WHLSL::AST::MakeArrayReferenceExpression::lValue):
+        * Modules/webgpu/WHLSL/AST/WHLSLMakePointerExpression.h: Added.
+        (WebCore::WHLSL::AST::MakePointerExpression::MakePointerExpression):
+        (WebCore::WHLSL::AST::MakePointerExpression::lValue):
+        * Modules/webgpu/WHLSL/AST/WHLSLNamedType.h: Added.
+        (WebCore::WHLSL::AST::NamedType::NamedType):
+        (WebCore::WHLSL::AST::NamedType::origin const):
+        (WebCore::WHLSL::AST::NamedType::name):
+        (WebCore::WHLSL::AST::NamedType::isTypeDefinition const):
+        (WebCore::WHLSL::AST::NamedType::isStructureDefinition const):
+        (WebCore::WHLSL::AST::NamedType::isEnumerationDefinition const):
+        (WebCore::WHLSL::AST::NamedType::isNativeTypeDeclaration const):
+        (WebCore::WHLSL::AST::NamedType::unifyNode const):
+        (WebCore::WHLSL::AST::NamedType::unifyNode):
+        * Modules/webgpu/WHLSL/AST/WHLSLNativeFunctionDeclaration.h: Added.
+        (WebCore::WHLSL::AST::NativeFunctionDeclaration::NativeFunctionDeclaration):
+        (WebCore::WHLSL::AST::NativeFunctionDeclaration::restricted const):
+        * Modules/webgpu/WHLSL/AST/WHLSLNativeTypeDeclaration.h: Added.
+        (WebCore::WHLSL::AST::NativeTypeDeclaration::NativeTypeDeclaration):
+        (WebCore::WHLSL::AST::NativeTypeDeclaration::name const):
+        (WebCore::WHLSL::AST::NativeTypeDeclaration::name):
+        (WebCore::WHLSL::AST::NativeTypeDeclaration::typeArguments):
+        (WebCore::WHLSL::AST::NativeTypeDeclaration::isInt const):
+        (WebCore::WHLSL::AST::NativeTypeDeclaration::isNumber const):
+        (WebCore::WHLSL::AST::NativeTypeDeclaration::isFloating const):
+        (WebCore::WHLSL::AST::NativeTypeDeclaration::isVector const):
+        (WebCore::WHLSL::AST::NativeTypeDeclaration::isMatrix const):
+        (WebCore::WHLSL::AST::NativeTypeDeclaration::isTexture const):
+        (WebCore::WHLSL::AST::NativeTypeDeclaration::isSigned const):
+        (WebCore::WHLSL::AST::NativeTypeDeclaration::std::function<bool const):
+        (WebCore::WHLSL::AST::NativeTypeDeclaration::std::function<int64_t const):
+        (WebCore::WHLSL::AST::NativeTypeDeclaration::iterateAllValues):
+        (WebCore::WHLSL::AST::NativeTypeDeclaration::setIsInt):
+        (WebCore::WHLSL::AST::NativeTypeDeclaration::setIsNumber):
+        (WebCore::WHLSL::AST::NativeTypeDeclaration::setIsFloating):
+        (WebCore::WHLSL::AST::NativeTypeDeclaration::setIsVector):
+        (WebCore::WHLSL::AST::NativeTypeDeclaration::setIsMatrix):
+        (WebCore::WHLSL::AST::NativeTypeDeclaration::setIsTexture):
+        (WebCore::WHLSL::AST::NativeTypeDeclaration::setIsSigned):
+        (WebCore::WHLSL::AST::NativeTypeDeclaration::setCanRepresentInteger):
+        (WebCore::WHLSL::AST::NativeTypeDeclaration::setCanRepresentUnsignedInteger):
+        (WebCore::WHLSL::AST::NativeTypeDeclaration::setCanRepresentFloat):
+        (WebCore::WHLSL::AST::NativeTypeDeclaration::setSuccessor):
+        (WebCore::WHLSL::AST::NativeTypeDeclaration::setFormatValueFromInteger):
+        (WebCore::WHLSL::AST::NativeTypeDeclaration::setFormatValueFromUnsignedInteger):
+        (WebCore::WHLSL::AST::NativeTypeDeclaration::setIterateAllValues):
+        * Modules/webgpu/WHLSL/AST/WHLSLNode.h: Added.
+        * Modules/webgpu/WHLSL/AST/WHLSLNullLiteral.h: Added.
+        (WebCore::WHLSL::AST::NullLiteral::NullLiteral):
+        (WebCore::WHLSL::AST::NullLiteral::type):
+        (WebCore::WHLSL::AST::NullLiteral::clone const):
+        * Modules/webgpu/WHLSL/AST/WHLSLNullLiteralType.cpp: Added.
+        (WebCore::WHLSL::AST::NullLiteralType::canResolve const):
+        (WebCore::WHLSL::AST::NullLiteralType::conversionCost const):
+        * Modules/webgpu/WHLSL/AST/WHLSLNullLiteralType.h: Added.
+        * Modules/webgpu/WHLSL/AST/WHLSLNumThreadsFunctionAttribute.h: Added.
+        (WebCore::WHLSL::AST::NumThreadsFunctionAttribute::NumThreadsFunctionAttribute):
+        (WebCore::WHLSL::AST::NumThreadsFunctionAttribute::width const):
+        (WebCore::WHLSL::AST::NumThreadsFunctionAttribute::height const):
+        (WebCore::WHLSL::AST::NumThreadsFunctionAttribute::depth const):
+        * Modules/webgpu/WHLSL/AST/WHLSLPointerType.h: Added.
+        (WebCore::WHLSL::AST::PointerType::PointerType):
+        * Modules/webgpu/WHLSL/AST/WHLSLPropertyAccessExpression.h: Added.
+        (WebCore::WHLSL::AST::PropertyAccessExpression::PropertyAccessExpression):
+        (WebCore::WHLSL::AST::PropertyAccessExpression::possibleGetOverloads):
+        (WebCore::WHLSL::AST::PropertyAccessExpression::possibleSetOverloads):
+        (WebCore::WHLSL::AST::PropertyAccessExpression::possibleAndOverloads):
+        (WebCore::WHLSL::AST::PropertyAccessExpression::setPossibleGetOverloads):
+        (WebCore::WHLSL::AST::PropertyAccessExpression::setPossibleSetOverloads):
+        (WebCore::WHLSL::AST::PropertyAccessExpression::setPossibleAndOverloads):
+        (WebCore::WHLSL::AST::PropertyAccessExpression::base):
+        * Modules/webgpu/WHLSL/AST/WHLSLQualifier.h: Added.
+        * Modules/webgpu/WHLSL/AST/WHLSLReadModifyWriteExpression.h: Added.
+        (WebCore::WHLSL::AST::ReadModifyWriteExpression::create):
+        (WebCore::WHLSL::AST::ReadModifyWriteExpression::setNewValueExpression):
+        (WebCore::WHLSL::AST::ReadModifyWriteExpression::setResultExpression):
+        (WebCore::WHLSL::AST::ReadModifyWriteExpression::oldVariableReference):
+        (WebCore::WHLSL::AST::ReadModifyWriteExpression::newVariableReference):
+        (WebCore::WHLSL::AST::ReadModifyWriteExpression::lValue):
+        (WebCore::WHLSL::AST::ReadModifyWriteExpression::oldValue):
+        (WebCore::WHLSL::AST::ReadModifyWriteExpression::newValue):
+        (WebCore::WHLSL::AST::ReadModifyWriteExpression::newValueExpression):
+        (WebCore::WHLSL::AST::ReadModifyWriteExpression::resultExpression):
+        (WebCore::WHLSL::AST::ReadModifyWriteExpression::ReadModifyWriteExpression):
+        * Modules/webgpu/WHLSL/AST/WHLSLReferenceType.h: Added.
+        (WebCore::WHLSL::AST::ReferenceType::ReferenceType):
+        (WebCore::WHLSL::AST::ReferenceType::addressSpace const):
+        (WebCore::WHLSL::AST::ReferenceType::elementType const):
+        (WebCore::WHLSL::AST::ReferenceType::elementType):
+        * Modules/webgpu/WHLSL/AST/WHLSLResolvableType.h: Added.
+        (WebCore::WHLSL::AST::ResolvableType::isFloatLiteralType const):
+        (WebCore::WHLSL::AST::ResolvableType::isIntegerLiteralType const):
+        (WebCore::WHLSL::AST::ResolvableType::isNullLiteralType const):
+        (WebCore::WHLSL::AST::ResolvableType::isUnsignedIntegerLiteralType const):
+        (WebCore::WHLSL::AST::ResolvableType::resolvedType const):
+        (WebCore::WHLSL::AST::ResolvableType::resolvedType):
+        (WebCore::WHLSL::AST::ResolvableType::resolve):
+        * Modules/webgpu/WHLSL/AST/WHLSLResourceSemantic.cpp: Added.
+        (WebCore::WHLSL::AST::ResourceSemantic::isAcceptableType const):
+        (WebCore::WHLSL::AST::ResourceSemantic::isAcceptableForShaderItemDirection const):
+        * Modules/webgpu/WHLSL/AST/WHLSLResourceSemantic.h: Added.
+        (WebCore::WHLSL::AST::ResourceSemantic::ResourceSemantic):
+        (WebCore::WHLSL::AST::ResourceSemantic::mode const):
+        (WebCore::WHLSL::AST::ResourceSemantic::index const):
+        (WebCore::WHLSL::AST::ResourceSemantic::space const):
+        (WebCore::WHLSL::AST::ResourceSemantic::operator== const):
+        (WebCore::WHLSL::AST::ResourceSemantic::operator!= const):
+        * Modules/webgpu/WHLSL/AST/WHLSLReturn.h: Added.
+        (WebCore::WHLSL::AST::Return::Return):
+        (WebCore::WHLSL::AST::Return::value):
+        (WebCore::WHLSL::AST::Return::function):
+        (WebCore::WHLSL::AST::Return::setFunction):
+        * Modules/webgpu/WHLSL/AST/WHLSLSemantic.h: Added.
+        * Modules/webgpu/WHLSL/AST/WHLSLSpecializationConstantSemantic.cpp: Added.
+        (WebCore::WHLSL::AST::SpecializationConstantSemantic::isAcceptableType const):
+        (WebCore::WHLSL::AST::SpecializationConstantSemantic::isAcceptableForShaderItemDirection const):
+        * Modules/webgpu/WHLSL/AST/WHLSLSpecializationConstantSemantic.h: Added.
+        (WebCore::WHLSL::AST::SpecializationConstantSemantic::SpecializationConstantSemantic):
+        (WebCore::WHLSL::AST::SpecializationConstantSemantic::operator== const):
+        (WebCore::WHLSL::AST::SpecializationConstantSemantic::operator!= const):
+        * Modules/webgpu/WHLSL/AST/WHLSLStageInOutSemantic.cpp: Added.
+        (WebCore::WHLSL::AST::StageInOutSemantic::isAcceptableType const):
+        (WebCore::WHLSL::AST::StageInOutSemantic::isAcceptableForShaderItemDirection const):
+        * Modules/webgpu/WHLSL/AST/WHLSLStageInOutSemantic.h: Added.
+        (WebCore::WHLSL::AST::StageInOutSemantic::StageInOutSemantic):
+        (WebCore::WHLSL::AST::StageInOutSemantic::index const):
+        (WebCore::WHLSL::AST::StageInOutSemantic::operator== const):
+        (WebCore::WHLSL::AST::StageInOutSemantic::operator!= const):
+        * Modules/webgpu/WHLSL/AST/WHLSLStatement.h: Added.
+        (WebCore::WHLSL::AST::Statement::Statement):
+        (WebCore::WHLSL::AST::Statement::isBlock const):
+        (WebCore::WHLSL::AST::Statement::isBreak const):
+        (WebCore::WHLSL::AST::Statement::isContinue const):
+        (WebCore::WHLSL::AST::Statement::isDoWhileLoop const):
+        (WebCore::WHLSL::AST::Statement::isEffectfulExpressionStatement const):
+        (WebCore::WHLSL::AST::Statement::isFallthrough const):
+        (WebCore::WHLSL::AST::Statement::isForLoop const):
+        (WebCore::WHLSL::AST::Statement::isIfStatement const):
+        (WebCore::WHLSL::AST::Statement::isReturn const):
+        (WebCore::WHLSL::AST::Statement::isSwitchCase const):
+        (WebCore::WHLSL::AST::Statement::isSwitchStatement const):
+        (WebCore::WHLSL::AST::Statement::isTrap const):
+        (WebCore::WHLSL::AST::Statement::isVariableDeclarationsStatement const):
+        (WebCore::WHLSL::AST::Statement::isWhileLoop const):
+        * Modules/webgpu/WHLSL/AST/WHLSLStructureDefinition.h: Added.
+        (WebCore::WHLSL::AST::StructureDefinition::StructureDefinition):
+        (WebCore::WHLSL::AST::StructureDefinition::structureElements):
+        * Modules/webgpu/WHLSL/AST/WHLSLStructureElement.h: Added.
+        (WebCore::WHLSL::AST::StructureElement::StructureElement):
+        (WebCore::WHLSL::AST::StructureElement::origin const):
+        (WebCore::WHLSL::AST::StructureElement::type):
+        (WebCore::WHLSL::AST::StructureElement::name):
+        (WebCore::WHLSL::AST::StructureElement::semantic):
+        * Modules/webgpu/WHLSL/AST/WHLSLSwitchCase.h: Added.
+        (WebCore::WHLSL::AST::SwitchCase::SwitchCase):
+        (WebCore::WHLSL::AST::SwitchCase::value):
+        (WebCore::WHLSL::AST::SwitchCase::block):
+        * Modules/webgpu/WHLSL/AST/WHLSLSwitchStatement.h: Added.
+        (WebCore::WHLSL::AST::SwitchStatement::SwitchStatement):
+        (WebCore::WHLSL::AST::SwitchStatement::value):
+        (WebCore::WHLSL::AST::SwitchStatement::switchCases):
+        * Modules/webgpu/WHLSL/AST/WHLSLTernaryExpression.h: Added.
+        (WebCore::WHLSL::AST::TernaryExpression::TernaryExpression):
+        (WebCore::WHLSL::AST::TernaryExpression::predicate):
+        (WebCore::WHLSL::AST::TernaryExpression::bodyExpression):
+        (WebCore::WHLSL::AST::TernaryExpression::elseExpression):
+        * Modules/webgpu/WHLSL/AST/WHLSLTrap.h: Added.
+        (WebCore::WHLSL::AST::Trap::Trap):
+        * Modules/webgpu/WHLSL/AST/WHLSLType.h: Added.
+        (WebCore::WHLSL::AST::Type::isNamedType const):
+        (WebCore::WHLSL::AST::Type::isUnnamedType const):
+        (WebCore::WHLSL::AST::Type::isResolvableType const):
+        * Modules/webgpu/WHLSL/AST/WHLSLTypeArgument.cpp: Added.
+        (WebCore::WHLSL::AST::clone):
+        * Modules/webgpu/WHLSL/AST/WHLSLTypeArgument.h: Added.
+        * Modules/webgpu/WHLSL/AST/WHLSLTypeDefinition.h: Added.
+        (WebCore::WHLSL::AST::TypeDefinition::TypeDefinition):
+        (WebCore::WHLSL::AST::TypeDefinition::type):
+        * Modules/webgpu/WHLSL/AST/WHLSLTypeReference.cpp: Added.
+        (WebCore::WHLSL::AST::TypeReference::wrap):
+        * Modules/webgpu/WHLSL/AST/WHLSLTypeReference.h: Added.
+        (WebCore::WHLSL::AST::TypeReference::TypeReference):
+        (WebCore::WHLSL::AST::TypeReference::name):
+        (WebCore::WHLSL::AST::TypeReference::typeArguments):
+        (WebCore::WHLSL::AST::TypeReference::resolvedType const):
+        (WebCore::WHLSL::AST::TypeReference::setResolvedType):
+        (WebCore::WHLSL::AST::TypeReference::cloneTypeReference const):
+        * Modules/webgpu/WHLSL/AST/WHLSLUnnamedType.h: Added.
+        (WebCore::WHLSL::AST::UnnamedType::UnnamedType):
+        (WebCore::WHLSL::AST::UnnamedType::isTypeReference const):
+        (WebCore::WHLSL::AST::UnnamedType::isPointerType const):
+        (WebCore::WHLSL::AST::UnnamedType::isArrayReferenceType const):
+        (WebCore::WHLSL::AST::UnnamedType::isArrayType const):
+        (WebCore::WHLSL::AST::UnnamedType::isReferenceType const):
+        (WebCore::WHLSL::AST::UnnamedType::unifyNode const):
+        (WebCore::WHLSL::AST::UnnamedType::unifyNode):
+        (WebCore::WHLSL::AST::UnnamedType::origin const):
+        * Modules/webgpu/WHLSL/AST/WHLSLUnsignedIntegerLiteral.cpp: Added.
+        (WebCore::WHLSL::AST::UnsignedIntegerLiteral::valueForSelectedType const):
+        * Modules/webgpu/WHLSL/AST/WHLSLUnsignedIntegerLiteral.h: Added.
+        (WebCore::WHLSL::AST::UnsignedIntegerLiteral::UnsignedIntegerLiteral):
+        (WebCore::WHLSL::AST::UnsignedIntegerLiteral::type):
+        (WebCore::WHLSL::AST::UnsignedIntegerLiteral::value const):
+        (WebCore::WHLSL::AST::UnsignedIntegerLiteral::clone const):
+        * Modules/webgpu/WHLSL/AST/WHLSLUnsignedIntegerLiteralType.cpp: Added.
+        (WebCore::WHLSL::AST::UnsignedIntegerLiteralType::UnsignedIntegerLiteralType):
+        (WebCore::WHLSL::AST::UnsignedIntegerLiteralType::canResolve const):
+        (WebCore::WHLSL::AST::UnsignedIntegerLiteralType::conversionCost const):
+        * Modules/webgpu/WHLSL/AST/WHLSLUnsignedIntegerLiteralType.h: Added.
+        (WebCore::WHLSL::AST::UnsignedIntegerLiteralType::preferredType):
+        * Modules/webgpu/WHLSL/AST/WHLSLValue.h: Added.
+        (WebCore::WHLSL::AST::Value::Value):
+        * Modules/webgpu/WHLSL/AST/WHLSLVariableDeclaration.h: Added.
+        (WebCore::WHLSL::AST::VariableDeclaration::VariableDeclaration):
+        (WebCore::WHLSL::AST::VariableDeclaration::origin const):
+        (WebCore::WHLSL::AST::VariableDeclaration::name):
+        (WebCore::WHLSL::AST::VariableDeclaration::type const):
+        (WebCore::WHLSL::AST::VariableDeclaration::type):
+        (WebCore::WHLSL::AST::VariableDeclaration::semantic):
+        (WebCore::WHLSL::AST::VariableDeclaration::initializer):
+        * Modules/webgpu/WHLSL/AST/WHLSLVariableDeclarationsStatement.h: Added.
+        (WebCore::WHLSL::AST::VariableDeclarationsStatement::VariableDeclarationsStatement):
+        (WebCore::WHLSL::AST::VariableDeclarationsStatement::variableDeclarations):
+        * Modules/webgpu/WHLSL/AST/WHLSLVariableReference.h: Added.
+        (WebCore::WHLSL::AST::VariableReference::VariableReference):
+        (WebCore::WHLSL::AST::VariableReference::wrap):
+        (WebCore::WHLSL::AST::VariableReference::name):
+        (WebCore::WHLSL::AST::VariableReference::variable):
+        (WebCore::WHLSL::AST::VariableReference::setVariable):
+        * Modules/webgpu/WHLSL/AST/WHLSLWhileLoop.h: Added.
+        (WebCore::WHLSL::AST::WhileLoop::WhileLoop):
+        (WebCore::WHLSL::AST::WhileLoop::conditional):
+        (WebCore::WHLSL::AST::WhileLoop::body):
+        * Modules/webgpu/WHLSL/WHLSLLexer.cpp:
+        * Modules/webgpu/WHLSL/WHLSLParser.cpp: Added.
+        * Modules/webgpu/WHLSL/WHLSLParser.h: Added.
+        * Modules/webgpu/WHLSL/WHLSLProgram.h: Added.
+        (WebCore::WHLSL::Program::append):
+        (WebCore::WHLSL::Program::nameContext):
+        (WebCore::WHLSL::Program::intrinsics):
+        (WebCore::WHLSL::Program::typeDefinitions):
+        (WebCore::WHLSL::Program::structureDefinitions):
+        (WebCore::WHLSL::Program::enumerationDefinitions):
+        (WebCore::WHLSL::Program::functionDefinitions const):
+        (WebCore::WHLSL::Program::functionDefinitions):
+        (WebCore::WHLSL::Program::nativeFunctionDeclarations const):
+        (WebCore::WHLSL::Program::nativeFunctionDeclarations):
+        (WebCore::WHLSL::Program::nativeTypeDeclarations):
+
 2019-01-10  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Bindings generator emits incorrect code when using VoidCallback as an IDL dictionary attribute
