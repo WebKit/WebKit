@@ -589,8 +589,8 @@ webkit.org/b/186933 webrtc/peer-connection-createMediaStreamDestination.html
 imported/w3c/web-platform-tests/webrtc/ [ Skip ]
 http/tests/webrtc [ Skip ]
 # The MediaStream implementation is also still not completed
-webkit.org/b/79203 fast/mediastream/mock-media-source-webaudio.html [ Timeout ]
-webkit.org/b/79203 fast/mediastream/getUserMedia-webaudio.html [ Failure ]
+webkit.org/b/79203 fast/mediastream/mock-media-source-webaudio.html [ Timeout Pass ]
+webkit.org/b/79203 fast/mediastream/getUserMedia-webaudio.html [ Timeout Pass ]
 # Crash is bug #186678
 webkit.org/b/79203 fast/mediastream/MediaStream-video-element-track-stop.html [ Timeout Crash ]
 webkit.org/b/79203 fast/mediastream/RTCPeerConnection-icecandidate-event.html [ Failure Crash ]
@@ -605,7 +605,7 @@ webkit.org/b/79203 fast/mediastream/RTCPeerConnection-inspect-answer.html [ Fail
 webkit.org/b/79203 fast/mediastream/RTCPeerConnection-inspect-offer-bundlePolicy-bundle-only.html [ Failure Crash ]
 webkit.org/b/79203 fast/mediastream/RTCPeerConnection-inspect-offer.html [ Failure ]
 webkit.org/b/79203 fast/mediastream/RTCPeerConnection-media-setup-callbacks-single-dialog.html [ Pass Crash Failure ]
-webkit.org/b/79203 webaudio/mediastreamaudiosourcenode.html [ Failure ]
+webkit.org/b/79203 webaudio/mediastreamaudiosourcenode.html [ Timeout Pass ]
 webkit.org/b/79203 fast/mediastream/MediaStream-video-element-video-tracks-disabled-then-enabled.html [ Timeout Failure ]
 webkit.org/b/79203 fast/mediastream/MediaStream-video-element-displays-buffer.html [ Failure ]
 webkit.org/b/79203 fast/mediastream/RTCPeerConnection-stats.html [ Timeout Crash ]
@@ -1113,6 +1113,7 @@ fast/forms/range/input-appearance-range-rtl.html [ ImageOnlyFailure ]
 # Service-workers tests that fail, time out or crash.
 webkit.org/b/175419 http/tests/workers/service/controller-change.html [ Skip ]
 webkit.org/b/175419 http/tests/workers/service/no-page-cache-when-controlled.html [ Skip ]
+webkit.org/b/175419 http/tests/workers/service/serviceworker-private-browsing.https.html [ Skip ]
 webkit.org/b/175419 http/wpt/service-workers/persistent-importScripts.html [ Failure ]
 webkit.org/b/175419 imported/w3c/web-platform-tests/service-workers/service-worker/activation.https.html [ Skip ]
 webkit.org/b/175419 imported/w3c/web-platform-tests/service-workers/service-worker/claim-with-redirect.https.html [ Skip ]
@@ -1136,7 +1137,7 @@ imported/w3c/web-platform-tests/credential-management/ [ Skip ]
 webkit.org/b/175419 imported/w3c/web-platform-tests/background-fetch/interfaces-worker.https.html [ Failure ]
 webkit.org/b/175419 imported/w3c/web-platform-tests/background-fetch/interfaces.html [ Failure ]
 webkit.org/b/175419 imported/w3c/web-platform-tests/fetch/api/policies/referrer-origin-when-cross-origin-service-worker.https.html [ Failure ]
-webkit.org/b/175419 imported/w3c/web-platform-tests/fetch/api/abort/serviceworker-intercepted.https.html [ Failure ]
+webkit.org/b/175419 imported/w3c/web-platform-tests/fetch/api/abort/serviceworker-intercepted.https.html [ Failure Pass ]
 webkit.org/b/175419 imported/w3c/web-platform-tests/html/webappapis/scripting/processing-model-2/integration-with-the-javascript-agent-formalism/canblock-serviceworker.https.html [ Failure ]
 
 # Loading MP4 as an image is not supported by GTK
@@ -2073,6 +2074,18 @@ webkit.org/b/192903 imported/w3c/web-platform-tests/service-workers/service-work
 webkit.org/b/178705 webkit.org/b/169917 webgl/1.0.2/conformance/rendering/multisample-corruption.html [ Pass Failure Timeout ]
 webkit.org/b/178705 webgl/2.0.0/conformance/rendering/multisample-corruption.html [ Pass Failure Timeout ]
 
+webkit.org/b/193315 editing/pasteboard/cjk-line-height.html [ Failure Pass ]
+webkit.org/b/193315 editing/pasteboard/paste-line-endings-006.html [ Failure Pass ]
+webkit.org/b/193315 editing/pasteboard/paste-text-004.html [ Failure Pass ]
+webkit.org/b/193315 editing/pasteboard/paste-text-009.html [ Failure Pass ]
+webkit.org/b/193315 editing/pasteboard/paste-text-with-style-2.html [ Failure Pass ]
+
+webkit.org/b/193316 imported/w3c/web-platform-tests/IndexedDB/idbindex_getAll.html [ Failure Pass ]
+
+webkit.org/b/193311 fast/images/decode-render-animated-image.html [ ImageOnlyFailure Pass ]
+
+webkit.org/b/193318 webrtc/audio-replace-track.html [ Timeout Pass ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Flaky tests
 #////////////////////////////////////////////////////////////////////////////////////////
@@ -2136,7 +2149,8 @@ webkit.org/b/149916 inspector/console/js-isLikelyStackTrace.html [ Pass Slow ]
 webkit.org/b/149916 inspector/console/messageRepeatCountUpdated.html [ Pass Slow ]
 webkit.org/b/149916 inspector/console/messagesCleared.html [ Pass Slow ]
 webkit.org/b/149916 inspector/controller/runtime-controller.html [ Pass Slow ]
-webkit.org/b/149916 inspector/css/createStyleSheet.html [ Pass Slow ]
+webkit.org/b/149916 inspector/css/createStyleSheet.html [ Pass Slow Failure ]
+webkit.org/b/149916 inspector/css/css-property.html [ Failure Pass ]
 webkit.org/b/149916 inspector/css/getAllStyleSheets.html [ Failure Pass Slow ]
 webkit.org/b/149916 inspector/css/get-system-fonts.html [ Pass Slow ]
 webkit.org/b/149916 inspector/css/manager-preferredInspectorStyleSheetForFrame.html [ Pass Slow ]
@@ -3009,8 +3023,6 @@ webkit.org/b/139352 accessibility/inline-block-assertion.html [ Failure ]
 
 webkit.org/b/139354 fast/repaint/selection-ruby-rl.html [ Failure ]
 
-webkit.org/b/139492 fast/text/space-width.html [ ImageOnlyFailure ]
-
 # Missing glyph symbol is not rendered properly.
 webkit.org/b/140252 fast/css/line-height-determined-by-primary-font.html [ Failure ]
 webkit.org/b/140252 fast/text/decorations-with-text-combine.html [ Failure ]
@@ -3074,9 +3086,6 @@ webkit.org/b/148936 imported/w3c/web-platform-tests/html/semantics/embedded-cont
 webkit.org/b/149128 fast/text/control-characters [ ImageOnlyFailure ]
 
 # web-platform-tests XHR tests
-webkit.org/b/179662 imported/w3c/web-platform-tests/xhr/status-async.htm [ Failure ]
-webkit.org/b/179662 imported/w3c/web-platform-tests/xhr/status-basic.htm [ Failure ]
-webkit.org/b/179662 imported/w3c/web-platform-tests/xhr/status-error.htm [ Failure ]
 imported/w3c/web-platform-tests/xhr/event-readystatechange-loaded.htm [ Slow ]
 
 webkit.org/b/151267 imported/blink/compositing/squashing/squashing-reflection-disallowed.html [ ImageOnlyFailure ]
@@ -3224,7 +3233,6 @@ webkit.org/b/168164 fast/picture/viewport-resize.html [ Failure ]
 webkit.org/b/168190 fast/spatial-navigation/snav-input.html [ Failure ]
 webkit.org/b/168190 fast/spatial-navigation/snav-textarea.html [ Failure ]
 
-webkit.org/b/168191 fast/text/system-font-weight-italic.html [ Failure ]
 webkit.org/b/168191 fast/text/system-font-weight.html [ Failure ]
 webkit.org/b/168191 fast/text/trak-optimizeLegibility.html [ Failure ]
 webkit.org/b/168191 css3/font-synthesis-small-caps.html [ ImageOnlyFailure ]
@@ -3362,8 +3370,6 @@ webkit.org/b/175662 inspector/canvas/recording-2d.html [ Failure ]
 webkit.org/b/177934 fast/dom/HTMLLinkElement/preconnect-support.html [ Failure ]
 webkit.org/b/177934 http/tests/preconnect/link-header-rel-preconnect-http.html [ Failure ]
 
-webkit.org/b/177936 fast/text/emoji-gender-2.html [ ImageOnlyFailure ]
-webkit.org/b/177936 fast/text/emoji-gender.html [ ImageOnlyFailure ]
 webkit.org/b/177936 fast/text/all-small-caps-whitespace.html [ ImageOnlyFailure ]
 webkit.org/b/177936 fast/text/regional-indicator-symobls.html [ Failure ]
 webkit.org/b/177936 fast/text/selection-in-initial-advance-region.html [ Failure ]
@@ -3387,11 +3393,8 @@ webkit.org/b/179605 editing/execCommand/underline-selection-containing-image.htm
 
 webkit.org/b/179722 compositing/accelerated-layers-after-back.html [ Failure ]
 
-webkit.org/b/179113 imported/w3c/web-platform-tests/css/css-ui/text-overflow-013.html [ ImageOnlyFailure ]
 # This one is only failing on the release bots.
 webkit.org/b/18328 [ Release ] imported/w3c/web-platform-tests/css/css-ui/text-overflow-022.html [ ImageOnlyFailure ]
-
-webkit.org/b/177632 fast/text/flag-codepoint.html [ ImageOnlyFailure ]
 
 webkit.org/b/179052 compositing/contents-format/subpixel-antialiased-nested-layer.html [ Failure ]
 
@@ -3461,8 +3464,6 @@ webkit.org/b/185254 imported/w3c/web-platform-tests/xhr/xmlhttprequest-network-e
 webkit.org/b/185254 http/tests/xmlhttprequest/connection-error-sync.html [ Failure ]
 
 webkit.org/b/185548 accessibility/scroll-to-make-visible-iframe-offscreen.html [ Failure ]
-
-webkit.org/b/185714 js/intl-numberformat-format-to-parts.html [ Failure ]
 
 # Imported css-text test suite from WPT
 webkit.org/b/183258 imported/w3c/web-platform-tests/css/css-text/letter-spacing/letter-spacing-control-chars-001.html [ ImageOnlyFailure ]
@@ -3600,6 +3601,11 @@ webkit.org/b/191005 webgpu/command-buffers.html [ Failure ]
 webkit.org/b/191005 webgpu/queue-creation.html [ Failure ]
 webkit.org/b/191005 webgpu/render-passes.html [ Failure ]
 webkit.org/b/191005 webgpu/textures-textureviews.html [ Failure ]
+webkit.org/b/191005 webgpu/buffers.html [ Failure ]
+webkit.org/b/191005 webgpu/pipeline-layouts.html [ Failure ]
+webkit.org/b/191005 webgpu/render-command-encoding.html [ Failure ]
+webkit.org/b/191005 webgpu/simple-triangle-strip.html [ ImageOnlyFailure ]
+webkit.org/b/191005 webgpu/vertex-buffer-triangle-strip.html [ ImageOnlyFailure ]
 
 webkit.org/b/191006 webrtc/simulcast-h264.html [ Failure ]
 
@@ -3659,6 +3665,34 @@ webkit.org/b/192902 js/dom/modules/import-mjs-module.html [ Failure ]
 
 imported/w3c/web-platform-tests/css/css-lists/content-property/marker-text-matches-georgian.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-lists/content-property/marker-text-matches-armenian.html [ ImageOnlyFailure ]
+
+webkit.org/b/193320 http/tests/resourceLoadStatistics/classify-as-prevalent-based-on-subresource-redirect-collusion.html [ Failure ]
+webkit.org/b/193320 http/tests/resourceLoadStatistics/classify-as-prevalent-based-on-top-frame-redirect-collusion.html [ Failure ]
+webkit.org/b/193320 http/tests/resourceLoadStatistics/non-sandboxed-iframe-redirect-ip-to-localhost-to-ip.html [ Failure ]
+webkit.org/b/193320 http/tests/resourceLoadStatistics/non-sandboxed-iframe-redirect-localhost-to-ip-to-localhost.html [ Failure ]
+webkit.org/b/193320 http/tests/resourceLoadStatistics/non-sandboxed-nesting-iframe-with-non-sandboxed-iframe-redirect-ip-to-localhost-to-ip.html [ Failure ]
+webkit.org/b/193320 http/tests/resourceLoadStatistics/non-sandboxed-nesting-iframe-with-non-sandboxed-iframe-redirect-localhost-to-ip-to-localhost.html [ Failure ]
+webkit.org/b/193320 http/tests/resourceLoadStatistics/non-sandboxed-nesting-iframe-with-sandboxed-iframe-redirect-ip-to-localhost-to-ip.html [ Failure ]
+webkit.org/b/193320 http/tests/resourceLoadStatistics/non-sandboxed-nesting-iframe-with-sandboxed-iframe-redirect-localhost-to-ip-to-localhost.html [ Failure ]
+webkit.org/b/193320 http/tests/resourceLoadStatistics/sandboxed-iframe-redirect-ip-to-localhost-to-ip.html [ Failure ]
+webkit.org/b/193320 http/tests/resourceLoadStatistics/sandboxed-iframe-redirect-localhost-to-ip-to-localhost.html [ Failure ]
+webkit.org/b/193320 http/tests/resourceLoadStatistics/sandboxed-nesting-iframe-with-non-sandboxed-iframe-redirect-ip-to-localhost-to-ip.html [ Failure ]
+webkit.org/b/193320 http/tests/resourceLoadStatistics/sandboxed-nesting-iframe-with-non-sandboxed-iframe-redirect-localhost-to-ip-to-localhost.html [ Failure ]
+webkit.org/b/193320 http/tests/resourceLoadStatistics/sandboxed-nesting-iframe-with-sandboxed-iframe-redirect-ip-to-localhost-to-ip.html [ Failure ]
+webkit.org/b/193320 http/tests/resourceLoadStatistics/sandboxed-nesting-iframe-with-sandboxed-iframe-redirect-localhost-to-ip-to-localhost.html [ Failure ]
+
+webkit.org/b/193322 imported/w3c/web-platform-tests/fetch/api/basic/header-value-combining.any.html [ Failure ]
+webkit.org/b/193322 imported/w3c/web-platform-tests/fetch/api/basic/header-value-combining.any.worker.html [ Failure ]
+webkit.org/b/193322 imported/w3c/web-platform-tests/fetch/api/basic/request-headers-case.any.html [ Failure ]
+webkit.org/b/193322 imported/w3c/web-platform-tests/fetch/api/basic/request-headers-case.any.worker.html [ Failure ]
+webkit.org/b/193322 imported/w3c/web-platform-tests/fetch/api/redirect/redirect-method.any.html [ Failure ]
+webkit.org/b/193322 imported/w3c/web-platform-tests/fetch/api/redirect/redirect-method.any.worker.html [ Failure ]
+webkit.org/b/193322 imported/w3c/web-platform-tests/fetch/api/redirect/redirect-mode.any.html [ Failure ]
+webkit.org/b/193322 imported/w3c/web-platform-tests/fetch/api/redirect/redirect-mode.any.worker.html [ Failure ]
+webkit.org/b/193322 imported/w3c/web-platform-tests/fetch/content-type/script.window.html [ Failure ]
+webkit.org/b/193322 imported/w3c/web-platform-tests/fetch/http-cache/cc-request.html [ Failure ]
+webkit.org/b/193322 imported/w3c/web-platform-tests/fetch/nosniff/parsing-nosniff.window.html [ Failure ]
+
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of non-crashing, non-flaky tests failing
@@ -3741,6 +3775,27 @@ imported/mozilla/svg/dynamic-textPath-02.svg [ Pass ]
 
 imported/w3c/web-platform-tests/css/css-lists/content-property/marker-text-matches-lower-greek.html [ Pass ]
 imported/w3c/web-platform-tests/css/css-lists/content-property/marker-text-matches-lower-latin.html [ Pass ]
+
+fast/text/emoji-gender-2-3.html [ Pass ]
+fast/text/emoji-gender-2-4.html [ Pass ]
+fast/text/emoji-gender-2-5.html [ Pass ]
+fast/text/emoji-gender-2-6.html [ Pass ]
+fast/text/emoji-gender-2-7.html [ Pass ]
+fast/text/emoji-gender-2-8.html [ Pass ]
+fast/text/emoji-gender-2-9.html [ Pass ]
+fast/text/emoji-gender.html [ Pass ]
+fast/text/emoji-gender-fe0f-3.html [ Pass ]
+fast/text/emoji-gender-fe0f-4.html [ Pass ]
+fast/text/emoji-gender-fe0f-5.html [ Pass ]
+fast/text/emoji-gender-fe0f-6.html [ Pass ]
+fast/text/emoji-gender-fe0f-7.html [ Pass ]
+fast/text/emoji-gender-fe0f-8.html [ Pass ]
+fast/text/emoji-gender-fe0f-9.html [ Pass ]
+
+imported/w3c/web-platform-tests/css/css-scoping/stylesheet-title-001.html [ Pass ]
+imported/w3c/web-platform-tests/css/css-text/text-transform/text-transform-capitalize-026.html [ Pass ]
+
+imported/w3c/web-platform-tests/fetch/http-cache/basic-auth-cache-test.html [ Pass ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of PASSING tests. See top of file where to put new expectations.

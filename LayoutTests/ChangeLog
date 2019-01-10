@@ -1,3 +1,9 @@
+2019-01-10  Miguel Gomez  <magomez@igalia.com>
+
+        Unreviewed GTK+ gardening after r239824.
+
+        * platform/gtk/TestExpectations:
+
 2019-01-10  Zalan Bujtas  <zalan@apple.com>
 
         [LFC][BFC][MarginCollapsing] Take collapsed through siblings into account when computing vertical position
