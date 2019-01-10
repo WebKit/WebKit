@@ -172,14 +172,14 @@ void AudioTrackPrivateMediaStreamCocoa::audioSamplesAvailable(const MediaTime& s
 
     if (!m_inputDescription || *m_inputDescription != description) {
 
-        m_inputDescription = nullptr;
-        m_outputDescription = nullptr;
-
         if (m_remoteIOUnit) {
             AudioOutputUnitStop(m_remoteIOUnit);
             AudioComponentInstanceDispose(m_remoteIOUnit);
             m_remoteIOUnit = nullptr;
         }
+
+        m_inputDescription = nullptr;
+        m_outputDescription = nullptr;
 
         CAAudioStreamDescription inputDescription = toCAAudioStreamDescription(description);
         CAAudioStreamDescription outputDescription;
