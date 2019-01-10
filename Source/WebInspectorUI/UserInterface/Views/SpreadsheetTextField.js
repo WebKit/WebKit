@@ -220,7 +220,8 @@ WI.SpreadsheetTextField = class SpreadsheetTextField
         this._applyCompletionHint();
         this.discardCompletion();
 
-        this._delegate.spreadsheetTextFieldDidBlur(this, event);
+        let changed = this._valueBeforeEditing !== this.value;
+        this._delegate.spreadsheetTextFieldDidBlur(this, event, changed);
         this.stopEditing();
     }
 

@@ -372,7 +372,7 @@ WI.SpreadsheetStyleProperty = class SpreadsheetStyleProperty extends WI.Object
             this.remove();
     }
 
-    spreadsheetTextFieldDidBlur(textField, event)
+    spreadsheetTextFieldDidBlur(textField, event, changed)
     {
         let focusedOutsideThisProperty = event.relatedTarget !== this._nameElement && event.relatedTarget !== this._valueElement;
         if (focusedOutsideThisProperty && (!this._nameTextField.value.trim() || !this._valueTextField.value.trim())) {
@@ -385,6 +385,9 @@ WI.SpreadsheetStyleProperty = class SpreadsheetStyleProperty extends WI.Object
 
         if (typeof this._delegate.spreadsheetStylePropertyFocusMoved === "function")
             this._delegate.spreadsheetStylePropertyFocusMoved(this, {direction: null});
+
+        if (changed && window.DOMAgent)
+            DOMAgent.markUndoableState();
     }
 
     spreadsheetTextFieldDidBackspace(textField)
