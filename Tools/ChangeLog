@@ -1,3 +1,28 @@
+2019-01-10  John Wilander  <wilander@apple.com>
+
+        Override the session configuration for cookieAcceptPolicy
+        https://bugs.webkit.org/show_bug.cgi?id=190925
+        <rdar://problem/45497382>
+
+        Reviewed by Alexey Proskuryakov and Alex Christensen.
+
+        Test infrastructure for setting a first-party-only cookie policy.
+
+        * DumpRenderTree/TestRunner.cpp:
+        (setOnlyAcceptFirstPartyCookiesCallback):
+        (TestRunner::staticFunctions):
+        * DumpRenderTree/TestRunner.h:
+        * DumpRenderTree/mac/TestRunnerMac.mm:
+        (TestRunner::setOnlyAcceptFirstPartyCookies):
+        * DumpRenderTree/win/TestRunnerWin.cpp:
+        (TestRunner::setOnlyAcceptFirstPartyCookies):
+        * WebKitTestRunner/InjectedBundle/Bindings/TestRunner.idl:
+        * WebKitTestRunner/InjectedBundle/TestRunner.cpp:
+        (WTR::TestRunner::setOnlyAcceptFirstPartyCookies):
+        * WebKitTestRunner/InjectedBundle/TestRunner.h:
+        * WebKitTestRunner/TestInvocation.cpp:
+        (WTR::TestInvocation::didReceiveSynchronousMessageFromInjectedBundle):
+
 2019-01-09  Matt Rajca  <mrajca@apple.com>
 
         Put per-document autoplay behavior behind runtime website policies quirk instead of a compile time flag

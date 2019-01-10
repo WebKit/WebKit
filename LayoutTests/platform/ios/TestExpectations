@@ -3170,6 +3170,9 @@ webkit.org/b/190032 animations/stop-animation-on-suspend.html [ Failure ]
 
 http/tests/cookies/same-site [ Pass ]
 
+# FIXME: Mark as Pass once <rdar://problem/47165939> is fixed.
+http/tests/cookies/only-accept-first-party-cookies.html [ Skip ]
+
 system-preview [ Pass ]
 
 editing/selection/character-granularity-rect.html [ Pass ]

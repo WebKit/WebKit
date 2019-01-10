@@ -397,6 +397,12 @@ void TestRunner::setAlwaysAcceptCookies(bool alwaysAcceptCookies)
     m_alwaysAcceptCookies = alwaysAcceptCookies;
 }
 
+void TestRunner::setOnlyAcceptFirstPartyCookies(bool onlyAcceptFirstPartyCookies)
+{
+    // FIXME: Implement.
+    fprintf(testResult, "ERROR: TestRunner::setOnlyAcceptFirstPartyCookies() not implemented\n");
+}
+
 void TestRunner::setAppCacheMaximumSize(unsigned long long size)
 {
     COMPtr<IWebApplicationCache> applicationCache;

@@ -926,6 +926,15 @@ void TestRunner::setAlwaysAcceptCookies(bool accept)
     WKBundlePostSynchronousMessage(InjectedBundle::singleton().bundle(), messageName.get(), messageBody.get(), nullptr);
 }
 
+void TestRunner::setOnlyAcceptFirstPartyCookies(bool accept)
+{
+    WKRetainPtr<WKStringRef> messageName(AdoptWK, WKStringCreateWithUTF8CString("SetOnlyAcceptFirstPartyCookies"));
+    
+    WKRetainPtr<WKBooleanRef> messageBody(AdoptWK, WKBooleanCreate(accept));
+    
+    WKBundlePostSynchronousMessage(InjectedBundle::singleton().bundle(), messageName.get(), messageBody.get(), nullptr);
+}
+
 double TestRunner::preciseTime()
 {
     return WallTime::now().secondsSinceEpoch().seconds();

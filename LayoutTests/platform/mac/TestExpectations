@@ -1726,6 +1726,9 @@ webkit.org/b/187393 imported/w3c/web-platform-tests/2dcontext/imagebitmap/create
 
 [ Mojave+ ] http/tests/cookies/same-site [ Pass ]
 
+# FIXME: Mark as Pass once <rdar://problem/47165939> is fixed.
+[ Mojave+ ] http/tests/cookies/only-accept-first-party-cookies.html [ Skip ]
+
 # FIXME: Mark as Pass once the fix for <rdar://problem/42255251> is shipped.
 [ Mojave+ ] http/tests/cookies/same-site/set-first-party-cross-site-cookies.php [ Skip ]
 [ Mojave+ ] http/tests/cookies/same-site/set-first-party-same-site-cookies.php [ Skip ]
