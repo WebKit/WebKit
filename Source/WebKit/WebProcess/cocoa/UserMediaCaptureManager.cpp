@@ -56,11 +56,13 @@ static uint64_t nextSessionID()
 
 class UserMediaCaptureManager::Source : public RealtimeMediaSource {
 public:
-    Source(String&& sourceID, Type type, String&& name, String&& hashSalt, uint64_t id, UserMediaCaptureManager& manager)
+    Source(String&& sourceID, Type type, CaptureDevice::DeviceType deviceType, String&& name, String&& hashSalt, uint64_t id, UserMediaCaptureManager& manager)
         : RealtimeMediaSource(type, WTFMove(name), WTFMove(sourceID), WTFMove(hashSalt))
         , m_id(id)
         , m_manager(manager)
+        , m_deviceType(deviceType)
     {
+        ASSERT(deviceType == CaptureDevice::DeviceType::Camera || deviceType == CaptureDevice::DeviceType::Screen || deviceType == CaptureDevice::DeviceType::Window);
         if (type == Type::Audio)
             m_ringBuffer = std::make_unique<CARingBuffer>(makeUniqueRef<SharedRingBufferStorage>(nullptr));
     }
@@ -178,6 +180,7 @@ private:
     void startProducingData() final { m_manager.startProducingData(m_id); }
     void stopProducingData() final { m_manager.stopProducingData(m_id); }
     bool isCaptureSource() const final { return true; }
+    CaptureDevice::DeviceType deviceType() const final { return m_deviceType; }
 
     // RealtimeMediaSource
     void beginConfiguration() final { }
@@ -197,6 +200,7 @@ private:
     std::unique_ptr<CARingBuffer> m_ringBuffer;
 
     std::unique_ptr<ImageTransferSessionVT> m_imageTransferSession;
+    CaptureDevice::DeviceType m_deviceType { CaptureDevice::DeviceType::Unknown };
 
     struct ApplyConstraintsCallback {
         SuccessHandler successHandler;
@@ -251,7 +255,7 @@ WebCore::CaptureSourceOrError UserMediaCaptureManager::createCaptureSource(const
         return WTFMove(errorMessage);
 
     auto type = device.type() == CaptureDevice::DeviceType::Microphone ? WebCore::RealtimeMediaSource::Type::Audio : WebCore::RealtimeMediaSource::Type::Video;
-    auto source = adoptRef(*new Source(String::number(id), type, String { settings.label() }, WTFMove(hashSalt), id, *this));
+    auto source = adoptRef(*new Source(String::number(id), type, device.type(), String { settings.label() }, WTFMove(hashSalt), id, *this));
     source->setSettings(WTFMove(settings));
     m_sources.set(id, source.copyRef());
     return WebCore::CaptureSourceOrError(WTFMove(source));

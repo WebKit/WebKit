@@ -38,7 +38,7 @@
 namespace WebCore {
 
 RealtimeIncomingVideoSource::RealtimeIncomingVideoSource(rtc::scoped_refptr<webrtc::VideoTrackInterface>&& videoTrack, String&& videoTrackId)
-    : RealtimeMediaSource(RealtimeMediaSource::Type::Video, "remote video"_s, WTFMove(videoTrackId))
+    : RealtimeMediaSource(Type::Video, "remote video"_s, WTFMove(videoTrackId))
     , m_videoTrack(WTFMove(videoTrack))
 {
     notifyMutedChange(!m_videoTrack);

@@ -116,8 +116,6 @@ public:
         case CaptureDevice::DeviceType::Window:
             return MockRealtimeVideoSource::create(String { device.persistentId() }, String { device.label() }, String { }, constraints);
             break;
-        case CaptureDevice::DeviceType::Application:
-        case CaptureDevice::DeviceType::Browser:
         case CaptureDevice::DeviceType::Microphone:
         case CaptureDevice::DeviceType::Camera:
         case CaptureDevice::DeviceType::Unknown:

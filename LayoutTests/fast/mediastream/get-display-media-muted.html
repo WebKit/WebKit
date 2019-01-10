@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Mute screen capture, make sure page state updates correctly.</title>
+    <script src="../../resources/testharness.js"></script>
+    <script src="../../resources/testharnessreport.js"></script>
+    <script>
+
+    if (window.testRunner)
+        testRunner.setUserMediaPermission(true);
+
+    async function waitForPageStateChange(numberOfTries, originalState)
+    {
+        return new Promise(async (resolve) => {
+            while (numberOfTries) {
+                if (internals.pageMediaState() != originalState) {
+                    resolve(true);
+                    return;
+                }
+                
+                await new Promise(resolve => { setTimeout(resolve, 10) });
+                --numberOfTries;
+            }
+
+            resolve(false);
+        });
+    }
+
+    promise_test(async (test) => {
+        await new Promise(async (resolve, reject) => {
+            let stream = await navigator.mediaDevices.getDisplayMedia({ video: true });
+            let pageMediaState = internals.pageMediaState();
+
+            assert_false(pageMediaState.includes('HasMutedDisplayCaptureDevice'), 'page state does not include HasMutedDisplayCaptureDevice');
+            assert_false(pageMediaState.includes('HasMutedVideoCaptureDevice'), 'page state does not include HasMutedVideoCaptureDevice');
+            assert_false(pageMediaState.includes('HasMutedAudioCaptureDevice'), 'page state does not include HasMutedAudioCaptureDevice');
+
+            let track = stream.getVideoTracks()[0];
+            track.onunmute = () => { assert_unreached("Got 'unmute' event unexpectedly!") };
+
+            track.onmute = async (evt) => {
+
+                if (!await waitForPageStateChange(10, pageMediaState))
+                    assert_unreached(`Page state did not change from ${pageMediaState}`);
+
+                track.onunmute = async (evt) => {
+                    if (!await waitForPageStateChange(10, pageMediaState))
+                        assert_unreached(`Page state did not change from ${pageMediaState}`);
+
+                    pageMediaState = internals.pageMediaState();
+                    assert_false(pageMediaState.includes('HasMutedDisplayCaptureDevice'), 'page state does not include HasMutedDisplayCaptureDevice');
+                    assert_true(pageMediaState.includes('HasActiveDisplayCaptureDevice'), 'page state includes HasActiveDisplayCaptureDevice');
+                    resolve()
+                }
+
+                pageMediaState = internals.pageMediaState();
+                assert_true(pageMediaState.includes('HasMutedDisplayCaptureDevice'), 'page state includes HasMutedDisplayCaptureDevice');
+                assert_false(pageMediaState.includes('HasActiveDisplayCaptureDevice'), 'page state does not include HasActiveDisplayCaptureDevice');
+                internals.setMediaStreamTrackMuted(track, false)
+            }
+
+            pageMediaState = internals.pageMediaState();
+            internals.setMediaStreamTrackMuted(track, true);
+
+            setTimeout(() => reject("Muted state did not change in .5 second"), 500);
+        });
+    }, "Mute video track during screen capture");
+
+    </script>
+</head>
+<body>
+</body>
+</html>

@@ -68,6 +68,7 @@ private:
     void startProducingData() final;
     void stopProducingData() final;
     bool isCaptureSource() const final { return true; }
+    CaptureDevice::DeviceType deviceType() const final { return CaptureDevice::DeviceType::Camera; }
     bool supportsSizeAndFrameRate(Optional<int> width, Optional<int> height, Optional<double>) final;
     void setSizeAndFrameRate(Optional<int> width, Optional<int> height, Optional<double>) final;
     void setSizeAndFrameRateWithPreset(IntSize, double, RefPtr<VideoPreset>) final;

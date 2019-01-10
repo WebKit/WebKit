@@ -31,7 +31,7 @@ namespace WebCore {
 
 class CaptureDevice {
 public:
-    enum class DeviceType { Unknown, Microphone, Camera, Screen, Application, Window, Browser };
+    enum class DeviceType { Unknown, Microphone, Camera, Screen, Window };
 
     CaptureDevice(const String& persistentId, DeviceType type, const String& label, const String& groupId = emptyString())
         : m_persistentId(persistentId)
@@ -121,9 +121,7 @@ template<> struct EnumTraits<WebCore::CaptureDevice::DeviceType> {
         WebCore::CaptureDevice::DeviceType::Microphone,
         WebCore::CaptureDevice::DeviceType::Camera,
         WebCore::CaptureDevice::DeviceType::Screen,
-        WebCore::CaptureDevice::DeviceType::Application,
-        WebCore::CaptureDevice::DeviceType::Window,
-        WebCore::CaptureDevice::DeviceType::Browser
+        WebCore::CaptureDevice::DeviceType::Window
     >;
 };
 

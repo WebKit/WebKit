@@ -62,6 +62,7 @@ private:
     void startProducingData() final;
     void stopProducingData() final;
     void commitConfiguration() final;
+    CaptureDevice::DeviceType deviceType() const final { return CaptureDevice::DeviceType::Screen; }
 
     bool createDisplayStream();
     void startDisplayStream();

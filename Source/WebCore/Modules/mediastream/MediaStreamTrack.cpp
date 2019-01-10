@@ -386,12 +386,14 @@ MediaProducer::MediaStateFlags MediaStreamTrack::mediaState() const
         if (m_private->isProducingData())
             return HasActiveAudioCaptureDevice;
     } else {
+        auto deviceType = source().deviceType();
+        ASSERT(deviceType == CaptureDevice::DeviceType::Camera || deviceType == CaptureDevice::DeviceType::Screen || deviceType == CaptureDevice::DeviceType::Window);
         if (source().interrupted() && !pageCaptureMuted)
-            return HasInterruptedVideoCaptureDevice;
+            return deviceType == CaptureDevice::DeviceType::Camera ? HasInterruptedVideoCaptureDevice : HasInterruptedDisplayCaptureDevice;
         if (muted())
-            return HasMutedVideoCaptureDevice;
+            return deviceType == CaptureDevice::DeviceType::Camera ? HasMutedVideoCaptureDevice : HasMutedDisplayCaptureDevice;
         if (m_private->isProducingData())
-            return HasActiveVideoCaptureDevice;
+            return deviceType == CaptureDevice::DeviceType::Camera ? HasActiveVideoCaptureDevice : HasActiveDisplayCaptureDevice;
     }
 
     return IsNotPlaying;

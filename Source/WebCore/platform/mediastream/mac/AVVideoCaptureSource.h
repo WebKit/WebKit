@@ -86,6 +86,7 @@ private:
     void beginConfiguration() final;
     void commitConfiguration() final;
     bool isCaptureSource() const final { return true; }
+    CaptureDevice::DeviceType deviceType() const final { return CaptureDevice::DeviceType::Camera; }
     bool interrupted() const final;
 
     void setSizeAndFrameRateWithPreset(IntSize, double, RefPtr<VideoPreset>) final;

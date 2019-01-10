@@ -149,8 +149,6 @@ void UserMediaCaptureManagerProxy::createMediaSourceForCaptureDeviceWithConstrai
         break;
     case WebCore::CaptureDevice::DeviceType::Screen:
     case WebCore::CaptureDevice::DeviceType::Window:
-    case WebCore::CaptureDevice::DeviceType::Application:
-    case WebCore::CaptureDevice::DeviceType::Browser:
         sourceOrError = RealtimeMediaSourceCenter::singleton().displayCaptureFactory().createDisplayCaptureSource(device, &constraints);
         break;
     case WebCore::CaptureDevice::DeviceType::Unknown:

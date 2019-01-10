@@ -1,3 +1,27 @@
+2019-01-10  Eric Carlson  <eric.carlson@apple.com>
+
+        Define page media state flags for display capture.
+        https://bugs.webkit.org/show_bug.cgi?id=193230
+        <rdar://problem/47095142>
+
+        Reviewed by Youenn Fablet.
+
+        Test: fast/mediastream/get-display-media-muted.html
+
+        * Modules/mediastream/MediaStreamTrack.cpp:
+        (WebCore::MediaStreamTrack::mediaState const):
+        * page/MediaProducer.h:
+        * platform/mediastream/RealtimeIncomingVideoSource.cpp:
+        (WebCore::RealtimeIncomingVideoSource::RealtimeIncomingVideoSource):
+        * platform/mediastream/RealtimeMediaSource.h:
+        * platform/mediastream/mac/AVVideoCaptureSource.h:
+        * platform/mediastream/mac/ScreenDisplayCaptureSourceMac.h:
+        * platform/mediastream/mac/WindowDisplayCaptureSourceMac.h:
+        * platform/mock/MockRealtimeAudioSource.h:
+        * platform/mock/MockRealtimeVideoSource.h:
+        * testing/Internals.cpp:
+        (WebCore::Internals::pageMediaState):
+
 2019-01-10  Justin Fan  <justin_fan@apple.com>
 
         [WebGPU] Add BindGroupBinding, BindGroupDescriptor, and BufferBinding dictionaries from API

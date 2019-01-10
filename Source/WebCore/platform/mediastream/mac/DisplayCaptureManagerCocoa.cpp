@@ -103,10 +103,6 @@ Optional<CaptureDevice> DisplayCaptureManagerCocoa::captureDeviceWithPersistentI
         return windowCaptureDeviceWithPersistentID(id);
         break;
 
-    case CaptureDevice::DeviceType::Application:
-    case CaptureDevice::DeviceType::Browser:
-        break;
-
     case CaptureDevice::DeviceType::Camera:
     case CaptureDevice::DeviceType::Microphone:
     case CaptureDevice::DeviceType::Unknown:

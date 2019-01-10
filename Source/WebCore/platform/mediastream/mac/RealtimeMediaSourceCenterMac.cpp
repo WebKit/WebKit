@@ -81,8 +81,6 @@ public:
 #if PLATFORM(MAC)
             return WindowDisplayCaptureSourceMac::create(String { device.persistentId() }, constraints);
 #endif
-        case CaptureDevice::DeviceType::Application:
-        case CaptureDevice::DeviceType::Browser:
         case CaptureDevice::DeviceType::Microphone:
         case CaptureDevice::DeviceType::Camera:
         case CaptureDevice::DeviceType::Unknown:

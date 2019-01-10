@@ -4025,6 +4025,10 @@ String Internals::pageMediaState()
         string.append("HasMutedVideoCaptureDevice,");
     if (state & MediaProducer::HasUserInteractedWithMediaElement)
         string.append("HasUserInteractedWithMediaElement,");
+    if (state & MediaProducer::HasActiveDisplayCaptureDevice)
+        string.append("HasActiveDisplayCaptureDevice,");
+    if (state & MediaProducer::HasMutedDisplayCaptureDevice)
+        string.append("HasMutedDisplayCaptureDevice,");
 
     if (string.isEmpty())
         string.append("IsNotPlaying");

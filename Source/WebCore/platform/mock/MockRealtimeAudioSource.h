@@ -64,6 +64,7 @@ private:
     void tick();
 
     bool isCaptureSource() const final { return true; }
+    CaptureDevice::DeviceType deviceType() const final { return CaptureDevice::DeviceType::Microphone; }
 
     void delaySamples(Seconds) final;
 

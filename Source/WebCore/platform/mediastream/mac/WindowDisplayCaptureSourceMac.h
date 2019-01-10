@@ -51,6 +51,7 @@ private:
 
     DisplayCaptureSourceCocoa::DisplayFrameType generateFrame() final;
     RealtimeMediaSourceSettings::DisplaySurfaceType surfaceType() const final { return RealtimeMediaSourceSettings::DisplaySurfaceType::Window; }
+    CaptureDevice::DeviceType deviceType() const final { return CaptureDevice::DeviceType::Window; }
 
     RetainPtr<CGImageRef> windowImage();
 
