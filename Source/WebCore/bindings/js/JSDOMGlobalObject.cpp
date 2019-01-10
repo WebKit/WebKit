@@ -75,13 +75,6 @@ void JSDOMGlobalObject::destroy(JSCell* cell)
     static_cast<JSDOMGlobalObject*>(cell)->JSDOMGlobalObject::~JSDOMGlobalObject();
 }
 
-JSDOMGlobalObject* JSDOMGlobalObject::create(JSC::VM& vm, JSC::Structure* structure, Ref<DOMWrapperWorld>&& world)
-{
-    JSDOMGlobalObject* domGlobalObject = new (NotNull, JSC::allocateCell<JSDOMGlobalObject>(vm.heap)) JSDOMGlobalObject(vm, structure, WTFMove(world));
-    domGlobalObject->finishCreation(vm);
-    return domGlobalObject;
-}
-
 EncodedJSValue JSC_HOST_CALL makeThisTypeErrorForBuiltins(ExecState* execState)
 {
     ASSERT(execState);

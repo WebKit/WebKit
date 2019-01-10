@@ -28,7 +28,6 @@
 
 #if ENABLE(INDEXED_DATABASE)
 
-#include "DOMWrapperWorld.h"
 #include "IDBBindingUtilities.h"
 #include "IDBCursorInfo.h"
 #include "IDBGetAllRecordsData.h"
@@ -43,7 +42,6 @@
 #include "Logging.h"
 #include "SerializedScriptValue.h"
 #include "UniqueIDBDatabaseConnection.h"
-#include "WebCoreJSClientData.h"
 #include <JavaScriptCore/AuxiliaryBarrierInlines.h>
 #include <JavaScriptCore/HeapInlines.h>
 #include <JavaScriptCore/StrongInlines.h>
@@ -940,11 +938,6 @@ VM& UniqueIDBDatabase::databaseThreadVM()
 {
     ASSERT(!isMainThread());
     static VM* vm = &VM::create().leakRef();
-    if (!vm->heap.hasAccess()) {
-        vm->heap.acquireAccess();
-        JSVMClientData::initNormalWorld(vm);
-    }
-
     return *vm;
 }
 
@@ -952,10 +945,10 @@ ExecState& UniqueIDBDatabase::databaseThreadExecState()
 {
     ASSERT(!isMainThread());
 
-    static NeverDestroyed<Strong<JSDOMGlobalObject>> domGlobalObject(databaseThreadVM(), JSDOMGlobalObject::create(databaseThreadVM(), JSDOMGlobalObject::createStructure(databaseThreadVM(), jsNull()), normalWorld(databaseThreadVM())));
+    static NeverDestroyed<Strong<JSGlobalObject>> globalObject(databaseThreadVM(), JSGlobalObject::create(databaseThreadVM(), JSGlobalObject::createStructure(databaseThreadVM(), jsNull())));
 
-    RELEASE_ASSERT(domGlobalObject.get()->globalExec());
-    return *domGlobalObject.get()->globalExec();
+    RELEASE_ASSERT(globalObject.get()->globalExec());
+    return *globalObject.get()->globalExec();
 }
 
 void UniqueIDBDatabase::performPutOrAdd(uint64_t callbackIdentifier, const IDBResourceIdentifier& transactionIdentifier, uint64_t objectStoreIdentifier, const IDBKeyData& keyData, const IDBValue& originalRecordValue, IndexedDB::ObjectStoreOverwriteMode overwriteMode)

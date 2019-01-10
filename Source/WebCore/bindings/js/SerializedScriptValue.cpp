@@ -765,6 +765,19 @@ private:
         }
     }
 
+    JSC::JSValue toJSArrayBuffer(ArrayBuffer& arrayBuffer)
+    {
+        auto& vm = m_exec->vm();
+        auto* globalObject = m_exec->lexicalGlobalObject();
+        if (globalObject->inherits<JSDOMGlobalObject>(vm))
+            return toJS(m_exec, jsCast<JSDOMGlobalObject*>(globalObject), &arrayBuffer);
+
+        if (auto* buffer = arrayBuffer.m_wrapper.get())
+            return buffer;
+
+        return JSC::JSArrayBuffer::create(vm, globalObject->arrayBufferStructure(arrayBuffer.sharingMode()), &arrayBuffer);
+    }
+
     bool dumpArrayBufferView(JSObject* obj, SerializationReturnCode& code)
     {
         VM& vm = m_exec->vm();
@@ -800,8 +813,8 @@ private:
             code = SerializationReturnCode::ValidationError;
             return true;
         }
-        JSValue bufferObj = toJS(m_exec, jsCast<JSDOMGlobalObject*>(m_exec->lexicalGlobalObject()), arrayBuffer.get());
-        return dumpIfTerminal(bufferObj, code);
+
+        return dumpIfTerminal(toJSArrayBuffer(*arrayBuffer), code);
     }
 
     void dumpDOMPoint(const DOMPointReadOnly& point)

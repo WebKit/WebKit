@@ -2,7 +2,8 @@
 <html>
 <head>
 <script>
-enablePrivateBrowsing = true;
+if (window.testRunner)
+    testRunner.setPrivateBrowsingEnabled(true);
 </script>
 <script src="../../resources/js-test-pre.js"></script>
 <script src="../resources/common.js"></script>
