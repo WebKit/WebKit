@@ -1,3 +1,43 @@
+2019-01-09  Kocsen Chung  <kocsen_chung@apple.com>
+
+        Cherry-pick r239731. rdar://problem/47158715
+
+    LLInt put_by_id uses the wrong load instruction for loading flags from the metadata
+    https://bugs.webkit.org/show_bug.cgi?id=193221
+    
+    Reviewed by Mark Lam.
+    
+    JSTests:
+    
+    * stress/put-by-id-flags.js: Added.
+    (f):
+    (g):
+    (numberOfDFGCompiles):
+    
+    Source/JavaScriptCore:
+    
+    The flags are only 4 bytes, but were loaded with loadp. It used to work,
+    since the flags were followed by a 4-byte padding, but it broke after the
+    struct was compacted in r239626.
+    
+    * llint/LowLevelInterpreter64.asm:
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@239731 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2019-01-08  Tadeu Zagallo  <tzagallo@apple.com>
+
+            LLInt put_by_id uses the wrong load instruction for loading flags from the metadata
+            https://bugs.webkit.org/show_bug.cgi?id=193221
+
+            Reviewed by Mark Lam.
+
+            The flags are only 4 bytes, but were loaded with loadp. It used to work,
+            since the flags were followed by a 4-byte padding, but it broke after the
+            struct was compacted in r239626.
+
+            * llint/LowLevelInterpreter64.asm:
+
 2019-01-09  Alan Coon  <alancoon@apple.com>
 
         Apply patch. rdar://problem/47158817
