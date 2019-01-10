@@ -179,7 +179,7 @@ CompactVariableMap::Handle::~Handle()
     if (!iter->value) {
         ASSERT(m_environment == &iter->key.environment());
         m_map->m_map.remove(iter);
-        fastFree(m_environment);
+        delete m_environment;
     }
 }
 

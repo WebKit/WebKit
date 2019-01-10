@@ -1,5 +1,42 @@
 2019-01-09  Kocsen Chung  <kocsen_chung@apple.com>
 
+        Cherry-pick r239755. rdar://problem/47158650
+
+    Leak of VectorBufferBase.m_buffer (16-64 bytes) under JSC::CompactVariableEnvironment in com.apple.WebKit.WebContent running layout tests
+    <https://webkit.org/b/193264>
+    <rdar://problem/46651026>
+    
+    Reviewed by Yusuke Suzuki.
+    
+    * parser/VariableEnvironment.cpp:
+    (JSC::CompactVariableMap::Handle::~Handle): Call delete on
+    m_environment instead of fastFree() to make sure the destructors
+    for the Vector instance variables are run.  This fixes the leaks
+    because calling fastFree() would only free the
+    CompactVariableEnvironment object, but not the heap-based
+    buffers allocated for the Vector instance variables.
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@239755 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2019-01-08  David Kilzer  <ddkilzer@apple.com>
+
+            Leak of VectorBufferBase.m_buffer (16-64 bytes) under JSC::CompactVariableEnvironment in com.apple.WebKit.WebContent running layout tests
+            <https://webkit.org/b/193264>
+            <rdar://problem/46651026>
+
+            Reviewed by Yusuke Suzuki.
+
+            * parser/VariableEnvironment.cpp:
+            (JSC::CompactVariableMap::Handle::~Handle): Call delete on
+            m_environment instead of fastFree() to make sure the destructors
+            for the Vector instance variables are run.  This fixes the leaks
+            because calling fastFree() would only free the
+            CompactVariableEnvironment object, but not the heap-based
+            buffers allocated for the Vector instance variables.
+
+2019-01-09  Kocsen Chung  <kocsen_chung@apple.com>
+
         Cherry-pick r239731. rdar://problem/47158715
 
     LLInt put_by_id uses the wrong load instruction for loading flags from the metadata
