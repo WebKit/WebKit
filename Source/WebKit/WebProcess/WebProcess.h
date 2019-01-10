@@ -178,7 +178,6 @@ public:
     void setCacheModel(CacheModel);
 
     void ensureLegacyPrivateBrowsingSessionInNetworkProcess();
-    void destroyLegacyPrivateBrowsingSessionInNetworkProcess();
 
     void pageDidEnterWindow(uint64_t pageID);
     void pageWillLeaveWindow(uint64_t pageID);

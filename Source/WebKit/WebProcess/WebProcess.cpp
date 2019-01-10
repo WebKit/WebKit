@@ -540,11 +540,6 @@ void WebProcess::ensureLegacyPrivateBrowsingSessionInNetworkProcess()
     ensureNetworkProcessConnection().connection().send(Messages::NetworkConnectionToWebProcess::EnsureLegacyPrivateBrowsingSession(), 0);
 }
 
-void WebProcess::destroyLegacyPrivateBrowsingSessionInNetworkProcess()
-{
-    ensureNetworkProcessConnection().connection().send(Messages::NetworkConnectionToWebProcess::DestroyLegacyPrivateBrowsingSession(), 0);
-}
-
 #if ENABLE(NETSCAPE_PLUGIN_API)
 PluginProcessConnectionManager& WebProcess::pluginProcessConnectionManager()
 {

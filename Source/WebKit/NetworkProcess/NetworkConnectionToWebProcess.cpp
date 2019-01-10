@@ -554,11 +554,6 @@ void NetworkConnectionToWebProcess::ensureLegacyPrivateBrowsingSession()
     m_networkProcess->addWebsiteDataStore(WebsiteDataStoreParameters::legacyPrivateSessionParameters());
 }
 
-void NetworkConnectionToWebProcess::destroyLegacyPrivateBrowsingSession()
-{
-    m_networkProcess->destroySession(PAL::SessionID::legacyPrivateSessionID());
-}
-
 void NetworkConnectionToWebProcess::removeStorageAccessForFrame(PAL::SessionID sessionID, uint64_t frameID, uint64_t pageID)
 {
 #if ENABLE(RESOURCE_LOAD_STATISTICS)

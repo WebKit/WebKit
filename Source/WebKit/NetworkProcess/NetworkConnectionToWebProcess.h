@@ -171,7 +171,6 @@ private:
     void destroySocketStream(uint64_t);
     
     void ensureLegacyPrivateBrowsingSession();
-    void destroyLegacyPrivateBrowsingSession();
 
 #if ENABLE(INDEXED_DATABASE)
     // Messages handlers (Modern IDB).

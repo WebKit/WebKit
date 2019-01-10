@@ -1,3 +1,24 @@
+2019-01-10  Alex Christensen  <achristensen@webkit.org>
+
+        REGRESSION(r239815) http/tests/workers/service/serviceworker-private-browsing.https.html test times out
+        https://bugs.webkit.org/show_bug.cgi?id=193325
+
+        Reviewed by Joseph Pecoraro.
+
+        InjectedBundle::setPrivateBrowsingEnabled effectively didn't do anything when enabled was false.
+        I made it destroy the legacy private browsing session in the NetworkProcess, which caused a test to time out.
+        This functionality is only used for testing, so it's no big deal to revert that part of the patch.
+
+        * NetworkProcess/NetworkConnectionToWebProcess.cpp:
+        (WebKit::NetworkConnectionToWebProcess::destroyLegacyPrivateBrowsingSession): Deleted.
+        * NetworkProcess/NetworkConnectionToWebProcess.h:
+        * NetworkProcess/NetworkConnectionToWebProcess.messages.in:
+        * WebProcess/InjectedBundle/InjectedBundle.cpp:
+        (WebKit::InjectedBundle::setPrivateBrowsingEnabled):
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::destroyLegacyPrivateBrowsingSessionInNetworkProcess): Deleted.
+        * WebProcess/WebProcess.h:
+
 2019-01-10  Per Arne Vollan  <pvollan@apple.com>
 
         [macOS] Add name of IORegistry key in sandbox.

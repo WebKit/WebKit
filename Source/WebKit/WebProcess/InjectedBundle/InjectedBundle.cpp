@@ -356,8 +356,6 @@ void InjectedBundle::setPrivateBrowsingEnabled(WebPageGroupProxy* pageGroup, boo
     ASSERT(!hasProcessPrivilege(ProcessPrivilege::CanAccessRawCookies));
     if (enabled)
         WebProcess::singleton().ensureLegacyPrivateBrowsingSessionInNetworkProcess();
-    else
-        WebProcess::singleton().destroyLegacyPrivateBrowsingSessionInNetworkProcess();
 
     const HashSet<Page*>& pages = PageGroup::pageGroup(pageGroup->identifier())->pages();
     for (HashSet<Page*>::iterator iter = pages.begin(); iter != pages.end(); ++iter)
