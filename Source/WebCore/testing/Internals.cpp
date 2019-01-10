@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2012 Google Inc. All rights reserved.
- * Copyright (C) 2013-2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -4628,6 +4628,14 @@ double Internals::preferredAudioBufferSize() const
     return AudioSession::sharedSession().preferredBufferSize();
 #endif
     return 0;
+}
+
+bool Internals::audioSessionActive() const
+{
+#if USE(AUDIO_SESSION)
+    return AudioSession::sharedSession().isActive();
+#endif
+    return false;
 }
 
 void Internals::clearCacheStorageMemoryRepresentation(DOMPromiseDeferred<void>&& promise)

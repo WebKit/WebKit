@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013-2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -37,6 +37,15 @@ AudioSession& AudioSession::sharedSession()
 {
     static NeverDestroyed<AudioSession> session;
     return session;
+}
+
+bool AudioSession::tryToSetActive(bool active)
+{
+    if (!tryToSetActiveInternal(active))
+        return false;
+
+    m_active = active;
+    return true;
 }
 
 #if !PLATFORM(COCOA)
@@ -91,7 +100,7 @@ size_t AudioSession::numberOfOutputChannels() const
     return 0;
 }
 
-bool AudioSession::tryToSetActive(bool)
+bool AudioSession::tryToSetActiveInternal(bool)
 {
     notImplemented();
     return true;

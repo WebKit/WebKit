@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013-2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -162,6 +162,12 @@ void PlatformMediaSessionManager::removeSession(PlatformMediaSession& session)
     if (m_sessions.isEmpty() || std::all_of(m_sessions.begin(), m_sessions.end(), std::logical_not<void>())) {
         m_remoteCommandListener = nullptr;
         m_audioHardwareListener = nullptr;
+#if USE(AUDIO_SESSION)
+        if (m_becameActive && shouldDeactivateAudioSession()) {
+            AudioSession::sharedSession().tryToSetActive(false);
+            m_becameActive = false;
+        }
+#endif
     }
 
     updateSessionState();
@@ -199,6 +205,8 @@ bool PlatformMediaSessionManager::sessionWillBeginPlayback(PlatformMediaSession&
 #if USE(AUDIO_SESSION)
     if (activeAudioSessionRequired() && !AudioSession::sharedSession().tryToSetActive(true))
         return false;
+
+    m_becameActive = true;
 #endif
 
     if (m_interrupted)
@@ -467,6 +475,22 @@ PlatformMediaSession* PlatformMediaSessionManager::findSession(const Function<bo
         m_sessions.removeAll(nullptr);
 
     return foundSession;
+}
+
+static bool& deactivateAudioSession()
+{
+    static bool deactivate;
+    return deactivate;
+}
+
+bool PlatformMediaSessionManager::shouldDeactivateAudioSession()
+{
+    return deactivateAudioSession();
+}
+
+void PlatformMediaSessionManager::setShouldDeactivateAudioSession(bool deactivate)
+{
+    deactivateAudioSession() = deactivate;
 }
 
 #else // ENABLE(VIDEO) || ENABLE(WEB_AUDIO)

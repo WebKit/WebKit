@@ -788,6 +788,7 @@ webkit.org/b/185994 [ Debug ] fast/text/user-installed-fonts/shadow-postscript-f
 # Skipped in general expectations since they only work on iOS and Mac, WK2.
 http/tests/security/strip-referrer-to-origin-for-third-party-redirects-in-private-mode.html [ Pass ]
 http/tests/security/strip-referrer-to-origin-for-third-party-requests-in-private-mode.html [ Pass ]
+media/deactivate-audio-session.html [ Pass ]
 
 # Link preconnect is disabled on pre-High Sierra because the CFNetwork SPI is missing.
 [ Sierra ] http/tests/preconnect [ Skip ]

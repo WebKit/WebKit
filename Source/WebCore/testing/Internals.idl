@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2012 Google Inc. All rights reserved.
- * Copyright (C) 2013-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -688,6 +688,7 @@ enum CompositingPolicy {
 
     DOMString audioSessionCategory();
     double preferredAudioBufferSize();
+    boolean audioSessionActive();
 
     [Conditional=SERVICE_WORKER] Promise<boolean> hasServiceWorkerRegistration(DOMString scopeURL);
     [Conditional=SERVICE_WORKER] void terminateServiceWorker(ServiceWorker worker);
