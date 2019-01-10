@@ -1791,7 +1791,7 @@ def sshRead(cmd, remoteIndex=0)
     remoteHost = $remoteHosts[remoteIndex]
 
     result = ""
-    IO.popen("ssh -p #{remoteHost.port} #{remoteHost.user}@#{remoteHost.host} '#{cmd}'", "r") {
+    IO.popen("ssh -o NoHostAuthenticationForLocalhost=yes -p #{remoteHost.port} #{remoteHost.user}@#{remoteHost.host} '#{cmd}'", "r") {
       | inp |
       inp.each_line {
         | line |
@@ -1908,8 +1908,8 @@ def runTestRunner(remoteIndex=0)
         if !remoteHost.remoteDirectory
             remoteHost.remoteDirectory = JSON::parse(sshRead("cat ~/.bencher", remoteIndex))["tempPath"]
         end
-        mysys("ssh", "-p", remoteHost.port.to_s, "#{remoteHost.user}@#{remoteHost.host}", "mkdir -p #{remoteHost.remoteDirectory}")
-        mysys("scp", "-P", remoteHost.port.to_s, ($outputDir.dirname + $tarFileName).to_s, "#{remoteHost.user}@#{remoteHost.host}:#{remoteHost.remoteDirectory}")
+        mysys("ssh", "-o", "NoHostAuthenticationForLocalhost=yes", "-p", remoteHost.port.to_s, "#{remoteHost.user}@#{remoteHost.host}", "mkdir -p #{remoteHost.remoteDirectory}")
+        mysys("scp", "-o", "NoHostAuthenticationForLocalhost=yes", "-P", remoteHost.port.to_s, ($outputDir.dirname + $tarFileName).to_s, "#{remoteHost.user}@#{remoteHost.host}:#{remoteHost.remoteDirectory}")
         remoteScript = "\""
         remoteScript += "cd #{remoteHost.remoteDirectory} && "
         remoteScript += "rm -rf #{$outputDir.basename} && "
