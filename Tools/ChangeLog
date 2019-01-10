@@ -1,5 +1,43 @@
 2019-01-09  Kocsen Chung  <kocsen_chung@apple.com>
 
+        Cherry-pick r239688. rdar://problem/47158770
+
+    A MediaTime timescale must never be zero
+    https://bugs.webkit.org/show_bug.cgi?id=193156
+    <rdar://problem/32504501>
+    
+    Reviewed by Jer Noble.
+    
+    Source/WTF:
+    
+    * wtf/MediaTime.cpp:
+    (WTF::greatestCommonDivisor): ASSERT if either parameter or return value is zero.
+    (WTF::MediaTime::MediaTime): Create +/- infinity if passed zero timescale.
+    (WTF::MediaTime::createWithFloat): Ditto.
+    (WTF::MediaTime::createWithDouble): Ditto.
+    (WTF::MediaTime::setTimeScale): Ditto.
+    
+    Tools:
+    
+    * TestWebKitAPI/Tests/WTF/MediaTime.cpp:
+    (TestWebKitAPI::TEST): Add tests for zero timescale.
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@239688 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2019-01-07  Eric Carlson  <eric.carlson@apple.com>
+
+            A MediaTime timescale must never be zero
+            https://bugs.webkit.org/show_bug.cgi?id=193156
+            <rdar://problem/32504501>
+
+            Reviewed by Jer Noble.
+
+            * TestWebKitAPI/Tests/WTF/MediaTime.cpp:
+            (TestWebKitAPI::TEST): Add tests for zero timescale.
+
+2019-01-09  Kocsen Chung  <kocsen_chung@apple.com>
+
         Cherry-pick r239676. rdar://problem/47158606
 
     API test broken: TestWebKitAPI.WebKit.CustomDataStorePathsVersusCompletionHandlers

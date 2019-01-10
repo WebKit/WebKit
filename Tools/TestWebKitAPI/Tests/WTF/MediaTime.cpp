@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 Apple Inc. All rights reserved.
+ * Copyright (C) 2012-2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -309,6 +309,18 @@ TEST(WTF, MediaTime)
     EXPECT_EQ(MediaTime(bigInt - 2, MediaTime::MaximumTimeScale).toTimeScale(MediaTime::MaximumTimeScale - 1).hasBeenRounded(), true);
     EXPECT_EQ(MediaTime(bigInt, 1).toTimeScale(MediaTime::MaximumTimeScale), MediaTime::positiveInfiniteTime());
     EXPECT_EQ(MediaTime(-bigInt, 1).toTimeScale(MediaTime::MaximumTimeScale), MediaTime::negativeInfiniteTime());
+
+    // Non-zero timescale
+    EXPECT_EQ(MediaTime(102, 0), MediaTime::positiveInfiniteTime());
+    EXPECT_EQ(MediaTime(-102, 0), MediaTime::negativeInfiniteTime());
+    EXPECT_EQ(MediaTime::createWithDouble(99, 0), MediaTime::positiveInfiniteTime());
+    EXPECT_EQ(MediaTime::createWithDouble(-99, 0), MediaTime::negativeInfiniteTime());
+    EXPECT_EQ(MediaTime::createWithDouble(99).toTimeScale(0), MediaTime::positiveInfiniteTime());
+    EXPECT_EQ(MediaTime::createWithDouble(-99).toTimeScale(0), MediaTime::negativeInfiniteTime());
+    EXPECT_EQ(MediaTime::createWithFloat(909, 0), MediaTime::positiveInfiniteTime());
+    EXPECT_EQ(MediaTime::createWithFloat(-909, 0), MediaTime::negativeInfiniteTime());
+    EXPECT_EQ(MediaTime::createWithFloat(999).toTimeScale(0), MediaTime::positiveInfiniteTime());
+    EXPECT_EQ(MediaTime::createWithFloat(-999).toTimeScale(0), MediaTime::negativeInfiniteTime());
 }
 
 }
