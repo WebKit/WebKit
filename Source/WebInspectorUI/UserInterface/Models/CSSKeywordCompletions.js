@@ -43,11 +43,7 @@ WI.CSSKeywordCompletions.forProperty = function(propertyName)
         else if (isNotPrefixed && ("-webkit-" + name) in WI.CSSKeywordCompletions._propertyKeywordMap)
             acceptedKeywords = acceptedKeywords.concat(WI.CSSKeywordCompletions._propertyKeywordMap["-webkit-" + name]);
 
-        if (name in WI.CSSKeywordCompletions._colorAwareProperties)
-            acceptedKeywords = acceptedKeywords.concat(WI.CSSKeywordCompletions._colors);
-        else if (isNotPrefixed && ("-webkit-" + name) in WI.CSSKeywordCompletions._colorAwareProperties)
-            acceptedKeywords = acceptedKeywords.concat(WI.CSSKeywordCompletions._colors);
-        else if (name.endsWith("color"))
+        if (WI.CSSKeywordCompletions.isColorAwareProperty(name))
             acceptedKeywords = acceptedKeywords.concat(WI.CSSKeywordCompletions._colors);
 
         // Only suggest "inherit" on inheritable properties even though it is valid on all properties.
@@ -75,6 +71,21 @@ WI.CSSKeywordCompletions.forProperty = function(propertyName)
     }
 
     return new WI.CSSCompletions(Array.from(new Set(acceptedKeywords)), true);
+};
+
+WI.CSSKeywordCompletions.isColorAwareProperty = function(name)
+{
+    if (name in WI.CSSKeywordCompletions._colorAwareProperties)
+        return true;
+
+    let isNotPrefixed = name.charAt(0) !== "-";
+    if (isNotPrefixed && ("-webkit-" + name) in WI.CSSKeywordCompletions._colorAwareProperties)
+        return true;
+
+    if (name.endsWith("color"))
+        return true;
+
+    return false;
 };
 
 WI.CSSKeywordCompletions.forFunction = function(functionName)
