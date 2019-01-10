@@ -1,5 +1,38 @@
 2019-01-09  Kocsen Chung  <kocsen_chung@apple.com>
 
+        Cherry-pick r239691. rdar://problem/47158674
+
+    [Cocoa] Add SPI to check if a WKWebView has an inspector frontend
+    https://bugs.webkit.org/show_bug.cgi?id=193162
+    <rdar://problem/24267143>
+    
+    Patch by Joseph Pecoraro <pecoraro@apple.com> on 2019-01-07
+    Reviewed by Alex Christensen.
+    
+    * UIProcess/API/Cocoa/WKWebView.mm:
+    (-[WKWebView _hasInspectorFrontend]):
+    * UIProcess/API/Cocoa/WKWebViewPrivate.h:
+    * UIProcess/WebPageProxy.h:
+    (WebKit::WebPageProxy::hasInspectorFrontend const):
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@239691 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2019-01-07  Joseph Pecoraro  <pecoraro@apple.com>
+
+            [Cocoa] Add SPI to check if a WKWebView has an inspector frontend
+            https://bugs.webkit.org/show_bug.cgi?id=193162
+            <rdar://problem/24267143>
+
+            Reviewed by Alex Christensen.
+
+            * UIProcess/API/Cocoa/WKWebView.mm:
+            (-[WKWebView _hasInspectorFrontend]):
+            * UIProcess/API/Cocoa/WKWebViewPrivate.h:
+            * UIProcess/WebPageProxy.h:
+            (WebKit::WebPageProxy::hasInspectorFrontend const):
+
+2019-01-09  Kocsen Chung  <kocsen_chung@apple.com>
+
         Cherry-pick r239686. rdar://problem/47158659
 
     Unwanted page navigation after showing & dismissing contextual menu with control-click
