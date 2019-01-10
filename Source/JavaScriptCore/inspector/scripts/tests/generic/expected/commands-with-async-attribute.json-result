@@ -161,14 +161,14 @@ public:
     class ExecuteSQLAsyncOptionalReturnValuesCallback : public BackendDispatcher::CallbackBase {
     public:
         ExecuteSQLAsyncOptionalReturnValuesCallback(Ref<BackendDispatcher>&&, int id);
-        void sendSuccess(RefPtr<JSON::ArrayOf<String>>&& columnNames, Optional<String>& notes, Optional<double>& timestamp, Optional<JSON::Object>& values, Optional<JSON::Value>& payload, Optional<int>& databaseId, RefPtr<Inspector::Protocol::Database::Error>&& sqlError, Optional<String>& screenColor, RefPtr<Inspector::Protocol::Database::ColorList>&& alternateColors, Optional<String>& printColor);
+        void sendSuccess(RefPtr<JSON::ArrayOf<String>>&& columnNames, Optional<String>& notes, Optional<double>& timestamp, Optional<JSON::Object>& values, Optional<JSON::Value>& payload, Optional<int>& databaseId, RefPtr<Inspector::Protocol::Database::Error>&& sqlError, Optional<Inspector::Protocol::Database::PrimaryColors> screenColor, RefPtr<Inspector::Protocol::Database::ColorList>&& alternateColors, Optional<DatabaseBackendDispatcherHandler::PrintColor> printColor);
     };
     virtual void executeSQLAsyncOptionalReturnValues(int in_databaseId, const String& in_query, Ref<ExecuteSQLAsyncOptionalReturnValuesCallback>&& callback) = 0;
     virtual void executeSQLSync(ErrorString&, int in_databaseId, const String& in_query, RefPtr<JSON::ArrayOf<String>>& out_columnNames, String* out_notes, double* out_timestamp, JSON::Object* out_values, JSON::Value* out_payload, int* out_databaseId, RefPtr<Inspector::Protocol::Database::Error>& out_sqlError, RefPtr<Inspector::Protocol::Database::ColorList>& out_alternateColors, Inspector::Protocol::Database::PrimaryColors* out_screenColor, DatabaseBackendDispatcherHandler::PrintColor* out_printColor) = 0;
     class ExecuteSQLAsyncCallback : public BackendDispatcher::CallbackBase {
     public:
         ExecuteSQLAsyncCallback(Ref<BackendDispatcher>&&, int id);
-        void sendSuccess(RefPtr<JSON::ArrayOf<String>>&& columnNames, const String& notes, double timestamp, JSON::Object values, JSON::Value payload, int databaseId, RefPtr<Inspector::Protocol::Database::Error>&& sqlError, const String& screenColor, RefPtr<Inspector::Protocol::Database::ColorList>&& alternateColors, const String& printColor);
+        void sendSuccess(RefPtr<JSON::ArrayOf<String>>&& columnNames, const String& notes, double timestamp, JSON::Object values, JSON::Value payload, int databaseId, RefPtr<Inspector::Protocol::Database::Error>&& sqlError, Inspector::Protocol::Database::PrimaryColors screenColor, RefPtr<Inspector::Protocol::Database::ColorList>&& alternateColors, DatabaseBackendDispatcherHandler::PrintColor printColor);
     };
     virtual void executeSQLAsync(int in_databaseId, const String& in_query, Ref<ExecuteSQLAsyncCallback>&& callback) = 0;
 protected:
@@ -336,7 +336,7 @@ void DatabaseBackendDispatcher::executeSQLSyncOptionalReturnValues(long requestI
 
 DatabaseBackendDispatcherHandler::ExecuteSQLAsyncOptionalReturnValuesCallback::ExecuteSQLAsyncOptionalReturnValuesCallback(Ref<BackendDispatcher>&& backendDispatcher, int id) : BackendDispatcher::CallbackBase(WTFMove(backendDispatcher), id) { }
 
-void DatabaseBackendDispatcherHandler::ExecuteSQLAsyncOptionalReturnValuesCallback::sendSuccess(RefPtr<JSON::ArrayOf<String>>&& columnNames, Optional<String>& notes, Optional<double>& timestamp, Optional<JSON::Object>& values, Optional<JSON::Value>& payload, Optional<int>& databaseId, RefPtr<Inspector::Protocol::Database::Error>&& sqlError, Optional<String>& screenColor, RefPtr<Inspector::Protocol::Database::ColorList>&& alternateColors, Optional<String>& printColor)
+void DatabaseBackendDispatcherHandler::ExecuteSQLAsyncOptionalReturnValuesCallback::sendSuccess(RefPtr<JSON::ArrayOf<String>>&& columnNames, Optional<String>& notes, Optional<double>& timestamp, Optional<JSON::Object>& values, Optional<JSON::Value>& payload, Optional<int>& databaseId, RefPtr<Inspector::Protocol::Database::Error>&& sqlError, Optional<Inspector::Protocol::Database::PrimaryColors> screenColor, RefPtr<Inspector::Protocol::Database::ColorList>&& alternateColors, Optional<DatabaseBackendDispatcherHandler::PrintColor> printColor)
 {
     Ref<JSON::Object> jsonMessage = JSON::Object::create();
     if (columnNames)
@@ -433,7 +433,7 @@ void DatabaseBackendDispatcher::executeSQLSync(long requestId, RefPtr<JSON::Obje
 
 DatabaseBackendDispatcherHandler::ExecuteSQLAsyncCallback::ExecuteSQLAsyncCallback(Ref<BackendDispatcher>&& backendDispatcher, int id) : BackendDispatcher::CallbackBase(WTFMove(backendDispatcher), id) { }
 
-void DatabaseBackendDispatcherHandler::ExecuteSQLAsyncCallback::sendSuccess(RefPtr<JSON::ArrayOf<String>>&& columnNames, const String& notes, double timestamp, JSON::Object values, JSON::Value payload, int databaseId, RefPtr<Inspector::Protocol::Database::Error>&& sqlError, const String& screenColor, RefPtr<Inspector::Protocol::Database::ColorList>&& alternateColors, const String& printColor)
+void DatabaseBackendDispatcherHandler::ExecuteSQLAsyncCallback::sendSuccess(RefPtr<JSON::ArrayOf<String>>&& columnNames, const String& notes, double timestamp, JSON::Object values, JSON::Value payload, int databaseId, RefPtr<Inspector::Protocol::Database::Error>&& sqlError, Inspector::Protocol::Database::PrimaryColors screenColor, RefPtr<Inspector::Protocol::Database::ColorList>&& alternateColors, DatabaseBackendDispatcherHandler::PrintColor printColor)
 {
     Ref<JSON::Object> jsonMessage = JSON::Object::create();
     jsonMessage->setArray("columnNames"_s, columnNames);

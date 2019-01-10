@@ -1,5 +1,20 @@
 2019-01-10  Brian Burg  <bburg@apple.com>
 
+        Web Inspector: incorrect type signature used for protocol enums in async command results
+        https://bugs.webkit.org/show_bug.cgi?id=193331
+
+        Reviewed by Devin Rousso.
+
+        When an enum is returned by an async command, the type signature should be that of the
+        Inspector::Protocol::* generated enum, rather than the underlying primitive type (i.e., String).
+
+        * inspector/scripts/codegen/cpp_generator.py:
+        (CppGenerator.cpp_type_for_formal_async_parameter):
+        * inspector/scripts/tests/generic/expected/commands-with-async-attribute.json-result:
+        Rebaseline generator test results.
+
+2019-01-10  Brian Burg  <bburg@apple.com>
+
         Rebaseline inspector generator test results after recent changes.
 
         Unreviewed test gardening.

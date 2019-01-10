@@ -229,9 +229,6 @@ class CppGenerator(Generator):
         if isinstance(_type, AliasedType):
             _type = _type.aliased_type  # Fall through.
 
-        if isinstance(_type, EnumType):
-            _type = _type.primitive_type  # Fall through.
-
         if isinstance(_type, (ObjectType, ArrayType)):
             return 'RefPtr<%s>&&' % CppGenerator.cpp_protocol_type_for_type(_type)
         if isinstance(_type, PrimitiveType):
@@ -242,6 +239,16 @@ class CppGenerator(Generator):
                 return CppGenerator.cpp_name_for_primitive_type(_type)
             elif _type.qualified_name() in ['string']:
                 return 'const %s&' % cpp_name
+            else:
+                return cpp_name
+        if isinstance(_type, EnumType):
+            if _type.is_anonymous:
+                cpp_name = '%sBackendDispatcherHandler::%s' % (_type.type_domain().domain_name, ucfirst(parameter.parameter_name))
+            else:
+                cpp_name = 'Inspector::Protocol::%s::%s' % (_type.type_domain().domain_name, _type.raw_name())
+
+            if parameter.is_optional:
+                return "Optional<%s>" % cpp_name
             else:
                 return cpp_name
 
