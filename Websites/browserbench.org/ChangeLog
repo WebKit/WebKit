@@ -1,3 +1,11 @@
+2019-01-09  Saam Barati  <sbarati@apple.com>
+
+        Merge the latest version of JetStream2.0 to browserbench.org.
+
+        Rubber-stamped by Ryosuke Niwa.
+
+        * JetStream2.0: Copied from PerformanceTests/JetStream2.
+
 2018-10-11  Jon Lee  <jonlee@apple.com>
 
         Update default hyperlink for MotionMark to MotionMark 1.1

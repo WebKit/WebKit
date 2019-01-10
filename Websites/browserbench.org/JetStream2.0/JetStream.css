@@ -1,0 +1,255 @@
+/*
+ * Copyright (C) 2018 Apple Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+ * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
+ * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+ * THE POSSIBILITY OF SUCH DAMAGE.
+*/
+
+body {
+    font-family: "Helvetica Neue", Helvetica, Verdana, sans-serif;
+    font-size: 14px;
+    line-height: 19px;
+    /* background-image: url(Swoosh.png); */
+    background-repeat: no-repeat;
+    background-position: center -40px;
+    background-size: 3000px auto;
+    padding-bottom: 00px;
+}
+
+::selection {
+    background-color: black;
+    color: white;
+}
+
+main {
+    display: block; /* For IE11 */
+    width: 800px;
+    margin: auto;
+    text-align: center;
+    padding: 10px;
+}
+
+img {
+    -webkit-user-select: none;
+    -webkit-user-drag: none;
+}
+
+#logo {
+    width: 621px;
+    height: 96px;
+    margin-top: 40px;
+}
+
+#magic {
+    position: absolute;
+    top: -900px;
+    left: -900px;
+    width: 300px;
+    height: 300px;
+    display: none;
+}
+
+/*
+@media (-webkit-min-device-pixel-ratio: 2), (min--moz-device-pixel-ratio: 2), (min-resolution: 2dppx), (min-resolution: 192dpi) {
+    #logo {
+        content: url(JetStream-Logo@2x.png);
+    }
+
+    body {
+        background-image: url(Swoosh@2x.png);
+    }
+}
+*/
+
+p.summary {
+    margin: 18px auto 5px;
+    background-image: -webkit-linear-gradient(right, white 70%, rgba(255, 255, 255, 0));
+    background-image: -moz-linear-gradient(right, white 70%, rgba(255, 255, 255, 0));
+    background-image: linear-gradient(to right, white 70%, rgba(255, 255, 255, 0));
+    padding: 15px 125px 0;
+    text-align: center;
+}
+
+p.summary + p.summary {
+    padding-top: 5px;
+    margin-top: 5px;
+}
+
+p.summary:empty {
+    display: none;
+}
+
+h1 {
+    color: black;
+    text-align: center;
+    font-size: 54px;
+}
+
+p {
+    text-align: left;
+    text-indent: 20px;
+}
+
+p:first-of-type {
+    text-indent: 0;
+}
+
+dt {
+    margin-top: 10px;
+    font-weight: bold;
+    text-align: left;
+}
+
+dd {
+    text-align: left;
+    padding: 10px 20px;
+    margin: 0;
+}
+
+#status {
+    margin-top: 20px;
+}
+
+#status {
+    height: 20px;
+}
+
+#status a:link {
+    font-weight: bold;
+}
+
+#result-summary:empty {
+    display: none;
+}
+
+#result-summary {
+	margin-top: 20px;
+}
+
+#result-summary label {
+    font-weight: bold;
+}
+
+#result-summary .score {
+	font-weight: bold;
+    font-size: 40px;
+	line-height: 40px;
+    color: black;
+}
+
+#result-summary .score .interval {
+	display: block;
+	font-size: 16px;
+	line-height: 16px;
+	font-weight: normal;
+}
+
+.interval {
+    opacity: 0.75;
+}
+
+a:link, a:visited {
+    color: black;
+    text-decoration: none;
+}
+
+a:link:hover {
+    text-decoration: underline;
+}
+
+table {
+    border-spacing: 0;
+    border-collapse: collapse;
+    margin-top: 15px;
+    width: 100%;
+    table-layout: fixed;
+}
+
+td, th {
+    padding: 4px 8px;
+}
+
+th {
+    font-size: 12px;
+}
+
+tr:first-child > th:nth-child(even) {
+    width: px;
+}
+
+tr:nth-child(even):not(:first-child, .benchmark-running) {
+    background-color: rgb(237, 237, 237);
+}
+
+.result {
+    white-space: nowrap;
+}
+
+.benchmark-running {
+    background-color: black;
+    color: white;
+}
+
+:not(.benchmark-running) .result {
+    color: black;
+}
+
+.benchmark-running .result {
+    color: white;
+}
+
+/*
+.result .benchmark-running {
+    color: red;
+}
+*/
+
+.benchmark-name {
+    white-space: nowrap;
+    text-align: left;
+}
+
+.result.category,
+.benchmark-name.category {
+    font-weight: bold;
+}
+
+.benchmark-name:not(.category):not(.geometric-mean) {
+    text-indent: 0.5em;
+}
+
+.geometric-mean {
+    font-weight: bold;
+}
+
+.benchmark-name:not(:first-child) {
+    border-left: 15px solid white;
+}
+
+.benchmark-name a:link,
+.benchmark-name a:visited {
+    color: black;
+}
+
+.highlighted-result {
+    background-color: black;
+    color: white;
+}
