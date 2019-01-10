@@ -1,3 +1,15 @@
+2019-01-10  Oriol Brufau  <obrufau@igalia.com>
+
+        [css-grid] Let abspos items reference implicit grid lines
+        https://bugs.webkit.org/show_bug.cgi?id=193313
+
+        Reviewed by Manuel Rego Casasnovas.
+
+        Import test changes from WPT.
+
+        * web-platform-tests/css/css-grid/abspos/grid-positioned-items-padding-001.html:
+        * web-platform-tests/css/css-grid/abspos/grid-positioned-items-unknown-named-grid-line-001.html:
+
 2019-01-10  cathie chen  <cathiechen@igalia.com>
 
         Import css-lists testcases from WPT.

@@ -133,7 +133,6 @@ private:
     void layoutGridItems();
     void populateGridPositionsForDirection(GridTrackSizingDirection);
 
-    bool gridPositionIsAutoForOutOfFlow(GridPosition, GridTrackSizingDirection) const;
     LayoutUnit resolveAutoStartGridPosition(GridTrackSizingDirection) const;
     LayoutUnit resolveAutoEndGridPosition(GridTrackSizingDirection) const;
     LayoutUnit gridAreaBreadthForOutOfFlowChild(const RenderBox&, GridTrackSizingDirection);
