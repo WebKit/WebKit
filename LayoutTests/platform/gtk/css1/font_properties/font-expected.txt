@@ -9,29 +9,29 @@ layer at (0,0) size 785x4273
       RenderBlock {PRE} at (0,27) size 769x168
         RenderText {#text} at (0,0) size 399x168
           text run at (0,0) width 161: "BODY {font-size: 12px;}"
-          text run at (160,0) width 1: " "
+          text run at (161,0) width 0: " "
           text run at (0,14) width 322: ".one {font: italic small-caps 13pt Helvetica;}"
-          text run at (321,14) width 1: " "
+          text run at (322,14) width 0: " "
           text run at (0,28) width 203: ".two {font: 150%/150% serif;}"
-          text run at (202,28) width 1: " "
+          text run at (203,28) width 0: " "
           text run at (0,42) width 252: ".three {font: 150%/150% sans-serif;}"
-          text run at (251,42) width 1: " "
+          text run at (252,42) width 0: " "
           text run at (0,56) width 231: ".four {font: small/200% cursive;}"
-          text run at (230,56) width 1: " "
+          text run at (231,56) width 0: " "
           text run at (0,70) width 399: ".five {font: italic small-caps 900 150%/150% sans-serif;}"
-          text run at (398,70) width 1: " "
+          text run at (399,70) width 0: " "
           text run at (0,84) width 392: ".six {font: italic small-caps 100 150%/300% sans-serif;}"
-          text run at (391,84) width 1: " "
+          text run at (392,84) width 0: " "
           text run at (0,98) width 392: ".seven {font: italic small-caps 900 150%/2em monospace;}"
-          text run at (391,98) width 1: " "
+          text run at (392,98) width 0: " "
           text run at (0,112) width 399: ".eight {font: italic small-caps 500 150%/1in sans-serif;}"
-          text run at (398,112) width 1: " "
+          text run at (399,112) width 0: " "
           text run at (0,126) width 378: ".nine {font: oblique normal 700 18px/200% sans-serif;}"
-          text run at (377,126) width 1: " "
+          text run at (378,126) width 0: " "
           text run at (0,140) width 301: ".ten {font: normal 400 80%/2.5 sans-serif;}"
-          text run at (300,140) width 1: " "
+          text run at (301,140) width 0: " "
           text run at (0,154) width 266: "SPAN.color {background-color: silver;}"
-          text run at (265,154) width 1: " "
+          text run at (266,154) width 0: " "
       RenderBlock {HR} at (0,207) size 769x2 [border: (1px inset #000000)]
       RenderBlock {P} at (0,221) size 769x15
         RenderText {#text} at (0,0) size 706x14
@@ -86,9 +86,9 @@ layer at (0,0) size 785x4273
         RenderText {#text} at (0,8) size 750x128
           text run at (0,8) width 750: "This element should be in a monospace font, italicized and small caps, with a weight of"
           text run at (0,44) width 55: "900. "
-          text run at (55,44) width 687: "Its font-size should be 150% the base font size, and its line-height should be"
+          text run at (54,44) width 688: "Its font-size should be 150% the base font size, and its line-height should be"
           text run at (0,80) width 618: "2em, or twice the element's font size (18px and 36px, respectively). "
-          text run at (618,80) width 113: "Extra text is"
+          text run at (617,80) width 114: "Extra text is"
           text run at (0,116) width 499: "included for the purposes of testing this more effectively."
       RenderBlock {P} at (0,1055) size 769x289
         RenderText {#text} at (0,38) size 765x212
