@@ -51,14 +51,8 @@ CallFrameShuffler::CallFrameShuffler(CCallHelpers& jit, const CallFrameShuffleDa
         m_lockedRegisters.clear(GPRInfo::toRegister(i));
     for (unsigned i = FPRInfo::numberOfRegisters; i--; )
         m_lockedRegisters.clear(FPRInfo::toRegister(i));
-
-#if USE(JSVALUE64)
-    // ... as well as the runtime registers on 64-bit architectures.
-    // However do not use these registers on 32-bit architectures since
-    // saving and restoring callee-saved registers in CallFrameShuffler isn't supported
-    // on 32-bit architectures yet.
+    // ... as well as the runtime registers.
     m_lockedRegisters.exclude(RegisterSet::vmCalleeSaveRegisters());
-#endif
 
     ASSERT(!data.callee.isInJSStack() || data.callee.virtualRegister().isLocal());
     addNew(VirtualRegister(CallFrameSlot::callee), data.callee);

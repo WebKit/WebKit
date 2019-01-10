@@ -75,6 +75,8 @@ static JSValue jsValueFor(CPUState& cpu, JSValueSource source)
 
 #if NUMBER_OF_CALLEE_SAVES_REGISTERS > 0
 
+static_assert(is64Bit(), "we only support callee save registers on 64-bit");
+
 // Based on AssemblyHelpers::emitRestoreCalleeSavesFor().
 static void restoreCalleeSavesFor(Context& context, CodeBlock* codeBlock)
 {
@@ -135,14 +137,8 @@ static void restoreCalleeSavesFromVMEntryFrameCalleeSavesBuffer(Context& context
         size_t uintptrOffset = entry.offset() / sizeof(UCPURegister);
         if (entry.reg().isGPR())
             context.gpr(entry.reg().gpr()) = calleeSaveBuffer[uintptrOffset];
-        else {
-#if USE(JSVALUE64)
+        else
             context.fpr(entry.reg().fpr()) = bitwise_cast<double>(calleeSaveBuffer[uintptrOffset]);
-#else
-            // FIXME: <https://webkit.org/b/193275> support callee-saved floating point registers on 32-bit architectures
-            RELEASE_ASSERT_NOT_REACHED();
-#endif
-        }
     }
 }
 
@@ -165,14 +161,8 @@ static void copyCalleeSavesToVMEntryFrameCalleeSavesBuffer(Context& context)
             continue;
         if (entry.reg().isGPR())
             stack.set(calleeSaveBuffer, entry.offset(), context.gpr<UCPURegister>(entry.reg().gpr()));
-        else {
-#if USE(JSVALUE64)
+        else
             stack.set(calleeSaveBuffer, entry.offset(), context.fpr<UCPURegister>(entry.reg().fpr()));
-#else
-            // FIXME: <https://webkit.org/b/193275> support callee-saved floating point registers on 32-bit architectures
-            RELEASE_ASSERT_NOT_REACHED();
-#endif
-        }
     }
 }
 

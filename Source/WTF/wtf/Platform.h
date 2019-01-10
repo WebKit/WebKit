@@ -760,6 +760,9 @@
 #if !defined(ENABLE_JIT)
 #define ENABLE_JIT 1
 #endif
+/* But still disable DFG for now. */
+#undef ENABLE_DFG_JIT
+#define ENABLE_DFG_JIT 0
 #else
 /* Disable JIT and force C_LOOP on all 32bit-architectures but ARMv7-Thumb2/Linux. */
 #undef ENABLE_JIT
