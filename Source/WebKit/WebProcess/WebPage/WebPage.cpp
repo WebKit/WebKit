@@ -58,7 +58,6 @@
 #include "RemoteWebInspectorUIMessages.h"
 #include "SessionState.h"
 #include "SessionStateConversion.h"
-#include "SessionTracker.h"
 #include "ShareSheetCallbackID.h"
 #include "ShareableBitmap.h"
 #include "SharedBufferDataReference.h"

@@ -35,7 +35,7 @@ struct WebsiteDataStoreParameters;
 
 class RemoteNetworkingContext {
 public:
-    // FIXME: Remove platform-specific code and use SessionTracker.
+    // FIXME: Remove platform-specific code.
     static void ensureWebsiteDataStoreSession(NetworkProcess&, WebsiteDataStoreParameters&&);
 };
 

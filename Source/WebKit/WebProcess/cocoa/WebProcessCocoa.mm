@@ -33,7 +33,6 @@
 #import "ObjCObjectGraph.h"
 #import "SandboxExtension.h"
 #import "SandboxInitializationParameters.h"
-#import "SessionTracker.h"
 #import "WKAPICast.h"
 #import "WKBrowsingContextHandleInternal.h"
 #import "WKCrashReporter.h"

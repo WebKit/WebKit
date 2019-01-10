@@ -31,7 +31,6 @@
 #include "Logging.h"
 #include "NetworkLoadParameters.h"
 #include "NetworkProcess.h"
-#include "SessionTracker.h"
 #include <WebCore/CrossOriginAccessControl.h>
 
 #define RELEASE_LOG_IF_ALLOWED(fmt, ...) RELEASE_LOG_IF(m_parameters.sessionID.isAlwaysOnLoggingAllowed(), Network, "%p - NetworkCORSPreflightChecker::" fmt, this, ##__VA_ARGS__)
@@ -72,7 +71,7 @@ void NetworkCORSPreflightChecker::startPreflight()
     if (m_shouldCaptureExtraNetworkLoadMetrics)
         m_loadInformation = NetworkTransactionInformation { NetworkTransactionInformation::Type::Preflight, loadParameters.request, { }, { } };
 
-    if (auto* networkSession = SessionTracker::networkSession(loadParameters.sessionID)) {
+    if (auto* networkSession = m_networkProcess->networkSession(loadParameters.sessionID)) {
         m_task = NetworkDataTask::create(*networkSession, *this, WTFMove(loadParameters));
         m_task->resume();
     } else

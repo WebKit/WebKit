@@ -36,10 +36,11 @@ namespace WebKit {
 
 class NetworkLoad;
 class NetworkLoadParameters;
+class NetworkProcess;
 
 class PreconnectTask final : public NetworkLoadClient {
 public:
-    explicit PreconnectTask(NetworkLoadParameters&&, CompletionHandler<void(const WebCore::ResourceError&)>&& completionHandler = { });
+    explicit PreconnectTask(NetworkProcess&, NetworkLoadParameters&&, CompletionHandler<void(const WebCore::ResourceError&)>&& completionHandler = { });
     ~PreconnectTask();
 
 private:

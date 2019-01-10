@@ -40,7 +40,7 @@ public:
         return adoptRef(*new WebFrameNetworkingContext(frame));
     }
 
-    // FIXME: remove platform-specific code and use SessionTracker
+    // FIXME: remove platform-specific code.
     static void ensureWebsiteDataStoreSession(WebsiteDataStoreParameters&&);
 
     WebFrameLoaderClient* webFrameLoaderClient() const;

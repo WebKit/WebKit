@@ -28,7 +28,6 @@
 
 #import "DataReference.h"
 #import "NetworkSessionCocoa.h"
-#import "SessionTracker.h"
 #import "WKDownloadProgress.h"
 #import <pal/spi/cf/CFNetworkSPI.h>
 #import <pal/spi/cocoa/NSProgressSPI.h>
@@ -41,7 +40,7 @@ void Download::resume(const IPC::DataReference& resumeData, const String& path, 
     if (m_sandboxExtension)
         m_sandboxExtension->consume();
 
-    auto* networkSession = SessionTracker::networkSession(m_sessionID);
+    auto* networkSession = m_downloadManager.client().networkSession(m_sessionID);
     if (!networkSession) {
         WTFLogAlways("Could not find network session with given session ID");
         return;

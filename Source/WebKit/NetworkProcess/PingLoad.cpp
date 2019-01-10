@@ -30,7 +30,7 @@
 #include "AuthenticationManager.h"
 #include "Logging.h"
 #include "NetworkLoadChecker.h"
-#include "SessionTracker.h"
+#include "NetworkProcess.h"
 #include "WebErrors.h"
 
 #define RELEASE_LOG_IF_ALLOWED(fmt, ...) RELEASE_LOG_IF(m_parameters.sessionID.isAlwaysOnLoggingAllowed(), Network, "%p - PingLoad::" fmt, this, ##__VA_ARGS__)
@@ -56,7 +56,7 @@ PingLoad::PingLoad(NetworkProcess& networkProcess, NetworkResourceLoadParameters
     // Set a very generous timeout, just in case.
     m_timeoutTimer.startOneShot(60000_s);
 
-    m_networkLoadChecker->check(ResourceRequest { m_parameters.request }, nullptr, [this] (auto&& result) {
+    m_networkLoadChecker->check(ResourceRequest { m_parameters.request }, nullptr, [this, networkProcess = makeRef(networkProcess)] (auto&& result) {
         WTF::switchOn(result,
             [this] (ResourceError& error) {
                 this->didFinish(error);
@@ -65,8 +65,8 @@ PingLoad::PingLoad(NetworkProcess& networkProcess, NetworkResourceLoadParameters
                 // We should never send a synthetic redirect for PingLoads.
                 ASSERT_NOT_REACHED();
             },
-            [this] (ResourceRequest& request) {
-                this->loadRequest(WTFMove(request));
+            [&] (ResourceRequest& request) {
+                this->loadRequest(networkProcess, WTFMove(request));
             }
         );
     });
@@ -87,10 +87,10 @@ void PingLoad::didFinish(const ResourceError& error, const ResourceResponse& res
     delete this;
 }
 
-void PingLoad::loadRequest(ResourceRequest&& request)
+void PingLoad::loadRequest(NetworkProcess& networkProcess, ResourceRequest&& request)
 {
     RELEASE_LOG_IF_ALLOWED("startNetworkLoad");
-    if (auto* networkSession = SessionTracker::networkSession(m_parameters.sessionID)) {
+    if (auto* networkSession = networkProcess.networkSession(m_parameters.sessionID)) {
         auto loadParameters = m_parameters;
         loadParameters.request = WTFMove(request);
         m_task = NetworkDataTask::create(*networkSession, *this, WTFMove(loadParameters));

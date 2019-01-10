@@ -72,6 +72,7 @@ public:
         virtual IPC::Connection* parentProcessConnectionForDownloads() = 0;
         virtual AuthenticationManager& downloadsAuthenticationManager() = 0;
         virtual void pendingDownloadCanceled(DownloadID) = 0;
+        virtual NetworkSession* networkSession(const PAL::SessionID&) const = 0;
         virtual void ref() const = 0;
         virtual void deref() const = 0;
     };

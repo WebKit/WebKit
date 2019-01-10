@@ -125,6 +125,10 @@ public:
 
     NetworkCache::Cache* cache() { return m_cache.get(); }
 
+    void setSession(const PAL::SessionID&, Ref<NetworkSession>&&);
+    NetworkSession* networkSession(const PAL::SessionID&) const override;
+    void destroySession(const PAL::SessionID&);
+    
     bool canHandleHTTPSServerTrustEvaluation() const { return m_canHandleHTTPSServerTrustEvaluation; }
 
     void processWillSuspendImminently(bool& handled);
@@ -265,7 +269,6 @@ private:
     void didReceiveSyncNetworkProcessMessage(IPC::Connection&, IPC::Decoder&, std::unique_ptr<IPC::Encoder>&);
     void initializeNetworkProcess(NetworkProcessCreationParameters&&);
     void createNetworkConnectionToWebProcess(bool isServiceWorkerProcess, WebCore::SecurityOriginData&&);
-    void destroySession(PAL::SessionID);
 
     void fetchWebsiteData(PAL::SessionID, OptionSet<WebsiteDataType>, OptionSet<WebsiteDataFetchOption>, uint64_t callbackID);
     void deleteWebsiteData(PAL::SessionID, OptionSet<WebsiteDataType>, WallTime modifiedSince, uint64_t callbackID);
@@ -375,8 +378,8 @@ private:
     NetworkProcessSupplementMap m_supplements;
 
     HashSet<PAL::SessionID> m_sessionsControlledByAutomation;
-
     HashMap<PAL::SessionID, Vector<CacheStorageParametersCallback>> m_cacheStorageParametersCallbacks;
+    HashMap<PAL::SessionID, Ref<NetworkSession>> m_networkSessions;
 
 #if PLATFORM(COCOA)
     void platformInitializeNetworkProcessCocoa(const NetworkProcessCreationParameters&);

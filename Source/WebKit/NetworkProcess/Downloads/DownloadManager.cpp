@@ -31,7 +31,6 @@
 #include "NetworkLoad.h"
 #include "NetworkSession.h"
 #include "PendingDownload.h"
-#include "SessionTracker.h"
 #include <WebCore/NotImplemented.h>
 #include <pal/SessionID.h>
 #include <wtf/StdLibExtras.h>
@@ -46,7 +45,7 @@ DownloadManager::DownloadManager(Client& client)
 
 void DownloadManager::startDownload(NetworkConnectionToWebProcess* connection, PAL::SessionID sessionID, DownloadID downloadID, const ResourceRequest& request, const String& suggestedName)
 {
-    auto* networkSession = SessionTracker::networkSession(sessionID);
+    auto* networkSession = client().networkSession(sessionID);
     if (!networkSession)
         return;
 

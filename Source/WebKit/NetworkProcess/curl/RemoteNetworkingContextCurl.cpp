@@ -26,8 +26,8 @@
 #include "config.h"
 #include "RemoteNetworkingContext.h"
 
+#include "NetworkProcess.h"
 #include "NetworkSession.h"
-#include "SessionTracker.h"
 #include "WebsiteDataStoreParameters.h"
 #include <WebCore/NetworkStorageSession.h>
 
@@ -42,7 +42,7 @@ void RemoteNetworkingContext::ensureWebsiteDataStoreSession(NetworkProcess& netw
         return;
 
     NetworkStorageSession::ensureSession(sessionID, String::number(sessionID.sessionID()));
-    SessionTracker::setSession(sessionID, NetworkSession::create(networkProcess, WTFMove(parameters.networkSessionParameters)));
+    networkProcess.setSession(sessionID, NetworkSession::create(networkProcess, WTFMove(parameters.networkSessionParameters)));
 }
 
 }

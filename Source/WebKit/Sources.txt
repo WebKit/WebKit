@@ -116,7 +116,6 @@ Shared/PrintInfo.cpp
 Shared/RTCNetwork.cpp
 Shared/RTCPacketOptions.cpp
 Shared/SessionState.cpp
-Shared/SessionTracker.cpp
 Shared/ShareableBitmap.cpp @no-unify
 Shared/ShareableResource.cpp
 Shared/SharedStringHashStore.cpp

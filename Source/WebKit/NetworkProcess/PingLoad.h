@@ -57,7 +57,7 @@ private:
     void cannotShowURL() final;
     void timeoutTimerFired();
 
-    void loadRequest(WebCore::ResourceRequest&&);
+    void loadRequest(NetworkProcess&, WebCore::ResourceRequest&&);
 
     void didFinish(const WebCore::ResourceError& = { }, const WebCore::ResourceResponse& response = { });
     

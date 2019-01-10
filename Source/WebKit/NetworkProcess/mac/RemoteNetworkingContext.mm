@@ -31,7 +31,6 @@
 #import "NetworkProcess.h"
 #import "NetworkSession.h"
 #import "NetworkSessionCreationParameters.h"
-#import "SessionTracker.h"
 #import "WebErrors.h"
 #import "WebsiteDataStoreParameters.h"
 #import <WebCore/NetworkStorageSession.h>
@@ -65,7 +64,7 @@ void RemoteNetworkingContext::ensureWebsiteDataStoreSession(NetworkProcess& netw
     for (const auto& cookie : parameters.pendingCookies)
         session->setCookie(cookie);
 
-    SessionTracker::setSession(sessionID, NetworkSession::create(networkProcess, WTFMove(parameters.networkSessionParameters)));
+    networkProcess.setSession(sessionID, NetworkSession::create(networkProcess, WTFMove(parameters.networkSessionParameters)));
 }
 
 }

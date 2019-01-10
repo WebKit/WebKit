@@ -55,6 +55,7 @@ messages -> NetworkConnectionToWebProcess LegacyReceiver {
     CreateSocketStream(URL url, PAL::SessionID sessionID, String cachePartition, uint64_t identifier)
 
     EnsureLegacyPrivateBrowsingSession()
+    DestroyLegacyPrivateBrowsingSession()
 
     RemoveStorageAccessForFrame(PAL::SessionID sessionID, uint64_t frameID, uint64_t pageID);
     RemoveStorageAccessForAllFramesOnPage(PAL::SessionID sessionID, uint64_t pageID);

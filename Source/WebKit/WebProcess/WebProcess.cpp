@@ -41,7 +41,6 @@
 #include "NetworkSession.h"
 #include "NetworkSessionCreationParameters.h"
 #include "PluginProcessConnectionManager.h"
-#include "SessionTracker.h"
 #include "StatisticsData.h"
 #include "UserData.h"
 #include "WebAutomationSessionProxy.h"
@@ -539,6 +538,11 @@ void WebProcess::fullKeyboardAccessModeChanged(bool fullKeyboardAccessEnabled)
 void WebProcess::ensureLegacyPrivateBrowsingSessionInNetworkProcess()
 {
     ensureNetworkProcessConnection().connection().send(Messages::NetworkConnectionToWebProcess::EnsureLegacyPrivateBrowsingSession(), 0);
+}
+
+void WebProcess::destroyLegacyPrivateBrowsingSessionInNetworkProcess()
+{
+    ensureNetworkProcessConnection().connection().send(Messages::NetworkConnectionToWebProcess::DestroyLegacyPrivateBrowsingSession(), 0);
 }
 
 #if ENABLE(NETSCAPE_PLUGIN_API)

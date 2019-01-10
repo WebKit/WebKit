@@ -31,8 +31,8 @@
 #include "Logging.h"
 #include "NetworkCache.h"
 #include "NetworkLoad.h"
+#include "NetworkProcess.h"
 #include "NetworkSession.h"
-#include "SessionTracker.h"
 #include <WebCore/NetworkStorageSession.h>
 #include <pal/SessionID.h>
 #include <wtf/RunLoop.h>
@@ -60,7 +60,7 @@ SpeculativeLoad::SpeculativeLoad(Cache& cache, const GlobalFrameID& globalFrameI
     parameters.contentSniffingPolicy = ContentSniffingPolicy::DoNotSniffContent;
     parameters.contentEncodingSniffingPolicy = ContentEncodingSniffingPolicy::Sniff;
     parameters.request = m_originalRequest;
-    m_networkLoad = std::make_unique<NetworkLoad>(*this, WTFMove(parameters), *SessionTracker::networkSession(PAL::SessionID::defaultSessionID()));
+    m_networkLoad = std::make_unique<NetworkLoad>(*this, WTFMove(parameters), *cache.networkProcess().networkSession(PAL::SessionID::defaultSessionID()));
 }
 
 SpeculativeLoad::~SpeculativeLoad()

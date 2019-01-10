@@ -32,7 +32,6 @@
 #include "NetworkConnectionToWebProcessMessages.h"
 #include "NetworkProcessConnection.h"
 #include "NetworkResourceLoadParameters.h"
-#include "SessionTracker.h"
 #include "SharedBufferDataReference.h"
 #include "WebCompiledContentRuleList.h"
 #include "WebCoreArgumentCoders.h"

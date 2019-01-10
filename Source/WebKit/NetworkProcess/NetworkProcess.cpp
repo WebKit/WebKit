@@ -49,7 +49,6 @@
 #include "NetworkSessionCreationParameters.h"
 #include "PreconnectTask.h"
 #include "RemoteNetworkingContext.h"
-#include "SessionTracker.h"
 #include "StatisticsData.h"
 #include "WebCookieManager.h"
 #include "WebPageProxyMessages.h"
@@ -302,7 +301,7 @@ void NetworkProcess::initializeNetworkProcess(NetworkProcessCreationParameters&&
         NetworkStorageSession::switchToNewTestingSession();
 
     auto sessionID = parameters.defaultDataStoreParameters.networkSessionParameters.sessionID;
-    SessionTracker::setSession(sessionID, NetworkSession::create(*this, WTFMove(parameters.defaultDataStoreParameters.networkSessionParameters)));
+    setSession(sessionID, NetworkSession::create(*this, WTFMove(parameters.defaultDataStoreParameters.networkSessionParameters)));
 
 #if ENABLE(INDEXED_DATABASE)
     addIndexedDatabaseSession(sessionID, parameters.defaultDataStoreParameters.indexedDatabaseDirectory, parameters.defaultDataStoreParameters.indexedDatabaseDirectoryExtensionHandle);
@@ -319,7 +318,7 @@ void NetworkProcess::initializeNetworkProcess(NetworkProcessCreationParameters&&
     }
 #endif
 
-    auto* defaultSession = SessionTracker::networkSession(PAL::SessionID::defaultSessionID());
+    auto* defaultSession = networkSession(PAL::SessionID::defaultSessionID());
     for (const auto& cookie : parameters.defaultDataStoreParameters.pendingCookies)
         defaultSession->networkStorageSession().setCookie(cookie);
 
@@ -432,7 +431,7 @@ void NetworkProcess::createNetworkConnectionToWebProcess(bool isServiceWorkerPro
 void NetworkProcess::clearCachedCredentials()
 {
     NetworkStorageSession::defaultStorageSession().credentialStorage().clearCredentials();
-    if (auto* networkSession = SessionTracker::networkSession(PAL::SessionID::defaultSessionID()))
+    if (auto* networkSession = this->networkSession(PAL::SessionID::defaultSessionID()))
         networkSession->clearCredentials();
     else
         ASSERT_NOT_REACHED();
@@ -452,9 +451,21 @@ void NetworkProcess::addWebsiteDataStore(WebsiteDataStoreParameters&& parameters
     RemoteNetworkingContext::ensureWebsiteDataStoreSession(*this, WTFMove(parameters));
 }
 
-void NetworkProcess::destroySession(PAL::SessionID sessionID)
+NetworkSession* NetworkProcess::networkSession(const PAL::SessionID& sessionID) const
 {
-    SessionTracker::destroySession(sessionID);
+    return m_networkSessions.get(sessionID);
+}
+
+void NetworkProcess::setSession(const PAL::SessionID& sessionID, Ref<NetworkSession>&& session)
+{
+    m_networkSessions.set(sessionID, WTFMove(session));
+}
+
+void NetworkProcess::destroySession(const PAL::SessionID& sessionID)
+{
+    if (auto session = m_networkSessions.take(sessionID))
+        session->get().invalidateAndCancel();
+    NetworkStorageSession::destroySession(sessionID);
     m_sessionsControlledByAutomation.remove(sessionID);
     CacheStorage::Engine::destroyEngine(*this, sessionID);
 
@@ -1033,7 +1044,7 @@ void NetworkProcess::preconnectTo(const URL& url, WebCore::StoredCredentialsPoli
     parameters.storedCredentialsPolicy = storedCredentialsPolicy;
     parameters.shouldPreconnectOnly = PreconnectOnly::Yes;
 
-    new PreconnectTask(WTFMove(parameters));
+    new PreconnectTask(*this, WTFMove(parameters));
 #else
     UNUSED_PARAM(url);
     UNUSED_PARAM(storedCredentialsPolicy);

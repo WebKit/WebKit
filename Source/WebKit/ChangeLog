@@ -1,5 +1,74 @@
 2019-01-09  Alex Christensen  <achristensen@webkit.org>
 
+        Replace SessionTracker with HashMap member of NetworkProcess
+        https://bugs.webkit.org/show_bug.cgi?id=193266
+
+        Reviewed by Joseph Pecoraro.
+
+        * NetworkProcess/Downloads/DownloadManager.cpp:
+        (WebKit::DownloadManager::startDownload):
+        * NetworkProcess/Downloads/DownloadManager.h:
+        * NetworkProcess/Downloads/cocoa/DownloadCocoa.mm:
+        (WebKit::Download::resume):
+        * NetworkProcess/NetworkCORSPreflightChecker.cpp:
+        (WebKit::NetworkCORSPreflightChecker::startPreflight):
+        * NetworkProcess/NetworkConnectionToWebProcess.cpp:
+        (WebKit::NetworkConnectionToWebProcess::preconnectTo):
+        (WebKit::NetworkConnectionToWebProcess::cookiesForDOM):
+        (WebKit::NetworkConnectionToWebProcess::setCookiesFromDOM):
+        (WebKit::NetworkConnectionToWebProcess::destroyLegacyPrivateBrowsingSession):
+        * NetworkProcess/NetworkConnectionToWebProcess.h:
+        * NetworkProcess/NetworkConnectionToWebProcess.messages.in:
+        * NetworkProcess/NetworkProcess.cpp:
+        (WebKit::NetworkProcess::initializeNetworkProcess):
+        (WebKit::NetworkProcess::clearCachedCredentials):
+        (WebKit::NetworkProcess::networkSession):
+        (WebKit::NetworkProcess::setSession):
+        (WebKit::NetworkProcess::destroySession):
+        (WebKit::NetworkProcess::preconnectTo):
+        * NetworkProcess/NetworkProcess.h:
+        * NetworkProcess/NetworkResourceLoader.cpp:
+        (WebKit::NetworkResourceLoader::startNetworkLoad):
+        (WebKit::NetworkResourceLoader::didFinishLoading):
+        (WebKit::NetworkResourceLoader::sendResultForCacheEntry):
+        (WebKit::NetworkResourceLoader::shouldLogCookieInformation):
+        (WebKit::NetworkResourceLoader::logCookieInformation const):
+        (WebKit::logBlockedCookieInformation):
+        (WebKit::logCookieInformationInternal):
+        (WebKit::NetworkResourceLoader::logCookieInformation):
+        * NetworkProcess/NetworkResourceLoader.h:
+        * NetworkProcess/PingLoad.cpp:
+        (WebKit::PingLoad::loadRequest):
+        * NetworkProcess/PingLoad.h:
+        * NetworkProcess/PreconnectTask.cpp:
+        (WebKit::PreconnectTask::PreconnectTask):
+        * NetworkProcess/PreconnectTask.h:
+        * NetworkProcess/RemoteNetworkingContext.h:
+        * NetworkProcess/cache/NetworkCacheSpeculativeLoad.cpp:
+        (WebKit::NetworkCache::SpeculativeLoad::SpeculativeLoad):
+        * NetworkProcess/cocoa/NetworkDataTaskCocoa.mm:
+        * NetworkProcess/cocoa/NetworkProcessCocoa.mm:
+        * NetworkProcess/cocoa/NetworkSessionCocoa.mm:
+        * NetworkProcess/mac/RemoteNetworkingContext.mm:
+        (WebKit::RemoteNetworkingContext::ensureWebsiteDataStoreSession):
+        * Shared/SessionTracker.cpp: Removed.
+        * Shared/SessionTracker.h: Removed.
+        * Sources.txt:
+        * WebKit.xcodeproj/project.pbxproj:
+        * WebProcess/InjectedBundle/InjectedBundle.cpp:
+        (WebKit::InjectedBundle::setPrivateBrowsingEnabled):
+        * WebProcess/Network/WebLoaderStrategy.cpp:
+        * WebProcess/WebCoreSupport/WebPlatformStrategies.cpp:
+        * WebProcess/WebCoreSupport/mac/WebFrameNetworkingContext.h:
+        * WebProcess/WebCoreSupport/mac/WebFrameNetworkingContext.mm:
+        * WebProcess/WebPage/WebPage.cpp:
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::destroyLegacyPrivateBrowsingSessionInNetworkProcess):
+        * WebProcess/WebProcess.h:
+        * WebProcess/cocoa/WebProcessCocoa.mm:
+
+2019-01-09  Alex Christensen  <achristensen@webkit.org>
+
         Expand use of sourceApplicationAuditData
         https://bugs.webkit.org/show_bug.cgi?id=192995
         <rdar://problem/46627875>

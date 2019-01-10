@@ -36,7 +36,6 @@
 #include "NetworkLoadChecker.h"
 #include "NetworkProcess.h"
 #include "NetworkProcessConnectionMessages.h"
-#include "SessionTracker.h"
 #include "SharedBufferDataReference.h"
 #include "WebCoreArgumentCoders.h"
 #include "WebErrors.h"
@@ -284,10 +283,10 @@ void NetworkResourceLoader::startNetworkLoad(ResourceRequest&& request, FirstLoa
     if (request.url().protocolIsBlob())
         parameters.blobFileReferences = NetworkBlobRegistry::singleton().filesInBlob(m_connection, originalRequest().url());
 
-    auto* networkSession = SessionTracker::networkSession(parameters.sessionID);
+    auto* networkSession = m_connection->networkProcess().networkSession(parameters.sessionID);
     if (!networkSession && parameters.sessionID.isEphemeral()) {
         m_connection->networkProcess().addWebsiteDataStore(WebsiteDataStoreParameters::privateSessionParameters(parameters.sessionID));
-        networkSession = SessionTracker::networkSession(parameters.sessionID);
+        networkSession = m_connection->networkProcess().networkSession(parameters.sessionID);
     }
     if (!networkSession) {
         WTFLogAlways("Attempted to create a NetworkLoad with a session (id=%" PRIu64 ") that does not exist.", parameters.sessionID.sessionID());
@@ -550,7 +549,7 @@ void NetworkResourceLoader::didFinishLoading(const NetworkLoadMetrics& networkLo
     }
 
 #if ENABLE(RESOURCE_LOAD_STATISTICS) && !RELEASE_LOG_DISABLED
-    if (shouldLogCookieInformation(sessionID()))
+    if (shouldLogCookieInformation(m_connection, sessionID()))
         logCookieInformation();
 #endif
 
@@ -850,7 +849,7 @@ void NetworkResourceLoader::sendResultForCacheEntry(std::unique_ptr<NetworkCache
 #endif
 
 #if ENABLE(RESOURCE_LOAD_STATISTICS) && !RELEASE_LOG_DISABLED
-    if (shouldLogCookieInformation(sessionID()))
+    if (shouldLogCookieInformation(m_connection, sessionID()))
         logCookieInformation();
 #endif
 
@@ -949,9 +948,9 @@ bool NetworkResourceLoader::shouldCaptureExtraNetworkLoadMetrics() const
 }
 
 #if ENABLE(RESOURCE_LOAD_STATISTICS) && !RELEASE_LOG_DISABLED
-bool NetworkResourceLoader::shouldLogCookieInformation(const PAL::SessionID& sessionID)
+bool NetworkResourceLoader::shouldLogCookieInformation(NetworkConnectionToWebProcess& connection, const PAL::SessionID& sessionID)
 {
-    if (auto session = SessionTracker::networkSession(sessionID))
+    if (auto session = connection.networkProcess().networkSession(sessionID))
         return session->shouldLogCookieInformation();
     return false;
 }
@@ -968,17 +967,17 @@ static String escapeIDForJSON(const Optional<uint64_t>& value)
 
 void NetworkResourceLoader::logCookieInformation() const
 {
-    ASSERT(shouldLogCookieInformation(sessionID()));
+    ASSERT(shouldLogCookieInformation(m_connection, sessionID()));
 
     auto networkStorageSession = WebCore::NetworkStorageSession::storageSession(sessionID());
     ASSERT(networkStorageSession);
 
-    logCookieInformation("NetworkResourceLoader", reinterpret_cast<const void*>(this), *networkStorageSession, originalRequest().firstPartyForCookies(), SameSiteInfo::create(originalRequest()), originalRequest().url(), originalRequest().httpReferrer(), frameID(), pageID(), identifier());
+    logCookieInformation(m_connection, "NetworkResourceLoader", reinterpret_cast<const void*>(this), *networkStorageSession, originalRequest().firstPartyForCookies(), SameSiteInfo::create(originalRequest()), originalRequest().url(), originalRequest().httpReferrer(), frameID(), pageID(), identifier());
 }
 
-static void logBlockedCookieInformation(const String& label, const void* loggedObject, const WebCore::NetworkStorageSession& networkStorageSession, const URL& firstParty, const SameSiteInfo& sameSiteInfo, const URL& url, const String& referrer, Optional<uint64_t> frameID, Optional<uint64_t> pageID, Optional<uint64_t> identifier)
+static void logBlockedCookieInformation(NetworkConnectionToWebProcess& connection, const String& label, const void* loggedObject, const WebCore::NetworkStorageSession& networkStorageSession, const URL& firstParty, const SameSiteInfo& sameSiteInfo, const URL& url, const String& referrer, Optional<uint64_t> frameID, Optional<uint64_t> pageID, Optional<uint64_t> identifier)
 {
-    ASSERT(NetworkResourceLoader::shouldLogCookieInformation(networkStorageSession.sessionID()));
+    ASSERT(NetworkResourceLoader::shouldLogCookieInformation(connection, networkStorageSession.sessionID()));
 
     auto escapedURL = escapeForJSON(url.string());
     auto escapedFirstParty = escapeForJSON(firstParty.string());
@@ -1003,9 +1002,9 @@ static void logBlockedCookieInformation(const String& label, const void* loggedO
 #undef LOCAL_LOG_IF_ALLOWED
 }
 
-static void logCookieInformationInternal(const String& label, const void* loggedObject, const WebCore::NetworkStorageSession& networkStorageSession, const URL& firstParty, const WebCore::SameSiteInfo& sameSiteInfo, const URL& url, const String& referrer, Optional<uint64_t> frameID, Optional<uint64_t> pageID, Optional<uint64_t> identifier)
+static void logCookieInformationInternal(NetworkConnectionToWebProcess& connection, const String& label, const void* loggedObject, const WebCore::NetworkStorageSession& networkStorageSession, const URL& firstParty, const WebCore::SameSiteInfo& sameSiteInfo, const URL& url, const String& referrer, Optional<uint64_t> frameID, Optional<uint64_t> pageID, Optional<uint64_t> identifier)
 {
-    ASSERT(NetworkResourceLoader::shouldLogCookieInformation(networkStorageSession.sessionID()));
+    ASSERT(NetworkResourceLoader::shouldLogCookieInformation(connection, networkStorageSession.sessionID()));
 
     Vector<WebCore::Cookie> cookies;
     if (!networkStorageSession.getRawCookies(firstParty, sameSiteInfo, url, frameID, pageID, cookies))
@@ -1064,14 +1063,14 @@ static void logCookieInformationInternal(const String& label, const void* logged
 #undef LOCAL_LOG_IF_ALLOWED
 }
 
-void NetworkResourceLoader::logCookieInformation(const String& label, const void* loggedObject, const NetworkStorageSession& networkStorageSession, const URL& firstParty, const SameSiteInfo& sameSiteInfo, const URL& url, const String& referrer, Optional<uint64_t> frameID, Optional<uint64_t> pageID, Optional<uint64_t> identifier)
+void NetworkResourceLoader::logCookieInformation(NetworkConnectionToWebProcess& connection, const String& label, const void* loggedObject, const NetworkStorageSession& networkStorageSession, const URL& firstParty, const SameSiteInfo& sameSiteInfo, const URL& url, const String& referrer, Optional<uint64_t> frameID, Optional<uint64_t> pageID, Optional<uint64_t> identifier)
 {
-    ASSERT(shouldLogCookieInformation(networkStorageSession.sessionID()));
+    ASSERT(shouldLogCookieInformation(connection, networkStorageSession.sessionID()));
 
     if (networkStorageSession.shouldBlockCookies(firstParty, url, frameID, pageID))
-        logBlockedCookieInformation(label, loggedObject, networkStorageSession, firstParty, sameSiteInfo, url, referrer, frameID, pageID, identifier);
+        logBlockedCookieInformation(connection, label, loggedObject, networkStorageSession, firstParty, sameSiteInfo, url, referrer, frameID, pageID, identifier);
     else
-        logCookieInformationInternal(label, loggedObject, networkStorageSession, firstParty, sameSiteInfo, url, referrer, frameID, pageID, identifier);
+        logCookieInformationInternal(connection, label, loggedObject, networkStorageSession, firstParty, sameSiteInfo, url, referrer, frameID, pageID, identifier);
 }
 #endif
 

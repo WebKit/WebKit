@@ -33,7 +33,6 @@
 #include "NetworkProcessConnection.h"
 #include "NetworkSessionCreationParameters.h"
 #include "NotificationPermissionRequestManager.h"
-#include "SessionTracker.h"
 #include "UserData.h"
 #include "WebConnectionToUIProcess.h"
 #include "WebCoreArgumentCoders.h"
@@ -355,10 +354,10 @@ void InjectedBundle::setJavaScriptCanAccessClipboard(WebPageGroupProxy* pageGrou
 void InjectedBundle::setPrivateBrowsingEnabled(WebPageGroupProxy* pageGroup, bool enabled)
 {
     ASSERT(!hasProcessPrivilege(ProcessPrivilege::CanAccessRawCookies));
-    if (enabled) {
+    if (enabled)
         WebProcess::singleton().ensureLegacyPrivateBrowsingSessionInNetworkProcess();
-    } else
-        SessionTracker::destroySession(PAL::SessionID::legacyPrivateSessionID());
+    else
+        WebProcess::singleton().destroyLegacyPrivateBrowsingSessionInNetworkProcess();
 
     const HashSet<Page*>& pages = PageGroup::pageGroup(pageGroup->identifier())->pages();
     for (HashSet<Page*>::iterator iter = pages.begin(); iter != pages.end(); ++iter)
