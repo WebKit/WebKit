@@ -526,13 +526,9 @@ public:
 
 #endif // CPU(X86_64)
 
-#if CPU(ARM)
-#define NUMBER_OF_ARGUMENT_REGISTERS 4u
 #if CPU(ARM_THUMB2)
+#define NUMBER_OF_ARGUMENT_REGISTERS 4u
 #define NUMBER_OF_CALLEE_SAVES_REGISTERS 1u
-#else
-#define NUMBER_OF_CALLEE_SAVES_REGISTERS 0u
-#endif
 
 class GPRInfo {
 public:
@@ -548,11 +544,7 @@ public:
     static const GPRReg regT4 = ARMRegisters::r8;
     static const GPRReg regT5 = ARMRegisters::r9;
     static const GPRReg regT6 = ARMRegisters::r10;
-#if CPU(ARM_THUMB2)
-    static const GPRReg regT7 = ARMRegisters::r11;
-#else 
-    static const GPRReg regT7 = ARMRegisters::r7;
-#endif
+    static const GPRReg regT7 = ARMRegisters::r5;
     static const GPRReg regT8 = ARMRegisters::r4;
     static const GPRReg regCS0 = ARMRegisters::r11;
     // These registers match the baseline JIT.
@@ -587,11 +579,7 @@ public:
         ASSERT(reg != InvalidGPRReg);
         ASSERT(static_cast<int>(reg) < 16);
         static const unsigned indexForRegister[16] =
-#if CPU(ARM_THUMB2)
-            { 0, 1, 2, 3, 8, InvalidIndex, InvalidIndex, InvalidIndex, 4, 5, 6, 7, InvalidIndex, InvalidIndex, InvalidIndex, InvalidIndex };
-#else
-            { 0, 1, 2, 3, 8, InvalidIndex, InvalidIndex, 7, 4, 5, 6, InvalidIndex, InvalidIndex, InvalidIndex, InvalidIndex, InvalidIndex };
-#endif
+            { 0, 1, 2, 3, 8, 7, InvalidIndex, InvalidIndex, 4, 5, 6, InvalidIndex, InvalidIndex, InvalidIndex, InvalidIndex, InvalidIndex };
         unsigned result = indexForRegister[reg];
         return result;
     }

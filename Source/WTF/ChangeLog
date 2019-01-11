@@ -1,3 +1,15 @@
+2019-01-11  Dominik Infuehr  <dinfuehr@igalia.com>
+
+        Enable DFG on ARM/Linux again
+        https://bugs.webkit.org/show_bug.cgi?id=192496
+
+        Reviewed by Yusuke Suzuki.
+
+        After changing the bytecode format DFG was disabled on all 32-bit
+        architectures. Enable DFG now again on ARM/Linux.
+
+        * wtf/Platform.h:
+
 2019-01-10  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r239825.
