@@ -101,8 +101,6 @@ static WKWebViewConfiguration *defaultConfiguration()
         processConfiguration.diskCacheSpeculativeValidationEnabled = ![SettingsController shared].networkCacheSpeculativeRevalidationDisabled;
         if ([SettingsController shared].perWindowWebProcessesDisabled)
             processConfiguration.maximumProcessCount = 1;
-        if ([SettingsController shared].processSwapOnNavigationEnabled)
-            processConfiguration.processSwapsOnNavigation = true;
         if ([SettingsController shared].processSwapOnWindowOpenWithOpenerEnabled)
             processConfiguration.processSwapsOnWindowOpenWithOpener = true;
         
