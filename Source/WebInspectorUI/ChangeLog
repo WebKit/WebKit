@@ -1,3 +1,26 @@
+2019-01-11  Matt Baker  <mattbaker@apple.com>
+
+        Web Inspector: REGRESSION: deleting an audit puts selection in a selected but invisible state
+        https://bugs.webkit.org/show_bug.cgi?id=192917
+        <rdar://problem/46875285>
+
+        Reviewed by Devin Rousso.
+
+        SelectionController should not be notified of removed children until the
+        child items have been removed from the TreeOutline. Doing so at this stage
+        is unsafe, since this method checks `this.selectedTreeElement`, which could
+        return the adjusted index from the SelectionController before anything has
+        actually been removed from the TreeOutline.
+
+        The number of calls to SelectionController.prototype.didRemoveItems is also
+        reduced somewhat, since we're no longer calling it for every TreeElement.
+
+        * UserInterface/Views/TreeOutline.js:
+        (WI.TreeOutline.prototype.removeChildAtIndex):
+        (WI.TreeOutline.prototype.removeChildren):
+        (WI.TreeOutline.prototype._forgetTreeElement):
+        (WI.TreeOutline.prototype._indexesForSubtree): Added.        
+
 2019-01-10  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: Audit: allow audits to be enabled/disabled
