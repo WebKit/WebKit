@@ -589,6 +589,21 @@ void WKBundlePageConfirmCompositionWithText(WKBundlePageRef pageRef, WKStringRef
     WebKit::toImpl(pageRef)->confirmCompositionForTesting(WebKit::toWTFString(text));
 }
 
+void WKBundlePageSetUseDarkAppearance(WKBundlePageRef pageRef, bool useDarkAppearance)
+{
+    WebKit::WebPage* webPage = WebKit::toImpl(pageRef);
+    if (WebCore::Page* page = webPage ? webPage->corePage() : nullptr)
+        page->setUseDarkAppearance(useDarkAppearance);
+}
+
+bool WKBundlePageIsUsingDarkAppearance(WKBundlePageRef pageRef)
+{
+    WebKit::WebPage* webPage = WebKit::toImpl(pageRef);
+    if (WebCore::Page* page = webPage ? webPage->corePage() : nullptr)
+        return page->useDarkAppearance();
+    return false;
+}
+
 bool WKBundlePageCanShowMIMEType(WKBundlePageRef pageRef, WKStringRef mimeTypeRef)
 {
     return WebKit::toImpl(pageRef)->canShowMIMEType(WebKit::toWTFString(mimeTypeRef));

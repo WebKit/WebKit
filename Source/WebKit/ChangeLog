@@ -1,3 +1,18 @@
+2019-01-10  Timothy Hatcher  <timothy@apple.com>
+
+        Add WKBundlePage SPI to temporarily force light or dark appearance on a page.
+        https://bugs.webkit.org/show_bug.cgi?id=193327
+        rdar://problem/47093222
+
+        Reviewed by Tim Horton.
+
+        Tests: WebKit.ForceLightAppearanceInBundle API Test
+
+        * WebProcess/InjectedBundle/API/c/WKBundlePage.cpp:
+        (WKBundlePageSetUseDarkAppearance): Added.
+        (WKBundlePageIsUsingDarkAppearance): Added.
+        * WebProcess/InjectedBundle/API/c/WKBundlePagePrivate.h:
+
 2019-01-10  Eric Carlson  <eric.carlson@apple.com>
 
         DeviceID hash salt manager can be NULL

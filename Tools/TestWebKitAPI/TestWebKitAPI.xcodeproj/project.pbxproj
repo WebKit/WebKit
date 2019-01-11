@@ -72,6 +72,9 @@
 		1C7FEB20207C0F2E00D23278 /* BackgroundColor.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1C7FEB1F207C0F2D00D23278 /* BackgroundColor.mm */; };
 		1C9EB8411E380DA1005C6442 /* ComplexTextController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1C9EB8401E380DA1005C6442 /* ComplexTextController.cpp */; };
 		1CAD1F861E5CE7DA00AF2C2C /* FontCache.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1CAD1F851E5CE7DA00AF2C2C /* FontCache.cpp */; };
+		1CF59AE221E68925006E37EC /* ForceLightAppearanceInBundle_Bundle.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1CF59AE021E68925006E37EC /* ForceLightAppearanceInBundle_Bundle.mm */; };
+		1CF59AE321E68932006E37EC /* ForceLightAppearanceInBundle.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1CF59ADF21E68925006E37EC /* ForceLightAppearanceInBundle.mm */; };
+		1CF59AE521E6977D006E37EC /* dark-mode.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 1CF59AE421E696FB006E37EC /* dark-mode.html */; };
 		1F83571B1D3FFB2300E3967B /* WKBackForwardList.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1F83571A1D3FFB0E00E3967B /* WKBackForwardList.mm */; };
 		26DF5A6315A2A27E003689C2 /* CancelLoadFromResourceLoadDelegate.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 26DF5A6115A2A22B003689C2 /* CancelLoadFromResourceLoadDelegate.html */; };
 		26F52EAD1828827B0023D412 /* geolocationGetCurrentPosition.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 26F52EAC1828820E0023D412 /* geolocationGetCurrentPosition.html */; };
@@ -1043,6 +1046,7 @@
 				7AEAD4811E20122700416EFE /* CrossPartitionFileSchemeAccess.html in Copy Resources */,
 				F4AB578A1F65165400DB0DA1 /* custom-draggable-div.html in Copy Resources */,
 				290F4275172A221C00939FF0 /* custom-protocol-sync-xhr.html in Copy Resources */,
+				1CF59AE521E6977D006E37EC /* dark-mode.html in Copy Resources */,
 				F47DFB2621A878DF00021FB6 /* data-detectors.html in Copy Resources */,
 				F486B1D01F67952300F34BDD /* DataTransfer-setDragImage.html in Copy Resources */,
 				F457A9D6202D68AF00F7E9D5 /* DataTransfer.html in Copy Resources */,
@@ -1356,6 +1360,9 @@
 		1CAD1F851E5CE7DA00AF2C2C /* FontCache.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FontCache.cpp; sourceTree = "<group>"; };
 		1CB9BC371A67482300FE5678 /* WeakPtr.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WeakPtr.cpp; sourceTree = "<group>"; };
 		1CF0D3781BBF2F3D00B4EF54 /* WKRetainPtr.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WKRetainPtr.cpp; sourceTree = "<group>"; };
+		1CF59ADF21E68925006E37EC /* ForceLightAppearanceInBundle.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ForceLightAppearanceInBundle.mm; sourceTree = "<group>"; };
+		1CF59AE021E68925006E37EC /* ForceLightAppearanceInBundle_Bundle.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ForceLightAppearanceInBundle_Bundle.mm; sourceTree = "<group>"; };
+		1CF59AE421E696FB006E37EC /* dark-mode.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = "dark-mode.html"; sourceTree = "<group>"; };
 		1F83571A1D3FFB0E00E3967B /* WKBackForwardList.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = WKBackForwardList.mm; path = Tests/WebKit/WKBackForwardList.mm; sourceTree = SOURCE_ROOT; };
 		260BA5781B1D2E7B004FA07C /* DFACombiner.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DFACombiner.cpp; sourceTree = "<group>"; };
 		260BA57A1B1D2EE2004FA07C /* DFAHelpers.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DFAHelpers.h; sourceTree = "<group>"; };
@@ -3528,7 +3535,10 @@
 				7AC7B56F20D9BA5B002C09A0 /* CustomBundleObject.mm */,
 				7AC7B56C20D9768F002C09A0 /* CustomBundleParameter.mm */,
 				7AC7B56B20D9768E002C09A0 /* CustomBundleParameter_Bundle.mm */,
+				1CF59AE421E696FB006E37EC /* dark-mode.html */,
 				BCAA485714A044D40088FAC4 /* EditorCommands.mm */,
+				1CF59ADF21E68925006E37EC /* ForceLightAppearanceInBundle.mm */,
+				1CF59AE021E68925006E37EC /* ForceLightAppearanceInBundle_Bundle.mm */,
 				C0C5D3BC14598B6F00A802A6 /* GetBackingScaleFactor.mm */,
 				C0C5D3BD14598B6F00A802A6 /* GetBackingScaleFactor_Bundle.mm */,
 				1AEF994817A09F5300998EF0 /* GetPIDAfterAbortedProcessLaunch.cpp */,
@@ -3995,6 +4005,7 @@
 				2E92B8FA2164A0C1005B64F0 /* FontAttributes.mm in Sources */,
 				1CAD1F861E5CE7DA00AF2C2C /* FontCache.cpp in Sources */,
 				F456AB1C213EDBA300CB2CEF /* FontManagerTests.mm in Sources */,
+				1CF59AE321E68932006E37EC /* ForceLightAppearanceInBundle.mm in Sources */,
 				7CCE7EF51A411AE600447C4C /* ForceRepaint.cpp in Sources */,
 				7CCE7EC01A411A7E00447C4C /* FragmentNavigation.mm in Sources */,
 				376C8C061D6E197C007D2BB9 /* FrameHandle.cpp in Sources */,
@@ -4365,6 +4376,7 @@
 				51393E221523952D005F39C5 /* DOMWindowExtensionBasic_Bundle.cpp in Sources */,
 				F6F49C6B15545CA70007F39D /* DOMWindowExtensionNoCache_Bundle.cpp in Sources */,
 				1171B24F219F49CD00CB897D /* FirstMeaningfulPaintMilestone_Bundle.cpp in Sources */,
+				1CF59AE221E68925006E37EC /* ForceLightAppearanceInBundle_Bundle.mm in Sources */,
 				C0C5D3C61459912900A802A6 /* GetBackingScaleFactor_Bundle.mm in Sources */,
 				F660AA1115A5F631003A1243 /* GetInjectedBundleInitializationUserDataCallback_Bundle.cpp in Sources */,
 				4BFDFFA71314776C0061F24B /* HitTestResultNodeHandle_Bundle.cpp in Sources */,

@@ -1,3 +1,22 @@
+2019-01-10  Timothy Hatcher  <timothy@apple.com>
+
+        Add WKBundlePage SPI to temporarily force light or dark appearance on a page.
+        https://bugs.webkit.org/show_bug.cgi?id=193327
+        rdar://problem/47093222
+
+        Reviewed by Tim Horton.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WebKit/mac/ForceLightAppearanceInBundle.mm: Added.
+        (TestWebKitAPI::didFinishNavigation):
+        (TestWebKitAPI::didReceiveMessageFromInjectedBundle):
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WebKit/mac/ForceLightAppearanceInBundle_Bundle.mm: Added.
+        (TestWebKitAPI::ForceLightAppearanceInBundleTest::ForceLightAppearanceInBundleTest):
+        (TestWebKitAPI::ForceLightAppearanceInBundleTest::didCreatePage):
+        (TestWebKitAPI::ForceLightAppearanceInBundleTest::didReceiveMessage):
+        * TestWebKitAPI/Tests/WebKit/mac/dark-mode.html: Added.
+
 2019-01-10  Joseph Pecoraro  <pecoraro@apple.com>
 
         Leak of WKWebProcessPlugInHitTestResult (160 bytes) in com.apple.WebKit.WebContent running layout tests
