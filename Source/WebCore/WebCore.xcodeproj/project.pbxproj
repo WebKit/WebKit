@@ -13314,6 +13314,8 @@
 		C21BF73721CD8A0200227979 /* WHLSLParser.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = WHLSLParser.cpp; sourceTree = "<group>"; };
 		C21BF73821CD8A0300227979 /* WHLSLParser.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WHLSLParser.h; sourceTree = "<group>"; };
 		C21BF73A21CD8D7000227979 /* WHLSLProgram.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WHLSLProgram.h; sourceTree = "<group>"; };
+		C21BF74221CD963B00227979 /* WHLSLStandardLibrary.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = WHLSLStandardLibrary.h; path = DerivedSources/WebCore/WHLSLStandardLibrary.h; sourceTree = BUILT_PRODUCTS_DIR; };
+		C21BF74521CD969800227979 /* WHLSLStandardLibrary.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = WHLSLStandardLibrary.txt; sourceTree = "<group>"; };
 		C21DF2E71D9E4E9900F5B24C /* CSSFontVariationValue.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CSSFontVariationValue.cpp; sourceTree = "<group>"; };
 		C21DF2E81D9E4E9900F5B24C /* CSSFontVariationValue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CSSFontVariationValue.h; sourceTree = "<group>"; };
 		C2458E611FE8979E00594759 /* FontCacheCoreText.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FontCacheCoreText.h; sourceTree = "<group>"; };
@@ -19667,6 +19669,7 @@
 		656580EC09D12B20000E61D7 /* Derived Sources */ = {
 			isa = PBXGroup;
 			children = (
+				C21BF74221CD963B00227979 /* WHLSLStandardLibrary.h */,
 				538EC7EA1F96A95B004D22A8 /* unified-sources */,
 				9908B0F31BCACFFE00ED0F65 /* ByteLengthQueuingStrategyBuiltins.cpp */,
 				9908B0F51BCAD07D00ED0F65 /* ByteLengthQueuingStrategyBuiltins.h */,
@@ -25372,6 +25375,7 @@
 		C210E90D21B4BCA400B7F83D /* WHLSL */ = {
 			isa = PBXGroup;
 			children = (
+				C21BF74521CD969800227979 /* WHLSLStandardLibrary.txt */,
 				C21BF6F121CD898D00227979 /* AST */,
 				C210E91121B4BD1000B7F83D /* WHLSLLexer.cpp */,
 				C210E91221B4BD1000B7F83D /* WHLSLLexer.h */,
