@@ -24,7 +24,29 @@
  */
 
 .sidebar > .panel.navigation.audit > .content {
+    display: flex;
+    flex-direction: column;
     top: var(--navigation-bar-height);
+}
+
+.sidebar > .panel.navigation.audit > .content > .tree-outline {
+    flex-grow: 1;
+}
+
+.sidebar > .panel.navigation.audit > .content .edit-audits:not(.disabled):active {
+    color: var(--glyph-color-pressed);
+}
+
+.sidebar > .panel.navigation.audit > .content .edit-audits:not(.disabled).activated {
+    color: var(--glyph-color-active);
+}
+
+.sidebar > .panel.navigation.audit > .content .edit-audits:not(.disabled).activated:active {
+    color: var(--glyph-color-active-pressed);
+}
+
+.sidebar > .panel.navigation.audit > .content .edit-audits.disabled {
+    color: var(--glyph-color-disabled);
 }
 
 .sidebar > .panel.navigation.audit.has-results:not(.has-tests) > .content > .message-text-view {
@@ -38,4 +60,9 @@
 
 .sidebar > .panel.navigation.audit.has-results:not(.has-tests) > .content > .message-text-view > button {
     margin: 8px 0 7px;
+}
+
+.finish-editing-audits-placeholder.message-text-view .navigation-item-help .navigation-bar {
+    padding: 0;
+    vertical-align: 0.5px;
 }

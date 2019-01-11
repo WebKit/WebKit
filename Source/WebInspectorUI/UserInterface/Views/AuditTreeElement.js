@@ -61,6 +61,7 @@ WI.AuditTreeElement = class AuditTreeElement extends WI.GeneralTreeElement
         super.onattach();
 
         if (this.representedObject instanceof WI.AuditTestBase) {
+            this.representedObject.addEventListener(WI.AuditTestBase.Event.DisabledChanged, this._handleTestDisabledChanged, this);
             this.representedObject.addEventListener(WI.AuditTestBase.Event.ResultCleared, this._handleTestResultCleared, this);
 
             if (this.representedObject instanceof WI.AuditTestCase)
@@ -68,6 +69,7 @@ WI.AuditTreeElement = class AuditTreeElement extends WI.GeneralTreeElement
             else if (this.representedObject instanceof WI.AuditTestGroup)
                 this.representedObject.addEventListener(WI.AuditTestBase.Event.Scheduled, this._handleTestGroupScheduled, this);
 
+            WI.auditManager.addEventListener(WI.AuditManager.Event.EditingChanged, this._handleManagerEditingChanged, this);
             WI.auditManager.addEventListener(WI.AuditManager.Event.TestScheduled, this._handleAuditManagerTestScheduled, this);
             WI.auditManager.addEventListener(WI.AuditManager.Event.TestCompleted, this._handleAuditManagerTestCompleted, this);
         }
@@ -162,6 +164,11 @@ WI.AuditTreeElement = class AuditTreeElement extends WI.GeneralTreeElement
         super.populateContextMenu(contextMenu, event);
     }
 
+    canSelectOnMouseDown(event)
+    {
+        return !WI.auditManager.editing;
+    }
+
     // Private
 
     _start()
@@ -232,11 +239,25 @@ WI.AuditTreeElement = class AuditTreeElement extends WI.GeneralTreeElement
         this.status.value = progress || 0;
     }
 
+    _updateTestGroupDisabled()
+    {
+        this.status.checked = !this.representedObject.disabled;
+
+        if (this.representedObject instanceof WI.AuditTestGroup)
+            this.status.indeterminate = this.representedObject.tests.some((test) => test.disabled !== this.representedObject.tests[0].disabled);
+    }
+
     _handleTestCaseCompleted(event)
     {
         this.representedObject.removeEventListener(WI.AuditTestBase.Event.Completed, this._handleTestCaseCompleted, this);
 
         this._updateLevel();
+    }
+
+    _handleTestDisabledChanged(event)
+    {
+        if (this.status instanceof HTMLInputElement && this.status.type === "checkbox")
+            this._updateTestGroupDisabled();
     }
 
     _handleTestResultCleared(event)
@@ -271,6 +292,24 @@ WI.AuditTreeElement = class AuditTreeElement extends WI.GeneralTreeElement
         this.representedObject.addEventListener(WI.AuditTestBase.Event.Progress, this._handleTestGroupProgress, this);
 
         this._showRunningProgress();
+    }
+
+    _handleManagerEditingChanged(event)
+    {
+        if (WI.auditManager.editing) {
+            this.status = document.createElement("input");
+            this.status.type = "checkbox";
+            this._updateTestGroupDisabled();
+            this.status.addEventListener("change", () => {
+                this.representedObject.disabled = !this.representedObject.disabled;
+            });
+
+            this.addClassName("editing-audits");
+        } else {
+            this.removeClassName("editing-audits");
+
+            this._updateLevel();
+        }
     }
 
     _handleAuditManagerTestScheduled(event)

@@ -1,0 +1,12 @@
+Tests WI.ObjectStore.prototype.clear.
+
+
+== Running test suite: WI.ObjectStore.prototype.clear
+-- Running test case: WI.ObjectStore.prototype.clear.Empty
+[]
+[]
+
+-- Running test case: WI.ObjectStore.prototype.clear.NotEmpty
+[true,1,"foo",["bar"],{"a":1}]
+[]
+

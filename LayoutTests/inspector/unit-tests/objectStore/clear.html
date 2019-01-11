@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../../http/tests/inspector/resources/inspector-test.js"></script>
+<script src="resources/objectStore-utilities.js"></script>
+<script>
+function test()
+{
+    let suite = InspectorTest.ObjectStore.createSuite("WI.ObjectStore.prototype.clear");
+
+    function testClear(name, {objects}) {
+        InspectorTest.ObjectStore.wrapTest(name, async function() {
+            let objectStore = InspectorTest.ObjectStore.createObjectStore({autoIncrement: true});
+
+            for (let object of objects)
+                await objectStore.add(object);
+
+            await InspectorTest.ObjectStore.logValues();
+
+            await objectStore.clear();
+        });
+    }
+
+    testClear("WI.ObjectStore.prototype.clear.Empty", {
+        objects: [],
+    });
+
+    testClear("WI.ObjectStore.prototype.clear.NotEmpty", {
+        objects: [true, 1, "foo", ["bar"], {a: 1}],
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="runTest()">
+    <p>Tests WI.ObjectStore.prototype.clear.</p>
+</body>
+</html>

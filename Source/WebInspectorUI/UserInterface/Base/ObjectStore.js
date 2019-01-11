@@ -52,6 +52,13 @@ WI.ObjectStore = class ObjectStore
             return;
         }
 
+        if (Array.isArray(WI.ObjectStore._databaseCallbacks)) {
+            WI.ObjectStore._databaseCallbacks.push(callback);
+            return;
+        }
+
+        WI.ObjectStore._databaseCallbacks = [callback];
+
         const version = 1; // Increment this for every edit to `WI.objectStores`.
 
         let databaseRequest = indexedDB.open(WI.ObjectStore._databaseName, version);
@@ -81,7 +88,10 @@ WI.ObjectStore = class ObjectStore
                 WI.ObjectStore._database = null;
             });
 
-            callback(WI.ObjectStore._database);
+            for (let databaseCallback of WI.ObjectStore._databaseCallbacks)
+                databaseCallback(WI.ObjectStore._database);
+
+            WI.ObjectStore._databaseCallbacks = null;
         });
     }
 
@@ -118,7 +128,7 @@ WI.ObjectStore = class ObjectStore
             return undefined;
 
         console.assert(typeof object.toJSON === "function", "ObjectStore cannot store an object without JSON serialization", object.constructor.name);
-        let result = await this.add(object.toJSON(), ...args);
+        let result = await this.add(object.toJSON(WI.ObjectStore.toJSONSymbol), ...args);
         this.associateObject(object, args[0], result);
         return result;
     }
@@ -137,6 +147,14 @@ WI.ObjectStore = class ObjectStore
             return undefined;
 
         return this.delete(this._resolveKeyPath(object).value, ...args);
+    }
+
+    async clear(...args)
+    {
+        if (!WI.ObjectStore.supported())
+            return undefined;
+
+        return this._operation("readwrite", (objectStore) => objectStore.clear(...args));
     }
 
     // Private
@@ -203,6 +221,9 @@ WI.ObjectStore = class ObjectStore
 };
 
 WI.ObjectStore._database = null;
+WI.ObjectStore._databaseCallbacks = null;
+
+WI.ObjectStore.toJSONSymbol = Symbol("ObjectStore-toJSON");
 
 // Be sure to update the `version` above when making changes.
 WI.objectStores = {

@@ -25,17 +25,21 @@
 
 WI.AuditTestBase = class AuditTestBase extends WI.Object
 {
-    constructor(name, {description} = {})
+    constructor(name, {description, disabled} = {})
     {
         console.assert(typeof name === "string");
         console.assert(!description || typeof description === "string");
+        console.assert(disabled === undefined || typeof disabled === "boolean");
 
         super();
+
+        // This class should not be instantiated directly. Create a concrete subclass instead.
+        console.assert(this.constructor !== WI.AuditTestBase && this instanceof WI.AuditTestBase);
 
         this._name = name;
         this._description = description || null;
 
-        this._runningState = WI.AuditManager.RunningState.Inactive;
+        this._runningState = disabled ? WI.AuditManager.RunningState.Disabled : WI.AuditManager.RunningState.Inactive;
         this._result = null;
     }
 
@@ -46,9 +50,32 @@ WI.AuditTestBase = class AuditTestBase extends WI.Object
     get runningState() { return this._runningState; }
     get result() { return this._result; }
 
+    get disabled()
+    {
+        return this._runningState === WI.AuditManager.RunningState.Disabled;
+    }
+
+    set disabled(disabled)
+    {
+        console.assert(this._runningState === WI.AuditManager.RunningState.Disabled || this._runningState === WI.AuditManager.RunningState.Inactive);
+        if (this._runningState !== WI.AuditManager.RunningState.Disabled && this._runningState !== WI.AuditManager.RunningState.Inactive)
+            return;
+
+        let runningState = disabled ? WI.AuditManager.RunningState.Disabled : WI.AuditManager.RunningState.Inactive;
+        if (runningState === this._runningState)
+            return;
+
+        this._runningState = runningState;
+
+        this.dispatchEventToListeners(WI.AuditTestBase.Event.DisabledChanged);
+    }
+
     async start()
     {
         // Called from WI.AuditManager.
+
+        if (this.disabled)
+            return;
 
         console.assert(WI.auditManager.runningState === WI.AuditManager.RunningState.Active);
 
@@ -69,7 +96,10 @@ WI.AuditTestBase = class AuditTestBase extends WI.Object
     {
         // Called from WI.AuditManager.
 
-        console.assert(this._runningState !== WI.AuditManager.RunningState.Inactive);
+        if (this.disabled)
+            return;
+
+        console.assert(WI.auditManager.runningState === WI.AuditManager.RunningState.Stopping);
 
         if (this._runningState !== WI.AuditManager.RunningState.Active)
             return;
@@ -96,7 +126,7 @@ WI.AuditTestBase = class AuditTestBase extends WI.Object
         cookie["audit-" + this.constructor.TypeIdentifier + "-name"] = this._name;
     }
 
-    toJSON()
+    toJSON(key)
     {
         let json = {
             type: this.constructor.TypeIdentifier,
@@ -104,6 +134,8 @@ WI.AuditTestBase = class AuditTestBase extends WI.Object
         };
         if (this._description)
             json.description = this._description;
+        if (key === WI.ObjectStore.toJSONSymbol)
+            json.disabled = this.disabled;
         return json;
     }
 
@@ -117,6 +149,7 @@ WI.AuditTestBase = class AuditTestBase extends WI.Object
 
 WI.AuditTestBase.Event = {
     Completed: "audit-test-base-completed",
+    DisabledChanged: "audit-test-base-disabled-changed",
     Progress: "audit-test-base-progress",
     ResultCleared: "audit-test-base-result-cleared",
     Scheduled: "audit-test-base-scheduled",

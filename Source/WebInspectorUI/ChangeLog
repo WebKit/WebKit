@@ -1,3 +1,109 @@
+2019-01-10  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: Audit: allow audits to be enabled/disabled
+        https://bugs.webkit.org/show_bug.cgi?id=192210
+        <rdar://problem/46423583>
+
+        Reviewed by Joseph Pecoraro.
+
+        * UserInterface/Controllers/AuditManager.js:
+        (WI.AuditManager.prototype.get editing): Added.
+        (WI.AuditManager.prototype.set editing): Added.
+        (WI.AuditManager.prototype.stop):
+        (WI.AuditManager.prototype.addDefaultTestsIfNeeded):
+        Since default audits aren't stored, keep a list of disabled default tests in a `WI.Setting`.
+
+        * UserInterface/Models/AuditTestBase.js:
+        (WI.AuditTestBase):
+        (WI.AuditTestBase.prototype.get disabled): Added.
+        (WI.AuditTestBase.prototype.set disabled): Added.
+        (WI.AuditTestBase.prototype.async start):
+        (WI.AuditTestBase.prototype.stop):
+        (WI.AuditTestBase.toJSON):
+
+        * UserInterface/Models/AuditTestCase.js:
+        (WI.AuditTestCase):
+        (WI.AuditTestCase.async fromPayload):
+        (WI.AuditTestCase.prototype.toJSON):
+
+        * UserInterface/Models/AuditTestGroup.js:
+        (WI.AuditTestGroup):
+        (WI.AuditTestGroup.async fromPayload):
+        (WI.AuditTestGroup.prototype.get disabled): Added.
+        (WI.AuditTestGroup.prototype.set disabled): Added.
+        (WI.AuditTestGroup.prototype.toJSON):
+        (WI.AuditTestGroup.prototype.async run):
+        (WI.AuditTestGroup.prototype._handleTestDisabledChanged): Added.
+        (WI.AuditTestGroup.prototype._handleTestProgress):
+        Propagate `disabled` changes to all sub-tests, unless the change was caused by one of the
+        sub-tests, in which case we are now in an intermediate state.
+
+        * UserInterface/Views/AuditNavigationSidebarPanel.js:
+        (WI.AuditNavigationSidebarPanel):
+        (WI.AuditNavigationSidebarPanel.prototype.showDefaultContentView):
+        (WI.AuditNavigationSidebarPanel.prototype.initialLayout):
+        (WI.AuditNavigationSidebarPanel.prototype.hasCustomFilters): Added.
+        (WI.AuditNavigationSidebarPanel.prototype.matchTreeElementAgainstCustomFilters): Added.
+        (WI.AuditNavigationSidebarPanel.prototype._addTest):
+        (WI.AuditNavigationSidebarPanel.prototype._addResult):
+        (WI.AuditNavigationSidebarPanel.prototype._updateStartStopButtonNavigationItemState):
+        (WI.AuditNavigationSidebarPanel.prototype._updateEditButtonNavigationItemState): Added.
+        (WI.AuditNavigationSidebarPanel.prototype._handleAuditManagerEditingChanged): Added.
+        (WI.AuditNavigationSidebarPanel.prototype._handleAuditTestRemoved):
+        (WI.AuditNavigationSidebarPanel.prototype._handleAuditTestScheduled):
+        (WI.AuditNavigationSidebarPanel.prototype._treeSelectionDidChange):
+        (WI.AuditNavigationSidebarPanel.prototype._handleEditButtonNavigationItemClicked): Added.
+        * UserInterface/Views/AuditNavigationSidebarPanel.css:
+        (.sidebar > .panel.navigation.audit > .content):
+        (.sidebar > .panel.navigation.audit > .content > .tree-outline): Added.
+        (.sidebar > .panel.navigation.audit > .content .edit-audits:not(.disabled):active): Added.
+        (.sidebar > .panel.navigation.audit > .content .edit-audits:not(.disabled).activated): Added.
+        (.sidebar > .panel.navigation.audit > .content .edit-audits:not(.disabled).activated:active): Added.
+        (.sidebar > .panel.navigation.audit > .content .edit-audits.disabled): Added.
+        (.finish-editing-audits-placeholder.message-text-view .navigation-item-help .navigation-bar): Added.
+        Leverage custom filters to ensure that disabled audits arent shown when not editing and that
+        result tree elements aren't shown while editing.
+
+        * UserInterface/Views/AuditTestGroupContentView.js:
+        (WI.AuditTestGroupContentView.prototype.shown):
+
+        * UserInterface/Views/AuditTreeElement.js:
+        (WI.AuditTreeElement.prototype.onattach):
+        (WI.AuditTreeElement.prototype.canSelectOnMouseDown): Added.
+        (WI.AuditTreeElement.prototype._updateTestGroupDisabled): Added.
+        (WI.AuditTreeElement.prototype._handleTestDisabledChanged): Added.
+        (WI.AuditTreeElement.prototype._handleManagerEditingChanged): Added.
+        * UserInterface/Views/AuditTreeElement.css:
+        (.tree-outline .item.audit > .status:not(:hover) > img.show-on-hover, .tree-outline .item.audit.test-group.expanded:not(.editing-audits) > .status:not(:hover)): Added.
+        (.tree-outline .item.audit.manager-active > .status > img.show-on-hover, .tree-outline .item.audit.test-group.expanded:not(.editing-audits) > .status:hover > :not(img), .tree-outline .item.audit.test-group-result.expanded > .status): Added.
+        (.tree-outline .item.audit > .status:not(:hover) > img.show-on-hover, .tree-outline .item.audit.test-group.expanded > .status:not(:hover)): Deleted.
+        (.tree-outline .item.audit.manager-active > .status > img.show-on-hover, .tree-outline .item.audit.test-group.expanded > .status:hover > :not(img), .tree-outline .item.audit.test-group-result.expanded > .status): Deleted.
+        Prevent selection and running when editing.
+
+        * UserInterface/Views/TreeOutline.css:
+        (.tree-outline .children.expanded:not([hidden])): Added.
+        (.tree-outline .children.expanded): Deleted.
+
+        * UserInterface/Base/ObjectStore.js:
+        (WI.ObjectStore._open):
+        Batch operations together to help avoid multiple simultaneous `indexedDB.open` calls. This
+        should also help preserve the order of operations, as once the database is open, operations
+        are executed in the order they were enqueued.
+
+        (WI.ObjectStore.prototype.async.addObject):
+        Pass a unique `Symbol` to the `toJSON` call on the given object so that the object can save
+        additional values that wouldn't normally be saved. This doesn't conflict with normal usage
+        of `toJSON` (e.g. `JSON.stringify`) because that case also passes in a value:
+         - `undefined`, if it was called directly on the object
+         - the key for this object in the containing object
+         - the index of this object in the containing array
+        In any case, the value can never equal the unique `Symbol`, so it's guaranteed that the code
+        will only run for `WI.ObjectStore` operations.
+
+        (WI.ObjectStore.prototype.async.clear): Added.
+
+        * Localizations/en.lproj/localizedStrings.js:
+
 2019-01-09  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: Protocol Logging: log messages as objects if inspector^2 is open

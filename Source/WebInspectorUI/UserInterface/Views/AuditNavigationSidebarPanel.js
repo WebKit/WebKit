@@ -36,15 +36,29 @@ WI.AuditNavigationSidebarPanel = class AuditNavigationSidebarPanel extends WI.Na
     {
         let contentView = new WI.ContentView;
 
-        let contentPlaceholder = WI.createMessageTextView(WI.UIString("No audit selected"));
-        contentView.element.appendChild(contentPlaceholder);
+        if (WI.auditManager.editing) {
+            let contentPlaceholder = WI.createMessageTextView(WI.UIString("Editing audits"));
+            contentPlaceholder.classList.add("finish-editing-audits-placeholder");
+            contentView.element.appendChild(contentPlaceholder);
 
-        let importNavigationItem = new WI.ButtonNavigationItem("import-audit", WI.UIString("Import"), "Images/Import.svg", 15, 15);
-        importNavigationItem.buttonStyle = WI.ButtonNavigationItem.Style.ImageAndText;
-        importNavigationItem.addEventListener(WI.ButtonNavigationItem.Event.Clicked, this._handleImportButtonNavigationItemClicked, this);
+            let finishEditingNavigationItem = new WI.ButtonNavigationItem("finish-editing-audits", WI.UIString("Done"));
+            finishEditingNavigationItem.addEventListener(WI.ButtonNavigationItem.Event.Clicked, (event) => {
+                WI.auditManager.editing = false;
+            });
 
-        let importHelpElement = WI.createNavigationItemHelp(WI.UIString("Press %s to import a test or result file"), importNavigationItem);
-        contentPlaceholder.appendChild(importHelpElement);
+            let importHelpElement = WI.createNavigationItemHelp(WI.UIString("Press %s to stop editing"), finishEditingNavigationItem);
+            contentPlaceholder.appendChild(importHelpElement);
+        } else {
+            let contentPlaceholder = WI.createMessageTextView(WI.UIString("No audit selected"));
+            contentView.element.appendChild(contentPlaceholder);
+
+             let importNavigationItem = new WI.ButtonNavigationItem("import-audit", WI.UIString("Import"), "Images/Import.svg", 15, 15);
+            importNavigationItem.buttonStyle = WI.ButtonNavigationItem.Style.ImageAndText;
+            importNavigationItem.addEventListener(WI.ButtonNavigationItem.Event.Clicked, this._handleImportButtonNavigationItemClicked, this);
+
+             let importHelpElement = WI.createNavigationItemHelp(WI.UIString("Press %s to import a test or result file"), importNavigationItem);
+            contentPlaceholder.appendChild(importHelpElement);
+        }
 
         this.contentBrowser.showContentView(contentView);
     }
@@ -57,23 +71,31 @@ WI.AuditNavigationSidebarPanel = class AuditNavigationSidebarPanel extends WI.Na
 
         this.contentTreeOutline.allowsRepeatSelection = false;
 
-        let navigationBar = new WI.NavigationBar;
+        let controlsNavigationBar = new WI.NavigationBar;
 
         this._startStopButtonNavigationItem = new WI.ToggleButtonNavigationItem("audit-start-stop", WI.UIString("Start"), WI.UIString("Stop"), "Images/AuditStart.svg", "Images/AuditStop.svg", 13, 13);
         this._startStopButtonNavigationItem.buttonStyle = WI.ButtonNavigationItem.Style.ImageAndText;
         this._updateStartStopButtonNavigationItemState();
         this._startStopButtonNavigationItem.addEventListener(WI.ButtonNavigationItem.Event.Clicked, this._handleStartStopButtonNavigationItemClicked, this);
-        navigationBar.addNavigationItem(this._startStopButtonNavigationItem);
+        controlsNavigationBar.addNavigationItem(this._startStopButtonNavigationItem);
 
-        navigationBar.addNavigationItem(new WI.DividerNavigationItem);
+        controlsNavigationBar.addNavigationItem(new WI.DividerNavigationItem);
 
         let importButtonNavigationItem = new WI.ButtonNavigationItem("audit-import", WI.UIString("Import"), "Images/Import.svg", 15, 15);
         importButtonNavigationItem.buttonStyle = WI.ButtonNavigationItem.Style.ImageAndText;
         importButtonNavigationItem.visibilityPriority = WI.NavigationItem.VisibilityPriority.Low;
         importButtonNavigationItem.addEventListener(WI.ButtonNavigationItem.Event.Clicked, this._handleImportButtonNavigationItemClicked, this);
-        navigationBar.addNavigationItem(importButtonNavigationItem);
+        controlsNavigationBar.addNavigationItem(importButtonNavigationItem);
 
-        this.addSubview(navigationBar);
+        this.addSubview(controlsNavigationBar);
+
+        let editNavigationbar = new WI.NavigationBar;
+
+        this._editButtonNavigationItem = new WI.ActivateButtonNavigationItem("edit-audits", WI.UIString("Edit"), WI.UIString("Done"));
+        this._editButtonNavigationItem.addEventListener(WI.ButtonNavigationItem.Event.Clicked, this._handleEditButtonNavigationItemClicked, this);
+        editNavigationbar.addNavigationItem(this._editButtonNavigationItem);
+
+        this.contentView.addSubview(editNavigationbar);
 
         for (let test of WI.auditManager.tests)
             this._addTest(test);
@@ -82,6 +104,7 @@ WI.AuditNavigationSidebarPanel = class AuditNavigationSidebarPanel extends WI.Na
             this._addResult(result, i);
         });
 
+        WI.auditManager.addEventListener(WI.AuditManager.Event.EditingChanged, this._handleAuditManagerEditingChanged, this);
         WI.auditManager.addEventListener(WI.AuditManager.Event.TestAdded, this._handleAuditTestAdded, this);
         WI.auditManager.addEventListener(WI.AuditManager.Event.TestCompleted, this._handleAuditTestCompleted, this);
         WI.auditManager.addEventListener(WI.AuditManager.Event.TestRemoved, this._handleAuditTestRemoved, this);
@@ -105,13 +128,29 @@ WI.AuditNavigationSidebarPanel = class AuditNavigationSidebarPanel extends WI.Na
             this._updateNoAuditsPlaceholder();
     }
 
+    hasCustomFilters()
+    {
+        return true;
+    }
+
+    matchTreeElementAgainstCustomFilters(treeElement, flags)
+    {
+        if (WI.auditManager.editing) {
+            if (treeElement.representedObject instanceof WI.AuditTestResultBase || treeElement.hasAncestor(this._resultsFolderTreeElement) || treeElement === this._resultsFolderTreeElement)
+                return false;
+        } else {
+            if (treeElement.representedObject instanceof WI.AuditTestBase && treeElement.representedObject.disabled)
+                return false;
+        }
+
+        return super.matchTreeElementAgainstCustomFilters(treeElement, flags);
+    }
+
     // Private
 
     _addTest(test)
     {
         this.element.classList.add("has-tests");
-
-        this._updateStartStopButtonNavigationItemState();
 
         let treeElement = new WI.AuditTreeElement(test);
 
@@ -121,14 +160,15 @@ WI.AuditNavigationSidebarPanel = class AuditNavigationSidebarPanel extends WI.Na
         } else
             this.contentTreeOutline.appendChild(treeElement);
 
+        this._updateStartStopButtonNavigationItemState();
+        this._updateEditButtonNavigationItemState();
+
         this.hideEmptyContentPlaceholder();
     }
 
     _addResult(result, index)
     {
         this.element.classList.add("has-results");
-
-        this._updateStartStopButtonNavigationItemState();
 
         if (!this._resultsFolderTreeElement) {
             this._resultsFolderTreeElement = new WI.FolderTreeElement(WI.UIString("Results"));
@@ -144,14 +184,26 @@ WI.AuditNavigationSidebarPanel = class AuditNavigationSidebarPanel extends WI.Na
         }
         this._resultsFolderTreeElement.appendChild(resultFolderTreeElement);
 
+        console.assert(this._resultsFolderTreeElement.children.length === WI.auditManager.results.length);
+
         for (let resultItem of result)
             resultFolderTreeElement.appendChild(new WI.AuditTreeElement(resultItem));
+
+        this._updateStartStopButtonNavigationItemState();
+        this._updateEditButtonNavigationItemState();
     }
 
     _updateStartStopButtonNavigationItemState()
     {
-        this._startStopButtonNavigationItem.toggled = WI.auditManager.runningState !== WI.AuditManager.RunningState.Inactive;
-        this._startStopButtonNavigationItem.enabled = WI.auditManager.tests.length && WI.auditManager.runningState !== WI.AuditManager.RunningState.Stopping;
+        this._startStopButtonNavigationItem.toggled = WI.auditManager.runningState === WI.AuditManager.RunningState.Active || WI.auditManager.runningState === WI.AuditManager.RunningState.Stopping;
+        this._startStopButtonNavigationItem.enabled = WI.auditManager.tests.length && (WI.auditManager.runningState === WI.AuditManager.RunningState.Inactive || WI.auditManager.runningState === WI.AuditManager.RunningState.Active);
+    }
+
+     _updateEditButtonNavigationItemState()
+    {
+        this._editButtonNavigationItem.label = WI.auditManager.editing ? this._editButtonNavigationItem.activatedToolTip : this._editButtonNavigationItem.defaultToolTip;
+        this._editButtonNavigationItem.activated = WI.auditManager.editing;
+        this._editButtonNavigationItem.enabled = WI.auditManager.tests.length && (WI.auditManager.editing || WI.auditManager.runningState === WI.AuditManager.RunningState.Inactive);
     }
 
     _updateNoAuditsPlaceholder()
@@ -176,6 +228,30 @@ WI.AuditNavigationSidebarPanel = class AuditNavigationSidebarPanel extends WI.Na
             // be styled such that only the button is visible.
             this.contentView.element.insertBefore(contentPlaceholder, this.contentView.element.firstChild);
         }
+
+        this._updateEditButtonNavigationItemState();
+    }
+
+    _handleAuditManagerEditingChanged(event)
+    {
+        if (WI.auditManager.editing) {
+            console.assert(!this._selectedTreeElementBeforeEditing);
+            this._selectedTreeElementBeforeEditing = this.contentTreeOutline.selectedTreeElement;
+            if (this._selectedTreeElementBeforeEditing)
+                this._selectedTreeElementBeforeEditing.deselect();
+        } else if (this._selectedTreeElementBeforeEditing) {
+            if (!(this._selectedTreeElementBeforeEditing.representedObject instanceof WI.AuditTestBase) || !this._selectedTreeElementBeforeEditing.representedObject.disabled)
+                this._selectedTreeElementBeforeEditing.select();
+            this._selectedTreeElementBeforeEditing = null;
+        }
+
+        if (!this.contentTreeOutline.selectedTreeElement)
+            this.showDefaultContentView();
+
+        this._updateStartStopButtonNavigationItemState();
+        this._updateEditButtonNavigationItemState();
+
+        this.updateFilter();
     }
 
     _handleAuditTestAdded(event)
@@ -204,6 +280,7 @@ WI.AuditNavigationSidebarPanel = class AuditNavigationSidebarPanel extends WI.Na
     _handleAuditTestScheduled(event)
     {
         this._updateStartStopButtonNavigationItemState();
+        this._updateEditButtonNavigationItemState();
     }
 
     _treeSelectionDidChange(event)
@@ -216,6 +293,10 @@ WI.AuditNavigationSidebarPanel = class AuditNavigationSidebarPanel extends WI.Na
             this.showDefaultContentView();
             return;
         }
+
+        console.assert(!WI.auditManager.editing);
+        if (WI.auditManager.editing)
+            return;
 
         let representedObject = treeElement.representedObject;
         if (representedObject instanceof WI.AuditTestCase || representedObject instanceof WI.AuditTestGroup
@@ -240,5 +321,10 @@ WI.AuditNavigationSidebarPanel = class AuditNavigationSidebarPanel extends WI.Na
     _handleImportButtonNavigationItemClicked(event)
     {
         WI.FileUtilities.importJSON((result) => WI.auditManager.processJSON(result));
+    }
+
+    _handleEditButtonNavigationItemClicked(event)
+    {
+        WI.auditManager.editing = !WI.auditManager.editing;
     }
 };

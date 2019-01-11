@@ -43,12 +43,12 @@
 }
 
 .tree-outline .item.audit > .status:not(:hover) > img.show-on-hover,
-.tree-outline .item.audit.test-group.expanded > .status:not(:hover) {
+.tree-outline .item.audit.test-group.expanded:not(.editing-audits) > .status:not(:hover) {
     opacity: 0;
 }
 
 .tree-outline .item.audit.manager-active > .status > img.show-on-hover,
-.tree-outline .item.audit.test-group.expanded > .status:hover > :not(img),
+.tree-outline .item.audit.test-group.expanded:not(.editing-audits) > .status:hover > :not(img),
 .tree-outline .item.audit.test-group-result.expanded > .status {
     display: none;
 }

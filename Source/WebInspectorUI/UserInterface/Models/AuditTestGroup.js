@@ -25,16 +25,25 @@
 
 WI.AuditTestGroup = class AuditTestGroup extends WI.AuditTestBase
 {
-    constructor(name, tests, {description} = {})
+    constructor(name, tests, options = {})
     {
         console.assert(Array.isArray(tests));
 
-        super(name, {description});
+        // Set disabled once `_tests` is set so that it propagates.
+        let disabled = options.disabled;
+        options.disabled = false;
+
+        super(name, options);
 
         this._tests = tests;
+        this._preventDisabledPropagation = false;
+
+        if (disabled)
+            this.disabled = disabled;
 
         for (let test of this._tests) {
             test.addEventListener(WI.AuditTestBase.Event.Completed, this._handleTestCompleted, this);
+            test.addEventListener(WI.AuditTestBase.Event.DisabledChanged, this._handleTestDisabledChanged, this);
             test.addEventListener(WI.AuditTestBase.Event.Progress, this._handleTestProgress, this);
         }
     }
@@ -46,7 +55,7 @@ WI.AuditTestGroup = class AuditTestGroup extends WI.AuditTestBase
         if (typeof payload !== "object" || payload === null)
             return null;
 
-        let {type, name, tests, description} = payload;
+        let {type, name, tests, description, disabled} = payload;
 
         if (type !== WI.AuditTestGroup.TypeIdentifier)
             return null;
@@ -75,6 +84,8 @@ WI.AuditTestGroup = class AuditTestGroup extends WI.AuditTestBase
         let options = {};
         if (typeof description === "string")
             options.description = description;
+        if (typeof disabled === "boolean")
+            options.disabled = disabled;
 
         return new WI.AuditTestGroup(name, tests, options);
     }
@@ -82,6 +93,21 @@ WI.AuditTestGroup = class AuditTestGroup extends WI.AuditTestBase
     // Public
 
     get tests() { return this._tests; }
+
+    get disabled()
+    {
+        return super.disabled;
+    }
+
+    set disabled(disabled)
+    {
+        if (!this._preventDisabledPropagation) {
+            for (let test of this._tests)
+                test.disabled = disabled;
+        }
+
+        super.disabled = disabled;
+    }
 
     stop()
     {
@@ -107,10 +133,10 @@ WI.AuditTestGroup = class AuditTestGroup extends WI.AuditTestBase
         });
     }
 
-    toJSON()
+    toJSON(key)
     {
-        let json = super.toJSON();
-        json.tests = this._tests.map((testCase) => testCase.toJSON());
+        let json = super.toJSON(key);
+        json.tests = this._tests.map((testCase) => testCase.toJSON(key));
         return json;
     }
 
@@ -121,6 +147,8 @@ WI.AuditTestGroup = class AuditTestGroup extends WI.AuditTestBase
         let count = this._tests.length;
         for (let index = 0; index < count && this._runningState === WI.AuditManager.RunningState.Active; ++index) {
             let test = this._tests[index];
+            if (test.disabled)
+                continue;
 
             await test.start();
 
@@ -153,6 +181,21 @@ WI.AuditTestGroup = class AuditTestGroup extends WI.AuditTestBase
         this.dispatchEventToListeners(WI.AuditTestBase.Event.Completed);
     }
 
+    _handleTestDisabledChanged(event)
+    {
+        let enabledTestCount = this._tests.filter((test) => !test.disabled).length;
+        if (event.target.disabled && !enabledTestCount)
+            this.disabled = true;
+        else if (!event.target.disabled && enabledTestCount === 1) {
+            this._preventDisabledPropagation = true;
+            this.disabled = false;
+            this._preventDisabledPropagation = false;
+        } else {
+            // Don't change `disabled`, as we're currently in an "indeterminate" state.
+            this.dispatchEventToListeners(WI.AuditTestBase.Event.DisabledChanged);
+        }
+    }
+
     _handleTestProgress(event)
     {
         if (this._runningState !== WI.AuditManager.RunningState.Active)
@@ -161,6 +204,9 @@ WI.AuditTestGroup = class AuditTestGroup extends WI.AuditTestBase
         let walk = (tests) => {
             let count = 0;
             for (let test of tests) {
+                if (test.disabled)
+                    continue;
+
                 if (test instanceof WI.AuditTestCase)
                     ++count;
                 else if (test instanceof WI.AuditTestGroup)
@@ -170,8 +216,8 @@ WI.AuditTestGroup = class AuditTestGroup extends WI.AuditTestBase
         };
 
         this.dispatchEventToListeners(WI.AuditTestBase.Event.Progress, {
-            index: event.data.index + walk(this.tests.slice(0, this.tests.indexOf(event.target))),
-            count: walk(this.tests),
+            index: event.data.index + walk(this._tests.slice(0, this._tests.indexOf(event.target))),
+            count: walk(this._tests),
         });
     }
 };

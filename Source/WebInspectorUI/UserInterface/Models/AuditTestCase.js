@@ -25,11 +25,11 @@
 
 WI.AuditTestCase = class AuditTestCase extends WI.AuditTestBase
 {
-    constructor(name, test, {description} = {})
+    constructor(name, test, options = {})
     {
         console.assert(typeof test === "string");
 
-        super(name, {description});
+        super(name, options);
 
         this._test = test;
     }
@@ -41,7 +41,7 @@ WI.AuditTestCase = class AuditTestCase extends WI.AuditTestBase
         if (typeof payload !== "object" || payload === null)
             return null;
 
-        let {type, name, test, description} = payload;
+        let {type, name, test, description, disabled} = payload;
 
         if (type !== WI.AuditTestCase.TypeIdentifier)
             return null;
@@ -55,6 +55,8 @@ WI.AuditTestCase = class AuditTestCase extends WI.AuditTestBase
         let options = {};
         if (typeof description === "string")
             options.description = description;
+        if (typeof disabled === "boolean")
+            options.disabled = disabled;
 
         return new WI.AuditTestCase(name, test, options);
     }
@@ -63,9 +65,9 @@ WI.AuditTestCase = class AuditTestCase extends WI.AuditTestBase
 
     get test() { return this._test; }
 
-    toJSON()
+    toJSON(key)
     {
-        let json = super.toJSON();
+        let json = super.toJSON(key);
         json.test = this._test;
         return json;
     }

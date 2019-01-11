@@ -40,7 +40,7 @@
     display: none;
 }
 
-.tree-outline .children.expanded {
+.tree-outline .children.expanded:not([hidden]) {
     display: block;
 }
 

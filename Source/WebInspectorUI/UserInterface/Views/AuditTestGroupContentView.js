@@ -149,6 +149,9 @@ WI.AuditTestGroupContentView = class AuditTestGroupContentView extends WI.AuditT
         }
 
         for (let subobject of this._subobjects()) {
+            if (subobject instanceof WI.AuditTestBase && subobject.disabled)
+                continue;
+
             let view = WI.ContentView.contentViewForRepresentedObject(subobject);
             this.contentView.addSubview(view);
             view.shown();
