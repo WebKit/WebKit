@@ -25,7 +25,7 @@
 
 #include "config.h"
 
-#if ENABLE(DARK_MODE_CSS) && WK_HAVE_C_SPI
+#if WK_HAVE_C_SPI
 
 #include "InjectedBundleTest.h"
 

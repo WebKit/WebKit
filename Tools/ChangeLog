@@ -1,3 +1,11 @@
+2019-01-11  Timothy Hatcher  <timothy@apple.com>
+
+        Unreviewed, fix #ifdef in API test added in r239851.
+        https://bugs.webkit.org/show_bug.cgi?id=193327
+        rdar://problem/47093222
+
+        * TestWebKitAPI/Tests/WebKit/mac/ForceLightAppearanceInBundle_Bundle.mm:
+
 2019-01-11  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Introduce IDL files for runtime-enabled UndoManager and UndoItem JavaScript API
