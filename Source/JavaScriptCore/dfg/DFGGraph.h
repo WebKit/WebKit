@@ -785,6 +785,7 @@ public:
 
     DesiredIdentifiers& identifiers() { return m_plan.identifiers(); }
     DesiredWatchpoints& watchpoints() { return m_plan.watchpoints(); }
+    DesiredGlobalProperties& globalProperties() { return m_plan.globalProperties(); }
 
     // Returns false if the key is already invalid or unwatchable. If this is a Presence condition,
     // this also makes it cheap to query if the condition holds. Also makes sure that the GC knows

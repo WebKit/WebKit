@@ -28,6 +28,7 @@
 #include "CompilationResult.h"
 #include "DFGCompilationKey.h"
 #include "DFGCompilationMode.h"
+#include "DFGDesiredGlobalProperties.h"
 #include "DFGDesiredIdentifiers.h"
 #include "DFGDesiredTransitions.h"
 #include "DFGDesiredWatchpoints.h"
@@ -101,6 +102,7 @@ public:
     DesiredIdentifiers& identifiers() { return m_identifiers; }
     DesiredWeakReferences& weakReferences() { return m_weakReferences; }
     DesiredTransitions& transitions() { return m_transitions; }
+    DesiredGlobalProperties& globalProperties() { return m_globalProperties; }
     RecordedStatuses& recordedStatuses() { return m_recordedStatuses; }
 
     bool willTryToTierUp() const { return m_willTryToTierUp; }
@@ -122,6 +124,7 @@ private:
     enum CompilationPath { FailPath, DFGPath, FTLPath, CancelPath };
     CompilationPath compileInThreadImpl();
     
+    bool isStillValidOnMainThread();
     bool isStillValid();
     void reallyAdd(CommonData*);
 
@@ -151,6 +154,7 @@ private:
     DesiredIdentifiers m_identifiers;
     DesiredWeakReferences m_weakReferences;
     DesiredTransitions m_transitions;
+    DesiredGlobalProperties m_globalProperties;
     RecordedStatuses m_recordedStatuses;
 
     bool m_willTryToTierUp { false };

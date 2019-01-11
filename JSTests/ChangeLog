@@ -1,3 +1,67 @@
+2019-01-11  Yusuke Suzuki  <yusukesuzuki@slowstart.org>
+
+        [JSC] Global lexical bindings can shadow global variables if it is `configurable = true`
+        https://bugs.webkit.org/show_bug.cgi?id=193308
+        <rdar://problem/45546542>
+
+        Reviewed by Saam Barati.
+
+        * stress/const-lexical-binding-shadow-existing-global-property-ftl.js: Added.
+        (shouldThrow):
+        (shouldBe):
+        (foo):
+        (get shouldThrow):
+        * stress/const-lexical-binding-shadow-existing-global-property-tdz-ftl.js: Added.
+        (shouldThrow):
+        (shouldBe):
+        (foo):
+        (get shouldBe):
+        (get shouldThrow):
+        (get return):
+        * stress/const-lexical-binding-shadow-existing-global-property-tdz.js: Added.
+        (shouldThrow):
+        (shouldBe):
+        (foo):
+        (get shouldBe):
+        (get shouldThrow):
+        * stress/const-lexical-binding-shadow-existing-global-property.js: Added.
+        (shouldThrow):
+        (shouldBe):
+        (foo):
+        * stress/const-lexical-binding-shadowing-global-properties-and-eval-injection.js: Added.
+        (shouldThrow):
+        (shouldBe):
+        (foo):
+        * stress/global-add-function-should-not-be-shadowed-by-lexical-bindings.js: Added.
+        (shouldThrow):
+        * stress/global-static-variables-should-not-be-shadowed-by-lexical-bindings.js: Added.
+        (shouldThrow):
+        * stress/let-lexical-binding-shadow-existing-global-property-ftl.js: Added.
+        (shouldThrow):
+        (shouldBe):
+        (foo):
+        * stress/let-lexical-binding-shadow-existing-global-property-tdz-ftl.js: Added.
+        (shouldThrow):
+        (shouldBe):
+        (foo):
+        (get shouldBe):
+        (get shouldThrow):
+        (get return):
+        * stress/let-lexical-binding-shadow-existing-global-property-tdz.js: Added.
+        (shouldThrow):
+        (shouldBe):
+        (foo):
+        (get shouldBe):
+        (get shouldThrow):
+        * stress/let-lexical-binding-shadow-existing-global-property.js: Added.
+        (shouldThrow):
+        (shouldBe):
+        (foo):
+        * stress/let-lexical-binding-shadowing-global-properties-and-eval-injection.js: Added.
+        (shouldThrow):
+        (shouldBe):
+        (foo):
+
 2019-01-11  Dominik Infuehr  <dinfuehr@igalia.com>
 
         Enable DFG on ARM/Linux again

@@ -556,6 +556,7 @@ void Plan::reallyAdd(CommonData* commonData)
     m_identifiers.reallyAdd(*m_vm, commonData);
     m_weakReferences.reallyAdd(*m_vm, commonData);
     m_transitions.reallyAdd(*m_vm, commonData);
+    m_globalProperties.reallyAdd(m_codeBlock, m_identifiers, *commonData);
     commonData->recordedStatuses = WTFMove(m_recordedStatuses);
 }
 
@@ -570,12 +571,17 @@ void Plan::notifyReady()
     m_stage = Ready;
 }
 
+bool Plan::isStillValidOnMainThread()
+{
+    return m_globalProperties.isStillValidOnMainThread(m_identifiers);
+}
+
 CompilationResult Plan::finalizeWithoutNotifyingCallback()
 {
     // We will establish new references from the code block to things. So, we need a barrier.
     m_vm->heap.writeBarrier(m_codeBlock);
 
-    if (!isStillValid()) {
+    if (!isStillValidOnMainThread() || !isStillValid()) {
         CODEBLOCK_LOG_EVENT(m_codeBlock, "dfgFinalize", ("invalidated"));
         return CompilationInvalidated;
     }
@@ -682,6 +688,7 @@ void Plan::cancel()
     m_inlineCallFrames = nullptr;
     m_watchpoints = DesiredWatchpoints();
     m_identifiers = DesiredIdentifiers();
+    m_globalProperties = DesiredGlobalProperties();
     m_weakReferences = DesiredWeakReferences();
     m_transitions = DesiredTransitions();
     m_callback = nullptr;

@@ -1,3 +1,115 @@
+2019-01-11  Yusuke Suzuki  <yusukesuzuki@slowstart.org>
+
+        [JSC] Global lexical bindings can shadow global variables if it is `configurable = true`
+        https://bugs.webkit.org/show_bug.cgi?id=193308
+        <rdar://problem/45546542>
+
+        Reviewed by Saam Barati.
+
+        Previously, we assumed that lexical bindings in JSGlobalLexicalEnvironment cannot shadow existing global properties.
+        However, it is wrong. According to the spec, we can shadow global properties if a property's attribute is configurable = true.
+        For example, we execute two scripts.
+
+        script1.js
+
+            bar = 42;
+            function load() { return bar; }
+            print(bar); // 42
+            print(load()); // 42
+
+        script2.js
+
+            let bar = 0; // This lexical binding can shadow the global.bar defined in script1.js
+            print(bar); // 0
+            print(load()); // 0
+
+        In JSC, we cache GlobalProperty resolve type and its associated information in op_resolve_type, op_get_from_scope, and op_put_to_scope.
+        They attempt to load a property from JSGlobalObject directly. However, once the newly added lexical binding starts shadowing this, our existing instructions
+        become invalid since they do not respect JSGlobalLexicalEnvironment.
+
+        In this patch, we fix this issue by introducing the following mechanisms.
+
+        1. We have a HashMap<property name, watchpoint set> in JSGlobalObject. DFG and FTL create a watchpoint set with the property name if the generated code
+        depends on GlobalProperty condition of op_resolve_scope etc. These watchpoint will be fired when the shadowing happens, so that our generated DFG and FTL
+        code will be invalidated if it depends on the condition which is no longer valid.
+
+        2. When we detect shadowing, we iterate all the live CodeBlocks which globalObject is the target one. And we rewrite instructions in them from GlobalProperty
+        to GlobalLexicalVar (or Dynamic precisely). So, the subsequent LLInt code just works well. "Dynamic" conversion happens when your op_put_to_scope attempts to
+        put a value onto a const lexical binding. This fails and it should throw a type error.
+
+        3. GlobalProperty scope operations in Baseline JIT start checking ResolveType in metadata, and emit code for GlobalProperty and GlobalLexicalVar. Once the rewrite
+        happens, baseline JIT continues working because it checks the rewritten metadata's ResolveType.
+
+        We use this mechanism (which is similar to haveABadTime() thing) because,
+
+        1. Shadowing should be super rare. Before r214145, we made these cases as SytaxError. Thus, before r214145, this type of code cannot be executed in WebKit.
+        And the number of the live CodeBlocks for the given JSGlobalObject should be small. This supports introducing rather simple (but not so efficient) mechanism
+        instead of the complicated one.
+
+        2. Rewriting instructions immediately forces GlobalProperty => GlobalLexicalVar / Dynamic conversion in all the possible CodeBlock. This allows us to avoid
+        compilation failure loop in DFG and FTL: DFG and FTL codes are invalidated by the watchpoint, but we may attempt to compile the code with the invalidated watchpoint
+        and GlobalProperty status if we do not rewrite it. One possible other implementation is having and checking a counter in instruction, and every time we introduce
+        a new shadow binding, bump the counter. And eventually executed instruction will go to the slow path and rewrite itself. However, this way leaves the not-executed-again-yet
+        instructions as is, and DFG and FTL repeatedly fail to compile if we just watch the invalidated watchpoint for that. Rewriting all the existing GlobalProperty immediately
+        avoids this situation easily.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * Sources.txt:
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::notifyLexicalBindingShadowing):
+        * bytecode/CodeBlock.h:
+        (JSC::CodeBlock::scriptMode const):
+        * bytecode/Watchpoint.h:
+        (JSC::WatchpointSet::create):
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::parseBlock):
+        * dfg/DFGDesiredGlobalProperties.cpp: Added.
+        (JSC::DFG::DesiredGlobalProperties::isStillValidOnMainThread):
+        (JSC::DFG::DesiredGlobalProperties::reallyAdd):
+        * dfg/DFGDesiredGlobalProperties.h: Added.
+        (JSC::DFG::DesiredGlobalProperties::addLazily):
+        We need this DesiredGlobalProperties mechanism since we do not want to ref() the UniquedStringImpl in DFG and FTL thread.
+        We keep JSGlobalObject* and identifierNumber, and materialize WatchpointSets for each JSGlobalObject's property referenced
+        from DFG and FTL and inject CodeBlock jettison watchpoints in the main thread.
+        * dfg/DFGDesiredGlobalProperty.h: Added.
+        (JSC::DFG::DesiredGlobalProperty::DesiredGlobalProperty):
+        (JSC::DFG::DesiredGlobalProperty::globalObject const):
+        (JSC::DFG::DesiredGlobalProperty::identifierNumber const):
+        (JSC::DFG::DesiredGlobalProperty::operator== const):
+        (JSC::DFG::DesiredGlobalProperty::operator!= const):
+        (JSC::DFG::DesiredGlobalProperty::isHashTableDeletedValue const):
+        (JSC::DFG::DesiredGlobalProperty::hash const):
+        (JSC::DFG::DesiredGlobalProperty::dumpInContext const):
+        (JSC::DFG::DesiredGlobalProperty::dump const):
+        (JSC::DFG::DesiredGlobalPropertyHash::hash):
+        (JSC::DFG::DesiredGlobalPropertyHash::equal):
+        * dfg/DFGGraph.h:
+        (JSC::DFG::Graph::globalProperties):
+        * dfg/DFGPlan.cpp:
+        (JSC::DFG::Plan::reallyAdd):
+        (JSC::DFG::Plan::isStillValidOnMainThread):
+        (JSC::DFG::Plan::finalizeWithoutNotifyingCallback):
+        (JSC::DFG::Plan::cancel):
+        * dfg/DFGPlan.h:
+        (JSC::DFG::Plan::globalProperties):
+        * jit/JITPropertyAccess.cpp:
+        (JSC::JIT::emit_op_resolve_scope):
+        (JSC::JIT::emit_op_get_from_scope):
+        (JSC::JIT::emit_op_put_to_scope):
+        * jit/JITPropertyAccess32_64.cpp:
+        (JSC::JIT::emit_op_resolve_scope):
+        (JSC::JIT::emit_op_get_from_scope):
+        (JSC::JIT::emit_op_put_to_scope):
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::addStaticGlobals):
+        (JSC::JSGlobalObject::notifyLexicalBindingShadowing):
+        (JSC::JSGlobalObject::getReferencedPropertyWatchpointSet):
+        (JSC::JSGlobalObject::ensureReferencedPropertyWatchpointSet):
+        * runtime/JSGlobalObject.h:
+        * runtime/ProgramExecutable.cpp:
+        (JSC::hasRestrictedGlobalProperty):
+        (JSC::ProgramExecutable::initializeGlobalProperties):
+
 2019-01-11  Dominik Infuehr  <dinfuehr@igalia.com>
 
         Enable DFG on ARM/Linux again

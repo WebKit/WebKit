@@ -195,6 +195,8 @@ public:
     void visitChildren(SlotVisitor&);
     void finalizeUnconditionally(VM&);
 
+    void notifyLexicalBindingShadowing(VM&, const IdentifierSet&);
+
     void dumpSource();
     void dumpSource(PrintStream&);
 
@@ -211,6 +213,8 @@ public:
 
     bool isStrictMode() const { return m_isStrictMode; }
     ECMAMode ecmaMode() const { return isStrictMode() ? StrictMode : NotStrictMode; }
+
+    JSParserScriptMode scriptMode() const { return m_unlinkedCode->scriptMode(); }
 
     bool hasInstalledVMTrapBreakpoints() const;
     bool installVMTrapBreakpoints();

@@ -483,6 +483,11 @@ public:
     bool isMapPrototypeSetFastAndNonObservable();
     bool isSetPrototypeAddFastAndNonObservable();
 
+#if ENABLE(DFG_JIT)
+    using ReferencedGlobalPropertyWatchpointSets = HashMap<RefPtr<UniquedStringImpl>, Ref<WatchpointSet>, IdentifierRepHash>;
+    ReferencedGlobalPropertyWatchpointSets m_referencedGlobalPropertyWatchpointSets;
+#endif
+
     bool m_evalEnabled { true };
     bool m_webAssemblyEnabled { true };
     String m_evalDisabledErrorMessage;
@@ -515,6 +520,11 @@ public:
     bool hasDebugger() const;
     bool hasInteractiveDebugger() const;
     const RuntimeFlags& runtimeFlags() const { return m_runtimeFlags; }
+
+#if ENABLE(DFG_JIT)
+    WatchpointSet* getReferencedPropertyWatchpointSet(UniquedStringImpl*);
+    WatchpointSet& ensureReferencedPropertyWatchpointSet(UniquedStringImpl*);
+#endif
 
 protected:
     JS_EXPORT_PRIVATE explicit JSGlobalObject(VM&, Structure*, const GlobalObjectMethodTable* = nullptr);
@@ -740,6 +750,8 @@ public:
     const HashSet<String>& intlNumberFormatAvailableLocales();
     const HashSet<String>& intlPluralRulesAvailableLocales();
 #endif // ENABLE(INTL)
+
+    void notifyLexicalBindingShadowing(VM&, const IdentifierSet&);
 
     void setConsoleClient(ConsoleClient* consoleClient) { m_consoleClient = consoleClient; }
     ConsoleClient* consoleClient() const { return m_consoleClient; }
