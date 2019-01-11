@@ -1,3 +1,14 @@
+2019-01-11  Antti Koivisto  <antti@apple.com>
+
+        Release assert when removing element with a map element in the shadow tree
+        https://bugs.webkit.org/show_bug.cgi?id=193351
+        <rdar://problem/47208807>
+
+        Reviewed by Ryosuke Niwa.
+
+        * fast/shadow-dom/image-map-tree-scope-expected.txt: Added.
+        * fast/shadow-dom/image-map-tree-scope.html: Added.
+
 2019-01-11  Dominik Infuehr  <dinfuehr@igalia.com>
 
         Enable DFG on ARM/Linux again

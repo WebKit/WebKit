@@ -1,0 +1,19 @@
+<html>
+<head>
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+
+function test() {
+    var shadow = host.attachShadow({mode: "open"});
+    shadow.innerHTML = '<map name="bar">';
+    host.remove();
+}
+</script>
+</head>
+<body onload="test()">
+This test passes if it doesn't crash.
+<map id="map" name="foo"></map>
+<div id="host"></div>
+</body>
+</html>
