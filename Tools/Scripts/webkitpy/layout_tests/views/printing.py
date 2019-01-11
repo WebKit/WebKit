@@ -82,8 +82,14 @@ class Printer(object):
             self._print_default("Placing new baselines in %s" % self._port.baseline_path())
 
         fs = self._port.host.filesystem
-        fallback_path = [fs.relpath(x, self._port.layout_tests_dir()).replace("../", "") for x in self._port.baseline_search_path()]
-        self._print_default("Baseline search path: %s -> generic" % " -> ".join(fallback_path))
+        full_baseline_search_path = self._port.baseline_search_path()
+        normalize_baseline = lambda baseline_search_path: [fs.relpath(x, self._port.layout_tests_dir()).replace("../", "") for x in baseline_search_path]
+
+        self._print_default('Verbose baseline search path: {} -> generic'.format(' -> '.join(normalize_baseline(full_baseline_search_path))))
+
+        self._print_default('')
+        self._print_default('Baseline search path: {} -> generic'.format(' -> '.join(normalize_baseline([path for path in full_baseline_search_path if fs.exists(path)]))))
+        self._print_default('')
 
         self._print_default("Using %s build" % self._options.configuration)
         if self._options.pixel_tests:

@@ -1,3 +1,16 @@
+2019-01-11  Jonathan Bedard  <jbedard@apple.com>
+
+        webkitpy: Print abbreviated baseline search path that includes only folders that exist
+        https://bugs.webkit.org/show_bug.cgi?id=193352
+        <rdar://problem/47210736>
+
+        Reviewed by Lucas Forschler.
+
+        * Scripts/webkitpy/layout_tests/views/printing.py:
+        (Printer.print_config): Print list on only baseline search paths which exist. 
+        * Scripts/webkitpy/layout_tests/views/printing_unittest.py:
+        (Testprinter.test_print_config):
+
 2019-01-11  Joseph Pecoraro  <pecoraro@apple.com>
 
         Cleanup possible WK*Copy/Create leaks in WebKitTestRunner
