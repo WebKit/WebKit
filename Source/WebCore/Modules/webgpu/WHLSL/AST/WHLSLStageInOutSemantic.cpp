@@ -39,6 +39,37 @@ namespace WHLSL {
 
 namespace AST {
 
+bool StageInOutSemantic::isAcceptableType(const UnnamedType& unnamedType, const Intrinsics&) const
+{
+    if (is<ArrayType>(unnamedType))
+        return true;
+    if (!is<TypeReference>(unnamedType))
+        return false;
+    auto& typeReference = downcast<TypeReference>(unnamedType);
+    ASSERT(typeReference.resolvedType());
+    auto& resolvedType = *typeReference.resolvedType();
+    if (is<EnumerationDefinition>(resolvedType))
+        return true;
+    if (!is<NativeTypeDeclaration>(resolvedType))
+        return false;
+    auto& nativeTypeDeclaration = downcast<NativeTypeDeclaration>(*typeReference.resolvedType());
+    return nativeTypeDeclaration.isNumber()
+        || nativeTypeDeclaration.isVector()
+        || nativeTypeDeclaration.isMatrix();
+}
+
+bool StageInOutSemantic::isAcceptableForShaderItemDirection(ShaderItemDirection direction, const FunctionDefinition& functionDefinition) const
+{
+    switch (*functionDefinition.entryPointType()) {
+    case FunctionDeclaration::EntryPointType::Vertex:
+        return true;
+    case FunctionDeclaration::EntryPointType::Fragment:
+        return direction == ShaderItemDirection::Input;
+    case FunctionDeclaration::EntryPointType::Compute:
+        return false;
+    }
+}
+
 } // namespace AST
 
 }

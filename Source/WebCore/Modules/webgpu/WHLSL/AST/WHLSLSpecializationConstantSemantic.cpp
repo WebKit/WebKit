@@ -36,6 +36,22 @@ namespace WHLSL {
 
 namespace AST {
 
+bool SpecializationConstantSemantic::isAcceptableType(const UnnamedType& unnamedType, const Intrinsics&) const
+{
+    if (!is<TypeReference>(unnamedType))
+        return false;
+    auto& typeReference = downcast<TypeReference>(unnamedType);
+    ASSERT(typeReference.resolvedType());
+    if (!is<NativeTypeDeclaration>(*typeReference.resolvedType()))
+        return false;
+    return downcast<NativeTypeDeclaration>(*typeReference.resolvedType()).isNumber();
+}
+
+bool SpecializationConstantSemantic::isAcceptableForShaderItemDirection(ShaderItemDirection direction, const FunctionDefinition&) const
+{
+    return direction == ShaderItemDirection::Input;
+}
+
 } // namespace AST
 
 }

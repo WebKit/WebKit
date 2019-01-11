@@ -1,3 +1,23 @@
+2019-01-10  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Fix the build after r239844
+        https://bugs.webkit.org/show_bug.cgi?id=192991
+
+        Unreviewed.
+
+        * Modules/webgpu/WHLSL/AST/WHLSLBuiltInSemantic.cpp:
+        (WebCore::WHLSL::AST::BuiltInSemantic::isAcceptableType const):
+        (WebCore::WHLSL::AST::BuiltInSemantic::isAcceptableForShaderItemDirection const):
+        * Modules/webgpu/WHLSL/AST/WHLSLResourceSemantic.cpp:
+        (WebCore::WHLSL::AST::ResourceSemantic::isAcceptableType const):
+        (WebCore::WHLSL::AST::ResourceSemantic::isAcceptableForShaderItemDirection const):
+        * Modules/webgpu/WHLSL/AST/WHLSLSpecializationConstantSemantic.cpp:
+        (WebCore::WHLSL::AST::SpecializationConstantSemantic::isAcceptableType const):
+        (WebCore::WHLSL::AST::SpecializationConstantSemantic::isAcceptableForShaderItemDirection const):
+        * Modules/webgpu/WHLSL/AST/WHLSLStageInOutSemantic.cpp:
+        (WebCore::WHLSL::AST::StageInOutSemantic::isAcceptableType const):
+        (WebCore::WHLSL::AST::StageInOutSemantic::isAcceptableForShaderItemDirection const):
+
 2019-01-10  Justin Fan  <justin_fan@apple.com>
 
         [WebGPU] WebGPUBindGroup and device::createBindGroup prototype

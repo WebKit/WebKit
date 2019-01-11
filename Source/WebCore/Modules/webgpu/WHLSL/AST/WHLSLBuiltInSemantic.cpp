@@ -37,6 +37,74 @@ namespace WHLSL {
 
 namespace AST {
 
+bool BuiltInSemantic::isAcceptableType(const UnnamedType&, const Intrinsics&) const
+{
+    // FIXME: Implement this
+    return true;
+}
+
+bool BuiltInSemantic::isAcceptableForShaderItemDirection(ShaderItemDirection direction, const FunctionDefinition& functionDefinition) const
+{
+    switch (*functionDefinition.entryPointType()) {
+    case FunctionDeclaration::EntryPointType::Vertex:
+        switch (direction) {
+        case ShaderItemDirection::Input:
+            switch (m_variable) {
+            case Variable::SVInstanceID:
+            case Variable::SVVertexID:
+                return true;
+            default:
+                return false;
+            }
+        case ShaderItemDirection::Output:
+            switch (m_variable) {
+            case Variable::PSize:
+            case Variable::SVPosition:
+                return true;
+            default:
+                return false;
+            }
+        }
+    case FunctionDeclaration::EntryPointType::Fragment:
+        switch (direction) {
+        case ShaderItemDirection::Input:
+            switch (m_variable) {
+            case Variable::SVIsFrontFace:
+            case Variable::SVPosition:
+            case Variable::SVSampleIndex:
+            case Variable::SVInnerCoverage:
+                return true;
+            default:
+                return false;
+            }
+        case ShaderItemDirection::Output:
+            switch (m_variable) {
+            case Variable::SVTarget:
+            case Variable::SVDepth:
+            case Variable::SVCoverage:
+                return true;
+            default:
+                return false;
+            }
+        }
+    case FunctionDeclaration::EntryPointType::Compute:
+        switch (direction) {
+        case ShaderItemDirection::Input:
+            switch (m_variable) {
+            case Variable::SVDispatchThreadID:
+            case Variable::SVGroupID:
+            case Variable::SVGroupIndex:
+            case Variable::SVGroupThreadID:
+                return true;
+            default:
+                return false;
+            }
+        case ShaderItemDirection::Output:
+            return false;
+        }
+    }
+}
+
 } // namespace AST
 
 }

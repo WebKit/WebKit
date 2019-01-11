@@ -38,6 +38,17 @@ namespace WHLSL {
 
 namespace AST {
 
+bool ResourceSemantic::isAcceptableType(const UnnamedType&, const Intrinsics&) const
+{
+    // FIXME: Implement this
+    return true;
+}
+
+bool ResourceSemantic::isAcceptableForShaderItemDirection(ShaderItemDirection direction, const FunctionDefinition&) const
+{
+    return direction == ShaderItemDirection::Input;
+}
+
 } // namespace AST
 
 }
