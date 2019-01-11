@@ -65,6 +65,9 @@
     if ([address hasPrefix:@"data:"])
         return address;
 
+    if ([address hasPrefix:@"about:"])
+        return address;
+
     return [@"http://" stringByAppendingString:address];
 }
 

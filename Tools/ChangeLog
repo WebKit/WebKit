@@ -1,5 +1,22 @@
 2019-01-10  Joseph Pecoraro  <pecoraro@apple.com>
 
+        MiniBrowser should be able to navigate to about:blank
+        https://bugs.webkit.org/show_bug.cgi?id=193345
+
+        Reviewed by Simon Fraser.
+
+        * MiniBrowser/mac/BrowserWindowController.m:
+        (-[BrowserWindowController addProtocolIfNecessary:]):
+        Don't prepend "http://" to "about:" prefixed URLs like "about:blank".
+
+        * MiniBrowser/mac/WK1BrowserWindowController.m:
+        (-[WK1BrowserWindowController fetch:]):
+        * MiniBrowser/mac/WK2BrowserWindowController.m:
+        (-[WK2BrowserWindowController fetch:]):
+        Clean up the code that uses this to match style.
+
+2019-01-10  Joseph Pecoraro  <pecoraro@apple.com>
+
         Remove MiniBrowser custom "Process Swap" menu item which does not work
         https://bugs.webkit.org/show_bug.cgi?id=193344
 
