@@ -1,3 +1,17 @@
+2019-01-11  Miguel Gomez  <magomez@igalia.com>
+
+        [GTK] Garbled rendering on Youtube while scrolling under X11.
+        https://bugs.webkit.org/show_bug.cgi?id=192982
+
+        Reviewed by Carlos Garcia Campos.
+
+        When creating a GLX window context, try to get a GLXFBConfig that has depth and stencil buffers for
+        the default framebuffer.
+
+        * platform/graphics/glx/GLContextGLX.cpp:
+        (WebCore::compatibleVisuals):
+        (WebCore::GLContextGLX::createWindowContext):
+
 2019-01-11  Sihui Liu  <sihui_liu@apple.com>
 
         IndexedDB: leak IDBTransaction, TransactionOperation and IDBRequest in layout tests
