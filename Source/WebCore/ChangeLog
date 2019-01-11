@@ -1,3 +1,22 @@
+2019-01-11  Sihui Liu  <sihui_liu@apple.com>
+
+        IndexedDB: leak IDBTransaction, TransactionOperation and IDBRequest in layout tests
+        https://bugs.webkit.org/show_bug.cgi?id=193167
+        <rdar://problem/46891688>
+
+        Reviewed by Geoffrey Garen.
+
+        Do some cleanup to break retain cycle when context is stopped. 
+
+        * Modules/indexeddb/IDBOpenDBRequest.cpp:
+        (WebCore::IDBOpenDBRequest::cancelForStop):
+        * Modules/indexeddb/IDBTransaction.cpp:
+        (WebCore::IDBTransaction::abortOnServerAndCancelRequests):
+        (WebCore::IDBTransaction::stop):
+        (WebCore::IDBTransaction::removeRequest):
+        * Modules/indexeddb/client/TransactionOperation.h:
+        (WebCore::IDBClient::TransactionOperation::doComplete):
+
 2019-01-11  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Introduce IDL files for runtime-enabled UndoManager and UndoItem JavaScript API
