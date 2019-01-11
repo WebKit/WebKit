@@ -1,3 +1,15 @@
+2019-01-11  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed GTK gardening. Rebaseline several tests after r239822.
+
+        * platform/gtk/css2.1/t1202-counter-04-b-expected.png:
+        * platform/gtk/css2.1/t1202-counter-04-b-expected.txt:
+        * platform/gtk/css2.1/t1202-counters-04-b-expected.png:
+        * platform/gtk/css2.1/t1202-counters-04-b-expected.txt:
+        * platform/gtk/fast/text/combining-enclosing-keycap-expected.txt:
+        * platform/gtk/fast/text/fallback-traits-fixup-expected.png:
+        * platform/gtk/fast/text/fallback-traits-fixup-expected.txt:
+
 2019-01-10  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: Audit: allow audits to be enabled/disabled
