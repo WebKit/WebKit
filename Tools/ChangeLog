@@ -1,5 +1,36 @@
 2019-01-11  Jonathan Bedard  <jbedard@apple.com>
 
+        webkitpy: Incorporate device type into baseline search path
+        https://bugs.webkit.org/show_bug.cgi?id=193356
+        <rdar://problem/47215515>
+
+        Reviewed by Lucas Forschler.
+
+        We need a way to include device type in the baseline search path for iOS to support device specific test expectations.
+
+        * Scripts/webkitpy/port/base.py:
+        (Port.default_baseline_search_path): Allow device type to be passed in.
+        * Scripts/webkitpy/port/gtk.py:
+        (GtkPort.default_baseline_search_path): Ignore device type.
+        * Scripts/webkitpy/port/ios.py:
+        (IOSPort.default_baseline_search_path): Optionally allow device type to be incorporated into the baseline search path.
+        (IOSPort.test_expectations_file_position): Update index for the additional device-type specific baseline search path.
+        * Scripts/webkitpy/port/ios_device_unittest.py:
+        (IOSDeviceTest):
+        * Scripts/webkitpy/port/ios_simulator_unittest.py:
+        (IOSSimulatorTest):
+        * Scripts/webkitpy/port/mac.py:
+        (MacPort.default_baseline_search_path): Ignore device type.
+        * Scripts/webkitpy/port/watch.py:
+        (WatchPort.default_baseline_search_path): Ditto.
+        * Scripts/webkitpy/port/win.py:
+        (WinPort.default_baseline_search_path): Ditto.
+        (WinCairoPort.default_baseline_search_path): Ditto.
+        * Scripts/webkitpy/port/wpe.py:
+        (WPEPort.default_baseline_search_path): Ditto.
+
+2019-01-11  Jonathan Bedard  <jbedard@apple.com>
+
         webkitpy: Print abbreviated baseline search path that includes only folders that exist
         https://bugs.webkit.org/show_bug.cgi?id=193352
         <rdar://problem/47210736>

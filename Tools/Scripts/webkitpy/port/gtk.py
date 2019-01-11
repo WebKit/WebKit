@@ -210,7 +210,7 @@ class GtkPort(Port):
         search_paths.extend(self.get_option("additional_platform_directory", []))
         return search_paths
 
-    def default_baseline_search_path(self):
+    def default_baseline_search_path(self, **kwargs):
         return map(self._webkit_baseline_path, self._search_paths())
 
     def _port_specific_expectations_files(self):

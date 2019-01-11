@@ -211,7 +211,7 @@ class Port(object):
     def baseline_search_path(self):
         return self.get_option('additional_platform_directory', []) + self._compare_baseline() + self.default_baseline_search_path()
 
-    def default_baseline_search_path(self):
+    def default_baseline_search_path(self, device_type=None):
         """Return a list of absolute paths to directories to search under for
         baselines. The directories are searched in order."""
         search_paths = []
