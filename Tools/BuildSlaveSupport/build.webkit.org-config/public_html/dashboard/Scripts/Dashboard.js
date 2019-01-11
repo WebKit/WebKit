@@ -25,9 +25,8 @@
 
 Dashboard = {
     Platform: {
-        macOSMojave: { name: "macos-mojave", readableName: "macOS Mojave", order: 6 },
-        macOSHighSierra: { name: "macos-highsierra", readableName: "macOS High Sierra", order: 7 },
-        macOSSierra: { name: "macos-sierra", readableName: "macOS Sierra", order: 8 },
+        macOSMojave: { name: "macos-mojave", readableName: "macOS Mojave", order: 1 },
+        macOSHighSierra: { name: "macos-highsierra", readableName: "macOS High Sierra", order: 2 },
         iOS12Simulator: { name: "ios-simulator-12", readableName: "iOS 12 Simulator", order: 20 },
         iOS12Device: { name: "ios-12", readableName: "iOS 12", order: 25 },
         Windows10: { name: "windows-10", readableName: "Windows 10", order: 30 },

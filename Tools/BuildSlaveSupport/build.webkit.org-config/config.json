@@ -24,31 +24,17 @@
                     { "name": "bot187", "platform": "mac-highsierra" },
                     { "name": "bot194", "platform": "mac-highsierra" },
                     { "name": "bot197", "platform": "mac-highsierra" },
+                    { "name": "bot205", "platform": "mac-highsierra" },
                     { "name": "bot215", "platform": "mac-highsierra" },
                     { "name": "bot216", "platform": "mac-highsierra" },
                     { "name": "bot217", "platform": "mac-highsierra" },
+                    { "name": "bot603", "platform": "mac-highsierra" },
                     { "name": "bot630", "platform": "mac-highsierra" },
                     { "name": "bot631", "platform": "mac-highsierra" },
+                    { "name": "bot632", "platform": "mac-highsierra" },
                     { "name": "bot635", "platform": "mac-highsierra" },
                     { "name": "bot636", "platform": "mac-highsierra" },
                     { "name": "bot638", "platform": "mac-highsierra" },
-
-                    { "name": "bot118", "platform": "mac-sierra" },
-                    { "name": "bot122", "platform": "mac-sierra" },
-                    { "name": "bot141", "platform": "mac-sierra" },
-                    { "name": "bot160", "platform": "mac-sierra" },
-                    { "name": "bot164", "platform": "mac-sierra" },
-                    { "name": "bot199", "platform": "mac-sierra" },
-                    { "name": "bot202", "platform": "mac-sierra" },
-                    { "name": "bot205", "platform": "mac-sierra" },
-                    { "name": "bot219", "platform": "mac-sierra" },
-                    { "name": "bot603", "platform": "mac-sierra" },
-                    { "name": "bot632", "platform": "mac-sierra" },
-                    { "name": "bot600", "platform": "mac-sierra" },
-                    { "name": "bot601", "platform": "mac-sierra" },
-                    { "name": "bot609", "platform": "mac-sierra" },
-                    { "name": "bot698", "platform": "mac-sierra" },
-                    { "name": "bot699", "platform": "mac-sierra" },
 
                     { "name": "bot673", "platform": "ios-12" },
                     { "name": "bot626", "platform": "ios-simulator-12" },
@@ -136,7 +122,7 @@
                     },
                     { "name": "Apple High Sierra Debug (Build)", "type": "Build", "builddir": "highsierra-debug",
                       "platform": "mac-highsierra", "configuration": "debug", "architectures": ["x86_64"],
-                      "triggers": ["highsierra-debug-tests-jsc", "highsierra-debug-tests-wk1", "highsierra-debug-tests-wk2"],
+                      "triggers": ["highsierra-debug-tests-jsc", "highsierra-debug-tests-test262", "highsierra-debug-tests-wk1", "highsierra-debug-tests-wk2"],
                       "slavenames": ["bot630", "bot631"]
                     },
                     { "name": "Apple High Sierra Debug WK1 (Tests)", "type": "TestWebKit1AllButJSC", "builddir": "highsierra-debug-tests-wk1",
@@ -151,7 +137,7 @@
                     },
                     { "name": "Apple High Sierra Release (Build)", "type": "Build", "builddir": "highsierra-release",
                       "platform": "mac-highsierra", "configuration": "release", "architectures": ["x86_64"],
-                      "triggers": ["highsierra-release-tests-jsc", "highsierra-release-tests-wk1", "highsierra-release-tests-wk2"],
+                      "triggers": ["highsierra-release-perf-tests", "highsierra-release-tests-jsc", "highsierra-release-tests-test262", "highsierra-release-tests-wk1", "highsierra-release-tests-wk2"],
                       "slavenames": ["bot635", "bot636"]
                     },
                     { "name": "Apple High Sierra Release WK1 (Tests)", "type": "TestWebKit1AllButJSC", "builddir": "highsierra-release-tests-wk1",
@@ -184,51 +170,17 @@
                       "platform": "mac-highsierra", "configuration": "debug", "architectures": ["i386"],
                       "slavenames": ["bot187"]
                     },
-                    { "name": "Apple Sierra Debug (Build)", "type": "Build", "builddir": "sierra-debug",
-                      "platform": "mac-sierra", "configuration": "debug", "architectures": ["x86_64"],
-                      "triggers": ["sierra-debug-tests-wk1", "sierra-debug-tests-wk2", "sierra-debug-tests-test262"],
-                      "slavenames": ["bot609", "bot698"]
-                    },
-                    { "name": "Apple Sierra Debug WK1 (Tests)", "type": "TestWebKit1AllButJSC", "builddir": "sierra-debug-tests-wk1",
-                      "platform": "mac-sierra", "configuration": "debug", "architectures": ["x86_64"],
-                      "additionalArguments": ["--no-retry-failures"],
-                      "slavenames": ["bot118", "bot122"]
-                    },
-                    { "name": "Apple Sierra Debug WK2 (Tests)", "type": "TestAllButJSC", "builddir": "sierra-debug-tests-wk2",
-                      "platform": "mac-sierra", "configuration": "debug", "architectures": ["x86_64"],
-                      "additionalArguments": ["--no-retry-failures"],
-                      "slavenames": ["bot202", "bot219"]
-                    },
-                    { "name": "Apple Sierra Release (Build)", "type": "Build", "builddir": "sierra-release",
-                      "platform": "mac-sierra", "configuration": "release", "architectures": ["x86_64"],
-                      "triggers": ["sierra-release-tests-wk1", "sierra-release-tests-wk2", "sierra-release-tests-test262", "sierra-release-perf-tests"],
-                      "slavenames": ["bot601", "bot699"]
-                    },
-                    { "name": "Apple Sierra Release WK1 (Tests)", "type": "TestWebKit1AllButJSC", "builddir": "sierra-release-tests-wk1",
-                      "platform": "mac-sierra", "configuration": "release", "architectures": ["x86_64"],
-                      "additionalArguments": ["--no-retry-failures"],
-                      "slavenames": ["bot141", "bot160"]
-                    },
-                    { "name": "Apple Sierra Release WK2 (Tests)", "type": "TestAllButJSC", "builddir": "sierra-release-tests-wk2",
-                      "platform": "mac-sierra", "configuration": "release", "architectures": ["x86_64"],
-                      "additionalArguments": ["--no-retry-failures"],
-                      "slavenames": ["bot164", "bot199"]
-                    },
-                    { "name": "Apple Sierra Release (32-bit Build)", "type": "Build", "builddir": "sierra-32bit-release",
-                      "platform": "mac-sierra", "configuration": "release", "architectures": ["i386"],
-                      "slavenames": ["bot600"]
-                    },
-                    { "name": "Apple Sierra Debug Test262 (Tests)", "type": "Test262", "builddir": "sierra-debug-tests-test262",
-                      "platform": "mac-sierra", "configuration": "debug", "architectures": ["x86_64"],
+                    { "name": "Apple High Sierra Debug Test262 (Tests)", "type": "Test262", "builddir": "highsierra-debug-tests-test262",
+                      "platform": "mac-highsierra", "configuration": "debug", "architectures": ["x86_64"],
                       "slavenames": ["bot603"]
                     },
                     {
-                      "name": "Apple Sierra Release WK2 (Perf)", "type": "DownloadAndPerfTest", "builddir": "sierra-release-perf-tests",
-                      "platform": "mac-sierra", "configuration": "release", "architectures": ["x86_64"],
+                      "name": "Apple High Sierra Release WK2 (Perf)", "type": "DownloadAndPerfTest", "builddir": "highsierra-release-perf-tests",
+                      "platform": "mac-highsierra", "configuration": "release", "architectures": ["x86_64"],
                       "slavenames": ["bot205"]
                     },
-                    { "name": "Apple Sierra Release Test262 (Tests)", "type": "Test262", "builddir": "sierra-release-tests-test262",
-                      "platform": "mac-sierra", "configuration": "release", "architectures": ["x86_64"],
+                    { "name": "Apple High Sierra Release Test262 (Tests)", "type": "Test262", "builddir": "highsierra-release-tests-test262",
+                      "platform": "mac-highsierra", "configuration": "release", "architectures": ["x86_64"],
                       "slavenames": ["bot632"]
                     },
                     {
@@ -450,9 +402,6 @@
                     { "type": "PlatformSpecificScheduler", "platform": "mac-highsierra", "branch": "trunk", "treeStableTimer": 45.0,
                       "builderNames": ["Apple High Sierra Release (Build)", "Apple High Sierra Debug (Build)", "Apple High Sierra Release (32-bit Build)", "Apple High Sierra LLINT CLoop (BuildAndTest)", "Apple High Sierra 32-bit JSC (BuildAndTest)"]
                     },
-                    { "type": "PlatformSpecificScheduler", "platform": "mac-sierra", "branch": "trunk", "treeStableTimer": 45.0,
-                      "builderNames": ["Apple Sierra Release (Build)", "Apple Sierra Debug (Build)", "Apple Sierra Release (32-bit Build)"]
-                    },
                     { "type": "PlatformSpecificScheduler", "platform": "ios-12", "branch": "trunk", "treeStableTimer": 45.0,
                       "builderNames": ["Apple iOS 12 Release (Build)"]
                     },
@@ -464,6 +413,9 @@
                     },
                     { "type": "Triggerable", "name": "highsierra-release-tests-wk1",
                       "builderNames": ["Apple High Sierra Release WK1 (Tests)"]
+                    },
+                    { "type": "Triggerable", "name": "highsierra-release-perf-tests",
+                      "builderNames": ["Apple High Sierra Release WK2 (Perf)"]
                     },
                     { "type": "Triggerable", "name": "highsierra-release-tests-wk2",
                       "builderNames": ["Apple High Sierra Release WK2 (Tests)"]
@@ -480,26 +432,11 @@
                     { "type": "Triggerable", "name": "highsierra-release-tests-jsc",
                       "builderNames": ["Apple High Sierra Release JSC (Tests)"]
                     },
-                    { "type": "Triggerable", "name": "sierra-release-tests-wk1",
-                      "builderNames": ["Apple Sierra Release WK1 (Tests)"]
+                    { "type": "Triggerable", "name": "highsierra-debug-tests-test262",
+                      "builderNames": ["Apple High Sierra Debug Test262 (Tests)"]
                     },
-                    { "type": "Triggerable", "name": "sierra-release-tests-wk2",
-                      "builderNames": ["Apple Sierra Release WK2 (Tests)"]
-                    },
-                    { "type": "Triggerable", "name": "sierra-debug-tests-wk1",
-                      "builderNames": ["Apple Sierra Debug WK1 (Tests)"]
-                    },
-                    { "type": "Triggerable", "name": "sierra-debug-tests-wk2",
-                      "builderNames": ["Apple Sierra Debug WK2 (Tests)"]
-                    },
-                    { "type": "Triggerable", "name": "sierra-release-perf-tests",
-                      "builderNames": ["Apple Sierra Release WK2 (Perf)"]
-                    },
-                    { "type": "Triggerable", "name": "sierra-debug-tests-test262",
-                      "builderNames": ["Apple Sierra Debug Test262 (Tests)"]
-                    },
-                    { "type": "Triggerable", "name": "sierra-release-tests-test262",
-                      "builderNames": ["Apple Sierra Release Test262 (Tests)"]
+                    { "type": "Triggerable", "name": "highsierra-release-tests-test262",
+                      "builderNames": ["Apple High Sierra Release Test262 (Tests)"]
                     },
                     { "type": "Triggerable", "name": "ios-simulator-12-release-tests-wk2",
                       "builderNames": ["Apple iOS 12 Simulator Release WK2 (Tests)"]

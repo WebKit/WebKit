@@ -205,10 +205,6 @@ table.queue-grid tr.platform.ios-12 img.logo {
     content: -webkit-image-set(url(../Images/IOS12@2x.png) 2x, url(../Images/IOS12.png) 1x);
 }
 
-table.queue-grid tr.platform.macos-sierra img.logo {
-    content: -webkit-image-set(url(../Images/Sierra@2x.png) 2x, url(../Images/Sierra.png) 1x);
-}
-
 table.queue-grid tr.platform.macos-highsierra img.logo {
     content: -webkit-image-set(url(../Images/HighSierra@2x.png) 2x, url(../Images/HighSierra.png) 1x);
 }
