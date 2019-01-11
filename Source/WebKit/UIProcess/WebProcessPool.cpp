@@ -87,6 +87,7 @@
 #include <WebCore/Process.h>
 #include <WebCore/ProcessWarming.h>
 #include <WebCore/ResourceRequest.h>
+#include <WebCore/RuntimeApplicationChecks.h>
 #include <pal/SessionID.h>
 #include <wtf/Language.h>
 #include <wtf/MainThread.h>
@@ -113,6 +114,10 @@
 #if PLATFORM(WAYLAND)
 #include "WaylandCompositor.h"
 #include <WebCore/PlatformDisplay.h>
+#endif
+
+#if PLATFORM(COCOA)
+#include "VersionChecks.h"
 #endif
 
 #ifndef NDEBUG
@@ -1145,7 +1150,14 @@ Ref<WebPageProxy> WebProcessPool::createWebPage(PageClient& pageClient, Ref<API:
 #endif
 
     auto page = process->createWebPage(pageClient, WTFMove(pageConfiguration));
-    m_configuration->setProcessSwapsOnNavigationFromExperimentalFeatures(page->preferences().processSwapOnCrossSiteNavigationEnabled());
+
+    bool enableProcessSwapOnCrossSiteNavigation = page->preferences().processSwapOnCrossSiteNavigationEnabled();
+#if PLATFORM(IOS_FAMILY)
+    if (WebCore::IOSApplication::isFirefox() && !linkedOnOrAfter(WebKit::SDKVersion::FirstWithProcessSwapOnCrossSiteNavigation))
+        enableProcessSwapOnCrossSiteNavigation = false;
+#endif
+
+    m_configuration->setProcessSwapsOnNavigationFromExperimentalFeatures(enableProcessSwapOnCrossSiteNavigation);
     m_configuration->setShouldCaptureAudioInUIProcess(page->preferences().captureAudioInUIProcessEnabled());
     m_configuration->setShouldCaptureVideoInUIProcess(page->preferences().captureVideoInUIProcessEnabled());
 

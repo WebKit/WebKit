@@ -90,6 +90,7 @@ WEBCORE_EXPORT bool isTheSecretSocietyHiddenMystery();
 WEBCORE_EXPORT bool isCardiogram();
 WEBCORE_EXPORT bool isNike();
 bool isMoviStarPlus();
+WEBCORE_EXPORT bool isFirefox();
 
 } // IOSApplication
 

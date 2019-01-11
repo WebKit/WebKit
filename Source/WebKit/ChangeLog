@@ -1,3 +1,32 @@
+2019-01-11  Tim Horton  <timothy_horton@apple.com>
+
+        REGRESSION (PSON): Firefox app lacks Open in New Tab in menu
+        https://bugs.webkit.org/show_bug.cgi?id=193366
+        <rdar://problem/46097212>
+
+        Reviewed by Simon Fraser.
+
+        A pair of unrelated changes broke Firefox's use of WKWebView internals
+        to override the long-press menu. Maintain binary compatibility by
+        introducing linked-on-or-after checks.
+
+        * UIProcess/Cocoa/VersionChecks.h:
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::WebProcessPool::createWebPage):
+        Disable PSON in Firefox when linked against an SDK where PSON wasn't enabled by default.
+        Because gestures are very stateful, we always swap them out when swapping
+        processes (changing that behavior is fairly risky). Also, we don't always
+        inform the client when we swap processes (only when the process actually crashes),
+        so they currently don't re-adjust the gesture recognizers when a PSON swap occurs.
+
+        * UIProcess/ios/WKContentView.mm:
+        (-[WKContentView _commonInitializationWithProcessPool:configuration:]):
+        Synchronously install gesture recognizers under -init when linked against
+        an SDK before the version that introduces lazy gesture recognizer installation.
+        r237331 is an optimization that made us lazily install gestures when the
+        view is parented, but Firefox (and potentially other clients) depend
+        on them being installed synchronously in order to find and override them.
+
 2019-01-11  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Introduce IDL files for runtime-enabled UndoManager and UndoItem JavaScript API

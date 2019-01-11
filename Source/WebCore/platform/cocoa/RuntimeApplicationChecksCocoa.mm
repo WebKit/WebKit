@@ -276,7 +276,13 @@ bool IOSApplication::isMoviStarPlus()
     static bool isMoviStarPlus = applicationBundleIsEqualTo("com.prisatv.yomvi"_s);
     return isMoviStarPlus;
 }
-    
+
+bool IOSApplication::isFirefox()
+{
+    static bool isFirefox = applicationBundleIsEqualTo("org.mozilla.ios.Firefox"_s);
+    return isFirefox;
+}
+
 #endif
 
 } // namespace WebCore
