@@ -1,0 +1,49 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ enableUndoManagerAPI=true ] -->
+<html>
+    <head>
+        <script src="../../resources/js-test.js"></script>
+    </head>
+    <script>
+        function emptyFunction() { }
+
+        function runTest()
+        {
+            description("Verifies that, when the UndoManager API is enabled, UndoManager and UndoItem interfaces behave as expected.");
+
+            debug("\nTesting UndoManager:");
+            shouldBeTrue("UndoManager instanceof Function");
+            shouldBeEqualToString("typeof UndoManager", "function");
+            shouldBeTrue("document.undoManager instanceof UndoManager");
+            shouldBeTrue("Object.getPrototypeOf(document.undoManager) === UndoManager.prototype");
+            shouldBeTrue("UndoManager.prototype.addItem instanceof Function");
+            shouldThrow("UndoManager()");
+            shouldThrow("new UndoManager()");
+            shouldThrow("document.undoManager.addItem()");
+            shouldThrow("document.undoManager.addItem('foo')");
+            shouldBeEqualToString("UndoManager.toString()", "function UndoManager() {\n    [native code]\n}");
+            shouldBeEqualToString("document.undoManager.toString()", "[object UndoManager]");
+
+            debug("\nTesting UndoItem:");
+            shouldBeTrue("UndoItem instanceof Function");
+            shouldBeEqualToString("typeof UndoItem", "function");
+            shouldThrow("UndoItem()");
+            shouldThrow("new UndoItem()");
+            shouldThrow("new UndoItem('foo')");
+            shouldThrow("new UndoItem({ })");
+            shouldThrow("new UndoItem({ label: null, undo: null })");
+            shouldThrow("new UndoItem({ redo: null })");
+            shouldThrow("new UndoItem({ label: '', undo: emptyFunction })");
+            shouldThrow("new UndoItem({ label: 'hello', redo: emptyFunction })");
+            shouldThrow("new UndoItem({ label: 3, undo: null, redo: null })");
+            shouldThrow("new UndoItem({ label: '', undo: '', redo: emptyFunction })");
+            shouldThrow("new UndoItem({ label: '', undo: emptyFunction, redo: 10 })");
+            shouldBeTrue("new UndoItem({ label: '', undo: emptyFunction, redo: emptyFunction, foo: 'hi' }) instanceof UndoItem");
+            shouldBeTrue("Object.getPrototypeOf(new UndoItem({ label: '', undo: emptyFunction, redo: emptyFunction })) === UndoItem.prototype");
+            shouldBeEqualToString("new UndoItem({ label: 'foo', undo: emptyFunction, redo: emptyFunction }).label", "foo");
+            shouldBeEqualToString("UndoItem.toString()", "function UndoItem() {\n    [native code]\n}");
+            shouldBeEqualToString("new UndoItem({ label: '', undo: emptyFunction, redo: emptyFunction }).toString()", "[object UndoItem]");
+            shouldNotThrow("document.undoManager.addItem(new UndoItem({ label: '', undo: emptyFunction, redo: emptyFunction }))");
+        }
+    </script>
+    <body onload=runTest()></body>
+</html>

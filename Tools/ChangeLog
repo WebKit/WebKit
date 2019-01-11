@@ -1,3 +1,20 @@
+2019-01-11  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Introduce IDL files for runtime-enabled UndoManager and UndoItem JavaScript API
+        https://bugs.webkit.org/show_bug.cgi?id=193109
+        <rdar://problem/44807048>
+
+        Reviewed by Ryosuke Niwa.
+
+        Introduce and respect a test option to enable the UndoManager API.
+
+        * WebKitTestRunner/TestController.cpp:
+        (WTR::updateTestOptionsFromTestHeader):
+        * WebKitTestRunner/TestOptions.h:
+        (WTR::TestOptions::hasSameInitializationOptions const):
+        * WebKitTestRunner/cocoa/TestControllerCocoa.mm:
+        (WTR::TestController::platformCreateWebView):
+
 2019-01-11  Zalan Bujtas  <zalan@apple.com>
 
         [LFC][BFC][MarginCollapsing] Adjust vertical position when box margin collapses through.

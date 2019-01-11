@@ -1507,6 +1507,7 @@ page/SocketProvider.cpp
 page/SpatialNavigation.cpp
 page/SuspendableTimer.cpp
 page/TextIndicator.cpp
+page/UndoManager.cpp
 page/UserContentProvider.cpp
 page/UserContentController.cpp
 page/UserContentURLPattern.cpp
@@ -3224,6 +3225,8 @@ JSTextMetrics.cpp
 JSTimeRanges.cpp
 JSTransitionEvent.cpp
 JSTreeWalker.cpp
+JSUndoItem.cpp
+JSUndoManager.cpp
 JSUIEvent.cpp
 JSUIEventInit.cpp
 JSURLSearchParams.cpp

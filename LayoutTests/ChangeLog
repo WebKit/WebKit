@@ -1,3 +1,22 @@
+2019-01-11  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Introduce IDL files for runtime-enabled UndoManager and UndoItem JavaScript API
+        https://bugs.webkit.org/show_bug.cgi?id=193109
+        <rdar://problem/44807048>
+
+        Reviewed by Ryosuke Niwa.
+
+        Add UndoManager tests to exercise new bindings, and verify that the JS wrapper for Document's UndoManager
+        survives garbage collection.
+
+        * TestExpectations:
+        * editing/undo-manager/undo-manager-interfaces-expected.txt: Added.
+        * editing/undo-manager/undo-manager-interfaces.html: Added.
+        * editing/undo-manager/undo-manager-keeps-wrapper-alive-expected.txt: Added.
+        * editing/undo-manager/undo-manager-keeps-wrapper-alive.html: Added.
+        * platform/ios-wk2/TestExpectations:
+        * platform/mac-wk2/TestExpectations:
+
 2019-01-11  Zalan Bujtas  <zalan@apple.com>
 
         [LFC][BFC][MarginCollapsing] Adjust vertical position when box margin collapses through.

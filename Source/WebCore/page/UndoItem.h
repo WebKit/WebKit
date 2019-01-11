@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,30 +25,43 @@
 
 #pragma once
 
-#if PLATFORM(MAC)
-
-#include "WheelEventDeltaFilter.h"
-#include <wtf/MonotonicTime.h>
-#include <wtf/RetainPtr.h>
-
-OBJC_CLASS _NSScrollingPredominantAxisFilter;
+#include "VoidCallback.h"
+#include <wtf/Function.h>
+#include <wtf/IsoMallocInlines.h>
+#include <wtf/RefCounted.h>
+#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
-class WheelEventDeltaFilterMac final : public WheelEventDeltaFilter {
-    WTF_MAKE_FAST_ALLOCATED;
+class UndoItem : public RefCounted<UndoItem> {
+    WTF_MAKE_ISO_ALLOCATED_INLINE(UndoItem);
 public:
-    WheelEventDeltaFilterMac();
+    struct Init {
+        String label;
+        RefPtr<VoidCallback> undo;
+        RefPtr<VoidCallback> redo;
+    };
 
-    void updateFromDelta(const FloatSize&) override;
-    void beginFilteringDeltas() override;
-    void endFilteringDeltas() override;
+    static Ref<UndoItem> create(Init&& init)
+    {
+        return adoptRef(*new UndoItem(WTFMove(init)));
+    }
+
+    const String& label() const { return m_label; }
+    VoidCallback& undoHandler() const { return m_undoHandler.get(); }
+    VoidCallback& redoHandler() const { return m_redoHandler.get(); }
 
 private:
-    RetainPtr<_NSScrollingPredominantAxisFilter> m_predominantAxisFilter;
-    MonotonicTime m_beginFilteringDeltasTime;
+    UndoItem(Init&& init)
+        : m_label(WTFMove(init.label))
+        , m_undoHandler(init.undo.releaseNonNull())
+        , m_redoHandler(init.redo.releaseNonNull())
+    {
+    }
+
+    String m_label;
+    Ref<VoidCallback> m_undoHandler;
+    Ref<VoidCallback> m_redoHandler;
 };
 
 } // namespace WebCore
-
-#endif // PLATFORM(MAC)

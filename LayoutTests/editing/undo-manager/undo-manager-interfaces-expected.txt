@@ -1,0 +1,43 @@
+Verifies that, when the UndoManager API is enabled, UndoManager and UndoItem interfaces behave as expected.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+
+Testing UndoManager:
+PASS UndoManager instanceof Function is true
+PASS typeof UndoManager is "function"
+PASS document.undoManager instanceof UndoManager is true
+PASS Object.getPrototypeOf(document.undoManager) === UndoManager.prototype is true
+PASS UndoManager.prototype.addItem instanceof Function is true
+PASS UndoManager() threw exception TypeError: Illegal constructor.
+PASS new UndoManager() threw exception TypeError: function is not a constructor (evaluating 'new UndoManager()').
+PASS document.undoManager.addItem() threw exception TypeError: Not enough arguments.
+PASS document.undoManager.addItem('foo') threw exception TypeError: Argument 1 ('item') to UndoManager.addItem must be an instance of UndoItem.
+PASS UndoManager.toString() is "function UndoManager() {\n    [native code]\n}"
+PASS document.undoManager.toString() is "[object UndoManager]"
+
+Testing UndoItem:
+PASS UndoItem instanceof Function is true
+PASS typeof UndoItem is "function"
+PASS UndoItem() threw exception TypeError: Constructor requires 'new' operator.
+PASS new UndoItem() threw exception TypeError: Not enough arguments.
+PASS new UndoItem('foo') threw exception TypeError: Type error.
+PASS new UndoItem({ }) threw exception TypeError: Member UndoItemInit.label is required and must be an instance of DOMString.
+PASS new UndoItem({ label: null, undo: null }) threw exception TypeError: Member UndoItemInit.redo is required and must be an instance of VoidCallback.
+PASS new UndoItem({ redo: null }) threw exception TypeError: Member UndoItemInit.label is required and must be an instance of DOMString.
+PASS new UndoItem({ label: '', undo: emptyFunction }) threw exception TypeError: Member UndoItemInit.redo is required and must be an instance of VoidCallback.
+PASS new UndoItem({ label: 'hello', redo: emptyFunction }) threw exception TypeError: Member UndoItemInit.undo is required and must be an instance of VoidCallback.
+PASS new UndoItem({ label: 3, undo: null, redo: null }) threw exception TypeError: Type error.
+PASS new UndoItem({ label: '', undo: '', redo: emptyFunction }) threw exception TypeError: Type error.
+PASS new UndoItem({ label: '', undo: emptyFunction, redo: 10 }) threw exception TypeError: Type error.
+PASS new UndoItem({ label: '', undo: emptyFunction, redo: emptyFunction, foo: 'hi' }) instanceof UndoItem is true
+PASS Object.getPrototypeOf(new UndoItem({ label: '', undo: emptyFunction, redo: emptyFunction })) === UndoItem.prototype is true
+PASS new UndoItem({ label: 'foo', undo: emptyFunction, redo: emptyFunction }).label is "foo"
+PASS UndoItem.toString() is "function UndoItem() {\n    [native code]\n}"
+PASS new UndoItem({ label: '', undo: emptyFunction, redo: emptyFunction }).toString() is "[object UndoItem]"
+PASS document.undoManager.addItem(new UndoItem({ label: '', undo: emptyFunction, redo: emptyFunction })) did not throw exception.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

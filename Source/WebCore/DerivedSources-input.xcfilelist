@@ -852,6 +852,8 @@ $(PROJECT_DIR)/page/ScrollLogicalPosition.idl
 $(PROJECT_DIR)/page/ScrollToOptions.idl
 $(PROJECT_DIR)/page/Settings.yaml
 $(PROJECT_DIR)/page/ShareData.idl
+$(PROJECT_DIR)/page/UndoItem.idl
+$(PROJECT_DIR)/page/UndoManager.idl
 $(PROJECT_DIR)/page/UserMessageHandler.idl
 $(PROJECT_DIR)/page/UserMessageHandlersNamespace.idl
 $(PROJECT_DIR)/page/VisualViewport.idl

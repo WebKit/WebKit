@@ -16,6 +16,7 @@ tiled-drawing/ios [ Pass ]
 fast/web-share [ Pass ]
 editing/find [ Pass ]
 editing/input/ios [ Pass ]
+editing/undo-manager [ Pass ]
 
 editing/selection/character-granularity-rect.html [ Failure ]
 

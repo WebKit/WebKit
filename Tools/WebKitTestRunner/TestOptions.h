@@ -67,6 +67,7 @@ struct TestOptions {
     bool shouldShowSpellCheckingDots { false };
     bool enableEditableImages { false };
     bool editable { false };
+    bool enableUndoManagerAPI { false };
 
     float deviceScaleFactor { 1 };
     Vector<String> overrideLanguages;
@@ -111,7 +112,8 @@ struct TestOptions {
             || shouldShowSpellCheckingDots != options.shouldShowSpellCheckingDots
             || shouldIgnoreMetaViewport != options.shouldIgnoreMetaViewport
             || enableEditableImages != options.enableEditableImages
-            || editable != options.editable)
+            || editable != options.editable
+            || enableUndoManagerAPI != options.enableUndoManagerAPI)
             return false;
 
         if (experimentalFeatures != options.experimentalFeatures)

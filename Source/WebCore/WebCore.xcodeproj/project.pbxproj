@@ -868,6 +868,8 @@
 		2EB4BCD3121F03E300EC4885 /* BlobResourceHandle.h in Headers */ = {isa = PBXBuildFile; fileRef = 2EB4BCD1121F03E300EC4885 /* BlobResourceHandle.h */; };
 		2EB767571DA19BDF003E23B5 /* InputEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = 2EB767541DA19B67003E23B5 /* InputEvent.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		2EBBC3D81B65988300F5253D /* WheelEventDeltaFilter.h in Headers */ = {isa = PBXBuildFile; fileRef = 2EBBC3D71B65988300F5253D /* WheelEventDeltaFilter.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		2ECDBAD121D8903400F00ECD /* UndoManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 2ECDBACE21D8903400F00ECD /* UndoManager.h */; };
+		2ECDBAD821D8906300F00ECD /* UndoItem.h in Headers */ = {isa = PBXBuildFile; fileRef = 2ECDBAD521D8906300F00ECD /* UndoItem.h */; };
 		2ECF7ADD10162B3800427DE7 /* JSErrorEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = 2ECF7ADB10162B3800427DE7 /* JSErrorEvent.h */; };
 		2ECF7AE210162B5800427DE7 /* ErrorEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = 2ECF7ADF10162B5800427DE7 /* ErrorEvent.h */; };
 		2ED609BD1145B07100C8684E /* DOMFormData.h in Headers */ = {isa = PBXBuildFile; fileRef = 2ED609BB1145B07100C8684E /* DOMFormData.h */; };
@@ -6833,6 +6835,11 @@
 		2EB767551DA19B99003E23B5 /* InputEvent.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = InputEvent.cpp; sourceTree = "<group>"; };
 		2EBBC3D71B65988300F5253D /* WheelEventDeltaFilter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WheelEventDeltaFilter.h; sourceTree = "<group>"; };
 		2EC41DE21C0410A300D294FE /* RealtimeMediaSourceSupportedConstraints.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RealtimeMediaSourceSupportedConstraints.cpp; sourceTree = "<group>"; };
+		2ECDBACE21D8903400F00ECD /* UndoManager.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = UndoManager.h; sourceTree = "<group>"; };
+		2ECDBACF21D8903400F00ECD /* UndoManager.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = UndoManager.cpp; sourceTree = "<group>"; };
+		2ECDBAD021D8903400F00ECD /* UndoManager.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = UndoManager.idl; sourceTree = "<group>"; };
+		2ECDBAD521D8906300F00ECD /* UndoItem.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = UndoItem.h; sourceTree = "<group>"; };
+		2ECDBAD721D8906300F00ECD /* UndoItem.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = UndoItem.idl; sourceTree = "<group>"; };
 		2ECF7ADA10162B3800427DE7 /* JSErrorEvent.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSErrorEvent.cpp; sourceTree = "<group>"; };
 		2ECF7ADB10162B3800427DE7 /* JSErrorEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSErrorEvent.h; sourceTree = "<group>"; };
 		2ECF7ADE10162B5800427DE7 /* ErrorEvent.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ErrorEvent.cpp; sourceTree = "<group>"; };
@@ -19669,7 +19676,6 @@
 		656580EC09D12B20000E61D7 /* Derived Sources */ = {
 			isa = PBXGroup;
 			children = (
-				C21BF74221CD963B00227979 /* WHLSLStandardLibrary.h */,
 				538EC7EA1F96A95B004D22A8 /* unified-sources */,
 				9908B0F31BCACFFE00ED0F65 /* ByteLengthQueuingStrategyBuiltins.cpp */,
 				9908B0F51BCAD07D00ED0F65 /* ByteLengthQueuingStrategyBuiltins.h */,
@@ -19759,6 +19765,7 @@
 				656581AF09D14EE6000E61D7 /* UserAgentStyleSheetsData.cpp */,
 				1A1414B313A0F0500019996C /* WebKitFontFamilyNames.cpp */,
 				1A1414B413A0F0500019996C /* WebKitFontFamilyNames.h */,
+				C21BF74221CD963B00227979 /* WHLSLStandardLibrary.h */,
 				51748FA21CC6EEEB00728D84 /* WorkerGlobalScopeConstructors.idl */,
 				9908B0F91BCAD07D00ED0F75 /* WritableStreamBuiltins.cpp */,
 				9B03D8061BB3110D00B764E8 /* WritableStreamBuiltins.h */,
@@ -20232,6 +20239,11 @@
 				62C1217B11AB9E77003C462C /* SuspendableTimer.h */,
 				2D4F96F11A1ECC240098BF88 /* TextIndicator.cpp */,
 				2D4F96F21A1ECC240098BF88 /* TextIndicator.h */,
+				2ECDBAD521D8906300F00ECD /* UndoItem.h */,
+				2ECDBAD721D8906300F00ECD /* UndoItem.idl */,
+				2ECDBACF21D8903400F00ECD /* UndoManager.cpp */,
+				2ECDBACE21D8903400F00ECD /* UndoManager.h */,
+				2ECDBAD021D8903400F00ECD /* UndoManager.idl */,
 				1AE79D40188DB61F002239C2 /* UserContentController.cpp */,
 				1AE79D41188DB61F002239C2 /* UserContentController.h */,
 				7C3F01BF1C8E5AB100ADD962 /* UserContentProvider.cpp */,
@@ -25375,13 +25387,13 @@
 		C210E90D21B4BCA400B7F83D /* WHLSL */ = {
 			isa = PBXGroup;
 			children = (
-				C21BF74521CD969800227979 /* WHLSLStandardLibrary.txt */,
 				C21BF6F121CD898D00227979 /* AST */,
 				C210E91121B4BD1000B7F83D /* WHLSLLexer.cpp */,
 				C210E91221B4BD1000B7F83D /* WHLSLLexer.h */,
 				C21BF73721CD8A0200227979 /* WHLSLParser.cpp */,
 				C21BF73821CD8A0300227979 /* WHLSLParser.h */,
 				C21BF73A21CD8D7000227979 /* WHLSLProgram.h */,
+				C21BF74521CD969800227979 /* WHLSLStandardLibrary.txt */,
 			);
 			path = WHLSL;
 			sourceTree = "<group>";
@@ -31873,6 +31885,8 @@
 				85031B4E0A44EFC700F992E0 /* UIEvent.h in Headers */,
 				83FE7CA71DA9F1A70037237C /* UIEventInit.h in Headers */,
 				85031B4F0A44EFC700F992E0 /* UIEventWithKeyState.h in Headers */,
+				2ECDBAD821D8906300F00ECD /* UndoItem.h in Headers */,
+				2ECDBAD121D8903400F00ECD /* UndoManager.h in Headers */,
 				9B2D8A7914997CCF00ECEF3E /* UndoStep.h in Headers */,
 				A863E2011343412000274926 /* UnicodeBidi.h in Headers */,
 				518864E11BBAF57400E540C9 /* UniqueIDBDatabase.h in Headers */,

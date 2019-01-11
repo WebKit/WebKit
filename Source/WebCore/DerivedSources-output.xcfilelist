@@ -1702,6 +1702,10 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSUIEventInit.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSUIEventInit.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSURLSearchParams.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSURLSearchParams.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSUndoItem.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSUndoItem.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSUndoManager.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSUndoManager.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSUserMessageHandler.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSUserMessageHandler.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSUserMessageHandlersNamespace.cpp

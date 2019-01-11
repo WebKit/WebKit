@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,32 +23,18 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
-
-#if PLATFORM(MAC)
-
-#include "WheelEventDeltaFilter.h"
-#include <wtf/MonotonicTime.h>
-#include <wtf/RetainPtr.h>
-
-OBJC_CLASS _NSScrollingPredominantAxisFilter;
-
-namespace WebCore {
-
-class WheelEventDeltaFilterMac final : public WheelEventDeltaFilter {
-    WTF_MAKE_FAST_ALLOCATED;
-public:
-    WheelEventDeltaFilterMac();
-
-    void updateFromDelta(const FloatSize&) override;
-    void beginFilteringDeltas() override;
-    void endFilteringDeltas() override;
-
-private:
-    RetainPtr<_NSScrollingPredominantAxisFilter> m_predominantAxisFilter;
-    MonotonicTime m_beginFilteringDeltasTime;
+[
+    EnabledAtRuntime=UndoManagerAPI,
+] dictionary UndoItemInit {
+    required DOMString label;
+    required VoidCallback undo;
+    required VoidCallback redo;
 };
 
-} // namespace WebCore
-
-#endif // PLATFORM(MAC)
+[
+    EnabledAtRuntime=UndoManagerAPI,
+    ImplementationLacksVTable,
+    Constructor(UndoItemInit initDict),
+] interface UndoItem {
+    readonly attribute DOMString label;
+};

@@ -927,6 +927,8 @@ set(WebCore_NON_SVG_IDL_FILES
     page/ScrollLogicalPosition.idl
     page/ScrollToOptions.idl
     page/ShareData.idl
+    page/UndoItem.idl
+    page/UndoManager.idl
     page/VisualViewport.idl
     page/WebKitPoint.idl
     page/WindowEventHandlers.idl

@@ -1,3 +1,65 @@
+2019-01-11  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Introduce IDL files for runtime-enabled UndoManager and UndoItem JavaScript API
+        https://bugs.webkit.org/show_bug.cgi?id=193109
+        <rdar://problem/44807048>
+
+        Reviewed by Ryosuke Niwa.
+
+        Adds new IDL files and stubs for UndoManager and UndoItem. This is an experimental DOM API that (in the near
+        future) is intended only for use in internal WebKit text editing clients. This API allows the page to
+        participate in the processes of undoing and redoing by defining custom undo and redo handlers, to be executed
+        when undo or redo is triggered.
+
+        Tests: editing/undo-manager/undo-manager-interfaces.html
+               editing/undo-manager/undo-manager-keeps-wrapper-alive.html
+
+        * CMakeLists.txt:
+        * DerivedSources-input.xcfilelist:
+        * DerivedSources-output.xcfilelist:
+        * DerivedSources.make:
+        * Sources.txt:
+        * UnifiedSources-input.xcfilelist:
+        * WebCore.xcodeproj/project.pbxproj:
+
+        Add new source files.
+
+        * bindings/js/WebCoreBuiltinNames.h:
+
+        Add "UndoManager" and "UndoItem" names.
+
+        * dom/Document.cpp:
+        (WebCore::m_undoManager):
+
+        Have the document own a UndoManager.
+
+        * dom/Document.h:
+        (WebCore::Document::undoManager const):
+        * dom/Document.idl:
+        * page/RuntimeEnabledFeatures.h:
+        (WebCore::RuntimeEnabledFeatures::setUndoManagerAPIEnabled):
+        (WebCore::RuntimeEnabledFeatures::undoManagerAPIEnabled const):
+
+        Guard the new bindings behind a runtime-enabled feature flag.
+
+        * page/UndoItem.h: Added.
+        (WebCore::UndoItem::create):
+        (WebCore::UndoItem::label const):
+        (WebCore::UndoItem::undoHandler const):
+        (WebCore::UndoItem::redoHandler const):
+        (WebCore::UndoItem::UndoItem):
+        * page/UndoItem.idl: Added.
+        * page/UndoManager.cpp: Added.
+        (WebCore::UndoManager::addItem):
+        * page/UndoManager.h: Added.
+        (WebCore::UndoManager::create):
+        (WebCore::UndoManager::document):
+        (WebCore::UndoManager::UndoManager):
+        * page/UndoManager.idl: Added.
+        * page/mac/WheelEventDeltaFilterMac.h:
+
+        Necessary (albeit unrelated) build fix to appease unified sources.
+
 2019-01-11  Zalan Bujtas  <zalan@apple.com>
 
         [LFC][BFC][MarginCollapsing] Adjust vertical position when box margin collapses through.

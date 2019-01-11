@@ -315,6 +315,9 @@ public:
     bool intersectionObserverEnabled() const { return m_intersectionObserverEnabled; }
 #endif
 
+    void setUndoManagerAPIEnabled(bool isEnabled) { m_undoManagerAPIEnabled = isEnabled; }
+    bool undoManagerAPIEnabled() const { return m_undoManagerAPIEnabled; }
+
 #if ENABLE(ENCRYPTED_MEDIA)
     void setEncryptedMediaAPIEnabled(bool isEnabled) { m_encryptedMediaAPIEnabled = isEnabled; }
     bool encryptedMediaAPIEnabled() const { return m_encryptedMediaAPIEnabled; }
@@ -505,6 +508,8 @@ private:
 #if USE(SYSTEM_PREVIEW)
     bool m_systemPreviewEnabled { false };
 #endif
+
+    bool m_undoManagerAPIEnabled { false };
 
     friend class WTF::NeverDestroyed<RuntimeEnabledFeatures>;
 };

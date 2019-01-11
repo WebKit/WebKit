@@ -186,6 +186,7 @@ class StyleSheetList;
 class Text;
 class TextResourceDecoder;
 class TreeWalker;
+class UndoManager;
 class VisibilityChangeClient;
 class VisitedLinkState;
 class WebAnimation;
@@ -1003,6 +1004,8 @@ public:
     WEBCORE_EXPORT bool queryCommandState(const String& command);
     WEBCORE_EXPORT bool queryCommandSupported(const String& command);
     WEBCORE_EXPORT String queryCommandValue(const String& command);
+
+    UndoManager& undoManager() const { return m_undoManager.get(); }
 
     // designMode support
     enum InheritedBool { off = false, on = true, inherit };    
@@ -2086,6 +2089,8 @@ private:
     bool m_isRunningUserScripts { false };
 
     bool m_alwaysAllowLocalWebarchive { false };
+
+    Ref<UndoManager> m_undoManager;
 };
 
 Element* eventTargetElementForDocument(Document*);

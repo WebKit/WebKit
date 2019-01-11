@@ -126,6 +126,7 @@ typedef (
     boolean queryCommandState(DOMString commandId);
     boolean queryCommandSupported(DOMString commandId);
     DOMString queryCommandValue(DOMString commandId);
+    [EnabledAtRuntime=UndoManagerAPI] readonly attribute UndoManager undoManager;
 
     // Special event handler IDL attributes that only apply to Document objects.
     [LenientThis] attribute EventHandler onreadystatechange;

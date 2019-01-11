@@ -11,6 +11,7 @@ fast/visual-viewport/tiled-drawing [ Pass ]
 swipe [ Pass ]
 fast/web-share [ Pass ]
 editing/find [ Pass ]
+editing/undo-manager [ Pass ]
 
 fast/events/autoscroll-when-zoomed.html [ Pass ]
 fast/events/autoscroll-main-document.html [ Pass ]

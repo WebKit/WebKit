@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,30 +25,33 @@
 
 #pragma once
 
-#if PLATFORM(MAC)
-
-#include "WheelEventDeltaFilter.h"
-#include <wtf/MonotonicTime.h>
-#include <wtf/RetainPtr.h>
-
-OBJC_CLASS _NSScrollingPredominantAxisFilter;
+#include <wtf/IsoMalloc.h>
+#include <wtf/Ref.h>
+#include <wtf/RefCounted.h>
 
 namespace WebCore {
 
-class WheelEventDeltaFilterMac final : public WheelEventDeltaFilter {
-    WTF_MAKE_FAST_ALLOCATED;
-public:
-    WheelEventDeltaFilterMac();
+class Document;
+class UndoItem;
 
-    void updateFromDelta(const FloatSize&) override;
-    void beginFilteringDeltas() override;
-    void endFilteringDeltas() override;
+class UndoManager : public RefCounted<UndoManager> {
+    WTF_MAKE_ISO_ALLOCATED(UndoManager);
+public:
+    static Ref<UndoManager> create(Document& document)
+    {
+        return adoptRef(*new UndoManager(document));
+    }
+
+    void addItem(Ref<UndoItem>&&);
+    Document& document() { return m_document; }
 
 private:
-    RetainPtr<_NSScrollingPredominantAxisFilter> m_predominantAxisFilter;
-    MonotonicTime m_beginFilteringDeltasTime;
+    UndoManager(Document& document)
+        : m_document(document)
+    {
+    }
+
+    Document& m_document;
 };
 
 } // namespace WebCore
-
-#endif // PLATFORM(MAC)

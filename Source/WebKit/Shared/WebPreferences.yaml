@@ -1528,3 +1528,11 @@ RestrictedHTTPResponseAccess:
   humanReadableDescription: "Enable HTTP Response filtering for WebProcesses"
   category: internal
   webcoreBinding: RuntimeEnabledFeatures
+
+UndoManagerAPIEnabled:
+  type: bool
+  defaultValue: false
+  humanReadableName: "UndoManager DOM API"
+  humanReadableDescription: "Enable the UndoManager DOM API"
+  category: internal
+  webcoreBinding: RuntimeEnabledFeatures

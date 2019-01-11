@@ -210,6 +210,7 @@
 #include "TextNodeTraversal.h"
 #include "TransformSource.h"
 #include "TreeWalker.h"
+#include "UndoManager.h"
 #include "UserGestureIndicator.h"
 #include "ValidationMessageClient.h"
 #include "VisibilityChangeClient.h"
@@ -537,6 +538,7 @@ Document::Document(Frame* frame, const URL& url, unsigned documentClasses, unsig
     , m_isNonRenderedPlaceholder(constructionFlags & NonRenderedPlaceholder)
     , m_orientationNotifier(currentOrientation(frame))
     , m_identifier(generateObjectIdentifier<DocumentIdentifierType>())
+    , m_undoManager(UndoManager::create(*this))
 {
     auto addResult = allDocumentsMap().add(m_identifier, this);
     ASSERT_UNUSED(addResult, addResult.isNewEntry);
