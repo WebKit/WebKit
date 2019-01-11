@@ -69,7 +69,7 @@ private:
     void precomputeVerticalPositionForFormattingRootIfNeeded(const Box&) const;
 
     InstrinsicWidthConstraints instrinsicWidthConstraints() const override;
-    LayoutUnit adjustedVerticalPositionAfterMarginCollapsing(const Box&, LayoutUnit marginBefore) const;
+    LayoutUnit adjustedVerticalPositionAfterMarginCollapsing(const Box&, const UsedVerticalMargin&) const;
 
     // This class implements positioning and sizing for boxes participating in a block formatting context.
     class Geometry : public FormattingContext::Geometry {
@@ -95,6 +95,7 @@ private:
         static UsedVerticalMargin::CollapsedValues collapsedVerticalValues(const LayoutState&, const Box&, const UsedVerticalMargin::NonCollapsedValues&);
 
         static EstimatedMarginBefore estimatedMarginBefore(const LayoutState&, const Box&);
+        static LayoutUnit marginBeforeIgnoringCollapsingThrough(const LayoutState&, const Box&, const UsedVerticalMargin::NonCollapsedValues&);
         static void updateCollapsedMarginAfter(const LayoutState&, const Box&, const UsedVerticalMargin& nextSiblingVerticalMargin);
 
         static bool marginBeforeCollapsesWithParentMarginBefore(const LayoutState&, const Box&);

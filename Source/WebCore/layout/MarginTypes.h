@@ -75,7 +75,10 @@ struct UsedHorizontalMargin {
 };
 
 struct EstimatedMarginBefore {
-    LayoutUnit usedValue;
+    LayoutUnit usedValue() const { return collapsedValue.valueOr(nonCollapsedValue); }
+    LayoutUnit nonCollapsedValue;
+    Optional<LayoutUnit> collapsedValue;
+    bool isCollapsedThrough { false };
 };
 
 struct PositiveAndNegativeVerticalMargin {

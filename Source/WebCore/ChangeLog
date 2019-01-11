@@ -1,3 +1,30 @@
+2019-01-11  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC][BFC][MarginCollapsing] Adjust vertical position when box margin collapses through.
+        https://bugs.webkit.org/show_bug.cgi?id=193346
+
+        Reviewed by Antti Koivisto.
+
+        If the top and bottom margins of a box are adjoining, then it is possible for margins to collapse through it.
+        In this case, the position of the element depends on its relationship with the other elements whose margins are being collapsed.
+
+        1. If the element's margins are collapsed with its parent's top margin, the top border edge of the box is defined to be the same as the parent's.
+        2. Otherwise, either the element's parent is not taking part in the margin collapsing, or only the parent's bottom margin is involved.
+           The position of the element's top border edge is the same as it would have been if the element had a non-zero bottom border.
+
+        Test: fast/block/block-only/collapsed-through-with-parent.html
+
+        * layout/MarginTypes.h:
+        (WebCore::Layout::EstimatedMarginBefore::usedValue const):
+        * layout/blockformatting/BlockFormattingContext.cpp:
+        (WebCore::Layout::BlockFormattingContext::computeEstimatedMarginBefore const):
+        (WebCore::Layout::BlockFormattingContext::computeHeightAndMargin const):
+        (WebCore::Layout::BlockFormattingContext::adjustedVerticalPositionAfterMarginCollapsing const):
+        * layout/blockformatting/BlockFormattingContext.h:
+        * layout/blockformatting/BlockMarginCollapse.cpp:
+        (WebCore::Layout::BlockFormattingContext::MarginCollapse::estimatedMarginBefore):
+        (WebCore::Layout::BlockFormattingContext::MarginCollapse::marginBeforeIgnoringCollapsingThrough):
+
 2019-01-10  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [WHLSL] Include the standard library

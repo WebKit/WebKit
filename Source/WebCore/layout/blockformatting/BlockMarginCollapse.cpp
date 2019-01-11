@@ -593,13 +593,21 @@ EstimatedMarginBefore BlockFormattingContext::MarginCollapse::estimatedMarginBef
     ASSERT(!layoutBox.establishesBlockFormattingContext());
     
     auto computedVerticalMargin = Geometry::computedVerticalMargin(layoutState, layoutBox);
-    auto nonCollapsedMargin = UsedVerticalMargin::NonCollapsedValues { computedVerticalMargin.before.valueOr(0), computedVerticalMargin.after.valueOr(0) }; 
+    auto nonCollapsedMargin = UsedVerticalMargin::NonCollapsedValues { computedVerticalMargin.before.valueOr(0), computedVerticalMargin.after.valueOr(0) };
+    auto marginsCollapseThrough = MarginCollapse::marginsCollapseThrough(layoutState, layoutBox);
+    auto positiveNegativeMarginBefore = MarginCollapse::positiveNegativeMarginBefore(layoutState, layoutBox, nonCollapsedMargin);
 
-    if (!marginsCollapseThrough(layoutState, layoutBox))
-        return { marginValue(positiveNegativeMarginBefore(layoutState, layoutBox, nonCollapsedMargin)).valueOr(0) };
-    
-    return { marginValue(computedPositiveAndNegativeMargin(positiveNegativeMarginBefore(layoutState, layoutBox, nonCollapsedMargin),
-        positiveNegativeMarginAfter(layoutState, layoutBox, nonCollapsedMargin))).valueOr(0) };
+    auto collapsedMarginBefore = marginValue(!marginsCollapseThrough ? positiveNegativeMarginBefore
+        : computedPositiveAndNegativeMargin(positiveNegativeMarginBefore, positiveNegativeMarginAfter(layoutState, layoutBox, nonCollapsedMargin)));
+
+    return { nonCollapsedMargin.before, collapsedMarginBefore, marginsCollapseThrough };
+}
+
+LayoutUnit BlockFormattingContext::MarginCollapse::marginBeforeIgnoringCollapsingThrough(const LayoutState& layoutState, const Box& layoutBox, const UsedVerticalMargin::NonCollapsedValues& nonCollapsedValues)
+{
+    ASSERT(!layoutBox.isAnonymous());
+    ASSERT(layoutBox.isBlockLevelBox());
+    return marginValue(positiveNegativeMarginBefore(layoutState, layoutBox, nonCollapsedValues)).valueOr(nonCollapsedValues.before);
 }
 
 UsedVerticalMargin::CollapsedValues BlockFormattingContext::MarginCollapse::collapsedVerticalValues(const LayoutState& layoutState, const Box& layoutBox, const UsedVerticalMargin::NonCollapsedValues& nonCollapsedValues)
