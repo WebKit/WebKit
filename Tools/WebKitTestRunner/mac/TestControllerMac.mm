@@ -293,22 +293,22 @@ static NSSet *systemHiddenFontFamilySet()
 
 static WKRetainPtr<WKArrayRef> generateWhitelist()
 {
-    WKMutableArrayRef result = WKMutableArrayCreate();
+    WKRetainPtr<WKMutableArrayRef> result = adoptWK(WKMutableArrayCreate());
     for (NSString *fontFamily in allowedFontFamilySet()) {
         NSArray *fontsForFamily = [[NSFontManager sharedFontManager] availableMembersOfFontFamily:fontFamily];
         WKRetainPtr<WKStringRef> familyInFont = adoptWK(WKStringCreateWithUTF8CString([fontFamily UTF8String]));
-        WKArrayAppendItem(result, familyInFont.get());
+        WKArrayAppendItem(result.get(), familyInFont.get());
         for (NSArray *fontInfo in fontsForFamily) {
             // Font name is the first entry in the array.
             WKRetainPtr<WKStringRef> fontName = adoptWK(WKStringCreateWithUTF8CString([[fontInfo objectAtIndex:0] UTF8String]));
-            WKArrayAppendItem(result, fontName.get());
+            WKArrayAppendItem(result.get(), fontName.get());
         }
     }
 
     for (NSString *hiddenFontFamily in systemHiddenFontFamilySet())
-        WKArrayAppendItem(result, adoptWK(WKStringCreateWithUTF8CString([hiddenFontFamily UTF8String])).get());
+        WKArrayAppendItem(result.get(), adoptWK(WKStringCreateWithUTF8CString([hiddenFontFamily UTF8String])).get());
 
-    return adoptWK(result);
+    return result;
 }
 
 void TestController::platformInitializeContext()

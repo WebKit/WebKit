@@ -126,7 +126,7 @@ void WebNotificationProvider::closeWebNotification(WKNotificationRef notificatio
 
     removeGlobalIDFromIDMap(m_localToGlobalNotificationIDMap, id);
 
-    WKRetainPtr<WKUInt64Ref> wkID = WKUInt64Create(id);
+    WKRetainPtr<WKUInt64Ref> wkID(AdoptWK, WKUInt64Create(id));
     WKRetainPtr<WKMutableArrayRef> array(AdoptWK, WKMutableArrayCreate());
     WKArrayAppendItem(array.get(), wkID.get());
     WKNotificationManagerProviderDidCloseNotifications(notificationManager, array.get());

@@ -1,3 +1,22 @@
+2019-01-11  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Cleanup possible WK*Copy/Create leaks in WebKitTestRunner
+        https://bugs.webkit.org/show_bug.cgi?id=193340
+
+        Reviewed by David Kilzer.
+
+        * WebKitTestRunner/InjectedBundle/InjectedBundle.cpp:
+        (WTR::InjectedBundle::didReceiveMessageToPage):
+        Pull the strings out into a WKRetainPtr.
+
+        * WebKitTestRunner/WebNotificationProvider.cpp:
+        (WTR::WebNotificationProvider::closeWebNotification):
+        Adopt the created value into the WKRetainPtr.
+
+        * WebKitTestRunner/mac/TestControllerMac.mm:
+        (WTR::generateWhitelist):
+        Immediately adopt a created value to avoid potential mistakes.
+
 2019-01-11  Dominik Infuehr  <dinfuehr@igalia.com>
 
         Enable DFG on ARM/Linux again
