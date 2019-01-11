@@ -1,5 +1,12 @@
 2019-01-10  Ryan Haddad  <ryanhaddad@apple.com>
 
+        Unreviewed, fix typo that breaks dashboard link.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Scripts/WebKitBuildbot.js:
+        (WebKitBuildbot):
+
+2019-01-10  Ryan Haddad  <ryanhaddad@apple.com>
+
         Update macOS queue configurations
         https://bugs.webkit.org/show_bug.cgi?id=193329
 
