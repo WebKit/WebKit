@@ -1,3 +1,21 @@
+2019-01-11  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        WorkQueue::concurrentApply() passes a raw pointer to a temporary String to Thread::create().
+        https://bugs.webkit.org/show_bug.cgi?id=191350
+
+        Reviewed by Brent Fulgham.
+
+        The non COCOA version of WorkQueue::concurrentApply() creates a temporary
+        String for the threadName and passes the raw pointer of this String to
+        Thread::create(). After freeing this String, Thread::entryPoint() uses
+        the raw char pointer to internally initialize the thread.
+
+        The fix is to use a single literal string for all the threads' names since
+        they are created for a thread-pool.
+
+        * wtf/WorkQueue.cpp:
+        (WTF::WorkQueue::concurrentApply):
+
 2019-01-11  Dominik Infuehr  <dinfuehr@igalia.com>
 
         Enable DFG on ARM/Linux again
