@@ -1,3 +1,25 @@
+2019-01-10  Eric Carlson  <eric.carlson@apple.com>
+
+        DeviceID hash salt manager can be NULL
+        https://bugs.webkit.org/show_bug.cgi?id=193334
+        <rdar://problem/47179650>
+
+        Reviewed by Youenn Fablet.
+
+        * UIProcess/UserMediaPermissionRequestManagerProxy.cpp:
+        (WebKit::UserMediaPermissionRequestManagerProxy::userMediaAccessWasGranted): No need to
+        NULL-check websiteDataStore.deviceIdHashSaltStorage, it is a Ref.
+        (WebKit::UserMediaPermissionRequestManagerProxy::requestUserMediaPermissionForFrame): Ditto.
+        (WebKit::UserMediaPermissionRequestManagerProxy::getUserMediaPermissionInfo): Ditto.
+        (WebKit::UserMediaPermissionRequestManagerProxy::enumerateMediaDevicesForFrame): Ditto.
+
+        * UIProcess/WebsiteData/WebsiteDataStore.cpp:
+        (WebKit::WebsiteDataStore::WebsiteDataStore): m_deviceIdHashSaltStorage is a Ref.
+        (WebKit::WebsiteDataStore::fetchDataAndApply): Ditto.
+        (WebKit::WebsiteDataStore::removeData): Ditto.
+        * UIProcess/WebsiteData/WebsiteDataStore.h:
+        (WebKit::WebsiteDataStore::deviceIdHashSaltStorage): Ditto.
+
 2019-01-10  Per Arne Vollan  <pvollan@apple.com>
 
         [macOS] Add name of IORegistry key in sandbox.

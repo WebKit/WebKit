@@ -142,7 +142,7 @@ public:
 
     StorageManager* storageManager() { return m_storageManager.get(); }
 
-    DeviceIdHashSaltStorage* deviceIdHashSaltStorage() { return m_deviceIdHashSaltStorage.get(); }
+    DeviceIdHashSaltStorage& deviceIdHashSaltStorage() { return m_deviceIdHashSaltStorage.get(); }
 
     WebProcessPool* processPoolForCookieStorageOperations();
     bool isAssociatedProcessPool(WebProcessPool&) const;
@@ -228,7 +228,7 @@ private:
     bool m_hasResolvedDirectories { false };
 
     const RefPtr<StorageManager> m_storageManager;
-    const RefPtr<DeviceIdHashSaltStorage> m_deviceIdHashSaltStorage;
+    const Ref<DeviceIdHashSaltStorage> m_deviceIdHashSaltStorage;
     RefPtr<WebResourceLoadStatisticsStore> m_resourceLoadStatistics;
     bool m_resourceLoadStatisticsDebugMode { false };
 
