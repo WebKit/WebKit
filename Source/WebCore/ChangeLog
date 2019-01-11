@@ -1,3 +1,16 @@
+2019-01-11  Sihui Liu  <sihui_liu@apple.com>
+
+        Fix an assertion in UniqueIDBDatabase
+        https://bugs.webkit.org/show_bug.cgi?id=193096
+
+        Reviewed by Brady Eidson.
+
+        m_objectStoreTransactionCounts.count(objectStore) == 1 in UniqueIDBDatabase::operationAndTransactionTimerFired()
+        is not necessarily true because m_objectStoreTransactionCounts may be cleared in immediateCloseForUserDelete.
+
+        * Modules/indexeddb/server/UniqueIDBDatabase.cpp:
+        (WebCore::IDBServer::UniqueIDBDatabase::operationAndTransactionTimerFired):
+
 2019-01-11  Miguel Gomez  <magomez@igalia.com>
 
         [GTK] Garbled rendering on Youtube while scrolling under X11.

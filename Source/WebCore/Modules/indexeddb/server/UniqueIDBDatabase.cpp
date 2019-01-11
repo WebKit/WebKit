@@ -1573,7 +1573,7 @@ void UniqueIDBDatabase::operationAndTransactionTimerFired()
             m_objectStoreTransactionCounts.add(objectStore);
             if (!transaction->isReadOnly()) {
                 m_objectStoreWriteTransactions.add(objectStore);
-                ASSERT(m_objectStoreTransactionCounts.count(objectStore) == 1);
+                ASSERT(m_objectStoreTransactionCounts.count(objectStore) == 1 || m_hardClosedForUserDelete);
             }
         }
 
