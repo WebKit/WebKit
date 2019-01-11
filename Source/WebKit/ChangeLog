@@ -1,3 +1,38 @@
+2019-01-10  Jiewen Tan  <jiewen_tan@apple.com>
+
+        [WebAuthN] Change the nonce in the CTAP kInit command to weak random values
+        https://bugs.webkit.org/show_bug.cgi?id=192061
+        <rdar://problem/46471091>
+
+        Reviewed by Chris Dumez.
+
+        Change the nonce in the CTAP kInit command to weak random values as the nonce is mainly
+        for being a probabilistically unique global identifier for hand shakes, instead of
+        preventing replay attacks. Otherwise, it might exhaust system entropy unnecessarily.
+
+        The patch also removes all logging when debugging the test case flakiness.
+
+        * UIProcess/WebAuthentication/AuthenticatorManager.cpp:
+        (WebKit::AuthenticatorManager::respondReceived):
+        (WebKit::AuthenticatorManager::initTimeOutTimer):
+        (WebKit::AuthenticatorManager::timeOutTimerFired):
+        * UIProcess/WebAuthentication/Cocoa/HidService.mm:
+        (WebKit::HidService::deviceAdded):
+        * UIProcess/WebAuthentication/Mock/MockAuthenticatorManager.cpp:
+        (WebKit::MockAuthenticatorManager::respondReceivedInternal):
+        * UIProcess/WebAuthentication/Mock/MockHidConnection.cpp:
+        (WebKit::MockHidConnection::send):
+        * UIProcess/WebAuthentication/fido/CtapHidAuthenticator.cpp:
+        (WebKit::CtapHidAuthenticator::makeCredential):
+        (WebKit::CtapHidAuthenticator::getAssertion):
+        * UIProcess/WebAuthentication/fido/CtapHidDriver.cpp:
+        (WebKit::CtapHidDriver::Worker::write):
+        (WebKit::CtapHidDriver::Worker::read):
+        (WebKit::CtapHidDriver::Worker::returnMessage):
+        (WebKit::CtapHidDriver::transact):
+        (WebKit::CtapHidDriver::continueAfterChannelAllocated):
+        (WebKit::CtapHidDriver::continueAfterResponseReceived):
+
 2019-01-10  Timothy Hatcher  <timothy@apple.com>
 
         Add WKBundlePage SPI to temporarily force light or dark appearance on a page.

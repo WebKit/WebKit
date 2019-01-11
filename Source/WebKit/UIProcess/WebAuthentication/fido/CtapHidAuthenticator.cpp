@@ -49,8 +49,6 @@ CtapHidAuthenticator::CtapHidAuthenticator(std::unique_ptr<CtapHidDriver>&& driv
 
 void CtapHidAuthenticator::makeCredential()
 {
-    // FIXME(192061)
-    LOG_ERROR("Start making credentials.");
     auto cborCmd = encodeMakeCredenitalRequestAsCBOR(requestData().hash, requestData().creationOptions, m_info.options().userVerificationAvailability());
     m_driver->transact(WTFMove(cborCmd), [weakThis = makeWeakPtr(*this)](Vector<uint8_t>&& data) {
         ASSERT(RunLoop::isMain());
@@ -72,8 +70,6 @@ void CtapHidAuthenticator::continueMakeCredentialAfterResponseReceived(Vector<ui
 
 void CtapHidAuthenticator::getAssertion()
 {
-    // FIXME(192061)
-    LOG_ERROR("Start getting assertions.");
     auto cborCmd = encodeGetAssertionRequestAsCBOR(requestData().hash, requestData().requestOptions, m_info.options().userVerificationAvailability());
     m_driver->transact(WTFMove(cborCmd), [weakThis = makeWeakPtr(*this)](Vector<uint8_t>&& data) {
         ASSERT(RunLoop::isMain());

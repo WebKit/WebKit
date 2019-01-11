@@ -192,8 +192,6 @@ void AuthenticatorManager::respondReceived(Respond&& respond)
     if (WTF::holds_alternative<PublicKeyCredentialData>(respond)) {
         m_pendingCompletionHandler(WTFMove(respond));
         clearStateAsync();
-        // FIXME(192061)
-        LOG_ERROR("Stop timer.");
         m_requestTimeOutTimer.stop();
         return;
     }
@@ -226,17 +224,12 @@ void AuthenticatorManager::initTimeOutTimer(const Optional<unsigned>& timeOutInM
     using namespace AuthenticatorManagerInternal;
 
     unsigned timeOutInMsValue = std::min(maxTimeOutValue, timeOutInMs.valueOr(maxTimeOutValue));
-    // FIXME(192061)
-    LOG_ERROR("Start timer: %d. Current time: %f.", timeOutInMsValue, MonotonicTime::now().secondsSinceEpoch().value());
     m_requestTimeOutTimer.startOneShot(Seconds::fromMilliseconds(timeOutInMsValue));
-    LOG_ERROR("Seconds until fire: %f", m_requestTimeOutTimer.secondsUntilFire().value());
 }
 
 void AuthenticatorManager::timeOutTimerFired()
 {
     ASSERT(m_requestTimeOutTimer.isActive());
-    // FIXME(192061)
-    LOG_ERROR("Timer fired: %f, Current time: %f", m_requestTimeOutTimer.secondsUntilFire().value(), MonotonicTime::now().secondsSinceEpoch().value());
     m_pendingCompletionHandler((ExceptionData { NotAllowedError, "Operation timed out."_s }));
     clearStateAsync();
 }
