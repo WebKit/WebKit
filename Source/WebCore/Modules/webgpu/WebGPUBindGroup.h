@@ -27,15 +27,20 @@
 
 #if ENABLE(WEBGPU)
 
-#include "GPUBuffer.h"
-#include <wtf/Ref.h>
+#include "GPUBindGroup.h"
+#include <wtf/RefCounted.h>
+#include <wtf/RefPtr.h>
 
 namespace WebCore {
 
-struct GPUBufferBinding {
-    Ref<const GPUBuffer> buffer;
-    unsigned long offset;
-    unsigned long size;
+class WebGPUBindGroup : public RefCounted<WebGPUBindGroup> {
+public:
+    static Ref<WebGPUBindGroup> create(RefPtr<GPUBindGroup>&&);
+
+private:
+    explicit WebGPUBindGroup(RefPtr<GPUBindGroup>&&);
+
+    RefPtr<GPUBindGroup> m_bindGroup;
 };
 
 } // namespace WebCore

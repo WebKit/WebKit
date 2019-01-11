@@ -1,0 +1,3 @@
+
+PASS Create a basic WebGPUBindGroup via WebGPUDevice. 
+

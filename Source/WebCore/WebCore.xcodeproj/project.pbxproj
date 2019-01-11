@@ -13978,6 +13978,11 @@
 		D0BE105121E6A70E00E42A89 /* GPUBindGroupDescriptor.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GPUBindGroupDescriptor.h; sourceTree = "<group>"; };
 		D0BE105221E6AA0D00E42A89 /* WebGPUBindGroupDescriptor.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebGPUBindGroupDescriptor.h; sourceTree = "<group>"; };
 		D0BE105321E6AA0D00E42A89 /* WebGPUBindGroupDescriptor.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = WebGPUBindGroupDescriptor.idl; sourceTree = "<group>"; };
+		D0BE105E21E6BAD300E42A89 /* GPUBindGroup.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GPUBindGroup.h; sourceTree = "<group>"; };
+		D0BE105F21E6BAD300E42A89 /* GPUBindGroup.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = GPUBindGroup.cpp; sourceTree = "<group>"; };
+		D0BE106021E6C0EB00E42A89 /* WebGPUBindGroup.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebGPUBindGroup.h; sourceTree = "<group>"; };
+		D0BE106121E6C0EB00E42A89 /* WebGPUBindGroup.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = WebGPUBindGroup.cpp; sourceTree = "<group>"; };
+		D0BE106221E6C0EB00E42A89 /* WebGPUBindGroup.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = WebGPUBindGroup.idl; sourceTree = "<group>"; };
 		D0C419EB2183CFA2009EC1DE /* WebGPUPipelineStageDescriptor.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebGPUPipelineStageDescriptor.h; sourceTree = "<group>"; };
 		D0C419EC2183CFA2009EC1DE /* WebGPUPipelineStageDescriptor.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = WebGPUPipelineStageDescriptor.idl; sourceTree = "<group>"; };
 		D0C419F02183EB31009EC1DE /* WebGPUPipelineDescriptorBase.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebGPUPipelineDescriptorBase.h; sourceTree = "<group>"; };
@@ -18177,6 +18182,8 @@
 			children = (
 				D087CE3721ACA94200BDE174 /* cocoa */,
 				312FF8CE21A4C33F00EB199D /* legacy */,
+				D0BE105F21E6BAD300E42A89 /* GPUBindGroup.cpp */,
+				D0BE105E21E6BAD300E42A89 /* GPUBindGroup.h */,
 				D0BE104E21E695E200E42A89 /* GPUBindGroupBinding.h */,
 				D0BE105121E6A70E00E42A89 /* GPUBindGroupDescriptor.h */,
 				D02454D021C4A41C00B73628 /* GPUBindGroupLayout.h */,
@@ -25822,6 +25829,9 @@
 				D00F5951216FFAC2000D71DB /* WebGPUAdapter.idl */,
 				D02C26912181416D00D818E4 /* WebGPUAdapterDescriptor.h */,
 				D02C26922181416D00D818E4 /* WebGPUAdapterDescriptor.idl */,
+				D0BE106121E6C0EB00E42A89 /* WebGPUBindGroup.cpp */,
+				D0BE106021E6C0EB00E42A89 /* WebGPUBindGroup.h */,
+				D0BE106221E6C0EB00E42A89 /* WebGPUBindGroup.idl */,
 				D0BE104F21E69F8300E42A89 /* WebGPUBindGroupBinding.h */,
 				D0BE105021E69F8300E42A89 /* WebGPUBindGroupBinding.idl */,
 				D0BE105221E6AA0D00E42A89 /* WebGPUBindGroupDescriptor.h */,

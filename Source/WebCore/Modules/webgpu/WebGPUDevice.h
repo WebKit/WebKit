@@ -40,6 +40,7 @@
 namespace WebCore {
 
 class ScriptExecutionContext;
+class WebGPUBindGroup;
 class WebGPUBindGroupLayout;
 class WebGPUBuffer;
 class WebGPUCommandBuffer;
@@ -47,6 +48,7 @@ class WebGPUPipelineLayout;
 class WebGPURenderPipeline;
 class WebGPUShaderModule;
 
+struct WebGPUBindGroupDescriptor;
 struct WebGPUPipelineLayoutDescriptor;
 struct WebGPURenderPipelineDescriptor;
 struct WebGPUShaderModuleDescriptor;
@@ -62,6 +64,7 @@ public:
 
     Ref<WebGPUBindGroupLayout> createBindGroupLayout(WebGPUBindGroupLayoutDescriptor&&) const;
     Ref<WebGPUPipelineLayout> createPipelineLayout(WebGPUPipelineLayoutDescriptor&&) const;
+    Ref<WebGPUBindGroup> createBindGroup(WebGPUBindGroupDescriptor&&) const;
 
     RefPtr<WebGPUShaderModule> createShaderModule(WebGPUShaderModuleDescriptor&&) const;
     RefPtr<WebGPURenderPipeline> createRenderPipeline(WebGPURenderPipelineDescriptor&&) const;

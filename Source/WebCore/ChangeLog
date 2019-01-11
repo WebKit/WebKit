@@ -1,3 +1,37 @@
+2019-01-10  Justin Fan  <justin_fan@apple.com>
+
+        [WebGPU] WebGPUBindGroup and device::createBindGroup prototype
+        https://bugs.webkit.org/show_bug.cgi?id=193341
+
+        Reviewed by Myles C. Maxfield.
+
+        Add *GPUBindGroup class stubs and the ability to create WebGPUBindGroups via the API.
+
+        Test: bind-groups.html
+
+        * CMakeLists.txt:
+        * DerivedSources.make:
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/WebCoreBuiltinNames.h:
+
+        * Modules/webgpu/WebGPUBindGroup.cpp:
+        (WebCore::WebGPUBindGroup::create):
+        (WebCore::WebGPUBindGroup::WebGPUBindGroup):
+        * Modules/webgpu/WebGPUBindGroup.h:
+        * Modules/webgpu/WebGPUBindGroup.idl: Enable createBindGroup().
+        * Modules/webgpu/WebGPUDevice.cpp:
+        (WebCore::BindingResourceVisitor::operator() const): Added. Validate and convert WebGPUBindGroupDescriptor to GPU* version.
+        (WebCore::WebGPUDevice::createBindGroup const): Added.
+        * Modules/webgpu/WebGPUDevice.h:
+        * platform/graphics/gpu/GPUBindGroup.cpp:
+        (WebCore::GPUBindGroup::create):
+        (WebCore::GPUBindGroup::GPUBindGroup):
+        * platform/graphics/gpu/GPUBindGroup.h:
+        * platform/graphics/gpu/GPUBufferBinding.h:
+        * platform/graphics/gpu/cocoa/GPUBindGroupLayoutMetal.mm:
+        (WebCore::appendArgumentToArray): Pass RetainPtr by reference to actually update descriptor.
+
 2019-01-10  Simon Fraser  <simon.fraser@apple.com>
 
         Fix rare crash under ScrollbarThemeMac::paintScrollCorner()

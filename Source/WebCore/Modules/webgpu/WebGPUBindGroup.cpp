@@ -23,20 +23,22 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#include "config.h"
+#include "WebGPUBindGroup.h"
 
 #if ENABLE(WEBGPU)
 
-#include "GPUBuffer.h"
-#include <wtf/Ref.h>
-
 namespace WebCore {
 
-struct GPUBufferBinding {
-    Ref<const GPUBuffer> buffer;
-    unsigned long offset;
-    unsigned long size;
-};
+Ref<WebGPUBindGroup> WebGPUBindGroup::create(RefPtr<GPUBindGroup>&& bindGroup)
+{
+    return adoptRef(*new WebGPUBindGroup(WTFMove(bindGroup)));
+}
+
+WebGPUBindGroup::WebGPUBindGroup(RefPtr<GPUBindGroup>&& bindGroup)
+    : m_bindGroup(WTFMove(bindGroup))
+{
+}
 
 } // namespace WebCore
 

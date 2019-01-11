@@ -37,6 +37,7 @@
 
     WebGPUBindGroupLayout createBindGroupLayout(WebGPUBindGroupLayoutDescriptor descriptor);
     WebGPUPipelineLayout createPipelineLayout(WebGPUPipelineLayoutDescriptor descriptor);
+    WebGPUBindGroup createBindGroup(WebGPUBindGroupDescriptor descriptor);
 
     WebGPUShaderModule createShaderModule(WebGPUShaderModuleDescriptor descriptor);
     WebGPURenderPipeline createRenderPipeline(WebGPURenderPipelineDescriptor descriptor);

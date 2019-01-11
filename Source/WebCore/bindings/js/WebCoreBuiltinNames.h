@@ -190,6 +190,7 @@ namespace WebCore {
     macro(WebGLVertexArrayObject) \
     macro(WebGPU) \
     macro(WebGPUAdapter) \
+    macro(WebGPUBindGroup) \
     macro(WebGPUBindGroupLayout) \
     macro(WebGPUBuffer) \
     macro(WebGPUBufferUsage) \

@@ -22,22 +22,11 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
+// https://github.com/gpuweb/gpuweb/blob/master/design/sketch.webidl
 
-#pragma once
-
-#if ENABLE(WEBGPU)
-
-#include "GPUBuffer.h"
-#include <wtf/Ref.h>
-
-namespace WebCore {
-
-struct GPUBufferBinding {
-    Ref<const GPUBuffer> buffer;
-    unsigned long offset;
-    unsigned long size;
+[
+    Conditional=WEBGPU,
+    EnabledAtRuntime=WebGPU,
+    ImplementationLacksVTable
+] interface WebGPUBindGroup {
 };
-
-} // namespace WebCore
-
-#endif // ENABLE(WEBGPU)

@@ -464,6 +464,7 @@ set(WebCore_NON_SVG_IDL_FILES
     Modules/webgpu/WebGPU.idl
     Modules/webgpu/WebGPUAdapter.idl
     Modules/webgpu/WebGPUAdapterDescriptor.idl
+    Modules/webgpu/WebGPUBindGroup.idl
     Modules/webgpu/WebGPUBindGroupBinding.idl
     Modules/webgpu/WebGPUBindGroupDescriptor.idl
     Modules/webgpu/WebGPUBindGroupLayout.idl

@@ -28,13 +28,21 @@
 
 #if ENABLE(WEBGPU)
 
+#include "GPUBindGroup.h"
+#include "GPUBindGroupBinding.h"
+#include "GPUBindGroupDescriptor.h"
+#include "GPUBufferBinding.h"
 #include "GPUCommandBuffer.h"
 #include "GPUPipelineStageDescriptor.h"
 #include "GPURenderPipelineDescriptor.h"
 #include "GPUShaderModuleDescriptor.h"
 #include "Logging.h"
+#include "WebGPUBindGroup.h"
+#include "WebGPUBindGroupBinding.h"
+#include "WebGPUBindGroupDescriptor.h"
 #include "WebGPUBindGroupLayout.h"
 #include "WebGPUBuffer.h"
+#include "WebGPUBufferBinding.h"
 #include "WebGPUCommandBuffer.h"
 #include "WebGPUPipelineLayout.h"
 #include "WebGPUPipelineLayoutDescriptor.h"
@@ -44,6 +52,7 @@
 #include "WebGPURenderPipelineDescriptor.h"
 #include "WebGPUShaderModule.h"
 #include "WebGPUShaderModuleDescriptor.h"
+#include <wtf/Variant.h>
 
 namespace WebCore {
 
@@ -83,6 +92,39 @@ Ref<WebGPUPipelineLayout> WebGPUDevice::createPipelineLayout(WebGPUPipelineLayou
     });
     auto layout = m_device->createPipelineLayout(GPUPipelineLayoutDescriptor { WTFMove(bindGroupLayouts) });
     return WebGPUPipelineLayout::create(WTFMove(layout));
+}
+
+Ref<WebGPUBindGroup> WebGPUDevice::createBindGroup(WebGPUBindGroupDescriptor&& descriptor) const
+{
+    if (!descriptor.layout || !descriptor.layout->bindGroupLayout()) {
+        LOG(WebGPU, "WebGPUDevice::createBindGroup: Invalid WebGPUBindGroupLayout!");
+        return WebGPUBindGroup::create(nullptr);
+    }
+
+    auto bindingResourceVisitor = WTF::makeVisitor([] (RefPtr<WebGPUTextureView> view) -> Optional<GPUBindingResource> {
+        if (view)
+            return static_cast<GPUBindingResource>(view->texture());
+        return WTF::nullopt;
+    }, [] (const WebGPUBufferBinding& binding) -> Optional<GPUBindingResource> {
+        if (binding.buffer)
+            return static_cast<GPUBindingResource>(GPUBufferBinding { binding.buffer->buffer(), binding.offset, binding.size });
+        return WTF::nullopt;
+    });
+
+    Vector<GPUBindGroupBinding> bindGroupBindings;
+    bindGroupBindings.reserveCapacity(descriptor.bindings.size());
+
+    for (const auto& binding : descriptor.bindings) {
+        auto bindingResource = WTF::visit(bindingResourceVisitor, binding.resource);
+        if (bindingResource)
+            bindGroupBindings.uncheckedAppend(GPUBindGroupBinding { binding.binding, WTFMove(bindingResource.value()) });
+        else {
+            LOG(WebGPU, "WebGPUDevice::createBindGroup: Invalid WebGPUBindingResource in WebGPUBindGroupBindings!");
+            return WebGPUBindGroup::create(nullptr);
+        }
+    }
+    auto bindGroup = GPUBindGroup::create(GPUBindGroupDescriptor { descriptor.layout->bindGroupLayout().releaseNonNull(), WTFMove(bindGroupBindings) });
+    return WebGPUBindGroup::create(WTFMove(bindGroup));
 }
 
 RefPtr<WebGPUShaderModule> WebGPUDevice::createShaderModule(WebGPUShaderModuleDescriptor&& descriptor) const

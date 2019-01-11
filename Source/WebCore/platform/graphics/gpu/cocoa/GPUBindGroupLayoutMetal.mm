@@ -51,7 +51,7 @@ static MTLDataType MTLDataTypeForBindingType(GPUBindGroupLayoutBinding::BindingT
 }
 
 using ArgumentArray = RetainPtr<NSMutableArray<MTLArgumentDescriptor *>>;
-static void appendArgumentToArray(ArgumentArray array, RetainPtr<MTLArgumentDescriptor> argument)
+static void appendArgumentToArray(ArgumentArray& array, RetainPtr<MTLArgumentDescriptor> argument)
 {
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
     if (!array)

@@ -321,6 +321,7 @@ Modules/webgpu/WHLSL/AST/WHLSLTypeReference.cpp
 Modules/webgpu/WHLSL/AST/WHLSLIntegerLiteral.cpp
 Modules/webgpu/WHLSL/AST/WHLSLUnsignedIntegerLiteral.cpp
 Modules/webgpu/WebGPU.cpp
+Modules/webgpu/WebGPUBindGroup.cpp
 Modules/webgpu/WebGPUAdapter.cpp
 Modules/webgpu/WebGPUBindGroupLayout.cpp
 Modules/webgpu/WebGPUBuffer.cpp
@@ -1763,6 +1764,7 @@ platform/graphics/filters/SourceAlpha.cpp
 platform/graphics/filters/SourceGraphic.cpp
 platform/graphics/filters/SpotLightSource.cpp
 
+platform/graphics/gpu/GPUBindGroup.cpp
 platform/graphics/gpu/GPUDevice.cpp
 platform/graphics/gpu/GPUPipelineLayout.cpp
 platform/graphics/gpu/legacy/GPULegacyBuffer.cpp
@@ -3248,6 +3250,7 @@ JSWebAnimation.cpp
 JSWebGPU.cpp
 JSWebGPUAdapter.cpp
 JSWebGPUAdapterDescriptor.cpp
+JSWebGPUBindGroup.cpp
 JSWebGPUBindGroupBinding.cpp
 JSWebGPUBindGroupDescriptor.cpp
 JSWebGPUBindGroupLayout.cpp
