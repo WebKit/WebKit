@@ -1,3 +1,14 @@
+2019-01-11  Jonathan Bedard  <jbedard@apple.com>
+
+        webkitpy: Support alternate simctl device list output
+        https://bugs.webkit.org/show_bug.cgi?id=193362
+        <rdar://problem/47122965>
+
+        Reviewed by Lucas Forschler.
+
+        * Scripts/webkitpy/xcode/simulated_device.py:
+        (SimulatedDeviceManager.populate_available_devices):
+
 2019-01-11  Aakash Jain  <aakash_jain@apple.com>
 
         [ews-build] Update macOS queue configurations
