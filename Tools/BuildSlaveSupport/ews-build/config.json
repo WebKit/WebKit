@@ -42,35 +42,35 @@
     },
     {
       "name": "ews100",
-      "platform": "mac-sierra"
+      "platform": "mac-high-sierra"
     },
     {
       "name": "ews101",
-      "platform": "mac-sierra"
+      "platform": "mac-high-sierra"
     },
     {
       "name": "ews102",
-      "platform": "mac-sierra"
+      "platform": "mac-high-sierra"
     },
     {
       "name": "ews103",
-      "platform": "mac-sierra"
+      "platform": "mac-high-sierra"
     },
     {
       "name": "ews104",
-      "platform": "mac-sierra"
+      "platform": "mac-high-sierra"
     },
     {
       "name": "ews105",
-      "platform": "mac-sierra"
+      "platform": "mac-high-sierra"
     },
     {
       "name": "ews106",
-      "platform": "mac-sierra"
+      "platform": "mac-high-sierra"
     },
     {
       "name": "ews107",
-      "platform": "mac-sierra"
+      "platform": "mac-high-sierra"
     },
     {
       "name": "ews108",
@@ -82,27 +82,27 @@
     },
     {
       "name": "ews112",
-      "platform": "mac-sierra"
+      "platform": "mac-high-sierra"
     },
     {
       "name": "ews113",
-      "platform": "mac-sierra"
+      "platform": "mac-high-sierra"
     },
     {
       "name": "ews114",
-      "platform": "mac-sierra"
+      "platform": "mac-high-sierra"
     },
     {
       "name": "ews115",
-      "platform": "mac-sierra"
+      "platform": "mac-high-sierra"
     },
     {
       "name": "ews116",
-      "platform": "mac-sierra"
+      "platform": "mac-high-sierra"
     },
     {
       "name": "ews117",
-      "platform": "mac-sierra"
+      "platform": "mac-high-sierra"
     },
     {
       "name": "ews118",
@@ -224,43 +224,43 @@
       "workernames": ["ews121", "ews122", "ews123", "ews124", "ews125", "ews126"]
     },
     {
-      "name": "macOS-Sierra-Release-Build-EWS",
+      "name": "macOS-High-Sierra-Release-Build-EWS",
       "factory": "macOSBuildFactory",
-      "platform": "mac-sierra",
+      "platform": "mac-high-sierra",
       "configuration": "release",
       "architectures": ["x86_64"],
-      "triggers": ["api-tests-mac-ews", "macos-sierra-release-wk1-tests-ews", "macos-sierra-release-wk2-tests-ews"],
+      "triggers": ["api-tests-mac-ews", "macos-high-sierra-release-wk1-tests-ews", "macos-high-sierra-release-wk2-tests-ews"],
       "workernames": ["ews100", "ews101", "ews102", "ews103"]
     },
     {
-      "name": "macOS-Sierra-Release-WK1-Tests-EWS",
+      "name": "macOS-High-Sierra-Release-WK1-Tests-EWS",
       "factory": "macOSWK1Factory",
-      "platform": "mac-sierra",
+      "platform": "mac-high-sierra",
       "configuration": "release",
       "architectures": ["x86_64"],
       "workernames": ["ews100", "ews101", "ews102", "ews103"]
     },
     {
-      "name": "macOS-Sierra-Release-WK2-Tests-EWS",
+      "name": "macOS-High-Sierra-Release-WK2-Tests-EWS",
       "factory": "macOSWK2Factory",
-      "platform": "mac-sierra",
+      "platform": "mac-high-sierra",
       "configuration": "release",
       "architectures": ["x86_64"],
       "workernames": ["ews104", "ews105", "ews106", "ews107"]
     },
     {
-      "name": "macOS-Sierra-Debug-Build-EWS",
+      "name": "macOS-High-Sierra-Debug-Build-EWS",
       "factory": "macOSBuildFactory",
-      "platform": "mac-sierra",
+      "platform": "mac-high-sierra",
       "configuration": "debug",
       "architectures": ["x86_64"],
-      "triggers": ["macos-sierra-debug-wk1-tests-ews"],
+      "triggers": ["macos-high-sierra-debug-wk1-tests-ews"],
       "workernames": ["ews112", "ews113", "ews114", "ews115", "ews116"]
     },
     {
-      "name": "macOS-Sierra-Debug-WK1-Tests-EWS",
+      "name": "macOS-High-Sierra-Debug-WK1-Tests-EWS",
       "factory": "macOSWK1Factory",
-      "platform": "mac-sierra",
+      "platform": "mac-high-sierra",
       "configuration": "debug",
       "architectures": ["x86_64"],
       "workernames": ["ews112", "ews113", "ews114", "ews115", "ews116"]
@@ -343,9 +343,9 @@
       "type": "Try_Userpass",
       "name": "try",
       "port": 5555,
-      "builderNames": ["Style-EWS", "JSC-Tests-EWS", "macOS-Sierra-Release-Build-EWS", "GTK-Webkit2-EWS",
+      "builderNames": ["Style-EWS", "JSC-Tests-EWS", "macOS-High-Sierra-Release-Build-EWS", "GTK-Webkit2-EWS",
                        "macOS-High-Sierra-Release-32bit-Build-EWS", "WPE-EWS", "Windows-EWS", "iOS-11-Build-EWS", "WinCairo-EWS", "iOS-11-Simulator-Build-EWS",
-                       "WebKitPy-Tests-EWS", "WebKitPerl-Tests-EWS", "macOS-Sierra-Debug-Build-EWS", "Bindings-Tests-EWS"]
+                       "WebKitPy-Tests-EWS", "WebKitPerl-Tests-EWS", "macOS-High-Sierra-Debug-Build-EWS", "Bindings-Tests-EWS"]
     },
     {
       "type": "Triggerable",
@@ -356,23 +356,23 @@
     },
     {
       "type": "Triggerable",
-      "name": "macos-sierra-release-wk1-tests-ews",
+      "name": "macos-high-sierra-release-wk1-tests-ews",
       "builderNames": [
-        "macOS-Sierra-Release-WK1-Tests-EWS"
+        "macOS-High-Sierra-Release-WK1-Tests-EWS"
       ]
     },
     {
       "type": "Triggerable",
-      "name": "macos-sierra-release-wk2-tests-ews",
+      "name": "macos-high-sierra-release-wk2-tests-ews",
       "builderNames": [
-        "macOS-Sierra-Release-WK2-Tests-EWS"
+        "macOS-High-Sierra-Release-WK2-Tests-EWS"
       ]
     },
     {
       "type": "Triggerable",
-      "name": "macos-sierra-debug-wk1-tests-ews",
+      "name": "macos-high-sierra-debug-wk1-tests-ews",
       "builderNames": [
-        "macOS-Sierra-Debug-WK1-Tests-EWS"
+        "macOS-High-Sierra-Debug-WK1-Tests-EWS"
       ]
     },
     {
