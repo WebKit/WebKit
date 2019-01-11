@@ -1,3 +1,45 @@
+2019-01-10  Jer Noble  <jer.noble@apple.com>
+
+        <video> elements do not enter 'paused' state when playing to end over AirPlay
+        https://bugs.webkit.org/show_bug.cgi?id=193295
+        <rdar://problem/46708670>
+
+        Reviewed by Eric Carlson.
+
+        Adopt the -[AVPlayer timeControlStatus] API, which reports whether the AVPlayer is paused, playing, or blocked waiting
+        for more data before playing. AirPlay devices report this state back from the remote device, and this allows the
+        MediaPlayerPrivateAVFoundationObjC to differentiate between user-generated pauses and simple stalling.
+
+        Adopting this API allows us to remove the heuristic from rateChanged() which inteprets a rate change when the
+        readyState > HAVE_ENOUGH as an intentional pause.
+
+        Drive-by fix: MediaPlayerPrivateAVFoundation had some code to delay calling platformPlay()
+        until the first frame became available. But this code was entirely undermined by the previous
+        behavior of setRate(). Fixing setRate()/setRateDouble() to only start playback if playback was
+        actually requested started making this code work for the first time, and broke some API tests.
+        Thus, we're removing this previously dead code.
+
+        * platform/graphics/avfoundation/MediaPlayerPrivateAVFoundation.cpp:
+        (WebCore::MediaPlayerPrivateAVFoundation::MediaPlayerPrivateAVFoundation):
+        (WebCore::MediaPlayerPrivateAVFoundation::play):
+        (WebCore::MediaPlayerPrivateAVFoundation::pause):
+        (WebCore::MediaPlayerPrivateAVFoundation::rateChanged):
+        (WebCore::MediaPlayerPrivateAVFoundation::updateStates):
+        * platform/graphics/avfoundation/MediaPlayerPrivateAVFoundation.h:
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.h:
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.mm:
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::cancelLoad):
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::createAVPlayer):
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::didEnd):
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::platformPlay):
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::platformPause):
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::seekToTime):
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::setRateDouble):
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::setPlayerRate):
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::timeControlStatusDidChange):
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::setShouldObserveTimeControlStatus):
+        (-[WebCoreAVFMovieObserver observeValueForKeyPath:ofObject:change:context:]):
+
 2019-01-10  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Fix the build after r239844

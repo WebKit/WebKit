@@ -80,6 +80,7 @@ public:
 
     void setAsset(RetainPtr<id>&&);
     void tracksChanged() override;
+    void didEnd() override;
 
 #if HAVE(AVFOUNDATION_MEDIA_SELECTION_GROUP)
     RetainPtr<AVPlayerItem> playerItem() const { return m_avPlayerItem; }
@@ -113,6 +114,7 @@ public:
     void presentationSizeDidChange(FloatSize);
     void durationDidChange(const MediaTime&);
     void rateDidChange(double);
+    void timeControlStatusDidChange(int);
     void metadataDidArrive(const RetainPtr<NSArray>&, const MediaTime&);
     void firstFrameAvailableDidChange(bool);
     void trackEnabledDidChange(bool);
@@ -181,6 +183,7 @@ private:
     void setVideoFullscreenGravity(MediaPlayer::VideoGravity) override;
     void setVideoFullscreenMode(MediaPlayer::VideoFullscreenMode) override;
     void videoFullscreenStandbyChanged() override;
+    void setPlayerRate(double);
 
 #if PLATFORM(IOS_FAMILY)
     NSArray *timedMetadata() const override;
@@ -333,6 +336,7 @@ private:
     AVPlayer *objCAVFoundationAVPlayer() const final { return m_avPlayer.get(); }
 
     bool performTaskAtMediaTime(WTF::Function<void()>&&, MediaTime) final;
+    void setShouldObserveTimeControlStatus(bool);
 
     WeakPtrFactory<MediaPlayerPrivateAVFoundationObjC> m_weakPtrFactory;
     RetainPtr<AVURLAsset> m_avAsset;
@@ -415,6 +419,9 @@ private:
     MediaTime m_cachedDuration;
     RefPtr<SharedBuffer> m_keyID;
     double m_cachedRate;
+    bool m_requestedPlaying { false };
+    double m_requestedRate { 1.0 };
+    int m_cachedTimeControlStatus { 0 };
     mutable long long m_cachedTotalBytes;
     unsigned m_pendingStatusChanges;
     int m_cachedItemStatus;
@@ -428,6 +435,7 @@ private:
     bool m_cachedCanPlayFastForward;
     bool m_cachedCanPlayFastReverse;
     bool m_muted { false };
+    bool m_shouldObserveTimeControlStatus { false };
     mutable Optional<bool> m_tracksArePlayable;
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
     mutable bool m_allowsWirelessVideoPlayback;
