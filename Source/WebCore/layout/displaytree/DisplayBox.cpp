@@ -74,7 +74,7 @@ Box::Box(const Box& other)
     , m_hasValidPadding(other.m_hasValidPadding)
     , m_hasValidContentHeight(other.m_hasValidContentHeight)
     , m_hasValidContentWidth(other.m_hasValidContentWidth)
-    , m_estimatedMarginBefore(other.m_estimatedMarginBefore)
+    , m_hasEstimatedMarginBefore(other.m_hasEstimatedMarginBefore)
 #endif
 {
 }

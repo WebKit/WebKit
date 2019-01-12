@@ -188,7 +188,7 @@ void BlockFormattingContext::computeEstimatedMarginBefore(const Box& layoutBox) 
 {
     auto& layoutState = this->layoutState();
     auto estimatedMarginBefore = MarginCollapse::estimatedMarginBefore(layoutState, layoutBox);
-    blockFormattingState().setHasEstimatedMarginBefore(layoutBox);
+    setEstimatedMarginBefore(layoutBox, estimatedMarginBefore);
 
     auto& displayBox = layoutState.displayBoxForLayoutBox(layoutBox);
     auto nonCollapsedValues = UsedVerticalMargin::NonCollapsedValues { estimatedMarginBefore.nonCollapsedValue, { } };
@@ -196,7 +196,7 @@ void BlockFormattingContext::computeEstimatedMarginBefore(const Box& layoutBox) 
     auto verticalMargin = UsedVerticalMargin { nonCollapsedValues, collapsedValues };
     displayBox.setTop(adjustedVerticalPositionAfterMarginCollapsing(layoutBox, verticalMargin));
 #if !ASSERT_DISABLED
-    displayBox.setEstimatedMarginBefore(estimatedMarginBefore);
+    displayBox.setHasEstimatedMarginBefore();
 #endif
 }
 
@@ -214,10 +214,9 @@ void BlockFormattingContext::computeEstimatedMarginBeforeForAncestors(const Box&
     // So when we get to the point where we intersect the box with the float to decide if the box needs to move, we don't yet have the final vertical position.
     //
     // The idea here is that as long as we don't cross the block formatting context boundary, we should be able to pre-compute the final top margin.
-    auto& formattingState = blockFormattingState();
     for (auto* ancestor = layoutBox.containingBlock(); ancestor && !ancestor->establishesBlockFormattingContext(); ancestor = ancestor->containingBlock()) {
         // FIXME: with incremental layout, we might actually have a valid (non-estimated) margin top as well.
-        if (formattingState.hasEstimatedMarginBefore(*ancestor))
+        if (hasEstimatedMarginBefore(*ancestor))
             return;
 
         computeEstimatedMarginBefore(*ancestor);
@@ -242,10 +241,10 @@ void BlockFormattingContext::precomputeVerticalPositionForFormattingRootIfNeeded
 }
 
 #ifndef NDEBUG
-static bool hasPrecomputedMarginBefore(const BlockFormattingState& formattingState, const Box& layoutBox)
+bool BlockFormattingContext::hasPrecomputedMarginBefore(const Box& layoutBox) const
 {
     for (auto* ancestor = layoutBox.containingBlock(); ancestor && !ancestor->establishesBlockFormattingContext(); ancestor = ancestor->containingBlock()) {
-        if (formattingState.hasEstimatedMarginBefore(*ancestor))
+        if (hasEstimatedMarginBefore(*ancestor))
             continue;
         return false;
     }
@@ -257,7 +256,7 @@ void BlockFormattingContext::computeFloatingPosition(const FloatingContext& floa
 {
     auto& layoutState = this->layoutState();
     ASSERT(layoutBox.isFloatingPositioned());
-    ASSERT(hasPrecomputedMarginBefore(blockFormattingState(), layoutBox));
+    ASSERT(hasPrecomputedMarginBefore(layoutBox));
 
     auto& displayBox = layoutState.displayBoxForLayoutBox(layoutBox);
     // 8.3.1 Collapsing margins
@@ -277,7 +276,7 @@ void BlockFormattingContext::computePositionToAvoidFloats(const FloatingContext&
     ASSERT(layoutBox.establishesBlockFormattingContext());
     ASSERT(!layoutBox.isFloatingPositioned());
     ASSERT(!layoutBox.hasFloatClear());
-    ASSERT(hasPrecomputedMarginBefore(blockFormattingState(), layoutBox));
+    ASSERT(hasPrecomputedMarginBefore(layoutBox));
 
     if (floatingContext.floatingState().isEmpty())
         return;
@@ -296,7 +295,7 @@ void BlockFormattingContext::computeVerticalPositionForFloatClear(const Floating
     // For formatting roots, we already precomputed final position.
     if (!layoutBox.establishesFormattingContext())
         computeEstimatedMarginBeforeForAncestors(layoutBox);
-    ASSERT(hasPrecomputedMarginBefore(blockFormattingState(), layoutBox));
+    ASSERT(hasPrecomputedMarginBefore(layoutBox));
 
     if (auto verticalPositionWithClearance = floatingContext.verticalPositionWithClearance(layoutBox))
         layoutState.displayBoxForLayoutBox(layoutBox).setTop(*verticalPositionWithClearance);
@@ -384,18 +383,15 @@ void BlockFormattingContext::computeHeightAndMargin(const Box& layoutBox) const
 
     // Out of flow boxes don't need vertical adjustment after margin collapsing.
     if (layoutBox.isOutOfFlowPositioned()) {
+        ASSERT(!hasEstimatedMarginBefore(layoutBox));
         displayBox.setContentBoxHeight(heightAndMargin.height);
         displayBox.setVerticalMargin(verticalMargin);
         return;
     }
 
-    auto& formattingState = this->blockFormattingState();
-    if (formattingState.hasEstimatedMarginBefore(layoutBox)) {
-        formattingState.clearHasEstimatedMarginBefore(layoutBox);
-        ASSERT(displayBox.estimatedMarginBefore()->usedValue() == verticalMargin.before());
-    } else
-        displayBox.setTop(adjustedVerticalPositionAfterMarginCollapsing(layoutBox, verticalMargin));
-
+    ASSERT(!hasEstimatedMarginBefore(layoutBox) || estimatedMarginBefore(layoutBox).usedValue() == verticalMargin.before());
+    removeEstimatedMarginBefore(layoutBox);
+    displayBox.setTop(adjustedVerticalPositionAfterMarginCollapsing(layoutBox, verticalMargin));
     // Adjust the previous sibling's margin bottom now that this box's vertical margin is computed.
     if (MarginCollapse::marginBeforeCollapsesWithPreviousSiblingMarginAfter(layoutState, layoutBox))
         MarginCollapse::updateCollapsedMarginAfter(layoutState, *layoutBox.previousInFlowSibling(), verticalMargin);
@@ -522,6 +518,20 @@ LayoutUnit BlockFormattingContext::adjustedVerticalPositionAfterMarginCollapsing
         return containingBlockContentBoxTop;
 
     return containingBlockContentBoxTop + verticalMargin.before();
+}
+
+void BlockFormattingContext::setEstimatedMarginBefore(const Box& layoutBox, const EstimatedMarginBefore& estimatedMarginBefore) const
+{
+    // Can't cross formatting context boundary.
+    ASSERT(&layoutState().formattingStateForBox(layoutBox) == &formattingState());
+    m_estimatedMarginBeforeList.set(&layoutBox, estimatedMarginBefore);
+}
+
+bool BlockFormattingContext::hasEstimatedMarginBefore(const Box& layoutBox) const
+{
+    // Can't cross formatting context boundary.
+    ASSERT(&layoutState().formattingStateForBox(layoutBox) == &formattingState());
+    return m_estimatedMarginBeforeList.contains(&layoutBox);
 }
 
 }

@@ -175,8 +175,7 @@ public:
     Rect contentBox() const;
 
 #if !ASSERT_DISABLED
-    void setEstimatedMarginBefore(Layout::EstimatedMarginBefore marginBefore) { m_estimatedMarginBefore = marginBefore; }
-    Optional<Layout::EstimatedMarginBefore> estimatedMarginBefore() const { return m_estimatedMarginBefore; }
+    void setHasEstimatedMarginBefore() { m_hasEstimatedMarginBefore = true; }
 #endif
 
 private:
@@ -207,7 +206,7 @@ private:
     void invalidateMargin();
     void invalidateBorder() { m_hasValidBorder = false; }
     void invalidatePadding() { m_hasValidPadding = false; }
-    void invalidateEstimatedMarginBefore() { m_estimatedMarginBefore = { }; }
+    void invalidateEstimatedMarginBefore() { m_hasEstimatedMarginBefore = false; }
 
     void setHasValidTop() { m_hasValidTop = true; }
     void setHasValidLeft() { m_hasValidLeft = true; }
@@ -248,7 +247,7 @@ private:
     bool m_hasValidPadding { false };
     bool m_hasValidContentHeight { false };
     bool m_hasValidContentWidth { false };
-    Optional<Layout::EstimatedMarginBefore> m_estimatedMarginBefore;
+    bool m_hasEstimatedMarginBefore { false };
 #endif
 };
 
@@ -443,7 +442,7 @@ inline Box::Rect::operator LayoutRect() const
 
 inline LayoutUnit Box::top() const
 {
-    ASSERT(m_hasValidTop && (m_estimatedMarginBefore || m_hasValidVerticalMargin));
+    ASSERT(m_hasValidTop && (m_hasEstimatedMarginBefore || m_hasValidVerticalMargin));
     return m_topLeft.y();
 }
 
@@ -455,7 +454,7 @@ inline LayoutUnit Box::left() const
 
 inline LayoutPoint Box::topLeft() const
 {
-    ASSERT(m_hasValidTop && (m_estimatedMarginBefore || m_hasValidVerticalMargin));
+    ASSERT(m_hasValidTop && (m_hasEstimatedMarginBefore || m_hasValidVerticalMargin));
     ASSERT(m_hasValidLeft && m_hasValidHorizontalMargin);
     return m_topLeft;
 }

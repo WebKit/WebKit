@@ -28,7 +28,6 @@
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
 
 #include "FormattingState.h"
-#include "MarginTypes.h"
 #include <wtf/IsoMalloc.h>
 
 namespace WebCore {
@@ -48,13 +47,8 @@ public:
     bool hasPositiveAndNegativeVerticalMargin(const Box& layoutBox) const { return m_positiveAndNegativeVerticalMargin.contains(&layoutBox); }
     PositiveAndNegativeVerticalMargin positiveAndNegativeVerticalMargin(const Box& layoutBox) const { return m_positiveAndNegativeVerticalMargin.get(&layoutBox); }
 
-    void setHasEstimatedMarginBefore(const Box& layoutBox) { m_estimatedMarginBeforeList.add(&layoutBox); }
-    void clearHasEstimatedMarginBefore(const Box& layoutBox) { m_estimatedMarginBeforeList.remove(&layoutBox); }
-    bool hasEstimatedMarginBefore(const Box& layoutBox) const { return m_estimatedMarginBeforeList.contains(&layoutBox); }
-
 private:
     HashMap<const Box*, PositiveAndNegativeVerticalMargin> m_positiveAndNegativeVerticalMargin;
-    HashSet<const Box*> m_estimatedMarginBeforeList;
 };
 
 }

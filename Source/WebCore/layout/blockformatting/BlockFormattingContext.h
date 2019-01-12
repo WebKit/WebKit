@@ -28,6 +28,8 @@
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
 
 #include "FormattingContext.h"
+#include "MarginTypes.h"
+#include <wtf/HashMap.h>
 #include <wtf/IsoMalloc.h>
 
 namespace WebCore {
@@ -126,6 +128,17 @@ private:
         static bool shouldIgnoreMarginBefore(const LayoutState&, const Box&);
         static bool shouldIgnoreMarginAfter(const LayoutState&, const Box&);
     };
+
+    void setEstimatedMarginBefore(const Box&, const EstimatedMarginBefore&) const;
+    void removeEstimatedMarginBefore(const Box& layoutBox) const { m_estimatedMarginBeforeList.remove(&layoutBox); }
+    bool hasEstimatedMarginBefore(const Box&) const;
+#ifndef NDEBUG
+    EstimatedMarginBefore estimatedMarginBefore(const Box& layoutBox) const { return m_estimatedMarginBeforeList.get(&layoutBox); }
+    bool hasPrecomputedMarginBefore(const Box&) const;
+#endif
+
+private:
+    mutable HashMap<const Box*, EstimatedMarginBefore> m_estimatedMarginBeforeList;
 };
 
 }
