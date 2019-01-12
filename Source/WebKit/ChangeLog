@@ -1,3 +1,13 @@
+2019-01-11  Sihui Liu  <sihui_liu@apple.com>
+
+        Make "Disable Web SQL" on by default
+        https://bugs.webkit.org/show_bug.cgi?id=193354
+        <rdar://problem/46524584>
+
+        Reviewed by Geoffrey Garen.
+
+        * Shared/WebPreferences.yaml:
+
 2019-01-11  Devin Rousso  <drousso@apple.com>
 
         Fix style CFNetworkSPI style checker warnings from r239698

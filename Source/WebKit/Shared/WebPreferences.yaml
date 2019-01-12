@@ -1366,7 +1366,7 @@ CSSTypedOMEnabled:
 
 WebSQLDisabled:
   type: bool
-  defaultValue: false
+  defaultValue: true
   humanReadableName: "Disable Web SQL"
   humanReadableDescription: "Disable Web SQL"
   webcoreBinding: RuntimeEnabledFeatures
