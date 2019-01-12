@@ -1,3 +1,15 @@
+2019-01-12  Yusuke Suzuki  <yusukesuzuki@slowstart.org>
+
+        Unreviewed, fix scope check assertions
+        https://bugs.webkit.org/show_bug.cgi?id=193308
+
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::notifyLexicalBindingShadowing):
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::notifyLexicalBindingShadowing):
+        * runtime/ProgramExecutable.cpp:
+        (JSC::ProgramExecutable::initializeGlobalProperties):
+
 2019-01-11  John Wilander  <wilander@apple.com>
 
         Compile out Web API Statistics Collection

@@ -207,8 +207,10 @@ JSObject* ProgramExecutable::initializeGlobalProperties(VM& vm, CallFrame* callF
         }
     }
 
-    if (!shadowedProperties.isEmpty())
+    if (!shadowedProperties.isEmpty()) {
         globalObject->notifyLexicalBindingShadowing(vm, WTFMove(shadowedProperties));
+        throwScope.assertNoException();
+    }
 
     return nullptr;
 }

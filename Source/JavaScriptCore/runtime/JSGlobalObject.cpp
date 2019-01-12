@@ -1853,6 +1853,7 @@ const HashSet<String>& JSGlobalObject::intlPluralRulesAvailableLocales()
 
 void JSGlobalObject::notifyLexicalBindingShadowing(VM& vm, const IdentifierSet& set)
 {
+    auto scope = DECLARE_THROW_SCOPE(vm);
 #if ENABLE(DFG_JIT)
     for (const auto& key : set)
         ensureReferencedPropertyWatchpointSet(key.get()).fireAll(vm, "Lexical binding shadows the existing global properties");
@@ -1861,7 +1862,9 @@ void JSGlobalObject::notifyLexicalBindingShadowing(VM& vm, const IdentifierSet& 
         if (codeBlock->globalObject() != this)
             return;
         codeBlock->notifyLexicalBindingShadowing(vm, set);
+        scope.assertNoException();
     });
+    scope.release();
 }
 
 void JSGlobalObject::queueMicrotask(Ref<Microtask>&& task)

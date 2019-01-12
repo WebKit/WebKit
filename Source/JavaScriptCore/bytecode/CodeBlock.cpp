@@ -2676,7 +2676,7 @@ void CodeBlock::notifyLexicalBindingShadowing(VM& vm, const IdentifierSet& set)
         return;
     JSGlobalObject* globalObject = m_globalObject.get();
 
-    auto throwScope = DECLARE_THROW_SCOPE(vm);
+    auto scope = DECLARE_THROW_SCOPE(vm);
 
     ConcurrentJSLocker locker(m_lock);
 
@@ -2693,7 +2693,7 @@ void CodeBlock::notifyLexicalBindingShadowing(VM& vm, const IdentifierSet& set)
                     // We pass JSGlobalLexicalScope as a start point of the scope chain.
                     // It should immediately find the lexical binding because that's the reason why we perform this rewriting now.
                     ResolveOp op = JSScope::abstractResolve(m_globalObject->globalExec(), bytecode.localScopeDepth, globalObject->globalScope(), ident, Get, bytecode.resolveType, InitializationMode::NotInitialization);
-                    EXCEPTION_ASSERT_UNUSED(throwScope, !throwScope.exception());
+                    scope.releaseAssertNoException();
                     ASSERT(op.type == GlobalLexicalVarWithVarInjectionChecks || op.type == GlobalLexicalVar);
                     metadata.resolveType = needsVarInjectionChecks(originalResolveType) ? GlobalLexicalVarWithVarInjectionChecks : GlobalLexicalVar;
                     metadata.localScopeDepth = 0;
@@ -2717,7 +2717,7 @@ void CodeBlock::notifyLexicalBindingShadowing(VM& vm, const IdentifierSet& set)
                     // We pass JSGlobalLexicalScope as a start point of the scope chain.
                     // It should immediately find the lexical binding because that's the reason why we perform this rewriting now.
                     ResolveOp op = JSScope::abstractResolve(m_globalObject->globalExec(), bytecode.localScopeDepth, globalObject->globalScope(), ident, Get, bytecode.getPutInfo.resolveType(), InitializationMode::NotInitialization);
-                    EXCEPTION_ASSERT_UNUSED(throwScope, !throwScope.exception());
+                    scope.releaseAssertNoException();
                     ASSERT(op.type == GlobalLexicalVarWithVarInjectionChecks || op.type == GlobalLexicalVar);
                     metadata.getPutInfo = GetPutInfo(bytecode.getPutInfo.resolveMode(), needsVarInjectionChecks(originalResolveType) ? GlobalLexicalVarWithVarInjectionChecks : GlobalLexicalVar, bytecode.getPutInfo.initializationMode());
                     metadata.watchpointSet = op.watchpointSet;
@@ -2738,7 +2738,7 @@ void CodeBlock::notifyLexicalBindingShadowing(VM& vm, const IdentifierSet& set)
                     // We pass JSGlobalLexicalScope as a start point of the scope chain.
                     // It should immediately find the lexical binding because that's the reason why we perform this rewriting now.
                     ResolveOp op = JSScope::abstractResolve(m_globalObject->globalExec(), bytecode.symbolTableOrScopeDepth, globalObject->globalScope(), ident, Put, bytecode.getPutInfo.resolveType(), bytecode.getPutInfo.initializationMode());
-                    EXCEPTION_ASSERT_UNUSED(throwScope, !throwScope.exception());
+                    scope.releaseAssertNoException();
                     ASSERT(op.type == GlobalLexicalVarWithVarInjectionChecks || op.type == GlobalLexicalVar || op.type == Dynamic);
 
                     ResolveType resolveType = op.type;
