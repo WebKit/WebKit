@@ -1,3 +1,13 @@
+2019-01-11  Saam barati  <sbarati@apple.com>
+
+        DFG combined liveness can be wrong for terminal basic blocks
+        https://bugs.webkit.org/show_bug.cgi?id=193304
+        <rdar://problem/45268632>
+
+        Reviewed by Yusuke Suzuki.
+
+        * stress/dfg-combined-liveness-consider-terminal-blocks-bytecode-liveness.js: Added.
+
 2019-01-11  Yusuke Suzuki  <yusukesuzuki@slowstart.org>
 
         [JSC] Global lexical bindings can shadow global variables if it is `configurable = true`

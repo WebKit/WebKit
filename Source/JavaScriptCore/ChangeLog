@@ -1,3 +1,37 @@
+2019-01-11  Saam barati  <sbarati@apple.com>
+
+        DFG combined liveness can be wrong for terminal basic blocks
+        https://bugs.webkit.org/show_bug.cgi?id=193304
+        <rdar://problem/45268632>
+
+        Reviewed by Yusuke Suzuki.
+
+        If a block doesn't have any successors, it can't rely on the typical
+        backwards liveness propagation that CombinedLiveness was doing. The phase
+        first got what was live in bytecode and IR at the heads of each block. Then
+        for each block, it made the live at tail the union of the live at head for
+        each successor. For a terminal block though, this could be wrong. We could
+        end up saying nothing is live even though many things may be live in bytecode.
+        We must account for what's bytecode live at the end of the block. Consider a
+        block that ends with:
+        ```
+        ForceOSRExit
+        Unreachable
+        ```
+        
+        Things may definitely be live in bytecode at the tail. However, we'll
+        report nothing as being alive. This probably subtly breaks many analyses,
+        but we have a test case of it breaking the interference analysis that
+        the ArgumentsEliminationPhase performs.
+
+        * dfg/DFGBasicBlock.h:
+        (JSC::DFG::BasicBlock::last const):
+        * dfg/DFGCombinedLiveness.cpp:
+        (JSC::DFG::addBytecodeLiveness):
+        (JSC::DFG::liveNodesAtHead):
+        (JSC::DFG::CombinedLiveness::CombinedLiveness):
+        * dfg/DFGCombinedLiveness.h:
+
 2019-01-11  Yusuke Suzuki  <yusukesuzuki@slowstart.org>
 
         [JSC] Global lexical bindings can shadow global variables if it is `configurable = true`
