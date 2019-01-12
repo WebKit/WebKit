@@ -64,7 +64,8 @@ webkit.org/b/190828 [ Mojave+ Debug ]  http/tests/workers/service/self_registrat
 
 fast/misc/valid-primary-screen-displayID.html [ Pass ]
 
-webkit.org/b/187773 http/tests/webAPIStatistics [ Pass ]
+# Skipped because of <rdar://problem/45388584>.
+http/tests/webAPIStatistics [ Skip ]
 
 webkit.org/b/184569 storage/indexeddb/modern/transactions-stop-on-navigation.html [ Pass Failure ]
 

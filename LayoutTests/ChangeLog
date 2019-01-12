@@ -1,3 +1,16 @@
+2019-01-11  John Wilander  <wilander@apple.com>
+
+        Compile out Web API Statistics Collection
+        https://bugs.webkit.org/show_bug.cgi?id=193370
+        <rdar://problem/45388584>
+
+        Reviewed by Brent Fulgham.
+
+        * platform/ios-wk2/TestExpectations:
+            http/tests/webAPIStatistics skipped.
+        * platform/mac-wk2/TestExpectations:
+            http/tests/webAPIStatistics skipped.
+
 2019-01-11  Antti Koivisto  <antti@apple.com>
 
         Release assert when removing element with a map element in the shadow tree

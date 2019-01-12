@@ -74,7 +74,8 @@ static void encodeOptionSet(KeyedEncoder& encoder, const String& label, const Op
     uint64_t optionSetBitMask = optionSet.toRaw();
     encoder.encodeUInt64(label, optionSetBitMask);
 }
-    
+
+#if ENABLE(WEB_API_STATISTICS)
 static void encodeFontHashSet(KeyedEncoder& encoder, const String& label, const HashSet<String>& hashSet)
 {
     encodeHashSet(encoder, label, "font", hashSet);
@@ -89,6 +90,7 @@ static void encodeCanvasActivityRecord(KeyedEncoder& encoder, const String& labe
         });
     });
 }
+#endif
 
 void ResourceLoadStatistics::encode(KeyedEncoder& encoder) const
 {
@@ -123,13 +125,15 @@ void ResourceLoadStatistics::encode(KeyedEncoder& encoder) const
 
     encoder.encodeUInt32("timesAccessedAsFirstPartyDueToUserInteraction", timesAccessedAsFirstPartyDueToUserInteraction);
     encoder.encodeUInt32("timesAccessedAsFirstPartyDueToStorageAccessAPI", timesAccessedAsFirstPartyDueToStorageAccessAPI);
-    
+
+#if ENABLE(WEB_API_STATISTICS)
     encodeFontHashSet(encoder, "fontsFailedToLoad", fontsFailedToLoad);
     encodeFontHashSet(encoder, "fontsSuccessfullyLoaded", fontsSuccessfullyLoaded);
     encodeHashCountedSet(encoder, "topFrameRegistrableDomainsWhichAccessedWebAPIs", topFrameRegistrableDomainsWhichAccessedWebAPIs);
     encodeCanvasActivityRecord(encoder, "canvasActivityRecord", canvasActivityRecord);
     encodeOptionSet(encoder, "navigatorFunctionsAccessedBitMask", navigatorFunctionsAccessed);
     encodeOptionSet(encoder, "screenFunctionsAccessedBitMask", screenFunctionsAccessed);
+#endif
 }
 
 static void decodeHashCountedSet(KeyedDecoder& decoder, const String& label, HashCountedSet<String>& hashCountedSet)
@@ -172,7 +176,8 @@ static void decodeOptionSet(KeyedDecoder& decoder, const String& label, OptionSe
     decoder.decodeUInt64(label, optionSetBitMask);
     optionSet = OptionSet<T>::fromRaw(optionSetBitMask);
 }
-    
+
+#if ENABLE(WEB_API_STATISTICS)
 static void decodeFontHashSet(KeyedDecoder& decoder, const String& label, HashSet<String>& hashSet)
 {
     decodeHashSet(decoder, label, "font", hashSet);
@@ -193,6 +198,7 @@ static void decodeCanvasActivityRecord(KeyedDecoder& decoder, const String& labe
         return true;
     });
 }
+#endif
 
 bool ResourceLoadStatistics::decode(KeyedDecoder& decoder, unsigned modelVersion)
 {
@@ -259,7 +265,8 @@ bool ResourceLoadStatistics::decode(KeyedDecoder& decoder, unsigned modelVersion
         if (!decoder.decodeUInt32("timesAccessedAsFirstPartyDueToStorageAccessAPI", timesAccessedAsFirstPartyDueToStorageAccessAPI))
             timesAccessedAsFirstPartyDueToStorageAccessAPI = 0;
     }
-    
+
+#if ENABLE(WEB_API_STATISTICS)
     if (modelVersion >= 13) {
         decodeFontHashSet(decoder, "fontsFailedToLoad", fontsFailedToLoad);
         decodeFontHashSet(decoder, "fontsSuccessfullyLoaded", fontsSuccessfullyLoaded);
@@ -268,7 +275,8 @@ bool ResourceLoadStatistics::decode(KeyedDecoder& decoder, unsigned modelVersion
         decodeOptionSet(decoder, "navigatorFunctionsAccessedBitMask", navigatorFunctionsAccessed);
         decodeOptionSet(decoder, "screenFunctionsAccessedBitMask", screenFunctionsAccessed);
     }
-    
+#endif
+
     return true;
 }
 
@@ -314,6 +322,7 @@ static void appendHashSet(StringBuilder& builder, const String& label, const Has
     }
 }
 
+#if ENABLE(WEB_API_STATISTICS)
 static ASCIILiteral navigatorAPIEnumToString(ResourceLoadStatistics::NavigatorAPI navigatorEnum)
 {
     switch (navigatorEnum) {
@@ -381,6 +390,7 @@ static void appendScreenAPIOptionSet(StringBuilder& builder, const OptionSet<Res
         builder.append('\n');
     }
 }
+#endif
 
 String ResourceLoadStatistics::toString() const
 {
@@ -425,6 +435,7 @@ String ResourceLoadStatistics::toString() const
     builder.appendNumber(dataRecordsRemoved);
     builder.append('\n');
 
+#if ENABLE(WEB_API_STATISTICS)
     appendHashSet(builder, "fontsFailedToLoad", fontsFailedToLoad);
     appendHashSet(builder, "fontsSuccessfullyLoaded", fontsSuccessfullyLoaded);
     appendHashCountedSet(builder, "topFrameRegistrableDomainsWhichAccessedWebAPIs", topFrameRegistrableDomainsWhichAccessedWebAPIs);
@@ -434,6 +445,7 @@ String ResourceLoadStatistics::toString() const
     appendBoolean(builder, "canvasReadData", canvasActivityRecord.wasDataRead);
     builder.append('\n');
     builder.append('\n');
+#endif
 
     return builder.toString();
 }
@@ -493,12 +505,14 @@ void ResourceLoadStatistics::merge(const ResourceLoadStatistics& other)
     isVeryPrevalentResource |= other.isVeryPrevalentResource;
     dataRecordsRemoved = std::max(dataRecordsRemoved, other.dataRecordsRemoved);
     
+#if ENABLE(WEB_API_STATISTICS)
     mergeHashSet(fontsFailedToLoad, other.fontsFailedToLoad);
     mergeHashSet(fontsSuccessfullyLoaded, other.fontsSuccessfullyLoaded);
     mergeHashCountedSet(topFrameRegistrableDomainsWhichAccessedWebAPIs, other.topFrameRegistrableDomainsWhichAccessedWebAPIs);
     canvasActivityRecord.mergeWith(other.canvasActivityRecord);
     navigatorFunctionsAccessed.add(other.navigatorFunctionsAccessed);
     screenFunctionsAccessed.add(other.screenFunctionsAccessed);
+#endif
 }
 
 String ResourceLoadStatistics::primaryDomain(const URL& url)

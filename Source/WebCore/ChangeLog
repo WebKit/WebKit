@@ -1,3 +1,32 @@
+2019-01-11  John Wilander  <wilander@apple.com>
+
+        Compile out Web API Statistics Collection
+        https://bugs.webkit.org/show_bug.cgi?id=193370
+        <rdar://problem/45388584>
+
+        Reviewed by Brent Fulgham.
+
+        No new tests. This patch disables functionality. The associated tests
+        are skipped.
+
+        These functions are now no-ops unless web API statistics is enabled.
+
+        * Configurations/FeatureDefines.xcconfig:
+        * loader/ResourceLoadObserver.cpp:
+        (WebCore::ResourceLoadObserver::logFontLoad):
+        (WebCore::ResourceLoadObserver::logCanvasRead):
+        (WebCore::ResourceLoadObserver::logCanvasWriteOrMeasure):
+        (WebCore::ResourceLoadObserver::logNavigatorAPIAccessed):
+        (WebCore::ResourceLoadObserver::logScreenAPIAccessed):
+        * loader/ResourceLoadStatistics.cpp:
+        (WebCore::ResourceLoadStatistics::encode const):
+        (WebCore::ResourceLoadStatistics::decode):
+        (WebCore::ResourceLoadStatistics::toString const):
+        (WebCore::ResourceLoadStatistics::merge):
+        * loader/ResourceLoadStatistics.h:
+            The associated struct members are skipped unless web API
+            statistics is enabled.
+
 2019-01-11  Sihui Liu  <sihui_liu@apple.com>
 
         IndexedDB: leak WebIDBConnectionToClient for retain cycle
