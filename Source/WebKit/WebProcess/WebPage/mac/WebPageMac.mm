@@ -53,7 +53,7 @@
 #import "WebPasteboardOverrides.h"
 #import "WebPreferencesStore.h"
 #import "WebProcess.h"
-#import <PDFKit/PDFKit.h>
+#import <Quartz/Quartz.h>
 #import <QuartzCore/QuartzCore.h>
 #import <WebCore/AXObjectCache.h>
 #import <WebCore/BackForwardController.h>

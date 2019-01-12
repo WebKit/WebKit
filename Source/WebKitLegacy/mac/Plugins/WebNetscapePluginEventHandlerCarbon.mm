@@ -29,7 +29,7 @@
 
 #import "WebNetscapePluginView.h"
 #import "WebKitLogging.h"
-#import <HIToolbox/CarbonEvents.h>
+#import <Carbon/Carbon.h>
 #import <pal/spi/mac/HIToolboxSPI.h>
 #import <pal/spi/mac/NSEventSPI.h>
 

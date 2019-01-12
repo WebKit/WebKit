@@ -23,7 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <QuickLookUI/QLPreviewItem.h>
+#import <Quartz/Quartz.h>
 
 @protocol QLPreviewMenuItemDelegate <NSObject>
 @optional
