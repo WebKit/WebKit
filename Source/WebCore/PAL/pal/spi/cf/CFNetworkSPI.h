@@ -215,7 +215,7 @@ typedef NS_ENUM(NSInteger, NSURLSessionCompanionProxyPreference) {
 @end
 #endif
 
-#if (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101500) || (PLATFORM(IOS_FAMILY) && __IPHONE_OS_VERSION_MIN_REQUIRED >= 130000)
+#if HAVE(CFNETWORK_NEGOTIATED_SSL_PROTOCOL_CIPHER)
 @interface NSURLSessionTaskTransactionMetrics ()
 @property (assign) SSLProtocol _negotiatedTLSProtocol;
 @property (assign) SSLCipherSuite _negotiatedTLSCipher;

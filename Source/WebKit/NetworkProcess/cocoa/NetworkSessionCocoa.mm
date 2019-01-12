@@ -93,7 +93,7 @@ static WebCore::NetworkLoadPriority toNetworkLoadPriority(float priority)
     return WebCore::NetworkLoadPriority::Medium;
 }
 
-#if (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101500) || (PLATFORM(IOS_FAMILY) && __IPHONE_OS_VERSION_MIN_REQUIRED >= 130000)
+#if HAVE(CFNETWORK_NEGOTIATED_SSL_PROTOCOL_CIPHER)
 static String stringForSSLProtocol(SSLProtocol protocol)
 {
     switch (protocol) {
@@ -660,7 +660,7 @@ static NSURLRequest* updateIgnoreStrictTransportSecuritySettingIfNecessary(NSURL
             networkLoadMetrics.connectionIdentifier = String([m._connectionIdentifier UUIDString]);
 #endif
 
-#if (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101500) || (PLATFORM(IOS_FAMILY) && __IPHONE_OS_VERSION_MIN_REQUIRED >= 130000)
+#if HAVE(CFNETWORK_NEGOTIATED_SSL_PROTOCOL_CIPHER)
             networkLoadMetrics.tlsProtocol = stringForSSLProtocol(m._negotiatedTLSProtocol);
             networkLoadMetrics.tlsCipher = stringForSSLCipher(m._negotiatedTLSCipher);
 #endif
