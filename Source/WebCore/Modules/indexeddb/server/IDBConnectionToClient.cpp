@@ -39,128 +39,152 @@ Ref<IDBConnectionToClient> IDBConnectionToClient::create(IDBConnectionToClientDe
 }
 
 IDBConnectionToClient::IDBConnectionToClient(IDBConnectionToClientDelegate& delegate)
-    : m_delegate(delegate)
+    : m_delegate(makeWeakPtr(delegate))
 {
 }
 
 uint64_t IDBConnectionToClient::identifier() const
 {
+    ASSERT(m_delegate);
     return m_delegate->identifier();
 }
 
 void IDBConnectionToClient::didDeleteDatabase(const IDBResultData& result)
 {
-    m_delegate->didDeleteDatabase(result);
+    if (m_delegate)
+        m_delegate->didDeleteDatabase(result);
 }
 
 void IDBConnectionToClient::didOpenDatabase(const IDBResultData& result)
 {
-    m_delegate->didOpenDatabase(result);
+    if (m_delegate)
+        m_delegate->didOpenDatabase(result);
 }
 
 void IDBConnectionToClient::didAbortTransaction(const IDBResourceIdentifier& transactionIdentifier, const IDBError& error)
 {
-    m_delegate->didAbortTransaction(transactionIdentifier, error);
+    if (m_delegate)
+        m_delegate->didAbortTransaction(transactionIdentifier, error);
 }
 
 void IDBConnectionToClient::didCreateObjectStore(const IDBResultData& result)
 {
-    m_delegate->didCreateObjectStore(result);
+    if (m_delegate)
+        m_delegate->didCreateObjectStore(result);
 }
 
 void IDBConnectionToClient::didDeleteObjectStore(const IDBResultData& result)
 {
-    m_delegate->didDeleteObjectStore(result);
+    if (m_delegate)
+        m_delegate->didDeleteObjectStore(result);
 }
 
 void IDBConnectionToClient::didRenameObjectStore(const IDBResultData& result)
 {
-    m_delegate->didRenameObjectStore(result);
+    if (m_delegate)
+        m_delegate->didRenameObjectStore(result);
 }
 
 void IDBConnectionToClient::didClearObjectStore(const IDBResultData& result)
 {
-    m_delegate->didClearObjectStore(result);
+    if (m_delegate)
+        m_delegate->didClearObjectStore(result);
 }
 
 void IDBConnectionToClient::didCreateIndex(const IDBResultData& result)
 {
-    m_delegate->didCreateIndex(result);
+    if (m_delegate)
+        m_delegate->didCreateIndex(result);
 }
 
 void IDBConnectionToClient::didDeleteIndex(const IDBResultData& result)
 {
-    m_delegate->didDeleteIndex(result);
+    if (m_delegate)
+        m_delegate->didDeleteIndex(result);
 }
 
 void IDBConnectionToClient::didRenameIndex(const IDBResultData& result)
 {
-    m_delegate->didRenameIndex(result);
+    if (m_delegate)
+        m_delegate->didRenameIndex(result);
 }
 
 void IDBConnectionToClient::didPutOrAdd(const IDBResultData& result)
 {
-    m_delegate->didPutOrAdd(result);
+    if (m_delegate)
+        m_delegate->didPutOrAdd(result);
 }
 
 void IDBConnectionToClient::didGetRecord(const IDBResultData& result)
 {
-    m_delegate->didGetRecord(result);
+    if (m_delegate)
+        m_delegate->didGetRecord(result);
 }
 
 void IDBConnectionToClient::didGetAllRecords(const IDBResultData& result)
 {
-    m_delegate->didGetAllRecords(result);
+    if (m_delegate)
+        m_delegate->didGetAllRecords(result);
 }
 
 void IDBConnectionToClient::didGetCount(const IDBResultData& result)
 {
-    m_delegate->didGetCount(result);
+    if (m_delegate)
+        m_delegate->didGetCount(result);
 }
 
 void IDBConnectionToClient::didDeleteRecord(const IDBResultData& result)
 {
-    m_delegate->didDeleteRecord(result);
+    if (m_delegate)
+        m_delegate->didDeleteRecord(result);
 }
 
 void IDBConnectionToClient::didOpenCursor(const IDBResultData& result)
 {
-    m_delegate->didOpenCursor(result);
+    if (m_delegate)
+        m_delegate->didOpenCursor(result);
 }
 
 void IDBConnectionToClient::didIterateCursor(const IDBResultData& result)
 {
-    m_delegate->didIterateCursor(result);
+    if (m_delegate)
+        m_delegate->didIterateCursor(result);
 }
 
 void IDBConnectionToClient::didCommitTransaction(const IDBResourceIdentifier& transactionIdentifier, const IDBError& error)
 {
-    m_delegate->didCommitTransaction(transactionIdentifier, error);
+    if (m_delegate)
+        m_delegate->didCommitTransaction(transactionIdentifier, error);
 }
 
 void IDBConnectionToClient::fireVersionChangeEvent(UniqueIDBDatabaseConnection& connection, const IDBResourceIdentifier& requestIdentifier, uint64_t requestedVersion)
 {
-    m_delegate->fireVersionChangeEvent(connection, requestIdentifier, requestedVersion);
+    if (m_delegate)
+        m_delegate->fireVersionChangeEvent(connection, requestIdentifier, requestedVersion);
 }
 
 void IDBConnectionToClient::didStartTransaction(const IDBResourceIdentifier& transactionIdentifier, const IDBError& error)
 {
-    m_delegate->didStartTransaction(transactionIdentifier, error);
+    if (m_delegate)
+        m_delegate->didStartTransaction(transactionIdentifier, error);
 }
 
 void IDBConnectionToClient::didCloseFromServer(UniqueIDBDatabaseConnection& connection, const IDBError& error)
 {
-    m_delegate->didCloseFromServer(connection, error);
+    if (m_delegate)
+        m_delegate->didCloseFromServer(connection, error);
 }
 
 void IDBConnectionToClient::notifyOpenDBRequestBlocked(const IDBResourceIdentifier& requestIdentifier, uint64_t oldVersion, uint64_t newVersion)
 {
-    m_delegate->notifyOpenDBRequestBlocked(requestIdentifier, oldVersion, newVersion);
+    if (m_delegate)
+        m_delegate->notifyOpenDBRequestBlocked(requestIdentifier, oldVersion, newVersion);
 }
 
 void IDBConnectionToClient::didGetAllDatabaseNames(uint64_t callbackID, const Vector<String>& databaseNames)
 {
-    m_delegate->didGetAllDatabaseNames(callbackID, databaseNames);
+    if (m_delegate)
+        m_delegate->didGetAllDatabaseNames(callbackID, databaseNames);
 }
 
 void IDBConnectionToClient::registerDatabaseConnection(UniqueIDBDatabaseConnection& connection)

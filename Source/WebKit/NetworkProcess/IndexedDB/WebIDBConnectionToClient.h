@@ -54,7 +54,7 @@ class NetworkProcess;
 
 class WebIDBConnectionToClient final : public WebCore::IDBServer::IDBConnectionToClientDelegate, public IPC::MessageSender, public RefCounted<WebIDBConnectionToClient> {
 public:
-    static Ref<WebIDBConnectionToClient> create(NetworkProcess&, NetworkConnectionToWebProcess&, uint64_t serverConnectionIdentifier, PAL::SessionID);
+    static Ref<WebIDBConnectionToClient> create(NetworkProcess&, IPC::Connection&, uint64_t serverConnectionIdentifier, PAL::SessionID);
 
     virtual ~WebIDBConnectionToClient();
 
@@ -128,13 +128,13 @@ public:
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&);
 
 private:
-    WebIDBConnectionToClient(NetworkProcess&, NetworkConnectionToWebProcess&, uint64_t serverConnectionIdentifier, PAL::SessionID);
+    WebIDBConnectionToClient(NetworkProcess&, IPC::Connection&, uint64_t serverConnectionIdentifier, PAL::SessionID);
 
     IPC::Connection* messageSenderConnection() final;
 
     template<class MessageType> void handleGetResult(const WebCore::IDBResultData&);
 
-    Ref<NetworkConnectionToWebProcess> m_connection;
+    Ref<IPC::Connection> m_connection;
     Ref<NetworkProcess> m_networkProcess;
 
     uint64_t m_identifier;

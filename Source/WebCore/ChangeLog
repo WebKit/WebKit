@@ -1,3 +1,42 @@
+2019-01-11  Sihui Liu  <sihui_liu@apple.com>
+
+        IndexedDB: leak WebIDBConnectionToClient for retain cycle
+        https://bugs.webkit.org/show_bug.cgi?id=193097
+        <rdar://problem/46899601>
+
+        Reviewed by Brady Eidson.
+
+        Let IDBConnectionToClient hold a WeakPtr of IDBConnectionToClientDelegate.
+
+        * Modules/indexeddb/server/IDBConnectionToClient.cpp:
+        (WebCore::IDBServer::IDBConnectionToClient::IDBConnectionToClient):
+        (WebCore::IDBServer::IDBConnectionToClient::identifier const):
+        (WebCore::IDBServer::IDBConnectionToClient::didDeleteDatabase):
+        (WebCore::IDBServer::IDBConnectionToClient::didOpenDatabase):
+        (WebCore::IDBServer::IDBConnectionToClient::didAbortTransaction):
+        (WebCore::IDBServer::IDBConnectionToClient::didCreateObjectStore):
+        (WebCore::IDBServer::IDBConnectionToClient::didDeleteObjectStore):
+        (WebCore::IDBServer::IDBConnectionToClient::didRenameObjectStore):
+        (WebCore::IDBServer::IDBConnectionToClient::didClearObjectStore):
+        (WebCore::IDBServer::IDBConnectionToClient::didCreateIndex):
+        (WebCore::IDBServer::IDBConnectionToClient::didDeleteIndex):
+        (WebCore::IDBServer::IDBConnectionToClient::didRenameIndex):
+        (WebCore::IDBServer::IDBConnectionToClient::didPutOrAdd):
+        (WebCore::IDBServer::IDBConnectionToClient::didGetRecord):
+        (WebCore::IDBServer::IDBConnectionToClient::didGetAllRecords):
+        (WebCore::IDBServer::IDBConnectionToClient::didGetCount):
+        (WebCore::IDBServer::IDBConnectionToClient::didDeleteRecord):
+        (WebCore::IDBServer::IDBConnectionToClient::didOpenCursor):
+        (WebCore::IDBServer::IDBConnectionToClient::didIterateCursor):
+        (WebCore::IDBServer::IDBConnectionToClient::didCommitTransaction):
+        (WebCore::IDBServer::IDBConnectionToClient::fireVersionChangeEvent):
+        (WebCore::IDBServer::IDBConnectionToClient::didStartTransaction):
+        (WebCore::IDBServer::IDBConnectionToClient::didCloseFromServer):
+        (WebCore::IDBServer::IDBConnectionToClient::notifyOpenDBRequestBlocked):
+        (WebCore::IDBServer::IDBConnectionToClient::didGetAllDatabaseNames):
+        * Modules/indexeddb/server/IDBConnectionToClient.h:
+        * Modules/indexeddb/server/IDBConnectionToClientDelegate.h:
+
 2019-01-11  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Fix the build after r239844

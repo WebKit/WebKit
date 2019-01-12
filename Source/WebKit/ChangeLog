@@ -1,5 +1,24 @@
 2019-01-11  Sihui Liu  <sihui_liu@apple.com>
 
+        IndexedDB: leak WebIDBConnectionToClient for retain cycle
+        https://bugs.webkit.org/show_bug.cgi?id=193097
+        <rdar://problem/46899601>
+
+        Reviewed by Brady Eidson.
+
+        Let WebIDBConnectionToClient hold reference to IPC::Connection instead of NetworkConnectionToWebProcess to break
+        the cycle.
+
+        * NetworkProcess/IndexedDB/WebIDBConnectionToClient.cpp:
+        (WebKit::WebIDBConnectionToClient::create):
+        (WebKit::WebIDBConnectionToClient::WebIDBConnectionToClient):
+        (WebKit::WebIDBConnectionToClient::messageSenderConnection):
+        * NetworkProcess/IndexedDB/WebIDBConnectionToClient.h:
+        * NetworkProcess/NetworkConnectionToWebProcess.cpp:
+        (WebKit::NetworkConnectionToWebProcess::establishIDBConnectionToServer):
+
+2019-01-11  Sihui Liu  <sihui_liu@apple.com>
+
         Make "Disable Web SQL" on by default
         https://bugs.webkit.org/show_bug.cgi?id=193354
         <rdar://problem/46524584>
