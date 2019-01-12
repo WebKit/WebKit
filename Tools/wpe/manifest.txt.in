@@ -86,6 +86,7 @@ exclude Tools/wpe/jhbuildrc
 
 file Tools/glib/generate-inspector-gresource-manifest.py
 
+directory Tools/gtkdoc
 directory Tools/MiniBrowser
 directory Tools/TestWebKitAPI
 
@@ -93,6 +94,5 @@ file CMakeLists.txt
 file Tools/CMakeLists.txt
 file Tools/PlatformWPE.cmake
 
-# FIXME: We are not currently generating documentation for WPE.
-#directory ${CMAKE_BINARY_DIR}/Documentation/webkit2gtk-${WEBKITGTK_API_VERSION}/html Documentation/webkit2gtk-${WEBKITGTK_API_VERSION}/html
-#directory ${CMAKE_BINARY_DIR}/Documentation/webkitdomgtk-${WEBKITGTK_API_VERSION}/html Documentation/webkitdomgtk-${WEBKITGTK_API_VERSION}/html
+directory ${CMAKE_BINARY_DIR}/Documentation/wpe-${WPE_API_VERSION}/html/wpe-${WPE_API_VERSION} Documentation/wpe-${WPE_API_VERSION}/html
+directory ${CMAKE_BINARY_DIR}/Documentation/wpe-webextensions-${WPE_API_VERSION}/html/wpe-webextensions-${WPE_API_VERSION} Documentation/wpe-webextensions-${WPE_API_VERSION}/html

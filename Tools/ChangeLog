@@ -1,3 +1,16 @@
+2019-01-11  Carlos Eduardo Ramalho  <cadubentzen@gmail.com>
+
+        [WPE] Add gtk-doc
+        https://bugs.webkit.org/show_bug.cgi?id=178900
+
+        Reviewed by Michael Catanzaro.
+
+        Add Tools/gtkdoc to manifest.txt.in files.
+        This should have been done in r238853 and caused failure in building WebKitGTK+ unstable release 2.23.2.
+
+        * gtk/manifest.txt.in: Add Tools/gtkdoc directory.
+        * wpe/manifest.txt.in: Add Tools/gtkdoc directory and uncomment lines to move documentation artifacts.
+
 2019-01-11  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [iOS] Precision drop state thrashes when dragging near the top edge of an editable element

@@ -90,6 +90,7 @@ exclude Tools/gtk/ycm_extra_conf.py
 file Tools/glib/common.py
 file Tools/glib/generate-inspector-gresource-manifest.py
 
+directory Tools/gtkdoc
 directory Tools/MiniBrowser
 directory Tools/TestWebKitAPI
 
