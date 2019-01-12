@@ -308,6 +308,7 @@ Modules/websockets/WorkerThreadableWebSocketChannel.cpp
 Modules/webgpu/DOMWindowWebGPU.cpp
 Modules/webgpu/WHLSL/WHLSLLexer.cpp
 Modules/webgpu/WHLSL/WHLSLParser.cpp
+Modules/webgpu/WHLSL/WHLSLVisitor.cpp
 Modules/webgpu/WHLSL/AST/WHLSLTypeArgument.cpp
 Modules/webgpu/WHLSL/AST/WHLSLBuiltInSemantic.cpp
 Modules/webgpu/WHLSL/AST/WHLSLResourceSemantic.cpp

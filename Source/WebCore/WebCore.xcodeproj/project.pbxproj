@@ -13325,6 +13325,8 @@
 		C21BF74521CD969800227979 /* WHLSLStandardLibrary.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = WHLSLStandardLibrary.txt; sourceTree = "<group>"; };
 		C21DF2E71D9E4E9900F5B24C /* CSSFontVariationValue.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CSSFontVariationValue.cpp; sourceTree = "<group>"; };
 		C21DF2E81D9E4E9900F5B24C /* CSSFontVariationValue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CSSFontVariationValue.h; sourceTree = "<group>"; };
+		C234A98521E886A9003C984D /* WHLSLVisitor.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = WHLSLVisitor.cpp; sourceTree = "<group>"; };
+		C234A98721E886AD003C984D /* WHLSLVisitor.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WHLSLVisitor.h; sourceTree = "<group>"; };
 		C2458E611FE8979E00594759 /* FontCacheCoreText.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FontCacheCoreText.h; sourceTree = "<group>"; };
 		C26017A11C72DC9900F74A16 /* CSSFontFaceSet.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CSSFontFaceSet.cpp; sourceTree = "<group>"; };
 		C26017A21C72DC9900F74A16 /* CSSFontFaceSet.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CSSFontFaceSet.h; sourceTree = "<group>"; };
@@ -25394,6 +25396,8 @@
 				C21BF73821CD8A0300227979 /* WHLSLParser.h */,
 				C21BF73A21CD8D7000227979 /* WHLSLProgram.h */,
 				C21BF74521CD969800227979 /* WHLSLStandardLibrary.txt */,
+				C234A98521E886A9003C984D /* WHLSLVisitor.cpp */,
+				C234A98721E886AD003C984D /* WHLSLVisitor.h */,
 			);
 			path = WHLSL;
 			sourceTree = "<group>";

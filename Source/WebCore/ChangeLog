@@ -1,3 +1,25 @@
+2019-01-11  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [WHLSL] Add a Visitor class
+        https://bugs.webkit.org/show_bug.cgi?id=192826
+
+        Reviewed by Dean Jackson.
+
+        This patch exposes a bunch of the private members of WHLSL's AST nodes so that Visitor can recurse on constituent nodes.
+        It also writes the recursion in Visitor.h. This is a virtual base class that gets subclassed for compiler passes.
+
+        I've split this part into its own patch to aid reviewing of the compiler.
+
+        * Modules/webgpu/WHLSL/AST/WHLSLStageInOutSemantic.cpp:
+        * Modules/webgpu/WHLSL/WHLSLVisitor.cpp: Added.
+        (WebCore::WHLSL::Visitor::visit):
+        (WebCore::WHLSL::Visitor::checkErrorAndVisit):
+        * Modules/webgpu/WHLSL/WHLSLVisitor.h: Added.
+        (WebCore::WHLSL::Visitor::setError):
+        (WebCore::WHLSL::Visitor::error const):
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+
 2019-01-11  Jer Noble  <jer.noble@apple.com>
 
         REGRESSION(r239419): Crash in AudioSourceProviderAVFObjC::~AudioSourceProviderAVFObjC()
