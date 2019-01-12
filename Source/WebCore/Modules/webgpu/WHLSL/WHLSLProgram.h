@@ -29,6 +29,7 @@
 
 #include "WHLSLEnumerationDefinition.h"
 #include "WHLSLFunctionDefinition.h"
+#include "WHLSLNameContext.h"
 #include "WHLSLNativeFunctionDeclaration.h"
 #include "WHLSLNativeTypeDeclaration.h"
 #include "WHLSLStructureDefinition.h"
@@ -47,39 +48,40 @@ public:
     bool append(AST::TypeDefinition&& typeDefinition)
     {
         m_typeDefinitions.append(makeUniqueRef<AST::TypeDefinition>(WTFMove(typeDefinition)));
-        return true;
+        return m_nameContext.add(static_cast<AST::TypeDefinition&>(m_typeDefinitions.last()));
     }
 
     bool append(AST::StructureDefinition&& structureDefinition)
     {
         m_structureDefinitions.append(makeUniqueRef<AST::StructureDefinition>(WTFMove(structureDefinition)));
-        return true;
+        return m_nameContext.add(static_cast<AST::StructureDefinition&>(m_structureDefinitions.last()));
     }
 
     bool append(AST::EnumerationDefinition&& enumerationDefinition)
     {
         m_enumerationDefinitions.append(makeUniqueRef<AST::EnumerationDefinition>(WTFMove(enumerationDefinition)));
-        return true;
+        return m_nameContext.add(static_cast<AST::EnumerationDefinition&>(m_enumerationDefinitions.last()));
     }
 
     bool append(AST::FunctionDefinition&& functionDefinition)
     {
         m_functionDefinitions.append(makeUniqueRef<AST::FunctionDefinition>(WTFMove(functionDefinition)));
-        return true;
+        return m_nameContext.add(static_cast<AST::FunctionDefinition&>(m_functionDefinitions.last()));
     }
 
     bool append(AST::NativeFunctionDeclaration&& nativeFunctionDeclaration)
     {
         m_nativeFunctionDeclarations.append(makeUniqueRef<AST::NativeFunctionDeclaration>(WTFMove(nativeFunctionDeclaration)));
-        return true;
+        return m_nameContext.add(static_cast<AST::NativeFunctionDeclaration&>(m_nativeFunctionDeclarations.last()));
     }
 
     bool append(AST::NativeTypeDeclaration&& nativeTypeDeclaration)
     {
         m_nativeTypeDeclarations.append(makeUniqueRef<AST::NativeTypeDeclaration>(WTFMove(nativeTypeDeclaration)));
-        return true;
+        return m_nameContext.add(static_cast<AST::NativeTypeDeclaration&>(m_nativeTypeDeclarations.last()));
     }
 
+    NameContext& nameContext() { return m_nameContext; }
     Vector<UniqueRef<AST::TypeDefinition>>& typeDefinitions() { return m_typeDefinitions; }
     Vector<UniqueRef<AST::StructureDefinition>>& structureDefinitions() { return m_structureDefinitions; }
     Vector<UniqueRef<AST::EnumerationDefinition>>& enumerationDefinitions() { return m_enumerationDefinitions; }
@@ -90,6 +92,7 @@ public:
     Vector<UniqueRef<AST::NativeTypeDeclaration>>& nativeTypeDeclarations() { return m_nativeTypeDeclarations; }
 
 private:
+    NameContext m_nameContext;
     Vector<UniqueRef<AST::TypeDefinition>> m_typeDefinitions;
     Vector<UniqueRef<AST::StructureDefinition>> m_structureDefinitions;
     Vector<UniqueRef<AST::EnumerationDefinition>> m_enumerationDefinitions;

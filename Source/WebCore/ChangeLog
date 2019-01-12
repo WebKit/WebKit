@@ -1,5 +1,86 @@
 2019-01-11  Myles C. Maxfield  <mmaxfield@apple.com>
 
+        [WHLSL] Implement the NameResolver
+        https://bugs.webkit.org/show_bug.cgi?id=193007
+
+        Reviewed by Dean Jackson.
+
+        This is the base implementation for WHLSL's name resolver. The name resolver matches three kinds of things:
+        1. It matches VariableRefs to VariableDecls
+        2. It matches TypeRefs to NamedTypes
+        3. It matches CallExpressions to FunctionDeclarations
+
+        No new tests because it isn't hooked up yet. Not enough of the compiler exists to have any meaningful sort
+        of test. When enough of the compiler is present, I'll port the reference implementation's test suite.
+
+        * Modules/webgpu/WHLSL/AST/WHLSLFloatLiteralType.cpp: Now that InferTypes.h exists, we can implement these
+        functions.
+        (WebCore::WHLSL::AST::FloatLiteralType::canResolve const):
+        (WebCore::WHLSL::AST::FloatLiteralType::conversionCost const):
+        * Modules/webgpu/WHLSL/AST/WHLSLFloatLiteralType.h: Remove unnecessary function.
+        (WebCore::WHLSL::AST::FloatLiteralType::value const): Deleted.
+        * Modules/webgpu/WHLSL/AST/WHLSLIntegerLiteralType.cpp: Now that InferTypes.h exists, we can implement these
+        functions.
+        (WebCore::WHLSL::AST::IntegerLiteralType::canResolve const):
+        (WebCore::WHLSL::AST::IntegerLiteralType::conversionCost const):
+        * Modules/webgpu/WHLSL/AST/WHLSLIntegerLiteralType.h: Remove unnecessary function.
+        (WebCore::WHLSL::AST::IntegerLiteralType::value const): Deleted.
+        * Modules/webgpu/WHLSL/AST/WHLSLSpecializationConstantSemantic.cpp: Modifying Sources.txt caused the sources
+        to get shuffled around, so the #includes need to be fixed.
+        * Modules/webgpu/WHLSL/AST/WHLSLUnsignedIntegerLiteralType.cpp: Now that InferTypes.h exists, we can implement
+        these functions.
+        (WebCore::WHLSL::AST::UnsignedIntegerLiteralType::canResolve const):
+        (WebCore::WHLSL::AST::UnsignedIntegerLiteralType::conversionCost const):
+        * Modules/webgpu/WHLSL/AST/WHLSLUnsignedIntegerLiteralType.h: Remove unnecessary function.
+        (WebCore::WHLSL::AST::UnsignedIntegerLiteralType::value const): Deleted.
+        * Modules/webgpu/WHLSL/WHLSLInferTypes.cpp: Added. This is the replacement for UnificationContext in the
+        reference compiler. It's much simpler (and we should remove UnificationContext in the reference compiler in
+        favor of this design). It has three sets of functions: Tell if two types are the same, tell if two types are
+        the same and commit the resolvable type, and run the above functions on type references or function arguments.
+        (WebCore::WHLSL::matches):
+        (WebCore::WHLSL::matchAndCommit):
+        (WebCore::WHLSL::commit):
+        (WebCore::WHLSL::inferTypesForTypeArguments):
+        (WebCore::WHLSL::inferTypesForCall):
+        * Modules/webgpu/WHLSL/WHLSLInferTypes.h: Copied from Source/WebCore/Modules/webgpu/WHLSL/AST/WHLSLIntegerLiteralType.cpp.
+        * Modules/webgpu/WHLSL/WHLSLNameContext.cpp: Added. This is the data structure that remembers NamedTypes,
+        FunctionDeclarations, and VariableDeclarations so NameResolver can work.
+        (WebCore::WHLSL::NameContext::NameContext):
+        (WebCore::WHLSL::NameContext::add):
+        (WebCore::WHLSL::NameContext::getTypes):
+        (WebCore::WHLSL::NameContext::getFunctions):
+        (WebCore::WHLSL::NameContext::getVariable):
+        (WebCore::WHLSL::NameContext::exists):
+        * Modules/webgpu/WHLSL/WHLSLNameContext.h: Copied from Source/WebCore/Modules/webgpu/WHLSL/AST/WHLSLFloatLiteralType.h.
+        * Modules/webgpu/WHLSL/WHLSLNameResolver.cpp: Added. Use the NameContext to match up the three types of names.
+        (WebCore::WHLSL::NameResolver::NameResolver):
+        (WebCore::WHLSL::NameResolver::visit):
+        (WebCore::WHLSL::resolveNamesInTypes):
+        (WebCore::WHLSL::resolveNamesInFunctions):
+        * Modules/webgpu/WHLSL/WHLSLNameResolver.h: Copied from Source/WebCore/Modules/webgpu/WHLSL/AST/WHLSLFloatLiteralType.h.
+        (WebCore::WHLSL::NameResolver::setCurrentFunctionDefinition):
+        * Modules/webgpu/WHLSL/WHLSLProgram.h:
+        (WebCore::WHLSL::Program::append): The parser needs to add all global declarations to the name context so the
+        name resolver is ready to go as soon as parsing is finished.
+        (WebCore::WHLSL::Program::nameContext):
+        * Modules/webgpu/WHLSL/WHLSLResolveOverloadImpl.cpp: Added. Pick the appropriate FunctionDeclaration or
+        NamedType for a particular CallExpression or TypeReference.
+        (WebCore::WHLSL::conversionCost):
+        (WebCore::WHLSL::resolveFunctionOverloadImpl):
+        (WebCore::WHLSL::resolveTypeOverloadImpl):
+        * Modules/webgpu/WHLSL/WHLSLResolveOverloadImpl.h: Copied from Source/WebCore/Modules/webgpu/WHLSL/AST/WHLSLIntegerLiteralType.cpp.
+        * Modules/webgpu/WHLSL/WHLSLResolvingType.h: Copied from Source/WebCore/Modules/webgpu/WHLSL/AST/WHLSLUnsignedIntegerLiteralType.cpp. This describes the two states that a type in the type resolver can be in: either an owned
+        UnnamedType, or a reference to a ResolvableType. This is because every expression needs to have a type
+        associated with it, but those types might be the type of a literal (aka a ResolvableType). Multiple
+        expressions might need to reference the same ResolvableType so when it gets resolved, all the expressions
+        get the result.
+        (WebCore::WHLSL::ResolvableTypeReference::ResolvableTypeReference):
+        (WebCore::WHLSL::ResolvableTypeReference::resolvableType):
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+
+2019-01-11  Myles C. Maxfield  <mmaxfield@apple.com>
+
         [WHLSL] Add a Visitor class
         https://bugs.webkit.org/show_bug.cgi?id=192826
 

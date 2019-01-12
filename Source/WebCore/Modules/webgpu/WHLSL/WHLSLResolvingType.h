@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,15 +23,15 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "WHLSLIntegerLiteralType.h"
+#pragma once
 
 #if ENABLE(WEBGPU)
 
-#include "WHLSLInferTypes.h"
-#include "WHLSLNativeTypeDeclaration.h"
-#include "WHLSLTypeArgument.h"
-#include "WHLSLTypeReference.h"
+#include <memory>
+#include <wtf/Ref.h>
+#include <wtf/RefCounted.h>
+#include <wtf/UniqueRef.h>
+#include <wtf/Variant.h>
 
 namespace WebCore {
 
@@ -39,41 +39,28 @@ namespace WHLSL {
 
 namespace AST {
 
-IntegerLiteralType::IntegerLiteralType(Lexer::Token&& origin, int value)
-    : m_value(value)
-    , m_preferredType(makeUniqueRef<TypeReference>(WTFMove(origin), String("int", String::ConstructFromLiteral), TypeArguments()))
-{
+class ResolvableType;
+class UnnamedType;
+
 }
 
-IntegerLiteralType::~IntegerLiteralType() = default;
+class ResolvableTypeReference : public RefCounted<ResolvableTypeReference> {
+public:
+    ResolvableTypeReference(AST::ResolvableType& resolvableType)
+        : m_resolvableType(&resolvableType)
+    {
+    }
 
-IntegerLiteralType::IntegerLiteralType(IntegerLiteralType&&) = default;
+    ResolvableTypeReference(const ResolvableTypeReference&) = delete;
+    ResolvableTypeReference(ResolvableTypeReference&&) = delete;
 
-IntegerLiteralType& IntegerLiteralType::operator=(IntegerLiteralType&&) = default;
+    AST::ResolvableType& resolvableType() { return *m_resolvableType; }
 
-bool IntegerLiteralType::canResolve(const Type& type) const
-{
-    if (!is<NamedType>(type))
-        return false;
-    auto& namedType = downcast<NamedType>(type);
-    if (!is<NativeTypeDeclaration>(namedType))
-        return false;
-    auto& nativeTypeDeclaration = downcast<NativeTypeDeclaration>(namedType);
-    if (!nativeTypeDeclaration.isNumber())
-        return false;
-    if (!nativeTypeDeclaration.canRepresentInteger()(m_value))
-        return false;
-    return true;
-}
+private:
+    AST::ResolvableType* m_resolvableType;
+};
 
-unsigned IntegerLiteralType::conversionCost(const UnnamedType& unnamedType) const
-{
-    if (matches(unnamedType, static_cast<const TypeReference&>(m_preferredType)))
-        return 0;
-    return 1;
-}
-
-} // namespace AST
+using ResolvingType = Variant<UniqueRef<AST::UnnamedType>, Ref<ResolvableTypeReference>>;
 
 }
 

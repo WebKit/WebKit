@@ -23,15 +23,14 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "WHLSLIntegerLiteralType.h"
+#pragma once
 
 #if ENABLE(WEBGPU)
 
-#include "WHLSLInferTypes.h"
-#include "WHLSLNativeTypeDeclaration.h"
-#include "WHLSLTypeArgument.h"
-#include "WHLSLTypeReference.h"
+#include <functional>
+#include <wtf/HashMap.h>
+#include <wtf/Vector.h>
+#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
@@ -39,41 +38,42 @@ namespace WHLSL {
 
 namespace AST {
 
-IntegerLiteralType::IntegerLiteralType(Lexer::Token&& origin, int value)
-    : m_value(value)
-    , m_preferredType(makeUniqueRef<TypeReference>(WTFMove(origin), String("int", String::ConstructFromLiteral), TypeArguments()))
-{
+class NamedType;
+class FunctionDeclaration;
+class TypeDefinition;
+class StructureDefinition;
+class EnumerationDefinition;
+class FunctionDefinition;
+class NativeFunctionDeclaration;
+class NativeTypeDeclaration;
+class VariableDeclaration;
+
 }
 
-IntegerLiteralType::~IntegerLiteralType() = default;
+class NameContext {
+public:
+    NameContext(NameContext* parent = nullptr);
 
-IntegerLiteralType::IntegerLiteralType(IntegerLiteralType&&) = default;
+    bool add(AST::TypeDefinition&);
+    bool add(AST::StructureDefinition&);
+    bool add(AST::EnumerationDefinition&);
+    bool add(AST::FunctionDefinition&);
+    bool add(AST::NativeFunctionDeclaration&);
+    bool add(AST::NativeTypeDeclaration&);
+    bool add(AST::VariableDeclaration&);
 
-IntegerLiteralType& IntegerLiteralType::operator=(IntegerLiteralType&&) = default;
+    Vector<std::reference_wrapper<AST::NamedType>, 1>* getTypes(const String&);
+    Vector<std::reference_wrapper<AST::FunctionDeclaration>, 1>* getFunctions(const String&);
+    AST::VariableDeclaration* getVariable(const String&);
 
-bool IntegerLiteralType::canResolve(const Type& type) const
-{
-    if (!is<NamedType>(type))
-        return false;
-    auto& namedType = downcast<NamedType>(type);
-    if (!is<NativeTypeDeclaration>(namedType))
-        return false;
-    auto& nativeTypeDeclaration = downcast<NativeTypeDeclaration>(namedType);
-    if (!nativeTypeDeclaration.isNumber())
-        return false;
-    if (!nativeTypeDeclaration.canRepresentInteger()(m_value))
-        return false;
-    return true;
-}
+private:
+    bool exists(String&);
 
-unsigned IntegerLiteralType::conversionCost(const UnnamedType& unnamedType) const
-{
-    if (matches(unnamedType, static_cast<const TypeReference&>(m_preferredType)))
-        return 0;
-    return 1;
-}
-
-} // namespace AST
+    HashMap<String, Vector<std::reference_wrapper<AST::NamedType>, 1>> m_types;
+    HashMap<String, Vector<std::reference_wrapper<AST::FunctionDeclaration>, 1>> m_functions;
+    HashMap<String, AST::VariableDeclaration*> m_variables;
+    NameContext* m_parent;
+};
 
 }
 

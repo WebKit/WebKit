@@ -13323,6 +13323,15 @@
 		C21BF73A21CD8D7000227979 /* WHLSLProgram.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WHLSLProgram.h; sourceTree = "<group>"; };
 		C21BF74221CD963B00227979 /* WHLSLStandardLibrary.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = WHLSLStandardLibrary.h; path = DerivedSources/WebCore/WHLSLStandardLibrary.h; sourceTree = BUILT_PRODUCTS_DIR; };
 		C21BF74521CD969800227979 /* WHLSLStandardLibrary.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = WHLSLStandardLibrary.txt; sourceTree = "<group>"; };
+		C234A98A21E8883E003C984D /* WHLSLNameResolver.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = WHLSLNameResolver.cpp; sourceTree = "<group>"; };
+		C234A98C21E8883E003C984D /* WHLSLNameResolver.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WHLSLNameResolver.h; sourceTree = "<group>"; };
+		C234A98D21E88884003C984D /* WHLSLNameContext.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = WHLSLNameContext.cpp; sourceTree = "<group>"; };
+		C234A98E21E88885003C984D /* WHLSLNameContext.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WHLSLNameContext.h; sourceTree = "<group>"; };
+		C234A99721E90F28003C984D /* WHLSLResolveOverloadImpl.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WHLSLResolveOverloadImpl.h; sourceTree = "<group>"; };
+		C234A99921E90F29003C984D /* WHLSLResolveOverloadImpl.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = WHLSLResolveOverloadImpl.cpp; sourceTree = "<group>"; };
+		C234A99A21E90F56003C984D /* WHLSLInferTypes.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = WHLSLInferTypes.cpp; sourceTree = "<group>"; };
+		C234A99B21E90F57003C984D /* WHLSLInferTypes.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WHLSLInferTypes.h; sourceTree = "<group>"; };
+		C234A99D21E910BD003C984D /* WHLSLResolvingType.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WHLSLResolvingType.h; sourceTree = "<group>"; };
 		C21DF2E71D9E4E9900F5B24C /* CSSFontVariationValue.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CSSFontVariationValue.cpp; sourceTree = "<group>"; };
 		C21DF2E81D9E4E9900F5B24C /* CSSFontVariationValue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CSSFontVariationValue.h; sourceTree = "<group>"; };
 		C234A98521E886A9003C984D /* WHLSLVisitor.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = WHLSLVisitor.cpp; sourceTree = "<group>"; };
@@ -25390,11 +25399,20 @@
 			isa = PBXGroup;
 			children = (
 				C21BF6F121CD898D00227979 /* AST */,
+				C234A99A21E90F56003C984D /* WHLSLInferTypes.cpp */,
+				C234A99B21E90F57003C984D /* WHLSLInferTypes.h */,
 				C210E91121B4BD1000B7F83D /* WHLSLLexer.cpp */,
 				C210E91221B4BD1000B7F83D /* WHLSLLexer.h */,
+				C234A98D21E88884003C984D /* WHLSLNameContext.cpp */,
+				C234A98E21E88885003C984D /* WHLSLNameContext.h */,
+				C234A98A21E8883E003C984D /* WHLSLNameResolver.cpp */,
+				C234A98C21E8883E003C984D /* WHLSLNameResolver.h */,
 				C21BF73721CD8A0200227979 /* WHLSLParser.cpp */,
 				C21BF73821CD8A0300227979 /* WHLSLParser.h */,
 				C21BF73A21CD8D7000227979 /* WHLSLProgram.h */,
+				C234A99921E90F29003C984D /* WHLSLResolveOverloadImpl.cpp */,
+				C234A99721E90F28003C984D /* WHLSLResolveOverloadImpl.h */,
+				C234A99D21E910BD003C984D /* WHLSLResolvingType.h */,
 				C21BF74521CD969800227979 /* WHLSLStandardLibrary.txt */,
 				C234A98521E886A9003C984D /* WHLSLVisitor.cpp */,
 				C234A98721E886AD003C984D /* WHLSLVisitor.h */,

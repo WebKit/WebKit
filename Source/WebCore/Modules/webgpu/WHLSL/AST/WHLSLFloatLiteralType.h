@@ -46,10 +46,10 @@ public:
     virtual ~FloatLiteralType();
 
     FloatLiteralType(const FloatLiteralType&) = delete;
-    FloatLiteralType(FloatLiteralType&&) = default;
+    FloatLiteralType(FloatLiteralType&&);
 
     FloatLiteralType& operator=(const FloatLiteralType&) = delete;
-    FloatLiteralType& operator=(FloatLiteralType&&) = default;
+    FloatLiteralType& operator=(FloatLiteralType&&);
 
     bool isFloatLiteralType() const override { return true; }
 
@@ -57,8 +57,6 @@ public:
 
     bool canResolve(const Type&) const override;
     unsigned conversionCost(const UnnamedType&) const override;
-
-    float value() const { return m_value; }
 
 private:
     float m_value;

@@ -23,15 +23,13 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "WHLSLIntegerLiteralType.h"
+#pragma once
 
 #if ENABLE(WEBGPU)
 
-#include "WHLSLInferTypes.h"
-#include "WHLSLNativeTypeDeclaration.h"
+#include "WHLSLResolvingType.h"
 #include "WHLSLTypeArgument.h"
-#include "WHLSLTypeReference.h"
+#include <memory>
 
 namespace WebCore {
 
@@ -39,41 +37,23 @@ namespace WHLSL {
 
 namespace AST {
 
-IntegerLiteralType::IntegerLiteralType(Lexer::Token&& origin, int value)
-    : m_value(value)
-    , m_preferredType(makeUniqueRef<TypeReference>(WTFMove(origin), String("int", String::ConstructFromLiteral), TypeArguments()))
-{
+class FunctionDeclaration;
+class NamedType;
+class ResolvableType;
+class UnnamedType;
+
 }
 
-IntegerLiteralType::~IntegerLiteralType() = default;
-
-IntegerLiteralType::IntegerLiteralType(IntegerLiteralType&&) = default;
-
-IntegerLiteralType& IntegerLiteralType::operator=(IntegerLiteralType&&) = default;
-
-bool IntegerLiteralType::canResolve(const Type& type) const
-{
-    if (!is<NamedType>(type))
-        return false;
-    auto& namedType = downcast<NamedType>(type);
-    if (!is<NativeTypeDeclaration>(namedType))
-        return false;
-    auto& nativeTypeDeclaration = downcast<NativeTypeDeclaration>(namedType);
-    if (!nativeTypeDeclaration.isNumber())
-        return false;
-    if (!nativeTypeDeclaration.canRepresentInteger()(m_value))
-        return false;
-    return true;
-}
-
-unsigned IntegerLiteralType::conversionCost(const UnnamedType& unnamedType) const
-{
-    if (matches(unnamedType, static_cast<const TypeReference&>(m_preferredType)))
-        return 0;
-    return 1;
-}
-
-} // namespace AST
+bool matches(const AST::UnnamedType&, const AST::UnnamedType&);
+bool matches(const AST::NamedType&, const AST::NamedType&);
+bool matches(const AST::UnnamedType&, const AST::NamedType&);
+// FIXME: Is anyone actually using the return type here?
+Optional<UniqueRef<AST::UnnamedType>> matchAndCommit(AST::UnnamedType&, AST::ResolvableType&);
+Optional<UniqueRef<AST::UnnamedType>> matchAndCommit(AST::NamedType&, AST::ResolvableType&);
+Optional<UniqueRef<AST::UnnamedType>> matchAndCommit(AST::ResolvableType&, AST::ResolvableType&);
+Optional<UniqueRef<AST::UnnamedType>> commit(AST::ResolvableType&);
+bool inferTypesForTypeArguments(AST::NamedType& possibleType, AST::TypeArguments&);
+bool inferTypesForCall(AST::FunctionDeclaration& possibleFunction, Vector<std::reference_wrapper<ResolvingType>>& argumentTypes, Optional<std::reference_wrapper<AST::NamedType>>& castReturnType);
 
 }
 

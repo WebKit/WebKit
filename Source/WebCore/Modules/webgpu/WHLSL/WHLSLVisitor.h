@@ -178,13 +178,13 @@ public:
 
     bool error() const { return m_error; }
 
-protected:
     template<typename T> void checkErrorAndVisit(T& x)
     {
         if (!m_error)
             visit(x);
     }
 
+protected:
     void setError()
     {
         ASSERT(!m_error);

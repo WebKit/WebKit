@@ -30,6 +30,7 @@
 #include "WHLSLLexer.h"
 #include "WHLSLNamedType.h"
 #include "WHLSLTypeArgument.h"
+#include "WHLSLTypeReference.h"
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {

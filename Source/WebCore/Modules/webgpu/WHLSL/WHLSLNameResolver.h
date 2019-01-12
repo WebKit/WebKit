@@ -23,57 +23,53 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "WHLSLIntegerLiteralType.h"
+#pragma once
 
 #if ENABLE(WEBGPU)
 
-#include "WHLSLInferTypes.h"
-#include "WHLSLNativeTypeDeclaration.h"
-#include "WHLSLTypeArgument.h"
-#include "WHLSLTypeReference.h"
+#include "WHLSLNameContext.h"
+#include "WHLSLVisitor.h"
 
 namespace WebCore {
 
 namespace WHLSL {
 
-namespace AST {
+class Program;
 
-IntegerLiteralType::IntegerLiteralType(Lexer::Token&& origin, int value)
-    : m_value(value)
-    , m_preferredType(makeUniqueRef<TypeReference>(WTFMove(origin), String("int", String::ConstructFromLiteral), TypeArguments()))
-{
-}
+class NameResolver : public Visitor {
+public:
+    NameResolver(NameContext&);
 
-IntegerLiteralType::~IntegerLiteralType() = default;
+    virtual ~NameResolver() = default;
 
-IntegerLiteralType::IntegerLiteralType(IntegerLiteralType&&) = default;
+    void visit(AST::FunctionDefinition&) override;
 
-IntegerLiteralType& IntegerLiteralType::operator=(IntegerLiteralType&&) = default;
+    void setCurrentFunctionDefinition(AST::FunctionDefinition* functionDefinition)
+    {
+        m_currentFunction = functionDefinition;
+    }
 
-bool IntegerLiteralType::canResolve(const Type& type) const
-{
-    if (!is<NamedType>(type))
-        return false;
-    auto& namedType = downcast<NamedType>(type);
-    if (!is<NativeTypeDeclaration>(namedType))
-        return false;
-    auto& nativeTypeDeclaration = downcast<NativeTypeDeclaration>(namedType);
-    if (!nativeTypeDeclaration.isNumber())
-        return false;
-    if (!nativeTypeDeclaration.canRepresentInteger()(m_value))
-        return false;
-    return true;
-}
+private:
+    void visit(AST::TypeReference&) override;
+    void visit(AST::Block&) override;
+    void visit(AST::IfStatement&) override;
+    void visit(AST::WhileLoop&) override;
+    void visit(AST::DoWhileLoop&) override;
+    void visit(AST::ForLoop&) override;
+    void visit(AST::VariableDeclaration&) override;
+    void visit(AST::VariableReference&) override;
+    void visit(AST::Return&) override;
+    void visit(AST::PropertyAccessExpression&) override;
+    void visit(AST::DotExpression&) override;
+    void visit(AST::CallExpression&) override;
+    void visit(AST::ConstantExpressionEnumerationMemberReference&) override;
 
-unsigned IntegerLiteralType::conversionCost(const UnnamedType& unnamedType) const
-{
-    if (matches(unnamedType, static_cast<const TypeReference&>(m_preferredType)))
-        return 0;
-    return 1;
-}
+    NameContext m_nameContext;
+    AST::FunctionDefinition* m_currentFunction { nullptr };
+};
 
-} // namespace AST
+bool resolveNamesInTypes(Program&, NameResolver&);
+bool resolveNamesInFunctions(Program&, NameResolver&);
 
 }
 

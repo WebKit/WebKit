@@ -28,6 +28,8 @@
 
 #if ENABLE(WEBGPU)
 
+#include "WHLSLInferTypes.h"
+#include "WHLSLNativeTypeDeclaration.h"
 #include "WHLSLTypeArgument.h"
 #include "WHLSLTypeReference.h"
 #include <wtf/UniqueRef.h>
@@ -46,16 +48,32 @@ UnsignedIntegerLiteralType::UnsignedIntegerLiteralType(Lexer::Token&& origin, un
 
 UnsignedIntegerLiteralType::~UnsignedIntegerLiteralType() = default;
 
-bool UnsignedIntegerLiteralType::canResolve(const Type&) const
+UnsignedIntegerLiteralType::UnsignedIntegerLiteralType(UnsignedIntegerLiteralType&&) = default;
+
+UnsignedIntegerLiteralType& UnsignedIntegerLiteralType::operator=(UnsignedIntegerLiteralType&&) = default;
+
+bool UnsignedIntegerLiteralType::canResolve(const Type& type) const
 {
-    // FIXME: Implement this
+    if (!is<NamedType>(type))
+        return false;
+    auto& namedType = downcast<NamedType>(type);
+    if (!is<NativeTypeDeclaration>(namedType))
+        return false;
+    auto& nativeTypeDeclaration = downcast<NativeTypeDeclaration>(namedType);
+    if (!nativeTypeDeclaration.isInt())
+        return false;
+    if (!nativeTypeDeclaration.isSigned())
+        return false;
+    if (!nativeTypeDeclaration.canRepresentUnsignedInteger()(m_value))
+        return false;
     return true;
 }
 
-unsigned UnsignedIntegerLiteralType::conversionCost(const UnnamedType&) const
+unsigned UnsignedIntegerLiteralType::conversionCost(const UnnamedType& unnamedType) const
 {
-    // FIXME: Implement this
-    return 0;
+    if (matches(unnamedType, static_cast<const TypeReference&>(m_preferredType)))
+        return 0;
+    return 1;
 }
 
 } // namespace AST

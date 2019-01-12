@@ -28,6 +28,8 @@
 
 #if ENABLE(WEBGPU)
 
+#include "WHLSLInferTypes.h"
+#include "WHLSLNativeTypeDeclaration.h"
 #include "WHLSLTypeReference.h"
 
 namespace WebCore {
@@ -44,16 +46,30 @@ FloatLiteralType::FloatLiteralType(Lexer::Token&& origin, float value)
 
 FloatLiteralType::~FloatLiteralType() = default;
 
-bool FloatLiteralType::canResolve(const Type&) const
+FloatLiteralType::FloatLiteralType(FloatLiteralType&&) = default;
+
+FloatLiteralType& FloatLiteralType::operator=(FloatLiteralType&&) = default;
+
+bool FloatLiteralType::canResolve(const Type& type) const
 {
-    // FIXME: Implement this
+    if (!is<NamedType>(type))
+        return false;
+    auto& namedType = downcast<NamedType>(type);
+    if (!is<NativeTypeDeclaration>(namedType))
+        return false;
+    auto& nativeTypeDeclaration = downcast<NativeTypeDeclaration>(namedType);
+    if (!nativeTypeDeclaration.isFloating())
+        return false;
+    if (!nativeTypeDeclaration.canRepresentFloat()(m_value))
+        return false;
     return true;
 }
 
-unsigned FloatLiteralType::conversionCost(const UnnamedType&) const
+unsigned FloatLiteralType::conversionCost(const UnnamedType& unnamedType) const
 {
-    // FIXME: Implement this
-    return 0;
+    if (matches(unnamedType, static_cast<const TypeReference&>(m_preferredType)))
+        return 0;
+    return 1;
 }
 
 } // namespace AST

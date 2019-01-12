@@ -46,10 +46,10 @@ public:
     virtual ~IntegerLiteralType();
 
     IntegerLiteralType(const IntegerLiteralType&) = delete;
-    IntegerLiteralType(IntegerLiteralType&&) = default;
+    IntegerLiteralType(IntegerLiteralType&&);
 
     IntegerLiteralType& operator=(const IntegerLiteralType&) = delete;
-    IntegerLiteralType& operator=(IntegerLiteralType&&) = default;
+    IntegerLiteralType& operator=(IntegerLiteralType&&);
 
     bool isIntegerLiteralType() const override { return true; }
 
@@ -57,8 +57,6 @@ public:
 
     bool canResolve(const Type&) const override;
     unsigned conversionCost(const UnnamedType&) const override;
-
-    int value() const { return m_value; }
 
 private:
     int m_value;
