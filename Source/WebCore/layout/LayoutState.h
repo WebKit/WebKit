@@ -47,6 +47,7 @@ namespace Layout {
 enum class StyleDiff;
 class Box;
 class Container;
+class FormattingContext;
 class FormattingState;
 
 // LayoutState is the entry point for layout. It takes the initial containing block which acts as the root of the layout context.
@@ -78,6 +79,12 @@ public:
     bool hasFormattingState(const Box& formattingRoot) const { return m_formattingStates.contains(&formattingRoot); }
     FormattingState& createFormattingStateForFormattingRootIfNeeded(const Box& formattingRoot);
 
+    std::unique_ptr<FormattingContext> createFormattingContext(const Box& formattingContextRoot);
+#ifndef NDEBUG
+    void registerFormattingContext(const FormattingContext&);
+    void deregisterFormattingContext(const FormattingContext& formattingContext) { m_formattingContextList.remove(&formattingContext); }
+#endif
+
     Display::Box& displayBoxForLayoutBox(const Box& layoutBox) const;
     bool hasDisplayBox(const Box& layoutBox) const { return m_layoutToDisplayBox.contains(&layoutBox); }
 
@@ -92,9 +99,21 @@ private:
     WeakPtr<const Container> m_initialContainingBlock;
     HashSet<const Container*> m_formattingContextRootListForLayout;
     HashMap<const Box*, std::unique_ptr<FormattingState>> m_formattingStates;
+#ifndef NDEBUG
+    HashSet<const FormattingContext*> m_formattingContextList;
+#endif
     mutable HashMap<const Box*, std::unique_ptr<Display::Box>> m_layoutToDisplayBox;
     bool m_inQuirksMode { false };
 };
+
+#ifndef NDEBUG
+inline void LayoutState::registerFormattingContext(const FormattingContext& formattingContext)
+{
+    // Multiple formatting contexts of the same root within a layout frame indicates defective layout logic.
+    ASSERT(!m_formattingContextList.contains(&formattingContext));
+    m_formattingContextList.add(&formattingContext);
+}
+#endif
 
 }
 }

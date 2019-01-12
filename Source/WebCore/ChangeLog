@@ -1,5 +1,40 @@
 2019-01-12  Zalan Bujtas  <zalan@apple.com>
 
+        [LFC] Move formatting context creation from FormattingState to LayoutState
+        https://bugs.webkit.org/show_bug.cgi?id=193381
+
+        Reviewed by Antti Koivisto.
+
+        layoutState().createFormattingStateForFormattingRootIfNeeded(root).createFormattingContext(root) is not only mouthful
+        but also feels unintuitive. Use layoutState().createFormattingContext(root) instead.
+
+        * layout/FormattingContext.cpp:
+        (WebCore::Layout::FormattingContext::FormattingContext):
+        (WebCore::Layout::FormattingContext::~FormattingContext):
+        (WebCore::Layout::FormattingContext::layoutOutOfFlowDescendants const):
+        * layout/FormattingContextGeometry.cpp:
+        (WebCore::Layout::FormattingContext::Geometry::shrinkToFitWidth):
+        * layout/FormattingState.h:
+        * layout/LayoutState.cpp:
+        (WebCore::Layout::LayoutState::layoutFormattingContextSubtree):
+        (WebCore::Layout::LayoutState::createFormattingContext):
+        * layout/LayoutState.h:
+        (WebCore::Layout::LayoutState::deregisterFormattingContext):
+        (WebCore::Layout::LayoutState::registerFormattingContext):
+        * layout/blockformatting/BlockFormattingContext.cpp:
+        (WebCore::Layout::BlockFormattingContext::layoutFormattingContextRoot const):
+        (WebCore::Layout::BlockFormattingContext::instrinsicWidthConstraints const):
+        * layout/blockformatting/BlockFormattingState.cpp:
+        (WebCore::Layout::BlockFormattingState::createFormattingContext): Deleted.
+        * layout/blockformatting/BlockFormattingState.h:
+        * layout/inlineformatting/InlineFormattingContext.cpp:
+        (WebCore::Layout::InlineFormattingContext::layoutFormattingContextRoot const):
+        * layout/inlineformatting/InlineFormattingState.cpp:
+        (WebCore::Layout::InlineFormattingState::createFormattingContext): Deleted.
+        * layout/inlineformatting/InlineFormattingState.h:
+
+2019-01-12  Zalan Bujtas  <zalan@apple.com>
+
         [LFC][BFC][MarginCollapsing] Move estimatedMarginBefore flag from state/display box to BlockFormattingContext
         https://bugs.webkit.org/show_bug.cgi?id=193375
 

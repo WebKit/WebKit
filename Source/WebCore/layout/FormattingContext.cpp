@@ -47,10 +47,16 @@ FormattingContext::FormattingContext(const Box& formattingContextRoot, Formattin
     : m_root(makeWeakPtr(formattingContextRoot))
     , m_formattingState(formattingState)
 {
+#ifndef NDEBUG
+    layoutState().registerFormattingContext(*this);
+#endif
 }
 
 FormattingContext::~FormattingContext()
 {
+#ifndef NDEBUG
+    layoutState().deregisterFormattingContext(*this);
+#endif
 }
 
 FormattingState& FormattingContext::formattingState() const
@@ -154,7 +160,7 @@ void FormattingContext::layoutOutOfFlowDescendants(const Box& layoutBox) const
         computeBorderAndPadding(layoutBox);
         computeOutOfFlowHorizontalGeometry(layoutBox);
 
-        layoutState.createFormattingStateForFormattingRootIfNeeded(layoutBox).createFormattingContext(layoutBox)->layout();
+        layoutState.createFormattingContext(layoutBox)->layout();
 
         computeOutOfFlowVerticalGeometry(layoutBox);
         layoutOutOfFlowDescendants(layoutBox);

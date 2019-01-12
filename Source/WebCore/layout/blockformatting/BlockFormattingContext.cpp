@@ -134,7 +134,7 @@ void BlockFormattingContext::layoutFormattingContextRoot(FloatingContext& floati
 
     precomputeVerticalPositionForFormattingRootIfNeeded(layoutBox);
     // Swich over to the new formatting context (the one that the root creates).
-    auto formattingContext = layoutState().createFormattingStateForFormattingRootIfNeeded(layoutBox).createFormattingContext(layoutBox);
+    auto formattingContext = layoutState().createFormattingContext(layoutBox);
     formattingContext->layout();
 
     // Come back and finalize the root's geometry.
@@ -436,7 +436,7 @@ FormattingContext::InstrinsicWidthConstraints BlockFormattingContext::instrinsic
                 if (!Geometry::instrinsicWidthConstraintsNeedChildrenWidth(childBox))
                     instrinsicWidthConstraints = Geometry::instrinsicWidthConstraints(layoutState, childBox);
                 else if (childBox.establishesFormattingContext())
-                    instrinsicWidthConstraints = layoutState.createFormattingStateForFormattingRootIfNeeded(childBox).createFormattingContext(childBox)->instrinsicWidthConstraints();
+                    instrinsicWidthConstraints = layoutState.createFormattingContext(childBox)->instrinsicWidthConstraints();
                 formattingState.setInstrinsicWidthConstraints(childBox, instrinsicWidthConstraints);
 
                 queue.removeLast();

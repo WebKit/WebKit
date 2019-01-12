@@ -41,8 +41,6 @@ public:
     BlockFormattingState(Ref<FloatingState>&&, LayoutState&);
     virtual ~BlockFormattingState();
 
-    std::unique_ptr<FormattingContext> createFormattingContext(const Box& formattingContextRoot) override;
-
     void setPositiveAndNegativeVerticalMargin(const Box& layoutBox, PositiveAndNegativeVerticalMargin verticalMargin) { m_positiveAndNegativeVerticalMargin.set(&layoutBox, verticalMargin); }
     bool hasPositiveAndNegativeVerticalMargin(const Box& layoutBox) const { return m_positiveAndNegativeVerticalMargin.contains(&layoutBox); }
     PositiveAndNegativeVerticalMargin positiveAndNegativeVerticalMargin(const Box& layoutBox) const { return m_positiveAndNegativeVerticalMargin.get(&layoutBox); }
