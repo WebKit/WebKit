@@ -42,7 +42,7 @@ namespace AST {
 
 UnsignedIntegerLiteralType::UnsignedIntegerLiteralType(Lexer::Token&& origin, unsigned value)
     : m_value(value)
-    , m_preferredType(makeUniqueRef<TypeReference>(WTFMove(origin), String("uint", String::ConstructFromLiteral), TypeArguments()))
+    , m_preferredType(makeUniqueRef<TypeReference>(WTFMove(origin), "uint"_str, TypeArguments()))
 {
 }
 

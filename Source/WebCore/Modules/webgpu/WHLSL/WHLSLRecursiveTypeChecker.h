@@ -27,58 +27,17 @@
 
 #if ENABLE(WEBGPU)
 
-#include "WHLSLLexer.h"
-#include "WHLSLPropertyAccessExpression.h"
-#include <wtf/UniqueRef.h>
 
 namespace WebCore {
 
 namespace WHLSL {
 
-namespace AST {
+class Program;
 
-class IndexExpression : public PropertyAccessExpression {
-public:
-    IndexExpression(Lexer::Token&& origin, UniqueRef<Expression>&& base, UniqueRef<Expression>&& index)
-        : PropertyAccessExpression(WTFMove(origin), WTFMove(base))
-        , m_index(WTFMove(index))
-    {
-    }
-
-    virtual ~IndexExpression() = default;
-
-    IndexExpression(const IndexExpression&) = delete;
-    IndexExpression(IndexExpression&&) = default;
-
-    bool isIndexExpression() const override { return true; }
-
-    String getFunctionName() const override
-    {
-        return "operator[]"_str;
-    }
-
-    String setFunctionName() const override
-    {
-        return "operator&[]"_str;
-    }
-
-    String andFunctionName() const override
-    {
-        return "operator[]="_str;
-    }
-
-    Expression& indexExpression() { return static_cast<Expression&>(m_index); }
-
-private:
-    UniqueRef<Expression> m_index;
-};
-
-} // namespace AST
+bool checkRecursiveTypes(Program&);
 
 }
 
 }
-
-SPECIALIZE_TYPE_TRAITS_WHLSL_EXPRESSION(IndexExpression, isIndexExpression())
 
 #endif

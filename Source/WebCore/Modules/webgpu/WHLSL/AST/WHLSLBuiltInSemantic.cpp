@@ -29,6 +29,8 @@
 #if ENABLE(WEBGPU)
 
 #include "WHLSLFunctionDefinition.h"
+#include "WHLSLInferTypes.h"
+#include "WHLSLIntrinsics.h"
 #include "WHLSLTypeReference.h"
 
 namespace WebCore {
@@ -37,10 +39,38 @@ namespace WHLSL {
 
 namespace AST {
 
-bool BuiltInSemantic::isAcceptableType(const UnnamedType&, const Intrinsics&) const
+bool BuiltInSemantic::isAcceptableType(const UnnamedType& unnamedType, const Intrinsics& intrinsics) const
 {
-    // FIXME: Implement this
-    return true;
+    switch (m_variable) {
+    case Variable::SVInstanceID:
+        return matches(unnamedType, intrinsics.uintType());
+    case Variable::SVVertexID:
+        return matches(unnamedType, intrinsics.uintType());
+    case Variable::PSize:
+        return matches(unnamedType, intrinsics.floatType());
+    case Variable::SVPosition:
+        return matches(unnamedType, intrinsics.float4Type());
+    case Variable::SVIsFrontFace:
+        return matches(unnamedType, intrinsics.boolType());
+    case Variable::SVSampleIndex:
+        return matches(unnamedType, intrinsics.uintType());
+    case Variable::SVInnerCoverage:
+        return matches(unnamedType, intrinsics.uintType());
+    case Variable::SVTarget:
+        return matches(unnamedType, intrinsics.float4Type());
+    case Variable::SVDepth:
+        return matches(unnamedType, intrinsics.floatType());
+    case Variable::SVCoverage:
+        return matches(unnamedType, intrinsics.uintType());
+    case Variable::SVDispatchThreadID:
+        return matches(unnamedType, intrinsics.float3Type());
+    case Variable::SVGroupID:
+        return matches(unnamedType, intrinsics.float3Type());
+    case Variable::SVGroupIndex:
+        return matches(unnamedType, intrinsics.uintType());
+    case Variable::SVGroupThreadID:
+        return matches(unnamedType, intrinsics.float3Type());
+    }
 }
 
 bool BuiltInSemantic::isAcceptableForShaderItemDirection(ShaderItemDirection direction, const FunctionDefinition& functionDefinition) const

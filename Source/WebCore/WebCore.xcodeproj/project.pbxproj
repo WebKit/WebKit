@@ -13332,6 +13332,20 @@
 		C234A99A21E90F56003C984D /* WHLSLInferTypes.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = WHLSLInferTypes.cpp; sourceTree = "<group>"; };
 		C234A99B21E90F57003C984D /* WHLSLInferTypes.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WHLSLInferTypes.h; sourceTree = "<group>"; };
 		C234A99D21E910BD003C984D /* WHLSLResolvingType.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WHLSLResolvingType.h; sourceTree = "<group>"; };
+		C234A9A921E92C17003C984D /* WHLSLSynthesizeArrayOperatorLength.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = WHLSLSynthesizeArrayOperatorLength.cpp; sourceTree = "<group>"; };
+		C234A9AB21E92C18003C984D /* WHLSLRecursiveTypeChecker.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WHLSLRecursiveTypeChecker.h; sourceTree = "<group>"; };
+		C234A9AC21E92C19003C984D /* WHLSLSynthesizeEnumerationFunctions.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WHLSLSynthesizeEnumerationFunctions.h; sourceTree = "<group>"; };
+		C234A9AD21E92C19003C984D /* WHLSLRecursiveTypeChecker.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = WHLSLRecursiveTypeChecker.cpp; sourceTree = "<group>"; };
+		C234A9AE21E92C1A003C984D /* WHLSLCheckDuplicateFunctions.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WHLSLCheckDuplicateFunctions.h; sourceTree = "<group>"; };
+		C234A9AF21E92C1B003C984D /* WHLSLSynthesizeArrayOperatorLength.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WHLSLSynthesizeArrayOperatorLength.h; sourceTree = "<group>"; };
+		C234A9B021E92C1C003C984D /* WHLSLSynthesizeConstructors.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = WHLSLSynthesizeConstructors.cpp; sourceTree = "<group>"; };
+		C234A9B121E92C1D003C984D /* WHLSLSynthesizeConstructors.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WHLSLSynthesizeConstructors.h; sourceTree = "<group>"; };
+		C234A9B221E92C1F003C984D /* WHLSLCheckDuplicateFunctions.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = WHLSLCheckDuplicateFunctions.cpp; sourceTree = "<group>"; };
+		C234A9B321E92C21003C984D /* WHLSLSynthesizeEnumerationFunctions.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = WHLSLSynthesizeEnumerationFunctions.cpp; sourceTree = "<group>"; };
+		C234A9B421E92C22003C984D /* WHLSLSynthesizeStructureAccessors.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = WHLSLSynthesizeStructureAccessors.cpp; sourceTree = "<group>"; };
+		C234A9B521E92C23003C984D /* WHLSLSynthesizeStructureAccessors.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WHLSLSynthesizeStructureAccessors.h; sourceTree = "<group>"; };
+		C234A9B621E92CC0003C984D /* WHLSLIntrinsics.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WHLSLIntrinsics.h; sourceTree = "<group>"; };
+		C234A9B721E92CC1003C984D /* WHLSLIntrinsics.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = WHLSLIntrinsics.cpp; sourceTree = "<group>"; };
 		C21DF2E71D9E4E9900F5B24C /* CSSFontVariationValue.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CSSFontVariationValue.cpp; sourceTree = "<group>"; };
 		C21DF2E81D9E4E9900F5B24C /* CSSFontVariationValue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CSSFontVariationValue.h; sourceTree = "<group>"; };
 		C234A98521E886A9003C984D /* WHLSLVisitor.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = WHLSLVisitor.cpp; sourceTree = "<group>"; };
@@ -25399,8 +25413,12 @@
 			isa = PBXGroup;
 			children = (
 				C21BF6F121CD898D00227979 /* AST */,
+				C234A9B221E92C1F003C984D /* WHLSLCheckDuplicateFunctions.cpp */,
+				C234A9AE21E92C1A003C984D /* WHLSLCheckDuplicateFunctions.h */,
 				C234A99A21E90F56003C984D /* WHLSLInferTypes.cpp */,
 				C234A99B21E90F57003C984D /* WHLSLInferTypes.h */,
+				C234A9B721E92CC1003C984D /* WHLSLIntrinsics.cpp */,
+				C234A9B621E92CC0003C984D /* WHLSLIntrinsics.h */,
 				C210E91121B4BD1000B7F83D /* WHLSLLexer.cpp */,
 				C210E91221B4BD1000B7F83D /* WHLSLLexer.h */,
 				C234A98D21E88884003C984D /* WHLSLNameContext.cpp */,
@@ -25410,10 +25428,20 @@
 				C21BF73721CD8A0200227979 /* WHLSLParser.cpp */,
 				C21BF73821CD8A0300227979 /* WHLSLParser.h */,
 				C21BF73A21CD8D7000227979 /* WHLSLProgram.h */,
+				C234A9AD21E92C19003C984D /* WHLSLRecursiveTypeChecker.cpp */,
+				C234A9AB21E92C18003C984D /* WHLSLRecursiveTypeChecker.h */,
 				C234A99921E90F29003C984D /* WHLSLResolveOverloadImpl.cpp */,
 				C234A99721E90F28003C984D /* WHLSLResolveOverloadImpl.h */,
 				C234A99D21E910BD003C984D /* WHLSLResolvingType.h */,
 				C21BF74521CD969800227979 /* WHLSLStandardLibrary.txt */,
+				C234A9A921E92C17003C984D /* WHLSLSynthesizeArrayOperatorLength.cpp */,
+				C234A9AF21E92C1B003C984D /* WHLSLSynthesizeArrayOperatorLength.h */,
+				C234A9B021E92C1C003C984D /* WHLSLSynthesizeConstructors.cpp */,
+				C234A9B121E92C1D003C984D /* WHLSLSynthesizeConstructors.h */,
+				C234A9B321E92C21003C984D /* WHLSLSynthesizeEnumerationFunctions.cpp */,
+				C234A9AC21E92C19003C984D /* WHLSLSynthesizeEnumerationFunctions.h */,
+				C234A9B421E92C22003C984D /* WHLSLSynthesizeStructureAccessors.cpp */,
+				C234A9B521E92C23003C984D /* WHLSLSynthesizeStructureAccessors.h */,
 				C234A98521E886A9003C984D /* WHLSLVisitor.cpp */,
 				C234A98721E886AD003C984D /* WHLSLVisitor.h */,
 			);

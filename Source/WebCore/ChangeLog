@@ -1,3 +1,77 @@
+2019-01-12  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [WHLSL] Add native function synthesis passes
+        https://bugs.webkit.org/show_bug.cgi?id=193360
+
+        Reviewed by Dean Jackson.
+
+        This patch includes all the passes in prepare() that are between the name resolver and the
+        type checker. It involves a few small pieces:
+
+        - CheckDuplicateFunctions which makes sure the same function isn't defined twice
+        - Intrinsics, which remembers all of the native types so they can be referred to by the
+          rest of the compiler
+        - RecursiveTypeChecker which makes sure types don't refer to themselves
+        - SynthesizeArrayOperatorLength which creates operator.length() functions for arrays
+        - SynthesizeConstructors which creates copy constructors and default constructors for all
+          types
+        - SynthesizeEnumerationFunctions which provides cast operators between enum types and their
+          base types
+        - SynthesizeStructureAccessors which provides getters, setters, and anders for each member
+          of a struct
+
+        No new tests because it isn't hooked up yet. Not enough of the compiler exists to have any meaningful sort
+        of test. When enough of the compiler is present, I'll port the reference implementation's test suite.
+
+        * Modules/webgpu/WHLSL/AST/WHLSLBuiltInSemantic.cpp:
+        (WebCore::WHLSL::AST::BuiltInSemantic::isAcceptableType const):
+        * Modules/webgpu/WHLSL/AST/WHLSLResourceSemantic.cpp:
+        (WebCore::WHLSL::AST::ResourceSemantic::isAcceptableType const):
+        * Modules/webgpu/WHLSL/WHLSLCheckDuplicateFunctions.cpp: Added.
+        (WebCore::WHLSL::checkDuplicateFunctions):
+        * Modules/webgpu/WHLSL/WHLSLCheckDuplicateFunctions.h: Copied from Source/WebCore/Modules/webgpu/WHLSL/AST/WHLSLResourceSemantic.cpp.
+        * Modules/webgpu/WHLSL/WHLSLIntrinsics.cpp: Added.
+        (WebCore::WHLSL::Intrinsics::Intrinsics):
+        (WebCore::WHLSL::Intrinsics::add):
+        (WebCore::WHLSL::Intrinsics::addPrimitive):
+        (WebCore::WHLSL::Intrinsics::addVector):
+        (WebCore::WHLSL::Intrinsics::addMatrix):
+        (WebCore::WHLSL::Intrinsics::addFullTexture):
+        (WebCore::WHLSL::Intrinsics::addDepthTexture):
+        (WebCore::WHLSL::Intrinsics::addTexture):
+        * Modules/webgpu/WHLSL/WHLSLIntrinsics.h: Added.
+        (WebCore::WHLSL::Intrinsics::voidType const):
+        (WebCore::WHLSL::Intrinsics::boolType const):
+        (WebCore::WHLSL::Intrinsics::intType const):
+        (WebCore::WHLSL::Intrinsics::uintType const):
+        (WebCore::WHLSL::Intrinsics::samplerType const):
+        (WebCore::WHLSL::Intrinsics::floatType const):
+        (WebCore::WHLSL::Intrinsics::float3Type const):
+        (WebCore::WHLSL::Intrinsics::float4Type const):
+        * Modules/webgpu/WHLSL/WHLSLProgram.h:
+        (WebCore::WHLSL::Program::append):
+        (WebCore::WHLSL::Program::intrinsics):
+        * Modules/webgpu/WHLSL/WHLSLRecursiveTypeChecker.cpp: Added.
+        (WebCore::WHLSL::checkRecursiveTypes):
+        * Modules/webgpu/WHLSL/WHLSLRecursiveTypeChecker.h: Copied from Source/WebCore/Modules/webgpu/WHLSL/AST/WHLSLResourceSemantic.cpp.
+        * Modules/webgpu/WHLSL/WHLSLSynthesizeArrayOperatorLength.cpp: Added.
+        (WebCore::WHLSL::FindArrayTypes::takeArrayTypes):
+        (WebCore::WHLSL::synthesizeArrayOperatorLength):
+        * Modules/webgpu/WHLSL/WHLSLSynthesizeArrayOperatorLength.h: Copied from Source/WebCore/Modules/webgpu/WHLSL/AST/WHLSLResourceSemantic.cpp.
+        * Modules/webgpu/WHLSL/WHLSLSynthesizeConstructors.cpp: Added.
+        (WebCore::WHLSL::FindAllTypes::takeUnnamedTypes):
+        (WebCore::WHLSL::FindAllTypes::takeNamedTypes):
+        (WebCore::WHLSL::synthesizeConstructors):
+        * Modules/webgpu/WHLSL/WHLSLSynthesizeConstructors.h: Copied from Source/WebCore/Modules/webgpu/WHLSL/AST/WHLSLResourceSemantic.cpp.
+        * Modules/webgpu/WHLSL/WHLSLSynthesizeEnumerationFunctions.cpp: Added.
+        (WebCore::WHLSL::synthesizeEnumerationFunctions):
+        * Modules/webgpu/WHLSL/WHLSLSynthesizeEnumerationFunctions.h: Copied from Source/WebCore/Modules/webgpu/WHLSL/AST/WHLSLResourceSemantic.cpp.
+        * Modules/webgpu/WHLSL/WHLSLSynthesizeStructureAccessors.cpp: Added.
+        (WebCore::WHLSL::synthesizeStructureAccessors):
+        * Modules/webgpu/WHLSL/WHLSLSynthesizeStructureAccessors.h: Copied from Source/WebCore/Modules/webgpu/WHLSL/AST/WHLSLResourceSemantic.cpp.
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+
 2019-01-12  Dan Bernstein  <mitz@apple.com>
 
         [Cocoa] Avoid importing directly from subumbrella frameworks

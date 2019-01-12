@@ -41,7 +41,7 @@ namespace AST {
 
 IntegerLiteralType::IntegerLiteralType(Lexer::Token&& origin, int value)
     : m_value(value)
-    , m_preferredType(makeUniqueRef<TypeReference>(WTFMove(origin), String("int", String::ConstructFromLiteral), TypeArguments()))
+    , m_preferredType(makeUniqueRef<TypeReference>(WTFMove(origin), "int"_str, TypeArguments()))
 {
 }
 

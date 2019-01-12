@@ -309,6 +309,13 @@ Modules/webgpu/DOMWindowWebGPU.cpp
 Modules/webgpu/WHLSL/WHLSLInferTypes.cpp
 Modules/webgpu/WHLSL/WHLSLLexer.cpp
 Modules/webgpu/WHLSL/WHLSLParser.cpp
+Modules/webgpu/WHLSL/WHLSLCheckDuplicateFunctions.cpp
+Modules/webgpu/WHLSL/WHLSLRecursiveTypeChecker.cpp
+Modules/webgpu/WHLSL/WHLSLSynthesizeArrayOperatorLength.cpp
+Modules/webgpu/WHLSL/WHLSLSynthesizeConstructors.cpp
+Modules/webgpu/WHLSL/WHLSLSynthesizeEnumerationFunctions.cpp
+Modules/webgpu/WHLSL/WHLSLSynthesizeStructureAccessors.cpp
+Modules/webgpu/WHLSL/WHLSLIntrinsics.cpp
 Modules/webgpu/WHLSL/WHLSLNameContext.cpp
 Modules/webgpu/WHLSL/WHLSLNameResolver.cpp
 Modules/webgpu/WHLSL/WHLSLResolveOverloadImpl.cpp

@@ -197,7 +197,7 @@ void NameResolver::visit(AST::CallExpression& callExpression)
         else {
             if (auto* types = m_nameContext.getTypes(callExpression.name())) {
                 if (types->size() == 1) {
-                    if (auto* functions = m_nameContext.getFunctions(String("operator cast", String::ConstructFromLiteral))) {
+                    if (auto* functions = m_nameContext.getFunctions("operator cast"_str)) {
                         callExpression.setCastData((*types)[0].get());
                         callExpression.setOverloads(*functions);
                     }

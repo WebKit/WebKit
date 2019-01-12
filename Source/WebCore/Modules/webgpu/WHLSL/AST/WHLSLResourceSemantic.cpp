@@ -29,6 +29,8 @@
 #if ENABLE(WEBGPU)
 
 #include "WHLSLArrayType.h"
+#include "WHLSLInferTypes.h"
+#include "WHLSLIntrinsics.h"
 #include "WHLSLReferenceType.h"
 #include "WHLSLTypeReference.h"
 
@@ -38,10 +40,42 @@ namespace WHLSL {
 
 namespace AST {
 
-bool ResourceSemantic::isAcceptableType(const UnnamedType&, const Intrinsics&) const
+bool ResourceSemantic::isAcceptableType(const UnnamedType& unnamedType, const Intrinsics& intrinsics) const
 {
-    // FIXME: Implement this
-    return true;
+    switch (m_mode) {
+    case Mode::UnorderedAccessView:
+        if (is<ReferenceType>(unnamedType)) {
+            auto& referenceType = downcast<ReferenceType>(unnamedType);
+            return referenceType.addressSpace() == ReferenceType::AddressSpace::Constant || referenceType.addressSpace() == ReferenceType::AddressSpace::Device;
+        }
+        if (is<ArrayType>(unnamedType))
+            return true;
+        if (is<TypeReference>(unnamedType)) {
+            auto& typeReference = downcast<TypeReference>(unnamedType);
+            ASSERT(typeReference.resolvedType());
+            if (is<NativeTypeDeclaration>(*typeReference.resolvedType()))
+                return downcast<NativeTypeDeclaration>(*typeReference.resolvedType()).isTexture();
+        }
+        return false;
+    case Mode::Texture:
+        if (is<ReferenceType>(unnamedType))
+            return downcast<ReferenceType>(unnamedType).addressSpace() == ReferenceType::AddressSpace::Constant;
+        if (is<ArrayType>(unnamedType))
+            return true;
+        if (is<TypeReference>(unnamedType)) {
+            auto& typeReference = downcast<TypeReference>(unnamedType);
+            ASSERT(typeReference.resolvedType());
+            if (is<NativeTypeDeclaration>(*typeReference.resolvedType()))
+                return downcast<NativeTypeDeclaration>(*typeReference.resolvedType()).isTexture();
+        }
+        return false;
+    case Mode::Buffer:
+        if (is<ReferenceType>(unnamedType))
+            return downcast<ReferenceType>(unnamedType).addressSpace() == ReferenceType::AddressSpace::Constant;
+        return is<ArrayType>(unnamedType);
+    case Mode::Sampler:
+        return matches(unnamedType, intrinsics.samplerType());
+    }
 }
 
 bool ResourceSemantic::isAcceptableForShaderItemDirection(ShaderItemDirection direction, const FunctionDefinition&) const

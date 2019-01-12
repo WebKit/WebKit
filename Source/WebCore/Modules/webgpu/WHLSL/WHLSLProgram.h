@@ -29,6 +29,7 @@
 
 #include "WHLSLEnumerationDefinition.h"
 #include "WHLSLFunctionDefinition.h"
+#include "WHLSLIntrinsics.h"
 #include "WHLSLNameContext.h"
 #include "WHLSLNativeFunctionDeclaration.h"
 #include "WHLSLNativeTypeDeclaration.h"
@@ -72,16 +73,19 @@ public:
     bool append(AST::NativeFunctionDeclaration&& nativeFunctionDeclaration)
     {
         m_nativeFunctionDeclarations.append(makeUniqueRef<AST::NativeFunctionDeclaration>(WTFMove(nativeFunctionDeclaration)));
+        m_intrinsics.add(static_cast<AST::NativeFunctionDeclaration&>(m_nativeFunctionDeclarations.last()));
         return m_nameContext.add(static_cast<AST::NativeFunctionDeclaration&>(m_nativeFunctionDeclarations.last()));
     }
 
     bool append(AST::NativeTypeDeclaration&& nativeTypeDeclaration)
     {
         m_nativeTypeDeclarations.append(makeUniqueRef<AST::NativeTypeDeclaration>(WTFMove(nativeTypeDeclaration)));
+        m_intrinsics.add(static_cast<AST::NativeTypeDeclaration&>(m_nativeTypeDeclarations.last()));
         return m_nameContext.add(static_cast<AST::NativeTypeDeclaration&>(m_nativeTypeDeclarations.last()));
     }
 
     NameContext& nameContext() { return m_nameContext; }
+    Intrinsics& intrinsics() { return m_intrinsics; }
     Vector<UniqueRef<AST::TypeDefinition>>& typeDefinitions() { return m_typeDefinitions; }
     Vector<UniqueRef<AST::StructureDefinition>>& structureDefinitions() { return m_structureDefinitions; }
     Vector<UniqueRef<AST::EnumerationDefinition>>& enumerationDefinitions() { return m_enumerationDefinitions; }
@@ -93,6 +97,7 @@ public:
 
 private:
     NameContext m_nameContext;
+    Intrinsics m_intrinsics;
     Vector<UniqueRef<AST::TypeDefinition>> m_typeDefinitions;
     Vector<UniqueRef<AST::StructureDefinition>> m_structureDefinitions;
     Vector<UniqueRef<AST::EnumerationDefinition>> m_enumerationDefinitions;

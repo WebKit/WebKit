@@ -40,7 +40,7 @@ namespace AST {
 
 FloatLiteralType::FloatLiteralType(Lexer::Token&& origin, float value)
     : m_value(value)
-    , m_preferredType(makeUniqueRef<TypeReference>(WTFMove(origin), String("float", String::ConstructFromLiteral), TypeArguments()))
+    , m_preferredType(makeUniqueRef<TypeReference>(WTFMove(origin), "float"_str, TypeArguments()))
 {
 }
 
