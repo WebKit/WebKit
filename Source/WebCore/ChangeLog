@@ -1,3 +1,15 @@
+2019-01-11  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Fix the build after r239844
+        https://bugs.webkit.org/show_bug.cgi?id=192991
+
+        Unreviewed.
+
+        * Modules/webgpu/WHLSL/AST/WHLSLIntegerLiteralType.cpp:
+        * Modules/webgpu/WHLSL/AST/WHLSLSpecializationConstantSemantic.cpp:
+        * Modules/webgpu/WHLSL/AST/WHLSLStageInOutSemantic.cpp:
+        * Modules/webgpu/WHLSL/AST/WHLSLUnsignedIntegerLiteralType.cpp:
+
 2019-01-11  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [iOS] Precision drop state thrashes when dragging near the top edge of an editable element

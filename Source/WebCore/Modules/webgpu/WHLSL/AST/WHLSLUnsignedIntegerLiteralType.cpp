@@ -28,6 +28,8 @@
 
 #if ENABLE(WEBGPU)
 
+#include "WHLSLTypeArgument.h"
+#include "WHLSLTypeReference.h"
 #include <wtf/UniqueRef.h>
 
 namespace WebCore {

@@ -31,6 +31,7 @@
 #include "WHLSLArrayType.h"
 #include "WHLSLEnumerationDefinition.h"
 #include "WHLSLFunctionDefinition.h"
+#include "WHLSLNativeTypeDeclaration.h"
 #include "WHLSLTypeReference.h"
 
 namespace WebCore {

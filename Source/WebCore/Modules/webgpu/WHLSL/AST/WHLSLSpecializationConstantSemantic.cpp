@@ -28,6 +28,7 @@
 
 #if ENABLE(WEBGPU)
 
+#include "WHLSLNativeTypeDeclaration.h"
 #include "WHLSLTypeReference.h"
 
 namespace WebCore {
