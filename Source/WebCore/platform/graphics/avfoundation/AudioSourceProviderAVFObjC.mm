@@ -69,7 +69,8 @@ namespace WebCore {
 using namespace PAL;
 static const double kRingBufferDuration = 1;
 
-struct AudioSourceProviderAVFObjC::TapStorage {
+class AudioSourceProviderAVFObjC::TapStorage : public ThreadSafeRefCounted<AudioSourceProviderAVFObjC::TapStorage> {
+public:
     TapStorage(AudioSourceProviderAVFObjC* _this) : _this(_this) { }
     AudioSourceProviderAVFObjC* _this;
     Lock mutex;
@@ -238,9 +239,12 @@ void AudioSourceProviderAVFObjC::initCallback(MTAudioProcessingTapRef tap, void*
     ASSERT(tap);
     AudioSourceProviderAVFObjC* _this = static_cast<AudioSourceProviderAVFObjC*>(clientInfo);
     _this->m_tap = adoptCF(tap);
-    _this->m_tapStorage = new TapStorage(_this);
+    _this->m_tapStorage = adoptRef(new TapStorage(_this));
     _this->init(clientInfo, tapStorageOut);
-    *tapStorageOut = _this->m_tapStorage;
+    *tapStorageOut = _this->m_tapStorage.get();
+
+    // ref balanced by deref in finalizeCallback:
+    _this->m_tapStorage->ref();
 }
 
 void AudioSourceProviderAVFObjC::finalizeCallback(MTAudioProcessingTapRef tap)
@@ -253,7 +257,7 @@ void AudioSourceProviderAVFObjC::finalizeCallback(MTAudioProcessingTapRef tap)
         if (tapStorage->_this)
             tapStorage->_this->finalize();
     }
-    delete tapStorage;
+    tapStorage->deref();
 }
 
 void AudioSourceProviderAVFObjC::prepareCallback(MTAudioProcessingTapRef tap, CMItemCount maxFrames, const AudioStreamBasicDescription *processingFormat)
