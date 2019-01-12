@@ -326,6 +326,27 @@ TEST(DragAndDropTests, ImageInLinkToInput)
     EXPECT_TRUE([simulator lastKnownDropProposal].precise);
 }
 
+TEST(DragAndDropTests, AvoidPreciseDropNearTopOfTextArea)
+{
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500)]);
+    [webView synchronouslyLoadHTMLString:@"<meta name='viewport' content='width=device-width, initial-scale=1'><body style='margin: 0'><textarea style='height: 100px'></textarea></body>"];
+
+    auto simulator = adoptNS([[DragAndDropSimulator alloc] initWithWebView:webView.get()]);
+    auto firstItem = adoptNS([[NSItemProvider alloc] initWithObject:[NSURL URLWithString:@"https://webkit.org"]]);
+    [simulator setExternalItemProviders:@[ firstItem.get() ]];
+    [simulator runFrom:CGPointMake(320, 10) to:CGPointMake(20, 10)];
+
+    EXPECT_WK_STREQ("https://webkit.org/", [webView stringByEvaluatingJavaScript:@"document.querySelector('textarea').value"]);
+    EXPECT_FALSE([simulator lastKnownDropProposal].precise);
+    [webView evaluateJavaScript:@"document.querySelector('textarea').value = ''" completionHandler:nil];
+
+    auto secondItem = adoptNS([[NSItemProvider alloc] initWithObject:[NSURL URLWithString:@"https://apple.com"]]);
+    [simulator setExternalItemProviders:@[ secondItem.get() ]];
+    [simulator runFrom:CGPointMake(320, 50) to:CGPointMake(20, 50)];
+    EXPECT_WK_STREQ("https://apple.com/", [webView stringByEvaluatingJavaScript:@"document.querySelector('textarea').value"]);
+    EXPECT_TRUE([simulator lastKnownDropProposal].precise);
+}
+
 TEST(DragAndDropTests, ImageInLinkWithoutHREFToInput)
 {
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500)]);

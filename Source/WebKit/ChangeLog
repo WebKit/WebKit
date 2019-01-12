@@ -1,3 +1,38 @@
+2019-01-11  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [iOS] Precision drop state thrashes when dragging near the top edge of an editable element
+        https://bugs.webkit.org/show_bug.cgi?id=193364
+        <rdar://problem/47214117>
+
+        Reviewed by Tim Horton.
+
+        On iOS, marking a UIDropProposal as precise offsets the hit-testing location of the drop by a small distance
+        either upwards or downwards from the actual location of the user's finger. When dragging over an editable
+        element, WebKit currently marks the drop proposal as precise; however, when dragging over the top edge of an
+        editable element, what happens is that the hit-testing location is offset to a location outside of the editable
+        element, which causes us to turn off precision drop mode; subsequently, turning off precision drop mode removes
+        the offset, which causes us to hit-test within the editable element once again and re-enable precision mode, and
+        the cycle continues.
+
+        In order to mitigate this, bail out of precision drop mode when dragging near the top or bottom edges of the
+        highest editable root that contains the current drop caret position (or, if the drop caret is inside of a text
+        form control, use the form control as the editable element instead).
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::didPerformDragControllerAction):
+        * UIProcess/WebPageProxy.h:
+        (WebKit::WebPageProxy::currentDragCaretEditableElementRect const):
+        * UIProcess/WebPageProxy.messages.in:
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView dropInteraction:sessionDidUpdate:]):
+
+        Avoid precise mode when we're less than 25pt away from the top and bottom edge of the editable element rect.
+        Since the drag location offset amount is a fixed offset in window coordinates, we first convert this minimum
+        distance to the content view's coordinate space by dividing by the content scale factor.
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::performDragControllerAction):
+
 2019-01-11  Tim Horton  <timothy_horton@apple.com>
 
         REGRESSION (PSON): Firefox app lacks Open in New Tab in menu
