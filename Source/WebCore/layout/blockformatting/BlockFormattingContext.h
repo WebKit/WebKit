@@ -47,13 +47,11 @@ class FloatingContext;
 class BlockFormattingContext : public FormattingContext {
     WTF_MAKE_ISO_ALLOCATED(BlockFormattingContext);
 public:
-    BlockFormattingContext(const Box& formattingContextRoot, FormattingState& formattingState);
+    BlockFormattingContext(const Box& formattingContextRoot, BlockFormattingState&);
 
     void layout() const override;
 
 private:
-    BlockFormattingState& blockFormattingState() const { return downcast<BlockFormattingState>(formattingState()); }
-
     void layoutFormattingContextRoot(FloatingContext&, const Box&) const;
     void placeInFlowPositionedChildren(const Container&) const;
 
@@ -136,6 +134,8 @@ private:
     EstimatedMarginBefore estimatedMarginBefore(const Box& layoutBox) const { return m_estimatedMarginBeforeList.get(&layoutBox); }
     bool hasPrecomputedMarginBefore(const Box&) const;
 #endif
+
+    BlockFormattingState& formattingState() const { return downcast<BlockFormattingState>(FormattingContext::formattingState()); }
 
 private:
     mutable HashMap<const Box*, EstimatedMarginBefore> m_estimatedMarginBeforeList;

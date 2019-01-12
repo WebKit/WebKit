@@ -65,8 +65,8 @@ public:
 protected:
     using LayoutQueue = Vector<const Box*>;
 
-    FormattingState& formattingState() const;
     LayoutState& layoutState() const;
+    FormattingState& formattingState() const { return m_formattingState; }
     const Box& root() const { return *m_root; }
 
     void computeBorderAndPadding(const Box&) const;

@@ -153,12 +153,15 @@ FormattingState& LayoutState::createFormattingStateForFormattingRootIfNeeded(con
 std::unique_ptr<FormattingContext> LayoutState::createFormattingContext(const Box& formattingContextRoot)
 {
     ASSERT(formattingContextRoot.establishesFormattingContext());
-    if (formattingContextRoot.establishesInlineFormattingContext())
-        return std::make_unique<InlineFormattingContext>(formattingContextRoot, createFormattingStateForFormattingRootIfNeeded(formattingContextRoot));
+    if (formattingContextRoot.establishesInlineFormattingContext()) {
+        auto& inlineFormattingState = downcast<InlineFormattingState>(createFormattingStateForFormattingRootIfNeeded(formattingContextRoot));
+        return std::make_unique<InlineFormattingContext>(formattingContextRoot, inlineFormattingState);
+    }
 
     if (formattingContextRoot.establishesBlockFormattingContext()) {
         ASSERT(formattingContextRoot.establishesBlockFormattingContextOnly());
-        return std::make_unique<BlockFormattingContext>(formattingContextRoot, createFormattingStateForFormattingRootIfNeeded(formattingContextRoot));
+        auto& blockFormattingState = downcast<BlockFormattingState>(createFormattingStateForFormattingRootIfNeeded(formattingContextRoot));
+        return std::make_unique<BlockFormattingContext>(formattingContextRoot, blockFormattingState);
     }
 
     CRASH();

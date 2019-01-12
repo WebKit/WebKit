@@ -59,11 +59,6 @@ FormattingContext::~FormattingContext()
 #endif
 }
 
-FormattingState& FormattingContext::formattingState() const
-{
-    return m_formattingState;
-}
-
 LayoutState& FormattingContext::layoutState() const
 {
     return m_formattingState.layoutState();

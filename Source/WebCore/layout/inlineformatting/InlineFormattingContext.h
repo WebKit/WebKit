@@ -43,7 +43,7 @@ class InlineRunProvider;
 class InlineFormattingContext : public FormattingContext {
     WTF_MAKE_ISO_ALLOCATED(InlineFormattingContext);
 public:
-    InlineFormattingContext(const Box& formattingContextRoot, FormattingState&);
+    InlineFormattingContext(const Box& formattingContextRoot, InlineFormattingState&);
 
     void layout() const override;
 
@@ -121,7 +121,7 @@ private:
     void collectInlineContentForSubtree(const Box& root, InlineRunProvider&) const;
     InstrinsicWidthConstraints instrinsicWidthConstraints() const override;
 
-    InlineFormattingState& inlineFormattingState() const { return downcast<InlineFormattingState>(formattingState()); }
+    InlineFormattingState& formattingState() const { return downcast<InlineFormattingState>(FormattingContext::formattingState()); }
 };
 
 }

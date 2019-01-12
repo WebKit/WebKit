@@ -48,7 +48,7 @@ namespace Layout {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(InlineFormattingContext);
 
-InlineFormattingContext::InlineFormattingContext(const Box& formattingContextRoot, FormattingState& formattingState)
+InlineFormattingContext::InlineFormattingContext(const Box& formattingContextRoot, InlineFormattingState& formattingState)
     : FormattingContext(formattingContextRoot, formattingState)
 {
 }
@@ -133,7 +133,7 @@ void InlineFormattingContext::splitInlineRunIfNeeded(const InlineRun& inlineRun,
     // 1. Start with the first inline item (element) and travers the list until
     // 2. either find an inline item that needs a dedicated run or we reach the end of the run
     // 3. Create dedicate inline runs.
-    auto& inlineContent = inlineFormattingState().inlineContent();
+    auto& inlineContent = formattingState().inlineContent();
     auto contentStart = inlineRun.logicalLeft();
     auto startPosition = inlineRun.textContext()->start();
     auto remaningLength = inlineRun.textContext()->length();
@@ -215,7 +215,7 @@ void InlineFormattingContext::splitInlineRunIfNeeded(const InlineRun& inlineRun,
 
 void InlineFormattingContext::createFinalRuns(Line& line) const
 {
-    auto& inlineFormattingState = this->inlineFormattingState();
+    auto& inlineFormattingState = formattingState();
     for (auto& inlineRun : line.runs()) {
         if (inlineRun.overlapsMultipleInlineItems()) {
             InlineRuns splitRuns;
@@ -246,7 +246,7 @@ void InlineFormattingContext::createFinalRuns(Line& line) const
 void InlineFormattingContext::postProcessInlineRuns(Line& line, IsLastLine isLastLine) const
 {
     Geometry::alignRuns(root().style().textAlign(), line, isLastLine);
-    auto firstRunIndex = inlineFormattingState().inlineRuns().size();
+    auto firstRunIndex = formattingState().inlineRuns().size();
     createFinalRuns(line);
 
     placeInFlowPositionedChildren(firstRunIndex);
@@ -273,7 +273,7 @@ void InlineFormattingContext::appendContentToLine(Line& line, const InlineRunPro
 void InlineFormattingContext::layoutInlineContent(const InlineRunProvider& inlineRunProvider) const
 {
     auto& layoutState = this->layoutState();
-    auto& inlineFormattingState = this->inlineFormattingState();
+    auto& inlineFormattingState = formattingState();
     auto floatingContext = FloatingContext { inlineFormattingState.floatingState() };
 
     Line line;
@@ -408,7 +408,7 @@ void InlineFormattingContext::computeFloatPosition(const FloatingContext& floati
 
 void InlineFormattingContext::placeInFlowPositionedChildren(unsigned fistRunIndex) const
 {
-    auto& inlineRuns = inlineFormattingState().inlineRuns();
+    auto& inlineRuns = formattingState().inlineRuns();
     for (auto runIndex = fistRunIndex; runIndex < inlineRuns.size(); ++runIndex) {
         auto& inlineRun = inlineRuns[runIndex];
 
@@ -433,7 +433,7 @@ void InlineFormattingContext::placeInFlowPositionedChildren(unsigned fistRunInde
 void InlineFormattingContext::collectInlineContentForSubtree(const Box& root, InlineRunProvider& inlineRunProvider) const
 {
     // Collect inline content recursively and set breaking rules for the inline elements (for paddings, margins, positioned element etc).
-    auto& inlineFormattingState = this->inlineFormattingState();
+    auto& inlineFormattingState = formattingState();
 
     auto createAndAppendInlineItem = [&] {
         auto inlineItem = std::make_unique<InlineItem>(root);
@@ -528,7 +528,7 @@ FormattingContext::InstrinsicWidthConstraints InlineFormattingContext::instrinsi
     if (auto instrinsicWidthConstraints = formattingStateForRoot.instrinsicWidthConstraints(root()))
         return *instrinsicWidthConstraints;
 
-    auto& inlineFormattingState = this->inlineFormattingState();
+    auto& inlineFormattingState = formattingState();
     InlineRunProvider inlineRunProvider;
     collectInlineContent(inlineRunProvider);
 

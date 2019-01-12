@@ -1,3 +1,38 @@
+2019-01-12  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC] Block/InlinFormattingContext should take Block/InlineFormattingState
+        https://bugs.webkit.org/show_bug.cgi?id=193383
+
+        Reviewed by Antti Koivisto.
+
+        This is just a downcast really.
+
+        * layout/FormattingContext.cpp:
+        (WebCore::Layout::FormattingContext::FormattingContext):
+        (WebCore::Layout::FormattingContext::formattingState const): Deleted.
+        * layout/FormattingContext.h:
+        * layout/LayoutState.cpp:
+        (WebCore::Layout::LayoutState::createFormattingContext):
+        * layout/blockformatting/BlockFormattingContext.cpp:
+        (WebCore::Layout::BlockFormattingContext::BlockFormattingContext):
+        * layout/blockformatting/BlockFormattingContext.h:
+        (WebCore::Layout::BlockFormattingContext::formattingState const):
+        (WebCore::Layout::BlockFormattingContext::blockFormattingState const): Deleted.
+        * layout/inlineformatting/InlineFormattingContext.cpp:
+        (WebCore::Layout::InlineFormattingContext::InlineFormattingContext):
+        (WebCore::Layout::InlineFormattingContext::splitInlineRunIfNeeded const):
+        (WebCore::Layout::InlineFormattingContext::createFinalRuns const):
+        (WebCore::Layout::InlineFormattingContext::postProcessInlineRuns const):
+        (WebCore::Layout::InlineFormattingContext::layoutInlineContent const):
+        (WebCore::Layout::InlineFormattingContext::placeInFlowPositionedChildren const):
+        (WebCore::Layout::InlineFormattingContext::collectInlineContentForSubtree const):
+        (WebCore::Layout::InlineFormattingContext::instrinsicWidthConstraints const):
+        * layout/inlineformatting/InlineFormattingContext.h:
+        (WebCore::Layout::InlineFormattingContext::formattingState const):
+        (WebCore::Layout::InlineFormattingContext::inlineFormattingState const): Deleted.
+        * page/FrameViewLayoutContext.cpp:
+        (WebCore::layoutUsingFormattingContext):
+
 2019-01-12  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [WHLSL] Add native function synthesis passes
