@@ -654,7 +654,7 @@ public:
 #else
         [NSNumber numberWithBool:YES], WebKitVisualViewportEnabledPreferenceKey,
 #endif
-        [NSNumber numberWithBool:NO], WebKitVisualViewportAPIEnabledPreferenceKey,
+        [NSNumber numberWithBool:YES], WebKitVisualViewportAPIEnabledPreferenceKey,
 
         [NSNumber numberWithBool:NO], WebKitCSSOMViewScrollingAPIEnabledPreferenceKey,
         [NSNumber numberWithBool:YES], WebKitNeedsStorageAccessFromFileURLsQuirkKey,

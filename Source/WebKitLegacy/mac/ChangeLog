@@ -1,3 +1,13 @@
+2019-01-11  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Enable visual viewport API by default
+        https://bugs.webkit.org/show_bug.cgi?id=193376
+
+        Reviewed by Simon Fraser.
+
+        * WebView/WebPreferences.mm:
+        (+[WebPreferences initialize]):
+
 2019-01-11  John Wilander  <wilander@apple.com>
 
         Compile out Web API Statistics Collection

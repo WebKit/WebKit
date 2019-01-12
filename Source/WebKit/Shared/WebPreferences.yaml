@@ -1240,7 +1240,7 @@ IntersectionObserverEnabled:
 
 VisualViewportAPIEnabled:
   type: bool
-  defaultValue: DEFAULT_EXPERIMENTAL_FEATURES_ENABLED
+  defaultValue: true
   humanReadableName: "Visual Viewport API"
   humanReadableDescription: "Enable Visual Viewport API"
   category: experimental

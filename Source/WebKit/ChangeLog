@@ -1,3 +1,15 @@
+2019-01-11  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Enable visual viewport API by default
+        https://bugs.webkit.org/show_bug.cgi?id=193376
+
+        Reviewed by Simon Fraser.
+
+        Enable this feature by default since the remaining issue on iOS is mostly about test failures,
+        not an issue with the core functionality of the API.
+
+        * Shared/WebPreferences.yaml:
+
 2019-01-11  Brent Fulgham  <bfulgham@apple.com>
 
         Allow WebContent process access to some drawing-related IOKit properties
