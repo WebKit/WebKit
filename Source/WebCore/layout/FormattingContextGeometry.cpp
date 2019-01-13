@@ -194,13 +194,13 @@ static LayoutUnit staticVerticalPositionForOutOfFlowPositioned(const LayoutState
 
     // Resolve top all the way up to the containing block.
     auto* containingBlock = layoutBox.containingBlock();
+    // Start with the parent since we pretend that this box is normal flow.
     for (auto* container = layoutBox.parent(); container != containingBlock; container = container->containingBlock()) {
         auto& displayBox = layoutState.displayBoxForLayoutBox(*container);
         // Display::Box::top is the border box top position in its containing block's coordinate system.
         top += displayBox.top();
-        ASSERT(!container->isPositioned());
+        ASSERT(!container->isPositioned() || layoutBox.isFixedPositioned());
     }
-    // FIXME: floatings need to be taken into account.
     return top;
 }
 
@@ -215,13 +215,13 @@ static LayoutUnit staticHorizontalPositionForOutOfFlowPositioned(const LayoutSta
 
     // Resolve left all the way up to the containing block.
     auto* containingBlock = layoutBox.containingBlock();
+    // Start with the parent since we pretend that this box is normal flow.
     for (auto* container = layoutBox.parent(); container != containingBlock; container = container->containingBlock()) {
         auto& displayBox = layoutState.displayBoxForLayoutBox(*container);
         // Display::Box::left is the border box left position in its containing block's coordinate system.
         left += displayBox.left();
-        ASSERT(!container->isPositioned());
+        ASSERT(!container->isPositioned() || layoutBox.isFixedPositioned());
     }
-    // FIXME: floatings need to be taken into account.
     return left;
 }
 
