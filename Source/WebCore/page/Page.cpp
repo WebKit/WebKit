@@ -2666,6 +2666,7 @@ void Page::setUseSystemAppearance(bool value)
 
 void Page::setUseDarkAppearance(bool value)
 {
+#if HAVE(OS_DARK_MODE_SUPPORT)
     if (m_useDarkAppearance == value)
         return;
 
@@ -2674,26 +2675,37 @@ void Page::setUseDarkAppearance(bool value)
     InspectorInstrumentation::defaultAppearanceDidChange(*this, value);
 
     appearanceDidChange();
+#else
+    UNUSED_PARAM(value);
+#endif
 }
 
 bool Page::useDarkAppearance() const
 {
+#if HAVE(OS_DARK_MODE_SUPPORT)
     FrameView* view = mainFrame().view();
     if (!view || !equalLettersIgnoringASCIICase(view->mediaType(), "screen"))
         return false;
     if (m_useDarkAppearanceOverride)
         return m_useDarkAppearanceOverride.value();
     return m_useDarkAppearance;
+#else
+    return false;
+#endif
 }
 
 void Page::setUseDarkAppearanceOverride(Optional<bool> valueOverride)
 {
+#if HAVE(OS_DARK_MODE_SUPPORT)
     if (valueOverride == m_useDarkAppearanceOverride)
         return;
 
     m_useDarkAppearanceOverride = valueOverride;
 
     appearanceDidChange();
+#else
+    UNUSED_PARAM(valueOverride);
+#endif
 }
 
 void Page::setFullscreenInsets(const FloatBoxExtent& insets)

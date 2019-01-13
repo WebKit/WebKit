@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+
+<!-- webkit-test-runner [ experimental:DarkModeCSSEnabled=true ] -->
+
+<script src="../../resources/testharness.js"></script>
+<script src="../../resources/testharnessreport.js"></script>
+
+<style>
+div {
+    background-color: red;
+    color: text;
+}
+
+@media (prefers-color-scheme: light) {
+    #test1 {
+        background-color: lime;
+    }
+}
+
+@media (prefers-color-scheme: dark) {
+    /* This is valid, but should not apply for us since there is no dark mode support. */
+    #test1 {
+        background-color: blue;
+    }
+}
+
+@media (prefers-color-scheme: no-preference) {
+    /* This is valid, but should not apply for us since there is no option for no user preference. */
+    #test1 {
+        background-color: cyan;
+    }
+}
+
+@media (prefers-color-scheme: foo) {
+    /* This is invalid and should not apply. */
+    #test1 {
+        background-color: yellow;
+    }
+}
+
+@media (prefers-color-scheme) {
+    /* This is valid and should always apply for us, since there is always a user preference currently. */
+    #test2 {
+        background-color: lime;
+    }
+}
+</style>
+
+<div id="test1"></div>
+<div id="test2"></div>
+
+<script>
+function test_prop(id, prop, expected) {
+    assert_equals(window.getComputedStyle(document.getElementById(id)).getPropertyValue(prop).trim(), expected);
+}
+
+test(function() {
+    // Styled background-color in media query should be lime green.
+    test_prop("test1", "background-color", "rgb(0, 255, 0)");
+
+    // The semantic text color should be black.
+    test_prop("test1", "color", "rgb(0, 0, 0)");
+}, "Element colors are correct in light color scheme");
+
+test(function() {
+    // Styled background-color in media query should be lime green.
+    test_prop("test2", "background-color", "rgb(0, 255, 0)");
+
+    // The semantic text color should be black.
+    test_prop("test2", "color", "rgb(0, 0, 0)");
+}, "Element colors are correct in light color scheme with boolean context query");
+</script>

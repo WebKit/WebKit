@@ -1767,7 +1767,11 @@ webkit.org/b/187393 imported/w3c/web-platform-tests/2dcontext/imagebitmap/create
 
 # Dark Mode is Mojave and later.
 [ Mojave+ ] css-dark-mode [ Pass ]
+[ Mojave+ ] css-dark-mode/older-systems [ Skip ]
 [ Mojave+ ] inspector/css/force-page-appearance.html [ Pass ]
+
+# Test Dark Mode CSS support for light mode on older systems.
+[ Sierra HighSierra ] css-dark-mode/older-systems [ Pass ]
 
 webkit.org/b/185651 legacy-animation-engine/animations/play-state-in-shorthand.html [ Pass Failure ]
 

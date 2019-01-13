@@ -162,7 +162,7 @@ static const double progressAnimationNumFrames = 256;
 
 - (CFDictionaryRef)_adjustedCoreUIDrawOptionsForDrawingBordersOnly:(CFDictionaryRef)defaultOptions
 {
-#if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101400
+#if HAVE(OS_DARK_MODE_SUPPORT)
     // Dark mode controls don't have borders, just a semi-transparent background of shadows.
     // In the dark mode case we can't disable borders, or we will not paint anything for the control.
     NSAppearanceName appearance = [self.controlView.effectiveAppearance bestMatchFromAppearancesWithNames:@[ NSAppearanceNameAqua, NSAppearanceNameDarkAqua ]];
@@ -235,7 +235,7 @@ static const CGFloat listButtonCornerRadius = 5.0f;
 
     // FIXME: Obtain the gradient colors from CoreUI or AppKit
     RetainPtr<NSGradient> gradient;
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101400
+#if HAVE(OS_DARK_MODE_SUPPORT)
     NSUserAccentColor accentColor = NSColorGetUserAccentColor();
     if (accentColor == NSUserAccentColorRed)
         gradient = adoptNS([[NSGradient alloc] initWithStartingColor:[NSColor colorWithRed:(212.0 / 255) green:(122.0 / 255) blue:(117.0 / 255) alpha:1.0] endingColor:[NSColor colorWithRed:(189.0 / 255) green:(34.0 / 255) blue:(23.0 / 255) alpha:1.0]]);
@@ -398,7 +398,7 @@ Color RenderThemeMac::platformActiveSelectionBackgroundColor(OptionSet<StyleColo
 
 Color RenderThemeMac::platformInactiveSelectionBackgroundColor(OptionSet<StyleColor::Options> options) const
 {
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101400
+#if HAVE(OS_DARK_MODE_SUPPORT)
     LocalDefaultSystemAppearance localAppearance(options.contains(StyleColor::Options::UseDarkAppearance));
     return colorFromNSColor([NSColor unemphasizedSelectedTextBackgroundColor]);
 #else
@@ -435,7 +435,7 @@ Color RenderThemeMac::platformActiveSelectionForegroundColor(OptionSet<StyleColo
 
 Color RenderThemeMac::platformInactiveSelectionForegroundColor(OptionSet<StyleColor::Options> options) const
 {
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101400
+#if HAVE(OS_DARK_MODE_SUPPORT)
     LocalDefaultSystemAppearance localAppearance(options.contains(StyleColor::Options::UseDarkAppearance));
     if (localAppearance.usingDarkAppearance())
         return colorFromNSColor([NSColor unemphasizedSelectedTextColor]);
@@ -448,7 +448,7 @@ Color RenderThemeMac::platformInactiveSelectionForegroundColor(OptionSet<StyleCo
 
 Color RenderThemeMac::platformActiveListBoxSelectionBackgroundColor(OptionSet<StyleColor::Options> options) const
 {
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101400
+#if HAVE(OS_DARK_MODE_SUPPORT)
     LocalDefaultSystemAppearance localAppearance(options.contains(StyleColor::Options::UseDarkAppearance));
     return colorFromNSColor([NSColor selectedContentBackgroundColor]);
 #else
@@ -459,7 +459,7 @@ Color RenderThemeMac::platformActiveListBoxSelectionBackgroundColor(OptionSet<St
 
 Color RenderThemeMac::platformInactiveListBoxSelectionBackgroundColor(OptionSet<StyleColor::Options> options) const
 {
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101400
+#if HAVE(OS_DARK_MODE_SUPPORT)
     LocalDefaultSystemAppearance localAppearance(options.contains(StyleColor::Options::UseDarkAppearance));
     return colorFromNSColor([NSColor unemphasizedSelectedContentBackgroundColor]);
 #else
@@ -476,7 +476,7 @@ Color RenderThemeMac::platformActiveListBoxSelectionForegroundColor(OptionSet<St
 
 Color RenderThemeMac::platformInactiveListBoxSelectionForegroundColor(OptionSet<StyleColor::Options> options) const
 {
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101400
+#if HAVE(OS_DARK_MODE_SUPPORT)
     LocalDefaultSystemAppearance localAppearance(options.contains(StyleColor::Options::UseDarkAppearance));
     return colorFromNSColor([NSColor unemphasizedSelectedTextColor]);
 #else
@@ -659,7 +659,7 @@ Color RenderThemeMac::systemColor(CSSValueID cssValueID, OptionSet<StyleColor::O
             return focusRingColor(options);
 
         case CSSValueAppleSystemControlAccent:
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101400
+#if HAVE(OS_DARK_MODE_SUPPORT)
             return systemAppearanceColor(cache.systemControlAccentColor, @selector(controlAccentColor));
 #else
             return systemAppearanceColor(cache.systemControlAccentColor, @selector(alternateSelectedControlColor));
@@ -740,7 +740,7 @@ Color RenderThemeMac::systemColor(CSSValueID cssValueID, OptionSet<StyleColor::O
             case CSSValueAppleSystemAlternateSelectedText:
                 return @selector(alternateSelectedControlTextColor);
             case CSSValueAppleSystemUnemphasizedSelectedContentBackground:
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101400
+#if HAVE(OS_DARK_MODE_SUPPORT)
                 return @selector(unemphasizedSelectedContentBackgroundColor);
 #else
                 return @selector(secondarySelectedControlColor);
@@ -748,13 +748,13 @@ Color RenderThemeMac::systemColor(CSSValueID cssValueID, OptionSet<StyleColor::O
             case CSSValueAppleSystemSelectedText:
                 return @selector(selectedTextColor);
             case CSSValueAppleSystemUnemphasizedSelectedText:
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101400
+#if HAVE(OS_DARK_MODE_SUPPORT)
                 return @selector(unemphasizedSelectedTextColor);
 #else
                 return @selector(textColor);
 #endif
             case CSSValueAppleSystemUnemphasizedSelectedTextBackground:
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101400
+#if HAVE(OS_DARK_MODE_SUPPORT)
                 return @selector(unemphasizedSelectedTextBackgroundColor);
 #else
                 return @selector(secondarySelectedControlColor);
@@ -769,7 +769,7 @@ Color RenderThemeMac::systemColor(CSSValueID cssValueID, OptionSet<StyleColor::O
                 return nullptr;
 #endif
             case CSSValueAppleSystemContainerBorder:
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101400
+#if HAVE(OS_DARK_MODE_SUPPORT)
                 return @selector(containerBorderColor);
 #else
                 // Handled below.
@@ -786,7 +786,7 @@ Color RenderThemeMac::systemColor(CSSValueID cssValueID, OptionSet<StyleColor::O
             case CSSValueAppleSystemGrid:
                 return @selector(gridColor);
             case CSSValueAppleSystemSeparator:
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101400
+#if HAVE(OS_DARK_MODE_SUPPORT)
                 return @selector(separatorColor);
 #else
                 return @selector(gridColor);
@@ -869,13 +869,13 @@ Color RenderThemeMac::systemColor(CSSValueID cssValueID, OptionSet<StyleColor::O
             return platformActiveTextSearchHighlightColor(options);
 #endif
 
-#if __MAC_OS_X_VERSION_MIN_REQUIRED < 101400
+#if !HAVE(OS_DARK_MODE_SUPPORT)
         case CSSValueAppleSystemContainerBorder:
             return 0xFFC5C5C5;
 #endif
 
         case CSSValueAppleSystemEvenAlternatingContentBackground: {
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101400
+#if HAVE(OS_DARK_MODE_SUPPORT)
             NSArray<NSColor *> *alternateColors = [NSColor alternatingContentBackgroundColors];
 #else
             NSArray<NSColor *> *alternateColors = [NSColor controlAlternatingRowBackgroundColors];
@@ -885,7 +885,7 @@ Color RenderThemeMac::systemColor(CSSValueID cssValueID, OptionSet<StyleColor::O
         }
 
         case CSSValueAppleSystemOddAlternatingContentBackground: {
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101400
+#if HAVE(OS_DARK_MODE_SUPPORT)
             NSArray<NSColor *> *alternateColors = [NSColor alternatingContentBackgroundColors];
 #else
             NSArray<NSColor *> *alternateColors = [NSColor controlAlternatingRowBackgroundColors];

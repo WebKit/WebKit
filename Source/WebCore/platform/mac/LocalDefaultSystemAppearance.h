@@ -45,7 +45,7 @@ public:
 
     bool usingDarkAppearance() const
     {
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101400
+#if HAVE(OS_DARK_MODE_SUPPORT)
         return m_usingDarkAppearance;
 #else
         return false;
@@ -53,7 +53,7 @@ public:
     }
 
 private:
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101400
+#if HAVE(OS_DARK_MODE_SUPPORT)
     RetainPtr<NSAppearance> m_savedSystemAppearance;
     bool m_usingDarkAppearance { false };
 #endif

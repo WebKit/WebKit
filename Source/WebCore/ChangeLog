@@ -1,3 +1,43 @@
+2019-01-12  Timothy Hatcher  <timothy@apple.com>
+
+        Have prefers-color-scheme: light always match on macOS versions before Mojave.
+        https://bugs.webkit.org/show_bug.cgi?id=191655
+        rdar://problem/46074680
+
+        Reviewed by Megan Gardner.
+
+        Tests: css-dark-mode/older-systems/prefers-color-scheme.html
+               css-dark-mode/older-systems/supported-color-schemes-css.html
+               css-dark-mode/older-systems/supported-color-schemes.html
+
+        Use new HAVE(OS_DARK_MODE_SUPPORT) to make it easier to find code.
+        Added HAVE(OS_DARK_MODE_SUPPORT) around more bits to make it work on older systems.
+
+        * Configurations/FeatureDefines.xcconfig:
+        * dom/Document.cpp:
+        (WebCore::Document::useDarkAppearance const):
+        * inspector/agents/InspectorPageAgent.cpp:
+        (WebCore::InspectorPageAgent::enable):
+        * page/Page.cpp:
+        (WebCore::Page::setUseDarkAppearance):
+        (WebCore::Page::useDarkAppearance const):
+        (WebCore::Page::setUseDarkAppearanceOverride):
+        * platform/mac/LocalDefaultSystemAppearance.h:
+        (WebCore::LocalDefaultSystemAppearance::usingDarkAppearance const):
+        * platform/mac/LocalDefaultSystemAppearance.mm:
+        (WebCore::LocalDefaultSystemAppearance::LocalDefaultSystemAppearance):
+        (WebCore::LocalDefaultSystemAppearance::~LocalDefaultSystemAppearance):
+        * platform/mac/ScrollAnimatorMac.mm:
+        * rendering/RenderThemeMac.mm:
+        (-[WebCoreTextFieldCell _adjustedCoreUIDrawOptionsForDrawingBordersOnly:]):
+        (-[WebListButtonCell drawWithFrame:inView:]):
+        (WebCore::RenderThemeMac::platformInactiveSelectionBackgroundColor const):
+        (WebCore::RenderThemeMac::platformInactiveSelectionForegroundColor const):
+        (WebCore::RenderThemeMac::platformActiveListBoxSelectionBackgroundColor const):
+        (WebCore::RenderThemeMac::platformInactiveListBoxSelectionBackgroundColor const):
+        (WebCore::RenderThemeMac::platformInactiveListBoxSelectionForegroundColor const):
+        (WebCore::RenderThemeMac::systemColor const):
+
 2019-01-12  Zalan Bujtas  <zalan@apple.com>
 
         [LFC] Block/InlinFormattingContext should take Block/InlineFormattingState

@@ -7419,6 +7419,7 @@ bool Document::useSystemAppearance() const
 
 bool Document::useDarkAppearance(const RenderStyle* style) const
 {
+#if HAVE(OS_DARK_MODE_SUPPORT)
 #if ENABLE(DARK_MODE_CSS)
     OptionSet<ColorSchemes> supportedColorSchemes;
 
@@ -7446,6 +7447,9 @@ bool Document::useDarkAppearance(const RenderStyle* style) const
 #if ENABLE(DARK_MODE_CSS)
     if (supportedColorSchemes.contains(ColorSchemes::Dark))
         return pageUsesDarkAppearance;
+#endif
+#else
+    UNUSED_PARAM(style);
 #endif
 
     return false;

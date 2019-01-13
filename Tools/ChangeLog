@@ -1,3 +1,14 @@
+2019-01-12  Timothy Hatcher  <timothy@apple.com>
+
+        Have prefers-color-scheme: light always match on macOS versions before Mojave.
+        https://bugs.webkit.org/show_bug.cgi?id=191655
+        rdar://problem/46074680
+
+        Reviewed by Megan Gardner.
+
+        * TestWebKitAPI/Configurations/FeatureDefines.xcconfig: ENABLE_DARK_MODE_CSS_macosx for all OS versions.
+        * TestWebKitAPI/Tests/WebKit/mac/ForceLightAppearanceInBundle.mm:
+
 2019-01-12  Dan Bernstein  <mitz@apple.com>
 
         [Cocoa] Avoid importing directly from subumbrella frameworks

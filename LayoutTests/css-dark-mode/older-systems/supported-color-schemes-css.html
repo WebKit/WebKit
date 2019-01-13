@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+
+<!-- webkit-test-runner [ experimental:DarkModeCSSEnabled=true ] -->
+
+<script src="../../resources/testharness.js"></script>
+<script src="../../resources/testharnessreport.js"></script>
+
+<style>
+#test1 {
+    color: text;
+}
+</style>
+
+<div id="test1"></div>
+
+<script>
+function test_prop(id, prop, expected) {
+    assert_equals(window.getComputedStyle(document.getElementById(id)).getPropertyValue(prop), expected);
+}
+
+function test_color_is_black(id) {
+    test_prop("test1", "color", "rgb(0, 0, 0)");
+}
+
+test(function() {
+    // The semantic text color should be black.
+    test_color_is_black("test1");
+}, "Element colors are correct in light color scheme with only light supported color scheme");
+
+test(function() {
+    document.body.style.setProperty("supported-color-schemes", "light dark");
+}, "Supported color schemes changed to light and dark");
+
+test(function() {
+    // The semantic text color should be black.
+    test_color_is_black("test1");
+}, "Element colors are correct in light color scheme with light and dark supported color scheme");
+
+test(function() {
+    document.body.style.setProperty("supported-color-schemes", "dark");
+}, "Supported color schemes changed to dark");
+
+test(function() {
+    test_color_is_black("test1");
+}, "Element colors are correct in light color scheme with only dark supported color scheme");
+
+test(function() {
+    document.body.style.setProperty("supported-color-schemes", "light foo");
+}, "Supported color schemes changed to light and a bogus value");
+
+test(function() {
+    // The semantic text color should be black again.
+    test_color_is_black("test1");
+}, "Element colors are correct in light color scheme with only light supported color scheme");
+
+test(function() {
+    document.body.style.setProperty("supported-color-schemes", "auto");
+}, "Supported color schemes changed to auto value");
+
+test(function() {
+    // The semantic text color should be black still.
+    test_color_is_black("test1");
+}, "Element colors are correct in light color scheme with implicit light supported color scheme");
+
+test(function() {
+    let meta = document.createElement("meta");
+    meta.id = "test-meta";
+    meta.name = "supported-color-schemes";
+    meta.content = "light dark";
+    document.head.appendChild(meta);
+}, "Supported color schemes changed to light and dark via <meta> element");
+
+test(function() {
+    test_color_is_black("test1");
+}, "Element colors are correct in light color scheme with light and dark supported color scheme via <meta> element");
+
+test(function() {
+    document.body.style.setProperty("supported-color-schemes", "light");
+}, "Supported color schemes changed to light value");
+
+test(function() {
+    // The semantic text color should be black again.
+    test_color_is_black("test1");
+}, "Element colors are correct in light color scheme with explicit light, overriding <meta> element");
+
+test(function() {
+    document.getElementById("test-meta").remove();
+}, "Remove test meta element");
+
+test(function() {
+    document.body.style.setProperty("supported-color-schemes", "light dark");
+}, "Supported color schemes changed to light and dark");
+
+test(function() {
+    test_color_is_black("test1");
+}, "Element colors are correct in light color scheme with light and dark supported color scheme");
+
+test(function() {
+    document.body.style.setProperty("supported-color-schemes", "foo dark");
+}, "Supported color schemes changed to a bogus value and dark");
+
+test(function() {
+    test_color_is_black("test1");
+}, "Element colors are correct in light color scheme with dark supported color scheme");
+</script>

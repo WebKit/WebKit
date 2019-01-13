@@ -195,7 +195,7 @@ enum class FeatureToAnimate {
     return true;
 }
 
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101400
+#if HAVE(OS_DARK_MODE_SUPPORT)
 - (NSAppearance *)effectiveAppearanceForScrollerImp:(NSScrollerImp *)scrollerImp
 {
     UNUSED_PARAM(scrollerImp);
