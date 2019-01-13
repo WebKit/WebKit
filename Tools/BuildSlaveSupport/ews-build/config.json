@@ -42,35 +42,35 @@
     },
     {
       "name": "ews100",
-      "platform": "mac-high-sierra"
+      "platform": "mac-highsierra"
     },
     {
       "name": "ews101",
-      "platform": "mac-high-sierra"
+      "platform": "mac-highsierra"
     },
     {
       "name": "ews102",
-      "platform": "mac-high-sierra"
+      "platform": "mac-highsierra"
     },
     {
       "name": "ews103",
-      "platform": "mac-high-sierra"
+      "platform": "mac-highsierra"
     },
     {
       "name": "ews104",
-      "platform": "mac-high-sierra"
+      "platform": "mac-highsierra"
     },
     {
       "name": "ews105",
-      "platform": "mac-high-sierra"
+      "platform": "mac-highsierra"
     },
     {
       "name": "ews106",
-      "platform": "mac-high-sierra"
+      "platform": "mac-highsierra"
     },
     {
       "name": "ews107",
-      "platform": "mac-high-sierra"
+      "platform": "mac-highsierra"
     },
     {
       "name": "ews108",
@@ -82,39 +82,39 @@
     },
     {
       "name": "ews112",
-      "platform": "mac-high-sierra"
+      "platform": "mac-highsierra"
     },
     {
       "name": "ews113",
-      "platform": "mac-high-sierra"
+      "platform": "mac-highsierra"
     },
     {
       "name": "ews114",
-      "platform": "mac-high-sierra"
+      "platform": "mac-highsierra"
     },
     {
       "name": "ews115",
-      "platform": "mac-high-sierra"
+      "platform": "mac-highsierra"
     },
     {
       "name": "ews116",
-      "platform": "mac-high-sierra"
+      "platform": "mac-highsierra"
     },
     {
       "name": "ews117",
-      "platform": "mac-high-sierra"
+      "platform": "mac-highsierra"
     },
     {
       "name": "ews118",
-      "platform": "mac-high-sierra"
+      "platform": "mac-highsierra"
     },
     {
       "name": "ews119",
-      "platform": "mac-high-sierra"
+      "platform": "mac-highsierra"
     },
     {
       "name": "ews120",
-      "platform": "mac-high-sierra"
+      "platform": "mac-highsierra"
     },
     {
       "name": "ews121",
@@ -226,7 +226,7 @@
     {
       "name": "macOS-High-Sierra-Release-Build-EWS",
       "factory": "macOSBuildFactory",
-      "platform": "mac-high-sierra",
+      "platform": "mac-highsierra",
       "configuration": "release",
       "architectures": ["x86_64"],
       "triggers": ["api-tests-mac-ews", "macos-high-sierra-release-wk1-tests-ews", "macos-high-sierra-release-wk2-tests-ews"],
@@ -235,7 +235,7 @@
     {
       "name": "macOS-High-Sierra-Release-WK1-Tests-EWS",
       "factory": "macOSWK1Factory",
-      "platform": "mac-high-sierra",
+      "platform": "mac-highsierra",
       "configuration": "release",
       "architectures": ["x86_64"],
       "workernames": ["ews100", "ews101", "ews102", "ews103"]
@@ -243,7 +243,7 @@
     {
       "name": "macOS-High-Sierra-Release-WK2-Tests-EWS",
       "factory": "macOSWK2Factory",
-      "platform": "mac-high-sierra",
+      "platform": "mac-highsierra",
       "configuration": "release",
       "architectures": ["x86_64"],
       "workernames": ["ews104", "ews105", "ews106", "ews107"]
@@ -251,7 +251,7 @@
     {
       "name": "macOS-High-Sierra-Debug-Build-EWS",
       "factory": "macOSBuildFactory",
-      "platform": "mac-high-sierra",
+      "platform": "mac-highsierra",
       "configuration": "debug",
       "architectures": ["x86_64"],
       "triggers": ["macos-high-sierra-debug-wk1-tests-ews"],
@@ -260,7 +260,7 @@
     {
       "name": "macOS-High-Sierra-Debug-WK1-Tests-EWS",
       "factory": "macOSWK1Factory",
-      "platform": "mac-high-sierra",
+      "platform": "mac-highsierra",
       "configuration": "debug",
       "architectures": ["x86_64"],
       "workernames": ["ews112", "ews113", "ews114", "ews115", "ews116"]
@@ -268,7 +268,7 @@
     {
       "name": "macOS-High-Sierra-Release-32bit-Build-EWS",
       "factory": "macOSBuildFactory",
-      "platform": "mac-high-sierra",
+      "platform": "mac-highsierra",
       "configuration": "release",
       "architectures": ["i386"],
       "triggers": ["macos-high-sierra-release-32bit-wk2-tests-ews"],
@@ -277,7 +277,7 @@
     {
       "name": "macOS-High-Sierra-Release-32bit-WK2-Tests-EWS",
       "factory": "macOSWK2Factory",
-      "platform": "mac-high-sierra",
+      "platform": "mac-highsierra",
       "configuration": "release",
       "architectures": ["i386"],
       "workernames": ["ews118", "ews119", "ews120"]

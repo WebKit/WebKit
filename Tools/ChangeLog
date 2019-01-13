@@ -1,3 +1,13 @@
+2019-01-13  Aakash Jain  <aakash_jain@apple.com>
+
+        [ews-build] Update macOS queue configurations
+        https://bugs.webkit.org/show_bug.cgi?id=193365
+        <rdar://problem/47221073>
+
+        Unreviewed, renamed mac-high-sierra to mac-highsierra to match with build.webkit.org configuration.
+
+        * BuildSlaveSupport/ews-build/config.json:
+
 2019-01-13  Zalan Bujtas  <zalan@apple.com>
 
         [LFC] Adjust assert for statically positioned fixed elements
