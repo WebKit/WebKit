@@ -227,12 +227,12 @@ void HTMLImageElement::parseAttribute(const QualifiedName& name, const AtomicStr
     } else if (name == srcAttr || name == srcsetAttr || name == sizesAttr)
         selectImageSource();
     else if (name == usemapAttr) {
-        if (isConnected() && !m_parsedUsemap.isNull())
+        if (isInTreeScope() && !m_parsedUsemap.isNull())
             treeScope().removeImageElementByUsemap(*m_parsedUsemap.impl(), *this);
 
         m_parsedUsemap = parseHTMLHashNameReference(value);
 
-        if (isConnected() && !m_parsedUsemap.isNull())
+        if (isInTreeScope() && !m_parsedUsemap.isNull())
             treeScope().addImageElementByUsemap(*m_parsedUsemap.impl(), *this);
     } else if (name == compositeAttr) {
         // FIXME: images don't support blend modes in their compositing attribute.
@@ -356,7 +356,7 @@ Node::InsertedIntoAncestorResult HTMLImageElement::insertedIntoAncestor(Insertio
     if (insertionType.connectedToDocument && hasEditableImageAttribute())
         insertNotificationRequest = InsertedIntoAncestorResult::NeedsPostInsertionCallback;
 
-    if (insertionType.connectedToDocument && !m_parsedUsemap.isNull())
+    if (insertionType.treeScopeChanged && !m_parsedUsemap.isNull())
         treeScope().addImageElementByUsemap(*m_parsedUsemap.impl(), *this);
 
     if (is<HTMLPictureElement>(parentNode())) {
@@ -383,7 +383,7 @@ void HTMLImageElement::removedFromAncestor(RemovalType removalType, ContainerNod
     if (m_form)
         m_form->removeImgElement(this);
 
-    if (removalType.disconnectedFromDocument && !m_parsedUsemap.isNull())
+    if (removalType.treeScopeChanged && !m_parsedUsemap.isNull())
         oldParentOfRemovedTree.treeScope().removeImageElementByUsemap(*m_parsedUsemap.impl(), *this);
 
     if (is<HTMLPictureElement>(parentNode()))

@@ -1,3 +1,20 @@
+2019-01-13  Antti Koivisto  <antti@apple.com>
+
+        Release assert with <img usemap> in shadow tree
+        https://bugs.webkit.org/show_bug.cgi?id=193378
+
+        Reviewed by Ryosuke Niwa.
+
+        When a shadow host that has <img usemap> in the shadow tree is removed from the document, we try
+        to remove the map from the scope of the host.
+
+        * html/HTMLImageElement.cpp:
+        (WebCore::HTMLImageElement::parseAttribute):
+        (WebCore::HTMLImageElement::insertedIntoAncestor):
+        (WebCore::HTMLImageElement::removedFromAncestor):
+
+        Tree scope changes are relevant, not the connection to the document.
+
 2019-01-12  Timothy Hatcher  <timothy@apple.com>
 
         Have prefers-color-scheme: light always match on macOS versions before Mojave.
