@@ -52,7 +52,7 @@
 
 #if !PLATFORM(WATCH)
 
-#import <PDFKit/PDFKit.h>
+#import <Quartz/Quartz.h>
 
 #endif // !PLATFORM(WATCH)
 

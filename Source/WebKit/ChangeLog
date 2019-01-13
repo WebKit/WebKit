@@ -1,5 +1,11 @@
 2019-01-13  Dan Bernstein  <mitz@apple.com>
 
+        Tried to fix the build.
+
+        * Platform/spi/ios/PDFKitSPI.h:
+
+2019-01-13  Dan Bernstein  <mitz@apple.com>
+
         Tried to fix USE(APPLE_INTERNAL_SDK) builds after r239901.
 
         Patch by Keith Rollin.
