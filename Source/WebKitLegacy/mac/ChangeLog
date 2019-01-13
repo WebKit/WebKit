@@ -1,3 +1,11 @@
+2019-01-13  Dan Bernstein  <mitz@apple.com>
+
+        Tried to fix USE(APPLE_INTERNAL_SDK) builds after r239901.
+
+        Patch by Keith Rollin.
+
+        * WebView/PDFViewSPI.h:
+
 2019-01-12  Timothy Hatcher  <timothy@apple.com>
 
         Have prefers-color-scheme: light always match on macOS versions before Mojave.

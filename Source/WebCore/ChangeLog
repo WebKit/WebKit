@@ -1,3 +1,11 @@
+2019-01-13  Dan Bernstein  <mitz@apple.com>
+
+        Tried to fix USE(APPLE_INTERNAL_SDK) builds after r239901.
+
+        Patch by Keith Rollin.
+
+        * accessibility/mac/AXObjectCacheMac.mm:
+
 2019-01-13  Zalan Bujtas  <zalan@apple.com>
 
         [LFC] Adjust assert for statically positioned fixed elements
