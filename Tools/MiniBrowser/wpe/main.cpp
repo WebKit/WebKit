@@ -202,7 +202,7 @@ int main(int argc, char *argv[])
     g_main_loop_run(loop);
 
     g_object_unref(webView);
-    if (privateMode)
+    if (privateMode || automationMode)
         g_object_unref(webContext);
     g_main_loop_unref(loop);
 
