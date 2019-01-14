@@ -1,3 +1,23 @@
+2019-01-13  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [FreeType] Support emoji modifiers
+        https://bugs.webkit.org/show_bug.cgi?id=177040
+
+        Reviewed by Myles C. Maxfield.
+
+        The problem only happens with emojis having the zero with joiner (U+200D) in the sequence. The sequence is
+        broken because createAndFillGlyphPage() in Font.cpp overwrites zero with joiner with zero width space (U+200B),
+        but the emoji font actually supports zero with joiner. This patch moves the control characters override from
+        createAndFillGlyphPage() to GlyphPage::fill() only for FreeType based ports. This way we can do the override
+        only for the cases where the code point is not supported by the font.
+
+        * platform/graphics/Font.cpp:
+        (WebCore::overrideControlCharacters): Helper function to override the control characters.
+        (WebCore::createAndFillGlyphPage): Call overrideControlCharacters() only when not using FreeType.
+        * platform/graphics/freetype/GlyphPageTreeNodeFreeType.cpp:
+        (WebCore::GlyphPage::fill): Use zero width space as fallback when the font doesn't support characters with
+        Default_Ignorable Unicode property.
+
 2019-01-13  Dan Bernstein  <mitz@apple.com>
 
         More build fixing.
