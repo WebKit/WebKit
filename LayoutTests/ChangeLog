@@ -1,3 +1,14 @@
+2019-01-04  Brent Fulgham  <bfulgham@apple.com>
+
+        Parsed protocol of javascript URLs with embedded newlines and carriage returns do not match parsed protocol in Chrome and Firefox
+        https://bugs.webkit.org/show_bug.cgi?id=193155
+        <rdar://problem/40230982>
+
+        Reviewed by Chris Dumez.
+
+        * fast/loader/comment-only-javascript-url-expected.txt: Added.
+        * fast/loader/comment-only-javascript-url.html: Added.
+
 2018-12-21  Zalan Bujtas  <zalan@apple.com>
 
         Synchronous media query evaluation could destroy current Frame/FrameView.
