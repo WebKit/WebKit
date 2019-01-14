@@ -1,3 +1,13 @@
+2019-01-14  Alex Christensen  <achristensen@webkit.org>
+
+        Remove unused networking entitlement from iOS WebProcess entitlements
+        https://bugs.webkit.org/show_bug.cgi?id=193267
+
+        Reviewed by Dean Jackson.
+
+        * Configurations/WebContent-iOS.entitlements:
+        This gave access to VPN stuff.  It's not needed any more.
+
 2019-01-14  Youenn Fablet  <youenn@apple.com>
 
         Enable MDNS ICE candidate support by default

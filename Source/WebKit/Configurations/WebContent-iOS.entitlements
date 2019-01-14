@@ -4,8 +4,6 @@
 <dict>
 	<key>com.apple.private.allow-explicit-graphics-priority</key>
 	<true/>
-	<key>com.apple.private.network.socket-delegate</key>
-	<true/>
 	<key>com.apple.private.webinspector.allow-remote-inspection</key>
 	<true/>
 	<key>com.apple.private.webinspector.proxy-application</key>
