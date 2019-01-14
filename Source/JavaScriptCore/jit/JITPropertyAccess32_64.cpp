@@ -815,7 +815,7 @@ void JIT::emit_op_resolve_scope(const Instruction* currentInstruction)
     case UnresolvedProperty:
     case UnresolvedPropertyWithVarInjectionChecks: {
         JumpList skipToEnd;
-        load32(&currentInstruction[4], regT0);
+        load32(&metadata.resolveType, regT0);
 
         Jump notGlobalProperty = branch32(NotEqual, regT0, TrustedImm32(GlobalProperty));
         emitCode(GlobalProperty);
@@ -940,7 +940,7 @@ void JIT::emit_op_get_from_scope(const Instruction* currentInstruction)
     case GlobalProperty:
     case GlobalPropertyWithVarInjectionChecks: {
         JumpList skipToEnd;
-        load32(&currentInstruction[4], regT0);
+        load32(&metadata.getPutInfo, regT0);
         and32(TrustedImm32(GetPutInfo::typeBits), regT0); // Load ResolveType into T0
 
         Jump isNotGlobalProperty = branch32(NotEqual, regT0, TrustedImm32(resolveType));
@@ -955,7 +955,7 @@ void JIT::emit_op_get_from_scope(const Instruction* currentInstruction)
     case UnresolvedProperty:
     case UnresolvedPropertyWithVarInjectionChecks: {
         JumpList skipToEnd;
-        load32(&currentInstruction[4], regT0);
+        load32(&metadata.getPutInfo, regT0);
         and32(TrustedImm32(GetPutInfo::typeBits), regT0); // Load ResolveType into T0
 
         Jump isGlobalProperty = branch32(Equal, regT0, TrustedImm32(GlobalProperty));
@@ -1095,7 +1095,7 @@ void JIT::emit_op_put_to_scope(const Instruction* currentInstruction)
     case GlobalProperty:
     case GlobalPropertyWithVarInjectionChecks: {
         JumpList skipToEnd;
-        load32(&currentInstruction[4], regT0);
+        load32(&metadata.getPutInfo, regT0);
         and32(TrustedImm32(GetPutInfo::typeBits), regT0); // Load ResolveType into T0
 
         Jump isGlobalProperty = branch32(Equal, regT0, TrustedImm32(resolveType));
@@ -1114,7 +1114,7 @@ void JIT::emit_op_put_to_scope(const Instruction* currentInstruction)
     case UnresolvedProperty:
     case UnresolvedPropertyWithVarInjectionChecks: {
         JumpList skipToEnd;
-        load32(&currentInstruction[4], regT0);
+        load32(&metadata.getPutInfo, regT0);
         and32(TrustedImm32(GetPutInfo::typeBits), regT0); // Load ResolveType into T0
 
         Jump isGlobalProperty = branch32(Equal, regT0, TrustedImm32(GlobalProperty));
