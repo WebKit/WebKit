@@ -1,3 +1,16 @@
+2019-01-14  Jer Noble  <jer.noble@apple.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=193403
+        <rdar://problem/46750743>
+
+        Continue fix in r239711 by using WeakPtr in SourceBufferPrivateAVFObjC.
+
+        Reviewed by Eric Carlson.
+
+        * platform/graphics/avfoundation/objc/SourceBufferPrivateAVFObjC.h:
+        * platform/graphics/avfoundation/objc/SourceBufferPrivateAVFObjC.mm:
+        (WebCore::SourceBufferPrivateAVFObjC::setCDMSession):
+
 2019-01-14  Justin Fan  <justin_fan@apple.com>
 
         [WebGPU] Map WebGPUBindGroupLayoutBindings from the BindGroupLayoutDescriptor for error checking and later referencing
