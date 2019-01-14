@@ -1,3 +1,10 @@
+2019-01-14  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. [GTK][WPE] Run distcheck with gtkdoc and MiniBrowser enabled
+
+        * Scripts/make-dist:
+        (Distcheck.configure):
+
 2019-01-13  Aakash Jain  <aakash_jain@apple.com>
 
         [ews-build] Update macOS queue configurations
