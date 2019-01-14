@@ -62,7 +62,7 @@ DOMTokenList& HTMLIFrameElement::sandbox()
 
 bool HTMLIFrameElement::isPresentationAttribute(const QualifiedName& name) const
 {
-    if (name == widthAttr || name == heightAttr || name == alignAttr || name == frameborderAttr)
+    if (name == widthAttr || name == heightAttr || name == frameborderAttr)
         return true;
     return HTMLFrameElementBase::isPresentationAttribute(name);
 }

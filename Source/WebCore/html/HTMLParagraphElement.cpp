@@ -51,13 +51,6 @@ Ref<HTMLParagraphElement> HTMLParagraphElement::create(const QualifiedName& tagN
     return adoptRef(*new HTMLParagraphElement(tagName, document));
 }
 
-bool HTMLParagraphElement::isPresentationAttribute(const QualifiedName& name) const
-{
-    if (name == alignAttr)
-        return true;
-    return HTMLElement::isPresentationAttribute(name);
-}
-
 void HTMLParagraphElement::collectStyleForPresentationAttribute(const QualifiedName& name, const AtomicString& value, MutableStyleProperties& style)
 {
     if (name == alignAttr) {

@@ -50,13 +50,6 @@ Ref<HTMLDivElement> HTMLDivElement::create(const QualifiedName& tagName, Documen
     return adoptRef(*new HTMLDivElement(tagName, document));
 }
 
-bool HTMLDivElement::isPresentationAttribute(const QualifiedName& name) const
-{
-    if (name == alignAttr)
-        return true;
-    return HTMLElement::isPresentationAttribute(name);
-}
-
 void HTMLDivElement::collectStyleForPresentationAttribute(const QualifiedName& name, const AtomicString& value, MutableStyleProperties& style)
 {
     if (name == alignAttr) {

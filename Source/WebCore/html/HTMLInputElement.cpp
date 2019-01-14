@@ -645,7 +645,7 @@ void HTMLInputElement::accessKeyAction(bool sendMouseEvents)
 
 bool HTMLInputElement::isPresentationAttribute(const QualifiedName& name) const
 {
-    if (name == vspaceAttr || name == hspaceAttr || name == alignAttr || name == widthAttr || name == heightAttr || (name == borderAttr && isImageButton()))
+    if (name == vspaceAttr || name == hspaceAttr || name == widthAttr || name == heightAttr || (name == borderAttr && isImageButton()))
         return true;
     return HTMLTextFormControlElement::isPresentationAttribute(name);
 }

@@ -36,7 +36,6 @@ private:
     HTMLEmbedElement(const QualifiedName&, Document&);
 
     void parseAttribute(const QualifiedName&, const AtomicString&) final;
-    bool isPresentationAttribute(const QualifiedName&) const final;
     void collectStyleForPresentationAttribute(const QualifiedName&, const AtomicString&, MutableStyleProperties&) final;
 
     bool rendererIsNeeded(const RenderStyle&) final;

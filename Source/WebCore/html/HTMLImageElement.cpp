@@ -114,7 +114,7 @@ Ref<HTMLImageElement> HTMLImageElement::createForJSConstructor(Document& documen
 
 bool HTMLImageElement::isPresentationAttribute(const QualifiedName& name) const
 {
-    if (name == widthAttr || name == heightAttr || name == borderAttr || name == vspaceAttr || name == hspaceAttr || name == alignAttr || name == valignAttr)
+    if (name == widthAttr || name == heightAttr || name == borderAttr || name == vspaceAttr || name == hspaceAttr || name == valignAttr)
         return true;
     return HTMLElement::isPresentationAttribute(name);
 }

@@ -90,13 +90,6 @@ RenderWidget* HTMLEmbedElement::renderWidgetLoadingPlugin() const
     return findWidgetRenderer(this);
 }
 
-bool HTMLEmbedElement::isPresentationAttribute(const QualifiedName& name) const
-{
-    if (name == hiddenAttr)
-        return true;
-    return HTMLPlugInImageElement::isPresentationAttribute(name);
-}
-
 void HTMLEmbedElement::collectStyleForPresentationAttribute(const QualifiedName& name, const AtomicString& value, MutableStyleProperties& style)
 {
     if (name == hiddenAttr) {
