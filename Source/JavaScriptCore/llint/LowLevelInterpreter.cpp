@@ -123,145 +123,116 @@ using namespace JSC::LLInt;
 
 #define OFFLINE_ASM_LOCAL_LABEL(label) label: TRACE_LABEL("OFFLINE_ASM_LOCAL_LABEL", #label); USE_LABEL(label);
 
-
-//============================================================================
-// Some utilities:
-//
-
 namespace JSC {
-namespace LLInt {
-
-#if USE(JSVALUE32_64)
-static double Ints2Double(uint32_t lo, uint32_t hi)
-{
-    union {
-        double dval;
-        uint64_t ival64;
-    } u;
-    u.ival64 = (static_cast<uint64_t>(hi) << 32) | lo;
-    return u.dval;
-}
-
-static void Double2Ints(double val, uint32_t& lo, uint32_t& hi)
-{
-    union {
-        double dval;
-        uint64_t ival64;
-    } u;
-    u.dval = val;
-    hi = static_cast<uint32_t>(u.ival64 >> 32);
-    lo = static_cast<uint32_t>(u.ival64);
-}
-#endif // USE(JSVALUE32_64)
-
-} // namespace LLint
-
 
 //============================================================================
 // CLoopRegister is the storage for an emulated CPU register.
 // It defines the policy of how ints smaller than intptr_t are packed into the
 // pseudo register, as well as hides endianness differences.
 
-struct CLoopRegister {
-    CLoopRegister() { i = static_cast<intptr_t>(0xbadbeef0baddbeef); }
-    union {
-        intptr_t i;
-        uintptr_t u;
+class CLoopRegister {
+public:
+    ALWAYS_INLINE intptr_t i() const { return m_value; };
+    ALWAYS_INLINE uintptr_t u() const { return m_value; }
+    ALWAYS_INLINE int32_t i32() const { return m_value; }
+    ALWAYS_INLINE uint32_t u32() const { return m_value; }
+    ALWAYS_INLINE int8_t i8() const { return m_value; }
+    ALWAYS_INLINE uint8_t u8() const { return m_value; }
+
+    ALWAYS_INLINE intptr_t* ip() const { return bitwise_cast<intptr_t*>(m_value); }
+    ALWAYS_INLINE int8_t* i8p() const { return bitwise_cast<int8_t*>(m_value); }
+    ALWAYS_INLINE void* vp() const { return bitwise_cast<void*>(m_value); }
+    ALWAYS_INLINE const void* cvp() const { return bitwise_cast<const void*>(m_value); }
+    ALWAYS_INLINE CallFrame* callFrame() const { return bitwise_cast<CallFrame*>(m_value); }
+    ALWAYS_INLINE ExecState* execState() const { return bitwise_cast<ExecState*>(m_value); }
+    ALWAYS_INLINE const void* instruction() const { return bitwise_cast<const void*>(m_value); }
+    ALWAYS_INLINE VM* vm() const { return bitwise_cast<VM*>(m_value); }
+    ALWAYS_INLINE JSCell* cell() const { return bitwise_cast<JSCell*>(m_value); }
+    ALWAYS_INLINE ProtoCallFrame* protoCallFrame() const { return bitwise_cast<ProtoCallFrame*>(m_value); }
+    ALWAYS_INLINE NativeFunction nativeFunc() const { return bitwise_cast<NativeFunction>(m_value); }
 #if USE(JSVALUE64)
-#if CPU(BIG_ENDIAN)
-        struct {
-            int32_t i32padding;
-            int32_t i32;
-        };
-        struct {
-            uint32_t u32padding;
-            uint32_t u32;
-        };
-        struct {
-            int8_t i8padding[7];
-            int8_t i8;
-        };
-        struct {
-            uint8_t u8padding[7];
-            uint8_t u8;
-        };
-#else // !CPU(BIG_ENDIAN)
-        struct {
-            int32_t i32;
-            int32_t i32padding;
-        };
-        struct {
-            uint32_t u32;
-            uint32_t u32padding;
-        };
-        struct {
-            int8_t i8;
-            int8_t i8padding[7];
-        };
-        struct {
-            uint8_t u8;
-            uint8_t u8padding[7];
-        };
-#endif // !CPU(BIG_ENDIAN)
-#else // !USE(JSVALUE64)
-        int32_t i32;
-        uint32_t u32;
-
-#if CPU(BIG_ENDIAN)
-        struct {
-            int8_t i8padding[3];
-            int8_t i8;
-        };
-        struct {
-            uint8_t u8padding[3];
-            uint8_t u8;
-        };
-
-#else // !CPU(BIG_ENDIAN)
-        struct {
-            int8_t i8;
-            int8_t i8padding[3];
-        };
-        struct {
-            uint8_t u8;
-            uint8_t u8padding[3];
-        };
-#endif // !CPU(BIG_ENDIAN)
-#endif // !USE(JSVALUE64)
-
-        intptr_t* ip;
-        int8_t* i8p;
-        void* vp;
-        const void* cvp;
-        CallFrame* callFrame;
-        ExecState* execState;
-        const void* instruction;
-        VM* vm;
-        JSCell* cell;
-        ProtoCallFrame* protoCallFrame;
-        NativeFunction nativeFunc;
-#if USE(JSVALUE64)
-        int64_t i64;
-        uint64_t u64;
-        EncodedJSValue encodedJSValue;
-        double castToDouble;
+    ALWAYS_INLINE int64_t i64() const { return m_value; }
+    ALWAYS_INLINE uint64_t u64() const { return m_value; }
+    ALWAYS_INLINE EncodedJSValue encodedJSValue() const { return bitwise_cast<EncodedJSValue>(m_value); }
 #endif
-        Opcode opcode;
-    };
+    ALWAYS_INLINE Opcode opcode() const { return bitwise_cast<Opcode>(m_value); }
 
-    operator ExecState*() { return execState; }
-    operator const Instruction*() { return reinterpret_cast<const Instruction*>(instruction); }
-    operator VM*() { return vm; }
-    operator ProtoCallFrame*() { return protoCallFrame; }
-    operator Register*() { return reinterpret_cast<Register*>(vp); }
-    operator JSCell*() { return cell; }
+    operator ExecState*() { return bitwise_cast<ExecState*>(m_value); }
+    operator const Instruction*() { return bitwise_cast<const Instruction*>(m_value); }
+    operator JSCell*() { return bitwise_cast<JSCell*>(m_value); }
+    operator ProtoCallFrame*() { return bitwise_cast<ProtoCallFrame*>(m_value); }
+    operator Register*() { return bitwise_cast<Register*>(m_value); }
+    operator VM*() { return bitwise_cast<VM*>(m_value); }
+
+    template<typename T, typename = std::enable_if_t<sizeof(T) == sizeof(uintptr_t)>>
+    ALWAYS_INLINE void operator=(T value) { m_value = bitwise_cast<uintptr_t>(value); }
+#if USE(JSVALUE64)
+    ALWAYS_INLINE void operator=(int32_t value) { m_value = static_cast<intptr_t>(value); }
+    ALWAYS_INLINE void operator=(uint32_t value) { m_value = static_cast<uintptr_t>(value); }
+#endif
+    ALWAYS_INLINE void operator=(int16_t value) { m_value = static_cast<intptr_t>(value); }
+    ALWAYS_INLINE void operator=(uint16_t value) { m_value = static_cast<uintptr_t>(value); }
+    ALWAYS_INLINE void operator=(int8_t value) { m_value = static_cast<intptr_t>(value); }
+    ALWAYS_INLINE void operator=(uint8_t value) { m_value = static_cast<uintptr_t>(value); }
+    ALWAYS_INLINE void operator=(bool value) { m_value = static_cast<uintptr_t>(value); }
 
 #if USE(JSVALUE64)
-    inline void clearHighWord() { i32padding = 0; }
-#else
-    inline void clearHighWord() { }
+    ALWAYS_INLINE double bitsAsDouble() const { return bitwise_cast<double>(m_value); }
+    ALWAYS_INLINE int64_t bitsAsInt64() const { return bitwise_cast<int64_t>(m_value); }
 #endif
+
+private:
+    uintptr_t m_value { static_cast<uintptr_t>(0xbadbeef0baddbeef) };
 };
+
+class CLoopDoubleRegister {
+public:
+    template<typename T>
+    explicit operator T() const { return bitwise_cast<T>(m_value); }
+
+    ALWAYS_INLINE double d() const { return m_value; }
+    ALWAYS_INLINE int64_t bitsAsInt64() const { return bitwise_cast<int64_t>(m_value); }
+
+    ALWAYS_INLINE void operator=(double value) { m_value = value; }
+
+    template<typename T, typename = std::enable_if_t<sizeof(T) == sizeof(uintptr_t) && std::is_integral<T>::value>>
+    ALWAYS_INLINE void operator=(T value) { m_value = bitwise_cast<double>(value); }
+
+private:
+    double m_value;
+};
+
+//============================================================================
+// Some utilities:
+//
+
+namespace LLInt {
+
+#if USE(JSVALUE32_64)
+static double ints2Double(uint32_t lo, uint32_t hi)
+{
+    uint64_t value = (static_cast<uint64_t>(hi) << 32) | lo;
+    return bitwise_cast<double>(value);
+}
+
+static void double2Ints(double val, CLoopRegister& lo, CLoopRegister& hi)
+{
+    uint64_t value = bitwise_cast<uint64_t>(val);
+    hi = static_cast<uint32_t>(value >> 32);
+    lo = static_cast<uint32_t>(value);
+}
+#endif // USE(JSVALUE32_64)
+
+static void decodeResult(SlowPathReturnType result, CLoopRegister& t0, CLoopRegister& t1)
+{
+    const void* t0Result;
+    const void* t1Result;
+    JSC::decodeResult(result, t0Result, t1Result);
+    t0 = t0Result;
+    t1 = t1Result;
+}
+
+} // namespace LLint
 
 //============================================================================
 // The llint C++ interpreter loop:
@@ -269,8 +240,7 @@ struct CLoopRegister {
 
 JSValue CLoop::execute(OpcodeID entryOpcodeID, void* executableAddress, VM* vm, ProtoCallFrame* protoCallFrame, bool isInitializationPass)
 {
-    #define CAST reinterpret_cast
-    #define SIGN_BIT32(x) ((x) & 0x80000000)
+#define CAST bitwise_cast
 
     // One-time initialization of our address tables. We have to put this code
     // here because our labels are only in scope inside this function. The
@@ -317,13 +287,6 @@ JSValue CLoop::execute(OpcodeID entryOpcodeID, void* executableAddress, VM* vm, 
     // Define the pseudo registers used by the LLINT C Loop backend:
     ASSERT(sizeof(CLoopRegister) == sizeof(intptr_t));
 
-    union CLoopDoubleRegister {
-        double d;
-#if USE(JSVALUE64)
-        int64_t castToInt64;
-#endif
-    };
-
     // The CLoop llint backend is initially based on the ARMv7 backend, and
     // then further enhanced with a few instructions from the x86 backend to
     // support building for X64 targets. Hence, the shape of the generated
@@ -348,7 +311,7 @@ JSValue CLoop::execute(OpcodeID entryOpcodeID, void* executableAddress, VM* vm, 
     // 2. 32 bit result values will be in the low 32-bit of t0.
     // 3. 64 bit result values will be in t0.
 
-    CLoopRegister t0, t1, t2, t3, t5, t7, sp, cfr, lr, pc;
+    CLoopRegister t0, t1, t2, t3, t5, sp, cfr, lr, pc;
 #if USE(JSVALUE64)
     CLoopRegister pcBase, tagTypeNumber, tagMask;
 #endif
@@ -374,24 +337,24 @@ JSValue CLoop::execute(OpcodeID entryOpcodeID, void* executableAddress, VM* vm, 
     CLoopStack& cloopStack = vm->interpreter->cloopStack();
     StackPointerScope stackPointerScope(cloopStack);
 
-    lr.opcode = getOpcode(llint_return_to_host);
-    sp.vp = cloopStack.currentStackPointer();
-    cfr.callFrame = vm->topCallFrame;
+    lr = getOpcode(llint_return_to_host);
+    sp = cloopStack.currentStackPointer();
+    cfr = vm->topCallFrame;
 #ifndef NDEBUG
-    void* startSP = sp.vp;
-    CallFrame* startCFR = cfr.callFrame;
+    void* startSP = sp.vp();
+    CallFrame* startCFR = cfr.callFrame();
 #endif
 
     // Initialize the incoming args for doVMEntryToJavaScript:
-    t0.vp = executableAddress;
-    t1.vm = vm;
-    t2.protoCallFrame = protoCallFrame;
+    t0 = executableAddress;
+    t1 = vm;
+    t2 = protoCallFrame;
 
 #if USE(JSVALUE64)
     // For the ASM llint, JITStubs takes care of this initialization. We do
     // it explicitly here for the C loop:
-    tagTypeNumber.i = 0xFFFF000000000000;
-    tagMask.i = 0xFFFF000000000002;
+    tagTypeNumber = 0xFFFF000000000000;
+    tagMask = 0xFFFF000000000002;
 #endif // USE(JSVALUE64)
 
     // Interpreter variables for value passing between opcodes and/or helpers:
@@ -401,14 +364,14 @@ JSValue CLoop::execute(OpcodeID entryOpcodeID, void* executableAddress, VM* vm, 
 
 #define PUSH(cloopReg) \
     do { \
-        sp.ip--; \
-        *sp.ip = cloopReg.i; \
+        sp = sp.ip() - 1; \
+        *sp.ip() = cloopReg.i(); \
     } while (false)
 
 #define POP(cloopReg) \
     do { \
-        cloopReg.i = *sp.ip; \
-        sp.ip++; \
+        cloopReg = *sp.ip(); \
+        sp = sp.ip() + 1; \
     } while (false)
 
 #if ENABLE(OPCODE_STATS)
@@ -473,12 +436,12 @@ JSValue CLoop::execute(OpcodeID entryOpcodeID, void* executableAddress, VM* vm, 
 
         OFFLINE_ASM_GLUE_LABEL(llint_return_to_host)
         {
-            ASSERT(startSP == sp.vp);
-            ASSERT(startCFR == cfr.callFrame);
+            ASSERT(startSP == sp.vp());
+            ASSERT(startCFR == cfr.callFrame());
 #if USE(JSVALUE32_64)
-            return JSValue(t1.i, t0.i); // returning JSValue(tag, payload);
+            return JSValue(t1.i(), t0.i()); // returning JSValue(tag, payload);
 #else
-            return JSValue::decode(t0.encodedJSValue);
+            return JSValue::decode(t0.encodedJSValue());
 #endif
         }
 
@@ -490,12 +453,12 @@ JSValue CLoop::execute(OpcodeID entryOpcodeID, void* executableAddress, VM* vm, 
             // The part in getHostCallReturnValueWithExecState():
             JSValue result = vm->hostCallReturnValue;
 #if USE(JSVALUE32_64)
-            t1.i = result.tag();
-            t0.i = result.payload();
+            t1 = result.tag();
+            t0 = result.payload();
 #else
-            t0.encodedJSValue = JSValue::encode(result);
+            t0 = JSValue::encode(result);
 #endif
-            opcode = lr.opcode;
+            opcode = lr.opcode();
             DISPATCH_OPCODE();
         }
 
@@ -523,7 +486,6 @@ JSValue CLoop::execute(OpcodeID entryOpcodeID, void* executableAddress, VM* vm, 
     #undef DEFINE_OPCODE
     #undef CHECK_FOR_TIMEOUT
     #undef CAST
-    #undef SIGN_BIT32
 
     return JSValue(); // to suppress a compiler warning.
 } // Interpreter::llintCLoopExecute()

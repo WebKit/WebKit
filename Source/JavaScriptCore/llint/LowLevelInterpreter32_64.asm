@@ -470,7 +470,7 @@ macro loadConstantOrVariableTag(size, index, tag)
     .constant:
         loadp CodeBlock[cfr], tag
         loadp CodeBlock::m_constantRegisters + VectorBufferOffset[tag], tag
-        subp FirstConstantRegisterIndex, index
+        subi FirstConstantRegisterIndex, index
         loadp TagOffset[tag, index, 8], tag
     .done:
     end)
@@ -486,7 +486,7 @@ macro loadConstantOrVariable2Reg(size, index, tag, payload)
     .constant:
         loadp CodeBlock[cfr], tag
         loadp CodeBlock::m_constantRegisters + VectorBufferOffset[tag], tag
-        subp FirstConstantRegisterIndex, index
+        subi FirstConstantRegisterIndex, index
         lshifti 3, index
         addp index, tag
         loadp PayloadOffset[tag], payload
@@ -1265,7 +1265,7 @@ llintOpWithReturn(op_is_cell_with_type, OpIsCellWithType, macro (size, get, disp
     get(operand, t1)
     loadConstantOrVariable(size, t1, t0, t3)
     bineq t0, CellTag, .notCellCase
-    get(type, t0)
+    getu(size, OpIsCellWithType, type, t0)
     cbeq JSCell::m_type[t3], t0, t1
     return(BooleanTag, t1)
 .notCellCase:
@@ -1351,7 +1351,7 @@ llintOpWithMetadata(op_get_by_id, OpGetById, macro (size, get, dispatch, metadat
     bbneq t1, constexpr GetByIdMode::ProtoLoad, .opGetByIdArrayLength
     loadi OpGetById::Metadata::modeMetadata.protoLoadMode.structure[t5], t1
     loadConstantOrVariablePayload(size, t0, CellTag, t3, .opGetByIdSlow)
-    loadi OpGetById::Metadata::modeMetadata.protoLoadMode.cachedOffset[t5], t2
+    loadis OpGetById::Metadata::modeMetadata.protoLoadMode.cachedOffset[t5], t2
     bineq JSCell::m_structureID[t3], t1, .opGetByIdSlow
     loadp OpGetById::Metadata::modeMetadata.protoLoadMode.cachedSlot[t5], t3
     loadPropertyAtVariableOffset(t2, t3, t0, t1)
@@ -1913,12 +1913,12 @@ macro commonCallOp(name, slowPath, op, prepareCall, prologue)
         loadp %op%::Metadata::callLinkInfo.callee[t5], t2
         loadConstantOrVariablePayload(size, t0, CellTag, t3, .opCallSlow)
         bineq t3, t2, .opCallSlow
-        get(argv, t3)
+        getu(size, op, argv, t3)
         lshifti 3, t3
         negi t3
         addp cfr, t3  # t3 contains the new value of cfr
         storei t2, Callee + PayloadOffset[t3]
-        get(argc, t2)
+        getu(size, op, argc, t2)
         storei PC, ArgumentCount + TagOffset[cfr]
         storei t2, ArgumentCount + PayloadOffset[t3]
         storei CellTag, Callee + TagOffset[t3]
@@ -2248,7 +2248,7 @@ end
 
 llintOpWithMetadata(op_get_from_scope, OpGetFromScope, macro (size, get, dispatch, metadata, return)
     macro getProperty()
-        loadis OpGetFromScope::Metadata::operand[t5], t3
+        loadp OpGetFromScope::Metadata::operand[t5], t3
         loadPropertyAtVariableOffset(t3, t0, t1, t2)
         valueProfile(OpGetFromScope, t5, t1, t2)
         return(t1, t2)
@@ -2264,7 +2264,7 @@ llintOpWithMetadata(op_get_from_scope, OpGetFromScope, macro (size, get, dispatc
     end
 
     macro getClosureVar()
-        loadis OpGetFromScope::Metadata::operand[t5], t3
+        loadp OpGetFromScope::Metadata::operand[t5], t3
         loadp JSLexicalEnvironment_variables + TagOffset[t0, t3, 8], t1
         loadp JSLexicalEnvironment_variables + PayloadOffset[t0, t3, 8], t2
         valueProfile(OpGetFromScope, t5, t1, t2)

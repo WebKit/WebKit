@@ -1,3 +1,15 @@
+2019-01-14  Mark Lam  <mark.lam@apple.com>
+
+        Fix all CLoop JSC test failures (including some LLInt bugs due to recent bytecode format change).
+        https://bugs.webkit.org/show_bug.cgi?id=193402
+        <rdar://problem/46012309>
+
+        Reviewed by Keith Miller.
+
+        * stress/regexp-compile-oom.js:
+        - Skip this test for !$jitTests because it is tuned for stack usage when the JIT
+          is enabled.  As a result, it will fail on cloop builds though there is no bug.
+
 2019-01-11  Saam barati  <sbarati@apple.com>
 
         DFG combined liveness can be wrong for terminal basic blocks

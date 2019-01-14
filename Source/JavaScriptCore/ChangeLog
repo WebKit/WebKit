@@ -1,3 +1,162 @@
+2019-01-14  Mark Lam  <mark.lam@apple.com>
+
+        Fix all CLoop JSC test failures (including some LLInt bugs due to recent bytecode format change).
+        https://bugs.webkit.org/show_bug.cgi?id=193402
+        <rdar://problem/46012309>
+
+        Reviewed by Keith Miller.
+
+        The CLoop builds via build-jsc were previously completely disabled after our
+        change to enable ASM LLInt build without the JIT.  As a result, JSC tests have
+        regressed on CLoop builds.  The CLoop builds and tests will be re-enabled when
+        the fix for https://bugs.webkit.org/show_bug.cgi?id=192955 lands.  This patch
+        fixes all the regressions (and some old bugs) so that the CLoop test bots won't
+        be red when CLoop build gets re-enabled.
+
+        In this patch, we do the following:
+
+        1. Change CLoopStack::grow() to set the new CLoop stack top at the maximum
+           allocated capacity (after discounting the reserved zone) as opposed to setting
+           it only at the level that the client requested.
+
+           This fixes a small performance bug that I happened to noticed when I was
+           debugging a stack issue.  It does not affect correctness.
+
+        2. In LowLevelInterpreter32_64.asm:
+
+           1. Fix loadConstantOrVariableTag() to use subi for computing the constant
+              index because the VirtualRegister offset and FirstConstantRegisterIndex
+              values it is operating on are both signed ints.  This is just to be
+              pedantic.  The previous use of subu will still produce a correct value.
+
+           2. Fix llintOpWithReturn() to use getu (instead of get) for reading
+              OpIsCellWithType::type because it is of type JSType, which is a uint8_t.
+
+           3. Fix llintOpWithMetadata() to use loadis for loading
+              OpGetById::Metadata::modeMetadata.protoLoadMode.cachedOffset[t5] because it
+              is of type PropertyOffset, which is a signed int.
+
+           4. Fix commonCallOp() to use getu for loading fields argv and argc because they
+              are  of type unsigned for OpCall, OpConstruct, and OpTailCall, which are the
+              clients of commonCallOp.
+
+           5. Fix llintOpWithMetadata() and getClosureVar() to use loadp for loading
+              OpGetFromScope::Metadata::operand because it is of type uintptr_t.
+
+        3. In LowLevelInterpreter64.asm:
+
+           1. Fix llintOpWithReturn() to use getu for reading OpIsCellWithType::type
+              because it is of type JSType, which is a uint8_t.
+
+           2. Fix llintOpWithMetadata() to use loadi for loading
+              OpGetById::Metadata::modeMetadata.protoLoadMode.structure[t2] because it is
+              of type StructureID, which is a uint32_t.
+
+              Fix llintOpWithMetadata() to use loadis for loading
+              OpGetById::Metadata::modeMetadata.protoLoadMode.cachedOffset[t2] because it
+              is of type PropertyOffset, which is a signed int.
+
+           3. commonOp() should reload the metadataTable for op_catch because unlike
+              for the ASM LLInt, the exception unwinding code is not able to restore
+              "callee saved registers" for the CLoop interpreter because the CLoop uses
+              pseudo-registers (see the CLoopRegister class).
+
+              This was the source of many exotic Cloop failures after the bytecode format
+              change (which introduced the metadataTable callee saved register).  Hence,
+              we fix it by reloading metadataTable's value on re-entry via op_catch for
+              exception handling.  We already take care of restoring it in op_ret.
+
+           4. Fix llintOpWithMetadata() and getClosureVar() to use loadp for loading
+              OpGetFromScope::Metadata::operand because it is of type uintptr_t.
+
+        4. In LowLevelInterpreter.asm:
+
+           Fix metadata() to use loadi for loading metadataTable offsets because they are
+           of type unsigned.  This was also a source of many exotic CLoop test failures.
+
+        5. Change CLoopRegister into a class with a uintptr_t as its storage element.
+           Previously, we were using a union to convert between various value types that
+           we would store in this pseudo-register.  This method of type conversion is
+           undefined behavior according to the C++ spec.  As a result, the C++ compiler
+           may choose to elide some CLoop statements, thereby resulting in some exotic
+           bugs.
+
+           We fix this by now always using accessor methods and assignment operators to
+           ensure that we use bitwise_cast to do the type conversions.  Since bitwise_cast
+           uses a memcpy, this ensures that there's no undefined behavior, and that CLoop
+           statements won't get elided willy-nilly by the compiler.
+
+           Ditto for the CloopDobleRegisters.
+
+           Similarly, use bitwise_cast for ints2Double() and double2Ints() utility
+           functions.
+
+           Also use bitwise_cast (instead of reinterpret_cast) for the CLoop CAST macro.
+
+        6. Fix cloop.rb to use the new CLoopRegister and CLoopDoubleRegister classes.
+
+           Add a clLValue accessor for offlineasm operand types to distinguish
+           LValue use of the operands from RValue uses.
+
+           Replace the use of clearHighWord() with simply casting to uint32_t.  This is
+           more efficient for the C++ compiler (and help speed up debug build runs).
+
+           Also fix 32-bit arithmetic operations to only set the lower 32-bit value of
+           the pseudo registers.  This fixes some CLoop JSC test failures.
+
+        This patch has been manually tested with the JSC tests on the following builds:
+        64bit X86 ASM LLLint (without JIT), 64bit and 32bit X86 CLoop, and ARMv7 Cloop.
+
+        * interpreter/CLoopStack.cpp:
+        (JSC::CLoopStack::grow):
+        * llint/LowLevelInterpreter.asm:
+        * llint/LowLevelInterpreter.cpp:
+        (JSC::CLoopRegister::i const):
+        (JSC::CLoopRegister::u const):
+        (JSC::CLoopRegister::i32 const):
+        (JSC::CLoopRegister::u32 const):
+        (JSC::CLoopRegister::i8 const):
+        (JSC::CLoopRegister::u8 const):
+        (JSC::CLoopRegister::ip const):
+        (JSC::CLoopRegister::i8p const):
+        (JSC::CLoopRegister::vp const):
+        (JSC::CLoopRegister::cvp const):
+        (JSC::CLoopRegister::callFrame const):
+        (JSC::CLoopRegister::execState const):
+        (JSC::CLoopRegister::instruction const):
+        (JSC::CLoopRegister::vm const):
+        (JSC::CLoopRegister::cell const):
+        (JSC::CLoopRegister::protoCallFrame const):
+        (JSC::CLoopRegister::nativeFunc const):
+        (JSC::CLoopRegister::i64 const):
+        (JSC::CLoopRegister::u64 const):
+        (JSC::CLoopRegister::encodedJSValue const):
+        (JSC::CLoopRegister::opcode const):
+        (JSC::CLoopRegister::operator ExecState*):
+        (JSC::CLoopRegister::operator const Instruction*):
+        (JSC::CLoopRegister::operator JSCell*):
+        (JSC::CLoopRegister::operator ProtoCallFrame*):
+        (JSC::CLoopRegister::operator Register*):
+        (JSC::CLoopRegister::operator VM*):
+        (JSC::CLoopRegister::operator=):
+        (JSC::CLoopRegister::bitsAsDouble const):
+        (JSC::CLoopRegister::bitsAsInt64 const):
+        (JSC::CLoopDoubleRegister::operator T const):
+        (JSC::CLoopDoubleRegister::d const):
+        (JSC::CLoopDoubleRegister::bitsAsInt64 const):
+        (JSC::CLoopDoubleRegister::operator=):
+        (JSC::LLInt::ints2Double):
+        (JSC::LLInt::double2Ints):
+        (JSC::LLInt::decodeResult):
+        (JSC::CLoop::execute):
+        (JSC::LLInt::Ints2Double): Deleted.
+        (JSC::LLInt::Double2Ints): Deleted.
+        (JSC::CLoopRegister::CLoopRegister): Deleted.
+        (JSC::CLoopRegister::clearHighWord): Deleted.
+        * llint/LowLevelInterpreter32_64.asm:
+        * llint/LowLevelInterpreter64.asm:
+        * offlineasm/cloop.rb:
+
 2019-01-14  Keith Miller  <keith_miller@apple.com>
 
         JSC should have a module loader API

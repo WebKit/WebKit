@@ -1215,7 +1215,7 @@ end)
 
 
 llintOpWithReturn(op_is_cell_with_type, OpIsCellWithType, macro (size, get, dispatch, return)
-    get(type, t0)
+    getu(size, OpIsCellWithType, type, t0)
     get(operand, t1)
     loadConstantOrVariable(size, t1, t3)
     btqnz t3, tagMask, .notCellCase
@@ -1302,9 +1302,9 @@ llintOpWithMetadata(op_get_by_id, OpGetById, macro (size, get, dispatch, metadat
 .opGetByIdProtoLoad:
     bbneq t1, constexpr GetByIdMode::ProtoLoad, .opGetByIdArrayLength
     loadi JSCell::m_structureID[t3], t1
-    loadis OpGetById::Metadata::modeMetadata.protoLoadMode.structure[t2], t3
+    loadi OpGetById::Metadata::modeMetadata.protoLoadMode.structure[t2], t3
     bineq t3, t1, .opGetByIdSlow
-    loadi OpGetById::Metadata::modeMetadata.protoLoadMode.cachedOffset[t2], t1
+    loadis OpGetById::Metadata::modeMetadata.protoLoadMode.cachedOffset[t2], t1
     loadp OpGetById::Metadata::modeMetadata.protoLoadMode.cachedSlot[t2], t3
     loadPropertyAtVariableOffset(t1, t3, t0)
     valueProfile(OpGetById, t2, t0)
@@ -2068,6 +2068,7 @@ commonOp(llint_op_catch, macro() end, macro (size)
     restoreStackPointerAfterCall()
 
     loadp CodeBlock[cfr], PB
+    loadp CodeBlock::m_metadata[PB], metadataTable
     loadp CodeBlock::m_instructionsRawPointer[PB], PB
     unpoison(_g_CodeBlockPoison, PB, t2)
     loadp VM::targetInterpreterPCForThrow[t3], PC
@@ -2311,7 +2312,7 @@ llintOpWithMetadata(op_get_from_scope, OpGetFromScope, macro (size, get, dispatc
     metadata(t5, t0)
 
     macro getProperty()
-        loadis OpGetFromScope::Metadata::operand[t5], t1
+        loadp OpGetFromScope::Metadata::operand[t5], t1
         loadPropertyAtVariableOffset(t1, t0, t2)
         valueProfile(OpGetFromScope, t5, t2)
         return(t2)
@@ -2326,7 +2327,7 @@ llintOpWithMetadata(op_get_from_scope, OpGetFromScope, macro (size, get, dispatc
     end
 
     macro getClosureVar()
-        loadis OpGetFromScope::Metadata::operand[t5], t1
+        loadp OpGetFromScope::Metadata::operand[t5], t1
         loadq JSLexicalEnvironment_variables[t0, t1, 8], t0
         valueProfile(OpGetFromScope, t5, t0)
         return(t0)

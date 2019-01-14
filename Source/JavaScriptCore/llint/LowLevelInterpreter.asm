@@ -344,7 +344,7 @@ macro wide(narrowFn, wideFn, k)
 end
 
 macro metadata(size, opcode, dst, scratch)
-    loadp constexpr %opcode%::opcodeID * 4[metadataTable], dst # offset = metadataTable<unsigned*>[opcodeID]
+    loadi constexpr %opcode%::opcodeID * 4[metadataTable], dst # offset = metadataTable<unsigned*>[opcodeID]
     getu(size, opcode, metadataID, scratch) # scratch = bytecode.metadataID
     muli sizeof %opcode%::Metadata, scratch # scratch *= sizeof(Op::Metadata)
     addi scratch, dst # offset += scratch
