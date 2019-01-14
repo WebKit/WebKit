@@ -1,3 +1,11 @@
+2019-01-14  Zan Dobersek  <zdobersek@igalia.com>
+
+        Unreviewed WPE debug build fix after r239921.
+
+        * platform/graphics/gstreamer/eme/WebKitClearKeyDecryptorGStreamer.cpp:
+        (webKitMediaClearKeyDecryptorDecrypt): Fix the assert that checks the
+        size of the mapped buffer containing IV data.
+
 2019-01-14  Charlie Turner  <cturner@igalia.com>
 
         [GStreamer] Add sharedBuffer utility to GstMappedBuffer, and a testsuite

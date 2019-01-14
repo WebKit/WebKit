@@ -199,7 +199,7 @@ static gboolean webKitMediaClearKeyDecryptorDecrypt(WebKitMediaCommonEncryptionD
         memset(ctr + 8, 0, 8);
         memcpy(ctr, mappedIVBuffer->data(), 8);
     } else {
-        ASSERT(mappedIVBuffer.size() == CLEARKEY_SIZE);
+        ASSERT(mappedIVBuffer->size() == CLEARKEY_SIZE);
         memcpy(ctr, mappedIVBuffer->data(), CLEARKEY_SIZE);
     }
 
