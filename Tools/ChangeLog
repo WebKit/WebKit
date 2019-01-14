@@ -1,5 +1,32 @@
 2019-01-14  Ryan Haddad  <ryanhaddad@apple.com>
 
+        Cherry-pick r239939. rdar://problem/47255372
+
+    webkitpy: Support alternate simctl device list output (Follow-up fix)
+    https://bugs.webkit.org/show_bug.cgi?id=193362
+    <rdar://problem/47122965>
+    
+    Rubber-stamped by Lucas Forschler.
+    
+    * Scripts/webkitpy/xcode/simulated_device.py:
+    (SimulatedDeviceManager.populate_available_devices):
+    
+    
+    git-svn-id: http://svn.webkit.org/repository/webkit/trunk@239939 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2019-01-14  Jonathan Bedard  <jbedard@apple.com>
+
+            webkitpy: Support alternate simctl device list output (Follow-up fix)
+            https://bugs.webkit.org/show_bug.cgi?id=193362
+            <rdar://problem/47122965>
+
+            Rubber-stamped by Lucas Forschler.
+
+            * Scripts/webkitpy/xcode/simulated_device.py:
+            (SimulatedDeviceManager.populate_available_devices):
+
+2019-01-14  Ryan Haddad  <ryanhaddad@apple.com>
+
         Cherry-pick r239878. rdar://problem/47255372
 
     webkitpy: Support alternate simctl device list output
