@@ -1,5 +1,35 @@
 2019-01-14  Jonathan Bedard  <jbedard@apple.com>
 
+        webkitpy: Expose device_type from host-like objects
+        https://bugs.webkit.org/show_bug.cgi?id=193406
+        <rdar://problem/47262305>
+
+        Reviewed by Lucas Forschler.
+
+        Devices should expose device_type. As a result, all host objects should
+        provide a device_type property, even if they do not yet define a device_type.
+
+        * Scripts/webkitpy/common/system/systemhost.py:
+        (SystemHost):
+        (SystemHost.device_type):
+        * Scripts/webkitpy/common/system/systemhost_mock.py:
+        (MockSystemHost):
+        (MockSystemHost.device_type):
+        * Scripts/webkitpy/port/device.py:
+        (Device):
+        (Device.device_type):
+        * Scripts/webkitpy/xcode/simulated_device.py:
+        (SimulatedDeviceManager._find_exisiting_device_for_request):
+        (SimulatedDeviceManager._disambiguate_device_type):
+        (SimulatedDeviceManager._does_fulfill_request):
+        (SimulatedDeviceManager.device_count_for_type):
+        (SimulatedDeviceManager.initialize_devices):
+        * Scripts/webkitpy/xcode/simulated_device_unittest.py:
+        (test_available_devices):
+        (test_swapping_devices):
+
+2019-01-14  Jonathan Bedard  <jbedard@apple.com>
+
         webkitpy: Support alternate simctl device list output (Follow-up fix)
         https://bugs.webkit.org/show_bug.cgi?id=193362
         <rdar://problem/47122965>
