@@ -829,6 +829,16 @@ static WebCore::EditableLinkBehavior toEditableLinkBehavior(_WKEditableLinkBehav
     return _preferences->shouldIgnoreMetaViewport();
 }
 
+- (void)_setNeedsSiteSpecificQuirks:(BOOL)enabled
+{
+    _preferences->setNeedsSiteSpecificQuirks(enabled);
+}
+
+- (BOOL)_needsSiteSpecificQuirks
+{
+    return _preferences->needsSiteSpecificQuirks();
+}
+
 #if PLATFORM(MAC)
 - (void)_setJavaEnabledForLocalFiles:(BOOL)enabled
 {
@@ -868,16 +878,6 @@ static WebCore::EditableLinkBehavior toEditableLinkBehavior(_WKEditableLinkBehav
 - (NSString *)_defaultTextEncodingName
 {
     return _preferences->defaultTextEncodingName();
-}
-
-- (void)_setNeedsSiteSpecificQuirks:(BOOL)enabled
-{
-    _preferences->setNeedsSiteSpecificQuirks(enabled);
-}
-
-- (BOOL)_needsSiteSpecificQuirks
-{
-    return _preferences->needsSiteSpecificQuirks();
 }
 
 - (void)_setAuthorAndUserStylesEnabled:(BOOL)enabled
