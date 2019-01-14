@@ -1,3 +1,21 @@
+2019-01-13  Simon Fraser  <simon.fraser@apple.com>
+
+        Minor optimization to RenderText::setRenderedText()
+        https://bugs.webkit.org/show_bug.cgi?id=193388
+
+        Reviewed by Ryosuke Niwa.
+
+        Avoid the call to applyTextTransform() if TextTransform is None, so that we don't
+        have to call previousCharacter() and reassign m_text.
+        
+        Similar optimization in RenderText::textWithoutConvertingBackslashToYenSymbol().
+
+        Speedometer profiles show a few samples here, but this isn't going to win any prizes.
+
+        * rendering/RenderText.cpp:
+        (WebCore::RenderText::setRenderedText):
+        (WebCore::RenderText::textWithoutConvertingBackslashToYenSymbol const):
+
 2019-01-13  Dan Bernstein  <mitz@apple.com>
 
         Tried to fix the build.

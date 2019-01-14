@@ -1169,10 +1169,12 @@ void RenderText::setRenderedText(const String& newText)
 
     if (m_useBackslashAsYenSymbol)
         m_text.replace('\\', yenSign);
+    
+    const auto& style = this->style();
+    if (style.textTransform() != TextTransform::None)
+        m_text = applyTextTransform(style, m_text, previousCharacter());
 
-    m_text = applyTextTransform(style(), m_text, previousCharacter());
-
-    switch (style().textSecurity()) {
+    switch (style.textSecurity()) {
     case TextSecurity::None:
         break;
 #if !PLATFORM(IOS_FAMILY)
@@ -1294,6 +1296,10 @@ String RenderText::textWithoutConvertingBackslashToYenSymbol() const
 {
     if (!m_useBackslashAsYenSymbol || style().textSecurity() != TextSecurity::None)
         return text();
+
+    if (style().textTransform() == TextTransform::None)
+        return originalText();
+
     return applyTextTransform(style(), originalText(), previousCharacter());
 }
 
