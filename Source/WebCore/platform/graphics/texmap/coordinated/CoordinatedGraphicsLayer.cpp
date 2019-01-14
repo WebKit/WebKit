@@ -888,7 +888,7 @@ void CoordinatedGraphicsLayer::updateContentBuffers()
 
     if (!m_needsDisplay.completeLayer) {
         for (auto& rect : m_needsDisplay.rects)
-            layerState.mainBackingStore->invalidate(IntRect { rect });
+            layerState.mainBackingStore->invalidate(enclosingIntRect(rect));
     } else
         layerState.mainBackingStore->invalidate({ { }, IntSize { m_size } });
 
