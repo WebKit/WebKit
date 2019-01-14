@@ -1,3 +1,9 @@
+2019-01-13  Dan Bernstein  <mitz@apple.com>
+
+        More build fixing.
+
+        * editing/cocoa/DictionaryLookup.mm:
+
 2019-01-13  Simon Fraser  <simon.fraser@apple.com>
 
         Minor optimization to RenderText::setRenderedText()
