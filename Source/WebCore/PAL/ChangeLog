@@ -1,3 +1,13 @@
+2019-01-14  Mark Lam  <mark.lam@apple.com>
+
+        Re-enable ability to build --cloop builds.
+        https://bugs.webkit.org/show_bug.cgi?id=192955
+        <rdar://problem/46882363>
+
+        Reviewed by Saam barati and Keith Miller.
+
+        * Configurations/FeatureDefines.xcconfig:
+
 2019-01-13  Dan Bernstein  <mitz@apple.com>
 
         Tried to fix USE(APPLE_INTERNAL_SDK) 32-bit builds.

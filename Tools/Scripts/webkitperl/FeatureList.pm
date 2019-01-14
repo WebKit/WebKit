@@ -61,6 +61,7 @@ my (
     $bubblewrapSandboxSupport,
     $cachePartitioningSupport,
     $channelMessagingSupport,
+    $cloopSupport,
     $contentFilteringSupport,
     $contextMenusSupport,
     $css3TextSupport,
@@ -216,6 +217,9 @@ my @features = (
 
     { option => "bubblewrap-sandbox", desc => "Toggle Bubblewrap sandboxing support",
       define => "ENABLE_BUBBLEWRAP_SANDBOX", value => \$bubblewrapSandboxSupport },
+
+    { option => "cloop", desc => "Enable CLoop interpreter",
+      define => "ENABLE_C_LOOP", value => \$cloopSupport },
 
     { option => "cache-partitioning", desc => "Toggle cache partitioning support",
       define => "ENABLE_CACHE_PARTITIONING", value => \$cachePartitioningSupport },

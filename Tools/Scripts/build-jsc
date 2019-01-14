@@ -142,7 +142,8 @@ if ($forceCLoop) {
 
 if (isCMakeBuild()) {
     if ($forceCLoop) {
-        push @cmakeArgs, " -DENABLE_JIT=OFF"
+        push @cmakeArgs, " -DENABLE_JIT=OFF";
+        push @cmakeArgs, " -DENABLE_C_LOOP=ON";
     }
     push @cmakeArgs, $ftlJIT ? " -DENABLE_FTL_JIT=ON" : " -DENABLE_FTL_JIT=OFF";
     if ($buildDir) {
@@ -169,6 +170,7 @@ if (isCMakeBuild()) {
 
 if (isAppleCocoaWebKit()) {
     push @options, ($forceCLoop ? "ENABLE_JIT=ENABLE_JIT=0" : "ENABLE_JIT=ENABLE_JIT");
+    push @options, ($forceCLoop ? "ENABLE_C_LOOP=ENABLE_C_LOOP" : "ENABLE_C_LOOP=ENABLE_C_LOOP=0");
     push @options, ($ftlJIT ? "ENABLE_FTL_JIT=ENABLE_FTL_JIT" : "ENABLE_FTL_JIT=ENABLE_FTL_JIT=0");
 
     sub option($$$)
