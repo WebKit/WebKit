@@ -1,3 +1,75 @@
+2019-01-14  Yusuke Suzuki  <yusukesuzuki@slowstart.org>
+
+        [JSC] Do not use asArrayModes() with Structures because it discards TypedArray information
+        https://bugs.webkit.org/show_bug.cgi?id=193372
+
+        Reviewed by Saam Barati.
+
+        When RegisteredStructureSet is filtered with AbstractValue, we use structure, SpeculationType, and ArrayModes.
+        However, we use asArrayModes() function with IndexingMode to compute the ArrayModes in AbstractValue. This is
+        wrong since this discards TypedArray ArrayModes. As a result, if RegisteredStructureSet with TypedArrays is
+        filtered with ArrayModes of AbstractValue populated from TypedArrays, we filter all the structures out since
+        AbstractValue's ArrayModes become NonArray, which is wrong with the TypedArrays' ArrayModes. This leads to
+        incorrect FTL code generation with MultiGetByOffset etc. nodes because,
+
+        1. AI think that this MultiGetByOffset never succeeds since all the values of RegisteredStructureSet are filtered out by the AbstractValue.
+        2. AI says the state of MultiGetByOffset is invalid since AI think it never succeeds.
+        3. So subsequent code becomes FTL crash code since AI think the execution should do OSR exit.
+        4. Then, FTL emits the code for MultiGetByOffset, and emits crash after that.
+        5. But in reality, the incoming value can match to the one of the RegisteredStructureSet value since (1)'s structures are incorrectly filtered by the incorrect ArrayModes.
+        6. Then, the execution goes on, and falls into the FTL crash.
+
+        This patch fixes the incorrect ArrayModes calculation by the following changes
+
+        1. Rename asArrayModes to asArrayModesIgnoringTypedArrays.
+        2. Fix incorrect asArrayModesIgnoringTypedArrays use in our code. Use arrayModesFromStructure instead.
+        3. Fix OSR exit code which stores incorrect ArrayModes to the profiles.
+
+        * bytecode/ArrayProfile.cpp:
+        (JSC::dumpArrayModes):
+        (JSC::ArrayProfile::computeUpdatedPrediction):
+        * bytecode/ArrayProfile.h:
+        (JSC::asArrayModesIgnoringTypedArrays):
+        (JSC::arrayModesFromStructure):
+        (JSC::arrayModesIncludeIgnoringTypedArrays):
+        (JSC::shouldUseSlowPutArrayStorage):
+        (JSC::shouldUseFastArrayStorage):
+        (JSC::shouldUseContiguous):
+        (JSC::shouldUseDouble):
+        (JSC::shouldUseInt32):
+        (JSC::asArrayModes): Deleted.
+        (JSC::arrayModeFromStructure): Deleted.
+        (JSC::arrayModesInclude): Deleted.
+        * dfg/DFGAbstractValue.cpp:
+        (JSC::DFG::AbstractValue::observeTransitions):
+        (JSC::DFG::AbstractValue::set):
+        (JSC::DFG::AbstractValue::mergeOSREntryValue):
+        (JSC::DFG::AbstractValue::contains const):
+        * dfg/DFGAbstractValue.h:
+        (JSC::DFG::AbstractValue::observeTransition):
+        (JSC::DFG::AbstractValue::validate const):
+        (JSC::DFG::AbstractValue::observeIndexingTypeTransition):
+        * dfg/DFGArrayMode.cpp:
+        (JSC::DFG::ArrayMode::fromObserved):
+        (JSC::DFG::ArrayMode::alreadyChecked const):
+        * dfg/DFGArrayMode.h:
+        (JSC::DFG::ArrayMode::structureWouldPassArrayModeFiltering):
+        (JSC::DFG::ArrayMode::arrayModesThatPassFiltering const):
+        (JSC::DFG::ArrayMode::arrayModesWithIndexingShape const):
+        * dfg/DFGOSRExit.cpp:
+        (JSC::DFG::OSRExit::executeOSRExit):
+        (JSC::DFG::OSRExit::compileExit):
+        * dfg/DFGRegisteredStructureSet.cpp:
+        (JSC::DFG::RegisteredStructureSet::filterArrayModes):
+        (JSC::DFG::RegisteredStructureSet::arrayModesFromStructures const):
+        * ftl/FTLOSRExitCompiler.cpp:
+        (JSC::FTL::compileStub):
+        * jit/JITInlines.h:
+        (JSC::JIT::chooseArrayMode):
+        (JSC::arrayProfileSaw): Deleted.
+        * runtime/JSType.h:
+        (JSC::isTypedArrayType):
+
 2019-01-14  Mark Lam  <mark.lam@apple.com>
 
         Re-enable ability to build --cloop builds.

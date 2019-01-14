@@ -1,3 +1,13 @@
+2019-01-14  Yusuke Suzuki  <yusukesuzuki@slowstart.org>
+
+        [JSC] Do not use asArrayModes() with Structures because it discards TypedArray information
+        https://bugs.webkit.org/show_bug.cgi?id=193372
+
+        Reviewed by Saam Barati.
+
+        * stress/typed-array-array-modes-profile.js: Added.
+        (foo):
+
 2019-01-14  Mark Lam  <mark.lam@apple.com>
 
         Fix all CLoop JSC test failures (including some LLInt bugs due to recent bytecode format change).

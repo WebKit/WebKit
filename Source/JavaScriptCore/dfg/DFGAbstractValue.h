@@ -137,7 +137,7 @@ struct AbstractValue {
     {
         if (m_type & SpecCell) {
             m_structure.observeTransition(from, to);
-            observeIndexingTypeTransition(from->indexingType(), to->indexingType());
+            observeIndexingTypeTransition(arrayModesFromStructure(from.get()), arrayModesFromStructure(to.get()));
         }
         checkConsistency();
     }
@@ -397,7 +397,7 @@ struct AbstractValue {
             ASSERT(m_type & SpecCell);
             Structure* structure = value.asCell()->structure();
             return m_structure.contains(structure)
-                && (m_arrayModes & asArrayModes(structure->indexingMode()));
+                && (m_arrayModes & arrayModesFromStructure(structure));
         }
         
         return true;
@@ -492,10 +492,10 @@ private:
         m_arrayModes = ALL_ARRAY_MODES;
     }
     
-    void observeIndexingTypeTransition(IndexingType from, IndexingType to)
+    void observeIndexingTypeTransition(ArrayModes from, ArrayModes to)
     {
-        if (m_arrayModes & asArrayModes(from))
-            m_arrayModes |= asArrayModes(to);
+        if (m_arrayModes & from)
+            m_arrayModes |= to;
     }
     
     bool validateType(JSValue value) const
