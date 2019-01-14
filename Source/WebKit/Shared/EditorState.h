@@ -109,6 +109,7 @@ struct EditorState {
         bool hasPlainText { false };
         bool elementIsTransparentOrFullyClipped { false };
         WebCore::Color caretColor;
+        bool atStartOfSentence { false };
 #endif
 #if PLATFORM(MAC)
         uint64_t candidateRequestStartPosition { 0 };

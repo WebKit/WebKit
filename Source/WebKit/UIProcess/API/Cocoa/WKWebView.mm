@@ -377,6 +377,7 @@ static Optional<WebCore::ScrollbarOverlayStyle> toCoreScrollbarStyle(_WKOverlayS
     std::unique_ptr<WebKit::WebViewImpl> _impl;
     RetainPtr<WKTextFinderClient> _textFinderClient;
 #endif
+    _WKSelectionAttributes _selectionAttributes;
     CGFloat _minimumEffectiveDeviceWidth;
 }
 
@@ -1267,15 +1268,49 @@ static NSDictionary *dictionaryRepresentationForEditorState(const WebKit::Editor
     };
 }
 
+static _WKSelectionAttributes selectionAttributes(const WebKit::EditorState& editorState, _WKSelectionAttributes previousAttributes)
+{
+    _WKSelectionAttributes attributes = _WKSelectionAttributeNoSelection;
+    if (editorState.selectionIsNone)
+        return attributes;
+
+    if (editorState.selectionIsRange)
+        attributes |= _WKSelectionAttributeIsRange;
+    else
+        attributes |= _WKSelectionAttributeIsCaret;
+
+    if (!editorState.isMissingPostLayoutData) {
+#if PLATFORM(IOS_FAMILY)
+        if (editorState.postLayoutData().atStartOfSentence)
+            attributes |= _WKSelectionAttributeAtStartOfSentence;
+#endif
+    } else if (previousAttributes & _WKSelectionAttributeAtStartOfSentence)
+        attributes |= _WKSelectionAttributeAtStartOfSentence;
+
+    return attributes;
+}
+
 - (void)_didChangeEditorState
 {
-    id <WKUIDelegatePrivate> uiDelegate = (id <WKUIDelegatePrivate>)self.UIDelegate;
+    auto newSelectionAttributes = selectionAttributes(_page->editorState(), _selectionAttributes);
+    if (_selectionAttributes != newSelectionAttributes) {
+        NSString *selectionAttributesKey = NSStringFromSelector(@selector(_selectionAttributes));
+        [self willChangeValueForKey:selectionAttributesKey];
+        _selectionAttributes = newSelectionAttributes;
+        [self didChangeValueForKey:selectionAttributesKey];
+    }
 
     // FIXME: We should either rename -_webView:editorStateDidChange: to clarify that it's only intended for use when testing,
     // or remove it entirely and use -_webView:didChangeFontAttributes: instead once text alignment is supported in the set of
     // font attributes.
+    id <WKUIDelegatePrivate> uiDelegate = (id <WKUIDelegatePrivate>)self.UIDelegate;
     if ([uiDelegate respondsToSelector:@selector(_webView:editorStateDidChange:)])
         [uiDelegate _webView:self editorStateDidChange:dictionaryRepresentationForEditorState(_page->editorState())];
+}
+
+- (_WKSelectionAttributes)_selectionAttributes
+{
+    return _selectionAttributes;
 }
 
 - (void)_showSafeBrowsingWarning:(const WebKit::SafeBrowsingWarning&)warning completionHandler:(CompletionHandler<void(Variant<WebKit::ContinueUnsafeLoad, URL>&&)>&&)completionHandler

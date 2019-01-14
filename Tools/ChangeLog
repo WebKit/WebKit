@@ -1,3 +1,29 @@
+2019-01-14  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [iOS] Expose SPI to access the current sentence boundary and selection state
+        https://bugs.webkit.org/show_bug.cgi?id=193398
+        <rdar://problem/45893108>
+
+        Reviewed by Dean Jackson.
+
+        Add an API test to verify that an SPI client can observe changes in the `@"_selectionAttributes"` key path on
+        WKWebView, and that inserting text, deleting, and changing the selection cause selection attributes to change as
+        expected.
+
+        * TestWebKitAPI/EditingTestHarness.h:
+        * TestWebKitAPI/EditingTestHarness.mm:
+        (-[EditingTestHarness moveBackward]):
+        (-[EditingTestHarness moveForward]):
+        (-[EditingTestHarness moveForwardAndExpectEditorStateWith:]):
+
+        Add a couple of new helper methods on EditingTestHarness.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/EditorStateTests.mm:
+        (-[SelectionChangeObserver initWithWebView:]):
+        (-[SelectionChangeObserver webView]):
+        (-[SelectionChangeObserver observeValueForKeyPath:ofObject:change:context:]):
+        (-[SelectionChangeObserver currentSelectionAttributes]):
+
 2019-01-14  Zalan Bujtas  <zalan@apple.com>
 
         [LFC][BFC] Add basic box-sizing support.

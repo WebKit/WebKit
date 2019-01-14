@@ -63,6 +63,13 @@ typedef NS_OPTIONS(NSUInteger, _WKCaptureDevices) {
     _WKCaptureDeviceDisplay = 1 << 2,
 } WK_API_AVAILABLE(macosx(10.13), ios(11.0));
 
+typedef NS_OPTIONS(NSUInteger, _WKSelectionAttributes) {
+    _WKSelectionAttributeNoSelection = 0,
+    _WKSelectionAttributeIsCaret = 1 << 0,
+    _WKSelectionAttributeIsRange = 1 << 1,
+    _WKSelectionAttributeAtStartOfSentence = 1 << 2,
+} WK_API_AVAILABLE(macosx(WK_MAC_TBA), ios(WK_IOS_TBA));
+
 #if TARGET_OS_IPHONE
 
 typedef NS_ENUM(NSUInteger, _WKDragInteractionPolicy) {
@@ -220,6 +227,7 @@ typedef NS_OPTIONS(NSUInteger, _WKRectEdge) {
 - (IBAction)_takeFindStringFromSelection:(id)sender WK_API_AVAILABLE(macosx(WK_MAC_TBA), ios(WK_IOS_TBA));
 
 @property (class, nonatomic, copy, setter=_setStringForFind:) NSString *_stringForFind WK_API_AVAILABLE(macosx(WK_MAC_TBA), ios(WK_IOS_TBA));
+@property (nonatomic, readonly) _WKSelectionAttributes _selectionAttributes WK_API_AVAILABLE(macosx(WK_MAC_TBA), ios(WK_IOS_TBA));
 
 #if TARGET_OS_IPHONE
 

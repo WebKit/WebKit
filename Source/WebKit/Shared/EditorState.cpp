@@ -132,6 +132,7 @@ void EditorState::PostLayoutData::encode(IPC::Encoder& encoder) const
     encoder << hasPlainText;
     encoder << elementIsTransparentOrFullyClipped;
     encoder << caretColor;
+    encoder << atStartOfSentence;
 #endif
 #if PLATFORM(MAC)
     encoder << candidateRequestStartPosition;
@@ -190,6 +191,8 @@ bool EditorState::PostLayoutData::decode(IPC::Decoder& decoder, PostLayoutData& 
     if (!decoder.decode(result.elementIsTransparentOrFullyClipped))
         return false;
     if (!decoder.decode(result.caretColor))
+        return false;
+    if (!decoder.decode(result.atStartOfSentence))
         return false;
 #endif
 #if PLATFORM(MAC)

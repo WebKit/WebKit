@@ -1,3 +1,37 @@
+2019-01-14  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [iOS] Expose SPI to access the current sentence boundary and selection state
+        https://bugs.webkit.org/show_bug.cgi?id=193398
+        <rdar://problem/45893108>
+
+        Reviewed by Dean Jackson.
+
+        Expose SPI on WKWebView for internal clients to grab information about attributes at the current selection; so
+        far, this only includes whether the selection is a caret or a range, and whether or not the start of the
+        selection is at the start of a new sentence.
+
+        Test: EditorStateTests.ObserveSelectionAttributeChanges
+
+        * Shared/EditorState.cpp:
+        (WebKit::EditorState::PostLayoutData::encode const):
+        (WebKit::EditorState::PostLayoutData::decode):
+        * Shared/EditorState.h:
+
+        Add a new bit in EditorState on iOS to compute whether or not the start of the selection is at the start of a
+        new sentence. This is computed and set when sending post-layout data in `WebPageIOS.mm`.
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (selectionAttributes):
+        (-[WKWebView _didChangeEditorState]):
+        (-[WKWebView _selectionAttributes]):
+
+        Make the new SPI property support KVO by invoking `-willChangeValueForKey:` and `-didChangeValueForKey:`
+        whenever the selection attributes change.
+
+        * UIProcess/API/Cocoa/WKWebViewPrivate.h:
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::platformEditorState const):
+
 2019-01-14  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed. Update OptionsGTK.cmake and NEWS for 2.23.3 release
