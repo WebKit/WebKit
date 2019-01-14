@@ -1,3 +1,12 @@
+2019-01-14  Jiewen Tan  <jiewen_tan@apple.com>
+
+        Unreviewed, test fixes after r239852.
+
+        * http/wpt/webauthn/public-key-credential-create-success-hid.https.html:
+        * http/wpt/webauthn/public-key-credential-create-success-u2f.https.html:
+        * http/wpt/webauthn/public-key-credential-get-success-hid.https.html:
+        * http/wpt/webauthn/public-key-credential-get-success-u2f.https.html:
+
 2019-01-14  Justin Fan  <justin_fan@apple.com>
 
         [WebGPU] Map WebGPUBindGroupLayoutBindings from the BindGroupLayoutDescriptor for error checking and later referencing
