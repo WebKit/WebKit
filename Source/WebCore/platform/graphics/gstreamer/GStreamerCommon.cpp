@@ -25,6 +25,7 @@
 
 #include "GstAllocatorFastMalloc.h"
 #include "IntSize.h"
+#include "SharedBuffer.h"
 #include <gst/audio/audio-info.h>
 #include <gst/gst.h>
 #include <mutex>
@@ -355,6 +356,15 @@ void connectSimpleBusMessageCallback(GstElement* pipeline)
     GRefPtr<GstBus> bus = adoptGRef(gst_pipeline_get_bus(GST_PIPELINE(pipeline)));
     gst_bus_add_signal_watch_full(bus.get(), RunLoopSourcePriority::RunLoopDispatcher);
     g_signal_connect(bus.get(), "message", G_CALLBACK(simpleBusMessageCallback), pipeline);
+}
+
+Ref<SharedBuffer> GstMappedBuffer::createSharedBuffer()
+{
+    // SharedBuffer provides a read-only view on what it expects are
+    // immutable data. Do not create one is writable and hence mutable.
+    RELEASE_ASSERT(isSharable());
+
+    return SharedBuffer::create(*this);
 }
 
 }

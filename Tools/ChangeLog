@@ -1,5 +1,21 @@
 2019-01-14  Charlie Turner  <cturner@igalia.com>
 
+        [GStreamer] Add sharedBuffer utility to GstMappedBuffer, and a testsuite
+        https://bugs.webkit.org/show_bug.cgi?id=192977
+
+        Reviewed by Carlos Garcia Campos.
+
+        * TestWebKitAPI/PlatformGTK.cmake: Build the new GStreamer test harness
+        * TestWebKitAPI/PlatformWPE.cmake: Ditto.
+        * TestWebKitAPI/Tests/WebCore/gstreamer/GStreamerTest.cpp: Added.
+        (TestWebKitAPI::GStreamerTest::SetUp):
+        (TestWebKitAPI::GStreamerTest::TearDown):
+        * TestWebKitAPI/Tests/WebCore/gstreamer/GStreamerTest.h: Added.
+        * TestWebKitAPI/Tests/WebCore/gstreamer/GstMappedBuffer.cpp: Added.
+        (TestWebKitAPI::TEST_F):
+
+2019-01-14  Charlie Turner  <cturner@igalia.com>
+
         [WPE] Workaround for incorrect template specialization being selected when UChar=char16_t
         https://bugs.webkit.org/show_bug.cgi?id=193332
 

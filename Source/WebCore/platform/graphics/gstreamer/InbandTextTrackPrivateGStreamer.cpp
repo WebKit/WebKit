@@ -112,16 +112,16 @@ void InbandTextTrackPrivateGStreamer::notifyTrackOfSample()
             GST_WARNING("Track %d got sample with no buffer.", m_index);
             continue;
         }
-        GstMappedBuffer mappedBuffer(buffer, GST_MAP_READ);
+        auto mappedBuffer = GstMappedBuffer::create(buffer, GST_MAP_READ);
         ASSERT(mappedBuffer);
         if (!mappedBuffer) {
             GST_WARNING("Track %d unable to map buffer.", m_index);
             continue;
         }
 
-        GST_INFO("Track %d parsing sample: %.*s", m_index, static_cast<int>(mappedBuffer.size()),
-            reinterpret_cast<char*>(mappedBuffer.data()));
-        client()->parseWebVTTCueData(reinterpret_cast<char*>(mappedBuffer.data()), mappedBuffer.size());
+        GST_INFO("Track %d parsing sample: %.*s", m_index, static_cast<int>(mappedBuffer->size()),
+            reinterpret_cast<char*>(mappedBuffer->data()));
+        client()->parseWebVTTCueData(reinterpret_cast<char*>(mappedBuffer->data()), mappedBuffer->size());
     }
 }
 

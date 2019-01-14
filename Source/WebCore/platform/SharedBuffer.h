@@ -48,6 +48,10 @@
 typedef struct _GBytes GBytes;
 #endif
 
+#if USE(GSTREAMER)
+#include "GStreamerCommon.h"
+#endif
+
 #if USE(FOUNDATION)
 OBJC_CLASS NSArray;
 OBJC_CLASS NSData;
@@ -88,6 +92,9 @@ public:
     static Ref<SharedBuffer> create(GBytes*);
 #endif
 
+#if USE(GSTREAMER)
+    static Ref<SharedBuffer> create(GstMappedBuffer&);
+#endif
     // Calling data() causes all the data segments to be copied into one segment if they are not already.
     // Iterate the segments using begin() and end() instead.
     // FIXME: Audit the call sites of this function and replace them with iteration if possible.
@@ -126,6 +133,9 @@ public:
 #if USE(GLIB)
         static Ref<DataSegment> create(GRefPtr<GBytes>&& data) { return adoptRef(*new DataSegment(WTFMove(data))); }
 #endif
+#if USE(GSTREAMER)
+        static Ref<DataSegment> create(RefPtr<GstMappedBuffer>&& data) { return adoptRef(*new DataSegment(WTFMove(data))); }
+#endif
         static Ref<DataSegment> create(FileSystem::MappedFileData&& data) { return adoptRef(*new DataSegment(WTFMove(data))); }
 
     private:
@@ -143,6 +153,10 @@ public:
         DataSegment(GRefPtr<GBytes>&& data)
             : m_immutableData(WTFMove(data)) { }
 #endif
+#if USE(GSTREAMER)
+        DataSegment(RefPtr<GstMappedBuffer>&& data)
+            : m_immutableData(WTFMove(data)) { }
+#endif
         DataSegment(FileSystem::MappedFileData&& data)
             : m_immutableData(WTFMove(data)) { }
 
@@ -155,6 +169,9 @@ public:
 #endif
 #if USE(GLIB)
             GRefPtr<GBytes>,
+#endif
+#if USE(GSTREAMER)
+            RefPtr<GstMappedBuffer>,
 #endif
             FileSystem::MappedFileData> m_immutableData;
         friend class SharedBuffer;
@@ -190,6 +207,9 @@ private:
 #endif
 #if USE(GLIB)
     explicit SharedBuffer(GBytes*);
+#endif
+#if USE(GSTREAMER)
+    explicit SharedBuffer(GstMappedBuffer&);
 #endif
 
     void combineIntoOneSegment() const;

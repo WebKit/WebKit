@@ -327,7 +327,7 @@ static Optional<Vector<GRefPtr<GstBuffer>>> webKitWebAudioSrcAllocateBuffersAndR
 
     Vector<GRefPtr<GstBuffer>> channelBufferList;
     channelBufferList.reserveInitialCapacity(priv->sources.size());
-    Vector<GstMappedBuffer> mappedBuffers;
+    Vector<RefPtr<GstMappedBuffer>> mappedBuffers;
     mappedBuffers.reserveInitialCapacity(priv->sources.size());
     for (unsigned i = 0; i < priv->sources.size(); ++i) {
         GRefPtr<GstBuffer> buffer;
@@ -342,10 +342,10 @@ static Optional<Vector<GRefPtr<GstBuffer>>> webKitWebAudioSrcAllocateBuffersAndR
         ASSERT(buffer);
         GST_BUFFER_TIMESTAMP(buffer.get()) = timestamp;
         GST_BUFFER_DURATION(buffer.get()) = duration;
-        GstMappedBuffer mappedBuffer(buffer.get(), GST_MAP_READWRITE);
+        auto mappedBuffer = GstMappedBuffer::create(buffer.get(), GST_MAP_READWRITE);
         ASSERT(mappedBuffer);
         mappedBuffers.uncheckedAppend(WTFMove(mappedBuffer));
-        priv->bus->setChannelMemory(i, reinterpret_cast<float*>(mappedBuffers[i].data()), priv->framesToPull);
+        priv->bus->setChannelMemory(i, reinterpret_cast<float*>(mappedBuffers[i]->data()), priv->framesToPull);
         channelBufferList.uncheckedAppend(WTFMove(buffer));
     }
 

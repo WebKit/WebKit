@@ -40,12 +40,12 @@ public:
     InitData(const String& systemId, GstBuffer* initData)
         : m_systemId(systemId)
     {
-        GstMappedBuffer mappedInitData(initData, GST_MAP_READ);
+        auto mappedInitData = GstMappedBuffer::create(initData, GST_MAP_READ);
         if (!mappedInitData) {
             GST_ERROR("cannot map %s protection data", systemId.utf8().data());
             ASSERT_NOT_REACHED();
         }
-        m_payload = SharedBuffer::create(mappedInitData.data(), mappedInitData.size());
+        m_payload = mappedInitData->createSharedBuffer();
     }
 
     void append(InitData&& initData)

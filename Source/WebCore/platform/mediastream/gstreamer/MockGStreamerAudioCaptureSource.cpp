@@ -78,13 +78,13 @@ public:
 
             GstBuffer* buffer = gst_buffer_new_allocate(nullptr, bipBopCount * m_streamFormat->bytesPerFrame(), nullptr);
             {
-                GstMappedBuffer map(buffer, GST_MAP_WRITE);
+                auto map = GstMappedBuffer::create(buffer, GST_MAP_WRITE);
 
                 if (!muted()) {
-                    memcpy(map.data(), &m_bipBopBuffer[bipBopStart], sizeof(float) * bipBopCount);
-                    addHum(s_HumVolume, s_HumFrequency, sampleRate(), m_samplesRendered, (float*)map.data(), bipBopCount);
+                    memcpy(map->data(), &m_bipBopBuffer[bipBopStart], sizeof(float) * bipBopCount);
+                    addHum(s_HumVolume, s_HumFrequency, sampleRate(), m_samplesRendered, (float*)map->data(), bipBopCount);
                 } else
-                    memset(map.data(), 0, sizeof(float) * bipBopCount);
+                    memset(map->data(), 0, sizeof(float) * bipBopCount);
             }
 
             gst_app_src_push_buffer(GST_APP_SRC(m_src.get()), buffer);

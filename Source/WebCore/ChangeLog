@@ -1,3 +1,60 @@
+2019-01-14  Charlie Turner  <cturner@igalia.com>
+
+        [GStreamer] Add sharedBuffer utility to GstMappedBuffer, and a testsuite
+        https://bugs.webkit.org/show_bug.cgi?id=192977
+
+        Reviewed by Carlos Garcia Campos.
+
+        Add a utility method on GstMappedBuffer to return a SharedBuffer
+        view over the mapped data with no copies.
+
+        This patch also introduces a new gstreamer port API test
+        directory, and includes some tests for GstMappedBuffer.
+
+        New tests in the API section.
+
+        * platform/SharedBuffer.cpp: Add a new overload for
+        GstMappedBuffer that allows sharing the mapped GStreamer buffers
+        with zero copies.
+        (WebCore::SharedBuffer::create):
+        (WebCore::SharedBuffer::SharedBuffer):
+        (WebCore::SharedBuffer::DataSegment::data const):
+        (WebCore::SharedBuffer::DataSegment::size const):
+        * platform/SharedBuffer.h:
+        * platform/audio/gstreamer/WebKitWebAudioSourceGStreamer.cpp:
+        (webKitWebAudioSrcAllocateBuffersAndRenderAudio): Update to new
+        API.
+        * platform/graphics/gstreamer/GStreamerCommon.cpp:
+        (WebCore::GstMappedBuffer::createSharedBuffer): Return a shared
+        buffer sharing this mapped buffer. The buffer must be shareable to
+        use this method.
+        * platform/graphics/gstreamer/GStreamerCommon.h:
+        (WebCore::GstMappedBuffer::create): Make GstMappedBuffer RefCounted
+        (WebCore::GstMappedBuffer::~GstMappedBuffer):
+        (WebCore::GstMappedBuffer::data):
+        (WebCore::GstMappedBuffer::data const):
+        (WebCore::GstMappedBuffer::size const):
+        (WebCore::GstMappedBuffer::isSharable const): New predicate to
+        check whether this buffer can be shared (i.e., is not writable)
+        (WebCore::GstMappedBuffer::GstMappedBuffer):
+        (WebCore::GstMappedBuffer::operator bool const): Deleted.
+        * platform/graphics/gstreamer/InbandTextTrackPrivateGStreamer.cpp:
+        (WebCore::InbandTextTrackPrivateGStreamer::notifyTrackOfSample):
+        Update to use new API.
+        * platform/graphics/gstreamer/eme/GStreamerEMEUtilities.h:
+        (WebCore::InitData::InitData): Ditto.
+        * platform/graphics/gstreamer/eme/WebKitClearKeyDecryptorGStreamer.cpp:
+        (webKitMediaClearKeyDecryptorFindAndSetKey): Ditto.
+        (webKitMediaClearKeyDecryptorDecrypt): Ditto.
+        * platform/mediastream/gstreamer/MockGStreamerAudioCaptureSource.cpp:
+        (WebCore::WrappedMockRealtimeAudioSource::render): Ditto.
+        * platform/mediastream/gstreamer/RealtimeOutgoingAudioSourceLibWebRTC.cpp:
+        (WebCore::RealtimeOutgoingAudioSourceLibWebRTC::pullAudioData): Ditto.
+        * platform/mediastream/gstreamer/RealtimeOutgoingVideoSourceLibWebRTC.cpp:
+        (WebCore::RealtimeOutgoingVideoSourceLibWebRTC::createBlackFrame): Ditto.
+        * platform/mediastream/libwebrtc/GStreamerVideoEncoderFactory.cpp:
+        (WebCore::GStreamerVideoEncoder::Fragmentize): Ditto.
+
 2019-01-14  Karl Leplat  <karl.leplat_ext@softathome.com>
 
         [GTK][WPE] Graphic issue with invalidations on composited layers with subpixel positions

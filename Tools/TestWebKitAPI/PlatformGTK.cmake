@@ -25,6 +25,7 @@ include_directories(
 include_directories(SYSTEM
     ${GDK3_INCLUDE_DIRS}
     ${GLIB_INCLUDE_DIRS}
+    ${GSTREAMER_INCLUDE_DIRS}
     ${GTK3_INCLUDE_DIRS}
     ${LIBSOUP_INCLUDE_DIRS}
 )
@@ -93,6 +94,8 @@ add_executable(TestWebCore
     ${TESTWEBKITAPI_DIR}/Tests/WebCore/DNS.cpp
     ${TESTWEBKITAPI_DIR}/Tests/WebCore/FileMonitor.cpp
     ${TESTWEBKITAPI_DIR}/Tests/WebCore/FileSystem.cpp
+    ${TESTWEBKITAPI_DIR}/Tests/WebCore/gstreamer/GstMappedBuffer.cpp
+    ${TESTWEBKITAPI_DIR}/Tests/WebCore/gstreamer/GStreamerTest.cpp
     ${TESTWEBKITAPI_DIR}/Tests/WebCore/GridPosition.cpp
     ${TESTWEBKITAPI_DIR}/Tests/WebCore/HTMLParserIdioms.cpp
     ${TESTWEBKITAPI_DIR}/Tests/WebCore/LayoutUnit.cpp

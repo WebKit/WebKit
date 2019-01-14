@@ -27,10 +27,12 @@
 #include <gst/video/video-format.h>
 #include <gst/video/video-info.h>
 #include <wtf/MediaTime.h>
+#include <wtf/ThreadSafeRefCounted.h>
 
 namespace WebCore {
 
 class IntSize;
+class SharedBuffer;
 
 inline bool webkitGstCheckVersion(guint major, guint minor, guint micro)
 {
@@ -77,51 +79,47 @@ inline GstClockTime toGstClockTime(const MediaTime &mediaTime)
     return static_cast<GstClockTime>(toGstUnsigned64Time(mediaTime));
 }
 
-class GstMappedBuffer {
-    WTF_MAKE_NONCOPYABLE(GstMappedBuffer);
+class GstMappedBuffer : public ThreadSafeRefCounted<GstMappedBuffer> {
 public:
-
-    GstMappedBuffer(GstMappedBuffer&& other)
-        : m_buffer(other.m_buffer)
-        , m_info(other.m_info)
-        , m_isValid(other.m_isValid)
+    static RefPtr<GstMappedBuffer> create(GstBuffer* buffer, GstMapFlags flags)
     {
-        other.m_isValid = false;
-    }
-
-    GstMappedBuffer(GstBuffer* buffer, GstMapFlags flags)
-        : m_buffer(buffer)
-    {
-        m_isValid = gst_buffer_map(m_buffer, &m_info, flags);
+        GstMapInfo info;
+        if (!gst_buffer_map(buffer, &info, flags))
+            return nullptr;
+        return adoptRef(new GstMappedBuffer(buffer, WTFMove(info)));
     }
 
     // Unfortunately, GST_MAP_READWRITE is defined out of line from the MapFlags
     // enum as an int, and C++ is careful to not implicity convert it to an enum.
-    GstMappedBuffer(GstBuffer* buffer, int flags)
-        : GstMappedBuffer(buffer, static_cast<GstMapFlags>(flags)) { }
+    static RefPtr<GstMappedBuffer> create(GstBuffer* buffer, int flags)
+    {
+        return GstMappedBuffer::create(buffer, static_cast<GstMapFlags>(flags));
+    }
 
     ~GstMappedBuffer()
     {
-        if (m_isValid)
-            gst_buffer_unmap(m_buffer, &m_info);
-        m_isValid = false;
+        gst_buffer_unmap(m_buffer, &m_info);
     }
 
-    uint8_t* data() { ASSERT(m_isValid); return static_cast<uint8_t*>(m_info.data); }
-    const uint8_t* data() const { ASSERT(m_isValid); return static_cast<uint8_t*>(m_info.data); }
-
-    size_t size() const { ASSERT(m_isValid); return static_cast<size_t>(m_info.size); }
-
-    explicit operator bool() const { return m_isValid; }
+    uint8_t* data() { return static_cast<uint8_t*>(m_info.data); }
+    const uint8_t* data() const { return static_cast<uint8_t*>(m_info.data); }
+    size_t size() const { return static_cast<size_t>(m_info.size); }
+    bool isSharable() const { return !(m_info.flags & GST_MAP_WRITE); }
+    Ref<SharedBuffer> createSharedBuffer();
 
 private:
+    GstMappedBuffer(GstBuffer* buffer, GstMapInfo&& info)
+        : m_buffer(buffer)
+        , m_info(WTFMove(info))
+    {
+    }
+
     friend bool operator==(const GstMappedBuffer&, const GstMappedBuffer&);
     friend bool operator==(const GstMappedBuffer&, const GstBuffer*);
     friend bool operator==(const GstBuffer* a, const GstMappedBuffer& b) { return operator==(b, a); }
 
     GstBuffer* m_buffer { nullptr };
     GstMapInfo m_info;
-    bool m_isValid { false };
 };
 
 inline bool operator==(const GstMappedBuffer& a, const GstMappedBuffer& b)
