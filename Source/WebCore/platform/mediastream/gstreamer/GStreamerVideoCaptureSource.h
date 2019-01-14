@@ -22,6 +22,7 @@
 #pragma once
 
 #if ENABLE(MEDIA_STREAM) && USE(LIBWEBRTC) && USE(GSTREAMER)
+#include "CaptureDevice.h"
 #include "GStreamerVideoCapturer.h"
 #include "RealtimeVideoSource.h"
 
@@ -52,6 +53,7 @@ protected:
 
     mutable Optional<RealtimeMediaSourceCapabilities> m_capabilities;
     mutable Optional<RealtimeMediaSourceSettings> m_currentSettings;
+    CaptureDevice::DeviceType deviceType() const override { return CaptureDevice::DeviceType::Camera; }
 
 private:
     static GstFlowReturn newSampleCallback(GstElement*, GStreamerVideoCaptureSource*);
