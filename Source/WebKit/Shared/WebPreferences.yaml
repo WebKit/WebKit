@@ -557,7 +557,7 @@ WebRTCH264SimulcastEnabled:
 
 WebRTCMDNSICECandidatesEnabled:
   type: bool
-  defaultValue: false
+  defaultValue: true
   humanReadableName: "WebRTC mDNS ICE candidates"
   humanReadableDescription: "Enable WebRTC mDNS ICE candidates"
   webcoreBinding: RuntimeEnabledFeatures
