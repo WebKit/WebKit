@@ -73,10 +73,10 @@ bool BuiltInSemantic::isAcceptableType(const UnnamedType& unnamedType, const Int
     }
 }
 
-bool BuiltInSemantic::isAcceptableForShaderItemDirection(ShaderItemDirection direction, const FunctionDefinition& functionDefinition) const
+bool BuiltInSemantic::isAcceptableForShaderItemDirection(ShaderItemDirection direction, const Optional<EntryPointType>& entryPointType) const
 {
-    switch (*functionDefinition.entryPointType()) {
-    case FunctionDeclaration::EntryPointType::Vertex:
+    switch (*entryPointType) {
+    case EntryPointType::Vertex:
         switch (direction) {
         case ShaderItemDirection::Input:
             switch (m_variable) {
@@ -95,7 +95,7 @@ bool BuiltInSemantic::isAcceptableForShaderItemDirection(ShaderItemDirection dir
                 return false;
             }
         }
-    case FunctionDeclaration::EntryPointType::Fragment:
+    case EntryPointType::Fragment:
         switch (direction) {
         case ShaderItemDirection::Input:
             switch (m_variable) {
@@ -117,7 +117,7 @@ bool BuiltInSemantic::isAcceptableForShaderItemDirection(ShaderItemDirection dir
                 return false;
             }
         }
-    case FunctionDeclaration::EntryPointType::Compute:
+    case EntryPointType::Compute:
         switch (direction) {
         case ShaderItemDirection::Input:
             switch (m_variable) {

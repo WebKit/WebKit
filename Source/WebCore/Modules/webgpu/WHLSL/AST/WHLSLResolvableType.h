@@ -58,8 +58,8 @@ public:
     virtual bool canResolve(const Type&) const = 0;
     virtual unsigned conversionCost(const UnnamedType&) const = 0;
 
-    const UnnamedType* resolvedType() const { return m_resolvedType ? &static_cast<const UnnamedType&>(*m_resolvedType) : nullptr; }
-    UnnamedType* resolvedType() { return m_resolvedType ? &static_cast<UnnamedType&>(*m_resolvedType) : nullptr; }
+    const UnnamedType* resolvedType() const { return m_resolvedType ? &*m_resolvedType : nullptr; }
+    UnnamedType* resolvedType() { return m_resolvedType ? &*m_resolvedType : nullptr; }
 
     void resolve(UniqueRef<UnnamedType>&& type)
     {

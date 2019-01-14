@@ -27,9 +27,8 @@
 
 #if ENABLE(WEBGPU)
 
-#include "WHLSLEnumerationMember.h"
-#include "WHLSLExpression.h"
 #include "WHLSLLexer.h"
+#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
@@ -37,25 +36,77 @@ namespace WHLSL {
 
 namespace AST {
 
+class EnumerationDefinition;
+class EnumerationMember;
+
 class EnumerationMemberLiteral : public Expression {
 public:
-    EnumerationMemberLiteral(Lexer::Token&& origin, EnumerationMember& enumerationMember)
+    EnumerationMemberLiteral(Lexer::Token&& origin, String&& left, String&& right)
         : Expression(WTFMove(origin))
-        , m_enumerationMember(enumerationMember)
+        , m_left(WTFMove(left))
+        , m_right(WTFMove(right))
     {
     }
 
     virtual ~EnumerationMemberLiteral() = default;
 
-    EnumerationMemberLiteral(const EnumerationMemberLiteral&) = delete;
+    explicit EnumerationMemberLiteral(const EnumerationMemberLiteral&) = default;
     EnumerationMemberLiteral(EnumerationMemberLiteral&&) = default;
+
+    EnumerationMemberLiteral& operator=(const EnumerationMemberLiteral&) = delete;
+    EnumerationMemberLiteral& operator=(EnumerationMemberLiteral&&) = default;
 
     bool isEnumerationMemberLiteral() const override { return true; }
 
-    EnumerationMember& enumerationMember() { return m_enumerationMember; }
+    static EnumerationMemberLiteral wrap(Lexer::Token&& origin, String&& left, String&& right, EnumerationDefinition& enumerationDefinition, EnumerationMember& enumerationMember)
+    {
+        EnumerationMemberLiteral result(WTFMove(origin), WTFMove(left), WTFMove(right));
+        result.m_enumerationDefinition = &enumerationDefinition;
+        result.m_enumerationMember = &enumerationMember;
+        return result;
+    }
+
+    const String& left() const { return m_left; }
+    const String& right() const { return m_right; }
+
+    EnumerationMemberLiteral clone() const
+    {
+        auto result = EnumerationMemberLiteral(Lexer::Token(origin()), String(m_left), String(m_right));
+        result.m_enumerationMember = m_enumerationMember;
+        return result;
+    }
+
+    EnumerationDefinition* enumerationDefinition()
+    {
+        return m_enumerationDefinition;
+    }
+
+    EnumerationDefinition* enumerationDefinition() const
+    {
+        return m_enumerationDefinition;
+    }
+
+    EnumerationMember* enumerationMember()
+    {
+        return m_enumerationMember;
+    }
+
+    EnumerationMember* enumerationMember() const
+    {
+        return m_enumerationMember;
+    }
+
+    void setEnumerationMember(EnumerationDefinition& enumerationDefinition, EnumerationMember& enumerationMember)
+    {
+        m_enumerationDefinition = &enumerationDefinition;
+        m_enumerationMember = &enumerationMember;
+    }
 
 private:
-    EnumerationMember& m_enumerationMember;
+    String m_left;
+    String m_right;
+    EnumerationDefinition* m_enumerationDefinition { nullptr };
+    EnumerationMember* m_enumerationMember { nullptr };
 };
 
 } // namespace AST

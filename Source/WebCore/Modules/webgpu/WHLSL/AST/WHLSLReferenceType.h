@@ -27,6 +27,7 @@
 
 #if ENABLE(WEBGPU)
 
+#include "WHLSLAddressSpace.h"
 #include "WHLSLLexer.h"
 #include "WHLSLUnnamedType.h"
 #include <wtf/UniqueRef.h>
@@ -40,13 +41,6 @@ namespace AST {
 
 class ReferenceType : public UnnamedType {
 public:
-    enum class AddressSpace : uint8_t {
-        Constant,
-        Device,
-        Threadgroup,
-        Thread
-    };
-
     ReferenceType(Lexer::Token&& origin, AddressSpace addressSpace, UniqueRef<UnnamedType>&& elementType)
         : UnnamedType(WTFMove(origin))
         , m_addressSpace(addressSpace)
@@ -62,8 +56,8 @@ public:
     bool isReferenceType() const override { return false; }
 
     AddressSpace addressSpace() const { return m_addressSpace; }
-    const UnnamedType& elementType() const { return static_cast<const UnnamedType&>(m_elementType); }
-    UnnamedType& elementType() { return static_cast<UnnamedType&>(m_elementType); }
+    const UnnamedType& elementType() const { return m_elementType; }
+    UnnamedType& elementType() { return m_elementType; }
 
 private:
     AddressSpace m_addressSpace;

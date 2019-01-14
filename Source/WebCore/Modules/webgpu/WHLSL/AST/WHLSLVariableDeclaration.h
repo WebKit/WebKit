@@ -65,9 +65,10 @@ public:
     String& name() { return m_name; }
 
     const Optional<UniqueRef<UnnamedType>>& type() const { return m_type; } // Anonymous variables inside ReadModifyWriteExpressions have their type set by the type checker.
-    UnnamedType* type() { return m_type ? &static_cast<UnnamedType&>(*m_type) : nullptr; }
+    UnnamedType* type() { return m_type ? &*m_type : nullptr; }
     Optional<Semantic>& semantic() { return m_semantic; }
-    Expression* initializer() { return m_initializer ? &static_cast<Expression&>(*m_initializer) : nullptr; }
+    Expression* initializer() { return m_initializer ? &*m_initializer : nullptr; }
+    bool isAnonymous() const { return m_name.isNull(); }
 
 private:
     Lexer::Token m_origin;

@@ -63,7 +63,7 @@ class UnsignedIntegerLiteral;
 class FloatLiteral;
 class NullLiteral;
 class BooleanLiteral;
-class ConstantExpressionEnumerationMemberReference;
+class EnumerationMemberLiteral;
 class NumThreadsFunctionAttribute;
 class Block;
 class Statement;
@@ -141,7 +141,7 @@ public:
     virtual void visit(AST::UnsignedIntegerLiteralType&);
     virtual void visit(AST::FloatLiteralType&);
     virtual void visit(AST::NullLiteralType&);
-    virtual void visit(AST::ConstantExpressionEnumerationMemberReference&);
+    virtual void visit(AST::EnumerationMemberLiteral&);
     virtual void visit(AST::FunctionAttribute&);
     virtual void visit(AST::NumThreadsFunctionAttribute&);
     virtual void visit(AST::Block&);

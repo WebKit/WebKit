@@ -56,9 +56,9 @@ public:
 
     bool isIfStatement() const override { return true; }
 
-    Expression& conditional() { return static_cast<Expression&>(m_conditional); }
-    Statement& body() { return static_cast<Statement&>(m_body); }
-    Statement* elseBody() { return m_elseBody ? &static_cast<Statement&>(*m_elseBody) : nullptr; }
+    Expression& conditional() { return m_conditional; }
+    Statement& body() { return m_body; }
+    Statement* elseBody() { return m_elseBody ? &*m_elseBody : nullptr; }
 
 private:
     UniqueRef<Expression> m_conditional;

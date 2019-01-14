@@ -40,7 +40,6 @@
 #include "WHLSLCallExpression.h"
 #include "WHLSLCommaExpression.h"
 #include "WHLSLConstantExpression.h"
-#include "WHLSLConstantExpressionEnumerationMemberReference.h"
 #include "WHLSLContinue.h"
 #include "WHLSLDereferenceExpression.h"
 #include "WHLSLDoWhileLoop.h"
@@ -48,6 +47,7 @@
 #include "WHLSLEffectfulExpressionStatement.h"
 #include "WHLSLEnumerationDefinition.h"
 #include "WHLSLEnumerationMember.h"
+#include "WHLSLEnumerationMemberLiteral.h"
 #include "WHLSLExpression.h"
 #include "WHLSLFallthrough.h"
 #include "WHLSLFloatLiteral.h"
@@ -104,17 +104,17 @@ void Visitor::visit(Program& program)
 {
     // These visiting functions might add new global statements, so don't use foreach syntax.
     for (size_t i = 0; i < program.typeDefinitions().size(); ++i)
-        checkErrorAndVisit(static_cast<AST::TypeDefinition&>(program.typeDefinitions()[i]));
+        checkErrorAndVisit(program.typeDefinitions()[i]);
     for (size_t i = 0; i < program.structureDefinitions().size(); ++i)
-        checkErrorAndVisit(static_cast<AST::StructureDefinition&>(program.structureDefinitions()[i]));
+        checkErrorAndVisit(program.structureDefinitions()[i]);
     for (size_t i = 0; i < program.enumerationDefinitions().size(); ++i)
-        checkErrorAndVisit(static_cast<AST::EnumerationDefinition&>(program.enumerationDefinitions()[i]));
+        checkErrorAndVisit(program.enumerationDefinitions()[i]);
     for (size_t i = 0; i < program.functionDefinitions().size(); ++i)
-        checkErrorAndVisit(static_cast<AST::FunctionDefinition&>(program.functionDefinitions()[i]));
+        checkErrorAndVisit(program.functionDefinitions()[i]);
     for (size_t i = 0; i < program.nativeFunctionDeclarations().size(); ++i)
-        checkErrorAndVisit(static_cast<AST::NativeFunctionDeclaration&>(program.nativeFunctionDeclarations()[i]));
+        checkErrorAndVisit(program.nativeFunctionDeclarations()[i]);
     for (size_t i = 0; i < program.nativeTypeDeclarations().size(); ++i)
-        checkErrorAndVisit(static_cast<AST::NativeTypeDeclaration&>(program.nativeTypeDeclarations()[i]));
+        checkErrorAndVisit(program.nativeTypeDeclarations()[i]);
 }
 
 void Visitor::visit(AST::UnnamedType& unnamedType)
@@ -158,8 +158,7 @@ void Visitor::visit(AST::StructureDefinition& structureDefinition)
 
 void Visitor::visit(AST::EnumerationDefinition& enumerationDefinition)
 {
-    if (enumerationDefinition.type())
-        checkErrorAndVisit(static_cast<AST::UnnamedType&>(*enumerationDefinition.type()));
+    checkErrorAndVisit(enumerationDefinition.type());
     for (auto& enumerationMember : enumerationDefinition.enumerationMembers())
         checkErrorAndVisit(enumerationMember);
 }
@@ -234,7 +233,7 @@ void Visitor::visit(AST::TypeArgument& typeArgument)
     WTF::visit(WTF::makeVisitor([&](AST::ConstantExpression& constantExpression) {
         checkErrorAndVisit(constantExpression);
     }, [&](UniqueRef<AST::TypeReference>& typeReference) {
-        checkErrorAndVisit(static_cast<AST::TypeReference&>(typeReference));
+        checkErrorAndVisit(typeReference);
     }), typeArgument);
 }
 
@@ -268,8 +267,8 @@ void Visitor::visit(AST::ConstantExpression& constantExpression)
         checkErrorAndVisit(nullLiteral);
     }, [&](AST::BooleanLiteral& booleanLiteral) {
         checkErrorAndVisit(booleanLiteral);
-    }, [&](AST::ConstantExpressionEnumerationMemberReference& constantExpressionEnumerationMemberReference) {
-        checkErrorAndVisit(constantExpressionEnumerationMemberReference);
+    }, [&](AST::EnumerationMemberLiteral& enumerationMemberLiteral) {
+        checkErrorAndVisit(enumerationMemberLiteral);
     }));
 }
 
@@ -346,7 +345,7 @@ void Visitor::visit(AST::NullLiteralType& nullLiteralType)
         checkErrorAndVisit(*nullLiteralType.resolvedType());
 }
 
-void Visitor::visit(AST::ConstantExpressionEnumerationMemberReference&)
+void Visitor::visit(AST::EnumerationMemberLiteral&)
 {
 }
 
@@ -364,7 +363,7 @@ void Visitor::visit(AST::NumThreadsFunctionAttribute&)
 void Visitor::visit(AST::Block& block)
 {
     for (auto& statement : block.statements())
-        checkErrorAndVisit(static_cast<AST::Statement&>(statement));
+        checkErrorAndVisit(statement);
 }
 
 void Visitor::visit(AST::Statement& statement)
@@ -451,6 +450,8 @@ void Visitor::visit(AST::Expression& expression)
         checkErrorAndVisit(downcast<AST::TernaryExpression>(expression));
     else if (is<AST::UnsignedIntegerLiteral>(expression))
         checkErrorAndVisit(downcast<AST::UnsignedIntegerLiteral>(expression));
+    else if (is<AST::EnumerationMemberLiteral>(expression))
+        checkErrorAndVisit(downcast<AST::EnumerationMemberLiteral>(expression));
     else {
         ASSERT(is<AST::VariableReference>(expression));
         checkErrorAndVisit(downcast<AST::VariableReference>(expression));
@@ -487,7 +488,7 @@ void Visitor::visit(AST::ForLoop& forLoop)
     WTF::visit(WTF::makeVisitor([&](AST::VariableDeclarationsStatement& variableDeclarationsStatement) {
         checkErrorAndVisit(variableDeclarationsStatement);
     }, [&](UniqueRef<AST::Expression>& expression) {
-        checkErrorAndVisit(static_cast<AST::Expression&>(expression));
+        checkErrorAndVisit(expression);
     }), forLoop.initialization());
     if (forLoop.condition())
         checkErrorAndVisit(*forLoop.condition());
@@ -501,7 +502,7 @@ void Visitor::visit(AST::IfStatement& ifStatement)
     checkErrorAndVisit(ifStatement.conditional());
     checkErrorAndVisit(ifStatement.body());
     if (ifStatement.elseBody())
-        checkErrorAndVisit(static_cast<AST::Statement&>(*ifStatement.elseBody()));
+        checkErrorAndVisit(*ifStatement.elseBody());
 }
 
 void Visitor::visit(AST::Return& returnStatement)
@@ -559,7 +560,7 @@ void Visitor::visit(AST::AssignmentExpression& assignmentExpression)
 void Visitor::visit(AST::CallExpression& callExpression)
 {
     for (auto& argument : callExpression.arguments())
-        checkErrorAndVisit(static_cast<AST::Expression&>(argument));
+        checkErrorAndVisit(argument);
     if (callExpression.castReturnType())
         checkErrorAndVisit(callExpression.castReturnType()->get());
 }
@@ -567,7 +568,7 @@ void Visitor::visit(AST::CallExpression& callExpression)
 void Visitor::visit(AST::CommaExpression& commaExpression)
 {
     for (auto& expression : commaExpression.list())
-        checkErrorAndVisit(static_cast<AST::Expression&>(expression));
+        checkErrorAndVisit(expression);
 }
 
 void Visitor::visit(AST::DereferenceExpression& dereferenceExpression)

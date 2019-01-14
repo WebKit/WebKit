@@ -41,9 +41,9 @@ bool checkDuplicateFunctions(const Program& program)
 {
     Vector<std::reference_wrapper<const AST::FunctionDeclaration>> functions;
     for (auto& functionDefinition : program.functionDefinitions())
-        functions.append(static_cast<const AST::FunctionDefinition&>(functionDefinition));
+        functions.append(functionDefinition);
     for (auto& nativeFunctionDeclaration : program.nativeFunctionDeclarations())
-        functions.append(static_cast<const AST::NativeFunctionDeclaration&>(nativeFunctionDeclaration));
+        functions.append(nativeFunctionDeclaration);
 
     std::sort(functions.begin(), functions.end(), [](const AST::FunctionDeclaration& a, const AST::FunctionDeclaration& b) -> bool {
         if (a.name().length() < b.name().length())
@@ -99,7 +99,7 @@ bool checkDuplicateFunctions(const Program& program)
             && functions[i].get().parameters().size() == 2
             && is<AST::ReferenceType>(static_cast<const AST::UnnamedType&>(*functions[i].get().parameters()[0].type()))
             && is<AST::ReferenceType>(static_cast<const AST::UnnamedType&>(*functions[i].get().parameters()[1].type()))
-            && matches(static_cast<const AST::UnnamedType&>(*functions[i].get().parameters()[0].type()), static_cast<const AST::UnnamedType&>(*functions[i].get().parameters()[1].type())))
+            && matches(*functions[i].get().parameters()[0].type(), *functions[i].get().parameters()[1].type()))
             return false;
     }
     return true;

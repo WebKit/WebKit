@@ -53,7 +53,7 @@ public:
 
     bool isEffectfulExpressionStatement() const override { return true; }
 
-    Expression& effectfulExpression() { return static_cast<Expression&>(m_effectfulExpression); }
+    Expression& effectfulExpression() { return m_effectfulExpression; }
 
 private:
     UniqueRef<Expression> m_effectfulExpression;

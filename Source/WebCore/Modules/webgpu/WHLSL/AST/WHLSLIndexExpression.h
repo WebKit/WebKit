@@ -67,7 +67,7 @@ public:
         return "operator[]="_str;
     }
 
-    Expression& indexExpression() { return static_cast<Expression&>(m_index); }
+    Expression& indexExpression() { return m_index; }
 
 private:
     UniqueRef<Expression> m_index;

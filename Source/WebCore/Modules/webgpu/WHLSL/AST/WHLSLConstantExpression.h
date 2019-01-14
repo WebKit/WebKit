@@ -28,7 +28,7 @@
 #if ENABLE(WEBGPU)
 
 #include "WHLSLBooleanLiteral.h"
-#include "WHLSLConstantExpressionEnumerationMemberReference.h"
+#include "WHLSLEnumerationMemberLiteral.h"
 #include "WHLSLFloatLiteral.h"
 #include "WHLSLIntegerLiteral.h"
 #include "WHLSLNullLiteral.h"
@@ -71,8 +71,8 @@ public:
     {
     }
 
-    ConstantExpression(ConstantExpressionEnumerationMemberReference&& constantExpressionEnumerationMemberReference)
-        : m_variant(WTFMove(constantExpressionEnumerationMemberReference))
+    ConstantExpression(EnumerationMemberLiteral&& enumerationMemberLiteral)
+        : m_variant(WTFMove(enumerationMemberLiteral))
     {
     }
 
@@ -110,8 +110,8 @@ public:
             return nullLiteral.clone();
         }, [&](const BooleanLiteral& booleanLiteral) -> ConstantExpression {
             return booleanLiteral.clone();
-        }, [&](const ConstantExpressionEnumerationMemberReference& constantExpressionEnumerationMemberReference) -> ConstantExpression {
-            return constantExpressionEnumerationMemberReference.clone();
+        }, [&](const EnumerationMemberLiteral& enumerationMemberLiteral) -> ConstantExpression {
+            return enumerationMemberLiteral.clone();
         }), m_variant);
     }
 
@@ -133,10 +133,10 @@ public:
                 result = booleanLiteral.value() == otherBooleanLiteral.value();
             } else
                 result = false;
-        }, [&](const ConstantExpressionEnumerationMemberReference& constantExpressionEnumerationMemberReference) {
-            if (WTF::holds_alternative<ConstantExpressionEnumerationMemberReference>(other.m_variant)) {
-                const auto& otherMemberReference = WTF::get<ConstantExpressionEnumerationMemberReference>(other.m_variant);
-                result = constantExpressionEnumerationMemberReference.enumerationMember() == otherMemberReference.enumerationMember();
+        }, [&](const EnumerationMemberLiteral& enumerationMemberLiteral) {
+            if (WTF::holds_alternative<EnumerationMemberLiteral>(other.m_variant)) {
+                const auto& otherMemberReference = WTF::get<EnumerationMemberLiteral>(other.m_variant);
+                result = enumerationMemberLiteral.enumerationMember() == otherMemberReference.enumerationMember();
             } else
                 result = false;
         }));
@@ -154,7 +154,7 @@ public:
             result = false;
         }, [&](const BooleanLiteral&) {
             result = false;
-        }, [&](const ConstantExpressionEnumerationMemberReference&) {
+        }, [&](const EnumerationMemberLiteral&) {
             result = false;
         }));
 
@@ -169,7 +169,7 @@ private:
         FloatLiteral,
         NullLiteral,
         BooleanLiteral,
-        ConstantExpressionEnumerationMemberReference
+        EnumerationMemberLiteral
         > m_variant;
 };
 

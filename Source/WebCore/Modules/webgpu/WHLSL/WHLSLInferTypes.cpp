@@ -159,16 +159,19 @@ Optional<UniqueRef<AST::UnnamedType>> commit(AST::ResolvableType& resolvableType
 {
     ASSERT(!resolvableType.resolvedType());
     if (is<AST::FloatLiteralType>(resolvableType)) {
-        resolvableType.resolve(downcast<AST::FloatLiteralType>(resolvableType).preferredType().clone());
-        return downcast<AST::FloatLiteralType>(resolvableType).preferredType().clone();
+        auto& floatLiteralType = downcast<AST::FloatLiteralType>(resolvableType);
+        resolvableType.resolve(floatLiteralType.preferredType().clone());
+        return floatLiteralType.preferredType().clone();
     }
     if (is<AST::IntegerLiteralType>(resolvableType)) {
-        resolvableType.resolve(downcast<AST::IntegerLiteralType>(resolvableType).preferredType().clone());
-        return downcast<AST::IntegerLiteralType>(resolvableType).preferredType().clone();
+        auto& integerLiteralType = downcast<AST::IntegerLiteralType>(resolvableType);
+        resolvableType.resolve(integerLiteralType.preferredType().clone());
+        return integerLiteralType.preferredType().clone();
     }
     if (is<AST::UnsignedIntegerLiteralType>(resolvableType)) {
-        resolvableType.resolve(downcast<AST::UnsignedIntegerLiteralType>(resolvableType).preferredType().clone());
-        return downcast<AST::UnsignedIntegerLiteralType>(resolvableType).preferredType().clone();
+        auto& unsignedIntegerLiteralType = downcast<AST::UnsignedIntegerLiteralType>(resolvableType);
+        resolvableType.resolve(unsignedIntegerLiteralType.preferredType().clone());
+        return unsignedIntegerLiteralType.preferredType().clone();
     }
     if (is<AST::NullLiteralType>(resolvableType)) {
         // FIXME: Trying to match nullptr and nullptr fails.
@@ -199,7 +202,7 @@ bool inferTypesForTypeArguments(AST::NamedType& possibleType, AST::TypeArguments
             WTF::visit(WTF::makeVisitor([&](AST::ConstantExpression& constantExpression) {
                 expression = &constantExpression;
             }, [&](UniqueRef<AST::TypeReference>& theTypeReference) {
-                typeReference = &static_cast<AST::TypeReference&>(theTypeReference);
+                typeReference = &theTypeReference;
             }), typeArgument);
         };
 
@@ -224,7 +227,7 @@ bool inferTypesForCall(AST::FunctionDeclaration& possibleFunction, Vector<std::r
         return false;
     for (size_t i = 0; i < possibleFunction.parameters().size(); ++i) {
         auto success = WTF::visit(WTF::makeVisitor([&](UniqueRef<AST::UnnamedType>& unnamedType) -> bool {
-            return matches(*possibleFunction.parameters()[i].type(), static_cast<AST::UnnamedType&>(unnamedType));
+            return matches(*possibleFunction.parameters()[i].type(), unnamedType);
         }, [&](Ref<ResolvableTypeReference>& resolvableTypeReference) -> bool {
             return resolvableTypeReference->resolvableType().canResolve(*possibleFunction.parameters()[i].type());
         }), argumentTypes[i].get());

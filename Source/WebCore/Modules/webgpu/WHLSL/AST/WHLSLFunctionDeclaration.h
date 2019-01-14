@@ -27,6 +27,7 @@
 
 #if ENABLE(WEBGPU)
 
+#include "WHLSLEntryPointType.h"
 #include "WHLSLFunctionAttribute.h"
 #include "WHLSLLexer.h"
 #include "WHLSLNode.h"
@@ -44,13 +45,6 @@ namespace AST {
 
 class FunctionDeclaration : public Node {
 public:
-    enum class EntryPointType : uint8_t {
-        Vertex,
-        Fragment,
-        Compute,
-        // FIXME: Add an entry point type for testing
-    };
-
     FunctionDeclaration(Lexer::Token&& origin, AttributeBlock&& attributeBlock, Optional<EntryPointType> entryPointType, UniqueRef<UnnamedType>&& type, String&& name, VariableDeclarations&& parameters, Optional<Semantic>&& semantic, bool isOperator)
         : m_origin(WTFMove(origin))
         , m_attributeBlock(WTFMove(attributeBlock))
@@ -73,8 +67,8 @@ public:
 
     AttributeBlock& attributeBlock() { return m_attributeBlock; }
     const Optional<EntryPointType>& entryPointType() const { return m_entryPointType; }
-    const UnnamedType& type() const { return static_cast<const UnnamedType&>(m_type); }
-    UnnamedType& type() { return static_cast<UnnamedType&>(m_type); }
+    const UnnamedType& type() const { return m_type; }
+    UnnamedType& type() { return m_type; }
     const String& name() const { return m_name; }
     bool isCast() const { return m_name == "operator cast"; }
     const VariableDeclarations& parameters() const { return m_parameters; }

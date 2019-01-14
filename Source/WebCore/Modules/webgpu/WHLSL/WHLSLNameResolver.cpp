@@ -103,7 +103,7 @@ void NameResolver::visit(AST::IfStatement& ifStatement)
     NameResolver(nameContext).checkErrorAndVisit(ifStatement.body());
     if (ifStatement.elseBody()) {
         NameContext nameContext(&m_nameContext);
-        NameResolver(nameContext).checkErrorAndVisit(static_cast<AST::Statement&>(*ifStatement.elseBody()));
+        NameResolver(nameContext).checkErrorAndVisit(*ifStatement.elseBody());
     }
 }
 
@@ -167,17 +167,20 @@ void NameResolver::visit(AST::PropertyAccessExpression& propertyAccessExpression
 void NameResolver::visit(AST::DotExpression& dotExpression)
 {
     if (is<AST::VariableReference>(dotExpression.base())) {
-        if (auto enumerationTypes = m_nameContext.getTypes(downcast<AST::VariableReference>(dotExpression.base()).name())) {
+        auto baseName = downcast<AST::VariableReference>(dotExpression.base()).name();
+        if (auto enumerationTypes = m_nameContext.getTypes(baseName)) {
             ASSERT(enumerationTypes->size() == 1);
             AST::NamedType& type = (*enumerationTypes)[0];
             if (is<AST::EnumerationDefinition>(type)) {
                 AST::EnumerationDefinition& enumerationDefinition = downcast<AST::EnumerationDefinition>(type);
-                if (auto* member = enumerationDefinition.memberByName(dotExpression.fieldName())) {
+                auto memberName = dotExpression.fieldName();
+                if (auto* member = enumerationDefinition.memberByName(memberName)) {
                     static_assert(sizeof(AST::EnumerationMemberLiteral) <= sizeof(AST::DotExpression), "Dot expressions need to be able to become EnumerationMemberLiterals without updating backreferences");
                     Lexer::Token origin = dotExpression.origin();
                     // FIXME: Perhaps do this with variants or a Rewriter instead.
                     dotExpression.~DotExpression();
-                    new (&dotExpression) AST::EnumerationMemberLiteral(WTFMove(origin), *member);
+                    auto enumerationMemberLiteral = AST::EnumerationMemberLiteral::wrap(WTFMove(origin), WTFMove(baseName), WTFMove(memberName), enumerationDefinition, *member);
+                    new (&dotExpression) AST::EnumerationMemberLiteral(WTFMove(enumerationMemberLiteral));
                     return;
                 }
                 setError();
@@ -212,15 +215,18 @@ void NameResolver::visit(AST::CallExpression& callExpression)
     checkErrorAndVisit(callExpression);
 }
 
-void NameResolver::visit(AST::ConstantExpressionEnumerationMemberReference& constantExpressionEnumerationMemberReference)
+void NameResolver::visit(AST::EnumerationMemberLiteral& enumerationMemberLiteral)
 {
-    if (auto enumerationTypes = m_nameContext.getTypes(constantExpressionEnumerationMemberReference.left())) {
+    if (enumerationMemberLiteral.enumerationMember())
+        return;
+
+    if (auto enumerationTypes = m_nameContext.getTypes(enumerationMemberLiteral.left())) {
         ASSERT(enumerationTypes->size() == 1);
         AST::NamedType& type = (*enumerationTypes)[0];
         if (is<AST::EnumerationDefinition>(type)) {
             AST::EnumerationDefinition& enumerationDefinition = downcast<AST::EnumerationDefinition>(type);
-            if (auto* member = enumerationDefinition.memberByName(constantExpressionEnumerationMemberReference.right())) {
-                constantExpressionEnumerationMemberReference.setEnumerationMember(enumerationDefinition, *member);
+            if (auto* member = enumerationDefinition.memberByName(enumerationMemberLiteral.right())) {
+                enumerationMemberLiteral.setEnumerationMember(enumerationDefinition, *member);
                 return;
             }
         }
@@ -234,22 +240,22 @@ void NameResolver::visit(AST::ConstantExpressionEnumerationMemberReference& cons
 bool resolveNamesInTypes(Program& program, NameResolver& nameResolver)
 {
     for (auto& typeDefinition : program.typeDefinitions()) {
-        nameResolver.checkErrorAndVisit(static_cast<AST::TypeDefinition&>(typeDefinition));
+        nameResolver.checkErrorAndVisit(typeDefinition);
         if (nameResolver.error())
             return false;
     }
     for (auto& structureDefinition : program.structureDefinitions()) {
-        nameResolver.checkErrorAndVisit(static_cast<AST::StructureDefinition&>(structureDefinition));
+        nameResolver.checkErrorAndVisit(structureDefinition);
         if (nameResolver.error())
             return false;
     }
     for (auto& enumerationDefinition : program.enumerationDefinitions()) {
-        nameResolver.checkErrorAndVisit(static_cast<AST::EnumerationDefinition&>(enumerationDefinition));
+        nameResolver.checkErrorAndVisit(enumerationDefinition);
         if (nameResolver.error())
             return false;
     }
     for (auto& nativeTypeDeclaration : program.nativeTypeDeclarations()) {
-        nameResolver.checkErrorAndVisit(static_cast<AST::NativeTypeDeclaration&>(nativeTypeDeclaration));
+        nameResolver.checkErrorAndVisit(nativeTypeDeclaration);
         if (nameResolver.error())
             return false;
     }
@@ -259,14 +265,14 @@ bool resolveNamesInTypes(Program& program, NameResolver& nameResolver)
 bool resolveNamesInFunctions(Program& program, NameResolver& nameResolver)
 {
     for (auto& functionDefinition : program.functionDefinitions()) {
-        nameResolver.setCurrentFunctionDefinition(&static_cast<AST::FunctionDefinition&>(functionDefinition));
-        nameResolver.checkErrorAndVisit(static_cast<AST::FunctionDefinition&>(functionDefinition));
+        nameResolver.setCurrentFunctionDefinition(&functionDefinition);
+        nameResolver.checkErrorAndVisit(functionDefinition);
         if (nameResolver.error())
             return false;
     }
     nameResolver.setCurrentFunctionDefinition(nullptr);
     for (auto& nativeFunctionDeclaration : program.nativeFunctionDeclarations()) {
-        nameResolver.checkErrorAndVisit(static_cast<AST::FunctionDeclaration&>(nativeFunctionDeclaration));
+        nameResolver.checkErrorAndVisit(nativeFunctionDeclaration);
         if (nameResolver.error())
             return false;
     }

@@ -27,8 +27,10 @@
 
 #if ENABLE(WEBGPU)
 
+#include "WHLSLEntryPointType.h"
 #include "WHLSLLexer.h"
 #include "WHLSLNode.h"
+#include <wtf/Optional.h>
 
 namespace WebCore {
 
@@ -59,7 +61,7 @@ public:
         Input,
         Output
     };
-    virtual bool isAcceptableForShaderItemDirection(ShaderItemDirection, const FunctionDefinition&) const = 0;
+    virtual bool isAcceptableForShaderItemDirection(ShaderItemDirection, const Optional<EntryPointType>&) const = 0;
 
 private:
     Lexer::Token m_origin;

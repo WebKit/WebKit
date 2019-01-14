@@ -55,7 +55,7 @@ public:
 
     bool isTypeDefinition() const override { return true; }
 
-    UnnamedType& type() { return static_cast<UnnamedType&>(m_type); }
+    UnnamedType& type() { return m_type; }
 
     const Type& unifyNode() const override
     {

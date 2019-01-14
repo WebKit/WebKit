@@ -23,14 +23,11 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "WHLSLFloatLiteralType.h"
+#pragma once
 
 #if ENABLE(WEBGPU)
 
-#include "WHLSLInferTypes.h"
-#include "WHLSLNativeTypeDeclaration.h"
-#include "WHLSLTypeReference.h"
+#include <cstdint>
 
 namespace WebCore {
 
@@ -38,41 +35,14 @@ namespace WHLSL {
 
 namespace AST {
 
-FloatLiteralType::FloatLiteralType(Lexer::Token&& origin, float value)
-    : m_value(value)
-    , m_preferredType(makeUniqueRef<TypeReference>(WTFMove(origin), "float"_str, TypeArguments()))
-{
+enum class EntryPointType : uint8_t {
+    Vertex,
+    Fragment,
+    Compute,
+    // FIXME: Add an entry point type for testing
+};
+
 }
-
-FloatLiteralType::~FloatLiteralType() = default;
-
-FloatLiteralType::FloatLiteralType(FloatLiteralType&&) = default;
-
-FloatLiteralType& FloatLiteralType::operator=(FloatLiteralType&&) = default;
-
-bool FloatLiteralType::canResolve(const Type& type) const
-{
-    if (!is<NamedType>(type))
-        return false;
-    auto& namedType = downcast<NamedType>(type);
-    if (!is<NativeTypeDeclaration>(namedType))
-        return false;
-    auto& nativeTypeDeclaration = downcast<NativeTypeDeclaration>(namedType);
-    if (!nativeTypeDeclaration.isFloating())
-        return false;
-    if (!nativeTypeDeclaration.canRepresentFloat()(m_value))
-        return false;
-    return true;
-}
-
-unsigned FloatLiteralType::conversionCost(const UnnamedType& unnamedType) const
-{
-    if (matches(unnamedType, m_preferredType))
-        return 0;
-    return 1;
-}
-
-} // namespace AST
 
 }
 

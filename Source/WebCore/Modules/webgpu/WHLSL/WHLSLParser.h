@@ -39,7 +39,6 @@
 #include "WHLSLCallExpression.h"
 #include "WHLSLCommaExpression.h"
 #include "WHLSLConstantExpression.h"
-#include "WHLSLConstantExpressionEnumerationMemberReference.h"
 #include "WHLSLContinue.h"
 #include "WHLSLDereferenceExpression.h"
 #include "WHLSLDoWhileLoop.h"

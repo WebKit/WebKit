@@ -46,7 +46,7 @@ namespace AST {
 
 class EnumerationDefinition : public NamedType {
 public:
-    EnumerationDefinition(Lexer::Token&& origin, String&& name, Optional<UniqueRef<UnnamedType>>&& type)
+    EnumerationDefinition(Lexer::Token&& origin, String&& name, UniqueRef<UnnamedType>&& type)
         : NamedType(WTFMove(origin), WTFMove(name))
         , m_type(WTFMove(type))
     {
@@ -59,7 +59,7 @@ public:
 
     bool isEnumerationDefinition() const override { return true; }
 
-    UnnamedType* type() { return m_type ? &static_cast<UnnamedType&>(*m_type) : nullptr; }
+    UnnamedType& type() { return m_type; }
 
     bool add(EnumerationMember&& member)
     {
@@ -84,7 +84,7 @@ public:
     }
 
 private:
-    Optional<UniqueRef<UnnamedType>> m_type;
+    UniqueRef<UnnamedType> m_type;
     HashMap<String, std::unique_ptr<EnumerationMember>> m_members;
 };
 

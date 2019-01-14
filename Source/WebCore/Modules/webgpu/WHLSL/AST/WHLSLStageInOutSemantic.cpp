@@ -59,14 +59,14 @@ bool StageInOutSemantic::isAcceptableType(const UnnamedType& unnamedType, const 
         || nativeTypeDeclaration.isMatrix();
 }
 
-bool StageInOutSemantic::isAcceptableForShaderItemDirection(ShaderItemDirection direction, const FunctionDefinition& functionDefinition) const
+bool StageInOutSemantic::isAcceptableForShaderItemDirection(ShaderItemDirection direction, const Optional<EntryPointType>& entryPointType) const
 {
-    switch (*functionDefinition.entryPointType()) {
-    case FunctionDeclaration::EntryPointType::Vertex:
+    switch (*entryPointType) {
+    case EntryPointType::Vertex:
         return true;
-    case FunctionDeclaration::EntryPointType::Fragment:
+    case EntryPointType::Fragment:
         return direction == ShaderItemDirection::Input;
-    case FunctionDeclaration::EntryPointType::Compute:
+    case EntryPointType::Compute:
         return false;
     }
 }

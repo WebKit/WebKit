@@ -54,7 +54,7 @@ public:
 
     bool isReturn() const override { return true; }
 
-    Expression* value() { return m_value ? &static_cast<Expression&>(*m_value) : nullptr; }
+    Expression* value() { return m_value ? &*m_value : nullptr; }
 
     FunctionDefinition* function() { return m_function; }
     void setFunction(FunctionDefinition* functionDefinition) { m_function = functionDefinition; }

@@ -52,7 +52,7 @@ public:
 
     bool isDereferenceExpression() const override { return true; }
 
-    Expression& pointer() { return static_cast<Expression&>(m_pointer); }
+    Expression& pointer() { return m_pointer; }
 
 private:
     UniqueRef<Expression> m_pointer;

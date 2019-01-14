@@ -54,9 +54,9 @@ public:
 
     bool isTernaryExpression() const override { return true; }
 
-    Expression& predicate() { return static_cast<Expression&>(m_predicate); }
-    Expression& bodyExpression() { return static_cast<Expression&>(m_bodyExpression); }
-    Expression& elseExpression() { return static_cast<Expression&>(m_elseExpression); }
+    Expression& predicate() { return m_predicate; }
+    Expression& bodyExpression() { return m_bodyExpression; }
+    Expression& elseExpression() { return m_elseExpression; }
 
 private:
     UniqueRef<Expression> m_predicate;

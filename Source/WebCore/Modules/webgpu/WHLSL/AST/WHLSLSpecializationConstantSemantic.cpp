@@ -48,7 +48,7 @@ bool SpecializationConstantSemantic::isAcceptableType(const UnnamedType& unnamed
     return downcast<NativeTypeDeclaration>(*typeReference.resolvedType()).isNumber();
 }
 
-bool SpecializationConstantSemantic::isAcceptableForShaderItemDirection(ShaderItemDirection direction, const FunctionDefinition&) const
+bool SpecializationConstantSemantic::isAcceptableForShaderItemDirection(ShaderItemDirection direction, const Optional<EntryPointType>&) const
 {
     return direction == ShaderItemDirection::Input;
 }

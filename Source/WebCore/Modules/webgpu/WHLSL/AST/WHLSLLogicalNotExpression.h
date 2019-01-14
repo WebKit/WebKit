@@ -52,7 +52,7 @@ public:
 
     bool isLogicalNotExpression() const override { return true; }
 
-    Expression& operand() { return static_cast<Expression&>(m_operand); }
+    Expression& operand() { return m_operand; }
 
 private:
     UniqueRef<Expression> m_operand;

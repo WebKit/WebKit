@@ -52,7 +52,7 @@ public:
 
     bool isMakePointerExpression() const override { return true; }
 
-    Expression& lValue() { return static_cast<Expression&>(m_lValue); }
+    Expression& lValue() { return m_lValue; }
 
 private:
     UniqueRef<Expression> m_lValue;

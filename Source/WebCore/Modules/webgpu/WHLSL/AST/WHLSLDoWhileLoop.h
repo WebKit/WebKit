@@ -54,8 +54,8 @@ public:
 
     bool isDoWhileLoop() const override { return true; }
 
-    Statement& body() { return static_cast<Statement&>(m_body); }
-    Expression& conditional() { return static_cast<Expression&>(m_conditional); }
+    Statement& body() { return m_body; }
+    Expression& conditional() { return m_conditional; }
 
 private:
     UniqueRef<Statement> m_body;

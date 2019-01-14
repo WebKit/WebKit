@@ -73,7 +73,7 @@ public:
         m_possibleAndOverloads = overloads;
     }
 
-    Expression& base() { return static_cast<Expression&>(m_base); }
+    Expression& base() { return m_base; }
 
 private:
     UniqueRef<Expression> m_base;

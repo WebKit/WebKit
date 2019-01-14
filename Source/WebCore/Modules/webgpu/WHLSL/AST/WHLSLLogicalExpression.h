@@ -61,8 +61,8 @@ public:
 
     bool isLogicalExpression() const override { return true; }
 
-    Expression& left() { return static_cast<Expression&>(m_left); }
-    Expression& right() { return static_cast<Expression&>(m_right); }
+    Expression& left() { return m_left; }
+    Expression& right() { return m_right; }
 
 private:
     Type m_type;

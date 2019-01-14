@@ -68,7 +68,7 @@ bool IntegerLiteralType::canResolve(const Type& type) const
 
 unsigned IntegerLiteralType::conversionCost(const UnnamedType& unnamedType) const
 {
-    if (matches(unnamedType, static_cast<const TypeReference&>(m_preferredType)))
+    if (matches(unnamedType, m_preferredType))
         return 0;
     return 1;
 }

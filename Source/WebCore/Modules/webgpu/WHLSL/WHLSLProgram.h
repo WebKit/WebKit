@@ -49,39 +49,39 @@ public:
     bool append(AST::TypeDefinition&& typeDefinition)
     {
         m_typeDefinitions.append(makeUniqueRef<AST::TypeDefinition>(WTFMove(typeDefinition)));
-        return m_nameContext.add(static_cast<AST::TypeDefinition&>(m_typeDefinitions.last()));
+        return m_nameContext.add(m_typeDefinitions.last());
     }
 
     bool append(AST::StructureDefinition&& structureDefinition)
     {
         m_structureDefinitions.append(makeUniqueRef<AST::StructureDefinition>(WTFMove(structureDefinition)));
-        return m_nameContext.add(static_cast<AST::StructureDefinition&>(m_structureDefinitions.last()));
+        return m_nameContext.add(m_structureDefinitions.last());
     }
 
     bool append(AST::EnumerationDefinition&& enumerationDefinition)
     {
         m_enumerationDefinitions.append(makeUniqueRef<AST::EnumerationDefinition>(WTFMove(enumerationDefinition)));
-        return m_nameContext.add(static_cast<AST::EnumerationDefinition&>(m_enumerationDefinitions.last()));
+        return m_nameContext.add(m_enumerationDefinitions.last());
     }
 
     bool append(AST::FunctionDefinition&& functionDefinition)
     {
         m_functionDefinitions.append(makeUniqueRef<AST::FunctionDefinition>(WTFMove(functionDefinition)));
-        return m_nameContext.add(static_cast<AST::FunctionDefinition&>(m_functionDefinitions.last()));
+        return m_nameContext.add(m_functionDefinitions.last());
     }
 
     bool append(AST::NativeFunctionDeclaration&& nativeFunctionDeclaration)
     {
         m_nativeFunctionDeclarations.append(makeUniqueRef<AST::NativeFunctionDeclaration>(WTFMove(nativeFunctionDeclaration)));
-        m_intrinsics.add(static_cast<AST::NativeFunctionDeclaration&>(m_nativeFunctionDeclarations.last()));
-        return m_nameContext.add(static_cast<AST::NativeFunctionDeclaration&>(m_nativeFunctionDeclarations.last()));
+        m_intrinsics.add(m_nativeFunctionDeclarations.last());
+        return m_nameContext.add(m_nativeFunctionDeclarations.last());
     }
 
     bool append(AST::NativeTypeDeclaration&& nativeTypeDeclaration)
     {
         m_nativeTypeDeclarations.append(makeUniqueRef<AST::NativeTypeDeclaration>(WTFMove(nativeTypeDeclaration)));
-        m_intrinsics.add(static_cast<AST::NativeTypeDeclaration&>(m_nativeTypeDeclarations.last()));
-        return m_nameContext.add(static_cast<AST::NativeTypeDeclaration&>(m_nativeTypeDeclarations.last()));
+        m_intrinsics.add(m_nativeTypeDeclarations.last());
+        return m_nameContext.add(m_nativeTypeDeclarations.last());
     }
 
     NameContext& nameContext() { return m_nameContext; }

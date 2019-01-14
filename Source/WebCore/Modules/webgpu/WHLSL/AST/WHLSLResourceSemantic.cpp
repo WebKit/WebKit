@@ -28,6 +28,7 @@
 
 #if ENABLE(WEBGPU)
 
+#include "WHLSLAddressSpace.h"
 #include "WHLSLArrayType.h"
 #include "WHLSLInferTypes.h"
 #include "WHLSLIntrinsics.h"
@@ -46,7 +47,7 @@ bool ResourceSemantic::isAcceptableType(const UnnamedType& unnamedType, const In
     case Mode::UnorderedAccessView:
         if (is<ReferenceType>(unnamedType)) {
             auto& referenceType = downcast<ReferenceType>(unnamedType);
-            return referenceType.addressSpace() == ReferenceType::AddressSpace::Constant || referenceType.addressSpace() == ReferenceType::AddressSpace::Device;
+            return referenceType.addressSpace() == AddressSpace::Constant || referenceType.addressSpace() == AddressSpace::Device;
         }
         if (is<ArrayType>(unnamedType))
             return true;
@@ -59,7 +60,7 @@ bool ResourceSemantic::isAcceptableType(const UnnamedType& unnamedType, const In
         return false;
     case Mode::Texture:
         if (is<ReferenceType>(unnamedType))
-            return downcast<ReferenceType>(unnamedType).addressSpace() == ReferenceType::AddressSpace::Constant;
+            return downcast<ReferenceType>(unnamedType).addressSpace() == AddressSpace::Constant;
         if (is<ArrayType>(unnamedType))
             return true;
         if (is<TypeReference>(unnamedType)) {
@@ -71,14 +72,14 @@ bool ResourceSemantic::isAcceptableType(const UnnamedType& unnamedType, const In
         return false;
     case Mode::Buffer:
         if (is<ReferenceType>(unnamedType))
-            return downcast<ReferenceType>(unnamedType).addressSpace() == ReferenceType::AddressSpace::Constant;
+            return downcast<ReferenceType>(unnamedType).addressSpace() == AddressSpace::Constant;
         return is<ArrayType>(unnamedType);
     case Mode::Sampler:
         return matches(unnamedType, intrinsics.samplerType());
     }
 }
 
-bool ResourceSemantic::isAcceptableForShaderItemDirection(ShaderItemDirection direction, const FunctionDefinition&) const
+bool ResourceSemantic::isAcceptableForShaderItemDirection(ShaderItemDirection direction, const Optional<EntryPointType>&) const
 {
     return direction == ShaderItemDirection::Input;
 }

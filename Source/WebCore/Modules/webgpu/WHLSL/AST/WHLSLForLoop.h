@@ -63,9 +63,9 @@ public:
     bool isForLoop() const override { return true; }
 
     Variant<VariableDeclarationsStatement, UniqueRef<Expression>>& initialization() { return m_initialization; }
-    Expression* condition() { return m_condition ? &static_cast<Expression&>(*m_condition) : nullptr; }
-    Expression* increment() { return m_increment ? &static_cast<Expression&>(*m_increment) : nullptr; }
-    Statement& body() { return static_cast<Statement&>(m_body); }
+    Expression* condition() { return m_condition ? &*m_condition : nullptr; }
+    Expression* increment() { return m_increment ? &*m_increment : nullptr; }
+    Statement& body() { return m_body; }
 
 private:
     Variant<VariableDeclarationsStatement, UniqueRef<Expression>> m_initialization;

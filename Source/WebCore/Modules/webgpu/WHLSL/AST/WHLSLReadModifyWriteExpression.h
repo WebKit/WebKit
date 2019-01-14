@@ -85,11 +85,11 @@ public:
 
     bool isReadModifyWriteExpression() const override { return true; }
 
-    Expression& lValue() { return static_cast<Expression&>(m_lValue); }
+    Expression& lValue() { return m_lValue; }
     VariableDeclaration& oldValue() { return m_oldValue; }
     VariableDeclaration& newValue() { return m_newValue; }
-    Expression* newValueExpression() { return m_newValueExpression ? &static_cast<Expression&>(*m_newValueExpression) : nullptr; }
-    Expression* resultExpression() { return m_resultExpression ? &static_cast<Expression&>(*m_resultExpression) : nullptr; }
+    Expression* newValueExpression() { return m_newValueExpression ? &*m_newValueExpression : nullptr; }
+    Expression* resultExpression() { return m_resultExpression ? &*m_resultExpression : nullptr; }
 
 private:
     template<class U, class... Args> friend UniqueRef<U> WTF::makeUniqueRef(Args&&...);

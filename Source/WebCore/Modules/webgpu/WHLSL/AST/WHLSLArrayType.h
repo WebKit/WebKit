@@ -55,8 +55,8 @@ public:
 
     bool isArrayType() const override { return true; }
 
-    const UnnamedType& type() const { return static_cast<const UnnamedType&>(m_elementType); }
-    UnnamedType& type() { return static_cast<UnnamedType&>(m_elementType); }
+    const UnnamedType& type() const { return m_elementType; }
+    UnnamedType& type() { return m_elementType; }
     unsigned numElements() const { return m_numElements; }
 
     UniqueRef<UnnamedType> clone() const override

@@ -57,7 +57,7 @@ public:
     StructureElement(StructureElement&&) = default;
 
     const Lexer::Token& origin() const { return m_origin; }
-    UnnamedType& type() { return static_cast<UnnamedType&>(m_type); }
+    UnnamedType& type() { return m_type; }
     const String& name() { return m_name; }
     Optional<Semantic>& semantic() { return m_semantic; }
 

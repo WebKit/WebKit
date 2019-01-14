@@ -55,7 +55,7 @@ public:
 
     bool isSwitchStatement() const override { return true; }
 
-    Expression& value() { return static_cast<Expression&>(m_value); }
+    Expression& value() { return m_value; }
     Vector<SwitchCase>& switchCases() { return m_switchCases; }
 
 private:
