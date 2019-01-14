@@ -1,5 +1,11 @@
 2019-01-13  Dan Bernstein  <mitz@apple.com>
 
+        Fixed iOS builds after r239910.
+
+        * Platform/spi/ios/PDFKitSPI.h:
+
+2019-01-13  Dan Bernstein  <mitz@apple.com>
+
         Tried to fix the build.
 
         * Platform/spi/ios/PDFKitSPI.h:
