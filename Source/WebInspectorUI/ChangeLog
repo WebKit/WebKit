@@ -1,3 +1,33 @@
+2019-01-14  Nikita Vasilyev  <nvasilyev@apple.com>
+
+        Web Inspector: Styles: pressing Down key on empty value field shouldn't discard completion popover
+        https://bugs.webkit.org/show_bug.cgi?id=193098
+        <rdar://problem/47016036>
+
+        Reviewed by Devin Rousso.
+
+        Hide CompletionSuggestionsView when SpreadsheetTextField moves, e.g. by scrolling or resizing the sidebar.
+        Update CompletionSuggestionsView position after pressing Up or Down key, because SpreadsheetTextField may
+        move from wrapping text.
+
+        * UserInterface/Views/CompletionSuggestionsView.js:
+        (WI.CompletionSuggestionsView.prototype.hide):
+        (WI.CompletionSuggestionsView.prototype.show):
+        (WI.CompletionSuggestionsView.prototype.showUntilAnchorMoves): Removed.
+        (WI.CompletionSuggestionsView.prototype.hideWhenElementMoves): Added.
+        (WI.CompletionSuggestionsView.prototype._stopMoveTimer): Added.
+        (WI.CompletionSuggestionsView):
+
+        * UserInterface/Views/SpreadsheetTextField.js:
+        (WI.SpreadsheetTextField.prototype.set suggestionHint):
+        (WI.SpreadsheetTextField.prototype.completionSuggestionsSelectedCompletion):
+        (WI.SpreadsheetTextField.prototype._handleKeyDownForSuggestionView):
+        (WI.SpreadsheetTextField.prototype._updateCompletions):
+        (WI.SpreadsheetTextField.prototype._showSuggestionsView): Added.
+
+        (WI.SpreadsheetTextField.prototype._reAttachSuggestionHint):
+        Drive-by: abstract out repeating code into a private method.
+
 2019-01-14  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: Settings: group titles should vertically align with the first editor

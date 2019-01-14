@@ -33,7 +33,7 @@ WI.CompletionSuggestionsView = class CompletionSuggestionsView extends WI.Object
         this._preventBlur = preventBlur || false;
 
         this._selectedIndex = NaN;
-        this._anchorBounds = null;
+        this._moveIntervalIdentifier = null;
 
         this._element = document.createElement("div");
         this._element.classList.add("completion-suggestions", WI.Popover.IgnoreAutoDismissClassName);
@@ -112,6 +112,8 @@ WI.CompletionSuggestionsView = class CompletionSuggestionsView extends WI.Object
 
     show(anchorBounds)
     {
+        let scrollTop = this._containerElement.scrollTop;
+
         // Measure the container so we can know the intrinsic size of the items.
         this._containerElement.style.position = "absolute";
         document.body.appendChild(this._containerElement);
@@ -156,38 +158,28 @@ WI.CompletionSuggestionsView = class CompletionSuggestionsView extends WI.Object
         this._element.style.height = height + "px";
 
         document.body.appendChild(this._element);
-    }
 
-    showUntilAnchorMoves(getAnchorBounds)
-    {
-        this._anchorBounds = getAnchorBounds();
-        if (!this._anchorBounds) {
-            this.hide();
-            return;
-        }
-
-        this.show(this._anchorBounds);
-
-        let hideWhenMoved = () => {
-            let anchorBounds = getAnchorBounds();
-            if (!anchorBounds || !anchorBounds.equals(this._anchorBounds))
-                this.hide();
-        };
-
-        if (this._hideWhenMovedIdentifier)
-            clearInterval(this._hideWhenMovedIdentifier);
-
-        this._hideWhenMovedIdentifier = setInterval(hideWhenMoved, 200);
+        if (scrollTop)
+            this._containerElement.scrollTop = scrollTop;
     }
 
     hide()
     {
         this._element.remove();
-        this._anchorBounds = null;
-        if (this._hideWhenMovedIdentifier) {
-            clearInterval(this._hideWhenMovedIdentifier);
-            this._hideWhenMovedIdentifier = 0;
-        }
+        this._stopMoveTimer();
+    }
+
+    hideWhenElementMoves(element)
+    {
+        this._stopMoveTimer();
+        let initialClientRect = element.getBoundingClientRect();
+
+        this._moveIntervalIdentifier = setInterval(() => {
+            let clientRect = element.getBoundingClientRect();
+            if (clientRect.x !== initialClientRect.x || clientRect.y !== initialClientRect.y)
+                this.hide();
+        }, 200);
+
     }
 
     update(completions, selectedIndex)
@@ -252,6 +244,15 @@ WI.CompletionSuggestionsView = class CompletionSuggestionsView extends WI.Object
 
         if (this._delegate && typeof this._delegate.completionSuggestionsClickedCompletion === "function")
             this._delegate.completionSuggestionsClickedCompletion(this, itemElement.textContent);
+    }
+
+    _stopMoveTimer()
+    {
+        if (!this._moveIntervalIdentifier)
+            return;
+
+        clearInterval(this._moveIntervalIdentifier);
+        this._moveIntervalIdentifier = null;
     }
 };
 
