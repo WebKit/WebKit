@@ -17,20 +17,20 @@ layer at (0,0) size 800x600
           text run at (371,18) width 4 LTR override: "."
       RenderBlock {HR} at (0,52) size 784x2 [border: (1px inset #000000)]
       RenderBlock {P} at (0,70) size 784x18
-        RenderText {#text} at (0,0) size 304x17
-          text run at (0,0) width 304 LTR override: "The text on both buttons should like this: \x{5E8}\x{5D5}\x{5EA}\x{5E4}\x{5DB}"
+        RenderText {#text} at (0,0) size 303x17
+          text run at (0,0) width 303 LTR override: "The text on both buttons should like this: \x{5E8}\x{5D5}\x{5EA}\x{5E4}\x{5DB}"
       RenderBlock (anonymous) at (0,104) size 784x58
-        RenderButton {BUTTON} at (2,2) size 59x27 [bgcolor=#C0C0C0] [border: (2px outset #C0C0C0)]
-          RenderBlock (anonymous) at (8,4) size 43x18
-            RenderText {#text} at (0,0) size 43x17
-              text run at (0,0) width 43 LTR override: "\x{5E8}\x{5D5}\x{5EA}\x{5E4}\x{5DB}"
-        RenderText {#text} at (63,6) size 4x17
-          text run at (63,6) width 4 LTR override: " "
-        RenderBR {BR} at (67,20) size 0x0
-        RenderButton {INPUT} at (2,33) size 55x23 [bgcolor=#C0C0C0]
-          RenderBlock (anonymous) at (6,2) size 43x18
-            RenderText at (0,0) size 43x17
-              text run at (0,0) width 43 RTL: "\x{5DB}\x{5E4}\x{5EA}\x{5D5}\x{5E8}"
+        RenderButton {BUTTON} at (2,2) size 58x27 [bgcolor=#C0C0C0] [border: (2px outset #C0C0C0)]
+          RenderBlock (anonymous) at (8,4) size 42x18
+            RenderText {#text} at (0,0) size 42x17
+              text run at (0,0) width 42 LTR override: "\x{5E8}\x{5D5}\x{5EA}\x{5E4}\x{5DB}"
+        RenderText {#text} at (62,6) size 4x17
+          text run at (62,6) width 4 LTR override: " "
+        RenderBR {BR} at (66,20) size 0x0
+        RenderButton {INPUT} at (2,33) size 54x23 [bgcolor=#C0C0C0]
+          RenderBlock (anonymous) at (6,2) size 42x18
+            RenderText at (0,0) size 42x17
+              text run at (0,0) width 42 RTL: "\x{5DB}\x{5E4}\x{5EA}\x{5D5}\x{5E8}"
         RenderText {#text} at (0,0) size 0x0
       RenderBlock {HR} at (0,170) size 784x2 [border: (1px inset #000000)]
       RenderBlock {P} at (0,188) size 784x18

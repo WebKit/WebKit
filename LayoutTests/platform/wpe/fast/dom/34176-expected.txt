@@ -12,43 +12,43 @@ layer at (0,0) size 785x1440
           text run at (161,36) width 608: "The visual order should be TextRun3 TextRun1 TextRun2, not TextRun3 TextRun2 TextRun1."
       RenderBlock {HR} at (0,70) size 769x2 [border: (1px inset #000000)]
       RenderBlock {P} at (0,88) size 769x18
-        RenderText {#text} at (303,0) size 466x17
-          text run at (303,0) width 341: "Pure text. The following 3 lines should all display as \""
-          text run at (644,0) width 30 RTL: "\x{5E9}\x{5E0}\x{5D1}"
+        RenderText {#text} at (309,0) size 460x17
+          text run at (309,0) width 341: "Pure text. The following 3 lines should all display as \""
+          text run at (650,0) width 24 RTL: "\x{5E9}\x{5E0}\x{5D1}"
           text run at (674,0) width 95: " This is a Test\""
       RenderBlock {DIV} at (0,122) size 769x18 [bgcolor=#FF0000]
         RenderText {#text} at (685,0) size 57x17
           text run at (685,0) width 57: "This is a "
-        RenderInline {SPAN} at (0,0) size 118x17
-          RenderInline {SPAN} at (0,0) size 118x17
+        RenderInline {SPAN} at (0,0) size 112x17
+          RenderInline {SPAN} at (0,0) size 112x17
             RenderText {#text} at (681,0) size 88x17
               text run at (681,0) width 4 RTL: " "
               text run at (742,0) width 27: "Test"
-            RenderInline {SPAN} at (0,0) size 30x17
-              RenderText {#text} at (651,0) size 30x17
-                text run at (651,0) width 30 RTL: "\x{5E9}\x{5E0}\x{5D1}"
+            RenderInline {SPAN} at (0,0) size 24x17
+              RenderText {#text} at (657,0) size 24x17
+                text run at (657,0) width 24 RTL: "\x{5E9}\x{5E0}\x{5D1}"
       RenderBlock {DIV} at (0,140) size 769x18 [bgcolor=#FF0000]
         RenderText {#text} at (685,0) size 57x17
           text run at (685,0) width 57: "This is a "
-        RenderInline {SPAN} at (0,0) size 118x17
-          RenderInline {SPAN} at (0,0) size 118x17
-            RenderInline {SPAN} at (0,0) size 118x17
+        RenderInline {SPAN} at (0,0) size 112x17
+          RenderInline {SPAN} at (0,0) size 112x17
+            RenderInline {SPAN} at (0,0) size 112x17
               RenderText {#text} at (681,0) size 88x17
                 text run at (681,0) width 4 RTL: " "
                 text run at (742,0) width 27: "Test"
-              RenderInline {SPAN} at (0,0) size 30x17
-                RenderText {#text} at (651,0) size 30x17
-                  text run at (651,0) width 30 RTL: "\x{5E9}\x{5E0}\x{5D1}"
+              RenderInline {SPAN} at (0,0) size 24x17
+                RenderText {#text} at (657,0) size 24x17
+                  text run at (657,0) width 24 RTL: "\x{5E9}\x{5E0}\x{5D1}"
       RenderBlock {DIV} at (0,158) size 769x18
         RenderText {#text} at (685,0) size 57x17
           text run at (685,0) width 57: "This is a "
-        RenderInline {SPAN} at (0,0) size 118x17
+        RenderInline {SPAN} at (0,0) size 112x17
           RenderText {#text} at (681,0) size 88x17
             text run at (681,0) width 4 RTL: " "
             text run at (742,0) width 27: "Test"
-          RenderInline {SPAN} at (0,0) size 30x17
-            RenderText {#text} at (651,0) size 30x17
-              text run at (651,0) width 30 RTL: "\x{5E9}\x{5E0}\x{5D1}"
+          RenderInline {SPAN} at (0,0) size 24x17
+            RenderText {#text} at (657,0) size 24x17
+              text run at (657,0) width 24 RTL: "\x{5E9}\x{5E0}\x{5D1}"
       RenderBlock {HR} at (0,184) size 769x2 [border: (1px inset #000000)]
       RenderBlock {P} at (0,202) size 769x18
         RenderText {#text} at (319,0) size 450x17
@@ -73,14 +73,14 @@ layer at (0,0) size 785x1440
       RenderBlock {DIV} at (0,272) size 769x18 [bgcolor=#FF0000]
         RenderText {#text} at (686,0) size 57x17
           text run at (686,0) width 57: "This is a "
-        RenderInline {SPAN} at (0,0) size 118x17
-          RenderInline {EM} at (0,0) size 118x17
+        RenderInline {SPAN} at (0,0) size 113x17
+          RenderInline {EM} at (0,0) size 113x17
             RenderText {#text} at (682,0) size 87x17
               text run at (682,0) width 4 RTL: " "
               text run at (743,0) width 26: "Test"
-            RenderInline {SPAN} at (0,0) size 31x17
-              RenderText {#text} at (651,0) size 31x17
-                text run at (651,0) width 31 RTL: "\x{5D3}\x{5DE}\x{5D4}"
+            RenderInline {SPAN} at (0,0) size 26x17
+              RenderText {#text} at (656,0) size 26x17
+                text run at (656,0) width 26 RTL: "\x{5D3}\x{5DE}\x{5D4}"
       RenderBlock {DIV} at (0,290) size 769x18
         RenderText {#text} at (686,0) size 57x17
           text run at (686,0) width 57: "This is a "
@@ -224,14 +224,14 @@ layer at (0,0) size 785x1440
         RenderBlock {DIV} at (0,70) size 769x18 [bgcolor=#FF0000]
           RenderText {#text} at (680,0) size 60x17
             text run at (680,0) width 60: "This is a "
-          RenderInline {SPAN} at (0,0) size 127x17
-            RenderInline {A} at (0,0) size 127x17 [color=#551A8B]
+          RenderInline {SPAN} at (0,0) size 117x17
+            RenderInline {A} at (0,0) size 117x17 [color=#551A8B]
               RenderText {#text} at (676,0) size 93x17
                 text run at (676,0) width 4 RTL: " "
                 text run at (740,0) width 29: "Test"
-              RenderInline {SPAN} at (0,0) size 34x17
-                RenderText {#text} at (642,0) size 34x17
-                  text run at (642,0) width 34 RTL: "\x{5E9}\x{5E0}\x{5D1}"
+              RenderInline {SPAN} at (0,0) size 24x17
+                RenderText {#text} at (652,0) size 24x17
+                  text run at (652,0) width 24 RTL: "\x{5E9}\x{5E0}\x{5D1}"
         RenderBlock {DIV} at (0,88) size 769x18 [bgcolor=#FF0000]
           RenderText {#text} at (682,0) size 60x17
             text run at (682,0) width 60: "This is a "

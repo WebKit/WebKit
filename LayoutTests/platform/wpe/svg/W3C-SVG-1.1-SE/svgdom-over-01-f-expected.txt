@@ -88,11 +88,11 @@ layer at (0,0) size 800x600
         RenderSVGText {text} at (10,-1) size 346x10 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 346x9
             chunk 1 text run 1 at (10.00,7.00) startOffset 0 endOffset 70 width 345.60: "g.gradientUnits.baseVal == 2 (SVG_UNIT_TYPE_OBJECTBOUNDINGBOX): PASSED"
-      RenderSVGContainer {g} at (16,316) size 250x16 [transform={m=((1.00,0.00)(0.00,1.00)) t=(10.00,190.00)}]
+      RenderSVGContainer {g} at (16,316) size 234x16 [transform={m=((1.00,0.00)(0.00,1.00)) t=(10.00,190.00)}]
         RenderSVGRect {rect} at (16,318) size 9x9 [fill={[type=SOLID] [color=#00FF00]}] [x=0.00] [y=1.00] [width=5.00] [height=5.00]
-        RenderSVGText {text} at (10,-1) size 140x10 contains 1 chunk(s)
-          RenderSVGInlineText {#text} at (0,0) size 140x9
-            chunk 1 text run 1 at (10.00,7.00) startOffset 0 endOffset 33 width 139.20: "f.filterResX.baseVal == 0: PASSED"
+        RenderSVGText {text} at (10,-1) size 130x10 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 130x9
+            chunk 1 text run 1 at (10.00,7.00) startOffset 0 endOffset 29 width 129.60: "c.orderX.baseVal == 0: PASSED"
       RenderSVGContainer {g} at (16,332) size 307x17 [transform={m=((1.00,0.00)(0.00,1.00)) t=(10.00,200.00)}]
         RenderSVGRect {rect} at (16,335) size 9x9 [fill={[type=SOLID] [color=#00FF00]}] [x=0.00] [y=1.00] [width=5.00] [height=5.00]
         RenderSVGText {text} at (10,-1) size 174x10 contains 1 chunk(s)

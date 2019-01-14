@@ -6,9 +6,9 @@ layer at (0,0) size 800x600
       RenderSVGText {text} at (133,150) size 194x13 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,0) size 194x12
           chunk 1 (middle anchor) text run 1 at (133.10,160.00) startOffset 0 endOffset 42 width 193.80: "Making the world wide web truly world wide"
-      RenderSVGText {text} at (145,185) size 170x13 contains 1 chunk(s)
-        RenderSVGInlineText {#text} at (0,0) size 169x12
-          chunk 1 (middle anchor) text run 1 at (145.70,195.00) startOffset 0 endOffset 31 width 168.60 RTL: "\x{5DC}\x{5D9}\x{5E6}\x{5D5}\x{5E8} \x{5DE}\x{5D4}\x{5E8}\x{5E9}\x{5EA} \x{5E8}\x{5E9}\x{5EA} \x{5DB}\x{5DC}\x{5DC} \x{5E2}\x{5D5}\x{5DC}\x{5DE}\x{5D9}\x{5EA} \x{5D1}\x{5D0}\x{5DE}\x{5EA}"
+      RenderSVGText {text} at (148,185) size 164x13 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 164x12
+          chunk 1 (middle anchor) text run 1 at (148.40,195.00) startOffset 0 endOffset 31 width 163.20 RTL: "\x{5DC}\x{5D9}\x{5E6}\x{5D5}\x{5E8} \x{5DE}\x{5D4}\x{5E8}\x{5E9}\x{5EA} \x{5E8}\x{5E9}\x{5EA} \x{5DB}\x{5DC}\x{5DC} \x{5E2}\x{5D5}\x{5DC}\x{5DE}\x{5D9}\x{5EA} \x{5D1}\x{5D0}\x{5DE}\x{5EA}"
       RenderSVGText {text} at (153,225) size 154x13 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,0) size 154x12
           chunk 1 (middle anchor) text run 1 at (153.20,235.00) startOffset 0 endOffset 38 width 153.60 RTL: "\x{62C}\x{639}\x{644} \x{634}\x{628}\x{643}\x{629} \x{627}\x{644}\x{648}\x{64A}\x{628} \x{627}\x{644}\x{639}\x{627}\x{644}\x{645}\x{64A}\x{651}\x{629} \x{639}\x{627}\x{644}\x{645}\x{64A}\x{651}\x{629} \x{62D}\x{642}\x{64B}\x{651}\x{627}"

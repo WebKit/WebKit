@@ -2,19 +2,19 @@ layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderSVGRoot {svg} at (0,0) size 800x600
-    RenderSVGContainer {g} at (7,192) size 791x208
+    RenderSVGContainer {g} at (7,192) size 783x208
       RenderSVGHiddenContainer {defs} at (0,0) size 0x0
-      RenderSVGContainer {g} at (7,192) size 791x208 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,60.00)}]
+      RenderSVGContainer {g} at (7,192) size 783x208 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,60.00)}]
         RenderSVGText {text} at (10,55) size 223x19 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 223x19
             chunk 1 text run 1 at (10.00,70.00) startOffset 0 endOffset 26 width 222.60: "StartIndex: 0. NumChars: 9"
-        RenderSVGText {text} at (10,84) size 469x55 contains 1 chunk(s)
-          RenderSVGInlineText {#text} at (0,0) size 469x54
+        RenderSVGText {text} at (10,84) size 464x55 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 464x54
             chunk 1 text run 1 at (10.00,128.00) startOffset 0 endOffset 4 width 101.40: "abc "
-            chunk 1 text run 1 at (111.40,128.00) startOffset 0 endOffset 4 width 87.60 RTL: " \x{5D3}\x{5D4}\x{5D5}"
-            chunk 1 text run 1 at (199.00,128.00) startOffset 0 endOffset 3 width 91.80: "123"
-            chunk 1 text run 1 at (290.80,128.00) startOffset 0 endOffset 4 width 96.00 RTL: "\x{5D0}\x{5D1}\x{5D2} "
-            chunk 1 text run 1 at (386.80,128.00) startOffset 0 endOffset 4 width 91.80: " def"
+            chunk 1 text run 1 at (111.40,128.00) startOffset 0 endOffset 4 width 84.60 RTL: " \x{5D3}\x{5D4}\x{5D5}"
+            chunk 1 text run 1 at (196.00,128.00) startOffset 0 endOffset 3 width 91.80: "123"
+            chunk 1 text run 1 at (287.80,128.00) startOffset 0 endOffset 4 width 94.20 RTL: "\x{5D0}\x{5D1}\x{5D2} "
+            chunk 1 text run 1 at (382.00,128.00) startOffset 0 endOffset 4 width 91.80: " def"
         RenderSVGContainer {g} at (7,366) size 727x34
           RenderSVGRect {rect} at (16,366) size 168x34 [fill={[type=SOLID] [color=#0000FF]}] [x=10.00] [y=160.00] [width=100.00] [height=20.00]
           RenderSVGText {text} at (4,160) size 112x19 contains 1 chunk(s)

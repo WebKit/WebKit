@@ -75,9 +75,9 @@ layer at (0,0) size 785x4381
         RenderText {#text} at (0,8) size 750x128
           text run at (0,8) width 750: "This element should be in a monospace font, italicized and small caps, with a weight of"
           text run at (0,44) width 55: "900. "
-          text run at (55,44) width 687: "Its font-size should be 150% the base font size, and its line-height should be"
+          text run at (54,44) width 688: "Its font-size should be 150% the base font size, and its line-height should be"
           text run at (0,80) width 618: "2em, or twice the element's font size (18px and 36px, respectively). "
-          text run at (618,80) width 113: "Extra text is"
+          text run at (617,80) width 114: "Extra text is"
           text run at (0,116) width 499: "included for the purposes of testing this more effectively."
       RenderBlock {P} at (0,1109) size 769x289
         RenderText {#text} at (0,38) size 745x212

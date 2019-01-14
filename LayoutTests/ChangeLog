@@ -1,3 +1,80 @@
+2019-01-14  Zan Dobersek  <zdobersek@igalia.com>
+
+        Unreviewed WPE gardening. Updating baselines for failures that in
+        majority of cases can be tracked down to the test fonts bump in r239436.
+
+        * platform/wpe/animations/lineheight-animation-expected.txt:
+        * platform/wpe/animations/simultaneous-start-transform-expected.txt:
+        * platform/wpe/animations/width-using-ems-expected.txt:
+        * platform/wpe/css1/font_properties/font-expected.txt:
+        * platform/wpe/css3/unicode-bidi-isolate-basic-expected.txt:
+        * platform/wpe/fast/css/line-height-determined-by-primary-font-expected.txt:
+        * platform/wpe/fast/css/rtl-ordering-expected.txt:
+        * platform/wpe/fast/css/text-overflow-ellipsis-bidi-expected.txt:
+        * platform/wpe/fast/css/text-overflow-ellipsis-expected.txt:
+        * platform/wpe/fast/css/text-overflow-ellipsis-strict-expected.txt:
+        * platform/wpe/fast/css/word-space-extra-expected.txt:
+        * platform/wpe/fast/dom/34176-expected.txt:
+        * platform/wpe/fast/dom/52776-expected.txt:
+        * platform/wpe/fast/inline/inline-box-background-expected.txt:
+        * platform/wpe/fast/inline/inline-box-background-long-image-expected.txt:
+        * platform/wpe/fast/inline/inline-box-background-repeat-x-expected.txt:
+        * platform/wpe/fast/inline/inline-box-background-repeat-y-expected.txt:
+        * platform/wpe/fast/inline/inline-content-with-float-and-margin-expected.txt: Added.
+        * platform/wpe/fast/inline/simple-inline-inflow-positioned-expected.txt: Added.
+        * platform/wpe/fast/inline/simple-inline-with-out-of-flow-descendant-expected.txt: Added.
+        * platform/wpe/fast/inline/simple-inline-with-out-of-flow-descendant2-expected.txt: Added.
+        * platform/wpe/svg/W3C-I18N/text-anchor-dirLTR-anchorEnd-expected.txt:
+        * platform/wpe/svg/W3C-I18N/text-anchor-dirLTR-anchorMiddle-expected.txt:
+        * platform/wpe/svg/W3C-I18N/text-anchor-dirLTR-anchorStart-expected.txt:
+        * platform/wpe/svg/W3C-I18N/text-anchor-dirNone-anchorEnd-expected.txt:
+        * platform/wpe/svg/W3C-I18N/text-anchor-dirNone-anchorMiddle-expected.txt:
+        * platform/wpe/svg/W3C-I18N/text-anchor-dirNone-anchorStart-expected.txt:
+        * platform/wpe/svg/W3C-I18N/text-anchor-dirRTL-anchorEnd-expected.txt:
+        * platform/wpe/svg/W3C-I18N/text-anchor-dirRTL-anchorMiddle-expected.txt:
+        * platform/wpe/svg/W3C-I18N/text-anchor-dirRTL-anchorStart-expected.txt:
+        * platform/wpe/svg/W3C-I18N/text-anchor-inherited-dirLTR-anchorEnd-expected.txt:
+        * platform/wpe/svg/W3C-I18N/text-anchor-inherited-dirLTR-anchorMiddle-expected.txt:
+        * platform/wpe/svg/W3C-I18N/text-anchor-inherited-dirLTR-anchorStart-expected.txt:
+        * platform/wpe/svg/W3C-I18N/text-anchor-inherited-dirRTL-anchorEnd-expected.txt:
+        * platform/wpe/svg/W3C-I18N/text-anchor-inherited-dirRTL-anchorMiddle-expected.txt:
+        * platform/wpe/svg/W3C-I18N/text-anchor-inherited-dirRTL-anchorStart-expected.txt:
+        * platform/wpe/svg/W3C-I18N/text-anchor-no-markup-expected.txt:
+        * platform/wpe/svg/W3C-SVG-1.1-SE/svgdom-over-01-f-expected.txt:
+        * platform/wpe/svg/W3C-SVG-1.1-SE/text-intro-02-b-expected.txt:
+        * platform/wpe/svg/W3C-SVG-1.1-SE/text-intro-09-b-expected.txt:
+        * platform/wpe/svg/W3C-SVG-1.1/text-tselect-02-f-expected.txt:
+        * platform/wpe/svg/custom/glyph-selection-bidi-mirror-expected.txt:
+        * platform/wpe/svg/custom/svg-fonts-fallback-expected.txt:
+        * platform/wpe/svg/hixie/perf/007-expected.txt:
+        * platform/wpe/svg/text/bidi-embedded-direction-expected.txt:
+        * platform/wpe/svg/text/bidi-reorder-value-lists-expected.txt: Added.
+        * platform/wpe/svg/text/bidi-text-anchor-direction-expected.txt:
+        * platform/wpe/svg/text/text-tselect-02-f-expected.txt:
+        * platform/wpe/tables/mozilla/marvin/backgr_layers-opacity-expected.txt:
+        * platform/wpe/tables/mozilla/marvin/backgr_position-table-expected.txt:
+        * platform/wpe/tables/mozilla/marvin/backgr_simple-table-cell-expected.txt:
+        * platform/wpe/tables/mozilla/marvin/backgr_simple-table-column-expected.txt:
+        * platform/wpe/tables/mozilla/marvin/backgr_simple-table-column-group-expected.txt:
+        * platform/wpe/tables/mozilla/marvin/backgr_simple-table-expected.txt:
+        * platform/wpe/tables/mozilla/marvin/backgr_simple-table-row-expected.txt:
+        * platform/wpe/tables/mozilla/marvin/backgr_simple-table-row-group-expected.txt:
+        * platform/wpe/tables/mozilla_expected_failures/marvin/backgr_border-table-cell-expected.txt:
+        * platform/wpe/tables/mozilla_expected_failures/marvin/backgr_border-table-column-expected.txt:
+        * platform/wpe/tables/mozilla_expected_failures/marvin/backgr_border-table-column-group-expected.txt:
+        * platform/wpe/tables/mozilla_expected_failures/marvin/backgr_border-table-expected.txt:
+        * platform/wpe/tables/mozilla_expected_failures/marvin/backgr_border-table-quirks-expected.txt:
+        * platform/wpe/tables/mozilla_expected_failures/marvin/backgr_border-table-row-expected.txt:
+        * platform/wpe/tables/mozilla_expected_failures/marvin/backgr_border-table-row-group-expected.txt:
+        * platform/wpe/tables/mozilla_expected_failures/marvin/backgr_fixed-bg-expected.txt:
+        * platform/wpe/tables/mozilla_expected_failures/marvin/backgr_layers-hide-expected.txt:
+        * platform/wpe/tables/mozilla_expected_failures/marvin/backgr_layers-show-expected.txt:
+        * platform/wpe/tables/mozilla_expected_failures/marvin/backgr_position-table-cell-expected.txt:
+        * platform/wpe/tables/mozilla_expected_failures/marvin/backgr_position-table-column-expected.txt:
+        * platform/wpe/tables/mozilla_expected_failures/marvin/backgr_position-table-column-group-expected.txt:
+        * platform/wpe/tables/mozilla_expected_failures/marvin/backgr_position-table-row-expected.txt:
+        * platform/wpe/tables/mozilla_expected_failures/marvin/backgr_position-table-row-group-expected.txt:
+
 2019-01-14  Karl Leplat  <karl.leplat_ext@softathome.com>
 
         [GTK][WPE] Graphic issue with invalidations on composited layers with subpixel positions

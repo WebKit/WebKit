@@ -9,54 +9,54 @@ layer at (0,0) size 800x272
           text run at (0,15) width 58: "below them:"
       RenderBlock {DIV} at (0,42) size 784x97
         RenderBlock {UL} at (0,0) size 567x97
-          RenderBlock (floating) {LI} at (40,0) size 46x31 [border: none (1px solid #FF0000) none]
-            RenderInline {A} at (0,0) size 24x15
-              RenderText {#text} at (12,7) size 24x15
-                text run at (12,7) width 24: "\x{6EE8}\x{5D0E}\x{6B65}"
-          RenderBlock (floating) {LI} at (86,0) size 76x31 [border: none (1px solid #FF0000) none]
+          RenderBlock (floating) {LI} at (40,0) size 58x31 [border: none (1px solid #FF0000) none]
+            RenderInline {A} at (0,0) size 36x15
+              RenderText {#text} at (12,7) size 36x15
+                text run at (12,7) width 36: "\x{6EE8}\x{5D0E}\x{6B65}"
+          RenderBlock (floating) {LI} at (98,0) size 76x31 [border: none (1px solid #FF0000) none]
             RenderInline {A} at (0,0) size 54x20
               RenderText {#text} at (12,5) size 54x20
                 text run at (12,5) width 54: "\x{8521}\x{4F9D}\x{6797}"
-          RenderBlock (floating) {LI} at (162,0) size 49x31 [border: none (1px solid #FF0000) none]
-            RenderInline {A} at (0,0) size 27x26
-              RenderText {#text} at (12,2) size 27x26
-                text run at (12,2) width 27: "\x{9648}\x{7EEE}\x{8D1E}"
-          RenderBlock (floating) {LI} at (211,0) size 65x31 [border: none (1px solid #FF0000) none]
-            RenderInline {A} at (0,0) size 43x20
-              RenderText {#text} at (12,5) size 43x20
-                text run at (12,5) width 43: "\x{9648}\x{5955}\x{8FC5}"
-          RenderBlock (floating) {LI} at (276,0) size 42x31 [border: none (1px solid #FF0000) none]
-            RenderInline {A} at (0,0) size 20x14
-              RenderText {#text} at (12,8) size 20x14
-                text run at (12,8) width 20: "\x{9ED1}\x{9E2D}\x{5B50}"
-          RenderBlock (floating) {LI} at (318,0) size 64x31 [border: none (1px solid #FF0000) none]
+          RenderBlock (floating) {LI} at (174,0) size 79x31 [border: none (1px solid #FF0000) none]
+            RenderInline {A} at (0,0) size 57x26
+              RenderText {#text} at (12,2) size 57x26
+                text run at (12,2) width 57: "\x{9648}\x{7EEE}\x{8D1E}"
+          RenderBlock (floating) {LI} at (253,0) size 72x31 [border: none (1px solid #FF0000) none]
+            RenderInline {A} at (0,0) size 50x20
+              RenderText {#text} at (12,5) size 50x20
+                text run at (12,5) width 50: "\x{9648}\x{5955}\x{8FC5}"
+          RenderBlock (floating) {LI} at (325,0) size 52x31 [border: none (1px solid #FF0000) none]
+            RenderInline {A} at (0,0) size 30x14
+              RenderText {#text} at (12,8) size 30x14
+                text run at (12,8) width 30: "\x{9ED1}\x{9E2D}\x{5B50}"
+          RenderBlock (floating) {LI} at (377,0) size 64x31 [border: none (1px solid #FF0000) none]
             RenderInline {A} at (0,0) size 42x15
               RenderText {#text} at (12,7) size 42x15
                 text run at (12,7) width 42: "\x{674E}\x{5B87}\x{6625}"
-          RenderBlock (floating) {LI} at (382,0) size 64x31 [border: none (1px solid #FF0000) none]
+          RenderBlock (floating) {LI} at (441,0) size 64x31 [border: none (1px solid #FF0000) none]
             RenderInline {A} at (0,0) size 42x15
               RenderText {#text} at (12,7) size 42x15
                 text run at (12,7) width 42: "\x{6881}\x{9759}\x{8339}"
       RenderBlock {DIV} at (0,151) size 784x97
         RenderBlock {UL} at (0,0) size 567x97
-          RenderBlock (floating) {LI} at (40,0) size 46x31 [border: none (1px solid #FF0000) none]
-            RenderText {#text} at (12,7) size 24x15
-              text run at (12,7) width 24: "\x{6EE8}\x{5D0E}\x{6B65}"
-          RenderBlock (floating) {LI} at (86,0) size 76x31 [border: none (1px solid #FF0000) none]
+          RenderBlock (floating) {LI} at (40,0) size 58x31 [border: none (1px solid #FF0000) none]
+            RenderText {#text} at (12,7) size 36x15
+              text run at (12,7) width 36: "\x{6EE8}\x{5D0E}\x{6B65}"
+          RenderBlock (floating) {LI} at (98,0) size 76x31 [border: none (1px solid #FF0000) none]
             RenderText {#text} at (12,5) size 54x20
               text run at (12,5) width 54: "\x{8521}\x{4F9D}\x{6797}"
-          RenderBlock (floating) {LI} at (162,0) size 49x31 [border: none (1px solid #FF0000) none]
-            RenderText {#text} at (12,2) size 27x26
-              text run at (12,2) width 27: "\x{9648}\x{7EEE}\x{8D1E}"
-          RenderBlock (floating) {LI} at (211,0) size 65x31 [border: none (1px solid #FF0000) none]
-            RenderText {#text} at (12,5) size 43x20
-              text run at (12,5) width 43: "\x{9648}\x{5955}\x{8FC5}"
-          RenderBlock (floating) {LI} at (276,0) size 42x31 [border: none (1px solid #FF0000) none]
-            RenderText {#text} at (12,8) size 20x14
-              text run at (12,8) width 20: "\x{9ED1}\x{9E2D}\x{5B50}"
-          RenderBlock (floating) {LI} at (318,0) size 64x31 [border: none (1px solid #FF0000) none]
+          RenderBlock (floating) {LI} at (174,0) size 79x31 [border: none (1px solid #FF0000) none]
+            RenderText {#text} at (12,2) size 57x26
+              text run at (12,2) width 57: "\x{9648}\x{7EEE}\x{8D1E}"
+          RenderBlock (floating) {LI} at (253,0) size 72x31 [border: none (1px solid #FF0000) none]
+            RenderText {#text} at (12,5) size 50x20
+              text run at (12,5) width 50: "\x{9648}\x{5955}\x{8FC5}"
+          RenderBlock (floating) {LI} at (325,0) size 52x31 [border: none (1px solid #FF0000) none]
+            RenderText {#text} at (12,8) size 30x14
+              text run at (12,8) width 30: "\x{9ED1}\x{9E2D}\x{5B50}"
+          RenderBlock (floating) {LI} at (377,0) size 64x31 [border: none (1px solid #FF0000) none]
             RenderText {#text} at (12,7) size 42x15
               text run at (12,7) width 42: "\x{674E}\x{5B87}\x{6625}"
-          RenderBlock (floating) {LI} at (382,0) size 64x31 [border: none (1px solid #FF0000) none]
+          RenderBlock (floating) {LI} at (441,0) size 64x31 [border: none (1px solid #FF0000) none]
             RenderText {#text} at (12,7) size 42x15
               text run at (12,7) width 42: "\x{6881}\x{9759}\x{8339}"

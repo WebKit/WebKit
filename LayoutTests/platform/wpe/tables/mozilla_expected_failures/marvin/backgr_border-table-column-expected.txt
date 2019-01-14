@@ -1,21 +1,21 @@
-layer at (0,0) size 785x1466
+layer at (0,0) size 785x1465
   RenderView at (0,0) size 785x600
-layer at (0,0) size 785x1466
-  RenderBlock {HTML} at (0,0) size 785x1467
-    RenderBody {BODY} at (8,17) size 769x1442 [color=#00FF00] [bgcolor=#333333]
+layer at (0,0) size 785x1465
+  RenderBlock {HTML} at (0,0) size 785x1466
+    RenderBody {BODY} at (8,17) size 769x1441 [color=#00FF00] [bgcolor=#333333]
       RenderBlock {H1} at (0,0) size 769x30
         RenderText {#text} at (0,0) size 528x30
           text run at (0,0) width 528: "CSS2 Table Backgrounds Test Suite"
       RenderBlock {H2} at (0,47) size 769x24
         RenderText {#text} at (0,0) size 372x23
           text run at (0,0) width 372: "Part D: Background with Borders"
-      RenderBlock {H3} at (0,86) size 769x19
-        RenderText {#text} at (0,0) size 252x18
+      RenderBlock {H3} at (0,86) size 769x18
+        RenderText {#text} at (0,0) size 252x17
           text run at (0,0) width 252: "Background on 'table-column'"
-      RenderBlock {P} at (0,119) size 769x16
+      RenderBlock {P} at (0,118) size 769x16
         RenderText {#text} at (0,0) size 200x15
           text run at (0,0) width 200: "Three columns are styled."
-      RenderBlock {P} at (0,147) size 769x106
+      RenderBlock {P} at (0,146) size 769x106
         RenderText {#text} at (0,0) size 768x105
           text run at (0,0) width 760: "In the first column, there should be three vertical stripes along the padding edge of the first"
           text run at (0,15) width 744: "cell, continuing down through the column. (In cell E, the aqua stripe will be obscured by the"
@@ -24,17 +24,17 @@ layer at (0,0) size 785x1466
           text run at (0,60) width 760: "in cell A due to cell B's thick border. The stripes should continue in the last cell, turning a"
           text run at (0,75) width 752: "right angle to the left into three aqua stripes along the bottom border edge of the last cell."
           text run at (0,90) width 624: "The last cell (M) should not have three vertical stripes along its right edge."
-      RenderBlock {P} at (0,265) size 769x46
+      RenderBlock {P} at (0,264) size 769x46
         RenderText {#text} at (0,0) size 768x45
           text run at (0,0) width 768: "In the second column, three vertical strips should run along the right of the first three cells,"
           text run at (0,15) width 760: "aligning along cell F's right padding edge. (The stripes will be partially obscured by cell B's"
           text run at (0,30) width 112: "thick border.)"
-      RenderBlock {P} at (0,323) size 769x46
+      RenderBlock {P} at (0,322) size 769x46
         RenderText {#text} at (0,0) size 736x45
           text run at (0,0) width 736: "In the third column, there should be three vertical stripes should run across the top of the"
           text run at (0,15) width 712: "first cell and down the left of the column, aligning along cell K's left padding edge. In"
           text run at (0,30) width 632: "border-collapse mode, they will be partially obscured by cell B's thick border."
-      RenderBlock {DL} at (0,381) size 769x91
+      RenderBlock {DL} at (0,380) size 769x91
         RenderBlock {DT} at (0,0) size 769x15
           RenderText {#text} at (0,0) size 32x15
             text run at (0,0) width 32: "next"
@@ -59,7 +59,7 @@ layer at (0,0) size 785x1466
             RenderText {#text} at (0,0) size 136x15
               text run at (0,0) width 136: "Table of Contents"
           RenderText {#text} at (0,0) size 0x0
-      RenderTable {TABLE} at (0,484) size 630x471 [color=#FFFFFF] [border: (3px dotted #FFFFFF)]
+      RenderTable {TABLE} at (0,483) size 630x471 [color=#FFFFFF] [border: (3px dotted #FFFFFF)]
         RenderBlock {CAPTION} at (0,0) size 630x22
           RenderText {#text} at (169,0) size 292x21
             text run at (169,0) width 292: "With 'border-collapse: separate'"
@@ -118,7 +118,7 @@ layer at (0,0) size 785x1466
             RenderTableCell {TD} at (504,144) size 113x26 [border: (1px dotted #FFFFFF)] [r=1 c=3 rs=1 cs=1]
               RenderText {#text} at (2,2) size 43x21
                 text run at (2,2) width 43: "TD L"
-      RenderTable {TABLE} at (0,954) size 588x437 [color=#FFFFFF] [border: (6px dotted #FFFFFF)]
+      RenderTable {TABLE} at (0,953) size 588x437 [color=#FFFFFF] [border: (6px dotted #FFFFFF)]
         RenderBlock {CAPTION} at (0,0) size 588x22
           RenderText {#text} at (149,0) size 290x21
             text run at (149,0) width 290: "With 'border-collapse: collapse'"
@@ -177,10 +177,10 @@ layer at (0,0) size 785x1466
             RenderTableCell {TD} at (469,136) size 115x25 [border: (1px dotted #FFFFFF)] [r=1 c=3 rs=1 cs=1]
               RenderText {#text} at (4,2) size 43x21
                 text run at (4,2) width 43: "TD L"
-      RenderBlock {DIV} at (0,1390) size 769x36
+      RenderBlock {DIV} at (0,1389) size 769x36
         RenderInline {A} at (0,0) size 88x15 [color=#FFFF00]
           RenderImage {IMG} at (0,0) size 88x31
         RenderText {#text} at (0,0) size 0x0
-      RenderBlock {ADDRESS} at (0,1425) size 769x16
+      RenderBlock {ADDRESS} at (0,1424) size 769x16
         RenderText {#text} at (0,0) size 704x15
           text run at (0,0) width 704: "CSS2 Table Backgrounds Test Suite designed and written by fantasai <fantasai@escape.com>"

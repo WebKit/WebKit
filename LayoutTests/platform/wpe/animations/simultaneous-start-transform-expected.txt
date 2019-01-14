@@ -1,4 +1,4 @@
-This test performs an animation of the transform property. It animates over 10 seconds. It takes 3 snapshots and expects each result to be within a specified range. PASS - "webkitTransform" property for "box1" element at 2s saw something close to: 0.309017,0.951057
+This test performs an animation of the transform property. It animates over 10 seconds. It takes 3 snapshots and expects each result to be within a specified range.PASS - "webkitTransform" property for "box1" element at 2s saw something close to: 0.309017,0.951057
 PASS - "webkitTransform" property for "box2" element at 2s saw something close to: 0.309017,0.951057
 PASS - "webkitTransform" property for "box1" and "box2" elements at 2s are close enough to each other
 PASS - "webkitTransform" property for "box1" element at 5s saw something close to: -1,0
