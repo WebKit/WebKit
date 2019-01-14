@@ -12,9 +12,6 @@
             },
             "/webkit/WebKitWebView/audio-usermedia-permission-request": {
                 "expected": {"gtk": {"status": ["TIMEOUT"], "bug": "webkit.org/b/158257"}}
-            },
-            "/webkit/WebKitWebView/disallow-modal-dialogs": {
-                "expected": {"wpe": {"status": ["FAIL"]}}
             }
         }
     },
@@ -54,9 +51,6 @@
             "/webkit/WebKitWebsiteData/appcache": {
                 "expected": {"all": {"status": ["PASS", "FAIL"], "bug": "webkit.org/b/188117"}}
             },
-            "/webkit/WebKitWebsiteData/configuration": {
-                "expected": {"wpe": {"status": ["FAIL"]}}
-            },
             "/webkit/WebKitWebsiteData/storage": {
                 "expected": {"wpe": {"status": ["PASS", "FAIL"]}}
             },
@@ -72,16 +66,6 @@
             },
             "/webkit/WebKitWebContext/languages": {
                 "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/188111"}}
-            }
-        }
-    },
-    "TestWebKitWebView": {
-        "subtests": {
-            "/webkit/WebKitWebView/backend": {
-                "expected": {"wpe": {"status": ["CRASH"], "bug": "webkit.org/b/179884"}}
-            },
-            "/webkit/WebKitWebView/run-javascript": {
-                "expected": {"wpe": {"status": ["FAIL"]}}
             }
         }
     },
@@ -176,56 +160,9 @@
             }
         }
     },
-    "TestLoaderClient": {
-        "subtests": {
-            "/webkit/WebKitWebPage/get-uri": {
-                "expected": {"wpe": {"status": ["FAIL"]}}
-            },
-            "/webkit/WebKitURIRequest/http-method": {
-                "expected": {"wpe": {"status": ["FAIL"]}}
-            },
-            "/webkit/WebKitWebView/is-loading": {
-                "expected": {"wpe": {"status": ["FAIL"]}}
-            },
-            "/webkit/WebKitWebView/active-uri": {
-                "expected": {"wpe": {"status": ["FAIL"]}}
-            }
-        }
-    },
     "TestResources": {
         "subtests": {
             "/webkit/WebKitWebResource/get-data-error": {
-                "expected": {"wpe": {"status": ["FAIL"]}}
-            }
-        }
-    },
-    "TestAuthentication": {
-        "subtests": {
-            "/webkit/Authentication/authentication-no-credential": {
-                "expected": {"wpe": {"status": ["FAIL"]}}
-            }
-        }
-    },
-    "TestDownloads": {
-        "subtests": {
-            "/webkit/Downloads/policy-decision-download": {
-                "expected": {"wpe": {"status": ["FAIL"]}}
-            }
-        }
-    },
-    "TestConsoleMessage": {
-        "subtests": {
-            "/webkit/WebKitConsoleMessage/js-exception": {
-                "expected": {"wpe": {"status": ["FAIL"]}}
-            }
-        }
-    },
-    "TestWebKitUserContentManager": {
-        "subtests": {
-            "/webkit/WebKitUserContentManager/injected-script": {
-                "expected": {"wpe": {"status": ["FAIL"]}}
-            },
-            "/webkit/WebKitUserContentManager/script-message-received": {
                 "expected": {"wpe": {"status": ["FAIL"]}}
             }
         }

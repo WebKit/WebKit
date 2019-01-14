@@ -1,5 +1,15 @@
 2019-01-14  Charlie Turner  <cturner@igalia.com>
 
+        [WPE] API test gardening
+        https://bugs.webkit.org/show_bug.cgi?id=193319
+
+        Reviewed by Michael Catanzaro.
+
+        * TestWebKitAPI/glib/TestExpectations.json: Remove some now
+        passing tests.
+
+2019-01-14  Charlie Turner  <cturner@igalia.com>
+
         [GStreamer] Add sharedBuffer utility to GstMappedBuffer, and a testsuite
         https://bugs.webkit.org/show_bug.cgi?id=192977
 
