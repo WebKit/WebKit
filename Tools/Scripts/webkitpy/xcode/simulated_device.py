@@ -139,7 +139,7 @@ class SimulatedDeviceManager(object):
                         devices = devices_for_runtime['devices']
                         break
             else:
-                devices = simctl_json['devices'][runtime.name]
+                devices = simctl_json['devices'].get(runtime.name, None) or simctl_json['devices'].get(runtime.identifier, [])
 
             for device_json in devices:
                 device = SimulatedDeviceManager._create_device_with_runtime(host, runtime, device_json)
