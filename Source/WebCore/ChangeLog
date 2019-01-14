@@ -1,3 +1,21 @@
+2019-01-14  Zan Dobersek  <zdobersek@igalia.com>
+
+        DOMCacheStorage: use-after-move in doSequentialMatch()
+        https://bugs.webkit.org/show_bug.cgi?id=193396
+
+        Reviewed by Youenn Fablet.
+
+        Depending on the platform- and compiler-specific calling conventions,
+        the doSequentialMatch() code can move out the Vector<Ref<DOMCache>>
+        object into the callback lambda before the DOMCache object at the
+        specified index is retrieved for the DOMCache::doMatch() invocation.
+
+        This problem is now avoided by retrieving reference to the target
+        DOMCache object in an earlier expression.
+
+        * Modules/cache/DOMCacheStorage.cpp:
+        (WebCore::doSequentialMatch):
+
 2019-01-14  Zalan Bujtas  <zalan@apple.com>
 
         [LFC][BFC] Add basic box-sizing support.
