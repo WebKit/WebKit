@@ -101,7 +101,7 @@ EXCLUDED_SOURCE_FILE_NAMES[sdk=macosx*] = *IOS.h *IOS.cpp *IOS.mm;
 EXCLUDED_SOURCE_FILE_NAMES[sdk=iphone*] = *Mac.h *Mac.cpp *Mac.mm */mac/*;
 
 OTHER_CFLAGS = $(ASAN_OTHER_CFLAGS) --system-header-prefix=WebKit/;
-OTHER_CFLAGS[sdk=macosx*] = $(inherited) -iframework $(SDKROOT)$(SYSTEM_LIBRARY_DIR)/PrivateFrameworks;
+OTHER_CFLAGS[sdk=macosx*] = $(inherited) -iframework $(SDKROOT)$(SYSTEM_LIBRARY_DIR)/Frameworks/ApplicationServices.framework/Frameworks -iframework $(SDKROOT)$(SYSTEM_LIBRARY_DIR)/Frameworks/Carbon.framework/Frameworks -iframework $(SDKROOT)$(SYSTEM_LIBRARY_DIR)/Frameworks/Quartz.framework/Frameworks -iframework $(SDKROOT)$(SYSTEM_LIBRARY_DIR)/Frameworks/CoreServices.framework/Frameworks -iframework $(SDKROOT)$(SYSTEM_LIBRARY_DIR)/PrivateFrameworks;
 OTHER_CPLUSPLUSFLAGS = $(ASAN_OTHER_CPLUSPLUSFLAGS);
 OTHER_LDFLAGS = $(ASAN_OTHER_LDFLAGS);
 

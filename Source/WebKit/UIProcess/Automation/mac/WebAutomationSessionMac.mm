@@ -33,7 +33,7 @@
 #import "WebInspectorProxy.h"
 #import "WebPageProxy.h"
 #import "_WKAutomationSession.h"
-#import <Carbon/Carbon.h>
+#import <HIToolbox/Events.h>
 #import <WebCore/IntPoint.h>
 #import <WebCore/IntSize.h>
 #import <WebCore/PlatformMouseEvent.h>

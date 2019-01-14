@@ -34,7 +34,7 @@
 #import "PrintInfo.h"
 #import "ShareableBitmap.h"
 #import "WebPageProxy.h"
-#import <Quartz/Quartz.h>
+#import <PDFKit/PDFKit.h>
 #import <WebCore/GraphicsContext.h>
 #import <WebCore/LocalDefaultSystemAppearance.h>
 #import <WebCore/WebCoreObjCExtras.h>

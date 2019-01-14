@@ -29,7 +29,7 @@
 
 #if USE(APPLE_INTERNAL_SDK)
 
-#include <ApplicationServices/ApplicationServicesPriv.h>
+#include <QD/QuickdrawPriv.h>
 
 #else
 

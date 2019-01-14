@@ -38,6 +38,9 @@ FRAMEWORK_SEARCH_PATHS[sdk=macosx*] = $(WK_QUOTED_OVERRIDE_FRAMEWORKS_DIR);
 SYSTEM_FRAMEWORK_SEARCH_PATHS = $(inherited) $(SDKROOT)$(SYSTEM_LIBRARY_DIR)/PrivateFrameworks $(SDKROOT)$(SYSTEM_LIBRARY_DIR)/Frameworks
 
 LIBRARY_SEARCH_PATHS = $(inherited) "$(WK_LIBWEBRTC_LIBRARY_DIR)";
+ADDITIONAL_CFLAGS = -iframework $(SDKROOT)$(SYSTEM_LIBRARY_DIR)/Frameworks/Carbon.framework/Frameworks -iframework $(SDKROOT)$(SYSTEM_LIBRARY_DIR)/Frameworks/ApplicationServices.framework/Frameworks -iframework $(SDKROOT)$(SYSTEM_LIBRARY_DIR)/Frameworks/CoreServices.framework/Frameworks -iframework $(SDKROOT)$(SYSTEM_LIBRARY_DIR)/Frameworks/Quartz.framework/Frameworks;
+OTHER_CFLAGS = $(inherited) $(ADDITIONAL_CFLAGS);
+OTHER_CPLUSPLUSFLAGS = $(inherited) $(ADDITIONAL_CFLAGS);
 
 WEBKITADDITIONS_HEADER_SEARCH_PATHS = $(BUILT_PRODUCTS_DIR)/usr/local/include/WebKitAdditions $(SDKROOT)/usr/local/include/WebKitAdditions;
 LIBWEBRTC_HEADER_SEARCH_PATHS = $(BUILT_PRODUCTS_DIR)/usr/local/include/webrtc $(SDKROOT)/usr/local/include/webrtc $(BUILT_PRODUCTS_DIR)/usr/local/include/webrtc/sdk/objc/Framework/Headers $(SDKROOT)/usr/local/include/webrtc/sdk/objc/Framework/Headers;

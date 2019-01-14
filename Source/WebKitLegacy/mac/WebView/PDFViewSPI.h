@@ -25,7 +25,7 @@
 
 #if USE(APPLE_INTERNAL_SDK)
 
-#import <Quartz/QuartzPrivate.h>
+#import <PDFKit/PDFViewPriv.h>
 
 #else
 

@@ -56,7 +56,7 @@
 #if PLATFORM(MAC)
 
 #if USE(APPLE_INTERNAL_SDK)
-#import <ApplicationServices/ApplicationServicesPriv.h>
+#import <HIServices/AccessibilityPriv.h>
 #else
 typedef enum {
     AXSuspendStatusRunning = 0,

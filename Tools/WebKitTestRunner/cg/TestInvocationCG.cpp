@@ -35,7 +35,7 @@
 #include <wtf/RetainPtr.h>
 
 #if PLATFORM(MAC) && !PLATFORM(IOS_FAMILY)
-#include <CoreServices/CoreServices.h>
+#include <LaunchServices/UTCoreTypes.h>
 #endif
 
 #if PLATFORM(IOS_FAMILY)

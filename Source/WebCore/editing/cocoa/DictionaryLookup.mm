@@ -50,11 +50,11 @@
 #import <wtf/BlockObjCExceptions.h>
 #import <wtf/RefPtr.h>
 
-#if PLATFORM(MAC)
-#import <Quartz/Quartz.h>
-#elif !PLATFORM(WATCH)
+#if !PLATFORM(WATCH)
+
 #import <PDFKit/PDFKit.h>
-#endif
+
+#endif // !PLATFORM(WATCH)
 
 #if PLATFORM(MAC)
 
