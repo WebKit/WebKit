@@ -76,6 +76,7 @@ fast/block/block-only/relative-position-when-containing-block-is-not-in-the-form
 fast/block/block-only/relative-right.html
 fast/block/block-only/relative-siblings.html
 fast/block/block-only/relative-simple.html
+fast/block/block-only/box-sizing-inflow-out-of-flow-simple.html
 fast/block/basic/002.html
 fast/block/basic/003.html
 fast/block/basic/006.html

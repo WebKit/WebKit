@@ -285,25 +285,29 @@ VerticalGeometry FormattingContext::Geometry::outOfFlowNonReplacedVerticalGeomet
     auto paddingBottom = displayBox.paddingBottom().valueOr(0);
     auto borderTop = displayBox.borderTop();
     auto borderBottom = displayBox.borderBottom();
+    auto contentHeight = [&] {
+        ASSERT(height);
+        return style.boxSizing() == BoxSizing::ContentBox ? *height : *height - (borderTop + paddingTop + paddingBottom + borderBottom);  
+    };
 
     if (!top && !height && !bottom)
         top = staticVerticalPositionForOutOfFlowPositioned(layoutState, layoutBox);
 
     if (top && height && bottom) {
         if (!computedVerticalMargin.before && !computedVerticalMargin.after) {
-            auto marginBeforeAndAfter = containingBlockHeight - (*top + borderTop + paddingTop + *height + paddingBottom + borderBottom + *bottom);
+            auto marginBeforeAndAfter = containingBlockHeight - (*top + borderTop + paddingTop + contentHeight() + paddingBottom + borderBottom + *bottom);
             usedVerticalMargin = { marginBeforeAndAfter / 2, marginBeforeAndAfter / 2 };
         } else if (!computedVerticalMargin.before) {
             usedVerticalMargin.after = *computedVerticalMargin.after;
-            usedVerticalMargin.before = containingBlockHeight - (*top + borderTop + paddingTop + *height + paddingBottom + borderBottom + usedVerticalMargin.after + *bottom);
+            usedVerticalMargin.before = containingBlockHeight - (*top + borderTop + paddingTop + contentHeight() + paddingBottom + borderBottom + usedVerticalMargin.after + *bottom);
         } else {
             usedVerticalMargin.before = *computedVerticalMargin.before;
-            usedVerticalMargin.after = containingBlockHeight - (*top + usedVerticalMargin.before + borderTop + paddingTop + *height + paddingBottom + borderBottom + *bottom);
+            usedVerticalMargin.after = containingBlockHeight - (*top + usedVerticalMargin.before + borderTop + paddingTop + contentHeight() + paddingBottom + borderBottom + *bottom);
         }
         // Over-constrained?
-        auto boxHeight = *top + usedVerticalMargin.before + borderTop + paddingTop + *height + paddingBottom + borderBottom + usedVerticalMargin.after + *bottom;
+        auto boxHeight = *top + usedVerticalMargin.before + borderTop + paddingTop + contentHeight() + paddingBottom + borderBottom + usedVerticalMargin.after + *bottom;
         if (boxHeight > containingBlockHeight)
-            bottom = containingBlockHeight - (*top + usedVerticalMargin.before + borderTop + paddingTop + *height + paddingBottom + borderBottom + usedVerticalMargin.after); 
+            bottom = containingBlockHeight - (*top + usedVerticalMargin.before + borderTop + paddingTop + contentHeight() + paddingBottom + borderBottom + usedVerticalMargin.after);
     }
 
     if (!top && !height && bottom) {
@@ -317,32 +321,32 @@ VerticalGeometry FormattingContext::Geometry::outOfFlowNonReplacedVerticalGeomet
         // #2
         top = staticVerticalPositionForOutOfFlowPositioned(layoutState, layoutBox);
         usedVerticalMargin = { computedVerticalMargin.before.valueOr(0), computedVerticalMargin.after.valueOr(0) };
-        bottom = containingBlockHeight - (*top + usedVerticalMargin.before + borderTop + paddingTop + *height + paddingBottom + borderBottom + usedVerticalMargin.after); 
+        bottom = containingBlockHeight - (*top + usedVerticalMargin.before + borderTop + paddingTop + contentHeight() + paddingBottom + borderBottom + usedVerticalMargin.after);
     }
 
     if (!height && !bottom && top) {
         // #3
         height = contentHeightForFormattingContextRoot(layoutState, layoutBox);
         usedVerticalMargin = { computedVerticalMargin.before.valueOr(0), computedVerticalMargin.after.valueOr(0) };
-        bottom = containingBlockHeight - (*top + usedVerticalMargin.before + borderTop + paddingTop + *height + paddingBottom + borderBottom + usedVerticalMargin.after); 
+        bottom = containingBlockHeight - (*top + usedVerticalMargin.before + borderTop + paddingTop + *height + paddingBottom + borderBottom + usedVerticalMargin.after);
     }
 
     if (!top && height && bottom) {
         // #4
         usedVerticalMargin = { computedVerticalMargin.before.valueOr(0), computedVerticalMargin.after.valueOr(0) };
-        top = containingBlockHeight - (usedVerticalMargin.before + borderTop + paddingTop + *height + paddingBottom + borderBottom + usedVerticalMargin.after + *bottom); 
+        top = containingBlockHeight - (usedVerticalMargin.before + borderTop + paddingTop + contentHeight() + paddingBottom + borderBottom + usedVerticalMargin.after + *bottom);
     }
 
     if (!height && top && bottom) {
         // #5
         usedVerticalMargin = { computedVerticalMargin.before.valueOr(0), computedVerticalMargin.after.valueOr(0) };
-        height = containingBlockHeight - (*top + usedVerticalMargin.before + borderTop + paddingTop + paddingBottom + borderBottom + usedVerticalMargin.after + *bottom); 
+        height = containingBlockHeight - (*top + usedVerticalMargin.before + borderTop + paddingTop + paddingBottom + borderBottom + usedVerticalMargin.after + *bottom);
     }
 
     if (!bottom && top && height) {
         // #6
         usedVerticalMargin = { computedVerticalMargin.before.valueOr(0), computedVerticalMargin.after.valueOr(0) };
-        bottom = containingBlockHeight - (*top + usedVerticalMargin.before + borderTop + paddingTop + *height + paddingBottom + borderBottom + usedVerticalMargin.after); 
+        bottom = containingBlockHeight - (*top + usedVerticalMargin.before + borderTop + paddingTop + contentHeight() + paddingBottom + borderBottom + usedVerticalMargin.after);
     }
 
     ASSERT(top);
@@ -350,7 +354,7 @@ VerticalGeometry FormattingContext::Geometry::outOfFlowNonReplacedVerticalGeomet
     ASSERT(height);
 
     LOG_WITH_STREAM(FormattingContextLayout, stream << "[Position][Height][Margin] -> out-of-flow non-replaced -> top(" << *top << "px) bottom("  << *bottom << "px) height(" << *height << "px) margin(" << usedVerticalMargin.before << "px, "  << usedVerticalMargin.after << "px) layoutBox(" << &layoutBox << ")");
-    return { *top, *bottom, { *height, usedVerticalMargin } };
+    return { *top, *bottom, { contentHeight(), usedVerticalMargin } };
 }
 
 HorizontalGeometry FormattingContext::Geometry::outOfFlowNonReplacedHorizontalGeometry(LayoutState& layoutState, const Box& layoutBox, Optional<LayoutUnit> usedWidth)
@@ -398,6 +402,10 @@ HorizontalGeometry FormattingContext::Geometry::outOfFlowNonReplacedHorizontalGe
     auto paddingRight = displayBox.paddingRight().valueOr(0);
     auto borderLeft = displayBox.borderLeft();
     auto borderRight = displayBox.borderRight();
+    auto contentWidth = [&] {
+        ASSERT(width);
+        return style.boxSizing() == BoxSizing::ContentBox ? *width : *width - (borderLeft + paddingLeft + paddingRight + borderRight);
+    };
 
     if (!left && !width && !right) {
         // If all three of 'left', 'width', and 'right' are 'auto': First set any 'auto' values for 'margin-left' and 'margin-right' to 0.
@@ -417,37 +425,37 @@ HorizontalGeometry FormattingContext::Geometry::outOfFlowNonReplacedHorizontalGe
         // If the values are over-constrained, ignore the value for 'left' (in case the 'direction' property of the containing block is 'rtl') or 'right'
         // (in case 'direction' is 'ltr') and solve for that value.
         if (!computedHorizontalMargin.start && !computedHorizontalMargin.end) {
-            auto marginStartAndEnd = containingBlockWidth - (*left + borderLeft + paddingLeft + *width + paddingRight + borderRight + *right);
+            auto marginStartAndEnd = containingBlockWidth - (*left + borderLeft + paddingLeft + contentWidth() + paddingRight + borderRight + *right);
             if (marginStartAndEnd >= 0)
                 usedHorizontalMargin = { marginStartAndEnd / 2, marginStartAndEnd / 2 };
             else {
                 if (isLeftToRightDirection) {
                     usedHorizontalMargin.start = 0_lu;
-                    usedHorizontalMargin.end = containingBlockWidth - (*left + usedHorizontalMargin.start + borderLeft + paddingLeft + *width + paddingRight + borderRight + *right);
+                    usedHorizontalMargin.end = containingBlockWidth - (*left + usedHorizontalMargin.start + borderLeft + paddingLeft + contentWidth() + paddingRight + borderRight + *right);
                 } else {
                     usedHorizontalMargin.end = 0_lu;
-                    usedHorizontalMargin.start = containingBlockWidth - (*left + borderLeft + paddingLeft + *width + paddingRight + borderRight + usedHorizontalMargin.end + *right);
+                    usedHorizontalMargin.start = containingBlockWidth - (*left + borderLeft + paddingLeft + contentWidth() + paddingRight + borderRight + usedHorizontalMargin.end + *right);
                 }
             }
         } else if (!computedHorizontalMargin.start) {
             usedHorizontalMargin.end = *computedHorizontalMargin.end;
-            usedHorizontalMargin.start = containingBlockWidth - (*left + borderLeft + paddingLeft + *width + paddingRight + borderRight + usedHorizontalMargin.end + *right);
+            usedHorizontalMargin.start = containingBlockWidth - (*left + borderLeft + paddingLeft + contentWidth() + paddingRight + borderRight + usedHorizontalMargin.end + *right);
             // Overconstrained? Ignore right (left).
             if (usedHorizontalMargin.start < 0) {
                 if (isLeftToRightDirection)
-                    usedHorizontalMargin.start = containingBlockWidth - (*left + borderLeft + paddingLeft + *width + paddingRight + borderRight + usedHorizontalMargin.end);
+                    usedHorizontalMargin.start = containingBlockWidth - (*left + borderLeft + paddingLeft + contentWidth() + paddingRight + borderRight + usedHorizontalMargin.end);
                 else
-                    usedHorizontalMargin.start = containingBlockWidth - (borderLeft + paddingLeft + *width + paddingRight + borderRight + usedHorizontalMargin.end + *right);
+                    usedHorizontalMargin.start = containingBlockWidth - (borderLeft + paddingLeft + contentWidth() + paddingRight + borderRight + usedHorizontalMargin.end + *right);
             }
         } else if (!computedHorizontalMargin.end) {
             usedHorizontalMargin.start = *computedHorizontalMargin.start;
-            usedHorizontalMargin.end = containingBlockWidth - (*left + usedHorizontalMargin.start + borderLeft + paddingLeft + *width + paddingRight + borderRight + *right);
+            usedHorizontalMargin.end = containingBlockWidth - (*left + usedHorizontalMargin.start + borderLeft + paddingLeft + contentWidth() + paddingRight + borderRight + *right);
             // Overconstrained? Ignore right (left).
             if (usedHorizontalMargin.end < 0) {
                 if (isLeftToRightDirection)
-                    usedHorizontalMargin.end = containingBlockWidth - (*left + usedHorizontalMargin.start + borderLeft + paddingLeft + *width + paddingRight + borderRight);
+                    usedHorizontalMargin.end = containingBlockWidth - (*left + usedHorizontalMargin.start + borderLeft + paddingLeft + contentWidth() + paddingRight + borderRight);
                 else
-                    usedHorizontalMargin.end = containingBlockWidth - (usedHorizontalMargin.start + borderLeft + paddingLeft + *width + paddingRight + borderRight + *right);
+                    usedHorizontalMargin.end = containingBlockWidth - (usedHorizontalMargin.start + borderLeft + paddingLeft + contentWidth() + paddingRight + borderRight + *right);
             }
         }
     } else {
@@ -464,10 +472,10 @@ HorizontalGeometry FormattingContext::Geometry::outOfFlowNonReplacedHorizontalGe
         auto staticHorizontalPosition = staticHorizontalPositionForOutOfFlowPositioned(layoutState, layoutBox);
         if (isLeftToRightDirection) {
             left = staticHorizontalPosition;
-            right = containingBlockWidth - (*left + usedHorizontalMargin.start + borderLeft + paddingLeft + *width + paddingRight + borderRight + usedHorizontalMargin.end);
+            right = containingBlockWidth - (*left + usedHorizontalMargin.start + borderLeft + paddingLeft + contentWidth() + paddingRight + borderRight + usedHorizontalMargin.end);
         } else {
             right = staticHorizontalPosition;
-            left = containingBlockWidth - (usedHorizontalMargin.start + borderLeft + paddingLeft + *width + paddingRight + borderRight + usedHorizontalMargin.end + *right);
+            left = containingBlockWidth - (usedHorizontalMargin.start + borderLeft + paddingLeft + contentWidth() + paddingRight + borderRight + usedHorizontalMargin.end + *right);
         }
     } else if (!width && !right && left) {
         // #3
@@ -475,13 +483,13 @@ HorizontalGeometry FormattingContext::Geometry::outOfFlowNonReplacedHorizontalGe
         right = containingBlockWidth - (*left + usedHorizontalMargin.start + borderLeft + paddingLeft + *width + paddingRight + borderRight + usedHorizontalMargin.end);
     } else if (!left && width && right) {
         // #4
-        left = containingBlockWidth - (usedHorizontalMargin.start + borderLeft + paddingLeft + *width + paddingRight + borderRight + usedHorizontalMargin.end + *right);
+        left = containingBlockWidth - (usedHorizontalMargin.start + borderLeft + paddingLeft + contentWidth() + paddingRight + borderRight + usedHorizontalMargin.end + *right);
     } else if (!width && left && right) {
         // #5
-        width = containingBlockWidth - (*left + usedHorizontalMargin.start + borderLeft + paddingLeft + paddingRight  + borderRight + usedHorizontalMargin.end + *right);
+        width = containingBlockWidth - (*left + usedHorizontalMargin.start + borderLeft + paddingLeft + paddingRight + borderRight + usedHorizontalMargin.end + *right);
     } else if (!right && left && width) {
         // #6
-        right = containingBlockWidth - (*left + usedHorizontalMargin.start + borderLeft + paddingLeft + *width + paddingRight + borderRight + usedHorizontalMargin.end);
+        right = containingBlockWidth - (*left + usedHorizontalMargin.start + borderLeft + paddingLeft + contentWidth() + paddingRight + borderRight + usedHorizontalMargin.end);
     }
 
     ASSERT(left);
@@ -489,7 +497,7 @@ HorizontalGeometry FormattingContext::Geometry::outOfFlowNonReplacedHorizontalGe
     ASSERT(width);
 
     LOG_WITH_STREAM(FormattingContextLayout, stream << "[Position][Width][Margin] -> out-of-flow non-replaced -> left(" << *left << "px) right("  << *right << "px) width(" << *width << "px) margin(" << usedHorizontalMargin.start << "px, "  << usedHorizontalMargin.end << "px) layoutBox(" << &layoutBox << ")");
-    return { *left, *right, { *width, usedHorizontalMargin, computedHorizontalMargin } };
+    return { *left, *right, { contentWidth(), usedHorizontalMargin, computedHorizontalMargin } };
 }
 
 VerticalGeometry FormattingContext::Geometry::outOfFlowReplacedVerticalGeometry(const LayoutState& layoutState, const Box& layoutBox, Optional<LayoutUnit> usedHeight)

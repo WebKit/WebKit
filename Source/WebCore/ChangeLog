@@ -1,3 +1,23 @@
+2019-01-14  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC][BFC] Add basic box-sizing support.
+        https://bugs.webkit.org/show_bug.cgi?id=193392
+
+        Reviewed by Antti Koivisto.
+
+        No min/max support yet.
+
+        Test: fast/block/block-only/box-sizing-inflow-out-of-flow-simple.html
+
+        * layout/FormattingContextGeometry.cpp:
+        (WebCore::Layout::FormattingContext::Geometry::outOfFlowNonReplacedVerticalGeometry):
+        (WebCore::Layout::FormattingContext::Geometry::outOfFlowNonReplacedHorizontalGeometry):
+        * layout/blockformatting/BlockFormattingContextGeometry.cpp:
+        (WebCore::Layout::BlockFormattingContext::Geometry::inFlowNonReplacedHeightAndMargin):
+        (WebCore::Layout::BlockFormattingContext::Geometry::inFlowNonReplacedWidthAndMargin):
+        * page/FrameViewLayoutContext.cpp:
+        (WebCore::layoutUsingFormattingContext):
+
 2019-01-14  Thibault Saunier  <tsaunier@igalia.com>
 
         [GStreamer][WebRTC] Override DeviceType() in RealtimeMediaSource implementations

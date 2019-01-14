@@ -61,10 +61,13 @@ HeightAndMargin BlockFormattingContext::Geometry::inFlowNonReplacedHeightAndMarg
         auto computedVerticalMargin = Geometry::computedVerticalMargin(layoutState, layoutBox);
         auto nonCollapsedMargin = UsedVerticalMargin::NonCollapsedValues { computedVerticalMargin.before.valueOr(0), computedVerticalMargin.after.valueOr(0) }; 
         auto borderAndPaddingTop = displayBox.borderTop() + displayBox.paddingTop().valueOr(0);
-
         auto height = usedHeight ? usedHeight.value() : computedHeightValue(layoutState, layoutBox, HeightType::Normal);
-        if (height)
-            return { height.value(), nonCollapsedMargin };
+
+        if (height) {
+            auto borderAndPaddingBottom = displayBox.borderBottom() + displayBox.paddingBottom().valueOr(0);
+            auto contentHeight = layoutBox.style().boxSizing() == BoxSizing::ContentBox ? *height : *height - (borderAndPaddingTop + borderAndPaddingBottom);  
+            return { contentHeight, nonCollapsedMargin };
+        }
 
         if (!is<Container>(layoutBox) || !downcast<Container>(layoutBox).hasInFlowChild())
             return { 0, nonCollapsedMargin };
@@ -142,10 +145,14 @@ WidthAndMargin BlockFormattingContext::Geometry::inFlowNonReplacedWidthAndMargin
         auto borderRight = displayBox.borderRight();
         auto paddingLeft = displayBox.paddingLeft().valueOr(0);
         auto paddingRight = displayBox.paddingRight().valueOr(0);
+        auto contentWidth = [&] {
+            ASSERT(width);
+            return style.boxSizing() == BoxSizing::ContentBox ? *width : *width - (borderLeft + paddingLeft + paddingRight + borderRight);
+        };
 
         // #1
         if (width) {
-            auto horizontalSpaceForMargin = containingBlockWidth - (computedHorizontalMargin.start.valueOr(0) + borderLeft + paddingLeft + *width + paddingRight + borderRight + computedHorizontalMargin.end.valueOr(0));
+            auto horizontalSpaceForMargin = containingBlockWidth - (computedHorizontalMargin.start.valueOr(0) + borderLeft + paddingLeft + contentWidth() + paddingRight + borderRight + computedHorizontalMargin.end.valueOr(0));
             if (horizontalSpaceForMargin < 0)
                 usedHorizontalMargin = { computedHorizontalMargin.start.valueOr(0), computedHorizontalMargin.end.valueOr(0) };
         }
@@ -154,23 +161,23 @@ WidthAndMargin BlockFormattingContext::Geometry::inFlowNonReplacedWidthAndMargin
         if (width && computedHorizontalMargin.start && computedHorizontalMargin.end) {
             if (containingBlock->style().isLeftToRightDirection()) {
                 usedHorizontalMargin.start = *computedHorizontalMargin.start;
-                usedHorizontalMargin.end = containingBlockWidth - (usedHorizontalMargin.start + borderLeft + paddingLeft  + *width + paddingRight + borderRight);
+                usedHorizontalMargin.end = containingBlockWidth - (usedHorizontalMargin.start + borderLeft + paddingLeft + contentWidth() + paddingRight + borderRight);
             } else {
                 usedHorizontalMargin.end = *computedHorizontalMargin.end;
-                usedHorizontalMargin.start = containingBlockWidth - (borderLeft + paddingLeft + *width + paddingRight + borderRight + usedHorizontalMargin.end);
+                usedHorizontalMargin.start = containingBlockWidth - (borderLeft + paddingLeft + contentWidth() + paddingRight + borderRight + usedHorizontalMargin.end);
             }
         }
 
         // #3
         if (!computedHorizontalMargin.start && width && computedHorizontalMargin.end) {
             usedHorizontalMargin.end = *computedHorizontalMargin.end;
-            usedHorizontalMargin.start = containingBlockWidth - (borderLeft + paddingLeft  + *width + paddingRight + borderRight + usedHorizontalMargin.end);
+            usedHorizontalMargin.start = containingBlockWidth - (borderLeft + paddingLeft  + contentWidth() + paddingRight + borderRight + usedHorizontalMargin.end);
         } else if (computedHorizontalMargin.start && !width && computedHorizontalMargin.end) {
             usedHorizontalMargin = { *computedHorizontalMargin.start, *computedHorizontalMargin.end };
             width = containingBlockWidth - (usedHorizontalMargin.start + borderLeft + paddingLeft + paddingRight + borderRight + usedHorizontalMargin.end);
         } else if (computedHorizontalMargin.start && width && !computedHorizontalMargin.end) {
             usedHorizontalMargin.start = *computedHorizontalMargin.start;
-            usedHorizontalMargin.end = containingBlockWidth - (usedHorizontalMargin.start + borderLeft + paddingLeft + *width + paddingRight + borderRight);
+            usedHorizontalMargin.end = containingBlockWidth - (usedHorizontalMargin.start + borderLeft + paddingLeft + contentWidth() + paddingRight + borderRight);
         }
 
         // #4
@@ -181,13 +188,13 @@ WidthAndMargin BlockFormattingContext::Geometry::inFlowNonReplacedWidthAndMargin
 
         // #5
         if (!computedHorizontalMargin.start && !computedHorizontalMargin.end) {
-            auto horizontalSpaceForMargin = containingBlockWidth - (borderLeft + paddingLeft  + *width + paddingRight + borderRight);
+            auto horizontalSpaceForMargin = containingBlockWidth - (borderLeft + paddingLeft  + contentWidth() + paddingRight + borderRight);
             usedHorizontalMargin = { horizontalSpaceForMargin / 2, horizontalSpaceForMargin / 2 };
         }
 
         ASSERT(width);
 
-        return WidthAndMargin { *width, usedHorizontalMargin, computedHorizontalMargin };
+        return WidthAndMargin { contentWidth(), usedHorizontalMargin, computedHorizontalMargin };
     };
 
     auto widthAndMargin = compute();
