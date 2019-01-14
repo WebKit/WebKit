@@ -1,3 +1,9 @@
+2019-01-14  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Update OptionsGTK.cmake and NEWS for 2.23.3 release
+
+        * gtk/NEWS: Add release notes for 2.23.3.
+
 2019-01-13  Dan Bernstein  <mitz@apple.com>
 
         Fixed iOS builds after r239910.

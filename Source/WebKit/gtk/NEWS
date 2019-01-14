@@ -1,4 +1,18 @@
 =================
+WebKitGTK+ 2.23.3
+=================
+
+What's new in WebKitGTK+ 2.23.3?
+
+  - Fix rendering of emoji sequences containing zero with joiner.
+  - Fallback to a colored font when rendering emojis.
+  - Fix rendering artifacts on Youtube while scrolling under X11.
+  - Remove DConf permissions from sandbox.
+  - Fix build from release tarball with gtkdoc enabled.
+  - Fix several crashes and rendering issues.
+  - Translation updates: Swedish
+
+=================
 WebKitGTK+ 2.23.2
 =================
 
