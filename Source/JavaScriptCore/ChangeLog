@@ -1,3 +1,14 @@
+2019-01-09  Mark Lam  <mark.lam@apple.com>
+
+        Gigacage disabling checks should handle the GIGACAGE_ALLOCATION_CAN_FAIL case properly.
+        https://bugs.webkit.org/show_bug.cgi?id=193292
+        <rdar://problem/46485450>
+
+        Reviewed by Yusuke Suzuki.
+
+        * runtime/VM.h:
+        (JSC::VM::gigacageAuxiliarySpace):
+
 2018-12-18  Mark Lam  <mark.lam@apple.com>
 
         JSPropertyNameEnumerator should cache the iterated object's structure only after getting its property names.

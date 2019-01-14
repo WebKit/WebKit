@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2017-2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -75,18 +75,23 @@ extern "C" alignas(GIGACAGE_BASE_PTRS_SIZE) BEXPORT char g_gigacageBasePtrs[GIGA
 
 namespace Gigacage {
 
-extern BEXPORT bool g_wasEnabled;
-BINLINE bool wasEnabled() { return g_wasEnabled; }
+BINLINE bool wasEnabled() { return g_gigacageBasePtrs[0]; }
+BINLINE void setWasEnabled() { g_gigacageBasePtrs[0] = true; }
 
 struct BasePtrs {
+    uintptr_t reservedForFlags;
     void* primitive;
     void* jsValue;
 };
 
 enum Kind {
+    ReservedForFlagsAndNotABasePtr = 0,
     Primitive,
     JSValue,
 };
+
+static_assert(offsetof(BasePtrs, primitive) == Kind::Primitive * sizeof(void*), "");
+static_assert(offsetof(BasePtrs, jsValue) == Kind::JSValue * sizeof(void*), "");
 
 static constexpr unsigned numKinds = 2;
 
@@ -107,6 +112,8 @@ inline bool canPrimitiveGigacageBeDisabled() { return !isDisablingPrimitiveGigac
 BINLINE const char* name(Kind kind)
 {
     switch (kind) {
+    case ReservedForFlagsAndNotABasePtr:
+        RELEASE_BASSERT_NOT_REACHED();
     case Primitive:
         return "Primitive";
     case JSValue:
@@ -119,6 +126,8 @@ BINLINE const char* name(Kind kind)
 BINLINE void*& basePtr(BasePtrs& basePtrs, Kind kind)
 {
     switch (kind) {
+    case ReservedForFlagsAndNotABasePtr:
+        RELEASE_BASSERT_NOT_REACHED();
     case Primitive:
         return basePtrs.primitive;
     case JSValue:
@@ -146,6 +155,8 @@ BINLINE bool isEnabled(Kind kind)
 BINLINE size_t size(Kind kind)
 {
     switch (kind) {
+    case ReservedForFlagsAndNotABasePtr:
+        RELEASE_BASSERT_NOT_REACHED();
     case Primitive:
         return static_cast<size_t>(PRIMITIVE_GIGACAGE_SIZE);
     case JSValue:
