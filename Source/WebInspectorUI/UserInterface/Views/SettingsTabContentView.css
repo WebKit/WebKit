@@ -55,7 +55,6 @@
 
 .content-view.settings > .settings-view > .container {
     display: flex;
-    align-items: center;
     margin-top: 1em;
     font-size: 13px;
 }
@@ -85,6 +84,14 @@
     flex-direction: column;
 }
 
+.content-view.settings > .settings-view > .container > .editor-group > .editor {
+    --settings-editor-child-margin-top: 0;
+}
+
+.content-view.settings > .settings-view > .container > .editor-group > .editor:first-child > * {
+    margin-top: var(--settings-editor-child-margin-top);
+}
+
 .content-view.settings > .settings-view > .container > .editor-group > .editor input {
     font-size: inherit;
 }
@@ -103,16 +110,18 @@
     font-size: 16px;
 
     /* Vertically align <select> with the group title text. */
-    margin-top: 0;
+    --settings-editor-child-margin-top: -2px;
 }
 
 .content-view.settings > .settings-view > .container > .editor-group > .editor input[type="number"] {
-    /* Vertically align <input> with the group title text. */
-    margin-top: -1px;
-
     max-width: 48px;
+    padding-top: 0;
+    padding-bottom: 0;
     text-align: end;
+    vertical-align: 1px;
 
+    /* Vertically align <input> with the group title text. */
+    --settings-editor-child-margin-top: -2px;
     --settings-input-number-margin-start: 2px;
     --settings-input-number-margin-end: 5px;
 }

@@ -1,3 +1,17 @@
+2019-01-14  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: Settings: group titles should vertically align with the first editor
+        https://bugs.webkit.org/show_bug.cgi?id=193391
+
+        Reviewed by Dean Jackson.
+
+        * UserInterface/Views/SettingsTabContentView.css:
+        (.content-view.settings > .settings-view > .container):
+        (.content-view.settings > .settings-view > .container > .editor-group > .editor): Added.
+        (.content-view.settings > .settings-view > .container > .editor-group > .editor:first-child > *): Added.
+        (.content-view.settings > .settings-view > .container > .editor-group > .editor select):
+        (.content-view.settings > .settings-view > .container > .editor-group > .editor input[type="number"]):
+
 2019-01-11  Matt Baker  <mattbaker@apple.com>
 
         Web Inspector: REGRESSION: deleting an audit puts selection in a selected but invisible state
