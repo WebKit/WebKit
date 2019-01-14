@@ -22,7 +22,7 @@ test(() => {
 }, "Create a basic WebGPUBindGroupLayoutDescriptor."); 
 
 promise_test(async () => {
-    const device = await window.getBasicDevice();
+    const device = await getBasicDevice();
     const bindGroupLayout = device.createBindGroupLayout({ bindings: [createBindGroupLayoutBinding()] });
     assert_true(bindGroupLayout instanceof WebGPUBindGroupLayout, "createBindGroupLayout returned a WebGPUBindGroupLayout");
 

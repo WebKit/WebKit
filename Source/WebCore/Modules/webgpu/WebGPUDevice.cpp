@@ -97,7 +97,12 @@ Ref<WebGPUPipelineLayout> WebGPUDevice::createPipelineLayout(WebGPUPipelineLayou
 Ref<WebGPUBindGroup> WebGPUDevice::createBindGroup(WebGPUBindGroupDescriptor&& descriptor) const
 {
     if (!descriptor.layout || !descriptor.layout->bindGroupLayout()) {
-        LOG(WebGPU, "WebGPUDevice::createBindGroup: Invalid WebGPUBindGroupLayout!");
+        LOG(WebGPU, "WebGPUDevice::createBindGroup(): Invalid WebGPUBindGroupLayout!");
+        return WebGPUBindGroup::create(nullptr);
+    }
+
+    if (descriptor.bindings.size() != descriptor.layout->bindGroupLayout()->bindingsMap().size()) {
+        LOG(WebGPU, "WebGPUDevice::createBindGroup(): Mismatched number of WebGPUBindGroupLayoutBindings and WebGPUBindGroupBindings!");
         return WebGPUBindGroup::create(nullptr);
     }
 
@@ -115,11 +120,16 @@ Ref<WebGPUBindGroup> WebGPUDevice::createBindGroup(WebGPUBindGroupDescriptor&& d
     bindGroupBindings.reserveCapacity(descriptor.bindings.size());
 
     for (const auto& binding : descriptor.bindings) {
+        if (!descriptor.layout->bindGroupLayout()->bindingsMap().contains(binding.binding)) {
+            LOG(WebGPU, "WebGPUDevice::createBindGroup(): WebGPUBindGroupBinding %lu not found in WebGPUBindGroupLayout!", binding.binding);
+            return WebGPUBindGroup::create(nullptr);
+        }
+
         auto bindingResource = WTF::visit(bindingResourceVisitor, binding.resource);
         if (bindingResource)
             bindGroupBindings.uncheckedAppend(GPUBindGroupBinding { binding.binding, WTFMove(bindingResource.value()) });
         else {
-            LOG(WebGPU, "WebGPUDevice::createBindGroup: Invalid WebGPUBindingResource in WebGPUBindGroupBindings!");
+            LOG(WebGPU, "WebGPUDevice::createBindGroup(): Invalid WebGPUBindingResource for binding %lu in WebGPUBindGroupBindings!", binding.binding);
             return WebGPUBindGroup::create(nullptr);
         }
     }

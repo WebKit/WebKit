@@ -76,8 +76,14 @@ static RetainPtr<MTLArgumentEncoder> newEncoder(const GPUDevice& device, Argumen
 RefPtr<GPUBindGroupLayout> GPUBindGroupLayout::tryCreate(const GPUDevice& device, GPUBindGroupLayoutDescriptor&& descriptor)
 {
     ArgumentArray vertexArguments, fragmentArguments, computeArguments;
+    BindingsMapType bindingsMap;
 
     for (const auto& binding : descriptor.bindings) {
+        if (!bindingsMap.add(binding.binding, binding)) {
+            LOG(WebGPU, "GPUBindGroupLayout::tryCreate(): Duplicate binding %lu found in WebGPUBindGroupLayoutDescriptor!", binding.binding);
+            return nullptr;
+        }
+
         RetainPtr<MTLArgumentDescriptor> mtlArgument;
 
         BEGIN_BLOCK_OBJC_EXCEPTIONS;
@@ -85,7 +91,7 @@ RefPtr<GPUBindGroupLayout> GPUBindGroupLayout::tryCreate(const GPUDevice& device
         END_BLOCK_OBJC_EXCEPTIONS;
 
         if (!mtlArgument) {
-            LOG(WebGPU, "GPUBindGroupLayout::tryCreate(): Unable to create MTLArgumentDescriptor!");
+            LOG(WebGPU, "GPUBindGroupLayout::tryCreate(): Unable to create MTLArgumentDescriptor for binding %lu!", binding.binding);
             return nullptr;
         }
 
@@ -115,11 +121,12 @@ RefPtr<GPUBindGroupLayout> GPUBindGroupLayout::tryCreate(const GPUDevice& device
             return nullptr;
     }
 
-    return adoptRef(new GPUBindGroupLayout(WTFMove(encoders)));
+    return adoptRef(new GPUBindGroupLayout(WTFMove(bindingsMap), WTFMove(encoders)));
 }
 
-GPUBindGroupLayout::GPUBindGroupLayout(ArgumentEncoders&& encoders)
-    : m_argumentEncoders(WTFMove(encoders))
+GPUBindGroupLayout::GPUBindGroupLayout(BindingsMapType&& bindingsMap, ArgumentEncoders&& encoders)
+    : m_bindingsMap(WTFMove(bindingsMap))
+    , m_argumentEncoders(WTFMove(encoders))
 {
 }
 

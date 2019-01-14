@@ -42,7 +42,7 @@ public:
     static Ref<GPUBindGroup> create(GPUBindGroupDescriptor&&);
 
 private:
-    GPUBindGroup(GPUBindGroupDescriptor&&);
+    explicit GPUBindGroup(GPUBindGroupDescriptor&&);
 
     Ref<GPUBindGroupLayout> m_layout;
     Vector<GPUBindGroupBinding> m_bindings;

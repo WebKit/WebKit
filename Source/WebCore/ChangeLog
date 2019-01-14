@@ -1,3 +1,30 @@
+2019-01-14  Justin Fan  <justin_fan@apple.com>
+
+        [WebGPU] Map WebGPUBindGroupLayoutBindings from the BindGroupLayoutDescriptor for error checking and later referencing
+        https://bugs.webkit.org/show_bug.cgi?id=193405
+
+        Reviewed by Dean Jackson.
+
+        When creating a WebGPUBindGroupLayout, cache the WebGPUBindGroupLayoutDescriptor's list of BindGroupLayoutBindings
+        in a HashMap, keyed by binding number, for quick reference during the WebGPUProgrammablePassEncoder::setBindGroups 
+        implementation to follow. Also add error-checking e.g. detecting duplicate binding numbers in the same WebGPUBindGroupLayout
+        and non-existent binding numbers when creating the WebGPUBindGroup.
+
+        No new tests. BindGroups and BindGroupLayouts reflect the (canonical?) strategy of returning empty 
+        objects upon creation failure and reporting errors elswhere. Since error reporting is not yet implemented, 
+        the error checks aren't testable from LayoutTests right now. Expected behavior unchanged and covered by existing tests.
+
+        * Modules/webgpu/WebGPUDevice.cpp:
+        (WebCore::WebGPUDevice::createBindGroup const): 
+                Number of bindings must be consistent between bindings and layout bindings.
+                BindGroupBindings should only refer to existing BindGroupLayoutBindings.
+        * platform/graphics/gpu/GPUBindGroup.h: 
+        * platform/graphics/gpu/GPUBindGroupLayout.h:
+        (WebCore::GPUBindGroupLayout::bindingsMap const): Added. Cache map of BindGroupLayoutBindings.
+        * platform/graphics/gpu/cocoa/GPUBindGroupLayoutMetal.mm: Disallow duplicate binding numbers in BindGroupLayoutBindings.
+        (WebCore::GPUBindGroupLayout::tryCreate):
+        (WebCore::GPUBindGroupLayout::GPUBindGroupLayout):
+
 2019-01-14  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [WHLSL] Assorted cleanup

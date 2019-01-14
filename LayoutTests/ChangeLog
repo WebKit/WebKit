@@ -1,3 +1,15 @@
+2019-01-14  Justin Fan  <justin_fan@apple.com>
+
+        [WebGPU] Map WebGPUBindGroupLayoutBindings from the BindGroupLayoutDescriptor for error checking and later referencing
+        https://bugs.webkit.org/show_bug.cgi?id=193405
+
+        Reviewed by Dean Jackson.
+
+        Small fixes that do not alter behavior.
+
+        * webgpu/bind-groups.html:
+        * webgpu/pipeline-layouts.html:
+
 2019-01-14  Zalan Bujtas  <zalan@apple.com>
 
         [LFC][BFC] Add basic box-sizing support.

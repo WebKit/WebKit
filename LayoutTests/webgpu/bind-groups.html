@@ -17,7 +17,7 @@ promise_test(async () => {
         type: "storageBuffer"
     };
 
-    const bindGroupLayout = device.createBindGroupLayout({ bindings: [bufferLayoutBinding]});
+    const bindGroupLayout = device.createBindGroupLayout({ bindings: [bufferLayoutBinding] });
 
     const buffer = device.createBuffer({ size: 16, usage: WebGPUBufferUsage.STORAGE });
     const bufferBinding = { buffer: buffer, offset: 0, size: 16 };

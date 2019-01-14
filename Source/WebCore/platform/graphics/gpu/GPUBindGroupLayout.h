@@ -29,6 +29,7 @@
 
 #include "GPUBindGroupLayoutDescriptor.h"
 
+#include <wtf/HashMap.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
 #include <wtf/RetainPtr.h>
@@ -49,9 +50,13 @@ public:
 
     static RefPtr<GPUBindGroupLayout> tryCreate(const GPUDevice&, GPUBindGroupLayoutDescriptor&&);
 
-private:
-    GPUBindGroupLayout(ArgumentEncoders&&);
+    using BindingsMapType = HashMap<unsigned long long, GPUBindGroupLayoutBinding, WTF::IntHash<unsigned long long>, WTF::UnsignedWithZeroKeyHashTraits<unsigned long long>>;
+    const BindingsMapType& bindingsMap() const { return m_bindingsMap; }
 
+private:
+    GPUBindGroupLayout(BindingsMapType&&, ArgumentEncoders&&);
+
+    const BindingsMapType m_bindingsMap;
     ArgumentEncoders m_argumentEncoders;
 };
 
