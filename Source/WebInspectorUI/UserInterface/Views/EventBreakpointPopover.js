@@ -107,7 +107,7 @@ WI.EventBreakpointPopover = class EventBreakpointPopover extends WI.Popover
             .then((eventNames) => {
                 this._currentCompletions = [];
                 for (let eventName of eventNames) {
-                    if (eventName.toLowerCase().startsWith(this._domEventNameInputElement.value))
+                    if (eventName.toLowerCase().startsWith(this._domEventNameInputElement.value.toLowerCase()))
                         this._currentCompletions.push(eventName);
                 }
 

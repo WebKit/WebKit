@@ -1,5 +1,15 @@
 2019-01-14  Devin Rousso  <drousso@apple.com>
 
+        Web Inspector: Event breakpoints: typing uppercase "DOM" doesn't show completions for events that start with "DOM"
+        https://bugs.webkit.org/show_bug.cgi?id=193384
+
+        Reviewed by Joseph Pecoraro.
+
+        * UserInterface/Views/EventBreakpointPopover.js:
+        (WI.EventBreakpointPopover.prototype.show):
+
+2019-01-14  Devin Rousso  <drousso@apple.com>
+
         Web Inspector: Event breakpoints: text field and completion popover fonts should match
         https://bugs.webkit.org/show_bug.cgi?id=193249
 
