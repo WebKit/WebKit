@@ -36,6 +36,7 @@ WI.CompletionSuggestionsView = class CompletionSuggestionsView extends WI.Object
         this._moveIntervalIdentifier = null;
 
         this._element = document.createElement("div");
+        this._element.setAttribute("dir", "ltr");
         this._element.classList.add("completion-suggestions", WI.Popover.IgnoreAutoDismissClassName);
 
         this._containerElement = document.createElement("div");

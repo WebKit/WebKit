@@ -32,3 +32,12 @@
     display: flex;
     margin-top: 4px;
 }
+
+.popover .event-breakpoint-content > .event-type > input {
+    font-family: Menlo, monospace;
+    text-align: left;
+}
+
+.popover .event-breakpoint-content > .event-type > input::placeholder {
+    font-family: system-ui;
+}

@@ -1,3 +1,23 @@
+2019-01-14  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: Event breakpoints: text field and completion popover fonts should match
+        https://bugs.webkit.org/show_bug.cgi?id=193249
+
+        Reviewed by Matt Baker.
+
+        * UserInterface/Views/EventBreakpointPopover.css:
+        (.popover .event-breakpoint-content > .event-type > input): Added.
+        (.popover .event-breakpoint-content > .event-type > input::placeholder): Added.
+        * UserInterface/Views/EventBreakpointPopover.js:
+        (WI.EventBreakpointPopover.prototype.show):
+        (WI.EventBreakpointPopover.prototype._showSuggestionsView):
+        Subtract the <input> border and padding from the bounds position so the <input> text lines
+        up with the `WI.CompletionSuggestionsView` text.
+
+        * UserInterface/Views/CompletionSuggestionsView.js:
+        (WI.CompletionSuggestionsView):
+        Drive-by: force `dir=ltr` to match the `text-align: left;` CSS styling.
+
 2019-01-14  Nikita Vasilyev  <nvasilyev@apple.com>
 
         Web Inspector: Styles: pressing Down key on empty value field shouldn't discard completion popover

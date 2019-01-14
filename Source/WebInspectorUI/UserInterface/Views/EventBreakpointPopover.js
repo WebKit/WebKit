@@ -82,6 +82,7 @@ WI.EventBreakpointPopover = class EventBreakpointPopover extends WI.Popover
             this._typeSelectElement.hidden = true;
 
         this._domEventNameInputElement = typeContainer.appendChild(document.createElement("input"));
+        this._domEventNameInputElement.setAttribute("dir", "ltr");
         this._domEventNameInputElement.placeholder = WI.UIString("Example: \u201C%s\u201D").format("click");
         this._domEventNameInputElement.spellcheck = false;
         this._domEventNameInputElement.addEventListener("keydown", (event) => {
@@ -190,6 +191,12 @@ WI.EventBreakpointPopover = class EventBreakpointPopover extends WI.Popover
 
      _showSuggestionsView()
      {
-        this._suggestionsView.show(WI.Rect.rectFromClientRect(this._domEventNameInputElement.getBoundingClientRect()));
+        let computedStyle = window.getComputedStyle(this._domEventNameInputElement);
+        let padding = parseInt(computedStyle.borderLeftWidth) + parseInt(computedStyle.paddingLeft);
+
+        let rect = WI.Rect.rectFromClientRect(this._domEventNameInputElement.getBoundingClientRect());
+        rect.origin.x += padding;
+        rect.size.width -= padding + parseInt(computedStyle.borderRightWidth) + parseInt(computedStyle.paddingRight);
+        this._suggestionsView.show(rect);
      }
 };
