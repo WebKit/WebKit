@@ -1,7 +1,7 @@
 /*
  *  Copyright (C) 1999-2001 Harri Porten (porten@kde.org)
  *  Copyright (C) 2001 Peter Kelly (pmk@post.com)
- *  Copyright (C) 2003, 2004, 2005, 2007, 2008 Apple Inc. All rights reserved.
+ *  Copyright (C) 2003-2019 Apple Inc. All rights reserved.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Library General Public
@@ -44,10 +44,9 @@ public:
 
     DECLARE_EXPORT_INFO;
 
-    static JSAPIValueWrapper* create(ExecState* exec, JSValue value) 
+    static JSAPIValueWrapper* create(VM& vm, JSValue value)
     {
-        VM& vm = exec->vm();
-        JSAPIValueWrapper* wrapper = new (NotNull, allocateCell<JSAPIValueWrapper>(vm.heap)) JSAPIValueWrapper(exec);
+        JSAPIValueWrapper* wrapper = new (NotNull, allocateCell<JSAPIValueWrapper>(vm.heap)) JSAPIValueWrapper(vm);
         wrapper->finishCreation(vm, value);
         return wrapper;
     }
@@ -61,17 +60,12 @@ protected:
     }
 
 private:
-    JSAPIValueWrapper(ExecState* exec)
-        : JSCell(exec->vm(), exec->vm().apiWrapperStructure.get())
+    JSAPIValueWrapper(VM& vm)
+        : JSCell(vm, vm.apiWrapperStructure.get())
     {
     }
 
     WriteBarrier<Unknown> m_value;
 };
-
-inline JSValue jsAPIValueWrapper(ExecState* exec, JSValue value)
-{
-    return JSAPIValueWrapper::create(exec, value);
-}
 
 } // namespace JSC

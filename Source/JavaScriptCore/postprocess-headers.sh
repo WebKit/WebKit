@@ -72,8 +72,8 @@ function rewrite_headers () {
             -e s/JSC_IOS_VERSION_TBA/${IOS_VERSION_NUMBER}/g
             -e s/JSC_API_AVAILABLE/API_AVAILABLE/
             -e s/JSC_API_DEPRECATED/API_DEPRECATED/
-            -e "s/^JSC_CLASS_AVAILABLE/JSC_EXTERN API_AVAILABLE/"
-            -e "s/^JSC_CLASS_DEPRECATED/JSC_EXTERN API_DEPRECATED/"
+            -e "s/^JSC_CLASS_AVAILABLE/JS_EXPORT API_AVAILABLE/"
+            -e "s/^JSC_CLASS_DEPRECATED/JS_EXPORT API_DEPRECATED/"
         )
     else
         SED_OPTIONS+=(

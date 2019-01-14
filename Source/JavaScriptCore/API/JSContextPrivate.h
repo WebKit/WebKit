@@ -30,6 +30,27 @@
 
 #import <JavaScriptCore/JSContext.h>
 
+@protocol JSModuleLoaderDelegate <NSObject>
+
+@required
+
+/*! @abstract Provides source code for any JS module that is actively imported.
+ @param context The context for which the module is being requested.
+ @param identifier The resolved identifier for the requested module.
+ @param resolve A JS function to call with the desired script for identifier.
+ @param reject A JS function to call when identifier cannot be fetched.
+ @discussion Currently, identifier will always be an absolute file URL computed from specifier of the requested module relative to the URL of the requesting script. If the requesting script does not have a URL and the module specifier is not an absolute path the module loader will fail to load the module.
+
+ The first argument to resolve sholud always be a JSScript, otherwise the module loader will reject the module.
+
+ Once an identifier has been resolved or rejected in a given context it will never be requested again. If a script is successfully evaluated it will not be re-evaluated on any subsequent import.
+
+ The VM will retain all evaluated modules for the lifetime of the context.
+ */
+- (void)context:(JSContext *)context fetchModuleForIdentifier:(JSValue *)identifier withResolveHandler:(JSValue *)resolve andRejectHandler:(JSValue *)reject;
+
+@end
+
 @interface JSContext(Private)
 
 /*!
@@ -49,6 +70,9 @@
 @discussion Set the run loop the Web Inspector debugger should use when evaluating JavaScript in the JSContext.
 */
 @property (setter=_setDebuggerRunLoop:) CFRunLoopRef _debuggerRunLoop JSC_API_AVAILABLE(macosx(10.10), ios(8.0));
+
+/*! @abstract The delegate the context will use when trying to load a module. Note, this delegate will be ignored for contexts returned by UIWebView. */
+@property (nonatomic, weak) id <JSModuleLoaderDelegate> moduleLoaderDelegate JSC_API_AVAILABLE(macosx(JSC_MAC_TBA), ios(JSC_IOS_TBA));
 
 @end
 

@@ -30,9 +30,9 @@
 #include "APICast.h"
 #include "CallFrame.h"
 #include "InitializeThreading.h"
+#include "JSAPIGlobalObject.h"
 #include "JSCallbackObject.h"
 #include "JSClassRef.h"
-#include "JSGlobalObject.h"
 #include "JSObject.h"
 #include "JSCInlines.h"
 #include "SourceProvider.h"
@@ -138,7 +138,7 @@ JSGlobalContextRef JSGlobalContextCreateInGroup(JSContextGroupRef group, JSClass
     JSLockHolder locker(vm.ptr());
 
     if (!globalObjectClass) {
-        JSGlobalObject* globalObject = JSGlobalObject::create(vm.get(), JSGlobalObject::createStructure(vm.get(), jsNull()));
+        JSGlobalObject* globalObject = JSAPIGlobalObject::create(vm.get(), JSAPIGlobalObject::createStructure(vm.get(), jsNull()));
 #if ENABLE(REMOTE_INSPECTOR)
         if (JSRemoteInspectorGetInspectionEnabledByDefault())
             globalObject->setRemoteDebuggingEnabled(true);

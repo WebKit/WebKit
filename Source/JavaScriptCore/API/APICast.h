@@ -128,19 +128,24 @@ inline JSC::VM* toJS(JSContextGroupRef g)
     return reinterpret_cast<JSC::VM*>(const_cast<OpaqueJSContextGroup*>(g));
 }
 
-inline JSValueRef toRef(JSC::ExecState* exec, JSC::JSValue v)
+inline JSValueRef toRef(JSC::VM& vm, JSC::JSValue v)
 {
-    ASSERT(exec->vm().currentThreadIsHoldingAPILock());
+    ASSERT(vm.currentThreadIsHoldingAPILock());
 #if !CPU(ADDRESS64)
     if (!v)
         return 0;
     if (!v.isCell())
-        return reinterpret_cast<JSValueRef>(JSC::jsAPIValueWrapper(exec, v).asCell());
+        return reinterpret_cast<JSValueRef>(JSC::JSAPIValueWrapper::create(vm, v));
     return reinterpret_cast<JSValueRef>(v.asCell());
 #else
-    UNUSED_PARAM(exec);
+    UNUSED_PARAM(vm);
     return bitwise_cast<JSValueRef>(v);
 #endif
+}
+
+inline JSValueRef toRef(JSC::ExecState* exec, JSC::JSValue v)
+{
+    return toRef(exec->vm(), v);
 }
 
 inline JSObjectRef toRef(JSC::JSObject* o)

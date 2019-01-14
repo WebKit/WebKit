@@ -31,7 +31,9 @@
 #import "DFGWorklist.h"
 #import "DateTests.h"
 #import "JSCast.h"
+#import "JSContextPrivate.h"
 #import "JSExportTests.h"
+#import "JSScript.h"
 #import "JSValuePrivate.h"
 #import "JSVirtualMachineInternal.h"
 #import "JSVirtualMachinePrivate.h"
@@ -1812,11 +1814,247 @@ static void parallelPromiseResolveTest()
     }
 }
 
+typedef JSValue *(^ResolveBlock)(JSContext *, JSValue *, JSScript *);
+typedef void (^FetchBlock)(JSContext *, JSValue *, JSValue *, JSValue *);
+
+@interface JSContextFetchDelegate : JSContext <JSModuleLoaderDelegate>
+
++ (instancetype)contextWithBlockForFetch:(FetchBlock)block;
+
+@end
+
+@implementation JSContextFetchDelegate {
+    FetchBlock m_fetchBlock;
+}
+
++ (instancetype)contextWithBlockForFetch:(FetchBlock)block
+{
+    auto *result = [[JSContextFetchDelegate alloc] init];
+    result->m_fetchBlock = block;
+    return result;
+}
+
+- (void)context:(JSContext *)context fetchModuleForIdentifier:(JSValue *)identifier withResolveHandler:(JSValue *)resolve andRejectHandler:(JSValue *)reject
+{
+    m_fetchBlock(context, identifier, resolve, reject);
+}
+
+@end
+
+static void checkModuleCodeRan(JSContext *context, JSValue *promise, JSValue *expected)
+{
+    __block BOOL promiseWasResolved = false;
+    [promise invokeMethod:@"then" withArguments:@[^(JSValue *exportValue) {
+        promiseWasResolved = true;
+        checkResult(@"module exported value 'exp' is null", [exportValue[@"exp"] isEqualToObject:expected]);
+        checkResult(@"ran is %@", [context[@"ran"] isEqualToObject:expected]);
+    }, ^(JSValue *error) {
+        NSLog(@"%@", [error toString]);
+        checkResult(@"module graph was resolved as expected", NO);
+    }]];
+    checkResult(@"Promise was resolved", promiseWasResolved);
+}
+
+static void checkModuleWasRejected(JSContext *context, JSValue *promise)
+{
+    __block BOOL promiseWasRejected = false;
+    [promise invokeMethod:@"then" withArguments:@[^() {
+        checkResult(@"module was rejected as expected", NO);
+    }, ^(JSValue *error) {
+        promiseWasRejected = true;
+        NSLog(@"%@", [error toString]);
+        checkResult(@"module graph was rejected with error", ![error isEqualWithTypeCoercionToObject:[JSValue valueWithNullInContext:context]]);
+    }]];
+}
+
+static void testFetch()
+{
+    @autoreleasepool {
+        auto *context = [JSContextFetchDelegate contextWithBlockForFetch:^(JSContext *context, JSValue *identifier, JSValue *resolve, JSValue *reject) {
+            if ([identifier isEqualToObject:@"file:///directory/bar.js"])
+                [resolve callWithArguments:@[[JSScript scriptWithSource:@"import \"../foo.js\"; export let exp = null;" inVirtualMachine:[context virtualMachine]]]];
+            else if ([identifier isEqualToObject:@"file:///foo.js"])
+                [resolve callWithArguments:@[[JSScript scriptWithSource:@"globalThis.ran = null;" inVirtualMachine:[context virtualMachine]]]];
+            else
+                [reject callWithArguments:@[[JSValue valueWithNewErrorFromMessage:@"Weird path" inContext:context]]];
+        }];
+        context.moduleLoaderDelegate = context;
+        JSValue *promise = [context evaluateScript:@"import('./bar.js');" withSourceURL:[NSURL fileURLWithPath:@"/directory" isDirectory:YES]];
+        JSValue *null = [JSValue valueWithNullInContext:context];
+        checkModuleCodeRan(context, promise, null);
+    }
+}
+
+static void testFetchWithTwoCycle()
+{
+    @autoreleasepool {
+        auto *context = [JSContextFetchDelegate contextWithBlockForFetch:^(JSContext *context, JSValue *identifier, JSValue *resolve, JSValue *reject) {
+            if ([identifier isEqualToObject:@"file:///directory/bar.js"])
+                [resolve callWithArguments:@[[JSScript scriptWithSource:@"import { n } from \"../foo.js\"; export let exp = n;" inVirtualMachine:[context virtualMachine]]]];
+            else if ([identifier isEqualToObject:@"file:///foo.js"])
+                [resolve callWithArguments:@[[JSScript scriptWithSource:@"import \"directory/bar.js\"; globalThis.ran = null; export let n = null;" inVirtualMachine:[context virtualMachine]]]];
+            else
+                [reject callWithArguments:@[[JSValue valueWithNewErrorFromMessage:@"Weird path" inContext:context]]];
+        }];
+        context.moduleLoaderDelegate = context;
+        JSValue *promise = [context evaluateScript:@"import('./bar.js');" withSourceURL:[NSURL fileURLWithPath:@"/directory" isDirectory:YES]];
+        JSValue *null = [JSValue valueWithNullInContext:context];
+        checkModuleCodeRan(context, promise, null);
+    }
+}
+
+
+static void testFetchWithThreeCycle()
+{
+    @autoreleasepool {
+        auto *context = [JSContextFetchDelegate contextWithBlockForFetch:^(JSContext *context, JSValue *identifier, JSValue *resolve, JSValue *reject) {
+            if ([identifier isEqualToObject:@"file:///directory/bar.js"])
+                [resolve callWithArguments:@[[JSScript scriptWithSource:@"import { n } from \"../foo.js\"; export let foo = n;" inVirtualMachine:[context virtualMachine]]]];
+            else if ([identifier isEqualToObject:@"file:///foo.js"])
+                [resolve callWithArguments:@[[JSScript scriptWithSource:@"import \"otherDirectory/baz.js\"; export let n = null;" inVirtualMachine:[context virtualMachine]]]];
+            else if ([identifier isEqualToObject:@"file:///otherDirectory/baz.js"])
+                [resolve callWithArguments:@[[JSScript scriptWithSource:@"import { foo } from \"../directory/bar.js\"; globalThis.ran = null; export let exp = foo;" inVirtualMachine:[context virtualMachine]]]];
+            else
+                [reject callWithArguments:@[[JSValue valueWithNewErrorFromMessage:@"Weird path" inContext:context]]];
+        }];
+        context.moduleLoaderDelegate = context;
+        JSValue *promise = [context evaluateScript:@"import('../otherDirectory/baz.js');" withSourceURL:[NSURL fileURLWithPath:@"/directory" isDirectory:YES]];
+        JSValue *null = [JSValue valueWithNullInContext:context];
+        checkModuleCodeRan(context, promise, null);
+    }
+}
+
+static void testLoaderResolvesAbsoluteScriptURL()
+{
+    @autoreleasepool {
+        auto *context = [JSContextFetchDelegate contextWithBlockForFetch:^(JSContext *context, JSValue *identifier, JSValue *resolve, JSValue *reject) {
+            if ([identifier isEqualToObject:@"file:///directory/bar.js"])
+                [resolve callWithArguments:@[[JSScript scriptWithSource:@"export let exp = null; globalThis.ran = null;" inVirtualMachine:[context virtualMachine]]]];
+            else
+                [reject callWithArguments:@[[JSValue valueWithNewErrorFromMessage:@"Weird path" inContext:context]]];
+        }];
+        context.moduleLoaderDelegate = context;
+        JSValue *promise = [context evaluateScript:@"import('/directory/bar.js');"];
+        JSValue *null = [JSValue valueWithNullInContext:context];
+        checkModuleCodeRan(context, promise, null);
+    }
+}
+
+static void testLoaderRejectsNilScriptURL()
+{
+    @autoreleasepool {
+        auto *context = [JSContextFetchDelegate contextWithBlockForFetch:^(JSContext *, JSValue *, JSValue *, JSValue *) {
+            checkResult(@"Code is not run", NO);
+        }];
+        context.moduleLoaderDelegate = context;
+        JSValue *promise = [context evaluateScript:@"import('../otherDirectory/baz.js');"];
+        checkModuleWasRejected(context, promise);
+    }
+}
+
+static void testLoaderRejectsFailedFetch()
+{
+    @autoreleasepool {
+        auto *context = [JSContextFetchDelegate contextWithBlockForFetch:^(JSContext *context, JSValue *, JSValue *, JSValue *reject) {
+            [reject callWithArguments:@[[JSValue valueWithNewErrorFromMessage:@"Nope" inContext:context]]];
+        }];
+        context.moduleLoaderDelegate = context;
+        JSValue *promise = [context evaluateScript:@"import('/otherDirectory/baz.js');"];
+        checkModuleWasRejected(context, promise);
+    }
+}
+
+static void testImportModuleTwice()
+{
+    @autoreleasepool {
+        auto *context = [JSContextFetchDelegate contextWithBlockForFetch:^(JSContext * context, JSValue *, JSValue *resolve, JSValue *) {
+            [resolve callWithArguments:@[[JSScript scriptWithSource:@"ran++; export let exp = 1;" inVirtualMachine:[context virtualMachine]]]];
+        }];
+        context.moduleLoaderDelegate = context;
+        context[@"ran"] = @(0);
+        JSValue *promise = [context evaluateScript:@"import('/baz.js');"];
+        JSValue *promise2 = [context evaluateScript:@"import('/baz.js');"];
+        JSValue *one = [JSValue valueWithInt32:1 inContext:context];
+        checkModuleCodeRan(context, promise, one);
+        checkModuleCodeRan(context, promise2, one);
+    }
+}
+
+@interface JSContextFileLoaderDelegate : JSContext <JSModuleLoaderDelegate>
+
++ (instancetype)newContext;
+
+@end
+
+@implementation JSContextFileLoaderDelegate {
+}
+
++ (instancetype)newContext
+{
+    auto *result = [[JSContextFileLoaderDelegate alloc] init];
+    return result;
+}
+
+static NSURL *resolvePathToScripts()
+{
+    NSString *arg0 = NSProcessInfo.processInfo.arguments[0];
+    NSURL *base;
+    if ([arg0 hasPrefix:@"/"])
+        base = [NSURL fileURLWithPath:arg0 isDirectory:NO];
+    else {
+        const size_t maxLength = 10000;
+        char cwd[maxLength];
+        if (!getcwd(cwd, maxLength)) {
+            NSLog(@"getcwd errored with code: %s", strerror(errno));
+            exit(1);
+        }
+        NSURL *cwdURL = [NSURL fileURLWithPath:[NSString stringWithFormat:@"%s", cwd]];
+        base = [NSURL fileURLWithPath:arg0 isDirectory:NO relativeToURL:cwdURL];
+    }
+    return [NSURL fileURLWithPath:@"./testapiScripts/" isDirectory:YES relativeToURL:base];
+}
+
+- (void)context:(JSContext *)context fetchModuleForIdentifier:(JSValue *)identifier withResolveHandler:(JSValue *)resolve andRejectHandler:(JSValue *)reject
+{
+    NSURL *filePath = [NSURL URLWithString:[identifier toString]];
+    auto *script = [JSScript scriptFromUTF8File:filePath inVirtualMachine:[context virtualMachine] withCodeSigning:nil andBytecodeCache:nil];
+    if (script)
+        [resolve callWithArguments:@[script]];
+    else
+        [reject callWithArguments:@[[JSValue valueWithNewErrorFromMessage:@"Unable to create Script" inContext:context]]];
+}
+
+@end
+
+static void testLoadBasicFile()
+{
+    @autoreleasepool {
+        auto *context = [JSContextFileLoaderDelegate newContext];
+        context.moduleLoaderDelegate = context;
+        JSValue *promise = [context evaluateScript:@"import('./basic.js');" withSourceURL:resolvePathToScripts()];
+        JSValue *null = [JSValue valueWithNullInContext:context];
+        checkModuleCodeRan(context, promise, null);
+    }
+}
+
 void testObjectiveCAPI()
 {
     NSLog(@"Testing Objective-C API");
+
     checkNegativeNSIntegers();
     runJITThreadLimitTests();
+
+    testLoaderResolvesAbsoluteScriptURL();
+    testFetch();
+    testFetchWithTwoCycle();
+    testFetchWithThreeCycle();
+    testImportModuleTwice();
+
+    testLoaderRejectsNilScriptURL();
+    testLoaderRejectsFailedFetch();
+
+    // File loading
+    testLoadBasicFile();
 
     promiseWithExecutor(Resolution::ResolveEager);
     promiseWithExecutor(Resolution::RejectEager);

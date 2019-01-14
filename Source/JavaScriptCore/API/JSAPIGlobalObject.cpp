@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013-2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2019 Apple Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -20,38 +20,35 @@
  * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef JSValueInternal_h
-#define JSValueInternal_h
+#include "config.h"
+#include "JSAPIGlobalObject.h"
 
-#import <JavaScriptCore/JSValuePrivate.h>
+#if !JSC_OBJC_API_ENABLED
 
-#if JSC_OBJC_API_ENABLED
+namespace JSC {
 
-@interface JSValue(Internal)
+const ClassInfo JSAPIGlobalObject::s_info = { "GlobalObject", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSAPIGlobalObject) };
 
-JSValueRef valueInternalValue(JSValue *);
+const GlobalObjectMethodTable JSAPIGlobalObject::s_globalObjectMethodTable = {
+    &supportsRichSourceInfo,
+    &shouldInterruptScript,
+    &javaScriptRuntimeFlags,
+    nullptr, // queueTaskToEventLoop
+    &shouldInterruptScriptBeforeTimeout,
+    nullptr, // moduleLoaderImportModule
+    nullptr, // moduleLoaderResolve
+    nullptr, // moduleLoaderFetch
+    nullptr, // moduleLoaderCreateImportMetaProperties
+    nullptr, // moduleLoaderEvaluate
+    nullptr, // promiseRejectionTracker
+    nullptr, // defaultLanguage
+    nullptr, // compileStreaming
+    nullptr, // instantiateStreaming
+};
 
-- (JSValue *)initWithValue:(JSValueRef)value inContext:(JSContext *)context;
-
-JSValueRef objectToValue(JSContext *, id);
-id valueToObject(JSContext *, JSValueRef);
-id valueToNumber(JSGlobalContextRef, JSValueRef, JSValueRef* exception);
-id valueToString(JSGlobalContextRef, JSValueRef, JSValueRef* exception);
-id valueToDate(JSGlobalContextRef, JSValueRef, JSValueRef* exception);
-id valueToArray(JSGlobalContextRef, JSValueRef, JSValueRef* exception);
-id valueToDictionary(JSGlobalContextRef, JSValueRef, JSValueRef* exception);
-
-+ (SEL)selectorForStructToValue:(const char *)structTag;
-+ (SEL)selectorForValueToStruct:(const char *)structTag;
-
-@end
-
-NSInvocation *typeToValueInvocationFor(const char* encodedType);
-NSInvocation *valueToTypeInvocationFor(const char* encodedType);
+}
 
 #endif
-
-#endif // JSValueInternal_h

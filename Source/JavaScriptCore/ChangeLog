@@ -1,3 +1,91 @@
+2019-01-14  Keith Miller  <keith_miller@apple.com>
+
+        JSC should have a module loader API
+        https://bugs.webkit.org/show_bug.cgi?id=191121
+
+        Reviewed by Michael Saboff.
+
+        This patch adds a new delegate to JSContext that is called to fetch
+        any resolved module. The resolution of a module identifier is computed
+        as if it were a URL on the web with the caveat that it must be a file URL.
+
+        A new class JSScript has also been added that is similar to JSScriptRef.
+        Right now all JSScripts are copied into memory. In the future we should
+        mmap the provided file into memory so the OS can evict it to disk under
+        pressure. Additionally, the API does not make use of the code signing path
+        nor the bytecode caching path, which we will add in subsequent patches.
+
+        Lastly, a couple of new convenience methods have been added. C API
+        conversion, can now toRef a JSValue with just a vm rather than
+        requiring an ExecState. Secondly, there is now a call wrapper that
+        does not require CallData and CallType since many places don't
+        care about this.
+
+        * API/APICast.h:
+        (toRef):
+        * API/JSAPIGlobalObject.cpp: Copied from Source/JavaScriptCore/API/JSVirtualMachineInternal.h.
+        * API/JSAPIGlobalObject.h: Added.
+        (JSC::JSAPIGlobalObject::create):
+        (JSC::JSAPIGlobalObject::createStructure):
+        (JSC::JSAPIGlobalObject::JSAPIGlobalObject):
+        * API/JSAPIGlobalObject.mm: Added.
+        (JSC::JSAPIGlobalObject::moduleLoaderResolve):
+        (JSC::JSAPIGlobalObject::moduleLoaderImportModule):
+        (JSC::JSAPIGlobalObject::moduleLoaderFetch):
+        (JSC::JSAPIGlobalObject::moduleLoaderCreateImportMetaProperties):
+        * API/JSAPIValueWrapper.h:
+        (JSC::jsAPIValueWrapper): Deleted.
+        * API/JSContext.h:
+        * API/JSContext.mm:
+        (-[JSContext moduleLoaderDelegate]):
+        (-[JSContext setModuleLoaderDelegate:]):
+        * API/JSContextInternal.h:
+        * API/JSContextPrivate.h:
+        * API/JSContextRef.cpp:
+        (JSGlobalContextCreateInGroup):
+        * API/JSScript.h: Added.
+        * API/JSScript.mm: Added.
+        (+[JSScript scriptWithSource:inVirtualMachine:]):
+        (fillBufferWithContentsOfFile):
+        (+[JSScript scriptFromUTF8File:inVirtualMachine:withCodeSigning:andBytecodeCache:]):
+        (getJSScriptSourceCode):
+        * API/JSScriptInternal.h: Copied from Source/JavaScriptCore/API/JSVirtualMachineInternal.h.
+        * API/JSValueInternal.h:
+        * API/JSVirtualMachineInternal.h:
+        * API/tests/testapi.mm:
+        (+[JSContextFetchDelegate contextWithBlockForFetch:]):
+        (-[JSContextFetchDelegate context:fetchModuleForIdentifier:withResolveHandler:andRejectHandler:]):
+        (checkModuleCodeRan):
+        (checkModuleWasRejected):
+        (testFetch):
+        (testFetchWithTwoCycle):
+        (testFetchWithThreeCycle):
+        (testLoaderResolvesAbsoluteScriptURL):
+        (testLoaderRejectsNilScriptURL):
+        (testLoaderRejectsFailedFetch):
+        (testImportModuleTwice):
+        (+[JSContextFileLoaderDelegate newContext]):
+        (resolvePathToScripts):
+        (-[JSContextFileLoaderDelegate context:fetchModuleForIdentifier:withResolveHandler:andRejectHandler:]):
+        (testLoadBasicFile):
+        (testObjectiveCAPI):
+        * API/tests/testapiScripts/basic.js: Copied from Source/JavaScriptCore/API/JSVirtualMachineInternal.h.
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * Sources.txt:
+        * SourcesCocoa.txt:
+        * config.h:
+        * postprocess-headers.sh:
+        * runtime/CallData.cpp:
+        (JSC::call):
+        * runtime/CallData.h:
+        * runtime/Completion.cpp:
+        (JSC::loadAndEvaluateModule):
+        * runtime/Completion.h:
+        * runtime/JSCast.h:
+        (JSC::jsSecureCast):
+        * runtime/JSGlobalObject.cpp:
+        (JSC::createProxyProperty):
+
 2019-01-14  Dominik Infuehr  <dinfuehr@igalia.com>
 
         Fix property access on ARM with the baseline JIT

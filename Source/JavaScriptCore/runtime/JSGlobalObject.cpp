@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007-2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2007-2019 Apple Inc. All rights reserved.
  * Copyright (C) 2008 Cameron Zwarich (cwzwarich@uwaterloo.ca)
  *
  * Redistribution and use in source and binary forms, with or without
@@ -63,6 +63,7 @@
 #include "Error.h"
 #include "ErrorConstructor.h"
 #include "ErrorPrototype.h"
+#include "Exception.h"
 #include "FunctionConstructor.h"
 #include "FunctionPrototype.h"
 #include "GeneratorFunctionConstructor.h"
@@ -193,7 +194,7 @@
 
 namespace JSC {
 
-    static JSValue createProxyProperty(VM& vm, JSObject* object)
+static JSValue createProxyProperty(VM& vm, JSObject* object)
 {
     JSGlobalObject* global = jsCast<JSGlobalObject*>(object);
     return ProxyConstructor::create(vm, ProxyConstructor::createStructure(vm, global, global->functionPrototype()));

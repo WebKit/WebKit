@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -31,7 +31,7 @@
 
 #if JSC_OBJC_API_ENABLED
 
-@class JSVirtualMachine, JSValue;
+@class JSScript, JSVirtualMachine, JSValue, JSContext;
 
 /*!
 @interface
@@ -39,7 +39,7 @@
  JavaScript execution takes place within a context, and all JavaScript values
  are tied to a context.
 */
-NS_CLASS_AVAILABLE(10_9, 7_0)
+JSC_CLASS_AVAILABLE(macosx(10.9), ios(7.0))
 @interface JSContext : NSObject
 
 /*!
@@ -177,7 +177,6 @@ NS_CLASS_AVAILABLE(10_9, 7_0)
 @discussion Name of the JSContext. Exposed when remote debugging the context.
 */
 @property (copy) NSString *name JSC_API_AVAILABLE(macosx(10.10), ios(8.0));
-
 @end
 
 /*!
@@ -231,6 +230,7 @@ NS_CLASS_AVAILABLE(10_9, 7_0)
 @result The C API equivalent of this JSContext.
 */
 @property (readonly) JSGlobalContextRef JSGlobalContextRef;
+
 @end
 
 #endif

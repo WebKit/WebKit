@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2018-2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -163,6 +163,14 @@ To jsDynamicCast(VM& vm, JSValue from)
     if (UNLIKELY(!from.isCell()))
         return nullptr;
     return jsDynamicCast<To>(vm, from.asCell());
+}
+
+template<typename To, typename From>
+To jsSecureCast(VM& vm, From from)
+{
+    auto* result = jsDynamicCast<To>(vm, from);
+    RELEASE_ASSERT_WITH_SECURITY_IMPLICATION(result);
+    return result;
 }
 
 }
