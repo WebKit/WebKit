@@ -131,7 +131,17 @@ class SimulatedDeviceManager(object):
         SimulatedDeviceManager.AVAILABLE_RUNTIMES = SimulatedDeviceManager._create_runtimes(simctl_json['runtimes'])
 
         for runtime in SimulatedDeviceManager.AVAILABLE_RUNTIMES:
-            for device_json in simctl_json['devices'][runtime.name]:
+            # Needed for <rdar://problem/47122965>
+            devices = []
+            if isinstance(simctl_json['devices'], list):
+                for devices_for_runtime in simctl_json['devices']:
+                    if devices_for_runtime['name'] == runtime.name:
+                        devices = devices_for_runtime['devices']
+                        break
+            else:
+                devices = simctl_json['devices'][runtime.name]
+
+            for device_json in devices:
                 device = SimulatedDeviceManager._create_device_with_runtime(host, runtime, device_json)
                 if not device:
                     continue
