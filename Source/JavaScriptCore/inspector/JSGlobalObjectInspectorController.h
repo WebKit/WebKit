@@ -55,6 +55,7 @@ class InspectorDebuggerAgent;
 class InspectorScriptProfilerAgent;
 class JSGlobalObjectConsoleClient;
 class ScriptCallStack;
+struct JSAgentContext;
 
 class JSGlobalObjectInspectorController final
     : public InspectorEnvironment
@@ -103,6 +104,9 @@ public:
 private:
     void appendAPIBacktrace(ScriptCallStack&);
 
+    JSAgentContext jsAgentContext();
+    void createLazyAgents();
+
     JSC::JSGlobalObject& m_globalObject;
     std::unique_ptr<InjectedScriptManager> m_injectedScriptManager;
     std::unique_ptr<JSGlobalObjectConsoleClient> m_consoleClient;
@@ -124,6 +128,7 @@ private:
     bool m_includeNativeCallStackWithExceptions { true };
     bool m_isAutomaticInspection { false };
     bool m_pauseAfterInitialization { false };
+    bool m_didCreateLazyAgents { false };
 
 #if ENABLE(INSPECTOR_ALTERNATE_DISPATCHERS)
     AugmentableInspectorControllerClient* m_augmentingClient { nullptr };

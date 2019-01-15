@@ -45,8 +45,8 @@ frames:
         5: performActions
         6: Global Code
         7: evaluateWithScopeExtension
-        8: _evaluateOn
-        9: _evaluateAndWrap
+        8: (anonymous function)
+        9: _wrapCall
     1: arc(6, 7, 8, 9, 10, true)
       swizzleTypes: [Number, Number, Number, Number, Number, Boolean]
       trace:
@@ -58,8 +58,8 @@ frames:
         5: performActions
         6: Global Code
         7: evaluateWithScopeExtension
-        8: _evaluateOn
-        9: _evaluateAndWrap
+        8: (anonymous function)
+        9: _wrapCall
 
 -- Running test case: Canvas.recording2D.multipleFrames
 initialState:
@@ -104,8 +104,8 @@ frames:
         5: performActions
         6: Global Code
         7: evaluateWithScopeExtension
-        8: _evaluateOn
-        9: _evaluateAndWrap
+        8: (anonymous function)
+        9: _wrapCall
     1: arc(6, 7, 8, 9, 10, true)
       swizzleTypes: [Number, Number, Number, Number, Number, Boolean]
       trace:
@@ -117,8 +117,8 @@ frames:
         5: performActions
         6: Global Code
         7: evaluateWithScopeExtension
-        8: _evaluateOn
-        9: _evaluateAndWrap
+        8: (anonymous function)
+        9: _wrapCall
   1: (duration)
     0: arcTo(1, 2, 3, 4, 5)
       swizzleTypes: [Number, Number, Number, Number, Number]
@@ -1131,8 +1131,8 @@ frames:
         5: performActions
         6: Global Code
         7: evaluateWithScopeExtension
-        8: _evaluateOn
-        9: _evaluateAndWrap
+        8: (anonymous function)
+        9: _wrapCall
 
 -- Running test case: Canvas.recording2D.Console
 PASS: The recording should have the name "TEST".

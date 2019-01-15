@@ -42,6 +42,7 @@
 #include "InspectorScriptProfilerAgent.h"
 #include "JSCInlines.h"
 #include "JSGlobalObject.h"
+#include "JSGlobalObjectAuditAgent.h"
 #include "JSGlobalObjectConsoleClient.h"
 #include "JSGlobalObjectDebuggerAgent.h"
 #include "JSGlobalObjectRuntimeAgent.h"
@@ -68,17 +69,7 @@ JSGlobalObjectInspectorController::JSGlobalObjectInspectorController(JSGlobalObj
     , m_frontendRouter(FrontendRouter::create())
     , m_backendDispatcher(BackendDispatcher::create(m_frontendRouter.copyRef()))
 {
-    AgentContext baseContext = {
-        *this,
-        *m_injectedScriptManager,
-        m_frontendRouter.get(),
-        m_backendDispatcher.get()
-    };
-
-    JSAgentContext context = {
-        baseContext,
-        globalObject
-    };
+    auto context = jsAgentContext();
 
     auto inspectorAgent = std::make_unique<InspectorAgent>(context);
     auto runtimeAgent = std::make_unique<JSGlobalObjectRuntimeAgent>(context);
@@ -123,6 +114,8 @@ void JSGlobalObjectInspectorController::connectFrontend(FrontendChannel& fronten
 {
     m_isAutomaticInspection = isAutomaticInspection;
     m_pauseAfterInitialization = immediatelyPause;
+
+    createLazyAgents();
 
     bool connectedFirstFrontend = !m_frontendRouter->hasFrontends();
     m_frontendRouter->connectFrontend(frontendChannel);
@@ -294,5 +287,34 @@ void JSGlobalObjectInspectorController::appendExtraAgent(std::unique_ptr<Inspect
     m_inspectorAgent->activateExtraDomain(domainName);
 }
 #endif
+
+JSAgentContext JSGlobalObjectInspectorController::jsAgentContext()
+{
+    AgentContext baseContext = {
+        *this,
+        *m_injectedScriptManager,
+        m_frontendRouter.get(),
+        m_backendDispatcher.get()
+    };
+
+    JSAgentContext context = {
+        baseContext,
+        m_globalObject
+    };
+
+    return context;
+}
+
+void JSGlobalObjectInspectorController::createLazyAgents()
+{
+    if (m_didCreateLazyAgents)
+        return;
+
+    m_didCreateLazyAgents = true;
+
+    auto context = jsAgentContext();
+
+    m_agents.append(std::make_unique<JSGlobalObjectAuditAgent>(context));
+}
 
 } // namespace Inspector

@@ -32,6 +32,7 @@
 #include "WebHeapAgent.h"
 #include "WebInjectedScriptHost.h"
 #include "WebInjectedScriptManager.h"
+#include "WorkerAuditAgent.h"
 #include "WorkerConsoleAgent.h"
 #include "WorkerDebuggerAgent.h"
 #include "WorkerGlobalScope.h"
@@ -168,13 +169,16 @@ void WorkerInspectorController::createLazyAgents()
 
     m_didCreateLazyAgents = true;
 
-#if ENABLE(SERVICE_WORKER)
     auto workerContext = workerAgentContext();
+
+#if ENABLE(SERVICE_WORKER)
     if (is<ServiceWorkerGlobalScope>(m_workerGlobalScope)) {
         m_agents.append(std::make_unique<ServiceWorkerAgent>(workerContext));
         m_agents.append(std::make_unique<WorkerNetworkAgent>(workerContext));
     }
 #endif
+
+    m_agents.append(std::make_unique<WorkerAuditAgent>(workerContext));
 }
 
 InspectorFunctionCallHandler WorkerInspectorController::functionCallHandler() const

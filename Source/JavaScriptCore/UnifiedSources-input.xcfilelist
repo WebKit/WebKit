@@ -544,12 +544,14 @@ $(SRCROOT)/inspector/ScriptCallStack.cpp
 $(SRCROOT)/inspector/ScriptCallStackFactory.cpp
 $(SRCROOT)/inspector/ScriptDebugServer.cpp
 $(SRCROOT)/inspector/agents/InspectorAgent.cpp
+$(SRCROOT)/inspector/agents/InspectorAuditAgent.cpp
 $(SRCROOT)/inspector/agents/InspectorConsoleAgent.cpp
 $(SRCROOT)/inspector/agents/InspectorDebuggerAgent.cpp
 $(SRCROOT)/inspector/agents/InspectorHeapAgent.cpp
 $(SRCROOT)/inspector/agents/InspectorRuntimeAgent.cpp
 $(SRCROOT)/inspector/agents/InspectorScriptProfilerAgent.cpp
 $(SRCROOT)/inspector/agents/InspectorTargetAgent.cpp
+$(SRCROOT)/inspector/agents/JSGlobalObjectAuditAgent.cpp
 $(SRCROOT)/inspector/agents/JSGlobalObjectDebuggerAgent.cpp
 $(SRCROOT)/inspector/agents/JSGlobalObjectRuntimeAgent.cpp
 $(SRCROOT)/inspector/remote/RemoteAutomationTarget.cpp

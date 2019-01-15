@@ -33,9 +33,11 @@
 #include "InjectedScript.h"
 
 #include "JSCInlines.h"
+#include "JSLock.h"
 #include "ScriptFunctionCall.h"
 #include "ScriptObject.h"
 #include <wtf/JSONValues.h>
+#include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>
 
 namespace Inspector {
@@ -52,6 +54,19 @@ InjectedScript::InjectedScript(Deprecated::ScriptObject injectedScriptObject, In
 
 InjectedScript::~InjectedScript()
 {
+}
+
+void InjectedScript::execute(ErrorString& errorString, const String& functionString, ExecuteOptions&& options, RefPtr<Protocol::Runtime::RemoteObject>& result, Optional<bool>& wasThrown, Optional<int>& savedResultIndex)
+{
+    Deprecated::ScriptFunctionCall function(injectedScriptObject(), "execute"_s, inspectorEnvironment()->functionCallHandler());
+    function.appendArgument(functionString);
+    function.appendArgument(options.objectGroup);
+    function.appendArgument(options.includeCommandLineAPI);
+    function.appendArgument(options.returnByValue);
+    function.appendArgument(options.generatePreview);
+    function.appendArgument(options.saveResult);
+    function.appendArgument(arrayFromVector(WTFMove(options.args)));
+    makeEvalCall(errorString, function, result, wasThrown, savedResultIndex);
 }
 
 void InjectedScript::evaluate(ErrorString& errorString, const String& expression, const String& objectGroup, bool includeCommandLineAPI, bool returnByValue, bool generatePreview, bool saveResult, RefPtr<Protocol::Runtime::RemoteObject>& result, Optional<bool>& wasThrown, Optional<int>& savedResultIndex)
@@ -384,6 +399,24 @@ void InjectedScript::releaseObjectGroup(const String& objectGroup)
     bool hadException = false;
     callFunctionWithEvalEnabled(releaseFunction, hadException);
     ASSERT(!hadException);
+}
+
+JSC::JSValue InjectedScript::arrayFromVector(Vector<JSC::JSValue>&& vector)
+{
+    JSC::ExecState* execState = scriptState();
+    if (!execState)
+        return JSC::jsUndefined();
+
+    JSC::JSLockHolder lock(execState);
+
+    JSC::JSArray* array = JSC::constructEmptyArray(execState, nullptr);
+    if (!array)
+        return JSC::jsUndefined();
+
+    for (auto& item : vector)
+        array->putDirectIndex(execState, array->length(), item);
+
+    return array;
 }
 
 } // namespace Inspector

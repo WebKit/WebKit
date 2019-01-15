@@ -35,6 +35,7 @@
     },
     "globals": {
         // Agents
+        "AuditAgent": true,
         "ApplicationCacheAgent": true,
         "CSSAgent": true,
         "CanvasAgent": true,

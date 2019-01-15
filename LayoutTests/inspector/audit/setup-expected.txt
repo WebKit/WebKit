@@ -1,0 +1,11 @@
+Tests for the Audit.setup command.
+
+
+== Running test suite: Audit.setup
+-- Running test case: Audit.setup.Invalid.SequentialCalls
+Audit setup...
+Audit setup...
+PASS: Should produce an exception.
+Error: Must call teardown before calling setup again.
+Audit teardown...
+

@@ -108,12 +108,6 @@ WI.AuditTestCase = class AuditTestCase extends WI.AuditTestBase
             data.errors.push(value);
         }
 
-        let evaluateArguments = {
-            expression: `(function() { "use strict"; return eval(${this._test})(); })()`,
-            objectGroup: "audit",
-            doNotPauseOnExceptionsAndMuteConsole: true,
-        };
-
         async function parseResponse(response) {
             let remoteObject = WI.RemoteObject.fromPayload(response.result, WI.mainTarget);
             if (response.wasThrown || (remoteObject.type === "object" && remoteObject.subtype === "error"))
@@ -234,9 +228,21 @@ WI.AuditTestCase = class AuditTestCase extends WI.AuditTestBase
                 addError(WI.UIString("Return value is not an object, string, or boolean"));
         }
 
+        let agentCommandFunction = null;
+        let agentCommandArguments = {};
+        if (InspectorBackend.domains.Audit) {
+            agentCommandFunction = AuditAgent.run;
+            agentCommandArguments.test = this._test;
+        } else {
+            agentCommandFunction = RuntimeAgent.evaluate;
+            agentCommandArguments.expression = `(function() { "use strict"; return eval(\`(${this._test.replace(/`/g, "\\`")})\`)(); })()`;
+            agentCommandArguments.objectGroup = "audit";
+            agentCommandArguments.doNotPauseOnExceptionsAndMuteConsole = true;
+        }
+
         try {
             metadata.startTimestamp = new Date;
-            let response = await RuntimeAgent.evaluate.invoke(evaluateArguments);
+            let response = await agentCommandFunction.invoke(agentCommandArguments);
             metadata.endTimestamp = new Date;
 
             if (response.result.type === "object" && response.result.className === "Promise") {

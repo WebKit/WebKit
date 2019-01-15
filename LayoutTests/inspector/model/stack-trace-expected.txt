@@ -17,6 +17,6 @@ StackTrace: 10
   6: triggerConsoleMessage (stack-trace.html:9) - nativeCode (false) programCode (false)
   7: Global Code (Anonymous Script 2 (line 1)) - nativeCode (false) programCode (true)
   8: evaluateWithScopeExtension - nativeCode (true) programCode (false)
-  9: _evaluateOn - nativeCode (true) programCode (false)
-  10: _evaluateAndWrap - nativeCode (true) programCode (false)
+  9:  - nativeCode (true) programCode (false)
+  10: _wrapCall - nativeCode (true) programCode (false)
 

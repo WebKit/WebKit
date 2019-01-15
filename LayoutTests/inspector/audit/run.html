@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script src="resources/audit-utilities.js"></script>
+<script>
+
+function test()
+{
+    async function auditRun(functionString, check) {
+        InspectorTest.log(`Audit run "${functionString}"...`);
+
+        let {result, wasThrown} = await AuditAgent.run(functionString);
+        InspectorTest.assert(!wasThrown, "Should not throw an exception.");
+        if (!wasThrown)
+            check(result);
+        else
+            InspectorTest.log(result.description);
+    }
+
+    let suite = InspectorTest.Audit.createSuite("Audit.run");
+
+    suite.addTestCase({
+        name: "Audit.run.Valid",
+        description: "Check that Audit.run is able to respond with a RemoteObject.",
+        async test() {
+            await auditRun(`function() { return 42; }`, (result) => {
+                InspectorTest.expectEqual(result.value, 42, "Run should send back 42.");
+            });
+        },
+    });
+
+    suite.addTestCase({
+        name: "Audit.run.Valid.InjectedObject",
+        description: "Check that an object is injected into the function that is executed.",
+        async test() {
+            await InspectorTest.Audit.setupAudit();
+            await auditRun(`function() { return WebInspectorAudit; }`, (result) => {
+                InspectorTest.expectEqual(result.type, "object", "The injected WebInspectorAudit should be an object.");
+                InspectorTest.expectFalse(result.subtype, "The injected WebInspectorAudit should be a basic object.");
+            });
+            await InspectorTest.Audit.teardownAudit();
+        },
+    });
+
+    suite.addTestCase({
+        name: "Audit.run.Valid.InjectedObject.Persistence",
+        description: "Check that the injected object is preserved between test runs.",
+        async test() {
+            await InspectorTest.Audit.setupAudit();
+            await auditRun(`function() { WebInspectorAudit.foo = 42; return 10; }`, (result) => {
+                InspectorTest.expectEqual(result.value, 10, "Run should send back 10.");
+            });
+            await auditRun(`function() { return WebInspectorAudit.foo; }`, (result) => {
+                InspectorTest.expectEqual(result.value, 42, "Run should send back 42.");
+            });
+            await InspectorTest.Audit.teardownAudit();
+
+            InspectorTest.log("Triggering GC...");
+            await HeapAgent.gc();
+
+            await InspectorTest.Audit.setupAudit();
+            await auditRun(`function() { return WebInspectorAudit.foo; }`, (result) => {
+                InspectorTest.expectEqual(result.value, undefined, "Run should send back undefined.");
+            });
+            await InspectorTest.Audit.teardownAudit();
+        },
+    });
+
+    suite.addTestCase({
+        name: "Audit.run.Valid.InjectedObject.Accessibility",
+        description: "Check that the injected object holds an instance of InspectorAuditAccessibilityObject.",
+        async test() {
+            await InspectorTest.Audit.setupAudit();
+            await auditRun(`function() { return WebInspectorAudit.Accessibility; }`, (result) => {
+                InspectorTest.expectEqual(result.description, "InspectorAuditAccessibilityObject", "The injected WebInspectorAudit should hold an instance of InspectorAuditAccessibilityObject.");
+            });
+            await InspectorTest.Audit.teardownAudit();
+        },
+    });
+
+    suite.addTestCase({
+        name: "Audit.run.Valid.InjectedObject.DOM",
+        description: "Check that the injected object holds an instance of InspectorAuditDOMObject.",
+        async test() {
+            await InspectorTest.Audit.setupAudit();
+            await auditRun(`function() { return WebInspectorAudit.DOM; }`, (result) => {
+                InspectorTest.expectEqual(result.description, "InspectorAuditDOMObject", "The injected WebInspectorAudit should hold an instance of InspectorAuditDOMObject.");
+            });
+            await InspectorTest.Audit.teardownAudit();
+        },
+    });
+
+    suite.addTestCase({
+        name: "Audit.run.Invalid",
+        description: "Check that an error is thrown when trying to execute a non-function.",
+        async test() {
+            let {result, wasThrown} = await AuditAgent.run(`42`);
+            InspectorTest.assert(wasThrown, "Should throw an exception.");
+            if (wasThrown)
+                InspectorTest.log(result.description);
+            else
+                InspectorTest.log(result);
+        },
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="runTest()">
+    <p>Tests for the Audit.run command.</p>
+</body>
+</html>

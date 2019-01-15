@@ -839,6 +839,8 @@ JS_BINDING_IDLS = \
     $(WebCore)/html/track/VideoTrack.idl \
     $(WebCore)/html/track/VideoTrackList.idl \
     $(WebCore)/inspector/CommandLineAPIHost.idl \
+    $(WebCore)/inspector/InspectorAuditAccessibilityObject.idl \
+    $(WebCore)/inspector/InspectorAuditDOMObject.idl \
     $(WebCore)/inspector/InspectorFrontendHost.idl \
     $(WebCore)/loader/appcache/DOMApplicationCache.idl \
     $(WebCore)/page/BarProp.idl \

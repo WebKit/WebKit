@@ -1,3 +1,67 @@
+2019-01-15  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: Audit: create new IDL type for exposing special functionality in test context
+        https://bugs.webkit.org/show_bug.cgi?id=193149
+        <rdar://problem/46801218>
+
+        Reviewed by Joseph Pecoraro.
+
+        Create a new `AuditAgent` (and various subclasses for different inspection targets)
+
+        * inspector/protocol/Audit.json: Added.
+        Add a `run` command that is a simpler version of `Runtime.evaluate`, except that it expects
+        a function string instead of an arbitrary JavaScript expression.
+        Add `setup` and `teardown` commands that create a JavaScript object that will be passed in
+        to the test as an argument. Keep this object alive so that tests can add to the object and
+        have later tests use what was added.
+
+        * inspector/agents/InspectorAuditAgent.h: Added.
+        * inspector/agents/InspectorAuditAgent.cpp: Added.
+        (Inspector::InspectorAuditAgent::InspectorAuditAgent):
+        (Inspector::InspectorAuditAgent::didCreateFrontendAndBackend):
+        (Inspector::InspectorAuditAgent::willDestroyFrontendAndBackend):
+        (Inspector::InspectorAuditAgent::setup):
+        (Inspector::InspectorAuditAgent::run):
+        (Inspector::InspectorAuditAgent::teardown):
+        (Inspector::InspectorAuditAgent::hasActiveAudit):
+        (Inspector::InspectorAuditAgent::populateAuditObject):
+
+        * inspector/agents/JSGlobalObjectAuditAgent.h: Added.
+        * inspector/agents/JSGlobalObjectAuditAgent.cpp: Added.
+        (Inspector::JSGlobalObjectAuditAgent::JSGlobalObjectAuditAgent):
+        (Inspector::JSGlobalObjectAuditAgent::injectedScriptForEval):
+
+        * inspector/JSGlobalObjectInspectorController.h:
+        * inspector/JSGlobalObjectInspectorController.cpp:
+        (Inspector::JSGlobalObjectInspectorController::JSGlobalObjectInspectorController):
+        (Inspector::JSGlobalObjectInspectorController::connectFrontend):
+        (Inspector::JSGlobalObjectInspectorController::jsAgentContext): Added.
+        (Inspector::JSGlobalObjectInspectorController::createLazyAgents): Added.
+
+        * inspector/InjectedScript.h:
+        * inspector/InjectedScript.cpp:
+        (Inspector::InjectedScript::execute): Added.
+        (Inspector::InjectedScript::arrayFromVector): Added.
+        Create a version of `evaluate` that accepts a list of values to be passed in as arguments
+        to the function that was created by the `eval` of the given `functionString`.
+
+        * inspector/InjectedScriptSource.js:
+        (InjectedScript.prototype.execute): Added.
+        (InjectedScript.prototype.evaluate):
+        (InjectedScript.prototype.evaluateOnCallFrame):
+        (InjectedScript.prototype._evaluateAndWrap):
+        (InjectedScript.prototype._wrapAndSaveCall): Added.
+        (InjectedScript.prototype._wrapCall): Added.
+        (InjectedScript.prototype._evaluateOn):
+        Refactor the `eval` and `saveResult` logic to allow for more flexibility for other callers.
+
+        * CMakeLists.txt:
+        * DerivedSources-input.xcfilelist:
+        * DerivedSources.make:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * Sources.txt:
+        * UnifiedSources-input.xcfilelist:
+
 2019-01-14  Michael Saboff  <msaboff@apple.com>
 
         Add option to JSC to dump memory footprint on script completion

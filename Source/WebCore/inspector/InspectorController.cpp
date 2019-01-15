@@ -60,6 +60,7 @@
 #include "JSDOMWindowCustom.h"
 #include "JSExecState.h"
 #include "Page.h"
+#include "PageAuditAgent.h"
 #include "PageConsoleAgent.h"
 #include "PageDebuggerAgent.h"
 #include "PageHeapAgent.h"
@@ -206,6 +207,7 @@ void InspectorController::createLazyAgents()
 #if ENABLE(RESOURCE_USAGE)
     m_agents.append(std::make_unique<InspectorMemoryAgent>(pageContext));
 #endif
+    m_agents.append(std::make_unique<PageAuditAgent>(pageContext));
 }
 
 void InspectorController::inspectedPageDestroyed()

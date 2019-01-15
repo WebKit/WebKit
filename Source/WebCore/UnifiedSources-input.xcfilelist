@@ -391,6 +391,8 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSImageBitmapRenderingContextSettin
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSImageData.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSImageSmoothingQuality.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSInputEvent.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSInspectorAuditAccessibilityObject.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSInspectorAuditDOMObject.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSInspectorFrontendHost.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSIntersectionObserver.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSIntersectionObserverCallback.cpp
@@ -2175,6 +2177,8 @@ $(SRCROOT)/inspector/CommandLineAPIHost.cpp
 $(SRCROOT)/inspector/CommandLineAPIModule.cpp
 $(SRCROOT)/inspector/DOMEditor.cpp
 $(SRCROOT)/inspector/DOMPatchSupport.cpp
+$(SRCROOT)/inspector/InspectorAuditAccessibilityObject.cpp
+$(SRCROOT)/inspector/InspectorAuditDOMObject.cpp
 $(SRCROOT)/inspector/InspectorCanvas.cpp
 $(SRCROOT)/inspector/InspectorClient.cpp
 $(SRCROOT)/inspector/InspectorController.cpp
@@ -2213,12 +2217,14 @@ $(SRCROOT)/inspector/agents/InspectorWorkerAgent.cpp
 $(SRCROOT)/inspector/agents/WebConsoleAgent.cpp
 $(SRCROOT)/inspector/agents/WebDebuggerAgent.cpp
 $(SRCROOT)/inspector/agents/WebHeapAgent.cpp
+$(SRCROOT)/inspector/agents/page/PageAuditAgent.cpp
 $(SRCROOT)/inspector/agents/page/PageConsoleAgent.cpp
 $(SRCROOT)/inspector/agents/page/PageDebuggerAgent.cpp
 $(SRCROOT)/inspector/agents/page/PageHeapAgent.cpp
 $(SRCROOT)/inspector/agents/page/PageNetworkAgent.cpp
 $(SRCROOT)/inspector/agents/page/PageRuntimeAgent.cpp
 $(SRCROOT)/inspector/agents/worker/ServiceWorkerAgent.cpp
+$(SRCROOT)/inspector/agents/worker/WorkerAuditAgent.cpp
 $(SRCROOT)/inspector/agents/worker/WorkerConsoleAgent.cpp
 $(SRCROOT)/inspector/agents/worker/WorkerDebuggerAgent.cpp
 $(SRCROOT)/inspector/agents/worker/WorkerNetworkAgent.cpp

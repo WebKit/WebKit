@@ -814,6 +814,10 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSImageSmoothingQuality.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSImageSmoothingQuality.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSInputEvent.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSInputEvent.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSInspectorAuditAccessibilityObject.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSInspectorAuditAccessibilityObject.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSInspectorAuditDOMObject.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSInspectorAuditDOMObject.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSInspectorFrontendHost.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSInspectorFrontendHost.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSInternalSettings.cpp

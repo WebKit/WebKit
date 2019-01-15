@@ -110,6 +110,7 @@ WI.AuditManager = class AuditManager extends WI.Object
         else
             tests = this._tests;
 
+        console.assert(tests.length);
         if (!tests.length)
             return;
 
@@ -122,7 +123,18 @@ WI.AuditManager = class AuditManager extends WI.Object
 
         this.dispatchEventToListeners(WI.AuditManager.Event.TestScheduled);
 
-        await Promise.chain(this._runningTests.map((test) => () => this._runningState === WI.AuditManager.RunningState.Active ? test.start() : null));
+        await Promise.chain(this._runningTests.map((test) => async () => {
+            if (this._runningState !== WI.AuditManager.RunningState.Active)
+                return;
+
+            if (InspectorBackend.domains.Audit)
+                await AuditAgent.setup();
+
+            await test.start();
+
+            if (InspectorBackend.domains.Audit)
+                await AuditAgent.teardown();
+        }));
 
         let result = this._runningTests.map((test) => test.result).filter((result) => !!result);
 

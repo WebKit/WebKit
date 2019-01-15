@@ -1,3 +1,33 @@
+2019-01-15  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: Audit: create new IDL type for exposing special functionality in test context
+        https://bugs.webkit.org/show_bug.cgi?id=193149
+        <rdar://problem/46801218>
+
+        Reviewed by Joseph Pecoraro.
+
+        * inspector/audit/resources/audit-utilities.js:
+        (TestPage.registerInitializer.InspectorTest.Audit.setupAudit): Added.
+        (TestPage.registerInitializer.InspectorTest.Audit.teardownAudit): Added.
+
+        * inspector/audit/run.html: Added.
+        * inspector/audit/run-expected.txt: Added.
+        * inspector/audit/setup.html: Added.
+        * inspector/audit/setup-expected.txt: Added.
+        * inspector/audit/teardown.html: Added.
+        * inspector/audit/teardown-expected.txt: Added.
+
+        * inspector/canvas/create-context-2d-expected.txt:
+        * inspector/canvas/create-context-bitmaprenderer-expected.txt:
+        * inspector/canvas/create-context-webgl-expected.txt:
+        * inspector/canvas/create-context-webgl2-expected.txt:
+        * inspector/canvas/create-context-webmetal-expected.txt:
+        * inspector/canvas/recording-2d-expected.txt:
+        * inspector/canvas/recording-webgl-expected.txt:
+        * inspector/canvas/recording-webgl-snapshots-expected.txt:
+        * inspector/model/remote-object-expected.txt:
+        * inspector/model/stack-trace-expected.txt:
+
 2019-01-14  Alex Christensen  <achristensen@webkit.org>
 
         Bulgarian TLD should not punycode-encode URLs with Bulgarian Cyrillic characters

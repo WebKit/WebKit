@@ -227,6 +227,7 @@ $(BYTECODE_FILES_PATTERNS): $(wildcard $(JavaScriptCore)/generator/*.rb) $(JavaS
 
 INSPECTOR_DOMAINS := \
     $(JavaScriptCore)/inspector/protocol/ApplicationCache.json \
+    $(JavaScriptCore)/inspector/protocol/Audit.json \
     $(JavaScriptCore)/inspector/protocol/CSS.json \
     $(JavaScriptCore)/inspector/protocol/Canvas.json \
     $(JavaScriptCore)/inspector/protocol/Console.json \

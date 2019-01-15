@@ -24,7 +24,17 @@ TestPage.registerInitializer(() => {
     InspectorTest.Audit.createSuite = function(name) {
         suite = InspectorTest.createAsyncSuite(name);
         return suite;
-    }
+    };
+
+    InspectorTest.Audit.setupAudit = async function() {
+        InspectorTest.log("Audit setup...");
+        await AuditAgent.setup();
+    };
+
+    InspectorTest.Audit.teardownAudit = async function() {
+        InspectorTest.log("Audit teardown...");
+        await AuditAgent.teardown();
+    };
 
     InspectorTest.Audit.addTest = function(name, test, level, logs = {}) {
         suite.addTestCase({

@@ -1,0 +1,16 @@
+Tests for the Audit.teardown command.
+
+
+== Running test suite: Audit.teardown
+-- Running test case: Audit.teardown.Invalid.WithoutSetup
+Audit teardown...
+PASS: Should produce an exception.
+Error: Must call setup before calling teardown.
+
+-- Running test case: Audit.teardown.Invalid.SequentialCalls
+Audit setup...
+Audit teardown...
+Audit teardown...
+PASS: Should produce an exception.
+Error: Must call setup before calling teardown.
+

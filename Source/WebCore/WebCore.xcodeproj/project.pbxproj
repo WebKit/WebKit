@@ -2582,6 +2582,12 @@
 		9001774012E0347800648462 /* OESStandardDerivatives.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9001773D12E0347800648462 /* OESStandardDerivatives.cpp */; };
 		9001774112E0347800648462 /* OESStandardDerivatives.h in Headers */ = {isa = PBXBuildFile; fileRef = 9001773E12E0347800648462 /* OESStandardDerivatives.h */; };
 		9001788112E0370700648462 /* JSOESStandardDerivatives.h in Headers */ = {isa = PBXBuildFile; fileRef = 9001787F12E0370700648462 /* JSOESStandardDerivatives.h */; };
+		91278D5E21DEDAD600B57184 /* PageAuditAgent.h in Headers */ = {isa = PBXBuildFile; fileRef = 91278D5C21DEDAD500B57184 /* PageAuditAgent.h */; };
+		91278D6221DEDAF000B57184 /* WorkerAuditAgent.h in Headers */ = {isa = PBXBuildFile; fileRef = 91278D6021DEDAF000B57184 /* WorkerAuditAgent.h */; };
+		9175CE5C21E281ED00DF2C27 /* InspectorAuditDOMObject.h in Headers */ = {isa = PBXBuildFile; fileRef = 9175CE5821E281EC00DF2C27 /* InspectorAuditDOMObject.h */; };
+		9175CE5C21E281ED00DF2C28 /* JSInspectorAuditDOMObject.h in Headers */ = {isa = PBXBuildFile; fileRef = 9175CE5821E281EC00DF2C28 /* InspectorAuditDOMObject.h */; };
+		9175CE5E21E281ED00DF2C27 /* InspectorAuditAccessibilityObject.h in Headers */ = {isa = PBXBuildFile; fileRef = 9175CE5A21E281ED00DF2C27 /* InspectorAuditAccessibilityObject.h */; };
+		9175CE5E21E281ED00DF2C28 /* JSInspectorAuditAccessibilityObject.h in Headers */ = {isa = PBXBuildFile; fileRef = 9175CE5A21E281ED00DF2C28 /* InspectorAuditAccessibilityObject.h */; };
 		91B8F0B521953D65000C2B00 /* CertificateInfoBase.h in Headers */ = {isa = PBXBuildFile; fileRef = 91B8F0B321953D65000C2B00 /* CertificateInfoBase.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		91B952241F58A58F00931DC2 /* RecordingSwizzleTypes.h in Headers */ = {isa = PBXBuildFile; fileRef = 91B952221F58A58000931DC2 /* RecordingSwizzleTypes.h */; };
 		91C9F2F91AE3BEB00095B61C /* AXTextStateChangeIntent.h in Headers */ = {isa = PBXBuildFile; fileRef = 91C9F2F81AE3BE240095B61C /* AXTextStateChangeIntent.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -10381,6 +10387,18 @@
 		9001773F12E0347800648462 /* OESStandardDerivatives.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = OESStandardDerivatives.idl; sourceTree = "<group>"; };
 		9001787E12E0370700648462 /* JSOESStandardDerivatives.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSOESStandardDerivatives.cpp; sourceTree = "<group>"; };
 		9001787F12E0370700648462 /* JSOESStandardDerivatives.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSOESStandardDerivatives.h; sourceTree = "<group>"; };
+		91278D5A21DEDAD500B57184 /* PageAuditAgent.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PageAuditAgent.cpp; sourceTree = "<group>"; };
+		91278D5C21DEDAD500B57184 /* PageAuditAgent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PageAuditAgent.h; sourceTree = "<group>"; };
+		91278D5F21DEDAEF00B57184 /* WorkerAuditAgent.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WorkerAuditAgent.cpp; sourceTree = "<group>"; };
+		91278D6021DEDAF000B57184 /* WorkerAuditAgent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WorkerAuditAgent.h; sourceTree = "<group>"; };
+		9175CE5721E281EB00DF2C27 /* InspectorAuditDOMObject.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = InspectorAuditDOMObject.cpp; sourceTree = "<group>"; };
+		9175CE5721E281EB00DF2C28 /* JSInspectorAuditDOMObject.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = InspectorAuditDOMObject.cpp; sourceTree = "<group>"; };
+		9175CE5821E281EC00DF2C27 /* InspectorAuditDOMObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InspectorAuditDOMObject.h; sourceTree = "<group>"; };
+		9175CE5821E281EC00DF2C28 /* JSInspectorAuditDOMObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InspectorAuditDOMObject.h; sourceTree = "<group>"; };
+		9175CE5921E281EC00DF2C27 /* InspectorAuditAccessibilityObject.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = InspectorAuditAccessibilityObject.cpp; sourceTree = "<group>"; };
+		9175CE5921E281EC00DF2C28 /* JSInspectorAuditAccessibilityObject.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = InspectorAuditAccessibilityObject.cpp; sourceTree = "<group>"; };
+		9175CE5A21E281ED00DF2C27 /* InspectorAuditAccessibilityObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InspectorAuditAccessibilityObject.h; sourceTree = "<group>"; };
+		9175CE5A21E281ED00DF2C28 /* JSInspectorAuditAccessibilityObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InspectorAuditAccessibilityObject.h; sourceTree = "<group>"; };
 		91B8F0B321953D65000C2B00 /* CertificateInfoBase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CertificateInfoBase.h; sourceTree = "<group>"; };
 		91B952221F58A58000931DC2 /* RecordingSwizzleTypes.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RecordingSwizzleTypes.h; sourceTree = "<group>"; };
 		91C9F2F81AE3BE240095B61C /* AXTextStateChangeIntent.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AXTextStateChangeIntent.h; sourceTree = "<group>"; };
@@ -16919,6 +16937,10 @@
 				A584FE2518637DAB00843B10 /* CommandLineAPIModuleSource.h */,
 				A584FE391864E2D800843B10 /* JSCommandLineAPIHost.cpp */,
 				A584FE3A1864E2D800843B10 /* JSCommandLineAPIHost.h */,
+				9175CE5921E281EC00DF2C28 /* JSInspectorAuditAccessibilityObject.cpp */,
+				9175CE5A21E281ED00DF2C28 /* JSInspectorAuditAccessibilityObject.h */,
+				9175CE5721E281EB00DF2C28 /* JSInspectorAuditDOMObject.cpp */,
+				9175CE5821E281EC00DF2C28 /* JSInspectorAuditDOMObject.h */,
 				7A0E771C10C00DB100A0276E /* JSInspectorFrontendHost.cpp */,
 				7A0E771D10C00DB100A0276E /* JSInspectorFrontendHost.h */,
 			);
@@ -16939,6 +16961,10 @@
 				7AABA25814BC613300AA9A11 /* DOMEditor.h */,
 				7A54881614E432A1006AE05A /* DOMPatchSupport.cpp */,
 				7A54881514E432A1006AE05A /* DOMPatchSupport.h */,
+				9175CE5921E281EC00DF2C27 /* InspectorAuditAccessibilityObject.cpp */,
+				9175CE5A21E281ED00DF2C27 /* InspectorAuditAccessibilityObject.h */,
+				9175CE5721E281EB00DF2C27 /* InspectorAuditDOMObject.cpp */,
+				9175CE5821E281EC00DF2C27 /* InspectorAuditDOMObject.h */,
 				6A22E8721F1042C400F546C3 /* InspectorCanvas.cpp */,
 				6A22E86F1F10418600F546C3 /* InspectorCanvas.h */,
 				7A1F2B51126C61B20006A7E6 /* InspectorClient.cpp */,
@@ -22343,6 +22369,8 @@
 		A5B81CB91FAA44820037D1E6 /* page */ = {
 			isa = PBXGroup;
 			children = (
+				91278D5A21DEDAD500B57184 /* PageAuditAgent.cpp */,
+				91278D5C21DEDAD500B57184 /* PageAuditAgent.h */,
 				A5B81CC01FAA44B70037D1E6 /* PageConsoleAgent.cpp */,
 				A5B81CBB1FAA44B70037D1E6 /* PageConsoleAgent.h */,
 				A5B81CBD1FAA44B70037D1E6 /* PageDebuggerAgent.cpp */,
@@ -22362,6 +22390,8 @@
 			children = (
 				A581ED121FB288C900CED4EC /* ServiceWorkerAgent.cpp */,
 				A581ED101FB288C800CED4EC /* ServiceWorkerAgent.h */,
+				91278D5F21DEDAEF00B57184 /* WorkerAuditAgent.cpp */,
+				91278D6021DEDAF000B57184 /* WorkerAuditAgent.h */,
 				A5B81CCB1FAA44DA0037D1E6 /* WorkerConsoleAgent.cpp */,
 				A5B81CCA1FAA44DA0037D1E6 /* WorkerConsoleAgent.h */,
 				A5B81CC81FAA44DA0037D1E6 /* WorkerDebuggerAgent.cpp */,
@@ -29518,6 +29548,8 @@
 				93309DF0099E64920056E581 /* InsertParagraphSeparatorCommand.h in Headers */,
 				93309DF2099E64920056E581 /* InsertTextCommand.h in Headers */,
 				A5B81CA71FAA44620037D1E6 /* InspectorApplicationCacheAgent.h in Headers */,
+				9175CE5E21E281ED00DF2C27 /* InspectorAuditAccessibilityObject.h in Headers */,
+				9175CE5C21E281ED00DF2C27 /* InspectorAuditDOMObject.h in Headers */,
 				6A22E8701F10418600F546C3 /* InspectorCanvas.h in Headers */,
 				A5B81CA81FAA44620037D1E6 /* InspectorCanvasAgent.h in Headers */,
 				1C81B95C0E97330800266E07 /* InspectorClient.h in Headers */,
@@ -29950,6 +29982,8 @@
 				A77979290D6B9E64003851B9 /* JSImageData.h in Headers */,
 				7C193C011F5E11050088F3E6 /* JSImageSmoothingQuality.h in Headers */,
 				A86629D309DA2B48009633A6 /* JSInputEvent.h in Headers */,
+				9175CE5E21E281ED00DF2C28 /* JSInspectorAuditAccessibilityObject.h in Headers */,
+				9175CE5C21E281ED00DF2C28 /* JSInspectorAuditDOMObject.h in Headers */,
 				7A0E771F10C00DB100A0276E /* JSInspectorFrontendHost.h in Headers */,
 				0F4710E61DB700C7002DCEC3 /* JSIntersectionObserver.h in Headers */,
 				0F8B45761DC41DBA00443C3F /* JSIntersectionObserverCallback.h in Headers */,
@@ -30770,6 +30804,7 @@
 				1A0D57370A5C77FE007EDD4C /* OverflowEvent.h in Headers */,
 				3774ABA50FA21EB400AD7DE9 /* OverlapTestRequestClient.h in Headers */,
 				65A21468097A329100B9050A /* Page.h in Headers */,
+				91278D5E21DEDAD600B57184 /* PageAuditAgent.h in Headers */,
 				1477E7770BF4134A00152872 /* PageCache.h in Headers */,
 				CD5E5B5F1A15CE54000C609E /* PageConfiguration.h in Headers */,
 				A5B81CC21FAA44BC0037D1E6 /* PageConsoleAgent.h in Headers */,
@@ -32196,6 +32231,7 @@
 				A14832C6187F668F00DA63A6 /* WKViewPrivate.h in Headers */,
 				379919971200DDF400EA041C /* WOFFFileFormat.h in Headers */,
 				2E4346460F546A8200B0F1BA /* Worker.h in Headers */,
+				91278D6221DEDAF000B57184 /* WorkerAuditAgent.h in Headers */,
 				41A7D3531F438D16008988DE /* WorkerCacheStorageConnection.h in Headers */,
 				A5B81CCD1FAA44DE0037D1E6 /* WorkerConsoleAgent.h in Headers */,
 				A55639D11C6F09E300806D8E /* WorkerConsoleClient.h in Headers */,

@@ -103,9 +103,18 @@ let InjectedScript = class InjectedScript
 
     // InjectedScript C++ API
 
-    evaluate(expression, objectGroup, injectCommandLineAPI, returnByValue, generatePreview, saveResult)
+    execute(functionString, objectGroup, includeCommandLineAPI, returnByValue, generatePreview, saveResult, args)
     {
-        return this._evaluateAndWrap(InjectedScriptHost.evaluateWithScopeExtension, InjectedScriptHost, expression, objectGroup, false, injectCommandLineAPI, returnByValue, generatePreview, saveResult);
+        return this._wrapAndSaveCall(objectGroup, returnByValue, generatePreview, saveResult, () => {
+            const isEvalOnCallFrame = false;
+            return this._evaluateOn(InjectedScriptHost.evaluateWithScopeExtension, InjectedScriptHost, functionString, isEvalOnCallFrame, includeCommandLineAPI).apply(undefined, args);
+        });
+    }
+
+    evaluate(expression, objectGroup, includeCommandLineAPI, returnByValue, generatePreview, saveResult)
+    {
+        const isEvalOnCallFrame = false;
+        return this._evaluateAndWrap(InjectedScriptHost.evaluateWithScopeExtension, InjectedScriptHost, expression, objectGroup, isEvalOnCallFrame, includeCommandLineAPI, returnByValue, generatePreview, saveResult);
     }
 
     awaitPromise(promiseObjectId, returnByValue, generatePreview, saveResult, callback)
@@ -145,12 +154,13 @@ let InjectedScript = class InjectedScript
         promiseObject.then(resolve, reject);
     }
 
-    evaluateOnCallFrame(topCallFrame, callFrameId, expression, objectGroup, injectCommandLineAPI, returnByValue, generatePreview, saveResult)
+    evaluateOnCallFrame(topCallFrame, callFrameId, expression, objectGroup, includeCommandLineAPI, returnByValue, generatePreview, saveResult)
     {
         let callFrame = this._callFrameForId(topCallFrame, callFrameId);
         if (!callFrame)
             return "Could not find call frame with given id";
-        return this._evaluateAndWrap(callFrame.evaluateWithScopeExtension, callFrame, expression, objectGroup, true, injectCommandLineAPI, returnByValue, generatePreview, saveResult);
+        const isEvalOnCallFrame = true;
+        return this._evaluateAndWrap(callFrame.evaluateWithScopeExtension, callFrame, expression, objectGroup, isEvalOnCallFrame, includeCommandLineAPI, returnByValue, generatePreview, saveResult);
     }
 
     callFunctionOn(objectId, expression, args, returnByValue, generatePreview)
@@ -501,14 +511,31 @@ let InjectedScript = class InjectedScript
         };
     }
 
-    _evaluateAndWrap(evalFunction, object, expression, objectGroup, isEvalOnCallFrame, injectCommandLineAPI, returnByValue, generatePreview, saveResult)
+    _evaluateAndWrap(evalFunction, object, expression, objectGroup, isEvalOnCallFrame, includeCommandLineAPI, returnByValue, generatePreview, saveResult)
+    {
+        return this._wrapAndSaveCall(objectGroup, returnByValue, generatePreview, saveResult, () => {
+            return this._evaluateOn(evalFunction, object, expression, isEvalOnCallFrame, includeCommandLineAPI);
+        });
+    }
+
+    _wrapAndSaveCall(objectGroup, returnByValue, generatePreview, saveResult, func)
+    {
+        return this._wrapCall(objectGroup, returnByValue, generatePreview, saveResult, () => {
+            let result = func();
+            if (saveResult)
+                this._saveResult(result);
+            return result;
+        });
+    }
+
+    _wrapCall(objectGroup, returnByValue, generatePreview, saveResult, func)
     {
         try {
             this._savedResultIndex = 0;
 
             let returnObject = {
                 wasThrown: false,
-                result: RemoteObject.create(this._evaluateOn(evalFunction, object, objectGroup, expression, isEvalOnCallFrame, injectCommandLineAPI, saveResult), objectGroup, returnByValue, generatePreview)
+                result: RemoteObject.create(func(), objectGroup, returnByValue, generatePreview)
             };
 
             if (saveResult && this._savedResultIndex)
@@ -520,20 +547,17 @@ let InjectedScript = class InjectedScript
         }
     }
 
-    _evaluateOn(evalFunction, object, objectGroup, expression, isEvalOnCallFrame, injectCommandLineAPI, saveResult)
+    _evaluateOn(evalFunction, object, expression, isEvalOnCallFrame, includeCommandLineAPI)
     {
         let commandLineAPI = null;
-        if (injectCommandLineAPI) {
+        if (includeCommandLineAPI) {
             if (this.CommandLineAPI)
                 commandLineAPI = new this.CommandLineAPI(this._commandLineAPIImpl, isEvalOnCallFrame ? object : null);
             else
                 commandLineAPI = new BasicCommandLineAPI(isEvalOnCallFrame ? object : null);
         }
 
-        let result = evalFunction.call(object, expression, commandLineAPI);
-        if (saveResult)
-            this._saveResult(result);
-        return result;
+        return evalFunction.call(object, expression, commandLineAPI);
     }
 
     _callFrameForId(topCallFrame, callFrameId)
