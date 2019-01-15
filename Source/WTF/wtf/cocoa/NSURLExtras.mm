@@ -540,6 +540,16 @@ static BOOL allCharactersAllowedByTLDRules(const UChar* buffer, int32_t length)
         return (ch >= 0x0430 && ch <= 0x044f) || ch == 0x0451 || ch == 0x04E9 || ch == 0x04AF || isASCIIDigit(ch) || ch == '-';
     });
 
+    // https://www.icann.org/sites/default/files/packages/lgr/lgr-second-level-bulgarian-30aug16-en.html
+    static const UChar cyrillicBG[] = {
+        '.',
+        0x0431, // CYRILLIC SMALL LETTER BE
+        0x0433 // CYRILLIC SMALL LETTER GHE
+    };
+    CHECK_RULES_IF_SUFFIX_MATCHES(cyrillicBG, [](UChar ch) {
+        return (ch >= 0x0430 && ch <= 0x044A) || ch == 0x044C || (ch >= 0x044E && ch <= 0x0450) || ch == 0x045D || isASCIIDigit(ch) || ch == '-';
+    });
+
     // Not a known top level domain with special rules.
     return NO;
 }

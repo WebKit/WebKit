@@ -1,3 +1,14 @@
+2019-01-14  Alex Christensen  <achristensen@webkit.org>
+
+        Bulgarian TLD should not punycode-encode URLs with Bulgarian Cyrillic characters
+        https://bugs.webkit.org/show_bug.cgi?id=193411
+        <rdar://problem/47215929>
+
+        Reviewed by Alexey Proskuryakov.
+
+        * fast/url/user-visible/cyrillic-NFD-expected.txt:
+        * fast/url/user-visible/cyrillic-NFD.html:
+
 2019-01-14  John Wilander  <wilander@apple.com>
 
         Restructure http/tests/resourceLoadStatistics/remove-blocking-in-redirect.html to address flakiness

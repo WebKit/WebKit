@@ -1,3 +1,14 @@
+2019-01-14  Alex Christensen  <achristensen@webkit.org>
+
+        Bulgarian TLD should not punycode-encode URLs with Bulgarian Cyrillic characters
+        https://bugs.webkit.org/show_bug.cgi?id=193411
+        <rdar://problem/47215929>
+
+        Reviewed by Alexey Proskuryakov.
+
+        * wtf/cocoa/NSURLExtras.mm:
+        (WTF::allCharactersAllowedByTLDRules):
+
 2019-01-12  Timothy Hatcher  <timothy@apple.com>
 
         Have prefers-color-scheme: light always match on macOS versions before Mojave.
