@@ -1,3 +1,10 @@
+2019-01-15  Alex Christensen  <achristensen@webkit.org>
+
+        Fix iOS build after r239993
+        https://bugs.webkit.org/show_bug.cgi?id=193361
+
+        * wtf/RefCounter.h:
+
 2019-01-14  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         Use unorm2_normalize instead of precomposedStringWithCanonicalMapping in userVisibleString
