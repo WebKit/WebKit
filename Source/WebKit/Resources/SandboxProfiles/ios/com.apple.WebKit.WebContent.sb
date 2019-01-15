@@ -190,6 +190,9 @@
     (global-name "com.apple.frontboard.workspace")
     (global-name "com.apple.frontboard.systemappservices"))
 
+;; <rdar://problem/47268166>
+(allow mach-lookup (xpc-service-name "com.apple.MTLCompilerService"))
+
 (allow-preferences-common)
 
 ;; CoreMotion

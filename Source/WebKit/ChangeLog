@@ -1,3 +1,15 @@
+2019-01-15  Per Arne Vollan  <pvollan@apple.com>
+
+        Add allow directive for MTLCompilerService.xpc to PluginProcess and WebContent
+        https://bugs.webkit.org/show_bug.cgi?id=193453
+        <rdar://problem/47268166>
+
+        Reviewed by Brent Fulgham.
+
+        * PluginProcess/mac/com.apple.WebKit.plugin-common.sb.in:
+        * Resources/SandboxProfiles/ios/com.apple.WebKit.WebContent.sb:
+        * WebProcess/com.apple.WebProcess.sb.in:
+
 2019-01-15  Chris Dumez  <cdumez@apple.com>
 
         Regression(PSON) View becomes blank after click a cross-site download link
