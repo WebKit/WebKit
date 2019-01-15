@@ -1,3 +1,30 @@
+2019-01-14  Alex Christensen  <achristensen@webkit.org>
+
+        Split headerValueForVary into specialized functions for NetworkProcess and WebProcess/WebKitLegacy
+        https://bugs.webkit.org/show_bug.cgi?id=193429
+
+        Reviewed by Joseph Pecoraro.
+
+        headerValueForVary is a strange function that is causing trouble with my NetworkProcess global state removal project.
+        It currently accesses the cookie storage to see if there's a match in two different ways currently written as fallbacks.
+        In the WebProcess or in WebKitLegacy, it uses cookiesStrategy to access cookies via IPC or directly, respectively,
+        depending on the PlatformStrategies implementation of cookiesStrategy for that process.
+        In the NetworkProcess, it uses WebCore::NetworkStorageSession to access cookies directly.
+        Both of these cookie accessing methods use global state in the process, and I must split them to refactor them separately.
+        This patch does the split by passing in the method of cookie access: a CookiesStrategy& or a NetworkStorageSession&.
+        Further refactoring will be done in bug 193368 and bug 161106 to build on this and replace the global state with
+        member variables of the correct containing objects.
+
+        * loader/cache/CachedResource.cpp:
+        (WebCore::CachedResource::setResponse):
+        (WebCore::CachedResource::varyHeaderValuesMatch):
+        * platform/network/CacheValidation.cpp:
+        (WebCore::cookieRequestHeaderFieldValue):
+        (WebCore::headerValueForVary):
+        (WebCore::collectVaryingRequestHeaders):
+        (WebCore::verifyVaryingRequestHeaders):
+        * platform/network/CacheValidation.h:
+
 2019-01-14  Simon Fraser  <simon.fraser@apple.com>
 
         Only run the node comparison code in FrameSelection::respondToNodeModification() for range selections

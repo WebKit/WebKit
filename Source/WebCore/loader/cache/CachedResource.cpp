@@ -476,7 +476,7 @@ void CachedResource::setResponse(const ResourceResponse& response)
 {
     ASSERT(m_response.type() == ResourceResponse::Type::Default);
     m_response = response;
-    m_varyingHeaderValues = collectVaryingRequestHeaders(m_resourceRequest, m_response, m_sessionID);
+    m_varyingHeaderValues = collectVaryingRequestHeaders(*platformStrategies()->cookiesStrategy(), m_resourceRequest, m_response, m_sessionID);
 
 #if ENABLE(SERVICE_WORKER)
     if (m_response.source() == ResourceResponse::Source::ServiceWorker) {
@@ -858,7 +858,7 @@ bool CachedResource::varyHeaderValuesMatch(const ResourceRequest& request)
     if (m_varyingHeaderValues.isEmpty())
         return true;
 
-    return verifyVaryingRequestHeaders(m_varyingHeaderValues, request, m_sessionID);
+    return verifyVaryingRequestHeaders(*platformStrategies()->cookiesStrategy(), m_varyingHeaderValues, request, m_sessionID);
 }
 
 unsigned CachedResource::overheadSize() const

@@ -326,27 +326,30 @@ CacheControlDirectives parseCacheControlDirectives(const HTTPHeaderMap& headers)
     return result;
 }
 
-static String headerValueForVary(const ResourceRequest& request, const String& headerName, PAL::SessionID sessionID)
+static String cookieRequestHeaderFieldValue(const NetworkStorageSession& session, const ResourceRequest& request)
+{
+    return session.cookieRequestHeaderFieldValue(request.firstPartyForCookies(), SameSiteInfo::create(request), request.url(), WTF::nullopt, WTF::nullopt, request.url().protocolIs("https") ? IncludeSecureCookies::Yes : IncludeSecureCookies::No).first;
+}
+
+static String cookieRequestHeaderFieldValue(CookiesStrategy& cookiesStrategy, const PAL::SessionID& sessionID, const ResourceRequest& request)
+{
+    return cookiesStrategy.cookieRequestHeaderFieldValue(sessionID, request.firstPartyForCookies(), SameSiteInfo::create(request), request.url(), WTF::nullopt, WTF::nullopt, request.url().protocolIs("https") ? IncludeSecureCookies::Yes : IncludeSecureCookies::No).first;
+}
+
+static String headerValueForVary(const ResourceRequest& request, const String& headerName, Function<String()>&& cookieRequestHeaderFieldValueFunction)
 {
     // Explicit handling for cookies is needed because they are added magically by the networking layer.
     // FIXME: The value might have changed between making the request and retrieving the cookie here.
     // We could fetch the cookie when making the request but that seems overkill as the case is very rare and it
     // is a blocking operation. This should be sufficient to cover reasonable cases.
-    if (headerName == httpHeaderNameString(HTTPHeaderName::Cookie)) {
-        auto includeSecureCookies = request.url().protocolIs("https") ? IncludeSecureCookies::Yes : IncludeSecureCookies::No;
-        auto* cookieStrategy = platformStrategies() ? platformStrategies()->cookiesStrategy() : nullptr;
-        if (!cookieStrategy) {
-            ASSERT(sessionID == PAL::SessionID::defaultSessionID());
-            return NetworkStorageSession::defaultStorageSession().cookieRequestHeaderFieldValue(request.firstPartyForCookies(), SameSiteInfo::create(request), request.url(), WTF::nullopt, WTF::nullopt, includeSecureCookies).first;
-        }
-        return cookieStrategy->cookieRequestHeaderFieldValue(sessionID, request.firstPartyForCookies(), SameSiteInfo::create(request), request.url(), WTF::nullopt, WTF::nullopt, includeSecureCookies).first;
-    }
+    if (headerName == httpHeaderNameString(HTTPHeaderName::Cookie))
+        return cookieRequestHeaderFieldValueFunction();
     return request.httpHeaderField(headerName);
 }
 
-Vector<std::pair<String, String>> collectVaryingRequestHeaders(const WebCore::ResourceRequest& request, const WebCore::ResourceResponse& response, PAL::SessionID sessionID)
+static Vector<std::pair<String, String>> collectVaryingRequestHeadersInternal(const ResourceResponse& response, Function<String(const String& headerName)>&& headerValueForVaryFunction)
 {
-    String varyValue = response.httpHeaderField(WebCore::HTTPHeaderName::Vary);
+    String varyValue = response.httpHeaderField(HTTPHeaderName::Vary);
     if (varyValue.isEmpty())
         return { };
     Vector<String> varyingHeaderNames = varyValue.split(',');
@@ -354,23 +357,58 @@ Vector<std::pair<String, String>> collectVaryingRequestHeaders(const WebCore::Re
     varyingRequestHeaders.reserveCapacity(varyingHeaderNames.size());
     for (auto& varyHeaderName : varyingHeaderNames) {
         String headerName = varyHeaderName.stripWhiteSpace();
-        String headerValue = headerValueForVary(request, headerName, sessionID);
+        String headerValue = headerValueForVaryFunction(headerName);
         varyingRequestHeaders.append(std::make_pair(headerName, headerValue));
     }
     return varyingRequestHeaders;
 }
 
-bool verifyVaryingRequestHeaders(const Vector<std::pair<String, String>>& varyingRequestHeaders, const WebCore::ResourceRequest& request, PAL::SessionID sessionID)
+Vector<std::pair<String, String>> collectVaryingRequestHeaders(NetworkStorageSession& storageSession, const ResourceRequest& request, const ResourceResponse& response)
+{
+    return collectVaryingRequestHeadersInternal(response, [&] (const String& headerName) {
+        return headerValueForVary(request, headerName, [&] {
+            return cookieRequestHeaderFieldValue(storageSession, request);
+        });
+    });
+}
+
+Vector<std::pair<String, String>> collectVaryingRequestHeaders(CookiesStrategy& cookiesStrategy, const ResourceRequest& request, const ResourceResponse& response, const PAL::SessionID& sessionID)
+{
+    return collectVaryingRequestHeadersInternal(response, [&] (const String& headerName) {
+        return headerValueForVary(request, headerName, [&] {
+            return cookieRequestHeaderFieldValue(cookiesStrategy, sessionID, request);
+        });
+    });
+}
+
+static bool verifyVaryingRequestHeadersInternal(const Vector<std::pair<String, String>>& varyingRequestHeaders, Function<String(const String&)>&& headerValueForVary)
 {
     for (auto& varyingRequestHeader : varyingRequestHeaders) {
         // FIXME: Vary: * in response would ideally trigger a cache delete instead of a store.
         if (varyingRequestHeader.first == "*")
             return false;
-        String headerValue = headerValueForVary(request, varyingRequestHeader.first, sessionID);
-        if (headerValue != varyingRequestHeader.second)
+        if (headerValueForVary(varyingRequestHeader.first) != varyingRequestHeader.second)
             return false;
     }
     return true;
+}
+
+bool verifyVaryingRequestHeaders(NetworkStorageSession& storageSession, const Vector<std::pair<String, String>>& varyingRequestHeaders, const ResourceRequest& request)
+{
+    return verifyVaryingRequestHeadersInternal(varyingRequestHeaders, [&] (const String& headerName) {
+        return headerValueForVary(request, headerName, [&] {
+            return cookieRequestHeaderFieldValue(storageSession, request);
+        });
+    });
+}
+
+bool verifyVaryingRequestHeaders(CookiesStrategy& cookiesStrategy, const Vector<std::pair<String, String>>& varyingRequestHeaders, const ResourceRequest& request, const PAL::SessionID& sessionID)
+{
+    return verifyVaryingRequestHeadersInternal(varyingRequestHeaders, [&] (const String& headerName) {
+        return headerValueForVary(request, headerName, [&] {
+            return cookieRequestHeaderFieldValue(cookiesStrategy, sessionID, request);
+        });
+    });
 }
 
 // http://tools.ietf.org/html/rfc7231#page-48

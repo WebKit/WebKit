@@ -34,7 +34,9 @@
 
 namespace WebCore {
 
+class CookiesStrategy;
 class HTTPHeaderMap;
+class NetworkStorageSession;
 class ResourceRequest;
 class ResourceResponse;
 
@@ -77,8 +79,10 @@ struct CacheControlDirectives {
 };
 WEBCORE_EXPORT CacheControlDirectives parseCacheControlDirectives(const HTTPHeaderMap&);
 
-WEBCORE_EXPORT Vector<std::pair<String, String>> collectVaryingRequestHeaders(const ResourceRequest&, const ResourceResponse&, PAL::SessionID = PAL::SessionID::defaultSessionID());
-WEBCORE_EXPORT bool verifyVaryingRequestHeaders(const Vector<std::pair<String, String>>& varyingRequestHeaders, const ResourceRequest&, PAL::SessionID = PAL::SessionID::defaultSessionID());
+WEBCORE_EXPORT Vector<std::pair<String, String>> collectVaryingRequestHeaders(NetworkStorageSession&, const ResourceRequest&, const ResourceResponse&);
+WEBCORE_EXPORT Vector<std::pair<String, String>> collectVaryingRequestHeaders(CookiesStrategy&, const ResourceRequest&, const ResourceResponse&, const PAL::SessionID&);
+WEBCORE_EXPORT bool verifyVaryingRequestHeaders(NetworkStorageSession&, const Vector<std::pair<String, String>>& varyingRequestHeaders, const ResourceRequest&);
+WEBCORE_EXPORT bool verifyVaryingRequestHeaders(CookiesStrategy&, const Vector<std::pair<String, String>>& varyingRequestHeaders, const ResourceRequest&, const PAL::SessionID&);
 
 WEBCORE_EXPORT bool isStatusCodeCacheableByDefault(int statusCode);
 WEBCORE_EXPORT bool isStatusCodePotentiallyCacheable(int statusCode);
