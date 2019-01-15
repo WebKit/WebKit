@@ -301,13 +301,13 @@ VerticalGeometry FormattingContext::Geometry::outOfFlowNonReplacedVerticalGeomet
         } else if (!computedVerticalMargin.before) {
             usedVerticalMargin.after = *computedVerticalMargin.after;
             usedVerticalMargin.before = containingBlockHeight - (*top + borderTop + paddingTop + contentHeight() + paddingBottom + borderBottom + usedVerticalMargin.after + *bottom);
-        } else {
+        } else if (!computedVerticalMargin.after) {
             usedVerticalMargin.before = *computedVerticalMargin.before;
             usedVerticalMargin.after = containingBlockHeight - (*top + usedVerticalMargin.before + borderTop + paddingTop + contentHeight() + paddingBottom + borderBottom + *bottom);
         }
         // Over-constrained?
         auto boxHeight = *top + usedVerticalMargin.before + borderTop + paddingTop + contentHeight() + paddingBottom + borderBottom + usedVerticalMargin.after + *bottom;
-        if (boxHeight > containingBlockHeight)
+        if (boxHeight != containingBlockHeight)
             bottom = containingBlockHeight - (*top + usedVerticalMargin.before + borderTop + paddingTop + contentHeight() + paddingBottom + borderBottom + usedVerticalMargin.after);
     }
 
