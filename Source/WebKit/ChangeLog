@@ -1,3 +1,40 @@
+2019-01-15  Brian Burg  <bburg@apple.com>
+
+        WebDriver: update Create Window implementation to support newest specification
+        https://bugs.webkit.org/show_bug.cgi?id=193333
+        <rdar://problem/45649489>
+
+        Reviewed by Carlos Garcia Campos.
+
+        Spec link: https://w3c.github.io/webdriver/#create-window
+
+        The command as specified returns a value indicating whether the new browsing context
+        was presented as a new tab or new window. Add a new delegate method to query the current
+        'presentation' of the browsing context. The presentation can change over time due to
+        things such as screen orientation, so the value that is returned by the command only
+        reflects how the browsing context was initially presented to the user.
+
+        This is covered by existing WPT and internal tests. More will be added when Selenium
+        exposes this command in its various bindings.
+
+        * UIProcess/API/Cocoa/_WKAutomationSessionDelegate.h:
+        Add new SPI delegate method to query the 'presentation' (tab or window) for an automated WKWebView.
+
+        * UIProcess/API/APIAutomationSessionClient.h:
+        (API::AutomationSessionClient::currentPresentationOfPage):
+        * UIProcess/Cocoa/AutomationSessionClient.h:
+        * UIProcess/Cocoa/AutomationSessionClient.mm:
+        (WebKit::AutomationSessionClient::AutomationSessionClient):
+        (WebKit::toImpl):
+        (WebKit::AutomationSessionClient::currentPresentationOfPage):
+        * UIProcess/Automation/WebAutomationSession.cpp:
+        (WebKit::toProtocol):
+        (WebKit::WebAutomationSession::createBrowsingContext):
+        Add plumbing between ObjC delegate and C++.
+
+        * UIProcess/Automation/Automation.json:
+        Include the initial presentation in the createBrowsingContext command result.
+
 2019-01-14  Alex Christensen  <achristensen@webkit.org>
 
         Split headerValueForVary into specialized functions for NetworkProcess and WebProcess/WebKitLegacy

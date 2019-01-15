@@ -42,6 +42,15 @@
             "description": "An opaque identifier for a browsing context."
         },
         {
+            "id": "BrowsingContextPresentation",
+            "type": "string",
+            "description": "How a browsing context is presented by the user agent. A browsing context is considered a tab if it shares an OS-level window with another browsing context.",
+            "enum": [
+                "Window",
+                "Tab"
+            ]
+        },
+        {
             "id": "FrameHandle",
             "type": "string",
             "description": "An opaque identifier for a frame in a page."
@@ -323,10 +332,11 @@
             "name": "createBrowsingContext",
             "description": "Opens a new browsing context in the automation session and makes it the active browsing context for user interaction. This command creates a browsing context in a new window rather than adding a tab to an existing window.",
             "parameters": [
-                { "name": "preferNewTab", "type": "boolean", "optional": true, "description": "Create the new browsing context as a tab in an existing Automation window, if possible."}
+                { "name": "presentationHint", "$ref": "BrowsingContextPresentation", "optional": true, "description": "A hint for the desired presentation of new browsing context (new tab or new window)."}
             ],
             "returns": [
-                { "name": "handle", "$ref": "BrowsingContextHandle", "description": "An opaque handle for the newly created browsing context." }
+                { "name": "handle", "$ref": "BrowsingContextHandle", "description": "An opaque handle for the newly created browsing context." },
+                { "name": "presentation", "$ref": "BrowsingContextPresentation", "description": "How the browser presented the new browsing context (new tab or new window)." }
             ],
             "async": true
         },

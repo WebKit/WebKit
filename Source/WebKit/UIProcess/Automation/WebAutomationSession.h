@@ -147,7 +147,7 @@ public:
     // Platform: Generic
     void getBrowsingContexts(Ref<GetBrowsingContextsCallback>&&) final;
     void getBrowsingContext(const String&, Ref<GetBrowsingContextCallback>&&) final;
-    void createBrowsingContext(const bool* preferNewTab, Ref<CreateBrowsingContextCallback>&&) final;
+    void createBrowsingContext(const String* optionalPresentationHint, Ref<CreateBrowsingContextCallback>&&) final;
     void closeBrowsingContext(Inspector::ErrorString&, const String&) final;
     void switchToBrowsingContext(const String& browsingContextHandle, const String* optionalFrameHandle, Ref<SwitchToBrowsingContextCallback>&&) final;
     void setWindowFrameOfBrowsingContext(const String& handle, const JSON::Object* origin, const JSON::Object* size, Ref<SetWindowFrameOfBrowsingContextCallback>&&) final;

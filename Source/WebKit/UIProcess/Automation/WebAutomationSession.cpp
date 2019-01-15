@@ -298,21 +298,35 @@ void WebAutomationSession::getBrowsingContext(const String& handle, Ref<GetBrows
     });
 }
 
-void WebAutomationSession::createBrowsingContext(const bool* preferNewTab, Ref<CreateBrowsingContextCallback>&& callback)
+static Inspector::Protocol::Automation::BrowsingContextPresentation toProtocol(API::AutomationSessionClient::BrowsingContextPresentation value)
+{
+    switch (value) {
+    case API::AutomationSessionClient::BrowsingContextPresentation::Tab:
+        return Inspector::Protocol::Automation::BrowsingContextPresentation::Tab;
+    case API::AutomationSessionClient::BrowsingContextPresentation::Window:
+        return Inspector::Protocol::Automation::BrowsingContextPresentation::Window;
+    }
+}
+
+void WebAutomationSession::createBrowsingContext(const String* optionalPresentationHint, Ref<CreateBrowsingContextCallback>&& callback)
 {
     ASSERT(m_client);
     if (!m_client)
         ASYNC_FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS(InternalError, "The remote session could not request a new browsing context.");
 
     uint16_t options = 0;
-    if (preferNewTab && *preferNewTab)
-        options |= API::AutomationSessionBrowsingContextOptionsPreferNewTab;
+
+    if (optionalPresentationHint) {
+        auto parsedPresentationHint = Inspector::Protocol::AutomationHelpers::parseEnumValueFromString<Inspector::Protocol::Automation::BrowsingContextPresentation>(*optionalPresentationHint);
+        if (parsedPresentationHint.hasValue() && parsedPresentationHint.value() == Inspector::Protocol::Automation::BrowsingContextPresentation::Tab)
+            options |= API::AutomationSessionBrowsingContextOptionsPreferNewTab;
+    }
 
     m_client->requestNewPageWithOptions(*this, static_cast<API::AutomationSessionBrowsingContextOptions>(options), [protectedThis = makeRef(*this), callback = WTFMove(callback)](WebPageProxy* page) {
-        if (page)
-            callback->sendSuccess(protectedThis->handleForWebPageProxy(*page));
-        else
+        if (!page)
             ASYNC_FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS(InternalError, "The remote session failed to create a new browsing context.");
+
+        callback->sendSuccess(protectedThis->handleForWebPageProxy(*page), toProtocol(protectedThis->m_client->currentPresentationOfPage(protectedThis.get(), *page)));
     });
 }
 

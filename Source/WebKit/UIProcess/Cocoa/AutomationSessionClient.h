@@ -57,6 +57,7 @@ private:
     String messageOfCurrentJavaScriptDialogOnPage(WebAutomationSession&, WebPageProxy&) override;
     void setUserInputForCurrentJavaScriptPromptOnPage(WebAutomationSession&, WebPageProxy&, const String&) override;
     Optional<API::AutomationSessionClient::JavaScriptDialogType> typeOfCurrentJavaScriptDialogOnPage(WebAutomationSession&, WebPageProxy&) override;
+    API::AutomationSessionClient::BrowsingContextPresentation currentPresentationOfPage(WebAutomationSession&, WebPageProxy&) override;
 
     WeakObjCPtr<id <_WKAutomationSessionDelegate>> m_delegate;
 
@@ -74,6 +75,7 @@ private:
         bool messageOfCurrentJavaScriptDialogForWebView : 1;
         bool setUserInputForCurrentJavaScriptPromptForWebView : 1;
         bool typeOfCurrentJavaScriptDialogForWebView : 1;
+        bool currentPresentationForWebView : 1;
     } m_delegateMethods;
 };
 

@@ -54,6 +54,7 @@ AutomationSessionClient::AutomationSessionClient(id <_WKAutomationSessionDelegat
     m_delegateMethods.messageOfCurrentJavaScriptDialogForWebView = [delegate respondsToSelector:@selector(_automationSession:messageOfCurrentJavaScriptDialogForWebView:)];
     m_delegateMethods.setUserInputForCurrentJavaScriptPromptForWebView = [delegate respondsToSelector:@selector(_automationSession:setUserInput:forCurrentJavaScriptDialogForWebView:)];
     m_delegateMethods.typeOfCurrentJavaScriptDialogForWebView = [delegate respondsToSelector:@selector(_automationSession:typeOfCurrentJavaScriptDialogForWebView:)];
+    m_delegateMethods.currentPresentationForWebView = [delegate respondsToSelector:@selector(_automationSession:currentPresentationForWebView:)];
 }
 
 void AutomationSessionClient::didDisconnectFromRemote(WebAutomationSession& session)
@@ -153,12 +154,30 @@ static Optional<API::AutomationSessionClient::JavaScriptDialogType> toImpl(_WKAu
     }
 }
 
+static API::AutomationSessionClient::BrowsingContextPresentation toImpl(_WKAutomationSessionBrowsingContextPresentation presentation)
+{
+    switch (presentation) {
+    case _WKAutomationSessionBrowsingContextPresentationTab:
+        return API::AutomationSessionClient::BrowsingContextPresentation::Tab;
+    case _WKAutomationSessionBrowsingContextPresentationWindow:
+        return API::AutomationSessionClient::BrowsingContextPresentation::Window;
+    }
+}
+
 Optional<API::AutomationSessionClient::JavaScriptDialogType> AutomationSessionClient::typeOfCurrentJavaScriptDialogOnPage(WebAutomationSession& session, WebPageProxy& page)
 {
     if (m_delegateMethods.typeOfCurrentJavaScriptDialogForWebView)
         return toImpl([m_delegate.get() _automationSession:wrapper(session) typeOfCurrentJavaScriptDialogForWebView:fromWebPageProxy(page)]);
 
     return API::AutomationSessionClient::JavaScriptDialogType::Prompt;
+}
+
+API::AutomationSessionClient::BrowsingContextPresentation AutomationSessionClient::currentPresentationOfPage(WebAutomationSession& session, WebPageProxy& page)
+{
+    if (m_delegateMethods.currentPresentationForWebView)
+        return toImpl([m_delegate.get() _automationSession:wrapper(session) currentPresentationForWebView:fromWebPageProxy(page)]);
+
+    return API::AutomationSessionClient::BrowsingContextPresentation::Window;
 }
 
 } // namespace WebKit
