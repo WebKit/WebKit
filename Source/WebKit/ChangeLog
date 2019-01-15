@@ -1,3 +1,200 @@
+2019-01-15  Chris Dumez  <cdumez@apple.com>
+
+        Regression(PSON) View becomes blank after click a cross-site download link
+        https://bugs.webkit.org/show_bug.cgi?id=193361
+        <rdar://problem/47099573>
+
+        Reviewed by Geoff Garen.
+
+        The issue tracked by rdar://problem/47099573 is that a provisional load may get
+        canceled (or converted into a download) *after* we've decided to process-swap.
+        In such cases, the view should keep displaying the current site and it should
+        still be interactive. However, with the previous PSON model, the view (pageProxy)
+        would have already swapped to the new process and would end up displaying the
+        initially empty document.
+
+        To address the issue, this patch introduces the concept of a provisional load
+        in the UIProcess, handled by a ProvisionalPageProxy which has its own privisional
+        process. The WebPageProxy owns the ProvisionalPageProxy but we do not commit the
+        provisional page until after the load was committed in the new process. This means
+        that the view / WebPageProxy keeps using the old process and displays the current
+        content until a load has committed in the provisional page. If no load commits
+        in the provisional process (e.g. because the load is cancelled or converted into
+        a download), then we merely destroy the ProvisionalPageProxy and terminate its
+        process, without impacting the WebPageProxy.
+
+        * Shared/WebPageCreationParameters.cpp:
+        (WebKit::WebPageCreationParameters::encode const):
+        (WebKit::WebPageCreationParameters::decode):
+        * Shared/WebPageCreationParameters.h:
+        Rename isSwapFromSuspended to isProcessSwap for clarity as we always want to
+        delay attaching the drawing area in case of a process-swap, no matter what
+        now that the previous process is kept alive until the provisional load is
+        committed in the new process.
+
+        * Shared/WebPolicyAction.h:
+        Drop Suspend policy action. At decidePolicyForNavigationAction time, in case of
+        process-swap, we now tell the previous process to simply ignore the load, while
+        we create a ProvisionalPageProxy to do the new load in a new process.
+        Suspension of the previous page in the old process, happens later, when a load
+        is actually committed in the new process.
+
+        * Sources.txt:
+        Add new ProvisionalPageProxy file.
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _killWebContentProcessAndResetState]):
+        When calling _killWebContentProcessAndResetState on a WKWebView, kill both the current
+        process and the provisional one, to maintain previous behavior in our API tests.
+
+        * UIProcess/PageClient.h:
+        Tiny build fix.
+
+        * UIProcess/ProvisionalPageProxy.cpp: Added.
+        (WebKit::ProvisionalPageProxy::ProvisionalPageProxy):
+        (WebKit::ProvisionalPageProxy::~ProvisionalPageProxy):
+        (WebKit::ProvisionalPageProxy::takeDrawingArea):
+        (WebKit::ProvisionalPageProxy::cancel):
+        (WebKit::ProvisionalPageProxy::initializeWebPage):
+        (WebKit::ProvisionalPageProxy::loadDataWithNavigation):
+        (WebKit::ProvisionalPageProxy::loadRequestWithNavigation):
+        (WebKit::ProvisionalPageProxy::goToBackForwardItem):
+        (WebKit::ProvisionalPageProxy::didCreateMainFrame):
+        (WebKit::ProvisionalPageProxy::didStartProvisionalLoadForFrame):
+        (WebKit::ProvisionalPageProxy::didFailProvisionalLoadForFrame):
+        (WebKit::ProvisionalPageProxy::didCommitLoadForFrame):
+        (WebKit::ProvisionalPageProxy::didReceiveMessage):
+        (WebKit::ProvisionalPageProxy::didReceiveSyncMessage):
+        * UIProcess/ProvisionalPageProxy.h: Added.
+        (WebKit::ProvisionalPageProxy::page):
+        (WebKit::ProvisionalPageProxy::mainFrame const):
+        (WebKit::ProvisionalPageProxy::process):
+        (WebKit::ProvisionalPageProxy::processSwapRequestedByClient const):
+        (WebKit::ProvisionalPageProxy::navigationID const):
+        Add new ProvisionalPageProxy class to wrap the provisional load in the new process
+        after a swap. The provisional page is owned by the WebPageProxy and we only commit
+        the provisional page when the load is committed. Until then, the WebPageProxy keeps
+        using the old process and displaying the current content.
+
+        * UIProcess/SuspendedPageProxy.cpp:
+        (WebKit::SuspendedPageProxy::~SuspendedPageProxy):
+        (WebKit::SuspendedPageProxy::unsuspend):
+        (WebKit::SuspendedPageProxy::didProcessRequestToSuspend):
+        Unregister the SuspendedPageProxy as an IPC message receiver a little bit earlier
+        when we're going to unsuspend it. This avoids conflicting with the ProvisionalPageProxy
+        which tries to register itself as an IPC message receiver for the same pageID when
+        a process-swap occurs and we're switching to a suspended page.
+
+        * UIProcess/WebFrameProxy.cpp:
+        (WebKit::WebFrameProxy::isMainFrame const):
+        WebFrameProxy::isMainFrame() relies on checking that the frame is the WebPageProxy's m_mainFrame.
+        Now that the WebPageProxy can have a ProvisionalPageProxy, also check if it is the ProvisionalPageProxy's
+        m_mainFrame to maintain previous behavior.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::swapToWebProcess):
+        swapToWebProcess() no longer takes care of unsuspending the SuspendedPage because we now call swapToWebProcess()
+        later, when a load is actually committed in the provisional page / process. swapToWebProcess() now also needs
+        to initialize some data members such as the drawing area and the main frame as it is transferring them over from
+        the ProvisionalPageProxy which started the provisional load.
+
+        (WebKit::WebPageProxy::finishAttachingToWebProcess):
+        We no longer need IsSwapFromSuspended parameter as this is called later now, after a load has actually been
+        committed in the provisional process.
+
+        (WebKit::WebPageProxy::initializeWebPage):
+        - We no longer need IsSwapFromSuspended parameter as this is called later now, after a load has actually been
+          committed in the provisional process.
+        - Factor some code out to WebPageProxy::setDrawingArea() so that it can be shared with swapToWebProcess().
+
+        (WebKit::WebPageProxy::loadRequestWithNavigation):
+        Only call setPendingAPIRequestURL() in loadRequestWithNavigation() only if ShouldTreatAsContinuingLoad is not
+        Yes. This avoids hitting some assertions as this was already called during the first API call if needed.
+
+        (WebKit::WebPageProxy::receivedNavigationPolicyDecision):
+        In case of process swap, tell the previous process to ignore the load instead of suspending it right away.
+        Suspension now happens later, only if we end up committing the provisional load in the new process.
+        Also discard the SuspendedPage if it failed to suspend (we only reuse its process in this case). This used
+        to happen a bit later but it is clearer if we do this as early as possible I think.
+
+        (WebKit::WebPageProxy::commitProvisionalPage):
+        When the load is committed in the new process, we call WebPageProxy::commitProvisionalPage(). It takes care of:
+        - Actually swapping the WebPageProxy to the new process by calling processDidTerminate() / swapToWebProcess().
+        - Suspending the current page.
+        - Letting the client know the load is comitted
+        - Destroy the ProvisionalPageProxy.
+        This work used to happen earlier in continueNavigationInNewProcess().
+
+        (WebKit::WebPageProxy::continueNavigationInNewProcess):
+        Moved some of the logic to commitProvisionalPage(). We now merely start the load in a new ProvisionalPageProxy,
+        without actually having the WebPageProxy switch to the new process yet.
+
+        (WebKit::WebPageProxy::didCreateMainFrame):
+        (WebKit::WebPageProxy::didCreateWindow):
+        Drop some code that is no longer needed, now that the ProvisionalPageProxy takes care of this.
+
+        (WebKit::WebPageProxy::didDestroyNavigation):
+        On process-swap, when telling the previous process to ignore the load and starting the new load in a new
+        ProvisionalPageProxy, the previous WebPage attempts to destroy the navigation. In this case, we ignore
+        the call since the navigation is merely taken over by the ProvisionalPageProxy.
+
+        (WebKit::WebPageProxy::didStartProvisionalLoadForFrame):
+        Moved some PSON logic to the ProvisionalPageProxy instead.
+
+        (WebKit::WebPageProxy::didFailProvisionalLoadForFrame):
+        When didFailProvisionalLoadForFrame() is called for a ProvisionalPageProxy, destroy it.
+
+        (WebKit::WebPageProxy::decidePolicyForNavigationActionAsync):
+        (WebKit::WebPageProxy::decidePolicyForResponse):
+        Capture the process in the lambda, to make sure we send the policy decision to the same process that
+        asked for it, so as to not get confused by process swaps.
+
+        (WebKit::WebPageProxy::resetState):
+        Drop some code that is no longer needed.
+
+        (WebKit::WebPageProxy::creationParameters):
+        Move the hasRegisteredServiceWorkers flag initialization from the call site to here now that we have
+        more than one call site. This was just some bad factoring.
+
+        (WebKit::WebPageProxy::PageProcessOverride::PageProcessOverride):
+        (WebKit::WebPageProxy::PageProcessOverride::~PageProcessOverride):
+        * UIProcess/WebPageProxy.h:
+        (WebKit::WebPageProxy::temporarilyOverrideProcess):
+        Add utility class to temporarily override the WebPageProxy's m_process with the provisional one when
+        the ProvisionalPageProxy interacts with the WebPageProxy.
+
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcessProxy::hasProvisionalPageWithID const):
+        (WebKit::WebProcessProxy::updateBackForwardItem):
+        Before updating a BackForwardListItem, we normally make sure the process has a WebPageProxy with the
+        item's pageID. We have to tweak the logic because there may now be no WebPageProxy with this pageID
+        associated with this process yet, because it is still a ProvisionalPageProxy.
+
+        (WebKit::WebProcessProxy::canTerminateChildProcess):
+        Do not terminate the WebProcess if there are ProvisionalPageProxy objects using it.
+
+        * UIProcess/WebProcessProxy.h:
+        (WebKit::WebProcessProxy::addProvisionalPageProxy):
+        (WebKit::WebProcessProxy::removeProvisionalPageProxy):
+
+        * WebKit.xcodeproj/project.pbxproj:
+
+        * WebProcess/WebPage/WebFrame.cpp:
+        (WebKit::toPolicyAction):
+        (WebKit::WebFrame::didReceivePolicyDecision):
+        Stop dealing with WebPolicyAction::Suspend as it no longer exists.
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::reinitializeWebPage):
+        (WebKit::WebPage::didReceivePolicyDecision):
+
+        (WebKit::WebPage::setIsSuspended):
+        Suspend the Page when setIsSuspended(true) is called, now that there is no longer a WebPolicyAction::Suspend.
+        setIsSuspended(true) IPC is sent when we actually commit the provisional page.
+
+        * WebProcess/WebPage/mac/TiledCoreAnimationDrawingArea.mm:
+        (WebKit::TiledCoreAnimationDrawingArea::TiledCoreAnimationDrawingArea):
+
 2019-01-15  Brian Burg  <bburg@apple.com>
 
         WebDriver: update Create Window implementation to support newest specification

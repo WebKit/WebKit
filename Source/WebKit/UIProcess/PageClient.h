@@ -48,6 +48,7 @@
 
 OBJC_CLASS CALayer;
 OBJC_CLASS NSFileWrapper;
+OBJC_CLASS NSMenu;
 OBJC_CLASS NSSet;
 OBJC_CLASS WKDrawingView;
 OBJC_CLASS _WKRemoteObjectRegistry;
