@@ -420,6 +420,7 @@ public:
     String m_uncaughtExceptionName;
     bool m_treatWatchdogExceptionAsSuccess { false };
     bool m_alwaysDumpUncaughtException { false };
+    bool m_dumpMemoryFootprint { false };
     bool m_dumpSamplingProfilerData { false };
     bool m_enableRemoteDebugging { false };
 
@@ -2572,6 +2573,7 @@ static NO_RETURN void printUsageStatement(bool help = false)
     fprintf(stderr, "  --exception=<name>         Check the last script exits with an uncaught exception with the specified name\n");
     fprintf(stderr, "  --watchdog-exception-ok    Uncaught watchdog exceptions exit with success\n");
     fprintf(stderr, "  --dumpException            Dump uncaught exception text\n");
+    fprintf(stderr, "  --footprint                Dump memory footprint after done executing\n");
     fprintf(stderr, "  --options                  Dumps all JSC VM options and exits\n");
     fprintf(stderr, "  --dumpOptions              Dumps all non-default JSC VM options before continuing\n");
     fprintf(stderr, "  --<jsc VM option>=<value>  Sets the specified JSC VM option\n");
@@ -2717,6 +2719,11 @@ void CommandLine::parseArguments(int argc, char** argv)
 
         if (!strcmp(arg, "--dumpException")) {
             m_alwaysDumpUncaughtException = true;
+            continue;
+        }
+
+        if (!strcmp(arg, "--footprint")) {
+            m_dumpMemoryFootprint = true;
             continue;
         }
 
@@ -2927,6 +2934,12 @@ int jscmain(int argc, char** argv)
         });
 
     printSuperSamplerState();
+
+    if (options.m_dumpMemoryFootprint) {
+        MemoryFootprint footprint = MemoryFootprint::now();
+
+        printf("Memory Footprint:\n    Current Footprint: %llu\n    Peak Footprint: %llu\n", footprint.current, footprint.peak);
+    }
 
     return result;
 }

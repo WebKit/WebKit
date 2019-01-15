@@ -1,3 +1,18 @@
+2019-01-14  Michael Saboff  <msaboff@apple.com>
+
+        Add option to JSC to dump memory footprint on script completion
+        https://bugs.webkit.org/show_bug.cgi?id=193422
+
+        Reviewed by Mark Lam.
+
+        Added the --footprint option to dump peak and current memory usage.  This uses the same
+        OS calls added in r2362362.
+
+        * jsc.cpp:
+        (printUsageStatement):
+        (CommandLine::parseArguments):
+        (jscmain):
+
 2019-01-14  Yusuke Suzuki  <yusukesuzuki@slowstart.org>
 
         [JSC] AI should check the given constant's array type when folding GetByVal into constant
