@@ -1,3 +1,21 @@
+2019-01-15  Youenn Fablet  <youenn@apple.com>
+
+        Correctly handle rotation for local video playback
+        https://bugs.webkit.org/show_bug.cgi?id=193412
+
+        Reviewed by Eric Carlson.
+
+        Update AVVideoCaptureSource to compute the size given to settings after rotating the sample.
+        This ensures computing the size of video elements appropriately.
+        Also makes sure to notify observers of size change whenever rotation happens as settings() call will provide a different size.
+        Covered by manual testing as we do not have yet emulation of local capture with rotation.
+
+        * platform/mediastream/RealtimeMediaSource.cpp:
+        (WebCore::RealtimeMediaSource::setIntrinsicSize):
+        * platform/mediastream/mac/AVVideoCaptureSource.mm:
+        (WebCore::AVVideoCaptureSource::settings):
+        (WebCore::AVVideoCaptureSource::computeSampleRotation):
+
 2019-01-15  Chris Dumez  <cdumez@apple.com>
 
         Regression(PSON) View becomes blank after click a cross-site download link
