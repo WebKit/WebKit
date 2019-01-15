@@ -1,3 +1,77 @@
+2019-01-15  Jonathan Bedard  <jbedard@apple.com>
+
+        webkitpy: Implement device type specific expected results (Part 1)
+        https://bugs.webkit.org/show_bug.cgi?id=192162
+
+        Reviewed by Lucas Forschler.
+
+        Device type specific expected results covers two related ideas. The first (covered by this change)
+        is where to search for -expected.* files. The second is which tests to run based on the
+        TestExpectations.txt file.
+
+        After this change, the baseline search path will be determined by the type of device running a
+        test. Device type will be passed into any function which picks a file based on the baseline search
+        path.
+
+        * Scripts/webkitpy/layout_tests/controllers/layout_test_runner.py:
+        (Worker._update_test_input): Pass device_type to self._port.reference_files(...).
+        * Scripts/webkitpy/layout_tests/controllers/manager.py:
+        (Manager.run): Print baseline search path for each round of devices.
+        * Scripts/webkitpy/layout_tests/controllers/single_test_runner.py:
+        (SingleTestRunner.__init__): Pass device_type into expected_*(...).
+        (SingleTestRunner._expected_driver_output): Ditto.
+        (SingleTestRunner._driver_input): Ditto.
+        * Scripts/webkitpy/layout_tests/views/printing.py:
+        (Printer.print_config): Move printing of baseline search path to a separate function.
+        (Printer.print_baseline_search_path): Moved from Printer.print_config.
+        * Scripts/webkitpy/layout_tests/views/printing_unittest.py:
+        (Testprinter.test_print_config):
+        (Testprinter.test_print_baseline_search_path):
+        * Scripts/webkitpy/port/base.py:
+        (Port.baseline_search_path): Pass device_type through.
+        (Port._expected_baselines_for_suffixes): Ditto.
+        (Port.expected_baselines): Ditto.
+        (Port.expected_filename): Ditto.
+        (Port.expected_checksum): Ditto.
+        (Port.expected_image): Ditto.
+        (Port.expected_audio): Ditto.
+        (Port.expected_text): Ditto.
+        (Port.reference_files): Ditto.
+        (Port.tests): Ditto.
+        (Port._expanded_paths): Ditto.
+        (Port.skipped_layout_tests): Ditto.
+        (Port.expectations_dict): Ditto.
+        (Port._port_specific_expectations_files): Ditto.
+        (Port.expectations_files): Ditto.
+        (Port.test_search_path): Ditto.
+        (Port._tests_for_other_platforms): Ditto.
+        * Scripts/webkitpy/port/base_unittest.py:
+        (PortTest.test_additional_platform_directory): Accept, but do not use, device_type.
+        (PortTest.test_nonexistant_expectations): Ditto.
+        (test_ref_tests_platform_directory): Ditto.
+        * Scripts/webkitpy/port/darwin.py:
+        (DarwinPort._port_specific_expectations_files): Accept device_type.
+        * Scripts/webkitpy/port/driver.py:
+        (DriverProxy):
+        (DriverProxy.host): Expose _target_host for device_type information.
+        * Scripts/webkitpy/port/gtk.py:
+        (GtkPort._port_specific_expectations_files): Accept, but do not use, device_type.
+        * Scripts/webkitpy/port/ios.py:
+        (IOSPort. default_baseline_search_path): Remove memoized, since it does not accept **kwargs.
+        * Scripts/webkitpy/port/mac.py:
+        (MacPort. default_baseline_search_path): Ditto.
+        * Scripts/webkitpy/port/port_testcase.py:
+        (TestWebKitPort._tests_for_other_platforms): Accept, but do not use, device_type.
+        * Scripts/webkitpy/port/test.py:
+        * Scripts/webkitpy/port/watch.py:
+        (WatchPort. default_baseline_search_path): Remove memoized, since it does not accept **kwargs.
+        * Scripts/webkitpy/port/win.py:
+        (WinPort.test_search_path): Accept, but do not use, device_type.
+        * Scripts/webkitpy/port/wpe.py:
+        (WPEPort._port_specific_expectations_files): Ditto.
+        * Scripts/webkitpy/tool/servers/rebaselineserver.py:
+        (get_test_baselines.AllPlatformsPort.baseline_search_path): Ditto.
+
 2019-01-15  Zalan Bujtas  <zalan@apple.com>
 
         [LFC] Use the containing block's padding box to position out-of-flow elements.

@@ -294,7 +294,7 @@ class Worker(object):
     def _update_test_input(self, test_input):
         if test_input.reference_files is None:
             # Lazy initialization.
-            test_input.reference_files = self._port.reference_files(test_input.test_name)
+            test_input.reference_files = self._port.reference_files(test_input.test_name, device_type=self._port.target_host(self._worker_number).device_type)
         if test_input.reference_files:
             test_input.should_run_pixel_test = True
         else:

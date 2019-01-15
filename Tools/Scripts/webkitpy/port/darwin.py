@@ -53,8 +53,8 @@ class DarwinPort(ApplePort):
             return 350 * 1000
         return super(DarwinPort, self).default_timeout_ms()
 
-    def _port_specific_expectations_files(self):
-        return list(reversed([self._filesystem.join(self._webkit_baseline_path(p), 'TestExpectations') for p in self.baseline_search_path()]))
+    def _port_specific_expectations_files(self, device_type=None):
+        return list(reversed([self._filesystem.join(self._webkit_baseline_path(p), 'TestExpectations') for p in self.baseline_search_path(device_type=device_type)]))
 
     def check_for_leaks(self, process_name, process_pid):
         if not self.get_option('leaks'):

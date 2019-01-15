@@ -719,6 +719,10 @@ class DriverProxy(object):
     def _make_driver(self, pixel_tests):
         return self._driver_instance_constructor(self._port, self._worker_number, pixel_tests, self._no_timeout)
 
+    @property
+    def host(self):
+        return self._driver._target_host
+
     # FIXME: this should be a @classmethod (or implemented on Port instead).
     def is_http_test(self, test_name):
         return self._driver.is_http_test(test_name)

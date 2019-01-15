@@ -58,7 +58,6 @@ class WatchPort(DevicePort):
     def test_expectations_file_position(self):
         return 4
 
-    @memoized
     def default_baseline_search_path(self, **kwargs):
         versions_to_fallback = []
         if self.device_version() == self.CURRENT_VERSION:
