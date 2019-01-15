@@ -32,6 +32,7 @@
 
 #import <unicode/uchar.h>
 #import <unicode/uidna.h>
+#import <unicode/unorm.h>
 #import <unicode/uscript.h>
 #import <wtf/Function.h>
 #import <wtf/HexNumber.h>
@@ -1105,6 +1106,31 @@ static CFStringRef createStringWithEscapedUnsafeCharacters(CFStringRef string)
     return CFStringCreateWithCharacters(nullptr, outBuffer.data(), outBuffer.size());
 }
 
+static String toNormalizationFormC(const String& string)
+{
+    auto sourceBuffer = string.charactersWithNullTermination();
+    ASSERT(sourceBuffer.last() == '\0');
+    sourceBuffer.removeLast();
+
+    String result;
+    Vector<UChar, URL_BYTES_BUFFER_LENGTH> normalizedCharacters(sourceBuffer.size());
+    UErrorCode uerror = U_ZERO_ERROR;
+    int32_t normalizedLength = 0;
+    const UNormalizer2 *normalizer = unorm2_getNFCInstance(&uerror);
+    if (!U_FAILURE(uerror)) {
+        normalizedLength = unorm2_normalize(normalizer, sourceBuffer.data(), sourceBuffer.size(), normalizedCharacters.data(), normalizedCharacters.size(), &uerror);
+        if (uerror == U_BUFFER_OVERFLOW_ERROR) {
+            uerror = U_ZERO_ERROR;
+            normalizedCharacters.resize(normalizedLength);
+            normalizedLength = unorm2_normalize(normalizer, sourceBuffer.data(), sourceBuffer.size(), normalizedCharacters.data(), normalizedLength, &uerror);
+        }
+        if (!U_FAILURE(uerror))
+            result = String(normalizedCharacters.data(), normalizedLength);
+    }
+
+    return result;
+}
+
 NSString *userVisibleString(NSURL *URL)
 {
     NSData *data = originalURLData(URL);
@@ -1175,7 +1201,9 @@ NSString *userVisibleString(NSURL *URL)
             result = mappedResult;
     }
 
-    result = [result precomposedStringWithCanonicalMapping];
+    auto wtfString = String(result.get());
+    auto normalized = toNormalizationFormC(wtfString);
+    result = static_cast<NSString *>(normalized);
     return CFBridgingRelease(createStringWithEscapedUnsafeCharacters((__bridge CFStringRef)result.get()));
 }
 

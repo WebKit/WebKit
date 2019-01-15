@@ -1,3 +1,20 @@
+2019-01-14  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        Use unorm2_normalize instead of precomposedStringWithCanonicalMapping in userVisibleString
+        https://bugs.webkit.org/show_bug.cgi?id=192945
+
+        Reviewed by Alex Christensen.
+
+        Replace use of the nice NSString function precomposedStringWithCanonicalMapping with the ICU
+        API unorm2_normalize. This is to prep the code for translation to cross-platform C++. Of
+        course this is much worse than the preexisting code, but this is just a transitional
+        measure and not the final state of the code. It wouldn't make sense to do this if the code
+        were to remain Objective C++.
+
+        * wtf/cocoa/NSURLExtras.mm:
+        (WTF::toNormalizationFormC):
+        (WTF::userVisibleString):
+
 2019-01-14  Alex Christensen  <achristensen@webkit.org>
 
         Bulgarian TLD should not punycode-encode URLs with Bulgarian Cyrillic characters
