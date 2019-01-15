@@ -1,3 +1,38 @@
+2019-01-15  Simon Fraser  <simon.fraser@apple.com>
+
+        Simplify isRunningAnimationOnRenderer()
+        https://bugs.webkit.org/show_bug.cgi?id=193435
+
+        Reviewed by Darin Adler.
+
+        All callers of CSSAnimationController::isRunningAnimationOnRenderer() pass AnimationBase::Running | AnimationBase::Paused,
+        so we can remove the parameter and just hardcode this behavior.
+        
+        This will simplify a later patch that needs to consider state changes between running and not running.
+        
+        No behavior change.
+
+        * page/animation/AnimationBase.h:
+        (WebCore::AnimationBase::isAnimatingProperty const):
+        * page/animation/CSSAnimationController.cpp:
+        (WebCore::CSSAnimationControllerPrivate::isRunningAnimationOnRenderer const):
+        (WebCore::CSSAnimationControllerPrivate::isRunningAcceleratedAnimationOnRenderer const):
+        (WebCore::CSSAnimationControllerPrivate::computeExtentOfAnimation const):
+        (WebCore::CSSAnimationController::isRunningAnimationOnRenderer const):
+        (WebCore::CSSAnimationController::isRunningAcceleratedAnimationOnRenderer const):
+        * page/animation/CSSAnimationController.h:
+        * page/animation/CSSAnimationControllerPrivate.h:
+        * page/animation/CompositeAnimation.cpp:
+        (WebCore::CompositeAnimation::isAnimatingProperty const):
+        * page/animation/CompositeAnimation.h:
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::currentTransform const):
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::updateGeometry):
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::requiresCompositingForAnimation const):
+        (WebCore::RenderLayerCompositor::isRunningTransformAnimation const):
+
 2019-01-15  Antti Koivisto  <antti@apple.com>
 
         Remove unused fields from Scrollbar

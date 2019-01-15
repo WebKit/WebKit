@@ -76,8 +76,8 @@ public:
     void startAnimationsIfNotSuspended(Document*);
     void detachFromDocument(Document*);
 
-    bool isRunningAnimationOnRenderer(RenderElement&, CSSPropertyID, AnimationBase::RunningState) const;
-    bool isRunningAcceleratedAnimationOnRenderer(RenderElement&, CSSPropertyID, AnimationBase::RunningState) const;
+    bool isRunningAnimationOnRenderer(RenderElement&, CSSPropertyID) const;
+    bool isRunningAcceleratedAnimationOnRenderer(RenderElement&, CSSPropertyID) const;
 
     bool pauseAnimationAtTime(Element&, const AtomicString& name, double t);
     bool pauseTransitionAtTime(Element&, const String& property, double t);

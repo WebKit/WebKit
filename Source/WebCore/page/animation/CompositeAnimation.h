@@ -69,7 +69,7 @@ public:
     
     bool hasAnimations() const  { return !m_transitions.isEmpty() || !m_keyframeAnimations.isEmpty(); }
 
-    bool isAnimatingProperty(CSSPropertyID, bool acceleratedOnly, AnimationBase::RunningState) const;
+    bool isAnimatingProperty(CSSPropertyID, bool acceleratedOnly) const;
 
     KeyframeAnimation* animationForProperty(CSSPropertyID) const;
 

@@ -1205,7 +1205,7 @@ TransformationMatrix RenderLayer::currentTransform(RenderStyle::ApplyTransformOr
             }
         }
     } else {
-        if (renderer().animation().isRunningAcceleratedAnimationOnRenderer(renderer(), CSSPropertyTransform, AnimationBase::Running | AnimationBase::Paused)) {
+        if (renderer().animation().isRunningAcceleratedAnimationOnRenderer(renderer(), CSSPropertyTransform)) {
             TransformationMatrix currTransform;
             FloatRect pixelSnappedBorderRect = snapRectToDevicePixels(box->borderBoxRect(), box->document().deviceScaleFactor());
             std::unique_ptr<RenderStyle> style = renderer().animation().animatedStyleForRenderer(renderer());

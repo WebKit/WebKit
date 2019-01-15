@@ -2439,15 +2439,14 @@ bool RenderLayerCompositor::requiresCompositingForAnimation(RenderLayerModelObje
     if (RuntimeEnabledFeatures::sharedFeatures().webAnimationsCSSIntegrationEnabled())
         return false;
 
-    const AnimationBase::RunningState activeAnimationState = AnimationBase::Running | AnimationBase::Paused;
     auto& animController = renderer.animation();
-    return (animController.isRunningAnimationOnRenderer(renderer, CSSPropertyOpacity, activeAnimationState)
+    return (animController.isRunningAnimationOnRenderer(renderer, CSSPropertyOpacity)
         && (usesCompositing() || (m_compositingTriggers & ChromeClient::AnimatedOpacityTrigger)))
-        || animController.isRunningAnimationOnRenderer(renderer, CSSPropertyFilter, activeAnimationState)
+        || animController.isRunningAnimationOnRenderer(renderer, CSSPropertyFilter)
 #if ENABLE(FILTERS_LEVEL_2)
-        || animController.isRunningAnimationOnRenderer(renderer, CSSPropertyWebkitBackdropFilter, activeAnimationState)
+        || animController.isRunningAnimationOnRenderer(renderer, CSSPropertyWebkitBackdropFilter)
 #endif
-        || animController.isRunningAnimationOnRenderer(renderer, CSSPropertyTransform, activeAnimationState);
+        || animController.isRunningAnimationOnRenderer(renderer, CSSPropertyTransform);
 }
 
 bool RenderLayerCompositor::requiresCompositingForTransform(RenderLayerModelObject& renderer) const
@@ -2856,7 +2855,7 @@ bool RenderLayerCompositor::isRunningTransformAnimation(RenderLayerModelObject& 
         }
         return false;
     }
-    return renderer.animation().isRunningAnimationOnRenderer(renderer, CSSPropertyTransform, AnimationBase::Running | AnimationBase::Paused);
+    return renderer.animation().isRunningAnimationOnRenderer(renderer, CSSPropertyTransform);
 }
 
 // If an element has negative z-index children, those children render in front of the 

@@ -69,8 +69,9 @@ public:
     WEBCORE_EXPORT bool pauseTransitionAtTime(Element&, const String& property, double t); // To be used only for testing
     WEBCORE_EXPORT unsigned numberOfActiveAnimations(Document*) const; // To be used only for testing
     
-    bool isRunningAnimationOnRenderer(RenderElement&, CSSPropertyID, AnimationBase::RunningState) const;
-    bool isRunningAcceleratedAnimationOnRenderer(RenderElement&, CSSPropertyID, AnimationBase::RunningState) const;
+    // "Running" here means the animation is running or paused.
+    bool isRunningAnimationOnRenderer(RenderElement&, CSSPropertyID) const;
+    bool isRunningAcceleratedAnimationOnRenderer(RenderElement&, CSSPropertyID) const;
 
     WEBCORE_EXPORT bool isSuspended() const;
     WEBCORE_EXPORT void suspendAnimations();

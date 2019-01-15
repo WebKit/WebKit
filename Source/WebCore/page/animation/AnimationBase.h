@@ -155,13 +155,7 @@ public:
     // Does this animation/transition involve the given property?
     virtual bool affectsProperty(CSSPropertyID /*property*/) const { return false; }
 
-    enum RunningStates {
-        Delaying = 1 << 0,
-        Paused = 1 << 1,
-        Running = 1 << 2,
-    };
-    typedef unsigned RunningState;
-    bool isAnimatingProperty(CSSPropertyID property, bool acceleratedOnly, RunningState runningState) const
+    bool isAnimatingProperty(CSSPropertyID property, bool acceleratedOnly) const
     {
         if (acceleratedOnly && !m_isAccelerated)
             return false;
@@ -169,13 +163,10 @@ public:
         if (!affectsProperty(property))
             return false;
 
-        if ((runningState & Delaying) && preActive())
+        if (inPausedState())
             return true;
 
-        if ((runningState & Paused) && inPausedState())
-            return true;
-
-        if ((runningState & Running) && !inPausedState() && (m_animationState >= AnimationState::StartWaitStyleAvailable && m_animationState < AnimationState::Done))
+        if (m_animationState >= AnimationState::StartWaitStyleAvailable && m_animationState < AnimationState::Done)
             return true;
 
         return false;

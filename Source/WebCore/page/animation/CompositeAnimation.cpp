@@ -510,19 +510,19 @@ void CompositeAnimation::resumeOverriddenImplicitAnimations(CSSPropertyID proper
     }
 }
 
-bool CompositeAnimation::isAnimatingProperty(CSSPropertyID property, bool acceleratedOnly, AnimationBase::RunningState runningState) const
+bool CompositeAnimation::isAnimatingProperty(CSSPropertyID property, bool acceleratedOnly) const
 {
     if (!m_keyframeAnimations.isEmpty()) {
         m_keyframeAnimations.checkConsistency();
         for (auto& animation : m_keyframeAnimations.values()) {
-            if (animation->isAnimatingProperty(property, acceleratedOnly, runningState))
+            if (animation->isAnimatingProperty(property, acceleratedOnly))
                 return true;
         }
     }
 
     if (!m_transitions.isEmpty()) {
         for (auto& transition : m_transitions.values()) {
-            if (transition->isAnimatingProperty(property, acceleratedOnly, runningState))
+            if (transition->isAnimatingProperty(property, acceleratedOnly))
                 return true;
         }
     }

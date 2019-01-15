@@ -290,24 +290,24 @@ void CSSAnimationControllerPrivate::animationTimerFired()
     fireEventsAndUpdateStyle();
 }
 
-bool CSSAnimationControllerPrivate::isRunningAnimationOnRenderer(RenderElement& renderer, CSSPropertyID property, AnimationBase::RunningState runningState) const
+bool CSSAnimationControllerPrivate::isRunningAnimationOnRenderer(RenderElement& renderer, CSSPropertyID property) const
 {
     if (!renderer.element())
         return false;
     auto* animation = m_compositeAnimations.get(renderer.element());
     if (!animation)
         return false;
-    return animation->isAnimatingProperty(property, false, runningState);
+    return animation->isAnimatingProperty(property, false);
 }
 
-bool CSSAnimationControllerPrivate::isRunningAcceleratedAnimationOnRenderer(RenderElement& renderer, CSSPropertyID property, AnimationBase::RunningState runningState) const
+bool CSSAnimationControllerPrivate::isRunningAcceleratedAnimationOnRenderer(RenderElement& renderer, CSSPropertyID property) const
 {
     if (!renderer.element())
         return false;
     auto* animation = m_compositeAnimations.get(renderer.element());
     if (!animation)
         return false;
-    return animation->isAnimatingProperty(property, true, runningState);
+    return animation->isAnimatingProperty(property, true);
 }
 
 void CSSAnimationControllerPrivate::updateThrottlingState()
@@ -489,7 +489,7 @@ bool CSSAnimationControllerPrivate::computeExtentOfAnimation(Element& element, L
     if (!animation)
         return true;
 
-    if (!animation->isAnimatingProperty(CSSPropertyTransform, false, AnimationBase::Running | AnimationBase::Paused))
+    if (!animation->isAnimatingProperty(CSSPropertyTransform, false))
         return true;
 
     return animation->computeExtentOfTransformAnimation(bounds);
@@ -693,18 +693,18 @@ bool CSSAnimationController::pauseTransitionAtTime(Element& element, const Strin
     return m_data->pauseTransitionAtTime(element, property, t);
 }
 
-bool CSSAnimationController::isRunningAnimationOnRenderer(RenderElement& renderer, CSSPropertyID property, AnimationBase::RunningState runningState) const
+bool CSSAnimationController::isRunningAnimationOnRenderer(RenderElement& renderer, CSSPropertyID property) const
 {
     if (!renderer.style().hasAnimationsOrTransitions())
         return false;
-    return m_data->isRunningAnimationOnRenderer(renderer, property, runningState);
+    return m_data->isRunningAnimationOnRenderer(renderer, property);
 }
 
-bool CSSAnimationController::isRunningAcceleratedAnimationOnRenderer(RenderElement& renderer, CSSPropertyID property, AnimationBase::RunningState runningState) const
+bool CSSAnimationController::isRunningAcceleratedAnimationOnRenderer(RenderElement& renderer, CSSPropertyID property) const
 {
     if (!renderer.style().hasAnimationsOrTransitions())
         return false;
-    return m_data->isRunningAcceleratedAnimationOnRenderer(renderer, property, runningState);
+    return m_data->isRunningAcceleratedAnimationOnRenderer(renderer, property);
 }
 
 bool CSSAnimationController::isSuspended() const
