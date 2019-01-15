@@ -957,6 +957,11 @@ bool PageClientImpl::effectiveAppearanceIsDark() const
     return m_impl->effectiveAppearanceIsDark();
 }
 
+void PageClientImpl::takeFocus(WebCore::FocusDirection direction)
+{
+    m_impl->takeFocus(direction);
+}
+
 } // namespace WebKit
 
 #endif // PLATFORM(MAC)

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,35 +23,35 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <wtf/Platform.h>
+#import "config.h"
+#import "OffscreenWindow.h"
 
-#if PLATFORM(MAC)
+@implementation OffscreenWindow
 
-#if USE(APPLE_INTERNAL_SDK)
+- (instancetype)initWithSize:(CGSize)size
+{
+    NSRect rect = NSMakeRect(0, 0, size.width, size.height);
+    NSRect windowRect = NSOffsetRect(rect, -10000, [(NSScreen *)[[NSScreen screens] objectAtIndex:0] frame].size.height - rect.size.height + 10000);
+    self = [super initWithContentRect:windowRect styleMask:NSWindowStyleMaskBorderless backing:NSBackingStoreBuffered defer:YES];
+    if (!self)
+        return nil;
 
-#import <AppKit/NSWindow_Private.h>
+    self.colorSpace = [[NSScreen mainScreen] colorSpace];
+    [self orderBack:nil];
+    self.autodisplay = NO;
+    self.releasedWhenClosed = NO;
 
-#else
+    return self;
+}
 
-#import <AppKit/NSWindow.h>
+- (BOOL)isKeyWindow
+{
+    return YES;
+}
 
-@interface NSWindow ()
-
-- (id)_oldFirstResponderBeforeBecoming;
-- (id)_newFirstResponderAfterResigning;
-- (void)_setCursorForMouseLocation:(NSPoint)point;
+- (BOOL)isVisible
+{
+    return YES;
+}
 
 @end
-
-enum {
-    NSSideUtilityWindowMask = 1 << 9,
-    NSSmallWindowMask = 1 << 10,
-    _NSCarbonWindowMask = 1 << 25,
-};
-
-#endif
-
-extern NSString *NSWindowWillOrderOnScreenNotification;
-extern NSString *NSWindowWillOrderOffScreenNotification;
-
-#endif // PLATFORM(MAC)

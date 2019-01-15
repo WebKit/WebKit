@@ -262,6 +262,8 @@ private:
     void didRestoreScrollPosition() override;
     bool windowIsFrontWindowUnderMouse(const NativeWebMouseEvent&) override;
 
+    void takeFocus(WebCore::FocusDirection) override;
+
     NSView *m_view;
     WeakPtr<WebViewImpl> m_impl;
 #if USE(AUTOCORRECTION_PANEL)

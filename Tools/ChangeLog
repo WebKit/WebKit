@@ -1,3 +1,32 @@
+2019-01-15  Tim Horton  <timothy_horton@apple.com>
+
+        Cannot tab out of WKWebView on macOS
+        https://bugs.webkit.org/show_bug.cgi?id=161448
+        <rdar://problem/28100085>
+
+        Reviewed by Dean Jackson.
+
+        Add a test that tabbing into and out of WKWebView works correctly.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WebKitCocoa/CommandBackForward.mm:
+        (WebKit2_CommandBackForwardTest::SetUp):
+        (-[CommandBackForwardOffscreenWindow isKeyWindow]): Deleted.
+        (-[CommandBackForwardOffscreenWindow isVisible]): Deleted.
+        * TestWebKitAPI/Tests/WebKitCocoa/TabOutOfWebView.mm: Added.
+        (-[FocusableView canBecomeKeyView]):
+        (TEST):
+        * TestWebKitAPI/mac/OffscreenWindow.h: Added.
+        * TestWebKitAPI/mac/OffscreenWindow.mm: Added.
+        (-[OffscreenWindow initWithSize:]):
+        (-[OffscreenWindow isKeyWindow]):
+        (-[OffscreenWindow isVisible]):
+        * TestWebKitAPI/mac/PlatformWebViewMac.mm:
+        (TestWebKitAPI::PlatformWebView::initialize):
+        (-[ActiveOffscreenWindow isKeyWindow]): Deleted.
+        (-[ActiveOffscreenWindow isVisible]): Deleted.
+        Factor ActiveOffscreenWindow out into OffscreenWindow and share it.
+
 2019-01-15  Ryan Haddad  <ryanhaddad@apple.com>
 
         Adjust the arguments passed to run-javascriptcore-tests for the 32-bit JSC bot

@@ -375,7 +375,6 @@ SOFT_LINK_CONSTANT_MAY_FAIL(Lookup, LUNotificationPopoverWillClose, NSString *)
 @end
 
 @interface NSWindow (WebNSWindowDetails)
-- (id)_oldFirstResponderBeforeBecoming;
 - (void)_enableScreenUpdatesIfNeeded;
 - (BOOL)_wrapsCarbonWindow;
 - (BOOL)_hasKeyAppearance;

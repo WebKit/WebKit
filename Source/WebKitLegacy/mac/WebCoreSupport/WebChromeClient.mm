@@ -85,6 +85,7 @@
 #import <WebCore/SerializedCryptoKeyWrap.h>
 #import <WebCore/Widget.h>
 #import <WebCore/WindowFeatures.h>
+#import <pal/spi/mac/NSViewSPI.h>
 #import <wtf/BlockObjCExceptions.h>
 #import <wtf/RefPtr.h>
 #import <wtf/Vector.h>
@@ -134,10 +135,6 @@ NSString *WebConsoleMessageErrorMessageLevel = @"ErrorMessageLevel";
 - (NSCursor *)_cursorRectCursor;
 @end
 #endif
-
-@interface NSView (WebNSViewDetails)
-- (NSView *)_findLastViewInKeyViewLoop;
-@end
 
 // For compatibility with old SPI.
 @interface NSView (WebOldWebKitPlugInDetails)

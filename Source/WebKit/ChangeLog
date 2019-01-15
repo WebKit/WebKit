@@ -1,3 +1,38 @@
+2019-01-15  Tim Horton  <timothy_horton@apple.com>
+
+        Cannot tab out of WKWebView on macOS
+        https://bugs.webkit.org/show_bug.cgi?id=161448
+        <rdar://problem/28100085>
+
+        Reviewed by Dean Jackson.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::takeFocus):
+        If the UIDelegate doesn't implement takeFocus, provide a simple default
+        implementation that just uses AppKit's key view loop to move the focus.
+
+        * UIProcess/API/APIUIClient.h:
+        (API::UIClient::takeFocus):
+        * UIProcess/API/C/WKPage.cpp:
+        (WKPageSetPageUIClient):
+        * UIProcess/Cocoa/UIDelegate.h:
+        * UIProcess/Cocoa/UIDelegate.mm:
+        (WebKit::UIDelegate::UIClient::takeFocus):
+        Make API::UIClient's takeFocus return a bool indicating whether the
+        client implements it or not.
+
+        * UIProcess/PageClient.h:
+        * UIProcess/mac/PageClientImplMac.h:
+        * UIProcess/mac/PageClientImplMac.mm:
+        (WebKit::PageClientImpl::takeFocus):
+        Plumb takeFocus to WebViewImpl.
+
+        * UIProcess/Cocoa/WebViewImpl.h:
+        * UIProcess/Cocoa/WebViewImpl.mm:
+        (WebKit::WebViewImpl::takeFocus):
+        Borrow the relevant portion of WebKitLegacy's implementation of takeFocus,
+        shifting focus to the next/previous key view in the window.
+
 2019-01-15  Youenn Fablet  <youenn@apple.com>
 
         Remove the specific handling of ephemeral sessions from CacheStorage::Engine::from
