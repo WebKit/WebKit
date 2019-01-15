@@ -1,4 +1,4 @@
-//@ if $buildType == "debug" or not $jitTests then skip else runTypeProfiler end
+//@ if $buildType == "debug" or not $jitTests or $architecture =~ /arm|mips/ then skip else runTypeProfiler end
 
 // Copyright 2006-2008 the V8 project authors. All rights reserved.
 // Copyright 2014 Apple Inc.

@@ -1,3 +1,11 @@
+2019-01-15  Guillaume Emont  <guijemont@igalia.com>
+
+        Skip a slow test and a flakey test on arm
+
+        Unreviewed gardening.
+
+        * js/script-tests/stack-overflow-regexp.js: flakey on arm.
+
 2019-01-15  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: Audit: create new IDL type for exposing special functionality in test context

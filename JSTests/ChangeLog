@@ -1,3 +1,14 @@
+2019-01-15  Guillaume Emont  <guijemont@igalia.com>
+
+        Skip a slow test and a flakey test on arm
+
+        Unreviewed gardening.
+
+        * typeProfiler/getter-richards.js:
+        this test always times out, it used to be always skipped on arm and
+        mips, but got accidentally enabled by r237919 now that we have DFG on
+        arm. Also skipping on mips as we plan to soon enable DFG for it too.
+
 2019-01-14  Keith Miller  <keith_miller@apple.com>
 
         Skip type-check-hoisting-phase-hoist... with no jit
