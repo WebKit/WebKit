@@ -1,3 +1,15 @@
+2019-01-14  Keith Miller  <keith_miller@apple.com>
+
+        Skip type-check-hoisting-phase-hoist... with no jit
+        https://bugs.webkit.org/show_bug.cgi?id=193421
+
+        Reviewed by Mark Lam.
+
+        It's timing out the 32-bit bots and takes 330 seconds
+        on my machine when run by itself.
+
+        * stress/type-check-hoisting-phase-hoist-check-structure-on-tdz-this-value.js:
+
 2019-01-14  Yusuke Suzuki  <yusukesuzuki@slowstart.org>
 
         [JSC] AI should check the given constant's array type when folding GetByVal into constant

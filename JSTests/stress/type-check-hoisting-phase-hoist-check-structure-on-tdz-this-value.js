@@ -1,3 +1,5 @@
+//@ skip if not $jitTests
+
 function __isPropertyOfType(obj, name, type) {
     desc = Object.getOwnPropertyDescriptor(obj, name)
     return typeof type === 'undefined' || typeof desc.value === type;
