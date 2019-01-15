@@ -1,3 +1,9 @@
+2019-01-15  Tomas Popela  <tpopela@redhat.com>
+
+        Unreviewed, skip JIT tests if it's not enabled
+
+        * stress/bit-op-with-object-returning-int32.js:
+
 2019-01-15  Caio Lima  <ticaiolima@gmail.com>
 
         DFGByteCodeParser rules for bitwise operations should consider type of their operands
