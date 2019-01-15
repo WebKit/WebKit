@@ -252,6 +252,16 @@ private:
 
     void didFinishProcessingAllPendingMouseEvents() final;
 
+#if ENABLE(WIRELESS_PLAYBACK_TARGET)
+    WebCore::WebMediaSessionManager& mediaSessionManager() override;
+#endif
+
+    void refView() override;
+    void derefView() override;
+
+    void didRestoreScrollPosition() override;
+    bool windowIsFrontWindowUnderMouse(const NativeWebMouseEvent&) override;
+
     NSView *m_view;
     WeakPtr<WebViewImpl> m_impl;
 #if USE(AUTOCORRECTION_PANEL)
@@ -262,16 +272,6 @@ private:
 #endif
 
     bool m_shouldSuppressFirstResponderChanges { false };
-
-#if ENABLE(WIRELESS_PLAYBACK_TARGET)
-    WebCore::WebMediaSessionManager& mediaSessionManager() override;
-#endif
-
-    void refView() override;
-    void derefView() override;
-
-    void didRestoreScrollPosition() override;
-    bool windowIsFrontWindowUnderMouse(const NativeWebMouseEvent&) override;
 };
 
 } // namespace WebKit
