@@ -1,3 +1,51 @@
+2019-01-14  Simon Fraser  <simon.fraser@apple.com>
+
+        Animation and other code is too aggressive about invalidating layer composition
+        https://bugs.webkit.org/show_bug.cgi?id=193343
+
+        Reviewed by Antoine Quint.
+        
+        We used to have the concept of a "SyntheticStyleChange", which was used to trigger
+        style updates for animation, and also to get compositing updated.
+        
+        That morphed into a call to Element::invalidateStyleAndLayerComposition(), which causes
+        a style update to result in a "RecompositeLayer" diff, which in turn triggers compositing work,
+        and dirties DOM touch event regions (which can be expensive to update).
+        
+        However, not all the callers of Element::invalidateStyleAndLayerComposition() need to trigger
+        compositing, and doing so from animations caused excessive touch event regions on yahoo.com,
+        which has several visibility:hidden elements with background-position animation.
+        
+        So fix callers of invalidateStyleAndLayerComposition() which don't care about compositing to instead
+        call just invalidateStyle().
+        
+        Also fix KeyframeAnimation::animate to correctly return true when animation state changes—it failed to
+        do so, because fireAnimationEventsIfNeeded() can run the state machine and change state.
+
+        * animation/KeyframeEffect.cpp:
+        (WebCore::invalidateElement):
+        * page/animation/AnimationBase.cpp:
+        (WebCore::AnimationBase::setNeedsStyleRecalc):
+        * page/animation/CSSAnimationController.cpp:
+        (WebCore::CSSAnimationControllerPrivate::updateAnimations):
+        (WebCore::CSSAnimationControllerPrivate::fireEventsAndUpdateStyle):
+        (WebCore::CSSAnimationControllerPrivate::pauseAnimationAtTime):
+        (WebCore::CSSAnimationControllerPrivate::pauseTransitionAtTime):
+        (WebCore::CSSAnimationController::cancelAnimations):
+        * page/animation/KeyframeAnimation.cpp:
+        (WebCore::KeyframeAnimation::animate):
+        * rendering/RenderImage.cpp:
+        (WebCore::RenderImage::imageChanged):
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::calculateClipRects const):
+        * rendering/svg/SVGResourcesCache.cpp:
+        (WebCore::SVGResourcesCache::clientStyleChanged):
+        * style/StyleTreeResolver.cpp:
+        (WebCore::Style::TreeResolver::createAnimatedElementUpdate):
+        * svg/SVGAnimateElementBase.cpp:
+        (WebCore::applyCSSPropertyToTarget):
+        (WebCore::removeCSSPropertyFromTarget):
+
 2019-01-14  Sihui Liu  <sihui_liu@apple.com>
 
         IndexedDB: When deleting databases, some open databases might be missed

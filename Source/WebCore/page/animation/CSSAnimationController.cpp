@@ -143,9 +143,10 @@ Optional<Seconds> CSSAnimationControllerPrivate::updateAnimations(SetChanged cal
             if (timeToNextService && timeToNextService.value() == 0_s) {
                 if (callSetChanged != CallSetChanged)
                     break;
+                
                 Element& element = *compositeAnimation.key;
                 ASSERT(element.document().pageCacheState() == Document::NotInPageCache);
-                element.invalidateStyleAndLayerComposition();
+                element.invalidateStyle();
                 calledSetChanged = true;
             }
         }
@@ -225,7 +226,7 @@ void CSSAnimationControllerPrivate::fireEventsAndUpdateStyle()
     }
 
     for (auto& change : m_elementChangesToDispatch)
-        change->invalidateStyleAndLayerComposition();
+        change->invalidateStyle();
 
     m_elementChangesToDispatch.clear();
 
@@ -412,7 +413,7 @@ bool CSSAnimationControllerPrivate::pauseAnimationAtTime(Element& element, const
 {
     CompositeAnimation& compositeAnimation = ensureCompositeAnimation(element);
     if (compositeAnimation.pauseAnimationAtTime(name, t)) {
-        element.invalidateStyleAndLayerComposition();
+        element.invalidateStyle();
         startUpdateStyleIfNeededDispatcher();
         return true;
     }
@@ -424,7 +425,7 @@ bool CSSAnimationControllerPrivate::pauseTransitionAtTime(Element& element, cons
 {
     CompositeAnimation& compositeAnimation = ensureCompositeAnimation(element);
     if (compositeAnimation.pauseTransitionAtTime(cssPropertyID(property), t)) {
-        element.invalidateStyleAndLayerComposition();
+        element.invalidateStyle();
         startUpdateStyleIfNeededDispatcher();
         return true;
     }
@@ -607,7 +608,7 @@ void CSSAnimationController::cancelAnimations(Element& element)
     if (element.document().renderTreeBeingDestroyed())
         return;
     ASSERT(element.document().pageCacheState() == Document::NotInPageCache);
-    element.invalidateStyleAndLayerComposition();
+    element.invalidateStyle();
 }
 
 AnimationUpdate CSSAnimationController::updateAnimations(Element& element, const RenderStyle& newStyle, const RenderStyle* oldStyle)
