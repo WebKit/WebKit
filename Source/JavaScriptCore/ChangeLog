@@ -1,3 +1,19 @@
+2019-01-14  Caio Lima  <ticaiolima@gmail.com>
+
+        [BigInt] Literal parsing is crashing when used inside a Object Literal
+        https://bugs.webkit.org/show_bug.cgi?id=193404
+
+        Reviewed by Yusuke Suzuki.
+
+        Former implementation was relying into token.m_data.radix after the
+        call of `next()` into Parser.cpp. This is not safe because next
+        clobbers token.m_data.radix in some cases (e.g is CLOSEBRACE).
+        Now we get radix value before calling `next()` into parser and store
+        in a local variable.
+
+        * parser/Parser.cpp:
+        (JSC::Parser<LexerType>::parsePrimaryExpression):
+
 2019-01-14  Yusuke Suzuki  <yusukesuzuki@slowstart.org>
 
         [JSC] Do not use asArrayModes() with Structures because it discards TypedArray information

@@ -1,3 +1,12 @@
+2019-01-14  Caio Lima  <ticaiolima@gmail.com>
+
+        [BigInt] Literal parsing is crashing when used inside a Object Literal
+        https://bugs.webkit.org/show_bug.cgi?id=193404
+
+        Reviewed by Yusuke Suzuki.
+
+        * stress/big-int-literal-inside-literal-object.js: Added.
+
 2019-01-14  Yusuke Suzuki  <yusukesuzuki@slowstart.org>
 
         [JSC] Do not use asArrayModes() with Structures because it discards TypedArray information
