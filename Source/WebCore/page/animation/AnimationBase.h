@@ -44,6 +44,12 @@ class RenderElement;
 class RenderStyle;
 class TimingFunction;
 
+enum class AnimateChange {
+    StyleBlended            = 1 << 0, // Style was changed.
+    StateChange             = 1 << 1, // Animation state() changed.
+    RunningStateChange      = 1 << 2, // Animation "running or paused" changed.
+};
+
 class AnimationBase : public RefCounted<AnimationBase>
     , public CSSPropertyBlendingClient {
     friend class CompositeAnimation;
@@ -122,7 +128,13 @@ public:
     bool active() const { return !postActive() && !preActive(); }
     bool running() const { return !isNew() && !postActive(); }
     bool paused() const { return m_pauseTime || m_animationState == AnimationState::PausedNew; }
-    bool inPausedState() const { return m_animationState >= AnimationState::PausedNew && m_animationState <= AnimationState::PausedRun; }
+
+    static bool isPausedState(AnimationState state) { return state >= AnimationState::PausedNew && state <= AnimationState::PausedRun; }
+    static bool isRunningState(AnimationState state) { return state >= AnimationState::StartWaitStyleAvailable && state < AnimationState::Done; }
+
+    bool inPausedState() const { return isPausedState(m_animationState); }
+    bool inRunningState() const { return isRunningState(m_animationState); }
+
     bool isNew() const { return m_animationState == AnimationState::New || m_animationState == AnimationState::PausedNew; }
     bool waitingForStartTime() const { return m_animationState == AnimationState::StartWaitResponse; }
     bool waitingForStyleAvailable() const { return m_animationState == AnimationState::StartWaitStyleAvailable; }
@@ -163,13 +175,7 @@ public:
         if (!affectsProperty(property))
             return false;
 
-        if (inPausedState())
-            return true;
-
-        if (m_animationState >= AnimationState::StartWaitStyleAvailable && m_animationState < AnimationState::Done)
-            return true;
-
-        return false;
+        return inRunningState() || inPausedState();
     }
 
     bool transformFunctionListsMatch() const override { return m_transformFunctionListsMatch; }

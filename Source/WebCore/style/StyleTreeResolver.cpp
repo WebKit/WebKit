@@ -306,7 +306,7 @@ ElementUpdate TreeResolver::createAnimatedElementUpdate(std::unique_ptr<RenderSt
         auto& animationController = m_document.frame()->animation();
 
         auto animationUpdate = animationController.updateAnimations(element, *newStyle, oldStyle);
-        shouldRecompositeLayer = animationUpdate.stateChanged; // FIXME: constrain this to just property animations triggering acceleration.
+        shouldRecompositeLayer = animationUpdate.animationChangeRequiresRecomposite;
 
         if (animationUpdate.style)
             newStyle = WTFMove(animationUpdate.style);

@@ -61,12 +61,12 @@ bool ImplicitAnimation::shouldSendEventForListener(Document::ListenerType inList
     return element()->document().hasListenerType(inListenerType);
 }
 
-bool ImplicitAnimation::animate(CompositeAnimation& compositeAnimation, const RenderStyle& targetStyle, std::unique_ptr<RenderStyle>& animatedStyle, bool& didBlendStyle)
+OptionSet<AnimateChange> ImplicitAnimation::animate(CompositeAnimation& compositeAnimation, const RenderStyle& targetStyle, std::unique_ptr<RenderStyle>& animatedStyle)
 {
     // If we get this far and the animation is done, it means we are cleaning up a just finished animation.
     // So just return. Everything is already all cleaned up.
     if (postActive())
-        return false;
+        return { };
 
     AnimationState oldState = state();
 
@@ -85,9 +85,15 @@ bool ImplicitAnimation::animate(CompositeAnimation& compositeAnimation, const Re
 
     // Fire the start timeout if needed
     fireAnimationEventsIfNeeded();
-    
-    didBlendStyle = true;
-    return state() != oldState;
+
+    OptionSet<AnimateChange> change(AnimateChange::StyleBlended);
+    if (state() != oldState)
+        change.add(AnimateChange::StateChange);
+
+    if ((isPausedState(oldState) || isRunningState(oldState)) != (isPausedState(state()) || isRunningState(state())))
+        change.add(AnimateChange::RunningStateChange);
+
+    return change;
 }
 
 void ImplicitAnimation::getAnimatedStyle(std::unique_ptr<RenderStyle>& animatedStyle)
@@ -129,6 +135,11 @@ bool ImplicitAnimation::computeExtentOfTransformAnimation(LayoutRect& bounds) co
 
     bounds = unionRect(startBounds, endBounds);
     return true;
+}
+
+bool ImplicitAnimation::affectsAcceleratedProperty() const
+{
+    return CSSPropertyAnimation::animationOfPropertyIsAccelerated(m_animatingProperty);
 }
 
 bool ImplicitAnimation::startAnimation(double timeOffset)

@@ -44,7 +44,7 @@ class RenderElement;
 
 struct AnimationUpdate {
     std::unique_ptr<RenderStyle> style;
-    bool stateChanged { false };
+    bool animationChangeRequiresRecomposite { false };
 };
 
 class CSSAnimationController {

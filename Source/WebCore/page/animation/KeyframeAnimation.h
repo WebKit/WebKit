@@ -44,8 +44,8 @@ public:
     {
         return adoptRef(*new KeyframeAnimation(animation, element, compositeAnimation, unanimatedStyle));
     }
-
-    bool animate(CompositeAnimation&, const RenderStyle& targetStyle, std::unique_ptr<RenderStyle>& animatedStyle, bool& didBlendStyle);
+    
+    OptionSet<AnimateChange> animate(CompositeAnimation&, const RenderStyle& targetStyle, std::unique_ptr<RenderStyle>& animatedStyle);
     void getAnimatedStyle(std::unique_ptr<RenderStyle>&) override;
 
     bool computeExtentOfTransformAnimation(LayoutRect&) const override;
@@ -58,6 +58,7 @@ public:
 
     bool triggersStackingContext() const { return m_triggersStackingContext; }
     bool dependsOnLayout() const { return m_dependsOnLayout; }
+    bool affectsAcceleratedProperty() const { return m_hasAcceleratedProperty; }
 
     void setUnanimatedStyle(std::unique_ptr<RenderStyle> style) { m_unanimatedStyle = WTFMove(style); }
     const RenderStyle& unanimatedStyle() const override { return *m_unanimatedStyle; }
@@ -84,7 +85,6 @@ protected:
 
     bool computeExtentOfAnimationForMatchingTransformLists(const FloatRect& rendererBox, LayoutRect&) const;
 
-    void computeStackingContextImpact();
     void computeLayoutDependency();
     void resolveKeyframeStyles();
     void validateTransformFunctionList();
@@ -107,6 +107,7 @@ private:
 
     bool m_startEventDispatched { false };
     bool m_triggersStackingContext { false };
+    bool m_hasAcceleratedProperty { false };
     bool m_dependsOnLayout { false };
 };
 

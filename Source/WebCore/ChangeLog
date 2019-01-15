@@ -1,5 +1,44 @@
 2019-01-15  Simon Fraser  <simon.fraser@apple.com>
 
+        Animations should only trigger layer recomposite when necessary
+        https://bugs.webkit.org/show_bug.cgi?id=193450
+
+        Reviewed by Antoine Quint.
+
+        Animations only need to trigger compositing updates when their states change in a way
+        that affects compositing. RenderLayerCompositor::requiresCompositingForAnimation() checks for
+        running animations of properties that can be accelerated, so this patch fixes the legacy
+        animation logic to only set 'shouldRecompositeLayer' in TreeResolver::createAnimatedElementUpdate()
+        when the running state of such an animation changes.
+
+        ImplicitAnimation::animate() and KeyframeAnimation::animate() now return OptionSet<AnimateChange>.
+        This contains information about whether the running state changed, so CompositeAnimation::animate()
+        asks about whether the running state of an accelerated property changed, and returns this in
+        the AnimationUpdate result.
+
+        * page/animation/AnimationBase.h:
+        (WebCore::AnimationBase::isPausedState):
+        (WebCore::AnimationBase::isRunningState):
+        (WebCore::AnimationBase::inPausedState const):
+        (WebCore::AnimationBase::inRunningState const):
+        (WebCore::AnimationBase::isAnimatingProperty const):
+        * page/animation/CSSAnimationController.h:
+        * page/animation/CompositeAnimation.cpp:
+        (WebCore::CompositeAnimation::animate):
+        * page/animation/ImplicitAnimation.cpp:
+        (WebCore::ImplicitAnimation::animate):
+        (WebCore::ImplicitAnimation::affectsAcceleratedProperty const):
+        * page/animation/ImplicitAnimation.h:
+        * page/animation/KeyframeAnimation.cpp:
+        (WebCore::KeyframeAnimation::KeyframeAnimation):
+        (WebCore::KeyframeAnimation::animate):
+        (WebCore::KeyframeAnimation::computeStackingContextImpact): Deleted.
+        * page/animation/KeyframeAnimation.h:
+        * style/StyleTreeResolver.cpp:
+        (WebCore::Style::TreeResolver::createAnimatedElementUpdate):
+
+2019-01-15  Simon Fraser  <simon.fraser@apple.com>
+
         Clean up code related to the updating of Dashboard and touch event regions
         https://bugs.webkit.org/show_bug.cgi?id=193460
 
