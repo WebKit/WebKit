@@ -2938,7 +2938,7 @@ int jscmain(int argc, char** argv)
     if (options.m_dumpMemoryFootprint) {
         MemoryFootprint footprint = MemoryFootprint::now();
 
-        printf("Memory Footprint:\n    Current Footprint: %llu\n    Peak Footprint: %llu\n", footprint.current, footprint.peak);
+        printf("Memory Footprint:\n    Current Footprint: %" PRIu64 "\n    Peak Footprint: %" PRIu64 "\n", footprint.current, footprint.peak);
     }
 
     return result;

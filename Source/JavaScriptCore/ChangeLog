@@ -1,3 +1,10 @@
+2019-01-15  Tomas Popela  <tpopela@redhat.com>
+
+        Unreviewed: Fix the -Wformat compiler warnings
+
+        * jsc.cpp:
+        (jscmain):
+
 2019-01-15  Caio Lima  <ticaiolima@gmail.com>
 
         DFGByteCodeParser rules for bitwise operations should consider type of their operands
