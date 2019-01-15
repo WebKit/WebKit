@@ -1,3 +1,15 @@
+2019-01-15  Youenn Fablet  <youenn@apple.com>
+
+        Remove the specific handling of ephemeral sessions from CacheStorage::Engine::from
+        https://bugs.webkit.org/show_bug.cgi?id=193400
+
+        Reviewed by Alex Christensen.
+
+        It is no longer needed as we correctly handle ephemeral sessions removal.
+
+        * NetworkProcess/cache/CacheStorageEngine.cpp:
+        (WebKit::CacheStorage::Engine::from):
+
 2019-01-15  Alex Christensen  <achristensen@webkit.org>
 
         Fix iOS build after r239993
