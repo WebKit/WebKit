@@ -1125,9 +1125,6 @@ bool ScrollAnimatorMac::shouldScrollbarParticipateInHitTesting(Scrollbar* scroll
     if (ScrollerStyle::recommendedScrollerStyle() != NSScrollerStyleOverlay)
         return true;
 
-    if (scrollbar->isAlphaLocked())
-        return true;
-
     // Overlay scrollbars should participate in hit testing whenever they are at all visible.
     NSScrollerImp *painter = scrollerImpForScrollbar(*scrollbar);
     if (!painter)

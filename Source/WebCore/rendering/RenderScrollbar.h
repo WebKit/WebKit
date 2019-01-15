@@ -54,14 +54,15 @@ public:
 
     int minimumThumbLength();
 
-    bool isOverlayScrollbar() const override { return false; }
-
     float opacity();
 
     std::unique_ptr<RenderStyle> getScrollbarPseudoStyle(ScrollbarPart, PseudoId);
 
 private:
     RenderScrollbar(ScrollableArea&, ScrollbarOrientation, Element*, Frame*);
+
+    bool isCustomScrollbar() const override { return true; }
+    bool isOverlayScrollbar() const override { return false; }
 
     void setParent(ScrollView*) override;
     void setEnabled(bool) override;

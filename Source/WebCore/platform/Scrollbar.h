@@ -56,7 +56,7 @@ public:
 
     ScrollableArea& scrollableArea() const { return m_scrollableArea; }
 
-    bool isCustomScrollbar() const { return m_isCustomScrollbar; }
+    virtual bool isCustomScrollbar() const { return false; }
     ScrollbarOrientation orientation() const { return m_orientation; }
 
     int value() const { return lroundf(m_currentPos); }
@@ -124,16 +124,15 @@ public:
 
     void moveThumb(int pos, bool draggingDocument = false);
 
-    bool isAlphaLocked() const { return m_isAlphaLocked; }
-    void setIsAlphaLocked(bool flag) { m_isAlphaLocked = flag; }
-
+#if !PLATFORM(COCOA)
     float opacity() const { return m_opacity; }
     void setOpacity(float opacity) { m_opacity = opacity; }
+#endif
 
     bool supportsUpdateOnSecondaryThread() const;
 
 protected:
-    Scrollbar(ScrollableArea&, ScrollbarOrientation, ScrollbarControlSize, ScrollbarTheme* = 0, bool isCustomScrollbar = false);
+    Scrollbar(ScrollableArea&, ScrollbarOrientation, ScrollbarControlSize, ScrollbarTheme* = nullptr);
 
     void updateThumb();
     virtual void updateThumbPosition();
@@ -151,32 +150,29 @@ protected:
     ScrollbarControlSize m_controlSize;
     ScrollbarTheme& m_theme;
 
-    int m_visibleSize;
-    int m_totalSize;
-    float m_currentPos;
-    float m_dragOrigin;
-    int m_lineStep;
-    int m_pageStep;
-    float m_pixelStep;
+    int m_visibleSize { 0 };
+    int m_totalSize { 0 };
+    float m_currentPos { 0 };
+    float m_dragOrigin { 0 };
+    int m_lineStep { 0 };
+    int m_pageStep { 0 };
+    float m_pixelStep { 1 };
 
-    ScrollbarPart m_hoveredPart;
-    ScrollbarPart m_pressedPart;
-    int m_pressedPos;
-    float m_scrollPos;
-    bool m_draggingDocument;
-    int m_documentDragPos;
+    ScrollbarPart m_hoveredPart { NoPart };
+    ScrollbarPart m_pressedPart { NoPart };
+    int m_pressedPos { 0 };
+    bool m_draggingDocument { false };
+    int m_documentDragPos { 0 };
 
-    bool m_enabled;
+    bool m_enabled { true };
 
     Timer m_scrollTimer;
 
-    bool m_suppressInvalidation;
+    bool m_suppressInvalidation { false };
 
-    bool m_isAlphaLocked;
-
-    bool m_isCustomScrollbar;
-
+#if !PLATFORM(COCOA)
     float m_opacity { 1 };
+#endif
 
 private:
     bool isScrollbar() const override { return true; }
