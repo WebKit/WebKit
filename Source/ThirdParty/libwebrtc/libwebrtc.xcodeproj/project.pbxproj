@@ -15759,7 +15759,6 @@
 				5C088C201E4AA44400403995 /* srtpfilter.cc in Sources */,
 				4100CDF921CAE33400F9B87D /* srtpsession.cc in Sources */,
 				41239B4D2147743A00396F81 /* video_stream_encoder_create.cc in Sources */,
-				4100CDF921CAE33400F9B87D /* srtpsession.cc in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
