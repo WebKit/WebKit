@@ -1,0 +1,6 @@
+CONSOLE MESSAGE: line 2659: Error: assert_unreached: resourcetimingbufferfull should not fire Reached unreachable code
+
+Harness Error (FAIL), message = Error: assert_unreached: resourcetimingbufferfull should not fire Reached unreachable code
+
+FAIL Test that overflowing the buffer and immediately increasing its limit does not trigger the resourcetimingbufferfull event assert_equals: All resources should be in the buffer, since its size was increased expected 3 but got 1
+

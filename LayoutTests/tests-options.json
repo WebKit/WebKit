@@ -1532,6 +1532,9 @@
     "imported/w3c/web-platform-tests/quirks/hashless-hex-color.html": [
         "slow"
     ],
+    "imported/w3c/web-platform-tests/resource-timing/resource-timing-level1.sub.html": [
+        "slow"
+    ],
     "imported/w3c/web-platform-tests/resource-timing/single-entry-per-resource.html": [
         "slow"
     ],

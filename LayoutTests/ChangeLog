@@ -1,3 +1,13 @@
+2019-01-14  Charles Vazac  <cvazac@akamai.com>
+
+        Import current Resource-Timing WPTs
+        https://bugs.webkit.org/show_bug.cgi?id=193302
+
+        Reviewed by Youenn Fablet.
+
+        * TestExpectations:
+        * tests-options.json:
+
 2019-01-14  Jiewen Tan  <jiewen_tan@apple.com>
 
         Unreviewed, test fixes after r239852.

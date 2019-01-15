@@ -1,4 +1,0 @@
-
-PASS There should only be |bufferSize| resource entries. 
-PASS onresourcetimingbufferfull should have been invoked once buffer is full. 
-

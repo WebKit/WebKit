@@ -1,16 +1,15 @@
-Blocked access to external URL http://www1.localhost:8801/resource-timing/resources/blue.png?id=cached
-Blocked access to external URL http://www1.localhost:8801/resource-timing/resources/blue.png?id=cached
-Blocked access to external URL http://www1.localhost:8801/resource-timing/resources/blue.png?id=cached
 Description
 
 This test validates that a memory cached resource appears in the buffer once.
 
 
-Harness Error (TIMEOUT), message = null
-
 PASS There should be only one entry 
-PASS http://localhost:8800/resource-timing/resources/blue.png?id=cached is expected to have initiatorType img 
+PASS Testing resource entries 
 PASS requestStart should be non-zero on the same-origin request 
 PASS responseEnd should not be before startTime 
 PASS duration should not be negative 
+PASS There should be one entry in second test 
+PASS Entry name should start with cross-origin domain 
+PASS Entry name should end with file name 
+PASS requestStart should be 0 on the cross-origin request 
   

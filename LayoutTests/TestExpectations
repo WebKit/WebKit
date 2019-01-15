@@ -378,7 +378,6 @@ imported/w3c/web-platform-tests/mediacapture-fromelement/creation.html [ Pass Fa
 webkit.org/b/180240 imported/w3c/web-platform-tests/resource-timing/single-entry-per-resource.html [ Pass Failure ]
 webkit.org/b/189906 imported/w3c/web-platform-tests/resource-timing/resource_timing_buffer_full_eventually.html [ Skip ]
 webkit.org/b/189905 imported/w3c/web-platform-tests/resource-timing/resource_initiator_types.html [ Pass Failure ]
-webkit.org/b/189910 imported/w3c/web-platform-tests/resource-timing/resource_timing_store_and_clear_during_callback.html [ Pass Failure ]
 webkit.org/b/190523 imported/w3c/web-platform-tests/resource-timing/resource_timing_cross_origin_redirect_chain.html [ Pass Failure ]
 
 # These fetch tests are flaky or fail.
@@ -771,8 +770,14 @@ imported/w3c/web-platform-tests/fetch/content-type/script.window.html [ DumpJSCo
 imported/w3c/web-platform-tests/fetch/api/request/request-init-stream.any.html [ DumpJSConsoleLogInStdErr ]
 imported/w3c/web-platform-tests/fetch/api/response/response-error-from-stream.html [ DumpJSConsoleLogInStdErr ]
 
-webkit.org/b/161088 imported/w3c/web-platform-tests/resource-timing/resource-timing.html [ Pass Failure ]
 imported/w3c/web-platform-tests/resource-timing/test_resource_timing.html [ Pass Failure ]
+imported/w3c/web-platform-tests/resource-timing/test_resource_timing.https.html [ Pass Failure ]
+imported/w3c/web-platform-tests/resource-timing/buffer-full-add-entries-during-callback-that-drop.html [ Skip ]
+imported/w3c/web-platform-tests/resource-timing/buffer-full-decrease-buffer-during-callback.html [ Skip ]
+
+imported/w3c/web-platform-tests/resource-timing/resource_connection_reuse.html [ Failure ]
+imported/w3c/web-platform-tests/resource-timing/resource_connection_reuse.https.html [ Failure ]
+imported/w3c/web-platform-tests/resource-timing/resource_reparenting.html [ Failure ]
 
 webkit.org/b/168357 http/wpt/resource-timing/rt-initiatorType-media.html [ Failure ]
 webkit.org/b/168448 http/wpt/resource-timing/rt-shared-resource-in-frames.html [ Pass Failure ]
@@ -2905,8 +2910,6 @@ fast/gradients/conic-gradient.html [ Skip ]
 fast/gradients/conic-two-hints.html [ Skip ]
 
 webkit.org/b/187773 http/tests/webAPIStatistics [ Skip ]
-
-webkit.org/b/189997 imported/w3c/web-platform-tests/resource-timing/resource_timing.worker.html [ Failure ]
 
 # This is fallout from turning Web Animations on.
 webkit.org/b/190032 animations/animation-playstate-paused-style-resolution.html [ Failure ]

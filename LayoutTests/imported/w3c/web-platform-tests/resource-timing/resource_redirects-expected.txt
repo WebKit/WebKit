@@ -3,9 +3,5 @@ Description
 This test validates that redirects do not alter the URL.
 
 
-PASS http://localhost:8800/common/redirect.py?location=/resource-timing/resources/blank_page_green.htm is expected to have initiatorType iframe 
-PASS http://localhost:8800/common/redirect.py?location=/resource-timing/resources/blank_page_green.htm?id=xhr is expected to have initiatorType xmlhttprequest 
-PASS http://localhost:8800/common/redirect.py?location=/resource-timing/resources/blue.png is expected to have initiatorType img 
-PASS http://localhost:8800/common/redirect.py?location=/resource-timing/resources/empty_script.js is expected to have initiatorType script 
-PASS http://localhost:8800/common/redirect.py?location=/resource-timing/resources/resource_timing_test0.css is expected to have initiatorType link 
+PASS Testing resource entries 
 

@@ -1,3 +1,73 @@
+2019-01-14  Charles Vazac  <cvazac@akamai.com>
+
+        Import current Resource-Timing WPTs
+        https://bugs.webkit.org/show_bug.cgi?id=193302
+
+        Reviewed by Youenn Fablet.
+
+        * web-platform-tests/resource-timing/SyntheticResponse.py:
+        (main):
+        * web-platform-tests/resource-timing/buffer-full-add-after-full-event-expected.txt: Added.
+        * web-platform-tests/resource-timing/buffer-full-add-after-full-event.html: Added.
+        * web-platform-tests/resource-timing/buffer-full-add-entries-during-callback-expected.txt: Added.
+        * web-platform-tests/resource-timing/buffer-full-add-entries-during-callback-that-drop.html: Added.
+        * web-platform-tests/resource-timing/buffer-full-add-entries-during-callback.html: Added.
+        * web-platform-tests/resource-timing/buffer-full-add-then-clear-expected.txt: Added.
+        * web-platform-tests/resource-timing/buffer-full-add-then-clear.html: Added.
+        * web-platform-tests/resource-timing/buffer-full-decrease-buffer-during-callback.html: Added.
+        * web-platform-tests/resource-timing/buffer-full-increase-buffer-during-callback-expected.txt: Added.
+        * web-platform-tests/resource-timing/buffer-full-increase-buffer-during-callback.html: Added.
+        * web-platform-tests/resource-timing/buffer-full-inspect-buffer-during-callback-expected.txt: Added.
+        * web-platform-tests/resource-timing/buffer-full-inspect-buffer-during-callback.html: Added.
+        * web-platform-tests/resource-timing/buffer-full-set-to-current-buffer-expected.txt: Added.
+        * web-platform-tests/resource-timing/buffer-full-set-to-current-buffer.html: Added.
+        * web-platform-tests/resource-timing/buffer-full-store-and-clear-during-callback-expected.txt: Added.
+        * web-platform-tests/resource-timing/buffer-full-store-and-clear-during-callback.html: Added.
+        * web-platform-tests/resource-timing/buffer-full-then-increased-expected.txt: Added.
+        * web-platform-tests/resource-timing/buffer-full-then-increased.html: Added.
+        * web-platform-tests/resource-timing/buffer-full-when-populate-entries-expected.txt: Added.
+        * web-platform-tests/resource-timing/buffer-full-when-populate-entries.html: Added.
+        * web-platform-tests/resource-timing/document-domain-no-impact-loader.sub-expected.txt: Added.
+        * web-platform-tests/resource-timing/document-domain-no-impact-loader.sub.html: Added.
+        * web-platform-tests/resource-timing/no-entries-for-cross-origin-css-fetched.sub-expected.txt: Added.
+        * web-platform-tests/resource-timing/no-entries-for-cross-origin-css-fetched.sub.html: Added.
+        * web-platform-tests/resource-timing/resource-timing-level1.js: Renamed from LayoutTests/imported/w3c/web-platform-tests/resource-timing/resource-timing.js.
+        (assertInvariants):
+        (window.onload):
+        * web-platform-tests/resource-timing/resource-timing-level1.sub-expected.txt: Added.
+        * web-platform-tests/resource-timing/resource-timing-level1.sub.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/resource-timing/resource-timing.html.
+        * web-platform-tests/resource-timing/resource_connection_reuse.html:
+        * web-platform-tests/resource-timing/resource_timing.worker.js:
+        * web-platform-tests/resource-timing/resource_timing_buffer_full_when_populate_entries-expected.txt: Removed.
+        * web-platform-tests/resource-timing/resource_timing_buffer_full_when_populate_entries.html: Removed.
+        * web-platform-tests/resource-timing/resource_timing_store_and_clear_during_callback-expected.txt: Removed.
+        * web-platform-tests/resource-timing/resource_timing_store_and_clear_during_callback.html: Removed.
+        * web-platform-tests/resource-timing/resources/buffer-full-utilities.js: Added.
+        (let.appendScript):
+        (let.waitForNextTask):
+        (let.waitForEventToFire.return.new.Promise):
+        (let.waitForEventToFire):
+        * web-platform-tests/resource-timing/resources/document-domain-no-impact.sub.html: Added.
+        * web-platform-tests/resource-timing/resources/iframe-setdomain.sub.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/resource-timing/iframe-setdomain.sub.html.
+        * web-platform-tests/resource-timing/resources/w3c-import.log:
+        * web-platform-tests/resource-timing/resources/webperftestharness.js:
+        (wp_test):
+        (test_namespace):
+        * web-platform-tests/resource-timing/resources/webperftestharnessextension.js:
+        (test_resource_entries):
+        (performance_entrylist_checker): Deleted.
+        * web-platform-tests/resource-timing/single-entry-per-resource.html:
+        * web-platform-tests/resource-timing/supported_resource_type.any-expected.txt: Added.
+        * web-platform-tests/resource-timing/supported_resource_type.any.html: Added.
+        * web-platform-tests/resource-timing/supported_resource_type.any.js: Added.
+        (test):
+        * web-platform-tests/resource-timing/supported_resource_type.any.worker-expected.txt: Added.
+        * web-platform-tests/resource-timing/supported_resource_type.any.worker.html: Added.
+        * web-platform-tests/resource-timing/test_resource_timing.https-expected.txt: Added.
+        * web-platform-tests/resource-timing/test_resource_timing.https.html: Added.
+        * web-platform-tests/resource-timing/test_resource_timing.js:
+        (resource_load):
+        * web-platform-tests/resource-timing/w3c-import.log:
 2019-01-10  Oriol Brufau  <obrufau@igalia.com>
 
         [css-grid] Let abspos items reference implicit grid lines

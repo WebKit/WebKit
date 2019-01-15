@@ -5,7 +5,5 @@ This test validates that initiator types are represented even when dynamically i
 
 PASS window.performance is defined 
 PASS window.performance.getEntriesByType is defined 
-PASS http://localhost:8800/resource-timing/resources/inject_resource_test.html is expected to have initiatorType iframe 
-PASS http://localhost:8800/resource-timing/resources/resource_timing_test0.css is expected to have initiatorType link 
-PASS http://localhost:8800/resource-timing/resources/resource_timing_test0.png is expected to have initiatorType img 
+PASS Testing resource entries 
 

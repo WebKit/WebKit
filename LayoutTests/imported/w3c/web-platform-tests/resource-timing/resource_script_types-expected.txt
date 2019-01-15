@@ -3,13 +3,5 @@ Description
 This test validates that all of the different types of script loads are reported with the correct initiator.
 
 
-PASS http://localhost:8800/resource-timing/resources/empty_script.js?id=1 is expected to have initiatorType script 
-PASS http://localhost:8800/resource-timing/resources/empty_script.js?id=2 is expected to have initiatorType script 
-PASS http://localhost:8800/resource-timing/resources/empty_script.js?id=3 is expected to have initiatorType script 
-PASS http://localhost:8800/resource-timing/resources/empty_script.js?id=4 is expected to have initiatorType script 
-PASS http://localhost:8800/resource-timing/resources/empty_script.js?id=5 is expected to have initiatorType script 
-PASS http://localhost:8800/resource-timing/resources/empty_script.js?id=6 is expected to have initiatorType script 
-PASS http://localhost:8800/resource-timing/resources/empty_script.js?id=7 is expected to have initiatorType script 
-PASS http://localhost:8800/resource-timing/resources/empty_script.js?id=8 is expected to have initiatorType script 
-PASS http://localhost:8800/resource-timing/resources/empty_script.js?id=9 is expected to have initiatorType script 
+PASS Testing resource entries 
 
