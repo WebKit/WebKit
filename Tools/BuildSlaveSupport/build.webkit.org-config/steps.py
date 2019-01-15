@@ -599,7 +599,7 @@ class Run32bitJSCTests(TestWithFailureCount):
     description = ["32bit-jsc-tests running"]
     descriptionDone = ["32bit-jsc-tests"]
     jsonFileName = "jsc_32bit.json"
-    command = ["perl", "./Tools/Scripts/run-javascriptcore-tests", "--32-bit", "--no-build", "--no-fail-fast", "--json-output={0}".format(jsonFileName), WithProperties("--%(configuration)s")]
+    command = ["perl", "./Tools/Scripts/run-javascriptcore-tests", "--32-bit", "--no-build", "--no-fail-fast", "--no-jit", "--no-testair", "--no-testb3", "--no-testmasm", "--json-output={0}".format(jsonFileName), WithProperties("--%(configuration)s")]
     failedTestsFormatString = "%d regression%s found."
     logfiles = {"json": jsonFileName}
 

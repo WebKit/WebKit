@@ -1,3 +1,13 @@
+2019-01-15  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Adjust the arguments passed to run-javascriptcore-tests for the 32-bit JSC bot
+        https://bugs.webkit.org/show_bug.cgi?id=193459
+
+        Reviewed by Mark Lam.
+
+        * BuildSlaveSupport/build.webkit.org-config/steps.py:
+        (Run32bitJSCTests): This queue should not run JIT, testair, testb3, or testmasm.
+
 2019-01-15  Chris Dumez  <cdumez@apple.com>
 
         Regression(PSON) View becomes blank after click a cross-site download link
