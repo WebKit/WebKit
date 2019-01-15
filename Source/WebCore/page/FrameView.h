@@ -333,9 +333,6 @@ public:
     bool speculativeTilingEnabled() const { return m_speculativeTilingEnabled; }
     void loadProgressingStatusChanged();
 
-#if ENABLE(DASHBOARD_SUPPORT)
-    void updateAnnotatedRegions();
-#endif
     WEBCORE_EXPORT void updateControlTints();
 
     WEBCORE_EXPORT bool wasScrolledByUser() const;

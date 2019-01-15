@@ -1,3 +1,44 @@
+2019-01-15  Simon Fraser  <simon.fraser@apple.com>
+
+        Clean up code related to the updating of Dashboard and touch event regions
+        https://bugs.webkit.org/show_bug.cgi?id=193460
+
+        Reviewed by Zalan Bujtas.
+
+        In preparation for layout testing that can count the number of event region
+        updates, move the code related to updating "annotated" (Dashboard) regions, and
+        touch event regions into bottleneck functions in Document.
+        
+        Updating these two kinds of regions is generally similar, but there are some code paths
+        that eagerly update annotated regions.
+
+        No behavior change.
+
+        * dom/Document.cpp:
+        (WebCore::Document::updateAnnotatedRegions): Moved from FrameView.
+        (WebCore::Document::invalidateRenderingDependentRegions):
+        (WebCore::Document::invalidateScrollbarDependentRegions):
+        (WebCore::Document::updateZOrderDependentRegions):
+        * dom/Document.h:
+        (WebCore::Document::setAnnotatedRegionsDirty):
+        (WebCore::Document::annotatedRegionsDirty const):
+        (WebCore::Document::hasAnnotatedRegions const):
+        * page/FrameView.cpp:
+        (WebCore::FrameView::didLayout):
+        (WebCore::FrameView::didPaintContents):
+        (WebCore::FrameView::updateAnnotatedRegions): Deleted.
+        * page/FrameView.h:
+        * rendering/RenderElement.cpp: Drive-by header cleanup.
+        (WebCore::RenderElement::styleWillChange):
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::scrollTo):
+        (WebCore::RenderLayer::setHasHorizontalScrollbar):
+        (WebCore::RenderLayer::setHasVerticalScrollbar):
+        (WebCore::RenderLayer::updateScrollbarsAfterLayout):
+        (WebCore::RenderLayer::calculateClipRects const):
+        * rendering/RenderListBox.cpp:
+        (WebCore::RenderListBox::setHasVerticalScrollbar):
+
 2019-01-15  David Kilzer  <ddkilzer@apple.com>
 
         Let Xcode have its way with the WebCore project

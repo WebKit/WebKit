@@ -954,11 +954,7 @@ void RenderListBox::setHasVerticalScrollbar(bool hasScrollbar)
     if (m_vBar)
         m_vBar->styleChanged();
 
-    // Force an update since we know the scrollbars have changed things.
-#if ENABLE(DASHBOARD_SUPPORT)
-    if (document().hasAnnotatedRegions())
-        document().setAnnotatedRegionsDirty(true);
-#endif
+    document().invalidateScrollbarDependentRegions();
 }
 
 bool RenderListBox::scrolledToTop() const

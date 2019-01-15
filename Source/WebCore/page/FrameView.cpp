@@ -1304,13 +1304,7 @@ void FrameView::didLayout(WeakPtr<RenderElement> layoutRoot)
         cache->postNotification(layoutRoot.get(), AXObjectCache::AXLayoutComplete);
 #endif
 
-#if ENABLE(DASHBOARD_SUPPORT)
-    updateAnnotatedRegions();
-#endif
-
-#if ENABLE(IOS_TOUCH_EVENTS)
-    frame().document()->setTouchEventRegionsNeedUpdate();
-#endif
+    frame().document()->invalidateRenderingDependentRegions(Document::AnnotationsAction::Update);
 
     updateCanBlitOnScrollRecursively();
 
@@ -3882,24 +3876,6 @@ bool FrameView::scrollAnimatorEnabled() const
     return false;
 }
 
-#if ENABLE(DASHBOARD_SUPPORT)
-void FrameView::updateAnnotatedRegions()
-{
-    Document* document = frame().document();
-    if (!document->hasAnnotatedRegions())
-        return;
-    Vector<AnnotatedRegionValue> newRegions;
-    document->renderBox()->collectAnnotatedRegions(newRegions);
-    if (newRegions == document->annotatedRegions())
-        return;
-    document->setAnnotatedRegions(newRegions);
-    Page* page = frame().page();
-    if (!page)
-        return;
-    page->chrome().client().annotatedRegionsChanged();
-}
-#endif
-
 void FrameView::updateScrollCorner()
 {
     RenderElement* renderer = nullptr;
@@ -4177,10 +4153,7 @@ void FrameView::didPaintContents(GraphicsContext& context, const IntRect& dirtyR
     m_lastPaintTime = MonotonicTime::now();
 
     // Regions may have changed as a result of the visibility/z-index of element changing.
-#if ENABLE(DASHBOARD_SUPPORT)
-    if (frame().document()->annotatedRegionsDirty())
-        updateAnnotatedRegions();
-#endif
+    frame().document()->updateZOrderDependentRegions();
 
     if (paintingState.isTopLevelPainter)
         sCurrentPaintTimeStamp = MonotonicTime();

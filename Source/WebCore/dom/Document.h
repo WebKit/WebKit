@@ -1137,13 +1137,14 @@ public:
     WEBCORE_EXPORT String displayStringModifiedByEncoding(const String&) const;
 
 #if ENABLE(DASHBOARD_SUPPORT)
-    void setAnnotatedRegionsDirty(bool f) { m_annotatedRegionsDirty = f; }
-    bool annotatedRegionsDirty() const { return m_annotatedRegionsDirty; }
-    bool hasAnnotatedRegions () const { return m_hasAnnotatedRegions; }
     void setHasAnnotatedRegions(bool f) { m_hasAnnotatedRegions = f; }
     WEBCORE_EXPORT const Vector<AnnotatedRegionValue>& annotatedRegions() const;
-    void setAnnotatedRegions(const Vector<AnnotatedRegionValue>&);
 #endif
+
+    enum class AnnotationsAction { Invalidate, Update };
+    void invalidateRenderingDependentRegions(AnnotationsAction = AnnotationsAction::Invalidate);
+    void invalidateScrollbarDependentRegions();
+    void updateZOrderDependentRegions();
 
     void removeAllEventListeners() final;
 
@@ -1633,6 +1634,14 @@ private:
     void didAssociateFormControlsTimerFired();
 
     void wheelEventHandlersChanged();
+
+#if ENABLE(DASHBOARD_SUPPORT)
+    void setAnnotatedRegionsDirty(bool f = true) { m_annotatedRegionsDirty = f; }
+    bool annotatedRegionsDirty() const { return m_annotatedRegionsDirty; }
+    bool hasAnnotatedRegions () const { return m_hasAnnotatedRegions; }
+    void setAnnotatedRegions(const Vector<AnnotatedRegionValue>&);
+    void updateAnnotatedRegions();
+#endif
 
     HttpEquivPolicy httpEquivPolicy() const;
     AXObjectCache* existingAXObjectCacheSlow() const;

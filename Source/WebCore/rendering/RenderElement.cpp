@@ -48,6 +48,7 @@
 #include "RenderDescendantIterator.h"
 #include "RenderFlexibleBox.h"
 #include "RenderFragmentedFlow.h"
+#include "RenderGrid.h"
 #include "RenderImage.h"
 #include "RenderImageResourceStyleImage.h"
 #include "RenderInline.h"
@@ -78,8 +79,6 @@
 #include <wtf/IsoMallocInlines.h>
 #include <wtf/MathExtras.h>
 #include <wtf/StackStats.h>
-
-#include "RenderGrid.h"
 
 namespace WebCore {
 
@@ -709,14 +708,10 @@ void RenderElement::styleWillChange(StyleDifference diff, const RenderStyle& new
         bool visibilityChanged = m_style.visibility() != newStyle.visibility()
             || m_style.zIndex() != newStyle.zIndex()
             || m_style.hasAutoZIndex() != newStyle.hasAutoZIndex();
-#if ENABLE(DASHBOARD_SUPPORT)
+
         if (visibilityChanged)
-            document().setAnnotatedRegionsDirty(true);
-#endif
-#if PLATFORM(IOS_FAMILY) && ENABLE(TOUCH_EVENTS)
-        if (visibilityChanged)
-            document().setTouchEventRegionsNeedUpdate();
-#endif
+            document().invalidateRenderingDependentRegions();
+
         if (visibilityChanged) {
             if (AXObjectCache* cache = document().existingAXObjectCache())
                 cache->childrenChanged(parent(), this);
@@ -737,6 +732,7 @@ void RenderElement::styleWillChange(StyleDifference diff, const RenderStyle& new
 
         if (m_parent && (newStyle.outlineSize() < m_style.outlineSize() || shouldRepaintForStyleDifference(diff)))
             repaint();
+
         if (isFloating() && m_style.floating() != newStyle.floating()) {
             // For changes in float styles, we need to conceivably remove ourselves
             // from the floating objects list.
