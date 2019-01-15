@@ -192,7 +192,7 @@ bool IncludeSameArrayElement(const std::set<std::string> &nameSet, const std::st
 {
     std::vector<unsigned int> subscripts;
     std::string baseName = ParseResourceName(name, &subscripts);
-    for (auto nameInSet : nameSet)
+    for (const auto& nameInSet : nameSet)
     {
         std::vector<unsigned int> arrayIndices;
         std::string arrayName = ParseResourceName(nameInSet, &arrayIndices);

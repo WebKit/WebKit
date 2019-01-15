@@ -1,3 +1,26 @@
+2019-01-15  David Kilzer  <ddkilzer@apple.com>
+
+        clang-tidy: Fix unnecessary copy of for loop variables in ANGLE
+        <https://webkit.org/b/193443>
+
+        Reviewed by Alex Christensen.
+
+        Fix unwanted copying of loop variables by making them const
+        references.
+
+        * src/compiler/preprocessor/MacroExpander.cpp:
+        (pp::MacroExpander::ScopedMacroReenabler::~ScopedMacroReenabler):
+        - Prevents copy and reference churn of std::shared_ptr<Macro>
+          objects.
+        * src/compiler/translator/Compiler.cpp:
+        (sh::TCompiler::useAllMembersInUnusedStandardAndSharedBlocks):
+        - Prevents copy of sh::InterfaceBlock structs.
+        (sh::TCompiler::initializeOutputVariables):
+        - Prevents copy of sh::Varying structs.
+        * src/libANGLE/Program.cpp:
+        (gl::(anonymous namespace)::IncludeSameArrayElement):
+        - Prevents copy of std::string objects.
+
 2018-10-03  Dan Bernstein  <mitz@apple.com>
 
         ANGLE part of [Xcode] Update some build settings as recommended by Xcode 10

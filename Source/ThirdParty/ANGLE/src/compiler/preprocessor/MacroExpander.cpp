@@ -70,7 +70,7 @@ MacroExpander::ScopedMacroReenabler::ScopedMacroReenabler(MacroExpander *expande
 MacroExpander::ScopedMacroReenabler::~ScopedMacroReenabler()
 {
     mExpander->mDeferReenablingMacros = false;
-    for (auto macro : mExpander->mMacrosToReenable)
+    for (const auto& macro : mExpander->mMacrosToReenable)
     {
         // Copying the string here by using substr is a check for use-after-free. It detects
         // use-after-free more reliably than just toggling the disabled flag.
