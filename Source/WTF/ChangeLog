@@ -1,3 +1,9 @@
+2019-01-15  Chris Dumez  <cdumez@apple.com>
+
+        Unreviewed, revert part of r239997 as it is not needed to fix the build.
+
+        * wtf/RefCounter.h:
+
 2019-01-15  Alex Christensen  <achristensen@webkit.org>
 
         Fix iOS build after r239993
