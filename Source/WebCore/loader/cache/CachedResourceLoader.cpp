@@ -101,42 +101,42 @@ static inline ResourceErrorOr<CachedResourceHandle<T>> castCachedResourceTo(Reso
     return makeUnexpected(cachedResource.error());
 }
 
-static CachedResource* createResource(CachedResource::Type type, CachedResourceRequest&& request, PAL::SessionID sessionID)
+static CachedResource* createResource(CachedResource::Type type, CachedResourceRequest&& request, const PAL::SessionID& sessionID, const CookieJar* cookieJar)
 {
     switch (type) {
     case CachedResource::Type::ImageResource:
-        return new CachedImage(WTFMove(request), sessionID);
+        return new CachedImage(WTFMove(request), sessionID, cookieJar);
     case CachedResource::Type::CSSStyleSheet:
-        return new CachedCSSStyleSheet(WTFMove(request), sessionID);
+        return new CachedCSSStyleSheet(WTFMove(request), sessionID, cookieJar);
     case CachedResource::Type::Script:
-        return new CachedScript(WTFMove(request), sessionID);
+        return new CachedScript(WTFMove(request), sessionID, cookieJar);
     case CachedResource::Type::SVGDocumentResource:
-        return new CachedSVGDocument(WTFMove(request), sessionID);
+        return new CachedSVGDocument(WTFMove(request), sessionID, cookieJar);
 #if ENABLE(SVG_FONTS)
     case CachedResource::Type::SVGFontResource:
-        return new CachedSVGFont(WTFMove(request), sessionID);
+        return new CachedSVGFont(WTFMove(request), sessionID, cookieJar);
 #endif
     case CachedResource::Type::FontResource:
-        return new CachedFont(WTFMove(request), sessionID);
+        return new CachedFont(WTFMove(request), sessionID, cookieJar);
     case CachedResource::Type::Beacon:
     case CachedResource::Type::MediaResource:
     case CachedResource::Type::RawResource:
     case CachedResource::Type::Icon:
     case CachedResource::Type::MainResource:
-        return new CachedRawResource(WTFMove(request), type, sessionID);
+        return new CachedRawResource(WTFMove(request), type, sessionID, cookieJar);
 #if ENABLE(XSLT)
     case CachedResource::Type::XSLStyleSheet:
-        return new CachedXSLStyleSheet(WTFMove(request), sessionID);
+        return new CachedXSLStyleSheet(WTFMove(request), sessionID, cookieJar);
 #endif
     case CachedResource::Type::LinkPrefetch:
-        return new CachedResource(WTFMove(request), CachedResource::Type::LinkPrefetch, sessionID);
+        return new CachedResource(WTFMove(request), CachedResource::Type::LinkPrefetch, sessionID, cookieJar);
 #if ENABLE(VIDEO_TRACK)
     case CachedResource::Type::TextTrackResource:
-        return new CachedTextTrack(WTFMove(request), sessionID);
+        return new CachedTextTrack(WTFMove(request), sessionID, cookieJar);
 #endif
 #if ENABLE(APPLICATION_MANIFEST)
     case CachedResource::Type::ApplicationManifest:
-        return new CachedApplicationManifest(WTFMove(request), sessionID);
+        return new CachedApplicationManifest(WTFMove(request), sessionID, cookieJar);
 #endif
     }
     ASSERT_NOT_REACHED();
@@ -236,7 +236,7 @@ ResourceErrorOr<CachedResourceHandle<CachedCSSStyleSheet>> CachedResourceLoader:
     return castCachedResourceTo<CachedCSSStyleSheet>(requestResource(CachedResource::Type::CSSStyleSheet, WTFMove(request)));
 }
 
-CachedResourceHandle<CachedCSSStyleSheet> CachedResourceLoader::requestUserCSSStyleSheet(CachedResourceRequest&& request)
+CachedResourceHandle<CachedCSSStyleSheet> CachedResourceLoader::requestUserCSSStyleSheet(Page& page, CachedResourceRequest&& request)
 {
     request.setDestinationIfNotSet(FetchOptions::Destination::Style);
 
@@ -254,7 +254,7 @@ CachedResourceHandle<CachedCSSStyleSheet> CachedResourceLoader::requestUserCSSSt
 
     request.removeFragmentIdentifierIfNeeded();
 
-    CachedResourceHandle<CachedCSSStyleSheet> userSheet = new CachedCSSStyleSheet(WTFMove(request), sessionID());
+    CachedResourceHandle<CachedCSSStyleSheet> userSheet = new CachedCSSStyleSheet(WTFMove(request), page.sessionID(), &page.cookieJar());
 
     if (userSheet->allowsCaching())
         memoryCache.add(*userSheet);
@@ -677,14 +677,14 @@ static inline bool isResourceSuitableForDirectReuse(const CachedResource& resour
     return true;
 }
 
-CachedResourceHandle<CachedResource> CachedResourceLoader::updateCachedResourceWithCurrentRequest(const CachedResource& resource, CachedResourceRequest&& request)
+CachedResourceHandle<CachedResource> CachedResourceLoader::updateCachedResourceWithCurrentRequest(const CachedResource& resource, CachedResourceRequest&& request, const PAL::SessionID& sessionID, const CookieJar* cookieJar)
 {
     if (!isResourceSuitableForDirectReuse(resource, request)) {
         request.setCachingPolicy(CachingPolicy::DisallowCaching);
-        return loadResource(resource.type(), WTFMove(request));
+        return loadResource(resource.type(), WTFMove(request), cookieJar);
     }
 
-    auto resourceHandle = createResource(resource.type(), WTFMove(request), sessionID());
+    auto resourceHandle = createResource(resource.type(), WTFMove(request), sessionID, cookieJar);
     resourceHandle->loadFrom(resource);
     return resourceHandle;
 }
@@ -816,7 +816,7 @@ ResourceErrorOr<CachedResourceHandle<CachedResource>> CachedResourceLoader::requ
         if (blockedStatus.blockedLoad) {
             RELEASE_LOG_IF_ALLOWED("requestResource: Resource blocked by content blocker (frame = %p)", frame());
             if (type == CachedResource::Type::MainResource) {
-                CachedResourceHandle<CachedResource> resource = createResource(type, WTFMove(request), sessionID());
+                CachedResourceHandle<CachedResource> resource = createResource(type, WTFMove(request), page->sessionID(), &page->cookieJar());
                 ASSERT(resource);
                 resource->error(CachedResource::Status::LoadError);
                 resource->setResourceError(ResourceError(ContentExtensions::WebKitContentBlockerDomain, 0, resourceRequest.url(), WEB_UI_STRING("The URL was blocked by a content blocker", "WebKitErrorBlockedByContentBlocker description")));
@@ -879,6 +879,8 @@ ResourceErrorOr<CachedResourceHandle<CachedResource>> CachedResourceLoader::requ
 
     logMemoryCacheResourceRequest(frame(), DiagnosticLoggingKeys::memoryCacheUsageKey(), resource ? DiagnosticLoggingKeys::inMemoryCacheKey() : DiagnosticLoggingKeys::notInMemoryCacheKey());
 
+    auto* cookieJar = document() && document()->page() ? &document()->page()->cookieJar() : nullptr;
+
     RevalidationPolicy policy = determineRevalidationPolicy(type, request, resource.get(), forPreload, defer);
     switch (policy) {
     case Reload:
@@ -887,7 +889,7 @@ ResourceErrorOr<CachedResourceHandle<CachedResource>> CachedResourceLoader::requ
     case Load:
         if (resource)
             logMemoryCacheResourceRequest(frame(), DiagnosticLoggingKeys::memoryCacheEntryDecisionKey(), DiagnosticLoggingKeys::unusedKey());
-        resource = loadResource(type, WTFMove(request));
+        resource = loadResource(type, WTFMove(request), cookieJar);
         break;
     case Revalidate:
         if (resource)
@@ -901,7 +903,7 @@ ResourceErrorOr<CachedResourceHandle<CachedResource>> CachedResourceLoader::requ
                 return makeUnexpected(WTFMove(*error));
         }
         if (shouldUpdateCachedResourceWithCurrentRequest(*resource, request)) {
-            resource = updateCachedResourceWithCurrentRequest(*resource, WTFMove(request));
+            resource = updateCachedResourceWithCurrentRequest(*resource, WTFMove(request), document()->page()->sessionID(), cookieJar);
             if (resource->status() != CachedResource::Status::Cached)
                 policy = Load;
         } else {
@@ -987,7 +989,7 @@ CachedResourceHandle<CachedResource> CachedResourceLoader::revalidateResource(Ca
     ASSERT(resource.sessionID() == sessionID());
     ASSERT(resource.allowsCaching());
 
-    CachedResourceHandle<CachedResource> newResource = createResource(resource.type(), WTFMove(request), resource.sessionID());
+    CachedResourceHandle<CachedResource> newResource = createResource(resource.type(), WTFMove(request), resource.sessionID(), resource.cookieJar());
 
     LOG(ResourceLoading, "Resource %p created to revalidate %p", newResource.get(), &resource);
     newResource->setResourceToRevalidate(&resource);
@@ -1001,7 +1003,7 @@ CachedResourceHandle<CachedResource> CachedResourceLoader::revalidateResource(Ca
     return newResource;
 }
 
-CachedResourceHandle<CachedResource> CachedResourceLoader::loadResource(CachedResource::Type type, CachedResourceRequest&& request)
+CachedResourceHandle<CachedResource> CachedResourceLoader::loadResource(CachedResource::Type type, CachedResourceRequest&& request, const CookieJar* cookieJar)
 {
     auto& memoryCache = MemoryCache::singleton();
     ASSERT(!request.allowsCaching() || !memoryCache.resourceForRequest(request.resourceRequest(), sessionID())
@@ -1009,7 +1011,7 @@ CachedResourceHandle<CachedResource> CachedResourceLoader::loadResource(CachedRe
 
     LOG(ResourceLoading, "Loading CachedResource for '%s'.", request.resourceRequest().url().stringCenterEllipsizedToLength().latin1().data());
 
-    CachedResourceHandle<CachedResource> resource = createResource(type, WTFMove(request), sessionID());
+    CachedResourceHandle<CachedResource> resource = createResource(type, WTFMove(request), sessionID(), cookieJar);
 
     if (resource->allowsCaching() && !memoryCache.add(*resource))
         resource->setOwningCachedResourceLoader(this);

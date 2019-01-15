@@ -45,6 +45,7 @@ class CachedResourceClient;
 class CachedResourceHandleBase;
 class CachedResourceLoader;
 class CachedResourceRequest;
+class CookieJar;
 class LoadTiming;
 class MemoryCache;
 class SecurityOrigin;
@@ -94,7 +95,7 @@ public:
         DecodeError
     };
 
-    CachedResource(CachedResourceRequest&&, Type, PAL::SessionID);
+    CachedResource(CachedResourceRequest&&, Type, const PAL::SessionID&, const CookieJar*);
     virtual ~CachedResource();
 
     virtual void load(CachedResourceLoader&);
@@ -116,6 +117,7 @@ public:
     const URL& url() const { return m_resourceRequest.url();}
     const String& cachePartition() const { return m_resourceRequest.cachePartition(); }
     PAL::SessionID sessionID() const { return m_sessionID; }
+    const CookieJar* cookieJar() const { return m_cookieJar.get(); }
     Type type() const { return m_type; }
     String mimeType() const { return m_response.mimeType(); }
     long long expectedContentLength() const { return m_response.expectedContentLength(); }
@@ -279,7 +281,7 @@ public:
 
 protected:
     // CachedResource constructor that may be used when the CachedResource can already be filled with response data.
-    CachedResource(const URL&, Type, PAL::SessionID);
+    CachedResource(const URL&, Type, const PAL::SessionID&, const CookieJar*);
 
     void setEncodedSize(unsigned);
     void setDecodedSize(unsigned);
@@ -320,6 +322,7 @@ protected:
 private:
     MonotonicTime m_lastDecodedAccessTime; // Used as a "thrash guard" in the cache
     PAL::SessionID m_sessionID;
+    RefPtr<const CookieJar> m_cookieJar;
     WallTime m_responseTimestamp;
     unsigned long m_identifierForLoadWithoutResourceLoader { 0 };
 

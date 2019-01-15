@@ -439,12 +439,12 @@ void InspectorPageAgent::getCookies(ErrorString&, RefPtr<JSON::ArrayOf<Inspector
 
     for (Frame* frame = &mainFrame(); frame; frame = frame->tree().traverseNext()) {
         Document* document = frame->document();
-        if (!document)
+        if (!document || !document->page())
             continue;
 
         for (auto& url : allResourcesURLsForFrame(frame)) {
             Vector<Cookie> docCookiesList;
-            rawCookiesImplemented = getRawCookies(*document, URL({ }, url), docCookiesList);
+            rawCookiesImplemented = document->page()->cookieJar().getRawCookies(*document, URL({ }, url), docCookiesList);
 
             if (!rawCookiesImplemented) {
                 // FIXME: We need duplication checking for the String representation of cookies.
@@ -469,8 +469,10 @@ void InspectorPageAgent::deleteCookie(ErrorString&, const String& cookieName, co
 {
     URL parsedURL({ }, url);
     for (Frame* frame = &m_page.mainFrame(); frame; frame = frame->tree().traverseNext()) {
-        if (auto* document = frame->document())
-            WebCore::deleteCookie(*document, parsedURL, cookieName);
+        if (auto* document = frame->document()) {
+            if (auto* page = document->page())
+                page->cookieJar().deleteCookie(*document, parsedURL, cookieName);
+        }
     }
 }
 

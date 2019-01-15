@@ -34,6 +34,7 @@
 #include "ConstantPropertyMap.h"
 #include "ContextMenuClient.h"
 #include "ContextMenuController.h"
+#include "CookieJar.h"
 #include "DOMRect.h"
 #include "DOMRectList.h"
 #include "DatabaseProvider.h"
@@ -238,6 +239,7 @@ Page::Page(PageConfiguration&& pageConfiguration)
     , m_inspectorDebuggable(std::make_unique<PageDebuggable>(*this))
 #endif
     , m_socketProvider(WTFMove(pageConfiguration.socketProvider))
+    , m_cookieJar(WTFMove(pageConfiguration.cookieJar))
     , m_applicationCacheStorage(*WTFMove(pageConfiguration.applicationCacheStorage))
     , m_cacheStorageProvider(WTFMove(pageConfiguration.cacheStorageProvider))
     , m_databaseProvider(*WTFMove(pageConfiguration.databaseProvider))

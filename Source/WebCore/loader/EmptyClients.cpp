@@ -33,6 +33,7 @@
 #include "CacheStorageProvider.h"
 #include "ColorChooser.h"
 #include "ContextMenuClient.h"
+#include "CookieJar.h"
 #include "DataListSuggestionPicker.h"
 #include "DatabaseProvider.h"
 #include "DiagnosticLoggingClient.h"
@@ -541,7 +542,8 @@ PageConfiguration pageConfigurationWithEmptyClients()
         SocketProvider::create(),
         LibWebRTCProvider::create(),
         CacheStorageProvider::create(),
-        adoptRef(*new EmptyBackForwardClient)
+        adoptRef(*new EmptyBackForwardClient),
+        CookieJar::create()
     };
 
     static NeverDestroyed<EmptyChromeClient> dummyChromeClient;

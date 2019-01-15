@@ -95,8 +95,11 @@ void StyleRuleImport::requestStyleSheet()
 {
     if (!m_parentStyleSheet)
         return;
-    Document* document = m_parentStyleSheet->singleOwnerDocument();
+    auto* document = m_parentStyleSheet->singleOwnerDocument();
     if (!document)
+        return;
+    auto* page = document->page();
+    if (!page)
         return;
 
     URL absURL;
@@ -141,7 +144,7 @@ void StyleRuleImport::requestStyleSheet()
 
         request.setOptions(WTFMove(options));
 
-        m_cachedSheet = document->cachedResourceLoader().requestUserCSSStyleSheet(WTFMove(request));
+        m_cachedSheet = document->cachedResourceLoader().requestUserCSSStyleSheet(*page, WTFMove(request));
     } else {
         auto options = request.options();
         options.loadedFromOpaqueSource = m_parentStyleSheet->isContentOpaque() ? LoadedFromOpaqueSource::Yes : LoadedFromOpaqueSource::No;

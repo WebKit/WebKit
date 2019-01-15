@@ -96,7 +96,7 @@ void RenderSnapshottedPlugIn::updateSnapshot(Image* image)
     if (!image)
         return;
 
-    m_snapshotResource->setCachedImage(new CachedImage(image, page().sessionID()));
+    m_snapshotResource->setCachedImage(new CachedImage(image, page().sessionID(), &page().cookieJar()));
     repaint();
 }
 

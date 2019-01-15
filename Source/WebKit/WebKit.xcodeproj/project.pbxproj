@@ -1050,6 +1050,7 @@
 		5C359C0D2154739F009E7948 /* WKDeprecated.h in Headers */ = {isa = PBXBuildFile; fileRef = 5C359C0C21547321009E7948 /* WKDeprecated.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		5C4B9D8B210A8CCF008F14D1 /* UndoOrRedo.h in Headers */ = {isa = PBXBuildFile; fileRef = 5C4B9D8A210A8C46008F14D1 /* UndoOrRedo.h */; };
 		5C62FDF91EFC271C00CE072E /* WKURLSchemeTaskPrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = 5C62FDF81EFC263C00CE072E /* WKURLSchemeTaskPrivate.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		5C7FB47021E97DC5009E3241 /* WebCookieJar.h in Headers */ = {isa = PBXBuildFile; fileRef = 5C7FB46F21E97C0C009E3241 /* WebCookieJar.h */; };
 		5C8BC797218CBB4800813886 /* SafeBrowsing.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 5C8BC796218CB58A00813886 /* SafeBrowsing.xcassets */; };
 		5C8DD3801FE4521600F2A556 /* WebsiteAutoplayPolicy.h in Headers */ = {isa = PBXBuildFile; fileRef = 5C8DD37F1FE4519200F2A556 /* WebsiteAutoplayPolicy.h */; };
 		5C9E56831DF7F1B300C9EE33 /* WKWebsitePolicies.h in Headers */ = {isa = PBXBuildFile; fileRef = 5C9E56811DF7F05500C9EE33 /* WKWebsitePolicies.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -3430,6 +3431,8 @@
 		5C7706731D111D8B0012700F /* WebSocketProvider.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = WebSocketProvider.cpp; path = Network/WebSocketProvider.cpp; sourceTree = "<group>"; };
 		5C7ACFD1218DD8BD004CBB59 /* Network-OSX.entitlements */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.entitlements; path = "Network-OSX.entitlements"; sourceTree = "<group>"; };
 		5C7C88DC1D0F41A0009D2F6D /* WebSocketProvider.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WebSocketProvider.h; path = Network/WebSocketProvider.h; sourceTree = "<group>"; };
+		5C7FB46E21E97C0B009E3241 /* WebCookieJar.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebCookieJar.cpp; sourceTree = "<group>"; };
+		5C7FB46F21E97C0C009E3241 /* WebCookieJar.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebCookieJar.h; sourceTree = "<group>"; };
 		5C84CF901F96AC4E00B6705A /* NetworkSessionCreationParameters.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NetworkSessionCreationParameters.h; sourceTree = "<group>"; };
 		5C85C7861C3F23C50061A4FA /* PendingDownload.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PendingDownload.cpp; sourceTree = "<group>"; };
 		5C89DF5621AF61FF004645E8 /* NetworkSessionCreationParameters.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = NetworkSessionCreationParameters.cpp; sourceTree = "<group>"; };
@@ -7219,6 +7222,8 @@
 				BC72B9F911E6476B001EB4EA /* WebBackForwardListProxy.h */,
 				51871B59127CB89D00F76232 /* WebContextMenu.cpp */,
 				51871B5A127CB89D00F76232 /* WebContextMenu.h */,
+				5C7FB46E21E97C0B009E3241 /* WebCookieJar.cpp */,
+				5C7FB46F21E97C0C009E3241 /* WebCookieJar.h */,
 				1A5B1C5218987EDF004FCF9B /* WebDocumentLoader.cpp */,
 				1A5B1C5318987EDF004FCF9B /* WebDocumentLoader.h */,
 				BC111ADC112F5B9300337BAB /* WebFrame.cpp */,
@@ -9358,6 +9363,7 @@
 				51ACBB82127A8BAD00D203B9 /* WebContextMenuProxy.h in Headers */,
 				51ACBBA0127A8F2C00D203B9 /* WebContextMenuProxyMac.h in Headers */,
 				BCF4DE25168FA44800C94AFC /* WebContextSupplement.h in Headers */,
+				5C7FB47021E97DC5009E3241 /* WebCookieJar.h in Headers */,
 				330934501315B94D0097A7BC /* WebCookieManager.h in Headers */,
 				330934481315B9220097A7BC /* WebCookieManagerMessages.h in Headers */,
 				330934561315B9750097A7BC /* WebCookieManagerProxy.h in Headers */,

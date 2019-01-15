@@ -38,11 +38,6 @@ void NetworkProcessPlatformStrategies::initialize()
     setPlatformStrategies(&platformStrategies.get());
 }
 
-CookiesStrategy* NetworkProcessPlatformStrategies::createCookiesStrategy()
-{
-    return nullptr;
-}
-
 LoaderStrategy* NetworkProcessPlatformStrategies::createLoaderStrategy()
 {
     return nullptr;

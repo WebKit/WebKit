@@ -75,6 +75,7 @@
 #include "WebColorChooser.h"
 #include "WebContextMenu.h"
 #include "WebContextMenuClient.h"
+#include "WebCookieJar.h"
 #include "WebCoreArgumentCoders.h"
 #include "WebDataListSuggestionPicker.h"
 #include "WebDatabaseProvider.h"
@@ -417,7 +418,8 @@ WebPage::WebPage(uint64_t pageID, WebPageCreationParameters&& parameters)
         WebSocketProvider::create(),
         makeUniqueRef<WebKit::LibWebRTCProvider>(),
         WebProcess::singleton().cacheStorageProvider(),
-        WebBackForwardListProxy::create(*this)
+        WebBackForwardListProxy::create(*this),
+        WebCookieJar::create()
     );
     pageConfiguration.chromeClient = new WebChromeClient(*this);
 #if ENABLE(CONTEXT_MENUS)

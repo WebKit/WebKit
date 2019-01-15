@@ -32,6 +32,7 @@
 #include "Frame.h"
 #include "HTTPParsers.h"
 #include "Navigator.h"
+#include "Page.h"
 #include <wtf/URL.h>
 
 namespace WebCore {

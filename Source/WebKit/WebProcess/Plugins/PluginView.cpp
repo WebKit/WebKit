@@ -1581,12 +1581,18 @@ String PluginView::proxiesForURL(const String& urlString)
 
 String PluginView::cookiesForURL(const String& urlString)
 {
-    return cookies(m_pluginElement->document(), URL(URL(), urlString));
+    if (auto* page = m_pluginElement->document().page())
+        return page->cookieJar().cookies(m_pluginElement->document(), URL(URL(), urlString));
+    ASSERT_NOT_REACHED();
+    return { };
 }
 
 void PluginView::setCookiesForURL(const String& urlString, const String& cookieString)
 {
-    setCookies(m_pluginElement->document(), URL(URL(), urlString), cookieString);
+    if (auto* page = m_pluginElement->document().page())
+        page->cookieJar().setCookies(m_pluginElement->document(), URL(URL(), urlString), cookieString);
+    else
+        ASSERT_NOT_REACHED();
 }
 
 bool PluginView::getAuthenticationInfo(const ProtectionSpace& protectionSpace, String& username, String& password)

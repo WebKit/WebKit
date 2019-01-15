@@ -32,6 +32,7 @@
 #import "WebViewInternal.h"
 #import <JavaScriptCore/InitializeThreading.h>
 #import <WebCore/ApplicationCacheStorage.h>
+#import <WebCore/CookieJar.h>
 #import <WebCore/CredentialStorage.h>
 #import <WebCore/CrossOriginPreflightResultCache.h>
 #import <WebCore/Document.h>
@@ -163,7 +164,7 @@
     if (!image || !url || ![[url absoluteString] length])
         return false;
 
-    return WebCore::MemoryCache::singleton().addImageToCache(RetainPtr<CGImageRef>(image), url, frame ? core(frame)->document()->domainForCachePartition() : emptyString());
+    return WebCore::MemoryCache::singleton().addImageToCache(RetainPtr<CGImageRef>(image), url, frame ? core(frame)->document()->domainForCachePartition() : emptyString(), PAL::SessionID::defaultSessionID(), WebCore::CookieJar::create().ptr());
 }
 
 + (void)removeImageFromCacheForURL:(NSURL *)url

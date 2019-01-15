@@ -25,7 +25,7 @@
 
 #pragma once
 
-#include "CookiesStrategy.h"
+#include "CookieJar.h"
 #include "SameSiteInfo.h"
 #include <pal/SessionID.h>
 #include <wtf/URL.h>

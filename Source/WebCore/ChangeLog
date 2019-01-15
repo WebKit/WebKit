@@ -1,3 +1,129 @@
+2019-01-15  Alex Christensen  <achristensen@webkit.org>
+
+        Stop using CookiesStrategy
+        https://bugs.webkit.org/show_bug.cgi?id=161106
+
+        Reviewed by Don Olmstead and Antti Koivisto.
+
+        CookiesStrategy is process-global and makes it difficult to switch NetworkStorageSession from having a process-global map.
+        Instead, use a CookieJar object in the WebProcess.  This has the additional benefit of making it more clear which code
+        is used in the WebProcess and which code is used in the NetworkProcess.
+
+        * Modules/beacon/NavigatorBeacon.cpp:
+        * Modules/websockets/WebSocketChannel.cpp:
+        (WebCore::WebSocketChannel::processBuffer):
+        * Modules/websockets/WebSocketHandshake.cpp:
+        (WebCore::WebSocketHandshake::clientHandshakeRequest const):
+        (WebCore::WebSocketHandshake::clientHandshakeCookieRequestHeaderFieldProxy const):
+        * WebCore.xcodeproj/project.pbxproj:
+        * css/StyleRuleImport.cpp:
+        (WebCore::StyleRuleImport::requestStyleSheet):
+        * dom/Document.cpp:
+        (WebCore::Document::cookie):
+        (WebCore::Document::setCookie):
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::mediaPlayerGetRawCookies const):
+        * inspector/agents/InspectorPageAgent.cpp:
+        (WebCore::InspectorPageAgent::getCookies):
+        (WebCore::InspectorPageAgent::deleteCookie):
+        * loader/CookieJar.cpp:
+        (WebCore::CookieJar::shouldIncludeSecureCookies):
+        (WebCore::CookieJar::sameSiteInfo):
+        (WebCore::CookieJar::create):
+        (WebCore::CookieJar::cookies const):
+        (WebCore::CookieJar::cookieRequestHeaderFieldProxy):
+        (WebCore::CookieJar::setCookies):
+        (WebCore::CookieJar::cookiesEnabled const):
+        (WebCore::CookieJar::cookieRequestHeaderFieldValue const):
+        (WebCore::CookieJar::getRawCookies const):
+        (WebCore::CookieJar::deleteCookie):
+        (WebCore::shouldIncludeSecureCookies): Deleted.
+        (WebCore::sameSiteInfo): Deleted.
+        (WebCore::cookies): Deleted.
+        (WebCore::cookieRequestHeaderFieldProxy): Deleted.
+        (WebCore::setCookies): Deleted.
+        (WebCore::cookiesEnabled): Deleted.
+        (WebCore::cookieRequestHeaderFieldValue): Deleted.
+        (WebCore::getRawCookies): Deleted.
+        (WebCore::deleteCookie): Deleted.
+        * loader/CookieJar.h:
+        * loader/EmptyClients.cpp:
+        (WebCore::pageConfigurationWithEmptyClients):
+        * loader/ImageLoader.cpp:
+        (WebCore::ImageLoader::updateFromElement):
+        * loader/cache/CachedApplicationManifest.cpp:
+        (WebCore::CachedApplicationManifest::CachedApplicationManifest):
+        * loader/cache/CachedApplicationManifest.h:
+        * loader/cache/CachedCSSStyleSheet.cpp:
+        (WebCore::CachedCSSStyleSheet::CachedCSSStyleSheet):
+        * loader/cache/CachedCSSStyleSheet.h:
+        * loader/cache/CachedFont.cpp:
+        (WebCore::CachedFont::CachedFont):
+        * loader/cache/CachedFont.h:
+        * loader/cache/CachedImage.cpp:
+        (WebCore::CachedImage::CachedImage):
+        * loader/cache/CachedImage.h:
+        * loader/cache/CachedRawResource.cpp:
+        (WebCore::CachedRawResource::CachedRawResource):
+        * loader/cache/CachedRawResource.h:
+        * loader/cache/CachedResource.cpp:
+        (WebCore::CachedResource::CachedResource):
+        (WebCore::CachedResource::setResponse):
+        (WebCore::CachedResource::varyHeaderValuesMatch):
+        * loader/cache/CachedResource.h:
+        (WebCore::CachedResource::cookieJar const):
+        * loader/cache/CachedResourceLoader.cpp:
+        (WebCore::createResource):
+        (WebCore::CachedResourceLoader::requestUserCSSStyleSheet):
+        (WebCore::CachedResourceLoader::updateCachedResourceWithCurrentRequest):
+        (WebCore::CachedResourceLoader::requestResource):
+        (WebCore::CachedResourceLoader::revalidateResource):
+        (WebCore::CachedResourceLoader::loadResource):
+        * loader/cache/CachedResourceLoader.h:
+        * loader/cache/CachedSVGDocument.cpp:
+        (WebCore::CachedSVGDocument::CachedSVGDocument):
+        * loader/cache/CachedSVGDocument.h:
+        * loader/cache/CachedSVGFont.cpp:
+        (WebCore::CachedSVGFont::CachedSVGFont):
+        * loader/cache/CachedSVGFont.h:
+        * loader/cache/CachedScript.cpp:
+        (WebCore::CachedScript::CachedScript):
+        * loader/cache/CachedScript.h:
+        * loader/cache/CachedTextTrack.cpp:
+        (WebCore::CachedTextTrack::CachedTextTrack):
+        * loader/cache/CachedTextTrack.h:
+        * loader/cache/CachedXSLStyleSheet.cpp:
+        (WebCore::CachedXSLStyleSheet::CachedXSLStyleSheet):
+        * loader/cache/CachedXSLStyleSheet.h:
+        * loader/cache/MemoryCache.cpp:
+        (WebCore::MemoryCache::addImageToCache):
+        * loader/cache/MemoryCache.h:
+        * page/Navigator.cpp:
+        (WebCore::Navigator::cookieEnabled const):
+        * page/Page.cpp:
+        (WebCore::Page::Page):
+        * page/Page.h:
+        (WebCore::Page::cookieJar):
+        * page/PageConfiguration.cpp:
+        (WebCore::PageConfiguration::PageConfiguration):
+        * page/PageConfiguration.h:
+        * platform/CookiesStrategy.h: Removed.
+        * platform/PlatformStrategies.h:
+        (WebCore::PlatformStrategies::cookiesStrategy): Deleted.
+        * platform/network/CacheValidation.cpp:
+        (WebCore::cookieRequestHeaderFieldValue):
+        (WebCore::collectVaryingRequestHeaders):
+        (WebCore::verifyVaryingRequestHeaders):
+        * platform/network/CacheValidation.h:
+        * platform/network/CookieRequestHeaderFieldProxy.h:
+        * platform/network/cf/NetworkStorageSessionCFNetWin.cpp:
+        * platform/network/cocoa/NetworkStorageSessionCocoa.mm:
+        * platform/network/curl/ResourceHandleCurl.cpp:
+        * rendering/RenderSnapshottedPlugIn.cpp:
+        (WebCore::RenderSnapshottedPlugIn::updateSnapshot):
+        * testing/Internals.cpp:
+        (WebCore::Internals::getCookies const):
+
 2019-01-15  Simon Fraser  <simon.fraser@apple.com>
 
         Animations should only trigger layer recomposite when necessary

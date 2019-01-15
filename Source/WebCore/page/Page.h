@@ -86,6 +86,7 @@ class ChromeClient;
 class Color;
 class ContextMenuClient;
 class ContextMenuController;
+class CookieJar;
 class DOMRect;
 class DOMRectList;
 class DatabaseProvider;
@@ -574,6 +575,7 @@ public:
     DatabaseProvider& databaseProvider() { return m_databaseProvider; }
     CacheStorageProvider& cacheStorageProvider() { return m_cacheStorageProvider; }
     SocketProvider& socketProvider() { return m_socketProvider; }
+    CookieJar& cookieJar() { return m_cookieJar.get(); }
 
     StorageNamespaceProvider& storageNamespaceProvider() { return m_storageNamespaceProvider.get(); }
     void setStorageNamespaceProvider(Ref<StorageNamespaceProvider>&&);
@@ -873,6 +875,7 @@ private:
     unsigned m_forbidPromptsDepth { 0 };
 
     Ref<SocketProvider> m_socketProvider;
+    Ref<CookieJar> m_cookieJar;
     Ref<ApplicationCacheStorage> m_applicationCacheStorage;
     Ref<CacheStorageProvider> m_cacheStorageProvider;
     Ref<DatabaseProvider> m_databaseProvider;

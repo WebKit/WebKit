@@ -192,14 +192,18 @@ bool Navigator::cookieEnabled() const
     if (RuntimeEnabledFeatures::sharedFeatures().webAPIStatisticsEnabled())
         ResourceLoadObserver::shared().logNavigatorAPIAccessed(*frame->document(), ResourceLoadStatistics::NavigatorAPI::CookieEnabled);
 
-    if (frame->page() && !frame->page()->settings().cookieEnabled())
+    auto* page = frame->page();
+    if (!page)
+        return false;
+    
+    if (!page->settings().cookieEnabled())
         return false;
 
     auto* document = frame->document();
     if (!document)
         return false;
 
-    return cookiesEnabled(*document);
+    return page->cookieJar().cookiesEnabled(*document);
 }
 
 bool Navigator::javaEnabled() const

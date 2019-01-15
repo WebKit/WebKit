@@ -4852,8 +4852,12 @@ auto Internals::getCookies() const -> Vector<CookieData>
     if (!document)
         return { };
 
+    auto* page = document->page();
+    if (!page)
+        return { };
+
     Vector<Cookie> cookies;
-    getRawCookies(*document, document->cookieURL(), cookies);
+    page->cookieJar().getRawCookies(*document, document->cookieURL(), cookies);
     return WTF::map(cookies, [](auto& cookie) {
         return CookieData { cookie };
     });

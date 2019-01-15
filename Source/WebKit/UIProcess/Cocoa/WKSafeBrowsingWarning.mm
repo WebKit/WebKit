@@ -368,6 +368,7 @@ static void setBackground(ViewType *view, ColorType *color)
 {
     ViewType *box = _box.get().get();
     ButtonType *showDetails = box.subviews.lastObject;
+    WTFLogAlways("SHOW DETAILS BUTTON? %@", showDetails);
     [showDetails removeFromSuperview];
 
     NSMutableAttributedString *text = [[_warning->details() mutableCopy] autorelease];

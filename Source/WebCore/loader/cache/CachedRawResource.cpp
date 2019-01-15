@@ -38,8 +38,8 @@
 
 namespace WebCore {
 
-CachedRawResource::CachedRawResource(CachedResourceRequest&& request, Type type, PAL::SessionID sessionID)
-    : CachedResource(WTFMove(request), type, sessionID)
+CachedRawResource::CachedRawResource(CachedResourceRequest&& request, Type type, const PAL::SessionID& sessionID, const CookieJar* cookieJar)
+    : CachedResource(WTFMove(request), type, sessionID, cookieJar)
     , m_identifier(0)
     , m_allowEncodedDataReplacement(true)
 {

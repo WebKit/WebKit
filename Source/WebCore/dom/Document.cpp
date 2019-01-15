@@ -4872,8 +4872,8 @@ ExceptionOr<String> Document::cookie()
     if (cookieURL.isEmpty())
         return String();
 
-    if (!isDOMCookieCacheValid())
-        setCachedDOMCookies(cookies(*this, cookieURL));
+    if (!isDOMCookieCacheValid() && page())
+        setCachedDOMCookies(page()->cookieJar().cookies(*this, cookieURL));
 
     return String { cachedDOMCookies() };
 }
@@ -4894,7 +4894,8 @@ ExceptionOr<void> Document::setCookie(const String& value)
         return { };
 
     invalidateDOMCookieCache();
-    setCookies(*this, cookieURL, value);
+    if (page())
+        page()->cookieJar().setCookies(*this, cookieURL, value);
     return { };
 }
 

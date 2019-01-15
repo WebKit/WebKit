@@ -41,6 +41,7 @@
 namespace WebCore  {
 
 class CachedResource;
+class CookieJar;
 class ResourceRequest;
 class ResourceResponse;
 class ScriptExecutionContext;
@@ -156,7 +157,7 @@ public:
     WEBCORE_EXPORT void getOriginsWithCache(SecurityOriginSet& origins);
     WEBCORE_EXPORT HashSet<RefPtr<SecurityOrigin>> originsWithCache(PAL::SessionID) const;
 
-    WEBCORE_EXPORT bool addImageToCache(NativeImagePtr&&, const URL&, const String& domainForCachePartition);
+    WEBCORE_EXPORT bool addImageToCache(NativeImagePtr&&, const URL&, const String& domainForCachePartition, const PAL::SessionID&, const CookieJar*);
     WEBCORE_EXPORT void removeImageFromCache(const URL&, const String& domainForCachePartition);
 
     // pruneDead*() - Flush decoded and encoded data from resources not referenced by Web pages.

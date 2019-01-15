@@ -3110,7 +3110,8 @@ HRESULT WebView::initWithFrame(RECT frame, _In_ BSTR frameName, _In_ BSTR groupN
         SocketProvider::create(),
         makeUniqueRef<LibWebRTCProvider>(),
         WebCore::CacheStorageProvider::create(),
-        BackForwardList::create()
+        BackForwardList::create(),
+        CookieJar::create()
     );
     configuration.chromeClient = new WebChromeClient(this);
     configuration.contextMenuClient = new WebContextMenuClient(this);

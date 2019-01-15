@@ -28,7 +28,6 @@
 
 #include "Cookie.h"
 #include "CookieRequestHeaderFieldProxy.h"
-#include "CookiesStrategy.h"
 #include "NotImplemented.h"
 #include <CFNetwork/CFHTTPCookiesPriv.h>
 #include <CoreFoundation/CoreFoundation.h>

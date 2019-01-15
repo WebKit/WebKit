@@ -38,7 +38,7 @@ class TextResourceDecoder;
 
 class CachedApplicationManifest final : public CachedResource {
 public:
-    CachedApplicationManifest(CachedResourceRequest&&, PAL::SessionID);
+    CachedApplicationManifest(CachedResourceRequest&&, const PAL::SessionID&, const CookieJar*);
 
     Optional<struct ApplicationManifest> process(const URL& manifestURL, const URL& documentURL, RefPtr<ScriptExecutionContext> = nullptr);
 

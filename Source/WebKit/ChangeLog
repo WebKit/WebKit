@@ -1,3 +1,43 @@
+2019-01-15  Alex Christensen  <achristensen@webkit.org>
+
+        Stop using CookiesStrategy
+        https://bugs.webkit.org/show_bug.cgi?id=161106
+
+        Reviewed by Don Olmstead and Antti Koivisto.
+
+        * NetworkProcess/NetworkProcessPlatformStrategies.cpp:
+        (WebKit::NetworkProcessPlatformStrategies::createCookiesStrategy): Deleted.
+        * NetworkProcess/NetworkProcessPlatformStrategies.h:
+        * NetworkProcess/curl/NetworkDataTaskCurl.cpp:
+        * Scripts/webkit/messages.py:
+        * Sources.txt:
+        * WebKit.xcodeproj/project.pbxproj:
+        * WebProcess/Automation/WebAutomationSessionProxy.cpp:
+        (WebKit::WebAutomationSessionProxy::getCookiesForFrame):
+        (WebKit::WebAutomationSessionProxy::deleteCookie):
+        * WebProcess/Plugins/PluginView.cpp:
+        (WebKit::PluginView::cookiesForURL):
+        (WebKit::PluginView::setCookiesForURL):
+        * WebProcess/WebCoreSupport/WebPlatformStrategies.cpp:
+        (WebKit::WebPlatformStrategies::createCookiesStrategy): Deleted.
+        (WebKit::WebPlatformStrategies::cookiesForDOM): Deleted.
+        (WebKit::WebPlatformStrategies::setCookiesFromDOM): Deleted.
+        (WebKit::WebPlatformStrategies::cookiesEnabled): Deleted.
+        (WebKit::WebPlatformStrategies::cookieRequestHeaderFieldValue): Deleted.
+        (WebKit::WebPlatformStrategies::getRawCookies): Deleted.
+        (WebKit::WebPlatformStrategies::deleteCookie): Deleted.
+        * WebProcess/WebCoreSupport/WebPlatformStrategies.h:
+        * WebProcess/WebPage/WebCookieJar.cpp: Added.
+        (WebKit::WebCookieJar::cookies const):
+        (WebKit::WebCookieJar::setCookies):
+        (WebKit::WebCookieJar::cookiesEnabled const):
+        (WebKit::WebCookieJar::cookieRequestHeaderFieldValue const):
+        (WebKit::WebCookieJar::getRawCookies const):
+        (WebKit::WebCookieJar::deleteCookie):
+        * WebProcess/WebPage/WebCookieJar.h: Added.
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::m_shouldAttachDrawingAreaOnPageTransition):
+
 2019-01-15  Per Arne Vollan  <pvollan@apple.com>
 
         Remove reporting for iOS mach lookups confirmed in-use

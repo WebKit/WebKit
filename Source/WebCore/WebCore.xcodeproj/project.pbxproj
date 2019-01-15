@@ -1013,7 +1013,6 @@
 		31FE6DFA15004C2A0004EBC4 /* NotificationPermissionCallback.h in Headers */ = {isa = PBXBuildFile; fileRef = 31EC1DAC14FF26EA00C94662 /* NotificationPermissionCallback.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		33503C9A10179A74003B47E1 /* NotificationClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 33503C9910179A74003B47E1 /* NotificationClient.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		33503CA410179AD7003B47E1 /* JSNotification.h in Headers */ = {isa = PBXBuildFile; fileRef = 33503CA010179AD7003B47E1 /* JSNotification.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		339B5B63131DAA3200F48D02 /* CookiesStrategy.h in Headers */ = {isa = PBXBuildFile; fileRef = 339B5B62131DAA3200F48D02 /* CookiesStrategy.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		33D0212D131DB37B004091A8 /* CookieStorage.h in Headers */ = {isa = PBXBuildFile; fileRef = E13F01EA1270E10D00DFBA71 /* CookieStorage.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		3717D7E817ECC591003C276D /* extract-localizable-strings.pl in Copy Scripts */ = {isa = PBXBuildFile; fileRef = 3717D7E517ECC3A6003C276D /* extract-localizable-strings.pl */; };
 		371E65CC13661EDC00BEEDB0 /* PageSerializer.h in Headers */ = {isa = PBXBuildFile; fileRef = 371E65CB13661EDC00BEEDB0 /* PageSerializer.h */; };
@@ -7174,7 +7173,6 @@
 		33503C9F10179AD7003B47E1 /* JSNotification.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSNotification.cpp; sourceTree = "<group>"; };
 		33503CA010179AD7003B47E1 /* JSNotification.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSNotification.h; sourceTree = "<group>"; };
 		33503CC61017A1B1003B47E1 /* Notification.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Notification.cpp; sourceTree = "<group>"; };
-		339B5B62131DAA3200F48D02 /* CookiesStrategy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CookiesStrategy.h; sourceTree = "<group>"; };
 		3662F984047CEDBE5DDDAFAA /* RenderMathMLMenclose.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RenderMathMLMenclose.cpp; sourceTree = "<group>"; };
 		37119A7920CCB610002C6DC9 /* WebKitTargetConditionals.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = WebKitTargetConditionals.xcconfig; sourceTree = "<group>"; };
 		3717D7E517ECC3A6003C276D /* extract-localizable-strings.pl */ = {isa = PBXFileReference; lastKnownFileType = text.script.perl; name = "extract-localizable-strings.pl"; path = "Scripts/extract-localizable-strings.pl"; sourceTree = "<group>"; };
@@ -25277,7 +25275,6 @@
 				06027CAC0B1CBFC000884B2D /* ContextMenuItem.h */,
 				311C08BC18E35D6800B65615 /* ControlStates.h */,
 				D8B6152E1032495100C8554A /* Cookie.h */,
-				339B5B62131DAA3200F48D02 /* CookiesStrategy.h */,
 				862F129D18C1572C005C54AF /* CountedUserActivity.h */,
 				46C696CA1E7205E400597937 /* CPUMonitor.cpp */,
 				46C696C91E7205E400597937 /* CPUMonitor.h */,
@@ -28582,7 +28579,6 @@
 				D8B6152F1032495100C8554A /* Cookie.h in Headers */,
 				E1424C94164B52C800F32D40 /* CookieJar.h in Headers */,
 				7A5699702086C619000E0433 /* CookieRequestHeaderFieldProxy.h in Headers */,
-				339B5B63131DAA3200F48D02 /* CookiesStrategy.h in Headers */,
 				33D0212D131DB37B004091A8 /* CookieStorage.h in Headers */,
 				5120BBAF1F1CECE700EFEBF1 /* CookieStorageObserver.h in Headers */,
 				9746AF2114F4DDE6003E7A71 /* Coordinates.h in Headers */,

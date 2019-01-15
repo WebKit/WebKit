@@ -406,7 +406,7 @@ def headers_for_type(type):
         'WebCore::GrammarDetail': ['<WebCore/TextCheckerClient.h>'],
         'WebCore::HasInsecureContent': ['<WebCore/FrameLoaderTypes.h>'],
         'WebCore::Highlight': ['<WebCore/InspectorOverlay.h>'],
-        'WebCore::IncludeSecureCookies': ['<WebCore/CookiesStrategy.h>'],
+        'WebCore::IncludeSecureCookies': ['<WebCore/CookieJar.h>'],
         'WebCore::KeyframeValueList': ['<WebCore/GraphicsLayer.h>'],
         'WebCore::KeypressCommand': ['<WebCore/KeyboardEvent.h>'],
         'WebCore::LockBackForwardList': ['<WebCore/FrameLoaderTypes.h>'],

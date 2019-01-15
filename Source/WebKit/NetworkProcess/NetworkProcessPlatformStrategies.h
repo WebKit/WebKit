@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef NetworkProcessPlatformStrategies_h
-#define NetworkProcessPlatformStrategies_h
+#pragma once
 
 #include <WebCore/LoaderStrategy.h>
 #include <WebCore/PlatformStrategies.h>
@@ -37,13 +36,9 @@ public:
     
 private:
     // WebCore::PlatformStrategies
-    WebCore::CookiesStrategy* createCookiesStrategy() override;
     WebCore::LoaderStrategy* createLoaderStrategy() override;
     WebCore::PasteboardStrategy* createPasteboardStrategy() override;
     WebCore::BlobRegistry* createBlobRegistry() override;
 };
 
 } // namespace WebKit
-
-
-#endif // NetworkProcessPlatformStrategies_h

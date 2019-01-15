@@ -29,7 +29,6 @@
 #import "Cookie.h"
 #import "CookieRequestHeaderFieldProxy.h"
 #import "CookieStorageObserver.h"
-#import "CookiesStrategy.h"
 #import "SameSiteInfo.h"
 #import <pal/spi/cf/CFNetworkSPI.h>
 #import <wtf/BlockObjCExceptions.h>

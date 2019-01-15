@@ -210,14 +210,13 @@ static CachedImageClient& dummyCachedImageClient()
     return client;
 }
 
-bool MemoryCache::addImageToCache(NativeImagePtr&& image, const URL& url, const String& domainForCachePartition)
+bool MemoryCache::addImageToCache(NativeImagePtr&& image, const URL& url, const String& domainForCachePartition, const PAL::SessionID& sessionID, const CookieJar* cookieJar)
 {
     ASSERT(image);
-    PAL::SessionID sessionID = PAL::SessionID::defaultSessionID();
     removeImageFromCache(url, domainForCachePartition); // Remove cache entry if it already exists.
 
     auto bitmapImage = BitmapImage::create(WTFMove(image), nullptr);
-    auto cachedImage = std::make_unique<CachedImage>(url, bitmapImage.ptr(), sessionID, domainForCachePartition);
+    auto cachedImage = std::make_unique<CachedImage>(url, bitmapImage.ptr(), sessionID, cookieJar, domainForCachePartition);
 
     cachedImage->addClient(dummyCachedImageClient());
     cachedImage->setDecodedSize(bitmapImage->decodedSize());

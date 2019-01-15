@@ -54,6 +54,7 @@
 #import <WebCore/Frame.h>
 #import <WebCore/FrameLoader.h>
 #import <WebCore/FrameTree.h>
+#import <WebCore/Page.h>
 #import <WebCore/PlatformEventFactoryMac.h>
 #import <WebCore/ProxyServer.h>
 #import <WebCore/ScriptController.h>
@@ -1567,8 +1568,12 @@ bool NetscapePluginInstanceProxy::getCookies(data_t urlData, mach_msg_type_numbe
         auto* document = frame->document();
         if (!document)
             return false;
+        
+        auto* page = document->page();
+        if (!page)
+            return false;
 
-        String cookieString = cookies(*document, url);
+        String cookieString = page->cookieJar().cookies(*document, url);
         WTF::CString cookieStringUTF8 = cookieString.utf8();
         if (cookieStringUTF8.isNull())
             return false;
@@ -1600,7 +1605,11 @@ bool NetscapePluginInstanceProxy::setCookies(data_t urlData, mach_msg_type_numbe
         if (!document)
             return false;
 
-        WebCore::setCookies(*document, url, cookieString);
+        auto* page = document->page();
+        if (!page)
+            return false;
+        
+        page->cookieJar().setCookies(*document, url, cookieString);
         return true;
     }
 

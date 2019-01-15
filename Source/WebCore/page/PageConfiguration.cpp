@@ -48,11 +48,12 @@
 
 namespace WebCore {
 
-PageConfiguration::PageConfiguration(UniqueRef<EditorClient>&& editorClient, Ref<SocketProvider>&& socketProvider, UniqueRef<LibWebRTCProvider>&& libWebRTCProvider, Ref<CacheStorageProvider>&& cacheStorageProvider, Ref<BackForwardClient>&& backForwardClient)
+PageConfiguration::PageConfiguration(UniqueRef<EditorClient>&& editorClient, Ref<SocketProvider>&& socketProvider, UniqueRef<LibWebRTCProvider>&& libWebRTCProvider, Ref<CacheStorageProvider>&& cacheStorageProvider, Ref<BackForwardClient>&& backForwardClient, Ref<CookieJar>&& cookieJar)
     : editorClient(WTFMove(editorClient))
     , socketProvider(WTFMove(socketProvider))
     , libWebRTCProvider(WTFMove(libWebRTCProvider))
     , backForwardClient(WTFMove(backForwardClient))
+    , cookieJar(WTFMove(cookieJar))
     , cacheStorageProvider(WTFMove(cacheStorageProvider))
 {
 }

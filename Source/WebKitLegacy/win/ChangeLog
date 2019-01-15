@@ -1,3 +1,26 @@
+2019-01-15  Alex Christensen  <achristensen@webkit.org>
+
+        Stop using CookiesStrategy
+        https://bugs.webkit.org/show_bug.cgi?id=161106
+
+        Reviewed by Don Olmstead and Antti Koivisto.
+
+        * Plugins/PluginView.cpp:
+        (WebCore::PluginView::getValueForURL):
+        (WebCore::PluginView::setValueForURL):
+        * WebCoreSupport/WebPlatformStrategies.cpp:
+        (WebPlatformStrategies::createBlobRegistry):
+        (WebPlatformStrategies::createCookiesStrategy): Deleted.
+        (WebPlatformStrategies::cookiesForDOM): Deleted.
+        (WebPlatformStrategies::setCookiesFromDOM): Deleted.
+        (WebPlatformStrategies::cookiesEnabled): Deleted.
+        (WebPlatformStrategies::cookieRequestHeaderFieldValue): Deleted.
+        (WebPlatformStrategies::getRawCookies): Deleted.
+        (WebPlatformStrategies::deleteCookie): Deleted.
+        * WebCoreSupport/WebPlatformStrategies.h:
+        * WebView.cpp:
+        (WebView::initWithFrame):
+
 2019-01-08  Alex Christensen  <achristensen@webkit.org>
 
         Stop using NetworkStorageSession in WebProcess

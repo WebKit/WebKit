@@ -37,8 +37,8 @@
 
 namespace WebCore {
 
-CachedCSSStyleSheet::CachedCSSStyleSheet(CachedResourceRequest&& request, PAL::SessionID sessionID)
-    : CachedResource(WTFMove(request), Type::CSSStyleSheet, sessionID)
+CachedCSSStyleSheet::CachedCSSStyleSheet(CachedResourceRequest&& request, const PAL::SessionID& sessionID, const CookieJar* cookieJar)
+    : CachedResource(WTFMove(request), Type::CSSStyleSheet, sessionID, cookieJar)
     , m_decoder(TextResourceDecoder::create("text/css", request.charset()))
 {
 }

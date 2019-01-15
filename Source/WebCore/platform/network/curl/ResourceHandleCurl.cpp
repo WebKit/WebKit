@@ -32,8 +32,8 @@
 
 #if USE(CURL)
 
+#include "CookieJar.h"
 #include "CookieJarCurl.h"
-#include "CookiesStrategy.h"
 #include "CredentialStorage.h"
 #include "CurlCacheManager.h"
 #include "CurlContext.h"

@@ -84,11 +84,6 @@ WebPlatformStrategies::WebPlatformStrategies()
 {
 }
 
-CookiesStrategy* WebPlatformStrategies::createCookiesStrategy()
-{
-    return this;
-}
-
 LoaderStrategy* WebPlatformStrategies::createLoaderStrategy()
 {
     return &WebProcess::singleton().webLoaderStrategy();
@@ -102,52 +97,6 @@ PasteboardStrategy* WebPlatformStrategies::createPasteboardStrategy()
 BlobRegistry* WebPlatformStrategies::createBlobRegistry()
 {
     return new BlobRegistryProxy;
-}
-
-// CookiesStrategy
-
-std::pair<String, bool> WebPlatformStrategies::cookiesForDOM(const PAL::SessionID& sessionID, const URL& firstParty, const SameSiteInfo& sameSiteInfo, const URL& url, Optional<uint64_t> frameID, Optional<uint64_t> pageID, IncludeSecureCookies includeSecureCookies)
-{
-    String cookieString;
-    bool secureCookiesAccessed = false;
-    if (!WebProcess::singleton().ensureNetworkProcessConnection().connection().sendSync(Messages::NetworkConnectionToWebProcess::CookiesForDOM(sessionID, firstParty, sameSiteInfo, url, frameID, pageID, includeSecureCookies), Messages::NetworkConnectionToWebProcess::CookiesForDOM::Reply(cookieString, secureCookiesAccessed), 0))
-        return { String(), false };
-
-    return { cookieString, secureCookiesAccessed };
-}
-
-void WebPlatformStrategies::setCookiesFromDOM(const PAL::SessionID& sessionID, const URL& firstParty, const WebCore::SameSiteInfo& sameSiteInfo, const URL& url, Optional<uint64_t> frameID, Optional<uint64_t> pageID, const String& cookieString)
-{
-    WebProcess::singleton().ensureNetworkProcessConnection().connection().send(Messages::NetworkConnectionToWebProcess::SetCookiesFromDOM(sessionID, firstParty, sameSiteInfo, url, frameID, pageID, cookieString), 0);
-}
-
-bool WebPlatformStrategies::cookiesEnabled(const PAL::SessionID& sessionID)
-{
-    bool result;
-    if (!WebProcess::singleton().ensureNetworkProcessConnection().connection().sendSync(Messages::NetworkConnectionToWebProcess::CookiesEnabled(sessionID), Messages::NetworkConnectionToWebProcess::CookiesEnabled::Reply(result), 0))
-        return false;
-    return result;
-}
-
-std::pair<String, bool> WebPlatformStrategies::cookieRequestHeaderFieldValue(const PAL::SessionID& sessionID, const URL& firstParty, const SameSiteInfo& sameSiteInfo, const URL& url, Optional<uint64_t> frameID, Optional<uint64_t> pageID, IncludeSecureCookies includeSecureCookies)
-{
-    String cookieString;
-    bool secureCookiesAccessed = false;
-    if (!WebProcess::singleton().ensureNetworkProcessConnection().connection().sendSync(Messages::NetworkConnectionToWebProcess::CookieRequestHeaderFieldValue(sessionID, firstParty, sameSiteInfo, url, frameID, pageID, includeSecureCookies), Messages::NetworkConnectionToWebProcess::CookieRequestHeaderFieldValue::Reply(cookieString, secureCookiesAccessed), 0))
-        return { String(), false };
-    return { cookieString, secureCookiesAccessed };
-}
-
-bool WebPlatformStrategies::getRawCookies(const PAL::SessionID& sessionID, const URL& firstParty, const SameSiteInfo& sameSiteInfo, const URL& url, Optional<uint64_t> frameID, Optional<uint64_t> pageID, Vector<Cookie>& rawCookies)
-{
-    if (!WebProcess::singleton().ensureNetworkProcessConnection().connection().sendSync(Messages::NetworkConnectionToWebProcess::GetRawCookies(sessionID, firstParty, sameSiteInfo, url, frameID, pageID), Messages::NetworkConnectionToWebProcess::GetRawCookies::Reply(rawCookies), 0))
-        return false;
-    return true;
-}
-
-void WebPlatformStrategies::deleteCookie(const PAL::SessionID& sessionID, const URL& url, const String& cookieName)
-{
-    WebProcess::singleton().ensureNetworkProcessConnection().connection().send(Messages::NetworkConnectionToWebProcess::DeleteCookie(sessionID, url, cookieName), 0);
 }
 
 #if PLATFORM(COCOA)

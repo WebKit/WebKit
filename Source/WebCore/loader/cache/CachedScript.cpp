@@ -36,8 +36,8 @@
 
 namespace WebCore {
 
-CachedScript::CachedScript(CachedResourceRequest&& request, PAL::SessionID sessionID)
-    : CachedResource(WTFMove(request), Type::Script, sessionID)
+CachedScript::CachedScript(CachedResourceRequest&& request, const PAL::SessionID& sessionID, const CookieJar* cookieJar)
+    : CachedResource(WTFMove(request), Type::Script, sessionID, cookieJar)
     , m_decoder(TextResourceDecoder::create("text/javascript"_s, request.charset()))
 {
 }

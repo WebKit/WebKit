@@ -190,7 +190,8 @@ void ImageLoader::updateFromElement()
         if (m_loadManually) {
             bool autoLoadOtherImages = document.cachedResourceLoader().autoLoadImages();
             document.cachedResourceLoader().setAutoLoadImages(false);
-            newImage = new CachedImage(WTFMove(request), m_element.document().page()->sessionID());
+            auto* page = m_element.document().page();
+            newImage = new CachedImage(WTFMove(request), page->sessionID(), &page->cookieJar());
             newImage->setStatus(CachedResource::Pending);
             newImage->setLoading(true);
             newImage->setOwningCachedResourceLoader(&document.cachedResourceLoader());

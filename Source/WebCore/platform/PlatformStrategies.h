@@ -28,19 +28,11 @@
 namespace WebCore {
 
 class BlobRegistry;
-class CookiesStrategy;
 class LoaderStrategy;
 class PasteboardStrategy;
 
 class PlatformStrategies {
 public:
-    CookiesStrategy* cookiesStrategy()
-    {
-        if (!m_cookiesStrategy)
-            m_cookiesStrategy = createCookiesStrategy();
-        return m_cookiesStrategy;
-    }
-
     LoaderStrategy* loaderStrategy()
     {
         if (!m_loaderStrategy)
@@ -70,12 +62,10 @@ protected:
     }
 
 private:
-    virtual CookiesStrategy* createCookiesStrategy() = 0;
     virtual LoaderStrategy* createLoaderStrategy() = 0;
     virtual PasteboardStrategy* createPasteboardStrategy() = 0;
     virtual BlobRegistry* createBlobRegistry() = 0;
 
-    CookiesStrategy* m_cookiesStrategy { };
     LoaderStrategy* m_loaderStrategy { };
     PasteboardStrategy* m_pasteboardStrategy { };
     BlobRegistry* m_blobRegistry { };

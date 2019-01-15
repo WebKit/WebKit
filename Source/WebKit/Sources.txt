@@ -539,6 +539,7 @@ WebProcess/WebPage/RemoteWebInspectorUI.cpp
 WebProcess/WebPage/VisitedLinkTableController.cpp
 WebProcess/WebPage/WebBackForwardListProxy.cpp
 WebProcess/WebPage/WebContextMenu.cpp
+WebProcess/WebPage/WebCookieJar.cpp
 WebProcess/WebPage/WebDocumentLoader.cpp
 WebProcess/WebPage/WebFrame.cpp
 WebProcess/WebPage/WebInspector.cpp

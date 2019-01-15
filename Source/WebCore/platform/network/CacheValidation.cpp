@@ -26,10 +26,9 @@
 #include "config.h"
 #include "CacheValidation.h"
 
-#include "CookiesStrategy.h"
+#include "CookieJar.h"
 #include "HTTPHeaderMap.h"
 #include "NetworkStorageSession.h"
-#include "PlatformStrategies.h"
 #include "ResourceRequest.h"
 #include "ResourceResponse.h"
 #include "SameSiteInfo.h"
@@ -331,9 +330,12 @@ static String cookieRequestHeaderFieldValue(const NetworkStorageSession& session
     return session.cookieRequestHeaderFieldValue(request.firstPartyForCookies(), SameSiteInfo::create(request), request.url(), WTF::nullopt, WTF::nullopt, request.url().protocolIs("https") ? IncludeSecureCookies::Yes : IncludeSecureCookies::No).first;
 }
 
-static String cookieRequestHeaderFieldValue(CookiesStrategy& cookiesStrategy, const PAL::SessionID& sessionID, const ResourceRequest& request)
+static String cookieRequestHeaderFieldValue(const CookieJar* cookieJar, const PAL::SessionID& sessionID, const ResourceRequest& request)
 {
-    return cookiesStrategy.cookieRequestHeaderFieldValue(sessionID, request.firstPartyForCookies(), SameSiteInfo::create(request), request.url(), WTF::nullopt, WTF::nullopt, request.url().protocolIs("https") ? IncludeSecureCookies::Yes : IncludeSecureCookies::No).first;
+    if (!cookieJar)
+        return { };
+
+    return cookieJar->cookieRequestHeaderFieldValue(sessionID, request.firstPartyForCookies(), SameSiteInfo::create(request), request.url(), WTF::nullopt, WTF::nullopt, request.url().protocolIs("https") ? IncludeSecureCookies::Yes : IncludeSecureCookies::No).first;
 }
 
 static String headerValueForVary(const ResourceRequest& request, const String& headerName, Function<String()>&& cookieRequestHeaderFieldValueFunction)
@@ -372,11 +374,11 @@ Vector<std::pair<String, String>> collectVaryingRequestHeaders(NetworkStorageSes
     });
 }
 
-Vector<std::pair<String, String>> collectVaryingRequestHeaders(CookiesStrategy& cookiesStrategy, const ResourceRequest& request, const ResourceResponse& response, const PAL::SessionID& sessionID)
+Vector<std::pair<String, String>> collectVaryingRequestHeaders(const CookieJar* cookieJar, const ResourceRequest& request, const ResourceResponse& response, const PAL::SessionID& sessionID)
 {
     return collectVaryingRequestHeadersInternal(response, [&] (const String& headerName) {
         return headerValueForVary(request, headerName, [&] {
-            return cookieRequestHeaderFieldValue(cookiesStrategy, sessionID, request);
+            return cookieRequestHeaderFieldValue(cookieJar, sessionID, request);
         });
     });
 }
@@ -402,11 +404,11 @@ bool verifyVaryingRequestHeaders(NetworkStorageSession& storageSession, const Ve
     });
 }
 
-bool verifyVaryingRequestHeaders(CookiesStrategy& cookiesStrategy, const Vector<std::pair<String, String>>& varyingRequestHeaders, const ResourceRequest& request, const PAL::SessionID& sessionID)
+bool verifyVaryingRequestHeaders(const CookieJar* cookieJar, const Vector<std::pair<String, String>>& varyingRequestHeaders, const ResourceRequest& request, const PAL::SessionID& sessionID)
 {
     return verifyVaryingRequestHeadersInternal(varyingRequestHeaders, [&] (const String& headerName) {
         return headerValueForVary(request, headerName, [&] {
-            return cookieRequestHeaderFieldValue(cookiesStrategy, sessionID, request);
+            return cookieRequestHeaderFieldValue(cookieJar, sessionID, request);
         });
     });
 }

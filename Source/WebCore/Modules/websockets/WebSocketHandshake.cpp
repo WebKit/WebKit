@@ -242,9 +242,9 @@ ResourceRequest WebSocketHandshake::clientHandshakeRequest() const
         request.setHTTPHeaderField(HTTPHeaderName::SecWebSocketProtocol, m_clientProtocol);
 
     URL url = httpURLForAuthenticationAndCookies();
-    if (m_allowCookies && m_document) {
+    if (m_allowCookies && m_document && m_document->page()) {
         RELEASE_ASSERT_WITH_SECURITY_IMPLICATION(InspectorInstrumentation::hasFrontends());
-        String cookie = cookieRequestHeaderFieldValue(*m_document, url);
+        String cookie = m_document->page()->cookieJar().cookieRequestHeaderFieldValue(*m_document, url);
         if (!cookie.isEmpty())
             request.setHTTPHeaderField(HTTPHeaderName::Cookie, cookie);
     }
@@ -268,7 +268,7 @@ Optional<CookieRequestHeaderFieldProxy> WebSocketHandshake::clientHandshakeCooki
 {
     if (!m_document || !m_allowCookies)
         return WTF::nullopt;
-    return cookieRequestHeaderFieldProxy(*m_document, httpURLForAuthenticationAndCookies());
+    return CookieJar::cookieRequestHeaderFieldProxy(*m_document, httpURLForAuthenticationAndCookies());
 }
 
 void WebSocketHandshake::reset()

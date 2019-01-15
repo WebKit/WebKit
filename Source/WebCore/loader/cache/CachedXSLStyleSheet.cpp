@@ -36,8 +36,8 @@ namespace WebCore {
 
 #if ENABLE(XSLT)
 
-CachedXSLStyleSheet::CachedXSLStyleSheet(CachedResourceRequest&& request, PAL::SessionID sessionID)
-    : CachedResource(WTFMove(request), Type::XSLStyleSheet, sessionID)
+CachedXSLStyleSheet::CachedXSLStyleSheet(CachedResourceRequest&& request, const PAL::SessionID& sessionID, const CookieJar* cookieJar)
+    : CachedResource(WTFMove(request), Type::XSLStyleSheet, sessionID, cookieJar)
     , m_decoder(TextResourceDecoder::create("text/xsl"))
 {
 }

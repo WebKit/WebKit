@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 Apple Inc. All rights reserved.
+ * Copyright (C) 2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,26 +25,20 @@
 
 #pragma once
 
-#if ENABLE(VIDEO_TRACK)
+#include <WebCore/CookieJar.h>
 
-#include "CachedResource.h"
+namespace WebKit {
 
-namespace WebCore {
-
-class CachedTextTrack final : public CachedResource {
+class WebCookieJar final : public WebCore::CookieJar {
 public:
-    CachedTextTrack(CachedResourceRequest&&, const PAL::SessionID&, const CookieJar*);
-
-private:
-    bool mayTryReplaceEncodedData() const override { return true; }
-    void updateBuffer(SharedBuffer&) override;
-    void finishLoading(SharedBuffer*) override;
-
-    void doUpdateBuffer(SharedBuffer*);
+    static Ref<WebCookieJar> create() { return adoptRef(*new WebCookieJar); }
+    
+    String cookies(WebCore::Document&, const URL&) const final;
+    void setCookies(WebCore::Document&, const URL&, const String& cookieString) final;
+    bool cookiesEnabled(const WebCore::Document&) const final;
+    std::pair<String, WebCore::SecureCookiesAccessed> cookieRequestHeaderFieldValue(const PAL::SessionID&, const URL& firstParty, const WebCore::SameSiteInfo&, const URL&, Optional<uint64_t> frameID, Optional<uint64_t> pageID, WebCore::IncludeSecureCookies) const final;
+    bool getRawCookies(const WebCore::Document&, const URL&, Vector<WebCore::Cookie>&) const final;
+    void deleteCookie(const WebCore::Document&, const URL&, const String& cookieName) final;
 };
 
-} // namespace WebCore
-
-SPECIALIZE_TYPE_TRAITS_CACHED_RESOURCE(CachedTextTrack, CachedResource::Type::TextTrackResource)
-
-#endif // ENABLE(VIDEO_TRACK)
+} // namespace WebKit

@@ -7098,7 +7098,9 @@ String HTMLMediaElement::mediaPlayerNetworkInterfaceName() const
 
 bool HTMLMediaElement::mediaPlayerGetRawCookies(const URL& url, Vector<Cookie>& cookies) const
 {
-    return getRawCookies(document(), url, cookies);
+    if (auto* page = document().page())
+        return page->cookieJar().getRawCookies(document(), url, cookies);
+    return false;
 }
 #endif
 
