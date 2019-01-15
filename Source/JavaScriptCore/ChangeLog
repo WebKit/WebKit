@@ -1,3 +1,46 @@
+2019-01-14  Yusuke Suzuki  <yusukesuzuki@slowstart.org>
+
+        [JSC] AI should check the given constant's array type when folding GetByVal into constant
+        https://bugs.webkit.org/show_bug.cgi?id=193413
+        <rdar://problem/46092389>
+
+        Reviewed by Keith Miller.
+
+        If GetByVal's DFG::ArrayMode's type is Array::Double, we expect that the result of GetByVal is Double, since we already performed CheckStructure or CheckArray
+        to ensure this array type. But this assumption on the given value becomes wrong in AI, since CheckStructure may not perform filtering. And the proven AbstractValue
+        in GetByVal would not be expected one.
+
+        We have the graph before performing constant folding.
+
+        53:<!0:->     GetLocal(Check:Untyped:@77, JS|MustGen|UseAsOther, Array, arg2(C<Array>/FlushedCell), R:Stack(7), bc#37, ExitValid)  predicting Array
+        54:< 1:->     JSConstant(JS|PureNum|UseAsOther|UseAsInt|ReallyWantsInt, BoolInt32, Int32: 0, bc#37, ExitValid)
+        93:<!0:->     CheckStructure(Cell:@53, MustGen, [%C7:Array], R:JSCell_structureID, Exits, bc#37, ExitValid)
+        94:< 1:->     GetButterfly(Check:Cell:@53, Storage|PureInt, R:JSObject_butterfly, Exits, bc#37, ExitValid)
+        55:<!0:->     GetByVal(Check:KnownCell:@53, Check:Int32:@54, Check:Untyped:@94, Double|MustGen|VarArgs|PureInt, AnyIntAsDouble|NonIntAsdouble, Double+OriginalCopyOnWriteArray+SaneChain+AsIs+Read, R:Butterfly_publicLength,IndexedDoubleProperties, Exits, bc#37, ExitValid)  predicting StringIdent|NonIntAsdouble
+
+        And 53 is converted to JSConstant in the constant folding. It leads to constant folding attempt in GetByVal.
+
+        53:< 1:->     JSConstant(JS|UseAsOther, Array, Weak:Object: 0x117fb4370 with butterfly 0x8000e4050 (Structure %BV:Array), StructureID: 104, bc#37, ExitValid)
+        54:< 1:->     JSConstant(JS|PureNum|UseAsOther|UseAsInt|ReallyWantsInt, BoolInt32, Int32: 0, bc#37, ExitValid)
+        93:<!0:->     CheckStructure(Cell:@53, MustGen, [%C7:Array], R:JSCell_structureID, Exits, bc#37, ExitValid)
+        94:< 1:->     GetButterfly(Check:Cell:@53, Storage|PureInt, R:JSObject_butterfly, Exits, bc#37, ExitValid)
+        55:<!0:->     GetByVal(Check:KnownCell:@53, Check:Int32:@54, Check:Untyped:@94, Double|MustGen|VarArgs|PureInt, AnyIntAsDouble|NonIntAsdouble, Double+OriginalCopyOnWriteArray+SaneChain+AsIs+Read, R:Butterfly_publicLength,IndexedDoubleProperties, Exits, bc#37, ExitValid)  predicting StringIdent|NonIntAsdouble
+
+        GetByVal gets constant Array from @53, and attempt to perform constant folding by leverating CoW state: if the given array's butterfly is CoW and we performed CoW array check for this GetByVal, the array would not be changed as long as the check works.
+        However, CheckStructure for @53 does not filter anything at AI. So, if @53 is CopyOnWrite | Contiguous array (not CopyOnWrite | Double array!), GetByVal will get a JSValue. But it does not meet the requirement of GetByVal since it has Double Array mode, and says it returns Double.
+        Here, CheckStructure is valid because structure of the constant object would be changed. What we should do is additional CoW & ArrayShape check in GetByVal when folding since this node leverages CoW's interesting feature,
+        "If CoW array check (CheckStructure etc.) is emitted by GetByVal's DFG::ArrayMode, the content is not changed from the creation!".
+
+        This patch adds ArrayShape check in addition to CoW status check in GetByVal.
+
+        Unfortunately, this crash is very flaky. In the above case, if @53 stays GetLocal after the constant folding phase, this issue does not occur. We can see this crash in r238109, but it is really hard to reproduce it in the current ToT.
+        I verified this fix works in r238109 with the attached test.
+
+        * dfg/DFGAbstractInterpreterInlines.h:
+        (JSC::DFG::AbstractInterpreter<AbstractStateType>::executeEffects):
+        * dfg/DFGAbstractValue.cpp:
+        (JSC::DFG::AbstractValue::fixTypeForRepresentation):
+
 2019-01-14  Caio Lima  <ticaiolima@gmail.com>
 
         [BigInt] Literal parsing is crashing when used inside a Object Literal

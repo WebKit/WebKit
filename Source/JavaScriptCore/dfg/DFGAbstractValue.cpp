@@ -186,7 +186,7 @@ void AbstractValue::fixTypeForRepresentation(Graph& graph, NodeFlags representat
 {
     if (representation == NodeResultDouble) {
         if (m_value) {
-            ASSERT(m_value.isNumber());
+            DFG_ASSERT(graph, node, m_value.isNumber());
             if (m_value.isInt32())
                 m_value = jsDoubleNumber(m_value.asNumber());
         }

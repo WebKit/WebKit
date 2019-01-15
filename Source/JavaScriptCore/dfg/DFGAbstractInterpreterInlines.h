@@ -1934,9 +1934,17 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
                         return false;
 
                     Structure* structure = m_vm.getStructure(structureIDLate);
-
-                    if (!isCopyOnWrite(structure->indexingMode()))
+                    switch (node->arrayMode().type()) {
+                    case Array::Int32:
+                    case Array::Contiguous:
+                    case Array::Double:
+                        if (structure->indexingMode() != (toIndexingShape(node->arrayMode().type()) | CopyOnWrite | IsArray))
+                            return false;
+                        break;
+                    default:
                         return false;
+                    }
+                    ASSERT(isCopyOnWrite(structure->indexingMode()));
 
                     JSImmutableButterfly* immutableButterfly = JSImmutableButterfly::fromButterfly(butterfly);
                     if (index < immutableButterfly->length()) {
