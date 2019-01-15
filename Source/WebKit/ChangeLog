@@ -1,5 +1,26 @@
 2019-01-15  Alan Coon  <alancoon@apple.com>
 
+        Apply patch. rdar://problem/47260255
+
+    2019-01-15  Chris Dumez  <cdumez@apple.com>
+
+            Better disable Automatic HTTPS upgrade
+            <rdar://problem/47213216>
+
+            Reviewed by Geoff Garen.
+
+            Drop database file from the bundle as it is currently huge and increases
+            our project size unnecessarily.
+
+            Also hide the feature from the experimental feature menu since enabling
+            it will not do anything without its database.
+
+            * DerivedSources.make:
+            * Shared/WebPreferences.yaml:
+            * WebKit.xcodeproj/project.pbxproj:
+
+2019-01-15  Alan Coon  <alancoon@apple.com>
+
         Revert r239446. rdar://problem/47125351
 
 2019-01-09  Kocsen Chung  <kocsen_chung@apple.com>

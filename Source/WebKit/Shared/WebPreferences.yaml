@@ -40,7 +40,6 @@ HTTPSUpgradeEnabled:
    defaultValue: false
    humanReadableName: "Automatic HTTPS upgrade"
    humanReadableDescription: "Automatic HTTPS upgrade for known supported sites"
-   category: experimental
 
 JavaEnabled:
   type: bool
