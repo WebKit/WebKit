@@ -73,6 +73,7 @@
 #include "StyleResolver.h"
 #include "StyleScope.h"
 #include "StyleScrollSnapPoints.h"
+#include "TouchAction.h"
 #include "WebKitFontFamilyNames.h"
 #include "WillChangeData.h"
 #include <wtf/NeverDestroyed.h>
@@ -1745,6 +1746,32 @@ static Ref<CSSPrimitiveValue> valueForFamily(const AtomicString& family)
         return CSSValuePool::singleton().createIdentifierValue(familyIdentifier);
     return CSSValuePool::singleton().createFontFamilyValue(family);
 }
+
+#if ENABLE(TOUCH_EVENTS)
+static Ref<CSSValue> touchActionFlagsToCSSValue(OptionSet<TouchAction> touchActions)
+{
+    auto& cssValuePool = CSSValuePool::singleton();
+
+    if (touchActions & TouchAction::Auto)
+        return cssValuePool.createIdentifierValue(CSSValueAuto);
+    if (touchActions & TouchAction::None)
+        return cssValuePool.createIdentifierValue(CSSValueNone);
+    if (touchActions & TouchAction::Manipulation)
+        return cssValuePool.createIdentifierValue(CSSValueManipulation);
+
+    auto list = CSSValueList::createSpaceSeparated();
+    if (touchActions & TouchAction::PanX)
+        list->append(cssValuePool.createIdentifierValue(CSSValuePanX));
+    if (touchActions & TouchAction::PanY)
+        list->append(cssValuePool.createIdentifierValue(CSSValuePanY));
+    if (touchActions & TouchAction::PinchZoom)
+        list->append(cssValuePool.createIdentifierValue(CSSValuePinchZoom));
+
+    if (!list->length())
+        return cssValuePool.createIdentifierValue(CSSValueAuto);
+    return WTFMove(list);
+}
+#endif
 
 static Ref<CSSValue> renderTextDecorationFlagsToCSSValue(OptionSet<TextDecoration> textDecoration)
 {
@@ -3732,7 +3759,7 @@ RefPtr<CSSValue> ComputedStyleExtractor::valueForPropertyinStyle(const RenderSty
         case CSSPropertyWebkitTapHighlightColor:
             return currentColorOrValidColor(&style, style.tapHighlightColor());
         case CSSPropertyTouchAction:
-            return cssValuePool.createValue(style.touchAction());
+            return touchActionFlagsToCSSValue(style.touchActions());
 #endif
 #if PLATFORM(IOS_FAMILY)
         case CSSPropertyWebkitTouchCallout:

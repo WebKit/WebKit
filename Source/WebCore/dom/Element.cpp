@@ -103,6 +103,7 @@
 #include "StyleScope.h"
 #include "StyleTreeResolver.h"
 #include "TextIterator.h"
+#include "TouchAction.h"
 #include "VoidCallback.h"
 #include "WebAnimation.h"
 #include "WheelEvent.h"
@@ -1664,7 +1665,7 @@ URL Element::absoluteLinkURL() const
 #if ENABLE(TOUCH_EVENTS)
 bool Element::allowsDoubleTapGesture() const
 {
-    if (renderStyle() && renderStyle()->touchAction() != TouchAction::Auto)
+    if (renderStyle() && renderStyle()->touchActions() != TouchAction::Auto)
         return false;
 
     Element* parent = parentElement();

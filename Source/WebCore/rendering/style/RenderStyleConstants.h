@@ -1085,13 +1085,6 @@ enum class CSSBoxType : uint8_t {
     ViewBox
 };
 
-#if ENABLE(TOUCH_EVENTS)
-enum class TouchAction : uint8_t {
-    Auto,
-    Manipulation
-};
-#endif
-
 #if ENABLE(CSS_SCROLL_SNAP)
 enum class ScrollSnapStrictness : uint8_t {
     None,

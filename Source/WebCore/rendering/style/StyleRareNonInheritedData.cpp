@@ -77,7 +77,7 @@ StyleRareNonInheritedData::StyleRareNonInheritedData()
     , justifySelf(RenderStyle::initialSelfAlignment())
     , customProperties(StyleCustomPropertyData::create())
 #if ENABLE(TOUCH_EVENTS)
-    , touchAction(static_cast<unsigned>(RenderStyle::initialTouchAction()))
+    , touchActions(static_cast<unsigned>(RenderStyle::initialTouchActions()))
 #endif
     , pageSizeType(PAGE_SIZE_AUTO)
     , transformStyle3D(static_cast<unsigned>(RenderStyle::initialTransformStyle3D()))
@@ -171,7 +171,7 @@ inline StyleRareNonInheritedData::StyleRareNonInheritedData(const StyleRareNonIn
     , customProperties(o.customProperties)
     , customPaintWatchedProperties(o.customPaintWatchedProperties ? std::make_unique<HashSet<String>>(*o.customPaintWatchedProperties) : nullptr)
 #if ENABLE(TOUCH_EVENTS)
-    , touchAction(o.touchAction)
+    , touchActions(o.touchActions)
 #endif
     , pageSizeType(o.pageSizeType)
     , transformStyle3D(o.transformStyle3D)
@@ -286,7 +286,7 @@ bool StyleRareNonInheritedData::operator==(const StyleRareNonInheritedData& o) c
         && textCombine == o.textCombine
         && textDecorationStyle == o.textDecorationStyle
 #if ENABLE(TOUCH_EVENTS)
-        && touchAction == o.touchAction
+        && touchActions == o.touchActions
 #endif
 #if ENABLE(CSS_COMPOSITING)
         && effectiveBlendMode == o.effectiveBlendMode

@@ -52,6 +52,7 @@
 #include "Settings.h"
 #include "StyleResolver.h"
 #include "StyleScrollSnapPoints.h"
+#include "TouchAction.h"
 #include "TransformFunctions.h"
 #include <wtf/Optional.h>
 
@@ -116,6 +117,7 @@ public:
 #endif
 #if ENABLE(TOUCH_EVENTS)
     static Color convertTapHighlightColor(StyleResolver&, const CSSValue&);
+    static OptionSet<TouchAction> convertTouchAction(StyleResolver&, const CSSValue&);
 #endif
 #if ENABLE(ACCELERATED_OVERFLOW_SCROLLING)
     static bool convertOverflowScrolling(StyleResolver&, const CSSValue&);
@@ -1344,6 +1346,26 @@ inline bool StyleBuilderConverter::convertTouchCallout(StyleResolver&, const CSS
 inline Color StyleBuilderConverter::convertTapHighlightColor(StyleResolver& styleResolver, const CSSValue& value)
 {
     return styleResolver.colorFromPrimitiveValue(downcast<CSSPrimitiveValue>(value));
+}
+
+inline OptionSet<TouchAction> StyleBuilderConverter::convertTouchAction(StyleResolver&, const CSSValue& value)
+{
+    if (is<CSSPrimitiveValue>(value))
+        return downcast<CSSPrimitiveValue>(value);
+
+    if (is<CSSValueList>(value)) {
+        OptionSet<TouchAction> touchActions;
+        for (auto& currentValue : downcast<CSSValueList>(value)) {
+            auto& primitiveValue = downcast<CSSPrimitiveValue>(currentValue.get());
+            auto primitiveValueID = primitiveValue.valueID();
+            if (primitiveValueID != CSSValuePanX && primitiveValueID != CSSValuePanY && primitiveValueID != CSSValuePinchZoom)
+                return RenderStyle::initialTouchActions();
+            touchActions.add(primitiveValue);
+        }
+        return touchActions;
+    }
+
+    return RenderStyle::initialTouchActions();
 }
 #endif
 

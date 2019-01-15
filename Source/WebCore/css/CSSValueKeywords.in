@@ -1354,7 +1354,12 @@ scroll-position
 
 #if defined(ENABLE_TOUCH_EVENTS) && ENABLE_TOUCH_EVENTS
 // touch-action
+// auto
+// none
 manipulation
+pan-x
+pan-y
+pinch-zoom
 #endif
 
 // hanging-punctuation

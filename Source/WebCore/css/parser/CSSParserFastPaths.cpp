@@ -758,10 +758,6 @@ bool CSSParserFastPaths::isValidKeywordPropertyAndValue(CSSPropertyID propertyId
         return valueID == CSSValueNormal || valueID == CSSValueBreakAll || valueID == CSSValueKeepAll || valueID == CSSValueBreakWord;
     case CSSPropertyWebkitBorderFit:
         return valueID == CSSValueBorder || valueID == CSSValueLines;
-#if ENABLE(TOUCH_EVENTS)
-    case CSSPropertyTouchAction: // auto | manipulation
-        return valueID == CSSValueAuto || valueID == CSSValueManipulation;
-#endif
 #if ENABLE(CSS_TRAILING_WORD)
     case CSSPropertyAppleTrailingWord: // auto | -apple-partially-balanced
         return valueID == CSSValueAuto || valueID == CSSValueWebkitPartiallyBalanced;
@@ -940,9 +936,6 @@ bool CSSParserFastPaths::isKeywordPropertyID(CSSPropertyID propertyId)
 #if ENABLE(CSS_COMPOSITING)
     case CSSPropertyIsolation:
     case CSSPropertyMixBlendMode:
-#endif
-#if ENABLE(TOUCH_EVENTS)
-    case CSSPropertyTouchAction:
 #endif
 #if ENABLE(CSS_BOX_DECORATION_BREAK)
     case CSSPropertyWebkitBoxDecorationBreak:

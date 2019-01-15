@@ -1,3 +1,46 @@
+2019-01-11  Antoine Quint  <graouts@apple.com>
+
+        Support parsing of additional values for the touch-action property
+        https://bugs.webkit.org/show_bug.cgi?id=193314
+        <rdar://problem/47176519>
+
+        Reviewed by Dean Jackson.
+
+        We add parsing support for the "none", "pan-x", "pan-y" and "pinch-zoom" values of the CSS "touch-action" property.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::touchActionFlagsToCSSValue):
+        (WebCore::ComputedStyleExtractor::valueForPropertyinStyle):
+        * css/CSSPrimitiveValueMappings.h:
+        (WebCore::CSSPrimitiveValue::CSSPrimitiveValue):
+        (WebCore::CSSPrimitiveValue::operator OptionSet<TouchAction> const):
+        (WebCore::CSSPrimitiveValue::operator TouchAction const): Deleted.
+        * css/CSSProperties.json:
+        * css/CSSValueKeywords.in:
+        * css/StyleBuilderConverter.h:
+        (WebCore::StyleBuilderConverter::convertTouchAction):
+        * css/parser/CSSParserFastPaths.cpp:
+        (WebCore::CSSParserFastPaths::isValidKeywordPropertyAndValue):
+        (WebCore::CSSParserFastPaths::isKeywordPropertyID):
+        * css/parser/CSSPropertyParser.cpp:
+        (WebCore::consumeTouchAction):
+        * dom/Element.cpp:
+        (WebCore::Element::allowsDoubleTapGesture const):
+        * platform/TouchAction.h: Added.
+        * rendering/style/RenderStyle.h:
+        (WebCore::RenderStyle::touchActions const):
+        (WebCore::RenderStyle::setTouchActions):
+        (WebCore::RenderStyle::initialTouchActions):
+        (WebCore::RenderStyle::touchAction const): Deleted.
+        (WebCore::RenderStyle::setTouchAction): Deleted.
+        (WebCore::RenderStyle::initialTouchAction): Deleted.
+        * rendering/style/RenderStyleConstants.h:
+        * rendering/style/StyleRareNonInheritedData.cpp:
+        (WebCore::StyleRareNonInheritedData::StyleRareNonInheritedData):
+        (WebCore::StyleRareNonInheritedData::operator== const):
+        * rendering/style/StyleRareNonInheritedData.h:
+
 2019-01-15  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: Audit: create new IDL type for exposing special functionality in test context

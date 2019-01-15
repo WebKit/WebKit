@@ -64,6 +64,7 @@
 #include "StyleVisualData.h"
 #include "TextFlags.h"
 #include "ThemeTypes.h"
+#include "TouchAction.h"
 #include "TransformOperations.h"
 #include "UnicodeBidi.h"
 #include <memory>
@@ -704,7 +705,7 @@ public:
     int initialLetterHeight() const { return initialLetter().height(); }
 
 #if ENABLE(TOUCH_EVENTS)
-    TouchAction touchAction() const { return static_cast<TouchAction>(m_rareNonInheritedData->touchAction); }
+    OptionSet<TouchAction> touchActions() const { return OptionSet<TouchAction>::fromRaw(m_rareNonInheritedData->touchActions); }
 #endif
 
 #if ENABLE(CSS_SCROLL_SNAP)
@@ -1223,7 +1224,7 @@ public:
     void setInitialLetter(const IntSize& size) { SET_VAR(m_rareNonInheritedData, initialLetter, size); }
     
 #if ENABLE(TOUCH_EVENTS)
-    void setTouchAction(TouchAction touchAction) { SET_VAR(m_rareNonInheritedData, touchAction, static_cast<unsigned>(touchAction)); }
+    void setTouchActions(OptionSet<TouchAction> touchActions) { SET_VAR(m_rareNonInheritedData, touchActions, touchActions.toRaw()); }
 #endif
 
 #if ENABLE(CSS_SCROLL_SNAP)
@@ -1619,7 +1620,7 @@ public:
     static WillChangeData* initialWillChange() { return nullptr; }
 
 #if ENABLE(TOUCH_EVENTS)
-    static TouchAction initialTouchAction() { return TouchAction::Auto; }
+    static TouchAction initialTouchActions() { return TouchAction::Auto; }
 #endif
 
 #if ENABLE(CSS_SCROLL_SNAP)

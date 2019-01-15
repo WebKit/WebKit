@@ -6677,10 +6677,16 @@
         "touch-action": {
             "values": [
                 "auto",
-                "manipulation"
+                "none",
+                "manipulation",
+                "pan-x",
+                "pan-y",
+                "pinch-zoom"
             ],
             "codegen-properties": {
-                "enable-if": "ENABLE_TOUCH_EVENTS"
+                "name-for-methods": "TouchActions",
+                "enable-if": "ENABLE_TOUCH_EVENTS",
+                "converter": "TouchAction"
             },
             "specification": {
                 "url": "https://www.w3.org/TR/pointerevents/#the-touch-action-css-property"

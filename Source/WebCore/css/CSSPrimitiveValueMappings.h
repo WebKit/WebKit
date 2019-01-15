@@ -42,6 +42,7 @@
 #include "SVGRenderStyleDefs.h"
 #include "TextFlags.h"
 #include "ThemeTypes.h"
+#include "TouchAction.h"
 #include "UnicodeBidi.h"
 #include "WritingMode.h"
 #include <wtf/MathExtras.h>
@@ -5247,10 +5248,22 @@ template<> inline CSSPrimitiveValue::CSSPrimitiveValue(TouchAction touchAction)
     case TouchAction::Manipulation:
         m_value.valueID = CSSValueManipulation;
         break;
+    case TouchAction::None:
+        m_value.valueID = CSSValueNone;
+        break;
+    case TouchAction::PanX:
+        m_value.valueID = CSSValuePanX;
+        break;
+    case TouchAction::PanY:
+        m_value.valueID = CSSValuePanY;
+        break;
+    case TouchAction::PinchZoom:
+        m_value.valueID = CSSValuePinchZoom;
+        break;
     }
 }
 
-template<> inline CSSPrimitiveValue::operator TouchAction() const
+template<> inline CSSPrimitiveValue::operator OptionSet<TouchAction>() const
 {
     ASSERT(isValueID());
     switch (m_value.valueID) {
@@ -5258,6 +5271,14 @@ template<> inline CSSPrimitiveValue::operator TouchAction() const
         return TouchAction::Auto;
     case CSSValueManipulation:
         return TouchAction::Manipulation;
+    case CSSValueNone:
+        return TouchAction::None;
+    case CSSValuePanX:
+        return TouchAction::PanX;
+    case CSSValuePanY:
+        return TouchAction::PanY;
+    case CSSValuePinchZoom:
+        return TouchAction::PinchZoom;
     default:
         break;
     }
