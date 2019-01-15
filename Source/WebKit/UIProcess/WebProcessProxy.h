@@ -70,7 +70,6 @@ namespace WebKit {
 class NetworkProcessProxy;
 class ObjCObjectGraph;
 class PageClient;
-class ProvisionalPageProxy;
 class UserMediaCaptureManagerProxy;
 class VisitedLinkStore;
 class WebBackForwardListItem;
@@ -124,9 +123,6 @@ public:
 
     enum class EndsUsingDataStore : bool { No, Yes };
     void removeWebPage(WebPageProxy&, uint64_t pageID, EndsUsingDataStore);
-
-    void addProvisionalPageProxy(ProvisionalPageProxy& provisionalPage) { ASSERT(!m_provisionalPages.contains(&provisionalPage)); m_provisionalPages.add(&provisionalPage); }
-    void removeProvisionalPageProxy(ProvisionalPageProxy& provisionalPage) { ASSERT(m_provisionalPages.contains(&provisionalPage)); m_provisionalPages.remove(&provisionalPage); }
 
     typename WebPageProxyMap::ValuesConstIteratorRange pages() const { return m_pageMap.values(); }
     unsigned pageCount() const { return m_pageMap.size(); }
@@ -334,8 +330,6 @@ private:
 
     void logDiagnosticMessageForResourceLimitTermination(const String& limitKey);
 
-    bool hasProvisionalPageWithID(uint64_t pageID) const;
-
     enum class IsWeak { No, Yes };
     template<typename T> class WeakOrStrongPtr {
     public:
@@ -379,7 +373,6 @@ private:
 
     WebPageProxyMap m_pageMap;
     WebFrameProxyMap m_frameMap;
-    HashSet<ProvisionalPageProxy*> m_provisionalPages;
     UserInitiatedActionMap m_userInitiatedActionMap;
 
     HashSet<VisitedLinkStore*> m_visitedLinkStores;

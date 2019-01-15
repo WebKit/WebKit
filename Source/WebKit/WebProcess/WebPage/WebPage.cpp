@@ -402,7 +402,7 @@ WebPage::WebPage(uint64_t pageID, WebPageCreationParameters&& parameters)
     , m_overrideContentSecurityPolicy { parameters.overrideContentSecurityPolicy }
     , m_cpuLimit(parameters.cpuLimit)
 #if PLATFORM(MAC)
-    , m_shouldAttachDrawingAreaOnPageTransition(parameters.isProcessSwap)
+    , m_shouldAttachDrawingAreaOnPageTransition(parameters.isSwapFromSuspended)
 #endif
 {
     ASSERT(m_pageID);
@@ -473,8 +473,8 @@ WebPage::WebPage(uint64_t pageID, WebPageCreationParameters&& parameters)
     m_drawingArea->setPaintingEnabled(false);
     m_drawingArea->setShouldScaleViewToFitDocument(parameters.shouldScaleViewToFitDocument);
 
-    if (parameters.isProcessSwap)
-        freezeLayerTree(LayerTreeFreezeReason::ProcessSwap);
+    if (parameters.isSwapFromSuspended)
+        freezeLayerTree(LayerTreeFreezeReason::SwapFromSuspended);
 
 #if ENABLE(ASYNC_SCROLLING)
     m_useAsyncScrolling = parameters.store.getBoolValueForKey(WebPreferencesKey::threadedScrollingEnabledKey());
@@ -698,7 +698,7 @@ void WebPage::reinitializeWebPage(WebPageCreationParameters&& parameters)
         m_drawingArea->updatePreferences(parameters.store);
         m_drawingArea->setPaintingEnabled(true);
 #if PLATFORM(MAC)
-        m_shouldAttachDrawingAreaOnPageTransition = parameters.isProcessSwap;
+        m_shouldAttachDrawingAreaOnPageTransition = parameters.isSwapFromSuspended;
 #endif
         unfreezeLayerTree(LayerTreeFreezeReason::PageSuspended);
     }
@@ -3055,6 +3055,12 @@ void WebPage::didReceivePolicyDecision(uint64_t frameID, uint64_t listenerID, We
     WebFrame* frame = WebProcess::singleton().webFrame(frameID);
     if (!frame)
         return;
+    if (policyAction == WebPolicyAction::Suspend) {
+        ASSERT(frame == m_mainFrame);
+        setIsSuspended(true);
+
+        WebProcess::singleton().sendPrewarmInformation(mainWebFrame()->url());
+    }
     frame->didReceivePolicyDecision(listenerID, policyAction, navigationID, downloadID, WTFMove(websitePolicies));
 }
 
@@ -3096,7 +3102,7 @@ void WebPage::didCompletePageTransition()
 
     bool isInitialEmptyDocument = !m_mainFrame;
     if (!isInitialEmptyDocument)
-        unfreezeLayerTree(LayerTreeFreezeReason::ProcessSwap);
+        unfreezeLayerTree(LayerTreeFreezeReason::SwapFromSuspended);
 
 #if PLATFORM(MAC)
     if (m_shouldAttachDrawingAreaOnPageTransition && !isInitialEmptyDocument) {
@@ -6308,10 +6314,6 @@ void WebPage::setIsSuspended(bool suspended)
     if (m_isSuspended) {
         // Unfrozen on drawing area reset.
         freezeLayerTree(LayerTreeFreezeReason::PageSuspended);
-
-        WebProcess::singleton().sendPrewarmInformation(mainWebFrame()->url());
-
-        suspendForProcessSwap();
     } else
         m_shouldResetDrawingAreaAfterSuspend = true;
 }

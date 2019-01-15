@@ -44,7 +44,6 @@
 #import "NavigationState.h"
 #import "ObjCObjectGraph.h"
 #import "PageClient.h"
-#import "ProvisionalPageProxy.h"
 #import "RemoteLayerTreeScrollingPerformanceData.h"
 #import "RemoteLayerTreeTransaction.h"
 #import "RemoteObjectRegistry.h"
@@ -4701,11 +4700,6 @@ FOR_EACH_PRIVATE_WKCONTENTVIEW_ACTION(FORWARD_ACTION_TO_WKCONTENTVIEW)
 {
     Ref<WebKit::WebProcessProxy> protectedProcessProxy(_page->process());
     protectedProcessProxy->requestTermination(WebKit::ProcessTerminationReason::RequestedByClient);
-
-    if (auto* provisionalPageProxy = _page->provisionalPageProxy()) {
-        Ref<WebKit::WebProcessProxy> protectedProcessProxy(provisionalPageProxy->process());
-        protectedProcessProxy->requestTermination(WebKit::ProcessTerminationReason::RequestedByClient);
-    }
 }
 
 #if PLATFORM(MAC)

@@ -263,6 +263,8 @@ static WebCore::PolicyAction toPolicyAction(WebPolicyAction policyAction)
         return WebCore::PolicyAction::Ignore;
     case WebPolicyAction::Download:
         return WebCore::PolicyAction::Download;
+    case WebPolicyAction::Suspend:
+        break;
     }
     ASSERT_NOT_REACHED();
     return WebCore::PolicyAction::Ignore;
@@ -270,8 +272,11 @@ static WebCore::PolicyAction toPolicyAction(WebPolicyAction policyAction)
 
 void WebFrame::didReceivePolicyDecision(uint64_t listenerID, WebPolicyAction action, uint64_t navigationID, DownloadID downloadID, Optional<WebsitePoliciesData>&& websitePolicies)
 {
-    if (!m_coreFrame || !m_policyListenerID || listenerID != m_policyListenerID || !m_policyFunction)
+    if (!m_coreFrame || !m_policyListenerID || listenerID != m_policyListenerID || !m_policyFunction) {
+        if (action == WebPolicyAction::Suspend)
+            page()->send(Messages::WebPageProxy::DidFailToSuspendAfterProcessSwap());
         return;
+    }
 
     FramePolicyFunction function = WTFMove(m_policyFunction);
     bool forNavigationAction = m_policyFunctionForNavigationAction == ForNavigationAction::Yes;
@@ -287,7 +292,16 @@ void WebFrame::didReceivePolicyDecision(uint64_t listenerID, WebPolicyAction act
             documentLoader->setNavigationID(navigationID);
     }
 
+    bool shouldSuspend = false;
+    if (action == WebPolicyAction::Suspend) {
+        shouldSuspend = true;
+        action = WebPolicyAction::Ignore;
+    }
+
     function(toPolicyAction(action));
+
+    if (shouldSuspend)
+        page()->suspendForProcessSwap();
 }
 
 void WebFrame::startDownload(const WebCore::ResourceRequest& request, const String& suggestedName)

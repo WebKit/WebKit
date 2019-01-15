@@ -1,3 +1,29 @@
+2019-01-15  Chris Dumez  <cdumez@apple.com>
+
+        Unreviewed, rolling out r239993, r239995, r239997, and
+        r239999.
+
+        Caused assertions under
+        ViewGestureController::disconnectFromProcess()
+
+        Reverted changesets:
+
+        "Regression(PSON) View becomes blank after click a cross-site
+        download link"
+        https://bugs.webkit.org/show_bug.cgi?id=193361
+        https://trac.webkit.org/changeset/239993
+
+        "Unreviewed iOS build fix after r239993."
+        https://trac.webkit.org/changeset/239995
+
+        "Fix iOS build after r239993"
+        https://bugs.webkit.org/show_bug.cgi?id=193361
+        https://trac.webkit.org/changeset/239997
+
+        "Unreviewed, revert part of r239997 as it is not needed to fix
+        the build."
+        https://trac.webkit.org/changeset/239999
+
 2019-01-15  Tim Horton  <timothy_horton@apple.com>
 
         Cannot tab out of WKWebView on macOS
