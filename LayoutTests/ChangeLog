@@ -1,3 +1,18 @@
+2019-01-14  John Wilander  <wilander@apple.com>
+
+        Restructure http/tests/resourceLoadStatistics/remove-blocking-in-redirect.html to address flakiness
+        https://bugs.webkit.org/show_bug.cgi?id=191211
+        <rdar://problem/45818606>
+
+        Unreviewed test gardening.
+
+        This test is flaky on the MacOS WK2 bot. The patch avoids a page navigation and
+        redirect which may avoid the code that changed in
+        https://trac.webkit.org/changeset/237735/webkit and made the test more flaky.
+
+        * http/tests/resourceLoadStatistics/remove-blocking-in-redirect-expected.txt:
+        * http/tests/resourceLoadStatistics/remove-blocking-in-redirect.html:
+
 2019-01-14  Simon Fraser  <simon.fraser@apple.com>
 
         Animation and other code is too aggressive about invalidating layer composition
