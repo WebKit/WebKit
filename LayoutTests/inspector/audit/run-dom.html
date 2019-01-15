@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script src="resources/audit-utilities.js"></script>
+<script>
+function test()
+{
+    let suite = InspectorTest.Audit.createSuite("Audit.run.DOM");
+
+    function evaluateStringForTest(func, target, args) {
+        return `WebInspectorAudit.DOM.${func}(document.querySelector("#${target}")${args ? ", " + JSON.stringify(args) : ""})`;
+    }
+
+    const tests = [
+        { func: "hasEventListeners", target: "noListeners" },
+        { func: "hasEventListeners", target: "noListeners", args: ["FakeEvent"] },
+        { func: "hasEventListeners", target: "attributeListener" },
+        { func: "hasEventListeners", target: "attributeListener", args: ["FakeEvent"] },
+        { func: "hasEventListeners", target: "javascriptListener" },
+        { func: "hasEventListeners", target: "javascriptListener", args: ["FakeEvent"] },
+        { func: "hasEventListeners", target: "builtinListener" },
+        { func: "hasEventListeners", target: "builtinListener", args: ["FakeEvent"] },
+    ];
+
+    for (let {func, target, args} of tests) {
+        suite.addTestCase({
+            name: "Audit.run.DOM." + func + "." + target + (args ? ".WithArgs" : ""),
+            async test() {
+                let functionString = evaluateStringForTest(func, target, args);
+
+                 await InspectorTest.Audit.setupAudit();
+
+                InspectorTest.log(`Audit run \`${functionString}\`...`);
+                let {result, wasThrown} = await AuditAgent.run(`function() { return ${functionString}; }`);
+                InspectorTest.assert(!wasThrown, "Should not throw an exception.");
+                if (!wasThrown)
+                    InspectorTest.log("Result: " + result.value);
+                else
+                    InspectorTest.log(result.description);
+
+                await InspectorTest.Audit.teardownAudit();
+            },
+        });
+    }
+
+    suite.addTestCase({
+        name: "Audit.run.DOM.InvalidCopiedFunctionCall",
+        description: "Check that WebInspectorAudit.DOM functions throw an error when called outside of an audit.",
+        async test() {
+            let functions = new Map;
+            for (let test of tests)
+                functions.set(test.func, test);
+
+            await InspectorTest.Audit.setupAudit();
+            InspectorTest.log(`Copying WebInspectorAudit to window...`);
+            let {wasThrown} = await AuditAgent.run(`function() { window.CopiedWebInspectorAudit = WebInspectorAudit; }`);
+            InspectorTest.assert(!wasThrown, "Should not throw an exception.");
+            await InspectorTest.Audit.teardownAudit();
+
+            for (let {func, target, args} of functions.values()) {
+                InspectorTest.log(`Testing copied ${func}...`);
+                await InspectorTest.expectException(async function() {
+                    await InspectorTest.evaluateInPage("window.Copied" + evaluateStringForTest(func, target, args));
+                });
+            }
+        },
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="runTest()">
+    <p>Tests for the injected WebInspectorAudit.DOM functions.</p>
+    <div id="noListeners"></div>
+    <div id="attributeListener" onclick="void(0);"></div>
+    <div id="javascriptListener"><script>document.querySelector("#javascriptListener").addEventListener("click", () => {});</script></div>
+    <video id="builtinListener"></video>
+</body>
+</html>

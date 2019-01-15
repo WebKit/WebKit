@@ -27,12 +27,43 @@
 #include "config.h"
 #include "InspectorAuditDOMObject.h"
 
+#include "Node.h"
+#include <wtf/text/AtomicString.h>
+#include <wtf/text/WTFString.h>
+
 namespace WebCore {
 
 using namespace Inspector;
 
-InspectorAuditDOMObject::InspectorAuditDOMObject()
+#define ERROR_IF_NO_ACTIVE_AUDIT() \
+    if (!m_auditAgent.hasActiveAudit()) \
+        return Exception { NotAllowedError, "Cannot be called outside of a Web Inspector Audit"_s };
+
+InspectorAuditDOMObject::InspectorAuditDOMObject(InspectorAuditAgent& auditAgent)
+    : m_auditAgent(auditAgent)
 {
+}
+
+ExceptionOr<bool> InspectorAuditDOMObject::hasEventListeners(Node& node, const String& type)
+{
+    ERROR_IF_NO_ACTIVE_AUDIT();
+
+    if (EventTargetData* eventTargetData = node.eventTargetData()) {
+        Vector<AtomicString> eventTypes;
+        if (type.isNull())
+            eventTypes = eventTargetData->eventListenerMap.eventTypes();
+        else
+            eventTypes.append(type);
+
+        for (AtomicString& type : eventTypes) {
+            for (const RefPtr<RegisteredEventListener>& listener : node.eventListeners(type)) {
+                if (listener->callback().type() == EventListener::JSEventListenerType)
+                    return true;
+            }
+        }
+    }
+
+    return false;
 }
 
 } // namespace WebCore

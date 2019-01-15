@@ -1,5 +1,16 @@
 2019-01-15  Devin Rousso  <drousso@apple.com>
 
+        Web Inspector: Audit: provide a way to determine whether a give node has event listeners
+        https://bugs.webkit.org/show_bug.cgi?id=193226
+        <rdar://problem/46800005>
+
+        Reviewed by Joseph Pecoraro.
+
+        * inspector/audit/run-dom.html: Added.
+        * inspector/audit/run-dom-expected.txt: Added.
+
+2019-01-15  Devin Rousso  <drousso@apple.com>
+
         Web Inspector: Audit: provide a way to query for all nodes with a given computed Accessibility role
         https://bugs.webkit.org/show_bug.cgi?id=193228
         <rdar://problem/46787787>
