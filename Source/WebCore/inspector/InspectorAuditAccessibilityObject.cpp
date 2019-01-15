@@ -27,12 +27,52 @@
 #include "config.h"
 #include "InspectorAuditAccessibilityObject.h"
 
+#include "AXObjectCache.h"
+#include "AccessibilityObject.h"
+#include "ContainerNode.h"
+#include "Document.h"
+#include "ElementDescendantIterator.h"
+#include "Node.h"
+#include <wtf/Vector.h>
+
 namespace WebCore {
 
 using namespace Inspector;
 
-InspectorAuditAccessibilityObject::InspectorAuditAccessibilityObject()
+#define ERROR_IF_NO_ACTIVE_AUDIT() \
+    if (!m_auditAgent.hasActiveAudit()) \
+        return Exception { NotAllowedError, "Cannot be called outside of a Web Inspector Audit"_s };
+
+InspectorAuditAccessibilityObject::InspectorAuditAccessibilityObject(InspectorAuditAgent& auditAgent)
+    : m_auditAgent(auditAgent)
 {
+}
+
+static AccessibilityObject* accessiblityObjectForNode(Node& node)
+{
+    if (!AXObjectCache::accessibilityEnabled())
+        AXObjectCache::enableAccessibility();
+
+    if (AXObjectCache* axObjectCache = node.document().axObjectCache())
+        return axObjectCache->getOrCreate(&node);
+
+    return nullptr;
+}
+
+ExceptionOr<Vector<Ref<Node>>> InspectorAuditAccessibilityObject::getElementsByComputedRole(Document& document, const String& role, Node* container)
+{
+    ERROR_IF_NO_ACTIVE_AUDIT();
+
+    Vector<Ref<Node>> nodes;
+
+    for (Element& element : elementDescendants(is<ContainerNode>(container) ? downcast<ContainerNode>(*container) : document)) {
+        if (AccessibilityObject* axObject = accessiblityObjectForNode(element)) {
+            if (axObject->computedRoleString() == role)
+                nodes.append(element);
+        }
+    }
+
+    return nodes;
 }
 
 } // namespace WebCore

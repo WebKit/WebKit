@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script src="resources/audit-utilities.js"></script>
+<script>
+
+function stringify(result) {
+    if (result instanceof Element)
+        return "#" + result.id;
+    if (Array.isArray(result))
+        return JSON.stringify(result.map(stringify));
+    return false;
+}
+
+function test()
+{
+    let suite = InspectorTest.Audit.createSuite("Audit.run.Accessibility");
+
+    function evaluateStringForTest(func, target, role) {
+        if (target) {
+            if (role)
+                return `WebInspectorAudit.Accessibility.${func}("${role}", document.querySelector("#${target}"))`;
+            return `WebInspectorAudit.Accessibility.${func}(document.querySelector("#${target}"))`;
+        }
+
+        if (role)
+            return `WebInspectorAudit.Accessibility.${func}("${role}")`;
+    }
+
+    const tests = [
+        { func: "getElementsByComputedRole", role: "FakeRole" },
+        { func: "getElementsByComputedRole", role: "FakeRole", target: "parent" },
+        { func: "getElementsByComputedRole", role: "tree" },
+        { func: "getElementsByComputedRole", role: "tree", target: "parent" },
+        { func: "getElementsByComputedRole", role: "button" },
+        { func: "getElementsByComputedRole", role: "button", target: "parent" },
+    ];
+
+    for (let {func, target, role} of tests) {
+        suite.addTestCase({
+            name: "Audit.run.Accessibility." + func + (role ? "." + role : "") + (target ? "." + target : ""),
+            async test() {
+                let functionString = evaluateStringForTest(func, target, role);
+
+                await InspectorTest.Audit.setupAudit();
+
+                InspectorTest.log(`Audit run \`${functionString}\`...`);
+                let {result, wasThrown} = await AuditAgent.run(`function() { return stringify(${functionString}); }`);
+                InspectorTest.assert(!wasThrown, "Should not throw an exception.");
+                if (!wasThrown)
+                    InspectorTest.log("Result: " + result.value);
+                else
+                    InspectorTest.log(result.description);
+
+                await InspectorTest.Audit.teardownAudit();
+            },
+        });
+    }
+
+    suite.addTestCase({
+        name: "Audit.run.Accessibility.InvalidCopiedFunctionCall",
+        description: "Check that WebInspectorAudit.Accessibility functions throw an error when called outside of an audit.",
+        async test() {
+            let functions = new Map;
+            for (let test of tests)
+                functions.set(test.func, test);
+
+            await InspectorTest.Audit.setupAudit();
+            InspectorTest.log(`Copying WebInspectorAudit to window...`);
+            let {wasThrown} = await AuditAgent.run(`function() { window.CopiedWebInspectorAudit = WebInspectorAudit; }`);
+            InspectorTest.assert(!wasThrown, "Should not throw an exception.");
+            await InspectorTest.Audit.teardownAudit();
+
+            for (let {func, target, role} of functions.values()) {
+                InspectorTest.log(`Testing copied ${func}...`);
+                await InspectorTest.expectException(async function() {
+                    await InspectorTest.evaluateInPage("window.Copied" + evaluateStringForTest(func, target, role));
+                });
+            }
+        },
+    });
+
+     suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="runTest()">
+    <p>Tests for the injected WebInspectorAudit.Accessibility functions.</p>
+    <ul id="parent" role="tree" aria-activedescendant="child" aria-controls="child" aria-flowto="child" aria-owns="child" onclick="void(0);">
+        <li id="child" role="treeitem" aria-selected="true"></li>
+    </ul>
+    <button id="button"></button>
+    <a id="link" role="button"></a>
+    <div id="fakeRole" role="fakeRole"></div>
+</body>
+</html>

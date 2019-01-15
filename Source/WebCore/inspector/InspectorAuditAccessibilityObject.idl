@@ -28,4 +28,5 @@
     JSGenerateToJSObject,
     NoInterfaceObject,
 ] interface InspectorAuditAccessibilityObject {
+    [CallWith=Document, MayThrowException] sequence<Node> getElementsByComputedRole(DOMString role, optional Node? container);
 };

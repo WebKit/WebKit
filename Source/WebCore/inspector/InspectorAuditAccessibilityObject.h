@@ -25,21 +25,30 @@
 
 #pragma once
 
+#include "ExceptionOr.h"
 #include <JavaScriptCore/InspectorAuditAgent.h>
+#include <wtf/Forward.h>
 #include <wtf/Ref.h>
 #include <wtf/RefCounted.h>
 
 namespace WebCore {
 
+class Document;
+class Node;
+
 class InspectorAuditAccessibilityObject : public RefCounted<InspectorAuditAccessibilityObject> {
 public:
-    static Ref<InspectorAuditAccessibilityObject> create(Inspector::InspectorAuditAgent&)
+    static Ref<InspectorAuditAccessibilityObject> create(Inspector::InspectorAuditAgent& auditAgent)
     {
-        return adoptRef(*new InspectorAuditAccessibilityObject());
+        return adoptRef(*new InspectorAuditAccessibilityObject(auditAgent));
     }
 
+    ExceptionOr<Vector<Ref<Node>>> getElementsByComputedRole(Document&, const String& role, Node* container);
+
 private:
-    explicit InspectorAuditAccessibilityObject();
+    explicit InspectorAuditAccessibilityObject(Inspector::InspectorAuditAgent&);
+
+    Inspector::InspectorAuditAgent& m_auditAgent;
 };
 
 } // namespace WebCore
