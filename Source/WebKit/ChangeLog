@@ -1,3 +1,13 @@
+2019-01-15  Per Arne Vollan  <pvollan@apple.com>
+
+        Remove reporting for iOS mach lookups confirmed in-use
+        https://bugs.webkit.org/show_bug.cgi?id=193455
+        <rdar://problem/47259551>
+
+        Reviewed by Brent Fulgham.
+
+        * Resources/SandboxProfiles/ios/com.apple.WebKit.WebContent.sb:
+
 2019-01-15  Tim Horton  <timothy_horton@apple.com>
 
         Cannot tab out of WKWebView on macOS
