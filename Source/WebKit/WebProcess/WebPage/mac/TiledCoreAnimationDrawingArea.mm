@@ -312,6 +312,9 @@ void TiledCoreAnimationDrawingArea::scaleViewToFitDocumentIfNeeded()
     if (!m_shouldScaleViewToFitDocument)
         return;
 
+    if (!m_webPage.mainFrameView()->renderView())
+        return;
+
     LOG(Resize, "TiledCoreAnimationDrawingArea %p scaleViewToFitDocumentIfNeeded", this);
     m_webPage.layoutIfNeeded();
 

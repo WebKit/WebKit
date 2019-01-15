@@ -1,3 +1,17 @@
+2019-01-15  Tim Horton  <timothy_horton@apple.com>
+
+        Frequent null-deref under TiledCoreAnimationDrawingArea::scaleViewToFitDocumentIfNeeded()
+        https://bugs.webkit.org/show_bug.cgi?id=193468
+        <rdar://problem/38645869>
+
+        Reviewed by Beth Dakin.
+
+        * WebProcess/WebPage/mac/TiledCoreAnimationDrawingArea.mm:
+        (WebKit::TiledCoreAnimationDrawingArea::scaleViewToFitDocumentIfNeeded):
+        I'm not sure why this got *worse*, but we should null-check RenderView.
+        It's OK to bail from scaleViewToFitDocumentIfNeeded, we'll re-do it
+        the next time we paint (which will surely happen if we gain a RenderView).
+
 2019-01-15  Chris Dumez  <cdumez@apple.com>
 
         Unreviewed, rolling out r239993, r239995, r239997, and
