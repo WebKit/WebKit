@@ -1,3 +1,13 @@
+2019-01-15  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC] Use the containing block's padding box to position out-of-flow elements.
+        https://bugs.webkit.org/show_bug.cgi?id=193431
+
+        Reviewed by Antti Koivisto.
+
+        * fast/block/block-only/out-of-flow-with-containing-block-border-padding-expected.txt: Added.
+        * fast/block/block-only/out-of-flow-with-containing-block-border-padding.html: Added.
+
 2019-01-15  Guillaume Emont  <guijemont@igalia.com>
 
         Skip a slow test and a flakey test on arm

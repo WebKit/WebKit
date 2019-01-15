@@ -273,11 +273,12 @@ VerticalGeometry FormattingContext::Geometry::outOfFlowNonReplacedVerticalGeomet
     auto& style = layoutBox.style();
     auto& displayBox = layoutState.displayBoxForLayoutBox(layoutBox);
     auto& containingBlockDisplayBox = layoutState.displayBoxForLayoutBox(*layoutBox.containingBlock());
-    auto containingBlockHeight = containingBlockDisplayBox.height();
-    auto containingBlockWidth = containingBlockDisplayBox.width();
+    auto containingBlockHeight = containingBlockDisplayBox.paddingBoxHeight();
+    auto containingBlockWidth = containingBlockDisplayBox.paddingBoxWidth();
 
     auto top = computedValueIfNotAuto(style.logicalTop(), containingBlockWidth);
     auto bottom = computedValueIfNotAuto(style.logicalBottom(), containingBlockWidth);
+    auto isStaticallyPositioned = !top && !bottom;
     auto height = usedHeight ? usedHeight.value() : computedHeightValue(layoutState, layoutBox, HeightType::Normal);
     auto computedVerticalMargin = Geometry::computedVerticalMargin(layoutState, layoutBox);
     UsedVerticalMargin::NonCollapsedValues usedVerticalMargin; 
@@ -353,6 +354,14 @@ VerticalGeometry FormattingContext::Geometry::outOfFlowNonReplacedVerticalGeomet
     ASSERT(bottom);
     ASSERT(height);
 
+    // For out-of-flow elements the containing block is formed by the padding edge of the ancestor.
+    // At this point the non-statically positioned value is in the coordinate system of the padding box. Let's convert it to border box coordinate system.
+    if (!isStaticallyPositioned) {
+        auto containingBlockPaddingVerticalEdge = containingBlockDisplayBox.paddingBoxTop();
+        *top += containingBlockPaddingVerticalEdge;
+        *bottom += containingBlockPaddingVerticalEdge;
+    }
+
     LOG_WITH_STREAM(FormattingContextLayout, stream << "[Position][Height][Margin] -> out-of-flow non-replaced -> top(" << *top << "px) bottom("  << *bottom << "px) height(" << *height << "px) margin(" << usedVerticalMargin.before << "px, "  << usedVerticalMargin.after << "px) layoutBox(" << &layoutBox << ")");
     return { *top, *bottom, { contentHeight(), usedVerticalMargin } };
 }
@@ -390,11 +399,13 @@ HorizontalGeometry FormattingContext::Geometry::outOfFlowNonReplacedHorizontalGe
     auto& style = layoutBox.style();
     auto& displayBox = layoutState.displayBoxForLayoutBox(layoutBox);
     auto& containingBlock = *layoutBox.containingBlock();
-    auto containingBlockWidth = layoutState.displayBoxForLayoutBox(containingBlock).contentBoxWidth();
+    auto& containingBlockDisplayBox = layoutState.displayBoxForLayoutBox(containingBlock);
+    auto containingBlockWidth = containingBlockDisplayBox.paddingBoxWidth();
     auto isLeftToRightDirection = containingBlock.style().isLeftToRightDirection();
     
     auto left = computedValueIfNotAuto(style.logicalLeft(), containingBlockWidth);
     auto right = computedValueIfNotAuto(style.logicalRight(), containingBlockWidth);
+    auto isStaticallyPositioned = !left && !right;
     auto width = computedValueIfNotAuto(usedWidth ? Length { usedWidth.value(), Fixed } : style.logicalWidth(), containingBlockWidth);
     auto computedHorizontalMargin = Geometry::computedHorizontalMargin(layoutState, layoutBox);
     UsedHorizontalMargin usedHorizontalMargin;
@@ -496,6 +507,14 @@ HorizontalGeometry FormattingContext::Geometry::outOfFlowNonReplacedHorizontalGe
     ASSERT(right);
     ASSERT(width);
 
+    // For out-of-flow elements the containing block is formed by the padding edge of the ancestor.
+    // At this point the non-statically positioned value is in the coordinate system of the padding box. Let's convert it to border box coordinate system.
+    if (!isStaticallyPositioned) {
+        auto containingBlockPaddingVerticalEdge = containingBlockDisplayBox.paddingBoxLeft();
+        *left += containingBlockPaddingVerticalEdge;
+        *right += containingBlockPaddingVerticalEdge;
+    }
+
     LOG_WITH_STREAM(FormattingContextLayout, stream << "[Position][Width][Margin] -> out-of-flow non-replaced -> left(" << *left << "px) right("  << *right << "px) width(" << *width << "px) margin(" << usedHorizontalMargin.start << "px, "  << usedHorizontalMargin.end << "px) layoutBox(" << &layoutBox << ")");
     return { *left, *right, { contentWidth(), usedHorizontalMargin, computedHorizontalMargin } };
 }
@@ -517,11 +536,12 @@ VerticalGeometry FormattingContext::Geometry::outOfFlowReplacedVerticalGeometry(
     auto& style = layoutBox.style();
     auto& displayBox = layoutState.displayBoxForLayoutBox(layoutBox);
     auto& containingBlockDisplayBox = layoutState.displayBoxForLayoutBox(*layoutBox.containingBlock());
-    auto containingBlockHeight = containingBlockDisplayBox.height();
-    auto containingBlockWidth = containingBlockDisplayBox.width();
+    auto containingBlockHeight = containingBlockDisplayBox.paddingBoxHeight();
+    auto containingBlockWidth = containingBlockDisplayBox.paddingBoxWidth();
 
     auto top = computedValueIfNotAuto(style.logicalTop(), containingBlockWidth);
     auto bottom = computedValueIfNotAuto(style.logicalBottom(), containingBlockWidth);
+    auto isStaticallyPositioned = !top && !bottom;
     auto height = inlineReplacedHeightAndMargin(layoutState, layoutBox, usedHeight).height;
     auto computedVerticalMargin = Geometry::computedVerticalMargin(layoutState, layoutBox);
     UsedVerticalMargin::NonCollapsedValues usedVerticalMargin; 
@@ -564,6 +584,14 @@ VerticalGeometry FormattingContext::Geometry::outOfFlowReplacedVerticalGeometry(
     if (boxHeight > containingBlockHeight)
         bottom = containingBlockHeight - (*top + usedVerticalMargin.before + borderTop + paddingTop + height + paddingBottom + borderBottom + usedVerticalMargin.after); 
 
+    // For out-of-flow elements the containing block is formed by the padding edge of the ancestor.
+    // At this point the non-statically positioned value is in the coordinate system of the padding box. Let's convert it to border box coordinate system.
+    if (!isStaticallyPositioned) {
+        auto containingBlockPaddingVerticalEdge = containingBlockDisplayBox.paddingBoxTop();
+        *top += containingBlockPaddingVerticalEdge;
+        *bottom += containingBlockPaddingVerticalEdge;
+    }
+
     LOG_WITH_STREAM(FormattingContextLayout, stream << "[Position][Height][Margin] -> out-of-flow replaced -> top(" << *top << "px) bottom("  << *bottom << "px) height(" << height << "px) margin(" << usedVerticalMargin.before << "px, "  << usedVerticalMargin.after << "px) layoutBox(" << &layoutBox << ")");
     return { *top, *bottom, { height, usedVerticalMargin } };
 }
@@ -589,11 +617,13 @@ HorizontalGeometry FormattingContext::Geometry::outOfFlowReplacedHorizontalGeome
     auto& style = layoutBox.style();
     auto& displayBox = layoutState.displayBoxForLayoutBox(layoutBox);
     auto& containingBlock = *layoutBox.containingBlock();
-    auto containingBlockWidth = layoutState.displayBoxForLayoutBox(containingBlock).contentBoxWidth();
+    auto& containingBlockDisplayBox = layoutState.displayBoxForLayoutBox(containingBlock);
+    auto containingBlockWidth = containingBlockDisplayBox.paddingBoxWidth();
     auto isLeftToRightDirection = containingBlock.style().isLeftToRightDirection();
 
     auto left = computedValueIfNotAuto(style.logicalLeft(), containingBlockWidth);
     auto right = computedValueIfNotAuto(style.logicalRight(), containingBlockWidth);
+    auto isStaticallyPositioned = !left && !right;
     auto computedHorizontalMargin = Geometry::computedHorizontalMargin(layoutState, layoutBox);
     UsedHorizontalMargin usedHorizontalMargin;
     auto width = inlineReplacedWidthAndMargin(layoutState, layoutBox, usedWidth).width;
@@ -656,6 +686,14 @@ HorizontalGeometry FormattingContext::Geometry::outOfFlowReplacedHorizontalGeome
 
     ASSERT(left);
     ASSERT(right);
+
+    // For out-of-flow elements the containing block is formed by the padding edge of the ancestor.
+    // At this point the non-statically positioned value is in the coordinate system of the padding box. Let's convert it to border box coordinate system.
+    if (isStaticallyPositioned) {
+        auto containingBlockPaddingVerticalEdge = containingBlockDisplayBox.paddingBoxLeft();
+        *left += containingBlockPaddingVerticalEdge;
+        *right += containingBlockPaddingVerticalEdge;
+    }
 
     LOG_WITH_STREAM(FormattingContextLayout, stream << "[Position][Width][Margin] -> out-of-flow replaced -> left(" << *left << "px) right("  << *right << "px) width(" << width << "px) margin(" << usedHorizontalMargin.start << "px, "  << usedHorizontalMargin.end << "px) layoutBox(" << &layoutBox << ")");
     return { *left, *right, { width, usedHorizontalMargin, computedHorizontalMargin } };

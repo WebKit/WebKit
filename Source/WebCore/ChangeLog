@@ -1,3 +1,37 @@
+2019-01-15  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC] Use the containing block's padding box to position out-of-flow elements.
+        https://bugs.webkit.org/show_bug.cgi?id=193431
+
+        Reviewed by Antti Koivisto.
+
+        If the element has 'position: absolute', the containing block is established by the nearest ancestor
+        with a 'position' of 'absolute', 'relative' or 'fixed', in the following way:
+
+        1. In the case that the ancestor is an inline element, the containing block is the bounding box around the padding
+        boxes of the first and the last inline boxes generated for that element. In CSS 2.2, if the inline element is split
+        across multiple lines, the containing block is undefined.
+
+        2. Otherwise, the containing block is formed by the padding edge of the ancestor.
+
+        This patch covers #2. 
+
+        Test: fast/block/block-only/out-of-flow-with-containing-block-border-padding.html
+
+        * layout/displaytree/DisplayBox.h:
+        (WebCore::Display::Box::width const):
+        (WebCore::Display::Box::height const):
+        (WebCore::Display::Box::contentBoxTop const):
+        (WebCore::Display::Box::contentBoxLeft const):
+        (WebCore::Display::Box::paddingBoxTop const):
+        (WebCore::Display::Box::paddingBoxLeft const):
+        (WebCore::Display::Box::paddingBoxBottom const):
+        (WebCore::Display::Box::paddingBoxRight const):
+        (WebCore::Display::Box::paddingBoxHeight const):
+        (WebCore::Display::Box::paddingBoxWidth const):
+        * page/FrameViewLayoutContext.cpp:
+        (WebCore::layoutUsingFormattingContext):
+
 2019-01-11  Antoine Quint  <graouts@apple.com>
 
         Support parsing of additional values for the touch-action property
