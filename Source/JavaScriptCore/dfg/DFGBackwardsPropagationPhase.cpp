@@ -110,6 +110,7 @@ private:
             return isWithinPowerOfTwoForConstant<power>(node);
         }
             
+        case ValueBitAnd:
         case ArithBitAnd: {
             if (power > 31)
                 return true;
@@ -120,6 +121,8 @@ private:
             
         case ArithBitOr:
         case ArithBitXor:
+        case ValueBitOr:
+        case ValueBitXor:
         case BitLShift: {
             return power > 31;
         }
@@ -218,6 +221,9 @@ private:
         case ArithBitAnd:
         case ArithBitOr:
         case ArithBitXor:
+        case ValueBitAnd:
+        case ValueBitOr:
+        case ValueBitXor:
         case BitRShift:
         case BitLShift:
         case BitURShift:

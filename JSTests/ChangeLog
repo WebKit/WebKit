@@ -1,3 +1,12 @@
+2019-01-15  Caio Lima  <ticaiolima@gmail.com>
+
+        DFGByteCodeParser rules for bitwise operations should consider type of their operands
+        https://bugs.webkit.org/show_bug.cgi?id=192966
+
+        Reviewed by Yusuke Suzuki.
+
+        * stress/bit-op-with-object-returning-int32.js: Added.
+
 2019-01-15  Guillaume Emont  <guijemont@igalia.com>
 
         Skip a slow test and a flakey test on arm

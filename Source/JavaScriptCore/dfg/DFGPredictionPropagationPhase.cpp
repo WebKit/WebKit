@@ -277,14 +277,6 @@ private:
             break;
         }
 
-        case ValueBitXor:
-        case ValueBitOr:
-        case ValueBitAnd: {
-            if (node->child1()->shouldSpeculateBigInt() && node->child2()->shouldSpeculateBigInt())
-                changed |= mergePrediction(SpecBigInt);
-            break;
-        }
-
         case ValueNegate:
         case ArithNegate: {
             SpeculatedType prediction = node->child1()->prediction();
@@ -807,6 +799,9 @@ private:
         case LoadValueFromMapBucket:
         case ToNumber:
         case ToObject:
+        case ValueBitAnd:
+        case ValueBitXor:
+        case ValueBitOr:
         case CallObjectConstructor:
         case GetArgument:
         case CallDOMGetter:
@@ -1118,9 +1113,6 @@ private:
         case GetLocal:
         case SetLocal:
         case UInt32ToNumber:
-        case ValueBitOr:
-        case ValueBitAnd:
-        case ValueBitXor:
         case ValueNegate:
         case ValueAdd:
         case ValueSub:

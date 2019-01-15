@@ -1,3 +1,28 @@
+2019-01-15  Caio Lima  <ticaiolima@gmail.com>
+
+        DFGByteCodeParser rules for bitwise operations should consider type of their operands
+        https://bugs.webkit.org/show_bug.cgi?id=192966
+
+        Reviewed by Yusuke Suzuki.
+
+        This patch is changing the logic how we lower bitwise operations, to
+        consider only the type of input nodes and fix them during FixupPhase,
+        if necessary. We are also changing the prediction propagation rules
+        for ValueBitOp to use `getHeapPrediction()`. 
+
+        * dfg/DFGBackwardsPropagationPhase.cpp:
+        (JSC::DFG::BackwardsPropagationPhase::isWithinPowerOfTwo):
+        (JSC::DFG::BackwardsPropagationPhase::propagate):
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::parseBlock):
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::fixupNode):
+        * dfg/DFGNode.h:
+        (JSC::DFG::Node::hasInt32Result):
+        (JSC::DFG::Node::hasNumberOrAnyIntResult):
+        (JSC::DFG::Node::hasHeapPrediction):
+        * dfg/DFGPredictionPropagationPhase.cpp:
+
 2019-01-15  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Generate the DOMDebugger domain for Augmenting Agents (ObjC protocol)

@@ -4939,34 +4939,37 @@ void ByteCodeParser::parseBlock(unsigned limit)
 
         case op_bitand: {
             auto bytecode = currentInstruction->as<OpBitand>();
+            SpeculatedType prediction = getPrediction();
             Node* op1 = get(bytecode.lhs);
             Node* op2 = get(bytecode.rhs);
-            if (isInt32Speculation(getPrediction()))
+            if (op1->hasNumberOrAnyIntResult() && op2->hasNumberOrAnyIntResult())
                 set(bytecode.dst, addToGraph(ArithBitAnd, op1, op2));
             else
-                set(bytecode.dst, addToGraph(ValueBitAnd, op1, op2));
+                set(bytecode.dst, addToGraph(ValueBitAnd, OpInfo(), OpInfo(prediction), op1, op2));
             NEXT_OPCODE(op_bitand);
         }
 
         case op_bitor: {
             auto bytecode = currentInstruction->as<OpBitor>();
+            SpeculatedType prediction = getPrediction();
             Node* op1 = get(bytecode.lhs);
             Node* op2 = get(bytecode.rhs);
-            if (isInt32Speculation(getPrediction()))
+            if (op1->hasNumberOrAnyIntResult() && op2->hasNumberOrAnyIntResult())
                 set(bytecode.dst, addToGraph(ArithBitOr, op1, op2));
             else
-                set(bytecode.dst, addToGraph(ValueBitOr, op1, op2));
+                set(bytecode.dst, addToGraph(ValueBitOr, OpInfo(), OpInfo(prediction), op1, op2));
             NEXT_OPCODE(op_bitor);
         }
 
         case op_bitxor: {
             auto bytecode = currentInstruction->as<OpBitxor>();
+            SpeculatedType prediction = getPrediction();
             Node* op1 = get(bytecode.lhs);
             Node* op2 = get(bytecode.rhs);
-            if (isInt32Speculation(getPrediction()))
+            if (op1->hasNumberOrAnyIntResult() && op2->hasNumberOrAnyIntResult())
                 set(bytecode.dst, addToGraph(ArithBitXor, op1, op2));
             else
-                set(bytecode.dst, addToGraph(ValueBitXor, op1, op2));
+                set(bytecode.dst, addToGraph(ValueBitXor, OpInfo(), OpInfo(prediction), op1, op2));
             NEXT_OPCODE(op_bitor);
         }
 

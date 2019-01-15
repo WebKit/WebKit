@@ -206,8 +206,32 @@ private:
                 break;
             }
 
-            fixEdge<UntypedUse>(node->child1());
-            fixEdge<UntypedUse>(node->child2());
+            if (Node::shouldSpeculateUntypedForBitOps(node->child1().node(), node->child2().node())) {
+                fixEdge<UntypedUse>(node->child1());
+                fixEdge<UntypedUse>(node->child2());
+                break;
+            }
+
+            // In such case, we need to fallback to ArithBitOp
+            switch (op) {
+            case ValueBitXor:
+                node->setOp(ArithBitXor);
+                break;
+            case ValueBitOr:
+                node->setOp(ArithBitOr);
+                break;
+            case ValueBitAnd:
+                node->setOp(ArithBitAnd);
+                break;
+            default:
+                DFG_CRASH(m_graph, node, "Unexpected node during ValueBit operation fixup");
+                break;
+            }
+
+            node->clearFlags(NodeMustGenerate);
+            node->setResult(NodeResultInt32);
+            fixIntConvertingEdge(node->child1());
+            fixIntConvertingEdge(node->child2());
             break;
         }
 
@@ -225,26 +249,6 @@ private:
         case ArithBitXor:
         case ArithBitOr:
         case ArithBitAnd: {
-            if (Node::shouldSpeculateUntypedForBitOps(node->child1().node(), node->child2().node())) {
-                fixEdge<UntypedUse>(node->child1());
-                fixEdge<UntypedUse>(node->child2());
-                switch (op) {
-                case ArithBitXor:
-                    node->setOpAndDefaultFlags(ValueBitXor);
-                    break;
-                case ArithBitOr:
-                    node->setOpAndDefaultFlags(ValueBitOr);
-                    break;
-                case ArithBitAnd:
-                    node->setOpAndDefaultFlags(ValueBitAnd);
-                    break;
-                default:
-                    DFG_CRASH(m_graph, node, "Unexpected node during ArithBit operation fixup");
-                    break;
-                }
-                break;
-            }
-
             fixIntConvertingEdge(node->child1());
             fixIntConvertingEdge(node->child2());
             break;
