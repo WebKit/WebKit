@@ -1729,7 +1729,7 @@ EXPRESSION: error = null; try { document.createTextNode("").splitText(100); } ca
       {
         "_name": "stack",
         "_type": "string",
-        "_value": "splitText@[native code]\nglobal code\nevaluateWithSc…ension@[native code]\n\n_wrapCall"
+        "_value": "splitText@[native code]\nglobal code\nevaluateWithScopeExtension@[native code]\n\n_wrapCall"
       },
       {
         "_name": "code",

@@ -1,5 +1,11 @@
 2019-01-15  Devin Rousso  <drousso@apple.com>
 
+        Unreviewed, test fix after r239976.
+
+        * inspector/model/remote-object-expected.txt:
+
+2019-01-15  Devin Rousso  <drousso@apple.com>
+
         Web Inspector: Audit: provide a way to determine whether a give node has event listeners
         https://bugs.webkit.org/show_bug.cgi?id=193226
         <rdar://problem/46800005>
