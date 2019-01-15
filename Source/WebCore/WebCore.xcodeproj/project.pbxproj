@@ -6413,6 +6413,10 @@
 		1C66260F1C6E7CA600AB527C /* FontFace.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FontFace.h; sourceTree = "<group>"; };
 		1C81B9560E97330800266E07 /* InspectorController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InspectorController.h; sourceTree = "<group>"; };
 		1C81B9570E97330800266E07 /* InspectorController.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = InspectorController.cpp; sourceTree = "<group>"; };
+		1C840B9721EC400700D0500D /* WHLSLChecker.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WHLSLChecker.h; sourceTree = "<group>"; };
+		1C840B9921EC400800D0500D /* WHLSLGatherEntryPointItems.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = WHLSLGatherEntryPointItems.cpp; sourceTree = "<group>"; };
+		1C840B9A21EC400900D0500D /* WHLSLGatherEntryPointItems.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WHLSLGatherEntryPointItems.h; sourceTree = "<group>"; };
+		1C840B9B21EC400900D0500D /* WHLSLChecker.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = WHLSLChecker.cpp; sourceTree = "<group>"; };
 		1C81B9580E97330800266E07 /* InspectorClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InspectorClient.h; sourceTree = "<group>"; };
 		1C840B7D21EBE0B800D0500D /* WHLSLEntryPointType.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WHLSLEntryPointType.h; sourceTree = "<group>"; };
 		1C840B9021EC30F900D0500D /* WHLSLAddressSpace.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WHLSLAddressSpace.h; sourceTree = "<group>"; };
@@ -25416,6 +25420,10 @@
 				C21BF6F121CD898D00227979 /* AST */,
 				C234A9B221E92C1F003C984D /* WHLSLCheckDuplicateFunctions.cpp */,
 				C234A9AE21E92C1A003C984D /* WHLSLCheckDuplicateFunctions.h */,
+				1C840B9B21EC400900D0500D /* WHLSLChecker.cpp */,
+				1C840B9721EC400700D0500D /* WHLSLChecker.h */,
+				1C840B9921EC400800D0500D /* WHLSLGatherEntryPointItems.cpp */,
+				1C840B9A21EC400900D0500D /* WHLSLGatherEntryPointItems.h */,
 				C234A99A21E90F56003C984D /* WHLSLInferTypes.cpp */,
 				C234A99B21E90F57003C984D /* WHLSLInferTypes.h */,
 				C234A9B721E92CC1003C984D /* WHLSLIntrinsics.cpp */,

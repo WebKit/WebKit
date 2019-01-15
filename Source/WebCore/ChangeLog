@@ -1,3 +1,71 @@
+2019-01-14  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [WHLSL] Implement the Type Checker
+        https://bugs.webkit.org/show_bug.cgi?id=193080
+
+        Reviewed by Dean Jackson.
+
+        This is a translation of https://github.com/gpuweb/WHLSL/blob/master/Source/Checker.mjs into C++.
+
+        The Checker passes types between nested expressions. An inner expression figures out what type it is, and
+        passes that information up to an outer expression. This is done via reading/writing into a HashMap,
+        because all the type information needs to be saved so that the Metal codegen can emit the correct types.
+
+        These types can have two forms: A regular type (like "int[]") or a ResolvableType. ResolvableTypes
+        represent literals, since a literal needs to know its context before it knows what type it should be. So,
+        if you have a function like "void foo(int x)" and you have a call like "foo(3)", the 3's ResolvableType
+        gets passed to the CallExpression, which then unifies it with the function's parameter type, thereby
+        resolving the 3 to be an int.
+
+        There are a few examples where multiple expressions will have the same type: "return (foo, 3)." If those
+        types are regular types, then it's no problem; we can just clone() the type and stick both in the HashMap.
+        However, if the type is a ResolvableType, an outer expression will only resolve that type once, so the two
+        ResolvableTypes can't be distinct. The Checker solves this problem by making a reference-counted wrapper
+        around ResolvableTypes and using that in the HashMap instead.
+
+        Once all the ResolvableTypes have been resolved, a second pass runs through the entire HashMap and assigns
+        the known types to all the expressions. LValues and their associated address spaces are held in a parallel
+        HashMap, and are assigned to the expression at the same time. The type is an Optional<AddressSpace> because
+        address spaces are only relevant if the value is an lvalue; if it's nullopt then that means the expression
+        is an rvalue.
+
+        No new tests because it isn't hooked up yet. Not enough of the compiler exists to have any meaningful sort
+        of test. When enough of the compiler is present, I'll port the reference implementation's test suite.
+
+        * Modules/webgpu/WHLSL/WHLSLChecker.cpp: Added.
+        (WebCore::WHLSL::resolveWithOperatorAnderIndexer):
+        (WebCore::WHLSL::resolveWithOperatorLength):
+        (WebCore::WHLSL::resolveWithReferenceComparator):
+        (WebCore::WHLSL::resolveByInstantiation):
+        (WebCore::WHLSL::checkSemantics):
+        (WebCore::WHLSL::checkOperatorOverload):
+        (WebCore::WHLSL::Checker::Checker):
+        (WebCore::WHLSL::Checker::visit):
+        (WebCore::WHLSL::Checker::assignTypes):
+        (WebCore::WHLSL::Checker::checkShaderType):
+        (WebCore::WHLSL::matchAndCommit):
+        (WebCore::WHLSL::Checker::recurseAndGetInfo):
+        (WebCore::WHLSL::Checker::getInfo):
+        (WebCore::WHLSL::Checker::assignType):
+        (WebCore::WHLSL::Checker::forwardType):
+        (WebCore::WHLSL::getUnnamedType):
+        (WebCore::WHLSL::Checker::finishVisitingPropertyAccess):
+        (WebCore::WHLSL::Checker::recurseAndWrapBaseType):
+        (WebCore::WHLSL::Checker::isBoolType):
+        (WebCore::WHLSL::Checker::recurseAndRequireBoolType):
+        (WebCore::WHLSL::check):
+        * Modules/webgpu/WHLSL/WHLSLChecker.h: Added.
+        * Modules/webgpu/WHLSL/WHLSLGatherEntryPointItems.cpp: Added.
+        (WebCore::WHLSL::Gatherer::Gatherer):
+        (WebCore::WHLSL::Gatherer::reset):
+        (WebCore::WHLSL::Gatherer::takeEntryPointItems):
+        (WebCore::WHLSL::Gatherer::visit):
+        (WebCore::WHLSL::gatherEntryPointItems):
+        * Modules/webgpu/WHLSL/WHLSLGatherEntryPointItems.h: Added.
+        (WebCore::WHLSL::EntryPointItem::EntryPointItem):
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+
 2019-01-14  Alex Christensen  <achristensen@webkit.org>
 
         Split headerValueForVary into specialized functions for NetworkProcess and WebProcess/WebKitLegacy
