@@ -23,7 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#if PLATFORM(IOSMAC)
+#if PLATFORM(IOS_FAMILY)
 
 WTF_EXTERN_C_BEGIN
 typedef struct __GSKeyboard* GSKeyboardRef;
@@ -120,4 +120,4 @@ NS_ASSUME_NONNULL_END
 
 #endif
 
-#endif
+#endif // PLATFORM(IOS_FAMILY)
