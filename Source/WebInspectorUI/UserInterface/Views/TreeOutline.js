@@ -329,6 +329,8 @@ WI.TreeOutline = class TreeOutline extends WI.Object
             treeOutline._forgetChildrenRecursive(child);
         }
 
+        let removedIndexes = this._indexesForSubtree(child);
+
         if (child.previousSibling)
             child.previousSibling.nextSibling = child.nextSibling;
         if (child.nextSibling)
@@ -342,8 +344,10 @@ WI.TreeOutline = class TreeOutline extends WI.Object
         child.nextSibling = null;
         child.previousSibling = null;
 
-        if (treeOutline)
+        if (treeOutline) {
+            treeOutline._selectionController.didRemoveItems(removedIndexes);
             treeOutline.dispatchEventToListeners(WI.TreeOutline.Event.ElementRemoved, {element: child});
+        }
     }
 
     removeChild(child, suppressOnDeselect, suppressSelectSibling)
@@ -378,16 +382,20 @@ WI.TreeOutline = class TreeOutline extends WI.Object
                 treeOutline._forgetChildrenRecursive(child);
             }
 
+            let removedIndexes = treeOutline._indexesForSubtree(child);
+
             child._detach();
             child.treeOutline = null;
             child.parent = null;
             child.nextSibling = null;
             child.previousSibling = null;
 
-            if (treeOutline)
-                treeOutline.dispatchEventToListeners(WI.TreeOutline.Event.ElementRemoved, {element: child});
-
             this.children.shift();
+
+            if (treeOutline) {
+                treeOutline._selectionController.didRemoveItems(removedIndexes);
+                treeOutline.dispatchEventToListeners(WI.TreeOutline.Event.ElementRemoved, {element: child});
+            }
         }
     }
 
@@ -419,10 +427,6 @@ WI.TreeOutline = class TreeOutline extends WI.Object
             this.selectedTreeElement = null;
         }
         if (this._knownTreeElements[element.identifier]) {
-            let index = this._indexOfTreeElement(element);
-            if (index >= 0)
-                this._selectionController.didRemoveItems(new WI.IndexSet([index]));
-
             this._knownTreeElements[element.identifier].remove(element, true);
             this._cachedNumberOfDescendents--;
         }
@@ -1071,6 +1075,39 @@ WI.TreeOutline = class TreeOutline extends WI.Object
         }
 
         this.dispatchEventToListeners(WI.TreeOutline.Event.SelectionDidChange, {selectedByUser});
+    }
+
+    _indexesForSubtree(treeElement)
+    {
+        let treeOutline = treeElement.treeOutline;
+        if (!treeOutline)
+            return new WI.IndexSet;
+
+        let firstChild = treeElement.children[0];
+        if (!firstChild)
+            return new WI.IndexSet;
+
+        let startIndex = treeOutline._indexOfTreeElement(firstChild);
+        let endIndex = startIndex;
+
+        const skipUnrevealed = false;
+        const stayWithin = treeElement;
+        const dontPopulate = true;
+
+        let current = firstChild;
+        while (current = current.traverseNextTreeElement(skipUnrevealed, stayWithin, dontPopulate))
+            endIndex++;
+
+        // Include the index of the subtree's root, unless it's the TreeOutline root.
+        if (!treeElement.root)
+            startIndex--;
+
+        let count = endIndex - startIndex + 1;
+
+        let indexes = new WI.IndexSet;
+        indexes.addRange(startIndex, count);
+
+        return indexes;
     }
 };
 
