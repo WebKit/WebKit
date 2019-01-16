@@ -1,3 +1,11 @@
+2019-01-16  Alex Christensen  <achristensen@webkit.org>
+
+        Revert r239938
+        https://bugs.webkit.org/show_bug.cgi?id=193267
+        <rdar://problem/47297304>
+
+        * Configurations/WebContent-iOS.entitlements:
+
 2019-01-16  Chris Dumez  <cdumez@apple.com>
 
         Regression(r240046) Several API tests are crashing
