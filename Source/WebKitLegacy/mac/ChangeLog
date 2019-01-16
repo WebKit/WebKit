@@ -1,3 +1,87 @@
+2019-01-15  Alan Coon  <alancoon@apple.com>
+
+        Cherry-pick r239888. rdar://problem/47260286
+
+    Compile out Web API Statistics Collection
+    https://bugs.webkit.org/show_bug.cgi?id=193370
+    <rdar://problem/45388584>
+    
+    Reviewed by Brent Fulgham.
+    
+    Source/JavaScriptCore:
+    
+    * Configurations/FeatureDefines.xcconfig:
+        Defined ENABLE_WEB_API_STATISTICS, off by default.
+    
+    Source/WebCore:
+    
+    No new tests. This patch disables functionality. The associated tests
+    are skipped.
+    
+    These functions are now no-ops unless web API statistics is enabled.
+    
+    * Configurations/FeatureDefines.xcconfig:
+    * loader/ResourceLoadObserver.cpp:
+    (WebCore::ResourceLoadObserver::logFontLoad):
+    (WebCore::ResourceLoadObserver::logCanvasRead):
+    (WebCore::ResourceLoadObserver::logCanvasWriteOrMeasure):
+    (WebCore::ResourceLoadObserver::logNavigatorAPIAccessed):
+    (WebCore::ResourceLoadObserver::logScreenAPIAccessed):
+    * loader/ResourceLoadStatistics.cpp:
+    (WebCore::ResourceLoadStatistics::encode const):
+    (WebCore::ResourceLoadStatistics::decode):
+    (WebCore::ResourceLoadStatistics::toString const):
+    (WebCore::ResourceLoadStatistics::merge):
+    * loader/ResourceLoadStatistics.h:
+        The associated struct members are skipped unless web API
+        statistics is enabled.
+    
+    Source/WebCore/PAL:
+    
+    * Configurations/FeatureDefines.xcconfig:
+        Defined ENABLE_WEB_API_STATISTICS, off by default.
+    
+    Source/WebKit:
+    
+    * Configurations/FeatureDefines.xcconfig:
+        Defined ENABLE_WEB_API_STATISTICS, off by default.
+    * Shared/WebCoreArgumentCoders.cpp:
+    (IPC::ArgumentCoder<ResourceLoadStatistics>::encode):
+        Skipped encoding of web API statistics.
+    (IPC::ArgumentCoder<ResourceLoadStatistics>::decode):
+        Skipped decoding of web API statistics.
+    
+    Source/WebKitLegacy/mac:
+    
+    * Configurations/FeatureDefines.xcconfig:
+        Defined ENABLE_WEB_API_STATISTICS, off by default.
+    
+    Tools:
+    
+    * TestWebKitAPI/Configurations/FeatureDefines.xcconfig:
+        Defined ENABLE_WEB_API_STATISTICS, off by default.
+    
+    LayoutTests:
+    
+    * platform/ios-wk2/TestExpectations:
+        http/tests/webAPIStatistics skipped.
+    * platform/mac-wk2/TestExpectations:
+        http/tests/webAPIStatistics skipped.
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@239888 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2019-01-11  John Wilander  <wilander@apple.com>
+
+            Compile out Web API Statistics Collection
+            https://bugs.webkit.org/show_bug.cgi?id=193370
+            <rdar://problem/45388584>
+
+            Reviewed by Brent Fulgham.
+
+            * Configurations/FeatureDefines.xcconfig:
+                Defined ENABLE_WEB_API_STATISTICS, off by default.
+
 2019-01-04  Alex Christensen  <achristensen@webkit.org>
 
         Progress towards fixing Mac CMake build

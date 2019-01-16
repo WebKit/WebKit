@@ -2647,7 +2647,8 @@ void ArgumentCoder<ResourceLoadStatistics>::encode(Encoder& encoder, const WebCo
     encoder << statistics.isPrevalentResource;
     encoder << statistics.isVeryPrevalentResource;
     encoder << statistics.dataRecordsRemoved;
-    
+
+#if ENABLE(WEB_API_STATISTICS)
     encoder << statistics.fontsFailedToLoad;
     encoder << statistics.fontsSuccessfullyLoaded;
     encoder << statistics.topFrameRegistrableDomainsWhichAccessedWebAPIs;
@@ -2656,7 +2657,7 @@ void ArgumentCoder<ResourceLoadStatistics>::encode(Encoder& encoder, const WebCo
     
     encoder << statistics.navigatorFunctionsAccessed;
     encoder << statistics.screenFunctionsAccessed;
-    
+#endif
 }
 
 Optional<ResourceLoadStatistics> ArgumentCoder<ResourceLoadStatistics>::decode(Decoder& decoder)
@@ -2717,6 +2718,7 @@ Optional<ResourceLoadStatistics> ArgumentCoder<ResourceLoadStatistics>::decode(D
     if (!decoder.decode(statistics.dataRecordsRemoved))
         return WTF::nullopt;
     
+#if ENABLE(WEB_API_STATISTICS)
     if (!decoder.decode(statistics.fontsFailedToLoad))
         return WTF::nullopt;
     
@@ -2734,7 +2736,8 @@ Optional<ResourceLoadStatistics> ArgumentCoder<ResourceLoadStatistics>::decode(D
     
     if (!decoder.decode(statistics.screenFunctionsAccessed))
         return WTF::nullopt;
-    
+#endif
+
     return WTFMove(statistics);
 }
 

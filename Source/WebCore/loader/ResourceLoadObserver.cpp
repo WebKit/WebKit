@@ -234,6 +234,7 @@ void ResourceLoadObserver::requestStorageAccessUnderOpener(const String& domainI
 
 void ResourceLoadObserver::logFontLoad(const Document& document, const String& familyName, bool loadStatus)
 {
+#if ENABLE(WEB_API_STATISTICS)
     if (!shouldLog(document.sessionID().isEphemeral()))
         return;
     auto registrableDomain = primaryDomain(document.url());
@@ -251,10 +252,16 @@ void ResourceLoadObserver::logFontLoad(const Document& document, const String& f
         shouldCallNotificationCallback = true;
     if (shouldCallNotificationCallback)
         scheduleNotificationIfNeeded();
+#else
+    UNUSED_PARAM(document);
+    UNUSED_PARAM(familyName);
+    UNUSED_PARAM(loadStatus);
+#endif
 }
     
 void ResourceLoadObserver::logCanvasRead(const Document& document)
 {
+#if ENABLE(WEB_API_STATISTICS)
     if (!shouldLog(document.sessionID().isEphemeral()))
         return;
     auto registrableDomain = primaryDomain(document.url());
@@ -263,10 +270,14 @@ void ResourceLoadObserver::logCanvasRead(const Document& document)
     statistics.canvasActivityRecord.wasDataRead = true;
     if (statistics.topFrameRegistrableDomainsWhichAccessedWebAPIs.add(mainFrameRegistrableDomain).isNewEntry)
         scheduleNotificationIfNeeded();
+#else
+    UNUSED_PARAM(document);
+#endif
 }
 
 void ResourceLoadObserver::logCanvasWriteOrMeasure(const Document& document, const String& textWritten)
 {
+#if ENABLE(WEB_API_STATISTICS)
     if (!shouldLog(document.sessionID().isEphemeral()))
         return;
     auto registrableDomain = primaryDomain(document.url());
@@ -279,10 +290,15 @@ void ResourceLoadObserver::logCanvasWriteOrMeasure(const Document& document, con
         shouldCallNotificationCallback = true;
     if (shouldCallNotificationCallback)
         scheduleNotificationIfNeeded();
+#else
+    UNUSED_PARAM(document);
+    UNUSED_PARAM(textWritten);
+#endif
 }
     
 void ResourceLoadObserver::logNavigatorAPIAccessed(const Document& document, const ResourceLoadStatistics::NavigatorAPI functionName)
 {
+#if ENABLE(WEB_API_STATISTICS)
     if (!shouldLog(document.sessionID().isEphemeral()))
         return;
     auto registrableDomain = primaryDomain(document.url());
@@ -297,10 +313,15 @@ void ResourceLoadObserver::logNavigatorAPIAccessed(const Document& document, con
         shouldCallNotificationCallback = true;
     if (shouldCallNotificationCallback)
         scheduleNotificationIfNeeded();
+#else
+    UNUSED_PARAM(document);
+    UNUSED_PARAM(functionName);
+#endif
 }
     
 void ResourceLoadObserver::logScreenAPIAccessed(const Document& document, const ResourceLoadStatistics::ScreenAPI functionName)
 {
+#if ENABLE(WEB_API_STATISTICS)
     if (!shouldLog(document.sessionID().isEphemeral()))
         return;
     auto registrableDomain = primaryDomain(document.url());
@@ -315,6 +336,10 @@ void ResourceLoadObserver::logScreenAPIAccessed(const Document& document, const 
         shouldCallNotificationCallback = true;
     if (shouldCallNotificationCallback)
         scheduleNotificationIfNeeded();
+#else
+    UNUSED_PARAM(document);
+    UNUSED_PARAM(functionName);
+#endif
 }
     
 ResourceLoadStatistics& ResourceLoadObserver::ensureResourceStatisticsForPrimaryDomain(const String& primaryDomain)
