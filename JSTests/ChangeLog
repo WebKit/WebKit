@@ -1,3 +1,16 @@
+2019-01-15  Mark Lam  <mark.lam@apple.com>
+
+        JSFunction::canUseAllocationProfile() should account for builtin functions with no own prototypes.
+        https://bugs.webkit.org/show_bug.cgi?id=193423
+        <rdar://problem/46209355>
+
+        Reviewed by Saam Barati.
+
+        * microbenchmarks/sinkable-new-object-with-builtin-constructor.js: Added.
+        * stress/constructing-builtin-functions-with-getter-prototype-should-only-call-getter-once-per-new-1.js: Added.
+        * stress/constructing-builtin-functions-with-getter-prototype-should-only-call-getter-once-per-new-2.js: Added.
+        * stress/jsfunction-cannot-use-allocation-profile-with-builtin-functions-with-no-prototype.js: Added.
+
 2019-01-15  Yusuke Suzuki  <yusukesuzuki@slowstart.org>
 
         [JSC] Use KnownStringUse for GetByVal(Array::String) since AI would offer wider type information and offer non-string type after removing Check(String)

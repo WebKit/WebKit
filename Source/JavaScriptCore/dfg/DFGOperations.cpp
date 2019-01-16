@@ -301,7 +301,7 @@ JSCell* JIT_OPERATION operationCreateThis(ExecState* exec, JSObject* constructor
     auto scope = DECLARE_THROW_SCOPE(vm);
     if (constructor->type() == JSFunctionType && jsCast<JSFunction*>(constructor)->canUseAllocationProfile()) {
         auto rareData = jsCast<JSFunction*>(constructor)->ensureRareDataAndAllocationProfile(exec, inlineCapacity);
-        RETURN_IF_EXCEPTION(scope, nullptr);
+        scope.releaseAssertNoException();
         ObjectAllocationProfile* allocationProfile = rareData->objectAllocationProfile();
         Structure* structure = allocationProfile->structure();
         JSObject* result = constructEmptyObject(exec, structure);

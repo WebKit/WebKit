@@ -1,3 +1,26 @@
+2019-01-15  Mark Lam  <mark.lam@apple.com>
+
+        JSFunction::canUseAllocationProfile() should account for builtin functions with no own prototypes.
+        https://bugs.webkit.org/show_bug.cgi?id=193423
+        <rdar://problem/46209355>
+
+        Reviewed by Saam Barati.
+
+        JSFunction::canUseAllocationProfile() should return false for most builtins
+        because the majority of them have no prototype property.  The only exception to
+        this is the few builtin functions that are explicitly used as constructors.
+
+        For these builtin constructors, JSFunction::canUseAllocationProfile() should also
+        return false if the prototype property is a getter or custom getter because
+        getting the prototype would then be effectful.
+
+        * dfg/DFGOperations.cpp:
+        * runtime/CommonSlowPaths.cpp:
+        (JSC::SLOW_PATH_DECL):
+        * runtime/JSFunctionInlines.h:
+        (JSC::JSFunction::canUseAllocationProfile):
+        * runtime/PropertySlot.h:
+
 2019-01-15  Yusuke Suzuki  <yusukesuzuki@slowstart.org>
 
         [JSC] Use KnownStringUse for GetByVal(Array::String) since AI would offer wider type information and offer non-string type after removing Check(String)
