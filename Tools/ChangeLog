@@ -1,5 +1,59 @@
 2019-01-15  Alan Coon  <alancoon@apple.com>
 
+        Cherry-pick r239851. rdar://problem/47260326
+
+    Add WKBundlePage SPI to temporarily force light or dark appearance on a page.
+    https://bugs.webkit.org/show_bug.cgi?id=193327
+    rdar://problem/47093222
+    
+    Reviewed by Tim Horton.
+    
+    Source/WebKit:
+    
+    Tests: WebKit.ForceLightAppearanceInBundle API Test
+    
+    * WebProcess/InjectedBundle/API/c/WKBundlePage.cpp:
+    (WKBundlePageSetUseDarkAppearance): Added.
+    (WKBundlePageIsUsingDarkAppearance): Added.
+    * WebProcess/InjectedBundle/API/c/WKBundlePagePrivate.h:
+    
+    Tools:
+    
+    * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+    * TestWebKitAPI/Tests/WebKit/mac/ForceLightAppearanceInBundle.mm: Added.
+    (TestWebKitAPI::didFinishNavigation):
+    (TestWebKitAPI::didReceiveMessageFromInjectedBundle):
+    (TestWebKitAPI::TEST):
+    * TestWebKitAPI/Tests/WebKit/mac/ForceLightAppearanceInBundle_Bundle.mm: Added.
+    (TestWebKitAPI::ForceLightAppearanceInBundleTest::ForceLightAppearanceInBundleTest):
+    (TestWebKitAPI::ForceLightAppearanceInBundleTest::didCreatePage):
+    (TestWebKitAPI::ForceLightAppearanceInBundleTest::didReceiveMessage):
+    * TestWebKitAPI/Tests/WebKit/mac/dark-mode.html: Added.
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@239851 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2019-01-10  Timothy Hatcher  <timothy@apple.com>
+
+            Add WKBundlePage SPI to temporarily force light or dark appearance on a page.
+            https://bugs.webkit.org/show_bug.cgi?id=193327
+            rdar://problem/47093222
+
+            Reviewed by Tim Horton.
+
+            * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+            * TestWebKitAPI/Tests/WebKit/mac/ForceLightAppearanceInBundle.mm: Added.
+            (TestWebKitAPI::didFinishNavigation):
+            (TestWebKitAPI::didReceiveMessageFromInjectedBundle):
+            (TestWebKitAPI::TEST):
+            * TestWebKitAPI/Tests/WebKit/mac/ForceLightAppearanceInBundle_Bundle.mm: Added.
+            (TestWebKitAPI::ForceLightAppearanceInBundleTest::ForceLightAppearanceInBundleTest):
+            (TestWebKitAPI::ForceLightAppearanceInBundleTest::didCreatePage):
+            (TestWebKitAPI::ForceLightAppearanceInBundleTest::didReceiveMessage):
+            * TestWebKitAPI/Tests/WebKit/mac/dark-mode.html: Added.
+
+2019-01-15  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r239832. rdar://problem/47260343
 
     Override the session configuration for cookieAcceptPolicy

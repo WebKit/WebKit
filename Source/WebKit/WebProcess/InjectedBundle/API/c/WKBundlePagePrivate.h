@@ -77,6 +77,9 @@ WK_EXPORT bool WKBundlePageHasComposition(WKBundlePageRef page);
 WK_EXPORT void WKBundlePageConfirmComposition(WKBundlePageRef page);
 WK_EXPORT void WKBundlePageConfirmCompositionWithText(WKBundlePageRef page, WKStringRef text);
 
+WK_EXPORT void WKBundlePageSetUseDarkAppearance(WKBundlePageRef page, bool useDarkAppearance);
+WK_EXPORT bool WKBundlePageIsUsingDarkAppearance(WKBundlePageRef page);
+
 WK_EXPORT bool WKBundlePageCanShowMIMEType(WKBundlePageRef, WKStringRef mimeType);
 
 WK_EXPORT void* WKAccessibilityRootObject(WKBundlePageRef);
