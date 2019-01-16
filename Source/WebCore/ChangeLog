@@ -1,3 +1,10 @@
+2019-01-16  Alex Christensen  <achristensen@webkit.org>
+
+        Internal build fix.
+
+        * platform/graphics/ca/cocoa/PlatformCALayerCocoa.mm:
+        (WebCore::layerContentsFormat):
+
 2019-01-16  Youenn Fablet  <youenn@apple.com>
 
         ServiceWorkerContainer is leaking due to a ref cycle
