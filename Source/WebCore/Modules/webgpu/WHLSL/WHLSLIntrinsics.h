@@ -146,8 +146,8 @@ private:
     AST::NativeTypeDeclaration* m_textureDepthCube[WTF_ARRAY_LENGTH(m_depthTextureInnerTypes)];
 };
 
-}
+} // namespace WHLSL
 
-}
+} // namespace WebCore
 
-#endif
+#endif // ENABLE(WEBGPU)

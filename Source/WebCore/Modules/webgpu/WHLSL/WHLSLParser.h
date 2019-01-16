@@ -105,8 +105,8 @@ class Parser {
 
 };
 
-}
+} // namespace WHLSL
 
-}
+} // namespace WebCore
 
-#endif
+#endif // ENABLE(WEBGPU)

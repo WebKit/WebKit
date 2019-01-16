@@ -142,8 +142,8 @@ bool findHighZombies(Program& program)
     return !loopChecker.error();
 }
 
-}
+} // namespace WHLSL
 
-}
+} // namespace WebCore
 
-#endif
+#endif // ENABLE(WEBGPU)

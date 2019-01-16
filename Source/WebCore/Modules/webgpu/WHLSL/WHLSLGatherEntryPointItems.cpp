@@ -177,8 +177,8 @@ Optional<EntryPointItems> gatherEntryPointItems(const Intrinsics& intrinsics, AS
     return {{ inputGatherer.takeEntryPointItems(), outputGatherer.takeEntryPointItems() }};
 }
 
-}
+} // namespace WHLSL
 
-}
+} // namespace WebCore
 
-#endif
+#endif // ENABLE(WEBGPU)

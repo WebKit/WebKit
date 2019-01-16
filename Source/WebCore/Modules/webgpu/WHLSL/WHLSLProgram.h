@@ -106,8 +106,8 @@ private:
     Vector<UniqueRef<AST::NativeTypeDeclaration>> m_nativeTypeDeclarations;
 };
 
-}
+} // namespace WHLSL
 
-}
+} // namespace WebCore
 
-#endif
+#endif // ENABLE(WEBGPU)

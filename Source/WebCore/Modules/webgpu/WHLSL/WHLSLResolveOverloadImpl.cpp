@@ -107,8 +107,8 @@ AST::NamedType* resolveTypeOverloadImpl(Vector<std::reference_wrapper<AST::Named
     return result;
 }
 
-}
+} // namespace WHLSL
 
-}
+} // namespace WebCore
 
-#endif
+#endif // ENABLE(WEBGPU)

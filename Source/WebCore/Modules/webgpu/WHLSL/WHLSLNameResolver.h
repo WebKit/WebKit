@@ -71,8 +71,8 @@ private:
 bool resolveNamesInTypes(Program&, NameResolver&);
 bool resolveNamesInFunctions(Program&, NameResolver&);
 
-}
+} // namespace WHLSL
 
-}
+} // namespace WebCore
 
-#endif
+#endif // ENABLE(WEBGPU)

@@ -62,8 +62,8 @@ struct EntryPointItems {
 
 Optional<EntryPointItems> gatherEntryPointItems(const Intrinsics&, AST::FunctionDefinition&);
 
-}
+} // namespace WHLSL
 
-}
+} // namespace WebCore
 
-#endif
+#endif // ENABLE(WEBGPU)

@@ -276,8 +276,8 @@ template<unsigned length> Optional<unsigned> Lexer::anyCharacter(const char (&st
     return WTF::nullopt;
 }
 
-}
+} // namespace WHLSL
 
-}
+} // namespace WebCore
 
-#endif
+#endif // ENABLE(WEBGPU)

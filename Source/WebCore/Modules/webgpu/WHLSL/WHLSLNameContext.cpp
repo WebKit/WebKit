@@ -156,8 +156,8 @@ bool NameContext::exists(String& name)
         || m_variables.find(name) != m_variables.end();
 }
 
-}
+} // namespace WHLSL
 
-}
+} // namespace WebCore
 
-#endif
+#endif // ENABLE(WEBGPU)

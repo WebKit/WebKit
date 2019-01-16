@@ -195,8 +195,8 @@ private:
     bool m_error { false }; // FIXME: Migrate this to be some sort of descriptive string.
 };
 
-}
+} // namespace WHLSL
 
-}
+} // namespace WebCore
 
-#endif
+#endif // ENABLE(WEBGPU)

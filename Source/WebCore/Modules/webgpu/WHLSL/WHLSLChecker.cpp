@@ -1472,8 +1472,8 @@ bool check(Program& program)
     return checker.assignTypes();
 }
 
-}
+} // namespace WHLSL
 
-}
+} // namespace WebCore
 
-#endif
+#endif // ENABLE(WEBGPU)

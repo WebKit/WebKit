@@ -417,8 +417,8 @@ void Intrinsics::add(AST::NativeTypeDeclaration& nativeTypeDeclaration)
     addTexture(nativeTypeDeclaration);
 }
 
-}
+} // namespace WHLSL
 
-}
+} // namespace WebCore
 
-#endif
+#endif // ENABLE(WEBGPU)

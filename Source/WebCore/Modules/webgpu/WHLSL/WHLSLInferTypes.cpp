@@ -239,8 +239,8 @@ bool inferTypesForCall(AST::FunctionDeclaration& possibleFunction, Vector<std::r
     return true;
 }
 
-}
+} // namespace WHLSL
 
-}
+} // namespace WebCore
 
-#endif
+#endif // ENABLE(WEBGPU)

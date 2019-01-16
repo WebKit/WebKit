@@ -105,8 +105,8 @@ bool checkDuplicateFunctions(const Program& program)
     return true;
 }
 
-}
+} // namespace WHLSL
 
-}
+} // namespace WebCore
 
-#endif
+#endif // ENABLE(WEBGPU)

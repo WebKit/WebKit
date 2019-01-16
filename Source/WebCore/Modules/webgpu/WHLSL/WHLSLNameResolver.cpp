@@ -279,8 +279,8 @@ bool resolveNamesInFunctions(Program& program, NameResolver& nameResolver)
     return true;
 }
 
-}
+} // namespace WHLSL
 
-}
+} // namespace WebCore
 
-#endif
+#endif // ENABLE(WEBGPU)

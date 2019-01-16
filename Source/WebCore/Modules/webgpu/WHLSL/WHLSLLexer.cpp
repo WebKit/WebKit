@@ -819,8 +819,8 @@ Optional<unsigned> Lexer::operatorName(unsigned offset) const
     return WTF::nullopt;
 }
 
-}
+} // namespace WHLSL
 
-}
+} // namespace WebCore
 
-#endif
+#endif // ENABLE(WEBGPU)

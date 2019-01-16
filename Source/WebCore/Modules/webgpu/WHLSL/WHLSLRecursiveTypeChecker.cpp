@@ -101,8 +101,8 @@ bool checkRecursiveTypes(Program& program)
     return recursiveTypeChecker.error();
 }
 
-}
+} // namespace WHLSL
 
-}
+} // namespace WebCore
 
-#endif
+#endif // ENABLE(WEBGPU)

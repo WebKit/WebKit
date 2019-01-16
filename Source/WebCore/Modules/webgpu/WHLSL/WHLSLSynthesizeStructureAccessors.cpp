@@ -83,8 +83,8 @@ void synthesizeStructureAccessors(Program& program)
     }
 }
 
-}
+} // namespace WHLSL
 
-}
+} // namespace WebCore
 
-#endif
+#endif // ENABLE(WEBGPU)
