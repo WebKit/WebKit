@@ -98,6 +98,8 @@ public:
         // so we need to do this trick to null it out without first destroying it.
         WTF::Function<void (const IDBResultData&)> oldCompleteFunction;
         std::swap(m_completeFunction, oldCompleteFunction);
+
+        m_performFunction = { };
     }
 
     const IDBResourceIdentifier& identifier() const { return m_identifier; }

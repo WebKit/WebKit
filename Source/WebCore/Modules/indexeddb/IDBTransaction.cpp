@@ -297,11 +297,12 @@ void IDBTransaction::abortOnServerAndCancelRequests(IDBClient::TransactionOperat
     abortInProgressOperations(error);
 
     for (auto& operation : m_abortQueue) {
-        m_currentlyCompletingRequest = nullptr;
         m_transactionOperationsInProgressQueue.append(operation.get());
         operation->doComplete(IDBResultData::error(operation->identifier(), error));
+        m_currentlyCompletingRequest = nullptr;
     }
 
+    m_abortQueue.clear();
     // Since we're aborting, it should be impossible to have queued any further operations.
     ASSERT(m_pendingTransactionOperationQueue.isEmpty());
 }
@@ -338,6 +339,9 @@ void IDBTransaction::stop()
 
     m_contextStopped = true;
 
+    if (isVersionChange())
+        m_openDBRequest = nullptr;
+
     if (isFinishedOrFinishing())
         return;
 
@@ -368,7 +372,6 @@ void IDBTransaction::addRequest(IDBRequest& request)
 void IDBTransaction::removeRequest(IDBRequest& request)
 {
     ASSERT(&m_database->originThread() == &Thread::current());
-    ASSERT(m_openRequests.contains(&request));
     m_openRequests.remove(&request);
 }
 
