@@ -437,7 +437,7 @@ void RTCPReceiver::HandleSenderReport(const CommonHeader& rtcp_block,
     packet_information->packet_type_flags |= kRtcpRr;
   }
 
-  for (const rtcp::ReportBlock report_block : sender_report.report_blocks())
+  for (const rtcp::ReportBlock& report_block : sender_report.report_blocks())
     HandleReportBlock(report_block, packet_information, remote_ssrc);
 }
 

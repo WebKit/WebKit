@@ -124,7 +124,7 @@ void LossBasedBandwidthEstimation::UpdateLossStatistics(
     return;
   }
   int loss_count = 0;
-  for (auto pkt : packet_results) {
+  for (const auto& pkt : packet_results) {
     loss_count += pkt.receive_time.IsInfinite() ? 1 : 0;
   }
   last_loss_ratio_ = static_cast<double>(loss_count) / packet_results.size();

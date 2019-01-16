@@ -275,7 +275,7 @@ void ReceiveStatisticsProxy::UpdateHistograms() {
   // Aggregate content_specific_stats_ by removing experiment or simulcast
   // information;
   std::map<VideoContentType, ContentSpecificStats> aggregated_stats;
-  for (auto it : content_specific_stats_) {
+  for (const auto& it : content_specific_stats_) {
     // Calculate simulcast specific metrics (".S0" ... ".S2" suffixes).
     VideoContentType content_type = it.first;
     if (videocontenttypehelpers::GetSimulcastId(content_type) > 0) {
@@ -297,7 +297,7 @@ void ReceiveStatisticsProxy::UpdateHistograms() {
     aggregated_stats[content_type].Add(it.second);
   }
 
-  for (auto it : aggregated_stats) {
+  for (const auto& it : aggregated_stats) {
     // For the metric Foo we report the following slices:
     // WebRTC.Video.Foo,
     // WebRTC.Video.Screenshare.Foo,

@@ -328,7 +328,7 @@ bool FileRotatingStream::GetSize(size_t* size) const {
   RTC_DCHECK(size);
   *size = 0;
   size_t total_size = 0;
-  for (auto file_name : file_names_) {
+  for (const auto& file_name : file_names_) {
     total_size += GetFileSize(file_name).value_or(0);
   }
   *size = total_size;

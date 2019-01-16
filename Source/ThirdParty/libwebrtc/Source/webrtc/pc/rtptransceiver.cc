@@ -59,12 +59,12 @@ void RtpTransceiver::SetChannel(cricket::ChannelInterface* channel) {
         this, &RtpTransceiver::OnFirstPacketReceived);
   }
 
-  for (auto sender : senders_) {
+  for (const auto& sender : senders_) {
     sender->internal()->SetMediaChannel(channel_ ? channel_->media_channel()
                                                  : nullptr);
   }
 
-  for (auto receiver : receivers_) {
+  for (const auto& receiver : receivers_) {
     if (!channel_) {
       receiver->internal()->Stop();
     }
@@ -147,7 +147,7 @@ absl::optional<std::string> RtpTransceiver::mid() const {
 }
 
 void RtpTransceiver::OnFirstPacketReceived(cricket::ChannelInterface*) {
-  for (auto receiver : receivers_) {
+  for (const auto& receiver : receivers_) {
     receiver->internal()->NotifyFirstPacketReceived();
   }
 }
@@ -212,10 +212,10 @@ absl::optional<RtpTransceiverDirection> RtpTransceiver::fired_direction()
 }
 
 void RtpTransceiver::Stop() {
-  for (auto sender : senders_) {
+  for (const auto& sender : senders_) {
     sender->internal()->Stop();
   }
-  for (auto receiver : receivers_) {
+  for (const auto& receiver : receivers_) {
     receiver->internal()->Stop();
   }
   stopped_ = true;

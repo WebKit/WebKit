@@ -832,7 +832,7 @@ PeerConnection::~PeerConnection() {
   // Need to stop transceivers before destroying the stats collector because
   // AudioRtpSender has a reference to the StatsCollector it will update when
   // stopping.
-  for (auto transceiver : transceivers_) {
+  for (const auto& transceiver : transceivers_) {
     transceiver->Stop();
   }
 
@@ -868,12 +868,12 @@ PeerConnection::~PeerConnection() {
 void PeerConnection::DestroyAllChannels() {
   // Destroy video channels first since they may have a pointer to a voice
   // channel.
-  for (auto transceiver : transceivers_) {
+  for (const auto& transceiver : transceivers_) {
     if (transceiver->media_type() == cricket::MEDIA_TYPE_VIDEO) {
       DestroyTransceiverChannel(transceiver);
     }
   }
-  for (auto transceiver : transceivers_) {
+  for (const auto& transceiver : transceivers_) {
     if (transceiver->media_type() == cricket::MEDIA_TYPE_AUDIO) {
       DestroyTransceiverChannel(transceiver);
     }
@@ -1611,7 +1611,7 @@ rtc::scoped_refptr<RtpSenderInterface> PeerConnection::CreateSender(
 std::vector<rtc::scoped_refptr<RtpSenderInterface>> PeerConnection::GetSenders()
     const {
   std::vector<rtc::scoped_refptr<RtpSenderInterface>> ret;
-  for (auto sender : GetSendersInternal()) {
+  for (const auto& sender : GetSendersInternal()) {
     ret.push_back(sender);
   }
   return ret;
@@ -1621,7 +1621,7 @@ std::vector<rtc::scoped_refptr<RtpSenderProxyWithInternal<RtpSenderInternal>>>
 PeerConnection::GetSendersInternal() const {
   std::vector<rtc::scoped_refptr<RtpSenderProxyWithInternal<RtpSenderInternal>>>
       all_senders;
-  for (auto transceiver : transceivers_) {
+  for (const auto& transceiver : transceivers_) {
     auto senders = transceiver->internal()->senders();
     all_senders.insert(all_senders.end(), senders.begin(), senders.end());
   }
@@ -1643,7 +1643,7 @@ PeerConnection::GetReceiversInternal() const {
   std::vector<
       rtc::scoped_refptr<RtpReceiverProxyWithInternal<RtpReceiverInternal>>>
       all_receivers;
-  for (auto transceiver : transceivers_) {
+  for (const auto& transceiver : transceivers_) {
     auto receivers = transceiver->internal()->receivers();
     all_receivers.insert(all_receivers.end(), receivers.begin(),
                          receivers.end());
@@ -1656,7 +1656,7 @@ PeerConnection::GetTransceivers() const {
   RTC_CHECK(IsUnifiedPlan())
       << "GetTransceivers is only supported with Unified Plan SdpSemantics.";
   std::vector<rtc::scoped_refptr<RtpTransceiverInterface>> all_transceivers;
-  for (auto transceiver : transceivers_) {
+  for (const auto& transceiver : transceivers_) {
     all_transceivers.push_back(transceiver);
   }
   return all_transceivers;
@@ -1867,7 +1867,7 @@ RTCError PeerConnection::HandleLegacyOfferOptions(
 
 void PeerConnection::RemoveRecvDirectionFromReceivingTransceiversOfType(
     cricket::MediaType media_type) {
-  for (auto transceiver : GetReceivingTransceiversOfType(media_type)) {
+  for (const auto& transceiver : GetReceivingTransceiversOfType(media_type)) {
     RtpTransceiverDirection new_direction =
         RtpTransceiverDirectionWithRecvSet(transceiver->direction(), false);
     if (new_direction != transceiver->direction()) {
@@ -1901,7 +1901,7 @@ PeerConnection::GetReceivingTransceiversOfType(cricket::MediaType media_type) {
   std::vector<
       rtc::scoped_refptr<RtpTransceiverProxyWithInternal<RtpTransceiver>>>
       receiving_transceivers;
-  for (auto transceiver : transceivers_) {
+  for (const auto& transceiver : transceivers_) {
     if (!transceiver->stopped() && transceiver->media_type() == media_type &&
         RtpTransceiverDirectionHasRecv(transceiver->direction())) {
       receiving_transceivers.push_back(transceiver);
@@ -2094,7 +2094,7 @@ RTCError PeerConnection::ApplyLocalDescription(
     }
     std::vector<rtc::scoped_refptr<RtpTransceiverInterface>> remove_list;
     std::vector<rtc::scoped_refptr<MediaStreamInterface>> removed_streams;
-    for (auto transceiver : transceivers_) {
+    for (const auto& transceiver : transceivers_) {
       const ContentInfo* content =
           FindMediaSectionForTransceiver(transceiver, local_description());
       if (!content) {
@@ -2122,10 +2122,10 @@ RTCError PeerConnection::ApplyLocalDescription(
       }
     }
     auto observer = Observer();
-    for (auto transceiver : remove_list) {
+    for (const auto& transceiver : remove_list) {
       observer->OnRemoveTrack(transceiver->receiver());
     }
-    for (auto stream : removed_streams) {
+    for (const auto& stream : removed_streams) {
       observer->OnRemoveStream(stream);
     }
   } else {
@@ -2167,7 +2167,7 @@ RTCError PeerConnection::ApplyLocalDescription(
   }
 
   if (IsUnifiedPlan()) {
-    for (auto transceiver : transceivers_) {
+    for (const auto& transceiver : transceivers_) {
       const ContentInfo* content =
           FindMediaSectionForTransceiver(transceiver, local_description());
       if (!content) {
@@ -2447,7 +2447,7 @@ RTCError PeerConnection::ApplyRemoteDescription(
     std::vector<rtc::scoped_refptr<RtpTransceiverInterface>> remove_list;
     std::vector<rtc::scoped_refptr<MediaStreamInterface>> added_streams;
     std::vector<rtc::scoped_refptr<MediaStreamInterface>> removed_streams;
-    for (auto transceiver : transceivers_) {
+    for (const auto& transceiver : transceivers_) {
       const ContentInfo* content =
           FindMediaSectionForTransceiver(transceiver, remote_description());
       if (!content) {
@@ -2541,19 +2541,19 @@ RTCError PeerConnection::ApplyRemoteDescription(
     }
     // Once all processing has finished, fire off callbacks.
     auto observer = Observer();
-    for (auto transceiver : now_receiving_transceivers) {
+    for (const auto& transceiver : now_receiving_transceivers) {
       stats_->AddTrack(transceiver->receiver()->track());
       observer->OnTrack(transceiver);
       observer->OnAddTrack(transceiver->receiver(),
                            transceiver->receiver()->streams());
     }
-    for (auto stream : added_streams) {
+    for (const auto& stream : added_streams) {
       observer->OnAddStream(stream);
     }
-    for (auto transceiver : remove_list) {
+    for (const auto& transceiver : remove_list) {
       observer->OnRemoveTrack(transceiver->receiver());
     }
-    for (auto stream : removed_streams) {
+    for (const auto& stream : removed_streams) {
       observer->OnRemoveStream(stream);
     }
   }
@@ -2660,7 +2660,7 @@ void PeerConnection::ProcessRemovalOfRemoteTrack(
   // TODO(https://crbug.com/webrtc/9480): When we use stream IDs instead
   // of streams, see if the stream was removed by checking if this was the
   // last receiver with that stream ID.
-  for (auto stream : media_streams) {
+  for (const auto& stream : media_streams) {
     if (stream->GetAudioTracks().empty() && stream->GetVideoTracks().empty()) {
       remote_streams_->RemoveStream(stream);
       removed_streams->push_back(stream);
@@ -3382,7 +3382,7 @@ void PeerConnection::Close() {
   ChangeSignalingState(PeerConnectionInterface::kClosed);
   NoteUsageEvent(UsageEvent::CLOSE_CALLED);
 
-  for (auto transceiver : transceivers_) {
+  for (const auto& transceiver : transceivers_) {
     transceiver->Stop();
   }
 
@@ -4045,7 +4045,7 @@ void PeerConnection::GetOptionsForUnifiedPlanOffer(
   // and not associated). Reuse media sections marked as recyclable first,
   // otherwise append to the end of the offer. New media sections should be
   // added in the order they were added to the PeerConnection.
-  for (auto transceiver : transceivers_) {
+  for (const auto& transceiver : transceivers_) {
     if (transceiver->mid() || transceiver->stopped()) {
       continue;
     }
@@ -4815,7 +4815,7 @@ bool PeerConnection::HasRtpSender(cricket::MediaType type) const {
 
 rtc::scoped_refptr<RtpSenderProxyWithInternal<RtpSenderInternal>>
 PeerConnection::FindSenderForTrack(MediaStreamTrackInterface* track) const {
-  for (auto transceiver : transceivers_) {
+  for (const auto& transceiver : transceivers_) {
     for (auto sender : transceiver->internal()->senders()) {
       if (sender->track() == track) {
         return sender;
@@ -4827,7 +4827,7 @@ PeerConnection::FindSenderForTrack(MediaStreamTrackInterface* track) const {
 
 rtc::scoped_refptr<RtpSenderProxyWithInternal<RtpSenderInternal>>
 PeerConnection::FindSenderById(const std::string& sender_id) const {
-  for (auto transceiver : transceivers_) {
+  for (const auto& transceiver : transceivers_) {
     for (auto sender : transceiver->internal()->senders()) {
       if (sender->id() == sender_id) {
         return sender;
@@ -4839,7 +4839,7 @@ PeerConnection::FindSenderById(const std::string& sender_id) const {
 
 rtc::scoped_refptr<RtpReceiverProxyWithInternal<RtpReceiverInternal>>
 PeerConnection::FindReceiverById(const std::string& receiver_id) const {
-  for (auto transceiver : transceivers_) {
+  for (const auto& transceiver : transceivers_) {
     for (auto receiver : transceiver->internal()->receivers()) {
       if (receiver->id() == receiver_id) {
         return receiver;
@@ -4999,7 +4999,7 @@ void PeerConnection::StopRtcEventLog_w() {
 
 cricket::ChannelInterface* PeerConnection::GetChannel(
     const std::string& content_name) {
-  for (auto transceiver : transceivers_) {
+  for (const auto& transceiver : transceivers_) {
     cricket::ChannelInterface* channel = transceiver->internal()->channel();
     if (channel && channel->content_name() == content_name) {
       return channel;
@@ -5114,7 +5114,7 @@ RTCError PeerConnection::PushdownMediaDescription(
   RTC_DCHECK(sdesc);
 
   // Push down the new SDP media section for each audio/video transceiver.
-  for (auto transceiver : transceivers_) {
+  for (const auto& transceiver : transceivers_) {
     const ContentInfo* content_info =
         FindMediaSectionForTransceiver(transceiver, sdesc);
     cricket::ChannelInterface* channel = transceiver->internal()->channel();
@@ -5463,7 +5463,7 @@ cricket::CandidateStatsList PeerConnection::GetPooledCandidateStats() const {
 std::map<std::string, std::string> PeerConnection::GetTransportNamesByMid()
     const {
   std::map<std::string, std::string> transport_names_by_mid;
-  for (auto transceiver : transceivers_) {
+  for (const auto& transceiver : transceivers_) {
     cricket::ChannelInterface* channel = transceiver->internal()->channel();
     if (channel) {
       transport_names_by_mid[channel->content_name()] =
@@ -5640,7 +5640,7 @@ void PeerConnection::OnTransportControllerDtlsHandshakeError(
 }
 
 void PeerConnection::EnableSending() {
-  for (auto transceiver : transceivers_) {
+  for (const auto& transceiver : transceivers_) {
     cricket::ChannelInterface* channel = transceiver->internal()->channel();
     if (channel && !channel->enabled()) {
       channel->Enable(true);
@@ -6377,7 +6377,7 @@ void PeerConnection::OnTransportControllerGatheringState(
 void PeerConnection::ReportTransportStats() {
   std::map<std::string, std::set<cricket::MediaType>>
       media_types_by_transport_name;
-  for (auto transceiver : transceivers_) {
+  for (const auto& transceiver : transceivers_) {
     if (transceiver->internal()->channel()) {
       const std::string& transport_name =
           transceiver->internal()->channel()->transport_name();

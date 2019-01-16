@@ -207,9 +207,9 @@ void AudioRtpReceiver::set_stream_ids(std::vector<std::string> stream_ids) {
 void AudioRtpReceiver::SetStreams(
     const std::vector<rtc::scoped_refptr<MediaStreamInterface>>& streams) {
   // Remove remote track from any streams that are going away.
-  for (auto existing_stream : streams_) {
+  for (const auto& existing_stream : streams_) {
     bool removed = true;
-    for (auto stream : streams) {
+    for (const auto& stream : streams) {
       if (existing_stream->id() == stream->id()) {
         RTC_DCHECK_EQ(existing_stream.get(), stream.get());
         removed = false;
@@ -221,9 +221,9 @@ void AudioRtpReceiver::SetStreams(
     }
   }
   // Add remote track to any streams that are new.
-  for (auto stream : streams) {
+  for (const auto& stream : streams) {
     bool added = true;
-    for (auto existing_stream : streams_) {
+    for (const auto& existing_stream : streams_) {
       if (stream->id() == existing_stream->id()) {
         RTC_DCHECK_EQ(stream.get(), existing_stream.get());
         added = false;
@@ -406,9 +406,9 @@ void VideoRtpReceiver::set_stream_ids(std::vector<std::string> stream_ids) {
 void VideoRtpReceiver::SetStreams(
     const std::vector<rtc::scoped_refptr<MediaStreamInterface>>& streams) {
   // Remove remote track from any streams that are going away.
-  for (auto existing_stream : streams_) {
+  for (const auto& existing_stream : streams_) {
     bool removed = true;
-    for (auto stream : streams) {
+    for (const auto& stream : streams) {
       if (existing_stream->id() == stream->id()) {
         RTC_DCHECK_EQ(existing_stream.get(), stream.get());
         removed = false;
@@ -420,9 +420,9 @@ void VideoRtpReceiver::SetStreams(
     }
   }
   // Add remote track to any streams that are new.
-  for (auto stream : streams) {
+  for (const auto& stream : streams) {
     bool added = true;
-    for (auto existing_stream : streams_) {
+    for (const auto& existing_stream : streams_) {
       if (stream->id() == existing_stream->id()) {
         RTC_DCHECK_EQ(stream.get(), existing_stream.get());
         added = false;

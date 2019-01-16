@@ -1,3 +1,30 @@
+2019-01-16  David Kilzer  <ddkilzer@apple.com>
+
+        clang-tidy: Fix unnecessary copy/ref churn of for loop variables in libwebrtc
+        <https://webkit.org/b/193498>
+
+        Reviewed by Youenn Fablet.
+
+        Fix unwanted copying/ref churn of loop variables by making them
+        const references.
+
+        * Source/webrtc/modules/bitrate_controller/loss_based_bandwidth_estimation.cc:
+        * Source/webrtc/modules/rtp_rtcp/source/rtcp_receiver.cc:
+        * Source/webrtc/p2p/base/mdns_message.cc:
+        * Source/webrtc/p2p/base/port.cc:
+        * Source/webrtc/p2p/base/stunrequest.cc:
+        * Source/webrtc/pc/jseptransportcontroller.cc:
+        * Source/webrtc/pc/peerconnection.cc:
+        * Source/webrtc/pc/rtcstatscollector.cc:
+        * Source/webrtc/pc/rtpreceiver.cc:
+        * Source/webrtc/pc/rtptransceiver.cc:
+        * Source/webrtc/pc/statscollector.cc:
+        * Source/webrtc/pc/trackmediainfomap.cc:
+        * Source/webrtc/rtc_base/filerotatingstream.cc:
+        * Source/webrtc/rtc_base/opensslsessioncache.cc:
+        * Source/webrtc/video/receive_statistics_proxy.cc:
+        * WebKit/0002-libwebrtc-fix-unnecessary-copy-of-for-loop-variables.diff: Added.
+
 2019-01-15  David Kilzer  <ddkilzer@apple.com>
 
         REGRESSION (r239510): Remove duplicate copy of srtpsession.cc from 'webrtcpcrtc' target in Xcode project

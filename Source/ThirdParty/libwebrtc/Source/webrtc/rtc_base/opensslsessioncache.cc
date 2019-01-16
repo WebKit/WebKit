@@ -22,7 +22,7 @@ OpenSSLSessionCache::OpenSSLSessionCache(SSLMode ssl_mode, SSL_CTX* ssl_ctx)
 }
 
 OpenSSLSessionCache::~OpenSSLSessionCache() {
-  for (auto it : sessions_) {
+  for (const auto& it : sessions_) {
     SSL_SESSION_free(it.second);
   }
   SSL_CTX_free(ssl_ctx_);

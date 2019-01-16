@@ -47,7 +47,7 @@ void GetAudioAndVideoTrackBySsrc(
   // means one thread jump if on signaling thread and two thread jumps if on any
   // other threads). Is there a way to avoid thread jump(s) on a per
   // sender/receiver, per method basis?
-  for (auto rtp_sender : rtp_senders) {
+  for (const auto& rtp_sender : rtp_senders) {
     cricket::MediaType media_type = rtp_sender->media_type();
     MediaStreamTrackInterface* track = rtp_sender->track();
     if (!track) {
@@ -72,7 +72,7 @@ void GetAudioAndVideoTrackBySsrc(
       }
     }
   }
-  for (auto rtp_receiver : rtp_receivers) {
+  for (const auto& rtp_receiver : rtp_receivers) {
     cricket::MediaType media_type = rtp_receiver->media_type();
     MediaStreamTrackInterface* track = rtp_receiver->track();
     RTC_DCHECK(track);
@@ -126,10 +126,10 @@ TrackMediaInfoMap::TrackMediaInfoMap(
       &remote_video_track_by_ssrc, &unsignaled_audio_track,
       &unsignaled_video_track);
 
-  for (auto sender : rtp_senders) {
+  for (const auto& sender : rtp_senders) {
     attachment_id_by_track_[sender->track()] = sender->AttachmentId();
   }
-  for (auto receiver : rtp_receivers) {
+  for (const auto& receiver : rtp_receivers) {
     attachment_id_by_track_[receiver->track()] = receiver->AttachmentId();
   }
 

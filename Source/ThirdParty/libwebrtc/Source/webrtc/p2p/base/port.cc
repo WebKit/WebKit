@@ -948,7 +948,7 @@ void Port::UpdateNetworkCost() {
   // Network cost change will affect the connection selection criteria.
   // Signal the connection state change on each connection to force a
   // re-sort in P2PTransportChannel.
-  for (auto kv : connections_) {
+  for (const auto& kv : connections_) {
     Connection* conn = kv.second;
     conn->SignalStateChange(conn);
   }
