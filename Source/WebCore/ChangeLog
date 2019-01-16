@@ -1,5 +1,57 @@
 2019-01-15  Alan Coon  <alancoon@apple.com>
 
+        Cherry-pick r239877. rdar://problem/47260302
+
+    Release assert when removing element with a map element in the shadow tree
+    https://bugs.webkit.org/show_bug.cgi?id=193351
+    <rdar://problem/47208807>
+    
+    Reviewed by Ryosuke Niwa.
+    
+    Source/WebCore:
+    
+    When a shadow host that has a map element in the shadow tree is removed from the document, we try
+    to remove the map from the scope of the host.
+    
+    Test: fast/shadow-dom/image-map-tree-scope.html
+    
+    * html/HTMLMapElement.cpp:
+    (WebCore::HTMLMapElement::insertedIntoAncestor):
+    (WebCore::HTMLMapElement::removedFromAncestor):
+    
+    Add and remove image maps when the scope changes, not when the document changes.
+    This matches how id/name/etc updates work in the HTMLElement.
+    
+    LayoutTests:
+    
+    * fast/shadow-dom/image-map-tree-scope-expected.txt: Added.
+    * fast/shadow-dom/image-map-tree-scope.html: Added.
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@239877 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2019-01-11  Antti Koivisto  <antti@apple.com>
+
+            Release assert when removing element with a map element in the shadow tree
+            https://bugs.webkit.org/show_bug.cgi?id=193351
+            <rdar://problem/47208807>
+
+            Reviewed by Ryosuke Niwa.
+
+            When a shadow host that has a map element in the shadow tree is removed from the document, we try
+            to remove the map from the scope of the host.
+
+            Test: fast/shadow-dom/image-map-tree-scope.html
+
+            * html/HTMLMapElement.cpp:
+            (WebCore::HTMLMapElement::insertedIntoAncestor):
+            (WebCore::HTMLMapElement::removedFromAncestor):
+
+            Add and remove image maps when the scope changes, not when the document changes.
+            This matches how id/name/etc updates work in the HTMLElement.
+
+2019-01-15  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r239865. rdar://problem/47260332
 
     IndexedDB: leak IDBTransaction, TransactionOperation and IDBRequest in layout tests
