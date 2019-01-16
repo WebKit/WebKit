@@ -1,3 +1,13 @@
+2019-01-15  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        Unreviewed WinCairo build fix.
+
+        * platform/network/curl/ResourceHandleCurl.cpp:
+        (WebCore::ResourceHandle::createCurlRequest):
+        (WebCore::ResourceHandle::didReceiveAuthenticationChallenge):
+        (WebCore::ResourceHandle::receivedCredential):
+        (WebCore::ResourceHandle::getCredential):
+
 2019-01-15  Alex Christensen  <achristensen@webkit.org>
 
         Reduce use of NetworkStorageSession::defaultStorageSession in WebCore

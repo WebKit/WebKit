@@ -1,3 +1,12 @@
+2019-01-15  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        Unreviewed WinCairo build fix.
+
+        * WebProcess/WebPage/WebPageInspectorTargetController.cpp:
+        (WebKit::WebPageInspectorTargetController::connectInspector): Use 'auto' instead of unprefixed InspectorTarget.
+        (WebKit::WebPageInspectorTargetController::disconnectInspector): Ditto.
+        (WebKit::WebPageInspectorTargetController::sendMessageToTargetBackend): Ditto.
+
 2019-01-15  Alex Christensen  <achristensen@webkit.org>
 
         Reduce use of NetworkStorageSession::defaultStorageSession in WebCore

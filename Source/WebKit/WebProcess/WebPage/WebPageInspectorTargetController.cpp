@@ -63,7 +63,7 @@ void WebPageInspectorTargetController::removeTarget(Inspector::InspectorTarget& 
 
 void WebPageInspectorTargetController::connectInspector(const String& targetId, Inspector::FrontendChannel::ConnectionType connectionType)
 {
-    InspectorTarget* target = m_targets.get(targetId);
+    auto target = m_targets.get(targetId);
     if (!target)
         return;
 
@@ -78,7 +78,7 @@ void WebPageInspectorTargetController::connectInspector(const String& targetId, 
 
 void WebPageInspectorTargetController::disconnectInspector(const String& targetId)
 {
-    InspectorTarget* target = m_targets.get(targetId);
+    auto target = m_targets.get(targetId);
     if (!target)
         return;
 
@@ -91,7 +91,7 @@ void WebPageInspectorTargetController::disconnectInspector(const String& targetI
 
 void WebPageInspectorTargetController::sendMessageToTargetBackend(const String& targetId, const String& message)
 {
-    InspectorTarget* target = m_targets.get(targetId);
+    auto target = m_targets.get(targetId);
     if (!target)
         return;
 
