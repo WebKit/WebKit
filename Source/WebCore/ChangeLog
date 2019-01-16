@@ -1,3 +1,17 @@
+2019-01-16  Chris Dumez  <cdumez@apple.com>
+
+        Regression(PSON) View becomes blank after click a cross-site download link
+        https://bugs.webkit.org/show_bug.cgi?id=193361
+        <rdar://problem/47099573>
+
+        Reviewed by Geoffrey Garen.
+
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::commitProvisionalLoad):
+        When restoring from PageCache, make sure we notify the client that the load was committed
+        *before* we tell it that the navigation is complete. This would confuse the ProvisionalPageProxy
+        logic in the UIProcess.
+
 2019-01-16  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: extend overlay element bounds lines to the right/below as well

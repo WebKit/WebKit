@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2017-2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -72,6 +72,7 @@ static bool serverRedirected;
 static HashSet<pid_t> seenPIDs;
 static bool willPerformClientRedirect;
 static bool didPerformClientRedirect;
+static bool shouldConvertToDownload;
 static RetainPtr<NSURL> clientRedirectSourceURL;
 static RetainPtr<NSURL> clientRedirectDestinationURL;
 
@@ -126,6 +127,11 @@ static RetainPtr<NSURL> clientRedirectDestinationURL;
     else
         decisionHandler(WKNavigationActionPolicyAllow);
     didRepondToPolicyDecisionCall = true;
+}
+
+- (void)webView:(WKWebView *)webView decidePolicyForNavigationResponse:(WKNavigationResponse *)navigationResponse decisionHandler:(void (^)(WKNavigationResponsePolicy))decisionHandler
+{
+    decisionHandler(shouldConvertToDownload ? _WKNavigationResponsePolicyBecomeDownload : WKNavigationResponsePolicyAllow);
 }
 
 - (void)webView:(WKWebView *)webView didReceiveServerRedirectForProvisionalNavigation:(WKNavigation *)navigation
@@ -1467,6 +1473,109 @@ TEST(ProcessSwap, ServerRedirect2)
     EXPECT_WK_STREQ(@"pson://www.webkit.org/main1.html", [[webView URL] absoluteString]);
 }
 
+static const char* linkToWebKitBytes = R"PSONRESOURCE(
+<body>
+  <a id="testLink" href="pson://www.webkit.org/main.html">Link</a>
+</body>
+)PSONRESOURCE";
+
+TEST(ProcessSwap, PolicyCancelAfterServerRedirect)
+{
+    auto processPoolConfiguration = adoptNS([[_WKProcessPoolConfiguration alloc] init]);
+    processPoolConfiguration.get().processSwapsOnNavigation = YES;
+    auto processPool = adoptNS([[WKProcessPool alloc] _initWithConfiguration:processPoolConfiguration.get()]);
+
+    auto webViewConfiguration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    [webViewConfiguration setProcessPool:processPool.get()];
+    auto handler = adoptNS([[PSONScheme alloc] init]);
+    [handler addMappingFromURLString:@"pson://www.google.com/main.html" toData:linkToWebKitBytes];
+    [handler addRedirectFromURLString:@"pson://www.webkit.org/main.html" toURLString:@"pson://www.apple.com/ignore.html"];
+    [webViewConfiguration setURLSchemeHandler:handler.get() forURLScheme:@"pson"];
+
+    auto webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:webViewConfiguration.get()]);
+    auto navigationDelegate = adoptNS([[PSONNavigationDelegate alloc] init]);
+    [webView setNavigationDelegate:navigationDelegate.get()];
+
+    navigationDelegate->decidePolicyForNavigationAction = ^(WKNavigationAction *action, void (^decisionHandler)(WKNavigationActionPolicy)) {
+        if ([action.request.URL.absoluteString hasSuffix:@"ignore.html"]) {
+            decisionHandler(WKNavigationActionPolicyCancel);
+            return;
+        }
+        decisionHandler(WKNavigationActionPolicyAllow);
+    };
+
+    NSURLRequest *request = [NSURLRequest requestWithURL:[NSURL URLWithString:@"pson://www.google.com/main.html"]];
+    [webView loadRequest:request];
+
+    TestWebKitAPI::Util::run(&done);
+    done = false;
+    auto pidAfterFirstLoad = [webView _webProcessIdentifier];
+
+    EXPECT_EQ(1, numberOfDecidePolicyCalls);
+
+    [webView evaluateJavaScript:@"testLink.click()" completionHandler:nil];
+
+    TestWebKitAPI::Util::run(&failed);
+    failed = false;
+    done = false;
+
+    EXPECT_EQ(3, numberOfDecidePolicyCalls);
+
+    // We should still be on google.com.
+    EXPECT_EQ(pidAfterFirstLoad, [webView _webProcessIdentifier]);
+    EXPECT_WK_STREQ(@"pson://www.google.com/main.html", [[webView URL] absoluteString]);
+
+    [webView evaluateJavaScript:@"testLink.innerText" completionHandler: [&] (id innerText, NSError *error) {
+        EXPECT_WK_STREQ(@"Link", innerText);
+        done = true;
+    }];
+    TestWebKitAPI::Util::run(&done);
+    done = false;
+}
+
+TEST(ProcessSwap, CrossSiteDownload)
+{
+    auto processPoolConfiguration = adoptNS([[_WKProcessPoolConfiguration alloc] init]);
+    processPoolConfiguration.get().processSwapsOnNavigation = YES;
+    auto processPool = adoptNS([[WKProcessPool alloc] _initWithConfiguration:processPoolConfiguration.get()]);
+
+    auto webViewConfiguration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    [webViewConfiguration setProcessPool:processPool.get()];
+    auto handler = adoptNS([[PSONScheme alloc] init]);
+    [handler addMappingFromURLString:@"pson://www.google.com/main.html" toData:linkToWebKitBytes];
+    [handler addMappingFromURLString:@"pson://www.webkit.org/main.html" toData:"Hello"];
+    [webViewConfiguration setURLSchemeHandler:handler.get() forURLScheme:@"pson"];
+
+    auto webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:webViewConfiguration.get()]);
+    auto navigationDelegate = adoptNS([[PSONNavigationDelegate alloc] init]);
+    [webView setNavigationDelegate:navigationDelegate.get()];
+
+    NSURLRequest *request = [NSURLRequest requestWithURL:[NSURL URLWithString:@"pson://www.google.com/main.html"]];
+    [webView loadRequest:request];
+
+    TestWebKitAPI::Util::run(&done);
+    done = false;
+    auto pidAfterFirstLoad = [webView _webProcessIdentifier];
+
+    shouldConvertToDownload = true;
+    [webView evaluateJavaScript:@"testLink.click()" completionHandler:nil];
+
+    TestWebKitAPI::Util::run(&failed);
+    failed = false;
+    shouldConvertToDownload = false;
+
+    // We should still be on google.com.
+    EXPECT_EQ(pidAfterFirstLoad, [webView _webProcessIdentifier]);
+    EXPECT_WK_STREQ(@"pson://www.google.com/main.html", [[webView URL] absoluteString]);
+
+    [webView evaluateJavaScript:@"testLink.innerText" completionHandler: [&] (id innerText, NSError *error) {
+        EXPECT_WK_STREQ(@"Link", innerText);
+        done = true;
+    }];
+    TestWebKitAPI::Util::run(&done);
+    done = false;
+}
+
 enum class ShouldEnablePSON { No, Yes };
 static void runClientSideRedirectTest(ShouldEnablePSON shouldEnablePSON)
 {
@@ -2232,12 +2341,27 @@ TEST(ProcessSwap, PageShowHide)
 
     EXPECT_EQ(7u, [receivedMessages count]);
     EXPECT_WK_STREQ(@"pson://www.webkit.org/main.html - pageshow NOT persisted", receivedMessages.get()[0]);
-    EXPECT_WK_STREQ(@"pson://www.webkit.org/main.html - pagehide persisted", receivedMessages.get()[1]);
-    EXPECT_WK_STREQ(@"pson://www.apple.com/main.html - pageshow NOT persisted", receivedMessages.get()[2]);
-    EXPECT_WK_STREQ(@"pson://www.apple.com/main.html - pagehide persisted", receivedMessages.get()[3]);
-    EXPECT_WK_STREQ(@"pson://www.webkit.org/main.html - pageshow persisted", receivedMessages.get()[4]);
-    EXPECT_WK_STREQ(@"pson://www.webkit.org/main.html - pagehide persisted", receivedMessages.get()[5]);
-    EXPECT_WK_STREQ(@"pson://www.apple.com/main.html - pageshow persisted", receivedMessages.get()[6]);
+    if ([receivedMessages.get()[1] hasPrefix:@"pson://www.webkit.org/main.html"]) {
+        EXPECT_WK_STREQ(@"pson://www.webkit.org/main.html - pagehide persisted", receivedMessages.get()[1]);
+        EXPECT_WK_STREQ(@"pson://www.apple.com/main.html - pageshow NOT persisted", receivedMessages.get()[2]);
+    } else {
+        EXPECT_WK_STREQ(@"pson://www.apple.com/main.html - pageshow NOT persisted", receivedMessages.get()[1]);
+        EXPECT_WK_STREQ(@"pson://www.webkit.org/main.html - pagehide persisted", receivedMessages.get()[2]);
+    }
+    if ([receivedMessages.get()[3] hasPrefix:@"pson://www.apple.com/main.html"]) {
+        EXPECT_WK_STREQ(@"pson://www.apple.com/main.html - pagehide persisted", receivedMessages.get()[3]);
+        EXPECT_WK_STREQ(@"pson://www.webkit.org/main.html - pageshow persisted", receivedMessages.get()[4]);
+    } else {
+        EXPECT_WK_STREQ(@"pson://www.webkit.org/main.html - pageshow persisted", receivedMessages.get()[3]);
+        EXPECT_WK_STREQ(@"pson://www.apple.com/main.html - pagehide persisted", receivedMessages.get()[4]);
+    }
+    if ([receivedMessages.get()[5] hasPrefix:@"pson://www.webkit.org/main.html"]) {
+        EXPECT_WK_STREQ(@"pson://www.webkit.org/main.html - pagehide persisted", receivedMessages.get()[5]);
+        EXPECT_WK_STREQ(@"pson://www.apple.com/main.html - pageshow persisted", receivedMessages.get()[6]);
+    } else {
+        EXPECT_WK_STREQ(@"pson://www.apple.com/main.html - pageshow persisted", receivedMessages.get()[5]);
+        EXPECT_WK_STREQ(@"pson://www.webkit.org/main.html - pagehide persisted", receivedMessages.get()[6]);
+    }
 }
 
 // Disabling the page cache explicitly is (for some reason) not available on iOS.
@@ -2307,12 +2431,27 @@ TEST(ProcessSwap, LoadUnload)
 
     EXPECT_EQ(7u, [receivedMessages count]);
     EXPECT_WK_STREQ(@"pson://www.webkit.org/main.html - load", receivedMessages.get()[0]);
-    EXPECT_WK_STREQ(@"pson://www.webkit.org/main.html - unload", receivedMessages.get()[1]);
-    EXPECT_WK_STREQ(@"pson://www.apple.com/main.html - load", receivedMessages.get()[2]);
-    EXPECT_WK_STREQ(@"pson://www.apple.com/main.html - unload", receivedMessages.get()[3]);
-    EXPECT_WK_STREQ(@"pson://www.webkit.org/main.html - load", receivedMessages.get()[4]);
-    EXPECT_WK_STREQ(@"pson://www.webkit.org/main.html - unload", receivedMessages.get()[5]);
-    EXPECT_WK_STREQ(@"pson://www.apple.com/main.html - load", receivedMessages.get()[6]);
+    if ([receivedMessages.get()[1] hasPrefix:@"pson://www.webkit.org/main.html"]) {
+        EXPECT_WK_STREQ(@"pson://www.webkit.org/main.html - unload", receivedMessages.get()[1]);
+        EXPECT_WK_STREQ(@"pson://www.apple.com/main.html - load", receivedMessages.get()[2]);
+    } else {
+        EXPECT_WK_STREQ(@"pson://www.apple.com/main.html - load", receivedMessages.get()[1]);
+        EXPECT_WK_STREQ(@"pson://www.webkit.org/main.html - unload", receivedMessages.get()[2]);
+    }
+    if ([receivedMessages.get()[3] hasPrefix:@"pson://www.apple.com/main.html"]) {
+        EXPECT_WK_STREQ(@"pson://www.apple.com/main.html - unload", receivedMessages.get()[3]);
+        EXPECT_WK_STREQ(@"pson://www.webkit.org/main.html - load", receivedMessages.get()[4]);
+    } else {
+        EXPECT_WK_STREQ(@"pson://www.webkit.org/main.html - load", receivedMessages.get()[3]);
+        EXPECT_WK_STREQ(@"pson://www.apple.com/main.html - unload", receivedMessages.get()[4]);
+    }
+    if ([receivedMessages.get()[5] hasPrefix:@"pson://www.webkit.org/main.html"]) {
+        EXPECT_WK_STREQ(@"pson://www.webkit.org/main.html - unload", receivedMessages.get()[5]);
+        EXPECT_WK_STREQ(@"pson://www.apple.com/main.html - load", receivedMessages.get()[6]);
+    } else {
+        EXPECT_WK_STREQ(@"pson://www.apple.com/main.html - load", receivedMessages.get()[5]);
+        EXPECT_WK_STREQ(@"pson://www.webkit.org/main.html - unload", receivedMessages.get()[6]);
+    }
 }
 
 TEST(ProcessSwap, WebInspector)

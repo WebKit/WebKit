@@ -1,3 +1,17 @@
+2019-01-16  Chris Dumez  <cdumez@apple.com>
+
+        Regression(PSON) View becomes blank after click a cross-site download link
+        https://bugs.webkit.org/show_bug.cgi?id=193361
+        <rdar://problem/47099573>
+
+        Reviewed by Geoffrey Garen.
+
+        Skip test testing the cross-process DOMWindow API as I broke it with this patch.
+        The feature is far from ready and off by default anyway. I will add support back
+        in a follow-up.
+
+        * platform/wk2/TestExpectations:
+
 2019-01-16  Zalan Bujtas  <zalan@apple.com>
 
         [LFC][Out-of-flow] Set used vertical margin values when top/height/bottom are non-auto.

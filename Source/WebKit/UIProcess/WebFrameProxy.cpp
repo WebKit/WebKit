@@ -27,6 +27,7 @@
 #include "WebFrameProxy.h"
 
 #include "APINavigation.h"
+#include "ProvisionalPageProxy.h"
 #include "WebCertificateInfo.h"
 #include "WebFramePolicyListenerProxy.h"
 #include "WebPageMessages.h"
@@ -74,7 +75,7 @@ bool WebFrameProxy::isMainFrame() const
     if (!m_page)
         return false;
 
-    return this == m_page->mainFrame();
+    return this == m_page->mainFrame() || (m_page->provisionalPageProxy() && this == m_page->provisionalPageProxy()->mainFrame());
 }
 
 void WebFrameProxy::loadURL(const URL& url)

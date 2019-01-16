@@ -324,7 +324,7 @@ void ViewGestureController::endSwipeGesture(WebBackForwardListItem* targetItem, 
     uint64_t pageID = m_webPageProxy.pageID();
     GestureID gestureID = m_currentGestureID;
     m_provisionalLoadCallback = [this, pageID, gestureID] {
-        auto drawingArea = m_webPageProxy.drawingArea();
+        auto drawingArea = m_webPageProxy.provisionalDrawingArea();
         if (!drawingArea) {
             removeSwipeSnapshot();
             return;

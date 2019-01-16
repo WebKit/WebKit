@@ -46,6 +46,7 @@ class DrawingAreaProxy;
 class RemoteLayerTreeTransaction;
 class WebFrameProxy;
 class WebPageProxy;
+class WebProcessProxy;
 class WebProcessPool;
 }
 
@@ -86,7 +87,7 @@ class WebProcessPool;
 
 - (void)_webViewDestroyed;
 
-- (std::unique_ptr<WebKit::DrawingAreaProxy>)_createDrawingAreaProxy;
+- (std::unique_ptr<WebKit::DrawingAreaProxy>)_createDrawingAreaProxy:(WebKit::WebProcessProxy&)process;
 - (void)_processDidExit;
 - (void)_processWillSwap;
 - (void)_didRelaunchProcess;
