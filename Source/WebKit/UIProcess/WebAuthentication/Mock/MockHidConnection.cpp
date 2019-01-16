@@ -70,23 +70,17 @@ void MockHidConnection::terminate()
 
 void MockHidConnection::send(Vector<uint8_t>&& data, DataSentCallback&& callback)
 {
-    // FIXME(192061): Remove all LOG_ERRORs.
-    LOG_ERROR("Sending data: Phase 1. Current time: %f.", MonotonicTime::now().secondsSinceEpoch().value());
     ASSERT(m_initialized);
     auto task = makeBlockPtr([weakThis = makeWeakPtr(*this), data = WTFMove(data), callback = WTFMove(callback)]() mutable {
         ASSERT(!RunLoop::isMain());
-        LOG_ERROR("Sending data: Phase 2. Current time: %f.", MonotonicTime::now().secondsSinceEpoch().value());
         RunLoop::main().dispatch([weakThis, data = WTFMove(data), callback = WTFMove(callback)]() mutable {
-            LOG_ERROR("Sending data: Phase 3. Current time: %f.", MonotonicTime::now().secondsSinceEpoch().value());
             if (!weakThis) {
                 callback(DataSent::No);
                 return;
             }
 
-            LOG_ERROR("Sending data: Phase 4. Current time: %f.", MonotonicTime::now().secondsSinceEpoch().value());
             weakThis->assembleRequest(WTFMove(data));
 
-            LOG_ERROR("Sending data: Phase 5. Current time: %f.", MonotonicTime::now().secondsSinceEpoch().value());
             auto sent = DataSent::Yes;
             if (weakThis->stagesMatch() && weakThis->m_configuration.hid->error == Mock::Error::DataNotSent)
                 sent = DataSent::No;
