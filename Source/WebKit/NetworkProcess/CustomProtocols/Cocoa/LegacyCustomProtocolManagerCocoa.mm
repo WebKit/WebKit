@@ -39,6 +39,25 @@
 
 using namespace WebKit;
 
+static RefPtr<NetworkProcess>& firstNetworkProcess()
+{
+    static NeverDestroyed<RefPtr<NetworkProcess>> networkProcess;
+    return networkProcess.get();
+}
+
+void LegacyCustomProtocolManager::networkProcessCreated(NetworkProcess& networkProcess)
+{
+    auto hasRegisteredSchemes = [] (auto* legacyCustomProtocolManager) {
+        if (!legacyCustomProtocolManager)
+            return false;
+        LockHolder locker(legacyCustomProtocolManager->m_registeredSchemesMutex);
+        return !legacyCustomProtocolManager->m_registeredSchemes.isEmpty();
+    };
+
+    RELEASE_ASSERT(!firstNetworkProcess() || !hasRegisteredSchemes(firstNetworkProcess()->supplement<LegacyCustomProtocolManager>()));
+    firstNetworkProcess() = &networkProcess;
+}
+
 @interface WKCustomProtocol : NSURLProtocol {
 @private
     uint64_t _customProtocolID;
@@ -54,7 +73,7 @@ using namespace WebKit;
 
 + (BOOL)canInitWithRequest:(NSURLRequest *)request
 {
-    if (auto* customProtocolManager = NetworkProcess::singleton().supplement<LegacyCustomProtocolManager>())
+    if (auto* customProtocolManager = firstNetworkProcess()->supplement<LegacyCustomProtocolManager>())
         return customProtocolManager->supportsScheme([[[request URL] scheme] lowercaseString]);
     return NO;
 }
@@ -75,7 +94,7 @@ using namespace WebKit;
     if (!self)
         return nil;
 
-    if (auto* customProtocolManager = NetworkProcess::singleton().supplement<LegacyCustomProtocolManager>())
+    if (auto* customProtocolManager = firstNetworkProcess()->supplement<LegacyCustomProtocolManager>())
         _customProtocolID = customProtocolManager->addCustomProtocol(self);
     _initializationRunLoop = CFRunLoopGetCurrent();
 
@@ -89,13 +108,13 @@ using namespace WebKit;
 
 - (void)startLoading
 {
-    if (auto* customProtocolManager = NetworkProcess::singleton().supplement<LegacyCustomProtocolManager>())
+    if (auto* customProtocolManager = firstNetworkProcess()->supplement<LegacyCustomProtocolManager>())
         customProtocolManager->startLoading(self.customProtocolID, [self request]);
 }
 
 - (void)stopLoading
 {
-    if (auto* customProtocolManager = NetworkProcess::singleton().supplement<LegacyCustomProtocolManager>()) {
+    if (auto* customProtocolManager = firstNetworkProcess()->supplement<LegacyCustomProtocolManager>()) {
         customProtocolManager->stopLoading(self.customProtocolID);
         customProtocolManager->removeCustomProtocol(self.customProtocolID);
     }

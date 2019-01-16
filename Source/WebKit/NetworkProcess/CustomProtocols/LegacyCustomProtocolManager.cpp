@@ -27,9 +27,9 @@
 #include "config.h"
 #include "LegacyCustomProtocolManager.h"
 
-#include "ChildProcess.h"
 #include "LegacyCustomProtocolManagerMessages.h"
 #include "LegacyCustomProtocolManagerProxyMessages.h"
+#include "NetworkProcess.h"
 #include "NetworkProcessCreationParameters.h"
 #include "WebCoreArgumentCoders.h"
 #include <WebCore/ResourceRequest.h>
@@ -47,10 +47,10 @@ const char* LegacyCustomProtocolManager::supplementName()
     return "LegacyCustomProtocolManager";
 }
 
-LegacyCustomProtocolManager::LegacyCustomProtocolManager(ChildProcess& childProcess)
-    : m_childProcess(childProcess)
+LegacyCustomProtocolManager::LegacyCustomProtocolManager(NetworkProcess& networkProcess)
+    : m_networkProcess(networkProcess)
 {
-    m_childProcess.addMessageReceiver(Messages::LegacyCustomProtocolManager::messageReceiverName(), *this);
+    m_networkProcess.addMessageReceiver(Messages::LegacyCustomProtocolManager::messageReceiverName(), *this);
 }
 
 void LegacyCustomProtocolManager::initialize(const NetworkProcessCreationParameters& parameters)
@@ -77,12 +77,12 @@ void LegacyCustomProtocolManager::removeCustomProtocol(uint64_t customProtocolID
 
 void LegacyCustomProtocolManager::startLoading(uint64_t customProtocolID, const WebCore::ResourceRequest& request)
 {
-    m_childProcess.send(Messages::LegacyCustomProtocolManagerProxy::StartLoading(customProtocolID, request));
+    m_networkProcess.send(Messages::LegacyCustomProtocolManagerProxy::StartLoading(customProtocolID, request));
 }
 
 void LegacyCustomProtocolManager::stopLoading(uint64_t customProtocolID)
 {
-    m_childProcess.send(Messages::LegacyCustomProtocolManagerProxy::StopLoading(customProtocolID), 0);
+    m_networkProcess.send(Messages::LegacyCustomProtocolManagerProxy::StopLoading(customProtocolID), 0);
 }
 
 } // namespace WebKit

@@ -142,6 +142,9 @@ NetworkProcess::NetworkProcess()
     addSupplement<WebCookieManager>();
 #if ENABLE(LEGACY_CUSTOM_PROTOCOL_MANAGER)
     addSupplement<LegacyCustomProtocolManager>();
+#if PLATFORM(COCOA)
+    LegacyCustomProtocolManager::networkProcessCreated(*this);
+#endif
 #endif
 #if ENABLE(PROXIMITY_NETWORKING)
     addSupplement<NetworkProximityManager>();

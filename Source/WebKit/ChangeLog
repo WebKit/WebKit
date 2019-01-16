@@ -1,5 +1,33 @@
 2019-01-15  Alex Christensen  <achristensen@webkit.org>
 
+        Remove more NetworkProcess::singleton use
+        https://bugs.webkit.org/show_bug.cgi?id=193484
+
+        Reviewed by Geoffrey Garen.
+
+        This removes the use of NetworkProcess::singleton in the LegacyCustomProtocolManager.
+        This is the kind of awful duct tape code that keeps me awake at night, but it's necessary
+        because we can't quite remove LegacyCustomProtocolManager yet but we need to allow more than
+        one NetworkProcess object.  To make it work well enough until we remove LegacyCustomProtocolManager,
+        use the last NetworkProcess object that has been created.
+
+        * NetworkProcess/CustomProtocols/Cocoa/LegacyCustomProtocolManagerCocoa.mm:
+        (newestNetworkProcess):
+        (LegacyCustomProtocolManager::networkProcessCreated):
+        (+[WKCustomProtocol canInitWithRequest:]):
+        (-[WKCustomProtocol initWithRequest:cachedResponse:client:]):
+        (-[WKCustomProtocol startLoading]):
+        (-[WKCustomProtocol stopLoading]):
+        * NetworkProcess/CustomProtocols/LegacyCustomProtocolManager.cpp:
+        (WebKit::LegacyCustomProtocolManager::LegacyCustomProtocolManager):
+        (WebKit::LegacyCustomProtocolManager::startLoading):
+        (WebKit::LegacyCustomProtocolManager::stopLoading):
+        * NetworkProcess/CustomProtocols/LegacyCustomProtocolManager.h:
+        * NetworkProcess/NetworkProcess.cpp:
+        (WebKit::NetworkProcess::NetworkProcess):
+
+2019-01-15  Alex Christensen  <achristensen@webkit.org>
+
         Fix WinCairo build after r240014
         https://bugs.webkit.org/show_bug.cgi?id=161106
 

@@ -59,13 +59,13 @@ class ResourceResponse;
 
 namespace WebKit {
 
-class ChildProcess;
+class NetworkProcess;
 struct NetworkProcessCreationParameters;
 
 class LegacyCustomProtocolManager : public NetworkProcessSupplement, public IPC::MessageReceiver {
     WTF_MAKE_NONCOPYABLE(LegacyCustomProtocolManager);
 public:
-    explicit LegacyCustomProtocolManager(ChildProcess&);
+    explicit LegacyCustomProtocolManager(NetworkProcess&);
 
     static const char* supplementName();
 
@@ -96,6 +96,7 @@ public:
 
 #if PLATFORM(COCOA)
     void registerProtocolClass(NSURLSessionConfiguration*);
+    static void networkProcessCreated(NetworkProcess&);
 #endif
 
 private:
@@ -113,7 +114,7 @@ private:
 
     void registerProtocolClass();
 
-    ChildProcess& m_childProcess;
+    NetworkProcess& m_networkProcess;
 
     typedef HashMap<uint64_t, CustomProtocol> CustomProtocolMap;
     CustomProtocolMap m_customProtocolMap;
