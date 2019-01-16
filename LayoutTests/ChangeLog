@@ -1,3 +1,15 @@
+2019-01-15  Ryosuke Niwa  <rniwa@webkit.org>
+
+        VisualViewport API should be updated upon opening of keyboard
+        https://bugs.webkit.org/show_bug.cgi?id=193475
+
+        Reviewed by Simon Fraser.
+
+        Added a regression test.
+
+        * fast/visual-viewport/ios/resize-event-for-keyboard-expected.txt: Added.
+        * fast/visual-viewport/ios/resize-event-for-keyboard.html: Added.
+
 2019-01-15  Chris Dumez  <cdumez@apple.com>
 
         Unreviewed, rolling out r239993, r239995, r239997, and

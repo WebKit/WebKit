@@ -121,6 +121,7 @@ inline bool operator==(const VisibleContentRectUpdateInfo& a, const VisibleConte
     return a.scale() == b.scale()
         && a.exposedContentRect() == b.exposedContentRect()
         && a.unobscuredContentRect() == b.unobscuredContentRect()
+        && a.unobscuredContentRectRespectingInputViewBounds() == b.unobscuredContentRectRespectingInputViewBounds()
         && a.customFixedPositionRect() == b.customFixedPositionRect()
         && a.obscuredInsets() == b.obscuredInsets()
         && a.unobscuredSafeAreaInsets() == b.unobscuredSafeAreaInsets()

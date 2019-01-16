@@ -1,3 +1,22 @@
+2019-01-15  Ryosuke Niwa  <rniwa@webkit.org>
+
+        VisualViewport API should be updated upon opening of keyboard
+        https://bugs.webkit.org/show_bug.cgi?id=193475
+
+        Reviewed by Simon Fraser.
+
+        The bug was caused by the changes to unobscuredContentRectRespectingInputViewBounds not updating the visual viewport
+        unless it caused a layout to happen. Added a code to update the visual viewport in WebPage::updateVisibleContentRects.
+
+        Also fixed the bug that VisibleContentRectUpdateInfo::operator== was not checking differences in
+        unobscuredContentRectRespectingInputViewBounds which resulted in the visual viewport override not getting updated
+        while the keyboard is getting brought up.
+
+        * Shared/VisibleContentRectUpdateInfo.h:
+        (WebKit::operator==):
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::updateVisibleContentRects):
+
 2019-01-15  Megan Gardner  <megan_gardner@apple.com>
 
         Add Reveal support in iOSMac

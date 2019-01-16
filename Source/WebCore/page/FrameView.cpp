@@ -2797,6 +2797,15 @@ void FrameView::updateTiledBackingAdaptiveSizing()
 
 #if PLATFORM(IOS_FAMILY)
 
+void FrameView::didUpdateViewportOverrideRects()
+{
+    if (!frame().settings().visualViewportAPIEnabled())
+        return;
+
+    if (auto* window = frame().window())
+        window->visualViewport().update();
+}
+
 void FrameView::unobscuredContentSizeChanged()
 {
     updateTiledBackingAdaptiveSizing();

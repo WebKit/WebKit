@@ -1,0 +1,67 @@
+<!DOCTYPE html><!-- webkit-test-runner [ useFlexibleViewport=true ] -->
+<html>
+<head>
+<meta name="viewport" content="initial-scale=1, user-scalable=no">
+</head>
+<body onload="runTest()">
+<input type="text" onclick="didFocus()" placeholder="Tap here to open keyboard">
+<script src="../../../resources/ui-helper.js"></script>
+<script src="../../../resources/js-test.js"></script>
+<script>
+description('This tests "resize" event on window.visualViewport and height getting updated upon keyboard showing up on iOS<br>'
+    + 'To manually test, tap the text field below to show the software keyboard then dismiss it.');
+
+jsTestIsAsync = true;
+
+function didFocus() { }
+
+async function runTest() {
+    if (window.testRunner)
+        await UIHelper.ensurePresentationUpdate();
+
+    window.originalWidth = window.visualViewport.width;
+    window.originalHeight = window.visualViewport.height;
+    window.resizeCount = 0;
+    window.visualViewport.addEventListener('resize', () => {
+        resizeCount++;
+    });
+
+    shouldBe('resizeCount', '0');
+
+    const rect = document.querySelector('input').getBoundingClientRect();
+
+    if (window.testRunner) {
+        await UIHelper.activateAndWaitForInputSessionAt(rect.left + 5, rect.top + 5);
+        await UIHelper.ensurePresentationUpdate();
+    } else {
+        await new Promise((resolve) => {
+            window.didFocus = () => setTimeout(resolve, 500);
+        });
+    }
+
+    shouldBe('resizeCount', '1');
+    shouldBe('originalWidth', 'window.visualViewport.width');
+    shouldNotBe('window.visualViewport.height', 'originalHeight');
+    shouldBeTrue('window.visualViewport.height < originalHeight');
+
+    document.querySelector('input').blur();
+    if (window.testRunner) {
+        await UIHelper.waitForKeyboardToHide();
+        await UIHelper.ensurePresentationUpdate();
+    } else {
+        await new Promise((resolve) => {
+            setTimeout(resolve, 500);
+        });
+    }
+
+    shouldBe('resizeCount', '2');
+    shouldBe('originalWidth', 'window.visualViewport.width');
+    shouldBe('window.visualViewport.height', 'originalHeight');
+    shouldBeFalse('window.visualViewport.height < originalHeight');
+
+    finishJSTest();
+}
+
+</script>
+</body>
+</html>

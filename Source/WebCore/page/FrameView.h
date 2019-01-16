@@ -590,6 +590,10 @@ public:
     void updateTiledBackingAdaptiveSizing();
     TiledBacking::Scrollability computeScrollability() const;
 
+#if PLATFORM(IOS_FAMILY)
+    WEBCORE_EXPORT void didUpdateViewportOverrideRects();
+#endif
+
     void addPaintPendingMilestones(OptionSet<LayoutMilestone>);
     void firePaintRelatedMilestonesIfNeeded();
     void fireLayoutRelatedMilestonesIfNeeded();

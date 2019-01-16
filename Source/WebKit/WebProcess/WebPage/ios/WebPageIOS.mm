@@ -3041,6 +3041,8 @@ void WebPage::updateVisibleContentRects(const VisibleContentRectUpdateInfo& visi
                 frameView.frame().selection().setCaretRectNeedsUpdate();
                 sendPartialEditorStateAndSchedulePostLayoutUpdate();
             }
+
+            frameView.didUpdateViewportOverrideRects();
         } else
             frameView.setCustomFixedPositionLayoutRect(enclosingIntRect(visibleContentRectUpdateInfo.customFixedPositionRect()));
     }
