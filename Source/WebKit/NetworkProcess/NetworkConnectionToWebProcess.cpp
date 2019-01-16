@@ -545,8 +545,12 @@ void NetworkConnectionToWebProcess::writeBlobsToTemporaryFiles(const Vector<Stri
 void NetworkConnectionToWebProcess::setCaptureExtraNetworkLoadMetricsEnabled(bool enabled)
 {
     m_captureExtraNetworkLoadMetricsEnabled = enabled;
-    if (!m_captureExtraNetworkLoadMetricsEnabled)
-        m_networkLoadInformationByID.clear();
+    if (m_captureExtraNetworkLoadMetricsEnabled)
+        return;
+
+    m_networkLoadInformationByID.clear();
+    for (auto& loader : m_networkResourceLoaders.values())
+        loader->disableExtraNetworkLoadMetricsCapture();
 }
 
 void NetworkConnectionToWebProcess::ensureLegacyPrivateBrowsingSession()

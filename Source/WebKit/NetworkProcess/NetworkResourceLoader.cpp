@@ -96,6 +96,7 @@ NetworkResourceLoader::NetworkResourceLoader(NetworkResourceLoadParameters&& par
     , m_isAllowedToAskUserForCredentials { m_parameters.clientCredentialPolicy == ClientCredentialPolicy::MayAskClientForCredentials }
     , m_bufferingTimer { *this, &NetworkResourceLoader::bufferingTimerFired }
     , m_cache { sessionID().isEphemeral() ? nullptr : connection.networkProcess().cache() }
+    , m_shouldCaptureExtraNetworkLoadMetrics(m_connection->captureExtraNetworkLoadMetricsEnabled())
 {
     ASSERT(RunLoop::isMain());
     // FIXME: This is necessary because of the existence of EmptyFrameLoaderClient in WebCore.
@@ -944,7 +945,7 @@ bool NetworkResourceLoader::isAlwaysOnLoggingAllowed() const
 
 bool NetworkResourceLoader::shouldCaptureExtraNetworkLoadMetrics() const
 {
-    return m_connection->captureExtraNetworkLoadMetricsEnabled();
+    return m_shouldCaptureExtraNetworkLoadMetrics;
 }
 
 #if ENABLE(RESOURCE_LOAD_STATISTICS) && !RELEASE_LOG_DISABLED

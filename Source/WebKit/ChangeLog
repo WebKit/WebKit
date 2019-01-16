@@ -1,3 +1,26 @@
+2019-01-16  Youenn Fablet  <youenn@apple.com>
+
+        ASSERTION FAILED: m_networkLoadInformationByID.contains(identifier) in WebKit::NetworkConnectionToWebProcess::addNetworkLoadInformationMetrics
+        https://bugs.webkit.org/show_bug.cgi?id=189097
+        <rdar://problem/43856423>
+
+        Reviewed by Alex Christensen.
+
+        In case where the inspector is launched, it will instruct the NetworkConnectionToWebProcess to start capturing network metrics.
+        If this happens in the middle of a load, addNetworkLoadInformationMetrics might fail since addNetworkLoadInformation will not be called.
+        To fix this issue, store whether to capture metrics at NetworkResourceLoader level.
+
+        To ensure that the case of switching back and forth capture of metrics, disable loader capture of metrics whenver NetworkConnectionToWebProcess is asked to.
+
+        * NetworkProcess/NetworkConnectionToWebProcess.cpp:
+        (WebKit::NetworkConnectionToWebProcess::setCaptureExtraNetworkLoadMetricsEnabled):
+        * NetworkProcess/NetworkConnectionToWebProcess.h:
+        (WebKit::NetworkConnectionToWebProcess::addNetworkLoadInformationMetrics):
+        * NetworkProcess/NetworkResourceLoader.cpp:
+        (WebKit::m_shouldCaptureExtraNetworkLoadMetrics):
+        (WebKit::NetworkResourceLoader::shouldCaptureExtraNetworkLoadMetrics const):
+        * NetworkProcess/NetworkResourceLoader.h:
+
 2019-01-16  Alex Christensen  <achristensen@webkit.org>
 
         Revert r239938
