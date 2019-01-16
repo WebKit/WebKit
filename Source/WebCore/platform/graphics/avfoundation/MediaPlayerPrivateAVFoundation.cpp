@@ -79,7 +79,6 @@ MediaPlayerPrivateAVFoundation::MediaPlayerPrivateAVFoundation(MediaPlayer* play
     , m_cachedHasCaptions(false)
     , m_ignoreLoadStateChanges(false)
     , m_haveReportedFirstVideoFrame(false)
-    , m_playWhenFramesAvailable(false)
     , m_inbandTrackConfigurationPending(false)
     , m_characteristicsChanged(false)
     , m_shouldMaintainAspectRatio(true)
@@ -216,21 +215,12 @@ void MediaPlayerPrivateAVFoundation::prepareToPlay()
 void MediaPlayerPrivateAVFoundation::play()
 {
     ALWAYS_LOG(LOGIDENTIFIER);
-
-    // If the file has video, don't request playback until the first frame of video is ready to display
-    // or the audio may start playing before we can render video.
-    if (!m_cachedHasVideo || hasAvailableVideoFrame())
-        platformPlay();
-    else {
-        INFO_LOG(LOGIDENTIFIER, "waiting for first video frame");
-        m_playWhenFramesAvailable = true;
-    }
+    platformPlay();
 }
 
 void MediaPlayerPrivateAVFoundation::pause()
 {
     ALWAYS_LOG(LOGIDENTIFIER);
-    m_playWhenFramesAvailable = false;
     platformPause();
 }
 
@@ -576,11 +566,6 @@ void MediaPlayerPrivateAVFoundation::updateStates()
 
     setNetworkState(newNetworkState);
     setReadyState(newReadyState);
-
-    if (m_playWhenFramesAvailable && hasAvailableVideoFrame()) {
-        m_playWhenFramesAvailable = false;
-        platformPlay();
-    }
 }
 
 void MediaPlayerPrivateAVFoundation::setSize(const IntSize&) 
@@ -623,17 +608,6 @@ void MediaPlayerPrivateAVFoundation::metadataLoaded()
 
 void MediaPlayerPrivateAVFoundation::rateChanged()
 {
-
-#if ENABLE(WIRELESS_PLAYBACK_TARGET) && PLATFORM(IOS_FAMILY)
-    if (isCurrentPlaybackTargetWireless() && playerItemStatus() >= MediaPlayerAVPlayerItemStatusPlaybackBufferFull) {
-        double rate = this->rate();
-        if (rate != requestedRate()) {
-            m_player->handlePlaybackCommand(rate ? PlatformMediaSession::PlayCommand : PlatformMediaSession::PauseCommand);
-            return;
-        }
-    }
-#endif
-
     m_player->rateChanged();
 }
 
