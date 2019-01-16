@@ -1,3 +1,25 @@
+2019-01-15  Yusuke Suzuki  <yusukesuzuki@slowstart.org>
+
+        [JSC] Use KnownStringUse for GetByVal(Array::String) since AI would offer wider type information and offer non-string type after removing Check(String)
+        https://bugs.webkit.org/show_bug.cgi?id=193438
+        <rdar://problem/45581249>
+
+        Reviewed by Saam Barati and Keith Miller.
+
+        GetByVal(Array::String) emits Check(String) before that. But AI can broaden type constraint in the second run.
+        After the first run removes Check(String), it would happen that AI starts saying the type of 1st child is not String.
+        To claim that it *is* a String type, we should use KnownStringUse here.
+
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::fixupNode): StringCharAt and GetByVal(Array::String) share the underlying compiler code. We should
+        change StringUse => KnownStringUse for StringCharAt too. And StringCharAt and StringCharCodeAt potentially have the same
+        problem. This patch fixes it too.
+        * dfg/DFGSSALoweringPhase.cpp:
+        (JSC::DFG::SSALoweringPhase::lowerBoundsCheck):
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::compileStringCharAt):
+        (JSC::FTL::DFG::LowerDFGToB3::compileStringCharCodeAt):
+
 2019-01-15  Saam Barati  <sbarati@apple.com>
 
         Try ripping out inferred types because it might be a performance improvement

@@ -1,3 +1,21 @@
+2019-01-15  Yusuke Suzuki  <yusukesuzuki@slowstart.org>
+
+        [JSC] Use KnownStringUse for GetByVal(Array::String) since AI would offer wider type information and offer non-string type after removing Check(String)
+        https://bugs.webkit.org/show_bug.cgi?id=193438
+        <rdar://problem/45581249>
+
+        Reviewed by Saam Barati and Keith Miller.
+
+        Under the heavy load (like, compiling WebKit), AI in this code can broaden type information after the 1st run.
+        Then, GetByVal(String) crashed.
+
+        * stress/string-get-by-val-lowering.js: Added.
+        (shouldBe):
+        (test):
+        * stress/type-for-get-by-val-can-be-widen-after-ai.js: Added.
+        (Hello):
+        (foo):
+
 2019-01-15  Tomas Popela  <tpopela@redhat.com>
 
         Unreviewed, skip JIT tests if it's not enabled

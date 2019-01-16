@@ -6590,7 +6590,7 @@ private:
     
     void compileStringCharAt()
     {
-        LValue base = lowCell(m_graph.child(m_node, 0));
+        LValue base = lowString(m_graph.child(m_node, 0));
         LValue index = lowInt32(m_graph.child(m_node, 1));
         LValue storage = lowStorage(m_graph.child(m_node, 2));
             
@@ -6704,7 +6704,7 @@ private:
         LBasicBlock is16Bit = m_out.newBlock();
         LBasicBlock continuation = m_out.newBlock();
 
-        LValue base = lowCell(m_node->child1());
+        LValue base = lowString(m_node->child1());
         LValue index = lowInt32(m_node->child2());
         LValue storage = lowStorage(m_node->child3());
         

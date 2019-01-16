@@ -781,7 +781,7 @@ private:
             // Currently we have no good way of refining these.
             ASSERT(node->arrayMode() == ArrayMode(Array::String, Array::Read));
             blessArrayOperation(node->child1(), node->child2(), node->child3());
-            fixEdge<KnownCellUse>(node->child1());
+            fixEdge<KnownStringUse>(node->child1());
             fixEdge<Int32Use>(node->child2());
             break;
         }
@@ -898,6 +898,10 @@ private:
 #endif
                 break;
             case Array::ForceExit:
+                break;
+            case Array::String:
+                fixEdge<KnownStringUse>(m_graph.varArgChild(node, 0));
+                fixEdge<Int32Use>(m_graph.varArgChild(node, 1));
                 break;
             default:
                 fixEdge<KnownCellUse>(m_graph.varArgChild(node, 0));
