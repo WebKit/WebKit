@@ -1,5 +1,40 @@
 2019-01-15  Alan Coon  <alancoon@apple.com>
 
+        Cherry-pick r239889. rdar://problem/47260233
+
+    REGRESSION(r239419): Crash in AudioSourceProviderAVFObjC::~AudioSourceProviderAVFObjC()
+    https://bugs.webkit.org/show_bug.cgi?id=193342
+    <rdar://problem/47119836>
+    
+    Reviewed by Eric Carlson.
+    
+    Make the TapStorage used by AudioSourceProviderAVFObjC thread-safe RefCounted.
+    
+    * platform/graphics/avfoundation/AudioSourceProviderAVFObjC.h:
+    * platform/graphics/avfoundation/AudioSourceProviderAVFObjC.mm:
+    (WebCore::AudioSourceProviderAVFObjC::initCallback):
+    (WebCore::AudioSourceProviderAVFObjC::finalizeCallback):
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@239889 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2019-01-11  Jer Noble  <jer.noble@apple.com>
+
+            REGRESSION(r239419): Crash in AudioSourceProviderAVFObjC::~AudioSourceProviderAVFObjC()
+            https://bugs.webkit.org/show_bug.cgi?id=193342
+            <rdar://problem/47119836>
+
+            Reviewed by Eric Carlson.
+
+            Make the TapStorage used by AudioSourceProviderAVFObjC thread-safe RefCounted.
+
+            * platform/graphics/avfoundation/AudioSourceProviderAVFObjC.h:
+            * platform/graphics/avfoundation/AudioSourceProviderAVFObjC.mm:
+            (WebCore::AudioSourceProviderAVFObjC::initCallback):
+            (WebCore::AudioSourceProviderAVFObjC::finalizeCallback):
+
+2019-01-15  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r239888. rdar://problem/47260286
 
     Compile out Web API Statistics Collection

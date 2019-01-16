@@ -98,8 +98,8 @@ private:
     bool m_paused { true };
     AudioSourceProviderClient* m_client { nullptr };
 
-    struct TapStorage;
-    TapStorage* m_tapStorage { nullptr };
+    class TapStorage;
+    RefPtr<TapStorage> m_tapStorage;
 };
     
 }
