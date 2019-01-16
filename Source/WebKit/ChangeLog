@@ -1,3 +1,17 @@
+2019-01-16  Tim Horton  <timothy_horton@apple.com>
+
+        Frequent null-deref under TiledCoreAnimationDrawingArea::scaleViewToFitDocumentIfNeeded()
+        https://bugs.webkit.org/show_bug.cgi?id=193468
+        <rdar://problem/38645869>
+
+        Reviewed by Zalan Bujtas.
+
+        * WebProcess/WebPage/mac/TiledCoreAnimationDrawingArea.mm:
+        (WebKit::TiledCoreAnimationDrawingArea::scaleViewToFitDocumentIfNeeded):
+        Adjust the null-check a bit; Zalan pointed out that the layout could
+        be responsible for the Frame/RenderView going away, so we should bail
+        *after* layout, not before.
+
 2019-01-15  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         Unreviewed WinCairo build fix.
