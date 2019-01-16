@@ -1,3 +1,22 @@
+2019-01-16  Youenn Fablet  <youenn@apple.com>
+
+        ServiceWorkerContainer is leaking due to a ref cycle
+        https://bugs.webkit.org/show_bug.cgi?id=193462
+        <rdar://problem/47026303>
+
+        Reviewed by Brady Eidson.
+
+        ServiceWorkerContainer keeps a reference to its ready promise.
+        The ready promise keeps a ref to its value which is a ServiceWorkerRegistration.
+        ServiceWorkerRegistration keeps a ref to ServiceWorkerContainer.
+
+        To break the reference cycle, set the ready promise to zero when ServiceWorkerContainer is stopped.
+
+        Covered by imported/w3c/web-platform-tests/service-workers/service-worker/ready.https.html no longer leaking.
+
+        * workers/service/ServiceWorkerContainer.cpp:
+        (WebCore::ServiceWorkerContainer::stop):
+
 2019-01-15  Simon Fraser  <simon.fraser@apple.com>
 
         Make didCommitChangesForLayer() explicitly about the platform layer changing because of tile/non-tile swapping
