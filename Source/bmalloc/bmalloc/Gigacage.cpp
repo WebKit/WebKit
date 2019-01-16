@@ -163,7 +163,7 @@ void ensureGigacage()
 
             // FIXME: Randomize where this goes.
             // https://bugs.webkit.org/show_bug.cgi?id=175245
-            void* base = tryVMAllocate(maxAlignment, totalSize);
+            void* base = tryVMAllocate(maxAlignment, totalSize, VMTag::JSGigacage);
             if (!base) {
                 if (GIGACAGE_ALLOCATION_CAN_FAIL)
                     return;

@@ -1,3 +1,23 @@
+2019-01-16  Keith Miller  <keith_miller@apple.com>
+
+        bmalloc should use JSC VM tag for gigacage
+        https://bugs.webkit.org/show_bug.cgi?id=193496
+
+        Reviewed by Mark Lam.
+
+        This patch moves the VMTag info from WTF to bmalloc so that we can
+        tag gigacage memory with the unused JSC memory tag. The JSC memory
+        tag was previously used for wasm but since wasm is now allocated
+        out of the primitive cage it was unused.
+
+        * bmalloc.xcodeproj/project.pbxproj:
+        * bmalloc/BVMTags.h: Copied from Source/WTF/wtf/VMTags.h.
+        * bmalloc/Gigacage.cpp:
+        (Gigacage::ensureGigacage):
+        * bmalloc/VMAllocate.h:
+        (bmalloc::tryVMAllocate):
+        (bmalloc::vmZeroAndPurge):
+
 2019-01-09  Mark Lam  <mark.lam@apple.com>
 
         Gigacage disabling checks should handle the GIGACAGE_ALLOCATION_CAN_FAIL case properly.

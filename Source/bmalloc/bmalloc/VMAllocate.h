@@ -27,6 +27,7 @@
 #define VMAllocate_h
 
 #include "BAssert.h"
+#include "BVMTags.h"
 #include "Logging.h"
 #include "Range.h"
 #include "Sizes.h"
@@ -37,19 +38,17 @@
 
 #if BOS(DARWIN)
 #include <mach/vm_page_size.h>
-#include <mach/vm_statistics.h>
 #endif
 
 namespace bmalloc {
 
-#if BOS(DARWIN)
-#define BMALLOC_VM_TAG VM_MAKE_TAG(VM_MEMORY_TCMALLOC)
-#define BMALLOC_NORESERVE 0
-#elif BOS(LINUX)
-#define BMALLOC_VM_TAG -1
+#ifndef BMALLOC_VM_TAG
+#define BMALLOC_VM_TAG VM_TAG_FOR_TCMALLOC_MEMORY
+#endif
+
+#if BOS(LINUX)
 #define BMALLOC_NORESERVE MAP_NORESERVE
 #else
-#define BMALLOC_VM_TAG -1
 #define BMALLOC_NORESERVE 0
 #endif
 
@@ -122,10 +121,10 @@ inline void vmValidatePhysical(void* p, size_t vmSize)
     BASSERT(p == mask(p, ~(vmPageSizePhysical() - 1)));
 }
 
-inline void* tryVMAllocate(size_t vmSize)
+inline void* tryVMAllocate(size_t vmSize, VMTag usage = VMTag::Malloc)
 {
     vmValidate(vmSize);
-    void* result = mmap(0, vmSize, PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANON | BMALLOC_NORESERVE, BMALLOC_VM_TAG, 0);
+    void* result = mmap(0, vmSize, PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANON | BMALLOC_NORESERVE, static_cast<int>(usage), 0);
     if (result == MAP_FAILED)
         return nullptr;
     return result;
@@ -150,19 +149,19 @@ inline void vmRevokePermissions(void* p, size_t vmSize)
     mprotect(p, vmSize, PROT_NONE);
 }
 
-inline void vmZeroAndPurge(void* p, size_t vmSize)
+inline void vmZeroAndPurge(void* p, size_t vmSize, VMTag usage = VMTag::Malloc)
 {
     vmValidate(p, vmSize);
     // MAP_ANON guarantees the memory is zeroed. This will also cause
     // page faults on accesses to this range following this call.
-    void* result = mmap(p, vmSize, PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANON | MAP_FIXED | BMALLOC_NORESERVE, BMALLOC_VM_TAG, 0);
+    void* result = mmap(p, vmSize, PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANON | MAP_FIXED | BMALLOC_NORESERVE, static_cast<int>(usage), 0);
     RELEASE_BASSERT(result == p);
 }
 
 // Allocates vmSize bytes at a specified power-of-two alignment.
 // Use this function to create maskable memory regions.
 
-inline void* tryVMAllocate(size_t vmAlignment, size_t vmSize)
+inline void* tryVMAllocate(size_t vmAlignment, size_t vmSize, VMTag usage = VMTag::Malloc)
 {
     vmValidate(vmSize);
     vmValidate(vmAlignment);
@@ -171,7 +170,7 @@ inline void* tryVMAllocate(size_t vmAlignment, size_t vmSize)
     if (mappedSize < vmAlignment || mappedSize < vmSize) // Check for overflow
         return nullptr;
 
-    char* mapped = static_cast<char*>(tryVMAllocate(mappedSize));
+    char* mapped = static_cast<char*>(tryVMAllocate(mappedSize, usage));
     if (!mapped)
         return nullptr;
     char* mappedEnd = mapped + mappedSize;

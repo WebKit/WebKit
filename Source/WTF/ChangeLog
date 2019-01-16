@@ -1,3 +1,14 @@
+2019-01-16  Keith Miller  <keith_miller@apple.com>
+
+        bmalloc should use JSC VM tag for gigacage
+        https://bugs.webkit.org/show_bug.cgi?id=193496
+
+        Reviewed by Mark Lam.
+
+        Move most of the macros for vm tagging to bmalloc.
+
+        * wtf/VMTags.h:
+
 2019-01-16  Alberto Garcia  <berto@igalia.com>
 
         [WTF] Compilation fails with system malloc
