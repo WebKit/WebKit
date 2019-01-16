@@ -1,5 +1,27 @@
 2019-01-15  Alan Coon  <alancoon@apple.com>
 
+        Cherry-pick r239866. rdar://problem/47260326
+
+    Unreviewed, fix #ifdef in API test added in r239851.
+    https://bugs.webkit.org/show_bug.cgi?id=193327
+    rdar://problem/47093222
+    
+    
+    * TestWebKitAPI/Tests/WebKit/mac/ForceLightAppearanceInBundle_Bundle.mm:
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@239866 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2019-01-11  Timothy Hatcher  <timothy@apple.com>
+
+            Unreviewed, fix #ifdef in API test added in r239851.
+            https://bugs.webkit.org/show_bug.cgi?id=193327
+            rdar://problem/47093222
+
+            * TestWebKitAPI/Tests/WebKit/mac/ForceLightAppearanceInBundle_Bundle.mm:
+
+2019-01-15  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r239851. rdar://problem/47260326
 
     Add WKBundlePage SPI to temporarily force light or dark appearance on a page.
