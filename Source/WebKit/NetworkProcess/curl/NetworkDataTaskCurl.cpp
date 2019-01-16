@@ -30,6 +30,7 @@
 #include "AuthenticationManager.h"
 #include "NetworkSessionCurl.h"
 #include <WebCore/AuthenticationChallenge.h>
+#include <WebCore/CookieJar.h>
 #include <WebCore/CurlRequest.h>
 #include <WebCore/NetworkStorageSession.h>
 #include <WebCore/NotImplemented.h>

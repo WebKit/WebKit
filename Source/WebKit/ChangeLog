@@ -1,3 +1,10 @@
+2019-01-15  Alex Christensen  <achristensen@webkit.org>
+
+        Fix WinCairo build after r240014
+        https://bugs.webkit.org/show_bug.cgi?id=161106
+
+        * NetworkProcess/curl/NetworkDataTaskCurl.cpp:
+
 2019-01-15  Ryosuke Niwa  <rniwa@webkit.org>
 
         VisualViewport API should be updated upon opening of keyboard
