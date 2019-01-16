@@ -1,5 +1,105 @@
 2019-01-16  Chris Dumez  <cdumez@apple.com>
 
+        Regression(r240046) Several API tests are crashing
+        https://bugs.webkit.org/show_bug.cgi?id=193509
+
+        Reviewed by Geoffrey Garen.
+
+        The crashes would happen because loadRequestShared() would take a WebProcessProxy& in parameter but
+        then call reattachToWebProcess() if the page is not valid, which would replace m_process and invalidate
+        our process reference.
+
+        To address the issue, move the reattachToWebProcess() call to loadRequest(), before calling
+        loadRequestShared(). Also, update *Shared() methods to take a Ref<WebProcessProxy>&& instead
+        of a WebProcessProxy& in parameter. Since we call client delegates, we need to make sure
+        our process stays alive.
+
+        * UIProcess/ProvisionalPageProxy.cpp:
+        (WebKit::ProvisionalPageProxy::loadData):
+        (WebKit::ProvisionalPageProxy::loadRequest):
+        (WebKit::ProvisionalPageProxy::didCreateMainFrame):
+        (WebKit::ProvisionalPageProxy::didPerformClientRedirect):
+        (WebKit::ProvisionalPageProxy::didStartProvisionalLoadForFrame):
+        (WebKit::ProvisionalPageProxy::didFailProvisionalLoadForFrame):
+        (WebKit::ProvisionalPageProxy::didNavigateWithNavigationData):
+        (WebKit::ProvisionalPageProxy::didChangeProvisionalURLForFrame):
+        (WebKit::ProvisionalPageProxy::decidePolicyForNavigationActionAsync):
+        (WebKit::ProvisionalPageProxy::decidePolicyForResponse):
+        (WebKit::ProvisionalPageProxy::startURLSchemeTask):
+        (WebKit::ProvisionalPageProxy::backForwardGoToItem):
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::loadRequest):
+        (WebKit::WebPageProxy::loadRequestWithNavigationShared):
+        (WebKit::WebPageProxy::loadData):
+        (WebKit::WebPageProxy::loadDataWithNavigationShared):
+        (WebKit::WebPageProxy::didPerformDragControllerAction):
+        (WebKit::WebPageProxy::findPlugin):
+        (WebKit::WebPageProxy::didCreateMainFrame):
+        (WebKit::WebPageProxy::didCreateSubframe):
+        (WebKit::WebPageProxy::didStartProvisionalLoadForFrame):
+        (WebKit::WebPageProxy::didStartProvisionalLoadForFrameShared):
+        (WebKit::WebPageProxy::didReceiveServerRedirectForProvisionalLoadForFrame):
+        (WebKit::WebPageProxy::didReceiveServerRedirectForProvisionalLoadForFrameShared):
+        (WebKit::WebPageProxy::willPerformClientRedirectForFrame):
+        (WebKit::WebPageProxy::didCancelClientRedirectForFrame):
+        (WebKit::WebPageProxy::didChangeProvisionalURLForFrame):
+        (WebKit::WebPageProxy::didChangeProvisionalURLForFrameShared):
+        (WebKit::WebPageProxy::didFailProvisionalLoadForFrame):
+        (WebKit::WebPageProxy::didFailProvisionalLoadForFrameShared):
+        (WebKit::WebPageProxy::didCommitLoadForFrame):
+        (WebKit::WebPageProxy::didFinishDocumentLoadForFrame):
+        (WebKit::WebPageProxy::didFinishLoadForFrame):
+        (WebKit::WebPageProxy::didFailLoadForFrame):
+        (WebKit::WebPageProxy::didSameDocumentNavigationForFrame):
+        (WebKit::WebPageProxy::didReceiveTitleForFrame):
+        (WebKit::WebPageProxy::didFirstVisuallyNonEmptyLayoutForFrame):
+        (WebKit::WebPageProxy::didDisplayInsecureContentForFrame):
+        (WebKit::WebPageProxy::didRunInsecureContentForFrame):
+        (WebKit::WebPageProxy::frameDidBecomeFrameSet):
+        (WebKit::WebPageProxy::decidePolicyForNavigationActionAsync):
+        (WebKit::WebPageProxy::decidePolicyForNavigationActionAsyncShared):
+        (WebKit::WebPageProxy::decidePolicyForNavigationAction):
+        (WebKit::WebPageProxy::decidePolicyForNavigationActionSync):
+        (WebKit::WebPageProxy::decidePolicyForNewWindowAction):
+        (WebKit::WebPageProxy::decidePolicyForResponse):
+        (WebKit::WebPageProxy::decidePolicyForResponseShared):
+        (WebKit::WebPageProxy::unableToImplementPolicy):
+        (WebKit::WebPageProxy::willSubmitForm):
+        (WebKit::WebPageProxy::didNavigateWithNavigationData):
+        (WebKit::WebPageProxy::didNavigateWithNavigationDataShared):
+        (WebKit::WebPageProxy::didPerformClientRedirect):
+        (WebKit::WebPageProxy::didPerformClientRedirectShared):
+        (WebKit::WebPageProxy::didPerformServerRedirect):
+        (WebKit::WebPageProxy::didUpdateHistoryTitle):
+        (WebKit::WebPageProxy::createNewPage):
+        (WebKit::WebPageProxy::runJavaScriptAlert):
+        (WebKit::WebPageProxy::runJavaScriptConfirm):
+        (WebKit::WebPageProxy::runJavaScriptPrompt):
+        (WebKit::WebPageProxy::unavailablePluginButtonClicked):
+        (WebKit::WebPageProxy::runBeforeUnloadConfirmPanel):
+        (WebKit::WebPageProxy::runOpenPanel):
+        (WebKit::WebPageProxy::printFrame):
+        (WebKit::WebPageProxy::backForwardGoToItem):
+        (WebKit::WebPageProxy::backForwardGoToItemShared):
+        (WebKit::WebPageProxy::learnWord):
+        (WebKit::WebPageProxy::ignoreWord):
+        (WebKit::WebPageProxy::didReceiveEvent):
+        (WebKit::WebPageProxy::editingRangeCallback):
+        (WebKit::WebPageProxy::rectForCharacterRangeCallback):
+        (WebKit::WebPageProxy::focusedFrameChanged):
+        (WebKit::WebPageProxy::frameSetLargestFrameChanged):
+        (WebKit::WebPageProxy::exceededDatabaseQuota):
+        (WebKit::WebPageProxy::requestGeolocationPermissionForFrame):
+        (WebKit::WebPageProxy::requestUserMediaPermissionForFrame):
+        (WebKit::WebPageProxy::enumerateMediaDevicesForFrame):
+        (WebKit::WebPageProxy::startURLSchemeTask):
+        (WebKit::WebPageProxy::startURLSchemeTaskShared):
+        (WebKit::WebPageProxy::stopURLSchemeTask):
+        (WebKit::WebPageProxy::loadSynchronousURLSchemeTask):
+        * UIProcess/WebPageProxy.h:
+
+2019-01-16  Chris Dumez  <cdumez@apple.com>
+
         Regression(PSON) View becomes blank after click a cross-site download link
         https://bugs.webkit.org/show_bug.cgi?id=193361
         <rdar://problem/47099573>
