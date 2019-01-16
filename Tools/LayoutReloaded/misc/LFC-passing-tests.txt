@@ -79,6 +79,7 @@ fast/block/block-only/relative-simple.html
 fast/block/block-only/box-sizing-inflow-out-of-flow-simple.html
 fast/block/block-only/out-of-flow-with-containing-block-border-padding.html
 fast/block/block-only/non-auto-top-bottom-left-right-widht-height-out-of-flow.html
+fast/block/block-only/non-auto-top-bottom-height-with-auto-margins.html
 fast/block/basic/002.html
 fast/block/basic/003.html
 fast/block/basic/006.html

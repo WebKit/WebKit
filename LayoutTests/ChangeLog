@@ -1,3 +1,13 @@
+2019-01-16  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC] Adjust margin box verification.
+        https://bugs.webkit.org/show_bug.cgi?id=193482
+
+        Reviewed by Antti Koivisto.
+
+        * fast/block/block-only/non-auto-top-bottom-height-with-auto-margins-expected.txt: Added.
+        * fast/block/block-only/non-auto-top-bottom-height-with-auto-margins.html: Added.
+
 2019-01-15  Ryosuke Niwa  <rniwa@webkit.org>
 
         VisualViewport API should be updated upon opening of keyboard

@@ -265,11 +265,6 @@ static bool outputMismatchingBlockBoxInformationIfNeeded(TextStream& stream, con
         return true;
     }
 
-    if (renderer.marginBoxRect() != renderBoxLikeMarginBox(displayBox)) {
-        outputRect("marginBox", renderer.marginBoxRect(), renderBoxLikeMarginBox(displayBox));
-        return true;
-    }
-
     if (renderer.borderBoxRect() != displayBox.borderBox()) {
         outputRect("borderBox", renderer.borderBoxRect(), displayBox.borderBox());
         return true;
@@ -283,6 +278,20 @@ static bool outputMismatchingBlockBoxInformationIfNeeded(TextStream& stream, con
     if (renderer.contentBoxRect() != displayBox.contentBox()) {
         outputRect("contentBox", renderer.contentBoxRect(), displayBox.contentBox());
         return true;
+    }
+
+    if (renderer.marginBoxRect() != renderBoxLikeMarginBox(displayBox)) {
+        // In certain cases, like out-of-flow boxes with margin auto, marginBoxRect() returns 0. It's clearly incorrect,
+        // so let's check the individual margin values instead (and at this point we know that all other boxes match).
+        auto marginsMatch = displayBox.marginBefore() == renderer.marginBefore()
+            && displayBox.marginAfter() == renderer.marginAfter()
+            && displayBox.marginStart() == renderer.marginStart()
+            && displayBox.marginEnd() == renderer.marginEnd();
+
+        if (!marginsMatch) {
+            outputRect("marginBox", renderer.marginBoxRect(), renderBoxLikeMarginBox(displayBox));
+            return true;
+        }
     }
 
     return false;
