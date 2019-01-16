@@ -1,5 +1,88 @@
 2019-01-16  Alan Coon  <alancoon@apple.com>
 
+        Apply patch. rdar://problem/47260377
+
+    Cherry-pick r239887. rdar://problem/47260377
+    
+        IndexedDB: leak WebIDBConnectionToClient for retain cycle
+        https://bugs.webkit.org/show_bug.cgi?id=193097
+        <rdar://problem/46899601>
+    
+        Reviewed by Brady Eidson.
+    
+        Source/WebCore:
+    
+        Let IDBConnectionToClient hold a WeakPtr of IDBConnectionToClientDelegate.
+    
+        * Modules/indexeddb/server/IDBConnectionToClient.cpp:
+        (WebCore::IDBServer::IDBConnectionToClient::IDBConnectionToClient):
+        (WebCore::IDBServer::IDBConnectionToClient::identifier const):
+        (WebCore::IDBServer::IDBConnectionToClient::didDeleteDatabase):
+        (WebCore::IDBServer::IDBConnectionToClient::didOpenDatabase):
+        (WebCore::IDBServer::IDBConnectionToClient::didAbortTransaction):
+        (WebCore::IDBServer::IDBConnectionToClient::didCreateObjectStore):
+        (WebCore::IDBServer::IDBConnectionToClient::didDeleteObjectStore):
+        (WebCore::IDBServer::IDBConnectionToClient::didRenameObjectStore):
+        (WebCore::IDBServer::IDBConnectionToClient::didClearObjectStore):
+        (WebCore::IDBServer::IDBConnectionToClient::didCreateIndex):
+        (WebCore::IDBServer::IDBConnectionToClient::didDeleteIndex):
+        (WebCore::IDBServer::IDBConnectionToClient::didRenameIndex):
+        (WebCore::IDBServer::IDBConnectionToClient::didPutOrAdd):
+        (WebCore::IDBServer::IDBConnectionToClient::didGetRecord):
+        (WebCore::IDBServer::IDBConnectionToClient::didGetAllRecords):
+        (WebCore::IDBServer::IDBConnectionToClient::didGetCount):
+        (WebCore::IDBServer::IDBConnectionToClient::didDeleteRecord):
+        (WebCore::IDBServer::IDBConnectionToClient::didOpenCursor):
+        (WebCore::IDBServer::IDBConnectionToClient::didIterateCursor):
+        (WebCore::IDBServer::IDBConnectionToClient::didCommitTransaction):
+        (WebCore::IDBServer::IDBConnectionToClient::fireVersionChangeEvent):
+        (WebCore::IDBServer::IDBConnectionToClient::didStartTransaction):
+        (WebCore::IDBServer::IDBConnectionToClient::didCloseFromServer):
+        (WebCore::IDBServer::IDBConnectionToClient::notifyOpenDBRequestBlocked):
+        (WebCore::IDBServer::IDBConnectionToClient::didGetAllDatabaseNames):
+        * Modules/indexeddb/server/IDBConnectionToClient.h:
+        * Modules/indexeddb/server/IDBConnectionToClientDelegate.h:
+    
+        Source/WebKit:
+    
+        Let WebIDBConnectionToClient hold reference to IPC::Connection instead of NetworkConnectionToWebProcess to break
+        the cycle.
+    
+        * NetworkProcess/IndexedDB/WebIDBConnectionToClient.cpp:
+        (WebKit::WebIDBConnectionToClient::create):
+        (WebKit::WebIDBConnectionToClient::WebIDBConnectionToClient):
+        (WebKit::WebIDBConnectionToClient::messageSenderConnection):
+        * NetworkProcess/IndexedDB/WebIDBConnectionToClient.h:
+        * NetworkProcess/NetworkConnectionToWebProcess.cpp:
+        (WebKit::NetworkConnectionToWebProcess::establishIDBConnectionToServer):
+    
+        git-svn-id: http://svn.webkit.org/repository/webkit/trunk@239887 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2019-01-16  David Kilzer  <ddkilzer@apple.com>
+
+            Cherry-pick r239887. rdar://problem/47260377
+
+        2019-01-11  Sihui Liu  <sihui_liu@apple.com>
+
+            IndexedDB: leak WebIDBConnectionToClient for retain cycle
+            https://bugs.webkit.org/show_bug.cgi?id=193097
+            <rdar://problem/46899601>
+
+            Reviewed by Brady Eidson.
+
+            Let WebIDBConnectionToClient hold reference to IPC::Connection instead of NetworkConnectionToWebProcess to break
+            the cycle.
+
+            * NetworkProcess/IndexedDB/WebIDBConnectionToClient.cpp:
+            (WebKit::WebIDBConnectionToClient::create):
+            (WebKit::WebIDBConnectionToClient::WebIDBConnectionToClient):
+            (WebKit::WebIDBConnectionToClient::messageSenderConnection):
+            * NetworkProcess/IndexedDB/WebIDBConnectionToClient.h:
+            * NetworkProcess/NetworkConnectionToWebProcess.cpp:
+            (WebKit::NetworkConnectionToWebProcess::establishIDBConnectionToServer):
+
+2019-01-16  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r239852. rdar://problem/47260195
 
     [WebAuthN] Change the nonce in the CTAP kInit command to weak random values

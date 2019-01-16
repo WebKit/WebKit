@@ -44,12 +44,12 @@
 namespace WebKit {
 using namespace WebCore;
 
-Ref<WebIDBConnectionToClient> WebIDBConnectionToClient::create(NetworkConnectionToWebProcess& connection, uint64_t serverConnectionIdentifier, PAL::SessionID sessionID)
+Ref<WebIDBConnectionToClient> WebIDBConnectionToClient::create(IPC::Connection& connection, uint64_t serverConnectionIdentifier, PAL::SessionID sessionID)
 {
     return adoptRef(*new WebIDBConnectionToClient(connection, serverConnectionIdentifier, sessionID));
 }
 
-WebIDBConnectionToClient::WebIDBConnectionToClient(NetworkConnectionToWebProcess& connection, uint64_t serverConnectionIdentifier, PAL::SessionID sessionID)
+WebIDBConnectionToClient::WebIDBConnectionToClient(IPC::Connection& connection, uint64_t serverConnectionIdentifier, PAL::SessionID sessionID)
     : m_connection(connection)
     , m_identifier(serverConnectionIdentifier)
     , m_sessionID(sessionID)
@@ -70,7 +70,7 @@ void WebIDBConnectionToClient::disconnectedFromWebProcess()
 
 IPC::Connection* WebIDBConnectionToClient::messageSenderConnection()
 {
-    return &m_connection->connection();
+    return m_connection.ptr();
 }
 
 WebCore::IDBServer::IDBConnectionToClient& WebIDBConnectionToClient::connectionToClient()
