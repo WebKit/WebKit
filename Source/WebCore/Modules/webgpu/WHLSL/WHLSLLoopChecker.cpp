@@ -135,7 +135,7 @@ private:
     unsigned m_switchDepth { 0 };
 };
 
-bool findHighZombies(Program& program)
+bool checkLoops(Program& program)
 {
     LoopChecker loopChecker;
     loopChecker.Visitor::visit(program);

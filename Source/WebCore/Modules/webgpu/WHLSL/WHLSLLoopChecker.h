@@ -33,7 +33,7 @@ namespace WHLSL {
 
 class Program;
 
-bool findHighZombies(Program&);
+bool checkLoops(Program&);
 
 }
 
