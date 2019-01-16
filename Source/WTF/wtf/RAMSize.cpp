@@ -32,9 +32,9 @@
 #if OS(WINDOWS)
 #include <windows.h>
 #elif defined(USE_SYSTEM_MALLOC) && USE_SYSTEM_MALLOC
-#if OS(UNIX)
+#if OS(LINUX)
 #include <sys/sysinfo.h>
-#endif // OS(UNIX)
+#endif // OS(LINUX)
 #else
 #include <bmalloc/bmalloc.h>
 #endif
@@ -55,13 +55,13 @@ static size_t computeRAMSize()
         return ramSizeGuess;
     return status.ullTotalPhys;
 #elif defined(USE_SYSTEM_MALLOC) && USE_SYSTEM_MALLOC
-#if OS(UNIX)
+#if OS(LINUX)
     struct sysinfo si;
     sysinfo(&si);
     return si.totalram * si.mem_unit;
 #else
 #error "Missing a platform specific way of determining the available RAM"
-#endif // OS(UNIX)
+#endif // OS(LINUX)
 #else
     return bmalloc::api::availableMemory();
 #endif

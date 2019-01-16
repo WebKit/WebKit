@@ -1,3 +1,16 @@
+2019-01-16  Alberto Garcia  <berto@igalia.com>
+
+        [WTF] Compilation fails with system malloc
+        https://bugs.webkit.org/show_bug.cgi?id=172445
+
+        Reviewed by Michael Catanzaro.
+
+        Follow-up to r217270. The sysinfo() system call is specific to
+        Linux so update the #ifdef checks accordingly.
+
+        * wtf/RAMSize.cpp:
+        (WTF::computeRAMSize):
+
 2019-01-15  Chris Dumez  <cdumez@apple.com>
 
         Unreviewed, revert part of r239997 as it is not needed to fix the build.
