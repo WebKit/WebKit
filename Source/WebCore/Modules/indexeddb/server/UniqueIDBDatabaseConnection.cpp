@@ -49,14 +49,14 @@ UniqueIDBDatabaseConnection::UniqueIDBDatabaseConnection(UniqueIDBDatabase& data
     , m_openRequestIdentifier(request.requestData().requestIdentifier())
 {
     m_database->server().registerDatabaseConnection(*this);
-    m_connectionToClient.registerDatabaseConnection(*this);
+    m_connectionToClient->registerDatabaseConnection(*this);
 }
 
 UniqueIDBDatabaseConnection::~UniqueIDBDatabaseConnection()
 {
     if (m_database)
         m_database->server().unregisterDatabaseConnection(*this);
-    m_connectionToClient.unregisterDatabaseConnection(*this);
+    m_connectionToClient->unregisterDatabaseConnection(*this);
 }
 
 bool UniqueIDBDatabaseConnection::hasNonFinishedTransactions() const
@@ -127,7 +127,7 @@ void UniqueIDBDatabaseConnection::didFinishHandlingVersionChange(const IDBResour
 void UniqueIDBDatabaseConnection::fireVersionChangeEvent(const IDBResourceIdentifier& requestIdentifier, uint64_t requestedVersion)
 {
     ASSERT(!m_closePending);
-    m_connectionToClient.fireVersionChangeEvent(*this, requestIdentifier, requestedVersion);
+    m_connectionToClient->fireVersionChangeEvent(*this, requestIdentifier, requestedVersion);
 }
 
 UniqueIDBDatabaseTransaction& UniqueIDBDatabaseConnection::createVersionChangeTransaction(uint64_t newVersion)
@@ -172,7 +172,7 @@ void UniqueIDBDatabaseConnection::didAbortTransaction(UniqueIDBDatabaseTransacti
     ASSERT(m_database);
     ASSERT(takenTransaction || m_database->hardClosedForUserDelete());
     if (takenTransaction)
-        m_connectionToClient.didAbortTransaction(transactionIdentifier, error);
+        m_connectionToClient->didAbortTransaction(transactionIdentifier, error);
 }
 
 void UniqueIDBDatabaseConnection::didCommitTransaction(UniqueIDBDatabaseTransaction& transaction, const IDBError& error)
@@ -184,56 +184,56 @@ void UniqueIDBDatabaseConnection::didCommitTransaction(UniqueIDBDatabaseTransact
     ASSERT(m_transactionMap.contains(transactionIdentifier));
     m_transactionMap.remove(transactionIdentifier);
 
-    m_connectionToClient.didCommitTransaction(transactionIdentifier, error);
+    m_connectionToClient->didCommitTransaction(transactionIdentifier, error);
 }
 
 void UniqueIDBDatabaseConnection::didCreateObjectStore(const IDBResultData& resultData)
 {
     LOG(IndexedDB, "UniqueIDBDatabaseConnection::didCreateObjectStore");
 
-    m_connectionToClient.didCreateObjectStore(resultData);
+    m_connectionToClient->didCreateObjectStore(resultData);
 }
 
 void UniqueIDBDatabaseConnection::didDeleteObjectStore(const IDBResultData& resultData)
 {
     LOG(IndexedDB, "UniqueIDBDatabaseConnection::didDeleteObjectStore");
 
-    m_connectionToClient.didDeleteObjectStore(resultData);
+    m_connectionToClient->didDeleteObjectStore(resultData);
 }
 
 void UniqueIDBDatabaseConnection::didRenameObjectStore(const IDBResultData& resultData)
 {
     LOG(IndexedDB, "UniqueIDBDatabaseConnection::didRenameObjectStore");
 
-    m_connectionToClient.didRenameObjectStore(resultData);
+    m_connectionToClient->didRenameObjectStore(resultData);
 }
 
 void UniqueIDBDatabaseConnection::didClearObjectStore(const IDBResultData& resultData)
 {
     LOG(IndexedDB, "UniqueIDBDatabaseConnection::didClearObjectStore");
 
-    m_connectionToClient.didClearObjectStore(resultData);
+    m_connectionToClient->didClearObjectStore(resultData);
 }
 
 void UniqueIDBDatabaseConnection::didCreateIndex(const IDBResultData& resultData)
 {
     LOG(IndexedDB, "UniqueIDBDatabaseConnection::didCreateIndex");
 
-    m_connectionToClient.didCreateIndex(resultData);
+    m_connectionToClient->didCreateIndex(resultData);
 }
 
 void UniqueIDBDatabaseConnection::didDeleteIndex(const IDBResultData& resultData)
 {
     LOG(IndexedDB, "UniqueIDBDatabaseConnection::didDeleteIndex");
 
-    m_connectionToClient.didDeleteIndex(resultData);
+    m_connectionToClient->didDeleteIndex(resultData);
 }
 
 void UniqueIDBDatabaseConnection::didRenameIndex(const IDBResultData& resultData)
 {
     LOG(IndexedDB, "UniqueIDBDatabaseConnection::didRenameIndex");
 
-    m_connectionToClient.didRenameIndex(resultData);
+    m_connectionToClient->didRenameIndex(resultData);
 }
 
 bool UniqueIDBDatabaseConnection::connectionIsClosing() const
