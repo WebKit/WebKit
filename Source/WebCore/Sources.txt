@@ -322,6 +322,7 @@ Modules/webgpu/WHLSL/WHLSLNameContext.cpp
 Modules/webgpu/WHLSL/WHLSLNameResolver.cpp
 Modules/webgpu/WHLSL/WHLSLResolveOverloadImpl.cpp
 Modules/webgpu/WHLSL/WHLSLVisitor.cpp
+Modules/webgpu/WHLSL/WHLSLLoopChecker.cpp
 Modules/webgpu/WHLSL/AST/WHLSLTypeArgument.cpp
 Modules/webgpu/WHLSL/AST/WHLSLBuiltInSemantic.cpp
 Modules/webgpu/WHLSL/AST/WHLSLResourceSemantic.cpp

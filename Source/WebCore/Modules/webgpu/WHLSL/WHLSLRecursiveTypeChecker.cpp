@@ -28,6 +28,9 @@
 
 #if ENABLE(WEBGPU)
 
+#include "WHLSLStructureDefinition.h"
+#include "WHLSLTypeDefinition.h"
+#include "WHLSLTypeReference.h"
 #include "WHLSLVisitor.h"
 #include <wtf/HashSet.h>
 
