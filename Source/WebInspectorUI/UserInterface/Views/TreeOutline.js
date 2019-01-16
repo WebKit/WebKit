@@ -323,13 +323,14 @@ WI.TreeOutline = class TreeOutline extends WI.Object
                 parent.select(true, false);
         }
 
+        let removedIndexes = null;
+
         let treeOutline = child.treeOutline;
         if (treeOutline) {
             treeOutline._forgetTreeElement(child);
             treeOutline._forgetChildrenRecursive(child);
+            removedIndexes = treeOutline._indexesForSubtree(child);
         }
-
-        let removedIndexes = this._indexesForSubtree(child);
 
         if (child.previousSibling)
             child.previousSibling.nextSibling = child.nextSibling;
