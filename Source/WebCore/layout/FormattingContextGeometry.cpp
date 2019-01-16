@@ -304,7 +304,8 @@ VerticalGeometry FormattingContext::Geometry::outOfFlowNonReplacedVerticalGeomet
         } else if (!computedVerticalMargin.after) {
             usedVerticalMargin.before = *computedVerticalMargin.before;
             usedVerticalMargin.after = containingBlockHeight - (*top + usedVerticalMargin.before + borderTop + paddingTop + contentHeight() + paddingBottom + borderBottom + *bottom);
-        }
+        } else
+            usedVerticalMargin = { *computedVerticalMargin.before, *computedVerticalMargin.after };
         // Over-constrained?
         auto boxHeight = *top + usedVerticalMargin.before + borderTop + paddingTop + contentHeight() + paddingBottom + borderBottom + usedVerticalMargin.after + *bottom;
         if (boxHeight != containingBlockHeight)

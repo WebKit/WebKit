@@ -1,3 +1,17 @@
+2019-01-16  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC][Out-of-flow] Set used vertical margin values when top/height/bottom are non-auto.
+        https://bugs.webkit.org/show_bug.cgi?id=193470
+
+        Reviewed by Antti Koivisto.
+
+        Non-auto vertical margin values (which is mostly the case) should be set as used values.
+
+        Test: fast/block/block-only/non-auto-top-bottom-height-with-margins.html
+
+        * layout/FormattingContextGeometry.cpp:
+        (WebCore::Layout::FormattingContext::Geometry::outOfFlowNonReplacedVerticalGeometry):
+
 2019-01-16  Alan Kinsley  <zalan@apple.com>
 
         [LFC] Adjust margin box verification.
