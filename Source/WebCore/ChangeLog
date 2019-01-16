@@ -1,3 +1,15 @@
+2019-01-16  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: extend overlay element bounds lines to the right/below as well
+        https://bugs.webkit.org/show_bug.cgi?id=193336
+
+        Reviewed by Matt Baker.
+
+        This patch is purely a visual change for WebInspector, and doesn't affect anything else.
+
+        * inspector/InspectorOverlayPage.js:
+        (_drawBounds):
+
 2019-01-16  Youenn Fablet  <youenn@apple.com>
 
         Prevent WorkerRunLoop::runInMode from spinning in nested cases

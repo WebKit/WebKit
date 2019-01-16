@@ -426,25 +426,43 @@ function _drawOutlinedQuadWithClip(quad, clipQuad, fillColor, bounds)
 function _drawBounds(bounds)
 {
     _isolateActions(() => {
-        let startX = DATA.contentInset.width;
-        let startY = DATA.contentInset.height;
+        let minX = DATA.contentInset.width;
+        let maxX = DATA.viewportSize.width;
+        let minY = DATA.contentInset.height;
+        let maxY = DATA.viewportSize.height;
 
         context.beginPath();
 
-        if (bounds.minY - startY > 0) {
+        if (bounds.minY > minY) {
             context.moveTo(bounds.minX, bounds.minY);
-            context.lineTo(bounds.minX, startY);
+            context.lineTo(bounds.minX, minY);
 
             context.moveTo(bounds.maxX, bounds.minY);
-            context.lineTo(bounds.maxX, startY);
+            context.lineTo(bounds.maxX, minY);
         }
 
-        if (bounds.minX - startX > 0) {
+        if (bounds.maxY < maxY) {
+            context.moveTo(bounds.minX, bounds.maxY);
+            context.lineTo(bounds.minX, maxY);
+
+            context.moveTo(bounds.maxX, bounds.maxY);
+            context.lineTo(bounds.maxX, maxY);
+        }
+
+        if (bounds.minX > minX) {
             context.moveTo(bounds.minX, bounds.minY);
-            context.lineTo(startX, bounds.minY);
+            context.lineTo(minX, bounds.minY);
 
             context.moveTo(bounds.minX, bounds.maxY);
-            context.lineTo(startX, bounds.maxY);
+            context.lineTo(minX, bounds.maxY);
+        }
+
+        if (bounds.maxX < maxX) {
+            context.moveTo(bounds.maxX, bounds.minY);
+            context.lineTo(maxX, bounds.minY);
+
+            context.moveTo(bounds.maxX, bounds.maxY);
+            context.lineTo(maxX, bounds.maxY);
         }
 
         context.lineWidth = 1;
