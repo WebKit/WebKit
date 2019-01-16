@@ -37,6 +37,10 @@
 #include "Framework/Headers/WebRTC/RTCVideoFrameBuffer.h"
 #include "Framework/Native/api/video_decoder_factory.h"
 #include "Framework/Native/api/video_encoder_factory.h"
+#include "VideoProcessingSoftLink.h"
+
+#include <mutex>
+
 /*
 #if !defined(WEBRTC_IOS)
 __attribute__((objc_runtime_name("WK_RTCUIApplicationStatusObserver")))
