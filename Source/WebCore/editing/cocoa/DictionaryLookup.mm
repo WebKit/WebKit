@@ -35,6 +35,7 @@
 #import "FocusController.h"
 #import "Frame.h"
 #import "FrameSelection.h"
+#import "GraphicsContextCG.h"
 #import "HTMLConverter.h"
 #import "HitTestResult.h"
 #import "NotImplemented.h"
@@ -45,16 +46,29 @@
 #import "VisiblePosition.h"
 #import "VisibleSelection.h"
 #import "VisibleUnits.h"
+#import <pal/spi/cg/CoreGraphicsSPI.h>
 #import <pal/spi/cocoa/RevealSPI.h>
+#import <pal/spi/ios/UIKitSPI.h>
 #import <pal/spi/mac/LookupSPI.h>
 #import <wtf/BlockObjCExceptions.h>
 #import <wtf/RefPtr.h>
 
 #if !PLATFORM(WATCH)
-
 #import <PDFKit/PDFKit.h>
-
 #endif // !PLATFORM(WATCH)
+
+#if PLATFORM(IOSMAC)
+extern "C" {
+#import <UIKitMacHelper/UINSRevealController.h>
+}
+SOFT_LINK_PRIVATE_FRAMEWORK(UIKitMacHelper)
+SOFT_LINK(UIKitMacHelper, UINSSharedRevealController, id<UINSRevealController>, (void), ())
+
+SOFT_LINK_FRAMEWORK(UIKit)
+SOFT_LINK_CLASS(UIKit, UIApplication)
+
+
+#endif // PLATFORM(IOSMAC)
 
 #if PLATFORM(MAC)
 
@@ -141,7 +155,108 @@
 
 @end
 
-#endif // PLATFORM(MAC)
+#elif PLATFORM(IOSMAC) // PLATFORM(MAC)
+
+@interface WebRevealHighlight <UIRVPresenterHighlightDelegate> : NSObject {
+@private
+    RefPtr<WebCore::Image> _image;
+    CGRect _highlightRect;
+    BOOL _highlighting;
+    UIView *_view;
+}
+
+- (instancetype)initWithHighlightRect:(NSRect)highlightRect view:(UIView *)view image:(RefPtr<WebCore::Image>&&)image;
+
+@end
+
+@implementation WebRevealHighlight
+
+- (instancetype)initWithHighlightRect:(NSRect)highlightRect view:(UIView *)view image:(RefPtr<WebCore::Image>&&)image
+{
+    if (!(self = [super init]))
+        return nil;
+    
+    _highlightRect = highlightRect;
+    _view = view;
+    _highlighting = NO;
+    _image = image;
+    
+    return self;
+}
+
+- (void)setImage:(RefPtr<WebCore::Image>&&)image
+{
+    _image = WTFMove(image);
+}
+
+- (NSArray<NSValue *> *)highlightRectsForItem:(RVItem *)item
+{
+    UNUSED_PARAM(item);
+    return @[[NSValue valueWithCGRect:_highlightRect]];
+}
+
+- (void)startHighlightingItem:(RVItem *)item
+{
+    UNUSED_PARAM(item);
+    _highlighting = YES;
+}
+
+- (void)highlightItem:(RVItem *)item withProgress:(CGFloat)progress
+{
+    UNUSED_PARAM(item);
+    UNUSED_PARAM(progress);
+}
+
+- (void)completeHighlightingItem:(RVItem *)item
+{
+    UNUSED_PARAM(item);
+}
+
+- (void)stopHighlightingItem:(RVItem *)item
+{
+    UNUSED_PARAM(item);
+    _highlighting = NO;
+}
+
+- (void)highlightRangeChangedForItem:(RVItem *)item
+{
+    UNUSED_PARAM(item);
+}
+
+- (BOOL)highlighting
+{
+    return _highlighting;
+}
+
+- (void)drawHighlightContentForItem:(RVItem *)item context:(CGContextRef)context
+{
+    NSArray <NSValue *> *rects = [self highlightRectsForItem:item];
+    if (!rects.count)
+        return;
+    
+    CGRect highlightRect = rects.firstObject.CGRectValue;
+    for (NSValue *rect in rects)
+        highlightRect = CGRectUnion(highlightRect, rect.CGRectValue);
+    highlightRect = [_view convertRect:highlightRect fromView:nil];
+    
+    WebCore::CGContextStateSaver saveState(context);
+    CGAffineTransform contextTransform = CGContextGetCTM(context);
+    CGFloat backingScale = contextTransform.a;
+    CGFloat iOSMacScaleFactor = [getUIApplicationClass() sharedApplication]._iOSMacScale;
+    CGAffineTransform transform = CGAffineTransformMakeScale(iOSMacScaleFactor * backingScale, iOSMacScaleFactor * backingScale);
+    CGContextSetCTM(context, transform);
+    
+    for (NSValue *v in rects) {
+        CGRect imgSrcRect = [_view convertRect:v.CGRectValue fromView:nil];
+        RetainPtr<CGImageRef> imageRef = _image->nativeImage();
+        CGRect origin = CGRectMake(imgSrcRect.origin.x - highlightRect.origin.x, imgSrcRect.origin.y - highlightRect.origin.y, highlightRect.size.width, highlightRect.size.height);
+        CGContextDrawImage(context, origin, imageRef.get());
+    }
+}
+
+@end
+
+#endif // PLATFORM(IOSMAC)
 
 #endif // ENABLE(REVEAL)
 
@@ -321,7 +436,7 @@ std::tuple<NSString *, NSDictionary *> DictionaryLookup::stringForPDFSelection(P
     
 #endif // !PLATFORM(WATCH)
 
-static WKRevealController showPopupOrCreateAnimationController(bool createAnimationController, const DictionaryPopupInfo& dictionaryPopupInfo, NSView *view, const WTF::Function<void(TextIndicator&)>& textIndicatorInstallationCallback, const WTF::Function<FloatRect(FloatRect)>& rootViewToViewConversionCallback, WTF::Function<void()>&& clearTextIndicator)
+static WKRevealController showPopupOrCreateAnimationController(bool createAnimationController, const DictionaryPopupInfo& dictionaryPopupInfo, RevealView *view, const WTF::Function<void(TextIndicator&)>& textIndicatorInstallationCallback, const WTF::Function<FloatRect(FloatRect)>& rootViewToViewConversionCallback, WTF::Function<void()>&& clearTextIndicator)
 {
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
     
@@ -379,7 +494,23 @@ static WKRevealController showPopupOrCreateAnimationController(bool createAnimat
     [presenter revealItem:item.get() documentContext:nil presentingContext:context.get() options:nil];
     return nil;
     
-#else // PLATFORM(MAC)
+#elif PLATFORM(IOSMAC)
+    
+    UNUSED_PARAM(textIndicatorInstallationCallback);
+    UNUSED_PARAM(rootViewToViewConversionCallback);
+    UNUSED_PARAM(clearTextIndicator);
+    ASSERT_UNUSED(createAnimationController, !createAnimationController);
+
+    auto textIndicator = TextIndicator::create(dictionaryPopupInfo.textIndicator);
+    
+    RetainPtr<WebRevealHighlight> webHighlight = adoptNS([[WebRevealHighlight alloc] initWithHighlightRect:[view convertRect:textIndicator->selectionRectInRootViewCoordinates() toView:nil] view:view image:textIndicator->contentImage()]);
+    
+    RetainPtr<RVItem> item = adoptNS([allocRVItemInstance() initWithText:dictionaryPopupInfo.attributedString.get().string selectedRange:NSMakeRange(0, 0)]);
+    
+    [UINSSharedRevealController() revealItem:item.get() locationInWindow:dictionaryPopupInfo.origin window:view.window highlighter:(id<UIRVPresenterHighlightDelegate>) webHighlight.get()];
+    return nil;
+    
+#else // PLATFORM(IOS_FAMILY)
     
     UNUSED_PARAM(createAnimationController);
     UNUSED_PARAM(dictionaryPopupInfo);
@@ -389,13 +520,13 @@ static WKRevealController showPopupOrCreateAnimationController(bool createAnimat
     UNUSED_PARAM(clearTextIndicator);
     
     return nil;
-#endif // PLATFORM(MAC)
+#endif // PLATFORM(IOS_FAMILY)
     
     END_BLOCK_OBJC_EXCEPTIONS;
     
 }
 
-void DictionaryLookup::showPopup(const DictionaryPopupInfo& dictionaryPopupInfo, NSView *view, const WTF::Function<void(TextIndicator&)>& textIndicatorInstallationCallback, const WTF::Function<FloatRect(FloatRect)>& rootViewToViewConversionCallback, WTF::Function<void()>&& clearTextIndicator)
+void DictionaryLookup::showPopup(const DictionaryPopupInfo& dictionaryPopupInfo, RevealView *view, const WTF::Function<void(TextIndicator&)>& textIndicatorInstallationCallback, const WTF::Function<FloatRect(FloatRect)>& rootViewToViewConversionCallback, WTF::Function<void()>&& clearTextIndicator)
 {
     showPopupOrCreateAnimationController(false, dictionaryPopupInfo, view, textIndicatorInstallationCallback, rootViewToViewConversionCallback, WTFMove(clearTextIndicator));
 }

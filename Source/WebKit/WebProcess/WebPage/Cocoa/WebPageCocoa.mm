@@ -175,6 +175,10 @@ DictionaryPopupInfo WebPage::dictionaryPopupInfoForRange(Frame& frame, Range& ra
     dictionaryPopupInfo.attributedString = scaledNSAttributedString;
 #endif // PLATFORM(MAC)
     
+#if PLATFORM(IOSMAC)
+    dictionaryPopupInfo.attributedString = adoptNS([[NSMutableAttributedString alloc] initWithString:range.text()]);
+#endif // PLATFORM(IOSMAC)
+    
     editor.setIsGettingDictionaryPopupInfo(false);
     return dictionaryPopupInfo;
 }

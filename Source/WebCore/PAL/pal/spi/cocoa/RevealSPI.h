@@ -44,9 +44,9 @@ SOFT_LINK_CLASS_OPTIONAL(RevealCore, RVSelection)
 #import <Reveal/RVPresenter.h>
 #import <Reveal/Reveal.h>
 #endif // PLATFORM(MAC)
+#import <RevealCore/RVItem_Private.h>
 #import <RevealCore/RVSelection.h>
 #import <RevealCore/RevealCore.h>
-
 #else // USE(APPLE_INTERNAL_SDK)
 
 

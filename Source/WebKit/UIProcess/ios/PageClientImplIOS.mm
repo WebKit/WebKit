@@ -54,6 +54,7 @@
 #import "WebEditCommandProxy.h"
 #import "WebProcessProxy.h"
 #import "_WKDownloadInternal.h"
+#import <WebCore/DictionaryLookup.h>
 #import <WebCore/NotImplemented.h>
 #import <WebCore/PlatformScreen.h>
 #import <WebCore/PromisedAttachmentInfo.h>
@@ -451,6 +452,15 @@ void PageClientImpl::exitAcceleratedCompositingMode()
 
 void PageClientImpl::updateAcceleratedCompositingMode(const LayerTreeContext&)
 {
+}
+
+void PageClientImpl::didPerformDictionaryLookup(const DictionaryPopupInfo& dictionaryPopupInfo)
+{
+#if ENABLE(REVEAL)
+    DictionaryLookup::showPopup(dictionaryPopupInfo, m_contentView, nullptr);
+#else
+    UNUSED_PARAM(dictionaryPopupInfo);
+#endif // ENABLE(REVEAL)
 }
 
 void PageClientImpl::setRemoteLayerTreeRootNode(RemoteLayerTreeNode* rootNode)

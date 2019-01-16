@@ -47,9 +47,10 @@ WTF_EXTERN_C_END
 @interface UIApplication ()
 + (UIApplicationSceneClassicMode)_classicMode;
 - (GSKeyboardRef)_hardwareKeyboard;
+- (CGFloat)_iOSMacScale;
 @end
 
-#else
+#else // USE(APPLE_INTERNAL_SDK)
 
 #import <UIKit/UIKit.h>
 

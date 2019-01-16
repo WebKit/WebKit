@@ -134,6 +134,8 @@ private:
 
     void didCommitLayerTree(const RemoteLayerTreeTransaction&) override;
     void layerTreeCommitComplete() override;
+        
+    void didPerformDictionaryLookup(const WebCore::DictionaryPopupInfo&) override;
 
     void couldNotRestorePageState() override;
     void restorePageState(Optional<WebCore::FloatPoint>, const WebCore::FloatPoint&, const WebCore::FloatBoxExtent&, double) override;

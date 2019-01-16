@@ -981,9 +981,9 @@ void WebPageProxy::setFocusedElementSelectedIndex(uint32_t index, bool allowMult
     process().send(Messages::WebPage::SetFocusedElementSelectedIndex(index, allowMultipleSelection), m_pageID);
 }
 
-void WebPageProxy::didPerformDictionaryLookup(const DictionaryPopupInfo&)
+void WebPageProxy::didPerformDictionaryLookup(const DictionaryPopupInfo& dictionaryPopupInfo)
 {
-    notImplemented();
+    pageClient().didPerformDictionaryLookup(dictionaryPopupInfo);
 }
 
 void WebPageProxy::savePDFToTemporaryFolderAndOpenWithNativeApplication(const String&, const String&, const IPC::DataReference&, const String&)

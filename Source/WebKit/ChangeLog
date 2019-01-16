@@ -1,3 +1,22 @@
+2019-01-15  Megan Gardner  <megan_gardner@apple.com>
+
+        Add Reveal support in iOSMac
+        https://bugs.webkit.org/show_bug.cgi?id=193408
+        <rdar://problem/47300699>
+
+        Reviewed by Tim Horton.
+
+        Add calls to DictionaryLookup from the appropriate places.
+
+        * UIProcess/PageClient.h:
+        * UIProcess/ios/PageClientImplIOS.h:
+        * UIProcess/ios/PageClientImplIOS.mm:
+        (WebKit::PageClientImpl::didPerformDictionaryLookup):
+        * UIProcess/ios/WebPageProxyIOS.mm:
+        (WebKit::WebPageProxy::didPerformDictionaryLookup):
+        * WebProcess/WebPage/Cocoa/WebPageCocoa.mm:
+        (WebKit::WebPage::dictionaryPopupInfoForRange):
+
 2019-01-15  Claudio Saavedra  <csaavedra@igalia.com>
 
         [SOUP] Remove usage of NetworkProcess::singleton()
