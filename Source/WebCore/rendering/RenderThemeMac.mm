@@ -1145,8 +1145,11 @@ void RenderThemeMac::paintListButtonForInput(const RenderObject& o, GraphicsCont
         [listButton setUserInterfaceLayoutDirection:NSUserInterfaceLayoutDirectionLeftToRight];
 
     [listButton setHighlighted:input.isPresentingAttachedView()];
-    if (!input.isPresentingAttachedView())
-        updatePressedState(listButton, *(input.dataListButtonElement()->renderer()));
+    if (!input.isPresentingAttachedView()) {
+        ASSERT(input.dataListButtonElement());
+        if (auto* buttonElement = input.dataListButtonElement())
+            updatePressedState(listButton, *buttonElement->renderer());
+    }
 
     [listButton drawWithFrame:listButtonFrame inView:documentViewFor(o)];
     [listButton setControlView:nil];
