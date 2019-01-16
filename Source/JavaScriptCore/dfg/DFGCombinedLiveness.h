@@ -32,7 +32,7 @@
 
 namespace JSC { namespace DFG {
 
-// Returns the set of nodes live at tail, both due to due DFG and due to bytecode (i.e. OSR exit).
+// Returns the set of nodes live at head, both due to DFG and due to bytecode (i.e. OSR exit).
 NodeSet liveNodesAtHead(Graph&, BasicBlock*);
 
 // WARNING: This currently does not reason about the liveness of shadow values. The execution

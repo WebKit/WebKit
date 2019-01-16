@@ -35,17 +35,10 @@
 
 namespace JSC { namespace DFG {
 
-NodeSet liveNodesAtHead(Graph& graph, BasicBlock* block)
+static void addBytecodeLiveness(Graph& graph, AvailabilityMap& availabilityMap, NodeSet& seen, Node* node)
 {
-    NodeSet seen;
-    for (NodeFlowProjection node : block->ssa->liveAtHead) {
-        if (node.kind() == NodeFlowProjection::Primary)
-            seen.addVoid(node.node());
-    }
-    
-    AvailabilityMap& availabilityMap = block->ssa->availabilityAtHead;
     graph.forAllLiveInBytecode(
-        block->at(0)->origin.forExit,
+        node->origin.forExit,
         [&] (VirtualRegister reg) {
             availabilityMap.closeStartingWithLocal(
                 reg,
@@ -56,7 +49,17 @@ NodeSet liveNodesAtHead(Graph& graph, BasicBlock* block)
                     return seen.add(node).isNewEntry;
                 });
         });
-    
+}
+
+NodeSet liveNodesAtHead(Graph& graph, BasicBlock* block)
+{
+    NodeSet seen;
+    for (NodeFlowProjection node : block->ssa->liveAtHead) {
+        if (node.kind() == NodeFlowProjection::Primary)
+            seen.addVoid(node.node());
+    }
+
+    addBytecodeLiveness(graph, block->ssa->availabilityAtHead, seen, block->at(0));
     return seen;
 }
 
@@ -64,9 +67,27 @@ CombinedLiveness::CombinedLiveness(Graph& graph)
     : liveAtHead(graph)
     , liveAtTail(graph)
 {
-    // First compute the liveAtHead for each block.
-    for (BasicBlock* block : graph.blocksInNaturalOrder())
+    // First compute 
+    // - The liveAtHead for each block.
+    // - The liveAtTail for blocks that won't properly propagate
+    //   the information based on their empty successor list.
+    for (BasicBlock* block : graph.blocksInNaturalOrder()) {
         liveAtHead[block] = liveNodesAtHead(graph, block);
+
+        // If we don't have successors, we can't rely on the propagation below. This doesn't usually
+        // do anything for terminal blocks, since the last node is usually a return, so nothing is live
+        // after it. However, we may also have the end of the basic block be:
+        //
+        // ForceOSRExit
+        // Unreachable
+        //
+        // And things may definitely be live in bytecode at that point in the program.
+        if (!block->numSuccessors()) {
+            NodeSet seen;
+            addBytecodeLiveness(graph, block->ssa->availabilityAtTail, seen, block->last());
+            liveAtTail[block] = seen;
+        }
+    }
     
     // Now compute the liveAtTail by unifying the liveAtHead of the successors.
     for (BasicBlock* block : graph.blocksInNaturalOrder()) {
