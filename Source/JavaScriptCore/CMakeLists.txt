@@ -794,10 +794,6 @@ set(JavaScriptCore_PRIVATE_FRAMEWORK_HEADERS
     runtime/IndexingHeader.h
     runtime/IndexingHeaderInlines.h
     runtime/IndexingType.h
-    runtime/InferredStructure.h
-    runtime/InferredStructureWatchpoint.h
-    runtime/InferredType.h
-    runtime/InferredTypeTable.h
     runtime/InferredValue.h
     runtime/InitializeThreading.h
     runtime/Int16Array.h

@@ -28,7 +28,6 @@
 #include "ClassInfo.h"
 #include "ConcurrentJSLock.h"
 #include "IndexingType.h"
-#include "InferredTypeTable.h"
 #include "JSCJSValue.h"
 #include "JSCast.h"
 #include "JSType.h"
@@ -76,13 +75,11 @@ struct PropertyMapEntry {
     UniquedStringImpl* key;
     PropertyOffset offset;
     uint8_t attributes;
-    bool hasInferredType; // This caches whether or not a property has an inferred type in the inferred type table, and is used for a fast check in JSObject::putDirectInternal().
 
     PropertyMapEntry()
         : key(nullptr)
         , offset(invalidOffset)
         , attributes(0)
-        , hasInferredType(false)
     {
     }
     
@@ -90,7 +87,6 @@ struct PropertyMapEntry {
         : key(key)
         , offset(offset)
         , attributes(attributes)
-        , hasInferredType(false)
     {
         ASSERT(this->attributes == attributes);
     }
@@ -435,7 +431,6 @@ public:
 
     PropertyOffset get(VM&, PropertyName);
     PropertyOffset get(VM&, PropertyName, unsigned& attributes);
-    PropertyOffset get(VM&, PropertyName, unsigned& attributes, bool& hasInferredType);
 
     // This is a somewhat internalish method. It will call your functor while possibly holding the
     // Structure's lock. There is no guarantee whether the lock is held or not in any particular
@@ -605,55 +600,6 @@ public:
         startWatchingInternalProperties(vm);
     }
     
-    bool hasInferredTypes() const
-    {
-        return !!m_inferredTypeTable;
-    }
-
-    InferredType* inferredTypeFor(UniquedStringImpl* uid)
-    {
-        if (InferredTypeTable* table = m_inferredTypeTable.get())
-            return table->get(uid);
-        return nullptr;
-    }
-
-    InferredType::Descriptor inferredTypeDescriptorFor(UniquedStringImpl* uid)
-    {
-        if (InferredType* result = inferredTypeFor(uid))
-            return result->descriptor();
-        return InferredType::Top;
-    }
-
-    // Call this when we know that this is a brand new property. Note that it's not enough for the
-    // property to be brand new to some object. It has to be brand new to the Structure.
-    ALWAYS_INLINE void willStoreValueForNewTransition(
-        VM& vm, PropertyName propertyName, JSValue value, bool shouldOptimize)
-    {
-        if (hasBeenDictionary() || (!shouldOptimize && !m_inferredTypeTable) || !VM::canUseJIT())
-            return;
-        willStoreValueSlow(vm, propertyName, value, shouldOptimize, InferredTypeTable::StoredPropertyAge::NewProperty);
-    }
-
-    // Call this when we know that this is a new property for the object, but not new for the
-    // structure. Therefore, under the InferredTypeTable's rules, absence of the property from the
-    // table means Top rather than Bottom.
-    ALWAYS_INLINE void willStoreValueForExistingTransition(
-        VM& vm, PropertyName propertyName, JSValue value, bool shouldOptimize)
-    {
-        if (hasBeenDictionary() || !m_inferredTypeTable || !VM::canUseJIT())
-            return;
-        willStoreValueSlow(vm, propertyName, value, shouldOptimize, InferredTypeTable::StoredPropertyAge::NewProperty);
-    }
-
-    // Call this when we know that the inferred type table exists and has an entry for this property.
-    ALWAYS_INLINE void willStoreValueForReplace(
-        VM& vm, PropertyName propertyName, JSValue value, bool shouldOptimize)
-    {
-        if (hasBeenDictionary() || !VM::canUseJIT())
-            return;
-        willStoreValueSlow(vm, propertyName, value, shouldOptimize, InferredTypeTable::StoredPropertyAge::OldProperty);
-    }
-
     Ref<StructureShape> toStructureShape(JSValue, bool& sawPolyProtoStructure);
     
     void dump(PrintStream&) const;
@@ -800,9 +746,6 @@ private:
     
     void startWatchingInternalProperties(VM&);
 
-    JS_EXPORT_PRIVATE void willStoreValueSlow(
-        VM&, PropertyName, JSValue, bool, InferredTypeTable::StoredPropertyAge);
-
     static const int s_maxTransitionLength = 64;
     static const int s_maxTransitionLengthForNonEvalPutById = 512;
 
@@ -832,8 +775,6 @@ private:
     // Should be accessed through ensurePropertyTable(). During GC, it may be set to 0 by another thread.
     // During a Heap Snapshot GC we avoid clearing the table so it is safe to use.
     WriteBarrier<PropertyTable> m_propertyTableUnsafe;
-
-    WriteBarrier<InferredTypeTable> m_inferredTypeTable;
 
     mutable InlineWatchpointSet m_transitionWatchpointSet;
 

@@ -120,17 +120,10 @@ ALWAYS_INLINE Structure* Structure::storedPrototypeStructure(const JSObject* obj
 ALWAYS_INLINE PropertyOffset Structure::get(VM& vm, PropertyName propertyName)
 {
     unsigned attributes;
-    bool hasInferredType;
-    return get(vm, propertyName, attributes, hasInferredType);
+    return get(vm, propertyName, attributes);
 }
     
 ALWAYS_INLINE PropertyOffset Structure::get(VM& vm, PropertyName propertyName, unsigned& attributes)
-{
-    bool hasInferredType;
-    return get(vm, propertyName, attributes, hasInferredType);
-}
-
-ALWAYS_INLINE PropertyOffset Structure::get(VM& vm, PropertyName propertyName, unsigned& attributes, bool& hasInferredType)
 {
     ASSERT(!isCompilationThread());
     ASSERT(structure(vm)->classInfo() == info());
@@ -144,7 +137,6 @@ ALWAYS_INLINE PropertyOffset Structure::get(VM& vm, PropertyName propertyName, u
         return invalidOffset;
 
     attributes = entry->attributes;
-    hasInferredType = entry->hasInferredType;
     return entry->offset;
 }
 

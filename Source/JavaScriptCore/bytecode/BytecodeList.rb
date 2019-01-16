@@ -474,11 +474,7 @@ op :put_by_id,
         oldStructure: StructureID,
         offset: unsigned,
         newStructure: StructureID,
-        flags: PutByIdFlags,
         structureChain: WriteBarrierBase[StructureChain],
-    },
-    metadata_initializers: {
-        flags: :flags
     }
 
 op :put_by_id_with_this,

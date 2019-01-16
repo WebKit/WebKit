@@ -1,3 +1,119 @@
+2019-01-15  Saam Barati  <sbarati@apple.com>
+
+        Try ripping out inferred types because it might be a performance improvement
+        https://bugs.webkit.org/show_bug.cgi?id=190906
+
+        Reviewed by Yusuke Suzuki.
+
+        This patch removes inferred types from JSC. Initial evidence shows that
+        this might be around a ~1% speedup on Speedometer2 and JetStream2.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * Sources.txt:
+        * bytecode/AccessCase.cpp:
+        (JSC::AccessCase::generateImpl):
+        * bytecode/Fits.h:
+        * bytecode/PutByIdFlags.cpp:
+        (WTF::printInternal):
+        * bytecode/PutByIdFlags.h:
+        * bytecode/PutByIdStatus.cpp:
+        (JSC::PutByIdStatus::computeFromLLInt):
+        (JSC::PutByIdStatus::computeForStubInfo):
+        (JSC::PutByIdStatus::computeFor):
+        * bytecode/PutByIdVariant.cpp:
+        (JSC::PutByIdVariant::operator=):
+        (JSC::PutByIdVariant::replace):
+        (JSC::PutByIdVariant::transition):
+        (JSC::PutByIdVariant::setter):
+        (JSC::PutByIdVariant::attemptToMerge):
+        (JSC::PutByIdVariant::dumpInContext const):
+        * bytecode/PutByIdVariant.h:
+        (JSC::PutByIdVariant::requiredType const): Deleted.
+        * dfg/DFGAbstractInterpreterInlines.h:
+        (JSC::DFG::AbstractInterpreter<AbstractStateType>::executeEffects):
+        * dfg/DFGAbstractValue.cpp:
+        (JSC::DFG::AbstractValue::isType const): Deleted.
+        * dfg/DFGAbstractValue.h:
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::handleGetByOffset):
+        (JSC::DFG::ByteCodeParser::handlePutByOffset):
+        (JSC::DFG::ByteCodeParser::load):
+        (JSC::DFG::ByteCodeParser::store):
+        (JSC::DFG::ByteCodeParser::handlePutById):
+        (JSC::DFG::ByteCodeParser::parseBlock):
+        * dfg/DFGConstantFoldingPhase.cpp:
+        (JSC::DFG::ConstantFoldingPhase::foldConstants):
+        (JSC::DFG::ConstantFoldingPhase::emitGetByOffset):
+        (JSC::DFG::ConstantFoldingPhase::emitPutByOffset):
+        * dfg/DFGDesiredInferredType.h: Removed.
+        * dfg/DFGDesiredWatchpoints.cpp:
+        (JSC::DFG::DesiredWatchpoints::reallyAdd):
+        (JSC::DFG::DesiredWatchpoints::areStillValid const):
+        (JSC::DFG::DesiredWatchpoints::dumpInContext const):
+        (JSC::DFG::InferredTypeAdaptor::add): Deleted.
+        * dfg/DFGDesiredWatchpoints.h:
+        (JSC::DFG::DesiredWatchpoints::isWatched):
+        (JSC::DFG::InferredTypeAdaptor::hasBeenInvalidated): Deleted.
+        (JSC::DFG::InferredTypeAdaptor::dumpInContext): Deleted.
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::fixupNode):
+        * dfg/DFGGraph.cpp:
+        (JSC::DFG::Graph::dump):
+        (JSC::DFG::Graph::inferredValueForProperty):
+        (JSC::DFG::Graph::inferredTypeFor): Deleted.
+        * dfg/DFGGraph.h:
+        (JSC::DFG::Graph::registerInferredType): Deleted.
+        (JSC::DFG::Graph::inferredTypeForProperty): Deleted.
+        * dfg/DFGInferredTypeCheck.cpp: Removed.
+        * dfg/DFGInferredTypeCheck.h: Removed.
+        * dfg/DFGNode.h:
+        * dfg/DFGObjectAllocationSinkingPhase.cpp:
+        * dfg/DFGSafeToExecute.h:
+        (JSC::DFG::safeToExecute):
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::compileMultiPutByOffset):
+        (JSC::FTL::DFG::LowerDFGToB3::checkInferredType): Deleted.
+        * generator/DSL.rb:
+        * heap/Heap.cpp:
+        (JSC::Heap::finalizeUnconditionalFinalizers):
+        * jit/AssemblyHelpers.cpp:
+        (JSC::AssemblyHelpers::branchIfNotType): Deleted.
+        * jit/AssemblyHelpers.h:
+        * jit/Repatch.cpp:
+        (JSC::tryCachePutByID):
+        * llint/LLIntOffsetsExtractor.cpp:
+        * llint/LLIntSlowPaths.cpp:
+        (JSC::LLInt::LLINT_SLOW_PATH_DECL):
+        * llint/LowLevelInterpreter.asm:
+        * llint/LowLevelInterpreter32_64.asm:
+        * llint/LowLevelInterpreter64.asm:
+        * runtime/InferredStructure.cpp:
+        (JSC::InferredStructure::InferredStructure): Deleted.
+        * runtime/InferredStructure.h:
+        (): Deleted.
+        * runtime/InferredStructureWatchpoint.cpp:
+        (JSC::InferredStructureWatchpoint::fireInternal): Deleted.
+        * runtime/InferredType.cpp: Removed.
+        * runtime/InferredType.h: Removed.
+        * runtime/InferredTypeInlines.h: Removed.
+        * runtime/InferredTypeTable.cpp: Removed.
+        * runtime/InferredTypeTable.h: Removed.
+        * runtime/JSObjectInlines.h:
+        (JSC::JSObject::putDirectInternal):
+        * runtime/Structure.cpp:
+        (JSC::Structure::materializePropertyTable):
+        (JSC::Structure::addNewPropertyTransition):
+        (JSC::Structure::removePropertyTransition):
+        (JSC::Structure::willStoreValueSlow):
+        (JSC::Structure::visitChildren):
+        * runtime/Structure.h:
+        (JSC::PropertyMapEntry::PropertyMapEntry):
+        * runtime/StructureInlines.h:
+        (JSC::Structure::get):
+        * runtime/VM.cpp:
+        (JSC::VM::VM):
+        * runtime/VM.h:
+
 2019-01-15  Tomas Popela  <tpopela@redhat.com>
 
         Unreviewed: Fix the -Wformat compiler warnings

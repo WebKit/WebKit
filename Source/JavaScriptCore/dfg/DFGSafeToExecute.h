@@ -541,31 +541,10 @@ bool safeToExecute(AbstractStateType& state, Graph& graph, Node* node, bool igno
     case PutByOffset: {
         StorageAccessData& data = node->storageAccessData();
         PropertyOffset offset = data.offset;
-        UniquedStringImpl* uid = graph.identifiers()[data.identifierNumber];
-
-        InferredType::Descriptor inferredType;
-        switch (node->op()) {
-        case GetByOffset:
-        case GetGetterSetterByOffset:
-            inferredType = data.inferredType;
-            break;
-        case PutByOffset:
-            // PutByOffset knows about inferred types because it's the enforcer of that type rather
-            // than the consumer of that type. Therefore, PutByOffset expects TOP for the purpose of
-            // safe-to-execute in the sense that it will be happy with anything as general as TOP
-            // (so any type).
-            inferredType = InferredType::Top;
-            break;
-        default:
-            DFG_CRASH(graph, node, "Bad opcode");
-            break;
-        }
-
         // Graph::isSafeToLoad() is all about proofs derived from PropertyConditions. Those don't
         // know anything about inferred types. But if we have a proof derived from watching a
         // structure that has a type proof, then the next case below will deal with it.
-        if (state.structureClobberState() == StructuresAreWatched
-            && inferredType.kind() == InferredType::Top) {
+        if (state.structureClobberState() == StructuresAreWatched) {
             if (JSObject* knownBase = node->child1()->dynamicCastConstant<JSObject*>(graph.m_vm)) {
                 if (graph.isSafeToLoad(knownBase, offset))
                     return true;
@@ -579,12 +558,6 @@ bool safeToExecute(AbstractStateType& state, Graph& graph, Node* node, bool igno
             Structure* thisStructure = value[i].get();
             if (!thisStructure->isValidOffset(offset))
                 return false;
-            if (inferredType.kind() != InferredType::Top) {
-                InferredType::Descriptor thisInferredType =
-                    graph.inferredTypeForProperty(thisStructure, uid);
-                if (!inferredType.subsumes(thisInferredType))
-                    return false;
-            }
         }
         return true;
     }

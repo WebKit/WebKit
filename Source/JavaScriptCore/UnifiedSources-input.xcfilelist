@@ -323,7 +323,6 @@ $(SRCROOT)/dfg/DFGGraph.cpp
 $(SRCROOT)/dfg/DFGGraphSafepoint.cpp
 $(SRCROOT)/dfg/DFGHeapLocation.cpp
 $(SRCROOT)/dfg/DFGInPlaceAbstractState.cpp
-$(SRCROOT)/dfg/DFGInferredTypeCheck.cpp
 $(SRCROOT)/dfg/DFGInsertionSet.cpp
 $(SRCROOT)/dfg/DFGIntegerCheckCombiningPhase.cpp
 $(SRCROOT)/dfg/DFGIntegerRangeOptimizationPhase.cpp
@@ -734,10 +733,6 @@ $(SRCROOT)/runtime/HashMapImpl.cpp
 $(SRCROOT)/runtime/Identifier.cpp
 $(SRCROOT)/runtime/IndexingType.cpp
 $(SRCROOT)/runtime/IndirectEvalExecutable.cpp
-$(SRCROOT)/runtime/InferredStructure.cpp
-$(SRCROOT)/runtime/InferredStructureWatchpoint.cpp
-$(SRCROOT)/runtime/InferredType.cpp
-$(SRCROOT)/runtime/InferredTypeTable.cpp
 $(SRCROOT)/runtime/InferredValue.cpp
 $(SRCROOT)/runtime/InitializeThreading.cpp
 $(SRCROOT)/runtime/InspectorInstrumentationObject.cpp

@@ -204,23 +204,6 @@ else
     const LowestTag = constexpr JSValue::LowestTag
 end
 
-# PutByIdFlags data
-const PutByIdPrimaryTypeMask = constexpr PutByIdPrimaryTypeMask
-const PutByIdPrimaryTypeSecondary = constexpr PutByIdPrimaryTypeSecondary
-const PutByIdPrimaryTypeObjectWithStructure = constexpr PutByIdPrimaryTypeObjectWithStructure
-const PutByIdPrimaryTypeObjectWithStructureOrOther = constexpr PutByIdPrimaryTypeObjectWithStructureOrOther
-const PutByIdSecondaryTypeMask = constexpr PutByIdSecondaryTypeMask
-const PutByIdSecondaryTypeBottom = constexpr PutByIdSecondaryTypeBottom
-const PutByIdSecondaryTypeBoolean = constexpr PutByIdSecondaryTypeBoolean
-const PutByIdSecondaryTypeOther = constexpr PutByIdSecondaryTypeOther
-const PutByIdSecondaryTypeInt32 = constexpr PutByIdSecondaryTypeInt32
-const PutByIdSecondaryTypeNumber = constexpr PutByIdSecondaryTypeNumber
-const PutByIdSecondaryTypeString = constexpr PutByIdSecondaryTypeString
-const PutByIdSecondaryTypeSymbol = constexpr PutByIdSecondaryTypeSymbol
-const PutByIdSecondaryTypeObject = constexpr PutByIdSecondaryTypeObject
-const PutByIdSecondaryTypeObjectOrOther = constexpr PutByIdSecondaryTypeObjectOrOther
-const PutByIdSecondaryTypeTop = constexpr PutByIdSecondaryTypeTop
-
 const CallOpCodeSize = constexpr op_call_length
 
 const maxFrameExtentForSlowPathCall = constexpr maxFrameExtentForSlowPathCall

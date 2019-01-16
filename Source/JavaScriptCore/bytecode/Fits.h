@@ -30,6 +30,7 @@
 #include "Label.h"
 #include "OpcodeSize.h"
 #include "ProfileTypeBytecodeFlag.h"
+#include "PutByIdFlags.h"
 #include "ResultType.h"
 #include "SpecialPointer.h"
 #include "VirtualRegister.h"

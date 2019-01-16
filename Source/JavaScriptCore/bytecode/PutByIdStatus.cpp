@@ -52,7 +52,8 @@ PutByIdStatus PutByIdStatus::computeFromLLInt(CodeBlock* profiledBlock, unsigned
     VM& vm = *profiledBlock->vm();
     
     auto instruction = profiledBlock->instructions().at(bytecodeIndex);
-    auto& metadata = instruction->as<OpPutById>().metadata(profiledBlock);
+    auto bytecode = instruction->as<OpPutById>();
+    auto& metadata = bytecode.metadata(profiledBlock);
 
     StructureID structureID = metadata.oldStructure;
     if (!structureID)
@@ -66,7 +67,7 @@ PutByIdStatus PutByIdStatus::computeFromLLInt(CodeBlock* profiledBlock, unsigned
         if (!isValidOffset(offset))
             return PutByIdStatus(NoInformation);
         
-        return PutByIdVariant::replace(structure, offset, structure->inferredTypeDescriptorFor(uid));
+        return PutByIdVariant::replace(structure, offset);
     }
 
     Structure* newStructure = vm.heap.structureIDTable().get(newStructureID);
@@ -78,7 +79,7 @@ PutByIdStatus PutByIdStatus::computeFromLLInt(CodeBlock* profiledBlock, unsigned
         return PutByIdStatus(NoInformation);
     
     ObjectPropertyConditionSet conditionSet;
-    if (!(metadata.flags & PutByIdIsDirect)) {
+    if (!(bytecode.flags & PutByIdIsDirect)) {
         conditionSet =
             generateConditionsForPropertySetterMissConcurrently(
                 vm, profiledBlock->globalObject(), structure, uid);
@@ -87,7 +88,7 @@ PutByIdStatus PutByIdStatus::computeFromLLInt(CodeBlock* profiledBlock, unsigned
     }
     
     return PutByIdVariant::transition(
-        structure, newStructure, conditionSet, offset, newStructure->inferredTypeDescriptorFor(uid));
+        structure, newStructure, conditionSet, offset);
 }
 
 #if ENABLE(JIT)
@@ -142,7 +143,7 @@ PutByIdStatus PutByIdStatus::computeForStubInfo(
             stubInfo->u.byIdSelf.baseObjectStructure->getConcurrently(uid);
         if (isValidOffset(offset)) {
             return PutByIdVariant::replace(
-                stubInfo->u.byIdSelf.baseObjectStructure.get(), offset, InferredType::Top);
+                stubInfo->u.byIdSelf.baseObjectStructure.get(), offset);
         }
         return PutByIdStatus(JSC::slowVersion(summary));
     }
@@ -169,7 +170,7 @@ PutByIdStatus PutByIdStatus::computeForStubInfo(
                 if (!isValidOffset(offset))
                     return PutByIdStatus(JSC::slowVersion(summary));
                 variant = PutByIdVariant::replace(
-                    structure, offset, structure->inferredTypeDescriptorFor(uid));
+                    structure, offset);
                 break;
             }
                 
@@ -182,8 +183,7 @@ PutByIdStatus PutByIdStatus::computeForStubInfo(
                 if (!conditionSet.structuresEnsureValidity())
                     return PutByIdStatus(JSC::slowVersion(summary));
                 variant = PutByIdVariant::transition(
-                    access.structure(), access.newStructure(), conditionSet, offset,
-                    access.newStructure()->inferredTypeDescriptorFor(uid));
+                    access.structure(), access.newStructure(), conditionSet, offset);
                 break;
             }
                 
@@ -315,7 +315,7 @@ PutByIdStatus PutByIdStatus::computeFor(JSGlobalObject* globalObject, const Stru
             }
 
             PutByIdVariant variant =
-                PutByIdVariant::replace(structure, offset, structure->inferredTypeDescriptorFor(uid));
+                PutByIdVariant::replace(structure, offset);
             if (!result.appendVariant(variant))
                 return PutByIdStatus(TakesSlowPath);
             continue;
@@ -350,8 +350,7 @@ PutByIdStatus PutByIdStatus::computeFor(JSGlobalObject* globalObject, const Stru
     
         bool didAppend = result.appendVariant(
             PutByIdVariant::transition(
-                structure, transition, conditionSet, offset,
-                transition->inferredTypeDescriptorFor(uid)));
+                structure, transition, conditionSet, offset));
         if (!didAppend)
             return PutByIdStatus(TakesSlowPath);
     }

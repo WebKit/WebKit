@@ -56,6 +56,7 @@
 #include "MarkedSpace.h"
 #include "MaxFrameExtentForSlowPathCall.h"
 #include "NativeExecutable.h"
+#include "PutByIdFlags.h"
 #include "ProtoCallFrame.h"
 #include "ShadowChicken.h"
 #include "Structure.h"

@@ -1019,14 +1019,6 @@ void AccessCase::generateImpl(AccessGenerationState& state)
     }
 
     case Replace: {
-        if (InferredType* type = structure()->inferredTypeFor(ident.impl())) {
-            if (AccessCaseInternal::verbose)
-                dataLog("Have type: ", type->descriptor(), "\n");
-            state.failAndRepatch.append(
-                jit.branchIfNotType(valueRegs, scratchGPR, type->descriptor()));
-        } else if (AccessCaseInternal::verbose)
-            dataLog("Don't have type.\n");
-
         if (isInlineOffset(m_offset)) {
             jit.storeValue(
                 valueRegs,
@@ -1048,14 +1040,6 @@ void AccessCase::generateImpl(AccessGenerationState& state)
     case Transition: {
         // AccessCase::transition() should have returned null if this wasn't true.
         RELEASE_ASSERT(GPRInfo::numberOfRegisters >= 6 || !structure()->outOfLineCapacity() || structure()->outOfLineCapacity() == newStructure()->outOfLineCapacity());
-
-        if (InferredType* type = newStructure()->inferredTypeFor(ident.impl())) {
-            if (AccessCaseInternal::verbose)
-                dataLog("Have type: ", type->descriptor(), "\n");
-            state.failAndRepatch.append(
-                jit.branchIfNotType(valueRegs, scratchGPR, type->descriptor()));
-        } else if (AccessCaseInternal::verbose)
-            dataLog("Don't have type.\n");
 
         // NOTE: This logic is duplicated in AccessCase::doesCalls(). It's important that doesCalls() knows
         // exactly when this would make calls.
