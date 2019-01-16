@@ -292,7 +292,10 @@ void UniqueIDBDatabase::shutdownForClose()
     m_backingStoreSupportsSimultaneousTransactions = false;
     m_backingStoreIsEphemeral = false;
 
-    ASSERT(m_databaseQueue.isEmpty());
+    if (!m_databaseQueue.isEmpty()) {
+        postDatabaseTask(createCrossThreadTask(*this, &UniqueIDBDatabase::shutdownForClose));
+        return;
+    }
     m_databaseQueue.kill();
 
     postDatabaseTaskReply(createCrossThreadTask(*this, &UniqueIDBDatabase::didShutdownForClose));
@@ -1271,10 +1274,10 @@ void UniqueIDBDatabase::performPrefetchCursor(const IDBResourceIdentifier& trans
     ASSERT(m_cursorPrefetches.contains(cursorIdentifier));
     LOG(IndexedDB, "(db) UniqueIDBDatabase::performPrefetchCursor");
 
-    if (m_backingStore->prefetchCursor(transactionIdentifier, cursorIdentifier))
-        postDatabaseTask(createCrossThreadTask(*this, &UniqueIDBDatabase::performPrefetchCursor, transactionIdentifier, cursorIdentifier));
-    else
+    if (m_hardClosedForUserDelete || !m_backingStore->prefetchCursor(transactionIdentifier, cursorIdentifier))
         m_cursorPrefetches.remove(cursorIdentifier);
+    else
+        postDatabaseTask(createCrossThreadTask(*this, &UniqueIDBDatabase::performPrefetchCursor, transactionIdentifier, cursorIdentifier));
 }
 
 void UniqueIDBDatabase::didPerformIterateCursor(uint64_t callbackIdentifier, const IDBError& error, const IDBGetResult& result)
@@ -1784,7 +1787,7 @@ void UniqueIDBDatabase::maybeFinishHardClose()
 
 bool UniqueIDBDatabase::isDoneWithHardClose()
 {
-    return m_databaseQueue.isKilled() && m_clientClosePendingDatabaseConnections.isEmpty() && m_serverClosePendingDatabaseConnections.isEmpty();
+    return m_databaseReplyQueue.isKilled() && m_clientClosePendingDatabaseConnections.isEmpty() && m_serverClosePendingDatabaseConnections.isEmpty();
 }
 
 static void errorOpenDBRequestForUserDelete(ServerOpenDBRequest& request)
