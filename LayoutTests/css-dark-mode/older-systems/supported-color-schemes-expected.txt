@@ -1,0 +1,15 @@
+
+PASS Element colors are correct in light color scheme with only light supported color scheme 
+PASS Supported color schemes changed to light and dark 
+PASS Element colors are correct in light color scheme with light and dark supported color scheme 
+PASS Supported color schemes changed to dark 
+PASS Element colors are correct in light color scheme with only dark supported color scheme 
+PASS Supported color schemes changed to light and a bogus value 
+PASS Element colors are correct in light color scheme with only light supported color scheme 
+PASS Supported color schemes changed to empty value 
+PASS Element colors are correct in light color scheme with implicit light supported color scheme 
+PASS Supported color schemes changed to light and dark 
+PASS Element colors are correct in light color scheme with light and dark supported color scheme 
+PASS Supported color schemes changed to a bogus value and dark 
+PASS Element colors are correct in light color scheme with dark supported color scheme 
+

@@ -301,7 +301,7 @@ void InspectorPageAgent::enable(ErrorString&)
     stopwatch->reset();
     stopwatch->start();
 
-#if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101400
+#if HAVE(OS_DARK_MODE_SUPPORT)
     defaultAppearanceDidChange(m_page.defaultUseDarkAppearance());
 #endif
 }

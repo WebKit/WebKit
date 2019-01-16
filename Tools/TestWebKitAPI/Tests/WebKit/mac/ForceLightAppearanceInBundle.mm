@@ -25,7 +25,7 @@
 
 #include "config.h"
 
-#if ENABLE(DARK_MODE_CSS) && WK_HAVE_C_SPI
+#if ENABLE(DARK_MODE_CSS) && HAVE(OS_DARK_MODE_SUPPORT) && WK_HAVE_C_SPI
 
 #include "PlatformUtilities.h"
 #include "PlatformWebView.h"
