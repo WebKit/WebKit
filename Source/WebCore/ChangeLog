@@ -1,3 +1,54 @@
+2019-01-16  Youenn Fablet  <youenn@apple.com>
+
+        Prevent WorkerRunLoop::runInMode from spinning in nested cases
+        https://bugs.webkit.org/show_bug.cgi?id=193359
+        <rdar://problem/46345353>
+
+        Reviewed by Joseph Pecoraro.
+
+        Speculative fix for some cases where service worker is spinning and consuming a lot of CPU.
+        The hypothesis is that:
+        - Service Worker is checking for its script freshness through WorkerScriptLoader.
+        This triggers the worker run loop to be nested.
+        - The run loop timer is active and needs to fire immediately.
+        The hypothesis is that this happens in some cases like restarting a device after sleep mode.
+
+        WorkerRunLoop::runInMode will then compute a 0 timeout value for getting a message.
+        This will trigger a timeout while waiting for the message queue.
+        Since the run loop is nested,  the run loop timer will not be able to fire,
+        and it will keep ask to fire immediately.
+        runInMode will return timeout as a result and WorkerRunLoop::run will call it immediately.
+
+        The fix is to prevent the shared timer to fire only when the run loop is being debugged through the web inspector.
+        We compute this by checking the run loop mode as debuggerMode().
+        Did some refactoring by introducing helper routines for running the loop and posting task in debugger mode.
+
+        * inspector/WorkerScriptDebugServer.cpp:
+        (WebCore::WorkerScriptDebugServer::runEventLoopWhilePaused):
+        * workers/WorkerInspectorProxy.cpp:
+        (WebCore::WorkerInspectorProxy::resumeWorkerIfPaused):
+        (WebCore::WorkerInspectorProxy::connectToWorkerInspectorController):
+        (WebCore::WorkerInspectorProxy::disconnectFromWorkerInspectorController):
+        (WebCore::WorkerInspectorProxy::sendMessageToWorkerInspectorController):
+        * workers/WorkerRunLoop.cpp:
+        (WebCore::ModePredicate::ModePredicate):
+        (WebCore::WorkerRunLoop::WorkerRunLoop):
+        (WebCore::debuggerMode):
+        (WebCore::RunLoopSetup::RunLoopSetup):
+        (WebCore::RunLoopSetup::~RunLoopSetup):
+        (WebCore::WorkerRunLoop::run):
+        (WebCore::WorkerRunLoop::runInDebuggerMode):
+        (WebCore::WorkerRunLoop::runInMode):
+        (WebCore::WorkerRunLoop::Task::performTask):
+        * workers/WorkerRunLoop.h:
+        (WebCore::WorkerRunLoop::isBeingDebugged const):
+        * workers/WorkerThread.cpp:
+        (WebCore::WorkerThread::startRunningDebuggerTasks):
+        * workers/service/context/ServiceWorkerInspectorProxy.cpp:
+        (WebCore::ServiceWorkerInspectorProxy::connectToWorker):
+        (WebCore::ServiceWorkerInspectorProxy::disconnectFromWorker):
+        (WebCore::ServiceWorkerInspectorProxy::sendMessageToWorker):
+
 2019-01-16  Sihui Liu  <sihui_liu@apple.com>
 
         IndexedDB: leak WebIDBConnectionToClient for retain cycle

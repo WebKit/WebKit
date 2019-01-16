@@ -249,7 +249,7 @@ void WorkerThread::startRunningDebuggerTasks()
 
     MessageQueueWaitResult result;
     do {
-        result = m_runLoop.runInMode(m_workerGlobalScope.get(), WorkerRunLoop::debuggerMode());
+        result = m_runLoop.runInDebuggerMode(*m_workerGlobalScope);
     } while (result != MessageQueueTerminated && m_pausedForDebugger);
 }
 

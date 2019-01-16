@@ -90,9 +90,9 @@ void WorkerInspectorProxy::workerTerminated()
 
 void WorkerInspectorProxy::resumeWorkerIfPaused()
 {
-    m_workerThread->runLoop().postTaskForMode([] (ScriptExecutionContext& context) {
+    m_workerThread->runLoop().postDebuggerTask([] (ScriptExecutionContext& context) {
         downcast<WorkerGlobalScope>(context).thread().stopRunningDebuggerTasks();
-    }, WorkerRunLoop::debuggerMode());
+    });
 }
 
 void WorkerInspectorProxy::connectToWorkerInspectorController(PageChannel* channel)
@@ -103,9 +103,9 @@ void WorkerInspectorProxy::connectToWorkerInspectorController(PageChannel* chann
 
     m_pageChannel = channel;
 
-    m_workerThread->runLoop().postTaskForMode([] (ScriptExecutionContext& context) {
+    m_workerThread->runLoop().postDebuggerTask([] (ScriptExecutionContext& context) {
         downcast<WorkerGlobalScope>(context).inspectorController().connectFrontend();
-    }, WorkerRunLoop::debuggerMode());
+    });
 }
 
 void WorkerInspectorProxy::disconnectFromWorkerInspectorController()
@@ -116,13 +116,13 @@ void WorkerInspectorProxy::disconnectFromWorkerInspectorController()
 
     m_pageChannel = nullptr;
 
-    m_workerThread->runLoop().postTaskForMode([] (ScriptExecutionContext& context) {
+    m_workerThread->runLoop().postDebuggerTask([] (ScriptExecutionContext& context) {
         downcast<WorkerGlobalScope>(context).inspectorController().disconnectFrontend(DisconnectReason::InspectorDestroyed);
 
         // In case the worker is paused running debugger tasks, ensure we break out of
         // the pause since this will be the last debugger task we send to the worker.
         downcast<WorkerGlobalScope>(context).thread().stopRunningDebuggerTasks();
-    }, WorkerRunLoop::debuggerMode());
+    });
 }
 
 void WorkerInspectorProxy::sendMessageToWorkerInspectorController(const String& message)
@@ -131,9 +131,9 @@ void WorkerInspectorProxy::sendMessageToWorkerInspectorController(const String& 
     if (!m_workerThread)
         return;
 
-    m_workerThread->runLoop().postTaskForMode([message = message.isolatedCopy()] (ScriptExecutionContext& context) {
+    m_workerThread->runLoop().postDebuggerTask([message = message.isolatedCopy()] (ScriptExecutionContext& context) {
         downcast<WorkerGlobalScope>(context).inspectorController().dispatchMessageFromFrontend(message);
-    }, WorkerRunLoop::debuggerMode());
+    });
 }
 
 void WorkerInspectorProxy::sendMessageFromWorkerToFrontend(const String& message)

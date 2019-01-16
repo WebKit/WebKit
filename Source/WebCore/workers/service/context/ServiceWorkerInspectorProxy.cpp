@@ -61,9 +61,9 @@ void ServiceWorkerInspectorProxy::connectToWorker(FrontendChannel& channel)
 {
     m_channel = &channel;
 
-    m_serviceWorkerThreadProxy.thread().runLoop().postTaskForMode([] (ScriptExecutionContext& context) {
+    m_serviceWorkerThreadProxy.thread().runLoop().postDebuggerTask([] (ScriptExecutionContext& context) {
         downcast<WorkerGlobalScope>(context).inspectorController().connectFrontend();
-    }, WorkerRunLoop::debuggerMode());
+    });
 }
 
 void ServiceWorkerInspectorProxy::disconnectFromWorker(FrontendChannel& channel)
@@ -71,20 +71,20 @@ void ServiceWorkerInspectorProxy::disconnectFromWorker(FrontendChannel& channel)
     ASSERT_UNUSED(channel, &channel == m_channel);
     m_channel = nullptr;
 
-    m_serviceWorkerThreadProxy.thread().runLoop().postTaskForMode([] (ScriptExecutionContext& context) {
+    m_serviceWorkerThreadProxy.thread().runLoop().postDebuggerTask([] (ScriptExecutionContext& context) {
         downcast<WorkerGlobalScope>(context).inspectorController().disconnectFrontend(DisconnectReason::InspectorDestroyed);
 
         // In case the worker is paused running debugger tasks, ensure we break out of
         // the pause since this will be the last debugger task we send to the worker.
         downcast<WorkerGlobalScope>(context).thread().stopRunningDebuggerTasks();
-    }, WorkerRunLoop::debuggerMode());
+    });
 }
 
 void ServiceWorkerInspectorProxy::sendMessageToWorker(const String& message)
 {
-    m_serviceWorkerThreadProxy.thread().runLoop().postTaskForMode([message = message.isolatedCopy()] (ScriptExecutionContext& context) {
+    m_serviceWorkerThreadProxy.thread().runLoop().postDebuggerTask([message = message.isolatedCopy()] (ScriptExecutionContext& context) {
         downcast<WorkerGlobalScope>(context).inspectorController().dispatchMessageFromFrontend(message);
-    }, WorkerRunLoop::debuggerMode());
+    });
 }
 
 void ServiceWorkerInspectorProxy::sendMessageFromWorkerToFrontend(const String& message)
