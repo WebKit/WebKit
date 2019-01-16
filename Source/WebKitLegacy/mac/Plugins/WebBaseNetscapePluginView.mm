@@ -47,6 +47,7 @@
 #import <WebCore/Frame.h>
 #import <WebCore/FrameLoader.h>
 #import <WebCore/HTMLPlugInElement.h>
+#import <WebCore/NetworkStorageSession.h>
 #import <WebCore/Page.h>
 #import <WebCore/ProtectionSpace.h>
 #import <WebCore/RenderEmbeddedObject.h>
@@ -871,7 +872,7 @@ bool getAuthenticationInfo(const char* protocolStr, const char* hostStr, int32_t
     
     RetainPtr<NSURLProtectionSpace> protectionSpace = adoptNS([[NSURLProtectionSpace alloc] initWithHost:host port:port protocol:protocol realm:realm authenticationMethod:authenticationMethod]);
     
-    NSURLCredential *credential = CredentialStorage::defaultCredentialStorage().get(emptyString(), ProtectionSpace(protectionSpace.get())).nsCredential();
+    NSURLCredential *credential = WebCore::NetworkStorageSession::defaultStorageSession().credentialStorage().get(emptyString(), ProtectionSpace(protectionSpace.get())).nsCredential();
     if (!credential)
         credential = [[NSURLCredentialStorage sharedCredentialStorage] defaultCredentialForProtectionSpace:protectionSpace.get()];
     if (!credential)

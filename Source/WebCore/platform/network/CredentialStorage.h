@@ -38,8 +38,6 @@ class ProtectionSpace;
 
 class CredentialStorage {
 public:
-    WEBCORE_EXPORT static CredentialStorage& defaultCredentialStorage();
-
     // WebCore session credential storage.
     WEBCORE_EXPORT void set(const String&, const Credential&, const ProtectionSpace&, const URL&);
     WEBCORE_EXPORT Credential get(const String&, const ProtectionSpace&);

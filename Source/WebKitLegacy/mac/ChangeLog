@@ -1,5 +1,19 @@
 2019-01-15  Alex Christensen  <achristensen@webkit.org>
 
+        Reduce use of NetworkStorageSession::defaultStorageSession in WebCore
+        https://bugs.webkit.org/show_bug.cgi?id=193368
+
+        Reviewed by Geoff Garen.
+
+        * Misc/WebCache.mm:
+        (+[WebCache clearCachedCredentials]):
+        * Misc/WebDownload.mm:
+        (-[WebDownloadInternal download:didReceiveAuthenticationChallenge:]):
+        * Plugins/WebBaseNetscapePluginView.mm:
+        (WebKit::getAuthenticationInfo):
+
+2019-01-15  Alex Christensen  <achristensen@webkit.org>
+
         Stop using CookiesStrategy
         https://bugs.webkit.org/show_bug.cgi?id=161106
 

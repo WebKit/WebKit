@@ -57,6 +57,7 @@
 #include <WebCore/MIMETypeRegistry.h>
 #include <WebCore/MouseEvent.h>
 #include <WebCore/NetscapePlugInStreamLoader.h>
+#include <WebCore/NetworkStorageSession.h>
 #include <WebCore/Page.h>
 #include <WebCore/PlatformMouseEvent.h>
 #include <WebCore/ProtectionSpace.h>
@@ -1602,9 +1603,9 @@ bool PluginView::getAuthenticationInfo(const ProtectionSpace& protectionSpace, S
         return false;
 
     String partitionName = contentDocument->topDocument().domainForCachePartition();
-    Credential credential = CredentialStorage::defaultCredentialStorage().get(partitionName, protectionSpace);
+    Credential credential = NetworkStorageSession::defaultStorageSession().credentialStorage().get(partitionName, protectionSpace);
     if (credential.isEmpty())
-        credential = CredentialStorage::defaultCredentialStorage().getFromPersistentStorage(protectionSpace);
+        credential = NetworkStorageSession::defaultStorageSession().credentialStorage().getFromPersistentStorage(protectionSpace);
 
     if (!credential.hasPassword())
         return false;

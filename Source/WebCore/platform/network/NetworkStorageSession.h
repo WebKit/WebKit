@@ -208,10 +208,8 @@ private:
     static bool m_processMayUseCookieAPI;
 };
 
-#if PLATFORM(COCOA)
+#if PLATFORM(COCOA) || USE(CFURLCONNECTION)
 WEBCORE_EXPORT CFURLStorageSessionRef createPrivateStorageSession(CFStringRef identifier);
-#elif USE(CFURLCONNECTION)
-CFURLStorageSessionRef createPrivateStorageSession(CFStringRef identifier, CFURLStorageSessionRef defaultStorageSession);
 #endif
 
 }

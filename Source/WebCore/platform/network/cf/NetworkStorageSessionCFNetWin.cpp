@@ -61,7 +61,7 @@ DECLARE_CF_TYPE_TRAIT(CFHTTPCookie);
 
 namespace WebCore {
 
-CFURLStorageSessionRef createPrivateStorageSession(CFStringRef identifier, CFURLStorageSessionRef defaultStorageSession)
+CFURLStorageSessionRef createPrivateStorageSession(CFStringRef identifier)
 {
     const void* sessionPropertyKeys[] = { _kCFURLStorageSessionIsPrivate };
     const void* sessionPropertyValues[] = { kCFBooleanTrue };
@@ -72,24 +72,14 @@ CFURLStorageSessionRef createPrivateStorageSession(CFStringRef identifier, CFURL
     // with the exception that it should be in-memory only storage.
     CFURLCacheRef cache = _CFURLStorageSessionCopyCache(kCFAllocatorDefault, storageSession);
     CFURLCacheSetDiskCapacity(cache, 0);
-    CFURLCacheRef defaultCache;
-    if (defaultStorageSession)
-        defaultCache = _CFURLStorageSessionCopyCache(kCFAllocatorDefault, defaultStorageSession);
-    else
-        defaultCache = CFURLCacheCopySharedURLCache();
+    CFURLCacheRef defaultCache = CFURLCacheCopySharedURLCache();
     CFURLCacheSetMemoryCapacity(cache, CFURLCacheMemoryCapacity(defaultCache));
     CFRelease(defaultCache);
     CFRelease(cache);
     
     CFHTTPCookieStorageRef cookieStorage = _CFURLStorageSessionCopyCookieStorage(kCFAllocatorDefault, storageSession);
-    CFHTTPCookieStorageRef defaultCookieStorage;
-    if (defaultStorageSession)
-        defaultCookieStorage = _CFURLStorageSessionCopyCookieStorage(kCFAllocatorDefault, defaultStorageSession);
-    else
-        defaultCookieStorage = _CFHTTPCookieStorageGetDefault(kCFAllocatorDefault);
+    CFHTTPCookieStorageRef defaultCookieStorage = _CFHTTPCookieStorageGetDefault(kCFAllocatorDefault);
     CFHTTPCookieStorageSetCookieAcceptPolicy(cookieStorage, CFHTTPCookieStorageGetCookieAcceptPolicy(defaultCookieStorage));
-    if (defaultStorageSession)
-        CFRelease(defaultCookieStorage);
     CFRelease(cookieStorage);
     
     return storageSession;

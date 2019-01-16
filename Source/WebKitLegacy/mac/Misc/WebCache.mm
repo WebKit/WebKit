@@ -37,6 +37,7 @@
 #import <WebCore/CrossOriginPreflightResultCache.h>
 #import <WebCore/Document.h>
 #import <WebCore/MemoryCache.h>
+#import <WebCore/NetworkStorageSession.h>
 #import <wtf/MainThread.h>
 #import <wtf/RunLoop.h>
 
@@ -213,7 +214,7 @@
 + (void)clearCachedCredentials
 {
     [WebView _makeAllWebViewsPerformSelector:@selector(_clearCredentials)];
-    WebCore::CredentialStorage::defaultCredentialStorage().clearCredentials();
+    WebCore::NetworkStorageSession::defaultStorageSession().credentialStorage().clearCredentials();
 }
 
 @end

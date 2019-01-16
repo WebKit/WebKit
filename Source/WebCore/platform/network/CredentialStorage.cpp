@@ -35,11 +35,6 @@
 
 namespace WebCore {
 
-CredentialStorage& CredentialStorage::defaultCredentialStorage()
-{
-    return NetworkStorageSession::defaultStorageSession().credentialStorage();
-}
-
 static String originStringFromURL(const URL& url)
 {
     return makeString(url.protocol(), "://", url.hostAndPort(), '/');

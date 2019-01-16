@@ -98,12 +98,7 @@ void NetworkStorageSession::switchToNewTestingSession()
     // Session name should be short enough for shared memory region name to be under the limit, otehrwise sandbox rules won't work (see <rdar://problem/13642852>).
     String sessionName = String::format("WebKit Test-%u", static_cast<uint32_t>(getCurrentProcessID()));
 
-    RetainPtr<CFURLStorageSessionRef> session;
-#if PLATFORM(COCOA)
-    session = adoptCF(createPrivateStorageSession(sessionName.createCFString().get()));
-#else
-    session = adoptCF(createPrivateStorageSession(sessionName.createCFString().get(), defaultStorageSession().platformSession()));
-#endif
+    auto session = adoptCF(createPrivateStorageSession(sessionName.createCFString().get()));
 
     RetainPtr<CFHTTPCookieStorageRef> cookieStorage;
     if (NetworkStorageSession::processMayUseCookieAPI()) {
@@ -131,13 +126,9 @@ void NetworkStorageSession::ensureSession(PAL::SessionID sessionID, const String
     RetainPtr<CFStringRef> cfIdentifier = String(identifierBase + ".PrivateBrowsing").createCFString();
 
     RetainPtr<CFURLStorageSessionRef> storageSession;
-    if (sessionID.isEphemeral()) {
-#if PLATFORM(COCOA)
+    if (sessionID.isEphemeral())
         storageSession = adoptCF(createPrivateStorageSession(cfIdentifier.get()));
-#else
-        storageSession = adoptCF(createPrivateStorageSession(cfIdentifier.get(), defaultNetworkStorageSession()->platformSession()));
-#endif
-    } else
+    else
         storageSession = createCFStorageSessionForIdentifier(cfIdentifier.get());
 
     if (NetworkStorageSession::processMayUseCookieAPI()) {
