@@ -62,7 +62,7 @@ public:
         , m_manager(manager)
         , m_deviceType(deviceType)
     {
-        ASSERT(deviceType == CaptureDevice::DeviceType::Camera || deviceType == CaptureDevice::DeviceType::Screen || deviceType == CaptureDevice::DeviceType::Window);
+        ASSERT(deviceType != CaptureDevice::DeviceType::Unknown);
         if (type == Type::Audio)
             m_ringBuffer = std::make_unique<CARingBuffer>(makeUniqueRef<SharedRingBufferStorage>(nullptr));
     }

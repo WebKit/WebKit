@@ -1,3 +1,14 @@
+2019-01-15  Eric Carlson  <eric.carlson@apple.com>
+
+        Fix incorrect ASSERT added in r239840
+        https://bugs.webkit.org/show_bug.cgi?id=193466
+        <rdar://problem/47095142>
+
+        Reviewed by Youenn Fablet.
+
+        * WebProcess/cocoa/UserMediaCaptureManager.cpp:
+        (WebKit::UserMediaCaptureManager::Source::Source):
+
 2019-01-15  Tim Horton  <timothy_horton@apple.com>
 
         Frequent null-deref under TiledCoreAnimationDrawingArea::scaleViewToFitDocumentIfNeeded()
