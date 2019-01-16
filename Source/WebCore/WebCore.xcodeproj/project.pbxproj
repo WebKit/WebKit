@@ -2585,9 +2585,9 @@
 		91278D5E21DEDAD600B57184 /* PageAuditAgent.h in Headers */ = {isa = PBXBuildFile; fileRef = 91278D5C21DEDAD500B57184 /* PageAuditAgent.h */; };
 		91278D6221DEDAF000B57184 /* WorkerAuditAgent.h in Headers */ = {isa = PBXBuildFile; fileRef = 91278D6021DEDAF000B57184 /* WorkerAuditAgent.h */; };
 		9175CE5C21E281ED00DF2C27 /* InspectorAuditDOMObject.h in Headers */ = {isa = PBXBuildFile; fileRef = 9175CE5821E281EC00DF2C27 /* InspectorAuditDOMObject.h */; };
-		9175CE5C21E281ED00DF2C28 /* JSInspectorAuditDOMObject.h in Headers */ = {isa = PBXBuildFile; fileRef = 9175CE5821E281EC00DF2C28 /* InspectorAuditDOMObject.h */; };
+		9175CE5C21E281ED00DF2C28 /* InspectorAuditDOMObject.h in Headers */ = {isa = PBXBuildFile; fileRef = 9175CE5821E281EC00DF2C28 /* InspectorAuditDOMObject.h */; };
 		9175CE5E21E281ED00DF2C27 /* InspectorAuditAccessibilityObject.h in Headers */ = {isa = PBXBuildFile; fileRef = 9175CE5A21E281ED00DF2C27 /* InspectorAuditAccessibilityObject.h */; };
-		9175CE5E21E281ED00DF2C28 /* JSInspectorAuditAccessibilityObject.h in Headers */ = {isa = PBXBuildFile; fileRef = 9175CE5A21E281ED00DF2C28 /* InspectorAuditAccessibilityObject.h */; };
+		9175CE5E21E281ED00DF2C28 /* InspectorAuditAccessibilityObject.h in Headers */ = {isa = PBXBuildFile; fileRef = 9175CE5A21E281ED00DF2C28 /* InspectorAuditAccessibilityObject.h */; };
 		91B8F0B521953D65000C2B00 /* CertificateInfoBase.h in Headers */ = {isa = PBXBuildFile; fileRef = 91B8F0B321953D65000C2B00 /* CertificateInfoBase.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		91B952241F58A58F00931DC2 /* RecordingSwizzleTypes.h in Headers */ = {isa = PBXBuildFile; fileRef = 91B952221F58A58000931DC2 /* RecordingSwizzleTypes.h */; };
 		91C9F2F91AE3BEB00095B61C /* AXTextStateChangeIntent.h in Headers */ = {isa = PBXBuildFile; fileRef = 91C9F2F81AE3BE240095B61C /* AXTextStateChangeIntent.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -6427,8 +6427,11 @@
 		1C840B9A21EC400900D0500D /* WHLSLGatherEntryPointItems.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WHLSLGatherEntryPointItems.h; sourceTree = "<group>"; };
 		1C840B9B21EC400900D0500D /* WHLSLChecker.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = WHLSLChecker.cpp; sourceTree = "<group>"; };
 		1C904DF90BA9D2C80081E9D0 /* Version.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = Version.xcconfig; sourceTree = "<group>"; };
-		1C9AE5CF21EDA27E0069D5F2 /* WHLSLLoopChecker.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = WHLSLLoopChecker.cpp; sourceTree = "<group>"; };
-		1C9AE5D021EDA27E0069D5F2 /* WHLSLLoopChecker.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WHLSLLoopChecker.h; sourceTree = "<group>"; };
+		1C9AE5CA21ED9DF50069D5F2 /* WHLSLHighZombieFinder.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = WHLSLHighZombieFinder.cpp; sourceTree = "<group>"; };
+		1C9AE5CB21ED9DF50069D5F2 /* WHLSLHighZombieFinder.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WHLSLHighZombieFinder.h; sourceTree = "<group>"; };
+		1CA0C2F421EEDAD000A11860 /* WHLSLLoopChecker.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = WHLSLLoopChecker.cpp; sourceTree = "<group>"; };
+		1CA0C2F521EEDAD100A11860 /* WHLSLLoopChecker.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WHLSLLoopChecker.h; sourceTree = "<group>"; };
+		1CA0C2F621EEDAD200A11860 /* AST */ = {isa = PBXFileReference; lastKnownFileType = folder; path = AST; sourceTree = "<group>"; };
 		1CA19E030DC255950065A994 /* EventLoopMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = EventLoopMac.mm; sourceTree = "<group>"; };
 		1CA19E150DC255CA0065A994 /* EventLoop.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EventLoop.h; sourceTree = "<group>"; };
 		1CAF347E0A6C405200ABE06E /* WebScriptObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebScriptObject.h; sourceTree = "<group>"; };
@@ -10394,13 +10397,13 @@
 		91278D5F21DEDAEF00B57184 /* WorkerAuditAgent.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WorkerAuditAgent.cpp; sourceTree = "<group>"; };
 		91278D6021DEDAF000B57184 /* WorkerAuditAgent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WorkerAuditAgent.h; sourceTree = "<group>"; };
 		9175CE5721E281EB00DF2C27 /* InspectorAuditDOMObject.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = InspectorAuditDOMObject.cpp; sourceTree = "<group>"; };
-		9175CE5721E281EB00DF2C28 /* JSInspectorAuditDOMObject.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = InspectorAuditDOMObject.cpp; sourceTree = "<group>"; };
+		9175CE5721E281EB00DF2C28 /* InspectorAuditDOMObject.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = InspectorAuditDOMObject.cpp; sourceTree = "<group>"; };
 		9175CE5821E281EC00DF2C27 /* InspectorAuditDOMObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InspectorAuditDOMObject.h; sourceTree = "<group>"; };
-		9175CE5821E281EC00DF2C28 /* JSInspectorAuditDOMObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InspectorAuditDOMObject.h; sourceTree = "<group>"; };
+		9175CE5821E281EC00DF2C28 /* InspectorAuditDOMObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InspectorAuditDOMObject.h; sourceTree = "<group>"; };
 		9175CE5921E281EC00DF2C27 /* InspectorAuditAccessibilityObject.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = InspectorAuditAccessibilityObject.cpp; sourceTree = "<group>"; };
-		9175CE5921E281EC00DF2C28 /* JSInspectorAuditAccessibilityObject.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = InspectorAuditAccessibilityObject.cpp; sourceTree = "<group>"; };
+		9175CE5921E281EC00DF2C28 /* InspectorAuditAccessibilityObject.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = InspectorAuditAccessibilityObject.cpp; sourceTree = "<group>"; };
 		9175CE5A21E281ED00DF2C27 /* InspectorAuditAccessibilityObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InspectorAuditAccessibilityObject.h; sourceTree = "<group>"; };
-		9175CE5A21E281ED00DF2C28 /* JSInspectorAuditAccessibilityObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InspectorAuditAccessibilityObject.h; sourceTree = "<group>"; };
+		9175CE5A21E281ED00DF2C28 /* InspectorAuditAccessibilityObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InspectorAuditAccessibilityObject.h; sourceTree = "<group>"; };
 		91B8F0B321953D65000C2B00 /* CertificateInfoBase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CertificateInfoBase.h; sourceTree = "<group>"; };
 		91B952221F58A58000931DC2 /* RecordingSwizzleTypes.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RecordingSwizzleTypes.h; sourceTree = "<group>"; };
 		91C9F2F81AE3BE240095B61C /* AXTextStateChangeIntent.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AXTextStateChangeIntent.h; sourceTree = "<group>"; };
@@ -16937,12 +16940,12 @@
 			isa = PBXGroup;
 			children = (
 				A584FE2518637DAB00843B10 /* CommandLineAPIModuleSource.h */,
+				9175CE5921E281EC00DF2C28 /* InspectorAuditAccessibilityObject.cpp */,
+				9175CE5A21E281ED00DF2C28 /* InspectorAuditAccessibilityObject.h */,
+				9175CE5721E281EB00DF2C28 /* InspectorAuditDOMObject.cpp */,
+				9175CE5821E281EC00DF2C28 /* InspectorAuditDOMObject.h */,
 				A584FE391864E2D800843B10 /* JSCommandLineAPIHost.cpp */,
 				A584FE3A1864E2D800843B10 /* JSCommandLineAPIHost.h */,
-				9175CE5921E281EC00DF2C28 /* JSInspectorAuditAccessibilityObject.cpp */,
-				9175CE5A21E281ED00DF2C28 /* JSInspectorAuditAccessibilityObject.h */,
-				9175CE5721E281EB00DF2C28 /* JSInspectorAuditDOMObject.cpp */,
-				9175CE5821E281EC00DF2C28 /* JSInspectorAuditDOMObject.h */,
 				7A0E771C10C00DB100A0276E /* JSInspectorFrontendHost.cpp */,
 				7A0E771D10C00DB100A0276E /* JSInspectorFrontendHost.h */,
 			);
@@ -25450,20 +25453,23 @@
 			isa = PBXGroup;
 			children = (
 				C21BF6F121CD898D00227979 /* AST */,
+				1CA0C2F621EEDAD200A11860 /* AST */,
 				C234A9B221E92C1F003C984D /* WHLSLCheckDuplicateFunctions.cpp */,
 				C234A9AE21E92C1A003C984D /* WHLSLCheckDuplicateFunctions.h */,
 				1C840B9B21EC400900D0500D /* WHLSLChecker.cpp */,
 				1C840B9721EC400700D0500D /* WHLSLChecker.h */,
 				1C840B9921EC400800D0500D /* WHLSLGatherEntryPointItems.cpp */,
 				1C840B9A21EC400900D0500D /* WHLSLGatherEntryPointItems.h */,
+				1C9AE5CA21ED9DF50069D5F2 /* WHLSLHighZombieFinder.cpp */,
+				1C9AE5CB21ED9DF50069D5F2 /* WHLSLHighZombieFinder.h */,
 				C234A99A21E90F56003C984D /* WHLSLInferTypes.cpp */,
 				C234A99B21E90F57003C984D /* WHLSLInferTypes.h */,
 				C234A9B721E92CC1003C984D /* WHLSLIntrinsics.cpp */,
 				C234A9B621E92CC0003C984D /* WHLSLIntrinsics.h */,
 				C210E91121B4BD1000B7F83D /* WHLSLLexer.cpp */,
 				C210E91221B4BD1000B7F83D /* WHLSLLexer.h */,
-				1C9AE5CF21EDA27E0069D5F2 /* WHLSLLoopChecker.cpp */,
-				1C9AE5D021EDA27E0069D5F2 /* WHLSLLoopChecker.h */,
+				1CA0C2F421EEDAD000A11860 /* WHLSLLoopChecker.cpp */,
+				1CA0C2F521EEDAD100A11860 /* WHLSLLoopChecker.h */,
 				C234A98D21E88884003C984D /* WHLSLNameContext.cpp */,
 				C234A98E21E88885003C984D /* WHLSLNameContext.h */,
 				C234A98A21E8883E003C984D /* WHLSLNameResolver.cpp */,
@@ -29552,7 +29558,9 @@
 				93309DF2099E64920056E581 /* InsertTextCommand.h in Headers */,
 				A5B81CA71FAA44620037D1E6 /* InspectorApplicationCacheAgent.h in Headers */,
 				9175CE5E21E281ED00DF2C27 /* InspectorAuditAccessibilityObject.h in Headers */,
+				9175CE5E21E281ED00DF2C28 /* InspectorAuditAccessibilityObject.h in Headers */,
 				9175CE5C21E281ED00DF2C27 /* InspectorAuditDOMObject.h in Headers */,
+				9175CE5C21E281ED00DF2C28 /* InspectorAuditDOMObject.h in Headers */,
 				6A22E8701F10418600F546C3 /* InspectorCanvas.h in Headers */,
 				A5B81CA81FAA44620037D1E6 /* InspectorCanvasAgent.h in Headers */,
 				1C81B95C0E97330800266E07 /* InspectorClient.h in Headers */,
@@ -29985,8 +29993,6 @@
 				A77979290D6B9E64003851B9 /* JSImageData.h in Headers */,
 				7C193C011F5E11050088F3E6 /* JSImageSmoothingQuality.h in Headers */,
 				A86629D309DA2B48009633A6 /* JSInputEvent.h in Headers */,
-				9175CE5E21E281ED00DF2C28 /* JSInspectorAuditAccessibilityObject.h in Headers */,
-				9175CE5C21E281ED00DF2C28 /* JSInspectorAuditDOMObject.h in Headers */,
 				7A0E771F10C00DB100A0276E /* JSInspectorFrontendHost.h in Headers */,
 				0F4710E61DB700C7002DCEC3 /* JSIntersectionObserver.h in Headers */,
 				0F8B45761DC41DBA00443C3F /* JSIntersectionObserverCallback.h in Headers */,

@@ -1,3 +1,21 @@
+2019-01-16  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [WHLSL] Add the high zombie finder
+        https://bugs.webkit.org/show_bug.cgi?id=193432
+
+        Reviewed by Robin Morisset and Saam Barati.
+
+        This is a translation of https://github.com/gpuweb/WHLSL/blob/master/Source/HighZombieFinder.mjs into C++.
+
+        No new tests because it isn't hooked up yet. Not enough of the compiler exists to have any meaningful sort
+        of test. When enough of the compiler is present, I'll port the reference implementation's test suite.
+
+        * Modules/webgpu/WHLSL/WHLSLHighZombieFinder.cpp: Added.
+        (WebCore::WHLSL::findHighZombies):
+        * Modules/webgpu/WHLSL/WHLSLHighZombieFinder.h: Added.
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+
 2019-01-15  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         Unreviewed WinCairo build fix.
