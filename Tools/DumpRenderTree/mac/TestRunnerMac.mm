@@ -72,6 +72,7 @@
 #import <WebKit/WebStorageManagerPrivate.h>
 #import <WebKit/WebView.h>
 #import <WebKit/WebViewPrivate.h>
+#import <pal/spi/cf/CFNetworkSPI.h>
 #import <wtf/HashMap.h>
 #import <wtf/RetainPtr.h>
 #import <wtf/WallTime.h>
@@ -397,6 +398,15 @@ void TestRunner::setAlwaysAcceptCookies(bool alwaysAcceptCookies)
 
     m_alwaysAcceptCookies = alwaysAcceptCookies;
     NSHTTPCookieAcceptPolicy cookieAcceptPolicy = alwaysAcceptCookies ? NSHTTPCookieAcceptPolicyAlways : NSHTTPCookieAcceptPolicyOnlyFromMainDocumentDomain;
+    [WebPreferences _setCurrentNetworkLoaderSessionCookieAcceptPolicy:cookieAcceptPolicy];
+}
+
+void TestRunner::setOnlyAcceptFirstPartyCookies(bool onlyAcceptFirstPartyCookies)
+{
+    if (onlyAcceptFirstPartyCookies)
+        m_alwaysAcceptCookies = NO;
+
+    NSHTTPCookieAcceptPolicy cookieAcceptPolicy = onlyAcceptFirstPartyCookies ? static_cast<NSHTTPCookieAcceptPolicy>(NSHTTPCookieAcceptPolicyExclusivelyFromMainDocumentDomain) : NSHTTPCookieAcceptPolicyOnlyFromMainDocumentDomain;
     [WebPreferences _setCurrentNetworkLoaderSessionCookieAcceptPolicy:cookieAcceptPolicy];
 }
 

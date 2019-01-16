@@ -126,6 +126,9 @@ typedef void (^CFCachedURLResponseCallBackBlock)(CFCachedURLResponseRef);
 #if HAVE(FOUNDATION_WITH_SAVE_COOKIES_WITH_COMPLETION_HANDLER)
 - (void)_saveCookies:(dispatch_block_t) completionHandler;
 #endif
+#if HAVE(CFNETWORK_OVERRIDE_SESSION_COOKIE_ACCEPT_POLICY)
+@property (nonatomic, readwrite) BOOL _overrideSessionCookieAcceptPolicy;
+#endif
 @end
 
 @interface NSURLConnection ()

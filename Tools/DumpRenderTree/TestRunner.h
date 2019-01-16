@@ -272,7 +272,8 @@ public:
 
     bool alwaysAcceptCookies() const { return m_alwaysAcceptCookies; }
     void setAlwaysAcceptCookies(bool);
-    
+    void setOnlyAcceptFirstPartyCookies(bool);
+
     bool rejectsProtectionSpaceAndContinueForAuthenticationChallenges() const { return m_rejectsProtectionSpaceAndContinueForAuthenticationChallenges; }
     void setRejectsProtectionSpaceAndContinueForAuthenticationChallenges(bool value) { m_rejectsProtectionSpaceAndContinueForAuthenticationChallenges = value; }
     
