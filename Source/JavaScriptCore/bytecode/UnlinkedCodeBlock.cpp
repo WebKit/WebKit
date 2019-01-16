@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2018 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2012-2019 Apple Inc. All Rights Reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -145,7 +145,7 @@ static void dumpLineColumnEntry(size_t index, const InstructionStream& instructi
     const auto instruction = instructionStream.at(instructionOffset);
     const char* event = "";
     if (instruction->is<OpDebug>()) {
-        switch (instruction->as<OpDebug>().debugHookType) {
+        switch (instruction->as<OpDebug>().m_debugHookType) {
         case WillExecuteProgram: event = " WillExecuteProgram"; break;
         case DidExecuteProgram: event = " DidExecuteProgram"; break;
         case DidEnterCallFrame: event = " DidEnterCallFrame"; break;

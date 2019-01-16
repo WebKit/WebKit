@@ -39,7 +39,7 @@ void CodeBlock::forEachValueProfile(const Functor& func)
 
     if (m_metadata) {
 #define VISIT(__op) \
-    m_metadata->forEach<__op>([&] (auto& metadata) { func(metadata.profile); });
+    m_metadata->forEach<__op>([&] (auto& metadata) { func(metadata.m_profile); });
 
         FOR_EACH_OPCODE_WITH_VALUE_PROFILE(VISIT)
 
@@ -53,12 +53,12 @@ void CodeBlock::forEachArrayProfile(const Functor& func)
 {
     if (m_metadata) {
         m_metadata->forEach<OpGetById>([&] (auto& metadata) {
-            if (metadata.mode == GetByIdMode::ArrayLength)
-                func(metadata.modeMetadata.arrayLengthMode.arrayProfile);
+            if (metadata.m_mode == GetByIdMode::ArrayLength)
+                func(metadata.m_modeMetadata.arrayLengthMode.arrayProfile);
         });
 
 #define VISIT(__op) \
-    m_metadata->forEach<__op>([&] (auto& metadata) { func(metadata.arrayProfile); });
+    m_metadata->forEach<__op>([&] (auto& metadata) { func(metadata.m_arrayProfile); });
 
         FOR_EACH_OPCODE_WITH_ARRAY_PROFILE(VISIT)
 
@@ -71,7 +71,7 @@ void CodeBlock::forEachArrayAllocationProfile(const Functor& func)
 {
     if (m_metadata) {
 #define VISIT(__op) \
-    m_metadata->forEach<__op>([&] (auto& metadata) { func(metadata.arrayAllocationProfile); });
+    m_metadata->forEach<__op>([&] (auto& metadata) { func(metadata.m_arrayAllocationProfile); });
 
         FOR_EACH_OPCODE_WITH_ARRAY_ALLOCATION_PROFILE(VISIT)
 
@@ -84,7 +84,7 @@ void CodeBlock::forEachObjectAllocationProfile(const Functor& func)
 {
     if (m_metadata) {
 #define VISIT(__op) \
-    m_metadata->forEach<__op>([&] (auto& metadata) { func(metadata.objectAllocationProfile); });
+    m_metadata->forEach<__op>([&] (auto& metadata) { func(metadata.m_objectAllocationProfile); });
 
         FOR_EACH_OPCODE_WITH_OBJECT_ALLOCATION_PROFILE(VISIT)
 
@@ -97,7 +97,7 @@ void CodeBlock::forEachLLIntCallLinkInfo(const Functor& func)
 {
     if (m_metadata) {
 #define VISIT(__op) \
-    m_metadata->forEach<__op>([&] (auto& metadata) { func(metadata.callLinkInfo); });
+    m_metadata->forEach<__op>([&] (auto& metadata) { func(metadata.m_callLinkInfo); });
 
         FOR_EACH_OPCODE_WITH_LLINT_CALL_LINK_INFO(VISIT)
 

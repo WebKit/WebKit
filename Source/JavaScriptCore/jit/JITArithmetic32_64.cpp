@@ -1,5 +1,5 @@
 /*
-* Copyright (C) 2008, 2015 Apple Inc. All rights reserved.
+* Copyright (C) 2008-2019 Apple Inc. All rights reserved.
 *
 * Redistribution and use in source and binary forms, with or without
 * modification, are permitted provided that the following conditions
@@ -48,9 +48,9 @@ void JIT::emit_compareAndJump(const Instruction* instruction, RelationalConditio
     JumpList notInt32Op2;
 
     auto bytecode = instruction->as<Op>();
-    int op1 = bytecode.lhs.offset();
-    int op2 = bytecode.rhs.offset();
-    unsigned target = jumpTarget(instruction, bytecode.target);
+    int op1 = bytecode.m_lhs.offset();
+    int op2 = bytecode.m_rhs.offset();
+    unsigned target = jumpTarget(instruction, bytecode.m_target);
 
     // Character less.
     if (isOperandConstantChar(op1)) {
@@ -102,9 +102,9 @@ template <typename Op>
 void JIT::emit_compareUnsignedAndJump(const Instruction* instruction, RelationalCondition condition)
 {
     auto bytecode = instruction->as<Op>();
-    int op1 = bytecode.lhs.offset();
-    int op2 = bytecode.rhs.offset();
-    unsigned target = jumpTarget(instruction, bytecode.target);
+    int op1 = bytecode.m_lhs.offset();
+    int op2 = bytecode.m_rhs.offset();
+    unsigned target = jumpTarget(instruction, bytecode.m_target);
 
     if (isOperandConstantInt(op1)) {
         emitLoad(op2, regT3, regT2);
@@ -122,9 +122,9 @@ template <typename Op>
 void JIT::emit_compareUnsigned(const Instruction* instruction, RelationalCondition condition)
 {
     auto bytecode = instruction->as<Op>();
-    int dst = bytecode.dst.offset();
-    int op1 = bytecode.lhs.offset();
-    int op2 = bytecode.rhs.offset();
+    int dst = bytecode.m_dst.offset();
+    int op1 = bytecode.m_lhs.offset();
+    int op2 = bytecode.m_rhs.offset();
 
     if (isOperandConstantInt(op1)) {
         emitLoad(op2, regT3, regT2);
@@ -143,9 +143,9 @@ template <typename Op>
 void JIT::emit_compareAndJumpSlow(const Instruction *instruction, DoubleCondition, size_t (JIT_OPERATION *operation)(ExecState*, EncodedJSValue, EncodedJSValue), bool invert, Vector<SlowCaseEntry>::iterator& iter)
 {
     auto bytecode = instruction->as<Op>();
-    int op1 = bytecode.lhs.offset();
-    int op2 = bytecode.rhs.offset();
-    unsigned target = jumpTarget(instruction, bytecode.target);
+    int op1 = bytecode.m_lhs.offset();
+    int op2 = bytecode.m_rhs.offset();
+    unsigned target = jumpTarget(instruction, bytecode.m_target);
 
     linkAllSlowCases(iter);
 
@@ -158,8 +158,8 @@ void JIT::emit_compareAndJumpSlow(const Instruction *instruction, DoubleConditio
 void JIT::emit_op_unsigned(const Instruction* currentInstruction)
 {
     auto bytecode = currentInstruction->as<OpUnsigned>();
-    int result = bytecode.dst.offset();
-    int op1 = bytecode.operand.offset();
+    int result = bytecode.m_dst.offset();
+    int op1 = bytecode.m_operand.offset();
     
     emitLoad(op1, regT1, regT0);
     
@@ -171,7 +171,7 @@ void JIT::emit_op_unsigned(const Instruction* currentInstruction)
 void JIT::emit_op_inc(const Instruction* currentInstruction)
 {
     auto bytecode = currentInstruction->as<OpInc>();
-    int srcDst = bytecode.srcDst.offset();
+    int srcDst = bytecode.m_srcDst.offset();
 
     emitLoad(srcDst, regT1, regT0);
 
@@ -183,7 +183,7 @@ void JIT::emit_op_inc(const Instruction* currentInstruction)
 void JIT::emit_op_dec(const Instruction* currentInstruction)
 {
     auto bytecode = currentInstruction->as<OpDec>();
-    int srcDst = bytecode.srcDst.offset();
+    int srcDst = bytecode.m_srcDst.offset();
 
     emitLoad(srcDst, regT1, regT0);
 
@@ -199,9 +199,9 @@ void JIT::emitBinaryDoubleOp(const Instruction *instruction, OperandTypes types,
 
     auto bytecode = instruction->as<Op>();
     int opcodeID = Op::opcodeID;
-    int target = jumpTarget(instruction, bytecode.target);
-    int op1 = bytecode.lhs.offset();
-    int op2 = bytecode.rhs.offset();
+    int target = jumpTarget(instruction, bytecode.m_target);
+    int op1 = bytecode.m_lhs.offset();
+    int op2 = bytecode.m_rhs.offset();
 
     if (!notInt32Op1.empty()) {
         // Double case 1: Op1 is not int32; Op2 is unknown.
@@ -336,9 +336,9 @@ void JIT::emit_op_mod(const Instruction* currentInstruction)
 {
 #if CPU(X86)
     auto bytecode = instruction->as<OpMod>();
-    int dst = bytecode.dst.offset();
-    int op1 = bytecode.lhs.offset();
-    int op2 = bytecode.rhs.offset();
+    int dst = bytecode.m_dst.offset();
+    int op1 = bytecode.m_lhs.offset();
+    int op2 = bytecode.m_rhs.offset();
 
     // Make sure registers are correct for x86 IDIV instructions.
     ASSERT(regT0 == X86Registers::eax);

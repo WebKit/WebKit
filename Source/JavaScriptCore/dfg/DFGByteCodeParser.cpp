@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011-2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2011-2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -1231,8 +1231,8 @@ template<typename CallOp>
 ByteCodeParser::Terminality ByteCodeParser::handleCall(const Instruction* pc, NodeType op, CallMode callMode)
 {
     auto bytecode = pc->as<CallOp>();
-    Node* callTarget = get(bytecode.callee);
-    int registerOffset = -static_cast<int>(bytecode.argv);
+    Node* callTarget = get(bytecode.m_callee);
+    int registerOffset = -static_cast<int>(bytecode.m_argv);
 
     CallLinkStatus callLinkStatus = CallLinkStatus::computeFor(
         m_inlineStackTop->m_profiledBlock, currentCodeOrigin(),
@@ -1240,8 +1240,8 @@ ByteCodeParser::Terminality ByteCodeParser::handleCall(const Instruction* pc, No
 
     InlineCallFrame::Kind kind = InlineCallFrame::kindFor(callMode);
 
-    return handleCall(bytecode.dst, op, kind, pc->size(), callTarget,
-        bytecode.argc, registerOffset, callLinkStatus, getPrediction());
+    return handleCall(bytecode.m_dst, op, kind, pc->size(), callTarget,
+        bytecode.m_argc, registerOffset, callLinkStatus, getPrediction());
 }
 
 void ByteCodeParser::refineStatically(CallLinkStatus& callLinkStatus, Node* callTarget)
@@ -1287,12 +1287,12 @@ template<typename CallOp>
 ByteCodeParser::Terminality ByteCodeParser::handleVarargsCall(const Instruction* pc, NodeType op, CallMode callMode)
 {
     auto bytecode = pc->as<CallOp>();
-    int firstFreeReg = bytecode.firstFree.offset();
-    int firstVarArgOffset = bytecode.firstVarArg;
+    int firstFreeReg = bytecode.m_firstFree.offset();
+    int firstVarArgOffset = bytecode.m_firstVarArg;
     
     SpeculatedType prediction = getPrediction();
     
-    Node* callTarget = get(bytecode.callee);
+    Node* callTarget = get(bytecode.m_callee);
     
     CallLinkStatus callLinkStatus = CallLinkStatus::computeFor(
         m_inlineStackTop->m_profiledBlock, currentCodeOrigin(),
@@ -1304,8 +1304,8 @@ ByteCodeParser::Terminality ByteCodeParser::handleVarargsCall(const Instruction*
     if (callLinkStatus.canOptimize()) {
         addToGraph(FilterCallLinkStatus, OpInfo(m_graph.m_plan.recordedStatuses().addCallLinkStatus(currentCodeOrigin(), callLinkStatus)), callTarget);
 
-        if (handleVarargsInlining(callTarget, bytecode.dst,
-            callLinkStatus, firstFreeReg, bytecode.thisValue, bytecode.arguments,
+        if (handleVarargsInlining(callTarget, bytecode.m_dst,
+            callLinkStatus, firstFreeReg, bytecode.m_thisValue, bytecode.m_arguments,
             firstVarArgOffset, op,
             InlineCallFrame::varargsKindFor(callMode))) {
             if (UNLIKELY(m_graph.compilation()))
@@ -1317,10 +1317,10 @@ ByteCodeParser::Terminality ByteCodeParser::handleVarargsCall(const Instruction*
     CallVarargsData* data = m_graph.m_callVarargsData.add();
     data->firstVarArgOffset = firstVarArgOffset;
     
-    Node* thisChild = get(bytecode.thisValue);
+    Node* thisChild = get(bytecode.m_thisValue);
     Node* argumentsChild = nullptr;
     if (op != TailCallForwardVarargs)
-        argumentsChild = get(bytecode.arguments);
+        argumentsChild = get(bytecode.m_arguments);
 
     if (op == TailCallVarargs || op == TailCallForwardVarargs) {
         if (allInlineFramesAreTailCalls()) {
@@ -1331,8 +1331,8 @@ ByteCodeParser::Terminality ByteCodeParser::handleVarargsCall(const Instruction*
     }
 
     Node* call = addToGraph(op, OpInfo(data), OpInfo(prediction), callTarget, thisChild, argumentsChild);
-    if (bytecode.dst.isValid())
-        set(bytecode.dst, call);
+    if (bytecode.m_dst.isValid())
+        set(bytecode.m_dst, call);
     return NonTerminal;
 }
 
@@ -4579,8 +4579,8 @@ void ByteCodeParser::parseGetById(const Instruction* currentInstruction)
     auto bytecode = currentInstruction->as<Op>();
     SpeculatedType prediction = getPrediction();
     
-    Node* base = get(bytecode.base);
-    unsigned identifierNumber = m_inlineStackTop->m_identifierRemap[bytecode.property];
+    Node* base = get(bytecode.m_base);
+    unsigned identifierNumber = m_inlineStackTop->m_identifierRemap[bytecode.m_property];
     
     UniquedStringImpl* uid = m_graph.identifiers()[identifierNumber];
     GetByIdStatus getByIdStatus = GetByIdStatus::computeFor(
@@ -4596,7 +4596,7 @@ void ByteCodeParser::parseGetById(const Instruction* currentInstruction)
         type = AccessType::GetDirect;
 
     handleGetById(
-        bytecode.dst, prediction, base, identifierNumber, getByIdStatus, type, opcodeLength);
+        bytecode.m_dst, prediction, base, identifierNumber, getByIdStatus, type, opcodeLength);
 
 }
 
@@ -4733,8 +4733,8 @@ void ByteCodeParser::parseBlock(unsigned limit)
             Node* op1 = getThis();
             if (op1->op() != ToThis) {
                 auto& metadata = currentInstruction->as<OpToThis>().metadata(codeBlock);
-                Structure* cachedStructure = metadata.cachedStructure.get();
-                if (metadata.toThisStatus != ToThisOK
+                Structure* cachedStructure = metadata.m_cachedStructure.get();
+                if (metadata.m_toThisStatus != ToThisOK
                     || !cachedStructure
                     || cachedStructure->classInfo()->methodTable.toThis != JSObject::info()->methodTable.toThis
                     || m_inlineStackTop->m_profiledBlock->couldTakeSlowCase(m_currentIndex)
@@ -4753,11 +4753,11 @@ void ByteCodeParser::parseBlock(unsigned limit)
 
         case op_create_this: {
             auto bytecode = currentInstruction->as<OpCreateThis>();
-            Node* callee = get(VirtualRegister(bytecode.callee));
+            Node* callee = get(VirtualRegister(bytecode.m_callee));
 
             JSFunction* function = callee->dynamicCastConstant<JSFunction*>(*m_vm);
             if (!function) {
-                JSCell* cachedFunction = bytecode.metadata(codeBlock).cachedCallee.unvalidatedGet();
+                JSCell* cachedFunction = bytecode.metadata(codeBlock).m_cachedCallee.unvalidatedGet();
                 if (cachedFunction
                     && cachedFunction != JSCell::seenMultipleCalleeObjects()
                     && !m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, BadCell)) {
@@ -4793,66 +4793,66 @@ void ByteCodeParser::parseBlock(unsigned limit)
                                 ASSERT(isInlineOffset(knownPolyProtoOffset));
                                 addToGraph(PutByOffset, OpInfo(data), object, object, weakJSConstant(prototype));
                             }
-                            set(VirtualRegister(bytecode.dst), object);
+                            set(VirtualRegister(bytecode.m_dst), object);
                             alreadyEmitted = true;
                         }
                     }
                 }
             }
             if (!alreadyEmitted) {
-                set(VirtualRegister(bytecode.dst),
-                    addToGraph(CreateThis, OpInfo(bytecode.inlineCapacity), callee));
+                set(VirtualRegister(bytecode.m_dst),
+                    addToGraph(CreateThis, OpInfo(bytecode.m_inlineCapacity), callee));
             }
             NEXT_OPCODE(op_create_this);
         }
 
         case op_new_object: {
             auto bytecode = currentInstruction->as<OpNewObject>();
-            set(bytecode.dst,
+            set(bytecode.m_dst,
                 addToGraph(NewObject,
-                    OpInfo(m_graph.registerStructure(bytecode.metadata(codeBlock).objectAllocationProfile.structure()))));
+                    OpInfo(m_graph.registerStructure(bytecode.metadata(codeBlock).m_objectAllocationProfile.structure()))));
             NEXT_OPCODE(op_new_object);
         }
             
         case op_new_array: {
             auto bytecode = currentInstruction->as<OpNewArray>();
-            int startOperand = bytecode.argv.offset();
-            int numOperands = bytecode.argc;
-            ArrayAllocationProfile& profile = bytecode.metadata(codeBlock).arrayAllocationProfile;
+            int startOperand = bytecode.m_argv.offset();
+            int numOperands = bytecode.m_argc;
+            ArrayAllocationProfile& profile = bytecode.metadata(codeBlock).m_arrayAllocationProfile;
             for (int operandIdx = startOperand; operandIdx > startOperand - numOperands; --operandIdx)
                 addVarArgChild(get(VirtualRegister(operandIdx)));
             unsigned vectorLengthHint = std::max<unsigned>(profile.vectorLengthHint(), numOperands);
-            set(bytecode.dst, addToGraph(Node::VarArg, NewArray, OpInfo(profile.selectIndexingType()), OpInfo(vectorLengthHint)));
+            set(bytecode.m_dst, addToGraph(Node::VarArg, NewArray, OpInfo(profile.selectIndexingType()), OpInfo(vectorLengthHint)));
             NEXT_OPCODE(op_new_array);
         }
 
         case op_new_array_with_spread: {
             auto bytecode = currentInstruction->as<OpNewArrayWithSpread>();
-            int startOperand = bytecode.argv.offset();
-            int numOperands = bytecode.argc;
-            const BitVector& bitVector = m_inlineStackTop->m_profiledBlock->unlinkedCodeBlock()->bitVector(bytecode.bitVector);
+            int startOperand = bytecode.m_argv.offset();
+            int numOperands = bytecode.m_argc;
+            const BitVector& bitVector = m_inlineStackTop->m_profiledBlock->unlinkedCodeBlock()->bitVector(bytecode.m_bitVector);
             for (int operandIdx = startOperand; operandIdx > startOperand - numOperands; --operandIdx)
                 addVarArgChild(get(VirtualRegister(operandIdx)));
 
             BitVector* copy = m_graph.m_bitVectors.add(bitVector);
             ASSERT(*copy == bitVector);
 
-            set(bytecode.dst,
+            set(bytecode.m_dst,
                 addToGraph(Node::VarArg, NewArrayWithSpread, OpInfo(copy)));
             NEXT_OPCODE(op_new_array_with_spread);
         }
 
         case op_spread: {
             auto bytecode = currentInstruction->as<OpSpread>();
-            set(bytecode.dst,
-                addToGraph(Spread, get(bytecode.argument)));
+            set(bytecode.m_dst,
+                addToGraph(Spread, get(bytecode.m_argument)));
             NEXT_OPCODE(op_spread);
         }
             
         case op_new_array_with_size: {
             auto bytecode = currentInstruction->as<OpNewArrayWithSize>();
-            ArrayAllocationProfile& profile = bytecode.metadata(codeBlock).arrayAllocationProfile;
-            set(bytecode.dst, addToGraph(NewArrayWithSize, OpInfo(profile.selectIndexingType()), get(bytecode.length)));
+            ArrayAllocationProfile& profile = bytecode.metadata(codeBlock).m_arrayAllocationProfile;
+            set(bytecode.m_dst, addToGraph(NewArrayWithSize, OpInfo(profile.selectIndexingType()), get(bytecode.m_length)));
             NEXT_OPCODE(op_new_array_with_size);
         }
             
@@ -4861,22 +4861,22 @@ void ByteCodeParser::parseBlock(unsigned limit)
             // Unfortunately, we can't allocate a new JSImmutableButterfly if the profile tells us new information because we
             // cannot allocate from compilation threads.
             WTF::loadLoadFence();
-            FrozenValue* frozen = get(VirtualRegister(bytecode.immutableButterfly))->constant();
+            FrozenValue* frozen = get(VirtualRegister(bytecode.m_immutableButterfly))->constant();
             WTF::loadLoadFence();
             JSImmutableButterfly* immutableButterfly = frozen->cast<JSImmutableButterfly*>();
             NewArrayBufferData data { };
             data.indexingMode = immutableButterfly->indexingMode();
             data.vectorLengthHint = immutableButterfly->toButterfly()->vectorLength();
 
-            set(VirtualRegister(bytecode.dst), addToGraph(NewArrayBuffer, OpInfo(frozen), OpInfo(data.asQuadWord)));
+            set(VirtualRegister(bytecode.m_dst), addToGraph(NewArrayBuffer, OpInfo(frozen), OpInfo(data.asQuadWord)));
             NEXT_OPCODE(op_new_array_buffer);
         }
             
         case op_new_regexp: {
             auto bytecode = currentInstruction->as<OpNewRegexp>();
-            ASSERT(bytecode.regexp.isConstant());
-            FrozenValue* frozenRegExp = m_graph.freezeStrong(m_inlineStackTop->m_codeBlock->getConstant(bytecode.regexp.offset()));
-            set(bytecode.dst, addToGraph(NewRegexp, OpInfo(frozenRegExp), jsConstant(jsNumber(0))));
+            ASSERT(bytecode.m_regexp.isConstant());
+            FrozenValue* frozenRegExp = m_graph.freezeStrong(m_inlineStackTop->m_codeBlock->getConstant(bytecode.m_regexp.offset()));
+            set(bytecode.m_dst, addToGraph(NewRegexp, OpInfo(frozenRegExp), jsConstant(jsNumber(0))));
             NEXT_OPCODE(op_new_regexp);
         }
 
@@ -4887,24 +4887,24 @@ void ByteCodeParser::parseBlock(unsigned limit)
             if (inlineCallFrame && !inlineCallFrame->isVarargs()) {
                 unsigned argumentsLength = inlineCallFrame->argumentCountIncludingThis - 1;
                 JSValue restLength;
-                if (argumentsLength <= bytecode.numParametersToSkip)
+                if (argumentsLength <= bytecode.m_numParametersToSkip)
                     restLength = jsNumber(0);
                 else
-                    restLength = jsNumber(argumentsLength - bytecode.numParametersToSkip);
+                    restLength = jsNumber(argumentsLength - bytecode.m_numParametersToSkip);
 
                 length = jsConstant(restLength);
             } else
-                length = addToGraph(GetRestLength, OpInfo(bytecode.numParametersToSkip));
-            set(bytecode.dst, length);
+                length = addToGraph(GetRestLength, OpInfo(bytecode.m_numParametersToSkip));
+            set(bytecode.m_dst, length);
             NEXT_OPCODE(op_get_rest_length);
         }
 
         case op_create_rest: {
             auto bytecode = currentInstruction->as<OpCreateRest>();
             noticeArgumentsUse();
-            Node* arrayLength = get(bytecode.arraySize);
-            set(bytecode.dst,
-                addToGraph(CreateRest, OpInfo(bytecode.numParametersToSkip), arrayLength));
+            Node* arrayLength = get(bytecode.m_arraySize);
+            set(bytecode.m_dst,
+                addToGraph(CreateRest, OpInfo(bytecode.m_numParametersToSkip), arrayLength));
             NEXT_OPCODE(op_create_rest);
         }
             
@@ -4912,74 +4912,74 @@ void ByteCodeParser::parseBlock(unsigned limit)
 
         case op_bitnot: {
             auto bytecode = currentInstruction->as<OpBitnot>();
-            Node* op1 = get(bytecode.operand);
-            set(bytecode.dst, addToGraph(ArithBitNot, op1));
+            Node* op1 = get(bytecode.m_operand);
+            set(bytecode.m_dst, addToGraph(ArithBitNot, op1));
             NEXT_OPCODE(op_bitnot);
         }
 
         case op_bitand: {
             auto bytecode = currentInstruction->as<OpBitand>();
             SpeculatedType prediction = getPrediction();
-            Node* op1 = get(bytecode.lhs);
-            Node* op2 = get(bytecode.rhs);
+            Node* op1 = get(bytecode.m_lhs);
+            Node* op2 = get(bytecode.m_rhs);
             if (op1->hasNumberOrAnyIntResult() && op2->hasNumberOrAnyIntResult())
-                set(bytecode.dst, addToGraph(ArithBitAnd, op1, op2));
+                set(bytecode.m_dst, addToGraph(ArithBitAnd, op1, op2));
             else
-                set(bytecode.dst, addToGraph(ValueBitAnd, OpInfo(), OpInfo(prediction), op1, op2));
+                set(bytecode.m_dst, addToGraph(ValueBitAnd, OpInfo(), OpInfo(prediction), op1, op2));
             NEXT_OPCODE(op_bitand);
         }
 
         case op_bitor: {
             auto bytecode = currentInstruction->as<OpBitor>();
             SpeculatedType prediction = getPrediction();
-            Node* op1 = get(bytecode.lhs);
-            Node* op2 = get(bytecode.rhs);
+            Node* op1 = get(bytecode.m_lhs);
+            Node* op2 = get(bytecode.m_rhs);
             if (op1->hasNumberOrAnyIntResult() && op2->hasNumberOrAnyIntResult())
-                set(bytecode.dst, addToGraph(ArithBitOr, op1, op2));
+                set(bytecode.m_dst, addToGraph(ArithBitOr, op1, op2));
             else
-                set(bytecode.dst, addToGraph(ValueBitOr, OpInfo(), OpInfo(prediction), op1, op2));
+                set(bytecode.m_dst, addToGraph(ValueBitOr, OpInfo(), OpInfo(prediction), op1, op2));
             NEXT_OPCODE(op_bitor);
         }
 
         case op_bitxor: {
             auto bytecode = currentInstruction->as<OpBitxor>();
             SpeculatedType prediction = getPrediction();
-            Node* op1 = get(bytecode.lhs);
-            Node* op2 = get(bytecode.rhs);
+            Node* op1 = get(bytecode.m_lhs);
+            Node* op2 = get(bytecode.m_rhs);
             if (op1->hasNumberOrAnyIntResult() && op2->hasNumberOrAnyIntResult())
-                set(bytecode.dst, addToGraph(ArithBitXor, op1, op2));
+                set(bytecode.m_dst, addToGraph(ArithBitXor, op1, op2));
             else
-                set(bytecode.dst, addToGraph(ValueBitXor, OpInfo(), OpInfo(prediction), op1, op2));
-            NEXT_OPCODE(op_bitor);
+                set(bytecode.m_dst, addToGraph(ValueBitXor, OpInfo(), OpInfo(prediction), op1, op2));
+            NEXT_OPCODE(op_bitxor);
         }
 
         case op_rshift: {
             auto bytecode = currentInstruction->as<OpRshift>();
-            Node* op1 = get(bytecode.lhs);
-            Node* op2 = get(bytecode.rhs);
-            set(bytecode.dst, addToGraph(BitRShift, op1, op2));
+            Node* op1 = get(bytecode.m_lhs);
+            Node* op2 = get(bytecode.m_rhs);
+            set(bytecode.m_dst, addToGraph(BitRShift, op1, op2));
             NEXT_OPCODE(op_rshift);
         }
 
         case op_lshift: {
             auto bytecode = currentInstruction->as<OpLshift>();
-            Node* op1 = get(bytecode.lhs);
-            Node* op2 = get(bytecode.rhs);
-            set(bytecode.dst, addToGraph(BitLShift, op1, op2));
+            Node* op1 = get(bytecode.m_lhs);
+            Node* op2 = get(bytecode.m_rhs);
+            set(bytecode.m_dst, addToGraph(BitLShift, op1, op2));
             NEXT_OPCODE(op_lshift);
         }
 
         case op_urshift: {
             auto bytecode = currentInstruction->as<OpUrshift>();
-            Node* op1 = get(bytecode.lhs);
-            Node* op2 = get(bytecode.rhs);
-            set(bytecode.dst, addToGraph(BitURShift, op1, op2));
+            Node* op1 = get(bytecode.m_lhs);
+            Node* op2 = get(bytecode.m_rhs);
+            set(bytecode.m_dst, addToGraph(BitURShift, op1, op2));
             NEXT_OPCODE(op_urshift);
         }
             
         case op_unsigned: {
             auto bytecode = currentInstruction->as<OpUnsigned>();
-            set(bytecode.dst, makeSafe(addToGraph(UInt32ToNumber, get(bytecode.operand))));
+            set(bytecode.m_dst, makeSafe(addToGraph(UInt32ToNumber, get(bytecode.m_operand))));
             NEXT_OPCODE(op_unsigned);
         }
 
@@ -4987,15 +4987,15 @@ void ByteCodeParser::parseBlock(unsigned limit)
 
         case op_inc: {
             auto bytecode = currentInstruction->as<OpInc>();
-            Node* op = get(bytecode.srcDst);
-            set(bytecode.srcDst, makeSafe(addToGraph(ArithAdd, op, addToGraph(JSConstant, OpInfo(m_constantOne)))));
+            Node* op = get(bytecode.m_srcDst);
+            set(bytecode.m_srcDst, makeSafe(addToGraph(ArithAdd, op, addToGraph(JSConstant, OpInfo(m_constantOne)))));
             NEXT_OPCODE(op_inc);
         }
 
         case op_dec: {
             auto bytecode = currentInstruction->as<OpDec>();
-            Node* op = get(bytecode.srcDst);
-            set(bytecode.srcDst, makeSafe(addToGraph(ArithSub, op, addToGraph(JSConstant, OpInfo(m_constantOne)))));
+            Node* op = get(bytecode.m_srcDst);
+            set(bytecode.m_srcDst, makeSafe(addToGraph(ArithSub, op, addToGraph(JSConstant, OpInfo(m_constantOne)))));
             NEXT_OPCODE(op_dec);
         }
 
@@ -5003,53 +5003,53 @@ void ByteCodeParser::parseBlock(unsigned limit)
 
         case op_add: {
             auto bytecode = currentInstruction->as<OpAdd>();
-            Node* op1 = get(bytecode.lhs);
-            Node* op2 = get(bytecode.rhs);
+            Node* op1 = get(bytecode.m_lhs);
+            Node* op2 = get(bytecode.m_rhs);
             if (op1->hasNumberResult() && op2->hasNumberResult())
-                set(bytecode.dst, makeSafe(addToGraph(ArithAdd, op1, op2)));
+                set(bytecode.m_dst, makeSafe(addToGraph(ArithAdd, op1, op2)));
             else
-                set(bytecode.dst, makeSafe(addToGraph(ValueAdd, op1, op2)));
+                set(bytecode.m_dst, makeSafe(addToGraph(ValueAdd, op1, op2)));
             NEXT_OPCODE(op_add);
         }
 
         case op_sub: {
             auto bytecode = currentInstruction->as<OpSub>();
-            Node* op1 = get(bytecode.lhs);
-            Node* op2 = get(bytecode.rhs);
+            Node* op1 = get(bytecode.m_lhs);
+            Node* op2 = get(bytecode.m_rhs);
             if (op1->hasNumberResult() && op2->hasNumberResult())
-                set(bytecode.dst, makeSafe(addToGraph(ArithSub, op1, op2)));
+                set(bytecode.m_dst, makeSafe(addToGraph(ArithSub, op1, op2)));
             else
-                set(bytecode.dst, makeSafe(addToGraph(ValueSub, op1, op2)));
+                set(bytecode.m_dst, makeSafe(addToGraph(ValueSub, op1, op2)));
             NEXT_OPCODE(op_sub);
         }
 
         case op_negate: {
             auto bytecode = currentInstruction->as<OpNegate>();
-            Node* op1 = get(bytecode.operand);
+            Node* op1 = get(bytecode.m_operand);
             if (op1->hasNumberResult())
-                set(bytecode.dst, makeSafe(addToGraph(ArithNegate, op1)));
+                set(bytecode.m_dst, makeSafe(addToGraph(ArithNegate, op1)));
             else
-                set(bytecode.dst, makeSafe(addToGraph(ValueNegate, op1)));
+                set(bytecode.m_dst, makeSafe(addToGraph(ValueNegate, op1)));
             NEXT_OPCODE(op_negate);
         }
 
         case op_mul: {
             // Multiply requires that the inputs are not truncated, unfortunately.
             auto bytecode = currentInstruction->as<OpMul>();
-            Node* op1 = get(bytecode.lhs);
-            Node* op2 = get(bytecode.rhs);
+            Node* op1 = get(bytecode.m_lhs);
+            Node* op2 = get(bytecode.m_rhs);
             if (op1->hasNumberResult() && op2->hasNumberResult())
-                set(bytecode.dst, makeSafe(addToGraph(ArithMul, op1, op2)));
+                set(bytecode.m_dst, makeSafe(addToGraph(ArithMul, op1, op2)));
             else
-                set(bytecode.dst, makeSafe(addToGraph(ValueMul, op1, op2)));
+                set(bytecode.m_dst, makeSafe(addToGraph(ValueMul, op1, op2)));
             NEXT_OPCODE(op_mul);
         }
 
         case op_mod: {
             auto bytecode = currentInstruction->as<OpMod>();
-            Node* op1 = get(bytecode.lhs);
-            Node* op2 = get(bytecode.rhs);
-            set(bytecode.dst, makeSafe(addToGraph(ArithMod, op1, op2)));
+            Node* op1 = get(bytecode.m_lhs);
+            Node* op2 = get(bytecode.m_rhs);
+            set(bytecode.m_dst, makeSafe(addToGraph(ArithMod, op1, op2)));
             NEXT_OPCODE(op_mod);
         }
 
@@ -5057,20 +5057,20 @@ void ByteCodeParser::parseBlock(unsigned limit)
             // FIXME: ArithPow(Untyped, Untyped) should be supported as the same to ArithMul, ArithSub etc.
             // https://bugs.webkit.org/show_bug.cgi?id=160012
             auto bytecode = currentInstruction->as<OpPow>();
-            Node* op1 = get(bytecode.lhs);
-            Node* op2 = get(bytecode.rhs);
-            set(bytecode.dst, addToGraph(ArithPow, op1, op2));
+            Node* op1 = get(bytecode.m_lhs);
+            Node* op2 = get(bytecode.m_rhs);
+            set(bytecode.m_dst, addToGraph(ArithPow, op1, op2));
             NEXT_OPCODE(op_pow);
         }
 
         case op_div: {
             auto bytecode = currentInstruction->as<OpDiv>();
-            Node* op1 = get(bytecode.lhs);
-            Node* op2 = get(bytecode.rhs);
+            Node* op1 = get(bytecode.m_lhs);
+            Node* op2 = get(bytecode.m_rhs);
             if (op1->hasNumberResult() && op2->hasNumberResult())
-                set(bytecode.dst, makeDivSafe(addToGraph(ArithDiv, op1, op2)));
+                set(bytecode.m_dst, makeDivSafe(addToGraph(ArithDiv, op1, op2)));
             else
-                set(bytecode.dst, makeDivSafe(addToGraph(ValueDiv, op1, op2)));
+                set(bytecode.m_dst, makeDivSafe(addToGraph(ValueDiv, op1, op2)));
             NEXT_OPCODE(op_div);
         }
 
@@ -5085,14 +5085,14 @@ void ByteCodeParser::parseBlock(unsigned limit)
 
         case op_mov: {
             auto bytecode = currentInstruction->as<OpMov>();
-            Node* op = get(bytecode.src);
-            set(bytecode.dst, op);
+            Node* op = get(bytecode.m_src);
+            set(bytecode.m_dst, op);
             NEXT_OPCODE(op_mov);
         }
 
         case op_check_tdz: {
             auto bytecode = currentInstruction->as<OpCheckTdz>();
-            addToGraph(CheckNotEmpty, get(bytecode.target));
+            addToGraph(CheckNotEmpty, get(bytecode.m_target));
             NEXT_OPCODE(op_check_tdz);
         }
 
@@ -5100,18 +5100,18 @@ void ByteCodeParser::parseBlock(unsigned limit)
             auto bytecode = currentInstruction->as<OpOverridesHasInstance>();
             JSFunction* defaultHasInstanceSymbolFunction = m_inlineStackTop->m_codeBlock->globalObjectFor(currentCodeOrigin())->functionProtoHasInstanceSymbolFunction();
 
-            Node* constructor = get(VirtualRegister(bytecode.constructor));
-            Node* hasInstanceValue = get(VirtualRegister(bytecode.hasInstanceValue));
+            Node* constructor = get(VirtualRegister(bytecode.m_constructor));
+            Node* hasInstanceValue = get(VirtualRegister(bytecode.m_hasInstanceValue));
 
-            set(VirtualRegister(bytecode.dst), addToGraph(OverridesHasInstance, OpInfo(m_graph.freeze(defaultHasInstanceSymbolFunction)), constructor, hasInstanceValue));
+            set(VirtualRegister(bytecode.m_dst), addToGraph(OverridesHasInstance, OpInfo(m_graph.freeze(defaultHasInstanceSymbolFunction)), constructor, hasInstanceValue));
             NEXT_OPCODE(op_overrides_has_instance);
         }
 
         case op_identity_with_profile: {
             auto bytecode = currentInstruction->as<OpIdentityWithProfile>();
-            Node* srcDst = get(bytecode.srcDst);
-            SpeculatedType speculation = static_cast<SpeculatedType>(bytecode.topProfile) << 32 | static_cast<SpeculatedType>(bytecode.bottomProfile);
-            set(bytecode.srcDst, addToGraph(IdentityWithProfile, OpInfo(speculation), srcDst));
+            Node* srcDst = get(bytecode.m_srcDst);
+            SpeculatedType speculation = static_cast<SpeculatedType>(bytecode.m_topProfile) << 32 | static_cast<SpeculatedType>(bytecode.m_bottomProfile);
+            set(bytecode.m_srcDst, addToGraph(IdentityWithProfile, OpInfo(speculation), srcDst));
             NEXT_OPCODE(op_identity_with_profile);
         }
 
@@ -5122,8 +5122,8 @@ void ByteCodeParser::parseBlock(unsigned limit)
                 m_inlineStackTop->m_profiledBlock, m_inlineStackTop->m_baselineMap,
                 m_currentIndex);
             
-            Node* value = get(bytecode.value);
-            Node* prototype = get(bytecode.prototype);
+            Node* value = get(bytecode.m_value);
+            Node* prototype = get(bytecode.m_prototype);
 
             // Only inline it if it's Simple with a commonPrototype; bottom/top or variable
             // prototypes both get handled by the IC. This makes sense for bottom (unprofiled)
@@ -5151,102 +5151,102 @@ void ByteCodeParser::parseBlock(unsigned limit)
                 
                 if (allOK) {
                     Node* match = addToGraph(MatchStructure, OpInfo(data), value);
-                    set(bytecode.dst, match);
+                    set(bytecode.m_dst, match);
                     NEXT_OPCODE(op_instanceof);
                 }
             }
             
-            set(bytecode.dst, addToGraph(InstanceOf, value, prototype));
+            set(bytecode.m_dst, addToGraph(InstanceOf, value, prototype));
             NEXT_OPCODE(op_instanceof);
         }
 
         case op_instanceof_custom: {
             auto bytecode = currentInstruction->as<OpInstanceofCustom>();
-            Node* value = get(bytecode.value);
-            Node* constructor = get(bytecode.constructor);
-            Node* hasInstanceValue = get(bytecode.hasInstanceValue);
-            set(bytecode.dst, addToGraph(InstanceOfCustom, value, constructor, hasInstanceValue));
+            Node* value = get(bytecode.m_value);
+            Node* constructor = get(bytecode.m_constructor);
+            Node* hasInstanceValue = get(bytecode.m_hasInstanceValue);
+            set(bytecode.m_dst, addToGraph(InstanceOfCustom, value, constructor, hasInstanceValue));
             NEXT_OPCODE(op_instanceof_custom);
         }
         case op_is_empty: {
             auto bytecode = currentInstruction->as<OpIsEmpty>();
-            Node* value = get(bytecode.operand);
-            set(bytecode.dst, addToGraph(IsEmpty, value));
+            Node* value = get(bytecode.m_operand);
+            set(bytecode.m_dst, addToGraph(IsEmpty, value));
             NEXT_OPCODE(op_is_empty);
         }
         case op_is_undefined: {
             auto bytecode = currentInstruction->as<OpIsUndefined>();
-            Node* value = get(bytecode.operand);
-            set(bytecode.dst, addToGraph(IsUndefined, value));
+            Node* value = get(bytecode.m_operand);
+            set(bytecode.m_dst, addToGraph(IsUndefined, value));
             NEXT_OPCODE(op_is_undefined);
         }
         case op_is_undefined_or_null: {
             auto bytecode = currentInstruction->as<OpIsUndefinedOrNull>();
-            Node* value = get(bytecode.operand);
-            set(bytecode.dst, addToGraph(IsUndefinedOrNull, value));
+            Node* value = get(bytecode.m_operand);
+            set(bytecode.m_dst, addToGraph(IsUndefinedOrNull, value));
             NEXT_OPCODE(op_is_undefined_or_null);
         }
 
         case op_is_boolean: {
             auto bytecode = currentInstruction->as<OpIsBoolean>();
-            Node* value = get(bytecode.operand);
-            set(bytecode.dst, addToGraph(IsBoolean, value));
+            Node* value = get(bytecode.m_operand);
+            set(bytecode.m_dst, addToGraph(IsBoolean, value));
             NEXT_OPCODE(op_is_boolean);
         }
 
         case op_is_number: {
             auto bytecode = currentInstruction->as<OpIsNumber>();
-            Node* value = get(bytecode.operand);
-            set(bytecode.dst, addToGraph(IsNumber, value));
+            Node* value = get(bytecode.m_operand);
+            set(bytecode.m_dst, addToGraph(IsNumber, value));
             NEXT_OPCODE(op_is_number);
         }
 
         case op_is_cell_with_type: {
             auto bytecode = currentInstruction->as<OpIsCellWithType>();
-            Node* value = get(bytecode.operand);
-            set(bytecode.dst, addToGraph(IsCellWithType, OpInfo(bytecode.type), value));
+            Node* value = get(bytecode.m_operand);
+            set(bytecode.m_dst, addToGraph(IsCellWithType, OpInfo(bytecode.m_type), value));
             NEXT_OPCODE(op_is_cell_with_type);
         }
 
         case op_is_object: {
             auto bytecode = currentInstruction->as<OpIsObject>();
-            Node* value = get(bytecode.operand);
-            set(bytecode.dst, addToGraph(IsObject, value));
+            Node* value = get(bytecode.m_operand);
+            set(bytecode.m_dst, addToGraph(IsObject, value));
             NEXT_OPCODE(op_is_object);
         }
 
         case op_is_object_or_null: {
             auto bytecode = currentInstruction->as<OpIsObjectOrNull>();
-            Node* value = get(bytecode.operand);
-            set(bytecode.dst, addToGraph(IsObjectOrNull, value));
+            Node* value = get(bytecode.m_operand);
+            set(bytecode.m_dst, addToGraph(IsObjectOrNull, value));
             NEXT_OPCODE(op_is_object_or_null);
         }
 
         case op_is_function: {
             auto bytecode = currentInstruction->as<OpIsFunction>();
-            Node* value = get(bytecode.operand);
-            set(bytecode.dst, addToGraph(IsFunction, value));
+            Node* value = get(bytecode.m_operand);
+            set(bytecode.m_dst, addToGraph(IsFunction, value));
             NEXT_OPCODE(op_is_function);
         }
 
         case op_not: {
             auto bytecode = currentInstruction->as<OpNot>();
-            Node* value = get(bytecode.operand);
-            set(bytecode.dst, addToGraph(LogicalNot, value));
+            Node* value = get(bytecode.m_operand);
+            set(bytecode.m_dst, addToGraph(LogicalNot, value));
             NEXT_OPCODE(op_not);
         }
             
         case op_to_primitive: {
             auto bytecode = currentInstruction->as<OpToPrimitive>();
-            Node* value = get(bytecode.src);
-            set(bytecode.dst, addToGraph(ToPrimitive, value));
+            Node* value = get(bytecode.m_src);
+            set(bytecode.m_dst, addToGraph(ToPrimitive, value));
             NEXT_OPCODE(op_to_primitive);
         }
             
         case op_strcat: {
             auto bytecode = currentInstruction->as<OpStrcat>();
-            int startOperand = bytecode.src.offset();
-            int numOperands = bytecode.count;
+            int startOperand = bytecode.m_src.offset();
+            int numOperands = bytecode.m_count;
 #if CPU(X86)
             // X86 doesn't have enough registers to compile MakeRope with three arguments. The
             // StrCat we emit here may be turned into a MakeRope. Rather than try to be clever,
@@ -5271,105 +5271,105 @@ void ByteCodeParser::parseBlock(unsigned limit)
                 ASSERT(indexInOperands < maxArguments);
                 operands[indexInOperands++] = get(VirtualRegister(startOperand - operandIdx));
             }
-            set(bytecode.dst, addToGraph(StrCat, operands[0], operands[1], operands[2]));
+            set(bytecode.m_dst, addToGraph(StrCat, operands[0], operands[1], operands[2]));
             NEXT_OPCODE(op_strcat);
         }
 
         case op_less: {
             auto bytecode = currentInstruction->as<OpLess>();
-            Node* op1 = get(bytecode.lhs);
-            Node* op2 = get(bytecode.rhs);
-            set(bytecode.dst, addToGraph(CompareLess, op1, op2));
+            Node* op1 = get(bytecode.m_lhs);
+            Node* op2 = get(bytecode.m_rhs);
+            set(bytecode.m_dst, addToGraph(CompareLess, op1, op2));
             NEXT_OPCODE(op_less);
         }
 
         case op_lesseq: {
             auto bytecode = currentInstruction->as<OpLesseq>();
-            Node* op1 = get(bytecode.lhs);
-            Node* op2 = get(bytecode.rhs);
-            set(bytecode.dst, addToGraph(CompareLessEq, op1, op2));
+            Node* op1 = get(bytecode.m_lhs);
+            Node* op2 = get(bytecode.m_rhs);
+            set(bytecode.m_dst, addToGraph(CompareLessEq, op1, op2));
             NEXT_OPCODE(op_lesseq);
         }
 
         case op_greater: {
             auto bytecode = currentInstruction->as<OpGreater>();
-            Node* op1 = get(bytecode.lhs);
-            Node* op2 = get(bytecode.rhs);
-            set(bytecode.dst, addToGraph(CompareGreater, op1, op2));
+            Node* op1 = get(bytecode.m_lhs);
+            Node* op2 = get(bytecode.m_rhs);
+            set(bytecode.m_dst, addToGraph(CompareGreater, op1, op2));
             NEXT_OPCODE(op_greater);
         }
 
         case op_greatereq: {
             auto bytecode = currentInstruction->as<OpGreatereq>();
-            Node* op1 = get(bytecode.lhs);
-            Node* op2 = get(bytecode.rhs);
-            set(bytecode.dst, addToGraph(CompareGreaterEq, op1, op2));
+            Node* op1 = get(bytecode.m_lhs);
+            Node* op2 = get(bytecode.m_rhs);
+            set(bytecode.m_dst, addToGraph(CompareGreaterEq, op1, op2));
             NEXT_OPCODE(op_greatereq);
         }
 
         case op_below: {
             auto bytecode = currentInstruction->as<OpBelow>();
-            Node* op1 = get(bytecode.lhs);
-            Node* op2 = get(bytecode.rhs);
-            set(bytecode.dst, addToGraph(CompareBelow, op1, op2));
+            Node* op1 = get(bytecode.m_lhs);
+            Node* op2 = get(bytecode.m_rhs);
+            set(bytecode.m_dst, addToGraph(CompareBelow, op1, op2));
             NEXT_OPCODE(op_below);
         }
 
         case op_beloweq: {
             auto bytecode = currentInstruction->as<OpBeloweq>();
-            Node* op1 = get(bytecode.lhs);
-            Node* op2 = get(bytecode.rhs);
-            set(bytecode.dst, addToGraph(CompareBelowEq, op1, op2));
+            Node* op1 = get(bytecode.m_lhs);
+            Node* op2 = get(bytecode.m_rhs);
+            set(bytecode.m_dst, addToGraph(CompareBelowEq, op1, op2));
             NEXT_OPCODE(op_beloweq);
         }
 
         case op_eq: {
             auto bytecode = currentInstruction->as<OpEq>();
-            Node* op1 = get(bytecode.lhs);
-            Node* op2 = get(bytecode.rhs);
-            set(bytecode.dst, addToGraph(CompareEq, op1, op2));
+            Node* op1 = get(bytecode.m_lhs);
+            Node* op2 = get(bytecode.m_rhs);
+            set(bytecode.m_dst, addToGraph(CompareEq, op1, op2));
             NEXT_OPCODE(op_eq);
         }
 
         case op_eq_null: {
             auto bytecode = currentInstruction->as<OpEqNull>();
-            Node* value = get(bytecode.operand);
+            Node* value = get(bytecode.m_operand);
             Node* nullConstant = addToGraph(JSConstant, OpInfo(m_constantNull));
-            set(bytecode.dst, addToGraph(CompareEq, value, nullConstant));
+            set(bytecode.m_dst, addToGraph(CompareEq, value, nullConstant));
             NEXT_OPCODE(op_eq_null);
         }
 
         case op_stricteq: {
             auto bytecode = currentInstruction->as<OpStricteq>();
-            Node* op1 = get(bytecode.lhs);
-            Node* op2 = get(bytecode.rhs);
-            set(bytecode.dst, addToGraph(CompareStrictEq, op1, op2));
+            Node* op1 = get(bytecode.m_lhs);
+            Node* op2 = get(bytecode.m_rhs);
+            set(bytecode.m_dst, addToGraph(CompareStrictEq, op1, op2));
             NEXT_OPCODE(op_stricteq);
         }
 
         case op_neq: {
             auto bytecode = currentInstruction->as<OpNeq>();
-            Node* op1 = get(bytecode.lhs);
-            Node* op2 = get(bytecode.rhs);
-            set(bytecode.dst, addToGraph(LogicalNot, addToGraph(CompareEq, op1, op2)));
+            Node* op1 = get(bytecode.m_lhs);
+            Node* op2 = get(bytecode.m_rhs);
+            set(bytecode.m_dst, addToGraph(LogicalNot, addToGraph(CompareEq, op1, op2)));
             NEXT_OPCODE(op_neq);
         }
 
         case op_neq_null: {
             auto bytecode = currentInstruction->as<OpNeqNull>();
-            Node* value = get(bytecode.operand);
+            Node* value = get(bytecode.m_operand);
             Node* nullConstant = addToGraph(JSConstant, OpInfo(m_constantNull));
-            set(bytecode.dst, addToGraph(LogicalNot, addToGraph(CompareEq, value, nullConstant)));
+            set(bytecode.m_dst, addToGraph(LogicalNot, addToGraph(CompareEq, value, nullConstant)));
             NEXT_OPCODE(op_neq_null);
         }
 
         case op_nstricteq: {
             auto bytecode = currentInstruction->as<OpNstricteq>();
-            Node* op1 = get(bytecode.lhs);
-            Node* op2 = get(bytecode.rhs);
+            Node* op1 = get(bytecode.m_lhs);
+            Node* op2 = get(bytecode.m_rhs);
             Node* invertedResult;
             invertedResult = addToGraph(CompareStrictEq, op1, op2);
-            set(bytecode.dst, addToGraph(LogicalNot, invertedResult));
+            set(bytecode.m_dst, addToGraph(LogicalNot, invertedResult));
             NEXT_OPCODE(op_nstricteq);
         }
 
@@ -5379,8 +5379,8 @@ void ByteCodeParser::parseBlock(unsigned limit)
             auto bytecode = currentInstruction->as<OpGetByVal>();
             SpeculatedType prediction = getPredictionWithoutOSRExit();
 
-            Node* base = get(bytecode.base);
-            Node* property = get(bytecode.property);
+            Node* base = get(bytecode.m_base);
+            Node* property = get(bytecode.m_property);
             bool compiledAsGetById = false;
             GetByIdStatus getByIdStatus;
             unsigned identifierNumber = 0;
@@ -5414,9 +5414,9 @@ void ByteCodeParser::parseBlock(unsigned limit)
             }
 
             if (compiledAsGetById)
-                handleGetById(bytecode.dst, prediction, base, identifierNumber, getByIdStatus, AccessType::Get, currentInstruction->size());
+                handleGetById(bytecode.m_dst, prediction, base, identifierNumber, getByIdStatus, AccessType::Get, currentInstruction->size());
             else {
-                ArrayMode arrayMode = getArrayMode(bytecode.metadata(codeBlock).arrayProfile, Array::Read);
+                ArrayMode arrayMode = getArrayMode(bytecode.metadata(codeBlock).m_arrayProfile, Array::Read);
                 // FIXME: We could consider making this not vararg, since it only uses three child
                 // slots.
                 // https://bugs.webkit.org/show_bug.cgi?id=184192
@@ -5425,7 +5425,7 @@ void ByteCodeParser::parseBlock(unsigned limit)
                 addVarArgChild(0); // Leave room for property storage.
                 Node* getByVal = addToGraph(Node::VarArg, GetByVal, OpInfo(arrayMode.asWord()), OpInfo(prediction));
                 m_exitOK = false; // GetByVal must be treated as if it clobbers exit state, since FixupPhase may make it generic.
-                set(bytecode.dst, getByVal);
+                set(bytecode.m_dst, getByVal);
             }
 
             NEXT_OPCODE(op_get_by_val);
@@ -5435,11 +5435,11 @@ void ByteCodeParser::parseBlock(unsigned limit)
             auto bytecode = currentInstruction->as<OpGetByValWithThis>();
             SpeculatedType prediction = getPrediction();
 
-            Node* base = get(bytecode.base);
-            Node* thisValue = get(bytecode.thisValue);
-            Node* property = get(bytecode.property);
+            Node* base = get(bytecode.m_base);
+            Node* thisValue = get(bytecode.m_thisValue);
+            Node* property = get(bytecode.m_property);
             Node* getByValWithThis = addToGraph(GetByValWithThis, OpInfo(), OpInfo(prediction), base, thisValue, property);
-            set(bytecode.dst, getByValWithThis);
+            set(bytecode.m_dst, getByValWithThis);
 
             NEXT_OPCODE(op_get_by_val_with_this);
         }
@@ -5455,10 +5455,10 @@ void ByteCodeParser::parseBlock(unsigned limit)
 
         case op_put_by_val_with_this: {
             auto bytecode = currentInstruction->as<OpPutByValWithThis>();
-            Node* base = get(bytecode.base);
-            Node* thisValue = get(bytecode.thisValue);
-            Node* property = get(bytecode.property);
-            Node* value = get(bytecode.value);
+            Node* base = get(bytecode.m_base);
+            Node* thisValue = get(bytecode.m_thisValue);
+            Node* property = get(bytecode.m_property);
+            Node* value = get(bytecode.m_value);
 
             addVarArgChild(base);
             addVarArgChild(thisValue);
@@ -5471,10 +5471,10 @@ void ByteCodeParser::parseBlock(unsigned limit)
 
         case op_define_data_property: {
             auto bytecode = currentInstruction->as<OpDefineDataProperty>();
-            Node* base = get(bytecode.base);
-            Node* property = get(bytecode.property);
-            Node* value = get(bytecode.value);
-            Node* attributes = get(bytecode.attributes);
+            Node* base = get(bytecode.m_base);
+            Node* property = get(bytecode.m_property);
+            Node* value = get(bytecode.m_value);
+            Node* attributes = get(bytecode.m_attributes);
 
             addVarArgChild(base);
             addVarArgChild(property);
@@ -5487,11 +5487,11 @@ void ByteCodeParser::parseBlock(unsigned limit)
 
         case op_define_accessor_property: {
             auto bytecode = currentInstruction->as<OpDefineAccessorProperty>();
-            Node* base = get(bytecode.base);
-            Node* property = get(bytecode.property);
-            Node* getter = get(bytecode.getter);
-            Node* setter = get(bytecode.setter);
-            Node* attributes = get(bytecode.attributes);
+            Node* base = get(bytecode.m_base);
+            Node* property = get(bytecode.m_property);
+            Node* getter = get(bytecode.m_getter);
+            Node* setter = get(bytecode.m_setter);
+            Node* attributes = get(bytecode.m_attributes);
 
             addVarArgChild(base);
             addVarArgChild(property);
@@ -5519,21 +5519,21 @@ void ByteCodeParser::parseBlock(unsigned limit)
             SpeculatedType prediction = getPrediction();
 
             auto bytecode = currentInstruction->as<OpGetByIdWithThis>();
-            Node* base = get(bytecode.base);
-            Node* thisValue = get(bytecode.thisValue);
-            unsigned identifierNumber = m_inlineStackTop->m_identifierRemap[bytecode.property];
+            Node* base = get(bytecode.m_base);
+            Node* thisValue = get(bytecode.m_thisValue);
+            unsigned identifierNumber = m_inlineStackTop->m_identifierRemap[bytecode.m_property];
 
-            set(bytecode.dst,
+            set(bytecode.m_dst,
                 addToGraph(GetByIdWithThis, OpInfo(identifierNumber), OpInfo(prediction), base, thisValue));
 
             NEXT_OPCODE(op_get_by_id_with_this);
         }
         case op_put_by_id: {
             auto bytecode = currentInstruction->as<OpPutById>();
-            Node* value = get(bytecode.value);
-            Node* base = get(bytecode.base);
-            unsigned identifierNumber = m_inlineStackTop->m_identifierRemap[bytecode.property];
-            bool direct = !!(bytecode.flags & PutByIdIsDirect);
+            Node* value = get(bytecode.m_value);
+            Node* base = get(bytecode.m_base);
+            unsigned identifierNumber = m_inlineStackTop->m_identifierRemap[bytecode.m_property];
+            bool direct = !!(bytecode.m_flags & PutByIdIsDirect);
 
             PutByIdStatus putByIdStatus = PutByIdStatus::computeFor(
                 m_inlineStackTop->m_profiledBlock,
@@ -5546,10 +5546,10 @@ void ByteCodeParser::parseBlock(unsigned limit)
 
         case op_put_by_id_with_this: {
             auto bytecode = currentInstruction->as<OpPutByIdWithThis>();
-            Node* base = get(bytecode.base);
-            Node* thisValue = get(bytecode.thisValue);
-            Node* value = get(bytecode.value);
-            unsigned identifierNumber = m_inlineStackTop->m_identifierRemap[bytecode.property];
+            Node* base = get(bytecode.m_base);
+            Node* thisValue = get(bytecode.m_thisValue);
+            Node* value = get(bytecode.m_value);
+            unsigned identifierNumber = m_inlineStackTop->m_identifierRemap[bytecode.m_property];
 
             addToGraph(PutByIdWithThis, OpInfo(identifierNumber), base, thisValue, value);
             NEXT_OPCODE(op_put_by_id_with_this);
@@ -5565,11 +5565,11 @@ void ByteCodeParser::parseBlock(unsigned limit)
 
         case op_put_getter_setter_by_id: {
             auto bytecode = currentInstruction->as<OpPutGetterSetterById>();
-            Node* base = get(bytecode.base);
-            unsigned identifierNumber = m_inlineStackTop->m_identifierRemap[bytecode.property];
-            Node* getter = get(bytecode.getter);
-            Node* setter = get(bytecode.setter);
-            addToGraph(PutGetterSetterById, OpInfo(identifierNumber), OpInfo(bytecode.attributes), base, getter, setter);
+            Node* base = get(bytecode.m_base);
+            unsigned identifierNumber = m_inlineStackTop->m_identifierRemap[bytecode.m_property];
+            Node* getter = get(bytecode.m_getter);
+            Node* setter = get(bytecode.m_setter);
+            addToGraph(PutGetterSetterById, OpInfo(identifierNumber), OpInfo(bytecode.m_attributes), base, getter, setter);
             NEXT_OPCODE(op_put_getter_setter_by_id);
         }
 
@@ -5583,31 +5583,31 @@ void ByteCodeParser::parseBlock(unsigned limit)
 
         case op_del_by_id: {
             auto bytecode = currentInstruction->as<OpDelById>();
-            Node* base = get(bytecode.base);
-            unsigned identifierNumber = m_inlineStackTop->m_identifierRemap[bytecode.property];
-            set(bytecode.dst, addToGraph(DeleteById, OpInfo(identifierNumber), base));
+            Node* base = get(bytecode.m_base);
+            unsigned identifierNumber = m_inlineStackTop->m_identifierRemap[bytecode.m_property];
+            set(bytecode.m_dst, addToGraph(DeleteById, OpInfo(identifierNumber), base));
             NEXT_OPCODE(op_del_by_id);
         }
 
         case op_del_by_val: {
             auto bytecode = currentInstruction->as<OpDelByVal>();
-            Node* base = get(bytecode.base);
-            Node* key = get(bytecode.property);
-            set(bytecode.dst, addToGraph(DeleteByVal, base, key));
+            Node* base = get(bytecode.m_base);
+            Node* key = get(bytecode.m_property);
+            set(bytecode.m_dst, addToGraph(DeleteByVal, base, key));
             NEXT_OPCODE(op_del_by_val);
         }
 
         case op_profile_type: {
             auto bytecode = currentInstruction->as<OpProfileType>();
             auto& metadata = bytecode.metadata(codeBlock);
-            Node* valueToProfile = get(bytecode.target);
-            addToGraph(ProfileType, OpInfo(metadata.typeLocation), valueToProfile);
+            Node* valueToProfile = get(bytecode.m_target);
+            addToGraph(ProfileType, OpInfo(metadata.m_typeLocation), valueToProfile);
             NEXT_OPCODE(op_profile_type);
         }
 
         case op_profile_control_flow: {
             auto bytecode = currentInstruction->as<OpProfileControlFlow>();
-            BasicBlockLocation* basicBlockLocation = bytecode.metadata(codeBlock).basicBlockLocation;
+            BasicBlockLocation* basicBlockLocation = bytecode.metadata(codeBlock).m_basicBlockLocation;
             addToGraph(ProfileControlFlow, OpInfo(basicBlockLocation));
             NEXT_OPCODE(op_profile_control_flow);
         }
@@ -5617,7 +5617,7 @@ void ByteCodeParser::parseBlock(unsigned limit)
         case op_jmp: {
             ASSERT(!m_currentBlock->terminal());
             auto bytecode = currentInstruction->as<OpJmp>();
-            int relativeOffset = jumpTarget(bytecode.target);
+            int relativeOffset = jumpTarget(bytecode.m_target);
             addToGraph(Jump, OpInfo(m_currentIndex + relativeOffset));
             if (relativeOffset <= 0)
                 flushForTerminal();
@@ -5626,24 +5626,24 @@ void ByteCodeParser::parseBlock(unsigned limit)
 
         case op_jtrue: {
             auto bytecode = currentInstruction->as<OpJtrue>();
-            unsigned relativeOffset = jumpTarget(bytecode.target);
-            Node* condition = get(bytecode.condition);
+            unsigned relativeOffset = jumpTarget(bytecode.m_target);
+            Node* condition = get(bytecode.m_condition);
             addToGraph(Branch, OpInfo(branchData(m_currentIndex + relativeOffset, m_currentIndex + currentInstruction->size())), condition);
             LAST_OPCODE(op_jtrue);
         }
 
         case op_jfalse: {
             auto bytecode = currentInstruction->as<OpJfalse>();
-            unsigned relativeOffset = jumpTarget(bytecode.target);
-            Node* condition = get(bytecode.condition);
+            unsigned relativeOffset = jumpTarget(bytecode.m_target);
+            Node* condition = get(bytecode.m_condition);
             addToGraph(Branch, OpInfo(branchData(m_currentIndex + currentInstruction->size(), m_currentIndex + relativeOffset)), condition);
             LAST_OPCODE(op_jfalse);
         }
 
         case op_jeq_null: {
             auto bytecode = currentInstruction->as<OpJeqNull>();
-            unsigned relativeOffset = jumpTarget(bytecode.target);
-            Node* value = get(bytecode.value);
+            unsigned relativeOffset = jumpTarget(bytecode.m_target);
+            Node* value = get(bytecode.m_value);
             Node* nullConstant = addToGraph(JSConstant, OpInfo(m_constantNull));
             Node* condition = addToGraph(CompareEq, value, nullConstant);
             addToGraph(Branch, OpInfo(branchData(m_currentIndex + relativeOffset, m_currentIndex + currentInstruction->size())), condition);
@@ -5652,8 +5652,8 @@ void ByteCodeParser::parseBlock(unsigned limit)
 
         case op_jneq_null: {
             auto bytecode = currentInstruction->as<OpJneqNull>();
-            unsigned relativeOffset = jumpTarget(bytecode.target);
-            Node* value = get(bytecode.value);
+            unsigned relativeOffset = jumpTarget(bytecode.m_target);
+            Node* value = get(bytecode.m_value);
             Node* nullConstant = addToGraph(JSConstant, OpInfo(m_constantNull));
             Node* condition = addToGraph(CompareEq, value, nullConstant);
             addToGraph(Branch, OpInfo(branchData(m_currentIndex + currentInstruction->size(), m_currentIndex + relativeOffset)), condition);
@@ -5662,9 +5662,9 @@ void ByteCodeParser::parseBlock(unsigned limit)
 
         case op_jless: {
             auto bytecode = currentInstruction->as<OpJless>();
-            unsigned relativeOffset = jumpTarget(bytecode.target);
-            Node* op1 = get(bytecode.lhs);
-            Node* op2 = get(bytecode.rhs);
+            unsigned relativeOffset = jumpTarget(bytecode.m_target);
+            Node* op1 = get(bytecode.m_lhs);
+            Node* op2 = get(bytecode.m_rhs);
             Node* condition = addToGraph(CompareLess, op1, op2);
             addToGraph(Branch, OpInfo(branchData(m_currentIndex + relativeOffset, m_currentIndex + currentInstruction->size())), condition);
             LAST_OPCODE(op_jless);
@@ -5672,9 +5672,9 @@ void ByteCodeParser::parseBlock(unsigned limit)
 
         case op_jlesseq: {
             auto bytecode = currentInstruction->as<OpJlesseq>();
-            unsigned relativeOffset = jumpTarget(bytecode.target);
-            Node* op1 = get(bytecode.lhs);
-            Node* op2 = get(bytecode.rhs);
+            unsigned relativeOffset = jumpTarget(bytecode.m_target);
+            Node* op1 = get(bytecode.m_lhs);
+            Node* op2 = get(bytecode.m_rhs);
             Node* condition = addToGraph(CompareLessEq, op1, op2);
             addToGraph(Branch, OpInfo(branchData(m_currentIndex + relativeOffset, m_currentIndex + currentInstruction->size())), condition);
             LAST_OPCODE(op_jlesseq);
@@ -5682,9 +5682,9 @@ void ByteCodeParser::parseBlock(unsigned limit)
 
         case op_jgreater: {
             auto bytecode = currentInstruction->as<OpJgreater>();
-            unsigned relativeOffset = jumpTarget(bytecode.target);
-            Node* op1 = get(bytecode.lhs);
-            Node* op2 = get(bytecode.rhs);
+            unsigned relativeOffset = jumpTarget(bytecode.m_target);
+            Node* op1 = get(bytecode.m_lhs);
+            Node* op2 = get(bytecode.m_rhs);
             Node* condition = addToGraph(CompareGreater, op1, op2);
             addToGraph(Branch, OpInfo(branchData(m_currentIndex + relativeOffset, m_currentIndex + currentInstruction->size())), condition);
             LAST_OPCODE(op_jgreater);
@@ -5692,9 +5692,9 @@ void ByteCodeParser::parseBlock(unsigned limit)
 
         case op_jgreatereq: {
             auto bytecode = currentInstruction->as<OpJgreatereq>();
-            unsigned relativeOffset = jumpTarget(bytecode.target);
-            Node* op1 = get(bytecode.lhs);
-            Node* op2 = get(bytecode.rhs);
+            unsigned relativeOffset = jumpTarget(bytecode.m_target);
+            Node* op1 = get(bytecode.m_lhs);
+            Node* op2 = get(bytecode.m_rhs);
             Node* condition = addToGraph(CompareGreaterEq, op1, op2);
             addToGraph(Branch, OpInfo(branchData(m_currentIndex + relativeOffset, m_currentIndex + currentInstruction->size())), condition);
             LAST_OPCODE(op_jgreatereq);
@@ -5702,9 +5702,9 @@ void ByteCodeParser::parseBlock(unsigned limit)
 
         case op_jeq: {
             auto bytecode = currentInstruction->as<OpJeq>();
-            unsigned relativeOffset = jumpTarget(bytecode.target);
-            Node* op1 = get(bytecode.lhs);
-            Node* op2 = get(bytecode.rhs);
+            unsigned relativeOffset = jumpTarget(bytecode.m_target);
+            Node* op1 = get(bytecode.m_lhs);
+            Node* op2 = get(bytecode.m_rhs);
             Node* condition = addToGraph(CompareEq, op1, op2);
             addToGraph(Branch, OpInfo(branchData(m_currentIndex + relativeOffset, m_currentIndex + currentInstruction->size())), condition);
             LAST_OPCODE(op_jeq);
@@ -5712,9 +5712,9 @@ void ByteCodeParser::parseBlock(unsigned limit)
 
         case op_jstricteq: {
             auto bytecode = currentInstruction->as<OpJstricteq>();
-            unsigned relativeOffset = jumpTarget(bytecode.target);
-            Node* op1 = get(bytecode.lhs);
-            Node* op2 = get(bytecode.rhs);
+            unsigned relativeOffset = jumpTarget(bytecode.m_target);
+            Node* op1 = get(bytecode.m_lhs);
+            Node* op2 = get(bytecode.m_rhs);
             Node* condition = addToGraph(CompareStrictEq, op1, op2);
             addToGraph(Branch, OpInfo(branchData(m_currentIndex + relativeOffset, m_currentIndex + currentInstruction->size())), condition);
             LAST_OPCODE(op_jstricteq);
@@ -5722,9 +5722,9 @@ void ByteCodeParser::parseBlock(unsigned limit)
 
         case op_jnless: {
             auto bytecode = currentInstruction->as<OpJnless>();
-            unsigned relativeOffset = jumpTarget(bytecode.target);
-            Node* op1 = get(bytecode.lhs);
-            Node* op2 = get(bytecode.rhs);
+            unsigned relativeOffset = jumpTarget(bytecode.m_target);
+            Node* op1 = get(bytecode.m_lhs);
+            Node* op2 = get(bytecode.m_rhs);
             Node* condition = addToGraph(CompareLess, op1, op2);
             addToGraph(Branch, OpInfo(branchData(m_currentIndex + currentInstruction->size(), m_currentIndex + relativeOffset)), condition);
             LAST_OPCODE(op_jnless);
@@ -5732,9 +5732,9 @@ void ByteCodeParser::parseBlock(unsigned limit)
 
         case op_jnlesseq: {
             auto bytecode = currentInstruction->as<OpJnlesseq>();
-            unsigned relativeOffset = jumpTarget(bytecode.target);
-            Node* op1 = get(bytecode.lhs);
-            Node* op2 = get(bytecode.rhs);
+            unsigned relativeOffset = jumpTarget(bytecode.m_target);
+            Node* op1 = get(bytecode.m_lhs);
+            Node* op2 = get(bytecode.m_rhs);
             Node* condition = addToGraph(CompareLessEq, op1, op2);
             addToGraph(Branch, OpInfo(branchData(m_currentIndex + currentInstruction->size(), m_currentIndex + relativeOffset)), condition);
             LAST_OPCODE(op_jnlesseq);
@@ -5742,9 +5742,9 @@ void ByteCodeParser::parseBlock(unsigned limit)
 
         case op_jngreater: {
             auto bytecode = currentInstruction->as<OpJngreater>();
-            unsigned relativeOffset = jumpTarget(bytecode.target);
-            Node* op1 = get(bytecode.lhs);
-            Node* op2 = get(bytecode.rhs);
+            unsigned relativeOffset = jumpTarget(bytecode.m_target);
+            Node* op1 = get(bytecode.m_lhs);
+            Node* op2 = get(bytecode.m_rhs);
             Node* condition = addToGraph(CompareGreater, op1, op2);
             addToGraph(Branch, OpInfo(branchData(m_currentIndex + currentInstruction->size(), m_currentIndex + relativeOffset)), condition);
             LAST_OPCODE(op_jngreater);
@@ -5752,9 +5752,9 @@ void ByteCodeParser::parseBlock(unsigned limit)
 
         case op_jngreatereq: {
             auto bytecode = currentInstruction->as<OpJngreatereq>();
-            unsigned relativeOffset = jumpTarget(bytecode.target);
-            Node* op1 = get(bytecode.lhs);
-            Node* op2 = get(bytecode.rhs);
+            unsigned relativeOffset = jumpTarget(bytecode.m_target);
+            Node* op1 = get(bytecode.m_lhs);
+            Node* op2 = get(bytecode.m_rhs);
             Node* condition = addToGraph(CompareGreaterEq, op1, op2);
             addToGraph(Branch, OpInfo(branchData(m_currentIndex + currentInstruction->size(), m_currentIndex + relativeOffset)), condition);
             LAST_OPCODE(op_jngreatereq);
@@ -5762,9 +5762,9 @@ void ByteCodeParser::parseBlock(unsigned limit)
 
         case op_jneq: {
             auto bytecode = currentInstruction->as<OpJneq>();
-            unsigned relativeOffset = jumpTarget(bytecode.target);
-            Node* op1 = get(bytecode.lhs);
-            Node* op2 = get(bytecode.rhs);
+            unsigned relativeOffset = jumpTarget(bytecode.m_target);
+            Node* op1 = get(bytecode.m_lhs);
+            Node* op2 = get(bytecode.m_rhs);
             Node* condition = addToGraph(CompareEq, op1, op2);
             addToGraph(Branch, OpInfo(branchData(m_currentIndex + currentInstruction->size(), m_currentIndex + relativeOffset)), condition);
             LAST_OPCODE(op_jneq);
@@ -5772,9 +5772,9 @@ void ByteCodeParser::parseBlock(unsigned limit)
 
         case op_jnstricteq: {
             auto bytecode = currentInstruction->as<OpJnstricteq>();
-            unsigned relativeOffset = jumpTarget(bytecode.target);
-            Node* op1 = get(bytecode.lhs);
-            Node* op2 = get(bytecode.rhs);
+            unsigned relativeOffset = jumpTarget(bytecode.m_target);
+            Node* op1 = get(bytecode.m_lhs);
+            Node* op2 = get(bytecode.m_rhs);
             Node* condition = addToGraph(CompareStrictEq, op1, op2);
             addToGraph(Branch, OpInfo(branchData(m_currentIndex + currentInstruction->size(), m_currentIndex + relativeOffset)), condition);
             LAST_OPCODE(op_jnstricteq);
@@ -5782,9 +5782,9 @@ void ByteCodeParser::parseBlock(unsigned limit)
 
         case op_jbelow: {
             auto bytecode = currentInstruction->as<OpJbelow>();
-            unsigned relativeOffset = jumpTarget(bytecode.target);
-            Node* op1 = get(bytecode.lhs);
-            Node* op2 = get(bytecode.rhs);
+            unsigned relativeOffset = jumpTarget(bytecode.m_target);
+            Node* op1 = get(bytecode.m_lhs);
+            Node* op2 = get(bytecode.m_rhs);
             Node* condition = addToGraph(CompareBelow, op1, op2);
             addToGraph(Branch, OpInfo(branchData(m_currentIndex + relativeOffset, m_currentIndex + currentInstruction->size())), condition);
             LAST_OPCODE(op_jbelow);
@@ -5792,9 +5792,9 @@ void ByteCodeParser::parseBlock(unsigned limit)
 
         case op_jbeloweq: {
             auto bytecode = currentInstruction->as<OpJbeloweq>();
-            unsigned relativeOffset = jumpTarget(bytecode.target);
-            Node* op1 = get(bytecode.lhs);
-            Node* op2 = get(bytecode.rhs);
+            unsigned relativeOffset = jumpTarget(bytecode.m_target);
+            Node* op1 = get(bytecode.m_lhs);
+            Node* op2 = get(bytecode.m_rhs);
             Node* condition = addToGraph(CompareBelowEq, op1, op2);
             addToGraph(Branch, OpInfo(branchData(m_currentIndex + relativeOffset, m_currentIndex + currentInstruction->size())), condition);
             LAST_OPCODE(op_jbeloweq);
@@ -5804,8 +5804,8 @@ void ByteCodeParser::parseBlock(unsigned limit)
             auto bytecode = currentInstruction->as<OpSwitchImm>();
             SwitchData& data = *m_graph.m_switchData.add();
             data.kind = SwitchImm;
-            data.switchTableIndex = m_inlineStackTop->m_switchRemap[bytecode.tableIndex];
-            data.fallThrough.setBytecodeIndex(m_currentIndex + jumpTarget(bytecode.defaultOffset));
+            data.switchTableIndex = m_inlineStackTop->m_switchRemap[bytecode.m_tableIndex];
+            data.fallThrough.setBytecodeIndex(m_currentIndex + jumpTarget(bytecode.m_defaultOffset));
             SimpleJumpTable& table = m_codeBlock->switchJumpTable(data.switchTableIndex);
             for (unsigned i = 0; i < table.branchOffsets.size(); ++i) {
                 if (!table.branchOffsets[i])
@@ -5815,7 +5815,7 @@ void ByteCodeParser::parseBlock(unsigned limit)
                     continue;
                 data.cases.append(SwitchCase::withBytecodeIndex(m_graph.freeze(jsNumber(static_cast<int32_t>(table.min + i))), target));
             }
-            addToGraph(Switch, OpInfo(&data), get(bytecode.scrutinee));
+            addToGraph(Switch, OpInfo(&data), get(bytecode.m_scrutinee));
             flushIfTerminal(data);
             LAST_OPCODE(op_switch_imm);
         }
@@ -5824,8 +5824,8 @@ void ByteCodeParser::parseBlock(unsigned limit)
             auto bytecode = currentInstruction->as<OpSwitchChar>();
             SwitchData& data = *m_graph.m_switchData.add();
             data.kind = SwitchChar;
-            data.switchTableIndex = m_inlineStackTop->m_switchRemap[bytecode.tableIndex];
-            data.fallThrough.setBytecodeIndex(m_currentIndex + jumpTarget(bytecode.defaultOffset));
+            data.switchTableIndex = m_inlineStackTop->m_switchRemap[bytecode.m_tableIndex];
+            data.fallThrough.setBytecodeIndex(m_currentIndex + jumpTarget(bytecode.m_defaultOffset));
             SimpleJumpTable& table = m_codeBlock->switchJumpTable(data.switchTableIndex);
             for (unsigned i = 0; i < table.branchOffsets.size(); ++i) {
                 if (!table.branchOffsets[i])
@@ -5836,7 +5836,7 @@ void ByteCodeParser::parseBlock(unsigned limit)
                 data.cases.append(
                     SwitchCase::withBytecodeIndex(LazyJSValue::singleCharacterString(table.min + i), target));
             }
-            addToGraph(Switch, OpInfo(&data), get(bytecode.scrutinee));
+            addToGraph(Switch, OpInfo(&data), get(bytecode.m_scrutinee));
             flushIfTerminal(data);
             LAST_OPCODE(op_switch_char);
         }
@@ -5845,8 +5845,8 @@ void ByteCodeParser::parseBlock(unsigned limit)
             auto bytecode = currentInstruction->as<OpSwitchString>();
             SwitchData& data = *m_graph.m_switchData.add();
             data.kind = SwitchString;
-            data.switchTableIndex = bytecode.tableIndex;
-            data.fallThrough.setBytecodeIndex(m_currentIndex + jumpTarget(bytecode.defaultOffset));
+            data.switchTableIndex = bytecode.m_tableIndex;
+            data.fallThrough.setBytecodeIndex(m_currentIndex + jumpTarget(bytecode.m_defaultOffset));
             StringJumpTable& table = m_codeBlock->stringSwitchJumpTable(data.switchTableIndex);
             StringJumpTable::StringOffsetTable::iterator iter;
             StringJumpTable::StringOffsetTable::iterator end = table.offsetTable.end();
@@ -5857,7 +5857,7 @@ void ByteCodeParser::parseBlock(unsigned limit)
                 data.cases.append(
                     SwitchCase::withBytecodeIndex(LazyJSValue::knownStringImpl(iter->key.get()), target));
             }
-            addToGraph(Switch, OpInfo(&data), get(bytecode.scrutinee));
+            addToGraph(Switch, OpInfo(&data), get(bytecode.m_scrutinee));
             flushIfTerminal(data);
             LAST_OPCODE(op_switch_string);
         }
@@ -5867,14 +5867,14 @@ void ByteCodeParser::parseBlock(unsigned limit)
             ASSERT(!m_currentBlock->terminal());
             if (!inlineCallFrame()) {
                 // Simple case: we are just producing a return
-                addToGraph(Return, get(bytecode.value));
+                addToGraph(Return, get(bytecode.m_value));
                 flushForReturn();
                 LAST_OPCODE(op_ret);
             }
 
             flushForReturn();
             if (m_inlineStackTop->m_returnValue.isValid())
-                setDirect(m_inlineStackTop->m_returnValue, get(bytecode.value), ImmediateSetWithFlush);
+                setDirect(m_inlineStackTop->m_returnValue, get(bytecode.m_value), ImmediateSetWithFlush);
 
             if (!m_inlineStackTop->m_continuationBlock && m_currentIndex + currentInstruction->size() != m_inlineStackTop->m_codeBlock->instructions().size()) {
                 // This is an early return from an inlined function and we do not have a continuation block, so we must allocate one.
@@ -5893,18 +5893,18 @@ void ByteCodeParser::parseBlock(unsigned limit)
         }
         case op_end:
             ASSERT(!inlineCallFrame());
-            addToGraph(Return, get(currentInstruction->as<OpEnd>().value));
+            addToGraph(Return, get(currentInstruction->as<OpEnd>().m_value));
             flushForReturn();
             LAST_OPCODE(op_end);
 
         case op_throw:
-            addToGraph(Throw, get(currentInstruction->as<OpThrow>().value));
+            addToGraph(Throw, get(currentInstruction->as<OpThrow>().m_value));
             flushForTerminal();
             LAST_OPCODE(op_throw);
             
         case op_throw_static_error: {
             auto bytecode = currentInstruction->as<OpThrowStaticError>();
-            addToGraph(ThrowStaticError, OpInfo(bytecode.errorType), get(bytecode.message));
+            addToGraph(ThrowStaticError, OpInfo(bytecode.m_errorType), get(bytecode.m_message));
             flushForTerminal();
             LAST_OPCODE(op_throw_static_error);
         }
@@ -5924,7 +5924,7 @@ void ByteCodeParser::parseBlock(unsigned limit)
 
             RELEASE_ASSERT(!m_currentBlock->size() || (m_graph.compilation() && m_currentBlock->size() == 1 && m_currentBlock->at(0)->op() == CountExecution));
 
-            ValueProfileAndOperandBuffer* buffer = bytecode.metadata(codeBlock).buffer;
+            ValueProfileAndOperandBuffer* buffer = bytecode.metadata(codeBlock).m_buffer;
 
             if (!buffer) {
                 NEXT_OPCODE(op_catch); // This catch has yet to execute. Note: this load can be racy with the main thread.
@@ -6097,21 +6097,21 @@ void ByteCodeParser::parseBlock(unsigned limit)
             
         case op_call_eval: {
             auto bytecode = currentInstruction->as<OpCallEval>();
-            int registerOffset = -bytecode.argv;
-            addCall(bytecode.dst, CallEval, nullptr, get(bytecode.callee), bytecode.argc, registerOffset, getPrediction());
+            int registerOffset = -bytecode.m_argv;
+            addCall(bytecode.m_dst, CallEval, nullptr, get(bytecode.m_callee), bytecode.m_argc, registerOffset, getPrediction());
             NEXT_OPCODE(op_call_eval);
         }
             
         case op_jneq_ptr: {
             auto bytecode = currentInstruction->as<OpJneqPtr>();
-            Special::Pointer specialPointer = bytecode.specialPointer;
+            Special::Pointer specialPointer = bytecode.m_specialPointer;
             ASSERT(pointerIsCell(specialPointer));
             JSCell* actualPointer = static_cast<JSCell*>(
                 actualPointerFor(m_inlineStackTop->m_codeBlock, specialPointer));
             FrozenValue* frozenPointer = m_graph.freeze(actualPointer);
-            unsigned relativeOffset = jumpTarget(bytecode.target);
-            Node* child = get(bytecode.value);
-            if (bytecode.metadata(codeBlock).hasJumped) {
+            unsigned relativeOffset = jumpTarget(bytecode.m_target);
+            Node* child = get(bytecode.m_value);
+            if (bytecode.metadata(codeBlock).m_hasJumped) {
                 Node* condition = addToGraph(CompareEqPtr, OpInfo(frozenPointer), child);
                 addToGraph(Branch, OpInfo(branchData(m_currentIndex + currentInstruction->size(), m_currentIndex + relativeOffset)), condition);
                 LAST_OPCODE(op_jneq_ptr);
@@ -6131,8 +6131,8 @@ void ByteCodeParser::parseBlock(unsigned limit)
             SymbolTable* symbolTable = nullptr;
             {
                 ConcurrentJSLocker locker(m_inlineStackTop->m_profiledBlock->m_lock);
-                resolveType = metadata.resolveType;
-                depth = metadata.localScopeDepth;
+                resolveType = metadata.m_resolveType;
+                depth = metadata.m_localScopeDepth;
                 switch (resolveType) {
                 case GlobalProperty:
                 case GlobalVar:
@@ -6140,15 +6140,15 @@ void ByteCodeParser::parseBlock(unsigned limit)
                 case GlobalVarWithVarInjectionChecks:
                 case GlobalLexicalVar:
                 case GlobalLexicalVarWithVarInjectionChecks:
-                    constantScope = metadata.constantScope.get();
+                    constantScope = metadata.m_constantScope.get();
                     break;
                 case ModuleVar:
-                    lexicalEnvironment = metadata.lexicalEnvironment.get();
+                    lexicalEnvironment = metadata.m_lexicalEnvironment.get();
                     break;
                 case LocalClosureVar:
                 case ClosureVar:
                 case ClosureVarWithVarInjectionChecks:
-                    symbolTable = metadata.symbolTable.get();
+                    symbolTable = metadata.m_symbolTable.get();
                     break;
                 default:
                     break;
@@ -6156,8 +6156,8 @@ void ByteCodeParser::parseBlock(unsigned limit)
             }
 
             if (needsDynamicLookup(resolveType, op_resolve_scope)) {
-                unsigned identifierNumber = m_inlineStackTop->m_identifierRemap[bytecode.var];
-                set(bytecode.dst, addToGraph(ResolveScope, OpInfo(identifierNumber), get(bytecode.scope)));
+                unsigned identifierNumber = m_inlineStackTop->m_identifierRemap[bytecode.m_var];
+                set(bytecode.m_dst, addToGraph(ResolveScope, OpInfo(identifierNumber), get(bytecode.m_scope)));
                 NEXT_OPCODE(op_resolve_scope);
             }
 
@@ -6169,7 +6169,7 @@ void ByteCodeParser::parseBlock(unsigned limit)
             // https://bugs.webkit.org/show_bug.cgi?id=193347
             if (m_inlineStackTop->m_codeBlock->scriptMode() != JSParserScriptMode::Module) {
                 if (resolveType == GlobalProperty || resolveType == GlobalPropertyWithVarInjectionChecks) {
-                    unsigned identifierNumber = m_inlineStackTop->m_identifierRemap[bytecode.var];
+                    unsigned identifierNumber = m_inlineStackTop->m_identifierRemap[bytecode.m_var];
                     JSGlobalObject* globalObject = m_inlineStackTop->m_codeBlock->globalObject();
                     m_graph.globalProperties().addLazily(DesiredGlobalProperty(globalObject, identifierNumber));
                 }
@@ -6184,21 +6184,21 @@ void ByteCodeParser::parseBlock(unsigned limit)
             case GlobalLexicalVarWithVarInjectionChecks: {
                 RELEASE_ASSERT(constantScope);
                 RELEASE_ASSERT(constantScope == JSScope::constantScopeForCodeBlock(resolveType, m_inlineStackTop->m_codeBlock));
-                set(bytecode.dst, weakJSConstant(constantScope));
-                addToGraph(Phantom, get(bytecode.scope));
+                set(bytecode.m_dst, weakJSConstant(constantScope));
+                addToGraph(Phantom, get(bytecode.m_scope));
                 break;
             }
             case ModuleVar: {
                 // Since the value of the "scope" virtual register is not used in LLInt / baseline op_resolve_scope with ModuleVar,
                 // we need not to keep it alive by the Phantom node.
                 // Module environment is already strongly referenced by the CodeBlock.
-                set(bytecode.dst, weakJSConstant(lexicalEnvironment));
+                set(bytecode.m_dst, weakJSConstant(lexicalEnvironment));
                 break;
             }
             case LocalClosureVar:
             case ClosureVar:
             case ClosureVarWithVarInjectionChecks: {
-                Node* localBase = get(bytecode.scope);
+                Node* localBase = get(bytecode.m_scope);
                 addToGraph(Phantom, localBase); // OSR exit cannot handle resolve_scope on a DCE'd scope.
                 
                 // We have various forms of constant folding here. This is necessary to avoid
@@ -6207,26 +6207,26 @@ void ByteCodeParser::parseBlock(unsigned limit)
                     InferredValue* singleton = symbolTable->singletonScope();
                     if (JSValue value = singleton->inferredValue()) {
                         m_graph.watchpoints().addLazily(singleton);
-                        set(bytecode.dst, weakJSConstant(value));
+                        set(bytecode.m_dst, weakJSConstant(value));
                         break;
                     }
                 }
                 if (JSScope* scope = localBase->dynamicCastConstant<JSScope*>(*m_vm)) {
                     for (unsigned n = depth; n--;)
                         scope = scope->next();
-                    set(bytecode.dst, weakJSConstant(scope));
+                    set(bytecode.m_dst, weakJSConstant(scope));
                     break;
                 }
                 for (unsigned n = depth; n--;)
                     localBase = addToGraph(SkipScope, localBase);
-                set(bytecode.dst, localBase);
+                set(bytecode.m_dst, localBase);
                 break;
             }
             case UnresolvedProperty:
             case UnresolvedPropertyWithVarInjectionChecks: {
-                addToGraph(Phantom, get(bytecode.scope));
+                addToGraph(Phantom, get(bytecode.m_scope));
                 addToGraph(ForceOSRExit);
-                set(bytecode.dst, addToGraph(JSConstant, OpInfo(m_constantNull)));
+                set(bytecode.m_dst, addToGraph(JSConstant, OpInfo(m_constantNull)));
                 break;
             }
             case Dynamic:
@@ -6237,9 +6237,9 @@ void ByteCodeParser::parseBlock(unsigned limit)
         }
         case op_resolve_scope_for_hoisting_func_decl_in_eval: {
             auto bytecode = currentInstruction->as<OpResolveScopeForHoistingFuncDeclInEval>();
-            unsigned identifierNumber = m_inlineStackTop->m_identifierRemap[bytecode.property];
+            unsigned identifierNumber = m_inlineStackTop->m_identifierRemap[bytecode.m_property];
 
-            set(bytecode.dst, addToGraph(ResolveScopeForHoistingFuncDeclInEval, OpInfo(identifierNumber), get(bytecode.scope)));
+            set(bytecode.m_dst, addToGraph(ResolveScopeForHoistingFuncDeclInEval, OpInfo(identifierNumber), get(bytecode.m_scope)));
 
             NEXT_OPCODE(op_resolve_scope_for_hoisting_func_decl_in_eval);
         }
@@ -6247,7 +6247,7 @@ void ByteCodeParser::parseBlock(unsigned limit)
         case op_get_from_scope: {
             auto bytecode = currentInstruction->as<OpGetFromScope>();
             auto& metadata = bytecode.metadata(codeBlock);
-            unsigned identifierNumber = m_inlineStackTop->m_identifierRemap[bytecode.var];
+            unsigned identifierNumber = m_inlineStackTop->m_identifierRemap[bytecode.m_var];
             UniquedStringImpl* uid = m_graph.identifiers()[identifierNumber];
 
             ResolveType resolveType;
@@ -6257,20 +6257,20 @@ void ByteCodeParser::parseBlock(unsigned limit)
             uintptr_t operand;
             {
                 ConcurrentJSLocker locker(m_inlineStackTop->m_profiledBlock->m_lock);
-                getPutInfo = metadata.getPutInfo;
+                getPutInfo = metadata.m_getPutInfo;
                 resolveType = getPutInfo.resolveType();
                 if (resolveType == GlobalVar || resolveType == GlobalVarWithVarInjectionChecks || resolveType == GlobalLexicalVar || resolveType == GlobalLexicalVarWithVarInjectionChecks)
-                    watchpoints = metadata.watchpointSet;
+                    watchpoints = metadata.m_watchpointSet;
                 else if (resolveType != UnresolvedProperty && resolveType != UnresolvedPropertyWithVarInjectionChecks)
-                    structure = metadata.structure.get();
-                operand = metadata.operand;
+                    structure = metadata.m_structure.get();
+                operand = metadata.m_operand;
             }
 
             if (needsDynamicLookup(resolveType, op_get_from_scope)) {
                 uint64_t opInfo1 = makeDynamicVarOpInfo(identifierNumber, getPutInfo.operand());
                 SpeculatedType prediction = getPrediction();
-                set(bytecode.dst,
-                    addToGraph(GetDynamicVar, OpInfo(opInfo1), OpInfo(prediction), get(bytecode.scope)));
+                set(bytecode.m_dst,
+                    addToGraph(GetDynamicVar, OpInfo(opInfo1), OpInfo(prediction), get(bytecode.m_scope)));
                 NEXT_OPCODE(op_get_from_scope);
             }
 
@@ -6292,21 +6292,21 @@ void ByteCodeParser::parseBlock(unsigned limit)
                 if (status.state() != GetByIdStatus::Simple
                     || status.numVariants() != 1
                     || status[0].structureSet().size() != 1) {
-                    set(bytecode.dst, addToGraph(GetByIdFlush, OpInfo(identifierNumber), OpInfo(prediction), get(bytecode.scope)));
+                    set(bytecode.m_dst, addToGraph(GetByIdFlush, OpInfo(identifierNumber), OpInfo(prediction), get(bytecode.m_scope)));
                     break;
                 }
 
                 Node* base = weakJSConstant(globalObject);
                 Node* result = load(prediction, base, identifierNumber, status[0]);
-                addToGraph(Phantom, get(bytecode.scope));
-                set(bytecode.dst, result);
+                addToGraph(Phantom, get(bytecode.m_scope));
+                set(bytecode.m_dst, result);
                 break;
             }
             case GlobalVar:
             case GlobalVarWithVarInjectionChecks:
             case GlobalLexicalVar:
             case GlobalLexicalVarWithVarInjectionChecks: {
-                addToGraph(Phantom, get(bytecode.scope));
+                addToGraph(Phantom, get(bytecode.m_scope));
                 WatchpointSet* watchpointSet;
                 ScopeOffset offset;
                 JSSegmentedVariableObject* scopeObject = jsCast<JSSegmentedVariableObject*>(JSScope::constantScopeForCodeBlock(resolveType, m_inlineStackTop->m_codeBlock));
@@ -6362,7 +6362,7 @@ void ByteCodeParser::parseBlock(unsigned limit)
                     JSValue value = pointer->get();
                     if (value) {
                         m_graph.watchpoints().addLazily(watchpointSet);
-                        set(bytecode.dst, weakJSConstant(value));
+                        set(bytecode.m_dst, weakJSConstant(value));
                         break;
                     }
                 }
@@ -6376,13 +6376,13 @@ void ByteCodeParser::parseBlock(unsigned limit)
                 Node* value = addToGraph(nodeType, OpInfo(operand), OpInfo(prediction));
                 if (resolveType == GlobalLexicalVar || resolveType == GlobalLexicalVarWithVarInjectionChecks)
                     addToGraph(CheckNotEmpty, value);
-                set(bytecode.dst, value);
+                set(bytecode.m_dst, value);
                 break;
             }
             case LocalClosureVar:
             case ClosureVar:
             case ClosureVarWithVarInjectionChecks: {
-                Node* scopeNode = get(bytecode.scope);
+                Node* scopeNode = get(bytecode.m_scope);
                 
                 // Ideally we wouldn't have to do this Phantom. But:
                 //
@@ -6398,11 +6398,11 @@ void ByteCodeParser::parseBlock(unsigned limit)
                 // prediction, we'd otherwise think that it has to exit. Then when it did execute, we
                 // would recompile. But if we can fold it here, we avoid the exit.
                 if (JSValue value = m_graph.tryGetConstantClosureVar(scopeNode, ScopeOffset(operand))) {
-                    set(bytecode.dst, weakJSConstant(value));
+                    set(bytecode.m_dst, weakJSConstant(value));
                     break;
                 }
                 SpeculatedType prediction = getPrediction();
-                set(bytecode.dst,
+                set(bytecode.m_dst,
                     addToGraph(GetClosureVar, OpInfo(operand), OpInfo(prediction), scopeNode));
                 break;
             }
@@ -6419,7 +6419,7 @@ void ByteCodeParser::parseBlock(unsigned limit)
         case op_put_to_scope: {
             auto bytecode = currentInstruction->as<OpPutToScope>();
             auto& metadata = bytecode.metadata(codeBlock);
-            unsigned identifierNumber = bytecode.var;
+            unsigned identifierNumber = bytecode.m_var;
             if (identifierNumber != UINT_MAX)
                 identifierNumber = m_inlineStackTop->m_identifierRemap[identifierNumber];
             UniquedStringImpl* uid;
@@ -6435,13 +6435,13 @@ void ByteCodeParser::parseBlock(unsigned limit)
             uintptr_t operand;
             {
                 ConcurrentJSLocker locker(m_inlineStackTop->m_profiledBlock->m_lock);
-                getPutInfo = metadata.getPutInfo;
+                getPutInfo = metadata.m_getPutInfo;
                 resolveType = getPutInfo.resolveType();
                 if (resolveType == GlobalVar || resolveType == GlobalVarWithVarInjectionChecks || resolveType == LocalClosureVar || resolveType == GlobalLexicalVar || resolveType == GlobalLexicalVarWithVarInjectionChecks)
-                    watchpoints = metadata.watchpointSet;
+                    watchpoints = metadata.m_watchpointSet;
                 else if (resolveType != UnresolvedProperty && resolveType != UnresolvedPropertyWithVarInjectionChecks)
-                    structure = metadata.structure.get();
-                operand = metadata.operand;
+                    structure = metadata.m_structure.get();
+                operand = metadata.m_operand;
             }
 
             JSGlobalObject* globalObject = m_inlineStackTop->m_codeBlock->globalObject();
@@ -6449,7 +6449,7 @@ void ByteCodeParser::parseBlock(unsigned limit)
             if (needsDynamicLookup(resolveType, op_put_to_scope)) {
                 ASSERT(identifierNumber != UINT_MAX);
                 uint64_t opInfo1 = makeDynamicVarOpInfo(identifierNumber, getPutInfo.operand());
-                addToGraph(PutDynamicVar, OpInfo(opInfo1), OpInfo(), get(bytecode.scope), get(bytecode.value));
+                addToGraph(PutDynamicVar, OpInfo(opInfo1), OpInfo(), get(bytecode.m_scope), get(bytecode.m_value));
                 NEXT_OPCODE(op_put_to_scope);
             }
 
@@ -6469,13 +6469,13 @@ void ByteCodeParser::parseBlock(unsigned limit)
                 if (status.numVariants() != 1
                     || status[0].kind() != PutByIdVariant::Replace
                     || status[0].structure().size() != 1) {
-                    addToGraph(PutById, OpInfo(identifierNumber), get(bytecode.scope), get(bytecode.value));
+                    addToGraph(PutById, OpInfo(identifierNumber), get(bytecode.m_scope), get(bytecode.m_value));
                     break;
                 }
                 Node* base = weakJSConstant(globalObject);
-                store(base, identifierNumber, status[0], get(bytecode.value));
+                store(base, identifierNumber, status[0], get(bytecode.m_value));
                 // Keep scope alive until after put.
-                addToGraph(Phantom, get(bytecode.scope));
+                addToGraph(Phantom, get(bytecode.m_scope));
                 break;
             }
             case GlobalLexicalVar:
@@ -6493,21 +6493,21 @@ void ByteCodeParser::parseBlock(unsigned limit)
                     SymbolTableEntry entry = scopeObject->symbolTable()->get(uid);
                     ASSERT_UNUSED(entry, watchpoints == entry.watchpointSet());
                 }
-                Node* valueNode = get(bytecode.value);
+                Node* valueNode = get(bytecode.m_value);
                 addToGraph(PutGlobalVariable, OpInfo(operand), weakJSConstant(scopeObject), valueNode);
                 if (watchpoints && watchpoints->state() != IsInvalidated) {
                     // Must happen after the store. See comment for GetGlobalVar.
                     addToGraph(NotifyWrite, OpInfo(watchpoints));
                 }
                 // Keep scope alive until after put.
-                addToGraph(Phantom, get(bytecode.scope));
+                addToGraph(Phantom, get(bytecode.m_scope));
                 break;
             }
             case LocalClosureVar:
             case ClosureVar:
             case ClosureVarWithVarInjectionChecks: {
-                Node* scopeNode = get(bytecode.scope);
-                Node* valueNode = get(bytecode.value);
+                Node* scopeNode = get(bytecode.m_scope);
+                Node* valueNode = get(bytecode.m_value);
 
                 addToGraph(PutClosureVar, OpInfo(operand), scopeNode, valueNode);
 
@@ -6571,28 +6571,28 @@ void ByteCodeParser::parseBlock(unsigned limit)
 
         case op_create_lexical_environment: {
             auto bytecode = currentInstruction->as<OpCreateLexicalEnvironment>();
-            ASSERT(bytecode.symbolTable.isConstant() && bytecode.initialValue.isConstant());
-            FrozenValue* symbolTable = m_graph.freezeStrong(m_inlineStackTop->m_codeBlock->getConstant(bytecode.symbolTable.offset()));
-            FrozenValue* initialValue = m_graph.freezeStrong(m_inlineStackTop->m_codeBlock->getConstant(bytecode.initialValue.offset()));
-            Node* scope = get(bytecode.scope);
+            ASSERT(bytecode.m_symbolTable.isConstant() && bytecode.m_initialValue.isConstant());
+            FrozenValue* symbolTable = m_graph.freezeStrong(m_inlineStackTop->m_codeBlock->getConstant(bytecode.m_symbolTable.offset()));
+            FrozenValue* initialValue = m_graph.freezeStrong(m_inlineStackTop->m_codeBlock->getConstant(bytecode.m_initialValue.offset()));
+            Node* scope = get(bytecode.m_scope);
             Node* lexicalEnvironment = addToGraph(CreateActivation, OpInfo(symbolTable), OpInfo(initialValue), scope);
-            set(bytecode.dst, lexicalEnvironment);
+            set(bytecode.m_dst, lexicalEnvironment);
             NEXT_OPCODE(op_create_lexical_environment);
         }
 
         case op_push_with_scope: {
             auto bytecode = currentInstruction->as<OpPushWithScope>();
-            Node* currentScope = get(bytecode.currentScope);
-            Node* object = get(bytecode.newScope);
-            set(bytecode.dst, addToGraph(PushWithScope, currentScope, object));
+            Node* currentScope = get(bytecode.m_currentScope);
+            Node* object = get(bytecode.m_newScope);
+            set(bytecode.m_dst, addToGraph(PushWithScope, currentScope, object));
             NEXT_OPCODE(op_push_with_scope);
         }
 
         case op_get_parent_scope: {
             auto bytecode = currentInstruction->as<OpGetParentScope>();
-            Node* currentScope = get(bytecode.scope);
+            Node* currentScope = get(bytecode.m_scope);
             Node* newScope = addToGraph(SkipScope, currentScope);
-            set(bytecode.dst, newScope);
+            set(bytecode.m_dst, newScope);
             addToGraph(Phantom, currentScope);
             NEXT_OPCODE(op_get_parent_scope);
         }
@@ -6609,14 +6609,14 @@ void ByteCodeParser::parseBlock(unsigned limit)
                 result = weakJSConstant(function->scope());
             else
                 result = addToGraph(GetScope, callee);
-            set(bytecode.dst, result);
+            set(bytecode.m_dst, result);
             NEXT_OPCODE(op_get_scope);
         }
 
         case op_argument_count: {
             auto bytecode = currentInstruction->as<OpArgumentCount>();
             Node* sub = addToGraph(ArithSub, OpInfo(Arith::Unchecked), OpInfo(SpecInt32Only), getArgumentCount(), addToGraph(JSConstant, OpInfo(m_constantOne)));
-            set(bytecode.dst, sub);
+            set(bytecode.m_dst, sub);
             NEXT_OPCODE(op_argument_count);
         }
 
@@ -6624,15 +6624,15 @@ void ByteCodeParser::parseBlock(unsigned limit)
             auto bytecode = currentInstruction->as<OpCreateDirectArguments>();
             noticeArgumentsUse();
             Node* createArguments = addToGraph(CreateDirectArguments);
-            set(bytecode.dst, createArguments);
+            set(bytecode.m_dst, createArguments);
             NEXT_OPCODE(op_create_direct_arguments);
         }
             
         case op_create_scoped_arguments: {
             auto bytecode = currentInstruction->as<OpCreateScopedArguments>();
             noticeArgumentsUse();
-            Node* createArguments = addToGraph(CreateScopedArguments, get(bytecode.scope));
-            set(bytecode.dst, createArguments);
+            Node* createArguments = addToGraph(CreateScopedArguments, get(bytecode.m_scope));
+            set(bytecode.m_dst, createArguments);
             NEXT_OPCODE(op_create_scoped_arguments);
         }
 
@@ -6640,18 +6640,18 @@ void ByteCodeParser::parseBlock(unsigned limit)
             auto bytecode = currentInstruction->as<OpCreateClonedArguments>();
             noticeArgumentsUse();
             Node* createArguments = addToGraph(CreateClonedArguments);
-            set(bytecode.dst, createArguments);
+            set(bytecode.m_dst, createArguments);
             NEXT_OPCODE(op_create_cloned_arguments);
         }
             
         case op_get_from_arguments: {
             auto bytecode = currentInstruction->as<OpGetFromArguments>();
-            set(bytecode.dst,
+            set(bytecode.m_dst,
                 addToGraph(
                     GetFromArguments,
-                    OpInfo(bytecode.index),
+                    OpInfo(bytecode.m_index),
                     OpInfo(getPrediction()),
-                    get(bytecode.arguments)));
+                    get(bytecode.m_arguments)));
             NEXT_OPCODE(op_get_from_arguments);
         }
             
@@ -6659,9 +6659,9 @@ void ByteCodeParser::parseBlock(unsigned limit)
             auto bytecode = currentInstruction->as<OpPutToArguments>();
             addToGraph(
                 PutToArguments,
-                OpInfo(bytecode.index),
-                get(bytecode.arguments),
-                get(bytecode.value));
+                OpInfo(bytecode.m_index),
+                get(bytecode.m_arguments),
+                get(bytecode.m_value));
             NEXT_OPCODE(op_put_to_arguments);
         }
 
@@ -6669,7 +6669,7 @@ void ByteCodeParser::parseBlock(unsigned limit)
             auto bytecode = currentInstruction->as<OpGetArgument>();
             InlineCallFrame* inlineCallFrame = this->inlineCallFrame();
             Node* argument;
-            int32_t argumentIndexIncludingThis = bytecode.index;
+            int32_t argumentIndexIncludingThis = bytecode.m_index;
             if (inlineCallFrame && !inlineCallFrame->isVarargs()) {
                 int32_t argumentCountIncludingThisWithFixup = inlineCallFrame->argumentsWithFixup.size();
                 if (argumentIndexIncludingThis < argumentCountIncludingThisWithFixup)
@@ -6678,7 +6678,7 @@ void ByteCodeParser::parseBlock(unsigned limit)
                     argument = addToGraph(JSConstant, OpInfo(m_constantUndefined));
             } else
                 argument = addToGraph(GetArgument, OpInfo(argumentIndexIncludingThis), OpInfo(getPrediction()));
-            set(bytecode.dst, argument);
+            set(bytecode.m_dst, argument);
             NEXT_OPCODE(op_get_argument);
         }
         case op_new_async_generator_func:
@@ -6709,53 +6709,53 @@ void ByteCodeParser::parseBlock(unsigned limit)
 
         case op_set_function_name: {
             auto bytecode = currentInstruction->as<OpSetFunctionName>();
-            Node* func = get(bytecode.function);
-            Node* name = get(bytecode.name);
+            Node* func = get(bytecode.m_function);
+            Node* name = get(bytecode.m_name);
             addToGraph(SetFunctionName, func, name);
             NEXT_OPCODE(op_set_function_name);
         }
 
         case op_typeof: {
             auto bytecode = currentInstruction->as<OpTypeof>();
-            set(bytecode.dst, addToGraph(TypeOf, get(bytecode.value)));
+            set(bytecode.m_dst, addToGraph(TypeOf, get(bytecode.m_value)));
             NEXT_OPCODE(op_typeof);
         }
 
         case op_to_number: {
             auto bytecode = currentInstruction->as<OpToNumber>();
             SpeculatedType prediction = getPrediction();
-            Node* value = get(bytecode.operand);
-            set(bytecode.dst, addToGraph(ToNumber, OpInfo(0), OpInfo(prediction), value));
+            Node* value = get(bytecode.m_operand);
+            set(bytecode.m_dst, addToGraph(ToNumber, OpInfo(0), OpInfo(prediction), value));
             NEXT_OPCODE(op_to_number);
         }
 
         case op_to_string: {
             auto bytecode = currentInstruction->as<OpToString>();
-            Node* value = get(bytecode.operand);
-            set(bytecode.dst, addToGraph(ToString, value));
+            Node* value = get(bytecode.m_operand);
+            set(bytecode.m_dst, addToGraph(ToString, value));
             NEXT_OPCODE(op_to_string);
         }
 
         case op_to_object: {
             auto bytecode = currentInstruction->as<OpToObject>();
             SpeculatedType prediction = getPrediction();
-            Node* value = get(bytecode.operand);
-            unsigned identifierNumber = m_inlineStackTop->m_identifierRemap[bytecode.message];
-            set(bytecode.dst, addToGraph(ToObject, OpInfo(identifierNumber), OpInfo(prediction), value));
+            Node* value = get(bytecode.m_operand);
+            unsigned identifierNumber = m_inlineStackTop->m_identifierRemap[bytecode.m_message];
+            set(bytecode.m_dst, addToGraph(ToObject, OpInfo(identifierNumber), OpInfo(prediction), value));
             NEXT_OPCODE(op_to_object);
         }
 
         case op_in_by_val: {
             auto bytecode = currentInstruction->as<OpInByVal>();
-            ArrayMode arrayMode = getArrayMode(bytecode.metadata(codeBlock).arrayProfile, Array::Read);
-            set(bytecode.dst, addToGraph(InByVal, OpInfo(arrayMode.asWord()), get(bytecode.base), get(bytecode.property)));
+            ArrayMode arrayMode = getArrayMode(bytecode.metadata(codeBlock).m_arrayProfile, Array::Read);
+            set(bytecode.m_dst, addToGraph(InByVal, OpInfo(arrayMode.asWord()), get(bytecode.m_base), get(bytecode.m_property)));
             NEXT_OPCODE(op_in_by_val);
         }
 
         case op_in_by_id: {
             auto bytecode = currentInstruction->as<OpInById>();
-            Node* base = get(bytecode.base);
-            unsigned identifierNumber = m_inlineStackTop->m_identifierRemap[bytecode.property];
+            Node* base = get(bytecode.m_base);
+            unsigned identifierNumber = m_inlineStackTop->m_identifierRemap[bytecode.m_property];
             UniquedStringImpl* uid = m_graph.identifiers()[identifierNumber];
 
             InByIdStatus status = InByIdStatus::computeFor(
@@ -6784,43 +6784,43 @@ void ByteCodeParser::parseBlock(unsigned limit)
                     addToGraph(FilterInByIdStatus, OpInfo(m_graph.m_plan.recordedStatuses().addInByIdStatus(currentCodeOrigin(), status)), base);
 
                     Node* match = addToGraph(MatchStructure, OpInfo(data), base);
-                    set(bytecode.dst, match);
+                    set(bytecode.m_dst, match);
                     NEXT_OPCODE(op_in_by_id);
                 }
             }
 
-            set(bytecode.dst, addToGraph(InById, OpInfo(identifierNumber), base));
+            set(bytecode.m_dst, addToGraph(InById, OpInfo(identifierNumber), base));
             NEXT_OPCODE(op_in_by_id);
         }
 
         case op_get_enumerable_length: {
             auto bytecode = currentInstruction->as<OpGetEnumerableLength>();
-            set(bytecode.dst, addToGraph(GetEnumerableLength, get(bytecode.base)));
+            set(bytecode.m_dst, addToGraph(GetEnumerableLength, get(bytecode.m_base)));
             NEXT_OPCODE(op_get_enumerable_length);
         }
 
         case op_has_generic_property: {
             auto bytecode = currentInstruction->as<OpHasGenericProperty>();
-            set(bytecode.dst, addToGraph(HasGenericProperty, get(bytecode.base), get(bytecode.property)));
+            set(bytecode.m_dst, addToGraph(HasGenericProperty, get(bytecode.m_base), get(bytecode.m_property)));
             NEXT_OPCODE(op_has_generic_property);
         }
 
         case op_has_structure_property: {
             auto bytecode = currentInstruction->as<OpHasStructureProperty>();
-            set(bytecode.dst, addToGraph(HasStructureProperty, 
-                get(bytecode.base),
-                get(bytecode.property),
-                get(bytecode.enumerator)));
+            set(bytecode.m_dst, addToGraph(HasStructureProperty,
+                get(bytecode.m_base),
+                get(bytecode.m_property),
+                get(bytecode.m_enumerator)));
             NEXT_OPCODE(op_has_structure_property);
         }
 
         case op_has_indexed_property: {
             auto bytecode = currentInstruction->as<OpHasIndexedProperty>();
-            Node* base = get(bytecode.base);
-            ArrayMode arrayMode = getArrayMode(bytecode.metadata(codeBlock).arrayProfile, Array::Read);
-            Node* property = get(bytecode.property);
+            Node* base = get(bytecode.m_base);
+            ArrayMode arrayMode = getArrayMode(bytecode.metadata(codeBlock).m_arrayProfile, Array::Read);
+            Node* property = get(bytecode.m_property);
             Node* hasIterableProperty = addToGraph(HasIndexedProperty, OpInfo(arrayMode.asWord()), OpInfo(static_cast<uint32_t>(PropertySlot::InternalMethodType::GetOwnProperty)), base, property);
-            set(bytecode.dst, hasIterableProperty);
+            set(bytecode.m_dst, hasIterableProperty);
             NEXT_OPCODE(op_has_indexed_property);
         }
 
@@ -6828,52 +6828,52 @@ void ByteCodeParser::parseBlock(unsigned limit)
             auto bytecode = currentInstruction->as<OpGetDirectPname>();
             SpeculatedType prediction = getPredictionWithoutOSRExit();
             
-            Node* base = get(bytecode.base);
-            Node* property = get(bytecode.property);
-            Node* index = get(bytecode.index);
-            Node* enumerator = get(bytecode.enumerator);
+            Node* base = get(bytecode.m_base);
+            Node* property = get(bytecode.m_property);
+            Node* index = get(bytecode.m_index);
+            Node* enumerator = get(bytecode.m_enumerator);
 
             addVarArgChild(base);
             addVarArgChild(property);
             addVarArgChild(index);
             addVarArgChild(enumerator);
-            set(bytecode.dst, addToGraph(Node::VarArg, GetDirectPname, OpInfo(0), OpInfo(prediction)));
+            set(bytecode.m_dst, addToGraph(Node::VarArg, GetDirectPname, OpInfo(0), OpInfo(prediction)));
 
             NEXT_OPCODE(op_get_direct_pname);
         }
 
         case op_get_property_enumerator: {
             auto bytecode = currentInstruction->as<OpGetPropertyEnumerator>();
-            set(bytecode.dst, addToGraph(GetPropertyEnumerator, get(bytecode.base)));
+            set(bytecode.m_dst, addToGraph(GetPropertyEnumerator, get(bytecode.m_base)));
             NEXT_OPCODE(op_get_property_enumerator);
         }
 
         case op_enumerator_structure_pname: {
             auto bytecode = currentInstruction->as<OpEnumeratorStructurePname>();
-            set(bytecode.dst, addToGraph(GetEnumeratorStructurePname,
-                get(bytecode.enumerator),
-                get(bytecode.index)));
+            set(bytecode.m_dst, addToGraph(GetEnumeratorStructurePname,
+                get(bytecode.m_enumerator),
+                get(bytecode.m_index)));
             NEXT_OPCODE(op_enumerator_structure_pname);
         }
 
         case op_enumerator_generic_pname: {
             auto bytecode = currentInstruction->as<OpEnumeratorGenericPname>();
-            set(bytecode.dst, addToGraph(GetEnumeratorGenericPname,
-                get(bytecode.enumerator),
-                get(bytecode.index)));
+            set(bytecode.m_dst, addToGraph(GetEnumeratorGenericPname,
+                get(bytecode.m_enumerator),
+                get(bytecode.m_index)));
             NEXT_OPCODE(op_enumerator_generic_pname);
         }
             
         case op_to_index_string: {
             auto bytecode = currentInstruction->as<OpToIndexString>();
-            set(bytecode.dst, addToGraph(ToIndexString, get(bytecode.index)));
+            set(bytecode.m_dst, addToGraph(ToIndexString, get(bytecode.m_index)));
             NEXT_OPCODE(op_to_index_string);
         }
             
         case op_log_shadow_chicken_prologue: {
             auto bytecode = currentInstruction->as<OpLogShadowChickenPrologue>();
             if (!m_inlineStackTop->m_inlineCallFrame)
-                addToGraph(LogShadowChickenPrologue, get(bytecode.scope));
+                addToGraph(LogShadowChickenPrologue, get(bytecode.m_scope));
             NEXT_OPCODE(op_log_shadow_chicken_prologue);
         }
 
@@ -6883,7 +6883,7 @@ void ByteCodeParser::parseBlock(unsigned limit)
                 // FIXME: The right solution for inlining is to elide these whenever the tail call
                 // ends up being inlined.
                 // https://bugs.webkit.org/show_bug.cgi?id=155686
-                addToGraph(LogShadowChickenTail, get(bytecode.thisValue), get(bytecode.scope));
+                addToGraph(LogShadowChickenTail, get(bytecode.m_thisValue), get(bytecode.m_scope));
             }
             NEXT_OPCODE(op_log_shadow_chicken_tail);
         }
@@ -7147,9 +7147,9 @@ void ByteCodeParser::parseCodeBlock()
 template <typename Bytecode>
 void ByteCodeParser::handlePutByVal(Bytecode bytecode, unsigned instructionSize)
 {
-    Node* base = get(bytecode.base);
-    Node* property = get(bytecode.property);
-    Node* value = get(bytecode.value);
+    Node* base = get(bytecode.m_base);
+    Node* property = get(bytecode.m_property);
+    Node* value = get(bytecode.m_value);
     bool isDirect = Bytecode::opcodeID == op_put_by_val_direct;
     bool compiledAsPutById = false;
     {
@@ -7190,7 +7190,7 @@ void ByteCodeParser::handlePutByVal(Bytecode bytecode, unsigned instructionSize)
     }
 
     if (!compiledAsPutById) {
-        ArrayMode arrayMode = getArrayMode(bytecode.metadata(m_inlineStackTop->m_codeBlock).arrayProfile, Array::Write);
+        ArrayMode arrayMode = getArrayMode(bytecode.metadata(m_inlineStackTop->m_codeBlock).m_arrayProfile, Array::Write);
 
         addVarArgChild(base);
         addVarArgChild(property);
@@ -7204,28 +7204,28 @@ void ByteCodeParser::handlePutByVal(Bytecode bytecode, unsigned instructionSize)
 template <typename Bytecode>
 void ByteCodeParser::handlePutAccessorById(NodeType op, Bytecode bytecode)
 {
-    Node* base = get(bytecode.base);
-    unsigned identifierNumber = m_inlineStackTop->m_identifierRemap[bytecode.property];
-    Node* accessor = get(bytecode.accessor);
-    addToGraph(op, OpInfo(identifierNumber), OpInfo(bytecode.attributes), base, accessor);
+    Node* base = get(bytecode.m_base);
+    unsigned identifierNumber = m_inlineStackTop->m_identifierRemap[bytecode.m_property];
+    Node* accessor = get(bytecode.m_accessor);
+    addToGraph(op, OpInfo(identifierNumber), OpInfo(bytecode.m_attributes), base, accessor);
 }
 
 template <typename Bytecode>
 void ByteCodeParser::handlePutAccessorByVal(NodeType op, Bytecode bytecode)
 {
-    Node* base = get(bytecode.base);
-    Node* subscript = get(bytecode.property);
-    Node* accessor = get(bytecode.accessor);
-    addToGraph(op, OpInfo(bytecode.attributes), base, subscript, accessor);
+    Node* base = get(bytecode.m_base);
+    Node* subscript = get(bytecode.m_property);
+    Node* accessor = get(bytecode.m_accessor);
+    addToGraph(op, OpInfo(bytecode.m_attributes), base, subscript, accessor);
 }
 
 template <typename Bytecode>
 void ByteCodeParser::handleNewFunc(NodeType op, Bytecode bytecode)
 {
-    FunctionExecutable* decl = m_inlineStackTop->m_profiledBlock->functionDecl(bytecode.functionDecl);
+    FunctionExecutable* decl = m_inlineStackTop->m_profiledBlock->functionDecl(bytecode.m_functionDecl);
     FrozenValue* frozen = m_graph.freezeStrong(decl);
-    Node* scope = get(bytecode.scope);
-    set(bytecode.dst, addToGraph(op, OpInfo(frozen), scope));
+    Node* scope = get(bytecode.m_scope);
+    set(bytecode.m_dst, addToGraph(op, OpInfo(frozen), scope));
     // Ideally we wouldn't have to do this Phantom. But:
     //
     // For the constant case: we must do it because otherwise we would have no way of knowing
@@ -7239,10 +7239,10 @@ void ByteCodeParser::handleNewFunc(NodeType op, Bytecode bytecode)
 template <typename Bytecode>
 void ByteCodeParser::handleNewFuncExp(NodeType op, Bytecode bytecode)
 {
-    FunctionExecutable* expr = m_inlineStackTop->m_profiledBlock->functionExpr(bytecode.functionDecl);
+    FunctionExecutable* expr = m_inlineStackTop->m_profiledBlock->functionExpr(bytecode.m_functionDecl);
     FrozenValue* frozen = m_graph.freezeStrong(expr);
-    Node* scope = get(bytecode.scope);
-    set(bytecode.dst, addToGraph(op, OpInfo(frozen), scope));
+    Node* scope = get(bytecode.m_scope);
+    set(bytecode.m_dst, addToGraph(op, OpInfo(frozen), scope));
     // Ideally we wouldn't have to do this Phantom. But:
     //
     // For the constant case: we must do it because otherwise we would have no way of knowing

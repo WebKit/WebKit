@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011-2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2011-2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -392,7 +392,7 @@ MacroAssemblerCodePtr<ExceptionHandlerPtrTag> prepareCatchOSREntry(ExecState* ex
 
     auto instruction = exec->codeBlock()->instructions().at(exec->bytecodeOffset());
     ASSERT(instruction->is<OpCatch>());
-    ValueProfileAndOperandBuffer* buffer = instruction->as<OpCatch>().metadata(exec).buffer;
+    ValueProfileAndOperandBuffer* buffer = instruction->as<OpCatch>().metadata(exec).m_buffer;
     JSValue* dataBuffer = reinterpret_cast<JSValue*>(dfgCommon->catchOSREntryBuffer->dataBuffer());
     unsigned index = 0;
     buffer->forEach([&] (ValueProfileAndOperand& profile) {

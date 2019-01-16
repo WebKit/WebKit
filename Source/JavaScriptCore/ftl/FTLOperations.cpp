@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014-2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2014-2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -477,7 +477,7 @@ extern "C" JSCell* JIT_OPERATION operationMaterializeObjectInOSR(
         const Instruction* currentInstruction = codeBlock->instructions().at(materialization->origin().bytecodeIndex).ptr();
         RELEASE_ASSERT(currentInstruction->is<OpNewArrayBuffer>());
         auto newArrayBuffer = currentInstruction->as<OpNewArrayBuffer>();
-        ArrayAllocationProfile* profile = &newArrayBuffer.metadata(codeBlock).arrayAllocationProfile;
+        ArrayAllocationProfile* profile = &newArrayBuffer.metadata(codeBlock).m_arrayAllocationProfile;
 
         // FIXME: Share the code with CommonSlowPaths. Currently, codeBlock etc. are slightly different.
         IndexingType indexingMode = profile->selectIndexingType();
@@ -495,7 +495,7 @@ extern "C" JSCell* JIT_OPERATION operationMaterializeObjectInOSR(
             // We also cannot allocate a new butterfly from compilation threads since it's invalid to allocate cells from
             // a compilation thread.
             WTF::storeStoreFence();
-            codeBlock->constantRegister(newArrayBuffer.immutableButterfly.offset()).set(vm, codeBlock, immutableButterfly);
+            codeBlock->constantRegister(newArrayBuffer.m_immutableButterfly.offset()).set(vm, codeBlock, immutableButterfly);
             WTF::storeStoreFence();
         }
 

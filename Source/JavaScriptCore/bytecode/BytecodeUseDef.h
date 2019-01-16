@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -32,7 +32,7 @@
 namespace JSC {
 
 #define CALL_FUNCTOR(__arg) \
-    functor(__bytecode.__arg);
+    functor(__bytecode.m_##__arg);
 
 #define USES_OR_DEFS(__opcode, ...) \
     case __opcode::opcodeID: { \
@@ -51,15 +51,15 @@ void computeUsesForBytecodeOffset(Block* codeBlock, OpcodeID opcodeID, const Ins
         functor(codeBlock->scopeRegister());
 
     auto handleNewArrayLike = [&](auto op) {
-        int base = op.argv.offset();
-        for (int i = 0; i < static_cast<int>(op.argc); i++)
+        int base = op.m_argv.offset();
+        for (int i = 0; i < static_cast<int>(op.m_argc); i++)
             functor(VirtualRegister { base - i });
     };
 
     auto handleOpCallLike = [&](auto op) {
-        functor(op.callee);
-        int lastArg = -static_cast<int>(op.argv) + CallFrame::thisArgumentOffset();
-        for (int i = 0; i < static_cast<int>(op.argc); i++)
+        functor(op.m_callee);
+        int lastArg = -static_cast<int>(op.m_argv) + CallFrame::thisArgumentOffset();
+        for (int i = 0; i < static_cast<int>(op.m_argc); i++)
             functor(VirtualRegister { lastArg + i });
         if (opcodeID == op_call_eval)
             functor(codeBlock->scopeRegister());
@@ -258,8 +258,8 @@ void computeUsesForBytecodeOffset(Block* codeBlock, OpcodeID opcodeID, const Ins
 
     case op_strcat: {
         auto bytecode = instruction->as<OpStrcat>();
-        int base = bytecode.src.offset();
-        for (int i = 0; i < bytecode.count; i++)
+        int base = bytecode.m_src.offset();
+        for (int i = 0; i < bytecode.m_count; i++)
             functor(VirtualRegister { base - i });
         return;
     }

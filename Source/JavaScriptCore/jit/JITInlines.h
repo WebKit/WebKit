@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008-2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2008-2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -329,7 +329,7 @@ inline void JIT::emitValueProfilingSite(ValueProfile& valueProfile)
 }
 
 template<typename Op>
-inline std::enable_if_t<std::is_same<decltype(Op::Metadata::profile), ValueProfile>::value, void> JIT::emitValueProfilingSiteIfProfiledOpcode(Op bytecode)
+inline std::enable_if_t<std::is_same<decltype(Op::Metadata::m_profile), ValueProfile>::value, void> JIT::emitValueProfilingSiteIfProfiledOpcode(Op bytecode)
 {
     emitValueProfilingSite(bytecode.metadata(m_codeBlock));
 }
@@ -341,7 +341,7 @@ inline void JIT::emitValueProfilingSite(Metadata& metadata)
 {
     if (!shouldEmitProfiling())
         return;
-    emitValueProfilingSite(metadata.profile);
+    emitValueProfilingSite(metadata.m_profile);
 }
 
 inline void JIT::emitArrayProfilingSiteWithCell(RegisterID cell, RegisterID indexingType, ArrayProfile* arrayProfile)
@@ -710,11 +710,11 @@ ALWAYS_INLINE int JIT::jumpTarget(const Instruction* instruction, int target)
 
 ALWAYS_INLINE GetPutInfo JIT::copiedGetPutInfo(OpPutToScope bytecode)
 {
-    unsigned key = bytecode.metadataID + 1; // HashMap doesn't like 0 as a key
+    unsigned key = bytecode.m_metadataID + 1; // HashMap doesn't like 0 as a key
     auto iterator = m_copiedGetPutInfos.find(key);
     if (iterator != m_copiedGetPutInfos.end())
         return GetPutInfo(iterator->value);
-    GetPutInfo getPutInfo = bytecode.metadata(m_codeBlock).getPutInfo;
+    GetPutInfo getPutInfo = bytecode.metadata(m_codeBlock).m_getPutInfo;
     m_copiedGetPutInfos.add(key, getPutInfo.operand());
     return getPutInfo;
 }
@@ -722,11 +722,11 @@ ALWAYS_INLINE GetPutInfo JIT::copiedGetPutInfo(OpPutToScope bytecode)
 template<typename BinaryOp>
 ALWAYS_INLINE ArithProfile JIT::copiedArithProfile(BinaryOp bytecode)
 {
-    uint64_t key = static_cast<uint64_t>(BinaryOp::opcodeID) << 32 | static_cast<uint64_t>(bytecode.metadataID);
+    uint64_t key = static_cast<uint64_t>(BinaryOp::opcodeID) << 32 | static_cast<uint64_t>(bytecode.m_metadataID);
     auto iterator = m_copiedArithProfiles.find(key);
     if (iterator != m_copiedArithProfiles.end())
         return iterator->value;
-    ArithProfile arithProfile = bytecode.metadata(m_codeBlock).arithProfile;
+    ArithProfile arithProfile = bytecode.metadata(m_codeBlock).m_arithProfile;
     m_copiedArithProfiles.add(key, arithProfile);
     return arithProfile;
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008-2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2008-2019 Apple Inc. All rights reserved.
  * Copyright (C) 2008 Cameron Zwarich <cwzwarich@uwaterloo.ca>
  * Copyright (C) 2012 Igalia, S.L.
  *
@@ -1389,13 +1389,13 @@ template<typename BinOp, typename JmpOp>
 bool BytecodeGenerator::fuseCompareAndJump(RegisterID* cond, Label& target, bool swapOperands)
 {
     auto binop = m_lastInstruction->as<BinOp>();
-    if (cond->index() == binop.dst.offset() && cond->isTemporary() && !cond->refCount()) {
+    if (cond->index() == binop.m_dst.offset() && cond->isTemporary() && !cond->refCount()) {
         rewind();
 
         if (swapOperands)
-            std::swap(binop.lhs, binop.rhs);
+            std::swap(binop.m_lhs, binop.m_rhs);
 
-        JmpOp::emit(this, binop.lhs, binop.rhs, target.bind(this));
+        JmpOp::emit(this, binop.m_lhs, binop.m_rhs, target.bind(this));
         return true;
     }
     return false;
@@ -1405,10 +1405,10 @@ template<typename UnaryOp, typename JmpOp>
 bool BytecodeGenerator::fuseTestAndJmp(RegisterID* cond, Label& target)
 {
     auto unop = m_lastInstruction->as<UnaryOp>();
-    if (cond->index() == unop.dst.offset() && cond->isTemporary() && !cond->refCount()) {
+    if (cond->index() == unop.m_dst.offset() && cond->isTemporary() && !cond->refCount()) {
         rewind();
 
-        JmpOp::emit(this, unop.operand, target.bind(this));
+        JmpOp::emit(this, unop.m_operand, target.bind(this));
         return true;
     }
     return false;
@@ -1709,49 +1709,49 @@ RegisterID* BytecodeGenerator::emitEqualityOp(RegisterID* dst, RegisterID* src1,
 {
     if (m_lastInstruction->is<OpTypeof>()) {
         auto op = m_lastInstruction->as<OpTypeof>();
-        if (src1->index() == op.dst.offset()
+        if (src1->index() == op.m_dst.offset()
             && src1->isTemporary()
             && m_codeBlock->isConstantRegisterIndex(src2->index())
             && m_codeBlock->constantRegister(src2->index()).get().isString()) {
             const String& value = asString(m_codeBlock->constantRegister(src2->index()).get())->tryGetValue();
             if (value == "undefined") {
                 rewind();
-                OpIsUndefined::emit(this, dst, op.value);
+                OpIsUndefined::emit(this, dst, op.m_value);
                 return dst;
             }
             if (value == "boolean") {
                 rewind();
-                OpIsBoolean::emit(this, dst, op.value);
+                OpIsBoolean::emit(this, dst, op.m_value);
                 return dst;
             }
             if (value == "number") {
                 rewind();
-                OpIsNumber::emit(this, dst, op.value);
+                OpIsNumber::emit(this, dst, op.m_value);
                 return dst;
             }
             if (value == "string") {
                 rewind();
-                OpIsCellWithType::emit(this, dst, op.value, StringType);
+                OpIsCellWithType::emit(this, dst, op.m_value, StringType);
                 return dst;
             }
             if (value == "symbol") {
                 rewind();
-                OpIsCellWithType::emit(this, dst, op.value, SymbolType);
+                OpIsCellWithType::emit(this, dst, op.m_value, SymbolType);
                 return dst;
             }
             if (Options::useBigInt() && value == "bigint") {
                 rewind();
-                OpIsCellWithType::emit(this, dst, op.value, BigIntType);
+                OpIsCellWithType::emit(this, dst, op.m_value, BigIntType);
                 return dst;
             }
             if (value == "object") {
                 rewind();
-                OpIsObjectOrNull::emit(this, dst, op.value);
+                OpIsObjectOrNull::emit(this, dst, op.m_value);
                 return dst;
             }
             if (value == "function") {
                 rewind();
-                OpIsFunction::emit(this, dst, op.value);
+                OpIsFunction::emit(this, dst, op.m_value);
                 return dst;
             }
         }
@@ -3889,7 +3889,7 @@ void BytecodeGenerator::endSwitch(uint32_t clauseCount, const Vector<Ref<Label>,
             return BoundLabel();
         });
 
-        UnlinkedSimpleJumpTable& jumpTable = m_codeBlock->switchJumpTable(bytecode.tableIndex);
+        UnlinkedSimpleJumpTable& jumpTable = m_codeBlock->switchJumpTable(bytecode.m_tableIndex);
         prepareJumpTableForSwitch(
             jumpTable, switchInfo.bytecodeOffset, clauseCount, labels, nodes, min, max,
             switchInfo.switchType == SwitchInfo::SwitchImmediate
@@ -3914,7 +3914,7 @@ void BytecodeGenerator::endSwitch(uint32_t clauseCount, const Vector<Ref<Label>,
             return BoundLabel();
         });
 
-        UnlinkedStringJumpTable& jumpTable = m_codeBlock->stringSwitchJumpTable(ref->as<OpSwitchString>().tableIndex);
+        UnlinkedStringJumpTable& jumpTable = m_codeBlock->stringSwitchJumpTable(ref->as<OpSwitchString>().m_tableIndex);
         prepareJumpTableForStringSwitch(jumpTable, switchInfo.bytecodeOffset, clauseCount, labels, nodes);
         break;
     }
@@ -4860,7 +4860,7 @@ void StructureForInContext::finalize(BytecodeGenerator& generator, UnlinkedCodeB
         // 1. dst stays the same.
         // 2. base stays the same.
         // 3. property gets switched to the original property.
-        OpGetByVal::emit<OpcodeSize::Wide>(&generator, bytecode.dst, bytecode.base, VirtualRegister(propertyRegIndex));
+        OpGetByVal::emit<OpcodeSize::Wide>(&generator, bytecode.m_dst, bytecode.m_base, VirtualRegister(propertyRegIndex));
 
         // 4. nop out the remaining bytes
         while (generator.m_writer.position() < end)

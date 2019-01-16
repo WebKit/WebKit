@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011-2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2011-2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -125,8 +125,8 @@ namespace JSC {
         bool bCondition = (condition);                         \
         CHECK_EXCEPTION();                                  \
         if (bCondition)                                        \
-            pc = bytecode.target \
-                ? reinterpret_cast<const Instruction*>(reinterpret_cast<const uint8_t*>(pc) + bytecode.target) \
+            pc = bytecode.m_target \
+                ? reinterpret_cast<const Instruction*>(reinterpret_cast<const uint8_t*>(pc) + bytecode.m_target) \
                 : exec->codeBlock()->outOfLineJumpTarget(pc);                              \
         else                                                      \
             pc = reinterpret_cast<const Instruction*>(reinterpret_cast<const uint8_t*>(pc) + pc->size()); \
@@ -141,7 +141,7 @@ namespace JSC {
         END_IMPL();                         \
     } while (false)
 
-#define RETURN_WITH_PROFILING(value__, profilingAction__) RETURN_WITH_PROFILING_CUSTOM(bytecode.dst, value__, profilingAction__)
+#define RETURN_WITH_PROFILING(value__, profilingAction__) RETURN_WITH_PROFILING_CUSTOM(bytecode.m_dst, value__, profilingAction__)
 
 #define RETURN(value) \
     RETURN_WITH_PROFILING(value, { })
@@ -150,7 +150,7 @@ namespace JSC {
     RETURN_WITH_PROFILING(value__, PROFILE_VALUE(returnValue__))
 
 #define PROFILE_VALUE(value) do { \
-        bytecode.metadata(exec).profile.m_buckets[0] = JSValue::encode(value); \
+        bytecode.metadata(exec).m_profile.m_buckets[0] = JSValue::encode(value); \
     } while (false)
 
 #define CALL_END_IMPL(exec, callTarget, callTargetTag) \
@@ -215,7 +215,7 @@ SLOW_PATH_DECL(slow_path_create_scoped_arguments)
 {
     BEGIN();
     auto bytecode = pc->as<OpCreateScopedArguments>();
-    JSLexicalEnvironment* scope = jsCast<JSLexicalEnvironment*>(GET(bytecode.scope).jsValue());
+    JSLexicalEnvironment* scope = jsCast<JSLexicalEnvironment*>(GET(bytecode.m_scope).jsValue());
     ScopedArgumentsTable* table = scope->symbolTable()->arguments();
     RETURN(ScopedArguments::createByCopying(exec, table, scope));
 }
@@ -232,16 +232,16 @@ SLOW_PATH_DECL(slow_path_create_this)
     BEGIN();
     auto bytecode = pc->as<OpCreateThis>();
     JSObject* result;
-    JSObject* constructorAsObject = asObject(GET(bytecode.callee).jsValue());
+    JSObject* constructorAsObject = asObject(GET(bytecode.m_callee).jsValue());
     if (constructorAsObject->type() == JSFunctionType && jsCast<JSFunction*>(constructorAsObject)->canUseAllocationProfile()) {
         JSFunction* constructor = jsCast<JSFunction*>(constructorAsObject);
-        WriteBarrier<JSCell>& cachedCallee = bytecode.metadata(exec).cachedCallee;
+        WriteBarrier<JSCell>& cachedCallee = bytecode.metadata(exec).m_cachedCallee;
         if (!cachedCallee)
             cachedCallee.set(vm, exec->codeBlock(), constructor);
         else if (cachedCallee.unvalidatedGet() != JSCell::seenMultipleCalleeObjects() && cachedCallee.get() != constructor)
             cachedCallee.setWithoutWriteBarrier(JSCell::seenMultipleCalleeObjects());
 
-        size_t inlineCapacity = bytecode.inlineCapacity;
+        size_t inlineCapacity = bytecode.m_inlineCapacity;
         ObjectAllocationProfile* allocationProfile = constructor->ensureRareDataAndAllocationProfile(exec, inlineCapacity)->objectAllocationProfile();
         throwScope.releaseAssertNoException();
         Structure* structure = allocationProfile->structure();
@@ -270,18 +270,18 @@ SLOW_PATH_DECL(slow_path_to_this)
     BEGIN();
     auto bytecode = pc->as<OpToThis>();
     auto& metadata = bytecode.metadata(exec);
-    JSValue v1 = GET(bytecode.srcDst).jsValue();
+    JSValue v1 = GET(bytecode.m_srcDst).jsValue();
     if (v1.isCell()) {
         Structure* myStructure = v1.asCell()->structure(vm);
-        Structure* otherStructure = metadata.cachedStructure.get();
+        Structure* otherStructure = metadata.m_cachedStructure.get();
         if (myStructure != otherStructure) {
             if (otherStructure)
-                metadata.toThisStatus = ToThisConflicted;
-            metadata.cachedStructure.set(vm, exec->codeBlock(), myStructure);
+                metadata.m_toThisStatus = ToThisConflicted;
+            metadata.m_cachedStructure.set(vm, exec->codeBlock(), myStructure);
         }
     } else {
-        metadata.toThisStatus = ToThisConflicted;
-        metadata.cachedStructure.clear();
+        metadata.m_toThisStatus = ToThisConflicted;
+        metadata.m_cachedStructure.clear();
     }
     // Note: We only need to do this value profiling here on the slow path. The fast path
     // just returns the input to to_this if the structure check succeeds. If the structure
@@ -290,7 +290,7 @@ SLOW_PATH_DECL(slow_path_to_this)
     // the same SpeculatedType. Therefore, we don't need to worry about value profiling on the
     // fast path.
     auto value = v1.toThis(exec, exec->codeBlock()->isStrictMode() ? StrictMode : NotStrictMode);
-    RETURN_WITH_PROFILING_CUSTOM(bytecode.srcDst, value, PROFILE_VALUE(value));
+    RETURN_WITH_PROFILING_CUSTOM(bytecode.m_srcDst, value, PROFILE_VALUE(value));
 }
 
 SLOW_PATH_DECL(slow_path_throw_tdz_error)
@@ -315,90 +315,90 @@ SLOW_PATH_DECL(slow_path_not)
 {
     BEGIN();
     auto bytecode = pc->as<OpNot>();
-    RETURN(jsBoolean(!GET_C(bytecode.operand).jsValue().toBoolean(exec)));
+    RETURN(jsBoolean(!GET_C(bytecode.m_operand).jsValue().toBoolean(exec)));
 }
 
 SLOW_PATH_DECL(slow_path_eq)
 {
     BEGIN();
     auto bytecode = pc->as<OpEq>();
-    RETURN(jsBoolean(JSValue::equal(exec, GET_C(bytecode.lhs).jsValue(), GET_C(bytecode.rhs).jsValue())));
+    RETURN(jsBoolean(JSValue::equal(exec, GET_C(bytecode.m_lhs).jsValue(), GET_C(bytecode.m_rhs).jsValue())));
 }
 
 SLOW_PATH_DECL(slow_path_neq)
 {
     BEGIN();
     auto bytecode = pc->as<OpNeq>();
-    RETURN(jsBoolean(!JSValue::equal(exec, GET_C(bytecode.lhs).jsValue(), GET_C(bytecode.rhs).jsValue())));
+    RETURN(jsBoolean(!JSValue::equal(exec, GET_C(bytecode.m_lhs).jsValue(), GET_C(bytecode.m_rhs).jsValue())));
 }
 
 SLOW_PATH_DECL(slow_path_stricteq)
 {
     BEGIN();
     auto bytecode = pc->as<OpStricteq>();
-    RETURN(jsBoolean(JSValue::strictEqual(exec, GET_C(bytecode.lhs).jsValue(), GET_C(bytecode.rhs).jsValue())));
+    RETURN(jsBoolean(JSValue::strictEqual(exec, GET_C(bytecode.m_lhs).jsValue(), GET_C(bytecode.m_rhs).jsValue())));
 }
 
 SLOW_PATH_DECL(slow_path_nstricteq)
 {
     BEGIN();
     auto bytecode = pc->as<OpNstricteq>();
-    RETURN(jsBoolean(!JSValue::strictEqual(exec, GET_C(bytecode.lhs).jsValue(), GET_C(bytecode.rhs).jsValue())));
+    RETURN(jsBoolean(!JSValue::strictEqual(exec, GET_C(bytecode.m_lhs).jsValue(), GET_C(bytecode.m_rhs).jsValue())));
 }
 
 SLOW_PATH_DECL(slow_path_less)
 {
     BEGIN();
     auto bytecode = pc->as<OpLess>();
-    RETURN(jsBoolean(jsLess<true>(exec, GET_C(bytecode.lhs).jsValue(), GET_C(bytecode.rhs).jsValue())));
+    RETURN(jsBoolean(jsLess<true>(exec, GET_C(bytecode.m_lhs).jsValue(), GET_C(bytecode.m_rhs).jsValue())));
 }
 
 SLOW_PATH_DECL(slow_path_lesseq)
 {
     BEGIN();
     auto bytecode = pc->as<OpLesseq>();
-    RETURN(jsBoolean(jsLessEq<true>(exec, GET_C(bytecode.lhs).jsValue(), GET_C(bytecode.rhs).jsValue())));
+    RETURN(jsBoolean(jsLessEq<true>(exec, GET_C(bytecode.m_lhs).jsValue(), GET_C(bytecode.m_rhs).jsValue())));
 }
 
 SLOW_PATH_DECL(slow_path_greater)
 {
     BEGIN();
     auto bytecode = pc->as<OpGreater>();
-    RETURN(jsBoolean(jsLess<false>(exec, GET_C(bytecode.rhs).jsValue(), GET_C(bytecode.lhs).jsValue())));
+    RETURN(jsBoolean(jsLess<false>(exec, GET_C(bytecode.m_rhs).jsValue(), GET_C(bytecode.m_lhs).jsValue())));
 }
 
 SLOW_PATH_DECL(slow_path_greatereq)
 {
     BEGIN();
     auto bytecode = pc->as<OpGreatereq>();
-    RETURN(jsBoolean(jsLessEq<false>(exec, GET_C(bytecode.rhs).jsValue(), GET_C(bytecode.lhs).jsValue())));
+    RETURN(jsBoolean(jsLessEq<false>(exec, GET_C(bytecode.m_rhs).jsValue(), GET_C(bytecode.m_lhs).jsValue())));
 }
 
 SLOW_PATH_DECL(slow_path_inc)
 {
     BEGIN();
     auto bytecode = pc->as<OpInc>();
-    RETURN_WITH_PROFILING_CUSTOM(bytecode.srcDst, jsNumber(GET(bytecode.srcDst).jsValue().toNumber(exec) + 1), { });
+    RETURN_WITH_PROFILING_CUSTOM(bytecode.m_srcDst, jsNumber(GET(bytecode.m_srcDst).jsValue().toNumber(exec) + 1), { });
 }
 
 SLOW_PATH_DECL(slow_path_dec)
 {
     BEGIN();
     auto bytecode = pc->as<OpDec>();
-    RETURN_WITH_PROFILING_CUSTOM(bytecode.srcDst, jsNumber(GET(bytecode.srcDst).jsValue().toNumber(exec) - 1), { });
+    RETURN_WITH_PROFILING_CUSTOM(bytecode.m_srcDst, jsNumber(GET(bytecode.m_srcDst).jsValue().toNumber(exec) - 1), { });
 }
 
 SLOW_PATH_DECL(slow_path_to_string)
 {
     BEGIN();
     auto bytecode = pc->as<OpToString>();
-    RETURN(GET_C(bytecode.operand).jsValue().toString(exec));
+    RETURN(GET_C(bytecode.m_operand).jsValue().toString(exec));
 }
 
 #if ENABLE(JIT)
 static void updateArithProfileForUnaryArithOp(OpNegate::Metadata& metadata, JSValue result, JSValue operand)
 {
-    ArithProfile& profile = metadata.arithProfile;
+    ArithProfile& profile = metadata.m_arithProfile;
     profile.observeLHS(operand);
     ASSERT(result.isNumber() || result.isBigInt());
     if (result.isNumber()) {
@@ -435,7 +435,7 @@ SLOW_PATH_DECL(slow_path_negate)
     BEGIN();
     auto bytecode = pc->as<OpNegate>();
     auto& metadata = bytecode.metadata(exec);
-    JSValue operand = GET_C(bytecode.operand).jsValue();
+    JSValue operand = GET_C(bytecode.m_operand).jsValue();
     JSValue primValue = operand.toPrimitive(exec, PreferNumber);
     CHECK_EXCEPTION();
 
@@ -492,7 +492,7 @@ SLOW_PATH_DECL(slow_path_to_number)
 {
     BEGIN();
     auto bytecode = pc->as<OpToNumber>();
-    JSValue argument = GET_C(bytecode.operand).jsValue();
+    JSValue argument = GET_C(bytecode.m_operand).jsValue();
     JSValue result = jsNumber(argument.toNumber(exec));
     RETURN_PROFILED(result);
 }
@@ -501,9 +501,9 @@ SLOW_PATH_DECL(slow_path_to_object)
 {
     BEGIN();
     auto bytecode = pc->as<OpToObject>();
-    JSValue argument = GET_C(bytecode.operand).jsValue();
+    JSValue argument = GET_C(bytecode.m_operand).jsValue();
     if (UNLIKELY(argument.isUndefinedOrNull())) {
-        const Identifier& ident = exec->codeBlock()->identifier(bytecode.message);
+        const Identifier& ident = exec->codeBlock()->identifier(bytecode.m_message);
         if (!ident.isEmpty())
             THROW(createTypeError(exec, ident.impl()));
     }
@@ -515,8 +515,8 @@ SLOW_PATH_DECL(slow_path_add)
 {
     BEGIN();
     auto bytecode = pc->as<OpAdd>();
-    JSValue v1 = GET_C(bytecode.lhs).jsValue();
-    JSValue v2 = GET_C(bytecode.rhs).jsValue();
+    JSValue v1 = GET_C(bytecode.m_lhs).jsValue();
+    JSValue v2 = GET_C(bytecode.m_rhs).jsValue();
     JSValue result;
 
     ArithProfile& arithProfile = *exec->codeBlock()->arithProfileForPC(pc);
@@ -544,8 +544,8 @@ SLOW_PATH_DECL(slow_path_mul)
 {
     BEGIN();
     auto bytecode = pc->as<OpMul>();
-    JSValue left = GET_C(bytecode.lhs).jsValue();
-    JSValue right = GET_C(bytecode.rhs).jsValue();
+    JSValue left = GET_C(bytecode.m_lhs).jsValue();
+    JSValue right = GET_C(bytecode.m_rhs).jsValue();
     JSValue result = jsMul(exec, left, right);
     CHECK_EXCEPTION();
     RETURN_WITH_PROFILING(result, {
@@ -557,8 +557,8 @@ SLOW_PATH_DECL(slow_path_sub)
 {
     BEGIN();
     auto bytecode = pc->as<OpSub>();
-    JSValue left = GET_C(bytecode.lhs).jsValue();
-    JSValue right = GET_C(bytecode.rhs).jsValue();
+    JSValue left = GET_C(bytecode.m_lhs).jsValue();
+    JSValue right = GET_C(bytecode.m_rhs).jsValue();
     auto leftNumeric = left.toNumeric(exec);
     CHECK_EXCEPTION();
     auto rightNumeric = right.toNumeric(exec);
@@ -586,8 +586,8 @@ SLOW_PATH_DECL(slow_path_div)
 {
     BEGIN();
     auto bytecode = pc->as<OpDiv>();
-    JSValue left = GET_C(bytecode.lhs).jsValue();
-    JSValue right = GET_C(bytecode.rhs).jsValue();
+    JSValue left = GET_C(bytecode.m_lhs).jsValue();
+    JSValue right = GET_C(bytecode.m_rhs).jsValue();
     auto leftNumeric = left.toNumeric(exec);
     CHECK_EXCEPTION();
     auto rightNumeric = right.toNumeric(exec);
@@ -617,8 +617,8 @@ SLOW_PATH_DECL(slow_path_mod)
 {
     BEGIN();
     auto bytecode = pc->as<OpMod>();
-    JSValue left = GET_C(bytecode.lhs).jsValue();
-    JSValue right = GET_C(bytecode.rhs).jsValue();
+    JSValue left = GET_C(bytecode.m_lhs).jsValue();
+    JSValue right = GET_C(bytecode.m_rhs).jsValue();
     auto leftNumeric = left.toNumeric(exec);
     CHECK_EXCEPTION();
     auto rightNumeric = right.toNumeric(exec);
@@ -643,10 +643,10 @@ SLOW_PATH_DECL(slow_path_pow)
 {
     BEGIN();
     auto bytecode = pc->as<OpPow>();
-    double a = GET_C(bytecode.lhs).jsValue().toNumber(exec);
+    double a = GET_C(bytecode.m_lhs).jsValue().toNumber(exec);
     if (UNLIKELY(throwScope.exception()))
         RETURN(JSValue());
-    double b = GET_C(bytecode.rhs).jsValue().toNumber(exec);
+    double b = GET_C(bytecode.m_rhs).jsValue().toNumber(exec);
     if (UNLIKELY(throwScope.exception()))
         RETURN(JSValue());
     RETURN(jsNumber(operationMathPow(a, b)));
@@ -656,8 +656,8 @@ SLOW_PATH_DECL(slow_path_lshift)
 {
     BEGIN();
     auto bytecode = pc->as<OpLshift>();
-    JSValue left = GET_C(bytecode.lhs).jsValue();
-    JSValue right = GET_C(bytecode.rhs).jsValue();
+    JSValue left = GET_C(bytecode.m_lhs).jsValue();
+    JSValue right = GET_C(bytecode.m_rhs).jsValue();
     auto leftNumeric = left.toBigIntOrInt32(exec);
     CHECK_EXCEPTION();
     auto rightNumeric = right.toBigIntOrInt32(exec);
@@ -680,8 +680,8 @@ SLOW_PATH_DECL(slow_path_rshift)
 {
     BEGIN();
     auto bytecode = pc->as<OpRshift>();
-    JSValue left = GET_C(bytecode.lhs).jsValue();
-    JSValue right = GET_C(bytecode.rhs).jsValue();
+    JSValue left = GET_C(bytecode.m_lhs).jsValue();
+    JSValue right = GET_C(bytecode.m_rhs).jsValue();
     auto leftNumeric = left.toBigIntOrInt32(exec);
     CHECK_EXCEPTION();
     auto rightNumeric = right.toBigIntOrInt32(exec);
@@ -704,10 +704,10 @@ SLOW_PATH_DECL(slow_path_urshift)
 {
     BEGIN();
     auto bytecode = pc->as<OpUrshift>();
-    uint32_t a = GET_C(bytecode.lhs).jsValue().toUInt32(exec);
+    uint32_t a = GET_C(bytecode.m_lhs).jsValue().toUInt32(exec);
     if (UNLIKELY(throwScope.exception()))
         RETURN(JSValue());
-    uint32_t b = GET_C(bytecode.rhs).jsValue().toUInt32(exec);
+    uint32_t b = GET_C(bytecode.m_rhs).jsValue().toUInt32(exec);
     RETURN(jsNumber(static_cast<int32_t>(a >> (b & 31))));
 }
 
@@ -715,7 +715,7 @@ SLOW_PATH_DECL(slow_path_unsigned)
 {
     BEGIN();
     auto bytecode = pc->as<OpUnsigned>();
-    uint32_t a = GET_C(bytecode.operand).jsValue().toUInt32(exec);
+    uint32_t a = GET_C(bytecode.m_operand).jsValue().toUInt32(exec);
     RETURN(jsNumber(a));
 }
 
@@ -723,7 +723,7 @@ SLOW_PATH_DECL(slow_path_bitnot)
 {
     BEGIN();
     auto bytecode = pc->as<OpBitnot>();
-    int32_t operand = GET_C(bytecode.operand).jsValue().toInt32(exec);
+    int32_t operand = GET_C(bytecode.m_operand).jsValue().toInt32(exec);
     CHECK_EXCEPTION();
     RETURN_PROFILED(jsNumber(~operand));
 }
@@ -732,9 +732,9 @@ SLOW_PATH_DECL(slow_path_bitand)
 {
     BEGIN();
     auto bytecode = pc->as<OpBitand>();
-    auto leftNumeric = GET_C(bytecode.lhs).jsValue().toBigIntOrInt32(exec);
+    auto leftNumeric = GET_C(bytecode.m_lhs).jsValue().toBigIntOrInt32(exec);
     CHECK_EXCEPTION();
-    auto rightNumeric = GET_C(bytecode.rhs).jsValue().toBigIntOrInt32(exec);
+    auto rightNumeric = GET_C(bytecode.m_rhs).jsValue().toBigIntOrInt32(exec);
     CHECK_EXCEPTION();
     if (WTF::holds_alternative<JSBigInt*>(leftNumeric) || WTF::holds_alternative<JSBigInt*>(rightNumeric)) {
         if (WTF::holds_alternative<JSBigInt*>(leftNumeric) && WTF::holds_alternative<JSBigInt*>(rightNumeric)) {
@@ -753,9 +753,9 @@ SLOW_PATH_DECL(slow_path_bitor)
 {
     BEGIN();
     auto bytecode = pc->as<OpBitor>();
-    auto leftNumeric = GET_C(bytecode.lhs).jsValue().toBigIntOrInt32(exec);
+    auto leftNumeric = GET_C(bytecode.m_lhs).jsValue().toBigIntOrInt32(exec);
     CHECK_EXCEPTION();
-    auto rightNumeric = GET_C(bytecode.rhs).jsValue().toBigIntOrInt32(exec);
+    auto rightNumeric = GET_C(bytecode.m_rhs).jsValue().toBigIntOrInt32(exec);
     CHECK_EXCEPTION();
     if (WTF::holds_alternative<JSBigInt*>(leftNumeric) || WTF::holds_alternative<JSBigInt*>(rightNumeric)) {
         if (WTF::holds_alternative<JSBigInt*>(leftNumeric) && WTF::holds_alternative<JSBigInt*>(rightNumeric)) {
@@ -774,9 +774,9 @@ SLOW_PATH_DECL(slow_path_bitxor)
 {
     BEGIN();
     auto bytecode = pc->as<OpBitxor>();
-    auto leftNumeric = GET_C(bytecode.lhs).jsValue().toBigIntOrInt32(exec);
+    auto leftNumeric = GET_C(bytecode.m_lhs).jsValue().toBigIntOrInt32(exec);
     CHECK_EXCEPTION();
-    auto rightNumeric = GET_C(bytecode.rhs).jsValue().toBigIntOrInt32(exec);
+    auto rightNumeric = GET_C(bytecode.m_rhs).jsValue().toBigIntOrInt32(exec);
     CHECK_EXCEPTION();
     if (WTF::holds_alternative<JSBigInt*>(leftNumeric) || WTF::holds_alternative<JSBigInt*>(rightNumeric)) {
         if (WTF::holds_alternative<JSBigInt*>(leftNumeric) && WTF::holds_alternative<JSBigInt*>(rightNumeric)) {
@@ -795,21 +795,21 @@ SLOW_PATH_DECL(slow_path_typeof)
 {
     BEGIN();
     auto bytecode = pc->as<OpTypeof>();
-    RETURN(jsTypeStringForValue(exec, GET_C(bytecode.value).jsValue()));
+    RETURN(jsTypeStringForValue(exec, GET_C(bytecode.m_value).jsValue()));
 }
 
 SLOW_PATH_DECL(slow_path_is_object_or_null)
 {
     BEGIN();
     auto bytecode = pc->as<OpIsObjectOrNull>();
-    RETURN(jsBoolean(jsIsObjectTypeOrNull(exec, GET_C(bytecode.operand).jsValue())));
+    RETURN(jsBoolean(jsIsObjectTypeOrNull(exec, GET_C(bytecode.m_operand).jsValue())));
 }
 
 SLOW_PATH_DECL(slow_path_is_function)
 {
     BEGIN();
     auto bytecode = pc->as<OpIsFunction>();
-    RETURN(jsBoolean(GET_C(bytecode.operand).jsValue().isFunction(vm)));
+    RETURN(jsBoolean(GET_C(bytecode.m_operand).jsValue().isFunction(vm)));
 }
 
 SLOW_PATH_DECL(slow_path_in_by_val)
@@ -817,7 +817,7 @@ SLOW_PATH_DECL(slow_path_in_by_val)
     BEGIN();
     auto bytecode = pc->as<OpInByVal>();
     auto& metadata = bytecode.metadata(exec);
-    RETURN(jsBoolean(CommonSlowPaths::opInByVal(exec, GET_C(bytecode.base).jsValue(), GET_C(bytecode.property).jsValue(), &metadata.arrayProfile)));
+    RETURN(jsBoolean(CommonSlowPaths::opInByVal(exec, GET_C(bytecode.m_base).jsValue(), GET_C(bytecode.m_property).jsValue(), &metadata.m_arrayProfile)));
 }
 
 SLOW_PATH_DECL(slow_path_in_by_id)
@@ -825,22 +825,22 @@ SLOW_PATH_DECL(slow_path_in_by_id)
     BEGIN();
 
     auto bytecode = pc->as<OpInById>();
-    JSValue baseValue = GET_C(bytecode.base).jsValue();
+    JSValue baseValue = GET_C(bytecode.m_base).jsValue();
     if (!baseValue.isObject())
         THROW(createInvalidInParameterError(exec, baseValue));
 
-    RETURN(jsBoolean(asObject(baseValue)->hasProperty(exec, exec->codeBlock()->identifier(bytecode.property))));
+    RETURN(jsBoolean(asObject(baseValue)->hasProperty(exec, exec->codeBlock()->identifier(bytecode.m_property))));
 }
 
 SLOW_PATH_DECL(slow_path_del_by_val)
 {
     BEGIN();
     auto bytecode = pc->as<OpDelByVal>();
-    JSValue baseValue = GET_C(bytecode.base).jsValue();
+    JSValue baseValue = GET_C(bytecode.m_base).jsValue();
     JSObject* baseObject = baseValue.toObject(exec);
     CHECK_EXCEPTION();
     
-    JSValue subscript = GET_C(bytecode.property).jsValue();
+    JSValue subscript = GET_C(bytecode.m_property).jsValue();
     
     bool couldDelete;
     
@@ -864,14 +864,14 @@ SLOW_PATH_DECL(slow_path_strcat)
 {
     BEGIN();
     auto bytecode = pc->as<OpStrcat>();
-    RETURN(jsStringFromRegisterArray(exec, &GET(bytecode.src), bytecode.count));
+    RETURN(jsStringFromRegisterArray(exec, &GET(bytecode.m_src), bytecode.m_count));
 }
 
 SLOW_PATH_DECL(slow_path_to_primitive)
 {
     BEGIN();
     auto bytecode = pc->as<OpToPrimitive>();
-    RETURN(GET_C(bytecode.src).jsValue().toPrimitive(exec));
+    RETURN(GET_C(bytecode.m_src).jsValue().toPrimitive(exec));
 }
 
 SLOW_PATH_DECL(slow_path_enter)
@@ -886,7 +886,7 @@ SLOW_PATH_DECL(slow_path_get_enumerable_length)
 {
     BEGIN();
     auto bytecode = pc->as<OpGetEnumerableLength>();
-    JSValue enumeratorValue = GET(bytecode.base).jsValue();
+    JSValue enumeratorValue = GET(bytecode.m_base).jsValue();
     if (enumeratorValue.isUndefinedOrNull())
         RETURN(jsNumber(0));
 
@@ -900,10 +900,10 @@ SLOW_PATH_DECL(slow_path_has_indexed_property)
     BEGIN();
     auto bytecode = pc->as<OpHasIndexedProperty>();
     auto& metadata = bytecode.metadata(exec);
-    JSObject* base = GET(bytecode.base).jsValue().toObject(exec);
+    JSObject* base = GET(bytecode.m_base).jsValue().toObject(exec);
     CHECK_EXCEPTION();
-    JSValue property = GET(bytecode.property).jsValue();
-    metadata.arrayProfile.observeStructure(base->structure(vm));
+    JSValue property = GET(bytecode.m_property).jsValue();
+    metadata.m_arrayProfile.observeStructure(base->structure(vm));
     ASSERT(property.isUInt32());
     RETURN(jsBoolean(base->hasPropertyGeneric(exec, property.asUInt32(), PropertySlot::InternalMethodType::GetOwnProperty)));
 }
@@ -912,11 +912,11 @@ SLOW_PATH_DECL(slow_path_has_structure_property)
 {
     BEGIN();
     auto bytecode = pc->as<OpHasStructureProperty>();
-    JSObject* base = GET(bytecode.base).jsValue().toObject(exec);
+    JSObject* base = GET(bytecode.m_base).jsValue().toObject(exec);
     CHECK_EXCEPTION();
-    JSValue property = GET(bytecode.property).jsValue();
+    JSValue property = GET(bytecode.m_property).jsValue();
     ASSERT(property.isString());
-    JSPropertyNameEnumerator* enumerator = jsCast<JSPropertyNameEnumerator*>(GET(bytecode.enumerator).jsValue().asCell());
+    JSPropertyNameEnumerator* enumerator = jsCast<JSPropertyNameEnumerator*>(GET(bytecode.m_enumerator).jsValue().asCell());
     if (base->structure(vm)->id() == enumerator->cachedStructureID())
         RETURN(jsBoolean(true));
     JSString* string = asString(property);
@@ -929,9 +929,9 @@ SLOW_PATH_DECL(slow_path_has_generic_property)
 {
     BEGIN();
     auto bytecode = pc->as<OpHasGenericProperty>();
-    JSObject* base = GET(bytecode.base).jsValue().toObject(exec);
+    JSObject* base = GET(bytecode.m_base).jsValue().toObject(exec);
     CHECK_EXCEPTION();
-    JSValue property = GET(bytecode.property).jsValue();
+    JSValue property = GET(bytecode.m_property).jsValue();
     ASSERT(property.isString());
     JSString* string = asString(property);
     auto propertyName = string->toIdentifier(exec);
@@ -943,8 +943,8 @@ SLOW_PATH_DECL(slow_path_get_direct_pname)
 {
     BEGIN();
     auto bytecode = pc->as<OpGetDirectPname>();
-    JSValue baseValue = GET_C(bytecode.base).jsValue();
-    JSValue property = GET(bytecode.property).jsValue();
+    JSValue baseValue = GET_C(bytecode.m_base).jsValue();
+    JSValue property = GET(bytecode.m_property).jsValue();
     ASSERT(property.isString());
     JSString* string = asString(property);
     auto propertyName = string->toIdentifier(exec);
@@ -956,7 +956,7 @@ SLOW_PATH_DECL(slow_path_get_property_enumerator)
 {
     BEGIN();
     auto bytecode = pc->as<OpGetPropertyEnumerator>();
-    JSValue baseValue = GET(bytecode.base).jsValue();
+    JSValue baseValue = GET(bytecode.m_base).jsValue();
     if (baseValue.isUndefinedOrNull())
         RETURN(JSPropertyNameEnumerator::create(vm));
 
@@ -970,8 +970,8 @@ SLOW_PATH_DECL(slow_path_enumerator_structure_pname)
 {
     BEGIN();
     auto bytecode = pc->as<OpEnumeratorStructurePname>();
-    JSPropertyNameEnumerator* enumerator = jsCast<JSPropertyNameEnumerator*>(GET(bytecode.enumerator).jsValue().asCell());
-    uint32_t index = GET(bytecode.index).jsValue().asUInt32();
+    JSPropertyNameEnumerator* enumerator = jsCast<JSPropertyNameEnumerator*>(GET(bytecode.m_enumerator).jsValue().asCell());
+    uint32_t index = GET(bytecode.m_index).jsValue().asUInt32();
 
     JSString* propertyName = nullptr;
     if (index < enumerator->endStructurePropertyIndex())
@@ -983,8 +983,8 @@ SLOW_PATH_DECL(slow_path_enumerator_generic_pname)
 {
     BEGIN();
     auto bytecode = pc->as<OpEnumeratorGenericPname>();
-    JSPropertyNameEnumerator* enumerator = jsCast<JSPropertyNameEnumerator*>(GET(bytecode.enumerator).jsValue().asCell());
-    uint32_t index = GET(bytecode.index).jsValue().asUInt32();
+    JSPropertyNameEnumerator* enumerator = jsCast<JSPropertyNameEnumerator*>(GET(bytecode.m_enumerator).jsValue().asCell());
+    uint32_t index = GET(bytecode.m_index).jsValue().asUInt32();
 
     JSString* propertyName = nullptr;
     if (enumerator->endStructurePropertyIndex() <= index && index < enumerator->endGenericPropertyIndex())
@@ -996,7 +996,7 @@ SLOW_PATH_DECL(slow_path_to_index_string)
 {
     BEGIN();
     auto bytecode = pc->as<OpToIndexString>();
-    RETURN(jsString(exec, Identifier::from(exec, GET(bytecode.index).jsValue().asUInt32()).string()));
+    RETURN(jsString(exec, Identifier::from(exec, GET(bytecode.m_index).jsValue().asUInt32()).string()));
 }
 
 SLOW_PATH_DECL(slow_path_profile_type_clear_log)
@@ -1017,10 +1017,10 @@ SLOW_PATH_DECL(slow_path_create_lexical_environment)
 {
     BEGIN();
     auto bytecode = pc->as<OpCreateLexicalEnvironment>();
-    int scopeReg = bytecode.scope.offset();
+    int scopeReg = bytecode.m_scope.offset();
     JSScope* currentScope = exec->uncheckedR(scopeReg).Register::scope();
-    SymbolTable* symbolTable = jsCast<SymbolTable*>(GET_C(bytecode.symbolTable).jsValue());
-    JSValue initialValue = GET_C(bytecode.initialValue).jsValue();
+    SymbolTable* symbolTable = jsCast<SymbolTable*>(GET_C(bytecode.m_symbolTable).jsValue());
+    JSValue initialValue = GET_C(bytecode.m_initialValue).jsValue();
     ASSERT(initialValue == jsUndefined() || initialValue == jsTDZValue());
     JSScope* newScope = JSLexicalEnvironment::create(vm, exec->lexicalGlobalObject(), currentScope, symbolTable, initialValue);
     RETURN(newScope);
@@ -1030,10 +1030,10 @@ SLOW_PATH_DECL(slow_path_push_with_scope)
 {
     BEGIN();
     auto bytecode = pc->as<OpPushWithScope>();
-    JSObject* newScope = GET_C(bytecode.newScope).jsValue().toObject(exec);
+    JSObject* newScope = GET_C(bytecode.m_newScope).jsValue().toObject(exec);
     CHECK_EXCEPTION();
 
-    int scopeReg = bytecode.currentScope.offset();
+    int scopeReg = bytecode.m_currentScope.offset();
     JSScope* currentScope = exec->uncheckedR(scopeReg).Register::scope();
     RETURN(JSWithScope::create(vm, exec->lexicalGlobalObject(), currentScope, newScope));
 }
@@ -1042,8 +1042,8 @@ SLOW_PATH_DECL(slow_path_resolve_scope_for_hoisting_func_decl_in_eval)
 {
     BEGIN();
     auto bytecode = pc->as<OpResolveScopeForHoistingFuncDeclInEval>();
-    const Identifier& ident = exec->codeBlock()->identifier(bytecode.property);
-    JSScope* scope = exec->uncheckedR(bytecode.scope.offset()).Register::scope();
+    const Identifier& ident = exec->codeBlock()->identifier(bytecode.m_property);
+    JSScope* scope = exec->uncheckedR(bytecode.m_scope.offset()).Register::scope();
     JSValue resolvedScope = JSScope::resolveScopeForHoistingFuncDeclInEval(exec, scope, ident);
 
     CHECK_EXCEPTION();
@@ -1056,13 +1056,13 @@ SLOW_PATH_DECL(slow_path_resolve_scope)
     BEGIN();
     auto bytecode = pc->as<OpResolveScope>();
     auto& metadata = bytecode.metadata(exec);
-    const Identifier& ident = exec->codeBlock()->identifier(bytecode.var);
-    JSScope* scope = exec->uncheckedR(bytecode.scope.offset()).Register::scope();
+    const Identifier& ident = exec->codeBlock()->identifier(bytecode.m_var);
+    JSScope* scope = exec->uncheckedR(bytecode.m_scope.offset()).Register::scope();
     JSObject* resolvedScope = JSScope::resolve(exec, scope, ident);
     // Proxy can throw an error here, e.g. Proxy in with statement's @unscopables.
     CHECK_EXCEPTION();
 
-    ResolveType resolveType = metadata.resolveType;
+    ResolveType resolveType = metadata.m_resolveType;
 
     // ModuleVar does not keep the scope register value alive in DFG.
     ASSERT(resolveType != ModuleVar);
@@ -1075,20 +1075,20 @@ SLOW_PATH_DECL(slow_path_resolve_scope)
             if (hasProperty) {
                 ConcurrentJSLocker locker(exec->codeBlock()->m_lock);
                 if (resolveType == UnresolvedProperty)
-                    metadata.resolveType = GlobalProperty;
+                    metadata.m_resolveType = GlobalProperty;
                 else
-                    metadata.resolveType = GlobalPropertyWithVarInjectionChecks;
+                    metadata.m_resolveType = GlobalPropertyWithVarInjectionChecks;
 
-                metadata.globalObject = globalObject;
+                metadata.m_globalObject = globalObject;
             }
         } else if (resolvedScope->isGlobalLexicalEnvironment()) {
             JSGlobalLexicalEnvironment* globalLexicalEnvironment = jsCast<JSGlobalLexicalEnvironment*>(resolvedScope);
             ConcurrentJSLocker locker(exec->codeBlock()->m_lock);
             if (resolveType == UnresolvedProperty)
-                metadata.resolveType = GlobalLexicalVar;
+                metadata.m_resolveType = GlobalLexicalVar;
             else
-                metadata.resolveType = GlobalLexicalVarWithVarInjectionChecks;
-            metadata.globalLexicalEnvironment = globalLexicalEnvironment;
+                metadata.m_resolveType = GlobalLexicalVarWithVarInjectionChecks;
+            metadata.m_globalLexicalEnvironment = globalLexicalEnvironment;
         }
     }
 
@@ -1099,10 +1099,10 @@ SLOW_PATH_DECL(slow_path_create_rest)
 {
     BEGIN();
     auto bytecode = pc->as<OpCreateRest>();
-    unsigned arraySize = GET_C(bytecode.arraySize).jsValue().asUInt32();
+    unsigned arraySize = GET_C(bytecode.m_arraySize).jsValue().asUInt32();
     JSGlobalObject* globalObject = exec->lexicalGlobalObject();
     Structure* structure = globalObject->restParameterStructure();
-    unsigned numParamsToSkip = bytecode.numParametersToSkip;
+    unsigned numParamsToSkip = bytecode.m_numParametersToSkip;
     JSValue* argumentsToCopyRegion = exec->addressOfArgumentsStart() + numParamsToSkip;
     RETURN(constructArray(exec, structure, argumentsToCopyRegion, arraySize));
 }
@@ -1111,9 +1111,9 @@ SLOW_PATH_DECL(slow_path_get_by_id_with_this)
 {
     BEGIN();
     auto bytecode = pc->as<OpGetByIdWithThis>();
-    const Identifier& ident = exec->codeBlock()->identifier(bytecode.property);
-    JSValue baseValue = GET_C(bytecode.base).jsValue();
-    JSValue thisVal = GET_C(bytecode.thisValue).jsValue();
+    const Identifier& ident = exec->codeBlock()->identifier(bytecode.m_property);
+    JSValue baseValue = GET_C(bytecode.m_base).jsValue();
+    JSValue thisVal = GET_C(bytecode.m_thisValue).jsValue();
     PropertySlot slot(thisVal, PropertySlot::PropertySlot::InternalMethodType::Get);
     JSValue result = baseValue.get(exec, ident, slot);
     RETURN_PROFILED(result);
@@ -1124,9 +1124,9 @@ SLOW_PATH_DECL(slow_path_get_by_val_with_this)
     BEGIN();
 
     auto bytecode = pc->as<OpGetByValWithThis>();
-    JSValue baseValue = GET_C(bytecode.base).jsValue();
-    JSValue thisValue = GET_C(bytecode.thisValue).jsValue();
-    JSValue subscript = GET_C(bytecode.property).jsValue();
+    JSValue baseValue = GET_C(bytecode.m_base).jsValue();
+    JSValue thisValue = GET_C(bytecode.m_thisValue).jsValue();
+    JSValue subscript = GET_C(bytecode.m_property).jsValue();
 
     if (LIKELY(baseValue.isCell() && subscript.isString())) {
         Structure& structure = *baseValue.asCell()->structure(vm);
@@ -1159,10 +1159,10 @@ SLOW_PATH_DECL(slow_path_put_by_id_with_this)
     BEGIN();
     auto bytecode = pc->as<OpPutByIdWithThis>();
     CodeBlock* codeBlock = exec->codeBlock();
-    const Identifier& ident = codeBlock->identifier(bytecode.property);
-    JSValue baseValue = GET_C(bytecode.base).jsValue();
-    JSValue thisVal = GET_C(bytecode.thisValue).jsValue();
-    JSValue putValue = GET_C(bytecode.value).jsValue();
+    const Identifier& ident = codeBlock->identifier(bytecode.m_property);
+    JSValue baseValue = GET_C(bytecode.m_base).jsValue();
+    JSValue thisVal = GET_C(bytecode.m_thisValue).jsValue();
+    JSValue putValue = GET_C(bytecode.m_value).jsValue();
     PutPropertySlot slot(thisVal, codeBlock->isStrictMode(), codeBlock->putByIdContext());
     baseValue.putInline(exec, ident, putValue, slot);
     END();
@@ -1172,10 +1172,10 @@ SLOW_PATH_DECL(slow_path_put_by_val_with_this)
 {
     BEGIN();
     auto bytecode = pc->as<OpPutByValWithThis>();
-    JSValue baseValue = GET_C(bytecode.base).jsValue();
-    JSValue thisValue = GET_C(bytecode.thisValue).jsValue();
-    JSValue subscript = GET_C(bytecode.property).jsValue();
-    JSValue value = GET_C(bytecode.value).jsValue();
+    JSValue baseValue = GET_C(bytecode.m_base).jsValue();
+    JSValue thisValue = GET_C(bytecode.m_thisValue).jsValue();
+    JSValue subscript = GET_C(bytecode.m_property).jsValue();
+    JSValue value = GET_C(bytecode.m_value).jsValue();
     
     auto property = subscript.toPropertyKey(exec);
     CHECK_EXCEPTION();
@@ -1188,10 +1188,10 @@ SLOW_PATH_DECL(slow_path_define_data_property)
 {
     BEGIN();
     auto bytecode = pc->as<OpDefineDataProperty>();
-    JSObject* base = asObject(GET_C(bytecode.base).jsValue());
-    JSValue property = GET_C(bytecode.property).jsValue();
-    JSValue value = GET_C(bytecode.value).jsValue();
-    JSValue attributes = GET_C(bytecode.attributes).jsValue();
+    JSObject* base = asObject(GET_C(bytecode.m_base).jsValue());
+    JSValue property = GET_C(bytecode.m_property).jsValue();
+    JSValue value = GET_C(bytecode.m_value).jsValue();
+    JSValue attributes = GET_C(bytecode.m_attributes).jsValue();
     ASSERT(attributes.isInt32());
 
     auto propertyName = property.toPropertyKey(exec);
@@ -1206,11 +1206,11 @@ SLOW_PATH_DECL(slow_path_define_accessor_property)
 {
     BEGIN();
     auto bytecode = pc->as<OpDefineAccessorProperty>();
-    JSObject* base = asObject(GET_C(bytecode.base).jsValue());
-    JSValue property = GET_C(bytecode.property).jsValue();
-    JSValue getter = GET_C(bytecode.getter).jsValue();
-    JSValue setter = GET_C(bytecode.setter).jsValue();
-    JSValue attributes = GET_C(bytecode.attributes).jsValue();
+    JSObject* base = asObject(GET_C(bytecode.m_base).jsValue());
+    JSValue property = GET_C(bytecode.m_property).jsValue();
+    JSValue getter = GET_C(bytecode.m_getter).jsValue();
+    JSValue setter = GET_C(bytecode.m_setter).jsValue();
+    JSValue attributes = GET_C(bytecode.m_attributes).jsValue();
     ASSERT(attributes.isInt32());
 
     auto propertyName = property.toPropertyKey(exec);
@@ -1225,10 +1225,10 @@ SLOW_PATH_DECL(slow_path_throw_static_error)
 {
     BEGIN();
     auto bytecode = pc->as<OpThrowStaticError>();
-    JSValue errorMessageValue = GET_C(bytecode.message).jsValue();
+    JSValue errorMessageValue = GET_C(bytecode.m_message).jsValue();
     RELEASE_ASSERT(errorMessageValue.isString());
     String errorMessage = asString(errorMessageValue)->value(exec);
-    ErrorType errorType = bytecode.errorType;
+    ErrorType errorType = bytecode.m_errorType;
     THROW(createError(exec, errorType, errorMessage));
 }
 
@@ -1236,11 +1236,11 @@ SLOW_PATH_DECL(slow_path_new_array_with_spread)
 {
     BEGIN();
     auto bytecode = pc->as<OpNewArrayWithSpread>();
-    int numItems = bytecode.argc;
+    int numItems = bytecode.m_argc;
     ASSERT(numItems >= 0);
-    const BitVector& bitVector = exec->codeBlock()->unlinkedCodeBlock()->bitVector(bytecode.bitVector);
+    const BitVector& bitVector = exec->codeBlock()->unlinkedCodeBlock()->bitVector(bytecode.m_bitVector);
 
-    JSValue* values = bitwise_cast<JSValue*>(&GET(bytecode.argv));
+    JSValue* values = bitwise_cast<JSValue*>(&GET(bytecode.m_argv));
 
     Checked<unsigned, RecordOverflow> checkedArraySize = 0;
     for (int i = 0; i < numItems; i++) {
@@ -1290,9 +1290,9 @@ SLOW_PATH_DECL(slow_path_new_array_buffer)
 {
     BEGIN();
     auto bytecode = pc->as<OpNewArrayBuffer>();
-    ASSERT(exec->codeBlock()->isConstantRegisterIndex(bytecode.immutableButterfly.offset()));
-    JSImmutableButterfly* immutableButterfly = bitwise_cast<JSImmutableButterfly*>(GET_C(bytecode.immutableButterfly).jsValue().asCell());
-    auto& profile = bytecode.metadata(exec).arrayAllocationProfile;
+    ASSERT(exec->codeBlock()->isConstantRegisterIndex(bytecode.m_immutableButterfly.offset()));
+    JSImmutableButterfly* immutableButterfly = bitwise_cast<JSImmutableButterfly*>(GET_C(bytecode.m_immutableButterfly).jsValue().asCell());
+    auto& profile = bytecode.metadata(exec).m_arrayAllocationProfile;
 
     IndexingType indexingMode = profile.selectIndexingType();
     Structure* structure = exec->lexicalGlobalObject()->arrayStructureForIndexingTypeDuringAllocation(indexingMode);
@@ -1310,7 +1310,7 @@ SLOW_PATH_DECL(slow_path_new_array_buffer)
         // We also cannot allocate a new butterfly from compilation threads since it's invalid to allocate cells from
         // a compilation thread.
         WTF::storeStoreFence();
-        codeBlock->constantRegister(bytecode.immutableButterfly.offset()).set(vm, codeBlock, immutableButterfly);
+        codeBlock->constantRegister(bytecode.m_immutableButterfly.offset()).set(vm, codeBlock, immutableButterfly);
         WTF::storeStoreFence();
     }
 
@@ -1325,7 +1325,7 @@ SLOW_PATH_DECL(slow_path_spread)
     BEGIN();
 
     auto bytecode = pc->as<OpSpread>();
-    JSValue iterable = GET_C(bytecode.argument).jsValue();
+    JSValue iterable = GET_C(bytecode.m_argument).jsValue();
 
     if (iterable.isCell() && isJSArray(iterable.asCell())) {
         JSArray* array = jsCast<JSArray*>(iterable);
