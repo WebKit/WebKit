@@ -1,3 +1,41 @@
+2019-01-15  Simon Fraser  <simon.fraser@apple.com>
+
+        Make didCommitChangesForLayer() explicitly about the platform layer changing because of tile/non-tile swapping
+        https://bugs.webkit.org/show_bug.cgi?id=193290
+
+        Reviewed by Tim Horton.
+
+        RenderLayerCompositor::didFlushChangesForLayer() triggers updates scrolling tree nodes for
+        the flushed layer, but it's not clear what has changed at this point.
+
+        didCommitChangesForLayer()/didFlushChangesForLayer() were added to explicitly handle the
+        case where the underlying platform layer for a GraphicsLayer changes because the layer swaps
+        between tiled and non-tiled, and structural layer changes; we need to push the new layer to
+        the scrolling tree because it operates on platform layers. So the only work that
+        didFlushChangesForLayer() should do is to update layers on scrolling tree nodes; it doesn't
+        need to do any geometry updating. Move towards that goal by renaming this callback to
+        didChangePlatformLayerForLayer() to make its function more explicit.
+
+        * platform/graphics/GraphicsLayerClient.h:
+        (WebCore::GraphicsLayerClient::didChangePlatformLayerForLayer):
+        (WebCore::GraphicsLayerClient::didCommitChangesForLayer const): Deleted.
+        * platform/graphics/ca/GraphicsLayerCA.cpp:
+        (WebCore::GraphicsLayerCA::flushCompositingStateForThisLayerOnly):
+        (WebCore::GraphicsLayerCA::recursiveCommitChanges):
+        (WebCore::GraphicsLayerCA::commitLayerChangesBeforeSublayers):
+        * platform/graphics/ca/GraphicsLayerCA.h:
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::didChangePlatformLayerForLayer):
+        (WebCore::RenderLayerBacking::didCommitChangesForLayer const): Deleted.
+        * rendering/RenderLayerBacking.h:
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::didChangePlatformLayerForLayer):
+        (WebCore::LegacyWebKitScrollingLayerCoordinator::didChangePlatformLayerForLayer):
+        (WebCore::RenderLayerCompositor::didFlushChangesForLayer): Deleted.
+        (WebCore::RenderLayerCompositor::didCommitChangesForLayer const): Deleted.
+        (WebCore::LegacyWebKitScrollingLayerCoordinator::didFlushChangesForLayer): Deleted.
+        * rendering/RenderLayerCompositor.h:
+
 2019-01-16  Chris Dumez  <cdumez@apple.com>
 
         Regression(PSON) View becomes blank after click a cross-site download link

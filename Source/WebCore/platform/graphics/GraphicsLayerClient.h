@@ -101,7 +101,7 @@ public:
     virtual void notifyFlushBeforeDisplayRefresh(const GraphicsLayer*) { }
 
     virtual void paintContents(const GraphicsLayer*, GraphicsContext&, GraphicsLayerPaintingPhase, const FloatRect& /* inClip */, GraphicsLayerPaintBehavior) { }
-    virtual void didCommitChangesForLayer(const GraphicsLayer*) const { }
+    virtual void didChangePlatformLayerForLayer(const GraphicsLayer*) { }
 
     // Provides current transform (taking transform-origin and animations into account). Input matrix has been
     // initialized to identity already. Returns false if the layer has no transform.

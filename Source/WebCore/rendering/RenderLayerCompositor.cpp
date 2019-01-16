@@ -536,14 +536,14 @@ void RenderLayerCompositor::updateCustomLayersAfterFlush()
 #endif
 }
 
-void RenderLayerCompositor::didFlushChangesForLayer(RenderLayer& layer, const GraphicsLayer* graphicsLayer)
+void RenderLayerCompositor::didChangePlatformLayerForLayer(RenderLayer& layer, const GraphicsLayer* graphicsLayer)
 {
     if (m_scrollCoordinatedLayers.contains(&layer))
         m_scrollCoordinatedLayersNeedingUpdate.add(&layer);
 
 #if PLATFORM(IOS_FAMILY)
     if (m_legacyScrollingLayerCoordinator)
-        m_legacyScrollingLayerCoordinator->didFlushChangesForLayer(layer);
+        m_legacyScrollingLayerCoordinator->didChangePlatformLayerForLayer(layer);
 #endif
 
     auto* backing = layer.backing();
@@ -2985,11 +2985,6 @@ float RenderLayerCompositor::contentsScaleMultiplierForNewTiles(const GraphicsLa
 #endif
 }
 
-void RenderLayerCompositor::didCommitChangesForLayer(const GraphicsLayer*) const
-{
-    // Nothing to do here yet.
-}
-
 bool RenderLayerCompositor::documentUsesTiledBacking() const
 {
     auto* layer = m_renderView.layer();
@@ -4230,7 +4225,7 @@ void LegacyWebKitScrollingLayerCoordinator::removeScrollingLayer(RenderLayer& la
     m_chromeClient.removeScrollingLayer(layer.renderer().element(), scrollingLayer, contentsLayer);
 }
 
-void LegacyWebKitScrollingLayerCoordinator::didFlushChangesForLayer(RenderLayer& layer)
+void LegacyWebKitScrollingLayerCoordinator::didChangePlatformLayerForLayer(RenderLayer& layer)
 {
     if (m_scrollingLayers.contains(&layer))
         m_scrollingLayersNeedingUpdate.add(&layer);

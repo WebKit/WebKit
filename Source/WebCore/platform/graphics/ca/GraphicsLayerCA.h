@@ -277,7 +277,7 @@ private:
         return m_animations && m_animations->runningAnimations.contains(animationName);
     }
 
-    void commitLayerChangesBeforeSublayers(CommitState&, float pageScaleFactor, const FloatPoint& positionRelativeToBase);
+    void commitLayerChangesBeforeSublayers(CommitState&, float pageScaleFactor, const FloatPoint& positionRelativeToBase, bool& layerTypeChanged);
     void commitLayerChangesAfterSublayers(CommitState&);
 
     FloatPoint computePositionRelativeToBase(float& pageScale) const;
@@ -402,7 +402,7 @@ private:
     void updateContentsVisibility();
     void updateContentsOpaque(float pageScaleFactor);
     void updateBackfaceVisibility();
-    void updateStructuralLayer();
+    bool updateStructuralLayer();
     void updateDrawsContent();
     void updateCoverage(const CommitState&);
     void updateBackgroundColor();
@@ -443,7 +443,7 @@ private:
         StructuralLayerForReplicaFlattening,
         StructuralLayerForBackdrop
     };
-    void ensureStructuralLayer(StructuralLayerPurpose);
+    bool ensureStructuralLayer(StructuralLayerPurpose);
     StructuralLayerPurpose structuralLayerPurpose() const;
     
     void ensureLayerAnimations();

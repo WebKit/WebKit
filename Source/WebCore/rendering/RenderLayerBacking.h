@@ -208,7 +208,8 @@ public:
 
     float pageScaleFactor() const override;
     float zoomedOutPageScaleFactor() const override;
-    void didCommitChangesForLayer(const GraphicsLayer*) const override;
+
+    void didChangePlatformLayerForLayer(const GraphicsLayer*) override;
     bool getCurrentTransform(const GraphicsLayer*, TransformationMatrix&) const override;
 
     bool isTrackingRepaints() const override;
