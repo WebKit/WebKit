@@ -40,7 +40,7 @@ NetworkSessionSoup::NetworkSessionSoup(NetworkProcess& networkProcess, NetworkSe
     : NetworkSession(networkProcess, parameters.sessionID)
 {
     networkStorageSession().setCookieObserverHandler([this] {
-        NetworkProcess::singleton().supplement<WebCookieManager>()->notifyCookiesDidChange(m_sessionID);
+        this->networkProcess().supplement<WebCookieManager>()->notifyCookiesDidChange(m_sessionID);
     });
 }
 

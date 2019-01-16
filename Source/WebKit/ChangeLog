@@ -1,3 +1,18 @@
+2019-01-15  Claudio Saavedra  <csaavedra@igalia.com>
+
+        [SOUP] Remove usage of NetworkProcess::singleton()
+        https://bugs.webkit.org/show_bug.cgi?id=193444
+
+        Reviewed by Michael Catanzaro.
+
+        * NetworkProcess/soup/NetworkDataTaskSoup.cpp:
+        (WebKit::NetworkDataTaskSoup::download):
+        (WebKit::NetworkDataTaskSoup::didWriteDownload):
+        (WebKit::NetworkDataTaskSoup::didFinishDownload):
+        (WebKit::NetworkDataTaskSoup::didFailDownload):
+        * NetworkProcess/soup/NetworkSessionSoup.cpp:
+        (WebKit::NetworkSessionSoup::NetworkSessionSoup):
+
 2019-01-15  Eric Carlson  <eric.carlson@apple.com>
 
         Fix incorrect ASSERT added in r239840

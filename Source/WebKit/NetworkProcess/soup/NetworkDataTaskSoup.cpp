@@ -907,7 +907,7 @@ void NetworkDataTaskSoup::download()
     }
     m_downloadOutputStream = adoptGRef(G_OUTPUT_STREAM(outputStream.leakRef()));
 
-    auto& downloadManager = NetworkProcess::singleton().downloadManager();
+    auto& downloadManager = m_session->networkProcess().downloadManager();
     auto download = std::make_unique<Download>(downloadManager, m_pendingDownloadID, *this, m_session->sessionID(), suggestedFilename());
     auto* downloadPtr = download.get();
     downloadManager.dataTaskBecameDownloadTask(m_pendingDownloadID, WTFMove(download));
@@ -974,7 +974,7 @@ void NetworkDataTaskSoup::writeDownload()
 void NetworkDataTaskSoup::didWriteDownload(gsize bytesWritten)
 {
     ASSERT(bytesWritten == m_readBuffer.size());
-    auto* download = NetworkProcess::singleton().downloadManager().download(m_pendingDownloadID);
+    auto* download = m_session->networkProcess().downloadManager().download(m_pendingDownloadID);
     ASSERT(download);
     download->didReceiveData(bytesWritten);
     read();
@@ -1002,7 +1002,7 @@ void NetworkDataTaskSoup::didFinishDownload()
     g_file_set_attributes_async(m_downloadDestinationFile.get(), info.get(), G_FILE_QUERY_INFO_NONE, RunLoopSourcePriority::AsyncIONetwork, nullptr, nullptr, nullptr);
 
     clearRequest();
-    auto* download = NetworkProcess::singleton().downloadManager().download(m_pendingDownloadID);
+    auto* download = m_session->networkProcess().downloadManager().download(m_pendingDownloadID);
     ASSERT(download);
     download->didFinish();
 }
@@ -1014,7 +1014,7 @@ void NetworkDataTaskSoup::didFailDownload(const ResourceError& error)
     if (m_client)
         dispatchDidCompleteWithError(error);
     else {
-        auto* download = NetworkProcess::singleton().downloadManager().download(m_pendingDownloadID);
+        auto* download = m_session->networkProcess().downloadManager().download(m_pendingDownloadID);
         ASSERT(download);
         download->didFail(error, IPC::DataReference());
     }
