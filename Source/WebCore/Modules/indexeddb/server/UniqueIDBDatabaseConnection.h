@@ -90,7 +90,7 @@ private:
     UniqueIDBDatabaseConnection(UniqueIDBDatabase&, ServerOpenDBRequest&);
 
     WeakPtr<UniqueIDBDatabase> m_database;
-    IDBConnectionToClient& m_connectionToClient;
+    Ref<IDBConnectionToClient> m_connectionToClient;
     IDBResourceIdentifier m_openRequestIdentifier;
 
     bool m_closePending { false };
