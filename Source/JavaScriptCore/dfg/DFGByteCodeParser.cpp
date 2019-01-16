@@ -6134,28 +6134,67 @@ void ByteCodeParser::parseBlock(unsigned limit)
         case op_resolve_scope: {
             auto bytecode = currentInstruction->as<OpResolveScope>();
             auto& metadata = bytecode.metadata(codeBlock);
-            unsigned depth = metadata.localScopeDepth;
 
-            if (needsDynamicLookup(metadata.resolveType, op_resolve_scope)) {
+            ResolveType resolveType;
+            unsigned depth;
+            JSScope* constantScope = nullptr;
+            JSCell* lexicalEnvironment = nullptr;
+            SymbolTable* symbolTable = nullptr;
+            {
+                ConcurrentJSLocker locker(m_inlineStackTop->m_profiledBlock->m_lock);
+                resolveType = metadata.resolveType;
+                depth = metadata.localScopeDepth;
+                switch (resolveType) {
+                case GlobalProperty:
+                case GlobalVar:
+                case GlobalPropertyWithVarInjectionChecks:
+                case GlobalVarWithVarInjectionChecks:
+                case GlobalLexicalVar:
+                case GlobalLexicalVarWithVarInjectionChecks:
+                    constantScope = metadata.constantScope.get();
+                    break;
+                case ModuleVar:
+                    lexicalEnvironment = metadata.lexicalEnvironment.get();
+                    break;
+                case LocalClosureVar:
+                case ClosureVar:
+                case ClosureVarWithVarInjectionChecks:
+                    symbolTable = metadata.symbolTable.get();
+                    break;
+                default:
+                    break;
+                }
+            }
+
+            if (needsDynamicLookup(resolveType, op_resolve_scope)) {
                 unsigned identifierNumber = m_inlineStackTop->m_identifierRemap[bytecode.var];
                 set(bytecode.dst, addToGraph(ResolveScope, OpInfo(identifierNumber), get(bytecode.scope)));
                 NEXT_OPCODE(op_resolve_scope);
             }
 
             // get_from_scope and put_to_scope depend on this watchpoint forcing OSR exit, so they don't add their own watchpoints.
-            if (needsVarInjectionChecks(metadata.resolveType))
+            if (needsVarInjectionChecks(resolveType))
                 m_graph.watchpoints().addLazily(m_inlineStackTop->m_codeBlock->globalObject()->varInjectionWatchpoint());
 
-            switch (metadata.resolveType) {
+            // FIXME: Currently, module code do not query to JSGlobalLexicalEnvironment. So this case should be removed once it is fixed.
+            // https://bugs.webkit.org/show_bug.cgi?id=193347
+            if (m_inlineStackTop->m_codeBlock->scriptMode() != JSParserScriptMode::Module) {
+                if (resolveType == GlobalProperty || resolveType == GlobalPropertyWithVarInjectionChecks) {
+                    unsigned identifierNumber = m_inlineStackTop->m_identifierRemap[bytecode.var];
+                    JSGlobalObject* globalObject = m_inlineStackTop->m_codeBlock->globalObject();
+                    m_graph.globalProperties().addLazily(DesiredGlobalProperty(globalObject, identifierNumber));
+                }
+            }
+
+            switch (resolveType) {
             case GlobalProperty:
             case GlobalVar:
             case GlobalPropertyWithVarInjectionChecks:
             case GlobalVarWithVarInjectionChecks:
             case GlobalLexicalVar:
             case GlobalLexicalVarWithVarInjectionChecks: {
-                JSScope* constantScope = JSScope::constantScopeForCodeBlock(metadata.resolveType, m_inlineStackTop->m_codeBlock);
                 RELEASE_ASSERT(constantScope);
-                RELEASE_ASSERT(metadata.constantScope.get() == constantScope);
+                RELEASE_ASSERT(constantScope == JSScope::constantScopeForCodeBlock(resolveType, m_inlineStackTop->m_codeBlock));
                 set(bytecode.dst, weakJSConstant(constantScope));
                 addToGraph(Phantom, get(bytecode.scope));
                 break;
@@ -6164,7 +6203,7 @@ void ByteCodeParser::parseBlock(unsigned limit)
                 // Since the value of the "scope" virtual register is not used in LLInt / baseline op_resolve_scope with ModuleVar,
                 // we need not to keep it alive by the Phantom node.
                 // Module environment is already strongly referenced by the CodeBlock.
-                set(bytecode.dst, weakJSConstant(metadata.lexicalEnvironment.get()));
+                set(bytecode.dst, weakJSConstant(lexicalEnvironment));
                 break;
             }
             case LocalClosureVar:
@@ -6175,7 +6214,7 @@ void ByteCodeParser::parseBlock(unsigned limit)
                 
                 // We have various forms of constant folding here. This is necessary to avoid
                 // spurious recompiles in dead-but-foldable code.
-                if (SymbolTable* symbolTable = metadata.symbolTable.get()) {
+                if (symbolTable) {
                     InferredValue* singleton = symbolTable->singletonScope();
                     if (JSValue value = singleton->inferredValue()) {
                         m_graph.watchpoints().addLazily(singleton);
@@ -6221,13 +6260,16 @@ void ByteCodeParser::parseBlock(unsigned limit)
             auto& metadata = bytecode.metadata(codeBlock);
             unsigned identifierNumber = m_inlineStackTop->m_identifierRemap[bytecode.var];
             UniquedStringImpl* uid = m_graph.identifiers()[identifierNumber];
-            ResolveType resolveType = metadata.getPutInfo.resolveType();
 
+            ResolveType resolveType;
+            GetPutInfo getPutInfo(0);
             Structure* structure = 0;
             WatchpointSet* watchpoints = 0;
             uintptr_t operand;
             {
                 ConcurrentJSLocker locker(m_inlineStackTop->m_profiledBlock->m_lock);
+                getPutInfo = metadata.getPutInfo;
+                resolveType = getPutInfo.resolveType();
                 if (resolveType == GlobalVar || resolveType == GlobalVarWithVarInjectionChecks || resolveType == GlobalLexicalVar || resolveType == GlobalLexicalVarWithVarInjectionChecks)
                     watchpoints = metadata.watchpointSet;
                 else if (resolveType != UnresolvedProperty && resolveType != UnresolvedPropertyWithVarInjectionChecks)
@@ -6236,7 +6278,7 @@ void ByteCodeParser::parseBlock(unsigned limit)
             }
 
             if (needsDynamicLookup(resolveType, op_get_from_scope)) {
-                uint64_t opInfo1 = makeDynamicVarOpInfo(identifierNumber, metadata.getPutInfo.operand());
+                uint64_t opInfo1 = makeDynamicVarOpInfo(identifierNumber, getPutInfo.operand());
                 SpeculatedType prediction = getPrediction();
                 set(bytecode.dst,
                     addToGraph(GetDynamicVar, OpInfo(opInfo1), OpInfo(prediction), get(bytecode.scope)));
@@ -6250,6 +6292,11 @@ void ByteCodeParser::parseBlock(unsigned limit)
             switch (resolveType) {
             case GlobalProperty:
             case GlobalPropertyWithVarInjectionChecks: {
+                // FIXME: Currently, module code do not query to JSGlobalLexicalEnvironment. So this case should be removed once it is fixed.
+                // https://bugs.webkit.org/show_bug.cgi?id=193347
+                if (m_inlineStackTop->m_codeBlock->scriptMode() != JSParserScriptMode::Module)
+                    m_graph.globalProperties().addLazily(DesiredGlobalProperty(globalObject, identifierNumber));
+
                 SpeculatedType prediction = getPrediction();
 
                 GetByIdStatus status = GetByIdStatus::computeFor(structure, uid);
@@ -6386,18 +6433,21 @@ void ByteCodeParser::parseBlock(unsigned limit)
             unsigned identifierNumber = bytecode.var;
             if (identifierNumber != UINT_MAX)
                 identifierNumber = m_inlineStackTop->m_identifierRemap[identifierNumber];
-            ResolveType resolveType = metadata.getPutInfo.resolveType();
             UniquedStringImpl* uid;
             if (identifierNumber != UINT_MAX)
                 uid = m_graph.identifiers()[identifierNumber];
             else
                 uid = nullptr;
             
+            ResolveType resolveType;
+            GetPutInfo getPutInfo(0);
             Structure* structure = nullptr;
             WatchpointSet* watchpoints = nullptr;
             uintptr_t operand;
             {
                 ConcurrentJSLocker locker(m_inlineStackTop->m_profiledBlock->m_lock);
+                getPutInfo = metadata.getPutInfo;
+                resolveType = getPutInfo.resolveType();
                 if (resolveType == GlobalVar || resolveType == GlobalVarWithVarInjectionChecks || resolveType == LocalClosureVar || resolveType == GlobalLexicalVar || resolveType == GlobalLexicalVarWithVarInjectionChecks)
                     watchpoints = metadata.watchpointSet;
                 else if (resolveType != UnresolvedProperty && resolveType != UnresolvedPropertyWithVarInjectionChecks)
@@ -6409,7 +6459,7 @@ void ByteCodeParser::parseBlock(unsigned limit)
 
             if (needsDynamicLookup(resolveType, op_put_to_scope)) {
                 ASSERT(identifierNumber != UINT_MAX);
-                uint64_t opInfo1 = makeDynamicVarOpInfo(identifierNumber, metadata.getPutInfo.operand());
+                uint64_t opInfo1 = makeDynamicVarOpInfo(identifierNumber, getPutInfo.operand());
                 addToGraph(PutDynamicVar, OpInfo(opInfo1), OpInfo(), get(bytecode.scope), get(bytecode.value));
                 NEXT_OPCODE(op_put_to_scope);
             }
@@ -6417,6 +6467,11 @@ void ByteCodeParser::parseBlock(unsigned limit)
             switch (resolveType) {
             case GlobalProperty:
             case GlobalPropertyWithVarInjectionChecks: {
+                // FIXME: Currently, module code do not query to JSGlobalLexicalEnvironment. So this case should be removed once it is fixed.
+                // https://bugs.webkit.org/show_bug.cgi?id=193347
+                if (m_inlineStackTop->m_codeBlock->scriptMode() != JSParserScriptMode::Module)
+                    m_graph.globalProperties().addLazily(DesiredGlobalProperty(globalObject, identifierNumber));
+
                 PutByIdStatus status;
                 if (uid)
                     status = PutByIdStatus::computeFor(globalObject, structure, uid, false);
@@ -6438,7 +6493,7 @@ void ByteCodeParser::parseBlock(unsigned limit)
             case GlobalLexicalVarWithVarInjectionChecks:
             case GlobalVar:
             case GlobalVarWithVarInjectionChecks: {
-                if (!isInitialization(metadata.getPutInfo.initializationMode()) && (resolveType == GlobalLexicalVar || resolveType == GlobalLexicalVarWithVarInjectionChecks)) {
+                if (!isInitialization(getPutInfo.initializationMode()) && (resolveType == GlobalLexicalVar || resolveType == GlobalLexicalVarWithVarInjectionChecks)) {
                     SpeculatedType prediction = SpecEmpty;
                     Node* value = addToGraph(GetGlobalLexicalVariable, OpInfo(operand), OpInfo(prediction));
                     addToGraph(CheckNotEmpty, value);

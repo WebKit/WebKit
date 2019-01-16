@@ -50,6 +50,7 @@
 #include "CatchScope.h"
 #include "ClonedArguments.h"
 #include "CodeBlock.h"
+#include "CodeBlockSetInlines.h"
 #include "CodeCache.h"
 #include "ConsoleObject.h"
 #include "DateConstructor.h"
@@ -1711,6 +1712,10 @@ void JSGlobalObject::addStaticGlobals(GlobalPropertyInfo* globals, int count)
 
     for (int i = 0; i < count; ++i) {
         GlobalPropertyInfo& global = globals[i];
+        // This `configurable = false` is necessary condition for static globals,
+        // otherwise lexical bindings can change the result of GlobalVar queries too.
+        // We won't be able to declare a global lexical variable with the sanem name to
+        // the static globals because configurable = false.
         ASSERT(global.attributes & PropertyAttribute::DontDelete);
         
         WatchpointSet* watchpointSet = nullptr;
@@ -1846,6 +1851,19 @@ const HashSet<String>& JSGlobalObject::intlPluralRulesAvailableLocales()
 }
 #endif // ENABLE(INTL)
 
+void JSGlobalObject::notifyLexicalBindingShadowing(VM& vm, const IdentifierSet& set)
+{
+#if ENABLE(DFG_JIT)
+    for (const auto& key : set)
+        ensureReferencedPropertyWatchpointSet(key.get()).fireAll(vm, "Lexical binding shadows the existing global properties");
+#endif
+    vm.heap.codeBlockSet().iterate([&] (CodeBlock* codeBlock) {
+        if (codeBlock->globalObject() != this)
+            return;
+        codeBlock->notifyLexicalBindingShadowing(vm, set);
+    });
+}
+
 void JSGlobalObject::queueMicrotask(Ref<Microtask>&& task)
 {
     if (globalObjectMethodTable()->queueTaskToEventLoop) {
@@ -1865,6 +1883,20 @@ bool JSGlobalObject::hasInteractiveDebugger() const
 { 
     return m_debugger && m_debugger->isInteractivelyDebugging();
 }
+
+#if ENABLE(DFG_JIT)
+WatchpointSet* JSGlobalObject::getReferencedPropertyWatchpointSet(UniquedStringImpl* uid)
+{
+    return m_referencedGlobalPropertyWatchpointSets.get(uid);
+}
+
+WatchpointSet& JSGlobalObject::ensureReferencedPropertyWatchpointSet(UniquedStringImpl* uid)
+{
+    return m_referencedGlobalPropertyWatchpointSets.ensure(uid, [] {
+        return WatchpointSet::create(IsWatched);
+    }).iterator->value.get();
+}
+#endif
 
 JSGlobalObject* JSGlobalObject::create(VM& vm, Structure* structure)
 {
