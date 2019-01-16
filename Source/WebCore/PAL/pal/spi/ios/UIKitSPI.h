@@ -23,6 +23,8 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#if PLATFORM(IOSMAC)
+
 WTF_EXTERN_C_BEGIN
 typedef struct __GSKeyboard* GSKeyboardRef;
 WTF_EXTERN_C_END
@@ -114,6 +116,8 @@ NS_ASSUME_NONNULL_END
 @interface NSURL ()
 @property (nonatomic, copy, nullable, setter=_setTitle:) NSString *_title;
 @end
+#endif
+
 #endif
 
 #endif
