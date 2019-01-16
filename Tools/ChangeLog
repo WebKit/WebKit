@@ -1,3 +1,15 @@
+2019-01-15  Jonathan Bedard  <jbedard@apple.com>
+
+        webkitpy: Support boolean simctl isAvailable
+        https://bugs.webkit.org/show_bug.cgi?id=193472
+        <rdar://problem/47296150>
+
+        Reviewed by Ryosuke Niwa.
+
+        * Scripts/webkitpy/xcode/simulated_device.py:
+        (SimulatedDeviceManager._create_runtimes):
+        (SimulatedDeviceManager._create_device_with_runtime):
+
 2019-01-15  Chris Dumez  <cdumez@apple.com>
 
         Unreviewed, rolling out r239993, r239995, r239997, and

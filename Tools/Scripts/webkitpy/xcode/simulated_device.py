@@ -77,7 +77,7 @@ class SimulatedDeviceManager(object):
     def _create_runtimes(runtimes):
         result = []
         for runtime in runtimes:
-            if runtime.get('availability') != '(available)' and runtime.get('isAvailable') != 'YES':
+            if runtime.get('availability') != '(available)' and runtime.get('isAvailable') != 'YES' and runtime.get('isAvailable') != True:
                 continue
             try:
                 result.append(SimulatedDeviceManager.Runtime(runtime))
@@ -87,7 +87,7 @@ class SimulatedDeviceManager(object):
 
     @staticmethod
     def _create_device_with_runtime(host, runtime, device_info):
-        if device_info.get('availability') != '(available)' and device_info.get('isAvailable') != 'YES':
+        if device_info.get('availability') != '(available)' and device_info.get('isAvailable') != 'YES' and device_info.get('isAvailable') != True:
             return None
 
         # Check existing devices.
