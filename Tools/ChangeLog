@@ -1,3 +1,15 @@
+2019-01-15  Sihui Liu  <sihui_liu@apple.com>
+
+        Fix API test WebKit.WebsiteDataStoreCustomPathsWithoutPrewarming after 193354
+        https://bugs.webkit.org/show_bug.cgi?id=193451
+
+        Reviewed by Geoffrey Garen.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/DuplicateCompletionHandlerCalls.mm:
+        (TEST):
+        * TestWebKitAPI/Tests/WebKitCocoa/WebsiteDataStoreCustomPaths.mm:
+        (runWebsiteDataStoreCustomPaths):
+
 2019-01-15  Jonathan Bedard  <jbedard@apple.com>
 
         webkitpy: Support boolean simctl isAvailable
