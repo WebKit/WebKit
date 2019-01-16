@@ -1,5 +1,25 @@
 2019-01-15  Alan Coon  <alancoon@apple.com>
 
+        Cherry-pick r239894. rdar://problem/47260353
+
+    Follow-up: WorkQueue::concurrentApply() passes a raw pointer to a temporary String to Thread::create().
+    https://bugs.webkit.org/show_bug.cgi?id=191350
+    
+    * wtf/WorkQueue.cpp:
+    (WTF::WorkQueue::concurrentApply): Fix whitespace.
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@239894 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2019-01-11  David Kilzer  <ddkilzer@apple.com>
+
+            Follow-up: WorkQueue::concurrentApply() passes a raw pointer to a temporary String to Thread::create().
+            https://bugs.webkit.org/show_bug.cgi?id=191350
+
+            * wtf/WorkQueue.cpp:
+            (WTF::WorkQueue::concurrentApply): Fix whitespace.
+
+2019-01-15  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r239873. rdar://problem/47260353
 
     WorkQueue::concurrentApply() passes a raw pointer to a temporary String to Thread::create().
