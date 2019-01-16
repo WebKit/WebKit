@@ -1,3 +1,26 @@
+2019-01-16  Antti Koivisto  <antti@apple.com>
+
+        Add more assertions to find root cause for release assert hit in StyleResolver
+        https://bugs.webkit.org/show_bug.cgi?id=193488
+        <rdar://problem/30983040>
+
+        Reviewed by Zalan Bujtas.
+
+        * css/StyleResolver.cpp:
+        (WebCore::StyleResolver::~StyleResolver):
+
+        Release assert we are not resolving tree style.
+
+        * dom/Document.cpp:
+        (WebCore::Document::setIsResolvingTreeStyle):
+        * dom/Document.h:
+        (WebCore::Document::isResolvingTreeStyle const):
+        * style/StyleTreeResolver.cpp:
+        (WebCore::Style::TreeResolver::Scope::Scope):
+        (WebCore::Style::TreeResolver::Scope::~Scope):
+
+        Set isResolvingTreeStyle bit when we have a tree resolver scope.
+
 2019-01-16  Zalan Bujtas  <zalan@apple.com>
 
         [LFC][Out-of-flow] Set used vertical margin values when top/height/bottom are non-auto.

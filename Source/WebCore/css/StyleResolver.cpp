@@ -267,6 +267,7 @@ void StyleResolver::addKeyframeStyle(Ref<StyleRuleKeyframes>&& rule)
 
 StyleResolver::~StyleResolver()
 {
+    RELEASE_ASSERT(!m_document.isResolvingTreeStyle());
     RELEASE_ASSERT(!m_isDeleted);
     m_isDeleted = true;
 

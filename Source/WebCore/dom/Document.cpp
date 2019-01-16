@@ -2326,6 +2326,12 @@ void Document::didClearStyleResolver()
     m_userAgentShadowTreeStyleResolver = nullptr;
 }
 
+void Document::setIsResolvingTreeStyle(bool value)
+{
+    RELEASE_ASSERT(value != m_isResolvingTreeStyle);
+    m_isResolvingTreeStyle = value;
+}
+
 void Document::createRenderTree()
 {
     ASSERT(!renderView());
