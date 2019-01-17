@@ -1,3 +1,18 @@
+2019-01-16  Justin Fan  <justin_fan@apple.com>
+
+        [WebGPU] Update vertex-buffer-triangle-strip.html to actually use vertex buffer
+        https://bugs.webkit.org/show_bug.cgi?id=193473
+
+        Reviewed by Dean Jackson and Myles Maxfield.
+
+        Also, switch to using the inputSlot instead of the shaderLocation field, as this seems more correct. 
+        As of now I cannot determine an analog for WebGPU's shaderLocation in Metal. 
+
+        Test: Covered by vertex-buffer-triangle-strip.html. No change in behavior.
+
+        * platform/graphics/gpu/cocoa/GPURenderPipelineMetal.mm:
+        (WebCore::setInputStateForPipelineDescriptor): Use the inputSlot instead of shaderLocation as bufferIndex. 
+
 2019-01-16  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [WHLSL] Add the function stage checker

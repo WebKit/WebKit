@@ -1,3 +1,14 @@
+2019-01-16  Justin Fan  <justin_fan@apple.com>
+
+        [WebGPU] Update vertex-buffer-triangle-strip.html to actually use vertex buffer
+        https://bugs.webkit.org/show_bug.cgi?id=193473
+
+        Reviewed by Dean Jackson and Myles Maxfield.
+
+        Refactor the vertex shader to use the vertex stage input, rather than buffer resources. 
+
+        * webgpu/vertex-buffer-triangle-strip.html:
+
 2019-01-16  Chris Dumez  <cdumez@apple.com>
 
         Regression(PSON) View becomes blank after click a cross-site download link

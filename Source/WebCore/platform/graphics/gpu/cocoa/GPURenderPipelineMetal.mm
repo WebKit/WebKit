@@ -134,7 +134,7 @@ static bool setInputStateForPipelineDescriptor(const char* const functionName, M
         MTLVertexAttributeDescriptor *mtlAttributeDesc = [attributeArray objectAtIndexedSubscript:i];
         mtlAttributeDesc.format = *mtlFormat;
         mtlAttributeDesc.offset = attributes[i].offset;
-        mtlAttributeDesc.bufferIndex = attributes[i].shaderLocation;
+        mtlAttributeDesc.bufferIndex = attributes[i].inputSlot;
         [mtlVertexDescriptor.get().attributes setObject:mtlAttributeDesc atIndexedSubscript:i];
     }
 
