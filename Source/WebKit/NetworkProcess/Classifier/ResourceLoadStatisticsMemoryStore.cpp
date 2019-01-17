@@ -534,6 +534,9 @@ Vector<String> ResourceLoadStatisticsMemoryStore::ensurePrevalentResourcesForDeb
         auto& manualResourceStatistic = ensureResourceStatisticsForPrimaryDomain(m_debugManualPrevalentResource);
         setPrevalentResource(manualResourceStatistic, ResourceLoadPrevalence::High);
         primaryDomainsToBlock.uncheckedAppend(m_debugManualPrevalentResource);
+#if !RELEASE_LOG_DISABLED
+        RELEASE_LOG_INFO(ResourceLoadStatisticsDebug, "Did set %{public}s as prevalent resource for the purposes of ITP Debug Mode.", m_debugManualPrevalentResource.utf8().data());
+#endif
     }
     
     return primaryDomainsToBlock;
@@ -543,24 +546,23 @@ void ResourceLoadStatisticsMemoryStore::setResourceLoadStatisticsDebugMode(bool 
 {
     ASSERT(!RunLoop::isMain());
 
+#if !RELEASE_LOG_DISABLED
+    if (enable)
+        RELEASE_LOG_INFO(ResourceLoadStatisticsDebug, "Turned ITP Debug Mode on.");
+#endif
+
     m_debugModeEnabled = enable;
     m_debugLoggingEnabled = enable;
 
     ensurePrevalentResourcesForDebugMode();
+    // This will log the current cookie blocking state.
+    if (enable)
+        updateCookieBlocking([]() { });
 }
 
 void ResourceLoadStatisticsMemoryStore::setPrevalentResourceForDebugMode(const String& domain)
 {
-    if (!m_debugModeEnabled)
-        return;
-
     m_debugManualPrevalentResource = domain;
-    auto& resourceStatistic = ensureResourceStatisticsForPrimaryDomain(domain);
-    setPrevalentResource(resourceStatistic, ResourceLoadPrevalence::High);
-
-#if !RELEASE_LOG_DISABLED
-    RELEASE_LOG_INFO(ResourceLoadStatisticsDebug, "Did set %{public}s as prevalent resource for the purposes of ITP Debug Mode.", domain.utf8().data());
-#endif
 }
 
 void ResourceLoadStatisticsMemoryStore::scheduleStatisticsProcessingRequestIfNecessary()

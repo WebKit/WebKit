@@ -145,8 +145,8 @@ public:
     void setAriaReflectionEnabled(bool isEnabled) { m_ariaReflectionEnabled = isEnabled; }
     bool ariaReflectionEnabled() const { return m_ariaReflectionEnabled; }
 
-    void setResourceLoadStatisticsDebugMode(bool isEnabled) { m_resourceLoadStatisticsDebugMode = isEnabled; }
-    bool resourceLoadStatisticsDebugMode() const { return m_resourceLoadStatisticsDebugMode; }
+    void setItpDebugModeEnabled(bool isEnabled) { m_itpDebugMode = isEnabled; }
+    bool itpDebugModeEnabled() const { return m_itpDebugMode; }
 
     void setRestrictedHTTPResponseAccess(bool isEnabled) { m_isRestrictedHTTPResponseAccess = isEnabled; }
     bool restrictedHTTPResponseAccess() const { return m_isRestrictedHTTPResponseAccess; }
@@ -375,7 +375,7 @@ private:
     bool m_webVREnabled { false };
     bool m_accessibilityObjectModelEnabled { false };
     bool m_ariaReflectionEnabled { true };
-    bool m_resourceLoadStatisticsDebugMode { false };
+    bool m_itpDebugMode { false };
     bool m_isRestrictedHTTPResponseAccess { true };
     bool m_crossOriginResourcePolicyEnabled { true };
     bool m_isWebGLCompressedTextureASTCSupportEnabled { false };

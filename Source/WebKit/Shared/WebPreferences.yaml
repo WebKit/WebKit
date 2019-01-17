@@ -1394,12 +1394,11 @@ ExperimentalPlugInSandboxProfilesEnabled:
   webcoreBinding: RuntimeEnabledFeatures
   webcoreName: experimentalPlugInSandboxProfilesEnabled
 
-ResourceLoadStatisticsDebugMode:
+ItpDebugModeEnabled:
   type: bool
   defaultValue: false
   humanReadableName: "ITP Debug Mode"
   humanReadableDescription: "Intelligent Tracking Prevention Debug Mode"
-  category: internal
   webcoreBinding: RuntimeEnabledFeatures
 
 ServiceWorkersEnabled:

@@ -1,3 +1,23 @@
+2019-01-17  John Wilander  <wilander@apple.com>
+
+        Add infrastructure to enable/disable ITP Debug Mode through Preferences
+        https://bugs.webkit.org/show_bug.cgi?id=193510
+        <rdar://problem/47330969>
+
+        Reviewed by Dean Jackson.
+
+        No new tests. These changes are purely for settings/preferences.
+
+        * page/RuntimeEnabledFeatures.h:
+        (WebCore::RuntimeEnabledFeatures::setItpDebugModeEnabled):
+        (WebCore::RuntimeEnabledFeatures::itpDebugModeEnabled const):
+        (WebCore::RuntimeEnabledFeatures::setResourceLoadStatisticsDebugMode): Deleted.
+        (WebCore::RuntimeEnabledFeatures::resourceLoadStatisticsDebugMode const): Deleted.
+            Renamed.
+        * page/Settings.yaml:
+            Removed since this particular setting should not be persisted for privacy
+            reasons.
+
 2019-01-17  Jer Noble  <jer.noble@apple.com>
 
         SDK_VARIANT build destinations should be separate from non-SDK_VARIANT builds

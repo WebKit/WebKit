@@ -46,12 +46,10 @@ void ResourceLoadStatisticsMemoryStore::registerUserDefaultsIfNeeded()
         if (grandfatheringTime > 0_s && grandfatheringTime <= 24_h * 7)
             setGrandfatheringTime(grandfatheringTime);
 
-        setDebugLogggingEnabled([[NSUserDefaults standardUserDefaults] boolForKey:@"ResourceLoadStatisticsDebugLoggingEnabled"]);
-        setResourceLoadStatisticsDebugMode([[NSUserDefaults standardUserDefaults] boolForKey:@"ExperimentalResourceLoadStatisticsDebugMode"]);
+        setResourceLoadStatisticsDebugMode([[NSUserDefaults standardUserDefaults] boolForKey:@"ItpDebugMode"]);
         auto* debugManualPrevalentResource = [[NSUserDefaults standardUserDefaults] stringForKey:@"ResourceLoadStatisticsManualPrevalentResource"];
         if (debugManualPrevalentResource)
             setPrevalentResourceForDebugMode(debugManualPrevalentResource);
-        setStorageAccessPromptsEnabled([[NSUserDefaults standardUserDefaults] boolForKey:@"ExperimentalStorageAccessPromptsEnabled"]);
 
         Seconds cacheMaxAgeCapForPrevalentResources([[NSUserDefaults standardUserDefaults] doubleForKey:@"ResourceLoadStatisticsCacheMaxAgeCap"]);
         if (cacheMaxAgeCapForPrevalentResources > 0_s && cacheMaxAgeCapForPrevalentResources <= 24_h * 365)

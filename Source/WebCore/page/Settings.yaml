@@ -765,9 +765,6 @@ shouldEnableTextAutosizingBoost:
 mediaCapabilitiesEnabled:
   initial: false
 
-resourceLoadStatisticsDebugMode:
-  initial: false
-
 clientCoordinatesRelativeToLayoutViewport:
   initial: false
   onChange: setNeedsRecalcStyleInAllFrames

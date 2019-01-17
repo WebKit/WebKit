@@ -17,8 +17,8 @@
             if (testRunner.isStatisticsPrevalentResource(thirdPartyOrigin))
                 testFailed(thirdPartyOrigin + " already set as prevalent resource.");
 
-            testRunner.setStatisticsDebugMode(true, function() {
-                testRunner.setStatisticsPrevalentResourceForDebugMode(thirdPartyOrigin, function() {
+            testRunner.setStatisticsPrevalentResourceForDebugMode(thirdPartyOrigin, function() {
+                testRunner.setStatisticsDebugMode(true, function() {
                     if (!testRunner.isStatisticsPrevalentResource(thirdPartyOrigin))
                         testFailed(thirdPartyOrigin + " didn't get set as prevalent resource.");
                     else
