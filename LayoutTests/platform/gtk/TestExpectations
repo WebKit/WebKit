@@ -990,8 +990,8 @@ webkit.org/b/167579 fast/forms/validation-message-on-radio.html [ Skip ]
 # Tests failing with GStreamer 1.6.3
 webkit.org/b/154390 http/tests/media/video-throttled-load-metadata.html [ Pass Failure ]
 webkit.org/b/154390 http/tests/media/video-redirect.html [ Timeout Pass ]
-webkit.org/b/154390 [ Release ] http/tests/media/hls/video-controller-getStartDate.html [ Timeout Failure ]
-webkit.org/b/154390 [ Release ] http/tests/media/hls/hls-audio-tracks-locale-selection.html [ Timeout Failure ]
+webkit.org/b/154390 http/tests/media/hls/video-controller-getStartDate.html [ Timeout Failure ]
+webkit.org/b/154390 http/tests/media/hls/hls-audio-tracks-locale-selection.html [ Timeout Failure ]
 webkit.org/b/154390 [ Release ] http/tests/media/hls/hls-video-resize.html [ Timeout Failure ]
 webkit.org/b/154390 http/tests/security/local-video-source-from-remote.html [ Timeout Pass ]
 
@@ -2082,6 +2082,16 @@ webkit.org/b/193316 imported/w3c/web-platform-tests/IndexedDB/idbindex_getAll.ht
 webkit.org/b/193311 fast/images/decode-render-animated-image.html [ ImageOnlyFailure Pass ]
 
 webkit.org/b/193318 webrtc/audio-replace-track.html [ Timeout Pass ]
+
+webkit.org/b/193490 [ Debug ] animations/animation-direction-normal.html [ Pass Failure ]
+webkit.org/b/193490 [ Debug ] animations/play-state-suspend.html [ Pass Failure ]
+
+webkit.org/b/128255 compositing/columns/composited-lr-paginated-repaint.html [ Pass Failure ]
+webkit.org/b/128255 compositing/columns/composited-rl-paginated-repaint.html [ Pass Failure ]
+
+webkit.org/b/89153 http/tests/websocket/tests/hybi/workers/close.html [ Pass Failure ]
+
+webkit.org/b/177322 [ Debug ] imported/w3c/web-platform-tests/html/semantics/document-metadata/the-meta-element/pragma-directives/attr-meta-http-equiv-refresh/parsing.html [ Pass Failure ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Flaky tests
@@ -3258,7 +3268,7 @@ webkit.org/b/168430 fast/inline/outline-corners-with-offset.html [ ImageOnlyFail
 
 webkit.org/b/168551 http/tests/misc/slow-loading-animated-image.html [ ImageOnlyFailure ]
 
-webkit.org/b/168552 [ Release ] fast/text/hyphenate-locale.html [ Failure ]
+webkit.org/b/168552 fast/text/hyphenate-locale.html [ Failure ]
 
 webkit.org/b/168555 fast/text/initial-advance-in-intermediate-run-complex.html [ ImageOnlyFailure ]
 
@@ -3690,6 +3700,19 @@ webkit.org/b/193322 imported/w3c/web-platform-tests/fetch/content-type/script.wi
 webkit.org/b/193322 imported/w3c/web-platform-tests/fetch/http-cache/cc-request.html [ Failure ]
 webkit.org/b/193322 imported/w3c/web-platform-tests/fetch/nosniff/parsing-nosniff.window.html [ Failure ]
 
+webkit.org/b/173419 fast/events/touch/emulate-touch-events.html [ Failure ]
+
+webkit.org/b/193491 fast/flexbox/missing-repaint-when-flext-item-never-had-layout.html [ Failure ]
+
+webkit.org/b/193493 fast/text/international/spaces-combined-in-vertical-text.html [ Failure ]
+
+webkit.org/b/193511 http/tests/images/mp4-partial-load.html [ Failure ]
+
+webkit.org/b/193516 http/tests/misc/form-submit-file-cross-site.html [ Failure ]
+
+webkit.org/b/193517 imported/w3c/web-platform-tests/css/css-properties-values-api/typedom.tentative.html [ Failure ]
+
+webkit.org/b/193518 imported/w3c/web-platform-tests/fetch/range/general.window.html [ Failure ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of non-crashing, non-flaky tests failing

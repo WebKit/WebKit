@@ -1,3 +1,14 @@
+2019-01-16  Alicia Boya García  <aboya@igalia.com>
+
+        Unreviewed GTK and WPE test gardening.
+        https://bugs.webkit.org/show_bug.cgi?id=193521
+
+        * platform/gtk/TestExpectations:
+        * platform/gtk/imported/w3c/web-platform-tests/fetch/security/dangling-markup-mitigation-data-url.tentative.sub-expected.txt: Added.
+        * platform/gtk/inspector/canvas/recording-bitmaprenderer-expected.txt:
+        * platform/wpe/TestExpectations:
+        * platform/wpe/imported/w3c/web-platform-tests/fetch/security/dangling-markup-mitigation-data-url.tentative.sub-expected.txt: Added.
+
 2019-01-16  Justin Fan  <justin_fan@apple.com>
 
         [WebGPU] Update vertex-buffer-triangle-strip.html to actually use vertex buffer
