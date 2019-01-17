@@ -3910,7 +3910,7 @@ webkit.org/b/181854 svg/filters/feDiffuseLighting-bottomRightPixel.html [ ImageO
 webkit.org/b/181869 svg/filters/fePointLight-color.svg [ ImageOnlyFailure ]
 webkit.org/b/181869 svg/filters/feSpotLight-color.svg [ ImageOnlyFailure ]
 
-webkit.org/b/182119 js/dom/random-array-gc-stress.html [ Failure ]
+webkit.org/b/182119 js/dom/random-array-gc-stress.html [ Skip ]
 
 webkit.org/b/182120 http/tests/images/image-supports-video.html [ Failure ]
 
@@ -4246,3 +4246,22 @@ webkit.org/b/192011 svg/text/monospace-text-size-in-img.html [ ImageOnlyFailure 
 js/dom/modules/import-mjs-module.html [ Skip ]
 
 webkit.org/b/181957 http/tests/misc/resource-timing-resolution.html [ Pass Failure ]
+
+webkit.org/b/193540 editing/style/apply-style-iframe-crash.html [ Failure ]
+webkit.org/b/193540 editing/style/iframe-onload-crash-mac.html [ Failure ]
+webkit.org/b/193540 fast/dom/reference-cycle-leaks.html [ Failure ]
+webkit.org/b/193540 js/dom/stack-trace.html [ Failure ]
+webkit.org/b/193540 svg/animations/smil-leak-dynamically-added-element-instances.svg [ Failure ]
+webkit.org/b/193540 svg/animations/smil-leak-element-instances-noBaseValRef.svg [ Failure ]
+webkit.org/b/193540 svg/animations/smil-leak-element-instances.svg [ Failure ]
+webkit.org/b/193540 svg/animations/smil-leak-elements.svg [ Failure ]
+webkit.org/b/193540 svg/animations/smil-leak-list-property-instances.svg [ Failure ]
+webkit.org/b/193540 webanimations/leak-document-with-web-animation.html [ Failure ]
+
+webkit.org/b/193540 fast/shadow-dom/shadowroot-stylesheets-wrapper-gc.html [ Crash ]
+
+webkit.org/b/193540 fast/dom/Document/document-write-recursion.html [ Skip ]
+webkit.org/b/193540 js/dfg-int-overflow-in-loop.html [ Skip ]
+webkit.org/b/193540 js/slow-stress/marsaglia.html [ Skip ]
+webkit.org/b/193540 js/slow-stress/simple-custom-getter.html [ Skip ]
+webkit.org/b/193540 performance-api/performance-observer-no-document-leak.html [ Skip ]
