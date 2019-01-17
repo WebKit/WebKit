@@ -1,3 +1,13 @@
+2019-01-17  Ross Kirsling  <ross.kirsling@sony.com>
+
+        Unreviewed WinCairo fix -- hundreds of tests crash after r240031.
+
+        * platform/network/curl/ResourceHandleCurl.cpp:
+        (WebCore::ResourceHandle::createCurlRequest):
+        (WebCore::ResourceHandle::didReceiveAuthenticationChallenge):
+        (WebCore::ResourceHandle::receivedCredential):
+        (WebCore::ResourceHandle::getCredential):
+
 2019-01-17  John Wilander  <wilander@apple.com>
 
         Add infrastructure to enable/disable ITP Debug Mode through Preferences
