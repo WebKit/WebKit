@@ -28,7 +28,6 @@
 #if ENABLE(DFG_JIT)
 
 #include "DFGAbstractHeap.h"
-#include "DFGEdgeUsesStructure.h"
 #include "DFGGraph.h"
 #include "DFGHeapLocation.h"
 #include "DFGLazyNode.h"
@@ -107,9 +106,6 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
     // information that clobberize() passes to write() and def(). Other clients of clobberize() can
     // just ignore def() by using a NoOpClobberize functor.
 
-    if (edgesUseStructure(graph, node))
-        read(JSCell_structureID);
-    
     // We allow the runtime to perform a stack scan at any time. We don't model which nodes get implemented
     // by calls into the runtime. For debugging we might replace the implementation of any node with a call
     // to the runtime, and that call may walk stack. Therefore, each node must read() anything that a stack
@@ -1653,17 +1649,18 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
     case ToString:
     case CallStringConstructor:
         switch (node->child1().useKind()) {
-        case StringObjectUse:
-        case StringOrStringObjectUse:
-            // These don't def a pure value, unfortunately. I'll avoid load-eliminating these for
-            // now.
-            return;
-            
         case CellUse:
         case UntypedUse:
             read(World);
             write(Heap);
             return;
+
+        case StringObjectUse:
+        case StringOrStringObjectUse:
+            // These two StringObjectUse's are pure because if we emit this node with either
+            // of these UseKinds, we'll first emit a StructureCheck ensuring that we're the
+            // original String or StringObject structure. Therefore, we don't have an overridden
+            // valueOf, etc.
 
         case Int32Use:
         case Int52RepUse:

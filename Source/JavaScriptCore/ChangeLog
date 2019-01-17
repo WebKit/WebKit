@@ -1,3 +1,105 @@
+2019-01-17  Saam barati  <sbarati@apple.com>
+
+        StringObjectUse should not be a structure check for the original string object structure
+        https://bugs.webkit.org/show_bug.cgi?id=193483
+        <rdar://problem/47280522>
+
+        Reviewed by Yusuke Suzuki.
+
+        Prior to this patch, the use kind for StringObjectUse implied that we
+        do a StructureCheck on the input operand for the *original* StringObject
+        structure. This is generally not how we use UseKinds, so it's no surprise
+        that this is buggy. A UseKind should map to a set of SpeculatedTypes, not an
+        actual set of structures. This patch changes the meaning of StringObjectUse
+        to mean an object where jsDynamicCast<StringObject*> would succeed.
+        
+        This patch also fixes a bug that was caused by the old and weird usage of the
+        UseKind to mean StructureCheck. Consider a program like this:
+        ```
+        S1 = Original StringObject structure
+        S2 = Original StringObject structure with the field "f" added
+        
+        a: GetLocal()
+        b: CheckStructure(@a, {S2})
+        c: ToString(StringObject:@a)
+        ```
+        
+        According to AI, in the above program, we would exit at @c, since
+        StringObject:@a implies a structure check of {S1}, and the intersection
+        of {S1} and {S2} is {}. So, we'd convert the program to be:
+        ```
+        a: GetLocal()
+        b: CheckStructure(@a, {S2})
+        c: Check(StringObject:@a)
+        d: Unreachable
+        ```
+        
+        However, AI would set the proof status of the StringObject:@a edge
+        to be proven, since the SpeculatedType for @a is SpecStringObject.
+        This was incorrect of AI to do because the SpeculatedType itself
+        didn't capture the full power of StringObjectUse. However, having
+        a UseKind mean CheckStructure is weird precisely because what AI was
+        doing is a natural fit to how we typically we think about UseKinds.
+        
+        So the above program would then incorrectly be converted to this, and
+        we'd crash when reaching the Unreachable node:
+        ```
+        a: GetLocal()
+        b: CheckStructure(@a, {S2})
+        d: Unreachable
+        ```
+        
+        This patch makes it so that StringObjectUse just means that the object that
+        filters through a StringObjectUse check must !!jsDynamicCast<StringObject*>.
+        This is now in line with all other UseKinds. It also lets us simplify a bunch
+        of other code that had weird checks for the StringObjectUse UseKind.
+        
+        This patch also makes it so that anywhere where we used to rely on
+        StringObjectUse implying a structure check we actually emit an explicit
+        CheckStructure node.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * bytecode/ExitKind.cpp:
+        (JSC::exitKindToString):
+        * bytecode/ExitKind.h:
+        * dfg/DFGAbstractInterpreterInlines.h:
+        (JSC::DFG::AbstractInterpreter<AbstractStateType>::executeEffects):
+        * dfg/DFGCSEPhase.cpp:
+        * dfg/DFGClobberize.h:
+        (JSC::DFG::clobberize):
+        * dfg/DFGEdgeUsesStructure.h: Removed.
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::attemptToForceStringArrayModeByToStringConversion):
+        (JSC::DFG::FixupPhase::addCheckStructureForOriginalStringObjectUse):
+        (JSC::DFG::FixupPhase::fixupToPrimitive):
+        (JSC::DFG::FixupPhase::fixupToStringOrCallStringConstructor):
+        (JSC::DFG::FixupPhase::attemptToMakeFastStringAdd):
+        (JSC::DFG::FixupPhase::isStringObjectUse): Deleted.
+        * dfg/DFGGraph.cpp:
+        (JSC::DFG::Graph::canOptimizeStringObjectAccess):
+        * dfg/DFGMayExit.cpp:
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileToStringOrCallStringConstructorOrStringValueOf):
+        (JSC::DFG::SpeculativeJIT::speculateStringObject):
+        (JSC::DFG::SpeculativeJIT::speculateStringOrStringObject):
+        * dfg/DFGSpeculativeJIT.h:
+        (JSC::DFG::SpeculativeJIT::speculateStringObjectForStructure): Deleted.
+        * dfg/DFGUseKind.h:
+        (JSC::DFG::alreadyChecked):
+        (JSC::DFG::usesStructure): Deleted.
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::compileToStringOrCallStringConstructorOrStringValueOf):
+        (JSC::FTL::DFG::LowerDFGToB3::speculateStringObject):
+        (JSC::FTL::DFG::LowerDFGToB3::speculateStringOrStringObject):
+        (JSC::FTL::DFG::LowerDFGToB3::speculateStringObjectForCell):
+        (JSC::FTL::DFG::LowerDFGToB3::speculateStringObjectForStructureID): Deleted.
+        * runtime/JSType.cpp:
+        (WTF::printInternal):
+        * runtime/JSType.h:
+        * runtime/StringObject.h:
+        (JSC::StringObject::createStructure):
+        * runtime/StringPrototype.h:
+
 2019-01-17  Yusuke Suzuki  <yusukesuzuki@slowstart.org>
 
         [JSC] Add generateHeapSnapshotForGCDebugging function to dump GCDebugging data

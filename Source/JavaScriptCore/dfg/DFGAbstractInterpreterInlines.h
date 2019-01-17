@@ -2421,12 +2421,6 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
     case CallStringConstructor: {
         switch (node->child1().useKind()) {
         case StringObjectUse:
-            // This also filters that the StringObject has the primordial StringObject
-            // structure.
-            filter(
-                node->child1(),
-                m_graph.registerStructure(m_graph.globalObjectFor(node->origin.semantic)->stringObjectStructure()));
-            break;
         case StringOrStringObjectUse:
         case Int32Use:
         case Int52RepUse:

@@ -175,13 +175,6 @@ ExitMode mayExitImpl(Graph& graph, Node* node, StateType& state)
                 result = Exits;
                 break;
                 
-            // These are shady because they check the structure even if the type of the child node
-            // passes the StringObject type filter.
-            case StringObjectUse:
-            case StringOrStringObjectUse:
-                result = Exits;
-                break;
-                
             default:
                 break;
             }
