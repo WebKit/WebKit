@@ -167,6 +167,7 @@ private:
     void platformSetVisible(bool) override;
     void platformPlay() override;
     void platformPause() override;
+    bool platformPaused() const override;
     MediaTime currentMediaTime() const override;
     void setVolume(float) override;
 #if PLATFORM(IOS_FAMILY)

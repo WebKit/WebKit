@@ -1,3 +1,36 @@
+2019-01-17  Jer Noble  <jer.noble@apple.com>
+
+        MediaPlayerPrivateAVFoundationObjC can return incorrect paused information
+        https://bugs.webkit.org/show_bug.cgi?id=193499
+
+        Reviewed by Eric Carlson.
+
+        MediaPlayerPrivateAVFoundation uses rate() as an indicator of whether the player
+        is paused or not. This is incorrect when playback is stalled waiting for more data.
+        For MPPAVFObjC, use the timeControlStatus as a more accurate indicator of whether
+        the player is playing.
+
+        Now that we have correct play state information, we can remove the handlePlaybackCommand()
+        path when playing remotely for a more direct approach of notifying the HTMLMediaElement
+        that the play state has changed.
+
+        Drive-by fix: Before throwing away the AVPlayer, clear its output context. This keeps
+        remote devices from keeping the AVPlayer alive.
+
+        Drive-by fix #2: The NullMediaPlayer should always return "true" for paused(), not "false",
+        since it can't possibly play anything.
+
+        * platform/graphics/MediaPlayer.cpp:
+        * platform/graphics/avfoundation/MediaPlayerPrivateAVFoundation.cpp:
+        (WebCore::MediaPlayerPrivateAVFoundation::paused const):
+        * platform/graphics/avfoundation/MediaPlayerPrivateAVFoundation.h:
+        (WebCore::MediaPlayerPrivateAVFoundation::platformPaused const):
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.h:
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.mm:
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::cancelLoad):
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::platformPaused const):
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::timeControlStatusDidChange):
+
 2019-01-17  Jiewen Tan  <jiewen_tan@apple.com>
 
         [Mac] Add a new quirk to HTMLFormControlElement::isMouseFocusable

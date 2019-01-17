@@ -79,7 +79,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 #if !PLATFORM(IOS_FAMILY)
 @interface AVPlayer (AVPlayerExternalPlaybackSupportPrivate)
-@property (nonatomic, retain) AVOutputContext *outputContext;
+@property (nonatomic, retain, nullable) AVOutputContext *outputContext;
 @end
 #else
 typedef NS_ENUM(NSInteger, AVPlayerExternalPlaybackType) {

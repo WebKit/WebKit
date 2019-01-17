@@ -275,7 +275,7 @@ bool MediaPlayerPrivateAVFoundation::paused() const
     if (!metaDataAvailable())
         return true;
 
-    return rate() == 0;
+    return platformPaused();
 }
 
 bool MediaPlayerPrivateAVFoundation::seeking() const

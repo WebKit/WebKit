@@ -590,6 +590,9 @@ void MediaPlayerPrivateAVFoundationObjC::cancelLoad()
         setShouldObserveTimeControlStatus(false);
 
         [m_avPlayer replaceCurrentItemWithPlayerItem:nil];
+#if !PLATFORM(IOS_FAMILY)
+        [m_avPlayer setOutputContext:nil];
+#endif
         m_avPlayer = nil;
     }
 
@@ -1302,6 +1305,11 @@ void MediaPlayerPrivateAVFoundationObjC::platformPause()
 
     m_requestedPlaying = false;
     setPlayerRate(0);
+}
+
+bool MediaPlayerPrivateAVFoundationObjC::platformPaused() const
+{
+    return m_cachedTimeControlStatus == AVPlayerTimeControlStatusPaused;
 }
 
 MediaTime MediaPlayerPrivateAVFoundationObjC::platformDuration() const
@@ -3267,8 +3275,10 @@ void MediaPlayerPrivateAVFoundationObjC::timeControlStatusDidChange(int timeCont
         return;
 
     bool playerIsPlaying = m_cachedTimeControlStatus != AVPlayerTimeControlStatusPaused;
-    if (playerIsPlaying != m_requestedPlaying)
-        player()->handlePlaybackCommand(playerIsPlaying ? PlatformMediaSession::PlayCommand : PlatformMediaSession::PauseCommand);
+    if (playerIsPlaying != m_requestedPlaying) {
+        m_requestedPlaying = playerIsPlaying;
+        player()->playbackStateChanged();
+    }
 #endif
 }
 
@@ -3354,9 +3364,10 @@ void MediaPlayerPrivateAVFoundationObjC::setShouldObserveTimeControlStatus(bool 
         return;
 
     m_shouldObserveTimeControlStatus = shouldObserve;
-    if (shouldObserve)
+    if (shouldObserve) {
         [m_avPlayer addObserver:m_objcObserver.get() forKeyPath:@"timeControlStatus" options:NSKeyValueObservingOptionNew context:(void *)MediaPlayerAVFoundationObservationContextPlayer];
-    else
+        timeControlStatusDidChange(m_avPlayer.get().timeControlStatus);
+    } else
         [m_avPlayer removeObserver:m_objcObserver.get() forKeyPath:@"timeControlStatus"];
 }
 
