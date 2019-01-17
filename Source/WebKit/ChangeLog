@@ -1,5 +1,51 @@
 2019-01-16  Youenn Fablet  <youenn@apple.com>
 
+        Add a new SPI for controlling getUserMedia
+        https://bugs.webkit.org/show_bug.cgi?id=192793
+
+        Reviewed by Eric Carlson.
+
+        Some weaknesses of the current getUserMedia/enumerateDevices SPI were found.
+        In particular:
+        - The hash salt should be handled by WebKit not by apps using WebKit.
+        - No need to expose the frame URL, only the top level origin is needed.
+        - The names of the callback are changed to improve the intent of these callbacks.
+        Addressed these by creating a new SPI which will replace the current one.
+        The current SPI will be removed later on.
+
+        Did some refactoring by making the callbacks not return false.
+        Instead, implement the default behavior inside the request objects as deny methods.
+        Some further refactoring will be done as a follow-up to better align the C API with the Cocoa API.
+
+        * UIProcess/API/APIUIClient.h:
+        (API::UIClient::decidePolicyForUserMediaPermissionRequest):
+        (API::UIClient::checkUserMediaPermissionForOrigin):
+        * UIProcess/API/C/WKPage.cpp:
+        (WKPageSetPageUIClient):
+        * UIProcess/API/Cocoa/WKUIDelegatePrivate.h:
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _mediaCaptureState]):
+        (-[WKWebView _setMediaCaptureMuted:]):
+        * UIProcess/API/Cocoa/WKWebViewPrivate.h:
+        * UIProcess/API/glib/WebKitUIClient.cpp:
+        * UIProcess/Cocoa/MediaCaptureUtilities.h: Added.
+        * UIProcess/Cocoa/MediaCaptureUtilities.mm: Added.
+        * UIProcess/Cocoa/UIDelegate.h:
+        * UIProcess/Cocoa/UIDelegate.mm:
+        (WebKit::UIDelegate::setDelegate):
+        (WebKit::requestUserMediaAuthorizationForFrame):
+        (WebKit::UIDelegate::UIClient::decidePolicyForUserMediaPermissionRequest):
+        (WebKit::UIDelegate::UIClient::checkUserMediaPermissionForOrigin):
+        (WebKit::UIDelegate::UIClient::mediaCaptureStateDidChange):
+        * UIProcess/UserMediaPermissionCheckProxy.h:
+        (WebKit::UserMediaPermissionCheckProxy::deny):
+        * UIProcess/UserMediaPermissionRequestManagerProxy.cpp:
+        (WebKit::UserMediaPermissionRequestManagerProxy::requestUserMediaPermissionForFrame):
+        (WebKit::UserMediaPermissionRequestManagerProxy::getUserMediaPermissionInfo):
+        * UIProcess/UserMediaPermissionRequestProxy.h:
+
+2019-01-16  Youenn Fablet  <youenn@apple.com>
+
         Pipe cache quota request from Network Process to UIProcess
         https://bugs.webkit.org/show_bug.cgi?id=193296
 

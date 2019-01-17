@@ -41,6 +41,7 @@
 #import "IconLoadingDelegate.h"
 #import "LegacySessionStateCoding.h"
 #import "Logging.h"
+#import "MediaCaptureUtilities.h"
 #import "NavigationState.h"
 #import "ObjCObjectGraph.h"
 #import "PageClient.h"
@@ -5554,6 +5555,16 @@ static inline WebKit::FindOptions toFindOptions(_WKFindOptions wkFindOptions)
 #else
     return false;
 #endif
+}
+
+- (_WKMediaCaptureState)_mediaCaptureState
+{
+    return WebKit::toWKMediaCaptureState(_page->mediaStateFlags());
+}
+
+- (void)_setMediaCaptureMuted:(BOOL)muted
+{
+    _page->setMediaStreamCaptureMuted(muted);
 }
 
 - (void)_muteMediaCapture

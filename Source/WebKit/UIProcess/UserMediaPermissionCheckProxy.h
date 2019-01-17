@@ -46,6 +46,7 @@ public:
         return adoptRef(*new UserMediaPermissionCheckProxy(frameID, WTFMove(handler), WTFMove(userMediaDocumentOrigin), WTFMove(topLevelDocumentOrigin)));
     }
 
+    void deny() { setUserMediaAccessInfo(false); }
     void setUserMediaAccessInfo(bool);
     void invalidate();
 

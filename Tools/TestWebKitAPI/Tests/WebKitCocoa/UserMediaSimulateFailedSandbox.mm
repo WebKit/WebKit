@@ -39,7 +39,6 @@
 
 #if WK_API_ENABLED
 
-static bool refuseRequest = false;
 static bool wasPrompted = false;
 
 static bool receivedScriptMessage = false;
@@ -62,14 +61,9 @@ static RetainPtr<WKScriptMessage> lastScriptMessage;
 
 @implementation SimulateFailedSandboxUIDelegate
 
-- (void)_webView:(WKWebView *)webView requestUserMediaAuthorizationForDevices:(NSUInteger)devices url:(NSURL *)url mainFrameURL:(NSURL *)mainFrameURL decisionHandler:(void (^)(BOOL))decisionHandler
+- (void)_webView:(WKWebView *)webView requestMediaCaptureAuthorization: (_WKCaptureDevices)devices decisionHandler:(void (^)(BOOL))decisionHandler
 {
     wasPrompted = true;
-
-    if (refuseRequest) {
-        decisionHandler(NO);
-        return;
-    }
 
     BOOL needsMicrophoneAuthorized = devices & _WKCaptureDeviceMicrophone;
     BOOL needsCameraAuthorized = devices & _WKCaptureDeviceCamera;
@@ -81,14 +75,9 @@ static RetainPtr<WKScriptMessage> lastScriptMessage;
     decisionHandler(YES);
 }
 
-- (void)_webView:(WKWebView *)webView checkUserMediaPermissionForURL:(NSURL *)url mainFrameURL:(NSURL *)mainFrameURL frameIdentifier:(NSUInteger)frameIdentifier decisionHandler:(void (^)(NSString *, BOOL))decisionHandler
+- (void)_webView:(WKWebView *)webView includeSensitiveMediaDeviceDetails:(void (^)(BOOL includeSensitiveDetails))decisionHandler
 {
-    if (refuseRequest) {
-        decisionHandler(nil, NO);
-        return;
-    }
-
-    decisionHandler(@"0x987654321", NO);
+    decisionHandler(NO);
 }
 @end
 

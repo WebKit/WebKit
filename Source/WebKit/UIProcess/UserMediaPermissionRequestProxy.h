@@ -45,7 +45,7 @@ public:
     void allow();
 
     enum class UserMediaAccessDenialReason { NoConstraints, UserMediaDisabled, NoCaptureDevices, InvalidConstraint, HardwareError, PermissionDenied, OtherFailure };
-    void deny(UserMediaAccessDenialReason);
+    void deny(UserMediaAccessDenialReason = UserMediaAccessDenialReason::UserMediaDisabled);
 
     void invalidate();
 

@@ -1,3 +1,26 @@
+2019-01-16  Youenn Fablet  <youenn@apple.com>
+
+        Add a new SPI for controlling getUserMedia
+        https://bugs.webkit.org/show_bug.cgi?id=192793
+
+        Reviewed by Eric Carlson.
+
+        * MiniBrowser/mac/WK2BrowserWindowController.m:
+        (-[WK2BrowserWindowController _webView:requestUserMediaAuthorizationForFrame:devices:decisionHandler:]):
+        (-[WK2BrowserWindowController _webView:isMediaCaptureAuthorizedForFrame:decisionHandler:]):
+        * TestWebKitAPI/Tests/WebKit/GetUserMediaNavigation.mm:
+        (-[NavigationWhileGetUserMediaPromptDisplayedUIDelegate _webView:requestMediaCaptureAuthorizationForFrame:devices:decisionHandler:]):
+        * TestWebKitAPI/Tests/WebKit/GetUserMediaReprompt.mm:
+        (-[GetUserMediaRepromptUIDelegate _webView:requestMediaCaptureAuthorizationForFrame:devices:decisionHandler:]):
+        * TestWebKitAPI/Tests/WebKit/MediaStreamTrackDetached.mm:
+        (-[MediaStreamTrackDetachedUIDelegate _webView:requestMediaCaptureAuthorizationForFrame:devices:decisionHandler:]):
+        * TestWebKitAPI/Tests/WebKitCocoa/UserMediaDisabled.mm:
+        (-[UserMediaUIDelegate _webView:requestMediaCaptureAuthorizationForFrame:devices:decisionHandler:]):
+        (-[UserMediaUIDelegate _webView:isMediaCaptureAuthorizedForFrame:decisionHandler:]):
+        * TestWebKitAPI/Tests/WebKitCocoa/UserMediaSimulateFailedSandbox.mm:
+        (-[SimulateFailedSandboxUIDelegate _webView:requestMediaCaptureAuthorizationForFrame:devices:decisionHandler:]):
+        (-[SimulateFailedSandboxUIDelegate _webView:isMediaCaptureAuthorizedForFrame:decisionHandler:]):
+
 2019-01-16  Zalan Bujtas  <zalan@apple.com>
 
         [LFC][BFC] Inflow non-replaced used width should not be negative.
