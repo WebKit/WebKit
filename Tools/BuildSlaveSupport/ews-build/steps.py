@@ -289,6 +289,8 @@ class ValidatePatch(buildstep.BuildStep):
             self._addToLog('stdio', 'Fetched patch id {} does not match with requested patch id {}. Unable to validate.\n'.format(patch_json.get('id'), self.getProperty('patch_id', '')))
             return -1
 
+        patch_author = patch_json.get('creator')
+        self.addURL('Patch by: {}'.format(patch_author), 'mailto:{}'.format(patch_author))
         return patch_json.get('is_obsolete')
 
     def _is_patch_review_denied(self, patch_id):
