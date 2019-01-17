@@ -183,7 +183,6 @@ set(WebCore_FORWARDING_HEADERS_DIRECTORIES
     loader/cache
     loader/icon
 
-
     page/animation
     page/csp
     page/scrolling

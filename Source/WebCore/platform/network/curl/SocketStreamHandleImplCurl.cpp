@@ -39,6 +39,7 @@
 #include "Logging.h"
 #include "SocketStreamError.h"
 #include "SocketStreamHandleClient.h"
+#include "StorageSessionProvider.h"
 #include <wtf/Lock.h>
 #include <wtf/MainThread.h>
 #include <wtf/URL.h>
