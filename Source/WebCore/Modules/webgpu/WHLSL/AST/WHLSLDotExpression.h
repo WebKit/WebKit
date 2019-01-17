@@ -30,6 +30,7 @@
 #include "WHLSLLexer.h"
 #include "WHLSLPropertyAccessExpression.h"
 #include <wtf/UniqueRef.h>
+#include <wtf/text/StringConcatenate.h>
 
 namespace WebCore {
 
@@ -54,17 +55,17 @@ public:
 
     String getFunctionName() const override
     {
-        return String::format("operator.%s", m_fieldName.utf8().data());
+        return makeString("operator.", m_fieldName);
     }
 
     String setFunctionName() const override
     {
-        return String::format("operator.%s=", m_fieldName.utf8().data());
+        return makeString("operator.", m_fieldName, "=");
     }
 
     String andFunctionName() const override
     {
-        return String::format("operator&.%s", m_fieldName.utf8().data());
+        return makeString("operator&.", m_fieldName);
     }
 
     String& fieldName() { return m_fieldName; }

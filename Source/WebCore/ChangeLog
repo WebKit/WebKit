@@ -1,3 +1,102 @@
+2019-01-16  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [WHLSL] Add a handwritten parser
+        https://bugs.webkit.org/show_bug.cgi?id=192355
+
+        Reviewed by Dean Jackson.
+
+        The parser is a mechanical representation of WHLSL's ANTLR grammar at
+        https://github.com/gpuweb/WHLSL/blob/master/Spec/WHLSL.g4. The parser
+        uses Expected<> to return an appropriate Error string when parsing fails.
+
+        This patch doesn't include the AST nodes themselves - those are in
+        https://bugs.webkit.org/show_bug.cgi?id=192991. I split up the patch to
+        aid easier reviewing.
+
+        No new tests because the parser isn't hooked up yet.
+
+        * Modules/webgpu/WHLSL/WHLSLParser.cpp:
+        (WebCore::WHLSL::Parser::Parser):
+        (WebCore::WHLSL::Parser::parse):
+        (WebCore::WHLSL::Parser::fail):
+        (WebCore::WHLSL::Parser::peek):
+        (WebCore::WHLSL::Parser::tryType):
+        (WebCore::WHLSL::Parser::tryTypes):
+        (WebCore::WHLSL::Parser::consumeType):
+        (WebCore::WHLSL::Parser::consumeTypes):
+        (WebCore::WHLSL::digitValue):
+        (WebCore::WHLSL::intLiteralToInt):
+        (WebCore::WHLSL::uintLiteralToUint):
+        (WebCore::WHLSL::floatLiteralToFloat):
+        (WebCore::WHLSL::Parser::consumeIntegralLiteral):
+        (WebCore::WHLSL::Parser::consumeNonNegativeIntegralLiteral):
+        (WebCore::WHLSL::recognizeSimpleUnsignedInteger):
+        (WebCore::WHLSL::Parser::parseConstantExpression):
+        (WebCore::WHLSL::Parser::parseTypeArgument):
+        (WebCore::WHLSL::Parser::parseTypeArguments):
+        (WebCore::WHLSL::Parser::parseTypeSuffixAbbreviated):
+        (WebCore::WHLSL::Parser::parseTypeSuffixNonAbbreviated):
+        (WebCore::WHLSL::Parser::parseAddressSpaceType):
+        (WebCore::WHLSL::Parser::parseNonAddressSpaceType):
+        (WebCore::WHLSL::Parser::parseType):
+        (WebCore::WHLSL::Parser::parseTypeDefinition):
+        (WebCore::WHLSL::Parser::parseBuiltInSemantic):
+        (WebCore::WHLSL::Parser::parseResourceSemantic):
+        (WebCore::WHLSL::Parser::parseSpecializationConstantSemantic):
+        (WebCore::WHLSL::Parser::parseStageInOutSemantic):
+        (WebCore::WHLSL::Parser::parseSemantic):
+        (WebCore::WHLSL::Parser::parseQualifiers):
+        (WebCore::WHLSL::Parser::parseStructureElement):
+        (WebCore::WHLSL::Parser::parseStructureDefinition):
+        (WebCore::WHLSL::Parser::parseEnumerationDefinition):
+        (WebCore::WHLSL::Parser::parseEnumerationMember):
+        (WebCore::WHLSL::Parser::parseNativeTypeDeclaration):
+        (WebCore::WHLSL::Parser::parseNumThreadsFunctionAttribute):
+        (WebCore::WHLSL::Parser::parseAttributeBlock):
+        (WebCore::WHLSL::Parser::parseParameter):
+        (WebCore::WHLSL::Parser::parseParameters):
+        (WebCore::WHLSL::Parser::parseFunctionDefinition):
+        (WebCore::WHLSL::Parser::parseEntryPointFunctionDeclaration):
+        (WebCore::WHLSL::Parser::parseRegularFunctionDeclaration):
+        (WebCore::WHLSL::Parser::parseOperatorFunctionDeclaration):
+        (WebCore::WHLSL::Parser::parseFunctionDeclaration):
+        (WebCore::WHLSL::Parser::parseNativeFunctionDeclaration):
+        (WebCore::WHLSL::Parser::parseBlock):
+        (WebCore::WHLSL::Parser::parseBlockBody):
+        (WebCore::WHLSL::Parser::parseIfStatement):
+        (WebCore::WHLSL::Parser::parseSwitchStatement):
+        (WebCore::WHLSL::Parser::parseSwitchCase):
+        (WebCore::WHLSL::Parser::parseForLoop):
+        (WebCore::WHLSL::Parser::parseWhileLoop):
+        (WebCore::WHLSL::Parser::parseDoWhileLoop):
+        (WebCore::WHLSL::Parser::parseVariableDeclaration):
+        (WebCore::WHLSL::Parser::parseVariableDeclarations):
+        (WebCore::WHLSL::Parser::parseStatement):
+        (WebCore::WHLSL::Parser::parseEffectfulExpression):
+        (WebCore::WHLSL::Parser::parseEffectfulAssignment):
+        (WebCore::WHLSL::Parser::parseEffectfulPrefix):
+        (WebCore::WHLSL::Parser::parseEffectfulSuffix):
+        (WebCore::WHLSL::Parser::parseLimitedSuffixOperator):
+        (WebCore::WHLSL::Parser::parseSuffixOperator):
+        (WebCore::WHLSL::Parser::parseExpression):
+        (WebCore::WHLSL::Parser::parseTernaryConditional):
+        (WebCore::WHLSL::Parser::parseAssignment):
+        (WebCore::WHLSL::Parser::parsePossibleTernaryConditional):
+        (WebCore::WHLSL::Parser::parsePossibleLogicalBinaryOperation):
+        (WebCore::WHLSL::Parser::parsePossibleRelationalBinaryOperation):
+        (WebCore::WHLSL::Parser::parsePossibleShift):
+        (WebCore::WHLSL::Parser::parsePossibleAdd):
+        (WebCore::WHLSL::Parser::parsePossibleMultiply):
+        (WebCore::WHLSL::Parser::parsePossiblePrefix):
+        (WebCore::WHLSL::Parser::parsePossibleSuffix):
+        (WebCore::WHLSL::Parser::parseCallExpression):
+        (WebCore::WHLSL::Parser::parseTerm):
+        * Modules/webgpu/WHLSL/WHLSLParser.h:
+        (WebCore::WHLSL::Parser::Error::Error):
+        (WebCore::WHLSL::Parser::backtrackingScope):
+        (WebCore::WHLSL::Parser::SuffixExpression::SuffixExpression):
+        (WebCore::WHLSL::Parser::SuffixExpression::operator bool const):
+
 2019-01-16  Sihui Liu  <sihui_liu@apple.com>
 
         IndexedDB: UniqueIDBDatabase should not be freed if the database task queue is not empty.

@@ -102,7 +102,129 @@ namespace WebCore {
 namespace WHLSL {
 
 class Parser {
+public:
+    enum class Mode {
+        StandardLibrary,
+        User
+    };
 
+    struct Error {
+        Error(String&& error)
+            : error(WTFMove(error))
+        {
+        }
+
+        String error;
+    };
+
+    Optional<Error> parse(Program&, StringView, Mode);
+
+private:
+    template<typename T> T backtrackingScope(std::function<T()> callback)
+    {
+        auto state = m_lexer.state();
+        auto result = callback();
+        if (result)
+            return result;
+        m_lexer.setState(WTFMove(state));
+        return result;
+    }
+
+    Unexpected<Error> fail(const String& message);
+    Expected<Lexer::Token, Error> peek();
+    Optional<Lexer::Token> tryType(Lexer::Token::Type);
+    Optional<Lexer::Token> tryTypes(Vector<Lexer::Token::Type>);
+    Expected<Lexer::Token, Error> consumeType(Lexer::Token::Type);
+    Expected<Lexer::Token, Error> consumeTypes(Vector<Lexer::Token::Type>);
+
+    Expected<Variant<int, unsigned>, Error> consumeIntegralLiteral();
+    Expected<unsigned, Error> consumeNonNegativeIntegralLiteral();
+    Expected<AST::ConstantExpression, Error> parseConstantExpression();
+    Expected<AST::TypeArgument, Error> parseTypeArgument();
+    Expected<AST::TypeArguments, Error> parseTypeArguments();
+    struct TypeSuffixAbbreviated {
+        Lexer::Token token;
+        Optional<unsigned> numElements;
+    };
+    Expected<TypeSuffixAbbreviated, Error> parseTypeSuffixAbbreviated();
+    struct TypeSuffixNonAbbreviated {
+        Lexer::Token token;
+        Optional<AST::AddressSpace> addressSpace;
+        Optional<unsigned> numElements;
+    };
+    Expected<TypeSuffixNonAbbreviated, Error> parseTypeSuffixNonAbbreviated();
+    Expected<UniqueRef<AST::UnnamedType>, Error> parseAddressSpaceType();
+    Expected<UniqueRef<AST::UnnamedType>, Error> parseNonAddressSpaceType();
+    Expected<UniqueRef<AST::UnnamedType>, Error> parseType();
+    Expected<AST::TypeDefinition, Error> parseTypeDefinition();
+    Expected<AST::BuiltInSemantic, Error> parseBuiltInSemantic();
+    Expected<AST::ResourceSemantic, Error> parseResourceSemantic();
+    Expected<AST::SpecializationConstantSemantic, Error> parseSpecializationConstantSemantic();
+    Expected<AST::StageInOutSemantic, Error> parseStageInOutSemantic();
+    Expected<AST::Semantic, Error> parseSemantic();
+    AST::Qualifiers parseQualifiers();
+    Expected<AST::StructureElement, Error> parseStructureElement();
+    Expected<AST::StructureDefinition, Error> parseStructureDefinition();
+    Expected<AST::EnumerationDefinition, Error> parseEnumerationDefinition();
+    Expected<AST::EnumerationMember, Error> parseEnumerationMember();
+    Expected<AST::NativeTypeDeclaration, Error> parseNativeTypeDeclaration();
+    Expected<AST::NumThreadsFunctionAttribute, Error> parseNumThreadsFunctionAttribute();
+    Expected<AST::AttributeBlock, Error> parseAttributeBlock();
+    Expected<AST::VariableDeclaration, Error> parseParameter();
+    Expected<AST::VariableDeclarations, Error> parseParameters();
+    Expected<AST::FunctionDeclaration, Error> parseEntryPointFunctionDeclaration();
+    Expected<AST::FunctionDeclaration, Error> parseRegularFunctionDeclaration();
+    Expected<AST::FunctionDeclaration, Error> parseOperatorFunctionDeclaration();
+    Expected<AST::FunctionDeclaration, Error> parseFunctionDeclaration();
+    Expected<AST::FunctionDefinition, Error> parseFunctionDefinition();
+    Expected<AST::NativeFunctionDeclaration, Error> parseNativeFunctionDeclaration();
+
+    Expected<AST::Block, Error> parseBlock();
+    AST::Block parseBlockBody(Lexer::Token&& origin);
+    Expected<AST::IfStatement, Error> parseIfStatement();
+    Expected<AST::SwitchStatement, Error> parseSwitchStatement();
+    Expected<AST::SwitchCase, Error> parseSwitchCase();
+    Expected<AST::ForLoop, Error> parseForLoop();
+    Expected<AST::WhileLoop, Error> parseWhileLoop();
+    Expected<AST::DoWhileLoop, Error> parseDoWhileLoop();
+    Expected<AST::VariableDeclaration, Error> parseVariableDeclaration(UniqueRef<AST::UnnamedType>&&);
+    Expected<AST::VariableDeclarationsStatement, Error> parseVariableDeclarations();
+    Expected<UniqueRef<AST::Statement>, Error> parseStatement();
+
+    Expected<UniqueRef<AST::Expression>, Error> parseEffectfulExpression();
+    Expected<UniqueRef<AST::Expression>, Error> parseEffectfulAssignment();
+    Expected<UniqueRef<AST::Expression>, Error> parseEffectfulPrefix();
+    Expected<UniqueRef<AST::Expression>, Error> parseEffectfulSuffix();
+    struct SuffixExpression {
+        SuffixExpression(UniqueRef<AST::Expression>&& result, bool success)
+            : result(WTFMove(result))
+            , success(success)
+        {
+        }
+
+        UniqueRef<AST::Expression> result;
+        bool success;
+        operator bool() const { return success; }
+    };
+    SuffixExpression parseLimitedSuffixOperator(UniqueRef<AST::Expression>&&);
+    SuffixExpression parseSuffixOperator(UniqueRef<AST::Expression>&&);
+
+    Expected<UniqueRef<AST::Expression>, Error> parseExpression();
+    Expected<UniqueRef<AST::Expression>, Error> parseTernaryConditional();
+    Expected<UniqueRef<AST::Expression>, Error> parseAssignment();
+    Expected<UniqueRef<AST::Expression>, Error> parsePossibleTernaryConditional();
+    Expected<UniqueRef<AST::Expression>, Error> parsePossibleLogicalBinaryOperation();
+    Expected<UniqueRef<AST::Expression>, Error> parsePossibleRelationalBinaryOperation();
+    Expected<UniqueRef<AST::Expression>, Error> parsePossibleShift();
+    Expected<UniqueRef<AST::Expression>, Error> parsePossibleAdd();
+    Expected<UniqueRef<AST::Expression>, Error> parsePossibleMultiply();
+    Expected<UniqueRef<AST::Expression>, Error> parsePossiblePrefix();
+    Expected<UniqueRef<AST::Expression>, Error> parsePossibleSuffix();
+    Expected<UniqueRef<AST::Expression>, Error> parseCallExpression();
+    Expected<UniqueRef<AST::Expression>, Error> parseTerm();
+
+    Lexer m_lexer;
+    Mode m_mode;
 };
 
 } // namespace WHLSL
