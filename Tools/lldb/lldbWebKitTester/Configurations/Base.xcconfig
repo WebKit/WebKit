@@ -22,6 +22,7 @@
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #include? "../../../../../Internal/Configurations/HaveInternalSDK.xcconfig"
+#include "SDKVariant.xcconfig"
 
 USE_INTERNAL_SDK = $(USE_INTERNAL_SDK_$(CONFIGURATION));
 USE_INTERNAL_SDK_Production = YES;
