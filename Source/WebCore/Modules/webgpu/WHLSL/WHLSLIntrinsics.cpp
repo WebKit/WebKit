@@ -46,9 +46,18 @@ Intrinsics::Intrinsics()
 {
 }
 
-void Intrinsics::add(AST::NativeFunctionDeclaration&)
+void Intrinsics::add(AST::NativeFunctionDeclaration& nativeFunctionDeclaration)
 {
-    // FIXME: Populate this.
+    if (nativeFunctionDeclaration.name() == "ddx")
+        m_ddx = &nativeFunctionDeclaration;
+    else if (nativeFunctionDeclaration.name() == "ddy")
+        m_ddy = &nativeFunctionDeclaration;
+    else if (nativeFunctionDeclaration.name() == "AllMemoryBarrierWithGroupSync")
+        m_allMemoryBarrier = &nativeFunctionDeclaration;
+    else if (nativeFunctionDeclaration.name() == "DeviceMemoryBarrierWithGroupSync")
+        m_deviceMemoryBarrier = &nativeFunctionDeclaration;
+    else if (nativeFunctionDeclaration.name() == "GroupMemoryBarrierWithGroupSync")
+        m_groupMemoryBarrier = &nativeFunctionDeclaration;
 }
 
 bool Intrinsics::addPrimitive(AST::NativeTypeDeclaration& nativeTypeDeclaration)

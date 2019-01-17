@@ -326,6 +326,7 @@ Modules/webgpu/WHLSL/WHLSLVisitor.cpp
 Modules/webgpu/WHLSL/WHLSLLiteralTypeChecker.cpp
 Modules/webgpu/WHLSL/WHLSLHighZombieFinder.cpp
 Modules/webgpu/WHLSL/WHLSLLoopChecker.cpp
+Modules/webgpu/WHLSL/WHLSLFunctionStageChecker.cpp
 Modules/webgpu/WHLSL/AST/WHLSLTypeArgument.cpp
 Modules/webgpu/WHLSL/AST/WHLSLBuiltInSemantic.cpp
 Modules/webgpu/WHLSL/AST/WHLSLResourceSemantic.cpp

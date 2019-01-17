@@ -1,5 +1,35 @@
 2019-01-16  Myles C. Maxfield  <mmaxfield@apple.com>
 
+        [WHLSL] Add the function stage checker
+        https://bugs.webkit.org/show_bug.cgi?id=193479
+
+        Reviewed by Dean Jackson and Robin Morisset.
+
+        This is a translation of https://github.com/gpuweb/WHLSL/blob/master/Source/CheckNativeFuncStages.mjs into C++.
+
+        No new tests because it isn't hooked up yet. Not enough of the compiler exists to have any meaningful sort
+        of test. When enough of the compiler is present, I'll port the reference implementation's test suite.
+
+        * Modules/webgpu/WHLSL/AST/WHLSLCallExpression.h:
+        (WebCore::WHLSL::AST::CallExpression::function):
+        * Modules/webgpu/WHLSL/WHLSLFunctionStageChecker.cpp: Added.
+        (WebCore::WHLSL::FunctionStageChecker::FunctionStageChecker):
+        (WebCore::WHLSL::checkFunctionStages):
+        * Modules/webgpu/WHLSL/WHLSLFunctionStageChecker.h: Added.
+        * Modules/webgpu/WHLSL/WHLSLIntrinsics.cpp:
+        (WebCore::WHLSL::Intrinsics::add):
+        * Modules/webgpu/WHLSL/WHLSLIntrinsics.h:
+        (WebCore::WHLSL::Intrinsics::ddx const):
+        (WebCore::WHLSL::Intrinsics::ddy const):
+        (WebCore::WHLSL::Intrinsics::allMemoryBarrier const):
+        (WebCore::WHLSL::Intrinsics::deviceMemoryBarrier const):
+        (WebCore::WHLSL::Intrinsics::groupMemoryBarrier const):
+        (WebCore::WHLSL::Intrinsics::WTF_ARRAY_LENGTH):
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+
+2019-01-16  Myles C. Maxfield  <mmaxfield@apple.com>
+
         [WHLSL] Delete the 'restricted' keyword
         https://bugs.webkit.org/show_bug.cgi?id=193469
 
