@@ -474,7 +474,7 @@ private:
 
     void updateCustomLayersAfterFlush();
 
-    void updateScrollCoordinationForThisFrame(ScrollingNodeID);
+    void updateScrollCoordinationForThisFrame(ScrollingNodeID, OptionSet<ScrollingNodeChangeFlags>);
     ScrollingNodeID attachScrollingNode(RenderLayer&, ScrollingNodeType, ScrollingNodeID parentNodeID);
     void updateScrollCoordinatedLayer(RenderLayer&, OptionSet<ScrollCoordinationRole>, OptionSet<ScrollingNodeChangeFlags>);
     void detachScrollCoordinatedLayer(RenderLayer&, OptionSet<ScrollCoordinationRole>);

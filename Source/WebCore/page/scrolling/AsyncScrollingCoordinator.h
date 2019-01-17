@@ -101,12 +101,10 @@ private:
     WEBCORE_EXPORT void detachFromStateTree(ScrollingNodeID) override;
     WEBCORE_EXPORT void clearStateTree() override;
     
-    WEBCORE_EXPORT void updateNodeLayer(ScrollingNodeID, GraphicsLayer*) override;
-    WEBCORE_EXPORT void updateNodeViewportConstraints(ScrollingNodeID, const ViewportConstraints&) override;
-    
-    WEBCORE_EXPORT void updateFrameScrollingNode(ScrollingNodeID, GraphicsLayer* scrollLayer, GraphicsLayer* scrolledContentsLayer, GraphicsLayer* counterScrollingLayer, GraphicsLayer* insetClipLayer, const ScrollingGeometry&) override;
-    WEBCORE_EXPORT void updateOverflowScrollingNode(ScrollingNodeID, GraphicsLayer* scrollLayer, GraphicsLayer* scrolledContentsLayer, const ScrollingGeometry&) override;
-    
+    WEBCORE_EXPORT void setNodeLayers(ScrollingNodeID, GraphicsLayer* /*layer*/, GraphicsLayer* /*scrolledContentsLayer*/ = nullptr, GraphicsLayer* /*counterScrollingLayer*/ = nullptr, GraphicsLayer* /*insetClipLayer*/ = nullptr) override;
+    WEBCORE_EXPORT void setScrollingNodeGeometry(ScrollingNodeID, const ScrollingGeometry&) override;
+    WEBCORE_EXPORT void setViewportConstraintedNodeGeometry(ScrollingNodeID, const ViewportConstraints&) override;
+
     WEBCORE_EXPORT void reconcileScrollingState(FrameView&, const FloatPoint&, const LayoutViewportOriginOrOverrideRect&, bool programmaticScroll, ViewportRectStability, ScrollingLayerPositionAction) override;
 
     bool isRubberBandInProgress() const override;

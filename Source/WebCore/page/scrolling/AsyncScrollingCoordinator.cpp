@@ -525,58 +525,53 @@ void AsyncScrollingCoordinator::ensureRootStateNodeForFrameView(FrameView& frame
     attachToStateTree(ScrollingNodeType::MainFrame, frameView.scrollLayerID(), 0, 0);
 }
 
-void AsyncScrollingCoordinator::updateFrameScrollingNode(ScrollingNodeID nodeID, GraphicsLayer* layer, GraphicsLayer* scrolledContentsLayer, GraphicsLayer* counterScrollingLayer, GraphicsLayer* insetClipLayer, const ScrollingGeometry& scrollingGeometry)
+void AsyncScrollingCoordinator::setNodeLayers(ScrollingNodeID nodeID, GraphicsLayer* layer, GraphicsLayer* scrolledContentsLayer, GraphicsLayer* counterScrollingLayer, GraphicsLayer* insetClipLayer)
 {
-    auto* node = downcast<ScrollingStateFrameScrollingNode>(m_scrollingStateTree->stateNodeForID(nodeID));
+    auto* node = m_scrollingStateTree->stateNodeForID(nodeID);
     ASSERT(node);
     if (!node)
         return;
 
     node->setLayer(layer);
-    node->setInsetClipLayer(insetClipLayer);
-    node->setScrolledContentsLayer(scrolledContentsLayer);
-    node->setCounterScrollingLayer(counterScrollingLayer);
-    node->setParentRelativeScrollableRect(scrollingGeometry.parentRelativeScrollableRect);
-    node->setScrollOrigin(scrollingGeometry.scrollOrigin);
-    node->setScrollPosition(scrollingGeometry.scrollPosition);
-    node->setTotalContentsSize(scrollingGeometry.contentSize);
-    node->setReachableContentsSize(scrollingGeometry.reachableContentSize);
-    node->setScrollableAreaSize(scrollingGeometry.scrollableAreaSize);
-}
+
+    if (is<ScrollingStateScrollingNode>(node)) {
+        auto& scrollingNode = downcast<ScrollingStateScrollingNode>(*node);
+        scrollingNode.setScrolledContentsLayer(scrolledContentsLayer);
     
-void AsyncScrollingCoordinator::updateOverflowScrollingNode(ScrollingNodeID nodeID, GraphicsLayer* layer, GraphicsLayer* scrolledContentsLayer, const ScrollingGeometry& scrollingGeometry)
+        if (is<ScrollingStateFrameScrollingNode>(node)) {
+            auto& frameScrollingNode = downcast<ScrollingStateFrameScrollingNode>(*node);
+            frameScrollingNode.setInsetClipLayer(insetClipLayer);
+            frameScrollingNode.setCounterScrollingLayer(counterScrollingLayer);
+        }
+    }
+}
+
+void AsyncScrollingCoordinator::setScrollingNodeGeometry(ScrollingNodeID nodeID, const ScrollingGeometry& scrollingGeometry)
 {
-    auto* node = downcast<ScrollingStateOverflowScrollingNode>(m_scrollingStateTree->stateNodeForID(nodeID));
-    ASSERT(node);
-    if (!node)
+    auto* scrollingNode = downcast<ScrollingStateScrollingNode>(m_scrollingStateTree->stateNodeForID(nodeID));
+    ASSERT(scrollingNode);
+    if (!scrollingNode)
         return;
 
-    node->setLayer(layer);
-    node->setScrolledContentsLayer(scrolledContentsLayer);
-    node->setParentRelativeScrollableRect(scrollingGeometry.parentRelativeScrollableRect);
-    node->setScrollOrigin(scrollingGeometry.scrollOrigin);
-    node->setScrollPosition(scrollingGeometry.scrollPosition);
-    node->setTotalContentsSize(scrollingGeometry.contentSize);
-    node->setReachableContentsSize(scrollingGeometry.reachableContentSize);
-    node->setScrollableAreaSize(scrollingGeometry.scrollableAreaSize);
+    scrollingNode->setParentRelativeScrollableRect(scrollingGeometry.parentRelativeScrollableRect);
+    scrollingNode->setScrollOrigin(scrollingGeometry.scrollOrigin);
+    scrollingNode->setScrollPosition(scrollingGeometry.scrollPosition);
+    scrollingNode->setTotalContentsSize(scrollingGeometry.contentSize);
+    scrollingNode->setReachableContentsSize(scrollingGeometry.reachableContentSize);
+    scrollingNode->setScrollableAreaSize(scrollingGeometry.scrollableAreaSize);
+
 #if ENABLE(CSS_SCROLL_SNAP)
-    setStateScrollingNodeSnapOffsetsAsFloat(*node, ScrollEventAxis::Horizontal, &scrollingGeometry.horizontalSnapOffsets, &scrollingGeometry.horizontalSnapOffsetRanges, m_page->deviceScaleFactor());
-    setStateScrollingNodeSnapOffsetsAsFloat(*node, ScrollEventAxis::Vertical, &scrollingGeometry.verticalSnapOffsets, &scrollingGeometry.verticalSnapOffsetRanges, m_page->deviceScaleFactor());
-    node->setCurrentHorizontalSnapPointIndex(scrollingGeometry.currentHorizontalSnapPointIndex);
-    node->setCurrentVerticalSnapPointIndex(scrollingGeometry.currentVerticalSnapPointIndex);
+    // updateScrollSnapPropertiesWithFrameView() sets these for frame scrolling nodes. FIXME: Why the difference?
+    if (is<ScrollingStateOverflowScrollingNode>(scrollingNode)) {
+        setStateScrollingNodeSnapOffsetsAsFloat(*scrollingNode, ScrollEventAxis::Horizontal, &scrollingGeometry.horizontalSnapOffsets, &scrollingGeometry.horizontalSnapOffsetRanges, m_page->deviceScaleFactor());
+        setStateScrollingNodeSnapOffsetsAsFloat(*scrollingNode, ScrollEventAxis::Vertical, &scrollingGeometry.verticalSnapOffsets, &scrollingGeometry.verticalSnapOffsetRanges, m_page->deviceScaleFactor());
+        scrollingNode->setCurrentHorizontalSnapPointIndex(scrollingGeometry.currentHorizontalSnapPointIndex);
+        scrollingNode->setCurrentVerticalSnapPointIndex(scrollingGeometry.currentVerticalSnapPointIndex);
+    }
 #endif
 }
 
-void AsyncScrollingCoordinator::updateNodeLayer(ScrollingNodeID nodeID, GraphicsLayer* graphicsLayer)
-{
-    auto* node = m_scrollingStateTree->stateNodeForID(nodeID);
-    if (!node)
-        return;
-
-    node->setLayer(graphicsLayer);
-}
-
-void AsyncScrollingCoordinator::updateNodeViewportConstraints(ScrollingNodeID nodeID, const ViewportConstraints& constraints)
+void AsyncScrollingCoordinator::setViewportConstraintedNodeGeometry(ScrollingNodeID nodeID, const ViewportConstraints& constraints)
 {
     auto* node = m_scrollingStateTree->stateNodeForID(nodeID);
     if (!node)

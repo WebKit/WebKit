@@ -1,3 +1,42 @@
+2019-01-17  Simon Fraser  <simon.fraser@apple.com>
+
+        ScrollingCoordinator: separate updating node geometry from node layers
+        https://bugs.webkit.org/show_bug.cgi?id=193527
+
+        Reviewed by Antti Koivisto.
+
+        Updating scrolling tree node layers happens in a different code path from updating geometry;
+        the former has to be post-flush, when GraphicsLayer has made tiled or structural layers.
+        Geometry only needs to be updated after layout, and soon we'll do this via compositing updates.
+        
+        We can also clean up the ScrollingCoordinator API and have a single function that updates
+        node layers (handling different node types), and separate functions for pushing viewport-constrained
+        and scrolling node geometry.
+
+        No observable behavior change.
+
+        * page/scrolling/AsyncScrollingCoordinator.cpp:
+        (WebCore::AsyncScrollingCoordinator::setNodeLayers):
+        (WebCore::AsyncScrollingCoordinator::setScrollingNodeGeometry):
+        (WebCore::AsyncScrollingCoordinator::setViewportConstraintedNodeGeometry):
+        (WebCore::AsyncScrollingCoordinator::updateFrameScrollingNode): Deleted.
+        (WebCore::AsyncScrollingCoordinator::updateOverflowScrollingNode): Deleted.
+        (WebCore::AsyncScrollingCoordinator::updateNodeLayer): Deleted.
+        (WebCore::AsyncScrollingCoordinator::updateNodeViewportConstraints): Deleted.
+        * page/scrolling/AsyncScrollingCoordinator.h:
+        * page/scrolling/ScrollingCoordinator.h:
+        (WebCore::ScrollingCoordinator::setNodeLayers):
+        (WebCore::ScrollingCoordinator::setScrollingNodeGeometry):
+        (WebCore::ScrollingCoordinator::setViewportConstraintedNodeGeometry):
+        (WebCore::ScrollingCoordinator::updateNodeLayer): Deleted.
+        (WebCore::ScrollingCoordinator::updateNodeViewportConstraints): Deleted.
+        (WebCore::ScrollingCoordinator::updateFrameScrollingNode): Deleted.
+        (WebCore::ScrollingCoordinator::updateOverflowScrollingNode): Deleted.
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::updateScrollCoordinationForThisFrame):
+        (WebCore::RenderLayerCompositor::updateScrollCoordinatedLayer):
+        * rendering/RenderLayerCompositor.h:
+
 2019-01-17  Zalan Bujtas  <zalan@apple.com>
 
         [LFC][BFC][Quirk] Take body padding and border into account when stretching height.
