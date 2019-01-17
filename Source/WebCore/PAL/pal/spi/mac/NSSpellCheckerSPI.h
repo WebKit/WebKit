@@ -35,6 +35,8 @@
 extern NSString *NSTextCheckingInsertionPointKey;
 #endif
 
+extern NSString *NSTextCheckingSuppressInitialCapitalizationKey;
+
 @interface NSSpellChecker ()
 
 #if HAVE(ADVANCED_SPELL_CHECKING)
