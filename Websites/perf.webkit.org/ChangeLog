@@ -1,3 +1,48 @@
+2018-12-21  Dewei Zhu  <dewei_zhu@apple.com>
+
+        Add UI in analysis task page to show commit testability information.
+        https://bugs.webkit.org/show_bug.cgi?id=192972
+
+        Reviewed by Ryosuke Niwa.
+
+        Add UI in custom analysis task configuration and customizable test group form to show testability information.
+        Fix a bug in 'CustomAnalysisTaskConfigurator._updateCommitSetMap' that 'currentComparison' is incorrectly set.
+        SQL to update existing database:
+            ALTER TABLE commits ADD COLUMN IF NOT EXISTS commit_testability varchar(128) DEFAULT NULL;
+
+        * browser-tests/custom-analysis-task-configurator-tests.js: Added a unit test for the bug in
+        'CustomAnalysisTaskConfigurator._updateCommitSetMap'.
+        Added a unit test to make sure 'CustomAnalysisTaskConfigurator' still works when commit fetching never returns.
+        * browser-tests/index.html: Imported ''custom-analysis-task-configurator-tests.js'.
+        * init-database.sql: Increase 'commit_testability' field length from 64 characters to 128.
+        * public/v3/components/custom-analysis-task-configurator.js: Added UI to show testability information.
+        (CustomAnalysisTaskConfigurator):
+        (CustomAnalysisTaskConfigurator.prototype._didUpdateSelectedPlatforms): Should reset related field for corresponding
+        repositories that user does not specify revision.
+        (CustomAnalysisTaskConfigurator.prototype._updateMapFromSpecifiedRevisionsForConfiguration): A helper function
+        to update '_specifiedCommits' and '_invalidRevisionsByConfiguration' per '_specifiedRevisions'.
+        (CustomAnalysisTaskConfigurator.prototype.render):
+        (CustomAnalysisTaskConfigurator.prototype._updateCommitSetMap): Fixed a bug that 'currentComparison' is incorrectly set.
+        (CustomAnalysisTaskConfigurator.prototype._computeCommitSet):
+        (CustomAnalysisTaskConfigurator.prototype.async._fetchCommitsForConfiguration):
+        (CustomAnalysisTaskConfigurator.prototype.async._resolveRevision):
+        (CustomAnalysisTaskConfigurator.prototype._buildRevisionTable):
+        (CustomAnalysisTaskConfigurator.prototype._buildTestabilityList):
+        (CustomAnalysisTaskConfigurator.prototype._selectRepositoryGroup):
+        (CustomAnalysisTaskConfigurator.prototype._buildRevisionInput):
+        (CustomAnalysisTaskConfigurator.cssTemplate):
+        * public/v3/components/customizable-test-group-form.js: Added UI to show testability information.
+        (CustomizableTestGroupForm.prototype._renderCustomRevisionTable):
+        (CustomizableTestGroupForm.prototype._constructTestabilityRows.):
+        (CustomizableTestGroupForm.prototype._constructTestabilityRows):
+        (CustomizableTestGroupForm.prototype._constructRevisionRadioButtons):
+        Changing either revision editor or radio button should trigger a re-render as testability
+        information for updated revision may change.
+        (CustomizableTestGroupForm.cssTemplate):
+        * public/v3/models/commit-set.js:
+        (IntermediateCommitSet.prototype.commitsWithTestability): Renamed from 'commitsWithTestabilityWarnings'.
+        (IntermediateCommitSet.prototype.commitsWithTestabilityWarnings): Deleted.
+
 2018-12-14  Dewei Zhu  <dewei_zhu@apple.com>
 
         Extend commits table to contain testability information.

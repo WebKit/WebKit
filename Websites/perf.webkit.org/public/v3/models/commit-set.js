@@ -389,7 +389,7 @@ class IntermediateCommitSet {
         return Promise.all(fetchingPromises);
     }
 
-    commitsWithTestabilityWarnings() { return this.commits().filter((commit) => !!commit.testabilityWarning()); }
+    commitsWithTestability() { return this.commits().filter((commit) => !!commit.testability()); }
     commits() { return  Array.from(this._commitByRepository.values()); }
 
     _fetchCommitLogAndOwnedCommits(repository, revision)

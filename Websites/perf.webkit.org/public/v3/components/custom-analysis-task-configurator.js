@@ -7,16 +7,16 @@ class CustomAnalysisTaskConfigurator extends ComponentBase {
         this._selectedTests = [];
         this._triggerablePlatforms = [];
         this._selectedPlatform = null;
-        this._configurationNames = ['Baseline', 'Comparison'];
         this._showComparison = false;
         this._commitSetMap = {};
         this._specifiedRevisions = {'Baseline': new Map, 'Comparison': new Map};
         this._patchUploaders = {'Baseline': new Map, 'Comparison': new Map};
         this._customRootUploaders = {'Baseline': null, 'Comparison': null};
-        this._fetchedRevisions = {'Baseline': new Map, 'Comparison': new Map};
+        this._fetchedCommits = {'Baseline': new Map, 'Comparison': new Map};
         this._repositoryGroupByConfiguration = {'Baseline': null, 'Comparison': null};
-        this._updateTriggerableLazily = new LazilyEvaluatedFunction(this._updateTriggerable.bind(this));
+        this._invalidRevisionsByConfiguration = {'Baseline': new Map, 'Comparison': new Map};
 
+        this._updateTriggerableLazily = new LazilyEvaluatedFunction(this._updateTriggerable.bind(this));
         this._renderTriggerableTestsLazily = new LazilyEvaluatedFunction(this._renderTriggerableTests.bind(this));
         this._renderTriggerablePlatformsLazily = new LazilyEvaluatedFunction(this._renderTriggerablePlatforms.bind(this));
         this._renderRepositoryPanesLazily = new LazilyEvaluatedFunction(this._renderRepositoryPanes.bind(this));
@@ -55,9 +55,25 @@ class CustomAnalysisTaskConfigurator extends ComponentBase {
 
     _didUpdateSelectedPlatforms()
     {
+        for (const configuration of ['Baseline', 'Comparison']) {
+            this._updateMapFromSpecifiedRevisionsForConfiguration(this._fetchedCommits, configuration);
+            this._updateMapFromSpecifiedRevisionsForConfiguration(this._invalidRevisionsByConfiguration, configuration);
+        }
         this._updateCommitSetMap();
-
         this.enqueueToRender();
+    }
+
+    _updateMapFromSpecifiedRevisionsForConfiguration(map, configuration)
+    {
+        const referenceMap = this._specifiedRevisions[configuration];
+        const newValue = new Map;
+        for (const [key, value] of map[configuration].entries()) {
+            if (!referenceMap.has(key))
+                continue;
+            newValue.set(key, value);
+        }
+        if (newValue.size !== map[configuration].size)
+            map[configuration] = newValue;
     }
 
     setCommitSets(baselineCommitSet, comparisonCommitSet)
@@ -190,6 +206,12 @@ class CustomAnalysisTaskConfigurator extends ComponentBase {
         const [triggerable, error] = this._updateTriggerableLazily.evaluate(this._selectedTests, this._selectedPlatform);
 
         this._renderRepositoryPanesLazily.evaluate(triggerable, error, this._selectedPlatform, this._repositoryGroupByConfiguration, this._showComparison);
+
+        this.renderReplace(this.content('baseline-testability'), this._buildTestabilityList(this._commitSetMap['Baseline'],
+            'Baseline', this._invalidRevisionsByConfiguration['Baseline']));
+
+        this.renderReplace(this.content('comparison-testability'), !this._showComparison ? null :
+            this._buildTestabilityList(this._commitSetMap['Comparison'], 'Comparison', this._invalidRevisionsByConfiguration['Comparison']));
     }
 
     _renderTriggerableTests()
@@ -304,12 +326,12 @@ class CustomAnalysisTaskConfigurator extends ComponentBase {
             newComparison = null;
 
         const currentBaseline = this._commitSetMap['Baseline'];
-        const currentComparison = this._commitSetMap['Baseline'];
-        if (newBaseline == currentBaseline && newComparison == currentComparison)
-            return; // Both of them are null.
+        const currentComparison = this._commitSetMap['Comparison'];
+        const areCommitSetsEqual = (commitSetA, commitSetB) => commitSetA == commitSetB || (commitSetA && commitSetB && commitSetA.equals(commitSetB));
+        const sameBaselineConfig = areCommitSetsEqual(currentBaseline, newBaseline);
+        const sameComparisionConfig = areCommitSetsEqual(currentComparison, newComparison);
 
-        if (newBaseline && currentBaseline && newBaseline.equals(currentBaseline)
-            && newComparison && currentComparison && newComparison.equals(currentComparison))
+        if (sameBaselineConfig && sameComparisionConfig)
             return;
 
         this._commitSetMap = {'Baseline': newBaseline, 'Comparison': newComparison};
@@ -331,8 +353,11 @@ class CustomAnalysisTaskConfigurator extends ComponentBase {
         const commitSet = new CustomCommitSet;
         for (let repository of repositoryGroup.repositories()) {
             let revision = this._specifiedRevisions[configurationName].get(repository);
-            if (!revision)
-                revision = this._fetchedRevisions[configurationName].get(repository);
+            if (!revision) {
+                const commit = this._fetchedCommits[configurationName].get(repository);
+                if (commit)
+                    revision = commit.revision();
+            }
             if (!revision)
                 return null;
             let patch = null;
@@ -353,6 +378,51 @@ class CustomAnalysisTaskConfigurator extends ComponentBase {
             commitSet.addCustomRoot(uploadedFile);
 
         return commitSet;
+    }
+
+    async _fetchCommitsForConfiguration(configurationName)
+    {
+        const commitSet = this._commitSetMap[configurationName];
+        if (!commitSet)
+            return;
+
+        const specifiedRevisions = this._specifiedRevisions[configurationName];
+        const fetchedCommits = this._fetchedCommits[configurationName];
+        const invalidRevisionForRepository = this._invalidRevisionsByConfiguration[configurationName];
+
+        await Promise.all(Array.from(commitSet.repositories()).map((repository) => {
+            const revision = commitSet.revisionForRepository(repository);
+            return this._resolveRevision(repository, revision, specifiedRevisions, invalidRevisionForRepository, fetchedCommits);
+        }));
+
+        const latestCommitSet = this._commitSetMap[configurationName];
+        if (commitSet != latestCommitSet)
+            return;
+        this.enqueueToRender();
+    }
+
+    async _resolveRevision(repository, revision, specifiedRevisions, invalidRevisionForRepository, fetchedCommits)
+    {
+        const fetchedCommit = fetchedCommits.get(repository);
+        if (fetchedCommit && fetchedCommit.revision() == revision)
+            return;
+
+        fetchedCommits.delete(repository);
+        let commits = [];
+        try {
+            commits = await CommitLog.fetchForSingleRevision(repository, revision);
+        } catch (error) {
+            console.assert(error == 'UnknownCommit');
+            if (revision != specifiedRevisions.get(repository))
+                return;
+            invalidRevisionForRepository.set(repository, revision);
+            return;
+        }
+        console.assert(commits.length, 1);
+        if (revision != specifiedRevisions.get(repository))
+            return;
+        invalidRevisionForRepository.delete(repository);
+        fetchedCommits.set(repository, commits[0]);
     }
 
     _renderRepositoryPanes(triggerable, error, platform, repositoryGroupByConfiguration, showComparison)
@@ -414,7 +484,6 @@ class CustomAnalysisTaskConfigurator extends ComponentBase {
     _buildRevisionTable(configurationName, repositoryGroups, currentGroup, platform, requiredRepositories, optionalRepositoryList, alwaysAcceptsCustomRoots)
     {
         const element = ComponentBase.createElement;
-        const link = ComponentBase.createLink;
 
         const customRootsTBody = element('tbody', [
             element('tr', [
@@ -453,6 +522,25 @@ class CustomAnalysisTaskConfigurator extends ComponentBase {
             )];
     }
 
+    _buildTestabilityList(commitSet, configurationName, invalidRevisionForRepository)
+    {
+        const element = ComponentBase.createElement;
+        const entries = [];
+
+        if (!commitSet || !commitSet.repositories().length)
+            return [];
+
+        for (const repository of commitSet.repositories()) {
+            const commit = this._fetchedCommits[configurationName].get(repository);
+            if (commit && commit.testability() && !invalidRevisionForRepository.has(repository))
+                entries.push(element('li', `${commit.repository().name()} - "${commit.label()}": ${commit.testability()}`));
+            if (invalidRevisionForRepository.has(repository))
+                entries.push(element('li', `${repository.name()} - "${invalidRevisionForRepository.get(repository)}": Invalid revision`));
+        }
+
+        return entries;
+    }
+
     _buildRepositoryGroupList(repositoryGroups, currentGroup, configurationName)
     {
         const element = ComponentBase.createElement;
@@ -476,6 +564,7 @@ class CustomAnalysisTaskConfigurator extends ComponentBase {
         clone[configurationName] = group;
         this._repositoryGroupByConfiguration = clone;
         this._updateCommitSetMap();
+        this._fetchCommitsForConfiguration(configurationName);
         this.enqueueToRender();
     }
 
@@ -483,10 +572,19 @@ class CustomAnalysisTaskConfigurator extends ComponentBase {
     {
         const revision = this._specifiedRevisions[configurationName].get(repository) || '';
         const element = ComponentBase.createElement;
+        let scheduledUpdate = null;
         const input = element('input', {value: revision, oninput: () => {
             unmodifiedInput = null;
-            this._specifiedRevisions[configurationName].set(repository, input.value);
+            const revisionToFetch = input.value;
+            this._specifiedRevisions[configurationName].set(repository, revisionToFetch);
             this._updateCommitSetMap();
+            if (scheduledUpdate)
+                clearTimeout(scheduledUpdate);
+            scheduledUpdate = setTimeout(() => {
+                if (revisionToFetch == input.value)
+                    this._fetchCommitsForConfiguration(configurationName);
+                scheduledUpdate = null;
+            }, CustomAnalysisTaskConfigurator.commitFetchInterval);
         }});
         let unmodifiedInput = input;
 
@@ -494,7 +592,7 @@ class CustomAnalysisTaskConfigurator extends ComponentBase {
             CommitLog.fetchLatestCommitForPlatform(repository, platform).then((commit) => {
                 if (commit && unmodifiedInput) {
                     unmodifiedInput.value = commit.revision();
-                    this._fetchedRevisions[configurationName].set(repository, commit.revision());
+                    this._fetchedCommits[configurationName].set(repository, commit);
                     this._updateCommitSetMap();
                 }
             });
@@ -521,6 +619,7 @@ class CustomAnalysisTaskConfigurator extends ComponentBase {
             <section id="baseline-configuration-pane" class="pane">
                 <h2>3. Configure Baseline</h2>
                 <table id="baseline-revision-table" class="revision-table"></table>
+                <ul id="baseline-testability"></ul>
             </section>
             <section id="specify-comparison-pane" class="pane">
                 <button id="specify-comparison-button">Configure to Compare</button>
@@ -528,6 +627,7 @@ class CustomAnalysisTaskConfigurator extends ComponentBase {
             <section id="comparison-configuration-pane" class="pane">
                 <h2>4. Configure Comparison</h2>
                 <table id="comparison-revision-table" class="revision-table"></table>
+                <ul id="comparison-testability"></ul>
             </section>`;
     }
 
@@ -674,8 +774,16 @@ class CustomAnalysisTaskConfigurator extends ComponentBase {
                 font-size: 1.2rem;
                 font-weight: inherit;
             }
+
+            #baseline-testability li,
+            #comparison-testability li {
+                color: #c33;
+                width: 20rem;
+            }
 `;
     }
 }
+
+CustomAnalysisTaskConfigurator.commitFetchInterval = 100;
 
 ComponentBase.defineElement('custom-analysis-task-configurator', CustomAnalysisTaskConfigurator);

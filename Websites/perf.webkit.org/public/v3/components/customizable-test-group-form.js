@@ -135,7 +135,33 @@ class CustomizableTestGroupForm extends TestGroupForm {
             element('thead',
                 element('tr',
                     [element('td', {colspan: 2}, 'Repository'), commitSetLabels.map((label) => element('td', {colspan: commitSetLabels.length + 1}, label)), element('td')])),
-            this._constructTableBodyList(repositoryList, commitSetMap, ownedRepositoriesByRepository, this._hasIncompleteOwnedRepository, uncustomizedCommitSetMap)]);
+            this._constructTableBodyList(repositoryList, commitSetMap, ownedRepositoriesByRepository, this._hasIncompleteOwnedRepository, uncustomizedCommitSetMap),
+            this._constructTestabilityRows(commitSetMap)]);
+    }
+
+    _constructTestabilityRows(commitSetMap)
+    {
+        const element = ComponentBase.createElement;
+
+        const commitSets = Array.from(commitSetMap.values());
+        const hasCommitWithTestability = commitSets.some((commitSet) =>  !!commitSet.commitsWithTestability().length);
+        for (const c of commitSets) {
+            if (c.commitsWithTestability().length)
+                console.log(c);
+        }
+        console.log({hasCommitWithTestability});
+        console.log('aaaa');
+        if (!hasCommitWithTestability)
+            return [];
+
+        const testabilityCells = [];
+        for (const commitSet of commitSetMap.values()) {
+            const entries = commitSet.commitsWithTestability().map((commit) =>
+                element('li', `${commit.title()}: ${commit.testability()}`));
+            testabilityCells.push(element('td', {colspan: commitSetMap.size + 1, class: 'testability'}, element('ul', entries)));
+        }
+
+        return element('tbody', element('tr', [element('td', {colspan: 2}), testabilityCells, element('td')]));
     }
 
     _constructTableBodyList(repositoryList, commitSetMap, ownedRepositoriesByRepository, hasIncompleteOwnedRepository, uncustomizedCommitSetMap)
@@ -255,8 +281,8 @@ class CustomizableTestGroupForm extends TestGroupForm {
             onchange: () => {
                 if (ownerRepository)
                     return;
-
-                commitSetMap.get(columnLabel).updateRevisionForOwnerRepository(repository, revisionEditor.value).catch(
+                commitSetMap.get(columnLabel).updateRevisionForOwnerRepository(repository, revisionEditor.value).then(
+                    () => this.enqueueToRender(),
                     () => {
                         alert(`"${revisionEditor.value}" does not exist in "${repository.name()}".`);
                         revisionEditor.value = revision;
@@ -278,6 +304,7 @@ class CustomizableTestGroupForm extends TestGroupForm {
                     revisionEditor.value = uncustomizedCommit ? uncustomizedCommit.revision() : '';
                     if (uncustomizedCommit && uncustomizedCommit.ownerCommit())
                         this._ownerRevisionMap.get(columnLabel).set(repository, uncustomizedCommit.ownerCommit().revision());
+                    this.enqueueToRender();
                 }});
             nodes.push(element('td', element('label', [radioButton, labelToChoose])));
         }
@@ -335,6 +362,18 @@ class CustomizableTestGroupForm extends TestGroupForm {
 
             #notify-on-completion-checkbox {
                 margin-left: 0.4rem;
+            }
+
+            #custom-table td.testability {
+                vertical-align: top;
+            }
+
+            #custom-table td.testability ul {
+                text-align: left;
+                color: #c33;
+                max-width: 13rem;
+                margin: 0 0 0 1rem;
+                padding: 0;
             }
             `;
     }
