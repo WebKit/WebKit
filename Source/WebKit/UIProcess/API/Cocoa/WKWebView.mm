@@ -2505,9 +2505,8 @@ static WebCore::FloatPoint constrainContentOffset(WebCore::FloatPoint contentOff
 
     // At this point, we have a page that asked for width = device-width. However,
     // if the content's width and height were large, we might have had to shrink it.
-    // Since we'll enable double tap zoom whenever we're not at the actual
-    // initial scale, this simply becomes a test of the current scale against 1.
-    return !areEssentiallyEqualAsFloat(contentZoomScale(self), 1);
+    // We'll enable double tap zoom whenever we're not at the actual initial scale.
+    return !areEssentiallyEqualAsFloat(contentZoomScale(self), _initialScaleFactor);
 }
 
 - (BOOL)_stylusTapGestureShouldCreateEditableImage

@@ -5,28 +5,16 @@
 
 <head>
     <script src="../../../resources/js-test-pre.js"></script>
-    <script id="ui-script" type="text/plain">
-        (function() {
-            uiController.doubleTapAtPoint(15, 400, function() {
-                uiController.uiScriptComplete();
-            });
-        })();
-    </script>
+    <script src="../../../resources/ui-helper.js"></script>
 
     <script>
-    var scriptCompleted = false;
-    var clickCount = 0;
     if (window.testRunner)
         testRunner.waitUntilDone();
 
-    function getUIScript() {
-        return document.getElementById("ui-script").text;
-    }
-
-    function runTest() {
+    async function runTest() {
         window.addEventListener("scroll", scrolled, false);
-        if (testRunner.runUIScript)
-            testRunner.runUIScript(getUIScript());
+        if (window.testRunner)
+            await UIHelper.doubleTapAt(15, 400);
     }
     function scrolled() {
         if (window.testRunner)

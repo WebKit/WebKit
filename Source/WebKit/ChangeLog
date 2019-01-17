@@ -1,3 +1,23 @@
+2019-01-16  Dean Jackson  <dino@apple.com>
+
+        (iPad) Link tapping is sluggish on many sites
+        https://bugs.webkit.org/show_bug.cgi?id=193522
+        <rdar://problem/47102987>
+
+        Reviewed by Wenson Hsieh.
+
+        Some WKWebView clients might set the initial zoom scale of the page to
+        something other than 1, which disables the "fast tap" behaviour.
+        The fix is very simple -- just check against the initial scale rather
+        than 1.
+
+        The most likely regression from this would be pages designed for desktop,
+        but provide a viewport tag saying width=device-width and initial-scale.
+        They might stop allowing double-tap-to-zoom.
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _allowsDoubleTapGestures]): Check against initial page scale.
+
 2019-01-17  Alex Christensen  <achristensen@webkit.org>
 
         Stop using NetworkStorageSession::storageSession in WebCore

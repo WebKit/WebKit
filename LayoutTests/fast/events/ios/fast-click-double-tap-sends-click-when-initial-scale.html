@@ -1,7 +1,7 @@
 <!DOCTYPE html> <!-- webkit-test-runner [ useFlexibleViewport=true ] -->
 
 <html>
-<meta name="viewport" content="initial-scale=5, width=device-width">
+<meta name="viewport" content="initial-scale=0.98,width=device-width">
 <head>
     <script src="../../../resources/ui-helper.js"></script>
     <script>
@@ -12,12 +12,16 @@
 
         async function runTest()
         {
+            document.getElementById("target").addEventListener("click", handleClick, false);
+
             if (!window.testRunner)
                 return;
+            await UIHelper.doubleTapAt(50, 50);
+        }
 
-            await UIHelper.zoomToScale(1.6);
-            let result = await UIHelper.zoomByDoubleTappingAt(15, 15);
-            document.getElementById("target").innerText = "The viewport zoomed to scale: " + Number(result);
+        function handleClick(event)
+        {
+            document.getElementById("target").textContent = "PASS: Click fired on element with handler.";
             testRunner.notifyDone();
         }
     </script>
@@ -34,5 +38,8 @@
 </head>
 <body onload="runTest()">
 <div id="target"></div>
+<div id="description">This document is set up to enable fast clicks, because
+    it has not moved from its initial scale. Double tapping on the rectangle
+    above should send a click event, not trigger a zoom.</div>
 </body>
 </html>

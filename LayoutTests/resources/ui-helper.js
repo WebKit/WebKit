@@ -25,8 +25,58 @@ window.UIHelper = class UIHelper {
         return new Promise((resolve) => {
             testRunner.runUIScript(`
                 uiController.singleTapAtPoint(${x}, ${y}, function() {
-                    uiController.uiScriptComplete('Done');
+                    uiController.uiScriptComplete();
                 });`, resolve);
+        });
+    }
+
+    static doubleTapAt(x, y)
+    {
+        console.assert(this.isIOS());
+
+        if (!this.isWebKit2()) {
+            eventSender.addTouchPoint(x, y);
+            eventSender.touchStart();
+            eventSender.releaseTouchPoint(0);
+            eventSender.touchEnd();
+            eventSender.addTouchPoint(x, y);
+            eventSender.touchStart();
+            eventSender.releaseTouchPoint(0);
+            eventSender.touchEnd();
+            return Promise.resolve();
+        }
+
+        return new Promise((resolve) => {
+            testRunner.runUIScript(`
+                uiController.doubleTapAtPoint(${x}, ${y}, function() {
+                    uiController.uiScriptComplete();
+                });`, resolve);
+        });
+    }
+
+    static zoomByDoubleTappingAt(x, y)
+    {
+        console.assert(this.isIOS());
+
+        if (!this.isWebKit2()) {
+            eventSender.addTouchPoint(x, y);
+            eventSender.touchStart();
+            eventSender.releaseTouchPoint(0);
+            eventSender.touchEnd();
+            eventSender.addTouchPoint(x, y);
+            eventSender.touchStart();
+            eventSender.releaseTouchPoint(0);
+            eventSender.touchEnd();
+            return Promise.resolve();
+        }
+
+        return new Promise((resolve) => {
+            testRunner.runUIScript(`
+                uiController.didEndZoomingCallback = () => {
+                    uiController.didEndZoomingCallback = null;
+                    uiController.uiScriptComplete(uiController.zoomScale);
+                };
+                uiController.doubleTapAtPoint(${x}, ${y}, () => {});`, resolve);
         });
     }
 
@@ -42,7 +92,7 @@ window.UIHelper = class UIHelper {
         return new Promise((resolve) => {
             testRunner.runUIScript(`
                 uiController.singleTapAtPoint(${x}, ${y}, function() {
-                    uiController.uiScriptComplete('Done');
+                    uiController.uiScriptComplete();
                 });`, resolve);
         });
     }
@@ -69,7 +119,7 @@ window.UIHelper = class UIHelper {
     static toggleCapsLock()
     {
         return new Promise((resolve) => {
-            testRunner.runUIScript(`uiController.toggleCapsLock(() => uiController.uiScriptComplete('Done'));`, resolve);
+            testRunner.runUIScript(`uiController.toggleCapsLock(() => uiController.uiScriptComplete());`, resolve);
         });
     }
 
@@ -83,7 +133,7 @@ window.UIHelper = class UIHelper {
         return new Promise(resolve => {
             testRunner.runUIScript(`
                 uiController.doAfterPresentationUpdate(function() {
-                    uiController.uiScriptComplete('Done');
+                    uiController.uiScriptComplete();
                 });`, resolve);
         });
     }
@@ -108,7 +158,7 @@ window.UIHelper = class UIHelper {
             testRunner.runUIScript(`
                 (function() {
                     uiController.didShowKeyboardCallback = function() {
-                        uiController.uiScriptComplete("Done");
+                        uiController.uiScriptComplete();
                     };
                     uiController.singleTapAtPoint(${x}, ${y}, function() { });
                 })()`, resolve);
@@ -127,7 +177,7 @@ window.UIHelper = class UIHelper {
             testRunner.runUIScript(`
                 (function() {
                     uiController.didStartFormControlInteractionCallback = function() {
-                        uiController.uiScriptComplete("Done");
+                        uiController.uiScriptComplete();
                     };
                     uiController.singleTapAtPoint(${x}, ${y}, function() { });
                 })()`, resolve);
@@ -250,7 +300,7 @@ window.UIHelper = class UIHelper {
         return new Promise(resolve => {
             testRunner.runUIScript(`(() => {
                 uiController.replaceTextAtRange("${text}", ${location}, ${length});
-                uiController.uiScriptComplete('Done');
+                uiController.uiScriptComplete();
             })()`, resolve);
         });
     }
@@ -348,7 +398,7 @@ window.UIHelper = class UIHelper {
 
     static zoomToScale(scale)
     {
-        const uiScript = `uiController.zoomToScale(${scale}, () => uiController.uiScriptComplete())`;
+        const uiScript = `uiController.zoomToScale(${scale}, () => uiController.uiScriptComplete(uiController.zoomScale))`;
         return new Promise(resolve => testRunner.runUIScript(uiScript, resolve));
     }
 
@@ -457,7 +507,7 @@ window.UIHelper = class UIHelper {
         return new Promise((resolve) => {
             testRunner.runUIScript(`
                 uiController.stylusTapAtPoint(${x}, ${y}, 2, 1, 0.5, function() {
-                    uiController.uiScriptComplete('Done');
+                    uiController.uiScriptComplete();
                 });`, resolve);
         });
     }

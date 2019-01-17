@@ -1,3 +1,47 @@
+2019-01-16  Dean Jackson  <dino@apple.com>
+
+        (iPad) Link tapping is sluggish on many sites
+        https://bugs.webkit.org/show_bug.cgi?id=193522
+        <rdar://problem/47102987>
+
+        Reviewed by Wenson Hsieh.
+
+        Add a test that checks a double tap will trigger a click
+        event on a page that is at initial scale.
+
+        Extra bonus: for some reason adding this test, or making this code
+        change, uncovered a couple of bugs in existing tests. The
+        viewport-zooms-from-element-to-initial-scale test was completely wrong
+        because it was expecting the incorrect result, which was triggered by
+        the zoom callback firing early at a forced scale value. The
+        viewport-no-width-value-allows-double-tap test was triggering a JS
+        error in its UI script. I modernised both of these to use UIHelper instead.
+
+        * fast/events/ios/fast-click-double-tap-sends-click-when-initial-scale-expected.txt: Added.
+        * fast/events/ios/fast-click-double-tap-sends-click-when-initial-scale.html: Added.
+        * fast/events/ios/viewport-no-width-value-allows-double-tap.html:
+        * fast/events/ios/viewport-zooms-from-element-to-initial-scale-expected.txt:
+        * fast/events/ios/viewport-zooms-from-element-to-initial-scale.html:
+        * resources/ui-helper.js: Add doubleTapAt and zoomByDoubleTapAt helpers. Remove the
+        unnecessary "Done" return value from many of the callbacks. Give zoomToScale a return
+        value.
+        (window.UIHelper.tapAt.return.new.Promise):
+        (window.UIHelper.tapAt):
+        (window.UIHelper.doubleTapAt.return.new.Promise):
+        (window.UIHelper.doubleTapAt):
+        (window.UIHelper.zoomByDoubleTappingAt):
+        (window.UIHelper.activateAt.return.new.Promise):
+        (window.UIHelper.activateAt):
+        (window.UIHelper.toggleCapsLock):
+        (window.UIHelper.ensurePresentationUpdate.return.new.Promise):
+        (window.UIHelper.ensurePresentationUpdate):
+        (window.UIHelper.activateAndWaitForInputSessionAt.return.new.Promise.):
+        (window.UIHelper.activateFormControl.return.new.Promise.):
+        (window.UIHelper.replaceTextAtRange):
+        (window.UIHelper.zoomToScale):
+        (window.UIHelper.stylusTapAt.return.new.Promise):
+        (window.UIHelper.stylusTapAt):
+
 2019-01-17  Per Arne Vollan  <pvollan@apple.com>
 
         Layout Test js/dfg-int-overflow-in-loop.html is failing
