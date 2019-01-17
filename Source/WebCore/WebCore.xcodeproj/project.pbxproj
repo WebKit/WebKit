@@ -6427,6 +6427,8 @@
 		1C840B9A21EC400900D0500D /* WHLSLGatherEntryPointItems.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WHLSLGatherEntryPointItems.h; sourceTree = "<group>"; };
 		1C840B9B21EC400900D0500D /* WHLSLChecker.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = WHLSLChecker.cpp; sourceTree = "<group>"; };
 		1C904DF90BA9D2C80081E9D0 /* Version.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = Version.xcconfig; sourceTree = "<group>"; };
+		1CA0C2DE21EEB5F400A11860 /* WHLSLRecursionChecker.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WHLSLRecursionChecker.h; sourceTree = "<group>"; };
+		1CA0C2E021EEB5F500A11860 /* WHLSLRecursionChecker.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = WHLSLRecursionChecker.cpp; sourceTree = "<group>"; };
 		1CA0C2EA21EED6F500A11860 /* WHLSLLiteralTypeChecker.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WHLSLLiteralTypeChecker.h; sourceTree = "<group>"; };
 		1CA0C2EC21EED6F600A11860 /* WHLSLLiteralTypeChecker.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = WHLSLLiteralTypeChecker.cpp; sourceTree = "<group>"; };
 		1C9AE5CA21ED9DF50069D5F2 /* WHLSLHighZombieFinder.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = WHLSLHighZombieFinder.cpp; sourceTree = "<group>"; };
@@ -25480,6 +25482,8 @@
 				C21BF73721CD8A0200227979 /* WHLSLParser.cpp */,
 				C21BF73821CD8A0300227979 /* WHLSLParser.h */,
 				C21BF73A21CD8D7000227979 /* WHLSLProgram.h */,
+				1CA0C2E021EEB5F500A11860 /* WHLSLRecursionChecker.cpp */,
+				1CA0C2DE21EEB5F400A11860 /* WHLSLRecursionChecker.h */,
 				C234A9AD21E92C19003C984D /* WHLSLRecursiveTypeChecker.cpp */,
 				C234A9AB21E92C18003C984D /* WHLSLRecursiveTypeChecker.h */,
 				C234A99921E90F29003C984D /* WHLSLResolveOverloadImpl.cpp */,

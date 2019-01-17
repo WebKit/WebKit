@@ -1,5 +1,26 @@
 2019-01-16  Myles C. Maxfield  <mmaxfield@apple.com>
 
+        [WHLSL] Implement the recursion checker
+        https://bugs.webkit.org/show_bug.cgi?id=193436
+
+        Reviewed by Saam Barati.
+
+        This is a translation of https://github.com/gpuweb/WHLSL/blob/master/Source/RecursionChecker.mjs into C++.
+
+        No new tests because it isn't hooked up yet. Not enough of the compiler exists to have any meaningful sort
+        of test. When enough of the compiler is present, I'll port the reference implementation's test suite.
+
+        * Modules/webgpu/WHLSL/AST/WHLSLCallExpression.h:
+        (WebCore::WHLSL::AST::CallExpression::function):
+        * Modules/webgpu/WHLSL/WHLSLRecursionChecker.cpp: Copied from Source/WebCore/Modules/webgpu/WHLSL/WHLSLRecursiveTypeChecker.cpp.
+        (WebCore::WHLSL::checkRecursion):
+        * Modules/webgpu/WHLSL/WHLSLRecursionChecker.h: Added.
+        * Modules/webgpu/WHLSL/WHLSLRecursiveTypeChecker.cpp:
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+
+2019-01-16  Myles C. Maxfield  <mmaxfield@apple.com>
+
         [WHLSL] Add the literal type checker
         https://bugs.webkit.org/show_bug.cgi?id=193430
 

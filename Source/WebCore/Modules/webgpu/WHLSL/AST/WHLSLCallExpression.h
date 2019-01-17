@@ -75,6 +75,8 @@ public:
         m_overloads = overloads;
     }
 
+    FunctionDeclaration* function() { return m_function; }
+
     void setFunction(FunctionDeclaration& functionDeclaration)
     {
         assert(!m_function);
