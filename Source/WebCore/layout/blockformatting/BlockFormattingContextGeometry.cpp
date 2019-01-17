@@ -77,7 +77,7 @@ HeightAndMargin BlockFormattingContext::Geometry::inFlowNonReplacedHeightAndMarg
             // This is temp and will be replaced by the correct display box once inline runs move over to the display tree.
             auto& inlineRuns = downcast<InlineFormattingState>(layoutState.establishedFormattingState(layoutBox)).inlineRuns();
             auto bottomEdge = inlineRuns.isEmpty() ? LayoutUnit() : inlineRuns.last().logicalBottom();
-            return { bottomEdge, nonCollapsedMargin };
+            return { bottomEdge - borderAndPaddingTop, nonCollapsedMargin };
         }
 
         // 2. the bottom edge of the bottom (possibly collapsed) margin of its last in-flow child, if the child's bottom margin...
