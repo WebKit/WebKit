@@ -1,6 +1,0 @@
-S11.9.4_A6.2
-
-PASS 
-
-TEST COMPLETE
-

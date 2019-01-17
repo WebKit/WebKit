@@ -1,7 +1,0 @@
-CONSOLE MESSAGE: line 80: SyntaxError: Unexpected token '}'. Expected ':' after property name.
-S12.6.1_A15
-
-PASS Expected parsing failure
-
-TEST COMPLETE
-

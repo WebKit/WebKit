@@ -1,6 +1,0 @@
-S7.5.3_A1.15
-
-FAIL No error detected
-
-TEST COMPLETE
-

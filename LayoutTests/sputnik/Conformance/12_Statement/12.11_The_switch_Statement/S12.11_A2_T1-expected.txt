@@ -1,7 +1,0 @@
-CONSOLE MESSAGE: line 85: SyntaxError: Unexpected keyword 'default'. Expected '}' to end a body of a 'switch'.
-S12.11_A2_T1
-
-PASS Expected parsing failure
-
-TEST COMPLETE
-

@@ -1,7 +1,0 @@
-CONSOLE MESSAGE: line 78: SyntaxError: Unexpected string literal ''. Expected '(' to start a do-while loop condition.
-S12.6.1_A6_T5
-
-PASS Expected parsing failure
-
-TEST COMPLETE
-

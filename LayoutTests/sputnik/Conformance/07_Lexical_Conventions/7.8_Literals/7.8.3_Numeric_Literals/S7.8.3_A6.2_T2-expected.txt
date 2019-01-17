@@ -1,7 +1,0 @@
-CONSOLE MESSAGE: line 77: SyntaxError: No hexadecimal digits after '0x'
-S7.8.3_A6.2_T2
-
-PASS Expected parsing failure
-
-TEST COMPLETE
-

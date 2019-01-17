@@ -1,7 +1,0 @@
-S13_A17_T2
-
-TypeError: __func is not a function. (In '__func()', '__func' is undefined)
-PASS 
-
-TEST COMPLETE
-

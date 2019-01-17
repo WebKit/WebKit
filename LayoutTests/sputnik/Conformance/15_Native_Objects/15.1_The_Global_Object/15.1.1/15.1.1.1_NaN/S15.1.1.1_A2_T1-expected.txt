@@ -1,6 +1,0 @@
-S15.1.1.1_A2_T1
-
-FAIL SputnikError: #1: NaN = 1; Boolean(NaN) === true. Actual: false
-
-TEST COMPLETE
-

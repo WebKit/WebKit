@@ -1,6 +1,0 @@
-S13.2_D1.2
-
-FAIL SputnikError: #1: Create a new native ECMAScript object, joined the already exists object
-
-TEST COMPLETE
-

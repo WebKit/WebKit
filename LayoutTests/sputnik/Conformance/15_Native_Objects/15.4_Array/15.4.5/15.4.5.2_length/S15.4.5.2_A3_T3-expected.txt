@@ -1,6 +1,0 @@
-S15.4.5.2_A3_T3
-
-PASS 
-
-TEST COMPLETE
-

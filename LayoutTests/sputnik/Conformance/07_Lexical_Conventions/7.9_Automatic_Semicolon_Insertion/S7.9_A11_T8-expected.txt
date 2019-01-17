@@ -1,7 +1,0 @@
-CONSOLE MESSAGE: line 79: SyntaxError: Unexpected keyword 'else'
-S7.9_A11_T8
-
-PASS Expected parsing failure
-
-TEST COMPLETE
-

@@ -1,7 +1,0 @@
-CONSOLE MESSAGE: line 77: SyntaxError: Unexpected token ';'. Expected 'while' to end a do-while loop.
-S7.9_A9_T8
-
-PASS Expected parsing failure
-
-TEST COMPLETE
-

@@ -1,7 +1,0 @@
-CONSOLE MESSAGE: line 78: SyntaxError: Unexpected token ')'. Expected a parameter pattern or a ')' in parameter list.
-S12.14_A16_T8
-
-PASS Expected parsing failure
-
-TEST COMPLETE
-

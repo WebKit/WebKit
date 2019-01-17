@@ -1,7 +1,0 @@
-CONSOLE MESSAGE: line 76: SyntaxError: Unexpected keyword 'in'
-S7.5.2_A1.13
-
-PASS Expected parsing failure
-
-TEST COMPLETE
-

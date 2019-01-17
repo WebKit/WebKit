@@ -1,6 +1,0 @@
-S7.6_A5.3_T2
-
-FAIL SputnikError: #037F 
-
-TEST COMPLETE
-

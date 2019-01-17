@@ -1,6 +1,0 @@
-S15.5.4.14_A1_T9
-
-FAIL SputnikError: #3: __obj = {valueOf:function(){}, toString:void 0}; __split = new String(__obj).split(function(){}()); __split.length === 2. Actual: 1
-
-TEST COMPLETE
-

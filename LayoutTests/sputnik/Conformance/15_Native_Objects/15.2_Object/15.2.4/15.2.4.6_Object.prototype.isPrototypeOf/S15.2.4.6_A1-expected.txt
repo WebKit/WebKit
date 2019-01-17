@@ -1,8 +1,0 @@
-S15.2.4.6_A1
-
-#1: Native ECMAScript objects have an internal property called [[Prototype]].
-#2: Native ECMAScript objects have an internal property called [[Prototype]].
-PASS 
-
-TEST COMPLETE
-

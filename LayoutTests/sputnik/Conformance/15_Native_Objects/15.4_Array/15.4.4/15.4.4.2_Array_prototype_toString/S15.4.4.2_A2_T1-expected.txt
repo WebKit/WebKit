@@ -1,6 +1,0 @@
-S15.4.4.2_A2_T1
-
-FAIL SputnikError: #1.2: var obj = {}; obj.toString = Array.prototype.toString; obj.toString() throw TypeError. Actual: SputnikError: #1.1: var obj = {}; obj.toString = Array.prototype.toString; obj.toString() throw TypeError. Actual: [object Object]
-
-TEST COMPLETE
-

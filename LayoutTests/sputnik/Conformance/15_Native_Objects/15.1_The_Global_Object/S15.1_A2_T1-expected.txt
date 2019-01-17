@@ -1,6 +1,0 @@
-S15.1_A2_T1
-
-PASS TypeError: this is not a function. (In 'this()', 'this' is an instance of Window)
-
-TEST COMPLETE
-

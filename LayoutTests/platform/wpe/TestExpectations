@@ -751,17 +751,6 @@ webkit.org/b/89153 http/tests/websocket/tests/hybi/workers/close.html [ Pass Fai
 # This test is so slow that a Slow expectation is not enough to avoid flakiness.
 webkit.org/b/159754 workers/bomb.html [ Skip ]
 
-webkit.org/b/111647 [ Debug ] sputnik/Conformance/07_Lexical_Conventions/7.8_Literals/7.8.5_Regular_Expression_Literals/S7.8.5_A1.1_T2.html [ Slow ]
-webkit.org/b/111647 [ Debug ] sputnik/Conformance/07_Lexical_Conventions/7.8_Literals/7.8.5_Regular_Expression_Literals/S7.8.5_A1.4_T2.html [ Slow ]
-webkit.org/b/111647 [ Debug ] sputnik/Conformance/07_Lexical_Conventions/7.8_Literals/7.8.5_Regular_Expression_Literals/S7.8.5_A2.1_T2.html [ Slow ]
-webkit.org/b/111647 [ Debug ] sputnik/Conformance/07_Lexical_Conventions/7.8_Literals/7.8.5_Regular_Expression_Literals/S7.8.5_A2.4_T2.html [ Slow ]
-webkit.org/b/111647 [ Debug ] sputnik/Conformance/10_Execution_Contexts/10.1_Definitions/10.1.8_Arguments_Object/S10.1.8_A3_T2.html [ Slow ]
-webkit.org/b/111647 [ Debug ] sputnik/Conformance/07_Lexical_Conventions/7.4_Comments/S7.4_A5.html [ Slow ]
-webkit.org/b/111647 [ Debug ] sputnik/Conformance/07_Lexical_Conventions/7.4_Comments/S7.4_A6.html [ Slow ]
-webkit.org/b/111647 [ Debug ] sputnik/Conformance/12_Statement/12.6_Iteration_Statements/12.6.2_The_while_statement/S12.6.2_A6_T2.html [ Slow ]
-webkit.org/b/111647 [ Debug ] sputnik/Conformance/13_Function_Definition/S13_A4_T4.html [ Slow ]
-webkit.org/b/111647 [ Debug ] sputnik/Unicode/Unicode_218/S7.6_A5.3_T2.html [ Slow ]
-
 webkit.org/b/169917 webgl/1.0.2/conformance/uniforms/gl-uniform-arrays.html [ Slow ]
 
 webkit.org/b/169917 webgl/1.0.2/conformance/glsl/misc/shader-uniform-packing-restrictions.html [ Slow ]

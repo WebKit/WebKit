@@ -1,6 +1,0 @@
-S15.7.3_A6
-
-PASS 
-
-TEST COMPLETE
-

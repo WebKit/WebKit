@@ -1,6 +1,0 @@
-S12.14_A16_T4
-
-PASS No error detected
-
-TEST COMPLETE
-

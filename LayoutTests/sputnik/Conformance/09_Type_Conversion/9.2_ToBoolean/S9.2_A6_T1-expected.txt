@@ -1,6 +1,0 @@
-S9.2_A6_T1
-
-PASS 
-
-TEST COMPLETE
-

@@ -1,7 +1,0 @@
-CONSOLE MESSAGE: line 80: SyntaxError: Unexpected token ')'
-S7.9_A6.3_T1
-
-PASS Expected parsing failure
-
-TEST COMPLETE
-

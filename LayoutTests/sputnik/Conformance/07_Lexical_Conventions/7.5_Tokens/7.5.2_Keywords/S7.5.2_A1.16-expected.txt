@@ -1,7 +1,0 @@
-CONSOLE MESSAGE: line 76: SyntaxError: Return statements are only valid inside functions.
-S7.5.2_A1.16
-
-PASS Expected parsing failure
-
-TEST COMPLETE
-

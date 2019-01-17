@@ -1,6 +1,0 @@
-S11.4.5_A2.1_T3
-
-PASS ReferenceError: Prefix -- operator applied to value that is not a reference.
-
-TEST COMPLETE
-

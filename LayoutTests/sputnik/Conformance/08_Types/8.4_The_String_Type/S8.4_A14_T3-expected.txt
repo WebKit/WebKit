@@ -1,7 +1,0 @@
-CONSOLE MESSAGE: line 76: SyntaxError: Unexpected string literal "". Expected ';' after variable declaration.
-S8.4_A14_T3
-
-PASS Expected parsing failure
-
-TEST COMPLETE
-

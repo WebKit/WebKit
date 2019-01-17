@@ -1,7 +1,0 @@
-CONSOLE MESSAGE: line 77: SyntaxError: Unexpected token ';'. Expected ')' to end a for-loop header.
-S7.9_A6.4_T1
-
-PASS Expected parsing failure
-
-TEST COMPLETE
-

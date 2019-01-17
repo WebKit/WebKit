@@ -1,7 +1,0 @@
-S15.3.4.2_A7
-
-TypeError: function is not a constructor (evaluating 'new FACTORY')
-PASS 
-
-TEST COMPLETE
-

@@ -1,6 +1,0 @@
-S8.6.2.2_A1
-
-PASS 
-
-TEST COMPLETE
-

@@ -1,7 +1,0 @@
-CONSOLE MESSAGE: line 76: SyntaxError: Unexpected identifier '\u0069'. Expected ';' after variable declaration.
-S7.8.5_A3.1_T8
-
-FAIL successfullyParsed is not set
-
-TEST COMPLETE
-

@@ -1,7 +1,0 @@
-CONSOLE MESSAGE: line 77: SyntaxError: Unterminated regular expression literal '/a'
-S7.8.5_A2.3_T3
-
-PASS Expected parsing failure
-
-TEST COMPLETE
-

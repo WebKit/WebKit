@@ -1,6 +1,0 @@
-S7.3_A2.4
-
-PASS 
-
-TEST COMPLETE
-

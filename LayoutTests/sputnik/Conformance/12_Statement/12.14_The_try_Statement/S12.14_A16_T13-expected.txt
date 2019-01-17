@@ -1,7 +1,0 @@
-CONSOLE MESSAGE: line 80: SyntaxError: Unexpected string literal "22". Expected a parameter pattern or a ')' in parameter list.
-S12.14_A16_T13
-
-PASS Expected parsing failure
-
-TEST COMPLETE
-

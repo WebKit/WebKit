@@ -1,6 +1,0 @@
-S15.5.4.6_A1_T3
-
-FAIL TypeError: String.prototype.concat requires that |this| not be null or undefined
-
-TEST COMPLETE
-

@@ -1,6 +1,0 @@
-S7.6_A5.2_T10
-
-FAIL SputnikError: #30FB 
-
-TEST COMPLETE
-

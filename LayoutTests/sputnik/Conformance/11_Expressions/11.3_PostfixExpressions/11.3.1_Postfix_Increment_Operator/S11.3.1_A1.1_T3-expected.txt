@@ -1,6 +1,0 @@
-S11.3.1_A1.1_T3
-
-PASS SyntaxError: Unexpected end of script
-
-TEST COMPLETE
-

@@ -1,7 +1,0 @@
-CONSOLE MESSAGE: line 77: SyntaxError: Unexpected keyword 'finally'
-S12.14_A16_T3
-
-PASS Expected parsing failure
-
-TEST COMPLETE
-

@@ -1,7 +1,0 @@
-CONSOLE MESSAGE: line 76: SyntaxError: Invalid unicode escape in identifier: '\u2029'
-S7.3_A6_T4
-
-PASS Expected parsing failure
-
-TEST COMPLETE
-

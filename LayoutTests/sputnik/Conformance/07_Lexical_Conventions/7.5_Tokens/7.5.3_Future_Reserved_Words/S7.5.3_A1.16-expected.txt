@@ -1,7 +1,0 @@
-CONSOLE MESSAGE: line 76: SyntaxError: Unexpected token '='. import call expects exactly one argument.
-S7.5.3_A1.16
-
-PASS Expected parsing failure
-
-TEST COMPLETE
-

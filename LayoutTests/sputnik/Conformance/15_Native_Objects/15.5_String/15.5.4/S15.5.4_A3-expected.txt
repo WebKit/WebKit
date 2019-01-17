@@ -1,6 +1,0 @@
-S15.5.4_A3
-
-PASS [object String]
-
-TEST COMPLETE
-

@@ -1,6 +1,0 @@
-S15.2.3.1_A3
-
-PASS 
-
-TEST COMPLETE
-

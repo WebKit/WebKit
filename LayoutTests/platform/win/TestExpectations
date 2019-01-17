@@ -681,30 +681,6 @@ webkit.org/b/180424 fast/zooming/uiscript-zooming.html [ Skip ]
 
 
 ################################################################################
-##############                 Sputnik Errors                   ################
-################################################################################
-webkit.org/b/140970 sputnik/Unicode/Unicode_500/S7.6_A5.3_T1.html [ Skip ]  # Crashes
-webkit.org/b/140970 sputnik/Unicode/Unicode_320/S7.6_A2.3.html [ Skip ]  # Crashes
-webkit.org/b/140970 sputnik/Unicode/Unicode_410/S7.6_A3.1.html [ Skip ]  # Crashes
-
-sputnik/Conformance/15_Native_Objects/15.2_Object/15.2.2/S15.2.2.1_A2_T5.html [ Failure ]
-sputnik/Conformance/07_Lexical_Conventions/7.8_Literals/7.8.5_Regular_Expression_Literals/S7.8.5_A1.4_T2.html [ Pass Timeout ]
-
-webkit.org/b/150973 sputnik/Conformance/07_Lexical_Conventions/7.8_Literals/7.8.5_Regular_Expression_Literals/S7.8.5_A1.1_T2.html [ Pass Timeout ]
-webkit.org/b/150973 sputnik/Conformance/07_Lexical_Conventions/7.8_Literals/7.8.5_Regular_Expression_Literals/S7.8.5_A2.1_T2.html [ Pass Timeout ]
-webkit.org/b/150973 sputnik/Conformance/07_Lexical_Conventions/7.8_Literals/7.8.5_Regular_Expression_Literals/S7.8.5_A2.4_T2.html [ Pass Timeout ]
-
-# Skipping these failing tests pending further investigation
-webkit.org/b/151505 sputnik/Unicode/Unicode_510/S7.6_A3.1.html [ Skip ]
-webkit.org/b/151505 sputnik/Unicode/Unicode_510/S7.6_A3.2.html [ Skip ]
-webkit.org/b/151505 sputnik/Unicode/Unicode_510/S7.6_A5.3_T1.html [ Skip ]
-webkit.org/b/151505 sputnik/Unicode/Unicode_510/S7.6_A5.3_T2.html [ Skip ]
-################################################################################
-##############               End Sputnik Errors                 ################
-################################################################################
-
-
-################################################################################
 ############## No built-in plugin in DRT <rdar://problem/5074411> ##############
 ################################################################################
 plugins/ [ Skip ]
@@ -2703,8 +2679,6 @@ webkit.org/b/162668 fast/text/woff2-totalsfntsize.html [ Skip ]
 [ Debug ] http/tests/security/mixedContent/data-url-script-in-iframe.html [ Skip ]
 [ Debug ] http/tests/security/listener/xss-window-onclick-addEventListener.html [ Skip ] # Causes later tests to fail
 [ Debug ] platform/win/fast/events/panScroll-no-iframe-jump.html [ Skip ] # Causes later tests to fail
-[ Debug ] sputnik/Unicode/Unicode_320/S7.6_A3.1.html [ Skip ] # Debug Assertion
-[ Debug ] sputnik/Unicode/Unicode_320/S7.6_A3.2.html [ Skip ] # Debug Assertion
 [ Debug ] svg/custom/list-items-with-svg-font-family.html [ Skip ] # Causes later tests to fail
 [ Debug ] transforms/3d/general/perspective-non-layer.html [ Failure ]
 
@@ -3157,7 +3131,6 @@ http/tests/security/local-video-src-from-remote.html [ Failure Pass ]
 http/tests/security/video-cross-origin-caching.html [ Crash Failure Timeout Pass ]
 http/tests/security/video-poster-cross-origin-crash2.html [ Crash Failure Pass ]
 security/contentSecurityPolicy/worker-inherits-blocks-eval.html [ Failure Pass ]
-sputnik/Conformance/07_Lexical_Conventions/7.4_Comments/S7.4_A4_T2.html [ Failure Pass ]
 storage/indexeddb/database-close-private.html [ Failure Pass ]
 security/contentSecurityPolicy/video-with-file-url-allowed-by-media-src-star-with-AllowContentSecurityPolicySourceStarToMatchAnyProtocol-enabled.html [ ImageOnlyFailure Pass ]
 http/tests/loading/preload-picture-nested.html [ Timeout Pass ]

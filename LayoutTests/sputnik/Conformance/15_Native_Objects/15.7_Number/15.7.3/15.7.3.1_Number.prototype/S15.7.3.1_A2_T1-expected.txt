@@ -1,6 +1,0 @@
-S15.7.3.1_A2_T1
-
-PASS 
-
-TEST COMPLETE
-

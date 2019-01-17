@@ -1,7 +1,0 @@
-CONSOLE MESSAGE: line 78: SyntaxError: Unexpected token '.'
-S7.8.5_A1.2_T3
-
-PASS Expected parsing failure
-
-TEST COMPLETE
-

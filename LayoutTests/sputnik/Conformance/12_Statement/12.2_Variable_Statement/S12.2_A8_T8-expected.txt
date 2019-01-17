@@ -1,7 +1,0 @@
-CONSOLE MESSAGE: line 80: SyntaxError: Unexpected keyword 'in'. Expected ';' after variable declaration.
-S12.2_A8_T8
-
-PASS Expected parsing failure
-
-TEST COMPLETE
-

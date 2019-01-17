@@ -1,6 +1,0 @@
-S9.9_A1
-
-FAIL SputnikError: #3.2: for(var y in undefined) y = 2 must throw TypeError. Actual: SputnikError: #3.1: for(var y in undefined) y = 2 must throw TypeError. Actual: y === undefined
-
-TEST COMPLETE
-

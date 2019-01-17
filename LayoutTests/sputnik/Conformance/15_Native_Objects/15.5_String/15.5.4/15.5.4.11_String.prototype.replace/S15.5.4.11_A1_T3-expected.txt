@@ -1,6 +1,0 @@
-S15.5.4.11_A1_T3
-
-FAIL TypeError: String.prototype.replace requires that |this| not be null or undefined
-
-TEST COMPLETE
-

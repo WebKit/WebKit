@@ -1,7 +1,0 @@
-S15.9.1.14_D1
-
-#1: TimeClip returns (ToInteger(value) + (+0))
-PASS 
-
-TEST COMPLETE
-

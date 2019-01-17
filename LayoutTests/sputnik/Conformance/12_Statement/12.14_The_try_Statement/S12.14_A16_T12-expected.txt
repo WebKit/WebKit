@@ -1,7 +1,0 @@
-CONSOLE MESSAGE: line 82: SyntaxError: Unexpected token '}'. Try statements must have at least a catch or finally block.
-S12.14_A16_T12
-
-PASS Expected parsing failure
-
-TEST COMPLETE
-

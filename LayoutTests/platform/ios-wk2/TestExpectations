@@ -849,10 +849,6 @@ js/promises-tests/promises-tests-2-3-1.html
 js/promises-tests/promises-tests-2-3-2.html
 js/promises-tests/promises-tests-2-3-3.html
 js/promises-tests/promises-tests-2-3-4.html 
-sputnik/Conformance/07_Lexical_Conventions/7.4_Comments/S7.4_A5.html
-sputnik/Conformance/07_Lexical_Conventions/7.4_Comments/S7.4_A6.html
-sputnik/Conformance/07_Lexical_Conventions/7.8_Literals/7.8.5_Regular_Expression_Literals/S7.8.5_A1.1_T2.html
-sputnik/Conformance/15_Native_Objects/15.5_String/15.5.4/15.5.4.19_String.prototype.toLocaleUpperCase/S15.5.4.19_A1_T1.html
 storage/websql/change-version.html
 
 # Flaky tests that assert/time out:

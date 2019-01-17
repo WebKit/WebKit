@@ -563,17 +563,6 @@ webkit.org/b/39725 fast/events/drag-and-drop-autoscroll.html [ Skip ]
 # Need support for ResourceHandle::didChangePriority and DRT support
 webkit.org/b/111016 http/tests/loading/promote-img-preload-priority.html [ Failure ]
 
-webkit.org/b/111647 [ Debug ] sputnik/Conformance/07_Lexical_Conventions/7.8_Literals/7.8.5_Regular_Expression_Literals/S7.8.5_A1.1_T2.html [ Slow ]
-webkit.org/b/111647 [ Debug ] sputnik/Conformance/07_Lexical_Conventions/7.8_Literals/7.8.5_Regular_Expression_Literals/S7.8.5_A1.4_T2.html [ Slow ]
-webkit.org/b/111647 [ Debug ] sputnik/Conformance/07_Lexical_Conventions/7.8_Literals/7.8.5_Regular_Expression_Literals/S7.8.5_A2.1_T2.html [ Slow ]
-webkit.org/b/111647 [ Debug ] sputnik/Conformance/07_Lexical_Conventions/7.8_Literals/7.8.5_Regular_Expression_Literals/S7.8.5_A2.4_T2.html [ Slow ]
-webkit.org/b/111647 [ Debug ] sputnik/Conformance/10_Execution_Contexts/10.1_Definitions/10.1.8_Arguments_Object/S10.1.8_A3_T2.html [ Slow ]
-webkit.org/b/111647 [ Debug ] sputnik/Conformance/07_Lexical_Conventions/7.4_Comments/S7.4_A5.html [ Slow ]
-webkit.org/b/111647 [ Debug ] sputnik/Conformance/07_Lexical_Conventions/7.4_Comments/S7.4_A6.html [ Slow ]
-webkit.org/b/111647 [ Debug ] sputnik/Conformance/12_Statement/12.6_Iteration_Statements/12.6.2_The_while_statement/S12.6.2_A6_T2.html [ Slow ]
-webkit.org/b/111647 [ Debug ] sputnik/Conformance/13_Function_Definition/S13_A4_T4.html [ Slow ]
-webkit.org/b/111647 [ Debug ] sputnik/Unicode/Unicode_218/S7.6_A5.3_T2.html [ Slow ]
-
 webkit.org/b/111606 fast/borders/border-fit-2.html [ Failure Pass ]
 webkit.org/b/111606 fast/borders/border-fit.html [ Failure Pass ]
 webkit.org/b/111606 fast/repaint/border-fit-lines.html [ Failure Pass ]
@@ -1026,12 +1015,6 @@ webkit.org/b/145432 media/video-transformed-by-javascript.html [ Failure ]
 
 webkit.org/b/140022 http/tests/media/track-in-band-hls-metadata.html [ Pass Timeout ]
 
-# <rdar://problem/19893462>
-[ Sierra+ ] sputnik/Unicode/Unicode_510/S7.6_A3.1.html [ Failure ]
-[ Sierra+ ] sputnik/Unicode/Unicode_510/S7.6_A3.2.html [ Failure ]
-[ Sierra+ ] sputnik/Unicode/Unicode_510/S7.6_A5.3_T1.html [ Failure ]
-[ Sierra+ ] sputnik/Unicode/Unicode_510/S7.6_A5.3_T2.html [ Failure ]
-
 # See also: <rdar://problem/20622665>
 webkit.org/b/148597 http/tests/media/video-play-stall.html [ Pass Failure ]
 
@@ -1140,8 +1123,6 @@ webkit.org/b/162668 fast/text/woff2-totalsfntsize.html [ ImageOnlyFailure ]
 webkit.org/b/140217 http/tests/navigation/forward-and-cancel.html [ Pass Failure ]
 
 webkit.org/b/151469 imported/w3c/web-platform-tests/html/syntax/parsing/template/creating-an-element-for-the-token/template-owner-document.html [ Pass Crash ]
-
-webkit.org/b/153086 sputnik/Conformance/15_Native_Objects/15.1_The_Global_Object/15.1.3/15.1.3.3_encodeURI/S15.1.3.3_A2.4_T2.html [ Pass Crash ]
 
 webkit.org/b/153809 transitions/clip-path-transitions.html [ Pass Failure ]
 webkit.org/b/153809 legacy-animation-engine/transitions/clip-path-transitions.html [ Pass Failure ]

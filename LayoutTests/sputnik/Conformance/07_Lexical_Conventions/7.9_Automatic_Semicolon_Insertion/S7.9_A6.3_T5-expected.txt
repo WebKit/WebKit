@@ -1,7 +1,0 @@
-CONSOLE MESSAGE: line 80: SyntaxError: Unexpected keyword 'false'. Expected either 'in' or 'of' in enumeration syntax.
-S7.9_A6.3_T5
-
-PASS Expected parsing failure
-
-TEST COMPLETE
-

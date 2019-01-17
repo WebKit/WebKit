@@ -1,7 +1,0 @@
-CONSOLE MESSAGE: line 80: SyntaxError: Unexpected token ';'. Expected ')' to end a for-in header.
-S12.6.3_A4_T1
-
-PASS Expected parsing failure
-
-TEST COMPLETE
-

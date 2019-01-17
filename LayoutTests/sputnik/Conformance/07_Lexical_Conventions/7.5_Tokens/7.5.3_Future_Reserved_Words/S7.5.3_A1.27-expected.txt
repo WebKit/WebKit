@@ -1,7 +1,0 @@
-CONSOLE MESSAGE: line 76: SyntaxError: super is not valid in this context.
-S7.5.3_A1.27
-
-PASS Expected parsing failure
-
-TEST COMPLETE
-

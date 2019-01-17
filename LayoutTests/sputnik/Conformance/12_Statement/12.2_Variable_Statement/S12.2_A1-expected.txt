@@ -1,7 +1,0 @@
-S12.2_A1
-
-Can't find variable: __something__undefined
-PASS 
-
-TEST COMPLETE
-

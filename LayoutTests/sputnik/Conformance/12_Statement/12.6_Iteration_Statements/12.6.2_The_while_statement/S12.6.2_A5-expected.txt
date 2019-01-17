@@ -1,6 +1,0 @@
-S12.6.2_A5
-
-PASS 
-
-TEST COMPLETE
-

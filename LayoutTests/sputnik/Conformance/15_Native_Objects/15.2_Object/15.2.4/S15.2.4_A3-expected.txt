@@ -1,7 +1,0 @@
-S15.2.4_A3
-
-TypeError: Object.prototype is not a function. (In 'Object.prototype()', 'Object.prototype' is an instance of Object)
-PASS 
-
-TEST COMPLETE
-

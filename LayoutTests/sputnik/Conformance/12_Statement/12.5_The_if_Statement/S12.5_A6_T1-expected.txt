@@ -1,7 +1,0 @@
-CONSOLE MESSAGE: line 78: SyntaxError: Unexpected keyword 'true'. Expected '(' to start an 'if' condition.
-S12.5_A6_T1
-
-PASS Expected parsing failure
-
-TEST COMPLETE
-

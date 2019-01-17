@@ -1,6 +1,0 @@
-S15.10.4.1_A3_T2
-
-FAIL SputnikError: #1: __re = new RegExp(void 0); __re.source === "". Actual: (?:)
-
-TEST COMPLETE
-

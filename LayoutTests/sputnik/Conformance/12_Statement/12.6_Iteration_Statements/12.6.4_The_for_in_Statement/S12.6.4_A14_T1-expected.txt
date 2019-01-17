@@ -1,6 +1,0 @@
-S12.6.4_A14_T1
-
-FAIL SputnikError: #2: function expession inside of for-in expression is allowed
-
-TEST COMPLETE
-

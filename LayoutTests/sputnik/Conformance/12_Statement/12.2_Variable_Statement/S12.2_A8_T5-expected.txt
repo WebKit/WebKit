@@ -1,7 +1,0 @@
-CONSOLE MESSAGE: line 78: SyntaxError: Unexpected token '--'. Expected a parameter pattern or a ')' in parameter list.
-S12.2_A8_T5
-
-PASS Expected parsing failure
-
-TEST COMPLETE
-

@@ -1,6 +1,0 @@
-S15.4.3_A2.2
-
-FAIL SputnikError: #2: delete Array.length; Array.hasOwnProperty('length') === true. Actual: false
-
-TEST COMPLETE
-

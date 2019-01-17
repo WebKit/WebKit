@@ -1,6 +1,0 @@
-S15.3.4.2_A1_T1
-
-FAIL SyntaxError: Function statements must have a name.
-
-TEST COMPLETE
-

@@ -1,6 +1,0 @@
-S7.6_A5.2_T4
-
-FAIL SputnikError: #2E2F 
-
-TEST COMPLETE
-

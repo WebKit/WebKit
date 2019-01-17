@@ -1,7 +1,0 @@
-CONSOLE MESSAGE: line 77: SyntaxError: \x can only be followed by a hex character sequence
-S7.8.4_A6.2_T1
-
-PASS Expected parsing failure
-
-TEST COMPLETE
-

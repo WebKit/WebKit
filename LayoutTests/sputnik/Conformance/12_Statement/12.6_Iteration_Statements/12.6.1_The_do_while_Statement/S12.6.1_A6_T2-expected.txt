@@ -1,7 +1,0 @@
-CONSOLE MESSAGE: line 78: SyntaxError: Unexpected number '0'. Expected '(' to start a do-while loop condition.
-S12.6.1_A6_T2
-
-PASS Expected parsing failure
-
-TEST COMPLETE
-

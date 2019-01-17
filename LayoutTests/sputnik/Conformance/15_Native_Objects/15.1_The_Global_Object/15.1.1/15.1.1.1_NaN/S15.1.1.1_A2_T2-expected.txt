@@ -1,6 +1,0 @@
-S15.1.1.1_A2_T2
-
-FAIL SputnikError: #1: NaN = true; typeof(NaN) === "boolean". Actual: number
-
-TEST COMPLETE
-

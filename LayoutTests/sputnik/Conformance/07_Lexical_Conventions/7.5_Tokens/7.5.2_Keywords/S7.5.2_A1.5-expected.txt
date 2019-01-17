@@ -1,7 +1,0 @@
-CONSOLE MESSAGE: line 76: SyntaxError: Unexpected keyword 'default'. Expected a closing '}' at the end of a block statement.
-S7.5.2_A1.5
-
-PASS Expected parsing failure
-
-TEST COMPLETE
-

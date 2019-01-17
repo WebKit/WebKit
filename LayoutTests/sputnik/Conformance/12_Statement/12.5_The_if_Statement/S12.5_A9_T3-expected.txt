@@ -1,7 +1,0 @@
-CONSOLE MESSAGE: line 76: SyntaxError: Function statements must have a name.
-S12.5_A9_T3
-
-PASS Expected parsing failure
-
-TEST COMPLETE
-

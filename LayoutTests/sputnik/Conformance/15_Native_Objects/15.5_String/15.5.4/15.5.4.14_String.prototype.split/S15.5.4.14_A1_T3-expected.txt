@@ -1,6 +1,0 @@
-S15.5.4.14_A1_T3
-
-FAIL TypeError: String.prototype.split requires that |this| not be null or undefined
-
-TEST COMPLETE
-

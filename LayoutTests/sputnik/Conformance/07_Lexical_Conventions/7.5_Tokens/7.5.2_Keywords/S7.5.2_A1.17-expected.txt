@@ -1,7 +1,0 @@
-CONSOLE MESSAGE: line 76: SyntaxError: Unexpected token '='. Expected '(' to start a subject of a 'switch'.
-S7.5.2_A1.17
-
-PASS Expected parsing failure
-
-TEST COMPLETE
-

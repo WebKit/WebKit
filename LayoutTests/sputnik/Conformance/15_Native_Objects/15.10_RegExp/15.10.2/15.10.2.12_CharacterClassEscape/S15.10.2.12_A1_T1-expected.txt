@@ -1,6 +1,0 @@
-S15.10.2.12_A1_T1
-
-FAIL SputnikError: #6: Error matching character class s between character 1800 and 1bff
-
-TEST COMPLETE
-

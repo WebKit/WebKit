@@ -1,6 +1,0 @@
-S12.1_A4_T1
-
-PASS TypeError: {__func} is not a function. (In '{__func}()', '{__func}' is an instance of Object)
-
-TEST COMPLETE
-

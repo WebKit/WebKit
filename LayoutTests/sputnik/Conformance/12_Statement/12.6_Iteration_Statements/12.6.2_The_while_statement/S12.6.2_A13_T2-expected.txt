@@ -1,6 +1,0 @@
-S12.6.2_A13_T2
-
-FAIL No error detected
-
-TEST COMPLETE
-

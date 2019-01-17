@@ -1,7 +1,0 @@
-CONSOLE MESSAGE: line 80: SyntaxError: Cannot use the undeclared label 'LABEL1'.
-S12.8_A6
-
-PASS Expected parsing failure
-
-TEST COMPLETE
-

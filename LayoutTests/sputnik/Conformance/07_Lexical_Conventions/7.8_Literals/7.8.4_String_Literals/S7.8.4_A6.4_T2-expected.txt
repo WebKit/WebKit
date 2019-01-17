@@ -1,6 +1,0 @@
-S7.8.4_A6.4_T2
-
-FAIL No error detected
-
-TEST COMPLETE
-

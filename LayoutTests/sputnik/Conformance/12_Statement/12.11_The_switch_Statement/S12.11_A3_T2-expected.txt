@@ -1,7 +1,0 @@
-CONSOLE MESSAGE: line 79: SyntaxError: Unexpected token '{'. Expected '(' to start a subject of a 'switch'.
-S12.11_A3_T2
-
-PASS Expected parsing failure
-
-TEST COMPLETE
-

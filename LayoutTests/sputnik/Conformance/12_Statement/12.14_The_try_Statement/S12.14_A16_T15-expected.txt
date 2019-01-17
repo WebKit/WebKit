@@ -1,7 +1,0 @@
-CONSOLE MESSAGE: line 79: SyntaxError: Unexpected token '('. Expected block statement for finally body.
-S12.14_A16_T15
-
-PASS Expected parsing failure
-
-TEST COMPLETE
-

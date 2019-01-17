@@ -1,6 +1,0 @@
-S15.4.4.12_D1.5_T2
-
-FAIL SputnikError: #2: var x = [0,1,2,3]; var arr = x.splice(1); arr.length === 0
-
-TEST COMPLETE
-

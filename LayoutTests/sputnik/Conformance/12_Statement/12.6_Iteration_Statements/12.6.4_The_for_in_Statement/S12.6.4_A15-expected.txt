@@ -1,6 +1,0 @@
-S12.6.4_A15
-
-FAIL No error detected
-
-TEST COMPLETE
-

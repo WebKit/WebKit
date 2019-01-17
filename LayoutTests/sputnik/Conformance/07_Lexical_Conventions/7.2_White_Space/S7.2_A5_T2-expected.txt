@@ -1,7 +1,0 @@
-CONSOLE MESSAGE: line 76: SyntaxError: Invalid unicode escape in identifier: '\u000B'
-S7.2_A5_T2
-
-PASS Expected parsing failure
-
-TEST COMPLETE
-

@@ -1,7 +1,0 @@
-CONSOLE MESSAGE: line 77: SyntaxError: Unexpected keyword 'catch'
-S12.14_A16_T2
-
-PASS Expected parsing failure
-
-TEST COMPLETE
-

@@ -1223,20 +1223,9 @@ webkit.org/b/173506  ietestcenter/Javascript/15.4.4.14-3-8.html [ Failure ]
 webkit.org/b/173506  ietestcenter/Javascript/15.4.4.15-3-12.html [ Failure ]
 webkit.org/b/173506  ietestcenter/Javascript/15.4.4.15-3-25.html [ Failure ]
 webkit.org/b/173506  ietestcenter/Javascript/15.4.4.15-3-7.html [ Failure ]
-webkit.org/b/173506  sputnik/Conformance/15_Native_Objects/15.4_Array/15.4.4/15.4.4.10_Array_prototype_slice/S15.4.4.10_A3_T3.html [ Failure ]
-webkit.org/b/173506  sputnik/Conformance/15_Native_Objects/15.4_Array/15.4.4/15.4.4.12_Array_prototype_splice/S15.4.4.12_A3_T3.html [ Failure ]
-webkit.org/b/173506  sputnik/Conformance/15_Native_Objects/15.4_Array/15.4.4/15.4.4.13_Array_prototype_unshift/S15.4.4.13_A2_T2.html [ Failure ]
-webkit.org/b/173506  sputnik/Conformance/15_Native_Objects/15.4_Array/15.4.4/15.4.4.13_Array_prototype_unshift/S15.4.4.13_A3_T2.html [ Failure ]
-webkit.org/b/173506  sputnik/Conformance/15_Native_Objects/15.4_Array/15.4.4/15.4.4.6_Array_prototype_pop/S15.4.4.6_A2_T2.html [ Failure ]
-webkit.org/b/173506  sputnik/Conformance/15_Native_Objects/15.4_Array/15.4.4/15.4.4.6_Array_prototype_pop/S15.4.4.6_A3_T3.html [ Failure ]
-webkit.org/b/173506  sputnik/Conformance/15_Native_Objects/15.4_Array/15.4.4/15.4.4.7_Array_prototype_push/S15.4.4.7_A2_T2.html [ Failure ]
-webkit.org/b/173506  sputnik/Conformance/15_Native_Objects/15.4_Array/15.4.4/15.4.4.7_Array_prototype_push/S15.4.4.7_A4_T3.html [ Failure ]
-webkit.org/b/173506  sputnik/Conformance/15_Native_Objects/15.4_Array/15.4.4/15.4.4.8_Array_prototype_reverse/S15.4.4.8_A3_T3.html [ Failure ]
-webkit.org/b/173506  sputnik/Conformance/15_Native_Objects/15.4_Array/15.4.4/15.4.4.9_Array_prototype_shift/S15.4.4.9_A3_T3.html [ Failure ]
 
 webkit.org/b/173506  ietestcenter/Javascript/15.4.4.15-3-14.html [ Skip ]
 webkit.org/b/173506  ietestcenter/Javascript/15.4.4.15-3-8.html [ Skip ]
-webkit.org/b/173506  sputnik/Conformance/15_Native_Objects/15.4_Array/15.4.4/15.4.4.9_Array_prototype_shift/S15.4.4.9_A2_T2.html [ Skip ]
 
 # IDBVersionChangeEvent tests need to be rewritten to use event constructors instead of createEvent,
 # after we implement the IDBVersionChangeEvent constructor.
@@ -1872,12 +1861,6 @@ webkit.org/b/56080 jquery/effects.html [ Skip ]
 webkit.org/b/6547 js/kde/Date.html [ Skip ]
 webkit.org/b/15046 js/string-concatenate-outofmemory.html [ Skip ]
 webkit.org/b/24690 platform/mac/plugins/pluginDocumentView-deallocated-dataSource.html [ Skip ]
-webkit.org/b/42625 sputnik/Conformance/15_Native_Objects/15.9_Date/15.9.3/S15.9.3.1_A5_T1.html [ Skip ]
-webkit.org/b/42625 sputnik/Conformance/15_Native_Objects/15.9_Date/15.9.3/S15.9.3.1_A5_T2.html [ Skip ]
-webkit.org/b/42625 sputnik/Conformance/15_Native_Objects/15.9_Date/15.9.3/S15.9.3.1_A5_T3.html [ Skip ]
-webkit.org/b/42625 sputnik/Conformance/15_Native_Objects/15.9_Date/15.9.3/S15.9.3.1_A5_T4.html [ Skip ]
-webkit.org/b/42625 sputnik/Conformance/15_Native_Objects/15.9_Date/15.9.3/S15.9.3.1_A5_T5.html [ Skip ]
-webkit.org/b/42625 sputnik/Conformance/15_Native_Objects/15.9_Date/15.9.3/S15.9.3.1_A5_T6.html [ Skip ]
 webkit.org/b/17392 svg/batik/text/textBiDi.svg [ Skip ]
 webkit.org/b/11662 svg/custom/js-font-test.svg [ Skip ]
 webkit.org/b/63186 svg/zoom/page/zoom-svg-through-object-with-text.xhtml [ Skip ]
@@ -1938,24 +1921,6 @@ http/tests/navigation/success200-subframeload-goback.html [ Skip ]
 
 # Test disabled in r45078
 media/video-canvas.html [ Skip ]
-
-# Tests disabled in r59504 for taking over 10 seconds to run
-sputnik/Conformance/15_Native_Objects/15.1_The_Global_Object/15.1.3/15.1.3.1_decodeURI/S15.1.3.1_A2.5_T1.html [ Skip ]
-sputnik/Conformance/15_Native_Objects/15.1_The_Global_Object/15.1.3/15.1.3.2_decodeURIComponent/S15.1.3.2_A2.5_T1.html [ Skip ]
-sputnik/Unicode/Unicode_218/S7.6_A3.1.html [ Skip ]
-sputnik/Unicode/Unicode_218/S7.6_A3.2.html [ Skip ]
-
-# Tests landed disabled in r58534; never enabled
-sputnik/Unicode/Unicode_218/S7.6_A1.1_T5.html [ Skip ]
-sputnik/Unicode/Unicode_218/S7.6_A5.2_T5.html [ Skip ]
-sputnik/Unicode/Unicode_320/S7.6_A1.1_T5.html [ Skip ]
-sputnik/Unicode/Unicode_320/S7.6_A5.2_T5.html [ Skip ]
-sputnik/Unicode/Unicode_410/S7.6_A1.1_T5.html [ Skip ]
-sputnik/Unicode/Unicode_410/S7.6_A5.2_T5.html [ Skip ]
-sputnik/Unicode/Unicode_500/S7.6_A1.1_T5.html [ Skip ]
-sputnik/Unicode/Unicode_500/S7.6_A5.2_T5.html [ Skip ]
-sputnik/Unicode/Unicode_510/S7.6_A1.1_T5.html [ Skip ]
-sputnik/Unicode/Unicode_510/S7.6_A5.2_T5.html [ Skip ]
 
 # Test disabled in r42921 for flaky failure
 svg/custom/filter-source-alpha.svg [ Skip ]

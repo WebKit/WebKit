@@ -1,7 +1,0 @@
-CONSOLE MESSAGE: line 79: SyntaxError: Unexpected token ';'
-S7.9_A5.3_T1
-
-PASS Expected parsing failure
-
-TEST COMPLETE
-

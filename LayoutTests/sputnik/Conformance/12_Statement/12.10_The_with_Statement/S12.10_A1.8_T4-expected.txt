@@ -1,6 +1,0 @@
-S12.10_A1.8_T4
-
-PASS 
-
-TEST COMPLETE
-

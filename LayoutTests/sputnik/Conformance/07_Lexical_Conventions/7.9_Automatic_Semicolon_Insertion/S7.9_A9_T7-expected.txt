@@ -1,7 +1,0 @@
-CONSOLE MESSAGE: line 81: SyntaxError: Unexpected token '}'. Expected a statement as the body of a while loop.
-S7.9_A9_T7
-
-PASS Expected parsing failure
-
-TEST COMPLETE
-

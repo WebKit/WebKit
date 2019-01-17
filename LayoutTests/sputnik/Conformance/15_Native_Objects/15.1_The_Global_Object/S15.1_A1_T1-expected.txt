@@ -1,6 +1,0 @@
-S15.1_A1_T1
-
-PASS TypeError: Window is not a constructor (evaluating 'new this')
-
-TEST COMPLETE
-

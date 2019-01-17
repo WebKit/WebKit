@@ -1,6 +1,0 @@
-S15.1.1.2_A2_T1
-
-FAIL SputnikError: #1: Infinity = 0; Boolean(Infinity) === false. Actual: true
-
-TEST COMPLETE
-

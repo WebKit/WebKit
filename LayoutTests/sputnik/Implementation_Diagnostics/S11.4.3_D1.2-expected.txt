@@ -1,6 +1,0 @@
-S11.4.3_D1.2
-
-FAIL SputnikError: #1: Result of typeof from RegExp is "object"
-
-TEST COMPLETE
-

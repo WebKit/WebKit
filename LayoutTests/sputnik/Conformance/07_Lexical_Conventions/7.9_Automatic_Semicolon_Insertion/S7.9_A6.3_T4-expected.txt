@@ -1,7 +1,0 @@
-CONSOLE MESSAGE: line 81: SyntaxError: Unexpected token ')'. Expected either 'in' or 'of' in enumeration syntax.
-S7.9_A6.3_T4
-
-PASS Expected parsing failure
-
-TEST COMPLETE
-

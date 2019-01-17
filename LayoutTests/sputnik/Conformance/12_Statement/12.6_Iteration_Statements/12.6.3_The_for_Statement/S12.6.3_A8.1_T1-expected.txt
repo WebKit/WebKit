@@ -1,7 +1,0 @@
-CONSOLE MESSAGE: line 80: SyntaxError: Unexpected token '++'. Expected a ':' following the property name 'index'.
-S12.6.3_A8.1_T1
-
-PASS Expected parsing failure
-
-TEST COMPLETE
-

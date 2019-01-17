@@ -1,6 +1,0 @@
-S7.9.2_A1_T7
-
-PASS 
-
-TEST COMPLETE
-

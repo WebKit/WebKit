@@ -1,6 +1,0 @@
-S8.4_D2.2
-
-FAIL No error detected
-
-TEST COMPLETE
-

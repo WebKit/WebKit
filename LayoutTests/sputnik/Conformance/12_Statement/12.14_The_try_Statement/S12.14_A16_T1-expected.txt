@@ -1,7 +1,0 @@
-CONSOLE MESSAGE: line 79: SyntaxError: Unexpected token '}'. Expected a block statement as body of a try statement.
-S12.14_A16_T1
-
-PASS Expected parsing failure
-
-TEST COMPLETE
-

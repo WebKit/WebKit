@@ -1,6 +1,0 @@
-S12.6.4_A4.1
-
-PASS 
-
-TEST COMPLETE
-

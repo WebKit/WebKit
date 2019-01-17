@@ -1,6 +1,0 @@
-S15.5.4.13_A1_T3
-
-FAIL TypeError: Type error
-
-TEST COMPLETE
-

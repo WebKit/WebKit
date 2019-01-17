@@ -1,6 +1,0 @@
-S12.6.3_A9.1
-
-FAIL SputnikError: #1: var __evaluated = eval("for(count=0;;) {if (count===supreme)break;else count++; }"); does not lead to throwing exception
-
-TEST COMPLETE
-

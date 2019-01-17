@@ -1,7 +1,0 @@
-CONSOLE MESSAGE: line 77: SyntaxError: Unexpected identifier 'comment'
-S7.3_A3.1_T3
-
-PASS Expected parsing failure
-
-TEST COMPLETE
-

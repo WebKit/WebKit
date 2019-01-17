@@ -1,7 +1,0 @@
-CONSOLE MESSAGE: line 82: SyntaxError: Cannot use the undeclared label 'nonexist'.
-S12.6.3_A11.1_T3
-
-PASS Expected parsing failure
-
-TEST COMPLETE
-

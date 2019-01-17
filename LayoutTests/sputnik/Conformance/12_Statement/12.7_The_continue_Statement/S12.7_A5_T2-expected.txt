@@ -1,7 +1,0 @@
-CONSOLE MESSAGE: line 80: SyntaxError: Cannot use the undeclared label 'IN_DO_FUNC'.
-S12.7_A5_T2
-
-PASS Expected parsing failure
-
-TEST COMPLETE
-

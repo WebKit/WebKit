@@ -2001,17 +2001,6 @@ editing/undo/undo-combined-delete.html [ Pass Failure ]
 editing/undo/undo-forward-delete-boundary.html [ Pass Failure ]
 editing/undo/undo-forward-delete.html [ Pass Failure ]
 
-# Sputnik tests that are flaky:
-sputnik/Conformance/07_Lexical_Conventions/7.8_Literals/7.8.5_Regular_Expression_Literals/S7.8.5_A1.4_T2.html
-sputnik/Conformance/07_Lexical_Conventions/7.8_Literals/7.8.5_Regular_Expression_Literals/S7.8.5_A2.1_T2.html
-sputnik/Conformance/07_Lexical_Conventions/7.8_Literals/7.8.5_Regular_Expression_Literals/S7.8.5_A2.4_T2.html
-
-# Sputnik tests that fail:
-sputnik/Unicode/Unicode_510/S7.6_A3.1.html [ Failure ]
-sputnik/Unicode/Unicode_510/S7.6_A3.2.html [ Failure ]
-sputnik/Unicode/Unicode_510/S7.6_A5.3_T1.html [ Failure ]
-sputnik/Unicode/Unicode_510/S7.6_A5.3_T2.html [ Failure ]
-
 # storage tests that fail:
 storage/websql/sql-error-codes.html [ Failure ]
 

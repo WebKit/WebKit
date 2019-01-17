@@ -1,6 +1,0 @@
-S7.6_A3.2
-
-FAIL SputnikError: #0524-0527 
-
-TEST COMPLETE
-

@@ -1,7 +1,0 @@
-CONSOLE MESSAGE: line 76: SyntaxError: Unexpected token '='. Expected '(' to start an 'if' condition.
-S7.5.2_A1.12
-
-PASS Expected parsing failure
-
-TEST COMPLETE
-

@@ -1,6 +1,0 @@
-S12.7_A3
-
-PASS 
-
-TEST COMPLETE
-

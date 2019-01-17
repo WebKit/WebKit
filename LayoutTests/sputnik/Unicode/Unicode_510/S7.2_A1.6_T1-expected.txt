@@ -1,6 +1,0 @@
-S7.2_A1.6_T1
-
-FAIL SputnikError: #180E 
-
-TEST COMPLETE
-

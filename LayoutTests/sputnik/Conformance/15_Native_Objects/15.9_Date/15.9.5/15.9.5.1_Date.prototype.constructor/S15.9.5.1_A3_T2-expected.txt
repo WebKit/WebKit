@@ -1,6 +1,0 @@
-S15.9.5.1_A3_T2
-
-FAIL SputnikError: #1: The Date.prototype.constructor.length property has the attributes DontDelete
-
-TEST COMPLETE
-

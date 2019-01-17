@@ -1,7 +1,0 @@
-CONSOLE MESSAGE: line 87: SyntaxError: 'break' is only valid inside a switch or loop statement.
-S12.8_A8_T2
-
-PASS Expected parsing failure
-
-TEST COMPLETE
-

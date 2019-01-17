@@ -1,6 +1,0 @@
-S15.1.1.2_R2.1
-
-FAIL SputnikError: #1: Infinity = "string"; isNaN(Infinity) === true
-
-TEST COMPLETE
-
