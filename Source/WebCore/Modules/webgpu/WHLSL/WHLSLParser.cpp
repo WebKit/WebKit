@@ -1096,8 +1096,6 @@ auto Parser::parseParameters() -> Expected<AST::VariableDeclarations, Error>
 
 auto Parser::parseFunctionDefinition() -> Expected<AST::FunctionDefinition, Error>
 {
-    bool restricted = static_cast<bool>(tryType(Lexer::Token::Type::Restricted));
-
     auto functionDeclaration = parseFunctionDeclaration();
     if (!functionDeclaration)
         return Unexpected<Error>(functionDeclaration.error());
@@ -1106,7 +1104,7 @@ auto Parser::parseFunctionDefinition() -> Expected<AST::FunctionDefinition, Erro
     if (!block)
         return Unexpected<Error>(block.error());
 
-    return AST::FunctionDefinition(WTFMove(*functionDeclaration), WTFMove(*block), restricted);
+    return AST::FunctionDefinition(WTFMove(*functionDeclaration), WTFMove(*block));
 }
 
 auto Parser::parseEntryPointFunctionDeclaration() -> Expected<AST::FunctionDeclaration, Error>
@@ -1249,12 +1247,6 @@ auto Parser::parseNativeFunctionDeclaration() -> Expected<AST::NativeFunctionDec
 {
     Optional<Lexer::Token> origin;
 
-    bool restricted = false;
-    if (auto restrictedValue = tryType(Lexer::Token::Type::Restricted)) {
-        origin = *restrictedValue;
-        restricted = true;
-    }
-
     auto native = consumeType(Lexer::Token::Type::Native);
     if (!native)
         return Unexpected<Error>(native.error());
@@ -1269,7 +1261,7 @@ auto Parser::parseNativeFunctionDeclaration() -> Expected<AST::NativeFunctionDec
     if (!semicolon)
         return Unexpected<Error>(semicolon.error());
 
-    return AST::NativeFunctionDeclaration(WTFMove(*functionDeclaration), restricted);
+    return AST::NativeFunctionDeclaration(WTFMove(*functionDeclaration));
 }
 
 auto Parser::parseBlock() -> Expected<AST::Block, Error>

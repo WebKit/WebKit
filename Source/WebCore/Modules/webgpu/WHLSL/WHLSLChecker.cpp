@@ -119,28 +119,25 @@ public:
 
 static AST::NativeFunctionDeclaration resolveWithOperatorAnderIndexer(AST::CallExpression& callExpression, AST::ArrayReferenceType& firstArgument, const Intrinsics& intrinsics)
 {
-    const bool isRestricted = false;
     const bool isOperator = true;
     auto returnType = makeUniqueRef<AST::PointerType>(Lexer::Token(callExpression.origin()), firstArgument.addressSpace(), firstArgument.elementType().clone());
     AST::VariableDeclarations parameters;
     parameters.append(AST::VariableDeclaration(Lexer::Token(callExpression.origin()), AST::Qualifiers(), { firstArgument.clone() }, String(), WTF::nullopt, WTF::nullopt));
     parameters.append(AST::VariableDeclaration(Lexer::Token(callExpression.origin()), AST::Qualifiers(), { AST::TypeReference::wrap(Lexer::Token(callExpression.origin()), intrinsics.uintType()) }, String(), WTF::nullopt, WTF::nullopt));
-    return AST::NativeFunctionDeclaration(AST::FunctionDeclaration(Lexer::Token(callExpression.origin()), AST::AttributeBlock(), WTF::nullopt, WTFMove(returnType), String("operator&[]", String::ConstructFromLiteral), WTFMove(parameters), WTF::nullopt, isOperator), isRestricted);
+    return AST::NativeFunctionDeclaration(AST::FunctionDeclaration(Lexer::Token(callExpression.origin()), AST::AttributeBlock(), WTF::nullopt, WTFMove(returnType), String("operator&[]", String::ConstructFromLiteral), WTFMove(parameters), WTF::nullopt, isOperator));
 }
 
 static AST::NativeFunctionDeclaration resolveWithOperatorLength(AST::CallExpression& callExpression, AST::UnnamedType& firstArgument, const Intrinsics& intrinsics)
 {
-    const bool isRestricted = false;
     const bool isOperator = true;
     auto returnType = AST::TypeReference::wrap(Lexer::Token(callExpression.origin()), intrinsics.uintType());
     AST::VariableDeclarations parameters;
     parameters.append(AST::VariableDeclaration(Lexer::Token(callExpression.origin()), AST::Qualifiers(), { firstArgument.clone() }, String(), WTF::nullopt, WTF::nullopt));
-    return AST::NativeFunctionDeclaration(AST::FunctionDeclaration(Lexer::Token(callExpression.origin()), AST::AttributeBlock(), WTF::nullopt, WTFMove(returnType), String("operator.length", String::ConstructFromLiteral), WTFMove(parameters), WTF::nullopt, isOperator), isRestricted);
+    return AST::NativeFunctionDeclaration(AST::FunctionDeclaration(Lexer::Token(callExpression.origin()), AST::AttributeBlock(), WTF::nullopt, WTFMove(returnType), String("operator.length", String::ConstructFromLiteral), WTFMove(parameters), WTF::nullopt, isOperator));
 }
 
 static AST::NativeFunctionDeclaration resolveWithReferenceComparator(AST::CallExpression& callExpression, ResolvingType& firstArgument, ResolvingType& secondArgument, const Intrinsics& intrinsics)
 {
-    const bool isRestricted = false;
     const bool isOperator = true;
     auto returnType = AST::TypeReference::wrap(Lexer::Token(callExpression.origin()), intrinsics.boolType());
     auto argumentType = WTF::visit(WTF::makeVisitor([](UniqueRef<AST::UnnamedType>& unnamedType) -> UniqueRef<AST::UnnamedType> {
@@ -158,7 +155,7 @@ static AST::NativeFunctionDeclaration resolveWithReferenceComparator(AST::CallEx
     AST::VariableDeclarations parameters;
     parameters.append(AST::VariableDeclaration(Lexer::Token(callExpression.origin()), AST::Qualifiers(), { argumentType->clone() }, String(), WTF::nullopt, WTF::nullopt));
     parameters.append(AST::VariableDeclaration(Lexer::Token(callExpression.origin()), AST::Qualifiers(), { WTFMove(argumentType) }, String(), WTF::nullopt, WTF::nullopt));
-    return AST::NativeFunctionDeclaration(AST::FunctionDeclaration(Lexer::Token(callExpression.origin()), AST::AttributeBlock(), WTF::nullopt, WTFMove(returnType), String("operator==", String::ConstructFromLiteral), WTFMove(parameters), WTF::nullopt, isOperator), isRestricted);
+    return AST::NativeFunctionDeclaration(AST::FunctionDeclaration(Lexer::Token(callExpression.origin()), AST::AttributeBlock(), WTF::nullopt, WTFMove(returnType), String("operator==", String::ConstructFromLiteral), WTFMove(parameters), WTF::nullopt, isOperator));
 }
 
 static Optional<AST::NativeFunctionDeclaration> resolveByInstantiation(AST::CallExpression& callExpression, const Vector<std::reference_wrapper<ResolvingType>>& types, const Intrinsics& intrinsics)

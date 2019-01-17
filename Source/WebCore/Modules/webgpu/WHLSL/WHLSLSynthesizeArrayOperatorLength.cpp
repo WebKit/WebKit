@@ -63,13 +63,12 @@ void synthesizeArrayOperatorLength(Program& program)
     auto arrayTypes = findArrayTypes.takeArrayTypes();
 
     bool isOperator = true;
-    bool isRestricted = false;
 
     for (auto& arrayType : arrayTypes) {
         AST::VariableDeclaration variableDeclaration(Lexer::Token(arrayType.get().origin()), AST::Qualifiers(), { arrayType.get().clone() }, String(), WTF::nullopt, WTF::nullopt);
         AST::VariableDeclarations parameters;
         parameters.append(WTFMove(variableDeclaration));
-        AST::NativeFunctionDeclaration nativeFunctionDeclaration(AST::FunctionDeclaration(Lexer::Token(arrayType.get().origin()), AST::AttributeBlock(), WTF::nullopt, AST::TypeReference::wrap(Lexer::Token(arrayType.get().origin()), program.intrinsics().uintType()), "operator.length"_str, WTFMove(parameters), WTF::nullopt, isOperator), isRestricted);
+        AST::NativeFunctionDeclaration nativeFunctionDeclaration(AST::FunctionDeclaration(Lexer::Token(arrayType.get().origin()), AST::AttributeBlock(), WTF::nullopt, AST::TypeReference::wrap(Lexer::Token(arrayType.get().origin()), program.intrinsics().uintType()), "operator.length"_str, WTFMove(parameters), WTF::nullopt, isOperator));
         program.append(WTFMove(nativeFunctionDeclaration));
     }
 }

@@ -38,10 +38,9 @@ namespace AST {
 
 class FunctionDefinition : public FunctionDeclaration {
 public:
-    FunctionDefinition(FunctionDeclaration&& functionDeclaration, Block&& block, bool restricted)
+    FunctionDefinition(FunctionDeclaration&& functionDeclaration, Block&& block)
         : FunctionDeclaration(WTFMove(functionDeclaration))
         , m_block(WTFMove(block))
-        , m_restricted(restricted)
     {
     }
 
@@ -53,11 +52,9 @@ public:
     bool isFunctionDefinition() const override { return true; }
 
     Block& block() { return m_block; }
-    bool restricted() const { return m_restricted; }
 
 private:
     Block m_block;
-    bool m_restricted;
 };
 
 } // namespace AST

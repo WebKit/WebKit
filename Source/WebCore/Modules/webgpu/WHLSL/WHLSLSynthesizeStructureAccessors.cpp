@@ -42,7 +42,6 @@ namespace WHLSL {
 void synthesizeStructureAccessors(Program& program)
 {
     bool isOperator = true;
-    bool isRestricted = false;
     for (auto& structureDefinition : program.structureDefinitions()) {
         for (auto& structureElement : structureDefinition->structureElements()) {
             {
@@ -50,7 +49,7 @@ void synthesizeStructureAccessors(Program& program)
                 AST::VariableDeclaration variableDeclaration(Lexer::Token(structureElement.origin()), AST::Qualifiers(), { AST::TypeReference::wrap(Lexer::Token(structureElement.origin()), structureDefinition) }, String(), WTF::nullopt, WTF::nullopt);
                 AST::VariableDeclarations parameters;
                 parameters.append(WTFMove(variableDeclaration));
-                AST::NativeFunctionDeclaration nativeFunctionDeclaration(AST::FunctionDeclaration(Lexer::Token(structureElement.origin()), AST::AttributeBlock(), WTF::nullopt, structureElement.type().clone(), makeString("operator.", structureElement.name()), WTFMove(parameters), WTF::nullopt, isOperator), isRestricted);
+                AST::NativeFunctionDeclaration nativeFunctionDeclaration(AST::FunctionDeclaration(Lexer::Token(structureElement.origin()), AST::AttributeBlock(), WTF::nullopt, structureElement.type().clone(), makeString("operator.", structureElement.name()), WTFMove(parameters), WTF::nullopt, isOperator));
                 program.append(WTFMove(nativeFunctionDeclaration));
             }
 
@@ -61,7 +60,7 @@ void synthesizeStructureAccessors(Program& program)
                 AST::VariableDeclarations parameters;
                 parameters.append(WTFMove(variableDeclaration1));
                 parameters.append(WTFMove(variableDeclaration2));
-                AST::NativeFunctionDeclaration nativeFunctionDeclaration(AST::FunctionDeclaration(Lexer::Token(structureElement.origin()), AST::AttributeBlock(), WTF::nullopt, AST::TypeReference::wrap(Lexer::Token(structureElement.origin()), structureDefinition), makeString("operator.", structureElement.name(), '='), WTFMove(parameters), WTF::nullopt, isOperator), isRestricted);
+                AST::NativeFunctionDeclaration nativeFunctionDeclaration(AST::FunctionDeclaration(Lexer::Token(structureElement.origin()), AST::AttributeBlock(), WTF::nullopt, AST::TypeReference::wrap(Lexer::Token(structureElement.origin()), structureDefinition), makeString("operator.", structureElement.name(), '='), WTFMove(parameters), WTF::nullopt, isOperator));
                 program.append(WTFMove(nativeFunctionDeclaration));
             }
 
@@ -72,7 +71,7 @@ void synthesizeStructureAccessors(Program& program)
                 AST::VariableDeclarations parameters;
                 parameters.append(WTFMove(variableDeclaration));
                 auto returnType = makeUniqueRef<AST::PointerType>(Lexer::Token(structureElement.origin()), addressSpace, structureElement.type().clone());
-                AST::NativeFunctionDeclaration nativeFunctionDeclaration(AST::FunctionDeclaration(Lexer::Token(structureElement.origin()), AST::AttributeBlock(), WTF::nullopt, WTFMove(returnType), makeString("operator&.", structureElement.name()), WTFMove(parameters), WTF::nullopt, isOperator), isRestricted);
+                AST::NativeFunctionDeclaration nativeFunctionDeclaration(AST::FunctionDeclaration(Lexer::Token(structureElement.origin()), AST::AttributeBlock(), WTF::nullopt, WTFMove(returnType), makeString("operator&.", structureElement.name()), WTFMove(parameters), WTF::nullopt, isOperator));
                 return nativeFunctionDeclaration;
             };
             program.append(createAnder(AST::AddressSpace::Constant));

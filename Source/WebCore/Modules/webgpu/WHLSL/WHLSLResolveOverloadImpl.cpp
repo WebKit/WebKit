@@ -71,25 +71,8 @@ AST::FunctionDeclaration* resolveFunctionOverloadImpl(Vector<std::reference_wrap
             minimumCostCandidates.append(candidate);
     }
 
-    bool restrictedCandidateExists = false;
-    for (auto& candidate : minimumCostCandidates) {
-        if (is<AST::FunctionDefinition>(candidate.get()) && downcast<AST::FunctionDefinition>(candidate.get()).restricted()) {
-            restrictedCandidateExists = true;
-            break;
-        }
-    }
-
-    candidates.clear();
-    if (restrictedCandidateExists) {
-        for (auto& candidate : minimumCostCandidates) {
-            if (is<AST::FunctionDefinition>(candidate.get()) && downcast<AST::FunctionDefinition>(candidate.get()).restricted())
-                candidates.append(candidate.get());
-        }
-    } else
-        candidates = minimumCostCandidates;
-
-    if (candidates.size() == 1)
-        return &candidates[0].get();
+    if (minimumCostCandidates.size() == 1)
+        return &minimumCostCandidates[0].get();
     return nullptr;
 }
 

@@ -37,9 +37,8 @@ namespace AST {
 
 class NativeFunctionDeclaration : public FunctionDeclaration {
 public:
-    NativeFunctionDeclaration(FunctionDeclaration&& functionDeclaration, bool restricted)
+    NativeFunctionDeclaration(FunctionDeclaration&& functionDeclaration)
         : FunctionDeclaration(WTFMove(functionDeclaration))
-        , m_restricted(restricted)
     {
     }
 
@@ -50,10 +49,7 @@ public:
 
     bool isNativeFunctionDeclaration() const override { return true; }
 
-    bool restricted() const { return m_restricted; }
-
 private:
-    bool m_restricted;
 };
 
 } // namespace AST
