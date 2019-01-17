@@ -1,5 +1,23 @@
 2019-01-17  Yusuke Suzuki  <yusukesuzuki@slowstart.org>
 
+        [JSC] Add generateHeapSnapshotForGCDebugging function to dump GCDebugging data
+        https://bugs.webkit.org/show_bug.cgi?id=193526
+
+        Reviewed by Michael Saboff.
+
+        This patch adds generateHeapSnapshotForGCDebugging to JSC shell to dump heap snapshot JSON string with GCDebugging option.
+        GCDebuggingSnapshot mode is slightly different from InspectorSnapshot in terms of both the output data and the behavior.
+        It always takes full snapshot, and it reports internal data too. This is useful to view the live heap objects after running
+        the code. Also, generateHeapSnapshotForGCDebugging returns String instead of parsing it to JSObject internally by calling
+        JSON.parse. If we convert the String to bunch of objects by using JSON.parse, it is difficult to call generateHeapSnapshotForGCDebugging
+        multiple times for debugging. Currently, it only generates a large string, which is easily distinguishable in the heap inspector tool.
+
+        * jsc.cpp:
+        (GlobalObject::finishCreation):
+        (functionGenerateHeapSnapshotForGCDebugging):
+
+2019-01-17  Yusuke Suzuki  <yusukesuzuki@slowstart.org>
+
         [JSC] ToThis omission in DFGByteCodeParser is wrong
         https://bugs.webkit.org/show_bug.cgi?id=193513
         <rdar://problem/45842236>
