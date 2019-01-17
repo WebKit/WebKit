@@ -82,7 +82,7 @@ void Engine::from(NetworkProcess& networkProcess, PAL::SessionID sessionID, Func
 
     networkProcess.cacheStorageParameters(sessionID, [networkProcess = makeRef(networkProcess), sessionID, callback = WTFMove(callback)] (auto&& rootPath, auto quota) mutable {
         callback(networkProcess->ensureCacheEngine(sessionID, [&] {
-            return adoptRef(*new Engine { String { rootPath }, quota });
+            return adoptRef(*new Engine { sessionID, networkProcess.get(), String { rootPath }, quota });
         }));
     });
 }
@@ -185,8 +185,10 @@ void Engine::clearCachesForOrigin(NetworkProcess& networkProcess, PAL::SessionID
     });
 }
 
-Engine::Engine(String&& rootPath, uint64_t quota)
-    : m_rootPath(WTFMove(rootPath))
+Engine::Engine(PAL::SessionID sessionID, NetworkProcess& process, String&& rootPath, uint64_t quota)
+    : m_sessionID(sessionID)
+    , m_networkProcess(makeWeakPtr(process))
+    , m_rootPath(WTFMove(rootPath))
     , m_quota(quota)
 {
     if (!m_rootPath.isNull())
@@ -646,6 +648,15 @@ String Engine::representation()
     }
     builder.append("]}");
     return builder.toString();
+}
+
+void Engine::requestSpace(const WebCore::ClientOrigin& origin, uint64_t quota, uint64_t currentSize, uint64_t spaceRequired, RequestSpaceCallback&& callback)
+{
+    if (!m_networkProcess) {
+        callback({ });
+        return;
+    }
+    m_networkProcess->requestCacheStorageSpace(m_sessionID, origin, quota, currentSize, spaceRequired, WTFMove(callback));
 }
 
 } // namespace CacheStorage

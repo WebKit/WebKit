@@ -63,4 +63,6 @@ messages -> NetworkProcessProxy LegacyReceiver {
     EstablishWorkerContextConnectionToNetworkProcess(struct WebCore::SecurityOriginData origin)
     EstablishWorkerContextConnectionToNetworkProcessForExplicitSession(struct WebCore::SecurityOriginData origin, PAL::SessionID explicitSession)
 #endif
+
+    RequestCacheStorageSpace(PAL::SessionID sessionID, struct WebCore::ClientOrigin origin, uint64_t quota, uint64_t currentSize, uint64_t spaceRequired) -> (Optional<uint64_t> newQuota) Async
 }

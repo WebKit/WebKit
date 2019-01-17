@@ -1,3 +1,42 @@
+2019-01-16  Youenn Fablet  <youenn@apple.com>
+
+        Pipe cache quota request from Network Process to UIProcess
+        https://bugs.webkit.org/show_bug.cgi?id=193296
+
+        Reviewed by Alex Christensen.
+
+        When cache storage hits quota for a given origin, pipe the request back to NetworkProcess.
+        No record will be put until the quota request is answered.
+        The request is sent from CacheStorage::Caches to CacheStorage::Engine and to NetworkProcess.
+        NetworkProcess then sends it to NetworkProcessProxy.
+        Currently NetworkProcessProxy just answers by keeping the quota as it is.
+        In the future, NetworkProcessProxy should make a delegate call to let the app using WebKit
+        make a decision on the quota. This will allow prompting user to bump it as done for other data.
+
+        * NetworkProcess/NetworkProcess.cpp:
+        (WebKit::NetworkProcess::requestCacheStorageSpace):
+        * NetworkProcess/NetworkProcess.h:
+        * NetworkProcess/cache/CacheStorageEngine.cpp:
+        (WebKit::CacheStorage::Engine::~Engine):
+        (WebKit::CacheStorage::Engine::from):
+        (WebKit::CacheStorage::Engine::Engine):
+        (WebKit::CacheStorage::Engine::requestSpace):
+        (WebKit::CacheStorage::Engine::requestSpaceCompleted):
+        * NetworkProcess/cache/CacheStorageEngine.h:
+        * NetworkProcess/cache/CacheStorageEngineCache.cpp:
+        (WebKit::CacheStorage::Cache::put):
+        (WebKit::CacheStorage::Cache::retryPuttingPendingRecords):
+        * NetworkProcess/cache/CacheStorageEngineCache.h:
+        * NetworkProcess/cache/CacheStorageEngineCaches.cpp:
+        (WebKit::CacheStorage::Caches::requestSpace):
+        (WebKit::CacheStorage::Caches::notifyCachesOfRequestSpaceEnd):
+        * NetworkProcess/cache/CacheStorageEngineCaches.h:
+        (WebKit::CacheStorage::Caches::isRequestingSpace const):
+        * UIProcess/Network/NetworkProcessProxy.cpp:
+        (WebKit::NetworkProcessProxy::requestCacheStorageSpace):
+        * UIProcess/Network/NetworkProcessProxy.h:
+        * UIProcess/Network/NetworkProcessProxy.messages.in:
+
 2019-01-16  Alex Christensen  <achristensen@webkit.org>
 
         sendBeacon to previously-unvisited https domain always fails

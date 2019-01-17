@@ -61,6 +61,7 @@ public:
     void readRecord(const NetworkCache::Key&, WTF::Function<void(Expected<WebCore::DOMCacheEngine::Record, WebCore::DOMCacheEngine::Error>&&)>&&);
 
     bool hasEnoughSpace(uint64_t spaceRequired) const { return m_quota >= m_size + spaceRequired; }
+    bool isRequestingSpace() const { return m_isRequestingSpace; }
     void requestSpace(uint64_t spaceRequired, WebCore::DOMCacheEngine::CompletionCallback&&);
     void writeRecord(const Cache&, const RecordInformation&, WebCore::DOMCacheEngine::Record&&, uint64_t previousRecordSize, WebCore::DOMCacheEngine::CompletionCallback&&);
 
@@ -93,7 +94,10 @@ private:
     void makeDirty() { ++m_updateCounter; }
     bool isDirty(uint64_t updateCounter) const;
 
+    void notifyCachesOfRequestSpaceEnd();
+
     bool m_isInitialized { false };
+    bool m_isRequestingSpace { false };
     Engine* m_engine { nullptr };
     uint64_t m_updateCounter { 0 };
     WebCore::ClientOrigin m_origin;

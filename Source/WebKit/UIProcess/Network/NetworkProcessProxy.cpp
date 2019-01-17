@@ -734,6 +734,19 @@ void NetworkProcessProxy::establishWorkerContextConnectionToNetworkProcessForExp
 }
 #endif
 
+void NetworkProcessProxy::requestCacheStorageSpace(PAL::SessionID sessionID, const WebCore::ClientOrigin& origin, uint64_t quota, uint64_t currentSize, uint64_t spaceRequired, CompletionHandler<void(Optional<uint64_t> quota)>&& completionHandler)
+{
+    auto* store = websiteDataStoreFromSessionID(sessionID);
+
+    if (!store) {
+        completionHandler({ });
+        return;
+    }
+
+    // FIXME: Ask WebsiteDataStore about updating the quota for this origin.
+    completionHandler(quota);
+}
+
 } // namespace WebKit
 
 #undef MESSAGE_CHECK

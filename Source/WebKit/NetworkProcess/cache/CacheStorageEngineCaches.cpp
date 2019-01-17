@@ -481,9 +481,35 @@ void Caches::readRecordsList(Cache& cache, NetworkCache::Storage::TraverseHandle
 
 void Caches::requestSpace(uint64_t spaceRequired, WebCore::DOMCacheEngine::CompletionCallback&& callback)
 {
-    // FIXME: Implement quota increase request.
+    ASSERT(!m_isRequestingSpace);
+
     ASSERT(m_quota < m_size + spaceRequired);
-    callback(Error::QuotaExceeded);
+
+    if (!m_engine) {
+        callback(Error::QuotaExceeded);
+        return;
+    }
+
+    m_isRequestingSpace = true;
+    m_engine->requestSpace(m_origin, m_quota, m_size, spaceRequired, [this, protectedThis = makeRef(*this), callback = WTFMove(callback)] (Optional<uint64_t> newQuota) {
+        m_isRequestingSpace = false;
+        if (!newQuota) {
+            callback(Error::QuotaExceeded);
+            notifyCachesOfRequestSpaceEnd();
+            return;
+        }
+        m_quota = *newQuota;
+        callback({ });
+        notifyCachesOfRequestSpaceEnd();
+    });
+}
+
+void Caches::notifyCachesOfRequestSpaceEnd()
+{
+    for (auto& cache : m_caches)
+        cache.retryPuttingPendingRecords();
+    for (auto& cache : m_removedCaches)
+        cache.retryPuttingPendingRecords();
 }
 
 void Caches::writeRecord(const Cache& cache, const RecordInformation& recordInformation, Record&& record, uint64_t previousRecordSize, CompletionCallback&& callback)

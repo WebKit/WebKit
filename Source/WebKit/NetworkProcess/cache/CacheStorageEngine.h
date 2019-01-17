@@ -90,8 +90,11 @@ public:
     const NetworkCache::Salt& salt() const { return m_salt.value(); }
     uint64_t nextCacheIdentifier() { return ++m_nextCacheIdentifier; }
 
+    using RequestSpaceCallback = CompletionHandler<void(Optional<uint64_t>)>;
+    void requestSpace(const WebCore::ClientOrigin&, uint64_t quota, uint64_t currentSize, uint64_t spaceRequired, RequestSpaceCallback&&);
+
 private:
-    Engine(String&& rootPath, uint64_t quota);
+    Engine(PAL::SessionID, NetworkProcess&, String&& rootPath, uint64_t quota);
 
     void open(const WebCore::ClientOrigin&, const String& cacheName, WebCore::DOMCacheEngine::CacheIdentifierCallback&&);
     void remove(uint64_t cacheIdentifier, WebCore::DOMCacheEngine::CacheIdentifierCallback&&);
@@ -129,6 +132,8 @@ private:
 
     Cache* cache(uint64_t cacheIdentifier);
 
+    PAL::SessionID m_sessionID;
+    WeakPtr<NetworkProcess> m_networkProcess;
     HashMap<WebCore::ClientOrigin, RefPtr<Caches>> m_caches;
     uint64_t m_nextCacheIdentifier { 0 };
     String m_rootPath;
