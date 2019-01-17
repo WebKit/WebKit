@@ -77,6 +77,7 @@ class FrameView;
 class GraphicsLayer;
 class Page;
 class Region;
+class RenderLayer;
 class ScrollableArea;
 class ViewportConstraints;
 
@@ -131,7 +132,10 @@ public:
     virtual bool isRemoteScrollingCoordinator() const { return false; }
 
     // Return whether this scrolling coordinator handles scrolling for the given frame view.
-    virtual bool coordinatesScrollingForFrameView(const FrameView&) const;
+    WEBCORE_EXPORT virtual bool coordinatesScrollingForFrameView(const FrameView&) const;
+
+    // Return whether this scrolling coordinator handles scrolling for the given overflow scroll layer.
+    WEBCORE_EXPORT virtual bool coordinatesScrollingForOverflowLayer(const RenderLayer&) const;
 
     // Should be called whenever the given frame view has been laid out.
     virtual void frameViewLayoutUpdated(FrameView&) { }

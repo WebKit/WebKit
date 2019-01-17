@@ -26,15 +26,15 @@
 #include "config.h"
 #include "ScrollingStateFrameScrollingNode.h"
 
+#if ENABLE(ASYNC_SCROLLING) && PLATFORM(MAC)
+
 #include "GraphicsLayer.h"
 #include "Scrollbar.h"
 #include "ScrollbarThemeMac.h"
 #include "ScrollingStateTree.h"
 
-#if ENABLE(ASYNC_SCROLLING) && PLATFORM(MAC)
-
 namespace WebCore {
-    
+
 void ScrollingStateFrameScrollingNode::setScrollerImpsFromScrollbars(Scrollbar* verticalScrollbar, Scrollbar* horizontalScrollbar)
 {
     ScrollbarTheme& scrollbarTheme = ScrollbarTheme::theme();

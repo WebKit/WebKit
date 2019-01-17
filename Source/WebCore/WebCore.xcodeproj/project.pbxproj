@@ -5783,6 +5783,8 @@
 		0FB88909167D2FA10010CDA5 /* ScrollingTreeStickyNode.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ScrollingTreeStickyNode.mm; sourceTree = "<group>"; };
 		0FB8890C167D30160010CDA5 /* ScrollingStateStickyNode.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ScrollingStateStickyNode.cpp; sourceTree = "<group>"; };
 		0FB8890D167D30160010CDA5 /* ScrollingStateStickyNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScrollingStateStickyNode.h; sourceTree = "<group>"; };
+		0FC05168219B5EBE0031C39E /* ScrollingTreeOverflowScrollingNodeMac.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = ScrollingTreeOverflowScrollingNodeMac.mm; sourceTree = "<group>"; };
+		0FC0516A219B5EBE0031C39E /* ScrollingTreeOverflowScrollingNodeMac.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ScrollingTreeOverflowScrollingNodeMac.h; sourceTree = "<group>"; };
 		0FC4E407187F82E10045882C /* ScrollingCoordinatorIOS.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScrollingCoordinatorIOS.h; sourceTree = "<group>"; };
 		0FC4E408187F82E10045882C /* ScrollingCoordinatorIOS.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ScrollingCoordinatorIOS.mm; sourceTree = "<group>"; };
 		0FC4E409187F82E10045882C /* ScrollingTreeIOS.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ScrollingTreeIOS.cpp; sourceTree = "<group>"; };
@@ -16928,6 +16930,8 @@
 				93C4A4141629DF5A00C3EB6E /* ScrollingTreeFrameScrollingNodeMac.mm */,
 				0FE5806119327A6200DE32EB /* ScrollingTreeMac.cpp */,
 				0FE5806219327A6200DE32EB /* ScrollingTreeMac.h */,
+				0FC0516A219B5EBE0031C39E /* ScrollingTreeOverflowScrollingNodeMac.h */,
+				0FC05168219B5EBE0031C39E /* ScrollingTreeOverflowScrollingNodeMac.mm */,
 				0FB88908167D2FA10010CDA5 /* ScrollingTreeStickyNode.h */,
 				0FB88909167D2FA10010CDA5 /* ScrollingTreeStickyNode.mm */,
 			);

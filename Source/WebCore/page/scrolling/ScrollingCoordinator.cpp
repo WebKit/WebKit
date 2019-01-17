@@ -87,6 +87,14 @@ bool ScrollingCoordinator::coordinatesScrollingForFrameView(const FrameView& fra
     return renderView->usesCompositing();
 }
 
+bool ScrollingCoordinator::coordinatesScrollingForOverflowLayer(const RenderLayer& layer) const
+{
+    ASSERT(isMainThread());
+    ASSERT(m_page);
+
+    return layer.hasCompositedScrollableOverflow();
+}
+
 EventTrackingRegions ScrollingCoordinator::absoluteEventTrackingRegionsForFrame(const Frame& frame) const
 {
     auto* renderView = frame.contentRenderer();

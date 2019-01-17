@@ -1,3 +1,42 @@
+2019-01-16  Simon Fraser  <simon.fraser@apple.com>
+
+        Stub out scrolling tree classes for overflow scrolling nodes on macOS
+        https://bugs.webkit.org/show_bug.cgi?id=193524
+
+        Reviewed by Antti Koivisto.
+
+        Add an empty implementation of ScrollingTreeOverflowScrollingNodeMac for macOS. Change
+        ScrollingTreeMac::createScrollingTreeNode() to create these nodes.
+        
+        Minor refactor of RenderLayerCompositor::useCoordinatedScrollingForLayer() code to ask
+        the scrolling coordinator if it can coordinate scrolling for this layer; no behavior
+        change for existing code paths.
+
+        * SourcesCocoa.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * page/scrolling/ScrollingCoordinator.cpp:
+        (WebCore::ScrollingCoordinator::coordinatesScrollingForOverflowLayer const):
+        * page/scrolling/ScrollingCoordinator.h:
+        * page/scrolling/mac/ScrollingStateFrameScrollingNodeMac.mm:
+        * page/scrolling/mac/ScrollingTreeMac.cpp:
+        (ScrollingTreeMac::createScrollingTreeNode):
+        * page/scrolling/mac/ScrollingTreeOverflowScrollingNodeMac.h: Copied from Source/WebCore/page/scrolling/mac/ScrollingStateFrameScrollingNodeMac.mm.
+        * page/scrolling/mac/ScrollingTreeOverflowScrollingNodeMac.mm: Added.
+        (WebCore::ScrollingTreeOverflowScrollingNodeMac::create):
+        (WebCore::ScrollingTreeOverflowScrollingNodeMac::ScrollingTreeOverflowScrollingNodeMac):
+        (WebCore::ScrollingTreeOverflowScrollingNodeMac::~ScrollingTreeOverflowScrollingNodeMac):
+        (WebCore::ScrollingTreeOverflowScrollingNodeMac::commitStateBeforeChildren):
+        (WebCore::ScrollingTreeOverflowScrollingNodeMac::commitStateAfterChildren):
+        (WebCore::ScrollingTreeOverflowScrollingNodeMac::updateLayersAfterAncestorChange):
+        (WebCore::ScrollingTreeOverflowScrollingNodeMac::scrollPosition const):
+        (WebCore::ScrollingTreeOverflowScrollingNodeMac::setScrollLayerPosition):
+        (WebCore::ScrollingTreeOverflowScrollingNodeMac::updateLayersAfterDelegatedScroll):
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::usesAsyncScrolling const):
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::useCoordinatedScrollingForLayer const):
+        * rendering/RenderLayerCompositor.h:
+
 2019-01-16  Justin Fan  <justin_fan@apple.com>
 
         [WebGPU] Update vertex-buffer-triangle-strip.html to actually use vertex buffer

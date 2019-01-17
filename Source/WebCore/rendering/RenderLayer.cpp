@@ -2223,7 +2223,7 @@ bool RenderLayer::usesCompositedScrolling() const
 // FIXME: this is only valid after we've made layers.
 bool RenderLayer::usesAsyncScrolling() const
 {
-    return usesCompositedScrolling();
+    return compositor().useCoordinatedScrollingForLayer(*this);
 }
 
 static inline int adjustedScrollDelta(int beginningDelta)

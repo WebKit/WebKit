@@ -2837,10 +2837,10 @@ bool RenderLayerCompositor::useCoordinatedScrollingForLayer(const RenderLayer& l
     if (layer.isRenderViewLayer() && hasCoordinatedScrolling())
         return true;
 
-#if PLATFORM(IOS_FAMILY)
-    return layer.hasCompositedScrollableOverflow();
-#endif
-    return false; // FIXME: Fix for composited scrolling on other platforms.
+    if (auto* scrollingCoordinator = this->scrollingCoordinator())
+        return scrollingCoordinator->coordinatesScrollingForOverflowLayer(layer);
+    
+    return false;
 }
 
 bool RenderLayerCompositor::isRunningTransformAnimation(RenderLayerModelObject& renderer) const

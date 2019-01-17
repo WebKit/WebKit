@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,44 +23,37 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "ScrollingTreeMac.h"
-
-#include "ScrollingTreeFixedNode.h"
-#include "ScrollingTreeFrameScrollingNodeMac.h"
-#include "ScrollingTreeOverflowScrollingNodeMac.h"
-#include "ScrollingTreeStickyNode.h"
+#pragma once
 
 #if ENABLE(ASYNC_SCROLLING) && PLATFORM(MAC)
 
-using namespace WebCore;
+#include "ScrollingTreeOverflowScrollingNode.h"
 
-Ref<ScrollingTreeMac> ScrollingTreeMac::create(AsyncScrollingCoordinator& scrollingCoordinator)
-{
-    return adoptRef(*new ScrollingTreeMac(scrollingCoordinator));
-}
+namespace WebCore {
 
-ScrollingTreeMac::ScrollingTreeMac(AsyncScrollingCoordinator& scrollingCoordinator)
-    : ThreadedScrollingTree(scrollingCoordinator)
-{
-}
+class ScrollingTreeOverflowScrollingNodeMac : public WebCore::ScrollingTreeOverflowScrollingNode {
+public:
+    static Ref<ScrollingTreeOverflowScrollingNodeMac> create(WebCore::ScrollingTree&, WebCore::ScrollingNodeID);
+    virtual ~ScrollingTreeOverflowScrollingNodeMac();
 
-Ref<ScrollingTreeNode> ScrollingTreeMac::createScrollingTreeNode(ScrollingNodeType nodeType, ScrollingNodeID nodeID)
-{
-    switch (nodeType) {
-    case ScrollingNodeType::MainFrame:
-    case ScrollingNodeType::Subframe:
-        return ScrollingTreeFrameScrollingNodeMac::create(*this, nodeType, nodeID);
-    case ScrollingNodeType::Overflow:
-        return ScrollingTreeOverflowScrollingNodeMac::create(*this, nodeID);
-        break;
-    case ScrollingNodeType::Fixed:
-        return ScrollingTreeFixedNode::create(*this, nodeID);
-    case ScrollingNodeType::Sticky:
-        return ScrollingTreeStickyNode::create(*this, nodeID);
-    }
-    ASSERT_NOT_REACHED();
-    return ScrollingTreeFixedNode::create(*this, nodeID);
-}
+private:
+    ScrollingTreeOverflowScrollingNodeMac(WebCore::ScrollingTree&, WebCore::ScrollingNodeID);
+
+    void commitStateBeforeChildren(const WebCore::ScrollingStateNode&) override;
+    void commitStateAfterChildren(const WebCore::ScrollingStateNode&) override;
+    
+    WebCore::FloatPoint scrollPosition() const override;
+
+    void setScrollLayerPosition(const WebCore::FloatPoint&, const WebCore::FloatRect& layoutViewport) override;
+
+    void updateLayersAfterViewportChange(const WebCore::FloatRect&, double) override { }
+    void updateLayersAfterDelegatedScroll(const WebCore::FloatPoint& scrollPosition) override;
+
+    void updateLayersAfterAncestorChange(const WebCore::ScrollingTreeNode& changedNode, const WebCore::FloatRect& fixedPositionRect, const WebCore::FloatSize& cumulativeDelta) override;
+
+    void handleWheelEvent(const WebCore::PlatformWheelEvent&) override { }
+};
+
+} // namespace WebKit
 
 #endif // ENABLE(ASYNC_SCROLLING) && PLATFORM(MAC)

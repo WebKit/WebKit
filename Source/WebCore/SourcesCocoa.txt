@@ -157,6 +157,7 @@ page/scrolling/mac/ScrollingStateFrameScrollingNodeMac.mm
 page/scrolling/mac/ScrollingThreadMac.mm
 page/scrolling/mac/ScrollingTreeFixedNode.mm
 page/scrolling/mac/ScrollingTreeFrameScrollingNodeMac.mm
+page/scrolling/mac/ScrollingTreeOverflowScrollingNodeMac.mm
 page/scrolling/mac/ScrollingTreeMac.cpp
 page/scrolling/mac/ScrollingTreeStickyNode.mm
 

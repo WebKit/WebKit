@@ -324,6 +324,8 @@ public:
     void updateScrollCoordinatedStatus(RenderLayer&, OptionSet<ScrollingNodeChangeFlags>);
     void removeFromScrollCoordinatedLayers(RenderLayer&);
 
+    bool useCoordinatedScrollingForLayer(const RenderLayer&) const;
+
     void willRemoveScrollingLayerWithBacking(RenderLayer&, RenderLayerBacking&);
     void didAddScrollingLayer(RenderLayer&);
 
@@ -492,7 +494,6 @@ private:
 
     // True if the FrameView uses a ScrollingCoordinator.
     bool hasCoordinatedScrolling() const;
-    bool useCoordinatedScrollingForLayer(const RenderLayer&) const;
 
     // FIXME: make the coordinated/async terminology consistent.
     bool isAsyncScrollableStickyLayer(const RenderLayer&, const RenderLayer** enclosingAcceleratedOverflowLayer = nullptr) const;
