@@ -48,11 +48,7 @@ bool Quirks::hasBrokenEncryptedMediaAPISupportQuirk() const
 
     auto domain = m_document->securityOrigin().domain().convertToASCIILowercase();
 
-    m_hasBrokenEncryptedMediaAPISupportQuirk = domain == "amazon.com"
-        || domain.endsWith(".amazon.com")
-        || domain == "primevideo.com"
-        || domain.endsWith(".primevideo.com")
-        || domain == "starz.com"
+    m_hasBrokenEncryptedMediaAPISupportQuirk = domain == "starz.com"
         || domain.endsWith(".starz.com")
         || domain == "hulu.com"
         || domain.endsWith("hulu.com");
