@@ -1,3 +1,14 @@
+2019-01-17  Aakash Jain  <aakash_jain@apple.com>
+
+        [ews-build] unapply-patch step should not update source
+        https://bugs.webkit.org/show_bug.cgi?id=193234
+
+        Reviewed by Lucas Forschler.
+
+        * BuildSlaveSupport/ews-build/steps.py:
+        (CleanWorkingDirectory): Use clean-webkit script to clean the working directory.
+        (UnApplyPatchIfRequired): Use CleanWorkingDirectory as base class.
+
 2019-01-16  Youenn Fablet  <youenn@apple.com>
 
         Add a new SPI for controlling getUserMedia

@@ -95,6 +95,15 @@ class CheckOutSource(git.Git):
                                                 **kwargs)
 
 
+class CleanWorkingDirectory(shell.ShellCommand):
+    name = 'clean-working-directory'
+    description = ['clean-working-directory running']
+    descriptionDone = ['clean-working-directory']
+    flunkOnFailure = True
+    haltOnFailure = True
+    command = ['Tools/Scripts/clean-webkit']
+
+
 class ApplyPatch(shell.ShellCommand, CompositeStepMixin):
     name = 'apply-patch'
     description = ['applying-patch']
@@ -344,7 +353,7 @@ class ValidatePatch(buildstep.BuildStep):
         return None
 
 
-class UnApplyPatchIfRequired(CheckOutSource):
+class UnApplyPatchIfRequired(CleanWorkingDirectory):
     name = 'unapply-patch'
 
     def doStepIf(self, step):
