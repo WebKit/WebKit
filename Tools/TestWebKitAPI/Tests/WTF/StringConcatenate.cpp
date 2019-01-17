@@ -82,7 +82,7 @@ TEST(WTF, StringConcatenate_Unsigned)
     EXPECT_EQ("hello 0 world", makeString("hello ", 0u , " world"));
 
     EXPECT_EQ("hello 42 world", makeString("hello ", static_cast<unsigned char>(42) , " world"));
-#if PLATFORM(WIN) || U_ICU_VERSION_MAJOR_NUM >= 59
+#if PLATFORM(WIN) || (U_ICU_VERSION_MAJOR_NUM >= 59 && !PLATFORM(COCOA))
     EXPECT_EQ("hello 42 world", makeString("hello ", static_cast<unsigned short>(42) , " world"));
 #else
     EXPECT_EQ("hello * world", makeString("hello ", static_cast<unsigned short>(42) , " world")); // Treated as a character.

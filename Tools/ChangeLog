@@ -1,3 +1,16 @@
+2019-01-17  Alex Christensen  <achristensen@webkit.org>
+
+        Fix string concatenation API test after r239920
+        https://bugs.webkit.org/show_bug.cgi?id=193551
+        <rdar://problem/47359304>
+
+        Reviewed by Youenn Fablet.
+
+        * TestWebKitAPI/Tests/WTF/StringConcatenate.cpp:
+        (TestWebKitAPI::TEST):
+        Cocoa platforms' interpretation of UChar/unsigned short equality is not affected by ICU's recent change of UChar's type
+        in WebKit's build configuration like it apparently is on Linux.
+
 2019-01-17  Aakash Jain  <aakash_jain@apple.com>
 
         [ews-build] validate-patch should handle the case when bug_id is None
