@@ -40,6 +40,7 @@ ALLOW_UNUSED_PARAMETERS_BEGIN
 
 ALLOW_UNUSED_PARAMETERS_END
 
+#include <wtf/CryptographicallyRandomNumber.h>
 #include <wtf/MainThread.h>
 
 namespace WebCore {
@@ -47,6 +48,9 @@ namespace WebCore {
 RealtimeOutgoingVideoSource::RealtimeOutgoingVideoSource(Ref<MediaStreamTrackPrivate>&& videoSource)
     : m_videoSource(WTFMove(videoSource))
     , m_blackFrameTimer(*this, &RealtimeOutgoingVideoSource::sendOneBlackFrame)
+#if !RELEASE_LOG_DISABLED
+    , m_logIdentifier(reinterpret_cast<const void*>(cryptographicallyRandomNumber()))
+#endif
 {
 }
 
@@ -186,7 +190,7 @@ void RealtimeOutgoingVideoSource::sendBlackFramesIfNeeded()
         m_blackFrame = createBlackFrame(width, height);
         ASSERT(m_blackFrame);
         if (!m_blackFrame) {
-            RELEASE_LOG(WebRTC, "RealtimeOutgoingVideoSource::sendBlackFramesIfNeeded unable to send black frames");
+            ALWAYS_LOG(LOGIDENTIFIER, "Unable to send black frames");
             return;
         }
     }
@@ -196,7 +200,7 @@ void RealtimeOutgoingVideoSource::sendBlackFramesIfNeeded()
 
 void RealtimeOutgoingVideoSource::sendOneBlackFrame()
 {
-    RELEASE_LOG(MediaStream, "RealtimeOutgoingVideoSource::sendOneBlackFrame");
+    ALWAYS_LOG(LOGIDENTIFIER, "test");
     sendFrame(rtc::scoped_refptr<webrtc::VideoFrameBuffer>(m_blackFrame));
 }
 
@@ -209,6 +213,20 @@ void RealtimeOutgoingVideoSource::sendFrame(rtc::scoped_refptr<webrtc::VideoFram
     for (auto* sink : m_sinks)
         sink->OnFrame(frame);
 }
+
+#if !RELEASE_LOG_DISABLED
+WTFLogChannel& RealtimeOutgoingVideoSource::logChannel() const
+{
+    return LogWebRTC;
+}
+
+const Logger& RealtimeOutgoingVideoSource::logger() const
+{
+    if (!m_logger)
+        m_logger = Logger::create(this);
+    return *m_logger;
+}
+#endif
 
 } // namespace WebCore
 

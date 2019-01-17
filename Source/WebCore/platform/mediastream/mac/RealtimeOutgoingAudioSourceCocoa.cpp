@@ -31,6 +31,7 @@
 #include "CAAudioStreamDescription.h"
 #include "LibWebRTCAudioFormat.h"
 #include "LibWebRTCProvider.h"
+#include "Logging.h"
 
 namespace WebCore {
 

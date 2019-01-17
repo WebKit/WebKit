@@ -41,12 +41,20 @@ ALLOW_UNUSED_PARAMETERS_BEGIN
 
 ALLOW_UNUSED_PARAMETERS_END
 
+#include <wtf/LoggerHelper.h>
 #include <wtf/Optional.h>
 #include <wtf/ThreadSafeRefCounted.h>
 
 namespace WebCore {
 
-class RealtimeOutgoingVideoSource : public ThreadSafeRefCounted<RealtimeOutgoingVideoSource, WTF::DestructionThread::Main>, public webrtc::VideoTrackSourceInterface, private MediaStreamTrackPrivate::Observer {
+class RealtimeOutgoingVideoSource
+    : public ThreadSafeRefCounted<RealtimeOutgoingVideoSource, WTF::DestructionThread::Main>
+    , public webrtc::VideoTrackSourceInterface
+    , private MediaStreamTrackPrivate::Observer
+#if !RELEASE_LOG_DISABLED
+    , private LoggerHelper
+#endif
+{
 public:
     static Ref<RealtimeOutgoingVideoSource> create(Ref<MediaStreamTrackPrivate>&& videoSource);
     ~RealtimeOutgoingVideoSource();
@@ -64,6 +72,10 @@ public:
 
     void setApplyRotation(bool shouldApplyRotation) { m_shouldApplyRotation = shouldApplyRotation; }
 
+#if !RELEASE_LOG_DISABLED
+    void setLogger(Ref<const Logger>&& logger) { m_logger = WTFMove(logger); }
+#endif
+
 protected:
     explicit RealtimeOutgoingVideoSource(Ref<MediaStreamTrackPrivate>&&);
 
@@ -74,6 +86,14 @@ protected:
 
     bool m_shouldApplyRotation { false };
     webrtc::VideoRotation m_currentRotation { webrtc::kVideoRotation_0 };
+
+#if !RELEASE_LOG_DISABLED
+    // LoggerHelper API
+    const Logger& logger() const final;
+    const void* logIdentifier() const final { return m_logIdentifier; }
+    const char* logClassName() const final { return "RealtimeOutgoingVideoSource"; }
+    WTFLogChannel& logChannel() const final;
+#endif
 
 private:
     void sendBlackFramesIfNeeded();
@@ -123,6 +143,11 @@ private:
     bool m_muted { false };
     uint32_t m_width { 0 };
     uint32_t m_height { 0 };
+
+#if !RELEASE_LOG_DISABLED
+    mutable RefPtr<const Logger> m_logger;
+    const void* m_logIdentifier;
+#endif
 };
 
 } // namespace WebCore

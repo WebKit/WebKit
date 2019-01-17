@@ -33,11 +33,16 @@
 
 #include "LibWebRTCAudioFormat.h"
 #include "LibWebRTCProvider.h"
+#include "Logging.h"
+#include <wtf/CryptographicallyRandomNumber.h>
 
 namespace WebCore {
 
 RealtimeOutgoingAudioSource::RealtimeOutgoingAudioSource(Ref<MediaStreamTrackPrivate>&& source)
     : m_audioSource(WTFMove(source))
+#if !RELEASE_LOG_DISABLED
+    , m_logIdentifier(reinterpret_cast<const void*>(cryptographicallyRandomNumber()))
+#endif
 {
 }
 
@@ -114,12 +119,31 @@ void RealtimeOutgoingAudioSource::RemoveSink(webrtc::AudioTrackSinkInterface* si
 
 void RealtimeOutgoingAudioSource::sendAudioFrames(const void* audioData, int bitsPerSample, int sampleRate, size_t numberOfChannels, size_t numberOfFrames)
 {
+#if !RELEASE_LOG_DISABLED
+    if (!(++m_chunksSent % 200))
+        ALWAYS_LOG(LOGIDENTIFIER, "chunk ", m_chunksSent);
+#endif
+
     auto locker = holdLock(m_sinksLock);
     for (auto sink : m_sinks)
         sink->OnData(audioData, bitsPerSample, sampleRate, numberOfChannels, numberOfFrames);
 }
 
+#if !RELEASE_LOG_DISABLED
+WTFLogChannel& RealtimeOutgoingAudioSource::logChannel() const
+{
+    return LogWebRTC;
+}
 
+const Logger& RealtimeOutgoingAudioSource::logger() const
+{
+    if (!m_logger)
+        m_logger = Logger::create(this);
+    return *m_logger;
+}
+
+#endif
+    
 } // namespace WebCore
 
 #endif // USE(LIBWEBRTC)

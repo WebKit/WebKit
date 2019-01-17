@@ -67,8 +67,8 @@ void RealtimeOutgoingVideoSourceCocoa::sampleBufferUpdated(MediaStreamTrackPriva
         return;
 
 #if !RELEASE_LOG_DISABLED
-    if (!(++m_numberOfFrames % 30))
-        RELEASE_LOG(MediaStream, "RealtimeOutgoingVideoSourceCocoa::sendFrame %zu frame", m_numberOfFrames);
+    if (!(++m_numberOfFrames % 60))
+        ALWAYS_LOG(LOGIDENTIFIER, "frame ", m_numberOfFrames);
 #endif
 
     switch (sample.videoRotation()) {

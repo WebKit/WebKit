@@ -33,6 +33,7 @@
 #include "AudioStreamDescription.h"
 #include "CAAudioStreamDescription.h"
 #include "LibWebRTCAudioFormat.h"
+#include "Logging.h"
 #include "WebAudioBufferList.h"
 #include "WebAudioSourceProviderAVFObjC.h"
 #include <pal/avfoundation/MediaTimeAVFoundation.h>
@@ -84,6 +85,11 @@ void RealtimeIncomingAudioSourceCocoa::OnData(const void* audioData, int bitsPer
         memset(audioBufferList.buffer(0)->mData, 0, audioBufferList.buffer(0)->mDataByteSize);
     else
         memcpy(audioBufferList.buffer(0)->mData, audioData, audioBufferList.buffer(0)->mDataByteSize);
+
+#if !RELEASE_LOG_DISABLED
+    if (!(++m_chunksReceived % 200))
+        ALWAYS_LOG(LOGIDENTIFIER, "chunk ", m_chunksReceived);
+#endif
 
     audioSamplesAvailable(mediaTime, audioBufferList, CAAudioStreamDescription(newDescription), numberOfFrames);
 }
