@@ -1,3 +1,15 @@
+2019-01-17  Per Arne Vollan  <pvollan@apple.com>
+
+        [Win] gperf command not found
+        https://bugs.webkit.org/show_bug.cgi?id=193538
+        <rdar://problem/47250549>
+
+        Reviewed by Brent Fulgham.
+
+        CMake only searches for gperf if ENABLE_WEBCORE is on. ENABLE_WEBCORE needs to be set to ON.
+
+        * Source/cmake/OptionsAppleWin.cmake:
+
 2019-01-14  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed. Update OptionsGTK.cmake and NEWS for 2.23.3 release
