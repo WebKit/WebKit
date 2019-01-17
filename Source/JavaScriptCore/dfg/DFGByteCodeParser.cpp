@@ -4731,22 +4731,20 @@ void ByteCodeParser::parseBlock(unsigned limit)
             
         case op_to_this: {
             Node* op1 = getThis();
-            if (op1->op() != ToThis) {
-                auto& metadata = currentInstruction->as<OpToThis>().metadata(codeBlock);
-                Structure* cachedStructure = metadata.m_cachedStructure.get();
-                if (metadata.m_toThisStatus != ToThisOK
-                    || !cachedStructure
-                    || cachedStructure->classInfo()->methodTable.toThis != JSObject::info()->methodTable.toThis
-                    || m_inlineStackTop->m_profiledBlock->couldTakeSlowCase(m_currentIndex)
-                    || m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, BadCache)
-                    || (op1->op() == GetLocal && op1->variableAccessData()->structureCheckHoistingFailed())) {
-                    setThis(addToGraph(ToThis, OpInfo(), OpInfo(getPrediction()), op1));
-                } else {
-                    addToGraph(
-                        CheckStructure,
-                        OpInfo(m_graph.addStructureSet(cachedStructure)),
-                        op1);
-                }
+            auto& metadata = currentInstruction->as<OpToThis>().metadata(codeBlock);
+            Structure* cachedStructure = metadata.m_cachedStructure.get();
+            if (metadata.m_toThisStatus != ToThisOK
+                || !cachedStructure
+                || cachedStructure->classInfo()->methodTable.toThis != JSObject::info()->methodTable.toThis
+                || m_inlineStackTop->m_profiledBlock->couldTakeSlowCase(m_currentIndex)
+                || m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, BadCache)
+                || (op1->op() == GetLocal && op1->variableAccessData()->structureCheckHoistingFailed())) {
+                setThis(addToGraph(ToThis, OpInfo(), OpInfo(getPrediction()), op1));
+            } else {
+                addToGraph(
+                    CheckStructure,
+                    OpInfo(m_graph.addStructureSet(cachedStructure)),
+                    op1);
             }
             NEXT_OPCODE(op_to_this);
         }

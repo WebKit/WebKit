@@ -1,3 +1,25 @@
+2019-01-17  Yusuke Suzuki  <yusukesuzuki@slowstart.org>
+
+        [JSC] ToThis omission in DFGByteCodeParser is wrong
+        https://bugs.webkit.org/show_bug.cgi?id=193513
+        <rdar://problem/45842236>
+
+        Reviewed by Saam Barati.
+
+        DFGByteCodeParser omitted ToThis node when we have `ToThis(ToThis(value))`. This semantics is wrong if ToThis has different semantics
+        in the sloppy mode and the strict mode. If we convert `ToThisInSloppyMode(ToThisInStrictMode(boolean))` to `ToThisInStrictMode(boolean)`,
+        we get boolean instead of BooleanObject.
+
+        This optimization is introduced more than 7 years ago, and from that, we have several optimizations that can remove such ToThis nodes
+        in BytecodeParser, AI, and Fixup. Furthermore, this optimization is simply wrong since `toThis()` function of JSCell can be defined
+        as they want. Before ensuring all the toThis function is safe, we should not fold `ToThis(ToThis(value))` => `ToThis(value)`.
+        This patch just removes the problematic optimization. The performance numbers look neutral.
+
+        * dfg/DFGAbstractInterpreterInlines.h:
+        (JSC::DFG::AbstractInterpreter<AbstractStateType>::executeEffects):
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::parseBlock):
+
 2019-01-16  Mark Lam  <mark.lam@apple.com>
 
         Refactor new bytecode structs so that the fields are prefixed with "m_".

@@ -1,3 +1,15 @@
+2019-01-17  Yusuke Suzuki  <yusukesuzuki@slowstart.org>
+
+        [JSC] ToThis omission in DFGByteCodeParser is wrong
+        https://bugs.webkit.org/show_bug.cgi?id=193513
+        <rdar://problem/45842236>
+
+        Reviewed by Saam Barati.
+
+        * stress/to-this-omission-with-different-strict-modes.js: Added.
+        (thisA):
+        (thisAStrictWrapper):
+
 2019-01-15  Mark Lam  <mark.lam@apple.com>
 
         JSFunction::canUseAllocationProfile() should account for builtin functions with no own prototypes.

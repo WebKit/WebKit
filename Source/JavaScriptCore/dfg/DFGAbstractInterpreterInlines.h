@@ -2549,30 +2549,26 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
         bool strictMode = m_graph.executableFor(node->origin.semantic)->isStrictMode();
 
         ToThisResult result = isToThisAnIdentity(m_vm, strictMode, source);
-        if (result != ToThisResult::Dynamic) {
-            switch (result) {
-            case ToThisResult::Identity:
-                m_state.setFoundConstants(true);
+        switch (result) {
+        case ToThisResult::Identity:
+            m_state.setFoundConstants(true);
+            destination = source;
+            break;
+        case ToThisResult::Undefined:
+            setConstant(node, jsUndefined());
+            break;
+        case ToThisResult::GlobalThis:
+            m_state.setFoundConstants(true);
+            destination.setType(m_graph, SpecObject);
+            break;
+        case ToThisResult::Dynamic:
+            if (strictMode)
+                destination.makeHeapTop();
+            else {
                 destination = source;
-                break;
-            case ToThisResult::Undefined:
-                setConstant(node, jsUndefined());
-                break;
-            case ToThisResult::GlobalThis:
-                m_state.setFoundConstants(true);
-                destination.setType(m_graph, SpecObject);
-                break;
-            case ToThisResult::Dynamic:
-                RELEASE_ASSERT_NOT_REACHED();
+                destination.merge(SpecObject);
             }
             break;
-        }
-
-        if (strictMode)
-            destination.makeHeapTop();
-        else {
-            destination = source;
-            destination.merge(SpecObject);
         }
         break;
     }
