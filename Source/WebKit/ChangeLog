@@ -1,3 +1,14 @@
+2019-01-16  Alex Christensen  <achristensen@webkit.org>
+
+        sendBeacon to previously-unvisited https domain always fails
+        https://bugs.webkit.org/show_bug.cgi?id=193508
+
+        Reviewed by Geoffrey Garen.
+
+        * NetworkProcess/PingLoad.cpp:
+        (WebKit::PingLoad::didReceiveChallenge):
+        If a ping load is doing a TLS handshake, continue if the server has good certificates.
+
 2019-01-16  Youenn Fablet  <youenn@apple.com>
 
         ASSERTION FAILED: m_networkLoadInformationByID.contains(identifier) in WebKit::NetworkConnectionToWebProcess::addNetworkLoadInformationMetrics

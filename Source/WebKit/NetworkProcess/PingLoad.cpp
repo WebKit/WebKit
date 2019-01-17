@@ -117,9 +117,13 @@ void PingLoad::willPerformHTTPRedirection(ResourceResponse&& redirectResponse, R
     });
 }
 
-void PingLoad::didReceiveChallenge(AuthenticationChallenge&&, ChallengeCompletionHandler&& completionHandler)
+void PingLoad::didReceiveChallenge(AuthenticationChallenge&& challenge, ChallengeCompletionHandler&& completionHandler)
 {
     RELEASE_LOG_IF_ALLOWED("didReceiveChallenge");
+    if (challenge.protectionSpace().authenticationScheme() == ProtectionSpaceAuthenticationSchemeServerTrustEvaluationRequested) {
+        completionHandler(AuthenticationChallengeDisposition::PerformDefaultHandling, { });
+        return;
+    }
     auto weakThis = makeWeakPtr(*this);
     completionHandler(AuthenticationChallengeDisposition::Cancel, { });
     if (!weakThis)
