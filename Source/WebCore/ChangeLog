@@ -1,3 +1,29 @@
+2019-01-16  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [WHLSL] Add the literal type checker
+        https://bugs.webkit.org/show_bug.cgi?id=193430
+
+        Reviewed by Dean Jackson.
+
+        This is a translation of https://github.com/gpuweb/WHLSL/blob/master/Source/LiteralTypeChecker.mjs into C++.
+
+        No new tests because it isn't hooked up yet. Not enough of the compiler exists to have any meaningful sort
+        of test. When enough of the compiler is present, I'll port the reference implementation's test suite.
+
+        * Modules/webgpu/WHLSL/AST/WHLSLFloatLiteralType.h:
+        (WebCore::WHLSL::AST::FloatLiteralType::value const):
+        * Modules/webgpu/WHLSL/AST/WHLSLIntegerLiteralType.h:
+        (WebCore::WHLSL::AST::IntegerLiteralType::value const):
+        * Modules/webgpu/WHLSL/AST/WHLSLUnsignedIntegerLiteralType.h:
+        (WebCore::WHLSL::AST::UnsignedIntegerLiteralType::value const):
+        * Modules/webgpu/WHLSL/WHLSLLiteralTypeChecker.cpp: Added.
+        (WebCore::WHLSL::getNativeTypeDeclaration):
+        (WebCore::WHLSL::LiteralTypeChecker::visit):
+        (WebCore::WHLSL::checkLiteralTypes):
+        * Modules/webgpu/WHLSL/WHLSLLiteralTypeChecker.h: Copied from Source/WebCore/Modules/webgpu/WHLSL/AST/WHLSLFloatLiteralType.h.
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+
 2019-01-16  Zalan Bujtas  <zalan@apple.com>
 
         [LFC][BFC] Inflow non-replaced used width should not be negative.

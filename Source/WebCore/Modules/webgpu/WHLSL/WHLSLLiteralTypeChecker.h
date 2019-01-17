@@ -27,52 +27,16 @@
 
 #if ENABLE(WEBGPU)
 
-#include "WHLSLResolvableType.h"
-#include <wtf/UniqueRef.h>
-#include <wtf/text/WTFString.h>
-
 namespace WebCore {
 
 namespace WHLSL {
 
-namespace AST {
+class Program;
 
-class TypeReference;
-
-class IntegerLiteralType : public ResolvableType {
-public:
-    IntegerLiteralType(Lexer::Token&& origin, int value);
-
-    virtual ~IntegerLiteralType();
-
-    IntegerLiteralType(const IntegerLiteralType&) = delete;
-    IntegerLiteralType(IntegerLiteralType&&);
-
-    IntegerLiteralType& operator=(const IntegerLiteralType&) = delete;
-    IntegerLiteralType& operator=(IntegerLiteralType&&);
-
-    bool isIntegerLiteralType() const override { return true; }
-
-    int value() const { return m_value; }
-
-    TypeReference& preferredType() { return m_preferredType; }
-
-    bool canResolve(const Type&) const override;
-    unsigned conversionCost(const UnnamedType&) const override;
-
-private:
-    int m_value;
-    // This is a unique_ptr to resolve a circular dependency between
-    // ConstantExpression -> LiteralType -> TypeReference -> TypeArguments -> ConstantExpression
-    UniqueRef<TypeReference> m_preferredType;
-};
-
-} // namespace AST
+void checkLiteralTypes(Program&);
 
 }
 
 }
-
-SPECIALIZE_TYPE_TRAITS_WHLSL_RESOLVABLE_TYPE(IntegerLiteralType, isIntegerLiteralType())
 
 #endif

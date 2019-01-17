@@ -53,6 +53,8 @@ public:
 
     bool isUnsignedIntegerLiteralType() const override { return true; }
 
+    unsigned value() const { return m_value; }
+
     TypeReference& preferredType() { return m_preferredType; }
 
     bool canResolve(const Type&) const override;

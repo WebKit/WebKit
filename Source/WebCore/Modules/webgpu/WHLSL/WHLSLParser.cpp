@@ -2586,8 +2586,8 @@ auto Parser::parseTerm() -> Expected<UniqueRef<AST::Expression>, Error>
     }
 }
 
-}
+} // namespace WHLSL
 
-}
+} // namespace WebCore
 
-#endif
+#endif // ENABLE(WEBGPU)

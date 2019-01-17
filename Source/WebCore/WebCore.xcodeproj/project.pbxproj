@@ -6427,6 +6427,8 @@
 		1C840B9A21EC400900D0500D /* WHLSLGatherEntryPointItems.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WHLSLGatherEntryPointItems.h; sourceTree = "<group>"; };
 		1C840B9B21EC400900D0500D /* WHLSLChecker.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = WHLSLChecker.cpp; sourceTree = "<group>"; };
 		1C904DF90BA9D2C80081E9D0 /* Version.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = Version.xcconfig; sourceTree = "<group>"; };
+		1CA0C2EA21EED6F500A11860 /* WHLSLLiteralTypeChecker.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WHLSLLiteralTypeChecker.h; sourceTree = "<group>"; };
+		1CA0C2EC21EED6F600A11860 /* WHLSLLiteralTypeChecker.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = WHLSLLiteralTypeChecker.cpp; sourceTree = "<group>"; };
 		1C9AE5CA21ED9DF50069D5F2 /* WHLSLHighZombieFinder.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = WHLSLHighZombieFinder.cpp; sourceTree = "<group>"; };
 		1C9AE5CB21ED9DF50069D5F2 /* WHLSLHighZombieFinder.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WHLSLHighZombieFinder.h; sourceTree = "<group>"; };
 		1CA0C2F421EEDAD000A11860 /* WHLSLLoopChecker.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = WHLSLLoopChecker.cpp; sourceTree = "<group>"; };
@@ -25452,7 +25454,6 @@
 		C210E90D21B4BCA400B7F83D /* WHLSL */ = {
 			isa = PBXGroup;
 			children = (
-				C21BF6F121CD898D00227979 /* AST */,
 				1CA0C2F621EEDAD200A11860 /* AST */,
 				C234A9B221E92C1F003C984D /* WHLSLCheckDuplicateFunctions.cpp */,
 				C234A9AE21E92C1A003C984D /* WHLSLCheckDuplicateFunctions.h */,
@@ -25468,6 +25469,8 @@
 				C234A9B621E92CC0003C984D /* WHLSLIntrinsics.h */,
 				C210E91121B4BD1000B7F83D /* WHLSLLexer.cpp */,
 				C210E91221B4BD1000B7F83D /* WHLSLLexer.h */,
+				1CA0C2EC21EED6F600A11860 /* WHLSLLiteralTypeChecker.cpp */,
+				1CA0C2EA21EED6F500A11860 /* WHLSLLiteralTypeChecker.h */,
 				1CA0C2F421EEDAD000A11860 /* WHLSLLoopChecker.cpp */,
 				1CA0C2F521EEDAD100A11860 /* WHLSLLoopChecker.h */,
 				C234A98D21E88884003C984D /* WHLSLNameContext.cpp */,
@@ -25497,7 +25500,7 @@
 			path = WHLSL;
 			sourceTree = "<group>";
 		};
-		C21BF6F121CD898D00227979 /* AST */ = {
+		1CA0C2F621EEDAD200A11860 /* AST */ = {
 			isa = PBXGroup;
 			children = (
 				1C840B9021EC30F900D0500D /* WHLSLAddressSpace.h */,
