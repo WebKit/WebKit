@@ -326,11 +326,10 @@ void BlockFormattingContext::computeWidthAndMargin(const Box& layoutBox) const
             widthAndMargin = maxWidthAndMargin;
     }
 
-    if (auto minWidth = Geometry::computedValueIfNotAuto(layoutBox.style().logicalMinWidth(), containingBlockWidth)) {
-        auto minWidthAndMargin = compute(minWidth);
-        if (widthAndMargin.width < minWidthAndMargin.width)
-            widthAndMargin = minWidthAndMargin;
-    }
+    auto minWidth = Geometry::computedValueIfNotAuto(layoutBox.style().logicalMinWidth(), containingBlockWidth).valueOr(0);
+    auto minWidthAndMargin = compute(minWidth);
+    if (widthAndMargin.width < minWidthAndMargin.width)
+        widthAndMargin = minWidthAndMargin;
 
     auto& displayBox = layoutState.displayBoxForLayoutBox(layoutBox);
     displayBox.setContentBoxWidth(widthAndMargin.width);

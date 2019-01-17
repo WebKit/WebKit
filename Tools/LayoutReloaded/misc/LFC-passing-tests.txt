@@ -83,6 +83,8 @@ fast/block/block-only/non-auto-top-bottom-height-with-margins.html
 fast/block/block-only/non-auto-top-bottom-height-with-auto-margins.html
 fast/block/basic/002.html
 fast/block/basic/003.html
+fast/block/basic/004.html
+fast/block/basic/005.html
 fast/block/basic/006.html
 fast/block/basic/007.html
 fast/block/basic/008.html

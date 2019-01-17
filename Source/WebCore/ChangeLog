@@ -1,3 +1,15 @@
+2019-01-16  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC][BFC] Inflow non-replaced used width should not be negative.
+        https://bugs.webkit.org/show_bug.cgi?id=193495
+
+        Reviewed by Antti Koivisto.
+
+        min-width (initial value 0) enforces non-negative used width. 
+
+        * layout/blockformatting/BlockFormattingContext.cpp:
+        (WebCore::Layout::BlockFormattingContext::computeWidthAndMargin const):
+
 2019-01-16  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [WHLSL] Add a handwritten parser
