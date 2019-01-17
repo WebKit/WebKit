@@ -1,3 +1,25 @@
+2019-01-17  Jiewen Tan  <jiewen_tan@apple.com>
+
+        [Mac] Add a new quirk to HTMLFormControlElement::isMouseFocusable
+        https://bugs.webkit.org/show_bug.cgi?id=193478
+        <rdar://problem/34368591>
+
+        Reviewed by Brent Fulgham.
+
+        By default in macOS, submit buttons (controls) are not focusable. WebKit follows this system convention
+        as suggested by the spec: https://html.spec.whatwg.org/multipage/interaction.html#focusable-area. This
+        is also the convention Firefox respects. However, Chrome doesn't. ceac.state.gov is by far the only
+        website that assumes submit buttons are focusable, and will prohibit users from completing immigration
+        forms, such as DS160 if buttons are not. To help immigrations, we decide to add a new quirk to
+        HTMLFormControlElement::isMouseFocusable such that submit buttons are mouse focusable.
+
+        This quirk is for ceac.state.gov specifically, and therefore no tests.
+
+        * html/HTMLFormControlElement.cpp:
+        (WebCore::HTMLFormControlElement::isMouseFocusable const):
+        (WebCore::HTMLFormControlElement::needsSiteSpecificQuirks const):
+        * html/HTMLFormControlElement.h:
+
 2019-01-17  Alex Christensen  <achristensen@webkit.org>
 
         Fix WinCairo build after r240117
