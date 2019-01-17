@@ -305,6 +305,10 @@ class ValidatePatch(buildstep.BuildStep):
         return 0
 
     def _is_bug_closed(self, bug_id):
+        if not bug_id:
+            self._addToLog('stdio', 'Skipping bug status validation since bug id is None.\n')
+            return -1
+
         bug_json = self.get_bug_json(bug_id)
         if not bug_json or not bug_json.get('status'):
             self._addToLog('stdio', 'Unable to fetch bug {}.\n'.format(bug_id))
@@ -329,7 +333,7 @@ class ValidatePatch(buildstep.BuildStep):
             self.finished(FAILURE)
             return None
 
-        bug_id = self.getProperty('bug_id', self.get_bug_id_from_patch(patch_id))
+        bug_id = self.getProperty('bug_id', '') or self.get_bug_id_from_patch(patch_id)
 
         bug_closed = self._is_bug_closed(bug_id)
         if bug_closed == 1:

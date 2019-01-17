@@ -1,5 +1,16 @@
 2019-01-17  Aakash Jain  <aakash_jain@apple.com>
 
+        [ews-build] validate-patch should handle the case when bug_id is None
+        https://bugs.webkit.org/show_bug.cgi?id=193547
+
+        Reviewed by Lucas Forschler.
+
+        * BuildSlaveSupport/ews-build/steps.py:
+        (ValidatePatch._is_bug_closed): Gracefully handle the case when bug_id is None.
+        (ValidatePatch.start): If bug_id is set as None in build properties, fetch it from the patch.
+
+2019-01-17  Aakash Jain  <aakash_jain@apple.com>
+
         [ews-build] Add patch author information in build
         https://bugs.webkit.org/show_bug.cgi?id=193465
 
