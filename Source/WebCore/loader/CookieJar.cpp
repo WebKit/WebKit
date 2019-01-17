@@ -36,9 +36,15 @@
 #include "NetworkingContext.h"
 #include "PlatformStrategies.h"
 #include "SameSiteInfo.h"
+#include "StorageSessionProvider.h"
 #include <wtf/SystemTracing.h>
 
 namespace WebCore {
+
+Ref<CookieJar> CookieJar::create(Ref<StorageSessionProvider>&& storageSessionProvider)
+{
+    return adoptRef(*new CookieJar(WTFMove(storageSessionProvider)));
+}
 
 IncludeSecureCookies CookieJar::shouldIncludeSecureCookies(const Document& document, const URL& url)
 {
@@ -52,9 +58,9 @@ SameSiteInfo CookieJar::sameSiteInfo(const Document& document)
     return { };
 }
 
-Ref<CookieJar> CookieJar::create()
+CookieJar::CookieJar(Ref<StorageSessionProvider>&& storageSessionProvider)
+    : m_storageSessionProvider(WTFMove(storageSessionProvider))
 {
-    return adoptRef(*new CookieJar);
 }
 
 CookieJar::~CookieJar() = default;
@@ -73,7 +79,7 @@ String CookieJar::cookies(Document& document, const URL& url) const
     }
 
     std::pair<String, bool> result;
-    if (auto* session = NetworkStorageSession::storageSession(document.sessionID()))
+    if (auto* session = m_storageSessionProvider->storageSession())
         result = session->cookiesForDOM(document.firstPartyForCookies(), sameSiteInfo(document), url, frameID, pageID, includeSecureCookies);
     else
         ASSERT_NOT_REACHED();
@@ -110,24 +116,24 @@ void CookieJar::setCookies(Document& document, const URL& url, const String& coo
         pageID = frame->loader().client().pageID();
     }
 
-    if (auto* session = NetworkStorageSession::storageSession(document.sessionID()))
+    if (auto* session = m_storageSessionProvider->storageSession())
         session->setCookiesFromDOM(document.firstPartyForCookies(), sameSiteInfo(document), url, frameID, pageID, cookieString);
     else
         ASSERT_NOT_REACHED();
 }
 
-bool CookieJar::cookiesEnabled(const Document& document) const
+bool CookieJar::cookiesEnabled(const Document&) const
 {
-    if (auto* session = NetworkStorageSession::storageSession(document.sessionID()))
+    if (auto* session = m_storageSessionProvider->storageSession())
         return session->cookiesEnabled();
 
     ASSERT_NOT_REACHED();
     return false;
 }
 
-std::pair<String, SecureCookiesAccessed> CookieJar::cookieRequestHeaderFieldValue(const PAL::SessionID& sessionID, const URL& firstParty, const SameSiteInfo& sameSiteInfo, const URL& url, Optional<uint64_t> frameID, Optional<uint64_t> pageID, IncludeSecureCookies includeSecureCookies) const
+std::pair<String, SecureCookiesAccessed> CookieJar::cookieRequestHeaderFieldValue(const PAL::SessionID&, const URL& firstParty, const SameSiteInfo& sameSiteInfo, const URL& url, Optional<uint64_t> frameID, Optional<uint64_t> pageID, IncludeSecureCookies includeSecureCookies) const
 {
-    if (auto* session = NetworkStorageSession::storageSession(sessionID)) {
+    if (auto* session = m_storageSessionProvider->storageSession()) {
         std::pair<String, bool> result = session->cookieRequestHeaderFieldValue(firstParty, sameSiteInfo, url, frameID, pageID, includeSecureCookies);
         return { result.first, result.second ? SecureCookiesAccessed::Yes : SecureCookiesAccessed::No };
     }
@@ -160,16 +166,16 @@ bool CookieJar::getRawCookies(const Document& document, const URL& url, Vector<C
         pageID = frame->loader().client().pageID();
     }
 
-    if (auto* session = NetworkStorageSession::storageSession(document.sessionID()))
+    if (auto* session = m_storageSessionProvider->storageSession())
         return session->getRawCookies(document.firstPartyForCookies(), sameSiteInfo(document), url, frameID, pageID, cookies);
 
     ASSERT_NOT_REACHED();
     return false;
 }
 
-void CookieJar::deleteCookie(const Document& document, const URL& url, const String& cookieName)
+void CookieJar::deleteCookie(const Document&, const URL& url, const String& cookieName)
 {
-    if (auto* session = NetworkStorageSession::storageSession(document.sessionID()))
+    if (auto* session = m_storageSessionProvider->storageSession())
         session->deleteCookie(url, cookieName);
     else
         ASSERT_NOT_REACHED();

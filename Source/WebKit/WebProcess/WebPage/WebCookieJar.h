@@ -39,6 +39,8 @@ public:
     std::pair<String, WebCore::SecureCookiesAccessed> cookieRequestHeaderFieldValue(const PAL::SessionID&, const URL& firstParty, const WebCore::SameSiteInfo&, const URL&, Optional<uint64_t> frameID, Optional<uint64_t> pageID, WebCore::IncludeSecureCookies) const final;
     bool getRawCookies(const WebCore::Document&, const URL&, Vector<WebCore::Cookie>&) const final;
     void deleteCookie(const WebCore::Document&, const URL&, const String& cookieName) final;
+private:
+    WebCookieJar();
 };
 
 } // namespace WebKit

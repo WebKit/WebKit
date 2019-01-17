@@ -40,11 +40,13 @@ enum class SecureCookiesAccessed : bool { No, Yes };
 class Document;
 struct Cookie;
 struct CookieRequestHeaderFieldProxy;
+class NetworkStorageSession;
+class StorageSessionProvider;
 struct SameSiteInfo;
 
 class WEBCORE_EXPORT CookieJar : public RefCounted<CookieJar> {
 public:
-    static Ref<CookieJar> create();
+    static Ref<CookieJar> create(Ref<StorageSessionProvider>&&);
     
     static CookieRequestHeaderFieldProxy cookieRequestHeaderFieldProxy(const Document&, const URL&);
 
@@ -63,6 +65,10 @@ public:
 protected:
     static SameSiteInfo sameSiteInfo(const Document&);
     static IncludeSecureCookies shouldIncludeSecureCookies(const Document&, const URL&);
+    CookieJar(Ref<StorageSessionProvider>&&);
+
+private:
+    Ref<StorageSessionProvider> m_storageSessionProvider;
 };
 
 } // namespace WebCore

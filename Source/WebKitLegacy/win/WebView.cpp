@@ -32,6 +32,7 @@
 #include "DOMCoreClasses.h"
 #include "FullscreenVideoController.h"
 #include "MarshallingHelpers.h"
+#include "PageStorageSessionProvider.h"
 #include "PluginDatabase.h"
 #include "PluginView.h"
 #include "WebApplicationCache.h"
@@ -3106,13 +3107,14 @@ HRESULT WebView::initWithFrame(RECT frame, _In_ BSTR frameName, _In_ BSTR groupN
 
     m_inspectorClient = new WebInspectorClient(this);
 
+    auto storageProvider = PageStorageSessionProvider::create();
     PageConfiguration configuration(
         makeUniqueRef<WebEditorClient>(this),
         SocketProvider::create(),
         makeUniqueRef<LibWebRTCProvider>(),
         WebCore::CacheStorageProvider::create(),
         BackForwardList::create(),
-        CookieJar::create()
+        CookieJar::create(storageProvider.copyRef())
     );
     configuration.chromeClient = new WebChromeClient(this);
     configuration.contextMenuClient = new WebContextMenuClient(this);
@@ -3128,6 +3130,7 @@ HRESULT WebView::initWithFrame(RECT frame, _In_ BSTR frameName, _In_ BSTR groupN
     configuration.pluginInfoProvider = &WebPluginInfoProvider::singleton();
 
     m_page = new Page(WTFMove(configuration));
+    storageProvider->setPage(*m_page);
     provideGeolocationTo(m_page, *new WebGeolocationClient(this));
 
     m_page->addLayoutMilestones({ DidFirstLayout, DidFirstVisuallyNonEmptyLayout });

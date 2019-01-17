@@ -34,8 +34,17 @@
 #include <WebCore/Frame.h>
 #include <WebCore/FrameLoader.h>
 #include <WebCore/FrameLoaderClient.h>
+#include <WebCore/StorageSessionProvider.h>
 
 namespace WebKit {
+
+class WebStorageSessionProvider : public WebCore::StorageSessionProvider {
+    // NetworkStorageSessions are accessed only in the NetworkProcess.
+    WebCore::NetworkStorageSession* storageSession() const final { return nullptr; }
+};
+
+WebCookieJar::WebCookieJar()
+    : WebCore::CookieJar(adoptRef(*new WebStorageSessionProvider)) { }
 
 String WebCookieJar::cookies(WebCore::Document& document, const URL& url) const
 {

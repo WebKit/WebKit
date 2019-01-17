@@ -281,7 +281,7 @@ void NetworkConnectionToWebProcess::createSocketStream(URL&& url, PAL::SessionID
 #if PLATFORM(COCOA)
     token = { m_networkProcess->sourceApplicationAuditData() };
 #endif
-    m_networkSocketStreams.set(identifier, NetworkSocketStream::create(WTFMove(url), sessionID, cachePartition, identifier, m_connection, WTFMove(token)));
+    m_networkSocketStreams.set(identifier, NetworkSocketStream::create(m_networkProcess.get(), WTFMove(url), sessionID, cachePartition, identifier, m_connection, WTFMove(token)));
 }
 
 void NetworkConnectionToWebProcess::destroySocketStream(uint64_t identifier)

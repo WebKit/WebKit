@@ -19,7 +19,7 @@
 
 #pragma once
 
-#include <wtf/RefCounted.h>
+#include "StorageSessionProvider.h"
 #include <wtf/RetainPtr.h>
 #include <wtf/text/WTFString.h>
 
@@ -41,7 +41,7 @@ class NetworkStorageSession;
 class ResourceError;
 class ResourceRequest;
 
-class NetworkingContext : public RefCounted<NetworkingContext> {
+class NetworkingContext : public StorageSessionProvider {
 public:
     virtual ~NetworkingContext() = default;
 
@@ -57,8 +57,6 @@ public:
 #endif
 
     virtual String sourceApplicationIdentifier() const { return emptyString(); }
-
-    virtual NetworkStorageSession* storageSession() const = 0;
 
 #if PLATFORM(WIN)
     virtual ResourceError blockedError(const ResourceRequest&) const = 0;

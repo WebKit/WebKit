@@ -41,12 +41,13 @@ typedef struct __CFHTTPMessage* CFHTTPMessageRef;
 namespace WebCore {
 
 class Credential;
+class StorageSessionProvider;
 class ProtectionSpace;
 class SocketStreamHandleClient;
 
 class SocketStreamHandleImpl : public SocketStreamHandle {
 public:
-    static Ref<SocketStreamHandleImpl> create(const URL& url, SocketStreamHandleClient& client, PAL::SessionID sessionID, const String& credentialPartition, SourceApplicationAuditToken&& auditData) { return adoptRef(*new SocketStreamHandleImpl(url, client, sessionID, credentialPartition, WTFMove(auditData))); }
+    static Ref<SocketStreamHandleImpl> create(const URL& url, SocketStreamHandleClient& client, PAL::SessionID sessionID, const String& credentialPartition, SourceApplicationAuditToken&& auditData, const StorageSessionProvider* provider) { return adoptRef(*new SocketStreamHandleImpl(url, client, sessionID, credentialPartition, WTFMove(auditData), provider)); }
 
     virtual ~SocketStreamHandleImpl();
 
@@ -58,7 +59,7 @@ private:
     Optional<size_t> platformSendInternal(const uint8_t*, size_t);
     bool sendPendingData();
 
-    WEBCORE_EXPORT SocketStreamHandleImpl(const URL&, SocketStreamHandleClient&, PAL::SessionID, const String& credentialPartition, SourceApplicationAuditToken&&);
+    WEBCORE_EXPORT SocketStreamHandleImpl(const URL&, SocketStreamHandleClient&, PAL::SessionID, const String& credentialPartition, SourceApplicationAuditToken&&, const StorageSessionProvider*);
     void createStreams();
     void scheduleStreams();
     void chooseProxy();
@@ -103,6 +104,7 @@ private:
     PAL::SessionID m_sessionID;
     String m_credentialPartition;
     SourceApplicationAuditToken m_auditData;
+    RefPtr<const StorageSessionProvider> m_storageSessionProvider;
 
     StreamBuffer<uint8_t, 1024 * 1024> m_buffer;
     static const unsigned maxBufferSize = 100 * 1024 * 1024;

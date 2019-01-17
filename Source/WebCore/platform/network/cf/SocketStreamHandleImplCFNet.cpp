@@ -40,6 +40,7 @@
 #include "ProtectionSpace.h"
 #include "SocketStreamError.h"
 #include "SocketStreamHandleClient.h"
+#include "StorageSessionProvider.h"
 #include <CFNetwork/CFNetwork.h>
 #include <wtf/Condition.h>
 #include <wtf/Lock.h>
@@ -95,7 +96,7 @@ static inline auto callbacksRunLoopMode()
 #endif
 }
 
-SocketStreamHandleImpl::SocketStreamHandleImpl(const URL& url, SocketStreamHandleClient& client, PAL::SessionID sessionID, const String& credentialPartition, SourceApplicationAuditToken&& auditData)
+SocketStreamHandleImpl::SocketStreamHandleImpl(const URL& url, SocketStreamHandleClient& client, PAL::SessionID sessionID, const String& credentialPartition, SourceApplicationAuditToken&& auditData, const StorageSessionProvider* provider)
     : SocketStreamHandle(url, client)
     , m_connectingSubstate(New)
     , m_connectionType(Unknown)
@@ -103,6 +104,7 @@ SocketStreamHandleImpl::SocketStreamHandleImpl(const URL& url, SocketStreamHandl
     , m_sessionID(sessionID)
     , m_credentialPartition(credentialPartition)
     , m_auditData(WTFMove(auditData))
+    , m_storageSessionProvider(provider)
 {
     LOG(Network, "SocketStreamHandle %p new client %p", this, &m_client);
 
@@ -367,7 +369,7 @@ bool SocketStreamHandleImpl::getStoredCONNECTProxyCredentials(const ProtectionSp
 
     // Try system credential storage first, matching HTTP behavior (CFNetwork only asks the client for password if it couldn't find it in Keychain).
     Credential storedCredential;
-    if (auto* storageSession = NetworkStorageSession::storageSession(m_sessionID)) {
+    if (auto* storageSession = m_storageSessionProvider ? m_storageSessionProvider->storageSession() : nullptr) {
         storedCredential = storageSession->credentialStorage().getFromPersistentStorage(protectionSpace);
         if (storedCredential.isEmpty())
             storedCredential = storageSession->credentialStorage().get(m_credentialPartition, protectionSpace);

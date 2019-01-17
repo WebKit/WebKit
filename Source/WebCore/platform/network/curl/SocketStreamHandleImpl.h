@@ -44,10 +44,11 @@
 namespace WebCore {
 
 class SocketStreamHandleClient;
+class StorageSessionProvider;
 
 class SocketStreamHandleImpl : public SocketStreamHandle {
 public:
-    static Ref<SocketStreamHandleImpl> create(const URL& url, SocketStreamHandleClient& client, PAL::SessionID, const String&, SourceApplicationAuditToken&&) { return adoptRef(*new SocketStreamHandleImpl(url, client)); }
+    static Ref<SocketStreamHandleImpl> create(const URL& url, SocketStreamHandleClient& client, PAL::SessionID, const String&, SourceApplicationAuditToken&&, const StorageSessionProvider* provider) { return adoptRef(*new SocketStreamHandleImpl(url, client, provider)); }
 
     virtual ~SocketStreamHandleImpl();
 
@@ -56,7 +57,7 @@ public:
     WEBCORE_EXPORT void platformClose() final;
 
 private:
-    WEBCORE_EXPORT SocketStreamHandleImpl(const URL&, SocketStreamHandleClient&);
+    WEBCORE_EXPORT SocketStreamHandleImpl(const URL&, SocketStreamHandleClient&, const StorageSessionProvider*);
 
     size_t bufferedAmount() final;
     Optional<size_t> platformSendInternal(const uint8_t*, size_t);
@@ -69,6 +70,7 @@ private:
     static const size_t kWriteBufferSize = 4 * 1024;
     static const size_t kReadBufferSize = 4 * 1024;
 
+    RefPtr<const StorageSessionProvider> m_storageSessionProvider;
     RefPtr<Thread> m_workerThread;
     std::atomic<bool> m_running { true };
 

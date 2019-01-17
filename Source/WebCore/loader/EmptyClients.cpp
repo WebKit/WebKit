@@ -535,6 +535,10 @@ Ref<StorageNamespace> EmptyStorageNamespaceProvider::createTransientLocalStorage
     return adoptRef(*new EmptyStorageNamespace);
 }
 
+class EmptyStorageSessionProvider : public StorageSessionProvider {
+    NetworkStorageSession* storageSession() const final { return nullptr; }
+};
+
 PageConfiguration pageConfigurationWithEmptyClients()
 {
     PageConfiguration pageConfiguration {
@@ -543,7 +547,7 @@ PageConfiguration pageConfigurationWithEmptyClients()
         LibWebRTCProvider::create(),
         CacheStorageProvider::create(),
         adoptRef(*new EmptyBackForwardClient),
-        CookieJar::create()
+        CookieJar::create(adoptRef(*new EmptyStorageSessionProvider))
     };
 
     static NeverDestroyed<EmptyChromeClient> dummyChromeClient;

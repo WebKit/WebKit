@@ -1,3 +1,51 @@
+2019-01-17  Alex Christensen  <achristensen@webkit.org>
+
+        Stop using NetworkStorageSession::storageSession in WebCore
+        https://bugs.webkit.org/show_bug.cgi?id=193529
+
+        Reviewed by Tim Horton.
+
+        Ownership of the map that NetworkStorageSession::storageSession searches needs to move to the WebKit/WebKitLegacy layer,
+        so when WebCore used to look in this map it needs to call a client function to ask the layer above it for the storage object.
+        I've called this client StorageSessionProvider::storageSession.  Right now it just looks in NetworkStorageSession::storageSession,
+        but this added abstraction makes it possible to move the currently process-global map to be a member of the NetworkProcess object.
+
+        * Modules/websockets/WebSocketChannel.cpp:
+        (WebCore::WebSocketChannel::connect):
+        * WebCore.xcodeproj/project.pbxproj:
+        * loader/CookieJar.cpp:
+        (WebCore::CookieJar::create):
+        (WebCore::CookieJar::CookieJar):
+        (WebCore::CookieJar::cookies const):
+        (WebCore::CookieJar::setCookies):
+        (WebCore::CookieJar::cookiesEnabled const):
+        (WebCore::CookieJar::cookieRequestHeaderFieldValue const):
+        (WebCore::CookieJar::getRawCookies const):
+        (WebCore::CookieJar::deleteCookie):
+        * loader/CookieJar.h:
+        * loader/EmptyClients.cpp:
+        (WebCore::pageConfigurationWithEmptyClients):
+        * page/Page.h:
+        * page/SocketProvider.cpp:
+        (WebCore::SocketProvider::createSocketStreamHandle):
+        * page/SocketProvider.h:
+        * platform/network/NetworkingContext.h:
+        * platform/network/SocketStreamHandleImpl.cpp:
+        (WebCore::cookieDataForHandshake):
+        (WebCore::SocketStreamHandleImpl::platformSendHandshake):
+        * platform/network/StorageSessionProvider.h: Added.
+        (WebCore::StorageSessionProvider::~StorageSessionProvider):
+        * platform/network/cf/SocketStreamHandleImpl.h:
+        (WebCore::SocketStreamHandleImpl::create):
+        * platform/network/cf/SocketStreamHandleImplCFNet.cpp:
+        (WebCore::SocketStreamHandleImpl::SocketStreamHandleImpl):
+        (WebCore::SocketStreamHandleImpl::getStoredCONNECTProxyCredentials):
+        * platform/network/curl/SocketStreamHandleImpl.h:
+        (WebCore::SocketStreamHandleImpl::create):
+        * platform/network/soup/SocketStreamHandleImpl.h:
+        * platform/network/soup/SocketStreamHandleImplSoup.cpp:
+        (WebCore::SocketStreamHandleImpl::create):
+
 2019-01-17  Jon Lee  <jonlee@apple.com>
 
         [EME] Remove Amazon Prime Video from quirks list

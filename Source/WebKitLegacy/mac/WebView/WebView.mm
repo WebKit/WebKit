@@ -37,6 +37,7 @@
 #import "DOMInternal.h"
 #import "DOMNodeInternal.h"
 #import "DOMRangeInternal.h"
+#import "PageStorageSessionProvider.h"
 #import "StorageThread.h"
 #import "WebAlternativeTextClient.h"
 #import "WebApplicationCacheInternal.h"
@@ -1440,13 +1441,14 @@ static void WebKitInitializeGamepadProviderIfNecessary()
     _private->group = WebViewGroup::getOrCreate(groupName, _private->preferences._localStorageDatabasePath);
     _private->group->addWebView(self);
 
+    auto storageProvider = PageStorageSessionProvider::create();
     PageConfiguration pageConfiguration(
         makeUniqueRef<WebEditorClient>(self),
         SocketProvider::create(),
         LibWebRTCProvider::create(),
         WebCore::CacheStorageProvider::create(),
         BackForwardList::create(self),
-        CookieJar::create()
+        CookieJar::create(storageProvider.copyRef())
     );
 #if !PLATFORM(IOS_FAMILY)
     pageConfiguration.chromeClient = new WebChromeClient(self);
@@ -1477,6 +1479,7 @@ static void WebKitInitializeGamepadProviderIfNecessary()
     pageConfiguration.userContentProvider = &_private->group->userContentController();
     pageConfiguration.visitedLinkStore = &_private->group->visitedLinkStore();
     _private->page = new Page(WTFMove(pageConfiguration));
+    storageProvider->setPage(*_private->page);
 
     _private->page->setGroupName(groupName);
 
@@ -1706,13 +1709,14 @@ static void WebKitInitializeGamepadProviderIfNecessary()
     _private->group = WebViewGroup::getOrCreate(groupName, _private->preferences._localStorageDatabasePath);
     _private->group->addWebView(self);
 
+    auto storageProvider = PageStorageSessionProvider::create();
     PageConfiguration pageConfiguration(
         makeUniqueRef<WebEditorClient>(self),
         SocketProvider::create(),
         LibWebRTCProvider::create(),
         WebCore::CacheStorageProvider::create(),
         BackForwardList::create(self),
-        CookieJar::create()
+        CookieJar::create(storageProvider.copyRef())
     );
     pageConfiguration.chromeClient = new WebChromeClientIOS(self);
 #if ENABLE(DRAG_SUPPORT)
@@ -1734,6 +1738,7 @@ static void WebKitInitializeGamepadProviderIfNecessary()
     pageConfiguration.pluginInfoProvider = &WebPluginInfoProvider::singleton();
 
     _private->page = new Page(WTFMove(pageConfiguration));
+    storageProvider->setPage(*_private->page);
     
     [self setSmartInsertDeleteEnabled:YES];
     

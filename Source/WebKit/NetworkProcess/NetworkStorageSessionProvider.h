@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,15 +25,32 @@
 
 #pragma once
 
-#include <WebCore/SocketProvider.h>
+#include "NetworkProcess.h"
+#include <WebCore/NetworkStorageSession.h>
+#include <WebCore/StorageSessionProvider.h>
+#include <pal/SessionID.h>
+#include <wtf/WeakPtr.h>
 
 namespace WebKit {
 
-class WebSocketProvider final : public WebCore::SocketProvider {
+class NetworkStorageSessionProvider final : public WebCore::StorageSessionProvider {
 public:
-    static Ref<WebSocketProvider> create() { return adoptRef(*new WebSocketProvider); }
-    Ref<WebCore::SocketStreamHandle> createSocketStreamHandle(const URL&, WebCore::SocketStreamHandleClient&, PAL::SessionID, const String& credentialPartition, const WebCore::StorageSessionProvider*) final;
-    virtual ~WebSocketProvider() { }
+    static Ref<NetworkStorageSessionProvider> create(NetworkProcess& networkProcess, const PAL::SessionID& sessionID) { return adoptRef(*new NetworkStorageSessionProvider(networkProcess, sessionID)); }
+    
+private:
+    NetworkStorageSessionProvider(NetworkProcess& networkProcess, const PAL::SessionID& sessionID)
+        : m_networkProcess(makeWeakPtr(networkProcess))
+        , m_sessionID(sessionID) { }
+
+    WebCore::NetworkStorageSession* storageSession() const final
+    {
+        if (m_networkProcess)
+            return WebCore::NetworkStorageSession::storageSession(m_sessionID);
+        return nullptr;
+    }
+
+    WeakPtr<NetworkProcess> m_networkProcess;
+    PAL::SessionID m_sessionID;
 };
 
 }
