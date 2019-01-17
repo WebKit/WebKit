@@ -140,15 +140,15 @@ const Container* Box::containingBlock() const
     }
 
     if (isFixedPositioned()) {
-        auto* initialContainingBlock = parent();
-        for (; initialContainingBlock->parent(); initialContainingBlock = initialContainingBlock->parent()) { }
-        return initialContainingBlock;
+        auto* ancestor = parent();
+        for (; ancestor->parent() && !ancestor->style().hasTransform(); ancestor = ancestor->parent()) { }
+        return ancestor;
     }
 
     if (isOutOfFlowPositioned()) {
-        auto* positionedAncestor = parent();
-        for (; positionedAncestor->parent() && !positionedAncestor->isPositioned(); positionedAncestor = positionedAncestor->parent()) { }
-        return positionedAncestor;
+        auto* ancestor = parent();
+        for (; ancestor->parent() && !ancestor->isPositioned() && !ancestor->style().hasTransform(); ancestor = ancestor->parent()) { }
+        return ancestor;
     }
 
     ASSERT_NOT_REACHED();

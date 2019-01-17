@@ -191,6 +191,7 @@ fast/block/collapse-anon-block-with-float-siblings-only.html
 fast/block/crash-when-anonymous-blocks-are-merged-with-simple-line-layout.html
 fast/block/crash-when-subtree-is-still-attached.html
 fast/block/geometry-map-assertion-with-tall-content.html
+fast/block/containing-block-changes.html
 fast/borders/0px-borders-no-line-height.html
 fast/borders/0px-borders.html
 fast/borders/block-mask-overlay-image-outset.html
