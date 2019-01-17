@@ -1,3 +1,18 @@
+2019-01-17  Per Arne Vollan  <pvollan@apple.com>
+
+        [Win][HighDPI] Repaint glitches when scrolling.
+        https://bugs.webkit.org/show_bug.cgi?id=173152
+        <rdar://problem/45269953>
+
+        Reviewed by Brent Fulgham.
+
+        Non-integral device scale factors are causing repaint glitches, because the computation of the scroll
+        delta in pixel coordinates from the scroll delta in logical coordinates will not always be correct.
+        Instead of blitting the scroll rectangle, repaint the entire region affected by scrolling.
+
+        * WebView.cpp:
+        (WebView::scrollBackingStore):
+
 2019-01-17  Alex Christensen  <achristensen@webkit.org>
 
         Stop using NetworkStorageSession::storageSession in WebCore

@@ -953,6 +953,19 @@ void WebView::addToDirtyRegion(GDIObject<HRGN> newRegion)
 
 void WebView::scrollBackingStore(FrameView* frameView, int logicalDx, int logicalDy, const IntRect& logicalScrollViewRect, const IntRect& logicalClipRect)
 {
+    if (deviceScaleFactor() != static_cast<int>(deviceScaleFactor())) {
+        // Non-integral device scale factors are causing repaint glitches, because the computation of the scroll
+        // delta in pixel coordinates from the scroll delta in logical coordinates will not always be correct.
+        // Instead of blitting the scroll rectangle, repaint the entire region affected by scrolling.
+        // FIXME: This is inefficient, we should be able to blit the scroll rectangle in this case as well,
+        // see https://bugs.webkit.org/show_bug.cgi?id=193542.
+        IntRect repaintRect = logicalScrollViewRect;
+        repaintRect.move(logicalDx, logicalDy);
+        repaintRect.unite(logicalScrollViewRect);
+        repaint(repaintRect, true);
+        return;
+    }
+
     m_needsDisplay = true;
 
     // Dimensions passed to us from WebCore are in logical units. We must convert to pixels:
