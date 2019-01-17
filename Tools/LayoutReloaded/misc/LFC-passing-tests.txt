@@ -91,6 +91,7 @@ fast/block/basic/008.html
 fast/block/basic/009.html
 fast/block/basic/012.html
 fast/block/basic/021.html
+fast/block/basic/quirk-height.html
 fast/block/basic/child-block-level-box-with-height-percent.html
 fast/block/basic/height-percentage-simple.html
 fast/block/basic/inline-content-with-floating-image.html

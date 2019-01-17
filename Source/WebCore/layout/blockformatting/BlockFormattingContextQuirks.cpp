@@ -72,11 +72,9 @@ HeightAndMargin BlockFormattingContext::Quirks::stretchedInFlowHeight(const Layo
 
     auto& documentBox = layoutBox.isDocumentBox() ? layoutBox : *layoutBox.parent();
     auto& documentBoxDisplayBox = layoutState.displayBoxForLayoutBox(documentBox);
-    auto documentBoxVerticalBorders = documentBoxDisplayBox.borderTop() + documentBoxDisplayBox.borderBottom();
-    auto documentBoxVerticalPaddings = documentBoxDisplayBox.paddingTop().valueOr(0) + documentBoxDisplayBox.paddingBottom().valueOr(0);
 
     auto strechedHeight = layoutState.displayBoxForLayoutBox(initialContainingBlock(layoutBox)).contentBoxHeight();
-    strechedHeight -= documentBoxVerticalBorders + documentBoxVerticalPaddings;
+    strechedHeight -= documentBoxDisplayBox.verticalBorder() + documentBoxDisplayBox.verticalPadding().valueOr(0);
 
     LayoutUnit totalVerticalMargin;
     if (layoutBox.isDocumentBox()) {
@@ -89,6 +87,9 @@ HeightAndMargin BlockFormattingContext::Quirks::stretchedInFlowHeight(const Layo
         // This looks extremely odd when html has non-auto height.
         auto documentBoxVerticalMargin = Geometry::computedVerticalMargin(layoutState, documentBox);
         strechedHeight -= (documentBoxVerticalMargin.before.valueOr(0) + documentBoxVerticalMargin.after.valueOr(0));
+
+        auto& bodyBoxDisplayBox = layoutState.displayBoxForLayoutBox(layoutBox);
+        strechedHeight -= bodyBoxDisplayBox.verticalBorder() + bodyBoxDisplayBox.verticalPadding().valueOr(0);
 
         auto nonCollapsedMargin = heightAndMargin.nonCollapsedMargin;
         auto collapsedMargin = MarginCollapse::collapsedVerticalValues(layoutState, layoutBox, nonCollapsedMargin);

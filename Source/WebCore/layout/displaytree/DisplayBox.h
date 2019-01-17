@@ -154,11 +154,15 @@ public:
     LayoutUnit borderLeft() const;
     LayoutUnit borderBottom() const;
     LayoutUnit borderRight() const;
+    LayoutUnit verticalBorder() const { return borderTop() + borderBottom(); }
+    LayoutUnit horizontalBorder() const { return borderLeft() + borderRight(); }
 
     Optional<LayoutUnit> paddingTop() const;
     Optional<LayoutUnit> paddingLeft() const;
     Optional<LayoutUnit> paddingBottom() const;
     Optional<LayoutUnit> paddingRight() const;
+    Optional<LayoutUnit> verticalPadding() const;
+    Optional<LayoutUnit> horizontalPadding() const;
 
     LayoutUnit contentBoxTop() const { return paddingBoxTop() + paddingTop().valueOr(0); }
     LayoutUnit contentBoxLeft() const { return paddingBoxLeft() + paddingLeft().valueOr(0); }
@@ -653,6 +657,24 @@ inline Optional<LayoutUnit> Box::paddingRight() const
     if (!m_padding)
         return { };
     return m_padding->horizontal.right;
+}
+
+inline Optional<LayoutUnit> Box::verticalPadding() const
+{
+    auto paddingTop = this->paddingTop();
+    auto paddingBottom = this->paddingBottom();
+    if (!paddingTop && !paddingBottom)
+        return { };
+    return paddingTop.valueOr(0) + paddingBottom.valueOr(0);
+}
+
+inline Optional<LayoutUnit> Box::horizontalPadding() const
+{
+    auto paddingLeft = this->paddingLeft();
+    auto paddingRight = this->paddingRight();
+    if (!paddingLeft && !paddingRight)
+        return { };
+    return paddingLeft.valueOr(0) + paddingRight.valueOr(0);
 }
 
 inline LayoutUnit Box::borderTop() const
