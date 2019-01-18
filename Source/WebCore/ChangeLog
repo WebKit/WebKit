@@ -1,5 +1,25 @@
 2019-01-18  Zalan Bujtas  <zalan@apple.com>
 
+        [LFC] Do not skip float boxes that are not part of the current formatting context when computing bottom.
+        https://bugs.webkit.org/show_bug.cgi?id=193562
+
+        Reviewed by Antti Koivisto.
+
+        The current floating context's (float) boxes could belong to descendant formatting contexts.
+        We need to include them as well when computing height (bottom) (we essentially need to skip ancestor floats only).
+
+        <div id=container style="overflow: hidden"><div>foo<div style="float: left">bar</div></div></div>
+        While computing the height for "container", the float box needs to be taken into account even though
+        it is part of another (descendant) formatting context (the inline formatting context established by its parent div).
+
+        * layout/floats/FloatingState.cpp:
+        (WebCore::Layout::FloatingState::bottom const):
+        * layout/floats/FloatingState.h:
+        (WebCore::Layout::FloatingState::FloatItem::isDescendantOfFormattingRoot const):
+        (WebCore::Layout::FloatingState::FloatItem::inFormattingContext const): Deleted.
+
+2019-01-18  Zalan Bujtas  <zalan@apple.com>
+
         [LFC][BFC] Check for inflow children while computing height for block formatting context roots.
         https://bugs.webkit.org/show_bug.cgi?id=193555
 

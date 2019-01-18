@@ -71,7 +71,7 @@ public:
         bool operator==(const Box& layoutBox) const { return m_layoutBox.get() == &layoutBox; }
 
         bool isLeftPositioned() const { return m_layoutBox->isLeftFloatingPositioned(); }
-        bool inFormattingContext(const Box&) const;
+        bool isDescendantOfFormattingRoot(const Box&) const;
 
         Display::Box::Rect rectWithMargin() const { return m_absoluteDisplayBox.rectWithMargin(); }
         PositionInContextRoot bottom() const { return { m_absoluteDisplayBox.bottom() }; }
@@ -115,10 +115,12 @@ inline Optional<PositionInContextRoot> FloatingState::bottom(const Box& formatti
     return bottom(formattingContextRoot, Clear::Both);
 }
 
-inline bool FloatingState::FloatItem::inFormattingContext(const Box& formattingContextRoot) const
+inline bool FloatingState::FloatItem::isDescendantOfFormattingRoot(const Box& formattingContextRoot) const
 {
     ASSERT(formattingContextRoot.establishesFormattingContext());
-    return &m_layoutBox->formattingContextRoot() == &formattingContextRoot;
+    if (!is<Container>(formattingContextRoot))
+        return false;
+    return m_layoutBox->isDescendantOf(downcast<Container>(formattingContextRoot));
 }
 
 }

@@ -143,8 +143,8 @@ Optional<PositionInContextRoot> FloatingState::bottom(const Box& formattingConte
     // Cache the value if we end up calling it more frequently (and update it at append/remove).
     Optional<PositionInContextRoot> bottom;
     for (auto& floatItem : m_floats) {
-        // Ignore floats from other formatting contexts when the floating state is inherited.
-        if (!floatItem.inFormattingContext(formattingContextRoot))
+        // Ignore floats from ancestor formatting contexts when the floating state is inherited.
+        if (!floatItem.isDescendantOfFormattingRoot(formattingContextRoot))
             continue;
 
         if ((type == Clear::Left && !floatItem.isLeftPositioned())
