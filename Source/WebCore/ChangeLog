@@ -1,5 +1,16 @@
 2019-01-18  Daniel Bates  <dabates@apple.com>
 
+        Another attempt to fix the iOS build following <https://trac.webkit.org/changeset/240174>
+        (https://bugs.webkit.org/show_bug.cgi?id=193583)
+
+        Only override RenderTheme::platformFocusRingColor() when building with ENABLE(FULL_KEYBOARD_ACCESS)
+        enabled.
+
+        * rendering/RenderThemeIOS.h:
+        * rendering/RenderThemeIOS.mm:
+
+2019-01-18  Daniel Bates  <dabates@apple.com>
+
         Attempt to fix the iOS build following <https://trac.webkit.org/changeset/240174>
         (https://bugs.webkit.org/show_bug.cgi?id=193583)
 

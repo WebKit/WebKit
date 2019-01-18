@@ -1123,10 +1123,12 @@ Color RenderThemeIOS::platformInactiveSelectionBackgroundColor(OptionSet<StyleCo
     return Color::transparent;
 }
 
+#if ENABLE(FULL_KEYBOARD_ACCESS)
 Color RenderThemeIOS::platformFocusRingColor(OptionSet<StyleColor::Options>) const
 {
     return colorFromUIColor([PAL::getUIColorClass() keyboardFocusIndicatorColor]);
 }
+#endif
 
 bool RenderThemeIOS::shouldHaveSpinButton(const HTMLInputElement&) const
 {
