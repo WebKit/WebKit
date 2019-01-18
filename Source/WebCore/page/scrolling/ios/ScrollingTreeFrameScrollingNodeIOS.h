@@ -34,9 +34,9 @@ OBJC_CLASS CALayer;
 
 namespace WebCore {
 
-class ScrollingTreeFrameScrollingNodeIOS : public ScrollingTreeFrameScrollingNode {
+class WEBCORE_EXPORT ScrollingTreeFrameScrollingNodeIOS : public ScrollingTreeFrameScrollingNode {
 public:
-    WEBCORE_EXPORT static Ref<ScrollingTreeFrameScrollingNodeIOS> create(ScrollingTree&, ScrollingNodeType, ScrollingNodeID);
+    static Ref<ScrollingTreeFrameScrollingNodeIOS> create(ScrollingTree&, ScrollingNodeType, ScrollingNodeID);
     virtual ~ScrollingTreeFrameScrollingNodeIOS();
 
 protected:
@@ -55,14 +55,16 @@ protected:
     void updateLayersAfterDelegatedScroll(const FloatPoint&) override;
     void updateLayersAfterAncestorChange(const ScrollingTreeNode& changedNode, const FloatRect& fixedPositionRect, const FloatSize& cumulativeDelta) override;
 
+    void setScrollPosition(const FloatPoint&) override;
     void setScrollLayerPosition(const FloatPoint&, const FloatRect& layoutViewport) override;
 
     FloatPoint minimumScrollPosition() const override;
     FloatPoint maximumScrollPosition() const override;
 
+    CALayer *scrollLayer() const;
+
 private:
     void updateChildNodesAfterScroll(const FloatPoint&);
-    CALayer *scrollLayer() const { return m_scrollLayer.get(); }
 
     RetainPtr<CALayer> m_scrollLayer;
     RetainPtr<CALayer> m_counterScrollingLayer;

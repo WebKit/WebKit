@@ -1,3 +1,13 @@
+2019-01-18  Antti Koivisto  <antti@apple.com>
+
+        Implement asynchronous frame scrolling for iOS
+        https://bugs.webkit.org/show_bug.cgi?id=193539
+        <rdar://problem/47379873>
+
+        Reviewed by Simon Fraser.
+
+        * platform/ios-wk2/compositing/tiling/tiled-drawing-async-frame-scrolling-expected.txt:
+
 2019-01-18  Ali Juma  <ajuma@chromium.org>
 
         FetchResponse::url should return the empty string for tainted responses

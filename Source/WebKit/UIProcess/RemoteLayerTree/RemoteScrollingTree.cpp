@@ -34,6 +34,7 @@
 #include <WebCore/ScrollingTreeStickyNode.h>
 
 #if PLATFORM(IOS_FAMILY)
+#include "ScrollingTreeFrameScrollingNodeRemoteIOS.h"
 #include "ScrollingTreeOverflowScrollingNodeIOS.h"
 #include <WebCore/ScrollingTreeFrameScrollingNodeIOS.h>
 #else
@@ -115,7 +116,7 @@ Ref<ScrollingTreeNode> RemoteScrollingTree::createScrollingTreeNode(ScrollingNod
     case ScrollingNodeType::MainFrame:
     case ScrollingNodeType::Subframe:
 #if PLATFORM(IOS_FAMILY)
-        return ScrollingTreeFrameScrollingNodeIOS::create(*this, nodeType, nodeID);
+        return ScrollingTreeFrameScrollingNodeRemoteIOS::create(*this, nodeType, nodeID);
 #else
         return ScrollingTreeFrameScrollingNodeRemoteMac::create(*this, nodeType, nodeID);
 #endif

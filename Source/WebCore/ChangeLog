@@ -1,3 +1,37 @@
+2019-01-18  Antti Koivisto  <antti@apple.com>
+
+        Implement asynchronous frame scrolling for iOS
+        https://bugs.webkit.org/show_bug.cgi?id=193539
+        <rdar://problem/47379873>
+
+        Reviewed by Simon Fraser.
+
+        This patch implements UIScrollView based frame scrolling on iOS, enabled by the "Async Frame Scrolling"
+        internal setting (still off by default).
+
+        * page/scrolling/ios/ScrollingTreeFrameScrollingNodeIOS.h:
+        (WebCore::ScrollingTreeFrameScrollingNodeIOS::scrollLayer const): Deleted.
+        * page/scrolling/ios/ScrollingTreeFrameScrollingNodeIOS.mm:
+        (WebCore::ScrollingTreeFrameScrollingNodeIOS::setScrollPosition):
+
+        Export ScrollingTreeFrameScrollingNodeIOS.
+
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::visibleRectForLayerFlushing const):
+        (WebCore::RenderLayerCompositor::frameViewDidChangeSize):
+        (WebCore::RenderLayerCompositor::updateScrollLayerClipping):
+
+        If we don't have a separate clip layer, just resize and position the scroll layer.
+
+        (WebCore::RenderLayerCompositor::updateRootLayerPosition):
+        (WebCore::RenderLayerCompositor::updateOverflowControlsLayers):
+        (WebCore::RenderLayerCompositor::ensureRootLayer):
+
+        Use GraphicsLayer::Type::Scrolling as the scroll layer type when async frame scrolling is enabled.
+        Don't create a separate clip layer since the scroll layer will handle clipping.
+
+        * rendering/RenderLayerCompositor.h:
+
 2019-01-18  Ali Juma  <ajuma@chromium.org>
 
         FetchResponse::url should return the empty string for tainted responses

@@ -236,6 +236,7 @@ public:
     GraphicsLayer* clipLayer() const { return m_clipLayer.get(); }
     GraphicsLayer* rootContentLayer() const { return m_rootContentLayer.get(); }
 
+    GraphicsLayer* layerForClipping() const {  return m_clipLayer ? m_clipLayer.get() : m_scrollLayer.get();  }
 
 #if ENABLE(RUBBER_BANDING)
     GraphicsLayer* headerLayer() const { return m_layerForHeader.get(); }
@@ -432,6 +433,7 @@ private:
     void updateOverflowControlsLayers();
 
     void updateScrollLayerPosition();
+    void updateScrollLayerClipping();
 
     FloatPoint positionForClipLayer() const;
 

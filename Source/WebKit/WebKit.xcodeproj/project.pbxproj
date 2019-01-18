@@ -1594,6 +1594,7 @@
 		E4436ECF1A0D040B00EAD204 /* NetworkCacheStorage.h in Headers */ = {isa = PBXBuildFile; fileRef = E4436EC21A0CFDB200EAD204 /* NetworkCacheStorage.h */; };
 		E489D28C1A0A2DB80078C06A /* NetworkCacheCoders.h in Headers */ = {isa = PBXBuildFile; fileRef = E489D2851A0A2DB80078C06A /* NetworkCacheCoders.h */; };
 		E49D40D71AD3FB170066B7B9 /* NetworkCacheBlobStorage.h in Headers */ = {isa = PBXBuildFile; fileRef = E49D40D61AD3FB170066B7B9 /* NetworkCacheBlobStorage.h */; };
+		E4D54D0421F1D72D007E3C36 /* ScrollingTreeFrameScrollingNodeRemoteIOS.h in Headers */ = {isa = PBXBuildFile; fileRef = E40C1F9321F0B96E00530718 /* ScrollingTreeFrameScrollingNodeRemoteIOS.h */; };
 		E4E57F6B21A83B1200345F3C /* RemoteLayerTreeNode.h in Headers */ = {isa = PBXBuildFile; fileRef = E4E57F6A21A83B1100345F3C /* RemoteLayerTreeNode.h */; };
 		E4E864931B16750700C82F40 /* VersionChecks.h in Headers */ = {isa = PBXBuildFile; fileRef = E4E8648E1B1673FB00C82F40 /* VersionChecks.h */; };
 		E52CF55220A35C3A00DADA27 /* WebDataListSuggestionPicker.h in Headers */ = {isa = PBXBuildFile; fileRef = E52CF55020A35C3A00DADA27 /* WebDataListSuggestionPicker.h */; };
@@ -4445,6 +4446,8 @@
 		E404907321DE65F70037F0DB /* ScrollingTreeFrameScrollingNodeRemoteMac.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScrollingTreeFrameScrollingNodeRemoteMac.h; sourceTree = "<group>"; };
 		E404907421DE65F70037F0DB /* ScrollerMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ScrollerMac.mm; sourceTree = "<group>"; };
 		E404907521DE65F70037F0DB /* ScrollerMac.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScrollerMac.h; sourceTree = "<group>"; };
+		E40C1F9321F0B96E00530718 /* ScrollingTreeFrameScrollingNodeRemoteIOS.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScrollingTreeFrameScrollingNodeRemoteIOS.h; sourceTree = "<group>"; };
+		E40C1F9521F0B97F00530718 /* ScrollingTreeFrameScrollingNodeRemoteIOS.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ScrollingTreeFrameScrollingNodeRemoteIOS.mm; sourceTree = "<group>"; };
 		E413F59B1AC1ADB600345360 /* NetworkCacheEntry.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NetworkCacheEntry.h; sourceTree = "<group>"; };
 		E413F59E1AC1AF9D00345360 /* NetworkCacheEntry.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = NetworkCacheEntry.cpp; sourceTree = "<group>"; };
 		E42E060B1AA7440D00B11699 /* NetworkCacheIOChannel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NetworkCacheIOChannel.h; sourceTree = "<group>"; };
@@ -5517,6 +5520,8 @@
 				2DC18FB1218A6E9E0025A88D /* RemoteLayerTreeViews.h */,
 				2DC18FB2218A6E9E0025A88D /* RemoteLayerTreeViews.mm */,
 				0F0C365B18C05CA100F607D7 /* RemoteScrollingCoordinatorProxyIOS.mm */,
+				E40C1F9321F0B96E00530718 /* ScrollingTreeFrameScrollingNodeRemoteIOS.h */,
+				E40C1F9521F0B97F00530718 /* ScrollingTreeFrameScrollingNodeRemoteIOS.mm */,
 				0F931C1A18C5711900DBA7C3 /* ScrollingTreeOverflowScrollingNodeIOS.h */,
 				0F931C1B18C5711900DBA7C3 /* ScrollingTreeOverflowScrollingNodeIOS.mm */,
 				0F931C1A18C5711900DBB8D4 /* ScrollingTreeScrollingNodeDelegateIOS.h */,
@@ -8858,6 +8863,7 @@
 				1A81B38118BD66AD0007FDAC /* _WKVisitedLinkStore.h in Headers */,
 				1A81B38518BD673A0007FDAC /* _WKVisitedLinkStoreInternal.h in Headers */,
 				1AE286781C7E76510069AC4F /* _WKWebsiteDataSize.h in Headers */,
+				E4D54D0421F1D72D007E3C36 /* ScrollingTreeFrameScrollingNodeRemoteIOS.h in Headers */,
 				1AE286801C7F92C00069AC4F /* _WKWebsiteDataSizeInternal.h in Headers */,
 				1AFB4C721ADF155D00B33339 /* _WKWebsiteDataStore.h in Headers */,
 				5120C8351E5B74B90025B250 /* _WKWebsiteDataStoreConfiguration.h in Headers */,

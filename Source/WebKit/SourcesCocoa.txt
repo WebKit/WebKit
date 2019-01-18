@@ -454,6 +454,7 @@ UIProcess/RemoteLayerTree/mac/ScrollingTreeFrameScrollingNodeRemoteMac.cpp
 
 UIProcess/RemoteLayerTree/ios/RemoteLayerTreeHostIOS.mm
 UIProcess/RemoteLayerTree/ios/RemoteScrollingCoordinatorProxyIOS.mm
+UIProcess/RemoteLayerTree/ios/ScrollingTreeFrameScrollingNodeRemoteIOS.mm
 UIProcess/RemoteLayerTree/ios/ScrollingTreeOverflowScrollingNodeIOS.mm
 UIProcess/RemoteLayerTree/ios/ScrollingTreeScrollingNodeDelegateIOS.mm
 

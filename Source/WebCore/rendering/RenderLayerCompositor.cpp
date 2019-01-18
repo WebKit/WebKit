@@ -447,8 +447,8 @@ FloatRect RenderLayerCompositor::visibleRectForLayerFlushing() const
 #if PLATFORM(IOS_FAMILY)
     return frameView.exposedContentRect();
 #else
-    // Having a m_clipLayer indicates that we're doing scrolling via GraphicsLayers.
-    FloatRect visibleRect = m_clipLayer ? FloatRect({ }, frameView.sizeForVisibleContent()) : frameView.visibleContentRect();
+    // Having a m_scrollLayer indicates that we're doing scrolling via GraphicsLayers.
+    FloatRect visibleRect = m_scrollLayer ? FloatRect({ }, frameView.sizeForVisibleContent()) : frameView.visibleContentRect();
 
     if (frameView.viewExposedRect())
         visibleRect.intersect(frameView.viewExposedRect().value());
@@ -1786,18 +1786,16 @@ void RenderLayerCompositor::frameViewDidChangeSize()
     if (auto* layer = m_renderView.layer())
         layer->setNeedsCompositingGeometryUpdate();
 
-    if (m_clipLayer) {
-        const FrameView& frameView = m_renderView.frameView();
-        m_clipLayer->setSize(frameView.sizeForVisibleContent());
-        m_clipLayer->setPosition(positionForClipLayer());
-
+    if (m_scrollLayer) {
+        updateScrollLayerClipping();
         frameViewDidScroll();
         updateOverflowControlsLayers();
 
 #if ENABLE(RUBBER_BANDING)
         if (m_layerForOverhangAreas) {
+            auto& frameView = m_renderView.frameView();
             m_layerForOverhangAreas->setSize(frameView.frameRect().size());
-            m_layerForOverhangAreas->setPosition(FloatPoint(0, m_renderView.frameView().topContentInset()));
+            m_layerForOverhangAreas->setPosition(FloatPoint(0, frameView.topContentInset()));
         }
 #endif
     }
@@ -1820,6 +1818,16 @@ void RenderLayerCompositor::updateScrollLayerPosition()
 
     if (auto* fixedBackgroundLayer = fixedRootBackgroundLayer())
         fixedBackgroundLayer->setPosition(frameView.scrollPositionForFixedPosition());
+}
+
+void RenderLayerCompositor::updateScrollLayerClipping()
+{
+    auto* layerForClipping = this->layerForClipping();
+    if (!layerForClipping)
+        return;
+
+    layerForClipping->setSize(m_renderView.frameView().sizeForVisibleContent());
+    layerForClipping->setPosition(positionForClipLayer());
 }
 
 FloatPoint RenderLayerCompositor::positionForClipLayer() const
@@ -2051,10 +2059,8 @@ void RenderLayerCompositor::updateRootLayerPosition()
         m_rootContentLayer->setPosition(m_renderView.frameView().positionForRootContentLayer());
         m_rootContentLayer->setAnchorPoint(FloatPoint3D());
     }
-    if (m_clipLayer) {
-        m_clipLayer->setSize(m_renderView.frameView().sizeForVisibleContent());
-        m_clipLayer->setPosition(positionForClipLayer());
-    }
+
+    updateScrollLayerClipping();
 
 #if ENABLE(RUBBER_BANDING)
     if (m_contentShadowLayer && m_rootContentLayer) {
@@ -3287,7 +3293,7 @@ void RenderLayerCompositor::updateOverflowControlsLayers()
 
             // We want the overhang areas layer to be positioned below the frame contents,
             // so insert it below the clip layer.
-            m_overflowControlsHostLayer->addChildBelow(*m_layerForOverhangAreas, m_clipLayer.get());
+            m_overflowControlsHostLayer->addChildBelow(*m_layerForOverhangAreas, layerForClipping());
         }
     } else
         GraphicsLayer::unparentAndClear(m_layerForOverhangAreas);
@@ -3399,23 +3405,30 @@ void RenderLayerCompositor::ensureRootLayer()
             m_overflowControlsHostLayer = GraphicsLayer::create(graphicsLayerFactory(), *this);
             m_overflowControlsHostLayer->setName("overflow controls host");
 
-            // Create a clipping layer if this is an iframe
-            m_clipLayer = GraphicsLayer::create(graphicsLayerFactory(), *this);
-            m_clipLayer->setName("frame clipping");
-            m_clipLayer->setMasksToBounds(true);
-            
-            m_scrollLayer = GraphicsLayer::create(graphicsLayerFactory(), *this);
+            auto scrollLayerType = GraphicsLayer::Type::Normal;
+#if PLATFORM(IOS_FAMILY)
+            if (m_renderView.settings().asyncFrameScrollingEnabled())
+                scrollLayerType = GraphicsLayer::Type::Scrolling;
+#endif
+            m_scrollLayer = GraphicsLayer::create(graphicsLayerFactory(), *this, scrollLayerType);
             m_scrollLayer->setName("frame scrolling");
 
-            // Hook them up
-            m_overflowControlsHostLayer->addChild(*m_clipLayer);
-            m_clipLayer->addChild(*m_scrollLayer);
+            if (scrollLayerType == GraphicsLayer::Type::Scrolling) {
+                // Scroll layer clips so there is no need for a separate clipping layer.
+                m_overflowControlsHostLayer->addChild(*m_scrollLayer);
+            } else {
+                m_clipLayer = GraphicsLayer::create(graphicsLayerFactory(), *this);
+                m_clipLayer->setName("frame clipping");
+                m_clipLayer->setMasksToBounds(true);
+                m_clipLayer->setAnchorPoint(FloatPoint3D());
+
+                m_clipLayer->addChild(*m_scrollLayer);
+                m_overflowControlsHostLayer->addChild(*m_clipLayer);
+            }
+
             m_scrollLayer->addChild(*m_rootContentLayer);
 
-            m_clipLayer->setSize(m_renderView.frameView().sizeForVisibleContent());
-            m_clipLayer->setPosition(positionForClipLayer());
-            m_clipLayer->setAnchorPoint(FloatPoint3D());
-
+            updateScrollLayerClipping();
             updateOverflowControlsLayers();
 
             if (hasCoordinatedScrolling())

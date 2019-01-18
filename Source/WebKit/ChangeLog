@@ -1,3 +1,31 @@
+2019-01-18  Antti Koivisto  <antti@apple.com>
+
+        Implement asynchronous frame scrolling for iOS
+        https://bugs.webkit.org/show_bug.cgi?id=193539
+        <rdar://problem/47379873>
+
+        Reviewed by Simon Fraser.
+
+        Add a scrolling node type that can handle UIScrollView backed frames.
+        It basically just instantiates and forwards to the existing ScrollingTreeScrollingNodeDelegateIOS.
+
+        * UIProcess/RemoteLayerTree/RemoteScrollingTree.cpp:
+        (WebKit::RemoteScrollingTree::createScrollingTreeNode):
+        * UIProcess/RemoteLayerTree/ios/RemoteScrollingCoordinatorProxyIOS.mm:
+        (WebKit::RemoteScrollingCoordinatorProxy::connectStateNodeLayers):
+        * UIProcess/RemoteLayerTree/ios/ScrollingTreeFrameScrollingNodeRemoteIOS.h: Added.
+        * UIProcess/RemoteLayerTree/ios/ScrollingTreeFrameScrollingNodeRemoteIOS.mm: Added.
+        (WebKit::ScrollingTreeFrameScrollingNodeRemoteIOS::create):
+        (WebKit::ScrollingTreeFrameScrollingNodeRemoteIOS::ScrollingTreeFrameScrollingNodeRemoteIOS):
+        (WebKit::ScrollingTreeFrameScrollingNodeRemoteIOS::~ScrollingTreeFrameScrollingNodeRemoteIOS):
+        (WebKit::ScrollingTreeFrameScrollingNodeRemoteIOS::commitStateBeforeChildren):
+        (WebKit::ScrollingTreeFrameScrollingNodeRemoteIOS::commitStateAfterChildren):
+        (WebKit::ScrollingTreeFrameScrollingNodeRemoteIOS::updateLayersAfterAncestorChange):
+        (WebKit::ScrollingTreeFrameScrollingNodeRemoteIOS::scrollPosition const):
+        (WebKit::ScrollingTreeFrameScrollingNodeRemoteIOS::setScrollLayerPosition):
+        (WebKit::ScrollingTreeFrameScrollingNodeRemoteIOS::updateLayersAfterDelegatedScroll):
+        * WebKit.xcodeproj/project.pbxproj:
+
 2019-01-18  Chris Dumez  <cdumez@apple.com>
 
         Regression(PSON) Scroll position is not always restored properly when navigating back
