@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014-2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,26 +23,24 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "WKWebsiteDataStorePrivate.h"
+#pragma once
 
-#if WK_API_ENABLED
+#include <wtf/CompletionHandler.h>
 
-#import "APIWebsiteDataStore.h"
-#import "WKObject.h"
+namespace WebCore {
+struct SecurityOriginData;
+}
 
 namespace WebKit {
 
-template<> struct WrapperTraits<API::WebsiteDataStore> {
-    using WrapperClass = WKWebsiteDataStore;
+class WebsiteDataStoreClient {
+public:
+    virtual ~WebsiteDataStoreClient() { }
+
+    virtual void requestCacheStorageSpace(const WebCore::SecurityOriginData& topOrigin, const WebCore::SecurityOriginData& frameOrigin, uint64_t quota, uint64_t currentSize, uint64_t spaceRequired, CompletionHandler<void(Optional<uint64_t>)>&& completionHandler)
+    {
+        completionHandler({ });
+    }
 };
 
-}
-
-@interface WKWebsiteDataStore () <WKObject> {
-@package
-    API::ObjectStorage<API::WebsiteDataStore> _websiteDataStore;
-    RetainPtr<id <_WKWebsiteDataStoreDelegate> > _delegate;
-}
-@end
-
-#endif // WK_API_ENABLED
+} // namespace WebKit

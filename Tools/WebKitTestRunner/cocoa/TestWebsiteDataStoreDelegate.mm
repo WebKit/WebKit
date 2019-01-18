@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014-2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,26 +23,27 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "WKWebsiteDataStorePrivate.h"
+#import "config.h"
+#import "TestWebsiteDataStoreDelegate.h"
 
 #if WK_API_ENABLED
 
-#import "APIWebsiteDataStore.h"
-#import "WKObject.h"
-
-namespace WebKit {
-
-template<> struct WrapperTraits<API::WebsiteDataStore> {
-    using WrapperClass = WKWebsiteDataStore;
-};
-
+@implementation TestWebsiteDataStoreDelegate { }
+- (instancetype)init
+{
+    _shouldAllowRaisingQuota = false;
+    return self;
 }
 
-@interface WKWebsiteDataStore () <WKObject> {
-@package
-    API::ObjectStorage<API::WebsiteDataStore> _websiteDataStore;
-    RetainPtr<id <_WKWebsiteDataStoreDelegate> > _delegate;
+- (void)requestCacheStorageSpace:(NSURL *)mainFrameURL frameOrigin:(NSURL *)frameURL quota:(NSUInteger)quota currentSize:(NSUInteger)currentSize spaceRequired:(NSUInteger)spaceRequired decisionHandler:(void (^)(unsigned long long quota))decisionHandler
+{
+    decisionHandler(_shouldAllowRaisingQuota ? 2 * quota : quota);
+}
+
+- (void)setAllowRaisingQuota:(BOOL)shouldAllowRaisingQuota
+{
+    _shouldAllowRaisingQuota = shouldAllowRaisingQuota;
 }
 @end
 
-#endif // WK_API_ENABLED
+#endif

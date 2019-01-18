@@ -248,6 +248,7 @@ public:
     void clearDOMCaches();
     bool hasDOMCache(WKStringRef origin);
     uint64_t domCacheSize(WKStringRef origin);
+    void allowCacheStorageQuotaIncrease();
 
     void setIDBPerOriginQuota(uint64_t);
 

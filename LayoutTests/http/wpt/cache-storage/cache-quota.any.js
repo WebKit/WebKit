@@ -114,7 +114,7 @@ promise_test((test) => {
         return cache.put("1ko-v2", response1ko.clone()).then(assert_unreached, (e) => {
             assert_equals(e.name, "QuotaExceededError");
         });
-   }).then(() => {
+    }).then(() => {
         return cache.delete("1ko-v1");
     }).then(() => {
         return cache.put("1ko-v2", response1ko.clone());
@@ -151,7 +151,10 @@ promise_test((test) => {
         return cache.put("1ko", response1ko.clone()).then(assert_unreached, (e) => {
             assert_equals(e.name, "QuotaExceededError");
         });
-   }).then(() => {
+    }).then(() => {
+        testRunner.allowCacheStorageQuotaIncrease();
+        return cache.put("1ko", response1ko.clone());
+    }).then(() => {
         return cache.delete("1ko-padded-to-200ko");
     }).then(() => {
         return cache.put("1ko-v2", response1ko.clone());

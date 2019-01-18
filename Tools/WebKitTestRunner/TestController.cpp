@@ -2832,6 +2832,13 @@ uint64_t TestController::domCacheSize(WKStringRef origin)
     return context.result;
 }
 
+#if !PLATFORM(COCOA)
+void TestController::allowCacheStorageQuotaIncrease()
+{
+    // FIXME: To implement.
+}
+#endif
+
 struct ResourceStatisticsCallbackContext {
     explicit ResourceStatisticsCallbackContext(TestController& controller)
         : testController(controller)

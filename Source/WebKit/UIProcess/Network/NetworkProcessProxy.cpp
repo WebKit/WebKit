@@ -43,6 +43,8 @@
 #include "WebProcessPool.h"
 #include "WebUserContentControllerProxy.h"
 #include "WebsiteData.h"
+#include "WebsiteDataStoreClient.h"
+#include <WebCore/ClientOrigin.h>
 #include <wtf/CompletionHandler.h>
 
 #if ENABLE(SEC_ITEM_SHIM)
@@ -743,8 +745,7 @@ void NetworkProcessProxy::requestCacheStorageSpace(PAL::SessionID sessionID, con
         return;
     }
 
-    // FIXME: Ask WebsiteDataStore about updating the quota for this origin.
-    completionHandler(quota);
+    store->client().requestCacheStorageSpace(origin.topOrigin, origin.clientOrigin, quota, currentSize, spaceRequired, WTFMove(completionHandler));
 }
 
 } // namespace WebKit

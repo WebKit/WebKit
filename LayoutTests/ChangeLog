@@ -1,5 +1,18 @@
 2019-01-18  Youenn Fablet  <youenn@apple.com>
 
+        Add a new SPI to request for cache storage quota increase
+        https://bugs.webkit.org/show_bug.cgi?id=193323
+
+        Reviewed by Alex Christensen.
+
+        Use new testRunner method to bump the cache quota and verify adding a
+        cache entry works when bumping the cache quota.
+
+        * http/wpt/cache-storage/cache-quota.any.js:
+        (promise_test):
+
+2019-01-18  Youenn Fablet  <youenn@apple.com>
+
         A track source should be unmuted whenever reenabled after setDirection changes
         https://bugs.webkit.org/show_bug.cgi?id=193554
         <rdar://problem/47366196>

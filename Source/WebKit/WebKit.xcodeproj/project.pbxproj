@@ -876,6 +876,7 @@
 		41897ED11F415D680016FA42 /* WebCacheStorageConnection.h in Headers */ = {isa = PBXBuildFile; fileRef = 41897ECD1F415D5C0016FA42 /* WebCacheStorageConnection.h */; };
 		41897ED81F415D8A0016FA42 /* CacheStorageEngine.h in Headers */ = {isa = PBXBuildFile; fileRef = 41897ED21F415D850016FA42 /* CacheStorageEngine.h */; };
 		41897EDA1F415D8A0016FA42 /* CacheStorageEngineConnection.h in Headers */ = {isa = PBXBuildFile; fileRef = 41897ED41F415D850016FA42 /* CacheStorageEngineConnection.h */; };
+		41C5379021F15B55008B1FAD /* _WKWebsiteDataStoreDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = 41C5378F21F1362D008B1FAD /* _WKWebsiteDataStoreDelegate.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		41D129DA1F3D101800D15E47 /* WebCacheStorageProvider.h in Headers */ = {isa = PBXBuildFile; fileRef = 41D129D91F3D101400D15E47 /* WebCacheStorageProvider.h */; };
 		41DC45961E3D6E2200B11F51 /* NetworkRTCProvider.h in Headers */ = {isa = PBXBuildFile; fileRef = 41DC45941E3D6E1E00B11F51 /* NetworkRTCProvider.h */; };
 		41DC459C1E3DBB2800B11F51 /* LibWebRTCSocketClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 41DC459A1E3DBB2400B11F51 /* LibWebRTCSocketClient.h */; };
@@ -2989,6 +2990,7 @@
 		4112EDD720E4077500BEA92A /* com.apple.NPSafeSubmit.sb */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = com.apple.NPSafeSubmit.sb; sourceTree = "<group>"; };
 		4112EDD820E4077500BEA92A /* com.apple.NPSafeInput.sb */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = com.apple.NPSafeInput.sb; sourceTree = "<group>"; };
 		4112EDD920E4077500BEA92A /* com.apple.BocomSubmitCtrl.sb */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = com.apple.BocomSubmitCtrl.sb; sourceTree = "<group>"; };
+		4118DC1B21E6D11A00DE04C7 /* WebsiteDataStoreClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebsiteDataStoreClient.h; sourceTree = "<group>"; };
 		411A8DD920DDB6050060D34F /* WKMockMediaDevice.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKMockMediaDevice.h; sourceTree = "<group>"; };
 		411A8DDA20DDB6050060D34F /* WKMockMediaDevice.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WKMockMediaDevice.cpp; sourceTree = "<group>"; };
 		411B22621E371244004F7363 /* LibWebRTCNetwork.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = LibWebRTCNetwork.h; path = Network/webrtc/LibWebRTCNetwork.h; sourceTree = "<group>"; };
@@ -3044,6 +3046,7 @@
 		41B7ED6F206965900087D853 /* NetworkMDNSRegister.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = NetworkMDNSRegister.cpp; sourceTree = "<group>"; };
 		41B7ED70206965900087D853 /* NetworkMDNSRegister.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NetworkMDNSRegister.h; sourceTree = "<group>"; };
 		41B7ED71206965900087D853 /* NetworkMDNSRegister.messages.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = NetworkMDNSRegister.messages.in; sourceTree = "<group>"; };
+		41C5378F21F1362D008B1FAD /* _WKWebsiteDataStoreDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = _WKWebsiteDataStoreDelegate.h; sourceTree = "<group>"; };
 		41C858191F510DEE0065E085 /* CacheStorageEngineCache.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CacheStorageEngineCache.cpp; sourceTree = "<group>"; };
 		41D0FC7D20E43A5100076AE8 /* Network-OSX-sandbox.entitlements */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.entitlements; path = "Network-OSX-sandbox.entitlements"; sourceTree = "<group>"; };
 		41D129D91F3D101400D15E47 /* WebCacheStorageProvider.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebCacheStorageProvider.h; sourceTree = "<group>"; };
@@ -4845,7 +4848,7 @@
 				1A53C2A51A32569F004E8C70 /* WebsiteDataStore.h */,
 				5C46C0AC21B7198B00BC5991 /* WebsiteDataStoreConfiguration.cpp */,
 				5C46C0AD21B7198C00BC5991 /* WebsiteDataStoreConfiguration.h */,
-				4118DC1B21E6D11A00DE04C7 /* WebsiteDataStoreQuotaManager.h */,
+				4118DC1B21E6D11A00DE04C7 /* WebsiteDataStoreClient.h */,
 			);
 			path = WebsiteData;
 			sourceTree = "<group>";
@@ -6054,6 +6057,7 @@
 				5120C8331E5B71570025B250 /* _WKWebsiteDataStoreConfiguration.h */,
 				5120C8341E5B71570025B250 /* _WKWebsiteDataStoreConfiguration.mm */,
 				5C46C0AE21B71AE200BC5991 /* _WKWebsiteDataStoreConfigurationInternal.h */,
+				41C5378F21F1362D008B1FAD /* _WKWebsiteDataStoreDelegate.h */,
 				5CB237891DF0DD4300117AA3 /* _WKWebsitePolicies.h */,
 				5CB2378A1DF0DD4300117AA3 /* _WKWebsitePolicies.mm */,
 				5CB2378D1DF0E0C200117AA3 /* _WKWebsitePoliciesInternal.h */,
@@ -8925,6 +8929,7 @@
 				7CB365B11D31DD1E007158CA /* APIUserInitiatedAction.h in Headers */,
 				7C89D2941A67122F003A5FDE /* APIUserScript.h in Headers */,
 				2D8786241BDB58FF00D02ABB /* APIUserStyleSheet.h in Headers */,
+				41C5379021F15B55008B1FAD /* _WKWebsiteDataStoreDelegate.h in Headers */,
 				C5E1AFED16B21017006CC1F2 /* APIWebArchive.h in Headers */,
 				C5E1AFEF16B21029006CC1F2 /* APIWebArchiveResource.h in Headers */,
 				1AE286841C7F93860069AC4F /* APIWebsiteDataRecord.h in Headers */,
@@ -9832,7 +9837,6 @@
 				1DB01943211CF002009FB3E8 /* WKShareSheet.h in Headers */,
 				513E462D1AD837560016234A /* WKSharingServicePickerDelegate.h in Headers */,
 				93F549B41E3174B7000E7239 /* WKSnapshotConfiguration.h in Headers */,
-				4118DC1F21E7BF5D00DE04C7 /* WKStorageQuotaDelegatePrivate.h in Headers */,
 				BC407606124FF0270068F20A /* WKString.h in Headers */,
 				BC40761A124FF0370068F20A /* WKStringCF.h in Headers */,
 				BC9099801256A98200083756 /* WKStringPrivate.h in Headers */,

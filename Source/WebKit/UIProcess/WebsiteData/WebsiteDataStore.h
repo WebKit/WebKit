@@ -27,6 +27,7 @@
 
 #include "NetworkSessionCreationParameters.h"
 #include "WebProcessLifetimeObserver.h"
+#include "WebsiteDataStoreClient.h"
 #include "WebsiteDataStoreConfiguration.h"
 #include <WebCore/Cookie.h>
 #include <WebCore/SecurityOriginData.h>
@@ -188,6 +189,9 @@ public:
 
     const WebsiteDataStoreConfiguration& configuration() { return m_configuration.get(); }
 
+    WebsiteDataStoreClient& client() { return m_client.get(); }
+    void setClient(UniqueRef<WebsiteDataStoreClient>&& client) { m_client = WTFMove(client); }
+
 private:
     explicit WebsiteDataStore(PAL::SessionID);
     explicit WebsiteDataStore(Ref<WebsiteDataStoreConfiguration>&&, PAL::SessionID);
@@ -256,6 +260,8 @@ private:
 #if ENABLE(WEB_AUTHN)
     UniqueRef<AuthenticatorManager> m_authenticatorManager;
 #endif
+
+    UniqueRef<WebsiteDataStoreClient> m_client;
 };
 
 }

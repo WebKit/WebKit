@@ -1,3 +1,30 @@
+2019-01-18  Youenn Fablet  <youenn@apple.com>
+
+        Add a new SPI to request for cache storage quota increase
+        https://bugs.webkit.org/show_bug.cgi?id=193323
+
+        Reviewed by Alex Christensen.
+
+        Implement WebsiteDataStore quota delegate to handle quota requests.
+        By default, do not update quota.
+        Update quota if test calls the new testRunner.allowCacheStorageQuotaIncrease method.
+
+        * WebKitTestRunner/InjectedBundle/Bindings/TestRunner.idl:
+        * WebKitTestRunner/InjectedBundle/TestRunner.cpp:
+        (WTR::TestRunner::allowCacheStorageQuotaIncrease):
+        * WebKitTestRunner/InjectedBundle/TestRunner.h:
+        * WebKitTestRunner/TestController.cpp:
+        (WTR::TestController::allowCacheStorageQuotaIncrease):
+        * WebKitTestRunner/TestController.h:
+        * WebKitTestRunner/TestInvocation.cpp:
+        (WTR::TestInvocation::didReceiveSynchronousMessageFromInjectedBundle):
+        * WebKitTestRunner/cocoa/TestControllerCocoa.mm:
+        (-[CacheStorageQuotaManager init]):
+        (-[CacheStorageQuotaManager _requestCacheStorageSpace:frameOrigin:quota:currentSize:spaceRequired:decisionHandler:]):
+        (WTR::initializeWebViewConfiguration):
+        (WTR::TestController::cocoaResetStateToConsistentValues):
+        (WTR::TestController::allowCacheStorageQuotaIncrease):
+
 2019-01-18  Aakash Jain  <aakash_jain@apple.com>
 
         [ews-build] Pass owner to the triggered builds

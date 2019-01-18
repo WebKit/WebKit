@@ -40,6 +40,7 @@
 #include "WebResourceLoadStatisticsStore.h"
 #include "WebResourceLoadStatisticsStoreMessages.h"
 #include "WebsiteData.h"
+#include "WebsiteDataStoreClient.h"
 #include "WebsiteDataStoreParameters.h"
 #include <WebCore/ApplicationCacheStorage.h>
 #include <WebCore/DatabaseTracker.h>
@@ -97,6 +98,7 @@ WebsiteDataStore::WebsiteDataStore(Ref<WebsiteDataStoreConfiguration>&& configur
 #if ENABLE(WEB_AUTHN)
     , m_authenticatorManager(makeUniqueRef<AuthenticatorManager>())
 #endif
+    , m_client(makeUniqueRef<WebsiteDataStoreClient>())
 {
     WTF::setProcessPrivileges(allPrivileges());
     maybeRegisterWithSessionIDMap();
@@ -114,6 +116,7 @@ WebsiteDataStore::WebsiteDataStore(PAL::SessionID sessionID)
 #if ENABLE(WEB_AUTHN)
     , m_authenticatorManager(makeUniqueRef<AuthenticatorManager>())
 #endif
+    , m_client(makeUniqueRef<WebsiteDataStoreClient>())
 {
     maybeRegisterWithSessionIDMap();
     platformInitialize();

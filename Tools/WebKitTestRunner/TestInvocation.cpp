@@ -1428,6 +1428,11 @@ WKRetainPtr<WKTypeRef> TestInvocation::didReceiveSynchronousMessageFromInjectedB
         return result;
     }
 
+    if (WKStringIsEqualToUTF8CString(messageName, "AllowCacheStorageQuotaIncrease")) {
+        TestController::singleton().allowCacheStorageQuotaIncrease();
+        return nullptr;
+    }
+
     if (WKStringIsEqualToUTF8CString(messageName, "SetIDBPerOriginQuota")) {
         ASSERT(WKGetTypeID(messageBody) == WKUInt64GetTypeID());
         WKUInt64Ref quota = static_cast<WKUInt64Ref>(messageBody);

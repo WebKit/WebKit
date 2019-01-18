@@ -29,6 +29,7 @@
 #if WK_API_ENABLED
 
 #import "APIString.h"
+#import "CompletionHandlerCallChecker.h"
 #import "WKHTTPCookieStoreInternal.h"
 #import "WKNSArray.h"
 #import "WKWebViewInternal.h"
@@ -38,9 +39,45 @@
 #import "WebResourceLoadStatisticsTelemetry.h"
 #import "WebsiteDataFetchOption.h"
 #import "_WKWebsiteDataStoreConfiguration.h"
+#import "_WKWebsiteDataStoreDelegate.h"
 #import <WebKit/ServiceWorkerProcessProxy.h>
 #import <wtf/BlockPtr.h>
 #import <wtf/URL.h>
+#import <wtf/WeakObjCPtr.h>
+
+class WebsiteDataStoreClient : public WebKit::WebsiteDataStoreClient {
+public:
+    explicit WebsiteDataStoreClient(id <_WKWebsiteDataStoreDelegate> delegate)
+        : m_delegate(delegate)
+        , m_hasRequestCacheStorageSpaceSelector([m_delegate.get() respondsToSelector:@selector(requestCacheStorageSpace: frameOrigin: quota: currentSize: spaceRequired: decisionHandler:)])
+    {
+    }
+
+private:
+    void requestCacheStorageSpace(const WebCore::SecurityOriginData& topOrigin, const WebCore::SecurityOriginData& frameOrigin, uint64_t quota, uint64_t currentSize, uint64_t spaceRequired, CompletionHandler<void(Optional<uint64_t>)>&& completionHandler) final
+    {
+        if (!m_hasRequestCacheStorageSpaceSelector || !m_delegate) {
+            completionHandler({ });
+            return;
+        }
+
+        auto checker = WebKit::CompletionHandlerCallChecker::create(m_delegate.getAutoreleased(), @selector(requestCacheStorageSpace: frameOrigin: quota: currentSize: spaceRequired: decisionHandler:));
+        auto decisionHandler = makeBlockPtr([completionHandler = WTFMove(completionHandler), checker = WTFMove(checker)](unsigned long long quota) mutable {
+            if (checker->completionHandlerHasBeenCalled())
+                return;
+            checker->didCallCompletionHandler();
+            completionHandler(quota);
+        });
+
+        URL mainFrameURL { URL(), topOrigin.toString() };
+        URL frameURL { URL(), frameOrigin.toString() };
+
+        [m_delegate.getAutoreleased() requestCacheStorageSpace:mainFrameURL frameOrigin:frameURL quota:quota currentSize:currentSize spaceRequired:spaceRequired decisionHandler:decisionHandler.get()];
+    }
+
+    WeakObjCPtr<id <_WKWebsiteDataStoreDelegate> > m_delegate;
+    bool m_hasRequestCacheStorageSpaceSelector { false };
+};
 
 @implementation WKWebsiteDataStore
 
@@ -381,6 +418,17 @@ static Vector<WebKit::WebsiteDataRecord> toWebsiteDataRecords(NSArray *dataRecor
 - (bool)_hasRegisteredServiceWorker
 {
     return WebKit::ServiceWorkerProcessProxy::hasRegisteredServiceWorkers(_websiteDataStore->websiteDataStore().serviceWorkerRegistrationDirectory());
+}
+
+- (id <_WKWebsiteDataStoreDelegate>)_delegate
+{
+    return _delegate.get();
+}
+
+- (void)set_delegate:(id <_WKWebsiteDataStoreDelegate>)delegate
+{
+    _delegate = delegate;
+    _websiteDataStore->websiteDataStore().setClient(makeUniqueRef<WebsiteDataStoreClient>(delegate));
 }
 
 @end

@@ -2367,6 +2367,12 @@ uint64_t TestRunner::domCacheSize(JSStringRef origin)
     return WKUInt64GetValue(static_cast<WKUInt64Ref>(returnData));
 }
 
+void TestRunner::allowCacheStorageQuotaIncrease()
+{
+    WKRetainPtr<WKStringRef> messageName(AdoptWK, WKStringCreateWithUTF8CString("AllowCacheStorageQuotaIncrease"));
+    WKBundlePostSynchronousMessage(InjectedBundle::singleton().bundle(), messageName.get(), nullptr, nullptr);
+}
+
 void TestRunner::getApplicationManifestThen(JSValueRef callback)
 {
     cacheTestRunnerCallback(GetApplicationManifestCallbackID, callback);

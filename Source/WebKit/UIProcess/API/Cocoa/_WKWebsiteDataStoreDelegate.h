@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014-2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,26 +23,19 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "WKWebsiteDataStorePrivate.h"
+#include <WebKit/WKFoundation.h>
 
 #if WK_API_ENABLED
 
-#import "APIWebsiteDataStore.h"
-#import "WKObject.h"
+#import <Foundation/Foundation.h>
 
-namespace WebKit {
+WK_API_AVAILABLE(macosx(WK_MAC_TBA), ios(WK_IOS_TBA))
+@protocol _WKWebsiteDataStoreDelegate <NSObject>
 
-template<> struct WrapperTraits<API::WebsiteDataStore> {
-    using WrapperClass = WKWebsiteDataStore;
-};
+@optional
 
-}
+- (void)requestCacheStorageSpace:(NSURL *)mainFrameURL frameOrigin:(NSURL *)frameURL quota:(NSUInteger)quota currentSize:(NSUInteger)currentSize spaceRequired:(NSUInteger)spaceRequired decisionHandler:(void (^)(unsigned long long quota))decisionHandler;
 
-@interface WKWebsiteDataStore () <WKObject> {
-@package
-    API::ObjectStorage<API::WebsiteDataStore> _websiteDataStore;
-    RetainPtr<id <_WKWebsiteDataStoreDelegate> > _delegate;
-}
 @end
 
-#endif // WK_API_ENABLED
+#endif

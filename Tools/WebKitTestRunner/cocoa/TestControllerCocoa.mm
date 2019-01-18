@@ -31,6 +31,7 @@
 #import "StringFunctions.h"
 #import "TestInvocation.h"
 #import "TestRunnerWKWebView.h"
+#import "TestWebsiteDataStoreDelegate.h"
 #import <Foundation/Foundation.h>
 #import <Security/SecItem.h>
 #import <WebKit/WKContextConfigurationRef.h>
@@ -54,6 +55,10 @@
 namespace WTR {
 
 static WKWebViewConfiguration *globalWebViewConfiguration;
+
+#if WK_API_ENABLED
+static TestWebsiteDataStoreDelegate *globalWebsiteDataStoreDelegateClient;
+#endif
 
 void initializeWebViewConfiguration(const char* libraryPath, WKStringRef injectedBundlePath, WKContextRef context, WKContextConfigurationRef contextConfiguration)
 {
@@ -79,6 +84,12 @@ void initializeWebViewConfiguration(const char* libraryPath, WKStringRef injecte
 
     [globalWebViewConfiguration.websiteDataStore _setResourceLoadStatisticsEnabled:YES];
     [globalWebViewConfiguration.websiteDataStore _resourceLoadStatisticsSetShouldSubmitTelemetry:NO];
+
+#if WK_API_ENABLED
+    [globalWebsiteDataStoreDelegateClient release];
+    globalWebsiteDataStoreDelegateClient = [[TestWebsiteDataStoreDelegate alloc] init];
+    [globalWebViewConfiguration.websiteDataStore set_delegate:globalWebsiteDataStoreDelegateClient];
+#endif
 
 #if PLATFORM(IOS_FAMILY)
     globalWebViewConfiguration.allowsInlineMediaPlayback = YES;
@@ -252,6 +263,8 @@ void TestController::cocoaResetStateToConsistentValues(const TestOptions& option
         if (options.shouldShowSpellCheckingDots)
             [platformView toggleContinuousSpellChecking:nil];
     }
+
+    [globalWebsiteDataStoreDelegateClient setAllowRaisingQuota: false];
 #endif
 }
 
@@ -383,6 +396,13 @@ bool TestController::keyExistsInKeychain(const String& attrLabel, const String& 
     ASSERT(status == errSecItemNotFound);
 #endif
     return false;
+}
+
+void TestController::allowCacheStorageQuotaIncrease()
+{
+#if WK_API_ENABLED
+    [globalWebsiteDataStoreDelegateClient setAllowRaisingQuota: true];
+#endif
 }
 
 } // namespace WTR
