@@ -13852,6 +13852,7 @@ private:
     
     LValue caged(Gigacage::Kind kind, LValue ptr)
     {
+#if GIGACAGE_ENABLED
         if (!Gigacage::isEnabled(kind))
             return ptr;
         
@@ -13880,6 +13881,9 @@ private:
         // and possibly other smart things if we want to be able to remove this opaque.
         // https://bugs.webkit.org/show_bug.cgi?id=175493
         return m_out.opaque(result);
+#else
+        return ptr;
+#endif
     }
     
     void buildSwitch(SwitchData* data, LType type, LValue switchValue)
