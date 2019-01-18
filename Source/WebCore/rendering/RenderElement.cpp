@@ -1820,7 +1820,7 @@ void RenderElement::paintFocusRing(PaintInfo& paintInfo, const RenderStyle& styl
         pixelSnappedFocusRingRects.append(snapRectToDevicePixels(rect, deviceScaleFactor));
     }
     // FIXME: The following code should only be compiled for Mac. See <https://bugs.webkit.org/show_bug.cgi?id=193591>.
-#if PLATFORM(COCOA)
+#if ENABLE(FULL_KEYBOARD_ACCESS)
     bool needsRepaint;
     if (style.hasBorderRadius()) {
         Path path = PathUtilities::pathWithShrinkWrappedRectsForOutline(pixelSnappedFocusRingRects, style.border(), outlineOffset, style.direction(), style.writingMode(),

@@ -1,5 +1,16 @@
 2019-01-18  Daniel Bates  <dabates@apple.com>
 
+        Another attempt to fix the iOS build following <https://trac.webkit.org/changeset/240174>
+        (https://bugs.webkit.org/show_bug.cgi?id=193583)
+
+        Substitute ENABLE(FULL_KEYBOARD_ACCESS) for PLATFORM(MAC). On Mac, we always build with
+        ENABLE(FULL_KEYBOARD_ACCESS) enabled.
+
+        * rendering/RenderElement.cpp:
+        (WebCore::RenderElement::paintFocusRing):
+
+2019-01-18  Daniel Bates  <dabates@apple.com>
+
         Fix some build issues.
 
         Including UIKitSoftLinking.h is not compatible with unified builds.
