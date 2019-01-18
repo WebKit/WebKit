@@ -247,7 +247,7 @@ void FetchResponse::fetch(ScriptExecutionContext& context, FetchRequest& request
 const String& FetchResponse::url() const
 {
     if (m_responseURL.isNull()) {
-        URL url = m_internalResponse.url();
+        URL url = filteredResponse().url();
         url.removeFragmentIdentifier();
         m_responseURL = url.string();
     }

@@ -1,3 +1,12 @@
+2019-01-18  Ali Juma  <ajuma@chromium.org>
+
+        FetchResponse::url should return the empty string for tainted responses
+        https://bugs.webkit.org/show_bug.cgi?id=193553
+
+        Reviewed by Youenn Fablet.
+
+        * http/wpt/fetch/response-opaque-clone.html:
+
 2019-01-18  Jonathan Bedard  <jbedard@apple.com>
 
         webkitpy: Implement device type specific expected results (Follow-up fix)
