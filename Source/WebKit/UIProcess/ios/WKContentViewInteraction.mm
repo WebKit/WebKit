@@ -81,6 +81,7 @@
 #import <WebCore/FloatQuad.h>
 #import <WebCore/FontAttributeChanges.h>
 #import <WebCore/InputMode.h>
+#import <WebCore/KeyEventCodesIOS.h>
 #import <WebCore/LocalizedStrings.h>
 #import <WebCore/NotImplemented.h>
 #import <WebCore/Pasteboard.h>
@@ -651,9 +652,6 @@ static inline bool hasFocusedElement(WebKit::FocusedElementInformation focusedEl
         [self.superview addSubview:_interactionViewsContainerView.get()];
     }
 
-    _keyboardScrollingAnimator = adoptNS([[WKKeyboardScrollViewAnimator alloc] initWithScrollView:_webView.scrollView]);
-    [_keyboardScrollingAnimator setDelegate:self];
-
     [self.layer addObserver:self forKeyPath:@"transform" options:NSKeyValueObservingOptionInitial context:nil];
 
     _touchEventGestureRecognizer = adoptNS([[UIWebTouchEventsGestureRecognizer alloc] initWithTarget:self action:@selector(_webTouchEventsRecognized:) touchDelegate:self]);
@@ -846,9 +844,6 @@ static inline bool hasFocusedElement(WebKit::FocusedElementInformation focusedEl
     _inputViewUpdateDeferrer = nullptr;
     _focusedElementInformation = { };
     
-    [_keyboardScrollingAnimator invalidate];
-    _keyboardScrollingAnimator = nil;
-
 #if HAVE(PENCILKIT)
     _drawingCoordinator = nil;
 #endif
@@ -2182,8 +2177,6 @@ static void cancelPotentialTapIfNecessary(WKContentView* contentView)
 {
     _page->hideValidationMessage();
 
-    [_keyboardScrollingAnimator willStartInteractiveScroll];
-
     _canSendTouchEventsAsynchronously = YES;
 }
 
@@ -2539,6 +2532,8 @@ WEBCORE_COMMAND_FOR_WEBVIEW(pasteAndMatchStyle);
 
 - (BOOL)canPerformActionForWebView:(SEL)action withSender:(id)sender
 {
+    if (action == @selector(_arrowKey:))
+        return [self isFirstResponder];
     if (action == @selector(_nextAccessoryTab:))
         return hasFocusedElement(_focusedElementInformation) && _focusedElementInformation.hasNextNode;
     if (action == @selector(_previousAccessoryTab:))
@@ -3313,14 +3308,44 @@ static void selectionChangedWithTouch(WKContentView *view, const WebCore::IntPoi
 
 - (NSArray *)keyCommands
 {
-    if (!_page->editorState().isContentEditable)
-        return nil;
+    static NSArray *nonEditableKeyCommands = [@[
+        [UIKeyCommand keyCommandWithInput:UIKeyInputUpArrow modifierFlags:0 action:@selector(_arrowKey:)],
+        [UIKeyCommand keyCommandWithInput:UIKeyInputDownArrow modifierFlags:0 action:@selector(_arrowKey:)],
+        [UIKeyCommand keyCommandWithInput:UIKeyInputLeftArrow modifierFlags:0 action:@selector(_arrowKey:)],
+        [UIKeyCommand keyCommandWithInput:UIKeyInputRightArrow modifierFlags:0 action:@selector(_arrowKey:)],
 
-    static NSArray* editableKeyCommands = [@[
+        [UIKeyCommand keyCommandWithInput:UIKeyInputUpArrow modifierFlags:UIKeyModifierCommand action:@selector(_arrowKey:)],
+        [UIKeyCommand keyCommandWithInput:UIKeyInputDownArrow modifierFlags:UIKeyModifierCommand action:@selector(_arrowKey:)],
+
+        [UIKeyCommand keyCommandWithInput:UIKeyInputUpArrow modifierFlags:UIKeyModifierShift action:@selector(_arrowKey:)],
+        [UIKeyCommand keyCommandWithInput:UIKeyInputDownArrow modifierFlags:UIKeyModifierShift action:@selector(_arrowKey:)],
+        [UIKeyCommand keyCommandWithInput:UIKeyInputLeftArrow modifierFlags:UIKeyModifierShift action:@selector(_arrowKey:)],
+        [UIKeyCommand keyCommandWithInput:UIKeyInputRightArrow modifierFlags:UIKeyModifierShift action:@selector(_arrowKey:)],
+
+        [UIKeyCommand keyCommandWithInput:UIKeyInputUpArrow modifierFlags:UIKeyModifierAlternate action:@selector(_arrowKey:)],
+        [UIKeyCommand keyCommandWithInput:UIKeyInputDownArrow modifierFlags:UIKeyModifierAlternate action:@selector(_arrowKey:)],
+        [UIKeyCommand keyCommandWithInput:UIKeyInputLeftArrow modifierFlags:UIKeyModifierAlternate action:@selector(_arrowKey:)],
+        [UIKeyCommand keyCommandWithInput:UIKeyInputRightArrow modifierFlags:UIKeyModifierAlternate action:@selector(_arrowKey:)],
+
+        [UIKeyCommand keyCommandWithInput:@" " modifierFlags:0 action:@selector(_arrowKey:)],
+        [UIKeyCommand keyCommandWithInput:@" " modifierFlags:UIKeyModifierShift action:@selector(_arrowKey:)],
+
+        [UIKeyCommand keyCommandWithInput:UIKeyInputPageDown modifierFlags:0 action:@selector(_arrowKey:)],
+        [UIKeyCommand keyCommandWithInput:UIKeyInputPageDown modifierFlags:0 action:@selector(_arrowKey:)],
+    ] retain];
+
+    static NSArray *editableKeyCommands = [@[
         [UIKeyCommand keyCommandWithInput:@"\t" modifierFlags:0 action:@selector(_nextAccessoryTab:)],
         [UIKeyCommand keyCommandWithInput:@"\t" modifierFlags:UIKeyModifierShift action:@selector(_previousAccessoryTab:)]
     ] retain];
-    return editableKeyCommands;
+
+    return (_page->editorState().isContentEditable) ? editableKeyCommands : nonEditableKeyCommands;
+}
+
+- (void)_arrowKeyForWebView:(id)sender
+{
+    UIKeyCommand *command = sender;
+    [self handleKeyEvent:command._triggeringEvent];
 }
 
 - (void)_nextAccessoryTabForWebView:(id)sender
@@ -3973,9 +3998,6 @@ static NSString *contentTypeFromFieldName(WebCore::AutofillFieldName fieldName)
 
 - (void)_didHandleKeyEvent:(::WebEvent *)event eventWasHandled:(BOOL)eventWasHandled
 {
-    if (!(event.keyboardFlags & WebEventKeyboardInputModifierFlagsChanged))
-        [_keyboardScrollingAnimator handleKeyEvent:event];
-    
     if (auto handler = WTFMove(_keyWebEventHandler)) {
         handler(event, eventWasHandled);
         return;
@@ -4001,6 +4023,75 @@ static NSString *contentTypeFromFieldName(WebCore::AutofillFieldName fieldName)
     _uiEventBeingResent = nil;
 }
 
+- (Optional<WebCore::FloatPoint>)_scrollOffsetForEvent:(::WebEvent *)event
+{
+    static const unsigned kWebSpaceKey = 0x20;
+
+    if (_page->editorState().isContentEditable)
+        return WTF::nullopt;
+
+    if (_focusedElementInformation.elementType == WebKit::InputType::Select)
+        return WTF::nullopt;
+
+    NSString *charactersIgnoringModifiers = event.charactersIgnoringModifiers;
+    if (!charactersIgnoringModifiers.length)
+        return WTF::nullopt;
+
+    auto firstCharacter = [charactersIgnoringModifiers characterAtIndex:0];
+
+    enum ScrollingIncrement { Document, Page, Line };
+    enum ScrollingDirection { Up, Down, Left, Right };
+
+    auto computeOffset = ^(ScrollingIncrement increment, ScrollingDirection direction) {
+        bool isHorizontal = (direction == Left || direction == Right);
+
+        CGFloat scrollDistance = ^ CGFloat {
+            switch (increment) {
+            case Document:
+                ASSERT(!isHorizontal);
+                return self.bounds.size.height;
+            case Page:
+                ASSERT(!isHorizontal);
+                return WebCore::Scrollbar::pageStep(_page->unobscuredContentRect().height(), self.bounds.size.height);
+            case Line:
+                return WebCore::Scrollbar::pixelsPerLineStep();
+            }
+            ASSERT_NOT_REACHED();
+            return 0;
+        }();
+
+        if (direction == Up || direction == Left)
+            scrollDistance = -scrollDistance;
+
+        return (isHorizontal ? WebCore::FloatPoint(scrollDistance, 0) : WebCore::FloatPoint(0, scrollDistance));
+    };
+
+    if (firstCharacter == NSLeftArrowFunctionKey)
+        return computeOffset(Line, Left);
+    if (firstCharacter == NSRightArrowFunctionKey)
+        return computeOffset(Line, Right);
+
+    ScrollingIncrement incrementForVerticalArrowKey = Line;
+    if (event.modifierFlags & WebEventFlagMaskOptionKey)
+        incrementForVerticalArrowKey = Page;
+    else if (event.modifierFlags & WebEventFlagMaskCommandKey)
+        incrementForVerticalArrowKey = Document;
+    if (firstCharacter == NSUpArrowFunctionKey)
+        return computeOffset(incrementForVerticalArrowKey, Up);
+    if (firstCharacter == NSDownArrowFunctionKey)
+        return computeOffset(incrementForVerticalArrowKey, Down);
+
+    if (firstCharacter == NSPageDownFunctionKey)
+        return computeOffset(Page, Down);
+    if (firstCharacter == NSPageUpFunctionKey)
+        return computeOffset(Page, Up);
+
+    if (firstCharacter == kWebSpaceKey)
+        return computeOffset(Page, (event.modifierFlags & WebEventFlagMaskShiftKey) ? Up : Down);
+
+    return WTF::nullopt;
+}
+
 - (BOOL)_interpretKeyEvent:(::WebEvent *)event isCharEvent:(BOOL)isCharEvent
 {
     static const unsigned kWebEnterKey = 0x0003;
@@ -4017,8 +4108,10 @@ static NSString *contentTypeFromFieldName(WebCore::AutofillFieldName fieldName)
     if (!contentEditable && event.isTabKey)
         return NO;
 
-    if ([_keyboardScrollingAnimator beginWithEvent:event])
+    if (Optional<WebCore::FloatPoint> scrollOffset = [self _scrollOffsetForEvent:event]) {
+        [_webView _scrollByContentOffset:*scrollOffset];
         return YES;
+    }
 
     UIKeyboardImpl *keyboard = [UIKeyboardImpl sharedInstance];
 
@@ -4065,41 +4158,6 @@ static NSString *contentTypeFromFieldName(WebCore::AutofillFieldName fieldName)
     }
 
     return NO;
-}
-
-- (BOOL)isScrollableForKeyboardScrollViewAnimator:(WKKeyboardScrollViewAnimator *)animator
-{
-    if (_page->editorState().isContentEditable)
-        return NO;
-
-    if (_focusedElementInformation.elementType == WebKit::InputType::Select)
-        return NO;
-
-    return YES;
-}
-
-- (CGFloat)keyboardScrollViewAnimator:(WKKeyboardScrollViewAnimator *)animator distanceForIncrement:(WebKit::ScrollingIncrement)increment
-{
-    switch (increment) {
-    case WebKit::ScrollingIncrement::Document:
-        return [self convertRect:self.bounds toView:_webView].size.height;
-    case WebKit::ScrollingIncrement::Page:
-        return [self convertSize:CGSizeMake(0, WebCore::Scrollbar::pageStep(_page->unobscuredContentRect().height(), self.bounds.size.height)) toView:_webView].height;
-    case WebKit::ScrollingIncrement::Line:
-        return [self convertSize:CGSizeMake(0, WebCore::Scrollbar::pixelsPerLineStep()) toView:_webView].height;
-    }
-    ASSERT_NOT_REACHED();
-    return 0;
-}
-
-- (void)keyboardScrollViewAnimatorWillScroll:(WKKeyboardScrollViewAnimator *)animator
-{
-    [self willStartZoomOrScroll];
-}
-
-- (void)keyboardScrollViewAnimatorDidFinishScrolling:(WKKeyboardScrollViewAnimator *)animator
-{
-    [_webView _didFinishScrolling];
 }
 
 - (void)executeEditCommandWithCallback:(NSString *)commandName

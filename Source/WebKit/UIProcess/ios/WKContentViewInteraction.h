@@ -41,7 +41,6 @@
 #import "WKAirPlayRoutePicker.h"
 #import "WKFileUploadPanel.h"
 #import "WKFormPeripheral.h"
-#import "WKKeyboardScrollingAnimator.h"
 #import "WKShareSheet.h"
 #import "WKSyntheticClickTapGestureRecognizer.h"
 #import "_WKFormInputSession.h"
@@ -110,6 +109,7 @@ typedef std::pair<WebKit::InteractionInformationRequest, InteractionInformationC
 
 #define FOR_EACH_WKCONTENTVIEW_ACTION(M) \
     M(_addShortcut) \
+    M(_arrowKey) \
     M(_define) \
     M(_lookup) \
     M(_promptForReplace) \
@@ -271,8 +271,6 @@ struct WKAutoCorrectionData {
     
     std::unique_ptr<WebKit::InputViewUpdateDeferrer> _inputViewUpdateDeferrer;
 
-    RetainPtr<WKKeyboardScrollViewAnimator> _keyboardScrollingAnimator;
-
 #if ENABLE(DATALIST_ELEMENT)
     RetainPtr<UIView <WKFormControl>> _dataListTextSuggestionsInputView;
     RetainPtr<NSArray<UITextSuggestion *>> _dataListTextSuggestions;
@@ -332,7 +330,7 @@ struct WKAutoCorrectionData {
 
 @end
 
-@interface WKContentView (WKInteraction) <UIGestureRecognizerDelegate, UITextAutoscrolling, UITextInputMultiDocument, UITextInputPrivate, UIWebFormAccessoryDelegate, UIWebTouchEventsGestureRecognizerDelegate, UIWKInteractionViewProtocol, WKActionSheetAssistantDelegate, WKFileUploadPanelDelegate, WKKeyboardScrollViewAnimatorDelegate
+@interface WKContentView (WKInteraction) <UIGestureRecognizerDelegate, UITextAutoscrolling, UITextInputMultiDocument, UITextInputPrivate, UIWebFormAccessoryDelegate, UIWebTouchEventsGestureRecognizerDelegate, UIWKInteractionViewProtocol, WKActionSheetAssistantDelegate, WKFileUploadPanelDelegate
 #if !PLATFORM(WATCHOS) && !PLATFORM(APPLETV)
     , WKShareSheetDelegate
 #endif
