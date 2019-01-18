@@ -1,5 +1,16 @@
 2019-01-18  David Kilzer  <ddkilzer@apple.com>
 
+        Follow-up: Switch remaining UIKit soft-linking in WebCore, WebKitLegacy over to UIKitSoftLink.{cpp,h}
+        <https://webkit.org/b/193568>
+        <rdar://problem/47381130>
+
+        * editing/cocoa/DictionaryLookup.mm:
+        (-[WebRevealHighlight drawHighlightContentForItem:context:]):
+        Fix the build by changing getUIApplicationClass() to
+        PAL::getUIApplicationClass().
+
+2019-01-18  David Kilzer  <ddkilzer@apple.com>
+
         Switch remaining UIKit soft-linking in WebCore, WebKitLegacy over to UIKitSoftLink.{cpp,h}
         <https://webkit.org/b/193568>
         <rdar://problem/47381130>

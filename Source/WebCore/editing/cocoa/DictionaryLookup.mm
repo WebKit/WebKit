@@ -239,7 +239,7 @@ SOFT_LINK(UIKitMacHelper, UINSSharedRevealController, id<UINSRevealController>, 
     WebCore::CGContextStateSaver saveState(context);
     CGAffineTransform contextTransform = CGContextGetCTM(context);
     CGFloat backingScale = contextTransform.a;
-    CGFloat iOSMacScaleFactor = [getUIApplicationClass() sharedApplication]._iOSMacScale;
+    CGFloat iOSMacScaleFactor = [PAL::getUIApplicationClass() sharedApplication]._iOSMacScale;
     CGAffineTransform transform = CGAffineTransformMakeScale(iOSMacScaleFactor * backingScale, iOSMacScaleFactor * backingScale);
     CGContextSetCTM(context, transform);
     
