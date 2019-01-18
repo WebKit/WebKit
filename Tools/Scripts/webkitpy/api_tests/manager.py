@@ -128,7 +128,7 @@ class Manager(object):
 
     def _initialize_devices(self):
         if 'simulator' in self._port.port_name:
-            SimulatedDeviceManager.initialize_devices(DeviceRequest(self._port.DEFAULT_DEVICE_TYPE, allow_incomplete_match=True), self.host, simulator_ui=False)
+            SimulatedDeviceManager.initialize_devices(DeviceRequest(self._port.DEVICE_TYPE, allow_incomplete_match=True), self.host, simulator_ui=False)
         elif 'device' in self._port.port_name:
             raise RuntimeError('Running api tests on {} is not supported'.format(self._port.port_name))
 

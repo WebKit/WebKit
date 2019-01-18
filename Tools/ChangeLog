@@ -1,5 +1,16 @@
 2019-01-18  Jonathan Bedard  <jbedard@apple.com>
 
+        webkitpy: Implement device type specific expected results (Follow-up fix)
+        https://bugs.webkit.org/show_bug.cgi?id=192162
+        <rdar://problem/46345449>
+
+        Unreviewed infrastructure fix.
+
+        * Scripts/webkitpy/api_tests/manager.py:
+        (Manager._initialize_devices): Use DEVICE_TYPE when running API tests.
+
+2019-01-18  Jonathan Bedard  <jbedard@apple.com>
+
         webkitpy: Implement device type specific expected results (Part 2)
         https://bugs.webkit.org/show_bug.cgi?id=192162
         <rdar://problem/46345449>
