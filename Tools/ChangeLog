@@ -1,3 +1,13 @@
+2019-01-18  Charlie Turner  <cturner@igalia.com>
+
+        [GStreamer][EME][ClearKey] Request keys from CDMInstance rather than passing via bus messages
+        https://bugs.webkit.org/show_bug.cgi?id=192229
+
+        Reviewed by Xabier Rodriguez-Calvar.
+
+        * MiniBrowser/wpe/main.cpp:
+        (main): Enable encrypted-media by default.
+
 2019-01-18  Philippe Normand  <pnormand@igalia.com>
 
         [Flatpak] Missing KeyboardInterrupt exception handler

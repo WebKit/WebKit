@@ -26,7 +26,7 @@
 #if ENABLE(ENCRYPTED_MEDIA) && USE(GSTREAMER)
 
 #include "GStreamerCommon.h"
-#include <CDMInstance.h>
+#include "GStreamerEMEUtilities.h"
 #include <wtf/Condition.h>
 #include <wtf/PrintStream.h>
 #include <wtf/RunLoop.h>
@@ -37,20 +37,21 @@ using WebCore::CDMInstance;
 struct _WebKitMediaCommonEncryptionDecryptPrivate {
     GRefPtr<GstEvent> protectionEvent;
     RefPtr<CDMInstance> cdmInstance;
-    bool keyReceived;
+    bool keyReceived { false };
     bool waitingForKey { false };
     Lock mutex;
     Condition condition;
 };
 
-static GstStateChangeReturn webKitMediaCommonEncryptionDecryptorChangeState(GstElement*, GstStateChange transition);
-static void webKitMediaCommonEncryptionDecryptorSetContext(GstElement*, GstContext*);
-static void webKitMediaCommonEncryptionDecryptorFinalize(GObject*);
-static GstCaps* webkitMediaCommonEncryptionDecryptTransformCaps(GstBaseTransform*, GstPadDirection, GstCaps*, GstCaps*);
-static GstFlowReturn webkitMediaCommonEncryptionDecryptTransformInPlace(GstBaseTransform*, GstBuffer*);
-static gboolean webkitMediaCommonEncryptionDecryptSinkEventHandler(GstBaseTransform*, GstEvent*);
-static gboolean webkitMediaCommonEncryptionDecryptorQueryHandler(GstBaseTransform*, GstPadDirection, GstQuery*);
-static bool webkitMediaCommonEncryptionDecryptIsCDMInstanceAvailable(WebKitMediaCommonEncryptionDecrypt*);
+static GstStateChangeReturn changeState(GstElement*, GstStateChange transition);
+static void finalize(GObject*);
+static GstCaps* transformCaps(GstBaseTransform*, GstPadDirection, GstCaps*, GstCaps*);
+static GstFlowReturn transformInPlace(GstBaseTransform*, GstBuffer*);
+static gboolean sinkEventHandler(GstBaseTransform*, GstEvent*);
+static gboolean queryHandler(GstBaseTransform*, GstPadDirection, GstQuery*);
+static bool isCDMInstanceAvailable(WebKitMediaCommonEncryptionDecrypt*);
+static void setContext(GstElement*, GstContext*);
+
 
 GST_DEBUG_CATEGORY_STATIC(webkit_media_common_encryption_decrypt_debug_category);
 #define GST_CAT_DEFAULT webkit_media_common_encryption_decrypt_debug_category
@@ -61,21 +62,21 @@ G_DEFINE_TYPE(WebKitMediaCommonEncryptionDecrypt, webkit_media_common_encryption
 static void webkit_media_common_encryption_decrypt_class_init(WebKitMediaCommonEncryptionDecryptClass* klass)
 {
     GObjectClass* gobjectClass = G_OBJECT_CLASS(klass);
-    gobjectClass->finalize = webKitMediaCommonEncryptionDecryptorFinalize;
+    gobjectClass->finalize = finalize;
 
     GST_DEBUG_CATEGORY_INIT(webkit_media_common_encryption_decrypt_debug_category,
         "webkitcenc", 0, "Common Encryption base class");
 
     GstElementClass* elementClass = GST_ELEMENT_CLASS(klass);
-    elementClass->change_state = GST_DEBUG_FUNCPTR(webKitMediaCommonEncryptionDecryptorChangeState);
-    elementClass->set_context = GST_DEBUG_FUNCPTR(webKitMediaCommonEncryptionDecryptorSetContext);
+    elementClass->change_state = GST_DEBUG_FUNCPTR(changeState);
+    elementClass->set_context = GST_DEBUG_FUNCPTR(setContext);
 
     GstBaseTransformClass* baseTransformClass = GST_BASE_TRANSFORM_CLASS(klass);
-    baseTransformClass->transform_ip = GST_DEBUG_FUNCPTR(webkitMediaCommonEncryptionDecryptTransformInPlace);
-    baseTransformClass->transform_caps = GST_DEBUG_FUNCPTR(webkitMediaCommonEncryptionDecryptTransformCaps);
+    baseTransformClass->transform_ip = GST_DEBUG_FUNCPTR(transformInPlace);
+    baseTransformClass->transform_caps = GST_DEBUG_FUNCPTR(transformCaps);
     baseTransformClass->transform_ip_on_passthrough = FALSE;
-    baseTransformClass->sink_event = GST_DEBUG_FUNCPTR(webkitMediaCommonEncryptionDecryptSinkEventHandler);
-    baseTransformClass->query = GST_DEBUG_FUNCPTR(webkitMediaCommonEncryptionDecryptorQueryHandler);
+    baseTransformClass->sink_event = GST_DEBUG_FUNCPTR(sinkEventHandler);
+    baseTransformClass->query = GST_DEBUG_FUNCPTR(queryHandler);
 
     g_type_class_add_private(klass, sizeof(WebKitMediaCommonEncryptionDecryptPrivate));
 }
@@ -93,7 +94,7 @@ static void webkit_media_common_encryption_decrypt_init(WebKitMediaCommonEncrypt
     gst_base_transform_set_gap_aware(base, FALSE);
 }
 
-static void webKitMediaCommonEncryptionDecryptorFinalize(GObject* object)
+static void finalize(GObject* object)
 {
     WebKitMediaCommonEncryptionDecrypt* self = WEBKIT_MEDIA_CENC_DECRYPT(object);
     WebKitMediaCommonEncryptionDecryptPrivate* priv = self->priv;
@@ -102,7 +103,7 @@ static void webKitMediaCommonEncryptionDecryptorFinalize(GObject* object)
     GST_CALL_PARENT(G_OBJECT_CLASS, finalize, (object));
 }
 
-static GstCaps* webkitMediaCommonEncryptionDecryptTransformCaps(GstBaseTransform* base, GstPadDirection direction, GstCaps* caps, GstCaps* filter)
+static GstCaps* transformCaps(GstBaseTransform* base, GstPadDirection direction, GstCaps* caps, GstCaps* filter)
 {
     if (direction == GST_PAD_UNKNOWN)
         return nullptr;
@@ -197,7 +198,7 @@ static GstCaps* webkitMediaCommonEncryptionDecryptTransformCaps(GstBaseTransform
     return transformedCaps;
 }
 
-static GstFlowReturn webkitMediaCommonEncryptionDecryptTransformInPlace(GstBaseTransform* base, GstBuffer* buffer)
+static GstFlowReturn transformInPlace(GstBaseTransform* base, GstBuffer* buffer)
 {
     WebKitMediaCommonEncryptionDecrypt* self = WEBKIT_MEDIA_CENC_DECRYPT(base);
     WebKitMediaCommonEncryptionDecryptPrivate* priv = WEBKIT_MEDIA_CENC_DECRYPT_GET_PRIVATE(self);
@@ -302,7 +303,7 @@ static GstFlowReturn webkitMediaCommonEncryptionDecryptTransformInPlace(GstBaseT
     return GST_FLOW_OK;
 }
 
-static bool webkitMediaCommonEncryptionDecryptIsCDMInstanceAvailable(WebKitMediaCommonEncryptionDecrypt* self)
+static bool isCDMInstanceAvailable(WebKitMediaCommonEncryptionDecrypt* self)
 {
     WebKitMediaCommonEncryptionDecryptPrivate* priv = WEBKIT_MEDIA_CENC_DECRYPT_GET_PRIVATE(self);
 
@@ -317,19 +318,22 @@ static bool webkitMediaCommonEncryptionDecryptIsCDMInstanceAvailable(WebKitMedia
         // requests are useful here.
         if (context) {
             const GValue* value = gst_structure_get_value(gst_context_get_structure(context.get()), "cdm-instance");
-            priv->cdmInstance = value ? reinterpret_cast<CDMInstance*>(g_value_get_pointer(value)) : nullptr;
+            // Capture the CDMInstance into a separate variable to avoid missing a refcount.
+            CDMInstance* instance = value ? reinterpret_cast<CDMInstance*>(g_value_get_pointer(value)) : nullptr;
+            // ... And force a refcount bump using operator=.
+            priv->cdmInstance = instance;
             if (priv->cdmInstance)
-                GST_DEBUG_OBJECT(self, "received new CDMInstance %p", priv->cdmInstance.get());
+                GST_DEBUG_OBJECT(self, "received a new CDM instance %p, refcount %u", priv->cdmInstance.get(), priv->cdmInstance->refCount());
             else
-                GST_TRACE_OBJECT(self, "former instance was detached");
+                GST_TRACE_OBJECT(self, "CDM instance was detached");
         }
     }
 
-    GST_TRACE_OBJECT(self, "CDMInstance available %s", boolForPrinting(priv->cdmInstance.get()));
+    GST_TRACE_OBJECT(self, "CDM instance available %s", boolForPrinting(priv->cdmInstance.get()));
     return priv->cdmInstance;
 }
 
-static gboolean webkitMediaCommonEncryptionDecryptSinkEventHandler(GstBaseTransform* trans, GstEvent* event)
+static gboolean sinkEventHandler(GstBaseTransform* trans, GstEvent* event)
 {
     WebKitMediaCommonEncryptionDecrypt* self = WEBKIT_MEDIA_CENC_DECRYPT(trans);
     WebKitMediaCommonEncryptionDecryptPrivate* priv = WEBKIT_MEDIA_CENC_DECRYPT_GET_PRIVATE(self);
@@ -345,13 +349,13 @@ static gboolean webkitMediaCommonEncryptionDecryptSinkEventHandler(GstBaseTransf
         // events will not be handled by the demuxer, so the must be
         // handled in here.
         LockHolder locker(priv->mutex);
-        if (!webkitMediaCommonEncryptionDecryptIsCDMInstanceAvailable(self)) {
+        if (!isCDMInstanceAvailable(self)) {
             GST_ERROR_OBJECT(self, "No CDM instance available");
             result = FALSE;
             break;
         }
 
-        if (klass->handleKeyResponse(self, event)) {
+        if (klass->handleKeyResponse(self, priv->cdmInstance)) {
             GST_DEBUG_OBJECT(self, "key received");
             priv->keyReceived = true;
             priv->condition.notifyOne();
@@ -369,7 +373,7 @@ static gboolean webkitMediaCommonEncryptionDecryptSinkEventHandler(GstBaseTransf
     return result;
 }
 
-static gboolean webkitMediaCommonEncryptionDecryptorQueryHandler(GstBaseTransform* trans, GstPadDirection direction, GstQuery* query)
+static gboolean queryHandler(GstBaseTransform* trans, GstPadDirection direction, GstQuery* query)
 {
     if (gst_structure_has_name(gst_query_get_structure(query), "any-decryptor-waiting-for-key")) {
         WebKitMediaCommonEncryptionDecryptPrivate* priv = WEBKIT_MEDIA_CENC_DECRYPT_GET_PRIVATE(trans);
@@ -379,7 +383,7 @@ static gboolean webkitMediaCommonEncryptionDecryptorQueryHandler(GstBaseTransfor
     return GST_BASE_TRANSFORM_CLASS(parent_class)->query(trans, direction, query);
 }
 
-static GstStateChangeReturn webKitMediaCommonEncryptionDecryptorChangeState(GstElement* element, GstStateChange transition)
+static GstStateChangeReturn changeState(GstElement* element, GstStateChange transition)
 {
     WebKitMediaCommonEncryptionDecrypt* self = WEBKIT_MEDIA_CENC_DECRYPT(element);
     WebKitMediaCommonEncryptionDecryptPrivate* priv = WEBKIT_MEDIA_CENC_DECRYPT_GET_PRIVATE(self);
@@ -400,7 +404,7 @@ static GstStateChangeReturn webKitMediaCommonEncryptionDecryptorChangeState(GstE
     return result;
 }
 
-static void webKitMediaCommonEncryptionDecryptorSetContext(GstElement* element, GstContext* context)
+static void setContext(GstElement* element, GstContext* context)
 {
     WebKitMediaCommonEncryptionDecrypt* self = WEBKIT_MEDIA_CENC_DECRYPT(element);
     WebKitMediaCommonEncryptionDecryptPrivate* priv = WEBKIT_MEDIA_CENC_DECRYPT_GET_PRIVATE(self);

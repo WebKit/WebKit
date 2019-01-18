@@ -55,11 +55,6 @@
 #include <wtf/text/AtomicString.h>
 #include <wtf/text/AtomicStringHash.h>
 
-#if ENABLE(ENCRYPTED_MEDIA)
-#include "CDMClearKey.h"
-#include "SharedBuffer.h"
-#endif
-
 static const char* dumpReadyState(WebCore::MediaPlayer::ReadyState readyState)
 {
     switch (readyState) {
@@ -907,42 +902,6 @@ MediaTime MediaPlayerPrivateGStreamerMSE::maxMediaTimeSeekable() const
 
     return result;
 }
-
-#if ENABLE(ENCRYPTED_MEDIA)
-void MediaPlayerPrivateGStreamerMSE::attemptToDecryptWithLocalInstance()
-{
-    if (is<CDMInstanceClearKey>(*m_cdmInstance)) {
-        auto& clearkeyCDMInstance = downcast<CDMInstanceClearKey>(*m_cdmInstance);
-        if (clearkeyCDMInstance.keys().isEmpty())
-            return;
-
-        GValue keyIDList = G_VALUE_INIT, keyValueList = G_VALUE_INIT;
-        g_value_init(&keyIDList, GST_TYPE_LIST);
-        g_value_init(&keyValueList, GST_TYPE_LIST);
-
-        auto appendBuffer =
-            [](GValue* valueList, const SharedBuffer& buffer)
-            {
-                GValue* bufferValue = g_new0(GValue, 1);
-                g_value_init(bufferValue, GST_TYPE_BUFFER);
-                gst_value_take_buffer(bufferValue,
-                    gst_buffer_new_wrapped(g_memdup(buffer.data(), buffer.size()), buffer.size()));
-                gst_value_list_append_and_take_value(valueList, bufferValue);
-            };
-
-        for (auto& key : clearkeyCDMInstance.keys()) {
-            appendBuffer(&keyIDList, *key.keyIDData);
-            appendBuffer(&keyValueList, *key.keyValueData);
-        }
-
-        GUniquePtr<GstStructure> structure(gst_structure_new_empty("drm-cipher-clearkey"));
-        gst_structure_set_value(structure.get(), "key-ids", &keyIDList);
-        gst_structure_set_value(structure.get(), "key-values", &keyValueList);
-
-        gst_element_send_event(m_playbackPipeline->pipeline(), gst_event_new_custom(GST_EVENT_CUSTOM_DOWNSTREAM_OOB, structure.release()));
-    }
-}
-#endif
 
 } // namespace WebCore.
 

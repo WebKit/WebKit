@@ -148,7 +148,6 @@ public:
 #if ENABLE(ENCRYPTED_MEDIA)
     void cdmInstanceAttached(CDMInstance&) override;
     void cdmInstanceDetached(CDMInstance&) override;
-    void dispatchDecryptionKey(GstBuffer*);
     void handleProtectionEvent(GstEvent*);
     virtual void attemptToDecryptWithLocalInstance();
     void attemptToDecryptWithInstance(CDMInstance&) final;

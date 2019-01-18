@@ -1,3 +1,56 @@
+2019-01-18  Charlie Turner  <cturner@igalia.com>
+
+        [GStreamer][EME][ClearKey] Request keys from CDMInstance rather than passing via bus messages
+        https://bugs.webkit.org/show_bug.cgi?id=192229
+
+        Reviewed by Xabier Rodriguez-Calvar.
+
+        Covered by existing tests.
+
+        * platform/encryptedmedia/clearkey/CDMClearKey.cpp:
+        (WebCore::parseLicenseFormat): There is a defect in some C++11
+        compiles where they will copy this return value since the type
+        doesn't exactly match. Force a move with WTFMove.
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamerBase.cpp:
+        (WebCore::MediaPlayerPrivateGStreamerBase::dispatchDecryptionKey):
+        Deleted. No longer used by anything.
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamerBase.h: Ditto.
+        * platform/graphics/gstreamer/eme/WebKitClearKeyDecryptorGStreamer.cpp:
+        Rename these methods to avoid "namespacing names".
+        (webkit_media_clear_key_decrypt_class_init):
+        (finalize):
+        (handleKeyResponse): This is a temporary fix, we need some more
+        reorganisation to be full driven by CDMInstance APIs for decryption.
+        (findAndSetKey):
+        (decrypt):
+        (webKitMediaClearKeyDecryptorFinalize): Deleted.
+        (webKitMediaClearKeyDecryptorHandleKeyResponse): Deleted.
+        (webKitMediaClearKeyDecryptorFindAndSetKey): Deleted.
+        (webKitMediaClearKeyDecryptorDecrypt): Deleted.
+        * platform/graphics/gstreamer/eme/WebKitCommonEncryptionDecryptorGStreamer.cpp: Ditto.
+        (webkit_media_common_encryption_decrypt_class_init):
+        (finalize):
+        (transformCaps):
+        (transformInPlace):
+        (isCDMInstanceAvailable):
+        (sinkEventHandler):
+        (queryHandler):
+        (changeState):
+        (setContext):
+        (webKitMediaCommonEncryptionDecryptorFinalize): Deleted.
+        (webkitMediaCommonEncryptionDecryptTransformCaps): Deleted.
+        (webkitMediaCommonEncryptionDecryptTransformInPlace): Deleted.
+        (webkitMediaCommonEncryptionDecryptIsCDMInstanceAvailable): Deleted.
+        (webkitMediaCommonEncryptionDecryptSinkEventHandler): Deleted.
+        (webkitMediaCommonEncryptionDecryptorQueryHandler): Deleted.
+        (webKitMediaCommonEncryptionDecryptorChangeState): Deleted.
+        (webKitMediaCommonEncryptionDecryptorSetContext): Deleted.
+        * platform/graphics/gstreamer/eme/WebKitCommonEncryptionDecryptorGStreamer.h:
+        * platform/graphics/gstreamer/mse/MediaPlayerPrivateGStreamerMSE.cpp:
+        (WebCore::MediaPlayerPrivateGStreamerMSE::attemptToDecryptWithLocalInstance):
+        Deleted. No longer passing key information over bus messages.
+        * platform/graphics/gstreamer/mse/MediaPlayerPrivateGStreamerMSE.h:
+
 2019-01-18  Zalan Bujtas  <zalan@apple.com>
 
         [LFC][BFC][MarginCollapsing] Collapsing through should not ignore floats.

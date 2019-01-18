@@ -124,8 +124,7 @@ static Optional<Vector<CDMInstanceClearKey::Key>> parseLicenseFormat(const JSON:
         });
     if (!validFormat)
         return WTF::nullopt;
-
-    return decodedKeys;
+    return WTFMove(decodedKeys);
 }
 
 static bool parseLicenseReleaseAcknowledgementFormat(const JSON::Object& root)

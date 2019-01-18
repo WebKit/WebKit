@@ -177,6 +177,7 @@ int main(int argc, char *argv[])
         "enable-developer-extras", TRUE,
         "enable-webgl", TRUE,
         "enable-media-stream", TRUE,
+        "enable-encrypted-media", TRUE,
         nullptr);
 
     auto* webView = WEBKIT_WEB_VIEW(g_object_new(WEBKIT_TYPE_WEB_VIEW,

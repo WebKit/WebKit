@@ -85,10 +85,6 @@ public:
     static bool supportsCodec(String codec);
     static bool supportsAllCodecs(const Vector<String>& codecs);
 
-#if ENABLE(ENCRYPTED_MEDIA)
-    void attemptToDecryptWithLocalInstance() final;
-#endif
-
 private:
     static void getSupportedTypes(HashSet<String, ASCIICaseInsensitiveHash>&);
     static MediaPlayer::SupportsType supportsType(const MediaEngineSupportParameters&);
