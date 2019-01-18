@@ -1226,9 +1226,6 @@ void RenderLayerBacking::updateGeometry()
         if (scrollSize != m_scrollingContentsLayer->size() || paddingBoxOffsetChanged)
             m_scrollingContentsLayer->setNeedsDisplay();
 
-        if (toLayoutSize(paddingBox.location()) != m_scrollingContentsLayer->offsetFromRenderer() || scrollOffset != m_scrollingContentsLayer->scrollOffset() || scrollSize != m_scrollingContentsLayer->size())
-            compositor().scrollingLayerDidChange(m_owningLayer);
-
         m_scrollingContentsLayer->setSize(scrollSize);
         m_scrollingContentsLayer->setScrollOffset(scrollOffset, GraphicsLayer::DontSetNeedsDisplay);
         m_scrollingContentsLayer->setOffsetFromRenderer(toLayoutSize(paddingBox.location()), GraphicsLayer::DontSetNeedsDisplay);

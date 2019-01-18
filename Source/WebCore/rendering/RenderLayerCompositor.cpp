@@ -1867,12 +1867,6 @@ void RenderLayerCompositor::rootLayerConfigurationChanged()
     }
 }
 
-void RenderLayerCompositor::scrollingLayerDidChange(RenderLayer& layer)
-{
-    if (auto* scrollingCoordinator = this->scrollingCoordinator())
-        scrollingCoordinator->scrollableAreaScrollLayerDidChange(layer);
-}
-
 void RenderLayerCompositor::fixedRootBackgroundLayerChanged()
 {
     if (m_renderView.renderTreeBeingDestroyed())
@@ -3990,11 +3984,8 @@ ScrollableArea* RenderLayerCompositor::scrollableAreaForScrollLayerID(ScrollingN
 
 void RenderLayerCompositor::willRemoveScrollingLayerWithBacking(RenderLayer& layer, RenderLayerBacking& backing)
 {
-    if (auto* scrollingCoordinator = this->scrollingCoordinator()) {
+    if (scrollingCoordinator()) {
         backing.detachFromScrollingCoordinator(ScrollCoordinationRole::Scrolling);
-
-        // For Coordinated Graphics.
-        scrollingCoordinator->scrollableAreaScrollLayerDidChange(layer);
         return;
     }
 
@@ -4002,18 +3993,16 @@ void RenderLayerCompositor::willRemoveScrollingLayerWithBacking(RenderLayer& lay
     ASSERT(m_renderView.document().pageCacheState() == Document::NotInPageCache);
     if (m_legacyScrollingLayerCoordinator)
         m_legacyScrollingLayerCoordinator->removeScrollingLayer(layer, backing);
+#else
+    UNUSED_PARAM(layer);
 #endif
 }
 
 void RenderLayerCompositor::didAddScrollingLayer(RenderLayer& layer)
 {
     updateScrollCoordinatedStatus(layer, { ScrollingNodeChangeFlags::Layer, ScrollingNodeChangeFlags::LayerGeometry });
-
-    if (auto* scrollingCoordinator = this->scrollingCoordinator()) {
-        // For Coordinated Graphics.
-        scrollingCoordinator->scrollableAreaScrollLayerDidChange(layer);
+    if (scrollingCoordinator())
         return;
-    }
 
 #if PLATFORM(IOS_FAMILY)
     ASSERT(m_renderView.document().pageCacheState() == Document::NotInPageCache);

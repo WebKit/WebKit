@@ -280,7 +280,6 @@ public:
     void frameViewDidLayout();
     void rootLayerConfigurationChanged();
 
-    void scrollingLayerDidChange(RenderLayer&);
     void fixedRootBackgroundLayerChanged();
 
     String layerTreeAsText(LayerTreeFlags);

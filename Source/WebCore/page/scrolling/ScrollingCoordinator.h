@@ -216,7 +216,6 @@ public:
     bool shouldUpdateScrollLayerPositionSynchronously(const FrameView&) const;
 
     virtual void willDestroyScrollableArea(ScrollableArea&) { }
-    virtual void scrollableAreaScrollLayerDidChange(ScrollableArea&) { }
     virtual void scrollableAreaScrollbarLayerDidChange(ScrollableArea&, ScrollbarOrientation) { }
 
     static String synchronousScrollingReasonsAsText(SynchronousScrollingReasons);
