@@ -1,3 +1,141 @@
+2019-01-17  Mark Lam  <mark.lam@apple.com>
+
+        Audit bytecode fields and ensure that LLInt instructions for accessing them are appropriate.
+        https://bugs.webkit.org/show_bug.cgi?id=193557
+        <rdar://problem/47369125>
+
+        Reviewed by Yusuke Suzuki.
+
+        1. Rename some bytecode fields so that it's easier to discern whether the LLInt
+           is accessing them the right way:
+           - distinguish between targetVirtualRegister and targetLabel.
+           - name all StructureID fields as structureID (oldStructureID, newStructureID)
+             instead of structure (oldStructure, newStructure).
+
+        2. Use bitwise_cast in struct Fits when sizeof(T) == size.
+           This prevents potential undefined behavior issues arising from doing
+           assignments with reinterpret_cast'ed pointers.
+
+        3. Make Special::Pointer an unsigned type (previously int).
+           Make ResolveType an unsigned type (previously int).
+
+        4. In LowLevelInterpreter*.asm:
+
+           - rename the op macro argument to opcodeName or opcodeStruct respectively.
+             This makes it clearer which argument type the macro is working with.
+
+           - rename the name macro argument to opcodeName.
+
+           - fix operator types to match the field type being accessed.  The following
+             may have resulted in bugs before:
+
+             1. The following should be read with getu() instead of get() because they
+                are unsigned ints:
+                    OpSwitchImm::m_tableIndex
+                    OpSwitchChar::m_tableIndex
+                    OpGetFromArguments::m_index
+                    OpPutToArguments::m_index
+                    OpGetRestLength::m_numParametersToSkip
+
+                OpJneqPtr::m_specialPointer should also be read with getu() though this
+                wasn't a bug because it was previously an int by default, and is only
+                changed to an unsigned int in this patch.
+
+             2.The following should be read with loadi (not loadp) because they are of
+               unsigned type (not a pointer):
+                    OpResolveScope::Metadata::m_resolveType
+                    CodeBlock::m_numParameters (see prepareForTailCall)
+
+             3. OpPutToScope::Metadata::m_operand should be read with loadp (not loadis)
+                because it is a uintptr_t.
+
+             4. The following should be read with loadi (not loadis) because they are
+                unsigned ints:
+                    OpNegate::Metadata::m_arithProfile + ArithProfile::m_bits
+                    OpPutById::Metadata::m_oldStructureID
+                    OpPutToScope::Metadata::m_getPutInfo + GetPutInfo::m_operand
+
+                These may not have manifested in bugs because the operations that follow
+                the load are 32-bit instructions which ignore the high word.
+
+        5. Give class GetPutInfo a default constructor so that we can use bitwise_cast
+           on it.  Also befriend LLIntOffsetsExtractor so that we can take the offset of
+           m_operand in it.
+
+        * bytecode/ArithProfile.h:
+        * bytecode/BytecodeList.rb:
+        * bytecode/BytecodeUseDef.h:
+        (JSC::computeUsesForBytecodeOffset):
+        (JSC::computeDefsForBytecodeOffset):
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::propagateTransitions):
+        (JSC::CodeBlock::finalizeLLIntInlineCaches):
+        * bytecode/Fits.h:
+        * bytecode/GetByIdMetadata.h:
+        * bytecode/GetByIdStatus.cpp:
+        (JSC::GetByIdStatus::computeFromLLInt):
+        * bytecode/LLIntPrototypeLoadAdaptiveStructureWatchpoint.cpp:
+        (JSC::LLIntPrototypeLoadAdaptiveStructureWatchpoint::clearLLIntGetByIdCache):
+        * bytecode/PreciseJumpTargetsInlines.h:
+        (JSC::jumpTargetForInstruction):
+        (JSC::updateStoredJumpTargetsForInstruction):
+        * bytecode/PutByIdStatus.cpp:
+        (JSC::PutByIdStatus::computeFromLLInt):
+        * bytecode/SpecialPointer.h:
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::Label::setLocation):
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::parseBlock):
+        * jit/JITArithmetic.cpp:
+        (JSC::JIT::emit_compareAndJump):
+        (JSC::JIT::emit_compareUnsignedAndJump):
+        (JSC::JIT::emit_compareAndJumpSlow):
+        * jit/JITArithmetic32_64.cpp:
+        (JSC::JIT::emit_compareAndJump):
+        (JSC::JIT::emit_compareUnsignedAndJump):
+        (JSC::JIT::emit_compareAndJumpSlow):
+        (JSC::JIT::emitBinaryDoubleOp):
+        * jit/JITOpcodes.cpp:
+        (JSC::JIT::emit_op_jmp):
+        (JSC::JIT::emit_op_jfalse):
+        (JSC::JIT::emit_op_jeq_null):
+        (JSC::JIT::emit_op_jneq_null):
+        (JSC::JIT::emit_op_jneq_ptr):
+        (JSC::JIT::emit_op_jeq):
+        (JSC::JIT::emit_op_jtrue):
+        (JSC::JIT::emit_op_jneq):
+        (JSC::JIT::compileOpStrictEqJump):
+        (JSC::JIT::emitSlow_op_jstricteq):
+        (JSC::JIT::emitSlow_op_jnstricteq):
+        (JSC::JIT::emit_op_check_tdz):
+        (JSC::JIT::emitSlow_op_jeq):
+        (JSC::JIT::emitSlow_op_jneq):
+        (JSC::JIT::emit_op_profile_type):
+        * jit/JITOpcodes32_64.cpp:
+        (JSC::JIT::emit_op_jmp):
+        (JSC::JIT::emit_op_jfalse):
+        (JSC::JIT::emit_op_jtrue):
+        (JSC::JIT::emit_op_jeq_null):
+        (JSC::JIT::emit_op_jneq_null):
+        (JSC::JIT::emit_op_jneq_ptr):
+        (JSC::JIT::emit_op_jeq):
+        (JSC::JIT::emitSlow_op_jeq):
+        (JSC::JIT::emit_op_jneq):
+        (JSC::JIT::emitSlow_op_jneq):
+        (JSC::JIT::compileOpStrictEqJump):
+        (JSC::JIT::emitSlow_op_jstricteq):
+        (JSC::JIT::emitSlow_op_jnstricteq):
+        (JSC::JIT::emit_op_check_tdz):
+        (JSC::JIT::emit_op_profile_type):
+        * llint/LLIntSlowPaths.cpp:
+        (JSC::LLInt::LLINT_SLOW_PATH_DECL):
+        (JSC::LLInt::setupGetByIdPrototypeCache):
+        * llint/LowLevelInterpreter.asm:
+        * llint/LowLevelInterpreter32_64.asm:
+        * llint/LowLevelInterpreter64.asm:
+        * runtime/CommonSlowPaths.cpp:
+        * runtime/GetPutInfo.h:
+
 2019-01-17  Truitt Savell  <tsavell@apple.com>
 
         Unreviewed, rolling out r240124.

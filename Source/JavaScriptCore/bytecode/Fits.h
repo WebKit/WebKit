@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2018-2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -52,10 +52,10 @@ template<typename T, OpcodeSize size>
 struct Fits<T, size, std::enable_if_t<sizeof(T) == size, std::true_type>> {
     static bool check(T) { return true; }
 
-    static typename TypeBySize<size>::type convert(T t) { return *reinterpret_cast<typename TypeBySize<size>::type*>(&t); }
+    static typename TypeBySize<size>::type convert(T t) { return bitwise_cast<typename TypeBySize<size>::type>(t); }
 
     template<class T1 = T, OpcodeSize size1 = size, typename = std::enable_if_t<!std::is_same<T1, typename TypeBySize<size1>::type>::value, std::true_type>>
-    static T1 convert(typename TypeBySize<size1>::type t) { return *reinterpret_cast<T1*>(&t); }
+    static T1 convert(typename TypeBySize<size1>::type t) { return bitwise_cast<T1>(t); }
 };
 
 template<typename T, OpcodeSize size>

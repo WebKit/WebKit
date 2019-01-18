@@ -55,13 +55,13 @@ PutByIdStatus PutByIdStatus::computeFromLLInt(CodeBlock* profiledBlock, unsigned
     auto bytecode = instruction->as<OpPutById>();
     auto& metadata = bytecode.metadata(profiledBlock);
 
-    StructureID structureID = metadata.m_oldStructure;
+    StructureID structureID = metadata.m_oldStructureID;
     if (!structureID)
         return PutByIdStatus(NoInformation);
     
     Structure* structure = vm.heap.structureIDTable().get(structureID);
 
-    StructureID newStructureID = metadata.m_newStructure;
+    StructureID newStructureID = metadata.m_newStructureID;
     if (!newStructureID) {
         PropertyOffset offset = structure->getConcurrently(uid);
         if (!isValidOffset(offset))

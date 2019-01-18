@@ -61,7 +61,7 @@ void LLIntPrototypeLoadAdaptiveStructureWatchpoint::clearLLIntGetByIdCache(OpGet
 {
     metadata.m_mode = GetByIdMode::Default;
     metadata.m_modeMetadata.defaultMode.cachedOffset = 0;
-    metadata.m_modeMetadata.defaultMode.structure = 0;
+    metadata.m_modeMetadata.defaultMode.structureID = 0;
 }
 
 

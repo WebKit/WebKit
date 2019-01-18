@@ -108,7 +108,7 @@ template<typename Op, typename Block>
 inline int jumpTargetForInstruction(Block&& codeBlock, const InstructionStream::Ref& instruction)
 {
     auto bytecode = instruction->as<Op>();
-    return jumpTargetForInstruction(codeBlock, instruction, bytecode.m_target);
+    return jumpTargetForInstruction(codeBlock, instruction, bytecode.m_targetLabel);
 }
 
 template<typename Block, typename Function>
@@ -139,7 +139,7 @@ inline void updateStoredJumpTargetsForInstruction(Block&& codeBlock, unsigned fi
     case __op::opcodeID: { \
         int32_t target = jumpTargetForInstruction<__op>(codeBlockOrHashMap, instruction); \
         int32_t newTarget = function(target); \
-        instruction->cast<__op>()->setTarget(BoundLabel(newTarget), [&]() { \
+        instruction->cast<__op>()->setTargetLabel(BoundLabel(newTarget), [&]() { \
             codeBlock->addOutOfLineJumpTarget(finalOffset + instruction.offset(), newTarget); \
             return BoundLabel(); \
         }); \

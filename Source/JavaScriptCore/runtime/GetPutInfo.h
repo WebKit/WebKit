@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015-2018 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2015-2019 Apple Inc. All Rights Reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -38,7 +38,7 @@ enum ResolveMode {
     DoNotThrowIfNotFound
 };
 
-enum ResolveType {
+enum ResolveType : unsigned {
     // Lexical scope guaranteed a certain type of variable access.
     GlobalProperty,
     GlobalVar,
@@ -210,6 +210,8 @@ public:
     static const unsigned modeBits = ((1 << 30) - 1) & ~initializationBits & ~typeBits;
     static_assert((modeBits & initializationBits & typeBits) == 0x0, "There should be no intersection between ResolveMode ResolveType and InitializationMode");
 
+    GetPutInfo() = default;
+
     GetPutInfo(ResolveMode resolveMode, ResolveType resolveType, InitializationMode initializationMode)
         : m_operand((resolveMode << modeShift) | (static_cast<unsigned>(initializationMode) << initializationShift) | resolveType)
     {
@@ -228,7 +230,9 @@ public:
     void dump(PrintStream&) const;
 
 private:
-    Operand m_operand;
+    Operand m_operand { 0 };
+
+    friend class JSC::LLIntOffsetsExtractor;
 };
 
 enum GetOrPut { Get, Put };

@@ -285,36 +285,36 @@ else
     end
 end
 
-macro dispatch(advance)
-    addp advance, PC
+macro dispatch(advanceReg)
+    addp advanceReg, PC
     nextInstruction()
 end
 
-macro dispatchIndirect(offset)
-    dispatch(offset)
+macro dispatchIndirect(offsetReg)
+    dispatch(offsetReg)
 end
 
-macro dispatchOp(size, op)
+macro dispatchOp(size, opcodeName)
     macro dispatchNarrow()
-        dispatch(constexpr %op%_length)
+        dispatch(constexpr %opcodeName%_length)
     end
 
     macro dispatchWide()
-        dispatch(constexpr %op%_length * 4 + 1)
+        dispatch(constexpr %opcodeName%_length * 4 + 1)
     end
 
     size(dispatchNarrow, dispatchWide, macro (dispatch) dispatch() end)
 end
 
-macro getu(size, op, fieldName, dst)
+macro getu(size, opcodeStruct, fieldName, dst)
     size(getuOperandNarrow, getuOperandWide, macro (getu)
-        getu(op, fieldName, dst)
+        getu(opcodeStruct, fieldName, dst)
     end)
 end
 
-macro get(size, op, fieldName, dst)
+macro get(size, opcodeStruct, fieldName, dst)
     size(getOperandNarrow, getOperandWide, macro (get)
-        get(op, fieldName, dst)
+        get(opcodeStruct, fieldName, dst)
     end)
 end
 
@@ -334,9 +334,9 @@ macro metadata(size, opcode, dst, scratch)
     addp metadataTable, dst # return &metadataTable[offset]
 end
 
-macro jumpImpl(target)
-    btiz target, .outOfLineJumpTarget
-    dispatchIndirect(target)
+macro jumpImpl(targetOffsetReg)
+    btiz targetOffsetReg, .outOfLineJumpTarget
+    dispatchIndirect(targetOffsetReg)
 .outOfLineJumpTarget:
     callSlowPath(_llint_slow_path_out_of_line_jump_target)
     nextInstruction()
@@ -358,39 +358,39 @@ macro op(l, fn)
     end)
 end
 
-macro llintOp(name, op, fn)
-    commonOp(llint_%name%, traceExecution, macro(size)
+macro llintOp(opcodeName, opcodeStruct, fn)
+    commonOp(llint_%opcodeName%, traceExecution, macro(size)
         macro getImpl(fieldName, dst)
-            get(size, op, fieldName, dst)
+            get(size, opcodeStruct, fieldName, dst)
         end
 
         macro dispatchImpl()
-            dispatchOp(size, name)
+            dispatchOp(size, opcodeName)
         end
 
         fn(size, getImpl, dispatchImpl)
     end)
 end
 
-macro llintOpWithReturn(name, op, fn)
-    llintOp(name, op, macro(size, get, dispatch)
+macro llintOpWithReturn(opcodeName, opcodeStruct, fn)
+    llintOp(opcodeName, opcodeStruct, macro(size, get, dispatch)
         makeReturn(get, dispatch, macro (return)
             fn(size, get, dispatch, return)
         end)
     end)
 end
 
-macro llintOpWithMetadata(name, op, fn)
-    llintOpWithReturn(name, op, macro (size, get, dispatch, return)
+macro llintOpWithMetadata(opcodeName, opcodeStruct, fn)
+    llintOpWithReturn(opcodeName, opcodeStruct, macro (size, get, dispatch, return)
         macro meta(dst, scratch)
-            metadata(size, op, dst, scratch)
+            metadata(size, opcodeStruct, dst, scratch)
         end
         fn(size, get, dispatch, meta, return)
     end)
 end
 
-macro llintOpWithJump(name, op, impl)
-    llintOpWithMetadata(name, op, macro(size, get, dispatch, metadata, return)
+macro llintOpWithJump(opcodeName, opcodeStruct, impl)
+    llintOpWithMetadata(opcodeName, opcodeStruct, macro(size, get, dispatch, metadata, return)
         macro jump(fieldName)
             get(fieldName, t0)
             jumpImpl(t0)
@@ -400,9 +400,9 @@ macro llintOpWithJump(name, op, impl)
     end)
 end
 
-macro llintOpWithProfile(name, op, fn)
-    llintOpWithMetadata(name, op, macro(size, get, dispatch, metadata, return)
-        makeReturnProfiled(op, get, metadata, dispatch, macro (returnProfiled)
+macro llintOpWithProfile(opcodeName, opcodeStruct, fn)
+    llintOpWithMetadata(opcodeName, opcodeStruct, macro(size, get, dispatch, metadata, return)
+        makeReturnProfiled(opcodeStruct, get, metadata, dispatch, macro (returnProfiled)
             fn(size, get, dispatch, returnProfiled)
         end)
     end)
@@ -895,14 +895,14 @@ macro traceExecution()
     end
 end
 
-macro callTargetFunction(size, op, dispatch, callee, callPtrTag)
+macro callTargetFunction(size, opcodeStruct, dispatch, callee, callPtrTag)
     if C_LOOP
         cloopCallJSFunction callee
     else
         call callee, callPtrTag
     end
     restoreStackPointerAfterCall()
-    dispatchAfterCall(size, op, dispatch)
+    dispatchAfterCall(size, opcodeStruct, dispatch)
 end
 
 macro prepareForRegularCall(callee, temp1, temp2, temp3, callPtrTag)
@@ -915,7 +915,7 @@ macro prepareForTailCall(callee, temp1, temp2, temp3, callPtrTag)
 
     loadi PayloadOffset + ArgumentCount[cfr], temp2
     loadp CodeBlock[cfr], temp1
-    loadp CodeBlock::m_numParameters[temp1], temp1
+    loadi CodeBlock::m_numParameters[temp1], temp1
     bilteq temp1, temp2, .noArityFixup
     move temp1, temp2
 
@@ -970,7 +970,7 @@ macro prepareForTailCall(callee, temp1, temp2, temp3, callPtrTag)
     jmp callee, callPtrTag
 end
 
-macro slowPathForCall(size, op, dispatch, slowPath, prepareCall)
+macro slowPathForCall(size, opcodeStruct, dispatch, slowPath, prepareCall)
     callCallSlowPath(
         slowPath,
         # Those are r0 and r1
@@ -979,7 +979,7 @@ macro slowPathForCall(size, op, dispatch, slowPath, prepareCall)
             move calleeFramePtr, sp
             prepareCall(callee, t2, t3, t4, SlowPathPtrTag)
         .dontUpdateSP:
-            callTargetFunction(size, op, dispatch, callee, SlowPathPtrTag)
+            callTargetFunction(size, opcodeStruct, dispatch, callee, SlowPathPtrTag)
         end)
 end
 
@@ -1192,8 +1192,8 @@ macro functionInitialization(profileArgSkip)
     loadp CodeBlock::m_argumentValueProfiles + RefCountedArray::m_data[t1], t3
     btpz t3, .argumentProfileDone # When we can't JIT, we don't allocate any argument value profiles.
     mulp sizeof ValueProfile, t0, t2 # Aaaaahhhh! Need strength reduction!
-    lshiftp 3, t0
-    addp t2, t3
+    lshiftp 3, t0 # offset of last JSValue arguments on the stack.
+    addp t2, t3 # pointer to end of ValueProfile array in CodeBlock::m_argumentValueProfiles.
 .argumentProfileLoop:
     if JSVALUE64
         loadq ThisArgumentOffset - 8 + profileArgSkip * 8[cfr, t0], t2
@@ -1433,9 +1433,9 @@ end
 
 
 # Value-representation-agnostic code.
-macro slowPathOp(op)
-    llintOp(op_%op%, unused, macro (unused, unused, dispatch)
-        callSlowPath(_slow_path_%op%)
+macro slowPathOp(opcodeName)
+    llintOp(op_%opcodeName%, unused, macro (unused, unused, dispatch)
+        callSlowPath(_slow_path_%opcodeName%)
         dispatch()
     end)
 end
@@ -1481,9 +1481,9 @@ slowPathOp(to_index_string)
 slowPathOp(typeof)
 slowPathOp(unreachable)
 
-macro llintSlowPathOp(op)
-    llintOp(op_%op%, unused, macro (unused, unused, dispatch)
-        callSlowPath(_llint_slow_path_%op%)
+macro llintSlowPathOp(opcodeName)
+    llintOp(op_%opcodeName%, unused, macro (unused, unused, dispatch)
+        callSlowPath(_llint_slow_path_%opcodeName%)
         dispatch()
     end)
 end
@@ -1538,7 +1538,7 @@ compareUnsignedOp(beloweq, OpBeloweq,
 
 
 llintOpWithJump(op_jmp, OpJmp, macro (size, get, jump, dispatch)
-    jump(m_target)
+    jump(m_targetLabel)
 end)
 
 
@@ -1674,8 +1674,8 @@ commonCallOp(op_call, _llint_slow_path_call, OpCall, prepareForRegularCall, macr
 end)
 
 
-macro callOp(name, op, prepareCall, fn)
-    commonCallOp(op_%name%, _llint_slow_path_%name%, op, prepareCall, fn)
+macro callOp(opcodeName, opcodeStruct, prepareCall, fn)
+    commonCallOp(op_%opcodeName%, _llint_slow_path_%opcodeName%, opcodeStruct, prepareCall, fn)
 end
 
 
@@ -1690,7 +1690,7 @@ end)
 callOp(construct, OpConstruct, prepareForRegularCall, macro (getu, metadata) end)
 
 
-macro doCallVarargs(size, op, dispatch, frameSlowPath, slowPath, prepareCall)
+macro doCallVarargs(size, opcodeStruct, dispatch, frameSlowPath, slowPath, prepareCall)
     callSlowPath(frameSlowPath)
     branchIfException(_llint_throw_from_slow_path_trampoline)
     # calleeFrame in r1
@@ -1705,7 +1705,7 @@ macro doCallVarargs(size, op, dispatch, frameSlowPath, slowPath, prepareCall)
             subp r1, CallerFrameAndPCSize, sp
         end
     end
-    slowPathForCall(size, op, dispatch, slowPath, prepareCall)
+    slowPathForCall(size, opcodeStruct, dispatch, slowPath, prepareCall)
 end
 
 

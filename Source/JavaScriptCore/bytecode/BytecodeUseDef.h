@@ -94,9 +94,9 @@ void computeUsesForBytecodeOffset(Block* codeBlock, OpcodeID opcodeID, const Ins
 
     USES(OpGetScope, dst)
     USES(OpToThis, srcDst)
-    USES(OpCheckTdz, target)
+    USES(OpCheckTdz, targetVirtualRegister)
     USES(OpIdentityWithProfile, srcDst)
-    USES(OpProfileType, target);
+    USES(OpProfileType, targetVirtualRegister);
     USES(OpThrow, value)
     USES(OpThrowStaticError, message)
     USES(OpEnd, value)
@@ -448,7 +448,7 @@ void computeDefsForBytecodeOffset(Block* codeBlock, OpcodeID opcodeID, const Ins
     DEFS(OpMov, dst)
     DEFS(OpNewObject, dst)
     DEFS(OpToThis, srcDst)
-    DEFS(OpCheckTdz, target)
+    DEFS(OpCheckTdz, targetVirtualRegister)
     DEFS(OpGetScope, dst)
     DEFS(OpCreateDirectArguments, dst)
     DEFS(OpCreateScopedArguments, dst)

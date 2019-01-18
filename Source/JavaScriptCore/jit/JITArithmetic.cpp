@@ -178,7 +178,7 @@ void JIT::emit_compareAndJump(const Instruction* instruction, RelationalConditio
     auto bytecode = instruction->as<Op>();
     int op1 = bytecode.m_lhs.offset();
     int op2 = bytecode.m_rhs.offset();
-    unsigned target = jumpTarget(instruction, bytecode.m_target);
+    unsigned target = jumpTarget(instruction, bytecode.m_targetLabel);
     if (isOperandConstantChar(op1)) {
         emitGetVirtualRegister(op2, regT0);
         addSlowCase(branchIfNotCell(regT0));
@@ -225,7 +225,7 @@ void JIT::emit_compareUnsignedAndJump(const Instruction* instruction, Relational
     auto bytecode = instruction->as<Op>();
     int op1 = bytecode.m_lhs.offset();
     int op2 = bytecode.m_rhs.offset();
-    unsigned target = jumpTarget(instruction, bytecode.m_target);
+    unsigned target = jumpTarget(instruction, bytecode.m_targetLabel);
     if (isOperandConstantInt(op2)) {
         emitGetVirtualRegister(op1, regT0);
         int32_t op2imm = getOperandConstantInt(op2);
@@ -269,7 +269,7 @@ void JIT::emit_compareAndJumpSlow(const Instruction* instruction, DoubleConditio
     auto bytecode = instruction->as<Op>();
     int op1 = bytecode.m_lhs.offset();
     int op2 = bytecode.m_rhs.offset();
-    unsigned target = jumpTarget(instruction, bytecode.m_target);
+    unsigned target = jumpTarget(instruction, bytecode.m_targetLabel);
 
     // We generate inline code for the following cases in the slow path:
     // - floating-point number to constant int immediate
