@@ -1,3 +1,41 @@
+2019-01-18  Jer Noble  <jer.noble@apple.com>
+
+        SDK_VARIANT build destinations should be separate from non-SDK_VARIANT builds
+        https://bugs.webkit.org/show_bug.cgi?id=189553
+
+        Reviewed by Tim Horton.
+
+        Add a check-webkit-style check that ensures all SDKVariant.xcconfig files match.
+
+        * ContentExtensionTester/Configurations/Base.xcconfig:
+        * ContentExtensionTester/Configurations/SDKVariant.xcconfig: Added.
+        * DumpRenderTree/mac/Configurations/Base.xcconfig:
+        * DumpRenderTree/mac/Configurations/SDKVariant.xcconfig: Added.
+        * ImageDiff/cg/Configurations/Base.xcconfig:
+        * ImageDiff/cg/Configurations/SDKVariant.xcconfig: Added.
+        * MiniBrowser/Configurations/Base.xcconfig:
+        * MiniBrowser/Configurations/SDKVariant.xcconfig: Added.
+        * MobileMiniBrowser/Configurations/Base.xcconfig:
+        * MobileMiniBrowser/Configurations/SDKVariant.xcconfig: Added.
+        * Scripts/webkitpy/style/checker.py:
+        (_all_categories):
+        (FileType):
+        (CheckerDispatcher._file_type):
+        (CheckerDispatcher._create_checker):
+        * Scripts/webkitpy/style/checkers/sdkvariant.py: Added.
+        (SDKVariantChecker):
+        (SDKVariantChecker.__init__):
+        (SDKVariantChecker.check):
+        * TestWebKitAPI/Configurations/Base.xcconfig:
+        * TestWebKitAPI/Configurations/SDKVariant.xcconfig: Added.
+        * WebEditingTester/Configurations/Base.xcconfig:
+        * WebEditingTester/Configurations/SDKVariant.xcconfig: Added.
+        * WebKitLauncher/Configurations/SDKVariant.xcconfig: Added.
+        * WebKitTestRunner/Configurations/Base.xcconfig:
+        * WebKitTestRunner/Configurations/SDKVariant.xcconfig: Added.
+        * lldb/lldbWebKitTester/Configurations/Base.xcconfig:
+        * lldb/lldbWebKitTester/Configurations/SDKVariant.xcconfig: Added.
+
 2019-01-18  David Kilzer  <ddkilzer@apple.com>
 
         Switch remaining UIKit soft-linking in WebCore, WebKitLegacy over to UIKitSoftLink.{cpp,h}

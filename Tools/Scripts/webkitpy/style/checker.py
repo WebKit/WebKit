@@ -51,6 +51,7 @@ from checkers.jstest import JSTestChecker
 from checkers.messagesin import MessagesInChecker
 from checkers.png import PNGChecker
 from checkers.python import PythonChecker
+from checkers.sdkvariant import SDKVariantChecker
 from checkers.test_expectations import TestExpectationsChecker
 from checkers.text import TextChecker
 from checkers.watchlist import WatchListChecker
@@ -416,6 +417,7 @@ def _all_categories():
     categories = categories.union(ChangeLogChecker.categories)
     categories = categories.union(PNGChecker.categories)
     categories = categories.union(FeatureDefinesChecker.categories)
+    categories = categories.union(SDKVariantChecker.categories)
 
     # FIXME: Consider adding all of the pep8 categories.  Since they
     #        are not too meaningful for documentation purposes, for
@@ -569,6 +571,7 @@ class FileType:
     XCODEPROJ = 10
     CMAKE = 11
     FEATUREDEFINES = 12
+    SDKVARIANT = 13
 
 
 class CheckerDispatcher(object):
@@ -656,6 +659,8 @@ class CheckerDispatcher(object):
             return FileType.TEXT
         elif os.path.basename(file_path) == "FeatureDefines.xcconfig":
             return FileType.FEATUREDEFINES
+        elif os.path.basename(file_path) == "SDKVariant.xcconfig":
+            return FileType.SDKVARIANT
         else:
             return FileType.NONE
 
@@ -720,6 +725,8 @@ class CheckerDispatcher(object):
             checker = WatchListChecker(file_path, handle_style_error)
         elif file_type == FileType.FEATUREDEFINES:
             checker = FeatureDefinesChecker(file_path, handle_style_error)
+        elif file_type == FileType.SDKVARIANT:
+            checker = SDKVariantChecker(file_path, handle_style_error)
         else:
             raise ValueError('Invalid file type "%(file_type)s": the only valid file types '
                              "are %(NONE)s, %(CPP)s, and %(TEXT)s."

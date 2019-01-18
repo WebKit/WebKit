@@ -1,4 +1,5 @@
 #include? "../../../../../Internal/Configurations/HaveInternalSDK.xcconfig"
+#include "SDKVariant.xcconfig"
 
 CODE_SIGN_IDENTITY = -;
 
@@ -98,10 +99,6 @@ EXCLUDED_INSTALLSRC_SUBDIRECTORY_PATTERNS = $(inherited) "$(PROJECT_DIR)/Source/
 
 NORMAL_WEBCORE_FRAMEWORKS_DIR = $(SYSTEM_LIBRARY_DIR)/PrivateFrameworks;
 NORMAL_WEBCORE_FRAMEWORKS_DIR[sdk=macosx*] = $(SYSTEM_LIBRARY_DIR)/Frameworks/WebKit.framework/Versions/A/Frameworks;
-
-WK_EMPTY_ = YES;
-WK_NOT_ = YES;
-WK_NOT_YES = NO;
 
 WK_USE_OVERRIDE_FRAMEWORKS_DIR = $(WK_NOT_$(WK_EMPTY_$(WK_OVERRIDE_FRAMEWORKS_DIR)));
 
