@@ -6,6 +6,17 @@
 
         Unreviewed infrastructure fix.
 
+        * Scripts/webkitpy/layout_tests/controllers/manager.py:
+        (Manager.run): Don't boot a device if no tests are available to run on it.
+
+2019-01-18  Jonathan Bedard  <jbedard@apple.com>
+
+        webkitpy: Implement device type specific expected results (Follow-up fix)
+        https://bugs.webkit.org/show_bug.cgi?id=192162
+        <rdar://problem/46345449>
+
+        Unreviewed infrastructure fix.
+
         * Scripts/webkitpy/api_tests/manager.py:
         (Manager._initialize_devices): Use DEVICE_TYPE when running API tests.
 
