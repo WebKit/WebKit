@@ -767,6 +767,8 @@ class WebkitFlatpak:
             except subprocess.CalledProcessError as e:
                 sys.stderr.write(str(e) + "\n")
                 return e.returncode
+            except KeyboardInterrupt:
+                return 0
 
         return 0
 

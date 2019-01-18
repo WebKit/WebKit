@@ -1,3 +1,13 @@
+2019-01-18  Philippe Normand  <pnormand@igalia.com>
+
+        [Flatpak] Missing KeyboardInterrupt exception handler
+        https://bugs.webkit.org/show_bug.cgi?id=193570
+
+        Reviewed by Michael Catanzaro.
+
+        * flatpak/flatpakutils.py:
+        (WebkitFlatpak.run_in_sandbox): Basic KeyboardInterrupt handling.
+
 2019-01-18  Zalan Bujtas  <zalan@apple.com>
 
         [LFC][BFC][MarginCollapsing] Collapsing through should not ignore floats.
