@@ -2528,10 +2528,10 @@ void WebPage::getFocusedElementInformation(FocusedElementInformation& informatio
     } else if (m_focusedElement->hasEditableStyle()) {
         information.elementType = InputType::ContentEditable;
         if (is<HTMLElement>(*m_focusedElement)) {
-            auto& assistedElement = downcast<HTMLElement>(*m_focusedElement);
-            information.isAutocorrect = assistedElement.shouldAutocorrect();
-            information.autocapitalizeType = assistedElement.autocapitalizeType();
-            information.inputMode = assistedElement.canonicalInputMode();
+            auto& focusedElement = downcast<HTMLElement>(*m_focusedElement);
+            information.isAutocorrect = focusedElement.shouldAutocorrect();
+            information.autocapitalizeType = focusedElement.autocapitalizeType();
+            information.inputMode = focusedElement.canonicalInputMode();
         } else {
             information.isAutocorrect = true;
             information.autocapitalizeType = AutocapitalizeTypeDefault;

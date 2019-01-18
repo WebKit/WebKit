@@ -1736,7 +1736,7 @@ static inline bool isSamePair(UIGestureRecognizer *a, UIGestureRecognizer *b, UI
 
         if (hasFocusedElement(_focusedElementInformation)) {
             // Request information about the position with sync message.
-            // If the assisted node is the same, prevent the gesture.
+            // If the focused element is the same, prevent the gesture.
             if (![self ensurePositionInformationIsUpToDate:WebKit::InteractionInformationRequest(WebCore::roundedIntPoint(point))])
                 return NO;
             if (_positionInformation.nodeAtPositionIsFocusedElement)
@@ -1746,7 +1746,7 @@ static inline bool isSamePair(UIGestureRecognizer *a, UIGestureRecognizer *b, UI
 
     if (gestureRecognizer == _highlightLongPressGestureRecognizer) {
         if (hasFocusedElement(_focusedElementInformation)) {
-            // This is a different node than the assisted one.
+            // This is a different element than the focused one.
             // Prevent the gesture if there is no node.
             // Allow the gesture if it is a node that wants highlight or if there is an action for it.
             if (!_positionInformation.isElement)
@@ -1885,7 +1885,7 @@ static inline bool isSamePair(UIGestureRecognizer *a, UIGestureRecognizer *b, UI
         return NO;
 #endif
 
-    // If we're currently editing an assisted node, only allow the selection to move within that assisted node.
+    // If we're currently focusing an editable element, only allow the selection to move within that focused element.
     if (self.isFocusingElement)
         return _positionInformation.nodeAtPositionIsFocusedElement;
     
@@ -4318,10 +4318,7 @@ static NSString *contentTypeFromFieldName(WebCore::AutofillFieldName fieldName)
     [[self textInputTraits] takeTraitsFrom:traits];
 }
 
-// FIXME: I want to change the name of these functions, but I'm leaving it for now
-// to make it easier to look up the corresponding functions in UIKit.
-
-- (void)_startAssistingKeyboard
+- (void)_showKeyboard
 {
     [self setUpTextSelectionAssistant];
     
@@ -4333,12 +4330,17 @@ static NSString *contentTypeFromFieldName(WebCore::AutofillFieldName fieldName)
 #endif
 }
 
-- (void)_stopAssistingKeyboard
+- (void)_hideKeyboard
 {
     self.inputDelegate = nil;
     [self setUpTextSelectionAssistant];
     
     [_textSelectionAssistant deactivateSelection];
+    [_formAccessoryView hideAutoFillButton];
+
+    // FIXME: Does it make sense to call -reloadInputViews on watchOS?
+    [self reloadInputViews];
+    [self _updateAccessory];
 }
 
 - (const WebKit::FocusedElementInformation&)focusedElementInformation
@@ -4565,7 +4567,7 @@ static const double minimumFocusedElementAreaForSuppressingSelectionAssistant = 
 #endif
         break;
     default:
-        [self _startAssistingKeyboard];
+        [self _showKeyboard];
         break;
     }
     
@@ -4615,10 +4617,7 @@ static const double minimumFocusedElementAreaForSuppressingSelectionAssistant = 
     _inputPeripheral = nil;
     _focusRequiresStrongPasswordAssistance = NO;
 
-    [self _stopAssistingKeyboard];
-    [_formAccessoryView hideAutoFillButton];
-    [self reloadInputViews];
-    [self _updateAccessory];
+    [self _hideKeyboard];
 
 #if PLATFORM(WATCHOS)
     [self dismissAllInputViewControllers:YES];
@@ -4671,7 +4670,7 @@ static const double minimumFocusedElementAreaForSuppressingSelectionAssistant = 
     auto identifierBeforeUpdate = _focusedElementInformation.focusedElementIdentifier;
     _page->requestFocusedElementInformation([callback = WTFMove(callback), identifierBeforeUpdate, weakSelf] (auto& info, auto error) {
         if (!weakSelf || error != WebKit::CallbackBase::Error::None || info.focusedElementIdentifier != identifierBeforeUpdate) {
-            // If the assisted node may have changed in the meantime, don't overwrite assisted node information.
+            // If the focused element may have changed in the meantime, don't overwrite focused element information.
             callback(false);
             return;
         }

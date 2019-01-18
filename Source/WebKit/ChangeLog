@@ -1,3 +1,27 @@
+2019-01-18  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Remove some last vestiges of assisted node terminology in WebKit
+        https://bugs.webkit.org/show_bug.cgi?id=193572
+
+        Reviewed by Tim Horton.
+
+        * UIProcess/API/Cocoa/_WKFocusedElementInfo.h:
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView gestureRecognizerShouldBegin:]):
+        (-[WKContentView textInteractionGesture:shouldBeginAtPoint:]):
+        (-[WKContentView _showKeyboard]):
+        (-[WKContentView _hideKeyboard]):
+
+        Add a FIXME about invoking `-reloadInputViews` on watchOS when the focused element is blurred.
+
+        (-[WKContentView _elementDidFocus:userIsInteracting:blurPreviousNode:changingActivityState:userObject:]):
+        (-[WKContentView _elementDidBlur]):
+        (-[WKContentView updateCurrentFocusedElementInformation:]):
+        (-[WKContentView _startAssistingKeyboard]): Deleted.
+        (-[WKContentView _stopAssistingKeyboard]): Deleted.
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::getFocusedElementInformation):
+
 2019-01-18  Youenn Fablet  <youenn@apple.com>
 
         Add a new SPI to request for cache storage quota increase
