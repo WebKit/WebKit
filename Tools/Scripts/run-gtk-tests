@@ -125,6 +125,9 @@ class GtkTestRunner(TestRunner):
     def is_google_test(self, test_program):
         return os.path.basename(os.path.dirname(test_program)) in ["WebKit", "WTF", "WebCore",  "WebCoreGtk"]
 
+    def is_qt_test(self, test_program):
+        return False
+
 if __name__ == "__main__":
     flatpakutils.run_in_sandbox_if_available(sys.argv)
     if not flatpakutils.is_sandboxed() and not jhbuildutils.enter_jhbuild_environment_if_available("gtk"):

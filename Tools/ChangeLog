@@ -1,3 +1,68 @@
+2019-01-18  Philippe Normand  <pnormand@igalia.com>
+
+        [WPE] Add Qt extension
+        https://bugs.webkit.org/show_bug.cgi?id=191464
+
+        Reviewed by Carlos Garcia Campos.
+
+        MiniBrowser and API tests for the WPE Qt API. To run the
+        MiniBrowser a new script is introduced. Example invocation:
+
+        $ run-qt-wpe-minibrowser -platform wayland https://webkit.org
+
+        Also note-worthy is the introduction of the python2-subprocess32
+        dependency to run the GLib API tests.
+
+        * MiniBrowser/wpe/CMakeLists.txt:
+        * MiniBrowser/wpe/qt/CMakeLists.txt: Added.
+        * MiniBrowser/wpe/qt/main.cpp: Added.
+        (main):
+        * MiniBrowser/wpe/qt/main.qml: Added.
+        * MiniBrowser/wpe/qt/qml.qrc: Added.
+        * Scripts/run-gtk-tests:
+        (GtkTestRunner.is_google_test):
+        (GtkTestRunner):
+        (GtkTestRunner.is_qt_test):
+        * Scripts/run-qt-wpe-minibrowser: Added.
+        * Scripts/run-wpe-tests:
+        (WPETestRunner):
+        (WPETestRunner.is_google_test):
+        (WPETestRunner.is_qt_test):
+        * TestWebKitAPI/Tests/WPEQt/TestLoad.cpp: Added.
+        (TestLoad::main):
+        * TestWebKitAPI/Tests/WPEQt/TestLoadHtml.cpp: Added.
+        (TestLoadHtml::main):
+        * TestWebKitAPI/Tests/WPEQt/TestLoadRequest.cpp: Added.
+        (TestLoadRequest::main):
+        * TestWebKitAPI/Tests/WPEQt/TestRunJavaScript.cpp: Added.
+        (TestRunJavaScript::main):
+        * TestWebKitAPI/Tests/WPEQt/WPEQtTest.cpp: Added.
+        (waitForSignal):
+        * TestWebKitAPI/Tests/WPEQt/WPEQtTest.h: Added.
+        (LoadSpy::LoadSpy):
+        (LoadSpy::~LoadSpy):
+        (LoadSpy::onLoadingChanged):
+        (LoadStartedCatcher::LoadStartedCatcher):
+        (LoadStartedCatcher::~LoadStartedCatcher):
+        (LoadStartedCatcher::onLoadingChanged):
+        (waitForLoadSucceeded):
+        (waitForLoadFailed):
+        * TestWebKitAPI/glib/CMakeLists.txt:
+        * flatpak/flatpakutils.py:
+        (WebkitFlatpak.load_from_args):
+        (WebkitFlatpak.__init__):
+        (WebkitFlatpak.clean_args):
+        (WebkitFlatpak.run_in_sandbox):
+        * flatpak/org.webkit.CommonModules.yaml:
+        * flatpak/org.webkit.WPE.yaml:
+        * flatpak/org.webkit.WPEModules.yaml:
+        * flatpak/org.webkit.WPEQT.yaml: Copied from Tools/flatpak/org.webkit.WebKit.yaml.
+        * flatpak/org.webkit.WebKit.yaml:
+        * glib/api_test_runner.py:
+        (TestRunner._run_test_qt):
+        (TestRunner.is_qt_test):
+        (TestRunner._run_test):
+
 2019-01-17  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [iOS] Content offset jumps erratically when autoscrolling near scroll view content inset areas

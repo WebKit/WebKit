@@ -1,15 +1,4 @@
-- name: libwpe
-  buildsystem: cmake-ninja
-  sources:
-    - type: archive
-      url: https://wpewebkit.org/releases/libwpe-1.0.0.tar.xz
-      sha256: aff11612123f9ab85a8b9a4bcdfb3a7503eba0a0d2d96f2cdecd30e911091719
-- name: wpebackend-fdo
-  buildsystem: cmake-ninja
-  sources:
-    - type: archive
-      url: https://wpewebkit.org/releases/wpebackend-fdo-1.0.0.tar.xz
-      sha256: 7a747f87a1ae46d30144369050e3ce348b58986d04e1a139ba75c198fa636729
+- org.webkit.WPEModules.yaml
 - name: webkitgtk-test-fonts
   no-autogen: true
   sources:

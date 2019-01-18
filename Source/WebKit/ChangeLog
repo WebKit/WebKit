@@ -1,3 +1,94 @@
+2019-01-18  Philippe Normand  <pnormand@igalia.com>
+
+        [WPE] Add Qt extension
+        https://bugs.webkit.org/show_bug.cgi?id=191464
+
+        Reviewed by Carlos Garcia Campos.
+
+        This new extension is a QML plugin embedding a WPE ViewBackend
+        implementation. It provides a public API very similar to Qt's
+        WebView module. It comes with a simple mini-browser implemented in
+        QML.
+
+        QtWPE is known to work with the Wayland-EGL (in GNOME and Weston
+        compositors) and EGLFS QPAs.
+
+        * PlatformWPE.cmake:
+        * UIProcess/API/wpe/qt/WPEQmlExtensionPlugin.cpp: Added.
+        (WPEQmlExtensionPlugin::registerTypes):
+        * UIProcess/API/wpe/qt/WPEQmlExtensionPlugin.h: Added.
+        * UIProcess/API/wpe/qt/WPEQtView.cpp: Added.
+        (WPEQtView::WPEQtView):
+        (WPEQtView::~WPEQtView):
+        (WPEQtView::geometryChanged):
+        (WPEQtView::configureWindow):
+        (WPEQtView::createOffscreen):
+        (WPEQtView::backendCreated):
+        (WPEQtView::notifyUrlChangedCallback):
+        (WPEQtView::notifyTitleChangedCallback):
+        (WPEQtView::notifyLoadProgressCallback):
+        (WPEQtView::notifyLoadChangedCallback):
+        (WPEQtView::notifyLoadFailedCallback):
+        (WPEQtView::updatePaintNode):
+        (WPEQtView::url const):
+        (WPEQtView::setUrl):
+        (WPEQtView::loadProgress const):
+        (WPEQtView::title const):
+        (WPEQtView::canGoBack const):
+        (WPEQtView::isLoading const):
+        (WPEQtView::canGoForward const):
+        (WPEQtView::goBack):
+        (WPEQtView::goForward):
+        (WPEQtView::reload):
+        (WPEQtView::stop):
+        (WPEQtView::loadHtml):
+        (WPEQtView::jsAsyncReadyCallback):
+        (WPEQtView::handleJsResult):
+        (WPEQtView::runJavaScript):
+        (WPEQtView::mousePressEvent):
+        (WPEQtView::mouseReleaseEvent):
+        (WPEQtView::hoverEnterEvent):
+        (WPEQtView::hoverLeaveEvent):
+        (WPEQtView::hoverMoveEvent):
+        (WPEQtView::wheelEvent):
+        (WPEQtView::keyPressEvent):
+        (WPEQtView::keyReleaseEvent):
+        (WPEQtView::touchEvent):
+        * UIProcess/API/wpe/qt/WPEQtView.h: Added.
+        * UIProcess/API/wpe/qt/WPEQtViewBackend.cpp: Added.
+        (configureCallback):
+        (WPEQtViewBackend::WPEQtViewBackend):
+        (WPEQtViewBackend::~WPEQtViewBackend):
+        (WPEQtViewBackend::configureGlibEglDisplay):
+        (WPEQtViewBackend::configureEglDisplay):
+        (WPEQtViewBackend::initialize):
+        (WPEQtViewBackend::backend const):
+        (WPEQtViewBackend::resize):
+        (WPEQtViewBackend::getTexture):
+        (WPEQtViewBackend::initSurface):
+        (WPEQtViewBackend::displayImage):
+        (WPEQtViewBackend::modifiers const):
+        (WPEQtViewBackend::dispatchHoverEnterEvent):
+        (WPEQtViewBackend::dispatchHoverLeaveEvent):
+        (WPEQtViewBackend::dispatchHoverMoveEvent):
+        (WPEQtViewBackend::dispatchMousePressEvent):
+        (WPEQtViewBackend::dispatchMouseReleaseEvent):
+        (WPEQtViewBackend::dispatchWheelEvent):
+        (WPEQtViewBackend::dispatchKeyEvent):
+        (WPEQtViewBackend::dispatchTouchEvent):
+        * UIProcess/API/wpe/qt/WPEQtViewBackend.h: Added.
+        * UIProcess/API/wpe/qt/WPEQtViewLoadRequest.cpp: Added.
+        (WPEQtViewLoadRequest::WPEQtViewLoadRequest):
+        (WPEQtViewLoadRequest::~WPEQtViewLoadRequest):
+        (WPEQtViewLoadRequest::url const):
+        (WPEQtViewLoadRequest::status const):
+        (WPEQtViewLoadRequest::errorString const):
+        * UIProcess/API/wpe/qt/WPEQtViewLoadRequest.h: Added.
+        * UIProcess/API/wpe/qt/WPEQtViewLoadRequestPrivate.h: Added.
+        (WPEQtViewLoadRequestPrivate::WPEQtViewLoadRequestPrivate):
+        (WPEQtViewLoadRequestPrivate::~WPEQtViewLoadRequestPrivate):
+        * UIProcess/API/wpe/qt/qmldir: Added.
+
 2019-01-17  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [iOS] Content offset jumps erratically when autoscrolling near scroll view content inset areas

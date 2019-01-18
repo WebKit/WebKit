@@ -15,7 +15,7 @@
   sources:
     - type: git
       url: https://github.com/apache/httpd.git
-      branch: 2.4.33
+      branch: 2.4.37
     - type : file
       path : files/httpd-autogen.sh
       dest-filename : autogen.sh
@@ -81,6 +81,15 @@
     url: https://files.pythonhosted.org/packages/9e/17/1d4ed6e1a4c0918a0357dfa2fdbe26bf63f6e616013c04a14bce9fd33e40/pyaml-17.12.1.tar.gz
     sha256: 66623c52f34d83a2c0fc963e08e8b9d0c13d88404e3b43b1852ef71eda19afa3
 
+- name: python2-subprocess32
+  buildsystem: simple
+  build-commands:
+  - pip2 install --target=/app/lib/python2.7/site-packages/ .
+  sources:
+  - type: archive
+    url: https://files.pythonhosted.org/packages/be/2b/beeba583e9877e64db10b52a96915afc0feabf7144dcbf2a0d0ea68bf73d/subprocess32-3.5.3.tar.gz
+    sha256: 6bc82992316eef3ccff319b5033809801c0c3372709c5f6985299c88ac7225c3
+
 # GStreamer modules
 - name: libvpx
   no-autogen: true
@@ -90,7 +99,7 @@
       branch: v1.7.0
   config-opts:
     - --enable-pic
-    - --as=yasm
+    - --as=nasm
     - --disable-unit-tests
     - --size-limit=16384x16384
     - --enable-postproc
@@ -181,6 +190,7 @@
     - "--enable-static"
     - "--enable-pic"
     - "--disable-lavf"
+    - "--disable-asm"
   sources:
     - type: archive
       url: http://download.videolan.org/pub/x264/snapshots/x264-snapshot-20140212-2245-stable.tar.bz2
@@ -205,8 +215,61 @@
       path: ../gstreamer/patches/gst-plugins-bad-0002-aomenc-Handle-8-bit_depth-images-with-AOM_IMG_FMT_HI.patch
   config-opts:
     - -Ddisable_gtkdoc=true
+- name: ffmpeg
+  sources:
+    - type: archive
+      url: https://ffmpeg.org/releases/ffmpeg-3.4.5.tar.gz
+      sha256: 18f80cc9ca322134ed40d25d7489af954fa519b4e7e6289b7084f1b0a1cdf472
+  config-opts:
+    - --enable-static
+    - --enable-pic
+    - --disable-avdevice
+    - --disable-postproc
+    - --disable-swscale
+    - --disable-programs
+    - --disable-ffplay
+    - --disable-ffprobe
+    - --disable-ffmpeg
+    - --disable-encoder=flac
+    - --disable-protocols
+    - --disable-devices
+    - --disable-network
+    - --disable-hwaccels
+    - --disable-dxva2
+    - --disable-vdpau
+    - --disable-filters
+    - --enable-filter=yadif
+    - --disable-doc
+    - --disable-d3d11va
+    - --disable-dxva2
+    - --disable-audiotoolbox
+    - --disable-videotoolbox
+    - --disable-vaapi
+    - --disable-crystalhd
+    - --disable-mediacodec
+    - --disable-nvenc
+    - --disable-mmal
+    - --disable-omx
+    - --disable-omx-rpi
+    - --disable-cuda
+    - --disable-cuvid
+    - --disable-libmfx
+    - --disable-libnpp
+    - --disable-iconv
+    - --disable-jni
+    - --disable-v4l2_m2m
+    - --enable-optimizations
+- name: gst-libav
+  buildsystem: meson
+  builddir: true
+  sources:
+    - type: archive
+      url: https://gstreamer.freedesktop.org/src/gst-libav/gst-libav-1.14.4.tar.xz
+      sha256: dfd78591901df7853eab7e56a86c34a1b03635da0d3d56b89aa577f1897865da
+  config-opts:
+    - -Ddisable_gtkdoc=true
 
-- name: libgcrypt # Speedup libgrcypt
+- name: libgcrypt # Speedup libgcrypt
   sources:
     - type: git
       url: https://dev.gnupg.org/source/libgcrypt.git

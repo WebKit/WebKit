@@ -1,10 +1,10 @@
-app-id: %(PORTNAME)s
-runtime: org.gnome.Platform
-runtime-version: "3.28"
+app-id: org.webkit.WPEQT
+runtime: org.kde.Platform
+runtime-version: "5.11"
 # Control the exact version of the Sdk/Runtime that is being used.
-sdk-hash: ba3017972f1cc6c7c8b0ed7f80d3297ad4c6f4076bd799d0bab0e2cbaa3e3c0a
-runtime-hash: 9d3fe926d425ad837e40a0945020a00f09c1f531335987a753e07f276d76ee36
-sdk: org.gnome.Sdk
+sdk-hash: dd9e5d3b3134c24fc191226f058fc78c6bdf1c25fd7be38bea977fcb15307e95
+runtime-hash: 02ede84d3591a5ea8028204d86059bffaccb778159ec53c859bbc60d9e7025e8
+sdk: org.kde.Sdk
 command: %(COMMAND)s
 finish-args:
   # Basically no sandboxing, the goal here is to make it flexible
@@ -29,5 +29,11 @@ build-options:
   no-debuginfo: true
 modules:
   - org.webkit.CommonModules.yaml
-  # Port specific components.
-  - %(PORTNAME)s.yaml
+  - org.webkit.WPEModules.yaml
+
+  # This module is not actually built.
+  - name: org.webkit.WPEQT
+    buildsystem: cmake
+    sources:
+    - type: dir
+      path: /app/webkit/Source/WebKit/UIProcess/API/wpe/qt

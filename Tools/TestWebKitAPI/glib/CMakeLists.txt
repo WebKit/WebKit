@@ -21,9 +21,13 @@ set(WebKitGLibAPITests_SYSTEM_INCLUDE_DIRECTORIES
     ${LIBSOUP_INCLUDE_DIRS}
 )
 
-set(WebKitGLibAPITest_LIBRARIES
+set(WebKitAPITest_LIBRARIES
     JavaScriptCore
     WebKit
+)
+
+set(WebKitGLibAPITest_LIBRARIES
+    ${WebKitAPITest_LIBRARIES}
     WebKitGLibAPITestsCore
     ${GLIB_LIBRARIES}
     ${LIBSOUP_LIBRARIES}
@@ -144,4 +148,33 @@ ADD_WK2_TEST(TestDOMElement ${TOOLS_DIR}/TestWebKitAPI/Tests/WebKitGLib/TestDOME
 # FIXME: Enable for WPE
 if (PORT STREQUAL "GTK")
     ADD_WK2_TEST(TestCookieManager ${TOOLS_DIR}/TestWebKitAPI/Tests/WebKitGLib/TestCookieManager.cpp)
+endif ()
+
+macro(ADD_WPE_QT_TEST test_name)
+    add_executable(${test_name} ${ARGN} ${TOOLS_DIR}/TestWebKitAPI/Tests/WPEQt/WPEQtTest.cpp)
+    set_target_properties(${test_name} PROPERTIES
+        RUNTIME_OUTPUT_DIRECTORY ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/TestWebKitAPI/WPEQt
+        AUTOMOC ON
+        CXX_STANDARD 14
+    )
+    target_compile_definitions(${test_name} PUBLIC QT_NO_KEYWORDS=1)
+    target_link_libraries(${test_name} ${WPEQtAPITest_LIBRARIES})
+    target_include_directories(${test_name} SYSTEM PRIVATE ${WPEQtAPITests_INCLUDE_DIRECTORIES})
+    target_include_directories(${test_name} PRIVATE
+      ${CMAKE_CURRENT_BINARY_DIR} ${CMAKE_SOURCE_DIR}/Source/WebKit/UIProcess/API/wpe/qt)
+endmacro()
+
+if (PORT STREQUAL "WPE" AND ENABLE_WPE_QT_API)
+    set(WPEQtAPITests_INCLUDE_DIRECTORIES
+        ${Qt5_INCLUDE_DIRS}
+        ${Qt5Test_INCLUDE_DIRS}
+    )
+    set(WPEQtAPITest_LIBRARIES
+         ${WebKitAPITest_LIBRARIES}
+         Qt5::Test qtwpe
+    )
+    ADD_WPE_QT_TEST(TestLoad ${TOOLS_DIR}/TestWebKitAPI/Tests/WPEQt/TestLoad.cpp)
+    ADD_WPE_QT_TEST(TestLoadHtml ${TOOLS_DIR}/TestWebKitAPI/Tests/WPEQt/TestLoadHtml.cpp)
+    ADD_WPE_QT_TEST(TestLoadRequest ${TOOLS_DIR}/TestWebKitAPI/Tests/WPEQt/TestLoadRequest.cpp)
+    ADD_WPE_QT_TEST(TestRunJavaScript ${TOOLS_DIR}/TestWebKitAPI/Tests/WPEQt/TestRunJavaScript.cpp)
 endif ()

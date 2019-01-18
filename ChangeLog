@@ -1,3 +1,12 @@
+2019-01-18  Philippe Normand  <pnormand@igalia.com>
+
+        [WPE] Add Qt extension
+        https://bugs.webkit.org/show_bug.cgi?id=191464
+
+        Reviewed by Carlos Garcia Campos.
+
+        * Source/cmake/OptionsWPE.cmake: Add ENABLE_WPE_QT_API CMake option. Disabled by default.
+
 2019-01-17  Truitt Savell  <tsavell@apple.com>
 
         Unreviewed, rolling out r240124.

@@ -26,12 +26,13 @@ top_level_directory = os.path.normpath(os.path.join(os.path.dirname(__file__), "
 sys.path.insert(0, os.path.join(top_level_directory, "Tools", "jhbuild"))
 sys.path.insert(0, os.path.join(top_level_directory, "Tools", "flatpak"))
 sys.path.insert(0, os.path.join(top_level_directory, "Tools", "glib"))
+import common
 import jhbuildutils
 import flatpakutils
 from api_test_runner import TestRunner, add_options
 
 class WPETestRunner(TestRunner):
-    TestRunner.TEST_DIRS = [ "WPE", "WebKit", "JavaScriptCore", "WTF", "WebCore" ]
+    TestRunner.TEST_DIRS = [ "WPE", "WPEQt", "WebKit", "JavaScriptCore", "WTF", "WebCore" ]
 
     def __init__(self, options, tests=[]):
         super(WPETestRunner, self).__init__("wpe", options, tests)
@@ -42,6 +43,8 @@ class WPETestRunner(TestRunner):
     def is_google_test(self, test_program):
         return os.path.basename(os.path.dirname(test_program)) in ["WebKit", "WTF", "WebCore"]
 
+    def is_qt_test(self, test_program):
+        return os.path.basename(os.path.dirname(test_program)) == "WPEQt"
 
 if __name__ == "__main__":
     flatpakutils.run_in_sandbox_if_available([sys.argv[0], "--wpe"] + sys.argv[1:])

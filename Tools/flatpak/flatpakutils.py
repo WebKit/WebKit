@@ -52,6 +52,10 @@ FLATPAK_REQ = [
     ("flatpak-builder", "0.10.0"),
 ]
 
+WPE_MANIFEST_MAP = {
+    "qt": "org.webkit.WPEQT.yaml",
+}
+
 scriptdir = os.path.abspath(os.path.dirname(__file__))
 _log = logging.getLogger(__name__)
 
@@ -498,6 +502,7 @@ class WebkitFlatpak:
                             dest="user_command")
         general.add_argument('--available', action='store_true', dest="check_available", help='Check if required dependencies are available.'),
         general.add_argument("--use-icecream", help="Use the distributed icecream (icecc) compiler.", action="store_true")
+        general.add_argument("--wpe-extension", action="store", dest="wpe_extension", help="WPE Extension to enable")
 
         debugoptions = parser.add_argument_group("Debugging")
         debugoptions.add_argument("--gdb", nargs="?", help="Activate gdb, passing extra args to it if wanted.")
@@ -553,6 +558,7 @@ class WebkitFlatpak:
         self.app_module = None
         self.flatpak_default_args = []
         self.check_available = False
+        self.wpe_extension = None
 
         # Default application to run in the sandbox
         self.command = None
@@ -596,7 +602,13 @@ class WebkitFlatpak:
             " --debug" if self.debug else " --release")
 
         self.name = "org.webkit.%s" % self.platform
-        self.manifest_path = os.path.abspath(os.path.join(scriptdir, '../flatpak/org.webkit.WebKit.yaml'))
+
+        if self.wpe_extension:
+            manifest_filename = WPE_MANIFEST_MAP[self.wpe_extension]
+        else:
+            manifest_filename = "org.webkit.WebKit.yaml"
+        self.manifest_path = os.path.abspath(os.path.join(scriptdir, '../flatpak/') + manifest_filename)
+
         self.build_name = self.name + "-generated"
 
         build_root = os.path.join(self.source_root, 'WebKitBuild')
@@ -679,6 +691,9 @@ class WebkitFlatpak:
                 "--bind-mount=/etc/perl=%s" % os.path.join(self.flatpak_build_path, "files/lib/perl"),
                 "--bind-mount=/run/host/%s=%s" % (tempfile.gettempdir(), tempfile.gettempdir()),
                 "--bind-mount=%s=%s" % (self.sandbox_source_root, self.source_root),
+                "--talk-name=org.a11y.Bus",
+                "--talk-name=org.gtk.vfs",
+                "--talk-name=org.gtk.vfs.*",
                 # We mount WebKitBuild/PORTNAME/BuildType to /app/webkit/WebKitBuild/BuildType
                 # so we can build WPE and GTK in a same source tree.
                 "--bind-mount=%s=%s" % (sandbox_build_path, self.build_path)]
@@ -708,6 +723,7 @@ class WebkitFlatpak:
                 "LANG",
                 "NUMBER_OF_PROCESSORS",
                 "CCACHE_PREFIX",
+                "QML2_IMPORT_PATH",
             ]
 
             if self.use_icecream:

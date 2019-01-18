@@ -1,0 +1,60 @@
+#!/usr/bin/env perl
+# Copyright (C) 2018, 2019 Igalia S.L.
+#
+# This program is free software; you can redistribute it and/or
+# modify it under the terms of the GNU Lesser General Public
+# License as published by the Free Software Foundation; either
+# version 2.1 of the License, or (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+# Lesser General Public License for more details.
+#
+# You should have received a copy of the GNU Lesser General Public
+# License along with this program; if not, write to the
+# Free Software Foundation, Inc., 51 Franklin St, Fifth Floor,
+# Boston, MA 02110-1301, USA.
+
+# Simplified "run" script for launching the QtWPE MiniBrowser.
+
+use strict;
+use warnings;
+use File::Spec::Functions qw/catdir/;
+use FindBin;
+use lib $FindBin::Bin;
+use webkitdirs;
+
+my $launcherName;
+my $libPath;
+my $launcherPath;
+my @jhbuildWrapper;
+
+prohibitUnknownPort();
+setConfiguration();
+
+if (isWPE()) {
+    my $configuration = passedConfiguration();
+    my $productDir = productDir();
+    my $libPath;
+    $libPath = "/app/webkit/WebKitBuild/$configuration/lib/qml" if $configuration;
+    $ENV{"QML2_IMPORT_PATH"} = "$libPath" if $libPath;
+    runInFlatpakIfAvailable("/app/webkit/Tools/Scripts/run-qt-wpe-minibrowser");
+
+    # Check to see that all the frameworks are built.
+    checkFrameworks();
+
+    if (!inFlatpakSandbox()) {
+       $libPath = "$productDir/lib/qml" if $productDir;
+       $ENV{"QML2_IMPORT_PATH"} = "$libPath" if $libPath;
+    }
+
+    $launcherPath = catdir($productDir, "bin", "qt-wpe-mini-browser");
+    die "Can't find $launcherPath" unless -x $launcherPath;
+    @jhbuildWrapper = wrapperPrefixIfNeeded();
+
+    print "Starting MiniBrowser.\n";
+    exec @jhbuildWrapper, $launcherPath, @ARGV or die;
+} else {
+    die "Unsupported platform."
+}
