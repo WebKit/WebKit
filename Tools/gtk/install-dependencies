@@ -530,7 +530,7 @@ function installDependenciesWithDnf {
         libproxy-devel \
         libpsl-devel \
         libtiff-devel \
-        libunistring-dev \
+        libunistring-devel \
         libxcb-devel \
         libxkbfile-devel \
         libxkbcommon-x11-devel \
