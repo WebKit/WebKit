@@ -487,6 +487,18 @@ static CGPoint contentOffsetBoundedInValidRange(UIScrollView *scrollView, CGPoin
     return contentOffset;
 }
 
+double UIScriptController::contentOffsetX() const
+{
+    TestRunnerWKWebView *webView = TestController::singleton().mainWebView()->platformView();
+    return webView.scrollView.contentOffset.x;
+}
+
+double UIScriptController::contentOffsetY() const
+{
+    TestRunnerWKWebView *webView = TestController::singleton().mainWebView()->platformView();
+    return webView.scrollView.contentOffset.y;
+}
+
 void UIScriptController::scrollToOffset(long x, long y)
 {
     TestRunnerWKWebView *webView = TestController::singleton().mainWebView()->platformView();

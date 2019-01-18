@@ -1,0 +1,51 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ useFlexibleViewport=true, contentInset.top=100 ] -->
+<html>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<head>
+    <script src="../../../resources/basic-gestures.js"></script>
+    <script src="../../../resources/ui-helper.js"></script>
+    <script src="../../../resources/js-test.js"></script>
+    <style>
+    body {
+        margin: 0;
+        box-sizing: border-box;
+        border: red 1px solid;
+    }
+
+    #text {
+        font-size: 30px;
+    }
+
+    #console {
+        overflow: scroll;
+        height: 100px;
+    }
+    </style>
+    <script>
+    jsTestIsAsync = true;
+
+    async function run()
+    {
+        await UIHelper.activateAndWaitForInputSessionAt(110, 40);
+        originalContentOffset = await UIHelper.contentOffset();
+        await longPressAndHoldAtPoint(110, 40);
+        await touchAndDragFromPointToPoint(110, 40, 210, 40);
+        await liftUpAtPoint(210, 40);
+        finalContentOffset = await UIHelper.contentOffset();
+        verticalMovementDuringDrag = Math.abs(finalContentOffset.y - originalContentOffset.y);
+
+        shouldBe("finalContentOffset.x", "0");
+        shouldBeTrue("verticalMovementDuringDrag < 1");
+        finishJSTest();
+    }
+    </script>
+</head>
+<body contenteditable onload="run()">
+    <p id="text"><strong>Select me and drag up.</strong></p>
+    <p id="description"></p>
+    <p id="console"></p>
+</body>
+<script>
+    description("Verifies that triggering autoscroll near the top of a web view with a top content inset does not cause the scroll view's content offset to jump to 0. This test requires WebKitTestRunner. To verify manually, load this page in a web view that has a scroll view top content inset, and scroll such that the full top content inset area is visible. Check that starting a text selection loupe gesture near the top of the top of the document and dragging upwards does not thrash the scroll view's content offset.");
+</script>
+</html>

@@ -71,6 +71,7 @@ class WebProcessPool;
 
 - (void)didUpdateVisibleRect:(CGRect)visibleRect
     unobscuredRect:(CGRect)unobscuredRect
+    contentInsets:(UIEdgeInsets)contentInsets
     unobscuredRectInScrollViewCoordinates:(CGRect)unobscuredRectInScrollViewCoordinates
     obscuredInsets:(UIEdgeInsets)obscuredInsets
     unobscuredSafeAreaInsets:(UIEdgeInsets)unobscuredSafeAreaInsets

@@ -554,4 +554,16 @@ window.UIHelper = class UIHelper {
         const escapedIdentifier = identifier.replace(/`/g, "\\`");
         return new Promise(resolve => testRunner.runUIScript(`uiController.setKeyboardInputModeIdentifier(\`${escapedIdentifier}\`)`, resolve));
     }
+
+    static contentOffset()
+    {
+        if (!this.isIOS())
+            return Promise.resolve();
+
+        const uiScript = "JSON.stringify([uiController.contentOffsetX, uiController.contentOffsetY])";
+        return new Promise(resolve => testRunner.runUIScript(uiScript, result => {
+            const [offsetX, offsetY] = JSON.parse(result)
+            resolve({ x: offsetX, y: offsetY });
+        }));
+    }
 }

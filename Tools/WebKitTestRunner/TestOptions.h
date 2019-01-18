@@ -69,6 +69,8 @@ struct TestOptions {
     bool editable { false };
     bool enableUndoManagerAPI { false };
 
+    double contentInsetTop { 0 };
+
     float deviceScaleFactor { 1 };
     Vector<String> overrideLanguages;
     std::string applicationManifest;
@@ -113,7 +115,8 @@ struct TestOptions {
             || shouldIgnoreMetaViewport != options.shouldIgnoreMetaViewport
             || enableEditableImages != options.enableEditableImages
             || editable != options.editable
-            || enableUndoManagerAPI != options.enableUndoManagerAPI)
+            || enableUndoManagerAPI != options.enableUndoManagerAPI
+            || contentInsetTop != options.contentInsetTop)
             return false;
 
         if (experimentalFeatures != options.experimentalFeatures)

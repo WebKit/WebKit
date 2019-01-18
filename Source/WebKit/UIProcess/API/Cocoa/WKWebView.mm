@@ -1734,7 +1734,7 @@ static WebCore::Color scrollViewBackgroundColor(WKWebView *webView)
     if (_haveSetObscuredInsets)
         return _obscuredInsets;
 
-#if __IPHONE_OS_VERSION_MIN_REQUIRED >= 110000
+#if PLATFORM(IOS)
     if (self._safeAreaShouldAffectObscuredInsets)
         return UIEdgeInsetsAdd(UIEdgeInsetsZero, self._scrollViewSystemContentInset, self._effectiveObscuredInsetEdgesAffectedBySafeArea);
 #endif
@@ -1749,7 +1749,7 @@ static WebCore::Color scrollViewBackgroundColor(WKWebView *webView)
 
     UIEdgeInsets insets = [_scrollView contentInset];
 
-#if __IPHONE_OS_VERSION_MIN_REQUIRED >= 110000
+#if PLATFORM(IOS)
     if (self._safeAreaShouldAffectObscuredInsets)
         insets = UIEdgeInsetsAdd(insets, self._scrollViewSystemContentInset, self._effectiveObscuredInsetEdgesAffectedBySafeArea);
 #endif
@@ -1762,7 +1762,7 @@ static WebCore::Color scrollViewBackgroundColor(WKWebView *webView)
     if (_haveSetUnobscuredSafeAreaInsets)
         return _unobscuredSafeAreaInsets;
 
-#if __IPHONE_OS_VERSION_MIN_REQUIRED >= 110000
+#if PLATFORM(IOS)
     if (!self._safeAreaShouldAffectObscuredInsets)
         return self.safeAreaInsets;
 #endif
@@ -2974,6 +2974,26 @@ static bool scrollViewCanScroll(UIScrollView *scrollView)
     CGRect unobscuredRectInContentCoordinates = _frozenUnobscuredContentRect ? _frozenUnobscuredContentRect.value() : [self convertRect:unobscuredRect toView:_contentView.get()];
     unobscuredRectInContentCoordinates = CGRectIntersection(unobscuredRectInContentCoordinates, [self _contentBoundsExtendedForRubberbandingWithScale:scaleFactor]);
 
+    // The following logic computes the extent to which the bottom, top, left and right content insets are visible.
+    auto scrollViewInsets = [_scrollView contentInset];
+    auto scrollViewBounds = [_scrollView bounds];
+    auto scrollViewContentSize = [_scrollView contentSize];
+    auto scrollViewOriginIncludingInset = UIEdgeInsetsInsetRect(scrollViewBounds, computedContentInsetUnadjustedForKeyboard).origin;
+    auto maximumVerticalScrollExtentWithoutRevealingBottomContentInset = scrollViewContentSize.height - CGRectGetHeight(scrollViewBounds);
+    auto maximumHorizontalScrollExtentWithoutRevealingRightContentInset = scrollViewContentSize.width - CGRectGetWidth(scrollViewBounds);
+    auto contentInsets = UIEdgeInsetsZero;
+    if (scrollViewInsets.left > 0 && scrollViewOriginIncludingInset.x < 0)
+        contentInsets.left = std::min(-scrollViewOriginIncludingInset.x, scrollViewInsets.left) / scaleFactor;
+
+    if (scrollViewInsets.top > 0 && scrollViewOriginIncludingInset.y < 0)
+        contentInsets.top = std::min(-scrollViewOriginIncludingInset.y, scrollViewInsets.top) / scaleFactor;
+
+    if (scrollViewInsets.right > 0 && scrollViewOriginIncludingInset.x > maximumHorizontalScrollExtentWithoutRevealingRightContentInset)
+        contentInsets.right = std::min(scrollViewOriginIncludingInset.x - maximumHorizontalScrollExtentWithoutRevealingRightContentInset, scrollViewInsets.right) / scaleFactor;
+
+    if (scrollViewInsets.bottom > 0 && scrollViewOriginIncludingInset.y > maximumVerticalScrollExtentWithoutRevealingBottomContentInset)
+        contentInsets.bottom = std::min(scrollViewOriginIncludingInset.y - maximumVerticalScrollExtentWithoutRevealingBottomContentInset, scrollViewInsets.bottom) / scaleFactor;
+
 #if ENABLE(CSS_SCROLL_SNAP) && ENABLE(ASYNC_SCROLLING)
     if (inStableState) {
         WebKit::RemoteScrollingCoordinatorProxy* coordinator = _page->scrollingCoordinatorProxy();
@@ -2993,6 +3013,7 @@ static bool scrollViewCanScroll(UIScrollView *scrollView)
 
     [_contentView didUpdateVisibleRect:visibleRectInContentCoordinates
         unobscuredRect:unobscuredRectInContentCoordinates
+        contentInsets:contentInsets
         unobscuredRectInScrollViewCoordinates:unobscuredRect
         obscuredInsets:_obscuredInsets
         unobscuredSafeAreaInsets:[self _computedUnobscuredSafeAreaInset]

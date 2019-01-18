@@ -1,3 +1,35 @@
+2019-01-17  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [iOS] Content offset jumps erratically when autoscrolling near scroll view content inset areas
+        https://bugs.webkit.org/show_bug.cgi?id=193494
+        <rdar://problem/46859627>
+
+        Reviewed by Simon Fraser and Tim Horton.
+
+        Add a new test option to add a top content inset to the test runner's WKWebView's scroll view, and automatically
+        scroll to reveal this top content inset area when beginning the test (i.e., scroll to (0, -topContentInset)).
+
+        * DumpRenderTree/ios/UIScriptControllerIOS.mm:
+        (WTR::UIScriptController::contentOffsetX const):
+        (WTR::UIScriptController::contentOffsetY const):
+        * TestRunnerShared/UIScriptContext/Bindings/UIScriptController.idl:
+        * TestRunnerShared/UIScriptContext/UIScriptController.cpp:
+        (WTR::UIScriptController::contentOffsetX const):
+        (WTR::UIScriptController::contentOffsetY const):
+        * TestRunnerShared/UIScriptContext/UIScriptController.h:
+
+        Also add new UIScriptController methods to ask for the content offset of the platform scroll view.
+
+        * WebKitTestRunner/TestController.cpp:
+        (WTR::updateTestOptionsFromTestHeader):
+        * WebKitTestRunner/TestOptions.h:
+        (WTR::TestOptions::hasSameInitializationOptions const):
+        * WebKitTestRunner/ios/TestControllerIOS.mm:
+        (WTR::TestController::platformResetStateToConsistentValues):
+        * WebKitTestRunner/ios/UIScriptControllerIOS.mm:
+        (WTR::UIScriptController::contentOffsetX const):
+        (WTR::UIScriptController::contentOffsetY const):
+
 2019-01-17  Truitt Savell  <tsavell@apple.com>
 
         Unreviewed, rolling out r240124.

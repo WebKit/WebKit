@@ -113,6 +113,9 @@ public:
     JSObjectRef contentsOfUserInterfaceItem(JSStringRef) const;
     void overridePreference(JSStringRef preference, JSStringRef value);
     
+    double contentOffsetX() const;
+    double contentOffsetY() const;
+
     void scrollToOffset(long x, long y);
 
     void immediateScrollToOffset(long x, long y);

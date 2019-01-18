@@ -1,3 +1,48 @@
+2019-01-17  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [iOS] Content offset jumps erratically when autoscrolling near scroll view content inset areas
+        https://bugs.webkit.org/show_bug.cgi?id=193494
+        <rdar://problem/46859627>
+
+        Reviewed by Simon Fraser and Tim Horton.
+
+        Adds `contentInsets` to `VisibleContentRectUpdateInfo`. This keeps track of the visible content insets
+        surrounding the unobscured content rect. See WebCore ChangeLog for more details.
+
+        * Shared/VisibleContentRectUpdateInfo.cpp:
+        (WebKit::VisibleContentRectUpdateInfo::encode const):
+        (WebKit::VisibleContentRectUpdateInfo::decode):
+        (WebKit::operator<<):
+        * Shared/VisibleContentRectUpdateInfo.h:
+        (WebKit::VisibleContentRectUpdateInfo::VisibleContentRectUpdateInfo):
+        (WebKit::VisibleContentRectUpdateInfo::contentInsets const):
+        (WebKit::operator==):
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _computedObscuredInset]):
+        (-[WKWebView _computedContentInset]):
+        (-[WKWebView _computedUnobscuredSafeAreaInset]):
+
+        We don't care about source compatibility with iOS 10 and below anymore, so we should change these >= iOS 11
+        target checks to simply `PLATFORM(IOS)`.
+
+        (-[WKWebView _updateVisibleContentRects]):
+
+        Compute the visible content insets on all sides of the unobscured content rect. These insets are scaled to
+        content coordinates.
+
+        * UIProcess/ios/WKContentView.h:
+        * UIProcess/ios/WKContentView.mm:
+        (floatBoxExtent):
+
+        Add a helper to convert `UIEdgeInsets` to `WebCore::FloatBoxExtent`, and use it in a few places below.
+
+        (-[WKContentView didUpdateVisibleRect:unobscuredRect:contentInsets:unobscuredRectInScrollViewCoordinates:obscuredInsets:unobscuredSafeAreaInsets:inputViewBounds:scale:minimumScale:inStableState:isChangingObscuredInsetsInteractively:enclosedInScrollableAncestorView:]):
+        (-[WKContentView didUpdateVisibleRect:unobscuredRect:unobscuredRectInScrollViewCoordinates:obscuredInsets:unobscuredSafeAreaInsets:inputViewBounds:scale:minimumScale:inStableState:isChangingObscuredInsetsInteractively:enclosedInScrollableAncestorView:]): Deleted.
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::updateVisibleContentRects):
+
+        Update the Page's content insets.
+
 2019-01-17  Truitt Savell  <tsavell@apple.com>
 
         Unreviewed, rolling out r240124.

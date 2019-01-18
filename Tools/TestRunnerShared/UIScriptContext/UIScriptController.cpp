@@ -336,6 +336,16 @@ JSRetainPtr<JSStringRef> UIScriptController::formInputLabel() const
     return nullptr;
 }
 
+double UIScriptController::contentOffsetX() const
+{
+    return 0;
+}
+
+double UIScriptController::contentOffsetY() const
+{
+    return 0;
+}
+
 void UIScriptController::scrollToOffset(long x, long y)
 {
 }

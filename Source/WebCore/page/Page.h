@@ -348,6 +348,9 @@ public:
     const FloatBoxExtent& obscuredInsets() const { return m_obscuredInsets; }
     void setObscuredInsets(const FloatBoxExtent& obscuredInsets) { m_obscuredInsets = obscuredInsets; }
 
+    const FloatBoxExtent& contentInsets() const { return m_contentInsets; }
+    void setContentInsets(const FloatBoxExtent& insets) { m_contentInsets = insets; }
+
     const FloatBoxExtent& unobscuredSafeAreaInsets() const { return m_unobscuredSafeAreaInsets; }
     WEBCORE_EXPORT void setUnobscuredSafeAreaInsets(const FloatBoxExtent&);
 
@@ -792,6 +795,7 @@ private:
 
     float m_topContentInset { 0 };
     FloatBoxExtent m_obscuredInsets;
+    FloatBoxExtent m_contentInsets;
     FloatBoxExtent m_unobscuredSafeAreaInsets;
     FloatBoxExtent m_fullscreenInsets;
     Seconds m_fullscreenAutoHideDuration { 0_s };

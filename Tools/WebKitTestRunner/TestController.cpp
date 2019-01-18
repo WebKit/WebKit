@@ -1266,6 +1266,8 @@ static void updateTestOptionsFromTestHeader(TestOptions& testOptions, const std:
             testOptions.editable = parseBooleanTestHeaderValue(value);
         else if (key == "enableUndoManagerAPI")
             testOptions.enableUndoManagerAPI = parseBooleanTestHeaderValue(value);
+        else if (key == "contentInset.top")
+            testOptions.contentInsetTop = std::stod(value);
         pairStart = pairEnd + 1;
     }
 }

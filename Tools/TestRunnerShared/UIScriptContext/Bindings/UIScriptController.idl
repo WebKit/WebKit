@@ -231,6 +231,9 @@ interface UIScriptController {
 
     void resignFirstResponder();
 
+    readonly attribute double contentOffsetX;
+    readonly attribute double contentOffsetY;
+
     void scrollToOffset(long x, long y); // Initiate an animated scroll in the UI process.
     attribute object didEndScrollingCallback;
 

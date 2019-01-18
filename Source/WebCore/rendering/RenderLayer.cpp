@@ -2551,7 +2551,7 @@ void RenderLayer::scrollRectToVisible(const LayoutRect& absoluteRect, bool insid
 #if !PLATFORM(IOS_FAMILY)
             LayoutRect viewRect = frameView.visibleContentRect();
 #else
-            LayoutRect viewRect = frameView.unobscuredContentRect();
+            LayoutRect viewRect = frameView.unobscuredContentRectExpandedByContentInsets();
 #endif
             // Move the target rect into "scrollView contents" coordinates.
             LayoutRect targetRect = absoluteRect;
@@ -2591,7 +2591,7 @@ void RenderLayer::updateCompositingLayersAfterScroll()
     }
 }
 
-LayoutRect RenderLayer::getRectToExpose(const LayoutRect &visibleRect, const LayoutRect &exposeRect, bool insideFixed, const ScrollAlignment& alignX, const ScrollAlignment& alignY) const
+LayoutRect RenderLayer::getRectToExpose(const LayoutRect& visibleRect, const LayoutRect& exposeRect, bool insideFixed, const ScrollAlignment& alignX, const ScrollAlignment& alignY) const
 {
     FrameView& frameView = renderer().view().frameView();
     if (renderer().isRenderView() && insideFixed) {

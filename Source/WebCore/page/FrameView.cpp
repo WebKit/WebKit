@@ -2014,6 +2014,14 @@ void FrameView::viewportContentsChanged()
 #endif
 }
 
+IntRect FrameView::unobscuredContentRectExpandedByContentInsets() const
+{
+    FloatRect unobscuredContentRect = this->unobscuredContentRect();
+    if (auto* page = frame().page())
+        unobscuredContentRect.expand(page->contentInsets());
+    return IntRect(unobscuredContentRect);
+}
+
 bool FrameView::fixedElementsLayoutRelativeToFrame() const
 {
     return frame().settings().fixedElementsLayoutRelativeToFrame();

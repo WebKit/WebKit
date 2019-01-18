@@ -1,3 +1,27 @@
+2019-01-17  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [iOS] Content offset jumps erratically when autoscrolling near scroll view content inset areas
+        https://bugs.webkit.org/show_bug.cgi?id=193494
+        <rdar://problem/46859627>
+
+        Reviewed by Simon Fraser and Tim Horton.
+
+        * editing/selection/ios/autoscroll-with-top-content-inset-expected.txt: Added.
+        * editing/selection/ios/autoscroll-with-top-content-inset.html: Added.
+
+        Add a new test to verify that moving the selection by autoscrolling near the top content inset area does not
+        cause the scroll view's content offset to jump.
+
+        * fast/scrolling/ios/scroll-into-view-with-top-content-inset-expected.txt: Added.
+        * fast/scrolling/ios/scroll-into-view-with-top-content-inset.html: Added.
+
+        Add a new test to verify that programmatically scrolling an element that's already visible into view does not
+        scroll away the scroll view's content inset.
+
+        * resources/ui-helper.js:
+        (window.UIHelper.contentOffset):
+        (window.UIHelper):
+
 2019-01-17  John Wilander  <wilander@apple.com>
 
         Add infrastructure to enable/disable ITP Debug Mode through Preferences

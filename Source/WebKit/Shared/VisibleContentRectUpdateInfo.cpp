@@ -37,6 +37,7 @@ void VisibleContentRectUpdateInfo::encode(IPC::Encoder& encoder) const
 {
     encoder << m_exposedContentRect;
     encoder << m_unobscuredContentRect;
+    encoder << m_contentInsets;
     encoder << m_unobscuredContentRectRespectingInputViewBounds;
     encoder << m_unobscuredRectInScrollViewCoordinates;
     encoder << m_customFixedPositionRect;
@@ -60,6 +61,8 @@ bool VisibleContentRectUpdateInfo::decode(IPC::Decoder& decoder, VisibleContentR
     if (!decoder.decode(result.m_exposedContentRect))
         return false;
     if (!decoder.decode(result.m_unobscuredContentRect))
+        return false;
+    if (!decoder.decode(result.m_contentInsets))
         return false;
     if (!decoder.decode(result.m_unobscuredContentRectRespectingInputViewBounds))
         return false;
@@ -114,6 +117,7 @@ TextStream& operator<<(TextStream& ts, const VisibleContentRectUpdateInfo& info)
 
     ts.dumpProperty("exposedContentRect", info.exposedContentRect());
     ts.dumpProperty("unobscuredContentRect", info.unobscuredContentRect());
+    ts.dumpProperty("contentInsets", info.contentInsets());
     ts.dumpProperty("unobscuredContentRectRespectingInputViewBounds", info.unobscuredContentRectRespectingInputViewBounds());
     ts.dumpProperty("unobscuredRectInScrollViewCoordinates", info.unobscuredRectInScrollViewCoordinates());
     ts.dumpProperty("customFixedPositionRect", info.customFixedPositionRect());

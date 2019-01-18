@@ -1,3 +1,43 @@
+2019-01-17  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [iOS] Content offset jumps erratically when autoscrolling near scroll view content inset areas
+        https://bugs.webkit.org/show_bug.cgi?id=193494
+        <rdar://problem/46859627>
+
+        Reviewed by Simon Fraser and Tim Horton.
+
+        When computing the content offset to scroll to when revealing a given rect in content coordinates, we currently
+        just use the unobscured content rect. As a result, when scrolling to reveal a rect, we'll clamp the final scroll
+        position such that only content is visible. For example, when asked to reveal the rect `(0, 0, 1, 1)`, we adjust
+        the scroll position to be the origin.
+
+        However, consider the case where a client (e.g. Mail on iOS) has added a content inset to the web view's scroll
+        view. If we're asked to reveal a rect that is outside the content area but within a content inset, we will still
+        end up clamping the scroll position to the unobscured rect. This manifests in a bug where selecting text and
+        autoscrolling in iOS Mail compose while the scroll view is scrolled all the way to the top to reveal the To/Cc/
+        Subject fields causes the content offset to jump to the origin, rather than staying at (0, -topContentInset).
+
+        To fix this, we teach `RenderLayer::scrollRectToVisible` about content insets that are visible. Rather than use
+        the content rects as-is, expand to encompass visible content insets as well. This ensures that revealing a
+        position which is already visible won't cause us to scroll away the content inset area and only show the
+        unobscured rect.
+
+        Tests:  editing/selection/ios/autoscroll-with-top-content-inset.html
+                fast/scrolling/ios/scroll-into-view-with-top-content-inset.html
+
+        * page/FrameView.cpp:
+        (WebCore::FrameView::unobscuredContentRectExpandedByContentInsets const):
+
+        Introduce a helper method that expands the unobscured content rect to include surrounding content insets.
+
+        * page/FrameView.h:
+        * page/Page.h:
+        (WebCore::Page::contentInsets const):
+        (WebCore::Page::setContentInsets):
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::scrollRectToVisible):
+        (WebCore::RenderLayer::getRectToExpose const):
+
 2019-01-17  Truitt Savell  <tsavell@apple.com>
 
         Unreviewed, rolling out r240124.

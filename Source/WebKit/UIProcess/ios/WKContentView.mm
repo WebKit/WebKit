@@ -365,6 +365,11 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     [_textSelectionAssistant deactivateSelection];
 }
 
+static WebCore::FloatBoxExtent floatBoxExtent(UIEdgeInsets insets)
+{
+    return WebCore::FloatBoxExtent(insets.top, insets.right, insets.bottom, insets.left);
+}
+
 - (CGRect)_computeUnobscuredContentRectRespectingInputViewBounds:(CGRect)unobscuredContentRect inputViewBounds:(CGRect)inputViewBounds
 {
     // The input view bounds are in window coordinates, but the unobscured rect is in content coordinates. Account for this by converting input view bounds to content coordinates.
@@ -376,6 +381,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
 - (void)didUpdateVisibleRect:(CGRect)visibleContentRect
     unobscuredRect:(CGRect)unobscuredContentRect
+    contentInsets:(UIEdgeInsets)contentInsets
     unobscuredRectInScrollViewCoordinates:(CGRect)unobscuredRectInScrollViewCoordinates
     obscuredInsets:(UIEdgeInsets)obscuredInsets
     unobscuredSafeAreaInsets:(UIEdgeInsets)unobscuredSafeAreaInsets
@@ -404,11 +410,12 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     WebKit::VisibleContentRectUpdateInfo visibleContentRectUpdateInfo(
         visibleContentRect,
         unobscuredContentRect,
+        floatBoxExtent(contentInsets),
         unobscuredRectInScrollViewCoordinates,
         unobscuredContentRectRespectingInputViewBounds,
         fixedPositionRectForLayout,
-        WebCore::FloatBoxExtent(obscuredInsets.top, obscuredInsets.right, obscuredInsets.bottom, obscuredInsets.left),
-        WebCore::FloatBoxExtent(unobscuredSafeAreaInsets.top, unobscuredSafeAreaInsets.right, unobscuredSafeAreaInsets.bottom, unobscuredSafeAreaInsets.left),
+        floatBoxExtent(obscuredInsets),
+        floatBoxExtent(unobscuredSafeAreaInsets),
         zoomScale,
         isStableState,
         _sizeChangedSinceLastVisibleContentRectUpdate,

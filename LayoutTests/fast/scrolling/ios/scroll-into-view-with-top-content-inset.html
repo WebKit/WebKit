@@ -1,0 +1,47 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ useFlexibleViewport=true, contentInset.top=100 ] -->
+<html>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<head>
+    <script src="../../../resources/ui-helper.js"></script>
+    <script src="../../../resources/js-test.js"></script>
+    <style>
+    body {
+        margin: 0;
+        border: red 1px solid;
+    }
+
+    #target {
+        position: absolute;
+        width: 4px;
+        height: 4px;
+        top: 0px;
+        left: 0px;
+        background-color: silver;
+    }
+    </style>
+    <script>
+    jsTestIsAsync = true;
+
+    async function run()
+    {
+        originalContentOffset = await UIHelper.contentOffset();
+        target.scrollIntoView({ block: "nearest", inline: "nearest" });
+        finalContentOffset = await UIHelper.contentOffset();
+
+        shouldBe("originalContentOffset.x", "0");
+        shouldBe("originalContentOffset.y", "-100");
+        shouldBe("finalContentOffset.x", "0");
+        shouldBe("finalContentOffset.y", "-100");
+        finishJSTest();
+    }
+    </script>
+</head>
+<body contenteditable onload="run()">
+    <div id="target"></div>
+    <p id="description"></p>
+    <p id="console"></p>
+</body>
+<script>
+    description("Verifies that Element.scrollIntoView() does not scroll away the top content inset if the element is already visible. This test requires WebKitTestRunner.");
+</script>
+</html>
