@@ -409,14 +409,23 @@ bool BlockFormattingContext::MarginCollapse::marginsCollapseThrough(const Layout
             // we haven't started laying it out yet.
             if (!layoutState.hasFormattingState(layoutBox))
                 return false;
-            return downcast<InlineFormattingState>(layoutState.establishedFormattingState(layoutBox)).inlineRuns().isEmpty();
+            auto& formattingState = downcast<InlineFormattingState>(layoutState.establishedFormattingState(layoutBox));
+            if (!formattingState.inlineRuns().isEmpty())
+                return false;
+            // Any float box in this formatting context prevents collapsing through.
+            auto& floats = formattingState.floatingState().floats();
+            for (auto& floatItem : floats) {
+                if (floatItem.isDescendantOfFormattingRoot(downcast<Container>(layoutBox)))
+                    return false;
+            }
+            return true;
         }
 
         if (establishesBlockFormattingContext(layoutBox))
             return false;
     }
 
-    for (auto* inflowChild = downcast<Container>(layoutBox).firstInFlowChild(); inflowChild; inflowChild = inflowChild->nextInFlowSibling()) {
+    for (auto* inflowChild = downcast<Container>(layoutBox).firstInFlowOrFloatingChild(); inflowChild; inflowChild = inflowChild->nextInFlowOrFloatingSibling()) {
         if (establishesBlockFormattingContext(*inflowChild))
             return false;
         if (!marginsCollapseThrough(layoutState, *inflowChild))

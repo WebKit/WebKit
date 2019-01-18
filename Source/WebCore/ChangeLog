@@ -1,5 +1,19 @@
 2019-01-18  Zalan Bujtas  <zalan@apple.com>
 
+        [LFC][BFC][MarginCollapsing] Collapsing through should not ignore floats.
+        https://bugs.webkit.org/show_bug.cgi?id=193564
+
+        Reviewed by Antti Koivisto.
+
+        Float boxes prevent collapsing through.
+
+        Test: fast/block/float/float-in-descendant-formatting-context.html
+
+        * layout/blockformatting/BlockMarginCollapse.cpp:
+        (WebCore::Layout::BlockFormattingContext::MarginCollapse::marginsCollapseThrough):
+
+2019-01-18  Zalan Bujtas  <zalan@apple.com>
+
         [LFC] Do not skip float boxes that are not part of the current formatting context when computing bottom.
         https://bugs.webkit.org/show_bug.cgi?id=193562
 
