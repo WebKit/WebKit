@@ -105,6 +105,7 @@ fast/block/float/008.html
 fast/block/float/009.html
 fast/block/float/013.html
 fast/block/float/019.html
+fast/block/float/030.html
 fast/block/float/negative-margin-clear.html
 fast/block/float/overhanging-after-height-decrease-offsets.html
 fast/block/float/overhanging-after-height-decrease.html

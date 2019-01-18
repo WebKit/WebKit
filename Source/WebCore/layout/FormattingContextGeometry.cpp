@@ -114,10 +114,12 @@ static LayoutUnit contentHeightForFormattingContextRoot(const LayoutState& layou
             bottom =  inlineRuns.last().logicalBottom();
         }
     } else if (formattingRootContainer.establishesBlockFormattingContext() || layoutBox.isDocumentBox()) {
-        auto& firstDisplayBox = layoutState.displayBoxForLayoutBox(*formattingRootContainer.firstInFlowChild());
-        auto& lastDisplayBox = layoutState.displayBoxForLayoutBox(*formattingRootContainer.lastInFlowChild());
-        top = firstDisplayBox.rectWithMargin().top();
-        bottom = lastDisplayBox.rectWithMargin().bottom();
+        if (formattingRootContainer.hasInFlowChild()) {
+            auto& firstDisplayBox = layoutState.displayBoxForLayoutBox(*formattingRootContainer.firstInFlowChild());
+            auto& lastDisplayBox = layoutState.displayBoxForLayoutBox(*formattingRootContainer.lastInFlowChild());
+            top = firstDisplayBox.rectWithMargin().top();
+            bottom = lastDisplayBox.rectWithMargin().bottom();
+        }
     }
 
     auto* formattingContextRoot = &layoutBox;

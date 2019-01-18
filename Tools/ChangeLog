@@ -1,3 +1,12 @@
+2019-01-18  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC][BFC] Check for inflow children while computing height for block formatting context roots.
+        https://bugs.webkit.org/show_bug.cgi?id=193555
+
+        Reviewed by Antti Koivisto.
+
+        * LayoutReloaded/misc/LFC-passing-tests.txt:
+
 2019-01-18  Philippe Normand  <pnormand@igalia.com>
 
         [WPE] Add Qt extension
