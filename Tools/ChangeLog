@@ -1,3 +1,15 @@
+2019-01-18  Chris Dumez  <cdumez@apple.com>
+
+        Regression(PSON) Content blockers are sometimes lost on back navigation cross-site
+        https://bugs.webkit.org/show_bug.cgi?id=193588
+        <rdar://problem/47131566>
+
+        Reviewed by Alex Christensen.
+
+        Add layout test coverage.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/ProcessSwapOnNavigation.mm:
+
 2019-01-18  Jer Noble  <jer.noble@apple.com>
 
         SDK_VARIANT build destinations should be separate from non-SDK_VARIANT builds
