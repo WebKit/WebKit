@@ -34,8 +34,9 @@ ifneq (,$(ARCHS))
 	endif
 endif
 
-ifneq (,$(SDK_VARIANT))
-	XCODE_OPTIONS += SDK_VARIANT="$(SDK_VARIANT)"
+ifeq (iosmac,$(SDK_VARIANT))
+	XCODE_OPTIONS += SDK_VARIANT=iosmac
+	XCODE_OPTIONS += WK_ALTERNATE_FRAMEWORKS_DIR=/System/iOSSupport
 endif
 
 DEFAULT_VERBOSITY := $(shell defaults read org.webkit.BuildConfiguration BuildTranscriptVerbosity 2>/dev/null || echo "default")
