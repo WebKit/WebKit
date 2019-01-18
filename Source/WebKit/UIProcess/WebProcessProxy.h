@@ -334,8 +334,6 @@ private:
 
     void logDiagnosticMessageForResourceLimitTermination(const String& limitKey);
 
-    bool hasProvisionalPageWithID(uint64_t pageID) const;
-
     enum class IsWeak { No, Yes };
     template<typename T> class WeakOrStrongPtr {
     public:

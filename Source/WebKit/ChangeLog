@@ -1,3 +1,63 @@
+2019-01-18  Chris Dumez  <cdumez@apple.com>
+
+        Regression(PSON) Scroll position is not always restored properly when navigating back
+        https://bugs.webkit.org/show_bug.cgi?id=193578
+        <rdar://problem/47386331>
+
+        Reviewed by Tim Horton.
+
+        Fix issues causing the scroll position to not be restored at all (or incorrectly) when
+        navigating back cross-site with PSON enabled. Also make sure that the swipe gesture
+        snapshot really stays up until we've restored the scroll position.
+
+        Note that even after those changes, I can still sometimes reproduce a white flash when
+        swiping back to Google search results (scroll position being correct now). This is
+        tracked by <rdar://problem/47071684> and happens even if I disable PSON entirely.
+
+        * Shared/SessionState.cpp:
+        (WebKit::FrameState::encode const):
+        (WebKit::FrameState::decode):
+        * Shared/SessionState.h:
+        * WebProcess/WebCoreSupport/SessionStateConversion.cpp:
+        (WebKit::toFrameState):
+        (WebKit::applyFrameState):
+        obscuredInsets is present on the HistoryItem in the WebProcess but was never passed to
+        or stored by the UIProcess on the WebBackForwardListItem. obscuredInsets is needed to
+        properly restore the scrollPosition (position was 70px off on my iPad without this).
+        With PSON enabled, if you swipe back cross-process and the previous page was not put
+        into PageCache, then the HistoryItem is gone on the WebProcess side. What happens is
+        that the UIProcess sends its WebBackForwardListItem to the WebProcess, which restores
+        the HistoryItem there, and then asks it to load it. The obscuredInsets was getting lost
+        in the process since the UIProcess never knew about it.
+
+        * UIProcess/Cocoa/ViewGestureController.cpp:
+        (WebKit::ViewGestureController::didReachMainFrameLoadTerminalState):
+        Drop logic that was causing the ViewGestureController to not wait for the scroll position
+        to be restored before taking down the snapshot, when UI-side compositing is enabled.
+        If you look at the comment above the code, you'll see that the code in question was meant
+        to impact only the non-UI side compositing code path. As a matter of fact, when the code
+        was reviewed at https://bugs.webkit.org/show_bug.cgi?id=151224, it was protected by a
+        #if PLATFORM(MAC), before getting modified the wrong way before landing. In practice, we
+        would have often restored the scroll position by the time the load is finished so it would
+        not cause a flash in most cases. However, with PSON enabled and the layer tree freezing we
+        do on process-swap, the first post-scroll restoration layer tree commit may now occur a
+        little bit later and we would lose the race more often.
+
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcessProxy::updateBackForwardItem):
+        * UIProcess/WebProcessProxy.h:
+        When adding PageCache support to PSON, we used to navigate the "suspended" page to
+        about:blank. This would lead to unwanted WebProcessProxy::updateBackForwardItem()
+        calls from the WebProcess which we wanted to ignore. We thus added logic to ignore
+        updateBackForwardItem() IPC from the old WebProcess after a swap. The issue with this
+        is that we sometimes miss/ignore legit updates to the HistoryItem from the old process,
+        in particular with regards to the scroll position and the pageScaleFactor. So if you
+        swiped and then quickly enough did a cross-site navigation, the UIProcess'
+        WebBackForwardList would not get updated with the latest scroll position and we would
+        thus fail to restore it later on. To address the issue, we now stop ignoring updates
+        from the old WebProcess after a swap. This logic is no longer needed since we no longer
+        navigate the old page to about:blank after a swap, we merely suspend it "in place".
+
 2019-01-18  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Remove some last vestiges of assisted node terminology in WebKit

@@ -96,6 +96,7 @@ static FrameState toFrameState(const HistoryItem& historyItem)
     frameState.minimumLayoutSizeInScrollViewCoordinates = historyItem.minimumLayoutSizeInScrollViewCoordinates();
     frameState.contentSize = historyItem.contentSize();
     frameState.scaleIsInitial = historyItem.scaleIsInitial();
+    frameState.obscuredInsets = historyItem.obscuredInsets();
 #endif
 
     for (auto& childHistoryItem : historyItem.children()) {
@@ -173,6 +174,7 @@ static void applyFrameState(HistoryItem& historyItem, const FrameState& frameSta
     historyItem.setMinimumLayoutSizeInScrollViewCoordinates(frameState.minimumLayoutSizeInScrollViewCoordinates);
     historyItem.setContentSize(frameState.contentSize);
     historyItem.setScaleIsInitial(frameState.scaleIsInitial);
+    historyItem.setObscuredInsets(frameState.obscuredInsets);
 #endif
 
     for (const auto& childFrameState : frameState.children) {
