@@ -85,6 +85,7 @@ class BuildFactory(Factory):
             "platform": Property("platform"),
             "fullPlatform": Property("fullPlatform"),
             "architecture": Property("architecture"),
+            "owner": Property("owner"),
         }
 
 
