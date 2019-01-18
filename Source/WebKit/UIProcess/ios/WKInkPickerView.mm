@@ -29,6 +29,7 @@
 #if HAVE(PENCILKIT)
 
 #import "WKContentViewInteraction.h"
+#import "WKDrawingCoordinator.h"
 
 #import "PencilKitSoftLink.h"
 

@@ -1,3 +1,11 @@
+2019-01-18  Daniel Bates  <dabates@apple.com>
+
+        Fix some build issues.
+
+        Include missing header WKDrawingCoordinator.
+
+        * UIProcess/ios/WKInkPickerView.mm:
+
 2019-01-18  Tim Horton  <timothy_horton@apple.com>
 
         Get rid of ADVANCED_SPELL_CHECKING

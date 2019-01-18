@@ -1,3 +1,12 @@
+2019-01-18  Daniel Bates  <dabates@apple.com>
+
+        Fix some build issues.
+
+        Including UIKitSoftLinking.h is not compatible with unified builds.
+
+        * SourcesCocoa.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+
 2019-01-18  Justin Fan  <justin_fan@apple.com>
 
         (WIP) [WebGPU] WebGPUProgrammablePassEncoder::setBindGroup prototype

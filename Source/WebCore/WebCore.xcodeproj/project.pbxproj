@@ -4219,6 +4219,8 @@
 		CECADFC9153778FF00E37068 /* DictationCommand.h in Headers */ = {isa = PBXBuildFile; fileRef = CECADFC5153778FF00E37068 /* DictationCommand.h */; };
 		CECADFCE1537791D00E37068 /* TextInsertionBaseCommand.h in Headers */ = {isa = PBXBuildFile; fileRef = CECADFCC1537791D00E37068 /* TextInsertionBaseCommand.h */; };
 		CECCFC3B141973D5002A0AC1 /* DecodeEscapeSequences.h in Headers */ = {isa = PBXBuildFile; fileRef = CECCFC3A141973D5002A0AC1 /* DecodeEscapeSequences.h */; };
+		CECDC93C21F2972900976BD1 /* WebVideoFullscreenControllerAVKit.mm in Sources */ = {isa = PBXBuildFile; fileRef = 3F42B31C1881191B00278AAC /* WebVideoFullscreenControllerAVKit.mm */; };
+		CECDC93D21F2973200976BD1 /* WebEvent.mm in Sources */ = {isa = PBXBuildFile; fileRef = FE0D84EA1048436E001A179E /* WebEvent.mm */; };
 		CED06AD11C77754800FDFAF1 /* JSSecurityPolicyViolationEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = CED06ACF1C77754800FDFAF1 /* JSSecurityPolicyViolationEvent.h */; };
 		CEDA12D7152CA1CB00D9E08D /* AlternativeTextClient.h in Headers */ = {isa = PBXBuildFile; fileRef = CEDA12D6152CA1CB00D9E08D /* AlternativeTextClient.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		CEEFCD7A19DB31F7003876D7 /* MediaResourceLoader.h in Headers */ = {isa = PBXBuildFile; fileRef = CEEFCD7819DB31F7003876D7 /* MediaResourceLoader.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -33456,6 +33458,7 @@
 				CD7E05221651C28200C1201F /* WebCoreAVFResourceLoader.mm in Sources */,
 				CD225C0B1C46FBF400140761 /* WebCoreNSURLSession.mm in Sources */,
 				93F19B0708245E59001E9ABC /* WebCoreView.m in Sources */,
+				CECDC93D21F2973200976BD1 /* WebEvent.mm in Sources */,
 				D3F3D36D1A69B7DC0059FC2B /* WebGL2RenderingContext.cpp in Sources */,
 				49C7B9C81042D32F0009D447 /* WebGLBuffer.cpp in Sources */,
 				D08B00E220A282490004BC0A /* WebGLCompressedTextureASTC.cpp in Sources */,
@@ -33498,6 +33501,7 @@
 				7C48A6D0191C9D6500026674 /* WebKitNamespace.cpp in Sources */,
 				0709D7921AE5557E004E42F8 /* WebMediaSessionManagerMac.cpp in Sources */,
 				1CAF34820A6C405200ABE06E /* WebScriptObject.mm in Sources */,
+				CECDC93C21F2972900976BD1 /* WebVideoFullscreenControllerAVKit.mm in Sources */,
 				F12171F516A8CED2000053CA /* WebVTTElement.cpp in Sources */,
 				5D21A80213ECE5DF00BB7064 /* WebVTTParser.cpp in Sources */,
 				B10B6981140C174000BC1C26 /* WebVTTTokenizer.cpp in Sources */,
