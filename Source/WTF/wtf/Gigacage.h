@@ -26,18 +26,18 @@
 #pragma once
 
 #include <wtf/FastMalloc.h>
-#include <wtf/StdLibExtras.h>
 
 #if defined(USE_SYSTEM_MALLOC) && USE_SYSTEM_MALLOC
 #define GIGACAGE_ENABLED 0
+#define PRIMITIVE_GIGACAGE_MASK 0
+#define JSVALUE_GIGACAGE_MASK 0
+#define GIGACAGE_BASE_PTRS_SIZE 8192
+
+extern "C" {
+alignas(void*) extern WTF_EXPORT_PRIVATE char g_gigacageBasePtrs[GIGACAGE_BASE_PTRS_SIZE];
+}
 
 namespace Gigacage {
-
-const size_t primitiveGigacageMask = 0;
-const size_t jsValueGigacageMask = 0;
-const size_t gigacageBasePtrsSize = 8 * KB;
-
-extern "C" alignas(void*) WTF_EXPORT_PRIVATE char g_gigacageBasePtrs[gigacageBasePtrsSize];
 
 struct BasePtrs {
     uintptr_t reservedForFlags;

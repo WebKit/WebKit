@@ -32,9 +32,9 @@
 
 #if defined(USE_SYSTEM_MALLOC) && USE_SYSTEM_MALLOC
 
-namespace Gigacage {
+alignas(void*) char g_gigacageBasePtrs[GIGACAGE_BASE_PTRS_SIZE];
 
-alignas(void*) char g_gigacageBasePtrs[gigacageBasePtrsSize];
+namespace Gigacage {
 
 void* tryMalloc(Kind, size_t size)
 {
@@ -61,7 +61,7 @@ void freeVirtualPages(Kind, void* basePtr, size_t size)
 }
 
 } // namespace Gigacage
-#else // defined(USE_SYSTEM_MALLOC) && USE_SYSTEM_MALLOC
+#else
 #include <bmalloc/bmalloc.h>
 
 namespace Gigacage {

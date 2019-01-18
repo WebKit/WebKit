@@ -35,24 +35,22 @@
 #include <cstdio>
 #include <mutex>
 
-#if GIGACAGE_ENABLED
-
-namespace Gigacage {
-
 // This is exactly 32GB because inside JSC, indexed accesses for arrays, typed arrays, etc,
 // use unsigned 32-bit ints as indices. The items those indices access are 8 bytes or less
 // in size. 2^32 * 8 = 32GB. This means if an access on a caged type happens to go out of
 // bounds, the access is guaranteed to land somewhere else in the cage or inside the runway.
 // If this were less than 32GB, those OOB accesses could reach outside of the cage.
-constexpr size_t gigacageRunway = 32llu * 1024 * 1024 * 1024;
+#define GIGACAGE_RUNWAY (32llu * 1024 * 1024 * 1024)
 
 // Note: g_gigacageBasePtrs[0] is reserved for storing the wasEnabled flag.
 // The first gigacageBasePtr will start at g_gigacageBasePtrs[sizeof(void*)].
 // This is done so that the wasEnabled flag will also be protected along with the
 // gigacageBasePtrs.
-alignas(gigacageBasePtrsSize) char g_gigacageBasePtrs[gigacageBasePtrsSize];
+alignas(GIGACAGE_BASE_PTRS_SIZE) char g_gigacageBasePtrs[GIGACAGE_BASE_PTRS_SIZE];
 
 using namespace bmalloc;
+
+namespace Gigacage {
 
 namespace {
 
@@ -63,12 +61,12 @@ void protectGigacageBasePtrs()
     uintptr_t basePtrs = reinterpret_cast<uintptr_t>(g_gigacageBasePtrs);
     // We might only get page size alignment, but that's also the minimum we need.
     RELEASE_BASSERT(!(basePtrs & (vmPageSize() - 1)));
-    mprotect(g_gigacageBasePtrs, gigacageBasePtrsSize, PROT_READ);
+    mprotect(g_gigacageBasePtrs, GIGACAGE_BASE_PTRS_SIZE, PROT_READ);
 }
 
 void unprotectGigacageBasePtrs()
 {
-    mprotect(g_gigacageBasePtrs, gigacageBasePtrsSize, PROT_READ | PROT_WRITE);
+    mprotect(g_gigacageBasePtrs, GIGACAGE_BASE_PTRS_SIZE, PROT_READ | PROT_WRITE);
 }
 
 class UnprotectGigacageBasePtrsScope {
@@ -103,23 +101,26 @@ struct PrimitiveDisableCallbacks {
     Vector<Callback> callbacks;
 };
 
+#if GIGACAGE_ENABLED
 size_t runwaySize(Kind kind)
 {
     switch (kind) {
     case Kind::ReservedForFlagsAndNotABasePtr:
         RELEASE_BASSERT_NOT_REACHED();
     case Kind::Primitive:
-        return gigacageRunway;
+        return static_cast<size_t>(GIGACAGE_RUNWAY);
     case Kind::JSValue:
-        return 0;
+        return static_cast<size_t>(0);
     }
-    return 0;
+    return static_cast<size_t>(0);
 }
+#endif
 
 } // anonymous namespace
 
 void ensureGigacage()
 {
+#if GIGACAGE_ENABLED
     static std::once_flag onceFlag;
     std::call_once(
         onceFlag,
@@ -188,6 +189,7 @@ void ensureGigacage()
             setWasEnabled();
             protectGigacageBasePtrs();
         });
+#endif // GIGACAGE_ENABLED
 }
 
 void disablePrimitiveGigacage()
@@ -263,6 +265,8 @@ bool isDisablingPrimitiveGigacageDisabled()
 bool shouldBeEnabled()
 {
     static bool cached = false;
+
+#if GIGACAGE_ENABLED
     static std::once_flag onceFlag;
     std::call_once(
         onceFlag,
@@ -284,11 +288,12 @@ bool shouldBeEnabled()
             
             cached = true;
         });
+#endif // GIGACAGE_ENABLED
+    
     return cached;
 }
 
 } // namespace Gigacage
 
-#endif // GIGACAGE_ENABLED
 
 
