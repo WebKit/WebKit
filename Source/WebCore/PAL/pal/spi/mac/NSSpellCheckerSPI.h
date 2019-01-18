@@ -31,18 +31,12 @@
 
 #else
 
-#if HAVE(ADVANCED_SPELL_CHECKING)
 extern NSString *NSTextCheckingInsertionPointKey;
-#endif
-
 extern NSString *NSTextCheckingSuppressInitialCapitalizationKey;
 
 @interface NSSpellChecker ()
 
-#if HAVE(ADVANCED_SPELL_CHECKING)
 - (BOOL)deletesAutospaceBeforeString:(NSString *)string language:(NSString *)language;
-#endif
-
 - (void)_preflightChosenSpellServer;
 
 @end

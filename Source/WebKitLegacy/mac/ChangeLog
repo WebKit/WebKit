@@ -1,3 +1,19 @@
+2019-01-18  Tim Horton  <timothy_horton@apple.com>
+
+        Get rid of ADVANCED_SPELL_CHECKING
+        https://bugs.webkit.org/show_bug.cgi?id=193592
+
+        Reviewed by Wenson Hsieh.
+
+        * WebCoreSupport/WebEditorClient.mm:
+        (insertionPointFromCurrentSelection):
+        (WebEditorClient::checkTextOfParagraph):
+        (WebEditorClient::getGuessesForWord):
+        (WebEditorClient::requestCandidatesForSelection):
+        (WebEditorClient::requestCheckingOfString):
+        * WebView/WebHTMLView.mm:
+        (-[WebHTMLView insertText:]):
+
 2019-01-18  Jer Noble  <jer.noble@apple.com>
 
         SDK_VARIANT build destinations should be separate from non-SDK_VARIANT builds

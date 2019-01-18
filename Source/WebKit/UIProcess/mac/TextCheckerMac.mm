@@ -321,15 +321,10 @@ Vector<TextCheckingResult> TextChecker::checkTextOfParagraph(SpellDocumentTag sp
     Vector<TextCheckingResult> results;
 
     RetainPtr<NSString> textString = text.createNSStringWithoutCopying();
-    NSDictionary *options = nil;
-#if HAVE(ADVANCED_SPELL_CHECKING)
-    options = @{
+    NSDictionary *options = @{
         NSTextCheckingInsertionPointKey : @(insertionPoint),
         NSTextCheckingSuppressInitialCapitalizationKey : @(!initialCapitalizationEnabled)
     };
-#else
-    options = @{ NSTextCheckingSuppressInitialCapitalizationKey : @(!initialCapitalizationEnabled) };
-#endif
     NSArray *incomingResults = [[NSSpellChecker sharedSpellChecker] checkString:textString.get()
                                                                           range:NSMakeRange(0, text.length())
                                                                           types:nsTextCheckingTypes(checkingTypes) | NSTextCheckingTypeOrthography
@@ -465,15 +460,10 @@ void TextChecker::getGuessesForWord(SpellDocumentTag spellDocumentTag, const Str
     NSString* language = nil;
     NSOrthography* orthography = nil;
     NSSpellChecker *checker = [NSSpellChecker sharedSpellChecker];
-    NSDictionary *options = nil;
-#if HAVE(ADVANCED_SPELL_CHECKING)
-    options = @{
+    NSDictionary *options = @{
         NSTextCheckingInsertionPointKey : @(insertionPoint),
         NSTextCheckingSuppressInitialCapitalizationKey : @(!initialCapitalizationEnabled)
     };
-#else
-    options = @{ NSTextCheckingSuppressInitialCapitalizationKey : @(!initialCapitalizationEnabled) };
-#endif
     if (context.length()) {
         [checker checkString:context range:NSMakeRange(0, context.length()) types:NSTextCheckingTypeOrthography options:options inSpellDocumentWithTag:spellDocumentTag orthography:&orthography wordCount:0];
         language = [checker languageForWordRange:NSMakeRange(0, context.length()) inString:context orthography:orthography];

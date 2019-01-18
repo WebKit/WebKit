@@ -6712,13 +6712,11 @@ IGNORE_WARNINGS_END
         return;
 
     BOOL needToRemoveSoftSpace = NO;
-#if HAVE(ADVANCED_SPELL_CHECKING)
+#if PLATFORM(MAC)
     if (_private->softSpaceRange.location != NSNotFound && (replacementRange.location == NSMaxRange(_private->softSpaceRange) || replacementRange.location == NSNotFound) && !replacementRange.length && [[NSSpellChecker sharedSpellChecker] deletesAutospaceBeforeString:text language:nil]) {
         replacementRange = _private->softSpaceRange;
         needToRemoveSoftSpace = YES;
     }
-#endif
-#if PLATFORM(MAC)
     _private->softSpaceRange = NSMakeRange(NSNotFound, 0);
 #endif
 
