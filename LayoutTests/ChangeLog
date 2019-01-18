@@ -1,3 +1,13 @@
+2019-01-18  Jonathan Bedard  <jbedard@apple.com>
+
+        webkitpy: Implement device type specific expected results (Follow-up fix)
+        https://bugs.webkit.org/show_bug.cgi?id=192162
+        <rdar://problem/46345449>
+
+        Unreviewed test gardening.
+
+        * tiled-drawing/ios/iphone7: Removed.
+
 2019-01-18  Youenn Fablet  <youenn@apple.com>
 
         Add a new SPI to request for cache storage quota increase
