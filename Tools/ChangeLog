@@ -1,3 +1,27 @@
+2019-01-18  Jonathan Bedard  <jbedard@apple.com>
+
+        webkitpy: Add iPhone and iPad ports
+        https://bugs.webkit.org/show_bug.cgi?id=193537
+        <rdar://problem/47353390>
+
+        Reviewed by Lucas Forschler.
+
+        Add --iphone-simulator and --ipad-simulator commands to run-webkit-tests which separate iPhone and iPad into separate
+        ports. Note that this separation is optional, the --ios-simulator command remains.
+
+        * Scripts/webkitpy/layout_tests/run_webkit_tests_integrationtest.py:
+        (RunTest.test_device_type_test_division): Drive-by fix.
+        (RunTest.test_device_type_specific_listing): Ditto.
+        (RunTest.test_ipad_test_division):
+        (RunTest):
+        (RunTest.test_ipad_listing):
+        * Scripts/webkitpy/port/factory.py:
+        (platform_options): Add --iphone-simulator and --ipad-simulator flags.
+        (PortFactory):
+        * Scripts/webkitpy/port/ios_simulator.py:
+        (IPhoneSimulatorPort):
+        (IPadSimulatorPort):
+
 2019-01-18  Chris Dumez  <cdumez@apple.com>
 
         Regression(PSON) Scroll position is not always restored properly when navigating back
