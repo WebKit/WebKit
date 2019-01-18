@@ -1,3 +1,15 @@
+2019-01-18  David Kilzer  <ddkilzer@apple.com>
+
+        Follow-up: Override the session configuration for cookieAcceptPolicy
+        <https://bugs.webkit.org/show_bug.cgi?id=190925>
+        <rdar://problem/45497382>
+
+        Discussed with John Wilander.
+
+        * pal/spi/cf/CFNetworkSPI.h: Declare new SPI for the internal
+        macOS 10.12 Sierra SDK since it will never appear in those
+        headers.  This fixes the build for trunk WebKit on Sierra.
+
 2019-01-18  Tim Horton  <timothy_horton@apple.com>
 
         Get rid of ADVANCED_SPELL_CHECKING
