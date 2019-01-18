@@ -413,21 +413,24 @@ void LibWebRTCMediaEndpoint::addRemoteTrack(rtc::scoped_refptr<webrtc::RtpReceiv
     fireTrackEvent(receiver.releaseNonNull(), track, rtcStreams, nullptr);
 }
 
-void LibWebRTCMediaEndpoint::fireTrackEvent(Ref<RTCRtpReceiver>&& receiver, Ref<MediaStreamTrack>&& track, const std::vector<rtc::scoped_refptr<webrtc::MediaStreamInterface>>& rtcStreams, RefPtr<RTCRtpTransceiver>&& transceiver)
+void LibWebRTCMediaEndpoint::fireTrackEvent(Ref<RTCRtpReceiver>&& receiver, MediaStreamTrack& track, const std::vector<rtc::scoped_refptr<webrtc::MediaStreamInterface>>& rtcStreams, RefPtr<RTCRtpTransceiver>&& transceiver)
 {
     Vector<RefPtr<MediaStream>> streams;
     for (auto& rtcStream : rtcStreams) {
         auto& mediaStream = mediaStreamFromRTCStream(*rtcStream.get());
         streams.append(&mediaStream);
-        mediaStream.addTrackFromPlatform(track.get());
+        mediaStream.addTrackFromPlatform(track);
     }
     auto streamIds = WTF::map(streams, [](auto& stream) -> String {
         return stream->id();
     });
-    m_remoteStreamsFromRemoteTrack.add(track.ptr(), WTFMove(streamIds));
+    m_remoteStreamsFromRemoteTrack.add(&track, WTFMove(streamIds));
 
     m_peerConnectionBackend.connection().fireEvent(RTCTrackEvent::create(eventNames().trackEvent,
-        Event::CanBubble::No, Event::IsCancelable::No, WTFMove(receiver), WTFMove(track), WTFMove(streams), WTFMove(transceiver)));
+        Event::CanBubble::No, Event::IsCancelable::No, WTFMove(receiver), &track, WTFMove(streams), WTFMove(transceiver)));
+
+    // FIXME: As per spec, we should set muted to 'false' when starting to receive the content from network.
+    track.source().setMuted(false);
 }
 
 static inline void setExistingReceiverSourceTrack(RealtimeMediaSource& existingSource, webrtc::RtpReceiverInterface& rtcReceiver)

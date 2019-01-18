@@ -359,8 +359,6 @@ void MediaPlayerPrivateMediaStreamAVFObjC::enqueueCorrectedVideoSample(MediaSamp
 
 void MediaPlayerPrivateMediaStreamAVFObjC::enqueueVideoSample(MediaStreamTrackPrivate& track, MediaSample& sample)
 {
-    ASSERT(m_videoTrackMap.contains(track.id()));
-
     if (&track != m_mediaStreamPrivate->activeVideoTrack())
         return;
 
@@ -413,6 +411,11 @@ void MediaPlayerPrivateMediaStreamAVFObjC::requestNotificationWhenReadyForVideoD
             return;
 
         [m_sampleBufferDisplayLayer stopRequestingMediaData];
+
+        if (!m_activeVideoTrack) {
+            m_pendingVideoSampleQueue.clear();
+            return;
+        }
 
         while (!m_pendingVideoSampleQueue.isEmpty()) {
             if (![m_sampleBufferDisplayLayer isReadyForMoreMediaData]) {

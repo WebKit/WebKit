@@ -1,3 +1,14 @@
+2019-01-18  Youenn Fablet  <youenn@apple.com>
+
+        A track source should be unmuted whenever reenabled after setDirection changes
+        https://bugs.webkit.org/show_bug.cgi?id=193554
+        <rdar://problem/47366196>
+
+        Reviewed by Eric Carlson.
+
+        * webrtc/video-setDirection-expected.txt: Added.
+        * webrtc/video-setDirection.html: Added.
+
 2019-01-18  Jonathan Bedard  <jbedard@apple.com>
 
         webkitpy: Implement device type specific expected results (Part 2)

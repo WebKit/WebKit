@@ -1,0 +1,108 @@
+<!doctype html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>Testing video exchange using setDirection with renegotiation from offerer to receiver</title>
+        <script src="../resources/testharness.js"></script>
+        <script src="../resources/testharnessreport.js"></script>
+    </head>
+    <body>
+        <video id="video" autoplay=""></video>
+        <canvas id="canvas" width="640" height="480"></canvas>
+        <script src ="routines.js"></script>
+        <script>
+video = document.getElementById("video");
+canvas = document.getElementById("canvas");
+
+function grabFrameData(x, y, w, h)
+{
+    canvas.width = video.videoWidth;
+    canvas.height = video.videoHeight;
+
+    canvas.getContext('2d').drawImage(video, x, y, w, h, x, y, w, h);
+    return canvas.getContext('2d').getImageData(x, y, w, h).data;
+}
+
+function testImage()
+{
+    const data = grabFrameData(10, 325, 250, 1);
+
+    var index = 20;
+    assert_true(data[index] < 100);
+    assert_true(data[index + 1] < 100);
+    assert_true(data[index + 2] < 100);
+
+    index = 80;
+    assert_true(data[index] > 200);
+    assert_true(data[index + 1] > 200);
+    assert_true(data[index + 2] > 200);
+
+    index += 80;
+    assert_true(data[index] > 200);
+    assert_true(data[index + 1] > 200);
+    assert_true(data[index + 2] < 100);
+}
+
+var pc1, pc2;
+async function renegotiate()
+{
+    let d = await pc1.createOffer();
+    await pc1.setLocalDescription(d);
+    await pc2.setRemoteDescription(d);
+    d = await pc2.createAnswer();
+    await pc1.setRemoteDescription(d);
+    await pc2.setLocalDescription(d);
+}
+
+promise_test(async (t) => {
+    if (window.testRunner)
+        testRunner.setUserMediaPermission(true);
+
+    const localStream = await navigator.mediaDevices.getUserMedia({video: true});
+    const stream = await new Promise((resolve, reject) => {
+        createConnections((firstConnection) => {
+            pc1 = firstConnection;
+            firstConnection.addTrack(localStream.getVideoTracks()[0], localStream);
+        }, (secondConnection) => {
+            pc2 = secondConnection;
+            secondConnection.ontrack = (trackEvent) => { resolve(trackEvent.streams[0]); };
+        });
+        setTimeout(() => reject("Test timed out"), 5000);
+    });
+
+    video.srcObject = stream;
+    await video.play();
+
+    testImage();
+
+    let promise = new Promise((resolve) => {
+        pc2.getReceivers()[0].track.onmute = resolve;
+    });
+
+    pc1.getTransceivers()[0].direction = "inactive";
+    await renegotiate();
+    await promise;
+
+    promise = new Promise((resolve) => {
+        pc2.getReceivers()[0].track.onunmute = resolve;
+    });
+
+    pc1.getTransceivers()[0].direction = "sendrecv";
+    const streamPromise = new Promise(resolve => {
+        pc2.ontrack = (trackEvent) => { resolve (trackEvent.streams[0]); };
+    });
+
+    await renegotiate();
+    video.srcObject = await streamPromise;
+    await promise;
+
+    test(() => {
+        assert_equals(stream, video.srcObject);
+    }, "The MediaStream should remain the same");
+    await video.play();
+
+    testImage();
+}, "Going from sendrecv to inactive and back to sendrecv");
+        </script>
+    </body>
+</html>
