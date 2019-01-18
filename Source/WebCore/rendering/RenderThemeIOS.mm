@@ -32,6 +32,7 @@
 #import "CSSPrimitiveValue.h"
 #import "CSSToLengthConversionData.h"
 #import "CSSValueKeywords.h"
+#import "ColorIOS.h"
 #import "DateComponents.h"
 #import "Document.h"
 #import "File.h"
@@ -1122,7 +1123,17 @@ Color RenderThemeIOS::platformInactiveSelectionBackgroundColor(OptionSet<StyleCo
     return Color::transparent;
 }
 
+Color RenderThemeIOS::platformFocusRingColor(OptionSet<StyleColor::Options>) const
+{
+    return colorFromUIColor([getUIColorClass() keyboardFocusIndicatorColor]);
+}
+
 bool RenderThemeIOS::shouldHaveSpinButton(const HTMLInputElement&) const
+{
+    return false;
+}
+
+bool RenderThemeIOS::supportsFocusRing(const RenderStyle&) const
 {
     return false;
 }

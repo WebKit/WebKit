@@ -1,3 +1,45 @@
+2019-01-18  Daniel Bates  <dabates@apple.com>
+
+        CSS auto focus-ring outlines don't render on iOS
+        https://bugs.webkit.org/show_bug.cgi?id=193583
+        <rdar://problem/6508697>
+
+        Reviewed by Simon Fraser.
+
+        Implement support for drawing focus rings on iOS when built with ENABLE(FULL_KEYBOARD_ACCESS)
+        enabled.
+
+        For now the focus ring drawing for iOS is tangled up into the Mac-specific code to draw
+        animated focus rings. I will fix this in <https://bugs.webkit.org/show_bug.cgi?id=193591>.
+
+        * SourcesCocoa.txt: Add file ColorIOS.mm.
+        * WebCore.xcodeproj/project.pbxproj: Add files ColorIOS.{h, mm}.
+
+        * platform/graphics/GraphicsContext.h:
+        * platform/graphics/cocoa/GraphicsContextCocoa.mm:
+        (WebCore::drawFocusRingAtTime):
+        (WebCore::GraphicsContext::drawFocusRing):
+        Compile focus ring drawing code when building with ENABLE(FULL_KEYBOARD_ACCESS) enabled.
+        This is always enabled on Mac.
+        
+        * platform/ios/ColorIOS.h: Added.
+        * platform/ios/ColorIOS.mm: Added.
+        (WebCore::colorFromUIColor): Convert a UIColor to a WebCore::Color.
+
+        * rendering/RenderElement.cpp:
+        (WebCore::RenderElement::paintFocusRing):
+        * rendering/RenderImage.cpp:
+        (WebCore::RenderImage::paintAreaElementFocusRing):
+        Compile focus ring drawing code when building with ENABLE(FULL_KEYBOARD_ACCESS) enabled.
+        This is always enabled on Mac.
+
+        * rendering/RenderThemeIOS.h:
+        * rendering/RenderThemeIOS.mm:
+        (WebCore::RenderThemeIOS::platformFocusRingColor const): Implement this override for iOS.
+        (WebCore::RenderThemeIOS::supportsFocusRing const): Implement this override for iOS to always
+        return false - the iOS theme code does not support painting focus rings. By returning false we
+        will use the platform-independent, non-theme code path to draw focus rings.
+
 2019-01-18  David Kilzer  <ddkilzer@apple.com>
 
         Follow-up: Switch remaining UIKit soft-linking in WebCore, WebKitLegacy over to UIKitSoftLink.{cpp,h}

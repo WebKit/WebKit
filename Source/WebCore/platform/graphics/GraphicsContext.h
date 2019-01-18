@@ -446,7 +446,9 @@ public:
 
     void drawFocusRing(const Vector<FloatRect>&, float width, float offset, const Color&);
     void drawFocusRing(const Path&, float width, float offset, const Color&);
-#if PLATFORM(MAC)
+
+    // FIXME: The following functions should only be compiled for Mac. See <https://bugs.webkit.org/show_bug.cgi?id=193591>.
+#if PLATFORM(COCOA)
     void drawFocusRing(const Path&, double timeOffset, bool& needsRedraw, const Color&);
     void drawFocusRing(const Vector<FloatRect>&, double timeOffset, bool& needsRedraw, const Color&);
 #endif

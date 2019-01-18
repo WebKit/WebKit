@@ -142,6 +142,12 @@ NS_ASSUME_NONNULL_END
 @end
 #endif
 
+#endif // USE(APPLE_INTERNAL_SDK)
+
+#if ENABLE(FULL_KEYBOARD_ACCESS)
+@interface UIColor (IPI)
++ (UIColor *)keyboardFocusIndicatorColor;
+@end
 #endif
 
 #endif // PLATFORM(IOS_FAMILY)

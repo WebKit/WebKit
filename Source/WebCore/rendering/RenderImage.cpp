@@ -550,10 +550,7 @@ void RenderImage::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
     
 void RenderImage::paintAreaElementFocusRing(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
 {
-#if PLATFORM(IOS_FAMILY)
-    UNUSED_PARAM(paintInfo);
-    UNUSED_PARAM(paintOffset);
-#else
+#if ENABLE(FULL_KEYBOARD_ACCESS)
     if (document().printing() || !frame().selection().isFocusedAndActive())
         return;
     
@@ -597,8 +594,11 @@ void RenderImage::paintAreaElementFocusRing(PaintInfo& paintInfo, const LayoutPo
         page().focusController().setFocusedElementNeedsRepaint();
 #else
     paintInfo.context().drawFocusRing(path, outlineWidth, areaElementStyle->outlineOffset(), areaElementStyle->visitedDependentColorWithColorFilter(CSSPropertyOutlineColor));
-#endif
-#endif
+#endif // PLATFORM(MAC)
+#else
+    UNUSED_PARAM(paintInfo);
+    UNUSED_PARAM(paintOffset);
+#endif // ENABLE(FULL_KEYBOARD_ACCESS)
 }
 
 void RenderImage::areaElementFocusChanged(HTMLAreaElement* element)

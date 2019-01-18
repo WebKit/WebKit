@@ -389,6 +389,7 @@ platform/graphics/opengl/TemporaryOpenGLSetting.cpp
 
 platform/graphics/opentype/OpenTypeCG.cpp
 
+platform/ios/ColorIOS.mm
 platform/ios/CursorIOS.cpp
 platform/ios/Device.cpp
 platform/ios/DeviceMotionClientIOS.mm

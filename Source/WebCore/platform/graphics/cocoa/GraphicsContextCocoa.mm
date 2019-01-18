@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2003-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2003-2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -59,12 +59,26 @@ namespace WebCore {
 // NSColor, NSBezierPath, and NSGraphicsContext calls do not raise exceptions
 // so we don't block exceptions.
 
-#if PLATFORM(MAC)
+#if ENABLE(FULL_KEYBOARD_ACCESS)
 
 static bool drawFocusRingAtTime(CGContextRef context, NSTimeInterval timeOffset, const Color& color)
 {
+#if USE(APPKIT)
     CGFocusRingStyle focusRingStyle;
     BOOL needsRepaint = NSInitializeCGFocusRingStyleForTime(NSFocusRingOnly, &focusRingStyle, timeOffset);
+#else
+    BOOL needsRepaint = NO;
+    UNUSED_PARAM(timeOffset);
+
+    CGFocusRingStyle focusRingStyle;
+    focusRingStyle.version = 0;
+    focusRingStyle.tint = kCGFocusRingTintBlue;
+    focusRingStyle.ordering = kCGFocusRingOrderingNone;
+    focusRingStyle.alpha = kCGFocusRingAlphaDefault;
+    focusRingStyle.radius = kCGFocusRingRadiusDefault;
+    focusRingStyle.threshold = kCGFocusRingThresholdDefault;
+    focusRingStyle.bounds = CGRectZero;
+#endif
 
     // We want to respect the CGContext clipping and also not overpaint any
     // existing focus ring. The way to do this is set accumulate to
@@ -101,11 +115,11 @@ static bool drawFocusRingToContextAtTime(CGContextRef context, CGPathRef focusRi
     return drawFocusRingAtTime(context, std::numeric_limits<double>::max(), color);
 }
 
-#endif // PLATFORM(MAC)
+#endif // ENABLE(FULL_KEYBOARD_ACCESS)
 
 void GraphicsContext::drawFocusRing(const Path& path, float width, float offset, const Color& color)
 {
-#if PLATFORM(MAC)
+#if ENABLE(FULL_KEYBOARD_ACCESS)
     if (paintingDisabled() || path.isNull())
         return;
 
@@ -123,7 +137,9 @@ void GraphicsContext::drawFocusRing(const Path& path, float width, float offset,
 #endif
 }
 
-#if PLATFORM(MAC)
+// FIXME: The following functions should only be compiled for Mac. See <https://bugs.webkit.org/show_bug.cgi?id=193591>.
+#if ENABLE(FULL_KEYBOARD_ACCESS)
+
 void GraphicsContext::drawFocusRing(const Path& path, double timeOffset, bool& needsRedraw, const Color& color)
 {
     if (paintingDisabled() || path.isNull())
@@ -149,11 +165,12 @@ void GraphicsContext::drawFocusRing(const Vector<FloatRect>& rects, double timeO
 
     needsRedraw = drawFocusRingToContextAtTime(platformContext(), focusRingPath.get(), timeOffset, color);
 }
+
 #endif
 
 void GraphicsContext::drawFocusRing(const Vector<FloatRect>& rects, float width, float offset, const Color& color)
 {
-#if PLATFORM(MAC)
+#if ENABLE(FULL_KEYBOARD_ACCESS)
     if (paintingDisabled())
         return;
 

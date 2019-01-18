@@ -1,3 +1,15 @@
+2019-01-18  Daniel Bates  <dabates@apple.com>
+
+        CSS auto focus-ring outlines don't render on iOS
+        https://bugs.webkit.org/show_bug.cgi?id=193583
+        <rdar://problem/6508697>
+
+        Reviewed by Simon Fraser.
+
+        Forward declare some IPI.
+
+        * pal/spi/ios/UIKitSPI.h:
+
 2019-01-18  David Kilzer  <ddkilzer@apple.com>
 
         Switch remaining UIKit soft-linking in WebCore, WebKitLegacy over to UIKitSoftLink.{cpp,h}
