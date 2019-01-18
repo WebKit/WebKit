@@ -29,7 +29,7 @@
         }
         
     </style>
-    <script src="../resources/zooming-test-utils.js"></script>
+    <script src="../../../../fast/forms/ios/resources/zooming-test-utils.js"></script>
     <script src="../../../../resources/basic-gestures.js"></script>
     <script>
         if (window.testRunner)
@@ -47,12 +47,12 @@
                 })();`
         }
 
-        function getTapOnSelectUIScript(x, y, row)
+        function getTapOnSelectUIScript(x, y)
         {
             return `
                 (function() {
                     uiController.didStartFormControlInteractionCallback = function() {
-                        uiController.selectFormAccessoryPickerRow(${row});
+                        uiController.selectFormAccessoryPickerRow(5);
                     };
 
                     uiController.didEndFormControlInteractionCallback = function() {
@@ -64,87 +64,55 @@
                 })();`
         }
 
-        var firstButtonIsClicked = false;
-        var finalButtonIsClicked = false;
-        var firstButtonTimeoutID;
-        var finalButtonTimeoutID;
-        
-        function firstButtonClicked()
+        var clicked = false;
+        var timeoutID;
+        function buttonClicked()
         {
-            clearTimeout(firstButtonTimeoutID);
-            if (!firstButtonIsClicked) {
-                firstButtonIsClicked = true;
-                
-                document.getElementById('nextStep').textContent = 'PASS: hit testing found #nextButton after first select interaction';
-                var selectElement = document.getElementsByTagName('select')[0];
-                var point = getPointInsideElement(selectElement, 10, 10);
-                testRunner.runUIScript(getTapOnSelectUIScript(point.x, point.y, 5), function() {
-                    document.getElementById('select-value2').textContent = selectElement.value;
-                        tryTapOnFinalButton();
-                });
-            }
-        }
-    
-        function finalButtonClicked()
-        {
-            clearTimeout(finalButtonTimeoutID);
-            if (!finalButtonIsClicked) {
-                finalButtonIsClicked = true;
-                document.getElementById('result').textContent = 'PASS: hit testing found #finalTarget after select interaction';
+            window.clearTimeout(timeoutID);
+            if (!clicked) {
+                clicked = true;
+                document.getElementById('result').textContent = 'PASS: hit testing found #target after select interaction';
                 if (window.testRunner)
                     testRunner.notifyDone();
             }
         }
 
-        async function tryTapOnFirstButton()
+        async function tryTapOnButton()
         {
-            var firstPoint = getPointInsideElement(document.getElementById('firstTarget'), 10, 10);
-            await tapAtPoint(firstPoint.x, firstPoint.y);
-            
+            var point = getPointInsideElement(document.getElementById('target'), 10, 10);
+            await tapAtPoint(point.x, point.y);
+
             // We have to keep retrying, because the dimming view behind the popover animates out,
             // and we currently have no callback when that animation completes.
-            if (!firstButtonIsClicked)
-                firstButtonTimeoutID = window.setTimeout(tryTapOnFirstButton, 100);
+            if (!clicked)
+                timeoutID = window.setTimeout(tryTapOnButton, 100);
         }
-    
-        async function tryTapOnFinalButton()
-        {
-            var finalPoint = getPointInsideElement(document.getElementById('finalTarget'), 10, 10);
-            await tapAtPoint(finalPoint.x, finalPoint.y);
-            
-            // We have to keep retrying, because the dimming view behind the popover animates out,
-            // and we currently have no callback when that animation completes.
-            if (!finalButtonIsClicked)
-                finalButtonTimeoutID = window.setTimeout(tryTapOnFinalButton, 100);
-        }
-    
 
         function doTest()
         {
             if (!window.testRunner)
                 return;
-
             testRunner.waitUntilDone();
             testRunner.dumpAsText();
 
             testRunner.runUIScript(getScrollDownUIScript(0, 500), function() {
                 var selectElement = document.getElementsByTagName('select')[0];
                 var point = getPointInsideElement(selectElement, 10, 10);
-                testRunner.runUIScript(getTapOnSelectUIScript(point.x, point.y, 2), function() {
+                testRunner.runUIScript(getTapOnSelectUIScript(point.x, point.y), function() {
                     document.getElementById('select-value').textContent = selectElement.value;
-                    tryTapOnFirstButton();
+                    tryTapOnButton();
                 });
             });
         }
         
         window.addEventListener('load', doTest, false);
+        
     </script>
 </head>
 <body>
     <p>This is the top</p>
     <div id="container">
-        <button id="firstTarget" onclick="firstButtonClicked()">First Click</button>
-        <button id="finalTarget" onclick="finalButtonClicked()">Final Click</button>
+        <button id="target" onclick="buttonClicked()">Click Me</button>
         <select>
             <option>January</option>
             <option>February</option>
@@ -157,8 +125,6 @@
             <option>September</option>
         </select>
         <span id="select-value">Value goes here</span>
-        <span id="select-value2">2nd Value goes here</span>
-        <div id="nextStep">FAIL: should have hit-tested and found #target element</div>
         <div id="result">FAIL: should have hit-tested and found #target element</div>
     </div>
     

@@ -39,8 +39,7 @@ class IOSPort(DevicePort):
     port_name = "ios"
 
     CURRENT_VERSION = Version(12)
-    # FIXME: This is not a clear way to do this (although it works) https://bugs.webkit.org/show_bug.cgi?id=192160
-    DEFAULT_DEVICE_TYPE = DeviceType(software_variant='iOS')
+    DEVICE_TYPE = DeviceType(software_variant='iOS')
 
     def __init__(self, host, port_name, **kwargs):
         super(IOSPort, self).__init__(host, port_name, **kwargs)

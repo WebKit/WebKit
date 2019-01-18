@@ -104,7 +104,7 @@ class DevicePort(DarwinPort):
                 raise RuntimeError('Failed to install dylibs at {} on device {}'.format(self._build_path(), device.udid))
 
     def _device_type_with_version(self, device_type=None):
-        device_type = device_type if device_type else self.DEFAULT_DEVICE_TYPE
+        device_type = device_type if device_type else self.DEVICE_TYPE
         return DeviceType(
             hardware_family=device_type.hardware_family,
             hardware_type=device_type.hardware_type,
@@ -116,11 +116,8 @@ class DevicePort(DarwinPort):
         if not self.DEVICE_MANAGER:
             raise RuntimeError(self.NO_DEVICE_MANAGER)
 
-        # FIXME Checking software variant is important for simulators, otherwise an iOS port could boot a watchOS simulator.
-        # Really, the DEFAULT_DEVICE_TYPE for simulators should be a general instead of specific type, then this code would
-        # explicitly compare against device_type
         device_type = self._device_type_with_version(device_type)
-        if device_type.software_variant and self.DEFAULT_DEVICE_TYPE.software_variant != device_type.software_variant:
+        if device_type not in self.DEVICE_TYPE:
             return 0
 
         if self.get_option('force'):
@@ -138,6 +135,17 @@ class DevicePort(DarwinPort):
         if result and self.DEVICE_MANAGER == SimulatedDeviceManager:
             return super(DevicePort, self).max_child_processes(device_type=None)
         return result
+
+    def supported_device_types(self):
+        types = set()
+        for device in self.DEVICE_MANAGER.available_devices(host=self.host):
+            if self.DEVICE_MANAGER == SimulatedDeviceManager and not device.platform_device.is_booted_or_booting():
+                continue
+            if device.device_type in self.DEVICE_TYPE:
+                types.add(device.device_type)
+        if types:
+            return list(types)
+        return self.DEFAULT_DEVICE_TYPES or [self.DEVICE_TYPE]
 
     def setup_test_run(self, device_type=None):
         if not self.DEVICE_MANAGER:

@@ -54,7 +54,7 @@ class JSONLayoutResultsGenerator(json_results_generator.JSONResultsGenerator):
 
     def __init__(self, port, builder_name, build_name, build_number,
         results_file_base_path,
-        expectations, run_results,
+        expectations_by_type, run_results,
         test_results_servers=[], test_type="", master_name=""):
         """Modifies the results.json file. Grabs it off the archive directory
         if it is not found locally.
@@ -67,7 +67,7 @@ class JSONLayoutResultsGenerator(json_results_generator.JSONResultsGenerator):
             {}, port.repository_paths(),
             test_results_servers, test_type, master_name)
 
-        self._expectations = expectations
+        self._expectations = expectations_by_type
 
         self._run_results = run_results
         self._failures = dict((test_name, run_results.results_by_name[test_name].type) for test_name in run_results.failures_by_name)
@@ -130,9 +130,12 @@ class JSONLayoutResultsGenerator(json_results_generator.JSONResultsGenerator):
         self._insert_item_into_raw_list(results_for_builder,
             self._get_failure_summary_entry(test_expectations.NOW),
             self.FIXABLE)
-        self._insert_item_into_raw_list(results_for_builder,
-            len(self._expectations.model().get_tests_with_timeline(
-                test_expectations.NOW)), self.ALL_FIXABLE_COUNT)
+
+        num_fixable = 0
+        for expectation in self._expectations.itervalues():
+            num_fixable += len(expectation.model().get_tests_with_timeline(test_expectations.NOW))
+
+        self._insert_item_into_raw_list(results_for_builder, num_fixable, self.ALL_FIXABLE_COUNT)
         self._insert_item_into_raw_list(results_for_builder,
             self._get_failure_summary_entry(test_expectations.WONTFIX),
             self.WONTFIX)

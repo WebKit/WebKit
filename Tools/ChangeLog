@@ -1,3 +1,84 @@
+2019-01-18  Jonathan Bedard  <jbedard@apple.com>
+
+        webkitpy: Implement device type specific expected results (Part 2)
+        https://bugs.webkit.org/show_bug.cgi?id=192162
+        <rdar://problem/46345449>
+
+        Rubber-stamped by Aakash Jain.
+
+        This change uses device_type to select a different set of TestExpectation files based on the type of device running
+        tests. This requires multiple baseline search paths to be used in a single instantiation of run-webkit-tests. Note
+        that while multiple baseline search paths are used, any single test will only ever be run on a single device type.
+
+        * Scripts/webkitpy/layout_tests/controllers/layout_test_finder.py:
+        (LayoutTestFinder.find_tests): Pass device_type through.
+        * Scripts/webkitpy/layout_tests/controllers/layout_test_finder_unittest.py:
+        (LayoutTestFinderTests.test_touched_but_skipped_test): Allow device_type to be passed in.
+        * Scripts/webkitpy/layout_tests/controllers/manager.py:
+        (Manager.__init__): Make _expectations an OrderedDict indexed by device_type, add current_device_type.
+        (Manager._collect_tests): Pass device type to test finder.
+        (Manager._needs_web_platform_test):
+        (Manager._prepare_lists): Index _expectations by device type.
+        (Manager._test_input_for_file):
+        (Manager._test_is_slow): Ditto.
+        (Manager._test_should_dump_jsconsolelog_in_stderr):
+        (Manager._test_should_dump_jsconsolelog_in_stderr): Ditto.
+        (Manager._get_test_inputs):
+        (Manager._update_worker_count):
+        (Manager._set_up_run): Use current_device_type instead of passing device_type in.
+        (Manager.run): Re-write function to gather and parse expectations from multiple baseline search paths. In the event
+        that a test can be run on multiple device types, the first device in the device type list which is eligible will be
+        the one which runs the test.
+        (Manager._run_test_subset):
+        (Manager._run_tests): Index _expectations by current_device_type.
+        (Manager._print_expectation_line_for_test): Ditto.
+        (Manager._print_expectations_for_subset): Ditto.
+        (Manager.print_expectations): Re-write function to gather and parse expectations from multiple baseline search paths.
+        Unlike run, this function will behave the same regardless of what devices are available.
+        (Manager._custom_device_for_test): Deleted.
+        * Scripts/webkitpy/layout_tests/controllers/manager_unittest.py:
+        (ManagerTest.test_uses_custom_device): Deleted.
+        (ManagerTest.test_uses_custom_device.get_manager): Deleted.
+        * Scripts/webkitpy/layout_tests/layout_package/json_layout_results_generator.py:
+        (JSONLayoutResultsGenerator.__init__): Pass expectations as a dictionary indexed by device type.
+        (JSONLayoutResultsGenerator._insert_failure_summaries): The number of fixable tests must take into consideration
+        all of the expectations.
+        * Scripts/webkitpy/layout_tests/lint_test_expectations_unittest.py:
+        (FakePort.skipped_layout_tests): Allow device_type to be passed in.
+        * Scripts/webkitpy/layout_tests/models/test_expectations.py:
+        (TestExpectations.__init__): Allow device_type to be passed through.
+        (TestExpectations.parse_all_expectations): Pick expectations_dict by device type.
+        * Scripts/webkitpy/layout_tests/models/test_expectations_unittest.py: Allow device_type to be passed in.
+        * Scripts/webkitpy/layout_tests/models/test_run_results.py:
+        (summarize_results):
+        * Scripts/webkitpy/layout_tests/models/test_run_results_unittest.py:
+        (summarized_results): Expectations are stored in a dictionary indexed by device_type. When determining the expectation
+        a test ran with, one must check all expectations to find the first non-skip expectation.
+        * Scripts/webkitpy/layout_tests/run_webkit_tests_integrationtest.py:
+        (RunTest.test_device_type_test_division):
+        (RunTest):
+        (RunTest.test_device_type_specific_listing):
+        * Scripts/webkitpy/port/base.py:
+        (Port): Add default values for DEVICE_TYPE and DEFAULT_DEVICE_TYPES.
+        (Port.supported_device_types): The result of this function will change based on what devices are available.
+        * Scripts/webkitpy/port/device_port.py:
+        (DevicePort._device_type_with_version): Replace DEFAULT_DEVICE_TYPE with DEVICE_TYPE.
+        (DevicePort.default_child_processes): DEVICE_TYPE is a general type, so the built-in comparison of the DeviceType object
+        can be used.
+        (DevicePort.supported_device_types): Generates a list of device types determined by the available devices, if there are
+        any, or the DEFAULT_DEVICE_TYPES of the port.
+        * Scripts/webkitpy/port/ios.py:
+        (IOSPort): Change DEFAULT_DEVICE_TYPE to DEVICE_TYPE.
+        * Scripts/webkitpy/port/ios_simulator.py:
+        (IOSSimulatorPort): Set the DEFAULT_DEVICE_TYPES to the devices currently used to run layout tests.
+        * Scripts/webkitpy/port/watch.py:
+        (WatchPort): Change DEFAULT_DEVICE_TYPE to DEVICE_TYPE.
+        * Scripts/webkitpy/port/watch_simulator.py:
+        (WatchSimulatorPort): Set the DEFAULT_DEVICE_TYPES to the device currently used to run layout tests.
+        * Scripts/webkitpy/xcode/device_type.py:
+        (DeviceType):
+        (DeviceType.__hash__): Allow DeviceType to be used as a dictionary index.
+
 2019-01-18  Philippe Normand  <pnormand@igalia.com>
 
         [WPE] run-qt-wpe-minibrowser needlessly expects a --wpe argument

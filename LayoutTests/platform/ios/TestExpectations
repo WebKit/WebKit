@@ -190,7 +190,10 @@ platform/ios/ios/fast/forms/range-input-touches.html [ Skip ]
 platform/ios/ios/fast/text/data-detectors/phone-disabled.html [ Skip ]
 platform/ios/ios/fast/text/data-detectors/phone.html [ Skip ]
 platform/ios/ios/touch [ Skip ]
+platform/iphone-7/fast/events/touch [ Skip ]
 media/modern-media-controls/css/pointer-events-none.html [ Skip ]
+
+platform/ipad/fast/forms [ Skip ]
 
 # Codecs not supported
 media/media-can-play-ogg.html [ WontFix ]
@@ -2971,7 +2974,6 @@ media/modern-media-controls/fullscreen-support/fullscreen-support-press.html [ S
 media/modern-media-controls/media-controller/ios/media-controller-ios-only-enable-tap-gesture-recognizer-with-fades-when-idle.html [ Skip ]
 media/modern-media-controls/media-controller/ios/media-controller-stop-updates-in-fullscreen.html [ Skip ]
 media/modern-media-controls/mute-support/mute-support-press-on-button.html [ Skip ]
-media/modern-media-controls/pip-support/ipad/pip-support-tap.html [ Skip ]
 media/modern-media-controls/placard-support/ipad [ Skip ]
 media/modern-media-controls/scrubber-support/ipad/scrubber-support-drag.html [ Skip ]
 media/modern-media-controls/seek-backward-support [ Skip ]
@@ -3021,8 +3023,6 @@ media/modern-media-controls/text-tracks [ Skip ]
 media/modern-media-controls/tracks-panel [ Skip ]
 media/modern-media-controls/tracks-support [ Skip ]
 media/modern-media-controls/volume-support [ Skip ]
-
-media/modern-media-controls/pip-support/ipad [ Pass ]
 
 webkit.org/b/178127 media/modern-media-controls/media-controller/media-controller-video-with-only-audio.html [ Skip ]
 

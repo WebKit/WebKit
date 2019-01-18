@@ -39,7 +39,7 @@ import logging
 import random
 import sys
 import time
-from collections import defaultdict
+from collections import defaultdict, OrderedDict
 
 from webkitpy.common.checkout.scm.detection import SCMDetector
 from webkitpy.common.net.file_uploader import FileUploader
@@ -78,7 +78,7 @@ class Manager(object):
         self._filesystem = port.host.filesystem
         self._options = options
         self._printer = printer
-        self._expectations = None
+        self._expectations = OrderedDict()
         self.HTTP_SUBDIR = 'http' + port.TEST_PATH_SEPARATOR + 'test'
         self.WEBSOCKET_SUBDIR = 'websocket' + port.TEST_PATH_SEPARATOR
         self.web_platform_test_subdir = self._port.web_platform_test_server_doc_root()
@@ -91,8 +91,8 @@ class Manager(object):
         test_options_json_path = self._port.path_from_webkit_base(self.LAYOUT_TESTS_DIRECTORY, "tests-options.json")
         self._tests_options = json.loads(self._filesystem.read_text_file(test_options_json_path)) if self._filesystem.exists(test_options_json_path) else {}
 
-    def _collect_tests(self, args):
-        return self._finder.find_tests(self._options, args)
+    def _collect_tests(self, args, device_type=None):
+        return self._finder.find_tests(self._options, args, device_type=device_type)
 
     def _is_http_test(self, test):
         return self.HTTP_SUBDIR in test or self._is_websocket_test(test) or self._needs_web_platform_test(test)
@@ -103,21 +103,11 @@ class Manager(object):
     def _needs_web_platform_test(self, test):
         return self.web_platform_test_subdir in test or self.webkit_specific_web_platform_test_subdir in test
 
-    def _custom_device_for_test(self, test):
-        # FIXME: This is a terrible way to do device-specific expected results https://bugs.webkit.org/show_bug.cgi?id=192162
-        for device_type in self._port.CUSTOM_DEVICE_TYPES:
-            if device_type.hardware_family and device_type.hardware_family.lower() + self._port.TEST_PATH_SEPARATOR in test:
-                return device_type
-            if device_type.hardware_family and device_type.hardware_type and \
-                (device_type.hardware_family + device_type.hardware_type).lower().replace(' ', '') + self._port.TEST_PATH_SEPARATOR in test:
-                return device_type
-        return None
-
     def _http_tests(self, test_names):
         return set(test for test in test_names if self._is_http_test(test))
 
-    def _prepare_lists(self, paths, test_names):
-        tests_to_skip = self._finder.skip_tests(paths, test_names, self._expectations, self._http_tests(test_names))
+    def _prepare_lists(self, paths, test_names, device_type=None):
+        tests_to_skip = self._finder.skip_tests(paths, test_names, self._expectations[device_type], self._http_tests(test_names))
         tests_to_run = [test for test in test_names if test not in tests_to_skip]
 
         # Create a sorted list of test files so the subset chunk,
@@ -128,38 +118,38 @@ class Manager(object):
             random.shuffle(tests_to_run)
 
         tests_to_run, tests_in_other_chunks = self._finder.split_into_chunks(tests_to_run)
-        self._expectations.add_skipped_tests(tests_in_other_chunks)
+        self._expectations[device_type].add_skipped_tests(tests_in_other_chunks)
         tests_to_skip.update(tests_in_other_chunks)
 
         return tests_to_run, tests_to_skip
 
-    def _test_input_for_file(self, test_file):
+    def _test_input_for_file(self, test_file, device_type=None):
         return TestInput(test_file,
-            self._options.slow_time_out_ms if self._test_is_slow(test_file) else self._options.time_out_ms,
+            self._options.slow_time_out_ms if self._test_is_slow(test_file, device_type=device_type) else self._options.time_out_ms,
             self._is_http_test(test_file),
-            should_dump_jsconsolelog_in_stderr=self._test_should_dump_jsconsolelog_in_stderr(test_file))
+            should_dump_jsconsolelog_in_stderr=self._test_should_dump_jsconsolelog_in_stderr(test_file, device_type=device_type))
 
-    def _test_is_slow(self, test_file):
-        if self._expectations.model().has_modifier(test_file, test_expectations.SLOW):
+    def _test_is_slow(self, test_file, device_type=None):
+        if self._expectations[device_type].model().has_modifier(test_file, test_expectations.SLOW):
             return True
         return "slow" in self._tests_options.get(test_file, [])
 
-    def _test_should_dump_jsconsolelog_in_stderr(self, test_file):
-        return self._expectations.model().has_modifier(test_file, test_expectations.DUMPJSCONSOLELOGINSTDERR)
+    def _test_should_dump_jsconsolelog_in_stderr(self, test_file, device_type=None):
+        return self._expectations[device_type].model().has_modifier(test_file, test_expectations.DUMPJSCONSOLELOGINSTDERR)
 
     def needs_servers(self, test_names):
         return any(self._is_http_test(test_name) for test_name in test_names) and self._options.http
 
-    def _get_test_inputs(self, tests_to_run, repeat_each, iterations):
+    def _get_test_inputs(self, tests_to_run, repeat_each, iterations, device_type=None):
         test_inputs = []
         for _ in xrange(iterations):
             for test in tests_to_run:
                 for _ in xrange(repeat_each):
-                    test_inputs.append(self._test_input_for_file(test))
+                    test_inputs.append(self._test_input_for_file(test, device_type=device_type))
         return test_inputs
 
-    def _update_worker_count(self, test_names):
-        test_inputs = self._get_test_inputs(test_names, self._options.repeat_each, self._options.iterations)
+    def _update_worker_count(self, test_names, device_type=None):
+        test_inputs = self._get_test_inputs(test_names, self._options.repeat_each, self._options.iterations, device_type=device_type)
         worker_count = self._runner.get_worker_count(test_inputs, int(self._options.child_processes))
         self._options.child_processes = worker_count
 
@@ -170,7 +160,7 @@ class Manager(object):
         if not self._port.start_helper(self._options.pixel_tests):
             return False
 
-        self._update_worker_count(test_names)
+        self._update_worker_count(test_names, device_type=device_type)
         self._port.reset_preferences()
 
         # Check that the system dependencies (themes, fonts, ...) are correct.
@@ -184,49 +174,47 @@ class Manager(object):
         return True
 
     def run(self, args):
-        """Run the tests and return a RunDetails object with the results."""
-        self._printer.write_update("Collecting tests ...")
-        try:
-            paths, test_names = self._collect_tests(args)
-        except IOError:
-            # This is raised if --test-list doesn't exist
-            return test_run_results.RunDetails(exit_code=-1)
+        total_tests = set()
+        aggregate_test_names = set()
+        aggregate_tests = set()
+        tests_to_run_by_device = {}
 
-        self._printer.write_update("Parsing expectations ...")
-        self._expectations = test_expectations.TestExpectations(self._port, test_names, force_expectations_pass=self._options.force)
-        self._expectations.parse_all_expectations()
+        device_type_list = self._port.supported_device_types()
+        for device_type in device_type_list:
+            """Run the tests and return a RunDetails object with the results."""
+            for_device_type = 'for {} '.format(device_type) if device_type else ''
+            self._printer.write_update('Collecting tests {}...'.format(for_device_type))
+            try:
+                paths, test_names = self._collect_tests(args, device_type=device_type)
+            except IOError:
+                # This is raised if --test-list doesn't exist
+                return test_run_results.RunDetails(exit_code=-1)
 
-        tests_to_run, tests_to_skip = self._prepare_lists(paths, test_names)
-        self._printer.print_found(len(test_names), len(tests_to_run), self._options.repeat_each, self._options.iterations)
+            self._printer.write_update('Parsing expectations {}...'.format(for_device_type))
+            self._expectations[device_type] = test_expectations.TestExpectations(self._port, test_names, force_expectations_pass=self._options.force, device_type=device_type)
+            self._expectations[device_type].parse_all_expectations()
+
+            aggregate_test_names.update(test_names)
+            tests_to_run, tests_to_skip = self._prepare_lists(paths, test_names, device_type=device_type)
+
+            total_tests.update(tests_to_run)
+            total_tests.update(tests_to_skip)
+
+            tests_to_run_by_device[device_type] = [test for test in tests_to_run if test not in aggregate_tests]
+            aggregate_tests.update(tests_to_run)
+
+        tests_to_skip = total_tests - aggregate_tests
+        self._printer.print_found(len(aggregate_test_names), len(aggregate_tests), self._options.repeat_each, self._options.iterations)
         start_time = time.time()
 
         # Check to make sure we're not skipping every test.
-        if not tests_to_run:
+        if not sum([len(tests) for tests in tests_to_run_by_device.itervalues()]):
             _log.critical('No tests to run.')
             return test_run_results.RunDetails(exit_code=-1)
 
-        # Look for tests with custom device requirements.
-        test_device_mapping = defaultdict(list)
-        for test_file in tests_to_run:
-            test_device_mapping[self._custom_device_for_test(test_file) or self._port.DEFAULT_DEVICE_TYPE].append(test_file)
-
-        # Order device types from most specific to least specific in the hopes that some of the more specific device
-        # types will match the less specific device types.
-        device_type_order = []
-        types_with_family = []
-        remaining_types = []
-        for device_type in test_device_mapping.iterkeys():
-            if device_type and device_type.hardware_family and device_type.hardware_type:
-                device_type_order.append(device_type)
-            elif device_type and device_type.hardware_family:
-                types_with_family.append(device_type)
-            else:
-                remaining_types.append(device_type)
-        device_type_order.extend(types_with_family + remaining_types)
-
-        needs_http = any((self._is_http_test(test) and not self._needs_web_platform_test(test)) for test in tests_to_run)
-        needs_web_platform_test_server = any(self._needs_web_platform_test(test) for test in tests_to_run)
-        needs_websockets = any(self._is_websocket_test(test) for test in tests_to_run)
+        needs_http = any((self._is_http_test(test) and not self._needs_web_platform_test(test)) for tests in tests_to_run_by_device.itervalues() for test in tests)
+        needs_web_platform_test_server = any(self._needs_web_platform_test(test) for tests in tests_to_run_by_device.itervalues() for test in tests)
+        needs_websockets = any(self._is_websocket_test(test) for tests in tests_to_run_by_device.itervalues() for test in tests)
         self._runner = LayoutTestRunner(self._options, self._port, self._printer, self._results_directory, self._test_is_slow,
                                         needs_http=needs_http, needs_web_platform_test_server=needs_web_platform_test_server, needs_websockets=needs_websockets)
 
@@ -248,40 +236,26 @@ class Manager(object):
         max_child_processes_for_run = 1
         child_processes_option_value = self._options.child_processes
 
-        while device_type_order:
-            device_type = device_type_order[0]
-            tests = test_device_mapping[device_type]
-            del device_type_order[0]
-
+        for device_type in device_type_list:
+            self._runner._test_is_slow = lambda test_file: self._test_is_slow(test_file, device_type=device_type)
             self._options.child_processes = min(self._port.max_child_processes(device_type=device_type), int(child_processes_option_value or self._port.default_child_processes(device_type=device_type)))
 
             _log.info('')
             if not self._options.child_processes:
-                _log.info('Skipping {} because {} is not available'.format(pluralize(len(test_device_mapping[device_type]), 'test'), str(device_type)))
+                _log.info('Skipping {} because {} is not available'.format(pluralize(len(tests_to_run_by_device[device_type]), 'test'), str(device_type)))
                 _log.info('')
                 continue
 
             max_child_processes_for_run = max(self._options.child_processes, max_child_processes_for_run)
 
-            # This loop looks for any less-specific device types which match the current device type
-            index = 0
-            while index < len(device_type_order):
-                if device_type_order[index] == device_type:
-                    tests.extend(test_device_mapping[device_type_order[index]])
-
-                    # Remove devices types from device_type_order once tests associated with that type have been claimed.
-                    del device_type_order[index]
-                else:
-                    index += 1
-
             self._printer.print_baseline_search_path(device_type=device_type)
 
-            _log.info('Running {}{}'.format(pluralize(len(tests), 'test'), ' for {}'.format(str(device_type)) if device_type else ''))
+            _log.info('Running {}{}'.format(pluralize(len(tests_to_run_by_device[device_type]), 'test'), ' for {}'.format(str(device_type)) if device_type else ''))
             _log.info('')
-            if not self._set_up_run(tests, device_type):
+            if not self._set_up_run(tests_to_run_by_device[device_type], device_type=device_type):
                 return test_run_results.RunDetails(exit_code=-1)
 
-            temp_initial_results, temp_retry_results, temp_enabled_pixel_tests_in_retry = self._run_test_subset(tests, tests_to_skip)
+            temp_initial_results, temp_retry_results, temp_enabled_pixel_tests_in_retry = self._run_test_subset(tests_to_run_by_device[device_type], tests_to_skip, device_type=device_type)
             initial_results = initial_results.merge(temp_initial_results) if initial_results else temp_initial_results
             retry_results = retry_results.merge(temp_retry_results) if retry_results else temp_retry_results
             enabled_pixel_tests_in_retry |= temp_enabled_pixel_tests_in_retry
@@ -294,10 +268,10 @@ class Manager(object):
         end_time = time.time()
         return self._end_test_run(start_time, end_time, initial_results, retry_results, enabled_pixel_tests_in_retry)
 
-    def _run_test_subset(self, tests_to_run, tests_to_skip):
+    def _run_test_subset(self, tests_to_run, tests_to_skip, device_type=None):
         try:
             enabled_pixel_tests_in_retry = False
-            initial_results = self._run_tests(tests_to_run, tests_to_skip, self._options.repeat_each, self._options.iterations, int(self._options.child_processes), retrying=False)
+            initial_results = self._run_tests(tests_to_run, tests_to_skip, self._options.repeat_each, self._options.iterations, int(self._options.child_processes), retrying=False, device_type=device_type)
 
             tests_to_retry = self._tests_to_retry(initial_results, include_crashes=self._port.should_retry_crashes())
             # Don't retry failures when interrupted by user or failures limit exception.
@@ -308,7 +282,7 @@ class Manager(object):
                 _log.info('')
                 _log.info("Retrying %s ..." % pluralize(len(tests_to_retry), "unexpected failure"))
                 _log.info('')
-                retry_results = self._run_tests(tests_to_retry, tests_to_skip=set(), repeat_each=1, iterations=1, num_workers=1, retrying=True)
+                retry_results = self._run_tests(tests_to_retry, tests_to_skip=set(), repeat_each=1, iterations=1, num_workers=1, retrying=True, device_type=device_type)
 
                 if enabled_pixel_tests_in_retry:
                     self._options.pixel_tests = False
@@ -355,10 +329,10 @@ class Manager(object):
                 exit_code = self._port.exit_code_from_summarized_results(summarized_results)
         return test_run_results.RunDetails(exit_code, summarized_results, initial_results, retry_results, enabled_pixel_tests_in_retry)
 
-    def _run_tests(self, tests_to_run, tests_to_skip, repeat_each, iterations, num_workers, retrying):
-        test_inputs = self._get_test_inputs(tests_to_run, repeat_each, iterations)
+    def _run_tests(self, tests_to_run, tests_to_skip, repeat_each, iterations, num_workers, retrying, device_type=None):
+        test_inputs = self._get_test_inputs(tests_to_run, repeat_each, iterations, device_type=device_type)
 
-        return self._runner.run_tests(self._expectations, test_inputs, tests_to_skip, num_workers, retrying)
+        return self._runner.run_tests(self._expectations[device_type], test_inputs, tests_to_skip, num_workers, retrying)
 
     def _clean_up_run(self):
         _log.debug("Flushing stdout")
@@ -574,9 +548,9 @@ class Manager(object):
             json_results_generator.add_path_to_trie(name, value, stats_trie)
         return stats_trie
 
-    def _print_expectation_line_for_test(self, format_string, test):
-        line = self._expectations.model().get_expectation_line(test)
-        print(format_string.format(test, line.expected_behavior, self._expectations.readable_filename_and_line_number(line), line.original_string or ''))
+    def _print_expectation_line_for_test(self, format_string, test, device_type=None):
+        line = self._expectations[device_type].model().get_expectation_line(test)
+        print(format_string.format(test, line.expected_behavior, self._expectations[device_type].readable_filename_and_line_number(line), line.original_string or ''))
 
     def _print_expectations_for_subset(self, device_type, test_col_width, tests_to_run, tests_to_skip={}):
         format_string = '{{:{width}}} {{}} {{}} {{}}'.format(width=test_col_width)
@@ -584,48 +558,49 @@ class Manager(object):
             print('')
             print('Tests to skip ({})'.format(len(tests_to_skip)))
             for test in sorted(tests_to_skip):
-                self._print_expectation_line_for_test(format_string, test)
+                self._print_expectation_line_for_test(format_string, test, device_type=device_type)
 
         print('')
         print('Tests to run{} ({})'.format(' for ' + str(device_type) if device_type else '', len(tests_to_run)))
         for test in sorted(tests_to_run):
-            self._print_expectation_line_for_test(format_string, test)
+            self._print_expectation_line_for_test(format_string, test, device_type=device_type)
 
     def print_expectations(self, args):
-        self._printer.write_update("Collecting tests ...")
-        try:
-            paths, test_names = self._collect_tests(args)
-        except IOError:
-            # This is raised if --test-list doesn't exist
-            return -1
+        aggregate_test_names = set()
+        aggregate_tests_to_run = set()
+        aggregate_tests_to_skip = set()
+        tests_to_run_by_device = {}
 
-        self._printer.write_update("Parsing expectations ...")
-        self._expectations = test_expectations.TestExpectations(self._port, test_names, force_expectations_pass=self._options.force)
-        self._expectations.parse_all_expectations()
+        device_type_list = self._port.DEFAULT_DEVICE_TYPES or [self._port.DEVICE_TYPE]
+        for device_type in device_type_list:
+            """Run the tests and return a RunDetails object with the results."""
+            for_device_type = 'for {} '.format(device_type) if device_type else ''
+            self._printer.write_update('Collecting tests {}...'.format(for_device_type))
+            try:
+                paths, test_names = self._collect_tests(args, device_type=device_type)
+            except IOError:
+                # This is raised if --test-list doesn't exist
+                return test_run_results.RunDetails(exit_code=-1)
 
-        tests_to_run, tests_to_skip = self._prepare_lists(paths, test_names)
-        self._printer.print_found(len(test_names), len(tests_to_run), self._options.repeat_each, self._options.iterations)
+            self._printer.write_update('Parsing expectations {}...'.format(for_device_type))
+            self._expectations[device_type] = test_expectations.TestExpectations(self._port, test_names, force_expectations_pass=self._options.force, device_type=device_type)
+            self._expectations[device_type].parse_all_expectations()
 
-        test_col_width = len(max(tests_to_run + list(tests_to_skip), key=len)) + 1
+            aggregate_test_names.update(test_names)
+            tests_to_run, tests_to_skip = self._prepare_lists(paths, test_names, device_type=device_type)
+            aggregate_tests_to_skip.update(tests_to_skip)
 
-        default_device_tests = []
+            tests_to_run_by_device[device_type] = [test for test in tests_to_run if test not in aggregate_tests_to_run]
+            aggregate_tests_to_run.update(tests_to_run)
 
-        # Look for tests with custom device requirements.
-        custom_device_tests = defaultdict(list)
-        for test_file in tests_to_run:
-            custom_device = self._custom_device_for_test(test_file)
-            if custom_device:
-                custom_device_tests[custom_device].append(test_file)
-            else:
-                default_device_tests.append(test_file)
+        aggregate_tests_to_skip = aggregate_tests_to_skip - aggregate_tests_to_run
 
-        if custom_device_tests:
-            for device_type, tests in custom_device_tests.iteritems():
-                _log.debug('{} tests use device {}'.format(len(tests), device_type))
+        self._printer.print_found(len(aggregate_test_names), len(aggregate_tests_to_run), self._options.repeat_each, self._options.iterations)
+        test_col_width = len(max(aggregate_tests_to_run.union(aggregate_tests_to_skip), key=len)) + 1
 
-        self._print_expectations_for_subset(None, test_col_width, tests_to_run, tests_to_skip)
+        self._print_expectations_for_subset(device_type_list[0], test_col_width, tests_to_run_by_device[device_type_list[0]], aggregate_tests_to_skip)
 
-        for device_type, tests in custom_device_tests.iteritems():
-            self._print_expectations_for_subset(device_type, test_col_width, tests)
+        for device_type in device_type_list[1:]:
+            self._print_expectations_for_subset(device_type, test_col_width, tests_to_run_by_device[device_type])
 
         return 0

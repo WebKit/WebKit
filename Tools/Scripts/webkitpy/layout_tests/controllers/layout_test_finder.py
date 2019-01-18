@@ -43,11 +43,11 @@ class LayoutTestFinder(object):
         self._filesystem = self._port.host.filesystem
         self.LAYOUT_TESTS_DIRECTORY = 'LayoutTests'
 
-    def find_tests(self, options, args):
+    def find_tests(self, options, args, device_type=None):
         paths = self._strip_test_dir_prefixes(args)
         if options and options.test_list:
             paths += self._strip_test_dir_prefixes(self._read_test_names_from_file(options.test_list, self._port.TEST_PATH_SEPARATOR))
-        test_files = self._port.tests(paths)
+        test_files = self._port.tests(paths, device_type=device_type)
         return (paths, test_files)
 
     def find_touched_tests(self, new_or_modified_paths, apply_skip_expectations=True):

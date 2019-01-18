@@ -113,7 +113,7 @@ def summarized_results(port, expected, passing, flaky, include_passes=False):
     else:
         retry_results = None
 
-    return test_run_results.summarize_results(port, initial_results.expectations, initial_results, retry_results,
+    return test_run_results.summarize_results(port, {None: initial_results.expectations}, initial_results, retry_results,
         enabled_pixel_tests_in_retry=False, include_passes=include_passes)
 
 

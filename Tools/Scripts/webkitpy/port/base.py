@@ -80,9 +80,8 @@ class Port(object):
     ALL_BUILD_TYPES = ('debug', 'release')
 
     DEFAULT_ARCHITECTURE = 'x86'
-
-    DEFAULT_DEVICE_TYPE = None
-    CUSTOM_DEVICE_TYPES = []
+    DEVICE_TYPE = None
+    DEFAULT_DEVICE_TYPES = []
 
     @classmethod
     def determine_full_port_name(cls, host, options, port_name):
@@ -186,6 +185,10 @@ class Port(object):
         if device_type:
             return 0
         return float('inf')
+
+    def supported_device_types(self):
+        # An empty list would indicate a port was incapable of running tests.
+        return [None]
 
     def worker_startup_delay_secs(self):
         # FIXME: If we start workers up too quickly, DumpRenderTree appears

@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-<script src="../../../media-file.js"></script>
+<script src="../../../../../media/media-file.js"></script>
 </head>
 <body>
 <video controls></video>
@@ -19,7 +19,7 @@ if (window.internals)
     internals.setMediaElementRestrictions(video, "NoRestrictions");
 video.addEventListener("webkitpresentationmodechanged", dispatchDidChangePresentationMode, false);
 video.addEventListener("canplaythrough", function () { video.webkitSetPresentationMode("picture-in-picture"); }, false);
-video.src = findMediaFile("video", "../../../content/test");
+video.src = findMediaFile("video", "../../../../../media/content/test");
 </script>
 </body>
 </html>

@@ -1,3 +1,88 @@
+2019-01-18  Jonathan Bedard  <jbedard@apple.com>
+
+        webkitpy: Implement device type specific expected results (Part 2)
+        https://bugs.webkit.org/show_bug.cgi?id=192162
+        <rdar://problem/46345449>
+
+        Rubber-stamped by Aakash Jain.
+
+        Move iPad and iPhone 7 tests to their respective platform specific directories.
+
+        * TestExpectations:
+        * fast/events/touch/ios/iphone7: Removed.
+        * fast/forms/ios/ipad: Removed.
+        * fast/text-autosizing/ios/ipad: Removed.
+        * fast/viewport/ios/ipad: Removed.
+        * media/controls/ipad: Removed.
+        * media/modern-media-controls/media-documents/ipad: Removed.
+        * media/modern-media-controls/pip-support/ipad: Removed.
+        * platform/ios-wk1/TestExpectations:
+        * platform/ios/TestExpectations:
+        * platform/ipad: Added.
+        * platform/ipad/fast: Added.
+        * platform/ipad/fast/forms: Added.
+        * platform/ipad/fast/forms/choose-select-option-expected.txt: Added.
+        * platform/ipad/fast/forms/choose-select-option.html: Added.
+        * platform/ipad/fast/forms/focus-input-via-button-expected.txt: Added.
+        * platform/ipad/fast/forms/focus-input-via-button.html: Added.
+        * platform/ipad/fast/forms/multiple-select-updates-renderer-expected.txt: Added.
+        * platform/ipad/fast/forms/multiple-select-updates-renderer.html: Added.
+        * platform/ipad/fast/forms/select-form-run-twice-expected.txt: Added.
+        * platform/ipad/fast/forms/select-form-run-twice.html: Added.
+        * platform/ipad/fast/forms/select-with-title-expected.txt: Added.
+        * platform/ipad/fast/forms/select-with-title.html: Added.
+        * platform/ipad/fast/forms/unfocus-inside-fixed-hittest-expected.txt: Added.
+        * platform/ipad/fast/forms/unfocus-inside-fixed-hittest.html: Added.
+        * platform/ipad/fast/text-autosizing: Added.
+        * platform/ipad/fast/text-autosizing/programmatic-text-size-adjust-expected.txt: Added.
+        * platform/ipad/fast/text-autosizing/programmatic-text-size-adjust.html: Added.
+        * platform/ipad/fast/text-autosizing/text-size-adjust-inline-style-expected.html: Added.
+        * platform/ipad/fast/text-autosizing/text-size-adjust-inline-style.html: Added.
+        * platform/ipad/fast/viewport: Added.
+        * platform/ipad/fast/viewport/empty-meta-expected.txt: Added.
+        * platform/ipad/fast/viewport/empty-meta.html: Added.
+        * platform/ipad/fast/viewport/meta-viewport-ignored-expected.txt: Added.
+        * platform/ipad/fast/viewport/meta-viewport-ignored.html: Added.
+        * platform/ipad/fast/viewport/viewport-overriden-by-minimum-effective-width-if-ignore-meta-viewport-expected.txt: Added.
+        * platform/ipad/fast/viewport/viewport-overriden-by-minimum-effective-width-if-ignore-meta-viewport.html: Added.
+        * platform/ipad/fast/viewport/viewport-unchanged-by-minimum-effective-width-if-not-ignore-meta-viewport-expected.txt: Added.
+        * platform/ipad/fast/viewport/viewport-unchanged-by-minimum-effective-width-if-not-ignore-meta-viewport.html: Added.
+        * platform/ipad/fast/viewport/width-is-device-width-expected.txt: Added.
+        * platform/ipad/fast/viewport/width-is-device-width.html: Added.
+        * platform/ipad/media: Added.
+        * platform/ipad/media/controls: Added.
+        * platform/ipad/media/controls/close-page-with-picture-in-picture-video-assertion-failure-expected.txt: Added.
+        * platform/ipad/media/controls/close-page-with-picture-in-picture-video-assertion-failure.html: Added.
+        * platform/ipad/media/controls/resources: Added.
+        * platform/ipad/media/controls/resources/picture-in-picture.html: Added.
+        * platform/ipad/media/modern-media-controls: Added.
+        * platform/ipad/media/modern-media-controls/media-documents: Added.
+        * platform/ipad/media/modern-media-controls/media-documents/media-document-audio-ios-sizing-expected.txt: Added.
+        * platform/ipad/media/modern-media-controls/media-documents/media-document-audio-ios-sizing.html: Added.
+        * platform/ipad/media/modern-media-controls/media-documents/media-document-video-ios-sizing-expected.txt: Added.
+        * platform/ipad/media/modern-media-controls/media-documents/media-document-video-ios-sizing.html: Added.
+        * platform/ipad/media/modern-media-controls/pip-support: Added.
+        * platform/ipad/media/modern-media-controls/pip-support/pip-support-enabled-expected.txt: Added.
+        * platform/ipad/media/modern-media-controls/pip-support/pip-support-enabled.html: Added.
+        * platform/ipad/media/modern-media-controls/pip-support/pip-support-tap-expected.txt: Added.
+        * platform/ipad/media/modern-media-controls/pip-support/pip-support-tap.html: Added.
+        * platform/iphone-7: Added.
+        * platform/iphone-7/fast: Added.
+        * platform/iphone-7/fast/events: Added.
+        * platform/iphone-7/fast/events/touch: Added.
+        * platform/iphone-7/fast/events/touch/force-press-event-expected.txt: Added.
+        * platform/iphone-7/fast/events/touch/force-press-event.html: Added.
+        * platform/iphone-7/fast/events/touch/force-press-on-link-expected.txt: Added.
+        * platform/iphone-7/fast/events/touch/force-press-on-link.html: Added.
+        * platform/iphone-7/fast/events/touch/prevent-default-touchmove-prevents-scrolling-expected.txt: Added.
+        * platform/iphone-7/fast/events/touch/prevent-default-touchmove-prevents-scrolling.html: Added.
+        * platform/iphone-7/tiled-drawing: Added.
+        * platform/iphone-7/tiled-drawing/compositing-layers-deep-color-expected.txt: Added.
+        * platform/iphone-7/tiled-drawing/compositing-layers-deep-color.html: Added.
+        * platform/mac-wk2/TestExpectations:
+        * platform/mac/TestExpectations:
+        * tiled-drawing/ios: Removed.
+
 2019-01-18  Zalan Bujtas  <zalan@apple.com>
 
         [LFC][BFC][MarginCollapsing] Collapsing through should not ignore floats.

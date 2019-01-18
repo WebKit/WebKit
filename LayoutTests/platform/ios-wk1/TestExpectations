@@ -2,9 +2,6 @@
 #
 # See http://trac.webkit.org/wiki/TestExpectations for more information on this file.
 
-# Selectively re-enable viewport tests that work
-fast/viewport/ios/ipad/width-is-device-width.html [ Pass ]
-
 editing/input/focus-change-with-marked-text.html [ Pass ]
 
 # No service worker implementation for WK1
@@ -1902,7 +1899,6 @@ fast/forms/selection-direction.html [ Timeout ]
 
 # Failure as of 09/21/2016
 css2.1/t1008-c44-ln-box-02-d-ag.html [ Failure ]
-fast/text-autosizing/ios/ipad/text-size-adjust-inline-style.html [ ImageOnlyFailure ]
 fast/text-autosizing/ios/text-size-adjust-inline-style.html [ ImageOnlyFailure ]
 
 # Flaky as of 09/21/2016
