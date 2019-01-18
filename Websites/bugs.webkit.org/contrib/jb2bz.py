@@ -17,8 +17,8 @@ This code requires a recent version of Andy Dustman's MySQLdb interface,
 Share and enjoy.
 """
 
-import rfc822, mimetools, multifile, mimetypes, email.utils
-import sys, re, glob, StringIO, os, stat, time
+import email, mimetypes, email.utils
+import sys, re, glob, os, stat, time
 import MySQLdb, getopt
 
 # mimetypes doesn't include everything we might encounter, yet.
@@ -89,10 +89,24 @@ def process_notes_file(current, fname):
 def process_reply_file(current, fname):
     new_note = {}
     reply = open(fname, "r")
-    msg = rfc822.Message(reply)
-    new_note['text'] = "%s\n%s" % (msg['From'], msg.fp.read())
-    new_note['timestamp'] = email.utils.parsedate_tz(msg['Date'])
-    current["notes"].append(new_note)
+    msg = email.message_from_file(reply)
+
+    # Add any attachments that may have been in a followup or reply
+    msgtype = msg.get_content_maintype()
+    if msgtype == "multipart":
+        for part in msg.walk():
+            new_note = {}
+            if part.get_filename() is None:
+                if part.get_content_type() == "text/plain":
+                    new_note['timestamp'] = time.gmtime(email.utils.mktime_tz(email.utils.parsedate_tz(msg['Date'])))
+                    new_note['text'] = "%s\n%s" % (msg['From'], part.get_payload())
+                    current["notes"].append(new_note)
+            else:
+                maybe_add_attachment(part, current)
+    else:
+        new_note['text'] = "%s\n%s" % (msg['From'], msg.get_payload())
+        new_note['timestamp'] = time.gmtime(email.utils.mktime_tz(email.utils.parsedate_tz(msg['Date'])))
+        current["notes"].append(new_note)
 
 def add_notes(current):
     """Add any notes that have been recorded for the current bug."""
@@ -104,51 +118,48 @@ def add_notes(current):
     for f in glob.glob("%d.followup.*" % current['number']):
         process_reply_file(current, f)
 
-def maybe_add_attachment(current, file, submsg):
+def maybe_add_attachment(submsg, current):
     """Adds the attachment to the current record"""
-    cd = submsg["Content-Disposition"]
-    m = re.search(r'filename="([^"]+)"', cd)
-    if m == None:
+    attachment_filename = submsg.get_filename()
+    if attachment_filename is None:
         return
-    attachment_filename = m.group(1)
-    if (submsg.gettype() == 'application/octet-stream'):
+
+    if (submsg.get_content_type() == 'application/octet-stream'):
         # try get a more specific content-type for this attachment
-        type, encoding = mimetypes.guess_type(m.group(1))
-        if type == None:
-            type = submsg.gettype()
+        mtype, encoding = mimetypes.guess_type(attachment_filename)
+        if mtype == None:
+            mtype = submsg.get_content_type()
     else:
-        type = submsg.gettype()
+        mtype = submsg.get_content_type()
+
+    if mtype == 'application/x-pkcs7-signature':
+        return
+
+    if mtype == 'application/pkcs7-signature':
+         return
+
+    if mtype == 'application/pgp-signature':
+        return
+
+    if mtype == 'message/rfc822':
+        return
 
     try:
-        data = StringIO.StringIO()
-        mimetools.decode(file, data, submsg.getencoding())
+        data = submsg.get_payload(decode=True)
     except:
         return
 
-    current['attachments'].append( ( attachment_filename, type, data.getvalue() ) )
-
-def process_mime_body(current, file, submsg):
-    data = StringIO.StringIO()
-    try:
-        mimetools.decode(file, data, submsg.getencoding())
-        current['description'] = data.getvalue()
-    except:
-        return
+    current['attachments'].append( ( attachment_filename, mtype, data ) )
 
 def process_text_plain(msg, current):
-    current['description'] = msg.fp.read()
+    current['description'] = msg.get_payload()
 
-def process_multi_part(file, msg, current):
-    mf = multifile.MultiFile(file)
-    mf.push(msg.getparam("boundary"))
-    while mf.next():
-        submsg = mimetools.Message(file)
-        if submsg.has_key("Content-Disposition"):
-            maybe_add_attachment(current, mf, submsg)
+def process_multi_part(msg, current):
+    for part in msg.walk():
+        if part.get_filename() is None:
+            process_text_plain(part, current)
         else:
-            # This is the message body itself (always?), so process
-            # accordingly
-            process_mime_body(current, mf, submsg)
+            maybe_add_attachment(part, current)
 
 def process_jitterbug(filename):
     current = {}
@@ -158,38 +169,36 @@ def process_jitterbug(filename):
     current['description'] = ''
     current['date-reported'] = ()
     current['short-description'] = ''
-    
+
     print "Processing: %d" % current['number']
 
-    file = open(filename, "r")
-    create_date = os.fstat(file.fileno())
-    msg = mimetools.Message(file)
+    mfile = open(filename, "r")
+    create_date = os.fstat(mfile.fileno())
+    msg = email.message_from_file(mfile)
 
-    msgtype = msg.gettype()
-
-    add_notes(current)
-    current['date-reported'] = email.utils.parsedate_tz(msg['Date'])
+    current['date-reported'] = time.gmtime(email.utils.mktime_tz(email.utils.parsedate_tz(msg['Date'])))
     if current['date-reported'] is None:
        current['date-reported'] = time.gmtime(create_date[stat.ST_MTIME])
 
     if current['date-reported'][0] < 1900:
        current['date-reported'] = time.gmtime(create_date[stat.ST_MTIME])
 
-    if msg.getparam('Subject') is not None: 
+    if msg.has_key('Subject') is not False:
         current['short-description'] = msg['Subject']
     else:
         current['short-description'] = "Unknown"
 
-    if msgtype[:5] == 'text/':
+    msgtype = msg.get_content_maintype()
+    if msgtype == 'text':
         process_text_plain(msg, current)
-    elif msgtype[:5] == 'text':
-        process_text_plain(msg, current)
-    elif msgtype[:10] == "multipart/":
-        process_multi_part(file, msg, current)
+    elif msgtype == "multipart":
+        process_multi_part(msg, current)
     else:
         # Huh? This should never happen.
         print "Unknown content-type: %s" % msgtype
         sys.exit(1)
+
+    add_notes(current)
 
     # At this point we have processed the message: we have all of the notes and
     # attachments stored, so it's time to add things to the database.
@@ -219,6 +228,7 @@ def process_jitterbug(filename):
     try:
         cursor.execute( "INSERT INTO bugs SET " \
                         "bug_id=%s," \
+                        "priority='---'," \
                         "bug_severity='normal',"  \
                         "bug_status=%s," \
                         "creation_ts=%s,"  \
@@ -242,7 +252,7 @@ def process_jitterbug(filename):
                           version,
                           component,
                           resolution] )
-    
+
         # This is the initial long description associated with the bug report
         cursor.execute( "INSERT INTO longdescs SET " \
                         "bug_id=%s," \
@@ -253,7 +263,7 @@ def process_jitterbug(filename):
                           reporter,
                           time.strftime("%Y-%m-%d %H:%M:%S", current['date-reported'][:9]),
                           current['description'] ] )
-    
+
         # Add whatever notes are associated with this defect
         for n in current['notes']:
                             cursor.execute( "INSERT INTO longdescs SET " \
@@ -265,15 +275,15 @@ def process_jitterbug(filename):
                              reporter,
                              time.strftime("%Y-%m-%d %H:%M:%S", n['timestamp'][:9]),
                              n['text']])
-    
+
         # add attachments associated with this defect
         for a in current['attachments']:
             cursor.execute( "INSERT INTO attachments SET " \
-                            "bug_id=%s, creation_ts=%s, description='', mimetype=%s," \
+                            "bug_id=%s, creation_ts=%s, description=%s, mimetype=%s," \
                             "filename=%s, submitter_id=%s",
                             [ current['number'],
                               time.strftime("%Y-%m-%d %H:%M:%S", current['date-reported'][:9]),
-                              a[1], a[0], reporter ])
+                              a[0], a[1], a[0], reporter ])
             cursor.execute( "INSERT INTO attach_data SET " \
                             "id=LAST_INSERT_ID(), thedata=%s",
                             [ a[2] ])

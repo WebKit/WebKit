@@ -31,7 +31,6 @@ use File::Path;
 use File::Basename;
 use File::Copy qw(move);
 use File::Spec;
-use File::Slurp;
 use IO::File;
 use POSIX ();
 
@@ -541,7 +540,7 @@ sub update_filesystem {
 
     # Remove old assets htaccess file to force recreation with correct values.
     if (-e "$assetsdir/.htaccess") {
-        if (read_file("$assetsdir/.htaccess") =~ /<FilesMatch \\\.css\$>/) {
+        if (read_text("$assetsdir/.htaccess") =~ /<FilesMatch \\\.css\$>/) {
             unlink("$assetsdir/.htaccess");
         }
     }
@@ -787,22 +786,21 @@ sub _update_old_charts {
 # to product IDs.
 sub _update_old_mining_filenames {
     my ($miningdir) = @_;
+    my $dbh = Bugzilla->dbh;
     my @conversion_errors;
-
-    require Bugzilla::Product;
 
     # We use a dummy product instance with ID 0, representing all products
     my $product_all = {id => 0, name => '-All-'};
-    bless($product_all, 'Bugzilla::Product');
 
     print "Updating old charting data file names...";
-    my @products = Bugzilla::Product->get_all();
+    my @products = @{ $dbh->selectall_arrayref('SELECT id, name FROM products
+                                                ORDER BY name', {Slice=>{}}) };
     push(@products, $product_all);
     foreach my $product (@products) {
-        if (-e File::Spec->catfile($miningdir, $product->id)) {
+        if (-e File::Spec->catfile($miningdir, $product->{id})) {
             push(@conversion_errors,
                  { product => $product,
-                   message => 'A file named "' . $product->id .
+                   message => 'A file named "' . $product->{id} .
                               '" already exists.' });
         }
     }
@@ -810,8 +808,8 @@ sub _update_old_mining_filenames {
     if (! @conversion_errors) {
         # Renaming mining files should work now without a hitch.
         foreach my $product (@products) {
-            if (! rename(File::Spec->catfile($miningdir, $product->name),
-                         File::Spec->catfile($miningdir, $product->id))) {
+            if (! rename(File::Spec->catfile($miningdir, $product->{name}),
+                         File::Spec->catfile($miningdir, $product->{id}))) {
                 push(@conversion_errors,
                      { product => $product,
                        message => $! });
@@ -827,7 +825,7 @@ sub _update_old_mining_filenames {
         print " FAILED:\n";
         foreach my $error (@conversion_errors) {
             printf "Cannot rename charting data file for product %d (%s): %s\n",
-                   $error->{product}->id, $error->{product}->name,
+                   $error->{product}->{id}, $error->{product}->{name},
                    $error->{message};
         }
         print "You need to empty the \"$miningdir\" directory, then run\n",

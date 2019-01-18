@@ -453,7 +453,7 @@ sub get_products_and_components {
 
             # Let's sort the list by classifications.
             @products = ();
-            push(@products, @{$class{$_->id}}) foreach Bugzilla::Classification->get_all;
+            push(@products, @{$class{$_->id} || []}) foreach Bugzilla::Classification->get_all;
         }
     }
 

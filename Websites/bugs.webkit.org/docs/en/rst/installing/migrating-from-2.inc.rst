@@ -21,7 +21,7 @@ Mac OS X, you can
 
 Once git is installed, run these commands to pull a copy of Bugzilla:
 
-:command:`git clone https://git.mozilla.org/bugzilla/bugzilla bugzilla-new`
+:command:`git clone https://github.com/bugzilla/bugzilla bugzilla-new`
 
 :command:`cd bugzilla-new`
 

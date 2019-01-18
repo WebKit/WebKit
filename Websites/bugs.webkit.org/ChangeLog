@@ -1,3 +1,56 @@
+2019-01-18  Ling Ho  <lingho@apple.com>
+
+        Update Bugzilla running on bugs.webkit.org and bugs.webkit-uat.org to version 5.0.4
+        https://bugs.webkit.org/show_bug.cgi?id=193477
+        <rdar://problem/37618737>
+
+        Reviewed by Lucas Forschler.
+
+        * Bugzilla/Config.pm:
+        (write_params):
+        (read_param_file):
+        * Bugzilla/Constants.pm:
+        * Bugzilla/DB/Sqlite.pm:
+        (sql_date_format):
+        * Bugzilla/Install/Filesystem.pm:
+        (update_filesystem):
+        (_update_old_mining_filenames):
+        * Bugzilla/Install/Requirements.pm:
+        (REQUIRED_MODULES):
+        * Bugzilla/JobQueue.pm:
+        (subprocess_worker):
+        (kill_worker):
+        * Bugzilla/Migrate.pm:
+        (parse_date):
+        * Bugzilla/Template.pm:
+        (_concatenate_css):
+        (_concatenate_js):
+        * Bugzilla/Util.pm:
+        (read_text):
+        (write_text):
+        (datetime_from):
+        * contrib/jb2bz.py:
+        (process_reply_file):
+        (maybe_add_attachment):
+        (process_text_plain):
+        (process_multi_part):
+        (process_jitterbug):
+        (process_mime_body): Deleted.
+        * docs/en/rst/conf.py:
+        * docs/en/rst/installing/linux.rst:
+        * docs/en/rst/installing/mac-os-x.rst:
+        * docs/en/rst/installing/migrating-from-2.inc.rst:
+        * docs/en/rst/installing/migrating.rst:
+        * docs/en/rst/installing/quick-start.rst:
+        * docs/en/rst/installing/upgrading-with-git.rst:
+        * docs/en/rst/installing/windows.rst:
+        * docs/en/rst/integrating/extensions.rst:
+        * docs/en/rst/integrating/skins.rst:
+        * editflagtypes.cgi:
+        (get_products_and_components):
+        * taskgraph.json:
+        * template/en/default/pages/release-notes.html.tmpl:
+
 2018-10-05  Jer Noble  <jer.noble@apple.com>
 
         Radar links should be clickable on bugs.webkit.org

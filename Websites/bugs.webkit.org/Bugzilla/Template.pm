@@ -32,7 +32,6 @@ use Digest::MD5 qw(md5_hex);
 use File::Basename qw(basename dirname);
 use File::Find;
 use File::Path qw(rmtree mkpath);
-use File::Slurp;
 use File::Spec;
 use IO::Dir;
 use List::MoreUtils qw(firstidx);
@@ -509,7 +508,7 @@ sub _concatenate_css {
         next unless -e "$cgi_path/$files{$source}";
         my $file = $skins_path . '/' . md5_hex($source) . '.css';
         if (!-e $file) {
-            my $content = read_file("$cgi_path/$files{$source}");
+            my $content = read_text("$cgi_path/$files{$source}");
 
             # minify
             $content =~ s{/\*.*?\*/}{}sg;   # comments
@@ -519,7 +518,7 @@ sub _concatenate_css {
             # rewrite urls
             $content =~ s{url\(([^\)]+)\)}{_css_url_rewrite($source, $1)}eig;
 
-            write_file($file, "/* $files{$source} */\n" . $content . "\n");
+            write_text($file, "/* $files{$source} */\n" . $content . "\n");
         }
         push @minified, $file;
     }
@@ -529,9 +528,9 @@ sub _concatenate_css {
     if (!-e $file) {
         my $content = '';
         foreach my $source (@minified) {
-            $content .= read_file($source);
+            $content .= read_text($source);
         }
-        write_file($file, $content);
+        write_text($file, $content);
     }
 
     $file =~ s/^\Q$cgi_path\E\///o;
@@ -570,7 +569,7 @@ sub _concatenate_js {
         next unless -e "$cgi_path/$files{$source}";
         my $file = $skins_path . '/' . md5_hex($source) . '.js';
         if (!-e $file) {
-            my $content = read_file("$cgi_path/$files{$source}");
+            my $content = read_text("$cgi_path/$files{$source}");
 
             # minimal minification
             $content =~ s#/\*.*?\*/##sg;    # block comments
@@ -579,7 +578,7 @@ sub _concatenate_js {
             $content =~ s#\n{2,}#\n#g;      # blank lines
             $content =~ s#(^\s+|\s+$)##g;   # whitespace at the start/end of file
 
-            write_file($file, ";/* $files{$source} */\n" . $content . "\n");
+            write_text($file, ";/* $files{$source} */\n" . $content . "\n");
         }
         push @minified, $file;
     }
@@ -589,9 +588,9 @@ sub _concatenate_js {
     if (!-e $file) {
         my $content = '';
         foreach my $source (@minified) {
-            $content .= read_file($source);
+            $content .= read_text($source);
         }
-        write_file($file, $content);
+        write_text($file, $content);
     }
 
     $file =~ s/^\Q$cgi_path\E\///o;

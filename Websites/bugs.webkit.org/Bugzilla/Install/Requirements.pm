@@ -156,11 +156,6 @@ sub REQUIRED_MODULES {
         version => '1.0.1',
     },
     {
-        package => 'File-Slurp',
-        module  => 'File::Slurp',
-        version => '9999.13',
-    },
-    {
         package => 'JSON-XS',
         module  => 'JSON::XS',
         # 2.0 is the first version that will work with JSON::RPC.

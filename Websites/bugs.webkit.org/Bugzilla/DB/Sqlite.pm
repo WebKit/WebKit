@@ -219,6 +219,7 @@ sub sql_date_format {
     my ($self, $date, $format) = @_;
     $format = "%Y.%m.%d %H:%M:%S" if !$format;
     $format =~ s/\%i/\%M/g;
+    $format =~ s/\%s/\%S/g;
     return "STRFTIME(" . $self->quote($format) . ", $date)";
 }
 

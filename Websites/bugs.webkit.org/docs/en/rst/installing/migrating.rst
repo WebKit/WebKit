@@ -4,8 +4,7 @@ Migrating From Other Bug-Tracking Systems
 #########################################
 
 Bugzilla has a framework you can use for migrating from other bug-tracking
-systems -
-`Bugzilla::Migrate <http://www.bugzilla.org/docs/tip/en/html/api/Bugzilla/Migrate.html>`_.
+systems - :api:`Bugzilla::Migrate <Bugzilla/Migrate.html>`.
 It provides the infrastructure you will need,
 but requires a module to be written to define the specifics of the system you
 are coming from. One exists for

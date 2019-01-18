@@ -64,7 +64,7 @@ Get it from our Git repository:
 
 :command:`cd /var/www/html`
 
-:command:`git clone --branch release-X.X-stable https://git.mozilla.org/bugzilla/bugzilla bugzilla`
+:command:`git clone --branch release-X.X-stable https://github.com/bugzilla/bugzilla bugzilla`
 
 (where "X.X" is the 2-digit version number of the stable release of Bugzilla
 that you want - e.g. 5.0)

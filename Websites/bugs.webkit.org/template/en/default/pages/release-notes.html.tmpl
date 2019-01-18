@@ -43,6 +43,27 @@
 
 <h2 id="point">Updates in this 5.0.x Release</h2>
 
+<h3>5.0.4</h3>
+
+<p>This release fixes one security issue. See the
+  <a href="https://www.bugzilla.org/security/4.4.12/">Security Advisory</a>
+  for details.</p>
+
+<p>This release also contains the following [% terms.bug %] fixes:</p>
+
+<ul>
+  <li><kbd>checksetup.pl</kbd> would fail to update Chart storage during pre-3.6 to 5.0 upgrade.
+    (<a href="https://bugzilla.mozilla.org/show_bug.cgi?id=1273846">[% terms.Bug %] 1273846</a>)</li>
+  <li><kbd>editflagtypes.cgi</kbd> would crash when classifications are enabled and
+    the user did not have global <kbd>editcomponents</kbd> privileges.
+    (<a href="https://bugzilla.mozilla.org/show_bug.cgi?id=1310728">[% terms.Bug %] 1310728</a>)</li>
+  <li>The <kbd>File::Slurp</kbd> would trigger warnings on perl 5.24.
+    (<a href="https://bugzilla.mozilla.org/show_bug.cgi?id=1301887">[% terms.Bug %] 1301887</a>)</li>
+  <li>All the time entries in the 'when' column had the correct date but the time
+    was fixed to 00:00 when using Sqlite.
+    (<a href="https://bugzilla.mozilla.org/show_bug.cgi?id=1303702">[% terms.Bug %] 1303702</a>)</li>
+</ul>
+
 <h3>5.0.3</h3>
 
 <p>This release fixes one security issue. See the
@@ -69,7 +90,7 @@
     (<a href="https://bugzilla.mozilla.org/show_bug.cgi?id=1259881">[% terms.Bug %] 1259881</a>)</li>
   <li>An extension which allows user-controlled data to be used as a link in
     tabs could trigger XSS if the data is not correctly sanitized.
-    [%+ terms. Bugzilla %] no longer relies on the extension to do the sanity
+    [%+ terms.Bugzilla %] no longer relies on the extension to do the sanity
     check. A vanilla installation is not affected as no tab is user-controlled.
     (<a href="https://bugzilla.mozilla.org/show_bug.cgi?id=1250114">[% terms.Bug %] 1250114</a>)</li>
   <li>Extensions can now easily override the favicon used for the
@@ -174,7 +195,7 @@
 <h3 id="req_modules">Required Perl Modules</h3>
 
 [% INCLUDE req_table reqs = REQUIRED_MODULES
-                     new = ['File-Slurp','JSON-XS', 'Email-Sender']
+                     new = ['JSON-XS', 'Email-Sender']
                      updated = ['DateTime', 'DateTime-TimeZone',
                                 'Template-Toolkit', 'URI'] %]
 
@@ -204,7 +225,7 @@
   tell whether or not you have these modules installed, and it will tell
   you.</p>
 
-
+<a name="v50_feat"></a>
 <h2 id="feat">New Features and Improvements</h2>
 
 <ul>

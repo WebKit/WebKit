@@ -40,7 +40,7 @@ Bugzilla
 The best way to get Bugzilla is to check it out from git. Download and install
 git from the `git website <http://git-scm.com/download>`_, and then run:
 
-:command:`git clone --branch release-X.X-stable https://git.mozilla.org/bugzilla/bugzilla C:\\bugzilla`
+:command:`git clone --branch release-X.X-stable https://github.com/bugzilla/bugzilla C:\\bugzilla`
 
 where "X.X" is the 2-digit version number of the stable release of Bugzilla
 that you want (e.g. 5.0).
@@ -85,7 +85,6 @@ Install the following mandatory modules with:
 * URI
 * List-MoreUtils
 * Math-Random-ISAAC
-* File-Slurp
 * JSON-XS
 * Win32
 * Win32-API

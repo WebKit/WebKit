@@ -14,8 +14,8 @@ use warnings;
 use Bugzilla::Constants;
 use Bugzilla::Error;
 use Bugzilla::Install::Util qw(install_string);
+use Bugzilla::Util qw(read_text);
 use File::Basename;
-use File::Slurp;
 use base qw(TheSchwartz);
 use fields qw(_worker_pidfile);
 
@@ -124,7 +124,7 @@ sub subprocess_worker {
             # And poll the PID to detect when the working has finished.
             # We do this instead of system() to allow for the INT signal to
             # interrup us and trigger kill_worker().
-            my $pid = read_file($self->{_worker_pidfile}, err_mode => 'quiet');
+            my $pid = read_text($self->{_worker_pidfile}, err_mode => 'quiet');
             if ($pid) {
                 sleep(3) while(kill(0, $pid));
             }
@@ -139,7 +139,7 @@ sub subprocess_worker {
 sub kill_worker {
     my $self = Bugzilla->job_queue();
     if ($self->{_worker_pidfile} && -e $self->{_worker_pidfile}) {
-        my $worker_pid = read_file($self->{_worker_pidfile});
+        my $worker_pid = read_text($self->{_worker_pidfile});
         if ($worker_pid && kill(0, $worker_pid)) {
             $self->debug("Stopping worker process");
             system "$0 -f -p '" . $self->{_worker_pidfile} . "' stop";

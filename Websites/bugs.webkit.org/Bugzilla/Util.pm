@@ -24,7 +24,7 @@ use parent qw(Exporter);
                              validate_email_syntax check_email_syntax clean_text
                              get_text template_var display_value disable_utf8
                              detect_encoding email_filter
-                             join_activity_entries);
+                             join_activity_entries read_text write_text);
 
 use Bugzilla::Constants;
 use Bugzilla::RNG qw(irand);
@@ -39,6 +39,8 @@ use Scalar::Util qw(tainted blessed);
 use Text::Wrap;
 use Encode qw(encode decode resolve_alias);
 use Encode::Guess;
+use File::Basename qw(dirname);
+use File::Temp qw(tempfile);
 
 sub trick_taint {
     require Carp;
@@ -104,6 +106,29 @@ sub html_quote {
         $var =~ tr/\x{202a}-\x{202e}//d;
     }
     return $var;
+}
+
+sub read_text {
+    my ($filename) = @_;
+    open my $fh, '<:encoding(utf-8)', $filename;
+    local $/ = undef;
+    my $content = <$fh>;
+    close $fh;
+    return $content;
+}
+
+sub write_text {
+    my ($filename, $content) = @_;
+    my ($tmp_fh, $tmp_filename) = tempfile('.tmp.XXXXXXXXXX',
+        DIR    => dirname($filename),
+        UNLINK => 0,
+    );
+    binmode $tmp_fh, ':encoding(utf-8)';
+    print $tmp_fh $content;
+    close $tmp_fh;
+    # File::Temp tries for secure files, but File::Slurp used the umask.
+    chmod(0666 & ~umask, $tmp_filename);
+    rename $tmp_filename, $filename;
 }
 
 sub html_light_quote {
@@ -590,7 +615,7 @@ sub datetime_from {
         second => defined($time[0]) ? int($time[0]) : undef,
         # If a timezone was specified, use it. Otherwise, use the
         # local timezone.
-        time_zone => Bugzilla->local_timezone->offset_as_string($time[6]) 
+        time_zone => DateTime::TimeZone->offset_as_string($time[6])
                      || Bugzilla->local_timezone,
     );
 

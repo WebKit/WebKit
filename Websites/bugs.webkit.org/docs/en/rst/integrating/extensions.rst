@@ -11,8 +11,8 @@ versions of Bugzilla with minimal effort. We maintain a
 written by other people on our wiki. You would need to
 make sure that the extension in question works with your version of Bugzilla.
 
-Or, you can write your own extension. See the `Bugzilla Extension
-documentation <http://www.bugzilla.org/docs/tip/en/html/api/Bugzilla/Extension.html>`_
+Or, you can write your own extension. See the :api:`Bugzilla Extension
+documentation <Bugzilla/Extension.html>`
 for the core documentation on how to do that. It would make sense to read
 the section on :ref:`templates`. There is also a sample extension in
 :file:`$BUGZILLA_HOME/extensions/Example/` which gives examples of how to
@@ -183,8 +183,8 @@ bugs, except to comment and add themselves to the CC list.
 
 Because this kind of change is such a common request, we have added a
 specific hook for it that :ref:`extensions` can call. It's called
-``bug_check_can_change_field``, and it's documented `in the Hooks
-documentation <http://www.bugzilla.org/docs/tip/en/html/api/Bugzilla/Hook.html#bug_check_can_change_field>`_.
+``bug_check_can_change_field``, and it's documented :api:`in the Hooks
+documentation <Bugzilla/Hook.html#bug_check_can_change_field>`.
 
 Checking Syntax
 ===============

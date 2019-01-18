@@ -44,7 +44,7 @@ master_doc = 'index'
 
 # General information about the project.
 project = u'Bugzilla'
-copyright = u'2014, The Bugzilla Team'
+copyright = u'2016, The Bugzilla Team'
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the
@@ -387,7 +387,7 @@ todo_include_todos = False
 on_rtd = os.environ.get('READTHEDOCS', None) == 'True'
 
 if on_rtd:
-    base_api_url = 'https://www.bugzilla.org/docs/5.0/en/html/api/'
+    base_api_url = 'https://www.bugzilla.org/docs/5.0/en/html/integrating/api/'
 else:
     base_api_url = '../integrating/api/'
 
