@@ -1,3 +1,25 @@
+2019-01-18  Yacine Bandou  <yacine.bandou@softathome.com>
+
+        [WebAudio] Call AudioContext::uninitialize() immediately when the AudioContext is stopped
+        https://bugs.webkit.org/show_bug.cgi?id=192586
+
+        Reviewed by Philippe Normand.
+
+        When WebProcess is killed, AudioContext::uninitialize() is not called immediately in the stop so
+        the AudioDestinationNode is not destroyed.
+
+        In my case, I have a resource device manager, the output audio device is reserved when AudioDestinationNode
+        is instantiated and it is released when AudioDestinationNode is destroyed, thus when the webprocess is killed,
+        the resources leak.
+
+        AudioContext::uninitialize() is not called immediately since r94608.
+        This modification can now be reverted without regression in WebAudio tests.
+
+        Test: webaudio/mediaelementaudiosourcenode-gc.html
+
+        * Modules/webaudio/AudioContext.cpp:
+        (WebCore::AudioContext::stop):
+
 2019-01-18  Simon Fraser  <simon.fraser@apple.com>
 
         ScrollingCoordinator::scrollableAreaScrollLayerDidChange() can be removed

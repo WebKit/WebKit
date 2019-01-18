@@ -314,16 +314,8 @@ void AudioContext::stop()
 
     m_eventQueue->close();
 
-    // Don't call uninitialize() immediately here because the ScriptExecutionContext is in the middle
-    // of dealing with all of its ActiveDOMObjects at this point. uninitialize() can de-reference other
-    // ActiveDOMObjects so let's schedule uninitialize() to be called later.
-    // FIXME: see if there's a more direct way to handle this issue.
-    // FIXME: This sounds very wrong. The whole idea of stop() is that it stops everything, and if we
-    // schedule some observable work for later, the work likely happens at an inappropriate time.
-    callOnMainThread([this] {
-        uninitialize();
-        clear();
-    });
+    uninitialize();
+    clear();
 }
 
 bool AudioContext::canSuspendForDocumentSuspension() const
