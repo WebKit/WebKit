@@ -1,5 +1,20 @@
 2019-01-18  Yacine Bandou  <yacine.bandou@softathome.com>
 
+        [WebAudio] Release the AudioDestination when uninitializing DefaultAudioDestinationNode
+        https://bugs.webkit.org/show_bug.cgi?id=192590
+
+        Reviewed by Philippe Normand.
+
+        When we uninitialize DefaultAudioDestinationNode, the AudioDestination is stopped but not destroyed.
+
+        On some platforms the resources are allocated and released with the AudioDestination, thus when we uninitialize
+        DefaultAudioDestinationNode we don't release resources because the AudioDestination is not destroyed.
+
+        * Modules/webaudio/DefaultAudioDestinationNode.cpp:
+        (WebCore::DefaultAudioDestinationNode::uninitialize):
+
+2019-01-18  Yacine Bandou  <yacine.bandou@softathome.com>
+
         [WebAudio] Call AudioContext::uninitialize() immediately when the AudioContext is stopped
         https://bugs.webkit.org/show_bug.cgi?id=192586
 

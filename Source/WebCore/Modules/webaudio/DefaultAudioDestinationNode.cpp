@@ -69,6 +69,7 @@ void DefaultAudioDestinationNode::uninitialize()
         return;
 
     m_destination->stop();
+    m_destination = nullptr;
     m_numberOfInputChannels = 0;
 
     AudioNode::uninitialize();
