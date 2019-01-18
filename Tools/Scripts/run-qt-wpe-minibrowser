@@ -25,36 +25,34 @@ use FindBin;
 use lib $FindBin::Bin;
 use webkitdirs;
 
+setConfiguration();
+
+if (!inFlatpakSandbox()) {
+    push @ARGV, "--wpe";
+}
+
 my $launcherName;
 my $libPath;
 my $launcherPath;
 my @jhbuildWrapper;
+my $configuration = passedConfiguration();
+my $productDir = productDir();
 
-prohibitUnknownPort();
-setConfiguration();
+$libPath = "/app/webkit/WebKitBuild/$configuration/lib/qml" if $configuration;
+$ENV{"QML2_IMPORT_PATH"} = "$libPath" if $libPath;
+runInFlatpakIfAvailable("/app/webkit/Tools/Scripts/run-qt-wpe-minibrowser");
 
-if (isWPE()) {
-    my $configuration = passedConfiguration();
-    my $productDir = productDir();
-    my $libPath;
-    $libPath = "/app/webkit/WebKitBuild/$configuration/lib/qml" if $configuration;
+# Check to see that all the frameworks are built.
+checkFrameworks();
+
+if (!inFlatpakSandbox()) {
+    $libPath = "$productDir/lib/qml" if $productDir;
     $ENV{"QML2_IMPORT_PATH"} = "$libPath" if $libPath;
-    runInFlatpakIfAvailable("/app/webkit/Tools/Scripts/run-qt-wpe-minibrowser");
-
-    # Check to see that all the frameworks are built.
-    checkFrameworks();
-
-    if (!inFlatpakSandbox()) {
-       $libPath = "$productDir/lib/qml" if $productDir;
-       $ENV{"QML2_IMPORT_PATH"} = "$libPath" if $libPath;
-    }
-
-    $launcherPath = catdir($productDir, "bin", "qt-wpe-mini-browser");
-    die "Can't find $launcherPath" unless -x $launcherPath;
-    @jhbuildWrapper = wrapperPrefixIfNeeded();
-
-    print "Starting MiniBrowser.\n";
-    exec @jhbuildWrapper, $launcherPath, @ARGV or die;
-} else {
-    die "Unsupported platform."
 }
+
+$launcherPath = catdir($productDir, "bin", "qt-wpe-mini-browser");
+die "Can't find $launcherPath" unless -x $launcherPath;
+@jhbuildWrapper = wrapperPrefixIfNeeded();
+
+print "Starting MiniBrowser.\n";
+exec @jhbuildWrapper, $launcherPath, @ARGV or die;

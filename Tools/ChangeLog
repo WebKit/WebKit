@@ -1,3 +1,16 @@
+2019-01-18  Philippe Normand  <pnormand@igalia.com>
+
+        [WPE] run-qt-wpe-minibrowser needlessly expects a --wpe argument
+        https://bugs.webkit.org/show_bug.cgi?id=193575
+
+        Reviewed by Michael Catanzaro.
+
+        Allow the script to run without explicit port argument because
+        it's specific to the WPE port anyway.
+
+        * Scripts/run-qt-wpe-minibrowser: Manually insert --wpe in argv
+        and simplify the rest of the code accordingly.
+
 2019-01-18  Charlie Turner  <cturner@igalia.com>
 
         [GStreamer][EME][ClearKey] Request keys from CDMInstance rather than passing via bus messages
