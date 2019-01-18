@@ -69,7 +69,6 @@ RefPtr<GPUCommandBuffer> GPUCommandBuffer::create(GPUDevice& device)
 GPUCommandBuffer::GPUCommandBuffer(PlatformCommandBufferSmartPtr&& buffer)
     : m_platformCommandBuffer(WTFMove(buffer))
 {
-    UNUSED_PARAM(m_platformCommandBuffer);
 }
 
 } // namespace WebCore

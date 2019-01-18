@@ -27,9 +27,7 @@
 
 #if ENABLE(WEBGPU)
 
-#include "GPUCommandBuffer.h"
 #include "GPUQueue.h"
-
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
 #include <wtf/RetainPtr.h>
@@ -43,6 +41,7 @@ using PlatformDeviceSmartPtr = RetainPtr<MTLDevice>;
 
 class GPUBindGroupLayout;
 class GPUBuffer;
+class GPUCommandBuffer;
 class GPUPipelineLayout;
 class GPURenderPipeline;
 class GPUShaderModule;

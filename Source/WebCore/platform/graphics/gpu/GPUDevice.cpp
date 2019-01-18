@@ -32,6 +32,7 @@
 #include "GPUBindGroupLayoutDescriptor.h"
 #include "GPUBuffer.h"
 #include "GPUBufferDescriptor.h"
+#include "GPUCommandBuffer.h"
 #include "GPUPipelineLayout.h"
 #include "GPUPipelineLayoutDescriptor.h"
 #include "GPURenderPipeline.h"

@@ -37,6 +37,8 @@ class WebGPUBindGroup : public RefCounted<WebGPUBindGroup> {
 public:
     static Ref<WebGPUBindGroup> create(RefPtr<GPUBindGroup>&&);
 
+    const GPUBindGroup* bindGroup() const { return m_bindGroup.get(); }
+
 private:
     explicit WebGPUBindGroup(RefPtr<GPUBindGroup>&&);
 

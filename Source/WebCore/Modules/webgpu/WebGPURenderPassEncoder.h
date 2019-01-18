@@ -44,7 +44,7 @@ public:
 
     // FIXME: Last argument should be Vector<unsigned long>. Why is the generated code incorrectly assuming the IDL wants a sequence<unsigned int>?
     void setVertexBuffers(unsigned long, Vector<RefPtr<WebGPUBuffer>>&&, Vector<unsigned>&&);
-    void draw(unsigned long, unsigned long, unsigned long, unsigned long);
+    void draw(unsigned long vertexCount, unsigned long instanceCount, unsigned long firstVertex, unsigned long firstInstance);
 
 private:
     WebGPURenderPassEncoder(Ref<WebGPUCommandBuffer>&&, Ref<GPURenderPassEncoder>&&);

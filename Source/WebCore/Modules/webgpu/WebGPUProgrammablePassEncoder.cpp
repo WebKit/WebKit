@@ -29,6 +29,7 @@
 #if ENABLE(WEBGPU)
 
 #include "GPUProgrammablePassEncoder.h"
+#include "WebGPUBindGroup.h"
 #include "WebGPURenderPipeline.h"
 
 namespace WebCore {
@@ -42,6 +43,16 @@ Ref<WebGPUCommandBuffer> WebGPUProgrammablePassEncoder::endPass()
 {
     passEncoder().endPass();
     return m_commandBuffer.copyRef();
+}
+
+void WebGPUProgrammablePassEncoder::setBindGroup(unsigned long index, const WebGPUBindGroup& bindGroup) const
+{
+    if (!bindGroup.bindGroup()) {
+        LOG(WebGPU, "WebGPUProgrammablePassEncoder::setBindGroup(): Invalid WebGPUBindGroup!");
+        return;
+    }
+    // FIXME: Any validation (e.g. index duplicates, not in pipeline layout).
+    passEncoder().setBindGroup(index, *bindGroup.bindGroup());
 }
 
 void WebGPUProgrammablePassEncoder::setPipeline(Ref<WebGPURenderPipeline>&& pipeline)

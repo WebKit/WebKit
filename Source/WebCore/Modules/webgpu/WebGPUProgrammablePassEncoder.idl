@@ -24,18 +24,14 @@
  */
 // https://github.com/gpuweb/gpuweb/blob/master/design/sketch.webidl
 
+typedef unsigned long u32;
+
 [
     Conditional=WEBGPU,
     EnabledAtRuntime=WebGPU,
     SkipVTableValidation
 ] interface WebGPUProgrammablePassEncoder {
     WebGPUCommandBuffer endPass();
-
-    // FIXME: Only support render pipelines for prototype.
-    void setPipeline(WebGPURenderPipeline pipeline);
-/* Not Yet Implemented
-    // Allowed in both compute and render passes
-    // TODO: setPushConstants() ?
-    void setBindGroup(u32 index, WebGPUBindGroup bindGroup);
-*/
+    void setBindGroup(u32 index, WebGPUBindGroup bindGroup/*, optional sequence<u32> dynamicOffsets*/);
+    void setPipeline(WebGPURenderPipeline pipeline); // FIXME: Support WebGPUComputePipelines.
 };

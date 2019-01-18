@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<title>WebGPU Hello Triangles</title>
+<meta name="assert" content="WebGPU correctly renders a green canvas.">
+<link rel="match" href="buffer-resource-triangles-expected.html">
+<p>Pass if square canvas below is completely green.</p>
+<canvas width="400" height="400"></canvas>
+<script src="js/webgpu-functions.js"></script>
+<script>
+const shaderCode = `
+#include <metal_stdlib>
+    
+using namespace metal;
+
+struct Vertex {
+    float4 position [[position]];
+};
+
+struct VertexArguments {
+    device Vertex* v0;
+    device Vertex* v1;
+    device Vertex* v2;
+};
+
+vertex Vertex vertex_main(
+    const device VertexArguments& args0 [[buffer(0)]],
+    const device VertexArguments& args1 [[buffer(1)]],
+    uint vid [[vertex_id]])
+{
+    switch (vid)
+    {
+        case 0: return args0.v0[0];
+        case 1: return args0.v1[0];
+        case 2: return args0.v2[0];
+        case 3: return args1.v0[0];
+        case 4: return args1.v1[0];
+        default: return args1.v2[0];
+    }
+}
+
+struct FragmentArguments {
+    device float4* color;
+};
+
+fragment float4 fragment_main(const device FragmentArguments& args [[buffer(0)]])
+{
+    return args.color[0];
+}
+`
+
+const bindingNums = {
+    UL: 0,
+    UM: 1,
+    UR: 2,
+    LL: 3,
+    LR: 4,
+    G: 5
+};
+
+function createUniformBufferBindGroupLayout(bindNum, stage = WebGPUShaderStageBit.VERTEX) {
+    return {
+        binding: bindNum,
+        visibility: stage,
+        type: "uniformBuffer"
+    };
+}
+
+const bufferSize = 4 * 4;
+
+// FIXME: Keep up to date with buffer upload decisions.
+function createFloat4Buffer(device, a, b) {
+    const buffer = device.createBuffer({ size: bufferSize, usage: WebGPUBufferUsage.UNIFORM });
+    
+    const arrayBuffer = buffer.mapping;
+    const floatArray = new Float32Array(arrayBuffer);
+
+    floatArray[0] = a;
+    floatArray[1] = b;
+    floatArray[2] = 0;
+    floatArray[3] = 1;
+
+    return buffer;
+}
+
+function createBufferBinding(buffer) {
+    return {
+        buffer: buffer,
+        offset: 0,
+        size: bufferSize
+    };
+}
+
+async function test() {
+    const device = await getBasicDevice();
+    const canvas = document.querySelector("canvas");
+    const context = createBasicContext(canvas, device);
+    // FIXME: Replace with non-MSL shaders.
+    const shaderModule = device.createShaderModule({ code: shaderCode });
+
+    // Create vertex data WebGPUBuffers.
+    const upperLeft = createFloat4Buffer(device, -1, 1);
+    const upperMiddle = createFloat4Buffer(device, 0, 1);
+    const upperRight = createFloat4Buffer(device, 1, 1);
+    const lowerLeft = createFloat4Buffer(device, -1, -1);
+    const lowerRight = createFloat4Buffer(device, 1, -1);
+
+    // Color data buffer.
+    const green = createFloat4Buffer(device, 0, 1);
+
+    // Create buffer WebGPUBindGroupLayoutBindings.
+    const layoutUL = createUniformBufferBindGroupLayout(bindingNums.UL);
+    const layoutUM = createUniformBufferBindGroupLayout(bindingNums.UM);
+    const layoutUR = createUniformBufferBindGroupLayout(bindingNums.UR);
+    const layoutLL = createUniformBufferBindGroupLayout(bindingNums.LL);
+    const layoutLR = createUniformBufferBindGroupLayout(bindingNums.LR);
+    const layoutG = createUniformBufferBindGroupLayout(bindingNums.G, WebGPUShaderStageBit.FRAGMENT);
+
+    // WebGPUBindGroupLayouts
+    const leftTriangleBGLayout = device.createBindGroupLayout({ bindings: [layoutUL, layoutUM, layoutLL, layoutG] });
+    const rightTriangleBGLayout = device.createBindGroupLayout({ bindings: [layoutUR, layoutUM, layoutLR] });
+    const middleTriangleBGLayout = device.createBindGroupLayout({ bindings: [layoutUM, layoutLL, layoutLR, layoutG] });
+
+    // WebGPUPipelineLayout and WebGPURenderPipeline
+    const pipelineLayout = device.createPipelineLayout({ bindGroupLayouts: [leftTriangleBGLayout, middleTriangleBGLayout, rightTriangleBGLayout] });
+    const pipeline = createBasicPipeline(shaderModule, device, pipelineLayout, null, "triangleList");
+
+    // WebGPUBufferBindings
+    const bindingUL = createBufferBinding(upperLeft);
+    const bindingUM = createBufferBinding(upperMiddle);
+    const bindingUR = createBufferBinding(upperRight);
+    const bindingLL = createBufferBinding(lowerLeft);
+    const bindingLR = createBufferBinding(lowerRight);
+    const bindingG = createBufferBinding(green);
+    
+    // WebGPUBindGroupBindings
+    const bgBindingUL = { binding: bindingNums.UL, resource: bindingUL };
+    const bgBindingUM = { binding: bindingNums.UM, resource: bindingUM };
+    const bgBindingUR = { binding: bindingNums.UR, resource: bindingUR };
+    const bgBindingLL = { binding: bindingNums.LL, resource: bindingLL };
+    const bgBindingLR = { binding: bindingNums.LR, resource: bindingLR };
+    const bgBindingG = { binding: bindingNums.G, resource: bindingG };
+
+    // WebGPUBindGroups
+    const leftTriangleBG = device.createBindGroup({ 
+        layout: leftTriangleBGLayout, 
+        bindings: [bgBindingUL, bgBindingUM, bgBindingLL, bgBindingG] 
+    });
+    const rightTriangleBG = device.createBindGroup({
+        layout: rightTriangleBGLayout,
+        bindings: [bgBindingUR, bgBindingUM, bgBindingLR]
+    });
+    const middleTriangleBG = device.createBindGroup({
+        layout: middleTriangleBGLayout,
+        bindings: [bgBindingUM, bgBindingLL, bgBindingLR, bgBindingG]
+    });
+
+    const commandBuffer = device.createCommandBuffer();
+    const passEncoder = beginBasicRenderPass(context, commandBuffer);
+    passEncoder.setPipeline(pipeline);
+
+    // Draw upper triangles.
+    passEncoder.setBindGroup(0, leftTriangleBG);
+    passEncoder.setBindGroup(1, rightTriangleBG);
+    passEncoder.draw(6, 1, 0, 0);
+    // Draw lower triangle.
+    passEncoder.setBindGroup(0, middleTriangleBG);
+    passEncoder.draw(3, 1, 0, 0);
+
+    const endCommandBuffer = passEncoder.endPass();
+    const queue = device.getQueue();
+    queue.submit([endCommandBuffer]);
+    context.present();
+}
+
+test();
+</script>

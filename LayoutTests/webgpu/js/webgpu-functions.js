@@ -12,7 +12,7 @@ function createBasicContext(canvas, device) {
     return context;
 }
 
-function createBasicPipeline(shaderModule, device, pipelineLayout, inputStateDescriptor) {
+function createBasicPipeline(shaderModule, device, pipelineLayout, inputStateDescriptor, primitiveTopology = "triangleStrip") {
     const vertexStageDescriptor = {
         module: shaderModule,
         entryPoint: "vertex_main" 
@@ -26,12 +26,14 @@ function createBasicPipeline(shaderModule, device, pipelineLayout, inputStateDes
     const pipelineDescriptor = {
         vertexStage: vertexStageDescriptor,
         fragmentStage: fragmentStageDescriptor,
-        primitiveTopology: "triangleStrip",
-        inputState: inputStateDescriptor
+        primitiveTopology: primitiveTopology
     };
 
     if (pipelineLayout)
         pipelineDescriptor.layout = pipelineLayout;
+
+    if (inputStateDescriptor)
+        pipelineDescriptor.inputState = inputStateDescriptor;
 
     return device.createRenderPipeline(pipelineDescriptor);
 }

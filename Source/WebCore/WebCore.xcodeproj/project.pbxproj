@@ -6427,17 +6427,16 @@
 		1C840B9A21EC400900D0500D /* WHLSLGatherEntryPointItems.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WHLSLGatherEntryPointItems.h; sourceTree = "<group>"; };
 		1C840B9B21EC400900D0500D /* WHLSLChecker.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = WHLSLChecker.cpp; sourceTree = "<group>"; };
 		1C904DF90BA9D2C80081E9D0 /* Version.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = Version.xcconfig; sourceTree = "<group>"; };
-		1CA0C2E421EED12A00A11860 /* WHLSLFunctionStageChecker.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = WHLSLFunctionStageChecker.cpp; sourceTree = "<group>"; };
-		1CA0C2E521EED12A00A11860 /* WHLSLFunctionStageChecker.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WHLSLFunctionStageChecker.h; sourceTree = "<group>"; };
-		1CA0C2DE21EEB5F400A11860 /* WHLSLRecursionChecker.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WHLSLRecursionChecker.h; sourceTree = "<group>"; };
-		1CA0C2E021EEB5F500A11860 /* WHLSLRecursionChecker.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = WHLSLRecursionChecker.cpp; sourceTree = "<group>"; };
-		1CA0C2EA21EED6F500A11860 /* WHLSLLiteralTypeChecker.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WHLSLLiteralTypeChecker.h; sourceTree = "<group>"; };
-		1CA0C2EC21EED6F600A11860 /* WHLSLLiteralTypeChecker.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = WHLSLLiteralTypeChecker.cpp; sourceTree = "<group>"; };
 		1C9AE5CA21ED9DF50069D5F2 /* WHLSLHighZombieFinder.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = WHLSLHighZombieFinder.cpp; sourceTree = "<group>"; };
 		1C9AE5CB21ED9DF50069D5F2 /* WHLSLHighZombieFinder.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WHLSLHighZombieFinder.h; sourceTree = "<group>"; };
+		1CA0C2DE21EEB5F400A11860 /* WHLSLRecursionChecker.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WHLSLRecursionChecker.h; sourceTree = "<group>"; };
+		1CA0C2E021EEB5F500A11860 /* WHLSLRecursionChecker.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = WHLSLRecursionChecker.cpp; sourceTree = "<group>"; };
+		1CA0C2E421EED12A00A11860 /* WHLSLFunctionStageChecker.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = WHLSLFunctionStageChecker.cpp; sourceTree = "<group>"; };
+		1CA0C2E521EED12A00A11860 /* WHLSLFunctionStageChecker.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WHLSLFunctionStageChecker.h; sourceTree = "<group>"; };
+		1CA0C2EA21EED6F500A11860 /* WHLSLLiteralTypeChecker.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WHLSLLiteralTypeChecker.h; sourceTree = "<group>"; };
+		1CA0C2EC21EED6F600A11860 /* WHLSLLiteralTypeChecker.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = WHLSLLiteralTypeChecker.cpp; sourceTree = "<group>"; };
 		1CA0C2F421EEDAD000A11860 /* WHLSLLoopChecker.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = WHLSLLoopChecker.cpp; sourceTree = "<group>"; };
 		1CA0C2F521EEDAD100A11860 /* WHLSLLoopChecker.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WHLSLLoopChecker.h; sourceTree = "<group>"; };
-		1CA0C2F621EEDAD200A11860 /* AST */ = {isa = PBXFileReference; lastKnownFileType = folder; path = AST; sourceTree = "<group>"; };
 		1CA19E030DC255950065A994 /* EventLoopMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = EventLoopMac.mm; sourceTree = "<group>"; };
 		1CA19E150DC255CA0065A994 /* EventLoop.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EventLoop.h; sourceTree = "<group>"; };
 		1CAF347E0A6C405200ABE06E /* WebScriptObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebScriptObject.h; sourceTree = "<group>"; };
@@ -17037,6 +17036,100 @@
 			tabWidth = 8;
 			usesTabs = 0;
 		};
+		1CA0C2F621EEDAD200A11860 /* AST */ = {
+			isa = PBXGroup;
+			children = (
+				1C840B9021EC30F900D0500D /* WHLSLAddressSpace.h */,
+				C21BF72521CD89E200227979 /* WHLSLArrayReferenceType.h */,
+				C21BF70921CD89CA00227979 /* WHLSLArrayType.h */,
+				C21BF73021CD89ED00227979 /* WHLSLAssignmentExpression.h */,
+				C21BF70A21CD89CB00227979 /* WHLSLBaseFunctionAttribute.h */,
+				C21BF6FA21CD89BE00227979 /* WHLSLBaseSemantic.h */,
+				C21BF71E21CD89DC00227979 /* WHLSLBlock.h */,
+				C21BF6F621CD89B700227979 /* WHLSLBooleanLiteral.h */,
+				C21BF71A21CD89D800227979 /* WHLSLBreak.h */,
+				C2138A1321DDECD300F516BA /* WHLSLBuiltInSemantic.cpp */,
+				C21BF72221CD89DF00227979 /* WHLSLBuiltInSemantic.h */,
+				C21BF71621CD89D500227979 /* WHLSLCallExpression.h */,
+				C21BF70621CD89C700227979 /* WHLSLCommaExpression.h */,
+				C21BF73321CD89F000227979 /* WHLSLConstantExpression.h */,
+				C21BF6F521CD89B500227979 /* WHLSLContinue.h */,
+				C21BF70121CD89C400227979 /* WHLSLDereferenceExpression.h */,
+				C21BF71821CD89D700227979 /* WHLSLDotExpression.h */,
+				C21BF6FB21CD89BE00227979 /* WHLSLDoWhileLoop.h */,
+				C21BF72821CD89E500227979 /* WHLSLEffectfulExpressionStatement.h */,
+				1C840B7D21EBE0B800D0500D /* WHLSLEntryPointType.h */,
+				C21BF72021CD89DD00227979 /* WHLSLEnumerationDefinition.h */,
+				C21BF72621CD89E300227979 /* WHLSLEnumerationMember.h */,
+				C21BF70221CD89C400227979 /* WHLSLEnumerationMemberLiteral.h */,
+				C21BF70C21CD89CC00227979 /* WHLSLExpression.h */,
+				C21BF70021CD89C200227979 /* WHLSLFallthrough.h */,
+				C21BF73521CD89F200227979 /* WHLSLFloatLiteral.h */,
+				1CB69B3821DF03E1006E846A /* WHLSLFloatLiteralType.cpp */,
+				1CB69B3421DED63A006E846A /* WHLSLFloatLiteralType.h */,
+				C21BF73421CD89F100227979 /* WHLSLForLoop.h */,
+				C21BF70521CD89C700227979 /* WHLSLFunctionAttribute.h */,
+				C21BF6FD21CD89C000227979 /* WHLSLFunctionDeclaration.h */,
+				C21BF6F421CD89B300227979 /* WHLSLFunctionDefinition.h */,
+				C21BF6FF21CD89C200227979 /* WHLSLIfStatement.h */,
+				C21BF6F721CD89B900227979 /* WHLSLIndexExpression.h */,
+				C20F4F6621DFF2360070C45A /* WHLSLIntegerLiteral.cpp */,
+				C21BF6F821CD89BB00227979 /* WHLSLIntegerLiteral.h */,
+				1CB69B3921DF03F3006E846A /* WHLSLIntegerLiteralType.cpp */,
+				1CB69B3521DED649006E846A /* WHLSLIntegerLiteralType.h */,
+				C21BF73221CD89EF00227979 /* WHLSLLogicalExpression.h */,
+				C21BF71521CD89D400227979 /* WHLSLLogicalNotExpression.h */,
+				C21BF72D21CD89E900227979 /* WHLSLMakeArrayReferenceExpression.h */,
+				C21BF72C21CD89E900227979 /* WHLSLMakePointerExpression.h */,
+				1C33277121CF0BE1000DC9F2 /* WHLSLNamedType.h */,
+				C21BF72321CD89E100227979 /* WHLSLNativeFunctionDeclaration.h */,
+				C21BF72A21CD89E700227979 /* WHLSLNativeTypeDeclaration.h */,
+				C21BF72421CD89E100227979 /* WHLSLNode.h */,
+				C21BF70721CD89C800227979 /* WHLSLNullLiteral.h */,
+				1CB69B3A21DF0403006E846A /* WHLSLNullLiteralType.cpp */,
+				1CB69B3621DED657006E846A /* WHLSLNullLiteralType.h */,
+				C21BF72121CD89DE00227979 /* WHLSLNumThreadsFunctionAttribute.h */,
+				C21BF72F21CD89EC00227979 /* WHLSLPointerType.h */,
+				C21BF72E21CD89EA00227979 /* WHLSLPropertyAccessExpression.h */,
+				C21BF70B21CD89CC00227979 /* WHLSLQualifier.h */,
+				C21BF71B21CD89D900227979 /* WHLSLReadModifyWriteExpression.h */,
+				C21BF70D21CD89CD00227979 /* WHLSLReferenceType.h */,
+				1CB69B3221DED40B006E846A /* WHLSLResolvableType.h */,
+				C2138A1521DDECE900F516BA /* WHLSLResourceSemantic.cpp */,
+				C21BF70821CD89C900227979 /* WHLSLResourceSemantic.h */,
+				C21BF70321CD89C500227979 /* WHLSLReturn.h */,
+				C21BF6F921CD89BD00227979 /* WHLSLSemantic.h */,
+				C2138A1621DDECFB00F516BA /* WHLSLSpecializationConstantSemantic.cpp */,
+				C21BF73621CD89F300227979 /* WHLSLSpecializationConstantSemantic.h */,
+				C2138A1721DDED0D00F516BA /* WHLSLStageInOutSemantic.cpp */,
+				C21BF70E21CD89CE00227979 /* WHLSLStageInOutSemantic.h */,
+				C21BF71221CD89D100227979 /* WHLSLStatement.h */,
+				C21BF72721CD89E400227979 /* WHLSLStructureDefinition.h */,
+				C21BF6FE21CD89C100227979 /* WHLSLStructureElement.h */,
+				C21BF71921CD89D700227979 /* WHLSLSwitchCase.h */,
+				C21BF73121CD89EE00227979 /* WHLSLSwitchStatement.h */,
+				C21BF71C21CD89DA00227979 /* WHLSLTernaryExpression.h */,
+				C21BF6F321CD89AD00227979 /* WHLSLTrap.h */,
+				C21BF71D21CD89DB00227979 /* WHLSLType.h */,
+				C288C72D21C991DA002DF5CA /* WHLSLTypeArgument.cpp */,
+				C21BF71121CD89D100227979 /* WHLSLTypeArgument.h */,
+				C21BF72921CD89E600227979 /* WHLSLTypeDefinition.h */,
+				C20F4F6421DFBE5C0070C45A /* WHLSLTypeReference.cpp */,
+				C21BF71F21CD89DC00227979 /* WHLSLTypeReference.h */,
+				1C33277221CF0D2E000DC9F2 /* WHLSLUnnamedType.h */,
+				C20F4F6721DFF3A70070C45A /* WHLSLUnsignedIntegerLiteral.cpp */,
+				C21BF72B21CD89E800227979 /* WHLSLUnsignedIntegerLiteral.h */,
+				1CB69B3B21DF041E006E846A /* WHLSLUnsignedIntegerLiteralType.cpp */,
+				1CB69B3721DED66B006E846A /* WHLSLUnsignedIntegerLiteralType.h */,
+				C21BF6FC21CD89BF00227979 /* WHLSLValue.h */,
+				C21BF71021CD89D000227979 /* WHLSLVariableDeclaration.h */,
+				C21BF71421CD89D300227979 /* WHLSLVariableDeclarationsStatement.h */,
+				C21BF71321CD89D200227979 /* WHLSLVariableReference.h */,
+				C21BF70421CD89C600227979 /* WHLSLWhileLoop.h */,
+			);
+			path = AST;
+			sourceTree = "<group>";
+		};
 		1CDD44660BA9C80000F90147 /* Configurations */ = {
 			isa = PBXGroup;
 			children = (
@@ -25514,100 +25607,6 @@
 				C234A98721E886AD003C984D /* WHLSLVisitor.h */,
 			);
 			path = WHLSL;
-			sourceTree = "<group>";
-		};
-		1CA0C2F621EEDAD200A11860 /* AST */ = {
-			isa = PBXGroup;
-			children = (
-				1C840B9021EC30F900D0500D /* WHLSLAddressSpace.h */,
-				C21BF72521CD89E200227979 /* WHLSLArrayReferenceType.h */,
-				C21BF70921CD89CA00227979 /* WHLSLArrayType.h */,
-				C21BF73021CD89ED00227979 /* WHLSLAssignmentExpression.h */,
-				C21BF70A21CD89CB00227979 /* WHLSLBaseFunctionAttribute.h */,
-				C21BF6FA21CD89BE00227979 /* WHLSLBaseSemantic.h */,
-				C21BF71E21CD89DC00227979 /* WHLSLBlock.h */,
-				C21BF6F621CD89B700227979 /* WHLSLBooleanLiteral.h */,
-				C21BF71A21CD89D800227979 /* WHLSLBreak.h */,
-				C2138A1321DDECD300F516BA /* WHLSLBuiltInSemantic.cpp */,
-				C21BF72221CD89DF00227979 /* WHLSLBuiltInSemantic.h */,
-				C21BF71621CD89D500227979 /* WHLSLCallExpression.h */,
-				C21BF70621CD89C700227979 /* WHLSLCommaExpression.h */,
-				C21BF73321CD89F000227979 /* WHLSLConstantExpression.h */,
-				C21BF6F521CD89B500227979 /* WHLSLContinue.h */,
-				C21BF70121CD89C400227979 /* WHLSLDereferenceExpression.h */,
-				C21BF71821CD89D700227979 /* WHLSLDotExpression.h */,
-				C21BF6FB21CD89BE00227979 /* WHLSLDoWhileLoop.h */,
-				C21BF72821CD89E500227979 /* WHLSLEffectfulExpressionStatement.h */,
-				1C840B7D21EBE0B800D0500D /* WHLSLEntryPointType.h */,
-				C21BF72021CD89DD00227979 /* WHLSLEnumerationDefinition.h */,
-				C21BF72621CD89E300227979 /* WHLSLEnumerationMember.h */,
-				C21BF70221CD89C400227979 /* WHLSLEnumerationMemberLiteral.h */,
-				C21BF70C21CD89CC00227979 /* WHLSLExpression.h */,
-				C21BF70021CD89C200227979 /* WHLSLFallthrough.h */,
-				C21BF73521CD89F200227979 /* WHLSLFloatLiteral.h */,
-				1CB69B3821DF03E1006E846A /* WHLSLFloatLiteralType.cpp */,
-				1CB69B3421DED63A006E846A /* WHLSLFloatLiteralType.h */,
-				C21BF73421CD89F100227979 /* WHLSLForLoop.h */,
-				C21BF70521CD89C700227979 /* WHLSLFunctionAttribute.h */,
-				C21BF6FD21CD89C000227979 /* WHLSLFunctionDeclaration.h */,
-				C21BF6F421CD89B300227979 /* WHLSLFunctionDefinition.h */,
-				C21BF6FF21CD89C200227979 /* WHLSLIfStatement.h */,
-				C21BF6F721CD89B900227979 /* WHLSLIndexExpression.h */,
-				C20F4F6621DFF2360070C45A /* WHLSLIntegerLiteral.cpp */,
-				C21BF6F821CD89BB00227979 /* WHLSLIntegerLiteral.h */,
-				1CB69B3921DF03F3006E846A /* WHLSLIntegerLiteralType.cpp */,
-				1CB69B3521DED649006E846A /* WHLSLIntegerLiteralType.h */,
-				C21BF73221CD89EF00227979 /* WHLSLLogicalExpression.h */,
-				C21BF71521CD89D400227979 /* WHLSLLogicalNotExpression.h */,
-				C21BF72D21CD89E900227979 /* WHLSLMakeArrayReferenceExpression.h */,
-				C21BF72C21CD89E900227979 /* WHLSLMakePointerExpression.h */,
-				1C33277121CF0BE1000DC9F2 /* WHLSLNamedType.h */,
-				C21BF72321CD89E100227979 /* WHLSLNativeFunctionDeclaration.h */,
-				C21BF72A21CD89E700227979 /* WHLSLNativeTypeDeclaration.h */,
-				C21BF72421CD89E100227979 /* WHLSLNode.h */,
-				C21BF70721CD89C800227979 /* WHLSLNullLiteral.h */,
-				1CB69B3A21DF0403006E846A /* WHLSLNullLiteralType.cpp */,
-				1CB69B3621DED657006E846A /* WHLSLNullLiteralType.h */,
-				C21BF72121CD89DE00227979 /* WHLSLNumThreadsFunctionAttribute.h */,
-				C21BF72F21CD89EC00227979 /* WHLSLPointerType.h */,
-				C21BF72E21CD89EA00227979 /* WHLSLPropertyAccessExpression.h */,
-				C21BF70B21CD89CC00227979 /* WHLSLQualifier.h */,
-				C21BF71B21CD89D900227979 /* WHLSLReadModifyWriteExpression.h */,
-				C21BF70D21CD89CD00227979 /* WHLSLReferenceType.h */,
-				1CB69B3221DED40B006E846A /* WHLSLResolvableType.h */,
-				C2138A1521DDECE900F516BA /* WHLSLResourceSemantic.cpp */,
-				C21BF70821CD89C900227979 /* WHLSLResourceSemantic.h */,
-				C21BF70321CD89C500227979 /* WHLSLReturn.h */,
-				C21BF6F921CD89BD00227979 /* WHLSLSemantic.h */,
-				C2138A1621DDECFB00F516BA /* WHLSLSpecializationConstantSemantic.cpp */,
-				C21BF73621CD89F300227979 /* WHLSLSpecializationConstantSemantic.h */,
-				C2138A1721DDED0D00F516BA /* WHLSLStageInOutSemantic.cpp */,
-				C21BF70E21CD89CE00227979 /* WHLSLStageInOutSemantic.h */,
-				C21BF71221CD89D100227979 /* WHLSLStatement.h */,
-				C21BF72721CD89E400227979 /* WHLSLStructureDefinition.h */,
-				C21BF6FE21CD89C100227979 /* WHLSLStructureElement.h */,
-				C21BF71921CD89D700227979 /* WHLSLSwitchCase.h */,
-				C21BF73121CD89EE00227979 /* WHLSLSwitchStatement.h */,
-				C21BF71C21CD89DA00227979 /* WHLSLTernaryExpression.h */,
-				C21BF6F321CD89AD00227979 /* WHLSLTrap.h */,
-				C21BF71D21CD89DB00227979 /* WHLSLType.h */,
-				C288C72D21C991DA002DF5CA /* WHLSLTypeArgument.cpp */,
-				C21BF71121CD89D100227979 /* WHLSLTypeArgument.h */,
-				C21BF72921CD89E600227979 /* WHLSLTypeDefinition.h */,
-				C20F4F6421DFBE5C0070C45A /* WHLSLTypeReference.cpp */,
-				C21BF71F21CD89DC00227979 /* WHLSLTypeReference.h */,
-				1C33277221CF0D2E000DC9F2 /* WHLSLUnnamedType.h */,
-				C20F4F6721DFF3A70070C45A /* WHLSLUnsignedIntegerLiteral.cpp */,
-				C21BF72B21CD89E800227979 /* WHLSLUnsignedIntegerLiteral.h */,
-				1CB69B3B21DF041E006E846A /* WHLSLUnsignedIntegerLiteralType.cpp */,
-				1CB69B3721DED66B006E846A /* WHLSLUnsignedIntegerLiteralType.h */,
-				C21BF6FC21CD89BF00227979 /* WHLSLValue.h */,
-				C21BF71021CD89D000227979 /* WHLSLVariableDeclaration.h */,
-				C21BF71421CD89D300227979 /* WHLSLVariableDeclarationsStatement.h */,
-				C21BF71321CD89D200227979 /* WHLSLVariableReference.h */,
-				C21BF70421CD89C600227979 /* WHLSLWhileLoop.h */,
-			);
-			path = AST;
 			sourceTree = "<group>";
 		};
 		C96F5EBF1B5872260091EA9D /* mediasession */ = {

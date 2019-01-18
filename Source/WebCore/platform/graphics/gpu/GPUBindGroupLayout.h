@@ -34,7 +34,10 @@
 #include <wtf/RefPtr.h>
 #include <wtf/RetainPtr.h>
 
+#if USE(METAL)
 OBJC_PROTOCOL(MTLArgumentEncoder);
+OBJC_PROTOCOL(MTLBuffer);
+#endif // USE(METAL)
 
 namespace WebCore {
 
@@ -42,22 +45,31 @@ class GPUDevice;
 
 class GPUBindGroupLayout : public RefCounted<GPUBindGroupLayout> {
 public:
-    struct ArgumentEncoders {
-        RetainPtr<MTLArgumentEncoder> vertex;
-        RetainPtr<MTLArgumentEncoder> fragment;
-        RetainPtr<MTLArgumentEncoder> compute;
-    };
-
     static RefPtr<GPUBindGroupLayout> tryCreate(const GPUDevice&, GPUBindGroupLayoutDescriptor&&);
 
     using BindingsMapType = HashMap<unsigned long long, GPUBindGroupLayoutBinding, WTF::IntHash<unsigned long long>, WTF::UnsignedWithZeroKeyHashTraits<unsigned long long>>;
     const BindingsMapType& bindingsMap() const { return m_bindingsMap; }
+#if USE(METAL)
+    struct ArgumentEncoderBuffer {
+        RetainPtr<MTLArgumentEncoder> encoder;
+        RetainPtr<MTLBuffer> buffer;
+
+        bool isValid() const { return encoder && buffer; }
+    };
+    const ArgumentEncoderBuffer& vertexArguments() const { return m_vertexArguments; }
+    const ArgumentEncoderBuffer& fragmentArguments() const { return m_fragmentArguments; }
+    const ArgumentEncoderBuffer& computeArguments() const { return m_computeArguments; }
+#endif // USE(METAL)
 
 private:
-    GPUBindGroupLayout(BindingsMapType&&, ArgumentEncoders&&);
+#if USE(METAL)
+    GPUBindGroupLayout(BindingsMapType&&, ArgumentEncoderBuffer&& vertex, ArgumentEncoderBuffer&& fragment, ArgumentEncoderBuffer&& compute);
 
+    ArgumentEncoderBuffer m_vertexArguments;
+    ArgumentEncoderBuffer m_fragmentArguments;
+    ArgumentEncoderBuffer m_computeArguments;
+#endif // USE(METAL)
     const BindingsMapType m_bindingsMap;
-    ArgumentEncoders m_argumentEncoders;
 };
 
 } // namespace WebCore

@@ -1,3 +1,51 @@
+2019-01-18  Justin Fan  <justin_fan@apple.com>
+
+        (WIP) [WebGPU] WebGPUProgrammablePassEncoder::setBindGroup prototype
+        https://bugs.webkit.org/show_bug.cgi?id=193457
+        <rdar://problem/47296678>
+
+        Reviewed by Dean Jackson.
+
+        Enable WebGPU developers to assign buffer bind groups and access them via render pipeline. 
+
+        Test: webgpu/buffer-resource-triangles.html
+
+        * Modules/webgpu/WebGPUBindGroup.h:
+        (WebCore::WebGPUBindGroup::bindGroup const): Added getter.
+        * Modules/webgpu/WebGPUProgrammablePassEncoder.cpp: 
+        (WebCore::WebGPUProgrammablePassEncoder::setBindGroup const): Added. Delegates call to GPUProgrammablePassEncoder.
+        * Modules/webgpu/WebGPUProgrammablePassEncoder.h: Enable setBindGroup.
+        * Modules/webgpu/WebGPUProgrammablePassEncoder.idl: ditto.
+        * WebCore.xcodeproj/project.pbxproj:
+        * platform/graphics/gpu/GPUBindGroup.h: 
+        (WebCore::GPUBindGroup::layout const): Added getter.
+        (WebCore::GPUBindGroup::bindings const): ditto.
+        * platform/graphics/gpu/GPUBindGroupLayout.h: Added ArgumentEncoderBuffer struct to retain ptr to both MTLArgumentEncoders and their argument MTLBuffers.
+        (WebCore::GPUBindGroupLayout::ArgumentEncoderBuffer::operator! const):
+        (WebCore::GPUBindGroupLayout::vertexArguments const): Added. Getter.
+        (WebCore::GPUBindGroupLayout::fragmentArguments const): ditto.
+        (WebCore::GPUBindGroupLayout::computeArguments const): ditto.
+        * platform/graphics/gpu/GPUDevice.cpp: Refactored unnecessary header include.
+        * platform/graphics/gpu/GPUDevice.h: ditto.
+        * platform/graphics/gpu/GPUProgrammablePassEncoder.h:
+        (WebCore::GPUProgrammablePassEncoder::setVertexBuffer): Added. Delegates to MTLCommandEncoder call.
+        (WebCore::GPUProgrammablePassEncoder::setFragmentBuffer): ditto.
+        * platform/graphics/gpu/GPURenderPassEncoder.h: 
+        * platform/graphics/gpu/cocoa/GPUBindGroupLayoutMetal.mm:
+        (WebCore::tryCreateArgumentEncoderAndBuffer): Replace newEncoder(). Now create an ArgumentEncoderBuffer object from an array of MTLArgumentDescriptors, if able.
+        (WebCore::GPUBindGroupLayout::tryCreate): Refactor to support ArgumentEncoderBuffers, and allocate MTLBuffers for argument encoders.
+        (WebCore::GPUBindGroupLayout::GPUBindGroupLayout): Support ArgumentEncoderBuffers.
+        (WebCore::newEncoder): Deleted.
+        * platform/graphics/gpu/cocoa/GPUCommandBufferMetal.mm:
+        (WebCore::GPUCommandBuffer::GPUCommandBuffer):
+        * platform/graphics/gpu/cocoa/GPUProgrammablePassEncoderMetal.mm:
+        (WebCore::GPUProgrammablePassEncoder::setResourceAsBufferOnEncoder): Set a buffer resource on the MTLArgumentEncoder, and call useResource on the command encoder.
+        (WebCore::GPUProgrammablePassEncoder::setBindGroup): Parses the bind group to assign each resource on its matching MTLArgumentEncoder.
+        * platform/graphics/gpu/cocoa/GPURenderPassEncoderMetal.mm: 
+        (WebCore::GPURenderPassEncoder::useResource): Resolves call from GPUProgrammablePassEncoder to call on MTLRenderCommandEncoder.
+        (WebCore::GPURenderPassEncoder::setVertexBuffer): ditto.
+        (WebCore::GPURenderPassEncoder::setFragmentBuffer): ditto.
+
 2019-01-18  Daniel Bates  <dabates@apple.com>
 
         Another attempt to fix the iOS build following <https://trac.webkit.org/changeset/240174>

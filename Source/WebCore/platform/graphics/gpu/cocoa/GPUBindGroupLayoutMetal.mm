@@ -61,21 +61,38 @@ static void appendArgumentToArray(ArgumentArray& array, RetainPtr<MTLArgumentDes
     END_BLOCK_OBJC_EXCEPTIONS;
 }
 
-static RetainPtr<MTLArgumentEncoder> newEncoder(const GPUDevice& device, ArgumentArray array)
+static GPUBindGroupLayout::ArgumentEncoderBuffer tryCreateArgumentEncoderAndBuffer(const GPUDevice& device, ArgumentArray array)
 {
-    RetainPtr<MTLArgumentEncoder> encoder;
-    BEGIN_BLOCK_OBJC_EXCEPTIONS;
-    encoder = adoptNS([device.platformDevice() newArgumentEncoderWithArguments:array.get()]);
-    END_BLOCK_OBJC_EXCEPTIONS;
-    if (!encoder)
-        LOG(WebGPU, "GPUBindGroupLayout::tryCreate(): Unable to create MTLArgumentEncoder!");
+    GPUBindGroupLayout::ArgumentEncoderBuffer args;
 
-    return encoder;
+    BEGIN_BLOCK_OBJC_EXCEPTIONS;
+    args.encoder = adoptNS([device.platformDevice() newArgumentEncoderWithArguments:array.get()]);
+    END_BLOCK_OBJC_EXCEPTIONS;
+    if (!args.encoder) {
+        LOG(WebGPU, "GPUBindGroupLayout::tryCreate(): Unable to create MTLArgumentEncoder!");
+        return { };
+    }
+
+    BEGIN_BLOCK_OBJC_EXCEPTIONS;
+    args.buffer = adoptNS([device.platformDevice() newBufferWithLength:args.encoder.get().encodedLength options:0]);
+    [args.encoder setArgumentBuffer:args.buffer.get() offset:0];
+    END_BLOCK_OBJC_EXCEPTIONS;
+    if (!args.buffer) {
+        LOG(WebGPU, "GPUBindGroupLayout::tryCreate(): Unable to create MTLBuffer from MTLArgumentEncoder!");
+        return { };
+    }
+
+    return args;
 };
 
 RefPtr<GPUBindGroupLayout> GPUBindGroupLayout::tryCreate(const GPUDevice& device, GPUBindGroupLayoutDescriptor&& descriptor)
 {
-    ArgumentArray vertexArguments, fragmentArguments, computeArguments;
+    if (!device.platformDevice()) {
+        LOG(WebGPU, "GPUBindGroupLayout::tryCreate(): Invalid MTLDevice!");
+        return nullptr;
+    }
+
+    ArgumentArray vertexArgsArray, fragmentArgsArray, computeArgsArray;
     BindingsMapType bindingsMap;
 
     for (const auto& binding : descriptor.bindings) {
@@ -99,34 +116,36 @@ RefPtr<GPUBindGroupLayout> GPUBindGroupLayout::tryCreate(const GPUDevice& device
         mtlArgument.get().index = binding.binding;
 
         if (binding.visibility & GPUShaderStageBit::VERTEX)
-            appendArgumentToArray(vertexArguments, mtlArgument);
+            appendArgumentToArray(vertexArgsArray, mtlArgument);
         if (binding.visibility & GPUShaderStageBit::FRAGMENT)
-            appendArgumentToArray(fragmentArguments, mtlArgument);
+            appendArgumentToArray(fragmentArgsArray, mtlArgument);
         if (binding.visibility & GPUShaderStageBit::COMPUTE)
-            appendArgumentToArray(computeArguments, mtlArgument);
+            appendArgumentToArray(computeArgsArray, mtlArgument);
     }
 
-    ArgumentEncoders encoders;
+    ArgumentEncoderBuffer vertex, fragment, compute;
 
-    if (vertexArguments) {
-        if (!(encoders.vertex = newEncoder(device, vertexArguments)))
+    if (vertexArgsArray) {
+        if (!(vertex = tryCreateArgumentEncoderAndBuffer(device, vertexArgsArray)).isValid())
             return nullptr;
     }
-    if (fragmentArguments) {
-        if (!(encoders.fragment = newEncoder(device, fragmentArguments)))
+    if (fragmentArgsArray) {
+        if (!(fragment = tryCreateArgumentEncoderAndBuffer(device, fragmentArgsArray)).isValid())
             return nullptr;
     }
-    if (computeArguments) {
-        if (!(encoders.compute = newEncoder(device, computeArguments)))
+    if (computeArgsArray) {
+        if (!(compute = tryCreateArgumentEncoderAndBuffer(device, computeArgsArray)).isValid())
             return nullptr;
     }
 
-    return adoptRef(new GPUBindGroupLayout(WTFMove(bindingsMap), WTFMove(encoders)));
+    return adoptRef(new GPUBindGroupLayout(WTFMove(bindingsMap), WTFMove(vertex), WTFMove(fragment), WTFMove(compute)));
 }
 
-GPUBindGroupLayout::GPUBindGroupLayout(BindingsMapType&& bindingsMap, ArgumentEncoders&& encoders)
-    : m_bindingsMap(WTFMove(bindingsMap))
-    , m_argumentEncoders(WTFMove(encoders))
+GPUBindGroupLayout::GPUBindGroupLayout(BindingsMapType&& bindingsMap, ArgumentEncoderBuffer&& vertex, ArgumentEncoderBuffer&& fragment, ArgumentEncoderBuffer&& compute)
+    : m_vertexArguments(WTFMove(vertex))
+    , m_fragmentArguments(WTFMove(fragment))
+    , m_computeArguments(WTFMove(compute))
+    , m_bindingsMap(WTFMove(bindingsMap))
 {
 }
 

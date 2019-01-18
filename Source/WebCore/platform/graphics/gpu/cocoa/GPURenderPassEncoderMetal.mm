@@ -118,6 +118,25 @@ void GPURenderPassEncoder::draw(unsigned long vertexCount, unsigned long instanc
         baseInstance:firstInstance];
 }
 
+#if USE(METAL)
+
+void GPURenderPassEncoder::useResource(MTLResource *resource, unsigned long usage)
+{
+    [m_platformRenderPassEncoder useResource:resource usage:usage];
+}
+
+void GPURenderPassEncoder::setVertexBuffer(MTLBuffer *buffer, unsigned long offset, unsigned long index)
+{
+    [m_platformRenderPassEncoder setVertexBuffer:buffer offset:offset atIndex:index];
+}
+
+void GPURenderPassEncoder::setFragmentBuffer(MTLBuffer *buffer, unsigned long offset, unsigned long index)
+{
+    [m_platformRenderPassEncoder setFragmentBuffer:buffer offset:offset atIndex:index];
+}
+
+#endif // USE(METAL)
+
 } // namespace WebCore
 
 #endif // ENABLE(WEBGPU)
