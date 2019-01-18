@@ -16,6 +16,7 @@ function testResponseOpacity(response, test, testName)
     assert_equals(response.type, "opaque", testName + " type");
     assert_equals(response.status, 0, testName + " status");
     assert_equals(response.statusText, "", testName + " statusText");
+    assert_equals(response.url, "", testName + " url");
     assert_false(response.redirected, testName + " redirected");
     assert_true(response.headers.values().next().done, testName + " headers");
     assert_equals(response.body, null, testName + " opaque response body should be null");
