@@ -1,3 +1,15 @@
+2018-12-31  Dewei Zhu  <dewei_zhu@apple.com>
+
+        Test group results notification should not say a build request to build had failed even when it had successfully completed.
+        https://bugs.webkit.org/show_bug.cgi?id=193064
+
+        Reviewed by Ryosuke Niwa.
+
+        Should show 'Build completed' or 'Build failed' for build type build requests.
+
+        * browser-tests/test-group-result-page-tests.js: Added a unit test to guard this bug.
+        * tools/js/test-group-result-page.js: Show 'Build completed' or 'Build failed' for build type build requests.
+
 2018-12-21  Dewei Zhu  <dewei_zhu@apple.com>
 
         Add UI in analysis task page to show commit testability information.

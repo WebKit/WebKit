@@ -6,7 +6,7 @@ describe('TestGroupResultPage', () => {
             'models/data-model.js', 'models/metric.js', '../shared/statistics.js',], 'TestGroupResultPage', 'Metric');
     }
 
-    async function prepareTestGroupResultPage(context, resultA, resultB)
+    async function prepareTestGroupResultPage(context, buildRequestsA, buildRequestsB)
     {
         const [TestGroupResultPage, Metric] = await importMarkupComponent(context);
 
@@ -20,15 +20,15 @@ describe('TestGroupResultPage', () => {
 
         const mockTestGroup = {
             requestedCommitSets: () => ['A', 'B'],
-            test: () => ({test: () => 'speeodmeter-2', name: () => 'speedometer-2'}),
+            test: () => ({test: () => 'speedometer-2', name: () => 'speedometer-2'}),
             labelForCommitSet: (commitSet) => commitSet,
-            requestsForCommitSet: (commitSet) => ({'A': resultA, 'B': resultB}[commitSet]),
+            requestsForCommitSet: (commitSet) => ({'A': buildRequestsA, 'B': buildRequestsB}[commitSet]),
             compareTestResults: (...args) => ({isStatisticallySignificant: true, changeType: 'worse'}),
             name: () => 'mock-test-group',
         };
 
         const mockAnalysisResults = {
-            viewForMetric: (metric) => ({resultForRequest: (buildRequest) => (buildRequest === null ? null : {value: buildRequest})})
+            viewForMetric: (metric) => ({resultForRequest: (buildRequest) => (buildRequest.value === null ? null : {value: buildRequest.value})})
         };
 
         const page = new TestGroupResultPage('test');
@@ -40,9 +40,19 @@ describe('TestGroupResultPage', () => {
         return page;
     }
 
+    function prepareBuildRequests(buildRequestValues, isTestBooleanList, hasCompletedBooleanList)
+    {
+        return Array.from(buildRequestValues.entries()).map((entry) => {
+            const [index, value] = entry;
+            const isTest = isTestBooleanList ? isTestBooleanList[index] : true;
+            const hasCompleted = hasCompletedBooleanList ? hasCompletedBooleanList[index] : true;
+            return {value, isTest: () => isTest, isBuild: () => !isTest, hasCompleted: () => hasCompleted};
+        });
+    }
+
     it('should render failed test group with empty bar', async () => {
         const context = new BrowsingContext();
-        const page = await prepareTestGroupResultPage(context, [null, 3, 5], [2, 4, 6]);
+        const page = await prepareTestGroupResultPage(context, prepareBuildRequests([null, 3, 5]), prepareBuildRequests([2, 4, 6]));
         await page.enqueueToRender();
         const document = context.document;
         document.open();
@@ -56,7 +66,7 @@ describe('TestGroupResultPage', () => {
         const context = new BrowsingContext();
         const resultA = [1, 3, 5];
         const resultB = [2, 4, 6];
-        const page = await prepareTestGroupResultPage(context, resultA, resultB);
+        const page = await prepareTestGroupResultPage(context, prepareBuildRequests(resultA), prepareBuildRequests(resultB));
         page.enqueueToRender();
         const document = context.document;
         document.open();
@@ -76,5 +86,28 @@ describe('TestGroupResultPage', () => {
             expect(almostEqual(currentNodeWidth / previousNodeWidth, expectedPercentages[i] / expectedPercentages[i - 1])).to.be(true);
             previousNodeWidth = currentNodeWidth;
         }
+    });
+
+    it('should not render rows for build requests those are not test', async () => {
+        const context = new BrowsingContext();
+        const resultA = [null, 1, 3, 5];
+        const isTestBooleanListA = [false, true, true, true];
+        const isBuildBooleanListA = [true, true, true, true];
+        const resultB = [null, 2, 4, 6];
+        const isTestBooleanListB = [false, true, true, true];
+        const isBuildBooleanListB = [false, true, true, true];
+        const page = await prepareTestGroupResultPage(context,
+            prepareBuildRequests(resultA, isTestBooleanListA, isBuildBooleanListA),
+            prepareBuildRequests(resultB, isTestBooleanListB, isBuildBooleanListB));
+        page.enqueueToRender();
+        const document = context.document;
+        document.open();
+        document.write(page.generateMarkup());
+        document.close();
+
+        const barNodes = context.document.querySelectorAll('.result-cell');
+        expect(barNodes.length).to.be(8);
+        expect(barNodes[0].textContent).to.be('Build completed');
+        expect(barNodes[4].textContent).to.be('Build failed');
     });
 });

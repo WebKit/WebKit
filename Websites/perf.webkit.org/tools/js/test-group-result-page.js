@@ -31,10 +31,14 @@ class TestGroupResultPage extends MarkupPage {
         for (const commitSet of testGroup.requestedCommitSets())
         {
             const buildRequestsForCommitSet = testGroup.requestsForCommitSet(commitSet);
-            const results = buildRequestsForCommitSet.map((buildRequest) => analysisResultsView.resultForRequest(buildRequest));
+            const buildTypeRequests = buildRequestsForCommitSet.filter((buildRequest) => buildRequest.isBuild());
+            const testTypeRequests = buildRequestsForCommitSet.filter((buildRequest) => buildRequest.isTest());
+
+            const buildTypeResults = buildTypeRequests.map((buildRequest) => ({isBuild: true, hasCompleted: buildRequest.hasCompleted()}));
+            const results = [...buildTypeResults, ...testTypeRequests.map((buildRequest) => analysisResultsView.resultForRequest(buildRequest))];
             resultsByCommitSet.set(commitSet, results);
             for (const result of results) {
-                if (!result)
+                if (!result || result.isBuild)
                     continue;
                 maxValue = Math.max(maxValue, result.value);
                 minValue = Math.min(minValue, result.value);
@@ -77,8 +81,8 @@ class TestGroupResultPage extends MarkupPage {
 
         const tableBodies = [];
 
-        const beforeResults = resultsByCommitSet.get(requestedCommitSets[0]).filter((result) => !!result);
-        const afterResults = resultsByCommitSet.get(requestedCommitSets[1]).filter((result) => !!result);
+        const beforeResults = resultsByCommitSet.get(requestedCommitSets[0]).filter((result) => !!result && !result.isBuild);
+        const afterResults = resultsByCommitSet.get(requestedCommitSets[1]).filter((result) => !!result && !result.isBuild);
         const comparison = testGroup.compareTestResults(metric, beforeResults, afterResults);
         const changeStyleClassForMean = `${comparison.isStatisticallySignificantForMean ? comparison.changeType : 'insignificant'}-result`;
         const changeStyleClassForIndividual = `${comparison.isStatisticallySignificantForIndividual ? comparison.changeType : 'insignificant'}-result`;
@@ -100,8 +104,16 @@ class TestGroupResultPage extends MarkupPage {
             const label = testGroup.labelForCommitSet(commitSet);
 
             for (const result of results) {
-                const cellValue = result ? formatValue(result.value, result.interval).join('') : 'Failed';
-                const barWidth = result ? widthForValue(result.value) : 0;
+                let cellValue = null;
+                let barWidth = 0;
+                if (!result)
+                    cellValue = 'Failed';
+                else if (result.isBuild)
+                    cellValue = 'Build ' + (result.hasCompleted ? 'completed' : 'failed');
+                else {
+                    cellValue = formatValue(result.value, result.interval).join('');
+                    barWidth = widthForValue(result.value);
+                }
                 tableRows.push(this._constructTableRow(cellValue, barWidth, firstRow, results.length, label, averageColumnContents));
                 firstRow = false;
             }
