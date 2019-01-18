@@ -65,19 +65,16 @@
 #import "TextIterator.h"
 #import "VisibleSelection.h"
 #import <objc/runtime.h>
+#import <pal/ios/UIKitSoftLink.h>
 #import <pal/spi/cocoa/NSAttributedStringSPI.h>
+#import <pal/spi/ios/UIKitSPI.h>
 #import <wtf/ASCIICType.h>
-#import <wtf/SoftLinking.h>
 #import <wtf/text/StringBuilder.h>
 
 #if PLATFORM(IOS_FAMILY)
 
 #import "WAKAppKitStubs.h"
 
-SOFT_LINK_FRAMEWORK(UIKit)
-SOFT_LINK_CLASS(UIKit, UIColor)
-
-SOFT_LINK_CLASS(UIFoundation, UIFont)
 SOFT_LINK_CLASS(UIFoundation, NSColor)
 SOFT_LINK_CLASS(UIFoundation, NSShadow)
 SOFT_LINK_CLASS(UIFoundation, NSTextAttachment)
@@ -97,10 +94,10 @@ SOFT_LINK_CLASS(UIFoundation, NSTextTab)
 #define PlatformNSTextTable         getNSTextTableClass()
 #define PlatformNSTextTab           getNSTextTabClass()
 #define PlatformColor               UIColor
-#define PlatformColorClass          getUIColorClass()
+#define PlatformColorClass          PAL::getUIColorClass()
 #define PlatformNSColorClass        getNSColorClass()
 #define PlatformFont                UIFont
-#define PlatformFontClass           getUIFontClass()
+#define PlatformFontClass           PAL::getUIFontClass()
 
 #else
 
@@ -123,15 +120,6 @@ using namespace WebCore;
 using namespace HTMLNames;
 
 #if PLATFORM(IOS_FAMILY)
-
-typedef enum {
-    UIFontTraitPlain       = 0x00000000,
-    UIFontTraitItalic      = 0x00000001, // 1 << 0
-    UIFontTraitBold        = 0x00000002, // 1 << 1
-    UIFontTraitThin        = (1 << 2),
-    UIFontTraitLight       = (1 << 3),
-    UIFontTraitUltraLight  = (1 << 4)
-} UIFontTrait;
 
 enum {
     NSTextBlockAbsoluteValueType    = 0,    // Absolute value in points
@@ -170,20 +158,6 @@ enum {
 };
 typedef NSUInteger NSTextBlockVerticalAlignment;
 
-typedef NS_ENUM(NSInteger, NSTextAlignment) {
-    NSTextAlignmentLeft      = 0,    // Visually left aligned
-    NSTextAlignmentCenter    = 1,    // Visually centered
-    NSTextAlignmentRight     = 2,    // Visually right aligned
-    NSTextAlignmentJustified = 3,    // Fully-justified. The last line in a paragraph is natural-aligned.
-    NSTextAlignmentNatural   = 4,    // Indicates the default alignment for script
-} NS_ENUM_AVAILABLE_IOS(6_0);
-
-typedef NS_ENUM(NSInteger, NSWritingDirection) {
-    NSWritingDirectionNatural       = -1,    // Determines direction using the Unicode Bidi Algorithm rules P2 and P3
-    NSWritingDirectionLeftToRight   =  0,    // Left to right writing direction
-    NSWritingDirectionRightToLeft   =  1     // Right to left writing direction
-} NS_ENUM_AVAILABLE_IOS(6_0);
-
 enum {
     NSEnterCharacter                = 0x0003,
     NSBackspaceCharacter            = 0x0008,
@@ -195,7 +169,6 @@ enum {
     NSDeleteCharacter               = 0x007f,
     NSLineSeparatorCharacter        = 0x2028,
     NSParagraphSeparatorCharacter   = 0x2029,
-    NSAttachmentCharacter           = 0xFFFC // Replacement character is used for attachments
 };
 
 enum {
@@ -206,57 +179,17 @@ enum {
 };
 typedef NSUInteger NSTextTabType;
 
-@interface UIColor : NSObject
-+ (UIColor *)clearColor;
-- (CGFloat)alphaComponent;
-@end
-
 @interface NSColor : UIColor
 + (id)colorWithCalibratedRed:(CGFloat)red green:(CGFloat)green blue:(CGFloat)blue alpha:(CGFloat)alpha;
 @end
 
-@interface UIFont
-+ (UIFont *)fontWithName:(NSString *)fontName size:(CGFloat)fontSize;
-+ (UIFont *)fontWithFamilyName:(NSString *)familyName traits:(UIFontTrait)traits size:(CGFloat)fontSize;
-- (NSString *)familyName;
-- (CGFloat)pointSize;
-- (UIFont *)fontWithSize:(CGFloat)fontSize;
-+ (NSArray *)familyNames;
-+ (NSArray *)fontNamesForFamilyName:(NSString *)familyName;
-+ (UIFont *)systemFontOfSize:(CGFloat)fontSize;
-@end
-
-@interface NSTextTab
+@interface NSTextTab ()
 - (id)initWithType:(NSTextTabType)type location:(CGFloat)loc;
-- (id)initWithTextAlignment:(NSTextAlignment)alignment location:(CGFloat)loc options:(NSDictionary *)options;
-- (CGFloat)location;
-- (void)release;
 @end
 
-@interface NSParagraphStyle : NSObject
-+ (NSParagraphStyle *)defaultParagraphStyle;
-- (void)setAlignment:(NSTextAlignment)alignment;
-- (void)setBaseWritingDirection:(NSWritingDirection)writingDirection;
-- (void)setHeadIndent:(CGFloat)aFloat;
-- (CGFloat)headIndent;
+@interface NSParagraphStyle ()
 - (void)setHeaderLevel:(NSInteger)level;
-- (void)setFirstLineHeadIndent:(CGFloat)aFloat;
-- (void)setTailIndent:(CGFloat)aFloat;
-- (void)setParagraphSpacing:(CGFloat)paragraphSpacing;
-- (void)setTextLists:(NSArray *)array;
 - (void)setTextBlocks:(NSArray *)array;
-- (void)setMinimumLineHeight:(CGFloat)aFloat;
-- (NSArray *)textLists;
-- (void)removeTabStop:(NSTextTab *)anObject;
-- (void)addTabStop:(NSTextTab *)anObject;
-- (NSArray *)tabStops;
-- (void)setHyphenationFactor:(float)aFactor;
-@end
-
-@interface NSShadow : NSObject
-- (void)setShadowOffset:(CGSize)size;
-- (void)setShadowBlurRadius:(CGFloat)radius;
-- (void)setShadowColor:(UIColor *)color;
 @end
 
 @interface NSTextBlock : NSObject
@@ -267,28 +200,6 @@ typedef NSUInteger NSTextTabType;
 - (void)setBorderColor:(UIColor *)color forEdge:(NSRectEdge)edge;
 - (void)setBorderColor:(UIColor *)color;        // Convenience method sets all edges at once
 - (void)setVerticalAlignment:(NSTextBlockVerticalAlignment)alignment;
-@end
-
-@interface NSTextList
-- (id)initWithMarkerFormat:(NSString *)format options:(NSUInteger)mask;
-- (void)setStartingItemNumber:(NSInteger)itemNum;
-- (NSInteger)startingItemNumber;
-- (NSString *)markerForItemNumber:(NSInteger)itemNum;
-- (void)release;
-@end
-
-@interface NSMutableParagraphStyle : NSParagraphStyle
-- (void)setDefaultTabInterval:(CGFloat)aFloat;
-- (void)setTabStops:(NSArray *)array;
-@end
-
-@interface NSTextAttachment : NSObject
-- (id)initWithFileWrapper:(NSFileWrapper *)fileWrapper;
-#if PLATFORM(IOS_FAMILY)
-- (void)setBounds:(CGRect)bounds;
-@property(retain, nonatomic) NSFileWrapper *fileWrapper;
-#endif
-- (void)release;
 @end
 
 @interface NSTextTable : NSTextBlock
@@ -561,7 +472,7 @@ static PlatformFont *_fontForNameAndSize(NSString *fontName, CGFloat size, NSMut
                     }
                 }
                 if (!font && [familyMemberFaceNames count])
-                    font = [getUIFontClass() fontWithName:familyName size:size];
+                    font = [PlatformFontClass fontWithName:familyName size:size];
 #else
                 NSArray *familyMemberArray;
                 NSString *faceName = [fontName substringFromIndex:(dividingRange.location + dividingRange.length)];
@@ -1866,7 +1777,7 @@ BOOL HTMLConverter::_processElement(Element& element, NSInteger depth)
     } else if (displayValue == "table-row" && [_textTables count] > 0) {
         PlatformColor *color = _colorForElement(element, CSSPropertyBackgroundColor);
         if (!color)
-            color = [PlatformColorClass clearColor];
+            color = (PlatformColor *)[PlatformColorClass clearColor];
         [_textTableRowBackgroundColors addObject:color];
     } else if (displayValue == "table-cell") {
         while ([_textTables count] < [_textBlocks count] + 1)

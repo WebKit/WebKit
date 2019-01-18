@@ -103,6 +103,7 @@
 #import <CoreImage/CoreImage.h>
 #import <UIKit/UIDevice.h>
 #import <mach/mach_port.h>
+#import <pal/ios/UIKitSoftLink.h>
 #else
 #import <Foundation/NSGeometry.h>
 #import <QuartzCore/CoreImage.h>
@@ -314,10 +315,6 @@ SOFT_LINK_CONSTANT(Celestial, AVController_RouteDescriptionKey_AVAudioRouteName,
 #define AVController_RouteDescriptionKey_AVAudioRouteName getAVController_RouteDescriptionKey_AVAudioRouteName()
 
 #endif // HAVE(CELESTIAL)
-
-SOFT_LINK_FRAMEWORK(UIKit)
-SOFT_LINK_CLASS(UIKit, UIDevice)
-#define UIDevice getUIDeviceClass()
 
 #endif // PLATFORM(IOS_FAMILY)
 
@@ -2889,7 +2886,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
             break;
 
         // The route is a speaker or HDMI out, override the name to be the localized device model.
-        NSString *localizedDeviceModel = [[UIDevice currentDevice] localizedModel];
+        NSString *localizedDeviceModel = [[PAL::getUIDeviceClass() currentDevice] localizedModel];
 
         // In cases where a route with that name already exists, prefix the name with the model.
         BOOL includeLocalizedDeviceModelName = NO;

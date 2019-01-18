@@ -1688,6 +1688,15 @@ class CppStyleTest(CppStyleTestBase):
             '  [runtime/retainptr] [5]')
         self.assert_lint('''RetainPtr<NSDictionary<NSString *, NSArray<NSString *>>> dictionary;''', '')
 
+    def test_softlink(self):
+        self.assert_lint(
+            '''SOFT_LINK_FRAMEWORK(AVFoundation)''',
+            '')
+        self.assert_lint(
+            '''SOFT_LINK_FRAMEWORK(UIKit)''',
+            'Use #import <pal/ios/UIKitSoftLink.h> and update pal/ios/UIKitSoftLink.mm to soft-link to UIKit.framework.'
+            '  [softlink/uikit] [5]')
+
     # Variable-length arrays are not permitted.
     def test_variable_length_array_detection(self):
         errmsg = ('Do not use variable-length arrays.  Use an appropriately named '

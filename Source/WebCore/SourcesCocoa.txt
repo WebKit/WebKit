@@ -416,15 +416,15 @@ platform/ios/ScrollbarThemeIOS.mm
 platform/ios/ScrollViewIOS.mm
 platform/ios/SelectionRect.cpp
 platform/ios/SystemMemoryIOS.cpp
-platform/ios/ThemeIOS.mm @no-unify
+platform/ios/ThemeIOS.mm
 platform/ios/TileControllerMemoryHandlerIOS.cpp
-platform/ios/UserAgentIOS.mm @no-unify
-platform/ios/ValidationBubbleIOS.mm @no-unify
+platform/ios/UserAgentIOS.mm
+platform/ios/ValidationBubbleIOS.mm
 platform/ios/VideoFullscreenInterfaceAVKit.mm @no-unify
 platform/ios/WebAVPlayerController.mm
 platform/ios/WebBackgroundTaskController.mm
 platform/ios/WebCoreMotionManager.mm
-platform/ios/WebEvent.mm @no-unify
+platform/ios/WebEvent.mm
 platform/ios/WebItemProviderPasteboard.mm @no-unify
 platform/ios/WebSQLiteDatabaseTrackerClient.mm
 platform/ios/WebVideoFullscreenControllerAVKit.mm

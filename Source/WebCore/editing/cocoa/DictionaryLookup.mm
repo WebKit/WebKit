@@ -46,6 +46,7 @@
 #import "VisiblePosition.h"
 #import "VisibleSelection.h"
 #import "VisibleUnits.h"
+#import <pal/ios/UIKitSoftLink.h>
 #import <pal/spi/cg/CoreGraphicsSPI.h>
 #import <pal/spi/cocoa/RevealSPI.h>
 #import <pal/spi/ios/UIKitSPI.h>
@@ -63,10 +64,6 @@ extern "C" {
 }
 SOFT_LINK_PRIVATE_FRAMEWORK(UIKitMacHelper)
 SOFT_LINK(UIKitMacHelper, UINSSharedRevealController, id<UINSRevealController>, (void), ())
-
-SOFT_LINK_FRAMEWORK(UIKit)
-SOFT_LINK_CLASS(UIKit, UIApplication)
-
 
 #endif // PLATFORM(IOSMAC)
 

@@ -38,10 +38,10 @@
 #import <UIKit/UIColor.h>
 #import <UIKit/UIImage.h>
 #import <UIKit/UIPasteboard.h>
+#import <pal/ios/UIKitSoftLink.h>
 #import <pal/spi/cocoa/NSKeyedArchiverSPI.h>
 #import <pal/spi/ios/UIKitSPI.h>
 #import <wtf/ListHashSet.h>
-#import <wtf/SoftLinking.h>
 #import <wtf/URL.h>
 #import <wtf/cocoa/NSURLExtras.h>
 #import <wtf/text/StringHash.h>
@@ -50,15 +50,10 @@
 #define PASTEBOARD_SUPPORTS_PRESENTATION_STYLE_AND_TEAM_DATA (PASTEBOARD_SUPPORTS_ITEM_PROVIDERS && !PLATFORM(IOSMAC))
 #define NSURL_SUPPORTS_TITLE (!PLATFORM(IOSMAC))
 
-SOFT_LINK_FRAMEWORK(UIKit)
-SOFT_LINK_CLASS(UIKit, UIColor)
-SOFT_LINK_CLASS(UIKit, UIImage)
-SOFT_LINK_CLASS(UIKit, UIPasteboard)
-
 namespace WebCore {
 
 PlatformPasteboard::PlatformPasteboard()
-    : m_pasteboard([getUIPasteboardClass() generalPasteboard])
+    : m_pasteboard([PAL::getUIPasteboardClass() generalPasteboard])
 {
 }
 
@@ -68,11 +63,11 @@ PlatformPasteboard::PlatformPasteboard(const String& name)
     if (name == "data interaction pasteboard")
         m_pasteboard = [WebItemProviderPasteboard sharedInstance];
     else
-        m_pasteboard = [getUIPasteboardClass() generalPasteboard];
+        m_pasteboard = [PAL::getUIPasteboardClass() generalPasteboard];
 }
 #else
 PlatformPasteboard::PlatformPasteboard(const String&)
-    : m_pasteboard([getUIPasteboardClass() generalPasteboard])
+    : m_pasteboard([PAL::getUIPasteboardClass() generalPasteboard])
 {
 }
 #endif
@@ -231,7 +226,7 @@ String PlatformPasteboard::stringForType(const String& type) const
 Color PlatformPasteboard::color()
 {
     NSData *data = [m_pasteboard dataForPasteboardType:UIColorPboardType];
-    UIColor *uiColor = [NSKeyedUnarchiver unarchivedObjectOfClass:getUIColorClass() fromData:data error:nil];
+    UIColor *uiColor = [NSKeyedUnarchiver unarchivedObjectOfClass:PAL::getUIColorClass() fromData:data error:nil];
     return Color(uiColor.CGColor);
 }
 
@@ -303,7 +298,7 @@ static void registerItemToPasteboard(WebItemProviderRegistrationInfoList *repres
 #if PLATFORM(IOSMAC)
     // In iOSMac, -[UIPasteboard setItemProviders:] is not yet supported, so we fall back to setting an item dictionary when
     // populating the pasteboard upon copy.
-    if ([pasteboard isKindOfClass:getUIPasteboardClass()]) {
+    if ([pasteboard isKindOfClass:PAL::getUIPasteboardClass()]) {
         auto itemDictionary = adoptNS([[NSMutableDictionary alloc] init]);
         [representationsToRegister enumerateItems:[itemDictionary] (id <WebItemProviderRegistrar> item, NSUInteger) {
             if ([item respondsToSelector:@selector(typeIdentifierForClient)] && [item respondsToSelector:@selector(dataForClient)])
@@ -326,7 +321,7 @@ static void registerItemToPasteboard(WebItemProviderRegistrationInfoList *repres
 long PlatformPasteboard::setColor(const Color& color)
 {
     auto representationsToRegister = adoptNS([[WebItemProviderRegistrationInfoList alloc] init]);
-    UIColor *uiColor = [getUIColorClass() colorWithCGColor:cachedCGColor(color)];
+    UIColor *uiColor = [PAL::getUIColorClass() colorWithCGColor:cachedCGColor(color)];
     [representationsToRegister addData:[NSKeyedArchiver archivedDataWithRootObject:uiColor requiringSecureCoding:NO error:nil] forType:UIColorPboardType];
     registerItemToPasteboard(representationsToRegister.get(), m_pasteboard.get());
     return 0;

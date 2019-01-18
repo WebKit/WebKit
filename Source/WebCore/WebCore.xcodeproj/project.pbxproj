@@ -809,7 +809,6 @@
 		2D8FEBDD143E3EF70072502B /* CSSCrossfadeValue.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D8FEBDB143E3EF70072502B /* CSSCrossfadeValue.h */; };
 		2D9066070BE141D400956998 /* RenderLayoutState.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D9066050BE141D400956998 /* RenderLayoutState.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		2D92A79A2134AD7900F493FD /* QuickLookSoftLink.mm in Sources */ = {isa = PBXBuildFile; fileRef = 443917FD1A91B2F8006E04F2 /* QuickLookSoftLink.mm */; };
-		2D92A79D2134AF9500F493FD /* UserAgentIOS.mm in Sources */ = {isa = PBXBuildFile; fileRef = A3AF9D8320325691006CAD06 /* UserAgentIOS.mm */; };
 		2D93AEE319DF5641002A86C3 /* ServicesOverlayController.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D93AEE119DF5641002A86C3 /* ServicesOverlayController.h */; };
 		2D97F04719DD413C001EE9C3 /* MockPageOverlayClient.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2DAAE32C19DCAF6000E002D2 /* MockPageOverlayClient.cpp */; };
 		2D97F04819DD4140001EE9C3 /* MockPageOverlayClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DAAE32D19DCAF6000E002D2 /* MockPageOverlayClient.h */; };
@@ -1229,7 +1228,6 @@
 		44A28AAF12DFB8BF00AE923B /* MathMLNames.h in Headers */ = {isa = PBXBuildFile; fileRef = 44A28AAE12DFB8BF00AE923B /* MathMLNames.h */; };
 		44C991860F3D1EBE00586670 /* ScrollbarThemeIOS.h in Headers */ = {isa = PBXBuildFile; fileRef = 44C991850F3D1EBE00586670 /* ScrollbarThemeIOS.h */; };
 		44C9919F0F3D210E00586670 /* ThemeIOS.h in Headers */ = {isa = PBXBuildFile; fileRef = 44C9919D0F3D210E00586670 /* ThemeIOS.h */; };
-		44C991A00F3D210E00586670 /* ThemeIOS.mm in Sources */ = {isa = PBXBuildFile; fileRef = 44C9919E0F3D210E00586670 /* ThemeIOS.mm */; };
 		44DAB5B215A623580097C1E4 /* Extensions3DOpenGLCommon.h in Headers */ = {isa = PBXBuildFile; fileRef = 44DAB5B015A623580097C1E4 /* Extensions3DOpenGLCommon.h */; };
 		450CEBF115073BBE002BB149 /* LabelableElement.h in Headers */ = {isa = PBXBuildFile; fileRef = 450CEBEF15073BBE002BB149 /* LabelableElement.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		4512502315DCE37D002F84E2 /* SpinButtonElement.h in Headers */ = {isa = PBXBuildFile; fileRef = 4512502115DCE37D002F84E2 /* SpinButtonElement.h */; };
@@ -2437,7 +2435,6 @@
 		8379363F1FBBB0B400C8023C /* ServiceWorkerClientData.h in Headers */ = {isa = PBXBuildFile; fileRef = 8379363E1FBBB0A500C8023C /* ServiceWorkerClientData.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		837964CF1F8DB69D00218EA0 /* GeolocationPositionIOS.mm in Sources */ = {isa = PBXBuildFile; fileRef = 837964CE1F8DB69A00218EA0 /* GeolocationPositionIOS.mm */; };
 		837A80131E1E127300026B9F /* Localizable.stringsdict in Resources */ = {isa = PBXBuildFile; fileRef = 837A80111E1E127300026B9F /* Localizable.stringsdict */; };
-		837B7D201DC3F55000D051FC /* ValidationBubbleIOS.mm in Sources */ = {isa = PBXBuildFile; fileRef = 837B7D1F1DC3F54C00D051FC /* ValidationBubbleIOS.mm */; };
 		837D46271FA2A8CE0054E1FA /* ServiceWorkerClientIdentifier.h in Headers */ = {isa = PBXBuildFile; fileRef = 837D46251FA2A8C50054E1FA /* ServiceWorkerClientIdentifier.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		837FB3451F9EA06D00D0FC31 /* ExtendableMessageEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = 837FB3401F9EA06600D0FC31 /* ExtendableMessageEvent.h */; };
 		8386A96D19F61B2E00E1EC4A /* StyleBuilder.h in Headers */ = {isa = PBXBuildFile; fileRef = 8386A96C19F61B2E00E1EC4A /* StyleBuilder.h */; };
@@ -4203,7 +4200,6 @@
 		CE08C3D2152B599A0021B8C2 /* AlternativeTextController.h in Headers */ = {isa = PBXBuildFile; fileRef = CE08C3D0152B599A0021B8C2 /* AlternativeTextController.h */; settings = {ATTRIBUTES = (); }; };
 		CE1866451F72E5B400A0CAB6 /* MarkedText.h in Headers */ = {isa = PBXBuildFile; fileRef = CE1866431F72E5B400A0CAB6 /* MarkedText.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		CE2849871CA360DF00B4A57F /* ContentSecurityPolicyDirectiveNames.h in Headers */ = {isa = PBXBuildFile; fileRef = CE2849861CA360DF00B4A57F /* ContentSecurityPolicyDirectiveNames.h */; };
-		CE4ECCD6215AA81200558C41 /* WebEvent.mm in Sources */ = {isa = PBXBuildFile; fileRef = FE0D84EA1048436E001A179E /* WebEvent.mm */; };
 		CE5FA255209E48C50051D700 /* ContentSecurityPolicyClient.h in Headers */ = {isa = PBXBuildFile; fileRef = CE5FA253209E48C50051D700 /* ContentSecurityPolicyClient.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		CE6DADFA1C591E6A003F6A88 /* ContentSecurityPolicyResponseHeaders.h in Headers */ = {isa = PBXBuildFile; fileRef = CE6DADF81C591E6A003F6A88 /* ContentSecurityPolicyResponseHeaders.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		CE799F981C6A46BC0097B518 /* ContentSecurityPolicySourceList.h in Headers */ = {isa = PBXBuildFile; fileRef = CE799F961C6A46BC0097B518 /* ContentSecurityPolicySourceList.h */; };
@@ -32833,7 +32829,6 @@
 				9759E94514EF1CF80026A2DD /* TextTrackCueList.cpp in Sources */,
 				076970861463AD8700F502CF /* TextTrackList.cpp in Sources */,
 				CD1E7347167BC78E009A885D /* TextTrackRepresentation.cpp in Sources */,
-				44C991A00F3D210E00586670 /* ThemeIOS.mm in Sources */,
 				51DF6D800B92A18E00C2DC85 /* ThreadCheck.mm in Sources */,
 				070334D9145A006F008D8D45 /* TrackBase.cpp in Sources */,
 				070334D31459FFAD008D8D45 /* TrackEvent.cpp in Sources */,
@@ -33431,12 +33426,10 @@
 				2D8B92FD203D13E1009C868F /* UnifiedSource528.cpp in Sources */,
 				2D8B92FE203D13E1009C868F /* UnifiedSource529.cpp in Sources */,
 				2D8B92FF203D13E1009C868F /* UnifiedSource530.cpp in Sources */,
-				2D92A79D2134AF9500F493FD /* UserAgentIOS.mm in Sources */,
 				532042021F9A9F1000B81B2A /* UserAgentScriptsData.cpp in Sources */,
 				7C3B79711908757B00B47A2D /* UserMessageHandler.cpp in Sources */,
 				7CE68344192143A800F4D928 /* UserMessageHandlerDescriptor.cpp in Sources */,
 				7C73FB07191EF417007DE061 /* UserMessageHandlersNamespace.cpp in Sources */,
-				837B7D201DC3F55000D051FC /* ValidationBubbleIOS.mm in Sources */,
 				3FBC4AF3189881560046EE38 /* VideoFullscreenInterfaceAVKit.mm in Sources */,
 				52D5A18F1C54592300DE34A3 /* VideoFullscreenLayerManagerObjC.mm in Sources */,
 				BE88E0DE1715D2A200658D98 /* VideoTrack.cpp in Sources */,
@@ -33458,7 +33451,6 @@
 				CD7E05221651C28200C1201F /* WebCoreAVFResourceLoader.mm in Sources */,
 				CD225C0B1C46FBF400140761 /* WebCoreNSURLSession.mm in Sources */,
 				93F19B0708245E59001E9ABC /* WebCoreView.m in Sources */,
-				CE4ECCD6215AA81200558C41 /* WebEvent.mm in Sources */,
 				D3F3D36D1A69B7DC0059FC2B /* WebGL2RenderingContext.cpp in Sources */,
 				49C7B9C81042D32F0009D447 /* WebGLBuffer.cpp in Sources */,
 				D08B00E220A282490004BC0A /* WebGLCompressedTextureASTC.cpp in Sources */,

@@ -35,13 +35,13 @@
 #import "WebCoreThreadRun.h"
 #import <AVFoundation/AVAudioSession.h>
 #import <AVFoundation/AVRouteDetector.h>
-#import <UIKit/UIApplication.h>
 #import <objc/runtime.h>
+#import <pal/ios/UIKitSoftLink.h>
+#import <pal/spi/ios/UIKitSPI.h>
 #import <wtf/BlockObjCExceptions.h>
 #import <wtf/MainThread.h>
 #import <wtf/RAMSize.h>
 #import <wtf/RetainPtr.h>
-#import <wtf/SoftLinking.h>
 
 SOFT_LINK_FRAMEWORK(AVFoundation)
 SOFT_LINK_CLASS(AVFoundation, AVAudioSession)
@@ -58,19 +58,6 @@ SOFT_LINK_CLASS(AVFoundation, AVRouteDetector)
 #define AVAudioSessionInterruptionNotification getAVAudioSessionInterruptionNotification()
 #define AVAudioSessionInterruptionTypeKey getAVAudioSessionInterruptionTypeKey()
 #define AVAudioSessionInterruptionOptionKey getAVAudioSessionInterruptionOptionKey()
-
-SOFT_LINK_FRAMEWORK(UIKit)
-SOFT_LINK_CLASS(UIKit, UIApplication)
-SOFT_LINK_CONSTANT(UIKit, UIApplicationWillResignActiveNotification, NSString *)
-SOFT_LINK_CONSTANT(UIKit, UIApplicationWillEnterForegroundNotification, NSString *)
-SOFT_LINK_CONSTANT(UIKit, UIApplicationDidBecomeActiveNotification, NSString *)
-SOFT_LINK_CONSTANT(UIKit, UIApplicationDidEnterBackgroundNotification, NSString *)
-
-#define UIApplication getUIApplicationClass()
-#define UIApplicationWillResignActiveNotification getUIApplicationWillResignActiveNotification()
-#define UIApplicationWillEnterForegroundNotification getUIApplicationWillEnterForegroundNotification()
-#define UIApplicationDidBecomeActiveNotification getUIApplicationDidBecomeActiveNotification()
-#define UIApplicationDidEnterBackgroundNotification getUIApplicationDidEnterBackgroundNotification()
 
 WEBCORE_EXPORT NSString* WebUIApplicationWillResignActiveNotification = @"WebUIApplicationWillResignActiveNotification";
 WEBCORE_EXPORT NSString* WebUIApplicationWillEnterForegroundNotification = @"WebUIApplicationWillEnterForegroundNotification";
@@ -207,19 +194,19 @@ void MediaSessionManageriOS::externalOutputDeviceAvailableDidChange()
     NSNotificationCenter *center = [NSNotificationCenter defaultCenter];
     [center addObserver:self selector:@selector(interruption:) name:AVAudioSessionInterruptionNotification object:[AVAudioSession sharedInstance]];
 
-    [center addObserver:self selector:@selector(applicationWillEnterForeground:) name:UIApplicationWillEnterForegroundNotification object:nil];
+    [center addObserver:self selector:@selector(applicationWillEnterForeground:) name:PAL::get_UIKit_UIApplicationWillEnterForegroundNotification() object:nil];
     [center addObserver:self selector:@selector(applicationWillEnterForeground:) name:WebUIApplicationWillEnterForegroundNotification object:nil];
-    [center addObserver:self selector:@selector(applicationDidBecomeActive:) name:UIApplicationDidBecomeActiveNotification object:nil];
+    [center addObserver:self selector:@selector(applicationDidBecomeActive:) name:PAL::get_UIKit_UIApplicationDidBecomeActiveNotification() object:nil];
     [center addObserver:self selector:@selector(applicationDidBecomeActive:) name:WebUIApplicationDidBecomeActiveNotification object:nil];
-    [center addObserver:self selector:@selector(applicationWillResignActive:) name:UIApplicationWillResignActiveNotification object:nil];
+    [center addObserver:self selector:@selector(applicationWillResignActive:) name:PAL::get_UIKit_UIApplicationWillResignActiveNotification() object:nil];
     [center addObserver:self selector:@selector(applicationWillResignActive:) name:WebUIApplicationWillResignActiveNotification object:nil];
-    [center addObserver:self selector:@selector(applicationDidEnterBackground:) name:UIApplicationDidEnterBackgroundNotification object:nil];
+    [center addObserver:self selector:@selector(applicationDidEnterBackground:) name:PAL::get_UIKit_UIApplicationDidEnterBackgroundNotification() object:nil];
     [center addObserver:self selector:@selector(applicationDidEnterBackground:) name:WebUIApplicationDidEnterBackgroundNotification object:nil];
 
     // Now playing won't work unless we turn on the delivery of remote control events.
     dispatch_async(dispatch_get_main_queue(), ^ {
         BEGIN_BLOCK_OBJC_EXCEPTIONS
-        [[UIApplication sharedApplication] beginReceivingRemoteControlEvents];
+        [[PAL::getUIApplicationClass() sharedApplication] beginReceivingRemoteControlEvents];
         END_BLOCK_OBJC_EXCEPTIONS
     });
 

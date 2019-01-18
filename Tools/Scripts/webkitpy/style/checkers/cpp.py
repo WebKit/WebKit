@@ -3332,6 +3332,10 @@ def check_language(filename, clean_lines, line_number, file_extension, include_s
                           'RetainPtr<> should never contain a type with \'*\'. Correct: RetainPtr<NSString>, RetainPtr<CFStringRef>.')
                 break
 
+    if search(r'^\s*SOFT_LINK_FRAMEWORK\(UIKit\)', line):
+        error(line_number, 'softlink/uikit', 5,
+              'Use #import <pal/ios/UIKitSoftLink.h> and update pal/ios/UIKitSoftLink.mm to soft-link to UIKit.framework.')
+
     # Check for suspicious usage of "if" like
     # } if (a == b) {
     if search(r'\}\s*if\s*\(', line):
@@ -4084,6 +4088,7 @@ class CppChecker(object):
         'security/assertion',
         'security/printf',
         'security/temp_file',
+        'softlink/uikit',
         'whitespace/blank_line',
         'whitespace/braces',
         'whitespace/brackets',

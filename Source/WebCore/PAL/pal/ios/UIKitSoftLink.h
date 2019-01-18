@@ -30,15 +30,39 @@
 #import <pal/spi/ios/UIKitSPI.h>
 #import <wtf/SoftLinking.h>
 
+@class CUICatalog;
+
 SOFT_LINK_FRAMEWORK_FOR_HEADER(PAL, UIKit)
 
+SOFT_LINK_CONSTANT_FOR_HEADER(PAL, UIKit, UIApplicationWillResignActiveNotification, NSNotificationName)
+SOFT_LINK_CONSTANT_FOR_HEADER(PAL, UIKit, UIApplicationWillEnterForegroundNotification, NSNotificationName)
+SOFT_LINK_CONSTANT_FOR_HEADER(PAL, UIKit, UIApplicationDidBecomeActiveNotification, NSNotificationName)
+SOFT_LINK_CONSTANT_FOR_HEADER(PAL, UIKit, UIApplicationDidEnterBackgroundNotification, NSNotificationName)
+SOFT_LINK_CONSTANT_FOR_HEADER(PAL, UIKit, UIContentSizeCategoryDidChangeNotification, NSNotificationName)
+SOFT_LINK_CONSTANT_FOR_HEADER(PAL, UIKit, UIFontTextStyleCallout, UIFontTextStyle)
+SOFT_LINK_CONSTANT_FOR_HEADER(PAL, UIKit, UITextEffectsBeneathStatusBarWindowLevel, UIWindowLevel)
 SOFT_LINK_CLASS_FOR_HEADER(PAL, NSParagraphStyle)
 SOFT_LINK_CLASS_FOR_HEADER(PAL, NSShadow)
 SOFT_LINK_CLASS_FOR_HEADER(PAL, NSTextList)
 SOFT_LINK_CLASS_FOR_HEADER(PAL, UIApplication)
-SOFT_LINK_CLASS_FOR_HEADER(PAL, UIScreen)
 SOFT_LINK_CLASS_FOR_HEADER(PAL, UIColor)
+SOFT_LINK_CLASS_FOR_HEADER(PAL, UIDevice)
+SOFT_LINK_CLASS_FOR_HEADER(PAL, UIDocumentInteractionController)
+SOFT_LINK_CLASS_FOR_HEADER(PAL, UIFont)
+SOFT_LINK_CLASS_FOR_HEADER(PAL, UIGraphicsImageRenderer)
+SOFT_LINK_CLASS_FOR_HEADER(PAL, UIImage)
+SOFT_LINK_CLASS_FOR_HEADER(PAL, UILabel)
+SOFT_LINK_CLASS_FOR_HEADER(PAL, UIPasteboard)
+SOFT_LINK_CLASS_FOR_HEADER(PAL, UIScreen)
+SOFT_LINK_CLASS_FOR_HEADER(PAL, UITapGestureRecognizer)
+SOFT_LINK_CLASS_FOR_HEADER(PAL, UIView)
+SOFT_LINK_CLASS_FOR_HEADER(PAL, UIViewController)
+SOFT_LINK_CLASS_FOR_HEADER(PAL, UIWindow)
+SOFT_LINK_FUNCTION_FOR_HEADER(PAL, UIKit, _UIKitGetTextEffectsCatalog, CUICatalog *, (void), ())
 SOFT_LINK_FUNCTION_FOR_HEADER(PAL, UIKit, UIAccessibilityIsGrayscaleEnabled, BOOL, (void), ())
 SOFT_LINK_FUNCTION_FOR_HEADER(PAL, UIKit, UIAccessibilityIsInvertColorsEnabled, BOOL, (void), ())
+SOFT_LINK_FUNCTION_FOR_HEADER(PAL, UIKit, UIAccessibilityIsReduceMotionEnabled, BOOL, (void), ())
+SOFT_LINK_FUNCTION_FOR_HEADER(PAL, UIKit, UIAccessibilityPostNotification, void, (UIAccessibilityNotifications n, id argument), (n, argument))
+SOFT_LINK_VARIABLE_FOR_HEADER(PAL, UIKit, UIAccessibilityAnnouncementNotification, UIAccessibilityNotifications)
 
 #endif

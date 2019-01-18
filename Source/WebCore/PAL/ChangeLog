@@ -1,3 +1,21 @@
+2019-01-18  David Kilzer  <ddkilzer@apple.com>
+
+        Switch remaining UIKit soft-linking in WebCore, WebKitLegacy over to UIKitSoftLink.{cpp,h}
+        <https://webkit.org/b/193568>
+        <rdar://problem/47381130>
+
+        Reviewed by Alex Christensen.
+
+        * pal/ios/UIKitSoftLink.h:
+        * pal/ios/UIKitSoftLink.mm:
+        - Add constants, classes and functions that were previously
+          soft-linked in separate source files.
+        - UIAccessibilityAnnouncementNotification is declared as a
+          variable because this constant is not marked as `const` in
+          UIKit.
+        * pal/spi/ios/UIKitSPI.h:
+        - Move SPI declarations from HTMLConverter.mm to here.
+
 2019-01-17  Truitt Savell  <tsavell@apple.com>
 
         Unreviewed, rolling out r240124.

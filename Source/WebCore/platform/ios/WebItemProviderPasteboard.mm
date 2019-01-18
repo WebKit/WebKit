@@ -36,15 +36,11 @@
 #import <UIKit/UIImage.h>
 #import <WebCore/FileSystem.h>
 #import <WebCore/Pasteboard.h>
+#import <pal/ios/UIKitSoftLink.h>
 #import <pal/spi/ios/UIKitSPI.h>
 #import <wtf/BlockPtr.h>
 #import <wtf/OSObjectPtr.h>
 #import <wtf/RetainPtr.h>
-#import <wtf/SoftLinking.h>
-
-SOFT_LINK_FRAMEWORK(UIKit)
-SOFT_LINK_CLASS(UIKit, UIColor)
-SOFT_LINK_CLASS(UIKit, UIImage)
 
 typedef void(^ItemProviderDataLoadCompletionHandler)(NSData *, NSError *);
 typedef void(^ItemProviderFileLoadCompletionHandler)(NSURL *, BOOL, NSError *);
@@ -579,7 +575,7 @@ static UIPreferredPresentationStyle uiPreferredPresentationStyle(WebPreferredPre
 
 static NSArray<Class<NSItemProviderReading>> *allLoadableClasses()
 {
-    return @[ [getUIColorClass() class], [getUIImageClass() class], [NSURL class], [NSString class], [NSAttributedString class] ];
+    return @[ [PAL::getUIColorClass() class], [PAL::getUIImageClass() class], [NSURL class], [NSString class], [NSAttributedString class] ];
 }
 
 static Class classForTypeIdentifier(NSString *typeIdentifier, NSString *&outTypeIdentifierToLoad)

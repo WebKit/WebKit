@@ -29,22 +29,11 @@
 
 #import "ValidationBubble.h"
 
+#import <pal/ios/UIKitSoftLink.h>
 #import <pal/spi/ios/UIKitSPI.h>
 #import <wtf/RetainPtr.h>
 #import <wtf/SoftLinking.h>
 #import <wtf/text/WTFString.h>
-
-SOFT_LINK_FRAMEWORK(UIKit);
-SOFT_LINK_CLASS(UIKit, UIFont);
-SOFT_LINK_CLASS(UIKit, UILabel);
-SOFT_LINK_CLASS(UIKit, UIPopoverPresentationController);
-SOFT_LINK_CLASS(UIKit, UITapGestureRecognizer);
-SOFT_LINK_CLASS(UIKit, UIView);
-SOFT_LINK_CLASS(UIKit, UIViewController);
-SOFT_LINK_CONSTANT(UIKit, UIFontTextStyleCallout, UIFontTextStyle);
-SOFT_LINK_CONSTANT(UIKit, UIAccessibilityAnnouncementNotification, UIAccessibilityNotifications);
-#define UIAccessibilityPostNotification getUIAccessibilityPostNotification
-SOFT_LINK(UIKit, UIAccessibilityPostNotification, void, (UIAccessibilityNotifications n, id argument), (n, argument));
 
 @interface WebValidationBubbleTapRecognizer : NSObject
 @end
@@ -61,7 +50,7 @@ SOFT_LINK(UIKit, UIAccessibilityPostNotification, void, (UIAccessibilityNotifica
         return nil;
 
     _popoverController = popoverController;
-    _tapGestureRecognizer = adoptNS([allocUITapGestureRecognizerInstance() initWithTarget:self action:@selector(dismissPopover)]);
+    _tapGestureRecognizer = adoptNS([PAL::allocUITapGestureRecognizerInstance() initWithTarget:self action:@selector(dismissPopover)]);
     [[_popoverController view] addGestureRecognizer:_tapGestureRecognizer.get()];
 
     return self;
@@ -106,16 +95,16 @@ ValidationBubble::ValidationBubble(UIView* view, const String& message, const Se
     : m_view(view)
     , m_message(message)
 {
-    m_popoverController = adoptNS([allocUIViewControllerInstance() init]);
+    m_popoverController = adoptNS([PAL::allocUIViewControllerInstance() init]);
     [m_popoverController setModalPresentationStyle:UIModalPresentationPopover];
 
-    RetainPtr<UIView> popoverView = adoptNS([allocUIViewInstance() initWithFrame:CGRectZero]);
+    RetainPtr<UIView> popoverView = adoptNS([PAL::allocUIViewInstance() initWithFrame:CGRectZero]);
     [m_popoverController setView:popoverView.get()];
     m_tapRecognizer = adoptNS([[WebValidationBubbleTapRecognizer alloc] initWithPopoverController:m_popoverController.get()]);
 
-    RetainPtr<UILabel> label = adoptNS([allocUILabelInstance() initWithFrame:CGRectZero]);
+    RetainPtr<UILabel> label = adoptNS([PAL::allocUILabelInstance() initWithFrame:CGRectZero]);
     [label setText:message];
-    [label setFont:[getUIFontClass() preferredFontForTextStyle:getUIFontTextStyleCallout()]];
+    [label setFont:[PAL::getUIFontClass() preferredFontForTextStyle:PAL::get_UIKit_UIFontTextStyleCallout()]];
     m_fontSize = [[label font] pointSize];
     [label setLineBreakMode:NSLineBreakByTruncatingTail];
     [label setNumberOfLines:4];
@@ -146,13 +135,13 @@ void ValidationBubble::show()
         [protectedThis->m_popoverController.get().view setAccessibilityElementsHidden:YES];
     }];
 
-    UIAccessibilityPostNotification(getUIAccessibilityAnnouncementNotification(), m_message);
+    PAL::softLinkUIKitUIAccessibilityPostNotification(*PAL::get_UIKit_UIAccessibilityAnnouncementNotification(), m_message);
 }
 
 static UIViewController *fallbackViewController(UIView *view)
 {
     for (UIView *currentView = view; currentView; currentView = currentView.superview) {
-        if (UIViewController *viewController = [getUIViewControllerClass() viewControllerForView:currentView])
+        if (UIViewController *viewController = [PAL::getUIViewControllerClass() viewControllerForView:currentView])
             return viewController;
     }
     NSLog(@"Failed to find a view controller to show form validation popover");

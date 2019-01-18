@@ -1,3 +1,85 @@
+2019-01-18  David Kilzer  <ddkilzer@apple.com>
+
+        Switch remaining UIKit soft-linking in WebCore, WebKitLegacy over to UIKitSoftLink.{cpp,h}
+        <https://webkit.org/b/193568>
+        <rdar://problem/47381130>
+
+        Reviewed by Alex Christensen.
+
+        This does the following:
+        - Removes local soft-linking of UIKit.
+        - Switches to using PAL functions for soft-linking.
+
+        * SourcesCocoa.txt: Add 4 source files to UnifiedSources.
+        * WebCore.xcodeproj/project.pbxproj: Remove 4 sources files
+        from WebCore target now that they are in UnifiedSources.
+        * editing/cocoa/DictionaryLookup.mm:
+        * editing/cocoa/HTMLConverter.mm: Move SPI to UIKitSPI.h. Remove
+        declarations in public headers.
+        (_fontForNameAndSize): Change use of getUIFontClass() to
+        PlatformFontClass.
+        (HTMLConverter::_processElement): Add cast here since compiler
+        finds the wrong selector for +clearColor and thinks it returns a
+        `CIColor *` object.  The same cast already exists in
+        VideoFullscreenInterfaceAVKit.mm.
+        * page/cocoa/SettingsBaseCocoa.mm:
+        (WebCore::SettingsBase::defaultTextAutosizingEnabled):
+        * platform/audio/ios/MediaSessionManagerIOS.mm:
+        (-[WebMediaSessionHelper initWithCallback:]):
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.mm:
+        (WebCore::exernalDeviceDisplayNameForPlayer):
+        * platform/graphics/cocoa/FontCascadeCocoa.mm:
+        (WebCore::showLetterpressedGlyphsWithAdvances):
+        * platform/ios/DragImageIOS.mm:
+        (WebCore::scaleDragImage):
+        (WebCore::createDragImageFromImage):
+        (WebCore::cascadeForSystemFont):
+        (WebCore::createDragImageForLink):
+        (WebCore::createDragImageForSelection):
+        (WebCore::createDragImageForRange):
+        (WebCore::createDragImageForColor):
+        * platform/ios/PlatformPasteboardIOS.mm:
+        (WebCore::PlatformPasteboard::PlatformPasteboard):
+        (WebCore::PlatformPasteboard::color):
+        (WebCore::registerItemToPasteboard):
+        (WebCore::PlatformPasteboard::setColor):
+        * platform/ios/ThemeIOS.mm:
+        (WebCore::ThemeIOS::userPrefersReducedMotion const):
+        * platform/ios/UserAgentIOS.mm:
+        (WebCore::isClassic):
+        (WebCore::isClassicPad):
+        (WebCore::isClassicPhone):
+        * platform/ios/ValidationBubbleIOS.mm:
+        (-[WebValidationBubbleTapRecognizer initWithPopoverController:]):
+        (WebCore::ValidationBubble::ValidationBubble):
+        (WebCore::ValidationBubble::show):
+        (WebCore::fallbackViewController):
+        * platform/ios/VideoFullscreenInterfaceAVKit.mm:
+        (clearUIColor):
+        (allocWebAVPictureInPicturePlayerLayerViewInstance):
+        (WebAVPlayerLayerView_videoView):
+        (fallbackViewController):
+        (VideoFullscreenInterfaceAVKit::doSetup):
+        * platform/ios/WebEvent.mm:
+        (+[WebEvent modifierFlags]):
+        * platform/ios/WebItemProviderPasteboard.mm:
+        (allLoadableClasses):
+        * platform/ios/WebVideoFullscreenControllerAVKit.mm:
+        (VideoFullscreenControllerContext::setUpFullscreen):
+        * platform/network/mac/WebCoreURLResponse.mm: Add missing header
+        after unified sources were updated.
+        * rendering/RenderThemeIOS.mm:
+        (WebCore::contentSizeCategoryDidChange):
+        (WebCore::RenderThemeIOS::RenderThemeIOS):
+        (WebCore::RenderThemeIOS::contentSizeCategory):
+        (WebCore::RenderThemeIOS::systemColor const):
+        (WebCore::attachmentActionColor):
+        (WebCore::attachmentTitleColor):
+        (WebCore::attachmentSubtitleColor):
+        (WebCore::iconForAttachment):
+        * testing/Internals.mm:
+        (WebCore::Internals::userPrefersReducedMotion const):
+
 2019-01-18  Antti Koivisto  <antti@apple.com>
 
         Implement asynchronous frame scrolling for iOS

@@ -1,3 +1,20 @@
+2019-01-18  David Kilzer  <ddkilzer@apple.com>
+
+        Switch remaining UIKit soft-linking in WebCore, WebKitLegacy over to UIKitSoftLink.{cpp,h}
+        <https://webkit.org/b/193568>
+        <rdar://problem/47381130>
+
+        Reviewed by Alex Christensen.
+
+        Make sure no one re-introduces UIKit soft-linking by adding a
+        style rule.
+
+        * Scripts/webkitpy/style/checkers/cpp.py:
+        (check_language): Add softlink/uikit check.
+        (CppChecker): Enable softlink/uikit check.
+        * Scripts/webkitpy/style/checkers/cpp_unittest.py:
+        (CppStyleTest): Add test for softlink/uikit.
+
 2019-01-18  Joanmarie Diggs  <jdiggs@igalia.com>
 
         [GTK] install-dependencies tool looks for libunistring-dev for dnf

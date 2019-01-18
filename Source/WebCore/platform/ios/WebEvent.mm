@@ -35,15 +35,10 @@
 
 #import "KeyEventCodesIOS.h"
 #import "WAKAppKitStubs.h"
+#import <pal/ios/UIKitSoftLink.h>
 #import <pal/spi/cocoa/IOKitSPI.h>
 #import <pal/spi/ios/GraphicsServicesSPI.h>
 #import <pal/spi/ios/UIKitSPI.h>
-#import <wtf/SoftLinking.h>
-
-SOFT_LINK_FRAMEWORK(UIKit)
-SOFT_LINK_CLASS(UIKit, UIApplication);
-
-#define UIApplication getUIApplicationClass()
 
 using WebCore::windowsKeyCodeForKeyCode;
 using WebCore::windowsKeyCodeForCharCode;
@@ -463,7 +458,7 @@ static NSString *normalizedStringWithAppKitCompatibilityMapping(NSString *charac
 
 + (WebEventFlags)modifierFlags
 {
-    return GSEventIsHardwareKeyboardAttached() ? GSKeyboardGetModifierState([UIApplication sharedApplication]._hardwareKeyboard) : 0;
+    return GSEventIsHardwareKeyboardAttached() ? GSKeyboardGetModifierState([PAL::getUIApplicationClass() sharedApplication]._hardwareKeyboard) : 0;
 }
 
 @end

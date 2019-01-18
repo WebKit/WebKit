@@ -32,10 +32,12 @@ WTF_EXTERN_C_END
 #if USE(APPLE_INTERNAL_SDK)
 
 #import <UIKit/NSParagraphStyle_Private.h>
+#import <UIKit/NSTextAttachment_Private.h>
 #import <UIKit/NSTextList.h>
 #import <UIKit/UIApplicationSceneConstants.h>
 #import <UIKit/UIApplication_Private.h>
 #import <UIKit/UIColor_Private.h>
+#import <UIKit/UIFont_Private.h>
 #import <UIKit/UIInterface_Private.h>
 #import <UIKit/UIScreen_Private.h>
 #import <UIKit/UIViewController_Private.h>
@@ -66,6 +68,15 @@ typedef NS_ENUM(NSInteger, UIApplicationSceneClassicMode) {
     UIApplicationSceneClassicModeOriginalPad = 4,
 };
 
+typedef enum {
+    UIFontTraitPlain       = 0x00000000,
+    UIFontTraitItalic      = 0x00000001, // 1 << 0
+    UIFontTraitBold        = 0x00000002, // 1 << 1
+    UIFontTraitThin        = (1 << 2),
+    UIFontTraitLight       = (1 << 3),
+    UIFontTraitUltraLight  = (1 << 4)
+} UIFontTrait;
+
 @interface NSParagraphStyle ()
 - (NSArray *)textLists;
 @end
@@ -74,10 +85,15 @@ typedef NS_ENUM(NSInteger, UIApplicationSceneClassicMode) {
 - (void)setTextLists:(NSArray *)textLists;
 @end
 
+@interface NSTextAttachment ()
+- (id)initWithFileWrapper:(NSFileWrapper *)fileWrapper;
+@end
+
 @interface NSTextList : NSObject
 - (instancetype)initWithMarkerFormat:(NSString *)format options:(NSUInteger)mask;
 @property (readonly, copy) NSString *markerFormat;
 @property NSInteger startingItemNumber;
+- (NSString *)markerForItemNumber:(NSInteger)itemNum;
 @end
 
 @interface UIApplication ()
@@ -97,6 +113,14 @@ typedef NS_ENUM(NSInteger, UIApplicationSceneClassicMode) {
 + (UIColor *)systemYellowColor;
 
 + (UIColor *)_disambiguated_due_to_CIImage_colorWithCGColor:(CGColorRef)cgColor;
+
+- (CGFloat)alphaComponent;
+
+@end
+
+@interface UIFont ()
+
++ (UIFont *)fontWithFamilyName:(NSString *)familyName traits:(UIFontTrait)traits size:(CGFloat)fontSize;
 
 @end
 

@@ -1,3 +1,17 @@
+2019-01-18  David Kilzer  <ddkilzer@apple.com>
+
+        Switch remaining UIKit soft-linking in WebCore, WebKitLegacy over to UIKitSoftLink.{cpp,h}
+        <https://webkit.org/b/193568>
+        <rdar://problem/47381130>
+
+        Reviewed by Alex Christensen.
+
+        * WebView/WebView.mm:
+        - Remove unused soft-linking macros.
+        (-[WebUITextIndicatorData initWithImage:textIndicatorData:scale:]):
+        (-[WebUITextIndicatorData initWithImage:scale:]):
+        - Update to use exported PAL functions.
+
 2019-01-17  Truitt Savell  <tsavell@apple.com>
 
         Unreviewed, rolling out r240124.

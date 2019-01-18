@@ -43,6 +43,7 @@
 #import <UIKit/UIWindow.h>
 #import <objc/message.h>
 #import <objc/runtime.h>
+#import <pal/ios/UIKitSoftLink.h>
 #import <pal/spi/cocoa/AVKitSPI.h>
 #import <pal/spi/ios/UIKitSPI.h>
 #import <wtf/RetainPtr.h>
@@ -65,15 +66,6 @@ SOFT_LINK_CLASS_OPTIONAL(AVKit, AVPictureInPictureController)
 SOFT_LINK_CLASS_OPTIONAL(AVKit, AVPlayerViewController)
 SOFT_LINK_CLASS_OPTIONAL(AVKit, __AVPlayerLayerView)
 
-SOFT_LINK_FRAMEWORK(UIKit)
-SOFT_LINK_CLASS(UIKit, UIApplication)
-SOFT_LINK_CLASS(UIKit, UIScreen)
-SOFT_LINK_CLASS(UIKit, UIWindow)
-SOFT_LINK_CLASS(UIKit, UIView)
-SOFT_LINK_CLASS(UIKit, UIViewController)
-SOFT_LINK_CLASS(UIKit, UIColor)
-SOFT_LINK_CONSTANT(UIKit, UITextEffectsBeneathStatusBarWindowLevel, UIWindowLevel)
-
 @interface UIWindow ()
 - (BOOL)_isHostedInAnotherProcess;
 @end
@@ -84,7 +76,7 @@ SOFT_LINK_CONSTANT(UIKit, UITextEffectsBeneathStatusBarWindowLevel, UIWindowLeve
 
 static UIColor *clearUIColor()
 {
-    return (UIColor *)[getUIColorClass() clearColor];
+    return (UIColor *)[PAL::getUIColorClass() clearColor];
 }
 
 #if !LOG_DISABLED
@@ -398,7 +390,7 @@ static WebAVPictureInPicturePlayerLayerView *allocWebAVPictureInPicturePlayerLay
     static Class theClass = nil;
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
-        theClass = objc_allocateClassPair(getUIViewClass(), "WebAVPictureInPicturePlayerLayerView", 0);
+        theClass = objc_allocateClassPair(PAL::getUIViewClass(), "WebAVPictureInPicturePlayerLayerView", 0);
         objc_registerClassPair(theClass);
         Class metaClass = objc_getMetaClass("WebAVPictureInPicturePlayerLayerView");
         class_addMethod(metaClass, @selector(layerClass), (IMP)WebAVPictureInPicturePlayerLayerView_layerClass, "@@:");
@@ -450,7 +442,7 @@ static UIView *WebAVPlayerLayerView_videoView(id aSelf, SEL)
     CALayer* videoLayer = [webAVPlayerLayer videoSublayer];
     if (!videoLayer || !videoLayer.delegate)
         return nil;
-    ASSERT([[videoLayer delegate] isKindOfClass:getUIViewClass()]);
+    ASSERT([[videoLayer delegate] isKindOfClass:PAL::getUIViewClass()]);
     return (UIView *)[videoLayer delegate];
 }
 
@@ -829,7 +821,7 @@ bool VideoFullscreenInterfaceAVKit::pictureInPictureWasStartedWhenEnteringBackgr
 static UIViewController *fallbackViewController(UIView *view)
 {
     for (UIView *currentView = view; currentView; currentView = currentView.superview) {
-        if (UIViewController *viewController = [getUIViewControllerClass() viewControllerForView:currentView]) {
+        if (UIViewController *viewController = [PAL::getUIViewControllerClass() viewControllerForView:currentView]) {
             if (![viewController parentViewController])
                 return viewController;
         }
@@ -1207,14 +1199,14 @@ void VideoFullscreenInterfaceAVKit::doSetup()
 #if !PLATFORM(WATCHOS)
     if (![[m_parentView window] _isHostedInAnotherProcess] && !m_window) {
         if (!m_window)
-            m_window = adoptNS([allocUIWindowInstance() initWithFrame:[[getUIScreenClass() mainScreen] bounds]]);
+            m_window = adoptNS([PAL::allocUIWindowInstance() initWithFrame:[[PAL::getUIScreenClass() mainScreen] bounds]]);
         [m_window setBackgroundColor:clearUIColor()];
         if (!m_viewController)
-            m_viewController = adoptNS([allocUIViewControllerInstance() init]);
+            m_viewController = adoptNS([PAL::allocUIViewControllerInstance() init]);
         [[m_viewController view] setFrame:[m_window bounds]];
         [m_viewController _setIgnoreAppSupportedOrientations:YES];
         [m_window setRootViewController:m_viewController.get()];
-        [m_window setWindowLevel:getUITextEffectsBeneathStatusBarWindowLevel() + 1];
+        [m_window setWindowLevel:PAL::get_UIKit_UITextEffectsBeneathStatusBarWindowLevel() + 1];
         [m_window makeKeyAndVisible];
     }
 #endif

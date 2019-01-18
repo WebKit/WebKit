@@ -43,11 +43,8 @@
 #import <WebCore/HTMLVideoElement.h>
 #import <WebCore/RenderVideo.h>
 #import <WebCore/WebCoreThreadRun.h>
+#import <pal/ios/UIKitSoftLink.h>
 #import <pal/spi/cocoa/QuartzCoreSPI.h>
-#import <wtf/SoftLinking.h>
-
-SOFT_LINK_FRAMEWORK(UIKit)
-SOFT_LINK_CLASS(UIKit, UIView)
 
 using namespace WebCore;
 
@@ -969,7 +966,7 @@ void VideoFullscreenControllerContext::setUpFullscreen(HTMLVideoElement& videoEl
         m_interface->setVideoFullscreenModel(this);
         m_interface->setVideoFullscreenChangeObserver(this);
 
-        m_videoFullscreenView = adoptNS([allocUIViewInstance() init]);
+        m_videoFullscreenView = adoptNS([PAL::allocUIViewInstance() init]);
 
         m_interface->setupFullscreen(*m_videoFullscreenView.get(), videoElementClientRect, viewRef.get(), mode, allowsPictureInPicture, false);
     });

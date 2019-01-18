@@ -30,15 +30,39 @@
 #import <pal/spi/ios/UIKitSPI.h>
 #import <wtf/SoftLinking.h>
 
+@class CUICatalog;
+
 SOFT_LINK_FRAMEWORK_FOR_SOURCE(PAL, UIKit)
 
+SOFT_LINK_CONSTANT_FOR_SOURCE(PAL, UIKit, UIApplicationWillResignActiveNotification, NSNotificationName)
+SOFT_LINK_CONSTANT_FOR_SOURCE(PAL, UIKit, UIApplicationWillEnterForegroundNotification, NSNotificationName)
+SOFT_LINK_CONSTANT_FOR_SOURCE(PAL, UIKit, UIApplicationDidBecomeActiveNotification, NSNotificationName)
+SOFT_LINK_CONSTANT_FOR_SOURCE(PAL, UIKit, UIApplicationDidEnterBackgroundNotification, NSNotificationName)
+SOFT_LINK_CONSTANT_FOR_SOURCE(PAL, UIKit, UIContentSizeCategoryDidChangeNotification, NSNotificationName)
+SOFT_LINK_CONSTANT_FOR_SOURCE(PAL, UIKit, UIFontTextStyleCallout, UIFontTextStyle)
+SOFT_LINK_CONSTANT_FOR_SOURCE(PAL, UIKit, UITextEffectsBeneathStatusBarWindowLevel, UIWindowLevel)
 SOFT_LINK_CLASS_FOR_SOURCE(PAL, UIKit, NSParagraphStyle)
 SOFT_LINK_CLASS_FOR_SOURCE(PAL, UIKit, NSShadow)
 SOFT_LINK_CLASS_FOR_SOURCE(PAL, UIKit, NSTextList)
 SOFT_LINK_CLASS_FOR_SOURCE(PAL, UIKit, UIApplication)
+SOFT_LINK_CLASS_FOR_SOURCE_WITH_EXPORT(PAL, UIKit, UIColor, PAL_EXPORT)
+SOFT_LINK_CLASS_FOR_SOURCE(PAL, UIKit, UIDevice)
+SOFT_LINK_CLASS_FOR_SOURCE(PAL, UIKit, UIDocumentInteractionController)
+SOFT_LINK_CLASS_FOR_SOURCE(PAL, UIKit, UIFont)
+SOFT_LINK_CLASS_FOR_SOURCE(PAL, UIKit, UIGraphicsImageRenderer)
+SOFT_LINK_CLASS_FOR_SOURCE_WITH_EXPORT(PAL, UIKit, UIImage, PAL_EXPORT)
+SOFT_LINK_CLASS_FOR_SOURCE(PAL, UIKit, UILabel)
+SOFT_LINK_CLASS_FOR_SOURCE(PAL, UIKit, UIPasteboard)
 SOFT_LINK_CLASS_FOR_SOURCE(PAL, UIKit, UIScreen)
-SOFT_LINK_CLASS_FOR_SOURCE(PAL, UIKit, UIColor)
+SOFT_LINK_CLASS_FOR_SOURCE(PAL, UIKit, UITapGestureRecognizer)
+SOFT_LINK_CLASS_FOR_SOURCE(PAL, UIKit, UIView)
+SOFT_LINK_CLASS_FOR_SOURCE(PAL, UIKit, UIViewController)
+SOFT_LINK_CLASS_FOR_SOURCE(PAL, UIKit, UIWindow)
+SOFT_LINK_FUNCTION_FOR_SOURCE(PAL, UIKit, _UIKitGetTextEffectsCatalog, CUICatalog *, (void), ())
 SOFT_LINK_FUNCTION_FOR_SOURCE(PAL, UIKit, UIAccessibilityIsGrayscaleEnabled, BOOL, (void), ())
 SOFT_LINK_FUNCTION_FOR_SOURCE(PAL, UIKit, UIAccessibilityIsInvertColorsEnabled, BOOL, (void), ())
+SOFT_LINK_FUNCTION_FOR_SOURCE_WITH_EXPORT(PAL, UIKit, UIAccessibilityIsReduceMotionEnabled, BOOL, (void), (), PAL_EXPORT)
+SOFT_LINK_FUNCTION_FOR_SOURCE(PAL, UIKit, UIAccessibilityPostNotification, void, (UIAccessibilityNotifications n, id argument), (n, argument))
+SOFT_LINK_VARIABLE_FOR_SOURCE(PAL, UIKit, UIAccessibilityAnnouncementNotification, UIAccessibilityNotifications)
 
 #endif

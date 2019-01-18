@@ -30,13 +30,8 @@
 
 #if PLATFORM(IOS_FAMILY)
 #include "Device.h"
+#include <pal/ios/UIKitSoftLink.h>
 #include <pal/spi/ios/UIKitSPI.h>
-#include <wtf/SoftLinking.h>
-#endif
-
-#if PLATFORM(IOS_FAMILY)
-SOFT_LINK_FRAMEWORK(UIKit)
-SOFT_LINK_CLASS(UIKit, UIApplication)
 #endif
 
 namespace WebCore {
@@ -130,7 +125,7 @@ void SettingsBase::initializeDefaultFontFamilies()
 
 bool SettingsBase::defaultTextAutosizingEnabled()
 {
-    return !deviceHasIPadCapability() || [[getUIApplicationClass() sharedApplication] _isClassic];
+    return !deviceHasIPadCapability() || [[PAL::getUIApplicationClass() sharedApplication] _isClassic];
 }
 
 #endif
