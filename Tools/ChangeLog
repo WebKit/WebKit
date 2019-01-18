@@ -1,3 +1,13 @@
+2019-01-18  Aakash Jain  <aakash_jain@apple.com>
+
+        [ews-app] Send patch author as a build property
+        https://bugs.webkit.org/show_bug.cgi?id=193560
+
+        Reviewed by Lucas Forschler.
+
+        * BuildSlaveSupport/ews-app/ews/fetcher.py:
+        (BugzillaPatchFetcher.fetch):
+
 2019-01-18  Jonathan Bedard  <jbedard@apple.com>
 
         webkitpy: Implement device type specific expected results (Follow-up fix)
