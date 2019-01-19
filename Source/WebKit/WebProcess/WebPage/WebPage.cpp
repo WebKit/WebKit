@@ -5365,7 +5365,8 @@ void WebPage::focusedElementDidChangeInputMode(WebCore::Element& element, WebCor
 {
 #if PLATFORM(IOS_FAMILY)
     ASSERT(m_focusedElement == &element);
-    ASSERT(element.canonicalInputMode() == mode);
+    ASSERT(is<HTMLElement>(element));
+    ASSERT(downcast<HTMLElement>(element).canonicalInputMode() == mode);
 
     if (!is<HTMLTextAreaElement>(*m_focusedElement) && !is<HTMLInputElement>(*m_focusedElement) && !m_focusedElement->hasEditableStyle())
         return;
