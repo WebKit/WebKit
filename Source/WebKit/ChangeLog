@@ -1,3 +1,9 @@
+2019-01-19  David Kilzer  <ddkilzer@apple.com>
+
+        Sort WebKit Xcode project file
+
+        * WebKit.xcodeproj/project.pbxproj:
+
 2019-01-19  Antoine Quint  <graouts@apple.com>
 
         Add a POINTER_EVENTS feature flag
