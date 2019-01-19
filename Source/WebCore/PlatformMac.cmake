@@ -381,6 +381,8 @@ list(APPEND WebCore_SOURCES
     platform/mac/WebCoreObjCExtras.mm
     platform/mac/WebGLBlacklist.mm
     platform/mac/WebNSAttributedStringExtras.mm
+    platform/mac/WebVideoFullscreenController.mm
+    platform/mac/WebVideoFullscreenHUDWindowController.mm
     platform/mac/WidgetMac.mm
 
     platform/mediastream/mac/MockRealtimeVideoSourceMac.mm

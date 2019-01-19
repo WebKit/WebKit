@@ -255,6 +255,7 @@
 #import "WebNSPrintOperationExtras.h"
 #import "WebPDFView.h"
 #import "WebSwitchingGPUClient.h"
+#import "WebVideoFullscreenController.h"
 #import <WebCore/TextIndicator.h>
 #import <WebCore/TextIndicatorWindow.h>
 #import <pal/spi/cocoa/AVKitSPI.h>
@@ -9379,7 +9380,6 @@ bool LayerFlushController::flushLayers()
 #if ENABLE(VIDEO)
 - (void)_enterVideoFullscreenForVideoElement:(WebCore::HTMLVideoElement*)videoElement mode:(WebCore::HTMLMediaElementEnums::VideoFullscreenMode)mode
 {
-#if PLATFORM(IOS_FAMILY)
     if (_private->fullscreenController) {
         if ([_private->fullscreenController videoElement] == videoElement) {
             // The backend may just warn us that the underlaying plaftormMovie()
@@ -9397,22 +9397,23 @@ bool LayerFlushController::flushLayers()
     if (!_private->fullscreenController) {
         _private->fullscreenController = [[WebVideoFullscreenController alloc] init];
         [_private->fullscreenController setVideoElement:videoElement];
+#if PLATFORM(IOS_FAMILY)
         [_private->fullscreenController enterFullscreen:(UIView *)[[[self window] hostLayer] delegate] mode:mode];
+#else
+        [_private->fullscreenController enterFullscreen:[[self window] screen]];
+#endif
     }
     else
         [_private->fullscreenController setVideoElement:videoElement];
-#endif
 }
 
 - (void)_exitVideoFullscreen
 {
-#if PLATFORM(IOS_FAMILY)
     if (!_private->fullscreenController)
         return;
     [_private->fullscreenController exitFullscreen];
     [_private->fullscreenController release];
     _private->fullscreenController = nil;
-#endif
 }
 
 #if PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE)

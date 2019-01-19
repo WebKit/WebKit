@@ -1,3 +1,107 @@
+2019-01-18  Eric Carlson  <eric.carlson@apple.com>
+
+        Revert r238815, it broke WK1 video fullscreen on Mac
+        https://bugs.webkit.org/show_bug.cgi?id=193586
+        <rdar://problem/47358941>
+
+        Reviewed by Jer Noble.
+
+        * WebView/WebVideoFullscreenController.h: Added.
+        * WebView/WebVideoFullscreenController.mm: Added.
+        (SOFT_LINK_CLASS):
+        (-[WebVideoFullscreenController init]):
+        (-[WebVideoFullscreenController dealloc]):
+        (-[WebVideoFullscreenController fullscreenWindow]):
+        (-[WebVideoFullscreenController windowDidLoad]):
+        (-[WebVideoFullscreenController videoElement]):
+        (-[WebVideoFullscreenController setVideoElement:]):
+        (-[WebVideoFullscreenController clearFadeAnimation]):
+        (-[WebVideoFullscreenController windowDidExitFullscreen]):
+        (-[WebVideoFullscreenController windowDidEnterFullscreen]):
+        (-[WebVideoFullscreenController videoElementRect]):
+        (-[WebVideoFullscreenController applicationDidResignActive:]):
+        (frameExpandedToRatioOfFrame):
+        (createBackgroundFullscreenWindow):
+        (-[WebVideoFullscreenController setupFadeAnimationIfNeededAndFadeIn:]):
+        (-[WebVideoFullscreenController enterFullscreen:]):
+        (-[WebVideoFullscreenController exitFullscreen]):
+        (-[WebVideoFullscreenController applicationDidChangeScreenParameters:]):
+        (-[WebVideoFullscreenController updateMenuAndDockForFullscreen]):
+        (-[WebVideoFullscreenController _requestExit]):
+        (-[WebVideoFullscreenController requestExitFullscreenWithAnimation:]):
+        (-[WebVideoFullscreenController requestExitFullscreen]):
+        (-[WebVideoFullscreenController fadeHUDIn]):
+        (-[WebVideoFullscreenController observeValueForKeyPath:ofObject:change:context:]):
+        (-[WebVideoFullscreenController rateChanged:]):
+        (-[WebVideoFullscreenWindow initWithContentRect:styleMask:backing:defer:]):
+        (-[WebVideoFullscreenWindow dealloc]):
+        (-[WebVideoFullscreenWindow resignFirstResponder]):
+        (-[WebVideoFullscreenWindow canBecomeKeyWindow]):
+        (-[WebVideoFullscreenWindow mouseDown:]):
+        (-[WebVideoFullscreenWindow cancelOperation:]):
+        (-[WebVideoFullscreenWindow animatedResizeDidEnd]):
+        (-[WebVideoFullscreenWindow animateFromRect:toRect:withSubAnimation:controllerAction:]):
+        (-[WebVideoFullscreenWindow animationDidEnd:]):
+        (-[WebVideoFullscreenWindow mouseMoved:]):
+        * WebView/WebVideoFullscreenHUDWindowController.h: Added.
+        * WebView/WebVideoFullscreenHUDWindowController.mm: Added.
+        (-[WebVideoFullscreenHUDWindow initWithContentRect:styleMask:backing:defer:]):
+        (-[WebVideoFullscreenHUDWindow canBecomeKeyWindow]):
+        (-[WebVideoFullscreenHUDWindow cancelOperation:]):
+        (-[WebVideoFullscreenHUDWindow center]):
+        (-[WebVideoFullscreenHUDWindow keyDown:]):
+        (-[WebVideoFullscreenHUDWindow resignFirstResponder]):
+        (-[WebVideoFullscreenHUDWindow performKeyEquivalent:]):
+        (-[WebVideoFullscreenHUDWindowController init]):
+        (-[WebVideoFullscreenHUDWindowController dealloc]):
+        (-[WebVideoFullscreenHUDWindowController setArea:]):
+        (-[WebVideoFullscreenHUDWindowController keyDown:]):
+        (-[WebVideoFullscreenHUDWindowController delegate]):
+        (-[WebVideoFullscreenHUDWindowController setDelegate:]):
+        (-[WebVideoFullscreenHUDWindowController scheduleTimeUpdate]):
+        (-[WebVideoFullscreenHUDWindowController unscheduleTimeUpdate]):
+        (-[WebVideoFullscreenHUDWindowController fadeWindowIn]):
+        (-[WebVideoFullscreenHUDWindowController fadeWindowOut]):
+        (-[WebVideoFullscreenHUDWindowController closeWindow]):
+        (createMediaUIControl):
+        (createControlWithMediaUIControlType):
+        (createTimeTextField):
+        (createMediaUIBackgroundView):
+        (-[WebVideoFullscreenHUDWindowController windowDidLoad]):
+        (-[WebVideoFullscreenHUDWindowController updateVolume]):
+        (-[WebVideoFullscreenHUDWindowController updateTime]):
+        (-[WebVideoFullscreenHUDWindowController endScrubbing]):
+        (-[WebVideoFullscreenHUDWindowController timelinePositionChanged:]):
+        (-[WebVideoFullscreenHUDWindowController currentTime]):
+        (-[WebVideoFullscreenHUDWindowController setCurrentTime:]):
+        (-[WebVideoFullscreenHUDWindowController duration]):
+        (-[WebVideoFullscreenHUDWindowController maxVolume]):
+        (-[WebVideoFullscreenHUDWindowController volumeChanged:]):
+        (-[WebVideoFullscreenHUDWindowController setVolumeToZero:]):
+        (-[WebVideoFullscreenHUDWindowController setVolumeToMaximum:]):
+        (-[WebVideoFullscreenHUDWindowController decrementVolume]):
+        (-[WebVideoFullscreenHUDWindowController incrementVolume]):
+        (-[WebVideoFullscreenHUDWindowController volume]):
+        (-[WebVideoFullscreenHUDWindowController setVolume:]):
+        (-[WebVideoFullscreenHUDWindowController updatePlayButton]):
+        (-[WebVideoFullscreenHUDWindowController updateRate]):
+        (-[WebVideoFullscreenHUDWindowController togglePlaying:]):
+        (-[WebVideoFullscreenHUDWindowController playing]):
+        (-[WebVideoFullscreenHUDWindowController setPlaying:]):
+        (timeToString):
+        (-[WebVideoFullscreenHUDWindowController remainingTimeText]):
+        (-[WebVideoFullscreenHUDWindowController elapsedTimeText]):
+        (-[WebVideoFullscreenHUDWindowController mouseEntered:]):
+        (-[WebVideoFullscreenHUDWindowController mouseExited:]):
+        (-[WebVideoFullscreenHUDWindowController rewind:]):
+        (-[WebVideoFullscreenHUDWindowController fastForward:]):
+        (-[WebVideoFullscreenHUDWindowController exitFullscreen:]):
+        (-[WebVideoFullscreenHUDWindowController windowDidExpose:]):
+        (-[WebVideoFullscreenHUDWindowController windowDidClose:]):
+        * WebView/WebView.mm:
+        (-[WebView _enterVideoFullscreenForVideoElement:mode:]):
+        (-[WebView _exitVideoFullscreen]):
+
 2019-01-18  Tim Horton  <timothy_horton@apple.com>
 
         Get rid of ADVANCED_SPELL_CHECKING
