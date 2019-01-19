@@ -588,7 +588,7 @@ class DefaultBenchmark extends Benchmark {
         }
         results = copyArray(results);
 
-        this.firstIteration = results[0];
+        this.firstIteration = toScore(results[0]);
 
         results = results.slice(1);
         results.sort((a, b) => a < b ? 1 : -1);
@@ -598,12 +598,12 @@ class DefaultBenchmark extends Benchmark {
         let worstCase = [];
         for (let i = 0; i < this.worstCaseCount; ++i)
             worstCase.push(results[i]);
-        this.worst4 = mean(worstCase);
-        this.average = mean(results);
+        this.worst4 = toScore(mean(worstCase));
+        this.average = toScore(mean(results));
     }
 
     get score() {
-        return toScore(geomean([this.firstIteration, this.worst4, this.average]));
+        return geomean([this.firstIteration, this.worst4, this.average]);
     }
 
     subTimes() {
@@ -615,7 +615,7 @@ class DefaultBenchmark extends Benchmark {
     }
 
     static scoreDescription() {
-        return ["First (ms)", "Worst (ms)", "Average (ms)", "Score"];
+        return ["First", "Worst", "Average", "Score"];
     }
 
     scoreIdentifiers() {
@@ -674,12 +674,12 @@ class WSLBenchmark extends Benchmark {
     }
 
     processResults(results) {
-        this.stdlib = results[0];
-        this.mainRun = results[1];
+        this.stdlib = toScore(results[0]);
+        this.mainRun = toScore(results[1]);
     }
 
     get score() {
-        return toScore(geomean([this.stdlib, this.mainRun]));
+        return geomean([this.stdlib, this.mainRun]);
     }
 
     get runnerCode() {
@@ -710,7 +710,7 @@ class WSLBenchmark extends Benchmark {
     }
 
     static scoreDescription() {
-        return ["Stdlib (ms)", "MainRun (ms)", "Score"];
+        return ["Stdlib", "MainRun", "Score"];
     }
 
     scoreIdentifiers() {
@@ -747,12 +747,12 @@ class WasmBenchmark extends Benchmark {
     }
 
     processResults(results) {
-        this.startupTime = results[0];
-        this.runTime = results[1];
+        this.startupTime = toScore(results[0]);
+        this.runTime = toScore(results[1]);
     }
 
     get score() {
-        return toScore(geomean([this.startupTime, this.runTime]));
+        return geomean([this.startupTime, this.runTime]);
     }
 
     get wasmPath() {
@@ -857,7 +857,7 @@ class WasmBenchmark extends Benchmark {
     }
 
     static scoreDescription() {
-        return ["Startup (ms)", "Runtime (ms)", "Score"];
+        return ["Startup", "Runtime", "Score"];
     }
 
     get startupID() {
