@@ -1,3 +1,11 @@
+2019-01-18  David Kilzer  <ddkilzer@apple.com>
+
+        [WebKit] Change Xcode folders to map to folders on disk
+
+        * WebKit.xcodeproj/project.pbxproj: Update these folders:
+        - Shared/Authentication
+        - Shared/Authentication/cocoa
+
 2019-01-18  Brian Burg  <bburg@apple.com>
 
         Automation.computeElementLayout should return visual viewport-aware coordinates

@@ -3219,9 +3219,9 @@
 		518ACF1012B015F800B04B83 /* WKCredentialTypes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKCredentialTypes.h; sourceTree = "<group>"; };
 		518D2CAB12D5153B003BB93B /* WebBackForwardListItem.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebBackForwardListItem.cpp; sourceTree = "<group>"; };
 		518D2CAC12D5153B003BB93B /* WebBackForwardListItem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebBackForwardListItem.h; sourceTree = "<group>"; };
-		518E8EF316B2091C00E91429 /* AuthenticationManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = AuthenticationManager.cpp; path = Authentication/AuthenticationManager.cpp; sourceTree = "<group>"; };
-		518E8EF416B2091C00E91429 /* AuthenticationManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AuthenticationManager.h; path = Authentication/AuthenticationManager.h; sourceTree = "<group>"; };
-		518E8EF516B2091C00E91429 /* AuthenticationManager.messages.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = AuthenticationManager.messages.in; path = Authentication/AuthenticationManager.messages.in; sourceTree = "<group>"; };
+		518E8EF316B2091C00E91429 /* AuthenticationManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AuthenticationManager.cpp; sourceTree = "<group>"; };
+		518E8EF416B2091C00E91429 /* AuthenticationManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AuthenticationManager.h; sourceTree = "<group>"; };
+		518E8EF516B2091C00E91429 /* AuthenticationManager.messages.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = AuthenticationManager.messages.in; sourceTree = "<group>"; };
 		51933DEB1965EB24008AC3EA /* MenuUtilities.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MenuUtilities.h; sourceTree = "<group>"; };
 		51933DEC1965EB24008AC3EA /* MenuUtilities.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = MenuUtilities.mm; sourceTree = "<group>"; };
 		5194B3861F192FB900FA4708 /* CookieStorageUtilsCF.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CookieStorageUtilsCF.h; sourceTree = "<group>"; };
@@ -3359,8 +3359,8 @@
 		578DC2972155A0010074E815 /* LocalAuthenticationSoftLink.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = LocalAuthenticationSoftLink.h; sourceTree = "<group>"; };
 		57AC8F4E217FEED90055438C /* HidConnection.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = HidConnection.h; sourceTree = "<group>"; };
 		57AC8F4F217FEED90055438C /* HidConnection.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = HidConnection.mm; sourceTree = "<group>"; };
-		57B4B45D20B504AB00D4AD79 /* AuthenticationManagerCocoa.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = AuthenticationManagerCocoa.mm; path = Authentication/cocoa/AuthenticationManagerCocoa.mm; sourceTree = "<group>"; };
-		57B4B45E20B504AB00D4AD79 /* ClientCertificateAuthenticationXPCConstants.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ClientCertificateAuthenticationXPCConstants.h; path = Authentication/cocoa/ClientCertificateAuthenticationXPCConstants.h; sourceTree = "<group>"; };
+		57B4B45D20B504AB00D4AD79 /* AuthenticationManagerCocoa.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = AuthenticationManagerCocoa.mm; sourceTree = "<group>"; };
+		57B4B45E20B504AB00D4AD79 /* ClientCertificateAuthenticationXPCConstants.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ClientCertificateAuthenticationXPCConstants.h; sourceTree = "<group>"; };
 		57DCED6A2142EAE20016B847 /* WebAuthenticatorCoordinatorMessages.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WebAuthenticatorCoordinatorMessages.h; path = DerivedSources/WebKit2/WebAuthenticatorCoordinatorMessages.h; sourceTree = BUILT_PRODUCTS_DIR; };
 		57DCED6B2142EAE20016B847 /* WebAuthenticatorCoordinatorMessageReceiver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = WebAuthenticatorCoordinatorMessageReceiver.cpp; path = DerivedSources/WebKit2/WebAuthenticatorCoordinatorMessageReceiver.cpp; sourceTree = BUILT_PRODUCTS_DIR; };
 		57DCED6C2142EAF90016B847 /* WebAuthenticatorCoordinatorProxyMessageReceiver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = WebAuthenticatorCoordinatorProxyMessageReceiver.cpp; path = DerivedSources/WebKit2/WebAuthenticatorCoordinatorProxyMessageReceiver.cpp; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -3454,7 +3454,7 @@
 		5CA26D80217ABBB600F97A35 /* WKSafeBrowsingWarning.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKSafeBrowsingWarning.h; sourceTree = "<group>"; };
 		5CA98549210BEB5A0057EB6B /* SafeBrowsingWarning.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SafeBrowsingWarning.h; sourceTree = "<group>"; };
 		5CA9854B210BEB730057EB6B /* SafeBrowsingWarningCocoa.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = SafeBrowsingWarningCocoa.mm; sourceTree = "<group>"; };
-		5CADDE0D2151AA010067D309 /* AuthenticationChallengeDisposition.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AuthenticationChallengeDisposition.h; path = Authentication/AuthenticationChallengeDisposition.h; sourceTree = "<group>"; };
+		5CADDE0D2151AA010067D309 /* AuthenticationChallengeDisposition.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AuthenticationChallengeDisposition.h; sourceTree = "<group>"; };
 		5CAFDE422130843500B1F7E1 /* _WKInspector.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = _WKInspector.h; sourceTree = "<group>"; };
 		5CAFDE432130843600B1F7E1 /* _WKInspector.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = _WKInspector.mm; sourceTree = "<group>"; };
 		5CAFDE442130843600B1F7E1 /* _WKInspectorInternal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = _WKInspectorInternal.h; sourceTree = "<group>"; };
@@ -6615,7 +6615,7 @@
 				518E8EF416B2091C00E91429 /* AuthenticationManager.h */,
 				518E8EF516B2091C00E91429 /* AuthenticationManager.messages.in */,
 			);
-			name = Authentication;
+			path = Authentication;
 			sourceTree = "<group>";
 		};
 		51B15A7D138439B200321AD8 /* unix */ = {
@@ -6737,7 +6737,7 @@
 				57B4B45D20B504AB00D4AD79 /* AuthenticationManagerCocoa.mm */,
 				57B4B45E20B504AB00D4AD79 /* ClientCertificateAuthenticationXPCConstants.h */,
 			);
-			name = cocoa;
+			path = cocoa;
 			sourceTree = "<group>";
 		};
 		57DCED9E2148F9D10016B847 /* Cocoa */ = {
