@@ -4883,6 +4883,13 @@ FloatPoint FrameView::layoutViewportToAbsolutePoint(FloatPoint p) const
     return p.scaled(frame().frameScaleFactor());
 }
 
+FloatRect FrameView::clientToLayoutViewportRect(FloatRect rect) const
+{
+    ASSERT(frame().settings().visualViewportEnabled());
+    rect.scale(frame().pageZoomFactor());
+    return rect;
+}
+
 FloatPoint FrameView::clientToLayoutViewportPoint(FloatPoint p) const
 {
     ASSERT(frame().settings().visualViewportEnabled());

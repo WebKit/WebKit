@@ -31,8 +31,7 @@ namespace WebKit {
 
 enum class CoordinateSystem : uint8_t {
     Page = 0,
-    LayoutViewport,
-    VisualViewport,
+    LayoutViewport
 };
 
 } // namespace WebKit
@@ -42,9 +41,7 @@ namespace WTF {
 template<> struct EnumTraits<WebKit::CoordinateSystem> {
     using values = EnumValues<
     WebKit::CoordinateSystem,
-    WebKit::CoordinateSystem::Page,
-    WebKit::CoordinateSystem::LayoutViewport,
-    WebKit::CoordinateSystem::VisualViewport
+    WebKit::CoordinateSystem::Page
     >;
 };
 

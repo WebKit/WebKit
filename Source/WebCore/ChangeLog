@@ -1,3 +1,17 @@
+2019-01-18  Brian Burg  <bburg@apple.com>
+
+        Automation.computeElementLayout should return visual viewport-aware coordinates
+        https://bugs.webkit.org/show_bug.cgi?id=193598
+        <rdar://problem/35325644>
+
+        Reviewed by Simon Fraser.
+
+        * page/FrameView.h: export symbol to be usable from WebKit.
+        * page/FrameView.cpp:
+        (WebCore::FrameView::clientToLayoutViewportRect const): Added.
+        Do the same thing as clientToLayoutViewportPoint with a rect instead.
+
+
 2019-01-18  Eric Carlson  <eric.carlson@apple.com>
 
         Revert r238815, it broke WK1 video fullscreen on Mac

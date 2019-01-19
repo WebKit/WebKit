@@ -1,3 +1,28 @@
+2019-01-18  Brian Burg  <bburg@apple.com>
+
+        Automation.computeElementLayout should return visual viewport-aware coordinates
+        https://bugs.webkit.org/show_bug.cgi?id=193598
+        <rdar://problem/35325644>
+
+        Reviewed by Simon Fraser.
+
+        Previously I added CoordinateSystem::VisualViewport to stub out this for iOS.
+        But I think that it's a mistake for safaridriver to care about VisualViewport
+        being enabled or not, because it is a runtime-switchable setting.
+
+        This patch removes CoordinateSystem::VisualViewport. Make the existing
+        CoordinateSystem::LayoutViewport use visual viewport semantics if needed.
+
+        This is tested by WebDriver element clicking tests. There should not be any
+        difference in behavior until it is possible to zoom with gestures via WebDriver.
+
+        * Shared/CoordinateSystem.h:
+        * UIProcess/Automation/Automation.json:
+        * UIProcess/Automation/WebAutomationSession.cpp:
+        (WebKit::protocolStringToCoordinateSystem):
+        * WebProcess/Automation/WebAutomationSessionProxy.cpp:
+        (WebKit::WebAutomationSessionProxy::computeElementLayout):
+
 2019-01-18  Daniel Bates  <dabates@apple.com>
 
         Fix some build issues.

@@ -486,7 +486,8 @@ public:
     FloatPoint layoutViewportToAbsolutePoint(FloatPoint) const;
 
     // Unlike client coordinates, layout viewport coordinates are affected by page zoom.
-    FloatPoint clientToLayoutViewportPoint(FloatPoint) const;
+    WEBCORE_EXPORT FloatRect clientToLayoutViewportRect(FloatRect) const;
+    WEBCORE_EXPORT FloatPoint clientToLayoutViewportPoint(FloatPoint) const;
 
     bool isFrameViewScrollCorner(const RenderScrollbarPart& scrollCorner) const { return m_scrollCorner.get() == &scrollCorner; }
 

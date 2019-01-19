@@ -32,8 +32,7 @@
             "description": "The coordinate system in which rects, points, and sizes are to be interpreted.",
             "enum": [
                 "Page",
-                "LayoutViewport",
-                "VisualViewport"
+                "LayoutViewport"
             ]
         },
         {

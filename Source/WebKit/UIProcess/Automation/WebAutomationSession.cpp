@@ -1004,8 +1004,6 @@ static Optional<CoordinateSystem> protocolStringToCoordinateSystem(const String&
         return CoordinateSystem::Page;
     if (coordinateSystemString == "LayoutViewport")
         return CoordinateSystem::LayoutViewport;
-    if (coordinateSystemString == "VisualViewport")
-        return CoordinateSystem::VisualViewport;
     return WTF::nullopt;
 }
 
