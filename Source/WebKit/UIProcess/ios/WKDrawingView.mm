@@ -163,7 +163,7 @@ static UIImage *emptyImage()
     [_pencilView setDrawing:drawing.get()];
 }
 
-- (void)drawingDidChange:(PKCanvasView *)canvasView
+- (void)canvasViewDrawingDidChange:(PKCanvasView *)canvasView
 {
     [self invalidateAttachment];
 }

@@ -1,3 +1,14 @@
+2019-01-18  Tim Horton  <timothy_horton@apple.com>
+
+        Adjust WKDrawingView protocol method name
+        https://bugs.webkit.org/show_bug.cgi?id=193604
+
+        Reviewed by Wenson Hsieh.
+
+        * UIProcess/ios/WKDrawingView.mm:
+        (-[WKDrawingView canvasViewDrawingDidChange:]):
+        (-[WKDrawingView drawingDidChange:]): Deleted.
+
 2019-01-18  David Kilzer  <ddkilzer@apple.com>
 
         [WebKit] Change Xcode folders to map to folders on disk
