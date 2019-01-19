@@ -25,8 +25,6 @@
 
 #pragma once
 
-#include "InspectorAuditAccessibilityObject.h"
-#include "InspectorAuditDOMObject.h"
 #include "InspectorWebAgentBase.h"
 #include <JavaScriptCore/InspectorAuditAgent.h>
 
@@ -50,8 +48,6 @@ private:
     void unmuteConsole() override;
 
     Page& m_inspectedPage;
-    RefPtr<InspectorAuditAccessibilityObject> m_auditAccessibilityObject;
-    RefPtr<InspectorAuditDOMObject> m_auditDOMObject;
 };
 
 } // namespace WebCore
