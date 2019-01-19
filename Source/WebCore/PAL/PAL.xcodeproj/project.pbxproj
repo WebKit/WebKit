@@ -171,8 +171,8 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		0C00CFD11F68CE4600AAC26D /* MediaTimeAVFoundation.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = MediaTimeAVFoundation.cpp; path = avfoundation/MediaTimeAVFoundation.cpp; sourceTree = "<group>"; };
-		0C00CFD21F68CE4600AAC26D /* MediaTimeAVFoundation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MediaTimeAVFoundation.h; path = avfoundation/MediaTimeAVFoundation.h; sourceTree = "<group>"; };
+		0C00CFD11F68CE4600AAC26D /* MediaTimeAVFoundation.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MediaTimeAVFoundation.cpp; sourceTree = "<group>"; };
+		0C00CFD21F68CE4600AAC26D /* MediaTimeAVFoundation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MediaTimeAVFoundation.h; sourceTree = "<group>"; };
 		0C2D9E721EEF5AF600DBC317 /* ExportMacros.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ExportMacros.h; sourceTree = "<group>"; };
 		0C2DA0671F33CA8400DBC317 /* CFLocaleSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CFLocaleSPI.h; sourceTree = "<group>"; };
 		0C2DA0681F33CA8400DBC317 /* CFNetworkConnectionCacheSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CFNetworkConnectionCacheSPI.h; sourceTree = "<group>"; };
@@ -248,11 +248,11 @@
 		0C7785861F45130F00F4EBB6 /* QTKitSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = QTKitSPI.h; sourceTree = "<group>"; };
 		0C7785871F45130F00F4EBB6 /* QuickLookMacSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = QuickLookMacSPI.h; sourceTree = "<group>"; };
 		0C7785881F45130F00F4EBB6 /* TUCallSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TUCallSPI.h; sourceTree = "<group>"; };
-		0CF99CA61F738436007EE793 /* CoreMediaSoftLink.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = CoreMediaSoftLink.cpp; path = pal/cf/CoreMediaSoftLink.cpp; sourceTree = SOURCE_ROOT; };
-		0CF99CA71F738437007EE793 /* CoreMediaSoftLink.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CoreMediaSoftLink.h; path = pal/cf/CoreMediaSoftLink.h; sourceTree = SOURCE_ROOT; };
+		0CF99CA61F738436007EE793 /* CoreMediaSoftLink.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CoreMediaSoftLink.cpp; sourceTree = "<group>"; };
+		0CF99CA71F738437007EE793 /* CoreMediaSoftLink.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CoreMediaSoftLink.h; sourceTree = "<group>"; };
 		1C09D03D1E31C32800725F18 /* libPAL.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libPAL.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		1C09D0521E31C44100725F18 /* CryptoDigest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CryptoDigest.h; sourceTree = "<group>"; };
-		1C09D0551E31C46500725F18 /* CryptoDigestCommonCrypto.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = CryptoDigestCommonCrypto.cpp; path = commoncrypto/CryptoDigestCommonCrypto.cpp; sourceTree = "<group>"; };
+		1C09D0551E31C46500725F18 /* CryptoDigestCommonCrypto.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CryptoDigestCommonCrypto.cpp; sourceTree = "<group>"; };
 		1C09D0571E31C57E00725F18 /* config.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = config.h; sourceTree = "<group>"; };
 		1C09D05D1E31C77A00725F18 /* PAL.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = PAL.xcconfig; sourceTree = "<group>"; };
 		1C09D0621E31EC2800725F18 /* DebugRelease.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = DebugRelease.xcconfig; sourceTree = "<group>"; };
@@ -265,8 +265,8 @@
 		1CCEE4F420D871930047B097 /* CoreUISPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CoreUISPI.h; sourceTree = "<group>"; };
 		1CCEE4F620D8743F0047B097 /* NSAppearanceSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NSAppearanceSPI.h; sourceTree = "<group>"; };
 		2D02E93B2056FAA700A13797 /* AudioToolboxSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AudioToolboxSPI.h; sourceTree = "<group>"; };
-		2E1342CA215AA10A007199D2 /* UIKitSoftLink.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = UIKitSoftLink.h; path = ios/UIKitSoftLink.h; sourceTree = "<group>"; };
-		2E1342CB215AA10A007199D2 /* UIKitSoftLink.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = UIKitSoftLink.mm; path = ios/UIKitSoftLink.mm; sourceTree = "<group>"; };
+		2E1342CA215AA10A007199D2 /* UIKitSoftLink.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UIKitSoftLink.h; sourceTree = "<group>"; };
+		2E1342CB215AA10A007199D2 /* UIKitSoftLink.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = UIKitSoftLink.mm; sourceTree = "<group>"; };
 		31308B1320A21705003FB929 /* SystemPreviewSPI.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SystemPreviewSPI.h; sourceTree = "<group>"; };
 		37119A7820CCB5FF002C6DC9 /* WebKitTargetConditionals.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = WebKitTargetConditionals.xcconfig; sourceTree = "<group>"; };
 		442956CC218A72DE0080DB54 /* RevealSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RevealSPI.h; sourceTree = "<group>"; };
@@ -337,7 +337,7 @@
 				0C00CFD11F68CE4600AAC26D /* MediaTimeAVFoundation.cpp */,
 				0C00CFD21F68CE4600AAC26D /* MediaTimeAVFoundation.h */,
 			);
-			name = avfoundation;
+			path = avfoundation;
 			sourceTree = "<group>";
 		};
 		0C2DA0651F33CA3300DBC317 /* spi */ = {
@@ -546,7 +546,7 @@
 			children = (
 				1C09D0551E31C46500725F18 /* CryptoDigestCommonCrypto.cpp */,
 			);
-			name = commoncrypto;
+			path = commoncrypto;
 			sourceTree = "<group>";
 		};
 		1C09D05C1E31C73300725F18 /* Configurations */ = {
@@ -579,7 +579,7 @@
 				2E1342CA215AA10A007199D2 /* UIKitSoftLink.h */,
 				2E1342CB215AA10A007199D2 /* UIKitSoftLink.mm */,
 			);
-			name = ios;
+			path = ios;
 			sourceTree = "<group>";
 		};
 		A30D411D1F0DD0AC00B71954 /* text */ = {
