@@ -2017,7 +2017,7 @@ static NSURL *resolvePathToScripts()
 - (void)context:(JSContext *)context fetchModuleForIdentifier:(JSValue *)identifier withResolveHandler:(JSValue *)resolve andRejectHandler:(JSValue *)reject
 {
     NSURL *filePath = [NSURL URLWithString:[identifier toString]];
-    auto *script = [JSScript scriptFromUTF8File:filePath inVirtualMachine:[context virtualMachine] withCodeSigning:nil andBytecodeCache:nil];
+    auto *script = [JSScript scriptFromASCIIFile:filePath inVirtualMachine:[context virtualMachine] withCodeSigning:nil andBytecodeCache:nil];
     if (script)
         [resolve callWithArguments:@[script]];
     else

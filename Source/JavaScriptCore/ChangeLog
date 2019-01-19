@@ -1,3 +1,21 @@
+2019-01-18  Keith Miller  <keith_miller@apple.com>
+
+        JSScript API should only take ascii files.
+        https://bugs.webkit.org/show_bug.cgi?id=193420
+
+        Reviewed by Saam Barati.
+
+        This patch leaves the UTF8 method for binary compatablity, which
+        will be removed later.
+
+        * API/JSScript.h:
+        * API/JSScript.mm:
+        (fillBufferWithContentsOfFile):
+        (+[JSScript scriptFromASCIIFile:inVirtualMachine:withCodeSigning:andBytecodeCache:]):
+        (+[JSScript scriptFromUTF8File:inVirtualMachine:withCodeSigning:andBytecodeCache:]):
+        * API/tests/testapi.mm:
+        (-[JSContextFileLoaderDelegate context:fetchModuleForIdentifier:withResolveHandler:andRejectHandler:]):
+
 2019-01-18  David Kilzer  <ddkilzer@apple.com>
 
         Follow-up: Gigacages should start allocations from a slide

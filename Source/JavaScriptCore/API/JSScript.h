@@ -52,6 +52,14 @@ JSC_CLASS_AVAILABLE(macosx(JSC_MAC_TBA), ios(JSC_IOS_TBA))
  @param cachePath A URL containing the path where the VM should cache for future execution.
  @result The new script.
  @discussion the files at filePath, codeSigningPath, and cachePath should not be externally modified  for the lifecycle of vm. Note that codeSigningPath and cachePath are not used currently, but that will change in the near future.
+
+ If the file at filePath is not ascii this method will return nil.
+ */
++ (nullable instancetype)scriptFromASCIIFile:(NSURL *)filePath inVirtualMachine:(JSVirtualMachine *)vm withCodeSigning:(nullable NSURL *)codeSigningPath andBytecodeCache:(nullable NSURL *)cachePath;
+
+
+/*!
+ This is deprecated and is equivalent to scriptFromASCIIFile:inVirtualMachine:withCodeSigning:andBytecodeCache:.
  */
 + (nullable instancetype)scriptFromUTF8File:(NSURL *)filePath inVirtualMachine:(JSVirtualMachine *)vm withCodeSigning:(nullable NSURL *)codeSigningPath andBytecodeCache:(nullable NSURL *)cachePath;
 

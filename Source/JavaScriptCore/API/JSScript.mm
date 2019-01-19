@@ -62,7 +62,7 @@ static bool fillBufferWithContentsOfFile(FILE* file, Vector& buffer)
     return readSize == buffer.size() - initialSize;
 }
 
-static bool fillBufferWithContentsOfFile(const String& fileName, Vector<char>& buffer)
+static bool fillBufferWithContentsOfFile(const String& fileName, Vector<LChar>& buffer)
 {
     FILE* f = fopen(fileName.utf8().data(), "rb");
     if (!f) {
@@ -77,7 +77,7 @@ static bool fillBufferWithContentsOfFile(const String& fileName, Vector<char>& b
 }
 
 
-+ (instancetype)scriptFromUTF8File:(NSURL *)filePath inVirtualMachine:(JSVirtualMachine *)vm withCodeSigning:(NSURL *)codeSigningPath andBytecodeCache:(NSURL *)cachePath
++ (instancetype)scriptFromASCIIFile:(NSURL *)filePath inVirtualMachine:(JSVirtualMachine *)vm withCodeSigning:(NSURL *)codeSigningPath andBytecodeCache:(NSURL *)cachePath
 {
     // FIXME: This should check codeSigning.
     UNUSED_PARAM(codeSigningPath);
@@ -88,13 +88,21 @@ static bool fillBufferWithContentsOfFile(const String& fileName, Vector<char>& b
     if (!filePathURL.isLocalFile())
         return nil;
     // FIXME: This should mmap the contents of the file instead of copying it into dirty memory.
-    Vector<char> buffer;
+    Vector<LChar> buffer;
     if (!fillBufferWithContentsOfFile(filePathURL.fileSystemPath(), buffer))
+        return nil;
+
+    if (!charactersAreAllASCII(buffer.data(), buffer.size()))
         return nil;
 
     JSScript *result = [[JSScript alloc] init];
     result->m_source = String::fromUTF8WithLatin1Fallback(buffer.data(), buffer.size());
     return result;
+}
+
++ (instancetype)scriptFromUTF8File:(NSURL *)filePath inVirtualMachine:(JSVirtualMachine *)vm withCodeSigning:(NSURL *)codeSigningPath andBytecodeCache:(NSURL *)cachePath
+{
+    return [JSScript scriptFromASCIIFile:filePath inVirtualMachine:vm withCodeSigning:codeSigningPath andBytecodeCache:cachePath];
 }
 
 const String& getJSScriptSourceCode(JSScript *module) { return module->m_source; }
