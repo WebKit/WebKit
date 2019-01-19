@@ -99,7 +99,14 @@ template<size_t divisor, typename T> inline T* roundUpToMultipleOf(T* x)
 template<typename T> inline T roundDownToMultipleOf(size_t divisor, T x)
 {
     BASSERT(isPowerOfTwo(divisor));
-    return reinterpret_cast<T>(mask(reinterpret_cast<uintptr_t>(x), ~(divisor - 1ul)));
+    static_assert(sizeof(T) == sizeof(uintptr_t), "sizeof(T) must be equal to sizeof(uintptr_t).");
+    return static_cast<T>(mask(static_cast<uintptr_t>(x), ~(divisor - 1ul)));
+}
+
+template<typename T> inline T* roundDownToMultipleOf(size_t divisor, T* x)
+{
+    BASSERT(isPowerOfTwo(divisor));
+    return reinterpret_cast<T*>(mask(reinterpret_cast<uintptr_t>(x), ~(divisor - 1ul)));
 }
 
 template<size_t divisor, typename T> constexpr T roundDownToMultipleOf(T x)

@@ -1,3 +1,19 @@
+2019-01-18  Keith Miller  <keith_miller@apple.com>
+
+        gigacage slide should randomize both start and end
+        https://bugs.webkit.org/show_bug.cgi?id=193601
+
+        Reviewed by Yusuke Suzuki.
+
+        This patch makes it so that the gigacade slide has an arbitrary
+        distance from the end as well as the start. This is done by
+        picking a random size then based on that size picking an random
+        starting offset.
+
+        * bmalloc/Gigacage.h:
+        * bmalloc/Heap.cpp:
+        (bmalloc::Heap::Heap):
+
 2019-01-18  Jer Noble  <jer.noble@apple.com>
 
         SDK_VARIANT build destinations should be separate from non-SDK_VARIANT builds
