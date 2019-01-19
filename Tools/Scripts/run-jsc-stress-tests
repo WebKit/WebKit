@@ -1920,7 +1920,7 @@ def runTestRunner(remoteIndex=0)
         remoteScript += "export JSCTEST_timeout=#{Shellwords.shellescape(ENV['JSCTEST_timeout'])} && "
         $envVars.each { |var| remoteScript += "export " << var << "\n" }
         remoteScript += "#{testRunnerCommand(remoteIndex)}\""
-        runAndMonitorTestRunnerCommand("ssh", "-p", remoteHost.port.to_s, "#{remoteHost.user}@#{remoteHost.host}", remoteScript)
+        runAndMonitorTestRunnerCommand("ssh", "-o", "NoHostAuthenticationForLocalhost=yes", "-p", remoteHost.port.to_s, "#{remoteHost.user}@#{remoteHost.host}", remoteScript)
     else
         Dir.chdir($runnerDir) {
             runAndMonitorTestRunnerCommand(testRunnerCommand)

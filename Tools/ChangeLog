@@ -1,3 +1,12 @@
+2019-01-18  Zhifei FANG  <zhifei_fang@apple.com>
+
+        Disable the run-jsc-stress-test remote host key check [second round].
+        https://bugs.webkit.org/show_bug.cgi?id=192988
+
+        Reviewed by Dewei Zhu.
+
+        * Scripts/run-jsc-stress-tests:
+
 2019-01-18  Aakash Jain  <aakash_jain@apple.com>
 
         [build.webkit.org] unit-test failure Builder GTK Linux 32-bit Release doesn't exist
