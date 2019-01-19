@@ -90,7 +90,7 @@ class TestFactory(Factory):
             self.addStep(self.LayoutTestClass())
 
         if platform.startswith('win') or platform.startswith('mac') or platform.startswith('ios-simulator'):
-            self.addStep(RunUnitTests())
+            self.addStep(RunAPITests())
         self.addStep(RunPythonTests())
         self.addStep(RunPerlTests())
         self.addStep(RunBindingsTests())

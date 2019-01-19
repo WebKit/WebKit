@@ -503,12 +503,12 @@ class RunDashboardTests(RunWebKitTests):
         return RunWebKitTests.start(self)
 
 
-class RunUnitTests(TestWithFailureCount):
+class RunAPITests(TestWithFailureCount):
     name = "run-api-tests"
-    description = ["unit tests running"]
-    descriptionDone = ["unit-tests"]
+    description = ["api tests running"]
+    descriptionDone = ["api-tests"]
     command = ["python", "./Tools/Scripts/run-api-tests", "--no-build", WithProperties("--%(configuration)s"), "--verbose"]
-    failedTestsFormatString = "%d unit test%s failed or timed out"
+    failedTestsFormatString = "%d api test%s failed or timed out"
 
     def start(self):
         appendCustomBuildFlags(self, self.getProperty('platform'), self.getProperty('fullPlatform'))

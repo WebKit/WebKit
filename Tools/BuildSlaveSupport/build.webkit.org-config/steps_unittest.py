@@ -260,20 +260,20 @@ class Run32bitJSCTestsTest(unittest.TestCase):
         self.assertResults(SUCCESS, ['webkit-32bit-jsc-test'], 0,  '    0 failures found.')
 
 
-class RunUnitTestsTest(unittest.TestCase):
+class RunAPITestsTest(unittest.TestCase):
     def assertFailures(self, expected_failure_count, stdio):
         if expected_failure_count:
             rc = 1
             expected_results = FAILURE
             plural_suffix = "" if expected_failure_count == 1 else "s"
-            expected_text = '%d unit test%s failed or timed out' % (expected_failure_count, plural_suffix)
+            expected_text = '%d api test%s failed or timed out' % (expected_failure_count, plural_suffix)
         else:
             rc = 0
             expected_results = SUCCESS
             expected_text = 'run-api-tests'
 
         cmd = StubRemoteCommand(rc, stdio)
-        step = RunUnitTests()
+        step = RunAPITests()
         step.commandComplete(cmd)
         actual_results = step.evaluateCommand(cmd)
         actual_failure_count = step.failedTestCount
