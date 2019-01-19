@@ -1,5 +1,14 @@
 2019-01-18  Aakash Jain  <aakash_jain@apple.com>
 
+        [build.webkit.org] unit-test failure Builder GTK Linux 32-bit Release doesn't exist
+        https://bugs.webkit.org/show_bug.cgi?id=193597
+
+        Reviewed by Lucas Forschler.
+
+        * BuildSlaveSupport/build.webkit.org-config/steps_unittest.py:
+
+2019-01-18  Aakash Jain  <aakash_jain@apple.com>
+
         [build.webkit.org] api tests failures are incorrectly named as unit test failures
         https://bugs.webkit.org/show_bug.cgi?id=193595
 
