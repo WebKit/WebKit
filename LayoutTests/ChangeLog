@@ -1,3 +1,21 @@
+2019-01-18  Ryosuke Niwa  <rniwa@webkit.org>
+
+        iOS: Updating input mode should update the software keyboard
+        https://bugs.webkit.org/show_bug.cgi?id=193565
+        <rdar://problem/47376334>
+
+        Reviewed by Wenson Hsieh.
+
+        Added a regression test for removing inputmode content attribute with the value of "none".
+
+        The test methodology is different between testRunner and in-browser since we don't force
+        software keyboard while running layout tests inside simulator which can elimiate
+        the visual viewport difference inside the test runner, and in-browser testing obviously
+        doesn't have access to the internal keyboard metrics.
+
+        * fast/forms/ios/inputmode-none-removed-expected.txt: Added.
+        * fast/forms/ios/inputmode-none-removed.html: Added.
+
 2019-01-18  Justin Fan  <justin_fan@apple.com>
 
         (WIP) [WebGPU] WebGPUProgrammablePassEncoder::setBindGroup prototype

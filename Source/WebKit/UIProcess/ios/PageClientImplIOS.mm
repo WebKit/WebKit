@@ -547,6 +547,11 @@ void PageClientImpl::elementDidBlur()
     [m_contentView _elementDidBlur];
 }
 
+void PageClientImpl::focusedElementDidChangeInputMode(WebCore::InputMode mode)
+{
+    [m_contentView _didUpdateInputMode:mode];
+}
+
 void PageClientImpl::didReceiveEditorStateUpdateAfterFocus()
 {
     [m_contentView _didReceiveEditorStateUpdateAfterFocus];

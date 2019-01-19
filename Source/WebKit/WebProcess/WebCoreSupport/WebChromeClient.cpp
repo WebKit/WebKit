@@ -213,6 +213,11 @@ void WebChromeClient::elementDidBlur(Element& element)
     m_page.elementDidBlur(element);
 }
 
+void WebChromeClient::focusedElementDidChangeInputMode(Element& element, InputMode mode)
+{
+    m_page.focusedElementDidChangeInputMode(element, mode);
+}
+
 void WebChromeClient::makeFirstResponder()
 {
     m_page.send(Messages::WebPageProxy::MakeFirstResponder());

@@ -143,6 +143,7 @@ private:
 
     void elementDidFocus(const FocusedElementInformation&, bool userIsInteracting, bool blurPreviousNode, bool changingActivityState, API::Object* userData) override;
     void elementDidBlur() override;
+    void focusedElementDidChangeInputMode(WebCore::InputMode) override;
     void didReceiveEditorStateUpdateAfterFocus() override;
     bool isFocusingElement() override;
     void selectionDidChange() override;

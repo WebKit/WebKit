@@ -32,6 +32,7 @@
 #include <WebCore/DiagnosticLoggingClient.h>
 #include <WebCore/FrameLoaderTypes.h>
 #include <WebCore/IndexedDB.h>
+#include <WebCore/InputMode.h>
 #include <WebCore/MediaSelectionOption.h>
 #include <WebCore/NetworkLoadMetrics.h>
 #include <WebCore/NotificationDirection.h>
@@ -763,6 +764,21 @@ template<> struct EnumTraits<WebCore::AutoplayEvent> {
         WebCore::AutoplayEvent::DidPlayMediaWithUserGesture,
         WebCore::AutoplayEvent::DidAutoplayMediaPastThresholdWithoutUserInterference,
         WebCore::AutoplayEvent::UserDidInterfereWithPlayback
+    >;
+};
+
+template<> struct EnumTraits<WebCore::InputMode> {
+    using values = EnumValues<
+        WebCore::InputMode,
+        WebCore::InputMode::Unspecified,
+        WebCore::InputMode::None,
+        WebCore::InputMode::Text,
+        WebCore::InputMode::Telephone,
+        WebCore::InputMode::Url,
+        WebCore::InputMode::Email,
+        WebCore::InputMode::Numeric,
+        WebCore::InputMode::Decimal,
+        WebCore::InputMode::Search
     >;
 };
 

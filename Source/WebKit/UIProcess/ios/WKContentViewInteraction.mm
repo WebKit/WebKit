@@ -4637,6 +4637,17 @@ static const double minimumFocusedElementAreaForSuppressingSelectionAssistant = 
     }
 }
 
+- (void)_didUpdateInputMode:(WebCore::InputMode)mode
+{
+    if (!self.inputDelegate || _focusedElementInformation.elementType == WebKit::InputType::None)
+        return;
+
+#if !PLATFORM(WATCHOS)
+    _focusedElementInformation.inputMode = mode;
+    [self reloadInputViews];
+#endif
+}
+
 - (void)_didReceiveEditorStateUpdateAfterFocus
 {
     [self _updateInitialWritingDirectionIfNecessary];

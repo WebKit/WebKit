@@ -920,6 +920,11 @@ void WebPageProxy::elementDidBlur()
     pageClient().elementDidBlur();
 }
 
+void WebPageProxy::focusedElementDidChangeInputMode(WebCore::InputMode mode)
+{
+    pageClient().focusedElementDidChangeInputMode(mode);
+}
+
 void WebPageProxy::autofillLoginCredentials(const String& username, const String& password)
 {
     m_process->send(Messages::WebPage::AutofillLoginCredentials(username, password), m_pageID);

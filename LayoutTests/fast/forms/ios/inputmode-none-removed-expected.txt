@@ -1,0 +1,16 @@
+This tests updating inputmode of an input element from "none" to "text". The software keyboard should be updated.
+To manually test, focus the input element below. The software keyboard should show up after 3 seconds
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Element has inputmode=none
+PASS keyboardRect.height is 0
+
+inputmode has been removed
+PASS keyboardRect.height > 0 is true
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
+

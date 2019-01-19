@@ -172,6 +172,7 @@
 #include <WebCore/HTMLOListElement.h>
 #include <WebCore/HTMLPlugInElement.h>
 #include <WebCore/HTMLPlugInImageElement.h>
+#include <WebCore/HTMLTextAreaElement.h>
 #include <WebCore/HTMLUListElement.h>
 #include <WebCore/HistoryController.h>
 #include <WebCore/HistoryItem.h>
@@ -5358,6 +5359,22 @@ void WebPage::elementDidBlur(WebCore::Element& element)
         m_isFocusingElementDueToUserInteraction = false;
         m_focusedElement = nullptr;
     }
+}
+
+void WebPage::focusedElementDidChangeInputMode(WebCore::Element& element, WebCore::InputMode mode)
+{
+#if PLATFORM(IOS_FAMILY)
+    ASSERT(m_focusedElement == &element);
+    ASSERT(element.canonicalInputMode() == mode);
+
+    if (!is<HTMLTextAreaElement>(*m_focusedElement) && !is<HTMLInputElement>(*m_focusedElement) && !m_focusedElement->hasEditableStyle())
+        return;
+
+    send(Messages::WebPageProxy::FocusedElementDidChangeInputMode(mode));
+#else
+    UNUSED_PARAM(element);
+    UNUSED_PARAM(mode);
+#endif
 }
 
 void WebPage::didUpdateComposition()

@@ -34,6 +34,7 @@
 #include "HTMLMediaElementEnums.h"
 #include "HostWindow.h"
 #include "Icon.h"
+#include "InputMode.h"
 #include "LayerFlushThrottleState.h"
 #include "MediaProducer.h"
 #include "PopupMenu.h"
@@ -292,7 +293,9 @@ public:
     virtual void elementDidFocus(Element&) { }
     virtual void elementDidBlur(Element&) { }
     virtual void elementDidRefocus(Element&) { }
-    
+
+    virtual void focusedElementDidChangeInputMode(Element&, InputMode) { }
+
     virtual bool shouldPaintEntireContents() const { return false; }
     virtual bool hasStablePageScaleFactor() const { return true; }
 

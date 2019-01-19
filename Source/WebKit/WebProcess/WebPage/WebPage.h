@@ -589,6 +589,7 @@ public:
     void elementDidFocus(WebCore::Element&);
     void elementDidRefocus(WebCore::Element&);
     void elementDidBlur(WebCore::Element&);
+    void focusedElementDidChangeInputMode(WebCore::Element&, WebCore::InputMode);
     void resetFocusedElementForFrame(WebFrame*);
 
     void disabledAdaptationsDidChange(const OptionSet<WebCore::DisabledAdaptations>&);
