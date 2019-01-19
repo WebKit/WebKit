@@ -68,8 +68,12 @@ class OSBuildFetcher {
             }
             newCommitsToReport.push(...commits);
 
-            for (const [revision, testability] of Object.entries(commitInfo.commitsWithTestability))
+            for (const [revision, testability] of Object.entries(commitInfo.commitsWithTestability)) {
+                const order = this._computeOrder(revision);
+                if (order > maxRevisionOrder || order < minRevisionOrder)
+                    continue;
                 commitsToUpdate.push({repository: repositoryName, revision, testability});
+            }
         }
         return {newCommitsToReport, commitsToUpdate};
     }

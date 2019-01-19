@@ -534,7 +534,7 @@ describe('OSBuildFetcher', function() {
             });
         });
 
-        it('should update testability warning for commits', async () => {
+        it('should update testability message for commits', async () => {
             const logger = new MockLogger;
             const fetcher = new OSBuildFetcher(config, TestServer.remoteAPI(), slaveAuth, MockSubprocess, logger);
             const db = TestServer.database();
@@ -797,6 +797,49 @@ describe('OSBuildFetcher', function() {
             assert.equal(result['commits'].length, 1);
             assert.equal(result['commits'][0]['revision'], 'Sierra16E34');
             assert.equal(result['commits'][0]['order'], 1604003400);
+        });
+
+        it('should update commits within specified revision range', async () => {
+            const logger = new MockLogger;
+            const fetcher = new OSBuildFetcher(configWithoutOwnedCommitCommand, TestServer.remoteAPI(), slaveAuth, MockSubprocess, logger);
+            const db = TestServer.database();
+            const resultsForSierraD = {allRevisions: ["Sierra16D68", "Sierra16D69"], commitsWithTestability: {"Sierra16D10000": "Panic"}};
+            const resultsForSierraE = {allRevisions: ["Sierra16E32", "Sierra16E33", "Sierra16E33h", "Sierra16E34", "Sierra16E10000"], commitsWithTestability: {}};
+
+            await addSlaveForReport(emptyReport);
+            await Promise.all([
+                db.insert('repositories', {'id': 10, 'name': 'OSX'}),
+                db.insert('commits', {'repository': 10, 'revision': 'Sierra16D67', 'order': 1603006700, 'reported': true}),
+                db.insert('commits', {'repository': 10, 'revision': 'Sierra16D68', 'order': 1603006800, 'reported': true}),
+                db.insert('commits', {'repository': 10, 'revision': 'Sierra16D69', 'order': 1603006900, 'reported': false}),
+                db.insert('commits', {'repository': 10, 'revision': 'Sierra16E32', 'order': 1604003200, 'reported': true}),
+                db.insert('commits', {'repository': 10, 'revision': 'Sierra16E33', 'order': 1604003300, 'reported': true}),
+                db.insert('commits', {'repository': 10, 'revision': 'Sierra16E33g', 'order': 1604003307, 'reported': true})]);
+
+            let result = await TestServer.remoteAPI().getJSON('/api/commits/OSX/last-reported?from=1603000000&to=1603099900');
+            assert.equal(result['commits'].length, 1);
+            assert.equal(result['commits'][0]['revision'], 'Sierra16D68');
+            assert.equal(result['commits'][0]['order'], 1603006800);
+
+            result = await TestServer.remoteAPI().getJSON('/api/commits/OSX/last-reported?from=1604000000&to=1604099900');
+            assert.equal(result['commits'].length, 1);
+            assert.equal(result['commits'][0]['revision'], 'Sierra16E33g');
+            assert.equal(result['commits'][0]['order'], 1604003307);
+            const waitForInvocationPromise = MockSubprocess.waitForInvocation();
+            const fetchAvailableBuildsPromise = fetcher._fetchAvailableBuilds();
+
+            await waitForInvocationPromise;
+            assert.equal(invocations.length, 1);
+            assert.deepEqual(invocations[0].command, ['list', 'all osx 16Dxx builds']);
+            invocations[0].resolve(JSON.stringify(resultsForSierraD));
+
+            await MockSubprocess.resetAndWaitForInvocation();
+            assert.equal(invocations.length, 1);
+            assert.deepEqual(invocations[0].command, ['list', 'all osx 16Exx builds']);
+            invocations[0].resolve(JSON.stringify(resultsForSierraE));
+
+            result = await fetchAvailableBuildsPromise;
+            assert.equal(result.commitsToUpdate.length, 0);
         });
 
         it('should use "last-reported" order + 1 as "minOrder"', async () => {
