@@ -1,3 +1,15 @@
+2019-01-19  Eric Liang  <ericliang@apple.com>
+
+        AXSelected attribute on RadioButton should not be settable.
+        https://bugs.webkit.org/show_bug.cgi?id=193371
+
+        Reviewed by Chris Fleizach.
+
+        Test: accessibility/set-selected-editable.html
+
+        * accessibility/AccessibilityNodeObject.cpp:
+        (WebCore::AccessibilityNodeObject::canSetSelectedAttribute const):
+
 2019-01-19  Antoine Quint  <graouts@apple.com>
 
         Add a POINTER_EVENTS feature flag

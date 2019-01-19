@@ -1455,6 +1455,7 @@ webkit.org/b/140798 [ Release ] accessibility/aria-switch-checked.html [ Skip ]
 webkit.org/b/140798 [ Debug ] accessibility/aria-switch-checked.html [ Skip ]
 webkit.org/b/140798 [ Release ] accessibility/aria-switch-text.html [ Skip ]
 webkit.org/b/140798 [ Debug ] accessibility/aria-switch-text.html [ Skip ]
+webkit.org/b/193371 accessibility/set-selected-editable.html [ Skip ]
 
 # The following timeouts are caused by the same problem: [ Failure ]
 webkit.org/b/126066 accessibility/loading-iframe-updates-axtree.html [ Skip ]

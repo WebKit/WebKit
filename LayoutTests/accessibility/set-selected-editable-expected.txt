@@ -1,0 +1,34 @@
+This tests that the accessibility Selected attribute can be settable only on certain elements.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS axElement.isAttributeSettable('AXSelected') is false
+PASS axElement.isAttributeSettable('AXSelected') is true
+PASS axElement.isAttributeSettable('AXSelected') is false
+PASS axElement.isAttributeSettable('AXSelected') is false
+PASS axElement.isAttributeSettable('AXSelected') is true
+PASS axElement.isAttributeSettable('AXSelected') is true
+PASS axElement.isAttributeSettable('AXSelected') is true
+PASS axElement.isAttributeSettable('AXSelected') is false
+PASS axElement.isAttributeSettable('AXSelected') is true
+PASS axElement.isAttributeSettable('AXSelected') is false
+PASS axElement.isAttributeSettable('AXSelected') is true
+PASS axElement.isAttributeSettable('AXSelected') is true
+PASS axElement.isAttributeSettable('AXSelected') is true
+PASS axElement.isAttributeSettable('AXSelected') is true
+PASS axElement.isAttributeSettable('AXSelected') is true
+PASS axElement.isAttributeSettable('AXSelected') is false
+PASS axElement.isAttributeSettable('AXSelected') is true
+PASS axElement.isAttributeSettable('AXSelected') is true
+PASS axElement.isAttributeSettable('AXSelected') is true
+PASS axElement.isAttributeSettable('AXSelected') is true
+PASS axElement.isAttributeSettable('AXSelected') is true
+PASS axElement.isAttributeSettable('AXSelected') is true
+PASS axElement.isAttributeSettable('AXSelected') is true
+PASS axElement.isAttributeSettable('AXSelected') is true
+PASS axElement.isAttributeSettable('AXSelected') is true
+PASS axElement.isAttributeSettable('AXSelected') is false
+PASS axElement.isAttributeSettable('AXSelected') is false
+PASS axElement.isAttributeSettable('AXSelected') is false
+
