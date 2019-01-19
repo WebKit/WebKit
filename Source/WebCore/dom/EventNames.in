@@ -82,4 +82,4 @@ MediaEncryptedEvent conditional=ENCRYPTED_MEDIA
 MediaKeyMessageEvent conditional=ENCRYPTED_MEDIA
 VRDisplayEvent
 AccessibleSetValueEvent
-PointerEvent
+PointerEvent conditional=POINTER_EVENTS

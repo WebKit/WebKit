@@ -25,6 +25,8 @@
 
 #pragma once
 
+#if ENABLE(POINTER_EVENTS)
+
 #include "MouseEvent.h"
 #include <wtf/text/WTFString.h>
 
@@ -102,3 +104,5 @@ private:
 } // namespace WebCore
 
 SPECIALIZE_TYPE_TRAITS_EVENT(PointerEvent)
+
+#endif // ENABLE(POINTER_EVENTS)

@@ -1,3 +1,12 @@
+2019-01-19  Antoine Quint  <graouts@apple.com>
+
+        Add a POINTER_EVENTS feature flag
+        https://bugs.webkit.org/show_bug.cgi?id=193577
+
+        Reviewed by Dean Jackson.
+
+        * TestWebKitAPI/Configurations/FeatureDefines.xcconfig:
+
 2019-01-18  Zhifei FANG  <zhifei_fang@apple.com>
 
         Disable the run-jsc-stress-test remote host key check [second round].

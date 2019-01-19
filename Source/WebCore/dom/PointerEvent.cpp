@@ -26,6 +26,8 @@
 #include "config.h"
 #include "PointerEvent.h"
 
+#if ENABLE(POINTER_EVENTS)
+
 namespace WebCore {
 
 PointerEvent::PointerEvent() = default;
@@ -54,3 +56,4 @@ EventInterface PointerEvent::eventInterface() const
 
 } // namespace WebCore
 
+#endif // ENABLE(POINTER_EVENTS)

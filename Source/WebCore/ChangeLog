@@ -1,3 +1,18 @@
+2019-01-19  Antoine Quint  <graouts@apple.com>
+
+        Add a POINTER_EVENTS feature flag
+        https://bugs.webkit.org/show_bug.cgi?id=193577
+
+        Reviewed by Dean Jackson.
+
+        Only expose the PointerEvent interface if the POINTER_EVENTS feature is enabled.
+
+        * Configurations/FeatureDefines.xcconfig:
+        * dom/EventNames.in:
+        * dom/PointerEvent.cpp:
+        * dom/PointerEvent.h:
+        * dom/PointerEvent.idl:
+
 2019-01-18  Ryosuke Niwa  <rniwa@webkit.org>
 
         iOS: Updating input mode should update the software keyboard
