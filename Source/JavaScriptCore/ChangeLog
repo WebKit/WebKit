@@ -1,3 +1,13 @@
+2019-01-18  David Kilzer  <ddkilzer@apple.com>
+
+        Follow-up: Gigacages should start allocations from a slide
+        <https://bugs.webkit.org/show_bug.cgi?id=193523>
+        <rdar://problem/44958707>
+
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::caged): Add UNUSED_PARAM(kind) to
+        fix the build.
+
 2019-01-18  Jer Noble  <jer.noble@apple.com>
 
         SDK_VARIANT build destinations should be separate from non-SDK_VARIANT builds
