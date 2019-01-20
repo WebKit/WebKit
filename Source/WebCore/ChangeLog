@@ -1,3 +1,20 @@
+2019-01-19  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC][BFC] <body>'s overflow property value is propagated to viewport
+        https://bugs.webkit.org/show_bug.cgi?id=193617
+
+        Reviewed by Antti Koivisto.
+
+        When the root element is an HTML "HTML" element or an XHTML "html" element, and that element has an HTML "BODY" element
+        or an XHTML "body" element as a child, user agents must instead apply the 'overflow' property from the first such child element to the viewport,
+        if the value on the root element is 'visible'. The 'visible' value when used for the viewport must be interpreted as 'auto'.
+        The element from which the value is propagated must have a used value for 'overflow' of 'visible'.
+
+        This also has impact on layout since <body style="overflow: hidden"> would establish a block formatting context.
+
+        * layout/layouttree/LayoutBox.cpp:
+        (WebCore::Layout::Box::isOverflowVisible const):
+
 2019-01-20  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         Unreviewed, rolling out r240209.
