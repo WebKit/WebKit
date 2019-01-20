@@ -1,3 +1,23 @@
+2019-01-19  Youenn Fablet  <youenn@apple.com>
+
+        getUserMedia with a deviceId exact constraint with an empty string value should succeed
+        https://bugs.webkit.org/show_bug.cgi?id=193541
+        <rdar://problem/47357218>
+
+        Reviewed by Eric Carlson.
+
+        If there is a deviceId constraint, remove any empty string from ideal/exact string list.
+        This will make the device selection be solely based on other constraints.
+        An improvement might be for 'exact' constraint to pick the default device.
+        There is currently no such notion of a default device.
+        Picking the best fitting device seems a good tradeoff.
+        Covered by updated test.
+
+        * platform/mediastream/MediaConstraints.cpp:
+        (WebCore::MediaTrackConstraintSetMap::set):
+        * platform/mediastream/MediaConstraints.h:
+        (WebCore::StringConstraint::removeEmptyStringConstraint):
+
 2019-01-19  Eric Liang  <ericliang@apple.com>
 
         AXSelected attribute on RadioButton should not be settable.
