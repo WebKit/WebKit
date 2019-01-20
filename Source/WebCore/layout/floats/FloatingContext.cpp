@@ -111,6 +111,38 @@ static Iterator end(const FloatingState& floatingState)
     return Iterator(floatingState.floats(), WTF::nullopt);
 }
 
+#ifndef NDEBUG
+static bool areFloatsHorizontallySorted(const FloatingState& floatingState)
+{
+    auto& floats = floatingState.floats();
+    auto rightEdgeOfLeftFloats = LayoutUnit::min();
+    auto leftEdgeOfRightFloats = LayoutUnit::max();
+    WTF::Optional<LayoutUnit> leftBottom;
+    WTF::Optional<LayoutUnit> rightBottom;
+
+    for (auto& floatItem : floats) {
+        if (floatItem.isLeftPositioned()) {
+            auto rightEdge = floatItem.rectWithMargin().right();
+            if (rightEdge < rightEdgeOfLeftFloats) {
+                if (leftBottom && floatItem.rectWithMargin().top() < *leftBottom)
+                    return false;
+            }
+            leftBottom = floatItem.rectWithMargin().bottom();
+            rightEdgeOfLeftFloats = rightEdge;
+        } else {
+            auto leftEdge = floatItem.rectWithMargin().left();
+            if (leftEdge > leftEdgeOfRightFloats) {
+                if (rightBottom && floatItem.rectWithMargin().top() < *rightBottom)
+                    return false;
+            }
+            rightBottom = floatItem.rectWithMargin().bottom();
+            leftEdgeOfRightFloats = leftEdge;
+        }
+    }
+    return true;
+}
+#endif
+
 FloatingContext::FloatingContext(FloatingState& floatingState)
     : m_floatingState(floatingState)
 {
@@ -119,6 +151,7 @@ FloatingContext::FloatingContext(FloatingState& floatingState)
 Point FloatingContext::positionForFloat(const Box& layoutBox) const
 {
     ASSERT(layoutBox.isFloatingPositioned());
+    ASSERT(areFloatsHorizontallySorted(m_floatingState));
 
     if (m_floatingState.isEmpty()) {
         auto& displayBox = layoutState().displayBoxForLayoutBox(layoutBox);
@@ -148,6 +181,7 @@ Optional<Point> FloatingContext::positionForFloatAvoiding(const Box& layoutBox) 
     ASSERT(layoutBox.establishesBlockFormattingContext());
     ASSERT(!layoutBox.isFloatingPositioned());
     ASSERT(!layoutBox.hasFloatClear());
+    ASSERT(areFloatsHorizontallySorted(m_floatingState));
 
     if (m_floatingState.isEmpty())
         return { };
@@ -161,6 +195,7 @@ Optional<Position> FloatingContext::verticalPositionWithClearance(const Box& lay
 {
     ASSERT(layoutBox.hasFloatClear());
     ASSERT(layoutBox.isBlockLevelBox());
+    ASSERT(areFloatsHorizontallySorted(m_floatingState));
 
     if (m_floatingState.isEmpty())
         return { };

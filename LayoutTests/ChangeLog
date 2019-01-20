@@ -1,3 +1,13 @@
+2019-01-19  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC][Floats] Ensure that floats in FloatingContext::m_floats are always horizontally ordered.
+        https://bugs.webkit.org/show_bug.cgi?id=193613
+
+        Reviewed by Antti Koivisto.
+
+        * fast/block/float/floats-with-negative-horizontal-margin-expected.html: Added.
+        * fast/block/float/floats-with-negative-horizontal-margin.html: Added.
+
 2019-01-19  Eric Liang  <ericliang@apple.com>
 
         AXSelected attribute on RadioButton should not be settable.

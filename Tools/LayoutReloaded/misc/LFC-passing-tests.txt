@@ -121,6 +121,7 @@ fast/block/float/float-with-anonymous-previous-sibling.html
 fast/block/float/floats-not-cleared-crash.html
 fast/block/float/crash-when-intruding-float-has-anonymous-parent-and-detach.html
 fast/block/float/float-in-descendant-formatting-context.html
+fast/block/float/floats-with-negative-horizontal-margin.html
 fast/block/margin-collapse/002.html
 fast/block/margin-collapse/003.html
 fast/block/margin-collapse/026.html

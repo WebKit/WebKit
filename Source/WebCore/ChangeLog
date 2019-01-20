@@ -1,3 +1,30 @@
+2019-01-19  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC][Floats] Ensure that floats in FloatingContext::m_floats are always horizontally ordered.
+        https://bugs.webkit.org/show_bug.cgi?id=193613
+
+        Reviewed by Antti Koivisto.
+
+        Float items in m_floats list should stay in horizontal position order (left/right edge).
+
+        When adding a new float item to floating state list, we have to ensure that it is definitely the left(right)-most item.
+        Normally it is, but negative horizontal margins can push the float box beyond another float box.
+
+        <div style="float: left; height: 10px; width: 10px;"></div>
+        <div style="float: left; height: 10px; width: 10px; margin-left: -80px;"></div>
+
+        The second float's right edge beyond the first float' left edge. THe second float is not the right(inner)-most float anymore.
+
+        Test: fast/block/float/floats-with-negative-horizontal-margin.html
+
+        * layout/floats/FloatingContext.cpp:
+        (WebCore::Layout::areFloatsHorizontallySorted):
+        (WebCore::Layout::FloatingContext::positionForFloat const):
+        (WebCore::Layout::FloatingContext::positionForFloatAvoiding const):
+        (WebCore::Layout::FloatingContext::verticalPositionWithClearance const):
+        * layout/floats/FloatingState.cpp:
+        (WebCore::Layout::FloatingState::append):
+
 2019-01-19  Youenn Fablet  <youenn@apple.com>
 
         getUserMedia with a deviceId exact constraint with an empty string value should succeed
