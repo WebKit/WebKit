@@ -1,3 +1,29 @@
+2019-01-12  Dan Bernstein  <mitz@apple.com>
+
+        [Cocoa] Avoid importing directly from subumbrella frameworks
+        https://bugs.webkit.org/show_bug.cgi?id=186016
+        <rdar://problem/40591038>
+
+        Reviewed by Sam Weinig.
+
+        * Configurations/BaseTarget.xcconfig: Removed -iframework options from OTHER_CFLAGS and
+          OTHER_CPLUSPLUSFLAGS.
+        * UIProcess/Automation/mac/WebAutomationSessionMac.mm: Import Carbon.h instead of an
+          HIToolbox header.
+        * UIProcess/Cocoa/WebViewImpl.mm: Ditto.
+        * UIProcess/mac/WKPrintingView.mm: Import Quartz.h instead of a PDFKit header.
+        * UIProcess/mac/WKTextInputWindowController.mm: Import Carbon.h instead of an HIToolbox
+          header.
+        * WebProcess/Plugins/PDF/PDFAnnotationTextWidgetDetails.h: Import Quartz.h instead of a
+          PDFKit header.
+        * WebProcess/Plugins/PDF/PDFLayerControllerSPI.h: Ditto.
+        * WebProcess/Plugins/PDF/PDFPlugin.mm: Ditto.
+        * WebProcess/Plugins/PDF/PDFPluginAnnotation.mm: Ditto.
+        * WebProcess/Plugins/PDF/PDFPluginChoiceAnnotation.mm: Ditto.
+        * WebProcess/Plugins/PDF/PDFPluginPasswordField.mm: Ditto.
+        * WebProcess/Plugins/PDF/PDFPluginTextAnnotation.mm: Ditto.
+        * WebProcess/WebPage/mac/WebPageMac.mm: Ditto.
+
 2019-01-20  chris fleizach  <cfleizach@apple.com>
 
         AX: Support returning relative frames for accessibility

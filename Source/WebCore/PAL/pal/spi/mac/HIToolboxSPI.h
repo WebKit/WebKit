@@ -27,7 +27,7 @@
 
 #if USE(APPLE_INTERNAL_SDK)
 
-#include <HIToolbox/HIToolboxPriv.h>
+#include <Carbon/CarbonPriv.h>
 
 #else
 

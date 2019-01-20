@@ -48,7 +48,7 @@ SYSTEM_FRAMEWORK_SEARCH_PATHS = $(inherited) $(SDKROOT)$(SYSTEM_LIBRARY_DIR)/Pri
 
 OTHER_CFLAGS = $(OTHER_CFLAGS_COCOA_TOUCH_$(WK_IS_COCOA_TOUCH));
 OTHER_CFLAGS_COCOA_TOUCH_YES = $(inherited) -isystem $(SDKROOT)/System/Library/Frameworks/System.framework/PrivateHeaders;
-OTHER_CFLAGS_COCOA_TOUCH_NO = $(inherited) -iframework $(SDKROOT)$(SYSTEM_LIBRARY_DIR)/Frameworks/WebKit.framework/Frameworks -iframework $(SDKROOT)$(SYSTEM_LIBRARY_DIR)/Frameworks/ApplicationServices.framework/Frameworks -iframework $(SDKROOT)$(SYSTEM_LIBRARY_DIR)/Frameworks/Carbon.framework/Frameworks -iframework $(SDKROOT)$(SYSTEM_LIBRARY_DIR)/Frameworks/Quartz.framework/Frameworks -iframework $(SDKROOT)$(SYSTEM_LIBRARY_DIR)/Frameworks/CoreServices.framework/Frameworks;
+OTHER_CFLAGS_COCOA_TOUCH_NO = $(inherited) -iframework $(SDKROOT)$(SYSTEM_LIBRARY_DIR)/Frameworks/WebKit.framework/Frameworks;
 OTHER_CPLUSPLUSFLAGS = $(OTHER_CFLAGS);
 
 GCC_PREFIX_HEADER = mac/WebKitPrefix.h;

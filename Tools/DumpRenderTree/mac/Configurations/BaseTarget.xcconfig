@@ -21,7 +21,7 @@
 // (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
 
-OTHER_CFLAGS = $(inherited) -iframework $(SDKROOT)$(SYSTEM_LIBRARY_DIR)/Frameworks/Quartz.framework/Frameworks -iframework $(SDKROOT)$(SYSTEM_LIBRARY_DIR)/Frameworks/ApplicationServices.framework/Frameworks -iframework $(SDKROOT)$(SYSTEM_LIBRARY_DIR)/Frameworks/CoreServices.framework/Frameworks -iframework $(SDKROOT)$(SYSTEM_LIBRARY_DIR)/Frameworks/WebKit.framework/Frameworks;
+OTHER_CFLAGS = $(inherited) -iframework $(SDKROOT)$(SYSTEM_LIBRARY_DIR)/Frameworks/WebKit.framework/Frameworks;
 OTHER_CPLUSPLUSFLAGS = $(OTHER_CFLAGS);
 GCC_ENABLE_OBJC_EXCEPTIONS = YES;
 GCC_PREFIX_HEADER = DumpRenderTreePrefix.h;

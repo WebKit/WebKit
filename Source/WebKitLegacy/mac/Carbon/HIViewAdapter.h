@@ -27,7 +27,7 @@
  */
 
 #import <WebKitLegacy/WebKit.h>
-#include <HIToolbox/HIView.h>
+#include <Carbon/Carbon.h>
 
 @interface HIViewAdapter : NSObject
 

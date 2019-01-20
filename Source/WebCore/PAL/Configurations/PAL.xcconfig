@@ -33,7 +33,7 @@ FRAMEWORK_SEARCH_PATHS[sdk=macosx*] = $(WK_QUOTED_OVERRIDE_FRAMEWORKS_DIR);
 
 SYSTEM_FRAMEWORK_SEARCH_PATHS = $(inherited) $(SDKROOT)$(SYSTEM_LIBRARY_DIR)/PrivateFrameworks $(SDKROOT)$(SYSTEM_LIBRARY_DIR)/Frameworks;
 
-OTHER_CFLAGS = $(inherited) -iframework $(SDKROOT)$(SYSTEM_LIBRARY_DIR)/Frameworks/Carbon.framework/Frameworks -iframework $(SDKROOT)$(SYSTEM_LIBRARY_DIR)/Frameworks/ApplicationServices.framework/Frameworks -iframework $(SDKROOT)$(SYSTEM_LIBRARY_DIR)/Frameworks/CoreServices.framework/Frameworks -iframework $(SDKROOT)$(SYSTEM_LIBRARY_DIR)/Frameworks/Quartz.framework/Frameworks -iframework $(SDKROOT)$(SYSTEM_LIBRARY_DIR)/PrivateFrameworks;
+OTHER_CFLAGS = $(inherited) -iframework $(SDKROOT)$(SYSTEM_LIBRARY_DIR)/PrivateFrameworks;
 OTHER_CPLUSPLUSFLAGS = $(OTHER_CFLAGS);
 
 HEADER_SEARCH_PATHS = "$(BUILT_PRODUCTS_DIR)/usr/local/include" $(inherited);

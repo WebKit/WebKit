@@ -32,7 +32,7 @@
 #import "PDFKitImports.h"
 #import "PDFLayerControllerSPI.h"
 #import "PDFPlugin.h"
-#import <PDFKit/PDFKit.h>
+#import <Quartz/Quartz.h>
 #import <WebCore/CSSPrimitiveValue.h>
 #import <WebCore/CSSPropertyNames.h>
 #import <WebCore/ColorMac.h>

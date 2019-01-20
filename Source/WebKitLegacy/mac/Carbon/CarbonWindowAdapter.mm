@@ -65,9 +65,7 @@
 
 #import <AppKit/AppKit.h>
 //#import <CoreGraphics/CGSWindow.h>
-#import <HIToolbox/CarbonEvents.h>
-#import <HIToolbox/Controls.h>
-#import <HIToolbox/HIView.h>
+#import <Carbon/Carbon.h>
 #import <assert.h>
 
 #import <JavaScriptCore/InitializeThreading.h>

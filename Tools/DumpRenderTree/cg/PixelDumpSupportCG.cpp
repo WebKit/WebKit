@@ -47,7 +47,7 @@
 #define COMMON_DIGEST_FOR_OPENSSL
 #include <CommonCrypto/CommonDigest.h>
 #elif PLATFORM(MAC)
-#include <LaunchServices/UTCoreTypes.h>
+#include <CoreServices/CoreServices.h>
 #define COMMON_DIGEST_FOR_OPENSSL
 #include <CommonCrypto/CommonDigest.h>
 #endif

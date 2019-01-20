@@ -28,7 +28,7 @@
 
 #if USE(APPKIT)
 
-#import <HIToolbox/CarbonEventsCore.h>
+#import <Carbon/Carbon.h>
 #import <pal/spi/mac/HIToolboxSPI.h>
 #import <pal/system/mac/WebPanel.h>
 

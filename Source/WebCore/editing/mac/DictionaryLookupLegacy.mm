@@ -42,7 +42,7 @@
 #import "VisiblePosition.h"
 #import "VisibleSelection.h"
 #import "VisibleUnits.h"
-#import <PDFKit/PDFKit.h>
+#import <Quartz/Quartz.h>
 #import <pal/spi/mac/LookupSPI.h>
 #import <pal/spi/mac/NSImmediateActionGestureRecognizerSPI.h>
 #import <wtf/BlockObjCExceptions.h>

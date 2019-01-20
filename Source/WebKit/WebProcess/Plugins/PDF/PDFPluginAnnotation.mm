@@ -33,7 +33,7 @@
 #import "PDFPlugin.h"
 #import "PDFPluginChoiceAnnotation.h"
 #import "PDFPluginTextAnnotation.h"
-#import <PDFKit/PDFKit.h>
+#import <Quartz/Quartz.h>
 #import <WebCore/CSSPrimitiveValue.h>
 #import <WebCore/CSSPropertyNames.h>
 #import <WebCore/ColorMac.h>

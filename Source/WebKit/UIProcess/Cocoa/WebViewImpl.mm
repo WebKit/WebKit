@@ -76,7 +76,7 @@
 #import "WebProcessProxy.h"
 #import "_WKRemoteObjectRegistryInternal.h"
 #import "_WKThumbnailViewInternal.h"
-#import <HIToolbox/CarbonEventsCore.h>
+#import <Carbon/Carbon.h>
 #import <WebCore/AXObjectCache.h>
 #import <WebCore/ActivityState.h>
 #import <WebCore/ColorMac.h>

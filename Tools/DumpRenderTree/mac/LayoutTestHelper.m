@@ -43,7 +43,7 @@
 
 #if USE(APPLE_INTERNAL_SDK)
 
-#include <ColorSync/ColorSyncPriv.h>
+#import <ColorSync/ColorSyncPriv.h>
 
 #else
 

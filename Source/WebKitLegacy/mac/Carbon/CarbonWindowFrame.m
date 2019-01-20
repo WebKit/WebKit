@@ -31,9 +31,9 @@
 #import "CarbonWindowFrame.h"
 #import "CarbonWindowAdapter.h"
 #import "CarbonWindowContentView.h"
+#import <Carbon/Carbon.h>
 #import <Foundation/NSGeometry.h>
 #import <Foundation/NSString.h>
-#import <HIToolbox/MacWindows.h>
 
 #import "WebTypesInternal.h"
 

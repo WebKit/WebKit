@@ -1,3 +1,21 @@
+2019-01-12  Dan Bernstein  <mitz@apple.com>
+
+        [Cocoa] Avoid importing directly from subumbrella frameworks
+        https://bugs.webkit.org/show_bug.cgi?id=186016
+        <rdar://problem/40591038>
+
+        Reviewed by Sam Weinig.
+
+        * Carbon/CarbonWindowAdapter.h: Import Carbon.h instead of HIToolbox headers.
+        * Carbon/CarbonWindowAdapter.mm: Ditto.
+        * Carbon/CarbonWindowFrame.m: Ditto.
+        * Carbon/HIViewAdapter.h: Ditto.
+        * Configurations/WebKitLegacy.xcconfig: Removed -iframework options from
+          OTHER_CFLAGS_COCOA_TOUCH_NO.
+        * Plugins/WebNetscapePluginEventHandlerCarbon.mm: Import Carbon.h instead of CarbonEvents.h.
+        * WebView/WebPDFDocumentExtras.mm: Import Quartz.h instead of a PDFKit header.
+        * WebView/WebPDFView.h: Ditto.
+
 2019-01-20  Antoine Quint  <graouts@apple.com>
 
         Add a POINTER_EVENTS feature flag

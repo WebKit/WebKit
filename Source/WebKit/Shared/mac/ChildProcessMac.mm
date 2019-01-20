@@ -41,6 +41,7 @@
 #import <mach/mach.h>
 #import <mach/task.h>
 #import <pal/crypto/CryptoDigest.h>
+#import <pal/spi/cocoa/LaunchServicesSPI.h>
 #import <pwd.h>
 #import <stdlib.h>
 #import <sys/sysctl.h>
@@ -55,7 +56,7 @@
 #import <wtf/text/StringBuilder.h>
 
 #if USE(APPLE_INTERNAL_SDK)
-#import <HIServices/ProcessesPriv.h>
+#import <ApplicationServices/ApplicationServicesPriv.h>
 #import <rootless.h>
 #endif
 
@@ -65,9 +66,15 @@
 #define USE_CACHE_COMPILED_SANDBOX 0
 #endif
 
+#if PLATFORM(IOSMAC) && USE(APPLE_INTERNAL_SDK)
+enum LSSessionID {
+    kLSDefaultSessionID = -2,
+};
+#endif
+
 typedef bool (^LSServerConnectionAllowedBlock) ( CFDictionaryRef optionsRef );
 extern "C" void _LSSetApplicationLaunchServicesServerConnectionStatus(uint64_t flags, LSServerConnectionAllowedBlock block);
-extern "C" CFDictionaryRef _LSApplicationCheckIn(int sessionID, CFDictionaryRef applicationInfo);
+extern "C" CFDictionaryRef _LSApplicationCheckIn(LSSessionID sessionID, CFDictionaryRef applicationInfo);
 
 extern "C" OSStatus SetApplicationIsDaemon(Boolean isDaemon);
 
@@ -152,13 +159,14 @@ void ChildProcess::setApplicationIsDaemon()
     ASSERT_UNUSED(error, error == noErr);
 #endif
 
+    // FIXME: Is this needed in iOSMac?
     launchServicesCheckIn();
 }
 
 void ChildProcess::launchServicesCheckIn()
 {
     _LSSetApplicationLaunchServicesServerConnectionStatus(0, 0);
-    RetainPtr<CFDictionaryRef> unused = _LSApplicationCheckIn(-2, CFBundleGetInfoDictionary(CFBundleGetMainBundle()));
+    RetainPtr<CFDictionaryRef> unused = _LSApplicationCheckIn(kLSDefaultSessionID, CFBundleGetInfoDictionary(CFBundleGetMainBundle()));
 }
 
 void ChildProcess::platformInitialize()

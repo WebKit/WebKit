@@ -1,3 +1,24 @@
+2019-01-12  Dan Bernstein  <mitz@apple.com>
+
+        [Cocoa] Avoid importing directly from subumbrella frameworks
+        https://bugs.webkit.org/show_bug.cgi?id=186016
+        <rdar://problem/40591038>
+
+        Reviewed by Sam Weinig.
+
+        * DumpRenderTree/cg/PixelDumpSupportCG.cpp: Include CoreServices.h instead of a
+          LaunchServices header.
+        * DumpRenderTree/mac/Configurations/BaseTarget.xcconfig: Removed -iframework options from
+          OTHER_CFLAGS and OTHER_CPLUSPLUSFLAGS.
+        * DumpRenderTree/mac/LayoutTestHelper.m: Import ApplicationServices.h instead of ColorSync.h
+          when using SDKs earlier than 10.13.
+        * TestWebKitAPI/Configurations/Base.xcconfig: Removed -iframework options from OTHER_CFLAGS
+          and OTHER_CPLUSPLUSFLAGS.
+        * WebKitTestRunner/Configurations/BaseTarget.xcconfig: Removed -iframework options from
+          OTHER_CFLAGS and OTHER_CPLUSPLUSFLAGS.
+        * WebKitTestRunner/cg/TestInvocationCG.cpp: Include CoreServices.h instead of a
+          LaunchServices header.
+
 2019-01-20  Tadeu Zagallo  <tzagallo@apple.com>
 
         Cache bytecode to disk

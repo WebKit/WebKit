@@ -35,7 +35,7 @@
 #import <pal/spi/mac/NSAccessibilitySPI.h>
 
 #if USE(APPLE_INTERNAL_SDK)
-#include <HIServices/AccessibilityPriv.h>
+#include <ApplicationServices/ApplicationServicesPriv.h>
 #endif
 
 #ifndef NSAccessibilityLiveRegionChangedNotification
