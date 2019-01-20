@@ -655,6 +655,15 @@ def runDefault(*optionalTestSpecificOptions)
     run("default", *(FTL_OPTIONS + optionalTestSpecificOptions))
 end
 
+def runBytecodeCache(*optionalTestSpecificOptions)
+    unless $hostOS == "darwin"
+        skip
+        return
+    end
+    options = BASE_OPTIONS + $testSpecificRequiredOptions + FTL_OPTIONS + optionalTestSpecificOptions
+    addRunCommand("bytecode-cache", ["ruby", (pathToHelpers + "bytecode-cache-test-helper").to_s, pathToVM.to_s, $benchmark.to_s] + options, silentOutputHandler, simpleErrorHandler)
+end
+
 def runBigIntEnabled(*optionalTestSpecificOptions)
     # FIXME: <rdar://problem/40331121>
     if $remote or ($architecture !~ /x86/i and $hostOS == "darwin")
@@ -751,6 +760,7 @@ def defaultRun
         defaultQuickRun
     else
         runDefault
+        runBytecodeCache
         if $jitTests
             runNoLLInt
             runNoCJITValidatePhases

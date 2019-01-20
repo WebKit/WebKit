@@ -28,6 +28,7 @@
 #include "ButterflyInlines.h"
 #include "CatchScope.h"
 #include "CodeBlock.h"
+#include "CodeCache.h"
 #include "Completion.h"
 #include "ConfigFile.h"
 #include "Disassembler.h"
@@ -1988,8 +1989,11 @@ EncodedJSValue JSC_HOST_CALL functionFailNextNewCodeBlock(ExecState* exec)
     return JSValue::encode(jsUndefined());
 }
 
-EncodedJSValue JSC_HOST_CALL functionQuit(ExecState*)
+EncodedJSValue JSC_HOST_CALL functionQuit(ExecState* exec)
 {
+    VM& vm = exec->vm();
+    vm.codeCache()->write(vm);
+
     jscExit(EXIT_SUCCESS);
 
 #if COMPILER(MSVC)
@@ -2875,6 +2879,8 @@ int runJSC(const CommandLine& options, bool isWorker, const Func& func)
         dataLog("Sampling profiler is not enabled on this platform\n");
 #endif
     }
+
+    vm.codeCache()->write(vm);
 
     if (isWorker) {
         JSLockHolder locker(vm);

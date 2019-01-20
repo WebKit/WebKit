@@ -29,6 +29,8 @@
 
 namespace JSC {
 
+class CachedProgramCodeBlock;
+
 class UnlinkedProgramCodeBlock final : public UnlinkedGlobalCodeBlock {
 public:
     typedef UnlinkedGlobalCodeBlock Base;
@@ -50,10 +52,14 @@ public:
     const VariableEnvironment& lexicalDeclarations() const { return m_lexicalDeclarations; }
 
 private:
+    friend CachedProgramCodeBlock;
+
     UnlinkedProgramCodeBlock(VM* vm, Structure* structure, const ExecutableInfo& info, DebuggerMode debuggerMode)
         : Base(vm, structure, GlobalCode, info, debuggerMode)
     {
     }
+
+    UnlinkedProgramCodeBlock(Decoder&, const CachedProgramCodeBlock&);
 
     VariableEnvironment m_varDeclarations;
     VariableEnvironment m_lexicalDeclarations;

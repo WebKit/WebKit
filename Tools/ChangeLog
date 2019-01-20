@@ -1,3 +1,20 @@
+2019-01-20  Tadeu Zagallo  <tzagallo@apple.com>
+
+        Cache bytecode to disk
+        https://bugs.webkit.org/show_bug.cgi?id=192782
+        <rdar://problem/46084932>
+
+        Reviewed by Keith Miller.
+
+        Add test helper to execute bytecode-cache tests: it executes each test
+        twice, the first with JSC_diskCachePath set to a temporary directory
+        and second with JSC_forceDiskCache=true (in addition to the cache path)
+        to guarantee that only the disk cache is being used and no new
+        UnlinkedCodeBlocks are being created.
+
+        * Scripts/jsc-stress-test-helpers/bytecode-cache-test-helper: Added.
+        * Scripts/run-jsc-stress-tests:
+
 2019-01-20  chris fleizach  <cfleizach@apple.com>
 
         AX: Support returning relative frames for accessibility

@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include "Heap.h"
 #include "WasmIndexOrName.h"
 #include "WriteBarrier.h"
 #include <limits.h>

@@ -1,3 +1,260 @@
+2019-01-20  Tadeu Zagallo  <tzagallo@apple.com>
+
+        Cache bytecode to disk
+        https://bugs.webkit.org/show_bug.cgi?id=192782
+        <rdar://problem/46084932>
+
+        Reviewed by Keith Miller.
+
+        Add the logic to serialize and deserialize the new JSC bytecode. For now,
+        the cache is only used for tests.
+
+        Each class that can be serialized has a counterpart in CachedTypes, which
+        handles the decoding and encoding. When decoding, the cached objects are
+        mmap'd from disk, but only used for creating instances of the respective
+        in-memory version of each object. Ideally, the mmap'd objects should be
+        used at runtime in the future.
+
+        * CMakeLists.txt:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * Sources.txt:
+        * builtins/BuiltinNames.cpp:
+        (JSC::BuiltinNames::BuiltinNames):
+        * builtins/BuiltinNames.h:
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::setConstantIdentifierSetRegisters):
+        * bytecode/CodeBlock.h:
+        * bytecode/HandlerInfo.h:
+        (JSC::UnlinkedHandlerInfo::UnlinkedHandlerInfo):
+        * bytecode/InstructionStream.h:
+        * bytecode/UnlinkedCodeBlock.h:
+        (JSC::UnlinkedCodeBlock::addSetConstant):
+        (JSC::UnlinkedCodeBlock::constantIdentifierSets):
+        * bytecode/UnlinkedEvalCodeBlock.h:
+        * bytecode/UnlinkedFunctionCodeBlock.h:
+        * bytecode/UnlinkedFunctionExecutable.h:
+        * bytecode/UnlinkedGlobalCodeBlock.h:
+        (JSC::UnlinkedGlobalCodeBlock::UnlinkedGlobalCodeBlock):
+        * bytecode/UnlinkedMetadataTable.h:
+        * bytecode/UnlinkedModuleProgramCodeBlock.h:
+        * bytecode/UnlinkedProgramCodeBlock.h:
+        * interpreter/Interpreter.cpp:
+        * jsc.cpp:
+        (functionQuit):
+        (runJSC):
+        * parser/SourceCode.h:
+        * parser/SourceCodeKey.h:
+        (JSC::SourceCodeKey::operator!= const):
+        * parser/UnlinkedSourceCode.h:
+        * parser/VariableEnvironment.h:
+        * runtime/CachedTypes.cpp: Added.
+        (JSC::Encoder::Allocation::buffer const):
+        (JSC::Encoder::Allocation::offset const):
+        (JSC::Encoder::Allocation::Allocation):
+        (JSC::Encoder::Encoder):
+        (JSC::Encoder::vm):
+        (JSC::Encoder::malloc):
+        (JSC::Encoder::offsetOf):
+        (JSC::Encoder::cachePtr):
+        (JSC::Encoder::offsetForPtr):
+        (JSC::Encoder::release):
+        (JSC::Encoder::Page::Page):
+        (JSC::Encoder::Page::malloc):
+        (JSC::Encoder::Page::buffer const):
+        (JSC::Encoder::Page::size const):
+        (JSC::Encoder::Page::getOffset const):
+        (JSC::Encoder::allocateNewPage):
+        (JSC::Decoder::Decoder):
+        (JSC::Decoder::~Decoder):
+        (JSC::Decoder::vm):
+        (JSC::Decoder::offsetOf):
+        (JSC::Decoder::cacheOffset):
+        (JSC::Decoder::addFinalizer):
+        (JSC::encode):
+        (JSC::decode):
+        (JSC::VariableLengthObject::buffer const):
+        (JSC::VariableLengthObject::allocate):
+        (JSC::CachedPtr::encode):
+        (JSC::CachedPtr::decode const):
+        (JSC::CachedPtr::operator-> const):
+        (JSC::CachedPtr::get const):
+        (JSC::CachedRefPtr::encode):
+        (JSC::CachedRefPtr::decode const):
+        (JSC::CachedWriteBarrier::encode):
+        (JSC::CachedWriteBarrier::decode const):
+        (JSC::CachedVector::encode):
+        (JSC::CachedVector::decode const):
+        (JSC::CachedPair::encode):
+        (JSC::CachedPair::decode const):
+        (JSC::CachedHashMap::encode):
+        (JSC::CachedHashMap::decode const):
+        (JSC::CachedUniquedStringImpl::encode):
+        (JSC::CachedUniquedStringImpl::decode const):
+        (JSC::CachedStringImpl::encode):
+        (JSC::CachedStringImpl::decode const):
+        (JSC::CachedString::encode):
+        (JSC::CachedString::decode const):
+        (JSC::CachedIdentifier::encode):
+        (JSC::CachedIdentifier::decode const):
+        (JSC::CachedOptional::encode):
+        (JSC::CachedOptional::decode const):
+        (JSC::CachedOptional::decodeAsPtr const):
+        (JSC::CachedSimpleJumpTable::encode):
+        (JSC::CachedSimpleJumpTable::decode const):
+        (JSC::CachedStringJumpTable::encode):
+        (JSC::CachedStringJumpTable::decode const):
+        (JSC::CachedCodeBlockRareData::encode):
+        (JSC::CachedCodeBlockRareData::decode const):
+        (JSC::CachedBitVector::encode):
+        (JSC::CachedBitVector::decode const):
+        (JSC::CachedHashSet::encode):
+        (JSC::CachedHashSet::decode const):
+        (JSC::CachedConstantIdentifierSetEntry::encode):
+        (JSC::CachedConstantIdentifierSetEntry::decode const):
+        (JSC::CachedVariableEnvironment::encode):
+        (JSC::CachedVariableEnvironment::decode const):
+        (JSC::CachedArray::encode):
+        (JSC::CachedArray::decode const):
+        (JSC::CachedScopedArgumentsTable::encode):
+        (JSC::CachedScopedArgumentsTable::decode const):
+        (JSC::CachedSymbolTableEntry::encode):
+        (JSC::CachedSymbolTableEntry::decode const):
+        (JSC::CachedSymbolTable::encode):
+        (JSC::CachedSymbolTable::decode const):
+        (JSC::CachedImmutableButterfly::encode):
+        (JSC::CachedImmutableButterfly::decode const):
+        (JSC::CachedRegExp::encode):
+        (JSC::CachedRegExp::decode const):
+        (JSC::CachedTemplateObjectDescriptor::encode):
+        (JSC::CachedTemplateObjectDescriptor::decode const):
+        (JSC::CachedBigInt::encode):
+        (JSC::CachedBigInt::decode const):
+        (JSC::CachedJSValue::encode):
+        (JSC::CachedJSValue::decode const):
+        (JSC::CachedInstructionStream::encode):
+        (JSC::CachedInstructionStream::decode const):
+        (JSC::CachedMetadataTable::encode):
+        (JSC::CachedMetadataTable::decode const):
+        (JSC::CachedSourceOrigin::encode):
+        (JSC::CachedSourceOrigin::decode const):
+        (JSC::CachedTextPosition::encode):
+        (JSC::CachedTextPosition::decode const):
+        (JSC::CachedSourceProviderShape::encode):
+        (JSC::CachedSourceProviderShape::decode const):
+        (JSC::CachedStringSourceProvider::encode):
+        (JSC::CachedStringSourceProvider::decode const):
+        (JSC::CachedWebAssemblySourceProvider::encode):
+        (JSC::CachedWebAssemblySourceProvider::decode const):
+        (JSC::CachedSourceProvider::encode):
+        (JSC::CachedSourceProvider::decode const):
+        (JSC::CachedUnlinkedSourceCodeShape::encode):
+        (JSC::CachedUnlinkedSourceCodeShape::decode const):
+        (JSC::CachedSourceCode::encode):
+        (JSC::CachedSourceCode::decode const):
+        (JSC::CachedFunctionExecutable::firstLineOffset const):
+        (JSC::CachedFunctionExecutable::lineCount const):
+        (JSC::CachedFunctionExecutable::unlinkedFunctionNameStart const):
+        (JSC::CachedFunctionExecutable::unlinkedBodyStartColumn const):
+        (JSC::CachedFunctionExecutable::unlinkedBodyEndColumn const):
+        (JSC::CachedFunctionExecutable::startOffset const):
+        (JSC::CachedFunctionExecutable::sourceLength const):
+        (JSC::CachedFunctionExecutable::parametersStartOffset const):
+        (JSC::CachedFunctionExecutable::typeProfilingStartOffset const):
+        (JSC::CachedFunctionExecutable::typeProfilingEndOffset const):
+        (JSC::CachedFunctionExecutable::parameterCount const):
+        (JSC::CachedFunctionExecutable::features const):
+        (JSC::CachedFunctionExecutable::sourceParseMode const):
+        (JSC::CachedFunctionExecutable::isInStrictContext const):
+        (JSC::CachedFunctionExecutable::hasCapturedVariables const):
+        (JSC::CachedFunctionExecutable::isBuiltinFunction const):
+        (JSC::CachedFunctionExecutable::isBuiltinDefaultClassConstructor const):
+        (JSC::CachedFunctionExecutable::constructAbility const):
+        (JSC::CachedFunctionExecutable::constructorKind const):
+        (JSC::CachedFunctionExecutable::functionMode const):
+        (JSC::CachedFunctionExecutable::scriptMode const):
+        (JSC::CachedFunctionExecutable::superBinding const):
+        (JSC::CachedFunctionExecutable::derivedContextType const):
+        (JSC::CachedFunctionExecutable::name const):
+        (JSC::CachedFunctionExecutable::ecmaName const):
+        (JSC::CachedFunctionExecutable::inferredName const):
+        (JSC::CachedCodeBlock::instructions const):
+        (JSC::CachedCodeBlock::thisRegister const):
+        (JSC::CachedCodeBlock::scopeRegister const):
+        (JSC::CachedCodeBlock::globalObjectRegister const):
+        (JSC::CachedCodeBlock::sourceURLDirective const):
+        (JSC::CachedCodeBlock::sourceMappingURLDirective const):
+        (JSC::CachedCodeBlock::usesEval const):
+        (JSC::CachedCodeBlock::isStrictMode const):
+        (JSC::CachedCodeBlock::isConstructor const):
+        (JSC::CachedCodeBlock::hasCapturedVariables const):
+        (JSC::CachedCodeBlock::isBuiltinFunction const):
+        (JSC::CachedCodeBlock::superBinding const):
+        (JSC::CachedCodeBlock::scriptMode const):
+        (JSC::CachedCodeBlock::isArrowFunctionContext const):
+        (JSC::CachedCodeBlock::isClassContext const):
+        (JSC::CachedCodeBlock::wasCompiledWithDebuggingOpcodes const):
+        (JSC::CachedCodeBlock::constructorKind const):
+        (JSC::CachedCodeBlock::derivedContextType const):
+        (JSC::CachedCodeBlock::evalContextType const):
+        (JSC::CachedCodeBlock::hasTailCalls const):
+        (JSC::CachedCodeBlock::lineCount const):
+        (JSC::CachedCodeBlock::endColumn const):
+        (JSC::CachedCodeBlock::numVars const):
+        (JSC::CachedCodeBlock::numCalleeLocals const):
+        (JSC::CachedCodeBlock::numParameters const):
+        (JSC::CachedCodeBlock::features const):
+        (JSC::CachedCodeBlock::parseMode const):
+        (JSC::CachedCodeBlock::codeType const):
+        (JSC::CachedCodeBlock::rareData const):
+        (JSC::CachedProgramCodeBlock::encode):
+        (JSC::CachedProgramCodeBlock::decode const):
+        (JSC::CachedModuleCodeBlock::encode):
+        (JSC::CachedModuleCodeBlock::decode const):
+        (JSC::CachedEvalCodeBlock::encode):
+        (JSC::CachedEvalCodeBlock::decode const):
+        (JSC::CachedFunctionCodeBlock::encode):
+        (JSC::CachedFunctionCodeBlock::decode const):
+        (JSC::UnlinkedFunctionCodeBlock::UnlinkedFunctionCodeBlock):
+        (JSC::UnlinkedCodeBlock::UnlinkedCodeBlock):
+        (JSC::CachedCodeBlock<CodeBlockType>::decode const):
+        (JSC::UnlinkedProgramCodeBlock::UnlinkedProgramCodeBlock):
+        (JSC::UnlinkedModuleProgramCodeBlock::UnlinkedModuleProgramCodeBlock):
+        (JSC::UnlinkedEvalCodeBlock::UnlinkedEvalCodeBlock):
+        (JSC::CachedFunctionExecutable::encode):
+        (JSC::CachedFunctionExecutable::decode const):
+        (JSC::UnlinkedFunctionExecutable::UnlinkedFunctionExecutable):
+        (JSC::CachedCodeBlock<CodeBlockType>::encode):
+        (JSC::CachedSourceCodeKey::encode):
+        (JSC::CachedSourceCodeKey::decode const):
+        (JSC::CacheEntry::encode):
+        (JSC::CacheEntry:: const):
+        (JSC:: const):
+        (JSC::encodeCodeBlock):
+        (JSC::decodeCodeBlockImpl):
+        * runtime/CachedTypes.h: Copied from Source/JavaScriptCore/bytecode/UnlinkedGlobalCodeBlock.h.
+        (JSC::decodeCodeBlock):
+        * runtime/CodeCache.cpp:
+        (JSC::CodeCacheMap::pruneSlowCase):
+        (JSC::CodeCache::getUnlinkedGlobalCodeBlock):
+        (JSC::CodeCache::getUnlinkedGlobalFunctionExecutable):
+        (JSC::CodeCache::write):
+        * runtime/CodeCache.h:
+        (JSC::CodeCacheMap::begin):
+        (JSC::CodeCacheMap::end):
+        (JSC::CodeCacheMap::fetchFromDiskImpl):
+        (JSC::CodeCacheMap::findCacheAndUpdateAge):
+        (JSC::writeCodeBlock):
+        * runtime/JSBigInt.cpp:
+        * runtime/JSBigInt.h:
+        * runtime/Options.cpp:
+        (JSC::recomputeDependentOptions):
+        * runtime/Options.h:
+        * runtime/RegExp.h:
+        * runtime/ScopedArgumentsTable.h:
+        * runtime/StackFrame.h:
+        * runtime/StructureInlines.h:
+        * runtime/SymbolTable.h:
+
 2019-01-20  Antoine Quint  <graouts@apple.com>
 
         Add a POINTER_EVENTS feature flag

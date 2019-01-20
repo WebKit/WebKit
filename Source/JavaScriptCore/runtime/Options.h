@@ -508,6 +508,8 @@ constexpr bool enableWebAssemblyStreamingApi = false;
     v(bool, traceLLIntExecution, false, Configurable, nullptr) \
     v(bool, traceLLIntSlowPath, false, Configurable, nullptr) \
     v(bool, traceBaselineJITExecution, false, Normal, nullptr) \
+    v(optionString, diskCachePath, nullptr, Restricted, "") \
+    v(bool, forceDiskCache, false, Restricted, "") \
 
 
 enum OptionEquivalence {
