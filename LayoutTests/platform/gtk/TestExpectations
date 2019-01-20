@@ -1207,6 +1207,9 @@ webkit.org/b/190738 imported/w3c/web-platform-tests/encrypted-media/resources/cl
 http/wpt/mediarecorder [ Skip ]
 imported/w3c/web-platform-tests/mediacapture-record [ Skip ]
 
+# This test requires an older version of ICU than we use
+webkit.org/b/193620 js/intl-numberformat.html [ Failure ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Expected failures.
 #

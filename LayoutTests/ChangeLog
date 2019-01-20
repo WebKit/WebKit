@@ -1,5 +1,13 @@
 2019-01-20  Michael Catanzaro  <mcatanzaro@igalia.com>
 
+        Unreviewed gardening, add failure expectation for js/intl-numberformat.html
+
+        This test requires an old version of ICU to pass.
+
+        * platform/gtk/TestExpectations:
+
+2019-01-20  Michael Catanzaro  <mcatanzaro@igalia.com>
+
         Unreviewed, rolling out r240209.
 
         Broke GTK/WPE injected bundle
