@@ -1,3 +1,13 @@
+2019-01-20  Antoine Quint  <graouts@apple.com>
+
+        Add a POINTER_EVENTS feature flag
+        https://bugs.webkit.org/show_bug.cgi?id=193577
+        <rdar://problem/47408511>
+
+        Unreviewed. Also enable Pointer Events for iosmac.
+
+        * Configurations/FeatureDefines.xcconfig:
+
 2019-01-19  Antoine Quint  <graouts@apple.com>
 
         Add a POINTER_EVENTS feature flag
