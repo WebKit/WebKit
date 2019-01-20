@@ -1,3 +1,17 @@
+2019-01-20  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        Unreviewed, rolling out r238275.
+
+        Regressed css3/shapes/shape-outside/shape-image/shape-
+        image-025.html
+
+        Reverted changeset:
+
+        "ScalableImageDecoder: don't forcefully decode image data when
+        querying frame completeness, duration"
+        https://bugs.webkit.org/show_bug.cgi?id=191354
+        https://trac.webkit.org/changeset/238275
+
 2019-01-19  Zalan Bujtas  <zalan@apple.com>
 
         [LFC][BFC] <body>'s overflow property value is propagated to viewport
