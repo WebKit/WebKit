@@ -1,3 +1,39 @@
+2019-01-20  chris fleizach  <cfleizach@apple.com>
+
+        AX: Support returning relative frames for accessibility
+        https://bugs.webkit.org/show_bug.cgi?id=193414
+        <rdar://problem/47268501>
+
+        Reviewed by Zalan Bujtas.
+
+        Create a way for assistive technologies to retrieve a frame in page space that can be transformed to its final screen space by having the AT message the UI process separately.
+
+        Consolidate rect/point conversion methods for macOS and iOS.
+        This is only needed on WebKit2, where we have to reach back across to the hosting process to get the final frame, so we can skip this test on WK1.
+
+        Tests: accessibility/mac/relative-frame.html
+
+        * accessibility/ios/WebAccessibilityObjectWrapperIOS.mm:
+        (-[WebAccessibilityObjectWrapper _accessibilityConvertPointToViewSpace:]):
+        (-[WebAccessibilityObjectWrapper _accessibilityRelativeFrame]):
+        (-[WebAccessibilityObjectWrapper accessibilityVisibleContentRect]):
+        (-[WebAccessibilityObjectWrapper accessibilityActivationPoint]):
+        (-[WebAccessibilityObjectWrapper accessibilityFrame]):
+        (-[WebAccessibilityObjectWrapper frameForTextMarkers:]):
+        (-[WebAccessibilityObjectWrapper rectsForSelectionRects:]):
+        (-[WebAccessibilityObjectWrapper convertPointToScreenSpace:]): Deleted.
+        (-[WebAccessibilityObjectWrapper convertRectToScreenSpace:]): Deleted.
+        * accessibility/mac/WebAccessibilityObjectWrapperBase.h:
+        * accessibility/mac/WebAccessibilityObjectWrapperBase.mm:
+        (convertPathToScreenSpaceFunction):
+        (-[WebAccessibilityObjectWrapperBase convertRectToSpace:space:]):
+        (-[WebAccessibilityObjectWrapperBase convertPointToScreenSpace:]): Deleted.
+        * accessibility/mac/WebAccessibilityObjectWrapperMac.mm:
+        (-[WebAccessibilityObjectWrapper IGNORE_WARNINGS_END]):
+        (-[WebAccessibilityObjectWrapper position]):
+        (-[WebAccessibilityObjectWrapper accessibilityAttributeValue:]):
+        (-[WebAccessibilityObjectWrapper convertPointToScreenSpace:]): Deleted.
+
 2019-01-20  Antoine Quint  <graouts@apple.com>
 
         Add a POINTER_EVENTS feature flag

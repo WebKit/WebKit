@@ -109,6 +109,7 @@ public:
 #endif
 
     // Attributes - platform-independent implementations
+    JSRetainPtr<JSStringRef> stringDescriptionOfAttributeValue(JSStringRef attribute);
     JSRetainPtr<JSStringRef> stringAttributeValue(JSStringRef attribute);
     double numberAttributeValue(JSStringRef attribute);
     JSValueRef uiElementArrayAttributeValue(JSStringRef attribute) const;

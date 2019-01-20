@@ -1,3 +1,19 @@
+2019-01-20  chris fleizach  <cfleizach@apple.com>
+
+        AX: Support returning relative frames for accessibility
+        https://bugs.webkit.org/show_bug.cgi?id=193414
+        <rdar://problem/47268501>
+
+        Reviewed by Zalan Bujtas.
+
+        * WebKitTestRunner/InjectedBundle/AccessibilityUIElement.h:
+        * WebKitTestRunner/InjectedBundle/Bindings/AccessibilityUIElement.idl:
+        * WebKitTestRunner/InjectedBundle/ios/AccessibilityUIElementIOS.mm:
+        (WTR::AccessibilityUIElement::stringDescriptionOfAttributeValue):
+        * WebKitTestRunner/InjectedBundle/mac/AccessibilityUIElementMac.mm:
+        (WTR::attributesOfElement):
+        (WTR::AccessibilityUIElement::stringDescriptionOfAttributeValue):
+
 2019-01-20  Antoine Quint  <graouts@apple.com>
 
         Add a POINTER_EVENTS feature flag

@@ -58,6 +58,7 @@ interface AccessibilityUIElement {
     readonly attribute long insertionPointLineNumber;
     readonly attribute DOMString selectedTextRange;
 
+    DOMString stringDescriptionOfAttributeValue(DOMString attr);
     DOMString stringAttributeValue(DOMString attr);
     double numberAttributeValue(DOMString attr);
     object uiElementArrayAttributeValue(DOMString attr);
