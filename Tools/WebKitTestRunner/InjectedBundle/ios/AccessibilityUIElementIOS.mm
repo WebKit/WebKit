@@ -348,11 +348,6 @@ JSRetainPtr<JSStringRef> AccessibilityUIElement::allAttributes()
     return createEmptyJSString();
 }
 
-JSRetainPtr<JSStringRef> AccessibilityUIElement::stringDescriptionOfAttributeValue(JSStringRef attribute)
-{
-    return createEmptyJSString();
-}
-
 JSRetainPtr<JSStringRef> AccessibilityUIElement::stringAttributeValue(JSStringRef attribute)
 {
     if (JSStringIsEqualToUTF8CString(attribute, "AXPlaceholderValue"))

@@ -3589,7 +3589,7 @@ void WebViewImpl::enableAccessibilityIfNecessary()
     updateWindowAndViewFrames();
 }
 
-id WebViewImpl::accessibilityAttributeValue(NSString *attribute, id parameter)
+id WebViewImpl::accessibilityAttributeValue(NSString *attribute)
 {
     enableAccessibilityIfNecessary();
 
@@ -3611,13 +3611,6 @@ id WebViewImpl::accessibilityAttributeValue(NSString *attribute, id parameter)
             return NSAccessibilityUnignoredAncestor([m_view superview]);
             if ([attribute isEqualToString:NSAccessibilityEnabledAttribute])
                 return @YES;
-    
-    if ([attribute isEqualToString:@"AXConvertRelativeFrame"]) {
-        if ([parameter isKindOfClass:[NSValue class]]) {
-            NSRect rect = [(NSValue *)parameter rectValue];
-            return [NSValue valueWithRect:m_pageClient->rootViewToScreen(IntRect(rect))];
-        }
-    }
     
     return [m_view _web_superAccessibilityAttributeValue:attribute];
 }

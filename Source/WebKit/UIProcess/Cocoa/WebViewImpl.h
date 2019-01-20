@@ -409,7 +409,7 @@ public:
     bool accessibilityIsIgnored() const { return false; }
     id accessibilityHitTest(CGPoint);
     void enableAccessibilityIfNecessary();
-    id accessibilityAttributeValue(NSString *, id parameter = nil);
+    id accessibilityAttributeValue(NSString *);
 
     NSTrackingArea *primaryTrackingArea() const { return m_primaryTrackingArea.get(); }
     void setPrimaryTrackingArea(NSTrackingArea *);

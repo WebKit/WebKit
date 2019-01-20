@@ -537,7 +537,6 @@ webkit.org/b/183352 accessibility/ios-simulator/AOM-dismiss-event.html [ Skip ]
 webkit.org/b/184742 accessibility/mac/async-increment-decrement-action.html [ Skip ]
 webkit.org/b/185897 accessibility/mac/AOM-event-accessiblesetvalue.html [ Skip ]
 webkit.org/b/185897 accessibility/mac/set-value-editable-types.html [ Skip ]
-webkit.org/b/193414 accessibility/mac/relative-frame.html [ Skip ]
 
 webkit.org/b/182752 accessibility/mac/accessibility-make-first-responder.html [ Skip ]
 
