@@ -274,20 +274,9 @@ Heap::Heap(VM* vm, HeapType heapType)
     : m_heapType(heapType)
     , m_ramSize(Options::forceRAMSize() ? Options::forceRAMSize() : ramSize())
     , m_minBytesPerCycle(minHeapSize(m_heapType, m_ramSize))
-    , m_sizeAfterLastCollect(0)
-    , m_sizeAfterLastFullCollect(0)
-    , m_sizeBeforeLastFullCollect(0)
-    , m_sizeAfterLastEdenCollect(0)
-    , m_sizeBeforeLastEdenCollect(0)
-    , m_bytesAllocatedThisCycle(0)
-    , m_bytesAbandonedSinceLastFullCollect(0)
     , m_maxEdenSize(m_minBytesPerCycle)
     , m_maxHeapSize(m_minBytesPerCycle)
-    , m_shouldDoFullCollection(false)
-    , m_totalBytesVisited(0)
     , m_objectSpace(this)
-    , m_extraMemorySize(0)
-    , m_deprecatedExtraMemorySize(0)
     , m_machineThreads(std::make_unique<MachineThreads>())
     , m_collectorSlotVisitor(std::make_unique<SlotVisitor>(*this, "C"))
     , m_mutatorSlotVisitor(std::make_unique<SlotVisitor>(*this, "M"))
@@ -297,20 +286,13 @@ Heap::Heap(VM* vm, HeapType heapType)
     , m_handleSet(vm)
     , m_codeBlocks(std::make_unique<CodeBlockSet>())
     , m_jitStubRoutines(std::make_unique<JITStubRoutineSet>())
-    , m_isSafeToCollect(false)
     , m_vm(vm)
     // We seed with 10ms so that GCActivityCallback::didAllocate doesn't continuously 
     // schedule the timer if we've never done a collection.
-    , m_lastFullGCLength(0.01)
-    , m_lastEdenGCLength(0.01)
     , m_fullActivityCallback(GCActivityCallback::tryCreateFullTimer(this))
     , m_edenActivityCallback(GCActivityCallback::tryCreateEdenTimer(this))
     , m_sweeper(adoptRef(*new IncrementalSweeper(this)))
     , m_stopIfNecessaryTimer(adoptRef(*new StopIfNecessaryTimer(vm)))
-    , m_deferralDepth(0)
-#if USE(FOUNDATION)
-    , m_delayedReleaseRecursionCount(0)
-#endif
     , m_sharedCollectorMarkStack(std::make_unique<MarkStackArray>())
     , m_sharedMutatorMarkStack(std::make_unique<MarkStackArray>())
     , m_helperClient(&heapHelperPool())
@@ -767,7 +749,7 @@ void Heap::removeDeadHeapSnapshotNodes(HeapProfiler& heapProfiler)
 
 void Heap::updateObjectCounts()
 {
-    if (m_collectionScope == CollectionScope::Full)
+    if (m_collectionScope && m_collectionScope.value() == CollectionScope::Full)
         m_totalBytesVisited = 0;
 
     m_totalBytesVisitedThisCycle = bytesVisited();
@@ -963,7 +945,7 @@ void Heap::addToRememberedSet(const JSCell* constCell)
             // path. So, we don't have to remember this object. We could return here. But we go
             // further and attempt to re-white the object.
             
-            RELEASE_ASSERT(m_collectionScope == CollectionScope::Full);
+            RELEASE_ASSERT(m_collectionScope && m_collectionScope.value() == CollectionScope::Full);
             
             if (cell->atomicCompareExchangeCellStateStrong(CellState::PossiblyBlack, CellState::DefinitelyWhite) == CellState::PossiblyBlack) {
                 // Now we protect against this race:
@@ -1234,7 +1216,7 @@ NEVER_INLINE bool Heap::runBeginPhase(GCConductor conn)
         
     prepareForMarking();
         
-    if (m_collectionScope == CollectionScope::Full) {
+    if (m_collectionScope && m_collectionScope.value() == CollectionScope::Full) {
         m_opaqueRoots.clear();
         m_collectorSlotVisitor->clearMarkStacks();
         m_mutatorMarkStack->clear();
@@ -2127,7 +2109,7 @@ void Heap::willStartCollection()
         if (false)
             dataLog("Eden collection!\n");
     }
-    if (m_collectionScope == CollectionScope::Full) {
+    if (m_collectionScope && m_collectionScope.value() == CollectionScope::Full) {
         m_sizeBeforeLastFullCollect = m_sizeAfterLastCollect + m_bytesAllocatedThisCycle;
         m_extraMemorySize = 0;
         m_deprecatedExtraMemorySize = 0;
@@ -2138,7 +2120,7 @@ void Heap::willStartCollection()
         if (m_fullActivityCallback)
             m_fullActivityCallback->willCollect();
     } else {
-        ASSERT(m_collectionScope == CollectionScope::Eden);
+        ASSERT(m_collectionScope && m_collectionScope.value() == CollectionScope::Eden);
         m_sizeBeforeLastEdenCollect = m_sizeAfterLastCollect + m_bytesAllocatedThisCycle;
     }
 
@@ -2161,7 +2143,7 @@ void Heap::reapWeakHandles()
 
 void Heap::pruneStaleEntriesFromWeakGCMaps()
 {
-    if (m_collectionScope != CollectionScope::Full)
+    if (!m_collectionScope || m_collectionScope.value() != CollectionScope::Full)
         return;
     for (WeakGCMapBase* weakGCMap : m_weakGCMaps)
         weakGCMap->pruneStaleEntries();
@@ -2180,13 +2162,13 @@ void Heap::snapshotUnswept()
 
 void Heap::deleteSourceProviderCaches()
 {
-    if (*m_lastCollectionScope == CollectionScope::Full)
+    if (m_lastCollectionScope && m_lastCollectionScope.value() == CollectionScope::Full)
         m_vm->clearSourceProviderCaches();
 }
 
 void Heap::notifyIncrementalSweeper()
 {
-    if (m_collectionScope == CollectionScope::Full) {
+    if (m_collectionScope && m_collectionScope.value() == CollectionScope::Full) {
         if (!m_logicallyEmptyWeakBlocks.isEmpty())
             m_indexOfNextLogicallyEmptyWeakBlockToSweep = 0;
     }
@@ -2231,7 +2213,7 @@ void Heap::updateAllocationLimits()
     if (verbose)
         dataLog("extraMemorySize() = ", extraMemorySize(), ", currentHeapSize = ", currentHeapSize, "\n");
     
-    if (m_collectionScope == CollectionScope::Full) {
+    if (m_collectionScope && m_collectionScope.value() == CollectionScope::Full) {
         // To avoid pathological GC churn in very small and very large heaps, we set
         // the new allocation limit based on the current size of the heap, with a
         // fixed minimum.

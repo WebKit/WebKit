@@ -26,6 +26,7 @@
 #pragma once
 
 #include "BlockDirectoryInlines.h"
+#include "HeapCellType.h"
 #include "JSCast.h"
 #include "MarkedBlock.h"
 #include "MarkedSpace.h"
@@ -76,10 +77,11 @@ void Subspace::forEachMarkedCell(const Func& func)
                     return IterationStatus::Continue;
                 });
         });
+    CellAttributes attributes = this->attributes();
     forEachLargeAllocation(
         [&] (LargeAllocation* allocation) {
             if (allocation->isMarked())
-                func(allocation->cell(), m_attributes.cellKind);
+                func(allocation->cell(), attributes.cellKind);
         });
 }
 
@@ -112,10 +114,11 @@ Ref<SharedTask<void(SlotVisitor&)>> Subspace::forEachMarkedCellInParallel(const 
                 m_needToVisitLargeAllocations = false;
             }
             
+            CellAttributes attributes = m_subspace.attributes();
             m_subspace.forEachLargeAllocation(
                 [&] (LargeAllocation* allocation) {
                     if (allocation->isMarked())
-                        m_func(visitor, allocation->cell(), m_subspace.m_attributes.cellKind);
+                        m_func(visitor, allocation->cell(), attributes.cellKind);
                 });
         }
         
@@ -141,11 +144,17 @@ void Subspace::forEachLiveCell(const Func& func)
                     return IterationStatus::Continue;
                 });
         });
+    CellAttributes attributes = this->attributes();
     forEachLargeAllocation(
         [&] (LargeAllocation* allocation) {
             if (allocation->isLive())
-                func(allocation->cell(), m_attributes.cellKind);
+                func(allocation->cell(), attributes.cellKind);
         });
+}
+
+inline const CellAttributes& Subspace::attributes() const
+{
+    return m_heapCellType->attributes();
 }
 
 } // namespace JSC

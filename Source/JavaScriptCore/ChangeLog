@@ -1,3 +1,57 @@
+2019-01-20  Yusuke Suzuki  <yusukesuzuki@slowstart.org>
+
+        [JSC] Shrink data structure size in JSC/heap
+        https://bugs.webkit.org/show_bug.cgi?id=193612
+
+        Reviewed by Saam Barati.
+
+        This patch reduces the size of data structures in JSC/heap. Basically, we reorder the members to remove paddings.
+
+        For Subspace, we drop CellAttributes `m_attributes`. Instead, we use `heapCellType->attributes()`. And we use
+        FreeList::cellSize() instead of holding m_cellSize in LocalAllocator.
+
+        This change reduces the size of JSC::VM too since it includes JSC::Heap. The size of VM becomes from 78208 to 76696.
+
+        * heap/BlockDirectory.cpp:
+        * heap/BlockDirectory.h:
+        * heap/CollectionScope.h:
+        * heap/CompleteSubspace.cpp:
+        (JSC::CompleteSubspace::allocatorForSlow):
+        * heap/FreeList.h:
+        (JSC::FreeList::offsetOfCellSize):
+        (JSC::FreeList::cellSize const):
+        * heap/Heap.cpp:
+        (JSC::Heap::Heap):
+        (JSC::Heap::updateObjectCounts):
+        (JSC::Heap::addToRememberedSet):
+        (JSC::Heap::runBeginPhase):
+        (JSC::Heap::willStartCollection):
+        (JSC::Heap::pruneStaleEntriesFromWeakGCMaps):
+        (JSC::Heap::deleteSourceProviderCaches):
+        (JSC::Heap::notifyIncrementalSweeper):
+        (JSC::Heap::updateAllocationLimits):
+        * heap/Heap.h:
+        * heap/IsoAlignedMemoryAllocator.h:
+        * heap/LargeAllocation.cpp:
+        * heap/LocalAllocator.cpp:
+        (JSC::LocalAllocator::LocalAllocator):
+        * heap/LocalAllocator.h:
+        (JSC::LocalAllocator::cellSize const):
+        (JSC::LocalAllocator::offsetOfCellSize):
+        * heap/MarkedSpace.cpp:
+        (JSC::MarkedSpace::MarkedSpace):
+        * heap/MarkedSpace.h:
+        * heap/MarkingConstraint.h:
+        * heap/Subspace.cpp:
+        (JSC::Subspace::initialize):
+        * heap/Subspace.h:
+        (JSC::Subspace::attributes const): Deleted.
+        * heap/SubspaceInlines.h:
+        (JSC::Subspace::forEachMarkedCell):
+        (JSC::Subspace::forEachMarkedCellInParallel):
+        (JSC::Subspace::forEachLiveCell):
+        (JSC::Subspace::attributes const):
+
 2019-01-20  Tadeu Zagallo  <tzagallo@apple.com>
 
         Cache bytecode to disk

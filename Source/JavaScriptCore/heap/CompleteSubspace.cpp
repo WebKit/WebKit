@@ -77,7 +77,7 @@ Allocator CompleteSubspace::allocatorForSlow(size_t size)
         return allocator;
 
     if (false)
-        dataLog("Creating BlockDirectory/LocalAllocator for ", m_name, ", ", m_attributes, ", ", sizeClass, ".\n");
+        dataLog("Creating BlockDirectory/LocalAllocator for ", m_name, ", ", attributes(), ", ", sizeClass, ".\n");
     
     std::unique_ptr<BlockDirectory> uniqueDirectory =
         std::make_unique<BlockDirectory>(m_space.heap(), sizeClass);

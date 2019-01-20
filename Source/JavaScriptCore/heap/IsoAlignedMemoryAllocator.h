@@ -40,11 +40,11 @@ public:
     void dump(PrintStream&) const override;
 
 private:
-    Lock m_lock;
     Vector<void*> m_blocks;
     HashMap<void*, unsigned> m_blockIndices;
     FastBitVector m_committed;
     unsigned m_firstUncommitted { 0 };
+    Lock m_lock;
 };
 
 } // namespace JSC

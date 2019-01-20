@@ -34,8 +34,7 @@ namespace JSC {
 
 LocalAllocator::LocalAllocator(BlockDirectory* directory)
     : m_directory(directory)
-    , m_cellSize(directory->m_cellSize)
-    , m_freeList(m_cellSize)
+    , m_freeList(directory->m_cellSize)
 {
     auto locker = holdLock(directory->m_localAllocatorsLock);
     directory->m_localAllocators.append(this);

@@ -50,7 +50,7 @@ public:
     const char* name() const { return m_name.data(); }
     MarkedSpace& space() const { return m_space; }
     
-    const CellAttributes& attributes() const { return m_attributes; }
+    const CellAttributes& attributes() const;
     HeapCellType* heapCellType() const { return m_heapCellType; }
     AlignedMemoryAllocator* alignedMemoryAllocator() const { return m_alignedMemoryAllocator; }
     
@@ -106,9 +106,6 @@ protected:
     
     MarkedSpace& m_space;
     
-    CString m_name;
-    CellAttributes m_attributes;
-
     HeapCellType* m_heapCellType { nullptr };
     AlignedMemoryAllocator* m_alignedMemoryAllocator { nullptr };
     
@@ -116,6 +113,8 @@ protected:
     BlockDirectory* m_directoryForEmptyAllocation { nullptr }; // Uses the MarkedSpace linked list of blocks.
     SentinelLinkedList<LargeAllocation, BasicRawSentinelNode<LargeAllocation>> m_largeAllocations;
     Subspace* m_nextSubspaceInAlignedMemoryAllocator { nullptr };
+
+    CString m_name;
 };
 
 } // namespace JSC

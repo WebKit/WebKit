@@ -84,8 +84,11 @@ public:
     static ptrdiff_t offsetOfPayloadEnd() { return OBJECT_OFFSETOF(FreeList, m_payloadEnd); }
     static ptrdiff_t offsetOfRemaining() { return OBJECT_OFFSETOF(FreeList, m_remaining); }
     static ptrdiff_t offsetOfOriginalSize() { return OBJECT_OFFSETOF(FreeList, m_originalSize); }
+    static ptrdiff_t offsetOfCellSize() { return OBJECT_OFFSETOF(FreeList, m_cellSize); }
     
     void dump(PrintStream&) const;
+
+    unsigned cellSize() const { return m_cellSize; }
     
 private:
     FreeCell* head() const { return FreeCell::descramble(m_scrambledHead, m_secret); }

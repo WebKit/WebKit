@@ -45,7 +45,6 @@ Subspace::Subspace(CString name, Heap& heap)
 
 void Subspace::initialize(HeapCellType* heapCellType, AlignedMemoryAllocator* alignedMemoryAllocator)
 {
-    m_attributes = heapCellType->attributes();
     m_heapCellType = heapCellType;
     m_alignedMemoryAllocator = alignedMemoryAllocator;
     m_directoryForEmptyAllocation = m_alignedMemoryAllocator->firstDirectory();

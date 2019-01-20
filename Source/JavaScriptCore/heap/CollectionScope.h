@@ -27,7 +27,7 @@
 
 namespace JSC {
 
-enum class CollectionScope { Eden, Full };
+enum class CollectionScope : uint8_t { Eden, Full };
 
 const char* collectionScopeName(CollectionScope);
 

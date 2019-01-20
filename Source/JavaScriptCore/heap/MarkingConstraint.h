@@ -82,13 +82,13 @@ protected:
 private:
     friend class MarkingConstraintSet; // So it can set m_index.
     
-    unsigned m_index { UINT_MAX };
     CString m_abbreviatedName;
     CString m_name;
+    size_t m_lastVisitCount { 0 };
+    unsigned m_index { UINT_MAX };
     ConstraintVolatility m_volatility;
     ConstraintConcurrency m_concurrency;
     ConstraintParallelism m_parallelism;
-    size_t m_lastVisitCount { 0 };
     Lock m_lock;
 };
 

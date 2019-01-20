@@ -30,6 +30,7 @@
 #include "Heap.h"
 #include "JSCInlines.h"
 #include "Operations.h"
+#include "SubspaceInlines.h"
 
 namespace JSC {
 
