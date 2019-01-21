@@ -550,7 +550,7 @@ void RenderImage::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
     
 void RenderImage::paintAreaElementFocusRing(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
 {
-#if ENABLE(FULL_KEYBOARD_ACCESS)
+#if !PLATFORM(IOS_FAMILY) || ENABLE(FULL_KEYBOARD_ACCESS)
     if (document().printing() || !frame().selection().isFocusedAndActive())
         return;
     

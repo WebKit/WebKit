@@ -1,3 +1,17 @@
+2019-01-20  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        REGRESSION(r240174): Wrong preprocessor guards in RenderImage::paintAreaElementFocusRing
+        https://bugs.webkit.org/show_bug.cgi?id=193630
+
+        Reviewed by Daniel Bates.
+
+        r240174 inadvertently disabled this function on non-Apple platforms.
+
+        This fixes layout test fast/images/image-map-outline-in-positioned-container.html.
+
+        * rendering/RenderImage.cpp:
+        (WebCore::RenderImage::paintAreaElementFocusRing):
+
 2019-01-20  chris fleizach  <cfleizach@apple.com>
 
         AX: Support returning relative frames for accessibility
