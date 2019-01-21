@@ -2461,7 +2461,7 @@ private:
 
     void addCheckStructureForOriginalStringObjectUse(UseKind useKind, const NodeOrigin& origin, Node* node)
     {
-        RELEASE_ASSERT(useKind == StringObjectUse || StringOrStringObjectUse);
+        RELEASE_ASSERT(useKind == StringObjectUse || useKind == StringOrStringObjectUse);
 
         StructureSet set;
         set.add(m_graph.globalObjectFor(node->origin.semantic)->stringObjectStructure());
