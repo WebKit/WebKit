@@ -25,6 +25,8 @@
 
 #pragma once
 
+#if ENABLE(RESOURCE_LOAD_STATISTICS)
+
 #include <wtf/text/WTFString.h>
 
 namespace WebKit {
@@ -38,3 +40,5 @@ void setNotifyPagesWhenTelemetryWasCaptured(bool);
     
 }
 }
+
+#endif

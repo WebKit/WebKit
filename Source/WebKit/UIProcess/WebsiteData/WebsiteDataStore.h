@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2014-2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -72,7 +72,8 @@ struct WebsiteDataRecord;
 struct WebsiteDataStoreParameters;
 
 #if ENABLE(RESOURCE_LOAD_STATISTICS)
-enum class StorageAccessStatus;
+enum class ShouldGrandfather;
+enum class StorageAccessStatus : unsigned;
 enum class StorageAccessPromptStatus;
 #endif
 
@@ -104,29 +105,73 @@ public:
     const String& serviceWorkerRegistrationDirectory() const { return m_resolvedConfiguration->serviceWorkerRegistrationDirectory(); }
     void setServiceWorkerRegistrationDirectory(String&& directory) { m_resolvedConfiguration->setServiceWorkerRegistrationDirectory(WTFMove(directory)); }
 
+#if ENABLE(RESOURCE_LOAD_STATISTICS)
     WebResourceLoadStatisticsStore* resourceLoadStatistics() const { return m_resourceLoadStatistics.get(); }
     void clearResourceLoadStatisticsInWebProcesses(CompletionHandler<void()>&&);
+#endif
 
     static void cloneSessionData(WebPageProxy& sourcePage, WebPageProxy& newPage);
 
     void fetchData(OptionSet<WebsiteDataType>, OptionSet<WebsiteDataFetchOption>, Function<void(Vector<WebsiteDataRecord>)>&& completionHandler);
-    void fetchDataForTopPrivatelyControlledDomains(OptionSet<WebsiteDataType>, OptionSet<WebsiteDataFetchOption>, const Vector<String>& topPrivatelyControlledDomains, Function<void(Vector<WebsiteDataRecord>&&, HashSet<String>&&)>&& completionHandler);
-    void topPrivatelyControlledDomainsWithWebsiteData(OptionSet<WebsiteDataType> dataTypes, OptionSet<WebsiteDataFetchOption> fetchOptions, Function<void(HashSet<String>&&)>&& completionHandler);
     void removeData(OptionSet<WebsiteDataType>, WallTime modifiedSince, Function<void()>&& completionHandler);
     void removeData(OptionSet<WebsiteDataType>, const Vector<WebsiteDataRecord>&, Function<void()>&& completionHandler);
-    void removeDataForTopPrivatelyControlledDomains(OptionSet<WebsiteDataType>, OptionSet<WebsiteDataFetchOption>, const Vector<String>& topPrivatelyControlledDomains, Function<void(HashSet<String>&&)>&& completionHandler);
 
 #if ENABLE(RESOURCE_LOAD_STATISTICS)
+    void fetchDataForTopPrivatelyControlledDomains(OptionSet<WebsiteDataType>, OptionSet<WebsiteDataFetchOption>, const Vector<String>& topPrivatelyControlledDomains, Function<void(Vector<WebsiteDataRecord>&&, HashSet<String>&&)>&& completionHandler);
+    void topPrivatelyControlledDomainsWithWebsiteData(OptionSet<WebsiteDataType> dataTypes, OptionSet<WebsiteDataFetchOption> fetchOptions, Function<void(HashSet<String>&&)>&& completionHandler);
+    void removeDataForTopPrivatelyControlledDomains(OptionSet<WebsiteDataType>, OptionSet<WebsiteDataFetchOption>, const Vector<String>& topPrivatelyControlledDomains, Function<void(HashSet<String>&&)>&& completionHandler);
+
+    void clearPrevalentResource(const URL&, CompletionHandler<void()>&&);
+    void clearUserInteraction(const URL&, CompletionHandler<void()>&&);
+    void deleteWebsiteDataForTopPrivatelyControlledDomainsInAllPersistentDataStores(OptionSet<WebsiteDataType>, Vector<String>&& topPrivatelyControlledDomains, bool shouldNotifyPages, CompletionHandler<void(const HashSet<String>&)>&&);
+    void dumpResourceLoadStatistics(CompletionHandler<void(const String&)>&&);
+    void logTestingEvent(const String&);
+    void logUserInteraction(const URL&, CompletionHandler<void()>&&);
     void updatePrevalentDomainsToBlockCookiesFor(const Vector<String>& domainsToBlock, CompletionHandler<void()>&&);
     void setAgeCapForClientSideCookies(Optional<Seconds>, CompletionHandler<void()>&&);
     void hasStorageAccessForFrameHandler(const String& resourceDomain, const String& firstPartyDomain, uint64_t frameID, uint64_t pageID, CompletionHandler<void(bool hasAccess)>&&);
     void getAllStorageAccessEntries(uint64_t pageID, CompletionHandler<void(Vector<String>&& domains)>&&);
     void grantStorageAccessHandler(const String& resourceDomain, const String& firstPartyDomain, Optional<uint64_t> frameID, uint64_t pageID, CompletionHandler<void(bool wasGranted)>&&);
+    void hasHadUserInteraction(const URL&, CompletionHandler<void(bool)>&&);
+    void isGrandfathered(const URL&, CompletionHandler<void(bool)>&&);
+    void isPrevalentResource(const URL&, CompletionHandler<void(bool)>&&);
+    void isRegisteredAsRedirectingTo(const URL& hostRedirectedFrom, const URL& hostRedirectedTo, CompletionHandler<void(bool)>&&);
+    void isRegisteredAsSubresourceUnder(const URL& subresource, const URL& topFrame, CompletionHandler<void(bool)>&&);
+    void isRegisteredAsSubFrameUnder(const URL& subFrame, const URL& topFrame, CompletionHandler<void(bool)>&&);
+    void isVeryPrevalentResource(const URL&, CompletionHandler<void(bool)>&&);
     void removeAllStorageAccessHandler(CompletionHandler<void()>&&);
     void removePrevalentDomains(const Vector<String>& domains);
+    void resetParametersToDefaultValues(CompletionHandler<void()>&&);
+    void scheduleCookieBlockingUpdate(CompletionHandler<void()>&&);
+    void scheduleClearInMemoryAndPersistent(WallTime modifiedSince, ShouldGrandfather, CompletionHandler<void()>&&);
+    void scheduleClearInMemoryAndPersistent(ShouldGrandfather, CompletionHandler<void()>&&);
+    void scheduleStatisticsAndDataRecordsProcessing(CompletionHandler<void()>&&);
+    void submitTelemetry();
+    void setCacheMaxAgeCap(Seconds, CompletionHandler<void()>&&);
+    void setGrandfathered(const URL&, bool, CompletionHandler<void()>&&);
+    void setGrandfatheringTime(Seconds, CompletionHandler<void()>&&);
+    void setLastSeen(const URL&, Seconds, CompletionHandler<void()>&&);
+    void setNotifyPagesWhenDataRecordsWereScanned(bool, CompletionHandler<void()>&&);
+    void setPruneEntriesDownTo(size_t, CompletionHandler<void()>&&);
+    void setSubframeUnderTopFrameOrigin(const URL& subframe, const URL& topFrame, CompletionHandler<void()>&&);
+    void setSubresourceUnderTopFrameOrigin(const URL& subresource, const URL& topFrame, CompletionHandler<void()>&&);
+    void setSubresourceUniqueRedirectTo(const URL& subresource, const URL& hostNameRedirectedTo, CompletionHandler<void()>&&);
+    void setSubresourceUniqueRedirectFrom(const URL& subresource, const URL& hostNameRedirectedFrom, CompletionHandler<void()>&&);
+    void setTimeToLiveUserInteraction(Seconds, CompletionHandler<void()>&&);
+    void setTopFrameUniqueRedirectTo(const URL& topFrameHostName, const URL& hostNameRedirectedTo, CompletionHandler<void()>&&);
+    void setTopFrameUniqueRedirectFrom(const URL& topFrameHostName, const URL& hostNameRedirectedFrom, CompletionHandler<void()>&&);
+    void setMaxStatisticsEntries(size_t, CompletionHandler<void()>&&);
+    void setMinimumTimeBetweenDataRecordsRemoval(Seconds, CompletionHandler<void()>&&);
+    void setNotifyPagesWhenTelemetryWasCaptured(bool, CompletionHandler<void()>&&);
+    void setPrevalentResource(const URL&, CompletionHandler<void()>&&);
+    void setPrevalentResourceForDebugMode(const URL&, CompletionHandler<void()>&&);
+    void setShouldClassifyResourcesBeforeDataRecordsRemoval(bool, CompletionHandler<void()>&&);
+    void setStatisticsTestingCallback(WTF::Function<void(const String&)>&& callback) { m_statisticsTestingCallback = WTFMove(callback); }
+    void setVeryPrevalentResource(const URL&, CompletionHandler<void()>&&);
     void hasStorageAccess(String&& subFrameHost, String&& topFrameHost, uint64_t frameID, uint64_t pageID, CompletionHandler<void(bool)>&&);
     void requestStorageAccess(String&& subFrameHost, String&& topFrameHost, uint64_t frameID, uint64_t pageID, bool promptEnabled, CompletionHandler<void(StorageAccessStatus)>&&);
     void grantStorageAccess(String&& subFrameHost, String&& topFrameHost, uint64_t frameID, uint64_t pageID, bool userWasPrompted, CompletionHandler<void(bool)>&&);
+    void setSubframeUnderTopFrameOrigin(const URL& subframe, const URL& topFrame);
 #endif
     void setCacheMaxAgeCapForPrevalentResources(Seconds, CompletionHandler<void()>&&);
     void resetCacheMaxAgeCapForPrevalentResources(CompletionHandler<void()>&&);
@@ -210,8 +255,10 @@ private:
     void platformDestroy();
     static void platformRemoveRecentSearches(WallTime);
 
+#if ENABLE(RESOURCE_LOAD_STATISTICS)
     void registerWebResourceLoadStatisticsStoreAsMessageReceiver();
     void unregisterWebResourceLoadStatisticsStoreAsMessageReceiver();
+#endif
 
     HashSet<RefPtr<WebProcessPool>> processPools(size_t count = std::numeric_limits<size_t>::max(), bool ensureAPoolExists = true) const;
 
@@ -233,8 +280,13 @@ private:
 
     const RefPtr<StorageManager> m_storageManager;
     const Ref<DeviceIdHashSaltStorage> m_deviceIdHashSaltStorage;
+
+#if ENABLE(RESOURCE_LOAD_STATISTICS)
     RefPtr<WebResourceLoadStatisticsStore> m_resourceLoadStatistics;
     bool m_resourceLoadStatisticsDebugMode { false };
+    bool m_resourceLoadStatisticsEnabled { false };
+    WTF::Function<void(const String&)> m_statisticsTestingCallback;
+#endif
 
     Ref<WorkQueue> m_queue;
 

@@ -39,6 +39,10 @@ class WorkQueue;
 class WallTime;
 }
 
+namespace PAL {
+class SessionID;
+}
+
 namespace WebCore {
 
 class Document;
@@ -69,6 +73,7 @@ public:
 
     WEBCORE_EXPORT void setNotificationCallback(WTF::Function<void (Vector<ResourceLoadStatistics>&&)>&&);
     WEBCORE_EXPORT void setRequestStorageAccessUnderOpenerCallback(WTF::Function<void(const String&, uint64_t, const String&)>&&);
+    WEBCORE_EXPORT void setLogUserInteractionNotificationCallback(WTF::Function<void(PAL::SessionID, const String&)>&&);
 
     WEBCORE_EXPORT void notifyObserver();
     WEBCORE_EXPORT void clearState();
@@ -95,6 +100,7 @@ private:
     HashMap<String, WTF::WallTime> m_lastReportedUserInteractionMap;
     WTF::Function<void (Vector<ResourceLoadStatistics>&&)> m_notificationCallback;
     WTF::Function<void(const String&, uint64_t, const String&)> m_requestStorageAccessUnderOpenerCallback;
+    WTF::Function<void(PAL::SessionID, const String&)> m_logUserInteractionNotificationCallback;
     Timer m_notificationTimer;
 #if ENABLE(RESOURCE_LOAD_STATISTICS) && !RELEASE_LOG_DISABLED
     uint64_t m_loggingCounter { 0 };

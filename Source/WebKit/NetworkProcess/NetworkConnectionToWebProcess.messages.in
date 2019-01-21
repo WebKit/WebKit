@@ -58,6 +58,9 @@ messages -> NetworkConnectionToWebProcess LegacyReceiver {
 
     RemoveStorageAccessForFrame(PAL::SessionID sessionID, uint64_t frameID, uint64_t pageID);
     RemoveStorageAccessForAllFramesOnPage(PAL::SessionID sessionID, uint64_t pageID);
+#if ENABLE(RESOURCE_LOAD_STATISTICS)
+    LogUserInteraction(PAL::SessionID sessionID, String topLevelOrigin)
+#endif
 
     AddOriginAccessWhitelistEntry(String sourceOrigin, String destinationProtocol, String destinationHost, bool allowDestinationSubdomains);
     RemoveOriginAccessWhitelistEntry(String sourceOrigin, String destinationProtocol, String destinationHost, bool allowDestinationSubdomains);

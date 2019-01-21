@@ -25,6 +25,8 @@
 
 #pragma once
 
+#if ENABLE(RESOURCE_LOAD_STATISTICS)
+
 #include <wtf/Forward.h>
 #include <wtf/MonotonicTime.h>
 #include <wtf/RunLoop.h>
@@ -75,3 +77,5 @@ private:
 };
 
 }
+
+#endif

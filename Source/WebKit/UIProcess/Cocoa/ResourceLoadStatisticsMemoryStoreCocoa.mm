@@ -25,6 +25,9 @@
 
 #import "config.h"
 #import "ResourceLoadStatisticsMemoryStore.h"
+
+#if ENABLE(RESOURCE_LOAD_STATISTICS)
+
 #import <wtf/text/WTFString.h>
 
 namespace WebKit {
@@ -62,3 +65,5 @@ void ResourceLoadStatisticsMemoryStore::registerUserDefaultsIfNeeded()
 }
 
 }
+
+#endif

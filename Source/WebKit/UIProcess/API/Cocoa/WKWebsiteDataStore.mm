@@ -292,12 +292,20 @@ static Vector<WebKit::WebsiteDataRecord> toWebsiteDataRecords(NSArray *dataRecor
 
 - (BOOL)_resourceLoadStatisticsDebugMode
 {
+#if ENABLE(RESOURCE_LOAD_STATISTICS)
     return _websiteDataStore->websiteDataStore().resourceLoadStatisticsDebugMode();
+#else
+    return NO;
+#endif
 }
 
 - (void)_setResourceLoadStatisticsDebugMode:(BOOL)enabled
 {
+#if ENABLE(RESOURCE_LOAD_STATISTICS)
     _websiteDataStore->websiteDataStore().setResourceLoadStatisticsDebugMode(enabled);
+#else
+    UNUSED_PARAM(enabled);
+#endif
 }
 
 - (NSUInteger)_cacheStoragePerOriginQuota
@@ -362,15 +370,18 @@ static Vector<WebKit::WebsiteDataRecord> toWebsiteDataRecords(NSArray *dataRecor
 
 - (void)_resourceLoadStatisticsSetShouldSubmitTelemetry:(BOOL)value
 {
+#if ENABLE(RESOURCE_LOAD_STATISTICS)
     auto* store = _websiteDataStore->websiteDataStore().resourceLoadStatistics();
     if (!store)
         return;
 
     store->setShouldSubmitTelemetry(value);
+#endif
 }
 
 - (void)_setResourceLoadStatisticsTestingCallback:(void (^)(WKWebsiteDataStore *, NSString *))callback
 {
+#if ENABLE(RESOURCE_LOAD_STATISTICS)
     if (!_websiteDataStore->isPersistent())
         return;
 
@@ -381,11 +392,8 @@ static Vector<WebKit::WebsiteDataRecord> toWebsiteDataRecords(NSArray *dataRecor
         return;
     }
 
-    auto* store = _websiteDataStore->websiteDataStore().resourceLoadStatistics();
-    if (!store)
-        return;
-
-    store->setStatisticsTestingCallback(nullptr);
+    _websiteDataStore->websiteDataStore().setStatisticsTestingCallback(nullptr);
+#endif
 }
 
 + (void)_allowWebsiteDataRecordsForAllOrigins
@@ -406,6 +414,7 @@ static Vector<WebKit::WebsiteDataRecord> toWebsiteDataRecords(NSArray *dataRecor
         return;
     }
 
+#if ENABLE(RESOURCE_LOAD_STATISTICS)
     _websiteDataStore->websiteDataStore().getAllStorageAccessEntries(webPageProxy->pageID(), [completionHandler = makeBlockPtr(completionHandler)](auto domains) {
         Vector<RefPtr<API::Object>> apiDomains;
         apiDomains.reserveInitialCapacity(domains.size());
@@ -413,6 +422,7 @@ static Vector<WebKit::WebsiteDataRecord> toWebsiteDataRecords(NSArray *dataRecor
             apiDomains.uncheckedAppend(API::String::create(domain));
         completionHandler(wrapper(API::Array::create(WTFMove(apiDomains))));
     });
+#endif
 }
 
 - (bool)_hasRegisteredServiceWorker

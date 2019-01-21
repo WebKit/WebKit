@@ -1,3 +1,316 @@
+2019-01-21  Brent Fulgham  <bfulgham@apple.com>
+
+        Implement message handlers for NetworkProcess-based ResourceLoadStatistics
+        https://bugs.webkit.org/show_bug.cgi?id=193556
+        <rdar://problem/47368501>
+
+        Reviewed by Alex Christensen.
+
+        This patch adds a number of sibling methods for tracking ResourceLoadStatistics when the
+        observations are being handled in the NetworkProcess, rather than the UIProcess. The
+        original versions of these methods will be removed as part of Bug 193303.
+
+        * NetworkProcess/Classifier/ResourceLoadStatisticsMemoryStore.cpp:
+        (WebKit::ResourceLoadStatisticsMemoryStore::removeDataRecords):
+        (WebKit::ResourceLoadStatisticsMemoryStore::processStatisticsAndDataRecords):
+        (WebKit::ResourceLoadStatisticsMemoryStore::grandfatherExistingWebsiteData):
+        * NetworkProcess/Classifier/ResourceLoadStatisticsMemoryStore.h:
+        (WebKit::ResourceLoadStatisticsMemoryStore::store const):
+        * NetworkProcess/Classifier/WebResourceLoadStatisticsStore.cpp:
+        (WebKit::WebResourceLoadStatisticsStore::setNotifyPagesWhenDataRecordsWereScanned):
+        (WebKit::WebResourceLoadStatisticsStore::setNotifyPagesWhenTelemetryWasCaptured):
+        (WebKit::WebResourceLoadStatisticsStore::WebResourceLoadStatisticsStore):
+        (WebKit::WebResourceLoadStatisticsStore::setPrevalentResourceForDebugMode):
+        (WebKit::WebResourceLoadStatisticsStore::scheduleStatisticsAndDataRecordsProcessing):
+        (WebKit::WebResourceLoadStatisticsStore::hasStorageAccess):
+        (WebKit::WebResourceLoadStatisticsStore::callHasStorageAccessForFrameHandler):
+        (WebKit::WebResourceLoadStatisticsStore::requestStorageAccess):
+        (WebKit::WebResourceLoadStatisticsStore::logUserInteraction):
+        (WebKit::WebResourceLoadStatisticsStore::clearUserInteraction):
+        (WebKit::WebResourceLoadStatisticsStore::hasHadUserInteraction):
+        (WebKit::WebResourceLoadStatisticsStore::setLastSeen):
+        (WebKit::WebResourceLoadStatisticsStore::setPrevalentResource):
+        (WebKit::WebResourceLoadStatisticsStore::setVeryPrevalentResource):
+        (WebKit::WebResourceLoadStatisticsStore::isPrevalentResource):
+        (WebKit::WebResourceLoadStatisticsStore::isVeryPrevalentResource):
+        (WebKit::WebResourceLoadStatisticsStore::isRegisteredAsSubresourceUnder):
+        (WebKit::WebResourceLoadStatisticsStore::isRegisteredAsSubFrameUnder):
+        (WebKit::WebResourceLoadStatisticsStore::isRegisteredAsRedirectingTo):
+        (WebKit::WebResourceLoadStatisticsStore::clearPrevalentResource):
+        (WebKit::WebResourceLoadStatisticsStore::setGrandfathered):
+        (WebKit::WebResourceLoadStatisticsStore::isGrandfathered):
+        (WebKit::WebResourceLoadStatisticsStore::setSubframeUnderTopFrameOrigin):
+        (WebKit::WebResourceLoadStatisticsStore::setSubresourceUnderTopFrameOrigin):
+        (WebKit::WebResourceLoadStatisticsStore::setSubresourceUniqueRedirectTo):
+        (WebKit::WebResourceLoadStatisticsStore::setSubresourceUniqueRedirectFrom):
+        (WebKit::WebResourceLoadStatisticsStore::setTopFrameUniqueRedirectTo):
+        (WebKit::WebResourceLoadStatisticsStore::setTopFrameUniqueRedirectFrom):
+        (WebKit::WebResourceLoadStatisticsStore::setTimeToLiveUserInteraction):
+        (WebKit::WebResourceLoadStatisticsStore::logTestingEvent):
+        (WebKit::WebResourceLoadStatisticsStore::notifyResourceLoadStatisticsProcessed):
+        (WebKit::WebResourceLoadStatisticsStore::deleteWebsiteDataForTopPrivatelyControlledDomainsInAllPersistentDataStores):
+        (WebKit::WebResourceLoadStatisticsStore::topPrivatelyControlledDomainsWithWebsiteData):
+        (WebKit::WebResourceLoadStatisticsStore::sendDiagnosticMessageWithValue const):
+        (WebKit::WebResourceLoadStatisticsStore::notifyPageStatisticsTelemetryFinished const):
+        * NetworkProcess/Classifier/WebResourceLoadStatisticsStore.h:
+        * NetworkProcess/Classifier/WebResourceLoadStatisticsTelemetry.cpp:
+        (WebKit::submitTopList):
+        (WebKit::submitTopLists):
+        (WebKit::notifyPages):
+        (WebKit::WebResourceLoadStatisticsTelemetry::calculateAndSubmit):
+        (WebKit::nonEphemeralWebPageProxy): Deleted.
+        * NetworkProcess/NetworkConnectionToWebProcess.cpp:
+        (WebKit::NetworkConnectionToWebProcess::logUserInteraction):
+        * NetworkProcess/NetworkConnectionToWebProcess.h:
+        * NetworkProcess/NetworkConnectionToWebProcess.messages.in:
+        * NetworkProcess/NetworkProcess.cpp:
+        (WebKit::NetworkProcess::dumpResourceLoadStatistics):
+        (WebKit::NetworkProcess::isGrandfathered):
+        (WebKit::NetworkProcess::isPrevalentResource):
+        (WebKit::NetworkProcess::isVeryPrevalentResource):
+        (WebKit::NetworkProcess::setGrandfathered):
+        (WebKit::NetworkProcess::setPrevalentResource):
+        (WebKit::NetworkProcess::setPrevalentResourceForDebugMode):
+        (WebKit::NetworkProcess::setVeryPrevalentResource):
+        (WebKit::NetworkProcess::clearPrevalentResource):
+        (WebKit::NetworkProcess::submitTelemetry):
+        (WebKit::NetworkProcess::scheduleCookieBlockingUpdate):
+        (WebKit::NetworkProcess::scheduleClearInMemoryAndPersistent):
+        (WebKit::NetworkProcess::resetParametersToDefaultValues):
+        (WebKit::NetworkProcess::scheduleStatisticsAndDataRecordsProcessing):
+        (WebKit::NetworkProcess::setNotifyPagesWhenDataRecordsWereScanned):
+        (WebKit::NetworkProcess::setNotifyPagesWhenTelemetryWasCaptured):
+        (WebKit::NetworkProcess::setSubframeUnderTopFrameOrigin):
+        (WebKit::NetworkProcess::isRegisteredAsRedirectingTo):
+        (WebKit::NetworkProcess::isRegisteredAsSubFrameUnder):
+        (WebKit::NetworkProcess::setSubresourceUnderTopFrameOrigin):
+        (WebKit::NetworkProcess::setSubresourceUniqueRedirectTo):
+        (WebKit::NetworkProcess::setSubresourceUniqueRedirectFrom):
+        (WebKit::NetworkProcess::isRegisteredAsSubresourceUnder):
+        (WebKit::NetworkProcess::setTopFrameUniqueRedirectTo):
+        (WebKit::NetworkProcess::setTopFrameUniqueRedirectFrom):
+        (WebKit::NetworkProcess::setLastSeen):
+        (WebKit::NetworkProcess::hasStorageAccess):
+        (WebKit::NetworkProcess::requestStorageAccess):
+        (WebKit::NetworkProcess::grantStorageAccess):
+        (WebKit::NetworkProcess::logUserInteraction):
+        (WebKit::NetworkProcess::hadUserInteraction):
+        (WebKit::NetworkProcess::clearUserInteraction):
+        (WebKit::NetworkProcess::setGrandfatheringTime):
+        (WebKit::NetworkProcess::setMaxStatisticsEntries):
+        (WebKit::NetworkProcess::setMinimumTimeBetweenDataRecordsRemoval):
+        (WebKit::NetworkProcess::setPruneEntriesDownTo):
+        (WebKit::NetworkProcess::setTimeToLiveUserInteraction):
+        (WebKit::NetworkProcess::setShouldClassifyResourcesBeforeDataRecordsRemoval):
+        (WebKit::NetworkProcess::setResourceLoadStatisticsEnabled):
+        (WebKit::NetworkProcess::setResourceLoadStatisticsDebugMode):
+        (WebKit::NetworkProcess::resetCacheMaxAgeCapForPrevalentResources):
+        (WebKit::NetworkProcess::deleteWebsiteData):
+        (WebKit::filterForTopLevelDomains):
+        (WebKit::NetworkProcess::deleteWebsiteDataForTopPrivatelyControlledDomainsInAllPersistentDataStores):
+        (WebKit::NetworkProcess::topPrivatelyControlledDomainsWithWebsiteData):
+        * NetworkProcess/NetworkProcess.h:
+        * NetworkProcess/NetworkProcess.messages.in:
+        * NetworkProcess/NetworkSession.cpp:
+        (WebKit::NetworkSession::setResourceLoadStatisticsEnabled):
+        (WebKit::NetworkSession::notifyResourceLoadStatisticsProcessed):
+        (WebKit::NetworkSession::logDiagnosticMessageWithValue):
+        (WebKit::NetworkSession::notifyPageStatisticsTelemetryFinished):
+        (WebKit::NetworkSession::deleteWebsiteDataForTopPrivatelyControlledDomainsInAllPersistentDataStores):
+        (WebKit::NetworkSession::topPrivatelyControlledDomainsWithWebsiteData):
+        (WebKit::NetworkSession::enableResourceLoadStatistics): Deleted.
+        * NetworkProcess/NetworkSession.h:
+        * NetworkProcess/cocoa/NetworkSessionCocoa.mm:
+        (WebKit::NetworkSessionCocoa::NetworkSessionCocoa):
+        * UIProcess/API/C/WKWebsiteDataStoreRef.cpp:
+        (WKWebsiteDataStoreSetResourceLoadStatisticsDebugModeWithCompletionHandler):
+        (WKWebsiteDataStoreSetResourceLoadStatisticsPrevalentResourceForDebugMode):
+        (WKWebsiteDataStoreSetStatisticsLastSeen):
+        (WKWebsiteDataStoreSetStatisticsPrevalentResource):
+        (WKWebsiteDataStoreSetStatisticsVeryPrevalentResource):
+        (WKWebsiteDataStoreDumpResourceLoadStatistics):
+        (WKWebsiteDataStoreIsStatisticsPrevalentResource):
+        (WKWebsiteDataStoreIsStatisticsVeryPrevalentResource):
+        (WKWebsiteDataStoreIsStatisticsRegisteredAsSubresourceUnder):
+        (WKWebsiteDataStoreIsStatisticsRegisteredAsSubFrameUnder):
+        (WKWebsiteDataStoreIsStatisticsRegisteredAsRedirectingTo):
+        (WKWebsiteDataStoreSetStatisticsHasHadUserInteraction):
+        (WKWebsiteDataStoreIsStatisticsHasHadUserInteraction):
+        (WKWebsiteDataStoreSetStatisticsGrandfathered):
+        (WKWebsiteDataStoreIsStatisticsGrandfathered):
+        (WKWebsiteDataStoreSetStatisticsSubframeUnderTopFrameOrigin):
+        (WKWebsiteDataStoreSetStatisticsSubresourceUnderTopFrameOrigin):
+        (WKWebsiteDataStoreSetStatisticsSubresourceUniqueRedirectTo):
+        (WKWebsiteDataStoreSetStatisticsSubresourceUniqueRedirectFrom):
+        (WKWebsiteDataStoreSetStatisticsTopFrameUniqueRedirectTo):
+        (WKWebsiteDataStoreSetStatisticsTopFrameUniqueRedirectFrom):
+        (WKWebsiteDataStoreSetStatisticsTimeToLiveUserInteraction):
+        (WKWebsiteDataStoreStatisticsProcessStatisticsAndDataRecords):
+        (WKWebsiteDataStoreStatisticsUpdateCookieBlocking):
+        (WKWebsiteDataStoreStatisticsSubmitTelemetry):
+        (WKWebsiteDataStoreSetStatisticsNotifyPagesWhenDataRecordsWereScanned):
+        (WKWebsiteDataStoreSetStatisticsShouldClassifyResourcesBeforeDataRecordsRemoval):
+        (WKWebsiteDataStoreSetStatisticsNotifyPagesWhenTelemetryWasCaptured):
+        (WKWebsiteDataStoreSetStatisticsMinimumTimeBetweenDataRecordsRemoval):
+        (WKWebsiteDataStoreSetStatisticsGrandfatheringTime):
+        (WKWebsiteDataStoreSetStatisticsMaxStatisticsEntries):
+        (WKWebsiteDataStoreSetStatisticsPruneEntriesDownTo):
+        (WKWebsiteDataStoreStatisticsClearInMemoryAndPersistentStore):
+        (WKWebsiteDataStoreStatisticsClearInMemoryAndPersistentStoreModifiedSinceHours):
+        (WKWebsiteDataStoreStatisticsResetToConsistentState):
+        * UIProcess/API/Cocoa/WKWebsiteDataStore.mm:
+        (-[WKWebsiteDataStore _setResourceLoadStatisticsTestingCallback:]):
+        * UIProcess/Network/NetworkProcessProxy.cpp:
+        (WebKit::NetworkProcessProxy::clearCallbackStates):
+        (WebKit::NetworkProcessProxy::didClose):
+        (WebKit::nonEphemeralWebPageProxy):
+        (WebKit::NetworkProcessProxy::logGlobalDiagnosticMessageWithValue):
+        (WebKit::NetworkProcessProxy::dumpResourceLoadStatistics):
+        (WebKit::NetworkProcessProxy::didDumpResourceLoadStatistics):
+        (WebKit::NetworkProcessProxy::updatePrevalentDomainsToBlockCookiesFor):
+        (WebKit::NetworkProcessProxy::didUpdateBlockCookies):
+        (WebKit::NetworkProcessProxy::isPrevalentResource):
+        (WebKit::NetworkProcessProxy::isPrevalentResourceResult):
+        (WebKit::NetworkProcessProxy::isVeryPrevalentResource):
+        (WebKit::NetworkProcessProxy::setPrevalentResource):
+        (WebKit::NetworkProcessProxy::setPrevalentResourceForDebugMode):
+        (WebKit::NetworkProcessProxy::setVeryPrevalentResource):
+        (WebKit::NetworkProcessProxy::didSetResourceLoadStatisticData):
+        (WebKit::NetworkProcessProxy::setLastSeen):
+        (WebKit::NetworkProcessProxy::clearPrevalentResource):
+        (WebKit::NetworkProcessProxy::scheduleCookieBlockingUpdate):
+        (WebKit::NetworkProcessProxy::didScheduleCookieBlockingUpdate):
+        (WebKit::NetworkProcessProxy::scheduleClearInMemoryAndPersistent):
+        (WebKit::NetworkProcessProxy::didScheduleStatisticsProcessing):
+        (WebKit::NetworkProcessProxy::scheduleStatisticsAndDataRecordsProcessing):
+        (WebKit::NetworkProcessProxy::logUserInteraction):
+        (WebKit::NetworkProcessProxy::hasHadUserInteraction):
+        (WebKit::NetworkProcessProxy::didHaveUserInteraction):
+        (WebKit::NetworkProcessProxy::clearUserInteraction):
+        (WebKit::NetworkProcessProxy::setAgeCapForClientSideCookies):
+        (WebKit::NetworkProcessProxy::didSetAgeCapForClientSideCookies):
+        (WebKit::NetworkProcessProxy::setTimeToLiveUserInteraction):
+        (WebKit::NetworkProcessProxy::didUpdateRuntimeSettings):
+        (WebKit::NetworkProcessProxy::setNotifyPagesWhenTelemetryWasCaptured):
+        (WebKit::NetworkProcessProxy::setNotifyPagesWhenDataRecordsWereScanned):
+        (WebKit::NetworkProcessProxy::setSubframeUnderTopFrameOrigin):
+        (WebKit::NetworkProcessProxy::isRegisteredAsRedirectingTo):
+        (WebKit::NetworkProcessProxy::didIsRegisteredAsRedirectingTo):
+        (WebKit::NetworkProcessProxy::isRegisteredAsSubFrameUnder):
+        (WebKit::NetworkProcessProxy::didIsRegisteredAsSubFrameUnder):
+        (WebKit::NetworkProcessProxy::setSubresourceUnderTopFrameOrigin):
+        (WebKit::NetworkProcessProxy::isRegisteredAsSubresourceUnder):
+        (WebKit::NetworkProcessProxy::didIsRegisteredAsSubresourceUnder):
+        (WebKit::NetworkProcessProxy::setSubresourceUniqueRedirectTo):
+        (WebKit::NetworkProcessProxy::setSubresourceUniqueRedirectFrom):
+        (WebKit::NetworkProcessProxy::setTopFrameUniqueRedirectTo):
+        (WebKit::NetworkProcessProxy::setTopFrameUniqueRedirectFrom):
+        (WebKit::NetworkProcessProxy::isGrandfathered):
+        (WebKit::NetworkProcessProxy::didIsGrandfathered):
+        (WebKit::NetworkProcessProxy::setGrandfathered):
+        (WebKit::NetworkProcessProxy::hasStorageAccess):
+        (WebKit::NetworkProcessProxy::requestStorageAccess):
+        (WebKit::NetworkProcessProxy::grantStorageAccess):
+        (WebKit::NetworkProcessProxy::storageAccessRequestResult):
+        (WebKit::NetworkProcessProxy::storageAccessOperationResult):
+        (WebKit::NetworkProcessProxy::didRemoveAllStorageAccess):
+        (WebKit::NetworkProcessProxy::didSetCacheMaxAgeCapForPrevalentResources):
+        (WebKit::NetworkProcessProxy::setCacheMaxAgeCap):
+        (WebKit::NetworkProcessProxy::setGrandfatheringTime):
+        (WebKit::NetworkProcessProxy::setMaxStatisticsEntries):
+        (WebKit::NetworkProcessProxy::setMinimumTimeBetweenDataRecordsRemoval):
+        (WebKit::NetworkProcessProxy::setPruneEntriesDownTo):
+        (WebKit::NetworkProcessProxy::setShouldClassifyResourcesBeforeDataRecordsRemoval):
+        (WebKit::NetworkProcessProxy::setResourceLoadStatisticsDebugMode):
+        (WebKit::NetworkProcessProxy::resetParametersToDefaultValues):
+        (WebKit::NetworkProcessProxy::submitTelemetry):
+        (WebKit::NetworkProcessProxy::notifyResourceLoadStatisticsProcessed):
+        (WebKit::NetworkProcessProxy::notifyWebsiteDataDeletionForTopPrivatelyOwnedDomainsFinished):
+        (WebKit::NetworkProcessProxy::notifyWebsiteDataScanForTopPrivatelyControlledDomainsFinished):
+        (WebKit::NetworkProcessProxy::notifyResourceLoadStatisticsTelemetryFinished):
+        (WebKit::NetworkProcessProxy::didLogUserInteraction): Deleted.
+        (WebKit::NetworkProcessProxy::didResetCacheMaxAgeCapForPrevalentResources): Deleted.
+        * UIProcess/Network/NetworkProcessProxy.h:
+        * UIProcess/Network/NetworkProcessProxy.messages.in:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::nonEphemeralWebPageProxy):
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::WebProcessPool::ensureNetworkProcess):
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcessProxy::notifyWebsiteDataScanForTopPrivatelyControlledDomainsFinished):
+        (WebKit::WebProcessProxy::notifyWebsiteDataDeletionForTopPrivatelyOwnedDomainsFinished):
+        * UIProcess/WebProcessProxy.h:
+        * UIProcess/WebsiteData/Cocoa/WebsiteDataStoreCocoa.mm:
+        (WebKit::WebsiteDataStore::parameters):
+        * UIProcess/WebsiteData/WebsiteDataStore.cpp:
+        (WebKit::WebsiteDataStore::removeData):
+        (WebKit::WebsiteDataStore::setMaxStatisticsEntries):
+        (WebKit::WebsiteDataStore::setPruneEntriesDownTo):
+        (WebKit::WebsiteDataStore::setGrandfatheringTime):
+        (WebKit::WebsiteDataStore::setCacheMaxAgeCap):
+        (WebKit::WebsiteDataStore::setMinimumTimeBetweenDataRecordsRemoval):
+        (WebKit::WebsiteDataStore::dumpResourceLoadStatistics):
+        (WebKit::WebsiteDataStore::isPrevalentResource):
+        (WebKit::WebsiteDataStore::setPrevalentResource):
+        (WebKit::WebsiteDataStore::setPrevalentResourceForDebugMode):
+        (WebKit::WebsiteDataStore::isVeryPrevalentResource):
+        (WebKit::WebsiteDataStore::setVeryPrevalentResource):
+        (WebKit::WebsiteDataStore::setShouldClassifyResourcesBeforeDataRecordsRemoval):
+        (WebKit::WebsiteDataStore::setSubframeUnderTopFrameOrigin):
+        (WebKit::WebsiteDataStore::isRegisteredAsSubFrameUnder):
+        (WebKit::WebsiteDataStore::setSubresourceUnderTopFrameOrigin):
+        (WebKit::WebsiteDataStore::isRegisteredAsSubresourceUnder):
+        (WebKit::WebsiteDataStore::setSubresourceUniqueRedirectTo):
+        (WebKit::WebsiteDataStore::setSubresourceUniqueRedirectFrom):
+        (WebKit::WebsiteDataStore::setTopFrameUniqueRedirectTo):
+        (WebKit::WebsiteDataStore::setTopFrameUniqueRedirectFrom):
+        (WebKit::WebsiteDataStore::isRegisteredAsRedirectingTo):
+        (WebKit::WebsiteDataStore::clearPrevalentResource):
+        (WebKit::WebsiteDataStore::resetParametersToDefaultValues):
+        (WebKit::WebsiteDataStore::submitTelemetry):
+        (WebKit::WebsiteDataStore::scheduleClearInMemoryAndPersistent):
+        (WebKit::WebsiteDataStore::scheduleCookieBlockingUpdate):
+        (WebKit::WebsiteDataStore::scheduleStatisticsAndDataRecordsProcessing):
+        (WebKit::WebsiteDataStore::updatePrevalentDomainsToBlockCookiesFor):
+        (WebKit::WebsiteDataStore::setAgeCapForClientSideCookies):
+        (WebKit::WebsiteDataStore::setLastSeen):
+        (WebKit::WebsiteDataStore::setNotifyPagesWhenDataRecordsWereScanned):
+        (WebKit::WebsiteDataStore::setNotifyPagesWhenTelemetryWasCaptured):
+        (WebKit::WebsiteDataStore::hasStorageAccessForFrameHandler):
+        (WebKit::WebsiteDataStore::getAllStorageAccessEntries):
+        (WebKit::WebsiteDataStore::grantStorageAccessHandler):
+        (WebKit::WebsiteDataStore::removeAllStorageAccessHandler):
+        (WebKit::WebsiteDataStore::removePrevalentDomains):
+        (WebKit::WebsiteDataStore::hasStorageAccess):
+        (WebKit::WebsiteDataStore::requestStorageAccess):
+        (WebKit::WebsiteDataStore::grantStorageAccess):
+        (WebKit::WebsiteDataStore::setTimeToLiveUserInteraction):
+        (WebKit::WebsiteDataStore::logUserInteraction):
+        (WebKit::WebsiteDataStore::hasHadUserInteraction):
+        (WebKit::WebsiteDataStore::clearUserInteraction):
+        (WebKit::WebsiteDataStore::isGrandfathered):
+        (WebKit::WebsiteDataStore::setGrandfathered):
+        (WebKit::WebsiteDataStore::setCacheMaxAgeCapForPrevalentResources):
+        (WebKit::WebsiteDataStore::resetCacheMaxAgeCapForPrevalentResources):
+        (WebKit::WebsiteDataStore::webPageWasAdded):
+        (WebKit::WebsiteDataStore::webPageWasInvalidated):
+        (WebKit::WebsiteDataStore::webProcessWillOpenConnection):
+        (WebKit::WebsiteDataStore::webPageWillOpenConnection):
+        (WebKit::WebsiteDataStore::webPageDidCloseConnection):
+        (WebKit::WebsiteDataStore::webProcessDidCloseConnection):
+        (WebKit::WebsiteDataStore::isAssociatedProcessPool const):
+        (WebKit::WebsiteDataStore::processPools const):
+        (WebKit::WebsiteDataStore::resourceLoadStatisticsEnabled const):
+        (WebKit::WebsiteDataStore::setResourceLoadStatisticsEnabled):
+        (WebKit::WebsiteDataStore::setResourceLoadStatisticsDebugMode):
+        (WebKit::WebsiteDataStore::enableResourceLoadStatisticsAndSetTestingCallback):
+        (WebKit::WebsiteDataStore::logTestingEvent):
+        * UIProcess/WebsiteData/WebsiteDataStore.h:
+        (WebKit::WebsiteDataStore::setStatisticsTestingCallback):
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::initializeWebProcess):
+
 2019-01-15  Darin Adler  <darin@apple.com>
 
         Use references rather than pointers for register/unregister functions, and more

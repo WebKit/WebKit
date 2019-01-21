@@ -26,6 +26,9 @@
 #include "config.h"
 #include "NetworkSession.h"
 
+#include "NetworkProcess.h"
+#include "NetworkProcessProxyMessages.h"
+#include "WebProcessProxy.h"
 #include "WebResourceLoadStatisticsStore.h"
 #include <WebCore/NetworkStorageSession.h>
 
@@ -78,12 +81,44 @@ void NetworkSession::invalidateAndCancel()
         task->invalidateAndCancel();
 }
 
-void NetworkSession::enableResourceLoadStatistics()
+#if ENABLE(RESOURCE_LOAD_STATISTICS)
+void NetworkSession::setResourceLoadStatisticsEnabled(bool enable)
 {
+    if (!enable) {
+        m_resourceLoadStatistics = nullptr;
+        return;
+    }
+
     if (m_resourceLoadStatistics)
         return;
 
     m_resourceLoadStatistics = WebResourceLoadStatisticsStore::create(*this, m_resourceLoadStatisticsDirectory);
 }
+
+void NetworkSession::notifyResourceLoadStatisticsProcessed()
+{
+    m_networkProcess->parentProcessConnection()->send(Messages::NetworkProcessProxy::NotifyResourceLoadStatisticsProcessed(), 0);
+}
+
+void NetworkSession::logDiagnosticMessageWithValue(const String& message, const String& description, unsigned value, unsigned significantFigures, WebCore::ShouldSample shouldSample)
+{
+    m_networkProcess->parentProcessConnection()->send(Messages::WebPageProxy::LogDiagnosticMessageWithValue(message, description, value, significantFigures, shouldSample), 0);
+}
+
+void NetworkSession::notifyPageStatisticsTelemetryFinished(unsigned totalPrevalentResources, unsigned totalPrevalentResourcesWithUserInteraction, unsigned top3SubframeUnderTopFrameOrigins)
+{
+    m_networkProcess->parentProcessConnection()->send(Messages::NetworkProcessProxy::NotifyResourceLoadStatisticsTelemetryFinished(totalPrevalentResources, totalPrevalentResourcesWithUserInteraction, top3SubframeUnderTopFrameOrigins), 0);
+}
+
+void NetworkSession::deleteWebsiteDataForTopPrivatelyControlledDomainsInAllPersistentDataStores(OptionSet<WebsiteDataType> dataTypes, Vector<String>&& topPrivatelyControlledDomains, bool shouldNotifyPage, CompletionHandler<void(const HashSet<String>&)>&& completionHandler)
+{
+    m_networkProcess->deleteWebsiteDataForTopPrivatelyControlledDomainsInAllPersistentDataStores(m_sessionID, dataTypes, WTFMove(topPrivatelyControlledDomains), shouldNotifyPage, WTFMove(completionHandler));
+}
+
+void NetworkSession::topPrivatelyControlledDomainsWithWebsiteData(OptionSet<WebsiteDataType> dataTypes, bool shouldNotifyPage, CompletionHandler<void(HashSet<String>&&)>&& completionHandler)
+{
+    m_networkProcess->topPrivatelyControlledDomainsWithWebsiteData(m_sessionID, dataTypes, shouldNotifyPage, WTFMove(completionHandler));
+}
+#endif
 
 } // namespace WebKit

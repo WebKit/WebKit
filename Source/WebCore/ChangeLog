@@ -1,3 +1,24 @@
+2019-01-21  Brent Fulgham  <bfulgham@apple.com>
+
+        Implement message handlers for NetworkProcess-based ResourceLoadStatistics
+        https://bugs.webkit.org/show_bug.cgi?id=193556
+        <rdar://problem/47368501>
+
+        Reviewed by Alex Christensen.
+
+        This patch adds a new observer callback used to message the NetworkProcess when
+        user interaction events are received. This is needed when the ResourceLoadStatistics
+        data is not being managed by the UIProcess.
+
+        Tested by existing ResourceLoadStatistics and storageAccess tests.
+
+        * loader/ResourceLoadObserver.cpp:
+        (WebCore::ResourceLoadObserver::setLogUserInteractionNotificationCallback):
+        (WebCore::ResourceLoadObserver::logUserInteractionWithReducedTimeResolution):
+        * loader/ResourceLoadObserver.h:
+        * platform/network/cocoa/NetworkStorageSessionCocoa.mm:
+        (WebCore::NetworkStorageSession::setCookiesFromDOM):
+
 2019-01-21  Zalan Bujtas  <zalan@apple.com>
 
         [LFC][Floats] Take float top position into account when computing containing block height.

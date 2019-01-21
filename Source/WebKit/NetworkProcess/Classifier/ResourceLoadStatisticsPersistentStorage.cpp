@@ -26,6 +26,8 @@
 #include "config.h"
 #include "ResourceLoadStatisticsPersistentStorage.h"
 
+#if ENABLE(RESOURCE_LOAD_STATISTICS)
+
 #include "Logging.h"
 #include "PersistencyUtils.h"
 #include "ResourceLoadStatisticsMemoryStore.h"
@@ -270,3 +272,5 @@ void ResourceLoadStatisticsPersistentStorage::excludeFromBackup() const
 #endif
 
 } // namespace WebKit
+
+#endif

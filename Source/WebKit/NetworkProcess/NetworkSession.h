@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -35,6 +35,7 @@
 
 namespace WebCore {
 class NetworkStorageSession;
+enum class ShouldSample : bool;
 }
 
 namespace WebKit {
@@ -44,6 +45,8 @@ class NetworkProcess;
 class WebResourceLoadStatisticsStore;
 struct NetworkSessionCreationParameters;
 
+enum class WebsiteDataType;
+    
 class NetworkSession : public RefCounted<NetworkSession>, public CanMakeWeakPtr<NetworkSession> {
 public:
     static Ref<NetworkSession> create(NetworkProcess&, NetworkSessionCreationParameters&&);
@@ -61,9 +64,16 @@ public:
     void registerNetworkDataTask(NetworkDataTask& task) { m_dataTaskSet.add(&task); }
     void unregisterNetworkDataTask(NetworkDataTask& task) { m_dataTaskSet.remove(&task); }
 
+#if ENABLE(RESOURCE_LOAD_STATISTICS)
     WebResourceLoadStatisticsStore* resourceLoadStatistics() const { return m_resourceLoadStatistics.get(); }
-    void enableResourceLoadStatistics();
-    
+    void setResourceLoadStatisticsEnabled(bool);
+    void notifyResourceLoadStatisticsProcessed();
+    void deleteWebsiteDataForTopPrivatelyControlledDomainsInAllPersistentDataStores(OptionSet<WebsiteDataType>, Vector<String>&& topPrivatelyControlledDomains, bool shouldNotifyPage, CompletionHandler<void(const HashSet<String>&)>&&);
+    void topPrivatelyControlledDomainsWithWebsiteData(OptionSet<WebsiteDataType>, bool shouldNotifyPage, CompletionHandler<void(HashSet<String>&&)>&&);
+    void logDiagnosticMessageWithValue(const String& message, const String& description, unsigned value, unsigned significantFigures, WebCore::ShouldSample);
+    void notifyPageStatisticsTelemetryFinished(unsigned totalPrevalentResources, unsigned totalPrevalentResourcesWithUserInteraction, unsigned top3SubframeUnderTopFrameOrigins);
+#endif
+
 protected:
     NetworkSession(NetworkProcess&, PAL::SessionID);
 
@@ -71,7 +81,9 @@ protected:
     Ref<NetworkProcess> m_networkProcess;
     HashSet<NetworkDataTask*> m_dataTaskSet;
     String m_resourceLoadStatisticsDirectory;
+#if ENABLE(RESOURCE_LOAD_STATISTICS)
     RefPtr<WebResourceLoadStatisticsStore> m_resourceLoadStatistics;
+#endif
 };
 
 } // namespace WebKit

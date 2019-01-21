@@ -85,16 +85,54 @@ messages -> NetworkProcess LegacyReceiver {
     PreconnectTo(URL url, enum:bool WebCore::StoredCredentialsPolicy storedCredentialsPolicy);
 
 #if ENABLE(RESOURCE_LOAD_STATISTICS)
+    ClearPrevalentResource(PAL::SessionID sessionID, String resourceDomain) -> () Async
+    ClearUserInteraction(PAL::SessionID sessionID, String resourceDomain) -> () Async
+    DumpResourceLoadStatistics(PAL::SessionID sessionID, uint64_t contextId)
+    SetResourceLoadStatisticsEnabled(bool enabled)
     UpdatePrevalentDomainsToBlockCookiesFor(PAL::SessionID sessionID, Vector<String> domainsToBlock, uint64_t contextId)
+    IsGrandfathered(PAL::SessionID sessionID, String targetPrimaryDomain) -> (bool isGrandfathered) Async
+    IsPrevalentResource(PAL::SessionID sessionID, String targetPrimaryDomain) -> (bool isPrevalent) Async
+    IsVeryPrevalentResource(PAL::SessionID sessionID, String targetPrimaryDomain) -> (bool isVeryPrevalent) Async
     SetAgeCapForClientSideCookies(PAL::SessionID sessionID, Optional<Seconds> seconds, uint64_t contextId)
+    SetLastSeen(PAL::SessionID sessionID, String resourceDomain, Seconds seconds) -> () Async
+    SetPrevalentResource(PAL::SessionID sessionID, String resourceDomain) -> () Async
+    SetPrevalentResourceForDebugMode(PAL::SessionID sessionID, String resourceDomain) -> () Async
+    HadUserInteraction(PAL::SessionID sessionID, String resourceDomain) -> (bool hadUserInteraction) Async
     HasStorageAccessForFrame(PAL::SessionID sessionID, String resourceDomain, String firstPartyDomain, uint64_t frameID, uint64_t pageID, uint64_t contextId)
+    HasStorageAccess(PAL::SessionID sessionID, String resourceDomain, String firstPartyDomain, Optional<uint64_t> frameID, uint64_t pageID) -> (bool hadUserInteraction) Async
     GetAllStorageAccessEntries(PAL::SessionID sessionID, uint64_t contextId)
-    GrantStorageAccess(PAL::SessionID sessionID, String resourceDomain, String firstPartyDomain, Optional<uint64_t> frameID, uint64_t pageID, uint64_t contextId)
+    GrantStorageAccess(PAL::SessionID sessionID, String resourceDomain, String firstPartyDomain, Optional<uint64_t> frameID, uint64_t pageID, bool userWasPrompted, uint64_t contextId)
+    IsRegisteredAsRedirectingTo(PAL::SessionID sessionID, String redirectedFrom, String redirectedTo) -> (bool isRedirectingTo) Async
+    IsRegisteredAsSubFrameUnder(PAL::SessionID sessionID, String subframe, String topFrame) -> (bool isSubframeUnder) Async
+    IsRegisteredAsSubresourceUnder(PAL::SessionID sessionID, String subresource, String topFrame) -> (bool isSubresourceUnder) Async
     LogFrameNavigation(PAL::SessionID sessionID, String targetPrimaryDomain, String mainFramePrimaryDomain, String sourcePrimaryDomain, String targetHost, String mainFrameHost, bool isRedirect, bool isMainFrame)
-    LogUserInteraction(PAL::SessionID sessionID, String targetPrimaryDomain, uint64_t contextId)
+    LogUserInteraction(PAL::SessionID sessionID, String targetPrimaryDomain) -> () Async
     RemoveAllStorageAccess(PAL::SessionID sessionID, uint64_t contextId)
     RemovePrevalentDomains(PAL::SessionID sessionID, Vector<String> domainsWithInteraction)
+    RequestStorageAccess(PAL::SessionID sessionID, String resourceDomain, String firstPartyDomain, Optional<uint64_t> frameID, uint64_t pageID, bool promptEnabled, uint64_t contextId)
+    ResetParametersToDefaultValues(PAL::SessionID sessionID) -> () Async
+    ScheduleClearInMemoryAndPersistent(PAL::SessionID sessionID, Optional<WallTime> modifiedSince, bool shouldGrandfather) -> () Async
+    ScheduleCookieBlockingUpdate(PAL::SessionID sessionID) -> () Async
+    ScheduleStatisticsAndDataRecordsProcessing(PAL::SessionID sessionID) -> () Async
+    SubmitTelemetry(PAL::SessionID sessionID) -> () Async
     SetCacheMaxAgeCapForPrevalentResources(PAL::SessionID sessionID, Seconds seconds, uint64_t contextId)
+    SetGrandfathered(PAL::SessionID sessionID, String resourceDomain, bool isGrandfathered) -> () Async
+    SetGrandfatheringTime(PAL::SessionID sessionID, Seconds seconds) -> () Async
+    SetMaxStatisticsEntries(PAL::SessionID sessionID, uint64_t maximumEntryCount) -> () Async
+    SetMinimumTimeBetweenDataRecordsRemoval(PAL::SessionID sessionID, Seconds seconds) -> () Async
+    SetPruneEntriesDownTo(PAL::SessionID sessionID, uint64_t maximumEntryCount) -> () Async
+    SetShouldClassifyResourcesBeforeDataRecordsRemoval(PAL::SessionID sessionID, bool value) -> () Async
+    SetNotifyPagesWhenDataRecordsWereScanned(PAL::SessionID sessionID, bool value) -> () Async
+    SetNotifyPagesWhenTelemetryWasCaptured(PAL::SessionID sessionID, bool value) -> () Async
+    SetResourceLoadStatisticsDebugMode(PAL::SessionID sessionID, bool debugMode) -> () Async
+    SetVeryPrevalentResource(PAL::SessionID sessionID, String resourceDomain) -> () Async
+    SetSubframeUnderTopFrameOrigin(PAL::SessionID sessionID, String subframe, String topFrame) -> () Async
+    SetSubresourceUnderTopFrameOrigin(PAL::SessionID sessionID, String subresource, String topFrame) -> () Async
+    SetSubresourceUniqueRedirectTo(PAL::SessionID sessionID, String subresource, String hostNameRedirectedTo) -> () Async
+    SetSubresourceUniqueRedirectFrom(PAL::SessionID sessionID, String subresource, String hostNameRedirectedFrom) -> () Async
+    SetTimeToLiveUserInteraction(PAL::SessionID sessionID, Seconds seconds) -> () Async
+    SetTopFrameUniqueRedirectTo(PAL::SessionID sessionID, String topFrameHostName, String hostNameRedirectedTo) -> () Async
+    SetTopFrameUniqueRedirectFrom(PAL::SessionID sessionID, String topFrameHostName, String hostNameRedirectedFrom) -> () Async
     ResetCacheMaxAgeCapForPrevalentResources(PAL::SessionID sessionID, uint64_t contextId)
 #endif
 

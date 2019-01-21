@@ -405,7 +405,7 @@ void NetworkStorageSession::setCookiesFromDOM(const URL& firstParty, const SameS
 #if ENABLE(RESOURCE_LOAD_STATISTICS)
     RetainPtr<NSArray> filteredCookies = filterCookies(unfilteredCookies, m_ageCapForClientSideCookies);
 #else
-    RetainPtr<NSArray> filteredCookies = filterCookies(unfilteredCookies, false);
+    RetainPtr<NSArray> filteredCookies = filterCookies(unfilteredCookies, WTF::nullopt);
 #endif
     ASSERT([filteredCookies.get() count] <= 1);
 

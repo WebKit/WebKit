@@ -4480,6 +4480,26 @@ void WebPageProxy::decidePolicyForNavigationAction(Ref<WebProcessProxy>&& proces
     m_shouldSuppressAppLinksInNextNavigationPolicyDecision = false;
 }
 
+WebPageProxy* WebPageProxy::nonEphemeralWebPageProxy()
+{
+    auto processPools = WebProcessPool::allProcessPools();
+    if (processPools.isEmpty())
+        return nullptr;
+    
+    auto processPool = processPools[0];
+    if (!processPool)
+        return nullptr;
+    
+    for (auto& webProcess : processPool->processes()) {
+        for (auto& page : webProcess->pages()) {
+            if (page->sessionID().isEphemeral())
+                continue;
+            return page;
+        }
+    }
+    return nullptr;
+}
+
 #if ENABLE(RESOURCE_LOAD_STATISTICS)
 void WebPageProxy::logFrameNavigation(const WebFrameProxy& frame, const URL& pageURL, const WebCore::ResourceRequest& request, const URL& redirectURL)
 {

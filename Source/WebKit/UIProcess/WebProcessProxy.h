@@ -171,10 +171,17 @@ public:
     void fetchWebsiteData(PAL::SessionID, OptionSet<WebsiteDataType>, CompletionHandler<void(WebsiteData)>&&);
     void deleteWebsiteData(PAL::SessionID, OptionSet<WebsiteDataType>, WallTime modifiedSince, CompletionHandler<void()>&&);
     void deleteWebsiteDataForOrigins(PAL::SessionID, OptionSet<WebsiteDataType>, const Vector<WebCore::SecurityOriginData>&, CompletionHandler<void()>&&);
+
+#if ENABLE(RESOURCE_LOAD_STATISTICS)
     static void deleteWebsiteDataForTopPrivatelyControlledDomainsInAllPersistentDataStores(OptionSet<WebsiteDataType>, Vector<String>&& topPrivatelyControlledDomains, bool shouldNotifyPages, CompletionHandler<void (const HashSet<String>&)>&&);
     static void topPrivatelyControlledDomainsWithWebsiteData(OptionSet<WebsiteDataType> dataTypes, bool shouldNotifyPage, CompletionHandler<void(HashSet<String>&&)>&&);
+
     static void notifyPageStatisticsAndDataRecordsProcessed();
     static void notifyPageStatisticsTelemetryFinished(API::Object* messageBody);
+
+    static void notifyWebsiteDataDeletionForTopPrivatelyOwnedDomainsFinished();
+    static void notifyWebsiteDataScanForTopPrivatelyControlledDomainsFinished();
+#endif
 
     void enableSuddenTermination();
     void disableSuddenTermination();
@@ -266,7 +273,7 @@ protected:
 #endif
 
     bool isJITEnabled() const final;
-    
+
 private:
     // IPC message handlers.
     void updateBackForwardItem(const BackForwardListItemState&);

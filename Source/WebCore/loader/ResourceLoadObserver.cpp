@@ -69,6 +69,12 @@ void ResourceLoadObserver::setRequestStorageAccessUnderOpenerCallback(WTF::Funct
     m_requestStorageAccessUnderOpenerCallback = WTFMove(callback);
 }
 
+void ResourceLoadObserver::setLogUserInteractionNotificationCallback(Function<void(PAL::SessionID, const String&)>&& callback)
+{
+    ASSERT(!m_logUserInteractionNotificationCallback);
+    m_logUserInteractionNotificationCallback = WTFMove(callback);
+}
+
 ResourceLoadObserver::ResourceLoadObserver()
     : m_notificationTimer(*this, &ResourceLoadObserver::notifyObserver)
 {
@@ -190,6 +196,9 @@ void ResourceLoadObserver::logUserInteractionWithReducedTimeResolution(const Doc
             }
         }
     }
+
+    // FIXME(193297): Uncomment this line when ResourceLoadStatistics are no longer gathered in the UI Process.
+    // m_logUserInteractionNotificationCallback(document.sessionID(), domain);
 #endif
 
     m_notificationTimer.stop();
