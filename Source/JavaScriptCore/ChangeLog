@@ -1,3 +1,22 @@
+2019-01-20  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] sub op with 0 should be optimized
+        https://bugs.webkit.org/show_bug.cgi?id=190751
+
+        Reviewed by Mark Lam.
+
+        LLInt sometimes emit `subp 0, %rxx`. For example, `maxFrameExtentForSlowPathCall` is 0 in X86_64, ARM64, and ARM64E.
+        So `subp maxFrameExtentForSlowPathCall sp` becomes `subp 0, %rsp`. While `addp 0, %rsp` is removed in offlineasm,
+        sub operation does not have such an optimization. This patch applies the same optimization to sub operation already
+        done in add operation. Since the CPU flags changed in offlineasm's these operations are not considered (if these flags
+        are required, we use special branch operations instead), this optimization is sane.
+
+        One problem is that zero-extension of the 32bit register in 64bit architecture. If the instruction emission is skipped,
+        this won't be happen. Currently, we align our sub to add operation: we skip emission in this case.
+
+        * offlineasm/arm64.rb:
+        * offlineasm/x86.rb:
+
 2019-01-20  Saam Barati  <sbarati@apple.com>
 
         DFG: When inlining DataView set* intrinsics we need to set undefined as our result

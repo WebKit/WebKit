@@ -460,8 +460,8 @@ def emitARM64Add(opcode, operands, kind)
         raise unless operands[2].register?
         
         if operands[0].immediate?
-            if operands[0].value == 0 and flag !~ /s$/
-                unless operands[1] == operands[2]
+            if operands[0].value == 0 and opcode !~ /s$/
+                if operands[1] != operands[2]
                     $asm.puts "mov #{arm64FlippedOperands(operands[1..2], kind)}"
                 end
             else
@@ -494,6 +494,30 @@ def emitARM64Mul(opcode, operands, kind)
     end
 
     $asm.puts "madd #{arm64TACOperands(operands, kind)}, #{arm64GPRName('xzr', kind)}"
+end
+
+def emitARM64Sub(opcode, operands, kind)
+    if operands.size == 3
+        raise unless operands[0].register?
+        raise unless operands[2].register?
+
+        if operands[1].immediate?
+            if operands[1].value == 0 and opcode !~ /s$/
+                if operands[0] != operands[2]
+                    $asm.puts "mov #{arm64FlippedOperands([operands[0], operands[2]], kind)}"
+                end
+                return
+            end
+        end
+    end
+
+    if operands.size == 2
+        if operands[0].immediate? and operands[0].value == 0 and opcode !~ /s$/
+            return
+        end
+    end
+
+    emitARM64TAC(opcode, operands, kind)
 end
 
 def emitARM64Unflipped(opcode, operands, kind)
@@ -655,13 +679,13 @@ class Instruction
         when "mulq"
             emitARM64Mul('mul', operands, :quad)
         when "subi"
-            emitARM64TAC("sub", operands, :word)
+            emitARM64Sub("sub", operands, :word)
         when "subp"
-            emitARM64TAC("sub", operands, :ptr)
+            emitARM64Sub("sub", operands, :ptr)
         when "subq"
-            emitARM64TAC("sub", operands, :quad)
+            emitARM64Sub("sub", operands, :quad)
         when "subis"
-            emitARM64TAC("subs", operands, :word)
+            emitARM64Sub("subs", operands, :word)
         when "negi"
             $asm.puts "sub #{operands[0].arm64Operand(:word)}, wzr, #{operands[0].arm64Operand(:word)}"
         when "negp"

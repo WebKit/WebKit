@@ -761,7 +761,7 @@ class Instruction
             raise unless operands[1].is_a? RegisterID
             raise unless operands[2].is_a? RegisterID
             if operands[0].value == 0
-                unless operands[1] == operands[2]
+                if operands[1] != operands[2]
                     $asm.puts "mov#{x86Suffix(kind)} #{orderOperands(operands[1].x86Operand(kind), operands[2].x86Operand(kind))}"
                 end
             else
@@ -787,12 +787,31 @@ class Instruction
     end
     
     def handleX86Sub(kind)
-        if operands.size == 3 and operands[1] == operands[2]
-            $asm.puts "neg#{x86Suffix(kind)} #{operands[2].x86Operand(kind)}"
-            $asm.puts "add#{x86Suffix(kind)} #{orderOperands(operands[0].x86Operand(kind), operands[2].x86Operand(kind))}"
-        else
-            handleX86Op("sub#{x86Suffix(kind)}", kind)
+        if operands.size == 3
+            if Immediate.new(nil, 0) == operands[1]
+                raise unless operands[0].is_a? RegisterID
+                raise unless operands[2].is_a? RegisterID
+                if operands[0] != operands[2]
+                    $asm.puts "mov#{x86Suffix(kind)} #{orderOperands(operands[0].x86Operand(kind), operands[2].x86Operand(kind))}"
+                end
+                return
+            end
+            if operands[1] == operands[2]
+                $asm.puts "neg#{x86Suffix(kind)} #{operands[2].x86Operand(kind)}"
+                if Immediate.new(nil, 0) != operands[0]
+                    $asm.puts "add#{x86Suffix(kind)} #{orderOperands(operands[0].x86Operand(kind), operands[2].x86Operand(kind))}"
+                end
+                return
+            end
         end
+
+        if operands.size == 2
+            if Immediate.new(nil, 0) == operands[0]
+                return
+            end
+        end
+
+        handleX86Op("sub#{x86Suffix(kind)}", kind)
     end
     
     def handleX86Mul(kind)
