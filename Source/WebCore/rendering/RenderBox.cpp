@@ -526,12 +526,12 @@ void RenderBox::layout()
 // excluding border and scrollbar.
 LayoutUnit RenderBox::clientWidth() const
 {
-    return width() - borderLeft() - borderRight() - verticalScrollbarWidth();
+    return paddingBoxWidth();
 }
 
 LayoutUnit RenderBox::clientHeight() const
 {
-    return height() - borderTop() - borderBottom() - horizontalScrollbarHeight();
+    return paddingBoxHeight();
 }
 
 int RenderBox::scrollWidth() const

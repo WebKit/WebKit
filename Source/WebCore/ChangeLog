@@ -1,3 +1,37 @@
+2019-01-20  Simon Fraser  <simon.fraser@apple.com>
+
+        On RenderBox, make client sizing be derived from padding box sizing
+        https://bugs.webkit.org/show_bug.cgi?id=193621
+
+        Reviewed by Daniel Bates.
+
+        I never liked how clientWidth/Height, an IE-originated term, was used as the basis
+        for various RenderBox geometry functions.
+
+        Fix by adding some functions which return the dimensions of the padding box (which
+        is the inside of the border and any scrollbar), and define clientWidth/Height in
+        terms of them.
+
+        Also add paddingBoxRectIncludingScrollbar() function that is used by compositing code.
+
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::clientWidth const):
+        (WebCore::RenderBox::clientHeight const):
+        * rendering/RenderBox.h:
+        (WebCore::RenderBox::borderBoxRect const):
+        (WebCore::RenderBox::computedCSSContentBoxRect const):
+        (WebCore::RenderBox::contentWidth const):
+        (WebCore::RenderBox::contentHeight const):
+        (WebCore::RenderBox::paddingBoxWidth const):
+        (WebCore::RenderBox::paddingBoxHeight const):
+        (WebCore::RenderBox::paddingBoxRect const):
+        (WebCore::RenderBox::paddingBoxRectIncludingScrollbar const):
+        (WebCore::RenderBox::hasHorizontalOverflow const):
+        (WebCore::RenderBox::hasVerticalOverflow const):
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::computeParentGraphicsLayerRect const):
+        (WebCore::RenderLayerBacking::updateGeometry):
+
 2019-01-20  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         Unreviewed, rolling out r238275.
