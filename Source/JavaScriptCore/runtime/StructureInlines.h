@@ -31,7 +31,6 @@
 #include "PropertyMapHashTable.h"
 #include "Structure.h"
 #include "StructureChain.h"
-#include "StructureRareDataInlines.h"
 
 namespace JSC {
 

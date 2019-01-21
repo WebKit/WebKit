@@ -1688,6 +1688,11 @@ bool JSBigInt::getPrimitiveNumber(ExecState* exec, double& number, JSValue& resu
     return true;
 }
 
+inline size_t JSBigInt::offsetOfData()
+{
+    return WTF::roundUpToMultipleOf<sizeof(Digit)>(sizeof(JSBigInt));
+}
+
 template <typename CharType>
 JSBigInt* JSBigInt::parseInt(ExecState* exec, CharType*  data, unsigned length, ErrorParseMode errorParseMode)
 {
@@ -1788,6 +1793,11 @@ JSBigInt* JSBigInt::parseInt(ExecState* exec, VM& vm, CharType* data, unsigned l
         throwVMError(exec, scope, createSyntaxError(exec, "Failed to parse String to BigInt"));
 
     return nullptr;
+}
+
+inline JSBigInt::Digit* JSBigInt::dataStorage()
+{
+    return reinterpret_cast<Digit*>(reinterpret_cast<char*>(this) + offsetOfData());
 }
 
 inline JSBigInt::Digit JSBigInt::digit(unsigned n)

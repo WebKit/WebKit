@@ -38,7 +38,6 @@ namespace JSC {
 class JSBigInt final : public JSCell {
     using Base = JSCell;
     static const unsigned StructureFlags = Base::StructureFlags | StructureIsImmortal | OverridesToThis;
-    friend class CachedBigInt;
 
 public:
 
@@ -229,15 +228,8 @@ private:
     static Optional<Digit> toShiftAmount(JSBigInt* x);
 
     static size_t allocationSize(unsigned length);
-    inline static size_t offsetOfData()
-    {
-        return WTF::roundUpToMultipleOf<sizeof(Digit)>(sizeof(JSBigInt));
-    }
-
-    inline Digit* dataStorage()
-    {
-        return reinterpret_cast<Digit*>(reinterpret_cast<char*>(this) + offsetOfData());
-    }
+    static size_t offsetOfData();
+    Digit* dataStorage();
 
     Digit digit(unsigned);
     void setDigit(unsigned, Digit);

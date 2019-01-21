@@ -41,8 +41,6 @@ class VM;
 JS_EXPORT_PRIVATE RegExpFlags regExpFlags(const String&);
 
 class RegExp final : public JSCell {
-    friend class CachedRegExp;
-
 public:
     typedef JSCell Base;
     static const unsigned StructureFlags = Base::StructureFlags | StructureIsImmortal;

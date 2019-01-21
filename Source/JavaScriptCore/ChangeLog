@@ -1,5 +1,256 @@
 2019-01-20  Saam Barati  <sbarati@apple.com>
 
+        Rollout r240210: It broke tests on iOS
+        https://bugs.webkit.org/show_bug.cgi?id=193640
+
+        Unreviewed. ~2650 tests are failing on iOS.
+
+        * CMakeLists.txt:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * Sources.txt:
+        * builtins/BuiltinNames.cpp:
+        (JSC::BuiltinNames::BuiltinNames):
+        * builtins/BuiltinNames.h:
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::setConstantIdentifierSetRegisters):
+        * bytecode/CodeBlock.h:
+        * bytecode/HandlerInfo.h:
+        * bytecode/InstructionStream.h:
+        * bytecode/UnlinkedCodeBlock.h:
+        (JSC::UnlinkedCodeBlock::addSetConstant):
+        (JSC::UnlinkedCodeBlock::constantIdentifierSets):
+        * bytecode/UnlinkedEvalCodeBlock.h:
+        * bytecode/UnlinkedFunctionCodeBlock.h:
+        * bytecode/UnlinkedFunctionExecutable.h:
+        * bytecode/UnlinkedGlobalCodeBlock.h:
+        (JSC::UnlinkedGlobalCodeBlock::UnlinkedGlobalCodeBlock):
+        * bytecode/UnlinkedMetadataTable.h:
+        * bytecode/UnlinkedModuleProgramCodeBlock.h:
+        * bytecode/UnlinkedProgramCodeBlock.h:
+        * interpreter/Interpreter.cpp:
+        * jsc.cpp:
+        (functionQuit):
+        (runJSC):
+        * parser/SourceCode.h:
+        * parser/SourceCodeKey.h:
+        (JSC::SourceCodeKey::operator!= const): Deleted.
+        * parser/UnlinkedSourceCode.h:
+        * parser/VariableEnvironment.h:
+        * runtime/CachedTypes.cpp:
+        (): Deleted.
+        (JSC::Encoder::Allocation::buffer const): Deleted.
+        (JSC::Encoder::Allocation::offset const): Deleted.
+        (JSC::Encoder::Allocation::Allocation): Deleted.
+        (JSC::Encoder::Encoder): Deleted.
+        (JSC::Encoder::vm): Deleted.
+        (JSC::Encoder::malloc): Deleted.
+        (JSC::Encoder::offsetOf): Deleted.
+        (JSC::Encoder::cachePtr): Deleted.
+        (JSC::Encoder::offsetForPtr): Deleted.
+        (JSC::Encoder::release): Deleted.
+        (JSC::Encoder::Page::Page): Deleted.
+        (JSC::Encoder::Page::malloc): Deleted.
+        (JSC::Encoder::Page::buffer const): Deleted.
+        (JSC::Encoder::Page::size const): Deleted.
+        (JSC::Encoder::Page::getOffset const): Deleted.
+        (JSC::Encoder::allocateNewPage): Deleted.
+        (JSC::Decoder::Decoder): Deleted.
+        (JSC::Decoder::~Decoder): Deleted.
+        (JSC::Decoder::vm): Deleted.
+        (JSC::Decoder::offsetOf): Deleted.
+        (JSC::Decoder::cacheOffset): Deleted.
+        (JSC::Decoder::addFinalizer): Deleted.
+        (JSC::encode): Deleted.
+        (JSC::decode): Deleted.
+        (JSC::VariableLengthObject::buffer const): Deleted.
+        (JSC::VariableLengthObject::allocate): Deleted.
+        (JSC::CachedPtr::encode): Deleted.
+        (JSC::CachedPtr::decode const): Deleted.
+        (JSC::CachedPtr::operator-> const): Deleted.
+        (JSC::CachedPtr::get const): Deleted.
+        (JSC::CachedRefPtr::encode): Deleted.
+        (JSC::CachedRefPtr::decode const): Deleted.
+        (JSC::CachedWriteBarrier::encode): Deleted.
+        (JSC::CachedWriteBarrier::decode const): Deleted.
+        (JSC::CachedVector::encode): Deleted.
+        (JSC::CachedVector::decode const): Deleted.
+        (JSC::CachedPair::encode): Deleted.
+        (JSC::CachedPair::decode const): Deleted.
+        (JSC::CachedHashMap::encode): Deleted.
+        (JSC::CachedHashMap::decode const): Deleted.
+        (JSC::CachedUniquedStringImpl::encode): Deleted.
+        (JSC::CachedUniquedStringImpl::decode const): Deleted.
+        (JSC::CachedStringImpl::encode): Deleted.
+        (JSC::CachedStringImpl::decode const): Deleted.
+        (JSC::CachedString::encode): Deleted.
+        (JSC::CachedString::decode const): Deleted.
+        (JSC::CachedIdentifier::encode): Deleted.
+        (JSC::CachedIdentifier::decode const): Deleted.
+        (JSC::CachedOptional::encode): Deleted.
+        (JSC::CachedOptional::decode const): Deleted.
+        (JSC::CachedOptional::decodeAsPtr const): Deleted.
+        (JSC::CachedSimpleJumpTable::encode): Deleted.
+        (JSC::CachedSimpleJumpTable::decode const): Deleted.
+        (JSC::CachedStringJumpTable::encode): Deleted.
+        (JSC::CachedStringJumpTable::decode const): Deleted.
+        (JSC::CachedCodeBlockRareData::encode): Deleted.
+        (JSC::CachedCodeBlockRareData::decode const): Deleted.
+        (JSC::CachedBitVector::encode): Deleted.
+        (JSC::CachedBitVector::decode const): Deleted.
+        (JSC::CachedHashSet::encode): Deleted.
+        (JSC::CachedHashSet::decode const): Deleted.
+        (JSC::CachedConstantIdentifierSetEntry::encode): Deleted.
+        (JSC::CachedConstantIdentifierSetEntry::decode const): Deleted.
+        (JSC::CachedVariableEnvironment::encode): Deleted.
+        (JSC::CachedVariableEnvironment::decode const): Deleted.
+        (JSC::CachedArray::encode): Deleted.
+        (JSC::CachedArray::decode const): Deleted.
+        (JSC::CachedScopedArgumentsTable::encode): Deleted.
+        (JSC::CachedScopedArgumentsTable::decode const): Deleted.
+        (JSC::CachedSymbolTableEntry::encode): Deleted.
+        (JSC::CachedSymbolTableEntry::decode const): Deleted.
+        (JSC::CachedSymbolTable::encode): Deleted.
+        (JSC::CachedSymbolTable::decode const): Deleted.
+        (JSC::CachedImmutableButterfly::encode): Deleted.
+        (JSC::CachedImmutableButterfly::decode const): Deleted.
+        (JSC::CachedRegExp::encode): Deleted.
+        (JSC::CachedRegExp::decode const): Deleted.
+        (JSC::CachedTemplateObjectDescriptor::encode): Deleted.
+        (JSC::CachedTemplateObjectDescriptor::decode const): Deleted.
+        (JSC::CachedBigInt::encode): Deleted.
+        (JSC::CachedBigInt::decode const): Deleted.
+        (JSC::CachedJSValue::encode): Deleted.
+        (JSC::CachedJSValue::decode const): Deleted.
+        (JSC::CachedInstructionStream::encode): Deleted.
+        (JSC::CachedInstructionStream::decode const): Deleted.
+        (JSC::CachedMetadataTable::encode): Deleted.
+        (JSC::CachedMetadataTable::decode const): Deleted.
+        (JSC::CachedSourceOrigin::encode): Deleted.
+        (JSC::CachedSourceOrigin::decode const): Deleted.
+        (JSC::CachedTextPosition::encode): Deleted.
+        (JSC::CachedTextPosition::decode const): Deleted.
+        (JSC::CachedSourceProviderShape::encode): Deleted.
+        (JSC::CachedSourceProviderShape::decode const): Deleted.
+        (JSC::CachedStringSourceProvider::encode): Deleted.
+        (JSC::CachedStringSourceProvider::decode const): Deleted.
+        (JSC::CachedWebAssemblySourceProvider::encode): Deleted.
+        (JSC::CachedWebAssemblySourceProvider::decode const): Deleted.
+        (JSC::CachedSourceProvider::encode): Deleted.
+        (JSC::CachedSourceProvider::decode const): Deleted.
+        (JSC::CachedUnlinkedSourceCodeShape::encode): Deleted.
+        (JSC::CachedUnlinkedSourceCodeShape::decode const): Deleted.
+        (JSC::CachedSourceCode::encode): Deleted.
+        (JSC::CachedSourceCode::decode const): Deleted.
+        (JSC::CachedFunctionExecutable::firstLineOffset const): Deleted.
+        (JSC::CachedFunctionExecutable::lineCount const): Deleted.
+        (JSC::CachedFunctionExecutable::unlinkedFunctionNameStart const): Deleted.
+        (JSC::CachedFunctionExecutable::unlinkedBodyStartColumn const): Deleted.
+        (JSC::CachedFunctionExecutable::unlinkedBodyEndColumn const): Deleted.
+        (JSC::CachedFunctionExecutable::startOffset const): Deleted.
+        (JSC::CachedFunctionExecutable::sourceLength const): Deleted.
+        (JSC::CachedFunctionExecutable::parametersStartOffset const): Deleted.
+        (JSC::CachedFunctionExecutable::typeProfilingStartOffset const): Deleted.
+        (JSC::CachedFunctionExecutable::typeProfilingEndOffset const): Deleted.
+        (JSC::CachedFunctionExecutable::parameterCount const): Deleted.
+        (JSC::CachedFunctionExecutable::features const): Deleted.
+        (JSC::CachedFunctionExecutable::sourceParseMode const): Deleted.
+        (JSC::CachedFunctionExecutable::isInStrictContext const): Deleted.
+        (JSC::CachedFunctionExecutable::hasCapturedVariables const): Deleted.
+        (JSC::CachedFunctionExecutable::isBuiltinFunction const): Deleted.
+        (JSC::CachedFunctionExecutable::isBuiltinDefaultClassConstructor const): Deleted.
+        (JSC::CachedFunctionExecutable::constructAbility const): Deleted.
+        (JSC::CachedFunctionExecutable::constructorKind const): Deleted.
+        (JSC::CachedFunctionExecutable::functionMode const): Deleted.
+        (JSC::CachedFunctionExecutable::scriptMode const): Deleted.
+        (JSC::CachedFunctionExecutable::superBinding const): Deleted.
+        (JSC::CachedFunctionExecutable::derivedContextType const): Deleted.
+        (JSC::CachedFunctionExecutable::name const): Deleted.
+        (JSC::CachedFunctionExecutable::ecmaName const): Deleted.
+        (JSC::CachedFunctionExecutable::inferredName const): Deleted.
+        (JSC::CachedCodeBlock::instructions const): Deleted.
+        (JSC::CachedCodeBlock::thisRegister const): Deleted.
+        (JSC::CachedCodeBlock::scopeRegister const): Deleted.
+        (JSC::CachedCodeBlock::globalObjectRegister const): Deleted.
+        (JSC::CachedCodeBlock::sourceURLDirective const): Deleted.
+        (JSC::CachedCodeBlock::sourceMappingURLDirective const): Deleted.
+        (JSC::CachedCodeBlock::usesEval const): Deleted.
+        (JSC::CachedCodeBlock::isStrictMode const): Deleted.
+        (JSC::CachedCodeBlock::isConstructor const): Deleted.
+        (JSC::CachedCodeBlock::hasCapturedVariables const): Deleted.
+        (JSC::CachedCodeBlock::isBuiltinFunction const): Deleted.
+        (JSC::CachedCodeBlock::superBinding const): Deleted.
+        (JSC::CachedCodeBlock::scriptMode const): Deleted.
+        (JSC::CachedCodeBlock::isArrowFunctionContext const): Deleted.
+        (JSC::CachedCodeBlock::isClassContext const): Deleted.
+        (JSC::CachedCodeBlock::wasCompiledWithDebuggingOpcodes const): Deleted.
+        (JSC::CachedCodeBlock::constructorKind const): Deleted.
+        (JSC::CachedCodeBlock::derivedContextType const): Deleted.
+        (JSC::CachedCodeBlock::evalContextType const): Deleted.
+        (JSC::CachedCodeBlock::hasTailCalls const): Deleted.
+        (JSC::CachedCodeBlock::lineCount const): Deleted.
+        (JSC::CachedCodeBlock::endColumn const): Deleted.
+        (JSC::CachedCodeBlock::numVars const): Deleted.
+        (JSC::CachedCodeBlock::numCalleeLocals const): Deleted.
+        (JSC::CachedCodeBlock::numParameters const): Deleted.
+        (JSC::CachedCodeBlock::features const): Deleted.
+        (JSC::CachedCodeBlock::parseMode const): Deleted.
+        (JSC::CachedCodeBlock::codeType const): Deleted.
+        (JSC::CachedCodeBlock::rareData const): Deleted.
+        (JSC::CachedProgramCodeBlock::encode): Deleted.
+        (JSC::CachedProgramCodeBlock::decode const): Deleted.
+        (JSC::CachedModuleCodeBlock::encode): Deleted.
+        (JSC::CachedModuleCodeBlock::decode const): Deleted.
+        (JSC::CachedEvalCodeBlock::encode): Deleted.
+        (JSC::CachedEvalCodeBlock::decode const): Deleted.
+        (JSC::CachedFunctionCodeBlock::encode): Deleted.
+        (JSC::CachedFunctionCodeBlock::decode const): Deleted.
+        (JSC::UnlinkedFunctionCodeBlock::UnlinkedFunctionCodeBlock): Deleted.
+        (JSC::UnlinkedCodeBlock::UnlinkedCodeBlock): Deleted.
+        (JSC::CachedCodeBlock<CodeBlockType>::decode const): Deleted.
+        (JSC::UnlinkedProgramCodeBlock::UnlinkedProgramCodeBlock): Deleted.
+        (JSC::UnlinkedModuleProgramCodeBlock::UnlinkedModuleProgramCodeBlock): Deleted.
+        (JSC::UnlinkedEvalCodeBlock::UnlinkedEvalCodeBlock): Deleted.
+        (JSC::CachedFunctionExecutable::encode): Deleted.
+        (JSC::CachedFunctionExecutable::decode const): Deleted.
+        (JSC::UnlinkedFunctionExecutable::UnlinkedFunctionExecutable): Deleted.
+        (JSC::CachedCodeBlock<CodeBlockType>::encode): Deleted.
+        (JSC::CachedSourceCodeKey::encode): Deleted.
+        (JSC::CachedSourceCodeKey::decode const): Deleted.
+        (JSC::CacheEntry::encode): Deleted.
+        (JSC::CacheEntry:: const): Deleted.
+        (JSC:: const): Deleted.
+        (JSC::encodeCodeBlock): Deleted.
+        (JSC::decodeCodeBlockImpl): Deleted.
+        * runtime/CachedTypes.h:
+        (JSC::decodeCodeBlock): Deleted.
+        * runtime/CodeCache.cpp:
+        (JSC::CodeCacheMap::pruneSlowCase):
+        (JSC::CodeCache::getUnlinkedGlobalCodeBlock):
+        (JSC::CodeCache::getUnlinkedGlobalFunctionExecutable):
+        (JSC::CodeCache::write): Deleted.
+        * runtime/CodeCache.h:
+        (JSC::CodeCacheMap::findCacheAndUpdateAge):
+        (JSC::CodeCache::clear):
+        (JSC::CodeCacheMap::begin): Deleted.
+        (JSC::CodeCacheMap::end): Deleted.
+        (JSC::CodeCacheMap::fetchFromDiskImpl): Deleted.
+        (): Deleted.
+        (JSC::writeCodeBlock): Deleted.
+        * runtime/JSBigInt.cpp:
+        (JSC::JSBigInt::offsetOfData):
+        (JSC::JSBigInt::dataStorage):
+        * runtime/JSBigInt.h:
+        * runtime/Options.cpp:
+        (JSC::recomputeDependentOptions):
+        * runtime/Options.h:
+        * runtime/RegExp.h:
+        * runtime/ScopedArgumentsTable.h:
+        * runtime/StackFrame.h:
+        * runtime/StructureInlines.h:
+        * runtime/SymbolTable.h:
+
+2019-01-20  Saam Barati  <sbarati@apple.com>
+
         MovHint must merge NodeBytecodeUsesAsValue for its child in backwards propagation
         https://bugs.webkit.org/show_bug.cgi?id=186916
         <rdar://problem/41396612>

@@ -35,7 +35,6 @@
 #include "CallFrameClosure.h"
 #include "CatchScope.h"
 #include "CodeBlock.h"
-#include "CodeCache.h"
 #include "DirectArguments.h"
 #include "Heap.h"
 #include "Debugger.h"

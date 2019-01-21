@@ -29,9 +29,6 @@
 
 namespace JSC {
 
-class Decoder;
-class CachedModuleCodeBlock;
-
 class UnlinkedModuleProgramCodeBlock final : public UnlinkedGlobalCodeBlock {
 public:
     typedef UnlinkedGlobalCodeBlock Base;
@@ -77,14 +74,10 @@ public:
     }
 
 private:
-    friend CachedModuleCodeBlock;
-
     UnlinkedModuleProgramCodeBlock(VM* vm, Structure* structure, const ExecutableInfo& info, DebuggerMode debuggerMode)
         : Base(vm, structure, ModuleCode, info, debuggerMode)
     {
     }
-
-    UnlinkedModuleProgramCodeBlock(Decoder&, const CachedModuleCodeBlock&);
 
     int m_moduleEnvironmentSymbolTableConstantRegisterOffset { 0 };
 

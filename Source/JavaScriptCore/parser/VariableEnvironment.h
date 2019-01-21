@@ -116,8 +116,6 @@ public:
     bool isEverythingCaptured() const { return m_isEverythingCaptured; }
 
 private:
-    friend class CachedVariableEnvironment;
-
     Map m_map;
     bool m_isEverythingCaptured { false };
 };

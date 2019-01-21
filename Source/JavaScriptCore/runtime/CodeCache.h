@@ -26,7 +26,6 @@
 #pragma once
 
 #include "BytecodeGenerator.h"
-#include "CachedTypes.h"
 #include "ExecutableInfo.h"
 #include "JSCInlines.h"
 #include "Parser.h"
@@ -38,7 +37,6 @@
 #include "UnlinkedEvalCodeBlock.h"
 #include "UnlinkedModuleProgramCodeBlock.h"
 #include "UnlinkedProgramCodeBlock.h"
-#include <sys/stat.h>
 #include <wtf/Forward.h>
 #include <wtf/text/WTFString.h>
 
@@ -91,76 +89,13 @@ public:
     {
     }
 
-    iterator begin() { return m_map.begin(); }
-    iterator end() { return m_map.end(); }
-
-    template<typename UnlinkedCodeBlockType>
-    UnlinkedCodeBlockType* fetchFromDiskImpl(VM& vm, const SourceCodeKey& key)
-    {
-#if OS(DARWIN)
-        const char* cachePath = Options::diskCachePath();
-        if (!cachePath)
-            return nullptr;
-
-        unsigned hash = key.hash();
-        char filename[512];
-        int count = snprintf(filename, 512, "%s/%u.cache", cachePath, hash);
-        if (count < 0 || count > 512)
-            return nullptr;
-
-        int fd = open(filename, O_RDONLY);
-        if (fd == -1)
-            return nullptr;
-
-        int rc = flock(fd, LOCK_SH | LOCK_NB);
-        if (rc) {
-            close(fd);
-            return nullptr;
-        }
-
-        struct stat sb;
-        int res = fstat(fd, &sb);
-        size_t size = static_cast<size_t>(sb.st_size);
-        if (res || !size)
-            return nullptr;
-
-        const void* buffer = mmap(nullptr, size, PROT_READ, MAP_PRIVATE, fd, 0);
-        UnlinkedCodeBlockType* unlinkedCodeBlock = decodeCodeBlock<UnlinkedCodeBlockType>(vm, key, buffer, size);
-
-        if (!unlinkedCodeBlock)
-            return nullptr;
-
-        addCache(key, SourceCodeValue(vm, unlinkedCodeBlock, m_age));
-        return unlinkedCodeBlock;
-#else
-        UNUSED_PARAM(vm);
-        UNUSED_PARAM(key);
-        return nullptr;
-#endif
-    }
-
-    template<typename UnlinkedCodeBlockType>
-    std::enable_if_t<std::is_base_of<UnlinkedCodeBlock, UnlinkedCodeBlockType>::value && !std::is_same<UnlinkedCodeBlockType, UnlinkedEvalCodeBlock>::value, UnlinkedCodeBlockType*>
-    fetchFromDisk(VM& vm, const SourceCodeKey& key)
-    {
-        UnlinkedCodeBlockType* codeBlock = fetchFromDiskImpl<UnlinkedCodeBlockType>(vm, key);
-        if (UNLIKELY(Options::forceDiskCache()))
-            RELEASE_ASSERT(codeBlock);
-        return codeBlock;
-    }
-
-    template<typename T>
-    std::enable_if_t<!std::is_base_of<UnlinkedCodeBlock, T>::value || std::is_same<T, UnlinkedEvalCodeBlock>::value, T*>
-    fetchFromDisk(VM&, const SourceCodeKey&) { return nullptr; }
-
-    template<typename UnlinkedCodeBlockType>
-    UnlinkedCodeBlockType* findCacheAndUpdateAge(VM& vm, const SourceCodeKey& key)
+    SourceCodeValue* findCacheAndUpdateAge(const SourceCodeKey& key)
     {
         prune();
 
         iterator findResult = m_map.find(key);
         if (findResult == m_map.end())
-            return fetchFromDisk<UnlinkedCodeBlockType>(vm, key);
+            return nullptr;
 
         int64_t age = m_age - findResult->value.age;
         if (age > m_capacity) {
@@ -180,7 +115,7 @@ public:
         findResult->value.age = m_age;
         m_age += key.length();
 
-        return jsCast<UnlinkedCodeBlockType*>(findResult->value.cell.get());
+        return &findResult->value;
     }
 
     AddResult addCache(const SourceCodeKey& key, const SourceCodeValue& value)
@@ -262,7 +197,6 @@ public:
     UnlinkedFunctionExecutable* getUnlinkedGlobalFunctionExecutable(VM&, const Identifier&, const SourceCode&, DebuggerMode, Optional<int> functionConstructorParametersEndPosition, ParserError&);
 
     void clear() { m_sourceCode.clear(); }
-    JS_EXPORT_PRIVATE void write(VM&);
 
 private:
     template <class UnlinkedCodeBlockType, class ExecutableType> 
@@ -321,37 +255,5 @@ UnlinkedCodeBlockType* generateUnlinkedCodeBlock(VM& vm, ExecutableType* executa
 
     return unlinkedCodeBlock;
 }
-
-ALWAYS_INLINE static void writeCodeBlock(VM& vm, const SourceCodeKey& key, const SourceCodeValue& value)
-{
-#if OS(DARWIN)
-    const char* cachePath = Options::diskCachePath();
-    if (LIKELY(!cachePath))
-        return;
-
-    UnlinkedCodeBlock* codeBlock = jsDynamicCast<UnlinkedCodeBlock*>(vm, value.cell.get());
-    if (!codeBlock)
-        return;
-
-    unsigned hash = key.hash();
-    char filename[512];
-    int count = snprintf(filename, 512, "%s/%u.cache", cachePath, hash);
-    if (count < 0 || count > 512)
-        return;
-
-    std::pair<MallocPtr<uint8_t>, size_t> result = encodeCodeBlock(vm, key, codeBlock);
-
-    int fd = open(filename, O_CREAT | O_WRONLY, 0666);
-    int rc = flock(fd, LOCK_EX | LOCK_NB);
-    if (!rc)
-        ::write(fd, result.first.get(), result.second);
-    close(fd);
-#else
-    UNUSED_PARAM(vm);
-    UNUSED_PARAM(key);
-    UNUSED_PARAM(value);
-#endif
-}
-
 
 } // namespace JSC

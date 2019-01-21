@@ -73,8 +73,6 @@ static ALWAYS_INLINE int missingSymbolMarker() { return std::numeric_limits<int>
 // copy:     SymbolTableEntry --> FatEntry -----^
 
 struct SymbolTableEntry {
-    friend class CachedSymbolTableEntry;
-
 private:
     static VarOffset varOffsetFromBits(intptr_t bits)
     {
@@ -438,8 +436,6 @@ struct SymbolTableIndexHashTraits : HashTraits<SymbolTableEntry> {
 };
 
 class SymbolTable final : public JSCell {
-    friend class CachedSymbolTable;
-
 public:
     typedef JSCell Base;
     static const unsigned StructureFlags = Base::StructureFlags | StructureIsImmortal;

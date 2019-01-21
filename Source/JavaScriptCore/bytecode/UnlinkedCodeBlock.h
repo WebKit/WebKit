@@ -65,15 +65,12 @@ class UnlinkedFunctionCodeBlock;
 class UnlinkedFunctionExecutable;
 struct ExecutableInfo;
 
-template<typename CodeBlockType>
-class CachedCodeBlock;
-
 typedef unsigned UnlinkedValueProfile;
 typedef unsigned UnlinkedArrayProfile;
 typedef unsigned UnlinkedArrayAllocationProfile;
 typedef unsigned UnlinkedObjectAllocationProfile;
 typedef unsigned UnlinkedLLIntCallLinkInfo;
-using ConstantIdentifierSetEntry = std::pair<IdentifierSet, unsigned>;
+using ConstantIndentifierSetEntry = std::pair<IdentifierSet, unsigned>;
 
 struct UnlinkedStringJumpTable {
     struct OffsetLocation {
@@ -171,7 +168,7 @@ public:
         unsigned result = m_constantRegisters.size();
         m_constantRegisters.append(WriteBarrier<Unknown>());
         m_constantsSourceCodeRepresentation.append(SourceCodeRepresentation::Other);
-        m_constantIdentifierSets.append(ConstantIdentifierSetEntry(set, result));
+        m_constantIdentifierSets.append(ConstantIndentifierSetEntry(set, result));
     }
 
     unsigned addConstant(JSValue v, SourceCodeRepresentation sourceCodeRepresentation = SourceCodeRepresentation::Other)
@@ -205,7 +202,7 @@ public:
         return m_linkTimeConstants[index];
     }
     const Vector<WriteBarrier<Unknown>>& constantRegisters() { return m_constantRegisters; }
-    const Vector<ConstantIdentifierSetEntry>& constantIdentifierSets() { return m_constantIdentifierSets; }
+    const Vector<ConstantIndentifierSetEntry>& constantIdentifierSets() { return m_constantIdentifierSets; }
     const WriteBarrier<Unknown>& constantRegister(int index) const { return m_constantRegisters[index - FirstConstantRegisterIndex]; }
     ALWAYS_INLINE bool isConstantRegisterIndex(int index) const { return index >= FirstConstantRegisterIndex; }
     ALWAYS_INLINE JSValue getConstant(int index) const { return m_constantRegisters[index - FirstConstantRegisterIndex].get(); }
@@ -370,10 +367,6 @@ public:
 
 protected:
     UnlinkedCodeBlock(VM*, Structure*, CodeType, const ExecutableInfo&, DebuggerMode);
-
-    template<typename CodeBlockType>
-    UnlinkedCodeBlock(Decoder&, Structure*, const CachedCodeBlock<CodeBlockType>&);
-
     ~UnlinkedCodeBlock();
 
     void finishCreation(VM& vm)
@@ -384,9 +377,6 @@ protected:
 private:
     friend class BytecodeRewriter;
     friend class BytecodeGenerator;
-
-    template<typename CodeBlockType>
-    friend class CachedCodeBlock;
 
     void applyModification(BytecodeRewriter&, InstructionStreamWriter&);
 
@@ -454,7 +444,7 @@ private:
     Vector<Identifier> m_identifiers;
     Vector<BitVector> m_bitVectors;
     Vector<WriteBarrier<Unknown>> m_constantRegisters;
-    Vector<ConstantIdentifierSetEntry> m_constantIdentifierSets;
+    Vector<ConstantIndentifierSetEntry> m_constantIdentifierSets;
     Vector<SourceCodeRepresentation> m_constantsSourceCodeRepresentation;
     typedef Vector<WriteBarrier<UnlinkedFunctionExecutable>> FunctionExpressionVector;
     FunctionExpressionVector m_functionDecls;

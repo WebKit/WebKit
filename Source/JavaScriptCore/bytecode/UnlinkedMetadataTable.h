@@ -35,7 +35,6 @@ class MetadataTable;
 class UnlinkedMetadataTable {
     friend class LLIntOffsetsExtractor;
     friend class MetadataTable;
-    friend class CachedMetadataTable;
 
 public:
     struct LinkingData {

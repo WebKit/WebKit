@@ -29,8 +29,6 @@
 
 namespace JSC {
 
-class CachedFunctionCodeBlock;
-
 class UnlinkedFunctionCodeBlock final : public UnlinkedCodeBlock {
 public:
     typedef UnlinkedCodeBlock Base;
@@ -46,14 +44,10 @@ public:
     static void destroy(JSCell*);
 
 private:
-    friend CachedFunctionCodeBlock;
-
     UnlinkedFunctionCodeBlock(VM* vm, Structure* structure, CodeType codeType, const ExecutableInfo& info, DebuggerMode debuggerMode)
         : Base(vm, structure, codeType, info, debuggerMode)
     {
     }
-
-    UnlinkedFunctionCodeBlock(Decoder&, const CachedFunctionCodeBlock&);
     
 public:
     static Structure* createStructure(VM& vm, JSGlobalObject* globalObject, JSValue proto)

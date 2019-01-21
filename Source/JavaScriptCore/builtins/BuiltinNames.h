@@ -213,7 +213,6 @@ extern SymbolImpl::StaticSymbolImpl polyProtoPrivateName;
 // We commandeer the publicToPrivateMap to allow us to convert private symbol names into the appropriate symbol.
 // e.g. @iteratorSymbol points to Symbol.iterator in this map rather than to a an actual private name.
 // FIXME: This is a weird hack and we shouldn't need to do this.
-#define INITIALIZE_SYMBOL_PRIVATE_TO_PUBLIC_ENTRY(name) m_privateToPublicMap.add(m_##name##Symbol.impl(), &m_##name##SymbolPrivateIdentifier);
 #define INITIALIZE_SYMBOL_PUBLIC_TO_PRIVATE_ENTRY(name) m_publicToPrivateMap.add(m_##name##SymbolPrivateIdentifier.impl(), &m_##name##Symbol);
 
 class BuiltinNames {

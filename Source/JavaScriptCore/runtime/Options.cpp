@@ -524,12 +524,6 @@ static void recomputeDependentOptions()
     // https://bugs.webkit.org/show_bug.cgi?id=177956
     Options::useProbeOSRExit() = false;
 #endif
-
-    if (!Options::useCodeCache())
-        Options::diskCachePath() = nullptr;
-
-    if (!Options::diskCachePath())
-        Options::forceDiskCache() = false;
 }
 
 void Options::initialize()

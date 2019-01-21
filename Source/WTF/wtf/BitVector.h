@@ -33,10 +33,6 @@
 #include <wtf/PrintStream.h>
 #include <wtf/StdLibExtras.h>
 
-namespace JSC {
-class CachedBitVector;
-}
-
 namespace WTF {
 
 // This is a space-efficient, resizeable bitvector class. In the common case it
@@ -342,8 +338,6 @@ public:
     iterator end() const { return iterator(*this, size()); }
         
 private:
-    friend class JSC::CachedBitVector;
-
     static unsigned bitsInPointer()
     {
         return sizeof(void*) << 3;

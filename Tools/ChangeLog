@@ -1,3 +1,13 @@
+2019-01-20  Saam Barati  <sbarati@apple.com>
+
+        Rollout r240210: It broke tests on iOS
+        https://bugs.webkit.org/show_bug.cgi?id=193640
+
+        Unreviewed.
+
+        * Scripts/jsc-stress-test-helpers/bytecode-cache-test-helper:
+        * Scripts/run-jsc-stress-tests:
+
 2019-01-20  chris fleizach  <cfleizach@apple.com>
 
         AX: Support returning relative frames for accessibility

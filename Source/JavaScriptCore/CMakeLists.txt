@@ -833,7 +833,6 @@ set(JavaScriptCore_PRIVATE_FRAMEWORK_HEADERS
     runtime/JSGlobalLexicalEnvironment.h
     runtime/JSGlobalObject.h
     runtime/JSGlobalObjectInlines.h
-    runtime/JSImmutableButterfly.h
     runtime/JSInternalPromise.h
     runtime/JSInternalPromiseDeferred.h
     runtime/JSMicrotask.h
@@ -849,7 +848,6 @@ set(JavaScriptCore_PRIVATE_FRAMEWORK_HEADERS
     runtime/JSPromise.h
     runtime/JSPromiseConstructor.h
     runtime/JSPromiseDeferred.h
-    runtime/JSPropertyNameEnumerator.h
     runtime/JSProxy.h
     runtime/JSRunLoopTimer.h
     runtime/JSScope.h

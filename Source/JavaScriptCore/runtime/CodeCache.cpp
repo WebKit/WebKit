@@ -43,9 +43,6 @@ void CodeCacheMap::pruneSlowCase()
 
     while (m_size > m_capacity || !canPruneQuickly()) {
         MapType::iterator it = m_map.begin();
-
-        writeCodeBlock(*it->value.cell->vm(), it->key, it->value);
-
         m_size -= it->key.length();
         m_map.remove(it);
     }
@@ -62,8 +59,9 @@ UnlinkedCodeBlockType* CodeCache::getUnlinkedGlobalCodeBlock(VM& vm, ExecutableT
         vm.typeProfiler() ? TypeProfilerEnabled::Yes : TypeProfilerEnabled::No, 
         vm.controlFlowProfiler() ? ControlFlowProfilerEnabled::Yes : ControlFlowProfilerEnabled::No,
         WTF::nullopt);
-    UnlinkedCodeBlockType* unlinkedCodeBlock = m_sourceCode.findCacheAndUpdateAge<UnlinkedCodeBlockType>(vm, key);
-    if (unlinkedCodeBlock && Options::useCodeCache()) {
+    SourceCodeValue* cache = m_sourceCode.findCacheAndUpdateAge(key);
+    if (cache && Options::useCodeCache()) {
+        UnlinkedCodeBlockType* unlinkedCodeBlock = jsCast<UnlinkedCodeBlockType*>(cache->cell.get());
         unsigned lineCount = unlinkedCodeBlock->lineCount();
         unsigned startColumn = unlinkedCodeBlock->startColumn() + source.startColumn().oneBasedInt();
         bool endColumnIsOnStartLine = !lineCount;
@@ -73,9 +71,9 @@ UnlinkedCodeBlockType* CodeCache::getUnlinkedGlobalCodeBlock(VM& vm, ExecutableT
         source.provider()->setSourceMappingURLDirective(unlinkedCodeBlock->sourceMappingURLDirective());
         return unlinkedCodeBlock;
     }
-
+    
     VariableEnvironment variablesUnderTDZ;
-    unlinkedCodeBlock = generateUnlinkedCodeBlock<UnlinkedCodeBlockType, ExecutableType>(vm, executable, source, strictMode, scriptMode, debuggerMode, error, evalContextType, &variablesUnderTDZ);
+    UnlinkedCodeBlockType* unlinkedCodeBlock = generateUnlinkedCodeBlock<UnlinkedCodeBlockType, ExecutableType>(vm, executable, source, strictMode, scriptMode, debuggerMode, error, evalContextType, &variablesUnderTDZ);
 
     if (unlinkedCodeBlock && Options::useCodeCache())
         m_sourceCode.addCache(key, SourceCodeValue(vm, unlinkedCodeBlock, m_sourceCode.age()));
@@ -112,8 +110,9 @@ UnlinkedFunctionExecutable* CodeCache::getUnlinkedGlobalFunctionExecutable(VM& v
         vm.typeProfiler() ? TypeProfilerEnabled::Yes : TypeProfilerEnabled::No, 
         vm.controlFlowProfiler() ? ControlFlowProfilerEnabled::Yes : ControlFlowProfilerEnabled::No,
         functionConstructorParametersEndPosition);
-    UnlinkedFunctionExecutable* executable = m_sourceCode.findCacheAndUpdateAge<UnlinkedFunctionExecutable>(vm, key);
-    if (executable && Options::useCodeCache()) {
+    SourceCodeValue* cache = m_sourceCode.findCacheAndUpdateAge(key);
+    if (cache && Options::useCodeCache()) {
+        UnlinkedFunctionExecutable* executable = jsCast<UnlinkedFunctionExecutable*>(cache->cell.get());
         source.provider()->setSourceURLDirective(executable->sourceURLDirective());
         source.provider()->setSourceMappingURLDirective(executable->sourceMappingURLDirective());
         return executable;
@@ -154,12 +153,6 @@ UnlinkedFunctionExecutable* CodeCache::getUnlinkedGlobalFunctionExecutable(VM& v
     if (Options::useCodeCache())
         m_sourceCode.addCache(key, SourceCodeValue(vm, functionExecutable, m_sourceCode.age()));
     return functionExecutable;
-}
-
-void CodeCache::write(VM& vm)
-{
-    for (const auto& it : m_sourceCode)
-        writeCodeBlock(vm, it.key, it.value);
 }
 
 }
