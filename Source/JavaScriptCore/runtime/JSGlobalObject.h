@@ -300,7 +300,7 @@ public:
     WriteBarrier<JSObject> m_regExpProtoUnicodeGetter;
     WriteBarrier<GetterSetter> m_throwTypeErrorArgumentsCalleeAndCallerGetterSetter;
 
-    WriteBarrier<JSModuleLoader> m_moduleLoader;
+    LazyProperty<JSGlobalObject, JSModuleLoader> m_moduleLoader;
 
     WriteBarrier<ObjectPrototype> m_objectPrototype;
     WriteBarrier<FunctionPrototype> m_functionPrototype;
@@ -611,7 +611,7 @@ public:
         return m_throwTypeErrorArgumentsCalleeAndCallerGetterSetter.get();
     }
     
-    JSModuleLoader* moduleLoader() const { return m_moduleLoader.get(); }
+    JSModuleLoader* moduleLoader() const { return m_moduleLoader.get(this); }
 
     ObjectPrototype* objectPrototype() const { return m_objectPrototype.get(); }
     FunctionPrototype* functionPrototype() const { return m_functionPrototype.get(); }

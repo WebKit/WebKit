@@ -788,9 +788,14 @@ putDirectWithoutTransition(vm, vm.propertyNames-> jsName, lowerName ## Construct
     ReflectObject* reflectObject = ReflectObject::create(vm, this, ReflectObject::createStructure(vm, this, m_objectPrototype.get()));
     putDirectWithoutTransition(vm, vm.propertyNames->Reflect, reflectObject, static_cast<unsigned>(PropertyAttribute::DontEnum));
 
-    m_moduleLoader.set(vm, this, JSModuleLoader::create(globalExec(), vm, this, JSModuleLoader::createStructure(vm, this, jsNull())));
+    m_moduleLoader.initLater(
+        [] (const Initializer<JSModuleLoader>& init) {
+            auto catchScope = DECLARE_CATCH_SCOPE(init.vm);
+            init.set(JSModuleLoader::create(init.owner->globalExec(), init.vm, init.owner, JSModuleLoader::createStructure(init.vm, init.owner, jsNull())));
+            catchScope.releaseAssertNoException();
+        });
     if (Options::exposeInternalModuleLoader())
-        putDirectWithoutTransition(vm, vm.propertyNames->Loader, m_moduleLoader.get(), static_cast<unsigned>(PropertyAttribute::DontEnum));
+        putDirectWithoutTransition(vm, vm.propertyNames->Loader, moduleLoader(), static_cast<unsigned>(PropertyAttribute::DontEnum));
 
     JSFunction* builtinLog = JSFunction::create(vm, this, 1, vm.propertyNames->emptyIdentifier.string(), globalFuncBuiltinLog);
     JSFunction* builtinDescribe = JSFunction::create(vm, this, 1, vm.propertyNames->emptyIdentifier.string(), globalFuncBuiltinDescribe);
@@ -1574,7 +1579,7 @@ void JSGlobalObject::visitChildren(JSCell* cell, SlotVisitor& visitor)
     visitor.append(thisObject->m_functionProtoHasInstanceSymbolFunction);
     thisObject->m_throwTypeErrorGetterSetter.visit(visitor);
     visitor.append(thisObject->m_throwTypeErrorArgumentsCalleeAndCallerGetterSetter);
-    visitor.append(thisObject->m_moduleLoader);
+    thisObject->m_moduleLoader.visit(visitor);
 
     visitor.append(thisObject->m_objectPrototype);
     visitor.append(thisObject->m_functionPrototype);
