@@ -129,7 +129,6 @@ Parser<LexerType>::Parser(VM* vm, const SourceCode& source, JSParserBuiltinMode 
     , m_source(&source)
     , m_hasStackOverflow(false)
     , m_allowsIn(true)
-    , m_syntaxAlreadyValidated(source.provider()->isValid())
     , m_statementDepth(0)
     , m_sourceElements(0)
     , m_parsingBuiltin(builtinMode == JSParserBuiltinMode::Builtin)
@@ -3010,14 +3009,13 @@ template <class TreeBuilder> TreeStatement Parser<LexerType>::parseExpressionOrL
         JSTextPosition end = tokenEndPosition();
         next();
         consumeOrFail(COLON, "Labels must be followed by a ':'");
-        if (!m_syntaxAlreadyValidated) {
-            // This is O(N^2) over the current list of consecutive labels, but I
-            // have never seen more than one label in a row in the real world.
-            for (size_t i = 0; i < labels.size(); i++)
-                failIfTrue(ident->impl() == labels[i].m_ident->impl(), "Attempted to redeclare the label '", ident->impl(), "'");
-            failIfTrue(getLabel(ident), "Cannot find scope for the label '", ident->impl(), "'");
-            labels.append(LabelInfo(ident, start, end));
-        }
+
+        // This is O(N^2) over the current list of consecutive labels, but I
+        // have never seen more than one label in a row in the real world.
+        for (size_t i = 0; i < labels.size(); i++)
+            failIfTrue(ident->impl() == labels[i].m_ident->impl(), "Attempted to redeclare the label '", ident->impl(), "'");
+        failIfTrue(getLabel(ident), "Cannot find scope for the label '", ident->impl(), "'");
+        labels.append(LabelInfo(ident, start, end));
     } while (matchSpecIdentifier());
     bool isLoop = false;
     switch (m_token.m_type) {
@@ -3032,16 +3030,12 @@ template <class TreeBuilder> TreeStatement Parser<LexerType>::parseExpressionOrL
     }
     const Identifier* unused = 0;
     ScopeRef labelScope = currentScope();
-    if (!m_syntaxAlreadyValidated) {
-        for (size_t i = 0; i < labels.size(); i++)
-            pushLabel(labels[i].m_ident, isLoop);
-    }
+    for (size_t i = 0; i < labels.size(); i++)
+        pushLabel(labels[i].m_ident, isLoop);
     m_immediateParentAllowsFunctionDeclarationInStatement = allowFunctionDeclarationAsStatement;
     TreeStatement statement = parseStatement(context, unused);
-    if (!m_syntaxAlreadyValidated) {
-        for (size_t i = 0; i < labels.size(); i++)
-            popLabel(labelScope);
-    }
+    for (size_t i = 0; i < labels.size(); i++)
+        popLabel(labelScope);
     failIfFalse(statement, "Cannot parse statement");
     for (size_t i = 0; i < labels.size(); i++) {
         const LabelInfo& info = labels[labels.size() - i - 1];
@@ -4124,9 +4118,6 @@ template <class TreeBuilder> TreeProperty Parser<LexerType>::parseGetterSetter(T
 template <typename LexerType>
 template <class TreeBuilder> bool Parser<LexerType>::shouldCheckPropertyForUnderscoreProtoDuplicate(TreeBuilder& context, const TreeProperty& property)
 {
-    if (m_syntaxAlreadyValidated)
-        return false;
-
     if (!context.getName(property))
         return false;
 
@@ -4181,7 +4172,7 @@ template <class TreeBuilder> TreeExpression Parser<LexerType>::parseObjectLitera
     TreeProperty property = parseProperty(context, false);
     failIfFalse(property, "Cannot parse object literal property");
 
-    if (!m_syntaxAlreadyValidated && context.getType(property) & (PropertyNode::Getter | PropertyNode::Setter)) {
+    if (context.getType(property) & (PropertyNode::Getter | PropertyNode::Setter)) {
         restoreSavePoint(savePoint);
         return parseStrictObjectLiteral(context);
     }
@@ -4199,7 +4190,7 @@ template <class TreeBuilder> TreeExpression Parser<LexerType>::parseObjectLitera
         JSTokenLocation propertyLocation(tokenLocation());
         property = parseProperty(context, false);
         failIfFalse(property, "Cannot parse object literal property");
-        if (!m_syntaxAlreadyValidated && context.getType(property) & (PropertyNode::Getter | PropertyNode::Setter)) {
+        if (context.getType(property) & (PropertyNode::Getter | PropertyNode::Setter)) {
             restoreSavePoint(savePoint);
             return parseStrictObjectLiteral(context);
         }
@@ -4968,7 +4959,7 @@ template <class TreeBuilder> TreeExpression Parser<LexerType>::parseUnaryExpress
     if (UNLIKELY(isUpdateOp(static_cast<JSTokenType>(lastOperator)) && context.isMetaProperty(expr)))
         internalFailWithMessage(false, metaPropertyName(context, expr), " can't come after a prefix operator");
     bool isEvalOrArguments = false;
-    if (strictMode() && !m_syntaxAlreadyValidated) {
+    if (strictMode()) {
         if (context.isResolve(expr))
             isEvalOrArguments = *m_parserState.lastIdentifier == m_vm->propertyNames->eval || *m_parserState.lastIdentifier == m_vm->propertyNames->arguments;
     }
@@ -5004,7 +4995,7 @@ template <class TreeBuilder> TreeExpression Parser<LexerType>::parseUnaryExpress
     
     JSTextPosition end = lastTokenEndPosition();
 
-    if (!TreeBuilder::CreatesAST && (m_syntaxAlreadyValidated || !strictMode()))
+    if (!TreeBuilder::CreatesAST && (!strictMode()))
         return expr;
 
     while (tokenStackDepth) {

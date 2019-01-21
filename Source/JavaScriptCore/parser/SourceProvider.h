@@ -72,18 +72,14 @@ namespace JSC {
             return m_id;
         }
 
-        bool isValid() const { return m_validated; }
-        void setValid() { m_validated = true; }
-
         void setSourceURLDirective(const String& sourceURL) { m_sourceURLDirective = sourceURL; }
         void setSourceMappingURLDirective(const String& sourceMappingURL) { m_sourceMappingURLDirective = sourceMappingURL; }
 
     private:
         JS_EXPORT_PRIVATE void getID();
 
-        URL m_url;
         SourceProviderSourceType m_sourceType;
-        bool m_validated : 1;
+        URL m_url;
         SourceOrigin m_sourceOrigin;
         String m_sourceURLDirective;
         String m_sourceMappingURLDirective;

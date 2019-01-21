@@ -53,13 +53,6 @@ namespace JSC {
         {
         }
 
-        SourceCode(Ref<SourceProvider>&& provider, int startOffset, int endOffset, int firstLine, int startColumn)
-            : UnlinkedSourceCode(WTFMove(provider), startOffset, endOffset)
-            , m_firstLine(OrdinalNumber::fromOneBasedInt(std::max(firstLine, 1)))
-            , m_startColumn(OrdinalNumber::fromOneBasedInt(std::max(startColumn, 1)))
-        {
-        }
-
         SourceCode(RefPtr<SourceProvider>&& provider, int startOffset, int endOffset, int firstLine, int startColumn)
             : UnlinkedSourceCode(WTFMove(provider), startOffset, endOffset)
             , m_firstLine(OrdinalNumber::fromOneBasedInt(std::max(firstLine, 1)))

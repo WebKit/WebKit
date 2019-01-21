@@ -1,3 +1,57 @@
+2019-01-20  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Reduce size of SourceProvider
+        https://bugs.webkit.org/show_bug.cgi?id=193544
+
+        Reviewed by Saam Barati.
+
+        This patch attempts to reduce the dirty memory footprint by the following 3 optimizations.
+
+        1. Reordering the members of SourceProvider to reduce the size. This affects on JSC, and CachedScriptSourceProvider used in WebCore.
+
+        2. Create one SourceProvider for all the builtin code and use substring to create builtin JS functions.
+           This reduces # of SourceProvider created for builtins.
+
+        3. Drop m_validated flag in SourceProvider since nobody uses it. It also deletes dead code in Parser.cpp.
+
+        Unfortunately, MSVC does not accept super long C string literal. So instead, we construct combined string in a form of C array.
+
+        * Scripts/tests/builtins/expected/JavaScriptCore-Builtin.Promise-Combined.js-result:
+        * Scripts/tests/builtins/expected/JavaScriptCore-Builtin.prototype-Combined.js-result:
+        * Scripts/tests/builtins/expected/JavaScriptCore-BuiltinConstructor-Combined.js-result:
+        * Scripts/tests/builtins/expected/JavaScriptCore-InternalClashingNames-Combined.js-result:
+        * Scripts/wkbuiltins/builtins_generate_combined_header.py:
+        (BuiltinsCombinedHeaderGenerator.generate_output):
+        * Scripts/wkbuiltins/builtins_generate_combined_implementation.py:
+        (BuiltinsCombinedImplementationGenerator.generate_output):
+        * Scripts/wkbuiltins/builtins_generate_separate_implementation.py:
+        (BuiltinsSeparateImplementationGenerator.generate_output):
+        * Scripts/wkbuiltins/builtins_generator.py:
+        (BuiltinsGenerator.generate_embedded_code_data_for_function):
+        (BuiltinsGenerator.generate_embedded_code_string_section_for_data):
+        (BuiltinsGenerator.generate_embedded_code_string_section_for_function): Deleted.
+        * builtins/BuiltinExecutables.cpp:
+        (JSC::BuiltinExecutables::BuiltinExecutables):
+        (JSC::JSC_FOREACH_BUILTIN_CODE):
+        (JSC::BuiltinExecutables::createExecutable):
+        * builtins/BuiltinExecutables.h:
+        * parser/Parser.cpp:
+        (JSC::Parser<LexerType>::Parser):
+        (JSC::Parser<LexerType>::parseExpressionOrLabelStatement):
+        (JSC::Parser<LexerType>::shouldCheckPropertyForUnderscoreProtoDuplicate):
+        (JSC::Parser<LexerType>::parseObjectLiteral):
+        (JSC::Parser<LexerType>::parseUnaryExpression):
+        * parser/Parser.h:
+        * parser/SourceCode.h:
+        * parser/SourceProvider.cpp:
+        (JSC::SourceProvider::SourceProvider):
+        * parser/SourceProvider.h:
+        (JSC::SourceProvider::isValid const): Deleted.
+        (JSC::SourceProvider::setValid): Deleted.
+        * runtime/CachedTypes.cpp:
+        (JSC::CachedSourceProviderShape::encode):
+        (JSC::CachedSourceProviderShape::decode const):
+
 2019-01-20  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         Unreviewed, fix -Wint-in-bool-context warning

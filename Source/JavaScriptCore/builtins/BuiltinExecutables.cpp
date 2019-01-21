@@ -36,9 +36,10 @@ namespace JSC {
 
 BuiltinExecutables::BuiltinExecutables(VM& vm)
     : m_vm(vm)
-#define INITIALIZE_BUILTIN_SOURCE_MEMBERS(name, functionName, overrideName, length) , m_##name##Source(makeSource(StringImpl::createFromLiteral(s_##name, length), { }))
+    , m_combinedSourceProvider(StringSourceProvider::create(StringImpl::createFromLiteral(s_JSCCombinedCode, s_JSCCombinedCodeLength), { }, URL()))
+#define INITIALIZE_BUILTIN_SOURCE_MEMBERS(name, functionName, overrideName, length) , m_##name##Source(m_combinedSourceProvider.copyRef(), s_##name - s_JSCCombinedCode, (s_##name - s_JSCCombinedCode) + length, 1, 1)
     JSC_FOREACH_BUILTIN_CODE(INITIALIZE_BUILTIN_SOURCE_MEMBERS)
-#undef EXPOSE_BUILTIN_STRINGS
+#undef INITIALIZE_BUILTIN_SOURCE_MEMBERS
 {
 }
 
@@ -101,18 +102,6 @@ UnlinkedFunctionExecutable* BuiltinExecutables::createExecutable(VM& vm, const S
 
     unsigned asyncOffset = isAsyncFunction ? strlen("async ") : 0;
     unsigned parametersStart = strlen("function (") + asyncOffset;
-    JSTokenLocation start;
-    start.line = -1;
-    start.lineStartOffset = std::numeric_limits<unsigned>::max();
-    start.startOffset = parametersStart;
-    start.endOffset = std::numeric_limits<unsigned>::max();
-
-    JSTokenLocation end;
-    end.line = 1;
-    end.lineStartOffset = 0;
-    end.startOffset = strlen("(") + asyncOffset;
-    end.endOffset = std::numeric_limits<unsigned>::max();
-
     unsigned startColumn = parametersStart;
     int functionKeywordStart = strlen("(") + asyncOffset;
     int functionNameStart = parametersStart;
@@ -192,16 +181,29 @@ UnlinkedFunctionExecutable* BuiltinExecutables::createExecutable(VM& vm, const S
 
     JSTextPosition positionBeforeLastNewline;
     positionBeforeLastNewline.line = lineCount;
-    positionBeforeLastNewline.offset = offsetOfLastNewline;
-    positionBeforeLastNewline.lineStartOffset = positionBeforeLastNewlineLineStartOffset;
+    positionBeforeLastNewline.offset = source.startOffset() + offsetOfLastNewline;
+    positionBeforeLastNewline.lineStartOffset = source.startOffset() + positionBeforeLastNewlineLineStartOffset;
 
-    SourceCode newSource = source.subExpression(parametersStart, view.length() - closeBraceOffsetFromEnd, 0, parametersStart);
+    SourceCode newSource = source.subExpression(source.startOffset() + parametersStart, source.startOffset() + (view.length() - closeBraceOffsetFromEnd), 0, parametersStart);
     bool isBuiltinDefaultClassConstructor = constructorKind != ConstructorKind::None;
     UnlinkedFunctionKind kind = isBuiltinDefaultClassConstructor ? UnlinkedNormalFunction : UnlinkedBuiltinFunction;
 
     SourceParseMode parseMode = isAsyncFunction ? SourceParseMode::AsyncFunctionMode : SourceParseMode::NormalFunctionMode;
+
+    JSTokenLocation start;
+    start.line = -1;
+    start.lineStartOffset = std::numeric_limits<unsigned>::max();
+    start.startOffset = source.startOffset() + parametersStart;
+    start.endOffset = std::numeric_limits<unsigned>::max();
+
+    JSTokenLocation end;
+    end.line = 1;
+    end.lineStartOffset = source.startOffset();
+    end.startOffset = source.startOffset() + strlen("(") + asyncOffset;
+    end.endOffset = std::numeric_limits<unsigned>::max();
+
     FunctionMetadataNode metadata(
-        start, end, startColumn, endColumn, functionKeywordStart, functionNameStart, parametersStart,
+        start, end, startColumn, endColumn, source.startOffset() + functionKeywordStart, source.startOffset() + functionNameStart, source.startOffset() + parametersStart,
         isInStrictContext, constructorKind, constructorKind == ConstructorKind::Extends ? SuperBinding::Needed : SuperBinding::NotNeeded,
         parameterCount, parseMode, isArrowFunctionBodyExpression);
 
@@ -237,7 +239,6 @@ UnlinkedFunctionExecutable* BuiltinExecutables::createExecutable(VM& vm, const S
             RELEASE_ASSERT(metadataFromParser);
             metadataFromParser->overrideName(name);
             metadataFromParser->setEndPosition(positionBeforeLastNewlineFromParser);
-
             if (metadata != *metadataFromParser || positionBeforeLastNewlineFromParser != positionBeforeLastNewline) {
                 dataLogLn("Expected Metadata:\n", metadata);
                 dataLogLn("Metadata from parser:\n", *metadataFromParser);

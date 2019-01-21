@@ -47,7 +47,7 @@ UnlinkedFunctionExecutable* name##Executable(); \
 const SourceCode& name##Source() { return m_##name##Source; }
     
     JSC_FOREACH_BUILTIN_CODE(EXPOSE_BUILTIN_EXECUTABLES)
-#undef EXPOSE_BUILTIN_SOURCES
+#undef EXPOSE_BUILTIN_EXECUTABLES
 
     static SourceCode defaultConstructorSourceCode(ConstructorKind);
     UnlinkedFunctionExecutable* createDefaultConstructor(ConstructorKind, const Identifier& name);
@@ -60,6 +60,7 @@ private:
 
     UnlinkedFunctionExecutable* createBuiltinExecutable(const SourceCode&, const Identifier&, ConstructAbility);
 
+    Ref<StringSourceProvider> m_combinedSourceProvider;
 #define DECLARE_BUILTIN_SOURCE_MEMBERS(name, functionName, overriddenName, length)\
     SourceCode m_##name##Source; \
     Weak<UnlinkedFunctionExecutable> m_##name##Executable;

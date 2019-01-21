@@ -1857,7 +1857,6 @@ private:
     JSToken m_token;
     bool m_allowsIn;
     JSTextPosition m_lastTokenEndPosition;
-    bool m_syntaxAlreadyValidated;
     int m_statementDepth;
     RefPtr<SourceProviderCache> m_functionCache;
     SourceElements* m_sourceElements;

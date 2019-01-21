@@ -56,8 +56,27 @@ class BuiltinsCombinedImplementationGenerator(BuiltinsGenerator):
         sections.append(self.generate_primary_header_includes())
         sections.append(self.generate_secondary_header_includes())
         sections.append(Template(Templates.NamespaceTop).substitute(args))
+
+        combinedCode = ""
+        combinedCodeOffset = 0
+        function_data = []
         for function in self.model().all_functions():
-            sections.append(self.generate_embedded_code_string_section_for_function(function))
+            data = self.generate_embedded_code_data_for_function(function)
+            combinedCode += data['originalSource']
+            data['embeddedSource'] = "s_%sCombinedCode + %d" % (args['namespace'], combinedCodeOffset)
+            combinedCodeOffset += data['embeddedSourceLength']
+            function_data.append(data)
+
+        combinedCharacters = []
+        for ch in combinedCode:
+            combinedCharacters.append(str(ord(ch)))
+
+        sections.append("const char s_%sCombinedCode[] = { %s };" % (args['namespace'], (", ".join(combinedCharacters))));
+        sections.append("const unsigned s_%sCombinedCodeLength = %d;" % (args['namespace'], len(combinedCharacters)));
+
+        for data in function_data:
+            sections.append(self.generate_embedded_code_string_section_for_data(data))
+
         if self.model().framework is Frameworks.JavaScriptCore:
             sections.append(Template(Templates.CombinedJSCImplementationStaticMacros).substitute(args))
         elif self.model().framework is Frameworks.WebCore:

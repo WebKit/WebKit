@@ -40,6 +40,10 @@ enum class ConstructAbility : unsigned;
 
 namespace JSC {
 
+extern const char s_JSCCombinedCode[];
+
+extern const unsigned s_JSCCombinedCodeLength;
+
 /* Builtin.Promise */
 extern const char* s_builtinPromiseRejectPromiseCode;
 extern const int s_builtinPromiseRejectPromiseCodeLength;
@@ -115,44 +119,22 @@ JSC_FOREACH_BUILTIN_CODE(DECLARE_BUILTIN_GENERATOR)
 
 namespace JSC {
 
+const char s_JSCCombinedCode[] = { 40, 102, 117, 110, 99, 116, 105, 111, 110, 32, 40, 112, 114, 111, 109, 105, 115, 101, 44, 32, 118, 97, 108, 117, 101, 41, 10, 123, 10, 32, 32, 32, 32, 34, 117, 115, 101, 32, 115, 116, 114, 105, 99, 116, 34, 59, 10, 10, 32, 32, 32, 32, 118, 97, 114, 32, 114, 101, 97, 99, 116, 105, 111, 110, 115, 32, 61, 32, 112, 114, 111, 109, 105, 115, 101, 46, 64, 112, 114, 111, 109, 105, 115, 101, 70, 117, 108, 102, 105, 108, 108, 82, 101, 97, 99, 116, 105, 111, 110, 115, 59, 10, 32, 32, 32, 32, 112, 114, 111, 109, 105, 115, 101, 46, 64, 112, 114, 111, 109, 105, 115, 101, 82, 101, 115, 117, 108, 116, 32, 61, 32, 118, 97, 108, 117, 101, 59, 10, 32, 32, 32, 32, 112, 114, 111, 109, 105, 115, 101, 46, 64, 112, 114, 111, 109, 105, 115, 101, 70, 117, 108, 102, 105, 108, 108, 82, 101, 97, 99, 116, 105, 111, 110, 115, 32, 61, 32, 117, 110, 100, 101, 102, 105, 110, 101, 100, 59, 10, 32, 32, 32, 32, 112, 114, 111, 109, 105, 115, 101, 46, 64, 112, 114, 111, 109, 105, 115, 101, 82, 101, 106, 101, 99, 116, 82, 101, 97, 99, 116, 105, 111, 110, 115, 32, 61, 32, 117, 110, 100, 101, 102, 105, 110, 101, 100, 59, 10, 32, 32, 32, 32, 112, 114, 111, 109, 105, 115, 101, 46, 64, 112, 114, 111, 109, 105, 115, 101, 83, 116, 97, 116, 101, 32, 61, 32, 64, 112, 114, 111, 109, 105, 115, 101, 70, 117, 108, 102, 105, 108, 108, 101, 100, 59, 10, 10, 32, 32, 32, 32, 64, 73, 110, 115, 112, 101, 99, 116, 111, 114, 73, 110, 115, 116, 114, 117, 109, 101, 110, 116, 97, 116, 105, 111, 110, 46, 112, 114, 111, 109, 105, 115, 101, 70, 117, 108, 102, 105, 108, 108, 101, 100, 40, 112, 114, 111, 109, 105, 115, 101, 44, 32, 118, 97, 108, 117, 101, 44, 32, 114, 101, 97, 99, 116, 105, 111, 110, 115, 41, 59, 10, 10, 32, 32, 32, 32, 64, 116, 114, 105, 103, 103, 101, 114, 80, 114, 111, 109, 105, 115, 101, 82, 101, 97, 99, 116, 105, 111, 110, 115, 40, 114, 101, 97, 99, 116, 105, 111, 110, 115, 44, 32, 118, 97, 108, 117, 101, 41, 59, 10, 125, 41, 10, 40, 102, 117, 110, 99, 116, 105, 111, 110, 32, 40, 112, 114, 111, 109, 105, 115, 101, 44, 32, 114, 101, 97, 115, 111, 110, 41, 10, 123, 10, 32, 32, 32, 32, 34, 117, 115, 101, 32, 115, 116, 114, 105, 99, 116, 34, 59, 10, 10, 32, 32, 32, 32, 118, 97, 114, 32, 114, 101, 97, 99, 116, 105, 111, 110, 115, 32, 61, 32, 112, 114, 111, 109, 105, 115, 101, 46, 64, 112, 114, 111, 109, 105, 115, 101, 82, 101, 106, 101, 99, 116, 82, 101, 97, 99, 116, 105, 111, 110, 115, 59, 10, 32, 32, 32, 32, 112, 114, 111, 109, 105, 115, 101, 46, 64, 112, 114, 111, 109, 105, 115, 101, 82, 101, 115, 117, 108, 116, 32, 61, 32, 114, 101, 97, 115, 111, 110, 59, 10, 32, 32, 32, 32, 112, 114, 111, 109, 105, 115, 101, 46, 64, 112, 114, 111, 109, 105, 115, 101, 70, 117, 108, 102, 105, 108, 108, 82, 101, 97, 99, 116, 105, 111, 110, 115, 32, 61, 32, 117, 110, 100, 101, 102, 105, 110, 101, 100, 59, 10, 32, 32, 32, 32, 112, 114, 111, 109, 105, 115, 101, 46, 64, 112, 114, 111, 109, 105, 115, 101, 82, 101, 106, 101, 99, 116, 82, 101, 97, 99, 116, 105, 111, 110, 115, 32, 61, 32, 117, 110, 100, 101, 102, 105, 110, 101, 100, 59, 10, 32, 32, 32, 32, 112, 114, 111, 109, 105, 115, 101, 46, 64, 112, 114, 111, 109, 105, 115, 101, 83, 116, 97, 116, 101, 32, 61, 32, 64, 112, 114, 111, 109, 105, 115, 101, 82, 101, 106, 101, 99, 116, 101, 100, 59, 10, 10, 32, 32, 32, 32, 64, 73, 110, 115, 112, 101, 99, 116, 111, 114, 73, 110, 115, 116, 114, 117, 109, 101, 110, 116, 97, 116, 105, 111, 110, 46, 112, 114, 111, 109, 105, 115, 101, 82, 101, 106, 101, 99, 116, 101, 100, 40, 112, 114, 111, 109, 105, 115, 101, 44, 32, 114, 101, 97, 115, 111, 110, 44, 32, 114, 101, 97, 99, 116, 105, 111, 110, 115, 41, 59, 10, 10, 32, 32, 32, 32, 64, 116, 114, 105, 103, 103, 101, 114, 80, 114, 111, 109, 105, 115, 101, 82, 101, 97, 99, 116, 105, 111, 110, 115, 40, 114, 101, 97, 99, 116, 105, 111, 110, 115, 44, 32, 114, 101, 97, 115, 111, 110, 41, 59, 10, 125, 41, 10 };
+
+const unsigned s_JSCCombinedCodeLength = 825;
+
 const JSC::ConstructAbility s_builtinPromiseFulfillPromiseCodeConstructAbility = JSC::ConstructAbility::CannotConstruct;
 const int s_builtinPromiseFulfillPromiseCodeLength = 412;
 static const JSC::Intrinsic s_builtinPromiseFulfillPromiseCodeIntrinsic = JSC::NoIntrinsic;
 const char* s_builtinPromiseFulfillPromiseCode =
-    "(function (promise, value)\n" \
-    "{\n" \
-    "    \"use strict\";\n" \
-    "\n" \
-    "    var reactions = promise.@promiseFulfillReactions;\n" \
-    "    promise.@promiseResult = value;\n" \
-    "    promise.@promiseFulfillReactions = undefined;\n" \
-    "    promise.@promiseRejectReactions = undefined;\n" \
-    "    promise.@promiseState = @promiseFulfilled;\n" \
-    "\n" \
-    "    @InspectorInstrumentation.promiseFulfilled(promise, value, reactions);\n" \
-    "\n" \
-    "    @triggerPromiseReactions(reactions, value);\n" \
-    "})\n" \
+s_JSCCombinedCode + 0
 ;
 
 const JSC::ConstructAbility s_builtinPromiseRejectPromiseCodeConstructAbility = JSC::ConstructAbility::CannotConstruct;
 const int s_builtinPromiseRejectPromiseCodeLength = 413;
 static const JSC::Intrinsic s_builtinPromiseRejectPromiseCodeIntrinsic = JSC::NoIntrinsic;
 const char* s_builtinPromiseRejectPromiseCode =
-    "(function (promise, reason)\n" \
-    "{\n" \
-    "    \"use strict\";\n" \
-    "\n" \
-    "    var reactions = promise.@promiseRejectReactions;\n" \
-    "    promise.@promiseResult = reason;\n" \
-    "    promise.@promiseFulfillReactions = undefined;\n" \
-    "    promise.@promiseRejectReactions = undefined;\n" \
-    "    promise.@promiseState = @promiseRejected;\n" \
-    "\n" \
-    "    @InspectorInstrumentation.promiseRejected(promise, reason, reactions);\n" \
-    "\n" \
-    "    @triggerPromiseReactions(reactions, reason);\n" \
-    "})\n" \
+s_JSCCombinedCode + 412
 ;
 
 

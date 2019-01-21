@@ -40,6 +40,10 @@ enum class ConstructAbility : unsigned;
 
 namespace JSC {
 
+extern const char s_JSCCombinedCode[];
+
+extern const unsigned s_JSCCombinedCodeLength;
+
 /* InternalClashingNames */
 extern const char* s_internalClashingNamesIsReadableStreamLockedCode;
 extern const int s_internalClashingNamesIsReadableStreamLockedCodeLength;
@@ -114,28 +118,22 @@ JSC_FOREACH_BUILTIN_CODE(DECLARE_BUILTIN_GENERATOR)
 
 namespace JSC {
 
+const char s_JSCCombinedCode[] = { 40, 102, 117, 110, 99, 116, 105, 111, 110, 32, 40, 115, 116, 114, 101, 97, 109, 41, 10, 123, 10, 32, 32, 32, 34, 117, 115, 101, 32, 115, 116, 114, 105, 99, 116, 34, 59, 10, 10, 32, 32, 32, 32, 114, 101, 116, 117, 114, 110, 32, 33, 33, 115, 116, 114, 101, 97, 109, 46, 64, 114, 101, 97, 100, 101, 114, 59, 10, 125, 41, 10, 40, 102, 117, 110, 99, 116, 105, 111, 110, 32, 40, 115, 116, 114, 101, 97, 109, 41, 10, 123, 10, 32, 32, 32, 34, 117, 115, 101, 32, 115, 116, 114, 105, 99, 116, 34, 59, 10, 10, 32, 32, 32, 32, 114, 101, 116, 117, 114, 110, 32, 33, 33, 115, 116, 114, 101, 97, 109, 46, 64, 114, 101, 97, 100, 101, 114, 59, 10, 125, 41, 10 };
+
+const unsigned s_JSCCombinedCodeLength = 142;
+
 const JSC::ConstructAbility s_internalClashingNamesIsReadableStreamLockedCodeConstructAbility = JSC::ConstructAbility::CannotConstruct;
 const int s_internalClashingNamesIsReadableStreamLockedCodeLength = 71;
 static const JSC::Intrinsic s_internalClashingNamesIsReadableStreamLockedCodeIntrinsic = JSC::NoIntrinsic;
 const char* s_internalClashingNamesIsReadableStreamLockedCode =
-    "(function (stream)\n" \
-    "{\n" \
-    "   \"use strict\";\n" \
-    "\n" \
-    "    return !!stream.@reader;\n" \
-    "})\n" \
+s_JSCCombinedCode + 0
 ;
 
 const JSC::ConstructAbility s_internalClashingNamesIsReadableStreamLockedCodeConstructAbility = JSC::ConstructAbility::CannotConstruct;
 const int s_internalClashingNamesIsReadableStreamLockedCodeLength = 71;
 static const JSC::Intrinsic s_internalClashingNamesIsReadableStreamLockedCodeIntrinsic = JSC::NoIntrinsic;
 const char* s_internalClashingNamesIsReadableStreamLockedCode =
-    "(function (stream)\n" \
-    "{\n" \
-    "   \"use strict\";\n" \
-    "\n" \
-    "    return !!stream.@reader;\n" \
-    "})\n" \
+s_JSCCombinedCode + 71
 ;
 
 
