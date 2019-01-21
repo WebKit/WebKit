@@ -1,3 +1,20 @@
+2019-01-21  Caio Lima  <ticaiolima@gmail.com>
+
+        DoesGC rule is wrong for nodes with BigIntUse
+        https://bugs.webkit.org/show_bug.cgi?id=193652
+
+        Reviewed by Saam Barati.
+
+        Former rule was that ValueOp does not GC. However this is wrong, since
+        these operations can trigger GC and mess up memory management. In the end, this
+        will generate wrong code because we will have wrong GC epoch value during 
+        Store Barrier Insertion phase.
+        We changed this to consider BigIntUse for such nodes and properly return true when
+        they are BigIntUse.
+
+        * dfg/DFGDoesGC.cpp:
+        (JSC::DFG::doesGC):
+
 2019-01-21  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] Lazily initialize JSModuleLoader

@@ -1,3 +1,20 @@
+2019-01-21  Caio Lima  <ticaiolima@gmail.com>
+
+        DoesGC rule is wrong for nodes with BigIntUse
+        https://bugs.webkit.org/show_bug.cgi?id=193652
+
+        Reviewed by Saam Barati.
+
+        * stress/big-int-value-op-update-gc-rules.js: Added.
+        (assert):
+        (doesGCAdd):
+        (doesGCSub):
+        (doesGCDiv):
+        (doesGCMul):
+        (doesGCBitAnd):
+        (doesGCBitOr):
+        (doesGCBitXor):
+
 2019-01-20  Saam Barati  <sbarati@apple.com>
 
         DFG: When inlining DataView set* intrinsics we need to set undefined as our result

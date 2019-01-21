@@ -97,14 +97,7 @@ bool doesGC(Graph& graph, Node* node)
     case ArithTrunc:
     case ArithFRound:
     case ArithUnary:
-    case ValueBitAnd:
-    case ValueBitOr:
-    case ValueBitXor:
-    case ValueAdd:
-    case ValueSub:
-    case ValueMul:
     case ValueNegate:
-    case ValueDiv:
     case TryGetById:
     case GetById:
     case GetByIdFlush:
@@ -383,6 +376,13 @@ bool doesGC(Graph& graph, Node* node)
     case ParseInt: // We might resolve a rope even though we don't clobber anything.
     case SetAdd:
     case MapSet:
+    case ValueBitAnd:
+    case ValueBitOr:
+    case ValueBitXor:
+    case ValueAdd:
+    case ValueSub:
+    case ValueMul:
+    case ValueDiv:
         return true;
 
     case GetIndexedPropertyStorage:
