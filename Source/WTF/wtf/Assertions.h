@@ -52,6 +52,7 @@
 #endif
 
 #ifdef __cplusplus
+#include <cstdlib>
 #include <type_traits>
 
 #if OS(WINDOWS)
