@@ -1,3 +1,9 @@
+2019-01-21  David Kilzer  <ddkilzer@apple.com>
+
+        Sort PAL Xcode project file
+
+        * PAL.xcodeproj/project.pbxproj:
+
 2019-01-12  Dan Bernstein  <mitz@apple.com>
 
         [Cocoa] Avoid importing directly from subumbrella frameworks
