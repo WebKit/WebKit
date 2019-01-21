@@ -73,7 +73,7 @@ ExceptionOr<Ref<Text>> Text::splitText(unsigned offset)
             return insertResult.releaseException();
     }
 
-    document().textNodeSplit(this);
+    document().textNodeSplit(*this);
 
     if (renderer())
         renderer()->setTextWithOffset(data(), 0, oldData.length());

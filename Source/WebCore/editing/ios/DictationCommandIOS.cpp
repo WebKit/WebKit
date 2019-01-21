@@ -57,7 +57,7 @@ void DictationCommandIOS::doApply()
         inputText(firstInterpretation, true);
 
         if (interpretations.size() > 1)
-            document().markers().addDictationPhraseWithAlternativesMarker(endingSelection().toNormalizedRange().get(), interpretations);
+            document().markers().addDictationPhraseWithAlternativesMarker(*endingSelection().toNormalizedRange(), interpretations);
 
         setEndingSelection(VisibleSelection(endingSelection().visibleEnd()));
     }
@@ -73,7 +73,8 @@ void DictationCommandIOS::doApply()
 
     if (startIndex >= 0) {
         RefPtr<Range> resultRange = TextIterator::rangeFromLocationAndLength(document().documentElement(), startIndex, endIndex, true);
-        document().markers().addDictationResultMarker(resultRange.get(), m_metadata);
+        ASSERT(resultRange); // FIXME: What guarantees this?
+        document().markers().addDictationResultMarker(*resultRange, m_metadata);
     }
 }
 

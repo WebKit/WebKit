@@ -314,12 +314,12 @@ FetchResponse::BodyLoader::BodyLoader(FetchResponse& response, NotificationCallb
     : m_response(response)
     , m_responseCallback(WTFMove(responseCallback))
 {
-    m_response.setPendingActivity(&m_response);
+    m_response.setPendingActivity(m_response);
 }
 
 FetchResponse::BodyLoader::~BodyLoader()
 {
-    m_response.unsetPendingActivity(&m_response);
+    m_response.unsetPendingActivity(m_response);
 }
 
 static uint64_t nextOpaqueLoadIdentifier { 0 };

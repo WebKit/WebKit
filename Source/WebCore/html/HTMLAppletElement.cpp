@@ -27,7 +27,6 @@
 #include "ElementIterator.h"
 #include "Frame.h"
 #include "FrameLoader.h"
-#include "HTMLDocument.h"
 #include "HTMLNames.h"
 #include "HTMLParamElement.h"
 #include "RenderEmbeddedObject.h"

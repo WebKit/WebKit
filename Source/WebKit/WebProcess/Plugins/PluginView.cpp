@@ -321,9 +321,9 @@ PluginView::~PluginView()
     ASSERT(!m_plugin || !m_plugin->isBeingDestroyed());
 
     if (m_isWaitingUntilMediaCanStart)
-        m_pluginElement->document().removeMediaCanStartListener(this);
+        m_pluginElement->document().removeMediaCanStartListener(*this);
 
-    m_pluginElement->document().removeAudioProducer(this);
+    m_pluginElement->document().removeAudioProducer(*this);
 
     destroyPluginAndReset();
 
@@ -591,13 +591,13 @@ void PluginView::initializePlugin()
                     return;
                 
                 m_isWaitingUntilMediaCanStart = true;
-                m_pluginElement->document().addMediaCanStartListener(this);
+                m_pluginElement->document().addMediaCanStartListener(*this);
                 return;
             }
         }
     }
 
-    m_pluginElement->document().addAudioProducer(this);
+    m_pluginElement->document().addAudioProducer(*this);
 
 #if ENABLE(PRIMARY_SNAPSHOTTED_PLUGIN_HEURISTIC)
     HTMLPlugInImageElement& plugInImageElement = downcast<HTMLPlugInImageElement>(*m_pluginElement);

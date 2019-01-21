@@ -37,7 +37,7 @@ class DeviceMotionData;
 class DeviceMotionController final : public DeviceController {
     WTF_MAKE_NONCOPYABLE(DeviceMotionController);
 public:
-    explicit DeviceMotionController(DeviceMotionClient*);
+    explicit DeviceMotionController(DeviceMotionClient&);
     virtual ~DeviceMotionController() = default;
 
 #if PLATFORM(IOS_FAMILY)
@@ -48,7 +48,7 @@ public:
 #endif
 
     void didChangeDeviceMotion(DeviceMotionData*);
-    DeviceMotionClient* deviceMotionClient();
+    DeviceMotionClient& deviceMotionClient();
 
     bool hasLastData() override;
     RefPtr<Event> getLastEvent() override;

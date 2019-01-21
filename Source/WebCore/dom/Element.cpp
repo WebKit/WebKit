@@ -200,7 +200,7 @@ Element::~Element()
         detachAllAttrNodesFromElement();
 
     if (hasPendingResources()) {
-        document().accessSVGExtensions().removeElementFromPendingResources(this);
+        document().accessSVGExtensions().removeElementFromPendingResources(*this);
         ASSERT(!hasPendingResources());
     }
 }
@@ -546,7 +546,7 @@ bool Element::isFocusable() const
 bool Element::isUserActionElementInActiveChain() const
 {
     ASSERT(isUserActionElement());
-    return document().userActionElements().inActiveChain(*this);
+    return document().userActionElements().isInActiveChain(*this);
 }
 
 bool Element::isUserActionElementActive() const
@@ -1843,16 +1843,16 @@ bool Element::hasAttributes() const
     return elementData() && elementData()->length();
 }
 
-bool Element::hasEquivalentAttributes(const Element* other) const
+bool Element::hasEquivalentAttributes(const Element& other) const
 {
     synchronizeAllAttributes();
-    other->synchronizeAllAttributes();
-    if (elementData() == other->elementData())
+    other.synchronizeAllAttributes();
+    if (elementData() == other.elementData())
         return true;
     if (elementData())
-        return elementData()->isEquivalent(other->elementData());
-    if (other->elementData())
-        return other->elementData()->isEquivalent(elementData());
+        return elementData()->isEquivalent(other.elementData());
+    if (other.elementData())
+        return other.elementData()->isEquivalent(elementData());
     return true;
 }
 
@@ -2013,7 +2013,7 @@ void Element::removedFromAncestor(RemovalType removalType, ContainerNode& oldPar
     ContainerNode::removedFromAncestor(removalType, oldParentOfRemovedTree);
 
     if (hasPendingResources())
-        document().accessSVGExtensions().removeElementFromPendingResources(this);
+        document().accessSVGExtensions().removeElementFromPendingResources(*this);
 
     RefPtr<Frame> frame = document().frame();
     if (auto* timeline = document().existingTimeline())
@@ -3768,9 +3768,9 @@ void Element::clearHoverAndActiveStatusBeforeDetachingRenderer()
     if (!isUserActionElement())
         return;
     if (hovered())
-        document().hoveredElementDidDetach(this);
-    if (inActiveChain())
-        document().elementInActiveChainDidDetach(this);
+        document().hoveredElementDidDetach(*this);
+    if (isInActiveChain())
+        document().elementInActiveChainDidDetach(*this);
     document().userActionElements().clearActiveAndHovered(*this);
 }
 

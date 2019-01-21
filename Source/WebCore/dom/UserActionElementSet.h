@@ -27,6 +27,7 @@
 
 #pragma once
 
+#include <wtf/Forward.h>
 #include <wtf/HashMap.h>
 #include <wtf/OptionSet.h>
 #include <wtf/Ref.h>
@@ -40,7 +41,7 @@ public:
     bool isActive(const Element& element) { return hasFlag(element, Flag::IsActive); }
     bool isFocused(const Element& element) { return hasFlag(element, Flag::IsFocused); }
     bool isHovered(const Element& element) { return hasFlag(element, Flag::IsHovered); }
-    bool inActiveChain(const Element& element) { return hasFlag(element, Flag::InActiveChain); }
+    bool isInActiveChain(const Element& element) { return hasFlag(element, Flag::InActiveChain); }
 
     void setActive(Element& element, bool enable) { setFlags(element, enable, Flag::IsActive); }
     void setFocused(Element& element, bool enable) { setFlags(element, enable, Flag::IsFocused); }

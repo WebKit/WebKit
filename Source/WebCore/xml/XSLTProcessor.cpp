@@ -21,10 +21,9 @@
  */
 
 #include "config.h"
+#include "XSLTProcessor.h"
 
 #if ENABLE(XSLT)
-
-#include "XSLTProcessor.h"
 
 #include "DOMImplementation.h"
 #include "CachedResourceLoader.h"
@@ -33,7 +32,6 @@
 #include "Frame.h"
 #include "FrameLoader.h"
 #include "FrameView.h"
-#include "HTMLDocument.h"
 #include "SecurityOrigin.h"
 #include "SecurityOriginPolicy.h"
 #include "Text.h"
@@ -87,7 +85,7 @@ Ref<Document> XSLTProcessor::createDocumentFromSource(const String& sourceString
 
         if (Document* oldDocument = frame->document()) {
             result->setTransformSourceDocument(oldDocument);
-            result->takeDOMWindowFrom(oldDocument);
+            result->takeDOMWindowFrom(*oldDocument);
             result->setSecurityOriginPolicy(oldDocument->securityOriginPolicy());
             result->setCookieURL(oldDocument->cookieURL());
             result->setFirstPartyForCookies(oldDocument->firstPartyForCookies());

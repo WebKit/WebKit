@@ -45,6 +45,4 @@ public:
     virtual void deviceMotionControllerDestroyed() = 0;
 };
 
-void provideDeviceMotionTo(Page*, DeviceMotionClient*);
-
 } // namespace WebCore

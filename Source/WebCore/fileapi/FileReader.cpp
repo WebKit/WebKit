@@ -129,7 +129,7 @@ ExceptionOr<void> FileReader::readInternal(Blob& blob, FileReaderLoader::ReadTyp
     if (m_state == LOADING)
         return Exception { InvalidStateError };
 
-    setPendingActivity(this);
+    setPendingActivity(*this);
 
     m_blob = &blob;
     m_readType = type;
@@ -166,7 +166,7 @@ void FileReader::abort()
         fireEvent(eventNames().loadendEvent);
 
         // All possible events have fired and we're done, no more pending activity.
-        unsetPendingActivity(this);
+        unsetPendingActivity(*this);
     });
 }
 
@@ -201,7 +201,7 @@ void FileReader::didFinishLoading()
     fireEvent(eventNames().loadendEvent);
     
     // All possible events have fired and we're done, no more pending activity.
-    unsetPendingActivity(this);
+    unsetPendingActivity(*this);
 }
 
 void FileReader::didFail(int errorCode)
@@ -218,7 +218,7 @@ void FileReader::didFail(int errorCode)
     fireEvent(eventNames().loadendEvent);
     
     // All possible events have fired and we're done, no more pending activity.
-    unsetPendingActivity(this);
+    unsetPendingActivity(*this);
 }
 
 void FileReader::fireEvent(const AtomicString& type)

@@ -45,6 +45,6 @@ public:
     virtual void deviceOrientationControllerDestroyed() = 0;
 };
 
-WEBCORE_EXPORT void provideDeviceOrientationTo(Page*, DeviceOrientationClient*);
+WEBCORE_EXPORT void provideDeviceOrientationTo(Page&, DeviceOrientationClient&);
 
 } // namespace WebCore

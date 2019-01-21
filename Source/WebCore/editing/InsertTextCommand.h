@@ -35,7 +35,7 @@ class Text;
 class TextInsertionMarkerSupplier : public RefCounted<TextInsertionMarkerSupplier> {
 public:
     virtual ~TextInsertionMarkerSupplier() = default;
-    virtual void addMarkersToTextNode(Text*, unsigned offsetOfInsertion, const String& textInserted) = 0;
+    virtual void addMarkersToTextNode(Text&, unsigned offsetOfInsertion, const String& textInserted) = 0;
 protected:
     TextInsertionMarkerSupplier() = default;
 };

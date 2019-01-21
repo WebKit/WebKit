@@ -43,10 +43,10 @@ public:
     explicit SVGDocumentExtensions(Document&);
     ~SVGDocumentExtensions();
     
-    void addTimeContainer(SVGSVGElement*);
-    void removeTimeContainer(SVGSVGElement*);
+    void addTimeContainer(SVGSVGElement&);
+    void removeTimeContainer(SVGSVGElement&);
 
-    void addResource(const AtomicString& id, RenderSVGResourceContainer*);
+    void addResource(const AtomicString& id, RenderSVGResourceContainer&);
     void removeResource(const AtomicString& id);
     RenderSVGResourceContainer* resourceById(const AtomicString& id) const;
 
@@ -61,19 +61,19 @@ public:
 
     SVGResourcesCache& resourcesCache() { return *m_resourcesCache; }
 
-    HashSet<SVGElement*>* setOfElementsReferencingTarget(SVGElement* referencedElement) const;
-    void addElementReferencingTarget(SVGElement* referencingElement, SVGElement* referencedElement);
-    void removeAllTargetReferencesForElement(SVGElement*);
+    HashSet<SVGElement*>* setOfElementsReferencingTarget(SVGElement& referencedElement) const;
+    void addElementReferencingTarget(SVGElement& referencingElement, SVGElement& referencedElement);
+    void removeAllTargetReferencesForElement(SVGElement&);
     void rebuildAllElementReferencesForTarget(SVGElement&);
-    void removeAllElementReferencesForTarget(SVGElement*);
+    void removeAllElementReferencesForTarget(SVGElement&);
 
     void clearTargetDependencies(SVGElement&);
     void rebuildElements();
 
 #if ENABLE(SVG_FONTS)
     const HashSet<SVGFontFaceElement*>& svgFontFaceElements() const { return m_svgFontFaceElements; }
-    void registerSVGFontFaceElement(SVGFontFaceElement*);
-    void unregisterSVGFontFaceElement(SVGFontFaceElement*);
+    void registerSVGFontFaceElement(SVGFontFaceElement&);
+    void unregisterSVGFontFaceElement(SVGFontFaceElement&);
 #endif
 
 private:
@@ -95,11 +95,11 @@ public:
     // This HashMap contains a list of pending resources. Pending resources, are such
     // which are referenced by any object in the SVG document, but do NOT exist yet.
     // For instance, dynamically build gradients / patterns / clippers...
-    void addPendingResource(const AtomicString& id, Element*);
+    void addPendingResource(const AtomicString& id, Element&);
     bool isIdOfPendingResource(const AtomicString& id) const;
-    bool isPendingResource(Element*, const AtomicString& id) const;
-    void clearHasPendingResourcesIfPossible(Element*);
-    void removeElementFromPendingResources(Element*);
+    bool isPendingResource(Element&, const AtomicString& id) const;
+    void clearHasPendingResourcesIfPossible(Element&);
+    void removeElementFromPendingResources(Element&);
     std::unique_ptr<PendingElements> removePendingResource(const AtomicString& id);
 
     // The following two functions are used for scheduling a pending resource to be removed.
@@ -107,7 +107,7 @@ public:
     RefPtr<Element> removeElementFromPendingResourcesForRemovalMap(const AtomicString&);
 
 private:
-    bool isElementWithPendingResources(Element*) const;
+    bool isElementWithPendingResources(Element&) const;
     std::unique_ptr<PendingElements> removePendingResourceForRemoval(const AtomicString&);
 };
 

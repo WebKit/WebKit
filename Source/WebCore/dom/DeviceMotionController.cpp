@@ -35,27 +35,28 @@
 
 namespace WebCore {
 
-DeviceMotionController::DeviceMotionController(DeviceMotionClient* client)
+DeviceMotionController::DeviceMotionController(DeviceMotionClient& client)
     : DeviceController(client)
 {
-    ASSERT(m_client);
-    deviceMotionClient()->setController(this);
+    deviceMotionClient().setController(this);
 }
 
 #if PLATFORM(IOS_FAMILY)
-// FIXME: We should look to reconcile the iOS and OpenSource differences with this class
-// so that we can either remove these methods or remove the PLATFORM(IOS_FAMILY)-guard.
+
+// FIXME: We should look to reconcile the iOS vs. non-iOS differences with this class
+// so that we can either remove these functions or the PLATFORM(IOS_FAMILY)-guard.
+
 void DeviceMotionController::suspendUpdates()
 {
-    if (m_client)
-        m_client->stopUpdating();
+    m_client.stopUpdating();
 }
 
 void DeviceMotionController::resumeUpdates()
 {
-    if (m_client && !m_listeners.isEmpty())
-        m_client->startUpdating();
+    if (!m_listeners.isEmpty())
+        m_client.startUpdating();
 }
+
 #endif
     
 void DeviceMotionController::didChangeDeviceMotion(DeviceMotionData* deviceMotionData)
@@ -63,19 +64,19 @@ void DeviceMotionController::didChangeDeviceMotion(DeviceMotionData* deviceMotio
     dispatchDeviceEvent(DeviceMotionEvent::create(eventNames().devicemotionEvent, deviceMotionData));
 }
 
-DeviceMotionClient* DeviceMotionController::deviceMotionClient()
+DeviceMotionClient& DeviceMotionController::deviceMotionClient()
 {
-    return static_cast<DeviceMotionClient*>(m_client);
+    return static_cast<DeviceMotionClient&>(m_client);
 }
 
 bool DeviceMotionController::hasLastData()
 {
-    return deviceMotionClient()->lastMotion();
+    return deviceMotionClient().lastMotion();
 }
 
 RefPtr<Event> DeviceMotionController::getLastEvent()
 {
-    return DeviceMotionEvent::create(eventNames().devicemotionEvent, deviceMotionClient()->lastMotion());
+    return DeviceMotionEvent::create(eventNames().devicemotionEvent, deviceMotionClient().lastMotion());
 }
 
 const char* DeviceMotionController::supplementName()
@@ -93,11 +94,6 @@ bool DeviceMotionController::isActiveAt(Page* page)
     if (DeviceMotionController* self = DeviceMotionController::from(page))
         return self->isActive();
     return false;
-}
-
-void provideDeviceMotionTo(Page* page, DeviceMotionClient* client)
-{
-    DeviceMotionController::provideTo(page, DeviceMotionController::supplementName(), std::make_unique<DeviceMotionController>(client));
 }
 
 } // namespace WebCore

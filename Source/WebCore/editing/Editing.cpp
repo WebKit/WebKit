@@ -1165,7 +1165,7 @@ bool areIdenticalElements(const Node& first, const Node& second)
         return false;
     auto& firstElement = downcast<Element>(first);
     auto& secondElement = downcast<Element>(second);
-    return firstElement.hasTagName(secondElement.tagQName()) && firstElement.hasEquivalentAttributes(&secondElement);
+    return firstElement.hasTagName(secondElement.tagQName()) && firstElement.hasEquivalentAttributes(secondElement);
 }
 
 bool isNonTableCellHTMLBlockElement(const Node* node)

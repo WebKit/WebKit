@@ -60,7 +60,7 @@ inline SVGSVGElement::SVGSVGElement(const QualifiedName& tagName, Document& docu
 {
     ASSERT(hasTagName(SVGNames::svgTag));
     registerAttributes();
-    document.registerForDocumentSuspensionCallbacks(this);
+    document.registerForDocumentSuspensionCallbacks(*this);
 }
 
 Ref<SVGSVGElement> SVGSVGElement::create(const QualifiedName& tagName, Document& document)
@@ -77,14 +77,14 @@ SVGSVGElement::~SVGSVGElement()
 {
     if (m_viewSpec)
         m_viewSpec->resetContextElement();
-    document().unregisterForDocumentSuspensionCallbacks(this);
-    document().accessSVGExtensions().removeTimeContainer(this);
+    document().unregisterForDocumentSuspensionCallbacks(*this);
+    document().accessSVGExtensions().removeTimeContainer(*this);
 }
 
 void SVGSVGElement::didMoveToNewDocument(Document& oldDocument, Document& newDocument)
 {
-    oldDocument.unregisterForDocumentSuspensionCallbacks(this);
-    document().registerForDocumentSuspensionCallbacks(this);
+    oldDocument.unregisterForDocumentSuspensionCallbacks(*this);
+    document().registerForDocumentSuspensionCallbacks(*this);
     SVGGraphicsElement::didMoveToNewDocument(oldDocument, newDocument);
 }
 
@@ -474,7 +474,7 @@ RenderPtr<RenderElement> SVGSVGElement::createElementRenderer(RenderStyle&& styl
 Node::InsertedIntoAncestorResult SVGSVGElement::insertedIntoAncestor(InsertionType insertionType, ContainerNode& parentOfInsertedTree)
 {
     if (insertionType.connectedToDocument) {
-        document().accessSVGExtensions().addTimeContainer(this);
+        document().accessSVGExtensions().addTimeContainer(*this);
         if (!document().accessSVGExtensions().areAnimationsPaused())
             unpauseAnimations();
 
@@ -490,7 +490,7 @@ Node::InsertedIntoAncestorResult SVGSVGElement::insertedIntoAncestor(InsertionTy
 void SVGSVGElement::removedFromAncestor(RemovalType removalType, ContainerNode& oldParentOfRemovedTree)
 {
     if (removalType.disconnectedFromDocument) {
-        document().accessSVGExtensions().removeTimeContainer(this);
+        document().accessSVGExtensions().removeTimeContainer(*this);
         pauseAnimations();
     }
     SVGGraphicsElement::removedFromAncestor(removalType, oldParentOfRemovedTree);

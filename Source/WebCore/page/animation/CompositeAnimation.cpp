@@ -64,14 +64,14 @@ void CompositeAnimation::clearElement()
         // Clear the renderers from all running animations, in case we are in the middle of
         // an animation callback (see https://bugs.webkit.org/show_bug.cgi?id=22052)
         for (auto& transition : m_transitions.values()) {
-            animationController().animationWillBeRemoved(transition.get());
+            animationController().animationWillBeRemoved(*transition);
             transition->clear();
         }
     }
     if (!m_keyframeAnimations.isEmpty()) {
         m_keyframeAnimations.checkConsistency();
         for (auto& animation : m_keyframeAnimations.values()) {
-            animationController().animationWillBeRemoved(animation.get());
+            animationController().animationWillBeRemoved(*animation);
             animation->clear();
         }
     }
@@ -159,7 +159,7 @@ void CompositeAnimation::updateTransitions(Element& element, const RenderStyle* 
                             implAnim->blendPropertyValueInStyle(prop, modifiedCurrentStyle.get());
                         }
                         LOG(Animations, "Removing existing ImplicitAnimation %p for property %s", implAnim, getPropertyName(prop));
-                        animationController().animationWillBeRemoved(implAnim);
+                        animationController().animationWillBeRemoved(*implAnim);
                         m_transitions.remove(prop);
                         equal = false;
                     }
@@ -193,7 +193,7 @@ void CompositeAnimation::updateTransitions(Element& element, const RenderStyle* 
     Vector<int> toBeRemoved;
     for (auto& transition : m_transitions.values()) {
         if (!transition->active()) {
-            animationController().animationWillBeRemoved(transition.get());
+            animationController().animationWillBeRemoved(*transition);
             toBeRemoved.append(transition->animatingProperty());
             LOG(Animations, "Removing ImplicitAnimation %p from element %p for property %s", transition.get(), &element, getPropertyName(transition->animatingProperty()));
         }
@@ -270,7 +270,7 @@ void CompositeAnimation::updateKeyframeAnimations(Element& element, const Render
     // Make a list of animations to be removed.
     for (auto& animation : m_keyframeAnimations.values()) {
         if (!newAnimations.contains(animation->name().impl())) {
-            animationController().animationWillBeRemoved(animation.get());
+            animationController().animationWillBeRemoved(*animation);
             animation->clear();
             LOG(Animations, "Removing KeyframeAnimation %p from element %p", animation.get(), &element);
         }

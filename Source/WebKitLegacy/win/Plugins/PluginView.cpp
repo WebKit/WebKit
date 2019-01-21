@@ -211,7 +211,7 @@ bool PluginView::startOrAddToUnstartedList()
     // ourselves. Otherwise, the loader will try to deliver data before we've
     // started the plug-in.
     if (!m_loadManually && !m_parentFrame->page()->canStartMedia()) {
-        m_parentFrame->document()->addMediaCanStartListener(this);
+        m_parentFrame->document()->addMediaCanStartListener(*this);
         m_isWaitingToStart = true;
         return true;
     }
@@ -287,7 +287,7 @@ PluginView::~PluginView()
         instanceMap().remove(m_instance);
 
     if (m_isWaitingToStart)
-        m_parentFrame->document()->removeMediaCanStartListener(this);
+        m_parentFrame->document()->removeMediaCanStartListener(*this);
 
     stop();
 

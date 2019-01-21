@@ -1,3 +1,12 @@
+2019-01-15  Darin Adler  <darin@apple.com>
+
+        Use references rather than pointers for register/unregister functions, and more
+        https://bugs.webkit.org/show_bug.cgi?id=175028
+
+        Reviewed by Daniel Bates.
+
+        * WebKitLegacy.xcodeproj/project.pbxproj: Let Xcode update this project.
+
 2019-01-18  Eric Carlson  <eric.carlson@apple.com>
 
         Revert r238815, it broke WK1 video fullscreen on Mac

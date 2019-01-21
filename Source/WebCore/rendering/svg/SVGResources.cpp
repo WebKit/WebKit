@@ -190,7 +190,7 @@ static inline RenderSVGResourceContainer* paintingResourceFromSVGPaint(Document&
 
 static inline void registerPendingResource(SVGDocumentExtensions& extensions, const AtomicString& id, SVGElement& element)
 {
-    extensions.addPendingResource(id, &element);
+    extensions.addPendingResource(id, element);
 }
 
 bool SVGResources::buildCachedResources(const RenderElement& renderer, const RenderStyle& style)

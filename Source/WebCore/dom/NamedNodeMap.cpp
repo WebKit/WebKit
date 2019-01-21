@@ -26,7 +26,6 @@
 #include "NamedNodeMap.h"
 
 #include "Attr.h"
-#include "HTMLDocument.h"
 #include "HTMLElement.h"
 
 namespace WebCore {
@@ -66,7 +65,7 @@ ExceptionOr<Ref<Attr>> NamedNodeMap::removeNamedItem(const AtomicString& name)
 Vector<String> NamedNodeMap::supportedPropertyNames() const
 {
     Vector<String> names = m_element.getAttributeNames();
-    if (is<HTMLElement>(m_element) && is<HTMLDocument>(m_element.document())) {
+    if (is<HTMLElement>(m_element) && m_element.document().isHTMLDocument()) {
         names.removeAllMatching([](String& name) {
             for (auto character : StringView { name }.codeUnits()) {
                 if (isASCIIUpper(character))

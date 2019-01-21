@@ -91,7 +91,7 @@ void Notification::show()
     }
     if (client.show(this)) {
         m_state = Showing;
-        setPendingActivity(this);
+        setPendingActivity(*this);
     }
 }
 
@@ -136,7 +136,7 @@ void Notification::finalize()
     if (m_state == Closed)
         return;
     m_state = Closed;
-    unsetPendingActivity(this);
+    unsetPendingActivity(*this);
 }
 
 void Notification::dispatchShowEvent()

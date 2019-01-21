@@ -507,17 +507,15 @@ unsigned CSSAnimationControllerPrivate::numberOfActiveAnimations(Document* docum
     return count;
 }
 
-void CSSAnimationControllerPrivate::addToAnimationsWaitingForStyle(AnimationBase* animation)
+void CSSAnimationControllerPrivate::addToAnimationsWaitingForStyle(AnimationBase& animation)
 {
-    // Make sure this animation is not in the start time waiters
-    m_animationsWaitingForStartTimeResponse.remove(animation);
-
-    m_animationsWaitingForStyle.add(animation);
+    m_animationsWaitingForStartTimeResponse.remove(&animation);
+    m_animationsWaitingForStyle.add(&animation);
 }
 
-void CSSAnimationControllerPrivate::removeFromAnimationsWaitingForStyle(AnimationBase* animationToRemove)
+void CSSAnimationControllerPrivate::removeFromAnimationsWaitingForStyle(AnimationBase& animationToRemove)
 {
-    m_animationsWaitingForStyle.remove(animationToRemove);
+    m_animationsWaitingForStyle.remove(&animationToRemove);
 }
 
 void CSSAnimationControllerPrivate::styleAvailable()
@@ -529,7 +527,7 @@ void CSSAnimationControllerPrivate::styleAvailable()
     m_animationsWaitingForStyle.clear();
 }
 
-void CSSAnimationControllerPrivate::addToAnimationsWaitingForStartTimeResponse(AnimationBase* animation, bool willGetResponse)
+void CSSAnimationControllerPrivate::addToAnimationsWaitingForStartTimeResponse(AnimationBase& animation, bool willGetResponse)
 {
     // If willGetResponse is true, it means this animation is actually waiting for a response
     // (which will come in as a call to notifyAnimationStarted()).
@@ -548,17 +546,16 @@ void CSSAnimationControllerPrivate::addToAnimationsWaitingForStartTimeResponse(A
     // This will synchronize all software and accelerated animations started in the same 
     // updateStyleIfNeeded cycle.
     //
-    
+
     if (willGetResponse)
         m_waitingForAsyncStartNotification = true;
 
-    m_animationsWaitingForStartTimeResponse.add(animation);
+    m_animationsWaitingForStartTimeResponse.add(&animation);
 }
 
-void CSSAnimationControllerPrivate::removeFromAnimationsWaitingForStartTimeResponse(AnimationBase* animationToRemove)
+void CSSAnimationControllerPrivate::removeFromAnimationsWaitingForStartTimeResponse(AnimationBase& animationToRemove)
 {
-    m_animationsWaitingForStartTimeResponse.remove(animationToRemove);
-    
+    m_animationsWaitingForStartTimeResponse.remove(&animationToRemove);
     if (m_animationsWaitingForStartTimeResponse.isEmpty())
         m_waitingForAsyncStartNotification = false;
 }
@@ -574,9 +571,9 @@ void CSSAnimationControllerPrivate::startTimeResponse(MonotonicTime time)
     m_waitingForAsyncStartNotification = false;
 }
 
-void CSSAnimationControllerPrivate::animationWillBeRemoved(AnimationBase* animation)
+void CSSAnimationControllerPrivate::animationWillBeRemoved(AnimationBase& animation)
 {
-    LOG(Animations, "CSSAnimationControllerPrivate %p animationWillBeRemoved: %p", this, animation);
+    LOG(Animations, "CSSAnimationControllerPrivate %p animationWillBeRemoved: %p", this, &animation);
 
     removeFromAnimationsWaitingForStyle(animation);
     removeFromAnimationsWaitingForStartTimeResponse(animation);

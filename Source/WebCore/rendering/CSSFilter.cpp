@@ -105,7 +105,7 @@ RefPtr<FilterEffect> CSSFilter::buildReferenceFilter(RenderElement& renderer, Fi
         // Although we did not find the referenced filter, it might exist later in the document.
         // FIXME: This skips anonymous RenderObjects. <https://webkit.org/b/131085>
         if (auto* element = renderer.element())
-            document->accessSVGExtensions().addPendingResource(filterOperation.fragment(), element);
+            document->accessSVGExtensions().addPendingResource(filterOperation.fragment(), *element);
         return nullptr;
     }
 

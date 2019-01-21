@@ -64,7 +64,7 @@ using namespace PeerConnection;
 
 Ref<RTCPeerConnection> RTCPeerConnection::create(ScriptExecutionContext& context)
 {
-    Ref<RTCPeerConnection> peerConnection = adoptRef(*new RTCPeerConnection(context));
+    auto peerConnection = adoptRef(*new RTCPeerConnection(context));
     peerConnection->suspendIfNeeded();
     // RTCPeerConnection may send events at about any time during its lifetime.
     // Let's make it uncollectable until the pc is closed by JS or the page stops it.

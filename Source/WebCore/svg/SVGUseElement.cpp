@@ -240,7 +240,7 @@ void SVGUseElement::updateShadowTree()
     String targetID;
     auto* target = findTarget(&targetID);
     if (!target) {
-        document().accessSVGExtensions().addPendingResource(targetID, this);
+        document().accessSVGExtensions().addPendingResource(targetID, *this);
         return;
     }
 

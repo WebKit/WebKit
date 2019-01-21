@@ -42,14 +42,14 @@ void FetchBodySource::setActive()
 {
     ASSERT(m_bodyOwner);
     if (m_bodyOwner)
-        m_bodyOwner->setPendingActivity(m_bodyOwner);
+        m_bodyOwner->setPendingActivity(*m_bodyOwner);
 }
 
 void FetchBodySource::setInactive()
 {
     ASSERT(m_bodyOwner);
     if (m_bodyOwner)
-        m_bodyOwner->unsetPendingActivity(m_bodyOwner);
+        m_bodyOwner->unsetPendingActivity(*m_bodyOwner);
 }
 
 void FetchBodySource::doStart()

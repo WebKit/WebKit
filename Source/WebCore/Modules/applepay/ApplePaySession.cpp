@@ -545,7 +545,7 @@ ExceptionOr<void> ApplePaySession::begin()
 
     m_state = State::Active;
 
-    setPendingActivity(this);
+    setPendingActivity(*this);
 
     return { };
 }
@@ -652,7 +652,7 @@ ExceptionOr<void> ApplePaySession::completePayment(ApplePayPaymentAuthorizationR
     }
 
     m_state = State::Completed;
-    unsetPendingActivity(this);
+    unsetPendingActivity(*this);
 
     return { };
 }
@@ -1047,7 +1047,7 @@ bool ApplePaySession::isFinalState() const
 void ApplePaySession::didReachFinalState()
 {
     ASSERT(isFinalState());
-    unsetPendingActivity(this);
+    unsetPendingActivity(*this);
 }
 
 }

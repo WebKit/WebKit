@@ -50,7 +50,6 @@
 #include "FrameTree.h"
 #include "GraphicsContext.h"
 #include "HTMLBodyElement.h"
-#include "HTMLDocument.h"
 #include "HTMLEmbedElement.h"
 #include "HTMLFrameElement.h"
 #include "HTMLFrameSetElement.h"
@@ -4464,7 +4463,7 @@ bool FrameView::qualifiesAsVisuallyNonEmpty() const
 
     auto isMoreContentExpected = [&]() {
         // Pending css/javascript/font loading/processing means we should wait a little longer.
-        auto hasPendingScriptExecution = frame().document()->scriptRunner() && frame().document()->scriptRunner()->hasPendingScripts();
+        auto hasPendingScriptExecution = frame().document()->scriptRunner().hasPendingScripts();
         if (hasPendingScriptExecution)
             return true;
 

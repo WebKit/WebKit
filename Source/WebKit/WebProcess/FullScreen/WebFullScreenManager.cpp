@@ -150,7 +150,7 @@ void WebFullScreenManager::willEnterFullScreen()
 {
     LOG(Fullscreen, "WebFullScreenManager %p willEnterFullScreen() - element %p", this, m_element.get());
 
-    m_element->document().webkitWillEnterFullScreenForElement(m_element.get());
+    m_element->document().webkitWillEnterFullScreen(*m_element);
 #if !PLATFORM(IOS_FAMILY)
     m_page->hidePageBanners();
 #endif
@@ -164,7 +164,7 @@ void WebFullScreenManager::didEnterFullScreen()
 {
     LOG(Fullscreen, "WebFullScreenManager %p didEnterFullScreen() - element %p", this, m_element.get());
 
-    m_element->document().webkitDidEnterFullScreenForElement(m_element.get());
+    m_element->document().webkitDidEnterFullScreen();
 
 #if PLATFORM(IOS_FAMILY) || (PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE))
     auto* currentPlaybackControlsElement = m_page->playbackSessionManager().currentPlaybackControlsElement();
@@ -182,7 +182,7 @@ void WebFullScreenManager::willExitFullScreen()
 #endif
 
     m_finalFrame = screenRectOfContents(m_element.get());
-    m_element->document().webkitWillExitFullScreenForElement(m_element.get());
+    m_element->document().webkitWillExitFullScreen();
 #if !PLATFORM(IOS_FAMILY)
     m_page->showPageBanners();
 #endif
@@ -196,7 +196,7 @@ void WebFullScreenManager::didExitFullScreen()
     ASSERT(m_element);
     setFullscreenInsets(FloatBoxExtent());
     setFullscreenAutoHideDuration(0_s);
-    m_element->document().webkitDidExitFullScreenForElement(m_element.get());
+    m_element->document().webkitDidExitFullScreen();
 }
 
 void WebFullScreenManager::setAnimatingFullScreen(bool animating)

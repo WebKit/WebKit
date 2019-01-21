@@ -58,17 +58,17 @@ void SVGMPathElement::buildPendingResource()
     auto target = SVGURIReference::targetElementFromIRIString(href(), treeScope());
     if (!target.element) {
         // Do not register as pending if we are already pending this resource.
-        if (document().accessSVGExtensions().isPendingResource(this, target.identifier))
+        if (document().accessSVGExtensions().isPendingResource(*this, target.identifier))
             return;
 
         if (!target.identifier.isEmpty()) {
-            document().accessSVGExtensions().addPendingResource(target.identifier, this);
+            document().accessSVGExtensions().addPendingResource(target.identifier, *this);
             ASSERT(hasPendingResources());
         }
-    } else if (target.element->isSVGElement()) {
+    } else if (is<SVGElement>(*target.element)) {
         // Register us with the target in the dependencies map. Any change of hrefElement
         // that leads to relayout/repainting now informs us, so we can react to it.
-        document().accessSVGExtensions().addElementReferencingTarget(this, downcast<SVGElement>(target.element.get()));
+        document().accessSVGExtensions().addElementReferencingTarget(*this, downcast<SVGElement>(*target.element));
     }
 
     targetPathChanged();
@@ -76,7 +76,7 @@ void SVGMPathElement::buildPendingResource()
 
 void SVGMPathElement::clearResourceReferences()
 {
-    document().accessSVGExtensions().removeAllTargetReferencesForElement(this);
+    document().accessSVGExtensions().removeAllTargetReferencesForElement(*this);
 }
 
 Node::InsertedIntoAncestorResult SVGMPathElement::insertedIntoAncestor(InsertionType insertionType, ContainerNode& parentOfInsertedTree)

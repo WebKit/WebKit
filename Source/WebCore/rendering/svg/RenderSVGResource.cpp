@@ -165,9 +165,9 @@ static inline void removeFromCacheAndInvalidateDependencies(RenderElement& rende
             clipper->removeClientFromCache(renderer);
     }
 
-    if (!renderer.element() || !renderer.element()->isSVGElement())
+    if (!is<SVGElement>(renderer.element()))
         return;
-    HashSet<SVGElement*>* dependencies = renderer.document().accessSVGExtensions().setOfElementsReferencingTarget(downcast<SVGElement>(renderer.element()));
+    auto* dependencies = renderer.document().accessSVGExtensions().setOfElementsReferencingTarget(downcast<SVGElement>(*renderer.element()));
     if (!dependencies)
         return;
 

@@ -58,7 +58,7 @@ Ref<RTCDataChannel> RTCDataChannel::create(ScriptExecutionContext& context, std:
     auto channel = adoptRef(*new RTCDataChannel(context, WTFMove(handler), WTFMove(label), WTFMove(options)));
     channel->suspendIfNeeded();
     channel->m_handler->setClient(channel.get());
-    channel->setPendingActivity(channel.ptr());
+    channel->setPendingActivity(channel.get());
     return channel;
 }
 
@@ -159,7 +159,7 @@ void RTCDataChannel::close()
 
     m_handler->close();
     m_handler = nullptr;
-    unsetPendingActivity(this);
+    unsetPendingActivity(*this);
 }
 
 void RTCDataChannel::didChangeReadyState(RTCDataChannelState newState)

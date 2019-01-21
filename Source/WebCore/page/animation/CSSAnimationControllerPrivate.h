@@ -93,13 +93,13 @@ public:
     void endAnimationUpdate();
     void receivedStartTimeResponse(MonotonicTime);
     
-    void addToAnimationsWaitingForStyle(AnimationBase*);
-    void removeFromAnimationsWaitingForStyle(AnimationBase*);
+    void addToAnimationsWaitingForStyle(AnimationBase&);
+    void removeFromAnimationsWaitingForStyle(AnimationBase&);
 
-    void addToAnimationsWaitingForStartTimeResponse(AnimationBase*, bool willGetResponse);
-    void removeFromAnimationsWaitingForStartTimeResponse(AnimationBase*);
+    void addToAnimationsWaitingForStartTimeResponse(AnimationBase&, bool willGetResponse);
+    void removeFromAnimationsWaitingForStartTimeResponse(AnimationBase&);
 
-    void animationWillBeRemoved(AnimationBase*);
+    void animationWillBeRemoved(AnimationBase&);
 
     void updateAnimationTimerForElement(Element&);
 

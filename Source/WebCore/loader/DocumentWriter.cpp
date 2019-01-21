@@ -146,7 +146,7 @@ bool DocumentWriter::begin(const URL& urlReference, bool dispatch, Document* own
 
     bool shouldReuseDefaultView = m_frame->loader().stateMachine().isDisplayingInitialEmptyDocument() && m_frame->document()->isSecureTransitionTo(url);
     if (shouldReuseDefaultView)
-        document->takeDOMWindowFrom(m_frame->document());
+        document->takeDOMWindowFrom(*m_frame->document());
     else
         document->createDOMWindow();
 

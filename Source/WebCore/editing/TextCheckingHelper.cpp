@@ -277,17 +277,17 @@ String TextCheckingHelper::findFirstMisspelling(int& firstMisspellingOffset, boo
 
         if (misspellingLocation >= 0 && misspellingLength > 0 && misspellingLocation < textLength && misspellingLength <= textLength && misspellingLocation + misspellingLength <= textLength) {
             // Compute range of misspelled word
-            RefPtr<Range> misspellingRange = TextIterator::subrange(m_range, currentChunkOffset + misspellingLocation, misspellingLength);
+            auto misspellingRange = TextIterator::subrange(m_range, currentChunkOffset + misspellingLocation, misspellingLength);
 
             // Remember first-encountered misspelling and its offset.
             if (!firstMisspelling) {
                 firstMisspellingOffset = currentChunkOffset + misspellingLocation;
                 firstMisspelling = text.substring(misspellingLocation, misspellingLength).toString();
-                firstMisspellingRange = misspellingRange;
+                firstMisspellingRange = misspellingRange.ptr();
             }
 
             // Store marker for misspelled word.
-            misspellingRange->startContainer().document().markers().addMarker(misspellingRange.get(), DocumentMarker::Spelling);
+            misspellingRange->startContainer().document().markers().addMarker(misspellingRange, DocumentMarker::Spelling);
 
             // Bail out if we're marking only the first misspelling, and not all instances.
             if (!markAll)
@@ -453,8 +453,8 @@ int TextCheckingHelper::findFirstGrammarDetail(const Vector<GrammarDetail>& gram
             continue;
         
         if (markAll) {
-            RefPtr<Range> badGrammarRange = TextIterator::subrange(m_range, badGrammarPhraseLocation - startOffset + detail->location, detail->length);
-            badGrammarRange->startContainer().document().markers().addMarker(badGrammarRange.get(), DocumentMarker::Grammar, detail->userDescription);
+            auto badGrammarRange = TextIterator::subrange(m_range, badGrammarPhraseLocation - startOffset + detail->location, detail->length);
+            badGrammarRange->startContainer().document().markers().addMarker(badGrammarRange, DocumentMarker::Grammar, detail->userDescription);
         }
         
         // Remember this detail only if it's earlier than our current candidate (the details aren't in a guaranteed order)

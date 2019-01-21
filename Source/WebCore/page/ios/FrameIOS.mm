@@ -81,14 +81,14 @@ void Frame::initWithSimpleHTMLDocument(const String& style, const URL& url)
 {
     m_loader->initForSynthesizedDocument(url);
 
-    auto document = HTMLDocument::createSynthesizedDocument(this, url);
+    auto document = HTMLDocument::createSynthesizedDocument(*this, url);
     document->setCompatibilityMode(DocumentCompatibilityMode::LimitedQuirksMode);
     document->createDOMWindow();
     setDocument(document.copyRef());
 
-    auto rootElement = HTMLHtmlElement::create(document.get());
+    auto rootElement = HTMLHtmlElement::create(document);
 
-    auto body = HTMLBodyElement::create(document.get());
+    auto body = HTMLBodyElement::create(document);
     if (!style.isEmpty())
         body->setAttribute(HTMLNames::styleAttr, style);
 

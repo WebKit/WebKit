@@ -48,27 +48,25 @@ SVGDocumentExtensions::SVGDocumentExtensions(Document& document)
 
 SVGDocumentExtensions::~SVGDocumentExtensions() = default;
 
-void SVGDocumentExtensions::addTimeContainer(SVGSVGElement* element)
+void SVGDocumentExtensions::addTimeContainer(SVGSVGElement& element)
 {
-    m_timeContainers.add(element);
+    m_timeContainers.add(&element);
     if (m_areAnimationsPaused)
-        element->pauseAnimations();
+        element.pauseAnimations();
 }
 
-void SVGDocumentExtensions::removeTimeContainer(SVGSVGElement* element)
+void SVGDocumentExtensions::removeTimeContainer(SVGSVGElement& element)
 {
-    m_timeContainers.remove(element);
+    m_timeContainers.remove(&element);
 }
 
-void SVGDocumentExtensions::addResource(const AtomicString& id, RenderSVGResourceContainer* resource)
+void SVGDocumentExtensions::addResource(const AtomicString& id, RenderSVGResourceContainer& resource)
 {
-    ASSERT(resource);
-
     if (id.isEmpty())
         return;
 
     // Replaces resource if already present, to handle potential id changes
-    m_resources.set(id, resource);
+    m_resources.set(id, &resource);
 }
 
 void SVGDocumentExtensions::removeResource(const AtomicString& id)
@@ -141,19 +139,17 @@ void SVGDocumentExtensions::reportError(const String& message)
     reportMessage(m_document, MessageLevel::Error, "Error: " + message);
 }
 
-void SVGDocumentExtensions::addPendingResource(const AtomicString& id, Element* element)
+void SVGDocumentExtensions::addPendingResource(const AtomicString& id, Element& element)
 {
-    ASSERT(element);
-
     if (id.isEmpty())
         return;
 
     auto result = m_pendingResources.add(id, nullptr);
     if (result.isNewEntry)
         result.iterator->value = std::make_unique<PendingElements>();
-    result.iterator->value->add(element);
+    result.iterator->value->add(&element);
 
-    element->setHasPendingResources();
+    element.setHasPendingResources();
 }
 
 bool SVGDocumentExtensions::isIdOfPendingResource(const AtomicString& id) const
@@ -164,49 +160,43 @@ bool SVGDocumentExtensions::isIdOfPendingResource(const AtomicString& id) const
     return m_pendingResources.contains(id);
 }
 
-bool SVGDocumentExtensions::isElementWithPendingResources(Element* element) const
+bool SVGDocumentExtensions::isElementWithPendingResources(Element& element) const
 {
     // This algorithm takes time proportional to the number of pending resources and need not.
     // If performance becomes an issue we can keep a counted set of elements and answer the question efficiently.
-    ASSERT(element);
     for (auto& elements : m_pendingResources.values()) {
         ASSERT(elements);
-
-        if (elements->contains(element))
+        if (elements->contains(&element))
             return true;
     }
     return false;
 }
 
-bool SVGDocumentExtensions::isPendingResource(Element* element, const AtomicString& id) const
+bool SVGDocumentExtensions::isPendingResource(Element& element, const AtomicString& id) const
 {
-    ASSERT(element);
-
     if (!isIdOfPendingResource(id))
         return false;
 
-    return m_pendingResources.get(id)->contains(element);
+    return m_pendingResources.get(id)->contains(&element);
 }
 
-void SVGDocumentExtensions::clearHasPendingResourcesIfPossible(Element* element)
+void SVGDocumentExtensions::clearHasPendingResourcesIfPossible(Element& element)
 {
     if (!isElementWithPendingResources(element))
-        element->clearHasPendingResources();
+        element.clearHasPendingResources();
 }
 
-void SVGDocumentExtensions::removeElementFromPendingResources(Element* element)
+void SVGDocumentExtensions::removeElementFromPendingResources(Element& element)
 {
-    ASSERT(element);
-
     // Remove the element from pending resources.
-    if (!m_pendingResources.isEmpty() && element->hasPendingResources()) {
+    if (!m_pendingResources.isEmpty() && element.hasPendingResources()) {
         Vector<AtomicString> toBeRemoved;
         for (auto& resource : m_pendingResources) {
             PendingElements* elements = resource.value.get();
             ASSERT(elements);
             ASSERT(!elements->isEmpty());
 
-            elements->remove(element);
+            elements->remove(&element);
             if (elements->isEmpty())
                 toBeRemoved.append(resource.key);
         }
@@ -226,7 +216,7 @@ void SVGDocumentExtensions::removeElementFromPendingResources(Element* element)
             ASSERT(elements);
             ASSERT(!elements->isEmpty());
 
-            elements->remove(element);
+            elements->remove(&element);
             if (elements->isEmpty())
                 toBeRemoved.append(resource.key);
         }
@@ -281,40 +271,29 @@ RefPtr<Element> SVGDocumentExtensions::removeElementFromPendingResourcesForRemov
     return element;
 }
 
-HashSet<SVGElement*>* SVGDocumentExtensions::setOfElementsReferencingTarget(SVGElement* referencedElement) const
+HashSet<SVGElement*>* SVGDocumentExtensions::setOfElementsReferencingTarget(SVGElement& referencedElement) const
 {
-    ASSERT(referencedElement);
-    const auto it = m_elementDependencies.find(referencedElement);
-    if (it == m_elementDependencies.end())
-        return 0;
-    return it->value.get();
+    return m_elementDependencies.get(&referencedElement);
 }
 
-void SVGDocumentExtensions::addElementReferencingTarget(SVGElement* referencingElement, SVGElement* referencedElement)
+void SVGDocumentExtensions::addElementReferencingTarget(SVGElement& referencingElement, SVGElement& referencedElement)
 {
-    ASSERT(referencingElement);
-    ASSERT(referencedElement);
-
-    if (HashSet<SVGElement*>* elements = m_elementDependencies.get(referencedElement)) {
-        elements->add(referencingElement);
-        return;
-    }
-
-    auto elements = std::make_unique<HashSet<SVGElement*>>();
-    elements->add(referencingElement);
-    m_elementDependencies.set(referencedElement, WTFMove(elements));
+    auto result = m_elementDependencies.ensure(&referencedElement, [&referencingElement] {
+        return std::make_unique<HashSet<SVGElement*>>(std::initializer_list<SVGElement*> { &referencingElement });
+    });
+    if (!result.isNewEntry)
+        result.iterator->value->add(&referencingElement);
 }
 
-void SVGDocumentExtensions::removeAllTargetReferencesForElement(SVGElement* referencingElement)
+void SVGDocumentExtensions::removeAllTargetReferencesForElement(SVGElement& referencingElement)
 {
     Vector<SVGElement*> toBeRemoved;
 
     for (auto& dependency : m_elementDependencies) {
-        SVGElement* referencedElement = dependency.key;
-        HashSet<SVGElement*>& referencingElements = *dependency.value;
-        referencingElements.remove(referencingElement);
+        auto& referencingElements = *dependency.value;
+        referencingElements.remove(&referencingElement);
         if (referencingElements.isEmpty())
-            toBeRemoved.append(referencedElement);
+            toBeRemoved.append(dependency.key);
     }
 
     for (auto& element : toBeRemoved)
@@ -330,11 +309,9 @@ void SVGDocumentExtensions::rebuildElements()
 
 void SVGDocumentExtensions::clearTargetDependencies(SVGElement& referencedElement)
 {
-    auto it = m_elementDependencies.find(&referencedElement);
-    if (it == m_elementDependencies.end())
+    auto* referencingElements = m_elementDependencies.get(&referencedElement);
+    if (!referencingElements)
         return;
-    ASSERT(it->key == &referencedElement);
-    HashSet<SVGElement*>* referencingElements = it->value.get();
     for (auto* element : *referencingElements) {
         m_rebuildElements.append(element);
         element->callClearTarget();
@@ -358,23 +335,25 @@ void SVGDocumentExtensions::rebuildAllElementReferencesForTarget(SVGElement& ref
         element->svgAttributeChanged(SVGNames::hrefAttr);
 }
 
-void SVGDocumentExtensions::removeAllElementReferencesForTarget(SVGElement* referencedElement)
+void SVGDocumentExtensions::removeAllElementReferencesForTarget(SVGElement& referencedElement)
 {
-    m_elementDependencies.remove(referencedElement);
-    m_rebuildElements.removeFirst(referencedElement);
+    m_elementDependencies.remove(&referencedElement);
+    m_rebuildElements.removeFirst(&referencedElement);
 }
 
 #if ENABLE(SVG_FONTS)
-void SVGDocumentExtensions::registerSVGFontFaceElement(SVGFontFaceElement* element)
+
+void SVGDocumentExtensions::registerSVGFontFaceElement(SVGFontFaceElement& element)
 {
-    m_svgFontFaceElements.add(element);
+    m_svgFontFaceElements.add(&element);
 }
 
-void SVGDocumentExtensions::unregisterSVGFontFaceElement(SVGFontFaceElement* element)
+void SVGDocumentExtensions::unregisterSVGFontFaceElement(SVGFontFaceElement& element)
 {
-    ASSERT(m_svgFontFaceElements.contains(element));
-    m_svgFontFaceElements.remove(element);
+    ASSERT(m_svgFontFaceElements.contains(&element));
+    m_svgFontFaceElements.remove(&element);
 }
+
 #endif
 
 }

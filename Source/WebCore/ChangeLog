@@ -1,3 +1,447 @@
+2019-01-15  Darin Adler  <darin@apple.com>
+
+        Use references rather than pointers for register/unregister functions, and more
+        https://bugs.webkit.org/show_bug.cgi?id=175028
+
+        Reviewed by Daniel Bates.
+
+        * Modules/applepay/ApplePaySession.cpp:
+        (WebCore::ApplePaySession::begin): Pass a reference.
+        (WebCore::ApplePaySession::completePayment): Ditto.
+        (WebCore::ApplePaySession::didReachFinalState): Ditto.
+        * Modules/cache/DOMCache.cpp:
+        (WebCore::DOMCache::retrieveRecords): Ditto.
+        (WebCore::DOMCache::batchDeleteOperation): Ditto.
+        (WebCore::DOMCache::batchPutOperation): Ditto.
+        * Modules/cache/DOMCacheStorage.cpp:
+        (WebCore::DOMCacheStorage::match): Ditto.
+        * Modules/fetch/FetchBodyOwner.cpp:
+        (WebCore::FetchBodyOwner::loadBlob): Ditto.
+        (WebCore::FetchBodyOwner::finishBlobLoading): Ditto.
+        * Modules/fetch/FetchBodySource.cpp:
+        (WebCore::FetchBodySource::setActive): Ditto.
+        (WebCore::FetchBodySource::setInactive): Ditto.
+        * Modules/fetch/FetchResponse.cpp:
+        (WebCore::FetchResponse::BodyLoader::BodyLoader): Ditto.
+        (WebCore::FetchResponse::BodyLoader::~BodyLoader): Ditto.
+        * Modules/mediasource/MediaSource.cpp:
+        (WebCore::MediaSource::addedToRegistry): Ditto.
+        (WebCore::MediaSource::removedFromRegistry): Ditto.
+        * Modules/mediastream/MediaStream.cpp:
+        (WebCore::MediaStream::~MediaStream): Ditto.
+        (WebCore::MediaStream::startProducingData): Ditto.
+        * Modules/mediastream/MediaStreamTrack.cpp:
+        (WebCore::MediaStreamTrack::MediaStreamTrack): Ditto.
+        (WebCore::MediaStreamTrack::~MediaStreamTrack): Ditto.
+        * Modules/mediastream/RTCDataChannel.cpp:
+        (WebCore::RTCDataChannel::create): Ditto.
+        (WebCore::RTCDataChannel::close): Ditto.
+        * Modules/mediastream/RTCPeerConnection.cpp:
+        (WebCore::RTCPeerConnection::create): Use auto.
+        * Modules/notifications/Notification.cpp:
+        (WebCore::Notification::show): Pass a reference.
+        (WebCore::Notification::finalize): Ditto.
+        * Modules/webaudio/AudioBasicInspectorNode.cpp:
+        (WebCore::AudioBasicInspectorNode::updatePullStatus): Ditto.
+
+        * Modules/webaudio/AudioContext.cpp:
+        (WebCore::AudioContext::constructCommon): Ditto.
+        (WebCore::AudioContext::lazyInitialize): Ditto.
+        (WebCore::AudioContext::clear): Ditto.
+        (WebCore::AudioContext::uninitialize): Ditto.
+        (WebCore::AudioContext::markForDeletion): Take a reference.
+        (WebCore::AudioContext::addAutomaticPullNode): Ditto.
+        (WebCore::AudioContext::removeAutomaticPullNode): Ditto.
+        (WebCore::AudioContext::willBeginPlayback): Pass a reference.
+        (WebCore::AudioContext::willPausePlayback): Ditto.
+        * Modules/webaudio/AudioContext.h: Update above functions to take
+        references rather than pointers.
+
+        * Modules/webaudio/AudioNode.cpp:
+        (WebCore::AudioNode::finishDeref): Pass a reference.
+        * Modules/websockets/WebSocket.cpp:
+        (WebCore::WebSocket::connect): Ditto.
+        (WebCore::WebSocket::stop): Ditto.
+        (WebCore::WebSocket::didClose): Ditto.
+
+        * WebCore.xcodeproj/project.pbxproj: Allowed Xcode to update this file.
+
+        * bindings/js/JSDOMWindowBase.cpp:
+        (WebCore::JSDOMWindowBase::moduleLoaderResolve): Update since
+        moduleLoader is now a reference.
+        (WebCore::JSDOMWindowBase::moduleLoaderFetch): Ditto.
+        (WebCore::JSDOMWindowBase::moduleLoaderEvaluate): Ditto.
+        (WebCore::JSDOMWindowBase::moduleLoaderImportModule): Ditto.
+        (WebCore::JSDOMWindowBase::moduleLoaderCreateImportMetaProperties): Ditto.
+
+        * dom/ActiveDOMObject.h:
+        (WebCore::ActiveDOMObject::setPendingActivity): Take a reference.
+        (WebCore::ActiveDOMObject::unsetPendingActivity): Ditto.
+
+        * dom/CharacterData.cpp:
+        (WebCore::CharacterData::setData): Pass a reference.
+        (WebCore::CharacterData::insertData): Ditto.
+        (WebCore::CharacterData::deleteData): Ditto.
+        (WebCore::CharacterData::replaceData): Ditto.
+
+        * dom/Document.cpp:
+        (WebCore::Document::getElementByAccessKey): Pass a reference.
+        (WebCore::Document::buildAccessKeyMap): Take a reference.
+        (WebCore::Document::registerForVisibilityStateChangedCallbacks): Ditto.
+        (WebCore::Document::unregisterForVisibilityStateChangedCallbacks): Ditto.
+        (WebCore::Document::addAudioProducer): Ditto.
+        (WebCore::Document::removeAudioProducer): Ditto.
+        (WebCore::Document::hoveredElementDidDetach): Ditto.
+        (WebCore::Document::elementInActiveChainDidDetach): Ditto.
+        (WebCore::Document::attachNodeIterator): Ditto.
+        (WebCore::Document::detachNodeIterator): Ditto.
+        (WebCore::Document::moveNodeIteratorsToNewDocumentSlowCase): Pass
+        a reference.
+        (WebCore::Document::nodeChildrenWillBeRemoved): Ditto.
+        (WebCore::Document::nodeWillBeRemoved): Ditto.
+        (WebCore::Document::textInserted): Take a reference.
+        (WebCore::Document::textRemoved): Ditto.
+        (WebCore::Document::textNodesMerged): Ditto.
+        (WebCore::Document::textNodeSplit): Ditto.
+        (WebCore::Document::takeDOMWindowFrom): Ditto.
+        (WebCore::Document::registerForDocumentSuspensionCallbacks): Ditto.
+        (WebCore::Document::unregisterForDocumentSuspensionCallbacks): Ditto.
+        (WebCore::Document::registerForMediaVolumeCallbacks): Ditto.
+        (WebCore::Document::unregisterForMediaVolumeCallbacks): Ditto.
+        (WebCore::Document::registerForPrivateBrowsingStateChangedCallbacks): Ditto.
+        (WebCore::Document::unregisterForPrivateBrowsingStateChangedCallbacks): Ditto.
+        (WebCore::Document::registerForCaptionPreferencesChangedCallbacks): Ditto.
+        (WebCore::Document::unregisterForCaptionPreferencesChangedCallbacks): Ditto.
+        (WebCore::Document::registerForPageScaleFactorChangedCallbacks): Ditto.
+        (WebCore::Document::unregisterForPageScaleFactorChangedCallbacks): Ditto.
+        (WebCore::Document::finishedParsing): Use a reference.
+        (WebCore::Document::attachRange): Take a reference.
+        (WebCore::Document::detachRange): Ditto.
+        (WebCore::Document::suspendScheduledTasks): Use a reference.
+        (WebCore::Document::resumeScheduledTasks): Ditto.
+        (WebCore::Document::addMediaCanStartListener): Take a reference.
+        (WebCore::Document::removeMediaCanStartListener): Ditto.
+        (WebCore::Document::deviceMotionController const): Return a reference.
+        (WebCore::Document::deviceOrientationController const): Ditto.
+        (WebCore::Document::simulateDeviceOrientationChange): Use a reference.
+        (WebCore::Document::fullScreenIsAllowedForElement const): Take a reference.
+        (WebCore::Document::requestFullScreenForElement): Pass a reference.
+        (WebCore::Document::webkitExitFullscreen): Ditto.
+        (WebCore::Document::webkitWillEnterFullScreen): Renamed to remove the
+        "ForElement" from the function name. Take a reference rather than a pointer.
+        (WebCore::Document::webkitDidEnterFullScreen): Renamed to remove the
+        "ForElement" from the function name and removed the unused element argument.
+        (WebCore::Document::webkitWillExitFullScreen): Ditto.
+        (WebCore::Document::webkitDidExitFullScreen): Ditto.
+        (WebCore::Document::pushFullscreenElementStack): Take a reference.
+        (WebCore::Document::addDocumentToFullScreenChangeEventQueue): Ditto.
+        (WebCore::DocumentParserYieldToken::DocumentParserYieldToken): Use a reference.
+        (WebCore::DocumentParserYieldToken::~DocumentParserYieldToken): Ditto.
+        (WebCore::Document::updateHoverActiveState): Updated name of isInActiveChain.
+
+        * dom/Document.h: Updated argument types as described above. Changed a couple
+        of inline functions to return references.
+
+        * dom/DocumentMarkerController.cpp:
+        (WebCore::DocumentMarkerController::addMarker): Take a reference.
+        (WebCore::DocumentMarkerController::addMarkerToNode): Ditto.
+        (WebCore::DocumentMarkerController::addTextMatchMarker): Ditto.
+        (WebCore::DocumentMarkerController::addDictationPhraseWithAlternativesMarker): Ditto.
+        (WebCore::DocumentMarkerController::addDictationResultMarker): Ditto.
+        (WebCore::DocumentMarkerController::addDraggedContentMarker): Ditto.
+        (WebCore::DocumentMarkerController::removeMarkers): Ditto.
+        (WebCore::DocumentMarkerController::copyMarkers): Ditto.
+        (WebCore::DocumentMarkerController::shiftMarkers): Ditto.
+        (WebCore::DocumentMarkerController::setMarkersActive): DItto.
+        * dom/DocumentMarkerController.h: Updated argument types as described above.
+
+        * dom/Element.cpp:
+        (WebCore::Element::~Element): Pass a reference.
+        (WebCore::Element::isUserActionElementInActiveChain const): Updated name of
+        isInActiveChain.
+        (WebCore::Element::hasEquivalentAttributes const): Take a reference.
+        (WebCore::Element::removedFromAncestor): Pass a reference.
+        (WebCore::Element::clearHoverAndActiveStatusBeforeDetachingRenderer):
+        Pass a reference and updated name of isInActiveChain.
+
+        * dom/Element.h: Renamed inActiveChain to isInActiveChain, updated argument
+        types to be references, and removed unneeded friend declaration and made
+        SynchronizationOfLazyAttribute private.
+
+        * dom/Node.cpp:
+        (WebCore::Node::normalize): Pass a reference.
+        (WebCore::Node::isEqualNode const): Ditto.
+        * dom/NodeIterator.cpp:
+        (WebCore::NodeIterator::NodeIterator): Ditto.
+        (WebCore::NodeIterator::~NodeIterator): Ditto.
+
+        * dom/RadioButtonGroups.cpp:
+        (WebCore::RadioButtonGroup::add): Take a reference.
+        (WebCore::RadioButtonGroup::updateCheckedState): Ditto.
+        (WebCore::RadioButtonGroup::remove): Ditto.
+        (WebCore::RadioButtonGroup::contains const): Ditto.
+        (WebCore::RadioButtonGroups::addButton): Ditto.
+        (WebCore::RadioButtonGroups::updateCheckedState): Ditto.
+        (WebCore::RadioButtonGroups::hasCheckedButton const): Ditto.
+        (WebCore::RadioButtonGroups::isInRequiredGroup const): Ditto.
+        (WebCore::RadioButtonGroups::removeButton): Ditto.
+        * dom/RadioButtonGroups.h: Updated argument types.
+
+        * dom/Range.cpp:
+        (WebCore::Range::Range): Pass a reference.
+        (WebCore::Range::~Range): Ditto.
+        (WebCore::Range::setDocument): Ditto.
+        (WebCore::Range::createContextualFragment): Ditto.
+        (WebCore::boundaryTextInserted): Ditto.
+        (WebCore::Range::textInserted): Ditto.
+        (WebCore::boundaryTextRemoved): Ditto.
+        (WebCore::Range::textRemoved): Ditto.
+        (WebCore::boundaryTextNodesSplit): Ditto.
+        (WebCore::Range::textNodeSplit): Ditto.
+        * dom/Range.h: Take references instead of pointers.
+
+        * dom/ScriptElement.cpp:
+        (WebCore::ScriptElement::prepareScript): Use reference.
+
+        * dom/Text.cpp:
+        (WebCore::Text::splitText): Pass reference.
+
+        * dom/UserActionElementSet.h: Renamed inActiveChain to isInActiveChain to
+        match the naming scheme of the other similar functions, like isActive.
+
+        * editing/AlternativeTextController.cpp:
+        (WebCore::AlternativeTextController::applyAlternativeTextToRange):
+        Pass a reference.
+        (WebCore::AlternativeTextController::respondToUnappliedSpellCorrection): Ditto.
+        (WebCore::AlternativeTextController::handleAlternativeTextUIResult): Ditto.
+        (WebCore::AlternativeTextController::respondToUnappliedEditing): Ditto.
+        (WebCore::AlternativeTextController::markReversed): Ditto.
+        (WebCore::AlternativeTextController::markCorrection): Ditto.
+        (WebCore::AlternativeTextController::recordSpellcheckerResponseForModifiedCorrection): Ditto.
+        (WebCore::AlternativeTextController::markPrecedingWhitespaceForDeletedAutocorrectionAfterCommand): Ditto.
+        * editing/CompositeEditCommand.cpp:
+        (WebCore::CompositeEditCommand::replaceTextInNodePreservingMarkers): Ditto.
+        * editing/DictationCommand.cpp: Ditto.
+        * editing/Editing.cpp:
+        (WebCore::areIdenticalElements): Ditto.
+        * editing/Editor.cpp:
+        (WebCore::Editor::ignoreSpelling): Ditto.
+        (WebCore::Editor::learnSpelling): Ditto.
+        (WebCore::Editor::advanceToNextMisspelling): Ditto.
+        (WebCore::Editor::clearMisspellingsAndBadGrammar): Ditto.
+        (WebCore::Editor::markMisspellingsAfterTypingToWord): Ditto.
+        (WebCore::Editor::markAndReplaceFor): Ditto.
+        (WebCore::Editor::changeBackToReplacedString): Ditto.
+        (WebCore::Editor::updateMarkersForWordsAffectedByEditing): Ditto.
+        (WebCore::Editor::countMatchesForText): Ditto.
+        (WebCore::Editor::scanRangeForTelephoneNumbers): Ditto.
+        (WebCore::Editor::editorUIUpdateTimerFired): Ditto.
+        (WebCore::Editor::handleAcceptedCandidate): Ditto.
+
+        * editing/InsertTextCommand.cpp:
+        (WebCore::InsertTextCommand::doApply): Pass a reference.
+        * editing/InsertTextCommand.h: Take a reference.
+
+        * editing/SpellChecker.cpp:
+        (WebCore::SpellChecker::didCheckSucceed): Pass a reference.
+        * editing/SplitTextNodeCommand.cpp:
+        (WebCore::SplitTextNodeCommand::doApply): Ditto.
+        (WebCore::SplitTextNodeCommand::doUnapply): Ditto.
+        * editing/TextCheckingHelper.cpp:
+        (WebCore::TextCheckingHelper::findFirstMisspelling): Pass a reference.
+        (WebCore::TextCheckingHelper::findFirstGrammarDetail const): Ditto.
+        * editing/ios/DictationCommandIOS.cpp:
+        (WebCore::DictationCommandIOS::doApply): Ditto.
+        Also added a comment about a possible missing null check; behavior should
+        be no different than before, but using a reference helps make clear there
+        was never any null check.
+        * editing/ios/EditorIOS.mm:
+        (WebCore::Editor::setDictationPhrasesAsChildOfElement): Ditto.
+        * fileapi/FileReader.cpp:
+        (WebCore::FileReader::readInternal): Ditto.
+        (WebCore::FileReader::abort): Ditto.
+        (WebCore::FileReader::didFinishLoading): Ditto.
+        (WebCore::FileReader::didFail): Ditto.
+
+        * html/HTMLAppletElement.cpp: Removed unneeded include of HTMLDocument.h.
+        There's very little left that is truly specific to HTMLDocument vs. Document.
+
+        * html/HTMLDocument.h:
+        (WebCore::HTMLDocument::create): Take a reference.
+        (WebCore::HTMLDocument::createSynthesizedDocument): Ditto.
+
+        * html/HTMLFormElement.cpp:
+        (WebCore::HTMLFormElement::~HTMLFormElement): Pass a reference.
+        (WebCore::HTMLFormElement::parseAttribute): Ditto.
+        (WebCore::HTMLFormElement::didMoveToNewDocument): Ditto.
+
+        * html/HTMLIFrameElement.cpp: Removed unneeded include of HTMLDocument.h.
+
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::~HTMLInputElement): Pass a reference.
+        (WebCore::HTMLInputElement::setChecked): Ditto.
+        (WebCore::HTMLInputElement::registerForSuspensionCallbackIfNeeded): Ditto.
+        (WebCore::HTMLInputElement::unregisterForSuspensionCallbackIfNeeded): Ditto.
+        (WebCore::HTMLInputElement::didMoveToNewDocument): Ditto.
+        (WebCore::HTMLInputElement::isInRequiredRadioButtonGroup): Ditto.
+        (WebCore::HTMLInputElement::addToRadioButtonGroup): Ditto.
+        (WebCore::HTMLInputElement::removeFromRadioButtonGroup): Ditto.
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::registerWithDocument): Ditto.
+        (WebCore::HTMLMediaElement::unregisterWithDocument): Ditto.
+        (WebCore::HTMLMediaElement::selectMediaResource): Ditto.
+        (WebCore::HTMLMediaElement::addTextTrack): Ditto.
+        (WebCore::HTMLMediaElement::clearMediaPlayer): Ditto.
+        (WebCore::HTMLMediaElement::resume): Ditto.
+        (WebCore::HTMLMediaElement::setMediaControlsDependOnPageScaleFactor): Ditto.
+
+        * html/HTMLNameCollection.cpp: Removed unneeded include of HTMLDocument.h.
+
+        * html/HTMLPlugInImageElement.cpp:
+        (WebCore::HTMLPlugInImageElement::~HTMLPlugInImageElement): Pass a reference.
+        (WebCore::HTMLPlugInImageElement::createElementRenderer): Ditto.
+        (WebCore::HTMLPlugInImageElement::didMoveToNewDocument): Ditto.
+
+        * html/HTMLSourceElement.cpp: Removed unneeded include of HTMLDocument.h.
+        * html/HTMLTemplateElement.cpp: Ditto.
+
+        * html/RadioInputType.cpp:
+        (WebCore::RadioInputType::matchesIndeterminatePseudoClass const):
+        Pass a reference.
+        * loader/DocumentWriter.cpp:
+        (WebCore::DocumentWriter::begin): Ditto.
+        * page/DOMWindow.cpp:
+        (WebCore::DOMWindow::addEventListener): Ditto.
+        (WebCore::DOMWindow::removeEventListener): Ditto.
+        (WebCore::DOMWindow::removeAllEventListeners): Ditto.
+
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::didStartDrag): Use a reference.
+
+        * page/EventSource.cpp:
+        (WebCore::EventSource::create): Pass reference.
+        (WebCore::EventSource::networkRequestEnded): Ditto.
+        (WebCore::EventSource::close): Ditto.
+        (WebCore::EventSource::abortConnectionAttempt): Ditto.
+
+        * page/Frame.cpp: Removed unneeded include of HTMLDocument.h.
+        * page/FrameView.cpp: Ditto.
+        (WebCore::FrameView::qualifiesAsVisuallyNonEmpty const): Use reference.
+
+        * page/animation/AnimationBase.cpp:
+        (WebCore::AnimationBase::updateStateMachine): Pass reference.
+
+        * page/animation/CSSAnimationController.cpp:
+        (WebCore::CSSAnimationControllerPrivate::addToAnimationsWaitingForStyle): Take reference.
+        (WebCore::CSSAnimationControllerPrivate::removeFromAnimationsWaitingForStyle): Ditto.
+        (WebCore::CSSAnimationControllerPrivate::addToAnimationsWaitingForStartTimeResponse): Ditto.
+        (WebCore::CSSAnimationControllerPrivate::removeFromAnimationsWaitingForStartTimeResponse): Ditto.
+        (WebCore::CSSAnimationControllerPrivate::animationWillBeRemoved): Ditto.
+        * page/animation/CSSAnimationControllerPrivate.h: Ditto.
+
+        * page/animation/CompositeAnimation.cpp:
+        (WebCore::CompositeAnimation::clearElement): Pass reference.
+        (WebCore::CompositeAnimation::updateTransitions): Ditto.
+        (WebCore::CompositeAnimation::updateKeyframeAnimations): Ditto.
+        * page/ios/FrameIOS.mm:
+        (WebCore::Frame::initWithSimpleHTMLDocument): Ditto.
+
+        * platform/graphics/ca/cocoa/PlatformCALayerCocoa.mm:
+        (WebCore::layerContentsFormat): Add ALLOW_DEPRECATED_DECLARATIONS_BEGIN/END so
+        I can continue to compile with latest headers.
+
+        * rendering/CSSFilter.cpp:
+        (WebCore::CSSFilter::buildReferenceFilter): Pass reference, small coding style
+        tweaks as well.
+
+        * rendering/svg/RenderSVGResource.cpp:
+        (WebCore::removeFromCacheAndInvalidateDependencies): Pass reference.
+        * rendering/svg/RenderSVGResourceContainer.cpp:
+        (WebCore::RenderSVGResourceContainer::registerResource): Ditto.
+        * rendering/svg/SVGResources.cpp:
+        (WebCore::registerPendingResource): Ditto.
+        * rendering/svg/SVGResourcesCache.cpp:
+        (WebCore::SVGResourcesCache::resourceDestroyed): Ditto.
+
+        * svg/SVGDocumentExtensions.cpp:
+        (WebCore::SVGDocumentExtensions::addTimeContainer): Take reference.
+        (WebCore::SVGDocumentExtensions::removeTimeContainer): Ditto.
+        (WebCore::SVGDocumentExtensions::addResource): Ditto.
+        (WebCore::SVGDocumentExtensions::addPendingResource): Ditto.
+        (WebCore::SVGDocumentExtensions::isElementWithPendingResources const): Ditto.
+        (WebCore::SVGDocumentExtensions::isPendingResource const): Ditto.
+        (WebCore::SVGDocumentExtensions::clearHasPendingResourcesIfPossible): Ditto.
+        (WebCore::SVGDocumentExtensions::removeElementFromPendingResources): Ditto.
+        (WebCore::SVGDocumentExtensions::setOfElementsReferencingTarget): Ditto.
+        (WebCore::SVGDocumentExtensions::addElementReferencingTarget): Ditto.
+        (WebCore::SVGDocumentExtensions::removeAllTargetReferencesForElement): Ditto.
+        (WebCore::SVGDocumentExtensions::clearTargetDependencies): Ditto.
+        (WebCore::SVGDocumentExtensions::removeAllElementReferencesForTarget): Ditto.
+        (WebCore::SVGDocumentExtensions::registerSVGFontFaceElement): Ditto.
+        (WebCore::SVGDocumentExtensions::unregisterSVGFontFaceElement): Ditto.
+        * svg/SVGDocumentExtensions.h: Ditto.
+
+        * svg/SVGElement.cpp:
+        (WebCore::SVGElement::~SVGElement): Pass reference.
+        (WebCore::SVGElement::removedFromAncestor): Ditto.
+        (WebCore::SVGElement::buildPendingResourcesIfNeeded): Ditto.
+        * svg/SVGFEImageElement.cpp:
+        (WebCore::SVGFEImageElement::clearResourceReferences): Ditto.
+        (WebCore::SVGFEImageElement::buildPendingResource): Ditto.
+        * svg/SVGFontFaceElement.cpp:
+        (WebCore::SVGFontFaceElement::insertedIntoAncestor): Ditto.
+        (WebCore::SVGFontFaceElement::removedFromAncestor): Ditto.
+        * svg/SVGMPathElement.cpp:
+        (WebCore::SVGMPathElement::buildPendingResource): Ditto.
+        (WebCore::SVGMPathElement::clearResourceReferences): Ditto.
+        * svg/SVGPathElement.cpp:
+        (WebCore::SVGPathElement::invalidateMPathDependencies): Ditto.
+        * svg/SVGSVGElement.cpp:
+        (WebCore::SVGSVGElement::SVGSVGElement): Ditto.
+        (WebCore::SVGSVGElement::~SVGSVGElement): Ditto.
+        (WebCore::SVGSVGElement::didMoveToNewDocument): Ditto.
+        (WebCore::SVGSVGElement::insertedIntoAncestor): Ditto.
+        (WebCore::SVGSVGElement::removedFromAncestor): Ditto.
+        * svg/SVGTRefElement.cpp:
+        (WebCore::SVGTRefElement::detachTarget): Ditto.
+        (WebCore::SVGTRefElement::buildPendingResource): Ditto.
+        * svg/SVGTextPathElement.cpp:
+        (WebCore::SVGTextPathElement::clearResourceReferences): Ditto.
+        (WebCore::SVGTextPathElement::buildPendingResource): Ditto.
+        * svg/SVGUseElement.cpp:
+        (WebCore::SVGUseElement::updateShadowTree): Ditto.
+        * svg/animation/SVGSMILElement.cpp:
+        (WebCore::SVGSMILElement::clearResourceReferences): Ditto.
+        (WebCore::SVGSMILElement::buildPendingResource): Ditto.
+        * testing/Internals.cpp:
+        (WebCore::Internals::addTextMatchMarker): Ditto.
+        (WebCore::Internals::webkitWillEnterFullScreenForElement): Ditto.
+        (WebCore::Internals::webkitDidEnterFullScreenForElement): Ditto.
+        (WebCore::Internals::webkitWillExitFullScreenForElement): Ditto.
+        (WebCore::Internals::webkitDidExitFullScreenForElement): Ditto.
+        * workers/Worker.cpp:
+        (WebCore::Worker::create): Ditto.
+        (WebCore::Worker::notifyFinished): Ditto.
+        * workers/service/ServiceWorkerContainer.cpp:
+        (WebCore::ServiceWorkerContainer::scheduleJob): Ditto.
+        (WebCore::ServiceWorkerContainer::jobDidFinish): Ditto.
+        * xml/XMLHttpRequest.cpp:
+        (WebCore::XMLHttpRequest::prepareToSend): Ditto.
+        (WebCore::XMLHttpRequest::createRequest): Ditto.
+        (WebCore::XMLHttpRequest::internalAbort): Ditto.
+        (WebCore::XMLHttpRequest::networkErrorTimerFired): Ditto.
+        (WebCore::XMLHttpRequest::didFail): Ditto.
+        (WebCore::XMLHttpRequest::didFinishLoading): Ditto.
+
+        * xml/XPathStep.cpp: Removed unneeded include of HTMLDocument.h.
+        (WebCore::XPath::nodeMatchesBasicTest): Changed code to call isHTMLDocument
+        rather than is<HTMLDocument> since this is not a type check for a downcast,
+        but rather a behavioral difference that does not depend on any of the data
+        stored in an HTMLDocument or the use of a distinct C++ class for it.
+
+        * xml/XSLTProcessor.cpp:
+        (WebCore::XSLTProcessor::createDocumentFromSource): Pass a reference.
+
 2019-01-21  David Kilzer  <ddkilzer@apple.com>
 
         Switch remaining VideoToolbox soft-linking in WebCore over to VideoToolboxSoftLink.{cpp,h}

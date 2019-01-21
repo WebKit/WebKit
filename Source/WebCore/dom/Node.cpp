@@ -660,7 +660,7 @@ void Node::normalize()
         while (Node* nextSibling = node->nextSibling()) {
             if (nextSibling->nodeType() != TEXT_NODE)
                 break;
-            RefPtr<Text> nextText = downcast<Text>(nextSibling);
+            Ref<Text> nextText = downcast<Text>(*nextSibling);
 
             // Remove empty text nodes.
             if (!nextText->length()) {
@@ -671,7 +671,7 @@ void Node::normalize()
             // Both non-empty text nodes. Merge them.
             unsigned offset = text->length();
             text->appendData(nextText->data());
-            document().textNodesMerged(nextText.get(), offset);
+            document().textNodesMerged(nextText, offset);
             nextText->remove();
         }
 
@@ -1379,7 +1379,7 @@ bool Node::isEqualNode(Node* other) const
         auto& otherElement = downcast<Element>(*other);
         if (thisElement.tagQName() != otherElement.tagQName())
             return false;
-        if (!thisElement.hasEquivalentAttributes(&otherElement))
+        if (!thisElement.hasEquivalentAttributes(otherElement))
             return false;
         break;
         }

@@ -101,7 +101,7 @@ void DOMCacheStorage::match(DOMCache::RequestInfo&& info, CacheQueryOptions&& op
             return;
         }
 
-        setPendingActivity(this);
+        setPendingActivity(*this);
         startSequentialMatch(WTF::map(m_caches, copyCache), WTFMove(info), WTFMove(options), [this, promise = WTFMove(promise)](ExceptionOr<FetchResponse*>&& result) mutable {
             if (!m_isStopped) {
                 if (result.hasException()) {
@@ -113,7 +113,7 @@ void DOMCacheStorage::match(DOMCache::RequestInfo&& info, CacheQueryOptions&& op
                 else
                     promise->resolve<IDLInterface<FetchResponse>>(*result.returnValue());
             }
-            unsetPendingActivity(this);
+            unsetPendingActivity(*this);
         });
     });
 }

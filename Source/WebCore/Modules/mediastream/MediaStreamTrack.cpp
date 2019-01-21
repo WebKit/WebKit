@@ -61,7 +61,7 @@ MediaStreamTrack::MediaStreamTrack(ScriptExecutionContext& context, Ref<MediaStr
     m_private->addObserver(*this);
 
     if (auto document = this->document())
-        document->addAudioProducer(this);
+        document->addAudioProducer(*this);
 }
 
 MediaStreamTrack::~MediaStreamTrack()
@@ -69,7 +69,7 @@ MediaStreamTrack::~MediaStreamTrack()
     m_private->removeObserver(*this);
 
     if (auto document = this->document())
-        document->removeAudioProducer(this);
+        document->removeAudioProducer(*this);
 }
 
 const AtomicString& MediaStreamTrack::kind() const

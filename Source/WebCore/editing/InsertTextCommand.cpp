@@ -206,7 +206,7 @@ void InsertTextCommand::doApply()
         insertTextIntoNode(*textNode, offset, m_text);
         endPosition = Position(textNode.get(), offset + m_text.length());
         if (m_markerSupplier)
-            m_markerSupplier->addMarkersToTextNode(textNode.get(), offset, m_text);
+            m_markerSupplier->addMarkersToTextNode(*textNode, offset, m_text);
 
         if (m_rebalanceType == RebalanceLeadingAndTrailingWhitespaces) {
             // The insertion may require adjusting adjacent whitespace, if it is present.

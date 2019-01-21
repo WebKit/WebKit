@@ -295,13 +295,13 @@ void Editor::setDictationPhrasesAsChildOfElement(const Vector<Vector<String>>& d
         int dictationPhraseEnd = previousDictationPhraseStart + dictationPhraseLength;
         if (interpretations.size() > 1) {
             auto dictationPhraseRange = Range::create(document(), &textNode, previousDictationPhraseStart, &textNode, dictationPhraseEnd);
-            document().markers().addDictationPhraseWithAlternativesMarker(dictationPhraseRange.ptr(), interpretations);
+            document().markers().addDictationPhraseWithAlternativesMarker(dictationPhraseRange, interpretations);
         }
         previousDictationPhraseStart = dictationPhraseEnd;
     }
 
     auto resultRange = Range::create(document(), &textNode, 0, &textNode, textNode.length());
-    document().markers().addDictationResultMarker(resultRange.ptr(), metadata);
+    document().markers().addDictationResultMarker(resultRange, metadata);
 
     client()->respondToChangedContents();
 }

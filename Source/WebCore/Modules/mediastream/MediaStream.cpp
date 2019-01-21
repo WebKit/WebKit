@@ -123,7 +123,7 @@ MediaStream::~MediaStream()
         track->removeObserver(*this);
     if (Document* document = this->document()) {
         if (m_isWaitingUntilMediaCanStart)
-            document->removeMediaCanStartListener(this);
+            document->removeMediaCanStartListener(*this);
     }
 }
 
@@ -282,7 +282,7 @@ void MediaStream::startProducingData()
             return;
 
         m_isWaitingUntilMediaCanStart = true;
-        document->addMediaCanStartListener(this);
+        document->addMediaCanStartListener(*this);
         return;
     }
 

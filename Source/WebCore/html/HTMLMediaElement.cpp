@@ -704,33 +704,33 @@ void HTMLMediaElement::registerWithDocument(Document& document)
     m_mediaSession->registerWithDocument(document);
 
     if (m_isWaitingUntilMediaCanStart)
-        document.addMediaCanStartListener(this);
+        document.addMediaCanStartListener(*this);
 
 #if !PLATFORM(IOS_FAMILY)
-    document.registerForMediaVolumeCallbacks(this);
-    document.registerForPrivateBrowsingStateChangedCallbacks(this);
+    document.registerForMediaVolumeCallbacks(*this);
+    document.registerForPrivateBrowsingStateChangedCallbacks(*this);
 #endif
 
-    document.registerForVisibilityStateChangedCallbacks(this);
+    document.registerForVisibilityStateChangedCallbacks(*this);
 
 #if ENABLE(VIDEO_TRACK)
     if (m_requireCaptionPreferencesChangedCallbacks)
-        document.registerForCaptionPreferencesChangedCallbacks(this);
+        document.registerForCaptionPreferencesChangedCallbacks(*this);
 #endif
 
 #if ENABLE(MEDIA_CONTROLS_SCRIPT)
     if (m_mediaControlsDependOnPageScaleFactor)
-        document.registerForPageScaleFactorChangedCallbacks(this);
+        document.registerForPageScaleFactorChangedCallbacks(*this);
     document.registerForUserInterfaceLayoutDirectionChangedCallbacks(*this);
 #endif
 
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
-    document.registerForDocumentSuspensionCallbacks(this);
+    document.registerForDocumentSuspensionCallbacks(*this);
 #endif
 
     document.registerForAllowsMediaDocumentInlinePlaybackChangedCallbacks(*this);
 
-    document.addAudioProducer(this);
+    document.addAudioProducer(*this);
     addElementToDocumentMap(*this, document);
 
 #if ENABLE(MEDIA_STREAM)
@@ -745,33 +745,33 @@ void HTMLMediaElement::unregisterWithDocument(Document& document)
     m_mediaSession->unregisterWithDocument(document);
 
     if (m_isWaitingUntilMediaCanStart)
-        document.removeMediaCanStartListener(this);
+        document.removeMediaCanStartListener(*this);
 
 #if !PLATFORM(IOS_FAMILY)
-    document.unregisterForMediaVolumeCallbacks(this);
-    document.unregisterForPrivateBrowsingStateChangedCallbacks(this);
+    document.unregisterForMediaVolumeCallbacks(*this);
+    document.unregisterForPrivateBrowsingStateChangedCallbacks(*this);
 #endif
 
-    document.unregisterForVisibilityStateChangedCallbacks(this);
+    document.unregisterForVisibilityStateChangedCallbacks(*this);
 
 #if ENABLE(VIDEO_TRACK)
     if (m_requireCaptionPreferencesChangedCallbacks)
-        document.unregisterForCaptionPreferencesChangedCallbacks(this);
+        document.unregisterForCaptionPreferencesChangedCallbacks(*this);
 #endif
 
 #if ENABLE(MEDIA_CONTROLS_SCRIPT)
     if (m_mediaControlsDependOnPageScaleFactor)
-        document.unregisterForPageScaleFactorChangedCallbacks(this);
+        document.unregisterForPageScaleFactorChangedCallbacks(*this);
     document.unregisterForUserInterfaceLayoutDirectionChangedCallbacks(*this);
 #endif
 
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
-    document.unregisterForDocumentSuspensionCallbacks(this);
+    document.unregisterForDocumentSuspensionCallbacks(*this);
 #endif
 
     document.unregisterForAllowsMediaDocumentInlinePlaybackChangedCallbacks(*this);
 
-    document.removeAudioProducer(this);
+    document.removeAudioProducer(*this);
     removeElementFromDocumentMap(*this, document);
 
 #if ENABLE(MEDIA_STREAM)
@@ -1341,7 +1341,7 @@ void HTMLMediaElement::selectMediaResource()
         if (m_isWaitingUntilMediaCanStart)
             return;
         m_isWaitingUntilMediaCanStart = true;
-        document().addMediaCanStartListener(this);
+        document().addMediaCanStartListener(*this);
         return;
     }
 
@@ -4068,7 +4068,7 @@ void HTMLMediaElement::addTextTrack(Ref<TextTrack>&& track)
     if (!m_requireCaptionPreferencesChangedCallbacks) {
         m_requireCaptionPreferencesChangedCallbacks = true;
         Document& document = this->document();
-        document.registerForCaptionPreferencesChangedCallbacks(this);
+        document.registerForCaptionPreferencesChangedCallbacks(*this);
         if (Page* page = document.page())
             m_captionDisplayMode = page->group().captionPreferences().captionDisplayMode();
     }
@@ -5612,7 +5612,7 @@ void HTMLMediaElement::clearMediaPlayer()
 
     if (m_isWaitingUntilMediaCanStart) {
         m_isWaitingUntilMediaCanStart = false;
-        document().removeMediaCanStartListener(this);
+        document().removeMediaCanStartListener(*this);
     }
 
     if (m_player) {
@@ -5757,7 +5757,7 @@ void HTMLMediaElement::resume()
     setShouldBufferData(true);
 
     if (!m_mediaSession->pageAllowsPlaybackAfterResuming())
-        document().addMediaCanStartListener(this);
+        document().addMediaCanStartListener(*this);
     else
         setPausedInternal(false);
 
@@ -7382,9 +7382,9 @@ void HTMLMediaElement::setMediaControlsDependOnPageScaleFactor(bool dependsOnPag
     m_mediaControlsDependOnPageScaleFactor = dependsOnPageScale;
 
     if (m_mediaControlsDependOnPageScaleFactor)
-        document().registerForPageScaleFactorChangedCallbacks(this);
+        document().registerForPageScaleFactorChangedCallbacks(*this);
     else
-        document().unregisterForPageScaleFactorChangedCallbacks(this);
+        document().unregisterForPageScaleFactorChangedCallbacks(*this);
 }
 
 void HTMLMediaElement::updateMediaControlsAfterPresentationModeChange()

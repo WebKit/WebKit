@@ -30,7 +30,6 @@
 
 #include "Attr.h"
 #include "Document.h"
-#include "HTMLDocument.h"
 #include "HTMLElement.h"
 #include "NodeTraversal.h"
 #include "XMLNSNames.h"
@@ -199,7 +198,7 @@ inline bool nodeMatchesBasicTest(Node& node, Step::Axis axis, const Step::NodeTe
             if (name == starAtom())
                 return namespaceURI.isEmpty() || namespaceURI == node.namespaceURI();
 
-            if (is<HTMLDocument>(node.document())) {
+            if (node.document().isHTMLDocument()) {
                 if (is<HTMLElement>(node)) {
                     // Paths without namespaces should match HTML elements in HTML documents despite those having an XHTML namespace. Names are compared case-insensitively.
                     return equalIgnoringASCIICase(downcast<HTMLElement>(node).localName(), name) && (namespaceURI.isNull() || namespaceURI == node.namespaceURI());

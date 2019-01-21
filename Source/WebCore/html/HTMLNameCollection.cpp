@@ -25,7 +25,6 @@
 
 #include "Element.h"
 #include "HTMLAppletElement.h"
-#include "HTMLDocument.h"
 #include "HTMLEmbedElement.h"
 #include "HTMLFormElement.h"
 #include "HTMLIFrameElement.h"

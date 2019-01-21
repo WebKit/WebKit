@@ -184,9 +184,9 @@ bool RadioInputType::isRadioButton() const
 bool RadioInputType::matchesIndeterminatePseudoClass() const
 {
     ASSERT(element());
-    const HTMLInputElement& element = *this->element();
-    if (const RadioButtonGroups* radioButtonGroups = element.radioButtonGroups())
-        return !radioButtonGroups->hasCheckedButton(&element);
+    auto& element = *this->element();
+    if (auto* radioButtonGroups = element.radioButtonGroups())
+        return !radioButtonGroups->hasCheckedButton(element);
     return !element.checked();
 }
 

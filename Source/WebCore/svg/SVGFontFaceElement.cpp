@@ -304,7 +304,7 @@ Node::InsertedIntoAncestorResult SVGFontFaceElement::insertedIntoAncestor(Insert
         ASSERT(!m_fontElement);
         return InsertedIntoAncestorResult::Done;
     }
-    document().accessSVGExtensions().registerSVGFontFaceElement(this);
+    document().accessSVGExtensions().registerSVGFontFaceElement(*this);
 
     rebuildFontFace();
     return InsertedIntoAncestorResult::Done;
@@ -316,7 +316,7 @@ void SVGFontFaceElement::removedFromAncestor(RemovalType removalType, ContainerN
 
     if (removalType.disconnectedFromDocument) {
         m_fontElement = nullptr;
-        document().accessSVGExtensions().unregisterSVGFontFaceElement(this);
+        document().accessSVGExtensions().unregisterSVGFontFaceElement(*this);
         m_fontFaceRule->mutableProperties().clear();
 
         document().styleScope().didChangeStyleSheetEnvironment();

@@ -287,8 +287,8 @@ ExceptionOr<void> WebSocket::connect(const String& url, const Vector<String>& pr
         Document& document = downcast<Document>(context);
         RefPtr<Frame> frame = document.frame();
         if (!frame || !frame->loader().mixedContentChecker().canRunInsecureContent(document.securityOrigin(), m_url)) {
-            // Balanced by the call to ActiveDOMObject::unsetPendingActivity() in WebSocket::stop().
-            ActiveDOMObject::setPendingActivity(this);
+            // Balanced by the call to unsetPendingActivity() in WebSocket::stop().
+            setPendingActivity(*this);
 
             // We must block this connection. Instead of throwing an exception, we indicate this
             // using the error event. But since this code executes as part of the WebSocket's
@@ -318,7 +318,7 @@ ExceptionOr<void> WebSocket::connect(const String& url, const Vector<String>& pr
         protocolString = joinStrings(protocols, subprotocolSeparator());
 
     m_channel->connect(m_url, protocolString);
-    ActiveDOMObject::setPendingActivity(this);
+    setPendingActivity(*this);
 
     return { };
 }
@@ -547,7 +547,7 @@ void WebSocket::stop()
     m_pendingEvents.clear();
     ActiveDOMObject::stop();
     if (pending)
-        ActiveDOMObject::unsetPendingActivity(this);
+        unsetPendingActivity(*this);
 }
 
 const char* WebSocket::activeDOMObjectName() const
@@ -631,7 +631,7 @@ void WebSocket::didClose(unsigned unhandledBufferedAmount, ClosingHandshakeCompl
         m_channel = nullptr;
     }
     if (hasPendingActivity())
-        ActiveDOMObject::unsetPendingActivity(this);
+        unsetPendingActivity(*this);
 }
 
 void WebSocket::didUpgradeURL()

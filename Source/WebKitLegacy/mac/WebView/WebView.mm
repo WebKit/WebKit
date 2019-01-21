@@ -1482,10 +1482,8 @@ static void WebKitInitializeGamepadProviderIfNecessary()
 #if ENABLE(NOTIFICATIONS)
     WebCore::provideNotification(_private->page, new WebNotificationClient(self));
 #endif
-#if ENABLE(DEVICE_ORIENTATION)
-#if !PLATFORM(IOS_FAMILY)
-    WebCore::provideDeviceOrientationTo(_private->page, new WebDeviceOrientationClient(self));
-#endif
+#if ENABLE(DEVICE_ORIENTATION) && !PLATFORM(IOS_FAMILY)
+    WebCore::provideDeviceOrientationTo(*_private->page, *new WebDeviceOrientationClient(self));
 #endif
 
 #if ENABLE(REMOTE_INSPECTOR)

@@ -237,7 +237,7 @@ static NSRect convertRectToScreen(NSWindow *window, NSRect rect)
 
     _savedScale = [_webView _viewScaleFactor];
     [_webView _scaleWebView:1 atOrigin:NSMakePoint(0, 0)];
-    [self _document]->webkitWillEnterFullScreenForElement(_element.get());
+    [self _document]->webkitWillEnterFullScreen(*_element);
     [self _document]->setAnimatingFullScreen(true);
     [self _document]->updateLayout();
 
@@ -272,7 +272,7 @@ static void setClipRectForWindow(NSWindow *window, NSRect clipRect)
         NSDisableScreenUpdates();
         ALLOW_DEPRECATED_DECLARATIONS_END
         [self _document]->setAnimatingFullScreen(false);
-        [self _document]->webkitDidEnterFullScreenForElement(_element.get());
+        [self _document]->webkitDidEnterFullScreen();
         
         NSRect windowBounds = [[self window] frame];
         windowBounds.origin = NSZeroPoint;
@@ -320,7 +320,7 @@ static void setClipRectForWindow(NSWindow *window, NSRect clipRect)
 
     _finalFrame = screenRectOfContents(_element.get());
 
-    [self _document]->webkitWillExitFullScreenForElement(_element.get());
+    [self _document]->webkitWillExitFullScreen();
     [self _document]->setAnimatingFullScreen(true);
 
     if (_isEnteringFullScreen)
@@ -362,7 +362,7 @@ static void setClipRectForWindow(NSWindow *window, NSRect clipRect)
     ALLOW_DEPRECATED_DECLARATIONS_END
 
     [self _document]->setAnimatingFullScreen(false);
-    [self _document]->webkitDidExitFullScreenForElement(_element.get());
+    [self _document]->webkitDidExitFullScreen();
     [_webView _scaleWebView:_savedScale atOrigin:NSMakePoint(0, 0)];
 
     NSResponder *firstResponder = [[self window] firstResponder];

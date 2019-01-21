@@ -477,7 +477,7 @@ void AudioNode::finishDeref(RefType refType)
                     output->disconnectAll(); // This will deref() nodes we're connected to.
 
                 // Mark for deletion at end of each render quantum or when context shuts down.
-                context().markForDeletion(this);
+                context().markForDeletion(*this);
                 m_isMarkedForDeletion = true;
             }
         } else if (refType == RefTypeConnection)

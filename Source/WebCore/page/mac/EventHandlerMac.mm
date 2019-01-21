@@ -787,10 +787,10 @@ static ContainerNode* findEnclosingScrollableContainer(ContainerNode* node, floa
     // Find the first node with a valid scrollable area starting with the current
     // node and traversing its parents (or shadow hosts).
     for (ContainerNode* candidate = node; candidate; candidate = candidate->parentOrShadowHostNode()) {
-        if (is<HTMLIFrameElement>(candidate))
+        if (is<HTMLIFrameElement>(*candidate))
             continue;
 
-        if (is<HTMLHtmlElement>(candidate) || is<HTMLDocument>(candidate))
+        if (is<HTMLHtmlElement>(*candidate) || is<HTMLDocument>(*candidate))
             return nullptr;
 
         RenderBox* box = candidate->renderBox();

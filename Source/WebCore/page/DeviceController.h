@@ -40,16 +40,16 @@ class Page;
 class DeviceController : public Supplement<Page> {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    explicit DeviceController(DeviceClient*);
+    explicit DeviceController(DeviceClient&);
     virtual ~DeviceController() = default;
 
-    void addDeviceEventListener(DOMWindow*);
-    void removeDeviceEventListener(DOMWindow*);
-    void removeAllDeviceEventListeners(DOMWindow*);
+    void addDeviceEventListener(DOMWindow&);
+    void removeDeviceEventListener(DOMWindow&);
+    void removeAllDeviceEventListeners(DOMWindow&);
 
     void dispatchDeviceEvent(Event&);
     bool isActive() { return !m_listeners.isEmpty(); }
-    DeviceClient* client() { return m_client; }
+    DeviceClient& client() { return m_client; }
 
     virtual bool hasLastData() { return false; }
     virtual RefPtr<Event> getLastEvent() { return nullptr; }
@@ -59,7 +59,7 @@ protected:
 
     HashCountedSet<RefPtr<DOMWindow>> m_listeners;
     HashCountedSet<RefPtr<DOMWindow>> m_lastEventListeners;
-    DeviceClient* m_client;
+    DeviceClient& m_client;
     Timer m_timer;
 };
 

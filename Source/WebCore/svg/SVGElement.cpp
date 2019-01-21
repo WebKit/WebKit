@@ -290,7 +290,7 @@ SVGElement::~SVGElement()
         m_svgRareData = nullptr;
     }
     document().accessSVGExtensions().rebuildAllElementReferencesForTarget(*this);
-    document().accessSVGExtensions().removeAllElementReferencesForTarget(this);
+    document().accessSVGExtensions().removeAllElementReferencesForTarget(*this);
 }
 
 int SVGElement::tabIndex() const
@@ -370,7 +370,7 @@ void SVGElement::removedFromAncestor(RemovalType removalType, ContainerNode& old
 
     if (removalType.disconnectedFromDocument) {
         document().accessSVGExtensions().clearTargetDependencies(*this);
-        document().accessSVGExtensions().removeAllElementReferencesForTarget(this);
+        document().accessSVGExtensions().removeAllElementReferencesForTarget(*this);
     }
     invalidateInstances();
 }
@@ -992,7 +992,7 @@ void SVGElement::buildPendingResourcesIfNeeded()
         ASSERT(clientElement->hasPendingResources());
         if (clientElement->hasPendingResources()) {
             clientElement->buildPendingResource();
-            extensions.clearHasPendingResourcesIfPossible(clientElement.get());
+            extensions.clearHasPendingResourcesIfPossible(*clientElement);
         }
     }
 }

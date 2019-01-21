@@ -71,18 +71,18 @@ public:
     // It can, however, have a side effect of deleting an ActiveDOMObject.
     virtual void stop();
 
-    template<class T> void setPendingActivity(T* thisObject)
+    template<typename T> void setPendingActivity(T& thisObject)
     {
-        ASSERT(thisObject == this);
-        thisObject->ref();
+        ASSERT(&thisObject == this);
+        thisObject.ref();
         ++m_pendingActivityCount;
     }
 
-    template<class T> void unsetPendingActivity(T* thisObject)
+    template<typename T> void unsetPendingActivity(T& thisObject)
     {
         ASSERT(m_pendingActivityCount > 0);
         --m_pendingActivityCount;
-        thisObject->deref();
+        thisObject.deref();
     }
 
     template<class T>

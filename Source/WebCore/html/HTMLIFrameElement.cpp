@@ -28,7 +28,6 @@
 #include "CSSPropertyNames.h"
 #include "DOMTokenList.h"
 #include "Frame.h"
-#include "HTMLDocument.h"
 #include "HTMLNames.h"
 #include "RenderIFrame.h"
 #include "ScriptableDocumentParser.h"

@@ -431,7 +431,7 @@ void DOMCache::keys(Optional<RequestInfo>&& info, CacheQueryOptions&& options, K
 
 void DOMCache::retrieveRecords(const URL& url, WTF::Function<void(Optional<Exception>&&)>&& callback)
 {
-    setPendingActivity(this);
+    setPendingActivity(*this);
 
     URL retrieveURL = url;
     retrieveURL.removeQueryAndFragmentIdentifier();
@@ -447,7 +447,7 @@ void DOMCache::retrieveRecords(const URL& url, WTF::Function<void(Optional<Excep
                 updateRecords(WTFMove(result.value()));
             callback(WTF::nullopt);
         }
-        unsetPendingActivity(this);
+        unsetPendingActivity(*this);
     });
 }
 
@@ -484,7 +484,7 @@ Vector<CacheStorageRecord> DOMCache::queryCacheWithTargetStorage(const FetchRequ
 
 void DOMCache::batchDeleteOperation(const FetchRequest& request, CacheQueryOptions&& options, WTF::Function<void(ExceptionOr<bool>&&)>&& callback)
 {
-    setPendingActivity(this);
+    setPendingActivity(*this);
     m_connection->batchDeleteOperation(m_identifier, request.internalRequest(), WTFMove(options), [this, callback = WTFMove(callback)](RecordIdentifiersOrError&& result) {
         if (!m_isStopped) {
             if (!result.has_value())
@@ -492,7 +492,7 @@ void DOMCache::batchDeleteOperation(const FetchRequest& request, CacheQueryOptio
             else
                 callback(!result.value().isEmpty());
         }
-        unsetPendingActivity(this);
+        unsetPendingActivity(*this);
     });
 }
 
@@ -527,7 +527,7 @@ void DOMCache::batchPutOperation(const FetchRequest& request, FetchResponse& res
 
 void DOMCache::batchPutOperation(Vector<Record>&& records, WTF::Function<void(ExceptionOr<void>&&)>&& callback)
 {
-    setPendingActivity(this);
+    setPendingActivity(*this);
     m_connection->batchPutOperation(m_identifier, WTFMove(records), [this, callback = WTFMove(callback)](RecordIdentifiersOrError&& result) {
         if (!m_isStopped) {
             if (!result.has_value())
@@ -535,7 +535,7 @@ void DOMCache::batchPutOperation(Vector<Record>&& records, WTF::Function<void(Ex
             else
                 callback({ });
         }
-        unsetPendingActivity(this);
+        unsetPendingActivity(*this);
     });
 }
 

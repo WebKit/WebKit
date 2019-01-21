@@ -38,11 +38,11 @@ class Page;
 class DeviceOrientationController final : public DeviceController {
     WTF_MAKE_NONCOPYABLE(DeviceOrientationController);
 public:
-    explicit DeviceOrientationController(DeviceOrientationClient*);
+    explicit DeviceOrientationController(DeviceOrientationClient&);
     virtual ~DeviceOrientationController() = default;
 
     void didChangeDeviceOrientation(DeviceOrientationData*);
-    DeviceOrientationClient* deviceOrientationClient();
+    DeviceOrientationClient& deviceOrientationClient();
 
 #if PLATFORM(IOS_FAMILY)
     // FIXME: We should look to reconcile the iOS and OpenSource differences with this class

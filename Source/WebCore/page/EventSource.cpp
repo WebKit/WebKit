@@ -74,7 +74,7 @@ ExceptionOr<Ref<EventSource>> EventSource::create(ScriptExecutionContext& contex
     }
 
     auto source = adoptRef(*new EventSource(context, fullURL, eventSourceInit));
-    source->setPendingActivity(source.ptr());
+    source->setPendingActivity(source.get());
     source->scheduleInitialConnect();
     source->suspendIfNeeded();
     return WTFMove(source);
@@ -125,7 +125,7 @@ void EventSource::networkRequestEnded()
     if (m_state != CLOSED)
         scheduleReconnect();
     else
-        unsetPendingActivity(this);
+        unsetPendingActivity(*this);
 }
 
 void EventSource::scheduleInitialConnect()
@@ -158,7 +158,7 @@ void EventSource::close()
         m_loader->cancel();
     else {
         m_state = CLOSED;
-        unsetPendingActivity(this);
+        unsetPendingActivity(*this);
     }
 }
 
@@ -260,7 +260,7 @@ void EventSource::abortConnectionAttempt()
         m_loader->cancel();
     else {
         m_state = CLOSED;
-        unsetPendingActivity(this);
+        unsetPendingActivity(*this);
     }
 
     ASSERT(m_state == CLOSED);

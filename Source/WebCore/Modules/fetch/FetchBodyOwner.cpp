@@ -248,7 +248,7 @@ void FetchBodyOwner::loadBlob(const Blob& blob, FetchBodyConsumer* consumer)
         m_blobLoader = WTF::nullopt;
         return;
     }
-    setPendingActivity(this);
+    setPendingActivity(*this);
 }
 
 void FetchBodyOwner::finishBlobLoading()
@@ -256,7 +256,7 @@ void FetchBodyOwner::finishBlobLoading()
     ASSERT(m_blobLoader);
 
     m_blobLoader = WTF::nullopt;
-    unsetPendingActivity(this);
+    unsetPendingActivity(*this);
 }
 
 void FetchBodyOwner::blobLoadingSucceeded()

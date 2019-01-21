@@ -3,7 +3,7 @@
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
  *           (C) 2001 Dirk Mueller (mueller@kde.org)
  *           (C) 2006 Alexey Proskuryakov (ap@webkit.org)
- * Copyright (C) 2004, 2005, 2006, 2007, 2008, 2009, 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2004-2019 Apple Inc. All rights reserved.
  * Copyright (C) 2008, 2009 Torch Mobile Inc. All rights reserved. (http://www.torchmobile.com/)
  * Copyright (C) Research In Motion Limited 2010. All rights reserved.
  *
@@ -48,19 +48,19 @@ public:
     ~DocumentMarkerController();
 
     void detach();
-    void addMarker(Range*, DocumentMarker::MarkerType);
-    void addMarker(Range*, DocumentMarker::MarkerType, const String& description);
-    void addMarkerToNode(Node*, unsigned startOffset, unsigned length, DocumentMarker::MarkerType);
-    void addMarkerToNode(Node*, unsigned startOffset, unsigned length, DocumentMarker::MarkerType, DocumentMarker::Data&&);
-    WEBCORE_EXPORT void addTextMatchMarker(const Range*, bool activeMatch);
+    void addMarker(Range&, DocumentMarker::MarkerType);
+    void addMarker(Range&, DocumentMarker::MarkerType, const String& description);
+    void addMarkerToNode(Node&, unsigned startOffset, unsigned length, DocumentMarker::MarkerType);
+    void addMarkerToNode(Node&, unsigned startOffset, unsigned length, DocumentMarker::MarkerType, DocumentMarker::Data&&);
+    WEBCORE_EXPORT void addTextMatchMarker(const Range&, bool activeMatch);
 #if PLATFORM(IOS_FAMILY)
-    void addMarker(Range*, DocumentMarker::MarkerType, const String& description, const Vector<String>& interpretations, const RetainPtr<id>& metadata);
-    void addDictationPhraseWithAlternativesMarker(Range*, const Vector<String>& interpretations);
-    void addDictationResultMarker(Range*, const RetainPtr<id>& metadata);
+    void addMarker(Range&, DocumentMarker::MarkerType, const String& description, const Vector<String>& interpretations, const RetainPtr<id>& metadata);
+    void addDictationPhraseWithAlternativesMarker(Range&, const Vector<String>& interpretations);
+    void addDictationResultMarker(Range&, const RetainPtr<id>& metadata);
 #endif
-    void addDraggedContentMarker(RefPtr<Range>);
+    void addDraggedContentMarker(Range&);
 
-    void copyMarkers(Node* srcNode, unsigned startOffset, int length, Node* dstNode, int delta);
+    void copyMarkers(Node& srcNode, unsigned startOffset, int length, Node& dstNode, int delta);
     bool hasMarkers() const
     {
         ASSERT(m_markers.isEmpty() == !m_possiblyExistingMarkerTypes.containsAny(DocumentMarker::allMarkers()));
@@ -72,15 +72,15 @@ public:
     // remove the marker. If the argument is false, we will adjust the span of the marker so that it retains
     // the portion that is outside of the range.
     enum RemovePartiallyOverlappingMarkerOrNot { DoNotRemovePartiallyOverlappingMarker, RemovePartiallyOverlappingMarker };
-    void removeMarkers(Range*, OptionSet<DocumentMarker::MarkerType> = DocumentMarker::allMarkers(), RemovePartiallyOverlappingMarkerOrNot = DoNotRemovePartiallyOverlappingMarker);
-    void removeMarkers(Node*, unsigned startOffset, int length, OptionSet<DocumentMarker::MarkerType> = DocumentMarker::allMarkers(),  RemovePartiallyOverlappingMarkerOrNot = DoNotRemovePartiallyOverlappingMarker);
+    void removeMarkers(Range&, OptionSet<DocumentMarker::MarkerType> = DocumentMarker::allMarkers(), RemovePartiallyOverlappingMarkerOrNot = DoNotRemovePartiallyOverlappingMarker);
+    void removeMarkers(Node&, unsigned startOffset, int length, OptionSet<DocumentMarker::MarkerType> = DocumentMarker::allMarkers(),  RemovePartiallyOverlappingMarkerOrNot = DoNotRemovePartiallyOverlappingMarker);
 
     WEBCORE_EXPORT void removeMarkers(OptionSet<DocumentMarker::MarkerType> = DocumentMarker::allMarkers());
-    void removeMarkers(Node*, OptionSet<DocumentMarker::MarkerType> = DocumentMarker::allMarkers());
+    void removeMarkers(Node&, OptionSet<DocumentMarker::MarkerType> = DocumentMarker::allMarkers());
     void repaintMarkers(OptionSet<DocumentMarker::MarkerType> = DocumentMarker::allMarkers());
-    void shiftMarkers(Node*, unsigned startOffset, int delta);
-    void setMarkersActive(Range*, bool);
-    void setMarkersActive(Node*, unsigned startOffset, unsigned endOffset, bool);
+    void shiftMarkers(Node&, unsigned startOffset, int delta);
+    void setMarkersActive(Range&, bool);
+    void setMarkersActive(Node&, unsigned startOffset, unsigned endOffset, bool);
 
     WEBCORE_EXPORT Vector<RenderedDocumentMarker*> markersFor(Node&, OptionSet<DocumentMarker::MarkerType> = DocumentMarker::allMarkers());
     WEBCORE_EXPORT Vector<RenderedDocumentMarker*> markersInRange(Range&, OptionSet<DocumentMarker::MarkerType>);
@@ -99,7 +99,7 @@ public:
 #endif
 
 private:
-    void addMarker(Node*, const DocumentMarker&);
+    void addMarker(Node&, const DocumentMarker&);
 
     typedef Vector<RenderedDocumentMarker> MarkerList;
     typedef HashMap<RefPtr<Node>, std::unique_ptr<MarkerList>> MarkerMap;

@@ -771,11 +771,11 @@ void CompositeEditCommand::replaceTextInNodePreservingMarkers(Text& node, unsign
     for (const auto& marker : markers) {
 #if PLATFORM(IOS_FAMILY)
         if (marker.isDictation()) {
-            markerController.addMarker(newRange.ptr(), marker.type(), marker.description(), marker.alternatives(), marker.metadata());
+            markerController.addMarker(newRange, marker.type(), marker.description(), marker.alternatives(), marker.metadata());
             continue;
         }
 #endif
-        markerController.addMarker(newRange.ptr(), marker.type(), marker.description());
+        markerController.addMarker(newRange, marker.type(), marker.description());
     }
 }
 

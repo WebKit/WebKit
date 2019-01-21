@@ -61,9 +61,9 @@ public:
         return adoptRef(*new DictationMarkerSupplier(alternatives));
     }
 
-    void addMarkersToTextNode(Text* textNode, unsigned offsetOfInsertion, const String& textToBeInserted) override
+    void addMarkersToTextNode(Text& textNode, unsigned offsetOfInsertion, const String& textToBeInserted) override
     {
-        auto& markerController = textNode->document().markers();
+        auto& markerController = textNode.document().markers();
         for (auto& alternative : m_alternatives) {
             DocumentMarker::DictationData data { alternative.dictationContext, textToBeInserted.substring(alternative.rangeStart, alternative.rangeLength) };
             markerController.addMarkerToNode(textNode, alternative.rangeStart + offsetOfInsertion, alternative.rangeLength, DocumentMarker::DictationAlternatives, WTFMove(data));

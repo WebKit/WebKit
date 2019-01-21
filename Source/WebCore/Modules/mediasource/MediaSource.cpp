@@ -133,12 +133,12 @@ void MediaSource::setPrivateAndOpen(Ref<MediaSourcePrivate>&& mediaSourcePrivate
 
 void MediaSource::addedToRegistry()
 {
-    setPendingActivity(this);
+    setPendingActivity(*this);
 }
 
 void MediaSource::removedFromRegistry()
 {
-    unsetPendingActivity(this);
+    unsetPendingActivity(*this);
 }
 
 MediaTime MediaSource::duration() const

@@ -93,7 +93,7 @@ ExceptionOr<Ref<Worker>> Worker::create(ScriptExecutionContext& context, JSC::Ru
     worker->m_shouldBypassMainWorldContentSecurityPolicy = shouldBypassMainWorldContentSecurityPolicy;
 
     // The worker context does not exist while loading, so we must ensure that the worker object is not collected, nor are its event listeners.
-    worker->setPendingActivity(worker.ptr());
+    worker->setPendingActivity(worker.get());
 
     // https://html.spec.whatwg.org/multipage/workers.html#official-moment-of-creation
     worker->m_workerCreationTime = MonotonicTime::now();
@@ -191,7 +191,7 @@ void Worker::notifyFinished()
     }
     m_scriptLoader = nullptr;
 
-    unsetPendingActivity(this);
+    unsetPendingActivity(*this);
 }
 
 } // namespace WebCore

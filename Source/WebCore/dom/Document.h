@@ -773,8 +773,8 @@ public:
     void adjustFocusedNodeOnNodeRemoval(Node&, NodeRemoval = NodeRemoval::Node);
     void adjustFocusNavigationNodeOnNodeRemoval(Node&, NodeRemoval = NodeRemoval::Node);
 
-    void hoveredElementDidDetach(Element*);
-    void elementInActiveChainDidDetach(Element*);
+    void hoveredElementDidDetach(Element&);
+    void elementInActiveChainDidDetach(Element&);
 
     void updateHoverActiveState(const HitTestRequest&, Element*);
 
@@ -801,16 +801,16 @@ public:
     template <typename InvalidationFunction>
     void invalidateNodeListAndCollectionCaches(InvalidationFunction);
 
-    void attachNodeIterator(NodeIterator*);
-    void detachNodeIterator(NodeIterator*);
+    void attachNodeIterator(NodeIterator&);
+    void detachNodeIterator(NodeIterator&);
     void moveNodeIteratorsToNewDocument(Node& node, Document& newDocument)
     {
         if (!m_nodeIterators.isEmpty())
             moveNodeIteratorsToNewDocumentSlowCase(node, newDocument);
     }
 
-    void attachRange(Range*);
-    void detachRange(Range*);
+    void attachRange(Range&);
+    void detachRange(Range&);
 
     void updateRangesAfterChildrenChanged(ContainerNode&);
     // nodeChildrenWillBeRemoved is used when removing all node children at once.
@@ -821,13 +821,13 @@ public:
     enum class AcceptChildOperation { Replace, InsertOrAdd };
     bool canAcceptChild(const Node& newChild, const Node* refChild, AcceptChildOperation) const;
 
-    void textInserted(Node*, unsigned offset, unsigned length);
-    void textRemoved(Node*, unsigned offset, unsigned length);
-    void textNodesMerged(Text* oldNode, unsigned offset);
-    void textNodeSplit(Text* oldNode);
+    void textInserted(Node&, unsigned offset, unsigned length);
+    void textRemoved(Node&, unsigned offset, unsigned length);
+    void textNodesMerged(Text& oldNode, unsigned offset);
+    void textNodeSplit(Text& oldNode);
 
     void createDOMWindow();
-    void takeDOMWindowFrom(Document*);
+    void takeDOMWindowFrom(Document&);
 
     DOMWindow* domWindow() const { return m_domWindow.get(); }
     // In DOM Level 2, the Document's DOMWindow is called the defaultView.
@@ -906,7 +906,7 @@ public:
 #endif
 
     // Returns the owning element in the parent document.
-    // Returns 0 if this is the top level document.
+    // Returns nullptr if this is the top level document.
     HTMLFrameOwnerElement* ownerElement() const;
 
     // Used by DOM bindings; no direction known.
@@ -1018,8 +1018,8 @@ public:
     Document* parentDocument() const;
     WEBCORE_EXPORT Document& topDocument() const;
     
-    ScriptRunner* scriptRunner() { return m_scriptRunner.get(); }
-    ScriptModuleLoader* moduleLoader() { return m_moduleLoader.get(); }
+    ScriptRunner& scriptRunner() { return *m_scriptRunner; }
+    ScriptModuleLoader& moduleLoader() { return *m_moduleLoader; }
 
     HTMLScriptElement* currentScript() const { return !m_currentScriptStack.isEmpty() ? m_currentScriptStack.last().get() : nullptr; }
     void pushCurrentScript(HTMLScriptElement*);
@@ -1031,7 +1031,7 @@ public:
     void scheduleToApplyXSLTransforms();
     void applyPendingXSLTransformsNowIfScheduled();
     RefPtr<Document> transformSourceDocument() { return m_transformSourceDocument; }
-    void setTransformSourceDocument(Document* doc) { m_transformSourceDocument = doc; }
+    void setTransformSourceDocument(Document* document) { m_transformSourceDocument = document; }
 
     void setTransformSource(std::unique_ptr<TransformSource>);
     TransformSource* transformSource() const { return m_transformSource.get(); }
@@ -1075,17 +1075,15 @@ public:
     PageCacheState pageCacheState() const { return m_pageCacheState; }
     void setPageCacheState(PageCacheState);
 
-    // Elements can register themselves for the "suspend()" and
-    // "resume()" callbacks
-    void registerForDocumentSuspensionCallbacks(Element*);
-    void unregisterForDocumentSuspensionCallbacks(Element*);
+    void registerForDocumentSuspensionCallbacks(Element&);
+    void unregisterForDocumentSuspensionCallbacks(Element&);
 
     void documentWillBecomeInactive();
     void suspend(ReasonForSuspension);
     void resume(ReasonForSuspension);
 
-    void registerForMediaVolumeCallbacks(Element*);
-    void unregisterForMediaVolumeCallbacks(Element*);
+    void registerForMediaVolumeCallbacks(Element&);
+    void unregisterForMediaVolumeCallbacks(Element&);
     void mediaVolumeDidChange();
 
     bool audioPlaybackRequiresUserGesture() const;
@@ -1095,28 +1093,28 @@ public:
     MediaSession& defaultMediaSession();
 #endif
 
-    void registerForPrivateBrowsingStateChangedCallbacks(Element*);
-    void unregisterForPrivateBrowsingStateChangedCallbacks(Element*);
+    void registerForPrivateBrowsingStateChangedCallbacks(Element&);
+    void unregisterForPrivateBrowsingStateChangedCallbacks(Element&);
     void storageBlockingStateDidChange();
     void privateBrowsingStateDidChange();
 
 #if ENABLE(VIDEO_TRACK)
-    void registerForCaptionPreferencesChangedCallbacks(Element*);
-    void unregisterForCaptionPreferencesChangedCallbacks(Element*);
+    void registerForCaptionPreferencesChangedCallbacks(Element&);
+    void unregisterForCaptionPreferencesChangedCallbacks(Element&);
     void captionPreferencesChanged();
 #endif
 
 #if ENABLE(MEDIA_CONTROLS_SCRIPT)
-    void registerForPageScaleFactorChangedCallbacks(HTMLMediaElement*);
-    void unregisterForPageScaleFactorChangedCallbacks(HTMLMediaElement*);
+    void registerForPageScaleFactorChangedCallbacks(HTMLMediaElement&);
+    void unregisterForPageScaleFactorChangedCallbacks(HTMLMediaElement&);
     void pageScaleFactorChangedAndStable();
     void registerForUserInterfaceLayoutDirectionChangedCallbacks(HTMLMediaElement&);
     void unregisterForUserInterfaceLayoutDirectionChangedCallbacks(HTMLMediaElement&);
     void userInterfaceLayoutDirectionChanged();
 #endif
 
-    void registerForVisibilityStateChangedCallbacks(VisibilityChangeClient*);
-    void unregisterForVisibilityStateChangedCallbacks(VisibilityChangeClient*);
+    void registerForVisibilityStateChangedCallbacks(VisibilityChangeClient&);
+    void unregisterForVisibilityStateChangedCallbacks(VisibilityChangeClient&);
 
 #if ENABLE(VIDEO)
     void registerForAllowsMediaDocumentInlinePlaybackChangedCallbacks(HTMLMediaElement&);
@@ -1177,8 +1175,8 @@ public:
     void dispatchPopstateEvent(RefPtr<SerializedScriptValue>&& stateObject);
     DocumentEventQueue& eventQueue() const final { return m_eventQueue; }
 
-    WEBCORE_EXPORT void addMediaCanStartListener(MediaCanStartListener*);
-    WEBCORE_EXPORT void removeMediaCanStartListener(MediaCanStartListener*);
+    WEBCORE_EXPORT void addMediaCanStartListener(MediaCanStartListener&);
+    WEBCORE_EXPORT void removeMediaCanStartListener(MediaCanStartListener&);
     MediaCanStartListener* takeAnyMediaCanStartListener();
 
 #if ENABLE(FULLSCREEN_API)
@@ -1195,16 +1193,16 @@ public:
     void requestFullScreenForElement(Element*, FullScreenCheckType);
     WEBCORE_EXPORT void webkitCancelFullScreen();
     
-    WEBCORE_EXPORT void webkitWillEnterFullScreenForElement(Element*);
-    WEBCORE_EXPORT void webkitDidEnterFullScreenForElement(Element*);
-    WEBCORE_EXPORT void webkitWillExitFullScreenForElement(Element*);
-    WEBCORE_EXPORT void webkitDidExitFullScreenForElement(Element*);
+    WEBCORE_EXPORT void webkitWillEnterFullScreen(Element&);
+    WEBCORE_EXPORT void webkitDidEnterFullScreen();
+    WEBCORE_EXPORT void webkitWillExitFullScreen();
+    WEBCORE_EXPORT void webkitDidExitFullScreen();
     
     void setFullScreenRenderer(RenderTreeBuilder&, RenderFullScreen&);
     RenderFullScreen* fullScreenRenderer() const { return m_fullScreenRenderer.get(); }
 
     void dispatchFullScreenChangeEvents();
-    bool fullScreenIsAllowedForElement(Element*) const;
+    bool fullScreenIsAllowedForElement(Element&) const;
     void fullScreenElementRemoved();
     void adjustFullScreenElementOnNodeRemoval(Node&, NodeRemoval = NodeRemoval::Node);
 
@@ -1235,8 +1233,8 @@ public:
 #endif
 
 #if ENABLE(DEVICE_ORIENTATION) && PLATFORM(IOS_FAMILY)
-    DeviceMotionController* deviceMotionController() const;
-    DeviceOrientationController* deviceOrientationController() const;
+    DeviceMotionController& deviceMotionController() const;
+    DeviceOrientationController& deviceOrientationController() const;
     WEBCORE_EXPORT void simulateDeviceOrientationChange(double alpha, double beta, double gamma);
 #endif
 
@@ -1380,8 +1378,8 @@ public:
     bool hasStyleWithViewportUnits() const { return m_hasStyleWithViewportUnits; }
     void updateViewportUnitsOnResize();
 
-    WEBCORE_EXPORT void addAudioProducer(MediaProducer*);
-    WEBCORE_EXPORT void removeAudioProducer(MediaProducer*);
+    WEBCORE_EXPORT void addAudioProducer(MediaProducer&);
+    WEBCORE_EXPORT void removeAudioProducer(MediaProducer&);
     MediaProducer::MediaStateFlags mediaState() const { return m_mediaState; }
     void noteUserInteractionWithMediaElement();
     bool isCapturing() const { return MediaProducer::isCapturing(m_mediaState); }
@@ -1599,7 +1597,7 @@ private:
     void updateTitle(const StringWithDirection&);
     void updateBaseURL();
 
-    void buildAccessKeyMap(TreeScope* root);
+    void buildAccessKeyMap(TreeScope&);
 
     void moveNodeIteratorsToNewDocumentSlowCase(Node&, Document&);
 
@@ -1616,8 +1614,8 @@ private:
     void dispatchFullScreenChangeOrErrorEvent(Deque<RefPtr<Node>>&, const AtomicString& eventName, bool shouldNotifyMediaElement);
     void clearFullscreenElementStack();
     void popFullscreenElementStack();
-    void pushFullscreenElementStack(Element*);
-    void addDocumentToFullScreenChangeEventQueue(Document*);
+    void pushFullscreenElementStack(Element&);
+    void addDocumentToFullScreenChangeEventQueue(Document&);
 #endif
 
     void dispatchDisabledAdaptationsDidChangeForMainFrame();
