@@ -1,3 +1,22 @@
+2019-01-21  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        REGRESSION(r239915): about 130 test failures on WPE
+        https://bugs.webkit.org/show_bug.cgi?id=193395
+
+        Reviewed by Žan Doberšek.
+
+        Since r239915 we are only overriding the characters with Default_Ignorable unicode property when the font
+        doesn't support the code point. If the font happens to provide a glyph for the character, it's later ignored by
+        harfbuzz when shaping, but the simple text code path doesn't ignore them unless there isn't a glyph.
+
+        * platform/graphics/WidthIterator.cpp:
+        (WebCore::WidthIterator::advanceInternal): Always ignore characters with Default_Ignorable unicode property.
+        (WebCore::characterMustDrawSomething): Moved to CharacterProperties.h and renamed as isDefaultIgnorableCodePoint().
+        * platform/graphics/freetype/GlyphPageTreeNodeFreeType.cpp:
+        (WebCore::GlyphPage::fill): Use isDefaultIgnorableCodePoint().
+        * platform/text/CharacterProperties.h:
+        (WebCore::isDefaultIgnorableCodePoint): Return whether the character has Default_Ignorable unicode property.
+
 2019-01-20  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [WHLSL] Implement Metal code generation

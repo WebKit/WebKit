@@ -32,6 +32,7 @@
 #include "GlyphPage.h"
 
 #include "CairoUtilities.h"
+#include "CharacterProperties.h"
 #include "Font.h"
 #include "FontCascade.h"
 #include "UTF16UChar32Iterator.h"
@@ -70,7 +71,7 @@ bool GlyphPage::fill(UChar* buffer, unsigned bufferLength)
 
         Glyph glyph = FcFreeTypeCharIndex(face, FontCascade::treatAsSpace(character) ? space : character);
         // If the font doesn't support a Default_Ignorable character, replace it with zero with space.
-        if (!glyph && u_hasBinaryProperty(character, UCHAR_DEFAULT_IGNORABLE_CODE_POINT))
+        if (!glyph && isDefaultIgnorableCodePoint(character))
             glyph = zeroWidthSpaceGlyph();
 
         if (!glyph)

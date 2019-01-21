@@ -22,6 +22,7 @@
 #include "config.h"
 #include "WidthIterator.h"
 
+#include "CharacterProperties.h"
 #include "Font.h"
 #include "FontCascade.h"
 #include "GlyphBuffer.h"
@@ -165,11 +166,6 @@ static inline std::pair<bool, bool> expansionLocation(bool ideograph, bool treat
     return std::make_pair(expandLeft, expandRight);
 }
 
-static inline bool characterMustDrawSomething(UChar32 character)
-{
-    return !u_hasBinaryProperty(character, UCHAR_DEFAULT_IGNORABLE_CODE_POINT);
-}
-
 template <typename TextIterator>
 inline unsigned WidthIterator::advanceInternal(TextIterator& textIterator, GlyphBuffer* glyphBuffer)
 {
@@ -201,10 +197,19 @@ inline unsigned WidthIterator::advanceInternal(TextIterator& textIterator, Glyph
     // We are iterating in string order, not glyph order. Compare this to ComplexTextController::adjustGlyphsAndAdvances()
     while (textIterator.consume(character, clusterLength)) {
         unsigned advanceLength = clusterLength;
+        bool characterMustDrawSomething = !isDefaultIgnorableCodePoint(character);
+#if USE(FREETYPE)
+        // Freetype based ports only override the characters with Default_Ignorable unicode property when the font
+        // doesn't support the code point. We should ignore them at this point to ensure they are not displayed.
+        if (!characterMustDrawSomething) {
+            textIterator.advance(advanceLength);
+            continue;
+        }
+#endif
         int currentCharacter = textIterator.currentIndex();
         const GlyphData& glyphData = m_font->glyphDataForCharacter(character, rtl);
         Glyph glyph = glyphData.glyph;
-        if (!glyph && !characterMustDrawSomething(character)) {
+        if (!glyph && !characterMustDrawSomething) {
             textIterator.advance(advanceLength);
             continue;
         }
