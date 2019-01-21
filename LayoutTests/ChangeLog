@@ -1,3 +1,13 @@
+2019-01-20  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        Unreviewed GTK test gardening
+
+        * accessibility/gtk/xml-roles-exposed-expected.txt:
+        * platform/gtk/TestExpectations:
+        * platform/gtk/imported/w3c/web-platform-tests/fetch/security/dangling-markup-mitigation-data-url.tentative.sub-expected.txt: Removed.
+        * platform/gtk/inspector/css/shadow-scoped-style-expected.txt: Added.
+        * platform/gtk/svg/text/font-size-below-point-five-expected.txt:
+
 2019-01-20  chris fleizach  <cfleizach@apple.com>
 
         AX: Support returning relative frames for accessibility
