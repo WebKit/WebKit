@@ -1852,20 +1852,17 @@ const HashSet<String>& JSGlobalObject::intlPluralRulesAvailableLocales()
 }
 #endif // ENABLE(INTL)
 
-void JSGlobalObject::notifyLexicalBindingShadowing(VM& vm, const IdentifierSet& set)
+void JSGlobalObject::bumpGlobalLexicalBindingEpoch(VM& vm)
 {
-    auto scope = DECLARE_THROW_SCOPE(vm);
-#if ENABLE(DFG_JIT)
-    for (const auto& key : set)
-        ensureReferencedPropertyWatchpointSet(key.get()).fireAll(vm, "Lexical binding shadows the existing global properties");
-#endif
-    vm.heap.codeBlockSet().iterate([&] (CodeBlock* codeBlock) {
-        if (codeBlock->globalObject() != this)
-            return;
-        codeBlock->notifyLexicalBindingShadowing(vm, set);
-        scope.assertNoException();
-    });
-    scope.release();
+    if (++m_globalLexicalBindingEpoch == Options::thresholdForGlobalLexicalBindingEpoch()) {
+        // Since the epoch overflows, we should rewrite all the CodeBlock to adjust to the newly started generation.
+        m_globalLexicalBindingEpoch = 1;
+        vm.heap.codeBlockSet().iterate([&] (CodeBlock* codeBlock) {
+            if (codeBlock->globalObject() != this)
+                return;
+            codeBlock->notifyLexicalBindingUpdate();
+        });
+    }
 }
 
 void JSGlobalObject::queueMicrotask(Ref<Microtask>&& task)
@@ -1891,11 +1888,13 @@ bool JSGlobalObject::hasInteractiveDebugger() const
 #if ENABLE(DFG_JIT)
 WatchpointSet* JSGlobalObject::getReferencedPropertyWatchpointSet(UniquedStringImpl* uid)
 {
+    ConcurrentJSLocker locker(m_referencedGlobalPropertyWatchpointSetsLock);
     return m_referencedGlobalPropertyWatchpointSets.get(uid);
 }
 
 WatchpointSet& JSGlobalObject::ensureReferencedPropertyWatchpointSet(UniquedStringImpl* uid)
 {
+    ConcurrentJSLocker locker(m_referencedGlobalPropertyWatchpointSetsLock);
     return m_referencedGlobalPropertyWatchpointSets.ensure(uid, [] {
         return WatchpointSet::create(IsWatched);
     }).iterator->value.get();

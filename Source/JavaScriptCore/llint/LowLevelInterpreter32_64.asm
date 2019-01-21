@@ -2092,9 +2092,18 @@ end
 
 llintOpWithMetadata(op_resolve_scope, OpResolveScope, macro (size, get, dispatch, metadata, return)
 
-    macro getConstantScope()
-        loadp OpResolveScope::Metadata::m_constantScope[t5],  t0
+    macro getConstantScope(dst)
+        loadp OpResolveScope::Metadata::m_constantScope[t5], dst
+    end
+
+    macro returnConstantScope()
+        getConstantScope(t0)
         return(CellTag, t0)
+    end
+
+    macro globalLexicalBindingEpochCheck(slowPath, globalObject, scratch)
+        loadi OpResolveScope::Metadata::m_globalLexicalBindingEpoch[globalObject], scratch
+        bineq JSGlobalObject::m_globalLexicalBindingEpoch[globalObject], scratch, slowPath
     end
 
     macro resolveScope()
@@ -2117,15 +2126,17 @@ llintOpWithMetadata(op_resolve_scope, OpResolveScope, macro (size, get, dispatch
 
 #rGlobalProperty:
     bineq t0, GlobalProperty, .rGlobalVar
-    getConstantScope()
+    getConstantScope(t0)
+    globalLexicalBindingEpochCheck(.rDynamic, t0, t2)
+    return(CellTag, t0)
 
 .rGlobalVar:
     bineq t0, GlobalVar, .rGlobalLexicalVar
-    getConstantScope()
+    returnConstantScope()
 
 .rGlobalLexicalVar:
     bineq t0, GlobalLexicalVar, .rClosureVar
-    getConstantScope()
+    returnConstantScope()
 
 .rClosureVar:
     bineq t0, ClosureVar, .rModuleVar
@@ -2133,22 +2144,24 @@ llintOpWithMetadata(op_resolve_scope, OpResolveScope, macro (size, get, dispatch
 
 .rModuleVar:
     bineq t0, ModuleVar, .rGlobalPropertyWithVarInjectionChecks
-    getConstantScope()
+    returnConstantScope()
 
 .rGlobalPropertyWithVarInjectionChecks:
     bineq t0, GlobalPropertyWithVarInjectionChecks, .rGlobalVarWithVarInjectionChecks
     varInjectionCheck(.rDynamic)
-    getConstantScope()
+    getConstantScope(t0)
+    globalLexicalBindingEpochCheck(.rDynamic, t0, t2)
+    return(CellTag, t0)
 
 .rGlobalVarWithVarInjectionChecks:
     bineq t0, GlobalVarWithVarInjectionChecks, .rGlobalLexicalVarWithVarInjectionChecks
     varInjectionCheck(.rDynamic)
-    getConstantScope()
+    returnConstantScope()
 
 .rGlobalLexicalVarWithVarInjectionChecks:
     bineq t0, GlobalLexicalVarWithVarInjectionChecks, .rClosureVarWithVarInjectionChecks
     varInjectionCheck(.rDynamic)
-    getConstantScope()
+    returnConstantScope()
 
 .rClosureVarWithVarInjectionChecks:
     bineq t0, ClosureVarWithVarInjectionChecks, .rDynamic

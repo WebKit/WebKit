@@ -1067,29 +1067,31 @@ SLOW_PATH_DECL(slow_path_resolve_scope)
     // ModuleVar does not keep the scope register value alive in DFG.
     ASSERT(resolveType != ModuleVar);
 
-    if (resolveType == UnresolvedProperty || resolveType == UnresolvedPropertyWithVarInjectionChecks) {
+    switch (resolveType) {
+    case GlobalProperty:
+    case GlobalPropertyWithVarInjectionChecks:
+    case UnresolvedProperty:
+    case UnresolvedPropertyWithVarInjectionChecks: {
         if (resolvedScope->isGlobalObject()) {
             JSGlobalObject* globalObject = jsCast<JSGlobalObject*>(resolvedScope);
             bool hasProperty = globalObject->hasProperty(exec, ident);
             CHECK_EXCEPTION();
             if (hasProperty) {
                 ConcurrentJSLocker locker(exec->codeBlock()->m_lock);
-                if (resolveType == UnresolvedProperty)
-                    metadata.m_resolveType = GlobalProperty;
-                else
-                    metadata.m_resolveType = GlobalPropertyWithVarInjectionChecks;
-
+                metadata.m_resolveType = needsVarInjectionChecks(resolveType) ? GlobalPropertyWithVarInjectionChecks : GlobalProperty;
                 metadata.m_globalObject = globalObject;
+                metadata.m_globalLexicalBindingEpoch = globalObject->globalLexicalBindingEpoch();
             }
         } else if (resolvedScope->isGlobalLexicalEnvironment()) {
             JSGlobalLexicalEnvironment* globalLexicalEnvironment = jsCast<JSGlobalLexicalEnvironment*>(resolvedScope);
             ConcurrentJSLocker locker(exec->codeBlock()->m_lock);
-            if (resolveType == UnresolvedProperty)
-                metadata.m_resolveType = GlobalLexicalVar;
-            else
-                metadata.m_resolveType = GlobalLexicalVarWithVarInjectionChecks;
+            metadata.m_resolveType = needsVarInjectionChecks(resolveType) ? GlobalLexicalVarWithVarInjectionChecks : GlobalLexicalVar;
             metadata.m_globalLexicalEnvironment = globalLexicalEnvironment;
         }
+        break;
+    }
+    default:
+        break;
     }
 
     RETURN(resolvedScope);

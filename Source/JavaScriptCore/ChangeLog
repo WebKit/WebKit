@@ -1,3 +1,85 @@
+2019-01-20  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Invalidate old scope operations using global lexical binding epoch
+        https://bugs.webkit.org/show_bug.cgi?id=193603
+        <rdar://problem/47380869>
+
+        Reviewed by Saam Barati.
+
+        Even if the global lexical binding does not shadow the global property at that time, we need to clear the cached information in
+        scope related operations since we may have a global property previously. Consider the following example,
+
+            foo = 0;
+            function get() { return foo; }
+            print(get()); // 0
+            print(get()); // 0
+            delete globalThis.foo;
+            $.evalScript(`const foo = 42;`);
+            print(get()); // Should be 42, but it returns 0 if the cached information in get() is not cleared.
+
+        To invalidate the cache easily, we introduce global lexical binding epoch. It is bumped every time we introduce a new lexical binding
+        into JSGlobalLexicalEnvironment, since that name could shadow the global property name previously. In op_resolve_scope, we first check
+        the epoch stored in the metadata, and go to slow path if it is not equal to the current epoch. Our slow path code convert the scope
+        operation to the appropriate one even if the resolve type is not UnresolvedProperty type. After updating the resolve type of the bytecode,
+        we update the cached epoch to the current one, so that we can use the cached information as long as we stay in the same epoch.
+
+        In op_get_from_scope and op_put_to_scope, we do not use this epoch since Structure check can do the same thing instead. If op_resolve_type
+        is updated by the epoch, and if it starts returning JSGlobalLexicalEnvironment instead JSGlobalObject, obviously the structure check fails.
+        And in the slow path, we update op_get_from_scope and op_put_to_scope appropriately.
+
+        So, the metadata for scope related bytecodes are eventually updated to the appropriate one. In DFG and FTL, we use the watchpoint based approach.
+        In DFG and FTL, we concurrently attempt to get the watchpoint for the lexical binding and look into it by using `isStillValid()` to avoid
+        infinite compile-and-fail loop.
+
+        When the global lexical binding epoch overflows we iterate all the live CodeBlock and update the op_resolve_scope's epoch. Even if the shadowing
+        happens, it is OK if we bump the epoch, since op_resolve_scope will return JSGlobalLexicalEnvironment instead of JSGlobalObject, and following
+        structure check in op_put_to_scope and op_get_from_scope fail. We do not need to update op_get_from_scope and op_put_to_scope because of the same
+        reason.
+
+        * bytecode/BytecodeList.rb:
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::notifyLexicalBindingUpdate):
+        (JSC::CodeBlock::notifyLexicalBindingShadowing): Deleted.
+        * bytecode/CodeBlock.h:
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::parseBlock):
+        * dfg/DFGDesiredGlobalProperties.cpp:
+        (JSC::DFG::DesiredGlobalProperties::isStillValidOnMainThread):
+        * dfg/DFGDesiredGlobalProperties.h:
+        * dfg/DFGGraph.cpp:
+        (JSC::DFG::Graph::watchGlobalProperty):
+        * dfg/DFGGraph.h:
+        * dfg/DFGPlan.cpp:
+        (JSC::DFG::Plan::isStillValidOnMainThread):
+        * jit/JITPropertyAccess.cpp:
+        (JSC::JIT::emit_op_resolve_scope):
+        * jit/JITPropertyAccess32_64.cpp:
+        (JSC::JIT::emit_op_resolve_scope):
+        * llint/LowLevelInterpreter32_64.asm:
+        * llint/LowLevelInterpreter64.asm:
+        * runtime/CommonSlowPaths.cpp:
+        (JSC::SLOW_PATH_DECL):
+        * runtime/CommonSlowPaths.h:
+        (JSC::CommonSlowPaths::tryCachePutToScopeGlobal):
+        (JSC::CommonSlowPaths::tryCacheGetFromScopeGlobal):
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::bumpGlobalLexicalBindingEpoch):
+        (JSC::JSGlobalObject::getReferencedPropertyWatchpointSet):
+        (JSC::JSGlobalObject::ensureReferencedPropertyWatchpointSet):
+        (JSC::JSGlobalObject::notifyLexicalBindingShadowing): Deleted.
+        * runtime/JSGlobalObject.h:
+        (JSC::JSGlobalObject::globalLexicalBindingEpoch const):
+        (JSC::JSGlobalObject::globalLexicalBindingEpochOffset):
+        (JSC::JSGlobalObject::addressOfGlobalLexicalBindingEpoch):
+        * runtime/Options.cpp:
+        (JSC::correctOptions):
+        (JSC::Options::initialize):
+        (JSC::Options::setOptions):
+        (JSC::Options::setOptionWithoutAlias):
+        * runtime/Options.h:
+        * runtime/ProgramExecutable.cpp:
+        (JSC::ProgramExecutable::initializeGlobalProperties):
+
 2019-01-20  Yusuke Suzuki  <yusukesuzuki@slowstart.org>
 
         [JSC] Shrink data structure size in JSC/heap
