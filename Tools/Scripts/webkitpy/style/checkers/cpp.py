@@ -2,7 +2,7 @@
 #
 # Copyright (C) 2009, 2010, 2012 Google Inc. All rights reserved.
 # Copyright (C) 2009 Torch Mobile Inc.
-# Copyright (C) 2009, 2013 Apple Inc. All rights reserved.
+# Copyright (C) 2009-2019 Apple Inc. All rights reserved.
 # Copyright (C) 2010 Chris Jerdonek (cjerdonek@webkit.org)
 #
 # Redistribution and use in source and binary forms, with or without
@@ -3332,9 +3332,13 @@ def check_language(filename, clean_lines, line_number, file_extension, include_s
                           'RetainPtr<> should never contain a type with \'*\'. Correct: RetainPtr<NSString>, RetainPtr<CFStringRef>.')
                 break
 
-    if search(r'^\s*SOFT_LINK_FRAMEWORK\(UIKit\)', line):
-        error(line_number, 'softlink/uikit', 5,
-              'Use #import <pal/ios/UIKitSoftLink.h> and update pal/ios/UIKitSoftLink.mm to soft-link to UIKit.framework.')
+    frameworks_with_soft_links = ['CoreMedia', 'CoreVideo', 'DataDetectorsCore', 'MediaAccessibility', 'MediaRemote', 'PassKit', 'QuickLook', 'UIKit', 'VideoToolbox']
+    matched = re.compile('^\s*SOFT_LINK_FRAMEWORK.*\(({})\)'.format('|'.join(frameworks_with_soft_links))).search(line)
+    if matched:
+        framework_name = matched.group(1)
+        if not re.compile('^\s*SOFT_LINK_FRAMEWORK_FOR_(HEADER|SOURCE)(_WITH_EXPORT)?\({}\)'.format(framework_name)).search(line):
+            error(line_number, 'softlink/framework', 5,
+                  'Use {framework}SoftLink.{{cpp,h,mm}} to soft-link to {framework}.framework.'.format(framework=framework_name))
 
     # Check for suspicious usage of "if" like
     # } if (a == b) {
@@ -4088,7 +4092,7 @@ class CppChecker(object):
         'security/assertion',
         'security/printf',
         'security/temp_file',
-        'softlink/uikit',
+        'softlink/framework',
         'whitespace/blank_line',
         'whitespace/braces',
         'whitespace/brackets',

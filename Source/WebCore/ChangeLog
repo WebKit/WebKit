@@ -1,3 +1,19 @@
+2019-01-21  David Kilzer  <ddkilzer@apple.com>
+
+        Switch remaining VideoToolbox soft-linking in WebCore over to VideoToolboxSoftLink.{cpp,h}
+        <https://webkit.org/b/193645>
+        <rdar://problem/47421574>
+
+        Reviewed by Alex Christensen.
+
+        * platform/cocoa/VideoToolboxSoftLink.cpp:
+        * platform/cocoa/VideoToolboxSoftLink.h:
+        - Move soft-linking of VTPixelBufferConformer* functions from
+          PixelBufferConformerCV.cpp to here.
+        * platform/graphics/cv/PixelBufferConformerCV.cpp:
+        - Remove local soft-linking of VideoToolbox.framework and switch
+          to VideoToolboxSoftLink.h.
+
 2019-01-21  Antti Koivisto  <antti@apple.com>
 
         Move delegatesScrolling() tests to lower level conversion function in ScrollView

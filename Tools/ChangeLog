@@ -1,3 +1,21 @@
+2019-01-21  David Kilzer  <ddkilzer@apple.com>
+
+        Switch remaining VideoToolbox soft-linking in WebCore over to VideoToolboxSoftLink.{cpp,h}
+        <https://webkit.org/b/193645>
+        <rdar://problem/47421574>
+
+        Reviewed by Alex Christensen.
+
+        - Now checks for local soft-linking of all frameworks that have
+          their own *SoftLinking.{cpp,h,mm} files.
+        - Changes softlink/uikit warning to softlink/framework.
+
+        * Scripts/webkitpy/style/checkers/cpp.py:
+        (check_language):
+        (CppChecker):
+        * Scripts/webkitpy/style/checkers/cpp_unittest.py:
+        (CppStyleTest):
+
 2019-01-20  Saam Barati  <sbarati@apple.com>
 
         Rollout r240210: It broke tests on iOS

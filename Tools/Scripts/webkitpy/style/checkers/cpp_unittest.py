@@ -2,7 +2,7 @@
 #
 # Copyright (C) 2011 Google Inc. All rights reserved.
 # Copyright (C) 2009 Torch Mobile Inc.
-# Copyright (C) 2009, 2013 Apple Inc. All rights reserved.
+# Copyright (C) 2009-2019 Apple Inc. All rights reserved.
 # Copyright (C) 2010 Chris Jerdonek (cjerdonek@webkit.org)
 #
 # Redistribution and use in source and binary forms, with or without
@@ -1693,9 +1693,42 @@ class CppStyleTest(CppStyleTestBase):
             '''SOFT_LINK_FRAMEWORK(AVFoundation)''',
             '')
         self.assert_lint(
+            '''SOFT_LINK_FRAMEWORK_OPTIONAL(AVFoundation)''',
+            '')
+        self.assert_lint(
+            '''SOFT_LINK_FRAMEWORK_OPTIONAL_PREFLIGHT(AVFoundation)''',
+            '')
+        self.assert_lint(
+            '''SOFT_LINK_FRAMEWORK_FOR_HEADER(AVFoundation)''',
+            '')
+        self.assert_lint(
+            '''SOFT_LINK_FRAMEWORK_FOR_SOURCE(AVFoundation)''',
+            '')
+        self.assert_lint(
+            '''SOFT_LINK_FRAMEWORK_FOR_SOURCE_WITH_EXPORT(AVFoundation)''',
+            '')
+
+        self.assert_lint(
             '''SOFT_LINK_FRAMEWORK(UIKit)''',
-            'Use #import <pal/ios/UIKitSoftLink.h> and update pal/ios/UIKitSoftLink.mm to soft-link to UIKit.framework.'
-            '  [softlink/uikit] [5]')
+            'Use UIKitSoftLink.{cpp,h,mm} to soft-link to UIKit.framework.'
+            '  [softlink/framework] [5]')
+        self.assert_lint(
+            '''SOFT_LINK_FRAMEWORK_OPTIONAL(UIKit)''',
+            'Use UIKitSoftLink.{cpp,h,mm} to soft-link to UIKit.framework.'
+            '  [softlink/framework] [5]')
+        self.assert_lint(
+            '''SOFT_LINK_FRAMEWORK_OPTIONAL_PREFLIGHT(UIKit)''',
+            'Use UIKitSoftLink.{cpp,h,mm} to soft-link to UIKit.framework.'
+            '  [softlink/framework] [5]')
+        self.assert_lint(
+            '''SOFT_LINK_FRAMEWORK_FOR_HEADER(UIKit)''',
+            '')
+        self.assert_lint(
+            '''SOFT_LINK_FRAMEWORK_FOR_SOURCE(UIKit)''',
+            '')
+        self.assert_lint(
+            '''SOFT_LINK_FRAMEWORK_FOR_SOURCE_WITH_EXPORT(UIKit)''',
+            '')
 
     # Variable-length arrays are not permitted.
     def test_variable_length_array_detection(self):
