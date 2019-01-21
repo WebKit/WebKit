@@ -306,6 +306,8 @@ static Inspector::Protocol::Automation::BrowsingContextPresentation toProtocol(A
     case API::AutomationSessionClient::BrowsingContextPresentation::Window:
         return Inspector::Protocol::Automation::BrowsingContextPresentation::Window;
     }
+
+    RELEASE_ASSERT_NOT_REACHED();
 }
 
 void WebAutomationSession::createBrowsingContext(const String* optionalPresentationHint, Ref<CreateBrowsingContextCallback>&& callback)

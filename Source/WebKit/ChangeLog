@@ -1,3 +1,12 @@
+2019-01-20  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        Unreviewed, fix -Wreturn-type warning
+        https://bugs.webkit.org/show_bug.cgi?id=193333
+        <rdar://problem/45649489>
+
+        * UIProcess/Automation/WebAutomationSession.cpp:
+        (WebKit::toProtocol):
+
 2019-01-20  chris fleizach  <cfleizach@apple.com>
 
         AX: Support returning relative frames for accessibility
