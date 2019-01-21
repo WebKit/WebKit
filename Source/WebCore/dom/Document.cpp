@@ -7919,7 +7919,7 @@ static Optional<IntersectionObservationState> computeIntersectionState(FrameView
         if (&targetRenderer->frame() == &rootRenderer->frame())
             intersectionState.absoluteIntersectionRect = rootAbsoluteIntersectionRect;
         else {
-            FloatRect rootViewIntersectionRect = frameView.delegatesScrolling() ? rootAbsoluteIntersectionRect : frameView.contentsToView(rootAbsoluteIntersectionRect);
+            FloatRect rootViewIntersectionRect = frameView.contentsToView(rootAbsoluteIntersectionRect);
             intersectionState.absoluteIntersectionRect = targetRenderer->view().frameView().rootViewToContents(rootViewIntersectionRect);
         }
     }

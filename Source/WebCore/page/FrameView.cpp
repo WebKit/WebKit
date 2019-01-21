@@ -4654,19 +4654,12 @@ IntRect FrameView::convertFromRendererToContainingView(const RenderElement* rend
 {
     IntRect rect = snappedIntRect(enclosingLayoutRect(renderer->localToAbsoluteQuad(FloatRect(rendererRect)).boundingBox()));
 
-    if (!delegatesScrolling())
-        rect = contentsToView(rect);
-
-    return rect;
+    return contentsToView(rect);
 }
 
 IntRect FrameView::convertFromContainingViewToRenderer(const RenderElement* renderer, const IntRect& viewRect) const
 {
-    IntRect rect = viewRect;
-    
-    // Convert from FrameView coords into page ("absolute") coordinates.
-    if (!delegatesScrolling())
-        rect = viewToContents(rect);
+    IntRect rect = viewToContents(viewRect);
 
     // FIXME: we don't have a way to map an absolute rect down to a local quad, so just
     // move the rect for now.
@@ -4676,11 +4669,7 @@ IntRect FrameView::convertFromContainingViewToRenderer(const RenderElement* rend
 
 FloatRect FrameView::convertFromContainingViewToRenderer(const RenderElement* renderer, const FloatRect& viewRect) const
 {
-    FloatRect rect = viewRect;
-
-    // Convert from FrameView coords into page ("absolute") coordinates.
-    if (!delegatesScrolling())
-        rect = viewToContents(rect);
+    FloatRect rect = viewToContents(viewRect);
 
     return (renderer->absoluteToLocalQuad(rect)).boundingBox();
 }
@@ -4689,11 +4678,7 @@ IntPoint FrameView::convertFromRendererToContainingView(const RenderElement* ren
 {
     IntPoint point = roundedIntPoint(renderer->localToAbsolute(rendererPoint, UseTransforms));
 
-    // Convert from page ("absolute") to FrameView coordinates.
-    if (!delegatesScrolling())
-        point = contentsToView(point);
-
-    return point;
+    return contentsToView(point);
 }
 
 IntPoint FrameView::convertFromContainingViewToRenderer(const RenderElement* renderer, const IntPoint& viewPoint) const

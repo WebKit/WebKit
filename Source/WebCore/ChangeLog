@@ -1,3 +1,26 @@
+2019-01-21  Antti Koivisto  <antti@apple.com>
+
+        Move delegatesScrolling() tests to lower level conversion function in ScrollView
+        https://bugs.webkit.org/show_bug.cgi?id=193649
+
+        Reviewed by Frédéric Wang.
+
+        This reduces places where these tests are needed and helps avoid mistakes.
+
+        * dom/Document.cpp:
+        (WebCore::computeIntersectionState):
+        * page/FrameView.cpp:
+        (WebCore::FrameView::convertFromRendererToContainingView const):
+        (WebCore::FrameView::convertFromContainingViewToRenderer const):
+        * platform/ScrollView.cpp:
+        (WebCore::ScrollView::viewToContents const):
+        (WebCore::ScrollView::contentsToView const):
+        (WebCore::ScrollView::contentsToContainingViewContents const):
+        (WebCore::ScrollView::rootViewToContents const):
+        (WebCore::ScrollView::contentsToRootView const):
+        (WebCore::ScrollView::windowToContents const):
+        (WebCore::ScrollView::contentsToWindow const):
+
 2019-01-21  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         REGRESSION(r239915): about 130 test failures on WPE
