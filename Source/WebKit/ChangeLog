@@ -1,3 +1,23 @@
+2019-01-20  chris fleizach  <cfleizach@apple.com>
+
+        AX: Support returning relative frames for accessibility
+        https://bugs.webkit.org/show_bug.cgi?id=193414
+        <rdar://problem/47268501>
+
+        Reviewed by Zalan Bujtas.
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView accessibilityAttributeValue:forParameter:]):
+        (-[WKWebView IGNORE_WARNINGS_END]):
+        * UIProcess/API/mac/WKView.mm:
+        (-[WKView accessibilityAttributeValue:forParameter:]):
+        (-[WKView IGNORE_WARNINGS_END]):
+        * UIProcess/Cocoa/WebViewImpl.h:
+        * UIProcess/Cocoa/WebViewImpl.mm:
+        (WebKit::WebViewImpl::accessibilityAttributeValue):
+        * UIProcess/ios/WKContentView.mm:
+        (-[WKContentView accessibilityConvertRelativeFrameFromPage:]):
+
 2019-01-20  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         Unreviewed, rolling out r240209.

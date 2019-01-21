@@ -42,6 +42,8 @@
 #import "AccessibilityTableCell.h"
 #import "AccessibilityTableColumn.h"
 #import "AccessibilityTableRow.h"
+#import "Chrome.h"
+#import "ChromeClient.h"
 #import "ColorMac.h"
 #import "ContextMenuController.h"
 #import "Editing.h"
@@ -51,6 +53,7 @@
 #import "FrameLoaderClient.h"
 #import "FrameSelection.h"
 #import "HTMLNames.h"
+#import "LayoutRect.h"
 #import "LocalizedStrings.h"
 #import "Page.h"
 #import "RenderTextControl.h"
@@ -60,6 +63,8 @@
 #import "TextCheckerClient.h"
 #import "TextCheckingHelper.h"
 #import "VisibleUnits.h"
+#import "WAKView.h"
+#import "WAKWindow.h"
 #import "WebCoreFrameView.h"
 
 using namespace WebCore;
@@ -461,31 +466,42 @@ static void convertPathToScreenSpaceFunction(PathConversionInfo& conversion, con
 {
     WebAccessibilityObjectWrapperBase *wrapper = conversion.wrapper;
     CGMutablePathRef newPath = conversion.path;
+    FloatRect rect;
     switch (element.type) {
     case PathElementMoveToPoint:
     {
-        CGPoint newPoint = [wrapper convertPointToScreenSpace:element.points[0]];
+        rect = FloatRect(element.points[0], FloatSize());
+        CGPoint newPoint = [wrapper convertRectToSpace:rect space:ScreenSpace].origin;
         CGPathMoveToPoint(newPath, nil, newPoint.x, newPoint.y);
         break;
     }
     case PathElementAddLineToPoint:
     {
-        CGPoint newPoint = [wrapper convertPointToScreenSpace:element.points[0]];
+        rect = FloatRect(element.points[0], FloatSize());
+        CGPoint newPoint = [wrapper convertRectToSpace:rect space:ScreenSpace].origin;
         CGPathAddLineToPoint(newPath, nil, newPoint.x, newPoint.y);
         break;
     }
     case PathElementAddQuadCurveToPoint:
     {
-        CGPoint newPoint1 = [wrapper convertPointToScreenSpace:element.points[0]];
-        CGPoint newPoint2 = [wrapper convertPointToScreenSpace:element.points[1]];
+        rect = FloatRect(element.points[0], FloatSize());
+        CGPoint newPoint1 = [wrapper convertRectToSpace:rect space:ScreenSpace].origin;
+
+        rect = FloatRect(element.points[1], FloatSize());
+        CGPoint newPoint2 = [wrapper convertRectToSpace:rect space:ScreenSpace].origin;
         CGPathAddQuadCurveToPoint(newPath, nil, newPoint1.x, newPoint1.y, newPoint2.x, newPoint2.y);
         break;
     }
     case PathElementAddCurveToPoint:
     {
-        CGPoint newPoint1 = [wrapper convertPointToScreenSpace:element.points[0]];
-        CGPoint newPoint2 = [wrapper convertPointToScreenSpace:element.points[1]];
-        CGPoint newPoint3 = [wrapper convertPointToScreenSpace:element.points[2]];
+        rect = FloatRect(element.points[0], FloatSize());
+        CGPoint newPoint1 = [wrapper convertRectToSpace:rect space:ScreenSpace].origin;
+
+        rect = FloatRect(element.points[1], FloatSize());
+        CGPoint newPoint2 = [wrapper convertRectToSpace:rect space:ScreenSpace].origin;
+
+        rect = FloatRect(element.points[2], FloatSize());
+        CGPoint newPoint3 = [wrapper convertRectToSpace:rect space:ScreenSpace].origin;
         CGPathAddCurveToPoint(newPath, nil, newPoint1.x, newPoint1.y, newPoint2.x, newPoint2.y, newPoint3.x, newPoint3.y);
         break;
     }
@@ -507,11 +523,80 @@ static void convertPathToScreenSpaceFunction(PathConversionInfo& conversion, con
     return conversion.path;
 }
 
-- (CGPoint)convertPointToScreenSpace:(FloatPoint &)point
+- (id)_accessibilityWebDocumentView
 {
-    UNUSED_PARAM(point);
     ASSERT_NOT_REACHED();
-    return CGPointZero;
+    // Overridden by sub-classes
+    return nil;
+}
+
+- (CGRect)convertRectToSpace:(WebCore::FloatRect &)rect space:(ConversionSpace)space
+{
+    if (!m_object)
+        return CGRectZero;
+    
+    CGSize size = CGSizeMake(rect.size().width(), rect.size().height());
+    CGPoint point = CGPointMake(rect.x(), rect.y());
+    
+    CGRect cgRect = CGRectMake(point.x, point.y, size.width, size.height);
+
+    // WebKit1 code path... platformWidget() exists.
+    FrameView* frameView = m_object->documentFrameView();
+#if PLATFORM(IOS_FAMILY)
+    WAKView* documentView = frameView ? frameView->documentView() : nullptr;
+    if (documentView) {
+        cgRect = [documentView convertRect:cgRect toView:nil];
+        
+        // we need the web document view to give us our final screen coordinates
+        // because that can take account of the scroller
+        id webDocument = [self _accessibilityWebDocumentView];
+        if (webDocument)
+            cgRect = [webDocument convertRect:cgRect toView:nil];
+    }
+#else
+    if (frameView && frameView->platformWidget()) {
+        NSRect nsRect = NSRectFromCGRect(cgRect);
+        NSView* view = frameView->documentView();
+        ALLOW_DEPRECATED_DECLARATIONS_BEGIN
+        nsRect = [[view window] convertRectToScreen:[view convertRect:nsRect toView:nil]];
+        ALLOW_DEPRECATED_DECLARATIONS_END
+        cgRect = NSRectToCGRect(nsRect);
+    }
+#endif
+    else {
+        // Find the appropriate scroll view to use to convert the contents to the window.
+        ScrollView* scrollView = nullptr;
+        const AccessibilityObject* parent = AccessibilityObject::matchedParent(*m_object, false, [] (const AccessibilityObject& object) {
+            return is<AccessibilityScrollView>(object);
+        });
+        if (parent)
+            scrollView = downcast<AccessibilityScrollView>(*parent).scrollView();
+        
+        auto intRect = snappedIntRect(IntRect(cgRect));
+        if (scrollView)
+            intRect = scrollView->contentsToRootView(intRect);
+        
+        if (space == ScreenSpace) {
+            auto page = m_object->page();
+            
+            // If we have an empty chrome client (like SVG) then we should use the page
+            // of the scroll view parent to help us get to the screen rect.
+            if (parent && page && page->chrome().client().isEmptyChromeClient())
+                page = parent->page();
+            
+            if (page) {
+#if PLATFORM(IOS_FAMILY)
+                intRect = page->chrome().rootViewToAccessibilityScreen(intRect);
+#else
+                intRect = page->chrome().rootViewToScreen(intRect);
+#endif
+            }
+        }
+        
+        cgRect = (CGRect)intRect;
+    }
+    
+    return cgRect;
 }
 
 - (NSString *)ariaLandmarkRoleDescription

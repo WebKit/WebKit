@@ -190,6 +190,12 @@ JSRetainPtr<JSStringRef> AccessibilityUIElement::stringAttributeValue(JSStringRe
     return nullptr;
 }
 
+JSRetainPtr<JSStringRef> AccessibilityUIElement::stringDescriptionOfAttributeValue(JSStringRef)
+{
+    notImplemented();
+    return nullptr;
+}
+
 double AccessibilityUIElement::numberAttributeValue(JSStringRef attribute)
 {
     notImplemented();

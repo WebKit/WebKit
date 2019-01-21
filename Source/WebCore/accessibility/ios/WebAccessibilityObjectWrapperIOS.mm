@@ -77,7 +77,6 @@ enum {
 @end
 
 @interface WebAccessibilityObjectWrapper (AccessibilityPrivate)
-- (id)_accessibilityWebDocumentView;
 - (id)accessibilityContainer;
 - (void)setAccessibilityLabel:(NSString *)label;
 - (void)setAccessibilityValue:(NSString *)value;
@@ -1498,8 +1497,9 @@ static void appendStringToResult(NSMutableString *result, NSString *string)
     if (![self _prepareAccessibilityCall])
         return point;
     
-    FloatPoint floatPoint = FloatPoint(point);
-    return [self convertPointToScreenSpace:floatPoint];
+    auto floatPoint = FloatPoint(point);
+    auto floatRect = FloatRect(floatPoint, FloatSize());
+    return [self convertRectToSpace:floatRect space:ScreenSpace].origin;
 }
 
 - (BOOL)accessibilityPerformEscape
@@ -1560,102 +1560,10 @@ static void appendStringToResult(NSMutableString *result, NSString *string)
     return result;
 }
 
-- (CGPoint)convertPointToScreenSpace:(FloatPoint &)point
+- (CGRect)_accessibilityRelativeFrame
 {
-    if (!m_object)
-        return CGPointZero;
-    
-    CGPoint cgPoint = CGPointMake(point.x(), point.y());
-    
-    FrameView* frameView = m_object->documentFrameView();
-    WAKView* documentView = frameView ? frameView->documentView() : nullptr;
-    if (documentView) {
-        cgPoint = [documentView convertPoint:cgPoint toView:nil];
-
-        // we need the web document view to give us our final screen coordinates
-        // because that can take account of the scroller
-        id webDocument = [self _accessibilityWebDocumentView];
-        if (webDocument)
-            cgPoint = [webDocument convertPoint:cgPoint toView:nil];
-    }
-    else {
-        // Find the appropriate scroll view to use to convert the contents to the window.
-        ScrollView* scrollView = nullptr;
-        const AccessibilityObject* parent = AccessibilityObject::matchedParent(*m_object, false, [] (const AccessibilityObject& object) {
-            return is<AccessibilityScrollView>(object);
-        });
-        if (parent)
-            scrollView = downcast<AccessibilityScrollView>(*parent).scrollView();
-        
-        IntPoint intPoint = flooredIntPoint(point);
-        if (scrollView)
-            intPoint = scrollView->contentsToRootView(intPoint);
-        
-        Page* page = m_object->page();
-        
-        // If we have an empty chrome client (like SVG) then we should use the page
-        // of the scroll view parent to help us get to the screen rect.
-        if (parent && page && page->chrome().client().isEmptyChromeClient())
-            page = parent->page();
-        
-        if (page) {
-            IntRect rect = IntRect(intPoint, IntSize(0, 0));
-            intPoint = page->chrome().rootViewToAccessibilityScreen(rect).location();
-        }
-        
-        cgPoint = (CGPoint)intPoint;
-    }
-    
-    return cgPoint;
-}
-
-- (CGRect)convertRectToScreenSpace:(IntRect &)rect
-{
-    if (!m_object)
-        return CGRectZero;
-    
-    CGSize size = CGSizeMake(rect.size().width(), rect.size().height());
-    CGPoint point = CGPointMake(rect.x(), rect.y());
-    
-    CGRect frame = CGRectMake(point.x, point.y, size.width, size.height);
-    
-    FrameView* frameView = m_object->documentFrameView();
-    WAKView* documentView = frameView ? frameView->documentView() : nil;
-    if (documentView) {
-        frame = [documentView convertRect:frame toView:nil];
-        
-        // we need the web document view to give us our final screen coordinates
-        // because that can take account of the scroller
-        id webDocument = [self _accessibilityWebDocumentView];
-        if (webDocument)
-            frame = [webDocument convertRect:frame toView:nil];
-        
-    } else {
-        // Find the appropriate scroll view to use to convert the contents to the window.
-        ScrollView* scrollView = nullptr;
-        const AccessibilityObject* parent = AccessibilityObject::matchedParent(*m_object, false, [] (const AccessibilityObject& object) {
-            return is<AccessibilityScrollView>(object);
-        });
-        if (parent)
-            scrollView = downcast<AccessibilityScrollView>(*parent).scrollView();
-        
-        if (scrollView)
-            rect = scrollView->contentsToRootView(rect);
-        
-        Page* page = m_object->page();
-        
-        // If we have an empty chrome client (like SVG) then we should use the page
-        // of the scroll view parent to help us get to the screen rect.
-        if (parent && page && page->chrome().client().isEmptyChromeClient())
-            page = parent->page();
-        
-        if (page)
-            rect = page->chrome().rootViewToAccessibilityScreen(rect);
-        
-        frame = (CGRect)rect;
-    }
-    
-    return frame;
+    auto rect = FloatRect(snappedIntRect(m_object->elementRect()));
+    return [self convertRectToSpace:rect space:PageSpace];
 }
 
 // Used by UIKit accessibility bundle to help determine distance during a hit-test.
@@ -1673,11 +1581,11 @@ static void appendStringToResult(NSMutableString *result, NSString *string)
     if (![self _prepareAccessibilityCall])
         return CGRectZero;
     
-    Document* document = m_object->document();
+    auto document = m_object->document();
     if (!document || !document->view())
         return CGRectZero;
-    IntRect rect = snappedIntRect(document->view()->unobscuredContentRect());
-    return [self convertRectToScreenSpace:rect];
+    auto rect = FloatRect(snappedIntRect(document->view()->unobscuredContentRect()));
+    return [self convertRectToSpace:rect space:ScreenSpace];
 }
 
 // The "center point" is where VoiceOver will "press" an object. This may not be the actual
@@ -1687,8 +1595,8 @@ static void appendStringToResult(NSMutableString *result, NSString *string)
     if (![self _prepareAccessibilityCall])
         return CGPointZero;
     
-    IntRect rect = snappedIntRect(m_object->boundingBoxRect());
-    CGRect cgRect = [self convertRectToScreenSpace:rect];
+    auto rect = FloatRect(snappedIntRect(m_object->boundingBoxRect()));
+    CGRect cgRect = [self convertRectToSpace:rect space:ScreenSpace];
     return CGPointMake(CGRectGetMidX(cgRect), CGRectGetMidY(cgRect));
 }
 
@@ -1697,8 +1605,8 @@ static void appendStringToResult(NSMutableString *result, NSString *string)
     if (![self _prepareAccessibilityCall])
         return CGRectZero;
     
-    IntRect rect = snappedIntRect(m_object->elementRect());
-    return [self convertRectToScreenSpace:rect];
+    auto rect = FloatRect(snappedIntRect(m_object->elementRect()));
+    return [self convertRectToSpace:rect space:ScreenSpace];
 }
 
 // Checks whether a link contains only static text and images (and has been divided unnaturally by <spans> and other nefarious mechanisms).
@@ -2742,8 +2650,8 @@ static void AXAttributedStringAppendText(NSMutableAttributedString* attrString, 
     if (!range)
         return CGRectZero;
     
-    IntRect rect = m_object->boundsForRange(range);
-    return [self convertRectToScreenSpace:rect];
+    auto rect = FloatRect(m_object->boundsForRange(range));
+    return [self convertRectToSpace:rect space:ScreenSpace];
 }
 
 - (RefPtr<Range>)rangeFromMarkers:(NSArray *)markers withText:(NSString *)text
@@ -2788,8 +2696,8 @@ static void AXAttributedStringAppendText(NSMutableAttributedString* attrString, 
     NSMutableArray *rects = [NSMutableArray arrayWithCapacity:size];
     for (unsigned i = 0; i < size; i++) {
         const WebCore::SelectionRect& coreRect = selectionRects[i];
-        IntRect selectionRect = coreRect.rect();
-        CGRect rect = [self convertRectToScreenSpace:selectionRect];
+        auto selectionRect = FloatRect(coreRect.rect());
+        CGRect rect = [self convertRectToSpace:selectionRect space:ScreenSpace];
         [rects addObject:[NSValue valueWithRect:rect]];
     }
     

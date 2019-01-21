@@ -1076,6 +1076,12 @@ JSRetainPtr<JSStringRef> AccessibilityUIElement::allAttributes()
     return JSStringCreateWithUTF8CString(attributesOfElement(this).utf8().data());
 }
 
+JSRetainPtr<JSStringRef> AccessibilityUIElement::stringDescriptionOfAttributeValue(JSStringRef attribute)
+{
+    // FIXME: implement
+    return JSStringCreateWithCharacters(0, 0);
+}
+
 JSRetainPtr<JSStringRef> AccessibilityUIElement::stringAttributeValue(JSStringRef attribute)
 {
     if (!ATK_IS_OBJECT(m_element.get()))

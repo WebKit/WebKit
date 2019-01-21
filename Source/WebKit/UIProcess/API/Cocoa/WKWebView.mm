@@ -4041,6 +4041,21 @@ IGNORE_WARNINGS_END
     return _impl->accessibilityAttributeValue(attribute);
 }
 
+IGNORE_WARNINGS_BEGIN("deprecated-implementations")
+- (id)accessibilityAttributeValue:(NSString *)attribute forParameter:(id)parameter
+IGNORE_WARNINGS_END
+{
+    return _impl->accessibilityAttributeValue(attribute, parameter);
+}
+
+IGNORE_WARNINGS_BEGIN("deprecated-implementations")
+- (NSArray<NSString *> *)accessibilityParameterizedAttributeNames
+IGNORE_WARNINGS_END
+{
+    NSArray<NSString *> *names = [super accessibilityParameterizedAttributeNames];
+    return [names arrayByAddingObject:@"AXConvertRelativeFrame"];
+}
+
 - (NSView *)hitTest:(NSPoint)point
 {
     if (!_impl)

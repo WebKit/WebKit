@@ -176,9 +176,9 @@ static NSString* attributesOfElement(id accessibilityObject)
             continue;
         
         // Skip screen-specific information.
-        if ([attribute isEqualToString:@"_AXPrimaryScreenHeight"])
+        if ([attribute isEqualToString:@"_AXPrimaryScreenHeight"] || [attribute isEqualToString:@"AXRelativeFrame"])
             continue;
-        
+
         // accessibilityAttributeValue: can throw an if an attribute is not returned.
         // For DumpRenderTree's purpose, we should ignore those exceptions
         BEGIN_AX_OBJC_EXCEPTIONS
@@ -555,6 +555,15 @@ JSRetainPtr<JSStringRef> AccessibilityUIElement::allAttributes()
 {
     NSString* attributes = attributesOfElement(m_element);
     return [attributes createJSStringRef];
+}
+    
+JSRetainPtr<JSStringRef> AccessibilityUIElement::stringDescriptionOfAttributeValue(JSStringRef attribute)
+{
+    BEGIN_AX_OBJC_EXCEPTIONS
+    NSString *value = descriptionOfValue([m_element accessibilityAttributeValue:[NSString stringWithJSStringRef:attribute]], m_element);
+    return [value createJSStringRef];
+    END_AX_OBJC_EXCEPTIONS
+    return nullptr;
 }
 
 JSRetainPtr<JSStringRef> AccessibilityUIElement::stringAttributeValue(JSStringRef attribute)

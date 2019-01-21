@@ -65,7 +65,9 @@ class VisiblePosition;
 - (void)accessibilityPostedNotification:(NSString *)notificationName userInfo:(NSDictionary *)userInfo;
 
 - (CGPathRef)convertPathToScreenSpace:(WebCore::Path &)path;
-- (CGPoint)convertPointToScreenSpace:(WebCore::FloatPoint &)point;
+
+enum ConversionSpace { ScreenSpace, PageSpace };
+- (CGRect)convertRectToSpace:(WebCore::FloatRect &)rect space:(ConversionSpace)space;
 
 // Math related functions
 - (NSArray *)accessibilityMathPostscriptPairs;
@@ -73,6 +75,10 @@ class VisiblePosition;
 
 extern WebCore::AccessibilitySearchCriteria accessibilitySearchCriteriaForSearchPredicateParameterizedAttribute(const NSDictionary *);
 extern NSArray *convertToNSArray(const WebCore::AccessibilityObject::AccessibilityChildrenVector&);
+
+#if PLATFORM(IOS_FAMILY)
+- (id)_accessibilityWebDocumentView;
+#endif
 
 @end
 
