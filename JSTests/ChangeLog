@@ -1,3 +1,14 @@
+2019-01-20  Saam Barati  <sbarati@apple.com>
+
+        MovHint must merge NodeBytecodeUsesAsValue for its child
+        https://bugs.webkit.org/show_bug.cgi?id=186916
+        <rdar://problem/41396612>
+
+        Reviewed by Yusuke Suzuki.
+
+        * stress/arith-abs-to-arith-negate-range-optimizaton.js:
+        * stress/movhint-backwards-propagation-must-merge-use-as-value.js: Added.
+
 2019-01-20  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] Invalidate old scope operations using global lexical binding epoch

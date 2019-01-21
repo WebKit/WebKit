@@ -205,7 +205,6 @@ private:
             break;
         }
             
-        case MovHint:
         case Check:
         case CheckVarargs:
             break;

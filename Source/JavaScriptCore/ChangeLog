@@ -1,3 +1,34 @@
+2019-01-20  Saam Barati  <sbarati@apple.com>
+
+        MovHint must merge NodeBytecodeUsesAsValue for its child in backwards propagation
+        https://bugs.webkit.org/show_bug.cgi?id=186916
+        <rdar://problem/41396612>
+
+        Reviewed by Yusuke Suzuki.
+
+        Otherwise, we may not think we care about the non-integral part in
+        a division (or perhaps overflow in an add, etc). Consider a program
+        like this:
+        
+        ```return a / b```
+        
+        That gets compiled to:
+        ```
+        a: ArithDiv // We don't check that the remainder is zero here.
+        b: MovHint(@a)
+        c: ForceOSRExit
+        d: Unreachable
+        ```
+        
+        If we don't inform @a that we care about its result in full number
+        accuracy, it will choose to ignore its non-integral remainder. This
+        makes sense if *everybody* that all uses of the Div only cared about
+        the integral part. However, OSR exit is not one of those users. OSR
+        exit cares about the fractional bits in such a Div.
+
+        * dfg/DFGBackwardsPropagationPhase.cpp:
+        (JSC::DFG::BackwardsPropagationPhase::propagate):
+
 2019-01-20  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] Invalidate old scope operations using global lexical binding epoch
