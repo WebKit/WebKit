@@ -6437,8 +6437,6 @@
 		1CA0C2E521EED12A00A11860 /* WHLSLFunctionStageChecker.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WHLSLFunctionStageChecker.h; sourceTree = "<group>"; };
 		1CA0C2EA21EED6F500A11860 /* WHLSLLiteralTypeChecker.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WHLSLLiteralTypeChecker.h; sourceTree = "<group>"; };
 		1CA0C2EC21EED6F600A11860 /* WHLSLLiteralTypeChecker.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = WHLSLLiteralTypeChecker.cpp; sourceTree = "<group>"; };
-		1CA0C2F421EEDAD000A11860 /* WHLSLLoopChecker.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = WHLSLLoopChecker.cpp; sourceTree = "<group>"; };
-		1CA0C2F521EEDAD100A11860 /* WHLSLLoopChecker.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WHLSLLoopChecker.h; sourceTree = "<group>"; };
 		1CA19E030DC255950065A994 /* EventLoopMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = EventLoopMac.mm; sourceTree = "<group>"; };
 		1CA19E150DC255CA0065A994 /* EventLoop.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EventLoop.h; sourceTree = "<group>"; };
 		1CAF347E0A6C405200ABE06E /* WebScriptObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebScriptObject.h; sourceTree = "<group>"; };
@@ -6460,6 +6458,8 @@
 		1CDD45E40BA9C84600F90147 /* DebugRelease.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = DebugRelease.xcconfig; sourceTree = "<group>"; };
 		1CDD45E50BA9C84600F90147 /* WebCore.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = WebCore.xcconfig; sourceTree = "<group>"; };
 		1CDD45E60BA9C84600F90147 /* Base.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = Base.xcconfig; sourceTree = "<group>"; };
+		1CECB3A821F2B67300F44542 /* WHLSLStatementBehaviorChecker.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WHLSLStatementBehaviorChecker.h; sourceTree = "<group>"; };
+		1CECB3A921F2B67300F44542 /* WHLSLStatementBehaviorChecker.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = WHLSLStatementBehaviorChecker.cpp; sourceTree = "<group>"; };
 		1CFAE3220A6D6A3F0032593D /* libobjc.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libobjc.dylib; path = /usr/lib/libobjc.dylib; sourceTree = "<absolute>"; };
 		1DC553FD211BA12A004B780E /* NavigatorShare.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = NavigatorShare.idl; sourceTree = "<group>"; };
 		1DC553FF211BA841004B780E /* ShareData.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = ShareData.idl; sourceTree = "<group>"; };
@@ -25580,8 +25580,6 @@
 				C210E91221B4BD1000B7F83D /* WHLSLLexer.h */,
 				1CA0C2EC21EED6F600A11860 /* WHLSLLiteralTypeChecker.cpp */,
 				1CA0C2EA21EED6F500A11860 /* WHLSLLiteralTypeChecker.h */,
-				1CA0C2F421EEDAD000A11860 /* WHLSLLoopChecker.cpp */,
-				1CA0C2F521EEDAD100A11860 /* WHLSLLoopChecker.h */,
 				C234A98D21E88884003C984D /* WHLSLNameContext.cpp */,
 				C234A98E21E88885003C984D /* WHLSLNameContext.h */,
 				C234A98A21E8883E003C984D /* WHLSLNameResolver.cpp */,
@@ -25597,6 +25595,8 @@
 				C234A99721E90F28003C984D /* WHLSLResolveOverloadImpl.h */,
 				C234A99D21E910BD003C984D /* WHLSLResolvingType.h */,
 				C21BF74521CD969800227979 /* WHLSLStandardLibrary.txt */,
+				1CECB3A921F2B67300F44542 /* WHLSLStatementBehaviorChecker.cpp */,
+				1CECB3A821F2B67300F44542 /* WHLSLStatementBehaviorChecker.h */,
 				C234A9A921E92C17003C984D /* WHLSLSynthesizeArrayOperatorLength.cpp */,
 				C234A9AF21E92C1B003C984D /* WHLSLSynthesizeArrayOperatorLength.h */,
 				C234A9B021E92C1C003C984D /* WHLSLSynthesizeConstructors.cpp */,

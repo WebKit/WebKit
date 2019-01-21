@@ -1,3 +1,25 @@
+2019-01-20  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [WHLSL] Add the statement behavior checker
+        https://bugs.webkit.org/show_bug.cgi?id=193487
+
+        Reviewed by Dean Jackson.
+
+        This is a translation of https://github.com/gpuweb/WHLSL/blob/master/Spec/source/index.rst#typing-statements
+        into C++. It is meant to replace the ReturnChecker and UnreachableCodeChecker in the reference implementation.
+
+        No new tests because it isn't hooked up yet. Not enough of the compiler exists to have any meaningful sort
+        of test. When enough of the compiler is present, I'll port the reference implementation's test suite.
+
+        * Modules/webgpu/WHLSL/WHLSLLoopChecker.cpp: Removed. StatementBehaviorChecker does everything that LoopChecker
+        does.
+        * Modules/webgpu/WHLSL/WHLSLStatementBehaviorChecker.cpp: Added.
+        (WebCore::WHLSL::StatementBehaviorChecker::takeFunctionBehavior):
+        (WebCore::WHLSL::checkStatementBehavior):
+        * Modules/webgpu/WHLSL/WHLSLStatementBehaviorChecker.h: Renamed from Source/WebCore/Modules/webgpu/WHLSL/WHLSLLoopChecker.h.
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+
 2019-01-20  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         REGRESSION(r240174): Wrong preprocessor guards in RenderImage::paintAreaElementFocusRing

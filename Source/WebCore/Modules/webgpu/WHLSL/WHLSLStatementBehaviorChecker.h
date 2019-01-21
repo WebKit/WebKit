@@ -33,7 +33,7 @@ namespace WHLSL {
 
 class Program;
 
-bool checkLoops(Program&);
+bool checkStatementBehavior(Program&);
 
 }
 
