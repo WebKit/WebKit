@@ -69,6 +69,7 @@ public:
     BuiltInSemantic(BuiltInSemantic&&) = default;
 
     Variable variable() const { return m_variable; }
+    Optional<unsigned>& targetIndex() { return m_targetIndex; }
 
     bool operator==(const BuiltInSemantic& other) const
     {

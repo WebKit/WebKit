@@ -71,7 +71,7 @@ public:
             setError();
             return;
         }
-        m_entryPointItems.append(EntryPointItem(m_typeReferences.last().get(), *m_currentSemantic));
+        m_entryPointItems.append(EntryPointItem(m_typeReferences.last().get(), *m_currentSemantic, m_path));
     }
 
     void visit(AST::NativeTypeDeclaration& nativeTypeDeclaration)
@@ -85,7 +85,7 @@ public:
             return;
         }
 
-        m_entryPointItems.append(EntryPointItem(m_typeReferences.last().get(), *m_currentSemantic));
+        m_entryPointItems.append(EntryPointItem(m_typeReferences.last().get(), *m_currentSemantic, m_path));
     }
 
     void visit(AST::StructureDefinition& structureDefinition)
@@ -98,7 +98,9 @@ public:
         for (auto& structureElement : structureDefinition.structureElements()) {
             if (structureElement.semantic())
                 m_currentSemantic = &*structureElement.semantic();
+            m_path.append(structureElement.name());
             checkErrorAndVisit(structureElement);
+            m_path.takeLast();
         }
     }
 
@@ -122,7 +124,7 @@ public:
             setError();
             return;
         }
-        m_entryPointItems.append(EntryPointItem(pointerType, *m_currentSemantic));
+        m_entryPointItems.append(EntryPointItem(pointerType, *m_currentSemantic, m_path));
     }
 
     void visit(AST::ArrayReferenceType& arrayReferenceType)
@@ -131,7 +133,7 @@ public:
             setError();
             return;
         }
-        m_entryPointItems.append(EntryPointItem(arrayReferenceType, *m_currentSemantic));
+        m_entryPointItems.append(EntryPointItem(arrayReferenceType, *m_currentSemantic, m_path));
     }
 
     void visit(AST::ArrayType& arrayType)
@@ -140,7 +142,7 @@ public:
             setError();
             return;
         }
-        m_entryPointItems.append(EntryPointItem(arrayType, *m_currentSemantic));
+        m_entryPointItems.append(EntryPointItem(arrayType, *m_currentSemantic, m_path));
     }
 
     void visit(AST::VariableDeclaration& variableDeclaration)
@@ -148,11 +150,14 @@ public:
         ASSERT(!m_currentSemantic);
         if (variableDeclaration.semantic())
             m_currentSemantic = &*variableDeclaration.semantic();
-        if (variableDeclaration.type())
-            checkErrorAndVisit(*variableDeclaration.type());
+        ASSERT(variableDeclaration.type());
+        m_path.append(variableDeclaration.name());
+        checkErrorAndVisit(*variableDeclaration.type());
+        m_path.takeLast();
     }
 
 private:
+    Vector<String> m_path;
     const Intrinsics& m_intrinsics;
     AST::Semantic* m_currentSemantic { nullptr };
     Vector<std::reference_wrapper<AST::TypeReference>> m_typeReferences;

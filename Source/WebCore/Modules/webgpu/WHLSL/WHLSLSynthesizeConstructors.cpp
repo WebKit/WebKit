@@ -28,8 +28,14 @@
 
 #if ENABLE(WEBGPU)
 
+#include "WHLSLArrayType.h"
+#include "WHLSLArrayReferenceType.h"
+#include "WHLSLEnumerationDefinition.h"
 #include "WHLSLNativeFunctionDeclaration.h"
+#include "WHLSLNativeTypeDeclaration.h"
+#include "WHLSLPointerType.h"
 #include "WHLSLProgram.h"
+#include "WHLSLStructureDefinition.h"
 #include "WHLSLTypeReference.h"
 #include "WHLSLVariableDeclaration.h"
 #include "WHLSLVisitor.h"

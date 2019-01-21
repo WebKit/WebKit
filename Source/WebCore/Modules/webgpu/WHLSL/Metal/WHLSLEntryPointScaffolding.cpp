@@ -23,58 +23,55 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#include "config.h"
+#include "WHLSLEntryPointScaffolding.h"
 
 #if ENABLE(WEBGPU)
 
-#include "WHLSLLexer.h"
-#include "WHLSLNamedType.h"
-#include "WHLSLStructureElement.h"
-#include <wtf/Vector.h>
-#include <wtf/text/WTFString.h>
+#include "WHLSLGatherEntryPointItems.h"
 
 namespace WebCore {
 
 namespace WHLSL {
 
-namespace AST {
+namespace Metal {
 
-class StructureDefinition : public NamedType {
-public:
-    StructureDefinition(Lexer::Token&& origin, String&& name, StructureElements&& structureElements)
-        : NamedType(WTFMove(origin), WTFMove(name))
-        , m_structureElements(WTFMove(structureElements))
-    {
-    }
+EntryPointScaffolding::EntryPointScaffolding(AST::FunctionDefinition& functionDefinition, Intrinsics& intrinsics)
+    : m_functionDefinition(&functionDefinition)
+    , m_intrinsics(&intrinsics)
+{
+    // FIXME: Implement this.
+    gatherEntryPointItems(*m_intrinsics, *m_functionDefinition);
+}
 
-    virtual ~StructureDefinition() = default;
+String EntryPointScaffolding::helperTypes()
+{
+    // FIXME: Implement this.
+    return String();
+}
 
-    StructureDefinition(const StructureDefinition&) = delete;
-    StructureDefinition(StructureDefinition&&) = default;
+String EntryPointScaffolding::signature()
+{
+    // FIXME: Implement this.
+    return String();
+}
 
-    bool isStructureDefinition() const override { return true; }
+String EntryPointScaffolding::unpack()
+{
+    // FIXME: Implement this.
+    return String();
+}
 
-    StructureElements& structureElements() { return m_structureElements; }
-    StructureElement* find(String& name)
-    {
-        auto iterator = std::find_if(m_structureElements.begin(), m_structureElements.end(), [&](StructureElement& structureElement) -> bool {
-            return structureElement.name() == name;
-        });
-        if (iterator == m_structureElements.end())
-            return nullptr;
-        return &*iterator;
-    }
-
-private:
-    StructureElements m_structureElements;
-};
-
-} // namespace AST
-
+String EntryPointScaffolding::pack(const String&, const String&)
+{
+    // FIXME: Implement this.
+    return String();
 }
 
 }
 
-SPECIALIZE_TYPE_TRAITS_WHLSL_NAMED_TYPE(StructureDefinition, isStructureDefinition())
+}
+
+}
 
 #endif

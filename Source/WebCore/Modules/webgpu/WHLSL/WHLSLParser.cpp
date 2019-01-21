@@ -245,7 +245,7 @@ static Expected<unsigned, Parser::Error> uintLiteralToUint(StringView text)
         text = text.substring(2);
         base = 16;
     }
-    ASSERT(text.endsWith("u"_str));
+    ASSERT(text.endsWith("u"));
     text = text.substring(0, text.length() - 1);
     unsigned result = 0;
     for (auto codePoint : text.codePoints()) {

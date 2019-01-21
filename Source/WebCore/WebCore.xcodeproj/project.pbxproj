@@ -6460,6 +6460,18 @@
 		1CDD45E60BA9C84600F90147 /* Base.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = Base.xcconfig; sourceTree = "<group>"; };
 		1CECB3A821F2B67300F44542 /* WHLSLStatementBehaviorChecker.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WHLSLStatementBehaviorChecker.h; sourceTree = "<group>"; };
 		1CECB3A921F2B67300F44542 /* WHLSLStatementBehaviorChecker.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = WHLSLStatementBehaviorChecker.cpp; sourceTree = "<group>"; };
+		1CECB3AF21F2B98400F44542 /* WHLSLFunctionWriter.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = WHLSLFunctionWriter.cpp; sourceTree = "<group>"; };
+		1CECB3B021F2B98500F44542 /* WHLSLTypeNamer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WHLSLTypeNamer.h; sourceTree = "<group>"; };
+		1CECB3B121F2B98500F44542 /* WHLSLTypeNamer.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = WHLSLTypeNamer.cpp; sourceTree = "<group>"; };
+		1CECB3B221F2B98600F44542 /* WHLSLFunctionWriter.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WHLSLFunctionWriter.h; sourceTree = "<group>"; };
+		1CECB3B521F50AC700F44542 /* WHLSLMetalCodeGenerator.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = WHLSLMetalCodeGenerator.cpp; sourceTree = "<group>"; };
+		1CECB3B621F50AC700F44542 /* WHLSLMetalCodeGenerator.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WHLSLMetalCodeGenerator.h; sourceTree = "<group>"; };
+		1CECB3B821F50D1000F44542 /* WHLSLNativeFunctionWriter.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = WHLSLNativeFunctionWriter.cpp; sourceTree = "<group>"; };
+		1CECB3B921F50D1000F44542 /* WHLSLNativeFunctionWriter.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WHLSLNativeFunctionWriter.h; sourceTree = "<group>"; };
+		1CECB3BA21F511AA00F44542 /* WHLSLEntryPointScaffolding.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = WHLSLEntryPointScaffolding.cpp; sourceTree = "<group>"; };
+		1CECB3BB21F511AA00F44542 /* WHLSLEntryPointScaffolding.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WHLSLEntryPointScaffolding.h; sourceTree = "<group>"; };
+		1CECB3C621F59C8700F44542 /* WHLSLNativeTypeWriter.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = WHLSLNativeTypeWriter.cpp; sourceTree = "<group>"; };
+		1CECB3C721F59C8700F44542 /* WHLSLNativeTypeWriter.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WHLSLNativeTypeWriter.h; sourceTree = "<group>"; };
 		1CFAE3220A6D6A3F0032593D /* libobjc.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libobjc.dylib; path = /usr/lib/libobjc.dylib; sourceTree = "<absolute>"; };
 		1DC553FD211BA12A004B780E /* NavigatorShare.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = NavigatorShare.idl; sourceTree = "<group>"; };
 		1DC553FF211BA841004B780E /* ShareData.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = ShareData.idl; sourceTree = "<group>"; };
@@ -17150,6 +17162,25 @@
 			tabWidth = 4;
 			usesTabs = 0;
 		};
+		1CECB3AD21F2B96400F44542 /* Metal */ = {
+			isa = PBXGroup;
+			children = (
+				1CECB3BA21F511AA00F44542 /* WHLSLEntryPointScaffolding.cpp */,
+				1CECB3BB21F511AA00F44542 /* WHLSLEntryPointScaffolding.h */,
+				1CECB3AF21F2B98400F44542 /* WHLSLFunctionWriter.cpp */,
+				1CECB3B221F2B98600F44542 /* WHLSLFunctionWriter.h */,
+				1CECB3B521F50AC700F44542 /* WHLSLMetalCodeGenerator.cpp */,
+				1CECB3B621F50AC700F44542 /* WHLSLMetalCodeGenerator.h */,
+				1CECB3B821F50D1000F44542 /* WHLSLNativeFunctionWriter.cpp */,
+				1CECB3B921F50D1000F44542 /* WHLSLNativeFunctionWriter.h */,
+				1CECB3B121F2B98500F44542 /* WHLSLTypeNamer.cpp */,
+				1CECB3B021F2B98500F44542 /* WHLSLTypeNamer.h */,
+				1CECB3C621F59C8700F44542 /* WHLSLNativeTypeWriter.cpp */,
+				1CECB3C721F59C8700F44542 /* WHLSLNativeTypeWriter.h */,
+			);
+			path = Metal;
+			sourceTree = "<group>";
+		};
 		26B9998D1803ADFA00D01121 /* cssjit */ = {
 			isa = PBXGroup;
 			children = (
@@ -25562,6 +25593,7 @@
 			isa = PBXGroup;
 			children = (
 				1CA0C2F621EEDAD200A11860 /* AST */,
+				1CECB3AD21F2B96400F44542 /* Metal */,
 				C234A9B221E92C1F003C984D /* WHLSLCheckDuplicateFunctions.cpp */,
 				C234A9AE21E92C1A003C984D /* WHLSLCheckDuplicateFunctions.h */,
 				1C840B9B21EC400900D0500D /* WHLSLChecker.cpp */,

@@ -57,7 +57,7 @@ public:
 
     const Lexer::Token& origin() const { return m_origin; }
 
-    UnnamedType* type() { return m_type ? &*m_type : nullptr; }
+    UnnamedType* resolvedType() { return m_type ? &*m_type : nullptr; }
 
     void setType(UniqueRef<UnnamedType>&& type)
     {

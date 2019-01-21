@@ -27,54 +27,23 @@
 
 #if ENABLE(WEBGPU)
 
-#include "WHLSLLexer.h"
-#include "WHLSLNamedType.h"
-#include "WHLSLStructureElement.h"
-#include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
 namespace WHLSL {
 
-namespace AST {
+class Program;
 
-class StructureDefinition : public NamedType {
-public:
-    StructureDefinition(Lexer::Token&& origin, String&& name, StructureElements&& structureElements)
-        : NamedType(WTFMove(origin), WTFMove(name))
-        , m_structureElements(WTFMove(structureElements))
-    {
-    }
+namespace Metal {
 
-    virtual ~StructureDefinition() = default;
-
-    StructureDefinition(const StructureDefinition&) = delete;
-    StructureDefinition(StructureDefinition&&) = default;
-
-    bool isStructureDefinition() const override { return true; }
-
-    StructureElements& structureElements() { return m_structureElements; }
-    StructureElement* find(String& name)
-    {
-        auto iterator = std::find_if(m_structureElements.begin(), m_structureElements.end(), [&](StructureElement& structureElement) -> bool {
-            return structureElement.name() == name;
-        });
-        if (iterator == m_structureElements.end())
-            return nullptr;
-        return &*iterator;
-    }
-
-private:
-    StructureElements m_structureElements;
-};
-
-} // namespace AST
+// FIXME: This needs to know about the pipeline state object to emit function prologues and epilogues.
+String generateMetalCode(Program&);
 
 }
 
 }
 
-SPECIALIZE_TYPE_TRAITS_WHLSL_NAMED_TYPE(StructureDefinition, isStructureDefinition())
+}
 
 #endif

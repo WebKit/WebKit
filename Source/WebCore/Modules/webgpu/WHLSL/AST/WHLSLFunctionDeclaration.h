@@ -70,6 +70,7 @@ public:
     const UnnamedType& type() const { return m_type; }
     UnnamedType& type() { return m_type; }
     const String& name() const { return m_name; }
+    String& name() { return m_name; }
     bool isCast() const { return m_name == "operator cast"; }
     const VariableDeclarations& parameters() const { return m_parameters; }
     VariableDeclarations& parameters() { return m_parameters; }

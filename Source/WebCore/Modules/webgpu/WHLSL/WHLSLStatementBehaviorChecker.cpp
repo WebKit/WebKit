@@ -28,12 +28,22 @@
 
 #if ENABLE(WEBGPU)
 
+#include "WHLSLBlock.h"
+#include "WHLSLBreak.h"
+#include "WHLSLContinue.h"
 #include "WHLSLDoWhileLoop.h"
+#include "WHLSLEffectfulExpressionStatement.h"
+#include "WHLSLFallthrough.h"
 #include "WHLSLForLoop.h"
 #include "WHLSLIfStatement.h"
 #include "WHLSLInferTypes.h"
 #include "WHLSLProgram.h"
+#include "WHLSLReturn.h"
+#include "WHLSLSwitchCase.h"
 #include "WHLSLSwitchStatement.h"
+#include "WHLSLTrap.h"
+#include "WHLSLVariableDeclarationsStatement.h"
+#include "WHLSLVisitor.h"
 #include "WHLSLWhileLoop.h"
 #include <cstdint>
 #include <wtf/OptionSet.h>

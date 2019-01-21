@@ -38,6 +38,7 @@
 #include "FileError.h"
 #include "FileReaderLoader.h"
 #include "Frame.h"
+#include "FrameLoader.h"
 #include "InspectorInstrumentation.h"
 #include "Logging.h"
 #include "NetworkingContext.h"

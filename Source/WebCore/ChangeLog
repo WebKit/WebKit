@@ -1,5 +1,142 @@
 2019-01-20  Myles C. Maxfield  <mmaxfield@apple.com>
 
+        [WHLSL] Implement Metal code generation
+        https://bugs.webkit.org/show_bug.cgi?id=193531
+
+        Reviewed by Dean Jackson.
+
+        This implements the majority of the metal code generation piece. There are still a few pieces missing,
+        that I'll add in follow up patches. There's still enough complexity here that this is worth reviewing
+        on its own, though.
+
+        This patch includes a few pieces:
+        - Metal typedefs for every WHLSL type. This analysis is actually pretty interesting, because complex
+              types depend on their inner types, and the inner types need to be emitted first. Therefore,
+              this patch implements a topological sort when emitting types. Also, WHLSL types need to be de-
+              duped because array references are implemented in MSL as structs, and if you have two structs
+              in MSL with the same contents, those two structs are not equal and cannot be assigned to each
+              other. So, this patch creates a trie to de-dup all the UnnamedTypes, and implements a
+              dependency graph which includes both nodes in the trie as well as NamedTypes which don't appear
+              in the trie.
+        - WHLSL enumeration code generation
+        - A name mangler, which ensures that no text from the source program is contained within the result
+              program
+        - Full support for expressions. An expression like "y = *x + 7;" would be converted to something like
+              Type1 variable1 = *x;
+              Type2 variable2 = 7;
+              Type3 variable3 = variable1 + variable2;
+              y = variable3;
+        - Mostly complete support for control flow. This is tricky because of how we transform WHLSL
+              expressions into C++ statements. Therefore, things like "for ( ; *x + 7; )" is difficult to
+              compile, because we can't put the "*x + 7" generated statements into the for loop itself.
+              Instead, we have to emit this code inside the loop, in all the places that would implicitly run
+              it. This patch doesn't fully handle this, see below. (If MSL supported lambdas, we could put
+              the statements into a lambda and do something like "for ( ; theLambda(); )" but MSL doesn't
+              support lambdas.)
+
+        Missing pieces:
+        - Entry point pack / unpack code
+        - Support for "continue" (See above regarding control flow)
+        - Knowing whether or not a switch case should end with break or fallthrough
+        - Trapping
+        - Zero filling variables
+        - Code generation for compiler-generated native functions (this patch supports native functions in the
+              standard library), texture functions, and HLSL's half <-> int functions.
+
+        No new tests because it isn't hooked up yet. As soon as we can do entry point packing and unpacking,
+        I'll start porting the test suite.
+
+        * Modules/webgpu/WHLSL/AST/WHLSLBuiltInSemantic.h:
+        (WebCore::WHLSL::AST::BuiltInSemantic::targetIndex):
+        * Modules/webgpu/WHLSL/AST/WHLSLExpression.h:
+        (WebCore::WHLSL::AST::Expression::resolvedType):
+        (WebCore::WHLSL::AST::Expression::type): Deleted.
+        * Modules/webgpu/WHLSL/AST/WHLSLFunctionDeclaration.h:
+        (WebCore::WHLSL::AST::FunctionDeclaration::name):
+        * Modules/webgpu/WHLSL/AST/WHLSLStructureDefinition.h:
+        (WebCore::WHLSL::AST::StructureDefinition::find):
+        * Modules/webgpu/WHLSL/Metal/WHLSLEntryPointScaffolding.cpp: Added.
+        (WebCore::WHLSL::Metal::EntryPointScaffolding::EntryPointScaffolding):
+        (WebCore::WHLSL::Metal::EntryPointScaffolding::helperTypes):
+        (WebCore::WHLSL::Metal::EntryPointScaffolding::signature):
+        (WebCore::WHLSL::Metal::EntryPointScaffolding::unpack):
+        (WebCore::WHLSL::Metal::EntryPointScaffolding::pack):
+        * Modules/webgpu/WHLSL/Metal/WHLSLEntryPointScaffolding.h: Copied from Source/WebCore/Modules/webgpu/WHLSL/WHLSLLoopChecker.h.
+        * Modules/webgpu/WHLSL/Metal/WHLSLFunctionWriter.cpp: Added.
+        (WebCore::WHLSL::Metal::FunctionDeclarationWriter::FunctionDeclarationWriter):
+        (WebCore::WHLSL::Metal::FunctionDeclarationWriter::toString):
+        (WebCore::WHLSL::Metal::FunctionDefinitionWriter::FunctionDefinitionWriter):
+        (WebCore::WHLSL::Metal::FunctionDefinitionWriter::toString):
+        (WebCore::WHLSL::Metal::FunctionDefinitionWriter::constantExpressionString):
+        (WebCore::WHLSL::Metal::FunctionDefinitionWriter::generateNextVariableName):
+        (WebCore::WHLSL::Metal::metalFunctions):
+        * Modules/webgpu/WHLSL/Metal/WHLSLFunctionWriter.h: Copied from Source/WebCore/Modules/webgpu/WHLSL/WHLSLLoopChecker.h.
+        * Modules/webgpu/WHLSL/Metal/WHLSLMetalCodeGenerator.cpp: Copied from Source/WebCore/Modules/webgpu/WHLSL/AST/WHLSLStructureDefinition.h.
+        (WebCore::WHLSL::Metal::generateMetalCode):
+        * Modules/webgpu/WHLSL/Metal/WHLSLMetalCodeGenerator.h: Copied from Source/WebCore/Modules/webgpu/WHLSL/WHLSLLoopChecker.h.
+        * Modules/webgpu/WHLSL/Metal/WHLSLNativeFunctionWriter.cpp: Added.
+        (WebCore::WHLSL::Metal::getNativeName):
+        (WebCore::WHLSL::Metal::mapFunctionName):
+        (WebCore::WHLSL::Metal::convertAddressSpace):
+        (WebCore::WHLSL::Metal::writeNativeFunction):
+        * Modules/webgpu/WHLSL/Metal/WHLSLNativeFunctionWriter.h: Copied from Source/WebCore/Modules/webgpu/WHLSL/WHLSLLoopChecker.h.
+        * Modules/webgpu/WHLSL/Metal/WHLSLTypeNamer.cpp: Added.
+        (WebCore::WHLSL::Metal::BaseTypeNameNode::BaseTypeNameNode):
+        (WebCore::WHLSL::Metal::BaseTypeNameNode::isArrayTypeNameNode const):
+        (WebCore::WHLSL::Metal::BaseTypeNameNode::isArrayReferenceTypeNameNode const):
+        (WebCore::WHLSL::Metal::BaseTypeNameNode::isPointerTypeNameNode const):
+        (WebCore::WHLSL::Metal::BaseTypeNameNode::isReferenceTypeNameNode const):
+        (WebCore::WHLSL::Metal::BaseTypeNameNode::children):
+        (WebCore::WHLSL::Metal::BaseTypeNameNode::append):
+        (WebCore::WHLSL::Metal::BaseTypeNameNode::parent):
+        (WebCore::WHLSL::Metal::BaseTypeNameNode::mangledName const):
+        (WebCore::WHLSL::Metal::ArrayTypeNameNode::ArrayTypeNameNode):
+        (WebCore::WHLSL::Metal::ArrayTypeNameNode::numElements const):
+        (WebCore::WHLSL::Metal::ArrayReferenceTypeNameNode::ArrayReferenceTypeNameNode):
+        (WebCore::WHLSL::Metal::ArrayReferenceTypeNameNode::addressSpace const):
+        (WebCore::WHLSL::Metal::PointerTypeNameNode::PointerTypeNameNode):
+        (WebCore::WHLSL::Metal::PointerTypeNameNode::addressSpace const):
+        (WebCore::WHLSL::Metal::ReferenceTypeNameNode::ReferenceTypeNameNode):
+        (WebCore::WHLSL::Metal::ReferenceTypeNameNode::namedType):
+        (WebCore::WHLSL::Metal::TypeNamer::TypeNamer):
+        (WebCore::WHLSL::Metal::TypeNamer::visit):
+        (WebCore::WHLSL::Metal::findInVector):
+        (WebCore::WHLSL::Metal::find):
+        (WebCore::WHLSL::Metal::TypeNamer::mangledNameForType):
+        (WebCore::WHLSL::Metal::TypeNamer::createNameNode):
+        (WebCore::WHLSL::Metal::TypeNamer::insert):
+        (WebCore::WHLSL::Metal::MetalTypeDeclarationWriter::MetalTypeDeclarationWriter):
+        (WebCore::WHLSL::Metal::MetalTypeDeclarationWriter::toString):
+        (WebCore::WHLSL::Metal::MetalTypeDeclarationWriter::visit):
+        (WebCore::WHLSL::Metal::TypeNamer::metalTypeDeclarations):
+        (WebCore::WHLSL::Metal::toString):
+        (WebCore::WHLSL::Metal::TypeNamer::emitUnnamedTypeDefinition):
+        (WebCore::WHLSL::Metal::TypeNamer::emitNamedTypeDefinition):
+        (WebCore::WHLSL::Metal::TypeNamer::metalTypeDefinitions):
+        (WebCore::WHLSL::Metal::TypeNamer::mangledNameForEnumerationMember):
+        (WebCore::WHLSL::Metal::TypeNamer::mangledNameForStructureElement):
+        (WebCore::WHLSL::Metal::TypeNamer::metalTypes):
+        * Modules/webgpu/WHLSL/Metal/WHLSLTypeNamer.h: Added.
+        (WebCore::WHLSL::Metal::TypeNamer::generateNextTypeName):
+        (WebCore::WHLSL::Metal::TypeNamer::generateNextStructureElementName):
+        (WebCore::WHLSL::Metal::TypeNamer::generateNextEnumerationMemberName):
+        * Modules/webgpu/WHLSL/WHLSLChecker.cpp:
+        (WebCore::WHLSL::checkSemantics):
+        (WebCore::WHLSL::Checker::visit):
+        * Modules/webgpu/WHLSL/WHLSLGatherEntryPointItems.cpp:
+        (WebCore::WHLSL::Gatherer::visit):
+        * Modules/webgpu/WHLSL/WHLSLGatherEntryPointItems.h:
+        (WebCore::WHLSL::EntryPointItem::EntryPointItem):
+        * Modules/webgpu/WHLSL/WHLSLLoopChecker.cpp: Removed.
+        * Modules/webgpu/WHLSL/WHLSLStatementBehaviorChecker.cpp: Added.
+        (WebCore::WHLSL::StatementBehaviorChecker::takeFunctionBehavior):
+        (WebCore::WHLSL::checkStatementBehavior):
+        * Modules/webgpu/WHLSL/WHLSLStatementBehaviorChecker.h: Renamed from Source/WebCore/Modules/webgpu/WHLSL/WHLSLLoopChecker.h.
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+
+2019-01-20  Myles C. Maxfield  <mmaxfield@apple.com>
+
         [WHLSL] Add the statement behavior checker
         https://bugs.webkit.org/show_bug.cgi?id=193487
 

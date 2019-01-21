@@ -326,6 +326,12 @@ Modules/webgpu/WHLSL/WHLSLRecursionChecker.cpp
 Modules/webgpu/WHLSL/WHLSLVisitor.cpp
 Modules/webgpu/WHLSL/WHLSLLiteralTypeChecker.cpp
 Modules/webgpu/WHLSL/WHLSLHighZombieFinder.cpp
+Modules/webgpu/WHLSL/Metal/WHLSLTypeNamer.cpp
+Modules/webgpu/WHLSL/Metal/WHLSLFunctionWriter.cpp
+Modules/webgpu/WHLSL/Metal/WHLSLMetalCodeGenerator.cpp
+Modules/webgpu/WHLSL/Metal/WHLSLNativeFunctionWriter.cpp
+Modules/webgpu/WHLSL/Metal/WHLSLEntryPointScaffolding.cpp
+Modules/webgpu/WHLSL/Metal/WHLSLNativeTypeWriter.cpp
 Modules/webgpu/WHLSL/WHLSLFunctionStageChecker.cpp
 Modules/webgpu/WHLSL/AST/WHLSLTypeArgument.cpp
 Modules/webgpu/WHLSL/AST/WHLSLBuiltInSemantic.cpp

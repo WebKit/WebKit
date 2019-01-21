@@ -221,8 +221,8 @@ static bool checkSemantics(Vector<EntryPointItem>& inputItems, Vector<EntryPoint
         auto checkSemanticTypes = [&](const Vector<EntryPointItem>& items) -> bool {
             for (auto& item : items) {
                 auto acceptable = WTF::visit(WTF::makeVisitor([&](const AST::BaseSemantic& semantic) -> bool {
-                    return semantic.isAcceptableType(item.unnamedType, intrinsics);
-                }), item.semantic);
+                    return semantic.isAcceptableType(*item.unnamedType, intrinsics);
+                }), *item.semantic);
                 if (!acceptable)
                     return false;
             }
@@ -239,7 +239,7 @@ static bool checkSemantics(Vector<EntryPointItem>& inputItems, Vector<EntryPoint
             for (auto& item : items) {
                 auto acceptable = WTF::visit(WTF::makeVisitor([&](const AST::BaseSemantic& semantic) -> bool {
                     return semantic.isAcceptableForShaderItemDirection(direction, entryPointType);
-                }), item.semantic);
+                }), *item.semantic);
                 if (!acceptable)
                     return false;
             }
@@ -256,11 +256,11 @@ static bool checkSemantics(Vector<EntryPointItem>& inputItems, Vector<EntryPoint
             for (auto& item : items) {
                 PODChecker podChecker;
                 if (is<AST::PointerType>(item.unnamedType))
-                    podChecker.checkErrorAndVisit(downcast<AST::PointerType>(item.unnamedType).elementType());
+                    podChecker.checkErrorAndVisit(downcast<AST::PointerType>(*item.unnamedType).elementType());
                 else if (is<AST::ArrayReferenceType>(item.unnamedType))
-                    podChecker.checkErrorAndVisit(downcast<AST::ArrayReferenceType>(item.unnamedType).elementType());
+                    podChecker.checkErrorAndVisit(downcast<AST::ArrayReferenceType>(*item.unnamedType).elementType());
                 else if (is<AST::ArrayType>(item.unnamedType))
-                    podChecker.checkErrorAndVisit(downcast<AST::ArrayType>(item.unnamedType).type());
+                    podChecker.checkErrorAndVisit(downcast<AST::ArrayType>(*item.unnamedType).type());
                 else
                     continue;
                 if (podChecker.error())
@@ -612,16 +612,12 @@ void Checker::visit(AST::EnumerationDefinition& enumerationDefinition)
     auto* baseType = ([&]() -> AST::NativeTypeDeclaration* {
         checkErrorAndVisit(enumerationDefinition.type());
         auto& baseType = enumerationDefinition.type().unifyNode();
-        if (!is<AST::UnnamedType>(baseType))
+        if (!is<AST::NamedType>(baseType))
             return nullptr;
-        auto& unnamedBase = downcast<AST::UnnamedType>(baseType);
-        if (!is<AST::TypeReference>(unnamedBase))
+        auto& namedType = downcast<AST::NamedType>(baseType);
+        if (!is<AST::NativeTypeDeclaration>(namedType))
             return nullptr;
-        auto& typeReferenceBase = downcast<AST::TypeReference>(unnamedBase);
-        ASSERT(typeReferenceBase.resolvedType());
-        if (!is<AST::NativeTypeDeclaration>(*typeReferenceBase.resolvedType()))
-            return nullptr;
-        auto& nativeTypeDeclaration = downcast<AST::NativeTypeDeclaration>(*typeReferenceBase.resolvedType());
+        auto& nativeTypeDeclaration = downcast<AST::NativeTypeDeclaration>(namedType);
         if (!nativeTypeDeclaration.isInt())
             return nullptr;
         return &nativeTypeDeclaration;

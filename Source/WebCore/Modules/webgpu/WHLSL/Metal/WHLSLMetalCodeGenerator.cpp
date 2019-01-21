@@ -23,58 +23,44 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#include "config.h"
+#include "WHLSLMetalCodeGenerator.h"
 
 #if ENABLE(WEBGPU)
 
-#include "WHLSLLexer.h"
-#include "WHLSLNamedType.h"
-#include "WHLSLStructureElement.h"
-#include <wtf/Vector.h>
-#include <wtf/text/WTFString.h>
+#include "WHLSLFunctionWriter.h"
+#include "WHLSLTypeNamer.h"
+#include <wtf/text/StringBuilder.h>
 
 namespace WebCore {
 
 namespace WHLSL {
 
-namespace AST {
+namespace Metal {
 
-class StructureDefinition : public NamedType {
-public:
-    StructureDefinition(Lexer::Token&& origin, String&& name, StructureElements&& structureElements)
-        : NamedType(WTFMove(origin), WTFMove(name))
-        , m_structureElements(WTFMove(structureElements))
-    {
-    }
+String generateMetalCode(Program& program)
+{
+    StringBuilder stringBuilder;
+    stringBuilder.append("#include <metal_stdlib>\n");
+    stringBuilder.append("#include <metal_atomic>\n");
+    stringBuilder.append("#include <metal_math>\n");
+    stringBuilder.append("#include <metal_relational>\n");
+    stringBuilder.append("#include <metal_compute>\n");
+    stringBuilder.append("#include <metal_texture>\n");
+    stringBuilder.append("\n");
+    stringBuilder.append("using namespace metal;\n");
+    stringBuilder.append("\n");
 
-    virtual ~StructureDefinition() = default;
-
-    StructureDefinition(const StructureDefinition&) = delete;
-    StructureDefinition(StructureDefinition&&) = default;
-
-    bool isStructureDefinition() const override { return true; }
-
-    StructureElements& structureElements() { return m_structureElements; }
-    StructureElement* find(String& name)
-    {
-        auto iterator = std::find_if(m_structureElements.begin(), m_structureElements.end(), [&](StructureElement& structureElement) -> bool {
-            return structureElement.name() == name;
-        });
-        if (iterator == m_structureElements.end())
-            return nullptr;
-        return &*iterator;
-    }
-
-private:
-    StructureElements m_structureElements;
-};
-
-} // namespace AST
+    TypeNamer typeNamer(program);
+    stringBuilder.append(typeNamer.metalTypes());
+    stringBuilder.append(metalFunctions(program, typeNamer));
+    return stringBuilder.toString();
+}
 
 }
 
 }
 
-SPECIALIZE_TYPE_TRAITS_WHLSL_NAMED_TYPE(StructureDefinition, isStructureDefinition())
+}
 
 #endif
