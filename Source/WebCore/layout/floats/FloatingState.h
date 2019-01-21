@@ -54,6 +54,7 @@ public:
 
     const Box& root() const { return *m_formattingContextRoot; }
 
+    Optional<PositionInContextRoot> top(const Box& formattingContextRoot) const;
     Optional<PositionInContextRoot> leftBottom(const Box& formattingContextRoot) const;
     Optional<PositionInContextRoot> rightBottom(const Box& formattingContextRoot) const;
     Optional<PositionInContextRoot> bottom(const Box& formattingContextRoot) const;

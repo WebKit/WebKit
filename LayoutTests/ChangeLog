@@ -1,3 +1,13 @@
+2019-01-21  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC][Floats] Take float top position into account when computing containing block height.
+        https://bugs.webkit.org/show_bug.cgi?id=193655
+
+        Reviewed by Antti Koivisto.
+
+        * fast/block/float/float-first-child-and-clear-sibling-expected.html: Added.
+        * fast/block/float/float-first-child-and-clear-sibling.html: Added.
+
 2019-01-21  Frederic Wang  <fwang@igalia.com>
 
         Add a basic test for scrollable iframe on iOS

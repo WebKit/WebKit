@@ -249,7 +249,10 @@ Optional<Position> FloatingContext::verticalPositionWithClearance(const Box& lay
         rootRelativeTop += clearance;
         ASSERT(*floatBottom == rootRelativeTop);
 
-        // The return vertical position is in the containing block's coordinate system.
+        // The return vertical position is in the containing block's coordinate system. Convert it to the formatting root's coordinate system if needed.
+        if (layoutBox.containingBlock() == &m_floatingState.root())
+            return Position { rootRelativeTop };
+
         auto containingBlockRootRelativeTop = FormattingContext::mapTopLeftToAncestor(layoutState, *layoutBox.containingBlock(), downcast<Container>(m_floatingState.root())).y;
         return Position { rootRelativeTop - containingBlockRootRelativeTop };
     };

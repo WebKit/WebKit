@@ -184,6 +184,27 @@ Optional<PositionInContextRoot> FloatingState::bottom(const Box& formattingConte
     return bottom;
 }
 
+Optional<PositionInContextRoot> FloatingState::top(const Box& formattingContextRoot) const
+{
+    if (m_floats.isEmpty())
+        return { };
+
+    Optional<PositionInContextRoot> top;
+    for (auto& floatItem : m_floats) {
+        // Ignore floats from ancestor formatting contexts when the floating state is inherited.
+        if (!floatItem.isDescendantOfFormattingRoot(formattingContextRoot))
+            continue;
+
+        auto floatTop = floatItem.rectWithMargin().top();
+        if (top) {
+            top = std::max<PositionInContextRoot>(*top, { floatTop });
+            continue;
+        }
+        top = PositionInContextRoot { floatTop };
+    }
+    return top;
+}
+
 }
 }
 #endif
