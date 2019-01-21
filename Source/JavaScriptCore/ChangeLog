@@ -1,3 +1,17 @@
+2019-01-20  Saam Barati  <sbarati@apple.com>
+
+        DFG: When inlining DataView set* intrinsics we need to set undefined as our result
+        https://bugs.webkit.org/show_bug.cgi?id=193644
+        <rdar://problem/46209745>
+
+        Reviewed by Yusuke Suzuki.
+
+        This patch also makes it so we fail fast when we make this mistake.
+        I've made this mistake more than once.
+
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::handleIntrinsicCall):
+
 2019-01-20  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] Reduce size of SourceProvider
