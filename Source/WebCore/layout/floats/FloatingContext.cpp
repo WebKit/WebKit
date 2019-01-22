@@ -191,7 +191,7 @@ Optional<Point> FloatingContext::positionForFloatAvoiding(const Box& layoutBox) 
     return { floatAvoider.rectInContainingBlock().topLeft() };
 }
 
-Optional<Position> FloatingContext::verticalPositionWithClearance(const Box& layoutBox) const
+FloatingContext::ClearancePosition FloatingContext::verticalPositionWithClearance(const Box& layoutBox) const
 {
     ASSERT(layoutBox.hasFloatClear());
     ASSERT(layoutBox.isBlockLevelBox());
@@ -200,7 +200,7 @@ Optional<Position> FloatingContext::verticalPositionWithClearance(const Box& lay
     if (m_floatingState.isEmpty())
         return { };
 
-    auto bottom = [&](Optional<PositionInContextRoot> floatBottom) -> Optional<Position> {
+    auto bottom = [&](Optional<PositionInContextRoot> floatBottom) -> ClearancePosition {
         // 'bottom' is in the formatting root's coordinate system.
         if (!floatBottom)
             return { };
@@ -210,37 +210,23 @@ Optional<Position> FloatingContext::verticalPositionWithClearance(const Box& lay
         //
         // 1. The amount necessary to place the border edge of the block even with the bottom outer edge of the lowest float that is to be cleared.
         // 2. The amount necessary to place the top border edge of the block at its hypothetical position.
-
         auto& layoutState = this->layoutState();
-        auto& displayBox = layoutState.displayBoxForLayoutBox(layoutBox);
-        auto rootRelativeTop = FormattingContext::mapTopLeftToAncestor(layoutState, layoutBox, downcast<Container>(m_floatingState.root())).y;
+        auto rootRelativeTop = FormattingContext::mapTopToAncestor(layoutState, layoutBox, downcast<Container>(m_floatingState.root()));
         auto clearance = *floatBottom - rootRelativeTop;
         if (clearance <= 0)
             return { };
 
-        displayBox.setHasClearance();
-        // Clearance inhibits margin collapsing. Let's reset the relevant adjoining margins.
+        // Clearance inhibits margin collapsing.
         if (auto* previousInFlowSibling = layoutBox.previousInFlowSibling()) {
-            auto& previousInFlowDisplayBox = layoutState.displayBoxForLayoutBox(*previousInFlowSibling);
             // Does this box with clearance actually collapse its margin before with the previous inflow box's margin after? 
-            auto verticalMargin = displayBox.verticalMargin();
+            auto verticalMargin = layoutState.displayBoxForLayoutBox(layoutBox).verticalMargin();
             if (verticalMargin.hasCollapsedValues() && verticalMargin.collapsedValues().before) {
-                // Reset previous bottom after and current margin before to non-collapsing.
-                auto previousVerticalMargin = previousInFlowDisplayBox.verticalMargin();
-                ASSERT(previousVerticalMargin.hasCollapsedValues() && previousVerticalMargin.collapsedValues().after);
-
+                auto previousVerticalMargin = layoutState.displayBoxForLayoutBox(*previousInFlowSibling).verticalMargin();
                 auto collapsedMargin = *verticalMargin.collapsedValues().before;
-                previousVerticalMargin.setCollapsedValues({ previousVerticalMargin.collapsedValues().before, { } });
-                previousInFlowDisplayBox.setVerticalMargin(previousVerticalMargin);
-
-                verticalMargin.setCollapsedValues({ { }, verticalMargin.collapsedValues().after });
-                displayBox.setVerticalMargin(verticalMargin);
-
                 auto nonCollapsedMargin = previousVerticalMargin.after() + verticalMargin.before();
                 auto marginDifference = nonCollapsedMargin - collapsedMargin;
                 // Move the box to the position where it would be with non-collapsed margins.
                 rootRelativeTop += marginDifference;
-
                 // Having negative clearance is also normal. It just means that the box with the non-collapsed margins is now lower than it needs to be.
                 clearance -= marginDifference;
             }
@@ -251,10 +237,10 @@ Optional<Position> FloatingContext::verticalPositionWithClearance(const Box& lay
 
         // The return vertical position is in the containing block's coordinate system. Convert it to the formatting root's coordinate system if needed.
         if (layoutBox.containingBlock() == &m_floatingState.root())
-            return Position { rootRelativeTop };
+            return { Position { rootRelativeTop }, clearance };
 
-        auto containingBlockRootRelativeTop = FormattingContext::mapTopLeftToAncestor(layoutState, *layoutBox.containingBlock(), downcast<Container>(m_floatingState.root())).y;
-        return Position { rootRelativeTop - containingBlockRootRelativeTop };
+        auto containingBlockRootRelativeTop = FormattingContext::mapTopToAncestor(layoutState, *layoutBox.containingBlock(), downcast<Container>(m_floatingState.root()));
+        return { Position { rootRelativeTop - containingBlockRootRelativeTop }, clearance };
     };
 
     auto clear = layoutBox.style().clear();

@@ -59,7 +59,7 @@ public:
     virtual InstrinsicWidthConstraints instrinsicWidthConstraints() const = 0;
 
     static Display::Box mapBoxToAncestor(const LayoutState&, const Box&, const Container& ancestor);
-    static Point mapTopLeftToAncestor(const LayoutState&, const Box&, const Container& ancestor);
+    static LayoutUnit mapTopToAncestor(const LayoutState&, const Box&, const Container& ancestor);
     static Point mapCoordinateToAncestor(const LayoutState&, Point, const Container& containingBlock, const Container& ancestor);
 
 protected:

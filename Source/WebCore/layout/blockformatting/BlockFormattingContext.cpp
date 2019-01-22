@@ -291,14 +291,46 @@ void BlockFormattingContext::computeVerticalPositionForFloatClear(const Floating
     if (floatingContext.floatingState().isEmpty())
         return;
 
-    auto& layoutState = this->layoutState();
     // For formatting roots, we already precomputed final position.
     if (!layoutBox.establishesFormattingContext())
         computeEstimatedMarginBeforeForAncestors(layoutBox);
     ASSERT(hasPrecomputedMarginBefore(layoutBox));
 
-    if (auto verticalPositionWithClearance = floatingContext.verticalPositionWithClearance(layoutBox))
-        layoutState.displayBoxForLayoutBox(layoutBox).setTop(*verticalPositionWithClearance);
+    // 1. Compute and adjust the vertical position with clearance.
+    // 2. Reset margin collapsing with previous in-flow sibling if clerance is present.
+    auto verticalPositionAndClearance = floatingContext.verticalPositionWithClearance(layoutBox);
+    if (!verticalPositionAndClearance.position)
+        return;
+
+    // Adjust vertical position first.
+    auto& layoutState = this->layoutState();
+    auto& displayBox = layoutState.displayBoxForLayoutBox(layoutBox);
+    displayBox.setTop(*verticalPositionAndClearance.position);
+    if (!verticalPositionAndClearance.clearance)
+        return;
+
+    displayBox.setHasClearance();
+    // Adjust margin collapsing with clearance.
+    auto* previousInFlowSibling = layoutBox.previousInFlowSibling();
+    if (!previousInFlowSibling)
+        return;
+
+    // Clearance inhibits margin collapsing. Let's reset the relevant adjoining margins.
+    // Does this box with clearance actually collapse its margin before with the previous inflow box's margin after? 
+    auto verticalMargin = displayBox.verticalMargin();
+    if (!verticalMargin.hasCollapsedValues() || !verticalMargin.collapsedValues().before)
+        return;
+
+    // Reset previous after and current before margin values to non-collapsing.
+    auto& previousInFlowDisplayBox = layoutState.displayBoxForLayoutBox(*previousInFlowSibling); 
+    auto previousVerticalMargin = previousInFlowDisplayBox.verticalMargin();
+    ASSERT(previousVerticalMargin.hasCollapsedValues() && previousVerticalMargin.collapsedValues().after);
+
+    previousVerticalMargin.setCollapsedValues({ previousVerticalMargin.collapsedValues().before, { } });
+    verticalMargin.setCollapsedValues({ { }, verticalMargin.collapsedValues().after });
+
+    previousInFlowDisplayBox.setVerticalMargin(previousVerticalMargin);
+    displayBox.setVerticalMargin(verticalMargin);
 }
 
 void BlockFormattingContext::computeWidthAndMargin(const Box& layoutBox) const

@@ -1,3 +1,23 @@
+2019-01-22  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC][Floats] Decouple clearance computation and margin collapsing reset.
+        https://bugs.webkit.org/show_bug.cgi?id=193670
+
+        Reviewed by Antti Koivisto.
+
+        Move margin collapsing reset logic from FloatingContext to BlockFormattingContext. It's the BlockFormattingContext's job to do.
+        This is also in preparation for adding clear to static position.
+
+        * layout/FormattingContext.cpp:
+        (WebCore::Layout::FormattingContext::mapTopToAncestor):
+        (WebCore::Layout::FormattingContext::mapTopLeftToAncestor): Deleted.
+        * layout/FormattingContext.h:
+        * layout/blockformatting/BlockFormattingContext.cpp:
+        (WebCore::Layout::BlockFormattingContext::computeVerticalPositionForFloatClear const):
+        * layout/floats/FloatingContext.cpp:
+        (WebCore::Layout::FloatingContext::verticalPositionWithClearance const):
+        * layout/floats/FloatingContext.h:
+
 2019-01-22  Frederic Wang  <fwang@igalia.com>
 
         Minor refactoring of the scrolling code
