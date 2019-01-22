@@ -73,7 +73,7 @@ void WebPageCreationParameters::encode(IPC::Encoder& encoder) const
     encoder.encodeEnum(layerHostingMode);
     encoder << mimeTypesWithCustomContentProviders;
     encoder << controlledByAutomation;
-    encoder << isProcessSwap;
+    encoder << isSwapFromSuspended;
 
 #if PLATFORM(MAC)
     encoder << colorSpace;
@@ -227,7 +227,7 @@ Optional<WebPageCreationParameters> WebPageCreationParameters::decode(IPC::Decod
         return WTF::nullopt;
     if (!decoder.decode(parameters.controlledByAutomation))
         return WTF::nullopt;
-    if (!decoder.decode(parameters.isProcessSwap))
+    if (!decoder.decode(parameters.isSwapFromSuspended))
         return WTF::nullopt;
 
 #if PLATFORM(MAC)

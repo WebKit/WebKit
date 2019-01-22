@@ -733,8 +733,8 @@ http/tests/resourceLoadStatistics/remove-blocking-in-redirect.html [ Skip ]
 http/tests/resourceLoadStatistics/non-prevalent-resources-can-access-cookies-in-a-third-party-context.html [ Skip ]
 http/tests/resourceLoadStatistics/cap-cache-max-age-for-prevalent-resource.html [ Skip ]
 
-# This feature is currently disabled by default and unfinished <rdar://problem/38925077>.
-http/tests/navigation/process-swap-window-open.html [ Skip ]
+# Process swapping is only implemented on WebKit2.
+http/tests/navigation/process-swap-window-open.html [ Pass ]
 
 # Cross-Origin-Resource-Policy response header is only implemented in WebKit2.
 http/wpt/cross-origin-resource-policy/ [ Pass ]
