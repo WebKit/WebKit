@@ -147,14 +147,14 @@ void ProvisionalPageProxy::loadData(API::Navigation& navigation, const IPC::Data
 {
     RELEASE_LOG_IF_ALLOWED(ProcessSwapping, "loadData: pageID = %" PRIu64, m_page.pageID());
 
-    m_page.loadDataWithNavigationShared(m_process, navigation, data, MIMEType, encoding, baseURL, userData, WebCore::ShouldTreatAsContinuingLoad::Yes, WTFMove(websitePolicies));
+    m_page.loadDataWithNavigationShared(m_process.copyRef(), navigation, data, MIMEType, encoding, baseURL, userData, WebCore::ShouldTreatAsContinuingLoad::Yes, WTFMove(websitePolicies));
 }
 
 void ProvisionalPageProxy::loadRequest(API::Navigation& navigation, WebCore::ResourceRequest&& request, WebCore::ShouldOpenExternalURLsPolicy shouldOpenExternalURLsPolicy, API::Object* userData, Optional<WebsitePoliciesData>&& websitePolicies)
 {
     RELEASE_LOG_IF_ALLOWED(ProcessSwapping, "loadRequest: pageID = %" PRIu64, m_page.pageID());
 
-    m_page.loadRequestWithNavigationShared(m_process, navigation, WTFMove(request), shouldOpenExternalURLsPolicy, userData, WebCore::ShouldTreatAsContinuingLoad::Yes, WTFMove(websitePolicies));
+    m_page.loadRequestWithNavigationShared(m_process.copyRef(), navigation, WTFMove(request), shouldOpenExternalURLsPolicy, userData, WebCore::ShouldTreatAsContinuingLoad::Yes, WTFMove(websitePolicies));
 }
 
 void ProvisionalPageProxy::goToBackForwardItem(API::Navigation& navigation, WebBackForwardListItem& item, Optional<WebsitePoliciesData>&& websitePolicies)
@@ -196,13 +196,13 @@ void ProvisionalPageProxy::didCreateMainFrame(uint64_t frameID)
     // In this case we have the UIProcess synthesize the redirect notification at the appropriate time.
     if (m_isServerRedirect) {
         m_mainFrame->frameLoadState().didStartProvisionalLoad(m_request.url());
-        m_page.didReceiveServerRedirectForProvisionalLoadForFrameShared(m_process, m_mainFrame->frameID(), m_navigationID, WTFMove(m_request), { });
+        m_page.didReceiveServerRedirectForProvisionalLoadForFrameShared(m_process.copyRef(), m_mainFrame->frameID(), m_navigationID, WTFMove(m_request), { });
     }
 }
 
 void ProvisionalPageProxy::didPerformClientRedirect(const String& sourceURLString, const String& destinationURLString, uint64_t frameID)
 {
-    m_page.didPerformClientRedirectShared(m_process, sourceURLString, destinationURLString, frameID);
+    m_page.didPerformClientRedirectShared(m_process.copyRef(), sourceURLString, destinationURLString, frameID);
 }
 
 void ProvisionalPageProxy::didStartProvisionalLoadForFrame(uint64_t frameID, uint64_t navigationID, URL&& url, URL&& unreachableURL, const UserData& userData)
@@ -223,7 +223,7 @@ void ProvisionalPageProxy::didStartProvisionalLoadForFrame(uint64_t frameID, uin
     if (auto* pageMainFrame = m_page.mainFrame())
         pageMainFrame->didStartProvisionalLoad(url);
 
-    m_page.didStartProvisionalLoadForFrameShared(m_process, frameID, navigationID, WTFMove(url), WTFMove(unreachableURL), userData);
+    m_page.didStartProvisionalLoadForFrameShared(m_process.copyRef(), frameID, navigationID, WTFMove(url), WTFMove(unreachableURL), userData);
 }
 
 void ProvisionalPageProxy::didFailProvisionalLoadForFrame(uint64_t frameID, const WebCore::SecurityOriginData& frameSecurityOrigin, uint64_t navigationID, const String& provisionalURL, const WebCore::ResourceError& error, const UserData& userData)
@@ -235,7 +235,7 @@ void ProvisionalPageProxy::didFailProvisionalLoadForFrame(uint64_t frameID, cons
     if (auto* pageMainFrame = m_page.mainFrame())
         pageMainFrame->didFailProvisionalLoad();
 
-    m_page.didFailProvisionalLoadForFrameShared(m_process, frameID, frameSecurityOrigin, navigationID, provisionalURL, error, userData); // Will delete |this|.
+    m_page.didFailProvisionalLoadForFrameShared(m_process.copyRef(), frameID, frameSecurityOrigin, navigationID, provisionalURL, error, userData); // Will delete |this|.
 }
 
 void ProvisionalPageProxy::didCommitLoadForFrame(uint64_t frameID, uint64_t navigationID, const String& mimeType, bool frameHasCustomContentProvider, uint32_t frameLoadType, const WebCore::CertificateInfo& certificateInfo, bool containsPluginDocument, Optional<WebCore::HasInsecureContent> forcedHasInsecureContent, const UserData& userData)
@@ -254,32 +254,32 @@ void ProvisionalPageProxy::didCommitLoadForFrame(uint64_t frameID, uint64_t navi
 
 void ProvisionalPageProxy::didNavigateWithNavigationData(const WebNavigationDataStore& store, uint64_t frameID)
 {
-    m_page.didNavigateWithNavigationDataShared(m_process, store, frameID);
+    m_page.didNavigateWithNavigationDataShared(m_process.copyRef(), store, frameID);
 }
 
 void ProvisionalPageProxy::didChangeProvisionalURLForFrame(uint64_t frameID, uint64_t navigationID, URL&& url)
 {
-    m_page.didChangeProvisionalURLForFrameShared(m_process, frameID, navigationID, WTFMove(url));
+    m_page.didChangeProvisionalURLForFrameShared(m_process.copyRef(), frameID, navigationID, WTFMove(url));
 }
 
 void ProvisionalPageProxy::decidePolicyForNavigationActionAsync(uint64_t frameID, WebCore::SecurityOriginData&& frameSecurityOrigin, uint64_t navigationID, NavigationActionData&& navigationActionData, FrameInfoData&& frameInfoData, uint64_t originatingPageID, const WebCore::ResourceRequest& originalRequest, WebCore::ResourceRequest&& request, IPC::FormDataReference&& requestBody, WebCore::ResourceResponse&& redirectResponse, const UserData& userData, uint64_t listenerID)
 {
-    m_page.decidePolicyForNavigationActionAsyncShared(m_process, frameID, WTFMove(frameSecurityOrigin), navigationID, WTFMove(navigationActionData), WTFMove(frameInfoData), originatingPageID, originalRequest, WTFMove(request), WTFMove(requestBody), WTFMove(redirectResponse), userData, listenerID);
+    m_page.decidePolicyForNavigationActionAsyncShared(m_process.copyRef(), frameID, WTFMove(frameSecurityOrigin), navigationID, WTFMove(navigationActionData), WTFMove(frameInfoData), originatingPageID, originalRequest, WTFMove(request), WTFMove(requestBody), WTFMove(redirectResponse), userData, listenerID);
 }
 
 void ProvisionalPageProxy::decidePolicyForResponse(uint64_t frameID, const WebCore::SecurityOriginData& frameSecurityOrigin, uint64_t navigationID, const WebCore::ResourceResponse& response, const WebCore::ResourceRequest& request, bool canShowMIMEType, uint64_t listenerID, const UserData& userData)
 {
-    m_page.decidePolicyForResponseShared(m_process, frameID, frameSecurityOrigin, navigationID, response, request, canShowMIMEType, listenerID, userData);
+    m_page.decidePolicyForResponseShared(m_process.copyRef(), frameID, frameSecurityOrigin, navigationID, response, request, canShowMIMEType, listenerID, userData);
 }
 
 void ProvisionalPageProxy::startURLSchemeTask(URLSchemeTaskParameters&& parameters)
 {
-    m_page.startURLSchemeTaskShared(m_process, WTFMove(parameters));
+    m_page.startURLSchemeTaskShared(m_process.copyRef(), WTFMove(parameters));
 }
 
 void ProvisionalPageProxy::backForwardGoToItem(const WebCore::BackForwardItemIdentifier& identifier, SandboxExtension::Handle& handle)
 {
-    m_page.backForwardGoToItemShared(m_process, identifier, handle);
+    m_page.backForwardGoToItemShared(m_process.copyRef(), identifier, handle);
 }
 
 void ProvisionalPageProxy::didReceiveMessage(IPC::Connection& connection, IPC::Decoder& decoder)
