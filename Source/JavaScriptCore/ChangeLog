@@ -1,3 +1,10 @@
+2019-01-22  Saam Barati  <sbarati@apple.com>
+
+        Unreviewed. Rollout r240223. It regressed JetStream2 by 1%.
+
+        * dfg/DFGBackwardsPropagationPhase.cpp:
+        (JSC::DFG::BackwardsPropagationPhase::propagate):
+
 2019-01-22  Tadeu Zagallo  <tzagallo@apple.com>
 
         Unreviewed, restore bytecode cache-related JSC options deleted in r240254

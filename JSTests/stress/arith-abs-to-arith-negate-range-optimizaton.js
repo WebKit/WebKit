@@ -233,7 +233,7 @@ function testUncheckedBetweenIntMinInclusiveAndZeroExclusive()
             throw "Failed testUncheckedBetweenIntMinInclusiveAndZeroExclusive() on -2147483648";
         }
     }
-    if (numberOfDFGCompiles(opaqueUncheckedBetweenIntMinInclusiveAndZeroExclusive) > 2) {
+    if (numberOfDFGCompiles(opaqueUncheckedBetweenIntMinInclusiveAndZeroExclusive) > 1) {
         throw "Failed optimizing testUncheckedBetweenIntMinInclusiveAndZeroExclusive(). None of the tested case need to OSR Exit.";
     }
 }
@@ -376,7 +376,7 @@ function testUncheckedLessThanZero()
             throw "Failed testUncheckedLessThanOrEqualZero() on -2147483648";
         }
     }
-    if (numberOfDFGCompiles(opaqueUncheckedLessThanZero) > 2) {
+    if (numberOfDFGCompiles(opaqueUncheckedLessThanZero) > 1) {
         throw "Failed optimizing testUncheckedLessThanZero(). None of the tested case need to OSR Exit.";
     }
 
@@ -420,7 +420,7 @@ function testUncheckedLessThanOrEqualZero()
             throw "Failed testUncheckedLessThanOrEqualZero() on -2147483648";
         }
     }
-    if (numberOfDFGCompiles(opaqueUncheckedLessThanOrEqualZero) > 2) {
+    if (numberOfDFGCompiles(opaqueUncheckedLessThanOrEqualZero) > 1) {
         throw "Failed optimizing testUncheckedLessThanOrEqualZero(). None of the tested case need to OSR Exit.";
     }
 }

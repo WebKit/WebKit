@@ -1,3 +1,14 @@
+2019-01-22  Saam Barati  <sbarati@apple.com>
+
+        Unreviewed. Rollout r240223. It regressed JetStream2 by 1%.
+
+        * stress/arith-abs-to-arith-negate-range-optimizaton.js:
+        (testUncheckedBetweenIntMinInclusiveAndZeroExclusive):
+        (testUncheckedLessThanZero):
+        (testUncheckedLessThanOrEqualZero):
+        * stress/movhint-backwards-propagation-must-merge-use-as-value-add.js: Removed.
+        * stress/movhint-backwards-propagation-must-merge-use-as-value.js: Removed.
+
 2019-01-22  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] Invalidate old scope operations using global lexical binding epoch
