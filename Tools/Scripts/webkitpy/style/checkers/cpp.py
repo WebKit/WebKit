@@ -2104,7 +2104,7 @@ def check_member_initialization_list(clean_lines, line_number, error):
     begin_line = line
     # match the start of initialization list
     if search(r'^(?P<indentation>\s*)((explicit\s+)?[^(\s|\?)]+\([^\?]*\)\s?\:|^(\s|\?)*\:)([^\:]|\Z)[^;]*$', line):
-        if search(r'[^:]\:[^\:\s]+', line):
+        if search(r'[^:]\:[^\:\s]+', line) and not search(r'^\s*:\s\S+', line):
             error(line_number, 'whitespace/init', 4,
                 'Missing spaces around :')
         if (not line.lstrip().startswith(':')) and search(r'[^\s]\(.*\)\s?\:.*[^;]*$', line):

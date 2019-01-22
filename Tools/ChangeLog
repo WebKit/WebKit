@@ -1,3 +1,20 @@
+2019-01-22  David Kilzer  <ddkilzer@apple.com>
+
+        check-webkit-style reports false-positive whitespace/init warning in C++ initialization parameters
+        <https://webkit.org/b/193676>
+
+        Reviewed by Alexey Proskuryakov.
+
+        * Scripts/webkitpy/style/checkers/cpp.py:
+        (check_member_initialization_list):
+        - Don't report missing whitespace around colon if the colon at
+          the start of the line is formatted correctly.
+        * Scripts/webkitpy/style/checkers/cpp_unittest.py:
+        (WebKitStyleTest.test_member_initialization_list):
+        - Add a test for a missing permutation of existing tests.
+        - Add a test this false-positive.
+        - Add blank lines between subtests to make them easier to read.
+
 2019-01-22  Aakash Jain  <aakash_jain@apple.com>
 
         [build.webkit.org] Unit-test failure after r237113
