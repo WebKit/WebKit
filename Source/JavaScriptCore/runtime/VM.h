@@ -394,7 +394,6 @@ public:
     IsoSubspace propertyTableSpace;
     IsoSubspace proxyRevokeSpace;
     IsoSubspace regExpConstructorSpace;
-    IsoSubspace strictModeTypeErrorFunctionSpace;
     IsoSubspace structureRareDataSpace;
     IsoSubspace structureSpace;
     IsoSubspace weakSetSpace;

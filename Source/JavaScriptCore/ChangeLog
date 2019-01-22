@@ -1,3 +1,21 @@
+2019-01-21  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] StrictModeTypeErrorFunction is no longer used
+        https://bugs.webkit.org/show_bug.cgi?id=193662
+
+        Reviewed by Mark Lam.
+
+        StrictModeTypeErrorFunction is no longer used. This patch drops it. Furthermore, it also allows us to drop
+        strictModeTypeErrorFunctionSpace from VM.
+
+        * runtime/Error.cpp:
+        (JSC::StrictModeTypeErrorFunction::destroy): Deleted.
+        * runtime/Error.h:
+        (): Deleted.
+        * runtime/VM.cpp:
+        (JSC::VM::VM):
+        * runtime/VM.h:
+
 2019-01-21  Caio Lima  <ticaiolima@gmail.com>
 
         DoesGC rule is wrong for nodes with BigIntUse

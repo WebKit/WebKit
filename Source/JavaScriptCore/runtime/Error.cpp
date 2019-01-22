@@ -361,14 +361,6 @@ JSObject* createOutOfMemoryError(ExecState* exec, const String& message)
     return error;
 }
 
-
-const ClassInfo StrictModeTypeErrorFunction::s_info = { "Function", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(StrictModeTypeErrorFunction) };
-
-void StrictModeTypeErrorFunction::destroy(JSCell* cell)
-{
-    static_cast<StrictModeTypeErrorFunction*>(cell)->StrictModeTypeErrorFunction::~StrictModeTypeErrorFunction();
-}
-
 } // namespace JSC
 
 namespace WTF {
