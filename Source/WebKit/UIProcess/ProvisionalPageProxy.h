@@ -88,7 +88,7 @@ private:
     URL m_provisionalLoadURL;
 
 #if PLATFORM(IOS_FAMILY)
-    ProcessThrottler::BackgroundActivityToken m_suspensionToken;
+    ProcessThrottler::ForegroundActivityToken m_suspensionToken;
 #endif
 };
 

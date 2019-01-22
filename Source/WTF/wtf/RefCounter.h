@@ -65,6 +65,7 @@ public:
     using ValueChangeFunction = WTF::Function<void (RefCounterEvent)>;
 
     RefCounter(ValueChangeFunction&& = nullptr);
+    RefCounter(RefCounter&&) = default;
     ~RefCounter();
 
     Token count() const
