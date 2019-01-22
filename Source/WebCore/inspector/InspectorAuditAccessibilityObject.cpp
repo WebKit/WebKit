@@ -28,10 +28,13 @@
 #include "InspectorAuditAccessibilityObject.h"
 
 #include "AXObjectCache.h"
+#include "AccessibilityNodeObject.h"
 #include "AccessibilityObject.h"
 #include "ContainerNode.h"
 #include "Document.h"
+#include "Element.h"
 #include "ElementDescendantIterator.h"
+#include "HTMLNames.h"
 #include "Node.h"
 #include <wtf/Vector.h>
 
@@ -73,6 +76,158 @@ ExceptionOr<Vector<Ref<Node>>> InspectorAuditAccessibilityObject::getElementsByC
     }
 
     return nodes;
+}
+
+ExceptionOr<RefPtr<Node>> InspectorAuditAccessibilityObject::getActiveDescendant(Node& node)
+{
+    ERROR_IF_NO_ACTIVE_AUDIT();
+
+    if (AccessibilityObject* axObject = accessiblityObjectForNode(node)) {
+        if (AccessibilityObject* activeDescendant = axObject->activeDescendant())
+            return activeDescendant->node();
+    }
+
+    return nullptr;
+}
+
+static void addChildren(AccessibilityObject& parentObject, Vector<RefPtr<Node>>& childNodes)
+{
+    for (const RefPtr<AccessibilityObject>& childObject : parentObject.children()) {
+        if (Node* childNode = childObject->node())
+            childNodes.append(childNode);
+        else
+            addChildren(*childObject, childNodes);
+    }
+}
+
+ExceptionOr<Optional<Vector<RefPtr<Node>>>> InspectorAuditAccessibilityObject::getChildNodes(Node& node)
+{
+    ERROR_IF_NO_ACTIVE_AUDIT();
+
+    Optional<Vector<RefPtr<Node>>> result;
+
+    if (AccessibilityObject* axObject = accessiblityObjectForNode(node)) {
+        Vector<RefPtr<Node>> childNodes;
+        addChildren(*axObject, childNodes);
+        result = WTFMove(childNodes);
+    }
+
+    return result;
+}
+
+
+ExceptionOr<Optional<Vector<RefPtr<Node>>>> InspectorAuditAccessibilityObject::getControlledNodes(Node& node)
+{
+    ERROR_IF_NO_ACTIVE_AUDIT();
+
+    Optional<Vector<RefPtr<Node>>> result;
+
+    if (AccessibilityObject* axObject = accessiblityObjectForNode(node)) {
+        Vector<RefPtr<Node>> controlledNodes;
+
+        Vector<Element*> controlledElements;
+        axObject->elementsFromAttribute(controlledElements, HTMLNames::aria_controlsAttr);
+        for (Element* controlledElement : controlledElements) {
+            if (controlledElement)
+                controlledNodes.append(controlledElement);
+        }
+
+        result = WTFMove(controlledNodes);
+    }
+
+    return result;
+}
+
+ExceptionOr<Optional<Vector<RefPtr<Node>>>> InspectorAuditAccessibilityObject::getFlowedNodes(Node& node)
+{
+    ERROR_IF_NO_ACTIVE_AUDIT();
+
+    Optional<Vector<RefPtr<Node>>> result;
+
+    if (AccessibilityObject* axObject = accessiblityObjectForNode(node)) {
+        Vector<RefPtr<Node>> flowedNodes;
+
+        Vector<Element*> flowedElements;
+        axObject->elementsFromAttribute(flowedElements, HTMLNames::aria_flowtoAttr);
+        for (Element* flowedElement : flowedElements) {
+            if (flowedElement)
+                flowedNodes.append(flowedElement);
+        }
+
+        result = WTFMove(flowedNodes);
+    }
+
+    return result;
+}
+
+ExceptionOr<RefPtr<Node>> InspectorAuditAccessibilityObject::getMouseEventNode(Node& node)
+{
+    ERROR_IF_NO_ACTIVE_AUDIT();
+
+    if (AccessibilityObject* axObject = accessiblityObjectForNode(node)) {
+        if (is<AccessibilityNodeObject>(axObject))
+            return downcast<AccessibilityNodeObject>(axObject)->mouseButtonListener(MouseButtonListenerResultFilter::IncludeBodyElement);
+    }
+
+    return nullptr;
+}
+
+ExceptionOr<Optional<Vector<RefPtr<Node>>>> InspectorAuditAccessibilityObject::getOwnedNodes(Node& node)
+{
+    ERROR_IF_NO_ACTIVE_AUDIT();
+
+    Optional<Vector<RefPtr<Node>>> result;
+
+    if (AccessibilityObject* axObject = accessiblityObjectForNode(node)) {
+        if (axObject->supportsARIAOwns()) {
+            Vector<RefPtr<Node>> ownedNodes;
+
+            Vector<Element*> ownedElements;
+            axObject->elementsFromAttribute(ownedElements, HTMLNames::aria_ownsAttr);
+            for (Element* ownedElement : ownedElements) {
+                if (ownedElement)
+                    ownedNodes.append(ownedElement);
+            }
+
+            result = WTFMove(ownedNodes);
+        }
+    }
+
+    return result;
+}
+
+ExceptionOr<RefPtr<Node>> InspectorAuditAccessibilityObject::getParentNode(Node& node)
+{
+    ERROR_IF_NO_ACTIVE_AUDIT();
+
+    if (AccessibilityObject* axObject = accessiblityObjectForNode(node)) {
+        if (AccessibilityObject* parentObject = axObject->parentObjectUnignored())
+            return parentObject->node();
+    }
+
+    return nullptr;
+}
+
+ExceptionOr<Optional<Vector<RefPtr<Node>>>> InspectorAuditAccessibilityObject::getSelectedChildNodes(Node& node)
+{
+    ERROR_IF_NO_ACTIVE_AUDIT();
+
+    Optional<Vector<RefPtr<Node>>> result;
+
+    if (AccessibilityObject* axObject = accessiblityObjectForNode(node)) {
+        Vector<RefPtr<Node>> selectedChildNodes;
+
+        AccessibilityObject::AccessibilityChildrenVector selectedChildren;
+        axObject->selectedChildren(selectedChildren);
+        for (RefPtr<AccessibilityObject>& selectedChildObject : selectedChildren) {
+            if (Node* selectedChildNode = selectedChildObject->node())
+                selectedChildNodes.append(selectedChildNode);
+        }
+
+        result = WTFMove(selectedChildNodes);
+    }
+
+    return result;
 }
 
 } // namespace WebCore

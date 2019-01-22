@@ -10,7 +10,9 @@ function stringify(result) {
         return "#" + result.id;
     if (Array.isArray(result))
         return JSON.stringify(result.map(stringify));
-    return false;
+    if (result === null || result === undefined);
+        return result;
+    return "UNEXPECTED " + result;
 }
 
 function test()
@@ -35,6 +37,30 @@ function test()
         { func: "getElementsByComputedRole", role: "tree", target: "parent" },
         { func: "getElementsByComputedRole", role: "button" },
         { func: "getElementsByComputedRole", role: "button", target: "parent" },
+
+        { func: "getActiveDescendant", target: "parent" },
+        { func: "getActiveDescendant", target: "child" },
+
+        { func: "getChildNodes", target: "parent" },
+        { func: "getChildNodes", target: "child" },
+
+        { func: "getControlledNodes", target: "parent" },
+        { func: "getControlledNodes", target: "child" },
+
+        { func: "getFlowedNodes", target: "parent" },
+        { func: "getFlowedNodes", target: "child" },
+
+        { func: "getMouseEventNode", target: "parent" },
+        { func: "getMouseEventNode", target: "child" },
+
+        { func: "getOwnedNodes", target: "parent" },
+        { func: "getOwnedNodes", target: "child" },
+
+        { func: "getParentNode", target: "parent" },
+        { func: "getParentNode", target: "child" },
+
+        { func: "getSelectedChildNodes", target: "parent" },
+        { func: "getSelectedChildNodes", target: "child" },
     ];
 
     for (let {func, target, role} of tests) {

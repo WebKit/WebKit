@@ -29,4 +29,13 @@
     NoInterfaceObject,
 ] interface InspectorAuditAccessibilityObject {
     [CallWith=Document, MayThrowException] sequence<Node> getElementsByComputedRole(DOMString role, optional Node? container);
+
+    [MayThrowException] Node? getActiveDescendant(Node node);
+    [MayThrowException] sequence<Node>? getChildNodes(Node node);
+    [MayThrowException] sequence<Node>? getControlledNodes(Node node);
+    [MayThrowException] sequence<Node>? getFlowedNodes(Node node);
+    [MayThrowException] Node? getMouseEventNode(Node node);
+    [MayThrowException] sequence<Node>? getOwnedNodes(Node node);
+    [MayThrowException] Node? getParentNode(Node node);
+    [MayThrowException] sequence<Node>? getSelectedChildNodes(Node node);
 };

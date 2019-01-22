@@ -1,3 +1,26 @@
+2019-01-22  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: Audit: provide a way to get related Accessibility nodes for a given node
+        https://bugs.webkit.org/show_bug.cgi?id=193225
+        <rdar://problem/46799956>
+
+        Reviewed by Joseph Pecoraro.
+
+        Test: inspector/audit/run-accessibility.html
+
+        * inspector/InspectorAuditAccessibilityObject.idl:
+        * inspector/InspectorAuditAccessibilityObject.h:
+        * inspector/InspectorAuditAccessibilityObject.cpp:
+        (WebCore::InspectorAuditAccessibilityObject::getActiveDescendant): Added.
+        (WebCore::addChildren): Added.
+        (WebCore::InspectorAuditAccessibilityObject::getChildNodes): Added.
+        (WebCore::InspectorAuditAccessibilityObject::getControlledNodes): Added.
+        (WebCore::InspectorAuditAccessibilityObject::getFlowedNodes): Added.
+        (WebCore::InspectorAuditAccessibilityObject::getMouseEventNode): Added.
+        (WebCore::InspectorAuditAccessibilityObject::getOwnedNodes): Added.
+        (WebCore::InspectorAuditAccessibilityObject::getParentNode): Added.
+        (WebCore::InspectorAuditAccessibilityObject::getSelectedChildNodes): Added.
+
 2019-01-22  David Kilzer  <ddkilzer@apple.com>
 
         Switch remaining QuickLook soft-linking in WebCore, WebKit over to QuickLookSoftLink.{cpp,h}
