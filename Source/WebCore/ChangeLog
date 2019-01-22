@@ -1,5 +1,13 @@
 2019-01-22  Alex Christensen  <achristensen@webkit.org>
 
+        Fix more builds.
+
+        * platform/network/curl/CurlResourceHandleDelegate.cpp:
+        (WebCore::handleCookieHeaders):
+        (WebCore::CurlResourceHandleDelegate::curlDidReceiveResponse):
+
+2019-01-22  Alex Christensen  <achristensen@webkit.org>
+
         Fix some builds after r240292
         https://bugs.webkit.org/show_bug.cgi?id=193580
 

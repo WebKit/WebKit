@@ -85,11 +85,11 @@ void CurlResourceHandleDelegate::curlDidSendData(CurlRequest& request, unsigned 
     client()->didSendData(&m_handle, bytesSent, totalBytesToBeSent);
 }
 
-static void handleCookieHeaders(const CurlResponse& response)
+static void handleCookieHeaders(ResourceHandleInternal* d, const CurlResponse& response)
 {
     static const auto setCookieHeader = "set-cookie: ";
 
-    const auto& storageSession = *d()->m_context->storageSession(PAL::SessionID::defaultSessionID());
+    const auto& storageSession = *d->m_context->storageSession(PAL::SessionID::defaultSessionID());
     const auto& cookieJar = storageSession.cookieStorage();
     for (const auto& header : response.headers) {
         if (header.startsWithIgnoringASCIICase(setCookieHeader)) {
@@ -112,7 +112,7 @@ void CurlResourceHandleDelegate::curlDidReceiveResponse(CurlRequest& request, co
     m_response.setCertificateInfo(request.certificateInfo().isolatedCopy());
     m_response.setDeprecatedNetworkLoadMetrics(request.networkLoadMetrics().isolatedCopy());
 
-    handleCookieHeaders(receivedResponse);
+    handleCookieHeaders(d(), receivedResponse);
 
     if (m_response.shouldRedirect()) {
         m_handle.willSendRequest();
