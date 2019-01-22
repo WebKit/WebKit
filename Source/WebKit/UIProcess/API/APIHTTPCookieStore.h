@@ -32,12 +32,12 @@
 #include <wtf/Forward.h>
 #include <wtf/HashSet.h>
 
-#if PLATFORM(COCOA)
 namespace WebCore {
 struct Cookie;
+#if PLATFORM(COCOA)
 class CookieStorageObserver;
-}
 #endif
+}
 
 namespace WebKit {
 class WebCookieManagerProxy;

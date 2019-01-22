@@ -93,6 +93,7 @@
 
 #if USE(SOUP)
 #include <WebCore/DNSResolveQueueSoup.h>
+#include <WebCore/SoupNetworkSession.h>
 #endif
 
 #if ENABLE(SERVICE_WORKER)
@@ -155,7 +156,7 @@ NetworkProcess::NetworkProcess()
 #endif
 
 #if USE(SOUP)
-    DNSResolveQueueSoup::setGlobalDefaultNetworkStorageSessionAccessor([this] {
+    DNSResolveQueueSoup::setGlobalDefaultNetworkStorageSessionAccessor([this]() -> NetworkStorageSession& {
         return defaultStorageSession();
     });
     defaultStorageSession().clearSoupNetworkSessionAndCookieStorage();
