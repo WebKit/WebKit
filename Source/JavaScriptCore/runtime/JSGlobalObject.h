@@ -80,6 +80,7 @@ class GetterSetter;
 class GlobalCodeBlock;
 class IndirectEvalExecutable;
 class InputCursor;
+class IntlObject;
 class JSArrayBuffer;
 class JSArrayBufferConstructor;
 class JSArrayBufferPrototype;
@@ -274,6 +275,9 @@ public:
     WriteBarrier<JSPromiseConstructor> m_promiseConstructor;
     WriteBarrier<JSInternalPromiseConstructor> m_internalPromiseConstructor;
 
+#if ENABLE(INTL)
+    WriteBarrier<IntlObject> m_intlObject;
+#endif
     WriteBarrier<NullGetterFunction> m_nullGetterFunction;
     WriteBarrier<NullSetterFunction> m_nullSetterFunction;
 
@@ -582,6 +586,10 @@ public:
     NativeErrorConstructor* syntaxErrorConstructor() const { return m_syntaxErrorConstructor.get(this); }
     NativeErrorConstructor* typeErrorConstructor() const { return m_typeErrorConstructor.get(); }
     NativeErrorConstructor* URIErrorConstructor() const { return m_URIErrorConstructor.get(this); }
+
+#if ENABLE(INTL)
+    IntlObject* intlObject() const { return m_intlObject.get(); }
+#endif
 
     NullGetterFunction* nullGetterFunction() const { return m_nullGetterFunction.get(); }
     NullSetterFunction* nullSetterFunction() const { return m_nullSetterFunction.get(); }

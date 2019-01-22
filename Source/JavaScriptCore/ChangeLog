@@ -1,3 +1,66 @@
+2019-01-22  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Intl constructors should fit in sizeof(InternalFunction)
+        https://bugs.webkit.org/show_bug.cgi?id=193661
+
+        Reviewed by Mark Lam.
+
+        Previously all the Intl constructors have their own subspace. This is because these constructors have different size from InternalFunction.
+        But it is too costly approach in terms of the memory usage since these constructors are only one per JSGlobalObject. This patch attempts to
+        reduce the memory size consumed by these Intl objects by holding instance structures in IntlObject instead of in each Intl constructors.
+        So that we can make sizeof(Intl constructors) == sizeof(InternalFunction) and drop costly subspaces. Since this patch drops subspaces in VM,
+        it also significantly reduces the sizeof(VM), from 76696 to 74680.
+
+        This patch also includes the preparation for making Intl properties lazy. But currently it is not possible since @Collator reference exists
+        in builtin code.
+
+        * CMakeLists.txt:
+        * DerivedSources.make:
+        * runtime/IntlCollatorConstructor.cpp:
+        (JSC::IntlCollatorConstructor::create):
+        (JSC::IntlCollatorConstructor::finishCreation):
+        (JSC::constructIntlCollator):
+        (JSC::callIntlCollator):
+        (JSC::IntlCollatorConstructor::visitChildren): Deleted.
+        * runtime/IntlCollatorConstructor.h:
+        * runtime/IntlDateTimeFormatConstructor.cpp:
+        (JSC::IntlDateTimeFormatConstructor::create):
+        (JSC::IntlDateTimeFormatConstructor::finishCreation):
+        (JSC::constructIntlDateTimeFormat):
+        (JSC::callIntlDateTimeFormat):
+        (JSC::IntlDateTimeFormatConstructor::visitChildren): Deleted.
+        * runtime/IntlDateTimeFormatConstructor.h:
+        * runtime/IntlNumberFormatConstructor.cpp:
+        (JSC::IntlNumberFormatConstructor::create):
+        (JSC::IntlNumberFormatConstructor::finishCreation):
+        (JSC::constructIntlNumberFormat):
+        (JSC::callIntlNumberFormat):
+        (JSC::IntlNumberFormatConstructor::visitChildren): Deleted.
+        * runtime/IntlNumberFormatConstructor.h:
+        * runtime/IntlObject.cpp:
+        (JSC::createCollatorConstructor):
+        (JSC::createNumberFormatConstructor):
+        (JSC::createDateTimeFormatConstructor):
+        (JSC::createPluralRulesConstructor):
+        (JSC::IntlObject::create):
+        (JSC::IntlObject::finishCreation):
+        (JSC::IntlObject::visitChildren):
+        * runtime/IntlObject.h:
+        * runtime/IntlPluralRulesConstructor.cpp:
+        (JSC::IntlPluralRulesConstructor::create):
+        (JSC::IntlPluralRulesConstructor::finishCreation):
+        (JSC::constructIntlPluralRules):
+        (JSC::IntlPluralRulesConstructor::visitChildren): Deleted.
+        * runtime/IntlPluralRulesConstructor.h:
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::init):
+        (JSC::JSGlobalObject::visitChildren):
+        * runtime/JSGlobalObject.h:
+        (JSC::JSGlobalObject::intlObject const):
+        * runtime/VM.cpp:
+        (JSC::VM::VM):
+        * runtime/VM.h:
+
 2019-01-22  Saam Barati  <sbarati@apple.com>
 
         Unreviewed. Rollout r240223. It regressed JetStream2 by 1%.

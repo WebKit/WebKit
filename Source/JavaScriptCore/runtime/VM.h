@@ -379,12 +379,6 @@ public:
     IsoSubspace generatorFunctionSpace;
     IsoSubspace inferredValueSpace;
     IsoSubspace internalFunctionSpace;
-#if ENABLE(INTL)
-    IsoSubspace intlCollatorConstructorSpace;
-    IsoSubspace intlDateTimeFormatConstructorSpace;
-    IsoSubspace intlNumberFormatConstructorSpace;
-    IsoSubspace intlPluralRulesConstructorSpace;
-#endif
     IsoSubspace nativeErrorConstructorSpace;
     IsoSubspace nativeExecutableSpace;
     IsoSubspace nativeStdFunctionSpace;

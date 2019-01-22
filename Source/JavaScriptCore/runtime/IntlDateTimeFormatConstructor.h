@@ -29,6 +29,7 @@
 #if ENABLE(INTL)
 
 #include "InternalFunction.h"
+#include "IntlObject.h"
 
 namespace JSC {
 
@@ -40,27 +41,18 @@ public:
     typedef InternalFunction Base;
     static const unsigned StructureFlags = Base::StructureFlags | HasStaticPropertyTable;
 
-    template<typename CellType>
-    static IsoSubspace* subspaceFor(VM& vm)
-    {
-        return &vm.intlDateTimeFormatConstructorSpace;
-    }
-
-    static IntlDateTimeFormatConstructor* create(VM&, Structure*, IntlDateTimeFormatPrototype*, Structure*);
+    static IntlDateTimeFormatConstructor* create(VM&, Structure*, IntlDateTimeFormatPrototype*);
     static Structure* createStructure(VM&, JSGlobalObject*, JSValue);
 
     DECLARE_INFO;
 
-    Structure* dateTimeFormatStructure() const { return m_dateTimeFormatStructure.get(); }
+    Structure* dateTimeFormatStructure(VM& vm) const { return globalObject(vm)->intlObject()->dateTimeFormatStructure(); }
 
 protected:
-    void finishCreation(VM&, IntlDateTimeFormatPrototype*, Structure*);
+    void finishCreation(VM&, IntlDateTimeFormatPrototype*);
 
 private:
     IntlDateTimeFormatConstructor(VM&, Structure*);
-    static void visitChildren(JSCell*, SlotVisitor&);
-    
-    WriteBarrier<Structure> m_dateTimeFormatStructure;
 };
 
 } // namespace JSC

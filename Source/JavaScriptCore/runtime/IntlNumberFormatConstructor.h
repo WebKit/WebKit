@@ -29,6 +29,7 @@
 #if ENABLE(INTL)
 
 #include "InternalFunction.h"
+#include "IntlObject.h"
 
 namespace JSC {
 
@@ -40,27 +41,18 @@ public:
     typedef InternalFunction Base;
     static const unsigned StructureFlags = Base::StructureFlags | HasStaticPropertyTable;
 
-    template<typename CellType>
-    static IsoSubspace* subspaceFor(VM& vm)
-    {
-        return &vm.intlNumberFormatConstructorSpace;
-    }
-
-    static IntlNumberFormatConstructor* create(VM&, Structure*, IntlNumberFormatPrototype*, Structure*);
+    static IntlNumberFormatConstructor* create(VM&, Structure*, IntlNumberFormatPrototype*);
     static Structure* createStructure(VM&, JSGlobalObject*, JSValue);
 
     DECLARE_INFO;
 
-    Structure* numberFormatStructure() const { return m_numberFormatStructure.get(); }
+    Structure* numberFormatStructure(VM& vm) const { return globalObject(vm)->intlObject()->numberFormatStructure(); }
 
 protected:
-    void finishCreation(VM&, IntlNumberFormatPrototype*, Structure*);
+    void finishCreation(VM&, IntlNumberFormatPrototype*);
 
 private:
     IntlNumberFormatConstructor(VM&, Structure*);
-    static void visitChildren(JSCell*, SlotVisitor&);
-    
-    WriteBarrier<Structure> m_numberFormatStructure;
 };
 
 } // namespace JSC

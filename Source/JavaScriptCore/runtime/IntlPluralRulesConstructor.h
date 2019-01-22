@@ -28,6 +28,7 @@
 #if ENABLE(INTL)
 
 #include "InternalFunction.h"
+#include "IntlObject.h"
 
 namespace JSC {
 
@@ -39,27 +40,18 @@ public:
     typedef InternalFunction Base;
     static const unsigned StructureFlags = Base::StructureFlags | HasStaticPropertyTable;
 
-    template<typename CellType>
-    static IsoSubspace* subspaceFor(VM& vm)
-    {
-        return &vm.intlPluralRulesConstructorSpace;
-    }
-
-    static IntlPluralRulesConstructor* create(VM&, Structure*, IntlPluralRulesPrototype*, Structure*);
+    static IntlPluralRulesConstructor* create(VM&, Structure*, IntlPluralRulesPrototype*);
     static Structure* createStructure(VM&, JSGlobalObject*, JSValue);
 
     DECLARE_INFO;
 
-    Structure* pluralRulesStructure() const { return m_pluralRulesStructure.get(); }
+    Structure* pluralRulesStructure(VM& vm) const { return globalObject(vm)->intlObject()->pluralRulesStructure(); }
 
 protected:
-    void finishCreation(VM&, IntlPluralRulesPrototype*, Structure*);
+    void finishCreation(VM&, IntlPluralRulesPrototype*);
 
 private:
     IntlPluralRulesConstructor(VM&, Structure*);
-    static void visitChildren(JSCell*, SlotVisitor&);
-    
-    WriteBarrier<Structure> m_pluralRulesStructure;
 };
 
 } // namespace JSC
