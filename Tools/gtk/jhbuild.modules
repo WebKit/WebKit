@@ -445,10 +445,10 @@
 
   <autotools id="libgcrypt"
              autogen-sh="configure">
-    <branch module="libgcrypt/libgcrypt-1.7.6.tar.bz2"
-            version="1.7.6"
+    <branch module="libgcrypt/libgcrypt-${version}.tar.bz2"
+            version="1.8.4"
             repo="gnupg.org"
-            hash="sha256:626aafee84af9d2ce253d2c143dc1c0902dda045780cc241f39970fc60be05bc">
+            hash="sha256:f638143a0672628fde0cad745e9b14deb85dffb175709cacc1f4fe24b93f2227">
         <patch file="libgcrypt-use-only-dev-urandom-for-testing.patch" strip="1"/>
     </branch>
     <dependencies>
