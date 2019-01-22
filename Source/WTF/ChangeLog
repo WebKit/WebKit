@@ -1,3 +1,16 @@
+2019-01-22  Tadeu Zagallo  <tzagallo@apple.com>
+
+        Cache bytecode to disk
+        https://bugs.webkit.org/show_bug.cgi?id=192782
+        <rdar://problem/46084932>
+
+        Reviewed by Keith Miller.
+
+        BitVectors have to be friends with JSC::CacheBitVector to allow
+        serializing its buffer as part of the bytecode cache encoding.
+
+        * wtf/BitVector.h:
+
 2019-01-21  Claudio Saavedra  <csaavedra@igalia.com>
 
         [GTK] Speculative build fix for Ubuntu LTS

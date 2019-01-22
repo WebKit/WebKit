@@ -39,6 +39,8 @@ namespace JSC {
 // makes sense because such modifications are so uncommon. You'd have to do something crazy like
 // "delete arguments[i]" or some variant of defineOwnProperty.
 class ScopedArgumentsTable final : public JSCell {
+    friend class CachedScopedArgumentsTable;
+
 public:
     typedef JSCell Base;
     static const unsigned StructureFlags = Base::StructureFlags | StructureIsImmortal;

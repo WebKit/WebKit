@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2016 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,25 +25,22 @@
 
 #pragma once
 
-#include "UnlinkedCodeBlock.h"
+#include "JSCast.h"
+#include <wtf/MallocPtr.h>
 
 namespace JSC {
 
-class UnlinkedGlobalCodeBlock : public UnlinkedCodeBlock {
-public:
-    typedef UnlinkedCodeBlock Base;
+class SourceCodeKey;
+class UnlinkedCodeBlock;
 
-protected:
-    UnlinkedGlobalCodeBlock(VM* vm, Structure* structure, CodeType codeType, const ExecutableInfo& info, DebuggerMode debuggerMode)
-        : Base(vm, structure, codeType, info, debuggerMode)
-    {
-    }
+std::pair<MallocPtr<uint8_t>, size_t> encodeCodeBlock(VM&, const SourceCodeKey&, const UnlinkedCodeBlock*);
+UnlinkedCodeBlock* decodeCodeBlockImpl(VM&, const SourceCodeKey&, const void*, size_t);
 
-    template<typename CodeBlockType>
-    UnlinkedGlobalCodeBlock(Decoder& decoder, Structure* structure, const CachedCodeBlock<CodeBlockType>& cachedCodeBlock)
-        : Base(decoder, structure, cachedCodeBlock)
-    {
-    }
-};
 
+template<typename UnlinkedCodeBlockType>
+UnlinkedCodeBlockType* decodeCodeBlock(VM& vm, const SourceCodeKey& key, const void* buffer, size_t size)
+{
+    return jsCast<UnlinkedCodeBlockType*>(decodeCodeBlockImpl(vm, key, buffer, size));
 }
+
+} // namespace JSC

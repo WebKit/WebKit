@@ -29,6 +29,8 @@
 
 namespace JSC {
 
+class CachedEvalCodeBlock;
+
 class UnlinkedEvalCodeBlock final : public UnlinkedGlobalCodeBlock {
 public:
     typedef UnlinkedGlobalCodeBlock Base;
@@ -59,10 +61,14 @@ public:
         m_functionHoistingCandidates = WTFMove(functionHoistingCandidates);
     }
 private:
+    friend CachedEvalCodeBlock;
+
     UnlinkedEvalCodeBlock(VM* vm, Structure* structure, const ExecutableInfo& info, DebuggerMode debuggerMode)
         : Base(vm, structure, EvalCode, info, debuggerMode)
     {
     }
+
+    UnlinkedEvalCodeBlock(Decoder&, const CachedEvalCodeBlock&);
 
     Vector<Identifier, 0, UnsafeVectorOverflow> m_variables;
     Vector<Identifier, 0, UnsafeVectorOverflow> m_functionHoistingCandidates;

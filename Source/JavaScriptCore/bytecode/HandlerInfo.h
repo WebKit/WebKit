@@ -89,6 +89,10 @@ struct HandlerInfoBase {
 };
 
 struct UnlinkedHandlerInfo : public HandlerInfoBase {
+    UnlinkedHandlerInfo()
+    {
+    }
+
     UnlinkedHandlerInfo(uint32_t start, uint32_t end, uint32_t target, HandlerType handlerType)
     {
         this->start = start;

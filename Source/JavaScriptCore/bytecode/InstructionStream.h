@@ -39,6 +39,7 @@ class InstructionStream {
     using InstructionBuffer = Vector<uint8_t, 0, UnsafeVectorOverflow>;
 
     friend class InstructionStreamWriter;
+    friend class CachedInstructionStream;
 public:
     size_t sizeInBytes() const;
 
