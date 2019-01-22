@@ -2668,22 +2668,17 @@ void CodeBlock::tallyFrequentExitSites()
 }
 #endif // ENABLE(DFG_JIT)
 
-void CodeBlock::notifyLexicalBindingUpdate()
+void CodeBlock::notifyLexicalBindingShadowing(VM& vm, const IdentifierSet& set)
 {
     // FIXME: Currently, module code do not query to JSGlobalLexicalEnvironment. So this case should be removed once it is fixed.
     // https://bugs.webkit.org/show_bug.cgi?id=193347
     if (scriptMode() == JSParserScriptMode::Module)
         return;
     JSGlobalObject* globalObject = m_globalObject.get();
-    JSGlobalLexicalEnvironment* globalLexicalEnvironment = jsCast<JSGlobalLexicalEnvironment*>(globalObject->globalScope());
-    SymbolTable* symbolTable = globalLexicalEnvironment->symbolTable();
+
+    auto scope = DECLARE_THROW_SCOPE(vm);
 
     ConcurrentJSLocker locker(m_lock);
-
-    auto isShadowed = [&] (UniquedStringImpl* uid) {
-        ConcurrentJSLocker locker(symbolTable->m_lock);
-        return symbolTable->contains(locker, uid);
-    };
 
     for (const auto& instruction : *m_instructions) {
         OpcodeID opcodeID = instruction->opcodeID();
@@ -2694,13 +2689,72 @@ void CodeBlock::notifyLexicalBindingUpdate()
             ResolveType originalResolveType = metadata.m_resolveType;
             if (originalResolveType == GlobalProperty || originalResolveType == GlobalPropertyWithVarInjectionChecks) {
                 const Identifier& ident = identifier(bytecode.m_var);
-                if (isShadowed(ident.impl()))
-                    metadata.m_globalLexicalBindingEpoch = 0;
-                else
-                    metadata.m_globalLexicalBindingEpoch = globalObject->globalLexicalBindingEpoch();
+                if (set.contains(ident.impl())) {
+                    // We pass JSGlobalLexicalScope as a start point of the scope chain.
+                    // It should immediately find the lexical binding because that's the reason why we perform this rewriting now.
+                    ResolveOp op = JSScope::abstractResolve(m_globalObject->globalExec(), bytecode.m_localScopeDepth, globalObject->globalScope(), ident, Get, bytecode.m_resolveType, InitializationMode::NotInitialization);
+                    scope.releaseAssertNoException();
+                    ASSERT(op.type == GlobalLexicalVarWithVarInjectionChecks || op.type == GlobalLexicalVar);
+                    metadata.m_resolveType = needsVarInjectionChecks(originalResolveType) ? GlobalLexicalVarWithVarInjectionChecks : GlobalLexicalVar;
+                    metadata.m_localScopeDepth = 0;
+                    ASSERT(!op.lexicalEnvironment);
+                    JSScope* constantScope = JSScope::constantScopeForCodeBlock(metadata.m_resolveType, this);
+                    ASSERT(constantScope == globalObject->globalScope());
+                    metadata.m_constantScope.set(vm, this, constantScope);
+                    dataLogLnIf(CodeBlockInternal::verbose, "Rewrite op_resolve_scope from ", originalResolveType, " to ", metadata.m_resolveType);
+                }
             }
             break;
         }
+
+        case op_get_from_scope: {
+            auto bytecode = instruction->as<OpGetFromScope>();
+            auto& metadata = bytecode.metadata(this);
+            ResolveType originalResolveType = metadata.m_getPutInfo.resolveType();
+            if (originalResolveType == GlobalProperty || originalResolveType == GlobalPropertyWithVarInjectionChecks) {
+                const Identifier& ident = identifier(bytecode.m_var);
+                if (set.contains(ident.impl())) {
+                    // We pass JSGlobalLexicalScope as a start point of the scope chain.
+                    // It should immediately find the lexical binding because that's the reason why we perform this rewriting now.
+                    ResolveOp op = JSScope::abstractResolve(m_globalObject->globalExec(), bytecode.m_localScopeDepth, globalObject->globalScope(), ident, Get, bytecode.m_getPutInfo.resolveType(), InitializationMode::NotInitialization);
+                    scope.releaseAssertNoException();
+                    ASSERT(op.type == GlobalLexicalVarWithVarInjectionChecks || op.type == GlobalLexicalVar);
+                    metadata.m_getPutInfo = GetPutInfo(bytecode.m_getPutInfo.resolveMode(), needsVarInjectionChecks(originalResolveType) ? GlobalLexicalVarWithVarInjectionChecks : GlobalLexicalVar, bytecode.m_getPutInfo.initializationMode());
+                    metadata.m_watchpointSet = op.watchpointSet;
+                    metadata.m_operand = op.operand;
+                    dataLogLnIf(CodeBlockInternal::verbose, "Rewrite op_get_from_scope from ", originalResolveType, " to ", metadata.m_getPutInfo.resolveType());
+                }
+            }
+            break;
+        }
+
+        case op_put_to_scope: {
+            auto bytecode = instruction->as<OpPutToScope>();
+            auto& metadata = bytecode.metadata(this);
+            ResolveType originalResolveType = metadata.m_getPutInfo.resolveType();
+            if (originalResolveType == GlobalProperty || originalResolveType == GlobalPropertyWithVarInjectionChecks) {
+                const Identifier& ident = identifier(bytecode.m_var);
+                if (set.contains(ident.impl())) {
+                    // We pass JSGlobalLexicalScope as a start point of the scope chain.
+                    // It should immediately find the lexical binding because that's the reason why we perform this rewriting now.
+                    ResolveOp op = JSScope::abstractResolve(m_globalObject->globalExec(), bytecode.m_symbolTableOrScopeDepth, globalObject->globalScope(), ident, Put, bytecode.m_getPutInfo.resolveType(), bytecode.m_getPutInfo.initializationMode());
+                    scope.releaseAssertNoException();
+                    ASSERT(op.type == GlobalLexicalVarWithVarInjectionChecks || op.type == GlobalLexicalVar || op.type == Dynamic);
+
+                    ResolveType resolveType = op.type;
+                    metadata.m_watchpointSet = nullptr;
+                    if (resolveType == GlobalLexicalVarWithVarInjectionChecks || resolveType == GlobalLexicalVar) {
+                        resolveType = needsVarInjectionChecks(originalResolveType) ? GlobalLexicalVarWithVarInjectionChecks : GlobalLexicalVar;
+                        metadata.m_watchpointSet = op.watchpointSet;
+                    }
+                    metadata.m_getPutInfo = GetPutInfo(bytecode.m_getPutInfo.resolveMode(), resolveType, bytecode.m_getPutInfo.initializationMode());
+                    metadata.m_operand = op.operand;
+                    dataLogLnIf(CodeBlockInternal::verbose, "Rewrite op_put_to_scope from ", originalResolveType, " to ", metadata.m_getPutInfo.resolveType());
+                }
+            }
+            break;
+        }
+
         default:
             break;
         }

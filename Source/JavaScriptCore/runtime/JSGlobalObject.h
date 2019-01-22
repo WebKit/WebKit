@@ -486,12 +486,10 @@ public:
 #if ENABLE(DFG_JIT)
     using ReferencedGlobalPropertyWatchpointSets = HashMap<RefPtr<UniquedStringImpl>, Ref<WatchpointSet>, IdentifierRepHash>;
     ReferencedGlobalPropertyWatchpointSets m_referencedGlobalPropertyWatchpointSets;
-    ConcurrentJSLock m_referencedGlobalPropertyWatchpointSetsLock;
 #endif
 
     bool m_evalEnabled { true };
     bool m_webAssemblyEnabled { true };
-    unsigned m_globalLexicalBindingEpoch { 1 };
     String m_evalDisabledErrorMessage;
     String m_webAssemblyDisabledErrorMessage;
     RuntimeFlags m_runtimeFlags;
@@ -753,10 +751,7 @@ public:
     const HashSet<String>& intlPluralRulesAvailableLocales();
 #endif // ENABLE(INTL)
 
-    void bumpGlobalLexicalBindingEpoch(VM&);
-    unsigned globalLexicalBindingEpoch() const { return m_globalLexicalBindingEpoch; }
-    static ptrdiff_t globalLexicalBindingEpochOffset() { return OBJECT_OFFSETOF(JSGlobalObject, m_globalLexicalBindingEpoch); }
-    unsigned* addressOfGlobalLexicalBindingEpoch() { return &m_globalLexicalBindingEpoch; }
+    void notifyLexicalBindingShadowing(VM&, const IdentifierSet&);
 
     void setConsoleClient(ConsoleClient* consoleClient) { m_consoleClient = consoleClient; }
     ConsoleClient* consoleClient() const { return m_consoleClient; }

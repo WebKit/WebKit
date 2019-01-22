@@ -1058,20 +1058,6 @@ bool Graph::isSafeToLoad(JSObject* base, PropertyOffset offset)
     return m_safeToLoad.contains(std::make_pair(base, offset));
 }
 
-bool Graph::watchGlobalProperty(JSGlobalObject* globalObject, unsigned identifierNumber)
-{
-    UniquedStringImpl* uid = identifiers()[identifierNumber];
-    // If we already have a WatchpointSet, and it is already invalidated, it means that this scope operation must be changed from GlobalProperty to GlobalLexicalVar,
-    // but we still have stale metadata here since we have not yet executed this bytecode operation since the invalidation. Just emitting ForceOSRExit to update the
-    // metadata when it reaches to this code.
-    if (auto* watchpoint = globalObject->getReferencedPropertyWatchpointSet(uid)) {
-        if (!watchpoint->isStillValid())
-            return false;
-    }
-    globalProperties().addLazily(DesiredGlobalProperty(globalObject, identifierNumber));
-    return true;
-}
-
 FullBytecodeLiveness& Graph::livenessFor(CodeBlock* codeBlock)
 {
     HashMap<CodeBlock*, std::unique_ptr<FullBytecodeLiveness>>::iterator iter = m_bytecodeLiveness.find(codeBlock);

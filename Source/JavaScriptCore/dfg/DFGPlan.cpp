@@ -573,7 +573,7 @@ void Plan::notifyReady()
 
 bool Plan::isStillValidOnMainThread()
 {
-    return m_globalProperties.isStillValidOnMainThread(*m_vm, m_identifiers);
+    return m_globalProperties.isStillValidOnMainThread(m_identifiers);
 }
 
 CompilationResult Plan::finalizeWithoutNotifyingCallback()

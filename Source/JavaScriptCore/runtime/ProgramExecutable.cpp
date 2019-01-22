@@ -107,6 +107,7 @@ JSObject* ProgramExecutable::initializeGlobalProperties(VM& vm, CallFrame* callF
     JSGlobalLexicalEnvironment* globalLexicalEnvironment = globalObject->globalLexicalEnvironment();
     const VariableEnvironment& variableDeclarations = unlinkedCodeBlock->variableDeclarations();
     const VariableEnvironment& lexicalDeclarations = unlinkedCodeBlock->lexicalDeclarations();
+    IdentifierSet shadowedProperties;
     // The ES6 spec says that no vars/global properties/let/const can be duplicated in the global scope.
     // This carried out section 15.1.8 of the ES6 spec: http://www.ecma-international.org/ecma-262/6.0/index.html#sec-globaldeclarationinstantiation
     {
@@ -130,9 +131,11 @@ JSObject* ProgramExecutable::initializeGlobalProperties(VM& vm, CallFrame* callF
                 // Lexical bindings can shadow global properties if the given property's attribute is configurable.
                 // https://tc39.github.io/ecma262/#sec-globaldeclarationinstantiation step 5-c, `hasRestrictedGlobal` becomes false
                 // However we may emit GlobalProperty look up in bytecodes already and it may cache the value for the global scope.
-                // To make it invalid,
-                // 1. In LLInt and Baseline, we bump the global lexical binding epoch and it works.
+                // To make it invalid, we iterate all the CodeBlocks and rewrite the instruction to convert GlobalProperty to GlobalLexicalVar.
+                // 1. In LLInt, we always check metadata's resolveType. So rewritten instruction just works.
+                // 2. In Baseline JIT, we check metadata's resolveType in GlobalProperty case so that we can notice once it is changed.
                 // 3. In DFG and FTL, we watch the watchpoint and jettison once it is fired.
+                shadowedProperties.add(entry.key.get());
                 break;
             case GlobalPropertyLookUpStatus::NotFound:
                 break;
@@ -203,18 +206,12 @@ JSObject* ProgramExecutable::initializeGlobalProperties(VM& vm, CallFrame* callF
             RELEASE_ASSERT(offsetForAssert == offset);
         }
     }
-    if (lexicalDeclarations.size()) {
-#if ENABLE(DFG_JIT)
-        for (auto& entry : lexicalDeclarations) {
-            // If WatchpointSet exists, just fire it. Since DFG WatchpointSet addition is also done on the main thread, we can sync them.
-            // So that we do not create WatchpointSet here. DFG will create if necessary on the main thread.
-            // And it will only create not-invalidated watchpoint set if the global lexical environment binding doesn't exist, which is why this code works.
-            if (auto* watchpointSet = globalObject->getReferencedPropertyWatchpointSet(entry.key.get()))
-                watchpointSet->fireAll(vm, "Lexical binding shadows an existing global property");
-        }
-#endif
-        globalObject->bumpGlobalLexicalBindingEpoch(vm);
+
+    if (!shadowedProperties.isEmpty()) {
+        globalObject->notifyLexicalBindingShadowing(vm, WTFMove(shadowedProperties));
+        throwScope.assertNoException();
     }
+
     return nullptr;
 }
 

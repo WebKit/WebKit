@@ -793,8 +793,6 @@ public:
     bool watchCondition(const ObjectPropertyCondition&);
     bool watchConditions(const ObjectPropertyConditionSet&);
 
-    bool watchGlobalProperty(JSGlobalObject*, unsigned identifierNumber);
-
     // Checks if it's known that loading from the given object at the given offset is fine. This is
     // computed by tracking which conditions we track with watchCondition().
     bool isSafeToLoad(JSObject* base, PropertyOffset);

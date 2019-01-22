@@ -1,3 +1,13 @@
+2019-01-21  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        Unreviewed, roll out r240220 due to date-format-xparb regression
+        https://bugs.webkit.org/show_bug.cgi?id=193603
+
+        * stress/let-lexical-binding-shadow-existing-global-property-ftl.js:
+        * stress/scope-operation-cache-global-property-before-deleting.js: Removed.
+        * stress/scope-operation-cache-global-property-bump-counter.js: Removed.
+        * stress/scope-operation-cache-global-property-even-if-it-fails.js: Removed.
+
 2019-01-21  Caio Lima  <ticaiolima@gmail.com>
 
         DoesGC rule is wrong for nodes with BigIntUse

@@ -47,7 +47,7 @@ public:
         m_set.add(WTFMove(property));
     }
 
-    bool isStillValidOnMainThread(VM&, DesiredIdentifiers&);
+    bool isStillValidOnMainThread(DesiredIdentifiers&);
 
     void reallyAdd(CodeBlock*, DesiredIdentifiers&, CommonData&);
 

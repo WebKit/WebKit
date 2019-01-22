@@ -1,5 +1,54 @@
 2019-01-21  Yusuke Suzuki  <ysuzuki@apple.com>
 
+        Unreviewed, roll out r240220 due to date-format-xparb regression
+        https://bugs.webkit.org/show_bug.cgi?id=193603
+
+        * bytecode/BytecodeList.rb:
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::notifyLexicalBindingShadowing):
+        (JSC::CodeBlock::notifyLexicalBindingUpdate): Deleted.
+        * bytecode/CodeBlock.h:
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::parseBlock):
+        * dfg/DFGDesiredGlobalProperties.cpp:
+        (JSC::DFG::DesiredGlobalProperties::isStillValidOnMainThread):
+        * dfg/DFGDesiredGlobalProperties.h:
+        * dfg/DFGGraph.cpp:
+        (JSC::DFG::Graph::watchGlobalProperty): Deleted.
+        * dfg/DFGGraph.h:
+        * dfg/DFGPlan.cpp:
+        (JSC::DFG::Plan::isStillValidOnMainThread):
+        * jit/JITPropertyAccess.cpp:
+        (JSC::JIT::emit_op_resolve_scope):
+        * jit/JITPropertyAccess32_64.cpp:
+        (JSC::JIT::emit_op_resolve_scope):
+        * llint/LowLevelInterpreter32_64.asm:
+        * llint/LowLevelInterpreter64.asm:
+        * runtime/CommonSlowPaths.cpp:
+        (JSC::SLOW_PATH_DECL):
+        * runtime/CommonSlowPaths.h:
+        (JSC::CommonSlowPaths::tryCachePutToScopeGlobal):
+        (JSC::CommonSlowPaths::tryCacheGetFromScopeGlobal):
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::notifyLexicalBindingShadowing):
+        (JSC::JSGlobalObject::getReferencedPropertyWatchpointSet):
+        (JSC::JSGlobalObject::ensureReferencedPropertyWatchpointSet):
+        (JSC::JSGlobalObject::bumpGlobalLexicalBindingEpoch): Deleted.
+        * runtime/JSGlobalObject.h:
+        (JSC::JSGlobalObject::globalLexicalBindingEpoch const): Deleted.
+        (JSC::JSGlobalObject::globalLexicalBindingEpochOffset): Deleted.
+        (JSC::JSGlobalObject::addressOfGlobalLexicalBindingEpoch): Deleted.
+        * runtime/Options.cpp:
+        (JSC::Options::initialize):
+        (JSC::Options::setOptions):
+        (JSC::Options::setOptionWithoutAlias):
+        (JSC::correctOptions): Deleted.
+        * runtime/Options.h:
+        * runtime/ProgramExecutable.cpp:
+        (JSC::ProgramExecutable::initializeGlobalProperties):
+
+2019-01-21  Yusuke Suzuki  <ysuzuki@apple.com>
+
         [JSC] StrictModeTypeErrorFunction is no longer used
         https://bugs.webkit.org/show_bug.cgi?id=193662
 

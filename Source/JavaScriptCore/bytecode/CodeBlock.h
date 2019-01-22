@@ -195,7 +195,7 @@ public:
     void visitChildren(SlotVisitor&);
     void finalizeUnconditionally(VM&);
 
-    void notifyLexicalBindingUpdate();
+    void notifyLexicalBindingShadowing(VM&, const IdentifierSet&);
 
     void dumpSource();
     void dumpSource(PrintStream&);

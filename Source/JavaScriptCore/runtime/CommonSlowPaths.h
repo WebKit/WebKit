@@ -124,39 +124,28 @@ inline void tryCachePutToScopeGlobal(
     // Covers implicit globals. Since they don't exist until they first execute, we didn't know how to cache them at compile time.
     auto& metadata = bytecode.metadata(exec);
     ResolveType resolveType = metadata.m_getPutInfo.resolveType();
+    if (resolveType != GlobalProperty && resolveType != GlobalPropertyWithVarInjectionChecks 
+        && resolveType != UnresolvedProperty && resolveType != UnresolvedPropertyWithVarInjectionChecks)
+        return;
 
-    switch (resolveType) {
-    case UnresolvedProperty:
-    case UnresolvedPropertyWithVarInjectionChecks: {
+    if (resolveType == UnresolvedProperty || resolveType == UnresolvedPropertyWithVarInjectionChecks) {
         if (scope->isGlobalObject()) {
-            ResolveType newResolveType = needsVarInjectionChecks(resolveType) ? GlobalPropertyWithVarInjectionChecks : GlobalProperty;
-            resolveType = newResolveType; // Allow below caching mechanism to kick in.
+            ResolveType newResolveType = resolveType == UnresolvedProperty ? GlobalProperty : GlobalPropertyWithVarInjectionChecks;
+            resolveType = newResolveType;
             ConcurrentJSLocker locker(codeBlock->m_lock);
             metadata.m_getPutInfo = GetPutInfo(metadata.m_getPutInfo.resolveMode(), newResolveType, metadata.m_getPutInfo.initializationMode());
-            break;
-        }
-        FALLTHROUGH;
-    }
-    case GlobalProperty:
-    case GlobalPropertyWithVarInjectionChecks: {
-         // Global Lexical Binding Epoch is changed. Update op_get_from_scope from GlobalProperty to GlobalLexicalVar.
-        if (scope->isGlobalLexicalEnvironment()) {
+        } else if (scope->isGlobalLexicalEnvironment()) {
             JSGlobalLexicalEnvironment* globalLexicalEnvironment = jsCast<JSGlobalLexicalEnvironment*>(scope);
-            ResolveType newResolveType = needsVarInjectionChecks(resolveType) ? GlobalLexicalVarWithVarInjectionChecks : GlobalLexicalVar;
+            ResolveType newResolveType = resolveType == UnresolvedProperty ? GlobalLexicalVar : GlobalLexicalVarWithVarInjectionChecks;
             metadata.m_getPutInfo = GetPutInfo(metadata.m_getPutInfo.resolveMode(), newResolveType, metadata.m_getPutInfo.initializationMode());
             SymbolTableEntry entry = globalLexicalEnvironment->symbolTable()->get(ident.impl());
             ASSERT(!entry.isNull());
             ConcurrentJSLocker locker(codeBlock->m_lock);
             metadata.m_watchpointSet = entry.watchpointSet();
             metadata.m_operand = reinterpret_cast<uintptr_t>(globalLexicalEnvironment->variableAt(entry.scopeOffset()).slot());
-            return;
         }
-        break;
     }
-    default:
-        return;
-    }
-
+    
     if (resolveType == GlobalProperty || resolveType == GlobalPropertyWithVarInjectionChecks) {
         VM& vm = exec->vm();
         JSGlobalObject* globalObject = codeBlock->globalObject();
@@ -187,36 +176,22 @@ inline void tryCacheGetFromScopeGlobal(
     auto& metadata = bytecode.metadata(exec);
     ResolveType resolveType = metadata.m_getPutInfo.resolveType();
 
-    switch (resolveType) {
-    case UnresolvedProperty:
-    case UnresolvedPropertyWithVarInjectionChecks: {
+    if (resolveType == UnresolvedProperty || resolveType == UnresolvedPropertyWithVarInjectionChecks) {
         if (scope->isGlobalObject()) {
-            ResolveType newResolveType = needsVarInjectionChecks(resolveType) ? GlobalPropertyWithVarInjectionChecks : GlobalProperty;
+            ResolveType newResolveType = resolveType == UnresolvedProperty ? GlobalProperty : GlobalPropertyWithVarInjectionChecks;
             resolveType = newResolveType; // Allow below caching mechanism to kick in.
             ConcurrentJSLocker locker(exec->codeBlock()->m_lock);
             metadata.m_getPutInfo = GetPutInfo(metadata.m_getPutInfo.resolveMode(), newResolveType, metadata.m_getPutInfo.initializationMode());
-            break;
-        }
-        FALLTHROUGH;
-    }
-    case GlobalProperty:
-    case GlobalPropertyWithVarInjectionChecks: {
-         // Global Lexical Binding Epoch is changed. Update op_get_from_scope from GlobalProperty to GlobalLexicalVar.
-        if (scope->isGlobalLexicalEnvironment()) {
+        } else if (scope->isGlobalLexicalEnvironment()) {
             JSGlobalLexicalEnvironment* globalLexicalEnvironment = jsCast<JSGlobalLexicalEnvironment*>(scope);
-            ResolveType newResolveType = needsVarInjectionChecks(resolveType) ? GlobalLexicalVarWithVarInjectionChecks : GlobalLexicalVar;
+            ResolveType newResolveType = resolveType == UnresolvedProperty ? GlobalLexicalVar : GlobalLexicalVarWithVarInjectionChecks;
             SymbolTableEntry entry = globalLexicalEnvironment->symbolTable()->get(ident.impl());
             ASSERT(!entry.isNull());
             ConcurrentJSLocker locker(exec->codeBlock()->m_lock);
             metadata.m_getPutInfo = GetPutInfo(metadata.m_getPutInfo.resolveMode(), newResolveType, metadata.m_getPutInfo.initializationMode());
             metadata.m_watchpointSet = entry.watchpointSet();
             metadata.m_operand = reinterpret_cast<uintptr_t>(globalLexicalEnvironment->variableAt(entry.scopeOffset()).slot());
-            return;
         }
-        break;
-    }
-    default:
-        return;
     }
 
     // Covers implicit globals. Since they don't exist until they first execute, we didn't know how to cache them at compile time.

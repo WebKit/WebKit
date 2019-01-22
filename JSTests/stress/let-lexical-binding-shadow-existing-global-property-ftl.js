@@ -40,7 +40,6 @@ for (var i = 0; i < 1e6; ++i)
     shouldBe(get(), 3);
 
 foo();
-shouldBe(globalThis.bar, 4);
 shouldBe(bar, 4);
 shouldBe(get(), 4);
 

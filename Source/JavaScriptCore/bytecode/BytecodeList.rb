@@ -833,11 +833,8 @@ op :resolve_scope,
     },
     metadata: {
         resolveType: ResolveType, # offset 4
-        _0: { # offset 5
-            localScopeDepth: unsigned,
-            globalLexicalBindingEpoch: unsigned,
-        },
-        _1: { # offset 6
+        localScopeDepth: unsigned, # offset 5
+        _: { # offset 6
              # written during linking
              lexicalEnvironment: WriteBarrierBase[JSCell], # lexicalEnvironment && type == ModuleVar
              symbolTable: WriteBarrierBase[SymbolTable], # lexicalEnvironment && type != ModuleVar
