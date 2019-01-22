@@ -38,20 +38,21 @@
 namespace WebKit {
 using namespace WebCore;
 
-DrawingAreaProxy::DrawingAreaProxy(DrawingAreaType type, WebPageProxy& webPageProxy)
+DrawingAreaProxy::DrawingAreaProxy(DrawingAreaType type, WebPageProxy& webPageProxy, WebProcessProxy& process)
     : m_type(type)
     , m_webPageProxy(webPageProxy)
+    , m_process(makeRef(process))
     , m_size(webPageProxy.viewSize())
 #if PLATFORM(MAC)
     , m_viewExposedRectChangedTimer(RunLoop::main(), this, &DrawingAreaProxy::viewExposedRectChangedTimerFired)
 #endif
 {
-    m_webPageProxy.process().addMessageReceiver(Messages::DrawingAreaProxy::messageReceiverName(), m_webPageProxy.pageID(), *this);
+    process.addMessageReceiver(Messages::DrawingAreaProxy::messageReceiverName(), m_webPageProxy.pageID(), *this);
 }
 
 DrawingAreaProxy::~DrawingAreaProxy()
 {
-    m_webPageProxy.process().removeMessageReceiver(Messages::DrawingAreaProxy::messageReceiverName(), m_webPageProxy.pageID());
+    process().removeMessageReceiver(Messages::DrawingAreaProxy::messageReceiverName(), m_webPageProxy.pageID());
 }
 
 bool DrawingAreaProxy::setSize(const IntSize& size, const IntSize& scrollDelta)
@@ -92,7 +93,7 @@ void DrawingAreaProxy::viewExposedRectChangedTimerFired()
     if (m_viewExposedRect == m_lastSentViewExposedRect)
         return;
 
-    m_webPageProxy.process().send(Messages::DrawingArea::SetViewExposedRect(m_viewExposedRect), m_webPageProxy.pageID());
+    process().send(Messages::DrawingArea::SetViewExposedRect(m_viewExposedRect), m_webPageProxy.pageID());
     m_lastSentViewExposedRect = m_viewExposedRect;
 }
 #endif // PLATFORM(MAC)

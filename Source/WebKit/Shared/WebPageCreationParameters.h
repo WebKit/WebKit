@@ -129,7 +129,7 @@ struct WebPageCreationParameters {
     Vector<String> mimeTypesWithCustomContentProviders;
 
     bool controlledByAutomation;
-    bool isSwapFromSuspended { false };
+    bool isProcessSwap { false };
 
 #if PLATFORM(MAC)
     ColorSpaceData colorSpace;

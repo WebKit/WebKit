@@ -45,8 +45,8 @@
 namespace WebKit {
 using namespace WebCore;
 
-AcceleratedDrawingAreaProxy::AcceleratedDrawingAreaProxy(WebPageProxy& webPageProxy)
-    : DrawingAreaProxy(DrawingAreaTypeImpl, webPageProxy)
+AcceleratedDrawingAreaProxy::AcceleratedDrawingAreaProxy(WebPageProxy& webPageProxy, WebProcessProxy& process)
+    : DrawingAreaProxy(DrawingAreaTypeImpl, webPageProxy, process)
 {
 }
 
@@ -106,7 +106,7 @@ void AcceleratedDrawingAreaProxy::didUpdateBackingStoreState(uint64_t backingSto
     m_isWaitingForDidUpdateBackingStoreState = false;
 
     // Stop the responsiveness timer that was started in sendUpdateBackingStoreState.
-    m_webPageProxy.process().responsivenessTimer().stop();
+    process().responsivenessTimer().stop();
 
     if (layerTreeContext != m_layerTreeContext) {
         if (layerTreeContext.isEmpty() && !m_layerTreeContext.isEmpty()) {
@@ -183,13 +183,13 @@ void AcceleratedDrawingAreaProxy::sendUpdateBackingStoreState(RespondImmediately
 
     m_isWaitingForDidUpdateBackingStoreState = respondImmediatelyOrNot == RespondImmediately;
 
-    m_webPageProxy.process().send(Messages::DrawingArea::UpdateBackingStoreState(m_nextBackingStoreStateID, respondImmediatelyOrNot == RespondImmediately, m_webPageProxy.deviceScaleFactor(), m_size, m_scrollOffset), m_webPageProxy.pageID());
+    process().send(Messages::DrawingArea::UpdateBackingStoreState(m_nextBackingStoreStateID, respondImmediatelyOrNot == RespondImmediately, m_webPageProxy.deviceScaleFactor(), m_size, m_scrollOffset), m_webPageProxy.pageID());
     m_scrollOffset = IntSize();
 
     if (m_isWaitingForDidUpdateBackingStoreState) {
         // Start the responsiveness timer. We will stop it when we hear back from the WebProcess
         // in didUpdateBackingStoreState.
-        m_webPageProxy.process().responsivenessTimer().start();
+        process().responsivenessTimer().start();
     }
 
     if (m_isWaitingForDidUpdateBackingStoreState && !m_layerTreeContext.isEmpty()) {
@@ -205,7 +205,7 @@ void AcceleratedDrawingAreaProxy::waitForAndDispatchDidUpdateBackingStoreState()
 
     if (!m_webPageProxy.isValid())
         return;
-    if (m_webPageProxy.process().state() == WebProcessProxy::State::Launching)
+    if (process().state() == WebProcessProxy::State::Launching)
         return;
     if (!m_webPageProxy.isViewVisible())
         return;
@@ -222,7 +222,7 @@ void AcceleratedDrawingAreaProxy::waitForAndDispatchDidUpdateBackingStoreState()
     // choose the most recent one, or the one that is closest to our current size.
 
     // The timeout, in seconds, we use when waiting for a DidUpdateBackingStoreState message when we're asked to paint.
-    m_webPageProxy.process().connection()->waitForAndDispatchImmediately<Messages::DrawingAreaProxy::DidUpdateBackingStoreState>(m_webPageProxy.pageID(), Seconds::fromMilliseconds(500));
+    process().connection()->waitForAndDispatchImmediately<Messages::DrawingAreaProxy::DidUpdateBackingStoreState>(m_webPageProxy.pageID(), Seconds::fromMilliseconds(500));
 }
 
 void AcceleratedDrawingAreaProxy::enterAcceleratedCompositingMode(const LayerTreeContext& layerTreeContext)
@@ -256,7 +256,7 @@ void AcceleratedDrawingAreaProxy::setNativeSurfaceHandleForCompositing(uint64_t 
         m_pendingNativeSurfaceHandleForCompositing = handle;
         return;
     }
-    m_webPageProxy.process().send(Messages::DrawingArea::SetNativeSurfaceHandleForCompositing(handle), m_webPageProxy.pageID(), IPC::SendOption::DispatchMessageEvenWhenWaitingForSyncReply);
+    process().send(Messages::DrawingArea::SetNativeSurfaceHandleForCompositing(handle), m_webPageProxy.pageID(), IPC::SendOption::DispatchMessageEvenWhenWaitingForSyncReply);
 }
 
 void AcceleratedDrawingAreaProxy::destroyNativeSurfaceHandleForCompositing()
@@ -266,7 +266,7 @@ void AcceleratedDrawingAreaProxy::destroyNativeSurfaceHandleForCompositing()
         return;
     }
     bool handled;
-    m_webPageProxy.process().sendSync(Messages::DrawingArea::DestroyNativeSurfaceHandleForCompositing(), Messages::DrawingArea::DestroyNativeSurfaceHandleForCompositing::Reply(handled), m_webPageProxy.pageID());
+    process().sendSync(Messages::DrawingArea::DestroyNativeSurfaceHandleForCompositing(), Messages::DrawingArea::DestroyNativeSurfaceHandleForCompositing::Reply(handled), m_webPageProxy.pageID());
 }
 #endif
 

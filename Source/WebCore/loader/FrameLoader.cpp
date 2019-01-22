@@ -2032,10 +2032,10 @@ void FrameLoader::commitProvisionalLoad()
 
         Optional<HasInsecureContent> hasInsecureContent = cachedPage->cachedMainFrame()->hasInsecureContent();
 
+        dispatchDidCommitLoad(hasInsecureContent);
+
         // FIXME: This API should be turned around so that we ground CachedPage into the Page.
         cachedPage->restore(*m_frame.page());
-
-        dispatchDidCommitLoad(hasInsecureContent);
 
 #if PLATFORM(IOS_FAMILY)
         m_frame.page()->chrome().setDispatchViewportDataDidChangeSuppressed(false);

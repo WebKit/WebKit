@@ -34,7 +34,7 @@ namespace WebKit {
 
 class AcceleratedDrawingAreaProxy : public DrawingAreaProxy {
 public:
-    explicit AcceleratedDrawingAreaProxy(WebPageProxy&);
+    AcceleratedDrawingAreaProxy(WebPageProxy&, WebProcessProxy&);
     virtual ~AcceleratedDrawingAreaProxy();
 
     bool isInAcceleratedCompositingMode() const { return alwaysUseCompositing() || !m_layerTreeContext.isEmpty(); }
