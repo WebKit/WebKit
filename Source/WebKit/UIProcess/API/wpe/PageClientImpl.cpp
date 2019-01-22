@@ -51,9 +51,9 @@ struct wpe_view_backend* PageClientImpl::viewBackend()
     return m_view.backend();
 }
 
-std::unique_ptr<DrawingAreaProxy> PageClientImpl::createDrawingAreaProxy(WebProcessProxy& process)
+std::unique_ptr<DrawingAreaProxy> PageClientImpl::createDrawingAreaProxy()
 {
-    return std::make_unique<AcceleratedDrawingAreaProxy>(m_view.page(), process);
+    return std::make_unique<AcceleratedDrawingAreaProxy>(m_view.page());
 }
 
 void PageClientImpl::setViewNeedsDisplay(const WebCore::Region&)

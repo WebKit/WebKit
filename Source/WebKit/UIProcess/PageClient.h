@@ -48,7 +48,6 @@
 
 OBJC_CLASS CALayer;
 OBJC_CLASS NSFileWrapper;
-OBJC_CLASS NSMenu;
 OBJC_CLASS NSSet;
 OBJC_CLASS WKDrawingView;
 OBJC_CLASS _WKRemoteObjectRegistry;
@@ -122,7 +121,6 @@ class WebFrameProxy;
 class WebOpenPanelResultListenerProxy;
 class WebPageProxy;
 class WebPopupMenuProxy;
-class WebProcessProxy;
 
 enum class ContinueUnsafeLoad : bool { No, Yes };
 
@@ -159,7 +157,7 @@ public:
     virtual ~PageClient() { }
 
     // Create a new drawing area proxy for the given page.
-    virtual std::unique_ptr<DrawingAreaProxy> createDrawingAreaProxy(WebProcessProxy&) = 0;
+    virtual std::unique_ptr<DrawingAreaProxy> createDrawingAreaProxy() = 0;
 
     // Tell the view to invalidate the given region. The region is in view coordinates.
     virtual void setViewNeedsDisplay(const WebCore::Region&) = 0;

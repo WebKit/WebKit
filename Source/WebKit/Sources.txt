@@ -228,7 +228,6 @@ UIProcess/PageLoadState.cpp
 UIProcess/PersistencyUtils.cpp
 UIProcess/ProcessAssertion.cpp
 UIProcess/ProcessThrottler.cpp
-UIProcess/ProvisionalPageProxy.cpp
 UIProcess/RemoteWebInspectorProxy.cpp
 UIProcess/ResourceLoadStatisticsMemoryStore.cpp
 UIProcess/ResourceLoadStatisticsPersistentStorage.cpp

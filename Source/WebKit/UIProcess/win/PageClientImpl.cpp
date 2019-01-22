@@ -43,9 +43,9 @@ PageClientImpl::PageClientImpl(WebView& view)
 }
 
 // PageClient's pure virtual functions
-std::unique_ptr<DrawingAreaProxy> PageClientImpl::createDrawingAreaProxy(WebProcessProxy& process)
+std::unique_ptr<DrawingAreaProxy> PageClientImpl::createDrawingAreaProxy()
 {
-    return std::make_unique<DrawingAreaProxyImpl>(*m_view.page(), process);
+    return std::make_unique<DrawingAreaProxyImpl>(*m_view.page());
 }
 
 void PageClientImpl::setViewNeedsDisplay(const WebCore::Region& region)

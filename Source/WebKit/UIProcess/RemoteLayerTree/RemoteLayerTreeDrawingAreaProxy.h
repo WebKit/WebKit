@@ -40,7 +40,7 @@ class RemoteScrollingCoordinatorTransaction;
 
 class RemoteLayerTreeDrawingAreaProxy final : public DrawingAreaProxy {
 public:
-    RemoteLayerTreeDrawingAreaProxy(WebPageProxy&, WebProcessProxy&);
+    explicit RemoteLayerTreeDrawingAreaProxy(WebPageProxy&);
     virtual ~RemoteLayerTreeDrawingAreaProxy();
 
     const RemoteLayerTreeHost& remoteLayerTreeHost() const { return *m_remoteLayerTreeHost; }

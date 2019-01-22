@@ -48,7 +48,6 @@ namespace WebKit {
 class LayerTreeContext;
 class UpdateInfo;
 class WebPageProxy;
-class WebProcessProxy;
 
 class DrawingAreaProxy : public IPC::MessageReceiver {
     WTF_MAKE_NONCOPYABLE(DrawingAreaProxy);
@@ -108,14 +107,12 @@ public:
     virtual void dispatchPresentationCallbacksAfterFlushingLayers(const Vector<CallbackID>&) { }
 
     WebPageProxy& page() const { return m_webPageProxy; }
-    WebProcessProxy& process() { return m_process.get(); }
 
 protected:
-    DrawingAreaProxy(DrawingAreaType, WebPageProxy&, WebProcessProxy&);
+    explicit DrawingAreaProxy(DrawingAreaType, WebPageProxy&);
 
     DrawingAreaType m_type;
     WebPageProxy& m_webPageProxy;
-    Ref<WebProcessProxy> m_process;
 
     WebCore::IntSize m_size;
     WebCore::IntSize m_scrollOffset;

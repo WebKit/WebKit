@@ -47,8 +47,8 @@
 namespace WebKit {
 using namespace WebCore;
 
-DrawingAreaProxyImpl::DrawingAreaProxyImpl(WebPageProxy& webPageProxy, WebProcessProxy& process)
-    : AcceleratedDrawingAreaProxy(webPageProxy, process)
+DrawingAreaProxyImpl::DrawingAreaProxyImpl(WebPageProxy& webPageProxy)
+    : AcceleratedDrawingAreaProxy(webPageProxy)
     , m_discardBackingStoreTimer(RunLoop::current(), this, &DrawingAreaProxyImpl::discardBackingStore)
 {
 #if USE(GLIB_EVENT_LOOP)
@@ -124,7 +124,7 @@ void DrawingAreaProxyImpl::update(uint64_t backingStoreStateID, const UpdateInfo
     // FIXME: Handle the case where the view is hidden.
 
     incorporateUpdate(updateInfo);
-    process().send(Messages::DrawingArea::DidUpdate(), m_webPageProxy.pageID());
+    m_webPageProxy.process().send(Messages::DrawingArea::DidUpdate(), m_webPageProxy.pageID());
 }
 
 void DrawingAreaProxyImpl::didUpdateBackingStoreState(uint64_t backingStoreStateID, const UpdateInfo& updateInfo, const LayerTreeContext& layerTreeContext)
