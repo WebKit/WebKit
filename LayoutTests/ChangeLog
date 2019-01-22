@@ -1,3 +1,16 @@
+2019-01-22  Oriol Brufau  <obrufau@igalia.com>
+
+        [css-logical] Implement flow-relative margin, padding and border shorthands
+        https://bugs.webkit.org/show_bug.cgi?id=188697
+
+        Reviewed by Simon Fraser and Antti Koivisto.
+
+        Add tests checking that CSS properties disabled behind runtime flags
+        are not exposed.
+
+        * webexposed/css-properties-behind-flags-expected.txt: Added.
+        * webexposed/css-properties-behind-flags.html: Added.
+
 2019-01-21  Antti Koivisto  <antti@apple.com>
 
         [iOS] Handle hit testing for subframes

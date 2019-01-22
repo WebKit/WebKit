@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!DOCTYPE html> <!-- webkit-test-runner [ internal:CSSLogicalEnabled=true ] -->
 <meta charset="utf-8" />
 <title>CSS Logical Properties: Flow-Relative Border Styles</title>
 <link rel="author" title="Oriol Brufau" href="mailto:obrufau@igalia.com" />
@@ -9,7 +9,7 @@
 
 <div id="log"></div>
 
-<script src="./resources/test-box-properties.js"></script>
-<script>
+<script type="module">
+import {runTests, createBoxPropertyGroup} from "./resources/test-box-properties.js";
 runTests(createBoxPropertyGroup("border-*-style", {type: "border-style"}));
 </script>

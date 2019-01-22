@@ -263,3 +263,4 @@
 #define WebKitMediaRecorderEnabledPreferenceKey @"WebKitMediaRecorderEnabled"
 #define WebKitServerTimingEnabledPreferenceKey @"WebKitServerTimingEnabled"
 #define WebKitSelectionAcrossShadowBoundariesEnabledPreferenceKey @"WebKitSelectionAcrossShadowBoundariesEnabled"
+#define WebKitCSSLogicalEnabledPreferenceKey @"WebKitCSSLogicalEnabled"

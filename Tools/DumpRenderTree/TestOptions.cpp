@@ -107,6 +107,8 @@ TestOptions::TestOptions(const std::string& pathOrURL, const std::string& absolu
             jscOptions = value;
         else if (key == "experimental:WebGPUEnabled")
             enableWebGPU = parseBooleanTestHeaderValue(value);
+        else if (key == "internal:CSSLogicalEnabled")
+            enableCSSLogical = parseBooleanTestHeaderValue(value);
         pairStart = pairEnd + 1;
     }
 }

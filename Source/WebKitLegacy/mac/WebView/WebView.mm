@@ -3077,6 +3077,8 @@ static bool needsSelfRetainWhileLoadingQuirk()
     settings.setFullScreenEnabled([preferences fullScreenEnabled]);
 #endif
 
+    RuntimeEnabledFeatures::sharedFeatures().setCSSLogicalEnabled([preferences cssLogicalEnabled]);
+
     settings.setHiddenPageDOMTimerThrottlingEnabled([preferences hiddenPageDOMTimerThrottlingEnabled]);
 
     settings.setHiddenPageCSSAnimationSuspensionEnabled([preferences hiddenPageCSSAnimationSuspensionEnabled]);

@@ -1535,3 +1535,11 @@ UndoManagerAPIEnabled:
   humanReadableDescription: "Enable the UndoManager DOM API"
   category: internal
   webcoreBinding: RuntimeEnabledFeatures
+
+CSSLogicalEnabled:
+  type: bool
+  defaultValue: false
+  humanReadableName: "CSS Logical Properties and Values"
+  humanReadableDescription: "Enable CSS Logical Properties and Values"
+  webcoreBinding: RuntimeEnabledFeatures
+  category: internal

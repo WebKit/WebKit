@@ -150,7 +150,7 @@ String StyleProperties::getPropertyValue(CSSPropertyID propertyID) const
     case CSSPropertyBackground:
         return getLayeredShorthandValue(backgroundShorthand());
     case CSSPropertyBorder:
-        return borderPropertyValue();
+        return borderPropertyValue(borderWidthShorthand(), borderStyleShorthand(), borderColorShorthand());
     case CSSPropertyBorderTop:
         return getShorthandValue(borderTopShorthand());
     case CSSPropertyBorderRight:
@@ -159,10 +159,26 @@ String StyleProperties::getPropertyValue(CSSPropertyID propertyID) const
         return getShorthandValue(borderBottomShorthand());
     case CSSPropertyBorderLeft:
         return getShorthandValue(borderLeftShorthand());
+    case CSSPropertyBorderBlock:
+        return borderPropertyValue(borderBlockWidthShorthand(), borderBlockStyleShorthand(), borderBlockColorShorthand());
+    case CSSPropertyBorderBlockColor:
+        return get2Values(borderBlockColorShorthand());
+    case CSSPropertyBorderBlockStyle:
+        return get2Values(borderBlockStyleShorthand());
+    case CSSPropertyBorderBlockWidth:
+        return get2Values(borderBlockWidthShorthand());
     case CSSPropertyBorderBlockStart:
         return getShorthandValue(borderBlockStartShorthand());
     case CSSPropertyBorderBlockEnd:
         return getShorthandValue(borderBlockEndShorthand());
+    case CSSPropertyBorderInline:
+        return borderPropertyValue(borderInlineWidthShorthand(), borderInlineStyleShorthand(), borderInlineColorShorthand());
+    case CSSPropertyBorderInlineColor:
+        return get2Values(borderInlineColorShorthand());
+    case CSSPropertyBorderInlineStyle:
+        return get2Values(borderInlineStyleShorthand());
+    case CSSPropertyBorderInlineWidth:
+        return get2Values(borderInlineWidthShorthand());
     case CSSPropertyBorderInlineStart:
         return getShorthandValue(borderInlineStartShorthand());
     case CSSPropertyBorderInlineEnd:
@@ -203,12 +219,20 @@ String StyleProperties::getPropertyValue(CSSPropertyID propertyID) const
         return fontValue();
     case CSSPropertyMargin:
         return get4Values(marginShorthand());
+    case CSSPropertyMarginBlock:
+        return get2Values(marginBlockShorthand());
+    case CSSPropertyMarginInline:
+        return get2Values(marginInlineShorthand());
     case CSSPropertyWebkitMarginCollapse:
         return getShorthandValue(webkitMarginCollapseShorthand());
     case CSSPropertyOverflow:
         return getCommonValue(overflowShorthand());
     case CSSPropertyPadding:
         return get4Values(paddingShorthand());
+    case CSSPropertyPaddingBlock:
+        return get2Values(paddingBlockShorthand());
+    case CSSPropertyPaddingInline:
+        return get2Values(paddingInlineShorthand());
     case CSSPropertyTransition:
         return getLayeredShorthandValue(transitionShorthand());
     case CSSPropertyListStyle:
@@ -353,6 +377,44 @@ String StyleProperties::fontValue() const
     result.append(fontFamilyProperty.value()->cssText());
     if (isInitialOrInherit(commonValue))
         return commonValue;
+    return result.toString();
+}
+
+String StyleProperties::get2Values(const StylePropertyShorthand& shorthand) const
+{
+    // Assume the properties are in the usual order start, end.
+    int startValueIndex = findPropertyIndex(shorthand.properties()[0]);
+    int endValueIndex = findPropertyIndex(shorthand.properties()[1]);
+
+    if (startValueIndex == -1 || endValueIndex == -1)
+        return { };
+
+    auto start = propertyAt(startValueIndex);
+    auto end = propertyAt(endValueIndex);
+
+    // All 2 properties must be specified.
+    if (!start.value() || !end.value())
+        return { };
+
+    // Important flags must be the same
+    if (start.isImportant() != end.isImportant())
+        return { };
+
+    if (start.isInherited() && end.isInherited())
+        return getValueName(CSSValueInherit);
+
+    if (start.value()->isInitialValue() || end.value()->isInitialValue()) {
+        if (start.value()->isInitialValue() && end.value()->isInitialValue() && !start.isImplicit())
+            return getValueName(CSSValueInitial);
+        return { };
+    }
+
+    StringBuilder result;
+    result.append(start.value()->cssText());
+    if (!start.value()->equals(*end.value())) {
+        result.append(' ');
+        result.append(end.value()->cssText());
+    }
     return result.toString();
 }
 
@@ -621,9 +683,9 @@ String StyleProperties::getAlignmentShorthandValue(const StylePropertyShorthand&
     return value;
 }
 
-String StyleProperties::borderPropertyValue() const
+String StyleProperties::borderPropertyValue(const StylePropertyShorthand& width, const StylePropertyShorthand& style, const StylePropertyShorthand& color) const
 {
-    const StylePropertyShorthand properties[3] = { borderWidthShorthand(), borderStyleShorthand(), borderColorShorthand() };
+    const StylePropertyShorthand properties[3] = { width, style, color };
     String commonValue;
     StringBuilder result;
     for (size_t i = 0; i < WTF_ARRAY_LENGTH(properties); ++i) {
@@ -763,6 +825,9 @@ bool StyleProperties::isPropertyImplicit(CSSPropertyID propertyID) const
 
 bool MutableStyleProperties::setProperty(CSSPropertyID propertyID, const String& value, bool important, CSSParserContext parserContext)
 {
+    if (!isEnabledCSSProperty(propertyID))
+        return false;
+
     // Setting the value to an empty string just removes the property in both IE and Gecko.
     // Setting it to null seems to produce less consistent results, but we treat it just the same.
     if (value.isEmpty())
@@ -909,7 +974,23 @@ String StyleProperties::asText() const
         CSSPropertyID propertyID = property.id();
         CSSPropertyID shorthandPropertyID = CSSPropertyInvalid;
         CSSPropertyID borderFallbackShorthandProperty = CSSPropertyInvalid;
+        CSSPropertyID borderBlockFallbackShorthandProperty = CSSPropertyInvalid;
+        CSSPropertyID borderInlineFallbackShorthandProperty = CSSPropertyInvalid;
         String value;
+        auto serializeBorderShorthand = [&] (const CSSPropertyID borderProperty, const CSSPropertyID fallbackProperty) {
+            // FIXME: Deal with cases where only some of border sides are specified.
+            ASSERT(borderProperty - firstCSSProperty < shorthandPropertyAppeared.size());
+            if (!shorthandPropertyAppeared[borderProperty - firstCSSProperty] && isEnabledCSSProperty(borderProperty)) {
+                value = getPropertyValue(borderProperty);
+                if (value.isNull())
+                    shorthandPropertyAppeared.set(borderProperty - firstCSSProperty);
+                else
+                    shorthandPropertyID = borderProperty;
+            } else if (shorthandPropertyUsed[borderProperty - firstCSSProperty])
+                shorthandPropertyID = borderProperty;
+            if (!shorthandPropertyID)
+                shorthandPropertyID = fallbackProperty;
+        };
         
         if (property.value() && property.value()->isPendingSubstitutionValue()) {
             auto& substitutionValue = downcast<CSSPendingSubstitutionValue>(*property.value());
@@ -959,19 +1040,39 @@ String StyleProperties::asText() const
             case CSSPropertyBorderLeftColor:
                 if (!borderFallbackShorthandProperty)
                     borderFallbackShorthandProperty = CSSPropertyBorderColor;
-
-                // FIXME: Deal with cases where only some of border-(top|right|bottom|left) are specified.
-                ASSERT(CSSPropertyBorder - firstCSSProperty < shorthandPropertyAppeared.size());
-                if (!shorthandPropertyAppeared[CSSPropertyBorder - firstCSSProperty]) {
-                    value = borderPropertyValue();
-                    if (value.isNull())
-                        shorthandPropertyAppeared.set(CSSPropertyBorder - firstCSSProperty);
-                    else
-                        shorthandPropertyID = CSSPropertyBorder;
-                } else if (shorthandPropertyUsed[CSSPropertyBorder - firstCSSProperty])
-                    shorthandPropertyID = CSSPropertyBorder;
-                if (!shorthandPropertyID)
-                    shorthandPropertyID = borderFallbackShorthandProperty;
+                serializeBorderShorthand(CSSPropertyBorder, borderFallbackShorthandProperty);
+                break;
+            case CSSPropertyBorderBlockStartWidth:
+            case CSSPropertyBorderBlockEndWidth:
+                if (!borderBlockFallbackShorthandProperty)
+                    borderBlockFallbackShorthandProperty = CSSPropertyBorderBlockWidth;
+                FALLTHROUGH;
+            case CSSPropertyBorderBlockStartStyle:
+            case CSSPropertyBorderBlockEndStyle:
+                if (!borderBlockFallbackShorthandProperty)
+                    borderBlockFallbackShorthandProperty = CSSPropertyBorderBlockStyle;
+                FALLTHROUGH;
+            case CSSPropertyBorderBlockStartColor:
+            case CSSPropertyBorderBlockEndColor:
+                if (!borderBlockFallbackShorthandProperty)
+                    borderBlockFallbackShorthandProperty = CSSPropertyBorderBlockColor;
+                serializeBorderShorthand(CSSPropertyBorderBlock, borderBlockFallbackShorthandProperty);
+                break;
+            case CSSPropertyBorderInlineStartWidth:
+            case CSSPropertyBorderInlineEndWidth:
+                if (!borderInlineFallbackShorthandProperty)
+                    borderInlineFallbackShorthandProperty = CSSPropertyBorderInlineWidth;
+                FALLTHROUGH;
+            case CSSPropertyBorderInlineStartStyle:
+            case CSSPropertyBorderInlineEndStyle:
+                if (!borderInlineFallbackShorthandProperty)
+                    borderInlineFallbackShorthandProperty = CSSPropertyBorderInlineStyle;
+                FALLTHROUGH;
+            case CSSPropertyBorderInlineStartColor:
+            case CSSPropertyBorderInlineEndColor:
+                if (!borderInlineFallbackShorthandProperty)
+                    borderInlineFallbackShorthandProperty = CSSPropertyBorderInlineColor;
+                serializeBorderShorthand(CSSPropertyBorderInline, borderInlineFallbackShorthandProperty);
                 break;
             case CSSPropertyWebkitBorderHorizontalSpacing:
             case CSSPropertyWebkitBorderVerticalSpacing:
@@ -996,6 +1097,14 @@ String StyleProperties::asText() const
             case CSSPropertyMarginLeft:
                 shorthandPropertyID = CSSPropertyMargin;
                 break;
+            case CSSPropertyMarginBlockStart:
+            case CSSPropertyMarginBlockEnd:
+                shorthandPropertyID = CSSPropertyMarginBlock;
+                break;
+            case CSSPropertyMarginInlineStart:
+            case CSSPropertyMarginInlineEnd:
+                shorthandPropertyID = CSSPropertyMarginInline;
+                break;
             case CSSPropertyOutlineWidth:
             case CSSPropertyOutlineStyle:
             case CSSPropertyOutlineColor:
@@ -1010,6 +1119,14 @@ String StyleProperties::asText() const
             case CSSPropertyPaddingBottom:
             case CSSPropertyPaddingLeft:
                 shorthandPropertyID = CSSPropertyPadding;
+                break;
+            case CSSPropertyPaddingBlockStart:
+            case CSSPropertyPaddingBlockEnd:
+                shorthandPropertyID = CSSPropertyPaddingBlock;
+                break;
+            case CSSPropertyPaddingInlineStart:
+            case CSSPropertyPaddingInlineEnd:
+                shorthandPropertyID = CSSPropertyPaddingInline;
                 break;
 #if ENABLE(CSS_SCROLL_SNAP)
             case CSSPropertyScrollPaddingTop:
@@ -1066,7 +1183,7 @@ String StyleProperties::asText() const
         }
 
         unsigned shortPropertyIndex = shorthandPropertyID - firstCSSProperty;
-        if (shorthandPropertyID) {
+        if (shorthandPropertyID && isEnabledCSSProperty(shorthandPropertyID)) {
             ASSERT(shortPropertyIndex < shorthandPropertyUsed.size());
             if (shorthandPropertyUsed[shortPropertyIndex])
                 continue;

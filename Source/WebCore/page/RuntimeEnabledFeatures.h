@@ -338,6 +338,9 @@ public:
     bool systemPreviewEnabled() const { return m_systemPreviewEnabled; }
 #endif
 
+    void setCSSLogicalEnabled(bool isEnabled) { m_CSSLogicalEnabled = isEnabled; }
+    bool cssLogicalEnabled() const { return m_CSSLogicalEnabled; }
+
     WEBCORE_EXPORT static RuntimeEnabledFeatures& sharedFeatures();
 
 private:
@@ -510,6 +513,8 @@ private:
 #endif
 
     bool m_undoManagerAPIEnabled { false };
+
+    bool m_CSSLogicalEnabled { false };
 
     friend class WTF::NeverDestroyed<RuntimeEnabledFeatures>;
 };

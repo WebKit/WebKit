@@ -1,0 +1,14 @@
+
+PASS border-block is not exposed 
+PASS border-block-width is not exposed 
+PASS border-block-style is not exposed 
+PASS border-block-color is not exposed 
+PASS border-inline is not exposed 
+PASS border-inline-width is not exposed 
+PASS border-inline-style is not exposed 
+PASS border-inline-color is not exposed 
+PASS margin-block is not exposed 
+PASS margin-inline is not exposed 
+PASS padding-block is not exposed 
+PASS padding-inline is not exposed 
+
