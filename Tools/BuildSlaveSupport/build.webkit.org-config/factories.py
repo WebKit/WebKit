@@ -39,7 +39,7 @@ class Factory(factory.BuildFactory):
         self.addStep(DeleteStaleBuildFiles())
         if platform == "win":
             self.addStep(InstallWin32Dependencies())
-        if platform == "gtk" and additionalArguments != ["--no-experimental-features"]:
+        if platform == "gtk" and "--no-experimental-features" not in (additionalArguments or []):
             self.addStep(InstallGtkDependencies())
         if platform == "wpe":
             self.addStep(InstallWpeDependencies())

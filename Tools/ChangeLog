@@ -1,3 +1,14 @@
+2019-01-22  Aakash Jain  <aakash_jain@apple.com>
+
+        [build.webkit.org] Unit-test failure after r237113
+        https://bugs.webkit.org/show_bug.cgi?id=193669
+
+        Reviewed by Michael Catanzaro.
+
+        * BuildSlaveSupport/build.webkit.org-config/factories.py:
+        (Factory.__init__): Properly check for --no-experimental-features flag when additionalArguments has 
+        multiple or zero flags.
+
 2019-01-22  Tadeu Zagallo  <tzagallo@apple.com>
 
         Cache bytecode to disk
