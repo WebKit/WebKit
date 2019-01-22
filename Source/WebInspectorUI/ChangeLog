@@ -1,3 +1,16 @@
+2019-01-22  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Network Table appears broken after filter - rows look collapsed
+        https://bugs.webkit.org/show_bug.cgi?id=192730
+        <rdar://problem/46853158>
+
+        Reviewed by Devin Rousso.
+
+        * UserInterface/Views/Table.js:
+        (WI.Table.prototype._applyColumnWidthsToColumnsIfNeeded):
+        Affect the filler row like the other applyColumnWidths calls since this
+        now may be the initial call to size visible columns.
+
 2019-01-22  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: Audit: use plural strings for Passed, Failed, and Unsupported
