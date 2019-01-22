@@ -6182,9 +6182,10 @@ void ByteCodeParser::parseBlock(unsigned limit)
             // https://bugs.webkit.org/show_bug.cgi?id=193347
             if (m_inlineStackTop->m_codeBlock->scriptMode() != JSParserScriptMode::Module) {
                 if (resolveType == GlobalProperty || resolveType == GlobalPropertyWithVarInjectionChecks) {
-                    unsigned identifierNumber = m_inlineStackTop->m_identifierRemap[bytecode.m_var];
                     JSGlobalObject* globalObject = m_inlineStackTop->m_codeBlock->globalObject();
-                    m_graph.globalProperties().addLazily(DesiredGlobalProperty(globalObject, identifierNumber));
+                    unsigned identifierNumber = m_inlineStackTop->m_identifierRemap[bytecode.m_var];
+                    if (!m_graph.watchGlobalProperty(globalObject, identifierNumber))
+                        addToGraph(ForceOSRExit);
                 }
             }
 
@@ -6296,8 +6297,10 @@ void ByteCodeParser::parseBlock(unsigned limit)
             case GlobalPropertyWithVarInjectionChecks: {
                 // FIXME: Currently, module code do not query to JSGlobalLexicalEnvironment. So this case should be removed once it is fixed.
                 // https://bugs.webkit.org/show_bug.cgi?id=193347
-                if (m_inlineStackTop->m_codeBlock->scriptMode() != JSParserScriptMode::Module)
-                    m_graph.globalProperties().addLazily(DesiredGlobalProperty(globalObject, identifierNumber));
+                if (m_inlineStackTop->m_codeBlock->scriptMode() != JSParserScriptMode::Module) {
+                    if (!m_graph.watchGlobalProperty(globalObject, identifierNumber))
+                        addToGraph(ForceOSRExit);
+                }
 
                 SpeculatedType prediction = getPrediction();
 
@@ -6471,8 +6474,10 @@ void ByteCodeParser::parseBlock(unsigned limit)
             case GlobalPropertyWithVarInjectionChecks: {
                 // FIXME: Currently, module code do not query to JSGlobalLexicalEnvironment. So this case should be removed once it is fixed.
                 // https://bugs.webkit.org/show_bug.cgi?id=193347
-                if (m_inlineStackTop->m_codeBlock->scriptMode() != JSParserScriptMode::Module)
-                    m_graph.globalProperties().addLazily(DesiredGlobalProperty(globalObject, identifierNumber));
+                if (m_inlineStackTop->m_codeBlock->scriptMode() != JSParserScriptMode::Module) {
+                    if (!m_graph.watchGlobalProperty(globalObject, identifierNumber))
+                        addToGraph(ForceOSRExit);
+                }
 
                 PutByIdStatus status;
                 if (uid)
