@@ -1,3 +1,15 @@
+2019-01-21  Antti Koivisto  <antti@apple.com>
+
+        [iOS] Handle hit testing for subframes
+        https://bugs.webkit.org/show_bug.cgi?id=192303
+
+        Reviewed by Frédéric Wang.
+
+        Test by Frederic Wang.
+
+        * fast/scrolling/ios/hit-testing-iframe-expected.html: Added.
+        * fast/scrolling/ios/hit-testing-iframe.html: Added.
+
 2019-01-21  Zalan Bujtas  <zalan@apple.com>
 
         [LFC][Floats] Take float top position into account when computing containing block height.

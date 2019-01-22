@@ -1439,7 +1439,8 @@ void WebFrameLoaderClient::transitionToCommittedForNewPage()
     m_frame->coreFrame()->view()->setViewExposedRect(webPage->drawingArea()->viewExposedRect());
 #endif
 #if PLATFORM(IOS_FAMILY)
-    m_frame->coreFrame()->view()->setDelegatesScrolling(true);
+    if (isMainFrame)
+        m_frame->coreFrame()->view()->setDelegatesScrolling(true);
 #endif
 
     if (webPage->scrollPinningBehavior() != DoNotPin)

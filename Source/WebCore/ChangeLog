@@ -1,3 +1,28 @@
+2019-01-21  Antti Koivisto  <antti@apple.com>
+
+        [iOS] Handle hit testing for subframes
+        https://bugs.webkit.org/show_bug.cgi?id=192303
+
+        Reviewed by Frédéric Wang.
+
+        Don't set delegatesScrolling bit for subframes on iOS. It is meant for top level application
+        controlled scrolling. This fixes coordinate conversions for subframes and makes events work.
+
+        Test by Frederic Wang.
+
+        Test: fast/scrolling/ios/hit-testing-iframe.html
+
+        * platform/ScrollView.cpp:
+        (WebCore::ScrollView::managesScrollbars const):
+
+        Add a function that tells if the scrollview should deal with scrollbars at all
+        This is always false on iOS and not connected to delegatesScrolling bit.
+
+        (WebCore::ScrollView::updateScrollbars):
+        * platform/ScrollView.h:
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::shouldCompositeOverflowControls const):
+
 2019-01-21  Brent Fulgham  <bfulgham@apple.com>
 
         Implement message handlers for NetworkProcess-based ResourceLoadStatistics

@@ -1,3 +1,15 @@
+2019-01-21  Antti Koivisto  <antti@apple.com>
+
+        [iOS] Handle hit testing for subframes
+        https://bugs.webkit.org/show_bug.cgi?id=192303
+
+        Reviewed by Frédéric Wang.
+
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebKit::WebFrameLoaderClient::transitionToCommittedForNewPage):
+
+        Only set delegatesScrolling for the main frame.
+
 2019-01-21  Brent Fulgham  <bfulgham@apple.com>
 
         Unreviewed test fix after r240243

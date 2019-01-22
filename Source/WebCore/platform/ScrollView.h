@@ -378,6 +378,8 @@ public:
     void setAllowsUnclampedScrollPositionForTesting(bool allowsUnclampedScrollPosition) { m_allowsUnclampedScrollPosition = allowsUnclampedScrollPosition; }
     bool allowsUnclampedScrollPosition() const { return m_allowsUnclampedScrollPosition; }
 
+    bool managesScrollbars() const;
+
 protected:
     ScrollView();
 

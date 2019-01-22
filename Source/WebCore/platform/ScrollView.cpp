@@ -542,6 +542,19 @@ IntSize ScrollView::overhangAmount() const
     return stretch;
 }
 
+bool ScrollView::managesScrollbars() const
+{
+#if PLATFORM(IOS_FAMILY)
+    return false;
+#else
+    if (platformWidget())
+        return false;
+    if (delegatesScrolling())
+        return false;
+    return true;
+#endif
+}
+
 void ScrollView::updateScrollbars(const ScrollPosition& desiredPosition)
 {
     LOG_WITH_STREAM(Scrolling, stream << "ScrollView::updateScrollbars " << desiredPosition);
@@ -549,7 +562,7 @@ void ScrollView::updateScrollbars(const ScrollPosition& desiredPosition)
     if (m_inUpdateScrollbars || prohibitsScrolling() || platformWidget())
         return;
     
-    if (delegatesScrolling()) {
+    if (!managesScrollbars()) {
         if (scrollOriginChanged()) {
             ScrollableArea::scrollToOffsetWithoutAnimation(scrollOffsetFromPosition(desiredPosition));
             resetScrollOriginChanged();

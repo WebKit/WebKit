@@ -3007,10 +3007,7 @@ bool RenderLayerCompositor::shouldCompositeOverflowControls() const
 {
     auto& frameView = m_renderView.frameView();
 
-    if (frameView.platformWidget())
-        return false;
-
-    if (frameView.delegatesScrolling())
+    if (!frameView.managesScrollbars())
         return false;
 
     if (documentUsesTiledBacking())
