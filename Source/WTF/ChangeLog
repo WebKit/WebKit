@@ -1,5 +1,21 @@
 2019-01-22  Alan Coon  <alancoon@apple.com>
 
+        Cherry-pick r239999. rdar://problem/47099573
+
+    Unreviewed, revert part of r239997 as it is not needed to fix the build.
+    
+    * wtf/RefCounter.h:
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@239999 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2019-01-15  Chris Dumez  <cdumez@apple.com>
+
+            Unreviewed, revert part of r239997 as it is not needed to fix the build.
+
+            * wtf/RefCounter.h:
+
+2019-01-22  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r239997. rdar://problem/47099573
 
     Fix iOS build after r239993
