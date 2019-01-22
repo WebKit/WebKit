@@ -1,3 +1,16 @@
+2019-01-22  Per Arne Vollan  <pvollan@apple.com>
+
+        [macOS] Adjust logging policy in WebKit's sandbox
+        https://bugs.webkit.org/show_bug.cgi?id=193454
+
+        Reviewed by Brent Fulgham.
+
+        Add a rule to initially deny all calls, since the default is to allow every call.
+        Later rules allow syscalls that we determined are needed for proper WebKit function.
+        This reduces the API surface available to attackers.
+
+        * WebProcess/com.apple.WebProcess.sb.in:
+
 2019-01-22  Daniel Bates  <dabates@apple.com>
 
         [iOS] WebKit should handle shift state changes when using the software keyboard
