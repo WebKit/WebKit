@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+    <style>
+        body {
+            margin: 0;
+        }
+        .container {
+            position: relative;
+            z-index: 0;
+            margin: 50px;
+            width: 400px;
+            height: 320px;
+            overflow-y: scroll;
+            border: 30px solid gray;
+            box-shadow: 0 0 10px transparent;
+            padding: 20px;
+        }
+
+        .inner {
+            height: 1000px;
+            width: 100%;
+            background-color: silver;
+        }
+        
+        .inner-fixed {
+            position: fixed;
+            top: 150px;
+            left: 200px;
+            width: 200px;
+            height: 150px;
+            background-color: green;
+            box-shadow: 0 0 10px transparent;
+        }
+        
+        .placeholder {
+            background-color: red;
+            width: 200px;
+            height: 148px;
+            margin: 32px 100px;
+        }
+        
+        .scrollbar-hider {
+            position: absolute;
+            height: 380px;
+            width: 37px;
+            top: 70px;
+            left: 484px;
+            background-color: black;
+        }
+    </style>
+    <script>
+        if (window.internals)
+            window.internals.settings.setAsyncOverflowScrollingEnabled(true);
+    </script>
+</head>
+<body>
+
+<div id="scroller" class="container">
+    <div class="inner">
+        &nbsp;
+        <div class="placeholder"></div>
+        <div class="inner-fixed"></div>
+    </div>
+</div>
+<div class="scrollbar-hider"></div>
+
+</body>
+</html>

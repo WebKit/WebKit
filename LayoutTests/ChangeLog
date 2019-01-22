@@ -1,3 +1,16 @@
+2019-01-22  Simon Fraser  <simon.fraser@apple.com>
+
+        Fix the position of layers nested inside of composited overflow-scroll
+        https://bugs.webkit.org/show_bug.cgi?id=193642
+
+        Reviewed by Antti Koivisto and Sam Weinig.
+        
+        Ref test. Black bar obscures the area that's different because of overlay/non-overlay
+        scrollbar differences between macOS and iOS.
+
+        * compositing/geometry/fixed-inside-overflow-scroll-expected.html: Added.
+        * compositing/geometry/fixed-inside-overflow-scroll.html: Added.
+
 2019-01-22  Oriol Brufau  <obrufau@igalia.com>
 
         [css-logical] Implement flow-relative margin, padding and border shorthands
