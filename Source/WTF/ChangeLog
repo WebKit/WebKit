@@ -1,5 +1,9 @@
 2019-01-22  Alan Coon  <alancoon@apple.com>
 
+        Revert r240261. rdar://problem/47099573
+
+2019-01-22  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r239999. rdar://problem/47099573
 
     Unreviewed, revert part of r239997 as it is not needed to fix the build.
