@@ -27,6 +27,7 @@
 #include "WebCookieManager.h"
 
 #include "ChildProcess.h"
+#include "NetworkProcess.h"
 #include <WebCore/NetworkStorageSession.h>
 #include <WebCore/SoupNetworkSession.h>
 #include <libsoup/soup.h>
@@ -51,14 +52,14 @@ void WebCookieManager::platformSetHTTPCookieAcceptPolicy(HTTPCookieAcceptPolicy 
         break;
     }
 
-    NetworkStorageSession::forEach([soupPolicy] (const NetworkStorageSession& session) {
+    m_process.forEachNetworkStorageSession([soupPolicy] (const auto& session) {
         soup_cookie_jar_set_accept_policy(session.cookieStorage(), soupPolicy);
     });
 }
 
 HTTPCookieAcceptPolicy WebCookieManager::platformGetHTTPCookieAcceptPolicy()
 {
-    switch (soup_cookie_jar_get_accept_policy(NetworkStorageSession::defaultStorageSession().cookieStorage())) {
+    switch (soup_cookie_jar_get_accept_policy(m_process.defaultStorageSession().cookieStorage())) {
     case SOUP_COOKIE_JAR_ACCEPT_ALWAYS:
         return HTTPCookieAcceptPolicyAlways;
     case SOUP_COOKIE_JAR_ACCEPT_NEVER:
@@ -85,7 +86,7 @@ void WebCookieManager::setCookiePersistentStorage(const String& storagePath, uin
         ASSERT_NOT_REACHED();
     }
 
-    auto& storageSession = NetworkStorageSession::defaultStorageSession();
+    auto& storageSession = m_process.defaultStorageSession();
     soup_cookie_jar_set_accept_policy(jar.get(), soup_cookie_jar_get_accept_policy(storageSession.cookieStorage()));
     storageSession.setCookieStorage(jar.get());
 }

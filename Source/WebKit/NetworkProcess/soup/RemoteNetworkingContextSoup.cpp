@@ -38,10 +38,10 @@ using namespace WebCore;
 void RemoteNetworkingContext::ensureWebsiteDataStoreSession(NetworkProcess& networkProcess, WebsiteDataStoreParameters&& parameters)
 {
     auto sessionID = parameters.networkSessionParameters.sessionID;
-    if (NetworkStorageSession::storageSession(sessionID))
+    if (networkProcess.storageSession(sessionID))
         return;
 
-    NetworkStorageSession::ensureSession(sessionID, String::number(sessionID.sessionID()));
+    networkProcess.ensureSession(sessionID, String::number(sessionID.sessionID()));
     networkProcess.setSession(sessionID, NetworkSession::create(networkProcess, WTFMove(parameters.networkSessionParameters)));
 }
 

@@ -1,3 +1,115 @@
+2019-01-22  Alex Christensen  <achristensen@webkit.org>
+
+        Move NetworkStorageSession ownership to NetworkProcess
+        https://bugs.webkit.org/show_bug.cgi?id=193580
+
+        Reviewed by Geoff Garen.
+
+        * NetworkProcess/Cookies/WebCookieManager.cpp:
+        (WebKit::WebCookieManager::WebCookieManager):
+        (WebKit::WebCookieManager::getHostnamesWithCookies):
+        (WebKit::WebCookieManager::deleteCookiesForHostname):
+        (WebKit::WebCookieManager::deleteAllCookies):
+        (WebKit::WebCookieManager::deleteCookie):
+        (WebKit::WebCookieManager::deleteAllCookiesModifiedSince):
+        (WebKit::WebCookieManager::getAllCookies):
+        (WebKit::WebCookieManager::getCookies):
+        (WebKit::WebCookieManager::setCookie):
+        (WebKit::WebCookieManager::setCookies):
+        (WebKit::WebCookieManager::startObservingCookieChanges):
+        (WebKit::WebCookieManager::stopObservingCookieChanges):
+        * NetworkProcess/Cookies/WebCookieManager.h:
+        * NetworkProcess/Cookies/mac/WebCookieManagerMac.mm:
+        (WebKit::WebCookieManager::platformSetHTTPCookieAcceptPolicy):
+        * NetworkProcess/NetworkConnectionToWebProcess.cpp:
+        (WebKit::storageSession):
+        (WebKit::NetworkConnectionToWebProcess::cookiesForDOM):
+        (WebKit::NetworkConnectionToWebProcess::setCookiesFromDOM):
+        (WebKit::NetworkConnectionToWebProcess::cookiesEnabled):
+        (WebKit::NetworkConnectionToWebProcess::cookieRequestHeaderFieldValue):
+        (WebKit::NetworkConnectionToWebProcess::getRawCookies):
+        (WebKit::NetworkConnectionToWebProcess::deleteCookie):
+        (WebKit::NetworkConnectionToWebProcess::removeStorageAccessForFrame):
+        (WebKit::NetworkConnectionToWebProcess::removeStorageAccessForAllFramesOnPage):
+        * NetworkProcess/NetworkProcess.cpp:
+        (WebKit::NetworkProcess::initializeNetworkProcess):
+        (WebKit::NetworkProcess::clearCachedCredentials):
+        (WebKit::NetworkProcess::switchToNewTestingSession):
+        (WebKit::NetworkProcess::ensureSession):
+        (WebKit::NetworkProcess::storageSession const):
+        (WebKit::NetworkProcess::defaultStorageSession const):
+        (WebKit::NetworkProcess::forEachNetworkStorageSession):
+        (WebKit::NetworkProcess::destroySession):
+        (WebKit::NetworkProcess::updatePrevalentDomainsToBlockCookiesFor):
+        (WebKit::NetworkProcess::setAgeCapForClientSideCookies):
+        (WebKit::NetworkProcess::hasStorageAccessForFrame):
+        (WebKit::NetworkProcess::getAllStorageAccessEntries):
+        (WebKit::NetworkProcess::grantStorageAccess):
+        (WebKit::NetworkProcess::removeAllStorageAccess):
+        (WebKit::NetworkProcess::removePrevalentDomains):
+        (WebKit::NetworkProcess::setCacheMaxAgeCapForPrevalentResources):
+        (WebKit::NetworkProcess::resetCacheMaxAgeCapForPrevalentResources):
+        (WebKit::NetworkProcess::fetchWebsiteData):
+        (WebKit::NetworkProcess::deleteWebsiteData):
+        (WebKit::NetworkProcess::deleteWebsiteDataForOrigins):
+        * NetworkProcess/NetworkProcess.h:
+        * NetworkProcess/NetworkResourceLoader.cpp:
+        (WebKit::NetworkResourceLoader::validateCacheEntryForMaxAgeCapValidation):
+        (WebKit::NetworkResourceLoader::logCookieInformation const):
+        * NetworkProcess/NetworkSession.cpp:
+        (WebKit::NetworkSession::networkStorageSession const):
+        * NetworkProcess/NetworkStorageSessionProvider.h:
+        * NetworkProcess/cache/NetworkCache.cpp:
+        (WebKit::NetworkCache::makeUseDecision):
+        (WebKit::NetworkCache::Cache::retrieve):
+        (WebKit::NetworkCache::Cache::makeEntry):
+        (WebKit::NetworkCache::Cache::makeRedirectEntry):
+        (WebKit::NetworkCache::Cache::update):
+        * NetworkProcess/cache/NetworkCacheSpeculativeLoad.cpp:
+        (WebKit::NetworkCache::SpeculativeLoad::willSendRedirectedRequest):
+        * NetworkProcess/cocoa/NetworkProcessCocoa.mm:
+        (WebKit::NetworkProcess::platformSyncAllCookies):
+        * NetworkProcess/cocoa/NetworkSessionCocoa.mm:
+        (-[WKNetworkSessionDelegate URLSession:task:willPerformHTTPRedirection:newRequest:completionHandler:]):
+        (-[WKNetworkSessionDelegate URLSession:task:_schemeUpgraded:completionHandler:]):
+        (-[WKNetworkSessionDelegate URLSession:task:didReceiveChallenge:completionHandler:]):
+        (WebKit::NetworkSessionCocoa::NetworkSessionCocoa):
+        * NetworkProcess/mac/RemoteNetworkingContext.mm:
+        (WebKit::RemoteNetworkingContext::ensureWebsiteDataStoreSession):
+        * SourcesCocoa.txt:
+        * UIProcess/API/APIHTTPCookieStore.cpp:
+        (API::HTTPCookieStore::~HTTPCookieStore):
+        (API::HTTPCookieStore::cookies):
+        (API::HTTPCookieStore::setCookie):
+        (API::HTTPCookieStore::deleteCookie):
+        (API::HTTPCookieStore::registerObserver):
+        (API::HTTPCookieStore::unregisterObserver):
+        (API::HTTPCookieStore::registerForNewProcessPoolNotifications):
+        (API::HTTPCookieStore::flushDefaultUIProcessCookieStore):
+        (API::HTTPCookieStore::getAllDefaultUIProcessCookieStoreCookies):
+        (API::HTTPCookieStore::setCookieInDefaultUIProcessCookieStore):
+        (API::HTTPCookieStore::deleteCookieFromDefaultUIProcessCookieStore):
+        (API::HTTPCookieStore::startObservingChangesToDefaultUIProcessCookieStore):
+        (API::HTTPCookieStore::stopObservingChangesToDefaultUIProcessCookieStore):
+        * UIProcess/API/APIHTTPCookieStore.h:
+        * UIProcess/API/Cocoa/APIHTTPCookieStoreCocoa.mm: Added.
+        (API::HTTPCookieStore::flushDefaultUIProcessCookieStore):
+        (API::HTTPCookieStore::getAllDefaultUIProcessCookieStoreCookies):
+        (API::HTTPCookieStore::setCookieInDefaultUIProcessCookieStore):
+        (API::HTTPCookieStore::deleteCookieFromDefaultUIProcessCookieStore):
+        (API::HTTPCookieStore::startObservingChangesToDefaultUIProcessCookieStore):
+        (API::HTTPCookieStore::stopObservingChangesToDefaultUIProcessCookieStore):
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::WebProcessPool::clearCachedCredentials):
+        * WebKit.xcodeproj/project.pbxproj:
+        * WebProcess/Plugins/PluginView.cpp:
+        (WebKit::PluginView::getAuthenticationInfo):
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::deleteWebsiteData):
+        (WebKit::WebProcess::clearCachedCredentials): Deleted.
+        * WebProcess/WebProcess.h:
+        * WebProcess/WebProcess.messages.in:
+
 2019-01-22  Per Arne Vollan  <pvollan@apple.com>
 
         [macOS] Adjust logging policy in WebKit's sandbox

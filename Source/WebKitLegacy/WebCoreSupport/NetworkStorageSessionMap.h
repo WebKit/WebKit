@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 Igalia S.L.
+ * Copyright (C) 2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -10,7 +10,7 @@
  *    notice, this list of conditions and the following disclaimer in the
  *    documentation and/or other materials provided with the distribution.
  *
- * THIS SOFTWARE IS PROVIDED BY APPLE AND ITS CONTRIBUTORS "AS IS" AND ANY
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. ``AS IS'' AND ANY
  * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
  * PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL APPLE INC. OR
@@ -25,35 +25,21 @@
 
 #pragma once
 
-#include "DNSResolveQueue.h"
+#include <wtf/text/WTFString.h>
 
-#include <wtf/HashMap.h>
-#include <wtf/glib/GRefPtr.h>
+namespace PAL {
+class SessionID;
+}
 
 namespace WebCore {
-
 class NetworkStorageSession;
-
-class DNSResolveQueueSoup final : public DNSResolveQueue {
-public:
-    using CompletionAndCancelHandlers = std::pair<WebCore::DNSCompletionHandler, GRefPtr<GCancellable>>;
-
-    DNSResolveQueueSoup() = default;
-    static void setGlobalDefaultNetworkStorageSessionAccessor(Function<NetworkStorageSession&()>&&);
-    void resolve(const String& hostname, uint64_t identifier, DNSCompletionHandler&&) final;
-    void stopResolve(uint64_t identifier) final;
-
-    std::unique_ptr<CompletionAndCancelHandlers> takeCompletionAndCancelHandlers(uint64_t identifier);
-    void removeCancelAndCompletionHandler(uint64_t identifier);
-
-private:
-    void updateIsUsingProxy() final;
-
-    HashMap<uint64_t, std::unique_ptr<CompletionAndCancelHandlers>> m_completionAndCancelHandlers;
-
-    void platformResolve(const String&) final;
-};
-
-using DNSResolveQueuePlatform = DNSResolveQueueSoup;
-
 }
+
+class NetworkStorageSessionMap {
+public:
+    static WebCore::NetworkStorageSession* storageSession(const PAL::SessionID&);
+    static WebCore::NetworkStorageSession& defaultStorageSession();
+    static void switchToNewTestingSession();
+    static void ensureSession(const PAL::SessionID&, const String& identifierBase = String());
+    static void destroySession(const PAL::SessionID&);
+};

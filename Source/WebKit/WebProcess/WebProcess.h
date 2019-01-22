@@ -266,8 +266,6 @@ private:
 
     void processSuspensionCleanupTimerFired();
 
-    void clearCachedCredentials();
-
     void platformTerminate();
 
     void markIsNoLongerPrewarmed();

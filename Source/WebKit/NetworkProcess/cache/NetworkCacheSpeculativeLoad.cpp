@@ -74,7 +74,7 @@ void SpeculativeLoad::willSendRedirectedRequest(ResourceRequest&& request, Resou
 
     Optional<Seconds> maxAgeCap;
 #if ENABLE(RESOURCE_LOAD_STATISTICS)
-    if (auto networkStorageSession = WebCore::NetworkStorageSession::storageSession(PAL::SessionID::defaultSessionID()))
+    if (auto* networkStorageSession = m_cache->networkProcess().storageSession(PAL::SessionID::defaultSessionID()))
         maxAgeCap = networkStorageSession->maxAgeCacheCap(request);
 #endif
     m_cacheEntry = m_cache->storeRedirect(request, redirectResponse, redirectRequest, maxAgeCap);

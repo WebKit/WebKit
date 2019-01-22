@@ -28,12 +28,13 @@
 #include "APIObject.h"
 #include "HTTPCookieAcceptPolicy.h"
 #include <WebCore/Cookie.h>
+#include <wtf/CompletionHandler.h>
 #include <wtf/Forward.h>
-#include <wtf/Function.h>
 #include <wtf/HashSet.h>
 
 namespace WebCore {
 struct Cookie;
+class CookieStorageObserver;
 }
 
 namespace WebKit {
@@ -55,9 +56,9 @@ public:
 
     virtual ~HTTPCookieStore();
 
-    void cookies(Function<void (const Vector<WebCore::Cookie>&)>&& completionHandler);
-    void setCookie(const WebCore::Cookie&, Function<void ()>&& completionHandler);
-    void deleteCookie(const WebCore::Cookie&, Function<void ()>&& completionHandler);
+    void cookies(CompletionHandler<void(const Vector<WebCore::Cookie>&)>&&);
+    void setCookie(const WebCore::Cookie&, CompletionHandler<void()>&&);
+    void deleteCookie(const WebCore::Cookie&, CompletionHandler<void()>&&);
 
     class Observer {
     public:
@@ -77,6 +78,13 @@ private:
     void registerForNewProcessPoolNotifications();
     void unregisterForNewProcessPoolNotifications();
 
+    static void flushDefaultUIProcessCookieStore();
+    static Vector<WebCore::Cookie> getAllDefaultUIProcessCookieStoreCookies();
+    static void setCookieInDefaultUIProcessCookieStore(const WebCore::Cookie&);
+    static void deleteCookieFromDefaultUIProcessCookieStore(const WebCore::Cookie&);
+    void startObservingChangesToDefaultUIProcessCookieStore(Function<void()>&&);
+    void stopObservingChangesToDefaultUIProcessCookieStore();
+    
     Ref<WebKit::WebsiteDataStore> m_owningDataStore;
     HashSet<Observer*> m_observers;
 
@@ -85,6 +93,7 @@ private:
     bool m_observingUIProcessCookies { false };
 
     uint64_t m_processPoolCreationListenerIdentifier { 0 };
+    RefPtr<WebCore::CookieStorageObserver> m_defaultUIProcessObserver;
 };
 
 }

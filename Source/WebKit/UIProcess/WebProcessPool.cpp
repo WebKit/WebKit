@@ -1629,7 +1629,6 @@ void WebProcessPool::setAllowsAnySSLCertificateForWebSocket(bool allows)
 
 void WebProcessPool::clearCachedCredentials()
 {
-    sendToAllProcesses(Messages::WebProcess::ClearCachedCredentials());
     if (m_networkProcess)
         m_networkProcess->send(Messages::NetworkProcess::ClearCachedCredentials(), 0);
 }

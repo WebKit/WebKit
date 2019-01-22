@@ -37,7 +37,6 @@ class NetworkProcessMain final: public ChildProcessMainBase {
 public:
     void platformFinalize() override
     {
-        WebCore::NetworkStorageSession::defaultStorageSession().clearSoupNetworkSessionAndCookieStorage();
     }
 };
 

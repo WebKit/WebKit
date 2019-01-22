@@ -45,7 +45,7 @@ private:
     WebCore::NetworkStorageSession* storageSession() const final
     {
         if (m_networkProcess)
-            return WebCore::NetworkStorageSession::storageSession(m_sessionID);
+            return m_networkProcess->storageSession(m_sessionID);
         return nullptr;
     }
 

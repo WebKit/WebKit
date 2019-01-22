@@ -1,3 +1,21 @@
+2019-01-22  Alex Christensen  <achristensen@webkit.org>
+
+        Move NetworkStorageSession ownership to NetworkProcess
+        https://bugs.webkit.org/show_bug.cgi?id=193580
+
+        Reviewed by Geoff Garen.
+
+        * WebCoreSupport/WebFrameNetworkingContext.cpp:
+        (WebFrameNetworkingContext::setCookieAcceptPolicyForAllContexts):
+        (WebFrameNetworkingContext::ensurePrivateBrowsingSession):
+        (WebFrameNetworkingContext::destroyPrivateBrowsingSession):
+        (WebFrameNetworkingContext::storageSession const):
+        * WebDownloadCFNet.cpp:
+        (WebDownload::didReceiveAuthenticationChallenge):
+        * WebPreferences.cpp:
+        (WebPreferences::clearNetworkLoaderSession):
+        (WebPreferences::switchNetworkLoaderToNewTestingSession):
+
 2019-01-15  Darin Adler  <darin@apple.com>
 
         Use references rather than pointers for register/unregister functions, and more

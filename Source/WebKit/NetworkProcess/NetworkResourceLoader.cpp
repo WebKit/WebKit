@@ -609,7 +609,7 @@ Optional<Seconds> NetworkResourceLoader::validateCacheEntryForMaxAgeCapValidatio
     }
     
     if (!existingCacheEntryMatchesNewResponse) {
-        if (auto networkStorageSession = WebCore::NetworkStorageSession::storageSession(sessionID()))
+        if (auto* networkStorageSession = m_connection->networkProcess().storageSession(sessionID()))
             return networkStorageSession->maxAgeCacheCap(request);
     }
 #endif
@@ -970,7 +970,7 @@ void NetworkResourceLoader::logCookieInformation() const
 {
     ASSERT(shouldLogCookieInformation(m_connection, sessionID()));
 
-    auto networkStorageSession = WebCore::NetworkStorageSession::storageSession(sessionID());
+    auto* networkStorageSession = m_connection->networkProcess().storageSession(sessionID());
     ASSERT(networkStorageSession);
 
     logCookieInformation(m_connection, "NetworkResourceLoader", reinterpret_cast<const void*>(this), *networkStorageSession, originalRequest().firstPartyForCookies(), SameSiteInfo::create(originalRequest()), originalRequest().url(), originalRequest().httpReferrer(), frameID(), pageID(), identifier());

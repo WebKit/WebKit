@@ -12,6 +12,7 @@ set(WebKitLegacy_SOURCES
     Storage/WebDatabaseProvider.cpp
     Storage/WebStorageNamespaceProvider.cpp
 
+    WebCoreSupport/NetworkStorageSessionMap.cpp
     WebCoreSupport/WebResourceLoadScheduler.cpp
     WebCoreSupport/WebViewGroup.cpp
 )

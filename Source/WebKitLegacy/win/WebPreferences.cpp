@@ -27,6 +27,7 @@
 #include "WebKitDLL.h"
 #include "WebPreferences.h"
 
+#include "NetworkStorageSessionMap.h"
 #include "WebNotificationCenter.h"
 #include "WebPreferenceKeysPrivate.h"
 
@@ -2118,13 +2119,13 @@ HRESULT WebPreferences::mediaPreloadingEnabled(_Out_ BOOL* enabled)
 
 HRESULT WebPreferences::clearNetworkLoaderSession()
 {
-    NetworkStorageSession::defaultStorageSession().deleteAllCookies();
+    NetworkStorageSessionMap::defaultStorageSession().deleteAllCookies();
     return S_OK;
 }
 
 HRESULT WebPreferences::switchNetworkLoaderToNewTestingSession()
 {
-    NetworkStorageSession::switchToNewTestingSession();
+    NetworkStorageSessionMap::switchToNewTestingSession();
     return S_OK;
 }
 

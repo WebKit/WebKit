@@ -231,7 +231,7 @@ void NetworkProcess::platformSyncAllCookies(CompletionHandler<void()>&& completi
 
 #if HAVE(FOUNDATION_WITH_SAVE_COOKIES_WITH_COMPLETION_HANDLER)
     RefPtr<CallbackAggregator> callbackAggregator = CallbackAggregator::create(WTFMove(completionHander));
-    WebCore::NetworkStorageSession::forEach([&] (auto& networkStorageSession) {
+    forEachNetworkStorageSession([&] (auto& networkStorageSession) {
         saveCookies(networkStorageSession.nsCookieStorage(), [callbackAggregator] { });
     });
 #else

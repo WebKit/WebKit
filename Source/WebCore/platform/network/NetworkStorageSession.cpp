@@ -42,36 +42,10 @@ namespace WebCore {
 
 bool NetworkStorageSession::m_processMayUseCookieAPI = false;
 
-HashMap<PAL::SessionID, std::unique_ptr<NetworkStorageSession>>& NetworkStorageSession::globalSessionMap()
-{
-    static NeverDestroyed<HashMap<PAL::SessionID, std::unique_ptr<NetworkStorageSession>>> map;
-    return map;
-}
-
-NetworkStorageSession* NetworkStorageSession::storageSession(PAL::SessionID sessionID)
-{
-    if (sessionID == PAL::SessionID::defaultSessionID())
-        return &defaultStorageSession();
-    return globalSessionMap().get(sessionID);
-}
-
-void NetworkStorageSession::destroySession(PAL::SessionID sessionID)
-{
-    ASSERT(sessionID != PAL::SessionID::defaultSessionID());
-    globalSessionMap().remove(sessionID);
-}
-
-void NetworkStorageSession::forEach(const WTF::Function<void(const WebCore::NetworkStorageSession&)>& functor)
-{
-    functor(defaultStorageSession());
-    for (auto& storageSession : globalSessionMap().values())
-        functor(*storageSession);
-}
-
 bool NetworkStorageSession::processMayUseCookieAPI()
 {
     return m_processMayUseCookieAPI;
-};
+}
 
 void NetworkStorageSession::permitProcessToUseCookieAPI(bool value)
 {

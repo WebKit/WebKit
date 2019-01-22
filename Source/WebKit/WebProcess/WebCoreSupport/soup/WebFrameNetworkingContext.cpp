@@ -41,15 +41,8 @@
 namespace WebKit {
 using namespace WebCore;
 
-void WebFrameNetworkingContext::ensureWebsiteDataStoreSession(WebsiteDataStoreParameters&& parameters)
+void WebFrameNetworkingContext::ensureWebsiteDataStoreSession(WebsiteDataStoreParameters&&)
 {
-    auto sessionID = parameters.networkSessionParameters.sessionID;
-    ASSERT(RunLoop::isMain());
-
-    if (NetworkStorageSession::storageSession(sessionID))
-        return;
-
-    NetworkStorageSession::ensureSession(sessionID, String::number(sessionID.sessionID()));
 }
 
 WebFrameNetworkingContext::WebFrameNetworkingContext(WebFrame* frame)

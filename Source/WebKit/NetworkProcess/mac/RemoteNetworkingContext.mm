@@ -44,7 +44,7 @@ using namespace WebCore;
 void RemoteNetworkingContext::ensureWebsiteDataStoreSession(NetworkProcess& networkProcess, WebsiteDataStoreParameters&& parameters)
 {
     auto sessionID = parameters.networkSessionParameters.sessionID;
-    if (NetworkStorageSession::storageSession(sessionID))
+    if (networkProcess.storageSession(sessionID))
         return;
 
     String base = networkProcess.uiProcessBundleIdentifier();
@@ -58,9 +58,9 @@ void RemoteNetworkingContext::ensureWebsiteDataStoreSession(NetworkProcess& netw
     if (!sessionID.isEphemeral() && !parameters.uiProcessCookieStorageIdentifier.isEmpty())
         uiProcessCookieStorage = cookieStorageFromIdentifyingData(parameters.uiProcessCookieStorageIdentifier);
 
-    NetworkStorageSession::ensureSession(sessionID, base + '.' + String::number(sessionID.sessionID()), WTFMove(uiProcessCookieStorage));
+    networkProcess.ensureSession(sessionID, base + '.' + String::number(sessionID.sessionID()), WTFMove(uiProcessCookieStorage));
 
-    auto* session = NetworkStorageSession::storageSession(sessionID);
+    auto* session = networkProcess.storageSession(sessionID);
     for (const auto& cookie : parameters.pendingCookies)
         session->setCookie(cookie);
 

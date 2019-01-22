@@ -25,6 +25,7 @@
 
 #include "WebFrameNetworkingContext.h"
 
+#include "NetworkStorageSessionMap.h"
 #include "WebView.h"
 #include <WebCore/FrameLoader.h>
 #include <WebCore/FrameLoaderClient.h>
@@ -50,10 +51,10 @@ static String& identifierBase()
 #if USE(CFURLCONNECTION)
 void WebFrameNetworkingContext::setCookieAcceptPolicyForAllContexts(WebKitCookieStorageAcceptPolicy policy)
 {
-    if (RetainPtr<CFHTTPCookieStorageRef> cookieStorage = NetworkStorageSession::defaultStorageSession().cookieStorage())
+    if (RetainPtr<CFHTTPCookieStorageRef> cookieStorage = NetworkStorageSessionMap::defaultStorageSession().cookieStorage())
         CFHTTPCookieStorageSetCookieAcceptPolicy(cookieStorage.get(), policy);
 
-    if (auto privateSession = NetworkStorageSession::storageSession(PAL::SessionID::legacyPrivateSessionID()))
+    if (auto privateSession = NetworkStorageSessionMap::storageSession(PAL::SessionID::legacyPrivateSessionID()))
         CFHTTPCookieStorageSetCookieAcceptPolicy(privateSession->cookieStorage().get(), policy);
 }
 #endif
@@ -70,7 +71,7 @@ NetworkStorageSession& WebFrameNetworkingContext::ensurePrivateBrowsingSession()
 #if USE(CFURLCONNECTION)
     ASSERT(isMainThread());
 
-    if (auto privateSession = NetworkStorageSession::storageSession(PAL::SessionID::legacyPrivateSessionID()))
+    if (auto privateSession = NetworkStorageSessionMap::storageSession(PAL::SessionID::legacyPrivateSessionID()))
         return *privateSession;
 
     String base;
@@ -81,17 +82,17 @@ NetworkStorageSession& WebFrameNetworkingContext::ensurePrivateBrowsingSession()
     } else
         base = identifierBase();
 
-    NetworkStorageSession::ensureSession(PAL::SessionID::legacyPrivateSessionID(), base);
+    NetworkStorageSessionMap::ensureSession(PAL::SessionID::legacyPrivateSessionID(), base);
 
 #endif
-    return *NetworkStorageSession::storageSession(PAL::SessionID::legacyPrivateSessionID());
+    return *NetworkStorageSessionMap::storageSession(PAL::SessionID::legacyPrivateSessionID());
 }
 
 void WebFrameNetworkingContext::destroyPrivateBrowsingSession()
 {
     ASSERT(isMainThread());
 
-    NetworkStorageSession::destroySession(PAL::SessionID::legacyPrivateSessionID());
+    NetworkStorageSessionMap::destroySession(PAL::SessionID::legacyPrivateSessionID());
 }
 
 ResourceError WebFrameNetworkingContext::blockedError(const ResourceRequest& request) const
@@ -104,7 +105,7 @@ NetworkStorageSession* WebFrameNetworkingContext::storageSession() const
     ASSERT(isMainThread());
 
     if (frame() && frame()->page()->usesEphemeralSession())
-        return NetworkStorageSession::storageSession(PAL::SessionID::legacyPrivateSessionID());
+        return NetworkStorageSessionMap::storageSession(PAL::SessionID::legacyPrivateSessionID());
 
-    return &NetworkStorageSession::defaultStorageSession();
+    return &NetworkStorageSessionMap::defaultStorageSession();
 }

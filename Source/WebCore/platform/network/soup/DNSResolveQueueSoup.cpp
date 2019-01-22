@@ -33,7 +33,9 @@
 #include "SoupNetworkSession.h"
 #include <libsoup/soup.h>
 #include <wtf/CompletionHandler.h>
+#include <wtf/Function.h>
 #include <wtf/MainThread.h>
+#include <wtf/NeverDestroyed.h>
 #include <wtf/glib/GUniquePtr.h>
 #include <wtf/text/CString.h>
 
@@ -76,10 +78,21 @@ static void proxyResolvedForHttpsUriCallback(GObject* source, GAsyncResult* resu
     didResolveProxy(G_PROXY_RESOLVER(source), result, &isUsingHttpsProxy, static_cast<bool*>(userData));
 }
 
+Function<NetworkStorageSession&()>& globalDefaultNetworkStorageSessionAccessor()
+{
+    static NeverDestroyed<Function<NetworkStorageSession&()>> accessor;
+    return accessor.get();
+}
+
+void DNSResolveQueueSoup::setGlobalDefaultNetworkStorageSessionAccessor(Function<NetworkStorageSession&()>&& accessor)
+{
+    globalDefaultNetworkStorageSessionAccessor() = WTFMove(accessor);
+}
+
 void DNSResolveQueueSoup::updateIsUsingProxy()
 {
     GRefPtr<GProxyResolver> resolver;
-    g_object_get(NetworkStorageSession::defaultStorageSession().getOrCreateSoupNetworkSession().soupSession(), "proxy-resolver", &resolver.outPtr(), nullptr);
+    g_object_get(globalDefaultNetworkStorageSessionAccessor()().getOrCreateSoupNetworkSession().soupSession(), "proxy-resolver", &resolver.outPtr(), nullptr);
     ASSERT(resolver);
 
     g_proxy_resolver_lookup_async(resolver.get(), "http://example.com/", nullptr, proxyResolvedForHttpUriCallback, &m_isUsingProxy);
@@ -162,7 +175,7 @@ void DNSResolveQueueSoup::platformResolve(const String& hostname)
 {
     ASSERT(isMainThread());
 
-    soup_session_prefetch_dns(NetworkStorageSession::defaultStorageSession().getOrCreateSoupNetworkSession().soupSession(), hostname.utf8().data(), nullptr, resolvedCallback, nullptr);
+    soup_session_prefetch_dns(globalDefaultNetworkStorageSessionAccessor()().getOrCreateSoupNetworkSession().soupSession(), hostname.utf8().data(), nullptr, resolvedCallback, nullptr);
 }
 
 void DNSResolveQueueSoup::resolve(const String& hostname, uint64_t identifier, DNSCompletionHandler&& completionHandler)
@@ -171,7 +184,7 @@ void DNSResolveQueueSoup::resolve(const String& hostname, uint64_t identifier, D
 
     auto address = adoptGRef(soup_address_new(hostname.utf8().data(), 0));
     auto cancellable = adoptGRef(g_cancellable_new());
-    soup_address_resolve_async(address.get(), soup_session_get_async_context(WebCore::NetworkStorageSession::defaultStorageSession().getOrCreateSoupNetworkSession().soupSession()), cancellable.get(), resolvedWithObserverCallback, this);
+    soup_address_resolve_async(address.get(), soup_session_get_async_context(WebCore::globalDefaultNetworkStorageSessionAccessor()().getOrCreateSoupNetworkSession().soupSession()), cancellable.get(), resolvedWithObserverCallback, this);
 
     g_object_set_data(G_OBJECT(address.get()), "identifier", GUINT_TO_POINTER(identifier));
 

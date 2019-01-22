@@ -1,3 +1,25 @@
+2019-01-22  Alex Christensen  <achristensen@webkit.org>
+
+        Move NetworkStorageSession ownership to NetworkProcess
+        https://bugs.webkit.org/show_bug.cgi?id=193580
+
+        Reviewed by Geoff Garen.
+
+        * Misc/WebCache.mm:
+        (+[WebCache clearCachedCredentials]):
+        * Misc/WebDownload.mm:
+        (-[WebDownloadInternal download:didReceiveAuthenticationChallenge:]):
+        * Plugins/WebBaseNetscapePluginView.mm:
+        (WebKit::getAuthenticationInfo):
+        * WebCoreSupport/WebFrameNetworkingContext.mm:
+        (WebFrameNetworkingContext::ensurePrivateBrowsingSession):
+        (WebFrameNetworkingContext::destroyPrivateBrowsingSession):
+        (WebFrameNetworkingContext::storageSession const):
+        * WebView/WebPreferences.mm:
+        (+[WebPreferences _switchNetworkLoaderToNewTestingSession]):
+        (+[WebPreferences _clearNetworkLoaderSession]):
+        (+[WebPreferences _setCurrentNetworkLoaderSessionCookieAcceptPolicy:]):
+
 2019-01-22  Daniel Bates  <dabates@apple.com>
 
         [iOS] Interpret text key commands on keydown and app key commands on keypress

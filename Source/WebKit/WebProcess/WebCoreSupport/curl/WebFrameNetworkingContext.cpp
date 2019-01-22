@@ -38,16 +38,8 @@
 namespace WebKit {
 using namespace WebCore;
 
-void WebFrameNetworkingContext::ensureWebsiteDataStoreSession(WebsiteDataStoreParameters&& parameters)
+void WebFrameNetworkingContext::ensureWebsiteDataStoreSession(WebsiteDataStoreParameters&&)
 {
-    auto sessionID = parameters.networkSessionParameters.sessionID;
-    ASSERT(isMainThread());
-    ASSERT(sessionID.isEphemeral());
-
-    if (NetworkStorageSession::storageSession(sessionID))
-        return;
-
-    // FIXME: Implement to ensure a data storage session.
 }
 
 WebFrameNetworkingContext::WebFrameNetworkingContext(WebFrame* frame)

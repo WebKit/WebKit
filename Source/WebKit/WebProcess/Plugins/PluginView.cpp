@@ -1602,11 +1602,7 @@ bool PluginView::getAuthenticationInfo(const ProtectionSpace& protectionSpace, S
     if (!contentDocument)
         return false;
 
-    String partitionName = contentDocument->topDocument().domainForCachePartition();
-    Credential credential = NetworkStorageSession::defaultStorageSession().credentialStorage().get(partitionName, protectionSpace);
-    if (credential.isEmpty())
-        credential = NetworkStorageSession::defaultStorageSession().credentialStorage().getFromPersistentStorage(protectionSpace);
-
+    auto credential = CredentialStorage::getFromPersistentStorage(protectionSpace);
     if (!credential.hasPassword())
         return false;
 

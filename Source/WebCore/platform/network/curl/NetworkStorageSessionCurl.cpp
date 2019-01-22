@@ -87,30 +87,6 @@ CookieJarDB& NetworkStorageSession::cookieDatabase() const
     return m_cookieDatabase;
 }
 
-static std::unique_ptr<NetworkStorageSession>& defaultSession()
-{
-    ASSERT(isMainThread());
-    static std::unique_ptr<NetworkStorageSession> session;
-    return session;
-}
-
-NetworkStorageSession& NetworkStorageSession::defaultStorageSession()
-{
-    if (!defaultSession())
-        defaultSession() = std::make_unique<NetworkStorageSession>(PAL::SessionID::defaultSessionID(), nullptr);
-    return *defaultSession();
-}
-
-void NetworkStorageSession::ensureSession(PAL::SessionID, const String&)
-{
-    // FIXME: Implement for WebKit to use.
-}
-
-void NetworkStorageSession::switchToNewTestingSession()
-{
-    // FIXME: Implement for WebKit to use.
-}
-
 void NetworkStorageSession::setCookiesFromDOM(const URL& firstParty, const SameSiteInfo& sameSiteInfo, const URL& url, Optional<uint64_t> frameID, Optional<uint64_t> pageID, const String& value) const
 {
     cookieStorage().setCookiesFromDOM(*this, firstParty, sameSiteInfo, url, frameID, pageID, value);

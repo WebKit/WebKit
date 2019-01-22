@@ -46,6 +46,10 @@
 #include <wtf/RetainPtr.h>
 #include <wtf/WeakPtr.h>
 
+#if PLATFORM(COCOA)
+typedef struct OpaqueCFHTTPCookieStorage*  CFHTTPCookieStorageRef;
+#endif
+
 namespace IPC {
 class FormDataReference;
 }
@@ -132,6 +136,16 @@ public:
     NetworkSession* networkSession(const PAL::SessionID&) const override;
     void destroySession(const PAL::SessionID&);
     
+    void forEachNetworkStorageSession(const Function<void(WebCore::NetworkStorageSession&)>&);
+    WebCore::NetworkStorageSession* storageSession(const PAL::SessionID&) const;
+    WebCore::NetworkStorageSession& defaultStorageSession() const;
+    void switchToNewTestingSession();
+#if PLATFORM(COCOA)
+    void ensureSession(const PAL::SessionID&, const String& identifier, RetainPtr<CFHTTPCookieStorageRef>&&);
+#else
+    void ensureSession(const PAL::SessionID&, const String& identifier);
+#endif
+
     bool canHandleHTTPSServerTrustEvaluation() const { return m_canHandleHTTPSServerTrustEvaluation; }
 
     void processWillSuspendImminently(bool& handled);
@@ -426,6 +440,8 @@ private:
     HashSet<PAL::SessionID> m_sessionsControlledByAutomation;
     HashMap<PAL::SessionID, Vector<CacheStorageParametersCallback>> m_cacheStorageParametersCallbacks;
     HashMap<PAL::SessionID, Ref<NetworkSession>> m_networkSessions;
+    HashMap<PAL::SessionID, std::unique_ptr<WebCore::NetworkStorageSession>> m_networkStorageSessions;
+    mutable std::unique_ptr<WebCore::NetworkStorageSession> m_defaultNetworkStorageSession;
 
 #if PLATFORM(COCOA)
     void platformInitializeNetworkProcessCocoa(const NetworkProcessCreationParameters&);

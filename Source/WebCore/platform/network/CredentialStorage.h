@@ -44,7 +44,7 @@ public:
     WEBCORE_EXPORT void remove(const String&, const ProtectionSpace&);
 
     // OS persistent storage.
-    WEBCORE_EXPORT Credential getFromPersistentStorage(const ProtectionSpace&);
+    WEBCORE_EXPORT static Credential getFromPersistentStorage(const ProtectionSpace&);
 
     WEBCORE_EXPORT void clearCredentials();
 

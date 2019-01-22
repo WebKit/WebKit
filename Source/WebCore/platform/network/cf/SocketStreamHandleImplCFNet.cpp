@@ -370,7 +370,7 @@ bool SocketStreamHandleImpl::getStoredCONNECTProxyCredentials(const ProtectionSp
     // Try system credential storage first, matching HTTP behavior (CFNetwork only asks the client for password if it couldn't find it in Keychain).
     Credential storedCredential;
     if (auto* storageSession = m_storageSessionProvider ? m_storageSessionProvider->storageSession() : nullptr) {
-        storedCredential = storageSession->credentialStorage().getFromPersistentStorage(protectionSpace);
+        storedCredential = CredentialStorage::getFromPersistentStorage(protectionSpace);
         if (storedCredential.isEmpty())
             storedCredential = storageSession->credentialStorage().get(m_credentialPartition, protectionSpace);
     }

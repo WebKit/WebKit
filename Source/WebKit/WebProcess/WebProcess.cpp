@@ -578,11 +578,6 @@ void WebProcess::setCacheModel(CacheModel cacheModel)
     platformSetCacheModel(cacheModel);
 }
 
-void WebProcess::clearCachedCredentials()
-{
-    NetworkStorageSession::defaultStorageSession().credentialStorage().clearCredentials();
-}
-
 WebPage* WebProcess::focusedWebPage() const
 {    
     for (auto& page : m_pageMap.values()) {
@@ -1298,11 +1293,6 @@ void WebProcess::deleteWebsiteData(PAL::SessionID sessionID, OptionSet<WebsiteDa
         MemoryCache::singleton().evictResources(sessionID);
 
         CrossOriginPreflightResultCache::singleton().clear();
-    }
-
-    if (websiteDataTypes.contains(WebsiteDataType::Credentials)) {
-        if (WebCore::NetworkStorageSession::storageSession(sessionID))
-            NetworkStorageSession::storageSession(sessionID)->credentialStorage().clearCredentials();
     }
 }
 

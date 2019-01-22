@@ -89,7 +89,7 @@ static void handleCookieHeaders(const CurlResponse& response)
 {
     static const auto setCookieHeader = "set-cookie: ";
 
-    const auto& storageSession = NetworkStorageSession::defaultStorageSession();
+    const auto& storageSession = *d()->m_context->storageSession(PAL::SessionID::defaultSessionID());
     const auto& cookieJar = storageSession.cookieStorage();
     for (const auto& header : response.headers) {
         if (header.startsWithIgnoringASCIICase(setCookieHeader)) {

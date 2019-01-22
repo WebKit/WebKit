@@ -60,7 +60,7 @@ Ref<NetworkSession> NetworkSession::create(NetworkProcess& networkProcess, Netwo
 
 NetworkStorageSession& NetworkSession::networkStorageSession() const
 {
-    auto* storageSession = NetworkStorageSession::storageSession(m_sessionID);
+    auto* storageSession = m_networkProcess->storageSession(m_sessionID);
     RELEASE_ASSERT(storageSession);
     return *storageSession;
 }

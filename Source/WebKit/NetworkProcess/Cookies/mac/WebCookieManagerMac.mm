@@ -26,6 +26,7 @@
 #import "config.h"
 #import "WebCookieManager.h"
 
+#import "NetworkProcess.h"
 #import "NetworkSession.h"
 #import <WebCore/NetworkStorageSession.h>
 #import <pal/spi/cf/CFNetworkSPI.h>
@@ -40,7 +41,7 @@ void WebCookieManager::platformSetHTTPCookieAcceptPolicy(HTTPCookieAcceptPolicy 
 
     [[NSHTTPCookieStorage sharedHTTPCookieStorage] setCookieAcceptPolicy:static_cast<NSHTTPCookieAcceptPolicy>(policy)];
 
-    NetworkStorageSession::forEach([&] (const NetworkStorageSession& networkStorageSession) {
+    m_process.forEachNetworkStorageSession([&] (const auto& networkStorageSession) {
         if (auto cookieStorage = networkStorageSession.cookieStorage())
             CFHTTPCookieStorageSetCookieAcceptPolicy(cookieStorage.get(), policy);
     });

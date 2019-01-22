@@ -95,7 +95,7 @@ void NetworkProcess::userPreferredLanguagesChanged(const Vector<String>& languag
 {
     auto acceptLanguages = buildAcceptLanguages(languages);
     SoupNetworkSession::setInitialAcceptLanguages(acceptLanguages);
-    NetworkStorageSession::forEach([&acceptLanguages](const WebCore::NetworkStorageSession& session) {
+    forEachNetworkStorageSession([&acceptLanguages](const auto& session) {
         if (auto* soupSession = session.soupNetworkSession())
             soupSession->setAcceptLanguages(acceptLanguages);
     });
@@ -168,7 +168,7 @@ void NetworkProcess::platformTerminate()
 void NetworkProcess::setNetworkProxySettings(const SoupNetworkProxySettings& settings)
 {
     SoupNetworkSession::setProxySettings(settings);
-    NetworkStorageSession::forEach([](const NetworkStorageSession& session) {
+    forEachNetworkStorageSession([](const auto& session) {
         if (auto* soupSession = session.soupNetworkSession())
             soupSession->setupProxy();
     });

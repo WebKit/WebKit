@@ -28,6 +28,7 @@
 
 #include "DefaultDownloadDelegate.h"
 #include "MarshallingHelpers.h"
+#include "NetworkStorageSessionMap.h"
 #include "WebError.h"
 #include "WebKit.h"
 #include "WebKitLogging.h"
@@ -376,7 +377,7 @@ void WebDownload::didReceiveAuthenticationChallenge(CFURLAuthChallengeRef challe
 {
     // Try previously stored credential first.
     if (!CFURLAuthChallengeGetPreviousFailureCount(challenge)) {
-        Credential credential = WebCore::NetworkStorageSession::defaultStorageSession().credentialStorage().get(emptyString(), core(CFURLAuthChallengeGetProtectionSpace(challenge)));
+        Credential credential = NetworkStorageSessionMap::defaultStorageSession().credentialStorage().get(emptyString(), core(CFURLAuthChallengeGetProtectionSpace(challenge)));
         if (!credential.isEmpty()) {
             RetainPtr<CFURLCredentialRef> cfCredential = adoptCF(createCF(credential));
             CFURLDownloadUseCredential(m_download.get(), cfCredential.get(), challenge);

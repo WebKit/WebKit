@@ -30,6 +30,7 @@
 
 #import "WebBaseNetscapePluginView.h"
 
+#import "NetworkStorageSessionMap.h"
 #import "WebFrameInternal.h"
 #import "WebKitLogging.h"
 #import "WebKitNSStringExtras.h"
@@ -872,7 +873,7 @@ bool getAuthenticationInfo(const char* protocolStr, const char* hostStr, int32_t
     
     RetainPtr<NSURLProtectionSpace> protectionSpace = adoptNS([[NSURLProtectionSpace alloc] initWithHost:host port:port protocol:protocol realm:realm authenticationMethod:authenticationMethod]);
     
-    NSURLCredential *credential = WebCore::NetworkStorageSession::defaultStorageSession().credentialStorage().get(emptyString(), ProtectionSpace(protectionSpace.get())).nsCredential();
+    NSURLCredential *credential = NetworkStorageSessionMap::defaultStorageSession().credentialStorage().get(emptyString(), ProtectionSpace(protectionSpace.get())).nsCredential();
     if (!credential)
         credential = [[NSURLCredentialStorage sharedCredentialStorage] defaultCredentialForProtectionSpace:protectionSpace.get()];
     if (!credential)

@@ -65,31 +65,6 @@ NetworkStorageSession::~NetworkStorageSession()
     g_signal_handlers_disconnect_matched(m_cookieStorage.get(), G_SIGNAL_MATCH_DATA, 0, 0, nullptr, nullptr, this);
 }
 
-static std::unique_ptr<NetworkStorageSession>& defaultSession()
-{
-    ASSERT(isMainThread());
-    static NeverDestroyed<std::unique_ptr<NetworkStorageSession>> session;
-    return session;
-}
-
-NetworkStorageSession& NetworkStorageSession::defaultStorageSession()
-{
-    if (!defaultSession())
-        defaultSession() = std::make_unique<NetworkStorageSession>(PAL::SessionID::defaultSessionID(), nullptr);
-    return *defaultSession();
-}
-
-void NetworkStorageSession::ensureSession(PAL::SessionID sessionID, const String&)
-{
-    ASSERT(!globalSessionMap().contains(sessionID));
-    globalSessionMap().add(sessionID, std::make_unique<NetworkStorageSession>(sessionID, std::make_unique<SoupNetworkSession>(sessionID)));
-}
-
-void NetworkStorageSession::switchToNewTestingSession()
-{
-    defaultSession() = std::make_unique<NetworkStorageSession>(PAL::SessionID::defaultSessionID(), std::make_unique<SoupNetworkSession>());
-}
-
 SoupNetworkSession& NetworkStorageSession::getOrCreateSoupNetworkSession() const
 {
     if (!m_session)
@@ -99,7 +74,6 @@ SoupNetworkSession& NetworkStorageSession::getOrCreateSoupNetworkSession() const
 
 void NetworkStorageSession::clearSoupNetworkSessionAndCookieStorage()
 {
-    ASSERT(defaultSession().get() == this);
     m_session = nullptr;
     m_cookieObserverHandler = nullptr;
     m_cookieStorage = nullptr;

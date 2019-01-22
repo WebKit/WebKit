@@ -51,8 +51,6 @@ messages -> WebProcess LegacyReceiver {
     UserPreferredLanguagesChanged(Vector<String> languages)
     FullKeyboardAccessModeChanged(bool fullKeyboardAccessEnabled)
 
-    ClearCachedCredentials()
-
     # Plug-ins.
     DidAddPlugInAutoStartOriginHash(uint32_t hash, WallTime expirationTime, PAL::SessionID sessionID)
     ResetPlugInAutoStartOriginDefaultHashes(HashMap<uint32_t,WallTime> hashes)

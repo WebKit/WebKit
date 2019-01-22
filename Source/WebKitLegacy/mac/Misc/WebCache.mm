@@ -25,6 +25,7 @@
 
 #import "WebCache.h"
 
+#import "NetworkStorageSessionMap.h"
 #import "WebApplicationCacheInternal.h"
 #import "WebNSObjectExtras.h"
 #import "WebPreferences.h"
@@ -54,7 +55,7 @@
 class DefaultStorageSessionProvider : public WebCore::StorageSessionProvider {
     WebCore::NetworkStorageSession* storageSession() const final
     {
-        return &WebCore::NetworkStorageSession::defaultStorageSession();
+        return &NetworkStorageSessionMap::defaultStorageSession();
     }
 };
 
@@ -223,7 +224,7 @@ class DefaultStorageSessionProvider : public WebCore::StorageSessionProvider {
 + (void)clearCachedCredentials
 {
     [WebView _makeAllWebViewsPerformSelector:@selector(_clearCredentials)];
-    WebCore::NetworkStorageSession::defaultStorageSession().credentialStorage().clearCredentials();
+    NetworkStorageSessionMap::defaultStorageSession().credentialStorage().clearCredentials();
 }
 
 @end

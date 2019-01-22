@@ -64,10 +64,6 @@ void WebProcess::platformTerminate()
 void WebProcess::setNetworkProxySettings(const WebCore::SoupNetworkProxySettings& settings)
 {
     WebCore::SoupNetworkSession::setProxySettings(settings);
-    WebCore::NetworkStorageSession::forEach([](const WebCore::NetworkStorageSession& session) {
-        if (auto* soupSession = session.soupNetworkSession())
-            soupSession->setupProxy();
-    });
 }
 
 } // namespace WebKit

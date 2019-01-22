@@ -96,6 +96,8 @@ public:
 
 #if PLATFORM(COCOA)
     void registerProtocolClass(NSURLSessionConfiguration*);
+#endif
+#if PLATFORM(COCOA) || USE(SOUP)
     static void networkProcessCreated(NetworkProcess&);
 #endif
 

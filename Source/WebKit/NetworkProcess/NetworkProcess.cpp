@@ -91,6 +91,10 @@
 #include "NetworkSessionCocoa.h"
 #endif
 
+#if USE(SOUP)
+#include <WebCore/DNSResolveQueueSoup.h>
+#endif
+
 #if ENABLE(SERVICE_WORKER)
 #include "WebSWServerToContextConnectionMessages.h"
 #endif
@@ -142,12 +146,19 @@ NetworkProcess::NetworkProcess()
     addSupplement<WebCookieManager>();
 #if ENABLE(LEGACY_CUSTOM_PROTOCOL_MANAGER)
     addSupplement<LegacyCustomProtocolManager>();
-#if PLATFORM(COCOA)
-    LegacyCustomProtocolManager::networkProcessCreated(*this);
 #endif
+#if PLATFORM(COCOA) || USE(SOUP)
+    LegacyCustomProtocolManager::networkProcessCreated(*this);
 #endif
 #if ENABLE(PROXIMITY_NETWORKING)
     addSupplement<NetworkProximityManager>();
+#endif
+
+#if USE(SOUP)
+    DNSResolveQueueSoup::setGlobalDefaultNetworkStorageSessionAccessor([this] {
+        return defaultStorageSession();
+    });
+    defaultStorageSession().clearSoupNetworkSessionAndCookieStorage();
 #endif
 
     NetworkStateNotifier::singleton().addListener([this](bool isOnLine) {
@@ -302,7 +313,7 @@ void NetworkProcess::initializeNetworkProcess(NetworkProcessCreationParameters&&
     setCanHandleHTTPSServerTrustEvaluation(parameters.canHandleHTTPSServerTrustEvaluation);
 
     if (parameters.shouldUseTestingNetworkSession)
-        NetworkStorageSession::switchToNewTestingSession();
+        switchToNewTestingSession();
 
     SandboxExtension::consumePermanently(parameters.defaultDataStoreParameters.networkSessionParameters.resourceLoadStatisticsDirectoryExtensionHandle);
 
@@ -436,7 +447,7 @@ void NetworkProcess::createNetworkConnectionToWebProcess(bool isServiceWorkerPro
 
 void NetworkProcess::clearCachedCredentials()
 {
-    NetworkStorageSession::defaultStorageSession().credentialStorage().clearCredentials();
+    defaultStorageSession().credentialStorage().clearCredentials();
     if (auto* networkSession = this->networkSession(PAL::SessionID::defaultSessionID()))
         networkSession->clearCredentials();
     else
@@ -457,6 +468,78 @@ void NetworkProcess::addWebsiteDataStore(WebsiteDataStoreParameters&& parameters
     RemoteNetworkingContext::ensureWebsiteDataStoreSession(*this, WTFMove(parameters));
 }
 
+void NetworkProcess::switchToNewTestingSession()
+{
+    // Session name should be short enough for shared memory region name to be under the limit, otehrwise sandbox rules won't work (see <rdar://problem/13642852>).
+    String sessionName = String::format("WebKit Test-%u", static_cast<uint32_t>(getCurrentProcessID()));
+
+    auto session = adoptCF(WebCore::createPrivateStorageSession(sessionName.createCFString().get()));
+
+#if PLATFORM(COCOA)
+    RetainPtr<CFHTTPCookieStorageRef> cookieStorage;
+    if (WebCore::NetworkStorageSession::processMayUseCookieAPI()) {
+        ASSERT(hasProcessPrivilege(ProcessPrivilege::CanAccessRawCookies));
+        if (session)
+            cookieStorage = adoptCF(_CFURLStorageSessionCopyCookieStorage(kCFAllocatorDefault, session.get()));
+    }
+
+    m_defaultNetworkStorageSession = std::make_unique<WebCore::NetworkStorageSession>(PAL::SessionID::defaultSessionID(), WTFMove(session), WTFMove(cookieStorage));
+#elif USE(SOUP)
+    m_defaultNetworkStorageSession = std::make_unique<WebCore::NetworkStorageSession>(PAL::SessionID::defaultSessionID(), std::make_unique<WebCore::SoupNetworkSession>());
+#endif
+}
+
+#if PLATFORM(COCOA)
+void NetworkProcess::ensureSession(const PAL::SessionID& sessionID, const String& identifierBase, RetainPtr<CFHTTPCookieStorageRef>&& cookieStorage)
+#else
+void NetworkProcess::ensureSession(const PAL::SessionID& sessionID, const String& identifierBase)
+#endif
+{
+    auto addResult = m_networkStorageSessions.add(sessionID, nullptr);
+    if (!addResult.isNewEntry)
+        return;
+
+#if PLATFORM(COCOA)
+    RetainPtr<CFURLStorageSessionRef> storageSession;
+    RetainPtr<CFStringRef> cfIdentifier = String(identifierBase + ".PrivateBrowsing").createCFString();
+    if (sessionID.isEphemeral())
+        storageSession = adoptCF(createPrivateStorageSession(cfIdentifier.get()));
+    else
+        storageSession = WebCore::NetworkStorageSession::createCFStorageSessionForIdentifier(cfIdentifier.get());
+
+    if (NetworkStorageSession::processMayUseCookieAPI()) {
+        ASSERT(hasProcessPrivilege(ProcessPrivilege::CanAccessRawCookies));
+        if (!cookieStorage && storageSession)
+            cookieStorage = adoptCF(_CFURLStorageSessionCopyCookieStorage(kCFAllocatorDefault, storageSession.get()));
+    }
+
+    addResult.iterator->value = std::make_unique<NetworkStorageSession>(sessionID, WTFMove(storageSession), WTFMove(cookieStorage));
+#elif USE(SOUP)
+    addResult.iterator->value = std::make_unique<NetworkStorageSession>(sessionID, std::make_unique<SoupNetworkSession>(sessionID));
+#endif
+}
+
+WebCore::NetworkStorageSession* NetworkProcess::storageSession(const PAL::SessionID& sessionID) const
+{
+    if (sessionID == PAL::SessionID::defaultSessionID())
+        return &defaultStorageSession();
+    return m_networkStorageSessions.get(sessionID);
+}
+
+WebCore::NetworkStorageSession& NetworkProcess::defaultStorageSession() const
+{
+    if (!m_defaultNetworkStorageSession)
+        m_defaultNetworkStorageSession = std::make_unique<WebCore::NetworkStorageSession>(PAL::SessionID::defaultSessionID());
+    return *m_defaultNetworkStorageSession;
+}
+
+void NetworkProcess::forEachNetworkStorageSession(const Function<void(WebCore::NetworkStorageSession&)>& functor)
+{
+    functor(defaultStorageSession());
+    for (auto& storageSession : m_networkStorageSessions.values())
+        functor(*storageSession);
+}
+
 NetworkSession* NetworkProcess::networkSession(const PAL::SessionID& sessionID) const
 {
     return m_networkSessions.get(sessionID);
@@ -471,7 +554,7 @@ void NetworkProcess::destroySession(const PAL::SessionID& sessionID)
 {
     if (auto session = m_networkSessions.take(sessionID))
         session->get().invalidateAndCancel();
-    NetworkStorageSession::destroySession(sessionID);
+    m_networkStorageSessions.remove(sessionID);
     m_sessionsControlledByAutomation.remove(sessionID);
     CacheStorage::Engine::destroyEngine(*this, sessionID);
 
@@ -511,7 +594,7 @@ void NetworkProcess::dumpResourceLoadStatistics(PAL::SessionID sessionID, uint64
 
 void NetworkProcess::updatePrevalentDomainsToBlockCookiesFor(PAL::SessionID sessionID, const Vector<String>& domainsToBlock, uint64_t contextId)
 {
-    if (auto* networkStorageSession = NetworkStorageSession::storageSession(sessionID))
+    if (auto* networkStorageSession = storageSession(sessionID))
         networkStorageSession->setPrevalentDomainsToBlockCookiesFor(domainsToBlock);
     parentProcessConnection()->send(Messages::NetworkProcessProxy::DidUpdateBlockCookies(contextId), 0);
 }
@@ -545,7 +628,7 @@ void NetworkProcess::isVeryPrevalentResource(PAL::SessionID sessionID, const Str
 
 void NetworkProcess::setAgeCapForClientSideCookies(PAL::SessionID sessionID, Optional<Seconds> seconds, uint64_t contextId)
 {
-    if (auto* networkStorageSession = NetworkStorageSession::storageSession(sessionID))
+    if (auto* networkStorageSession = storageSession(sessionID))
         networkStorageSession->setAgeCapForClientSideCookies(seconds);
     parentProcessConnection()->send(Messages::NetworkProcessProxy::DidSetAgeCapForClientSideCookies(contextId), 0);
 }
@@ -756,7 +839,7 @@ void NetworkProcess::setLastSeen(PAL::SessionID sessionID, const String& resourc
 
 void NetworkProcess::hasStorageAccessForFrame(PAL::SessionID sessionID, const String& resourceDomain, const String& firstPartyDomain, uint64_t frameID, uint64_t pageID, uint64_t contextId)
 {
-    if (auto* networkStorageSession = NetworkStorageSession::storageSession(sessionID))
+    if (auto* networkStorageSession = storageSession(sessionID))
         parentProcessConnection()->send(Messages::NetworkProcessProxy::StorageAccessOperationResult(networkStorageSession->hasStorageAccess(resourceDomain, firstPartyDomain, frameID, pageID), contextId), 0);
     else
         ASSERT_NOT_REACHED();
@@ -764,7 +847,7 @@ void NetworkProcess::hasStorageAccessForFrame(PAL::SessionID sessionID, const St
 
 void NetworkProcess::getAllStorageAccessEntries(PAL::SessionID sessionID, uint64_t contextId)
 {
-    if (auto* networkStorageSession = NetworkStorageSession::storageSession(sessionID))
+    if (auto* networkStorageSession = storageSession(sessionID))
         parentProcessConnection()->send(Messages::NetworkProcessProxy::AllStorageAccessEntriesResult(networkStorageSession->getAllStorageAccessEntries(), contextId), 0);
     else
         ASSERT_NOT_REACHED();
@@ -794,7 +877,7 @@ void NetworkProcess::requestStorageAccess(PAL::SessionID sessionID, const String
 void NetworkProcess::grantStorageAccess(PAL::SessionID sessionID, const String& resourceDomain, const String& firstPartyDomain, Optional<uint64_t> frameID, uint64_t pageID, bool userWasPrompted, uint64_t contextId)
 {
     bool isStorageGranted = false;
-    if (auto* networkStorageSession = NetworkStorageSession::storageSession(sessionID)) {
+    if (auto* networkStorageSession = storageSession(sessionID)) {
         networkStorageSession->grantStorageAccess(resourceDomain, firstPartyDomain, frameID, pageID);
         ASSERT(networkStorageSession->hasStorageAccess(resourceDomain, firstPartyDomain, frameID, pageID));
         isStorageGranted = true;
@@ -843,7 +926,7 @@ void NetworkProcess::clearUserInteraction(PAL::SessionID sessionID, const String
 
 void NetworkProcess::removeAllStorageAccess(PAL::SessionID sessionID, uint64_t contextId)
 {
-    if (auto* networkStorageSession = NetworkStorageSession::storageSession(sessionID))
+    if (auto* networkStorageSession = storageSession(sessionID))
         networkStorageSession->removeAllStorageAccess();
     else
         ASSERT_NOT_REACHED();
@@ -852,13 +935,13 @@ void NetworkProcess::removeAllStorageAccess(PAL::SessionID sessionID, uint64_t c
 
 void NetworkProcess::removePrevalentDomains(PAL::SessionID sessionID, const Vector<String>& domains)
 {
-    if (auto* networkStorageSession = NetworkStorageSession::storageSession(sessionID))
+    if (auto* networkStorageSession = storageSession(sessionID))
         networkStorageSession->removePrevalentDomains(domains);
 }
 
 void NetworkProcess::setCacheMaxAgeCapForPrevalentResources(PAL::SessionID sessionID, Seconds seconds, uint64_t contextId)
 {
-    if (auto* networkStorageSession = NetworkStorageSession::storageSession(sessionID))
+    if (auto* networkStorageSession = storageSession(sessionID))
         networkStorageSession->setCacheMaxAgeCapForPrevalentResources(Seconds { seconds });
     else
         ASSERT_NOT_REACHED();
@@ -936,7 +1019,7 @@ void NetworkProcess::setResourceLoadStatisticsDebugMode(PAL::SessionID sessionID
 
 void NetworkProcess::resetCacheMaxAgeCapForPrevalentResources(PAL::SessionID sessionID, uint64_t contextId)
 {
-    if (auto* networkStorageSession = NetworkStorageSession::storageSession(sessionID))
+    if (auto* networkStorageSession = storageSession(sessionID))
         networkStorageSession->resetCacheMaxAgeCapForPrevalentResources();
     else
         ASSERT_NOT_REACHED();
@@ -1013,13 +1096,13 @@ void NetworkProcess::fetchWebsiteData(PAL::SessionID sessionID, OptionSet<Websit
     }));
 
     if (websiteDataTypes.contains(WebsiteDataType::Cookies)) {
-        if (auto* networkStorageSession = NetworkStorageSession::storageSession(sessionID))
+        if (auto* networkStorageSession = storageSession(sessionID))
             networkStorageSession->getHostnamesWithCookies(callbackAggregator->m_websiteData.hostNamesWithCookies);
     }
 
     if (websiteDataTypes.contains(WebsiteDataType::Credentials)) {
-        if (NetworkStorageSession::storageSession(sessionID))
-            callbackAggregator->m_websiteData.originsWithCredentials = NetworkStorageSession::storageSession(sessionID)->credentialStorage().originsWithCredentials();
+        if (storageSession(sessionID))
+            callbackAggregator->m_websiteData.originsWithCredentials = storageSession(sessionID)->credentialStorage().originsWithCredentials();
     }
 
     if (websiteDataTypes.contains(WebsiteDataType::DOMCache)) {
@@ -1030,7 +1113,7 @@ void NetworkProcess::fetchWebsiteData(PAL::SessionID sessionID, OptionSet<Websit
 
 #if PLATFORM(COCOA)
     if (websiteDataTypes.contains(WebsiteDataType::HSTSCache)) {
-        if (auto* networkStorageSession = NetworkStorageSession::storageSession(sessionID))
+        if (auto* networkStorageSession = storageSession(sessionID))
             getHostNamesWithHSTSCache(*networkStorageSession, callbackAggregator->m_websiteData.hostNamesWithHSTSCache);
     }
 #endif
@@ -1069,19 +1152,19 @@ void NetworkProcess::deleteWebsiteData(PAL::SessionID sessionID, OptionSet<Websi
 {
 #if PLATFORM(COCOA)
     if (websiteDataTypes.contains(WebsiteDataType::HSTSCache)) {
-        if (auto* networkStorageSession = NetworkStorageSession::storageSession(sessionID))
+        if (auto* networkStorageSession = storageSession(sessionID))
             clearHSTSCache(*networkStorageSession, modifiedSince);
     }
 #endif
 
     if (websiteDataTypes.contains(WebsiteDataType::Cookies)) {
-        if (auto* networkStorageSession = NetworkStorageSession::storageSession(sessionID))
+        if (auto* networkStorageSession = storageSession(sessionID))
             networkStorageSession->deleteAllCookiesModifiedSince(modifiedSince);
     }
 
     if (websiteDataTypes.contains(WebsiteDataType::Credentials)) {
-        if (NetworkStorageSession::storageSession(sessionID))
-            NetworkStorageSession::storageSession(sessionID)->credentialStorage().clearCredentials();
+        if (auto* session = storageSession(sessionID))
+            session->credentialStorage().clearCredentials();
     }
 
     auto clearTasksHandler = WTF::CallbackAggregator::create([this, callbackID] {
@@ -1149,13 +1232,13 @@ static void clearDiskCacheEntries(NetworkCache::Cache* cache, const Vector<Secur
 void NetworkProcess::deleteWebsiteDataForOrigins(PAL::SessionID sessionID, OptionSet<WebsiteDataType> websiteDataTypes, const Vector<SecurityOriginData>& originDatas, const Vector<String>& cookieHostNames, const Vector<String>& HSTSCacheHostNames, uint64_t callbackID)
 {
     if (websiteDataTypes.contains(WebsiteDataType::Cookies)) {
-        if (auto* networkStorageSession = NetworkStorageSession::storageSession(sessionID))
+        if (auto* networkStorageSession = storageSession(sessionID))
             networkStorageSession->deleteCookiesForHostnames(cookieHostNames);
     }
 
 #if PLATFORM(COCOA)
     if (websiteDataTypes.contains(WebsiteDataType::HSTSCache)) {
-        if (auto* networkStorageSession = NetworkStorageSession::storageSession(sessionID))
+        if (auto* networkStorageSession = storageSession(sessionID))
             deleteHSTSCacheForHostNames(*networkStorageSession, HSTSCacheHostNames);
     }
 #endif
@@ -1253,7 +1336,7 @@ void NetworkProcess::deleteWebsiteDataForTopPrivatelyControlledDomainsInAllPersi
 
     Vector<String> hostnamesWithCookiesToDelete;
     if (websiteDataTypes.contains(WebsiteDataType::Cookies)) {
-        if (auto* networkStorageSession = NetworkStorageSession::storageSession(sessionID)) {
+        if (auto* networkStorageSession = storageSession(sessionID)) {
             networkStorageSession->getHostnamesWithCookies(websiteDataStore.hostNamesWithCookies);
             hostnamesWithCookiesToDelete = filterForTopLevelDomains(topPrivatelyControlledDomains, websiteDataStore.hostNamesWithCookies);
             networkStorageSession->deleteCookiesForHostnames(hostnamesWithCookiesToDelete);
@@ -1263,7 +1346,7 @@ void NetworkProcess::deleteWebsiteDataForTopPrivatelyControlledDomainsInAllPersi
     Vector<String> hostnamesWithHSTSToDelete;
 #if PLATFORM(COCOA)
     if (websiteDataTypes.contains(WebsiteDataType::HSTSCache)) {
-        if (auto* networkStorageSession = NetworkStorageSession::storageSession(sessionID)) {
+        if (auto* networkStorageSession = storageSession(sessionID)) {
             getHostNamesWithHSTSCache(*networkStorageSession, websiteDataStore.hostNamesWithHSTSCache);
             hostnamesWithHSTSToDelete = filterForTopLevelDomains(topPrivatelyControlledDomains, websiteDataStore.hostNamesWithHSTSCache);
             deleteHSTSCacheForHostNames(*networkStorageSession, hostnamesWithHSTSToDelete);
@@ -1274,8 +1357,8 @@ void NetworkProcess::deleteWebsiteDataForTopPrivatelyControlledDomainsInAllPersi
     /*
     // FIXME: No API to delete credentials by origin
     if (websiteDataTypes.contains(WebsiteDataType::Credentials)) {
-        if (NetworkStorageSession::storageSession(sessionID))
-            websiteDataStore.originsWithCredentials = NetworkStorageSession::storageSession(sessionID)->credentialStorage().originsWithCredentials();
+        if (storageSession(sessionID))
+            websiteDataStore.originsWithCredentials = storageSession(sessionID)->credentialStorage().originsWithCredentials();
     }
     */
     
@@ -1385,21 +1468,21 @@ void NetworkProcess::topPrivatelyControlledDomainsWithWebsiteData(PAL::SessionID
     
     Vector<String> hostnamesWithCookiesToDelete;
     if (websiteDataTypes.contains(WebsiteDataType::Cookies)) {
-        if (auto* networkStorageSession = NetworkStorageSession::storageSession(sessionID))
+        if (auto* networkStorageSession = storageSession(sessionID))
             networkStorageSession->getHostnamesWithCookies(websiteDataStore.hostNamesWithCookies);
     }
     
     Vector<String> hostnamesWithHSTSToDelete;
 #if PLATFORM(COCOA)
     if (websiteDataTypes.contains(WebsiteDataType::HSTSCache)) {
-        if (auto* networkStorageSession = NetworkStorageSession::storageSession(sessionID))
+        if (auto* networkStorageSession = storageSession(sessionID))
             getHostNamesWithHSTSCache(*networkStorageSession, websiteDataStore.hostNamesWithHSTSCache);
     }
 #endif
 
     if (websiteDataTypes.contains(WebsiteDataType::Credentials)) {
-        if (NetworkStorageSession::storageSession(sessionID))
-            websiteDataStore.originsWithCredentials = NetworkStorageSession::storageSession(sessionID)->credentialStorage().originsWithCredentials();
+        if (auto* networkStorageSession = storageSession(sessionID))
+            websiteDataStore.originsWithCredentials = networkStorageSession->credentialStorage().originsWithCredentials();
     }
     
     if (websiteDataTypes.contains(WebsiteDataType::DOMCache)) {

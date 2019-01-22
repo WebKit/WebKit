@@ -1,3 +1,53 @@
+2019-01-22  Alex Christensen  <achristensen@webkit.org>
+
+        Move NetworkStorageSession ownership to NetworkProcess
+        https://bugs.webkit.org/show_bug.cgi?id=193580
+
+        Reviewed by Geoff Garen.
+
+        NetworkStorageSessions used to be owned by a process-global map living in WebCore.
+        This patch moves the ownership to the WebKit/WebKitLegacy layer.
+        In WebKitLegacy they are still owned by a process-global map for compatibility.
+        In WebKit they are owned by a map owned by the NetworkProcess object.
+        There were three non-NetworkProcess uses of NetworkStorageSessions which have been dealt with thusly:
+        1. The WebProcess used to clear credentials from a NetworkStorageSession.  Since this was the only use
+        of a NetworkStorageSession in the WebProcess we can conclude there were no credentials to clear,
+        so this code was removed with no change in behavior.
+        2. The WebProcess used NetworkStorageSessions to get persistent credentials.  This was turned
+        into a static method that does the same thing.  We should audit these calls and decide if we really want them.
+        3. The UIProcess used NetworkStorageSessions in APIHTTPCookieStore to interact with the default cookie
+        storage on Cocoa platforms.  This has been replaced by functions that do the same thing directly.
+
+        * platform/network/CredentialStorage.h:
+        * platform/network/NetworkStorageSession.cpp:
+        (WebCore::NetworkStorageSession::processMayUseCookieAPI):
+        (WebCore::NetworkStorageSession::globalSessionMap): Deleted.
+        (WebCore::NetworkStorageSession::storageSession): Deleted.
+        (WebCore::NetworkStorageSession::destroySession): Deleted.
+        (WebCore::NetworkStorageSession::forEach): Deleted.
+        * platform/network/NetworkStorageSession.h:
+        * platform/network/cf/NetworkStorageSessionCFNet.cpp:
+        (WebCore::NetworkStorageSession::createCFStorageSessionForIdentifier):
+        (WebCore::createCFStorageSessionForIdentifier): Deleted.
+        (WebCore::defaultNetworkStorageSession): Deleted.
+        (WebCore::NetworkStorageSession::switchToNewTestingSession): Deleted.
+        (WebCore::NetworkStorageSession::defaultStorageSession): Deleted.
+        (WebCore::NetworkStorageSession::ensureSession): Deleted.
+        * platform/network/cf/SocketStreamHandleImplCFNet.cpp:
+        (WebCore::SocketStreamHandleImpl::getStoredCONNECTProxyCredentials):
+        * platform/network/cocoa/CookieStorageObserver.h:
+        * platform/network/curl/NetworkStorageSessionCurl.cpp:
+        (WebCore::defaultSession): Deleted.
+        (WebCore::NetworkStorageSession::defaultStorageSession): Deleted.
+        (WebCore::NetworkStorageSession::ensureSession): Deleted.
+        (WebCore::NetworkStorageSession::switchToNewTestingSession): Deleted.
+        * platform/network/soup/NetworkStorageSessionSoup.cpp:
+        (WebCore::NetworkStorageSession::clearSoupNetworkSessionAndCookieStorage):
+        (WebCore::defaultSession): Deleted.
+        (WebCore::NetworkStorageSession::defaultStorageSession): Deleted.
+        (WebCore::NetworkStorageSession::ensureSession): Deleted.
+        (WebCore::NetworkStorageSession::switchToNewTestingSession): Deleted.
+
 2019-01-22  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: Audit: provide a way to get related Accessibility nodes for a given node

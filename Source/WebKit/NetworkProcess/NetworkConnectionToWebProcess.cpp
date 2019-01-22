@@ -408,18 +408,18 @@ void NetworkConnectionToWebProcess::didFinishPreconnection(uint64_t preconnectio
     m_connection->send(Messages::NetworkProcessConnection::DidFinishPreconnection(preconnectionIdentifier, error), 0);
 }
 
-static NetworkStorageSession& storageSession(PAL::SessionID sessionID)
+static NetworkStorageSession& storageSession(const NetworkProcess& networkProcess, PAL::SessionID sessionID)
 {
     ASSERT(sessionID.isValid());
     if (sessionID != PAL::SessionID::defaultSessionID()) {
-        if (auto* storageSession = NetworkStorageSession::storageSession(sessionID))
+        if (auto* storageSession = networkProcess.storageSession(sessionID))
             return *storageSession;
 
         // Some requests with private browsing mode requested may still be coming shortly after NetworkProcess was told to destroy its session.
         // FIXME: Find a way to track private browsing sessions more rigorously.
         LOG_ERROR("Non-default storage session was requested, but there was no session for it. Please file a bug unless you just disabled private browsing, in which case it's an expected race.");
     }
-    return NetworkStorageSession::defaultStorageSession();
+    return networkProcess.defaultStorageSession();
 }
 
 void NetworkConnectionToWebProcess::startDownload(PAL::SessionID sessionID, DownloadID downloadID, const ResourceRequest& request, const String& suggestedName)
@@ -448,7 +448,7 @@ void NetworkConnectionToWebProcess::convertMainResourceLoadToDownload(PAL::Sessi
 
 void NetworkConnectionToWebProcess::cookiesForDOM(PAL::SessionID sessionID, const URL& firstParty, const SameSiteInfo& sameSiteInfo, const URL& url, Optional<uint64_t> frameID, Optional<uint64_t> pageID, IncludeSecureCookies includeSecureCookies, String& cookieString, bool& secureCookiesAccessed)
 {
-    auto& networkStorageSession = storageSession(sessionID);
+    auto& networkStorageSession = storageSession(networkProcess(), sessionID);
     std::tie(cookieString, secureCookiesAccessed) = networkStorageSession.cookiesForDOM(firstParty, sameSiteInfo, url, frameID, pageID, includeSecureCookies);
 #if ENABLE(RESOURCE_LOAD_STATISTICS) && !RELEASE_LOG_DISABLED
     if (auto session = networkProcess().networkSession(sessionID)) {
@@ -460,7 +460,7 @@ void NetworkConnectionToWebProcess::cookiesForDOM(PAL::SessionID sessionID, cons
 
 void NetworkConnectionToWebProcess::setCookiesFromDOM(PAL::SessionID sessionID, const URL& firstParty, const SameSiteInfo& sameSiteInfo, const URL& url, Optional<uint64_t> frameID, Optional<uint64_t> pageID, const String& cookieString)
 {
-    auto& networkStorageSession = storageSession(sessionID);
+    auto& networkStorageSession = storageSession(networkProcess(), sessionID);
     networkStorageSession.setCookiesFromDOM(firstParty, sameSiteInfo, url, frameID, pageID, cookieString);
 #if ENABLE(RESOURCE_LOAD_STATISTICS) && !RELEASE_LOG_DISABLED
     if (auto session = networkProcess().networkSession(sessionID)) {
@@ -472,22 +472,22 @@ void NetworkConnectionToWebProcess::setCookiesFromDOM(PAL::SessionID sessionID, 
 
 void NetworkConnectionToWebProcess::cookiesEnabled(PAL::SessionID sessionID, bool& result)
 {
-    result = storageSession(sessionID).cookiesEnabled();
+    result = storageSession(networkProcess(), sessionID).cookiesEnabled();
 }
 
 void NetworkConnectionToWebProcess::cookieRequestHeaderFieldValue(PAL::SessionID sessionID, const URL& firstParty, const SameSiteInfo& sameSiteInfo, const URL& url, Optional<uint64_t> frameID, Optional<uint64_t> pageID, IncludeSecureCookies includeSecureCookies, String& cookieString, bool& secureCookiesAccessed)
 {
-    std::tie(cookieString, secureCookiesAccessed) = storageSession(sessionID).cookieRequestHeaderFieldValue(firstParty, sameSiteInfo, url, frameID, pageID, includeSecureCookies);
+    std::tie(cookieString, secureCookiesAccessed) = storageSession(networkProcess(), sessionID).cookieRequestHeaderFieldValue(firstParty, sameSiteInfo, url, frameID, pageID, includeSecureCookies);
 }
 
 void NetworkConnectionToWebProcess::getRawCookies(PAL::SessionID sessionID, const URL& firstParty, const SameSiteInfo& sameSiteInfo, const URL& url, Optional<uint64_t> frameID, Optional<uint64_t> pageID, Vector<Cookie>& result)
 {
-    storageSession(sessionID).getRawCookies(firstParty, sameSiteInfo, url, frameID, pageID, result);
+    storageSession(networkProcess(), sessionID).getRawCookies(firstParty, sameSiteInfo, url, frameID, pageID, result);
 }
 
 void NetworkConnectionToWebProcess::deleteCookie(PAL::SessionID sessionID, const URL& url, const String& cookieName)
 {
-    storageSession(sessionID).deleteCookie(url, cookieName);
+    storageSession(networkProcess(), sessionID).deleteCookie(url, cookieName);
 }
 
 void NetworkConnectionToWebProcess::registerFileBlobURL(const URL& url, const String& path, SandboxExtension::Handle&& extensionHandle, const String& contentType)
@@ -562,7 +562,7 @@ void NetworkConnectionToWebProcess::ensureLegacyPrivateBrowsingSession()
 void NetworkConnectionToWebProcess::removeStorageAccessForFrame(PAL::SessionID sessionID, uint64_t frameID, uint64_t pageID)
 {
 #if ENABLE(RESOURCE_LOAD_STATISTICS)
-    if (auto* storageSession = NetworkStorageSession::storageSession(sessionID))
+    if (auto* storageSession = networkProcess().storageSession(sessionID))
         storageSession->removeStorageAccessForFrame(frameID, pageID);
 #else
     UNUSED_PARAM(sessionID);
@@ -574,7 +574,7 @@ void NetworkConnectionToWebProcess::removeStorageAccessForFrame(PAL::SessionID s
 void NetworkConnectionToWebProcess::removeStorageAccessForAllFramesOnPage(PAL::SessionID sessionID, uint64_t pageID)
 {
 #if ENABLE(RESOURCE_LOAD_STATISTICS)
-    if (auto* storageSession = NetworkStorageSession::storageSession(sessionID))
+    if (auto* storageSession = networkProcess().storageSession(sessionID))
         storageSession->removeStorageAccessForAllFramesOnPage(pageID);
 #else
     UNUSED_PARAM(sessionID);

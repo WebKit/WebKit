@@ -30,6 +30,7 @@
 #include "NetworkCacheSpeculativeLoadManager.h"
 #include "NetworkCacheStatistics.h"
 #include "NetworkCacheStorage.h"
+#include "NetworkProcess.h"
 #include <WebCore/CacheValidation.h>
 #include <WebCore/FileSystem.h>
 #include <WebCore/HTTPHeaderNames.h>
@@ -184,14 +185,14 @@ static bool responseNeedsRevalidation(const WebCore::ResourceResponse& response,
     return responseHasExpired(response, timestamp, requestDirectives.maxStale);
 }
 
-static UseDecision makeUseDecision(const Entry& entry, const WebCore::ResourceRequest& request)
+static UseDecision makeUseDecision(NetworkProcess& networkProcess, const Entry& entry, const WebCore::ResourceRequest& request)
 {
     // The request is conditional so we force revalidation from the network. We merely check the disk cache
     // so we can update the cache entry.
     if (request.isConditional() && !entry.redirectRequest())
         return UseDecision::Validate;
 
-    if (!WebCore::verifyVaryingRequestHeaders(WebCore::NetworkStorageSession::defaultStorageSession(), entry.varyingRequestHeaders(), request))
+    if (!WebCore::verifyVaryingRequestHeaders(networkProcess.defaultStorageSession(), entry.varyingRequestHeaders(), request))
         return UseDecision::NoDueToVaryingHeaderMismatch;
 
     // We never revalidate in the case of a history navigation.
@@ -305,9 +306,9 @@ void Cache::retrieve(const WebCore::ResourceRequest& request, const GlobalFrameI
 
 #if ENABLE(NETWORK_CACHE_SPECULATIVE_REVALIDATION)
     if (canUseSpeculativeRevalidation && m_speculativeLoadManager->canRetrieve(storageKey, request, frameID)) {
-        m_speculativeLoadManager->retrieve(storageKey, [request, completionHandler = WTFMove(completionHandler), info = WTFMove(info)](std::unique_ptr<Entry> entry) mutable {
+        m_speculativeLoadManager->retrieve(storageKey, [networkProcess = makeRef(networkProcess()), request, completionHandler = WTFMove(completionHandler), info = WTFMove(info)](std::unique_ptr<Entry> entry) mutable {
             info.wasSpeculativeLoad = true;
-            if (entry && WebCore::verifyVaryingRequestHeaders(WebCore::NetworkStorageSession::defaultStorageSession(), entry->varyingRequestHeaders(), request))
+            if (entry && WebCore::verifyVaryingRequestHeaders(networkProcess->defaultStorageSession(), entry->varyingRequestHeaders(), request))
                 completeRetrieve(WTFMove(completionHandler), WTFMove(entry), info);
             else
                 completeRetrieve(WTFMove(completionHandler), nullptr, info);
@@ -333,7 +334,7 @@ void Cache::retrieve(const WebCore::ResourceRequest& request, const GlobalFrameI
 
         auto entry = Entry::decodeStorageRecord(*record);
 
-        auto useDecision = entry ? makeUseDecision(*entry, request) : UseDecision::NoDueToDecodeFailure;
+        auto useDecision = entry ? makeUseDecision(networkProcess(), *entry, request) : UseDecision::NoDueToDecodeFailure;
         switch (useDecision) {
         case UseDecision::Use:
             break;
@@ -364,12 +365,12 @@ void Cache::completeRetrieve(RetrieveCompletionHandler&& handler, std::unique_pt
     
 std::unique_ptr<Entry> Cache::makeEntry(const WebCore::ResourceRequest& request, const WebCore::ResourceResponse& response, RefPtr<WebCore::SharedBuffer>&& responseData)
 {
-    return std::make_unique<Entry>(makeCacheKey(request), response, WTFMove(responseData), WebCore::collectVaryingRequestHeaders(WebCore::NetworkStorageSession::defaultStorageSession(), request, response));
+    return std::make_unique<Entry>(makeCacheKey(request), response, WTFMove(responseData), WebCore::collectVaryingRequestHeaders(networkProcess().defaultStorageSession(), request, response));
 }
 
 std::unique_ptr<Entry> Cache::makeRedirectEntry(const WebCore::ResourceRequest& request, const WebCore::ResourceResponse& response, const WebCore::ResourceRequest& redirectRequest)
 {
-    return std::make_unique<Entry>(makeCacheKey(request), response, redirectRequest, WebCore::collectVaryingRequestHeaders(WebCore::NetworkStorageSession::defaultStorageSession(), request, response));
+    return std::make_unique<Entry>(makeCacheKey(request), response, redirectRequest, WebCore::collectVaryingRequestHeaders(networkProcess().defaultStorageSession(), request, response));
 }
 
 std::unique_ptr<Entry> Cache::store(const WebCore::ResourceRequest& request, const WebCore::ResourceResponse& response, RefPtr<WebCore::SharedBuffer>&& responseData, Function<void(MappedBody&)>&& completionHandler)
@@ -453,7 +454,7 @@ std::unique_ptr<Entry> Cache::update(const WebCore::ResourceRequest& originalReq
     WebCore::ResourceResponse response = existingEntry.response();
     WebCore::updateResponseHeadersAfterRevalidation(response, validatingResponse);
 
-    auto updateEntry = std::make_unique<Entry>(existingEntry.key(), response, existingEntry.buffer(), WebCore::collectVaryingRequestHeaders(WebCore::NetworkStorageSession::defaultStorageSession(), originalRequest, response));
+    auto updateEntry = std::make_unique<Entry>(existingEntry.key(), response, existingEntry.buffer(), WebCore::collectVaryingRequestHeaders(networkProcess().defaultStorageSession(), originalRequest, response));
     auto updateRecord = updateEntry->encodeAsStorageRecord();
 
     m_storage->store(updateRecord, { });

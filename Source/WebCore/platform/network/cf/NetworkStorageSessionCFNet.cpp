@@ -40,7 +40,7 @@ namespace WebCore {
 
 static bool storageAccessAPIEnabled;
 
-static RetainPtr<CFURLStorageSessionRef> createCFStorageSessionForIdentifier(CFStringRef identifier)
+RetainPtr<CFURLStorageSessionRef> NetworkStorageSession::createCFStorageSessionForIdentifier(CFStringRef identifier)
 {
     auto storageSession = adoptCF(_CFURLStorageSessionCreate(kCFAllocatorDefault, identifier, nullptr));
 
@@ -83,66 +83,6 @@ NetworkStorageSession::NetworkStorageSession(PAL::SessionID sessionID, RetainPtr
 NetworkStorageSession::NetworkStorageSession(PAL::SessionID sessionID)
     : m_sessionID(sessionID)
 {
-}
-
-
-static std::unique_ptr<NetworkStorageSession>& defaultNetworkStorageSession()
-{
-    ASSERT(isMainThread());
-    static NeverDestroyed<std::unique_ptr<NetworkStorageSession>> session;
-    return session;
-}
-
-void NetworkStorageSession::switchToNewTestingSession()
-{
-    // Session name should be short enough for shared memory region name to be under the limit, otehrwise sandbox rules won't work (see <rdar://problem/13642852>).
-    String sessionName = String::format("WebKit Test-%u", static_cast<uint32_t>(getCurrentProcessID()));
-
-    auto session = adoptCF(createPrivateStorageSession(sessionName.createCFString().get()));
-
-    RetainPtr<CFHTTPCookieStorageRef> cookieStorage;
-    if (NetworkStorageSession::processMayUseCookieAPI()) {
-        ASSERT(hasProcessPrivilege(ProcessPrivilege::CanAccessRawCookies));
-        if (session)
-            cookieStorage = adoptCF(_CFURLStorageSessionCopyCookieStorage(kCFAllocatorDefault, session.get()));
-    }
-
-    defaultNetworkStorageSession() = std::make_unique<NetworkStorageSession>(PAL::SessionID::defaultSessionID(), WTFMove(session), WTFMove(cookieStorage));
-}
-
-NetworkStorageSession& NetworkStorageSession::defaultStorageSession()
-{
-    if (!defaultNetworkStorageSession())
-        defaultNetworkStorageSession() = std::make_unique<NetworkStorageSession>(PAL::SessionID::defaultSessionID());
-    return *defaultNetworkStorageSession();
-}
-
-void NetworkStorageSession::ensureSession(PAL::SessionID sessionID, const String& identifierBase, RetainPtr<CFHTTPCookieStorageRef>&& cookieStorage)
-{
-    auto addResult = globalSessionMap().add(sessionID, nullptr);
-    if (!addResult.isNewEntry)
-        return;
-
-    RetainPtr<CFStringRef> cfIdentifier = String(identifierBase + ".PrivateBrowsing").createCFString();
-
-    RetainPtr<CFURLStorageSessionRef> storageSession;
-    if (sessionID.isEphemeral())
-        storageSession = adoptCF(createPrivateStorageSession(cfIdentifier.get()));
-    else
-        storageSession = createCFStorageSessionForIdentifier(cfIdentifier.get());
-
-    if (NetworkStorageSession::processMayUseCookieAPI()) {
-        ASSERT(hasProcessPrivilege(ProcessPrivilege::CanAccessRawCookies));
-        if (!cookieStorage && storageSession)
-            cookieStorage = adoptCF(_CFURLStorageSessionCopyCookieStorage(kCFAllocatorDefault, storageSession.get()));
-    }
-
-    addResult.iterator->value = std::make_unique<NetworkStorageSession>(sessionID, WTFMove(storageSession), WTFMove(cookieStorage));
-}
-
-void NetworkStorageSession::ensureSession(PAL::SessionID sessionID, const String& identifierBase)
-{
-    ensureSession(sessionID, identifierBase, nullptr);
 }
 
 RetainPtr<CFHTTPCookieStorageRef> NetworkStorageSession::cookieStorage() const

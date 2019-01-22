@@ -35,18 +35,19 @@ OBJC_CLASS WebCookieObserverAdapter;
 
 namespace WebCore {
 
-class CookieStorageObserver : public ThreadSafeRefCounted<CookieStorageObserver> {
+class WEBCORE_EXPORT CookieStorageObserver : public ThreadSafeRefCounted<CookieStorageObserver> {
 public:
     static Ref<CookieStorageObserver> create(NSHTTPCookieStorage *);
-    CookieStorageObserver(NSHTTPCookieStorage *);
     ~CookieStorageObserver();
 
-    void startObserving(WTF::Function<void()>&& callback);
+    void startObserving(Function<void()>&& callback);
     void stopObserving();
 
     void cookiesDidChange();
 
 private:
+    CookieStorageObserver(NSHTTPCookieStorage *);
+
     RetainPtr<NSHTTPCookieStorage> m_cookieStorage;
     bool m_hasRegisteredInternalsForNotifications { false };
     RetainPtr<WebCookieObserverAdapter> m_observerAdapter;
