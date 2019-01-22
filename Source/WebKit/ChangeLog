@@ -1,3 +1,18 @@
+2019-01-22  Daniel Bates  <dabates@apple.com>
+
+        [iOS] Interpret text key commands on keydown and app key commands on keypress
+        https://bugs.webkit.org/show_bug.cgi?id=192897
+        <rdar://problem/46857378>
+
+        Reviewed by Brent Fulgham.
+
+        Adopt SPI to interpret text key commands and app key commands independently on keydown (isCharEvent
+        is false) and keypress (isCharEvent is true), respectively.
+
+        * Platform/spi/ios/UIKitSPI.h: Add more SPI.
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView _interpretKeyEvent:isCharEvent:]):
+
 2019-01-22  David Kilzer  <ddkilzer@apple.com>
 
         C strings in ClientCertificateAuthenticationXPCConstants.h are duplicated

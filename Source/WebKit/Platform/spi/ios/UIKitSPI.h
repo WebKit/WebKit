@@ -1072,6 +1072,8 @@ typedef NSInteger UICompositingMode;
 @interface UIKeyboardImpl (IPI)
 - (void)setInitialDirection;
 - (void)prepareKeyboardInputModeFromPreferences:(UIKeyboardInputMode *)lastUsedMode;
+- (BOOL)handleKeyTextCommandForCurrentEvent;
+- (BOOL)handleKeyAppCommandForCurrentEvent;
 @property (nonatomic, readonly) UIKeyboardInputMode *currentInputModeInPreference;
 @end
 

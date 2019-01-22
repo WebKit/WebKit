@@ -6092,8 +6092,12 @@ static BOOL writingDirectionKeyBindingsEnabled()
         if (!webView.isEditable && event.isTabKey)
             return NO;
 
+        bool isCharEvent = platformEvent->type() == PlatformKeyboardEvent::Char;
+
 #if __IPHONE_OS_VERSION_MIN_REQUIRED >= 130000
-        if (event.type == WebEventKeyDown && [webView._UIKitDelegateForwarder handleKeyCommandForCurrentEvent])
+        if (!isCharEvent && [webView._UIKitDelegateForwarder handleKeyTextCommandForCurrentEvent])
+            return YES;
+        if (isCharEvent && [webView._UIKitDelegateForwarder handleKeyAppCommandForCurrentEvent])
             return YES;
 #endif
 
@@ -6107,14 +6111,14 @@ static BOOL writingDirectionKeyBindingsEnabled()
             return YES;
         case kWebEnterKey:
         case kWebReturnKey:
-            if (platformEvent->type() == PlatformKeyboardEvent::Char) {
+            if (isCharEvent) {
                 // Map \r from HW keyboard to \n to match the behavior of the soft keyboard.
                 [[webView _UIKitDelegateForwarder] addInputString:@"\n" withFlags:0];
                 return YES;
             }
             break;
         default:
-            if (platformEvent->type() == PlatformKeyboardEvent::Char) {
+            if (isCharEvent) {
                 [[webView _UIKitDelegateForwarder] addInputString:event.characters withFlags:event.keyboardFlags];
                 return YES;
             }

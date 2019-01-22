@@ -162,7 +162,12 @@ static WebDefaultUIKitDelegate *sharedDelegate = nil;
 {
 }
 
-- (BOOL)handleKeyCommandForCurrentEvent
+- (BOOL)handleKeyTextCommandForCurrentEvent
+{
+    return NO;
+}
+
+- (BOOL)handleKeyAppCommandForCurrentEvent
 {
     return NO;
 }
