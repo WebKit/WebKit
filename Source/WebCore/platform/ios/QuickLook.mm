@@ -32,11 +32,10 @@
 #import "PreviewConverter.h"
 #import "ResourceRequest.h"
 #import "SchemeRegistry.h"
+#import <pal/ios/QuickLookSoftLink.h>
 #import <pal/spi/cocoa/NSFileManagerSPI.h>
 #import <wtf/Lock.h>
 #import <wtf/NeverDestroyed.h>
-
-#import "QuickLookSoftLink.h"
 
 namespace WebCore {
 
@@ -44,7 +43,7 @@ const char* QLPreviewProtocol = "x-apple-ql-id";
 
 NSSet *QLPreviewGetSupportedMIMETypesSet()
 {
-    static NSSet *set = [QLPreviewGetSupportedMIMETypes() retain];
+    static NSSet *set = [PAL::softLink_QuickLook_QLPreviewGetSupportedMIMETypes() retain];
     return set;
 }
 
@@ -80,10 +79,10 @@ static void addQLPreviewConverterWithFileForURL(NSURL *url, id converter, NSStri
 
 RetainPtr<NSURLRequest> registerQLPreviewConverterIfNeeded(NSURL *url, NSString *mimeType, NSData *data)
 {
-    RetainPtr<NSString> updatedMIMEType = adoptNS(QLTypeCopyBestMimeTypeForURLAndMimeType(url, mimeType));
+    RetainPtr<NSString> updatedMIMEType = adoptNS(PAL::softLink_QuickLook_QLTypeCopyBestMimeTypeForURLAndMimeType(url, mimeType));
 
     if ([QLPreviewGetSupportedMIMETypesSet() containsObject:updatedMIMEType.get()]) {
-        RetainPtr<NSString> uti = adoptNS(QLTypeCopyUTIForURLAndMimeType(url, updatedMIMEType.get()));
+        RetainPtr<NSString> uti = adoptNS(PAL::softLink_QuickLook_QLTypeCopyUTIForURLAndMimeType(url, updatedMIMEType.get()));
 
         auto converter = std::make_unique<PreviewConverter>(data, uti.get());
         ResourceRequest previewRequest = converter->previewRequest();

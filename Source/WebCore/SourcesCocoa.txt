@@ -410,7 +410,6 @@ platform/ios/PlatformScreenIOS.mm
 platform/ios/PlatformSpeechSynthesizerIOS.mm @no-unify
 platform/ios/PlaybackSessionInterfaceAVKit.mm @no-unify
 platform/ios/QuickLook.mm
-platform/ios/QuickLookSoftLink.mm @no-unify
 platform/ios/RemoteCommandListenerIOS.mm
 platform/ios/ScrollAnimatorIOS.mm
 platform/ios/ScrollbarThemeIOS.mm

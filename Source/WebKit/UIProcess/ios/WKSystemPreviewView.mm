@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2018-2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -36,14 +36,11 @@
 #import <WebCore/FloatRect.h>
 #import <WebCore/LocalizedStrings.h>
 #import <WebCore/MIMETypeRegistry.h>
+#import <pal/ios/QuickLookSoftLink.h>
 #import <pal/spi/cg/CoreGraphicsSPI.h>
 #import <pal/spi/ios/SystemPreviewSPI.h>
 #import <wtf/RetainPtr.h>
-#import <wtf/SoftLinking.h>
 #import <wtf/Vector.h>
-
-SOFT_LINK_FRAMEWORK(QuickLook);
-SOFT_LINK_CLASS(QuickLook, QLItem);
 
 SOFT_LINK_PRIVATE_FRAMEWORK(AssetViewer);
 SOFT_LINK_CLASS(AssetViewer, ASVThumbnailView);
@@ -105,7 +102,7 @@ static NSString *getUTIForSystemPreviewMIMEType(const String& mimeType)
 
     NSString *contentType = getUTIForSystemPreviewMIMEType(_mimeType.get());
 
-    _item = adoptNS([allocQLItemInstance() initWithDataProvider:self contentType:contentType previewTitle:_suggestedFilename.get()]);
+    _item = adoptNS([PAL::allocQLItemInstance() initWithDataProvider:self contentType:contentType previewTitle:_suggestedFilename.get()]);
     [_item setUseLoadingTimeout:NO];
 
     _thumbnailView = adoptNS([allocASVThumbnailViewInstance() init]);

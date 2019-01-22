@@ -2990,7 +2990,6 @@ $(SRCROOT)/platform/ios/PlatformScreenIOS.mm
 $(SRCROOT)/platform/ios/PlatformSpeechSynthesizerIOS.mm
 $(SRCROOT)/platform/ios/PlaybackSessionInterfaceAVKit.mm
 $(SRCROOT)/platform/ios/QuickLook.mm
-$(SRCROOT)/platform/ios/QuickLookSoftLink.mm
 $(SRCROOT)/platform/ios/RemoteCommandListenerIOS.mm
 $(SRCROOT)/platform/ios/ScrollAnimatorIOS.mm
 $(SRCROOT)/platform/ios/ScrollViewIOS.mm

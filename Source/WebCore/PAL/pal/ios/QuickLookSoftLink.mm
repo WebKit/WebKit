@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -22,20 +22,22 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#import "config.h"
+
 #if USE(QUICK_LOOK)
 
-#include <pal/spi/ios/QuickLookSPI.h>
-#include <wtf/SoftLinking.h>
+#import <pal/spi/ios/QuickLookSPI.h>
+#import <wtf/SoftLinking.h>
 
-SOFT_LINK_FRAMEWORK_FOR_HEADER(WebCore, QuickLook)
+SOFT_LINK_FRAMEWORK_FOR_SOURCE(PAL, QuickLook)
 
-SOFT_LINK_FUNCTION_FOR_HEADER(WebCore, QuickLook, QLPreviewGetSupportedMIMETypes, NSSet *, (), ())
-#define QLPreviewGetSupportedMIMETypes softLink_QuickLook_QLPreviewGetSupportedMIMETypes
-SOFT_LINK_FUNCTION_FOR_HEADER(WebCore, QuickLook, QLTypeCopyBestMimeTypeForFileNameAndMimeType, NSString *, (NSString *fileName, NSString *mimeType), (fileName, mimeType))
-#define QLTypeCopyBestMimeTypeForFileNameAndMimeType softLink_QuickLook_QLTypeCopyBestMimeTypeForFileNameAndMimeType
-SOFT_LINK_FUNCTION_FOR_HEADER(WebCore, QuickLook, QLTypeCopyBestMimeTypeForURLAndMimeType, NSString *, (NSURL *url, NSString *mimeType), (url, mimeType))
-#define QLTypeCopyBestMimeTypeForURLAndMimeType softLink_QuickLook_QLTypeCopyBestMimeTypeForURLAndMimeType
-SOFT_LINK_FUNCTION_FOR_HEADER(WebCore, QuickLook, QLTypeCopyUTIForURLAndMimeType, NSString *, (NSURL *url, NSString *mimeType), (url, mimeType))
-#define QLTypeCopyUTIForURLAndMimeType softLink_QuickLook_QLTypeCopyUTIForURLAndMimeType
+SOFT_LINK_CLASS_FOR_SOURCE_WITH_EXPORT(PAL, QuickLook, QLItem, PAL_EXPORT)
+SOFT_LINK_CLASS_FOR_SOURCE_WITH_EXPORT(PAL, QuickLook, QLPreviewController, PAL_EXPORT)
+SOFT_LINK_CLASS_FOR_SOURCE(PAL, QuickLook, QLPreviewConverter)
+SOFT_LINK_CONSTANT_FOR_SOURCE(PAL, QuickLook, kQLPreviewOptionPasswordKey, CFStringRef);
+SOFT_LINK_FUNCTION_FOR_SOURCE(PAL, QuickLook, QLPreviewGetSupportedMIMETypes, NSSet *, (), ())
+SOFT_LINK_FUNCTION_FOR_SOURCE(PAL, QuickLook, QLTypeCopyBestMimeTypeForFileNameAndMimeType, NSString *, (NSString *fileName, NSString *mimeType), (fileName, mimeType))
+SOFT_LINK_FUNCTION_FOR_SOURCE(PAL, QuickLook, QLTypeCopyBestMimeTypeForURLAndMimeType, NSString *, (NSURL *url, NSString *mimeType), (url, mimeType))
+SOFT_LINK_FUNCTION_FOR_SOURCE(PAL, QuickLook, QLTypeCopyUTIForURLAndMimeType, NSString *, (NSURL *url, NSString *mimeType), (url, mimeType))
 
 #endif // USE(QUICK_LOOK)

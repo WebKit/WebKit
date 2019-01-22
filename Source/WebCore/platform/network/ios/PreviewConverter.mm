@@ -30,12 +30,8 @@
 
 #import "ResourceRequest.h"
 #import "ResourceResponse.h"
+#import <pal/ios/QuickLookSoftLink.h>
 #import <pal/spi/ios/QuickLookSPI.h>
-#import <wtf/SoftLinking.h>
-
-SOFT_LINK_FRAMEWORK(QuickLook);
-SOFT_LINK_CLASS(QuickLook, QLPreviewConverter);
-SOFT_LINK_CONSTANT(QuickLook, kQLPreviewOptionPasswordKey, CFStringRef);
 
 namespace WebCore {
 
@@ -44,16 +40,16 @@ static NSDictionary *optionsWithPassword(const String& password)
     if (password.isNull())
         return nil;
 
-    return @{ (NSString *)getkQLPreviewOptionPasswordKey() : password };
+    return @{ (NSString *)PAL::get_QuickLook_kQLPreviewOptionPasswordKey() : password };
 }
 
 PreviewConverter::PreviewConverter(id delegate, const ResourceResponse& response, const String& password)
-    : m_platformConverter { adoptNS([allocQLPreviewConverterInstance() initWithConnection:nil delegate:delegate response:response.nsURLResponse() options:optionsWithPassword(password)]) }
+    : m_platformConverter { adoptNS([PAL::allocQLPreviewConverterInstance() initWithConnection:nil delegate:delegate response:response.nsURLResponse() options:optionsWithPassword(password)]) }
 {
 }
 
 PreviewConverter::PreviewConverter(NSData *data, const String& uti, const String& password)
-    : m_platformConverter { adoptNS([allocQLPreviewConverterInstance() initWithData:data name:nil uti:uti options:optionsWithPassword(password)]) }
+    : m_platformConverter { adoptNS([PAL::allocQLPreviewConverterInstance() initWithData:data name:nil uti:uti options:optionsWithPassword(password)]) }
 {
 }
 

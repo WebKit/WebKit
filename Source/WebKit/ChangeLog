@@ -1,3 +1,23 @@
+2019-01-22  David Kilzer  <ddkilzer@apple.com>
+
+        Switch remaining QuickLook soft-linking in WebCore, WebKit over to QuickLookSoftLink.{cpp,h}
+        <https://webkit.org/b/193654>
+        <rdar://problem/47430290>
+
+        Reviewed by Alex Christensen.
+
+        - Moves QuickLookSoftLink.{h,mm} to PAL.
+        - Adds soft-link to 3 classes to consolidate QuickLook.framework
+          soft-linking.
+        - Updates existing source to work with above changes.
+
+        * UIProcess/Cocoa/SystemPreviewControllerCocoa.mm:
+        (-[_WKPreviewControllerDataSource previewController:previewItemAtIndex:]):
+        (WebKit::SystemPreviewController::start):
+        * UIProcess/ios/WKSystemPreviewView.mm:
+        (-[WKSystemPreviewView web_setContentProviderData:suggestedFilename:]):
+        - Switch to using QuickLookSoftLink.{h,mm} in PAL.
+
 2019-01-22  Oriol Brufau  <obrufau@igalia.com>
 
         [css-logical] Implement flow-relative margin, padding and border shorthands

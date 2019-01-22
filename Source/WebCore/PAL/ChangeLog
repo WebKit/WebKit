@@ -1,3 +1,24 @@
+2019-01-22  David Kilzer  <ddkilzer@apple.com>
+
+        Switch remaining QuickLook soft-linking in WebCore, WebKit over to QuickLookSoftLink.{cpp,h}
+        <https://webkit.org/b/193654>
+        <rdar://problem/47430290>
+
+        Reviewed by Alex Christensen.
+
+        - Moves QuickLookSoftLink.{h,mm} to PAL.
+        - Adds soft-link to 3 classes to consolidate QuickLook.framework
+          soft-linking.
+        - Updates existing source to work with above changes.
+
+        * PAL.xcodeproj/project.pbxproj:
+        - Add QuickLookSoftLink.{h,mm} due to move from WebCore.
+
+        * pal/ios/QuickLookSoftLink.h: Renamed from Source/WebCore/platform/ios/QuickLookSoftLink.h.
+        * pal/ios/QuickLookSoftLink.mm: Renamed from Source/WebCore/platform/ios/QuickLookSoftLink.mm.
+        - Add 3 classes for soft-linking.
+        - Change namespace from WebCore to PAL.
+
 2019-01-21  David Kilzer  <ddkilzer@apple.com>
 
         Sort PAL Xcode project file

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2018-2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -34,13 +34,9 @@
 #import <QuickLook/QuickLook.h>
 #import <UIKit/UIViewController.h>
 #import <WebCore/MIMETypeRegistry.h>
+#import <pal/ios/QuickLookSoftLink.h>
 #import <pal/spi/ios/QuickLookSPI.h>
-#import <wtf/SoftLinking.h>
 #import <wtf/WeakObjCPtr.h>
-
-SOFT_LINK_FRAMEWORK(QuickLook)
-SOFT_LINK_CLASS(QuickLook, QLPreviewController);
-SOFT_LINK_CLASS(QuickLook, QLItem);
 
 @interface _WKPreviewControllerDataSource : NSObject <QLPreviewControllerDataSource> {
     RetainPtr<NSItemProvider> _itemProvider;
@@ -88,7 +84,7 @@ SOFT_LINK_CLASS(QuickLook, QLItem);
     // then we'll need a table.
     static NSString *contentType = (__bridge NSString *) UTTypeCreatePreferredIdentifierForTag(kUTTagClassFilenameExtension, CFSTR("usdz"), nil);
 
-    _item = adoptNS([allocQLItemInstance() initWithPreviewItemProvider:_itemProvider.get() contentType:contentType previewTitle:@"Preview" fileSize:@(0)]);
+    _item = adoptNS([PAL::allocQLItemInstance() initWithPreviewItemProvider:_itemProvider.get() contentType:contentType previewTitle:@"Preview" fileSize:@(0)]);
     [_item setUseLoadingTimeout:NO];
 
     WeakObjCPtr<_WKPreviewControllerDataSource> weakSelf { self };
@@ -204,7 +200,7 @@ void SystemPreviewController::start(const String& mimeType, const WebCore::IntRe
     if (!presentingViewController)
         return;
 
-    m_qlPreviewController = adoptNS([allocQLPreviewControllerInstance() init]);
+    m_qlPreviewController = adoptNS([PAL::allocQLPreviewControllerInstance() init]);
 
     m_qlPreviewControllerDelegate = adoptNS([[_WKPreviewControllerDelegate alloc] initWithSystemPreviewController:this fromRect:fromRect]);
     [m_qlPreviewController setDelegate:m_qlPreviewControllerDelegate.get()];

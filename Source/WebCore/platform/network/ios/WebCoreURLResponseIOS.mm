@@ -34,8 +34,7 @@
 #import "QuickLook.h"
 #import "UTIUtilities.h"
 #import <MobileCoreServices/MobileCoreServices.h>
-
-#import "QuickLookSoftLink.h"
+#import <pal/ios/QuickLookSoftLink.h>
 
 namespace WebCore {
 
@@ -82,7 +81,7 @@ void adjustMIMETypeIfNecessary(CFURLResponseRef cfResponse, bool isMainResourceL
     // We filter the basic MIME types so that we don't do unnecessary work in standard browsing situations.
     if (isMainResourceLoad && shouldUseQuickLookForMIMEType((NSString *)updatedMIMEType.get())) {
         RetainPtr<CFStringRef> suggestedFilename = adoptCF(CFURLResponseCopySuggestedFilename(cfResponse));
-        RetainPtr<CFStringRef> quickLookMIMEType = adoptCF((CFStringRef)QLTypeCopyBestMimeTypeForFileNameAndMimeType((NSString *)suggestedFilename.get(), (NSString *)mimeType.get()));
+        RetainPtr<CFStringRef> quickLookMIMEType = adoptCF((CFStringRef)PAL::softLink_QuickLook_QLTypeCopyBestMimeTypeForFileNameAndMimeType((NSString *)suggestedFilename.get(), (NSString *)mimeType.get()));
         if (!quickLookMIMEType) {
             auto url = CFURLResponseGetURL(cfResponse);
             if ([(NSURL *)url isFileURL]) {
