@@ -3068,6 +3068,7 @@
 		41FBE823206DA79C000F0741 /* NetworkContentRuleListManager.messages.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = NetworkContentRuleListManager.messages.in; sourceTree = "<group>"; };
 		41FBE824206DA79C000F0741 /* NetworkContentRuleListManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = NetworkContentRuleListManager.cpp; sourceTree = "<group>"; };
 		4450AEBF1DC3FAE5009943F2 /* SharedMemoryCocoa.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SharedMemoryCocoa.cpp; sourceTree = "<group>"; };
+		44A481C621F2D27B00F2F919 /* ClientCertificateAuthenticationXPCConstants.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = ClientCertificateAuthenticationXPCConstants.cpp; sourceTree = "<group>"; };
 		460F488D1F996F6C00CF4B87 /* WebSWContextManagerConnectionMessageReceiver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = WebSWContextManagerConnectionMessageReceiver.cpp; path = DerivedSources/WebKit2/WebSWContextManagerConnectionMessageReceiver.cpp; sourceTree = BUILT_PRODUCTS_DIR; };
 		460F488E1F996F6C00CF4B87 /* WebSWContextManagerConnectionMessages.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WebSWContextManagerConnectionMessages.h; path = DerivedSources/WebKit2/WebSWContextManagerConnectionMessages.h; sourceTree = BUILT_PRODUCTS_DIR; };
 		462107D71F38DBD300DD7810 /* PingLoad.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PingLoad.cpp; sourceTree = "<group>"; };
@@ -6735,6 +6736,7 @@
 			isa = PBXGroup;
 			children = (
 				57B4B45D20B504AB00D4AD79 /* AuthenticationManagerCocoa.mm */,
+				44A481C621F2D27B00F2F919 /* ClientCertificateAuthenticationXPCConstants.cpp */,
 				57B4B45E20B504AB00D4AD79 /* ClientCertificateAuthenticationXPCConstants.h */,
 			);
 			path = cocoa;

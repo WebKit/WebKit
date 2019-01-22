@@ -23,7 +23,8 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#include "config.h"
+#include "ClientCertificateAuthenticationXPCConstants.h"
 
 #if HAVE(SEC_KEY_PROXY)
 
@@ -31,12 +32,12 @@ namespace WebKit {
 
 namespace ClientCertificateAuthentication {
 
-extern const char* const XPCCertificatesKey;
-extern const char* const XPCChallengeIDKey;
-extern const char* const XPCMessageNameKey;
-extern const char* const XPCMessageNameValue;
-extern const char* const XPCPersistenceKey;
-extern const char* const XPCSecKeyProxyEndpointKey;
+const char* const XPCCertificatesKey = "certificates";
+const char* const XPCChallengeIDKey = "challenge-id";
+const char* const XPCMessageNameKey = "message-name";
+const char* const XPCMessageNameValue = "client-certificate-credential";
+const char* const XPCPersistenceKey = "persistence";
+const char* const XPCSecKeyProxyEndpointKey = "sec-key-proxy-endpoint";
 
 } // namespace ClientCertificateAuthentication
 

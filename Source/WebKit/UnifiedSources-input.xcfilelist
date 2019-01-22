@@ -170,6 +170,7 @@ $(SRCROOT)/Shared/AssistedNodeInformation.cpp
 $(SRCROOT)/Shared/AsyncRequest.cpp
 $(SRCROOT)/Shared/Authentication/AuthenticationManager.cpp
 $(SRCROOT)/Shared/Authentication/cocoa/AuthenticationManagerCocoa.mm
+$(SRCROOT)/Shared/Authentication/cocoa/ClientCertificateAuthenticationXPCConstants.cpp
 $(SRCROOT)/Shared/BlobDataFileReferenceWithSandboxExtension.cpp
 $(SRCROOT)/Shared/CacheModel.cpp
 $(SRCROOT)/Shared/ChildProcess.cpp

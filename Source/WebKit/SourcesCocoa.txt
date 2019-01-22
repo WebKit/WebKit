@@ -123,6 +123,7 @@ Shared/cf/CookieStorageUtilsCF.mm
 Shared/cg/ShareableBitmapCG.cpp
 
 Shared/Authentication/cocoa/AuthenticationManagerCocoa.mm
+Shared/Authentication/cocoa/ClientCertificateAuthenticationXPCConstants.cpp
 
 Shared/Cocoa/APIDataCocoa.mm
 Shared/Cocoa/APIObject.mm

@@ -1,5 +1,29 @@
 2019-01-22  David Kilzer  <ddkilzer@apple.com>
 
+        C strings in ClientCertificateAuthenticationXPCConstants.h are duplicated
+        <https://webkit.org/b/193607>
+        <rdar://problem/47334613>
+
+        Reviewed by Alex Christensen.
+
+        * Shared/Authentication/cocoa/AuthenticationManagerCocoa.mm:
+        (WebKit::AuthenticationManager::initializeConnection):
+        * UIProcess/Authentication/cocoa/AuthenticationChallengeProxyCocoa.mm:
+        (WebKit::AuthenticationChallengeProxy::sendClientCertificateCredentialOverXpc):
+        - Update name of constants.
+
+        * Shared/Authentication/cocoa/ClientCertificateAuthenticationXPCConstants.cpp: Copied from Source/WebKit/Shared/Authentication/cocoa/ClientCertificateAuthenticationXPCConstants.h.
+        * Shared/Authentication/cocoa/ClientCertificateAuthenticationXPCConstants.h:
+        - Put constant values in a namespace, and move values to
+          ClientCertificateAuthenticationXPCConstants.cpp.
+
+        * SourcesCocoa.txt:
+        * UnifiedSources-input.xcfilelist:
+        * WebKit.xcodeproj/project.pbxproj:
+        - Add ClientCertificateAuthenticationXPCConstants.cpp.
+
+2019-01-22  David Kilzer  <ddkilzer@apple.com>
+
         Switch remaining QuickLook soft-linking in WebCore, WebKit over to QuickLookSoftLink.{cpp,h}
         <https://webkit.org/b/193654>
         <rdar://problem/47430290>

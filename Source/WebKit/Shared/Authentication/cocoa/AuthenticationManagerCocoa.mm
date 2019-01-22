@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2018-2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -56,16 +56,16 @@ void AuthenticationManager::initializeConnection(IPC::Connection* connection)
         if (type == XPC_TYPE_ERROR || !weakThis)
             return;
 
-        if (type != XPC_TYPE_DICTIONARY || strcmp(xpc_dictionary_get_string(event, clientCertificateAuthenticationXPCMessageNameKey), clientCertificateAuthenticationXPCMessageNameValue)) {
+        if (type != XPC_TYPE_DICTIONARY || strcmp(xpc_dictionary_get_string(event, ClientCertificateAuthentication::XPCMessageNameKey), ClientCertificateAuthentication::XPCMessageNameValue)) {
             ASSERT_NOT_REACHED();
             return;
         }
 
-        auto challengeID = xpc_dictionary_get_uint64(event, clientCertificateAuthenticationXPCChallengeIDKey);
+        auto challengeID = xpc_dictionary_get_uint64(event, ClientCertificateAuthentication::XPCChallengeIDKey);
         if (!challengeID)
             return;
 
-        auto xpcEndPoint = xpc_dictionary_get_value(event, clientCertificateAuthenticationXPCSecKeyProxyEndpointKey);
+        auto xpcEndPoint = xpc_dictionary_get_value(event, ClientCertificateAuthentication::XPCSecKeyProxyEndpointKey);
         if (!xpcEndPoint || xpc_get_type(xpcEndPoint) != XPC_TYPE_ENDPOINT)
             return;
         auto endPoint = adoptNS([[NSXPCListenerEndpoint alloc] init]);
@@ -77,7 +77,7 @@ void AuthenticationManager::initializeConnection(IPC::Connection* connection)
             return;
         }
 
-        auto certificateDataArray = xpc_dictionary_get_array(event, clientCertificateAuthenticationXPCCertificatesKey);
+        auto certificateDataArray = xpc_dictionary_get_array(event, ClientCertificateAuthentication::XPCCertificatesKey);
         if (!certificateDataArray)
             return;
         NSMutableArray *certificates = nil;
@@ -93,7 +93,7 @@ void AuthenticationManager::initializeConnection(IPC::Connection* connection)
             }
         }
 
-        auto persistence = xpc_dictionary_get_uint64(event, clientCertificateAuthenticationXPCPersistenceKey);
+        auto persistence = xpc_dictionary_get_uint64(event, ClientCertificateAuthentication::XPCPersistenceKey);
         if (persistence > static_cast<uint64_t>(NSURLCredentialPersistenceSynchronizable))
             return;
 
