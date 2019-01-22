@@ -1,3 +1,22 @@
+2019-01-22  Frederic Wang  <fwang@igalia.com>
+
+        Enable CSSOMViewScrollingAPI
+        https://bugs.webkit.org/show_bug.cgi?id=189472
+
+        Reviewed by Simon Fraser.
+
+        This patch enables the CSSOMViewScrollingAPI option by default. This feature has already been
+        enabled in tests since r235855. Basically, this change fixes an old compatibility issue
+        regarding which scrolling element correspond to the viewport in standard mode (WebKit uses
+        document.body while Gecko/Edge/Chromium use document.documentElement as described in the
+        CSSOM View specification). WebKit developers writing tests can use document.scrollingElement
+        for that purpose, so that they work independently of whether the option is enabled.
+
+        [1] https://lists.webkit.org/pipermail/webkit-dev/2018-January/029857.html
+
+        * Shared/WebPreferences.yaml: Enable by default and remove "experimental" category in
+        accordance with the new policy. Instead, keep an internal flag only for developers.
+
 2019-01-21  Antti Koivisto  <antti@apple.com>
 
         [iOS] Handle hit testing for subframes

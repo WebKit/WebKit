@@ -1255,10 +1255,10 @@ PointerEventsEnabled:
 
 CSSOMViewScrollingAPIEnabled:
   type: bool
-  defaultValue: false
+  defaultValue: true
   humanReadableName: "CSSOM View Scrolling API"
   humanReadableDescription: "Implement standard behavior for scrollLeft, scrollTop, scrollWidth, scrollHeight, scrollTo, scrollBy and scrollingElement."
-  category: experimental
+  category: internal
 
 WebAnimationsEnabled:
   type: bool
