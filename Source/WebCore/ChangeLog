@@ -1,3 +1,12 @@
+2019-01-22  Frederic Wang  <fwang@igalia.com>
+
+        Minor refactoring of the scrolling code
+        https://bugs.webkit.org/show_bug.cgi?id=192398
+
+        Unreviewed build fix.
+
+        * page/scrolling/ScrollingTreeScrollingNode.cpp: Add missing header.
+
 2019-01-22  Oriol Brufau  <obrufau@igalia.com>
 
         [css-logical] Implement flow-relative margin, padding and border shorthands
