@@ -41,7 +41,8 @@ namespace WTF {
 template<> struct EnumTraits<WebKit::CoordinateSystem> {
     using values = EnumValues<
     WebKit::CoordinateSystem,
-    WebKit::CoordinateSystem::Page
+    WebKit::CoordinateSystem::Page,
+    WebKit::CoordinateSystem::LayoutViewport
     >;
 };
 
