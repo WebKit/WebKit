@@ -145,7 +145,7 @@ Ref<CurlRequest> ResourceHandle::createCurlRequest(ResourceRequest&& request, Re
     if (status == RequestStatus::NewRequest) {
         addCacheValidationHeaders(request);
 
-        auto& storageSession = *d->m_context->storageSession(PAL::SessionID::defaultSessionID());
+        auto& storageSession = *d->m_context->storageSession();
         auto& cookieJar = storageSession.cookieStorage();
         auto includeSecureCookies = request.url().protocolIs("https") ? IncludeSecureCookies::Yes : IncludeSecureCookies::No;
         String cookieHeaderField = cookieJar.cookieRequestHeaderFieldValue(storageSession, request.firstPartyForCookies(), SameSiteInfo::create(request), request.url(), WTF::nullopt, WTF::nullopt, includeSecureCookies).first;
@@ -231,7 +231,7 @@ void ResourceHandle::didReceiveAuthenticationChallenge(const AuthenticationChall
         URL urlToStore;
         if (challenge.failureResponse().httpStatusCode() == 401)
             urlToStore = challenge.failureResponse().url();
-        d->m_context->storageSession(PAL::SessionID::defaultSessionID())->credentialStorage().set(partition, credential, challenge.protectionSpace(), urlToStore);
+        d->m_context->storageSession()->credentialStorage().set(partition, credential, challenge.protectionSpace(), urlToStore);
 
         restartRequestWithCredential(challenge.protectionSpace(), credential);
 
@@ -246,16 +246,16 @@ void ResourceHandle::didReceiveAuthenticationChallenge(const AuthenticationChall
             // The stored credential wasn't accepted, stop using it.
             // There is a race condition here, since a different credential might have already been stored by another ResourceHandle,
             // but the observable effect should be very minor, if any.
-            d->m_context->storageSession(PAL::SessionID::defaultSessionID())->credentialStorage().remove(partition, challenge.protectionSpace());
+            d->m_context->storageSession()->credentialStorage().remove(partition, challenge.protectionSpace());
         }
 
         if (!challenge.previousFailureCount()) {
-            Credential credential = d->m_context->storageSession(PAL::SessionID::defaultSessionID())->credentialStorage().get(partition, challenge.protectionSpace());
+            Credential credential = d->m_context->storageSession()->credentialStorage().get(partition, challenge.protectionSpace());
             if (!credential.isEmpty() && credential != d->m_initialCredential) {
                 ASSERT(credential.persistence() == CredentialPersistenceNone);
                 if (challenge.failureResponse().httpStatusCode() == 401) {
                     // Store the credential back, possibly adding it as a default for this directory.
-                    d->m_context->storageSession(PAL::SessionID::defaultSessionID())->credentialStorage().set(partition, credential, challenge.protectionSpace(), challenge.failureResponse().url());
+                    d->m_context->storageSession()->credentialStorage().set(partition, credential, challenge.protectionSpace(), challenge.failureResponse().url());
                 }
 
                 restartRequestWithCredential(challenge.protectionSpace(), credential);
@@ -289,7 +289,7 @@ void ResourceHandle::receivedCredential(const AuthenticationChallenge& challenge
     if (shouldUseCredentialStorage()) {
         if (challenge.failureResponse().httpStatusCode() == 401) {
             URL urlToStore = challenge.failureResponse().url();
-            d->m_context->storageSession(PAL::SessionID::defaultSessionID())->credentialStorage().set(partition, credential, challenge.protectionSpace(), urlToStore);
+            d->m_context->storageSession()->credentialStorage().set(partition, credential, challenge.protectionSpace(), urlToStore);
         }
     }
 
@@ -346,13 +346,13 @@ Optional<Credential> ResourceHandle::getCredential(const ResourceRequest& reques
         if (credential.isEmpty()) {
             // <rdar://problem/7174050> - For URLs that match the paths of those previously challenged for HTTP Basic authentication, 
             // try and reuse the credential preemptively, as allowed by RFC 2617.
-            d->m_initialCredential = d->m_context->storageSession(PAL::SessionID::defaultSessionID())->credentialStorage().get(partition, request.url());
+            d->m_initialCredential = d->m_context->storageSession()->credentialStorage().get(partition, request.url());
         } else if (!redirect) {
             // If there is already a protection space known for the URL, update stored credentials
             // before sending a request. This makes it possible to implement logout by sending an
             // XMLHttpRequest with known incorrect credentials, and aborting it immediately (so that
             // an authentication dialog doesn't pop up).
-            d->m_context->storageSession(PAL::SessionID::defaultSessionID())->credentialStorage().set(partition, credential, request.url());
+            d->m_context->storageSession()->credentialStorage().set(partition, credential, request.url());
         }
     }
 

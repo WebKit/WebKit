@@ -1,3 +1,13 @@
+2019-01-22  Alex Christensen  <achristensen@webkit.org>
+
+        Fix some builds after r240292
+        https://bugs.webkit.org/show_bug.cgi?id=193580
+
+        * NetworkProcess/NetworkProcess.cpp:
+        (WebKit::NetworkProcess::switchToNewTestingSession):
+        * NetworkProcess/cache/NetworkCache.cpp:
+        (WebKit::NetworkCache::Cache::retrieve):
+
 2019-01-22  Brian Burg  <bburg@apple.com>
 
         Automation.computeElementLayout should return visual viewport-aware coordinates

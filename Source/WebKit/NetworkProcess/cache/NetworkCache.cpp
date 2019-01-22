@@ -317,7 +317,7 @@ void Cache::retrieve(const WebCore::ResourceRequest& request, const GlobalFrameI
     }
 #endif
 
-    m_storage->retrieve(storageKey, priority, [this, protectedThis = makeRef(*this), request, completionHandler = WTFMove(completionHandler), info = WTFMove(info), storageKey, frameID](auto record, auto timings) mutable {
+    m_storage->retrieve(storageKey, priority, [this, protectedThis = makeRef(*this), request, completionHandler = WTFMove(completionHandler), info = WTFMove(info), storageKey, frameID, networkProcess = makeRef(networkProcess())](auto record, auto timings) mutable {
         info.storageTimings = timings;
 
         if (!record) {
@@ -334,7 +334,7 @@ void Cache::retrieve(const WebCore::ResourceRequest& request, const GlobalFrameI
 
         auto entry = Entry::decodeStorageRecord(*record);
 
-        auto useDecision = entry ? makeUseDecision(networkProcess(), *entry, request) : UseDecision::NoDueToDecodeFailure;
+        auto useDecision = entry ? makeUseDecision(networkProcess, *entry, request) : UseDecision::NoDueToDecodeFailure;
         switch (useDecision) {
         case UseDecision::Use:
             break;

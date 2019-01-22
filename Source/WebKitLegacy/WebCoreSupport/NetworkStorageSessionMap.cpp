@@ -27,6 +27,7 @@
 
 #include <WebCore/NetworkStorageSession.h>
 #include <pal/SessionID.h>
+#include <wtf/MainThread.h>
 #include <wtf/ProcessID.h>
 #include <wtf/ProcessPrivilege.h>
 
