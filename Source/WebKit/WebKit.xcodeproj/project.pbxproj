@@ -1558,6 +1558,7 @@
 		CE1A0BD51A48E6C60054EF74 /* ManagedConfigurationSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = CE1A0BCF1A48E6C60054EF74 /* ManagedConfigurationSPI.h */; };
 		CE1A0BD61A48E6C60054EF74 /* TCCSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = CE1A0BD01A48E6C60054EF74 /* TCCSPI.h */; };
 		CE1A0BD71A48E6C60054EF74 /* TextInputSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = CE1A0BD11A48E6C60054EF74 /* TextInputSPI.h */; };
+		CE5B4C8821B73D870022E64F /* WKSyntheticFlagsChangedWebEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = CE5B4C8621B73D870022E64F /* WKSyntheticFlagsChangedWebEvent.h */; };
 		CEC8F9CB1FDF5870002635E7 /* WKWebProcessPlugInNodeHandlePrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = CEC8F9CA1FDF5870002635E7 /* WKWebProcessPlugInNodeHandlePrivate.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		CEDA12E3152CD1B300D9E08D /* WebAlternativeTextClient.h in Headers */ = {isa = PBXBuildFile; fileRef = CEDA12DE152CCAE800D9E08D /* WebAlternativeTextClient.h */; };
 		CEE4AE2B1A5DCF430002F49B /* UIKitSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = CEE4AE2A1A5DCF430002F49B /* UIKitSPI.h */; };
@@ -4385,6 +4386,8 @@
 		CE1A0BCF1A48E6C60054EF74 /* ManagedConfigurationSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ManagedConfigurationSPI.h; sourceTree = "<group>"; };
 		CE1A0BD01A48E6C60054EF74 /* TCCSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TCCSPI.h; sourceTree = "<group>"; };
 		CE1A0BD11A48E6C60054EF74 /* TextInputSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TextInputSPI.h; sourceTree = "<group>"; };
+		CE5B4C8621B73D870022E64F /* WKSyntheticFlagsChangedWebEvent.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = WKSyntheticFlagsChangedWebEvent.h; path = ios/WKSyntheticFlagsChangedWebEvent.h; sourceTree = "<group>"; };
+		CE5B4C8721B73D870022E64F /* WKSyntheticFlagsChangedWebEvent.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; name = WKSyntheticFlagsChangedWebEvent.mm; path = ios/WKSyntheticFlagsChangedWebEvent.mm; sourceTree = "<group>"; };
 		CEC8F9CA1FDF5870002635E7 /* WKWebProcessPlugInNodeHandlePrivate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WKWebProcessPlugInNodeHandlePrivate.h; sourceTree = "<group>"; };
 		CEDA12DE152CCAE800D9E08D /* WebAlternativeTextClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebAlternativeTextClient.h; sourceTree = "<group>"; };
 		CEDA12DF152CCAE800D9E08D /* WebAlternativeTextClient.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebAlternativeTextClient.cpp; sourceTree = "<group>"; };
@@ -5853,6 +5856,8 @@
 				0FCB4E4518BBE044000FCFC9 /* WKScrollView.mm */,
 				26F10BE619187E2E001D0E68 /* WKSyntheticClickTapGestureRecognizer.h */,
 				26F10BE719187E2E001D0E68 /* WKSyntheticClickTapGestureRecognizer.m */,
+				CE5B4C8621B73D870022E64F /* WKSyntheticFlagsChangedWebEvent.h */,
+				CE5B4C8721B73D870022E64F /* WKSyntheticFlagsChangedWebEvent.mm */,
 				316B8B622054B55800BD4A62 /* WKSystemPreviewView.h */,
 				316B8B612054B55800BD4A62 /* WKSystemPreviewView.mm */,
 				2D1E8221216FFF5000A15265 /* WKWebEvent.h */,
@@ -9849,6 +9854,7 @@
 				BC40761A124FF0370068F20A /* WKStringCF.h in Headers */,
 				BC9099801256A98200083756 /* WKStringPrivate.h in Headers */,
 				26F10BE819187E2E001D0E68 /* WKSyntheticClickTapGestureRecognizer.h in Headers */,
+				CE5B4C8821B73D870022E64F /* WKSyntheticFlagsChangedWebEvent.h in Headers */,
 				316B8B642054B55800BD4A62 /* WKSystemPreviewView.h in Headers */,
 				51F886A61F2C228100C193EF /* WKTestingSupport.h in Headers */,
 				31D755C11D91B81500843BD1 /* WKTextChecker.h in Headers */,

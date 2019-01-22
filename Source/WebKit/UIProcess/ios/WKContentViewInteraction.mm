@@ -56,6 +56,7 @@
 #import "WKPreviewElementInfoInternal.h"
 #import "WKQuickboardListViewController.h"
 #import "WKSelectMenuListViewController.h"
+#import "WKSyntheticFlagsChangedWebEvent.h"
 #import "WKTextInputListViewController.h"
 #import "WKTimePickerViewController.h"
 #import "WKUIDelegatePrivate.h"
@@ -3921,6 +3922,25 @@ static NSString *contentTypeFromFieldName(WebCore::AutofillFieldName fieldName)
     return CGRectZero;
 }
 
+#if USE(UIKIT_KEYBOARD_ADDITIONS)
+- (void)modifierFlagsDidChangeFrom:(UIKeyModifierFlags)oldFlags to:(UIKeyModifierFlags)newFlags
+{
+    auto dispatchSyntheticFlagsChangedEvents = [&] (UIKeyModifierFlags flags, bool keyDown) {
+        if (flags & UIKeyModifierShift)
+            [self handleKeyWebEvent:adoptNS([[WKSyntheticFlagsChangedWebEvent alloc] initWithShiftState:keyDown]).get()];
+        if (flags & UIKeyModifierAlphaShift)
+            [self handleKeyWebEvent:adoptNS([[WKSyntheticFlagsChangedWebEvent alloc] initWithCapsLockState:keyDown]).get()];
+    };
+
+    UIKeyModifierFlags removedFlags = oldFlags & ~newFlags;
+    UIKeyModifierFlags addedFlags = newFlags & ~oldFlags;
+    if (removedFlags)
+        dispatchSyntheticFlagsChangedEvents(removedFlags, false);
+    if (addedFlags)
+        dispatchSyntheticFlagsChangedEvents(addedFlags, true);
+}
+#endif
+
 // Web events.
 - (BOOL)requiresKeyEvents
 {
@@ -3965,6 +3985,11 @@ static NSString *contentTypeFromFieldName(WebCore::AutofillFieldName fieldName)
 
 - (void)_didHandleKeyEvent:(::WebEvent *)event eventWasHandled:(BOOL)eventWasHandled
 {
+#if USE(UIKIT_KEYBOARD_ADDITIONS)
+    if ([event isKindOfClass:[WKSyntheticFlagsChangedWebEvent class]])
+        return;
+#endif
+
     if (!(event.keyboardFlags & WebEventKeyboardInputModifierFlagsChanged))
         [_keyboardScrollingAnimator handleKeyEvent:event];
     

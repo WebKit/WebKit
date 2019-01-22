@@ -393,6 +393,9 @@ typedef enum {
 - (void)insertDictationResult:(NSArray *)dictationResult withCorrectionIdentifier:(id)correctionIdentifier;
 - (void)replaceRangeWithTextWithoutClosingTyping:(UITextRange *)range replacementText:(NSString *)text;
 - (void)setBottomBufferHeight:(CGFloat)bottomBuffer;
+#if USE(UIKIT_KEYBOARD_ADDITIONS)
+- (void)modifierFlagsDidChangeFrom:(UIKeyModifierFlags)oldFlags to:(UIKeyModifierFlags)newFlags;
+#endif
 @property (nonatomic) UITextGranularity selectionGranularity;
 @required
 - (BOOL)hasContent;

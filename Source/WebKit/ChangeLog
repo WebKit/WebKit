@@ -1,5 +1,36 @@
 2019-01-22  Daniel Bates  <dabates@apple.com>
 
+        [iOS] WebKit should handle shift state changes when using the software keyboard
+        https://bugs.webkit.org/show_bug.cgi?id=191475
+        <rdar://problem/45949246>
+
+        Reviewed by Brent Fulgham.
+
+        Implement UIKit SPI to be notified of shift state changes to the software keyboard
+        and dispatch a synthetic keydown or keyup event for either the Shift key or Caps Lock
+        key.
+
+        A side benefit of this change is that we now show and hide the caps lock indicator
+        in a focused password field when caps lock is enabled or disabled using the software
+        keyboard, respectively.
+
+        * Platform/spi/ios/UIKitSPI.h: Expose more SPI.
+        * SourcesCocoa.txt:
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView modifierFlagsDidChangeFrom:to:]): Create a synthetic flags changed
+        web event based on the state change and dispatch it.
+        (-[WKContentView _didHandleKeyEvent:eventWasHandled:]): Early return if the event
+        was a synethic flags change event so that we do not notify UIKit about this event
+        as it does not know anything about such synthetic events.
+        * UIProcess/ios/WKSyntheticFlagsChangedWebEvent.h: Added.
+        * UIProcess/ios/WKSyntheticFlagsChangedWebEvent.mm: Added.
+        (-[WKSyntheticFlagsChangedWebEvent initWithKeyCode:modifiers:keyDown:]):
+        (-[WKSyntheticFlagsChangedWebEvent initWithCapsLockState:]):
+        (-[WKSyntheticFlagsChangedWebEvent initWithShiftState:]):
+        * WebKit.xcodeproj/project.pbxproj:
+
+2019-01-22  Daniel Bates  <dabates@apple.com>
+
         [iOS] Interpret text key commands on keydown and app key commands on keypress
         https://bugs.webkit.org/show_bug.cgi?id=192897
         <rdar://problem/46857378>
