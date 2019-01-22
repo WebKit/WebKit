@@ -34,6 +34,7 @@
 #include "Logging.h"
 #include "PluginInfoStore.h"
 #include "PluginProcessManager.h"
+#include "ProvisionalPageProxy.h"
 #include "TextChecker.h"
 #include "TextCheckerState.h"
 #include "UIMessagePortChannelProvider.h"
@@ -584,6 +585,15 @@ bool WebProcessProxy::fullKeyboardAccessEnabled()
 }
 #endif
 
+bool WebProcessProxy::hasProvisionalPageWithID(uint64_t pageID) const
+{
+    for (auto* provisionalPage : m_provisionalPages) {
+        if (provisionalPage->page().pageID() == pageID)
+            return true;
+    }
+    return false;
+}
+
 void WebProcessProxy::updateBackForwardItem(const BackForwardListItemState& itemState)
 {
     if (auto* item = WebBackForwardListItem::itemForID(itemState.identifier)) {
@@ -591,7 +601,7 @@ void WebProcessProxy::updateBackForwardItem(const BackForwardListItemState& item
         // the back/forward items page.
         // e.g. The old web process is navigating to about:blank for suspension.
         // We ignore these updates.
-        if (m_pageMap.contains(item->pageID()))
+        if (m_pageMap.contains(item->pageID()) || hasProvisionalPageWithID(item->pageID()))
             item->setPageState(itemState.pageState);
     }
 }
@@ -694,6 +704,7 @@ void WebProcessProxy::processDidTerminateOrFailedToLaunch()
         webConnection->didClose();
 
     auto pages = copyToVectorOf<RefPtr<WebPageProxy>>(m_pageMap.values());
+    auto provisionalPages = WTF::map(m_provisionalPages, [](auto* provisionalPage) { return makeWeakPtr(provisionalPage); });
 
     shutDown();
 
@@ -708,6 +719,11 @@ void WebProcessProxy::processDidTerminateOrFailedToLaunch()
 
     for (auto& page : pages)
         page->processDidTerminate(ProcessTerminationReason::Crash);
+
+    for (auto& provisionalPage : provisionalPages) {
+        if (provisionalPage)
+            provisionalPage->processDidTerminate();
+    }
 }
 
 void WebProcessProxy::didReceiveInvalidMessage(IPC::Connection& connection, IPC::StringReference messageReceiverName, IPC::StringReference messageName)
@@ -779,6 +795,12 @@ void WebProcessProxy::didFinishLaunching(ProcessLauncher* launcher, IPC::Connect
         ASSERT(this == &page->process());
         page->processDidFinishLaunching();
     }
+
+    for (auto* provisionalPage : m_provisionalPages) {
+        ASSERT(this == &provisionalPage->process());
+        provisionalPage->processDidFinishLaunching();
+    }
+
 
     RELEASE_ASSERT(!m_webConnection);
     m_webConnection = WebConnectionToWebProcess::create(this);
@@ -873,7 +895,7 @@ void WebProcessProxy::maybeShutDown()
 
 bool WebProcessProxy::canTerminateChildProcess()
 {
-    if (!m_pageMap.isEmpty() || m_processPool->hasSuspendedPageFor(*this))
+    if (!m_pageMap.isEmpty() || m_processPool->hasSuspendedPageFor(*this) || !m_provisionalPages.isEmpty())
         return false;
 
     if (!m_processPool->shouldTerminate(this))
