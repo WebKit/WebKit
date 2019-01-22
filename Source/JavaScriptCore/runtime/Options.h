@@ -509,6 +509,8 @@ constexpr bool enableWebAssemblyStreamingApi = false;
     v(bool, traceLLIntSlowPath, false, Configurable, nullptr) \
     v(bool, traceBaselineJITExecution, false, Normal, nullptr) \
     v(unsigned, thresholdForGlobalLexicalBindingEpoch, UINT_MAX, Normal, "Threshold for global lexical binding epoch. If the epoch reaches to this value, CodeBlock metadata for scope operations will be revised globally. It needs to be greater than 1.") \
+    v(optionString, diskCachePath, nullptr, Restricted, nullptr) \
+    v(bool, forceDiskCache, false, Restricted, nullptr) \
 
 
 enum OptionEquivalence {
