@@ -33,7 +33,7 @@ namespace WebKit {
 
 class TiledCoreAnimationDrawingAreaProxy : public DrawingAreaProxy {
 public:
-    explicit TiledCoreAnimationDrawingAreaProxy(WebPageProxy&);
+    TiledCoreAnimationDrawingAreaProxy(WebPageProxy&, WebProcessProxy&);
     virtual ~TiledCoreAnimationDrawingAreaProxy();
 
 private:

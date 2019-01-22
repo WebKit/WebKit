@@ -29,11 +29,11 @@
 
 namespace WebKit {
 
+// FIXME: Remove this type and use WebCore::PolicyAction instead.
 enum class WebPolicyAction : uint8_t {
     Use,
     Download,
-    Ignore,
-    Suspend
+    Ignore
 };
 
 }
@@ -45,8 +45,7 @@ template<> struct EnumTraits<WebKit::WebPolicyAction> {
         WebKit::WebPolicyAction,
         WebKit::WebPolicyAction::Use,
         WebKit::WebPolicyAction::Download,
-        WebKit::WebPolicyAction::Ignore,
-        WebKit::WebPolicyAction::Suspend
+        WebKit::WebPolicyAction::Ignore
     >;
 };
 
