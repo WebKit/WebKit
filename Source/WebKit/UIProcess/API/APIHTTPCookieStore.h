@@ -32,10 +32,12 @@
 #include <wtf/Forward.h>
 #include <wtf/HashSet.h>
 
+#if PLATFORM(COCOA)
 namespace WebCore {
 struct Cookie;
 class CookieStorageObserver;
 }
+#endif
 
 namespace WebKit {
 class WebCookieManagerProxy;
@@ -93,7 +95,10 @@ private:
     bool m_observingUIProcessCookies { false };
 
     uint64_t m_processPoolCreationListenerIdentifier { 0 };
+
+#if PLATFORM(COCOA)
     RefPtr<WebCore::CookieStorageObserver> m_defaultUIProcessObserver;
+#endif
 };
 
 }
