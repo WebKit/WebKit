@@ -1,3 +1,33 @@
+2019-01-22  Antti Koivisto  <antti@apple.com>
+
+        [iOS] Flash when swiping back to Google search result page
+        https://bugs.webkit.org/show_bug.cgi?id=193668
+        <rdar://problem/47071684>
+
+        Reviewed by Simon Fraser.
+
+        If the google page is scrolled, there is sometimes a short flash.
+
+        When restoring the page state we also restore exposedContentRect which is used to determine
+        which part of the page to create layers for. Scroll position is restored by the UI process
+        later so we rely on this to get the right layers for the initial view update.
+
+        A viewport configuration update may sometimes trample over the restored exposedContentRect,
+        moving it to top left. In this case the initial layer tree unfreeze commit may not have
+        layers to cover the actual visible view position.
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::didCommitLoad):
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::restorePageState):
+
+        Set a bit to indicate we have already restored the exposedContentRect.
+
+        (WebKit::WebPage::viewportConfigurationChanged):
+
+        Only reset exposedContentRect if wasn't already set by restorePageState.
+
 2019-01-22  Alex Christensen  <achristensen@webkit.org>
 
         Fix more builds.
