@@ -1,3 +1,53 @@
+2019-01-22  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [iOS] Multiple WKWebViewAutofillTests are flaky failures
+        https://bugs.webkit.org/show_bug.cgi?id=189165
+        <rdar://problem/47433765>
+
+        Reviewed by Tim Horton.
+
+        These tests are currently flaky because they expect an invocation of "Element.blur()" in the web process to
+        immediately dispatch an IPC message to notify the UI process that the element has been blurred. In particular,
+        the -textInputHasAutofillContext helper assumes that waiting for the next remote layer tree commit in the UI
+        process in sufficient to ensure that any previous action that blurred the focused element in the web process
+        would make its way to the UI process by the time the layer tree commit is finished.
+
+        However, WebPage::elementDidBlur sends its IPC message to the UI process asynchronously, using callOnMainThread.
+        This means that if a layer tree flush was already scheduled in the web process before the element was blurred,
+        the element blur IPC message to the UI process will lose the race against the layer tree commit, and the test
+        will fail because it asks for -_autofillContext too early.
+
+        To fix this, we tweak these tests to actually wait until the intended input session change triggered by script
+        is handled in the UI process.
+
+        * TestWebKitAPI/Tests/ios/WKWebViewAutofillTests.mm:
+
+        Tweak some of these tests to wait for input session changes before checking for the presence of an autofill
+        context. The only exception is an existing test that doesn't allow programmatic focus to begin input sessions
+        by default; to fix this test, we simply wait for _WKInputDelegate to be invoked, instead of waiting for a new
+        input session.
+
+        (-[AutofillTestView textInputHasAutofillContext]):
+
+        Remove the incorrect presentation update here. This helper now assumes that the UI process is up to date.
+
+        * TestWebKitAPI/cocoa/TestWKWebView.h:
+        * TestWebKitAPI/cocoa/TestWKWebView.mm:
+        (nextInputSessionChangeCount):
+
+        Monotonically increasing identifier that's incremented whenever an input session is started in the UI process.
+        This includes changing the focused element from one to another.
+
+        (-[TestWKWebView initWithFrame:configuration:addToWindow:]):
+        (-[TestWKWebView didStartFormControlInteraction]):
+        (-[TestWKWebView didEndFormControlInteraction]):
+        (-[TestWKWebView evaluateJavaScriptAndWaitForInputSessionToChange:]):
+
+        Add a helper to evaluate JavaScript and wait for this script to cause some change in the input session. This
+        handles three cases: (1) changing focus from an element that doesn't require an input session to one that does,
+        (2) changing focus between elements that require input sessions, and (3) changing focus from an input session
+        that doesn't require an input session to one that doesn't.
+
 2019-01-22  David Kilzer  <ddkilzer@apple.com>
 
         check-webkit-style reports false-positive whitespace/init warning in C++ initialization parameters

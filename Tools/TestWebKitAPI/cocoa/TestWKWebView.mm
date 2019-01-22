@@ -249,11 +249,23 @@ NSEventMask __simulated_forceClickAssociatedEventsMask(id self, SEL _cmd)
 
 @end
 
+#if PLATFORM(IOS_FAMILY)
+
+using InputSessionChangeCount = NSUInteger;
+static InputSessionChangeCount nextInputSessionChangeCount()
+{
+    static InputSessionChangeCount gInputSessionChangeCount = 0;
+    return ++gInputSessionChangeCount;
+}
+
+#endif
+
 @implementation TestWKWebView {
     RetainPtr<TestWKWebViewHostWindow> _hostWindow;
     RetainPtr<TestMessageHandler> _testHandler;
 #if PLATFORM(IOS_FAMILY)
     std::unique_ptr<ClassMethodSwizzler> _sharedCalloutBarSwizzler;
+    InputSessionChangeCount _inputSessionChangeCount;
 #endif
 }
 
@@ -289,6 +301,7 @@ static UICalloutBar *suppressUICalloutBar()
 #if PLATFORM(IOS_FAMILY)
     // FIXME: Remove this workaround once <https://webkit.org/b/175204> is fixed.
     _sharedCalloutBarSwizzler = std::make_unique<ClassMethodSwizzler>([UICalloutBar class], @selector(sharedCalloutBar), reinterpret_cast<IMP>(suppressUICalloutBar));
+    _inputSessionChangeCount = 0;
 #endif
 
     return self;
@@ -409,11 +422,45 @@ static UICalloutBar *suppressUICalloutBar()
     [self evaluateJavaScript:@"getSelection().collapseToEnd()" completionHandler:nil];
 }
 
+#if PLATFORM(IOS_FAMILY)
+
+- (void)didStartFormControlInteraction
+{
+    _inputSessionChangeCount = nextInputSessionChangeCount();
+}
+
+- (void)didEndFormControlInteraction
+{
+    _inputSessionChangeCount = 0;
+}
+
+#endif // PLATFORM(IOS_FAMILY)
+
 @end
 
 #if PLATFORM(IOS_FAMILY)
 
 @implementation TestWKWebView (IOSOnly)
+
+- (void)evaluateJavaScriptAndWaitForInputSessionToChange:(NSString *)script
+{
+    auto initialChangeCount = _inputSessionChangeCount;
+    BOOL hasEmittedWarning = NO;
+    NSTimeInterval secondsToWaitUntilWarning = 2;
+    NSTimeInterval startTime = [NSDate timeIntervalSinceReferenceDate];
+
+    [self objectByEvaluatingJavaScript:script];
+    while ([[NSRunLoop currentRunLoop] runMode:NSDefaultRunLoopMode beforeDate:[NSDate distantPast]]) {
+        if (_inputSessionChangeCount != initialChangeCount)
+            break;
+
+        if (hasEmittedWarning || startTime + secondsToWaitUntilWarning >= [NSDate timeIntervalSinceReferenceDate])
+            continue;
+
+        NSLog(@"Warning: expecting input session change count to differ from %tu", initialChangeCount);
+        hasEmittedWarning = YES;
+    }
+}
 
 - (UIView <UITextInputPrivate, UITextInputMultiDocument> *)textInputContentView
 {
