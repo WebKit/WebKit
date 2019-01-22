@@ -1,3 +1,11 @@
+2019-01-22  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        Unreviewed, skip all resource load statistics tests on GTK
+
+        We don't have this feature enabled yet, so shouldn't be running the tests. Yet.
+
+        * platform/gtk/TestExpectations:
+
 2019-01-22  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: Audit: provide a way to get related Accessibility nodes for a given node
