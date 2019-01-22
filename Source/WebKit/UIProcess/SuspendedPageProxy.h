@@ -72,7 +72,7 @@ private:
     SuspensionState m_suspensionState { SuspensionState::Suspending };
     CompletionHandler<void(SuspendedPageProxy*)> m_readyToUnsuspendHandler;
 #if PLATFORM(IOS_FAMILY)
-    ProcessThrottler::BackgroundActivityToken m_suspensionToken;
+    ProcessThrottler::ForegroundActivityToken m_suspensionToken;
 #endif
 };
 

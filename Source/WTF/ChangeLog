@@ -1,5 +1,9 @@
 2019-01-22  Alan Coon  <alancoon@apple.com>
 
+        Revert r240260. rdar://problem/47099573
+
+2019-01-22  Alan Coon  <alancoon@apple.com>
+
         Revert r240261. rdar://problem/47099573
 
 2019-01-22  Alan Coon  <alancoon@apple.com>
