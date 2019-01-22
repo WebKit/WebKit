@@ -757,6 +757,7 @@ void WebsiteDataStore::removeData(OptionSet<WebsiteDataType> dataTypes, WallTime
     }
 #endif
 
+    bool didNotifyNetworkProcessToDeleteWebsiteData = false;
     auto networkProcessAccessType = computeNetworkProcessAccessTypeForDataRemoval(dataTypes, !isPersistent());
     if (networkProcessAccessType != ProcessAccessType::None) {
         for (auto& processPool : processPools()) {
@@ -778,6 +779,7 @@ void WebsiteDataStore::removeData(OptionSet<WebsiteDataType> dataTypes, WallTime
             processPool->networkProcess()->deleteWebsiteData(m_sessionID, dataTypes, modifiedSince, [callbackAggregator, processPool] {
                 callbackAggregator->removePendingCallback();
             });
+            didNotifyNetworkProcessToDeleteWebsiteData = true;
         }
     }
 
@@ -938,15 +940,15 @@ void WebsiteDataStore::removeData(OptionSet<WebsiteDataType> dataTypes, WallTime
         // we do not need to re-grandfather old data.
         auto shouldGrandfather = ((monitoredTypesRaw & deletedTypesRaw) == monitoredTypesRaw) ? ShouldGrandfather::No : ShouldGrandfather::Yes;
         
-        callbackAggregator->addPendingCallback();
-
         if (m_resourceLoadStatistics) {
+            callbackAggregator->addPendingCallback();
             m_resourceLoadStatistics->scheduleClearInMemoryAndPersistent(modifiedSince, shouldGrandfather, [callbackAggregator] {
                 callbackAggregator->removePendingCallback();
             });
-        } else {
+        } else if (!didNotifyNetworkProcessToDeleteWebsiteData) {
             for (auto& processPool : processPools()) {
                 if (auto* process = processPool->networkProcess()) {
+                    callbackAggregator->addPendingCallback();
                     process->deleteWebsiteData(m_sessionID, dataTypes, modifiedSince, [callbackAggregator] {
                         callbackAggregator->removePendingCallback();
                     });

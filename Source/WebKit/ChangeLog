@@ -1,5 +1,24 @@
 2019-01-21  Brent Fulgham  <bfulgham@apple.com>
 
+        Unreviewed test fix after r240243
+        Nhttps://bugs.webkit.org/show_bug.cgi?id=193660
+        <rdar://problem/47433602>
+
+        The new ResourceLoadStatistics section of 'removeData' was incrementing the
+        pending callback count before deciding whether to send a message to delete
+        data. This left the count out-of-balance leading to the operation never
+        completing.
+
+        This patch also prevents sending a second message to the NetworkProcess
+        requesting data be deleted if the message was already sent in an earlier
+        section of the method (e.g., as typically happens when all website data
+        is being deleted).
+
+        * UIProcess/WebsiteData/WebsiteDataStore.cpp:
+        (WebKit::WebsiteDataStore::removeData):
+
+2019-01-21  Brent Fulgham  <bfulgham@apple.com>
+
         Implement message handlers for NetworkProcess-based ResourceLoadStatistics
         https://bugs.webkit.org/show_bug.cgi?id=193556
         <rdar://problem/47368501>
