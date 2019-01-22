@@ -33,20 +33,20 @@
 
 WKTypeID WKAuthenticationDecisionListenerGetTypeID()
 {
-    return WebKit::toAPI(AuthenticationDecisionListener::APIType);
+    return WebKit::toAPI(WebKit::AuthenticationDecisionListener::APIType);
 }
 
 void WKAuthenticationDecisionListenerUseCredential(WKAuthenticationDecisionListenerRef authenticationListener, WKCredentialRef credential)
 {
-    WebKit::toImpl(authenticationListener)->completeChallenge(AuthenticationChallengeDisposition::UseCredential, credential ? WebKit::toImpl(credential)->credential() : WebCore::Credential());
+    WebKit::toImpl(authenticationListener)->completeChallenge(WebKit::AuthenticationChallengeDisposition::UseCredential, credential ? WebKit::toImpl(credential)->credential() : WebCore::Credential());
 }
 
 void WKAuthenticationDecisionListenerCancel(WKAuthenticationDecisionListenerRef authenticationListener)
 {
-    WebKit::toImpl(authenticationListener)->completeChallenge(AuthenticationChallengeDisposition::Cancel);
+    WebKit::toImpl(authenticationListener)->completeChallenge(WebKit::AuthenticationChallengeDisposition::Cancel);
 }
 
 void WKAuthenticationDecisionListenerRejectProtectionSpaceAndContinue(WKAuthenticationDecisionListenerRef authenticationListener)
 {
-    WebKit::toImpl(authenticationListener)->completeChallenge(AuthenticationChallengeDisposition::RejectProtectionSpaceAndContinue);
+    WebKit::toImpl(authenticationListener)->completeChallenge(WebKit::AuthenticationChallengeDisposition::RejectProtectionSpaceAndContinue);
 }

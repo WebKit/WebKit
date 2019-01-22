@@ -32,10 +32,16 @@ namespace WebCore {
 class ResourceRequest;
 }
 
+namespace IPC {
+class FormDataReference;
+}
+
 namespace WebKit {
 
 class DrawingAreaProxy;
 class SuspendedPageProxy;
+struct URLSchemeTaskParameters;
+class UserData;
 class WebFrameProxy;
 struct WebNavigationDataStore;
 class WebPageProxy;
