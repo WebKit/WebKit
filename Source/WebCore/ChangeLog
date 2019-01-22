@@ -1,3 +1,14 @@
+2019-01-22  David Kilzer  <ddkilzer@apple.com>
+
+        Leak of NSMutableArray (128 bytes) in com.apple.WebKit.WebContent running WebKit layout tests
+        <https://webkit.org/b/193673>
+        <rdar://problem/47448241>
+
+        Reviewed by Dean Jackson.
+
+        * platform/graphics/gpu/cocoa/GPUBindGroupLayoutMetal.mm:
+        (WebCore::appendArgumentToArray): Use adoptNS() to fix the leak.
+
 2019-01-22  Zalan Bujtas  <zalan@apple.com>
 
         [LFC][Floats] Decouple clearance computation and margin collapsing reset.

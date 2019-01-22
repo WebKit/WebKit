@@ -55,7 +55,7 @@ static void appendArgumentToArray(ArgumentArray& array, RetainPtr<MTLArgumentDes
 {
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
     if (!array)
-        array = [[NSMutableArray alloc] initWithObjects:argument.get(), nil];
+        array = adoptNS([[NSMutableArray alloc] initWithObjects:argument.get(), nil]);
     else
         [array addObject:argument.get()];
     END_BLOCK_OBJC_EXCEPTIONS;
