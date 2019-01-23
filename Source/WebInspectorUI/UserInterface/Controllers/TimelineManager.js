@@ -356,6 +356,28 @@ WI.TimelineManager = class TimelineManager extends WI.Object
         if (!this._isCapturing)
             return;
 
+        function fixMicrotaskPlacement(children)
+        {
+            let newChildren = [];
+            for (let child of children) {
+                if (child.type === TimelineAgent.EventType.EvaluateScript) {
+                    let [microtasks, events] = child.children.partition((grandchild) => {
+                        return grandchild.type === TimelineAgent.EventType.ObserverCallback;
+                    });
+
+                    if (events.length) {
+                        child.children = events;
+                        child.endTime = events.lastValue.endTime;
+                        newChildren.push(child);
+                    }
+
+                    newChildren = newChildren.concat(microtasks);
+                } else
+                    newChildren.push(child);
+            }
+            return newChildren;
+        }
+
         var records = [];
 
         // Iterate over the records tree using a stack. Doing this recursively has
@@ -376,7 +398,7 @@ WI.TimelineManager = class TimelineManager extends WI.Object
                 }
 
                 if (recordPayload.children && recordPayload.children.length)
-                    stack.push({array: recordPayload.children, parent: recordPayload, parentRecord: record || entry.parentRecord, index: 0});
+                    stack.push({array: fixMicrotaskPlacement(recordPayload.children), parent: recordPayload, parentRecord: record || entry.parentRecord, index: 0});
                 ++entry.index;
             } else
                 stack.pop();
@@ -1055,14 +1077,22 @@ WI.TimelineManager = class TimelineManager extends WI.Object
                 webRecord.profilePayload = profilerRecord.profilePayload;
                 profilerRecord = nextScriptProfilerRecord();
 
+                let firstProfilerRecordForWebRecord = null;
+
                 // If there are more script profile records in the same time interval, add them
                 // as individual script evaluated records with profiles. This can happen with
                 // web microtask checkpoints that are technically inside of other web records.
                 // FIXME: <https://webkit.org/b/152903> Web Inspector: Timeline Cleanup: Better Timeline Record for Microtask Checkpoints
                 while (profilerRecord && recordEnclosesRecord(webRecord, profilerRecord)) {
+                    if (!firstProfilerRecordForWebRecord)
+                        firstProfilerRecordForWebRecord = profilerRecord;
+
                     this._addRecord(profilerRecord);
                     profilerRecord = nextScriptProfilerRecord();
                 }
+
+                if (firstProfilerRecordForWebRecord)
+                    webRecord.endTime = firstProfilerRecordForWebRecord.startTime;
 
                 webRecord = nextWebTimelineRecord();
                 continue;
