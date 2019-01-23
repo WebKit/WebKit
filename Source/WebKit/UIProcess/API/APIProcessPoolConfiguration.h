@@ -56,8 +56,8 @@ public:
     bool shouldHaveLegacyDataStore() const { return m_shouldHaveLegacyDataStore; }
     void setShouldHaveLegacyDataStore(bool shouldHaveLegacyDataStore) { m_shouldHaveLegacyDataStore = shouldHaveLegacyDataStore; }
 
-    unsigned maximumProcessCount() const { return m_maximumProcessCount; }
-    void setMaximumProcessCount(unsigned maximumProcessCount) { m_maximumProcessCount = maximumProcessCount; }
+    bool usesSingleWebProcess() const { return m_usesSingleWebProcess; }
+    void setUsesSingleWebProcess(bool enabled) { m_usesSingleWebProcess = enabled; }
 
     bool isAutomaticProcessWarmingEnabled() const
     {
@@ -187,7 +187,6 @@ public:
 private:
     bool m_shouldHaveLegacyDataStore { false };
 
-    unsigned m_maximumProcessCount { 0 };
     bool m_diskCacheSpeculativeValidationEnabled { false };
     WebKit::CacheModel m_cacheModel { WebKit::CacheModel::PrimaryWebBrowser };
 
@@ -224,6 +223,7 @@ private:
     bool m_clientWouldBenefitFromAutomaticProcessPrewarming { false };
     WTF::String m_customWebContentServiceBundleIdentifier;
     bool m_isJITEnabled { true };
+    bool m_usesSingleWebProcess { false };
 
 #if PLATFORM(IOS_FAMILY)
     WTF::String m_ctDataConnectionServiceType;

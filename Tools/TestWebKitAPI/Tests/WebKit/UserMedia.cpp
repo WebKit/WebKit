@@ -106,7 +106,6 @@ static void didCrashCallback(WKPageRef, const void*)
 TEST(WebKit, OnDeviceChangeCrash)
 {
     auto context = adoptWK(WKContextCreateWithConfiguration(nullptr));
-    WKContextSetMaximumNumberOfProcesses(context.get(), 1);
 
     WKRetainPtr<WKPageGroupRef> pageGroup(AdoptWK, WKPageGroupCreateWithIdentifier(Util::toWK("GetUserMedia").get()));
     WKPreferencesRef preferences = WKPageGroupGetPreferences(pageGroup.get());
@@ -131,7 +130,7 @@ TEST(WebKit, OnDeviceChangeCrash)
     WKPageLoadURL(webView.page(), url.get());
 
     // Load a second page in same process.
-    PlatformWebView webView2(context.get(), pageGroup.get());
+    PlatformWebView webView2(webView.page());
     WKPageSetPageUIClient(webView2.page(), &uiClient.base);
     WKPageNavigationClientV0 navigationClient;
     memset(&navigationClient, 0, sizeof(navigationClient));

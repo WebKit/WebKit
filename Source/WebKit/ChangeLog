@@ -1,3 +1,45 @@
+2019-01-23  Chris Dumez  <cdumez@apple.com>
+
+        Deprecate API to limit the maximum number of WebProcesses
+        https://bugs.webkit.org/show_bug.cgi?id=193725
+        <rdar://problem/47464879>
+
+        Reviewed by Geoff Garen.
+
+        Deprecate API to limit the maximum number of WebProcesses and make it a no-op. It adds
+        complexity and is not safe (conflicts with PSON).
+
+        Add a new usesSingleWebProcess SPI to _WKProcessPoolConfiguration to be used by
+        Minibrowser / Safari in order to disable process per tab (can be useful for debugging).
+        Note that enabling the single WebProcess mode will disable PSON and process prewarming.
+
+        * UIProcess/API/APIProcessPoolConfiguration.cpp:
+        (API::ProcessPoolConfiguration::createWithLegacyOptions):
+        (API::ProcessPoolConfiguration::copy):
+        * UIProcess/API/APIProcessPoolConfiguration.h:
+        * UIProcess/API/C/WKContext.cpp:
+        (WKContextSetMaximumNumberOfProcesses):
+        (WKContextGetMaximumNumberOfProcesses):
+        * UIProcess/API/C/WKContext.h:
+        * UIProcess/API/Cocoa/WKProcessPool.mm:
+        * UIProcess/API/Cocoa/WKProcessPoolPrivate.h:
+        * UIProcess/API/Cocoa/_WKProcessPoolConfiguration.h:
+        * UIProcess/API/Cocoa/_WKProcessPoolConfiguration.mm:
+        (-[_WKProcessPoolConfiguration maximumProcessCount]):
+        (-[_WKProcessPoolConfiguration setMaximumProcessCount:]):
+        (-[_WKProcessPoolConfiguration usesSingleWebProcess]):
+        (-[_WKProcessPoolConfiguration setUsesSingleWebProcess:]):
+        (-[_WKProcessPoolConfiguration description]):
+        * UIProcess/API/glib/WebKitWebContext.cpp:
+        (webkitWebContextConstructed):
+        (webkit_web_context_set_process_model):
+        (webkit_web_context_set_web_process_count_limit):
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::WebProcessPool::createNewWebProcessRespectingProcessCountLimit):
+        (WebKit::WebProcessPool::didReachGoodTimeToPrewarm):
+        (WebKit::WebProcessPool::processForNavigationInternal):
+        * UIProcess/WebProcessPool.h:
+
 2019-01-23  Brent Fulgham  <bfulgham@apple.com>
 
         Switch NetworkStorageSession portions of ResourceLoadStatistics to Async message passing style

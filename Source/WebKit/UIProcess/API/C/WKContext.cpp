@@ -326,14 +326,15 @@ WKCacheModel WKContextGetCacheModel(WKContextRef contextRef)
     return WebKit::toAPI(WebKit::toImpl(contextRef)->cacheModel());
 }
 
-void WKContextSetMaximumNumberOfProcesses(WKContextRef contextRef, unsigned numberOfProcesses)
+void WKContextSetMaximumNumberOfProcesses(WKContextRef, unsigned)
 {
-    WebKit::toImpl(contextRef)->setMaximumNumberOfProcesses(numberOfProcesses);
+    // Deprecated.
 }
 
-unsigned WKContextGetMaximumNumberOfProcesses(WKContextRef contextRef)
+unsigned WKContextGetMaximumNumberOfProcesses(WKContextRef)
 {
-    return WebKit::toImpl(contextRef)->maximumNumberOfProcesses();
+    // Deprecated.
+    return std::numeric_limits<unsigned>::max();
 }
 
 void WKContextSetAlwaysUsesComplexTextCodePath(WKContextRef contextRef, bool alwaysUseComplexTextCodePath)
@@ -403,6 +404,16 @@ void WKContextSetCanHandleHTTPSServerTrustEvaluation(WKContextRef contextRef, bo
 void WKContextSetPrewarmsProcessesAutomatically(WKContextRef contextRef, bool value)
 {
     WebKit::toImpl(contextRef)->configuration().setIsAutomaticProcessWarmingEnabled(value);
+}
+
+void WKContextSetUsesSingleWebProcess(WKContextRef contextRef, bool value)
+{
+    WebKit::toImpl(contextRef)->configuration().setUsesSingleWebProcess(value);
+}
+
+bool WKContextGetUsesSingleWebProcess(WKContextRef contextRef)
+{
+    return WebKit::toImpl(contextRef)->configuration().usesSingleWebProcess();
 }
 
 void WKContextSetCustomWebContentServiceBundleIdentifier(WKContextRef contextRef, WKStringRef name)

@@ -153,9 +153,6 @@ public:
     void setAutomationClient(std::unique_ptr<API::AutomationClient>&&);
     void setLegacyCustomProtocolManagerClient(std::unique_ptr<API::CustomProtocolManagerClient>&&);
 
-    void setMaximumNumberOfProcesses(unsigned); // Can only be called when there are no processes running.
-    unsigned maximumNumberOfProcesses() const { return !m_configuration->maximumProcessCount() ? UINT_MAX : m_configuration->maximumProcessCount(); }
-
     void setCustomWebContentServiceBundleIdentifier(const String&);
     const String& customWebContentServiceBundleIdentifier() { return m_configuration->customWebContentServiceBundleIdentifier(); }
 
@@ -515,6 +512,8 @@ private:
 
     static void languageChanged(void* context);
     void languageChanged();
+
+    bool usesSingleWebProcess() const { return m_configuration->usesSingleWebProcess(); }
 
 #if PLATFORM(IOS_FAMILY)
     String cookieStorageDirectory() const;

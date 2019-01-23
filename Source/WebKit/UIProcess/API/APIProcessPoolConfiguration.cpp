@@ -41,7 +41,6 @@ Ref<ProcessPoolConfiguration> ProcessPoolConfiguration::createWithLegacyOptions(
     auto configuration = ProcessPoolConfiguration::createWithWebsiteDataStoreConfiguration(WebsiteDataStore::legacyDefaultDataStoreConfiguration());
 
     configuration->m_shouldHaveLegacyDataStore = true;
-    configuration->m_maximumProcessCount = 1;
     configuration->m_cacheModel = WebKit::CacheModel::DocumentViewer;
 
     return configuration;
@@ -90,7 +89,6 @@ Ref<ProcessPoolConfiguration> ProcessPoolConfiguration::copy()
     auto copy = this->create();
 
     copy->m_shouldHaveLegacyDataStore = this->m_shouldHaveLegacyDataStore;
-    copy->m_maximumProcessCount = this->m_maximumProcessCount;
     copy->m_cacheModel = this->m_cacheModel;
     copy->m_diskCacheDirectory = this->m_diskCacheDirectory;
     copy->m_diskCacheSpeculativeValidationEnabled = this->m_diskCacheSpeculativeValidationEnabled;
@@ -133,6 +131,7 @@ Ref<ProcessPoolConfiguration> ProcessPoolConfiguration::copy()
     copy->m_suppressesConnectionTerminationOnSystemChange = this->m_suppressesConnectionTerminationOnSystemChange;
 #endif
     copy->m_customWebContentServiceBundleIdentifier = this->m_customWebContentServiceBundleIdentifier;
+    copy->m_usesSingleWebProcess = m_usesSingleWebProcess;
 
     return copy;
 }

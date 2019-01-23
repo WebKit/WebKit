@@ -100,7 +100,7 @@ static WKWebViewConfiguration *defaultConfiguration()
         _WKProcessPoolConfiguration *processConfiguration = [[[_WKProcessPoolConfiguration alloc] init] autorelease];
         processConfiguration.diskCacheSpeculativeValidationEnabled = ![SettingsController shared].networkCacheSpeculativeRevalidationDisabled;
         if ([SettingsController shared].perWindowWebProcessesDisabled)
-            processConfiguration.maximumProcessCount = 1;
+            processConfiguration.usesSingleWebProcess = YES;
         if ([SettingsController shared].processSwapOnWindowOpenWithOpenerEnabled)
             processConfiguration.processSwapsOnWindowOpenWithOpener = true;
         

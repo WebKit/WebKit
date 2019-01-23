@@ -1,3 +1,25 @@
+2019-01-23  Chris Dumez  <cdumez@apple.com>
+
+        Deprecate API to limit the maximum number of WebProcesses
+        https://bugs.webkit.org/show_bug.cgi?id=193725
+        <rdar://problem/47464879>
+
+        Reviewed by Geoff Garen.
+
+        Update existing API tests to stop using deprecated API.
+
+        * MiniBrowser/mac/AppDelegate.m:
+        (defaultConfiguration):
+        * TestWebKitAPI/Tests/WebKit/UserMedia.cpp:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WebKitCocoa/ResponsivenessTimer.mm:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WebKitCocoa/ServiceWorkerBasic.mm:
+        * TestWebKitAPI/Tests/WebKitCocoa/UserContentController.mm:
+        (TEST):
+        * TestWebKitAPI/Tests/WebKitCocoa/WKProcessPoolConfiguration.mm:
+        (TEST):
+
 2019-01-23  Aakash Jain  <aakash_jain@apple.com>
 
         [ews-app] Rename ews model buildermappings to buildermapping

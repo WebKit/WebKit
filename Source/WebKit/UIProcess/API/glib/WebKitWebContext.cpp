@@ -334,7 +334,6 @@ static void webkitWebContextConstructed(GObject* object)
 
     API::ProcessPoolConfiguration configuration;
     configuration.setInjectedBundlePath(WebCore::FileSystem::stringFromFileSystemRepresentation(bundleFilename.get()));
-    configuration.setMaximumProcessCount(1);
     configuration.setDiskCacheSpeculativeValidationEnabled(true);
 
     WebKitWebContext* webContext = WEBKIT_WEB_CONTEXT(object);
@@ -1495,14 +1494,6 @@ void webkit_web_context_set_process_model(WebKitWebContext* context, WebKitProce
         return;
 
     context->priv->processModel = processModel;
-    switch (context->priv->processModel) {
-    case WEBKIT_PROCESS_MODEL_SHARED_SECONDARY_PROCESS:
-        context->priv->processPool->setMaximumNumberOfProcesses(1);
-        break;
-    case WEBKIT_PROCESS_MODEL_MULTIPLE_SECONDARY_PROCESSES:
-        context->priv->processPool->setMaximumNumberOfProcesses(context->priv->processCountLimit);
-        break;
-    }
 }
 
 /**
@@ -1545,8 +1536,6 @@ void webkit_web_context_set_web_process_count_limit(WebKitWebContext* context, g
         return;
 
     context->priv->processCountLimit = limit;
-    if (context->priv->processModel != WEBKIT_PROCESS_MODEL_SHARED_SECONDARY_PROCESS)
-        context->priv->processPool->setMaximumNumberOfProcesses(limit);
 }
 
 /**
