@@ -166,7 +166,7 @@ WI.ComputedStyleDetailsPanel = class ComputedStyleDetailsPanel extends WI.StyleD
     {
         let result = new Map();
         for (let rule of orderedDeclarations) {
-            for (let property of rule.allProperties) {
+            for (let property of rule.properties) {
                 let properties = result.get(property.name);
                 if (!properties) {
                     properties = [];

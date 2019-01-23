@@ -236,7 +236,7 @@ WI.SpreadsheetRulesStyleDetailsPanel = class SpreadsheetRulesStyleDetailsPanel e
 
             section.addEventListener(WI.SpreadsheetCSSStyleDeclarationSection.Event.FilterApplied, this._handleSectionFilterApplied, this);
 
-            if (this._newRuleSelector === style.selectorText && !style.hasProperties())
+            if (this._newRuleSelector === style.selectorText && style.enabledProperties.length === 0)
                 section.startEditingRuleSelector();
 
             this.addSubview(section);

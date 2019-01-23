@@ -247,7 +247,7 @@ WI.SpreadsheetStyleProperty = class SpreadsheetStyleProperty extends WI.Object
         let duplicatePropertyExistsBelow = (cssProperty) => {
             let propertyFound = false;
 
-            for (let property of this._property.ownerStyle.properties) {
+            for (let property of this._property.ownerStyle.enabledProperties) {
                 if (property === cssProperty)
                     propertyFound = true;
                 else if (property.name === cssProperty.name && propertyFound)

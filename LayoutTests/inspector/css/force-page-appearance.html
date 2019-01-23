@@ -14,7 +14,7 @@ function test() {
 
     let getProperty = (propertyName) => {
         let styleDeclaration = nodeStyles.computedStyle;
-        for (let property of styleDeclaration.properties) {
+        for (let property of styleDeclaration.enabledProperties) {
             if (property.name === propertyName)
                 return property;
         }

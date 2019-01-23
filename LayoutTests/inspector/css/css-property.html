@@ -16,7 +16,7 @@ function test() {
                 if (rule.selectorText !== "div#x")
                     continue;
 
-                for (let property of rule.style.properties) {
+                for (let property of rule.style.enabledProperties) {
                     switch (property.name) {
                     case "background-repeat":
                         InspectorTest.expectThat(property.valid, `"${property.name}" is a valid property.`);
@@ -42,7 +42,7 @@ function test() {
                 if (rule.selectorText !== "div#x")
                     continue;
 
-                for (let property of rule.style.properties) {
+                for (let property of rule.style.enabledProperties) {
                     switch (property.name) {
                     case "background-repeat":
                     case "background-repeat-x":
@@ -68,7 +68,7 @@ function test() {
                 if (rule.selectorText !== "div#x")
                     continue;
 
-                for (let property of rule.style.properties) {
+                for (let property of rule.style.enabledProperties) {
                     switch (property.name) {
                     case "background-repeat":
                     case "background-repeat-x":
@@ -94,7 +94,7 @@ function test() {
                 if (rule.selectorText !== "div#x")
                     continue;
 
-                for (let property of rule.style.properties) {
+                for (let property of rule.style.enabledProperties) {
                     switch (property.name) {
                     case "background-repeat":
                     case "background-repeat-x":
@@ -118,7 +118,7 @@ function test() {
                 if (rule.selectorText !== "div#x")
                     continue;
 
-                for (let property of rule.style.allProperties) {
+                for (let property of rule.style.properties) {
                     switch (property.name) {
                     case "background-repeat":
                     case "background-repeat-x":
@@ -145,7 +145,7 @@ function test() {
                 if (rule.selectorText !== "div#x")
                     continue;
 
-                for (let property of rule.style.allProperties) {
+                for (let property of rule.style.properties) {
                     switch (property.name) {
                     case "background-repeat":
                     case "background-repeat-x":
@@ -176,7 +176,7 @@ function test() {
                 // synthesize a value for the CSSProperty if it is falsy.  This is used for cases
                 // where a shorthand property is written in the style, since the longhand properties
                 // (with corresponding values) are still sent to the frontend.
-                for (let property of rule.style.properties) {
+                for (let property of rule.style.enabledProperties) {
                     switch (property.name) {
                     case "background-repeat":
                         InspectorTest.expectEqual(property.text, "background-repeat: repeat;", `"${property.name}" has the text "background-repeat: repeat;".`);
@@ -210,14 +210,14 @@ function test() {
                 if (rule.selectorText !== "div#x")
                     continue;
 
-                let propertiesLength = rule.style.allProperties.length;
-                let firstProperty = rule.style.allProperties[0];
-                let secondProperty = rule.style.allProperties[1];
+                let propertiesLength = rule.style.properties.length;
+                let firstProperty = rule.style.properties[0];
+                let secondProperty = rule.style.properties[1];
 
-                rule.style.allProperties[0].remove();
+                rule.style.properties[0].remove();
 
-                InspectorTest.expectEqual(rule.style.allProperties.length, propertiesLength - 1, "The removed property should no longer be in allProperties array.");
-                InspectorTest.expectEqual(rule.style.allProperties[0], secondProperty, "The second property should shift and become the first.");
+                InspectorTest.expectEqual(rule.style.properties.length, propertiesLength - 1, "The removed property should no longer be in properties array.");
+                InspectorTest.expectEqual(rule.style.properties[0], secondProperty, "The second property should shift and become the first.");
             }
 
             resolve();

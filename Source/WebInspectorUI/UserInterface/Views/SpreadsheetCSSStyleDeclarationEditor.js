@@ -222,9 +222,9 @@ WI.SpreadsheetCSSStyleDeclarationEditor = class SpreadsheetCSSStyleDeclarationEd
             return properties;
 
         if (this._style._styleSheetTextRange)
-            properties = this._style.allVisibleProperties;
+            properties = this._style.visibleProperties;
         else
-            properties = this._style.allProperties;
+            properties = this._style.properties;
 
         if (this._sortPropertiesByName)
             properties.sort((a, b) => a.name.extendedLocaleCompare(b.name));

@@ -44,8 +44,9 @@ WI.CSSStyleDeclaration = class CSSStyleDeclaration extends WI.Object
         this._pendingProperties = [];
         this._propertyNameMap = {};
 
-        this._allProperties = [];
-        this._allVisibleProperties = null;
+        this._properties = [];
+        this._enabledProperties = [];
+        this._visibleProperties = null;
 
         this.update(text, properties, styleSheetTextRange, {dontFireEvents: true});
     }
@@ -114,18 +115,17 @@ WI.CSSStyleDeclaration = class CSSStyleDeclaration extends WI.Object
         var oldText = this._text;
 
         this._text = text;
-        this._properties = properties.filter((property) => property.enabled);
-        this._allProperties = properties;
+        this._properties = properties;
+        this._enabledProperties = properties.filter((property) => property.enabled);
 
         this._styleSheetTextRange = styleSheetTextRange;
         this._propertyNameMap = {};
 
-        delete this._visibleProperties;
-        this._allVisibleProperties = null;
+        this._visibleProperties = null;
 
         var editable = this.editable;
 
-        for (let property of this._allProperties) {
+        for (let property of this._properties) {
             property.ownerStyle = this;
 
             // Store the property in a map if we aren't editable. This
@@ -144,7 +144,7 @@ WI.CSSStyleDeclaration = class CSSStyleDeclaration extends WI.Object
         for (var i = 0; i < oldProperties.length; ++i) {
             var oldProperty = oldProperties[i];
 
-            if (!this._properties.includes(oldProperty)) {
+            if (!this._enabledProperties.includes(oldProperty)) {
                 // Clear the index, since it is no longer valid.
                 oldProperty.index = NaN;
 
@@ -161,9 +161,9 @@ WI.CSSStyleDeclaration = class CSSStyleDeclaration extends WI.Object
             return;
 
         var addedProperties = [];
-        for (var i = 0; i < this._properties.length; ++i) {
-            if (!oldProperties.includes(this._properties[i]))
-                addedProperties.push(this._properties[i]);
+        for (var i = 0; i < this._enabledProperties.length; ++i) {
+            if (!oldProperties.includes(this._enabledProperties[i]))
+                addedProperties.push(this._enabledProperties[i]);
         }
 
         // Don't fire the event if there is text and it hasn't changed.
@@ -220,20 +220,12 @@ WI.CSSStyleDeclaration = class CSSStyleDeclaration extends WI.Object
         this._nodeStyles.changeStyleText(this, text);
     }
 
-    get properties()
+    get enabledProperties()
     {
-        return this._properties;
+        return this._enabledProperties;
     }
 
-    get allProperties() { return this._allProperties; }
-
-    get allVisibleProperties()
-    {
-        if (!this._allVisibleProperties)
-            this._allVisibleProperties = this._allProperties.filter((property) => !!property.styleDeclarationTextRange);
-
-        return this._allVisibleProperties;
-    }
+    get properties() { return this._properties; }
 
     get visibleProperties()
     {
@@ -293,7 +285,7 @@ WI.CSSStyleDeclaration = class CSSStyleDeclaration extends WI.Object
 
         var bestMatchProperty = null;
 
-        findMatch(this._properties);
+        findMatch(this._enabledProperties);
 
         if (bestMatchProperty)
             return bestMatchProperty;
@@ -314,11 +306,6 @@ WI.CSSStyleDeclaration = class CSSStyleDeclaration extends WI.Object
         return newProperty;
     }
 
-    hasProperties()
-    {
-        return !!this._properties.length;
-    }
-
     newBlankProperty(propertyIndex)
     {
         let text, name, value, priority, overridden, implicit, anonymous;
@@ -328,11 +315,11 @@ WI.CSSStyleDeclaration = class CSSStyleDeclaration extends WI.Object
 
         let property = new WI.CSSProperty(propertyIndex, text, name, value, priority, enabled, overridden, implicit, anonymous, valid, styleSheetTextRange);
 
-        this._allProperties.insertAtIndex(property, propertyIndex);
-        for (let index = propertyIndex + 1; index < this._allProperties.length; index++)
-            this._allProperties[index].index = index;
+        this._properties.insertAtIndex(property, propertyIndex);
+        for (let index = propertyIndex + 1; index < this._properties.length; index++)
+            this._properties[index].index = index;
 
-        this.update(this._text, this._allProperties, this._styleSheetTextRange, {dontFireEvents: true, suppressLock: true});
+        this.update(this._text, this._properties, this._styleSheetTextRange, {dontFireEvents: true, suppressLock: true});
 
         return property;
     }
@@ -340,14 +327,14 @@ WI.CSSStyleDeclaration = class CSSStyleDeclaration extends WI.Object
     shiftPropertiesAfter(cssProperty, lineDelta, columnDelta, propertyWasRemoved)
     {
         // cssProperty.index could be set to NaN by WI.CSSStyleDeclaration.prototype.update.
-        let realIndex = this._allProperties.indexOf(cssProperty);
+        let realIndex = this._properties.indexOf(cssProperty);
         if (realIndex === -1)
             return;
 
         let endLine = cssProperty.styleSheetTextRange.endLine;
 
-        for (let i = realIndex + 1; i < this._allProperties.length; i++) {
-            let property = this._allProperties[i];
+        for (let i = realIndex + 1; i < this._properties.length; i++) {
+            let property = this._properties[i];
 
             if (property._styleSheetTextRange) {
                 if (property.styleSheetTextRange.startLine === endLine) {
@@ -362,10 +349,10 @@ WI.CSSStyleDeclaration = class CSSStyleDeclaration extends WI.Object
         }
 
         if (propertyWasRemoved)
-            this._allProperties.splice(realIndex, 1);
+            this._properties.splice(realIndex, 1);
 
         // Invalidate cached properties.
-        this._allVisibleProperties = null;
+        this._visibleProperties = null;
     }
 
     // Protected
@@ -382,10 +369,10 @@ WI.CSSStyleDeclaration = class CSSStyleDeclaration extends WI.Object
         if (index < 0)
             return this._styleSheetTextRange.collapseToStart();
 
-        if (index >= this.allVisibleProperties.length)
+        if (index >= this.visibleProperties.length)
             return this._styleSheetTextRange.collapseToEnd();
 
-        let property = this.allVisibleProperties[index];
+        let property = this.visibleProperties[index];
         return property.styleSheetTextRange.collapseToEnd();
     }
 };

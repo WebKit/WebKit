@@ -51,6 +51,6 @@ PASS: "background-repeat-y" has the text "".
 PASS: "background-repeat-y" has the _text (private) "".
 
 -- Running test case: CSSProperty.prototype.remove
-PASS: The removed property should no longer be in allProperties array.
+PASS: The removed property should no longer be in properties array.
 PASS: The second property should shift and become the first.
 

@@ -392,7 +392,7 @@ WI.CSSProperty = class CSSProperty extends WI.Object
     _prependSemicolonIfNeeded()
     {
         for (let i = this.index - 1; i >= 0; --i) {
-            let property = this._ownerStyle.allProperties[i];
+            let property = this._ownerStyle.properties[i];
             if (!property.enabled)
                 continue;
 

@@ -536,7 +536,7 @@ WI.DOMNodeStyles = class DOMNodeStyles extends WI.Object
 
         if (styleDeclaration) {
             // Use propertyForName when the index is NaN since propertyForName is fast in that case.
-            var property = isNaN(index) ? styleDeclaration.propertyForName(name, true) : styleDeclaration.properties[index];
+            var property = isNaN(index) ? styleDeclaration.propertyForName(name, true) : styleDeclaration.enabledProperties[index];
 
             // Reuse a property if the index and name matches. Otherwise it is a different property
             // and should be created from scratch. This works in the simple cases where only existing
@@ -880,7 +880,7 @@ WI.DOMNodeStyles = class DOMNodeStyles extends WI.Object
 
         for (var i = 0; i < styles.length; ++i) {
             var style = styles[i];
-            var properties = style.properties;
+            var properties = style.enabledProperties;
 
             for (var j = 0; j < properties.length; ++j) {
                 var property = properties[j];
@@ -922,7 +922,7 @@ WI.DOMNodeStyles = class DOMNodeStyles extends WI.Object
     _associateRelatedProperties(styles, propertyNameToEffectiveProperty)
     {
         for (var i = 0; i < styles.length; ++i) {
-            var properties = styles[i].properties;
+            var properties = styles[i].enabledProperties;
 
             var knownShorthands = {};
 
@@ -979,7 +979,7 @@ WI.DOMNodeStyles = class DOMNodeStyles extends WI.Object
     _isPropertyFoundInMatchingRules(propertyName)
     {
         return this._orderedStyles.some((style) => {
-            return style.properties.some((property) => property.name === propertyName);
+            return style.enabledProperties.some((property) => property.name === propertyName);
         });
     }
 };

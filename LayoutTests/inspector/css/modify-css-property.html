@@ -29,7 +29,7 @@ function test() {
 
             let getProperty = (propertyName) => {
                 let styleDeclaration = getMatchedStyleDeclaration();
-                for (let property of styleDeclaration.properties) {
+                for (let property of styleDeclaration.enabledProperties) {
                     if (property.name === propertyName)
                         return property;
                 }
@@ -64,7 +64,7 @@ function test() {
 
             let getProperty = (propertyName) => {
                 let styleDeclaration = getMatchedStyleDeclaration();
-                for (let property of styleDeclaration.properties) {
+                for (let property of styleDeclaration.enabledProperties) {
                     if (property.name === propertyName)
                         return property;
                 }
@@ -107,7 +107,7 @@ function test() {
 
             let getProperty = (propertyName) => {
                 let styleDeclaration = getInlineStyleDeclaration();
-                for (let property of styleDeclaration.properties) {
+                for (let property of styleDeclaration.enabledProperties) {
                     if (property.name === propertyName)
                         return property;
                 }
@@ -153,7 +153,7 @@ function test() {
 
             let getProperty = (propertyName) => {
                 let styleDeclaration = getMatchedStyleDeclaration();
-                for (let property of styleDeclaration.allProperties) {
+                for (let property of styleDeclaration.properties) {
                     if (property.name === propertyName)
                         return property;
                 }
@@ -200,7 +200,7 @@ function test() {
 
             let getProperty = (propertyName) => {
                 let styleDeclaration = getMatchedStyleDeclaration();
-                for (let property of styleDeclaration.allProperties) {
+                for (let property of styleDeclaration.properties) {
                     if (property.name === propertyName)
                         return property;
                 }

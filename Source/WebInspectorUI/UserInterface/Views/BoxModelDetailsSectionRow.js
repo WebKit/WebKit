@@ -200,7 +200,7 @@ WI.BoxModelDetailsSectionRow = class BoxModelDetailsSectionRow extends WI.Detail
 
         this._boxElements = [];
 
-        if (!style.hasProperties()) {
+        if (style.enabledProperties.length === 0) {
             this.showEmptyMessage();
             return;
         }

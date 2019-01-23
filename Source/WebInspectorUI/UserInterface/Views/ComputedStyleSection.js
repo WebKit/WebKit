@@ -125,9 +125,9 @@ WI.ComputedStyleSection = class ComputedStyleSection extends WI.View
             return properties;
 
         if (this._style._styleSheetTextRange)
-            properties = this._style.allVisibleProperties;
+            properties = this._style.visibleProperties;
         else
-            properties = this._style.allProperties;
+            properties = this._style.properties;
 
         properties.sort((a, b) => a.name.extendedLocaleCompare(b.name));
 

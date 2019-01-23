@@ -13,7 +13,7 @@ function test()
 
     function generateCSSRuleString(style) {
         let styleText = style.selectorText + " {\n";
-        for (let property of style.properties) {
+        for (let property of style.enabledProperties) {
             if (property.anonymous)
                 continue;
 

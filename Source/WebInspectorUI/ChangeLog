@@ -1,3 +1,47 @@
+2019-01-22  Nikita Vasilyev  <nvasilyev@apple.com>
+
+        Web Inspector: Styles: refactor properties/allProperties/visibleProperties/allVisibleProperties
+        https://bugs.webkit.org/show_bug.cgi?id=193615
+
+        Reviewed by Devin Rousso.
+
+        Remove unused visibleProperties.
+
+        Rename:
+        - properties to enabledProperties;
+        - allProperties to properties;
+        - allVisibleProperties to visibleProperties.
+
+        * UserInterface/Models/CSSProperty.js:
+        (WI.CSSProperty.prototype._prependSemicolonIfNeeded):
+        (WI.CSSProperty):
+        * UserInterface/Models/CSSStyleDeclaration.js:
+        (WI.CSSStyleDeclaration):
+        (WI.CSSStyleDeclaration.prototype.get enabledProperties):
+        (WI.CSSStyleDeclaration.prototype.get properties):
+        (WI.CSSStyleDeclaration.prototype.propertyForName):
+        (WI.CSSStyleDeclaration.prototype.newBlankProperty):
+        (WI.CSSStyleDeclaration.prototype.shiftPropertiesAfter):
+        (WI.CSSStyleDeclaration.prototype._rangeAfterPropertyAtIndex):
+        * UserInterface/Models/DOMNodeStyles.js:
+        (WI.DOMNodeStyles.prototype._parseStylePropertyPayload):
+        (WI.DOMNodeStyles.prototype._markOverriddenProperties):
+        (WI.DOMNodeStyles.prototype._associateRelatedProperties):
+        (WI.DOMNodeStyles.prototype._isPropertyFoundInMatchingRules):
+        (WI.DOMNodeStyles):
+        * UserInterface/Views/BoxModelDetailsSectionRow.js:
+        (WI.BoxModelDetailsSectionRow.prototype._updateMetrics):
+        * UserInterface/Views/ComputedStyleDetailsPanel.js:
+        (WI.ComputedStyleDetailsPanel.prototype._computePropertyTraces):
+        * UserInterface/Views/ComputedStyleSection.js:
+        (WI.ComputedStyleSection.prototype.get propertiesToRender):
+        * UserInterface/Views/SpreadsheetCSSStyleDeclarationEditor.js:
+        (WI.SpreadsheetCSSStyleDeclarationEditor.prototype.get propertiesToRender):
+        * UserInterface/Views/SpreadsheetRulesStyleDetailsPanel.js:
+        (WI.SpreadsheetRulesStyleDetailsPanel.prototype.layout):
+        * UserInterface/Views/SpreadsheetStyleProperty.js:
+        (WI.SpreadsheetStyleProperty.prototype.updateStatus):
+
 2019-01-22  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Network Table appears broken after filter - rows look collapsed

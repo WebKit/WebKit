@@ -1,3 +1,21 @@
+2019-01-22  Nikita Vasilyev  <nvasilyev@apple.com>
+
+        Web Inspector: Styles: refactor properties/allProperties/visibleProperties/allVisibleProperties
+        https://bugs.webkit.org/show_bug.cgi?id=193615
+
+        Reviewed by Devin Rousso.
+
+        Rename:
+        - properties to enabledProperties;
+        - allProperties to properties.
+
+        * inspector/css/css-property-expected.txt:
+        * inspector/css/css-property.html:
+        * inspector/css/force-page-appearance.html:
+        * inspector/css/matched-style-properties.html:
+        * inspector/css/modify-css-property.html:
+        * inspector/css/shadow-scoped-style.html:
+
 2019-01-22  Sihui Liu  <sihui_liu@apple.com>
 
         Layout test storage/indexeddb/open-during-transaction-private.html is failing

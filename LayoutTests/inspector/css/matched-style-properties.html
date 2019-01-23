@@ -40,8 +40,8 @@ function test() {
             if (rule.type !== WI.CSSStyleSheet.Type.Author)
                 continue;
 
-            for (var j = 0; j < rule.style.properties.length; ++j) {
-                var property = rule.style.properties[j];
+            for (var j = 0; j < rule.style.enabledProperties.length; ++j) {
+                var property = rule.style.enabledProperties[j];
 
                 if (property.anonymous)
                     continue;
