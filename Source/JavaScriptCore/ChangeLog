@@ -1,3 +1,17 @@
+2019-01-23  David Kilzer  <ddkilzer@apple.com>
+
+        [JSC] Duplicate global variables: JSC::opcodeLengths
+        <https://webkit.org/b/193714>
+        <rdar://problem/47340200>
+
+        Reviewed by Mark Lam.
+
+        * bytecode/Opcode.cpp:
+        (JSC::opcodeLengths): Move array implementation here and mark
+        const.
+        * bytecode/Opcode.h:
+        (JSC::opcodeLengths): Change to extern declaration.
+
 2019-01-23  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GLIB] Remote Inspector: no data displayed
