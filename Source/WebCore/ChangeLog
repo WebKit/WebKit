@@ -1,3 +1,11 @@
+2019-01-23  David Kilzer  <ddkilzer@apple.com>
+
+        REGRESSION (r240292): Attempt to fix WinCairo build
+
+        * platform/network/curl/CurlResourceHandleDelegate.cpp:
+        (WebCore::handleCookieHeaders): Remove argument to
+        NetworkingContext::storageSession().
+
 2019-01-23  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Introduce UndoStep::label() and adopt it in WebKitLegacy and WebKit
