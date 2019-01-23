@@ -337,6 +337,10 @@ void UniqueIDBDatabase::didDeleteBackingStore(uint64_t deletedVersion)
     }
 
     m_deleteBackingStoreInProgress = false;
+
+    if (m_hardClosedForUserDelete)
+        return;
+
     invokeOperationAndTransactionTimer();
 }
 
@@ -633,6 +637,9 @@ void UniqueIDBDatabase::didOpenBackingStore(const IDBDatabaseInfo& info, const I
 
     ASSERT(m_isOpeningBackingStore);
     m_isOpeningBackingStore = false;
+
+    if (m_hardClosedForUserDelete)
+        return;
 
     handleDatabaseOperations();
 }
@@ -1708,7 +1715,7 @@ void UniqueIDBDatabase::transactionCompleted(RefPtr<UniqueIDBDatabaseTransaction
     for (auto objectStore : transaction->objectStoreIdentifiers()) {
         if (!transaction->isReadOnly()) {
             m_objectStoreWriteTransactions.remove(objectStore);
-            ASSERT(m_objectStoreTransactionCounts.count(objectStore) == 1);
+            ASSERT(m_objectStoreTransactionCounts.count(objectStore) == 1 || m_hardClosedForUserDelete);
         }
         m_objectStoreTransactionCounts.remove(objectStore);
     }

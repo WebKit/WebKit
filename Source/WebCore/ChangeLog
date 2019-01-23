@@ -1,3 +1,17 @@
+2019-01-23  Sihui Liu  <sihui_liu@apple.com>
+
+        Clean up IndexedDB files between tests
+        https://bugs.webkit.org/show_bug.cgi?id=192796
+        <rdar://problem/46824999>
+
+        Reviewed by Geoffrey Garen.
+
+        We should clean up the IndexedDB files between tests to make sure each IDB test is independent of others.
+
+        * Modules/indexeddb/server/UniqueIDBDatabase.cpp:
+        (WebCore::IDBServer::UniqueIDBDatabase::didDeleteBackingStore):
+        (WebCore::IDBServer::UniqueIDBDatabase::transactionCompleted):
+
 2019-01-23  Oriol Brufau  <obrufau@igalia.com>
 
         Add CSS Logical spec to features.json

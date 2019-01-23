@@ -2013,6 +2013,9 @@ static void runTest(const string& inputLine)
     gTestRunner->setIconDatabaseEnabled(false);
     gTestRunner->clearAllApplicationCaches();
 
+    gTestRunner->clearAllDatabases();
+    gTestRunner->setIDBPerOriginQuota(50 * MB);
+
     if (disallowedURLs)
         CFSetRemoveAllValues(disallowedURLs);
     if (shouldLogFrameLoadDelegates(pathOrURL.c_str()))
