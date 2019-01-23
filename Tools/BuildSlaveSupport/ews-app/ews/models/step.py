@@ -1,4 +1,4 @@
-# Copyright (C) 2018 Apple Inc. All rights reserved.
+# Copyright (C) 2018-2019 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -26,7 +26,7 @@ from django.db import models
 from ews.models.build import Build
 
 
-class Steps(models.Model):
+class Step(models.Model):
     stepid = models.IntegerField(primary_key=True)
     build = models.ForeignKey(Build, on_delete=models.CASCADE)
     result = models.IntegerField()

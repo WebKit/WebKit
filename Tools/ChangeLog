@@ -1,3 +1,13 @@
+2019-01-23  Aakash Jain  <aakash_jain@apple.com>
+
+        [ews-app] Rename ews model steps to step
+        https://bugs.webkit.org/show_bug.cgi?id=193697
+
+        Reviewed by Lucas Forschler.
+
+        * BuildSlaveSupport/ews-app/ews/models/step.py: Renamed from Tools/BuildSlaveSupport/ews-app/ews/models/steps.py.
+        (Step): Renamed Steps to Step.
+
 2019-01-23  Sihui Liu  <sihui_liu@apple.com>
 
         Clean up IndexedDB files between tests
