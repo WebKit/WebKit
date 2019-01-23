@@ -139,7 +139,9 @@ class DefaultStorageSessionProvider : public WebCore::StorageSessionProvider {
     // _close]. [WebView _close] schedules its work on the WebThread. So we
     // schedule this method on the WebThread as well so as to pick up all the
     // dead resources left behind after closing the WebViews
+#if USE(WEB_THREAD)
     WebThreadRun(^{
+#endif
         WebKit::MemoryMeasure measurer("[WebCache emptyInMemoryResources]");
 
         // Toggling the cache model like this forces the cache to evict all its in-memory resources.
@@ -148,7 +150,9 @@ class DefaultStorageSessionProvider : public WebCore::StorageSessionProvider {
         [WebView _setCacheModel:cacheModel];
 
         WebCore::MemoryCache::singleton().pruneLiveResources(true);
+#if USE(WEB_THREAD)
     });
+#endif
 }
 
 + (void)sizeOfDeadResources:(int *)resources

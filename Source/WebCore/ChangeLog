@@ -1,3 +1,86 @@
+2019-01-22  Conrad Shultz  <conrad_shultz@apple.com>
+
+        Clean up USE(WEB_THREAD)
+        https://bugs.webkit.org/show_bug.cgi?id=193698
+
+        Rubber-stamped by Tim Horton.
+
+        * page/CaptionUserPreferencesMediaAF.cpp:
+        (WebCore::userCaptionPreferencesChangedNotificationCallback):
+        * platform/cf/MainThreadSharedTimerCF.cpp:
+        (WebCore::applicationDidBecomeActive):
+        * platform/cocoa/ContentFilterUnblockHandlerCocoa.mm:
+        (WebCore::dispatchToMainThread):
+        * platform/graphics/cocoa/TextTrackRepresentationCocoa.mm:
+        (-[WebCoreTextTrackRepresentationCocoaHelper observeValueForKeyPath:ofObject:change:context:]):
+        * platform/ios/LegacyTileCache.mm:
+        (WebCore::LegacyTileCache::layoutTiles):
+        (WebCore::LegacyTileCache::setTilingMode):
+        * platform/ios/WebCoreMotionManager.mm:
+        (-[WebCoreMotionManager sendAccelerometerData:]):
+        (-[WebCoreMotionManager sendMotionData:withHeading:]):
+        * platform/ios/WebVideoFullscreenControllerAVKit.mm:
+        (VideoFullscreenControllerContext::requestUpdateInlineRect):
+        (VideoFullscreenControllerContext::requestVideoContentLayer):
+        (VideoFullscreenControllerContext::returnVideoContentLayer):
+        (VideoFullscreenControllerContext::didSetupFullscreen):
+        (VideoFullscreenControllerContext::willExitFullscreen):
+        (VideoFullscreenControllerContext::didExitFullscreen):
+        (VideoFullscreenControllerContext::didCleanupFullscreen):
+        (VideoFullscreenControllerContext::fullscreenMayReturnToInline):
+        (VideoFullscreenControllerContext::requestFullscreenMode):
+        (VideoFullscreenControllerContext::setVideoLayerFrame):
+        (VideoFullscreenControllerContext::setVideoLayerGravity):
+        (VideoFullscreenControllerContext::fullscreenModeChanged):
+        (VideoFullscreenControllerContext::play):
+        (VideoFullscreenControllerContext::pause):
+        (VideoFullscreenControllerContext::togglePlayState):
+        (VideoFullscreenControllerContext::toggleMuted):
+        (VideoFullscreenControllerContext::setMuted):
+        (VideoFullscreenControllerContext::setVolume):
+        (VideoFullscreenControllerContext::setPlayingOnSecondScreen):
+        (VideoFullscreenControllerContext::beginScrubbing):
+        (VideoFullscreenControllerContext::endScrubbing):
+        (VideoFullscreenControllerContext::seekToTime):
+        (VideoFullscreenControllerContext::fastSeek):
+        (VideoFullscreenControllerContext::beginScanningForward):
+        (VideoFullscreenControllerContext::beginScanningBackward):
+        (VideoFullscreenControllerContext::endScanning):
+        (VideoFullscreenControllerContext::selectAudioMediaOption):
+        (VideoFullscreenControllerContext::selectLegibleMediaOption):
+        (VideoFullscreenControllerContext::duration const):
+        (VideoFullscreenControllerContext::currentTime const):
+        (VideoFullscreenControllerContext::bufferedTime const):
+        (VideoFullscreenControllerContext::isPlaying const):
+        (VideoFullscreenControllerContext::playbackRate const):
+        (VideoFullscreenControllerContext::seekableRanges const):
+        (VideoFullscreenControllerContext::seekableTimeRangesLastModifiedTime const):
+        (VideoFullscreenControllerContext::liveUpdateInterval const):
+        (VideoFullscreenControllerContext::canPlayFastReverse const):
+        (VideoFullscreenControllerContext::audioMediaSelectionOptions const):
+        (VideoFullscreenControllerContext::audioMediaSelectedIndex const):
+        (VideoFullscreenControllerContext::legibleMediaSelectionOptions const):
+        (VideoFullscreenControllerContext::legibleMediaSelectedIndex const):
+        (VideoFullscreenControllerContext::externalPlaybackEnabled const):
+        (VideoFullscreenControllerContext::externalPlaybackTargetType const):
+        (VideoFullscreenControllerContext::externalPlaybackLocalizedDeviceName const):
+        (VideoFullscreenControllerContext::wirelessVideoPlaybackDisabled const):
+        (VideoFullscreenControllerContext::setUpFullscreen):
+        (VideoFullscreenControllerContext::exitFullscreen):
+        (VideoFullscreenControllerContext::requestHideAndExitFullscreen):
+        (-[WebVideoFullscreenController enterFullscreen:mode:]):
+        (-[WebVideoFullscreenController exitFullscreen]):
+        (-[WebVideoFullscreenController requestHideAndExitFullscreen]):
+        * platform/ios/wak/WAKWindow.mm:
+        (-[WAKWindow setVisible:]):
+        (-[WAKWindow setScreenScale:]):
+        (-[WAKWindow sendEvent:]):
+        (-[WAKWindow sendMouseMoveEvent:contentChange:]):
+        * platform/network/ios/NetworkStateNotifierIOS.mm:
+        (WebCore::NetworkStateNotifier::startObserving):
+        * rendering/RenderThemeIOS.mm:
+        (WebCore::contentSizeCategoryDidChange):
+
 2019-01-23  David Kilzer  <ddkilzer@apple.com>
 
         REGRESSION (r240292): Attempt to fix WinCairo build

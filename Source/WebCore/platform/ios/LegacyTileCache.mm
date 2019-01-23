@@ -277,12 +277,16 @@ void LegacyTileCache::layoutTiles()
     m_hasPendingLayoutTiles = true;
 
     LegacyTileCacheTombstone *tombstone = m_tombstone.get();
+#if USE(WEB_THREAD)
     WebThreadRun(^{
+#endif
         if ([tombstone isDead])
             return;
         m_hasPendingLayoutTiles = false;
         doLayoutTiles();
+#if USE(WEB_THREAD)
     });
+#endif
 }
 
 void LegacyTileCache::layoutTilesNow()
@@ -716,12 +720,16 @@ void LegacyTileCache::setTilingMode(TilingMode tilingMode)
     m_hasPendingUpdateTilingMode = true;
 
     LegacyTileCacheTombstone *tombstone = m_tombstone.get();
+#if USE(WEB_THREAD)
     WebThreadRun(^{
+#endif
         if ([tombstone isDead])
             return;
         m_hasPendingUpdateTilingMode = false;
         updateTilingMode();
+#if USE(WEB_THREAD)
     });
+#endif
 }
 
 void LegacyTileCache::setTilingDirection(TilingDirection tilingDirection)

@@ -1,3 +1,19 @@
+2019-01-22  Conrad Shultz  <conrad_shultz@apple.com>
+
+        Clean up USE(WEB_THREAD)
+        https://bugs.webkit.org/show_bug.cgi?id=193698
+
+        Rubber-stamped by Tim Horton.
+
+        * Misc/WebGeolocationProviderIOS.mm:
+        (-[_WebCoreLocationUpdateThreadingProxy geolocationAuthorizationGranted]):
+        (-[_WebCoreLocationUpdateThreadingProxy geolocationAuthorizationDenied]):
+        (-[_WebCoreLocationUpdateThreadingProxy positionChanged:]):
+        (-[_WebCoreLocationUpdateThreadingProxy errorOccurred:]):
+        (-[_WebCoreLocationUpdateThreadingProxy resetGeolocation]):
+        * WebCoreSupport/WebFixedPositionContent.mm:
+        (-[WebFixedPositionContent didFinishScrollingOrZooming]):
+
 2019-01-22  Daniel Bates  <dabates@apple.com>
 
         [iOS] Interpret text key commands on keydown and app key commands on keypress

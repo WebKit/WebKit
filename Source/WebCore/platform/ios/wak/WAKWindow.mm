@@ -199,9 +199,13 @@ static id<OrientationProvider> gOrientationProvider;
 
     _visible = visible;
 
+#if USE(WEB_THREAD)
     WebThreadRun(^{
         [[NSNotificationCenter defaultCenter] postNotificationName:WAKWindowVisibilityDidChangeNotification object:self userInfo:nil];
     });
+#else
+    [[NSNotificationCenter defaultCenter] postNotificationName:WAKWindowVisibilityDidChangeNotification object:self userInfo:nil];
+#endif
 }
 
 - (NSSelectionDirection)keyViewSelectionDirection
@@ -292,9 +296,13 @@ static id<OrientationProvider> gOrientationProvider;
 {
     _screenScale = scale;
 
+#if USE(WEB_THREAD)
     WebThreadRun(^{
         [[NSNotificationCenter defaultCenter] postNotificationName:WAKWindowScreenScaleDidChangeNotification object:self userInfo:nil];
     });
+#else
+    [[NSNotificationCenter defaultCenter] postNotificationName:WAKWindowScreenScaleDidChangeNotification object:self userInfo:nil];
+#endif
 }
 
 - (CGFloat)screenScale
@@ -315,9 +323,13 @@ static id<OrientationProvider> gOrientationProvider;
 - (void)sendEvent:(WebEvent *)anEvent
 {
     ASSERT(anEvent);
+#if USE(WEB_THREAD)
     WebThreadRun(^{
         [self sendEventSynchronously:anEvent];
     });
+#else
+    [self sendEventSynchronously:anEvent];
+#endif
 }
 
 - (void)sendEventSynchronously:(WebEvent *)anEvent
@@ -358,12 +370,16 @@ static id<OrientationProvider> gOrientationProvider;
 
 - (void)sendMouseMoveEvent:(WebEvent *)anEvent contentChange:(WKContentChange *)aContentChange
 {
+#if USE(WEB_THREAD)
     WebThreadRun(^{
+#endif
         [self sendEvent:anEvent];
 
         if (aContentChange)
             *aContentChange = WKObservedContentChange();
+#if USE(WEB_THREAD)
     });
+#endif
 }
 
 - (void)setExposedScrollViewRect:(CGRect)exposedScrollViewRect

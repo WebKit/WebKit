@@ -336,38 +336,58 @@ static inline void abortSendLastPosition(WebGeolocationProviderIOS* provider)
 
 - (void)geolocationAuthorizationGranted
 {
+#if USE(WEB_THREAD)
     WebThreadRun(^{
         [_provider geolocationAuthorizationGranted];
     });
+#else
+    [_provider geolocationAuthorizationGranted];
+#endif
 }
 
 - (void)geolocationAuthorizationDenied
 {
+#if USE(WEB_THREAD)
     WebThreadRun(^{
         [_provider geolocationAuthorizationDenied];
     });
+#else
+    [_provider geolocationAuthorizationDenied];
+#endif
 }
 
 - (void)positionChanged:(WebCore::GeolocationPosition&&)position
 {
     RetainPtr<WebGeolocationPosition> webPosition = adoptNS([[WebGeolocationPosition alloc] initWithGeolocationPosition:WTFMove(position)]);
+#if USE(WEB_THREAD)
     WebThreadRun(^{
         [_provider positionChanged:webPosition.get()];
     });
+#else
+    [_provider positionChanged:webPosition.get()];
+#endif
 }
 
 - (void)errorOccurred:(NSString *)errorMessage
 {
+#if USE(WEB_THREAD)
     WebThreadRun(^{
         [_provider errorOccurred:errorMessage];
     });
+#else
+    [_provider errorOccurred:errorMessage];
+#endif
 }
 
 - (void)resetGeolocation
 {
+#if USE(WEB_THREAD)
     WebThreadRun(^{
         [_provider resetGeolocation];
     });
+#else
+    [_provider resetGeolocation];
+#endif
 }
 @end
 

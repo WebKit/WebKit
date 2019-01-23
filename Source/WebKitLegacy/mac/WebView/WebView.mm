@@ -1783,9 +1783,13 @@ static void WebKitInitializeGamepadProviderIfNecessary()
 
 + (void)_releaseMemoryNow
 {
+#if USE(WEB_THREAD)
     WebThreadRun(^{
         WebCore::releaseMemory(Critical::Yes, Synchronous::Yes);
     });
+#else
+    WebCore::releaseMemory(Critical::Yes, Synchronous::Yes);
+#endif
 }
 
 - (void)_replaceCurrentHistoryItem:(WebHistoryItem *)item
@@ -1797,10 +1801,14 @@ static void WebKitInitializeGamepadProviderIfNecessary()
 
 + (void)willEnterBackgroundWithCompletionHandler:(void(^)(void))handler
 {
+#if USE(WEB_THREAD)
     WebThreadRun(^{
+#endif
         [WebView _releaseMemoryNow];
         dispatch_async(dispatch_get_main_queue(), handler);
+#if USE(WEB_THREAD)
     });
+#endif
 }
 
 + (BOOL)isCharacterSmartReplaceExempt:(unichar)character isPreviousCharacter:(BOOL)b
@@ -1810,13 +1818,17 @@ static void WebKitInitializeGamepadProviderIfNecessary()
 
 - (void)updateLayoutIgnorePendingStyleSheets
 {
+#if USE(WEB_THREAD)
     WebThreadRun(^{
+#endif
         for (Frame* frame = [self _mainCoreFrame]; frame; frame = frame->tree().traverseNext()) {
             Document *document = frame->document();
             if (document)
                 document->updateLayoutIgnorePendingStylesheets();
         }
+#if USE(WEB_THREAD)
     });
+#endif
 }
 #endif
 
@@ -2155,7 +2167,9 @@ static NSMutableSet *knownPluginMIMETypes()
 
 - (void)_dispatchUnloadEvent
 {
+#if USE(WEB_THREAD)
     WebThreadRun(^{
+#endif
         WebFrame *mainFrame = [self mainFrame];
         Frame *coreMainFrame = core(mainFrame);
         if (coreMainFrame) {
@@ -2163,7 +2177,9 @@ static NSMutableSet *knownPluginMIMETypes()
             if (document)
                 document->dispatchWindowEvent(Event::create(eventNames().unloadEvent, Event::CanBubble::No, Event::IsCancelable::No));
         }
+#if USE(WEB_THREAD)
     });
+#endif
 }
 
 - (DOMCSSStyleDeclaration *)styleAtSelectionStart
@@ -2312,8 +2328,10 @@ static bool fastDocumentTeardownEnabled()
 
     [self _clearDelegates];
 
+#if USE(WEB_THREAD)
     // Fix for problems such as <rdar://problem/5774587> Crash closing tab in WebCore::Frame::page() from -[WebCoreFrameBridge pauseTimeouts]
     WebThreadRun(^{
+#endif
 #endif            
 
     if (!_private || _private->closed)
@@ -2419,7 +2437,7 @@ static bool fastDocumentTeardownEnabled()
         [WebCache setDisabled:YES];
     }
 #endif
-#if PLATFORM(IOS_FAMILY)
+#if PLATFORM(IOS_FAMILY) && USE(WEB_THREAD)
     // Fix for problems such as <rdar://problem/5774587> Crash closing tab in WebCore::Frame::page() from -[WebCoreFrameBridge pauseTimeouts]
     });
 #endif            
@@ -2792,14 +2810,18 @@ static bool needsSelfRetainWhileLoadingQuirk()
 
 #if PLATFORM(IOS_FAMILY)
     } else {
+#if USE(WEB_THREAD)
         WebThreadRun(^{
+#endif
             // It is possible that the prefs object has already changed before the invocation could be called
             // on the web thread. This is not possible on TOT which is why they have a simple ASSERT.
             WebPreferences *preferences = (WebPreferences *)[notification object];
             if (preferences != [self preferences])
                 return;
             [self _preferencesChanged:preferences];
+#if USE(WEB_THREAD)
         });
+#endif
     }
 #endif
 }
@@ -4359,9 +4381,14 @@ IGNORE_WARNINGS_END
     }
     if (!synchronize)
         return;
+
+#if USE(WEB_THREAD)
     WebThreadRun(^{
         [self _synchronizeCustomFixedPositionLayoutRect];
     });
+#else
+    [self _synchronizeCustomFixedPositionLayoutRect];
+#endif
 }
 
 - (void)_setCustomFixedPositionLayoutRect:(CGRect)rect
@@ -6441,11 +6468,11 @@ static NSString * const backingPropertyOldScaleFactorKey = @"NSBackingPropertyOl
     if (!_private->page)
         return NO;
     
-#if PLATFORM(IOS_FAMILY)
+#if USE(WEB_THREAD)
     if (WebThreadIsCurrent() || !WebThreadIsEnabled())
 #endif
     return _private->page->backForward().goBack();
-#if PLATFORM(IOS_FAMILY)
+#if USE(WEB_THREAD)
     WebThreadRun(^{
         _private->page->backForward().goBack();
     });
@@ -6459,11 +6486,11 @@ static NSString * const backingPropertyOldScaleFactorKey = @"NSBackingPropertyOl
     if (!_private->page)
         return NO;
 
-#if PLATFORM(IOS_FAMILY)
+#if USE(WEB_THREAD)
     if (WebThreadIsCurrent() || !WebThreadIsEnabled())
 #endif
     return _private->page->backForward().goForward();
-#if PLATFORM(IOS_FAMILY)
+#if USE(WEB_THREAD)
     WebThreadRun(^{
         _private->page->backForward().goForward();
     });
@@ -7414,7 +7441,7 @@ static WebFrameView *containingFrameView(NSView *view)
 
 + (void)_cacheModelChangedNotification:(NSNotification *)notification
 {
-#if PLATFORM(IOS_FAMILY)
+#if USE(WEB_THREAD)
     // This needs to happen on the Web Thread
     WebThreadRun(^{
 #endif
@@ -7426,7 +7453,7 @@ static WebFrameView *containingFrameView(NSView *view)
         [self _setCacheModel:cacheModel];
     else if (cacheModel < [self _cacheModel])
         [self _setCacheModel:std::max([[WebPreferences standardPreferences] cacheModel], [self _maxCacheModelInAnyInstance])];
-#if PLATFORM(IOS_FAMILY)
+#if USE(WEB_THREAD)
     });
 #endif
 }
@@ -7573,7 +7600,7 @@ static WebFrameView *containingFrameView(NSView *view)
 
 - (IBAction)stopLoading:(id)sender
 {
-#if PLATFORM(IOS_FAMILY)
+#if USE(WEB_THREAD)
     if (WebThreadNotCurrent()) {
         _private->isStopping = true;
         WebThreadSetShouldYield();
@@ -7582,7 +7609,7 @@ static WebFrameView *containingFrameView(NSView *view)
         _private->isStopping = false;
 #endif
     [[self mainFrame] stopLoading];
-#if PLATFORM(IOS_FAMILY)
+#if USE(WEB_THREAD)
     });
 #endif
 }
@@ -7590,11 +7617,13 @@ static WebFrameView *containingFrameView(NSView *view)
 #if PLATFORM(IOS_FAMILY)
 - (void)stopLoadingAndClear
 {
+#if USE(WEB_THREAD)
     if (WebThreadNotCurrent() && !WebThreadIsLocked()) {
         _private->isStopping = true;
         WebThreadSetShouldYield();
     }
     WebThreadRun(^{
+#endif
         _private->isStopping = false;
 
         WebFrame *frame = [self mainFrame];
@@ -7609,17 +7638,19 @@ static WebFrameView *containingFrameView(NSView *view)
         [mainFrameView _setDocumentView:plainWhiteView];
         [plainWhiteView setNeedsDisplay:YES];
         [plainWhiteView release];
+#if USE(WEB_THREAD)
     });
+#endif
 }
 #endif
 
 - (IBAction)reload:(id)sender
 {
-#if PLATFORM(IOS_FAMILY)
+#if USE(WEB_THREAD)
     WebThreadRun(^{
 #endif            
     [[self mainFrame] reload];
-#if PLATFORM(IOS_FAMILY)
+#if USE(WEB_THREAD)
     });
 #endif            
 }
@@ -10279,11 +10310,11 @@ void WebInstallMemoryPressureHandler(void)
         std::call_once(onceFlag, [] {
             auto& memoryPressureHandler = MemoryPressureHandler::singleton();
             memoryPressureHandler.setLowMemoryHandler([] (Critical critical, Synchronous synchronous) {
-#if PLATFORM(IOS_FAMILY)
+#if USE(WEB_THREAD)
                 WebThreadRun(^{
 #endif
                 WebCore::releaseMemory(critical, synchronous);
-#if PLATFORM(IOS_FAMILY)
+#if USE(WEB_THREAD)
                 });
 #endif
             });

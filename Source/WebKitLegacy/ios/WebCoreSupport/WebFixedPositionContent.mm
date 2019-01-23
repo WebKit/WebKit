@@ -164,10 +164,15 @@ WebFixedPositionContentData::~WebFixedPositionContentData()
 // FIXME: share code with 'sendScrollEvent'?
 - (void)didFinishScrollingOrZooming
 {
+#if USE(WEB_THREAD)
     WebThreadRun(^{
         if (Frame* frame = [_private->m_webView _mainCoreFrame])
             frame->viewportOffsetChanged(Frame::CompletedScrollOffset);
     });
+#else
+    if (Frame* frame = [_private->m_webView _mainCoreFrame])
+        frame->viewportOffsetChanged(Frame::CompletedScrollOffset);
+#endif
 }
 
 - (void)setViewportConstrainedLayers:(WTF::HashMap<CALayer *, std::unique_ptr<WebCore::ViewportConstraints>>&)layerMap stickyContainerMap:(const WTF::HashMap<CALayer*, CALayer*>&)stickyContainers

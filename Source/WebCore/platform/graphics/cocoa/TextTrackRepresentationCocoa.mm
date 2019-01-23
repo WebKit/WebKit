@@ -85,7 +85,7 @@ using namespace WebCore;
 {
     UNUSED_PARAM(change);
     UNUSED_PARAM(context);
-#if PLATFORM(IOS_FAMILY)
+#if USE(WEB_THREAD)
     WebThreadRun(^{
         if (_parent && [keyPath isEqual:@"bounds"] && object == _parent->platformLayer())
             _parent->client().textTrackRepresentationBoundsChanged(_parent->bounds());
