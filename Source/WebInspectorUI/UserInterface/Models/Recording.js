@@ -51,7 +51,7 @@ WI.Recording = class Recording extends WI.Object
         if (typeof payload !== "object" || payload === null)
             return null;
 
-        if (isNaN(payload.version) || payload.version <= 0)
+        if (isNaN(payload.version) || payload.version <= 0 || payload.version > WI.Recording.Version)
             return null;
 
         let type = null;
@@ -471,6 +471,9 @@ WI.Recording = class Recording extends WI.Object
         this._processing = false;
     }
 };
+
+// Keep this in sync with Inspector::Protocol::Recording::VERSION.
+WI.Recording.Version = 1;
 
 WI.Recording.Event = {
     ProcessedAction: "recording-processed-action",

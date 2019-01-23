@@ -140,6 +140,12 @@ InspectorBackendClass = class InspectorBackendClass
         return this._activeTracers;
     }
 
+    registerVersion(domainName, version)
+    {
+        let agent = this._agentForDomain(domainName);
+        agent.VERSION = version;
+    }
+
     registerCommand(qualifiedName, callSignature, replySignature)
     {
         var [domainName, commandName] = qualifiedName.split(".");

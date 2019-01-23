@@ -428,6 +428,8 @@ namespace Inspector {
 
 namespace Protocol {
 
+
+
 // Forward declarations.
 #if PLATFORM(WEB_TYPES)
 namespace Network2 {

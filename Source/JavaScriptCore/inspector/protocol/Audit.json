@@ -1,6 +1,7 @@
 {
     "domain": "Audit",
     "description": "",
+    "version": 1,
     "commands": [
         {
             "name": "setup",

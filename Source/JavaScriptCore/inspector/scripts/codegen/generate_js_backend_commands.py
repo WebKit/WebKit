@@ -52,7 +52,7 @@ class JSBackendCommandsGenerator(Generator):
     def should_generate_domain(self, domain):
         type_declarations = self.type_declarations_for_domain(domain)
         domain_enum_types = [declaration for declaration in type_declarations if isinstance(declaration.type, EnumType)]
-        return len(self.commands_for_domain(domain)) > 0 or len(self.events_for_domain(domain)) > 0 or len(domain_enum_types) > 0
+        return self.version_for_domain(domain) is not None or len(self.commands_for_domain(domain)) > 0 or len(self.events_for_domain(domain)) > 0 or len(domain_enum_types) > 0
 
     def domains_to_generate(self):
         return list(filter(self.should_generate_domain, Generator.domains_to_generate(self)))
@@ -71,6 +71,7 @@ class JSBackendCommandsGenerator(Generator):
 
         lines.append('// %(domain)s.' % args)
 
+        version = self.version_for_domain(domain)
         type_declarations = self.type_declarations_for_domain(domain)
         commands = self.commands_for_domain(domain)
         events = self.events_for_domain(domain)
@@ -78,6 +79,13 @@ class JSBackendCommandsGenerator(Generator):
         has_async_commands = any([command.is_async for command in commands])
         if len(events) > 0 or has_async_commands:
             lines.append('InspectorBackend.register%(domain)sDispatcher = InspectorBackend.registerDomainDispatcher.bind(InspectorBackend, "%(domain)s");' % args)
+
+        if isinstance(version, int):
+            version_args = {
+                'domain': domain.domain_name,
+                'version': version
+            }
+            lines.append('InspectorBackend.registerVersion("%(domain)s", %(version)s);' % version_args)
 
         for declaration in type_declarations:
             if declaration.type.is_enum():

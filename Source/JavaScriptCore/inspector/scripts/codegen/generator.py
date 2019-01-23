@@ -108,6 +108,9 @@ class Generator:
     def can_generate_platform(self, model_platform):
         return model_platform is Platforms.Generic or self._platform is Platforms.All or model_platform is self._platform
 
+    def version_for_domain(self, domain):
+        return domain.version()
+
     def type_declarations_for_domain(self, domain):
         return [type_declaration for type_declaration in domain.all_type_declarations() if self.can_generate_platform(type_declaration.platform)]
 

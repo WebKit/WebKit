@@ -409,6 +409,8 @@ namespace Inspector {
 
 namespace Protocol {
 
+
+
 // Forward declarations.
 namespace Network {
 class NetworkError;

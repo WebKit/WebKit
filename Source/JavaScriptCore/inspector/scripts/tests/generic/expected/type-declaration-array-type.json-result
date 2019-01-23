@@ -317,6 +317,8 @@ namespace Inspector {
 
 namespace Protocol {
 
+
+
 // Forward declarations.
 namespace Debugger {
 enum class Reason;

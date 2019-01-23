@@ -1,3 +1,55 @@
+2019-01-22  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: expose Audit and Recording versions to the frontend
+        https://bugs.webkit.org/show_bug.cgi?id=193262
+        <rdar://problem/47130684>
+
+        Reviewed by Joseph Pecoraro.
+
+        * inspector/protocol/Audit.json:
+        * inspector/protocol/Recording.json:
+        Add `version` values.
+
+        * inspector/scripts/codegen/models.py:
+        (Protocol.parse_domain):
+        (Domain.__init__):
+        (Domain.version): Added.
+        (Domains):
+
+        * inspector/scripts/codegen/generator.py:
+        (Generator.version_for_domain): Added.
+
+        * inspector/scripts/codegen/generate_cpp_protocol_types_header.py:
+        (CppProtocolTypesHeaderGenerator.generate_output):
+        (CppProtocolTypesHeaderGenerator._generate_versions): Added.
+
+        * inspector/scripts/codegen/generate_js_backend_commands.py:
+        (JSBackendCommandsGenerator.should_generate_domain):
+        (JSBackendCommandsGenerator.generate_domain):
+
+        * inspector/scripts/tests/generic/version.json: Added.
+        * inspector/scripts/tests/generic/expected/version.json-result: Added.
+
+        * inspector/scripts/tests/all/expected/definitions-with-mac-platform.json-result:
+        * inspector/scripts/tests/generic/expected/commands-with-async-attribute.json-result:
+        * inspector/scripts/tests/generic/expected/commands-with-optional-call-return-parameters.json-result:
+        * inspector/scripts/tests/generic/expected/definitions-with-mac-platform.json-result:
+        * inspector/scripts/tests/generic/expected/domain-availability.json-result:
+        * inspector/scripts/tests/generic/expected/domains-with-varying-command-sizes.json-result:
+        * inspector/scripts/tests/generic/expected/enum-values.json-result:
+        * inspector/scripts/tests/generic/expected/events-with-optional-parameters.json-result:
+        * inspector/scripts/tests/generic/expected/generate-domains-with-feature-guards.json-result:
+        * inspector/scripts/tests/generic/expected/same-type-id-different-domain.json-result:
+        * inspector/scripts/tests/generic/expected/shadowed-optional-type-setters.json-result:
+        * inspector/scripts/tests/generic/expected/type-declaration-aliased-primitive-type.json-result:
+        * inspector/scripts/tests/generic/expected/type-declaration-array-type.json-result:
+        * inspector/scripts/tests/generic/expected/type-declaration-enum-type.json-result:
+        * inspector/scripts/tests/generic/expected/type-declaration-object-type.json-result:
+        * inspector/scripts/tests/generic/expected/type-requiring-runtime-casts.json-result:
+        * inspector/scripts/tests/generic/expected/type-with-open-parameters.json-result:
+        * inspector/scripts/tests/ios/expected/definitions-with-mac-platform.json-result:
+        * inspector/scripts/tests/mac/expected/definitions-with-mac-platform.json-result:
+
 2019-01-22  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] Intl constructors should fit in sizeof(InternalFunction)

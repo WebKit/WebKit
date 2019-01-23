@@ -65,6 +65,7 @@ class CppProtocolTypesHeaderGenerator(CppGenerator):
         sections.append(self.generate_license())
         sections.append(Template(CppTemplates.HeaderPrelude).substitute(None, **header_args))
         sections.append('namespace Protocol {')
+        sections.append(self._generate_versions(domains))
         sections.append(self._generate_forward_declarations(domains))
         sections.append(self._generate_typedefs(domains))
         sections.extend(self._generate_enum_constant_value_conversion_methods())
@@ -88,6 +89,31 @@ class CppProtocolTypesHeaderGenerator(CppGenerator):
         ]
 
         return '\n'.join(self.generate_includes_from_entries(header_includes))
+
+    def _generate_versions(self, domains):
+        sections = []
+
+        for domain in domains:
+            version = self.version_for_domain(domain)
+            if not version:
+                continue
+
+            domain_lines = []
+            domain_lines.append('namespace %s {' % domain.domain_name)
+
+            if isinstance(version, int):
+                domain_lines.append('static const unsigned VERSION = %s;' % version)
+
+            domain_lines.append('} // %s' % domain.domain_name)
+            sections.append(self.wrap_with_guard_for_domain(domain, '\n'.join(domain_lines)))
+
+        if len(sections) == 0:
+            return ''
+
+        return """// Versions.
+%s
+// End of versions.
+""" % '\n\n'.join(sections)
 
     def _generate_forward_declarations(self, domains):
         sections = []

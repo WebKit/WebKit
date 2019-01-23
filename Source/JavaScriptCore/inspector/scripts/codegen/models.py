@@ -368,9 +368,15 @@ class Protocol:
         check_for_required_properties(['domain'], json, "domain")
         log.debug("parse domain " + json['domain'])
 
+        version = None
         types = []
         commands = []
         events = []
+
+        if 'version' in json:
+            if not isinstance(json['version'], int):
+                raise ParseException("Malformed domain specification: version is not a number or string")
+            version = json['version']
 
         if 'types' in json:
             if not isinstance(json['types'], list):
@@ -395,7 +401,7 @@ class Protocol:
                 if availability_type not in allowed_activation_strings:
                     raise ParseException('Malformed domain specification: availability is an unsupported string. Was: "%s", Allowed values: %s' % (json['availability'], ', '.join(allowed_activation_strings)))
 
-        self.domains.append(Domain(json['domain'], json.get('description', ''), json.get('featureGuard'), json.get('availability'), isSupplemental, types, commands, events))
+        self.domains.append(Domain(json['domain'], json.get('description', ''), json.get('featureGuard'), json.get('availability'), isSupplemental, version, types, commands, events))
 
     def parse_type_declaration(self, json):
         check_for_required_properties(['id', 'type'], json, "type")
@@ -565,15 +571,19 @@ class Protocol:
 
 
 class Domain:
-    def __init__(self, domain_name, description, feature_guard, availability, isSupplemental, type_declarations, commands, events):
+    def __init__(self, domain_name, description, feature_guard, availability, isSupplemental, version, type_declarations, commands, events):
         self.domain_name = domain_name
         self.description = description
         self.feature_guard = feature_guard
         self.availability = availability
         self.is_supplemental = isSupplemental
+        self._version = version
         self._type_declarations = type_declarations
         self._commands = commands
         self._events = events
+
+    def version(self):
+        return self._version
 
     def all_type_declarations(self):
         return self._type_declarations
@@ -599,7 +609,7 @@ class Domain:
 
 
 class Domains:
-    GLOBAL = Domain("", "The global domain, in which primitive types are implicitly declared.", None, None, False, [], [], [])
+    GLOBAL = Domain("", "The global domain, in which primitive types are implicitly declared.", None, None, False, None, [], [], [])
 
 
 class TypeDeclaration:

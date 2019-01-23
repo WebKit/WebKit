@@ -279,4 +279,7 @@ WI.AuditTestCase = class AuditTestCase extends WI.AuditTestBase
     }
 };
 
+// Keep this in sync with Inspector::Protocol::Audit::VERSION.
+WI.AuditTestCase.Version = 1;
+
 WI.AuditTestCase.TypeIdentifier = "test-case";

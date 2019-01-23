@@ -319,6 +319,8 @@ namespace Inspector {
 
 namespace Protocol {
 
+
+
 // Forward declarations.
 namespace Database {
 class Error;

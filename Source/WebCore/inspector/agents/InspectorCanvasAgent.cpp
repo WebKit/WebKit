@@ -558,7 +558,7 @@ void InspectorCanvasAgent::didFinishRecordingCanvasFrame(CanvasRenderingContext&
     }
 
     auto recording = Inspector::Protocol::Recording::Recording::create()
-        .setVersion(1)
+        .setVersion(Inspector::Protocol::Recording::VERSION)
         .setType(type)
         .setInitialState(inspectorCanvas->releaseInitialState())
         .setData(inspectorCanvas->releaseData())

@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script>
+function test()
+{
+    let suite = InspectorTest.createSyncSuite("Recording.VERSION");
+
+    suite.addTestCase({
+        name: "Recording.VERSION.MatchesFrontend",
+        description: "Check that the recording system version is in sync with the frontend version.",
+        test() {
+            InspectorTest.expectEqual(RecordingAgent.VERSION, WI.Recording.Version, "The recording system version should match the frontend version.");
+            return true;
+        },
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="runTest()">
+    <p>Tests Recording.VERSION value.</p>
+</body>
+</html>

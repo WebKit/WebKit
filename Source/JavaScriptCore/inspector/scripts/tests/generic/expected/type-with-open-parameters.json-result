@@ -313,6 +313,8 @@ namespace Inspector {
 
 namespace Protocol {
 
+
+
 // Forward declarations.
 namespace Test {
 class NoOpenParameters;

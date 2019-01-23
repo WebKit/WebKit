@@ -2,6 +2,7 @@
     "domain": "Recording",
     "description": "General types used for recordings of actions performed in the inspected page.",
     "availability": ["web"],
+    "version": 1,
     "types": [
         {
             "id": "Type",
