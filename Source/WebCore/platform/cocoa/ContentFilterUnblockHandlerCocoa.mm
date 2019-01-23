@@ -144,7 +144,7 @@ bool ContentFilterUnblockHandler::canHandleRequest(const ResourceRequest& reques
 static inline void dispatchToMainThread(void (^block)())
 {
     dispatch_async(dispatch_get_main_queue(), ^{
-#if USE(WEB_THREAD)
+#if PLATFORM(IOS_FAMILY)
         WebThreadRun(block);
 #else
         block();

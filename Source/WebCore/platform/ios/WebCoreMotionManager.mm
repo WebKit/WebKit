@@ -220,23 +220,17 @@ static const double kGravity = 9.80665;
 
 - (void)sendAccelerometerData:(CMAccelerometerData *)newAcceleration
 {
-#if USE(WEB_THREAD)
     WebThreadRun(^{
-#endif
         CMAcceleration accel = newAcceleration.acceleration;
 
         for (auto& client : copyToVector(m_deviceMotionClients))
             client->motionChanged(0, 0, 0, accel.x * kGravity, accel.y * kGravity, accel.z * kGravity, 0, 0, 0);
-#if USE(WEB_THREAD)
     });
-#endif
 }
 
 - (void)sendMotionData:(CMDeviceMotion *)newMotion withHeading:(CLHeading *)newHeading
 {
-#if USE(WEB_THREAD)
     WebThreadRun(^{
-#endif
         // Acceleration is user + gravity
         CMAcceleration userAccel = newMotion.userAcceleration;
         CMAcceleration gravity = newMotion.gravity;
@@ -327,9 +321,7 @@ static const double kGravity = 9.80665;
 
         for (size_t i = 0; i < orientationClients.size(); ++i)
             orientationClients[i]->orientationChanged(alpha, beta, gamma, heading, headingAccuracy);
-#if USE(WEB_THREAD)
     });
-#endif
 }
 
 @end

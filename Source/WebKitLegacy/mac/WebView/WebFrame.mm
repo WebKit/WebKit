@@ -1296,18 +1296,14 @@ static WebFrameLoadType toWebFrameLoadType(FrameLoadType frameLoadType)
 
 - (void)deviceOrientationChanged
 {
-#if USE(WEB_THREAD)
     WebThreadRun(^{
-#endif
 #if ENABLE(ORIENTATION_EVENTS)
         WebView *webView = getWebView(self);
         [webView _setDeviceOrientation:[[webView _UIKitDelegateForwarder] deviceOrientation]];
 #endif
         if (WebCore::Frame* frame = core(self))
             frame->orientationChanged();
-#if USE(WEB_THREAD)
     });
-#endif
 }
 
 - (void)setNeedsLayout

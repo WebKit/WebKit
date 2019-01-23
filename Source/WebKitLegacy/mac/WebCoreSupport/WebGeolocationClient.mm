@@ -174,37 +174,25 @@ Optional<GeolocationPosition> WebGeolocationClient::lastPosition()
 
 - (void)allow
 {
-#if USE(WEB_THREAD)
     WebThreadRun(^{
         _geolocation->setIsAllowed(true);
     });
-#else
-    _geolocation->setIsAllowed(true);
-#endif
 }
 
 - (void)deny
 {
-#if USE(WEB_THREAD)
     WebThreadRun(^{
         _geolocation->setIsAllowed(false);
     });
-#else
-    _geolocation->setIsAllowed(false);
-#endif
 }
 
 - (void)denyOnlyThisRequest
 {
-#if USE(WEB_THREAD)
     WebThreadRun(^{
-#endif
         // A soft deny does not prevent subsequent request from the Geolocation object.
         [self deny];
         _geolocation->resetIsAllowed();
-#if USE(WEB_THREAD)
     });
-#endif
 }
 
 - (BOOL)shouldClearCache

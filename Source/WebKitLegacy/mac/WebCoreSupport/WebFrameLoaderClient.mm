@@ -2454,16 +2454,12 @@ void WebFrameLoaderClient::finishedLoadingIcon(uint64_t callbackID, SharedBuffer
 #if HAVE(APP_LINKS)
     if (_appLinkURL && _frame) {
         [LSAppLink openWithURL:_appLinkURL.get() completionHandler:^(BOOL success, NSError *) {
-#if USE(WEB_THREAD)
             WebThreadRun(^{
-#endif
                 if (success)
                     [self receivedPolicyDecision:PolicyAction::Ignore];
                 else
                     [self receivedPolicyDecision:PolicyAction::Use];
-#if USE(WEB_THREAD)
             });
-#endif
         }];
         return;
     }

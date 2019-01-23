@@ -280,13 +280,9 @@ static IOSGradientRef gradientWithName(IOSGradientType gradientType)
 static void contentSizeCategoryDidChange(CFNotificationCenterRef, void*, CFStringRef name, const void*, CFDictionaryRef)
 {
     ASSERT_UNUSED(name, CFEqual(name, PAL::get_UIKit_UIContentSizeCategoryDidChangeNotification()));
-#if USE(WEB_THREAD)
     WebThreadRun(^{
         Page::updateStyleForAllPagesAfterGlobalChangeInEnvironment();
     });
-#else
-    Page::updateStyleForAllPagesAfterGlobalChangeInEnvironment();
-#endif
 }
 
 RenderThemeIOS::RenderThemeIOS()

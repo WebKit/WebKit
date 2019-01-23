@@ -820,15 +820,11 @@ static NSString * const WebMarkedTextUpdatedNotification = @"WebMarkedTextUpdate
 static void hardwareKeyboardAvailabilityChangedCallback(CFNotificationCenterRef, void* observer, CFStringRef, const void*, CFDictionaryRef)
 {
     ASSERT(observer);
-#if USE(WEB_THREAD)
     WebThreadRun(^{
-#endif
         WebHTMLView *webView = (__bridge WebHTMLView *)observer;
         if (Frame* coreFrame = core([webView _frame]))
             coreFrame->eventHandler().capsLockStateMayHaveChanged();
-#if USE(WEB_THREAD)
     });
-#endif
 }
 #endif
 

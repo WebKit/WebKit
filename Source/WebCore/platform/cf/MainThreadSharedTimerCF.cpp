@@ -46,13 +46,9 @@ static const CFTimeInterval kCFTimeIntervalDistantFuture = std::numeric_limits<C
 #if PLATFORM(IOS_FAMILY)
 static void applicationDidBecomeActive(CFNotificationCenterRef, void*, CFStringRef, const void*, CFDictionaryRef)
 {
-#if USE(WEB_THREAD)
     WebThreadRun(^{
         restartSharedTimer();
     });
-#else
-    restartSharedTimer();
-#endif
 }
 #endif
 
