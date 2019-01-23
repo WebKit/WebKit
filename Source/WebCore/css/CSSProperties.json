@@ -2569,6 +2569,87 @@
                 "url": "https://www.w3.org/TR/css-logical/#dimension-properties"
             }
         },
+        "inset": {
+            "codegen-properties": {
+                "runtime-flag": "cssLogical",
+                "longhands": [
+                    "top",
+                    "right",
+                    "bottom",
+                    "left"
+                ]
+            },
+            "specification": {
+                "category": "css-logical-props",
+                "url": "https://www.w3.org/TR/css-logical/#inset-properties"
+            }
+        },
+        "inset-block": {
+            "codegen-properties": {
+                "runtime-flag": "cssLogical",
+                "longhands": [
+                    "inset-block-start",
+                    "inset-block-end"
+                ]
+            },
+            "specification": {
+                "category": "css-logical-props",
+                "url": "https://www.w3.org/TR/css-logical/#inset-properties"
+            }
+        },
+        "inset-block-end": {
+            "codegen-properties": {
+                "runtime-flag": "cssLogical",
+                "skip-builder": true
+            },
+            "specification": {
+                "category": "css-logical-props",
+                "url": "https://www.w3.org/TR/css-logical/#inset-properties"
+            }
+        },
+        "inset-block-start": {
+            "codegen-properties": {
+                "runtime-flag": "cssLogical",
+                "skip-builder": true
+            },
+            "specification": {
+                "category": "css-logical-props",
+                "url": "https://www.w3.org/TR/css-logical/#inset-properties"
+            }
+        },
+        "inset-inline": {
+            "codegen-properties": {
+                "runtime-flag": "cssLogical",
+                "longhands": [
+                    "inset-inline-start",
+                    "inset-inline-end"
+                ]
+            },
+            "specification": {
+                "category": "css-logical-props",
+                "url": "https://www.w3.org/TR/css-logical/#inset-properties"
+            }
+        },
+        "inset-inline-end": {
+            "codegen-properties": {
+                "runtime-flag": "cssLogical",
+                "skip-builder": true
+            },
+            "specification": {
+                "category": "css-logical-props",
+                "url": "https://www.w3.org/TR/css-logical/#inset-properties"
+            }
+        },
+        "inset-inline-start": {
+            "codegen-properties": {
+                "runtime-flag": "cssLogical",
+                "skip-builder": true
+            },
+            "specification": {
+                "category": "css-logical-props",
+                "url": "https://www.w3.org/TR/css-logical/#inset-properties"
+            }
+        },
         "kerning": {
             "inherited": true,
             "codegen-properties": {

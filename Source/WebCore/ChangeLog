@@ -1,5 +1,35 @@
 2019-01-23  Oriol Brufau  <obrufau@igalia.com>
 
+        [css-logical] Implement flow-relative inset properties
+        https://bugs.webkit.org/show_bug.cgi?id=189441
+
+        Reviewed by Dean Jackson.
+
+        Implement 'inset', 'inset-block', 'inset-block-start', 'inset-block-end',
+        'inset-inline', 'inset-inline-start' and 'inset-inline-end' CSS properties
+        behind the CSSLogicalEnabled runtime flag.
+
+        Tests: imported/w3c/web-platform-tests/css/css-logical/logical-box-inset.html
+               webexposed/css-properties-behind-flags.html
+
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::isLayoutDependent):
+        (WebCore::ComputedStyleExtractor::valueForPropertyinStyle):
+        * css/CSSProperties.json:
+        * css/CSSProperty.cpp:
+        (WebCore::CSSProperty::resolveDirectionAwareProperty):
+        (WebCore::CSSProperty::isDirectionAwareProperty):
+        * css/StyleProperties.cpp:
+        (WebCore::StyleProperties::getPropertyValue const):
+        (WebCore::StyleProperties::asText const):
+        * css/parser/CSSParserFastPaths.cpp:
+        (WebCore::isSimpleLengthPropertyID):
+        * css/parser/CSSPropertyParser.cpp:
+        (WebCore::CSSPropertyParser::parseSingleValue):
+        (WebCore::CSSPropertyParser::parseShorthand):
+
+2019-01-23  Oriol Brufau  <obrufau@igalia.com>
+
         [css-grid] Properly handle static positions of abspos inside grid items
         https://bugs.webkit.org/show_bug.cgi?id=193657
 

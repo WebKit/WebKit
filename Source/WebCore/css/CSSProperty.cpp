@@ -76,6 +76,14 @@ static const StylePropertyShorthand& borderDirections()
 CSSPropertyID CSSProperty::resolveDirectionAwareProperty(CSSPropertyID propertyID, TextDirection direction, WritingMode writingMode)
 {
     switch (propertyID) {
+    case CSSPropertyInsetInlineEnd:
+        return resolveToPhysicalProperty(direction, writingMode, LogicalBoxSide::End, insetShorthand());
+    case CSSPropertyInsetInlineStart:
+        return resolveToPhysicalProperty(direction, writingMode, LogicalBoxSide::Start, insetShorthand());
+    case CSSPropertyInsetBlockStart:
+        return resolveToPhysicalProperty(direction, writingMode, LogicalBoxSide::Before, insetShorthand());
+    case CSSPropertyInsetBlockEnd:
+        return resolveToPhysicalProperty(direction, writingMode, LogicalBoxSide::After, insetShorthand());
     case CSSPropertyMarginInlineEnd:
         return resolveToPhysicalProperty(direction, writingMode, LogicalBoxSide::End, marginShorthand());
     case CSSPropertyMarginInlineStart:
@@ -186,6 +194,10 @@ bool CSSProperty::isDirectionAwareProperty(CSSPropertyID propertyID)
     case CSSPropertyBorderBlockEndColor:
     case CSSPropertyBorderBlockEndStyle:
     case CSSPropertyBorderBlockEndWidth:
+    case CSSPropertyInsetInlineEnd:
+    case CSSPropertyInsetInlineStart:
+    case CSSPropertyInsetBlockStart:
+    case CSSPropertyInsetBlockEnd:
     case CSSPropertyMarginInlineEnd:
     case CSSPropertyMarginInlineStart:
     case CSSPropertyMarginBlockStart:

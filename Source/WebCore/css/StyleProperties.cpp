@@ -217,6 +217,12 @@ String StyleProperties::getPropertyValue(CSSPropertyID propertyID) const
         return getAlignmentShorthandValue(placeSelfShorthand());
     case CSSPropertyFont:
         return fontValue();
+    case CSSPropertyInset:
+        return get4Values(insetShorthand());
+    case CSSPropertyInsetBlock:
+        return get2Values(insetBlockShorthand());
+    case CSSPropertyInsetInline:
+        return get2Values(insetInlineShorthand());
     case CSSPropertyMargin:
         return get4Values(marginShorthand());
     case CSSPropertyMarginBlock:
@@ -1085,6 +1091,20 @@ String StyleProperties::asText() const
             case CSSPropertyFontVariantCaps:
             case CSSPropertyFontWeight:
                 // Don't use CSSPropertyFont because old UAs can't recognize them but are important for editing.
+                break;
+            case CSSPropertyTop:
+            case CSSPropertyRight:
+            case CSSPropertyBottom:
+            case CSSPropertyLeft:
+                shorthandPropertyID = CSSPropertyInset;
+                break;
+            case CSSPropertyInsetBlockStart:
+            case CSSPropertyInsetBlockEnd:
+                shorthandPropertyID = CSSPropertyInsetBlock;
+                break;
+            case CSSPropertyInsetInlineStart:
+            case CSSPropertyInsetInlineEnd:
+                shorthandPropertyID = CSSPropertyInsetInline;
                 break;
             case CSSPropertyListStyleType:
             case CSSPropertyListStylePosition:

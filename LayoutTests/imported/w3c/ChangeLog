@@ -1,5 +1,20 @@
 2019-01-23  Oriol Brufau  <obrufau@igalia.com>
 
+        [css-logical] Implement flow-relative inset properties
+        https://bugs.webkit.org/show_bug.cgi?id=189441
+
+        Reviewed by Dean Jackson.
+
+        Enable the CSSLogicalEnabled flag in the test for logical insets, and
+        update its expectations. It still has some failures because sideways
+        writing modes have not been implemented yet
+        (https://bugs.webkit.org/show_bug.cgi?id=166941).
+
+        * web-platform-tests/css/css-logical/logical-box-inset-expected.txt:
+        * web-platform-tests/css/css-logical/logical-box-inset.html:
+
+2019-01-23  Oriol Brufau  <obrufau@igalia.com>
+
         [css-grid] Properly handle static positions of abspos inside grid items
         https://bugs.webkit.org/show_bug.cgi?id=193657
 

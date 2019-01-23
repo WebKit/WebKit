@@ -7,6 +7,13 @@ PASS border-inline is not exposed
 PASS border-inline-width is not exposed 
 PASS border-inline-style is not exposed 
 PASS border-inline-color is not exposed 
+PASS inset is not exposed 
+PASS inset-block is not exposed 
+PASS inset-block-start is not exposed 
+PASS inset-block-end is not exposed 
+PASS inset-inline is not exposed 
+PASS inset-inline-start is not exposed 
+PASS inset-inline-end is not exposed 
 PASS margin-block is not exposed 
 PASS margin-inline is not exposed 
 PASS padding-block is not exposed 

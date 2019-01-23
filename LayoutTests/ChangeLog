@@ -1,3 +1,16 @@
+2019-01-23  Oriol Brufau  <obrufau@igalia.com>
+
+        [css-logical] Implement flow-relative inset properties
+        https://bugs.webkit.org/show_bug.cgi?id=189441
+
+        Reviewed by Dean Jackson.
+
+        Check that the new CSS properties are disabled behind runtime flags
+        and are not exposed.
+
+        * webexposed/css-properties-behind-flags-expected.txt:
+        * webexposed/css-properties-behind-flags.html:
+
 2019-01-23  Rob Buis  <rbuis@igalia.com>
 
         Update MIME type parser
