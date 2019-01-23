@@ -25,7 +25,7 @@
 
 WI.TableColumn = class TableColumn extends WI.Object
 {
-    constructor(identifier, name, {initialWidth, minWidth, maxWidth, hidden, sortable, hideable, align, resizeType, headerView} = {})
+    constructor(identifier, name, {initialWidth, minWidth, maxWidth, hidden, sortable, hideable, align, resizeType, headerView, needsReloadOnResize} = {})
     {
         super();
 
@@ -49,6 +49,7 @@ WI.TableColumn = class TableColumn extends WI.Object
         this._align = align || null;
         this._resizeType = resizeType || TableColumn.ResizeType.Auto;
         this._headerView = headerView || null;
+        this._needsReloadOnResize = needsReloadOnResize || false;
 
         console.assert(!this._minWidth || !this._maxWidth || this._minWidth <= this._maxWidth, "Invalid min/max", this._minWidth, this._maxWidth);
         console.assert(isNaN(this._width) || !this._minWidth || (this._width >= this._minWidth), "Initial width is less than min", this._width, this._minWidth);
@@ -67,6 +68,7 @@ WI.TableColumn = class TableColumn extends WI.Object
     get hideable() { return this._hideable; }
     get align() { return this._align; }
     get headerView() { return this._headerView; }
+    get needsReloadOnResize() { return this._needsReloadOnResize; }
 
     get locked() { return this._resizeType === TableColumn.ResizeType.Locked; }
     get flexible() { return this._resizeType === TableColumn.ResizeType.Auto; }

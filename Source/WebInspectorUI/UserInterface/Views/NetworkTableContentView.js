@@ -1070,6 +1070,7 @@ WI.NetworkTableContentView = class NetworkTableContentView extends WI.ContentVie
         this._waterfallColumn = new WI.TableColumn("waterfall", WI.UIString("Waterfall"), {
             minWidth: 230,
             headerView: this._waterfallTimelineRuler,
+            needsReloadOnResize: true,
         });
 
         this._nameColumn.addEventListener(WI.TableColumn.Event.WidthDidChange, this._tableNameColumnDidChangeWidth, this);
