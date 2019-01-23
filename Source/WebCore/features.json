@@ -126,6 +126,19 @@
         "category": "css"
     },
     {
+        "name": "CSS Logical Properties and Values Level 1",
+        "status": {
+            "status": "In Development"
+        },
+        "url": "https://drafts.csswg.org/css-logical/",
+        "keywords": ["css", "css-logical", "flow-relative", "logical"],
+        "category": "css",
+        "contact": {
+            "name": "Oriol Brufau",
+            "email": "obrufau@igalia.com"
+        }
+    },
+    {
         "name": "CSS Media Queries Level 4",
         "url": "http://dev.w3.org/csswg/mediaqueries-4/",
         "keywords": ["css media queries", "media queries"],

@@ -1,3 +1,12 @@
+2019-01-23  Oriol Brufau  <obrufau@igalia.com>
+
+        Add CSS Logical spec to features.json
+        https://bugs.webkit.org/show_bug.cgi?id=193717
+
+        Reviewed by Manuel Rego Casasnovas.
+
+        * features.json:
+
 2019-01-22  Conrad Shultz  <conrad_shultz@apple.com>
 
         Clean up USE(WEB_THREAD)
