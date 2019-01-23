@@ -1070,7 +1070,6 @@
 		5CD286551E7235B80094FDC8 /* WKContentRuleListInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = 5CD2864C1E722F440094FDC8 /* WKContentRuleListInternal.h */; };
 		5CD286571E7235C90094FDC8 /* WKContentRuleListStoreInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = 5CD2864F1E722F440094FDC8 /* WKContentRuleListStoreInternal.h */; };
 		5CD286581E7235D10094FDC8 /* WKContentRuleListStorePrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = 5CD286501E722F440094FDC8 /* WKContentRuleListStorePrivate.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		5CE43B7221F7CC020093BCC5 /* APIHTTPCookieStoreCocoa.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5CA46E7A21F1A23900CE86B4 /* APIHTTPCookieStoreCocoa.mm */; };
 		5CE85B201C88E64B0070BFCE /* PingLoad.h in Headers */ = {isa = PBXBuildFile; fileRef = 5CE85B1F1C88E6430070BFCE /* PingLoad.h */; };
 		617A52D81F43A9DA00DCDC0A /* ServiceWorkerClientFetchMessageReceiver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 617A52D71F43A9B600DCDC0A /* ServiceWorkerClientFetchMessageReceiver.cpp */; };
 		63108F961F96719C00A0DB84 /* _WKApplicationManifest.h in Headers */ = {isa = PBXBuildFile; fileRef = 63108F941F96719C00A0DB84 /* _WKApplicationManifest.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -10787,7 +10786,6 @@
 				2D92A787212B6AB100F493FD /* ShareableBitmap.cpp in Sources */,
 				2DE6943D18BD2A68005C15E5 /* SmartMagnificationControllerMessageReceiver.cpp in Sources */,
 				1A334DED16DE8F88006A8E38 /* StorageAreaMapMessageReceiver.cpp in Sources */,
-				5CE43B7221F7CC020093BCC5 /* APIHTTPCookieStoreCocoa.mm in Sources */,
 				1AB31A9616BC688100F6DBC9 /* StorageManagerMessageReceiver.cpp in Sources */,
 				2D92A783212B6A7100F493FD /* StringReference.cpp in Sources */,
 				2D11B7512126A282006F8878 /* UnifiedSource1-mm.mm in Sources */,

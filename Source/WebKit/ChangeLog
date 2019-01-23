@@ -1,3 +1,17 @@
+2019-01-22  Alex Christensen  <achristensen@webkit.org>
+
+        Fix an internal build failure after r240292
+        https://bugs.webkit.org/show_bug.cgi?id=193580
+
+        Rubber-stamped by Wenson Hsieh.
+
+        * SourcesCocoa.txt:
+        * UIProcess/mac/WebContextMenuProxyMac.mm:
+        (-[WKMenuTarget forwardContextMenuAction:]):
+        * WebKit.xcodeproj/project.pbxproj:
+        It was apparently unclear to the compiler sometimes which "state" selector to use, and this apparently mattered.
+        Tell the compiler to use the NSMenuItem selector, but at runtime it doesn't matter.
+
 2019-01-22  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         Unreviewed, fix -Wunused-but-set-variable warning

@@ -255,6 +255,7 @@ UIProcess/API/Cocoa/_WKWebsiteDataStoreConfiguration.mm
 UIProcess/API/Cocoa/_WKWebsitePolicies.mm
 UIProcess/API/Cocoa/APIAttachmentCocoa.mm
 UIProcess/API/Cocoa/APIContentRuleListStoreCocoa.mm
+UIProcess/API/Cocoa/APIHTTPCookieStoreCocoa.mm
 UIProcess/API/Cocoa/APISerializedScriptValueCocoa.mm
 UIProcess/API/Cocoa/APIWebsiteDataStoreCocoa.mm
 UIProcess/API/Cocoa/LegacyBundleForClass.mm

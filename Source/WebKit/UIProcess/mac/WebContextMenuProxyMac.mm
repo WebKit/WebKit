@@ -138,7 +138,8 @@
         return;
     }
 
-    WebKit::WebContextMenuItemData item(WebCore::ActionType, static_cast<WebCore::ContextMenuAction>([sender tag]), [sender title], [sender isEnabled], [sender state] == NSControlStateValueOn);
+    ASSERT(!sender || [sender isKindOfClass:NSMenuItem.class]);
+    WebKit::WebContextMenuItemData item(WebCore::ActionType, static_cast<WebCore::ContextMenuAction>([sender tag]), [sender title], [sender isEnabled], [(NSMenuItem *)sender state] == NSControlStateValueOn);
     if (representedObject) {
         ASSERT([representedObject isKindOfClass:[WKUserDataWrapper class]]);
         item.setUserData([static_cast<WKUserDataWrapper *>(representedObject) userData]);
