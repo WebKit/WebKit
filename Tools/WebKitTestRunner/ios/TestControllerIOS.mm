@@ -115,6 +115,7 @@ void TestController::platformResetStateToConsistentValues(const TestOptions& opt
 {
     cocoaResetStateToConsistentValues(options);
 
+    [[UIApplication sharedApplication] _cancelAllTouches];
     [[UIDevice currentDevice] setOrientation:UIDeviceOrientationPortrait animated:NO];
 
     m_inputModeSwizzlers.clear();

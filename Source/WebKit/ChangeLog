@@ -1,3 +1,16 @@
+2019-01-23  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [iOS] fast/events/touch/ios/hover-when-style-change-is-async.html times out
+        https://bugs.webkit.org/show_bug.cgi?id=193182
+        <rdar://problem/47452154>
+
+        Reviewed by Tim Horton.
+
+        Fix an existing bug where blurring an element doesn't always un-suppress text interactions.
+
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView _elementDidBlur]):
+
 2019-01-23  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         Minor improvements to NetworkProcess

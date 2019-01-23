@@ -1,3 +1,23 @@
+2019-01-23  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [iOS] fast/events/touch/ios/hover-when-style-change-is-async.html times out
+        https://bugs.webkit.org/show_bug.cgi?id=193182
+        <rdar://problem/47452154>
+
+        Reviewed by Tim Horton.
+
+        This test was timing out because one of its preceding tests (drag-to-autoscroll-in-single-line-editable.html)
+        long presses and drags to select text, but does not end the touch by lifting up; subsequently, the tap gesture
+        recognizer isn't fired when simulating a tap in hover-when-style-change-is-async.html.
+
+        To fix this, tweak the test runner to make it safe for tests to end while touching the web view without
+        preventing later tests from recognizing gestures.
+
+        * WebKitTestRunner/ios/TestControllerIOS.mm:
+        (WTR::TestController::platformResetStateToConsistentValues):
+
+        Cancel all touches in the UIApplication when resetting to a consistent state between tests.
+
 2019-01-23  Jonathan Bedard  <jbedard@apple.com>
 
         webkitpy: Use correct config for --iphone-simulator and --ipad-simulator

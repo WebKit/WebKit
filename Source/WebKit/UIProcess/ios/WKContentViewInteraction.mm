@@ -4660,6 +4660,7 @@ static const double minimumFocusedElementAreaForSuppressingSelectionAssistant = 
 
     if (!_isChangingFocus) {
         [self _stopSuppressingSelectionAssistantForReason:WebKit::FocusedElementIsTransparentOrFullyClipped];
+        [self _stopSuppressingSelectionAssistantForReason:WebKit::FocusedElementIsTooSmall];
         _didAccessoryTabInitiateFocus = NO;
     }
 }
