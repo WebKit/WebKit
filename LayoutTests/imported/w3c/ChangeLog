@@ -1,3 +1,90 @@
+2019-01-23  Oriol Brufau  <obrufau@igalia.com>
+
+        [css-grid] Properly handle static positions of abspos inside grid items
+        https://bugs.webkit.org/show_bug.cgi?id=193657
+
+        Reviewed by Javier Fernandez.
+
+        Import test changes from WPT.
+        Various orthogonal tests still fail because of https://bugs.webkit.org/show_bug.cgi?id=189513
+        Some other tests also fail because of https://bugs.webkit.org/show_bug.cgi?id=193656
+
+        * resources/import-expectations.json:
+        * web-platform-tests/css/css-grid/abspos/orthogonal-positioned-grid-descendants-001-expected.txt: Added.
+        * web-platform-tests/css/css-grid/abspos/orthogonal-positioned-grid-descendants-001.html: Added.
+        * web-platform-tests/css/css-grid/abspos/orthogonal-positioned-grid-descendants-002-expected.txt: Added.
+        * web-platform-tests/css/css-grid/abspos/orthogonal-positioned-grid-descendants-002.html: Added.
+        * web-platform-tests/css/css-grid/abspos/orthogonal-positioned-grid-descendants-003-expected.txt: Added.
+        * web-platform-tests/css/css-grid/abspos/orthogonal-positioned-grid-descendants-003.html: Added.
+        * web-platform-tests/css/css-grid/abspos/orthogonal-positioned-grid-descendants-004-expected.txt: Added.
+        * web-platform-tests/css/css-grid/abspos/orthogonal-positioned-grid-descendants-004.html: Added.
+        * web-platform-tests/css/css-grid/abspos/orthogonal-positioned-grid-descendants-005-expected.txt: Added.
+        * web-platform-tests/css/css-grid/abspos/orthogonal-positioned-grid-descendants-005.html: Added.
+        * web-platform-tests/css/css-grid/abspos/orthogonal-positioned-grid-descendants-006-expected.txt: Added.
+        * web-platform-tests/css/css-grid/abspos/orthogonal-positioned-grid-descendants-006.html: Added.
+        * web-platform-tests/css/css-grid/abspos/orthogonal-positioned-grid-descendants-007-expected.txt: Added.
+        * web-platform-tests/css/css-grid/abspos/orthogonal-positioned-grid-descendants-007.html: Added.
+        * web-platform-tests/css/css-grid/abspos/orthogonal-positioned-grid-descendants-008-expected.txt: Added.
+        * web-platform-tests/css/css-grid/abspos/orthogonal-positioned-grid-descendants-008.html: Added.
+        * web-platform-tests/css/css-grid/abspos/orthogonal-positioned-grid-descendants-009-expected.txt: Added.
+        * web-platform-tests/css/css-grid/abspos/orthogonal-positioned-grid-descendants-009.html: Added.
+        * web-platform-tests/css/css-grid/abspos/orthogonal-positioned-grid-descendants-010-expected.txt: Added.
+        * web-platform-tests/css/css-grid/abspos/orthogonal-positioned-grid-descendants-010.html: Added.
+        * web-platform-tests/css/css-grid/abspos/orthogonal-positioned-grid-descendants-011-expected.txt: Added.
+        * web-platform-tests/css/css-grid/abspos/orthogonal-positioned-grid-descendants-011.html: Added.
+        * web-platform-tests/css/css-grid/abspos/orthogonal-positioned-grid-descendants-012-expected.txt: Added.
+        * web-platform-tests/css/css-grid/abspos/orthogonal-positioned-grid-descendants-012.html: Added.
+        * web-platform-tests/css/css-grid/abspos/orthogonal-positioned-grid-descendants-013-expected.txt: Added.
+        * web-platform-tests/css/css-grid/abspos/orthogonal-positioned-grid-descendants-013.html: Added.
+        * web-platform-tests/css/css-grid/abspos/orthogonal-positioned-grid-descendants-014-expected.txt: Added.
+        * web-platform-tests/css/css-grid/abspos/orthogonal-positioned-grid-descendants-014.html: Added.
+        * web-platform-tests/css/css-grid/abspos/orthogonal-positioned-grid-descendants-015-expected.txt: Added.
+        * web-platform-tests/css/css-grid/abspos/orthogonal-positioned-grid-descendants-015.html: Added.
+        * web-platform-tests/css/css-grid/abspos/orthogonal-positioned-grid-descendants-016-expected.txt: Added.
+        * web-platform-tests/css/css-grid/abspos/orthogonal-positioned-grid-descendants-016.html: Added.
+        * web-platform-tests/css/css-grid/abspos/positioned-grid-descendants-001-expected.txt: Added.
+        * web-platform-tests/css/css-grid/abspos/positioned-grid-descendants-001.html: Added.
+        * web-platform-tests/css/css-grid/abspos/positioned-grid-descendants-002-expected.txt: Added.
+        * web-platform-tests/css/css-grid/abspos/positioned-grid-descendants-002.html: Added.
+        * web-platform-tests/css/css-grid/abspos/positioned-grid-descendants-003-expected.txt: Added.
+        * web-platform-tests/css/css-grid/abspos/positioned-grid-descendants-003.html: Added.
+        * web-platform-tests/css/css-grid/abspos/positioned-grid-descendants-004-expected.txt: Added.
+        * web-platform-tests/css/css-grid/abspos/positioned-grid-descendants-004.html: Added.
+        * web-platform-tests/css/css-grid/abspos/positioned-grid-descendants-005-expected.txt: Added.
+        * web-platform-tests/css/css-grid/abspos/positioned-grid-descendants-005.html: Added.
+        * web-platform-tests/css/css-grid/abspos/positioned-grid-descendants-006-expected.txt: Added.
+        * web-platform-tests/css/css-grid/abspos/positioned-grid-descendants-006.html: Added.
+        * web-platform-tests/css/css-grid/abspos/positioned-grid-descendants-007-expected.txt: Added.
+        * web-platform-tests/css/css-grid/abspos/positioned-grid-descendants-007.html: Added.
+        * web-platform-tests/css/css-grid/abspos/positioned-grid-descendants-008-expected.txt: Added.
+        * web-platform-tests/css/css-grid/abspos/positioned-grid-descendants-008.html: Added.
+        * web-platform-tests/css/css-grid/abspos/positioned-grid-descendants-009-expected.txt: Added.
+        * web-platform-tests/css/css-grid/abspos/positioned-grid-descendants-009.html: Added.
+        * web-platform-tests/css/css-grid/abspos/positioned-grid-descendants-010-expected.txt: Added.
+        * web-platform-tests/css/css-grid/abspos/positioned-grid-descendants-010.html: Added.
+        * web-platform-tests/css/css-grid/abspos/positioned-grid-descendants-011-expected.txt: Added.
+        * web-platform-tests/css/css-grid/abspos/positioned-grid-descendants-011.html: Added.
+        * web-platform-tests/css/css-grid/abspos/positioned-grid-descendants-012-expected.txt: Added.
+        * web-platform-tests/css/css-grid/abspos/positioned-grid-descendants-012.html: Added.
+        * web-platform-tests/css/css-grid/abspos/positioned-grid-descendants-013-expected.txt: Added.
+        * web-platform-tests/css/css-grid/abspos/positioned-grid-descendants-013.html: Added.
+        * web-platform-tests/css/css-grid/abspos/positioned-grid-descendants-014-expected.txt: Added.
+        * web-platform-tests/css/css-grid/abspos/positioned-grid-descendants-014.html: Added.
+        * web-platform-tests/css/css-grid/abspos/positioned-grid-descendants-015-expected.txt: Added.
+        * web-platform-tests/css/css-grid/abspos/positioned-grid-descendants-015.html: Added.
+        * web-platform-tests/css/css-grid/abspos/positioned-grid-descendants-016-expected.txt: Added.
+        * web-platform-tests/css/css-grid/abspos/positioned-grid-descendants-016.html: Added.
+        * web-platform-tests/css/css-grid/abspos/support/positioned-grid-descendants.css: Added.
+        (.grid):
+        (.abspos):
+        (.orthogonal):
+        (.grid > :nth-child(1) > .abspos):
+        (.grid > :nth-child(2) > .abspos):
+        * web-platform-tests/css/css-grid/abspos/support/positioned-grid-descendants.js: Added.
+        (export.runTests):
+        * web-platform-tests/css/css-grid/abspos/support/w3c-import.log:
+        * web-platform-tests/css/css-grid/abspos/w3c-import.log:
+
 2019-01-23  Rob Buis  <rbuis@igalia.com>
 
         Update MIME type parser

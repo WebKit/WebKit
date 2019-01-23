@@ -1,3 +1,59 @@
+2019-01-23  Oriol Brufau  <obrufau@igalia.com>
+
+        [css-grid] Properly handle static positions of abspos inside grid items
+        https://bugs.webkit.org/show_bug.cgi?id=193657
+
+        Reviewed by Javier Fernandez.
+
+        Rename findChildLogicalPosition to setLogicalPositionForChild and let it set the position.
+        Add setLogicalOffsetForChild like setLogicalPositionForChild but just for one offset,
+        and only if it's needed (not for abspos descentants in their static position).
+        Add logicalOffsetForChild that finds the value to be set by the functions above.
+        Rename existing logicalOffsetForChild to logicalOffsetForOutOfFlowChild.
+
+        Tests: imported/w3c/web-platform-tests/css/css-grid/abspos/orthogonal-positioned-grid-descendants-001.html
+               imported/w3c/web-platform-tests/css/css-grid/abspos/orthogonal-positioned-grid-descendants-002.html
+               imported/w3c/web-platform-tests/css/css-grid/abspos/orthogonal-positioned-grid-descendants-003.html
+               imported/w3c/web-platform-tests/css/css-grid/abspos/orthogonal-positioned-grid-descendants-004.html
+               imported/w3c/web-platform-tests/css/css-grid/abspos/orthogonal-positioned-grid-descendants-005.html
+               imported/w3c/web-platform-tests/css/css-grid/abspos/orthogonal-positioned-grid-descendants-006.html
+               imported/w3c/web-platform-tests/css/css-grid/abspos/orthogonal-positioned-grid-descendants-007.html
+               imported/w3c/web-platform-tests/css/css-grid/abspos/orthogonal-positioned-grid-descendants-008.html
+               imported/w3c/web-platform-tests/css/css-grid/abspos/orthogonal-positioned-grid-descendants-009.html
+               imported/w3c/web-platform-tests/css/css-grid/abspos/orthogonal-positioned-grid-descendants-010.html
+               imported/w3c/web-platform-tests/css/css-grid/abspos/orthogonal-positioned-grid-descendants-011.html
+               imported/w3c/web-platform-tests/css/css-grid/abspos/orthogonal-positioned-grid-descendants-012.html
+               imported/w3c/web-platform-tests/css/css-grid/abspos/orthogonal-positioned-grid-descendants-013.html
+               imported/w3c/web-platform-tests/css/css-grid/abspos/orthogonal-positioned-grid-descendants-014.html
+               imported/w3c/web-platform-tests/css/css-grid/abspos/orthogonal-positioned-grid-descendants-015.html
+               imported/w3c/web-platform-tests/css/css-grid/abspos/orthogonal-positioned-grid-descendants-016.html
+               imported/w3c/web-platform-tests/css/css-grid/abspos/positioned-grid-descendants-001.html
+               imported/w3c/web-platform-tests/css/css-grid/abspos/positioned-grid-descendants-002.html
+               imported/w3c/web-platform-tests/css/css-grid/abspos/positioned-grid-descendants-003.html
+               imported/w3c/web-platform-tests/css/css-grid/abspos/positioned-grid-descendants-004.html
+               imported/w3c/web-platform-tests/css/css-grid/abspos/positioned-grid-descendants-005.html
+               imported/w3c/web-platform-tests/css/css-grid/abspos/positioned-grid-descendants-006.html
+               imported/w3c/web-platform-tests/css/css-grid/abspos/positioned-grid-descendants-007.html
+               imported/w3c/web-platform-tests/css/css-grid/abspos/positioned-grid-descendants-008.html
+               imported/w3c/web-platform-tests/css/css-grid/abspos/positioned-grid-descendants-009.html
+               imported/w3c/web-platform-tests/css/css-grid/abspos/positioned-grid-descendants-010.html
+               imported/w3c/web-platform-tests/css/css-grid/abspos/positioned-grid-descendants-011.html
+               imported/w3c/web-platform-tests/css/css-grid/abspos/positioned-grid-descendants-012.html
+               imported/w3c/web-platform-tests/css/css-grid/abspos/positioned-grid-descendants-013.html
+               imported/w3c/web-platform-tests/css/css-grid/abspos/positioned-grid-descendants-014.html
+               imported/w3c/web-platform-tests/css/css-grid/abspos/positioned-grid-descendants-015.html
+               imported/w3c/web-platform-tests/css/css-grid/abspos/positioned-grid-descendants-016.html
+
+        * rendering/RenderGrid.cpp:
+        (WebCore::RenderGrid::layoutGridItems):
+        (WebCore::RenderGrid::layoutPositionedObject):
+        (WebCore::RenderGrid::logicalOffsetForOutOfFlowChild const):
+        (WebCore::RenderGrid::gridAreaPositionForOutOfFlowChild const):
+        (WebCore::RenderGrid::setLogicalPositionForChild const):
+        (WebCore::RenderGrid::setLogicalOffsetForChild const):
+        (WebCore::RenderGrid::logicalOffsetForChild const):
+        * rendering/RenderGrid.h:
+
 2019-01-23  Rob Buis  <rbuis@igalia.com>
 
         Update MIME type parser

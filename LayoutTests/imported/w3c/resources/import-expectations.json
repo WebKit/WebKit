@@ -67,6 +67,7 @@
     "web-platform-tests/css/css-color": "import", 
     "web-platform-tests/css/css-display": "import", 
     "web-platform-tests/css/css-grid": "import", 
+    "web-platform-tests/css/css-grid/abspos": "import", 
     "web-platform-tests/css/css-grid/grid-definition/": "import", 
     "web-platform-tests/css/css-grid/layout-algorithm/": "import", 
     "web-platform-tests/css/css-lists/": "import", 

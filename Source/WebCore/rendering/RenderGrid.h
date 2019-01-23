@@ -136,7 +136,7 @@ private:
     LayoutUnit resolveAutoStartGridPosition(GridTrackSizingDirection) const;
     LayoutUnit resolveAutoEndGridPosition(GridTrackSizingDirection) const;
     LayoutUnit gridAreaBreadthForOutOfFlowChild(const RenderBox&, GridTrackSizingDirection);
-    LayoutUnit logicalOffsetForChild(const RenderBox&, GridTrackSizingDirection, LayoutUnit) const;
+    LayoutUnit logicalOffsetForOutOfFlowChild(const RenderBox&, GridTrackSizingDirection, LayoutUnit) const;
     void gridAreaPositionForOutOfFlowChild(const RenderBox&, GridTrackSizingDirection, LayoutUnit& start, LayoutUnit& end) const;
     void gridAreaPositionForInFlowChild(const RenderBox&, GridTrackSizingDirection, LayoutUnit& start, LayoutUnit& end) const;
     void gridAreaPositionForChild(const RenderBox&, GridTrackSizingDirection, LayoutUnit& start, LayoutUnit& end) const;
@@ -146,7 +146,9 @@ private:
     LayoutUnit columnAxisOffsetForChild(const RenderBox&) const;
     LayoutUnit rowAxisOffsetForChild(const RenderBox&) const;
     void computeContentPositionAndDistributionOffset(GridTrackSizingDirection, const LayoutUnit& availableFreeSpace, unsigned numberOfGridTracks);
-    LayoutPoint findChildLogicalPosition(const RenderBox&) const;
+    void setLogicalPositionForChild(RenderBox&) const;
+    void setLogicalOffsetForChild(RenderBox&, GridTrackSizingDirection) const;
+    LayoutUnit logicalOffsetForChild(const RenderBox&, GridTrackSizingDirection) const;
     GridArea cachedGridArea(const RenderBox&) const;
     GridSpan cachedGridSpan(const RenderBox&, GridTrackSizingDirection) const;
 
