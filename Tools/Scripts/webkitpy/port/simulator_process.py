@@ -1,4 +1,4 @@
-# Copyright (C) 2017 Apple Inc. All rights reserved.
+# Copyright (C) 2017-2019 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -95,7 +95,7 @@ class SimulatorProcess(ServerProcess):
         self._target_host.listening_socket.listen(3)
         self._pid = self._target_host.launch_app(self._bundle_id, self._cmd[1:], env=self._env)
 
-        with Timeout(6, RuntimeError('Timed out waiting for pid {} to connect at port {}'.format(self._pid, self._target_host.listening_port()))):
+        with Timeout(15, RuntimeError('Timed out waiting for pid {} to connect at port {}'.format(self._pid, self._target_host.listening_port()))):
             stdin = None
             stdout = None
             stderr = None
