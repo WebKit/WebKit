@@ -1,3 +1,10 @@
+2019-01-23  Daniel Bates  <dabates@apple.com>
+
+        Fix the Apple Internal build. See <rdar://problem/47486758>.
+
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView dropInteraction:previewForDroppingItem:withDefault:]):
+
 2019-01-23  Per Arne Vollan  <pvollan@apple.com>
 
         [macOS] Sandbox fails to compile
