@@ -38,6 +38,7 @@ NetworkProcess/soup/NetworkProcessMainSoup.cpp
 NetworkProcess/soup/NetworkProcessSoup.cpp
 NetworkProcess/soup/NetworkSessionSoup.cpp
 NetworkProcess/soup/RemoteNetworkingContextSoup.cpp
+NetworkProcess/soup/WebKitSoupRequestInputStream.cpp
 
 NetworkProcess/webrtc/LibWebRTCSocketClient.cpp
 NetworkProcess/webrtc/NetworkRTCMonitor.cpp
@@ -250,7 +251,6 @@ WebProcess/WebPage/wpe/CompositingManager.cpp
 WebProcess/WebPage/wpe/WebInspectorUIWPE.cpp
 WebProcess/WebPage/wpe/WebPageWPE.cpp
 
-WebProcess/soup/WebKitSoupRequestInputStream.cpp
-WebProcess/soup/WebProcessSoup.cpp
+WebProcess/glib/WebProcessGLib.cpp
 
 WebProcess/wpe/WebProcessMainWPE.cpp

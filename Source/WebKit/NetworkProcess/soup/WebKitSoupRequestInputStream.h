@@ -17,8 +17,7 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#ifndef WebKitSoupRequestInputStream_h
-#define WebKitSoupRequestInputStream_h
+#pragma once
 
 #include <WebCore/ResourceError.h>
 #include <gio/gio.h>
@@ -53,5 +52,3 @@ void webkitSoupRequestInputStreamDidFailWithError(WebKitSoupRequestInputStream*,
 bool webkitSoupRequestInputStreamFinished(WebKitSoupRequestInputStream*);
 
 G_END_DECLS
-
-#endif // WebKitSoupRequestInputStream_h

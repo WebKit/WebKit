@@ -56,7 +56,6 @@ void WebProcessPool::setIgnoreTLSErrors(bool ignoreTLSErrors)
 void WebProcessPool::setNetworkProxySettings(const WebCore::SoupNetworkProxySettings& settings)
 {
     m_networkProxySettings = settings;
-    sendToAllProcesses(Messages::WebProcess::SetNetworkProxySettings(m_networkProxySettings));
     if (m_networkProcess)
         m_networkProcess->send(Messages::NetworkProcess::SetNetworkProxySettings(m_networkProxySettings), 0);
 }

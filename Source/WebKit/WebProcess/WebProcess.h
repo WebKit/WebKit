@@ -73,7 +73,6 @@ struct MockMediaDevice;
 struct PluginInfo;
 struct PrewarmInformation;
 struct SecurityOriginData;
-struct SoupNetworkProxySettings;
 
 #if ENABLE(SERVICE_WORKER)
 struct ServiceWorkerContextData;
@@ -319,9 +318,7 @@ private:
     void gamepadConnected(const GamepadData&);
     void gamepadDisconnected(unsigned index);
 #endif
-#if USE(SOUP)
-    void setNetworkProxySettings(const WebCore::SoupNetworkProxySettings&);
-#endif
+
 #if ENABLE(SERVICE_WORKER)
     void establishWorkerContextConnectionToNetworkProcess(uint64_t pageGroupID, uint64_t pageID, const WebPreferencesStore&, PAL::SessionID);
     void registerServiceWorkerClients();

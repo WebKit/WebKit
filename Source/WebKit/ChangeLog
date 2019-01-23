@@ -1,5 +1,45 @@
 2019-01-23  Michael Catanzaro  <mcatanzaro@igalia.com>
 
+        [SOUP] Remove libsoup cruft from WebProcess
+        https://bugs.webkit.org/show_bug.cgi?id=193710
+
+        Reviewed by Carlos Garcia Campos.
+
+        SoupNetworkSession is no longer accessible from the web process because it's owned
+        (indirectly) by NetworkProcess after r240292. It doesn't make sense to have any libsoup
+        code under WebProcess anymore. The current libsoup code consists of (a) unused stuff to be
+        removed, (b) stuff unrelated to libsoup, which should move to a WebProcessGLib.cpp, and (c)
+        WebKitSoupRequestInputStream, which is only used by NetworkProcess and should move there
+
+        * NetworkProcess/soup/WebKitSoupRequestInputStream.cpp: Renamed from Source/WebKit/WebProcess/soup/WebKitSoupRequestInputStream.cpp.
+        (AsyncReadData::AsyncReadData):
+        (webkitSoupRequestInputStreamReadAsyncResultComplete):
+        (webkitSoupRequestInputStreamPendingReadAsyncComplete):
+        (webkitSoupRequestInputStreamHasDataToRead):
+        (webkitSoupRequestInputStreamIsWaitingForData):
+        (webkitSoupRequestInputStreamReadAsync):
+        (webkitSoupRequestInputStreamReadFinish):
+        (webkitSoupRequestInputStreamFinalize):
+        (webkit_soup_request_input_stream_init):
+        (webkit_soup_request_input_stream_class_init):
+        (webkitSoupRequestInputStreamNew):
+        (webkitSoupRequestInputStreamAddData):
+        (webkitSoupRequestInputStreamDidFailWithError):
+        (webkitSoupRequestInputStreamFinished):
+        * NetworkProcess/soup/WebKitSoupRequestInputStream.h: Renamed from Source/WebKit/WebProcess/soup/WebKitSoupRequestInputStream.h.
+        * SourcesGTK.txt:
+        * SourcesWPE.txt:
+        * UIProcess/soup/WebProcessPoolSoup.cpp:
+        (WebKit::WebProcessPool::setNetworkProxySettings): Don't send message to web processes.
+        * WebProcess/WebProcess.h:
+        * WebProcess/WebProcess.messages.in:
+        * WebProcess/glib/WebProcessGLib.cpp: Renamed from Source/WebKit/WebProcess/soup/WebProcessSoup.cpp.
+        (WebKit::WebProcess::platformSetCacheModel):
+        (WebKit::WebProcess::platformInitializeWebProcess):
+        (WebKit::WebProcess::platformTerminate):
+
+2019-01-23  Michael Catanzaro  <mcatanzaro@igalia.com>
+
         [SOUP] Clean up NetworkStorageSession
         https://bugs.webkit.org/show_bug.cgi?id=193707
 

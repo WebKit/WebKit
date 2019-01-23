@@ -30,8 +30,6 @@
 #include "WebProcessCreationParameters.h"
 #include <WebCore/GStreamerCommon.h>
 #include <WebCore/MemoryCache.h>
-#include <WebCore/NetworkStorageSession.h>
-#include <WebCore/SoupNetworkSession.h>
 
 #if PLATFORM(WAYLAND)
 #include "WaylandCompositorDisplay.h"
@@ -46,9 +44,6 @@ void WebProcess::platformSetCacheModel(CacheModel cacheModel)
 
 void WebProcess::platformInitializeWebProcess(WebProcessCreationParameters&& parameters)
 {
-    if (parameters.proxySettings.mode != WebCore::SoupNetworkProxySettings::Mode::Default)
-        setNetworkProxySettings(parameters.proxySettings);
-
 #if PLATFORM(WAYLAND)
     m_waylandCompositorDisplay = WaylandCompositorDisplay::create(parameters.waylandCompositorDisplayName);
 #endif
@@ -59,11 +54,6 @@ void WebProcess::platformInitializeWebProcess(WebProcessCreationParameters&& par
 
 void WebProcess::platformTerminate()
 {
-}
-
-void WebProcess::setNetworkProxySettings(const WebCore::SoupNetworkProxySettings& settings)
-{
-    WebCore::SoupNetworkSession::setProxySettings(settings);
 }
 
 } // namespace WebKit

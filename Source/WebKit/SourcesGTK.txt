@@ -42,6 +42,7 @@ NetworkProcess/soup/NetworkProcessMainSoup.cpp
 NetworkProcess/soup/NetworkProcessSoup.cpp
 NetworkProcess/soup/NetworkSessionSoup.cpp
 NetworkProcess/soup/RemoteNetworkingContextSoup.cpp
+NetworkProcess/soup/WebKitSoupRequestInputStream.cpp
 
 NetworkProcess/webrtc/LibWebRTCSocketClient.cpp
 NetworkProcess/webrtc/NetworkRTCMonitor.cpp
@@ -412,10 +413,9 @@ WebProcess/WebPage/gtk/WebInspectorUIGtk.cpp
 WebProcess/WebPage/gtk/WebPageGtk.cpp
 WebProcess/WebPage/gtk/WebPrintOperationGtk.cpp
 
+WebProcess/glib/WebProcessGLib.cpp
+
 WebProcess/gtk/WaylandCompositorDisplay.cpp
 WebProcess/gtk/WebProcessMainGtk.cpp
-
-WebProcess/soup/WebKitSoupRequestInputStream.cpp
-WebProcess/soup/WebProcessSoup.cpp
 
 WebProcess/Plugins/Netscape/NetscapePluginNone.cpp

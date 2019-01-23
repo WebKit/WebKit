@@ -109,10 +109,6 @@ messages -> WebProcess LegacyReceiver {
     GamepadDisconnected(unsigned index)
 #endif
 
-#if USE(SOUP)
-    SetNetworkProxySettings(struct WebCore::SoupNetworkProxySettings settings)
-#endif
-
 #if ENABLE(SERVICE_WORKER)
     EstablishWorkerContextConnectionToNetworkProcess(uint64_t pageGroupID, uint64_t pageID, struct WebKit::WebPreferencesStore store, PAL::SessionID initialSessionID)
     RegisterServiceWorkerClients()
