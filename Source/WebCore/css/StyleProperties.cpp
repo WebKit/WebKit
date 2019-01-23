@@ -979,7 +979,7 @@ String StyleProperties::asText() const
         String value;
         auto serializeBorderShorthand = [&] (const CSSPropertyID borderProperty, const CSSPropertyID fallbackProperty) {
             // FIXME: Deal with cases where only some of border sides are specified.
-            ASSERT(borderProperty - firstCSSProperty < shorthandPropertyAppeared.size());
+            ASSERT(borderProperty - firstCSSProperty < static_cast<CSSPropertyID>(shorthandPropertyAppeared.size()));
             if (!shorthandPropertyAppeared[borderProperty - firstCSSProperty] && isEnabledCSSProperty(borderProperty)) {
                 value = getPropertyValue(borderProperty);
                 if (value.isNull())
