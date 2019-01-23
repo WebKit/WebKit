@@ -88,6 +88,8 @@ public:
 private:
     EditCommandComposition(Document&, const VisibleSelection& startingSelection, const VisibleSelection& endingSelection, EditAction);
 
+    String label() const final;
+
     RefPtr<Document> m_document;
     VisibleSelection m_startingSelection;
     VisibleSelection m_endingSelection;

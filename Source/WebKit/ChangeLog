@@ -1,3 +1,45 @@
+2019-01-23  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Introduce UndoStep::label() and adopt it in WebKitLegacy and WebKit
+        https://bugs.webkit.org/show_bug.cgi?id=193706
+        <rdar://problem/44807048>
+
+        Reviewed by Ryosuke Niwa.
+
+        * UIProcess/Cocoa/WebViewImpl.mm:
+        (WebKit::WebViewImpl::registerEditCommand):
+        * UIProcess/WebEditCommandProxy.cpp:
+        (WebKit::WebEditCommandProxy::WebEditCommandProxy):
+        * UIProcess/WebEditCommandProxy.h:
+
+        Drive-by tweak: make WebEditCommandProxy's backpointer to its WebPageProxy a WeakPtr instead of a raw pointer.
+        Additionally, call clear() instead of setting m_page to 0 upon invalidation. Also, turn the WebPageProxy*
+        argument into a WebPageProxy&, since the WebPageProxy must exist when it creates a new WebEditCommandProxy.
+
+        (WebKit::WebEditCommandProxy::create):
+        (WebKit::WebEditCommandProxy::label const):
+        (WebKit::WebEditCommandProxy::invalidate):
+        (WebKit::WebEditCommandProxy::editAction const): Deleted.
+
+        Adjust UI-side logic to just handle the undo/redo label, rather than map the edit action to a localized string.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::registerEditCommandForUndo):
+        (WebKit::WebPageProxy::resetState):
+
+        Tweak this to use std::exchange instead of copying all the WebEditCommandProxy RefPtrs into a separate Vector
+        and then iterating over the Vector.
+
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPageProxy.messages.in:
+
+        Adjust this so that we only send the undo/redo label over IPC, rather than the edit action type.
+
+        * UIProcess/ios/PageClientImplIOS.mm:
+        (WebKit::PageClientImpl::registerEditCommand):
+        * WebProcess/WebCoreSupport/WebEditorClient.cpp:
+        (WebKit::WebEditorClient::registerUndoStep):
+
 2019-01-23  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         [SOUP] Remove libsoup cruft from WebProcess

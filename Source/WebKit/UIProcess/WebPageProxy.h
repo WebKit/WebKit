@@ -1644,7 +1644,7 @@ private:
     void backForwardClear();
 
     // Undo management
-    void registerEditCommandForUndo(WebUndoStepID commandID, uint32_t editAction);
+    void registerEditCommandForUndo(WebUndoStepID commandID, const String& label);
     void registerInsertionUndoGrouping();
     void clearAllEditCommands();
     void canUndoRedo(UndoOrRedo, bool& result);

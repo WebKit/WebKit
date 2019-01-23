@@ -302,6 +302,11 @@ void EditCommandComposition::getNodesInCommand(HashSet<Node*>& nodes)
 }
 #endif
 
+String EditCommandComposition::label() const
+{
+    return undoRedoLabel(m_editAction);
+}
+
 CompositeEditCommand::CompositeEditCommand(Document& document, EditAction editingAction)
     : EditCommand(document, editingAction)
 {

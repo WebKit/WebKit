@@ -95,6 +95,6 @@ enum class EditAction : uint8_t {
     InsertEditableImage
 };
 
-WEBCORE_EXPORT WTF::String nameForUndoRedo(EditAction);
+WTF::String undoRedoLabel(EditAction);
 
 } // namespace WebCore

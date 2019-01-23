@@ -65,4 +65,13 @@ bool CustomUndoStep::isValid() const
     return m_undoItem && m_undoItem->isValid();
 }
 
+String CustomUndoStep::label() const
+{
+    if (!isValid()) {
+        ASSERT_NOT_REACHED();
+        return emptyString();
+    }
+    return m_undoItem->label();
+}
+
 } // namespace WebCore

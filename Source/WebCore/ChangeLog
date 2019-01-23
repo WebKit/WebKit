@@ -1,3 +1,35 @@
+2019-01-23  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Introduce UndoStep::label() and adopt it in WebKitLegacy and WebKit
+        https://bugs.webkit.org/show_bug.cgi?id=193706
+        <rdar://problem/44807048>
+
+        Reviewed by Ryosuke Niwa.
+
+        Refactors some existing logic when registering undoable actions, such that we propagate the undoable action's
+        label string instead of the EditAction to the client layer. This will help make handling of CustomUndoStep's
+        undo/redo label simpler, as the client layer won't need to worry about managing an EditAction and undo/redo
+        label simultaneously. There should be no change in behavior.
+
+        * editing/CompositeEditCommand.cpp:
+        (WebCore::EditCommandComposition::label const):
+        * editing/CompositeEditCommand.h:
+        * editing/CustomUndoStep.cpp:
+        (WebCore::CustomUndoStep::label const):
+        * editing/CustomUndoStep.h:
+        * editing/EditAction.cpp:
+        (WebCore::undoRedoLabel):
+        (WebCore::nameForUndoRedo): Deleted.
+        * editing/EditAction.h:
+
+        Rename nameForUndoRedo to undoRedoLabel, and remove the WEBCORE_EXPORT since it's no longer needed in WebKit or
+        WebKitLegacy.
+
+        * editing/UndoStep.h:
+
+        Add UndoStep::label(). While EditCommandComposition implements this by mapping its EditAction to a
+        localized string, CustomUndoStep implements this by returning the undoable action label provided by script.
+
 2019-01-23  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         [SOUP] Clean up NetworkStorageSession

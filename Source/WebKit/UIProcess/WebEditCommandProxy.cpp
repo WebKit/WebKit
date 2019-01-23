@@ -36,10 +36,10 @@
 namespace WebKit {
 using namespace WebCore;
 
-WebEditCommandProxy::WebEditCommandProxy(WebUndoStepID commandID, WebCore::EditAction editAction, WebPageProxy* page)
+WebEditCommandProxy::WebEditCommandProxy(WebUndoStepID commandID, const String& label, WebPageProxy& page)
     : m_commandID(commandID)
-    , m_editAction(editAction)
-    , m_page(page)
+    , m_label(label)
+    , m_page(makeWeakPtr(page))
 {
     m_page->addEditCommand(*this);
 }

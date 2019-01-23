@@ -1,3 +1,21 @@
+2019-01-23  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Introduce UndoStep::label() and adopt it in WebKitLegacy and WebKit
+        https://bugs.webkit.org/show_bug.cgi?id=193706
+        <rdar://problem/44807048>
+
+        Reviewed by Ryosuke Niwa.
+
+        Use UndoStep::label().
+
+        * WebCoreSupport/WebEditorClient.h:
+        * WebCoreSupport/WebEditorClient.mm:
+        (-[WebUndoStep initWithUndoStep:]):
+        (+[WebUndoStep stepWithUndoStep:]):
+        (WebEditorClient::registerUndoOrRedoStep):
+        (WebEditorClient::registerUndoStep):
+        (WebEditorClient::registerRedoStep):
+
 2019-01-22  Alex Christensen  <achristensen@webkit.org>
 
         Move NetworkStorageSession ownership to NetworkProcess

@@ -267,7 +267,7 @@ void PageClientImpl::didChangeViewportProperties(const ViewportAttributes&)
 
 void PageClientImpl::registerEditCommand(Ref<WebEditCommandProxy>&& command, UndoOrRedo undoOrRedo)
 {
-    auto actionName = WebCore::nameForUndoRedo(command->editAction());
+    auto actionName = command->label();
     auto commandObjC = adoptNS([[WKEditCommand alloc] initWithWebEditCommandProxy:WTFMove(command)]);
     
     NSUndoManager *undoManager = [m_contentView undoManager];

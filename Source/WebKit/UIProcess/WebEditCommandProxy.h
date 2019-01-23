@@ -31,6 +31,8 @@
 #include <wtf/Forward.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
+#include <wtf/WeakPtr.h>
+#include <wtf/text/WTFString.h>
 
 namespace WebKit {
 
@@ -38,26 +40,26 @@ class WebPageProxy;
 
 class WebEditCommandProxy : public API::ObjectImpl<API::Object::Type::EditCommandProxy> {
 public:
-    static Ref<WebEditCommandProxy> create(WebUndoStepID commandID, WebCore::EditAction editAction, WebPageProxy* page)
+    static Ref<WebEditCommandProxy> create(WebUndoStepID commandID, const String& label, WebPageProxy& page)
     {
-        return adoptRef(*new WebEditCommandProxy(commandID, editAction, page));
+        return adoptRef(*new WebEditCommandProxy(commandID, label, page));
     }
     ~WebEditCommandProxy();
 
     WebUndoStepID commandID() const { return m_commandID; }
-    WebCore::EditAction editAction() const { return m_editAction; }
+    String label() const { return m_label; }
 
-    void invalidate() { m_page = 0; }
+    void invalidate() { m_page.clear(); }
 
     void unapply();
     void reapply();
 
 private:
-    WebEditCommandProxy(WebUndoStepID commandID, WebCore::EditAction, WebPageProxy*);
+    WebEditCommandProxy(WebUndoStepID commandID, const String& label, WebPageProxy&);
 
     WebUndoStepID m_commandID;
-    WebCore::EditAction m_editAction;
-    WebPageProxy* m_page;
+    String m_label;
+    WeakPtr<WebPageProxy> m_page;
 };
 
 } // namespace WebKit

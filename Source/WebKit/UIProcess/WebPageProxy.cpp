@@ -5439,9 +5439,9 @@ void WebPageProxy::compositionWasCanceled()
 
 // Undo management
 
-void WebPageProxy::registerEditCommandForUndo(WebUndoStepID commandID, uint32_t editAction)
+void WebPageProxy::registerEditCommandForUndo(WebUndoStepID commandID, const String& label)
 {
-    registerEditCommand(WebEditCommandProxy::create(commandID, static_cast<EditAction>(editAction), this), UndoOrRedo::Undo);
+    registerEditCommand(WebEditCommandProxy::create(commandID, label, *this), UndoOrRedo::Undo);
 }
     
 void WebPageProxy::registerInsertionUndoGrouping()
@@ -6652,10 +6652,7 @@ void WebPageProxy::resetState(ResetStateReason resetStateReason)
     m_callbacks.invalidate(error);
     m_loadDependentStringCallbackIDs.clear();
 
-    auto editCommandVector = copyToVector(m_editCommandSet);
-    m_editCommandSet.clear();
-
-    for (auto& editCommand : editCommandVector)
+    for (auto& editCommand : std::exchange(m_editCommandSet, { }))
         editCommand->invalidate();
 
     m_activePopupMenu = nullptr;

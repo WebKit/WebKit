@@ -30,7 +30,7 @@
 
 namespace WebCore {
 
-String nameForUndoRedo(EditAction editAction)
+String undoRedoLabel(EditAction editAction)
 {
     switch (editAction) {
     case EditAction::Unspecified:

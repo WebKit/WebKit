@@ -233,7 +233,7 @@ messages -> WebPageProxy {
     WillGoToBackForwardListItem(struct WebCore::BackForwardItemIdentifier itemID, bool inPageCache)
 
     # Undo/Redo messages
-    RegisterEditCommandForUndo(uint64_t commandID, uint32_t editAction)
+    RegisterEditCommandForUndo(uint64_t commandID, String label)
     ClearAllEditCommands()
     RegisterInsertionUndoGrouping()
     CanUndoRedo(enum:bool WebKit::UndoOrRedo undoOrRedo) -> (bool result) LegacySync

@@ -32,6 +32,7 @@
 
 #include "EditAction.h"
 #include <wtf/RefCounted.h>
+#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
@@ -42,6 +43,7 @@ public:
     virtual void unapply() = 0;
     virtual void reapply() = 0;
     virtual EditAction editingAction() const = 0;
+    virtual String label() const = 0;
 };
 
 } // namespace WebCore

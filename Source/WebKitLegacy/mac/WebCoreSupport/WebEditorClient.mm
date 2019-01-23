@@ -125,7 +125,7 @@ static WebViewInsertAction kit(EditorInsertAction action)
     RefPtr<UndoStep> m_step;   
 }
 
-+ (WebUndoStep *)stepWithUndoStep:(UndoStep&)step;
++ (WebUndoStep *)stepWithUndoStep:(Ref<UndoStep>&&)step;
 - (UndoStep&)step;
 
 @end
@@ -141,12 +141,12 @@ static WebViewInsertAction kit(EditorInsertAction action)
 #endif
 }
 
-- (id)initWithUndoStep:(UndoStep&)step
+- (id)initWithUndoStep:(Ref<UndoStep>&&)step
 {
     self = [super init];
     if (!self)
         return nil;
-    m_step = &step;
+    m_step = WTFMove(step);
     return self;
 }
 
@@ -158,9 +158,9 @@ static WebViewInsertAction kit(EditorInsertAction action)
     [super dealloc];
 }
 
-+ (WebUndoStep *)stepWithUndoStep:(UndoStep&)step
++ (WebUndoStep *)stepWithUndoStep:(Ref<UndoStep>&&)step
 {
-    return [[[WebUndoStep alloc] initWithUndoStep:step] autorelease];
+    return [[[WebUndoStep alloc] initWithUndoStep:WTFMove(step)] autorelease];
 }
 
 - (UndoStep&)step
@@ -601,9 +601,8 @@ void WebEditorClient::registerUndoOrRedoStep(UndoStep& step, bool isRedo)
         return;
 #endif
 
-    NSString *actionName = WebCore::nameForUndoRedo(step.editingAction());
-    WebUndoStep *webEntry = [WebUndoStep stepWithUndoStep:step];
-    [undoManager registerUndoWithTarget:m_undoTarget.get() selector:(isRedo ? @selector(redoEditing:) : @selector(undoEditing:)) object:webEntry];
+    NSString *actionName = step.label();
+    [undoManager registerUndoWithTarget:m_undoTarget.get() selector:(isRedo ? @selector(redoEditing:) : @selector(undoEditing:)) object:[WebUndoStep stepWithUndoStep:step]];
     if (actionName)
         [undoManager setActionName:actionName];
     m_haveUndoRedoOperations = YES;
@@ -629,14 +628,14 @@ void WebEditorClient::updateEditorStateAfterLayoutIfEditabilityChanged()
         [m_webView updateTouchBar];
 }
 
-void WebEditorClient::registerUndoStep(UndoStep& cmd)
+void WebEditorClient::registerUndoStep(UndoStep& command)
 {
-    registerUndoOrRedoStep(cmd, false);
+    registerUndoOrRedoStep(command, false);
 }
 
-void WebEditorClient::registerRedoStep(UndoStep& cmd)
+void WebEditorClient::registerRedoStep(UndoStep& command)
 {
-    registerUndoOrRedoStep(cmd, true);
+    registerUndoOrRedoStep(command, true);
 }
 
 void WebEditorClient::clearUndoRedoOperations()
