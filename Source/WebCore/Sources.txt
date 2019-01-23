@@ -952,6 +952,7 @@ editing/BreakBlockquoteCommand.cpp
 editing/ChangeListTypeCommand.cpp
 editing/CompositeEditCommand.cpp
 editing/CreateLinkCommand.cpp
+editing/CustomUndoStep.cpp
 editing/DeleteFromTextNodeCommand.cpp
 editing/DeleteSelectionCommand.cpp
 editing/DictationAlternative.cpp

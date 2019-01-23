@@ -1,3 +1,38 @@
+2019-01-22  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Introduce CustomUndoStep.h and CustomUndoStep.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=193704
+        <rdar://problem/44807048>
+
+        Reviewed by Ryosuke Niwa.
+
+        This patch is more work in progress towards supporting `UndoManager.addItem()`. Here, we introduce a helper
+        class, CustomUndoStep, that holds a weak reference to a script-defined UndoItem. See below for more details.
+
+        No change in behavior.
+
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * editing/CustomUndoStep.cpp:
+        (WebCore::CustomUndoStep::CustomUndoStep):
+
+        Subclass UndoStep.
+
+        (WebCore::CustomUndoStep::unapply):
+        (WebCore::CustomUndoStep::reapply):
+
+        If possible, invoke the UndoItem's undo and redo handlers.
+
+        (WebCore::CustomUndoStep::isValid const):
+        * editing/CustomUndoStep.h:
+        * editing/EditingStyle.cpp:
+        * editing/InsertEditableImageCommand.cpp:
+        (WebCore::InsertEditableImageCommand::doApply):
+
+        Unified build fixes.
+
+        * page/UndoItem.h:
+
 2019-01-22  Simon Fraser  <simon.fraser@apple.com>
 
         Adding a child to a ScrollingStateNode needs to trigger a tree state commit

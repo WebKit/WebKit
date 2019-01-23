@@ -23,56 +23,46 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#include "config.h"
+#include "CustomUndoStep.h"
 
+#include "Document.h"
+#include "UndoItem.h"
+#include "UndoManager.h"
 #include "VoidCallback.h"
-#include <wtf/IsoMalloc.h>
-#include <wtf/RefCounted.h>
-#include <wtf/WeakPtr.h>
-#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
-class Document;
-class UndoManager;
+CustomUndoStep::CustomUndoStep(UndoItem& item)
+    : m_undoItem(makeWeakPtr(item))
+{
+}
 
-class UndoItem : public RefCounted<UndoItem>, public CanMakeWeakPtr<UndoItem> {
-    WTF_MAKE_ISO_ALLOCATED(UndoItem);
-public:
-    struct Init {
-        String label;
-        RefPtr<VoidCallback> undo;
-        RefPtr<VoidCallback> redo;
-    };
+void CustomUndoStep::unapply()
+{
+    if (!isValid())
+        return;
 
-    static Ref<UndoItem> create(Init&& init)
-    {
-        return adoptRef(*new UndoItem(WTFMove(init)));
-    }
+    // FIXME: It's currently unclear how input events should be dispatched when unapplying or reapplying custom
+    // edit commands. Should the page be allowed to specify a target in the DOM for undo and redo?
+    Ref<UndoItem> protectedUndoItem(*m_undoItem);
+    protectedUndoItem->document()->updateLayoutIgnorePendingStylesheets();
+    protectedUndoItem->undoHandler().handleEvent();
+}
 
-    bool isValid() const;
-    void invalidate();
+void CustomUndoStep::reapply()
+{
+    if (!isValid())
+        return;
 
-    Document* document() const;
+    Ref<UndoItem> protectedUndoItem(*m_undoItem);
+    protectedUndoItem->document()->updateLayoutIgnorePendingStylesheets();
+    protectedUndoItem->redoHandler().handleEvent();
+}
 
-    void setUndoManager(UndoManager*);
-
-    const String& label() const { return m_label; }
-    VoidCallback& undoHandler() const { return m_undoHandler.get(); }
-    VoidCallback& redoHandler() const { return m_redoHandler.get(); }
-
-private:
-    UndoItem(Init&& init)
-        : m_label(WTFMove(init.label))
-        , m_undoHandler(init.undo.releaseNonNull())
-        , m_redoHandler(init.redo.releaseNonNull())
-    {
-    }
-
-    String m_label;
-    Ref<VoidCallback> m_undoHandler;
-    Ref<VoidCallback> m_redoHandler;
-    WeakPtr<UndoManager> m_undoManager;
-};
+bool CustomUndoStep::isValid() const
+{
+    return m_undoItem && m_undoItem->isValid();
+}
 
 } // namespace WebCore

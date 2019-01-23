@@ -25,54 +25,32 @@
 
 #pragma once
 
-#include "VoidCallback.h"
-#include <wtf/IsoMalloc.h>
-#include <wtf/RefCounted.h>
+#include "UndoStep.h"
+#include <wtf/Ref.h>
 #include <wtf/WeakPtr.h>
-#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
 class Document;
-class UndoManager;
+class UndoItem;
 
-class UndoItem : public RefCounted<UndoItem>, public CanMakeWeakPtr<UndoItem> {
-    WTF_MAKE_ISO_ALLOCATED(UndoItem);
+class CustomUndoStep final : public UndoStep {
 public:
-    struct Init {
-        String label;
-        RefPtr<VoidCallback> undo;
-        RefPtr<VoidCallback> redo;
-    };
-
-    static Ref<UndoItem> create(Init&& init)
+    static Ref<CustomUndoStep> create(UndoItem& item)
     {
-        return adoptRef(*new UndoItem(WTFMove(init)));
+        return adoptRef(*new CustomUndoStep(item));
     }
-
-    bool isValid() const;
-    void invalidate();
-
-    Document* document() const;
-
-    void setUndoManager(UndoManager*);
-
-    const String& label() const { return m_label; }
-    VoidCallback& undoHandler() const { return m_undoHandler.get(); }
-    VoidCallback& redoHandler() const { return m_redoHandler.get(); }
 
 private:
-    UndoItem(Init&& init)
-        : m_label(WTFMove(init.label))
-        , m_undoHandler(init.undo.releaseNonNull())
-        , m_redoHandler(init.redo.releaseNonNull())
-    {
-    }
+    CustomUndoStep(UndoItem&);
 
-    String m_label;
-    Ref<VoidCallback> m_undoHandler;
-    Ref<VoidCallback> m_redoHandler;
-    WeakPtr<UndoManager> m_undoManager;
+    void unapply() final;
+    void reapply() final;
+    EditAction editingAction() const final { return EditAction::Unspecified; }
+
+    bool isValid() const;
+
+    WeakPtr<UndoItem> m_undoItem;
 };
 
 } // namespace WebCore

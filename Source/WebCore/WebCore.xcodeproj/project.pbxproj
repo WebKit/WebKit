@@ -15131,6 +15131,8 @@
 		F4D9817E2195FBF6008230FC /* ChangeListTypeCommand.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = ChangeListTypeCommand.cpp; sourceTree = "<group>"; };
 		F4E1965A21F2395000285078 /* JSUndoItemCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSUndoItemCustom.cpp; sourceTree = "<group>"; };
 		F4E1965F21F26E4E00285078 /* UndoItem.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = UndoItem.cpp; sourceTree = "<group>"; };
+		F4E1966121F27D3C00285078 /* CustomUndoStep.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CustomUndoStep.h; sourceTree = "<group>"; };
+		F4E1966221F27D3D00285078 /* CustomUndoStep.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CustomUndoStep.cpp; sourceTree = "<group>"; };
 		F4E57EDA213F3F5F004EA98E /* FontAttributeChanges.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FontAttributeChanges.h; sourceTree = "<group>"; };
 		F4E57EDF213F434A004EA98E /* WebCoreNSFontManagerExtras.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebCoreNSFontManagerExtras.h; sourceTree = "<group>"; };
 		F4E57EE0213F434A004EA98E /* WebCoreNSFontManagerExtras.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = WebCoreNSFontManagerExtras.mm; sourceTree = "<group>"; };
@@ -21107,6 +21109,8 @@
 				2DD5A7261EBEE47D009BA597 /* CompositionUnderline.h */,
 				D0B0556709C6700100307E43 /* CreateLinkCommand.cpp */,
 				D0B0556609C6700100307E43 /* CreateLinkCommand.h */,
+				F4E1966221F27D3D00285078 /* CustomUndoStep.cpp */,
+				F4E1966121F27D3C00285078 /* CustomUndoStep.h */,
 				93309D8F099E64910056E581 /* DeleteFromTextNodeCommand.cpp */,
 				93309D90099E64910056E581 /* DeleteFromTextNodeCommand.h */,
 				93309D91099E64910056E581 /* DeleteSelectionCommand.cpp */,
