@@ -132,6 +132,11 @@ void NetworkProcess::platformInitializeNetworkProcess(const NetworkProcessCreati
     setIgnoreTLSErrors(parameters.ignoreTLSErrors);
 }
 
+std::unique_ptr<WebCore::NetworkStorageSession> NetworkProcess::platformCreateDefaultStorageSession() const
+{
+    return std::make_unique<WebCore::NetworkStorageSession>(PAL::SessionID::defaultSessionID(), std::make_unique<SoupNetworkSession>(PAL::SessionID::defaultSessionID()));
+}
+
 void NetworkProcess::setIgnoreTLSErrors(bool ignoreTLSErrors)
 {
     SoupNetworkSession::setShouldIgnoreTLSErrors(ignoreTLSErrors);

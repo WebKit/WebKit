@@ -130,6 +130,11 @@ void NetworkProcess::platformInitializeNetworkProcessCocoa(const NetworkProcessC
     [NSURLCache setSharedURLCache:urlCache.get()];
 }
 
+std::unique_ptr<WebCore::NetworkStorageSession> NetworkProcess::platformCreateDefaultStorageSession() const
+{
+    return std::make_unique<WebCore::NetworkStorageSession>(PAL::SessionID::defaultSessionID());
+}
+
 RetainPtr<CFDataRef> NetworkProcess::sourceApplicationAuditData() const
 {
 #if USE(SOURCE_APPLICATION_AUDIT_DATA)

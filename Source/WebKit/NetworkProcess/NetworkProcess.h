@@ -289,6 +289,7 @@ private:
     NetworkProcess();
 
     void platformInitializeNetworkProcess(const NetworkProcessCreationParameters&);
+    std::unique_ptr<WebCore::NetworkStorageSession> platformCreateDefaultStorageSession() const;
 
     void terminate() override;
     void platformTerminate();

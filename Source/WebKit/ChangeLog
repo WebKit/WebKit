@@ -1,3 +1,23 @@
+2019-01-23  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        Minor improvements to NetworkProcess
+        https://bugs.webkit.org/show_bug.cgi?id=193708
+
+        Reviewed by Alex Christensen.
+
+        * NetworkProcess/NetworkProcess.cpp:
+        (WebKit::NetworkProcess::switchToNewTestingSession): Fix a spelling error.
+        (WebKit::NetworkProcess::ensureSession): Add useful assertion.
+        (WebKit::NetworkProcess::defaultStorageSession const): Split into platform functions.
+        (WebKit::NetworkProcess::destroySession): Add useful assertion.
+        * NetworkProcess/NetworkProcess.h:
+        * NetworkProcess/cocoa/NetworkProcessCocoa.mm:
+        (WebKit::NetworkProcess::platformCreateDefaultStorageSession const):
+        * NetworkProcess/curl/NetworkProcessCurl.cpp:
+        (WebKit::NetworkProcess::platformCreateDefaultStorageSession const):
+        * NetworkProcess/soup/NetworkProcessSoup.cpp:
+        (WebKit::NetworkProcess::platformCreateDefaultStorageSession const):
+
 2019-01-23  Daniel Bates  <dabates@apple.com>
 
         Fix the Apple Internal build. See <rdar://problem/47486758>.

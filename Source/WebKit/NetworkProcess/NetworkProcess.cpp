@@ -475,7 +475,7 @@ void NetworkProcess::addWebsiteDataStore(WebsiteDataStoreParameters&& parameters
 void NetworkProcess::switchToNewTestingSession()
 {
 #if PLATFORM(COCOA)
-    // Session name should be short enough for shared memory region name to be under the limit, otehrwise sandbox rules won't work (see <rdar://problem/13642852>).
+    // Session name should be short enough for shared memory region name to be under the limit, otherwise sandbox rules won't work (see <rdar://problem/13642852>).
     String sessionName = String::format("WebKit Test-%u", static_cast<uint32_t>(getCurrentProcessID()));
 
     auto session = adoptCF(WebCore::createPrivateStorageSession(sessionName.createCFString().get()));
@@ -499,6 +499,8 @@ void NetworkProcess::ensureSession(const PAL::SessionID& sessionID, const String
 void NetworkProcess::ensureSession(const PAL::SessionID& sessionID, const String& identifierBase)
 #endif
 {
+    ASSERT(sessionID != PAL::SessionID::defaultSessionID());
+
     auto addResult = m_networkStorageSessions.add(sessionID, nullptr);
     if (!addResult.isNewEntry)
         return;
@@ -532,19 +534,8 @@ WebCore::NetworkStorageSession* NetworkProcess::storageSession(const PAL::Sessio
 
 WebCore::NetworkStorageSession& NetworkProcess::defaultStorageSession() const
 {
-    if (m_defaultNetworkStorageSession)
-      return *m_defaultNetworkStorageSession;
-
-#if PLATFORM(COCOA)
-    m_defaultNetworkStorageSession = std::make_unique<WebCore::NetworkStorageSession>(PAL::SessionID::defaultSessionID());
-#elif USE(SOUP)
-    m_defaultNetworkStorageSession = std::make_unique<WebCore::NetworkStorageSession>(PAL::SessionID::defaultSessionID(), std::make_unique<SoupNetworkSession>(PAL::SessionID::defaultSessionID()));
-#elif USE(CURL)
-    m_defaultNetworkStorageSession = std::make_unique<WebCore::NetworkStorageSession>(PAL::SessionID::defaultSessionID(), CurlContext::singleton());
-#else
-#error Implement me
-#endif
-
+    if (!m_defaultNetworkStorageSession)
+        m_defaultNetworkStorageSession = platformCreateDefaultStorageSession();
     return *m_defaultNetworkStorageSession;
 }
 
@@ -567,6 +558,8 @@ void NetworkProcess::setSession(const PAL::SessionID& sessionID, Ref<NetworkSess
 
 void NetworkProcess::destroySession(const PAL::SessionID& sessionID)
 {
+    ASSERT(sessionID != PAL::SessionID::defaultSessionID());
+
     if (auto session = m_networkSessions.take(sessionID))
         session->get().invalidateAndCancel();
     m_networkStorageSessions.remove(sessionID);
