@@ -1,3 +1,16 @@
+2019-01-22  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        Unreviewed attempt to fix GTK/WPE bots
+        https://bugs.webkit.org/show_bug.cgi?id=193580
+        <rdar://problem/47457742>
+
+        Doesn't make sense to clear the storage session right after creating it. This should fix
+        network process crash on startup under G_DEBUG=fatal-criticals due to the storage session
+        not having a cookie jar.
+
+        * NetworkProcess/NetworkProcess.cpp:
+        (WebKit::NetworkProcess::NetworkProcess):
+
 2019-01-22  Megan Gardner  <megan_gardner@apple.com>
 
         Cancel Web Touches Properly so that long presses on YouTube links do not incorrectly trigger a load

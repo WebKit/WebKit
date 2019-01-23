@@ -163,7 +163,6 @@ NetworkProcess::NetworkProcess()
     DNSResolveQueueSoup::setGlobalDefaultNetworkStorageSessionAccessor([this]() -> NetworkStorageSession& {
         return defaultStorageSession();
     });
-    defaultStorageSession().clearSoupNetworkSessionAndCookieStorage();
 #endif
 
     NetworkStateNotifier::singleton().addListener([this](bool isOnLine) {
