@@ -293,7 +293,6 @@ void RemoteInspector::receivedGetTargetListMessage()
 
 void RemoteInspector::receivedSetupMessage(unsigned targetIdentifier)
 {
-    std::lock_guard<Lock> lock(m_mutex);
     setup(targetIdentifier);
 }
 
@@ -328,9 +327,13 @@ void RemoteInspector::receivedCloseMessage(unsigned targetIdentifier)
 
 void RemoteInspector::setup(unsigned targetIdentifier)
 {
-    RemoteControllableTarget* target = m_targetMap.get(targetIdentifier);
-    if (!target)
-        return;
+    RemoteControllableTarget* target;
+    {
+        std::lock_guard<Lock> lock(m_mutex);
+        target = m_targetMap.get(targetIdentifier);
+        if (!target)
+            return;
+    }
 
     auto connectionToTarget = adoptRef(*new RemoteConnectionToTarget(*target));
     ASSERT(is<RemoteInspectionTarget>(target) || is<RemoteAutomationTarget>(target));
@@ -338,6 +341,8 @@ void RemoteInspector::setup(unsigned targetIdentifier)
         connectionToTarget->close();
         return;
     }
+
+    std::lock_guard<Lock> lock(m_mutex);
     m_targetConnectionMap.set(targetIdentifier, WTFMove(connectionToTarget));
 
     updateHasActiveDebugSession();

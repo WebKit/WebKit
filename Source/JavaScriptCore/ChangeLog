@@ -1,3 +1,17 @@
+2019-01-23  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GLIB] Remote Inspector: no data displayed
+        https://bugs.webkit.org/show_bug.cgi?id=193569
+
+        Reviewed by Michael Catanzaro.
+
+        Release the remote inspector mutex before using RemoteConnectionToTarget in RemoteInspector::setup() to avoid a
+        deadlock.
+
+        * inspector/remote/glib/RemoteInspectorGlib.cpp:
+        (Inspector::RemoteInspector::receivedSetupMessage):
+        (Inspector::RemoteInspector::setup):
+
 2019-01-22  Yusuke Suzuki  <ysuzuki@apple.com>
 
         Unreviewed, fix initial global lexical binding epoch
