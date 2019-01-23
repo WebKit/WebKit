@@ -1,3 +1,17 @@
+2019-01-23  Jonathan Bedard  <jbedard@apple.com>
+
+        webkitpy: Use correct config for --iphone-simulator and --ipad-simulator
+        https://bugs.webkit.org/show_bug.cgi?id=193722
+        <rdar://problem/47481475>
+
+        Reviewed by Lucas Forschler.
+
+        iPhone and iPad ports should both use the iOS config.
+
+        * Scripts/webkitpy/port/ios_simulator.py:
+        (IPhoneSimulatorPort.__init__):
+        (IPadSimulatorPort.__init__):
+
 2019-01-23  Rob Buis  <rbuis@igalia.com>
 
         Update MIME type parser
