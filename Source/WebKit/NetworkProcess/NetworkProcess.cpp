@@ -538,9 +538,9 @@ WebCore::NetworkStorageSession& NetworkProcess::defaultStorageSession() const
 
 #if PLATFORM(COCOA)
     m_defaultNetworkStorageSession = std::make_unique<WebCore::NetworkStorageSession>(PAL::SessionID::defaultSessionID());
-#elif PLATFORM(SOUP)
+#elif USE(SOUP)
     m_defaultNetworkStorageSession = std::make_unique<WebCore::NetworkStorageSession>(PAL::SessionID::defaultSessionID(), std::make_unique<SoupNetworkSession>(PAL::SessionID::defaultSessionID()));
-#elif PLATFORM(CURL)
+#elif USE(CURL)
     m_defaultNetworkStorageSession = std::make_unique<WebCore::NetworkStorageSession>(PAL::SessionID::defaultSessionID(), CurlContext::singleton());
 #else
 #error Implement me
