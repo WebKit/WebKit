@@ -757,7 +757,9 @@ void WebsiteDataStore::removeData(OptionSet<WebsiteDataType> dataTypes, WallTime
     }
 #endif
 
+#if ENABLE(RESOURCE_LOAD_STATISTICS)
     bool didNotifyNetworkProcessToDeleteWebsiteData = false;
+#endif
     auto networkProcessAccessType = computeNetworkProcessAccessTypeForDataRemoval(dataTypes, !isPersistent());
     if (networkProcessAccessType != ProcessAccessType::None) {
         for (auto& processPool : processPools()) {
@@ -779,7 +781,9 @@ void WebsiteDataStore::removeData(OptionSet<WebsiteDataType> dataTypes, WallTime
             processPool->networkProcess()->deleteWebsiteData(m_sessionID, dataTypes, modifiedSince, [callbackAggregator, processPool] {
                 callbackAggregator->removePendingCallback();
             });
+#if ENABLE(RESOURCE_LOAD_STATISTICS)
             didNotifyNetworkProcessToDeleteWebsiteData = true;
+#endif
         }
     }
 

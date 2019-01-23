@@ -1,5 +1,14 @@
 2019-01-22  Michael Catanzaro  <mcatanzaro@igalia.com>
 
+        Unreviewed, fix -Wunused-but-set-variable warning
+        https://bugs.webkit.org/show_bug.cgi?id=193660
+        <rdar://problem/47433602>
+
+        * UIProcess/WebsiteData/WebsiteDataStore.cpp:
+        (WebKit::WebsiteDataStore::removeData):
+
+2019-01-22  Michael Catanzaro  <mcatanzaro@igalia.com>
+
         Unreviewed, further build fixes after r240292
         https://bugs.webkit.org/show_bug.cgi?id=193580
         <rdar://problem/47457742>
