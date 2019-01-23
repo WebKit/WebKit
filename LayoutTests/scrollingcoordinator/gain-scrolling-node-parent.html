@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Check that scrolling nodes get reparented when an ancestor is removed</title>
+    <script>
+        if (window.testRunner) {
+            testRunner.dumpAsText();
+            testRunner.waitUntilDone();
+        }
+
+        if (window.internals)
+            window.internals.settings.setAsyncOverflowScrollingEnabled(true);
+
+        function doTest() {
+            requestAnimationFrame(() => {
+                document.getElementById('target').classList.add('changed');
+                if (window.internals)
+                    document.getElementById('scrollingTree').innerText = window.internals.scrollingStateTreeAsText() + "\n";
+
+                if (window.testRunner)
+                    testRunner.notifyDone();
+            });
+        }
+
+        window.addEventListener('load', doTest, false);
+    </script>
+    <style>
+        .scroller {
+            background-color: silver;
+            border: 1px solid black;
+            padding: 10px;
+            width: 400px;
+            height: 300px;
+            overflow: scroll;
+        }
+        
+        #target.changed {
+            overflow: visible;
+        }
+        
+        .scrolling-content {
+            height: 1000px;
+        }
+    </style>
+</head>
+<body>
+    <div class="scroller">
+        <div class="scrolling-content">
+            Scrolling content
+            <div class="intermediate scroller" id="target">
+                <div class="scrolling-content">
+                    Middle scrolling content
+                    <div class="inner scroller">
+                        <div class="scrolling-content">
+                        Inner scrolling content
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <pre id="scrollingTree"></pre>
+</body>
+</html>

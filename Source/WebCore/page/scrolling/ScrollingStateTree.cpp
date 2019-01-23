@@ -106,7 +106,7 @@ ScrollingNodeID ScrollingStateTree::attachNode(ScrollingNodeType nodeType, Scrol
 
             ASSERT(currentIndex != notFound);
             Ref<ScrollingStateNode> protectedNode(*node);
-            parent->children()->remove(currentIndex);
+            parent->removeChildAtIndex(currentIndex);
 
             if (childIndex == notFound)
                 parent->appendChild(WTFMove(protectedNode));

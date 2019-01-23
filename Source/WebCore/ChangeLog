@@ -1,3 +1,30 @@
+2019-01-22  Simon Fraser  <simon.fraser@apple.com>
+
+        Adding a child to a ScrollingStateNode needs to trigger a tree state commit
+        https://bugs.webkit.org/show_bug.cgi?id=193682
+
+        Reviewed by Zalan Bujtas.
+
+        Scrolling tree mutations that re-arrange nodes (e.g. node reordering when z-index changes)
+        need to trigger scrolling tree updates, and currently do not.
+
+        Fix by adding a "ChildNodes" dirty bit to ScrollingStateNode. There isn't any code that consults
+        this flag when committing the scrolling tree because we always eagerly traverse children, but
+        we could use it to optimize later. The important part is that we use it to trigger a tree update.
+        
+        Can't test via z-reordering until webkit.org/b/192529 is fixed.
+
+        Tests: scrollingcoordinator/gain-scrolling-node-parent.html
+               scrollingcoordinator/lose-scrolling-node-parent.html
+
+        * page/scrolling/ScrollingStateNode.cpp:
+        (WebCore::ScrollingStateNode::appendChild):
+        (WebCore::ScrollingStateNode::insertChild):
+        (WebCore::ScrollingStateNode::removeChildAtIndex):
+        * page/scrolling/ScrollingStateNode.h:
+        * page/scrolling/ScrollingStateTree.cpp:
+        (WebCore::ScrollingStateTree::attachNode):
+
 2019-01-22  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: InspectorInstrumentation::willEvaluateScript should include column number

@@ -208,6 +208,7 @@ public:
 
     enum {
         ScrollLayer = 0,
+        ChildNodes,
         NumStateNodeBits // This must remain at the last position.
     };
     typedef uint64_t ChangedProperties;
@@ -237,6 +238,8 @@ public:
 
     void appendChild(Ref<ScrollingStateNode>&&);
     void insertChild(Ref<ScrollingStateNode>&&, size_t index);
+
+    void removeChildAtIndex(size_t index);
 
     size_t indexOfChild(ScrollingStateNode&) const;
 

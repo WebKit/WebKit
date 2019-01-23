@@ -1,5 +1,19 @@
 2019-01-22  Simon Fraser  <simon.fraser@apple.com>
 
+        Adding a child to a ScrollingStateNode needs to trigger a tree state commit
+        https://bugs.webkit.org/show_bug.cgi?id=193682
+
+        Reviewed by Zalan Bujtas.
+
+        * platform/ios/scrollingcoordinator/gain-scrolling-node-parent-expected.txt: Added.
+        * platform/ios/scrollingcoordinator/lose-scrolling-node-parent-expected.txt: Added.
+        * scrollingcoordinator/gain-scrolling-node-parent-expected.txt: Added.
+        * scrollingcoordinator/gain-scrolling-node-parent.html: Added.
+        * scrollingcoordinator/lose-scrolling-node-parent-expected.txt: Added.
+        * scrollingcoordinator/lose-scrolling-node-parent.html: Added.
+
+2019-01-22  Simon Fraser  <simon.fraser@apple.com>
+
         Make scrollingcoordinator tests only run on iOS/macOS WK2
         https://bugs.webkit.org/show_bug.cgi?id=193690
 
