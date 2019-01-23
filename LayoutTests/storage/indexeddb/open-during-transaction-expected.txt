@@ -17,14 +17,12 @@ the transaction is kept alive with a series of puts until opens are complete
 
 trying to open the same database
 openreq2 = indexedDB.open(dbname)
-
-trying to open a different database
-openreq3 = indexedDB.open(dbname + '2')
-
 openreq2.onsuccess
 PASS state is "starting"
 state = 'open2complete'
 
+trying to open a different database
+openreq3 = indexedDB.open(dbname + '2')
 openreq3.onsuccess
 PASS state is "open2complete"
 state = 'open3complete'

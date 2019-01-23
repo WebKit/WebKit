@@ -55,17 +55,15 @@ function tryOpens()
         shouldBeEqualToString("state", "starting");
         evalAndLog("state = 'open2complete'");
         debug("");
-    };
-    debug("");
 
-    debug("trying to open a different database");
-    evalAndLog("openreq3 = indexedDB.open(dbname + '2')");
-    openreq3.onerror = unexpectedErrorCallback;
-    openreq3.onsuccess = function (e) {
-        debug("openreq3.onsuccess");
-        shouldBeEqualToString("state", "open2complete");
-        evalAndLog("state = 'open3complete'");
-        debug("");
+        debug("trying to open a different database");
+        evalAndLog("openreq3 = indexedDB.open(dbname + '2')");
+        openreq3.onerror = unexpectedErrorCallback;
+        openreq3.onsuccess = function (e) {
+            debug("openreq3.onsuccess");
+            shouldBeEqualToString("state", "open2complete");
+            evalAndLog("state = 'open3complete'");
+            debug("");
+        };
     };
-    debug("");
 }
