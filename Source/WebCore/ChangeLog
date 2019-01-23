@@ -1,3 +1,22 @@
+2019-01-22  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [WinCairo][WebKitTestRunner] Null dereference of GraphicsContext::m_data in GraphicsContext::releaseWindowsContext
+        https://bugs.webkit.org/show_bug.cgi?id=193664
+
+        Reviewed by Brent Fulgham.
+
+        WinCairo WebKitTestRunner always crash on openning test cases of
+        HTMLMeterElement.
+
+        If GraphicsContext::getWindowsContext retruned null HDC,
+        LocalWindowsContext shouldn't release the null HDC.
+
+        Covered by existing tests.
+
+        * platform/graphics/win/LocalWindowsContext.h:
+        (WebCore::LocalWindowsContext::~LocalWindowsContext):
+        Release m_hdc only if it isn't null.
+
 2019-01-22  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         Unreviewed, fix -Wsign-compare warning

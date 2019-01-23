@@ -43,7 +43,8 @@ public:
 
     ~LocalWindowsContext()
     {
-        m_graphicsContext.releaseWindowsContext(m_hdc, m_rect, m_supportAlphaBlend);
+        if (m_hdc)
+            m_graphicsContext.releaseWindowsContext(m_hdc, m_rect, m_supportAlphaBlend);
     }
 
     HDC hdc() const { return m_hdc; }
