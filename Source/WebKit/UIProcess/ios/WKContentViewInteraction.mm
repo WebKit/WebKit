@@ -1348,6 +1348,13 @@ static NSValue *nsSizeForTapHighlightBorderRadius(WebCore::IntSize borderRadius,
     [_highlightLongPressGestureRecognizer cancel];
 }
 
+- (void)_cancelTouchEventGestureRecognizer
+{
+#if HAVE(CANCEL_WEB_TOUCH_EVENTS_GESTURE)
+    [_touchEventGestureRecognizer cancel];
+#endif
+}
+
 - (void)_didScroll
 {
     [self _cancelLongPressGestureRecognizer];
@@ -1979,6 +1986,7 @@ static inline bool isSamePair(UIGestureRecognizer *a, UIGestureRecognizer *b, UI
 {
     ASSERT(gestureRecognizer == _longPressGestureRecognizer);
     [self _resetIsDoubleTapPending];
+    [self _cancelTouchEventGestureRecognizer];
 
     _lastInteractionLocation = gestureRecognizer.startPoint;
 

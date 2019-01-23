@@ -1,3 +1,18 @@
+2019-01-22  Megan Gardner  <megan_gardner@apple.com>
+
+        Cancel Web Touches Properly so that long presses on YouTube links do not incorrectly trigger a load
+        https://bugs.webkit.org/show_bug.cgi?id=193687
+        <rdar://problem/47056717>
+
+        Reviewed by Tim Horton.
+
+        Cancel web gestures when a long press is recognized.
+
+        * Platform/spi/ios/UIKitSPI.h:
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView _cancelWebGestureRecognizer]):
+        (-[WKContentView _longPressRecognized:]):
+
 2019-01-22  Alex Christensen  <achristensen@webkit.org>
 
         Fix an internal build failure after r240292
