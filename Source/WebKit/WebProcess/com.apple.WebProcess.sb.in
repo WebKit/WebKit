@@ -825,7 +825,7 @@
 #endif // PLATFORM(MAC)
 
 (when (defined? 'syscall-unix)
-    (deny syscall-unix (with termination))
+    (deny syscall-unix (with send-signal SIGKILL))
     (allow syscall-unix
         (syscall-number SYS_exit)
         (syscall-number SYS_read)
