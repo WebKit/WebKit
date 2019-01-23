@@ -1,4 +1,4 @@
-# Copyright (C) 2018 Apple Inc. All rights reserved.
+# Copyright (C) 2018-2019 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -25,7 +25,7 @@ from __future__ import unicode_literals
 from django.db import models
 
 
-class BuilderMappings(models.Model):
+class BuilderMapping(models.Model):
     builderid = models.IntegerField(primary_key=True)
     name = models.TextField()
 
