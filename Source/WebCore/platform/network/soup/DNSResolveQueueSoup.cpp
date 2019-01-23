@@ -92,7 +92,7 @@ void DNSResolveQueueSoup::setGlobalDefaultNetworkStorageSessionAccessor(Function
 void DNSResolveQueueSoup::updateIsUsingProxy()
 {
     GRefPtr<GProxyResolver> resolver;
-    g_object_get(globalDefaultNetworkStorageSessionAccessor()().getOrCreateSoupNetworkSession().soupSession(), "proxy-resolver", &resolver.outPtr(), nullptr);
+    g_object_get(globalDefaultNetworkStorageSessionAccessor()().soupNetworkSession().soupSession(), "proxy-resolver", &resolver.outPtr(), nullptr);
     ASSERT(resolver);
 
     g_proxy_resolver_lookup_async(resolver.get(), "http://example.com/", nullptr, proxyResolvedForHttpUriCallback, &m_isUsingProxy);
@@ -175,7 +175,7 @@ void DNSResolveQueueSoup::platformResolve(const String& hostname)
 {
     ASSERT(isMainThread());
 
-    soup_session_prefetch_dns(globalDefaultNetworkStorageSessionAccessor()().getOrCreateSoupNetworkSession().soupSession(), hostname.utf8().data(), nullptr, resolvedCallback, nullptr);
+    soup_session_prefetch_dns(globalDefaultNetworkStorageSessionAccessor()().soupNetworkSession().soupSession(), hostname.utf8().data(), nullptr, resolvedCallback, nullptr);
 }
 
 void DNSResolveQueueSoup::resolve(const String& hostname, uint64_t identifier, DNSCompletionHandler&& completionHandler)
@@ -184,7 +184,7 @@ void DNSResolveQueueSoup::resolve(const String& hostname, uint64_t identifier, D
 
     auto address = adoptGRef(soup_address_new(hostname.utf8().data(), 0));
     auto cancellable = adoptGRef(g_cancellable_new());
-    soup_address_resolve_async(address.get(), soup_session_get_async_context(WebCore::globalDefaultNetworkStorageSessionAccessor()().getOrCreateSoupNetworkSession().soupSession()), cancellable.get(), resolvedWithObserverCallback, this);
+    soup_address_resolve_async(address.get(), soup_session_get_async_context(WebCore::globalDefaultNetworkStorageSessionAccessor()().soupNetworkSession().soupSession()), cancellable.get(), resolvedWithObserverCallback, this);
 
     g_object_set_data(G_OBJECT(address.get()), "identifier", GUINT_TO_POINTER(identifier));
 

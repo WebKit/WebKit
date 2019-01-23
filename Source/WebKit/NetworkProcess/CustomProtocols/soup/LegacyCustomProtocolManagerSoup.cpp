@@ -103,8 +103,7 @@ void LegacyCustomProtocolManager::registerScheme(const String& scheme)
     ASSERT(genericRequestClass);
     genericRequestClass->schemes = const_cast<const char**>(reinterpret_cast<char**>(m_registeredSchemes->pdata));
     lastCreatedNetworkProcess()->forEachNetworkStorageSession([](const auto& session) {
-        if (auto* soupSession = session.soupNetworkSession())
-            soupSession->setupCustomProtocols();
+        session.soupNetworkSession().setupCustomProtocols();
     });
 }
 

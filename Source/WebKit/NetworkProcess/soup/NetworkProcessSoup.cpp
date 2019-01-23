@@ -96,8 +96,7 @@ void NetworkProcess::userPreferredLanguagesChanged(const Vector<String>& languag
     auto acceptLanguages = buildAcceptLanguages(languages);
     SoupNetworkSession::setInitialAcceptLanguages(acceptLanguages);
     forEachNetworkStorageSession([&acceptLanguages](const auto& session) {
-        if (auto* soupSession = session.soupNetworkSession())
-            soupSession->setAcceptLanguages(acceptLanguages);
+        session.soupNetworkSession().setAcceptLanguages(acceptLanguages);
     });
 }
 
@@ -169,8 +168,7 @@ void NetworkProcess::setNetworkProxySettings(const SoupNetworkProxySettings& set
 {
     SoupNetworkSession::setProxySettings(settings);
     forEachNetworkStorageSession([](const auto& session) {
-        if (auto* soupSession = session.soupNetworkSession())
-            soupSession->setupProxy();
+        session.soupNetworkSession().setupProxy();
     });
 }
 

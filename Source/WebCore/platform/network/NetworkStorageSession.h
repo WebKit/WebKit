@@ -97,9 +97,8 @@ public:
     WEBCORE_EXPORT NetworkStorageSession(PAL::SessionID, std::unique_ptr<SoupNetworkSession>&&);
     ~NetworkStorageSession();
 
-    SoupNetworkSession* soupNetworkSession() const { return m_session.get(); };
-    SoupNetworkSession& getOrCreateSoupNetworkSession() const;
-    void clearSoupNetworkSessionAndCookieStorage();
+    SoupNetworkSession& soupNetworkSession() const;
+    void clearSoupNetworkSession();
     SoupCookieJar* cookieStorage() const;
     void setCookieStorage(SoupCookieJar*);
     void setCookieObserverHandler(Function<void ()>&&);
@@ -168,7 +167,6 @@ private:
     static void cookiesDidChange(NetworkStorageSession*);
 
     mutable std::unique_ptr<SoupNetworkSession> m_session;
-    GRefPtr<SoupCookieJar> m_cookieStorage;
     Function<void ()> m_cookieObserverHandler;
 #elif USE(CURL)
     RefPtr<NetworkingContext> m_context;

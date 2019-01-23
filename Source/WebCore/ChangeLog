@@ -1,3 +1,37 @@
+2019-01-23  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        [SOUP] Clean up NetworkStorageSession
+        https://bugs.webkit.org/show_bug.cgi?id=193707
+
+        Reviewed by Carlos Garcia Campos.
+
+        A NetworkStorageSession now always has a SoupNetworkSession, so we can remove a lot of
+        complexity that is no longer needed. getOrCreateSoupNetworkSession can go away because we
+        know the session has always already been created. The soupNetworkSession getter can now
+        return a reference rather than a pointer, because it will never be NULL except after it has
+        been cleared with clearSoupNetworkSession (renamed), and that should only happen immediately
+        before process termination after nothing else is using it. Cookie jar syncing can also go
+        away; the NetworkStorageSession can now rely on the SoupNetworkSession to exist and just
+        use its cookie jar.
+
+        * platform/network/NetworkStorageSession.h:
+        (WebCore::NetworkStorageSession::soupNetworkSession const): Deleted.
+        * platform/network/soup/DNSResolveQueueSoup.cpp:
+        (WebCore::DNSResolveQueueSoup::updateIsUsingProxy):
+        (WebCore::DNSResolveQueueSoup::platformResolve):
+        (WebCore::DNSResolveQueueSoup::resolve):
+        * platform/network/soup/NetworkStorageSessionSoup.cpp:
+        (WebCore::NetworkStorageSession::NetworkStorageSession):
+        (WebCore::NetworkStorageSession::~NetworkStorageSession):
+        (WebCore::NetworkStorageSession::soupNetworkSession const):
+        (WebCore::NetworkStorageSession::clearSoupNetworkSession):
+        (WebCore::NetworkStorageSession::cookieStorage const):
+        (WebCore::NetworkStorageSession::setCookieStorage):
+        (WebCore::NetworkStorageSession::getOrCreateSoupNetworkSession const): Deleted.
+        (WebCore::NetworkStorageSession::clearSoupNetworkSessionAndCookieStorage): Deleted.
+        * platform/network/soup/SocketStreamHandleImplSoup.cpp:
+        (WebCore::SocketStreamHandleImpl::create):
+
 2019-01-23  Zalan Bujtas  <zalan@apple.com>
 
         [LFC][BFC] computeStaticPosition should include estimated computation as well.

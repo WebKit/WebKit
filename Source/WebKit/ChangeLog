@@ -1,3 +1,22 @@
+2019-01-23  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        [SOUP] Clean up NetworkStorageSession
+        https://bugs.webkit.org/show_bug.cgi?id=193707
+
+        Reviewed by Carlos Garcia Campos.
+
+        Restore an important call to clearSoupNetworkSession that was removed in r240292. Also,
+        adapt to NetworkStorageSessions API changes.
+
+        * NetworkProcess/CustomProtocols/soup/LegacyCustomProtocolManagerSoup.cpp:
+        (WebKit::LegacyCustomProtocolManager::registerScheme):
+        * NetworkProcess/soup/NetworkProcessMainSoup.cpp:
+        * NetworkProcess/soup/NetworkProcessSoup.cpp:
+        (WebKit::NetworkProcess::userPreferredLanguagesChanged):
+        (WebKit::NetworkProcess::setNetworkProxySettings):
+        * NetworkProcess/soup/NetworkSessionSoup.cpp:
+        (WebKit::NetworkSessionSoup::soupSession const):
+
 2019-01-23  Philippe Normand  <pnormand@igalia.com>
 
         [GTK] Crash when browsing inspector:// uri without port set

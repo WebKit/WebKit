@@ -52,7 +52,7 @@ NetworkSessionSoup::~NetworkSessionSoup()
 
 SoupSession* NetworkSessionSoup::soupSession() const
 {
-    return networkStorageSession().getOrCreateSoupNetworkSession().soupSession();
+    return networkStorageSession().soupNetworkSession().soupSession();
 }
 
 void NetworkSessionSoup::clearCredentials()

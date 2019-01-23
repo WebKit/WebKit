@@ -37,6 +37,9 @@ class NetworkProcessMain final: public ChildProcessMainBase {
 public:
     void platformFinalize() override
     {
+        // Needed to destroy the SoupSession and SoupCookieJar, e.g. to avoid
+        // leaking SQLite temporary journaling files.
+        NetworkProcess::singleton().defaultStorageSession().clearSoupNetworkSession();
     }
 };
 

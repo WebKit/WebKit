@@ -93,7 +93,7 @@ Ref<SocketStreamHandleImpl> SocketStreamHandleImpl::create(const URL& url, Socke
 
     auto uri = urlToSoupURI(url);
     Ref<SocketStreamHandle> protectedSocketStreamHandle = socket.copyRef();
-    soup_session_connect_async(networkStorageSession->getOrCreateSoupNetworkSession().soupSession(), uri.get(), socket->m_cancellable.get(),
+    soup_session_connect_async(networkStorageSession->soupNetworkSession().soupSession(), uri.get(), socket->m_cancellable.get(),
         url.protocolIs("wss") ? reinterpret_cast<SoupSessionConnectProgressCallback>(connectProgressCallback) : nullptr,
         reinterpret_cast<GAsyncReadyCallback>(connectedCallback), &protectedSocketStreamHandle.leakRef());
 #else
