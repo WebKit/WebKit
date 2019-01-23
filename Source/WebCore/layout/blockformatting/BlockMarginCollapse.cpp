@@ -187,10 +187,6 @@ bool BlockFormattingContext::MarginCollapse::marginBeforeCollapsesWithFirstInFlo
     if (establishesBlockFormattingContext(layoutBox))
         return false;
 
-    // Margins of elements that establish new block formatting contexts do not collapse with their in-flow children.
-    if (establishesBlockFormattingContext(layoutBox))
-        return false;
-
     // The top margin of an in-flow block element collapses with its first in-flow block-level
     // child's top margin if the element has no top border...
     if (hasBorderBefore(layoutBox))

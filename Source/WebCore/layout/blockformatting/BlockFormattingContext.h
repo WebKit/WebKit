@@ -63,10 +63,10 @@ private:
     void computePositionToAvoidFloats(const FloatingContext&, const Box&) const;
     void computeVerticalPositionForFloatClear(const FloatingContext&, const Box&) const;
 
-    void computeEstimatedMarginBeforeForAncestors(const Box&) const;
-    void computeEstimatedMarginBefore(const Box&) const;
-
-    void precomputeVerticalPositionForFormattingRootIfNeeded(const Box&) const;
+    void computeEstimatedVerticalPosition(const Box&) const;
+    void computeEstimatedVerticalPositionForAncestors(const Box&) const;
+    void computeEstimatedVerticalPositionForFormattingRoot(const Box&) const;
+    void computeEstimatedVerticalPositionForFloatClear(const Box&) const;
 
     InstrinsicWidthConstraints instrinsicWidthConstraints() const override;
     LayoutUnit adjustedVerticalPositionAfterMarginCollapsing(const Box&, const UsedVerticalMargin&) const;

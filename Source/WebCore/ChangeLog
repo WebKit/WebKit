@@ -1,3 +1,36 @@
+2019-01-23  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC][BFC] computeStaticPosition should include estimated computation as well.
+        https://bugs.webkit.org/show_bug.cgi?id=193719
+
+        Reviewed by Antti Koivisto.
+
+        Consolidate all static position (non-estimated, estimated) computation in BlockFormattingContext::computeStaticPosition.
+        It requires to compute width/horizontal margin first, since vertical top estimation needs valid horizontal widths (margin-top: 5% is computed using
+        the containing block's width).
+        This is also in preparation for moving 'clear' positioning to computeStaticPosition.
+
+        * layout/blockformatting/BlockFormattingContext.cpp:
+        (WebCore::Layout::BlockFormattingContext::layout const):
+        (WebCore::Layout::BlockFormattingContext::layoutFormattingContextRoot const):
+        (WebCore::Layout::BlockFormattingContext::computeStaticPosition const):
+        (WebCore::Layout::BlockFormattingContext::computeEstimatedVerticalPosition const):
+        (WebCore::Layout::BlockFormattingContext::computeEstimatedVerticalPositionForAncestors const):
+        (WebCore::Layout::BlockFormattingContext::computeEstimatedVerticalPositionForFormattingRoot const):
+        (WebCore::Layout::BlockFormattingContext::computeEstimatedVerticalPositionForFloatClear const):
+        (WebCore::Layout::BlockFormattingContext::computeVerticalPositionForFloatClear const):
+        (WebCore::Layout::BlockFormattingContext::computeWidthAndMargin const):
+        (WebCore::Layout::BlockFormattingContext::computeHeightAndMargin const):
+        (WebCore::Layout::BlockFormattingContext::adjustedVerticalPositionAfterMarginCollapsing const):
+        (WebCore::Layout::BlockFormattingContext::computeEstimatedMarginBefore const): Deleted.
+        (WebCore::Layout::BlockFormattingContext::computeEstimatedMarginBeforeForAncestors const): Deleted.
+        (WebCore::Layout::BlockFormattingContext::precomputeVerticalPositionForFormattingRootIfNeeded const): Deleted.
+        * layout/blockformatting/BlockFormattingContext.h:
+        * layout/blockformatting/BlockFormattingContextGeometry.cpp:
+        (WebCore::Layout::BlockFormattingContext::Geometry::staticPosition):
+        * layout/blockformatting/BlockMarginCollapse.cpp:
+        (WebCore::Layout::BlockFormattingContext::MarginCollapse::marginBeforeCollapsesWithFirstInFlowChildMarginBefore):
+
 2019-01-22  Simon Fraser  <simon.fraser@apple.com>
 
         Compositing updates need to reparent scrolling tree nodes with a changed ancestor

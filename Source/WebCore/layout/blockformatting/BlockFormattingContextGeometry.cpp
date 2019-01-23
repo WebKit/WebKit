@@ -236,7 +236,7 @@ Point BlockFormattingContext::Geometry::staticPosition(const LayoutState& layout
     } else
         top = containingBlockDisplayBox.contentBoxTop();
 
-    auto left = containingBlockDisplayBox.contentBoxLeft();
+    auto left = containingBlockDisplayBox.contentBoxLeft() + layoutState.displayBoxForLayoutBox(layoutBox).marginStart();
     LOG_WITH_STREAM(FormattingContextLayout, stream << "[Position] -> static -> top(" << top << "px) left(" << left << "px) layoutBox(" << &layoutBox << ")");
     return { left, top };
 }
