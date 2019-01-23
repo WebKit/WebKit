@@ -1,3 +1,21 @@
+2019-01-22  Simon Fraser  <simon.fraser@apple.com>
+
+        Make scrollingcoordinator tests only run on iOS/macOS WK2
+        https://bugs.webkit.org/show_bug.cgi?id=193690
+
+        Reviewed by Zalan Bujtas.
+        
+        scrollingcoordinator is only active in WK2, and both WPE and WinCairo skip this directory
+        already, so skip it at the top level, and re-enable for mac-wk2 and ios-wk2.
+
+        Also do some cleanup after tiled-drawing/ios was removed on 1/18.
+
+        * TestExpectations:
+        * platform/ios-device/TestExpectations:
+        * platform/ios-wk2/TestExpectations:
+        * platform/ios/TestExpectations:
+        * platform/mac-wk2/TestExpectations:
+
 2019-01-22  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: InspectorInstrumentation::willEvaluateScript should include column number

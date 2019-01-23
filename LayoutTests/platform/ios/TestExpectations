@@ -1531,10 +1531,6 @@ svg/zoom/text/zoom-svg-float-border-padding.xml [ Failure ]
 transforms/3d/point-mapping/3d-point-mapping-3.html [ Failure ]
 transforms/3d/point-mapping/3d-point-mapping-overlapping.html [ Failure ]
 
-# Scrolling coordinator tests that fail:
-scrollingcoordinator/non-fast-scrollable-region-scaled-iframe.html [ Failure ]
-scrollingcoordinator/non-fast-scrollable-region-transformed-iframe.html [ Failure ]
-
 # Userscript tests that fail:
 userscripts/user-script-plugin-document.html [ Failure ]
 

@@ -11,8 +11,7 @@ fast/history/ios [ Pass ]
 fast/scrolling/ios [ Pass ]
 fast/viewport/ios [ Pass ]
 fast/visual-viewport/ios/ [ Pass ]
-scrollingcoordinator/ios [ Pass ]
-tiled-drawing/ios [ Pass ]
+scrollingcoordinator [ Pass ]
 fast/web-share [ Pass ]
 editing/find [ Pass ]
 editing/input/ios [ Pass ]
@@ -56,6 +55,10 @@ applicationmanifest/ [ Pass ]
 
 # Skipped because of <rdar://problem/45388584>.
 http/tests/webAPIStatistics [ Skip ]
+
+# Non-fast scrollable region doesn't apply to iOS.
+scrollingcoordinator/non-fast-scrollable-region-scaled-iframe.html [ Skip ]
+scrollingcoordinator/non-fast-scrollable-region-transformed-iframe.html [ Skip ]
 
 #//////////////////////////////////////////////////////////////////////////////////////////
 # End platform-specific directories.
@@ -1190,6 +1193,7 @@ fast/css/deferred-parsing/hover-test.html [ Skip ]
 fast/events/context-activated-by-key-event.html [ Skip ]
 
 webkit.org/b/168924 scrollingcoordinator/ios/non-stable-viewport-scroll.html [ Pass Failure ]
+webkit.org/b/171628 scrollingcoordinator/ios/nested-fixed-layer-positions.html [ Pass ImageOnlyFailure ]
 
 webkit.org/b/169640 imported/w3c/web-platform-tests/html/webappapis/scripting/events/event-handler-javascript.html [ Failure ]
 
@@ -1216,8 +1220,6 @@ webkit.org/b/171613 http/tests/xmlhttprequest/supported-xml-content-types.html [
 webkit.org/b/171331 http/tests/preload/single_download_preload.html [ Pass Failure ]
 
 webkit.org/b/170699 [ Release ] imported/w3c/web-platform-tests/html/webappapis/timers/negative-settimeout.html [ Pass Failure ]
-
-webkit.org/b/171628 scrollingcoordinator/ios/nested-fixed-layer-positions.html [ Pass ImageOnlyFailure ]
 
 webkit.org/b/171638 [ Release ] http/tests/xmlhttprequest/methods.html [ Pass Timeout ]
 

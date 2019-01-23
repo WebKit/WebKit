@@ -5,13 +5,14 @@
 # Platform-specific directories. Skipped globally, then re-enabled here.
 #//////////////////////////////////////////////////////////////////////////////////////////
 
-tiled-drawing [ Pass ]
-tiled-drawing/ios [ Skip ]
-fast/visual-viewport/tiled-drawing [ Pass ]
-swipe [ Pass ]
-fast/web-share [ Pass ]
 editing/find [ Pass ]
 editing/undo-manager [ Pass ]
+fast/visual-viewport/tiled-drawing [ Pass ]
+fast/web-share [ Pass ]
+scrollingcoordinator [ Pass ]
+scrollingcoordinator/ios [ Skip ]
+swipe [ Pass ]
+tiled-drawing [ Pass ]
 
 fast/events/autoscroll-when-zoomed.html [ Pass ]
 fast/events/autoscroll-main-document.html [ Pass ]
