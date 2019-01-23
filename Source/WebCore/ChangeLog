@@ -1,3 +1,17 @@
+2019-01-22  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        Dynamic changes in the style attributes of an SVGElement do no affect the <use> instances
+        https://bugs.webkit.org/show_bug.cgi?id=193647
+
+        Reviewed by Simon Fraser.
+
+        Changing a style attribute of an SVGELement needs to call invalidateInstances().
+
+        Tests: svg/custom/svg-use-style-dynamic-change-invalidate.svg
+
+        * svg/SVGElement.cpp:
+        (WebCore::SVGElement::attributeChanged):
+
 2019-01-22  Alex Christensen  <achristensen@webkit.org>
 
         Fix more builds.

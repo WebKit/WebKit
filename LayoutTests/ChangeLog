@@ -1,3 +1,13 @@
+2019-01-22  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        Dynamic changes in the style attributes of an SVGElement do no affect the <use> instances
+        https://bugs.webkit.org/show_bug.cgi?id=193647
+
+        Reviewed by Simon Fraser.
+
+        * svg/custom/svg-use-style-dynamic-change-invalidate-expected.svg: Added.
+        * svg/custom/svg-use-style-dynamic-change-invalidate.svg: Added.
+
 2019-01-22  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         Unreviewed, skip all resource load statistics tests on GTK
