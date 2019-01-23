@@ -118,11 +118,11 @@ public:
     void didRemoveTimer(int timerId, Frame*);
     void willFireTimer(int timerId, Frame*);
     void didFireTimer();
-    void willCallFunction(const String& scriptName, int scriptLine, Frame*);
+    void willCallFunction(const String& scriptName, int scriptLine, int scriptColumn, Frame*);
     void didCallFunction(Frame*);
     void willDispatchEvent(const Event&, Frame*);
     void didDispatchEvent();
-    void willEvaluateScript(const String&, int, Frame&);
+    void willEvaluateScript(const String&, int lineNumber, int columnNumber, Frame&);
     void didEvaluateScript(Frame&);
     void didInvalidateLayout(Frame&);
     void willLayout(Frame&);

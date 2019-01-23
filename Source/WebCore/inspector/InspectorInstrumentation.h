@@ -146,7 +146,7 @@ public:
     static void willDispatchPostMessage(Frame&, TimerBase&);
     static void didDispatchPostMessage(Frame&, TimerBase&);
 
-    static InspectorInstrumentationCookie willCallFunction(ScriptExecutionContext*, const String& scriptName, int scriptLine);
+    static InspectorInstrumentationCookie willCallFunction(ScriptExecutionContext*, const String& scriptName, int scriptLine, int scriptColumn);
     static void didCallFunction(const InspectorInstrumentationCookie&, ScriptExecutionContext*);
     static void didAddEventListener(EventTarget&, const AtomicString& eventType, EventListener&, bool capture);
     static void willRemoveEventListener(EventTarget&, const AtomicString& eventType, EventListener&, bool capture);
@@ -158,7 +158,7 @@ public:
     static InspectorInstrumentationCookie willDispatchEventOnWindow(Frame*, const Event&, DOMWindow&);
     static void didDispatchEventOnWindow(const InspectorInstrumentationCookie&);
     static void eventDidResetAfterDispatch(const Event&);
-    static InspectorInstrumentationCookie willEvaluateScript(Frame&, const String& url, int lineNumber);
+    static InspectorInstrumentationCookie willEvaluateScript(Frame&, const String& url, int lineNumber, int columnNumber);
     static void didEvaluateScript(const InspectorInstrumentationCookie&, Frame&);
     static InspectorInstrumentationCookie willFireTimer(ScriptExecutionContext&, int timerId, bool oneShot);
     static void didFireTimer(const InspectorInstrumentationCookie&);
@@ -338,7 +338,7 @@ private:
     static void willDispatchPostMessageImpl(InstrumentingAgents&, const TimerBase&);
     static void didDispatchPostMessageImpl(InstrumentingAgents&, const TimerBase&);
 
-    static InspectorInstrumentationCookie willCallFunctionImpl(InstrumentingAgents&, const String& scriptName, int scriptLine, ScriptExecutionContext*);
+    static InspectorInstrumentationCookie willCallFunctionImpl(InstrumentingAgents&, const String& scriptName, int scriptLine, int scriptColumn, ScriptExecutionContext*);
     static void didCallFunctionImpl(const InspectorInstrumentationCookie&, ScriptExecutionContext*);
     static void didAddEventListenerImpl(InstrumentingAgents&, EventTarget&, const AtomicString& eventType, EventListener&, bool capture);
     static void willRemoveEventListenerImpl(InstrumentingAgents&, EventTarget&, const AtomicString& eventType, EventListener&, bool capture);
@@ -350,7 +350,7 @@ private:
     static InspectorInstrumentationCookie willDispatchEventOnWindowImpl(InstrumentingAgents&, const Event&, DOMWindow&);
     static void didDispatchEventOnWindowImpl(const InspectorInstrumentationCookie&);
     static void eventDidResetAfterDispatchImpl(InstrumentingAgents&, const Event&);
-    static InspectorInstrumentationCookie willEvaluateScriptImpl(InstrumentingAgents&, Frame&, const String& url, int lineNumber);
+    static InspectorInstrumentationCookie willEvaluateScriptImpl(InstrumentingAgents&, Frame&, const String& url, int lineNumber, int columnNumber);
     static void didEvaluateScriptImpl(const InspectorInstrumentationCookie&, Frame&);
     static InspectorInstrumentationCookie willFireTimerImpl(InstrumentingAgents&, int timerId, bool oneShot, ScriptExecutionContext&);
     static void didFireTimerImpl(const InspectorInstrumentationCookie&);
@@ -768,11 +768,11 @@ inline void InspectorInstrumentation::didDispatchPostMessage(Frame& frame, Timer
         didDispatchPostMessageImpl(*instrumentingAgents, timer);
 }
 
-inline InspectorInstrumentationCookie InspectorInstrumentation::willCallFunction(ScriptExecutionContext* context, const String& scriptName, int scriptLine)
+inline InspectorInstrumentationCookie InspectorInstrumentation::willCallFunction(ScriptExecutionContext* context, const String& scriptName, int scriptLine, int scriptColumn)
 {
     FAST_RETURN_IF_NO_FRONTENDS(InspectorInstrumentationCookie());
     if (InstrumentingAgents* instrumentingAgents = instrumentingAgentsForContext(context))
-        return willCallFunctionImpl(*instrumentingAgents, scriptName, scriptLine, context);
+        return willCallFunctionImpl(*instrumentingAgents, scriptName, scriptLine, scriptColumn, context);
     return InspectorInstrumentationCookie();
 }
 
@@ -839,11 +839,11 @@ inline void InspectorInstrumentation::eventDidResetAfterDispatch(const Event& ev
         return eventDidResetAfterDispatchImpl(*instrumentingAgents, event);
 }
 
-inline InspectorInstrumentationCookie InspectorInstrumentation::willEvaluateScript(Frame& frame, const String& url, int lineNumber)
+inline InspectorInstrumentationCookie InspectorInstrumentation::willEvaluateScript(Frame& frame, const String& url, int lineNumber, int columnNumber)
 {
     FAST_RETURN_IF_NO_FRONTENDS(InspectorInstrumentationCookie());
     if (InstrumentingAgents* instrumentingAgents = instrumentingAgentsForFrame(frame))
-        return willEvaluateScriptImpl(*instrumentingAgents, frame, url, lineNumber);
+        return willEvaluateScriptImpl(*instrumentingAgents, frame, url, lineNumber, columnNumber);
     return InspectorInstrumentationCookie();
 }
 

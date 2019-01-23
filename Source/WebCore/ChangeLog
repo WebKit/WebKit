@@ -1,5 +1,42 @@
 2019-01-22  Devin Rousso  <drousso@apple.com>
 
+        Web Inspector: InspectorInstrumentation::willEvaluateScript should include column number
+        https://bugs.webkit.org/show_bug.cgi?id=116191
+        <rdar://problem/13905910>
+
+        Reviewed by Joseph Pecoraro.
+
+        Test inspector/timeline/line-column.html
+
+        * bindings/js/ScriptController.cpp:
+        (WebCore::ScriptController::evaluateInWorld):
+        (WebCore::ScriptController::evaluateModule):
+
+        * bindings/js/JSExecStateInstrumentation.h:
+        (WebCore::JSExecState::instrumentFunctionInternal):
+
+        * inspector/InspectorInstrumentation.h:
+        (WebCore::InspectorInstrumentation::willCallFunction):
+        (WebCore::InspectorInstrumentation::willEvaluateScript):
+        * inspector/InspectorInstrumentation.cpp:
+        (WebCore::InspectorInstrumentation::willCallFunctionImpl):
+        (WebCore::InspectorInstrumentation::willEvaluateScriptImpl):
+
+        * inspector/agents/InspectorTimelineAgent.h:
+        * inspector/agents/InspectorTimelineAgent.cpp:
+        (WebCore::InspectorTimelineAgent::willCallFunction):
+        (WebCore::InspectorTimelineAgent::willEvaluateScript):
+
+        * inspector/TimelineRecordFactory.h:
+        * inspector/TimelineRecordFactory.cpp:
+        (WebCore::TimelineRecordFactory::createFunctionCallData):
+        (WebCore::TimelineRecordFactory::createEvaluateScriptData):
+
+        * bindings/js/ScriptSourceCode.h:
+        (WebCore::ScriptSourceCode::startColumn const): Added.
+
+2019-01-22  Devin Rousso  <drousso@apple.com>
+
         Web Inspector: expose Audit and Recording versions to the frontend
         https://bugs.webkit.org/show_bug.cgi?id=193262
         <rdar://problem/47130684>

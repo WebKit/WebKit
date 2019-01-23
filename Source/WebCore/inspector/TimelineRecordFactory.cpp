@@ -57,11 +57,12 @@ Ref<JSON::Object> TimelineRecordFactory::createGenericRecord(double startTime, i
     return record;
 }
 
-Ref<JSON::Object> TimelineRecordFactory::createFunctionCallData(const String& scriptName, int scriptLine)
+Ref<JSON::Object> TimelineRecordFactory::createFunctionCallData(const String& scriptName, int scriptLine, int scriptColumn)
 {
     Ref<JSON::Object> data = JSON::Object::create();
     data->setString("scriptName"_s, scriptName);
     data->setInteger("scriptLine"_s, scriptLine);
+    data->setInteger("scriptColumn"_s, scriptColumn);
     return data;
 }
 
@@ -103,11 +104,12 @@ Ref<JSON::Object> TimelineRecordFactory::createTimerInstallData(int timerId, Sec
     return data;
 }
 
-Ref<JSON::Object> TimelineRecordFactory::createEvaluateScriptData(const String& url, double lineNumber)
+Ref<JSON::Object> TimelineRecordFactory::createEvaluateScriptData(const String& url, int lineNumber, int columnNumber)
 {
     Ref<JSON::Object> data = JSON::Object::create();
     data->setString("url"_s, url);
     data->setInteger("lineNumber"_s, lineNumber);
+    data->setInteger("columnNumber"_s, columnNumber);
     return data;
 }
 

@@ -125,7 +125,7 @@ JSValue ScriptController::evaluateInWorld(const ScriptSourceCode& sourceCode, DO
 
     Ref<Frame> protector(m_frame);
 
-    InspectorInstrumentationCookie cookie = InspectorInstrumentation::willEvaluateScript(m_frame, sourceURL, sourceCode.startLine());
+    InspectorInstrumentationCookie cookie = InspectorInstrumentation::willEvaluateScript(m_frame, sourceURL, sourceCode.startLine(), sourceCode.startColumn());
 
     NakedPtr<JSC::Exception> evaluationException;
     JSValue returnValue = JSExecState::profiledEvaluate(&exec, JSC::ProfilingReason::Other, jsSourceCode, &proxy, evaluationException);
@@ -218,7 +218,7 @@ JSC::JSValue ScriptController::evaluateModule(const URL& sourceURL, JSModuleReco
 
     Ref<Frame> protector(m_frame);
 
-    auto cookie = InspectorInstrumentation::willEvaluateScript(m_frame, sourceURL, jsSourceCode.firstLine().oneBasedInt());
+    auto cookie = InspectorInstrumentation::willEvaluateScript(m_frame, sourceURL, jsSourceCode.firstLine().oneBasedInt(), jsSourceCode.startColumn().oneBasedInt());
 
     auto returnValue = moduleRecord.evaluate(&state);
     InspectorInstrumentation::didEvaluateScript(cookie, m_frame);

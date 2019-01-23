@@ -39,12 +39,14 @@ inline InspectorInstrumentationCookie JSExecState::instrumentFunctionInternal(Sc
         return InspectorInstrumentationCookie();
     String resourceName;
     int lineNumber = 1;
+    int columnNumber = 1;
     if (callType == jsType) {
         resourceName = callData.js.functionExecutable->sourceURL();
         lineNumber = callData.js.functionExecutable->firstLine();
+        columnNumber = callData.js.functionExecutable->startColumn();
     } else
         resourceName = "undefined";
-    return InspectorInstrumentation::willCallFunction(context, resourceName, lineNumber);
+    return InspectorInstrumentation::willCallFunction(context, resourceName, lineNumber, columnNumber);
 }
 
 inline InspectorInstrumentationCookie JSExecState::instrumentFunctionCall(ScriptExecutionContext* context, JSC::CallType type, const JSC::CallData& data)

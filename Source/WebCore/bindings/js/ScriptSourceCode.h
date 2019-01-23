@@ -70,6 +70,7 @@ public:
     StringView source() const { return m_provider->source(); }
 
     int startLine() const { return m_code.firstLine().oneBasedInt(); }
+    int startColumn() const { return m_code.startColumn().oneBasedInt(); }
 
     CachedScript* cachedScript() const { return m_cachedScript.get(); }
 

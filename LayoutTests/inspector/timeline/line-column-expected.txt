@@ -1,0 +1,238 @@
+Test that script Timeline records have column numbers.
+
+
+
+== Running test suite: Timeline.LineColumn
+-- Running test case: Timeline.LineColumn.willCallFunction
+Evaluating in page...
+PASS: Capturing started.
+{
+  "startTime": "<filtered>",
+  "data": {},
+  "children": [
+    {
+      "startTime": "<filtered>",
+      "stackTrace": [
+        {
+          "functionName": "click",
+          "url": "[native code]",
+          "scriptId": "<filtered>",
+          "lineNumber": 0,
+          "columnNumber": 0
+        },
+        {
+          "functionName": "willCallFunctionTest",
+          "url": "timeline/line-column.html",
+          "scriptId": "<filtered>",
+          "lineNumber": 26,
+          "columnNumber": 44
+        },
+        {
+          "functionName": "global code",
+          "url": "",
+          "scriptId": "<filtered>",
+          "lineNumber": 1,
+          "columnNumber": 21
+        },
+        {
+          "functionName": "evaluateWithScopeExtension",
+          "url": "[native code]",
+          "scriptId": "<filtered>",
+          "lineNumber": 0,
+          "columnNumber": 0
+        },
+        {
+          "functionName": "",
+          "url": "",
+          "scriptId": "<filtered>",
+          "lineNumber": 134,
+          "columnNumber": 97
+        }
+      ],
+      "data": {},
+      "frameId": "<filtered>",
+      "type": "ScheduleStyleRecalculation"
+    },
+    {
+      "startTime": "<filtered>",
+      "frameId": "<filtered>",
+      "data": {
+        "type": "click"
+      },
+      "children": [],
+      "endTime": "<filtered>",
+      "type": "EventDispatch"
+    },
+    {
+      "startTime": "<filtered>",
+      "frameId": "<filtered>",
+      "data": {
+        "type": "click"
+      },
+      "children": [
+        {
+          "startTime": "<filtered>",
+          "stackTrace": [
+            {
+              "functionName": "click",
+              "url": "[native code]",
+              "scriptId": "<filtered>",
+              "lineNumber": 0,
+              "columnNumber": 0
+            },
+            {
+              "functionName": "willCallFunctionTest",
+              "url": "timeline/line-column.html",
+              "scriptId": "<filtered>",
+              "lineNumber": 26,
+              "columnNumber": 44
+            },
+            {
+              "functionName": "global code",
+              "url": "",
+              "scriptId": "<filtered>",
+              "lineNumber": 1,
+              "columnNumber": 21
+            },
+            {
+              "functionName": "evaluateWithScopeExtension",
+              "url": "[native code]",
+              "scriptId": "<filtered>",
+              "lineNumber": 0,
+              "columnNumber": 0
+            },
+            {
+              "functionName": "",
+              "url": "",
+              "scriptId": "<filtered>",
+              "lineNumber": 134,
+              "columnNumber": 97
+            }
+          ],
+          "frameId": "<filtered>",
+          "data": {
+            "scriptName": "timeline/line-column.html",
+            "scriptLine": 17,
+            "scriptColumn": 65
+          },
+          "children": [],
+          "endTime": "<filtered>",
+          "type": "FunctionCall"
+        }
+      ],
+      "endTime": "<filtered>",
+      "type": "EventDispatch"
+    },
+    {
+      "startTime": "<filtered>",
+      "stackTrace": [
+        {
+          "functionName": "profile",
+          "url": "[native code]",
+          "scriptId": "<filtered>",
+          "lineNumber": 0,
+          "columnNumber": 0
+        },
+        {
+          "functionName": "willCallFunctionTest",
+          "url": "timeline/line-column.html",
+          "scriptId": "<filtered>",
+          "lineNumber": 25,
+          "columnNumber": 20
+        },
+        {
+          "functionName": "global code",
+          "url": "",
+          "scriptId": "<filtered>",
+          "lineNumber": 1,
+          "columnNumber": 21
+        },
+        {
+          "functionName": "evaluateWithScopeExtension",
+          "url": "[native code]",
+          "scriptId": "<filtered>",
+          "lineNumber": 0,
+          "columnNumber": 0
+        },
+        {
+          "functionName": "",
+          "url": "",
+          "scriptId": "<filtered>",
+          "lineNumber": 134,
+          "columnNumber": 97
+        }
+      ],
+      "frameId": "<filtered>",
+      "data": {
+        "title": ""
+      },
+      "children": [],
+      "endTime": "<filtered>",
+      "type": "ConsoleProfile"
+    }
+  ],
+  "endTime": "<filtered>",
+  "type": "RenderingFrame"
+}
+PASS: Capturing stopped.
+
+-- Running test case: Timeline.LineColumn.willEvaluateScript
+Evaluating in page...
+PASS: Capturing started.
+{
+  "startTime": "<filtered>",
+  "data": {},
+  "children": [
+    {
+      "startTime": "<filtered>",
+      "stackTrace": [
+        {
+          "functionName": "profile",
+          "url": "[native code]",
+          "scriptId": "<filtered>",
+          "lineNumber": 0,
+          "columnNumber": 0
+        },
+        {
+          "functionName": "willEvaluateScriptTest",
+          "url": "timeline/line-column.html",
+          "scriptId": "<filtered>",
+          "lineNumber": 31,
+          "columnNumber": 20
+        },
+        {
+          "functionName": "global code",
+          "url": "",
+          "scriptId": "<filtered>",
+          "lineNumber": 1,
+          "columnNumber": 23
+        },
+        {
+          "functionName": "evaluateWithScopeExtension",
+          "url": "[native code]",
+          "scriptId": "<filtered>",
+          "lineNumber": 0,
+          "columnNumber": 0
+        },
+        {
+          "functionName": "",
+          "url": "",
+          "scriptId": "<filtered>",
+          "lineNumber": 134,
+          "columnNumber": 97
+        }
+      ],
+      "frameId": "<filtered>",
+      "data": {
+        "title": ""
+      },
+      "children": [],
+      "endTime": "<filtered>",
+      "type": "ConsoleProfile"
+    }
+  ],
+  "endTime": "<filtered>",
+  "type": "RenderingFrame"
+}
+PASS: Capturing stopped.
+

@@ -293,9 +293,9 @@ void InspectorTimelineAgent::stopFromConsole(JSC::ExecState*, const String& titl
     }
 }
 
-void InspectorTimelineAgent::willCallFunction(const String& scriptName, int scriptLine, Frame* frame)
+void InspectorTimelineAgent::willCallFunction(const String& scriptName, int scriptLine, int scriptColumn, Frame* frame)
 {
-    pushCurrentRecord(TimelineRecordFactory::createFunctionCallData(scriptName, scriptLine), TimelineRecordType::FunctionCall, true, frame);
+    pushCurrentRecord(TimelineRecordFactory::createFunctionCallData(scriptName, scriptLine, scriptColumn), TimelineRecordType::FunctionCall, true, frame);
 }
 
 void InspectorTimelineAgent::didCallFunction(Frame*)
@@ -402,9 +402,9 @@ void InspectorTimelineAgent::didFireTimer()
     didCompleteCurrentRecord(TimelineRecordType::TimerFire);
 }
 
-void InspectorTimelineAgent::willEvaluateScript(const String& url, int lineNumber, Frame& frame)
+void InspectorTimelineAgent::willEvaluateScript(const String& url, int lineNumber, int columnNumber, Frame& frame)
 {
-    pushCurrentRecord(TimelineRecordFactory::createEvaluateScriptData(url, lineNumber), TimelineRecordType::EvaluateScript, true, &frame);
+    pushCurrentRecord(TimelineRecordFactory::createEvaluateScriptData(url, lineNumber, columnNumber), TimelineRecordType::EvaluateScript, true, &frame);
 }
 
 void InspectorTimelineAgent::didEvaluateScript(Frame&)

@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/protocol-test.js"></script>
+<script>
+
+function bar(x)
+{
+    return x * 10;
+}
+
+function foo() {
+    bar(42);
+}
+
+function load() {
+    document.querySelector("#button").addEventListener("click", (event) => {
+        foo();
+    });
+
+    runTest();
+}
+
+function willCallFunctionTest() {
+    console.profile();
+    document.querySelector("#button").click();
+    console.profileEnd();
+}
+
+function willEvaluateScriptTest() {
+    console.profile();
+    foo();
+    console.profileEnd();
+}
+
+function test() {
+    ProtocolTest.debug();
+
+    let suite = ProtocolTest.createAsyncSuite("Timeline.LineColumn");
+
+    function replacer(key, value) {
+        if (key === "startTime" || key === "endTime" || key === "scriptId" || key === "frameId")
+            return "<filtered>";
+        if (key === "url" || key === "scriptName")
+            return value.replace(/^.+LayoutTests\/inspector\//, "");
+        return value;
+    }
+
+    const tests = [
+        {
+            name: "Timeline.LineColumn.willCallFunction",
+            description: "Test that column numbers are passed through the willCallFunction instrumentation point.",
+            expression: `willCallFunctionTest()`,
+        },
+        {
+            name: "Timeline.LineColumn.willEvaluateScript",
+            description: "Test that column numbers are passed through the willEvaluateScript instrumentation point.",
+            expression: `willEvaluateScriptTest()`,
+        },
+    ];
+
+    for (let {name, description, expression} of tests) {
+        suite.addTestCase({
+            name,
+            description,
+            test(resolve, reject) {
+                let eventNames = [];
+
+                function handleEvent(eventName, handler) {
+                    eventNames.push(eventName);
+                    InspectorProtocol.eventHandler[eventName] = handler;
+                }
+
+                handleEvent("Timeline.eventRecorded", (event) => {
+                    ProtocolTest.log(JSON.stringify(event.params.record, replacer, 2));
+                });
+
+                handleEvent("Timeline.programmaticCaptureStarted", () => {
+                    ProtocolTest.pass("Capturing started.");
+                });
+
+                handleEvent("Timeline.programmaticCaptureStopped", () => {
+                    ProtocolTest.pass("Capturing stopped.");
+
+                    for (let eventName of eventNames)
+                        delete InspectorProtocol.eventHandler[eventName];
+
+                    resolve();
+                });
+
+                ProtocolTest.log("Evaluating in page...");
+                ProtocolTest.evaluateInPage(expression)
+                .catch(reject);
+            },
+        });
+    }
+
+    suite.runTestCasesAndFinish();
+}
+
+</script>
+</head>
+<body onload="load()">
+    <p>Test that script Timeline records have column numbers.</p>
+    <button id="button"></button>
+</body>
+</html>

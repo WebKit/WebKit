@@ -532,10 +532,9 @@ WI.TimelineManager = class TimelineManager extends WI.Object
                 var scriptResource = mainFrame.url === recordPayload.data.url ? mainFrame.mainResource : mainFrame.resourceForURL(recordPayload.data.url, true);
                 if (scriptResource) {
                     // The lineNumber is 1-based, but we expect 0-based.
-                    var lineNumber = recordPayload.data.lineNumber - 1;
-
-                    // FIXME: No column number is provided.
-                    sourceCodeLocation = scriptResource.createSourceCodeLocation(lineNumber, 0);
+                    let lineNumber = recordPayload.data.lineNumber - 1;
+                    let columnNumber = "columnNumber" in recordPayload.data ? recordPayload.data.columnNumber - 1 : 0;
+                    sourceCodeLocation = scriptResource.createSourceCodeLocation(lineNumber, columnNumber);
                 }
             }
 
@@ -586,10 +585,9 @@ WI.TimelineManager = class TimelineManager extends WI.Object
                 var scriptResource = mainFrame.url === recordPayload.data.scriptName ? mainFrame.mainResource : mainFrame.resourceForURL(recordPayload.data.scriptName, true);
                 if (scriptResource) {
                     // The lineNumber is 1-based, but we expect 0-based.
-                    var lineNumber = recordPayload.data.scriptLine - 1;
-
-                    // FIXME: No column number is provided.
-                    sourceCodeLocation = scriptResource.createSourceCodeLocation(lineNumber, 0);
+                    let lineNumber = recordPayload.data.scriptLine - 1;
+                    let columnNumber = "scriptColumn" in recordPayload.data ? recordPayload.data.scriptColumn - 1 : 0;
+                    sourceCodeLocation = scriptResource.createSourceCodeLocation(lineNumber, columnNumber);
                 }
             }
 
