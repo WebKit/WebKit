@@ -36,7 +36,9 @@
 #include "ElementDescendantIterator.h"
 #include "HTMLNames.h"
 #include "Node.h"
+#include "SpaceSplitString.h"
 #include <wtf/Vector.h>
+#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
@@ -115,6 +117,129 @@ ExceptionOr<Optional<Vector<RefPtr<Node>>>> InspectorAuditAccessibilityObject::g
     return result;
 }
 
+ExceptionOr<Optional<InspectorAuditAccessibilityObject::ComputedProperties>> InspectorAuditAccessibilityObject::getComputedProperties(Node& node)
+{
+    ERROR_IF_NO_ACTIVE_AUDIT();
+
+    Optional<InspectorAuditAccessibilityObject::ComputedProperties> result;
+
+    if (AccessibilityObject* axObject = accessiblityObjectForNode(node)) {
+        ComputedProperties computedProperties;
+
+        AccessibilityObject* current = axObject;
+        while (current && (!computedProperties.busy || !computedProperties.busy.value())) {
+            computedProperties.busy = current->isBusy();
+            current = current->parentObject();
+        }
+
+        if (axObject->supportsChecked()) {
+            AccessibilityButtonState checkValue = axObject->checkboxOrRadioValue();
+            if (checkValue == AccessibilityButtonState::On)
+                computedProperties.checked = "true"_s;
+            else if (checkValue == AccessibilityButtonState::Mixed)
+                computedProperties.checked = "mixed"_s;
+            else if (axObject->isChecked())
+                computedProperties.checked = "true"_s;
+            else
+                computedProperties.checked = "false"_s;
+        }
+
+        switch (axObject->currentState()) {
+        case AccessibilityCurrentState::False:
+            computedProperties.currentState = "false"_s;
+            break;
+        case AccessibilityCurrentState::True:
+            computedProperties.currentState = "true"_s;
+            break;
+        case AccessibilityCurrentState::Page:
+            computedProperties.currentState = "page"_s;
+            break;
+        case AccessibilityCurrentState::Step:
+            computedProperties.currentState = "step"_s;
+            break;
+        case AccessibilityCurrentState::Location:
+            computedProperties.currentState = "location"_s;
+            break;
+        case AccessibilityCurrentState::Date:
+            computedProperties.currentState = "date"_s;
+            break;
+        case AccessibilityCurrentState::Time:
+            computedProperties.currentState = "time"_s;
+            break;
+        }
+
+        computedProperties.disabled = !axObject->isEnabled();
+
+        if (axObject->supportsExpanded())
+            computedProperties.expanded = axObject->isExpanded();
+
+        if (is<Element>(node) && axObject->canSetFocusAttribute())
+            computedProperties.focused = axObject->isFocused();
+
+        computedProperties.headingLevel = axObject->headingLevel();
+        computedProperties.hidden = axObject->isAXHidden() || axObject->isDOMHidden();
+        computedProperties.hierarchicalLevel = axObject->hierarchicalLevel();
+        computedProperties.ignored = axObject->accessibilityIsIgnored();
+        computedProperties.ignoredByDefault = axObject->accessibilityIsIgnoredByDefault();
+
+        String invalidValue = axObject->invalidStatus();
+        if (invalidValue == "false")
+            computedProperties.invalidStatus = "false"_s;
+        else if (invalidValue == "grammar")
+            computedProperties.invalidStatus = "grammar"_s;
+        else if (invalidValue == "spelling")
+            computedProperties.invalidStatus = "spelling"_s;
+        else
+            computedProperties.invalidStatus = "true"_s;
+
+        computedProperties.isPopUpButton = axObject->isPopUpButton() || axObject->hasPopup();
+        computedProperties.label = axObject->computedLabel();
+
+        if (axObject->supportsLiveRegion()) {
+            computedProperties.liveRegionAtomic = axObject->liveRegionAtomic();
+
+            String ariaRelevantAttrValue = axObject->liveRegionRelevant();
+            if (!ariaRelevantAttrValue.isEmpty()) {
+                Vector<String> liveRegionRelevant;
+                String ariaRelevantAdditions = "additions";
+                String ariaRelevantRemovals = "removals";
+                String ariaRelevantText = "text";
+
+                const auto& values = SpaceSplitString(ariaRelevantAttrValue, true);
+                if (values.contains("all")) {
+                    liveRegionRelevant.append(ariaRelevantAdditions);
+                    liveRegionRelevant.append(ariaRelevantRemovals);
+                    liveRegionRelevant.append(ariaRelevantText);
+                } else {
+                    if (values.contains(ariaRelevantAdditions))
+                        liveRegionRelevant.append(ariaRelevantAdditions);
+                    if (values.contains(ariaRelevantRemovals))
+                        liveRegionRelevant.append(ariaRelevantRemovals);
+                    if (values.contains(ariaRelevantText))
+                        liveRegionRelevant.append(ariaRelevantText);
+                }
+                computedProperties.liveRegionRelevant = liveRegionRelevant;
+            }
+
+            computedProperties.liveRegionStatus = axObject->liveRegionStatus();
+        }
+
+        computedProperties.pressed = axObject->pressedIsPresent() && axObject->isPressed();
+
+        if (axObject->isTextControl())
+            computedProperties.readonly = !axObject->canSetValueAttribute();
+
+        if (axObject->supportsRequiredAttribute())
+            computedProperties.required = axObject->isRequired();
+
+        computedProperties.role = axObject->computedRoleString();
+        computedProperties.selected = axObject->isSelected();
+
+        result = computedProperties;
+    }
+
+    return result;
+}
 
 ExceptionOr<Optional<Vector<RefPtr<Node>>>> InspectorAuditAccessibilityObject::getControlledNodes(Node& node)
 {

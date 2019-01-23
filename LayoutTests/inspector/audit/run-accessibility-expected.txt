@@ -63,6 +63,46 @@ Audit run `WebInspectorAudit.Accessibility.getChildNodes(document.querySelector(
 Result: []
 Audit teardown...
 
+-- Running test case: Audit.run.Accessibility.getComputedProperties.parent
+Audit setup...
+Audit run `WebInspectorAudit.Accessibility.getComputedProperties(document.querySelector("#parent"))`...
+Result: {
+    "busy": false,
+    "currentState": "false",
+    "disabled": false,
+    "headingLevel": 0,
+    "hidden": false,
+    "hierarchicalLevel": 0,
+    "ignored": false,
+    "ignoredByDefault": false,
+    "invalidStatus": "false",
+    "isPopUpButton": false,
+    "pressed": false,
+    "role": "tree",
+    "selected": false
+}
+Audit teardown...
+
+-- Running test case: Audit.run.Accessibility.getComputedProperties.child
+Audit setup...
+Audit run `WebInspectorAudit.Accessibility.getComputedProperties(document.querySelector("#child"))`...
+Result: {
+    "busy": false,
+    "currentState": "false",
+    "disabled": false,
+    "headingLevel": 0,
+    "hidden": false,
+    "hierarchicalLevel": 1,
+    "ignored": false,
+    "ignoredByDefault": false,
+    "invalidStatus": "false",
+    "isPopUpButton": false,
+    "pressed": false,
+    "role": "treeitem",
+    "selected": true
+}
+Audit teardown...
+
 -- Running test case: Audit.run.Accessibility.getControlledNodes.parent
 Audit setup...
 Audit run `WebInspectorAudit.Accessibility.getControlledNodes(document.querySelector("#parent"))`...
@@ -114,7 +154,7 @@ Audit teardown...
 -- Running test case: Audit.run.Accessibility.getParentNode.parent
 Audit setup...
 Audit run `WebInspectorAudit.Accessibility.getParentNode(document.querySelector("#parent"))`...
-Result: undefined
+Result: <document>
 Audit teardown...
 
 -- Running test case: Audit.run.Accessibility.getParentNode.child
@@ -146,6 +186,9 @@ Testing copied getActiveDescendant...
 PASS: Should produce an exception.
 Error: NotAllowedError: Cannot be called outside of a Web Inspector Audit
 Testing copied getChildNodes...
+PASS: Should produce an exception.
+Error: NotAllowedError: Cannot be called outside of a Web Inspector Audit
+Testing copied getComputedProperties...
 PASS: Should produce an exception.
 Error: NotAllowedError: Cannot be called outside of a Web Inspector Audit
 Testing copied getControlledNodes...

@@ -6,12 +6,20 @@
 <script>
 
 function stringify(result) {
+    if (result === null || result === undefined || typeof result === "boolean" || typeof result === "string" || typeof result === "number")
+        return result;
     if (result instanceof Element)
         return "#" + result.id;
+    if (result instanceof HTMLDocument)
+        return "<document>";
     if (Array.isArray(result))
         return JSON.stringify(result.map(stringify));
-    if (result === null || result === undefined);
-        return result;
+    if (typeof result === "object" && result.constructor === Object) {
+        let mapped = {};
+        for (let key in result)
+            mapped[key] = stringify(result[key]);
+        return JSON.stringify(mapped, null, 4);
+    }
     return "UNEXPECTED " + result;
 }
 
@@ -43,6 +51,9 @@ function test()
 
         { func: "getChildNodes", target: "parent" },
         { func: "getChildNodes", target: "child" },
+
+        { func: "getComputedProperties", target: "parent" },
+        { func: "getComputedProperties", target: "child" },
 
         { func: "getControlledNodes", target: "parent" },
         { func: "getControlledNodes", target: "child" },

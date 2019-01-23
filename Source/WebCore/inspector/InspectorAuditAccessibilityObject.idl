@@ -32,10 +32,38 @@
 
     [MayThrowException] Node? getActiveDescendant(Node node);
     [MayThrowException] sequence<Node>? getChildNodes(Node node);
+    [MayThrowException] ComputedProperties? getComputedProperties(Node node);
     [MayThrowException] sequence<Node>? getControlledNodes(Node node);
     [MayThrowException] sequence<Node>? getFlowedNodes(Node node);
     [MayThrowException] Node? getMouseEventNode(Node node);
     [MayThrowException] sequence<Node>? getOwnedNodes(Node node);
     [MayThrowException] Node? getParentNode(Node node);
     [MayThrowException] sequence<Node>? getSelectedChildNodes(Node node);
+};
+
+[
+    JSGenerateToJSObject,
+] dictionary ComputedProperties {
+    boolean? busy;
+    DOMString? checked;
+    DOMString? currentState;
+    boolean? disabled;
+    boolean? expanded;
+    boolean? focused;
+    long? headingLevel;
+    boolean? hidden;
+    long? hierarchicalLevel;
+    boolean? ignored;
+    boolean? ignoredByDefault;
+    DOMString? invalidStatus;
+    boolean? isPopUpButton;
+    DOMString? label;
+    boolean? liveRegionAtomic;
+    sequence<DOMString>? liveRegionRelevant;
+    DOMString? liveRegionStatus;
+    boolean? pressed;
+    boolean? readonly;
+    boolean? required;
+    DOMString? role;
+    boolean? selected;
 };

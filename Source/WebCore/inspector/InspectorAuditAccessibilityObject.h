@@ -46,8 +46,34 @@ public:
 
     ExceptionOr<Vector<Ref<Node>>> getElementsByComputedRole(Document&, const String& role, Node* container);
 
+    struct ComputedProperties {
+        Optional<bool> busy;
+        String checked;
+        String currentState;
+        Optional<bool> disabled;
+        Optional<bool> expanded;
+        Optional<bool> focused;
+        Optional<int> headingLevel;
+        Optional<bool> hidden;
+        Optional<int> hierarchicalLevel;
+        Optional<bool> ignored;
+        Optional<bool> ignoredByDefault;
+        String invalidStatus;
+        Optional<bool> isPopUpButton;
+        String label;
+        Optional<bool> liveRegionAtomic;
+        Optional<Vector<String>> liveRegionRelevant;
+        String liveRegionStatus;
+        Optional<bool> pressed;
+        Optional<bool> readonly;
+        Optional<bool> required;
+        String role;
+        Optional<bool> selected;
+    };
+
     ExceptionOr<RefPtr<Node>> getActiveDescendant(Node&);
     ExceptionOr<Optional<Vector<RefPtr<Node>>>> getChildNodes(Node&);
+    ExceptionOr<Optional<ComputedProperties>> getComputedProperties(Node&);
     ExceptionOr<Optional<Vector<RefPtr<Node>>>> getControlledNodes(Node&);
     ExceptionOr<Optional<Vector<RefPtr<Node>>>> getFlowedNodes(Node&);
     ExceptionOr<RefPtr<Node>> getMouseEventNode(Node&);
