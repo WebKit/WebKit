@@ -1,3 +1,29 @@
+2019-01-22  Chris Dumez  <cdumez@apple.com>
+
+        Regression(r240178) Some API tests are crashing
+        https://bugs.webkit.org/show_bug.cgi?id=193680
+
+        Reviewed by Alex Christensen.
+
+        r240178 made sure that userScripts / scriptMessageHandlers / contentExtensions are always
+        properly populated in the WebPageCreationParameters. This was needed in case we need to
+        reconstruct the WebUserContentController on the WebProcess side. However, this caused a
+        regression in the case we reuse a process where the WebUserContentController still exists
+        (because it was kept alive, e.g. by the WebPageGroup). In that case, we would add duplicate
+        entries to the existing WebUserContentController instance because its "add" methods did not
+        have duplicate checks. To address the issue, this patch adds duplicate checks to the
+        WebUserContentController "add" methods.
+
+        * WebProcess/UserContent/WebUserContentController.cpp:
+        (WebKit::WebUserContentController::addUserScriptMessageHandlerInternal):
+        (WebKit::WebUserContentController::removeUserScriptMessageHandlerInternal):
+        (WebKit::WebUserContentController::addUserScriptInternal):
+        (WebKit::WebUserContentController::removeUserScriptInternal):
+        (WebKit::WebUserContentController::addUserStyleSheetInternal):
+        (WebKit::WebUserContentController::removeUserStyleSheetInternal):
+        (WebKit::WebUserContentController::forEachUserMessageHandler const):
+        * WebProcess/UserContent/WebUserContentController.h:
+
 2019-01-22  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         Unreviewed attempt to fix GTK/WPE bots
