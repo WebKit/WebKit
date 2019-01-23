@@ -1,3 +1,16 @@
+2019-01-23  Rob Buis  <rbuis@igalia.com>
+
+        Update MIME type parser
+        https://bugs.webkit.org/show_bug.cgi?id=180526
+
+        Reviewed by Frédéric Wang.
+
+        Add unit tests for both parse modes of ParsedContentType.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WebCore/ParsedContentType.cpp: Added.
+        (TestWebKitAPI::TEST):
+
 2019-01-22  Aakash Jain  <aakash_jain@apple.com>
 
         [ews-app] fetch loop should not stop on network issues

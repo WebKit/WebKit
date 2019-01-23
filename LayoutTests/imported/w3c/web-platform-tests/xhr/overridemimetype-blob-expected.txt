@@ -4,59 +4,59 @@ PASS Use text/xml as fallback MIME type, 2
 PASS Loading data… 
 FAIL 1) MIME types need to be parsed and serialized: text/html;charset=gbk assert_equals: expected "text/html;charset=gbk" but got "text/html"
 FAIL 2) MIME types need to be parsed and serialized: TEXT/HTML;CHARSET=GBK assert_equals: expected "text/html;charset=GBK" but got "text/html"
-FAIL 3) MIME types need to be parsed and serialized: text/html;charset=gbk( assert_equals: expected "text/html;charset=\"gbk(\"" but got "application/octet-stream"
-FAIL 4) MIME types need to be parsed and serialized: text/html;x=(;charset=gbk assert_equals: expected "text/html;x=\"(\";charset=gbk" but got "application/octet-stream"
+FAIL 3) MIME types need to be parsed and serialized: text/html;charset=gbk( assert_equals: expected "text/html;charset=\"gbk(\"" but got "text/html"
+FAIL 4) MIME types need to be parsed and serialized: text/html;x=(;charset=gbk assert_equals: expected "text/html;x=\"(\";charset=gbk" but got "text/html"
 FAIL 5) MIME types need to be parsed and serialized: text/html;charset=gbk;charset=windows-1255 assert_equals: expected "text/html;charset=gbk" but got "text/html"
-FAIL 6) MIME types need to be parsed and serialized: text/html;charset=();charset=GBK assert_equals: expected "text/html;charset=\"()\"" but got "application/octet-stream"
-FAIL 7) MIME types need to be parsed and serialized: text/html;charset =gbk assert_equals: expected "text/html" but got "application/octet-stream"
+FAIL 6) MIME types need to be parsed and serialized: text/html;charset=();charset=GBK assert_equals: expected "text/html;charset=\"()\"" but got "text/html"
+PASS 7) MIME types need to be parsed and serialized: text/html;charset =gbk 
 FAIL 8) MIME types need to be parsed and serialized: text/html ;charset=gbk assert_equals: expected "text/html;charset=gbk" but got "text/html"
 FAIL 9) MIME types need to be parsed and serialized: text/html; charset=gbk assert_equals: expected "text/html;charset=gbk" but got "text/html"
-FAIL 10) MIME types need to be parsed and serialized: text/html;charset= gbk assert_equals: expected "text/html;charset=\" gbk\"" but got "application/octet-stream"
-FAIL 11) MIME types need to be parsed and serialized: text/html;charset= "gbk" assert_equals: expected "text/html;charset=\" \\\"gbk\\"\"" but got "application/octet-stream"
+FAIL 10) MIME types need to be parsed and serialized: text/html;charset= gbk assert_equals: expected "text/html;charset=\" gbk\"" but got "text/html"
+FAIL 11) MIME types need to be parsed and serialized: text/html;charset= "gbk" assert_equals: expected "text/html;charset=\" \\\"gbk\\"\"" but got "text/html"
 FAIL 12) MIME types need to be parsed and serialized: text/html;charset='gbk' assert_equals: expected "text/html;charset='gbk'" but got "text/html"
 FAIL 13) MIME types need to be parsed and serialized: text/html;charset='gbk assert_equals: expected "text/html;charset='gbk" but got "text/html"
 FAIL 14) MIME types need to be parsed and serialized: text/html;charset=gbk' assert_equals: expected "text/html;charset=gbk'" but got "text/html"
 FAIL 15) MIME types need to be parsed and serialized: text/html;charset=';charset=GBK assert_equals: expected "text/html;charset='" but got "text/html"
-FAIL 16) MIME types need to be parsed and serialized: text/html;test;charset=gbk assert_equals: expected "text/html;charset=gbk" but got "application/octet-stream"
+FAIL 16) MIME types need to be parsed and serialized: text/html;test;charset=gbk assert_equals: expected "text/html;charset=gbk" but got "text/html"
 FAIL 17) MIME types need to be parsed and serialized: text/html;test=;charset=gbk assert_equals: expected "text/html;charset=gbk" but got "application/octet-stream"
-FAIL 18) MIME types need to be parsed and serialized: text/html;';charset=gbk assert_equals: expected "text/html;charset=gbk" but got "application/octet-stream"
-FAIL 19) MIME types need to be parsed and serialized: text/html;";charset=gbk assert_equals: expected "text/html;charset=gbk" but got "application/octet-stream"
-FAIL 20) MIME types need to be parsed and serialized: text/html ; ; charset=gbk assert_equals: expected "text/html;charset=gbk" but got "application/octet-stream"
-FAIL 21) MIME types need to be parsed and serialized: text/html;;;;charset=gbk assert_equals: expected "text/html;charset=gbk" but got "application/octet-stream"
-FAIL 22) MIME types need to be parsed and serialized: text/html;charset= ";charset=GBK assert_equals: expected "text/html;charset=GBK" but got "application/octet-stream"
+FAIL 18) MIME types need to be parsed and serialized: text/html;';charset=gbk assert_equals: expected "text/html;charset=gbk" but got "text/html"
+FAIL 19) MIME types need to be parsed and serialized: text/html;";charset=gbk assert_equals: expected "text/html;charset=gbk" but got "text/html"
+FAIL 20) MIME types need to be parsed and serialized: text/html ; ; charset=gbk assert_equals: expected "text/html;charset=gbk" but got "text/html"
+FAIL 21) MIME types need to be parsed and serialized: text/html;;;;charset=gbk assert_equals: expected "text/html;charset=gbk" but got "text/html"
+FAIL 22) MIME types need to be parsed and serialized: text/html;charset= ";charset=GBK assert_equals: expected "text/html;charset=GBK" but got "text/html"
 FAIL 23) MIME types need to be parsed and serialized: text/html;charset=";charset=foo";charset=GBK assert_equals: expected "text/html;charset=GBK" but got "text/html"
 FAIL 24) MIME types need to be parsed and serialized: text/html;charset="gbk" assert_equals: expected "text/html;charset=gbk" but got "text/html"
-FAIL 25) MIME types need to be parsed and serialized: text/html;charset="gbk assert_equals: expected "text/html;charset=gbk" but got "application/octet-stream"
-FAIL 26) MIME types need to be parsed and serialized: text/html;charset=gbk" assert_equals: expected "text/html;charset=\"gbk\\\"\"" but got "application/octet-stream"
+FAIL 25) MIME types need to be parsed and serialized: text/html;charset="gbk assert_equals: expected "text/html;charset=gbk" but got "text/html"
+FAIL 26) MIME types need to be parsed and serialized: text/html;charset=gbk" assert_equals: expected "text/html;charset=\"gbk\\\"\"" but got "text/html"
 FAIL 27) MIME types need to be parsed and serialized: text/html;charset=" gbk" assert_equals: expected "text/html;charset=\" gbk\"" but got "text/html"
 FAIL 28) MIME types need to be parsed and serialized: text/html;charset="gbk " assert_equals: expected "text/html;charset=\"gbk \"" but got "text/html"
 FAIL 29) MIME types need to be parsed and serialized: text/html;charset="\ gbk" assert_equals: expected "text/html;charset=\" gbk\"" but got "text/html"
 FAIL 30) MIME types need to be parsed and serialized: text/html;charset="\g\b\k" assert_equals: expected "text/html;charset=gbk" but got "text/html"
-FAIL 31) MIME types need to be parsed and serialized: text/html;charset="gbk"x assert_equals: expected "text/html;charset=gbk" but got "application/octet-stream"
+FAIL 31) MIME types need to be parsed and serialized: text/html;charset="gbk"x assert_equals: expected "text/html;charset=gbk" but got "text/html"
 FAIL 32) MIME types need to be parsed and serialized: text/html;charset="";charset=GBK assert_equals: expected "text/html;charset=\"\"" but got "text/html"
-FAIL 33) MIME types need to be parsed and serialized: text/html;charset=";charset=GBK assert_equals: expected "text/html;charset=\";charset=GBK\"" but got "application/octet-stream"
+FAIL 33) MIME types need to be parsed and serialized: text/html;charset=";charset=GBK assert_equals: expected "text/html;charset=\";charset=GBK\"" but got "text/html"
 FAIL 34) MIME types need to be parsed and serialized: text/html;charset={gbk} assert_equals: expected "text/html;charset=\"{gbk}\"" but got "text/html"
 FAIL 35) MIME types need to be parsed and serialized: text/html;0123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789=x;charset=gbk assert_equals: expected "text/html;0123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789=x;charset=gbk" but got "text/html"
 PASS 36) MIME types need to be parsed and serialized: 0123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789/0123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789 
 FAIL 37) MIME types need to be parsed and serialized: !#$%&'*+-.^_`|~0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz/!#$%&'*+-.^_`|~0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz;!#$%&'*+-.^_`|~0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz=!#$%&'*+-.^_`|~0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz assert_equals: expected "!#$%&'*+-.^_`|~0123456789abcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyz/!#$%&'*+-.^_`|~0123456789abcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyz;!#$%&'*+-.^_`|~0123456789abcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyz=!#$%&'*+-.^_`|~0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz" but got "!#$%&'*+-.^_`|~0123456789abcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyz/!#$%&'*+-.^_`|~0123456789abcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyz"
 FAIL 38) MIME types need to be parsed and serialized: x/x;x="	 !\"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~ ¡¢£¤¥¦§¨©ª«¬­®¯°±²³´µ¶·¸¹º»¼½¾¿ÀÁÂÃÄÅÆÇÈÉÊËÌÍÎÏÐÑÒÓÔÕÖ×ØÙÚÛÜÝÞßàáâãäåæçèéêëìíîïðñòóôõö÷øùúûüýþÿ" assert_equals: expected "x/x;x=\"\t !\\\"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~ ¡¢£¤¥¦§¨©ª«¬­®¯°±²³´µ¶·¸¹º»¼½¾¿ÀÁÂÃÄÅÆÇÈÉÊËÌÍÎÏÐÑÒÓÔÕÖ×ØÙÚÛÜÝÞßàáâãäåæçèéêëìíîïðñòóôõö÷øùúûüýþÿ\"" but got "x/x"
-FAIL 39) MIME types need to be parsed and serialized: x/x;test assert_equals: expected "x/x" but got "application/octet-stream"
-FAIL 40) MIME types need to be parsed and serialized: x/x;test="\ assert_equals: expected "x/x;test=\"\\\\"" but got "application/octet-stream"
-FAIL 41) MIME types need to be parsed and serialized: x/x;x=  assert_equals: expected "x/x" but got "application/octet-stream"
-FAIL 42) MIME types need to be parsed and serialized: x/x;x=	 assert_equals: expected "x/x" but got "application/octet-stream"
-FAIL 43) MIME types need to be parsed and serialized: text/html;test=ÿ;charset=gbk assert_equals: expected "text/html;test=\"ÿ\";charset=gbk" but got "application/octet-stream"
-FAIL 44) MIME types need to be parsed and serialized: x/x;test=�;x=x assert_equals: expected "x/x;x=x" but got "application/octet-stream"
+PASS 39) MIME types need to be parsed and serialized: x/x;test 
+FAIL 40) MIME types need to be parsed and serialized: x/x;test="\ assert_equals: expected "x/x;test=\"\\\\"" but got "x/x"
+PASS 41) MIME types need to be parsed and serialized: x/x;x=  
+PASS 42) MIME types need to be parsed and serialized: x/x;x=	 
+FAIL 43) MIME types need to be parsed and serialized: text/html;test=ÿ;charset=gbk assert_equals: expected "text/html;test=\"ÿ\";charset=gbk" but got "text/html"
+FAIL 44) MIME types need to be parsed and serialized: x/x;test=�;x=x assert_equals: expected "x/x;x=x" but got "x/x"
 PASS 45) MIME types need to be parsed and serialized:  
 PASS 46) MIME types need to be parsed and serialized: 	 
 PASS 47) MIME types need to be parsed and serialized: / 
 PASS 48) MIME types need to be parsed and serialized: bogus 
 PASS 49) MIME types need to be parsed and serialized: bogus/ 
-PASS 50) MIME types need to be parsed and serialized: bogus/  
+FAIL 50) MIME types need to be parsed and serialized: bogus/  assert_equals: expected "application/octet-stream" but got "bogus/"
 PASS 51) MIME types need to be parsed and serialized: bogus/bogus/; 
 PASS 52) MIME types need to be parsed and serialized: </> 
 PASS 53) MIME types need to be parsed and serialized: (/) 
 PASS 54) MIME types need to be parsed and serialized: ÿ/ÿ 
-FAIL 55) MIME types need to be parsed and serialized: text/html(;doesnot=matter assert_equals: expected "application/octet-stream" but got "text/html("
+PASS 55) MIME types need to be parsed and serialized: text/html(;doesnot=matter 
 FAIL 56) MIME types need to be parsed and serialized: {/} assert_equals: expected "application/octet-stream" but got "{/}"
 PASS 57) MIME types need to be parsed and serialized: Ā/Ā 
 

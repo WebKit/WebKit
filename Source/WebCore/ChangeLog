@@ -1,3 +1,50 @@
+2019-01-23  Rob Buis  <rbuis@igalia.com>
+
+        Update MIME type parser
+        https://bugs.webkit.org/show_bug.cgi?id=180526
+
+        Reviewed by Frédéric Wang.
+
+        Add an enum to allow two modes of MIME type parsing, one mode
+        to keep supporting RFC2045 as before, and one mode to support
+        the updated MIME parser from mimesniff [1]. Mimesniff support
+        brings the following changes:
+        - allows parameter names without matching =value.
+        - skips whitespace after subtype, parameter value and before
+          parameter name.
+        - lower cases MIME type and parameter name.
+        - parameter names parsed before are discarded.
+
+        The old mode is still used by CDM.cpp and MIMEHeader.cpp.
+
+        [1] https://mimesniff.spec.whatwg.org/
+
+        * Modules/encryptedmedia/CDM.cpp:
+        (WebCore::CDM::getSupportedCapabilitiesForAudioVideoType):
+        * platform/network/MIMEHeader.cpp:
+        (WebCore::MIMEHeader::parseHeader):
+        * platform/network/ParsedContentType.cpp:
+        (WebCore::DummyParsedContentType::setContentType const):
+        (WebCore::DummyParsedContentType::setContentTypeParameter const):
+        (WebCore::isQuotedStringTokenCharacter):
+        (WebCore::isTokenCharacter):
+        (WebCore::parseToken):
+        (WebCore::containsNonTokenCharacters):
+        (WebCore::parseQuotedString):
+        (WebCore::isNotForwardSlash):
+        (WebCore::isNotSemicolon):
+        (WebCore::isNotSemicolonOrEqualSign):
+        (WebCore::parseContentType):
+        (WebCore::isValidContentType):
+        (WebCore::ParsedContentType::ParsedContentType):
+        (WebCore::ParsedContentType::setContentType):
+        (WebCore::isNonTokenCharacter):
+        (WebCore::isNonQuotedStringTokenCharacter):
+        (WebCore::ParsedContentType::setContentTypeParameter):
+        * platform/network/ParsedContentType.h:
+
+        Test: web-platform-tests/xhr/overridemimetype-blob.html
+
 2019-01-22  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Introduce CustomUndoStep.h and CustomUndoStep.cpp

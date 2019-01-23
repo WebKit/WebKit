@@ -1,3 +1,16 @@
+2019-01-23  Rob Buis  <rbuis@igalia.com>
+
+        Update MIME type parser
+        https://bugs.webkit.org/show_bug.cgi?id=180526
+
+        Reviewed by Frédéric Wang.
+
+        Adjust test expectation.
+
+        * http/tests/xmlhttprequest/post-blob-content-type-async-expected.txt:
+        * http/tests/xmlhttprequest/post-blob-content-type-sync-expected.txt:
+        * http/tests/xmlhttprequest/post-blob-content-type-tests.js:
+
 2019-01-22  Simon Fraser  <simon.fraser@apple.com>
 
         Adding a child to a ScrollingStateNode needs to trigger a tree state commit

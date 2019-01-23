@@ -23,7 +23,7 @@ var xhrBlobTestCases = [{
     expectedMime: ''
 }, {
     mime: 'multipart/mixed;boundary="--blob-boundary',
-    expectedMime: ''
+    expectedMime: 'multipart/mixed;boundary="--blob-boundary'
 }, {
     mime: 'multipart/mixed;boundary="--blob-boundary"',
     expectedMime: 'multipart/mixed;boundary="--blob-boundary"'

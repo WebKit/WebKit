@@ -87,7 +87,7 @@ RefPtr<MIMEHeader> MIMEHeader::parseHeader(SharedBufferChunkReader& buffer)
     KeyValueMap keyValuePairs = retrieveKeyValuePairs(buffer);
     KeyValueMap::iterator mimeParametersIterator = keyValuePairs.find("content-type");
     if (mimeParametersIterator != keyValuePairs.end()) {
-        ParsedContentType parsedContentType(mimeParametersIterator->value);
+        ParsedContentType parsedContentType(mimeParametersIterator->value, Mode::Rfc2045);
         mimeHeader->m_contentType = parsedContentType.mimeType();
         if (!mimeHeader->isMultipart())
             mimeHeader->m_charset = parsedContentType.charset().stripWhiteSpace();

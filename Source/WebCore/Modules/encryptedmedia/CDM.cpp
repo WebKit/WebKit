@@ -433,7 +433,7 @@ Optional<Vector<MediaKeySystemMediaCapability>> CDM::getSupportedCapabilitiesFor
             return WTF::nullopt;
 
         // 3.4. If content type is an invalid or unrecognized MIME type, continue to the next iteration.
-        if (!isValidContentType(requestedCapability.contentType))
+        if (!isValidContentType(requestedCapability.contentType, Mode::Rfc2045))
             continue;
 
         // 3.5. Let container be the container type specified by content type.
