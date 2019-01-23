@@ -1,3 +1,32 @@
+2019-01-23  Antti Koivisto  <antti@apple.com>
+
+        [PSON] Flash on back navigation on Mac
+        https://bugs.webkit.org/show_bug.cgi?id=193716
+        <rdar://problem/47148458>
+
+        Reviewed by Chris Dumez.
+
+        We close the page immediately if we fail to suspend. Layers disappear and we get a flash.
+
+        * UIProcess/SuspendedPageProxy.cpp:
+        (WebKit::SuspendedPageProxy::didProcessRequestToSuspend):
+
+        Remove the suspended page (so closing it on web process side) if the suspension fails.
+        Skip this if we are using web process side compositing on Mac.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::enterAcceleratedCompositingMode):
+
+        On Mac, remove failed SuspendedPageProxy when entering compositing mode. At this point we don't need it to keep layers alive.
+
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::WebProcessPool::removeFailedSuspendedPagesForPage):
+        * UIProcess/WebProcessPool.h:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::suspendForProcessSwap):
+
+        Don't close the page on suspension failure.
+
 2019-01-23  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Introduce UndoStep::label() and adopt it in WebKitLegacy and WebKit

@@ -1340,7 +1340,6 @@ void WebPage::sendClose()
 void WebPage::suspendForProcessSwap()
 {
     auto failedToSuspend = [this, protectedThis = makeRef(*this)] {
-        close();
         send(Messages::WebPageProxy::DidFailToSuspendAfterProcessSwap());
     };
 

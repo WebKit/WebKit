@@ -6847,7 +6847,12 @@ void WebPageProxy::isJITEnabled(CompletionHandler<void(bool)>&& completionHandle
 
 void WebPageProxy::enterAcceleratedCompositingMode(const LayerTreeContext& layerTreeContext)
 {
+#if PLATFORM(MAC)
+    ASSERT(m_drawingArea->type() == DrawingAreaTypeTiledCoreAnimation);
+#endif
     pageClient().enterAcceleratedCompositingMode(layerTreeContext);
+    // We needed the failed suspended page to stay alive to avoid flashing. Now we can get rid of it.
+    m_process->processPool().removeFailedSuspendedPagesForPage(*this);
 }
 
 void WebPageProxy::exitAcceleratedCompositingMode()

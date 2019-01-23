@@ -450,6 +450,7 @@ public:
     // SuspendedPageProxy management.
     void addSuspendedPage(std::unique_ptr<SuspendedPageProxy>&&);
     void removeAllSuspendedPagesForPage(WebPageProxy&);
+    void removeFailedSuspendedPagesForPage(WebPageProxy&);
     std::unique_ptr<SuspendedPageProxy> takeSuspendedPage(SuspendedPageProxy&);
     void removeSuspendedPage(SuspendedPageProxy&);
     bool hasSuspendedPageFor(WebProcessProxy&) const;

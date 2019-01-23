@@ -2270,6 +2270,13 @@ void WebProcessPool::removeAllSuspendedPagesForPage(WebPageProxy& page)
     });
 }
 
+void WebProcessPool::removeFailedSuspendedPagesForPage(WebPageProxy& page)
+{
+    m_suspendedPages.removeAllMatching([&page](auto& suspendedPage) {
+        return &suspendedPage->page() == &page && suspendedPage->failedToSuspend();
+    });
+}
+
 std::unique_ptr<SuspendedPageProxy> WebProcessPool::takeSuspendedPage(SuspendedPageProxy& suspendedPage)
 {
     return m_suspendedPages.takeFirst([&suspendedPage](auto& item) {
