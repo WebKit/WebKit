@@ -96,6 +96,10 @@
 #include <WebCore/SoupNetworkSession.h>
 #endif
 
+#if USE(CURL)
+#include <WebCore/CurlContext.h>
+#endif
+
 #if ENABLE(SERVICE_WORKER)
 #include "WebSWServerToContextConnectionMessages.h"
 #endif
@@ -529,8 +533,19 @@ WebCore::NetworkStorageSession* NetworkProcess::storageSession(const PAL::Sessio
 
 WebCore::NetworkStorageSession& NetworkProcess::defaultStorageSession() const
 {
-    if (!m_defaultNetworkStorageSession)
-        m_defaultNetworkStorageSession = std::make_unique<WebCore::NetworkStorageSession>(PAL::SessionID::defaultSessionID());
+    if (m_defaultNetworkStorageSession)
+      return *m_defaultNetworkStorageSession;
+
+#if PLATFORM(COCOA)
+    m_defaultNetworkStorageSession = std::make_unique<WebCore::NetworkStorageSession>(PAL::SessionID::defaultSessionID());
+#elif PLATFORM(SOUP)
+    m_defaultNetworkStorageSession = std::make_unique<WebCore::NetworkStorageSession>(PAL::SessionID::defaultSessionID(), std::make_unique<SoupNetworkSession>(PAL::SessionID::defaultSessionID()));
+#elif PLATFORM(CURL)
+    m_defaultNetworkStorageSession = std::make_unique<WebCore::NetworkStorageSession>(PAL::SessionID::defaultSessionID(), CurlContext::singleton());
+#else
+#error Implement me
+#endif
+
     return *m_defaultNetworkStorageSession;
 }
 

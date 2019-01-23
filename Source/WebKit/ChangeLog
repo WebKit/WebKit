@@ -4,6 +4,19 @@
         https://bugs.webkit.org/show_bug.cgi?id=193580
         <rdar://problem/47457742>
 
+        This builds for libsoup. Doesn't work, but at least builds.
+
+        Also, speculative fixes for curl.
+
+        * NetworkProcess/NetworkProcess.cpp:
+        (WebKit::NetworkProcess::defaultStorageSession const):
+
+2019-01-22  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        Unreviewed, further build fixes after r240292
+        https://bugs.webkit.org/show_bug.cgi?id=193580
+        <rdar://problem/47457742>
+
         Still not working yet.
 
         * NetworkProcess/NetworkProcess.cpp:
