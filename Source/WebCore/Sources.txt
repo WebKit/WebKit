@@ -526,6 +526,7 @@ bindings/js/JSTextTrackListCustom.cpp
 bindings/js/JSTrackCustom.cpp
 bindings/js/JSTreeWalkerCustom.cpp
 bindings/js/JSTypedOMCSSStyleValueCustom.cpp
+bindings/js/JSUndoItemCustom.cpp
 bindings/js/JSVideoTrackCustom.cpp
 bindings/js/JSVideoTrackListCustom.cpp
 bindings/js/JSWebAnimationCustom.cpp
@@ -1536,6 +1537,7 @@ page/SocketProvider.cpp
 page/SpatialNavigation.cpp
 page/SuspendableTimer.cpp
 page/TextIndicator.cpp
+page/UndoItem.cpp
 page/UndoManager.cpp
 page/UserContentProvider.cpp
 page/UserContentController.cpp

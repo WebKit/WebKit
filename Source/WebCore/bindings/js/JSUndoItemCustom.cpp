@@ -23,20 +23,24 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-[
-    EnabledAtRuntime=UndoManagerAPI,
-] dictionary UndoItemInit {
-    required DOMString label;
-    required VoidCallback undo;
-    required VoidCallback redo;
-};
+#include "config.h"
+#include "JSUndoItem.h"
 
-[
-    EnabledAtRuntime=UndoManagerAPI,
-    ImplementationLacksVTable,
-    JSCustomMarkFunction,
-    CustomIsReachable,
-    Constructor(UndoItemInit initDict),
-] interface UndoItem {
-    readonly attribute DOMString label;
-};
+namespace WebCore {
+
+void JSUndoItem::visitAdditionalChildren(JSC::SlotVisitor& visitor)
+{
+    wrapped().undoHandler().visitJSFunction(visitor);
+    wrapped().redoHandler().visitJSFunction(visitor);
+}
+
+bool JSUndoItemOwner::isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown> handle, void*, SlotVisitor& visitor, const char** reason)
+{
+    if (UNLIKELY(reason))
+        *reason = "Document is an opaque root.";
+
+    auto* documentForUndoItem = jsCast<JSUndoItem*>(handle.slot()->asCell())->wrapped().document();
+    return documentForUndoItem && visitor.containsOpaqueRoot(documentForUndoItem);
+}
+
+} // namespace WebCore

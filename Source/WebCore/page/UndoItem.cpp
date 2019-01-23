@@ -23,20 +23,40 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-[
-    EnabledAtRuntime=UndoManagerAPI,
-] dictionary UndoItemInit {
-    required DOMString label;
-    required VoidCallback undo;
-    required VoidCallback redo;
-};
+#include "config.h"
+#include "UndoItem.h"
 
-[
-    EnabledAtRuntime=UndoManagerAPI,
-    ImplementationLacksVTable,
-    JSCustomMarkFunction,
-    CustomIsReachable,
-    Constructor(UndoItemInit initDict),
-] interface UndoItem {
-    readonly attribute DOMString label;
-};
+#include "UndoManager.h"
+#include <wtf/IsoMallocInlines.h>
+
+namespace WebCore {
+
+WTF_MAKE_ISO_ALLOCATED_IMPL(UndoItem);
+
+void UndoItem::setUndoManager(UndoManager* undoManager)
+{
+    m_undoManager = makeWeakPtr(undoManager);
+}
+
+void UndoItem::invalidate()
+{
+    if (auto* undoManager = m_undoManager.get()) {
+        undoManager->removeItem(*this);
+        m_undoManager = nullptr;
+    }
+}
+
+bool UndoItem::isValid() const
+{
+    return !!m_undoManager;
+}
+
+Document* UndoItem::document() const
+{
+    if (!isValid())
+        return nullptr;
+
+    return &m_undoManager->document();
+}
+
+} // namespace WebCore

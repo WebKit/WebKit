@@ -7098,8 +7098,6 @@
 		319BDE531E7A86C100BA296C /* JSRTCIceTransportState.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSRTCIceTransportState.h; sourceTree = "<group>"; };
 		319BDE531E7A86C100BA296D /* JSRTCPeerConnectionState.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSRTCPeerConnectionState.h; sourceTree = "<group>"; };
 		319FBD5D15D2F444009640A6 /* CachedImageClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CachedImageClient.h; sourceTree = "<group>"; };
-		31A088C41E737B2C003B6609 /* JSWebGPURenderingContextCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSWebGPURenderingContextCustom.cpp; sourceTree = "<group>"; };
-		31A088C51E737B2C003B6609 /* JSWebGPURenderPassAttachmentDescriptorCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSWebGPURenderPassAttachmentDescriptorCustom.cpp; sourceTree = "<group>"; };
 		31A0891B1E738D59003B6609 /* JSWebGPUBuffer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSWebGPUBuffer.cpp; sourceTree = "<group>"; };
 		31A0891D1E738D59003B6609 /* JSWebGPUBuffer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSWebGPUBuffer.h; sourceTree = "<group>"; };
 		31A0891E1E738D59003B6609 /* JSWebGPUCommandBuffer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSWebGPUCommandBuffer.cpp; sourceTree = "<group>"; };
@@ -15131,6 +15129,8 @@
 		F4D43D64218802E600ECECAC /* SerializedAttachmentData.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SerializedAttachmentData.h; sourceTree = "<group>"; };
 		F4D9817D2195FBF6008230FC /* ChangeListTypeCommand.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ChangeListTypeCommand.h; sourceTree = "<group>"; };
 		F4D9817E2195FBF6008230FC /* ChangeListTypeCommand.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = ChangeListTypeCommand.cpp; sourceTree = "<group>"; };
+		F4E1965A21F2395000285078 /* JSUndoItemCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSUndoItemCustom.cpp; sourceTree = "<group>"; };
+		F4E1965F21F26E4E00285078 /* UndoItem.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = UndoItem.cpp; sourceTree = "<group>"; };
 		F4E57EDA213F3F5F004EA98E /* FontAttributeChanges.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FontAttributeChanges.h; sourceTree = "<group>"; };
 		F4E57EDF213F434A004EA98E /* WebCoreNSFontManagerExtras.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebCoreNSFontManagerExtras.h; sourceTree = "<group>"; };
 		F4E57EE0213F434A004EA98E /* WebCoreNSFontManagerExtras.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = WebCoreNSFontManagerExtras.mm; sourceTree = "<group>"; };
@@ -17169,10 +17169,10 @@
 				1CECB3B621F50AC700F44542 /* WHLSLMetalCodeGenerator.h */,
 				1CECB3B821F50D1000F44542 /* WHLSLNativeFunctionWriter.cpp */,
 				1CECB3B921F50D1000F44542 /* WHLSLNativeFunctionWriter.h */,
-				1CECB3B121F2B98500F44542 /* WHLSLTypeNamer.cpp */,
-				1CECB3B021F2B98500F44542 /* WHLSLTypeNamer.h */,
 				1CECB3C621F59C8700F44542 /* WHLSLNativeTypeWriter.cpp */,
 				1CECB3C721F59C8700F44542 /* WHLSLNativeTypeWriter.h */,
+				1CECB3B121F2B98500F44542 /* WHLSLTypeNamer.cpp */,
+				1CECB3B021F2B98500F44542 /* WHLSLTypeNamer.h */,
 			);
 			path = Metal;
 			sourceTree = "<group>";
@@ -20434,6 +20434,7 @@
 				62C1217B11AB9E77003C462C /* SuspendableTimer.h */,
 				2D4F96F11A1ECC240098BF88 /* TextIndicator.cpp */,
 				2D4F96F21A1ECC240098BF88 /* TextIndicator.h */,
+				F4E1965F21F26E4E00285078 /* UndoItem.cpp */,
 				2ECDBAD521D8906300F00ECD /* UndoItem.h */,
 				2ECDBAD721D8906300F00ECD /* UndoItem.idl */,
 				2ECDBACF21D8903400F00ECD /* UndoManager.cpp */,
@@ -20802,13 +20803,12 @@
 				07846384145B1B8E00A58DF1 /* JSTrackCustom.h */,
 				516BB7920CE91E6800512F79 /* JSTreeWalkerCustom.cpp */,
 				4BAFD0E22192604D00C0AB64 /* JSTypedOMCSSStyleValueCustom.cpp */,
+				F4E1965A21F2395000285078 /* JSUndoItemCustom.cpp */,
 				BE6DF708171CA2C500DD52B8 /* JSVideoTrackCustom.cpp */,
 				BE6DF70A171CA2C500DD52B8 /* JSVideoTrackListCustom.cpp */,
 				715DA5D3201BB902002EF2B0 /* JSWebAnimationCustom.cpp */,
 				D3F3D3591A69A3B00059FC2B /* JSWebGL2RenderingContextCustom.cpp */,
 				49EED14C1051971A00099FAB /* JSWebGLRenderingContextCustom.cpp */,
-				31A088C41E737B2C003B6609 /* JSWebGPURenderingContextCustom.cpp */,
-				31A088C51E737B2C003B6609 /* JSWebGPURenderPassAttachmentDescriptorCustom.cpp */,
 				E18258AB0EF3CD7000933242 /* JSWorkerGlobalScopeCustom.cpp */,
 				46F91BC91FCDD0FE001599C3 /* JSWorkerNavigatorCustom.cpp */,
 				83A4A9F81CE7FD7E00709B00 /* JSXMLDocumentCustom.cpp */,

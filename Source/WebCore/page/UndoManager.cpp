@@ -33,10 +33,32 @@ namespace WebCore {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(UndoManager);
 
+UndoManager::UndoManager(Document& document)
+    : m_document(document)
+{
+}
+
+UndoManager::~UndoManager() = default;
+
 void UndoManager::addItem(Ref<UndoItem>&& item)
 {
-    UNUSED_PARAM(item);
     UNUSED_PARAM(m_document);
+
+    item->setUndoManager(this);
+    m_items.add(WTFMove(item));
+}
+
+void UndoManager::removeItem(UndoItem& item)
+{
+    if (auto foundItem = m_items.take(&item))
+        foundItem->setUndoManager(nullptr);
+}
+
+void UndoManager::removeAllItems()
+{
+    for (auto& item : m_items)
+        item->setUndoManager(nullptr);
+    m_items.clear();
 }
 
 } // namespace WebCore

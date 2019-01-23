@@ -2501,6 +2501,8 @@ void Document::prepareForDestruction()
     clearTouchEventHandlersAndListeners();
 #endif
 
+    m_undoManager->removeAllItems();
+
 #if HAVE(ACCESSIBILITY)
     if (this != &topDocument()) {
         // Let the ax cache know that this subframe goes out of scope.

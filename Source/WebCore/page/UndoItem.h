@@ -26,15 +26,18 @@
 #pragma once
 
 #include "VoidCallback.h"
-#include <wtf/Function.h>
-#include <wtf/IsoMallocInlines.h>
+#include <wtf/IsoMalloc.h>
 #include <wtf/RefCounted.h>
+#include <wtf/WeakPtr.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
+class Document;
+class UndoManager;
+
 class UndoItem : public RefCounted<UndoItem> {
-    WTF_MAKE_ISO_ALLOCATED_INLINE(UndoItem);
+    WTF_MAKE_ISO_ALLOCATED(UndoItem);
 public:
     struct Init {
         String label;
@@ -46,6 +49,13 @@ public:
     {
         return adoptRef(*new UndoItem(WTFMove(init)));
     }
+
+    bool isValid() const;
+    void invalidate();
+
+    Document* document() const;
+
+    void setUndoManager(UndoManager*);
 
     const String& label() const { return m_label; }
     VoidCallback& undoHandler() const { return m_undoHandler.get(); }
@@ -62,6 +72,7 @@ private:
     String m_label;
     Ref<VoidCallback> m_undoHandler;
     Ref<VoidCallback> m_redoHandler;
+    WeakPtr<UndoManager> m_undoManager;
 };
 
 } // namespace WebCore

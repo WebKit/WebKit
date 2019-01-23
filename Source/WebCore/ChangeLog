@@ -1,3 +1,67 @@
+2019-01-22  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Add some bindings-related bookkeeping to UndoManager and UndoItem
+        https://bugs.webkit.org/show_bug.cgi?id=193111
+        <rdar://problem/44807048>
+
+        Reviewed by Ryosuke Niwa.
+
+        This patch is work in progress towards supporting `UndoManager.addItem()`. Here, we add helper methods to
+        UndoItem and UndoManager which later patches will exercise, as well as introduce some custom bindings to
+        properly handle the case where UndoItems are given anonymous JavaScript functions (see below for more details).
+
+        No new tests, because there is no script-observable change in behavior yet. When `addItems()` is hooked up, I
+        will write a test to verify that the undo and redo JavaScript functions survive garbage collection.
+
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/JSUndoItemCustom.cpp:
+        (WebCore::JSUndoItem::visitAdditionalChildren):
+
+        Have each JSUndoItem visit its undo and redo callback functions to ensure that the JavaScript wrapper objects
+        for these functions are not garbage collected underneath the item.
+
+        (WebCore::JSUndoItemOwner::isReachableFromOpaqueRoots):
+
+        Consider the undo item wrapper reachable from opaque roots if it is associated with its UndoManager's Document.
+        This ensures that if script isn't holding on to a reference to the wrapper (for instance, by calling
+        `UndoManager.addItem(new UndoItem({ ... }))`), we still protect the corresponding JSUndoItem as long as the
+        UndoManager's Document is alive. In the case where the undo item is not associated with a document, either (1)
+        script is keeping a reference to it, in which case it will be trivially reachable, or (2) script won't be able
+        to observe the destruction of the wrapper anyways (e.g. calling `new UndoItem({ ... })` by itself).
+
+        * dom/Document.cpp:
+        (WebCore::Document::prepareForDestruction):
+
+        Invalidate all undo items when the document is about to go away.
+
+        * page/UndoItem.cpp:
+        (WebCore::UndoItem::setUndoManager):
+        (WebCore::UndoItem::invalidate):
+        (WebCore::UndoItem::isValid const):
+
+        Add a few helpers, to be used in a future patch. We consider an UndoItem valid if it has been added to an
+        UndoManager, and is thus associated with a document.
+
+        (WebCore::UndoItem::document const):
+        * page/UndoItem.h:
+        * page/UndoItem.idl:
+        * page/UndoManager.cpp:
+        (WebCore::UndoManager::UndoManager):
+        (WebCore::UndoManager::addItem):
+
+        Have an UndoManager keep its UndoItems alive. These UndoItems remain in this set until either the document will
+        be destroyed, or the corresponding undo action is no longer needed because the platform undo stack has changed
+        (this latter behavior is yet to be implemented).
+
+        (WebCore::UndoManager::removeItem):
+        (WebCore::UndoManager::removeAllItems):
+        * page/UndoManager.h:
+        (WebCore::UndoManager::UndoManager): Deleted.
+        * page/scrolling/ScrollingTreeScrollingNode.cpp:
+
+        Unified build fix.
+
 2019-01-22  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         [WinCairo][WebKitTestRunner] Null dereference of GraphicsContext::m_data in GraphicsContext::releaseWindowsContext
