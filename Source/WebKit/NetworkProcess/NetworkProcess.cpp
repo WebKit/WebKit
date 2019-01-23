@@ -49,7 +49,9 @@
 #include "NetworkSessionCreationParameters.h"
 #include "PreconnectTask.h"
 #include "RemoteNetworkingContext.h"
+#include "ShouldGrandfatherStatistics.h"
 #include "StatisticsData.h"
+#include "StorageAccessStatus.h"
 #include "WebCookieManager.h"
 #include "WebPageProxyMessages.h"
 #include "WebProcessPoolMessages.h"
@@ -588,23 +590,24 @@ void NetworkProcess::writeBlobToFilePath(const URL& url, const String& path, San
 }
 
 #if ENABLE(RESOURCE_LOAD_STATISTICS)
-void NetworkProcess::dumpResourceLoadStatistics(PAL::SessionID sessionID, uint64_t contextId)
+void NetworkProcess::dumpResourceLoadStatistics(PAL::SessionID sessionID, CompletionHandler<void(String)>&& completionHandler)
 {
     if (auto* networkSession = this->networkSession(sessionID)) {
-        if (auto* resourceLoadStatistics = networkSession->resourceLoadStatistics()) {
-            resourceLoadStatistics->dumpResourceLoadStatistics([this, contextId](const String& dumpedStatistics) {
-                parentProcessConnection()->send(Messages::NetworkProcessProxy::DidDumpResourceLoadStatistics(dumpedStatistics, contextId), 0);
-            });
-        }
-    } else
+        if (auto* resourceLoadStatistics = networkSession->resourceLoadStatistics())
+            resourceLoadStatistics->dumpResourceLoadStatistics(WTFMove(completionHandler));
+        else
+            completionHandler({ });
+    } else {
         ASSERT_NOT_REACHED();
+        completionHandler({ });
+    }
 }
 
-void NetworkProcess::updatePrevalentDomainsToBlockCookiesFor(PAL::SessionID sessionID, const Vector<String>& domainsToBlock, uint64_t contextId)
+void NetworkProcess::updatePrevalentDomainsToBlockCookiesFor(PAL::SessionID sessionID, const Vector<String>& domainsToBlock, CompletionHandler<void()>&& completionHandler)
 {
     if (auto* networkStorageSession = storageSession(sessionID))
         networkStorageSession->setPrevalentDomainsToBlockCookiesFor(domainsToBlock);
-    parentProcessConnection()->send(Messages::NetworkProcessProxy::DidUpdateBlockCookies(contextId), 0);
+    completionHandler();
 }
 
 void NetworkProcess::isGrandfathered(PAL::SessionID sessionID, const String& targetPrimaryDomain, CompletionHandler<void(bool)>&& completionHandler)
@@ -612,8 +615,12 @@ void NetworkProcess::isGrandfathered(PAL::SessionID sessionID, const String& tar
     if (auto* networkSession = this->networkSession(sessionID)) {
         if (auto* resourceLoadStatistics = networkSession->resourceLoadStatistics())
             resourceLoadStatistics->isGrandfathered(targetPrimaryDomain, WTFMove(completionHandler));
-    } else
+        else
+            completionHandler(false);
+    } else {
         ASSERT_NOT_REACHED();
+        completionHandler(false);
+    }
 }
 
 void NetworkProcess::isPrevalentResource(PAL::SessionID sessionID, const String& resourceDomain, CompletionHandler<void(bool)>&& completionHandler)
@@ -621,8 +628,12 @@ void NetworkProcess::isPrevalentResource(PAL::SessionID sessionID, const String&
     if (auto* networkSession = this->networkSession(sessionID)) {
         if (auto* resourceLoadStatistics = networkSession->resourceLoadStatistics())
             resourceLoadStatistics->isPrevalentResource(resourceDomain, WTFMove(completionHandler));
-    } else
+        else
+            completionHandler(false);
+    } else {
         ASSERT_NOT_REACHED();
+        completionHandler(false);
+    }
 }
 
 void NetworkProcess::isVeryPrevalentResource(PAL::SessionID sessionID, const String& resourceDomain, CompletionHandler<void(bool)>&& completionHandler)
@@ -630,15 +641,19 @@ void NetworkProcess::isVeryPrevalentResource(PAL::SessionID sessionID, const Str
     if (auto* networkSession = this->networkSession(sessionID)) {
         if (auto* resourceLoadStatistics = networkSession->resourceLoadStatistics())
             resourceLoadStatistics->isVeryPrevalentResource(resourceDomain, WTFMove(completionHandler));
-    } else
+        else
+            completionHandler(false);
+    } else {
         ASSERT_NOT_REACHED();
+        completionHandler(false);
+    }
 }
 
-void NetworkProcess::setAgeCapForClientSideCookies(PAL::SessionID sessionID, Optional<Seconds> seconds, uint64_t contextId)
+void NetworkProcess::setAgeCapForClientSideCookies(PAL::SessionID sessionID, Optional<Seconds> seconds, CompletionHandler<void()>&& completionHandler)
 {
     if (auto* networkStorageSession = storageSession(sessionID))
         networkStorageSession->setAgeCapForClientSideCookies(seconds);
-    parentProcessConnection()->send(Messages::NetworkProcessProxy::DidSetAgeCapForClientSideCookies(contextId), 0);
+    completionHandler();
 }
 
 void NetworkProcess::setGrandfathered(PAL::SessionID sessionID, const String& resourceDomain, bool isGrandfathered, CompletionHandler<void()>&& completionHandler)
@@ -646,8 +661,12 @@ void NetworkProcess::setGrandfathered(PAL::SessionID sessionID, const String& re
     if (auto* networkSession = this->networkSession(sessionID)) {
         if (auto* resourceLoadStatistics = networkSession->resourceLoadStatistics())
             resourceLoadStatistics->setGrandfathered(resourceDomain, isGrandfathered, WTFMove(completionHandler));
-    } else
+        else
+            completionHandler();
+    } else {
         ASSERT_NOT_REACHED();
+        completionHandler();
+    }
 }
 
 void NetworkProcess::setPrevalentResource(PAL::SessionID sessionID, const String& resourceDomain, CompletionHandler<void()>&& completionHandler)
@@ -655,8 +674,12 @@ void NetworkProcess::setPrevalentResource(PAL::SessionID sessionID, const String
     if (auto* networkSession = this->networkSession(sessionID)) {
         if (auto* resourceLoadStatistics = networkSession->resourceLoadStatistics())
             resourceLoadStatistics->setPrevalentResource(resourceDomain, WTFMove(completionHandler));
-    } else
+        else
+            completionHandler();
+    } else {
         ASSERT_NOT_REACHED();
+        completionHandler();
+    }
 }
 
 void NetworkProcess::setPrevalentResourceForDebugMode(PAL::SessionID sessionID, String resourceDomain, CompletionHandler<void()>&& completionHandler)
@@ -664,8 +687,12 @@ void NetworkProcess::setPrevalentResourceForDebugMode(PAL::SessionID sessionID, 
     if (auto* networkSession = this->networkSession(sessionID)) {
         if (auto* resourceLoadStatistics = networkSession->resourceLoadStatistics())
             resourceLoadStatistics->setPrevalentResourceForDebugMode(resourceDomain, WTFMove(completionHandler));
-    } else
+        else
+            completionHandler();
+    } else {
         ASSERT_NOT_REACHED();
+        completionHandler();
+    }
 }
 
 void NetworkProcess::setVeryPrevalentResource(PAL::SessionID sessionID, const String& resourceDomain, CompletionHandler<void()>&& completionHandler)
@@ -673,8 +700,12 @@ void NetworkProcess::setVeryPrevalentResource(PAL::SessionID sessionID, const St
     if (auto* networkSession = this->networkSession(sessionID)) {
         if (auto* resourceLoadStatistics = networkSession->resourceLoadStatistics())
             resourceLoadStatistics->setVeryPrevalentResource(resourceDomain, WTFMove(completionHandler));
-    } else
+        else
+            completionHandler();
+    } else {
         ASSERT_NOT_REACHED();
+        completionHandler();
+    }
 }
 
 void NetworkProcess::clearPrevalentResource(PAL::SessionID sessionID, const String& resourceDomain, CompletionHandler<void()>&& completionHandler)
@@ -682,8 +713,12 @@ void NetworkProcess::clearPrevalentResource(PAL::SessionID sessionID, const Stri
     if (auto* networkSession = this->networkSession(sessionID)) {
         if (auto* resourceLoadStatistics = networkSession->resourceLoadStatistics())
             resourceLoadStatistics->clearPrevalentResource(resourceDomain, WTFMove(completionHandler));
-    } else
+        else
+            completionHandler();
+    } else {
         ASSERT_NOT_REACHED();
+        completionHandler();
+    }
 }
 
 void NetworkProcess::submitTelemetry(PAL::SessionID sessionID, CompletionHandler<void()>&& completionHandler)
@@ -691,8 +726,12 @@ void NetworkProcess::submitTelemetry(PAL::SessionID sessionID, CompletionHandler
     if (auto* networkSession = this->networkSession(sessionID)) {
         if (auto* resourceLoadStatistics = networkSession->resourceLoadStatistics())
             resourceLoadStatistics->submitTelemetry(WTFMove(completionHandler));
-    } else
+        else
+            completionHandler();
+    } else {
         ASSERT_NOT_REACHED();
+        completionHandler();
+    }
 }
 
 void NetworkProcess::scheduleCookieBlockingUpdate(PAL::SessionID sessionID, CompletionHandler<void()>&& completionHandler)
@@ -700,22 +739,28 @@ void NetworkProcess::scheduleCookieBlockingUpdate(PAL::SessionID sessionID, Comp
     if (auto* networkSession = this->networkSession(sessionID)) {
         if (auto* resourceLoadStatistics = networkSession->resourceLoadStatistics())
             resourceLoadStatistics->scheduleCookieBlockingUpdate(WTFMove(completionHandler));
-    } else
+        else
+            completionHandler();
+    } else {
         ASSERT_NOT_REACHED();
+        completionHandler();
+    }
 }
 
-void NetworkProcess::scheduleClearInMemoryAndPersistent(PAL::SessionID sessionID, Optional<WallTime> modifiedSince, bool shouldGrandfather, CompletionHandler<void()>&& completionHandler)
+void NetworkProcess::scheduleClearInMemoryAndPersistent(PAL::SessionID sessionID, Optional<WallTime> modifiedSince, ShouldGrandfatherStatistics shouldGrandfather, CompletionHandler<void()>&& completionHandler)
 {
     if (auto* networkSession = this->networkSession(sessionID)) {
         if (auto* resourceLoadStatistics = networkSession->resourceLoadStatistics()) {
-            auto grandfather = shouldGrandfather ? ShouldGrandfather::Yes : ShouldGrandfather::No;
             if (modifiedSince)
-                resourceLoadStatistics->scheduleClearInMemoryAndPersistent(modifiedSince.value(), grandfather, WTFMove(completionHandler));
+                resourceLoadStatistics->scheduleClearInMemoryAndPersistent(modifiedSince.value(), shouldGrandfather, WTFMove(completionHandler));
             else
-                resourceLoadStatistics->scheduleClearInMemoryAndPersistent(grandfather, WTFMove(completionHandler));
-        }
-    } else
+                resourceLoadStatistics->scheduleClearInMemoryAndPersistent(shouldGrandfather, WTFMove(completionHandler));
+        } else
+            completionHandler();
+    } else {
         ASSERT_NOT_REACHED();
+        completionHandler();
+    }
 }
 
 void NetworkProcess::resetParametersToDefaultValues(PAL::SessionID sessionID, CompletionHandler<void()>&& completionHandler)
@@ -723,8 +768,12 @@ void NetworkProcess::resetParametersToDefaultValues(PAL::SessionID sessionID, Co
     if (auto* networkSession = this->networkSession(sessionID)) {
         if (auto* resourceLoadStatistics = networkSession->resourceLoadStatistics())
             resourceLoadStatistics->resetParametersToDefaultValues(WTFMove(completionHandler));
-    } else
+        else
+            completionHandler();
+    } else {
         ASSERT_NOT_REACHED();
+        completionHandler();
+    }
 }
 
 void NetworkProcess::scheduleStatisticsAndDataRecordsProcessing(PAL::SessionID sessionID, CompletionHandler<void()>&& completionHandler)
@@ -732,8 +781,12 @@ void NetworkProcess::scheduleStatisticsAndDataRecordsProcessing(PAL::SessionID s
     if (auto* networkSession = this->networkSession(sessionID)) {
         if (auto* resourceLoadStatistics = networkSession->resourceLoadStatistics())
             resourceLoadStatistics->scheduleStatisticsAndDataRecordsProcessing(WTFMove(completionHandler));
-    } else
+        else
+            completionHandler();
+    } else {
         ASSERT_NOT_REACHED();
+        completionHandler();
+    }
 }
 
 void NetworkProcess::setNotifyPagesWhenDataRecordsWereScanned(PAL::SessionID sessionID, bool value, CompletionHandler<void()>&& completionHandler)
@@ -741,8 +794,12 @@ void NetworkProcess::setNotifyPagesWhenDataRecordsWereScanned(PAL::SessionID ses
     if (auto* networkSession = this->networkSession(sessionID)) {
         if (auto* resourceLoadStatistics = networkSession->resourceLoadStatistics())
             resourceLoadStatistics->setNotifyPagesWhenDataRecordsWereScanned(value, WTFMove(completionHandler));
-    } else
+        else
+            completionHandler();
+    } else {
         ASSERT_NOT_REACHED();
+        completionHandler();
+    }
 }
 
 void NetworkProcess::setNotifyPagesWhenTelemetryWasCaptured(PAL::SessionID sessionID, bool value, CompletionHandler<void()>&& completionHandler)
@@ -750,8 +807,12 @@ void NetworkProcess::setNotifyPagesWhenTelemetryWasCaptured(PAL::SessionID sessi
     if (auto* networkSession = this->networkSession(sessionID)) {
         if (auto* resourceLoadStatistics = networkSession->resourceLoadStatistics())
             resourceLoadStatistics->setNotifyPagesWhenTelemetryWasCaptured(value, WTFMove(completionHandler));
-    } else
+        else
+            completionHandler();
+    } else {
         ASSERT_NOT_REACHED();
+        completionHandler();
+    }
 }
 
 void NetworkProcess::setSubframeUnderTopFrameOrigin(PAL::SessionID sessionID, String subframe, String topFrame, CompletionHandler<void()>&& completionHandler)
@@ -759,8 +820,12 @@ void NetworkProcess::setSubframeUnderTopFrameOrigin(PAL::SessionID sessionID, St
     if (auto* networkSession = this->networkSession(sessionID)) {
         if (auto* resourceLoadStatistics = networkSession->resourceLoadStatistics())
             resourceLoadStatistics->setSubframeUnderTopFrameOrigin(subframe, topFrame, WTFMove(completionHandler));
-    } else
+        else
+            completionHandler();
+    } else {
         ASSERT_NOT_REACHED();
+        completionHandler();
+    }
 }
 
 void NetworkProcess::isRegisteredAsRedirectingTo(PAL::SessionID sessionID, const String& redirectedFrom, const String& redirectedTo, CompletionHandler<void(bool)>&& completionHandler)
@@ -768,8 +833,12 @@ void NetworkProcess::isRegisteredAsRedirectingTo(PAL::SessionID sessionID, const
     if (auto* networkSession = this->networkSession(sessionID)) {
         if (auto* resourceLoadStatistics = networkSession->resourceLoadStatistics())
             resourceLoadStatistics->isRegisteredAsRedirectingTo(redirectedFrom, redirectedTo, WTFMove(completionHandler));
-    } else
+        else
+            completionHandler(false);
+    } else {
         ASSERT_NOT_REACHED();
+        completionHandler(false);
+    }
 }
 
 void NetworkProcess::isRegisteredAsSubFrameUnder(PAL::SessionID sessionID, const String& subframe, const String& topFrame, CompletionHandler<void(bool)>&& completionHandler)
@@ -777,8 +846,12 @@ void NetworkProcess::isRegisteredAsSubFrameUnder(PAL::SessionID sessionID, const
     if (auto* networkSession = this->networkSession(sessionID)) {
         if (auto* resourceLoadStatistics = networkSession->resourceLoadStatistics())
             resourceLoadStatistics->isRegisteredAsSubFrameUnder(subframe, topFrame, WTFMove(completionHandler));
-    } else
+        else
+            completionHandler(false);
+    } else {
         ASSERT_NOT_REACHED();
+        completionHandler(false);
+    }
 }
 
 void NetworkProcess::setSubresourceUnderTopFrameOrigin(PAL::SessionID sessionID, String subresource, String topFrame, CompletionHandler<void()>&& completionHandler)
@@ -786,8 +859,12 @@ void NetworkProcess::setSubresourceUnderTopFrameOrigin(PAL::SessionID sessionID,
     if (auto* networkSession = this->networkSession(sessionID)) {
         if (auto* resourceLoadStatistics = networkSession->resourceLoadStatistics())
             resourceLoadStatistics->setSubresourceUnderTopFrameOrigin(subresource, topFrame, WTFMove(completionHandler));
-    } else
+        else
+            completionHandler();
+    } else {
         ASSERT_NOT_REACHED();
+        completionHandler();
+    }
 }
 
 void NetworkProcess::setSubresourceUniqueRedirectTo(PAL::SessionID sessionID, String subresource, String hostNameRedirectedTo, CompletionHandler<void()>&& completionHandler)
@@ -795,8 +872,12 @@ void NetworkProcess::setSubresourceUniqueRedirectTo(PAL::SessionID sessionID, St
     if (auto* networkSession = this->networkSession(sessionID)) {
         if (auto* resourceLoadStatistics = networkSession->resourceLoadStatistics())
             resourceLoadStatistics->setSubresourceUniqueRedirectTo(subresource, hostNameRedirectedTo, WTFMove(completionHandler));
-    } else
+        else
+            completionHandler();
+    } else {
         ASSERT_NOT_REACHED();
+        completionHandler();
+    }
 }
 
 void NetworkProcess::setSubresourceUniqueRedirectFrom(PAL::SessionID sessionID, String subresource, String hostNameRedirectedFrom, CompletionHandler<void()>&& completionHandler)
@@ -804,8 +885,12 @@ void NetworkProcess::setSubresourceUniqueRedirectFrom(PAL::SessionID sessionID, 
     if (auto* networkSession = this->networkSession(sessionID)) {
         if (auto* resourceLoadStatistics = networkSession->resourceLoadStatistics())
             resourceLoadStatistics->setSubresourceUniqueRedirectFrom(subresource, hostNameRedirectedFrom, WTFMove(completionHandler));
-    } else
+        else
+            completionHandler();
+    } else {
         ASSERT_NOT_REACHED();
+        completionHandler();
+    }
 }
 
 void NetworkProcess::isRegisteredAsSubresourceUnder(PAL::SessionID sessionID, const String& subresource, const String& topFrame, CompletionHandler<void(bool)>&& completionHandler)
@@ -813,8 +898,12 @@ void NetworkProcess::isRegisteredAsSubresourceUnder(PAL::SessionID sessionID, co
     if (auto* networkSession = this->networkSession(sessionID)) {
         if (auto* resourceLoadStatistics = networkSession->resourceLoadStatistics())
             resourceLoadStatistics->isRegisteredAsSubresourceUnder(subresource, topFrame, WTFMove(completionHandler));
-    } else
+        else
+            completionHandler(false);
+    } else {
         ASSERT_NOT_REACHED();
+        completionHandler(false);
+    }
 }
 
 void NetworkProcess::setTopFrameUniqueRedirectTo(PAL::SessionID sessionID, String topFrameHostName, String hostNameRedirectedTo, CompletionHandler<void()>&& completionHandler)
@@ -822,8 +911,12 @@ void NetworkProcess::setTopFrameUniqueRedirectTo(PAL::SessionID sessionID, Strin
     if (auto* networkSession = this->networkSession(sessionID)) {
         if (auto* resourceLoadStatistics = networkSession->resourceLoadStatistics())
             resourceLoadStatistics->setTopFrameUniqueRedirectTo(topFrameHostName, hostNameRedirectedTo, WTFMove(completionHandler));
-    } else
+        else
+            completionHandler();
+    } else {
         ASSERT_NOT_REACHED();
+        completionHandler();
+    }
 }
 
 void NetworkProcess::setTopFrameUniqueRedirectFrom(PAL::SessionID sessionID, String topFrameHostName, String hostNameRedirectedFrom, CompletionHandler<void()>&& completionHandler)
@@ -831,8 +924,12 @@ void NetworkProcess::setTopFrameUniqueRedirectFrom(PAL::SessionID sessionID, Str
     if (auto* networkSession = this->networkSession(sessionID)) {
         if (auto* resourceLoadStatistics = networkSession->resourceLoadStatistics())
             resourceLoadStatistics->setTopFrameUniqueRedirectFrom(topFrameHostName, hostNameRedirectedFrom, WTFMove(completionHandler));
-    } else
+        else
+            completionHandler();
+    } else {
         ASSERT_NOT_REACHED();
+        completionHandler();
+    }
 }
     
     
@@ -841,24 +938,33 @@ void NetworkProcess::setLastSeen(PAL::SessionID sessionID, const String& resourc
     if (auto* networkSession = this->networkSession(sessionID)) {
         if (auto* resourceLoadStatistics = networkSession->resourceLoadStatistics())
             resourceLoadStatistics->setLastSeen(resourceDomain, seconds, WTFMove(completionHandler));
-    } else
+        else
+            completionHandler();
+    } else {
         ASSERT_NOT_REACHED();
+        completionHandler();
+    }
 }
 
-void NetworkProcess::hasStorageAccessForFrame(PAL::SessionID sessionID, const String& resourceDomain, const String& firstPartyDomain, uint64_t frameID, uint64_t pageID, uint64_t contextId)
+void NetworkProcess::hasStorageAccessForFrame(PAL::SessionID sessionID, const String& resourceDomain, const String& firstPartyDomain, uint64_t frameID, uint64_t pageID, CompletionHandler<void(bool)>&& completionHandler)
 {
+    bool hasStorageAccess = false;
     if (auto* networkStorageSession = storageSession(sessionID))
-        parentProcessConnection()->send(Messages::NetworkProcessProxy::StorageAccessOperationResult(networkStorageSession->hasStorageAccess(resourceDomain, firstPartyDomain, frameID, pageID), contextId), 0);
+        hasStorageAccess = networkStorageSession->hasStorageAccess(resourceDomain, firstPartyDomain, frameID, pageID);
     else
         ASSERT_NOT_REACHED();
+
+    completionHandler(hasStorageAccess);
 }
 
-void NetworkProcess::getAllStorageAccessEntries(PAL::SessionID sessionID, uint64_t contextId)
+void NetworkProcess::getAllStorageAccessEntries(PAL::SessionID sessionID, CompletionHandler<void(Vector<String> domains)>&& completionHandler)
 {
     if (auto* networkStorageSession = storageSession(sessionID))
-        parentProcessConnection()->send(Messages::NetworkProcessProxy::AllStorageAccessEntriesResult(networkStorageSession->getAllStorageAccessEntries(), contextId), 0);
-    else
+        completionHandler(networkStorageSession->getAllStorageAccessEntries());
+    else {
         ASSERT_NOT_REACHED();
+        completionHandler({ });
+    }
 }
 
 void NetworkProcess::hasStorageAccess(PAL::SessionID sessionID, const String& resourceDomain, const String& firstPartyDomain, Optional<uint64_t> frameID, uint64_t pageID, CompletionHandler<void(bool)>&& completionHandler)
@@ -866,23 +972,28 @@ void NetworkProcess::hasStorageAccess(PAL::SessionID sessionID, const String& re
     if (auto* networkSession = this->networkSession(sessionID)) {
         if (auto* resourceLoadStatistics = networkSession->resourceLoadStatistics())
             resourceLoadStatistics->hasStorageAccess(resourceDomain, firstPartyDomain, frameID, pageID, WTFMove(completionHandler));
-    } else
+        else
+            completionHandler(false);
+    } else {
         ASSERT_NOT_REACHED();
+        completionHandler(false);
+    }
 }
 
-void NetworkProcess::requestStorageAccess(PAL::SessionID sessionID, const String& resourceDomain, const String& firstPartyDomain, Optional<uint64_t> frameID, uint64_t pageID, bool promptEnabled, uint64_t contextId)
+void NetworkProcess::requestStorageAccess(PAL::SessionID sessionID, const String& resourceDomain, const String& firstPartyDomain, Optional<uint64_t> frameID, uint64_t pageID, bool promptEnabled, CompletionHandler<void(StorageAccessStatus)>&& completionHandler)
 {
     if (auto* networkSession = this->networkSession(sessionID)) {
-        if (auto* resourceLoadStatistics = networkSession->resourceLoadStatistics()) {
-            resourceLoadStatistics->requestStorageAccess(resourceDomain, firstPartyDomain, frameID, pageID, promptEnabled, [this, contextId](StorageAccessStatus promptAccepted) {
-                parentProcessConnection()->send(Messages::NetworkProcessProxy::StorageAccessRequestResult(static_cast<unsigned>(promptAccepted), contextId), 0);
-            });
-        }
-    } else
+        if (auto* resourceLoadStatistics = networkSession->resourceLoadStatistics())
+            resourceLoadStatistics->requestStorageAccess(resourceDomain, firstPartyDomain, frameID, pageID, promptEnabled, WTFMove(completionHandler));
+        else
+            completionHandler(StorageAccessStatus::CannotRequestAccess);
+    } else {
         ASSERT_NOT_REACHED();
+        completionHandler(StorageAccessStatus::CannotRequestAccess);
+    }
 }
 
-void NetworkProcess::grantStorageAccess(PAL::SessionID sessionID, const String& resourceDomain, const String& firstPartyDomain, Optional<uint64_t> frameID, uint64_t pageID, bool userWasPrompted, uint64_t contextId)
+void NetworkProcess::grantStorageAccess(PAL::SessionID sessionID, const String& resourceDomain, const String& firstPartyDomain, Optional<uint64_t> frameID, uint64_t pageID, bool userWasPrompted, CompletionHandler<void(bool)>&& completionHandler)
 {
     bool isStorageGranted = false;
     if (auto* networkStorageSession = storageSession(sessionID)) {
@@ -892,7 +1003,7 @@ void NetworkProcess::grantStorageAccess(PAL::SessionID sessionID, const String& 
     } else
         ASSERT_NOT_REACHED();
 
-    parentProcessConnection()->send(Messages::NetworkProcessProxy::StorageAccessOperationResult(isStorageGranted, contextId), 0);
+    completionHandler(isStorageGranted);
 }
 
 void NetworkProcess::logFrameNavigation(PAL::SessionID sessionID, const String& targetPrimaryDomain, const String& mainFramePrimaryDomain, const String& sourcePrimaryDomain, const String& targetHost, const String& mainFrameHost, bool isRedirect, bool isMainFrame)
@@ -909,18 +1020,25 @@ void NetworkProcess::logUserInteraction(PAL::SessionID sessionID, const String& 
     if (auto* networkSession = this->networkSession(sessionID)) {
         if (auto* resourceLoadStatistics = networkSession->resourceLoadStatistics())
             resourceLoadStatistics->logUserInteraction(targetPrimaryDomain, WTFMove(completionHandler));
-    } else
+        else
+            completionHandler();
+    } else {
         ASSERT_NOT_REACHED();
+        completionHandler();
+    }
 }
 
 void NetworkProcess::hadUserInteraction(PAL::SessionID sessionID, const String& resourceDomain, CompletionHandler<void(bool)>&& completionHandler)
 {
     if (auto* networkSession = this->networkSession(sessionID)) {
-        if (auto* resourceLoadStatistics = networkSession->resourceLoadStatistics()) {
+        if (auto* resourceLoadStatistics = networkSession->resourceLoadStatistics())
             resourceLoadStatistics->hasHadUserInteraction(resourceDomain, WTFMove(completionHandler));
-        }
-    } else
+        else
+            completionHandler(false);
+    } else {
         ASSERT_NOT_REACHED();
+        completionHandler(false);
+    }
 }
 
 void NetworkProcess::clearUserInteraction(PAL::SessionID sessionID, const String& resourceDomain, CompletionHandler<void()>&& completionHandler)
@@ -928,17 +1046,21 @@ void NetworkProcess::clearUserInteraction(PAL::SessionID sessionID, const String
     if (auto* networkSession = this->networkSession(sessionID)) {
         if (auto* resourceLoadStatistics = networkSession->resourceLoadStatistics())
             resourceLoadStatistics->clearUserInteraction(resourceDomain, WTFMove(completionHandler));
-    } else
+        else
+            completionHandler();
+    } else {
         ASSERT_NOT_REACHED();
+        completionHandler();
+    }
 }
 
-void NetworkProcess::removeAllStorageAccess(PAL::SessionID sessionID, uint64_t contextId)
+void NetworkProcess::removeAllStorageAccess(PAL::SessionID sessionID, CompletionHandler<void()>&& completionHandler)
 {
     if (auto* networkStorageSession = storageSession(sessionID))
         networkStorageSession->removeAllStorageAccess();
     else
         ASSERT_NOT_REACHED();
-    parentProcessConnection()->send(Messages::NetworkProcessProxy::DidRemoveAllStorageAccess(contextId), 0);
+    completionHandler();
 }
 
 void NetworkProcess::removePrevalentDomains(PAL::SessionID sessionID, const Vector<String>& domains)
@@ -947,13 +1069,13 @@ void NetworkProcess::removePrevalentDomains(PAL::SessionID sessionID, const Vect
         networkStorageSession->removePrevalentDomains(domains);
 }
 
-void NetworkProcess::setCacheMaxAgeCapForPrevalentResources(PAL::SessionID sessionID, Seconds seconds, uint64_t contextId)
+void NetworkProcess::setCacheMaxAgeCapForPrevalentResources(PAL::SessionID sessionID, Seconds seconds, CompletionHandler<void()>&& completionHandler)
 {
     if (auto* networkStorageSession = storageSession(sessionID))
         networkStorageSession->setCacheMaxAgeCapForPrevalentResources(Seconds { seconds });
     else
         ASSERT_NOT_REACHED();
-    parentProcessConnection()->send(Messages::NetworkProcessProxy::DidSetCacheMaxAgeCapForPrevalentResources(contextId), 0);
+    completionHandler();
 }
 
 void NetworkProcess::setGrandfatheringTime(PAL::SessionID sessionID, Seconds seconds, CompletionHandler<void()>&& completionHandler)
@@ -961,8 +1083,12 @@ void NetworkProcess::setGrandfatheringTime(PAL::SessionID sessionID, Seconds sec
     if (auto* networkSession = this->networkSession(sessionID)) {
         if (auto* resourceLoadStatistics = networkSession->resourceLoadStatistics())
             resourceLoadStatistics->setGrandfatheringTime(seconds, WTFMove(completionHandler));
-    } else
+        else
+            completionHandler();
+    } else {
         ASSERT_NOT_REACHED();
+        completionHandler();
+    }
 }
 
 void NetworkProcess::setMaxStatisticsEntries(PAL::SessionID sessionID, uint64_t maximumEntryCount, CompletionHandler<void()>&& completionHandler)
@@ -970,8 +1096,12 @@ void NetworkProcess::setMaxStatisticsEntries(PAL::SessionID sessionID, uint64_t 
     if (auto* networkSession = this->networkSession(sessionID)) {
         if (auto* resourceLoadStatistics = networkSession->resourceLoadStatistics())
             resourceLoadStatistics->setMaxStatisticsEntries(maximumEntryCount, WTFMove(completionHandler));
-    } else
+        else
+            completionHandler();
+    } else {
         ASSERT_NOT_REACHED();
+        completionHandler();
+    }
 }
 
 void NetworkProcess::setMinimumTimeBetweenDataRecordsRemoval(PAL::SessionID sessionID, Seconds seconds, CompletionHandler<void()>&& completionHandler)
@@ -979,8 +1109,12 @@ void NetworkProcess::setMinimumTimeBetweenDataRecordsRemoval(PAL::SessionID sess
     if (auto* networkSession = this->networkSession(sessionID)) {
         if (auto* resourceLoadStatistics = networkSession->resourceLoadStatistics())
             resourceLoadStatistics->setMinimumTimeBetweenDataRecordsRemoval(seconds, WTFMove(completionHandler));
-    } else
+        else
+            completionHandler();
+    } else {
         ASSERT_NOT_REACHED();
+        completionHandler();
+    }
 }
 
 void NetworkProcess::setPruneEntriesDownTo(PAL::SessionID sessionID, uint64_t pruneTargetCount, CompletionHandler<void()>&& completionHandler)
@@ -988,8 +1122,12 @@ void NetworkProcess::setPruneEntriesDownTo(PAL::SessionID sessionID, uint64_t pr
     if (auto* networkSession = this->networkSession(sessionID)) {
         if (auto* resourceLoadStatistics = networkSession->resourceLoadStatistics())
             resourceLoadStatistics->setPruneEntriesDownTo(pruneTargetCount, WTFMove(completionHandler));
-    } else
+        else
+            completionHandler();
+    } else {
         ASSERT_NOT_REACHED();
+        completionHandler();
+    }
 }
 
 void NetworkProcess::setTimeToLiveUserInteraction(PAL::SessionID sessionID, Seconds seconds, CompletionHandler<void()>&& completionHandler)
@@ -997,8 +1135,12 @@ void NetworkProcess::setTimeToLiveUserInteraction(PAL::SessionID sessionID, Seco
     if (auto* networkSession = this->networkSession(sessionID)) {
         if (auto* resourceLoadStatistics = networkSession->resourceLoadStatistics())
             resourceLoadStatistics->setTimeToLiveUserInteraction(seconds, WTFMove(completionHandler));
-    } else
+        else
+            completionHandler();
+    } else {
         ASSERT_NOT_REACHED();
+        completionHandler();
+    }
 }
 
 void NetworkProcess::setShouldClassifyResourcesBeforeDataRecordsRemoval(PAL::SessionID sessionID, bool value, CompletionHandler<void()>&& completionHandler)
@@ -1006,8 +1148,12 @@ void NetworkProcess::setShouldClassifyResourcesBeforeDataRecordsRemoval(PAL::Ses
     if (auto* networkSession = this->networkSession(sessionID)) {
         if (auto* resourceLoadStatistics = networkSession->resourceLoadStatistics())
             resourceLoadStatistics->setShouldClassifyResourcesBeforeDataRecordsRemoval(value, WTFMove(completionHandler));
-    } else
+        else
+            completionHandler();
+    } else {
         ASSERT_NOT_REACHED();
+        completionHandler();
+    }
 }
 
 void NetworkProcess::setResourceLoadStatisticsEnabled(bool enabled)
@@ -1021,17 +1167,21 @@ void NetworkProcess::setResourceLoadStatisticsDebugMode(PAL::SessionID sessionID
     if (auto* networkSession = this->networkSession(sessionID)) {
         if (auto* resourceLoadStatistics = networkSession->resourceLoadStatistics())
             resourceLoadStatistics->setResourceLoadStatisticsDebugMode(debugMode, WTFMove(completionHandler));
-    } else
+        else
+            completionHandler();
+    } else {
         ASSERT_NOT_REACHED();
+        completionHandler();
+    }
 }
 
-void NetworkProcess::resetCacheMaxAgeCapForPrevalentResources(PAL::SessionID sessionID, uint64_t contextId)
+void NetworkProcess::resetCacheMaxAgeCapForPrevalentResources(PAL::SessionID sessionID, CompletionHandler<void()>&& completionHandler)
 {
     if (auto* networkStorageSession = storageSession(sessionID))
         networkStorageSession->resetCacheMaxAgeCapForPrevalentResources();
     else
         ASSERT_NOT_REACHED();
-    parentProcessConnection()->send(Messages::NetworkProcessProxy::DidUpdateRuntimeSettings(contextId), 0);
+    completionHandler();
 }
 #endif // ENABLE(RESOURCE_LOAD_STATISTICS)
 
@@ -1204,7 +1354,7 @@ void NetworkProcess::deleteWebsiteData(PAL::SessionID sessionID, OptionSet<Websi
 
                 // If we are deleting all of the data types that the resource load statistics store monitors
                 // we do not need to re-grandfather old data.
-                auto shouldGrandfather = ((monitoredTypesRaw & deletedTypesRaw) == monitoredTypesRaw) ? ShouldGrandfather::No : ShouldGrandfather::Yes;
+                auto shouldGrandfather = ((monitoredTypesRaw & deletedTypesRaw) == monitoredTypesRaw) ? ShouldGrandfatherStatistics::No : ShouldGrandfatherStatistics::Yes;
 
                 resourceLoadStatistics->scheduleClearInMemoryAndPersistent(modifiedSince, shouldGrandfather, [clearTasksHandler = clearTasksHandler.copyRef()] { });
             }

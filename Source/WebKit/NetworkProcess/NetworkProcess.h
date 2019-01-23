@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2012-2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -81,6 +81,8 @@ class NetworkProcessSupplement;
 class NetworkProximityManager;
 class WebSWServerConnection;
 class WebSWServerToContextConnection;
+enum class ShouldGrandfatherStatistics : bool;
+enum class StorageAccessStatus : uint8_t;
 enum class WebsiteDataFetchOption;
 enum class WebsiteDataType;
 struct NetworkProcessCreationParameters;
@@ -176,12 +178,12 @@ public:
     void clearPrevalentResource(PAL::SessionID, const String& resourceDomain, CompletionHandler<void()>&&);
     void clearUserInteraction(PAL::SessionID, const String& resourceDomain, CompletionHandler<void()>&&);
     void deleteWebsiteDataForTopPrivatelyControlledDomainsInAllPersistentDataStores(PAL::SessionID, OptionSet<WebsiteDataType>, Vector<String>&& topPrivatelyControlledDomains, bool shouldNotifyPage, CompletionHandler<void(const HashSet<String>&)>&&);
-    void dumpResourceLoadStatistics(PAL::SessionID, uint64_t contextId);
-    void updatePrevalentDomainsToBlockCookiesFor(PAL::SessionID, const Vector<String>& domainsToBlock, uint64_t contextId);
+    void dumpResourceLoadStatistics(PAL::SessionID, CompletionHandler<void(String)>&&);
+    void updatePrevalentDomainsToBlockCookiesFor(PAL::SessionID, const Vector<String>& domainsToBlock, CompletionHandler<void()>&&);
     void isGrandfathered(PAL::SessionID, const String& targetPrimaryDomain, CompletionHandler<void(bool)>&&);
     void isPrevalentResource(PAL::SessionID, const String& resourceDomain, CompletionHandler<void(bool)>&&);
     void isVeryPrevalentResource(PAL::SessionID, const String& resourceDomain, CompletionHandler<void(bool)>&&);
-    void setAgeCapForClientSideCookies(PAL::SessionID, Optional<Seconds>, uint64_t contextId);
+    void setAgeCapForClientSideCookies(PAL::SessionID, Optional<Seconds>, CompletionHandler<void()>&&);
     void isRegisteredAsRedirectingTo(PAL::SessionID, const String& redirectedFrom, const String& redirectedTo, CompletionHandler<void(bool)>&&);
     void isRegisteredAsSubFrameUnder(PAL::SessionID, const String& subframe, const String& topFrame, CompletionHandler<void(bool)>&&);
     void isRegisteredAsSubresourceUnder(PAL::SessionID, const String& subresource, const String& topFrame, CompletionHandler<void(bool)>&&);
@@ -192,22 +194,22 @@ public:
     void setVeryPrevalentResource(PAL::SessionID, const String& resourceDomain, CompletionHandler<void()>&&);
     void setPruneEntriesDownTo(PAL::SessionID, uint64_t pruneTargetCount, CompletionHandler<void()>&&);
     void hadUserInteraction(PAL::SessionID, const String& resourceDomain, CompletionHandler<void(bool)>&&);
-    void hasStorageAccessForFrame(PAL::SessionID, const String& resourceDomain, const String& firstPartyDomain, uint64_t frameID, uint64_t pageID, uint64_t contextId);
-    void getAllStorageAccessEntries(PAL::SessionID, uint64_t contextId);
-    void grantStorageAccess(PAL::SessionID, const String& resourceDomain, const String& firstPartyDomain, Optional<uint64_t> frameID, uint64_t pageID, bool userWasPrompted, uint64_t contextId);
+    void hasStorageAccessForFrame(PAL::SessionID, const String& resourceDomain, const String& firstPartyDomain, uint64_t frameID, uint64_t pageID, CompletionHandler<void(bool)>&&);
+    void getAllStorageAccessEntries(PAL::SessionID, CompletionHandler<void(Vector<String> domains)>&&);
+    void grantStorageAccess(PAL::SessionID, const String& resourceDomain, const String& firstPartyDomain, Optional<uint64_t> frameID, uint64_t pageID, bool userWasPrompted, CompletionHandler<void(bool)>&&);
     void hasStorageAccess(PAL::SessionID, const String& resourceDomain, const String& firstPartyDomain, Optional<uint64_t> frameID, uint64_t pageID, CompletionHandler<void(bool)>&&);
     void logFrameNavigation(PAL::SessionID, const String& targetPrimaryDomain, const String& mainFramePrimaryDomain, const String& sourcePrimaryDomain, const String& targetHost, const String& mainFrameHost, bool isRedirect, bool isMainFrame);
     void logUserInteraction(PAL::SessionID, const String& targetPrimaryDomain, CompletionHandler<void()>&&);
-    void removeAllStorageAccess(PAL::SessionID, uint64_t contextId);
+    void removeAllStorageAccess(PAL::SessionID, CompletionHandler<void()>&&);
     void removePrevalentDomains(PAL::SessionID, const Vector<String>& domains);
-    void requestStorageAccess(PAL::SessionID, const String& resourceDomain, const String& firstPartyDomain, Optional<uint64_t> frameID, uint64_t pageID, bool promptEnabled, uint64_t contextId);
-    void resetCacheMaxAgeCapForPrevalentResources(PAL::SessionID, uint64_t contextId);
+    void requestStorageAccess(PAL::SessionID, const String& resourceDomain, const String& firstPartyDomain, Optional<uint64_t> frameID, uint64_t pageID, bool promptEnabled, CompletionHandler<void(StorageAccessStatus)>&&);
+    void resetCacheMaxAgeCapForPrevalentResources(PAL::SessionID, CompletionHandler<void()>&&);
     void resetParametersToDefaultValues(PAL::SessionID, CompletionHandler<void()>&&);
-    void scheduleClearInMemoryAndPersistent(PAL::SessionID, Optional<WallTime> modifiedSince, bool shouldGrandfather, CompletionHandler<void()>&&);
+    void scheduleClearInMemoryAndPersistent(PAL::SessionID, Optional<WallTime> modifiedSince, ShouldGrandfatherStatistics, CompletionHandler<void()>&&);
     void scheduleCookieBlockingUpdate(PAL::SessionID, CompletionHandler<void()>&&);
     void scheduleStatisticsAndDataRecordsProcessing(PAL::SessionID, CompletionHandler<void()>&&);
     void submitTelemetry(PAL::SessionID, CompletionHandler<void()>&&);
-    void setCacheMaxAgeCapForPrevalentResources(PAL::SessionID, Seconds, uint64_t contextId);
+    void setCacheMaxAgeCapForPrevalentResources(PAL::SessionID, Seconds, CompletionHandler<void()>&&);
     void setGrandfatheringTime(PAL::SessionID, Seconds, CompletionHandler<void()>&&);
     void setLastSeen(PAL::SessionID, const String& resourceDomain, Seconds, CompletionHandler<void()>&&);
     void setMinimumTimeBetweenDataRecordsRemoval(PAL::SessionID, Seconds, CompletionHandler<void()>&&);

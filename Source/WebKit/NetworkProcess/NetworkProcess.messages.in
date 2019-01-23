@@ -1,4 +1,4 @@
-# Copyright (C) 2012-2017 Apple Inc. All rights reserved.
+# Copyright (C) 2012-2019 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -87,35 +87,35 @@ messages -> NetworkProcess LegacyReceiver {
 #if ENABLE(RESOURCE_LOAD_STATISTICS)
     ClearPrevalentResource(PAL::SessionID sessionID, String resourceDomain) -> () Async
     ClearUserInteraction(PAL::SessionID sessionID, String resourceDomain) -> () Async
-    DumpResourceLoadStatistics(PAL::SessionID sessionID, uint64_t contextId)
+    DumpResourceLoadStatistics(PAL::SessionID sessionID) -> (String dumpedStatistics) Async
     SetResourceLoadStatisticsEnabled(bool enabled)
-    UpdatePrevalentDomainsToBlockCookiesFor(PAL::SessionID sessionID, Vector<String> domainsToBlock, uint64_t contextId)
+    UpdatePrevalentDomainsToBlockCookiesFor(PAL::SessionID sessionID, Vector<String> domainsToBlock) -> () Async
     IsGrandfathered(PAL::SessionID sessionID, String targetPrimaryDomain) -> (bool isGrandfathered) Async
     IsPrevalentResource(PAL::SessionID sessionID, String targetPrimaryDomain) -> (bool isPrevalent) Async
     IsVeryPrevalentResource(PAL::SessionID sessionID, String targetPrimaryDomain) -> (bool isVeryPrevalent) Async
-    SetAgeCapForClientSideCookies(PAL::SessionID sessionID, Optional<Seconds> seconds, uint64_t contextId)
+    SetAgeCapForClientSideCookies(PAL::SessionID sessionID, Optional<Seconds> seconds) -> () Async
     SetLastSeen(PAL::SessionID sessionID, String resourceDomain, Seconds seconds) -> () Async
     SetPrevalentResource(PAL::SessionID sessionID, String resourceDomain) -> () Async
     SetPrevalentResourceForDebugMode(PAL::SessionID sessionID, String resourceDomain) -> () Async
     HadUserInteraction(PAL::SessionID sessionID, String resourceDomain) -> (bool hadUserInteraction) Async
-    HasStorageAccessForFrame(PAL::SessionID sessionID, String resourceDomain, String firstPartyDomain, uint64_t frameID, uint64_t pageID, uint64_t contextId)
-    HasStorageAccess(PAL::SessionID sessionID, String resourceDomain, String firstPartyDomain, Optional<uint64_t> frameID, uint64_t pageID) -> (bool hadUserInteraction) Async
-    GetAllStorageAccessEntries(PAL::SessionID sessionID, uint64_t contextId)
-    GrantStorageAccess(PAL::SessionID sessionID, String resourceDomain, String firstPartyDomain, Optional<uint64_t> frameID, uint64_t pageID, bool userWasPrompted, uint64_t contextId)
+    HasStorageAccessForFrame(PAL::SessionID sessionID, String resourceDomain, String firstPartyDomain, uint64_t frameID, uint64_t pageID) -> (bool hasStorageAccess) Async
+    HasStorageAccess(PAL::SessionID sessionID, String resourceDomain, String firstPartyDomain, Optional<uint64_t> frameID, uint64_t pageID) -> (bool hasStorageAccess) Async
+    GetAllStorageAccessEntries(PAL::SessionID sessionID) -> (Vector<String> domains) Async
+    GrantStorageAccess(PAL::SessionID sessionID, String resourceDomain, String firstPartyDomain, Optional<uint64_t> frameID, uint64_t pageID, bool userWasPrompted) -> (bool accessGranted) Async
     IsRegisteredAsRedirectingTo(PAL::SessionID sessionID, String redirectedFrom, String redirectedTo) -> (bool isRedirectingTo) Async
     IsRegisteredAsSubFrameUnder(PAL::SessionID sessionID, String subframe, String topFrame) -> (bool isSubframeUnder) Async
     IsRegisteredAsSubresourceUnder(PAL::SessionID sessionID, String subresource, String topFrame) -> (bool isSubresourceUnder) Async
     LogFrameNavigation(PAL::SessionID sessionID, String targetPrimaryDomain, String mainFramePrimaryDomain, String sourcePrimaryDomain, String targetHost, String mainFrameHost, bool isRedirect, bool isMainFrame)
     LogUserInteraction(PAL::SessionID sessionID, String targetPrimaryDomain) -> () Async
-    RemoveAllStorageAccess(PAL::SessionID sessionID, uint64_t contextId)
+    RemoveAllStorageAccess(PAL::SessionID sessionID) -> () Async
     RemovePrevalentDomains(PAL::SessionID sessionID, Vector<String> domainsWithInteraction)
-    RequestStorageAccess(PAL::SessionID sessionID, String resourceDomain, String firstPartyDomain, Optional<uint64_t> frameID, uint64_t pageID, bool promptEnabled, uint64_t contextId)
+    RequestStorageAccess(PAL::SessionID sessionID, String resourceDomain, String firstPartyDomain, Optional<uint64_t> frameID, uint64_t pageID, bool promptEnabled) -> (enum:uint8_t WebKit::StorageAccessStatus storageAccessStatus) Async
     ResetParametersToDefaultValues(PAL::SessionID sessionID) -> () Async
-    ScheduleClearInMemoryAndPersistent(PAL::SessionID sessionID, Optional<WallTime> modifiedSince, bool shouldGrandfather) -> () Async
+    ScheduleClearInMemoryAndPersistent(PAL::SessionID sessionID, Optional<WallTime> modifiedSince, enum:bool WebKit::ShouldGrandfatherStatistics shouldGrandfather) -> () Async
     ScheduleCookieBlockingUpdate(PAL::SessionID sessionID) -> () Async
     ScheduleStatisticsAndDataRecordsProcessing(PAL::SessionID sessionID) -> () Async
     SubmitTelemetry(PAL::SessionID sessionID) -> () Async
-    SetCacheMaxAgeCapForPrevalentResources(PAL::SessionID sessionID, Seconds seconds, uint64_t contextId)
+    SetCacheMaxAgeCapForPrevalentResources(PAL::SessionID sessionID, Seconds seconds) -> () Async
     SetGrandfathered(PAL::SessionID sessionID, String resourceDomain, bool isGrandfathered) -> () Async
     SetGrandfatheringTime(PAL::SessionID sessionID, Seconds seconds) -> () Async
     SetMaxStatisticsEntries(PAL::SessionID sessionID, uint64_t maximumEntryCount) -> () Async
@@ -133,7 +133,7 @@ messages -> NetworkProcess LegacyReceiver {
     SetTimeToLiveUserInteraction(PAL::SessionID sessionID, Seconds seconds) -> () Async
     SetTopFrameUniqueRedirectTo(PAL::SessionID sessionID, String topFrameHostName, String hostNameRedirectedTo) -> () Async
     SetTopFrameUniqueRedirectFrom(PAL::SessionID sessionID, String topFrameHostName, String hostNameRedirectedFrom) -> () Async
-    ResetCacheMaxAgeCapForPrevalentResources(PAL::SessionID sessionID, uint64_t contextId)
+    ResetCacheMaxAgeCapForPrevalentResources(PAL::SessionID sessionID) -> () Async
 #endif
 
     SetSessionIsControlledByAutomation(PAL::SessionID sessionID, bool controlled);

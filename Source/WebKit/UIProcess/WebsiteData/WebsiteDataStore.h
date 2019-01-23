@@ -72,8 +72,8 @@ struct WebsiteDataRecord;
 struct WebsiteDataStoreParameters;
 
 #if ENABLE(RESOURCE_LOAD_STATISTICS)
-enum class ShouldGrandfather;
-enum class StorageAccessStatus : unsigned;
+enum class ShouldGrandfatherStatistics : bool;
+enum class StorageAccessStatus : uint8_t;
 enum class StorageAccessPromptStatus;
 #endif
 
@@ -143,8 +143,8 @@ public:
     void removePrevalentDomains(const Vector<String>& domains);
     void resetParametersToDefaultValues(CompletionHandler<void()>&&);
     void scheduleCookieBlockingUpdate(CompletionHandler<void()>&&);
-    void scheduleClearInMemoryAndPersistent(WallTime modifiedSince, ShouldGrandfather, CompletionHandler<void()>&&);
-    void scheduleClearInMemoryAndPersistent(ShouldGrandfather, CompletionHandler<void()>&&);
+    void scheduleClearInMemoryAndPersistent(WallTime modifiedSince, ShouldGrandfatherStatistics, CompletionHandler<void()>&&);
+    void scheduleClearInMemoryAndPersistent(ShouldGrandfatherStatistics, CompletionHandler<void()>&&);
     void scheduleStatisticsAndDataRecordsProcessing(CompletionHandler<void()>&&);
     void submitTelemetry();
     void setCacheMaxAgeCap(Seconds, CompletionHandler<void()>&&);

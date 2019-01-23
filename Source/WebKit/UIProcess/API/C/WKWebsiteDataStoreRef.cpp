@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -29,6 +29,7 @@
 #include "APIArray.h"
 #include "APIWebsiteDataStore.h"
 #include "MockWebAuthenticationConfiguration.h"
+#include "ShouldGrandfatherStatistics.h"
 #include "WKAPICast.h"
 #include "WKDictionary.h"
 #include "WKNumber.h"
@@ -316,6 +317,8 @@ void WKWebsiteDataStoreStatisticsUpdateCookieBlocking(WKWebsiteDataStoreRef data
     WebKit::toImpl(dataStoreRef)->websiteDataStore().scheduleCookieBlockingUpdate([context, completionHandler]() {
         completionHandler(context);
     });
+#else
+    completionHandler(context);
 #endif
 }
 
@@ -378,7 +381,7 @@ void WKWebsiteDataStoreSetStatisticsPruneEntriesDownTo(WKWebsiteDataStoreRef dat
 void WKWebsiteDataStoreStatisticsClearInMemoryAndPersistentStore(WKWebsiteDataStoreRef dataStoreRef, void* context, WKWebsiteDataStoreStatisticsClearInMemoryAndPersistentStoreFunction callback)
 {
 #if ENABLE(RESOURCE_LOAD_STATISTICS)
-    WebKit::toImpl(dataStoreRef)->websiteDataStore().scheduleClearInMemoryAndPersistent(ShouldGrandfather::Yes, [context, callback]() {
+    WebKit::toImpl(dataStoreRef)->websiteDataStore().scheduleClearInMemoryAndPersistent(ShouldGrandfatherStatistics::Yes, [context, callback]() {
         callback(context);
     });
 #else
@@ -389,9 +392,11 @@ void WKWebsiteDataStoreStatisticsClearInMemoryAndPersistentStore(WKWebsiteDataSt
 void WKWebsiteDataStoreStatisticsClearInMemoryAndPersistentStoreModifiedSinceHours(WKWebsiteDataStoreRef dataStoreRef, unsigned hours, void* context, WKWebsiteDataStoreStatisticsClearInMemoryAndPersistentStoreModifiedSinceHoursFunction callback)
 {
 #if ENABLE(RESOURCE_LOAD_STATISTICS)
-    WebKit::toImpl(dataStoreRef)->websiteDataStore().scheduleClearInMemoryAndPersistent(WallTime::now() - Seconds::fromHours(hours), ShouldGrandfather::Yes, [context, callback]() {
+    WebKit::toImpl(dataStoreRef)->websiteDataStore().scheduleClearInMemoryAndPersistent(WallTime::now() - Seconds::fromHours(hours), ShouldGrandfatherStatistics::Yes, [context, callback]() {
         callback(context);
     });
+#else
+    callback(context);
 #endif
 }
 
@@ -405,9 +410,13 @@ void WKWebsiteDataStoreStatisticsClearThroughWebsiteDataRemoval(WKWebsiteDataSto
 
 void WKWebsiteDataStoreSetStatisticsCacheMaxAgeCap(WKWebsiteDataStoreRef dataStoreRef, double seconds, void* context, WKWebsiteDataStoreSetStatisticsCacheMaxAgeCapFunction callback)
 {
+#if ENABLE(RESOURCE_LOAD_STATISTICS)
     WebKit::toImpl(dataStoreRef)->websiteDataStore().setCacheMaxAgeCapForPrevalentResources(Seconds { seconds }, [context, callback] {
         callback(context);
     });
+#else
+    callback(context);
+#endif
 }
 
 void WKWebsiteDataStoreStatisticsResetToConsistentState(WKWebsiteDataStoreRef dataStoreRef, void* context, WKWebsiteDataStoreStatisticsResetToConsistentStateFunction completionHandler)
@@ -421,7 +430,7 @@ void WKWebsiteDataStoreStatisticsResetToConsistentState(WKWebsiteDataStoreRef da
     store.clearResourceLoadStatisticsInWebProcesses([callbackAggregator = callbackAggregator.copyRef()] { });
     store.resetCacheMaxAgeCapForPrevalentResources([callbackAggregator = callbackAggregator.copyRef()] { });
     store.resetParametersToDefaultValues([callbackAggregator = callbackAggregator.copyRef()] { });
-    store.scheduleClearInMemoryAndPersistent(ShouldGrandfather::No, [callbackAggregator = callbackAggregator.copyRef()] { });
+    store.scheduleClearInMemoryAndPersistent(ShouldGrandfatherStatistics::No, [callbackAggregator = callbackAggregator.copyRef()] { });
 #else
     UNUSED_PARAM(dataStoreRef);
     completionHandler(context);

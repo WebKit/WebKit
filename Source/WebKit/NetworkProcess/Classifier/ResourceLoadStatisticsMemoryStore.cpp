@@ -33,6 +33,7 @@
 #include "PluginProcessManager.h"
 #include "PluginProcessProxy.h"
 #include "ResourceLoadStatisticsPersistentStorage.h"
+#include "StorageAccessStatus.h"
 #include "WebProcessProxy.h"
 #include "WebResourceLoadStatisticsTelemetry.h"
 #include "WebsiteDataStore.h"

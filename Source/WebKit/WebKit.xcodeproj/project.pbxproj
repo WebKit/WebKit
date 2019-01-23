@@ -1092,6 +1092,8 @@
 		762B748D120BC75C00819339 /* WKPreferencesRefPrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = 762B7484120BBA2D00819339 /* WKPreferencesRefPrivate.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		7A1E2A851EEFE8920037A0E0 /* APINotificationProvider.h in Headers */ = {isa = PBXBuildFile; fileRef = 7A1E2A841EEFE88A0037A0E0 /* APINotificationProvider.h */; };
 		7A3ACE1B1EEEF79B00A864A4 /* APIInjectedBundlePageLoaderClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 7A3ACE1A1EEEF78C00A864A4 /* APIInjectedBundlePageLoaderClient.h */; };
+		7A3FECA221F7C09700F267CD /* StorageAccessStatus.h in Headers */ = {isa = PBXBuildFile; fileRef = 7A3FECA121F7C09700F267CD /* StorageAccessStatus.h */; };
+		7A41E9FB21F81DAD00B88CDB /* ShouldGrandfatherStatistics.h in Headers */ = {isa = PBXBuildFile; fileRef = 7A41E9FA21F81DAC00B88CDB /* ShouldGrandfatherStatistics.h */; };
 		7A772C8D1DDD4A25000F34F1 /* com.apple.WebKit.plugin-common.sb in Copy Plug-in Sandbox Profiles */ = {isa = PBXBuildFile; fileRef = 7A1506721DD56298001F4B58 /* com.apple.WebKit.plugin-common.sb */; };
 		7A791EFA1C7CFCF100C4C52B /* WebResourceLoadStatisticsStoreMessageReceiver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7A791EF91C7CFB3700C4C52B /* WebResourceLoadStatisticsStoreMessageReceiver.cpp */; };
 		7A791EFB1C7CFD0100C4C52B /* WebResourceLoadStatisticsStoreMessages.h in Headers */ = {isa = PBXBuildFile; fileRef = 7A791EF81C7CFB1000C4C52B /* WebResourceLoadStatisticsStoreMessages.h */; };
@@ -3511,6 +3513,8 @@
 		7A1506721DD56298001F4B58 /* com.apple.WebKit.plugin-common.sb */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = "com.apple.WebKit.plugin-common.sb"; path = "DerivedSources/WebKit2/com.apple.WebKit.plugin-common.sb"; sourceTree = BUILT_PRODUCTS_DIR; };
 		7A1E2A841EEFE88A0037A0E0 /* APINotificationProvider.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = APINotificationProvider.h; sourceTree = "<group>"; };
 		7A3ACE1A1EEEF78C00A864A4 /* APIInjectedBundlePageLoaderClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = APIInjectedBundlePageLoaderClient.h; sourceTree = "<group>"; };
+		7A3FECA121F7C09700F267CD /* StorageAccessStatus.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = StorageAccessStatus.h; path = Classifier/StorageAccessStatus.h; sourceTree = "<group>"; };
+		7A41E9FA21F81DAC00B88CDB /* ShouldGrandfatherStatistics.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ShouldGrandfatherStatistics.h; path = Classifier/ShouldGrandfatherStatistics.h; sourceTree = "<group>"; };
 		7A5E39491D5BD8A700B4B7CE /* com.macromedia.Flash Player ESR.plugin.sb */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "com.macromedia.Flash Player ESR.plugin.sb"; sourceTree = "<group>"; };
 		7A791EF81C7CFB1000C4C52B /* WebResourceLoadStatisticsStoreMessages.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WebResourceLoadStatisticsStoreMessages.h; path = DerivedSources/WebKit2/WebResourceLoadStatisticsStoreMessages.h; sourceTree = BUILT_PRODUCTS_DIR; };
 		7A791EF91C7CFB3700C4C52B /* WebResourceLoadStatisticsStoreMessageReceiver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = WebResourceLoadStatisticsStoreMessageReceiver.cpp; path = DerivedSources/WebKit2/WebResourceLoadStatisticsStoreMessageReceiver.cpp; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -6895,6 +6899,8 @@
 				7AFBD36521E51BAB005DBACB /* ResourceLoadStatisticsMemoryStore.h */,
 				7AFBD36921E542E8005DBACB /* ResourceLoadStatisticsPersistentStorage.cpp */,
 				7AFBD36821E542E8005DBACB /* ResourceLoadStatisticsPersistentStorage.h */,
+				7A41E9FA21F81DAC00B88CDB /* ShouldGrandfatherStatistics.h */,
+				7A3FECA121F7C09700F267CD /* StorageAccessStatus.h */,
 				7A843A1A21E41FB200DEF663 /* WebResourceLoadStatisticsStore.cpp */,
 				7AFBD36221E50F39005DBACB /* WebResourceLoadStatisticsStore.h */,
 				7AFBD36C21E54544005DBACB /* WebResourceLoadStatisticsTelemetry.cpp */,
@@ -9299,11 +9305,13 @@
 				8313F7EE1F7DAE0800B944EB /* SharedStringHashTable.h in Headers */,
 				83F9644E1FA0F76E00C47750 /* SharedStringHashTableReadOnly.h in Headers */,
 				1D67B339212E1F6100FAA786 /* ShareSheetCallbackID.h in Headers */,
+				7A41E9FB21F81DAD00B88CDB /* ShouldGrandfatherStatistics.h in Headers */,
 				995226D6207D184600F78420 /* SimulatedInputDispatcher.h in Headers */,
 				2DAF06D618BD1A470081CEB1 /* SmartMagnificationController.h in Headers */,
 				2DE6943E18BD2A68005C15E5 /* SmartMagnificationControllerMessages.h in Headers */,
 				5272B28B1406985D0096A5D0 /* StatisticsData.h in Headers */,
 				514BDED316C98EDD00E4E25E /* StatisticsRequest.h in Headers */,
+				7A3FECA221F7C09700F267CD /* StorageAccessStatus.h in Headers */,
 				1AD3306F16B1D991004F60E7 /* StorageAreaImpl.h in Headers */,
 				1ACECD2517162DB1001FC9EF /* StorageAreaMap.h in Headers */,
 				1A334DEE16DE8F88006A8E38 /* StorageAreaMapMessages.h in Headers */,
@@ -10699,6 +10707,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				2D92A784212B6AB100F493FD /* ActivityAssertion.cpp in Sources */,
+				5CE43B7221F7CC020093BCC5 /* APIHTTPCookieStoreCocoa.mm in Sources */,
 				2D92A77B212B6A7100F493FD /* ArgumentCoders.cpp in Sources */,
 				2DEB1D2E2127473600933906 /* ArgumentCodersCF.cpp in Sources */,
 				2D92A77C212B6A7100F493FD /* Attachment.cpp in Sources */,

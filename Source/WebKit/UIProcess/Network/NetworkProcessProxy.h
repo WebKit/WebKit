@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 Apple Inc. All rights reserved.
+ * Copyright (C) 2012-2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -57,7 +57,8 @@ namespace WebKit {
 class DownloadProxy;
 class DownloadProxyMap;
 class WebProcessPool;
-enum class StorageAccessStatus : unsigned;
+enum class ShouldGrandfatherStatistics : bool;
+enum class StorageAccessStatus : uint8_t;
 enum class WebsiteDataFetchOption;
 enum class WebsiteDataType;
 struct NetworkProcessCreationParameters;
@@ -80,7 +81,7 @@ public:
 #if ENABLE(RESOURCE_LOAD_STATISTICS)
     void clearPrevalentResource(PAL::SessionID, const String& resourceDomain, CompletionHandler<void()>&&);
     void clearUserInteraction(PAL::SessionID, const String& resourceDomain, CompletionHandler<void()>&&);
-    void dumpResourceLoadStatistics(PAL::SessionID, CompletionHandler<void(const String&)>&&);
+    void dumpResourceLoadStatistics(PAL::SessionID, CompletionHandler<void(String)>&&);
     void updatePrevalentDomainsToBlockCookiesFor(PAL::SessionID, const Vector<String>& domainsToBlock, CompletionHandler<void()>&&);
     void hasHadUserInteraction(PAL::SessionID, const String& resourceDomain, CompletionHandler<void(bool)>&&);
     void isGrandfathered(PAL::SessionID, const String& resourceDomain, CompletionHandler<void(bool)>&&);
@@ -107,15 +108,15 @@ public:
     void setPrevalentResource(PAL::SessionID, const String& resourceDomain, CompletionHandler<void()>&&);
     void setPrevalentResourceForDebugMode(PAL::SessionID, const String& resourceDomain, CompletionHandler<void()>&&);
     void setVeryPrevalentResource(PAL::SessionID, const String& resourceDomain, CompletionHandler<void()>&&);
-    void hasStorageAccessForFrame(PAL::SessionID, const String& resourceDomain, const String& firstPartyDomain, uint64_t frameID, uint64_t pageID, CompletionHandler<void(bool)>&& callback);
-    void getAllStorageAccessEntries(PAL::SessionID, CompletionHandler<void(Vector<String>&& domains)>&&);
-    void grantStorageAccess(PAL::SessionID, const String& resourceDomain, const String& firstPartyDomain, Optional<uint64_t> frameID, uint64_t pageID, bool userWasPrompted, WTF::CompletionHandler<void(bool)>&&);
+    void hasStorageAccessForFrame(PAL::SessionID, const String& resourceDomain, const String& firstPartyDomain, uint64_t frameID, uint64_t pageID, CompletionHandler<void(bool)>&&);
+    void getAllStorageAccessEntries(PAL::SessionID, CompletionHandler<void(Vector<String> domains)>&&);
+    void grantStorageAccess(PAL::SessionID, const String& resourceDomain, const String& firstPartyDomain, Optional<uint64_t> frameID, uint64_t pageID, bool userWasPrompted, CompletionHandler<void(bool)>&&);
     void hasStorageAccess(PAL::SessionID, const String& subFrameHost, const String& topFrameHost, Optional<uint64_t> frameID, uint64_t pageID, CompletionHandler<void(bool)>&&);
     void requestStorageAccess(PAL::SessionID, const String& resourceDomain, const String& firstPartyDomain, Optional<uint64_t> frameID, uint64_t pageID, bool promptEnabled, CompletionHandler<void(StorageAccessStatus)>&&);
     void resetParametersToDefaultValues(PAL::SessionID, CompletionHandler<void()>&&);
     void removeAllStorageAccess(PAL::SessionID, CompletionHandler<void()>&&);
-    void scheduleClearInMemoryAndPersistent(PAL::SessionID, bool shouldGrandfather, CompletionHandler<void()>&&);
-    void scheduleClearInMemoryAndPersistent(PAL::SessionID, Optional<WallTime> modifiedSince, ShouldGrandfather, CompletionHandler<void()>&&);
+    void scheduleClearInMemoryAndPersistent(PAL::SessionID, ShouldGrandfatherStatistics, CompletionHandler<void()>&&);
+    void scheduleClearInMemoryAndPersistent(PAL::SessionID, Optional<WallTime> modifiedSince, ShouldGrandfatherStatistics, CompletionHandler<void()>&&);
     void scheduleCookieBlockingUpdate(PAL::SessionID, CompletionHandler<void()>&&);
     void submitTelemetry(PAL::SessionID, CompletionHandler<void()>&&);
     void setCacheMaxAgeCapForPrevalentResources(PAL::SessionID, Seconds, CompletionHandler<void()>&&);
@@ -184,15 +185,6 @@ private:
     void logDiagnosticMessageWithValue(uint64_t pageID, const String& message, const String& description, double value, unsigned significantFigures, WebCore::ShouldSample);
     void logGlobalDiagnosticMessageWithValue(const String& message, const String& description, double value, unsigned significantFigures, WebCore::ShouldSample);
 #if ENABLE(RESOURCE_LOAD_STATISTICS)
-    void didDumpResourceLoadStatistics(String dumpedStatistics, uint64_t callbackId);
-    void didUpdateBlockCookies(uint64_t contextId);
-    void didSetAgeCapForClientSideCookies(uint64_t contextId);
-    void storageAccessOperationResult(bool wasGranted, uint64_t contextId);
-    void storageAccessRequestResult(unsigned wasGranted, uint64_t contextId);
-    void allStorageAccessEntriesResult(Vector<String>&& domains, uint64_t contextId);
-    void didRemoveAllStorageAccess(uint64_t contextId);
-    void didSetCacheMaxAgeCapForPrevalentResources(uint64_t contextId);
-    void didUpdateRuntimeSettings(uint64_t contextId);
     void notifyResourceLoadStatisticsProcessed();
     void notifyWebsiteDataDeletionForTopPrivatelyOwnedDomainsFinished();
     void notifyWebsiteDataScanForTopPrivatelyControlledDomainsFinished();
@@ -238,17 +230,6 @@ private:
     ProcessThrottler::BackgroundActivityToken m_syncAllCookiesToken;
     
     unsigned m_syncAllCookiesCounter { 0 };
-
-#if ENABLE(RESOURCE_LOAD_STATISTICS)
-    HashMap<uint64_t, CompletionHandler<void()>> m_scheduleStatisticsProcessingCallbackMap;
-    HashMap<uint64_t, CompletionHandler<void(bool wasGranted)>> m_storageAccessResponseCallbackMap;
-    HashMap<uint64_t, CompletionHandler<void(StorageAccessStatus wasGranted)>> m_storageAccessRequestResponseCallbackMap;
-    HashMap<uint64_t, CompletionHandler<void()>> m_removeAllStorageAccessCallbackMap;
-    HashMap<uint64_t, CompletionHandler<void(Vector<String>&& domains)>> m_allStorageAccessEntriesCallbackMap;
-    HashMap<uint64_t, CompletionHandler<void(const String&)>> m_dumpStatisticsCallbackMap;
-#endif
-
-    HashMap<uint64_t, CompletionHandler<void()>> m_updateRuntimeSettingsCallbackMap;
 
 #if ENABLE(CONTENT_EXTENSIONS)
     HashSet<WebUserContentControllerProxy*> m_webUserContentControllerProxies;

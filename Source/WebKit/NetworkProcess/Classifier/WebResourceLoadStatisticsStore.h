@@ -28,6 +28,7 @@
 #if ENABLE(RESOURCE_LOAD_STATISTICS)
 
 #include "Connection.h"
+#include "StorageAccessStatus.h"
 #include "WebsiteDataType.h"
 #include <wtf/CompletionHandler.h>
 #include <wtf/RunLoop.h>
@@ -55,17 +56,7 @@ class ResourceLoadStatisticsPersistentStorage;
 class WebFrameProxy;
 class WebProcessProxy;
 class WebsiteDataStore;
-
-enum class StorageAccessStatus : unsigned {
-    CannotRequestAccess,
-    RequiresUserPrompt,
-    HasAccess
-};
-
-enum class ShouldGrandfather {
-    No,
-    Yes,
-};
+enum class ShouldGrandfatherStatistics : bool;
 
 class WebResourceLoadStatisticsStore final : public ThreadSafeRefCounted<WebResourceLoadStatisticsStore, WTF::DestructionThread::Main>, public IPC::MessageReceiver {
 public:
@@ -116,7 +107,7 @@ public:
     void setPrevalentResource(const String& resourceDomain, CompletionHandler<void()>&&);
     void setVeryPrevalentResource(const URL&, CompletionHandler<void()>&&);
     void setVeryPrevalentResource(const String& resourceDomain, CompletionHandler<void()>&&);
-    void dumpResourceLoadStatistics(CompletionHandler<void(const String&)>&&);
+    void dumpResourceLoadStatistics(CompletionHandler<void(String)>&&);
     void isPrevalentResource(const URL&, CompletionHandler<void(bool)>&&);
     void isPrevalentResource(const String&, CompletionHandler<void(bool)>&&);
     void isVeryPrevalentResource(const URL&, CompletionHandler<void(bool)>&&);
@@ -155,8 +146,8 @@ public:
     void scheduleStatisticsAndDataRecordsProcessing(CompletionHandler<void()>&&);
     void submitTelemetry(CompletionHandler<void()>&&);
     void updatePrevalentDomainsToBlockCookiesFor(const Vector<String>& domainsToBlock);
-    void scheduleClearInMemoryAndPersistent(ShouldGrandfather, CompletionHandler<void()>&&);
-    void scheduleClearInMemoryAndPersistent(WallTime modifiedSince, ShouldGrandfather, CompletionHandler<void()>&&);
+    void scheduleClearInMemoryAndPersistent(ShouldGrandfatherStatistics, CompletionHandler<void()>&&);
+    void scheduleClearInMemoryAndPersistent(WallTime modifiedSince, ShouldGrandfatherStatistics, CompletionHandler<void()>&&);
 
     void setTimeToLiveUserInteraction(Seconds, CompletionHandler<void()>&&);
     void setMinimumTimeBetweenDataRecordsRemoval(Seconds, CompletionHandler<void()>&&);

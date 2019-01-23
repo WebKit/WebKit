@@ -591,9 +591,6 @@ NetworkProcessProxy& WebProcessPool::ensureNetworkProcess(WebsiteDataStore* with
             m_networkProcess->addSession(*websiteDataStore);
     }
 
-    if (m_websiteDataStore)
-        m_websiteDataStore->websiteDataStore().didCreateNetworkProcess();
-
     return *m_networkProcess;
 }
 
@@ -1034,6 +1031,9 @@ void WebProcessPool::processDidFinishLaunching(WebProcessProxy* process)
         process->connection()->ignoreTimeoutsForTesting();
 
     m_connectionClient.didCreateConnection(this, process->webConnection());
+
+    if (m_websiteDataStore)
+        m_websiteDataStore->websiteDataStore().didCreateNetworkProcess();
 }
 
 void WebProcessPool::disconnectProcess(WebProcessProxy* process)

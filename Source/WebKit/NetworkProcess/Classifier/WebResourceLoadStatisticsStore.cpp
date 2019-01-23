@@ -33,6 +33,8 @@
 #include "NetworkSession.h"
 #include "ResourceLoadStatisticsMemoryStore.h"
 #include "ResourceLoadStatisticsPersistentStorage.h"
+#include "ShouldGrandfatherStatistics.h"
+#include "StorageAccessStatus.h"
 #include "WebFrameProxy.h"
 #include "WebPageProxy.h"
 #include "WebProcessMessages.h"
@@ -639,7 +641,7 @@ void WebResourceLoadStatisticsStore::setVeryPrevalentResource(const String& prim
     });
 }
     
-void WebResourceLoadStatisticsStore::dumpResourceLoadStatistics(CompletionHandler<void(const String&)>&& completionHandler)
+void WebResourceLoadStatisticsStore::dumpResourceLoadStatistics(CompletionHandler<void(String)>&& completionHandler)
 {
     ASSERT(RunLoop::isMain());
 
@@ -1010,7 +1012,7 @@ void WebResourceLoadStatisticsStore::scheduleClearBlockingStateForDomains(const 
     });
 }
 
-void WebResourceLoadStatisticsStore::scheduleClearInMemoryAndPersistent(ShouldGrandfather shouldGrandfather, CompletionHandler<void()>&& completionHandler)
+void WebResourceLoadStatisticsStore::scheduleClearInMemoryAndPersistent(ShouldGrandfatherStatistics shouldGrandfather, CompletionHandler<void()>&& completionHandler)
 {
     ASSERT(RunLoop::isMain());
     postTask([this, protectedThis = makeRef(*this), shouldGrandfather, completionHandler = WTFMove(completionHandler)]() mutable {
@@ -1023,7 +1025,7 @@ void WebResourceLoadStatisticsStore::scheduleClearInMemoryAndPersistent(ShouldGr
 
         if (m_memoryStore) {
             m_memoryStore->clear([this, protectedThis = protectedThis.copyRef(), shouldGrandfather, completionHandlerCaller = WTFMove(completionHandlerCaller)] () mutable {
-                if (shouldGrandfather == ShouldGrandfather::Yes) {
+                if (shouldGrandfather == ShouldGrandfatherStatistics::Yes) {
                     if (m_memoryStore)
                         m_memoryStore->grandfatherExistingWebsiteData(completionHandlerCaller.release());
                     else
@@ -1031,13 +1033,13 @@ void WebResourceLoadStatisticsStore::scheduleClearInMemoryAndPersistent(ShouldGr
                 }
             });
         } else {
-            if (shouldGrandfather == ShouldGrandfather::Yes)
+            if (shouldGrandfather == ShouldGrandfatherStatistics::Yes)
                 RELEASE_LOG(ResourceLoadStatistics, "WebResourceLoadStatisticsStore::scheduleClearInMemoryAndPersistent Before being cleared, m_memoryStore is null when trying to grandfather data.");
         }
     });
 }
 
-void WebResourceLoadStatisticsStore::scheduleClearInMemoryAndPersistent(WallTime modifiedSince, ShouldGrandfather shouldGrandfather, CompletionHandler<void()>&& callback)
+void WebResourceLoadStatisticsStore::scheduleClearInMemoryAndPersistent(WallTime modifiedSince, ShouldGrandfatherStatistics shouldGrandfather, CompletionHandler<void()>&& callback)
 {
     ASSERT(RunLoop::isMain());
 

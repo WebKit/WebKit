@@ -37,6 +37,8 @@
 #include "NetworkProcessCreationParameters.h"
 #include "NetworkProcessMessages.h"
 #include "SandboxExtension.h"
+#include "ShouldGrandfatherStatistics.h"
+#include "StorageAccessStatus.h"
 #include "WebCompiledContentRuleList.h"
 #include "WebPageProxy.h"
 #include "WebProcessMessages.h"
@@ -234,26 +236,6 @@ void NetworkProcessProxy::clearCallbackStates()
 
     while (!m_pendingDeleteWebsiteDataForOriginsCallbacks.isEmpty())
         m_pendingDeleteWebsiteDataForOriginsCallbacks.take(m_pendingDeleteWebsiteDataForOriginsCallbacks.begin()->key)();
-
-#if ENABLE(RESOURCE_LOAD_STATISTICS)
-    while (!m_scheduleStatisticsProcessingCallbackMap.isEmpty())
-        m_scheduleStatisticsProcessingCallbackMap.take(m_scheduleStatisticsProcessingCallbackMap.begin()->key)();
-
-    while (!m_storageAccessResponseCallbackMap.isEmpty())
-        m_storageAccessResponseCallbackMap.take(m_storageAccessResponseCallbackMap.begin()->key)(false);
-    
-    while (!m_storageAccessRequestResponseCallbackMap.isEmpty())
-        m_storageAccessRequestResponseCallbackMap.take(m_storageAccessRequestResponseCallbackMap.begin()->key)(StorageAccessStatus::CannotRequestAccess);
-
-    while (!m_removeAllStorageAccessCallbackMap.isEmpty())
-        m_removeAllStorageAccessCallbackMap.take(m_removeAllStorageAccessCallbackMap.begin()->key)();
-
-    while (!m_allStorageAccessEntriesCallbackMap.isEmpty())
-        m_allStorageAccessEntriesCallbackMap.take(m_allStorageAccessEntriesCallbackMap.begin()->key)({ });
-
-    while (!m_dumpStatisticsCallbackMap.isEmpty())
-        m_dumpStatisticsCallbackMap.take(m_dumpStatisticsCallbackMap.begin()->key)({ });
-#endif
 }
 
 void NetworkProcessProxy::didReceiveMessage(IPC::Connection& connection, IPC::Decoder& decoder)
@@ -289,16 +271,6 @@ void NetworkProcessProxy::didClose(IPC::Connection&)
     
     m_syncAllCookiesToken = nullptr;
     m_syncAllCookiesCounter = 0;
-
-#if ENABLE(RESOURCE_LOAD_STATISTICS)
-    for (auto& callback : m_removeAllStorageAccessCallbackMap.values())
-        callback();
-    m_removeAllStorageAccessCallbackMap.clear();
-
-    for (auto& callback : m_scheduleStatisticsProcessingCallbackMap.values())
-        callback();
-    m_scheduleStatisticsProcessingCallbackMap.clear();
-#endif
 
     // This will cause us to be deleted.
     networkProcessCrashed();
@@ -425,24 +397,14 @@ void NetworkProcessProxy::logGlobalDiagnosticMessageWithValue(const String& mess
 }
 
 #if ENABLE(RESOURCE_LOAD_STATISTICS)
-void NetworkProcessProxy::dumpResourceLoadStatistics(PAL::SessionID sessionID, CompletionHandler<void(const String&)>&& completionHandler)
+void NetworkProcessProxy::dumpResourceLoadStatistics(PAL::SessionID sessionID, CompletionHandler<void(String)>&& completionHandler)
 {
     if (!canSendMessage()) {
         completionHandler({ });
         return;
     }
     
-    auto callbackId = generateCallbackID();
-    auto addResult = m_dumpStatisticsCallbackMap.add(callbackId, [protectedProcessPool = makeRef(m_processPool), token = throttler().backgroundActivityToken(), completionHandler = WTFMove(completionHandler)](const String& dumpedStatistics) mutable {
-        completionHandler(dumpedStatistics);
-    });
-    ASSERT_UNUSED(addResult, addResult.isNewEntry);
-    send(Messages::NetworkProcess::DumpResourceLoadStatistics(sessionID, callbackId), 0);
-}
-
-void NetworkProcessProxy::didDumpResourceLoadStatistics(String dumpedStatistics, uint64_t callbackId)
-{
-    m_dumpStatisticsCallbackMap.take(callbackId)(dumpedStatistics);
+    sendWithAsyncReply(Messages::NetworkProcess::DumpResourceLoadStatistics(sessionID), WTFMove(completionHandler));
 }
 
 void NetworkProcessProxy::updatePrevalentDomainsToBlockCookiesFor(PAL::SessionID sessionID, const Vector<String>& domainsToBlock, CompletionHandler<void()>&& completionHandler)
@@ -451,18 +413,8 @@ void NetworkProcessProxy::updatePrevalentDomainsToBlockCookiesFor(PAL::SessionID
         completionHandler();
         return;
     }
-    
-    auto callbackId = generateCallbackID();
-    auto addResult = m_scheduleStatisticsProcessingCallbackMap.add(callbackId, [protectedProcessPool = makeRef(m_processPool), token = throttler().backgroundActivityToken(), completionHandler = WTFMove(completionHandler)]() mutable {
-        completionHandler();
-    });
-    ASSERT_UNUSED(addResult, addResult.isNewEntry);
-    send(Messages::NetworkProcess::UpdatePrevalentDomainsToBlockCookiesFor(sessionID, domainsToBlock, callbackId), 0);
-}
 
-void NetworkProcessProxy::didUpdateBlockCookies(uint64_t callbackId)
-{
-    m_scheduleStatisticsProcessingCallbackMap.take(callbackId)();
+    sendWithAsyncReply(Messages::NetworkProcess::UpdatePrevalentDomainsToBlockCookiesFor(sessionID, domainsToBlock), WTFMove(completionHandler));
 }
 
 void NetworkProcessProxy::isPrevalentResource(PAL::SessionID sessionID, const String& resourceDomain, CompletionHandler<void(bool)>&& completionHandler)
@@ -545,15 +497,14 @@ void NetworkProcessProxy::scheduleCookieBlockingUpdate(PAL::SessionID sessionID,
     sendWithAsyncReply(Messages::NetworkProcess::ScheduleCookieBlockingUpdate(sessionID), WTFMove(completionHandler));
 }
 
-void NetworkProcessProxy::scheduleClearInMemoryAndPersistent(PAL::SessionID sessionID, Optional<WallTime> modifiedSince, ShouldGrandfather shouldGrandfather, CompletionHandler<void()>&& completionHandler)
+void NetworkProcessProxy::scheduleClearInMemoryAndPersistent(PAL::SessionID sessionID, Optional<WallTime> modifiedSince, ShouldGrandfatherStatistics shouldGrandfather, CompletionHandler<void()>&& completionHandler)
 {
     if (!canSendMessage()) {
         completionHandler();
         return;
     }
 
-    bool shouldGrandfatherBool = shouldGrandfather == ShouldGrandfather::Yes;
-    sendWithAsyncReply(Messages::NetworkProcess::ScheduleClearInMemoryAndPersistent(sessionID, modifiedSince, shouldGrandfatherBool), WTFMove(completionHandler));
+    sendWithAsyncReply(Messages::NetworkProcess::ScheduleClearInMemoryAndPersistent(sessionID, modifiedSince, shouldGrandfather), WTFMove(completionHandler));
 }
 
 void NetworkProcessProxy::scheduleStatisticsAndDataRecordsProcessing(PAL::SessionID sessionID, CompletionHandler<void()>&& completionHandler)
@@ -603,17 +554,7 @@ void NetworkProcessProxy::setAgeCapForClientSideCookies(PAL::SessionID sessionID
         return;
     }
     
-    auto callbackId = generateCallbackID();
-    auto addResult = m_scheduleStatisticsProcessingCallbackMap.add(callbackId, [protectedProcessPool = makeRef(m_processPool), token = throttler().backgroundActivityToken(), completionHandler = WTFMove(completionHandler)]() mutable {
-        completionHandler();
-    });
-    ASSERT_UNUSED(addResult, addResult.isNewEntry);
-    send(Messages::NetworkProcess::SetAgeCapForClientSideCookies(sessionID, seconds, callbackId), 0);
-}
-
-void NetworkProcessProxy::didSetAgeCapForClientSideCookies(uint64_t callbackId)
-{
-    m_scheduleStatisticsProcessingCallbackMap.take(callbackId)();
+    sendWithAsyncReply(Messages::NetworkProcess::SetAgeCapForClientSideCookies(sessionID, seconds), WTFMove(completionHandler));
 }
 
 void NetworkProcessProxy::setTimeToLiveUserInteraction(PAL::SessionID sessionID, Seconds seconds, CompletionHandler<void()>&& completionHandler)
@@ -624,11 +565,6 @@ void NetworkProcessProxy::setTimeToLiveUserInteraction(PAL::SessionID sessionID,
     }
     
     sendWithAsyncReply(Messages::NetworkProcess::SetTimeToLiveUserInteraction(sessionID, seconds), WTFMove(completionHandler));
-}
-
-void NetworkProcessProxy::didUpdateRuntimeSettings(uint64_t callbackId)
-{
-    m_updateRuntimeSettingsCallbackMap.take(callbackId)();
 }
 
 void NetworkProcessProxy::setNotifyPagesWhenTelemetryWasCaptured(PAL::SessionID sessionID, bool value, CompletionHandler<void()>&& completionHandler)
@@ -761,17 +697,14 @@ void NetworkProcessProxy::setGrandfathered(PAL::SessionID sessionID, const Strin
     sendWithAsyncReply(Messages::NetworkProcess::SetGrandfathered(sessionID, resourceDomain, isGrandfathered), WTFMove(completionHandler));
 }
 
-void NetworkProcessProxy::hasStorageAccessForFrame(PAL::SessionID sessionID, const String& resourceDomain, const String& firstPartyDomain, uint64_t frameID, uint64_t pageID, WTF::CompletionHandler<void(bool)>&& callback)
+void NetworkProcessProxy::hasStorageAccessForFrame(PAL::SessionID sessionID, const String& resourceDomain, const String& firstPartyDomain, uint64_t frameID, uint64_t pageID, CompletionHandler<void(bool)>&& completionHandler)
 {
     if (!canSendMessage()) {
-        callback(false);
+        completionHandler(false);
         return;
     }
 
-    auto contextId = generateCallbackID();
-    auto addResult = m_storageAccessResponseCallbackMap.add(contextId, WTFMove(callback));
-    ASSERT_UNUSED(addResult, addResult.isNewEntry);
-    send(Messages::NetworkProcess::HasStorageAccessForFrame(sessionID, resourceDomain, firstPartyDomain, frameID, pageID, contextId), 0);
+    sendWithAsyncReply(Messages::NetworkProcess::HasStorageAccessForFrame(sessionID, resourceDomain, firstPartyDomain, frameID, pageID), WTFMove(completionHandler));
 }
 
 void NetworkProcessProxy::hasStorageAccess(PAL::SessionID sessionID, const String& resourceDomain, const String& firstPartyDomain, Optional<uint64_t> frameID, uint64_t pageID, CompletionHandler<void(bool)>&& completionHandler)
@@ -791,33 +724,17 @@ void NetworkProcessProxy::requestStorageAccess(PAL::SessionID sessionID, const S
         return;
     }
 
-    auto contextId = generateCallbackID();
-    auto addResult = m_storageAccessRequestResponseCallbackMap.add(contextId, WTFMove(completionHandler));
-    ASSERT_UNUSED(addResult, addResult.isNewEntry);
-    send(Messages::NetworkProcess::RequestStorageAccess(sessionID, resourceDomain, firstPartyDomain, frameID, pageID, promptEnabled, contextId), 0);
+    sendWithAsyncReply(Messages::NetworkProcess::RequestStorageAccess(sessionID, resourceDomain, firstPartyDomain, frameID, pageID, promptEnabled), WTFMove(completionHandler));
 }
 
-void NetworkProcessProxy::grantStorageAccess(PAL::SessionID sessionID, const String& resourceDomain, const String& firstPartyDomain, Optional<uint64_t> frameID, uint64_t pageID, bool userWasPrompted, WTF::CompletionHandler<void(bool)>&& completionHandler)
+void NetworkProcessProxy::grantStorageAccess(PAL::SessionID sessionID, const String& resourceDomain, const String& firstPartyDomain, Optional<uint64_t> frameID, uint64_t pageID, bool userWasPrompted, CompletionHandler<void(bool)>&& completionHandler)
 {
     if (!canSendMessage()) {
         completionHandler(false);
         return;
     }
 
-    auto contextId = generateCallbackID();
-    auto addResult = m_storageAccessResponseCallbackMap.add(contextId, WTFMove(completionHandler));
-    ASSERT_UNUSED(addResult, addResult.isNewEntry);
-    send(Messages::NetworkProcess::GrantStorageAccess(sessionID, resourceDomain, firstPartyDomain, frameID.value(), pageID, userWasPrompted, contextId), 0);
-}
-
-void NetworkProcessProxy::storageAccessRequestResult(unsigned status, uint64_t contextId)
-{
-    m_storageAccessRequestResponseCallbackMap.take(contextId)(static_cast<StorageAccessStatus>(status));
-}
-
-void NetworkProcessProxy::storageAccessOperationResult(bool wasGranted, uint64_t contextId)
-{
-    m_storageAccessResponseCallbackMap.take(contextId)(wasGranted);
+    sendWithAsyncReply(Messages::NetworkProcess::GrantStorageAccess(sessionID, resourceDomain, firstPartyDomain, frameID.value(), pageID, userWasPrompted), WTFMove(completionHandler));
 }
 
 void NetworkProcessProxy::removeAllStorageAccess(PAL::SessionID sessionID, CompletionHandler<void()>&& completionHandler)
@@ -827,34 +744,17 @@ void NetworkProcessProxy::removeAllStorageAccess(PAL::SessionID sessionID, Compl
         return;
     }
 
-    auto contextId = generateCallbackID();
-    auto addResult = m_removeAllStorageAccessCallbackMap.add(contextId, WTFMove(completionHandler));
-    ASSERT_UNUSED(addResult, addResult.isNewEntry);
-    send(Messages::NetworkProcess::RemoveAllStorageAccess(sessionID, contextId), 0);
+    sendWithAsyncReply(Messages::NetworkProcess::RemoveAllStorageAccess(sessionID), WTFMove(completionHandler));
 }
 
-void NetworkProcessProxy::didRemoveAllStorageAccess(uint64_t contextId)
-{
-    m_removeAllStorageAccessCallbackMap.take(contextId)();
-}
-
-void NetworkProcessProxy::getAllStorageAccessEntries(PAL::SessionID sessionID, CompletionHandler<void(Vector<String>&& domains)>&& callback)
+void NetworkProcessProxy::getAllStorageAccessEntries(PAL::SessionID sessionID, CompletionHandler<void(Vector<String> domains)>&& completionHandler)
 {
     if (!canSendMessage()) {
-        callback({ });
+        completionHandler({ });
         return;
     }
 
-    auto contextId = generateCallbackID();
-    auto addResult = m_allStorageAccessEntriesCallbackMap.add(contextId, WTFMove(callback));
-    ASSERT_UNUSED(addResult, addResult.isNewEntry);
-    send(Messages::NetworkProcess::GetAllStorageAccessEntries(sessionID, contextId), 0);
-}
-
-void NetworkProcessProxy::allStorageAccessEntriesResult(Vector<String>&& domains, uint64_t contextId)
-{
-    auto callback = m_allStorageAccessEntriesCallbackMap.take(contextId);
-    callback(WTFMove(domains));
+    sendWithAsyncReply(Messages::NetworkProcess::GetAllStorageAccessEntries(sessionID), WTFMove(completionHandler));
 }
 
 void NetworkProcessProxy::setCacheMaxAgeCapForPrevalentResources(PAL::SessionID sessionID, Seconds seconds, CompletionHandler<void()>&& completionHandler)
@@ -863,16 +763,8 @@ void NetworkProcessProxy::setCacheMaxAgeCapForPrevalentResources(PAL::SessionID 
         completionHandler();
         return;
     }
-    
-    auto contextId = generateCallbackID();
-    auto addResult = m_updateRuntimeSettingsCallbackMap.add(contextId, WTFMove(completionHandler));
-    ASSERT_UNUSED(addResult, addResult.isNewEntry);
-    send(Messages::NetworkProcess::SetCacheMaxAgeCapForPrevalentResources(sessionID, seconds, contextId), 0);
-}
 
-void NetworkProcessProxy::didSetCacheMaxAgeCapForPrevalentResources(uint64_t contextId)
-{
-    m_updateRuntimeSettingsCallbackMap.take(contextId)();
+    sendWithAsyncReply(Messages::NetworkProcess::SetCacheMaxAgeCapForPrevalentResources(sessionID, seconds), WTFMove(completionHandler));
 }
 
 void NetworkProcessProxy::setCacheMaxAgeCap(PAL::SessionID sessionID, Seconds seconds, CompletionHandler<void()>&& completionHandler)
@@ -882,10 +774,7 @@ void NetworkProcessProxy::setCacheMaxAgeCap(PAL::SessionID sessionID, Seconds se
         return;
     }
     
-    auto contextId = generateCallbackID();
-    auto addResult = m_updateRuntimeSettingsCallbackMap.add(contextId, WTFMove(completionHandler));
-    ASSERT_UNUSED(addResult, addResult.isNewEntry);
-    send(Messages::NetworkProcess::SetCacheMaxAgeCapForPrevalentResources(sessionID, seconds, contextId), 0);
+    sendWithAsyncReply(Messages::NetworkProcess::SetCacheMaxAgeCapForPrevalentResources(sessionID, seconds), WTFMove(completionHandler));
 }
 
 void NetworkProcessProxy::setGrandfatheringTime(PAL::SessionID sessionID, Seconds seconds, CompletionHandler<void()>&& completionHandler)
@@ -955,10 +844,7 @@ void NetworkProcessProxy::resetCacheMaxAgeCapForPrevalentResources(PAL::SessionI
         return;
     }
     
-    auto contextId = generateCallbackID();
-    auto addResult = m_updateRuntimeSettingsCallbackMap.add(contextId, WTFMove(completionHandler));
-    ASSERT_UNUSED(addResult, addResult.isNewEntry);
-    send(Messages::NetworkProcess::ResetCacheMaxAgeCapForPrevalentResources(sessionID, contextId), 0);
+    sendWithAsyncReply(Messages::NetworkProcess::ResetCacheMaxAgeCapForPrevalentResources(sessionID), WTFMove(completionHandler));
 }
 
 void NetworkProcessProxy::resetParametersToDefaultValues(PAL::SessionID sessionID, CompletionHandler<void()>&& completionHandler)
@@ -981,13 +867,12 @@ void NetworkProcessProxy::submitTelemetry(PAL::SessionID sessionID, CompletionHa
     sendWithAsyncReply(Messages::NetworkProcess::SubmitTelemetry(sessionID), WTFMove(completionHandler));
 }
 
-void NetworkProcessProxy::scheduleClearInMemoryAndPersistent(PAL::SessionID sessionID, bool shouldGrandfather, CompletionHandler<void()>&& completionHandler)
+void NetworkProcessProxy::scheduleClearInMemoryAndPersistent(PAL::SessionID sessionID, ShouldGrandfatherStatistics shouldGrandfather, CompletionHandler<void()>&& completionHandler)
 {
     if (!canSendMessage()) {
         completionHandler();
         return;
     }
-    
 
     sendWithAsyncReply(Messages::NetworkProcess::ScheduleClearInMemoryAndPersistent(sessionID, { }, shouldGrandfather), WTFMove(completionHandler));
 }

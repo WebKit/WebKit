@@ -422,6 +422,8 @@ static Vector<WebKit::WebsiteDataRecord> toWebsiteDataRecords(NSArray *dataRecor
             apiDomains.uncheckedAppend(API::String::create(domain));
         completionHandler(wrapper(API::Array::create(WTFMove(apiDomains))));
     });
+#else
+    completionHandler({ });
 #endif
 }
 
