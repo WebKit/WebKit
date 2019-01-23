@@ -34,6 +34,7 @@
 #import <CoreMedia/CoreMedia.h>
 #import <ImageIO/ImageIO.h>
 #import <MobileCoreServices/MobileCoreServices.h>
+#import <pal/cf/CoreMediaSoftLink.h>
 #import <wtf/MathExtras.h>
 #import <wtf/RetainPtr.h>
 #import <wtf/SoftLinking.h>
@@ -41,11 +42,6 @@
 SOFT_LINK_FRAMEWORK(AVFoundation);
 SOFT_LINK_CLASS(AVFoundation, AVAssetImageGenerator);
 SOFT_LINK_CLASS(AVFoundation, AVURLAsset);
-
-SOFT_LINK_FRAMEWORK(CoreMedia);
-SOFT_LINK_CONSTANT(CoreMedia, kCMTimeZero, CMTime);
-
-#define kCMTimeZero getkCMTimeZero()
 
 namespace WebKit {
 

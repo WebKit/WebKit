@@ -192,14 +192,14 @@
     variableType get_##framework##_##variableName(); \
     }
 
-#define SOFT_LINK_CONSTANT_FOR_SOURCE(functionNamespace, framework, variableName, variableType) \
+#define SOFT_LINK_CONSTANT_FOR_SOURCE_WITH_EXPORT(functionNamespace, framework, variableName, variableType, export) \
     namespace functionNamespace { \
     static void init##framework##variableName(void* context) { \
         variableType* ptr = reinterpret_cast<variableType*>(SOFT_LINK_GETPROCADDRESS(framework##Library(), #variableName)); \
         RELEASE_ASSERT(ptr); \
         *static_cast<variableType*>(context) = *ptr; \
     } \
-    variableType get_##framework##_##variableName(); \
+    export variableType get_##framework##_##variableName(); \
     variableType get_##framework##_##variableName() \
     { \
         static variableType constant##framework##variableName; \
@@ -208,6 +208,9 @@
         return constant##framework##variableName; \
     } \
     }
+
+#define SOFT_LINK_CONSTANT_FOR_SOURCE(functionNamespace, framework, variableName, variableType) \
+    SOFT_LINK_CONSTANT_FOR_SOURCE_WITH_EXPORT(functionNamespace, framework, variableName, variableType, )
 
 #define SOFT_LINK_CONSTANT_MAY_FAIL_FOR_HEADER(functionNamespace, framework, variableName, variableType) \
     namespace functionNamespace { \

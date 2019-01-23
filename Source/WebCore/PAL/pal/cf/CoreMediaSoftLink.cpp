@@ -83,7 +83,7 @@ SOFT_LINK_CONSTANT_FOR_SOURCE(PAL, CoreMedia, kCMTextMarkupAttribute_WritingDire
 SOFT_LINK_CONSTANT_FOR_SOURCE(PAL, CoreMedia, kCMTextVerticalLayout_LeftToRight, CFStringRef)
 SOFT_LINK_CONSTANT_FOR_SOURCE(PAL, CoreMedia, kCMTextVerticalLayout_RightToLeft, CFStringRef)
 SOFT_LINK_CONSTANT_FOR_SOURCE(PAL, CoreMedia, kCMTimeInvalid, CMTime)
-SOFT_LINK_CONSTANT_FOR_SOURCE(PAL, CoreMedia, kCMTimeZero, CMTime)
+SOFT_LINK_CONSTANT_FOR_SOURCE_WITH_EXPORT(PAL, CoreMedia, kCMTimeZero, CMTime, PAL_EXPORT)
 SOFT_LINK_CONSTANT_FOR_SOURCE(PAL, CoreMedia, kCMTimePositiveInfinity, CMTime)
 SOFT_LINK_CONSTANT_FOR_SOURCE(PAL, CoreMedia, kCMTimeRangeInvalid, CMTimeRange);
 

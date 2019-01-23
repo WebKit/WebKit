@@ -1,3 +1,17 @@
+2019-01-23  David Kilzer  <ddkilzer@apple.com>
+
+        Switch remaining CoreMedia soft-linking in WebKit over to CoreMediaSoftLink.{cpp,h}
+        <https://webkit.org/b/193694>
+        <rdar://problem/47464025>
+
+        Reviewed by Tim Horton.
+
+        * wtf/win/SoftLinking.h:
+        (SOFT_LINK_CONSTANT_FOR_SOURCE_WITH_EXPORT):
+        - Implement for Windows.
+        (SOFT_LINK_CONSTANT_FOR_SOURCE):
+        - Define using SOFT_LINK_CONSTANT_FOR_SOURCE_WITH_EXPORT().
+
 2019-01-22  Tadeu Zagallo  <tzagallo@apple.com>
 
         Cache bytecode to disk

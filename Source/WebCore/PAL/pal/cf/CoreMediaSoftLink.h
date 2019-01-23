@@ -125,7 +125,7 @@ SOFT_LINK_CONSTANT_FOR_HEADER(PAL, CoreMedia, kCMTextVerticalLayout_RightToLeft,
 SOFT_LINK_CONSTANT_FOR_HEADER(PAL, CoreMedia, kCMTimeInvalid, CMTime)
 #define kCMTimeInvalid get_CoreMedia_kCMTimeInvalid()
 SOFT_LINK_CONSTANT_FOR_HEADER(PAL, CoreMedia, kCMTimeZero, CMTime)
-#define kCMTimeZero get_CoreMedia_kCMTimeZero()
+#define kCMTimeZero PAL::get_CoreMedia_kCMTimeZero()
 SOFT_LINK_CONSTANT_FOR_HEADER(PAL, CoreMedia, kCMTimePositiveInfinity, CMTime)
 #define kCMTimePositiveInfinity get_CoreMedia_kCMTimePositiveInfinity()
 SOFT_LINK_CONSTANT_FOR_HEADER(PAL, CoreMedia, kCMTimeRangeInvalid, CMTimeRange);

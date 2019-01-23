@@ -1,3 +1,17 @@
+2019-01-23  David Kilzer  <ddkilzer@apple.com>
+
+        Switch remaining CoreMedia soft-linking in WebKit over to CoreMediaSoftLink.{cpp,h}
+        <https://webkit.org/b/193694>
+        <rdar://problem/47464025>
+
+        Reviewed by Tim Horton.
+
+        * pal/cf/CoreMediaSoftLink.cpp:
+        - Export kCMTimeZero soft-link.
+        * pal/cf/CoreMediaSoftLink.h:
+        - Update kCMTimeZero macro to use PAL namespace for use in
+          WebKit.framework.
+
 2019-01-22  David Kilzer  <ddkilzer@apple.com>
 
         Switch remaining QuickLook soft-linking in WebCore, WebKit over to QuickLookSoftLink.{cpp,h}
