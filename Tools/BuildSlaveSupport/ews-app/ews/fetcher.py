@@ -40,7 +40,10 @@ class FetchLoop():
 
     def run(self):
         while True:
-            BugzillaPatchFetcher().fetch()
+            try:
+                BugzillaPatchFetcher().fetch()
+            except Exception as e:
+                _log.error('Exception in BugzillaPatchFetcher: {}'.format(e))
             time.sleep(self.interval)
 
 

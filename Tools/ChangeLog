@@ -1,3 +1,13 @@
+2019-01-22  Aakash Jain  <aakash_jain@apple.com>
+
+        [ews-app] fetch loop should not stop on network issues
+        https://bugs.webkit.org/show_bug.cgi?id=193666
+
+        Reviewed by Lucas Forschler.
+
+        * BuildSlaveSupport/ews-app/ews/fetcher.py:
+        (FetchLoop.run): Ensure that fetch loop doesn't exit on any exception.
+
 2019-01-22  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [iOS] Multiple WKWebViewAutofillTests are flaky failures
