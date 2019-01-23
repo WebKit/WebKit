@@ -1,3 +1,13 @@
+2019-01-23  Aakash Jain  <aakash_jain@apple.com>
+
+        [ews-app] Rename ews model Builds to Build
+        https://bugs.webkit.org/show_bug.cgi?id=193695
+
+        Reviewed by Lucas Forschler.
+
+        * BuildSlaveSupport/ews-app/ews/models/build.py: Renamed from Tools/BuildSlaveSupport/ews-app/ews/models/builds.py.
+        (Build): Renamed Builds to Build.
+
 2019-01-23  Jonathan Bedard  <jbedard@apple.com>
 
         webkitpy: Wait longer when launching WebKitTestRunner

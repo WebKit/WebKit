@@ -23,12 +23,12 @@
 from __future__ import unicode_literals
 
 from django.db import models
-from ews.models.builds import Builds
+from ews.models.build import Build
 
 
 class Steps(models.Model):
     stepid = models.IntegerField(primary_key=True)
-    build = models.ForeignKey(Builds, on_delete=models.CASCADE)
+    build = models.ForeignKey(Build, on_delete=models.CASCADE)
     result = models.IntegerField()
     state_string = models.TextField()
     started_at = models.IntegerField()

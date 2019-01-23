@@ -26,7 +26,7 @@ from django.db import models
 from ews.models.patch import Patch
 
 
-class Builds(models.Model):
+class Build(models.Model):
     patch = models.ForeignKey(Patch, on_delete=models.CASCADE)
     buildid = models.IntegerField(primary_key=True)
     builderid = models.IntegerField()
