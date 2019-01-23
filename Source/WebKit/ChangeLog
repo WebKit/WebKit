@@ -1,3 +1,15 @@
+2019-01-23  Philippe Normand  <pnormand@igalia.com>
+
+        [GTK] Crash when browsing inspector:// uri without port set
+        https://bugs.webkit.org/show_bug.cgi?id=193721
+
+        Reviewed by Michael Catanzaro.
+
+        * UIProcess/API/gtk/WebKitRemoteInspectorProtocolHandler.cpp:
+        (WebKit::RemoteInspectorProtocolHandler::handleRequest): Return
+        back to caller after setting the error, if no port was provided
+        along with the inspector URL.
+
 2019-01-23  David Kilzer  <ddkilzer@apple.com>
 
         Switch remaining CoreMedia soft-linking in WebKit over to CoreMediaSoftLink.{cpp,h}

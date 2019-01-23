@@ -92,6 +92,7 @@ void RemoteInspectorProtocolHandler::handleRequest(WebKitURISchemeRequest* reque
     if (!requestURL.port()) {
         GUniquePtr<GError> error(g_error_new_literal(WEBKIT_POLICY_ERROR, WEBKIT_POLICY_ERROR_CANNOT_SHOW_URI, "Cannot show inspector URL: no port provided"));
         webkit_uri_scheme_request_finish_error(request, error.get());
+        return;
     }
 
     auto* webView = webkit_uri_scheme_request_get_web_view(request);
