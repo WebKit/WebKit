@@ -49,7 +49,14 @@ class MeasurementSetAnalyzer {
         const metric = Metric.findById(measurementSet.metricId());
         const platform = Platform.findById(measurementSet.platformId());
         this._logger.info(`==== "${metric.fullName()}" on "${platform.name()}" ====`);
-        await measurementSet.fetchBetween(this._startTime, this._endTime);
+        try {
+            await measurementSet.fetchBetween(this._startTime, this._endTime);
+        } catch (error) {
+            if (error != 'ConfigurationNotFound')
+                throw error;
+            this._logger.warn(`Skipping analysis for "${metric.fullName()}" on "${platform.name()}" as time series does not exit.`);
+            return;
+        }
         const currentTimeSeries = measurementSet.fetchedTimeSeries('current', false, false);
         const rawValues = currentTimeSeries.values();
         if (!rawValues || rawValues.length < 2)

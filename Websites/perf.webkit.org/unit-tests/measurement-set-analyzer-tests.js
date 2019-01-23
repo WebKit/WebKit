@@ -35,10 +35,12 @@ describe('MeasurementSetAnalyzer', () => {
     {
         const info_logs = [];
         const error_logs =[];
+        const warn_logs =[];
         return {
             info: (message) => info_logs.push(message),
+            warn: (message) => warn_logs.push(message),
             error: (message) => error_logs.push(message),
-            info_logs, error_logs
+            info_logs, warn_logs, error_logs
         };
     }
 
@@ -86,6 +88,44 @@ describe('MeasurementSetAnalyzer', () => {
                 'status': 'OK'});
             await analysisPromise;
             assert.deepEqual(logger.info_logs, ['==== "Some test : Some metric" on "Some platform" ====']);
+            assert.deepEqual(logger.error_logs, []);
+        });
+
+        it('should not analyze if no corresponding time series for a measurement set', async () => {
+            const measurementSet = MeasurementSet.findSet(MockModels.somePlatform.id(), MockModels.someMetric.id(), 5000);
+            const logger = mockLogger();
+            const measurementSetAnalyzer = new MeasurementSetAnalyzer([measurementSet], 4000, 5000, logger);
+            const analysisPromise = measurementSetAnalyzer.analyzeOnce(measurementSet);
+            assert.equal(requests.length, 1);
+            assert.equal(requests[0].url, `/data/measurement-set-${MockModels.somePlatform.id()}-${MockModels.someMetric.id()}.json`);
+            requests[0].reject('ConfigurationNotFound');
+
+            try {
+                await analysisPromise;
+            } catch (error) {
+                assert(false, 'Should not throw any exception here');
+            }
+            assert.deepEqual(logger.info_logs, ['==== "Some test : Some metric" on "Some platform" ====']);
+            assert.deepEqual(logger.warn_logs, [`Skipping analysis for "${MockModels.someMetric.fullName()}" on "${MockModels.somePlatform.name()}" as time series does not exit.`]);
+            assert.deepEqual(logger.error_logs, []);
+        });
+
+        it('should throw an error if "measurementSet.fetchBetween" is not failed due to "ConfugurationNotFound"', async () => {
+            const measurementSet = MeasurementSet.findSet(MockModels.somePlatform.id(), MockModels.someMetric.id(), 5000);
+            const logger = mockLogger();
+            const measurementSetAnalyzer = new MeasurementSetAnalyzer([measurementSet], 4000, 5000, logger);
+            const analysisPromise = measurementSetAnalyzer.analyzeOnce(measurementSet);
+            assert.equal(requests.length, 1);
+            assert.equal(requests[0].url, `/data/measurement-set-${MockModels.somePlatform.id()}-${MockModels.someMetric.id()}.json`);
+            requests[0].reject('SomeError');
+
+            try {
+                await analysisPromise;
+            } catch (error) {
+                assert.equal(error, 'SomeError');
+            }
+            assert.deepEqual(logger.info_logs, ['==== "Some test : Some metric" on "Some platform" ====']);
+            assert.deepEqual(logger.warn_logs, []);
             assert.deepEqual(logger.error_logs, []);
         });
 
@@ -296,7 +336,6 @@ describe('MeasurementSetAnalyzer', () => {
                 'Created analysis task with id "5255" to confirm: "Potential 2.38% regression on Some platform between WebKit: r35-r44".']);
             assert.deepEqual(logger.error_logs, []);
         });
-
 
         it('should not create confirming A/B tests if a new regression is detected but no triggerable available', async () => {
             PrivilegedAPI.configure('test', 'password');
