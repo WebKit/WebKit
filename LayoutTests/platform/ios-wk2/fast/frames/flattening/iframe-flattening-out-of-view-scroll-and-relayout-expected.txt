@@ -9,13 +9,13 @@ layer at (0,0) size 800x600
             text run at (0,0) width 607: "Test that an off-screen iframe with positive coordinates is flattened, and so are its child frames."
       RenderBlock {P} at (0,36) size 784x0
 layer at (1200,0) size 828x200
-  RenderPartObject {IFRAME} at (1200,0) size 828x200
+  RenderIFrame {IFRAME} at (1200,0) size 828x200
     layer at (0,0) size 828x200
       RenderView at (0,0) size 828x200
     layer at (0,0) size 828x200
       RenderBlock {HTML} at (0,0) size 828x200
         RenderBody {BODY} at (8,8) size 812x184 [bgcolor=#0000FF]
-          RenderPartObject {IFRAME} at (0,0) size 820x154 [border: (2px inset #000000)]
+          RenderIFrame {IFRAME} at (0,0) size 820x154 [border: (2px inset #000000)]
             layer at (0,0) size 816x150
               RenderView at (0,0) size 816x150
             layer at (0,0) size 816x150

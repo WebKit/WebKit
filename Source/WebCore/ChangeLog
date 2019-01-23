@@ -1,3 +1,14 @@
+2019-01-22  Simon Fraser  <simon.fraser@apple.com>
+
+        Remove an iOS quirk where iframe renderers are identified as "RenderPartObject" in layout test results
+        https://bugs.webkit.org/show_bug.cgi?id=193692
+
+        Reviewed by Zalan Bujtas.
+
+        Remove the iOS-specific renderName() implementation.
+
+        * rendering/RenderIFrame.h:
+
 2019-01-22  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
         Dynamic changes in the style attributes of an SVGElement do no affect the <use> instances

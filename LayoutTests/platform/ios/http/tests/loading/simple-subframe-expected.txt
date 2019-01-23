@@ -16,7 +16,7 @@ layer at (0,0) size 800x600
       RenderText {#text} at (0,0) size 496x19
         text run at (0,0) width 496: "This is a test of load callbacks. It is only useful inside the regression test tool."
       RenderBR {BR} at (495,15) size 1x0
-      RenderPartObject {IFRAME} at (0,20) size 304x154 [border: (2px inset #000000)]
+      RenderIFrame {IFRAME} at (0,20) size 304x154 [border: (2px inset #000000)]
         layer at (0,0) size 300x150
           RenderView at (0,0) size 300x150
         layer at (0,0) size 300x150

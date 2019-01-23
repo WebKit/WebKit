@@ -20,7 +20,7 @@ layer at (0,0) size 800x600
         RenderText {#text} at (0,0) size 339x19
           text run at (0,0) width 339: "Testing the highlighting of and near hard line breaks."
       RenderBlock (anonymous) at (0,92) size 784x80
-        RenderPartObject {IFRAME} at (4,4) size 62x72 [border: (1px solid #0000FF)]
+        RenderIFrame {IFRAME} at (4,4) size 62x72 [border: (1px solid #0000FF)]
           layer at (0,0) size 60x70
             RenderView at (0,0) size 60x70
           layer at (0,0) size 60x70
@@ -32,7 +32,7 @@ layer at (0,0) size 800x600
                     text run at (23,0) width 1: " "
                     text run at (0,14) width 0: " "
                     text run at (0,28) width 24: "bar"
-        RenderPartObject {IFRAME} at (74,4) size 62x72 [border: (1px solid #0000FF)]
+        RenderIFrame {IFRAME} at (74,4) size 62x72 [border: (1px solid #0000FF)]
           layer at (0,0) size 60x70
             RenderView at (0,0) size 60x70
           layer at (0,0) size 60x70
@@ -44,7 +44,7 @@ layer at (0,0) size 800x600
                     text run at (23,0) width 1: " "
                     text run at (0,14) width 0: " "
                     text run at (0,28) width 24: "bar"
-        RenderPartObject {IFRAME} at (144,4) size 62x72 [border: (1px solid #0000FF)]
+        RenderIFrame {IFRAME} at (144,4) size 62x72 [border: (1px solid #0000FF)]
           layer at (0,0) size 60x70
             RenderView at (0,0) size 60x70
           layer at (0,0) size 60x70
@@ -56,7 +56,7 @@ layer at (0,0) size 800x600
                     text run at (23,0) width 1: " "
                     text run at (0,14) width 0: " "
                     text run at (0,28) width 24: "bar"
-        RenderPartObject {IFRAME} at (214,4) size 62x72 [border: (1px solid #0000FF)]
+        RenderIFrame {IFRAME} at (214,4) size 62x72 [border: (1px solid #0000FF)]
           layer at (0,0) size 60x70
             RenderView at (0,0) size 60x70
           layer at (0,0) size 60x70
@@ -68,7 +68,7 @@ layer at (0,0) size 800x600
                     text run at (23,0) width 1: " "
                     text run at (0,14) width 0: " "
                     text run at (0,28) width 24: "bar"
-        RenderPartObject {IFRAME} at (284,4) size 62x72 [border: (1px solid #0000FF)]
+        RenderIFrame {IFRAME} at (284,4) size 62x72 [border: (1px solid #0000FF)]
           layer at (0,0) size 60x70
             RenderView at (0,0) size 60x70
           layer at (0,0) size 60x70
@@ -80,7 +80,7 @@ layer at (0,0) size 800x600
                     text run at (23,0) width 1: " "
                     text run at (0,14) width 0: " "
                     text run at (0,28) width 24: "bar"
-        RenderPartObject {IFRAME} at (354,4) size 62x72 [border: (1px solid #0000FF)]
+        RenderIFrame {IFRAME} at (354,4) size 62x72 [border: (1px solid #0000FF)]
           layer at (0,0) size 60x70
             RenderView at (0,0) size 60x70
           layer at (0,0) size 60x70
@@ -92,7 +92,7 @@ layer at (0,0) size 800x600
                     text run at (23,0) width 1: " "
                     text run at (0,14) width 0: " "
                     text run at (0,28) width 24: "bar"
-        RenderPartObject {IFRAME} at (424,4) size 62x72 [border: (1px solid #0000FF)]
+        RenderIFrame {IFRAME} at (424,4) size 62x72 [border: (1px solid #0000FF)]
           layer at (0,0) size 60x70
             RenderView at (0,0) size 60x70
           layer at (0,0) size 60x70
@@ -104,7 +104,7 @@ layer at (0,0) size 800x600
                     text run at (23,0) width 1: " "
                     text run at (0,14) width 0: " "
                     text run at (0,28) width 24: "bar"
-        RenderPartObject {IFRAME} at (494,4) size 62x72 [border: (1px solid #0000FF)]
+        RenderIFrame {IFRAME} at (494,4) size 62x72 [border: (1px solid #0000FF)]
           layer at (0,0) size 60x70
             RenderView at (0,0) size 60x70
           layer at (0,0) size 60x70
@@ -116,7 +116,7 @@ layer at (0,0) size 800x600
                     text run at (23,0) width 1: " "
                     text run at (0,14) width 0: " "
                     text run at (0,28) width 24: "bar"
-        RenderPartObject {IFRAME} at (564,4) size 62x72 [border: (1px solid #0000FF)]
+        RenderIFrame {IFRAME} at (564,4) size 62x72 [border: (1px solid #0000FF)]
           layer at (0,0) size 60x70
             RenderView at (0,0) size 60x70
           layer at (0,0) size 60x70
@@ -128,7 +128,7 @@ layer at (0,0) size 800x600
                     text run at (23,0) width 1: " "
                     text run at (0,14) width 0: " "
                     text run at (0,28) width 24: "bar"
-        RenderPartObject {IFRAME} at (634,4) size 62x72 [border: (1px solid #0000FF)]
+        RenderIFrame {IFRAME} at (634,4) size 62x72 [border: (1px solid #0000FF)]
           layer at (0,0) size 60x70
             RenderView at (0,0) size 60x70
           layer at (0,0) size 60x70
@@ -145,7 +145,7 @@ layer at (0,0) size 800x600
         RenderText {#text} at (0,0) size 319x19
           text run at (0,0) width 319: "Testing the highlighting of text split across boxes."
       RenderBlock (anonymous) at (0,224) size 784x80
-        RenderPartObject {IFRAME} at (4,4) size 130x72 [border: (1px solid #0000FF)]
+        RenderIFrame {IFRAME} at (4,4) size 130x72 [border: (1px solid #0000FF)]
           layer at (0,0) size 128x70
             RenderView at (0,0) size 128x70
           layer at (0,0) size 128x70

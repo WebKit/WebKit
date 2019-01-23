@@ -6,7 +6,7 @@ layer at (0,0) size 800x600
       RenderText {#text} at (0,0) size 216x19
         text run at (0,0) width 216: "This iframe should have a border."
       RenderBR {BR} at (215,15) size 1x0
-      RenderPartObject {IFRAME} at (0,20) size 304x154 [border: (2px inset #000000)]
+      RenderIFrame {IFRAME} at (0,20) size 304x154 [border: (2px inset #000000)]
         layer at (0,0) size 300x150
           RenderView at (0,0) size 300x150
         layer at (0,0) size 300x150
@@ -18,7 +18,7 @@ layer at (0,0) size 800x600
       RenderText {#text} at (0,179) size 150x19
         text run at (0,179) width 150: "This iframe should not."
       RenderBR {BR} at (149,194) size 1x0
-      RenderPartObject {IFRAME} at (0,199) size 300x150
+      RenderIFrame {IFRAME} at (0,199) size 300x150
         layer at (0,0) size 300x150
           RenderView at (0,0) size 300x150
         layer at (0,0) size 300x150
@@ -30,7 +30,7 @@ layer at (0,0) size 800x600
       RenderText {#text} at (0,354) size 220x19
         text run at (0,354) width 220: "This iframe should have a border. "
       RenderBR {BR} at (219,369) size 1x0
-      RenderPartObject {IFRAME} at (0,374) size 304x154 [border: (2px inset #000000)]
+      RenderIFrame {IFRAME} at (0,374) size 304x154 [border: (2px inset #000000)]
         layer at (0,0) size 300x150
           RenderView at (0,0) size 300x150
         layer at (0,0) size 300x150

@@ -6,7 +6,7 @@ layer at (0,0) size 800x195
       RenderText {#text} at (0,0) size 350x19
         text run at (0,0) width 350: "You should see the word \"worked\" in the frame below."
       RenderBR {BR} at (349,0) size 1x19
-      RenderPartObject {IFRAME} at (0,20) size 304x154 [border: (2px inset #000000)]
+      RenderIFrame {IFRAME} at (0,20) size 304x154 [border: (2px inset #000000)]
         layer at (0,0) size 300x150
           RenderView at (0,0) size 300x150
         layer at (0,0) size 300x150

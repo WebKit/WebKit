@@ -5,7 +5,7 @@ layer at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
 layer at (8,8) size 400x400
   RenderBlock {DIV} at (0,0) size 400x400 [bgcolor=#FFFFE0]
-    RenderPartObject {IFRAME} at (7,7) size 386x386 [border: (3px solid #000000)]
+    RenderIFrame {IFRAME} at (7,7) size 386x386 [border: (3px solid #000000)]
       layer at (0,0) size 900x900
         RenderView at (0,0) size 380x380
       layer at (0,0) size 900x900

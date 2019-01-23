@@ -14,7 +14,7 @@ layer at (0,0) size 800x934
       RenderText {#text} at (100,210) size 4x19
         text run at (100,210) width 4: " "
       RenderBR {BR} at (0,0) size 0x0
-      RenderPartObject {IFRAME} at (0,230) size 304x154 [border: (2px inset #000000)]
+      RenderIFrame {IFRAME} at (0,230) size 304x154 [border: (2px inset #000000)]
         layer at (0,0) size 300x150
           RenderView at (0,0) size 300x150
         layer at (0,0) size 300x150

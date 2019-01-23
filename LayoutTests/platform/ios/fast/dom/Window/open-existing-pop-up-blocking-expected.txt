@@ -3,7 +3,7 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderPartObject {IFRAME} at (0,0) size 304x154 [border: (2px inset #000000)]
+      RenderIFrame {IFRAME} at (0,0) size 304x154 [border: (2px inset #000000)]
         layer at (0,0) size 300x150
           RenderView at (0,0) size 300x150
         layer at (0,0) size 300x150
@@ -16,7 +16,7 @@ layer at (0,0) size 800x600
                 text run at (0,60) width 59: "doing so."
       RenderText {#text} at (304,139) size 4x19
         text run at (304,139) width 4: " "
-      RenderPartObject {IFRAME} at (308,0) size 304x154 [border: (2px inset #000000)]
+      RenderIFrame {IFRAME} at (308,0) size 304x154 [border: (2px inset #000000)]
         layer at (0,0) size 300x150
           RenderView at (0,0) size 300x150
         layer at (0,0) size 300x150

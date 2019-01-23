@@ -21,7 +21,7 @@ layer at (0,0) size 800x600
           text run at (0,0) width 293: "The two squares below should be solid green."
       RenderBlock {HR} at (0,92) size 784x2 [border: (1px inset #000000)]
       RenderBlock (anonymous) at (0,102) size 784x109
-        RenderPartObject {IFRAME} at (0,0) size 104x104 [border: (2px inset #000000)]
+        RenderIFrame {IFRAME} at (0,0) size 104x104 [border: (2px inset #000000)]
           layer at (0,0) size 100x100
             RenderView at (0,0) size 100x100
           layer at (0,0) size 100x8
@@ -31,7 +31,7 @@ layer at (0,0) size 800x600
             RenderBlock (positioned) {DIV} at (0,0) size 100x100 [bgcolor=#008000]
         RenderText {#text} at (104,89) size 4x19
           text run at (104,89) width 4: " "
-        RenderPartObject {IFRAME} at (108,0) size 104x104 [border: (2px inset #000000)]
+        RenderIFrame {IFRAME} at (108,0) size 104x104 [border: (2px inset #000000)]
           layer at (0,0) size 100x100
             RenderView at (0,0) size 100x100
           layer at (0,0) size 100x16

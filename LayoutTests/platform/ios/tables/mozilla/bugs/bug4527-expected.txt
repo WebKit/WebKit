@@ -15,7 +15,7 @@ layer at (0,0) size 800x600
               RenderText {#text} at (0,0) size 0x0
             RenderTableCell {TD} at (126,0) size 488x70 [r=0 c=1 rs=1 cs=3]
               RenderInline {NOBR} at (0,0) size 19x19
-                RenderPartObject {IFRAME} at (0,0) size 468x60
+                RenderIFrame {IFRAME} at (0,0) size 468x60
                   layer at (0,0) size 468x60
                     RenderView at (0,0) size 468x60
                   layer at (0,0) size 468x60

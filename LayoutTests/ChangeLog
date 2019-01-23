@@ -1,3 +1,128 @@
+2019-01-22  Simon Fraser  <simon.fraser@apple.com>
+
+        Remove an iOS quirk where iframe renderers are identified as "RenderPartObject" in layout test results
+        https://bugs.webkit.org/show_bug.cgi?id=193692
+
+        Reviewed by Zalan Bujtas.
+
+        Replace all instances of "RenderPartObject" with "RenderIFrame".
+
+        * platform/ios-wk1/editing/pasteboard/4631972-expected.txt:
+        * platform/ios-wk1/editing/pasteboard/subframe-dragndrop-1-expected.txt:
+        * platform/ios-wk1/editing/selection/iframe-expected.txt:
+        * platform/ios-wk1/editing/selection/select-all-iframe-expected.txt:
+        * platform/ios-wk1/fast/overflow/scrollRevealButton-expected.txt:
+        * platform/ios-wk1/fast/text/selection-hard-linebreak-expected.txt:
+        * platform/ios-wk2/compositing/iframes/compositing-for-scrollable-iframe-expected.txt:
+        * platform/ios-wk2/editing/pasteboard/4631972-expected.txt:
+        * platform/ios-wk2/editing/pasteboard/subframe-dragndrop-1-expected.txt:
+        * platform/ios-wk2/editing/selection/select-all-iframe-expected.txt:
+        * platform/ios-wk2/fast/forms/basic-textareas-expected.txt:
+        * platform/ios-wk2/fast/forms/tabbing-input-iframe-expected.txt:
+        * platform/ios-wk2/fast/forms/targeted-frame-submission-expected.txt:
+        * platform/ios-wk2/fast/frames/flattening/iframe-flattening-out-of-view-and-scroll-expected.txt:
+        * platform/ios-wk2/fast/frames/flattening/iframe-flattening-out-of-view-scroll-and-relayout-expected.txt:
+        * platform/ios-wk2/fast/frames/onlyCommentInIFrame-expected.txt:
+        * platform/ios-wk2/fast/overflow/scrollRevealButton-expected.txt:
+        * platform/ios-wk2/fast/replaced/border-radius-clip-expected.txt:
+        * platform/ios/compositing/iframes/composited-iframe-alignment-expected.txt:
+        * platform/ios/compositing/iframes/compositing-for-scrollable-iframe-expected.txt:
+        * platform/ios/compositing/iframes/iframe-copy-on-scroll-expected.txt:
+        * platform/ios/compositing/iframes/iframe-in-composited-layer-expected.txt:
+        * platform/ios/css2.1/20110323/absolute-replaced-height-004-expected.txt:
+        * platform/ios/css2.1/20110323/absolute-replaced-height-005-expected.txt:
+        * platform/ios/css2.1/20110323/absolute-replaced-height-007-expected.txt:
+        * platform/ios/css2.1/20110323/absolute-replaced-height-011-expected.txt:
+        * platform/ios/css2.1/20110323/absolute-replaced-height-012-expected.txt:
+        * platform/ios/css2.1/20110323/absolute-replaced-height-014-expected.txt:
+        * platform/ios/css2.1/20110323/absolute-replaced-height-018-expected.txt:
+        * platform/ios/css2.1/20110323/absolute-replaced-height-019-expected.txt:
+        * platform/ios/css2.1/20110323/absolute-replaced-height-021-expected.txt:
+        * platform/ios/css2.1/20110323/absolute-replaced-height-025-expected.txt:
+        * platform/ios/css2.1/20110323/absolute-replaced-height-026-expected.txt:
+        * platform/ios/css2.1/20110323/absolute-replaced-height-028-expected.txt:
+        * platform/ios/css2.1/20110323/absolute-replaced-height-032-expected.txt:
+        * platform/ios/css2.1/20110323/absolute-replaced-height-033-expected.txt:
+        * platform/ios/css2.1/20110323/absolute-replaced-height-035-expected.txt:
+        * platform/ios/css2.1/20110323/block-replaced-height-004-expected.txt:
+        * platform/ios/css2.1/20110323/block-replaced-height-005-expected.txt:
+        * platform/ios/css2.1/20110323/block-replaced-height-007-expected.txt:
+        * platform/ios/css2.1/20110323/float-replaced-height-004-expected.txt:
+        * platform/ios/css2.1/20110323/float-replaced-height-005-expected.txt:
+        * platform/ios/css2.1/20110323/float-replaced-height-007-expected.txt:
+        * platform/ios/css2.1/20110323/inline-block-replaced-height-004-expected.txt:
+        * platform/ios/css2.1/20110323/inline-block-replaced-height-005-expected.txt:
+        * platform/ios/css2.1/20110323/inline-block-replaced-height-007-expected.txt:
+        * platform/ios/css2.1/20110323/inline-replaced-height-004-expected.txt:
+        * platform/ios/css2.1/20110323/inline-replaced-height-005-expected.txt:
+        * platform/ios/css2.1/20110323/inline-replaced-height-007-expected.txt:
+        * platform/ios/editing/execCommand/find-after-replace-expected.txt:
+        * platform/ios/editing/execCommand/paste-1-expected.txt:
+        * platform/ios/editing/pasteboard/drag-image-to-contenteditable-in-iframe-expected.txt:
+        * platform/ios/editing/pasteboard/image-in-iframe-expected.txt:
+        * platform/ios/editing/pasteboard/paste-2-expected.txt:
+        * platform/ios/editing/selection/4776665-expected.txt:
+        * platform/ios/editing/selection/4960137-expected.txt:
+        * platform/ios/editing/selection/4975120-expected.txt:
+        * platform/ios/editing/selection/drag-in-iframe-expected.txt:
+        * platform/ios/editing/selection/drag-to-contenteditable-iframe-expected.txt:
+        * platform/ios/editing/selection/iframe-expected.txt:
+        * platform/ios/fast/block/basic/013-expected.txt:
+        * platform/ios/fast/block/positioning/window-height-change-expected.txt:
+        * platform/ios/fast/css/line-height-overflow-expected.txt:
+        * platform/ios/fast/css/resize-corner-tracking-transformed-iframe-expected.txt:
+        * platform/ios/fast/css3-text/css3-text-decoration/text-decoration-line-scaled-expected.txt:
+        * platform/ios/fast/dom/Window/open-existing-pop-up-blocking-expected.txt:
+        * platform/ios/fast/flexbox/016-expected.txt:
+        * platform/ios/fast/forms/basic-textareas-expected.txt:
+        * platform/ios/fast/forms/tabbing-input-iframe-expected.txt:
+        * platform/ios/fast/forms/targeted-frame-submission-expected.txt:
+        * platform/ios/fast/frames/001-expected.txt:
+        * platform/ios/fast/frames/flattening/iframe-flattening-fixed-height-expected.txt:
+        * platform/ios/fast/frames/flattening/iframe-flattening-fixed-width-and-height-expected.txt:
+        * platform/ios/fast/frames/flattening/iframe-flattening-fixed-width-and-height-no-scrolling-expected.txt:
+        * platform/ios/fast/frames/flattening/iframe-flattening-fixed-width-expected.txt:
+        * platform/ios/fast/frames/flattening/iframe-flattening-nested-expected.txt:
+        * platform/ios/fast/frames/flattening/iframe-flattening-offscreen-expected.txt:
+        * platform/ios/fast/frames/flattening/iframe-flattening-out-of-view-and-scroll-expected.txt:
+        * platform/ios/fast/frames/flattening/iframe-flattening-out-of-view-expected.txt:
+        * platform/ios/fast/frames/flattening/iframe-flattening-out-of-view-scroll-and-relayout-expected.txt:
+        * platform/ios/fast/frames/flattening/iframe-flattening-simple-expected.txt:
+        * platform/ios/fast/frames/frameElement-iframe-expected.txt:
+        * platform/ios/fast/frames/iframe-option-crash-expected.txt:
+        * platform/ios/fast/frames/iframe-scrolling-attribute-expected.txt:
+        * platform/ios/fast/frames/iframe-with-frameborder-expected.txt:
+        * platform/ios/fast/frames/onlyCommentInIFrame-expected.txt:
+        * platform/ios/fast/frames/take-focus-from-iframe-expected.txt:
+        * platform/ios/fast/images/favicon-as-image-expected.txt:
+        * platform/ios/fast/overflow/scrollRevealButton-expected.txt:
+        * platform/ios/fast/regions/repaint/line-flow-with-floats-in-regions-expected.txt:
+        * platform/ios/fast/replaced/007-expected.txt:
+        * platform/ios/fast/replaced/border-radius-clip-expected.txt:
+        * platform/ios/fast/replaced/percent-height-in-anonymous-block-in-table-expected.txt:
+        * platform/ios/fast/replaced/replaced-breaking-expected.txt:
+        * platform/ios/fast/table/quote-text-around-iframe-expected.txt:
+        * platform/ios/fast/text-autosizing/ios/contenteditable-expected.txt:
+        * platform/ios/http/tests/loading/simple-subframe-expected.txt:
+        * platform/ios/http/tests/local/file-url-sent-as-referer-expected.txt:
+        * platform/ios/http/tests/misc/favicon-as-image-expected.txt:
+        * platform/ios/http/tests/misc/frame-access-during-load-expected.txt:
+        * platform/ios/http/tests/misc/iframe404-expected.txt:
+        * platform/ios/http/tests/multipart/invalid-image-data-standalone-expected.txt:
+        * platform/ios/http/tests/security/contentSecurityPolicy/sandbox-empty-in-http-header-inherited-by-subframe-expected.txt:
+        * platform/ios/imported/w3c/web-platform-tests/html/dom/dynamic-markup-insertion/document-write/nested-document-write-2-expected.txt:
+        * platform/ios/ios/fast/fixed/frame-with-fixed-expected.txt:
+        * platform/ios/svg/custom/embedding-external-svgs-expected.txt:
+        * platform/ios/svg/hixie/rendering-model/003-expected.txt:
+        * platform/ios/tables/mozilla/bugs/bug131020-expected.txt:
+        * platform/ios/tables/mozilla/bugs/bug137388-1-expected.txt:
+        * platform/ios/tables/mozilla/bugs/bug137388-2-expected.txt:
+        * platform/ios/tables/mozilla/bugs/bug137388-3-expected.txt:
+        * platform/ios/tables/mozilla/bugs/bug38916-expected.txt:
+        * platform/ios/tables/mozilla/bugs/bug4527-expected.txt:
+        * platform/ios/tables/mozilla/bugs/bug50695-2-expected.txt:
+        * platform/ios/webarchive/loading/cache-expired-subresource-expected.txt:
+
 2019-01-22  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
         Dynamic changes in the style attributes of an SVGElement do no affect the <use> instances

@@ -16,7 +16,7 @@ layer at (0,0) size 800x2225
       RenderBlock {DIV} at (5,1804) size 774x200 [bgcolor=#C0C0C0]
       RenderBlock {DIV} at (5,2009) size 774x200 [bgcolor=#C0C0C0]
 layer at (8,8) size 304x154
-  RenderPartObject {IFRAME} at (0,0) size 304x154 [border: (2px inset #000000)]
+  RenderIFrame {IFRAME} at (0,0) size 304x154 [border: (2px inset #000000)]
     layer at (0,0) size 300x831
       RenderView at (0,0) size 300x150
     layer at (0,0) size 300x831

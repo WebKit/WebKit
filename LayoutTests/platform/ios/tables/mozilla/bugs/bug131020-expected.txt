@@ -11,7 +11,7 @@ layer at (0,0) size 800x600
                 RenderTableSection {TBODY} at (1,1) size 788x572
                   RenderTableRow {TR} at (0,2) size 788x568
                     RenderTableCell {TD} at (2,2) size 784x568 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
-                      RenderPartObject {IFRAME} at (2,2) size 790x564 [border: (5px solid #0000FF)]
+                      RenderIFrame {IFRAME} at (2,2) size 790x564 [border: (5px solid #0000FF)]
                         layer at (0,0) size 780x2036
                           RenderView at (0,0) size 780x554
                         layer at (0,0) size 780x2036

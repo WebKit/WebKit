@@ -7,7 +7,7 @@ layer at (0,0) size 800x600
         RenderText {#text} at (0,0) size 671x19
           text run at (0,0) width 671: "This tests for an ASSERTion failure when setting the main frame's selection inside a node in a subframe."
       RenderBlock (anonymous) at (0,36) size 784x154
-        RenderPartObject {IFRAME} at (0,0) size 304x154 [border: (2px inset #000000)]
+        RenderIFrame {IFRAME} at (0,0) size 304x154 [border: (2px inset #000000)]
           layer at (0,0) size 300x150
             RenderView at (0,0) size 300x150
           layer at (0,0) size 300x150

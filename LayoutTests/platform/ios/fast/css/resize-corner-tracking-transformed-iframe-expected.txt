@@ -20,7 +20,7 @@ layer at (0,0) size 800x600
       RenderBlock (anonymous) at (0,64) size 784x204
         RenderText {#text} at (0,0) size 0x0
 layer at (58,122) size 154x104
-  RenderPartObject {IFRAME} at (50,50) size 154x104 [border: (2px solid #0000FF)]
+  RenderIFrame {IFRAME} at (50,50) size 154x104 [border: (2px solid #0000FF)]
     layer at (0,0) size 150x100
       RenderView at (0,0) size 150x100
     layer at (0,0) size 150x100

@@ -23,7 +23,7 @@ layer at (8,200) size 792x164
       RenderText {#text} at (0,0) size 467x19
         text run at (0,0) width 467: "NOTE: The test only works in the DRT or with frame flattening enabled."
 layer at (-100,-100) size 300x300 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
-  RenderPartObject {IFRAME} at (-100,-100) size 300x300
+  RenderIFrame {IFRAME} at (-100,-100) size 300x300
     layer at (0,0) size 300x300
       RenderView at (0,0) size 300x300
     layer at (0,0) size 300x300

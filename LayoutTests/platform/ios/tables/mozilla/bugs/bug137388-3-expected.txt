@@ -8,7 +8,7 @@ layer at (0,0) size 800x600
           RenderTableRow {TR} at (0,2) size 206x216
             RenderTableCell {TD} at (2,2) size 202x216 [r=0 c=0 rs=1 cs=1]
               RenderBlock {DIV} at (1,1) size 200x214
-                RenderPartObject {IFRAME} at (0,0) size 204x214 [border: (2px inset #000000)]
+                RenderIFrame {IFRAME} at (0,0) size 204x214 [border: (2px inset #000000)]
                   layer at (0,0) size 200x210
                     RenderView at (0,0) size 200x210
                   layer at (0,0) size 200x210

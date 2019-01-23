@@ -9,7 +9,7 @@ layer at (0,0) size 800x600
       RenderTextControl {INPUT} at (2,158) size 136x22 [bgcolor=#FFFFFF] [border: (1px solid #4C4C4C)]
       RenderText {#text} at (139,157) size 5x19
         text run at (139,157) width 5: " "
-      RenderPartObject {IFRAME} at (143,20) size 303x152 [border: (1px solid #000000)]
+      RenderIFrame {IFRAME} at (143,20) size 303x152 [border: (1px solid #000000)]
         layer at (0,0) size 300x150
           RenderView at (0,0) size 300x150
         layer at (0,0) size 300x150

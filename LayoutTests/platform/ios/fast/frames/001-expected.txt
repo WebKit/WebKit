@@ -6,7 +6,7 @@ layer at (0,0) size 800x600
       RenderText {#text} at (0,0) size 532x19
         text run at (0,0) width 532: "The three red squares below should all look the same and be filled only with black."
       RenderBR {BR} at (531,15) size 1x0
-      RenderPartObject {IFRAME} at (0,20) size 170x170 [border: (10px solid #FF0000)]
+      RenderIFrame {IFRAME} at (0,20) size 170x170 [border: (10px solid #FF0000)]
         layer at (0,0) size 100x100
           RenderView at (0,0) size 100x100
         layer at (0,0) size 100x100

@@ -11,7 +11,7 @@ layer at (0,0) size 800x600
       RenderBlock {P} at (0,56) size 784x0
       RenderBlock {P} at (0,56) size 784x0
 layer at (1200,0) size 8000x800
-  RenderPartObject {IFRAME} at (1200,0) size 8000x800
+  RenderIFrame {IFRAME} at (1200,0) size 8000x800
     layer at (0,0) size 8000x800
       RenderView at (0,0) size 8000x800
     layer at (0,0) size 8000x800

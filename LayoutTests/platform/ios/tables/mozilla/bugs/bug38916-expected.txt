@@ -30,7 +30,7 @@ layer at (0,0) size 800x1386
                 text run at (2,2) width 11: "A"
                 text run at (2,22) width 27: "Cell"
             RenderTableCell {TD} at (45,0) size 692x204 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
-              RenderPartObject {IFRAME} at (12,12) size 155x180 [border: (5px solid #FF0000)]
+              RenderIFrame {IFRAME} at (12,12) size 155x180 [border: (5px solid #FF0000)]
                 layer at (0,0) size 125x150
                   RenderView at (0,0) size 125x150
                 layer at (0,0) size 125x150
@@ -100,7 +100,7 @@ layer at (0,0) size 800x1386
                 text run at (2,2) width 11: "A"
                 text run at (2,22) width 27: "Cell"
             RenderTableCell {TD} at (45,0) size 692x204 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
-              RenderPartObject {IFRAME} at (12,12) size 155x180 [border: (5px solid #FF0000)]
+              RenderIFrame {IFRAME} at (12,12) size 155x180 [border: (5px solid #FF0000)]
                 layer at (0,0) size 125x150
                   RenderView at (0,0) size 125x150
                 layer at (0,0) size 125x150
@@ -122,7 +122,7 @@ layer at (0,0) size 800x1386
                 text run at (2,2) width 11: "A"
                 text run at (2,22) width 27: "Cell"
             RenderTableCell {TD} at (45,2) size 692x204 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
-              RenderPartObject {IFRAME} at (12,12) size 155x180 [border: (5px solid #FF0000)]
+              RenderIFrame {IFRAME} at (12,12) size 155x180 [border: (5px solid #FF0000)]
                 layer at (0,0) size 125x150
                   RenderView at (0,0) size 125x150
                 layer at (0,0) size 125x150

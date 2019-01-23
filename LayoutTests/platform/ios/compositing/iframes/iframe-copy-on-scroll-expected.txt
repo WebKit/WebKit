@@ -8,7 +8,7 @@ layer at (0,0) size 800x52
           text run at (0,0) width 383: "In pixel results, the blue box should be scrolled out of view."
 layer at (8,52) size 324x229
   RenderBlock (positioned) zI: 1 {DIV} at (8,52) size 324x229
-    RenderPartObject {IFRAME} at (10,10) size 304x204 [border: (2px inset #000000)]
+    RenderIFrame {IFRAME} at (10,10) size 304x204 [border: (2px inset #000000)]
       layer at (0,0) size 300x1018
         RenderView at (0,0) size 300x200
       layer at (0,0) size 300x1018

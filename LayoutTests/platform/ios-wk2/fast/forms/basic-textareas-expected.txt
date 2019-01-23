@@ -3,7 +3,7 @@ layer at (0,0) size 800x1371
 layer at (0,0) size 800x1371
   RenderBlock {HTML} at (0,0) size 800x1371
     RenderBody {BODY} at (0,0) size 800x1371
-      RenderPartObject {IFRAME} at (0,0) size 800x702
+      RenderIFrame {IFRAME} at (0,0) size 800x702
         layer at (0,0) size 800x702
           RenderView at (0,0) size 800x702
         layer at (0,0) size 800x702
@@ -668,7 +668,7 @@ layer at (0,0) size 800x1371
                 text run at (3,28) width 78: "QRSTUVWXYZ"
                 text run at (80,28) width 4: " "
                 text run at (3,42) width 116: "abcdefghijklmnopqrstuv"
-      RenderPartObject {IFRAME} at (0,702) size 800x669
+      RenderIFrame {IFRAME} at (0,702) size 800x669
         layer at (0,0) size 800x669
           RenderView at (0,0) size 800x669
         layer at (0,0) size 800x669

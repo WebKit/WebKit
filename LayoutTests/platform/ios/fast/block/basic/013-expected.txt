@@ -3,7 +3,7 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (0,0) size 800x600
-      RenderPartObject {IFRAME} at (0,0) size 504x104 [border: (2px inset #000000)]
+      RenderIFrame {IFRAME} at (0,0) size 504x104 [border: (2px inset #000000)]
         layer at (0,0) size 500x100
           RenderView at (0,0) size 500x100
         layer at (0,0) size 500x100

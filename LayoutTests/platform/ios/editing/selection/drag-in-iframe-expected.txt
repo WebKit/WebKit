@@ -10,7 +10,7 @@ layer at (0,0) size 800x600
           text run at (766,0) width 5: " "
           text run at (0,20) width 160: "appears inside the frame."
       RenderBlock (anonymous) at (0,56) size 784x152
-        RenderPartObject {IFRAME} at (0,0) size 302x152 [border: (1px solid #000000)]
+        RenderIFrame {IFRAME} at (0,0) size 302x152 [border: (1px solid #000000)]
           layer at (0,0) size 300x150
             RenderView at (0,0) size 300x150
           layer at (0,0) size 300x150

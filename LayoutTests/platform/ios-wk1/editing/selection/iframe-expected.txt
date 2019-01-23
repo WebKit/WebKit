@@ -196,7 +196,7 @@ layer at (0,0) size 800x600
         RenderBlock {DIV} at (0,0) size 784x207
           RenderText {#text} at (0,187) size 51x19
             text run at (0,187) width 51: "iframe: "
-          RenderPartObject {IFRAME} at (50,0) size 403x202 [border: (1px solid #000000)]
+          RenderIFrame {IFRAME} at (50,0) size 403x202 [border: (1px solid #000000)]
             layer at (0,0) size 400x214
               RenderView at (0,0) size 400x200
             layer at (0,0) size 400x214

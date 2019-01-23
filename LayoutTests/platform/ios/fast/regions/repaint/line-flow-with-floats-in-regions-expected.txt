@@ -10,7 +10,7 @@ Named flows
   Named flow 'thread'
     layer at (0,0) size 500x600
       RenderNamedFlowThread at (0,0) size 500x600
-        RenderPartObject {IFRAME} at (0,0) size 500x600
+        RenderIFrame {IFRAME} at (0,0) size 500x600
           layer at (0,0) size 500x642
             RenderView at (0,0) size 500x600
           layer at (0,0) size 500x642
