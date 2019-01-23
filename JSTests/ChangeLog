@@ -1,5 +1,17 @@
 2019-01-22  Yusuke Suzuki  <ysuzuki@apple.com>
 
+        Unreviewed, fix initial global lexical binding epoch
+        https://bugs.webkit.org/show_bug.cgi?id=193603
+        <rdar://problem/47380869>
+
+        * stress/global-lexical-binding-epoch-should-be-correct-one.js: Added.
+        (f1.f2.f3.f4):
+        (f1.f2.f3):
+        (f1.f2):
+        (f1):
+
+2019-01-22  Yusuke Suzuki  <ysuzuki@apple.com>
+
         REGRESSION(r239612) Crash at runtime due to broken DFG assumption
         https://bugs.webkit.org/show_bug.cgi?id=193709
         <rdar://problem/47363838>
