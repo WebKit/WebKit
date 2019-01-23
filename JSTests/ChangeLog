@@ -1,3 +1,17 @@
+2019-01-22  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        REGRESSION(r239612) Crash at runtime due to broken DFG assumption
+        https://bugs.webkit.org/show_bug.cgi?id=193709
+        <rdar://problem/47363838>
+
+        Unreviewed, rollout to watch the tests.
+
+        * stress/object-tostring-changed-proto.js: Removed.
+        * stress/object-tostring-changed.js: Removed.
+        * stress/object-tostring-misc.js: Removed.
+        * stress/object-tostring-other.js: Removed.
+        * stress/object-tostring-untyped.js: Removed.
+
 2019-01-22  Saam Barati  <sbarati@apple.com>
 
         Unreviewed. Rollout r240223. It regressed JetStream2 by 1%.

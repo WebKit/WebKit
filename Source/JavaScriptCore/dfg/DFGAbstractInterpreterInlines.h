@@ -2635,24 +2635,6 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
         break;
     }
 
-    case ObjectToString: {
-        AbstractValue& source = forNode(node->child1());
-        bool clobbering = node->child1().useKind() != OtherUse;
-        if (JSValue sourceValue = source.m_value) {
-            if (sourceValue.isUndefinedOrNull()) {
-                if (clobbering)
-                    didFoldClobberWorld();
-                setConstant(node, *m_graph.freeze(sourceValue.isUndefined() ? m_vm.smallStrings.undefinedObjectString() : m_vm.smallStrings.nullObjectString()));
-                break;
-            }
-        }
-
-        if (clobbering)
-            clobberWorld();
-        setTypeForNode(node, SpecString);
-        break;
-    }
-
     case ToObject:
     case CallObjectConstructor: {
         AbstractValue& source = forNode(node->child1());
