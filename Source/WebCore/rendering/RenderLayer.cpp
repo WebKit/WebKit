@@ -6632,9 +6632,8 @@ static void outputPaintOrderTreeLegend(TextStream& stream)
     stream.nextLine();
     stream << "(S)tacking Context, (N)ormal flow only, (O)verflow clip, (A)lpha (opacity or mask), has (B)lend mode, (I)solates blending, (T)ransform-ish, (F)ilter, Fi(X)ed position, (C)omposited, (c)omposited descendant\n"
         "Dirty (z)-lists, Dirty (n)ormal flow lists\n"
-        "Descendant needs overlap (t)raversal, Descendant needs (b)acking or hierarchy update, All descendants need (r)equirements traversal, All (s)ubsequent layers need requirements traversal, All descendants need (h)ierarchy traversal\n"
-        "Needs compositing paint order update on (s)ubsequent layers, Needs compositing paint (o)rder children update, "
-        "Needs post-(l)ayout update, Needs compositing (g)eometry update, (k)ids need geometry update, Needs compositing (c)onfig update, Needs compositing layer conne(x)ion update";
+        "Traversal needs: requirements (t)raversal on descendants, (b)acking or hierarchy traversal on descendants, (r)equirements traversal on all descendants, requirements traversal on all (s)ubsequent layers, (h)ierarchy traversal on all descendants, update of paint (o)rder children\n"
+        "Update needs:    post-(l)ayout requirements, (g)eometry, (k)ids geometry, (c)onfig, layer conne(x)ion, (s)crolling tree\n";
     stream.nextLine();
 }
 
@@ -6671,15 +6670,16 @@ static void outputPaintOrderTreeRecursive(TextStream& stream, const WebCore::Ren
     stream << (layer.descendantsNeedCompositingRequirementsTraversal() ? "r" : "-");
     stream << (layer.subsequentLayersNeedCompositingRequirementsTraversal() ? "s" : "-");
     stream << (layer.descendantsNeedUpdateBackingAndHierarchyTraversal() ? "h" : "-");
+    stream << (layer.needsCompositingPaintOrderChildrenUpdate() ? "o" : "-");
 
     stream << " ";
 
-    stream << (layer.needsCompositingPaintOrderChildrenUpdate() ? "o" : "-");
     stream << (layer.needsPostLayoutCompositingUpdate() ? "l" : "-");
     stream << (layer.needsCompositingGeometryUpdate() ? "g" : "-");
     stream << (layer.childrenNeedCompositingGeometryUpdate() ? "k" : "-");
     stream << (layer.needsCompositingConfigurationUpdate() ? "c" : "-");
     stream << (layer.needsCompositingLayerConnection() ? "x" : "-");
+    stream << (layer.needsScrollingTreeUpdate() ? "s" : "-");
 
     stream << " ";
 

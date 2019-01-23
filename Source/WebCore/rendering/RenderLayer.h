@@ -202,9 +202,10 @@ private:
         // Things that trigger HasDescendantNeedingBackingOrHierarchyTraversal
         NeedsGeometryUpdate                                 = 1 << 6, // This layer needs a geometry update.
         NeedsConfigurationUpdate                            = 1 << 7, // This layer needs a configuration update (updating its internal compositing hierarchy).
-        NeedsLayerConnection                                = 1 << 8, // This layer needs hookup with its parents or children.
-        ChildrenNeedGeometryUpdate                          = 1 << 9, // This layer's composited children needs a geometry update.
-        DescendantsNeedBackingAndHierarchyTraversal         = 1 << 10, // Something changed that forces us to traverse all descendant layers in updateBackingAndHierarchy.
+        NeedsScrollingTreeUpdate                            = 1 << 8, // Something changed that requires this layer's scrolling tree node to be updated.
+        NeedsLayerConnection                                = 1 << 9, // This layer needs hookup with its parents or children.
+        ChildrenNeedGeometryUpdate                          = 1 << 10, // This layer's composited children need a geometry update.
+        DescendantsNeedBackingAndHierarchyTraversal         = 1 << 11, // Something changed that forces us to traverse all descendant layers in updateBackingAndHierarchy.
     };
 
     static constexpr OptionSet<Compositing> computeCompositingRequirementsFlags()
@@ -223,6 +224,7 @@ private:
             Compositing::NeedsLayerConnection,
             Compositing::NeedsGeometryUpdate,
             Compositing::NeedsConfigurationUpdate,
+            Compositing::NeedsScrollingTreeUpdate,
             Compositing::ChildrenNeedGeometryUpdate,
             Compositing::DescendantsNeedBackingAndHierarchyTraversal,
         };
@@ -242,6 +244,7 @@ public:
     bool needsCompositingLayerConnection() const { return m_compositingDirtyBits.contains(Compositing::NeedsLayerConnection); }
     bool needsCompositingGeometryUpdate() const { return m_compositingDirtyBits.contains(Compositing::NeedsGeometryUpdate); }
     bool needsCompositingConfigurationUpdate() const { return m_compositingDirtyBits.contains(Compositing::NeedsConfigurationUpdate); }
+    bool needsScrollingTreeUpdate() const { return m_compositingDirtyBits.contains(Compositing::NeedsScrollingTreeUpdate); }
     bool childrenNeedCompositingGeometryUpdate() const { return m_compositingDirtyBits.contains(Compositing::ChildrenNeedGeometryUpdate); }
     bool descendantsNeedUpdateBackingAndHierarchyTraversal() const { return m_compositingDirtyBits.contains(Compositing::DescendantsNeedBackingAndHierarchyTraversal); }
 
@@ -269,6 +272,7 @@ public:
     void setNeedsCompositingLayerConnection() { setBackingAndHierarchyTraversalDirtyBit<Compositing::NeedsLayerConnection>(); }
     void setNeedsCompositingGeometryUpdate() { setBackingAndHierarchyTraversalDirtyBit<Compositing::NeedsGeometryUpdate>(); }
     void setNeedsCompositingConfigurationUpdate() { setBackingAndHierarchyTraversalDirtyBit<Compositing::NeedsConfigurationUpdate>(); }
+    void setNeedsScrollingTreeUpdate() { setBackingAndHierarchyTraversalDirtyBit<Compositing::NeedsScrollingTreeUpdate>(); }
     void setChildrenNeedCompositingGeometryUpdate() { setBackingAndHierarchyTraversalDirtyBit<Compositing::ChildrenNeedGeometryUpdate>(); }
     void setDescendantsNeedUpdateBackingAndHierarchyTraversal() { setBackingAndHierarchyTraversalDirtyBit<Compositing::DescendantsNeedBackingAndHierarchyTraversal>(); }
 

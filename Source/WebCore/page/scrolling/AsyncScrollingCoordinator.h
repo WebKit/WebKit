@@ -100,7 +100,9 @@ private:
     WEBCORE_EXPORT ScrollingNodeID attachToStateTree(ScrollingNodeType, ScrollingNodeID newNodeID, ScrollingNodeID parentID, size_t childIndex) override;
     WEBCORE_EXPORT void detachFromStateTree(ScrollingNodeID) override;
     WEBCORE_EXPORT void clearStateTree() override;
-    
+
+    WEBCORE_EXPORT Vector<ScrollingNodeID> childrenOfNode(ScrollingNodeID) const override;
+
     WEBCORE_EXPORT void setNodeLayers(ScrollingNodeID, GraphicsLayer* /*layer*/, GraphicsLayer* /*scrolledContentsLayer*/ = nullptr, GraphicsLayer* /*counterScrollingLayer*/ = nullptr, GraphicsLayer* /*insetClipLayer*/ = nullptr) override;
     WEBCORE_EXPORT void setScrollingNodeGeometry(ScrollingNodeID, const ScrollingGeometry&) override;
     WEBCORE_EXPORT void setViewportConstraintedNodeGeometry(ScrollingNodeID, const ViewportConstraints&) override;

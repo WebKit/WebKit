@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Check that compositing traverses deeply enough to re-parent scrolling tree nodes</title>
+    <script>
+        if (window.testRunner) {
+            testRunner.dumpAsText();
+            testRunner.waitUntilDone();
+        }
+
+        if (window.internals)
+            window.internals.settings.setAsyncOverflowScrollingEnabled(true);
+
+        function doTest()
+        {
+            requestAnimationFrame(() => {
+                document.getElementById('main').classList.add('changed');
+                if (window.internals)
+                    document.getElementById('scrollingTree').innerText = window.internals.scrollingStateTreeAsText() + "\n";
+
+                if (window.testRunner)
+                    testRunner.notifyDone();
+            });
+        }
+
+        window.addEventListener('load', doTest, false);
+    </script>
+    <style>
+        .scroller {
+            position: relative;
+            z-index: 0; /* We want z-order nesting */
+            background-color: silver;
+            border: 1px solid black;
+            padding: 20px;
+            margin: 20px;
+            width: 400px;
+            height: 300px;
+            overflow: scroll;
+        }
+        
+        #main {
+            height: 500px;
+        }
+        
+        #main.changed {
+            overflow: hidden;
+        }
+        
+        .scrolling-content {
+            height: 1000px;
+        }
+
+        .intermediate {
+            position: relative;
+            z-index: 0;
+        }
+        
+        .composited {
+            transform: translateZ(1px);
+            background-color: orange;
+        }
+    </style>
+</head>
+<body>
+    <div class="scroller" id="main">
+        <div class="scrolling-content">
+            Scrolling content
+                <div class="intermediate composited">
+                    Intermediate
+                    <div class="inner scroller">
+                        <div class="scrolling-content">
+                        Inner scrolling content
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <pre id="scrollingTree"></pre>
+</body>
+</html>

@@ -1,3 +1,36 @@
+2019-01-22  Simon Fraser  <simon.fraser@apple.com>
+
+        Compositing updates need to reparent scrolling tree nodes with a changed ancestor
+        https://bugs.webkit.org/show_bug.cgi?id=193699
+
+        Reviewed by Frédéric Wang.
+
+        Now that compositing updates are incremental and may not do a full layer walk,
+        we need to ensure that when a scrolling tree node is removed, we traverse to all
+        descendant layers whose scrolling tree nodes refer to the removed node as their parent.
+
+        To achieve this, add a RenderLayer dirty bit for "NeedsScrollingTreeUpdate" which
+        ensures that the updateBackingAndHierarchy part of the compositing update traverses
+        layers with the bit set.
+
+        Adjust the compositing logging to make the legend easier to read.
+
+        Tests: scrollingcoordinator/reparent-across-compositing-layers.html
+               scrollingcoordinator/reparent-with-layer-removal.html
+
+        * page/scrolling/AsyncScrollingCoordinator.cpp:
+        (WebCore::AsyncScrollingCoordinator::childrenOfNode const):
+        * page/scrolling/AsyncScrollingCoordinator.h:
+        * page/scrolling/ScrollingCoordinator.h:
+        (WebCore::ScrollingCoordinator::childrenOfNode const):
+        * rendering/RenderLayer.cpp:
+        (WebCore::outputPaintOrderTreeLegend):
+        (WebCore::outputPaintOrderTreeRecursive):
+        * rendering/RenderLayer.h:
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::updateBackingAndHierarchy):
+        (WebCore::RenderLayerCompositor::detachScrollCoordinatedLayer):
+
 2019-01-23  Oriol Brufau  <obrufau@igalia.com>
 
         [css-logical] Implement flow-relative inset properties

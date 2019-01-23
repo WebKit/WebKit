@@ -1,3 +1,17 @@
+2019-01-22  Simon Fraser  <simon.fraser@apple.com>
+
+        Compositing updates need to reparent scrolling tree nodes with a changed ancestor
+        https://bugs.webkit.org/show_bug.cgi?id=193699
+
+        Reviewed by Frédéric Wang.
+
+        * platform/ios-wk2/scrollingcoordinator/reparent-across-compositing-layers-expected.txt: Added.
+        * platform/ios-wk2/scrollingcoordinator/reparent-with-layer-removal-expected.txt: Added.
+        * scrollingcoordinator/reparent-across-compositing-layers-expected.txt: Added.
+        * scrollingcoordinator/reparent-across-compositing-layers.html: Added.
+        * scrollingcoordinator/reparent-with-layer-removal-expected.txt: Added.
+        * scrollingcoordinator/reparent-with-layer-removal.html: Added.
+
 2019-01-23  Oriol Brufau  <obrufau@igalia.com>
 
         [css-logical] Implement flow-relative inset properties

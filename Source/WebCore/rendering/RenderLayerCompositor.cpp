@@ -1130,7 +1130,7 @@ void RenderLayerCompositor::updateBackingAndHierarchy(RenderLayer& layer, Vector
             layerBacking->updateDebugIndicators(m_showDebugBorders, m_showRepaintCounter);
         }
         
-        if (layerNeedsUpdate || layer.needsCompositingGeometryUpdate())
+        if (layerNeedsUpdate || layer.needsCompositingGeometryUpdate() || layer.needsScrollingTreeUpdate())
             layerBacking->updateGeometry();
 
         if (auto* reflection = layer.reflectionLayer()) {
@@ -3837,14 +3837,29 @@ void RenderLayerCompositor::detachScrollCoordinatedLayer(RenderLayer& layer, Opt
     if (!backing)
         return;
 
+    auto* scrollingCoordinator = this->scrollingCoordinator();
+
+    auto dirtyDescendantScrollingLayers = [&] (ScrollingNodeID nodeID) {
+        auto childNodes = scrollingCoordinator->childrenOfNode(nodeID);
+        for (auto childNodeID : childNodes) {
+            // FIXME: The child might be in a child frame. Need to do something that crosses frame boundaries.
+            if (auto* layer = m_scrollingNodeToLayerMap.get(childNodeID))
+                layer->setNeedsScrollingTreeUpdate();
+        }
+    };
+
     if (roles.contains(ScrollCoordinationRole::Scrolling)) {
-        if (ScrollingNodeID nodeID = backing->scrollingNodeIDForRole(ScrollCoordinationRole::Scrolling))
+        if (ScrollingNodeID nodeID = backing->scrollingNodeIDForRole(ScrollCoordinationRole::Scrolling)) {
+            dirtyDescendantScrollingLayers(nodeID);
             m_scrollingNodeToLayerMap.remove(nodeID);
+        }
     }
 
     if (roles.contains(ScrollCoordinationRole::ViewportConstrained)) {
-        if (ScrollingNodeID nodeID = backing->scrollingNodeIDForRole(ScrollCoordinationRole::ViewportConstrained))
+        if (ScrollingNodeID nodeID = backing->scrollingNodeIDForRole(ScrollCoordinationRole::ViewportConstrained)) {
+            dirtyDescendantScrollingLayers(nodeID);
             m_scrollingNodeToLayerMap.remove(nodeID);
+        }
     }
 
     backing->detachFromScrollingCoordinator(roles);

@@ -502,6 +502,24 @@ void AsyncScrollingCoordinator::clearStateTree()
     m_scrollingStateTree->clear();
 }
 
+Vector<ScrollingNodeID> AsyncScrollingCoordinator::childrenOfNode(ScrollingNodeID nodeID) const
+{
+    auto* scrollingNode = m_scrollingStateTree->stateNodeForID(nodeID);
+    if (!scrollingNode)
+        return { };
+
+    auto* children = scrollingNode->children();
+    if (!children || children->isEmpty())
+        return { };
+    
+    Vector<ScrollingNodeID> childNodeIDs;
+    childNodeIDs.reserveInitialCapacity(children->size());
+    for (const auto& childNode : *children)
+        childNodeIDs.uncheckedAppend(childNode->scrollingNodeID());
+
+    return childNodeIDs;
+}
+
 void AsyncScrollingCoordinator::reconcileViewportConstrainedLayerPositions(ScrollingNodeID scrollingNodeID, const LayoutRect& viewportRect, ScrollingLayerPositionAction action)
 {
     auto* scrollingNode = m_scrollingStateTree->stateNodeForID(scrollingNodeID);
