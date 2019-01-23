@@ -1,3 +1,13 @@
+2019-01-22  Youenn Fablet  <youenn@apple.com>
+
+        Resync libwebrtc with latest M72 branch
+        https://bugs.webkit.org/show_bug.cgi?id=193693
+        <rdar://problem/47463803>
+
+        Reviewed by Eric Carlson.
+
+        * web-platform-tests/webrtc/RTCRtpTransceiver.https-expected.txt:
+
 2019-01-22  Oriol Brufau  <obrufau@igalia.com>
 
         [css-logical] Implement flow-relative margin, padding and border shorthands

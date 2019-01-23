@@ -1799,14 +1799,12 @@ bool MediaSessionDescriptionFactory::AddTransportOffer(
   std::unique_ptr<TransportDescription> new_tdesc(
       transport_desc_factory_->CreateOffer(transport_options, current_tdesc,
                                            ice_credentials));
-  bool ret =
-      (new_tdesc.get() != NULL &&
-       offer_desc->AddTransportInfo(TransportInfo(content_name, *new_tdesc)));
-  if (!ret) {
+  if (!new_tdesc) {
     RTC_LOG(LS_ERROR) << "Failed to AddTransportOffer, content name="
                       << content_name;
   }
-  return ret;
+  offer_desc->AddTransportInfo(TransportInfo(content_name, *new_tdesc));
+  return true;
 }
 
 TransportDescription* MediaSessionDescriptionFactory::CreateTransportAnswer(
@@ -1831,12 +1829,7 @@ bool MediaSessionDescriptionFactory::AddTransportAnswer(
     const std::string& content_name,
     const TransportDescription& transport_desc,
     SessionDescription* answer_desc) const {
-  if (!answer_desc->AddTransportInfo(
-          TransportInfo(content_name, transport_desc))) {
-    RTC_LOG(LS_ERROR) << "Failed to AddTransportAnswer, content name="
-                      << content_name;
-    return false;
-  }
+  answer_desc->AddTransportInfo(TransportInfo(content_name, transport_desc));
   return true;
 }
 

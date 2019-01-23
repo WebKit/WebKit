@@ -1084,6 +1084,22 @@ TEST_P(PeerConnectionMediaTest, ReOfferHasSameMidsAsFirstOffer) {
             cricket::GetFirstVideoContent(reoffer->description())->name);
 }
 
+// Test that SetRemoteDescription returns an error if there are two m= sections
+// with the same MID value.
+TEST_P(PeerConnectionMediaTest, SetRemoteDescriptionFailsWithDuplicateMids) {
+  auto caller = CreatePeerConnectionWithAudioVideo();
+  auto callee = CreatePeerConnectionWithAudioVideo();
+
+  auto offer = caller->CreateOffer();
+  RenameContent(offer->description(), cricket::MEDIA_TYPE_AUDIO, "same");
+  RenameContent(offer->description(), cricket::MEDIA_TYPE_VIDEO, "same");
+
+  std::string error;
+  EXPECT_FALSE(callee->SetRemoteDescription(std::move(offer), &error));
+  EXPECT_EQ(error,
+            "Failed to set remote offer sdp: Duplicate a=mid value 'same'.");
+}
+
 TEST_P(PeerConnectionMediaTest,
        CombinedAudioVideoBweConfigPropagatedToMediaEngine) {
   RTCConfiguration config;

@@ -394,15 +394,9 @@ NetworkControlUpdate GoogCcNetworkController::OnTransportLossReport(
 NetworkControlUpdate GoogCcNetworkController::OnTransportPacketsFeedback(
     TransportPacketsFeedback report) {
   if (report.packet_feedbacks.empty()) {
-    DelayBasedBwe::Result result = delay_based_bwe_->OnDelayedFeedback(
-        report.sendless_arrival_times.back());
-    NetworkControlUpdate update;
-    if (result.updated) {
-      bandwidth_estimation_->UpdateDelayBasedEstimate(report.feedback_time,
-                                                      result.target_bitrate);
-      MaybeTriggerOnNetworkChanged(&update, report.feedback_time);
-    }
-    return update;
+    // TODO(bugs.webrtc.org/10125): Design a better mechanism to safe-guard
+    // against building very large network queues.
+    return NetworkControlUpdate();
   }
 
   if (congestion_window_pushback_controller_) {

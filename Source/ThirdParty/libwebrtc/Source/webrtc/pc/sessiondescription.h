@@ -447,8 +447,7 @@ class SessionDescription {
     transport_infos_ = transport_infos;
   }
   // Adds a TransportInfo to this description.
-  // Returns false if a TransportInfo with the same name already exists.
-  bool AddTransportInfo(const TransportInfo& transport_info);
+  void AddTransportInfo(const TransportInfo& transport_info);
   bool RemoveTransportInfoByName(const std::string& name);
 
   // Group accessors.

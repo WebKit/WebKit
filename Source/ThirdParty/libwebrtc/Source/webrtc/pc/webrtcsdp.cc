@@ -2363,20 +2363,6 @@ static C* ParseContentDescription(const std::string& message,
                                   std::vector<JsepIceCandidate*>* candidates,
                                   webrtc::SdpParseError* error) {
   C* media_desc = new C();
-  switch (media_type) {
-    case cricket::MEDIA_TYPE_AUDIO:
-      *content_name = cricket::CN_AUDIO;
-      break;
-    case cricket::MEDIA_TYPE_VIDEO:
-      *content_name = cricket::CN_VIDEO;
-      break;
-    case cricket::MEDIA_TYPE_DATA:
-      *content_name = cricket::CN_DATA;
-      break;
-    default:
-      RTC_NOTREACHED();
-      break;
-  }
   if (!ParseContent(message, media_type, mline_index, protocol, payload_types,
                     pos, content_name, bundle_only, msid_signaling, media_desc,
                     transport, candidates, error)) {
@@ -2559,14 +2545,7 @@ bool ParseMediaDescription(const std::string& message,
                                           : MediaProtocolType::kRtp,
                      content_rejected, bundle_only, content.release());
     // Create TransportInfo with the media level "ice-pwd" and "ice-ufrag".
-    TransportInfo transport_info(content_name, transport);
-
-    if (!desc->AddTransportInfo(transport_info)) {
-      rtc::StringBuilder description;
-      description << "Failed to AddTransportInfo with content name: "
-                  << content_name;
-      return ParseFailed("", description.str(), error);
-    }
+    desc->AddTransportInfo(TransportInfo(content_name, transport));
   }
 
   desc->set_msid_signaling(msid_signaling);

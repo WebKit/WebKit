@@ -1,3 +1,35 @@
+2019-01-22  Youenn Fablet  <youenn@apple.com>
+
+        Resync libwebrtc with latest M72 branch
+        https://bugs.webkit.org/show_bug.cgi?id=193693
+
+        Reviewed by Eric Carlson.
+
+        Update libwebrtc up to latest M72 branch to fix some identified issues:
+        - Bad bandwidth estimation in case of multiple transceivers
+        - mid handling for legacy endpoints
+        - msid handling for updating mediastreams accordingly.
+
+        * Source/webrtc/modules/congestion_controller/goog_cc/delay_based_bwe.cc:
+        * Source/webrtc/modules/congestion_controller/goog_cc/delay_based_bwe.h:
+        * Source/webrtc/modules/congestion_controller/goog_cc/goog_cc_network_control.cc:
+        * Source/webrtc/modules/congestion_controller/goog_cc/goog_cc_network_control_unittest.cc:
+        * Source/webrtc/modules/congestion_controller/send_side_congestion_controller_unittest.cc:
+        * Source/webrtc/pc/jsepsessiondescription_unittest.cc:
+        * Source/webrtc/pc/mediasession.cc:
+        * Source/webrtc/pc/mediasession_unittest.cc:
+        * Source/webrtc/pc/peerconnection.cc:
+        * Source/webrtc/pc/peerconnection.h:
+        * Source/webrtc/pc/peerconnection_jsep_unittest.cc:
+        * Source/webrtc/pc/peerconnection_media_unittest.cc:
+        * Source/webrtc/pc/peerconnection_rtp_unittest.cc:
+        * Source/webrtc/pc/sessiondescription.cc:
+        * Source/webrtc/pc/sessiondescription.h:
+        * Source/webrtc/pc/webrtcsdp.cc:
+        * Source/webrtc/pc/webrtcsdp_unittest.cc:
+        * Source/webrtc/system_wrappers/include/metrics.h:
+        * Source/webrtc/video/BUILD.gn:
+
 2019-01-18  Jer Noble  <jer.noble@apple.com>
 
         SDK_VARIANT build destinations should be separate from non-SDK_VARIANT builds
