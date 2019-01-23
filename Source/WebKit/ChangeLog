@@ -1,3 +1,17 @@
+2019-01-23  Brent Fulgham  <bfulgham@apple.com>
+
+        REGRESSION (r240243): CrashTracer: WebKitTestRunnerApp at com.apple.WebKit: WebKit::WebResourceLoadStatisticsStore::sendDiagnosticMessageWithValue const + 32
+        https://bugs.webkit.org/show_bug.cgi?id=193723
+        <rdar://problem/47476802>
+
+        Reviewed by David Kilzer.
+
+        The new code added in r240243 could attempt to submit telemetry after the relevant
+        WebResourceLoadStatisticsStore was destroyed. We should guard against this possibility.
+
+        * NetworkProcess/Classifier/WebResourceLoadStatisticsTelemetry.cpp:
+        (WebKit::WebResourceLoadStatisticsTelemetry::calculateAndSubmit):
+
 2019-01-23  Antti Koivisto  <antti@apple.com>
 
         [PSON] Flash on back navigation on Mac
