@@ -185,8 +185,6 @@ inline void JSObject::putDirectWithoutTransition(VM& vm, PropertyName propertyNa
     StructureID structureID = this->structureID();
     Structure* structure = vm.heap.structureIDTable().get(structureID);
     PropertyOffset offset = prepareToPutDirectWithoutTransition(vm, propertyName, attributes, structureID, structure);
-    bool shouldOptimize = false;
-    structure->willStoreValueForNewTransition(vm, propertyName, value, shouldOptimize);
     putDirect(vm, offset, value);
     if (attributes & PropertyAttribute::ReadOnly)
         structure->setContainsReadOnlyProperties();
@@ -281,7 +279,6 @@ ALWAYS_INLINE bool JSObject::putDirectInternal(VM& vm, PropertyName propertyName
     Structure* structure = vm.heap.structureIDTable().get(structureID);
     if (structure->isDictionary()) {
         ASSERT(!isCopyOnWrite(indexingMode()));
-        ASSERT(!structure->hasInferredTypes());
         
         unsigned currentAttributes;
         PropertyOffset offset = structure->get(vm, propertyName, currentAttributes);
@@ -318,9 +315,6 @@ ALWAYS_INLINE bool JSObject::putDirectInternal(VM& vm, PropertyName propertyName
     Structure* newStructure = Structure::addPropertyTransitionToExistingStructure(
         structure, propertyName, attributes, offset);
     if (newStructure) {
-        newStructure->willStoreValueForExistingTransition(
-            vm, propertyName, value, slot.context() == PutPropertySlot::PutById);
-        
         Butterfly* newButterfly = butterfly();
         if (currentCapacity != newStructure->outOfLineCapacity()) {
             ASSERT(newStructure != this->structure(vm));
@@ -341,18 +335,12 @@ ALWAYS_INLINE bool JSObject::putDirectInternal(VM& vm, PropertyName propertyName
     }
 
     unsigned currentAttributes;
-    bool hasInferredType;
-    offset = structure->get(vm, propertyName, currentAttributes, hasInferredType);
+    offset = structure->get(vm, propertyName, currentAttributes);
     if (offset != invalidOffset) {
         if ((mode == PutModePut) && currentAttributes & PropertyAttribute::ReadOnly)
             return false;
 
         structure->didReplaceProperty(offset);
-        if (UNLIKELY(hasInferredType)) {
-            structure->willStoreValueForReplace(
-                vm, propertyName, value, slot.context() == PutPropertySlot::PutById);
-        }
-
         putDirect(vm, offset, value);
 
         if ((attributes & PropertyAttribute::Accessor) != (currentAttributes & PropertyAttribute::Accessor) || (attributes & PropertyAttribute::CustomAccessorOrValue) != (currentAttributes & PropertyAttribute::CustomAccessorOrValue)) {
@@ -374,8 +362,6 @@ ALWAYS_INLINE bool JSObject::putDirectInternal(VM& vm, PropertyName propertyName
     
     newStructure = Structure::addNewPropertyTransition(
         vm, structure, propertyName, attributes, offset, slot.context(), &deferredWatchpointFire);
-    newStructure->willStoreValueForNewTransition(
-        vm, propertyName, value, slot.context() == PutPropertySlot::PutById);
     
     validateOffset(offset);
     ASSERT(newStructure->isValidOffset(offset));

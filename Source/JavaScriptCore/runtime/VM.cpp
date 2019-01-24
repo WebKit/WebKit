@@ -63,7 +63,6 @@
 #include "Identifier.h"
 #include "IncrementalSweeper.h"
 #include "IndirectEvalExecutable.h"
-#include "InferredTypeTable.h"
 #include "InferredValue.h"
 #include "Interpreter.h"
 #include "IntlCollatorConstructor.h"
@@ -303,7 +302,6 @@ VM::VM(VMType vmType, HeapType heapType)
     , executableToCodeBlockEdgeSpace ISO_SUBSPACE_INIT(heap, cellDangerousBitsHeapCellType.get(), ExecutableToCodeBlockEdge)
     , functionSpace ISO_SUBSPACE_INIT(heap, cellJSValueOOBHeapCellType.get(), JSFunction)
     , generatorFunctionSpace ISO_SUBSPACE_INIT(heap, cellJSValueOOBHeapCellType.get(), JSGeneratorFunction)
-    , inferredTypeSpace ISO_SUBSPACE_INIT(heap, destructibleCellHeapCellType.get(), InferredType)
     , inferredValueSpace ISO_SUBSPACE_INIT(heap, destructibleCellHeapCellType.get(), InferredValue)
     , internalFunctionSpace ISO_SUBSPACE_INIT(heap, destructibleObjectHeapCellType.get(), InternalFunction)
 #if ENABLE(INTL)
@@ -334,7 +332,6 @@ VM::VM(VMType vmType, HeapType heapType)
 #endif
     , executableToCodeBlockEdgesWithConstraints(executableToCodeBlockEdgeSpace)
     , executableToCodeBlockEdgesWithFinalizers(executableToCodeBlockEdgeSpace)
-    , inferredTypesWithFinalizers(inferredTypeSpace)
     , inferredValuesWithFinalizers(inferredValueSpace)
     , evalCodeBlockSpace ISO_SUBSPACE_INIT(heap, destructibleCellHeapCellType.get(), EvalCodeBlock)
     , functionCodeBlockSpace ISO_SUBSPACE_INIT(heap, destructibleCellHeapCellType.get(), FunctionCodeBlock)
@@ -427,8 +424,6 @@ VM::VM(VMType vmType, HeapType heapType)
     unlinkedFunctionCodeBlockStructure.set(*this, UnlinkedFunctionCodeBlock::createStructure(*this, 0, jsNull()));
     unlinkedModuleProgramCodeBlockStructure.set(*this, UnlinkedModuleProgramCodeBlock::createStructure(*this, 0, jsNull()));
     propertyTableStructure.set(*this, PropertyTable::createStructure(*this, 0, jsNull()));
-    inferredTypeStructure.set(*this, InferredType::createStructure(*this, 0, jsNull()));
-    inferredTypeTableStructure.set(*this, InferredTypeTable::createStructure(*this, 0, jsNull()));
     inferredValueStructure.set(*this, InferredValue::createStructure(*this, 0, jsNull()));
     functionRareDataStructure.set(*this, FunctionRareData::createStructure(*this, 0, jsNull()));
     exceptionStructure.set(*this, Exception::createStructure(*this, 0, jsNull()));

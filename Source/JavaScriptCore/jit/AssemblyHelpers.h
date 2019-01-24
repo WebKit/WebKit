@@ -1052,10 +1052,6 @@ public:
 #endif
     }
 
-    JumpList branchIfNotType(
-        JSValueRegs, GPRReg tempGPR, const InferredType::Descriptor&,
-        TagRegistersMode = HaveTagRegisters);
-
     template<typename T>
     Jump branchStructure(RelationalCondition condition, T leftHandSide, Structure* structure)
     {

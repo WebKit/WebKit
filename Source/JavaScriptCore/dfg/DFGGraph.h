@@ -797,26 +797,10 @@ public:
     // computed by tracking which conditions we track with watchCondition().
     bool isSafeToLoad(JSObject* base, PropertyOffset);
 
-    void registerInferredType(const InferredType::Descriptor& type)
-    {
-        if (type.structure())
-            registerStructure(type.structure());
-    }
-
-    // Tells us what inferred type we are able to prove the property to have now and in the future.
-    InferredType::Descriptor inferredTypeFor(const PropertyTypeKey&);
-    InferredType::Descriptor inferredTypeForProperty(Structure* structure, UniquedStringImpl* uid)
-    {
-        return inferredTypeFor(PropertyTypeKey(structure, uid));
-    }
-
-    AbstractValue inferredValueForProperty(
-        const RegisteredStructureSet& base, UniquedStringImpl* uid, StructureClobberState = StructuresAreWatched);
-
     // This uses either constant property inference or property type inference to derive a good abstract
     // value for some property accessed with the given abstract value base.
     AbstractValue inferredValueForProperty(
-        const AbstractValue& base, UniquedStringImpl* uid, PropertyOffset, StructureClobberState);
+        const AbstractValue& base, PropertyOffset, StructureClobberState);
     
     FullBytecodeLiveness& livenessFor(CodeBlock*);
     FullBytecodeLiveness& livenessFor(InlineCallFrame*);
@@ -1065,7 +1049,6 @@ public:
     HashMap<CodeBlock*, std::unique_ptr<FullBytecodeLiveness>> m_bytecodeLiveness;
     HashMap<CodeBlock*, std::unique_ptr<BytecodeKills>> m_bytecodeKills;
     HashSet<std::pair<JSObject*, PropertyOffset>> m_safeToLoad;
-    HashMap<PropertyTypeKey, InferredType::Descriptor> m_inferredTypes;
     Vector<Ref<Snippet>> m_domJITSnippets;
     std::unique_ptr<CPSDominators> m_cpsDominators;
     std::unique_ptr<SSADominators> m_ssaDominators;

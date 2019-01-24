@@ -2294,14 +2294,14 @@ private:
                         // at this point, we can simply trust that the incoming value has the right type
                         // for whatever structure we are using.
                         data->variants.append(
-                            PutByIdVariant::replace(currentSet, currentOffset, InferredType::Top));
+                            PutByIdVariant::replace(currentSet, currentOffset));
                         currentOffset = offset;
                         currentSet.clear();
                     }
                     currentSet.add(structure.get());
                 }
                 data->variants.append(
-                    PutByIdVariant::replace(currentSet, currentOffset, InferredType::Top));
+                    PutByIdVariant::replace(currentSet, currentOffset));
             }
 
             return m_graph.addNode(

@@ -659,10 +659,9 @@ void JIT::emitSlow_op_get_by_id_with_this(const Instruction* currentInstruction,
 void JIT::emit_op_put_by_id(const Instruction* currentInstruction)
 {
     auto bytecode = currentInstruction->as<OpPutById>();
-    auto& metadata = bytecode.metadata(m_codeBlock);
     int baseVReg = bytecode.base.offset();
     int valueVReg = bytecode.value.offset();
-    unsigned direct = metadata.flags & PutByIdIsDirect;
+    bool direct = !!(bytecode.flags & PutByIdIsDirect);
 
     // In order to be able to patch both the Structure, and the object offset, we store one pointer,
     // to just after the arguments have been loaded into registers 'hotPathBegin', and we generate code

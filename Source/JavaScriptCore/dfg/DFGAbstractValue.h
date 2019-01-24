@@ -34,7 +34,6 @@
 #include "DFGNodeFlags.h"
 #include "DFGStructureAbstractValue.h"
 #include "DFGStructureClobberState.h"
-#include "InferredType.h"
 #include "JSCast.h"
 #include "ResultType.h"
 #include "SpeculatedType.h"
@@ -249,9 +248,6 @@ struct AbstractValue {
         checkConsistency();
     }
 
-    void set(Graph&, const InferredType::Descriptor&);
-    void set(Graph&, const InferredType::Descriptor&, StructureClobberState);
-
     void fixTypeForRepresentation(Graph&, NodeFlags representation, Node* = nullptr);
     void fixTypeForRepresentation(Graph&, Node*);
     
@@ -318,8 +314,6 @@ struct AbstractValue {
         return !(m_type & ~desiredType);
     }
 
-    bool isType(Graph&, const InferredType::Descriptor&) const;
-
     // Filters the value using the given structure set. If the admittedTypes argument is not passed, this
     // implicitly filters by the types implied by the structure set, which are usually a subset of
     // SpecCell. Hence, after this call, the value will no longer have any non-cell members. But, you can
@@ -354,8 +348,6 @@ struct AbstractValue {
     FiltrationResult filter(const AbstractValue&);
     FiltrationResult filterClassInfo(Graph&, const ClassInfo*);
 
-    FiltrationResult filter(Graph&, const InferredType::Descriptor&);
-    
     ALWAYS_INLINE FiltrationResult fastForwardToAndFilterUnproven(AbstractValueClobberEpoch newEpoch, SpeculatedType type)
     {
         if (m_type & SpecCell)

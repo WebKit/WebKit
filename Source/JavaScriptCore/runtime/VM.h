@@ -377,7 +377,6 @@ public:
     IsoSubspace executableToCodeBlockEdgeSpace;
     IsoSubspace functionSpace;
     IsoSubspace generatorFunctionSpace;
-    IsoSubspace inferredTypeSpace;
     IsoSubspace inferredValueSpace;
     IsoSubspace internalFunctionSpace;
 #if ENABLE(INTL)
@@ -409,7 +408,6 @@ public:
     
     IsoCellSet executableToCodeBlockEdgesWithConstraints;
     IsoCellSet executableToCodeBlockEdgesWithFinalizers;
-    IsoCellSet inferredTypesWithFinalizers;
     IsoCellSet inferredValuesWithFinalizers;
     
     struct SpaceAndFinalizerSet {
@@ -551,8 +549,6 @@ public:
     Strong<Structure> unlinkedFunctionCodeBlockStructure;
     Strong<Structure> unlinkedModuleProgramCodeBlockStructure;
     Strong<Structure> propertyTableStructure;
-    Strong<Structure> inferredTypeStructure;
-    Strong<Structure> inferredTypeTableStructure;
     Strong<Structure> inferredValueStructure;
     Strong<Structure> functionRareDataStructure;
     Strong<Structure> exceptionStructure;

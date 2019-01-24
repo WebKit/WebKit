@@ -846,7 +846,7 @@ LLINT_SLOW_PATH_DECL(slow_path_put_by_id)
     
     JSValue baseValue = LLINT_OP_C(bytecode.base).jsValue();
     PutPropertySlot slot(baseValue, codeBlock->isStrictMode(), codeBlock->putByIdContext());
-    if (metadata.flags & PutByIdIsDirect)
+    if (bytecode.flags & PutByIdIsDirect)
         CommonSlowPaths::putDirectWithReify(vm, exec, asObject(baseValue), ident, LLINT_OP_C(bytecode.value).jsValue(), slot);
     else
         baseValue.putInline(exec, ident, LLINT_OP_C(bytecode.value).jsValue(), slot);
@@ -876,7 +876,6 @@ LLINT_SLOW_PATH_DECL(slow_path_put_by_id)
         metadata.offset = 0;
         metadata.newStructure = 0;
         metadata.structureChain.clear();
-        metadata.flags = static_cast<PutByIdFlags>(metadata.flags & PutByIdPersistentFlagsMask);
         
         JSCell* baseCell = baseValue.asCell();
         Structure* structure = baseCell->structure(vm);
@@ -900,23 +899,17 @@ LLINT_SLOW_PATH_DECL(slow_path_put_by_id)
                         metadata.oldStructure = structure->previousID()->id();
                         metadata.offset = slot.cachedOffset();
                         metadata.newStructure = structure->id();
-                        if (!(metadata.flags & PutByIdIsDirect)) {
+                        if (!(bytecode.flags & PutByIdIsDirect)) {
                             StructureChain* chain = structure->prototypeChain(exec, asObject(baseCell));
                             ASSERT(chain);
                             metadata.structureChain.set(vm, codeBlock, chain);
                         }
-                        metadata.flags = static_cast<PutByIdFlags>(
-                            metadata.flags |
-                            structure->inferredTypeDescriptorFor(ident.impl()).putByIdFlags());
                     }
                 }
             } else {
                 structure->didCachePropertyReplacement(vm, slot.cachedOffset());
                 metadata.oldStructure = structure->id();
                 metadata.offset = slot.cachedOffset();
-                metadata.flags = static_cast<PutByIdFlags>(
-                    metadata.flags |
-                    structure->inferredTypeDescriptorFor(ident.impl()).putByIdFlags());
             }
         }
     }

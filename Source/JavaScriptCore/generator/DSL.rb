@@ -123,6 +123,8 @@ module DSL
 #include "GetByIdMetadata.h"
 #include "Instruction.h"
 #include "Opcode.h"
+#include "PutByIdStatus.h"
+#include "PutByIdFlags.h"
 #include "ToThisStatus.h"
 
 namespace JSC {

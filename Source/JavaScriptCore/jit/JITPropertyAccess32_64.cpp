@@ -661,10 +661,9 @@ void JIT::emit_op_put_by_id(const Instruction* currentInstruction)
     // such that the Structure & offset are always at the same distance from this.
     
     auto bytecode = currentInstruction->as<OpPutById>();
-    auto& metadata = bytecode.metadata(m_codeBlock);
     int base = bytecode.base.offset();
     int value = bytecode.value.offset();
-    int direct = metadata.flags & PutByIdIsDirect;
+    bool direct = !!(bytecode.flags & PutByIdIsDirect);
     
     emitLoad2(base, regT1, regT0, value, regT3, regT2);
     

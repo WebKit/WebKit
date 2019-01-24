@@ -32,6 +32,7 @@ namespace JSC {
 
 class JSInternalPromise;
 class JSModuleNamespaceObject;
+class JSModuleRecord;
 class SourceCode;
 
 class JSModuleLoader final : public JSNonFinalObject {

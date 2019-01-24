@@ -26,7 +26,6 @@
 #include "config.h"
 #include "PutByIdFlags.h"
 
-#include "InferredType.h"
 #include <wtf/CommaPrinter.h>
 #include <wtf/PrintStream.h>
 #include <wtf/StringPrintStream.h>
@@ -39,11 +38,6 @@ void printInternal(PrintStream& out, PutByIdFlags flags) {
     CommaPrinter comma("|");
     if (flags & PutByIdIsDirect)
         out.print(comma, "IsDirect");
-
-    InferredType::Kind kind = InferredType::kindForFlags(flags);
-    out.print(comma, kind);
-    if (InferredType::hasStructure(kind))
-        out.print(":", bitwise_cast<int32_t>(decodeStructureID(flags)));
 }
 
 } // namespace WTF
