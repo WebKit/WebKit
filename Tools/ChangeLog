@@ -1,3 +1,13 @@
+2019-01-24  Philippe Normand  <pnormand@igalia.com>
+
+        [WPE] Remove hard dependency on subprocess32 for the API tests
+
+        Rubber-stamped by Carlos Garcia Campos.
+
+        * glib/api_test_runner.py:
+        (TestRunner._run_test_qt): Lazily import subprocess32 and check
+        its presence only when running WPEQt tests.
+
 2019-01-24  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GLIB] Expose JavaScriptCore options in GLib public API

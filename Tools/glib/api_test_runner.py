@@ -32,7 +32,10 @@ from webkitpy.common.test_expectations import TestExpectations
 from webkitpy.common.timeout_context import Timeout
 
 if os.name == 'posix' and sys.version_info[0] < 3:
-    import subprocess32 as subprocess
+    try:
+        import subprocess32 as subprocess
+    except ImportError:
+        import subprocess
 else:
     import subprocess
 
@@ -166,6 +169,10 @@ class TestRunner(object):
         env['QML2_IMPORT_PATH'] = common.library_build_path('qml')
 
         name = os.path.basename(test_program)
+        if not hasattr(subprocess, 'TimeoutExpired'):
+            print("Can't run WPEQt test in Python2 without subprocess32")
+            return {name: "FAIL"}
+
         try:
             output = subprocess.check_output([test_program, ], stderr=subprocess.STDOUT,
                                              env=env, timeout=self._options.timeout)
