@@ -452,7 +452,6 @@ bool safeToExecute(AbstractStateType& state, Graph& graph, Node* node, bool igno
     case StringValueOf:
     case StringSlice:
     case ToLowerCase:
-    case ObjectToString:
     case GetMapBucket:
     case GetMapBucketHead:
     case GetMapBucketNext:

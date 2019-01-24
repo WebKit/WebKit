@@ -1,5 +1,83 @@
 2019-01-23  Alan Coon  <alancoon@apple.com>
 
+        Cherry-pick r240327. rdar://problem/47494707
+
+    REGRESSION(r239612) Crash at runtime due to broken DFG assumption
+    https://bugs.webkit.org/show_bug.cgi?id=193709
+    <rdar://problem/47363838>
+    
+    Unreviewed, rollout to watch the tests.
+    
+    JSTests:
+    
+    * stress/object-tostring-changed-proto.js: Removed.
+    * stress/object-tostring-changed.js: Removed.
+    * stress/object-tostring-misc.js: Removed.
+    * stress/object-tostring-other.js: Removed.
+    * stress/object-tostring-untyped.js: Removed.
+    
+    Source/JavaScriptCore:
+    
+    * JavaScriptCore.xcodeproj/project.pbxproj:
+    * dfg/DFGAbstractInterpreterInlines.h:
+    (JSC::DFG::AbstractInterpreter<AbstractStateType>::executeEffects):
+    * dfg/DFGByteCodeParser.cpp:
+    (JSC::DFG::ByteCodeParser::handleIntrinsicCall):
+    * dfg/DFGClobberize.h:
+    (JSC::DFG::clobberize):
+    * dfg/DFGDoesGC.cpp:
+    (JSC::DFG::doesGC):
+    * dfg/DFGFixupPhase.cpp:
+    (JSC::DFG::FixupPhase::fixupNode):
+    (JSC::DFG::FixupPhase::fixupObjectToString): Deleted.
+    * dfg/DFGNodeType.h:
+    * dfg/DFGOperations.cpp:
+    * dfg/DFGOperations.h:
+    * dfg/DFGPredictionPropagationPhase.cpp:
+    * dfg/DFGSafeToExecute.h:
+    (JSC::DFG::safeToExecute):
+    * dfg/DFGSpeculativeJIT.cpp:
+    (JSC::DFG::SpeculativeJIT::compileObjectToString): Deleted.
+    * dfg/DFGSpeculativeJIT.h:
+    * dfg/DFGSpeculativeJIT32_64.cpp:
+    (JSC::DFG::SpeculativeJIT::compile):
+    * dfg/DFGSpeculativeJIT64.cpp:
+    (JSC::DFG::SpeculativeJIT::compile):
+    * ftl/FTLAbstractHeapRepository.h:
+    * ftl/FTLCapabilities.cpp:
+    (JSC::FTL::canCompile):
+    * ftl/FTLLowerDFGToB3.cpp:
+    (JSC::FTL::DFG::LowerDFGToB3::compileNode):
+    (JSC::FTL::DFG::LowerDFGToB3::compileToStringOrCallStringConstructorOrStringValueOf):
+    (JSC::FTL::DFG::LowerDFGToB3::compileObjectToString): Deleted.
+    * runtime/Intrinsic.cpp:
+    (JSC::intrinsicName):
+    * runtime/Intrinsic.h:
+    * runtime/ObjectPrototype.cpp:
+    (JSC::ObjectPrototype::finishCreation):
+    (JSC::objectProtoFuncToString):
+    * runtime/ObjectPrototype.h:
+    * runtime/ObjectPrototypeInlines.h: Removed.
+    * runtime/StructureRareData.h:
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@240327 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2019-01-22  Yusuke Suzuki  <ysuzuki@apple.com>
+
+            REGRESSION(r239612) Crash at runtime due to broken DFG assumption
+            https://bugs.webkit.org/show_bug.cgi?id=193709
+            <rdar://problem/47363838>
+
+            Unreviewed, rollout to watch the tests.
+
+            * stress/object-tostring-changed-proto.js: Removed.
+            * stress/object-tostring-changed.js: Removed.
+            * stress/object-tostring-misc.js: Removed.
+            * stress/object-tostring-other.js: Removed.
+            * stress/object-tostring-untyped.js: Removed.
+
+2019-01-23  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r239951. rdar://problem/47295353
 
     [JSC] Do not use asArrayModes() with Structures because it discards TypedArray information

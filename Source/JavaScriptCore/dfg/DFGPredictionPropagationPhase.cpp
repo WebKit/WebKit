@@ -884,7 +884,6 @@ private:
         case StringValueOf:
         case StringSlice:
         case ToLowerCase:
-        case ObjectToString:
             setPrediction(SpecString);
             break;
 
