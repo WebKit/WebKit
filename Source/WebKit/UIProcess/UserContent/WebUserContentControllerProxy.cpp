@@ -84,10 +84,8 @@ WebUserContentControllerProxy::~WebUserContentControllerProxy()
 
 void WebUserContentControllerProxy::addProcess(WebProcessProxy& webProcessProxy, WebPageCreationParameters& parameters)
 {
-    if (!m_processes.add(&webProcessProxy).isNewEntry)
-        return;
-
-    webProcessProxy.addMessageReceiver(Messages::WebUserContentControllerProxy::messageReceiverName(), identifier().toUInt64(), *this);
+    if (m_processes.add(&webProcessProxy).isNewEntry)
+        webProcessProxy.addMessageReceiver(Messages::WebUserContentControllerProxy::messageReceiverName(), identifier().toUInt64(), *this);
 
     ASSERT(parameters.userContentWorlds.isEmpty());
     for (const auto& world : m_userContentWorlds)
