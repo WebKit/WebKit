@@ -431,6 +431,9 @@ TextStream& operator<<(TextStream& ts, ScrollingNodeType nodeType)
     case ScrollingNodeType::Subframe:
         ts << "subframe-scrolling";
         break;
+    case ScrollingNodeType::FrameHosting:
+        ts << "frame-hosting";
+        break;
     case ScrollingNodeType::Overflow:
         ts << "overflow-scrolling";
         break;

@@ -87,6 +87,8 @@ void RemoteScrollingCoordinatorProxy::connectStateNodeLayers(ScrollingStateTree&
             if (currNode->hasChangedProperty(ScrollingStateNode::ScrollLayer))
                 currNode->setLayer(layerTreeHost.layerForID(currNode->layer()));
             break;
+        case ScrollingNodeType::FrameHosting:
+            break;
         }
     }
 }

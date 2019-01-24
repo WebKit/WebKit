@@ -140,6 +140,7 @@ void RemoteScrollingCoordinatorProxy::connectStateNodeLayers(ScrollingStateTree&
                 scrollingStateNode.setScrolledContentsLayer(layerTreeHost.layerForID(scrollingStateNode.scrolledContentsLayer()));
             break;
         }
+        case ScrollingNodeType::FrameHosting:
         case ScrollingNodeType::Fixed:
         case ScrollingNodeType::Sticky:
             break;

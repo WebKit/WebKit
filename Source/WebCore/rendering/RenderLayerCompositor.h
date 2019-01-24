@@ -85,7 +85,8 @@ enum class CompositingReason {
 
 enum class ScrollCoordinationRole {
     ViewportConstrained = 1 << 0,
-    Scrolling           = 1 << 1
+    Scrolling           = 1 << 1,
+    FrameHosting        = 1 << 2,
 };
 
 #if PLATFORM(IOS_FAMILY)
@@ -479,6 +480,7 @@ private:
     ScrollingNodeID attachScrollingNode(RenderLayer&, ScrollingNodeType, ScrollingNodeID parentNodeID);
     void updateScrollCoordinatedLayer(RenderLayer&, OptionSet<ScrollCoordinationRole>, OptionSet<ScrollingNodeChangeFlags>);
     void detachScrollCoordinatedLayer(RenderLayer&, OptionSet<ScrollCoordinationRole>);
+    void detachScrollCoordinatedLayerWithRole(RenderLayer&, ScrollingCoordinator&, ScrollCoordinationRole);
     void reattachSubframeScrollLayers();
     
     FixedPositionViewportConstraints computeFixedViewportConstraints(RenderLayer&) const;

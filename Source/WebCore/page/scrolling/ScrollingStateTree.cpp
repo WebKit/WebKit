@@ -30,6 +30,7 @@
 
 #include "AsyncScrollingCoordinator.h"
 #include "ScrollingStateFixedNode.h"
+#include "ScrollingStateFrameHostingNode.h"
 #include "ScrollingStateFrameScrollingNode.h"
 #include "ScrollingStateOverflowScrollingNode.h"
 #include "ScrollingStateStickyNode.h"
@@ -71,6 +72,8 @@ Ref<ScrollingStateNode> ScrollingStateTree::createNode(ScrollingNodeType nodeTyp
     case ScrollingNodeType::MainFrame:
     case ScrollingNodeType::Subframe:
         return ScrollingStateFrameScrollingNode::create(*this, nodeType, nodeID);
+    case ScrollingNodeType::FrameHosting:
+        return ScrollingStateFrameHostingNode::create(*this, nodeID);
     case ScrollingNodeType::Overflow:
         return ScrollingStateOverflowScrollingNode::create(*this, nodeID);
     case ScrollingNodeType::Fixed:

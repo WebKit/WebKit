@@ -57,6 +57,7 @@ typedef uint64_t ScrollingNodeID;
 enum class ScrollingNodeType : uint8_t {
     MainFrame,
     Subframe,
+    FrameHosting,
     Overflow,
     Fixed,
     Sticky

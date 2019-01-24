@@ -1,3 +1,60 @@
+2019-01-23  Simon Fraser  <simon.fraser@apple.com>
+
+        Add "frame hosting" nodes to the scrolling tree
+        https://bugs.webkit.org/show_bug.cgi?id=193753
+
+        Reviewed by Antti Koivisto.
+
+        When the scrolling tree crosses frame boundaries, mutations in the parent frame currently
+        require the iframe's scrolling node to get reparented in a new ancestor, which requires
+        a layer tree walk of the parent frame. This is error-prone, and not very future-proof.
+
+        Fix this by introducing "frame hosting" scrolling tree nodes. These are mostly inert
+        nodes that are owned by the RenderIFrame's layer backing in the parent frame, and exist
+        to provide a consistent parent node for the subframe's scrolling node.
+
+        This patch adds the node types, but does not instantiate them yet.
+
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * page/scrolling/ScrollingCoordinator.cpp:
+        (WebCore::operator<<):
+        * page/scrolling/ScrollingCoordinator.h:
+        * page/scrolling/ScrollingStateFrameHostingNode.cpp: Added.
+        (WebCore::ScrollingStateFrameHostingNode::create):
+        (WebCore::ScrollingStateFrameHostingNode::ScrollingStateFrameHostingNode):
+        (WebCore::ScrollingStateFrameHostingNode::clone):
+        (WebCore::ScrollingStateFrameHostingNode::dumpProperties const):
+        * page/scrolling/ScrollingStateFrameHostingNode.h: Added.
+        * page/scrolling/ScrollingStateNode.h:
+        (WebCore::ScrollingStateNode::isFrameHostingNode const):
+        * page/scrolling/ScrollingStateTree.cpp:
+        (WebCore::ScrollingStateTree::createNode):
+        * page/scrolling/ScrollingTreeFrameHostingNode.cpp: Added.
+        (WebCore::ScrollingTreeFrameHostingNode::create):
+        (WebCore::ScrollingTreeFrameHostingNode::ScrollingTreeFrameHostingNode):
+        (WebCore::ScrollingTreeFrameHostingNode::commitStateBeforeChildren):
+        (WebCore::ScrollingTreeFrameHostingNode::updateLayersAfterAncestorChange):
+        (WebCore::ScrollingTreeFrameHostingNode::dumpProperties const):
+        * page/scrolling/ScrollingTreeFrameHostingNode.h: Added.
+        * page/scrolling/ScrollingTreeNode.h:
+        (WebCore::ScrollingTreeNode::isFrameHostingNode const):
+        * page/scrolling/ios/ScrollingTreeIOS.cpp:
+        (WebCore::ScrollingTreeIOS::createScrollingTreeNode):
+        * page/scrolling/mac/ScrollingTreeMac.cpp:
+        (ScrollingTreeMac::createScrollingTreeNode):
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::~RenderLayerBacking):
+        (WebCore::RenderLayerBacking::detachFromScrollingCoordinator):
+        (WebCore::operator<<):
+        * rendering/RenderLayerBacking.h:
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::scrollCoordinationRoleForNodeType):
+        (WebCore::RenderLayerCompositor::detachScrollCoordinatedLayerWithRole):
+        (WebCore::RenderLayerCompositor::detachScrollCoordinatedLayer):
+        (WebCore::RenderLayerCompositor::updateScrollCoordinatedLayer):
+        * rendering/RenderLayerCompositor.h:
+
 2019-01-24  Eric Carlson  <eric.carlson@apple.com>
 
         [iOS] Enable media element volume on iPad

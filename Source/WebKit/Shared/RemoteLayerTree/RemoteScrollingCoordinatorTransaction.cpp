@@ -30,6 +30,7 @@
 #include "WebCoreArgumentCoders.h"
 #include <WebCore/GraphicsLayer.h>
 #include <WebCore/ScrollingStateFixedNode.h>
+#include <WebCore/ScrollingStateFrameHostingNode.h>
 #include <WebCore/ScrollingStateFrameScrollingNode.h>
 #include <WebCore/ScrollingStateOverflowScrollingNode.h>
 #include <WebCore/ScrollingStateStickyNode.h>
@@ -52,17 +53,22 @@ template<> struct ArgumentCoder<ScrollingStateScrollingNode> {
     static void encode(Encoder&, const ScrollingStateScrollingNode&);
     static bool decode(Decoder&, ScrollingStateScrollingNode&);
 };
-    
+
+template<> struct ArgumentCoder<ScrollingStateFrameHostingNode> {
+    static void encode(Encoder&, const ScrollingStateFrameHostingNode&);
+    static bool decode(Decoder&, ScrollingStateFrameHostingNode&);
+};
+
 template<> struct ArgumentCoder<ScrollingStateFrameScrollingNode> {
     static void encode(Encoder&, const ScrollingStateFrameScrollingNode&);
     static bool decode(Decoder&, ScrollingStateFrameScrollingNode&);
 };
-    
+
 template<> struct ArgumentCoder<ScrollingStateOverflowScrollingNode> {
     static void encode(Encoder&, const ScrollingStateOverflowScrollingNode&);
     static bool decode(Decoder&, ScrollingStateOverflowScrollingNode&);
 };
-    
+
 template<> struct ArgumentCoder<ScrollingStateFixedNode> {
     static void encode(Encoder&, const ScrollingStateFixedNode&);
     static bool decode(Decoder&, ScrollingStateFixedNode&);
@@ -170,6 +176,11 @@ void ArgumentCoder<ScrollingStateFrameScrollingNode>::encode(Encoder& encoder, c
 
     if (node.hasChangedProperty(ScrollingStateFrameScrollingNode::HorizontalScrollbarLayer))
         encoder << static_cast<GraphicsLayer::PlatformLayerID>(node.horizontalScrollbarLayer());
+}
+
+void ArgumentCoder<ScrollingStateFrameHostingNode>::encode(Encoder& encoder, const ScrollingStateFrameHostingNode& node)
+{
+    encoder << static_cast<const ScrollingStateNode&>(node);
 }
 
 void ArgumentCoder<ScrollingStateOverflowScrollingNode>::encode(Encoder& encoder, const ScrollingStateOverflowScrollingNode& node)
@@ -292,6 +303,14 @@ bool ArgumentCoder<ScrollingStateFrameScrollingNode>::decode(Decoder& decoder, S
     return true;
 }
 
+bool ArgumentCoder<ScrollingStateFrameHostingNode>::decode(Decoder& decoder, ScrollingStateFrameHostingNode& node)
+{
+    if (!decoder.decode(static_cast<ScrollingStateNode&>(node)))
+        return false;
+
+    return true;
+}
+
 bool ArgumentCoder<ScrollingStateOverflowScrollingNode>::decode(Decoder& decoder, ScrollingStateOverflowScrollingNode& node)
 {
     if (!decoder.decode(static_cast<ScrollingStateScrollingNode&>(node)))
@@ -356,6 +375,9 @@ static void encodeNodeAndDescendants(IPC::Encoder& encoder, const ScrollingState
     case ScrollingNodeType::MainFrame:
     case ScrollingNodeType::Subframe:
         encoder << downcast<ScrollingStateFrameScrollingNode>(stateNode);
+        break;
+    case ScrollingNodeType::FrameHosting:
+        encoder << downcast<ScrollingStateFrameHostingNode>(stateNode);
         break;
     case ScrollingNodeType::Overflow:
         encoder << downcast<ScrollingStateOverflowScrollingNode>(stateNode);
@@ -441,6 +463,10 @@ bool RemoteScrollingCoordinatorTransaction::decode(IPC::Decoder& decoder)
         case ScrollingNodeType::MainFrame:
         case ScrollingNodeType::Subframe:
             if (!decoder.decode(downcast<ScrollingStateFrameScrollingNode>(*newNode)))
+                return false;
+            break;
+        case ScrollingNodeType::FrameHosting:
+            if (!decoder.decode(downcast<ScrollingStateFrameHostingNode>(*newNode)))
                 return false;
             break;
         case ScrollingNodeType::Overflow:
@@ -585,6 +611,9 @@ static void dump(TextStream& ts, const ScrollingStateNode& node, bool changedPro
     case ScrollingNodeType::MainFrame:
     case ScrollingNodeType::Subframe:
         dump(ts, downcast<ScrollingStateFrameScrollingNode>(node), changedPropertiesOnly);
+        break;
+    case ScrollingNodeType::FrameHosting:
+        dump(ts, downcast<ScrollingStateFrameHostingNode>(node), changedPropertiesOnly);
         break;
     case ScrollingNodeType::Overflow:
         dump(ts, downcast<ScrollingStateOverflowScrollingNode>(node), changedPropertiesOnly);

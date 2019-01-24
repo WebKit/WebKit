@@ -1,3 +1,33 @@
+2019-01-23  Simon Fraser  <simon.fraser@apple.com>
+
+        Create "frame hosting" nodes for the scrolling tree
+        https://bugs.webkit.org/show_bug.cgi?id=193753
+
+        Reviewed by Antti Koivisto.
+
+        When the scrolling tree crosses frame boundaries, mutations in the parent frame currently
+        require the iframe's scrolling node to get reparented in a new ancestor, which requires
+        a layer tree walk of the parent frame. This is error-prone, and not very future-proof.
+
+        Fix this by introducing "frame hosting" scrolling tree nodes. These are mostly inert
+        nodes that are owned by the RenderIFrame's layer backing in the parent frame, and exist
+        to provide a consistent parent node for the subframe's scrolling node.
+
+        This patch adds the node types, but does not instantiate them yet.
+
+        * Shared/RemoteLayerTree/RemoteScrollingCoordinatorTransaction.cpp:
+        (ArgumentCoder<ScrollingStateFrameHostingNode>::encode):
+        (ArgumentCoder<ScrollingStateFrameHostingNode>::decode):
+        (WebKit::encodeNodeAndDescendants):
+        (WebKit::RemoteScrollingCoordinatorTransaction::decode):
+        (WebKit::dump):
+        * UIProcess/RemoteLayerTree/RemoteScrollingCoordinatorProxy.cpp:
+        (WebKit::RemoteScrollingCoordinatorProxy::connectStateNodeLayers):
+        * UIProcess/RemoteLayerTree/RemoteScrollingTree.cpp:
+        (WebKit::RemoteScrollingTree::createScrollingTreeNode):
+        * UIProcess/RemoteLayerTree/ios/RemoteScrollingCoordinatorProxyIOS.mm:
+        (WebKit::RemoteScrollingCoordinatorProxy::connectStateNodeLayers):
+
 2019-01-23  Ross Kirsling  <ross.kirsling@sony.com>
 
         [Curl] Unreviewed build fix for r240292 and friends.

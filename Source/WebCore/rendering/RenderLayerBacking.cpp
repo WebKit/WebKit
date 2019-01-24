@@ -244,7 +244,7 @@ RenderLayerBacking::~RenderLayerBacking()
     updateBackgroundLayer(false);
     updateMaskingLayer(false, false);
     updateScrollingLayers(false);
-    detachFromScrollingCoordinator({ ScrollCoordinationRole::Scrolling, ScrollCoordinationRole::ViewportConstrained });
+    detachFromScrollingCoordinator({ ScrollCoordinationRole::Scrolling, ScrollCoordinationRole::ViewportConstrained, ScrollCoordinationRole::FrameHosting });
     destroyGraphicsLayers();
 }
 
@@ -1776,13 +1776,19 @@ void RenderLayerBacking::detachFromScrollingCoordinator(OptionSet<ScrollCoordina
     if (!scrollingCoordinator)
         return;
 
-    if ((roles.contains(ScrollCoordinationRole::Scrolling)) && m_scrollingNodeID) {
+    if (roles.contains(ScrollCoordinationRole::Scrolling) && m_scrollingNodeID) {
         LOG(Compositing, "Detaching Scrolling node %" PRIu64, m_scrollingNodeID);
         scrollingCoordinator->detachFromStateTree(m_scrollingNodeID);
         m_scrollingNodeID = 0;
     }
-    
-    if ((roles.contains(ScrollCoordinationRole::ViewportConstrained)) && m_viewportConstrainedNodeID) {
+
+    if (roles.contains(ScrollCoordinationRole::Scrolling) && m_frameHostingNodeID) {
+        LOG(Compositing, "Detaching FrameHosting node %" PRIu64, m_frameHostingNodeID);
+        scrollingCoordinator->detachFromStateTree(m_frameHostingNodeID);
+        m_frameHostingNodeID = 0;
+    }
+
+    if (roles.contains(ScrollCoordinationRole::ViewportConstrained) && m_viewportConstrainedNodeID) {
         LOG(Compositing, "Detaching ViewportConstrained node %" PRIu64, m_viewportConstrainedNodeID);
         scrollingCoordinator->detachFromStateTree(m_viewportConstrainedNodeID);
         m_viewportConstrainedNodeID = 0;
@@ -3081,6 +3087,8 @@ TextStream& operator<<(TextStream& ts, const RenderLayerBacking& backing)
         ts << " viewport constrained scrolling node " << nodeID;
     if (auto nodeID = backing.scrollingNodeIDForRole(ScrollCoordinationRole::Scrolling))
         ts << " scrolling node " << nodeID;
+    if (auto nodeID = backing.scrollingNodeIDForRole(ScrollCoordinationRole::FrameHosting))
+        ts << " frame hosting node " << nodeID;
     return ts;
 }
 

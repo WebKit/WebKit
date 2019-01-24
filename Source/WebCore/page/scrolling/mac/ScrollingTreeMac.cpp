@@ -27,6 +27,7 @@
 #include "ScrollingTreeMac.h"
 
 #include "ScrollingTreeFixedNode.h"
+#include "ScrollingTreeFrameHostingNode.h"
 #include "ScrollingTreeFrameScrollingNodeMac.h"
 #include "ScrollingTreeOverflowScrollingNodeMac.h"
 #include "ScrollingTreeStickyNode.h"
@@ -51,6 +52,8 @@ Ref<ScrollingTreeNode> ScrollingTreeMac::createScrollingTreeNode(ScrollingNodeTy
     case ScrollingNodeType::MainFrame:
     case ScrollingNodeType::Subframe:
         return ScrollingTreeFrameScrollingNodeMac::create(*this, nodeType, nodeID);
+    case ScrollingNodeType::FrameHosting:
+        return ScrollingTreeFrameHostingNode::create(*this, nodeID);
     case ScrollingNodeType::Overflow:
         return ScrollingTreeOverflowScrollingNodeMac::create(*this, nodeID);
         break;

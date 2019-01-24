@@ -3799,6 +3799,8 @@ static inline ScrollCoordinationRole scrollCoordinationRoleForNodeType(Scrolling
     case ScrollingNodeType::Subframe:
     case ScrollingNodeType::Overflow:
         return ScrollCoordinationRole::Scrolling;
+    case ScrollingNodeType::FrameHosting:
+        return ScrollCoordinationRole::FrameHosting;
     case ScrollingNodeType::Fixed:
     case ScrollingNodeType::Sticky:
         return ScrollCoordinationRole::ViewportConstrained;
@@ -3831,6 +3833,22 @@ ScrollingNodeID RenderLayerCompositor::attachScrollingNode(RenderLayer& layer, S
     return nodeID;
 }
 
+void RenderLayerCompositor::detachScrollCoordinatedLayerWithRole(RenderLayer& layer, ScrollingCoordinator& scrollingCoordinator, ScrollCoordinationRole role)
+{
+    auto nodeID = layer.backing()->scrollingNodeIDForRole(role);
+    if (!nodeID)
+        return;
+
+    auto childNodes = scrollingCoordinator.childrenOfNode(nodeID);
+    for (auto childNodeID : childNodes) {
+        // FIXME: The child might be in a child frame. Need to do something that crosses frame boundaries.
+        if (auto* layer = m_scrollingNodeToLayerMap.get(childNodeID))
+            layer->setNeedsScrollingTreeUpdate();
+    }
+
+    m_scrollingNodeToLayerMap.remove(nodeID);
+}
+
 void RenderLayerCompositor::detachScrollCoordinatedLayer(RenderLayer& layer, OptionSet<ScrollCoordinationRole> roles)
 {
     auto* backing = layer.backing();
@@ -3839,28 +3857,14 @@ void RenderLayerCompositor::detachScrollCoordinatedLayer(RenderLayer& layer, Opt
 
     auto* scrollingCoordinator = this->scrollingCoordinator();
 
-    auto dirtyDescendantScrollingLayers = [&] (ScrollingNodeID nodeID) {
-        auto childNodes = scrollingCoordinator->childrenOfNode(nodeID);
-        for (auto childNodeID : childNodes) {
-            // FIXME: The child might be in a child frame. Need to do something that crosses frame boundaries.
-            if (auto* layer = m_scrollingNodeToLayerMap.get(childNodeID))
-                layer->setNeedsScrollingTreeUpdate();
-        }
-    };
+    if (roles.contains(ScrollCoordinationRole::Scrolling))
+        detachScrollCoordinatedLayerWithRole(layer, *scrollingCoordinator, ScrollCoordinationRole::Scrolling);
 
-    if (roles.contains(ScrollCoordinationRole::Scrolling)) {
-        if (ScrollingNodeID nodeID = backing->scrollingNodeIDForRole(ScrollCoordinationRole::Scrolling)) {
-            dirtyDescendantScrollingLayers(nodeID);
-            m_scrollingNodeToLayerMap.remove(nodeID);
-        }
-    }
+    if (roles.contains(ScrollCoordinationRole::FrameHosting))
+        detachScrollCoordinatedLayerWithRole(layer, *scrollingCoordinator, ScrollCoordinationRole::FrameHosting);
 
-    if (roles.contains(ScrollCoordinationRole::ViewportConstrained)) {
-        if (ScrollingNodeID nodeID = backing->scrollingNodeIDForRole(ScrollCoordinationRole::ViewportConstrained)) {
-            dirtyDescendantScrollingLayers(nodeID);
-            m_scrollingNodeToLayerMap.remove(nodeID);
-        }
-    }
+    if (roles.contains(ScrollCoordinationRole::ViewportConstrained))
+        detachScrollCoordinatedLayerWithRole(layer, *scrollingCoordinator, ScrollCoordinationRole::ViewportConstrained);
 
     backing->detachFromScrollingCoordinator(roles);
 }
@@ -3948,6 +3952,7 @@ void RenderLayerCompositor::updateScrollCoordinatedLayer(RenderLayer& layer, Opt
                 break;
             case ScrollingNodeType::MainFrame:
             case ScrollingNodeType::Subframe:
+            case ScrollingNodeType::FrameHosting:
             case ScrollingNodeType::Overflow:
                 break;
             }
@@ -3997,6 +4002,18 @@ void RenderLayerCompositor::updateScrollCoordinatedLayer(RenderLayer& layer, Opt
         }
     } else
         detachScrollCoordinatedLayer(layer, ScrollCoordinationRole::Scrolling);
+
+    if (roles.contains(ScrollCoordinationRole::FrameHosting)) {
+        ScrollingNodeID nodeID = attachScrollingNode(layer, ScrollingNodeType::FrameHosting, parentNodeID);
+        if (!nodeID)
+            return;
+
+        if (changes & ScrollingNodeChangeFlags::Layer)
+            scrollingCoordinator->setNodeLayers(nodeID, backing->graphicsLayer());
+
+        LOG(Compositing, "Registering Scrolling scrolling node %" PRIu64 " (layer %" PRIu64 ") as child of %" PRIu64, nodeID, backing->graphicsLayer()->primaryLayerID(), parentNodeID);
+    } else
+        detachScrollCoordinatedLayer(layer, ScrollCoordinationRole::FrameHosting);
 }
 
 ScrollableArea* RenderLayerCompositor::scrollableAreaForScrollLayerID(ScrollingNodeID nodeID) const

@@ -1575,6 +1575,7 @@ page/scrolling/ScrollLatchingState.cpp
 page/scrolling/ScrollingConstraints.cpp
 page/scrolling/ScrollingCoordinator.cpp
 page/scrolling/ScrollingStateFixedNode.cpp
+page/scrolling/ScrollingStateFrameHostingNode.cpp
 page/scrolling/ScrollingStateFrameScrollingNode.cpp
 page/scrolling/ScrollingStateNode.cpp
 page/scrolling/ScrollingStateOverflowScrollingNode.cpp
@@ -1583,6 +1584,7 @@ page/scrolling/ScrollingStateStickyNode.cpp
 page/scrolling/ScrollingStateTree.cpp
 page/scrolling/ScrollingThread.cpp
 page/scrolling/ScrollingTree.cpp
+page/scrolling/ScrollingTreeFrameHostingNode.cpp
 page/scrolling/ScrollingTreeFrameScrollingNode.cpp
 page/scrolling/ScrollingTreeNode.cpp
 page/scrolling/ScrollingTreeOverflowScrollingNode.cpp

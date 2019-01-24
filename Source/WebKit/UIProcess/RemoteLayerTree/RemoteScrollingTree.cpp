@@ -31,6 +31,7 @@
 #include "RemoteLayerTreeHost.h"
 #include "RemoteScrollingCoordinatorProxy.h"
 #include <WebCore/ScrollingTreeFixedNode.h>
+#include <WebCore/ScrollingTreeFrameHostingNode.h>
 #include <WebCore/ScrollingTreeStickyNode.h>
 
 #if PLATFORM(IOS_FAMILY)
@@ -120,6 +121,8 @@ Ref<ScrollingTreeNode> RemoteScrollingTree::createScrollingTreeNode(ScrollingNod
 #else
         return ScrollingTreeFrameScrollingNodeRemoteMac::create(*this, nodeType, nodeID);
 #endif
+    case ScrollingNodeType::FrameHosting:
+        return ScrollingTreeFrameHostingNode::create(*this, nodeID);
     case ScrollingNodeType::Overflow:
 #if PLATFORM(IOS_FAMILY)
         return ScrollingTreeOverflowScrollingNodeIOS::create(*this, nodeID);

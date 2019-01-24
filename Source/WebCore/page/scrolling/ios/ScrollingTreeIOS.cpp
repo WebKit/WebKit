@@ -32,6 +32,7 @@
 #include "PlatformWheelEvent.h"
 #include "ScrollingThread.h"
 #include "ScrollingTreeFixedNode.h"
+#include "ScrollingTreeFrameHostingNode.h"
 #include "ScrollingTreeFrameScrollingNodeIOS.h"
 #include "ScrollingTreeNode.h"
 #include "ScrollingTreeScrollingNode.h"
@@ -89,6 +90,8 @@ Ref<ScrollingTreeNode> ScrollingTreeIOS::createScrollingTreeNode(ScrollingNodeTy
     case ScrollingNodeType::MainFrame:
     case ScrollingNodeType::Subframe:
         return ScrollingTreeFrameScrollingNodeIOS::create(*this, nodeType, nodeID);
+    case ScrollingNodeType::FrameHosting:
+        return ScrollingTreeFrameHostingNode::create(*this, nodeID);
     case ScrollingNodeType::Overflow:
         ASSERT_NOT_REACHED();
         break;

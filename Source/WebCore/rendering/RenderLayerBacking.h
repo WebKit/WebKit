@@ -112,6 +112,8 @@ public:
         switch (role) {
         case ScrollCoordinationRole::Scrolling:
             return m_scrollingNodeID;
+        case ScrollCoordinationRole::FrameHosting:
+            return m_frameHostingNodeID;
         case ScrollCoordinationRole::ViewportConstrained:
             return m_viewportConstrainedNodeID;
         }
@@ -124,6 +126,9 @@ public:
         case ScrollCoordinationRole::Scrolling:
             m_scrollingNodeID = nodeID;
             break;
+        case ScrollCoordinationRole::FrameHosting:
+            m_frameHostingNodeID = nodeID;
+            break;
         case ScrollCoordinationRole::ViewportConstrained:
             m_viewportConstrainedNodeID = nodeID;
             setIsScrollCoordinatedWithViewportConstrainedRole(nodeID);
@@ -131,7 +136,10 @@ public:
         }
     }
     
-    ScrollingNodeID scrollingNodeIDForChildren() const { return m_scrollingNodeID ? m_scrollingNodeID : m_viewportConstrainedNodeID; }
+    ScrollingNodeID scrollingNodeIDForChildren() const
+    {
+        return m_frameHostingNodeID ? m_frameHostingNodeID : (m_scrollingNodeID ? m_scrollingNodeID : m_viewportConstrainedNodeID);
+    }
 
     void setIsScrollCoordinatedWithViewportConstrainedRole(bool);
 
@@ -378,6 +386,7 @@ private:
 
     ScrollingNodeID m_viewportConstrainedNodeID { 0 };
     ScrollingNodeID m_scrollingNodeID { 0 };
+    ScrollingNodeID m_frameHostingNodeID { 0 };
 
     bool m_artificiallyInflatedBounds { false }; // bounds had to be made non-zero to make transform-origin work
     bool m_isMainFrameRenderViewLayer { false };
