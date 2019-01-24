@@ -62,12 +62,12 @@ Heap::Heap(HeapKind kind, std::lock_guard<Mutex>&)
 #if GIGACAGE_ENABLED
         if (usingGigacage()) {
             RELEASE_BASSERT(gigacageBasePtr());
-            uint64_t random;
-            cryptoRandom(reinterpret_cast<unsigned char*>(&random), sizeof(random));
-            ptrdiff_t offset = random % (gigacageSize() - Gigacage::minimumCageSizeAfterSlide);
-            offset = reinterpret_cast<ptrdiff_t>(roundDownToMultipleOf(vmPageSize(), reinterpret_cast<void*>(offset)));
+            uint64_t random[2];
+            cryptoRandom(reinterpret_cast<unsigned char*>(random), sizeof(random));
+            size_t size = roundDownToMultipleOf(vmPageSize(), gigacageSize() - (random[0] % Gigacage::maximumCageSizeReductionForSlide));
+            ptrdiff_t offset = roundDownToMultipleOf(vmPageSize(), random[1] % (gigacageSize() - size));
             void* base = reinterpret_cast<unsigned char*>(gigacageBasePtr()) + offset;
-            m_largeFree.add(LargeRange(base, gigacageSize() - offset, 0, 0));
+            m_largeFree.add(LargeRange(base, size, 0, 0));
         }
 #endif
     }

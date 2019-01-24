@@ -70,13 +70,13 @@ BINLINE const char* name(Kind kind)
 constexpr size_t primitiveGigacageSize = 2 * bmalloc::Sizes::GB;
 constexpr size_t jsValueGigacageSize = 1 * bmalloc::Sizes::GB;
 constexpr size_t gigacageBasePtrsSize = 16 * bmalloc::Sizes::kB;
-constexpr size_t minimumCageSizeAfterSlide = bmalloc::Sizes::GB / 2;
+constexpr size_t maximumCageSizeReductionForSlide = bmalloc::Sizes::GB / 2;
 #define GIGACAGE_ALLOCATION_CAN_FAIL 1
 #else
 constexpr size_t primitiveGigacageSize = 32 * bmalloc::Sizes::GB;
 constexpr size_t jsValueGigacageSize = 16 * bmalloc::Sizes::GB;
 constexpr size_t gigacageBasePtrsSize = 4 * bmalloc::Sizes::kB;
-constexpr size_t minimumCageSizeAfterSlide = 4 * bmalloc::Sizes::GB;
+constexpr size_t maximumCageSizeReductionForSlide = 4 * bmalloc::Sizes::GB;
 #define GIGACAGE_ALLOCATION_CAN_FAIL 0
 #endif
 
@@ -90,8 +90,8 @@ constexpr size_t minimumCageSizeAfterSlide = 4 * bmalloc::Sizes::GB;
 
 static_assert(bmalloc::isPowerOfTwo(primitiveGigacageSize), "");
 static_assert(bmalloc::isPowerOfTwo(jsValueGigacageSize), "");
-static_assert(primitiveGigacageSize > minimumCageSizeAfterSlide, "");
-static_assert(jsValueGigacageSize > minimumCageSizeAfterSlide, "");
+static_assert(primitiveGigacageSize > maximumCageSizeReductionForSlide, "");
+static_assert(jsValueGigacageSize > maximumCageSizeReductionForSlide, "");
 
 constexpr size_t gigacageSizeToMask(size_t size) { return size - 1; }
 
