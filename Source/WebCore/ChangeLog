@@ -1,3 +1,34 @@
+2019-01-23  Alan Coon  <alancoon@apple.com>
+
+        Cherry-pick r239971. rdar://problem/47458229
+
+    Only run the node comparison code in FrameSelection::respondToNodeModification() for range selections
+    https://bugs.webkit.org/show_bug.cgi?id=193416
+    
+    Reviewed by Wenson Hsieh.
+    
+    The code inside the m_selection.firstRange() clause needs to only run for non-collapsed selections, and
+    it shows up on Speedometer profiles so optimize to only run this code if we have a selection range.
+    
+    * editing/FrameSelection.cpp:
+    (WebCore::FrameSelection::respondToNodeModification):
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@239971 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2019-01-14  Simon Fraser  <simon.fraser@apple.com>
+
+            Only run the node comparison code in FrameSelection::respondToNodeModification() for range selections
+            https://bugs.webkit.org/show_bug.cgi?id=193416
+
+            Reviewed by Wenson Hsieh.
+
+            The code inside the m_selection.firstRange() clause needs to only run for non-collapsed selections, and
+            it shows up on Speedometer profiles so optimize to only run this code if we have a selection range.
+
+            * editing/FrameSelection.cpp:
+            (WebCore::FrameSelection::respondToNodeModification):
+
 2019-01-22  Alan Coon  <alancoon@apple.com>
 
         Cherry-pick r240046. rdar://problem/47099573
