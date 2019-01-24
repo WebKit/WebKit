@@ -122,8 +122,8 @@ namespace JSC { namespace LLInt {
         LLINT_END_IMPL();                       \
     } while (false)
 
-#define JUMP_OFFSET(target) \
-    ((target) ? (target) : exec->codeBlock()->outOfLineJumpOffset(pc))
+#define JUMP_OFFSET(targetOffset) \
+    ((targetOffset) ? (targetOffset) : exec->codeBlock()->outOfLineJumpOffset(pc))
 
 #define JUMP_TO(target) do { \
         pc = reinterpret_cast<const Instruction*>(reinterpret_cast<const uint8_t*>(pc) + (target)); \
@@ -133,7 +133,7 @@ namespace JSC { namespace LLInt {
         bool __b_condition = (condition);                         \
         LLINT_CHECK_EXCEPTION();                                  \
         if (__b_condition)                                        \
-            JUMP_TO(JUMP_OFFSET(bytecode.m_target)); \
+            JUMP_TO(JUMP_OFFSET(bytecode.m_targetLabel));         \
         else                                                      \
             JUMP_TO(pc->size()); \
         LLINT_END_IMPL();                                         \
@@ -656,7 +656,7 @@ LLINT_SLOW_PATH_DECL(slow_path_get_by_id_direct)
     if (!LLINT_ALWAYS_ACCESS_SLOW && slot.isCacheable()) {
         auto& metadata = bytecode.metadata(exec);
         {
-            StructureID oldStructureID = metadata.m_structure;
+            StructureID oldStructureID = metadata.m_structureID;
             if (oldStructureID) {
                 Structure* a = vm.heap.structureIDTable().get(oldStructureID);
                 Structure* b = baseValue.asCell()->structure(vm);
@@ -672,7 +672,7 @@ LLINT_SLOW_PATH_DECL(slow_path_get_by_id_direct)
         Structure* structure = baseCell->structure(vm);
         if (slot.isValue()) {
             // Start out by clearing out the old cache.
-            metadata.m_structure = 0;
+            metadata.m_structureID = 0;
             metadata.m_offset = 0;
 
             if (structure->propertyAccessesAreCacheable()
@@ -681,7 +681,7 @@ LLINT_SLOW_PATH_DECL(slow_path_get_by_id_direct)
 
                 ConcurrentJSLocker locker(codeBlock->m_lock);
 
-                metadata.m_structure = structure->id();
+                metadata.m_structureID = structure->id();
                 metadata.m_offset = slot.cachedOffset();
             }
         }
@@ -736,13 +736,13 @@ static void setupGetByIdPrototypeCache(ExecState* exec, VM& vm, const Instructio
 
     if (slot.isUnset()) {
         metadata.m_mode = GetByIdMode::Unset;
-        metadata.m_modeMetadata.unsetMode.structure = structure->id();
+        metadata.m_modeMetadata.unsetMode.structureID = structure->id();
         return;
     }
     ASSERT(slot.isValue());
 
     metadata.m_mode = GetByIdMode::ProtoLoad;
-    metadata.m_modeMetadata.protoLoadMode.structure = structure->id();
+    metadata.m_modeMetadata.protoLoadMode.structureID = structure->id();
     metadata.m_modeMetadata.protoLoadMode.cachedOffset = offset;
     metadata.m_modeMetadata.protoLoadMode.cachedSlot = slot.slotBase();
     // We know that this pointer will remain valid because it will be cleared by either a watchpoint fire or
@@ -773,13 +773,13 @@ LLINT_SLOW_PATH_DECL(slow_path_get_by_id)
             auto mode = metadata.m_mode;
             switch (mode) {
             case GetByIdMode::Default:
-                oldStructureID = metadata.m_modeMetadata.defaultMode.structure;
+                oldStructureID = metadata.m_modeMetadata.defaultMode.structureID;
                 break;
             case GetByIdMode::Unset:
-                oldStructureID = metadata.m_modeMetadata.unsetMode.structure;
+                oldStructureID = metadata.m_modeMetadata.unsetMode.structureID;
                 break;
             case GetByIdMode::ProtoLoad:
-                oldStructureID = metadata.m_modeMetadata.protoLoadMode.structure;
+                oldStructureID = metadata.m_modeMetadata.protoLoadMode.structureID;
                 break;
             default:
                 oldStructureID = 0;
@@ -800,7 +800,7 @@ LLINT_SLOW_PATH_DECL(slow_path_get_by_id)
         if (slot.isValue() && slot.slotBase() == baseValue) {
             // Start out by clearing out the old cache.
             metadata.m_mode = GetByIdMode::Default;
-            metadata.m_modeMetadata.defaultMode.structure = 0;
+            metadata.m_modeMetadata.defaultMode.structureID = 0;
             metadata.m_modeMetadata.defaultMode.cachedOffset = 0;
 
             // Prevent the prototype cache from ever happening.
@@ -812,7 +812,7 @@ LLINT_SLOW_PATH_DECL(slow_path_get_by_id)
                 
                 ConcurrentJSLocker locker(codeBlock->m_lock);
 
-                metadata.m_modeMetadata.defaultMode.structure = structure->id();
+                metadata.m_modeMetadata.defaultMode.structureID = structure->id();
                 metadata.m_modeMetadata.defaultMode.cachedOffset = slot.cachedOffset();
             }
         } else if (UNLIKELY(metadata.m_hitCountForLLIntCaching && (slot.isValue() || slot.isUnset()))) {
@@ -857,7 +857,7 @@ LLINT_SLOW_PATH_DECL(slow_path_put_by_id)
         && slot.isCacheablePut()) {
 
         {
-            StructureID oldStructureID = metadata.m_oldStructure;
+            StructureID oldStructureID = metadata.m_oldStructureID;
             if (oldStructureID) {
                 Structure* a = vm.heap.structureIDTable().get(oldStructureID);
                 Structure* b = baseValue.asCell()->structure(vm);
@@ -872,9 +872,9 @@ LLINT_SLOW_PATH_DECL(slow_path_put_by_id)
         }
 
         // Start out by clearing out the old cache.
-        metadata.m_oldStructure = 0;
+        metadata.m_oldStructureID = 0;
         metadata.m_offset = 0;
-        metadata.m_newStructure = 0;
+        metadata.m_newStructureID = 0;
         metadata.m_structureChain.clear();
         
         JSCell* baseCell = baseValue.asCell();
@@ -896,9 +896,9 @@ LLINT_SLOW_PATH_DECL(slow_path_put_by_id)
                     auto result = normalizePrototypeChain(exec, baseCell, sawPolyProto);
                     if (result != InvalidPrototypeChain && !sawPolyProto) {
                         ASSERT(structure->previousID()->isObject());
-                        metadata.m_oldStructure = structure->previousID()->id();
+                        metadata.m_oldStructureID = structure->previousID()->id();
                         metadata.m_offset = slot.cachedOffset();
-                        metadata.m_newStructure = structure->id();
+                        metadata.m_newStructureID = structure->id();
                         if (!(bytecode.m_flags & PutByIdIsDirect)) {
                             StructureChain* chain = structure->prototypeChain(exec, asObject(baseCell));
                             ASSERT(chain);
@@ -908,7 +908,7 @@ LLINT_SLOW_PATH_DECL(slow_path_put_by_id)
                 }
             } else {
                 structure->didCachePropertyReplacement(vm, slot.cachedOffset());
-                metadata.m_oldStructure = structure->id();
+                metadata.m_oldStructureID = structure->id();
                 metadata.m_offset = slot.cachedOffset();
             }
         }

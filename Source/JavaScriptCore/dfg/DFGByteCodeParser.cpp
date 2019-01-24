@@ -5102,7 +5102,7 @@ void ByteCodeParser::parseBlock(unsigned limit)
 
         case op_check_tdz: {
             auto bytecode = currentInstruction->as<OpCheckTdz>();
-            addToGraph(CheckNotEmpty, get(bytecode.m_target));
+            addToGraph(CheckNotEmpty, get(bytecode.m_targetVirtualRegister));
             NEXT_OPCODE(op_check_tdz);
         }
 
@@ -5603,7 +5603,7 @@ void ByteCodeParser::parseBlock(unsigned limit)
         case op_profile_type: {
             auto bytecode = currentInstruction->as<OpProfileType>();
             auto& metadata = bytecode.metadata(codeBlock);
-            Node* valueToProfile = get(bytecode.m_target);
+            Node* valueToProfile = get(bytecode.m_targetVirtualRegister);
             addToGraph(ProfileType, OpInfo(metadata.m_typeLocation), valueToProfile);
             NEXT_OPCODE(op_profile_type);
         }
@@ -5620,7 +5620,7 @@ void ByteCodeParser::parseBlock(unsigned limit)
         case op_jmp: {
             ASSERT(!m_currentBlock->terminal());
             auto bytecode = currentInstruction->as<OpJmp>();
-            int relativeOffset = jumpTarget(bytecode.m_target);
+            int relativeOffset = jumpTarget(bytecode.m_targetLabel);
             addToGraph(Jump, OpInfo(m_currentIndex + relativeOffset));
             if (relativeOffset <= 0)
                 flushForTerminal();
@@ -5629,7 +5629,7 @@ void ByteCodeParser::parseBlock(unsigned limit)
 
         case op_jtrue: {
             auto bytecode = currentInstruction->as<OpJtrue>();
-            unsigned relativeOffset = jumpTarget(bytecode.m_target);
+            unsigned relativeOffset = jumpTarget(bytecode.m_targetLabel);
             Node* condition = get(bytecode.m_condition);
             addToGraph(Branch, OpInfo(branchData(m_currentIndex + relativeOffset, m_currentIndex + currentInstruction->size())), condition);
             LAST_OPCODE(op_jtrue);
@@ -5637,7 +5637,7 @@ void ByteCodeParser::parseBlock(unsigned limit)
 
         case op_jfalse: {
             auto bytecode = currentInstruction->as<OpJfalse>();
-            unsigned relativeOffset = jumpTarget(bytecode.m_target);
+            unsigned relativeOffset = jumpTarget(bytecode.m_targetLabel);
             Node* condition = get(bytecode.m_condition);
             addToGraph(Branch, OpInfo(branchData(m_currentIndex + currentInstruction->size(), m_currentIndex + relativeOffset)), condition);
             LAST_OPCODE(op_jfalse);
@@ -5645,7 +5645,7 @@ void ByteCodeParser::parseBlock(unsigned limit)
 
         case op_jeq_null: {
             auto bytecode = currentInstruction->as<OpJeqNull>();
-            unsigned relativeOffset = jumpTarget(bytecode.m_target);
+            unsigned relativeOffset = jumpTarget(bytecode.m_targetLabel);
             Node* value = get(bytecode.m_value);
             Node* nullConstant = addToGraph(JSConstant, OpInfo(m_constantNull));
             Node* condition = addToGraph(CompareEq, value, nullConstant);
@@ -5655,7 +5655,7 @@ void ByteCodeParser::parseBlock(unsigned limit)
 
         case op_jneq_null: {
             auto bytecode = currentInstruction->as<OpJneqNull>();
-            unsigned relativeOffset = jumpTarget(bytecode.m_target);
+            unsigned relativeOffset = jumpTarget(bytecode.m_targetLabel);
             Node* value = get(bytecode.m_value);
             Node* nullConstant = addToGraph(JSConstant, OpInfo(m_constantNull));
             Node* condition = addToGraph(CompareEq, value, nullConstant);
@@ -5665,7 +5665,7 @@ void ByteCodeParser::parseBlock(unsigned limit)
 
         case op_jless: {
             auto bytecode = currentInstruction->as<OpJless>();
-            unsigned relativeOffset = jumpTarget(bytecode.m_target);
+            unsigned relativeOffset = jumpTarget(bytecode.m_targetLabel);
             Node* op1 = get(bytecode.m_lhs);
             Node* op2 = get(bytecode.m_rhs);
             Node* condition = addToGraph(CompareLess, op1, op2);
@@ -5675,7 +5675,7 @@ void ByteCodeParser::parseBlock(unsigned limit)
 
         case op_jlesseq: {
             auto bytecode = currentInstruction->as<OpJlesseq>();
-            unsigned relativeOffset = jumpTarget(bytecode.m_target);
+            unsigned relativeOffset = jumpTarget(bytecode.m_targetLabel);
             Node* op1 = get(bytecode.m_lhs);
             Node* op2 = get(bytecode.m_rhs);
             Node* condition = addToGraph(CompareLessEq, op1, op2);
@@ -5685,7 +5685,7 @@ void ByteCodeParser::parseBlock(unsigned limit)
 
         case op_jgreater: {
             auto bytecode = currentInstruction->as<OpJgreater>();
-            unsigned relativeOffset = jumpTarget(bytecode.m_target);
+            unsigned relativeOffset = jumpTarget(bytecode.m_targetLabel);
             Node* op1 = get(bytecode.m_lhs);
             Node* op2 = get(bytecode.m_rhs);
             Node* condition = addToGraph(CompareGreater, op1, op2);
@@ -5695,7 +5695,7 @@ void ByteCodeParser::parseBlock(unsigned limit)
 
         case op_jgreatereq: {
             auto bytecode = currentInstruction->as<OpJgreatereq>();
-            unsigned relativeOffset = jumpTarget(bytecode.m_target);
+            unsigned relativeOffset = jumpTarget(bytecode.m_targetLabel);
             Node* op1 = get(bytecode.m_lhs);
             Node* op2 = get(bytecode.m_rhs);
             Node* condition = addToGraph(CompareGreaterEq, op1, op2);
@@ -5705,7 +5705,7 @@ void ByteCodeParser::parseBlock(unsigned limit)
 
         case op_jeq: {
             auto bytecode = currentInstruction->as<OpJeq>();
-            unsigned relativeOffset = jumpTarget(bytecode.m_target);
+            unsigned relativeOffset = jumpTarget(bytecode.m_targetLabel);
             Node* op1 = get(bytecode.m_lhs);
             Node* op2 = get(bytecode.m_rhs);
             Node* condition = addToGraph(CompareEq, op1, op2);
@@ -5715,7 +5715,7 @@ void ByteCodeParser::parseBlock(unsigned limit)
 
         case op_jstricteq: {
             auto bytecode = currentInstruction->as<OpJstricteq>();
-            unsigned relativeOffset = jumpTarget(bytecode.m_target);
+            unsigned relativeOffset = jumpTarget(bytecode.m_targetLabel);
             Node* op1 = get(bytecode.m_lhs);
             Node* op2 = get(bytecode.m_rhs);
             Node* condition = addToGraph(CompareStrictEq, op1, op2);
@@ -5725,7 +5725,7 @@ void ByteCodeParser::parseBlock(unsigned limit)
 
         case op_jnless: {
             auto bytecode = currentInstruction->as<OpJnless>();
-            unsigned relativeOffset = jumpTarget(bytecode.m_target);
+            unsigned relativeOffset = jumpTarget(bytecode.m_targetLabel);
             Node* op1 = get(bytecode.m_lhs);
             Node* op2 = get(bytecode.m_rhs);
             Node* condition = addToGraph(CompareLess, op1, op2);
@@ -5735,7 +5735,7 @@ void ByteCodeParser::parseBlock(unsigned limit)
 
         case op_jnlesseq: {
             auto bytecode = currentInstruction->as<OpJnlesseq>();
-            unsigned relativeOffset = jumpTarget(bytecode.m_target);
+            unsigned relativeOffset = jumpTarget(bytecode.m_targetLabel);
             Node* op1 = get(bytecode.m_lhs);
             Node* op2 = get(bytecode.m_rhs);
             Node* condition = addToGraph(CompareLessEq, op1, op2);
@@ -5745,7 +5745,7 @@ void ByteCodeParser::parseBlock(unsigned limit)
 
         case op_jngreater: {
             auto bytecode = currentInstruction->as<OpJngreater>();
-            unsigned relativeOffset = jumpTarget(bytecode.m_target);
+            unsigned relativeOffset = jumpTarget(bytecode.m_targetLabel);
             Node* op1 = get(bytecode.m_lhs);
             Node* op2 = get(bytecode.m_rhs);
             Node* condition = addToGraph(CompareGreater, op1, op2);
@@ -5755,7 +5755,7 @@ void ByteCodeParser::parseBlock(unsigned limit)
 
         case op_jngreatereq: {
             auto bytecode = currentInstruction->as<OpJngreatereq>();
-            unsigned relativeOffset = jumpTarget(bytecode.m_target);
+            unsigned relativeOffset = jumpTarget(bytecode.m_targetLabel);
             Node* op1 = get(bytecode.m_lhs);
             Node* op2 = get(bytecode.m_rhs);
             Node* condition = addToGraph(CompareGreaterEq, op1, op2);
@@ -5765,7 +5765,7 @@ void ByteCodeParser::parseBlock(unsigned limit)
 
         case op_jneq: {
             auto bytecode = currentInstruction->as<OpJneq>();
-            unsigned relativeOffset = jumpTarget(bytecode.m_target);
+            unsigned relativeOffset = jumpTarget(bytecode.m_targetLabel);
             Node* op1 = get(bytecode.m_lhs);
             Node* op2 = get(bytecode.m_rhs);
             Node* condition = addToGraph(CompareEq, op1, op2);
@@ -5775,7 +5775,7 @@ void ByteCodeParser::parseBlock(unsigned limit)
 
         case op_jnstricteq: {
             auto bytecode = currentInstruction->as<OpJnstricteq>();
-            unsigned relativeOffset = jumpTarget(bytecode.m_target);
+            unsigned relativeOffset = jumpTarget(bytecode.m_targetLabel);
             Node* op1 = get(bytecode.m_lhs);
             Node* op2 = get(bytecode.m_rhs);
             Node* condition = addToGraph(CompareStrictEq, op1, op2);
@@ -5785,7 +5785,7 @@ void ByteCodeParser::parseBlock(unsigned limit)
 
         case op_jbelow: {
             auto bytecode = currentInstruction->as<OpJbelow>();
-            unsigned relativeOffset = jumpTarget(bytecode.m_target);
+            unsigned relativeOffset = jumpTarget(bytecode.m_targetLabel);
             Node* op1 = get(bytecode.m_lhs);
             Node* op2 = get(bytecode.m_rhs);
             Node* condition = addToGraph(CompareBelow, op1, op2);
@@ -5795,7 +5795,7 @@ void ByteCodeParser::parseBlock(unsigned limit)
 
         case op_jbeloweq: {
             auto bytecode = currentInstruction->as<OpJbeloweq>();
-            unsigned relativeOffset = jumpTarget(bytecode.m_target);
+            unsigned relativeOffset = jumpTarget(bytecode.m_targetLabel);
             Node* op1 = get(bytecode.m_lhs);
             Node* op2 = get(bytecode.m_rhs);
             Node* condition = addToGraph(CompareBelowEq, op1, op2);
@@ -6112,7 +6112,7 @@ void ByteCodeParser::parseBlock(unsigned limit)
             JSCell* actualPointer = static_cast<JSCell*>(
                 actualPointerFor(m_inlineStackTop->m_codeBlock, specialPointer));
             FrozenValue* frozenPointer = m_graph.freeze(actualPointer);
-            unsigned relativeOffset = jumpTarget(bytecode.m_target);
+            unsigned relativeOffset = jumpTarget(bytecode.m_targetLabel);
             Node* child = get(bytecode.m_value);
             if (bytecode.metadata(codeBlock).m_hasJumped) {
                 Node* condition = addToGraph(CompareEqPtr, OpInfo(frozenPointer), child);

@@ -50,7 +50,7 @@ void JIT::emit_compareAndJump(const Instruction* instruction, RelationalConditio
     auto bytecode = instruction->as<Op>();
     int op1 = bytecode.m_lhs.offset();
     int op2 = bytecode.m_rhs.offset();
-    unsigned target = jumpTarget(instruction, bytecode.m_target);
+    unsigned target = jumpTarget(instruction, bytecode.m_targetLabel);
 
     // Character less.
     if (isOperandConstantChar(op1)) {
@@ -104,7 +104,7 @@ void JIT::emit_compareUnsignedAndJump(const Instruction* instruction, Relational
     auto bytecode = instruction->as<Op>();
     int op1 = bytecode.m_lhs.offset();
     int op2 = bytecode.m_rhs.offset();
-    unsigned target = jumpTarget(instruction, bytecode.m_target);
+    unsigned target = jumpTarget(instruction, bytecode.m_targetLabel);
 
     if (isOperandConstantInt(op1)) {
         emitLoad(op2, regT3, regT2);
@@ -145,7 +145,7 @@ void JIT::emit_compareAndJumpSlow(const Instruction *instruction, DoubleConditio
     auto bytecode = instruction->as<Op>();
     int op1 = bytecode.m_lhs.offset();
     int op2 = bytecode.m_rhs.offset();
-    unsigned target = jumpTarget(instruction, bytecode.m_target);
+    unsigned target = jumpTarget(instruction, bytecode.m_targetLabel);
 
     linkAllSlowCases(iter);
 
@@ -199,7 +199,7 @@ void JIT::emitBinaryDoubleOp(const Instruction *instruction, OperandTypes types,
 
     auto bytecode = instruction->as<Op>();
     int opcodeID = Op::opcodeID;
-    int target = jumpTarget(instruction, bytecode.m_target);
+    int target = jumpTarget(instruction, bytecode.m_targetLabel);
     int op1 = bytecode.m_lhs.offset();
     int op2 = bytecode.m_rhs.offset();
 

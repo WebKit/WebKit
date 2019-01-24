@@ -1095,8 +1095,8 @@ void CodeBlock::propagateTransitions(const ConcurrentJSLocker&, SlotVisitor& vis
             auto instruction = m_instructions->at(propertyAccessInstructions[i]);
             if (instruction->is<OpPutById>()) {
                 auto& metadata = instruction->as<OpPutById>().metadata(this);
-                StructureID oldStructureID = metadata.m_oldStructure;
-                StructureID newStructureID = metadata.m_newStructure;
+                StructureID oldStructureID = metadata.m_oldStructureID;
+                StructureID newStructureID = metadata.m_newStructureID;
                 if (!oldStructureID || !newStructureID)
                     continue;
                 Structure* oldStructure =
@@ -1226,7 +1226,7 @@ void CodeBlock::finalizeLLIntInlineCaches()
             auto& metadata = curInstruction->as<OpGetById>().metadata(this);
             if (metadata.m_mode != GetByIdMode::Default)
                 break;
-            StructureID oldStructureID = metadata.m_modeMetadata.defaultMode.structure;
+            StructureID oldStructureID = metadata.m_modeMetadata.defaultMode.structureID;
             if (!oldStructureID || Heap::isMarked(vm.heap.structureIDTable().get(oldStructureID)))
                 break;
             if (Options::verboseOSR())
@@ -1236,19 +1236,19 @@ void CodeBlock::finalizeLLIntInlineCaches()
         }
         case op_get_by_id_direct: {
             auto& metadata = curInstruction->as<OpGetByIdDirect>().metadata(this);
-            StructureID oldStructureID = metadata.m_structure;
+            StructureID oldStructureID = metadata.m_structureID;
             if (!oldStructureID || Heap::isMarked(vm.heap.structureIDTable().get(oldStructureID)))
                 break;
             if (Options::verboseOSR())
                 dataLogF("Clearing LLInt property access.\n");
-            metadata.m_structure = 0;
+            metadata.m_structureID = 0;
             metadata.m_offset = 0;
             break;
         }
         case op_put_by_id: {
             auto& metadata = curInstruction->as<OpPutById>().metadata(this);
-            StructureID oldStructureID = metadata.m_oldStructure;
-            StructureID newStructureID = metadata.m_newStructure;
+            StructureID oldStructureID = metadata.m_oldStructureID;
+            StructureID newStructureID = metadata.m_newStructureID;
             StructureChain* chain = metadata.m_structureChain.get();
             if ((!oldStructureID || Heap::isMarked(vm.heap.structureIDTable().get(oldStructureID)))
                 && (!newStructureID || Heap::isMarked(vm.heap.structureIDTable().get(newStructureID)))
@@ -1256,9 +1256,9 @@ void CodeBlock::finalizeLLIntInlineCaches()
                 break;
             if (Options::verboseOSR())
                 dataLogF("Clearing LLInt put transition.\n");
-            metadata.m_oldStructure = 0;
+            metadata.m_oldStructureID = 0;
             metadata.m_offset = 0;
-            metadata.m_newStructure = 0;
+            metadata.m_newStructureID = 0;
             metadata.m_structureChain.clear();
             break;
         }

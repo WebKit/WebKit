@@ -125,8 +125,8 @@ namespace JSC {
         bool bCondition = (condition);                         \
         CHECK_EXCEPTION();                                  \
         if (bCondition)                                        \
-            pc = bytecode.m_target \
-                ? reinterpret_cast<const Instruction*>(reinterpret_cast<const uint8_t*>(pc) + bytecode.m_target) \
+            pc = bytecode.m_targetLabel \
+                ? reinterpret_cast<const Instruction*>(reinterpret_cast<const uint8_t*>(pc) + bytecode.m_targetLabel) \
                 : exec->codeBlock()->outOfLineJumpTarget(pc);                              \
         else                                                      \
             pc = reinterpret_cast<const Instruction*>(reinterpret_cast<const uint8_t*>(pc) + pc->size()); \

@@ -102,7 +102,7 @@ void Label::setLocation(BytecodeGenerator& generator, unsigned location)
 
 #define CASE(__op) \
     case __op::opcodeID:  \
-        instruction->cast<__op>()->setTarget(BoundLabel(target), [&]() { \
+        instruction->cast<__op>()->setTargetLabel(BoundLabel(target), [&]() { \
             generator.m_codeBlock->addOutOfLineJumpTarget(instruction.offset(), target); \
             return BoundLabel(); \
         }); \

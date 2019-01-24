@@ -74,7 +74,7 @@ void JIT::emit_op_end(const Instruction* currentInstruction)
 void JIT::emit_op_jmp(const Instruction* currentInstruction)
 {
     auto bytecode = currentInstruction->as<OpJmp>();
-    unsigned target = jumpTarget(currentInstruction, bytecode.m_target);
+    unsigned target = jumpTarget(currentInstruction, bytecode.m_targetLabel);
     addJump(jump(), target);
 }
 
@@ -359,7 +359,7 @@ void JIT::emit_op_jfalse(const Instruction* currentInstruction)
 {
     auto bytecode = currentInstruction->as<OpJfalse>();
     int cond = bytecode.m_condition.offset();
-    unsigned target = jumpTarget(currentInstruction, bytecode.m_target);
+    unsigned target = jumpTarget(currentInstruction, bytecode.m_targetLabel);
 
     emitLoad(cond, regT1, regT0);
 
@@ -374,7 +374,7 @@ void JIT::emit_op_jtrue(const Instruction* currentInstruction)
 {
     auto bytecode = currentInstruction->as<OpJtrue>();
     int cond = bytecode.m_condition.offset();
-    unsigned target = jumpTarget(currentInstruction, bytecode.m_target);
+    unsigned target = jumpTarget(currentInstruction, bytecode.m_targetLabel);
 
     emitLoad(cond, regT1, regT0);
     bool shouldCheckMasqueradesAsUndefined = true;
@@ -388,7 +388,7 @@ void JIT::emit_op_jeq_null(const Instruction* currentInstruction)
 {
     auto bytecode = currentInstruction->as<OpJeqNull>();
     int src = bytecode.m_value.offset();
-    unsigned target = jumpTarget(currentInstruction, bytecode.m_target);
+    unsigned target = jumpTarget(currentInstruction, bytecode.m_targetLabel);
 
     emitLoad(src, regT1, regT0);
 
@@ -414,7 +414,7 @@ void JIT::emit_op_jneq_null(const Instruction* currentInstruction)
 {
     auto bytecode = currentInstruction->as<OpJneqNull>();
     int src = bytecode.m_value.offset();
-    unsigned target = jumpTarget(currentInstruction, bytecode.m_target);
+    unsigned target = jumpTarget(currentInstruction, bytecode.m_targetLabel);
 
     emitLoad(src, regT1, regT0);
 
@@ -442,7 +442,7 @@ void JIT::emit_op_jneq_ptr(const Instruction* currentInstruction)
     auto& metadata = bytecode.metadata(m_codeBlock);
     int src = bytecode.m_value.offset();
     Special::Pointer ptr = bytecode.m_specialPointer;
-    unsigned target = jumpTarget(currentInstruction, bytecode.m_target);
+    unsigned target = jumpTarget(currentInstruction, bytecode.m_targetLabel);
 
     emitLoad(src, regT1, regT0);
     Jump notCell = branchIfNotCell(regT1);
@@ -501,7 +501,7 @@ void JIT::emitSlow_op_eq(const Instruction* currentInstruction, Vector<SlowCaseE
 void JIT::emit_op_jeq(const Instruction* currentInstruction)
 {
     auto bytecode = currentInstruction->as<OpJeq>();
-    unsigned target = jumpTarget(currentInstruction, bytecode.m_target);
+    unsigned target = jumpTarget(currentInstruction, bytecode.m_targetLabel);
     int src1 = bytecode.m_lhs.offset();
     int src2 = bytecode.m_rhs.offset();
 
@@ -541,7 +541,7 @@ void JIT::compileOpEqJumpSlow(Vector<SlowCaseEntry>::iterator& iter, CompileOpEq
 void JIT::emitSlow_op_jeq(const Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
 {
     auto bytecode = currentInstruction->as<OpJeq>();
-    unsigned target = jumpTarget(currentInstruction, bytecode.m_target);
+    unsigned target = jumpTarget(currentInstruction, bytecode.m_targetLabel);
     compileOpEqJumpSlow(iter, CompileOpEqType::Eq, target);
 }
 
@@ -593,7 +593,7 @@ void JIT::emitSlow_op_neq(const Instruction* currentInstruction, Vector<SlowCase
 void JIT::emit_op_jneq(const Instruction* currentInstruction)
 {
     auto bytecode = currentInstruction->as<OpJneq>();
-    unsigned target = jumpTarget(currentInstruction, bytecode.m_target);
+    unsigned target = jumpTarget(currentInstruction, bytecode.m_targetLabel);
     int src1 = bytecode.m_lhs.offset();
     int src2 = bytecode.m_rhs.offset();
 
@@ -608,7 +608,7 @@ void JIT::emit_op_jneq(const Instruction* currentInstruction)
 void JIT::emitSlow_op_jneq(const Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
 {
     auto bytecode = currentInstruction->as<OpJneq>();
-    unsigned target = jumpTarget(currentInstruction, bytecode.m_target);
+    unsigned target = jumpTarget(currentInstruction, bytecode.m_targetLabel);
     compileOpEqJumpSlow(iter, CompileOpEqType::NEq, target);
 }
 
@@ -656,7 +656,7 @@ template<typename Op>
 void JIT::compileOpStrictEqJump(const Instruction* currentInstruction, CompileOpStrictEqType type)
 {
     auto bytecode = currentInstruction->as<Op>();
-    int target = jumpTarget(currentInstruction, bytecode.m_target);
+    int target = jumpTarget(currentInstruction, bytecode.m_targetLabel);
     int src1 = bytecode.m_lhs.offset();
     int src2 = bytecode.m_rhs.offset();
 
@@ -695,7 +695,7 @@ void JIT::emitSlow_op_jstricteq(const Instruction* currentInstruction, Vector<Sl
     linkAllSlowCases(iter);
 
     auto bytecode = currentInstruction->as<OpJstricteq>();
-    unsigned target = jumpTarget(currentInstruction, bytecode.m_target);
+    unsigned target = jumpTarget(currentInstruction, bytecode.m_targetLabel);
     callOperation(operationCompareStrictEq, JSValueRegs(regT1, regT0), JSValueRegs(regT3, regT2));
     emitJumpSlowToHot(branchTest32(NonZero, returnValueGPR), target);
 }
@@ -705,7 +705,7 @@ void JIT::emitSlow_op_jnstricteq(const Instruction* currentInstruction, Vector<S
     linkAllSlowCases(iter);
 
     auto bytecode = currentInstruction->as<OpJnstricteq>();
-    unsigned target = jumpTarget(currentInstruction, bytecode.m_target);
+    unsigned target = jumpTarget(currentInstruction, bytecode.m_targetLabel);
     callOperation(operationCompareStrictEq, JSValueRegs(regT1, regT0), JSValueRegs(regT3, regT2));
     emitJumpSlowToHot(branchTest32(Zero, returnValueGPR), target);
 }
@@ -1045,7 +1045,7 @@ void JIT::emit_op_to_this(const Instruction* currentInstruction)
 void JIT::emit_op_check_tdz(const Instruction* currentInstruction)
 {
     auto bytecode = currentInstruction->as<OpCheckTdz>();
-    emitLoadTag(bytecode.m_target.offset(), regT0);
+    emitLoadTag(bytecode.m_targetVirtualRegister.offset(), regT0);
     addSlowCase(branchIfEmpty(regT0));
 }
 
@@ -1258,7 +1258,7 @@ void JIT::emit_op_profile_type(const Instruction* currentInstruction)
     auto bytecode = currentInstruction->as<OpProfileType>();
     auto& metadata = bytecode.metadata(m_codeBlock);
     TypeLocation* cachedTypeLocation = metadata.m_typeLocation;
-    int valueToProfile = bytecode.m_target.offset();
+    int valueToProfile = bytecode.m_targetVirtualRegister.offset();
 
     // Load payload in T0. Load tag in T3.
     emitLoadPayload(valueToProfile, regT0);
