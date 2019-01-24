@@ -1,3 +1,13 @@
+2019-01-24  Jer Noble  <jer.noble@apple.com>
+
+        Fix leak of AVSampleBufferRenderSynchronizer boundaryObserver object.
+        https://bugs.webkit.org/show_bug.cgi?id=193778
+
+        Reviewed by Jon Lee.
+
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateMediaSourceAVFObjC.mm:
+        (WebCore::MediaPlayerPrivateMediaSourceAVFObjC::performTaskAtMediaTime):
+
 2019-01-24  Zalan Bujtas  <zalan@apple.com>
 
         DidFirstVisuallyNonEmptyLayout milestone should always fire at some point.
