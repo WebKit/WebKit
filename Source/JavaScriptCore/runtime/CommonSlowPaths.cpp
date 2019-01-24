@@ -243,6 +243,7 @@ SLOW_PATH_DECL(slow_path_create_this)
 
         size_t inlineCapacity = bytecode.inlineCapacity;
         ObjectAllocationProfile* allocationProfile = constructor->ensureRareDataAndAllocationProfile(exec, inlineCapacity)->objectAllocationProfile();
+        throwScope.releaseAssertNoException();
         Structure* structure = allocationProfile->structure();
         result = constructEmptyObject(exec, structure);
         if (structure->hasPolyProto()) {

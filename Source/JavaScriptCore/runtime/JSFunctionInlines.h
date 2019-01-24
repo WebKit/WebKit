@@ -110,8 +110,16 @@ inline bool JSFunction::hasReifiedName() const
 
 inline bool JSFunction::canUseAllocationProfile()
 {
-    if (isHostFunction())
-        return false;
+    if (isHostOrBuiltinFunction()) {
+        if (isHostFunction())
+            return false;
+
+        VM& vm = globalObject()->vm();
+        unsigned attributes;
+        JSValue prototype = getDirect(vm, vm.propertyNames->prototype, attributes);
+        if (!prototype || (attributes & PropertyAttribute::AccessorOrCustomAccessorOrValue))
+            return false;
+    }
 
     // If we don't have a prototype property, we're not guaranteed it's
     // non-configurable. For example, user code can define the prototype
