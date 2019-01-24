@@ -26,7 +26,6 @@
 #include "config.h"
 #include "SuspendedPageProxy.h"
 
-#include "DrawingAreaProxy.h"
 #include "Logging.h"
 #include "WebPageMessages.h"
 #include "WebPageProxy.h"
@@ -154,19 +153,6 @@ void SuspendedPageProxy::didProcessRequestToSuspend(SuspensionState newSuspensio
 #endif
 
     m_process->removeMessageReceiver(Messages::WebPageProxy::messageReceiverName(), m_page.pageID());
-
-    bool shouldKeepOnFailure = false;
-#if PLATFORM(MAC)
-    // With web process side tiles, we need to keep the suspended page around on failure to avoid flashing.
-    // It is removed by WebPageProxy::enterAcceleratedCompositingMode when the target page is ready.
-    shouldKeepOnFailure = m_page.drawingArea() && m_page.drawingArea()->type() == DrawingAreaTypeTiledCoreAnimation;
-#endif
-    if (newSuspensionState == SuspensionState::FailedToSuspend && !shouldKeepOnFailure) {
-        RunLoop::main().dispatch([weakProcessPool = makeWeakPtr(m_process->processPool()), weakThis = makeWeakPtr(*this)] {
-            if (weakProcessPool && weakThis)
-                weakProcessPool->removeSuspendedPage(*weakThis);
-        });
-    }
 
     if (m_readyToUnsuspendHandler)
         m_readyToUnsuspendHandler(this);

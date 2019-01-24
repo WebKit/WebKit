@@ -1,3 +1,15 @@
+2019-01-23  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Unreviewed, rolling out r240343.
+
+        Caused 4 PSON API test failures.
+
+        Reverted changeset:
+
+        "[PSON] Flash on back navigation on Mac"
+        https://bugs.webkit.org/show_bug.cgi?id=193716
+        https://trac.webkit.org/changeset/240343
+
 2019-01-23  Chris Dumez  <cdumez@apple.com>
 
         Deprecate API to limit the maximum number of WebProcesses
