@@ -1,3 +1,21 @@
+2019-01-24  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC][BFC][MarginCollapsing] MarginCollapse::collapsedVerticalValues should not return computed non-collapsed values.
+        https://bugs.webkit.org/show_bug.cgi?id=193768
+
+        Reviewed by Antti Koivisto.
+
+        When it comes to the actual used values it does not really matter, only from correctness point of view.
+        (This patch also moves some checks to their correct place.)
+
+        * layout/blockformatting/BlockMarginCollapse.cpp:
+        (WebCore::Layout::BlockFormattingContext::MarginCollapse::marginBeforeCollapsesWithPreviousSiblingMarginAfter):
+        (WebCore::Layout::BlockFormattingContext::MarginCollapse::marginBeforeCollapsesWithFirstInFlowChildMarginBefore):
+        (WebCore::Layout::BlockFormattingContext::MarginCollapse::marginAfterCollapsesWithLastInFlowChildMarginAfter):
+        (WebCore::Layout::BlockFormattingContext::MarginCollapse::positiveNegativeMarginBefore):
+        (WebCore::Layout::BlockFormattingContext::MarginCollapse::positiveNegativeMarginAfter):
+        (WebCore::Layout::BlockFormattingContext::MarginCollapse::collapsedVerticalValues):
+
 2019-01-23  Simon Fraser  <simon.fraser@apple.com>
 
         Add "frame hosting" nodes to the scrolling tree
