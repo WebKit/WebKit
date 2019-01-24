@@ -70,6 +70,15 @@
 
     }, "Pass device IDs as optional constraints");
 
+    promise_test(async (test) => {
+        await navigator.mediaDevices.getUserMedia({ audio: {deviceId: {exact: ""}}});
+        await navigator.mediaDevices.getUserMedia({ video: {deviceId: {exact: [""]}}});
+        await navigator.mediaDevices.getUserMedia({ audio: {deviceId: {exact: undefined}}});
+
+        await navigator.mediaDevices.getUserMedia({ audio: {deviceId: {exact: null}}}).then(assert_unreached, () => { });
+        await navigator.mediaDevices.getUserMedia({ audio: {deviceId: {exact: "test"}}}).then(assert_unreached, () => { });
+    }, "Exact device IDs with special values: empty string, null, undefined");
+
     </script>
 </head>
 <body>

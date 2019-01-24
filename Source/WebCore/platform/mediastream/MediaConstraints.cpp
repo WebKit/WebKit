@@ -315,6 +315,8 @@ void MediaTrackConstraintSetMap::set(MediaConstraintType constraintType, Optiona
         m_facingMode = WTFMove(constraint);
         break;
     case MediaConstraintType::DeviceId:
+        if (constraint)
+            constraint->removeEmptyStringConstraint();
         m_deviceId = WTFMove(constraint);
         break;
     case MediaConstraintType::GroupId:

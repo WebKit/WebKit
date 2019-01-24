@@ -610,6 +610,16 @@ public:
         return true;
     }
 
+    void removeEmptyStringConstraint()
+    {
+        m_exact.removeAllMatching([](auto& constraint) {
+            return constraint.isEmpty();
+        });
+        m_ideal.removeAllMatching([](auto& constraint) {
+            return constraint.isEmpty();
+        });
+    }
+
 private:
     Vector<String> m_exact;
     Vector<String> m_ideal;
