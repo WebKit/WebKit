@@ -110,6 +110,7 @@ struct FrameState {
     WebCore::FloatSize minimumLayoutSizeInScrollViewCoordinates;
     WebCore::IntSize contentSize;
     bool scaleIsInitial { false };
+    WebCore::FloatBoxExtent obscuredInsets;
 #endif
 
     Vector<FrameState> children;

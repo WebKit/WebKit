@@ -585,25 +585,10 @@ bool WebProcessProxy::fullKeyboardAccessEnabled()
 }
 #endif
 
-bool WebProcessProxy::hasProvisionalPageWithID(uint64_t pageID) const
-{
-    for (auto* provisionalPage : m_provisionalPages) {
-        if (provisionalPage->page().pageID() == pageID)
-            return true;
-    }
-    return false;
-}
-
 void WebProcessProxy::updateBackForwardItem(const BackForwardListItemState& itemState)
 {
-    if (auto* item = WebBackForwardListItem::itemForID(itemState.identifier)) {
-        // This update could be coming from a web process that is not the active process for
-        // the back/forward items page.
-        // e.g. The old web process is navigating to about:blank for suspension.
-        // We ignore these updates.
-        if (m_pageMap.contains(item->pageID()) || hasProvisionalPageWithID(item->pageID()))
-            item->setPageState(itemState.pageState);
-    }
+    if (auto* item = WebBackForwardListItem::itemForID(itemState.identifier))
+        item->setPageState(itemState.pageState);
 }
 
 #if ENABLE(NETSCAPE_PLUGIN_API)

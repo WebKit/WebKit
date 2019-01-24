@@ -128,6 +128,7 @@ void FrameState::encode(IPC::Encoder& encoder) const
     encoder << minimumLayoutSizeInScrollViewCoordinates;
     encoder << contentSize;
     encoder << scaleIsInitial;
+    encoder << obscuredInsets;
 #endif
 
     encoder << children;
@@ -175,6 +176,8 @@ Optional<FrameState> FrameState::decode(IPC::Decoder& decoder)
     if (!decoder.decode(result.contentSize))
         return WTF::nullopt;
     if (!decoder.decode(result.scaleIsInitial))
+        return WTF::nullopt;
+    if (!decoder.decode(result.obscuredInsets))
         return WTF::nullopt;
 #endif
 
