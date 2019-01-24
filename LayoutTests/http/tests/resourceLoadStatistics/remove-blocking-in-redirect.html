@@ -18,7 +18,6 @@
     const subPathToSetFirstPartyCookie = "/set-cookie.php?name=" + firstPartyCookieName + "&value=value";
     const partitionedCookieName = "partitionedCookie";
     const subPathToSetPartitionedCookie = "/set-cookie.php?name=" + partitionedCookieName + "&value=value";
-    const returnUrl = "http://" + partitionHost + "/resourceLoadStatistics/remove-blocking-in-redirect.html";
     const subPathToGetCookies = "/get-cookies.php?name1=" + firstPartyCookieName + "&name2=" + partitionedCookieName;
     const redirectChainUrl = thirdPartyOrigin + resourcePath + "/redirect.php?redirectTo=http://" + partitionHost + resourcePath + subPathToGetCookies;
 
@@ -35,12 +34,17 @@
         switch (document.location.hash) {
             case "#step1":
                 // Set first-party cookies for 127.0.0.1 and localhost.
+                document.location.hash = "step2";
                 document.cookie = firstPartyCookieName + "=127.0.0.1;path='/'";
-                document.location.href = thirdPartyBaseUrl + subPathToSetFirstPartyCookie + "#" + returnUrl + "#step2";
+                if (window.testRunner)
+                    testRunner.setAlwaysAcceptCookies(true);
+                openIframe(thirdPartyBaseUrl + subPathToSetFirstPartyCookie + "&message=Set cookie.", runTest);
                 break;
             case "#step2":
                 // Check that the cookie gets sent for localhost under 127.0.0.1 since localhost is not prevalent.
                 document.location.hash = "step3";
+                if (window.testRunner)
+                    testRunner.setAlwaysAcceptCookies(false);
                 openIframe(thirdPartyBaseUrl + subPathToGetCookies + "&message=Should receive first-party cookie.", runTest);
                 break;
             case "#step3":
