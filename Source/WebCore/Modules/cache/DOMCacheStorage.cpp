@@ -59,7 +59,8 @@ static void doSequentialMatch(size_t index, Vector<Ref<DOMCache>>&& caches, DOMC
         return;
     }
 
-    caches[index]->doMatch(WTFMove(info), WTFMove(options), [caches = WTFMove(caches), info, options, completionHandler = WTFMove(completionHandler), index](ExceptionOr<FetchResponse*>&& result) mutable {
+    auto& cache = caches[index].get();
+    cache.doMatch(WTFMove(info), WTFMove(options), [caches = WTFMove(caches), info, options, completionHandler = WTFMove(completionHandler), index](ExceptionOr<FetchResponse*>&& result) mutable {
         if (result.hasException()) {
             completionHandler(result.releaseException());
             return;
