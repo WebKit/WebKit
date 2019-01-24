@@ -1,3 +1,11 @@
+2019-01-23  Conrad Shultz  <conrad_shultz@apple.com>
+
+        Fix the Apple Internal build. See <rdar://problem/47491383>.
+
+        Rubber-stamped by Tim Horton.
+
+        * WebCoreSupport/WebFrameLoaderClient.mm:
+
 2019-01-22  Conrad Shultz  <conrad_shultz@apple.com>
 
         Clean up USE(WEB_THREAD)
