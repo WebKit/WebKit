@@ -1,3 +1,17 @@
+2019-01-23  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [DFG] AvailabilityMap::pruneByLiveness should make non-live operands Availability::unavailable instead of Availability()
+        https://bugs.webkit.org/show_bug.cgi?id=193711
+        <rdar://problem/47250262>
+
+        Reviewed by Saam Barati.
+
+        * stress/availability-was-cleared-when-locals-are-not-live.js: Added.
+        (shouldBe):
+        (foo):
+        (bar):
+        (baz):
+
 2019-01-22  Yusuke Suzuki  <ysuzuki@apple.com>
 
         Unreviewed, fix initial global lexical binding epoch

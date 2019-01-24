@@ -1,3 +1,79 @@
+2019-01-23  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [DFG] AvailabilityMap::pruneByLiveness should make non-live operands Availability::unavailable instead of Availability()
+        https://bugs.webkit.org/show_bug.cgi?id=193711
+        <rdar://problem/47250262>
+
+        Reviewed by Saam Barati.
+
+        When pruning OSR Availability based on bytecode liveness, we accidentally clear the Availability (making it DeadFlush) instead of
+        making it Availability::unavailable() (Making it ConflictingFlush). In OSRAvailabilityAnalysisPhase, we perform forward analysis.
+        We first clear all the availability of basic blocks DeadFlush, which is an empty set. And then, we set operands in the root block
+        ConflictingFlush. In this forward analysis, DeadFlush is BOTTOM, and ConflictingFlush is TOP. Then, we propagate information by
+        merging availability until we reach to the fixed-point. As an optimization, we perform "pruning" of the availability in the head
+        of the basic blocks. We remove availabilities of operands which are not live in the bytecode liveness at the head of the basic block.
+        The problem is, when removing availabilities, we set DeadFlush for them instead of ConflictingFlush. Basically, it means that we set
+        BOTTOM (an empty set) instead of TOP. Let's consider the following simple example. We have 6 basic blocks, and they are connected
+        as follows.
+
+            BB0 -> BB1 -> BB2 -> BB4
+             |        \        ^
+             v          > BB3 /
+            BB5
+
+        And consider about loc1 in FTL, which is required to be recovered in BB4's OSR exit.
+
+            BB0 does nothing
+                head: loc1 is dead
+                tail: loc1 is dead
+
+            BB1 has MovHint @1, loc1
+                head: loc1 is dead
+                tail: loc1 is live
+
+            BB2 does nothing
+                head: loc1 is live
+                tail: loc1 is live
+
+            BB3 has PutStack @1, loc1
+                head: loc1 is live
+                tail: loc1 is live
+
+            BB4 has OSR exit using loc1
+                head: loc1 is live
+                tail: loc1 is live (in bytecode)
+
+            BB5 does nothing
+                head: loc1 is dead
+                tail: loc1 is dead
+
+        In our OSR Availability analysis, we always prune loc1 result in BB1's head since its head says "loc1 is dead".
+        But at that time, we clear the availability for loc1, which makes it DeadFlush, instead of making it ConflictingFlush.
+
+        So, the flush format of loc1 in each tail of BB is like this.
+
+            BB0
+                ConflictingFlush (because all the local operands are initialized with ConflictingFlush)
+            BB1
+                DeadFlush+@1 (pruning clears it)
+            BB2
+                DeadFlush+@1 (since it is propagated from BB1)
+            BB3
+                FlushedJSValue+@1 with loc1 (since it has PutStack)
+            BB4
+                FlushedJSValue+@1 with loc1 (since MERGE(DeadFlush, FlushedJSValue) = FlushedJSValue)
+            BB5
+                DeadFlush (pruning clears it)
+
+        Then, if we go the path BB0->BB1->BB2->BB4, we read the value from the stack while it is not flushed.
+        The correct fix is making availability "unavailable" when pruning based on bytecode liveness.
+
+        * dfg/DFGAvailabilityMap.cpp:
+        (JSC::DFG::AvailabilityMap::pruneByLiveness): When pruning availability, we first set all the operands Availability::unavailable(),
+        and copy the calculated value from the current availability map.
+        * dfg/DFGOSRAvailabilityAnalysisPhase.cpp:
+        (JSC::DFG::OSRAvailabilityAnalysisPhase::run): Add logging things for debugging.
+
 2019-01-23  David Kilzer  <ddkilzer@apple.com>
 
         [JSC] Duplicate global variables: JSC::opcodeLengths
