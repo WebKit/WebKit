@@ -178,7 +178,7 @@ static void applyFrameState(HistoryItem& historyItem, const FrameState& frameSta
 #endif
 
     for (const auto& childFrameState : frameState.children) {
-        Ref<HistoryItem> childHistoryItem = HistoryItem::create(childFrameState.urlString, { }, { }, { Process::identifier(), generateObjectIdentifier<BackForwardItemIdentifier::ItemIdentifierType>() });
+        Ref<HistoryItem> childHistoryItem = HistoryItem::create(childFrameState.urlString, { }, { });
         applyFrameState(childHistoryItem, childFrameState);
 
         historyItem.addChildItem(WTFMove(childHistoryItem));

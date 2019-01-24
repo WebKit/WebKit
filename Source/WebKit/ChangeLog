@@ -1,3 +1,39 @@
+2019-01-24  Chris Dumez  <cdumez@apple.com>
+
+        Regression(PSON) Back/Forward list items' URL sometimes gets replaced with the URL of a subframe
+        https://bugs.webkit.org/show_bug.cgi?id=193761
+        <rdar://problem/47456405>
+
+        Reviewed by Alex Christensen.
+
+        When doing a history navigation cross-process, the UIProcess would first send the back/forward list items
+        to the destination WebProcess via WebPage::updateBackForwardListForReattach(), then ask the process to
+        navigate to the expected back/forward list item.
+
+        WebPage::updateBackForwardListForReattach() would call restoreSessionInternal(), which would call
+        toHistoryItem() on each BackForwardListItem. This may end up creating more than one HistoryItem for each
+        BackForwardListItem because HistoryItems are part of a tree (each frame has its own list of history items).
+
+        Note that BackForwardListItems and HistoryItem share a BackForwardItemIdentifier which is a
+        (processIdentifier, itemIdentifier) pair. We normally generate the HistoryItem's identifier from inside
+        its constructor like so:
+        `{ Process::identifier(), generateObjectIdentifier<BackForwardItemIdentifier::ItemIdentifierType>() }`
+
+        However, when calling updateBackForwardListForReattach() and constructing children HistoryItem,
+        applyFrameState() would generate the identifier by itself and passing it to the HistoryItem constructor.
+        Its genegates the ID the exact same way so this would in theory not be a problem. Unfortunately, both
+        calls to generateObjectIdentifier() get inlined and both call sites end up with their own static counter
+        to generate ids. As a result, we may end up with conflicts as HistoryItems for child frames (restored
+        by restoreSessionInternal()) can end up with the same identifier as HistoryItems for top frames.
+
+        This confusion would lead to the WebContent process sending the UIProcess bad information and the URL
+        of subframes could end up as the WebBackForwardListItem's mainframe URL.
+
+        * WebProcess/WebCoreSupport/SessionStateConversion.cpp:
+        (WebKit::applyFrameState):
+        Stop calling generateObjectIdentifier() explicitly and let the HistoryItem constructor take care of it.
+        Calling generateObjectIdentifier() for the same type from different places is not safe due to inlining.
+
 2019-01-24  Ross Kirsling  <ross.kirsling@sony.com>
 
         Move FileSystem to WTF
