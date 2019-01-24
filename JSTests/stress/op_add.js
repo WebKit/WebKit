@@ -1,6 +1,6 @@
 // FIXME: unskip when this is solved
 // https://bugs.webkit.org/show_bug.cgi?id=191163
-//@ skip if $architecture == "arm" or $architecture == "x86"
+//@ skip if ["arm", "mips", "x86"].include?($architecture)
 //@ runFTLNoCJIT
 
 // If all goes well, this test module will terminate silently. If not, it will print

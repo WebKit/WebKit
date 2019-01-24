@@ -1,3 +1,14 @@
+2019-01-24  Guillaume Emont  <guijemont@igalia.com>
+
+        [JSC] Reenable baseline JIT on mips
+        https://bugs.webkit.org/show_bug.cgi?id=192983
+
+        Reviewed by Mark Lam.
+
+        Use baseline JIT by default on MIPS.
+
+        * Source/cmake/WebKitFeatures.cmake:
+
 2019-01-24  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK][WPE] Support JPEG 2000 images

@@ -1,3 +1,20 @@
+2019-01-24  Guillaume Emont  <guijemont@igalia.com>
+
+        [JSC] Reenable baseline JIT on mips
+        https://bugs.webkit.org/show_bug.cgi?id=192983
+
+        Reviewed by Mark Lam.
+
+        Use $s0 as metadata register and make sure it's properly saved and
+        restored.
+
+        * jit/GPRInfo.h:
+        * jit/RegisterSet.cpp:
+        (JSC::RegisterSet::vmCalleeSaveRegisters):
+        (JSC::RegisterSet::llintBaselineCalleeSaveRegisters):
+        * llint/LowLevelInterpreter.asm:
+        * offlineasm/mips.rb:
+
 2019-01-24  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GLIB] Expose JavaScriptCore options in GLib public API

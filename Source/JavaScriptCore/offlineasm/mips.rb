@@ -135,6 +135,8 @@ class RegisterID
             "$t5"
         when "cfr"
             "$fp"
+        when "csr0"
+            "$s0"
         when "lr"
             "$ra"
         when "sp"
@@ -878,7 +880,7 @@ class Instruction
             $asm.puts "sw #{mipsOperands(operands)}"
         when "loadb"
             $asm.puts "lbu #{mipsFlippedOperands(operands)}"
-        when "loadbs"
+        when "loadbs", "loadbsp"
             $asm.puts "lb #{mipsFlippedOperands(operands)}"
         when "storeb"
             $asm.puts "sb #{mipsOperands(operands)}"
@@ -1035,7 +1037,14 @@ class Instruction
         when /^bnz/
             $asm.puts "bne #{operands[0].mipsOperand}, #{operands[1].mipsOperand}, #{operands[2].asmLabel}"
         when "leai", "leap"
-            operands[0].mipsEmitLea(operands[1])
+            if operands[0].is_a? LabelReference
+                labelRef = operands[0]
+                raise unless labelRef.offset == 0
+                $asm.puts "lw #{operands[1].mipsOperand}, %got(#{labelRef.asmLabel})($gp)"
+            else
+                operands[0].mipsEmitLea(operands[1])
+            end
+
         when "smulli"
             raise "Wrong number of arguments to smull in #{self.inspect} at #{codeOriginString}" unless operands.length == 4
             $asm.puts "mult #{operands[0].mipsOperand}, #{operands[1].mipsOperand}"

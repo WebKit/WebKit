@@ -1,6 +1,6 @@
 // We only need one run of this with any GC or JIT strategy. This test is not particularly fast.
 // Unfortunately, it needs to run for a while to test the thing it's testing.
-//@ if $architecture =~ /arm/ then skip else runWithRAMSize(10000000) end
+//@ if $architecture =~ /arm|mips/ then skip else runWithRAMSize(10000000) end
 //@ slow!
 
 function foo(x) {

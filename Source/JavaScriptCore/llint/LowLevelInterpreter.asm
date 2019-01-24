@@ -214,6 +214,8 @@ elsif C_LOOP
     const CalleeSaveSpaceAsVirtualRegisters = 1
 elsif ARMv7
     const CalleeSaveSpaceAsVirtualRegisters = 1
+elsif MIPS
+    const CalleeSaveSpaceAsVirtualRegisters = 1
 else
     const CalleeSaveSpaceAsVirtualRegisters = 0
 end
@@ -279,6 +281,8 @@ else
     if C_LOOP
         const metadataTable = csr3
     elsif ARMv7
+        const metadataTable = csr0
+    elsif MIPS
         const metadataTable = csr0
     else
         error
@@ -614,7 +618,7 @@ if C_LOOP or ARM64 or ARM64E or X86_64 or X86_64_WIN
 elsif ARMv7
     const CalleeSaveRegisterCount = 7
 elsif MIPS
-    const CalleeSaveRegisterCount = 1
+    const CalleeSaveRegisterCount = 2
 elsif X86 or X86_WIN
     const CalleeSaveRegisterCount = 3
 end
@@ -630,8 +634,9 @@ macro pushCalleeSaves()
     elsif ARMv7
         emit "push {r4-r6, r8-r11}"
     elsif MIPS
-        emit "addiu $sp, $sp, -4"
-        emit "sw $s4, 0($sp)"
+        emit "addiu $sp, $sp, -8"
+        emit "sw $s0, 0($sp)" # csr0/metaData
+        emit "sw $s4, 4($sp)"
         # save $gp to $s4 so that we can restore it after a function call
         emit "move $s4, $gp"
     elsif X86
@@ -650,8 +655,9 @@ macro popCalleeSaves()
     elsif ARMv7
         emit "pop {r4-r6, r8-r11}"
     elsif MIPS
-        emit "lw $s4, 0($sp)"
-        emit "addiu $sp, $sp, 4"
+        emit "lw $s0, 0($sp)"
+        emit "lw $s4, 4($sp)"
+        emit "addiu $sp, $sp, 8"
     elsif X86
         emit "pop %ebx"
         emit "pop %edi"
@@ -693,12 +699,11 @@ macro preserveCalleeSavesUsedByLLInt()
     subp CalleeSaveSpaceStackAligned, sp
     if C_LOOP
         storep metadataTable, -PtrSize[cfr]
-    elsif ARMv7
+    elsif ARMv7 or MIPS
         storep metadataTable, -4[cfr]
     elsif ARM64 or ARM64E
         emit "stp x27, x28, [x29, #-16]"
         emit "stp x25, x26, [x29, #-32]"
-    elsif MIPS
     elsif X86
     elsif X86_WIN
     elsif X86_64
@@ -717,12 +722,11 @@ end
 macro restoreCalleeSavesUsedByLLInt()
     if C_LOOP
         loadp -PtrSize[cfr], metadataTable
-    elsif ARMv7
+    elsif ARMv7 or MIPS
         loadp -4[cfr], metadataTable
     elsif ARM64 or ARM64E
         emit "ldp x25, x26, [x29, #-32]"
         emit "ldp x27, x28, [x29, #-16]"
-    elsif MIPS
     elsif X86
     elsif X86_WIN
     elsif X86_64
@@ -739,7 +743,7 @@ macro restoreCalleeSavesUsedByLLInt()
 end
 
 macro copyCalleeSavesToVMEntryFrameCalleeSavesBuffer(vm, temp)
-    if ARM64 or ARM64E or X86_64 or X86_64_WIN or ARMv7
+    if ARM64 or ARM64E or X86_64 or X86_64_WIN or ARMv7 or MIPS
         loadp VM::topEntryFrame[vm], temp
         vmEntryRecord(temp, temp)
         leap VMEntryRecord::calleeSaveRegistersBuffer[temp], temp
@@ -776,14 +780,14 @@ macro copyCalleeSavesToVMEntryFrameCalleeSavesBuffer(vm, temp)
             storeq csr4, 32[temp]
             storeq csr5, 40[temp]
             storeq csr6, 48[temp]
-        elsif ARMv7
+        elsif ARMv7 or MIPS
             storep csr0, [temp]
         end
     end
 end
 
 macro restoreCalleeSavesFromVMEntryFrameCalleeSavesBuffer(vm, temp)
-    if ARM64 or ARM64E or X86_64 or X86_64_WIN or ARMv7
+    if ARM64 or ARM64E or X86_64 or X86_64_WIN or ARMv7 or MIPS
         loadp VM::topEntryFrame[vm], temp
         vmEntryRecord(temp, temp)
         leap VMEntryRecord::calleeSaveRegistersBuffer[temp], temp
@@ -820,7 +824,7 @@ macro restoreCalleeSavesFromVMEntryFrameCalleeSavesBuffer(vm, temp)
             loadq 32[temp], csr4
             loadq 40[temp], csr5
             loadq 48[temp], csr6
-        elsif ARMv7
+        elsif ARMv7 or MIPS
             loadp [temp], csr0
         end
     end

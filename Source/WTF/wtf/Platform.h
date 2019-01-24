@@ -760,8 +760,15 @@
 #if !defined(ENABLE_JIT)
 #define ENABLE_JIT 1
 #endif
+#elif CPU(MIPS) && OS(LINUX)
+/* Same on MIPS/Linux, but DFG is disabled for now. */
+#if !defined(ENABLE_JIT)
+#define ENABLE_JIT 1
+#endif
+#undef ENABLE_DFG_JIT
+#define ENABLE_DFG_JIT 0
 #else
-/* Disable JIT and force C_LOOP on all 32bit-architectures but ARMv7-Thumb2/Linux. */
+/* Disable JIT and force C_LOOP on all other 32bit architectures. */
 #undef ENABLE_JIT
 #define ENABLE_JIT 0
 #undef ENABLE_C_LOOP

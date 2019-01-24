@@ -716,7 +716,7 @@ public:
 
 #if CPU(MIPS)
 #define NUMBER_OF_ARGUMENT_REGISTERS 4u
-#define NUMBER_OF_CALLEE_SAVES_REGISTERS 0u
+#define NUMBER_OF_CALLEE_SAVES_REGISTERS 1u
 
 class GPRInfo {
 public:
@@ -750,6 +750,7 @@ public:
     static const GPRReg returnValueGPR = regT0;
     static const GPRReg returnValueGPR2 = regT1;
     static const GPRReg nonPreservedNonReturnGPR = regT2;
+    static const GPRReg regCS0 = MIPSRegisters::s0;
 
     static GPRReg toRegister(unsigned index)
     {
