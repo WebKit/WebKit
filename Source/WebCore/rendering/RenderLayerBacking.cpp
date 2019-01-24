@@ -634,7 +634,7 @@ void RenderLayerBacking::updateAfterWidgetResize()
     if (!is<RenderWidget>(renderer()))
         return;
 
-    if (auto* innerCompositor = RenderLayerCompositor::frameContentsCompositor(&downcast<RenderWidget>(renderer()))) {
+    if (auto* innerCompositor = RenderLayerCompositor::frameContentsCompositor(downcast<RenderWidget>(renderer()))) {
         innerCompositor->frameViewDidChangeSize();
         innerCompositor->frameViewDidChangeLocation(flooredIntPoint(contentsBox().location()));
     }
@@ -783,7 +783,7 @@ bool RenderLayerBacking::updateConfiguration()
         layerConfigChanged = true;
     }
 #endif
-    if (is<RenderWidget>(renderer()) && RenderLayerCompositor::parentFrameContentLayers(&downcast<RenderWidget>(renderer()))) {
+    if (is<RenderWidget>(renderer()) && RenderLayerCompositor::parentFrameContentLayers(downcast<RenderWidget>(renderer()))) {
         m_owningLayer.setNeedsCompositingGeometryUpdate();
         layerConfigChanged = true;
     }

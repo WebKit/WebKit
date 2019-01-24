@@ -1194,7 +1194,7 @@ void RenderLayerCompositor::updateBackingAndHierarchy(RenderLayer& layer, Vector
         if (requireDescendantTraversal || requiresChildRebuild) {
             bool parented = false;
             if (is<RenderWidget>(layer.renderer()))
-                parented = parentFrameContentLayers(&downcast<RenderWidget>(layer.renderer()));
+                parented = parentFrameContentLayers(downcast<RenderWidget>(layer.renderer()));
 
             if (!parented)
                 layerBacking->parentForSublayers()->setChildren(WTFMove(layerChildren));
@@ -1557,7 +1557,7 @@ bool RenderLayerCompositor::updateBacking(RenderLayer& layer, RequiresCompositin
 #endif
 
     if (layerChanged && is<RenderWidget>(layer.renderer())) {
-        auto* innerCompositor = frameContentsCompositor(&downcast<RenderWidget>(layer.renderer()));
+        auto* innerCompositor = frameContentsCompositor(downcast<RenderWidget>(layer.renderer()));
         if (innerCompositor && innerCompositor->usesCompositing())
             innerCompositor->updateRootLayerAttachment();
     }
@@ -1928,22 +1928,22 @@ String RenderLayerCompositor::layerTreeAsText(LayerTreeFlags flags)
     return layerTreeText;
 }
 
-RenderLayerCompositor* RenderLayerCompositor::frameContentsCompositor(RenderWidget* renderer)
+RenderLayerCompositor* RenderLayerCompositor::frameContentsCompositor(RenderWidget& renderer)
 {
-    if (auto* contentDocument = renderer->frameOwnerElement().contentDocument()) {
+    if (auto* contentDocument = renderer.frameOwnerElement().contentDocument()) {
         if (auto* view = contentDocument->renderView())
             return &view->compositor();
     }
     return nullptr;
 }
 
-bool RenderLayerCompositor::parentFrameContentLayers(RenderWidget* renderer)
+bool RenderLayerCompositor::parentFrameContentLayers(RenderWidget& renderer)
 {
     auto* innerCompositor = frameContentsCompositor(renderer);
     if (!innerCompositor || !innerCompositor->usesCompositing() || innerCompositor->rootLayerAttachment() != RootLayerAttachedViaEnclosingFrame)
         return false;
     
-    auto* layer = renderer->layer();
+    auto* layer = renderer.layer();
     if (!layer->isComposited())
         return false;
 

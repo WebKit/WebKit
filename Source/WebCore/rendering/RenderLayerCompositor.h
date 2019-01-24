@@ -269,9 +269,9 @@ public:
     // to know if there is non-affine content, e.g. for drawing into an image.
     bool has3DContent() const;
     
-    static RenderLayerCompositor* frameContentsCompositor(RenderWidget*);
+    static RenderLayerCompositor* frameContentsCompositor(RenderWidget&);
     // Return true if the layers changed.
-    static bool parentFrameContentLayers(RenderWidget*);
+    static bool parentFrameContentLayers(RenderWidget&);
 
     // Update the geometry of the layers used for clipping and scrolling in frames.
     void frameViewDidChangeLocation(const IntPoint& contentsOffset);
