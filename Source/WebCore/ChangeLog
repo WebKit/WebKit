@@ -1,3 +1,37 @@
+2019-01-24  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [iOS] Unable to make a selection in jsfiddle.net using arrow keys when requesting desktop site
+        https://bugs.webkit.org/show_bug.cgi?id=193758
+        <rdar://problem/43614978>
+
+        Reviewed by Tim Horton.
+
+        CodeMirror's script adds a repeating timer that periodically normalizes the logical selection in the editor
+        (this is distinct from the actual DOM selection, which is inside a hidden textarea element). This script defines
+        a helper method to select all the text inside of a text form control, called `selectInput`, which normally
+        invokes `node.select()`. However, in the case of iOS, the script works around broken `select()` behavior by
+        setting `selectionStart` and `selectionEnd` to encompass all the content in the form control. When requesting
+        the desktop version of the site, CodeMirror no longer attempts to apply its iOS workaround.
+
+        This iOS-specific behavior was introduced to fix <rdar://problem/4901923>. However, the original bug no longer
+        reproduces even without this quirk. To fix CodeMirror, we make two adjustments:
+
+        1.  Roll out this ancient demo hack, in favor of standardized behavior.
+        2.  Note that `select()` is also used when focusing an input. However, when focusing an input element on iOS, we
+            want to match the platform (i.e. UITextField behavior) and move focus to the end of the text field. To
+            achieve this, we introduce a new helper on HTMLInputElement that is called when setting the default
+            selection of a text input after focus; on iOS, this helper method moves the selection to the end of the
+            input, but everywhere else, it selects all the text in the input element.
+
+        This causes 6 existing layout tests to begin passing on iOS.
+
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::updateFocusAppearance):
+        (WebCore::HTMLInputElement::setDefaultSelectionAfterFocus):
+        * html/HTMLInputElement.h:
+        * html/HTMLTextFormControlElement.cpp:
+        (WebCore::HTMLTextFormControlElement::select):
+
 2019-01-24  Jer Noble  <jer.noble@apple.com>
 
         Fix leak of AVSampleBufferRenderSynchronizer boundaryObserver object.

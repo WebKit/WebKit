@@ -189,14 +189,7 @@ void HTMLTextFormControlElement::setSelectionDirection(const String& direction)
 
 void HTMLTextFormControlElement::select(SelectionRevealMode revealMode, const AXTextStateChangeIntent& intent)
 {
-    // FIXME: We should abstract the selection behavior into an EditingBehavior function instead
-    // of hardcoding the behavior using a macro define.
-#if PLATFORM(IOS_FAMILY)
-    // We don't want to select all the text on iOS. Instead use the standard textfield behavior of going to the end of the line.
-    setSelectionRange(std::numeric_limits<int>::max(), std::numeric_limits<int>::max(), SelectionHasForwardDirection, revealMode, intent);
-#else
     setSelectionRange(0, std::numeric_limits<int>::max(), SelectionHasNoDirection, revealMode, intent);
-#endif
 }
 
 String HTMLTextFormControlElement::selectedText() const

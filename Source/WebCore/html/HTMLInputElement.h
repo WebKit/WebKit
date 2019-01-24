@@ -454,6 +454,8 @@ private:
     void addToRadioButtonGroup();
     void removeFromRadioButtonGroup();
 
+    void setDefaultSelectionAfterFocus(SelectionRevealMode);
+
     AtomicString m_name;
     String m_valueIfDirty;
     unsigned m_size;

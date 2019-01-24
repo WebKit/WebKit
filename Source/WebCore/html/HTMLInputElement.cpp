@@ -459,11 +459,25 @@ void HTMLInputElement::updateFocusAppearance(SelectionRestorationMode restoratio
 {
     if (isTextField()) {
         if (restorationMode == SelectionRestorationMode::SetDefault || !hasCachedSelection())
-            select(revealMode, Element::defaultFocusTextStateChangeIntent());
+            setDefaultSelectionAfterFocus(revealMode);
         else
             restoreCachedSelection(revealMode);
     } else
         HTMLTextFormControlElement::updateFocusAppearance(restorationMode, revealMode);
+}
+
+void HTMLInputElement::setDefaultSelectionAfterFocus(SelectionRevealMode revealMode)
+{
+    ASSERT(isTextField());
+#if PLATFORM(IOS_FAMILY)
+    // We don't want to select all the text on iOS when focusing a field. Instead, match platform behavior by going to the end of the line.
+    int start = std::numeric_limits<int>::max();
+    auto direction = SelectionHasForwardDirection;
+#else
+    int start = 0;
+    auto direction = SelectionHasNoDirection;
+#endif
+    setSelectionRange(start, std::numeric_limits<int>::max(), direction, revealMode, Element::defaultFocusTextStateChangeIntent());
 }
 
 void HTMLInputElement::endEditing()

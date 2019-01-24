@@ -1,3 +1,17 @@
+2019-01-24  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [iOS] Unable to make a selection in jsfiddle.net using arrow keys when requesting desktop site
+        https://bugs.webkit.org/show_bug.cgi?id=193758
+        <rdar://problem/43614978>
+
+        Reviewed by Tim Horton.
+
+        Mark some existing layout tests as passing on iOS. Additionally, remove failing expectations for another
+        existing layout test on iOS.
+
+        * platform/ios/TestExpectations:
+        * platform/ios/editing/text-iterator/hidden-textarea-selection-quirk-expected.txt: Removed.
+
 2019-01-24  John Wilander  <wilander@apple.com>
 
         Add Ad Click Attribution as an internal/experimental feature
