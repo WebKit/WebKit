@@ -1,3 +1,7 @@
+2019-01-23  Kocsen Chung  <kocsen_chung@apple.com>
+
+        Revert r238815. rdar://problem/47457960
+
 2019-01-04  Youenn Fablet  <youenn@apple.com>
 
         CSP violation reports should bypass CSP checks
