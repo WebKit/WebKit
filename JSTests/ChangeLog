@@ -1,3 +1,16 @@
+2019-01-24  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        stress/const-semantics.js fails a dfg-eager / ftl-eager run with an ASAN release build.
+        https://bugs.webkit.org/show_bug.cgi?id=190693
+
+        Reviewed by Michael Saboff.
+
+        * stress/regress-190693.js: Added.
+        (truth):
+        (assert):
+        (shouldThrowInvalidConstAssignment):
+        (taz):
+
 2019-01-24  Saam Barati  <sbarati@apple.com>
 
         Object Allocation Sinking phase can move a node that walks the stack into a place where the InlineCallFrame is no longer valid

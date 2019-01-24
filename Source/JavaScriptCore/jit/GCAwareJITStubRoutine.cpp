@@ -43,8 +43,6 @@ namespace JSC {
 GCAwareJITStubRoutine::GCAwareJITStubRoutine(
     const MacroAssemblerCodeRef<JITStubRoutinePtrTag>& code, VM& vm)
     : JITStubRoutine(code)
-    , m_mayBeExecuting(false)
-    , m_isJettisoned(false)
 {
     vm.heap.m_jitStubRoutines->add(this);
 }

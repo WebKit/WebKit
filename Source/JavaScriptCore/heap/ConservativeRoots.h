@@ -42,7 +42,7 @@ public:
     void add(void* begin, void* end, JITStubRoutineSet&, CodeBlockSet&);
     
     size_t size() const;
-    HeapCell** roots();
+    HeapCell** roots() const;
 
 private:
     static const size_t inlineCapacity = 128;
@@ -68,7 +68,7 @@ inline size_t ConservativeRoots::size() const
     return m_size;
 }
 
-inline HeapCell** ConservativeRoots::roots()
+inline HeapCell** ConservativeRoots::roots() const
 {
     return m_roots;
 }

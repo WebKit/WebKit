@@ -2621,15 +2621,22 @@ void Heap::addCoreConstraints()
             TimingScope preConvergenceTimingScope(*this, "Constraint: conservative scan");
             m_objectSpace.prepareForConservativeScan();
 
-            ConservativeRoots conservativeRoots(*this);
-            SuperSamplerScope superSamplerScope(false);
+            {
+                ConservativeRoots conservativeRoots(*this);
+                SuperSamplerScope superSamplerScope(false);
 
-            gatherStackRoots(conservativeRoots);
-            gatherJSStackRoots(conservativeRoots);
-            gatherScratchBufferRoots(conservativeRoots);
+                gatherStackRoots(conservativeRoots);
+                gatherJSStackRoots(conservativeRoots);
+                gatherScratchBufferRoots(conservativeRoots);
 
-            SetRootMarkReasonScope rootScope(slotVisitor, SlotVisitor::RootMarkReason::ConservativeScan);
-            slotVisitor.append(conservativeRoots);
+                SetRootMarkReasonScope rootScope(slotVisitor, SlotVisitor::RootMarkReason::ConservativeScan);
+                slotVisitor.append(conservativeRoots);
+            }
+            {
+                // JITStubRoutines must be visited after scanning ConservativeRoots since JITStubRoutines depend on the hook executed during gathering ConservativeRoots.
+                SetRootMarkReasonScope rootScope(slotVisitor, SlotVisitor::RootMarkReason::JITStubRoutines);
+                m_jitStubRoutines->traceMarkedStubRoutines(slotVisitor);
+            }
             
             lastVersion = m_phaseVersion;
         },
@@ -2693,14 +2700,6 @@ void Heap::addCoreConstraints()
                 m_vm->typeProfilerLog()->visit(slotVisitor);
             
             m_vm->shadowChicken().visitChildren(slotVisitor);
-        },
-        ConstraintVolatility::GreyedByExecution);
-    
-    m_constraintSet->add(
-        "Jsr", "JIT Stub Routines",
-        [this] (SlotVisitor& slotVisitor) {
-            SetRootMarkReasonScope rootScope(slotVisitor, SlotVisitor::RootMarkReason::JITStubRoutines);
-            m_jitStubRoutines->traceMarkedStubRoutines(slotVisitor);
         },
         ConstraintVolatility::GreyedByExecution);
     

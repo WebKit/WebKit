@@ -1,3 +1,40 @@
+2019-01-24  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        stress/const-semantics.js fails a dfg-eager / ftl-eager run with an ASAN release build.
+        https://bugs.webkit.org/show_bug.cgi?id=190693
+
+        Reviewed by Michael Saboff.
+
+        JITStubRoutine's fields are marked only when JITStubRoutine::m_mayBeExecuting is true.
+        This becomes true when we find the executable address in our conservative roots, which
+        means that we could be executing it right now. This means that object liveness in
+        JITStubRoutine depends on the information gathered in ConservativeRoots. However, our
+        constraints are separated, "Conservative Scan" and "JIT Stub Routines". They can even
+        be executed concurrently, so that "JIT Stub Routines" may miss to mark the actually
+        executing JITStubRoutine because "Conservative Scan" finds it later.
+        When finalizing the GC, we delete the dead JITStubRoutines. At that time, since
+        "Conservative Scan" already finishes, we do not delete some JITStubRoutines which do not
+        mark the depending objects. Then, in the next cycle, we find JITStubRoutines still live,
+        attempt to mark the depending objects, and encounter the dead objects which are collected
+        in the previous cycles.
+
+        This patch removes "JIT Stub Routines" and merge it to "Conservative Scan". Since
+        "Conservative Scan" and "JIT Stub Routines" need to be executed only when the execution
+        happens (ensured by GreyedByExecution and CollectionPhase check), this change is OK for
+        GC stop time.
+
+        * heap/ConservativeRoots.h:
+        (JSC::ConservativeRoots::roots const):
+        (JSC::ConservativeRoots::roots): Deleted.
+        * heap/Heap.cpp:
+        (JSC::Heap::addCoreConstraints):
+        * heap/SlotVisitor.cpp:
+        (JSC::SlotVisitor::append):
+        * heap/SlotVisitor.h:
+        * jit/GCAwareJITStubRoutine.cpp:
+        (JSC::GCAwareJITStubRoutine::GCAwareJITStubRoutine):
+        * jit/GCAwareJITStubRoutine.h:
+
 2019-01-24  Saam Barati  <sbarati@apple.com>
 
         Update ARM64EHash

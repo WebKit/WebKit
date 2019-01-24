@@ -67,8 +67,8 @@ protected:
 private:
     friend class JITStubRoutineSet;
 
-    bool m_mayBeExecuting;
-    bool m_isJettisoned;
+    bool m_mayBeExecuting { false };
+    bool m_isJettisoned { false };
 };
 
 // Use this if you want to mark one additional object during GC if your stub
