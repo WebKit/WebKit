@@ -1,3 +1,30 @@
+2019-01-23  Alan Coon  <alancoon@apple.com>
+
+        Cherry-pick r240051. rdar://problem/47458262
+
+    Web Inspector: Fix TreeOutline TypeError:​ this._indexesForSubtree is not a function
+    https://bugs.webkit.org/show_bug.cgi?id=193501
+    <rdar://problem/47323967>
+    
+    Reviewed by Joseph Pecoraro.
+    
+    * UserInterface/Views/TreeOutline.js:
+    (WI.TreeOutline.prototype.removeChildAtIndex):
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@240051 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2019-01-16  Matt Baker  <mattbaker@apple.com>
+
+            Web Inspector: Fix TreeOutline TypeError:​ this._indexesForSubtree is not a function
+            https://bugs.webkit.org/show_bug.cgi?id=193501
+            <rdar://problem/47323967>
+
+            Reviewed by Joseph Pecoraro.
+
+            * UserInterface/Views/TreeOutline.js:
+            (WI.TreeOutline.prototype.removeChildAtIndex):
+
 2019-01-15  Alan Coon  <alancoon@apple.com>
 
         Cherry-pick r239870. rdar://problem/47260266
