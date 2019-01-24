@@ -6,7 +6,7 @@ if (window.testRunner)
 
 function test() {
     var shadow = host.attachShadow({mode: "open"});
-    shadow.innerHTML = '<map name="bar">';
+    shadow.innerHTML = '<map name="bar"></map><img usemap="#bar">';
     host.remove();
 }
 </script>
@@ -14,6 +14,7 @@ function test() {
 <body onload="test()">
 This test passes if it doesn't crash.
 <map id="map" name="foo"></map>
+<img usemap="#foo">
 <div id="host"></div>
 </body>
 </html>

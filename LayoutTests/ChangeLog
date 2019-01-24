@@ -1,5 +1,42 @@
 2019-01-23  Alan Coon  <alancoon@apple.com>
 
+        Cherry-pick r239905. rdar://problem/47494732
+
+    Release assert with <img usemap> in shadow tree
+    https://bugs.webkit.org/show_bug.cgi?id=193378
+    
+    Reviewed by Ryosuke Niwa.
+    
+    Source/WebCore:
+    
+    When a shadow host that has <img usemap> in the shadow tree is removed from the document, we try
+    to remove the map from the scope of the host.
+    
+    * html/HTMLImageElement.cpp:
+    (WebCore::HTMLImageElement::parseAttribute):
+    (WebCore::HTMLImageElement::insertedIntoAncestor):
+    (WebCore::HTMLImageElement::removedFromAncestor):
+    
+    Tree scope changes are relevant, not the connection to the document.
+    
+    LayoutTests:
+    
+    * fast/shadow-dom/image-map-tree-scope.html:
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@239905 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2019-01-13  Antti Koivisto  <antti@apple.com>
+
+            Release assert with <img usemap> in shadow tree
+            https://bugs.webkit.org/show_bug.cgi?id=193378
+
+            Reviewed by Ryosuke Niwa.
+
+            * fast/shadow-dom/image-map-tree-scope.html:
+
+2019-01-23  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r240158. rdar://problem/47458281
 
     FetchResponse::url should return the empty string for tainted responses
