@@ -1,5 +1,42 @@
 2019-01-23  Alan Coon  <alancoon@apple.com>
 
+        Cherry-pick r240158. rdar://problem/47458281
+
+    FetchResponse::url should return the empty string for tainted responses
+    https://bugs.webkit.org/show_bug.cgi?id=193553
+    
+    Reviewed by Youenn Fablet.
+    
+    LayoutTests/imported/w3c:
+    
+    * web-platform-tests/fetch/api/basic/mode-no-cors.sub.any.js:
+    (fetchNoCors):
+    
+    Source/WebCore:
+    
+    Check whether the response is tainted in FetchResponse::url, to match
+    the behavior described in https://fetch.spec.whatwg.org/#concept-filtered-response-opaque.
+    
+    * Modules/fetch/FetchResponse.cpp:
+    (WebCore::FetchResponse::url const):
+    
+    LayoutTests:
+    
+    * http/wpt/fetch/response-opaque-clone.html:
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@240158 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2019-01-18  Ali Juma  <ajuma@chromium.org>
+
+            FetchResponse::url should return the empty string for tainted responses
+            https://bugs.webkit.org/show_bug.cgi?id=193553
+
+            Reviewed by Youenn Fablet.
+
+            * http/wpt/fetch/response-opaque-clone.html:
+
+2019-01-23  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r240152. rdar://problem/47458242
 
     A track source should be unmuted whenever reenabled after setDirection changes
