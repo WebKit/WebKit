@@ -1,3 +1,22 @@
+2019-01-24  David Kilzer  <ddkilzer@apple.com>
+
+        Duplicate global variables: WTF::asciiCaseFoldTable
+        <https://webkit.org/b/193726>
+        <rdar://problem/47334622>
+
+        Reviewed by Michael Catanzaro.
+
+        * WTF.xcodeproj/project.pbxproj:
+        * wtf/CMakeLists.txt:
+        - Add ASCIICType.cpp to build systems.
+
+        * wtf/ASCIICType.cpp: Added.
+        (WTF::asciiCaseFoldTable): Move table to here so there is only
+        one copy.  Mark as exported for other frameworks to use.
+        * wtf/ASCIICType.h:
+        (WTF::asciiCaseFoldTable): Change to extern declaration, and
+        mark as exported for other frameworks to use.
+
 2019-01-23  Mark Lam  <mark.lam@apple.com>
 
         ARM64E should not ENABLE(SEPARATED_WX_HEAP).

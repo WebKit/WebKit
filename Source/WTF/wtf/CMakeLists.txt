@@ -334,6 +334,7 @@ set(WTF_PUBLIC_HEADERS
 )
 
 set(WTF_SOURCES
+    ASCIICType.cpp
     Assertions.cpp
     AutomaticThread.cpp
     BitVector.cpp
