@@ -1,5 +1,36 @@
 2019-01-23  Alan Coon  <alancoon@apple.com>
 
+        Cherry-pick r240290. rdar://problem/47494764
+
+    Web Inspector: Network Table appears broken after filter - rows look collapsed
+    https://bugs.webkit.org/show_bug.cgi?id=192730
+    <rdar://problem/46853158>
+    
+    Patch by Joseph Pecoraro <pecoraro@apple.com> on 2019-01-22
+    Reviewed by Devin Rousso.
+    
+    * UserInterface/Views/Table.js:
+    (WI.Table.prototype._applyColumnWidthsToColumnsIfNeeded):
+    Affect the filler row like the other applyColumnWidths calls since this
+    now may be the initial call to size visible columns.
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@240290 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2019-01-22  Joseph Pecoraro  <pecoraro@apple.com>
+
+            Web Inspector: Network Table appears broken after filter - rows look collapsed
+            https://bugs.webkit.org/show_bug.cgi?id=192730
+            <rdar://problem/46853158>
+
+            Reviewed by Devin Rousso.
+
+            * UserInterface/Views/Table.js:
+            (WI.Table.prototype._applyColumnWidthsToColumnsIfNeeded):
+            Affect the filler row like the other applyColumnWidths calls since this
+            now may be the initial call to size visible columns.
+
+2019-01-23  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r239935. rdar://problem/47295382
 
     Web Inspector: Styles: pressing Down key on empty value field shouldn't discard completion popover

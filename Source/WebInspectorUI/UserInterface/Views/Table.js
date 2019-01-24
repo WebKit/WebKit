@@ -1153,11 +1153,13 @@ WI.Table = class Table extends WI.View
     {
         // Apply and create missing cells only if row needs a width update.
         for (let row of this._listElement.children) {
-            if (row.__widthGeneration !== this._widthGeneration && row !== this._fillerRow) {
+            if (row.__widthGeneration !== this._widthGeneration) {
                 for (let i = 0; i < row.children.length; ++i)
                     row.children[i].style.width = this._columnWidths[i] + "px";
-                if (row.children.length !== this._visibleColumns.length)
-                    this._populateRow(row);
+                if (row !== this._fillerRow) {
+                    if (row.children.length !== this._visibleColumns.length)
+                        this._populateRow(row);
+                }
                 row.__widthGeneration = this._widthGeneration;
             }
         }
