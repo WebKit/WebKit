@@ -2127,490 +2127,628 @@ bool ByteCodeParser::handleIntrinsicCall(Node* callee, VirtualRegister result, I
     // Which is extremely amusing, but probably not worth optimizing.
     if (!result.isValid())
         return false;
-    
-    switch (intrinsic) {
 
-    // Intrinsic Functions:
-
-    case AbsIntrinsic: {
-        if (argumentCountIncludingThis == 1) { // Math.abs()
-            insertChecks();
-            set(result, addToGraph(JSConstant, OpInfo(m_constantNaN)));
-            return true;
-        }
-
-        if (!MacroAssembler::supportsFloatingPointAbs())
-            return false;
-
-        insertChecks();
-        Node* node = addToGraph(ArithAbs, get(virtualRegisterForArgument(1, registerOffset)));
-        if (m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, Overflow))
-            node->mergeFlags(NodeMayOverflowInt32InDFG);
+    bool didSetResult = false;
+    auto setResult = [&] (Node* node) {
+        RELEASE_ASSERT(!didSetResult);
         set(result, node);
-        return true;
-    }
+        didSetResult = true;
+    };
 
-    case MinIntrinsic:
-        return handleMinMax(result, ArithMin, registerOffset, argumentCountIncludingThis, insertChecks);
-        
-    case MaxIntrinsic:
-        return handleMinMax(result, ArithMax, registerOffset, argumentCountIncludingThis, insertChecks);
-
-#define DFG_ARITH_UNARY(capitalizedName, lowerName) \
-    case capitalizedName##Intrinsic:
-    FOR_EACH_DFG_ARITH_UNARY_OP(DFG_ARITH_UNARY)
-#undef DFG_ARITH_UNARY
-    {
-        if (argumentCountIncludingThis == 1) {
-            insertChecks();
-            set(result, addToGraph(JSConstant, OpInfo(m_constantNaN)));
-            return true;
-        }
-        Arith::UnaryType type = Arith::UnaryType::Sin;
+    auto inlineIntrinsic = [&] {
         switch (intrinsic) {
-#define DFG_ARITH_UNARY(capitalizedName, lowerName) \
-        case capitalizedName##Intrinsic: \
-            type = Arith::UnaryType::capitalizedName; \
-            break;
-    FOR_EACH_DFG_ARITH_UNARY_OP(DFG_ARITH_UNARY)
-#undef DFG_ARITH_UNARY
-        default:
-            RELEASE_ASSERT_NOT_REACHED();
-        }
-        insertChecks();
-        set(result, addToGraph(ArithUnary, OpInfo(static_cast<std::underlying_type<Arith::UnaryType>::type>(type)), get(virtualRegisterForArgument(1, registerOffset))));
-        return true;
-    }
 
-    case FRoundIntrinsic:
-    case SqrtIntrinsic: {
-        if (argumentCountIncludingThis == 1) {
-            insertChecks();
-            set(result, addToGraph(JSConstant, OpInfo(m_constantNaN)));
-            return true;
-        }
+        // Intrinsic Functions:
 
-        NodeType nodeType = Unreachable;
-        switch (intrinsic) {
-        case FRoundIntrinsic:
-            nodeType = ArithFRound;
-            break;
-        case SqrtIntrinsic:
-            nodeType = ArithSqrt;
-            break;
-        default:
-            RELEASE_ASSERT_NOT_REACHED();
-        }
-        insertChecks();
-        set(result, addToGraph(nodeType, get(virtualRegisterForArgument(1, registerOffset))));
-        return true;
-    }
+        case AbsIntrinsic: {
+            if (argumentCountIncludingThis == 1) { // Math.abs()
+                insertChecks();
+                setResult(addToGraph(JSConstant, OpInfo(m_constantNaN)));
+                return true;
+            }
 
-    case PowIntrinsic: {
-        if (argumentCountIncludingThis < 3) {
-            // Math.pow() and Math.pow(x) return NaN.
-            insertChecks();
-            set(result, addToGraph(JSConstant, OpInfo(m_constantNaN)));
-            return true;
-        }
-        insertChecks();
-        VirtualRegister xOperand = virtualRegisterForArgument(1, registerOffset);
-        VirtualRegister yOperand = virtualRegisterForArgument(2, registerOffset);
-        set(result, addToGraph(ArithPow, get(xOperand), get(yOperand)));
-        return true;
-    }
-        
-    case ArrayPushIntrinsic: {
-#if USE(JSVALUE32_64)
-        if (isX86()) {
-            if (argumentCountIncludingThis > 2)
+            if (!MacroAssembler::supportsFloatingPointAbs())
                 return false;
-        }
-#endif
 
-        if (static_cast<unsigned>(argumentCountIncludingThis) >= MIN_SPARSE_ARRAY_INDEX)
-            return false;
-        
-        ArrayMode arrayMode = getArrayMode(Array::Write);
-        if (!arrayMode.isJSArray())
-            return false;
-        switch (arrayMode.type()) {
-        case Array::Int32:
-        case Array::Double:
-        case Array::Contiguous:
-        case Array::ArrayStorage: {
             insertChecks();
+            Node* node = addToGraph(ArithAbs, get(virtualRegisterForArgument(1, registerOffset)));
+            if (m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, Overflow))
+                node->mergeFlags(NodeMayOverflowInt32InDFG);
+            setResult(node);
+            return true;
+        }
 
-            addVarArgChild(nullptr); // For storage.
-            for (int i = 0; i < argumentCountIncludingThis; ++i)
-                addVarArgChild(get(virtualRegisterForArgument(i, registerOffset)));
-            Node* arrayPush = addToGraph(Node::VarArg, ArrayPush, OpInfo(arrayMode.asWord()), OpInfo(prediction));
-            set(result, arrayPush);
-            
+        case MinIntrinsic:
+        case MaxIntrinsic:
+            if (handleMinMax(result, intrinsic == MinIntrinsic ? ArithMin : ArithMax, registerOffset, argumentCountIncludingThis, insertChecks)) {
+                didSetResult = true;
+                return true;
+            }
+            return false;
+
+#define DFG_ARITH_UNARY(capitalizedName, lowerName) \
+        case capitalizedName##Intrinsic:
+        FOR_EACH_DFG_ARITH_UNARY_OP(DFG_ARITH_UNARY)
+#undef DFG_ARITH_UNARY
+        {
+            if (argumentCountIncludingThis == 1) {
+                insertChecks();
+                setResult(addToGraph(JSConstant, OpInfo(m_constantNaN)));
+                return true;
+            }
+            Arith::UnaryType type = Arith::UnaryType::Sin;
+            switch (intrinsic) {
+#define DFG_ARITH_UNARY(capitalizedName, lowerName) \
+            case capitalizedName##Intrinsic: \
+                type = Arith::UnaryType::capitalizedName; \
+                break;
+        FOR_EACH_DFG_ARITH_UNARY_OP(DFG_ARITH_UNARY)
+#undef DFG_ARITH_UNARY
+            default:
+                RELEASE_ASSERT_NOT_REACHED();
+            }
+            insertChecks();
+            setResult(addToGraph(ArithUnary, OpInfo(static_cast<std::underlying_type<Arith::UnaryType>::type>(type)), get(virtualRegisterForArgument(1, registerOffset))));
+            return true;
+        }
+
+        case FRoundIntrinsic:
+        case SqrtIntrinsic: {
+            if (argumentCountIncludingThis == 1) {
+                insertChecks();
+                setResult(addToGraph(JSConstant, OpInfo(m_constantNaN)));
+                return true;
+            }
+
+            NodeType nodeType = Unreachable;
+            switch (intrinsic) {
+            case FRoundIntrinsic:
+                nodeType = ArithFRound;
+                break;
+            case SqrtIntrinsic:
+                nodeType = ArithSqrt;
+                break;
+            default:
+                RELEASE_ASSERT_NOT_REACHED();
+            }
+            insertChecks();
+            setResult(addToGraph(nodeType, get(virtualRegisterForArgument(1, registerOffset))));
+            return true;
+        }
+
+        case PowIntrinsic: {
+            if (argumentCountIncludingThis < 3) {
+                // Math.pow() and Math.pow(x) return NaN.
+                insertChecks();
+                setResult(addToGraph(JSConstant, OpInfo(m_constantNaN)));
+                return true;
+            }
+            insertChecks();
+            VirtualRegister xOperand = virtualRegisterForArgument(1, registerOffset);
+            VirtualRegister yOperand = virtualRegisterForArgument(2, registerOffset);
+            setResult(addToGraph(ArithPow, get(xOperand), get(yOperand)));
             return true;
         }
             
-        default:
-            return false;
-        }
-    }
-
-    case ArraySliceIntrinsic: {
+        case ArrayPushIntrinsic: {
 #if USE(JSVALUE32_64)
-        if (isX86()) {
-            // There aren't enough registers for this to be done easily.
-            return false;
-        }
+            if (isX86()) {
+                if (argumentCountIncludingThis > 2)
+                    return false;
+            }
 #endif
-        if (argumentCountIncludingThis < 1)
-            return false;
 
-        if (m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, BadConstantCache)
-            || m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, BadCache))
-            return false;
-
-        ArrayMode arrayMode = getArrayMode(Array::Read);
-        if (!arrayMode.isJSArray())
-            return false;
-
-        if (!arrayMode.isJSArrayWithOriginalStructure())
-            return false;
-
-        switch (arrayMode.type()) {
-        case Array::Double:
-        case Array::Int32:
-        case Array::Contiguous: {
-            JSGlobalObject* globalObject = m_graph.globalObjectFor(currentNodeOrigin().semantic);
-
-            Structure* arrayPrototypeStructure = globalObject->arrayPrototype()->structure(*m_vm);
-            Structure* objectPrototypeStructure = globalObject->objectPrototype()->structure(*m_vm);
-
-            // FIXME: We could easily relax the Array/Object.prototype transition as long as we OSR exitted if we saw a hole.
-            // https://bugs.webkit.org/show_bug.cgi?id=173171
-            if (globalObject->arraySpeciesWatchpoint().state() == IsWatched
-                && globalObject->havingABadTimeWatchpoint()->isStillValid()
-                && arrayPrototypeStructure->transitionWatchpointSetIsStillValid()
-                && objectPrototypeStructure->transitionWatchpointSetIsStillValid()
-                && globalObject->arrayPrototypeChainIsSane()) {
-
-                m_graph.watchpoints().addLazily(globalObject->arraySpeciesWatchpoint());
-                m_graph.watchpoints().addLazily(globalObject->havingABadTimeWatchpoint());
-                m_graph.registerAndWatchStructureTransition(arrayPrototypeStructure);
-                m_graph.registerAndWatchStructureTransition(objectPrototypeStructure);
-
+            if (static_cast<unsigned>(argumentCountIncludingThis) >= MIN_SPARSE_ARRAY_INDEX)
+                return false;
+            
+            ArrayMode arrayMode = getArrayMode(Array::Write);
+            if (!arrayMode.isJSArray())
+                return false;
+            switch (arrayMode.type()) {
+            case Array::Int32:
+            case Array::Double:
+            case Array::Contiguous:
+            case Array::ArrayStorage: {
                 insertChecks();
 
-                Node* array = get(virtualRegisterForArgument(0, registerOffset));
-                // We do a few things here to prove that we aren't skipping doing side-effects in an observable way:
-                // 1. We ensure that the "constructor" property hasn't been changed (because the observable
-                // effects of slice require that we perform a Get(array, "constructor") and we can skip
-                // that if we're an original array structure. (We can relax this in the future by using
-                // TryGetById and CheckCell).
-                //
-                // 2. We check that the array we're calling slice on has the same global object as the lexical
-                // global object that this code is running in. This requirement is necessary because we setup the
-                // watchpoints above on the lexical global object. This means that code that calls slice on
-                // arrays produced by other global objects won't get this optimization. We could relax this
-                // requirement in the future by checking that the watchpoint hasn't fired at runtime in the code
-                // we generate instead of registering it as a watchpoint that would invalidate the compilation.
-                //
-                // 3. By proving we're an original array structure, we guarantee that the incoming array
-                // isn't a subclass of Array.
-
-                StructureSet structureSet;
-                structureSet.add(globalObject->originalArrayStructureForIndexingType(ArrayWithInt32));
-                structureSet.add(globalObject->originalArrayStructureForIndexingType(ArrayWithContiguous));
-                structureSet.add(globalObject->originalArrayStructureForIndexingType(ArrayWithDouble));
-                structureSet.add(globalObject->originalArrayStructureForIndexingType(CopyOnWriteArrayWithInt32));
-                structureSet.add(globalObject->originalArrayStructureForIndexingType(CopyOnWriteArrayWithContiguous));
-                structureSet.add(globalObject->originalArrayStructureForIndexingType(CopyOnWriteArrayWithDouble));
-                addToGraph(CheckStructure, OpInfo(m_graph.addStructureSet(structureSet)), array);
-
-                addVarArgChild(array);
-                if (argumentCountIncludingThis >= 2)
-                    addVarArgChild(get(virtualRegisterForArgument(1, registerOffset))); // Start index.
-                if (argumentCountIncludingThis >= 3)
-                    addVarArgChild(get(virtualRegisterForArgument(2, registerOffset))); // End index.
-                addVarArgChild(addToGraph(GetButterfly, array));
-
-                Node* arraySlice = addToGraph(Node::VarArg, ArraySlice, OpInfo(), OpInfo());
-                set(result, arraySlice);
+                addVarArgChild(nullptr); // For storage.
+                for (int i = 0; i < argumentCountIncludingThis; ++i)
+                    addVarArgChild(get(virtualRegisterForArgument(i, registerOffset)));
+                Node* arrayPush = addToGraph(Node::VarArg, ArrayPush, OpInfo(arrayMode.asWord()), OpInfo(prediction));
+                setResult(arrayPush);
                 return true;
             }
+                
+            default:
+                return false;
+            }
+        }
 
+        case ArraySliceIntrinsic: {
+#if USE(JSVALUE32_64)
+            if (isX86()) {
+                // There aren't enough registers for this to be done easily.
+                return false;
+            }
+#endif
+            if (argumentCountIncludingThis < 1)
+                return false;
+
+            if (m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, BadConstantCache)
+                || m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, BadCache))
+                return false;
+
+            ArrayMode arrayMode = getArrayMode(Array::Read);
+            if (!arrayMode.isJSArray())
+                return false;
+
+            if (!arrayMode.isJSArrayWithOriginalStructure())
+                return false;
+
+            switch (arrayMode.type()) {
+            case Array::Double:
+            case Array::Int32:
+            case Array::Contiguous: {
+                JSGlobalObject* globalObject = m_graph.globalObjectFor(currentNodeOrigin().semantic);
+
+                Structure* arrayPrototypeStructure = globalObject->arrayPrototype()->structure(*m_vm);
+                Structure* objectPrototypeStructure = globalObject->objectPrototype()->structure(*m_vm);
+
+                // FIXME: We could easily relax the Array/Object.prototype transition as long as we OSR exitted if we saw a hole.
+                // https://bugs.webkit.org/show_bug.cgi?id=173171
+                if (globalObject->arraySpeciesWatchpoint().state() == IsWatched
+                    && globalObject->havingABadTimeWatchpoint()->isStillValid()
+                    && arrayPrototypeStructure->transitionWatchpointSetIsStillValid()
+                    && objectPrototypeStructure->transitionWatchpointSetIsStillValid()
+                    && globalObject->arrayPrototypeChainIsSane()) {
+
+                    m_graph.watchpoints().addLazily(globalObject->arraySpeciesWatchpoint());
+                    m_graph.watchpoints().addLazily(globalObject->havingABadTimeWatchpoint());
+                    m_graph.registerAndWatchStructureTransition(arrayPrototypeStructure);
+                    m_graph.registerAndWatchStructureTransition(objectPrototypeStructure);
+
+                    insertChecks();
+
+                    Node* array = get(virtualRegisterForArgument(0, registerOffset));
+                    // We do a few things here to prove that we aren't skipping doing side-effects in an observable way:
+                    // 1. We ensure that the "constructor" property hasn't been changed (because the observable
+                    // effects of slice require that we perform a Get(array, "constructor") and we can skip
+                    // that if we're an original array structure. (We can relax this in the future by using
+                    // TryGetById and CheckCell).
+                    //
+                    // 2. We check that the array we're calling slice on has the same global object as the lexical
+                    // global object that this code is running in. This requirement is necessary because we setup the
+                    // watchpoints above on the lexical global object. This means that code that calls slice on
+                    // arrays produced by other global objects won't get this optimization. We could relax this
+                    // requirement in the future by checking that the watchpoint hasn't fired at runtime in the code
+                    // we generate instead of registering it as a watchpoint that would invalidate the compilation.
+                    //
+                    // 3. By proving we're an original array structure, we guarantee that the incoming array
+                    // isn't a subclass of Array.
+
+                    StructureSet structureSet;
+                    structureSet.add(globalObject->originalArrayStructureForIndexingType(ArrayWithInt32));
+                    structureSet.add(globalObject->originalArrayStructureForIndexingType(ArrayWithContiguous));
+                    structureSet.add(globalObject->originalArrayStructureForIndexingType(ArrayWithDouble));
+                    structureSet.add(globalObject->originalArrayStructureForIndexingType(CopyOnWriteArrayWithInt32));
+                    structureSet.add(globalObject->originalArrayStructureForIndexingType(CopyOnWriteArrayWithContiguous));
+                    structureSet.add(globalObject->originalArrayStructureForIndexingType(CopyOnWriteArrayWithDouble));
+                    addToGraph(CheckStructure, OpInfo(m_graph.addStructureSet(structureSet)), array);
+
+                    addVarArgChild(array);
+                    if (argumentCountIncludingThis >= 2)
+                        addVarArgChild(get(virtualRegisterForArgument(1, registerOffset))); // Start index.
+                    if (argumentCountIncludingThis >= 3)
+                        addVarArgChild(get(virtualRegisterForArgument(2, registerOffset))); // End index.
+                    addVarArgChild(addToGraph(GetButterfly, array));
+
+                    Node* arraySlice = addToGraph(Node::VarArg, ArraySlice, OpInfo(), OpInfo());
+                    setResult(arraySlice);
+                    return true;
+                }
+
+                return false;
+            }
+            default:
+                return false;
+            }
+
+            RELEASE_ASSERT_NOT_REACHED();
             return false;
         }
-        default:
+
+        case ArrayIndexOfIntrinsic: {
+            if (argumentCountIncludingThis < 2)
+                return false;
+
+            if (m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, BadIndexingType)
+                || m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, BadConstantCache)
+                || m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, BadCache)
+                || m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, BadType))
+                return false;
+
+            ArrayMode arrayMode = getArrayMode(Array::Read);
+            if (!arrayMode.isJSArray())
+                return false;
+
+            if (!arrayMode.isJSArrayWithOriginalStructure())
+                return false;
+
+            // We do not want to convert arrays into one type just to perform indexOf.
+            if (arrayMode.doesConversion())
+                return false;
+
+            switch (arrayMode.type()) {
+            case Array::Double:
+            case Array::Int32:
+            case Array::Contiguous: {
+                JSGlobalObject* globalObject = m_graph.globalObjectFor(currentNodeOrigin().semantic);
+
+                Structure* arrayPrototypeStructure = globalObject->arrayPrototype()->structure(*m_vm);
+                Structure* objectPrototypeStructure = globalObject->objectPrototype()->structure(*m_vm);
+
+                // FIXME: We could easily relax the Array/Object.prototype transition as long as we OSR exitted if we saw a hole.
+                // https://bugs.webkit.org/show_bug.cgi?id=173171
+                if (arrayPrototypeStructure->transitionWatchpointSetIsStillValid()
+                    && objectPrototypeStructure->transitionWatchpointSetIsStillValid()
+                    && globalObject->arrayPrototypeChainIsSane()) {
+
+                    m_graph.registerAndWatchStructureTransition(arrayPrototypeStructure);
+                    m_graph.registerAndWatchStructureTransition(objectPrototypeStructure);
+
+                    insertChecks();
+
+                    Node* array = get(virtualRegisterForArgument(0, registerOffset));
+                    addVarArgChild(array);
+                    addVarArgChild(get(virtualRegisterForArgument(1, registerOffset))); // Search element.
+                    if (argumentCountIncludingThis >= 3)
+                        addVarArgChild(get(virtualRegisterForArgument(2, registerOffset))); // Start index.
+                    addVarArgChild(nullptr);
+
+                    Node* node = addToGraph(Node::VarArg, ArrayIndexOf, OpInfo(arrayMode.asWord()), OpInfo());
+                    setResult(node);
+                    return true;
+                }
+
+                return false;
+            }
+            default:
+                return false;
+            }
+
+            RELEASE_ASSERT_NOT_REACHED();
             return false;
+
         }
-
-        RELEASE_ASSERT_NOT_REACHED();
-        return false;
-    }
-
-    case ArrayIndexOfIntrinsic: {
-        if (argumentCountIncludingThis < 2)
-            return false;
-
-        if (m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, BadIndexingType)
-            || m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, BadConstantCache)
-            || m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, BadCache)
-            || m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, BadType))
-            return false;
-
-        ArrayMode arrayMode = getArrayMode(Array::Read);
-        if (!arrayMode.isJSArray())
-            return false;
-
-        if (!arrayMode.isJSArrayWithOriginalStructure())
-            return false;
-
-        // We do not want to convert arrays into one type just to perform indexOf.
-        if (arrayMode.doesConversion())
-            return false;
-
-        switch (arrayMode.type()) {
-        case Array::Double:
-        case Array::Int32:
-        case Array::Contiguous: {
-            JSGlobalObject* globalObject = m_graph.globalObjectFor(currentNodeOrigin().semantic);
-
-            Structure* arrayPrototypeStructure = globalObject->arrayPrototype()->structure(*m_vm);
-            Structure* objectPrototypeStructure = globalObject->objectPrototype()->structure(*m_vm);
-
-            // FIXME: We could easily relax the Array/Object.prototype transition as long as we OSR exitted if we saw a hole.
-            // https://bugs.webkit.org/show_bug.cgi?id=173171
-            if (arrayPrototypeStructure->transitionWatchpointSetIsStillValid()
-                && objectPrototypeStructure->transitionWatchpointSetIsStillValid()
-                && globalObject->arrayPrototypeChainIsSane()) {
-
-                m_graph.registerAndWatchStructureTransition(arrayPrototypeStructure);
-                m_graph.registerAndWatchStructureTransition(objectPrototypeStructure);
-
+            
+        case ArrayPopIntrinsic: {
+            if (argumentCountIncludingThis != 1)
+                return false;
+            
+            ArrayMode arrayMode = getArrayMode(Array::Write);
+            if (!arrayMode.isJSArray())
+                return false;
+            switch (arrayMode.type()) {
+            case Array::Int32:
+            case Array::Double:
+            case Array::Contiguous:
+            case Array::ArrayStorage: {
                 insertChecks();
-
-                Node* array = get(virtualRegisterForArgument(0, registerOffset));
-                addVarArgChild(array);
-                addVarArgChild(get(virtualRegisterForArgument(1, registerOffset))); // Search element.
-                if (argumentCountIncludingThis >= 3)
-                    addVarArgChild(get(virtualRegisterForArgument(2, registerOffset))); // Start index.
-                addVarArgChild(nullptr);
-
-                Node* node = addToGraph(Node::VarArg, ArrayIndexOf, OpInfo(arrayMode.asWord()), OpInfo());
-                set(result, node);
+                Node* arrayPop = addToGraph(ArrayPop, OpInfo(arrayMode.asWord()), OpInfo(prediction), get(virtualRegisterForArgument(0, registerOffset)));
+                setResult(arrayPop);
                 return true;
             }
-
-            return false;
+                
+            default:
+                return false;
+            }
         }
-        default:
-            return false;
-        }
-
-        RELEASE_ASSERT_NOT_REACHED();
-        return false;
-
-    }
-        
-    case ArrayPopIntrinsic: {
-        if (argumentCountIncludingThis != 1)
-            return false;
-        
-        ArrayMode arrayMode = getArrayMode(Array::Write);
-        if (!arrayMode.isJSArray())
-            return false;
-        switch (arrayMode.type()) {
-        case Array::Int32:
-        case Array::Double:
-        case Array::Contiguous:
-        case Array::ArrayStorage: {
+            
+        case AtomicsAddIntrinsic:
+        case AtomicsAndIntrinsic:
+        case AtomicsCompareExchangeIntrinsic:
+        case AtomicsExchangeIntrinsic:
+        case AtomicsIsLockFreeIntrinsic:
+        case AtomicsLoadIntrinsic:
+        case AtomicsOrIntrinsic:
+        case AtomicsStoreIntrinsic:
+        case AtomicsSubIntrinsic:
+        case AtomicsXorIntrinsic: {
+            if (!is64Bit())
+                return false;
+            
+            NodeType op = LastNodeType;
+            Array::Action action = Array::Write;
+            unsigned numArgs = 0; // Number of actual args; we add one for the backing store pointer.
+            switch (intrinsic) {
+            case AtomicsAddIntrinsic:
+                op = AtomicsAdd;
+                numArgs = 3;
+                break;
+            case AtomicsAndIntrinsic:
+                op = AtomicsAnd;
+                numArgs = 3;
+                break;
+            case AtomicsCompareExchangeIntrinsic:
+                op = AtomicsCompareExchange;
+                numArgs = 4;
+                break;
+            case AtomicsExchangeIntrinsic:
+                op = AtomicsExchange;
+                numArgs = 3;
+                break;
+            case AtomicsIsLockFreeIntrinsic:
+                // This gets no backing store, but we need no special logic for this since this also does
+                // not need varargs.
+                op = AtomicsIsLockFree;
+                numArgs = 1;
+                break;
+            case AtomicsLoadIntrinsic:
+                op = AtomicsLoad;
+                numArgs = 2;
+                action = Array::Read;
+                break;
+            case AtomicsOrIntrinsic:
+                op = AtomicsOr;
+                numArgs = 3;
+                break;
+            case AtomicsStoreIntrinsic:
+                op = AtomicsStore;
+                numArgs = 3;
+                break;
+            case AtomicsSubIntrinsic:
+                op = AtomicsSub;
+                numArgs = 3;
+                break;
+            case AtomicsXorIntrinsic:
+                op = AtomicsXor;
+                numArgs = 3;
+                break;
+            default:
+                RELEASE_ASSERT_NOT_REACHED();
+                break;
+            }
+            
+            if (static_cast<unsigned>(argumentCountIncludingThis) < 1 + numArgs)
+                return false;
+            
             insertChecks();
-            Node* arrayPop = addToGraph(ArrayPop, OpInfo(arrayMode.asWord()), OpInfo(prediction), get(virtualRegisterForArgument(0, registerOffset)));
-            set(result, arrayPop);
+            
+            Vector<Node*, 3> args;
+            for (unsigned i = 0; i < numArgs; ++i)
+                args.append(get(virtualRegisterForArgument(1 + i, registerOffset)));
+            
+            Node* resultNode;
+            if (numArgs + 1 <= 3) {
+                while (args.size() < 3)
+                    args.append(nullptr);
+                resultNode = addToGraph(op, OpInfo(ArrayMode(Array::SelectUsingPredictions, action).asWord()), OpInfo(prediction), args[0], args[1], args[2]);
+            } else {
+                for (Node* node : args)
+                    addVarArgChild(node);
+                addVarArgChild(nullptr);
+                resultNode = addToGraph(Node::VarArg, op, OpInfo(ArrayMode(Array::SelectUsingPredictions, action).asWord()), OpInfo(prediction));
+            }
+            
+            setResult(resultNode);
+            return true;
+        }
+
+        case ParseIntIntrinsic: {
+            if (argumentCountIncludingThis < 2)
+                return false;
+
+            if (m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, BadCell) || m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, BadType))
+                return false;
+
+            insertChecks();
+            VirtualRegister valueOperand = virtualRegisterForArgument(1, registerOffset);
+            Node* parseInt;
+            if (argumentCountIncludingThis == 2)
+                parseInt = addToGraph(ParseInt, OpInfo(), OpInfo(prediction), get(valueOperand));
+            else {
+                ASSERT(argumentCountIncludingThis > 2);
+                VirtualRegister radixOperand = virtualRegisterForArgument(2, registerOffset);
+                parseInt = addToGraph(ParseInt, OpInfo(), OpInfo(prediction), get(valueOperand), get(radixOperand));
+            }
+            setResult(parseInt);
+            return true;
+        }
+
+        case CharCodeAtIntrinsic: {
+            if (argumentCountIncludingThis != 2)
+                return false;
+
+            insertChecks();
+            VirtualRegister thisOperand = virtualRegisterForArgument(0, registerOffset);
+            VirtualRegister indexOperand = virtualRegisterForArgument(1, registerOffset);
+            Node* charCode = addToGraph(StringCharCodeAt, OpInfo(ArrayMode(Array::String, Array::Read).asWord()), get(thisOperand), get(indexOperand));
+
+            setResult(charCode);
+            return true;
+        }
+
+        case CharAtIntrinsic: {
+            if (argumentCountIncludingThis != 2)
+                return false;
+
+            insertChecks();
+            VirtualRegister thisOperand = virtualRegisterForArgument(0, registerOffset);
+            VirtualRegister indexOperand = virtualRegisterForArgument(1, registerOffset);
+            Node* charCode = addToGraph(StringCharAt, OpInfo(ArrayMode(Array::String, Array::Read).asWord()), get(thisOperand), get(indexOperand));
+
+            setResult(charCode);
+            return true;
+        }
+        case Clz32Intrinsic: {
+            insertChecks();
+            if (argumentCountIncludingThis == 1)
+                setResult(addToGraph(JSConstant, OpInfo(m_graph.freeze(jsNumber(32)))));
+            else {
+                Node* operand = get(virtualRegisterForArgument(1, registerOffset));
+                setResult(addToGraph(ArithClz32, operand));
+            }
+            return true;
+        }
+        case FromCharCodeIntrinsic: {
+            if (argumentCountIncludingThis != 2)
+                return false;
+
+            insertChecks();
+            VirtualRegister indexOperand = virtualRegisterForArgument(1, registerOffset);
+            Node* charCode = addToGraph(StringFromCharCode, get(indexOperand));
+
+            setResult(charCode);
+
+            return true;
+        }
+
+        case RegExpExecIntrinsic: {
+            if (argumentCountIncludingThis != 2)
+                return false;
+            
+            insertChecks();
+            Node* regExpExec = addToGraph(RegExpExec, OpInfo(0), OpInfo(prediction), addToGraph(GetGlobalObject, callee), get(virtualRegisterForArgument(0, registerOffset)), get(virtualRegisterForArgument(1, registerOffset)));
+            setResult(regExpExec);
+            
             return true;
         }
             
-        default:
-            return false;
+        case RegExpTestIntrinsic:
+        case RegExpTestFastIntrinsic: {
+            if (argumentCountIncludingThis != 2)
+                return false;
+
+            if (intrinsic == RegExpTestIntrinsic) {
+                // Don't inline intrinsic if we exited due to one of the primordial RegExp checks failing.
+                if (m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, BadCell))
+                    return false;
+
+                JSGlobalObject* globalObject = m_inlineStackTop->m_codeBlock->globalObject();
+                Structure* regExpStructure = globalObject->regExpStructure();
+                m_graph.registerStructure(regExpStructure);
+                ASSERT(regExpStructure->storedPrototype().isObject());
+                ASSERT(regExpStructure->storedPrototype().asCell()->classInfo(*m_vm) == RegExpPrototype::info());
+
+                FrozenValue* regExpPrototypeObjectValue = m_graph.freeze(regExpStructure->storedPrototype());
+                Structure* regExpPrototypeStructure = regExpPrototypeObjectValue->structure();
+
+                auto isRegExpPropertySame = [&] (JSValue primordialProperty, UniquedStringImpl* propertyUID) {
+                    JSValue currentProperty;
+                    if (!m_graph.getRegExpPrototypeProperty(regExpStructure->storedPrototypeObject(), regExpPrototypeStructure, propertyUID, currentProperty))
+                        return false;
+                    
+                    return currentProperty == primordialProperty;
+                };
+
+                // Check that RegExp.exec is still the primordial RegExp.prototype.exec
+                if (!isRegExpPropertySame(globalObject->regExpProtoExecFunction(), m_vm->propertyNames->exec.impl()))
+                    return false;
+
+                // Check that regExpObject is actually a RegExp object.
+                Node* regExpObject = get(virtualRegisterForArgument(0, registerOffset));
+                addToGraph(Check, Edge(regExpObject, RegExpObjectUse));
+
+                // Check that regExpObject's exec is actually the primodial RegExp.prototype.exec.
+                UniquedStringImpl* execPropertyID = m_vm->propertyNames->exec.impl();
+                unsigned execIndex = m_graph.identifiers().ensure(execPropertyID);
+                Node* actualProperty = addToGraph(TryGetById, OpInfo(execIndex), OpInfo(SpecFunction), Edge(regExpObject, CellUse));
+                FrozenValue* regExpPrototypeExec = m_graph.freeze(globalObject->regExpProtoExecFunction());
+                addToGraph(CheckCell, OpInfo(regExpPrototypeExec), Edge(actualProperty, CellUse));
+            }
+
+            insertChecks();
+            Node* regExpObject = get(virtualRegisterForArgument(0, registerOffset));
+            Node* regExpExec = addToGraph(RegExpTest, OpInfo(0), OpInfo(prediction), addToGraph(GetGlobalObject, callee), regExpObject, get(virtualRegisterForArgument(1, registerOffset)));
+            setResult(regExpExec);
+            
+            return true;
         }
-    }
-        
-    case AtomicsAddIntrinsic:
-    case AtomicsAndIntrinsic:
-    case AtomicsCompareExchangeIntrinsic:
-    case AtomicsExchangeIntrinsic:
-    case AtomicsIsLockFreeIntrinsic:
-    case AtomicsLoadIntrinsic:
-    case AtomicsOrIntrinsic:
-    case AtomicsStoreIntrinsic:
-    case AtomicsSubIntrinsic:
-    case AtomicsXorIntrinsic: {
-        if (!is64Bit())
-            return false;
-        
-        NodeType op = LastNodeType;
-        Array::Action action = Array::Write;
-        unsigned numArgs = 0; // Number of actual args; we add one for the backing store pointer.
-        switch (intrinsic) {
-        case AtomicsAddIntrinsic:
-            op = AtomicsAdd;
-            numArgs = 3;
-            break;
-        case AtomicsAndIntrinsic:
-            op = AtomicsAnd;
-            numArgs = 3;
-            break;
-        case AtomicsCompareExchangeIntrinsic:
-            op = AtomicsCompareExchange;
-            numArgs = 4;
-            break;
-        case AtomicsExchangeIntrinsic:
-            op = AtomicsExchange;
-            numArgs = 3;
-            break;
-        case AtomicsIsLockFreeIntrinsic:
-            // This gets no backing store, but we need no special logic for this since this also does
-            // not need varargs.
-            op = AtomicsIsLockFree;
-            numArgs = 1;
-            break;
-        case AtomicsLoadIntrinsic:
-            op = AtomicsLoad;
-            numArgs = 2;
-            action = Array::Read;
-            break;
-        case AtomicsOrIntrinsic:
-            op = AtomicsOr;
-            numArgs = 3;
-            break;
-        case AtomicsStoreIntrinsic:
-            op = AtomicsStore;
-            numArgs = 3;
-            break;
-        case AtomicsSubIntrinsic:
-            op = AtomicsSub;
-            numArgs = 3;
-            break;
-        case AtomicsXorIntrinsic:
-            op = AtomicsXor;
-            numArgs = 3;
-            break;
-        default:
-            RELEASE_ASSERT_NOT_REACHED();
-            break;
+
+        case RegExpMatchFastIntrinsic: {
+            RELEASE_ASSERT(argumentCountIncludingThis == 2);
+
+            insertChecks();
+            Node* regExpMatch = addToGraph(RegExpMatchFast, OpInfo(0), OpInfo(prediction), addToGraph(GetGlobalObject, callee), get(virtualRegisterForArgument(0, registerOffset)), get(virtualRegisterForArgument(1, registerOffset)));
+            setResult(regExpMatch);
+            return true;
         }
-        
-        if (static_cast<unsigned>(argumentCountIncludingThis) < 1 + numArgs)
-            return false;
-        
-        insertChecks();
-        
-        Vector<Node*, 3> args;
-        for (unsigned i = 0; i < numArgs; ++i)
-            args.append(get(virtualRegisterForArgument(1 + i, registerOffset)));
-        
-        Node* resultNode;
-        if (numArgs + 1 <= 3) {
-            while (args.size() < 3)
-                args.append(nullptr);
-            resultNode = addToGraph(op, OpInfo(ArrayMode(Array::SelectUsingPredictions, action).asWord()), OpInfo(prediction), args[0], args[1], args[2]);
-        } else {
-            for (Node* node : args)
-                addVarArgChild(node);
-            addVarArgChild(nullptr);
-            resultNode = addToGraph(Node::VarArg, op, OpInfo(ArrayMode(Array::SelectUsingPredictions, action).asWord()), OpInfo(prediction));
+
+        case ObjectCreateIntrinsic: {
+            if (argumentCountIncludingThis != 2)
+                return false;
+
+            insertChecks();
+            setResult(addToGraph(ObjectCreate, get(virtualRegisterForArgument(1, registerOffset))));
+            return true;
         }
-        
-        set(result, resultNode);
-        return true;
-    }
 
-    case ParseIntIntrinsic: {
-        if (argumentCountIncludingThis < 2)
-            return false;
+        case ObjectGetPrototypeOfIntrinsic: {
+            if (argumentCountIncludingThis != 2)
+                return false;
 
-        if (m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, BadCell) || m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, BadType))
-            return false;
-
-        insertChecks();
-        VirtualRegister valueOperand = virtualRegisterForArgument(1, registerOffset);
-        Node* parseInt;
-        if (argumentCountIncludingThis == 2)
-            parseInt = addToGraph(ParseInt, OpInfo(), OpInfo(prediction), get(valueOperand));
-        else {
-            ASSERT(argumentCountIncludingThis > 2);
-            VirtualRegister radixOperand = virtualRegisterForArgument(2, registerOffset);
-            parseInt = addToGraph(ParseInt, OpInfo(), OpInfo(prediction), get(valueOperand), get(radixOperand));
+            insertChecks();
+            setResult(addToGraph(GetPrototypeOf, OpInfo(0), OpInfo(prediction), get(virtualRegisterForArgument(1, registerOffset))));
+            return true;
         }
-        set(result, parseInt);
-        return true;
-    }
 
-    case CharCodeAtIntrinsic: {
-        if (argumentCountIncludingThis != 2)
-            return false;
+        case ObjectIsIntrinsic: {
+            if (argumentCountIncludingThis < 3)
+                return false;
 
-        insertChecks();
-        VirtualRegister thisOperand = virtualRegisterForArgument(0, registerOffset);
-        VirtualRegister indexOperand = virtualRegisterForArgument(1, registerOffset);
-        Node* charCode = addToGraph(StringCharCodeAt, OpInfo(ArrayMode(Array::String, Array::Read).asWord()), get(thisOperand), get(indexOperand));
-
-        set(result, charCode);
-        return true;
-    }
-
-    case CharAtIntrinsic: {
-        if (argumentCountIncludingThis != 2)
-            return false;
-
-        insertChecks();
-        VirtualRegister thisOperand = virtualRegisterForArgument(0, registerOffset);
-        VirtualRegister indexOperand = virtualRegisterForArgument(1, registerOffset);
-        Node* charCode = addToGraph(StringCharAt, OpInfo(ArrayMode(Array::String, Array::Read).asWord()), get(thisOperand), get(indexOperand));
-
-        set(result, charCode);
-        return true;
-    }
-    case Clz32Intrinsic: {
-        insertChecks();
-        if (argumentCountIncludingThis == 1)
-            set(result, addToGraph(JSConstant, OpInfo(m_graph.freeze(jsNumber(32)))));
-        else {
-            Node* operand = get(virtualRegisterForArgument(1, registerOffset));
-            set(result, addToGraph(ArithClz32, operand));
+            insertChecks();
+            setResult(addToGraph(SameValue, get(virtualRegisterForArgument(1, registerOffset)), get(virtualRegisterForArgument(2, registerOffset))));
+            return true;
         }
-        return true;
-    }
-    case FromCharCodeIntrinsic: {
-        if (argumentCountIncludingThis != 2)
-            return false;
 
-        insertChecks();
-        VirtualRegister indexOperand = virtualRegisterForArgument(1, registerOffset);
-        Node* charCode = addToGraph(StringFromCharCode, get(indexOperand));
+        case ObjectKeysIntrinsic: {
+            if (argumentCountIncludingThis < 2)
+                return false;
 
-        set(result, charCode);
+            insertChecks();
+            setResult(addToGraph(ObjectKeys, get(virtualRegisterForArgument(1, registerOffset))));
+            return true;
+        }
 
-        return true;
-    }
+        case ObjectPrototypeToStringIntrinsic: {
+            insertChecks();
+            Node* value = get(virtualRegisterForArgument(0, registerOffset));
+            setResult(addToGraph(ObjectToString, value));
+            return true;
+        }
 
-    case RegExpExecIntrinsic: {
-        if (argumentCountIncludingThis != 2)
-            return false;
-        
-        insertChecks();
-        Node* regExpExec = addToGraph(RegExpExec, OpInfo(0), OpInfo(prediction), addToGraph(GetGlobalObject, callee), get(virtualRegisterForArgument(0, registerOffset)), get(virtualRegisterForArgument(1, registerOffset)));
-        set(result, regExpExec);
-        
-        return true;
-    }
-        
-    case RegExpTestIntrinsic:
-    case RegExpTestFastIntrinsic: {
-        if (argumentCountIncludingThis != 2)
-            return false;
+        case ReflectGetPrototypeOfIntrinsic: {
+            if (argumentCountIncludingThis != 2)
+                return false;
 
-        if (intrinsic == RegExpTestIntrinsic) {
+            insertChecks();
+            setResult(addToGraph(GetPrototypeOf, OpInfo(0), OpInfo(prediction), Edge(get(virtualRegisterForArgument(1, registerOffset)), ObjectUse)));
+            return true;
+        }
+
+        case IsTypedArrayViewIntrinsic: {
+            ASSERT(argumentCountIncludingThis == 2);
+
+            insertChecks();
+            setResult(addToGraph(IsTypedArrayView, OpInfo(prediction), get(virtualRegisterForArgument(1, registerOffset))));
+            return true;
+        }
+
+        case StringPrototypeValueOfIntrinsic: {
+            insertChecks();
+            Node* value = get(virtualRegisterForArgument(0, registerOffset));
+            setResult(addToGraph(StringValueOf, value));
+            return true;
+        }
+
+        case StringPrototypeReplaceIntrinsic: {
+            if (argumentCountIncludingThis != 3)
+                return false;
+
+            // Don't inline intrinsic if we exited due to "search" not being a RegExp or String object.
+            if (m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, BadType))
+                return false;
+
             // Don't inline intrinsic if we exited due to one of the primordial RegExp checks failing.
             if (m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, BadCell))
                 return false;
@@ -2628,775 +2766,652 @@ bool ByteCodeParser::handleIntrinsicCall(Node* callee, VirtualRegister result, I
                 JSValue currentProperty;
                 if (!m_graph.getRegExpPrototypeProperty(regExpStructure->storedPrototypeObject(), regExpPrototypeStructure, propertyUID, currentProperty))
                     return false;
-                
+
                 return currentProperty == primordialProperty;
             };
 
-            // Check that RegExp.exec is still the primordial RegExp.prototype.exec
+            // Check that searchRegExp.exec is still the primordial RegExp.prototype.exec
             if (!isRegExpPropertySame(globalObject->regExpProtoExecFunction(), m_vm->propertyNames->exec.impl()))
                 return false;
 
-            // Check that regExpObject is actually a RegExp object.
-            Node* regExpObject = get(virtualRegisterForArgument(0, registerOffset));
-            addToGraph(Check, Edge(regExpObject, RegExpObjectUse));
-
-            // Check that regExpObject's exec is actually the primodial RegExp.prototype.exec.
-            UniquedStringImpl* execPropertyID = m_vm->propertyNames->exec.impl();
-            unsigned execIndex = m_graph.identifiers().ensure(execPropertyID);
-            Node* actualProperty = addToGraph(TryGetById, OpInfo(execIndex), OpInfo(SpecFunction), Edge(regExpObject, CellUse));
-            FrozenValue* regExpPrototypeExec = m_graph.freeze(globalObject->regExpProtoExecFunction());
-            addToGraph(CheckCell, OpInfo(regExpPrototypeExec), Edge(actualProperty, CellUse));
-        }
-
-        insertChecks();
-        Node* regExpObject = get(virtualRegisterForArgument(0, registerOffset));
-        Node* regExpExec = addToGraph(RegExpTest, OpInfo(0), OpInfo(prediction), addToGraph(GetGlobalObject, callee), regExpObject, get(virtualRegisterForArgument(1, registerOffset)));
-        set(result, regExpExec);
-        
-        return true;
-    }
-
-    case RegExpMatchFastIntrinsic: {
-        RELEASE_ASSERT(argumentCountIncludingThis == 2);
-
-        insertChecks();
-        Node* regExpMatch = addToGraph(RegExpMatchFast, OpInfo(0), OpInfo(prediction), addToGraph(GetGlobalObject, callee), get(virtualRegisterForArgument(0, registerOffset)), get(virtualRegisterForArgument(1, registerOffset)));
-        set(result, regExpMatch);
-        return true;
-    }
-
-    case ObjectCreateIntrinsic: {
-        if (argumentCountIncludingThis != 2)
-            return false;
-
-        insertChecks();
-        set(result, addToGraph(ObjectCreate, get(virtualRegisterForArgument(1, registerOffset))));
-        return true;
-    }
-
-    case ObjectGetPrototypeOfIntrinsic: {
-        if (argumentCountIncludingThis != 2)
-            return false;
-
-        insertChecks();
-        set(result, addToGraph(GetPrototypeOf, OpInfo(0), OpInfo(prediction), get(virtualRegisterForArgument(1, registerOffset))));
-        return true;
-    }
-
-    case ObjectIsIntrinsic: {
-        if (argumentCountIncludingThis < 3)
-            return false;
-
-        insertChecks();
-        set(result, addToGraph(SameValue, get(virtualRegisterForArgument(1, registerOffset)), get(virtualRegisterForArgument(2, registerOffset))));
-        return true;
-    }
-
-    case ObjectKeysIntrinsic: {
-        if (argumentCountIncludingThis < 2)
-            return false;
-
-        insertChecks();
-        set(result, addToGraph(ObjectKeys, get(virtualRegisterForArgument(1, registerOffset))));
-        return true;
-    }
-
-    case ObjectPrototypeToStringIntrinsic: {
-        insertChecks();
-        Node* value = get(virtualRegisterForArgument(0, registerOffset));
-        set(result, addToGraph(ObjectToString, value));
-        return true;
-    }
-
-    case ReflectGetPrototypeOfIntrinsic: {
-        if (argumentCountIncludingThis != 2)
-            return false;
-
-        insertChecks();
-        set(result, addToGraph(GetPrototypeOf, OpInfo(0), OpInfo(prediction), Edge(get(virtualRegisterForArgument(1, registerOffset)), ObjectUse)));
-        return true;
-    }
-
-    case IsTypedArrayViewIntrinsic: {
-        ASSERT(argumentCountIncludingThis == 2);
-
-        insertChecks();
-        set(result, addToGraph(IsTypedArrayView, OpInfo(prediction), get(virtualRegisterForArgument(1, registerOffset))));
-        return true;
-    }
-
-    case StringPrototypeValueOfIntrinsic: {
-        insertChecks();
-        Node* value = get(virtualRegisterForArgument(0, registerOffset));
-        set(result, addToGraph(StringValueOf, value));
-        return true;
-    }
-
-    case StringPrototypeReplaceIntrinsic: {
-        if (argumentCountIncludingThis != 3)
-            return false;
-
-        // Don't inline intrinsic if we exited due to "search" not being a RegExp or String object.
-        if (m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, BadType))
-            return false;
-
-        // Don't inline intrinsic if we exited due to one of the primordial RegExp checks failing.
-        if (m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, BadCell))
-            return false;
-
-        JSGlobalObject* globalObject = m_inlineStackTop->m_codeBlock->globalObject();
-        Structure* regExpStructure = globalObject->regExpStructure();
-        m_graph.registerStructure(regExpStructure);
-        ASSERT(regExpStructure->storedPrototype().isObject());
-        ASSERT(regExpStructure->storedPrototype().asCell()->classInfo(*m_vm) == RegExpPrototype::info());
-
-        FrozenValue* regExpPrototypeObjectValue = m_graph.freeze(regExpStructure->storedPrototype());
-        Structure* regExpPrototypeStructure = regExpPrototypeObjectValue->structure();
-
-        auto isRegExpPropertySame = [&] (JSValue primordialProperty, UniquedStringImpl* propertyUID) {
-            JSValue currentProperty;
-            if (!m_graph.getRegExpPrototypeProperty(regExpStructure->storedPrototypeObject(), regExpPrototypeStructure, propertyUID, currentProperty))
+            // Check that searchRegExp.global is still the primordial RegExp.prototype.global
+            if (!isRegExpPropertySame(globalObject->regExpProtoGlobalGetter(), m_vm->propertyNames->global.impl()))
                 return false;
 
-            return currentProperty == primordialProperty;
-        };
+            // Check that searchRegExp.unicode is still the primordial RegExp.prototype.unicode
+            if (!isRegExpPropertySame(globalObject->regExpProtoUnicodeGetter(), m_vm->propertyNames->unicode.impl()))
+                return false;
 
-        // Check that searchRegExp.exec is still the primordial RegExp.prototype.exec
-        if (!isRegExpPropertySame(globalObject->regExpProtoExecFunction(), m_vm->propertyNames->exec.impl()))
-            return false;
+            // Check that searchRegExp[Symbol.match] is still the primordial RegExp.prototype[Symbol.replace]
+            if (!isRegExpPropertySame(globalObject->regExpProtoSymbolReplaceFunction(), m_vm->propertyNames->replaceSymbol.impl()))
+                return false;
 
-        // Check that searchRegExp.global is still the primordial RegExp.prototype.global
-        if (!isRegExpPropertySame(globalObject->regExpProtoGlobalGetter(), m_vm->propertyNames->global.impl()))
-            return false;
-
-        // Check that searchRegExp.unicode is still the primordial RegExp.prototype.unicode
-        if (!isRegExpPropertySame(globalObject->regExpProtoUnicodeGetter(), m_vm->propertyNames->unicode.impl()))
-            return false;
-
-        // Check that searchRegExp[Symbol.match] is still the primordial RegExp.prototype[Symbol.replace]
-        if (!isRegExpPropertySame(globalObject->regExpProtoSymbolReplaceFunction(), m_vm->propertyNames->replaceSymbol.impl()))
-            return false;
-
-        insertChecks();
-
-        Node* resultNode = addToGraph(StringReplace, OpInfo(0), OpInfo(prediction), get(virtualRegisterForArgument(0, registerOffset)), get(virtualRegisterForArgument(1, registerOffset)), get(virtualRegisterForArgument(2, registerOffset)));
-        set(result, resultNode);
-        return true;
-    }
-        
-    case StringPrototypeReplaceRegExpIntrinsic: {
-        if (argumentCountIncludingThis != 3)
-            return false;
-        
-        insertChecks();
-        Node* resultNode = addToGraph(StringReplaceRegExp, OpInfo(0), OpInfo(prediction), get(virtualRegisterForArgument(0, registerOffset)), get(virtualRegisterForArgument(1, registerOffset)), get(virtualRegisterForArgument(2, registerOffset)));
-        set(result, resultNode);
-        return true;
-    }
-        
-    case RoundIntrinsic:
-    case FloorIntrinsic:
-    case CeilIntrinsic:
-    case TruncIntrinsic: {
-        if (argumentCountIncludingThis == 1) {
             insertChecks();
-            set(result, addToGraph(JSConstant, OpInfo(m_constantNaN)));
+
+            Node* resultNode = addToGraph(StringReplace, OpInfo(0), OpInfo(prediction), get(virtualRegisterForArgument(0, registerOffset)), get(virtualRegisterForArgument(1, registerOffset)), get(virtualRegisterForArgument(2, registerOffset)));
+            setResult(resultNode);
             return true;
         }
-        insertChecks();
-        Node* operand = get(virtualRegisterForArgument(1, registerOffset));
-        NodeType op;
-        if (intrinsic == RoundIntrinsic)
-            op = ArithRound;
-        else if (intrinsic == FloorIntrinsic)
-            op = ArithFloor;
-        else if (intrinsic == CeilIntrinsic)
-            op = ArithCeil;
-        else {
-            ASSERT(intrinsic == TruncIntrinsic);
-            op = ArithTrunc;
+            
+        case StringPrototypeReplaceRegExpIntrinsic: {
+            if (argumentCountIncludingThis != 3)
+                return false;
+            
+            insertChecks();
+            Node* resultNode = addToGraph(StringReplaceRegExp, OpInfo(0), OpInfo(prediction), get(virtualRegisterForArgument(0, registerOffset)), get(virtualRegisterForArgument(1, registerOffset)), get(virtualRegisterForArgument(2, registerOffset)));
+            setResult(resultNode);
+            return true;
         }
-        Node* roundNode = addToGraph(op, OpInfo(0), OpInfo(prediction), operand);
-        set(result, roundNode);
-        return true;
-    }
-    case IMulIntrinsic: {
-        if (argumentCountIncludingThis != 3)
-            return false;
-        insertChecks();
-        VirtualRegister leftOperand = virtualRegisterForArgument(1, registerOffset);
-        VirtualRegister rightOperand = virtualRegisterForArgument(2, registerOffset);
-        Node* left = get(leftOperand);
-        Node* right = get(rightOperand);
-        set(result, addToGraph(ArithIMul, left, right));
-        return true;
-    }
-
-    case RandomIntrinsic: {
-        if (argumentCountIncludingThis != 1)
-            return false;
-        insertChecks();
-        set(result, addToGraph(ArithRandom));
-        return true;
-    }
-        
-    case DFGTrueIntrinsic: {
-        insertChecks();
-        set(result, jsConstant(jsBoolean(true)));
-        return true;
-    }
-
-    case FTLTrueIntrinsic: {
-        insertChecks();
-        set(result, jsConstant(jsBoolean(m_graph.m_plan.isFTL())));
-        return true;
-    }
-        
-    case OSRExitIntrinsic: {
-        insertChecks();
-        addToGraph(ForceOSRExit);
-        set(result, addToGraph(JSConstant, OpInfo(m_constantUndefined)));
-        return true;
-    }
-        
-    case IsFinalTierIntrinsic: {
-        insertChecks();
-        set(result,
-            jsConstant(jsBoolean(Options::useFTLJIT() ? m_graph.m_plan.isFTL() : true)));
-        return true;
-    }
-        
-    case SetInt32HeapPredictionIntrinsic: {
-        insertChecks();
-        for (int i = 1; i < argumentCountIncludingThis; ++i) {
-            Node* node = get(virtualRegisterForArgument(i, registerOffset));
-            if (node->hasHeapPrediction())
-                node->setHeapPrediction(SpecInt32Only);
+            
+        case RoundIntrinsic:
+        case FloorIntrinsic:
+        case CeilIntrinsic:
+        case TruncIntrinsic: {
+            if (argumentCountIncludingThis == 1) {
+                insertChecks();
+                setResult(addToGraph(JSConstant, OpInfo(m_constantNaN)));
+                return true;
+            }
+            insertChecks();
+            Node* operand = get(virtualRegisterForArgument(1, registerOffset));
+            NodeType op;
+            if (intrinsic == RoundIntrinsic)
+                op = ArithRound;
+            else if (intrinsic == FloorIntrinsic)
+                op = ArithFloor;
+            else if (intrinsic == CeilIntrinsic)
+                op = ArithCeil;
+            else {
+                ASSERT(intrinsic == TruncIntrinsic);
+                op = ArithTrunc;
+            }
+            Node* roundNode = addToGraph(op, OpInfo(0), OpInfo(prediction), operand);
+            setResult(roundNode);
+            return true;
         }
-        set(result, addToGraph(JSConstant, OpInfo(m_constantUndefined)));
-        return true;
-    }
-        
-    case CheckInt32Intrinsic: {
-        insertChecks();
-        for (int i = 1; i < argumentCountIncludingThis; ++i) {
-            Node* node = get(virtualRegisterForArgument(i, registerOffset));
-            addToGraph(Phantom, Edge(node, Int32Use));
+        case IMulIntrinsic: {
+            if (argumentCountIncludingThis != 3)
+                return false;
+            insertChecks();
+            VirtualRegister leftOperand = virtualRegisterForArgument(1, registerOffset);
+            VirtualRegister rightOperand = virtualRegisterForArgument(2, registerOffset);
+            Node* left = get(leftOperand);
+            Node* right = get(rightOperand);
+            setResult(addToGraph(ArithIMul, left, right));
+            return true;
         }
-        set(result, jsConstant(jsBoolean(true)));
-        return true;
-    }
-        
-    case FiatInt52Intrinsic: {
-        if (argumentCountIncludingThis != 2)
-            return false;
-        insertChecks();
-        VirtualRegister operand = virtualRegisterForArgument(1, registerOffset);
-        if (enableInt52())
-            set(result, addToGraph(FiatInt52, get(operand)));
-        else
-            set(result, get(operand));
-        return true;
-    }
 
-    case JSMapGetIntrinsic: {
-        if (argumentCountIncludingThis != 2)
-            return false;
+        case RandomIntrinsic: {
+            if (argumentCountIncludingThis != 1)
+                return false;
+            insertChecks();
+            setResult(addToGraph(ArithRandom));
+            return true;
+        }
+            
+        case DFGTrueIntrinsic: {
+            insertChecks();
+            setResult(jsConstant(jsBoolean(true)));
+            return true;
+        }
 
-        insertChecks();
-        Node* map = get(virtualRegisterForArgument(0, registerOffset));
-        Node* key = get(virtualRegisterForArgument(1, registerOffset));
-        Node* normalizedKey = addToGraph(NormalizeMapKey, key);
-        Node* hash = addToGraph(MapHash, normalizedKey);
-        Node* bucket = addToGraph(GetMapBucket, Edge(map, MapObjectUse), Edge(normalizedKey), Edge(hash));
-        Node* resultNode = addToGraph(LoadValueFromMapBucket, OpInfo(BucketOwnerType::Map), OpInfo(prediction), bucket);
-        set(result, resultNode);
-        return true;
-    }
+        case FTLTrueIntrinsic: {
+            insertChecks();
+            setResult(jsConstant(jsBoolean(m_graph.m_plan.isFTL())));
+            return true;
+        }
+            
+        case OSRExitIntrinsic: {
+            insertChecks();
+            addToGraph(ForceOSRExit);
+            setResult(addToGraph(JSConstant, OpInfo(m_constantUndefined)));
+            return true;
+        }
+            
+        case IsFinalTierIntrinsic: {
+            insertChecks();
+            setResult(jsConstant(jsBoolean(Options::useFTLJIT() ? m_graph.m_plan.isFTL() : true)));
+            return true;
+        }
+            
+        case SetInt32HeapPredictionIntrinsic: {
+            insertChecks();
+            for (int i = 1; i < argumentCountIncludingThis; ++i) {
+                Node* node = get(virtualRegisterForArgument(i, registerOffset));
+                if (node->hasHeapPrediction())
+                    node->setHeapPrediction(SpecInt32Only);
+            }
+            setResult(addToGraph(JSConstant, OpInfo(m_constantUndefined)));
+            return true;
+        }
+            
+        case CheckInt32Intrinsic: {
+            insertChecks();
+            for (int i = 1; i < argumentCountIncludingThis; ++i) {
+                Node* node = get(virtualRegisterForArgument(i, registerOffset));
+                addToGraph(Phantom, Edge(node, Int32Use));
+            }
+            setResult(jsConstant(jsBoolean(true)));
+            return true;
+        }
+            
+        case FiatInt52Intrinsic: {
+            if (argumentCountIncludingThis != 2)
+                return false;
+            insertChecks();
+            VirtualRegister operand = virtualRegisterForArgument(1, registerOffset);
+            if (enableInt52())
+                setResult(addToGraph(FiatInt52, get(operand)));
+            else
+                setResult(get(operand));
+            return true;
+        }
 
-    case JSSetHasIntrinsic:
-    case JSMapHasIntrinsic: {
-        if (argumentCountIncludingThis != 2)
-            return false;
+        case JSMapGetIntrinsic: {
+            if (argumentCountIncludingThis != 2)
+                return false;
 
-        insertChecks();
-        Node* mapOrSet = get(virtualRegisterForArgument(0, registerOffset));
-        Node* key = get(virtualRegisterForArgument(1, registerOffset));
-        Node* normalizedKey = addToGraph(NormalizeMapKey, key);
-        Node* hash = addToGraph(MapHash, normalizedKey);
-        UseKind useKind = intrinsic == JSSetHasIntrinsic ? SetObjectUse : MapObjectUse;
-        Node* bucket = addToGraph(GetMapBucket, OpInfo(0), Edge(mapOrSet, useKind), Edge(normalizedKey), Edge(hash));
-        JSCell* sentinel = nullptr;
-        if (intrinsic == JSMapHasIntrinsic)
-            sentinel = m_vm->sentinelMapBucket.get();
-        else
-            sentinel = m_vm->sentinelSetBucket.get();
+            insertChecks();
+            Node* map = get(virtualRegisterForArgument(0, registerOffset));
+            Node* key = get(virtualRegisterForArgument(1, registerOffset));
+            Node* normalizedKey = addToGraph(NormalizeMapKey, key);
+            Node* hash = addToGraph(MapHash, normalizedKey);
+            Node* bucket = addToGraph(GetMapBucket, Edge(map, MapObjectUse), Edge(normalizedKey), Edge(hash));
+            Node* resultNode = addToGraph(LoadValueFromMapBucket, OpInfo(BucketOwnerType::Map), OpInfo(prediction), bucket);
+            setResult(resultNode);
+            return true;
+        }
 
-        FrozenValue* frozenPointer = m_graph.freeze(sentinel);
-        Node* invertedResult = addToGraph(CompareEqPtr, OpInfo(frozenPointer), bucket);
-        Node* resultNode = addToGraph(LogicalNot, invertedResult);
-        set(result, resultNode);
-        return true;
-    }
+        case JSSetHasIntrinsic:
+        case JSMapHasIntrinsic: {
+            if (argumentCountIncludingThis != 2)
+                return false;
 
-    case JSSetAddIntrinsic: {
-        if (argumentCountIncludingThis != 2)
-            return false;
+            insertChecks();
+            Node* mapOrSet = get(virtualRegisterForArgument(0, registerOffset));
+            Node* key = get(virtualRegisterForArgument(1, registerOffset));
+            Node* normalizedKey = addToGraph(NormalizeMapKey, key);
+            Node* hash = addToGraph(MapHash, normalizedKey);
+            UseKind useKind = intrinsic == JSSetHasIntrinsic ? SetObjectUse : MapObjectUse;
+            Node* bucket = addToGraph(GetMapBucket, OpInfo(0), Edge(mapOrSet, useKind), Edge(normalizedKey), Edge(hash));
+            JSCell* sentinel = nullptr;
+            if (intrinsic == JSMapHasIntrinsic)
+                sentinel = m_vm->sentinelMapBucket.get();
+            else
+                sentinel = m_vm->sentinelSetBucket.get();
 
-        insertChecks();
-        Node* base = get(virtualRegisterForArgument(0, registerOffset));
-        Node* key = get(virtualRegisterForArgument(1, registerOffset));
-        Node* normalizedKey = addToGraph(NormalizeMapKey, key);
-        Node* hash = addToGraph(MapHash, normalizedKey);
-        addToGraph(SetAdd, base, normalizedKey, hash);
-        set(result, base);
-        return true;
-    }
+            FrozenValue* frozenPointer = m_graph.freeze(sentinel);
+            Node* invertedResult = addToGraph(CompareEqPtr, OpInfo(frozenPointer), bucket);
+            Node* resultNode = addToGraph(LogicalNot, invertedResult);
+            setResult(resultNode);
+            return true;
+        }
 
-    case JSMapSetIntrinsic: {
-        if (argumentCountIncludingThis != 3)
-            return false;
+        case JSSetAddIntrinsic: {
+            if (argumentCountIncludingThis != 2)
+                return false;
 
-        insertChecks();
-        Node* base = get(virtualRegisterForArgument(0, registerOffset));
-        Node* key = get(virtualRegisterForArgument(1, registerOffset));
-        Node* value = get(virtualRegisterForArgument(2, registerOffset));
+            insertChecks();
+            Node* base = get(virtualRegisterForArgument(0, registerOffset));
+            Node* key = get(virtualRegisterForArgument(1, registerOffset));
+            Node* normalizedKey = addToGraph(NormalizeMapKey, key);
+            Node* hash = addToGraph(MapHash, normalizedKey);
+            addToGraph(SetAdd, base, normalizedKey, hash);
+            setResult(base);
+            return true;
+        }
 
-        Node* normalizedKey = addToGraph(NormalizeMapKey, key);
-        Node* hash = addToGraph(MapHash, normalizedKey);
+        case JSMapSetIntrinsic: {
+            if (argumentCountIncludingThis != 3)
+                return false;
 
-        addVarArgChild(base);
-        addVarArgChild(normalizedKey);
-        addVarArgChild(value);
-        addVarArgChild(hash);
-        addToGraph(Node::VarArg, MapSet, OpInfo(0), OpInfo(0));
-        set(result, base);
-        return true;
-    }
+            insertChecks();
+            Node* base = get(virtualRegisterForArgument(0, registerOffset));
+            Node* key = get(virtualRegisterForArgument(1, registerOffset));
+            Node* value = get(virtualRegisterForArgument(2, registerOffset));
 
-    case JSSetBucketHeadIntrinsic:
-    case JSMapBucketHeadIntrinsic: {
-        ASSERT(argumentCountIncludingThis == 2);
+            Node* normalizedKey = addToGraph(NormalizeMapKey, key);
+            Node* hash = addToGraph(MapHash, normalizedKey);
 
-        insertChecks();
-        Node* map = get(virtualRegisterForArgument(1, registerOffset));
-        UseKind useKind = intrinsic == JSSetBucketHeadIntrinsic ? SetObjectUse : MapObjectUse;
-        Node* resultNode = addToGraph(GetMapBucketHead, Edge(map, useKind));
-        set(result, resultNode);
-        return true;
-    }
+            addVarArgChild(base);
+            addVarArgChild(normalizedKey);
+            addVarArgChild(value);
+            addVarArgChild(hash);
+            addToGraph(Node::VarArg, MapSet, OpInfo(0), OpInfo(0));
+            setResult(base);
+            return true;
+        }
 
-    case JSSetBucketNextIntrinsic:
-    case JSMapBucketNextIntrinsic: {
-        ASSERT(argumentCountIncludingThis == 2);
+        case JSSetBucketHeadIntrinsic:
+        case JSMapBucketHeadIntrinsic: {
+            ASSERT(argumentCountIncludingThis == 2);
 
-        insertChecks();
-        Node* bucket = get(virtualRegisterForArgument(1, registerOffset));
-        BucketOwnerType type = intrinsic == JSSetBucketNextIntrinsic ? BucketOwnerType::Set : BucketOwnerType::Map;
-        Node* resultNode = addToGraph(GetMapBucketNext, OpInfo(type), bucket);
-        set(result, resultNode);
-        return true;
-    }
+            insertChecks();
+            Node* map = get(virtualRegisterForArgument(1, registerOffset));
+            UseKind useKind = intrinsic == JSSetBucketHeadIntrinsic ? SetObjectUse : MapObjectUse;
+            Node* resultNode = addToGraph(GetMapBucketHead, Edge(map, useKind));
+            setResult(resultNode);
+            return true;
+        }
 
-    case JSSetBucketKeyIntrinsic:
-    case JSMapBucketKeyIntrinsic: {
-        ASSERT(argumentCountIncludingThis == 2);
+        case JSSetBucketNextIntrinsic:
+        case JSMapBucketNextIntrinsic: {
+            ASSERT(argumentCountIncludingThis == 2);
 
-        insertChecks();
-        Node* bucket = get(virtualRegisterForArgument(1, registerOffset));
-        BucketOwnerType type = intrinsic == JSSetBucketKeyIntrinsic ? BucketOwnerType::Set : BucketOwnerType::Map;
-        Node* resultNode = addToGraph(LoadKeyFromMapBucket, OpInfo(type), OpInfo(prediction), bucket);
-        set(result, resultNode);
-        return true;
-    }
+            insertChecks();
+            Node* bucket = get(virtualRegisterForArgument(1, registerOffset));
+            BucketOwnerType type = intrinsic == JSSetBucketNextIntrinsic ? BucketOwnerType::Set : BucketOwnerType::Map;
+            Node* resultNode = addToGraph(GetMapBucketNext, OpInfo(type), bucket);
+            setResult(resultNode);
+            return true;
+        }
 
-    case JSMapBucketValueIntrinsic: {
-        ASSERT(argumentCountIncludingThis == 2);
+        case JSSetBucketKeyIntrinsic:
+        case JSMapBucketKeyIntrinsic: {
+            ASSERT(argumentCountIncludingThis == 2);
 
-        insertChecks();
-        Node* bucket = get(virtualRegisterForArgument(1, registerOffset));
-        Node* resultNode = addToGraph(LoadValueFromMapBucket, OpInfo(BucketOwnerType::Map), OpInfo(prediction), bucket);
-        set(result, resultNode);
-        return true;
-    }
+            insertChecks();
+            Node* bucket = get(virtualRegisterForArgument(1, registerOffset));
+            BucketOwnerType type = intrinsic == JSSetBucketKeyIntrinsic ? BucketOwnerType::Set : BucketOwnerType::Map;
+            Node* resultNode = addToGraph(LoadKeyFromMapBucket, OpInfo(type), OpInfo(prediction), bucket);
+            setResult(resultNode);
+            return true;
+        }
 
-    case JSWeakMapGetIntrinsic: {
-        if (argumentCountIncludingThis != 2)
-            return false;
+        case JSMapBucketValueIntrinsic: {
+            ASSERT(argumentCountIncludingThis == 2);
 
-        if (m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, BadType))
-            return false;
+            insertChecks();
+            Node* bucket = get(virtualRegisterForArgument(1, registerOffset));
+            Node* resultNode = addToGraph(LoadValueFromMapBucket, OpInfo(BucketOwnerType::Map), OpInfo(prediction), bucket);
+            setResult(resultNode);
+            return true;
+        }
 
-        insertChecks();
-        Node* map = get(virtualRegisterForArgument(0, registerOffset));
-        Node* key = get(virtualRegisterForArgument(1, registerOffset));
-        addToGraph(Check, Edge(key, ObjectUse));
-        Node* hash = addToGraph(MapHash, key);
-        Node* holder = addToGraph(WeakMapGet, Edge(map, WeakMapObjectUse), Edge(key, ObjectUse), Edge(hash, Int32Use));
-        Node* resultNode = addToGraph(ExtractValueFromWeakMapGet, OpInfo(), OpInfo(prediction), holder);
+        case JSWeakMapGetIntrinsic: {
+            if (argumentCountIncludingThis != 2)
+                return false;
 
-        set(result, resultNode);
-        return true;
-    }
+            if (m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, BadType))
+                return false;
 
-    case JSWeakMapHasIntrinsic: {
-        if (argumentCountIncludingThis != 2)
-            return false;
+            insertChecks();
+            Node* map = get(virtualRegisterForArgument(0, registerOffset));
+            Node* key = get(virtualRegisterForArgument(1, registerOffset));
+            addToGraph(Check, Edge(key, ObjectUse));
+            Node* hash = addToGraph(MapHash, key);
+            Node* holder = addToGraph(WeakMapGet, Edge(map, WeakMapObjectUse), Edge(key, ObjectUse), Edge(hash, Int32Use));
+            Node* resultNode = addToGraph(ExtractValueFromWeakMapGet, OpInfo(), OpInfo(prediction), holder);
 
-        if (m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, BadType))
-            return false;
+            setResult(resultNode);
+            return true;
+        }
 
-        insertChecks();
-        Node* map = get(virtualRegisterForArgument(0, registerOffset));
-        Node* key = get(virtualRegisterForArgument(1, registerOffset));
-        addToGraph(Check, Edge(key, ObjectUse));
-        Node* hash = addToGraph(MapHash, key);
-        Node* holder = addToGraph(WeakMapGet, Edge(map, WeakMapObjectUse), Edge(key, ObjectUse), Edge(hash, Int32Use));
-        Node* invertedResult = addToGraph(IsEmpty, holder);
-        Node* resultNode = addToGraph(LogicalNot, invertedResult);
+        case JSWeakMapHasIntrinsic: {
+            if (argumentCountIncludingThis != 2)
+                return false;
 
-        set(result, resultNode);
-        return true;
-    }
+            if (m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, BadType))
+                return false;
 
-    case JSWeakSetHasIntrinsic: {
-        if (argumentCountIncludingThis != 2)
-            return false;
+            insertChecks();
+            Node* map = get(virtualRegisterForArgument(0, registerOffset));
+            Node* key = get(virtualRegisterForArgument(1, registerOffset));
+            addToGraph(Check, Edge(key, ObjectUse));
+            Node* hash = addToGraph(MapHash, key);
+            Node* holder = addToGraph(WeakMapGet, Edge(map, WeakMapObjectUse), Edge(key, ObjectUse), Edge(hash, Int32Use));
+            Node* invertedResult = addToGraph(IsEmpty, holder);
+            Node* resultNode = addToGraph(LogicalNot, invertedResult);
 
-        if (m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, BadType))
-            return false;
+            setResult(resultNode);
+            return true;
+        }
 
-        insertChecks();
-        Node* map = get(virtualRegisterForArgument(0, registerOffset));
-        Node* key = get(virtualRegisterForArgument(1, registerOffset));
-        addToGraph(Check, Edge(key, ObjectUse));
-        Node* hash = addToGraph(MapHash, key);
-        Node* holder = addToGraph(WeakMapGet, Edge(map, WeakSetObjectUse), Edge(key, ObjectUse), Edge(hash, Int32Use));
-        Node* invertedResult = addToGraph(IsEmpty, holder);
-        Node* resultNode = addToGraph(LogicalNot, invertedResult);
+        case JSWeakSetHasIntrinsic: {
+            if (argumentCountIncludingThis != 2)
+                return false;
 
-        set(result, resultNode);
-        return true;
-    }
+            if (m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, BadType))
+                return false;
 
-    case JSWeakSetAddIntrinsic: {
-        if (argumentCountIncludingThis != 2)
-            return false;
+            insertChecks();
+            Node* map = get(virtualRegisterForArgument(0, registerOffset));
+            Node* key = get(virtualRegisterForArgument(1, registerOffset));
+            addToGraph(Check, Edge(key, ObjectUse));
+            Node* hash = addToGraph(MapHash, key);
+            Node* holder = addToGraph(WeakMapGet, Edge(map, WeakSetObjectUse), Edge(key, ObjectUse), Edge(hash, Int32Use));
+            Node* invertedResult = addToGraph(IsEmpty, holder);
+            Node* resultNode = addToGraph(LogicalNot, invertedResult);
 
-        if (m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, BadType))
-            return false;
+            setResult(resultNode);
+            return true;
+        }
 
-        insertChecks();
-        Node* base = get(virtualRegisterForArgument(0, registerOffset));
-        Node* key = get(virtualRegisterForArgument(1, registerOffset));
-        addToGraph(Check, Edge(key, ObjectUse));
-        Node* hash = addToGraph(MapHash, key);
-        addToGraph(WeakSetAdd, Edge(base, WeakSetObjectUse), Edge(key, ObjectUse), Edge(hash, Int32Use));
-        set(result, base);
-        return true;
-    }
+        case JSWeakSetAddIntrinsic: {
+            if (argumentCountIncludingThis != 2)
+                return false;
 
-    case JSWeakMapSetIntrinsic: {
-        if (argumentCountIncludingThis != 3)
-            return false;
+            if (m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, BadType))
+                return false;
 
-        if (m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, BadType))
-            return false;
+            insertChecks();
+            Node* base = get(virtualRegisterForArgument(0, registerOffset));
+            Node* key = get(virtualRegisterForArgument(1, registerOffset));
+            addToGraph(Check, Edge(key, ObjectUse));
+            Node* hash = addToGraph(MapHash, key);
+            addToGraph(WeakSetAdd, Edge(base, WeakSetObjectUse), Edge(key, ObjectUse), Edge(hash, Int32Use));
+            setResult(base);
+            return true;
+        }
 
-        insertChecks();
-        Node* base = get(virtualRegisterForArgument(0, registerOffset));
-        Node* key = get(virtualRegisterForArgument(1, registerOffset));
-        Node* value = get(virtualRegisterForArgument(2, registerOffset));
+        case JSWeakMapSetIntrinsic: {
+            if (argumentCountIncludingThis != 3)
+                return false;
 
-        addToGraph(Check, Edge(key, ObjectUse));
-        Node* hash = addToGraph(MapHash, key);
+            if (m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, BadType))
+                return false;
 
-        addVarArgChild(Edge(base, WeakMapObjectUse));
-        addVarArgChild(Edge(key, ObjectUse));
-        addVarArgChild(Edge(value));
-        addVarArgChild(Edge(hash, Int32Use));
-        addToGraph(Node::VarArg, WeakMapSet, OpInfo(0), OpInfo(0));
-        set(result, base);
-        return true;
-    }
+            insertChecks();
+            Node* base = get(virtualRegisterForArgument(0, registerOffset));
+            Node* key = get(virtualRegisterForArgument(1, registerOffset));
+            Node* value = get(virtualRegisterForArgument(2, registerOffset));
 
-    case DataViewGetInt8:
-    case DataViewGetUint8:
-    case DataViewGetInt16:
-    case DataViewGetUint16:
-    case DataViewGetInt32:
-    case DataViewGetUint32:
-    case DataViewGetFloat32:
-    case DataViewGetFloat64: {
-        if (!is64Bit())
-            return false;
+            addToGraph(Check, Edge(key, ObjectUse));
+            Node* hash = addToGraph(MapHash, key);
 
-        // To inline data view accesses, we assume the architecture we're running on:
-        // - Is little endian.
-        // - Allows unaligned loads/stores without crashing. 
+            addVarArgChild(Edge(base, WeakMapObjectUse));
+            addVarArgChild(Edge(key, ObjectUse));
+            addVarArgChild(Edge(value));
+            addVarArgChild(Edge(hash, Int32Use));
+            addToGraph(Node::VarArg, WeakMapSet, OpInfo(0), OpInfo(0));
+            setResult(base);
+            return true;
+        }
 
-        if (argumentCountIncludingThis < 2)
-            return false;
-        if (m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, BadType))
-            return false;
-
-        insertChecks();
-
-        uint8_t byteSize;
-        NodeType op = DataViewGetInt;
-        bool isSigned = false;
-        switch (intrinsic) {
         case DataViewGetInt8:
-            isSigned = true;
-            FALLTHROUGH;
         case DataViewGetUint8:
-            byteSize = 1;
-            break;
-
         case DataViewGetInt16:
-            isSigned = true;
-            FALLTHROUGH;
         case DataViewGetUint16:
-            byteSize = 2;
-            break;
-
         case DataViewGetInt32:
-            isSigned = true;
-            FALLTHROUGH;
         case DataViewGetUint32:
-            byteSize = 4;
-            break;
-
         case DataViewGetFloat32:
-            byteSize = 4;
-            op = DataViewGetFloat;
-            break;
-        case DataViewGetFloat64:
-            byteSize = 8;
-            op = DataViewGetFloat;
-            break;
-        default:
-            RELEASE_ASSERT_NOT_REACHED();
-        }
+        case DataViewGetFloat64: {
+            if (!is64Bit())
+                return false;
 
-        TriState isLittleEndian = MixedTriState;
-        Node* littleEndianChild = nullptr;
-        if (byteSize > 1) {
-            if (argumentCountIncludingThis < 3)
-                isLittleEndian = FalseTriState;
-            else {
-                littleEndianChild = get(virtualRegisterForArgument(2, registerOffset));
-                if (littleEndianChild->hasConstant()) {
-                    JSValue constant = littleEndianChild->constant()->value();
-                    isLittleEndian = constant.pureToBoolean();
-                    if (isLittleEndian != MixedTriState)
-                        littleEndianChild = nullptr;
-                } else
-                    isLittleEndian = MixedTriState;
+            // To inline data view accesses, we assume the architecture we're running on:
+            // - Is little endian.
+            // - Allows unaligned loads/stores without crashing. 
+
+            if (argumentCountIncludingThis < 2)
+                return false;
+            if (m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, BadType))
+                return false;
+
+            insertChecks();
+
+            uint8_t byteSize;
+            NodeType op = DataViewGetInt;
+            bool isSigned = false;
+            switch (intrinsic) {
+            case DataViewGetInt8:
+                isSigned = true;
+                FALLTHROUGH;
+            case DataViewGetUint8:
+                byteSize = 1;
+                break;
+
+            case DataViewGetInt16:
+                isSigned = true;
+                FALLTHROUGH;
+            case DataViewGetUint16:
+                byteSize = 2;
+                break;
+
+            case DataViewGetInt32:
+                isSigned = true;
+                FALLTHROUGH;
+            case DataViewGetUint32:
+                byteSize = 4;
+                break;
+
+            case DataViewGetFloat32:
+                byteSize = 4;
+                op = DataViewGetFloat;
+                break;
+            case DataViewGetFloat64:
+                byteSize = 8;
+                op = DataViewGetFloat;
+                break;
+            default:
+                RELEASE_ASSERT_NOT_REACHED();
             }
+
+            TriState isLittleEndian = MixedTriState;
+            Node* littleEndianChild = nullptr;
+            if (byteSize > 1) {
+                if (argumentCountIncludingThis < 3)
+                    isLittleEndian = FalseTriState;
+                else {
+                    littleEndianChild = get(virtualRegisterForArgument(2, registerOffset));
+                    if (littleEndianChild->hasConstant()) {
+                        JSValue constant = littleEndianChild->constant()->value();
+                        isLittleEndian = constant.pureToBoolean();
+                        if (isLittleEndian != MixedTriState)
+                            littleEndianChild = nullptr;
+                    } else
+                        isLittleEndian = MixedTriState;
+                }
+            }
+
+            DataViewData data { };
+            data.isLittleEndian = isLittleEndian;
+            data.isSigned = isSigned;
+            data.byteSize = byteSize;
+
+            setResult(
+                addToGraph(op, OpInfo(data.asQuadWord), OpInfo(prediction), get(virtualRegisterForArgument(0, registerOffset)), get(virtualRegisterForArgument(1, registerOffset)), littleEndianChild));
+            return true;
         }
 
-        DataViewData data { };
-        data.isLittleEndian = isLittleEndian;
-        data.isSigned = isSigned;
-        data.byteSize = byteSize;
-
-        set(VirtualRegister(result),
-            addToGraph(op, OpInfo(data.asQuadWord), OpInfo(prediction), get(virtualRegisterForArgument(0, registerOffset)), get(virtualRegisterForArgument(1, registerOffset)), littleEndianChild));
-        return true;
-    }
-
-    case DataViewSetInt8:
-    case DataViewSetUint8:
-    case DataViewSetInt16:
-    case DataViewSetUint16:
-    case DataViewSetInt32:
-    case DataViewSetUint32:
-    case DataViewSetFloat32:
-    case DataViewSetFloat64: {
-        if (!is64Bit())
-            return false;
-
-        if (argumentCountIncludingThis < 3)
-            return false;
-
-        if (m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, BadType))
-            return false;
-
-        insertChecks();
-
-        uint8_t byteSize;
-        bool isFloatingPoint = false;
-        bool isSigned = false;
-        switch (intrinsic) {
         case DataViewSetInt8:
-            isSigned = true;
-            FALLTHROUGH;
         case DataViewSetUint8:
-            byteSize = 1;
-            break;
-
         case DataViewSetInt16:
-            isSigned = true;
-            FALLTHROUGH;
         case DataViewSetUint16:
-            byteSize = 2;
-            break;
-
         case DataViewSetInt32:
-            isSigned = true;
-            FALLTHROUGH;
         case DataViewSetUint32:
-            byteSize = 4;
-            break;
-
         case DataViewSetFloat32:
-            isFloatingPoint = true;
-            byteSize = 4;
-            break;
-        case DataViewSetFloat64:
-            isFloatingPoint = true;
-            byteSize = 8;
-            break;
-        default:
-            RELEASE_ASSERT_NOT_REACHED();
-        }
+        case DataViewSetFloat64: {
+            if (!is64Bit())
+                return false;
 
-        TriState isLittleEndian = MixedTriState;
-        Node* littleEndianChild = nullptr;
-        if (byteSize > 1) {
-            if (argumentCountIncludingThis < 4)
-                isLittleEndian = FalseTriState;
-            else {
-                littleEndianChild = get(virtualRegisterForArgument(3, registerOffset));
-                if (littleEndianChild->hasConstant()) {
-                    JSValue constant = littleEndianChild->constant()->value();
-                    isLittleEndian = constant.pureToBoolean();
-                    if (isLittleEndian != MixedTriState)
-                        littleEndianChild = nullptr;
-                } else
-                    isLittleEndian = MixedTriState;
+            if (argumentCountIncludingThis < 3)
+                return false;
+
+            if (m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, BadType))
+                return false;
+
+            insertChecks();
+
+            uint8_t byteSize;
+            bool isFloatingPoint = false;
+            bool isSigned = false;
+            switch (intrinsic) {
+            case DataViewSetInt8:
+                isSigned = true;
+                FALLTHROUGH;
+            case DataViewSetUint8:
+                byteSize = 1;
+                break;
+
+            case DataViewSetInt16:
+                isSigned = true;
+                FALLTHROUGH;
+            case DataViewSetUint16:
+                byteSize = 2;
+                break;
+
+            case DataViewSetInt32:
+                isSigned = true;
+                FALLTHROUGH;
+            case DataViewSetUint32:
+                byteSize = 4;
+                break;
+
+            case DataViewSetFloat32:
+                isFloatingPoint = true;
+                byteSize = 4;
+                break;
+            case DataViewSetFloat64:
+                isFloatingPoint = true;
+                byteSize = 8;
+                break;
+            default:
+                RELEASE_ASSERT_NOT_REACHED();
             }
+
+            TriState isLittleEndian = MixedTriState;
+            Node* littleEndianChild = nullptr;
+            if (byteSize > 1) {
+                if (argumentCountIncludingThis < 4)
+                    isLittleEndian = FalseTriState;
+                else {
+                    littleEndianChild = get(virtualRegisterForArgument(3, registerOffset));
+                    if (littleEndianChild->hasConstant()) {
+                        JSValue constant = littleEndianChild->constant()->value();
+                        isLittleEndian = constant.pureToBoolean();
+                        if (isLittleEndian != MixedTriState)
+                            littleEndianChild = nullptr;
+                    } else
+                        isLittleEndian = MixedTriState;
+                }
+            }
+
+            DataViewData data { };
+            data.isLittleEndian = isLittleEndian;
+            data.isSigned = isSigned;
+            data.byteSize = byteSize;
+            data.isFloatingPoint = isFloatingPoint;
+
+            addVarArgChild(get(virtualRegisterForArgument(0, registerOffset)));
+            addVarArgChild(get(virtualRegisterForArgument(1, registerOffset)));
+            addVarArgChild(get(virtualRegisterForArgument(2, registerOffset)));
+            addVarArgChild(littleEndianChild);
+
+            addToGraph(Node::VarArg, DataViewSet, OpInfo(data.asQuadWord), OpInfo());
+            setResult(addToGraph(JSConstant, OpInfo(m_constantUndefined)));
+            return true;
         }
 
-        DataViewData data { };
-        data.isLittleEndian = isLittleEndian;
-        data.isSigned = isSigned;
-        data.byteSize = byteSize;
-        data.isFloatingPoint = isFloatingPoint;
+        case HasOwnPropertyIntrinsic: {
+            if (argumentCountIncludingThis != 2)
+                return false;
 
-        addVarArgChild(get(virtualRegisterForArgument(0, registerOffset)));
-        addVarArgChild(get(virtualRegisterForArgument(1, registerOffset)));
-        addVarArgChild(get(virtualRegisterForArgument(2, registerOffset)));
-        addVarArgChild(littleEndianChild);
+            // This can be racy, that's fine. We know that once we observe that this is created,
+            // that it will never be destroyed until the VM is destroyed. It's unlikely that
+            // we'd ever get to the point where we inline this as an intrinsic without the
+            // cache being created, however, it's possible if we always throw exceptions inside
+            // hasOwnProperty.
+            if (!m_vm->hasOwnPropertyCache())
+                return false;
 
-        addToGraph(Node::VarArg, DataViewSet, OpInfo(data.asQuadWord), OpInfo());
-        return true;
-    }
-
-    case HasOwnPropertyIntrinsic: {
-        if (argumentCountIncludingThis != 2)
-            return false;
-
-        // This can be racy, that's fine. We know that once we observe that this is created,
-        // that it will never be destroyed until the VM is destroyed. It's unlikely that
-        // we'd ever get to the point where we inline this as an intrinsic without the
-        // cache being created, however, it's possible if we always throw exceptions inside
-        // hasOwnProperty.
-        if (!m_vm->hasOwnPropertyCache())
-            return false;
-
-        insertChecks();
-        Node* object = get(virtualRegisterForArgument(0, registerOffset));
-        Node* key = get(virtualRegisterForArgument(1, registerOffset));
-        Node* resultNode = addToGraph(HasOwnProperty, object, key);
-        set(result, resultNode);
-        return true;
-    }
-
-    case StringPrototypeSliceIntrinsic: {
-        if (argumentCountIncludingThis < 2)
-            return false;
-
-        if (m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, BadType))
-            return false;
-
-        insertChecks();
-        Node* thisString = get(virtualRegisterForArgument(0, registerOffset));
-        Node* start = get(virtualRegisterForArgument(1, registerOffset));
-        Node* end = nullptr;
-        if (argumentCountIncludingThis > 2)
-            end = get(virtualRegisterForArgument(2, registerOffset));
-        Node* resultNode = addToGraph(StringSlice, thisString, start, end);
-        set(result, resultNode);
-        return true;
-    }
-
-    case StringPrototypeToLowerCaseIntrinsic: {
-        if (argumentCountIncludingThis != 1)
-            return false;
-
-        if (m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, BadType))
-            return false;
-
-        insertChecks();
-        Node* thisString = get(virtualRegisterForArgument(0, registerOffset));
-        Node* resultNode = addToGraph(ToLowerCase, thisString);
-        set(result, resultNode);
-        return true;
-    }
-
-    case NumberPrototypeToStringIntrinsic: {
-        if (argumentCountIncludingThis != 1 && argumentCountIncludingThis != 2)
-            return false;
-
-        if (m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, BadType))
-            return false;
-
-        insertChecks();
-        Node* thisNumber = get(virtualRegisterForArgument(0, registerOffset));
-        if (argumentCountIncludingThis == 1) {
-            Node* resultNode = addToGraph(ToString, thisNumber);
-            set(result, resultNode);
-        } else {
-            Node* radix = get(virtualRegisterForArgument(1, registerOffset));
-            Node* resultNode = addToGraph(NumberToStringWithRadix, thisNumber, radix);
-            set(result, resultNode);
+            insertChecks();
+            Node* object = get(virtualRegisterForArgument(0, registerOffset));
+            Node* key = get(virtualRegisterForArgument(1, registerOffset));
+            Node* resultNode = addToGraph(HasOwnProperty, object, key);
+            setResult(resultNode);
+            return true;
         }
-        return true;
-    }
 
-    case NumberIsIntegerIntrinsic: {
-        if (argumentCountIncludingThis < 2)
-            return false;
+        case StringPrototypeSliceIntrinsic: {
+            if (argumentCountIncludingThis < 2)
+                return false;
 
-        insertChecks();
-        Node* input = get(virtualRegisterForArgument(1, registerOffset));
-        Node* resultNode = addToGraph(NumberIsInteger, input);
-        set(result, resultNode);
-        return true;
-    }
+            if (m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, BadType))
+                return false;
 
-    case CPUMfenceIntrinsic:
-    case CPURdtscIntrinsic:
-    case CPUCpuidIntrinsic:
-    case CPUPauseIntrinsic: {
+            insertChecks();
+            Node* thisString = get(virtualRegisterForArgument(0, registerOffset));
+            Node* start = get(virtualRegisterForArgument(1, registerOffset));
+            Node* end = nullptr;
+            if (argumentCountIncludingThis > 2)
+                end = get(virtualRegisterForArgument(2, registerOffset));
+            Node* resultNode = addToGraph(StringSlice, thisString, start, end);
+            setResult(resultNode);
+            return true;
+        }
+
+        case StringPrototypeToLowerCaseIntrinsic: {
+            if (argumentCountIncludingThis != 1)
+                return false;
+
+            if (m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, BadType))
+                return false;
+
+            insertChecks();
+            Node* thisString = get(virtualRegisterForArgument(0, registerOffset));
+            Node* resultNode = addToGraph(ToLowerCase, thisString);
+            setResult(resultNode);
+            return true;
+        }
+
+        case NumberPrototypeToStringIntrinsic: {
+            if (argumentCountIncludingThis != 1 && argumentCountIncludingThis != 2)
+                return false;
+
+            if (m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, BadType))
+                return false;
+
+            insertChecks();
+            Node* thisNumber = get(virtualRegisterForArgument(0, registerOffset));
+            if (argumentCountIncludingThis == 1) {
+                Node* resultNode = addToGraph(ToString, thisNumber);
+                setResult(resultNode);
+            } else {
+                Node* radix = get(virtualRegisterForArgument(1, registerOffset));
+                Node* resultNode = addToGraph(NumberToStringWithRadix, thisNumber, radix);
+                setResult(resultNode);
+            }
+            return true;
+        }
+
+        case NumberIsIntegerIntrinsic: {
+            if (argumentCountIncludingThis < 2)
+                return false;
+
+            insertChecks();
+            Node* input = get(virtualRegisterForArgument(1, registerOffset));
+            Node* resultNode = addToGraph(NumberIsInteger, input);
+            setResult(resultNode);
+            return true;
+        }
+
+        case CPUMfenceIntrinsic:
+        case CPURdtscIntrinsic:
+        case CPUCpuidIntrinsic:
+        case CPUPauseIntrinsic: {
 #if CPU(X86_64)
-        if (!m_graph.m_plan.isFTL())
-            return false;
-        insertChecks();
-        set(result,
-            addToGraph(CPUIntrinsic, OpInfo(intrinsic), OpInfo()));
-        return true;
+            if (!m_graph.m_plan.isFTL())
+                return false;
+            insertChecks();
+            setResult(addToGraph(CPUIntrinsic, OpInfo(intrinsic), OpInfo()));
+            return true;
 #else
-        return false;
+            return false;
 #endif
+        }
+
+        default:
+            return false;
+        }
+    };
+
+    if (inlineIntrinsic()) {
+        RELEASE_ASSERT(didSetResult);
+        return true;
     }
 
-
-    default:
-        return false;
-    }
+    return false;
 }
 
 template<typename ChecksFunctor>
