@@ -1,5 +1,27 @@
 2019-01-23  Alan Coon  <alancoon@apple.com>
 
+        Cherry-pick r240225. rdar://problem/47458257
+
+    Unreviewed, fix -Wint-in-bool-context warning
+    https://bugs.webkit.org/show_bug.cgi?id=193483
+    <rdar://problem/47280522>
+    
+    * dfg/DFGFixupPhase.cpp:
+    (JSC::DFG::FixupPhase::addCheckStructureForOriginalStringObjectUse):
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@240225 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2019-01-20  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+            Unreviewed, fix -Wint-in-bool-context warning
+            https://bugs.webkit.org/show_bug.cgi?id=193483
+            <rdar://problem/47280522>
+
+            * dfg/DFGFixupPhase.cpp:
+            (JSC::DFG::FixupPhase::addCheckStructureForOriginalStringObjectUse):
+
+2019-01-23  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r240186. rdar://problem/47458146
 
     Follow-up: Gigacages should start allocations from a slide
