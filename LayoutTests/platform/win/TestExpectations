@@ -110,6 +110,7 @@ webkit.org/b/173281 editing/selection/selection-across-shadow-boundaries-readonl
 webkit.org/b/173281 editing/selection/selection-across-shadow-boundaries-readonly-2.html [ Skip ]
 webkit.org/b/173281 editing/selection/selection-across-shadow-boundaries-readonly-3.html [ Skip ]
 webkit.org/b/173281 editing/selection/selection-across-shadow-boundaries-user-select-all-1.html [ Skip ]
+webkit.org/b/193748 http/tests/adClickAttribution [ Skip ]
 
 # TODO HW filters not yet supported on Windows
 webkit.org/b/74716 css3/filters/effect-blur-hw.html [ Skip ]

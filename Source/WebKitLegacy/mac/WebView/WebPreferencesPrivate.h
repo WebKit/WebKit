@@ -585,6 +585,9 @@ extern NSString *WebPreferencesCacheModelChangedInternalNotification WEBKIT_DEPR
 - (void)setCSSLogicalEnabled:(BOOL)flag;
 - (BOOL)cssLogicalEnabled;
 
+- (BOOL)adClickAttributionEnabled;
+- (void)setAdClickAttributionEnabled:(BOOL)flag;
+
 @property (nonatomic) BOOL visualViewportEnabled;
 @property (nonatomic) BOOL visualViewportAPIEnabled;
 @property (nonatomic) BOOL CSSOMViewScrollingAPIEnabled;

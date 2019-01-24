@@ -788,3 +788,6 @@ videoQualityIncludesDisplayCompositingEnabled:
 
 editableImagesEnabled:
   initial: false
+
+adClickAttributionEnabled:
+  initial: false

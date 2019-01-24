@@ -1011,6 +1011,7 @@ static void setWebPreferencesForTestOptions(const TestOptions& options)
     preferences.selectionAcrossShadowBoundariesEnabled = options.enableSelectionAcrossShadowBoundaries;
     preferences.webGPUEnabled = options.enableWebGPU;
     preferences.CSSLogicalEnabled = options.enableCSSLogical;
+    preferences.adClickAttributionEnabled = options.adClickAttributionEnabled;
 }
 
 // Called once on DumpRenderTree startup.

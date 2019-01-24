@@ -109,6 +109,8 @@ TestOptions::TestOptions(const std::string& pathOrURL, const std::string& absolu
             enableWebGPU = parseBooleanTestHeaderValue(value);
         else if (key == "internal:CSSLogicalEnabled")
             enableCSSLogical = parseBooleanTestHeaderValue(value);
+        else if (key == "internal:AdClickAttributionEnabled")
+            adClickAttributionEnabled = parseBooleanTestHeaderValue(value);
         pairStart = pairEnd + 1;
     }
 }

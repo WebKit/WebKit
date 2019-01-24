@@ -19,6 +19,8 @@
  */
 
 interface HTMLAnchorElement : HTMLElement {
+    [CEReactions=NotNeeded, EnabledAtRuntime=AdClickAttribution, Reflect] attribute DOMString adcampaignid;
+    [CEReactions=NotNeeded, EnabledAtRuntime=AdClickAttribution, Reflect] attribute DOMString addestination;
     [CEReactions=NotNeeded, Reflect] attribute DOMString charset;
     [CEReactions=NotNeeded, Reflect] attribute DOMString coords;
     [CEReactions=NotNeeded, Conditional=DOWNLOAD_ATTRIBUTE, EnabledAtRuntime=DownloadAttribute, Reflect] attribute DOMString download;

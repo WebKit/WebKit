@@ -670,6 +670,7 @@ public:
 #endif
         [NSNumber numberWithBool:YES], WebKitSelectionAcrossShadowBoundariesEnabledPreferenceKey,
         [NSNumber numberWithBool:NO], WebKitCSSLogicalEnabledPreferenceKey,
+        [NSNumber numberWithBool:NO], WebKitAdClickAttributionEnabledPreferenceKey,
 #if ENABLE(INTERSECTION_OBSERVER)
         @NO, WebKitIntersectionObserverEnabledPreferenceKey,
 #endif
@@ -3388,6 +3389,16 @@ static NSString *classIBCreatorID = nil;
 - (void)setCSSLogicalEnabled:(BOOL)flag
 {
     [self _setBoolValue:flag forKey:WebKitCSSLogicalEnabledPreferenceKey];
+}
+
+- (BOOL)adClickAttributionEnabled
+{
+    return [self _boolValueForKey:WebKitAdClickAttributionEnabledPreferenceKey];
+}
+
+- (void)setAdClickAttributionEnabled:(BOOL)flag
+{
+    [self _setBoolValue:flag forKey:WebKitAdClickAttributionEnabledPreferenceKey];
 }
 
 @end

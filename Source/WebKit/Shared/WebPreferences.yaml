@@ -1543,3 +1543,11 @@ CSSLogicalEnabled:
   humanReadableDescription: "Enable CSS Logical Properties and Values"
   webcoreBinding: RuntimeEnabledFeatures
   category: internal
+
+AdClickAttributionEnabled:
+  type: bool
+  defaultValue: false
+  humanReadableName: "Ad Click Attribution"
+  humanReadableDescription: "Enable Ad Click Attribution for Cross-Site Link Navigations"
+  webcoreBinding: RuntimeEnabledFeatures
+  category: internal

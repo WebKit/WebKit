@@ -1,3 +1,16 @@
+2019-01-24  John Wilander  <wilander@apple.com>
+
+        Add Ad Click Attribution as an internal/experimental feature
+        https://bugs.webkit.org/show_bug.cgi?id=193685
+        <rdar://problem/47450399>
+
+        Reviewed by Brent Fulgham.
+
+        * http/tests/adClickAttribution/anchor-tag-attributes-reflect-expected.txt: Added.
+        * http/tests/adClickAttribution/anchor-tag-attributes-reflect.html: Added.
+        * platform/win/TestExpectations:
+            Skipped on Windows for now.
+
 2019-01-23  Oriol Brufau  <obrufau@igalia.com>
 
         Allow failures in flaky tests from bug 193657

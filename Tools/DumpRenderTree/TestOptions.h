@@ -45,6 +45,7 @@ struct TestOptions {
     bool enableSelectionAcrossShadowBoundaries { true };
     bool enableWebGPU { false };
     bool enableCSSLogical { false };
+    bool adClickAttributionEnabled { false };
     std::string jscOptions;
 
     TestOptions(const std::string& pathOrURL, const std::string& absolutePath);

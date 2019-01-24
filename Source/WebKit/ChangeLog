@@ -1,3 +1,14 @@
+2019-01-24  John Wilander  <wilander@apple.com>
+
+        Add Ad Click Attribution as an internal/experimental feature
+        https://bugs.webkit.org/show_bug.cgi?id=193685
+        <rdar://problem/47450399>
+
+        Reviewed by Brent Fulgham.
+
+        * Shared/WebPreferences.yaml:
+            Added AdClickAttributionEnabled as a runtime enabled feature, off by default.
+
 2019-01-24  Antti Koivisto  <antti@apple.com>
 
         [PSON] Flash on back navigation on Mac
