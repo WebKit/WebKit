@@ -104,7 +104,7 @@ class DarwinPort(ApplePort):
                 else:
                     process_name = test.split('-')[0]
                     pid = int(test.split('-')[1])
-            except IndexError:
+            except IndexError, ValueError:
                 continue
             if not any(entry[1] == process_name and entry[2] == pid for entry in crashed_processes):
                 # if this is a new crash, then append the logs

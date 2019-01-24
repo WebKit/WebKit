@@ -1,3 +1,16 @@
+2019-01-24  Jonathan Bedard  <jbedard@apple.com>
+
+        webkitpy: Missing PID in crashlog name should not be fatal
+        https://bugs.webkit.org/show_bug.cgi?id=193771
+
+        If we can't determine the PID of a crashlog, just ignore the crashlog instead
+        of raising an exception.
+
+        Reviewed by Lucas Forschler.
+
+        * Scripts/webkitpy/port/darwin.py:
+        (DarwinPort._merge_crash_logs):
+
 2019-01-24  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         test_exporter.py: webkitpy.common.system.executive.ScriptError from create_branch_with_patch
