@@ -4928,9 +4928,9 @@ void ByteCodeParser::parseBlock(unsigned limit)
             Node* op1 = get(bytecode.m_lhs);
             Node* op2 = get(bytecode.m_rhs);
             if (isInt32Speculation(getPrediction()))
-                set(bytecode.dst, addToGraph(ArithBitAnd, op1, op2));
+                set(bytecode.m_dst, addToGraph(ArithBitAnd, op1, op2));
             else
-                set(bytecode.dst, addToGraph(ValueBitAnd, op1, op2));
+                set(bytecode.m_dst, addToGraph(ValueBitAnd, op1, op2));
             NEXT_OPCODE(op_bitand);
         }
 
@@ -4939,9 +4939,9 @@ void ByteCodeParser::parseBlock(unsigned limit)
             Node* op1 = get(bytecode.m_lhs);
             Node* op2 = get(bytecode.m_rhs);
             if (isInt32Speculation(getPrediction()))
-                set(bytecode.dst, addToGraph(ArithBitOr, op1, op2));
+                set(bytecode.m_dst, addToGraph(ArithBitOr, op1, op2));
             else
-                set(bytecode.dst, addToGraph(ValueBitOr, op1, op2));
+                set(bytecode.m_dst, addToGraph(ValueBitOr, op1, op2));
             NEXT_OPCODE(op_bitor);
         }
 
@@ -4950,9 +4950,9 @@ void ByteCodeParser::parseBlock(unsigned limit)
             Node* op1 = get(bytecode.m_lhs);
             Node* op2 = get(bytecode.m_rhs);
             if (isInt32Speculation(getPrediction()))
-                set(bytecode.dst, addToGraph(ArithBitXor, op1, op2));
+                set(bytecode.m_dst, addToGraph(ArithBitXor, op1, op2));
             else
-                set(bytecode.dst, addToGraph(ValueBitXor, op1, op2));
+                set(bytecode.m_dst, addToGraph(ValueBitXor, op1, op2));
             NEXT_OPCODE(op_bitor);
         }
 
