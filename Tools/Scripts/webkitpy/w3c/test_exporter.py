@@ -293,7 +293,6 @@ class WebPlatformTestExporter(object):
             self._git.apply_mail_patch([patch])
         except Exception as e:
             _log.warning(e)
-            self._git.apply_mail_patch(['--abort'])
             return False
         self._git.commit(['-a', '-m', self._commit_message])
         return True

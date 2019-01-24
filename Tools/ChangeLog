@@ -1,3 +1,16 @@
+2019-01-24  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        test_exporter.py: webkitpy.common.system.executive.ScriptError from create_branch_with_patch
+        https://bugs.webkit.org/show_bug.cgi?id=193746
+
+        Reviewed by Youenn Fablet.
+
+        It calls 'git apply --index --abort', but --abort is not a valid argument to 'git apply',
+        so we'd best just not call it.
+
+        * Scripts/webkitpy/w3c/test_exporter.py:
+        (WebPlatformTestExporter.create_branch_with_patch):
+
 2019-01-24  Ross Kirsling  <ross.kirsling@sony.com>
 
         Move FileSystem to WTF
