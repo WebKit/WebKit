@@ -27,9 +27,8 @@
  */
 
 #include "config.h"
-#include "FileSystem.h"
+#include <wtf/FileSystem.h>
 
-#include "FileMetadata.h"
 #include <dirent.h>
 #include <errno.h>
 #include <fcntl.h>
@@ -41,13 +40,14 @@
 #include <sys/types.h>
 #include <unistd.h>
 #include <wtf/EnumTraits.h>
+#include <wtf/FileMetadata.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/StringBuilder.h>
 #include <wtf/text/WTFString.h>
 
-namespace WebCore {
+namespace WTF {
 
-namespace FileSystem {
+namespace FileSystemImpl {
 
 bool fileExists(const String& path)
 {
@@ -317,19 +317,22 @@ bool makeAllDirectories(const String& path)
     char* p = fullPath.mutableData() + 1;
     int length = fullPath.length();
 
-    if(p[length - 1] == '/')
+    if (p[length - 1] == '/')
         p[length - 1] = '\0';
-    for (; *p; ++p)
+    for (; *p; ++p) {
         if (*p == '/') {
             *p = '\0';
-            if (access(fullPath.data(), F_OK))
+            if (access(fullPath.data(), F_OK)) {
                 if (mkdir(fullPath.data(), S_IRWXU))
                     return false;
+            }
             *p = '/';
         }
-    if (access(fullPath.data(), F_OK))
+    }
+    if (access(fullPath.data(), F_OK)) {
         if (mkdir(fullPath.data(), S_IRWXU))
             return false;
+    }
 
     return true;
 }
@@ -489,5 +492,5 @@ String realPath(const String& filePath)
     return result ? String::fromUTF8(result) : filePath;
 }
 
-} // namespace FileSystem
-} // namespace WebCore
+} // namespace FileSystemImpl
+} // namespace WTF

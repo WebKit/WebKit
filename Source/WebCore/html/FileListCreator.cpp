@@ -28,9 +28,9 @@
 
 #include "FileChooser.h"
 #include "FileList.h"
-#include "FileMetadata.h"
-#include "FileSystem.h"
 #include <wtf/CrossThreadCopier.h>
+#include <wtf/FileMetadata.h>
+#include <wtf/FileSystem.h>
 
 namespace WebCore {
 

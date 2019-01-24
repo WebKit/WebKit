@@ -28,7 +28,6 @@
 
 #if ENABLE(SERVICE_WORKER)
 
-#include "FileSystem.h"
 #include "Logging.h"
 #include "RegistrationStore.h"
 #include "SQLiteDatabase.h"
@@ -39,6 +38,7 @@
 #include "SecurityOrigin.h"
 #include <wtf/CompletionHandler.h>
 #include <wtf/CrossThreadCopier.h>
+#include <wtf/FileSystem.h>
 #include <wtf/MainThread.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/Scope.h>

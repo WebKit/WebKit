@@ -1,3 +1,14 @@
+2019-01-24  Ross Kirsling  <ross.kirsling@sony.com>
+
+        Move FileSystem to WTF
+        https://bugs.webkit.org/show_bug.cgi?id=193602
+
+        Reviewed by Yusuke Suzuki.
+
+        * Misc/WebNSFileManagerExtras.mm:
+        * Storage/WebDatabaseProvider.mm:
+        * WebView/WebView.mm:
+
 2019-01-23  Conrad Shultz  <conrad_shultz@apple.com>
 
         Fix the Apple Internal build. See <rdar://problem/47491383>.

@@ -64,7 +64,7 @@ ServiceWorkerProcessProxy::~ServiceWorkerProcessProxy()
 bool ServiceWorkerProcessProxy::hasRegisteredServiceWorkers(const String& serviceWorkerDirectory)
 {
     String registrationFile = WebCore::serviceWorkerRegistrationDatabaseFilename(serviceWorkerDirectory);
-    return WebCore::FileSystem::fileExists(registrationFile);
+    return FileSystem::fileExists(registrationFile);
 }
 
 void ServiceWorkerProcessProxy::getLaunchOptions(ProcessLauncher::LaunchOptions& launchOptions)

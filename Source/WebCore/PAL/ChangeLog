@@ -1,3 +1,13 @@
+2019-01-24  Ross Kirsling  <ross.kirsling@sony.com>
+
+        Move FileSystem to WTF
+        https://bugs.webkit.org/show_bug.cgi?id=193602
+
+        Reviewed by Yusuke Suzuki.
+
+        * PAL.xcodeproj/project.pbxproj:
+        * pal/PlatformMac.cmake:
+
 2019-01-24  David Kilzer  <ddkilzer@apple.com>
 
         Follow-up #2: Override the session configuration for cookieAcceptPolicy

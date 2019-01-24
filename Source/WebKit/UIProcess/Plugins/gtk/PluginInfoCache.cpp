@@ -29,8 +29,8 @@
 #if ENABLE(NETSCAPE_PLUGIN_API)
 
 #include "NetscapePluginModule.h"
-#include <WebCore/FileSystem.h>
 #include <WebCore/PlatformDisplay.h>
+#include <wtf/FileSystem.h>
 #include <wtf/text/CString.h>
 
 namespace WebKit {
@@ -66,10 +66,10 @@ PluginInfoCache::PluginInfoCache()
     m_saveToFileIdle.setPriority(G_PRIORITY_DEFAULT_IDLE);
 
     GUniquePtr<char> cacheDirectory(g_build_filename(g_get_user_cache_dir(), "webkitgtk", nullptr));
-    if (WebCore::FileSystem::makeAllDirectories(cacheDirectory.get())) {
+    if (FileSystem::makeAllDirectories(cacheDirectory.get())) {
         // Delete old cache file.
         GUniquePtr<char> oldCachePath(g_build_filename(cacheDirectory.get(), "plugins", nullptr));
-        WebCore::FileSystem::deleteFile(WebCore::FileSystem::stringFromFileSystemRepresentation(oldCachePath.get()));
+        FileSystem::deleteFile(FileSystem::stringFromFileSystemRepresentation(oldCachePath.get()));
 
         m_cachePath.reset(g_build_filename(cacheDirectory.get(), cacheFilenameForCurrentDisplay(), nullptr));
         g_key_file_load_from_file(m_cacheFile.get(), m_cachePath.get(), G_KEY_FILE_NONE, nullptr);
@@ -112,7 +112,7 @@ bool PluginInfoCache::getPluginInfo(const String& pluginPath, PluginModuleInfo& 
     if (!g_key_file_has_group(m_cacheFile.get(), pluginGroup.data()))
         return false;
 
-    auto lastModifiedTime = WebCore::FileSystem::getFileModificationTime(pluginPath);
+    auto lastModifiedTime = FileSystem::getFileModificationTime(pluginPath);
     if (!lastModifiedTime)
         return false;
     time_t cachedLastModified = static_cast<time_t>(g_key_file_get_uint64(m_cacheFile.get(), pluginGroup.data(), "mtime", nullptr));
@@ -120,7 +120,7 @@ bool PluginInfoCache::getPluginInfo(const String& pluginPath, PluginModuleInfo& 
         return false;
 
     plugin.path = pluginPath;
-    plugin.info.file = WebCore::FileSystem::pathGetFileName(pluginPath);
+    plugin.info.file = FileSystem::pathGetFileName(pluginPath);
 
     GUniquePtr<char> stringValue(g_key_file_get_string(m_cacheFile.get(), pluginGroup.data(), "name", nullptr));
     plugin.info.name = String::fromUTF8(stringValue.get());
@@ -140,7 +140,7 @@ bool PluginInfoCache::getPluginInfo(const String& pluginPath, PluginModuleInfo& 
 
 void PluginInfoCache::updatePluginInfo(const String& pluginPath, const PluginModuleInfo& plugin)
 {
-    auto lastModifiedTime = WebCore::FileSystem::getFileModificationTime(pluginPath);
+    auto lastModifiedTime = FileSystem::getFileModificationTime(pluginPath);
     if (!lastModifiedTime)
         return;
 

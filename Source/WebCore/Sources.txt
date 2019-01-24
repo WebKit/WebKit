@@ -1605,7 +1605,6 @@ platform/FileChooser.cpp
 platform/FileHandle.cpp
 platform/FileMonitor.cpp
 platform/FileStream.cpp
-platform/FileSystem.cpp
 platform/GenericTaskQueue.cpp
 platform/LayoutUnit.cpp
 platform/Length.cpp

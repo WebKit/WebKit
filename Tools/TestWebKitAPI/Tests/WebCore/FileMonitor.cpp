@@ -29,7 +29,7 @@
 #include "Test.h"
 #include "WTFStringUtilities.h"
 #include <WebCore/FileMonitor.h>
-#include <WebCore/FileSystem.h>
+#include <wtf/FileSystem.h>
 #include <wtf/MainThread.h>
 #include <wtf/RunLoop.h>
 #include <wtf/Scope.h>

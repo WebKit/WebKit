@@ -27,14 +27,14 @@
  */
 
 #include "config.h"
-#include "FileSystem.h"
+#include <wtf/FileSystem.h>
 
 #include <CoreFoundation/CFString.h>
 #include <wtf/RetainPtr.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/WTFString.h>
 
-namespace WebCore {
+namespace WTF {
 
 CString FileSystem::fileSystemRepresentation(const String& path)
 {
@@ -71,4 +71,4 @@ RetainPtr<CFURLRef> FileSystem::pathAsURL(const String& path)
     return adoptCF(CFURLCreateWithFileSystemPath(0, path.createCFString().get(), pathStyle, FALSE));
 }
 
-} // namespace WebCore
+} // namespace WTF

@@ -29,10 +29,10 @@
 
 #if USE(LIBHYPHEN)
 
-#include "FileSystem.h"
 #include <hyphen.h>
 #include <limits>
 #include <stdlib.h>
+#include <wtf/FileSystem.h>
 #include <wtf/HashMap.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/TinyLRUCache.h>
@@ -224,7 +224,7 @@ public:
 
     static RefPtr<WebCore::HyphenationDictionary> createValueForKey(const AtomicString& dictionaryPath)
     {
-        return WebCore::HyphenationDictionary::create(WebCore::FileSystem::fileSystemRepresentation(dictionaryPath.string()));
+        return WebCore::HyphenationDictionary::create(FileSystem::fileSystemRepresentation(dictionaryPath.string()));
     }
 };
 

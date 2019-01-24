@@ -29,13 +29,13 @@
 #if ENABLE(MEDIA_STREAM) && USE(AVFOUNDATION)
 
 #include "AudioStreamDescription.h"
-#include "FileSystem.h"
 #include "Logging.h"
 #include "MediaStreamTrackPrivate.h"
 #include "WebAudioBufferList.h"
 #include <AVFoundation/AVAssetWriter.h>
 #include <AVFoundation/AVAssetWriterInput.h>
 #include <pal/cf/CoreMediaSoftLink.h>
+#include <wtf/FileSystem.h>
 
 typedef AVAssetWriter AVAssetWriterType;
 typedef AVAssetWriterInput AVAssetWriterInputType;

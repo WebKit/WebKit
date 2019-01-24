@@ -29,10 +29,8 @@
  */
 
 #include "config.h"
-
 #include "FileStream.h"
 
-#include "FileSystem.h"
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {

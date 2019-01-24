@@ -26,7 +26,7 @@
 #include "config.h"
 #include "PluginSearchPath.h"
 
-#include <WebCore/FileSystem.h>
+#include <wtf/FileSystem.h>
 
 namespace WebKit {
 using namespace WebCore;

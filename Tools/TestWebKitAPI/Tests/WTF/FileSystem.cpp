@@ -27,12 +27,10 @@
 #include "config.h"
 
 #include "Test.h"
-#include <WebCore/FileMetadata.h>
-#include <WebCore/FileSystem.h>
+#include <wtf/FileMetadata.h>
+#include <wtf/FileSystem.h>
 #include <wtf/MainThread.h>
 #include <wtf/StringExtras.h>
-
-using namespace WebCore;
 
 namespace TestWebKitAPI {
 
@@ -44,7 +42,7 @@ public:
     void SetUp() override
     {
         WTF::initializeMainThread();
-        
+
         // create temp file
         FileSystem::PlatformFileHandle handle;
         m_tempFilePath = FileSystem::openTemporaryFile("tempTestFile", handle);

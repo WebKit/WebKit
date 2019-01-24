@@ -1,3 +1,82 @@
+2019-01-24  Ross Kirsling  <ross.kirsling@sony.com>
+
+        Move FileSystem to WTF
+        https://bugs.webkit.org/show_bug.cgi?id=193602
+
+        Reviewed by Yusuke Suzuki.
+
+        * NetworkProcess/Classifier/ResourceLoadStatisticsPersistentStorage.cpp:
+        * NetworkProcess/NetworkDataTaskBlob.h:
+        * NetworkProcess/NetworkProcess.cpp:
+        * NetworkProcess/cache/CacheStorageEngine.cpp:
+        * NetworkProcess/cache/CacheStorageEngineCaches.cpp:
+        * NetworkProcess/cache/NetworkCache.cpp:
+        * NetworkProcess/cache/NetworkCacheBlobStorage.cpp:
+        * NetworkProcess/cache/NetworkCacheData.cpp:
+        * NetworkProcess/cache/NetworkCacheFileSystem.cpp:
+        * NetworkProcess/cache/NetworkCacheFileSystem.h:
+        * NetworkProcess/cache/NetworkCacheIOChannelCocoa.mm:
+        * NetworkProcess/cache/NetworkCacheIOChannelSoup.cpp:
+        * NetworkProcess/cache/NetworkCacheStatistics.cpp:
+        * NetworkProcess/cache/NetworkCacheStorage.cpp:
+        * NetworkProcess/cocoa/NetworkDataTaskCocoa.mm:
+        * NetworkProcess/cocoa/NetworkSessionCocoa.mm:
+        * NetworkProcess/mac/NetworkProcessMac.mm:
+        * NetworkProcess/soup/NetworkProcessSoup.cpp:
+        * PluginProcess/unix/PluginProcessMainUnix.cpp:
+        * Shared/PersistencyUtils.cpp:
+        * Shared/Plugins/Netscape/unix/NetscapePluginModuleUnix.cpp:
+        * Shared/Plugins/unix/PluginSearchPath.cpp:
+        * Shared/WebMemorySampler.h:
+        * Shared/glib/ProcessExecutablePathGLib.cpp:
+        * Shared/ios/ChildProcessIOS.mm:
+        * Shared/mac/ChildProcessMac.mm:
+        * Shared/mac/SandboxExtensionMac.mm:
+        * UIProcess/API/APIContentRuleListStore.cpp:
+        * UIProcess/API/Cocoa/APIWebsiteDataStoreCocoa.mm:
+        * UIProcess/API/glib/APIWebsiteDataStoreGLib.cpp:
+        * UIProcess/API/glib/IconDatabase.cpp:
+        * UIProcess/API/glib/WebKitFaviconDatabase.cpp:
+        * UIProcess/API/glib/WebKitFileChooserRequest.cpp:
+        * UIProcess/API/glib/WebKitWebContext.cpp:
+        * UIProcess/API/glib/WebKitWebsiteDataManager.cpp:
+        * UIProcess/API/win/APIWebsiteDataStoreWin.cpp:
+        * UIProcess/Automation/WebAutomationSession.cpp:
+        * UIProcess/Cocoa/DownloadClient.mm:
+        * UIProcess/Cocoa/WebProcessPoolCocoa.mm:
+        * UIProcess/Cocoa/WebViewImpl.mm:
+        * UIProcess/DeviceIdHashSaltStorage.cpp:
+        * UIProcess/Downloads/DownloadProxy.cpp:
+        * UIProcess/Launcher/glib/BubblewrapLauncher.cpp:
+        * UIProcess/Launcher/glib/ProcessLauncherGLib.cpp:
+        * UIProcess/Plugins/gtk/PluginInfoCache.cpp:
+        * UIProcess/Plugins/mac/PluginProcessProxyMac.mm:
+        * UIProcess/Plugins/unix/PluginInfoStoreUnix.cpp:
+        * UIProcess/Plugins/unix/PluginProcessProxyUnix.cpp:
+        * UIProcess/ServiceWorkerProcessProxy.cpp:
+        * UIProcess/WebStorage/LocalStorageDatabase.cpp:
+        * UIProcess/WebStorage/LocalStorageDatabaseTracker.cpp:
+        * UIProcess/WebsiteData/Cocoa/WebsiteDataStoreCocoa.mm:
+        * UIProcess/WebsiteData/WebsiteDataStore.cpp:
+        * UIProcess/glib/WebProcessProxyGLib.cpp:
+        * UIProcess/gtk/WebInspectorProxyGtk.cpp:
+        * UIProcess/gtk/WebProcessPoolGtk.cpp:
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        * UIProcess/ios/forms/WKFileUploadPanel.mm:
+        * UIProcess/mac/WebPageProxyMac.mm:
+        * UIProcess/win/WebProcessPoolWin.cpp:
+        * UIProcess/win/WebView.cpp:
+        * UIProcess/wpe/WebProcessPoolWPE.cpp:
+        * WebProcess/InjectedBundle/API/glib/WebKitExtensionManager.cpp:
+        * WebProcess/InjectedBundle/glib/InjectedBundleGlib.cpp:
+        * WebProcess/MediaCache/WebMediaKeyStorageManager.cpp:
+        * WebProcess/Plugins/Netscape/NetscapePluginStream.h:
+        * WebProcess/Plugins/PluginProcessConnection.cpp:
+        * WebProcess/WebCoreSupport/SessionStateConversion.cpp:
+        * WebProcess/WebPage/gtk/WebInspectorUIGtk.cpp:
+        * WebProcess/WebPage/win/WebInspectorUIWin.cpp:
+        * WebProcess/cocoa/WebProcessCocoa.mm:
+
 2019-01-23  Simon Fraser  <simon.fraser@apple.com>
 
         Create "frame hosting" nodes for the scrolling tree

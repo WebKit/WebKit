@@ -32,10 +32,10 @@
 #include "CurlRequestSchedulerClient.h"
 #include "CurlResponse.h"
 #include "CurlSSLVerifier.h"
-#include "FileSystem.h"
 #include "NetworkLoadMetrics.h"
 #include "ProtectionSpace.h"
 #include "ResourceRequest.h"
+#include <wtf/FileSystem.h>
 #include <wtf/MessageQueue.h>
 #include <wtf/MonotonicTime.h>
 #include <wtf/Noncopyable.h>

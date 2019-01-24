@@ -189,7 +189,6 @@ list(APPEND WebCore_SOURCES
     platform/audio/mac/CARingBuffer.cpp
     platform/audio/mac/FFTFrameMac.cpp
 
-    platform/cf/FileSystemCF.cpp
     platform/cf/KeyedDecoderCF.cpp
     platform/cf/KeyedEncoderCF.cpp
     platform/cf/MainThreadSharedTimerCF.cpp
@@ -200,7 +199,6 @@ list(APPEND WebCore_SOURCES
     platform/cocoa/ContentFilterUnblockHandlerCocoa.mm
     platform/cocoa/CoreVideoSoftLink.cpp
     platform/cocoa/FileMonitorCocoa.mm
-    platform/cocoa/FileSystemCocoa.mm
     platform/cocoa/KeyEventCocoa.mm
     platform/cocoa/LocalizedStringsCocoa.mm
     platform/cocoa/MIMETypeRegistryCocoa.mm
@@ -347,7 +345,6 @@ list(APPEND WebCore_SOURCES
     platform/mac/DragDataMac.mm
     platform/mac/DragImageMac.mm
     platform/mac/EventLoopMac.mm
-    platform/mac/FileSystemMac.mm
     platform/mac/KeyEventMac.mm
     platform/mac/LocalCurrentGraphicsContext.mm
     platform/mac/LoggingMac.mm
@@ -417,8 +414,6 @@ list(APPEND WebCore_SOURCES
     platform/network/mac/UTIUtilities.mm
     platform/network/mac/WebCoreResourceHandleAsOperationQueueDelegate.mm
     platform/network/mac/WebCoreURLResponse.mm
-
-    platform/posix/FileSystemPOSIX.cpp
 
     platform/text/cf/HyphenationCF.cpp
 

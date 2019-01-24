@@ -41,7 +41,7 @@ IOChannel::IOChannel(const String& filePath, Type type)
     : m_path(filePath)
     , m_type(type)
 {
-    auto path = WebCore::FileSystem::fileSystemRepresentation(filePath);
+    auto path = FileSystem::fileSystemRepresentation(filePath);
     GRefPtr<GFile> file = adoptGRef(g_file_new_for_path(path.data()));
     switch (m_type) {
     case Type::Create: {

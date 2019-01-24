@@ -37,7 +37,6 @@
 #import "Editor.h"
 #import "EditorClient.h"
 #import "File.h"
-#import "FileSystem.h"
 #import "Frame.h"
 #import "FrameLoader.h"
 #import "FrameLoaderClient.h"
@@ -65,6 +64,7 @@
 #import "WebNSAttributedStringExtras.h"
 #import "markup.h"
 #import <pal/spi/cocoa/NSAttributedStringSPI.h>
+#import <wtf/FileSystem.h>
 #import <wtf/SoftLinking.h>
 #import <wtf/URLParser.h>
 

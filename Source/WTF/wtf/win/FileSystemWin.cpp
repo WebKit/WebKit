@@ -7,13 +7,13 @@
  * are met:
  *
  * 1.  Redistributions of source code must retain the above copyright
- *     notice, this list of conditions and the following disclaimer. 
+ *     notice, this list of conditions and the following disclaimer.
  * 2.  Redistributions in binary form must reproduce the above copyright
  *     notice, this list of conditions and the following disclaimer in the
- *     documentation and/or other materials provided with the distribution. 
+ *     documentation and/or other materials provided with the distribution.
  * 3.  Neither the name of Apple Inc. ("Apple") nor the names of
  *     its contributors may be used to endorse or promote products derived
- *     from this software without specific prior written permission. 
+ *     from this software without specific prior written permission.
  *
  * THIS SOFTWARE IS PROVIDED BY APPLE AND ITS CONTRIBUTORS "AS IS" AND ANY
  * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
@@ -28,25 +28,24 @@
  */
 
 #include "config.h"
-#include "FileSystem.h"
+#include <wtf/FileSystem.h>
 
-#include "FileMetadata.h"
-#include "NotImplemented.h"
-#include "PathWalker.h"
 #include <io.h>
 #include <shlobj.h>
 #include <shlwapi.h>
 #include <sys/stat.h>
 #include <windows.h>
 #include <wtf/CryptographicallyRandomNumber.h>
+#include <wtf/FileMetadata.h>
 #include <wtf/HashMap.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/StringBuilder.h>
 #include <wtf/text/win/WCharStringExtras.h>
+#include <wtf/win/PathWalker.h>
 
-namespace WebCore {
+namespace WTF {
 
-namespace FileSystem {
+namespace FileSystemImpl {
 
 static const ULONGLONG kSecondsFromFileTimeToTimet = 11644473600;
 
@@ -310,7 +309,6 @@ bool makeAllDirectories(const String& path)
 
 String homeDirectoryPath()
 {
-    notImplemented();
     return "";
 }
 
@@ -537,7 +535,6 @@ Vector<String> listDirectory(const String& directory, const String& filter)
 
 bool getVolumeFreeSpace(const String&, uint64_t&)
 {
-    notImplemented();
     return false;
 }
 
@@ -585,5 +582,5 @@ bool deleteNonEmptyDirectory(const String& directoryPath)
     return !SHFileOperation(&deleteOperation);
 }
 
-} // namespace FileSystem
-} // namespace WebCore
+} // namespace FileSystemImpl
+} // namespace WTF

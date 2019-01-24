@@ -29,8 +29,8 @@
 
 #include <WebCore/CookieJarDB.h>
 #include <WebCore/CookieUtil.h>
-#include <WebCore/FileSystem.h>
 #include <memory>
+#include <wtf/FileSystem.h>
 
 using namespace WebCore;
 

@@ -61,7 +61,9 @@ set(WTF_PUBLIC_HEADERS
     FastMalloc.h
     FastTLS.h
     FeatureDefines.h
+    FileMetadata.h
     FilePrintStream.h
+    FileSystem.h
     FlipBytes.h
     ForbidHeapAllocation.h
     Forward.h
@@ -354,6 +356,7 @@ set(WTF_SOURCES
     FastBitVector.cpp
     FastMalloc.cpp
     FilePrintStream.cpp
+    FileSystem.cpp
     FunctionDispatcher.cpp
     Gigacage.cpp
     GlobalVersion.cpp

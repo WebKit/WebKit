@@ -28,8 +28,8 @@
 #include "WebProcessPool.h"
 
 #include "WebProcessCreationParameters.h"
-#include <WebCore/FileSystem.h>
 #include <WebCore/NotImplemented.h>
+#include <wtf/FileSystem.h>
 
 namespace WebKit {
 

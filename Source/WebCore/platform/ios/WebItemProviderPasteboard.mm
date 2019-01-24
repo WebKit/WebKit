@@ -34,11 +34,11 @@
 #import <UIKit/NSItemProvider+UIKitAdditions.h>
 #import <UIKit/UIColor.h>
 #import <UIKit/UIImage.h>
-#import <WebCore/FileSystem.h>
 #import <WebCore/Pasteboard.h>
 #import <pal/ios/UIKitSoftLink.h>
 #import <pal/spi/ios/UIKitSPI.h>
 #import <wtf/BlockPtr.h>
+#import <wtf/FileSystem.h>
 #import <wtf/OSObjectPtr.h>
 #import <wtf/RetainPtr.h>
 
@@ -694,7 +694,7 @@ static NSURL *linkTemporaryItemProviderFilesToDropStagingDirectory(NSURL *url, N
     if (!url)
         return nil;
 
-    NSString *temporaryDataInteractionDirectory = WebCore::FileSystem::createTemporaryDirectory(dataInteractionDirectoryPrefix);
+    NSString *temporaryDataInteractionDirectory = FileSystem::createTemporaryDirectory(dataInteractionDirectoryPrefix);
     if (!temporaryDataInteractionDirectory)
         return nil;
 

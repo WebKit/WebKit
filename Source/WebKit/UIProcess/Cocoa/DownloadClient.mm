@@ -42,10 +42,10 @@
 #import "WebProcessProxy.h"
 #import "_WKDownloadDelegate.h"
 #import "_WKDownloadInternal.h"
-#import <WebCore/FileSystem.h>
 #import <WebCore/ResourceError.h>
 #import <WebCore/ResourceResponse.h>
 #import <wtf/BlockPtr.h>
+#import <wtf/FileSystem.h>
 
 namespace WebKit {
 
@@ -181,7 +181,7 @@ void DownloadClient::decideDestinationWithSuggestedFilename(WebProcessPool&, Dow
 {
 #if USE(SYSTEM_PREVIEW)
     if (downloadProxy.isSystemPreviewDownload()) {
-        NSString *temporaryDirectory = WebCore::FileSystem::createTemporaryDirectory(@"SystemPreviews");
+        NSString *temporaryDirectory = FileSystem::createTemporaryDirectory(@"SystemPreviews");
         NSString *destination = [temporaryDirectory stringByAppendingPathComponent:filename];
         completionHandler(AllowOverwrite::Yes, destination);
         return;

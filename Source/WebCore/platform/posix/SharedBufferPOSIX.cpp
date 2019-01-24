@@ -26,11 +26,10 @@
 #include "config.h"
 #include "SharedBuffer.h"
 
-#include "FileSystem.h"
-
 #include <fcntl.h>
 #include <sys/stat.h>
 #include <unistd.h>
+#include <wtf/FileSystem.h>
 #include <wtf/text/CString.h>
 
 namespace WebCore {

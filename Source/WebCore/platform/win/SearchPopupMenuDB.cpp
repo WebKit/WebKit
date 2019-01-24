@@ -25,9 +25,9 @@
 #include "config.h"
 #include "SearchPopupMenuDB.h"
 
-#include "FileSystem.h"
 #include "SQLiteFileSystem.h"
 #include "SQLiteTransaction.h"
+#include <wtf/FileSystem.h>
 
 namespace WebCore {
 

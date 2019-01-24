@@ -35,7 +35,6 @@
 #import "WKFoundation.h"
 #import "XPCServiceEntryPoint.h"
 #import <WebCore/FileHandle.h>
-#import <WebCore/FileSystem.h>
 #import <WebCore/SystemVersion.h>
 #import <mach-o/dyld.h>
 #import <mach/mach.h>
@@ -47,6 +46,7 @@
 #import <sys/sysctl.h>
 #import <sysexits.h>
 #import <wtf/DataLog.h>
+#import <wtf/FileSystem.h>
 #import <wtf/RandomNumber.h>
 #import <wtf/Scope.h>
 #import <wtf/SystemTracing.h>

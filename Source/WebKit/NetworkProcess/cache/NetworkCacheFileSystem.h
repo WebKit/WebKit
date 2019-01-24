@@ -25,7 +25,7 @@
 
 #pragma once
 
-#include <WebCore/FileSystem.h>
+#include <wtf/FileSystem.h>
 
 namespace WebKit {
 namespace NetworkCache {

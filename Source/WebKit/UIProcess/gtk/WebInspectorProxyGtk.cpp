@@ -42,9 +42,9 @@
 #include "WebProcessPool.h"
 #include "WebProcessProxy.h"
 #include <WebCore/CertificateInfo.h>
-#include <WebCore/FileSystem.h>
 #include <WebCore/GtkUtilities.h>
 #include <WebCore/NotImplemented.h>
+#include <wtf/FileSystem.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/WTFString.h>
 

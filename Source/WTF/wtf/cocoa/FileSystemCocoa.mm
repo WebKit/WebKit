@@ -6,13 +6,13 @@
  * are met:
  *
  * 1.  Redistributions of source code must retain the above copyright
- *     notice, this list of conditions and the following disclaimer. 
+ *     notice, this list of conditions and the following disclaimer.
  * 2.  Redistributions in binary form must reproduce the above copyright
  *     notice, this list of conditions and the following disclaimer in the
- *     documentation and/or other materials provided with the distribution. 
+ *     documentation and/or other materials provided with the distribution.
  * 3.  Neither the name of Apple Inc. ("Apple") nor the names of
  *     its contributors may be used to endorse or promote products derived
- *     from this software without specific prior written permission. 
+ *     from this software without specific prior written permission.
  *
  * THIS SOFTWARE IS PROVIDED BY APPLE AND ITS CONTRIBUTORS "AS IS" AND ANY
  * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
@@ -27,26 +27,26 @@
  */
 
 #import "config.h"
-#import "FileSystem.h"
+#import <wtf/FileSystem.h>
 
-@interface WebFileManagerDelegate : NSObject <NSFileManagerDelegate>
+@interface WTFWebFileManagerDelegate : NSObject <NSFileManagerDelegate>
 @end
 
-@implementation WebFileManagerDelegate
+@implementation WTFWebFileManagerDelegate
 
 - (BOOL)fileManager:(NSFileManager *)fileManager shouldProceedAfterError:(NSError *)error movingItemAtURL:(NSURL *)srcURL toURL:(NSURL *)dstURL
 {
     UNUSED_PARAM(fileManager);
     UNUSED_PARAM(srcURL);
-    UNUSED_PARAM(dstURL);    
+    UNUSED_PARAM(dstURL);
     return error.code == NSFileWriteFileExistsError;
 }
 
 @end
 
-namespace WebCore {
+namespace WTF {
 
-namespace FileSystem {
+namespace FileSystemImpl {
 
 String homeDirectoryPath()
 {
@@ -56,12 +56,12 @@ String homeDirectoryPath()
 String openTemporaryFile(const String& prefix, PlatformFileHandle& platformFileHandle)
 {
     platformFileHandle = invalidPlatformFileHandle;
-    
+
     Vector<char> temporaryFilePath(PATH_MAX);
     if (!confstr(_CS_DARWIN_USER_TEMP_DIR, temporaryFilePath.data(), temporaryFilePath.size()))
         return String();
 
-    // Shrink the vector.   
+    // Shrink the vector.
     temporaryFilePath.shrink(strlen(temporaryFilePath.data()));
 
     // FIXME: Change to a runtime assertion that the path ends with a slash once <rdar://problem/23579077> is
@@ -86,9 +86,9 @@ bool moveFile(const String& oldPath, const String& newPath)
 {
     // Overwrite existing files.
     auto manager = adoptNS([[NSFileManager alloc] init]);
-    auto delegate = adoptNS([[WebFileManagerDelegate alloc] init]);
+    auto delegate = adoptNS([[WTFWebFileManagerDelegate alloc] init]);
     [manager setDelegate:delegate.get()];
-    
+
     NSError *error = nil;
     bool success = [manager moveItemAtURL:[NSURL fileURLWithPath:oldPath] toURL:[NSURL fileURLWithPath:newPath] error:&error];
     if (!success)
@@ -139,5 +139,5 @@ bool deleteNonEmptyDirectory(const String& path)
     return [[NSFileManager defaultManager] removeItemAtPath:path error:nil];
 }
 
-} // namespace FileSystem
-} // namespace WebCore
+} // namespace FileSystemImpl
+} // namespace WTF

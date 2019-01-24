@@ -21,7 +21,3 @@ endif ()
 set(test_main_SOURCES
     ${TESTWEBKITAPI_DIR}/generic/main.cpp
 )
-
-list(APPEND TestWTF_SOURCES
-    ${TESTWEBKITAPI_DIR}/Tests/WTF/RunLoop.cpp
-)

@@ -28,10 +28,9 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef FileStream_h
-#define FileStream_h
+#pragma once
 
-#include "FileSystem.h"
+#include <wtf/FileSystem.h>
 
 namespace WebCore {
 
@@ -64,5 +63,3 @@ private:
 };
 
 } // namespace WebCore
-
-#endif // FileStream_h

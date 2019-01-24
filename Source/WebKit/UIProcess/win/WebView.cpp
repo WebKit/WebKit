@@ -44,7 +44,6 @@
 #include <WebCore/BitmapInfo.h>
 #include <WebCore/Cursor.h>
 #include <WebCore/Editor.h>
-#include <WebCore/FileSystem.h>
 #include <WebCore/FloatRect.h>
 #include <WebCore/HWndDC.h>
 #include <WebCore/IntRect.h>
@@ -55,6 +54,7 @@
 #include <WebCore/WindowsTouch.h>
 #include <cairo-win32.h>
 #include <cairo.h>
+#include <wtf/FileSystem.h>
 #include <wtf/SoftLinking.h>
 #include <wtf/text/StringBuffer.h>
 #include <wtf/text/StringBuilder.h>

@@ -38,13 +38,13 @@
 
 #include <CoreFoundation/CoreFoundation.h>
 #include <WebCore/COMPtr.h>
-#include <WebCore/FileSystem.h>
 #include <WebCore/FontCascade.h>
 #include <WebCore/LocalizedStrings.h>
 #include <WebCore/NetworkStorageSession.h>
 #include <limits>
 #include <shlobj.h>
 #include <wchar.h>
+#include <wtf/FileSystem.h>
 #include <wtf/HashMap.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/StdLibExtras.h>

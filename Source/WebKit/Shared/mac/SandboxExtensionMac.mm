@@ -31,13 +31,12 @@
 #import "DataReference.h"
 #import "Decoder.h"
 #import "Encoder.h"
-#import <WebCore/FileSystem.h>
 #import <sys/stat.h>
+#import <wtf/FileSystem.h>
 #import <wtf/spi/darwin/SandboxSPI.h>
 #import <wtf/text/CString.h>
 
 namespace WebKit {
-using namespace WebCore;
 
 class SandboxExtensionImpl {
 public:

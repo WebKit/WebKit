@@ -34,10 +34,10 @@
 #include "WebCookieManagerProxy.h"
 #include "WebProcessCreationParameters.h"
 #include "WebProcessMessages.h"
-#include <WebCore/FileSystem.h>
 #include <WebCore/NotImplemented.h>
 #include <WebCore/SchemeRegistry.h>
 #include <cstdlib>
+#include <wtf/FileSystem.h>
 
 #if ENABLE(REMOTE_INSPECTOR)
 #include <JavaScriptCore/RemoteInspectorServer.h>

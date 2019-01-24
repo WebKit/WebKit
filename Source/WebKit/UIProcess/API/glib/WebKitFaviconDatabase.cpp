@@ -23,12 +23,12 @@
 #include "IconDatabase.h"
 #include "WebKitFaviconDatabasePrivate.h"
 #include "WebPreferences.h"
-#include <WebCore/FileSystem.h>
 #include <WebCore/Image.h>
 #include <WebCore/IntSize.h>
 #include <WebCore/RefPtrCairo.h>
 #include <WebCore/SharedBuffer.h>
 #include <glib/gi18n-lib.h>
+#include <wtf/FileSystem.h>
 #include <wtf/RunLoop.h>
 #include <wtf/SetForScope.h>
 #include <wtf/glib/GRefPtr.h>
@@ -273,7 +273,7 @@ void webkitFaviconDatabaseOpen(WebKitFaviconDatabase* database, const String& pa
     priv->iconDatabase->setEnabled(true);
     priv->iconDatabase->setPrivateBrowsingEnabled(WebPreferences::anyPagesAreUsingPrivateBrowsing());
 
-    if (!priv->iconDatabase->open(WebCore::FileSystem::directoryName(path), WebCore::FileSystem::pathGetFileName(path))) {
+    if (!priv->iconDatabase->open(FileSystem::directoryName(path), FileSystem::pathGetFileName(path))) {
         priv->iconDatabase = nullptr;
         IconDatabase::allowDatabaseCleanup();
     }

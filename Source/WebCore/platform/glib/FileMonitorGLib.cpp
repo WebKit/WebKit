@@ -26,7 +26,7 @@
 #include "config.h"
 #include "FileMonitor.h"
 
-#include "FileSystem.h"
+#include <wtf/FileSystem.h>
 #include <wtf/glib/GUniquePtr.h>
 #include <wtf/threads/BinarySemaphore.h>
 

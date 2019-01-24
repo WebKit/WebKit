@@ -26,11 +26,11 @@
 #include "config.h"
 
 #include <WebCore/DatabaseTracker.h>
-#include <WebCore/FileSystem.h>
 #include <WebCore/OriginLock.h>
 #include <WebCore/SQLiteDatabase.h>
 #include <WebCore/SQLiteStatement.h>
 #include <WebCore/SecurityOriginData.h>
+#include <wtf/FileSystem.h>
 
 using namespace WebCore;
 

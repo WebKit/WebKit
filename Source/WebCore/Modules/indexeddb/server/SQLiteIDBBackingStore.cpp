@@ -28,7 +28,6 @@
 
 #if ENABLE(INDEXED_DATABASE)
 
-#include "FileSystem.h"
 #include "IDBBindingUtilities.h"
 #include "IDBGetAllRecordsData.h"
 #include "IDBGetAllResult.h"
@@ -54,6 +53,7 @@
 #include <JavaScriptCore/JSGlobalObject.h>
 #include <JavaScriptCore/StrongInlines.h>
 #include <JavaScriptCore/StructureInlines.h>
+#include <wtf/FileSystem.h>
 #include <wtf/NeverDestroyed.h>
 
 namespace WebCore {

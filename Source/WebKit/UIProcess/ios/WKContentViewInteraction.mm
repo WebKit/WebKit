@@ -5699,7 +5699,7 @@ static NSArray<NSItemProvider *> *extractItemProvidersFromDropSession(id <UIDrop
             return;
         }
 
-        NSString *temporaryBlobDirectory = WebCore::FileSystem::createTemporaryDirectory(@"blobs");
+        NSString *temporaryBlobDirectory = FileSystem::createTemporaryDirectory(@"blobs");
         NSURL *destinationURL = [NSURL fileURLWithPath:[temporaryBlobDirectory stringByAppendingPathComponent:[NSUUID UUID].UUIDString] isDirectory:NO];
 
         auto attachment = strongSelf->_page->attachmentForIdentifier(info.attachmentIdentifier);

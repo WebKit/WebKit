@@ -26,8 +26,6 @@
 #include "config.h"
 #include "OriginLock.h"
 
-#include "FileSystem.h"
-
 namespace WebCore {
 
 String OriginLock::lockFileNameForPath(String originPath)

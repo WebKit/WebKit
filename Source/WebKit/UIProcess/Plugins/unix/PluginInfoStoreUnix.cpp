@@ -34,10 +34,10 @@
 #include "NetscapePluginModule.h"
 #include "PluginSearchPath.h"
 #include "ProcessExecutablePath.h"
-#include <WebCore/FileSystem.h>
 #include <WebCore/PlatformDisplay.h>
 #include <limits.h>
 #include <stdlib.h>
+#include <wtf/FileSystem.h>
 
 #if PLATFORM(GTK)
 #include "PluginInfoCache.h"

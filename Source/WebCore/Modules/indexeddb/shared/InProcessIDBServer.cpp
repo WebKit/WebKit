@@ -28,7 +28,6 @@
 
 #if ENABLE(INDEXED_DATABASE)
 
-#include "FileSystem.h"
 #include "IDBConnectionToClient.h"
 #include "IDBConnectionToServer.h"
 #include "IDBCursorInfo.h"
@@ -40,6 +39,7 @@
 #include "IDBResultData.h"
 #include "IDBValue.h"
 #include "Logging.h"
+#include <wtf/FileSystem.h>
 #include <wtf/RunLoop.h>
 
 namespace WebCore {

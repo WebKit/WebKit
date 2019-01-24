@@ -27,13 +27,13 @@
 
 #if ENABLE(INDEXED_DATABASE)
 
-#include "FileSystem.h"
 #include "IDBCursorInfo.h"
 #include "IndexedDB.h"
 #include "Logging.h"
 #include "SQLiteIDBBackingStore.h"
 #include "SQLiteIDBCursor.h"
 #include "SQLiteTransaction.h"
+#include <wtf/FileSystem.h>
 
 namespace WebCore {
 namespace IDBServer {

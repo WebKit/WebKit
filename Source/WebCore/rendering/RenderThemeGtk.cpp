@@ -27,7 +27,6 @@
 
 #include "CSSValueKeywords.h"
 #include "FileList.h"
-#include "FileSystem.h"
 #include "FloatRoundedRect.h"
 #include "FontDescription.h"
 #include "GRefPtrGtk.h"
@@ -55,6 +54,7 @@
 #include <gdk/gdk.h>
 #include <glib.h>
 #include <gtk/gtk.h>
+#include <wtf/FileSystem.h>
 #include <wtf/glib/GRefPtr.h>
 #include <wtf/glib/GUniquePtr.h>
 #include <wtf/text/CString.h>

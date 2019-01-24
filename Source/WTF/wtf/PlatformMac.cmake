@@ -32,6 +32,8 @@ list(APPEND WTF_PUBLIC_HEADERS
     spi/darwin/XPCSPI.h
     spi/darwin/dyldSPI.h
 
+    spi/mac/MetadataSPI.h
+
     text/cf/TextBreakIteratorCF.h
 )
 
@@ -42,6 +44,7 @@ list(APPEND WTF_SOURCES
     SchedulePairMac.mm
 
     cf/CFURLExtras.cpp
+    cf/FileSystemCF.cpp
     cf/LanguageCF.cpp
     cf/RunLoopCF.cpp
     cf/URLCF.cpp
@@ -49,6 +52,7 @@ list(APPEND WTF_SOURCES
     cocoa/AutodrainedPool.cpp
     cocoa/CPUTimeCocoa.cpp
     cocoa/Entitlements.mm
+    cocoa/FileSystemCocoa.mm
     cocoa/MachSendRight.cpp
     cocoa/MainThreadCocoa.mm
     cocoa/MemoryFootprintCocoa.cpp
@@ -58,6 +62,9 @@ list(APPEND WTF_SOURCES
     cocoa/WorkQueueCocoa.cpp
 
     mac/DeprecatedSymbolsUsedBySafari.mm
+    mac/FileSystemMac.mm
+
+    posix/FileSystemPOSIX.cpp
 
     text/cf/AtomicStringImplCF.cpp
     text/cf/StringCF.cpp

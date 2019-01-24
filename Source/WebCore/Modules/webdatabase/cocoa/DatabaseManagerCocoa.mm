@@ -29,7 +29,7 @@
 #import "config.h"
 #import "DatabaseManager.h"
 
-#import "FileSystem.h"
+#import <wtf/FileSystem.h>
 
 namespace WebCore {
 

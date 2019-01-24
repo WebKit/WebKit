@@ -28,8 +28,8 @@
 
 #if ENABLE(FILE_REPLACEMENT)
 
-#include "FileMetadata.h"
-#include "FileSystem.h"
+#include <wtf/FileMetadata.h>
+#include <wtf/FileSystem.h>
 #include <wtf/SoftLinking.h>
 #include <wtf/text/CString.h>
 

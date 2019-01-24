@@ -29,10 +29,10 @@
 #include "DOMException.h"
 #include "DOMFileSystem.h"
 #include "ErrorCallback.h"
-#include "FileSystem.h"
 #include "FileSystemDirectoryEntry.h"
 #include "FileSystemEntryCallback.h"
 #include "ScriptExecutionContext.h"
+#include <wtf/FileSystem.h>
 
 namespace WebCore {
 

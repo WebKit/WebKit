@@ -32,7 +32,6 @@
 #if USE(SOUP)
 
 #include "CredentialStorage.h"
-#include "FileSystem.h"
 #include "GUniquePtrSoup.h"
 #include "HTTPParsers.h"
 #include "LocalizedStrings.h"
@@ -57,6 +56,7 @@
 #include <unistd.h>
 #endif
 #include <wtf/CompletionHandler.h>
+#include <wtf/FileSystem.h>
 #include <wtf/glib/GRefPtr.h>
 #include <wtf/glib/RunLoopSourcePriority.h>
 #include <wtf/text/CString.h>

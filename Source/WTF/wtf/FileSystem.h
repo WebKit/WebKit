@@ -8,13 +8,13 @@
  * are met:
  *
  * 1.  Redistributions of source code must retain the above copyright
- *     notice, this list of conditions and the following disclaimer. 
+ *     notice, this list of conditions and the following disclaimer.
  * 2.  Redistributions in binary form must reproduce the above copyright
  *     notice, this list of conditions and the following disclaimer in the
- *     documentation and/or other materials provided with the distribution. 
+ *     documentation and/or other materials provided with the distribution.
  * 3.  Neither the name of Apple Inc. ("Apple") nor the names of
  *     its contributors may be used to endorse or promote products derived
- *     from this software without specific prior written permission. 
+ *     from this software without specific prior written permission.
  *
  * THIS SOFTWARE IS PROVIDED BY APPLE AND ITS CONTRIBUTORS "AS IS" AND ANY
  * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
@@ -56,11 +56,11 @@ typedef void *HANDLE;
 typedef struct _GFileIOStream GFileIOStream;
 #endif
 
-namespace WebCore {
+namespace WTF {
 
 struct FileMetadata;
 
-namespace FileSystem {
+namespace FileSystemImpl {
 
 // PlatformFileHandle
 #if USE(GLIB) && !PLATFORM(WIN)
@@ -69,7 +69,7 @@ const PlatformFileHandle invalidPlatformFileHandle = 0;
 #elif PLATFORM(WIN)
 typedef HANDLE PlatformFileHandle;
 // FIXME: -1 is INVALID_HANDLE_VALUE, defined in <winbase.h>. Chromium tries to
-// avoid using Windows headers in headers.  We'd rather move this into the .cpp.
+// avoid using Windows headers in headers. We'd rather move this into the .cpp.
 const PlatformFileHandle invalidPlatformFileHandle = reinterpret_cast<HANDLE>(-1);
 #else
 typedef int PlatformFileHandle;
@@ -98,75 +98,75 @@ enum class FileLockMode {
 
 enum class ShouldFollowSymbolicLinks { No, Yes };
 
-WEBCORE_EXPORT bool fileExists(const String&);
-WEBCORE_EXPORT bool deleteFile(const String&);
-WEBCORE_EXPORT bool deleteEmptyDirectory(const String&);
-WEBCORE_EXPORT bool moveFile(const String& oldPath, const String& newPath);
-WEBCORE_EXPORT bool getFileSize(const String&, long long& result);
-WEBCORE_EXPORT bool getFileSize(PlatformFileHandle, long long& result);
-WEBCORE_EXPORT Optional<WallTime> getFileModificationTime(const String&);
-WEBCORE_EXPORT Optional<WallTime> getFileCreationTime(const String&); // Not all platforms store file creation time.
-WEBCORE_EXPORT Optional<FileMetadata> fileMetadata(const String& path);
-WEBCORE_EXPORT Optional<FileMetadata> fileMetadataFollowingSymlinks(const String& path);
-WEBCORE_EXPORT bool fileIsDirectory(const String&, ShouldFollowSymbolicLinks);
-WEBCORE_EXPORT String pathByAppendingComponent(const String& path, const String& component);
-String pathByAppendingComponents(StringView path, const Vector<StringView>& components);
-String lastComponentOfPathIgnoringTrailingSlash(const String& path);
-WEBCORE_EXPORT bool makeAllDirectories(const String& path);
-String homeDirectoryPath();
-WEBCORE_EXPORT String pathGetFileName(const String&);
-WEBCORE_EXPORT String directoryName(const String&);
-WEBCORE_EXPORT bool getVolumeFreeSpace(const String&, uint64_t&);
-WEBCORE_EXPORT Optional<int32_t> getFileDeviceId(const CString&);
-WEBCORE_EXPORT bool createSymbolicLink(const String& targetPath, const String& symbolicLinkPath);
+WTF_EXPORT_PRIVATE bool fileExists(const String&);
+WTF_EXPORT_PRIVATE bool deleteFile(const String&);
+WTF_EXPORT_PRIVATE bool deleteEmptyDirectory(const String&);
+WTF_EXPORT_PRIVATE bool moveFile(const String& oldPath, const String& newPath);
+WTF_EXPORT_PRIVATE bool getFileSize(const String&, long long& result);
+WTF_EXPORT_PRIVATE bool getFileSize(PlatformFileHandle, long long& result);
+WTF_EXPORT_PRIVATE Optional<WallTime> getFileModificationTime(const String&);
+WTF_EXPORT_PRIVATE Optional<WallTime> getFileCreationTime(const String&); // Not all platforms store file creation time.
+WTF_EXPORT_PRIVATE Optional<FileMetadata> fileMetadata(const String& path);
+WTF_EXPORT_PRIVATE Optional<FileMetadata> fileMetadataFollowingSymlinks(const String& path);
+WTF_EXPORT_PRIVATE bool fileIsDirectory(const String&, ShouldFollowSymbolicLinks);
+WTF_EXPORT_PRIVATE String pathByAppendingComponent(const String& path, const String& component);
+WTF_EXPORT_PRIVATE String pathByAppendingComponents(StringView path, const Vector<StringView>& components);
+WTF_EXPORT_PRIVATE String lastComponentOfPathIgnoringTrailingSlash(const String& path);
+WTF_EXPORT_PRIVATE bool makeAllDirectories(const String& path);
+WTF_EXPORT_PRIVATE String homeDirectoryPath();
+WTF_EXPORT_PRIVATE String pathGetFileName(const String&);
+WTF_EXPORT_PRIVATE String directoryName(const String&);
+WTF_EXPORT_PRIVATE bool getVolumeFreeSpace(const String&, uint64_t&);
+WTF_EXPORT_PRIVATE Optional<int32_t> getFileDeviceId(const CString&);
+WTF_EXPORT_PRIVATE bool createSymbolicLink(const String& targetPath, const String& symbolicLinkPath);
 
-WEBCORE_EXPORT void setMetadataURL(const String& path, const String& urlString, const String& referrer = { });
+WTF_EXPORT_PRIVATE void setMetadataURL(const String& path, const String& urlString, const String& referrer = { });
 
 bool canExcludeFromBackup(); // Returns true if any file can ever be excluded from backup.
 bool excludeFromBackup(const String&); // Returns true if successful.
 
-WEBCORE_EXPORT Vector<String> listDirectory(const String& path, const String& filter = String());
+WTF_EXPORT_PRIVATE Vector<String> listDirectory(const String& path, const String& filter = String());
 
-WEBCORE_EXPORT CString fileSystemRepresentation(const String&);
+WTF_EXPORT_PRIVATE CString fileSystemRepresentation(const String&);
 String stringFromFileSystemRepresentation(const char*);
 
 inline bool isHandleValid(const PlatformFileHandle& handle) { return handle != invalidPlatformFileHandle; }
 
 // Prefix is what the filename should be prefixed with, not the full path.
-WEBCORE_EXPORT String openTemporaryFile(const String& prefix, PlatformFileHandle&);
-WEBCORE_EXPORT PlatformFileHandle openFile(const String& path, FileOpenMode);
-WEBCORE_EXPORT void closeFile(PlatformFileHandle&);
+WTF_EXPORT_PRIVATE String openTemporaryFile(const String& prefix, PlatformFileHandle&);
+WTF_EXPORT_PRIVATE PlatformFileHandle openFile(const String& path, FileOpenMode);
+WTF_EXPORT_PRIVATE void closeFile(PlatformFileHandle&);
 // Returns the resulting offset from the beginning of the file if successful, -1 otherwise.
-WEBCORE_EXPORT long long seekFile(PlatformFileHandle, long long offset, FileSeekOrigin);
+WTF_EXPORT_PRIVATE long long seekFile(PlatformFileHandle, long long offset, FileSeekOrigin);
 bool truncateFile(PlatformFileHandle, long long offset);
 // Returns number of bytes actually read if successful, -1 otherwise.
-WEBCORE_EXPORT int writeToFile(PlatformFileHandle, const char* data, int length);
+WTF_EXPORT_PRIVATE int writeToFile(PlatformFileHandle, const char* data, int length);
 // Returns number of bytes actually written if successful, -1 otherwise.
-WEBCORE_EXPORT int readFromFile(PlatformFileHandle, char* data, int length);
+WTF_EXPORT_PRIVATE int readFromFile(PlatformFileHandle, char* data, int length);
 
-WEBCORE_EXPORT PlatformFileHandle openAndLockFile(const String&, FileOpenMode, OptionSet<FileLockMode> = FileLockMode::Exclusive);
-WEBCORE_EXPORT void unlockAndCloseFile(PlatformFileHandle);
+WTF_EXPORT_PRIVATE PlatformFileHandle openAndLockFile(const String&, FileOpenMode, OptionSet<FileLockMode> = FileLockMode::Exclusive);
+WTF_EXPORT_PRIVATE void unlockAndCloseFile(PlatformFileHandle);
 
 // Appends the contents of the file found at 'path' to the open PlatformFileHandle.
 // Returns true if the write was successful, false if it was not.
-bool appendFileContentsToFileHandle(const String& path, PlatformFileHandle&);
+WTF_EXPORT_PRIVATE bool appendFileContentsToFileHandle(const String& path, PlatformFileHandle&);
 
 // Hard links a file if possible, copies it if not.
-bool hardLinkOrCopyFile(const String& source, const String& destination);
+WTF_EXPORT_PRIVATE bool hardLinkOrCopyFile(const String& source, const String& destination);
 
 #if USE(FILE_LOCK)
-WEBCORE_EXPORT bool lockFile(PlatformFileHandle, OptionSet<FileLockMode>);
-WEBCORE_EXPORT bool unlockFile(PlatformFileHandle);
+WTF_EXPORT_PRIVATE bool lockFile(PlatformFileHandle, OptionSet<FileLockMode>);
+WTF_EXPORT_PRIVATE bool unlockFile(PlatformFileHandle);
 #endif
 
 // Encode a string for use within a file name.
-WEBCORE_EXPORT String encodeForFileName(const String&);
-WEBCORE_EXPORT String decodeFromFilename(const String&);
+WTF_EXPORT_PRIVATE String encodeForFileName(const String&);
+WTF_EXPORT_PRIVATE String decodeFromFilename(const String&);
 
-WEBCORE_EXPORT bool filesHaveSameVolume(const String&, const String&);
+WTF_EXPORT_PRIVATE bool filesHaveSameVolume(const String&, const String&);
 
 #if USE(CF)
-RetainPtr<CFURLRef> pathAsURL(const String&);
+WTF_EXPORT_PRIVATE RetainPtr<CFURLRef> pathAsURL(const String&);
 #endif
 
 #if PLATFORM(GTK) || PLATFORM(WPE)
@@ -174,28 +174,28 @@ String filenameForDisplay(const String&);
 #endif
 
 #if PLATFORM(WIN)
-WEBCORE_EXPORT String localUserSpecificStorageDirectory();
-String roamingUserSpecificStorageDirectory();
+WTF_EXPORT_PRIVATE String localUserSpecificStorageDirectory();
+WTF_EXPORT_PRIVATE String roamingUserSpecificStorageDirectory();
 #endif
 
 #if PLATFORM(COCOA)
-WEBCORE_EXPORT NSString *createTemporaryDirectory(NSString *directoryPrefix);
-WEBCORE_EXPORT bool deleteNonEmptyDirectory(const String&);
+WTF_EXPORT_PRIVATE NSString *createTemporaryDirectory(NSString *directoryPrefix);
+WTF_EXPORT_PRIVATE bool deleteNonEmptyDirectory(const String&);
 #endif
 
 #if PLATFORM(WIN_CAIRO)
-WEBCORE_EXPORT String createTemporaryDirectory();
-WEBCORE_EXPORT bool deleteNonEmptyDirectory(const String&);
+WTF_EXPORT_PRIVATE String createTemporaryDirectory();
+WTF_EXPORT_PRIVATE bool deleteNonEmptyDirectory(const String&);
 #endif
 
-WEBCORE_EXPORT String realPath(const String&);
+WTF_EXPORT_PRIVATE String realPath(const String&);
 
 class MappedFileData {
 public:
     MappedFileData() { }
     MappedFileData(MappedFileData&&);
-    WEBCORE_EXPORT MappedFileData(const String& filePath, bool& success);
-    WEBCORE_EXPORT ~MappedFileData();
+    WTF_EXPORT_PRIVATE MappedFileData(const String& filePath, bool& success);
+    WTF_EXPORT_PRIVATE ~MappedFileData();
     MappedFileData& operator=(MappedFileData&&);
 
     explicit operator bool() const { return !!m_fileData; }
@@ -220,6 +220,7 @@ inline MappedFileData& MappedFileData::operator=(MappedFileData&& other)
     return *this;
 }
 
-} // namespace FileSystem
-} // namespace WebCore
+} // namespace FileSystemImpl
+} // namespace WTF
 
+namespace FileSystem = WTF::FileSystemImpl;

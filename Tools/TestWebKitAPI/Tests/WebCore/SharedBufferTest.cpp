@@ -26,10 +26,8 @@
 #include "config.h"
 #include "SharedBufferTest.h"
 
-#include <WebCore/FileSystem.h>
+#include <wtf/FileSystem.h>
 #include <wtf/MainThread.h>
-
-using namespace WebCore;
 
 namespace TestWebKitAPI {
 

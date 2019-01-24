@@ -32,9 +32,9 @@
 
 #include "PluginProcessCreationParameters.h"
 #include "ProcessExecutablePath.h"
-#include <WebCore/FileSystem.h>
 #include <WebCore/PlatformDisplay.h>
 #include <sys/wait.h>
+#include <wtf/FileSystem.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/WTFString.h>
 

@@ -24,7 +24,6 @@
 
 #include "CSSValueKeywords.h"
 #include "Element.h"
-#include "FileSystem.h"
 #include "FontMetrics.h"
 #include "Frame.h"
 #include "FrameSelection.h"
@@ -38,6 +37,7 @@
 #include "SystemInfo.h"
 #include "UserAgentStyleSheets.h"
 #include "WebCoreBundleWin.h"
+#include <wtf/FileSystem.h>
 #include <wtf/SoftLinking.h>
 #include <wtf/text/StringBuilder.h>
 #include <wtf/text/win/WCharStringExtras.h>

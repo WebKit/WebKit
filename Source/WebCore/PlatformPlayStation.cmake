@@ -63,7 +63,6 @@ list(APPEND WebCore_SOURCES
     platform/playstation/ScrollbarThemePlayStation.cpp
     platform/playstation/UserAgentPlayStation.cpp
 
-    platform/posix/FileSystemPOSIX.cpp
     platform/posix/SharedBufferPOSIX.cpp
 
     platform/text/Hyphenation.cpp

@@ -33,7 +33,7 @@
 
 #include "NetworkDataTask.h"
 #include <WebCore/FileStreamClient.h>
-#include <WebCore/FileSystem.h>
+#include <wtf/FileSystem.h>
 
 namespace WebCore {
 class AsyncFileStream;
@@ -113,7 +113,7 @@ private:
     unsigned m_sizeItemCount { 0 };
     unsigned m_readItemCount { 0 };
     bool m_fileOpened { false };
-    WebCore::FileSystem::PlatformFileHandle m_downloadFile { WebCore::FileSystem::invalidPlatformFileHandle };
+    FileSystem::PlatformFileHandle m_downloadFile { FileSystem::invalidPlatformFileHandle };
 
     Vector<RefPtr<WebCore::BlobDataFileReference>> m_fileReferences;
     RefPtr<SandboxExtension> m_sandboxExtension;

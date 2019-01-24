@@ -30,15 +30,15 @@
 #include "SecurityOrigin.h"
 
 #include "BlobURL.h"
-#include "FileSystem.h"
-#include <wtf/URL.h>
 #include "SchemeRegistry.h"
 #include "SecurityPolicy.h"
 #include "TextEncoding.h"
 #include "ThreadableBlobRegistry.h"
+#include <wtf/FileSystem.h>
 #include <wtf/MainThread.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/StdLibExtras.h>
+#include <wtf/URL.h>
 #include <wtf/text/StringBuilder.h>
 
 namespace WebCore {

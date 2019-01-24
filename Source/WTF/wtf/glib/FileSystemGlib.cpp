@@ -21,16 +21,15 @@
  */
 
 #include "config.h"
-#include "FileSystem.h"
+#include <wtf/FileSystem.h>
 
-#include "FileMetadata.h"
-#include "NotImplemented.h"
 #include <gio/gfiledescriptorbased.h>
 #include <gio/gio.h>
 #include <glib.h>
 #include <glib/gstdio.h>
 #include <sys/file.h>
 #include <wtf/EnumTraits.h>
+#include <wtf/FileMetadata.h>
 #include <wtf/UUID.h>
 #include <wtf/glib/GLibUtilities.h>
 #include <wtf/glib/GRefPtr.h>
@@ -39,9 +38,9 @@
 #include <wtf/text/StringBuilder.h>
 #include <wtf/text/WTFString.h>
 
-namespace WebCore {
+namespace WTF {
 
-namespace FileSystem {
+namespace FileSystemImpl {
 
 /* On linux file names are just raw bytes, so also strings that cannot be encoded in any way
  * are valid file names. This mean that we cannot just store a file name as-is in a String
@@ -466,5 +465,5 @@ bool unlockFile(PlatformFileHandle handle)
 }
 #endif // USE(FILE_LOCK)
 
-} // namespace FileSystem
-} // namespace WebCore
+} // namespace FileSystemImpl
+} // namespace WTF

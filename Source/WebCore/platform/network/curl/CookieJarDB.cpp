@@ -26,10 +26,9 @@
 #include "CookieJarDB.h"
 
 #include "CookieUtil.h"
-#include "FileSystem.h"
 #include "Logging.h"
 #include "SQLiteFileSystem.h"
-
+#include <wtf/FileSystem.h>
 #include <wtf/MonotonicTime.h>
 #include <wtf/URL.h>
 

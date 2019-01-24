@@ -31,7 +31,6 @@
 #import "AVAssetTrackUtilities.h"
 #import "AVFoundationMIMETypeCache.h"
 #import "CDMSessionAVStreamSession.h"
-#import "FileSystem.h"
 #import "GraphicsContextCG.h"
 #import "Logging.h"
 #import "MediaSourcePrivateAVFObjC.h"
@@ -49,6 +48,7 @@
 #import <pal/avfoundation/MediaTimeAVFoundation.h>
 #import <pal/spi/mac/AVFoundationSPI.h>
 #import <wtf/Deque.h>
+#import <wtf/FileSystem.h>
 #import <wtf/MainThread.h>
 #import <wtf/NeverDestroyed.h>
 

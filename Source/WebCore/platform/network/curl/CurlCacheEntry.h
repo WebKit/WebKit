@@ -26,11 +26,11 @@
 
 #pragma once
 
-#include "FileSystem.h"
 #include "HTTPHeaderMap.h"
 #include "ResourceHandle.h"
 #include "ResourceRequest.h"
 #include "ResourceResponse.h"
+#include <wtf/FileSystem.h>
 #include <wtf/Forward.h>
 #include <wtf/HashMap.h>
 #include <wtf/ListHashSet.h>

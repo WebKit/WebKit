@@ -25,9 +25,9 @@
  */
 
 #include "config.h"
-#include "FileSystem.h"
+#include <wtf/FileSystem.h>
 
-#include "FileMetadata.h"
+#include <wtf/FileMetadata.h>
 #include <wtf/HexNumber.h>
 #include <wtf/Scope.h>
 #include <wtf/text/CString.h>
@@ -40,9 +40,9 @@
 #include <unistd.h>
 #endif
 
-namespace WebCore {
+namespace WTF {
 
-namespace FileSystem {
+namespace FileSystemImpl {
 
 // The following lower-ASCII characters need escaping to be used in a filename
 // across all systems, including Windows:
@@ -61,29 +61,29 @@ namespace FileSystem {
 //     - Delete            (7F)
 
 static const bool needsEscaping[128] = {
-    /* 00-07 */ true,  true,  true,  true,  true,  true,  true,  true, 
-    /* 08-0F */ true,  true,  true,  true,  true,  true,  true,  true, 
+    true,  true,  true,  true,  true,  true,  true,  true,  /* 00-07 */
+    true,  true,  true,  true,  true,  true,  true,  true,  /* 08-0F */
 
-    /* 10-17 */ true,  true,  true,  true,  true,  true,  true,  true, 
-    /* 18-1F */ true,  true,  true,  true,  true,  true,  true,  true, 
+    true,  true,  true,  true,  true,  true,  true,  true,  /* 10-17 */
+    true,  true,  true,  true,  true,  true,  true,  true,  /* 18-1F */
 
-    /* 20-27 */ true,  false, true,  false, false, true,  false, false, 
-    /* 28-2F */ false, false, true,  false, false, false, false, true, 
-    
-    /* 30-37 */ false, false, false, false, false, false, false, false, 
-    /* 38-3F */ false, false, true,  false, true,  false, true,  true, 
-    
-    /* 40-47 */ false, false, false, false, false, false, false, false, 
-    /* 48-4F */ false, false, false, false, false, false, false, false,
-    
-    /* 50-57 */ false, false, false, false, false, false, false, false, 
-    /* 58-5F */ false, false, false, false, true,  false, false, false,
-    
-    /* 60-67 */ false, false, false, false, false, false, false, false, 
-    /* 68-6F */ false, false, false, false, false, false, false, false,
-    
-    /* 70-77 */ false, false, false, false, false, false, false, false, 
-    /* 78-7F */ false, false, false, false, true,  false, false, true, 
+    true,  false, true,  false, false, true,  false, false, /* 20-27 */
+    false, false, true,  false, false, false, false, true,  /* 28-2F */
+
+    false, false, false, false, false, false, false, false, /* 30-37 */
+    false, false, true,  false, true,  false, true,  true,  /* 38-3F */
+
+    false, false, false, false, false, false, false, false, /* 40-47 */
+    false, false, false, false, false, false, false, false, /* 48-4F */
+
+    false, false, false, false, false, false, false, false, /* 50-57 */
+    false, false, false, false, true,  false, false, false, /* 58-5F */
+
+    false, false, false, false, false, false, false, false, /* 60-67 */
+    false, false, false, false, false, false, false, false, /* 68-6F */
+
+    false, false, false, false, false, false, false, false, /* 70-77 */
+    false, false, false, false, true,  false, false, true,  /* 78-7F */
 };
 
 static inline bool shouldEscapeUChar(UChar character, UChar previousCharacter, UChar nextCharacter)
@@ -222,7 +222,7 @@ bool appendFileContentsToFileHandle(const String& path, PlatformFileHandle& targ
 
     do {
         int readBytes = readFromFile(source, buffer.data(), bufferSize);
-        
+
         if (readBytes < 0)
             return false;
 
@@ -236,12 +236,12 @@ bool appendFileContentsToFileHandle(const String& path, PlatformFileHandle& targ
     ASSERT_NOT_REACHED();
 }
 
-    
+
 bool filesHaveSameVolume(const String& fileA, const String& fileB)
 {
     auto fsRepFileA = fileSystemRepresentation(fileA);
     auto fsRepFileB = fileSystemRepresentation(fileB);
-    
+
     if (fsRepFileA.isNull() || fsRepFileB.isNull())
         return false;
 
@@ -252,7 +252,7 @@ bool filesHaveSameVolume(const String& fileA, const String& fileB)
 
     if (fileADev && fileBDev)
         result = (fileADev == fileBDev);
-    
+
     return result;
 }
 
@@ -363,5 +363,5 @@ bool fileIsDirectory(const String& path, ShouldFollowSymbolicLinks shouldFollowS
     return metadata.value().type == FileMetadata::Type::Directory;
 }
 
-} // namespace FileSystem
-} // namespace WebCore
+} // namespace FileSystemImpl
+} // namespace WTF

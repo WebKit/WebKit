@@ -1,3 +1,14 @@
+2019-01-24  Ross Kirsling  <ross.kirsling@sony.com>
+
+        Move FileSystem to WTF
+        https://bugs.webkit.org/show_bug.cgi?id=193602
+
+        Reviewed by Yusuke Suzuki.
+
+        * Storage/StorageAreaSync.cpp:
+        * Storage/StorageSyncManager.cpp:
+        * Storage/StorageTracker.cpp:
+
 2019-01-23  Ross Kirsling  <ross.kirsling@sony.com>
 
         [Curl] Unreviewed build fix for r240292 and friends.

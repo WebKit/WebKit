@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011-2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2011 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,26 +23,30 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include <Windows.h>
-#include <wtf/Forward.h>
-#include <wtf/Noncopyable.h>
+#include "config.h"
+#include <wtf/win/PathWalker.h>
 
-namespace WebCore {
+#include <wtf/text/WTFString.h>
+#include <wtf/text/win/WCharStringExtras.h>
 
-class PathWalker {
-    WTF_MAKE_NONCOPYABLE(PathWalker);
-public:
-    PathWalker(const WTF::String& directory, const WTF::String& pattern);
-    ~PathWalker();
+namespace WTF {
 
-    bool isValid() const { return m_handle != INVALID_HANDLE_VALUE; }
-    const WIN32_FIND_DATAW& data() const { return m_data; }
+PathWalker::PathWalker(const String& directory, const String& pattern)
+{
+    String path = directory + "\\" + pattern;
+    m_handle = ::FindFirstFileW(stringToNullTerminatedWChar(path).data(), &m_data);
+}
 
-    bool step();
+PathWalker::~PathWalker()
+{
+    if (!isValid())
+        return;
+    ::FindClose(m_handle);
+}
 
-private:
-    HANDLE m_handle;
-    WIN32_FIND_DATAW m_data;
-};
+bool PathWalker::step()
+{
+    return ::FindNextFileW(m_handle, &m_data);
+}
 
-} // namespace WebCore
+} // namespace WTF

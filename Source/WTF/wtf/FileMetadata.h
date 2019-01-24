@@ -32,7 +32,7 @@
 
 #include <wtf/WallTime.h>
 
-namespace WebCore {
+namespace WTF {
 
 struct FileMetadata {
     // The last modification time of the file, in seconds.
@@ -47,4 +47,6 @@ struct FileMetadata {
     Type type;
 };
 
-} // namespace WebCore
+} // namespace WTF
+
+using WTF::FileMetadata;

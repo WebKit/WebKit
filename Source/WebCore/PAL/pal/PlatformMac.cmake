@@ -58,7 +58,6 @@ list(APPEND PAL_PUBLIC_HEADERS
     spi/mac/HIToolboxSPI.h
     spi/mac/LookupSPI.h
     spi/mac/MediaRemoteSPI.h
-    spi/mac/MetadataSPI.h
     spi/mac/NSAccessibilitySPI.h
     spi/mac/NSAppearanceSPI.h
     spi/mac/NSApplicationSPI.h

@@ -27,9 +27,9 @@
 
 #if ENABLE(NETSCAPE_PLUGIN_API)
 
-#include <WebCore/FileSystem.h>
 #include <WebCore/npruntime_internal.h>
 #include <memory>
+#include <wtf/FileSystem.h>
 #include <wtf/Forward.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
@@ -89,7 +89,7 @@ private:
     int32_t m_offset;
 
     String m_filePath;
-    WebCore::FileSystem::PlatformFileHandle m_fileHandle;
+    FileSystem::PlatformFileHandle m_fileHandle;
     
     // Whether NPP_NewStream has successfully been called.
     bool m_isStarted;

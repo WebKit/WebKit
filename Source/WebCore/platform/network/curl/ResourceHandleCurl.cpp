@@ -38,7 +38,6 @@
 #include "CurlCacheManager.h"
 #include "CurlContext.h"
 #include "CurlRequest.h"
-#include "FileSystem.h"
 #include "HTTPParsers.h"
 #include "Logging.h"
 #include "NetworkStorageSession.h"
@@ -48,6 +47,7 @@
 #include "SynchronousLoaderClient.h"
 #include "TextEncoding.h"
 #include <wtf/CompletionHandler.h>
+#include <wtf/FileSystem.h>
 #include <wtf/text/Base64.h>
 
 namespace WebCore {

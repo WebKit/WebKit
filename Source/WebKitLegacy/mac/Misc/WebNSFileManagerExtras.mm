@@ -30,10 +30,10 @@
 
 #import "WebKitNSStringExtras.h"
 #import "WebNSURLExtras.h"
-#import <WebCore/FileSystem.h>
 #import <WebCore/LoaderNSURLExtras.h>
 #import <sys/stat.h>
 #import <wtf/Assertions.h>
+#import <wtf/FileSystem.h>
 #import <wtf/ObjCRuntimeExtras.h>
 
 @implementation NSFileManager (WebNSFileManagerExtras)
@@ -44,7 +44,7 @@
 {
     ASSERT(URLString);
     ASSERT(path);
-    WebCore::FileSystem::setMetadataURL(path, URLString, referrer);
+    FileSystem::setMetadataURL(path, URLString, referrer);
 }
 
 #endif // !PLATFORM(IOS_FAMILY)
@@ -93,7 +93,7 @@ static BOOL fileExists(NSString *path)
 #if PLATFORM(IOS_FAMILY)
 - (NSString *)_webkit_createTemporaryDirectoryWithTemplatePrefix:(NSString *)prefix
 {
-    return WebCore::FileSystem::createTemporaryDirectory(prefix);
+    return FileSystem::createTemporaryDirectory(prefix);
 }
 #endif
 

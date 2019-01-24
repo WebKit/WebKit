@@ -36,11 +36,11 @@
 #include "DataTransferItemList.h"
 #include "Document.h"
 #include "File.h"
-#include "FileSystem.h"
 #include "FileSystemDirectoryEntry.h"
 #include "FileSystemFileEntry.h"
 #include "ScriptExecutionContext.h"
 #include "StringCallback.h"
+#include <wtf/FileSystem.h>
 
 namespace WebCore {
 

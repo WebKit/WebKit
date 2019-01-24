@@ -28,7 +28,6 @@
 
 #if ENABLE(VIDEO) && USE(GSTREAMER)
 
-#include "FileSystem.h"
 #include "GStreamerCommon.h"
 #include "HTTPHeaderNames.h"
 #include "MIMETypeRegistry.h"
@@ -42,6 +41,7 @@
 #include <gst/gst.h>
 #include <gst/pbutils/missing-plugins.h>
 #include <limits>
+#include <wtf/FileSystem.h>
 #include <wtf/HexNumber.h>
 #include <wtf/MediaTime.h>
 #include <wtf/NeverDestroyed.h>

@@ -27,12 +27,12 @@
 #pragma once
 
 #include "PluginQuirkSet.h"
-#include <WebCore/FileSystem.h>
 #include <WebCore/NetscapePlugInStreamLoader.h>
 #include <WebCore/ResourceRequest.h>
 #include <WebCore/ResourceResponse.h>
 #include <WebCore/Timer.h>
 #include <WebCore/npruntime_internal.h>
+#include <wtf/FileSystem.h>
 #include <wtf/HashMap.h>
 #include <wtf/RefCounted.h>
 #include <wtf/URL.h>

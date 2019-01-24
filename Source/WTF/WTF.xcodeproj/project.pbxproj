@@ -90,6 +90,11 @@
 		93934BD518A1F16900D0D6A1 /* StringViewCF.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 93934BD418A1F16900D0D6A1 /* StringViewCF.cpp */; };
 		93F1993E19D7958D00C2390B /* StringView.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 93F1993D19D7958D00C2390B /* StringView.cpp */; };
 		9BC70F05176C379D00101DEC /* AtomicStringTable.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9BC70F04176C379D00101DEC /* AtomicStringTable.cpp */; };
+		A331D95B21F24992009F02AA /* FileSystem.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A331D95A21F24992009F02AA /* FileSystem.cpp */; };
+		A331D95D21F249E4009F02AA /* FileSystemCF.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A331D95C21F249E4009F02AA /* FileSystemCF.cpp */; };
+		A331D95F21F249F6009F02AA /* FileSystemCocoa.mm in Sources */ = {isa = PBXBuildFile; fileRef = A331D95E21F249F6009F02AA /* FileSystemCocoa.mm */; };
+		A331D96121F24A0A009F02AA /* FileSystemMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = A331D96021F24A0A009F02AA /* FileSystemMac.mm */; };
+		A331D96721F24ABD009F02AA /* FileSystemPOSIX.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A331D96621F24ABD009F02AA /* FileSystemPOSIX.cpp */; };
 		A3B725EC987446AD93F1A440 /* RandomDevice.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C8F597CA2A57417FBAB92FD6 /* RandomDevice.cpp */; };
 		A3E4DD931F3A803400DED0B4 /* TextStream.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A3E4DD911F3A803400DED0B4 /* TextStream.cpp */; };
 		A5BA15F3182433A900A82E69 /* StringCocoa.mm in Sources */ = {isa = PBXBuildFile; fileRef = A5BA15F2182433A900A82E69 /* StringCocoa.mm */; };
@@ -432,8 +437,16 @@
 		9C67C542589348E285B49699 /* IndexedContainerIterator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IndexedContainerIterator.h; sourceTree = "<group>"; };
 		A30D412C1F0DE0BA00B71954 /* SoftLinking.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SoftLinking.h; sourceTree = "<group>"; };
 		A30D412D1F0DE13F00B71954 /* SoftLinking.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SoftLinking.h; sourceTree = "<group>"; };
+		A331D95821F24978009F02AA /* FileMetadata.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FileMetadata.h; sourceTree = "<group>"; };
+		A331D95921F24992009F02AA /* FileSystem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FileSystem.h; sourceTree = "<group>"; };
+		A331D95A21F24992009F02AA /* FileSystem.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FileSystem.cpp; sourceTree = "<group>"; };
+		A331D95C21F249E4009F02AA /* FileSystemCF.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FileSystemCF.cpp; sourceTree = "<group>"; };
+		A331D95E21F249F6009F02AA /* FileSystemCocoa.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = FileSystemCocoa.mm; sourceTree = "<group>"; };
+		A331D96021F24A0A009F02AA /* FileSystemMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = FileSystemMac.mm; sourceTree = "<group>"; };
+		A331D96621F24ABD009F02AA /* FileSystemPOSIX.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FileSystemPOSIX.cpp; sourceTree = "<group>"; };
 		A36E16F7216FF828008DD87E /* WTFSemaphore.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WTFSemaphore.h; sourceTree = "<group>"; };
 		A3AB6E6A1F3E1AD6009C14B1 /* ValueToString.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ValueToString.h; sourceTree = "<group>"; };
+		A3D273B921F2EE9100866971 /* MetadataSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MetadataSPI.h; sourceTree = "<group>"; };
 		A3E4DD911F3A803400DED0B4 /* TextStream.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TextStream.cpp; sourceTree = "<group>"; };
 		A3E4DD921F3A803400DED0B4 /* TextStream.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TextStream.h; sourceTree = "<group>"; };
 		A5098AFF1C169E0700087797 /* SandboxSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SandboxSPI.h; sourceTree = "<group>"; };
@@ -719,6 +732,7 @@
 			children = (
 				5C1F05912164356B0039302C /* CFURLExtras.cpp */,
 				5C1F05922164356B0039302C /* CFURLExtras.h */,
+				A331D95C21F249E4009F02AA /* FileSystemCF.cpp */,
 				C2BCFC411F61D61600C9222C /* LanguageCF.cpp */,
 				2CDED0EE18115C38004DBA70 /* RunLoopCF.cpp */,
 				1AFDE647195201C300C48FFA /* TypeCastsCF.h */,
@@ -776,6 +790,22 @@
 			name = Source;
 			sourceTree = "<group>";
 		};
+		A331D96321F24A2E009F02AA /* posix */ = {
+			isa = PBXGroup;
+			children = (
+				A331D96621F24ABD009F02AA /* FileSystemPOSIX.cpp */,
+			);
+			path = posix;
+			sourceTree = "<group>";
+		};
+		A3D273B821F2EE7B00866971 /* mac */ = {
+			isa = PBXGroup;
+			children = (
+				A3D273B921F2EE9100866971 /* MetadataSPI.h */,
+			);
+			path = mac;
+			sourceTree = "<group>";
+		};
 		A5BA15F11824339F00A82E69 /* cocoa */ = {
 			isa = PBXGroup;
 			children = (
@@ -809,6 +839,7 @@
 				1FA47C87152502DA00568D1B /* ios */,
 				A8A472C4151A825A004123FF /* mac */,
 				E43A46851E228B5700276B05 /* persistence */,
+				A331D96321F24A2E009F02AA /* posix */,
 				CEF4820C19DA347600CC04B8 /* spi */,
 				A8A4731B151A825B004123FF /* text */,
 				A8A47339151A825B004123FF /* threads */,
@@ -897,8 +928,11 @@
 				A8A472A2151A825A004123FF /* FastMalloc.h */,
 				0F79C7C31E73511800EB34D1 /* FastTLS.h */,
 				B38FD7BC168953E80065C969 /* FeatureDefines.h */,
+				A331D95821F24978009F02AA /* FileMetadata.h */,
 				0F9D335B165DBA73005AD387 /* FilePrintStream.cpp */,
 				0F9D335C165DBA73005AD387 /* FilePrintStream.h */,
+				A331D95A21F24992009F02AA /* FileSystem.cpp */,
+				A331D95921F24992009F02AA /* FileSystem.h */,
 				0F2B66A517B6B4F700A7AE3F /* FlipBytes.h */,
 				FE86A8741E59440200111BBF /* ForbidHeapAllocation.h */,
 				A8A472A6151A825A004123FF /* Forward.h */,
@@ -1193,6 +1227,7 @@
 			children = (
 				1A428B8B1C8F89DD0051E9EB /* AppKitCompatibilityDeclarations.h */,
 				1ACADD821884480100D8B71D /* DeprecatedSymbolsUsedBySafari.mm */,
+				A331D96021F24A0A009F02AA /* FileSystemMac.mm */,
 				53534F291EC0E10E00141B2F /* MachExceptions.defs */,
 			);
 			path = mac;
@@ -1320,6 +1355,7 @@
 				DCEE21F91CEA752F000C2396 /* cf */,
 				CE46516C19DB1FB4003ECA05 /* cocoa */,
 				CE73E02319DCB7AB00580D5C /* darwin */,
+				A3D273B821F2EE7B00866971 /* mac */,
 			);
 			path = spi;
 			sourceTree = "<group>";
@@ -1354,6 +1390,7 @@
 				E38C41241EB4E04C0042957D /* CPUTimeCocoa.cpp */,
 				143DDE9720C8BE99007F76FA /* Entitlements.h */,
 				143DDE9520C8BC37007F76FA /* Entitlements.mm */,
+				A331D95E21F249F6009F02AA /* FileSystemCocoa.mm */,
 				7A6EBA3320746C34004F9C44 /* MachSendRight.cpp */,
 				A8A472C5151A825A004123FF /* MainThreadCocoa.mm */,
 				ADF2CE651E39F106006889DB /* MemoryFootprintCocoa.cpp */,
@@ -1480,6 +1517,11 @@
 				0F7C5FB61D885CF20044F5E2 /* FastBitVector.cpp in Sources */,
 				A8A473C3151A825B004123FF /* FastMalloc.cpp in Sources */,
 				0F9D3360165DBA73005AD387 /* FilePrintStream.cpp in Sources */,
+				A331D95B21F24992009F02AA /* FileSystem.cpp in Sources */,
+				A331D95D21F249E4009F02AA /* FileSystemCF.cpp in Sources */,
+				A331D95F21F249F6009F02AA /* FileSystemCocoa.mm in Sources */,
+				A331D96121F24A0A009F02AA /* FileSystemMac.mm in Sources */,
+				A331D96721F24ABD009F02AA /* FileSystemPOSIX.cpp in Sources */,
 				A8A473B5151A825B004123FF /* fixed-dtoa.cc in Sources */,
 				1A1D8B9E1731879800141DA4 /* FunctionDispatcher.cpp in Sources */,
 				0F5BF1761F23D49A0029D91D /* Gigacage.cpp in Sources */,

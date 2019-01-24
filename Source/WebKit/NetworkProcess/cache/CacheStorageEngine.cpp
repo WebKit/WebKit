@@ -52,7 +52,7 @@ String Engine::cachesRootPath(const WebCore::ClientOrigin& origin)
         return { };
 
     Key key(origin.topOrigin.toString(), origin.clientOrigin.toString(), { }, { }, salt());
-    return WebCore::FileSystem::pathByAppendingComponent(rootPath(), key.hashAsString());
+    return FileSystem::pathByAppendingComponent(rootPath(), key.hashAsString());
 }
 
 Engine::~Engine()
@@ -291,9 +291,9 @@ void Engine::initialize(CompletionCallback&& callback)
     if (!shouldComputeSalt)
         return;
 
-    String saltPath = WebCore::FileSystem::pathByAppendingComponent(m_rootPath, "salt"_s);
+    String saltPath = FileSystem::pathByAppendingComponent(m_rootPath, "salt"_s);
     m_ioQueue->dispatch([this, weakThis = makeWeakPtr(this), saltPath = WTFMove(saltPath)] () mutable {
-        WebCore::FileSystem::makeAllDirectories(m_rootPath);
+        FileSystem::makeAllDirectories(m_rootPath);
         RunLoop::main().dispatch([this, weakThis = WTFMove(weakThis), salt = readOrMakeSalt(saltPath)]() mutable {
             if (!weakThis)
                 return;
@@ -383,9 +383,9 @@ void Engine::writeFile(const String& filename, NetworkCache::Data&& data, WebCor
     m_pendingWriteCallbacks.add(++m_pendingCallbacksCounter, WTFMove(callback));
     m_ioQueue->dispatch([this, weakThis = makeWeakPtr(this), identifier = m_pendingCallbacksCounter, data = WTFMove(data), filename = filename.isolatedCopy()]() mutable {
 
-        String directoryPath = WebCore::FileSystem::directoryName(filename);
-        if (!WebCore::FileSystem::fileExists(directoryPath))
-            WebCore::FileSystem::makeAllDirectories(directoryPath);
+        String directoryPath = FileSystem::directoryName(filename);
+        if (!FileSystem::fileExists(directoryPath))
+            FileSystem::makeAllDirectories(directoryPath);
 
         auto channel = IOChannel::open(filename, IOChannel::Type::Create);
         channel->write(0, data, nullptr, [this, weakThis = WTFMove(weakThis), identifier](int error) mutable {
@@ -445,7 +445,7 @@ void Engine::removeFile(const String& filename)
         return;
 
     m_ioQueue->dispatch([filename = filename.isolatedCopy()]() mutable {
-        WebCore::FileSystem::deleteFile(filename);
+        FileSystem::deleteFile(filename);
     });
 }
 
@@ -487,8 +487,8 @@ void Engine::fetchEntries(bool shouldComputeSize, WTF::CompletionHandler<void(Ve
     }
 
     auto taskCounter = ReadOriginsTaskCounter::create(WTFMove(completionHandler));
-    for (auto& folderPath : WebCore::FileSystem::listDirectory(m_rootPath, "*")) {
-        if (!WebCore::FileSystem::fileIsDirectory(folderPath, WebCore::FileSystem::ShouldFollowSymbolicLinks::No))
+    for (auto& folderPath : FileSystem::listDirectory(m_rootPath, "*")) {
+        if (!FileSystem::fileIsDirectory(folderPath, FileSystem::ShouldFollowSymbolicLinks::No))
             continue;
         Caches::retrieveOriginFromDirectory(folderPath, *m_ioQueue, [protectedThis = makeRef(*this), shouldComputeSize, taskCounter = taskCounter.copyRef()] (auto&& origin) mutable {
             ASSERT(RunLoop::isMain());
@@ -531,8 +531,8 @@ void Engine::clearAllCachesFromDisk(CompletionHandler<void()>&& completionHandle
     ASSERT(RunLoop::isMain());
 
     m_ioQueue->dispatch([path = m_rootPath.isolatedCopy(), completionHandler = WTFMove(completionHandler)]() mutable {
-        for (auto& filename : WebCore::FileSystem::listDirectory(path, "*")) {
-            if (WebCore::FileSystem::fileIsDirectory(filename, WebCore::FileSystem::ShouldFollowSymbolicLinks::No))
+        for (auto& filename : FileSystem::listDirectory(path, "*")) {
+            if (FileSystem::fileIsDirectory(filename, FileSystem::ShouldFollowSymbolicLinks::No))
                 deleteDirectoryRecursively(filename);
         }
         RunLoop::main().dispatch(WTFMove(completionHandler));
@@ -562,8 +562,8 @@ void Engine::clearCachesForOriginFromDisk(const WebCore::SecurityOriginData& ori
 
     auto callbackAggregator = CallbackAggregator::create(WTFMove(completionHandler));
 
-    for (auto& folderPath : WebCore::FileSystem::listDirectory(m_rootPath, "*")) {
-        if (!WebCore::FileSystem::fileIsDirectory(folderPath, WebCore::FileSystem::ShouldFollowSymbolicLinks::No))
+    for (auto& folderPath : FileSystem::listDirectory(m_rootPath, "*")) {
+        if (!FileSystem::fileIsDirectory(folderPath, FileSystem::ShouldFollowSymbolicLinks::No))
             continue;
         Caches::retrieveOriginFromDirectory(folderPath, *m_ioQueue, [this, protectedThis = makeRef(*this), origin, callbackAggregator = callbackAggregator.copyRef(), folderPath] (Optional<WebCore::ClientOrigin>&& folderOrigin) mutable {
             if (!folderOrigin)

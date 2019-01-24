@@ -33,11 +33,11 @@
 #import "PluginProcessMessages.h"
 #import "SandboxUtilities.h"
 #import <QuartzCore/CARemoteLayerServer.h>
-#import <WebCore/FileSystem.h>
 #import <crt_externs.h>
 #import <mach-o/dyld.h>
 #import <pal/spi/cf/CFNetworkSPI.h>
 #import <spawn.h>
+#import <wtf/FileSystem.h>
 #import <wtf/ProcessPrivilege.h>
 #import <wtf/URL.h>
 #import <wtf/text/CString.h>
@@ -57,8 +57,6 @@
 @end
 
 namespace WebKit {
-using namespace WebCore;
-
     
 void PluginProcessProxy::platformGetLaunchOptionsWithAttributes(ProcessLauncher::LaunchOptions& launchOptions, const PluginProcessAttributes& pluginProcessAttributes)
 {

@@ -24,15 +24,15 @@
  */
 
 #import "config.h"
-#import "FileSystem.h"
+#import <wtf/FileSystem.h>
 
 #if PLATFORM(MAC)
 
-#import <pal/spi/mac/MetadataSPI.h>
 #import <wtf/cocoa/NSURLExtras.h>
+#import <wtf/spi/mac/MetadataSPI.h>
 #import <wtf/text/WTFString.h>
 
-namespace WebCore {
+namespace WTF {
 
 bool FileSystem::deleteEmptyDirectory(const String& path)
 {
@@ -83,6 +83,6 @@ bool FileSystem::excludeFromBackup(const String& path)
     return true;
 }
 
-} // namespace WebCore
+} // namespace WTF
 
 #endif // PLATFORM(MAC)

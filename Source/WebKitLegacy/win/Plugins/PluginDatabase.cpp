@@ -33,7 +33,7 @@
 #include <wtf/text/CString.h>
 
 #if ENABLE(NETSCAPE_PLUGIN_METADATA_CACHE)
-#include "FileSystem.h"
+#include <wtf/FileSystem.h>
 #endif
 
 namespace WebCore {

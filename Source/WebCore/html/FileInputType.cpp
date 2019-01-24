@@ -30,7 +30,6 @@
 #include "File.h"
 #include "FileList.h"
 #include "FileListCreator.h"
-#include "FileSystem.h"
 #include "FormController.h"
 #include "Frame.h"
 #include "HTMLInputElement.h"
@@ -43,6 +42,7 @@
 #include "Settings.h"
 #include "ShadowRoot.h"
 #include "UserGestureIndicator.h"
+#include <wtf/FileSystem.h>
 #include <wtf/IsoMallocInlines.h>
 #include <wtf/TypeCasts.h>
 #include <wtf/text/StringBuilder.h>

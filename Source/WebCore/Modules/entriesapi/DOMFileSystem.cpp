@@ -27,12 +27,12 @@
 #include "DOMFileSystem.h"
 
 #include "File.h"
-#include "FileMetadata.h"
-#include "FileSystem.h"
 #include "FileSystemDirectoryEntry.h"
 #include "FileSystemFileEntry.h"
 #include "ScriptExecutionContext.h"
 #include <wtf/CrossThreadCopier.h>
+#include <wtf/FileMetadata.h>
+#include <wtf/FileSystem.h>
 #include <wtf/UUID.h>
 #include <wtf/text/StringBuilder.h>
 

@@ -188,7 +188,14 @@ set(TestWTF_SOURCES
     ${TESTWEBKITAPI_DIR}/Tests/WTF/WorkerPool.cpp
 )
 
-# FIXME: Tests/WTF/RunLoop.cpp is missing because it doesn't work for Windows.
+# FIXME: Make these work on Windows too.
+if (NOT WIN32)
+    list(APPEND TestWTF_SOURCES
+        ${TESTWEBKITAPI_DIR}/Tests/WTF/FileSystem.cpp
+        ${TESTWEBKITAPI_DIR}/Tests/WTF/RunLoop.cpp
+    )
+endif ()
+
 # FIXME: Platform-specific sources in Tests/WTF are not included in TestWTF_SOURCES.
 
 WEBKIT_INCLUDE_CONFIG_FILES_IF_EXISTS()

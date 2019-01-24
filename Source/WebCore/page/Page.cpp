@@ -51,7 +51,6 @@
 #include "Event.h"
 #include "EventNames.h"
 #include "ExtensionStyleSheets.h"
-#include "FileSystem.h"
 #include "FocusController.h"
 #include "FrameLoader.h"
 #include "FrameLoaderClient.h"
@@ -122,6 +121,7 @@
 #include "WebGLStateTracker.h"
 #include "WheelEventDeltaFilter.h"
 #include "Widget.h"
+#include <wtf/FileSystem.h>
 #include <wtf/RefCountedLeakCounter.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/text/Base64.h>

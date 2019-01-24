@@ -32,13 +32,13 @@
 #include "NetworkCacheStorage.h"
 #include "NetworkProcess.h"
 #include <WebCore/CacheValidation.h>
-#include <WebCore/FileSystem.h>
 #include <WebCore/HTTPHeaderNames.h>
 #include <WebCore/LowPowerModeNotifier.h>
 #include <WebCore/NetworkStorageSession.h>
 #include <WebCore/ResourceRequest.h>
 #include <WebCore/ResourceResponse.h>
 #include <WebCore/SharedBuffer.h>
+#include <wtf/FileSystem.h>
 #include <wtf/MainThread.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/RunLoop.h>
@@ -51,7 +51,7 @@
 namespace WebKit {
 namespace NetworkCache {
 
-using namespace WebCore::FileSystem;
+using namespace FileSystem;
 
 static const AtomicString& resourceType()
 {

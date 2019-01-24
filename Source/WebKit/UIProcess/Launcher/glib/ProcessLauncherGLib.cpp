@@ -31,10 +31,10 @@
 #include "Connection.h"
 #include "FlatpakLauncher.h"
 #include "ProcessExecutablePath.h"
-#include <WebCore/FileSystem.h>
 #include <errno.h>
 #include <fcntl.h>
 #include <glib.h>
+#include <wtf/FileSystem.h>
 #include <wtf/RunLoop.h>
 #include <wtf/UniStdExtras.h>
 #include <wtf/glib/GLibUtilities.h>
@@ -47,7 +47,6 @@
 #endif
 
 namespace WebKit {
-using namespace WebCore;
 
 static void childSetupFunction(gpointer userData)
 {

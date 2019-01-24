@@ -5,6 +5,8 @@ list(APPEND WTF_SOURCES
     generic/RunLoopGeneric.cpp
     generic/WorkQueueGeneric.cpp
 
+    posix/FileSystemPOSIX.cpp
+
     text/unix/TextBreakIteratorInternalICUUnix.cpp
 
     unix/CPUTimeUnix.cpp

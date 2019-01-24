@@ -28,7 +28,6 @@
 #import "TestWKWebView.h"
 #import "Utilities.h"
 #import <Foundation/NSProgress.h>
-#import <WebCore/FileSystem.h>
 #import <WebKit/WKBrowsingContextController.h>
 #import <WebKit/WKNavigationDelegatePrivate.h>
 #import <WebKit/WKProcessPoolPrivate.h>
@@ -37,6 +36,7 @@
 #import <WebKit/_WKDownloadDelegate.h>
 #import <pal/spi/cocoa/NSProgressSPI.h>
 #import <wtf/BlockPtr.h>
+#import <wtf/FileSystem.h>
 #import <wtf/RetainPtr.h>
 #import <wtf/WeakObjCPtr.h>
 
@@ -380,10 +380,10 @@ static void* progressObservingContext = &progressObservingContext;
 {
     EXPECT_EQ(download, m_download.get());
 
-    WebCore::FileSystem::PlatformFileHandle fileHandle;
-    RetainPtr<NSString> path = (NSString *)WebCore::FileSystem::openTemporaryFile("TestWebKitAPI", fileHandle);
-    EXPECT_TRUE(fileHandle != WebCore::FileSystem::invalidPlatformFileHandle);
-    WebCore::FileSystem::closeFile(fileHandle);
+    FileSystem::PlatformFileHandle fileHandle;
+    RetainPtr<NSString> path = (NSString *)FileSystem::openTemporaryFile("TestWebKitAPI", fileHandle);
+    EXPECT_TRUE(fileHandle != FileSystem::invalidPlatformFileHandle);
+    FileSystem::closeFile(fileHandle);
 
     completionHandler(YES, path.get());
 }

@@ -77,7 +77,7 @@ std::unique_ptr<Statistics> Statistics::open(Cache& cache, const String& cachePa
 {
     ASSERT(RunLoop::isMain());
 
-    String databasePath = WebCore::FileSystem::pathByAppendingComponent(cachePath, StatisticsDatabaseName);
+    String databasePath = FileSystem::pathByAppendingComponent(cachePath, StatisticsDatabaseName);
     return std::make_unique<Statistics>(cache, databasePath);
 }
 
@@ -98,7 +98,7 @@ void Statistics::initialize(const String& databasePath)
     serialBackgroundIOQueue().dispatch([this, databasePath = databasePath.isolatedCopy(), networkCachePath = m_cache.recordsPath(), startTime] {
         WebCore::SQLiteTransactionInProgressAutoCounter transactionCounter;
 
-        if (!WebCore::FileSystem::makeAllDirectories(WebCore::FileSystem::directoryName(databasePath)))
+        if (!FileSystem::makeAllDirectories(FileSystem::directoryName(databasePath)))
             return;
 
         LOG(NetworkCache, "(NetworkProcess) Opening network cache statistics database at %s...", databasePath.utf8().data());

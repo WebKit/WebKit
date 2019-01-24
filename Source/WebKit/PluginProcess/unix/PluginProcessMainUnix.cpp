@@ -34,8 +34,8 @@
 #include "Logging.h"
 #include "NetscapePlugin.h"
 #include "PluginProcess.h"
-#include <WebCore/FileSystem.h>
 #include <stdlib.h>
+#include <wtf/FileSystem.h>
 
 #if PLATFORM(GTK)
 #include <gtk/gtk.h>

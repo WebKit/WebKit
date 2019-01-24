@@ -30,13 +30,13 @@
 #include "MarshallingHelpers.h"
 #include "WebPreferences.h"
 #include "WebSecurityOrigin.h"
-#include <wtf/RetainPtr.h>
 #include <WebCore/ApplicationCache.h>
 #include <WebCore/ApplicationCacheStorage.h>
 #include <WebCore/COMPtr.h>
-#include <WebCore/FileSystem.h>
 #include <WebCore/SecurityOrigin.h>
 #include <comutil.h>
+#include <wtf/FileSystem.h>
+#include <wtf/RetainPtr.h>
 
 using namespace WebCore;
 

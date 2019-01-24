@@ -29,11 +29,10 @@
 
 #include "WKBundleAPICast.h"
 #include "WKBundleInitialize.h"
-#include <WebCore/FileSystem.h>
+#include <wtf/FileSystem.h>
 #include <wtf/text/CString.h>
 
 namespace WebKit {
-using namespace WebCore;
 
 bool InjectedBundle::initialize(const WebProcessCreationParameters&, API::Object* initializationUserData)
 {

@@ -1,3 +1,81 @@
+2019-01-24  Ross Kirsling  <ross.kirsling@sony.com>
+
+        Move FileSystem to WTF
+        https://bugs.webkit.org/show_bug.cgi?id=193602
+
+        Reviewed by Yusuke Suzuki.
+
+        * Modules/encryptedmedia/CDM.cpp:
+        * Modules/encryptedmedia/legacy/WebKitMediaKeySession.cpp:
+        * Modules/entriesapi/DOMFileSystem.cpp:
+        * Modules/entriesapi/FileSystemEntry.cpp:
+        * Modules/indexeddb/IDBDatabaseIdentifier.cpp:
+        * Modules/indexeddb/server/SQLiteIDBBackingStore.cpp:
+        * Modules/indexeddb/server/SQLiteIDBTransaction.cpp:
+        * Modules/indexeddb/shared/InProcessIDBServer.cpp:
+        * Modules/webdatabase/DatabaseTracker.cpp:
+        * Modules/webdatabase/OriginLock.cpp:
+        * Modules/webdatabase/OriginLock.h:
+        * Modules/webdatabase/cocoa/DatabaseManagerCocoa.mm:
+        * PlatformMac.cmake:
+        * PlatformPlayStation.cmake:
+        * PlatformWin.cmake:
+        * Sources.txt:
+        * SourcesCocoa.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/GCController.cpp:
+        * dom/DataTransferItem.cpp:
+        * editing/cocoa/WebContentReaderCocoa.mm:
+        * fileapi/File.cpp:
+        * fileapi/FileCocoa.mm:
+        * html/FileInputType.cpp:
+        * html/FileListCreator.cpp:
+        * loader/appcache/ApplicationCacheHost.cpp:
+        * loader/appcache/ApplicationCacheStorage.cpp:
+        * page/Page.cpp:
+        * page/SecurityOrigin.cpp:
+        * page/SecurityOriginData.cpp:
+        * platform/FileHandle.h:
+        * platform/FileStream.cpp:
+        * platform/FileStream.h:
+        * platform/SharedBuffer.h:
+        * platform/SourcesGLib.txt:
+        * platform/cocoa/FileMonitorCocoa.mm:
+        * platform/glib/FileMonitorGLib.cpp:
+        * platform/glib/SharedBufferGlib.cpp:
+        * platform/graphics/avfoundation/objc/CDMSessionAVContentKeySession.mm:
+        * platform/graphics/avfoundation/objc/CDMSessionAVStreamSession.mm:
+        * platform/graphics/avfoundation/objc/CDMSessionMediaSourceAVFObjC.mm:
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateMediaSourceAVFObjC.mm:
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.cpp:
+        * platform/ios/QuickLook.mm:
+        * platform/ios/WebItemProviderPasteboard.mm:
+        * platform/mediarecorder/cocoa/MediaRecorderPrivateWriterCocoa.mm:
+        * platform/network/BlobDataFileReference.cpp:
+        * platform/network/BlobRegistryImpl.cpp:
+        * platform/network/BlobResourceHandle.cpp:
+        * platform/network/FormData.cpp:
+        * platform/network/cf/FormDataStreamCFNet.cpp:
+        * platform/network/cocoa/ResourceRequestCocoa.mm:
+        * platform/network/curl/CookieJarDB.cpp:
+        * platform/network/curl/CurlCacheEntry.h:
+        * platform/network/curl/CurlCacheManager.cpp:
+        * platform/network/curl/CurlFormDataStream.h:
+        * platform/network/curl/CurlRequest.h:
+        * platform/network/curl/NetworkStorageSessionCurl.cpp:
+        * platform/network/curl/ResourceHandleCurl.cpp:
+        * platform/network/mac/BlobDataFileReferenceMac.mm:
+        * platform/network/soup/ResourceHandleSoup.cpp:
+        * platform/network/soup/SoupNetworkSession.cpp:
+        * platform/posix/SharedBufferPOSIX.cpp:
+        * platform/sql/SQLiteFileSystem.cpp:
+        * platform/text/hyphen/HyphenationLibHyphen.cpp:
+        * platform/win/SearchPopupMenuDB.cpp:
+        * rendering/RenderTheme.cpp:
+        * rendering/RenderThemeGtk.cpp:
+        * rendering/RenderThemeWin.cpp:
+        * workers/service/server/RegistrationDatabase.cpp:
+
 2019-01-24  Zalan Bujtas  <zalan@apple.com>
 
         [LFC][BFC][MarginCollapsing] MarginCollapse::collapsedVerticalValues should not return computed non-collapsed values.

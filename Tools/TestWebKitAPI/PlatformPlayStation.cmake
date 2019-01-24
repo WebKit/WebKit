@@ -14,5 +14,4 @@ set(test_main_SOURCES
 
 list(APPEND TestWTF_SOURCES
     ${TESTWEBKITAPI_DIR}/generic/UtilitiesGeneric.cpp
-    ${TESTWEBKITAPI_DIR}/Tests/WTF/RunLoop.cpp
 )

@@ -16,6 +16,7 @@ list(APPEND WTF_SOURCES
     generic/MainThreadGeneric.cpp
     generic/WorkQueueGeneric.cpp
 
+    glib/FileSystemGlib.cpp
     glib/GLibUtilities.cpp
     glib/GRefPtr.cpp
     glib/RunLoopGLib.cpp
@@ -40,5 +41,6 @@ list(APPEND WTF_LIBRARIES
 )
 
 list(APPEND WTF_SYSTEM_INCLUDE_DIRECTORIES
+    ${GIO_UNIX_INCLUDE_DIRS}
     ${GLIB_INCLUDE_DIRS}
 )

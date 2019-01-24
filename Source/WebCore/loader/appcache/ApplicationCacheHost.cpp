@@ -33,7 +33,6 @@
 #include "DocumentLoader.h"
 #include "DOMApplicationCache.h"
 #include "EventNames.h"
-#include "FileSystem.h"
 #include "Frame.h"
 #include "FrameLoader.h"
 #include "FrameLoaderClient.h"
@@ -44,6 +43,7 @@
 #include "ResourceRequest.h"
 #include "Settings.h"
 #include "SubresourceLoader.h"
+#include <wtf/FileSystem.h>
 #include <wtf/UUID.h>
 
 namespace WebCore {

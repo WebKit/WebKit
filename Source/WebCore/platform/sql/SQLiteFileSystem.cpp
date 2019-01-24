@@ -31,10 +31,10 @@
 #include "config.h"
 #include "SQLiteFileSystem.h"
 
-#include "FileSystem.h"
 #include "SQLiteDatabase.h"
 #include "SQLiteStatement.h"
 #include <sqlite3.h>
+#include <wtf/FileSystem.h>
 
 #if PLATFORM(IOS_FAMILY)
 #include <pal/spi/ios/SQLite3SPI.h>

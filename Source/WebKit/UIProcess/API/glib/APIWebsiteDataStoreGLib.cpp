@@ -26,7 +26,7 @@
 #include "config.h"
 #include "APIWebsiteDataStore.h"
 
-#include <WebCore/FileSystem.h>
+#include <wtf/FileSystem.h>
 #include <wtf/glib/GUniquePtr.h>
 
 #if PLATFORM(GTK)
@@ -46,12 +46,12 @@ WTF::String WebsiteDataStore::defaultApplicationCacheDirectory()
 // Why is only this directory namespaced to a particular application?
 WTF::String WebsiteDataStore::defaultNetworkCacheDirectory()
 {
-    return cacheDirectoryFileSystemRepresentation(WebCore::FileSystem::pathByAppendingComponent(WebCore::FileSystem::stringFromFileSystemRepresentation(g_get_prgname()), "WebKitCache"));
+    return cacheDirectoryFileSystemRepresentation(FileSystem::pathByAppendingComponent(FileSystem::stringFromFileSystemRepresentation(g_get_prgname()), "WebKitCache"));
 }
 
 WTF::String WebsiteDataStore::defaultCacheStorageDirectory()
 {
-    return cacheDirectoryFileSystemRepresentation(WebCore::FileSystem::pathByAppendingComponent(WebCore::FileSystem::stringFromFileSystemRepresentation(g_get_prgname()), "CacheStorage"));
+    return cacheDirectoryFileSystemRepresentation(FileSystem::pathByAppendingComponent(FileSystem::stringFromFileSystemRepresentation(g_get_prgname()), "CacheStorage"));
 }
 
 WTF::String WebsiteDataStore::defaultIndexedDBDatabaseDirectory()
@@ -91,19 +91,19 @@ WTF::String WebsiteDataStore::defaultResourceLoadStatisticsDirectory()
 
 WTF::String WebsiteDataStore::cacheDirectoryFileSystemRepresentation(const WTF::String& directoryName)
 {
-    return WebCore::FileSystem::pathByAppendingComponent(WebCore::FileSystem::stringFromFileSystemRepresentation(g_get_user_cache_dir()), directoryName);
+    return FileSystem::pathByAppendingComponent(FileSystem::stringFromFileSystemRepresentation(g_get_user_cache_dir()), directoryName);
 }
 
 WTF::String WebsiteDataStore::websiteDataDirectoryFileSystemRepresentation(const WTF::String& directoryName)
 {
-    return WebCore::FileSystem::pathByAppendingComponent(WebCore::FileSystem::stringFromFileSystemRepresentation(g_get_user_data_dir()), directoryName);
+    return FileSystem::pathByAppendingComponent(FileSystem::stringFromFileSystemRepresentation(g_get_user_data_dir()), directoryName);
 }
 
 WTF::String WebsiteDataStore::legacyDefaultApplicationCacheDirectory()
 {
 #if PLATFORM(WPE)
     GUniquePtr<gchar> cacheDirectory(g_build_filename(g_get_user_cache_dir(), "wpe", "appcache", nullptr));
-    return WebCore::FileSystem::stringFromFileSystemRepresentation(cacheDirectory.get());
+    return FileSystem::stringFromFileSystemRepresentation(cacheDirectory.get());
 #endif
     return defaultApplicationCacheDirectory();
 }
@@ -112,7 +112,7 @@ WTF::String WebsiteDataStore::legacyDefaultNetworkCacheDirectory()
 {
 #if PLATFORM(WPE)
     GUniquePtr<char> diskCacheDirectory(g_build_filename(g_get_user_cache_dir(), "wpe", "cache", nullptr));
-    return WebCore::FileSystem::stringFromFileSystemRepresentation(diskCacheDirectory.get());
+    return FileSystem::stringFromFileSystemRepresentation(diskCacheDirectory.get());
 #endif
     return defaultNetworkCacheDirectory();
 }
@@ -121,7 +121,7 @@ WTF::String WebsiteDataStore::legacyDefaultWebSQLDatabaseDirectory()
 {
 #if PLATFORM(WPE)
     GUniquePtr<gchar> databaseDirectory(g_build_filename(g_get_user_data_dir(), "wpe", "databases", nullptr));
-    return WebCore::FileSystem::stringFromFileSystemRepresentation(databaseDirectory.get());
+    return FileSystem::stringFromFileSystemRepresentation(databaseDirectory.get());
 #endif
     return defaultWebSQLDatabaseDirectory();
 }
@@ -130,7 +130,7 @@ WTF::String WebsiteDataStore::legacyDefaultIndexedDBDatabaseDirectory()
 {
 #if PLATFORM(WPE)
     GUniquePtr<gchar> indexedDBDatabaseDirectory(g_build_filename(g_get_user_data_dir(), "wpe", "databases", "indexeddb", nullptr));
-    return WebCore::FileSystem::stringFromFileSystemRepresentation(indexedDBDatabaseDirectory.get());
+    return FileSystem::stringFromFileSystemRepresentation(indexedDBDatabaseDirectory.get());
 #endif
     return defaultIndexedDBDatabaseDirectory();
 }
@@ -139,7 +139,7 @@ WTF::String WebsiteDataStore::legacyDefaultLocalStorageDirectory()
 {
 #if PLATFORM(WPE)
     GUniquePtr<gchar> storageDirectory(g_build_filename(g_get_user_data_dir(), "wpe", "localstorage", nullptr));
-    return WebCore::FileSystem::stringFromFileSystemRepresentation(storageDirectory.get());
+    return FileSystem::stringFromFileSystemRepresentation(storageDirectory.get());
 #endif
     return defaultLocalStorageDirectory();
 }
@@ -148,7 +148,7 @@ WTF::String WebsiteDataStore::legacyDefaultMediaCacheDirectory()
 {
 #if PLATFORM(WPE)
     GUniquePtr<gchar> cacheDirectory(g_build_filename(g_get_user_cache_dir(), "wpe", "mediacache", nullptr));
-    return WebCore::FileSystem::stringFromFileSystemRepresentation(cacheDirectory.get());
+    return FileSystem::stringFromFileSystemRepresentation(cacheDirectory.get());
 #endif
     return defaultMediaCacheDirectory();
 }
@@ -157,7 +157,7 @@ WTF::String WebsiteDataStore::legacyDefaultMediaKeysStorageDirectory()
 {
 #if PLATFORM(WPE)
     GUniquePtr<gchar> mediaKeysStorageDirectory(g_build_filename(g_get_user_data_dir(), "wpe", "mediakeys", nullptr));
-    return WebCore::FileSystem::stringFromFileSystemRepresentation(mediaKeysStorageDirectory.get());
+    return FileSystem::stringFromFileSystemRepresentation(mediaKeysStorageDirectory.get());
 #endif
     return defaultMediaKeysStorageDirectory();
 }
@@ -166,7 +166,7 @@ String WebsiteDataStore::legacyDefaultDeviceIdHashSaltsStorageDirectory()
 {
 #if PLATFORM(WPE)
     GUniquePtr<gchar> deviceIdHashSaltsStorageDirectory(g_build_filename(g_get_user_data_dir(), "wpe", "deviceidhashsalts", nullptr));
-    return WebCore::FileSystem::stringFromFileSystemRepresentation(deviceIdHashSaltsStorageDirectory.get());
+    return FileSystem::stringFromFileSystemRepresentation(deviceIdHashSaltsStorageDirectory.get());
 #endif
     return defaultDeviceIdHashSaltsStorageDirectory();
 }
@@ -174,7 +174,7 @@ String WebsiteDataStore::legacyDefaultDeviceIdHashSaltsStorageDirectory()
 WTF::String WebsiteDataStore::legacyDefaultJavaScriptConfigurationDirectory()
 {
     GUniquePtr<gchar> javaScriptCoreConfigDirectory(g_build_filename(g_get_user_data_dir(), BASE_DIRECTORY, "JavaScriptCoreDebug", nullptr));
-    return WebCore::FileSystem::stringFromFileSystemRepresentation(javaScriptCoreConfigDirectory.get());
+    return FileSystem::stringFromFileSystemRepresentation(javaScriptCoreConfigDirectory.get());
 }
 
 Ref<WebKit::WebsiteDataStoreConfiguration> WebsiteDataStore::defaultDataStoreConfiguration()

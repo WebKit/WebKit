@@ -28,8 +28,8 @@
 
 #include "RemoteWebInspectorUI.h"
 
-#include <WebCore/FileSystem.h>
 #include <WebCore/WebCoreBundleWin.h>
+#include <wtf/FileSystem.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebKit {

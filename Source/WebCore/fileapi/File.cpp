@@ -27,11 +27,11 @@
 #include "File.h"
 
 #include "BlobURL.h"
-#include "FileMetadata.h"
-#include "FileSystem.h"
 #include "MIMETypeRegistry.h"
 #include "ThreadableBlobRegistry.h"
 #include <wtf/DateMath.h>
+#include <wtf/FileMetadata.h>
+#include <wtf/FileSystem.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {

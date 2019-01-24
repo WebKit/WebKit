@@ -42,12 +42,12 @@ using namespace NetworkCache;
 
 static inline String cachesListFilename(const String& cachesRootPath)
 {
-    return WebCore::FileSystem::pathByAppendingComponent(cachesRootPath, "cacheslist"_s);
+    return FileSystem::pathByAppendingComponent(cachesRootPath, "cacheslist"_s);
 }
 
 static inline String cachesOriginFilename(const String& cachesRootPath)
 {
-    return WebCore::FileSystem::pathByAppendingComponent(cachesRootPath, "origin"_s);
+    return FileSystem::pathByAppendingComponent(cachesRootPath, "origin"_s);
 }
 
 Caches::~Caches()
@@ -58,7 +58,7 @@ Caches::~Caches()
 void Caches::retrieveOriginFromDirectory(const String& folderPath, WorkQueue& queue, WTF::CompletionHandler<void(Optional<WebCore::ClientOrigin>&&)>&& completionHandler)
 {
     queue.dispatch([completionHandler = WTFMove(completionHandler), filename = cachesOriginFilename(folderPath)]() mutable {
-        if (!WebCore::FileSystem::fileExists(filename)) {
+        if (!FileSystem::fileExists(filename)) {
             RunLoop::main().dispatch([completionHandler = WTFMove(completionHandler)]() mutable {
                 completionHandler(WTF::nullopt);
             });
@@ -408,7 +408,7 @@ void Caches::readCachesFromDisk(WTF::Function<void(Expected<Vector<Cache>, Error
     }
 
     auto filename = cachesListFilename(m_rootPath);
-    if (!WebCore::FileSystem::fileExists(filename)) {
+    if (!FileSystem::fileExists(filename)) {
         callback(Vector<Cache> { });
         return;
     }

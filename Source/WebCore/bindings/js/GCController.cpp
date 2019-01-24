@@ -27,7 +27,6 @@
 #include "GCController.h"
 
 #include "CommonVM.h"
-#include "FileSystem.h"
 #include "JSHTMLDocument.h"
 #include "Location.h"
 #include <JavaScriptCore/Heap.h>
@@ -36,6 +35,7 @@
 #include <JavaScriptCore/VM.h>
 #include <pal/Logging.h>
 #include <wtf/FastMalloc.h>
+#include <wtf/FileSystem.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/StdLibExtras.h>
 

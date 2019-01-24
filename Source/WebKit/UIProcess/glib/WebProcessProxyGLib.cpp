@@ -31,8 +31,8 @@
 #endif
 #include "WebProcessPool.h"
 #include "WebsiteDataStore.h"
-#include <WebCore/FileSystem.h>
 #include <WebCore/PlatformDisplay.h>
+#include <wtf/FileSystem.h>
 
 namespace WebKit {
 using namespace WebCore;

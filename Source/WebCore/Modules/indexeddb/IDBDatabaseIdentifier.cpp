@@ -28,8 +28,8 @@
 
 #if ENABLE(INDEXED_DATABASE)
 
-#include "FileSystem.h"
 #include "SecurityOrigin.h"
+#include <wtf/FileSystem.h>
 #include <wtf/Ref.h>
 #include <wtf/text/WTFString.h>
 

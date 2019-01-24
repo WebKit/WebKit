@@ -84,7 +84,6 @@ list(APPEND WebCore_SOURCES
     platform/win/DragDataWin.cpp
     platform/win/DragImageWin.cpp
     platform/win/EventLoopWin.cpp
-    platform/win/FileSystemWin.cpp
     platform/win/GDIObjectCounter.cpp
     platform/win/GDIUtilities.cpp
     platform/win/KeyEventWin.cpp
@@ -93,7 +92,6 @@ list(APPEND WebCore_SOURCES
     platform/win/MIMETypeRegistryWin.cpp
     platform/win/MainThreadSharedTimerWin.cpp
     platform/win/PasteboardWin.cpp
-    platform/win/PathWalker.cpp
     platform/win/PlatformMouseEventWin.cpp
     platform/win/PlatformScreenWin.cpp
     platform/win/PopupMenuWin.cpp
@@ -248,7 +246,6 @@ if (USE_CF)
     list(APPEND WebCore_SOURCES
         loader/archive/cf/LegacyWebArchive.cpp
 
-        platform/cf/FileSystemCF.cpp
         platform/cf/KeyedDecoderCF.cpp
         platform/cf/KeyedEncoderCF.cpp
         platform/cf/SharedBufferCF.cpp

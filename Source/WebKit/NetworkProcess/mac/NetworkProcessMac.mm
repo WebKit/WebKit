@@ -38,12 +38,12 @@
 #import "StringUtilities.h"
 #import "WKFoundation.h"
 #import <WebCore/CertificateInfo.h>
-#import <WebCore/FileSystem.h>
 #import <WebCore/LocalizedStrings.h>
 #import <notify.h>
 #import <pal/spi/cf/CFNetworkSPI.h>
 #import <pal/spi/cocoa/LaunchServicesSPI.h>
 #import <sysexits.h>
+#import <wtf/FileSystem.h>
 #import <wtf/MemoryPressureHandler.h>
 #import <wtf/text/WTFString.h>
 

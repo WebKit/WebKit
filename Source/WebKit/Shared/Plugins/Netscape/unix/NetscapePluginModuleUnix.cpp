@@ -30,12 +30,12 @@
 
 #include "NetscapeBrowserFuncs.h"
 #include "PluginProcessProxy.h"
-#include <WebCore/FileSystem.h>
 #include <errno.h>
 #include <fcntl.h>
 #include <sys/stat.h>
 #include <sys/types.h>
 #include <unistd.h>
+#include <wtf/FileSystem.h>
 #include <wtf/text/StringBuilder.h>
 
 namespace WebKit {

@@ -33,9 +33,9 @@
 #include "ResourceLoadStatisticsMemoryStore.h"
 #include "WebResourceLoadStatisticsStore.h"
 #include <WebCore/FileMonitor.h>
-#include <WebCore/FileSystem.h>
 #include <WebCore/KeyedCoding.h>
 #include <WebCore/SharedBuffer.h>
+#include <wtf/FileSystem.h>
 #include <wtf/RunLoop.h>
 #include <wtf/WorkQueue.h>
 

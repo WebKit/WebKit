@@ -35,13 +35,13 @@
 #include "BlobData.h"
 #include "BlobPart.h"
 #include "BlobResourceHandle.h"
-#include "FileMetadata.h"
-#include "FileSystem.h"
 #include "ResourceError.h"
 #include "ResourceHandle.h"
 #include "ResourceRequest.h"
 #include "ResourceResponse.h"
 #include <wtf/CompletionHandler.h>
+#include <wtf/FileMetadata.h>
+#include <wtf/FileSystem.h>
 #include <wtf/MainThread.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/Scope.h>

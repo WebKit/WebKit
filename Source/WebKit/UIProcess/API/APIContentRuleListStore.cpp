@@ -39,6 +39,7 @@
 #include <WebCore/QualifiedName.h>
 #include <string>
 #include <wtf/CompletionHandler.h>
+#include <wtf/FileSystem.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/RunLoop.h>
 #include <wtf/WorkQueue.h>
@@ -48,7 +49,7 @@
 
 namespace API {
 using namespace WebKit::NetworkCache;
-using namespace WebCore::FileSystem;
+using namespace FileSystem;
 
 ContentRuleListStore& ContentRuleListStore::legacyDefaultStore()
 {

@@ -1,3 +1,27 @@
+2019-01-24  Ross Kirsling  <ross.kirsling@sony.com>
+
+        Move FileSystem to WTF
+        https://bugs.webkit.org/show_bug.cgi?id=193602
+
+        Reviewed by Yusuke Suzuki.
+
+        * DumpRenderTree/win/DumpRenderTree.cpp:
+        * TestWebKitAPI/CMakeLists.txt:
+        * TestWebKitAPI/PlatformGTK.cmake:
+        * TestWebKitAPI/PlatformJSCOnly.cmake:
+        * TestWebKitAPI/PlatformPlayStation.cmake:
+        * TestWebKitAPI/PlatformWPE.cmake:
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WTF/FileSystem.cpp: Renamed from Tools/TestWebKitAPI/Tests/WebCore/FileSystem.cpp.
+        * TestWebKitAPI/Tests/WebCore/FileMonitor.cpp:
+        * TestWebKitAPI/Tests/WebCore/SecurityOrigin.cpp:
+        * TestWebKitAPI/Tests/WebCore/SharedBufferTest.cpp:
+        * TestWebKitAPI/Tests/WebCore/cocoa/DatabaseTrackerTest.mm:
+        * TestWebKitAPI/Tests/WebCore/curl/Cookies.cpp:
+        * TestWebKitAPI/Tests/WebKitCocoa/Download.mm:
+        * TestWebKitAPI/Tests/WebKitCocoa/DownloadProgress.mm:
+        * TestWebKitAPI/win/PlatformUtilitiesWin.cpp:
+
 2019-01-24  Philippe Normand  <pnormand@igalia.com>
 
         [WPE] Remove hard dependency on subprocess32 for the API tests

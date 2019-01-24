@@ -30,12 +30,12 @@
 
 #include "CurlCacheManager.h"
 
-#include "FileSystem.h"
 #include "HTTPHeaderMap.h"
 #include "Logging.h"
 #include "ResourceHandleClient.h"
 #include "ResourceHandleInternal.h"
 #include "ResourceRequest.h"
+#include <wtf/FileSystem.h>
 #include <wtf/HashMap.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/text/CString.h>

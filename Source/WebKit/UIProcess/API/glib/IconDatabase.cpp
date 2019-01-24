@@ -29,11 +29,11 @@
 
 #include "Logging.h"
 #include <WebCore/BitmapImage.h>
-#include <WebCore/FileSystem.h>
 #include <WebCore/Image.h>
 #include <WebCore/SQLiteStatement.h>
 #include <WebCore/SQLiteTransaction.h>
 #include <WebCore/SharedBuffer.h>
+#include <wtf/FileSystem.h>
 #include <wtf/MainThread.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/StdLibExtras.h>

@@ -29,9 +29,9 @@
 #if ENABLE(LEGACY_ENCRYPTED_MEDIA) && ENABLE(MEDIA_SOURCE)
 
 #import "CDMPrivateMediaSourceAVFObjC.h"
-#import "FileSystem.h"
 #import "WebCoreNSErrorExtras.h"
 #import <AVFoundation/AVError.h>
+#import <wtf/FileSystem.h>
 
 namespace WebCore {
 

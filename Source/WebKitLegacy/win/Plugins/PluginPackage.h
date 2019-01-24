@@ -29,8 +29,8 @@
 
 #include "PlatformModule.h"
 #include "PluginQuirkSet.h"
-#include <WebCore/FileSystem.h>
 #include <WebCore/Timer.h>
+#include <wtf/FileSystem.h>
 #include <wtf/HashMap.h>
 #include <wtf/RefCounted.h>
 #include <wtf/text/StringHash.h>

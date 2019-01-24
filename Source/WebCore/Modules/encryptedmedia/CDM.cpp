@@ -31,7 +31,6 @@
 #include "CDMFactory.h"
 #include "CDMPrivate.h"
 #include "Document.h"
-#include "FileSystem.h"
 #include "InitDataRegistry.h"
 #include "MediaKeysRequirement.h"
 #include "MediaPlayer.h"
@@ -42,6 +41,7 @@
 #include "SecurityOrigin.h"
 #include "SecurityOriginData.h"
 #include "Settings.h"
+#include <wtf/FileSystem.h>
 #include <wtf/NeverDestroyed.h>
 
 namespace WebCore {

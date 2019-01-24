@@ -31,7 +31,6 @@
 
 #import "SandboxInitializationParameters.h"
 #import "XPCServiceEntryPoint.h"
-#import <WebCore/FileSystem.h>
 #import <WebCore/FloatingPointEnvironment.h>
 #import <WebCore/SystemVersion.h>
 #import <mach/mach.h>
@@ -39,6 +38,7 @@
 #import <pwd.h>
 #import <stdlib.h>
 #import <sysexits.h>
+#import <wtf/FileSystem.h>
 
 #if ENABLE(MANUAL_SANDBOXING)
 #import <wtf/spi/darwin/SandboxSPI.h>

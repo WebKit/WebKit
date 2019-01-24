@@ -29,12 +29,12 @@
 #include "DOMFormData.h"
 #include "Document.h"
 #include "File.h"
-#include "FileSystem.h"
 #include "FormDataBuilder.h"
 #include "Page.h"
 #include "SharedBuffer.h"
 #include "TextEncoding.h"
 #include "ThreadableBlobRegistry.h"
+#include <wtf/FileSystem.h>
 #include <wtf/text/LineEnding.h>
 
 namespace WebCore {

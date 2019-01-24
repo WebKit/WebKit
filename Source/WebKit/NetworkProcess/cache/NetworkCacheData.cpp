@@ -26,9 +26,9 @@
 #include "config.h"
 #include "NetworkCacheData.h"
 
-#include <WebCore/FileSystem.h>
 #include <fcntl.h>
 #include <wtf/CryptographicallyRandomNumber.h>
+#include <wtf/FileSystem.h>
 
 #if !OS(WINDOWS)
 #include <sys/mman.h>
@@ -156,7 +156,7 @@ static Salt makeSalt()
 Optional<Salt> readOrMakeSalt(const String& path)
 {
 #if !OS(WINDOWS)
-    auto cpath = WebCore::FileSystem::fileSystemRepresentation(path);
+    auto cpath = FileSystem::fileSystemRepresentation(path);
     auto fd = open(cpath.data(), O_RDONLY, 0);
     Salt salt;
     auto bytesRead = read(fd, salt.data(), salt.size());

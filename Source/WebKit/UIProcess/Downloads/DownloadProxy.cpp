@@ -36,8 +36,8 @@
 #include "WebProcessMessages.h"
 #include "WebProcessPool.h"
 #include "WebProtectionSpace.h"
-#include <WebCore/FileSystem.h>
 #include <WebCore/MIMETypeRegistry.h>
+#include <wtf/FileSystem.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/WTFString.h>
 

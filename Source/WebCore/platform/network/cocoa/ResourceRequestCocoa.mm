@@ -28,13 +28,13 @@
 
 #if PLATFORM(COCOA)
 
-#import "FileSystem.h"
 #import "FormDataStreamMac.h"
 #import "HTTPHeaderNames.h"
 #import "ResourceRequestCFNet.h"
 #import "RuntimeApplicationChecks.h"
 #import <Foundation/Foundation.h>
 #import <pal/spi/cf/CFNetworkSPI.h>
+#import <wtf/FileSystem.h>
 #import <wtf/text/CString.h>
 
 namespace WebCore {

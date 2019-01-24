@@ -28,9 +28,8 @@
 
 #include "SandboxExtension.h"
 #include "SandboxUtilities.h"
-
 #include <Foundation/Foundation.h>
-#include <WebCore/FileSystem.h>
+#include <wtf/FileSystem.h>
 
 #if PLATFORM(IOS_FAMILY)
 #import <WebCore/RuntimeApplicationChecks.h>
@@ -169,7 +168,7 @@ WTF::String WebsiteDataStore::legacyDefaultIndexedDBDatabaseDirectory()
     // Currently, the top level of that directory contains entities related to WebSQL databases.
     // We should fix this, and move WebSQL into a subdirectory (https://bugs.webkit.org/show_bug.cgi?id=124807)
     // In the meantime, an entity name prefixed with three underscores will not conflict with any WebSQL entities.
-    return WebCore::FileSystem::pathByAppendingComponent(legacyDefaultWebSQLDatabaseDirectory(), "___IndexedDB");
+    return FileSystem::pathByAppendingComponent(legacyDefaultWebSQLDatabaseDirectory(), "___IndexedDB");
 }
 
 WTF::String WebsiteDataStore::legacyDefaultLocalStorageDirectory()

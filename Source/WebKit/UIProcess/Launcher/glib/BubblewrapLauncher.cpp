@@ -20,12 +20,12 @@
 
 #if ENABLE(BUBBLEWRAP_SANDBOX)
 
-#include <WebCore/FileSystem.h>
 #include <WebCore/PlatformDisplay.h>
 #include <fcntl.h>
 #include <glib.h>
 #include <seccomp.h>
 #include <sys/ioctl.h>
+#include <wtf/FileSystem.h>
 #include <wtf/glib/GLibUtilities.h>
 #include <wtf/glib/GRefPtr.h>
 #include <wtf/glib/GUniquePtr.h>

@@ -25,7 +25,6 @@
 #include "ControlStates.h"
 #include "Document.h"
 #include "FileList.h"
-#include "FileSystem.h"
 #include "FloatConversion.h"
 #include "FloatRoundedRect.h"
 #include "FocusController.h"
@@ -45,6 +44,7 @@
 #include "SpinButtonElement.h"
 #include "StringTruncator.h"
 #include "TextControlInnerElements.h"
+#include <wtf/FileSystem.h>
 #include <wtf/NeverDestroyed.h>
 
 #if ENABLE(METER_ELEMENT)
