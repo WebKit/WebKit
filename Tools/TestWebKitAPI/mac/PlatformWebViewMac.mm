@@ -26,24 +26,11 @@
 #import "config.h"
 #import "PlatformWebView.h"
 
+#import "OffscreenWindow.h"
 #import <Carbon/Carbon.h>
 #import <WebKit/WKRetainPtr.h>
 #import <WebKit/WKViewPrivate.h>
 #import <wtf/mac/AppKitCompatibilityDeclarations.h>
-
-@interface ActiveOffscreenWindow : NSWindow
-@end
-
-@implementation ActiveOffscreenWindow
-- (BOOL)isKeyWindow
-{
-    return YES;
-}
-- (BOOL)isVisible
-{
-    return YES;
-}
-@end
 
 namespace TestWebKitAPI {
 
@@ -53,13 +40,8 @@ void PlatformWebView::initialize(WKPageConfigurationRef configuration, Class wkV
     m_view = [[wkViewSubclass alloc] initWithFrame:rect configurationRef:configuration];
     [m_view setWindowOcclusionDetectionEnabled:NO];
 
-    NSRect windowRect = NSOffsetRect(rect, -10000, [(NSScreen *)[[NSScreen screens] objectAtIndex:0] frame].size.height - rect.size.height + 10000);
-    m_window = [[ActiveOffscreenWindow alloc] initWithContentRect:windowRect styleMask:NSWindowStyleMaskBorderless backing:NSBackingStoreBuffered defer:YES];
-    [m_window setColorSpace:[[NSScreen mainScreen] colorSpace]];
+    m_window = [[OffscreenWindow alloc] initWithSize:NSSizeToCGSize(rect.size)];
     [[m_window contentView] addSubview:m_view];
-    [m_window orderBack:nil];
-    [m_window setAutodisplay:NO];
-    [m_window setReleasedWhenClosed:NO];
 }
 
 PlatformWebView::PlatformWebView(WKPageConfigurationRef configuration)

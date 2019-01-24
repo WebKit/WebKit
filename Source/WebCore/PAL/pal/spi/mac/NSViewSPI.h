@@ -28,6 +28,9 @@
 #import <pal/spi/cocoa/QuartzCoreSPI.h>
 
 @interface NSView () <CALayerDelegate>
+
+- (NSView *)_findLastViewInKeyViewLoop;
+
 @end
 
 #endif // PLATFORM(MAC)

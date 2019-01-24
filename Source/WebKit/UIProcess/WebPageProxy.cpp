@@ -5869,7 +5869,10 @@ void WebPageProxy::setFocus(bool focused)
 
 void WebPageProxy::takeFocus(uint32_t direction)
 {
-    m_uiClient->takeFocus(this, (static_cast<FocusDirection>(direction) == FocusDirectionForward) ? kWKFocusDirectionForward : kWKFocusDirectionBackward);
+    if (m_uiClient->takeFocus(this, (static_cast<FocusDirection>(direction) == FocusDirectionForward) ? kWKFocusDirectionForward : kWKFocusDirectionBackward))
+        return;
+
+    pageClient().takeFocus(static_cast<FocusDirection>(direction));
 }
 
 void WebPageProxy::setToolTip(const String& toolTip)

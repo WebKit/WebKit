@@ -252,6 +252,18 @@ private:
 
     void didFinishProcessingAllPendingMouseEvents() final;
 
+#if ENABLE(WIRELESS_PLAYBACK_TARGET)
+    WebCore::WebMediaSessionManager& mediaSessionManager() override;
+#endif
+
+    void refView() override;
+    void derefView() override;
+
+    void didRestoreScrollPosition() override;
+    bool windowIsFrontWindowUnderMouse(const NativeWebMouseEvent&) override;
+
+    void takeFocus(WebCore::FocusDirection) override;
+
     NSView *m_view;
     WeakPtr<WebViewImpl> m_impl;
 #if USE(AUTOCORRECTION_PANEL)

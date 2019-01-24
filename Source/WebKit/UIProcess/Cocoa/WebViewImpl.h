@@ -32,6 +32,7 @@
 #include "WKDragDestinationAction.h"
 #include "WKLayoutMode.h"
 #include "_WKOverlayScrollbarStyle.h"
+#include <WebCore/FocusDirection.h>
 #include <WebCore/ScrollTypes.h>
 #include <WebCore/TextIndicatorWindow.h>
 #include <WebCore/UserInterfaceLayoutDirection.h>
@@ -602,6 +603,8 @@ public:
 
     void effectiveAppearanceDidChange();
     bool effectiveAppearanceIsDark();
+
+    void takeFocus(WebCore::FocusDirection);
 
 private:
 #if HAVE(TOUCH_BAR)

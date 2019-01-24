@@ -466,16 +466,17 @@ static inline _WKFocusDirection toWKFocusDirection(WKFocusDirection direction)
     return _WKFocusDirectionForward;
 }
 
-void UIDelegate::UIClient::takeFocus(WebPageProxy*, WKFocusDirection direction)
+bool UIDelegate::UIClient::takeFocus(WebPageProxy*, WKFocusDirection direction)
 {
     if (!m_uiDelegate.m_delegateMethods.webViewTakeFocus)
-        return;
+        return false;
     
     auto delegate = m_uiDelegate.m_delegate.get();
     if (!delegate)
-        return;
+        return false;
     
     [(id <WKUIDelegatePrivate>)delegate _webView:m_uiDelegate.m_webView takeFocus:toWKFocusDirection(direction)];
+    return true;
 }
 
 #if PLATFORM(MAC)

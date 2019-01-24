@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,35 +23,20 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <wtf/Platform.h>
+#pragma once
 
 #if PLATFORM(MAC)
 
-#if USE(APPLE_INTERNAL_SDK)
+#import <AppKit/AppKit.h>
 
-#import <AppKit/NSWindow_Private.h>
+@interface OffscreenWindow : NSWindow
 
-#else
+- (instancetype)init NS_UNAVAILABLE;
+- (instancetype)initWithContentRect:(NSRect)contentRect styleMask:(NSWindowStyleMask)style backing:(NSBackingStoreType)backingStoreType defer:(BOOL)flag NS_UNAVAILABLE;
+- (instancetype)initWithContentRect:(NSRect)contentRect styleMask:(NSWindowStyleMask)style backing:(NSBackingStoreType)backingStoreType defer:(BOOL)flag screen:(NSScreen *)screen NS_UNAVAILABLE;
 
-#import <AppKit/NSWindow.h>
-
-@interface NSWindow ()
-
-- (id)_oldFirstResponderBeforeBecoming;
-- (id)_newFirstResponderAfterResigning;
-- (void)_setCursorForMouseLocation:(NSPoint)point;
+- (instancetype)initWithSize:(CGSize)size;
 
 @end
 
-enum {
-    NSSideUtilityWindowMask = 1 << 9,
-    NSSmallWindowMask = 1 << 10,
-    _NSCarbonWindowMask = 1 << 25,
-};
-
 #endif
-
-extern NSString *NSWindowWillOrderOnScreenNotification;
-extern NSString *NSWindowWillOrderOffScreenNotification;
-
-#endif // PLATFORM(MAC)
