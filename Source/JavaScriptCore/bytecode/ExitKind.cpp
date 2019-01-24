@@ -70,8 +70,6 @@ const char* exitKindToString(ExitKind kind)
         return "ArgumentsEscaped";
     case ExoticObjectMode:
         return "ExoticObjectMode";
-    case NotStringObject:
-        return "NotStringObject";
     case VarargsOverflow:
         return "VarargsOverflow";
     case TDZFailure:

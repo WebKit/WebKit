@@ -9468,7 +9468,6 @@ void SpeculativeJIT::compileToStringOrCallStringConstructorOrStringValueOf(Node*
         GPRReg resultGPR = result.gpr();
         
         speculateStringObject(node->child1(), op1GPR);
-        m_interpreter.filter(node->child1(), SpecStringObject);
 
         m_jit.loadPtr(JITCompiler::Address(op1GPR, JSWrapperObject::internalValueCellOffset()), resultGPR);
         cellResult(resultGPR, node);
@@ -9479,17 +9478,13 @@ void SpeculativeJIT::compileToStringOrCallStringConstructorOrStringValueOf(Node*
         GPRTemporary result(this);
         GPRReg resultGPR = result.gpr();
 
-        m_jit.load32(JITCompiler::Address(op1GPR, JSCell::structureIDOffset()), resultGPR);
-        JITCompiler::Jump isString = m_jit.branchWeakStructure(
-            JITCompiler::Equal,
-            resultGPR,
-            m_jit.graph().registerStructure(m_jit.vm()->stringStructure.get()));
+        m_jit.load8(JITCompiler::Address(op1GPR, JSCell::typeInfoTypeOffset()), resultGPR);
+        JITCompiler::Jump isString = m_jit.branch32(JITCompiler::Equal, resultGPR, TrustedImm32(StringType));
 
-        speculateStringObjectForStructure(node->child1(), resultGPR);
-        
+        speculationCheck(BadType, JSValueSource::unboxedCell(op1GPR), node->child1().node(), m_jit.branch32(JITCompiler::NotEqual, resultGPR, TrustedImm32(StringObjectType)));
         m_jit.loadPtr(JITCompiler::Address(op1GPR, JSWrapperObject::internalValueCellOffset()), resultGPR);
-        
         JITCompiler::Jump done = m_jit.jump();
+
         isString.link(&m_jit);
         m_jit.move(op1GPR, resultGPR);
         done.link(&m_jit);
@@ -10192,9 +10187,9 @@ void SpeculativeJIT::speculateString(Edge edge)
     speculateString(edge, operand.gpr());
 }
 
-void SpeculativeJIT::speculateStringObject(Edge edge, GPRReg gpr)
+void SpeculativeJIT::speculateStringObject(Edge edge, GPRReg cellGPR)
 {
-    speculateStringObjectForStructure(edge, JITCompiler::Address(gpr, JSCell::structureIDOffset()));
+    DFG_TYPE_CHECK(JSValueSource::unboxedCell(cellGPR), edge, ~SpecCellCheck | SpecStringObject, m_jit.branchIfNotType(cellGPR, StringObjectType));
 }
 
 void SpeculativeJIT::speculateStringObject(Edge edge)
@@ -10204,11 +10199,7 @@ void SpeculativeJIT::speculateStringObject(Edge edge)
     
     SpeculateCellOperand operand(this, edge);
     GPRReg gpr = operand.gpr();
-    if (!needsTypeCheck(edge, SpecStringObject))
-        return;
-    
     speculateStringObject(edge, gpr);
-    m_interpreter.filter(edge, SpecStringObject);
 }
 
 void SpeculativeJIT::speculateStringOrStringObject(Edge edge)
@@ -10221,17 +10212,13 @@ void SpeculativeJIT::speculateStringOrStringObject(Edge edge)
     if (!needsTypeCheck(edge, SpecString | SpecStringObject))
         return;
 
-    GPRTemporary structureID(this);
-    GPRReg structureIDGPR = structureID.gpr();
+    GPRTemporary typeTemp(this);
+    GPRReg typeGPR = typeTemp.gpr();
 
-    m_jit.load32(JITCompiler::Address(gpr, JSCell::structureIDOffset()), structureIDGPR); 
-    JITCompiler::Jump isString = m_jit.branchWeakStructure(
-        JITCompiler::Equal,
-        structureIDGPR, 
-        m_jit.graph().registerStructure(m_jit.vm()->stringStructure.get()));
-    
-    speculateStringObjectForStructure(edge, structureIDGPR);
-    
+    m_jit.load8(JITCompiler::Address(gpr, JSCell::typeInfoTypeOffset()), typeGPR);
+
+    JITCompiler::Jump isString = m_jit.branch32(JITCompiler::Equal, typeGPR, TrustedImm32(StringType));
+    speculationCheck(BadType, JSValueSource::unboxedCell(gpr), edge.node(), m_jit.branch32(JITCompiler::NotEqual, typeGPR, TrustedImm32(StringObjectType)));
     isString.link(&m_jit);
     
     m_interpreter.filter(edge, SpecString | SpecStringObject);

@@ -1690,7 +1690,7 @@ bool Graph::isStringPrototypeMethodSane(JSGlobalObject* globalObject, UniquedStr
 
 bool Graph::canOptimizeStringObjectAccess(const CodeOrigin& codeOrigin)
 {
-    if (hasExitSite(codeOrigin, NotStringObject))
+    if (hasExitSite(codeOrigin, BadCache) || hasExitSite(codeOrigin, BadConstantCache))
         return false;
 
     JSGlobalObject* globalObject = globalObjectFor(codeOrigin);

@@ -33,7 +33,6 @@
 #include "DFGClobberSet.h"
 #include "DFGClobberize.h"
 #include "DFGDominators.h"
-#include "DFGEdgeUsesStructure.h"
 #include "DFGGraph.h"
 #include "DFGPhase.h"
 #include "JSCInlines.h"
