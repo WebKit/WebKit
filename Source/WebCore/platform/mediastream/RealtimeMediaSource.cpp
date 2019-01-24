@@ -890,9 +890,10 @@ void RealtimeMediaSource::setIntrinsicSize(const IntSize& size)
     if (m_intrinsicSize == size)
         return;
 
+    auto currentSize = this->size();
     m_intrinsicSize = size;
 
-    if (m_intrinsicSize != m_size)
+    if (currentSize != this->size())
         notifySettingsDidChangeObservers({ RealtimeMediaSourceSettings::Flag::Width, RealtimeMediaSourceSettings::Flag::Height });
 }
 

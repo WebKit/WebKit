@@ -260,7 +260,11 @@ const RealtimeMediaSourceSettings& AVVideoCaptureSource::settings()
         settings.setFacingMode(RealtimeMediaSourceSettings::Unknown);
 
     settings.setFrameRate(frameRate());
-    auto& size = this->size();
+
+    auto size = this->size();
+    if (m_sampleRotation == MediaSample::VideoRotation::Left || m_sampleRotation == MediaSample::VideoRotation::Right)
+        size = size.transposedSize();
+    
     settings.setWidth(size.width());
     settings.setHeight(size.height());
     settings.setDeviceId(hashedId());
@@ -501,25 +505,31 @@ void AVVideoCaptureSource::orientationChanged(int orientation)
 void AVVideoCaptureSource::computeSampleRotation()
 {
     bool frontCamera = [device() position] == AVCaptureDevicePositionFront;
+    MediaSample::VideoRotation sampleRotation;
     switch (m_sensorOrientation - m_deviceOrientation) {
     case 0:
-        m_sampleRotation = MediaSample::VideoRotation::None;
+        sampleRotation = MediaSample::VideoRotation::None;
         break;
     case 180:
     case -180:
-        m_sampleRotation = MediaSample::VideoRotation::UpsideDown;
+        sampleRotation = MediaSample::VideoRotation::UpsideDown;
         break;
     case 90:
-        m_sampleRotation = frontCamera ? MediaSample::VideoRotation::Left : MediaSample::VideoRotation::Right;
+        sampleRotation = frontCamera ? MediaSample::VideoRotation::Left : MediaSample::VideoRotation::Right;
         break;
     case -90:
     case -270:
-        m_sampleRotation = frontCamera ? MediaSample::VideoRotation::Right : MediaSample::VideoRotation::Left;
+        sampleRotation = frontCamera ? MediaSample::VideoRotation::Right : MediaSample::VideoRotation::Left;
         break;
     default:
         ASSERT_NOT_REACHED();
-        m_sampleRotation = MediaSample::VideoRotation::None;
+        sampleRotation = MediaSample::VideoRotation::None;
     }
+    if (sampleRotation == m_sampleRotation)
+        return;
+
+    m_sampleRotation = sampleRotation;
+    notifySettingsDidChangeObservers({ RealtimeMediaSourceSettings::Flag::Width, RealtimeMediaSourceSettings::Flag::Height });
 }
 
 void AVVideoCaptureSource::processNewFrame(Ref<MediaSample>&& sample)
