@@ -65,7 +65,7 @@ WTF_EXTERN_C_END
 // This only needs to be declared on macOS 10.12 Sierra because
 // it will never appear in those SDK headers.  See also
 // HAVE(CFNETWORK_OVERRIDE_SESSION_COOKIE_ACCEPT_POLICY).
-#if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED == 101200
+#if defined(__OBJC__) && PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED == 101200
 @interface NSHTTPCookieStorage ()
 @property (nonatomic, readwrite) BOOL _overrideSessionCookieAcceptPolicy;
 @end
