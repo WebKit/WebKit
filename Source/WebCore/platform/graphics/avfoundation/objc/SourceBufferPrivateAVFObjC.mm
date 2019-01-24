@@ -908,7 +908,7 @@ void SourceBufferPrivateAVFObjC::setCDMSession(CDMSessionMediaSourceAVFObjC* ses
     if (m_session)
         m_session->removeSourceBuffer(this);
 
-    m_session = session;
+    m_session = makeWeakPtr(session);
 
     if (m_session) {
         m_session->addSourceBuffer(this);
