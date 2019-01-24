@@ -426,14 +426,14 @@ class MediaSessionDescriptionFactoryTest : public testing::Test {
     std::unique_ptr<SessionDescription> desc;
     if (has_current_desc) {
       current_desc.reset(new SessionDescription());
-      EXPECT_TRUE(current_desc->AddTransportInfo(TransportInfo(
+      current_desc->AddTransportInfo(TransportInfo(
           "audio",
-          TransportDescription(current_audio_ufrag, current_audio_pwd))));
-      EXPECT_TRUE(current_desc->AddTransportInfo(TransportInfo(
+          TransportDescription(current_audio_ufrag, current_audio_pwd)));
+      current_desc->AddTransportInfo(TransportInfo(
           "video",
-          TransportDescription(current_video_ufrag, current_video_pwd))));
-      EXPECT_TRUE(current_desc->AddTransportInfo(TransportInfo(
-          "data", TransportDescription(current_data_ufrag, current_data_pwd))));
+          TransportDescription(current_video_ufrag, current_video_pwd)));
+      current_desc->AddTransportInfo(TransportInfo(
+          "data", TransportDescription(current_data_ufrag, current_data_pwd)));
     }
     if (offer) {
       desc.reset(f1_.CreateOffer(options, current_desc.get()));

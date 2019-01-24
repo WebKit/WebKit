@@ -49,7 +49,6 @@ class DelayBasedBwe {
       absl::optional<DataRate> acked_bitrate,
       absl::optional<DataRate> probe_bitrate,
       Timestamp at_time);
-  Result OnDelayedFeedback(Timestamp receive_time);
   void OnRttUpdate(TimeDelta avg_rtt);
   bool LatestEstimate(std::vector<uint32_t>* ssrcs, DataRate* bitrate) const;
   void SetStartBitrate(DataRate start_bitrate);
@@ -60,7 +59,6 @@ class DelayBasedBwe {
   friend class GoogCcStatePrinter;
   void IncomingPacketFeedback(const PacketFeedback& packet_feedback,
                               Timestamp at_time);
-  Result OnLongFeedbackDelay(Timestamp arrival_time);
   Result MaybeUpdateEstimate(absl::optional<DataRate> acked_bitrate,
                              absl::optional<DataRate> probe_bitrate,
                              bool request_probe,
@@ -81,7 +79,6 @@ class DelayBasedBwe {
   size_t trendline_window_size_;
   double trendline_smoothing_coeff_;
   double trendline_threshold_gain_;
-  int consecutive_delayed_feedbacks_;
   DataRate prev_bitrate_;
   BandwidthUsage prev_state_;
 

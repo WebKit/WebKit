@@ -60,16 +60,16 @@ static cricket::SessionDescription* CreateCricketSessionDescription() {
   video->AddCodec(cricket::VideoCodec(120, "VP8"));
   desc->AddContent(cricket::CN_VIDEO, MediaProtocolType::kRtp, video.release());
 
-  EXPECT_TRUE(desc->AddTransportInfo(cricket::TransportInfo(
+  desc->AddTransportInfo(cricket::TransportInfo(
       cricket::CN_AUDIO,
       cricket::TransportDescription(
           std::vector<std::string>(), kCandidateUfragVoice, kCandidatePwdVoice,
-          cricket::ICEMODE_FULL, cricket::CONNECTIONROLE_NONE, NULL))));
-  EXPECT_TRUE(desc->AddTransportInfo(cricket::TransportInfo(
+          cricket::ICEMODE_FULL, cricket::CONNECTIONROLE_NONE, NULL)));
+  desc->AddTransportInfo(cricket::TransportInfo(
       cricket::CN_VIDEO,
       cricket::TransportDescription(
           std::vector<std::string>(), kCandidateUfragVideo, kCandidatePwdVideo,
-          cricket::ICEMODE_FULL, cricket::CONNECTIONROLE_NONE, NULL))));
+          cricket::ICEMODE_FULL, cricket::CONNECTIONROLE_NONE, NULL)));
   return desc;
 }
 

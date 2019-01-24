@@ -196,12 +196,8 @@ bool SessionDescription::RemoveContentByName(const std::string& name) {
   return false;
 }
 
-bool SessionDescription::AddTransportInfo(const TransportInfo& transport_info) {
-  if (GetTransportInfoByName(transport_info.content_name) != NULL) {
-    return false;
-  }
+void SessionDescription::AddTransportInfo(const TransportInfo& transport_info) {
   transport_infos_.push_back(transport_info);
-  return true;
 }
 
 bool SessionDescription::RemoveTransportInfoByName(const std::string& name) {

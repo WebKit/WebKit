@@ -455,6 +455,33 @@ TEST_F(PeerConnectionRtpTestUnifiedPlan,
   EXPECT_EQ(1u, callee->observer()->remove_track_events_.size());
 }
 
+TEST_F(PeerConnectionRtpTestUnifiedPlan, ChangeMsidWhileReceiving) {
+  auto caller = CreatePeerConnection();
+  caller->AddAudioTrack("audio_track", {"stream1"});
+  auto callee = CreatePeerConnection();
+  ASSERT_TRUE(callee->SetRemoteDescription(caller->CreateOffer()));
+
+  ASSERT_EQ(1u, callee->observer()->on_track_transceivers_.size());
+  auto transceiver = callee->observer()->on_track_transceivers_[0];
+  ASSERT_EQ(1u, transceiver->receiver()->streams().size());
+  EXPECT_EQ("stream1", transceiver->receiver()->streams()[0]->id());
+
+  ASSERT_TRUE(callee->SetLocalDescription(callee->CreateAnswer()));
+
+  // Change the stream ID in the offer.
+  // TODO(https://crbug.com/webrtc/10129): When RtpSenderInterface::SetStreams
+  // is supported, this can use that instead of munging the SDP.
+  auto offer = caller->CreateOffer();
+  auto contents = offer->description()->contents();
+  ASSERT_EQ(1u, contents.size());
+  auto& stream_params = contents[0].media_description()->mutable_streams();
+  ASSERT_EQ(1u, stream_params.size());
+  stream_params[0].set_stream_ids({"stream2"});
+  ASSERT_TRUE(callee->SetRemoteDescription(std::move(offer)));
+  ASSERT_EQ(1u, transceiver->receiver()->streams().size());
+  EXPECT_EQ("stream2", transceiver->receiver()->streams()[0]->id());
+}
+
 // These tests examine the state of the peer connection as a result of
 // performing SetRemoteDescription().
 

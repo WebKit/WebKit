@@ -46,8 +46,6 @@ constexpr size_t kDefaultTrendlineWindowSize = 20;
 constexpr double kDefaultTrendlineSmoothingCoeff = 0.9;
 constexpr double kDefaultTrendlineThresholdGain = 4.0;
 
-constexpr int kMaxConsecutiveFailedLookups = 5;
-
 const char kBweWindowSizeInPacketsExperiment[] =
     "WebRTC-BweWindowSizeInPackets";
 
@@ -94,7 +92,6 @@ DelayBasedBwe::DelayBasedBwe(RtcEventLog* event_log)
               : kDefaultTrendlineWindowSize),
       trendline_smoothing_coeff_(kDefaultTrendlineSmoothingCoeff),
       trendline_threshold_gain_(kDefaultTrendlineThresholdGain),
-      consecutive_delayed_feedbacks_(0),
       prev_bitrate_(DataRate::Zero()),
       prev_state_(BandwidthUsage::kBwNormal) {
   RTC_LOG(LS_INFO)
@@ -147,43 +144,12 @@ DelayBasedBwe::Result DelayBasedBwe::IncomingPacketFeedbackVector(
   }
 
   if (delayed_feedback) {
-    Timestamp arrival_time = Timestamp::PlusInfinity();
-    if (packet_feedback_vector.back().arrival_time_ms > 0)
-      arrival_time =
-          Timestamp::ms(packet_feedback_vector.back().arrival_time_ms);
-    return OnDelayedFeedback(arrival_time);
-
-  } else {
-    consecutive_delayed_feedbacks_ = 0;
-    return MaybeUpdateEstimate(acked_bitrate, probe_bitrate,
-                               recovered_from_overuse, at_time);
+    // TODO(bugs.webrtc.org/10125): Design a better mechanism to safe-guard
+    // against building very large network queues.
+    return Result();
   }
-  return Result();
-}
-
-DelayBasedBwe::Result DelayBasedBwe::OnDelayedFeedback(Timestamp receive_time) {
-  ++consecutive_delayed_feedbacks_;
-  if (consecutive_delayed_feedbacks_ >= kMaxConsecutiveFailedLookups) {
-    consecutive_delayed_feedbacks_ = 0;
-    return OnLongFeedbackDelay(receive_time);
-  }
-  return Result();
-}
-
-DelayBasedBwe::Result DelayBasedBwe::OnLongFeedbackDelay(
-    Timestamp arrival_time) {
-  // Estimate should always be valid since a start bitrate always is set in the
-  // Call constructor. An alternative would be to return an empty Result here,
-  // or to estimate the throughput based on the feedback we received.
-  RTC_DCHECK(rate_control_.ValidEstimate());
-  rate_control_.SetEstimate(rate_control_.LatestEstimate() / 2, arrival_time);
-  Result result;
-  result.updated = true;
-  result.probe = false;
-  result.target_bitrate = rate_control_.LatestEstimate();
-  RTC_LOG(LS_WARNING) << "Long feedback delay detected, reducing BWE to "
-                      << ToString(result.target_bitrate);
-  return result;
+  return MaybeUpdateEstimate(acked_bitrate, probe_bitrate,
+                             recovered_from_overuse, at_time);
 }
 
 void DelayBasedBwe::IncomingPacketFeedback(

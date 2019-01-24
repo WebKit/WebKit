@@ -1604,4 +1604,110 @@ TEST_F(PeerConnectionJsepTest, OneVideoUnifiedPlanToTwoVideoPlanBFails) {
   EXPECT_EQ(RTCErrorType::INVALID_PARAMETER, error.type());
 }
 
+// Removes the RTP header extension associated with the given URI from the media
+// description.
+static void RemoveRtpHeaderExtensionByUri(
+    MediaContentDescription* media_description,
+    absl::string_view uri) {
+  std::vector<RtpExtension> header_extensions =
+      media_description->rtp_header_extensions();
+  header_extensions.erase(std::remove_if(
+      header_extensions.begin(), header_extensions.end(),
+      [uri](const RtpExtension& extension) { return extension.uri == uri; }));
+  media_description->set_rtp_header_extensions(header_extensions);
+}
+
+// Transforms a session description to emulate a legacy endpoint which does not
+// support a=mid, BUNDLE, and the MID header extension.
+static void ClearMids(SessionDescriptionInterface* sdesc) {
+  cricket::SessionDescription* desc = sdesc->description();
+  desc->RemoveGroupByName(cricket::GROUP_TYPE_BUNDLE);
+  cricket::ContentInfo* audio_content = cricket::GetFirstAudioContent(desc);
+  if (audio_content) {
+    desc->GetTransportInfoByName(audio_content->name)->content_name = "";
+    audio_content->name = "";
+    RemoveRtpHeaderExtensionByUri(audio_content->media_description(),
+                                  RtpExtension::kMidUri);
+  }
+  cricket::ContentInfo* video_content = cricket::GetFirstVideoContent(desc);
+  if (video_content) {
+    desc->GetTransportInfoByName(video_content->name)->content_name = "";
+    video_content->name = "";
+    RemoveRtpHeaderExtensionByUri(video_content->media_description(),
+                                  RtpExtension::kMidUri);
+  }
+}
+
+// Test that negotiation works with legacy endpoints which do not support a=mid.
+TEST_F(PeerConnectionJsepTest, LegacyNoMidAudioOnlyOffer) {
+  auto caller = CreatePeerConnection();
+  caller->AddAudioTrack("audio");
+  auto callee = CreatePeerConnection();
+  callee->AddAudioTrack("audio");
+
+  auto offer = caller->CreateOffer();
+  ClearMids(offer.get());
+
+  ASSERT_TRUE(callee->SetRemoteDescription(std::move(offer)));
+  EXPECT_TRUE(callee->SetLocalDescription(callee->CreateAnswer()));
+}
+TEST_F(PeerConnectionJsepTest, LegacyNoMidAudioVideoOffer) {
+  auto caller = CreatePeerConnection();
+  caller->AddAudioTrack("audio");
+  caller->AddVideoTrack("video");
+  auto callee = CreatePeerConnection();
+  callee->AddAudioTrack("audio");
+  callee->AddVideoTrack("video");
+
+  auto offer = caller->CreateOffer();
+  ClearMids(offer.get());
+
+  ASSERT_TRUE(callee->SetRemoteDescription(std::move(offer)));
+  EXPECT_TRUE(callee->SetLocalDescription(callee->CreateAnswer()));
+}
+TEST_F(PeerConnectionJsepTest, LegacyNoMidAudioOnlyAnswer) {
+  auto caller = CreatePeerConnection();
+  caller->AddAudioTrack("audio");
+  auto callee = CreatePeerConnection();
+  callee->AddAudioTrack("audio");
+
+  ASSERT_TRUE(callee->SetRemoteDescription(caller->CreateOfferAndSetAsLocal()));
+
+  auto answer = callee->CreateAnswer();
+  ClearMids(answer.get());
+
+  EXPECT_TRUE(caller->SetRemoteDescription(std::move(answer)));
+}
+TEST_F(PeerConnectionJsepTest, LegacyNoMidAudioVideoAnswer) {
+  auto caller = CreatePeerConnection();
+  caller->AddAudioTrack("audio");
+  caller->AddVideoTrack("video");
+  auto callee = CreatePeerConnection();
+  callee->AddAudioTrack("audio");
+  callee->AddVideoTrack("video");
+
+  ASSERT_TRUE(callee->SetRemoteDescription(caller->CreateOfferAndSetAsLocal()));
+
+  auto answer = callee->CreateAnswer();
+  ClearMids(answer.get());
+
+  ASSERT_TRUE(caller->SetRemoteDescription(std::move(answer)));
+}
+
+// Test that SetLocalDescription fails if a=mid lines are missing.
+TEST_F(PeerConnectionJsepTest, SetLocalDescriptionFailsMissingMid) {
+  auto caller = CreatePeerConnection();
+  caller->AddAudioTrack("audio");
+
+  auto offer = caller->CreateOffer();
+  ClearMids(offer.get());
+
+  std::string error;
+  ASSERT_FALSE(caller->SetLocalDescription(std::move(offer), &error));
+  EXPECT_EQ(
+      "Failed to set local offer sdp: A media section is missing a MID "
+      "attribute.",
+      error);
+}
+
 }  // namespace webrtc

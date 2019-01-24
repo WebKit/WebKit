@@ -181,6 +181,7 @@ rtc_source_set("video_stream_encoder_impl") {
     "../common_video:common_video",
     "../modules/video_coding",
     "../modules/video_coding:video_coding_utility",
+    "../modules/video_coding:webrtc_vp9_helpers",
     "../rtc_base:checks",
     "../rtc_base:criticalsection",
     "../rtc_base:logging",
