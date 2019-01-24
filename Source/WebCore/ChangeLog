@@ -1,5 +1,61 @@
 2019-01-23  Alan Coon  <alancoon@apple.com>
 
+        Cherry-pick r240152. rdar://problem/47458242
+
+    A track source should be unmuted whenever reenabled after setDirection changes
+    https://bugs.webkit.org/show_bug.cgi?id=193554
+    <rdar://problem/47366196>
+    
+    Reviewed by Eric Carlson.
+    
+    Source/WebCore:
+    
+    Ensure that track gets unmuted after being fired as part of track event.
+    Test is triggering some existing issues with MediaPlayerPrivateMediaStreamAVFObjC.
+    Given the enqueuing of samples happens in a different frame than the thread used to update media stream and the active video track,
+    some enqueued samples might not be from the right active video track or there might be no active video track.
+    
+    Test: webrtc/video-setDirection.html
+    
+    * Modules/mediastream/libwebrtc/LibWebRTCMediaEndpoint.cpp:
+    (WebCore::LibWebRTCMediaEndpoint::fireTrackEvent):
+    * Modules/mediastream/libwebrtc/LibWebRTCMediaEndpoint.h:
+    * platform/graphics/avfoundation/objc/MediaPlayerPrivateMediaStreamAVFObjC.mm:
+    (WebCore::MediaPlayerPrivateMediaStreamAVFObjC::enqueueVideoSample):
+    (WebCore::MediaPlayerPrivateMediaStreamAVFObjC::requestNotificationWhenReadyForVideoData):
+    
+    LayoutTests:
+    
+    * webrtc/video-setDirection-expected.txt: Added.
+    * webrtc/video-setDirection.html: Added.
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@240152 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2019-01-18  Youenn Fablet  <youenn@apple.com>
+
+            A track source should be unmuted whenever reenabled after setDirection changes
+            https://bugs.webkit.org/show_bug.cgi?id=193554
+            <rdar://problem/47366196>
+
+            Reviewed by Eric Carlson.
+
+            Ensure that track gets unmuted after being fired as part of track event.
+            Test is triggering some existing issues with MediaPlayerPrivateMediaStreamAVFObjC.
+            Given the enqueuing of samples happens in a different frame than the thread used to update media stream and the active video track,
+            some enqueued samples might not be from the right active video track or there might be no active video track.
+
+            Test: webrtc/video-setDirection.html
+
+            * Modules/mediastream/libwebrtc/LibWebRTCMediaEndpoint.cpp:
+            (WebCore::LibWebRTCMediaEndpoint::fireTrackEvent):
+            * Modules/mediastream/libwebrtc/LibWebRTCMediaEndpoint.h:
+            * platform/graphics/avfoundation/objc/MediaPlayerPrivateMediaStreamAVFObjC.mm:
+            (WebCore::MediaPlayerPrivateMediaStreamAVFObjC::enqueueVideoSample):
+            (WebCore::MediaPlayerPrivateMediaStreamAVFObjC::requestNotificationWhenReadyForVideoData):
+
+2019-01-23  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r240122. rdar://problem/47458135
 
     [Mac] Add a new quirk to HTMLFormControlElement::isMouseFocusable

@@ -143,7 +143,7 @@ private:
     void newTransceiver(rtc::scoped_refptr<webrtc::RtpTransceiverInterface>&&);
     void removeRemoteTrack(rtc::scoped_refptr<webrtc::RtpReceiverInterface>&&);
 
-    void fireTrackEvent(Ref<RTCRtpReceiver>&&, Ref<MediaStreamTrack>&&, const std::vector<rtc::scoped_refptr<webrtc::MediaStreamInterface>>&, RefPtr<RTCRtpTransceiver>&&);
+    void fireTrackEvent(Ref<RTCRtpReceiver>&&, MediaStreamTrack&, const std::vector<rtc::scoped_refptr<webrtc::MediaStreamInterface>>&, RefPtr<RTCRtpTransceiver>&&);
 
     template<typename T>
     Optional<Backends> createTransceiverBackends(T&&, const RTCRtpTransceiverInit&, LibWebRTCRtpSenderBackend::Source&&);
