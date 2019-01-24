@@ -53,13 +53,19 @@ WebCore::NetworkStorageSession* NetworkStorageSessionMap::storageSession(const P
 
 WebCore::NetworkStorageSession& NetworkStorageSessionMap::defaultStorageSession()
 {
-    if (!defaultNetworkStorageSession())
+    if (!defaultNetworkStorageSession()) {
+#if USE(CURL)
+        defaultNetworkStorageSession() = std::make_unique<WebCore::NetworkStorageSession>(PAL::SessionID::defaultSessionID(), nullptr);
+#else
         defaultNetworkStorageSession() = std::make_unique<WebCore::NetworkStorageSession>(PAL::SessionID::defaultSessionID());
+#endif
+    }
     return *defaultNetworkStorageSession();
 }
 
 void NetworkStorageSessionMap::switchToNewTestingSession()
 {
+#if USE(CFURLCONNECTION)
     // Session name should be short enough for shared memory region name to be under the limit, otehrwise sandbox rules won't work (see <rdar://problem/13642852>).
     String sessionName = String::format("WebKit Test-%u", static_cast<uint32_t>(getCurrentProcessID()));
 
@@ -73,10 +79,12 @@ void NetworkStorageSessionMap::switchToNewTestingSession()
     }
 
     defaultNetworkStorageSession() = std::make_unique<WebCore::NetworkStorageSession>(PAL::SessionID::defaultSessionID(), WTFMove(session), WTFMove(cookieStorage));
+#endif
 }
 
 void NetworkStorageSessionMap::ensureSession(const PAL::SessionID& sessionID, const String& identifierBase)
 {
+#if USE(CFURLCONNECTION)
     auto addResult = globalSessionMap().add(sessionID, nullptr);
     if (!addResult.isNewEntry)
         return;
@@ -97,6 +105,7 @@ void NetworkStorageSessionMap::ensureSession(const PAL::SessionID& sessionID, co
     }
 
     addResult.iterator->value = std::make_unique<WebCore::NetworkStorageSession>(sessionID, WTFMove(storageSession), WTFMove(cookieStorage));
+#endif
 }
 
 void NetworkStorageSessionMap::destroySession(const PAL::SessionID& sessionID)
