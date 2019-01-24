@@ -1,3 +1,15 @@
+2019-01-24  Zalan Bujtas  <zalan@apple.com>
+
+        DidFirstVisuallyNonEmptyLayout milestone should always fire at some point.
+        https://bugs.webkit.org/show_bug.cgi?id=193741
+        <rdar://problem/47135030>
+
+        Reviewed by Antti Koivisto and Simon Fraser.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WebKit/LayoutMilestonesWithAllContentInFrame.cpp:
+        (TestWebKitAPI::TEST):
+
 2019-01-24  Brent Fulgham  <bfulgham@apple.com>
 
         Activate the WebResourceLoadStatisticsStore in the NetworkProcess and deactivate it in the UIProcess.

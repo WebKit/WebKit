@@ -117,6 +117,28 @@ TEST(WebKit, FirstVisuallyNonEmptyLayoutAfterPageCacheRestore)
     didNavigate = false;
 }
 
+TEST(WebKit, FirstVisuallyNonEmptyMilestoneWithLoadComplete)
+{
+    WKRetainPtr<WKContextRef> context(AdoptWK, WKContextCreateWithConfiguration(nullptr));
+    PlatformWebView webView(context.get());
+
+    WKPageNavigationClientV3 loaderClient;
+    memset(&loaderClient, 0, sizeof(loaderClient));
+
+    loaderClient.base.version = 3;
+    loaderClient.base.clientInfo = &webView;
+    loaderClient.renderingProgressDidChange = renderingProgressDidChange;
+
+    WKPageSetPageNavigationClient(webView.page(), &loaderClient.base);
+    didFirstVisuallyNonEmptyLayout = false;
+
+    WKPageListenForLayoutMilestones(webView.page(), WKPageRenderingProgressEventFirstVisuallyNonEmptyLayout);
+    WKPageLoadURL(webView.page(), adoptWK(Util::createURLForResource("async-script-load", "html")).get());
+
+    Util::run(&didFirstVisuallyNonEmptyLayout);
+    EXPECT_TRUE(didFirstVisuallyNonEmptyLayout);
+}
+
 } // namespace TestWebKitAPI
 
 #endif

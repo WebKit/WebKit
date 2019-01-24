@@ -1,3 +1,23 @@
+2019-01-24  Zalan Bujtas  <zalan@apple.com>
+
+        DidFirstVisuallyNonEmptyLayout milestone should always fire at some point.
+        https://bugs.webkit.org/show_bug.cgi?id=193741
+        <rdar://problem/47135030>
+
+        Reviewed by Antti Koivisto and Simon Fraser.
+
+        fireLayoutRelatedMilestonesIfNeeded() is part of the post-layout tasks. In certain cases when
+            1. the received data is not "contentful" yet
+            2. and we are expecting some more (loading is not complete yet)
+            3. but no layout is initiated anymore
+        nothing triggers the milestone firing.
+
+        This patch ensures that we fire the DidFirstVisuallyNonEmptyLayout when the frame load is complete unless we already did.
+
+        * page/FrameView.cpp:
+        (WebCore::FrameView::FrameView):
+        (WebCore::FrameView::loadProgressingStatusChanged):
+
 2019-01-24  Brent Fulgham  <bfulgham@apple.com>
 
         Activate the WebResourceLoadStatisticsStore in the NetworkProcess and deactivate it in the UIProcess.

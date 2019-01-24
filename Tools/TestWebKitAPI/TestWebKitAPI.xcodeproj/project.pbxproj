@@ -51,6 +51,7 @@
 		115EB3431EE0BA03003C2C0A /* ViewportSizeForViewportUnits.mm in Sources */ = {isa = PBXBuildFile; fileRef = 115EB3421EE0B720003C2C0A /* ViewportSizeForViewportUnits.mm */; };
 		1171B24F219F49CD00CB897D /* FirstMeaningfulPaintMilestone_Bundle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 11B7FD21219F46DD0069B27F /* FirstMeaningfulPaintMilestone_Bundle.cpp */; };
 		11B7FD28219F47110069B27F /* FirstMeaningfulPaintMilestone.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 11B7FD22219F46DD0069B27F /* FirstMeaningfulPaintMilestone.cpp */; };
+		11C2598D21FA6324004C9E23 /* async-script-load.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 11C2598C21FA618D004C9E23 /* async-script-load.html */; };
 		143DDE9820C9018B007F76FA /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 574F55D0204D471C002948C6 /* Security.framework */; };
 		1A02C870125D4CFD00E3F4BD /* find.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 1A02C84B125D4A5E00E3F4BD /* find.html */; };
 		1A3524AE1D63A4FB0031729B /* Scope.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A3524AC1D63A4FB0031729B /* Scope.cpp */; };
@@ -1003,6 +1004,7 @@
 				5C9E59421D3EB5AC00E3C62E /* ApplicationCache.db-shm in Copy Resources */,
 				5C9E59431D3EB5AC00E3C62E /* ApplicationCache.db-wal in Copy Resources */,
 				F6B7BE9717469B96008A3445 /* associate-form-controls.html in Copy Resources */,
+				11C2598D21FA6324004C9E23 /* async-script-load.html in Copy Resources */,
 				F4856CA31E649EA8009D7EE7 /* attachment-element.html in Copy Resources */,
 				B55F11B71517D03300915916 /* attributedStringCustomFont.html in Copy Resources */,
 				7C9ED98B17A19F4B00E4DC33 /* attributedStringStrikethrough.html in Copy Resources */,
@@ -1327,6 +1329,7 @@
 		115EB3421EE0B720003C2C0A /* ViewportSizeForViewportUnits.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ViewportSizeForViewportUnits.mm; sourceTree = "<group>"; };
 		11B7FD21219F46DD0069B27F /* FirstMeaningfulPaintMilestone_Bundle.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FirstMeaningfulPaintMilestone_Bundle.cpp; sourceTree = "<group>"; };
 		11B7FD22219F46DD0069B27F /* FirstMeaningfulPaintMilestone.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FirstMeaningfulPaintMilestone.cpp; sourceTree = "<group>"; };
+		11C2598C21FA618D004C9E23 /* async-script-load.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = "async-script-load.html"; sourceTree = "<group>"; };
 		14464012167A8305000BD218 /* LayoutUnit.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = LayoutUnit.cpp; sourceTree = "<group>"; };
 		14F3B11215E45EAB00210069 /* SaturatedArithmeticOperations.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SaturatedArithmeticOperations.cpp; sourceTree = "<group>"; };
 		1A02C84B125D4A5E00E3F4BD /* find.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = find.html; sourceTree = "<group>"; };
@@ -3272,6 +3275,7 @@
 				1C2B81851C89252300A5529F /* Ahem.ttf */,
 				93D3D19B17B1A7B000C7C415 /* all-content-in-one-iframe.html */,
 				F6B7BE9617469B7E008A3445 /* associate-form-controls.html */,
+				11C2598C21FA618D004C9E23 /* async-script-load.html */,
 				C9C9A91A21DED24D00FDE96E /* audio-with-play-button.html */,
 				76E182DE15475A8300F1FADD /* auto-submitting-form.html */,
 				C9C60E631E53A9BA006DA181 /* autoplay-check-frame.html */,
