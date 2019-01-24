@@ -1,5 +1,27 @@
 2019-01-23  Alan Coon  <alancoon@apple.com>
 
+        Cherry-pick r240087. rdar://problem/47458394
+
+    Revert r239938
+    https://bugs.webkit.org/show_bug.cgi?id=193267
+    <rdar://problem/47297304>
+    
+    * Configurations/WebContent-iOS.entitlements:
+    
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@240087 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2019-01-16  Alex Christensen  <achristensen@webkit.org>
+
+            Revert r239938
+            https://bugs.webkit.org/show_bug.cgi?id=193267
+            <rdar://problem/47297304>
+
+            * Configurations/WebContent-iOS.entitlements:
+
+2019-01-23  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r240045. rdar://problem/47458249
 
     Frequent null-deref under TiledCoreAnimationDrawingArea::scaleViewToFitDocumentIfNeeded()
