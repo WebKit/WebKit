@@ -40,6 +40,7 @@
 #include "HTMLTextAreaElement.h"
 #include "RenderBox.h"
 #include "RenderTheme.h"
+#include "Settings.h"
 #include "StyleTreeResolver.h"
 #include "ValidationMessage.h"
 #include <wtf/IsoMallocInlines.h>
@@ -372,6 +373,8 @@ bool HTMLFormControlElement::isMouseFocusable() const
 #if PLATFORM(GTK)
     return HTMLElement::isMouseFocusable();
 #else
+    if (needsMouseFocusableQuirk())
+        return HTMLElement::isMouseFocusable();
     return false;
 #endif
 }
@@ -653,6 +656,20 @@ AutofillData HTMLFormControlElement::autofillData() const
     // owner's autocomplete attribute changed or the form owner itself changed.
 
     return AutofillData::createFromHTMLFormControlElement(*this);
+}
+
+// FIXME: We should remove the quirk once <rdar://problem/47334655> is fixed.
+bool HTMLFormControlElement::needsMouseFocusableQuirk() const
+{
+#if PLATFORM(MAC)
+    if (!document().settings().needsSiteSpecificQuirks())
+        return false;
+
+    auto host = document().url().host();
+    return equalLettersIgnoringASCIICase(host, "ceac.state.gov") || host.endsWithIgnoringASCIICase(".ceac.state.gov");
+#else
+    return false;
+#endif
 }
 
 } // namespace Webcore

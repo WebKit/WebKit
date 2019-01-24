@@ -177,6 +177,8 @@ private:
     const HTMLFormControlElement& asHTMLElement() const final { return *this; }
     HTMLFormControlElement* asFormNamedItem() final { return this; }
 
+    bool needsMouseFocusableQuirk() const;
+
     std::unique_ptr<ValidationMessage> m_validationMessage;
     unsigned m_disabled : 1;
     unsigned m_isReadOnly : 1;
