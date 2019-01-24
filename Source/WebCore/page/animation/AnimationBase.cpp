@@ -90,7 +90,7 @@ void AnimationBase::setNeedsStyleRecalc(Element* element)
         return;
 
     ASSERT(element->document().pageCacheState() == Document::NotInPageCache);
-    element->invalidateStyleAndLayerComposition();
+    element->invalidateStyle();
 }
 
 double AnimationBase::duration() const

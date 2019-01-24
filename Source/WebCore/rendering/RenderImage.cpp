@@ -284,7 +284,7 @@ void RenderImage::imageChanged(WrappedImagePtr newImage, const IntRect* rect)
             ASSERT(element());
             if (element()) {
                 m_needsToSetSizeForAltText = true;
-                element()->invalidateStyleAndLayerComposition();
+                element()->invalidateStyle();
             }
             return;
         }

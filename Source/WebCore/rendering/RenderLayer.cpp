@@ -6599,8 +6599,10 @@ void RenderLayer::updateFilterPaintingStrategy()
 void RenderLayer::filterNeedsRepaint()
 {
     // We use the enclosing element so that we recalculate style for the ancestor of an anonymous object.
-    if (Element* element = enclosingElement())
+    if (Element* element = enclosingElement()) {
+        // FIXME: This really shouldn't have to invalidate layer composition, but tests like css3/filters/effect-reference-delete.html fail if that doesn't happen.
         element->invalidateStyleAndLayerComposition();
+    }
     renderer().repaint();
 }
 

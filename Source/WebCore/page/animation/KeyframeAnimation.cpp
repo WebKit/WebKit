@@ -158,9 +158,11 @@ void KeyframeAnimation::fetchIntervalEndpointsForProperty(CSSPropertyID property
 
 bool KeyframeAnimation::animate(CompositeAnimation& compositeAnimation, const RenderStyle& targetStyle, std::unique_ptr<RenderStyle>& animatedStyle, bool& didBlendStyle)
 {
-    // Fire the start timeout if needed
+    AnimationState oldState = state();
+
+    // Update state and fire the start timeout if needed (FIXME: this function needs a better name).
     fireAnimationEventsIfNeeded();
-    
+
     // If we have not yet started, we will not have a valid start time, so just start the animation if needed.
     if (isNew()) {
         if (m_animation->playState() == AnimationPlayState::Playing && !compositeAnimation.isSuspended())
@@ -190,9 +192,6 @@ bool KeyframeAnimation::animate(CompositeAnimation& compositeAnimation, const Re
         updateStateMachine(AnimationStateInput::EndAnimation, -1);
         return false;
     }
-
-    // FIXME: the code below never changes the state, so this function always returns false.
-    AnimationState oldState = state();
 
     // Run a cycle of animation.
     // We know we will need a new render style, so make one if needed.
