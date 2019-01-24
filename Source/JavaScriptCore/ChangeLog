@@ -1,3 +1,36 @@
+2019-01-24  Saam Barati  <sbarati@apple.com>
+
+        Object Allocation Sinking phase can move a node that walks the stack into a place where the InlineCallFrame is no longer valid
+        https://bugs.webkit.org/show_bug.cgi?id=193751
+        <rdar://problem/47280215>
+
+        Reviewed by Michael Saboff.
+
+        The Object Allocation Sinking phase may move allocations around inside
+        of the program. However, it was not ensuring that it's still possible 
+        to walk the stack at the point in the program that it moved the allocation to.
+        Certain InlineCallFrames rely on data in the stack when taking a stack trace.
+        All allocation sites can do a stack walk (we do a stack walk when we GC).
+        Conservatively, this patch says we're ok to move this allocation if we are
+        moving within the same InlineCallFrame. We could be more precise and do an
+        analysis of stack writes. However, this scenario is so rare that we just
+        take the conservative-and-straight-forward approach of checking that the place
+        we're moving to is the same InlineCallFrame as the allocation site.
+        
+        In general, this issue arises anytime we do any kind of code motion.
+        Interestingly, LICM gets this right. It gets it right because the only
+        InlineCallFrames we can't move out of are the InlineCallFrames that
+        have metadata stored on the stack (callee for closure calls and argument
+        count for varargs calls). LICM doesn't have this issue because it relies
+        on Clobberize for doing its effects analysis. In clobberize, we model every
+        node within an InlineCallFrame that meets the above criteria as reading
+        from those stack fields. Consequently, LICM won't hoist any node in that
+        InlineCallFrame past the beginning of the InlineCallFrame since the IR
+        we generate to set up such an InlineCallFrame contains writes to that
+        stack location.
+
+        * dfg/DFGObjectAllocationSinkingPhase.cpp:
+
 2019-01-24  Guillaume Emont  <guijemont@igalia.com>
 
         [JSC] Reenable baseline JIT on mips

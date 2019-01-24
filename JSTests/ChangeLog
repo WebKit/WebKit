@@ -1,3 +1,16 @@
+2019-01-24  Saam Barati  <sbarati@apple.com>
+
+        Object Allocation Sinking phase can move a node that walks the stack into a place where the InlineCallFrame is no longer valid
+        https://bugs.webkit.org/show_bug.cgi?id=193751
+        <rdar://problem/47280215>
+
+        Reviewed by Michael Saboff.
+
+        * stress/object-allocation-sinking-phase-must-only-move-allocations-if-stack-trace-is-still-valid.js: Added.
+        (let.thing):
+        (foo.let.hello):
+        (foo):
+
 2019-01-24  Guillaume Emont  <guijemont@igalia.com>
 
         [JSC] Reenable baseline JIT on mips
