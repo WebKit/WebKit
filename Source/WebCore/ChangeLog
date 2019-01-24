@@ -1,5 +1,76 @@
 2019-01-23  Alan Coon  <alancoon@apple.com>
 
+        Cherry-pick r239947. rdar://problem/47295371
+
+    Re-enable ability to build --cloop builds.
+    https://bugs.webkit.org/show_bug.cgi?id=192955
+    Source/JavaScriptCore:
+    
+    <rdar://problem/46882363>
+    
+    Reviewed by Saam barati and Keith Miller.
+    
+    * Configurations/FeatureDefines.xcconfig:
+    
+    Source/WebCore:
+    
+    
+    Reviewed by Saam barati and Keith Miller.
+    
+    * Configurations/FeatureDefines.xcconfig:
+    
+    Source/WebCore/PAL:
+    
+    <rdar://problem/46882363>
+    
+    Reviewed by Saam barati and Keith Miller.
+    
+    * Configurations/FeatureDefines.xcconfig:
+    
+    Source/WebKit:
+    
+    <rdar://problem/46882363>
+    
+    Reviewed by Saam barati and Keith Miller.
+    
+    * Configurations/FeatureDefines.xcconfig:
+    
+    Source/WebKitLegacy/mac:
+    
+    <rdar://problem/46882363>
+    
+    Reviewed by Saam barati and Keith Miller.
+    
+    * Configurations/FeatureDefines.xcconfig:
+    
+    Tools:
+    
+    <rdar://problem/46882363>
+    
+    Reviewed by Saam barati and Keith Miller.
+    
+    The --cloop build option was being ignored this whole time since r236381.
+    This patch makes it possible to build CLoop builds again.
+    
+    * Scripts/build-jsc:
+    * Scripts/webkitperl/FeatureList.pm:
+    * TestWebKitAPI/Configurations/FeatureDefines.xcconfig:
+    
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@239947 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2019-01-14  Mark Lam  <mark.lam@apple.com>
+
+            Re-enable ability to build --cloop builds.
+            https://bugs.webkit.org/show_bug.cgi?id=192955
+
+            Reviewed by Saam barati and Keith Miller.
+
+            * Configurations/FeatureDefines.xcconfig:
+
+2019-01-23  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r239946. rdar://problem/47295375
 
     https://bugs.webkit.org/show_bug.cgi?id=193403
