@@ -1688,24 +1688,35 @@ class CppStyleTest(CppStyleTestBase):
             '  [runtime/retainptr] [5]')
         self.assert_lint('''RetainPtr<NSDictionary<NSString *, NSArray<NSString *>>> dictionary;''', '')
 
-    def test_softlink(self):
+    def test_softlink_framework(self):
         self.assert_lint(
-            '''SOFT_LINK_FRAMEWORK(AVFoundation)''',
+            '''SOFT_LINK_FRAMEWORK(Foundation)''',
             '')
         self.assert_lint(
-            '''SOFT_LINK_FRAMEWORK_OPTIONAL(AVFoundation)''',
+            '''SOFT_LINK_FRAMEWORK_OPTIONAL(Foundation)''',
             '')
         self.assert_lint(
-            '''SOFT_LINK_FRAMEWORK_OPTIONAL_PREFLIGHT(AVFoundation)''',
+            '''SOFT_LINK_FRAMEWORK_OPTIONAL_PREFLIGHT(Foundation)''',
             '')
         self.assert_lint(
-            '''SOFT_LINK_FRAMEWORK_FOR_HEADER(AVFoundation)''',
+            '''SOFT_LINK_FRAMEWORK_FOR_HEADER(Foundation)''',
+            '',
+             file_name='foo.h')
+        self.assert_lint(
+            '''SOFT_LINK_FRAMEWORK_FOR_SOURCE(Foundation)''',
             '')
         self.assert_lint(
-            '''SOFT_LINK_FRAMEWORK_FOR_SOURCE(AVFoundation)''',
+            '''SOFT_LINK_FRAMEWORK_FOR_SOURCE_WITH_EXPORT(Foundation)''',
             '')
         self.assert_lint(
-            '''SOFT_LINK_FRAMEWORK_FOR_SOURCE_WITH_EXPORT(AVFoundation)''',
+            '''SOFT_LINK_PRIVATE_FRAMEWORK_FOR_HEADER(Foundation)''',
+            '',
+             file_name='foo.h')
+        self.assert_lint(
+            '''SOFT_LINK_PRIVATE_FRAMEWORK_FOR_SOURCE(Foundation)''',
+            '')
+        self.assert_lint(
+            '''SOFT_LINK_PRIVATE_FRAMEWORK_FOR_SOURCE_WITH_EXPORT(Foundation)''',
             '')
 
         self.assert_lint(
@@ -1722,13 +1733,51 @@ class CppStyleTest(CppStyleTestBase):
             '  [softlink/framework] [5]')
         self.assert_lint(
             '''SOFT_LINK_FRAMEWORK_FOR_HEADER(UIKit)''',
-            '')
+            '',
+             file_name='foo.h')
         self.assert_lint(
             '''SOFT_LINK_FRAMEWORK_FOR_SOURCE(UIKit)''',
             '')
         self.assert_lint(
             '''SOFT_LINK_FRAMEWORK_FOR_SOURCE_WITH_EXPORT(UIKit)''',
             '')
+
+    def test_softlink_header(self):
+        self.assert_lint(
+            '''SOFT_LINK_FRAMEWORK(MyFramework)''',
+            'Never soft-link frameworks in headers. Put the soft-link macros in a source file, or create MyFrameworkSoftLink.{cpp,mm} instead.'
+            '  [softlink/header] [5]',
+            file_name='foo.h')
+        self.assert_lint(
+            '''SOFT_LINK_FRAMEWORK_OPTIONAL(MyFramework)''',
+            'Never soft-link frameworks in headers. Put the soft-link macros in a source file, or create MyFrameworkSoftLink.{cpp,mm} instead.'
+            '  [softlink/header] [5]',
+            file_name='foo.h')
+        self.assert_lint(
+            '''SOFT_LINK_FRAMEWORK_OPTIONAL_PREFLIGHT(MyFramework)''',
+            'Never soft-link frameworks in headers. Put the soft-link macros in a source file, or create MyFrameworkSoftLink.{cpp,mm} instead.'
+            '  [softlink/header] [5]',
+            file_name='foo.h')
+        self.assert_lint(
+            '''SOFT_LINK_PRIVATE_FRAMEWORK(MyPrivateFramework)''',
+            'Never soft-link frameworks in headers. Put the soft-link macros in a source file, or create MyPrivateFrameworkSoftLink.{cpp,mm} instead.'
+            '  [softlink/header] [5]',
+            file_name='foo.h')
+
+        self.assert_lint(
+            '''SOFT_LINK_FRAMEWORK_FOR_HEADER(MyFramework)''',
+            '',
+            file_name='foo.h')
+        self.assert_lint(
+            '''SOFT_LINK_FRAMEWORK_FOR_SOURCE(MyFramework)''',
+            'Never soft-link frameworks in headers. Put the soft-link macros in a source file, or create MyFrameworkSoftLink.{cpp,mm} instead.'
+            '  [softlink/header] [5]',
+            file_name='foo.h')
+        self.assert_lint(
+            '''SOFT_LINK_FRAMEWORK_FOR_SOURCE_WITH_EXPORT(MyFramework)''',
+            'Never soft-link frameworks in headers. Put the soft-link macros in a source file, or create MyFrameworkSoftLink.{cpp,mm} instead.'
+            '  [softlink/header] [5]',
+            file_name='foo.h')
 
     # Variable-length arrays are not permitted.
     def test_variable_length_array_detection(self):

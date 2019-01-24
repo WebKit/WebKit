@@ -1,3 +1,22 @@
+2019-01-23  David Kilzer  <ddkilzer@apple.com>
+
+        check-webkit-style should warn when using soft-linking macros in a header
+        <https://webkit.org/b/193750>
+
+        Reviewed by Darin Adler.
+
+        * Scripts/webkitpy/style/checkers/cpp.py:
+        (check_language): Add softlink/header check by refactoring the
+        softlink/framework check.
+        (CppChecker): Enable softlink/header check by default.
+        * Scripts/webkitpy/style/checkers/cpp_unittest.py:
+        (CppStyleTest.test_softlink_framework): Rename from
+        CppStyleTest.test_softlink() and change test framework name in
+        case AVFoundation gets its own AVFoundationSoftLink.{h,mm}
+        files. Set file_name for macros that only appear in headers.
+        (CppStyleTest.test_softlink_header): Add tests for using
+        soft-link macros in headers.
+
 2019-01-23  Chris Dumez  <cdumez@apple.com>
 
         Deprecate API to limit the maximum number of WebProcesses
