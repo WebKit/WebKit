@@ -37,6 +37,19 @@ namespace JSC {
 const char* const ArrayProfile::s_typeName = "ArrayProfile";
 #endif
 
+// Keep in sync with the order of TypedArrayType.
+const ArrayModes typedArrayModes[NumberOfTypedArrayTypesExcludingDataView] = {
+    Int8ArrayMode,
+    Uint8ArrayMode,
+    Uint8ClampedArrayMode,
+    Int16ArrayMode,
+    Uint16ArrayMode,
+    Int32ArrayMode,
+    Uint32ArrayMode,
+    Float32ArrayMode,
+    Float64ArrayMode,
+};
+
 void dumpArrayModes(PrintStream& out, ArrayModes arrayModes)
 {
     if (!arrayModes) {
@@ -50,37 +63,37 @@ void dumpArrayModes(PrintStream& out, ArrayModes arrayModes)
     }
     
     CommaPrinter comma("|");
-    if (arrayModes & asArrayModes(NonArray))
+    if (arrayModes & asArrayModesIgnoringTypedArrays(NonArray))
         out.print(comma, "NonArray");
-    if (arrayModes & asArrayModes(NonArrayWithInt32))
+    if (arrayModes & asArrayModesIgnoringTypedArrays(NonArrayWithInt32))
         out.print(comma, "NonArrayWithInt32");
-    if (arrayModes & asArrayModes(NonArrayWithDouble))
+    if (arrayModes & asArrayModesIgnoringTypedArrays(NonArrayWithDouble))
         out.print(comma, "NonArrayWithDouble");
-    if (arrayModes & asArrayModes(NonArrayWithContiguous))
+    if (arrayModes & asArrayModesIgnoringTypedArrays(NonArrayWithContiguous))
         out.print(comma, "NonArrayWithContiguous");
-    if (arrayModes & asArrayModes(NonArrayWithArrayStorage))
+    if (arrayModes & asArrayModesIgnoringTypedArrays(NonArrayWithArrayStorage))
         out.print(comma, "NonArrayWithArrayStorage");
-    if (arrayModes & asArrayModes(NonArrayWithSlowPutArrayStorage))
+    if (arrayModes & asArrayModesIgnoringTypedArrays(NonArrayWithSlowPutArrayStorage))
         out.print(comma, "NonArrayWithSlowPutArrayStorage");
-    if (arrayModes & asArrayModes(ArrayClass))
+    if (arrayModes & asArrayModesIgnoringTypedArrays(ArrayClass))
         out.print(comma, "ArrayClass");
-    if (arrayModes & asArrayModes(ArrayWithUndecided))
+    if (arrayModes & asArrayModesIgnoringTypedArrays(ArrayWithUndecided))
         out.print(comma, "ArrayWithUndecided");
-    if (arrayModes & asArrayModes(ArrayWithInt32))
+    if (arrayModes & asArrayModesIgnoringTypedArrays(ArrayWithInt32))
         out.print(comma, "ArrayWithInt32");
-    if (arrayModes & asArrayModes(ArrayWithDouble))
+    if (arrayModes & asArrayModesIgnoringTypedArrays(ArrayWithDouble))
         out.print(comma, "ArrayWithDouble");
-    if (arrayModes & asArrayModes(ArrayWithContiguous))
+    if (arrayModes & asArrayModesIgnoringTypedArrays(ArrayWithContiguous))
         out.print(comma, "ArrayWithContiguous");
-    if (arrayModes & asArrayModes(ArrayWithArrayStorage))
+    if (arrayModes & asArrayModesIgnoringTypedArrays(ArrayWithArrayStorage))
         out.print(comma, "ArrayWithArrayStorage");
-    if (arrayModes & asArrayModes(ArrayWithSlowPutArrayStorage))
+    if (arrayModes & asArrayModesIgnoringTypedArrays(ArrayWithSlowPutArrayStorage))
         out.print(comma, "ArrayWithSlowPutArrayStorage");
-    if (arrayModes & asArrayModes(CopyOnWriteArrayWithInt32))
+    if (arrayModes & asArrayModesIgnoringTypedArrays(CopyOnWriteArrayWithInt32))
         out.print(comma, "CopyOnWriteArrayWithInt32");
-    if (arrayModes & asArrayModes(CopyOnWriteArrayWithDouble))
+    if (arrayModes & asArrayModesIgnoringTypedArrays(CopyOnWriteArrayWithDouble))
         out.print(comma, "CopyOnWriteArrayWithDouble");
-    if (arrayModes & asArrayModes(CopyOnWriteArrayWithContiguous))
+    if (arrayModes & asArrayModesIgnoringTypedArrays(CopyOnWriteArrayWithContiguous))
         out.print(comma, "CopyOnWriteArrayWithContiguous");
 
     if (arrayModes & Int8ArrayMode)
@@ -115,11 +128,11 @@ void ArrayProfile::computeUpdatedPrediction(const ConcurrentJSLocker& locker, Co
 
 void ArrayProfile::computeUpdatedPrediction(const ConcurrentJSLocker&, CodeBlock* codeBlock, Structure* lastSeenStructure)
 {
-    m_observedArrayModes |= arrayModeFromStructure(lastSeenStructure);
+    m_observedArrayModes |= arrayModesFromStructure(lastSeenStructure);
     
     if (!m_didPerformFirstRunPruning
         && hasTwoOrMoreBitsSet(m_observedArrayModes)) {
-        m_observedArrayModes = arrayModeFromStructure(lastSeenStructure);
+        m_observedArrayModes = arrayModesFromStructure(lastSeenStructure);
         m_didPerformFirstRunPruning = true;
     }
     

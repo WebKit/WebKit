@@ -53,7 +53,7 @@ void RegisteredStructureSet::filterArrayModes(ArrayModes arrayModes)
 {
     genericFilter(
         [&] (RegisteredStructure structure) -> bool {
-            return arrayModes & arrayModeFromStructure(structure.get());
+            return arrayModes & arrayModesFromStructure(structure.get());
         });
 }
 
@@ -79,7 +79,7 @@ ArrayModes RegisteredStructureSet::arrayModesFromStructures() const
     ArrayModes result = 0;
     forEach(
         [&] (RegisteredStructure structure) {
-            mergeArrayModes(result, asArrayModes(structure->indexingMode()));
+            mergeArrayModes(result, arrayModesFromStructure(structure.get()));
         });
     return result;
 }

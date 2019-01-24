@@ -58,7 +58,9 @@ const ArrayModes Uint32ArrayMode = 1 << 27;
 const ArrayModes Float32ArrayMode = 1 << 28;
 const ArrayModes Float64ArrayMode = 1 << 29;
 
-constexpr ArrayModes asArrayModes(IndexingType indexingMode)
+extern const ArrayModes typedArrayModes[NumberOfTypedArrayTypesExcludingDataView];
+
+constexpr ArrayModes asArrayModesIgnoringTypedArrays(IndexingType indexingMode)
 {
     return static_cast<unsigned>(1) << static_cast<unsigned>(indexingMode);
 }
@@ -76,12 +78,12 @@ constexpr ArrayModes asArrayModes(IndexingType indexingMode)
     )
 
 #define ALL_NON_ARRAY_ARRAY_MODES                       \
-    (asArrayModes(NonArray)                             \
-    | asArrayModes(NonArrayWithInt32)                   \
-    | asArrayModes(NonArrayWithDouble)                  \
-    | asArrayModes(NonArrayWithContiguous)              \
-    | asArrayModes(NonArrayWithArrayStorage)            \
-    | asArrayModes(NonArrayWithSlowPutArrayStorage)     \
+    (asArrayModesIgnoringTypedArrays(NonArray)                             \
+    | asArrayModesIgnoringTypedArrays(NonArrayWithInt32)                   \
+    | asArrayModesIgnoringTypedArrays(NonArrayWithDouble)                  \
+    | asArrayModesIgnoringTypedArrays(NonArrayWithContiguous)              \
+    | asArrayModesIgnoringTypedArrays(NonArrayWithArrayStorage)            \
+    | asArrayModesIgnoringTypedArrays(NonArrayWithSlowPutArrayStorage)     \
     | ALL_TYPED_ARRAY_MODES)
 
 #define ALL_COPY_ON_WRITE_ARRAY_MODES                   \
@@ -90,13 +92,13 @@ constexpr ArrayModes asArrayModes(IndexingType indexingMode)
     | CopyOnWriteArrayWithContiguousArrayMode)
 
 #define ALL_WRITABLE_ARRAY_ARRAY_MODES                  \
-    (asArrayModes(ArrayClass)                           \
-    | asArrayModes(ArrayWithUndecided)                  \
-    | asArrayModes(ArrayWithInt32)                      \
-    | asArrayModes(ArrayWithDouble)                     \
-    | asArrayModes(ArrayWithContiguous)                 \
-    | asArrayModes(ArrayWithArrayStorage)               \
-    | asArrayModes(ArrayWithSlowPutArrayStorage))
+    (asArrayModesIgnoringTypedArrays(ArrayClass)                           \
+    | asArrayModesIgnoringTypedArrays(ArrayWithUndecided)                  \
+    | asArrayModesIgnoringTypedArrays(ArrayWithInt32)                      \
+    | asArrayModesIgnoringTypedArrays(ArrayWithDouble)                     \
+    | asArrayModesIgnoringTypedArrays(ArrayWithContiguous)                 \
+    | asArrayModesIgnoringTypedArrays(ArrayWithArrayStorage)               \
+    | asArrayModesIgnoringTypedArrays(ArrayWithSlowPutArrayStorage))
 
 #define ALL_ARRAY_ARRAY_MODES                           \
     (ALL_WRITABLE_ARRAY_ARRAY_MODES                     \
@@ -104,33 +106,12 @@ constexpr ArrayModes asArrayModes(IndexingType indexingMode)
 
 #define ALL_ARRAY_MODES (ALL_NON_ARRAY_ARRAY_MODES | ALL_ARRAY_ARRAY_MODES)
 
-inline ArrayModes arrayModeFromStructure(Structure* structure)
+inline ArrayModes arrayModesFromStructure(Structure* structure)
 {
-    switch (structure->classInfo()->typedArrayStorageType) {
-    case TypeInt8:
-        return Int8ArrayMode;
-    case TypeUint8:
-        return Uint8ArrayMode;
-    case TypeUint8Clamped:
-        return Uint8ClampedArrayMode;
-    case TypeInt16:
-        return Int16ArrayMode;
-    case TypeUint16:
-        return Uint16ArrayMode;
-    case TypeInt32:
-        return Int32ArrayMode;
-    case TypeUint32:
-        return Uint32ArrayMode;
-    case TypeFloat32:
-        return Float32ArrayMode;
-    case TypeFloat64:
-        return Float64ArrayMode;
-    case TypeDataView:
-    case NotTypedArray:
-        break;
-    }
-
-    return asArrayModes(structure->indexingMode());
+    JSType type = structure->typeInfo().type();
+    if (isTypedArrayType(type))
+        return typedArrayModes[type - FirstTypedArrayType];
+    return asArrayModesIgnoringTypedArrays(structure->indexingMode());
 }
 
 void dumpArrayModes(PrintStream&, ArrayModes);
@@ -156,37 +137,37 @@ inline bool arrayModesAlreadyChecked(ArrayModes proven, ArrayModes expected)
     return (expected | proven) == expected;
 }
 
-inline bool arrayModesInclude(ArrayModes arrayModes, IndexingType shape)
+inline bool arrayModesIncludeIgnoringTypedArrays(ArrayModes arrayModes, IndexingType shape)
 {
-    ArrayModes modes = asArrayModes(NonArray | shape) | asArrayModes(ArrayClass | shape);
+    ArrayModes modes = asArrayModesIgnoringTypedArrays(NonArray | shape) | asArrayModesIgnoringTypedArrays(ArrayClass | shape);
     if (hasInt32(shape) || hasDouble(shape) || hasContiguous(shape))
-        modes |= asArrayModes(ArrayClass | shape | CopyOnWrite);
+        modes |= asArrayModesIgnoringTypedArrays(ArrayClass | shape | CopyOnWrite);
     return !!(arrayModes & modes);
 }
 
 inline bool shouldUseSlowPutArrayStorage(ArrayModes arrayModes)
 {
-    return arrayModesInclude(arrayModes, SlowPutArrayStorageShape);
+    return arrayModesIncludeIgnoringTypedArrays(arrayModes, SlowPutArrayStorageShape);
 }
 
 inline bool shouldUseFastArrayStorage(ArrayModes arrayModes)
 {
-    return arrayModesInclude(arrayModes, ArrayStorageShape);
+    return arrayModesIncludeIgnoringTypedArrays(arrayModes, ArrayStorageShape);
 }
 
 inline bool shouldUseContiguous(ArrayModes arrayModes)
 {
-    return arrayModesInclude(arrayModes, ContiguousShape);
+    return arrayModesIncludeIgnoringTypedArrays(arrayModes, ContiguousShape);
 }
 
 inline bool shouldUseDouble(ArrayModes arrayModes)
 {
-    return arrayModesInclude(arrayModes, DoubleShape);
+    return arrayModesIncludeIgnoringTypedArrays(arrayModes, DoubleShape);
 }
 
 inline bool shouldUseInt32(ArrayModes arrayModes)
 {
-    return arrayModesInclude(arrayModes, Int32Shape);
+    return arrayModesIncludeIgnoringTypedArrays(arrayModes, Int32Shape);
 }
 
 inline bool hasSeenArray(ArrayModes arrayModes)

@@ -420,7 +420,7 @@ public:
 
     bool structureWouldPassArrayModeFiltering(Structure* structure)
     {
-        return arrayModesAlreadyChecked(arrayModeFromStructure(structure), arrayModesThatPassFiltering());
+        return arrayModesAlreadyChecked(arrayModesFromStructure(structure), arrayModesThatPassFiltering());
     }
     
     ArrayModes arrayModesThatPassFiltering() const
@@ -445,8 +445,28 @@ public:
         case Array::DirectArguments:
         case Array::ScopedArguments:
             return arrayModesWithIndexingShapes(ArrayStorageShape, NonArray);
+        case Array::Int8Array:
+            return Int8ArrayMode;
+        case Array::Int16Array:
+            return Int16ArrayMode;
+        case Array::Int32Array:
+            return Int32ArrayMode;
+        case Array::Uint8Array:
+            return Uint8ArrayMode;
+        case Array::Uint8ClampedArray:
+            return Uint8ClampedArrayMode;
+        case Array::Uint16Array:
+            return Uint16ArrayMode;
+        case Array::Uint32Array:
+            return Uint32ArrayMode;
+        case Array::Float32Array:
+            return Float32ArrayMode;
+        case Array::Float64Array:
+            return Float64ArrayMode;
+        case Array::AnyTypedArray:
+            return ALL_TYPED_ARRAY_MODES;
         default:
-            return asArrayModes(NonArray);
+            return asArrayModesIgnoringTypedArrays(NonArray);
         }
 
         if (action() == Array::Write)
@@ -497,20 +517,20 @@ private:
         switch (arrayClass()) {
         case Array::NonArray:
         case Array::OriginalNonArray:
-            return asArrayModes(shape);
+            return asArrayModesIgnoringTypedArrays(shape);
         case Array::OriginalCopyOnWriteArray:
             ASSERT(hasInt32(shape) || hasDouble(shape) || hasContiguous(shape));
-            return asArrayModes(shape | IsArray) | asArrayModes(shape | IsArray | CopyOnWrite);
+            return asArrayModesIgnoringTypedArrays(shape | IsArray) | asArrayModesIgnoringTypedArrays(shape | IsArray | CopyOnWrite);
         case Array::Array:
             if (hasInt32(shape) || hasDouble(shape) || hasContiguous(shape))
-                return asArrayModes(shape | IsArray) | asArrayModes(shape | IsArray | CopyOnWrite);
+                return asArrayModesIgnoringTypedArrays(shape | IsArray) | asArrayModesIgnoringTypedArrays(shape | IsArray | CopyOnWrite);
             FALLTHROUGH;
         case Array::OriginalArray:
-            return asArrayModes(shape | IsArray);
+            return asArrayModesIgnoringTypedArrays(shape | IsArray);
         case Array::PossiblyArray:
             if (hasInt32(shape) || hasDouble(shape) || hasContiguous(shape))
-                return asArrayModes(shape) | asArrayModes(shape | IsArray) | asArrayModes(shape | IsArray | CopyOnWrite);
-            return asArrayModes(shape) | asArrayModes(shape | IsArray);
+                return asArrayModesIgnoringTypedArrays(shape) | asArrayModesIgnoringTypedArrays(shape | IsArray) | asArrayModesIgnoringTypedArrays(shape | IsArray | CopyOnWrite);
+            return asArrayModesIgnoringTypedArrays(shape) | asArrayModesIgnoringTypedArrays(shape | IsArray);
         default:
             // This is only necessary for C++ compilers that don't understand enums.
             return 0;

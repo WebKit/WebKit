@@ -364,13 +364,12 @@ inline void JIT::emitArrayProfileOutOfBoundsSpecialCase(ArrayProfile* arrayProfi
     store8(TrustedImm32(1), arrayProfile->addressOfOutOfBounds());
 }
 
-static inline bool arrayProfileSaw(ArrayModes arrayModes, IndexingType capability)
-{
-    return arrayModesInclude(arrayModes, capability);
-}
-
 inline JITArrayMode JIT::chooseArrayMode(ArrayProfile* profile)
 {
+    auto arrayProfileSaw = [] (ArrayModes arrayModes, IndexingType capability) {
+        return arrayModesIncludeIgnoringTypedArrays(arrayModes, capability);
+    };
+
     ConcurrentJSLocker locker(m_codeBlock->m_lock);
     profile->computeUpdatedPrediction(locker, m_codeBlock);
     ArrayModes arrayModes = profile->observedArrayModes(locker);
