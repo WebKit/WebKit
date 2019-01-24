@@ -124,13 +124,17 @@ private:
         case Array::SlowPutArrayStorage:
             op = GetVectorLength;
             break;
+        case Array::String:
+            // When we need to support this, it will require additional code since base's useKind is KnownStringUse.
+            DFG_CRASH(m_graph, m_node, "Array::String's base.useKind() is KnownStringUse");
+            break;
         default:
             break;
         }
 
         Node* length = m_insertionSet.insertNode(
             m_nodeIndex, SpecInt32Only, op, m_node->origin,
-            OpInfo(m_node->arrayMode().asWord()), base, storage);
+            OpInfo(m_node->arrayMode().asWord()), Edge(base.node(), KnownCellUse), storage);
         m_insertionSet.insertNode(
             m_nodeIndex, SpecInt32Only, CheckInBounds, m_node->origin,
             index, Edge(length, KnownInt32Use));
