@@ -24,6 +24,7 @@
       <dep package="libgcrypt"/>
       <dep package="libepoxy"/>
       <dep package="wayland-protocols"/>
+      <dep package="openjpeg"/>
     </dependencies>
   </metamodule>
 
@@ -225,6 +226,14 @@
       <dep package="glib"/>
     </dependencies>
   </meson>
+
+  <cmake id="openjpeg">
+    <branch repo="github-tarball"
+            module="uclouvain/openjpeg/archive/v${version}.tar.gz"
+            checkoutdir="openjpeg-${version}"
+            version="2.3.0"
+            hash="sha256:3dc787c1bb6023ba846c2a0d9b1f6e179f1cd255172bde9eb75b01f1e6c7d71a"/>
+  </cmake>
 
   <distutils id="meson" python3="1">
     <branch repo="github-tarball"

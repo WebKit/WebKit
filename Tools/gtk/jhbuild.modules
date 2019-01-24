@@ -31,6 +31,7 @@
       <dep package="libsecret"/>
       <dep package="libgpg-error"/>
       <dep package="libgcrypt"/>
+      <dep package="openjpeg"/>
       <if condition-set="linux">
           <dep package="xdg-dbus-proxy"/>
           <dep package="xserver"/>
@@ -455,6 +456,14 @@
       <dep package="libgpg-error"/>
     </dependencies>
   </autotools>
+
+  <cmake id="openjpeg">
+    <branch repo="github-tarball"
+            module="uclouvain/openjpeg/archive/v${version}.tar.gz"
+            checkoutdir="openjpeg-${version}"
+            version="2.3.0"
+            hash="sha256:3dc787c1bb6023ba846c2a0d9b1f6e179f1cd255172bde9eb75b01f1e6c7d71a"/>
+  </cmake>
 
   <!-- Dependencies listed below this point are not thought to affect test results, and are only
        included because they themselves depend on other dependencies built by jhbuild. -->

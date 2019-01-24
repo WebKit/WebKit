@@ -125,6 +125,10 @@ const HashSet<String, ASCIICaseInsensitiveHash>& MIMETypeRegistry::supportedImag
         "image/vnd.microsoft.icon"_s, // ico
         "image/x-icon"_s, // ico
         "image/x-xbitmap"_s, // xbm
+#if USE(OPENJPEG)
+        "image/jp2"_s,
+        "image/jpeg2000"_s,
+#endif
 #if USE(WEBP)
         "image/webp"_s,
 #endif

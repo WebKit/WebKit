@@ -44,6 +44,7 @@ WEBKIT_OPTION_DEFAULT_PORT_VALUE(ENABLE_WEB_RTC PRIVATE ${ENABLE_EXPERIMENTAL_FE
 # there is a strong reason we should support changing the value of the option,
 # and the option is not relevant to any other WebKit ports.
 WEBKIT_OPTION_DEFINE(ENABLE_GTKDOC "Whether or not to use generate gtkdoc." PUBLIC OFF)
+WEBKIT_OPTION_DEFINE(USE_OPENJPEG "Whether to enable support for JPEG2000 images." PUBLIC ON)
 WEBKIT_OPTION_DEFINE(USE_WOFF2 "Whether to enable support for WOFF2 Web Fonts." PUBLIC ON)
 WEBKIT_OPTION_DEFINE(ENABLE_WPE_QT_API "Whether to enable support for the Qt5/QML plugin" PUBLIC OFF)
 
@@ -85,6 +86,16 @@ find_package(Threads REQUIRED)
 find_package(WebP REQUIRED)
 find_package(WPE REQUIRED)
 find_package(ZLIB REQUIRED)
+
+if (USE_OPENJPEG)
+    find_package(OpenJPEG)
+    if (NOT OpenJPEG_FOUND)
+        message(FATAL_ERROR "libopenjpeg is needed for USE_OPENJPEG.")
+    endif ()
+    if ("${OPENJPEG_MAJOR_VERSION}.${OPENJPEG_MINOR_VERSION}.${OPENJPEG_BUILD_VERSION}" VERSION_LESS "2.2.0")
+        message(FATAL_ERROR "libopenjpeg 2.2.0 is required for USE_OPENJPEG.")
+    endif ()
+endif ()
 
 if (USE_WOFF2)
     find_package(WOFF2Dec 1.0.2)

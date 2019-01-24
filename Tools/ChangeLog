@@ -1,3 +1,15 @@
+2019-01-24  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK][WPE] Support JPEG 2000 images
+        https://bugs.webkit.org/show_bug.cgi?id=186272
+
+        Reviewed by Žan Doberšek.
+
+        Add OpenJPEG to jhbuild since 2.2.0 version is required and it's not available in debian stable.
+
+        * gtk/jhbuild.modules:
+        * wpe/jhbuild.modules:
+
 2019-01-23  David Kilzer  <ddkilzer@apple.com>
 
         check-webkit-style should warn when using soft-linking macros in a header

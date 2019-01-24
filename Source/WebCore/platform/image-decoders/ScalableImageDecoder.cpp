@@ -29,6 +29,9 @@
 #include "JPEGImageDecoder.h"
 #include "PNGImageDecoder.h"
 #include "SharedBuffer.h"
+#if USE(OPENJPEG)
+#include "JPEG2000ImageDecoder.h"
+#endif
 #if USE(WEBP)
 #include "WEBPImageDecoder.h"
 #endif
@@ -73,6 +76,19 @@ bool matchesJPEGSignature(char* contents)
     return !memcmp(contents, "\xFF\xD8\xFF", 3);
 }
 
+#if USE(OPENJPEG)
+bool matchesJP2Signature(char* contents)
+{
+    return !memcmp(contents, "\x00\x00\x00\x0C\x6A\x50\x20\x20\x0D\x0A\x87\x0A", 12)
+        || !memcmp(contents, "\x0D\x0A\x87\x0A", 4);
+}
+
+bool matchesJ2KSignature(char* contents)
+{
+    return !memcmp(contents, "\xFF\x4F\xFF\x51", 4);
+}
+#endif
+
 #if USE(WEBP)
 bool matchesWebPSignature(char* contents)
 {
@@ -116,6 +132,14 @@ RefPtr<ScalableImageDecoder> ScalableImageDecoder::create(SharedBuffer& data, Al
 
     if (matchesJPEGSignature(contents))
         return JPEGImageDecoder::create(alphaOption, gammaAndColorProfileOption);
+
+#if USE(OPENJPEG)
+    if (matchesJP2Signature(contents))
+        return JPEG2000ImageDecoder::create(JPEG2000ImageDecoder::Format::JP2, alphaOption, gammaAndColorProfileOption);
+
+    if (matchesJ2KSignature(contents))
+        return JPEG2000ImageDecoder::create(JPEG2000ImageDecoder::Format::J2K, alphaOption, gammaAndColorProfileOption);
+#endif
 
 #if USE(WEBP)
     if (matchesWebPSignature(contents))

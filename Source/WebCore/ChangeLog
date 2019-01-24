@@ -1,3 +1,28 @@
+2019-01-24  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK][WPE] Support JPEG 2000 images
+        https://bugs.webkit.org/show_bug.cgi?id=186272
+
+        Reviewed by Žan Doberšek.
+
+        Add JPEG2000ImageDecoder to support JPEG2000 images using OpenJPEG. For now only SRGB and SYCC color spaces are
+        supported.
+
+        * platform/ImageDecoders.cmake:
+        * platform/MIMETypeRegistry.cpp:
+        (WebCore::MIMETypeRegistry::supportedImageMIMETypes):
+        * platform/image-decoders/ScalableImageDecoder.cpp:
+        (WebCore::ScalableImageDecoder::create):
+        * platform/image-decoders/jpeg2000/JPEG2000ImageDecoder.cpp: Added.
+        (WebCore::syccToRGB):
+        (WebCore::sycc444ToRGB):
+        (WebCore::sycc422ToRGB):
+        (WebCore::sycc420ToRGB):
+        (WebCore::JPEG2000ImageDecoder::JPEG2000ImageDecoder):
+        (WebCore::JPEG2000ImageDecoder::frameBufferAtIndex):
+        (WebCore::JPEG2000ImageDecoder::decode):
+        * platform/image-decoders/jpeg2000/JPEG2000ImageDecoder.h: Added.
+
 2019-01-23  Simon Fraser  <simon.fraser@apple.com>
 
         Change some RenderLayerCompositor functions to use references
