@@ -1,4 +1,4 @@
-# Copyright (C) 2018 Apple Inc. All rights reserved.
+# Copyright (C) 2018-2019 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -35,11 +35,15 @@ class Argument
     end
 
     def field
-        "#{@type.to_s} #{@name};"
+        "#{@type.to_s} #{field_name};"
     end
 
     def create_param
         "#{@type.to_s} #{@name}"
+    end
+
+    def field_name
+        "m_#{@name}"
     end
 
     def fits_check(size)
@@ -55,7 +59,7 @@ class Argument
     end
 
     def load_from_stream(index, size)
-        "#{@name}(#{Fits::convert(size, "stream[#{index}]", @type)})"
+        "#{field_name}(#{Fits::convert(size, "stream[#{index}]", @type)})"
     end
 
     def setter

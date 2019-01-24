@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -58,7 +58,7 @@ namespace JSC {
     CASE_OP(OpJbeloweq) \
     case op_switch_imm: { \
         auto bytecode = instruction->as<OpSwitchImm>(); \
-        auto& table = codeBlock->switchJumpTable(bytecode.tableIndex); \
+        auto& table = codeBlock->switchJumpTable(bytecode.m_tableIndex); \
         for (unsigned i = table.branchOffsets.size(); i--;) \
             SWITCH_CASE(table.branchOffsets[i]); \
         SWITCH_DEFAULT_OFFSET(OpSwitchImm); \
@@ -66,7 +66,7 @@ namespace JSC {
     } \
     case op_switch_char: { \
         auto bytecode = instruction->as<OpSwitchChar>(); \
-        auto& table = codeBlock->switchJumpTable(bytecode.tableIndex); \
+        auto& table = codeBlock->switchJumpTable(bytecode.m_tableIndex); \
         for (unsigned i = table.branchOffsets.size(); i--;) \
             SWITCH_CASE(table.branchOffsets[i]); \
         SWITCH_DEFAULT_OFFSET(OpSwitchChar); \
@@ -74,7 +74,7 @@ namespace JSC {
     } \
     case op_switch_string: { \
         auto bytecode = instruction->as<OpSwitchString>(); \
-        auto& table = codeBlock->stringSwitchJumpTable(bytecode.tableIndex); \
+        auto& table = codeBlock->stringSwitchJumpTable(bytecode.m_tableIndex); \
         auto iter = table.offsetTable.begin(); \
         auto end = table.offsetTable.end(); \
         for (; iter != end; ++iter) \
@@ -108,7 +108,7 @@ template<typename Op, typename Block>
 inline int jumpTargetForInstruction(Block&& codeBlock, const InstructionStream::Ref& instruction)
 {
     auto bytecode = instruction->as<Op>();
-    return jumpTargetForInstruction(codeBlock, instruction, bytecode.target);
+    return jumpTargetForInstruction(codeBlock, instruction, bytecode.m_target);
 }
 
 template<typename Block, typename Function>
@@ -123,7 +123,7 @@ inline void extractStoredJumpTargetsForInstruction(Block&& codeBlock, const Inst
     function(__target)
 
 #define SWITCH_DEFAULT_OFFSET(__op) \
-    function(jumpTargetForInstruction(codeBlock, instruction, bytecode.defaultOffset)) \
+    function(jumpTargetForInstruction(codeBlock, instruction, bytecode.m_defaultOffset)) \
 
 SWITCH_JMP(CASE_OP, SWITCH_CASE, SWITCH_DEFAULT_OFFSET)
 
@@ -154,7 +154,7 @@ inline void updateStoredJumpTargetsForInstruction(Block&& codeBlock, unsigned fi
 
 #define SWITCH_DEFAULT_OFFSET(__op) \
     do { \
-        int32_t target = jumpTargetForInstruction(codeBlockOrHashMap, instruction, bytecode.defaultOffset); \
+        int32_t target = jumpTargetForInstruction(codeBlockOrHashMap, instruction, bytecode.m_defaultOffset); \
         int32_t newTarget = function(target); \
         instruction->cast<__op>()->setDefaultOffset(BoundLabel(newTarget), [&]() { \
             codeBlock->addOutOfLineJumpTarget(finalOffset + instruction.offset(), newTarget); \

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011-2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2011-2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -133,7 +133,7 @@ namespace JSC { namespace LLInt {
         bool __b_condition = (condition);                         \
         LLINT_CHECK_EXCEPTION();                                  \
         if (__b_condition)                                        \
-            JUMP_TO(JUMP_OFFSET(bytecode.target)); \
+            JUMP_TO(JUMP_OFFSET(bytecode.m_target)); \
         else                                                      \
             JUMP_TO(pc->size()); \
         LLINT_END_IMPL();                                         \
@@ -142,20 +142,20 @@ namespace JSC { namespace LLInt {
 #define LLINT_RETURN(value) do {                \
         JSValue __r_returnValue = (value);      \
         LLINT_CHECK_EXCEPTION();                \
-        LLINT_OP(bytecode.dst) = __r_returnValue;          \
+        LLINT_OP(bytecode.m_dst) = __r_returnValue;          \
         LLINT_END_IMPL();                       \
     } while (false)
 
 #define LLINT_RETURN_PROFILED(value) do {               \
         JSValue __rp_returnValue = (value);                     \
         LLINT_CHECK_EXCEPTION();                                \
-        LLINT_OP(bytecode.dst) = __rp_returnValue;                         \
+        LLINT_OP(bytecode.m_dst) = __rp_returnValue;                         \
         LLINT_PROFILE_VALUE(__rp_returnValue);          \
         LLINT_END_IMPL();                                       \
     } while (false)
 
 #define LLINT_PROFILE_VALUE(value) do { \
-        bytecode.metadata(exec).profile.m_buckets[0] = JSValue::encode(value); \
+        bytecode.metadata(exec).m_profile.m_buckets[0] = JSValue::encode(value); \
     } while (false)
 
 #define LLINT_CALL_END_IMPL(exec, callTarget, callTargetTag) \
@@ -571,7 +571,7 @@ LLINT_SLOW_PATH_DECL(slow_path_new_object)
     LLINT_BEGIN();
     auto bytecode = pc->as<OpNewObject>();
     auto& metadata = bytecode.metadata(exec);
-    LLINT_RETURN(constructEmptyObject(exec, metadata.objectAllocationProfile.structure()));
+    LLINT_RETURN(constructEmptyObject(exec, metadata.m_objectAllocationProfile.structure()));
 }
 
 LLINT_SLOW_PATH_DECL(slow_path_new_array)
@@ -579,7 +579,7 @@ LLINT_SLOW_PATH_DECL(slow_path_new_array)
     LLINT_BEGIN();
     auto bytecode = pc->as<OpNewArray>();
     auto& metadata = bytecode.metadata(exec);
-    LLINT_RETURN(constructArrayNegativeIndexed(exec, &metadata.arrayAllocationProfile, bitwise_cast<JSValue*>(&LLINT_OP(bytecode.argv)), bytecode.argc));
+    LLINT_RETURN(constructArrayNegativeIndexed(exec, &metadata.m_arrayAllocationProfile, bitwise_cast<JSValue*>(&LLINT_OP(bytecode.m_argv)), bytecode.m_argc));
 }
 
 LLINT_SLOW_PATH_DECL(slow_path_new_array_with_size)
@@ -587,14 +587,14 @@ LLINT_SLOW_PATH_DECL(slow_path_new_array_with_size)
     LLINT_BEGIN();
     auto bytecode = pc->as<OpNewArrayWithSize>();
     auto& metadata = bytecode.metadata(exec);
-    LLINT_RETURN(constructArrayWithSizeQuirk(exec, &metadata.arrayAllocationProfile, exec->lexicalGlobalObject(), LLINT_OP_C(bytecode.length).jsValue()));
+    LLINT_RETURN(constructArrayWithSizeQuirk(exec, &metadata.m_arrayAllocationProfile, exec->lexicalGlobalObject(), LLINT_OP_C(bytecode.m_length).jsValue()));
 }
 
 LLINT_SLOW_PATH_DECL(slow_path_new_regexp)
 {
     LLINT_BEGIN();
     auto bytecode = pc->as<OpNewRegexp>();
-    RegExp* regExp = jsCast<RegExp*>(LLINT_OP_C(bytecode.regexp).jsValue());
+    RegExp* regExp = jsCast<RegExp*>(LLINT_OP_C(bytecode.m_regexp).jsValue());
     ASSERT(regExp->isValid());
     LLINT_RETURN(RegExpObject::create(vm, exec->lexicalGlobalObject()->regExpStructure(), regExp));
 }
@@ -603,8 +603,8 @@ LLINT_SLOW_PATH_DECL(slow_path_instanceof)
 {
     LLINT_BEGIN();
     auto bytecode = pc->as<OpInstanceof>();
-    JSValue value = LLINT_OP_C(bytecode.value).jsValue();
-    JSValue proto = LLINT_OP_C(bytecode.prototype).jsValue();
+    JSValue value = LLINT_OP_C(bytecode.m_value).jsValue();
+    JSValue proto = LLINT_OP_C(bytecode.m_prototype).jsValue();
     LLINT_RETURN(jsBoolean(JSObject::defaultHasInstance(exec, value, proto)));
 }
 
@@ -613,9 +613,9 @@ LLINT_SLOW_PATH_DECL(slow_path_instanceof_custom)
     LLINT_BEGIN();
 
     auto bytecode = pc->as<OpInstanceofCustom>();
-    JSValue value = LLINT_OP_C(bytecode.value).jsValue();
-    JSValue constructor = LLINT_OP_C(bytecode.constructor).jsValue();
-    JSValue hasInstanceValue = LLINT_OP_C(bytecode.hasInstanceValue).jsValue();
+    JSValue value = LLINT_OP_C(bytecode.m_value).jsValue();
+    JSValue constructor = LLINT_OP_C(bytecode.m_constructor).jsValue();
+    JSValue hasInstanceValue = LLINT_OP_C(bytecode.m_hasInstanceValue).jsValue();
 
     ASSERT(constructor.isObject());
     ASSERT(hasInstanceValue != exec->lexicalGlobalObject()->functionProtoHasInstanceSymbolFunction() || !constructor.getObject()->structure(vm)->typeInfo().implementsDefaultHasInstance());
@@ -629,8 +629,8 @@ LLINT_SLOW_PATH_DECL(slow_path_try_get_by_id)
     LLINT_BEGIN();
     auto bytecode = pc->as<OpTryGetById>();
     CodeBlock* codeBlock = exec->codeBlock();
-    const Identifier& ident = codeBlock->identifier(bytecode.property);
-    JSValue baseValue = LLINT_OP_C(bytecode.base).jsValue();
+    const Identifier& ident = codeBlock->identifier(bytecode.m_property);
+    JSValue baseValue = LLINT_OP_C(bytecode.m_base).jsValue();
     PropertySlot slot(baseValue, PropertySlot::PropertySlot::InternalMethodType::VMInquiry);
 
     baseValue.getPropertySlot(exec, ident, slot);
@@ -644,8 +644,8 @@ LLINT_SLOW_PATH_DECL(slow_path_get_by_id_direct)
     LLINT_BEGIN();
     auto bytecode = pc->as<OpGetByIdDirect>();
     CodeBlock* codeBlock = exec->codeBlock();
-    const Identifier& ident = codeBlock->identifier(bytecode.property);
-    JSValue baseValue = LLINT_OP_C(bytecode.base).jsValue();
+    const Identifier& ident = codeBlock->identifier(bytecode.m_property);
+    JSValue baseValue = LLINT_OP_C(bytecode.m_base).jsValue();
     PropertySlot slot(baseValue, PropertySlot::PropertySlot::InternalMethodType::GetOwnProperty);
 
     bool found = baseValue.getOwnPropertySlot(exec, ident, slot);
@@ -656,7 +656,7 @@ LLINT_SLOW_PATH_DECL(slow_path_get_by_id_direct)
     if (!LLINT_ALWAYS_ACCESS_SLOW && slot.isCacheable()) {
         auto& metadata = bytecode.metadata(exec);
         {
-            StructureID oldStructureID = metadata.structure;
+            StructureID oldStructureID = metadata.m_structure;
             if (oldStructureID) {
                 Structure* a = vm.heap.structureIDTable().get(oldStructureID);
                 Structure* b = baseValue.asCell()->structure(vm);
@@ -672,8 +672,8 @@ LLINT_SLOW_PATH_DECL(slow_path_get_by_id_direct)
         Structure* structure = baseCell->structure(vm);
         if (slot.isValue()) {
             // Start out by clearing out the old cache.
-            metadata.structure = 0;
-            metadata.offset = 0;
+            metadata.m_structure = 0;
+            metadata.m_offset = 0;
 
             if (structure->propertyAccessesAreCacheable()
                 && !structure->needImpurePropertyWatchpoint()) {
@@ -681,8 +681,8 @@ LLINT_SLOW_PATH_DECL(slow_path_get_by_id_direct)
 
                 ConcurrentJSLocker locker(codeBlock->m_lock);
 
-                metadata.structure = structure->id();
-                metadata.offset = slot.cachedOffset();
+                metadata.m_structure = structure->id();
+                metadata.m_offset = slot.cachedOffset();
             }
         }
     }
@@ -735,19 +735,19 @@ static void setupGetByIdPrototypeCache(ExecState* exec, VM& vm, const Instructio
     ConcurrentJSLocker locker(codeBlock->m_lock);
 
     if (slot.isUnset()) {
-        metadata.mode = GetByIdMode::Unset;
-        metadata.modeMetadata.unsetMode.structure = structure->id();
+        metadata.m_mode = GetByIdMode::Unset;
+        metadata.m_modeMetadata.unsetMode.structure = structure->id();
         return;
     }
     ASSERT(slot.isValue());
 
-    metadata.mode = GetByIdMode::ProtoLoad;
-    metadata.modeMetadata.protoLoadMode.structure = structure->id();
-    metadata.modeMetadata.protoLoadMode.cachedOffset = offset;
-    metadata.modeMetadata.protoLoadMode.cachedSlot = slot.slotBase();
+    metadata.m_mode = GetByIdMode::ProtoLoad;
+    metadata.m_modeMetadata.protoLoadMode.structure = structure->id();
+    metadata.m_modeMetadata.protoLoadMode.cachedOffset = offset;
+    metadata.m_modeMetadata.protoLoadMode.cachedSlot = slot.slotBase();
     // We know that this pointer will remain valid because it will be cleared by either a watchpoint fire or
     // during GC when we clear the LLInt caches.
-    metadata.modeMetadata.protoLoadMode.cachedSlot = slot.slotBase();
+    metadata.m_modeMetadata.protoLoadMode.cachedSlot = slot.slotBase();
 }
 
 
@@ -757,29 +757,29 @@ LLINT_SLOW_PATH_DECL(slow_path_get_by_id)
     auto bytecode = pc->as<OpGetById>();
     auto& metadata = bytecode.metadata(exec);
     CodeBlock* codeBlock = exec->codeBlock();
-    const Identifier& ident = codeBlock->identifier(bytecode.property);
-    JSValue baseValue = LLINT_OP_C(bytecode.base).jsValue();
+    const Identifier& ident = codeBlock->identifier(bytecode.m_property);
+    JSValue baseValue = LLINT_OP_C(bytecode.m_base).jsValue();
     PropertySlot slot(baseValue, PropertySlot::PropertySlot::InternalMethodType::Get);
 
     JSValue result = baseValue.get(exec, ident, slot);
     LLINT_CHECK_EXCEPTION();
-    LLINT_OP(bytecode.dst) = result;
+    LLINT_OP(bytecode.m_dst) = result;
     
     if (!LLINT_ALWAYS_ACCESS_SLOW
         && baseValue.isCell()
         && slot.isCacheable()) {
         {
             StructureID oldStructureID;
-            auto mode = metadata.mode;
+            auto mode = metadata.m_mode;
             switch (mode) {
             case GetByIdMode::Default:
-                oldStructureID = metadata.modeMetadata.defaultMode.structure;
+                oldStructureID = metadata.m_modeMetadata.defaultMode.structure;
                 break;
             case GetByIdMode::Unset:
-                oldStructureID = metadata.modeMetadata.unsetMode.structure;
+                oldStructureID = metadata.m_modeMetadata.unsetMode.structure;
                 break;
             case GetByIdMode::ProtoLoad:
-                oldStructureID = metadata.modeMetadata.protoLoadMode.structure;
+                oldStructureID = metadata.m_modeMetadata.protoLoadMode.structure;
                 break;
             default:
                 oldStructureID = 0;
@@ -799,12 +799,12 @@ LLINT_SLOW_PATH_DECL(slow_path_get_by_id)
         Structure* structure = baseCell->structure(vm);
         if (slot.isValue() && slot.slotBase() == baseValue) {
             // Start out by clearing out the old cache.
-            metadata.mode = GetByIdMode::Default;
-            metadata.modeMetadata.defaultMode.structure = 0;
-            metadata.modeMetadata.defaultMode.cachedOffset = 0;
+            metadata.m_mode = GetByIdMode::Default;
+            metadata.m_modeMetadata.defaultMode.structure = 0;
+            metadata.m_modeMetadata.defaultMode.cachedOffset = 0;
 
             // Prevent the prototype cache from ever happening.
-            metadata.hitCountForLLIntCaching = 0;
+            metadata.m_hitCountForLLIntCaching = 0;
         
             if (structure->propertyAccessesAreCacheable()
                 && !structure->needImpurePropertyWatchpoint()) {
@@ -812,24 +812,24 @@ LLINT_SLOW_PATH_DECL(slow_path_get_by_id)
                 
                 ConcurrentJSLocker locker(codeBlock->m_lock);
 
-                metadata.modeMetadata.defaultMode.structure = structure->id();
-                metadata.modeMetadata.defaultMode.cachedOffset = slot.cachedOffset();
+                metadata.m_modeMetadata.defaultMode.structure = structure->id();
+                metadata.m_modeMetadata.defaultMode.cachedOffset = slot.cachedOffset();
             }
-        } else if (UNLIKELY(metadata.hitCountForLLIntCaching && (slot.isValue() || slot.isUnset()))) {
+        } else if (UNLIKELY(metadata.m_hitCountForLLIntCaching && (slot.isValue() || slot.isUnset()))) {
             ASSERT(slot.slotBase() != baseValue);
 
-            if (!(--metadata.hitCountForLLIntCaching))
+            if (!(--metadata.m_hitCountForLLIntCaching))
                 setupGetByIdPrototypeCache(exec, vm, pc, metadata, baseCell, slot, ident);
         }
     } else if (!LLINT_ALWAYS_ACCESS_SLOW
         && isJSArray(baseValue)
         && ident == vm.propertyNames->length) {
-        metadata.mode = GetByIdMode::ArrayLength;
-        new (&metadata.modeMetadata.arrayLengthMode.arrayProfile) ArrayProfile(codeBlock->bytecodeOffset(pc));
-        metadata.modeMetadata.arrayLengthMode.arrayProfile.observeStructure(baseValue.asCell()->structure(vm));
+        metadata.m_mode = GetByIdMode::ArrayLength;
+        new (&metadata.m_modeMetadata.arrayLengthMode.arrayProfile) ArrayProfile(codeBlock->bytecodeOffset(pc));
+        metadata.m_modeMetadata.arrayLengthMode.arrayProfile.observeStructure(baseValue.asCell()->structure(vm));
 
         // Prevent the prototype cache from ever happening.
-        metadata.hitCountForLLIntCaching = 0;
+        metadata.m_hitCountForLLIntCaching = 0;
     }
 
     LLINT_PROFILE_VALUE(result);
@@ -842,14 +842,14 @@ LLINT_SLOW_PATH_DECL(slow_path_put_by_id)
     auto bytecode = pc->as<OpPutById>();
     auto& metadata = bytecode.metadata(exec);
     CodeBlock* codeBlock = exec->codeBlock();
-    const Identifier& ident = codeBlock->identifier(bytecode.property);
+    const Identifier& ident = codeBlock->identifier(bytecode.m_property);
     
-    JSValue baseValue = LLINT_OP_C(bytecode.base).jsValue();
+    JSValue baseValue = LLINT_OP_C(bytecode.m_base).jsValue();
     PutPropertySlot slot(baseValue, codeBlock->isStrictMode(), codeBlock->putByIdContext());
-    if (bytecode.flags & PutByIdIsDirect)
-        CommonSlowPaths::putDirectWithReify(vm, exec, asObject(baseValue), ident, LLINT_OP_C(bytecode.value).jsValue(), slot);
+    if (bytecode.m_flags & PutByIdIsDirect)
+        CommonSlowPaths::putDirectWithReify(vm, exec, asObject(baseValue), ident, LLINT_OP_C(bytecode.m_value).jsValue(), slot);
     else
-        baseValue.putInline(exec, ident, LLINT_OP_C(bytecode.value).jsValue(), slot);
+        baseValue.putInline(exec, ident, LLINT_OP_C(bytecode.m_value).jsValue(), slot);
     LLINT_CHECK_EXCEPTION();
     
     if (!LLINT_ALWAYS_ACCESS_SLOW
@@ -857,7 +857,7 @@ LLINT_SLOW_PATH_DECL(slow_path_put_by_id)
         && slot.isCacheablePut()) {
 
         {
-            StructureID oldStructureID = metadata.oldStructure;
+            StructureID oldStructureID = metadata.m_oldStructure;
             if (oldStructureID) {
                 Structure* a = vm.heap.structureIDTable().get(oldStructureID);
                 Structure* b = baseValue.asCell()->structure(vm);
@@ -872,10 +872,10 @@ LLINT_SLOW_PATH_DECL(slow_path_put_by_id)
         }
 
         // Start out by clearing out the old cache.
-        metadata.oldStructure = 0;
-        metadata.offset = 0;
-        metadata.newStructure = 0;
-        metadata.structureChain.clear();
+        metadata.m_oldStructure = 0;
+        metadata.m_offset = 0;
+        metadata.m_newStructure = 0;
+        metadata.m_structureChain.clear();
         
         JSCell* baseCell = baseValue.asCell();
         Structure* structure = baseCell->structure(vm);
@@ -896,20 +896,20 @@ LLINT_SLOW_PATH_DECL(slow_path_put_by_id)
                     auto result = normalizePrototypeChain(exec, baseCell, sawPolyProto);
                     if (result != InvalidPrototypeChain && !sawPolyProto) {
                         ASSERT(structure->previousID()->isObject());
-                        metadata.oldStructure = structure->previousID()->id();
-                        metadata.offset = slot.cachedOffset();
-                        metadata.newStructure = structure->id();
-                        if (!(bytecode.flags & PutByIdIsDirect)) {
+                        metadata.m_oldStructure = structure->previousID()->id();
+                        metadata.m_offset = slot.cachedOffset();
+                        metadata.m_newStructure = structure->id();
+                        if (!(bytecode.m_flags & PutByIdIsDirect)) {
                             StructureChain* chain = structure->prototypeChain(exec, asObject(baseCell));
                             ASSERT(chain);
-                            metadata.structureChain.set(vm, codeBlock, chain);
+                            metadata.m_structureChain.set(vm, codeBlock, chain);
                         }
                     }
                 }
             } else {
                 structure->didCachePropertyReplacement(vm, slot.cachedOffset());
-                metadata.oldStructure = structure->id();
-                metadata.offset = slot.cachedOffset();
+                metadata.m_oldStructure = structure->id();
+                metadata.m_offset = slot.cachedOffset();
             }
         }
     }
@@ -922,9 +922,9 @@ LLINT_SLOW_PATH_DECL(slow_path_del_by_id)
     LLINT_BEGIN();
     auto bytecode = pc->as<OpDelById>();
     CodeBlock* codeBlock = exec->codeBlock();
-    JSObject* baseObject = LLINT_OP_C(bytecode.base).jsValue().toObject(exec);
+    JSObject* baseObject = LLINT_OP_C(bytecode.m_base).jsValue().toObject(exec);
     LLINT_CHECK_EXCEPTION();
-    bool couldDelete = baseObject->methodTable(vm)->deleteProperty(baseObject, exec, codeBlock->identifier(bytecode.property));
+    bool couldDelete = baseObject->methodTable(vm)->deleteProperty(baseObject, exec, codeBlock->identifier(bytecode.m_property));
     LLINT_CHECK_EXCEPTION();
     if (!couldDelete && codeBlock->isStrictMode())
         LLINT_THROW(createTypeError(exec, UnableToDeletePropertyError));
@@ -933,8 +933,8 @@ LLINT_SLOW_PATH_DECL(slow_path_del_by_id)
 
 static ALWAYS_INLINE JSValue getByVal(VM& vm, ExecState* exec, OpGetByVal bytecode)
 {
-    JSValue baseValue = LLINT_OP_C(bytecode.base).jsValue();
-    JSValue subscript = LLINT_OP_C(bytecode.property).jsValue();
+    JSValue baseValue = LLINT_OP_C(bytecode.m_base).jsValue();
+    JSValue subscript = LLINT_OP_C(bytecode.m_property).jsValue();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     if (LIKELY(baseValue.isCell() && subscript.isString())) {
@@ -950,7 +950,7 @@ static ALWAYS_INLINE JSValue getByVal(VM& vm, ExecState* exec, OpGetByVal byteco
     if (subscript.isUInt32()) {
         uint32_t i = subscript.asUInt32();
         auto& metadata = bytecode.metadata(exec);
-        ArrayProfile* arrayProfile = &metadata.arrayProfile;
+        ArrayProfile* arrayProfile = &metadata.m_arrayProfile;
 
         if (isJSString(baseValue)) {
             if (asString(baseValue)->canGetIndex(i)) {
@@ -1000,9 +1000,9 @@ LLINT_SLOW_PATH_DECL(slow_path_put_by_val)
     LLINT_BEGIN();
     
     auto bytecode = pc->as<OpPutByVal>();
-    JSValue baseValue = LLINT_OP_C(bytecode.base).jsValue();
-    JSValue subscript = LLINT_OP_C(bytecode.property).jsValue();
-    JSValue value = LLINT_OP_C(bytecode.value).jsValue();
+    JSValue baseValue = LLINT_OP_C(bytecode.m_base).jsValue();
+    JSValue subscript = LLINT_OP_C(bytecode.m_property).jsValue();
+    JSValue value = LLINT_OP_C(bytecode.m_value).jsValue();
     bool isStrictMode = exec->codeBlock()->isStrictMode();
     
     if (LIKELY(subscript.isUInt32())) {
@@ -1031,9 +1031,9 @@ LLINT_SLOW_PATH_DECL(slow_path_put_by_val_direct)
     LLINT_BEGIN();
     
     auto bytecode = pc->as<OpPutByValDirect>();
-    JSValue baseValue = LLINT_OP_C(bytecode.base).jsValue();
-    JSValue subscript = LLINT_OP_C(bytecode.property).jsValue();
-    JSValue value = LLINT_OP_C(bytecode.value).jsValue();
+    JSValue baseValue = LLINT_OP_C(bytecode.m_base).jsValue();
+    JSValue subscript = LLINT_OP_C(bytecode.m_property).jsValue();
+    JSValue value = LLINT_OP_C(bytecode.m_value).jsValue();
     RELEASE_ASSERT(baseValue.isObject());
     JSObject* baseObject = asObject(baseValue);
     bool isStrictMode = exec->codeBlock()->isStrictMode();
@@ -1071,11 +1071,11 @@ LLINT_SLOW_PATH_DECL(slow_path_del_by_val)
 {
     LLINT_BEGIN();
     auto bytecode = pc->as<OpDelByVal>();
-    JSValue baseValue = LLINT_OP_C(bytecode.base).jsValue();
+    JSValue baseValue = LLINT_OP_C(bytecode.m_base).jsValue();
     JSObject* baseObject = baseValue.toObject(exec);
     LLINT_CHECK_EXCEPTION();
 
-    JSValue subscript = LLINT_OP_C(bytecode.property).jsValue();
+    JSValue subscript = LLINT_OP_C(bytecode.m_property).jsValue();
     
     bool couldDelete;
     
@@ -1100,15 +1100,15 @@ LLINT_SLOW_PATH_DECL(slow_path_put_getter_by_id)
 {
     LLINT_BEGIN();
     auto bytecode = pc->as<OpPutGetterById>();
-    ASSERT(LLINT_OP(bytecode.base).jsValue().isObject());
-    JSObject* baseObj = asObject(LLINT_OP(bytecode.base).jsValue());
+    ASSERT(LLINT_OP(bytecode.m_base).jsValue().isObject());
+    JSObject* baseObj = asObject(LLINT_OP(bytecode.m_base).jsValue());
 
-    unsigned options = bytecode.attributes;
+    unsigned options = bytecode.m_attributes;
 
-    JSValue getter = LLINT_OP(bytecode.accessor).jsValue();
+    JSValue getter = LLINT_OP(bytecode.m_accessor).jsValue();
     ASSERT(getter.isObject());
 
-    baseObj->putGetter(exec, exec->codeBlock()->identifier(bytecode.property), asObject(getter), options);
+    baseObj->putGetter(exec, exec->codeBlock()->identifier(bytecode.m_property), asObject(getter), options);
     LLINT_END();
 }
 
@@ -1116,15 +1116,15 @@ LLINT_SLOW_PATH_DECL(slow_path_put_setter_by_id)
 {
     LLINT_BEGIN();
     auto bytecode = pc->as<OpPutSetterById>();
-    ASSERT(LLINT_OP(bytecode.base).jsValue().isObject());
-    JSObject* baseObj = asObject(LLINT_OP(bytecode.base).jsValue());
+    ASSERT(LLINT_OP(bytecode.m_base).jsValue().isObject());
+    JSObject* baseObj = asObject(LLINT_OP(bytecode.m_base).jsValue());
 
-    unsigned options = bytecode.attributes;
+    unsigned options = bytecode.m_attributes;
 
-    JSValue setter = LLINT_OP(bytecode.accessor).jsValue();
+    JSValue setter = LLINT_OP(bytecode.m_accessor).jsValue();
     ASSERT(setter.isObject());
 
-    baseObj->putSetter(exec, exec->codeBlock()->identifier(bytecode.property), asObject(setter), options);
+    baseObj->putSetter(exec, exec->codeBlock()->identifier(bytecode.m_property), asObject(setter), options);
     LLINT_END();
 }
 
@@ -1132,15 +1132,15 @@ LLINT_SLOW_PATH_DECL(slow_path_put_getter_setter_by_id)
 {
     LLINT_BEGIN();
     auto bytecode = pc->as<OpPutGetterSetterById>();
-    ASSERT(LLINT_OP(bytecode.base).jsValue().isObject());
-    JSObject* baseObject = asObject(LLINT_OP(bytecode.base).jsValue());
+    ASSERT(LLINT_OP(bytecode.m_base).jsValue().isObject());
+    JSObject* baseObject = asObject(LLINT_OP(bytecode.m_base).jsValue());
 
-    JSValue getter = LLINT_OP(bytecode.getter).jsValue();
-    JSValue setter = LLINT_OP(bytecode.setter).jsValue();
+    JSValue getter = LLINT_OP(bytecode.m_getter).jsValue();
+    JSValue setter = LLINT_OP(bytecode.m_setter).jsValue();
     ASSERT(getter.isObject() || setter.isObject());
     GetterSetter* accessor = GetterSetter::create(vm, exec->lexicalGlobalObject(), getter, setter);
 
-    CommonSlowPaths::putDirectAccessorWithReify(vm, exec, baseObject, exec->codeBlock()->identifier(bytecode.property), accessor, bytecode.attributes);
+    CommonSlowPaths::putDirectAccessorWithReify(vm, exec, baseObject, exec->codeBlock()->identifier(bytecode.m_property), accessor, bytecode.m_attributes);
     LLINT_END();
 }
 
@@ -1148,13 +1148,13 @@ LLINT_SLOW_PATH_DECL(slow_path_put_getter_by_val)
 {
     LLINT_BEGIN();
     auto bytecode = pc->as<OpPutGetterByVal>();
-    ASSERT(LLINT_OP(bytecode.base).jsValue().isObject());
-    JSObject* baseObj = asObject(LLINT_OP(bytecode.base).jsValue());
-    JSValue subscript = LLINT_OP_C(bytecode.property).jsValue();
+    ASSERT(LLINT_OP(bytecode.m_base).jsValue().isObject());
+    JSObject* baseObj = asObject(LLINT_OP(bytecode.m_base).jsValue());
+    JSValue subscript = LLINT_OP_C(bytecode.m_property).jsValue();
 
-    unsigned options = bytecode.attributes;
+    unsigned options = bytecode.m_attributes;
 
-    JSValue getter = LLINT_OP(bytecode.accessor).jsValue();
+    JSValue getter = LLINT_OP(bytecode.m_accessor).jsValue();
     ASSERT(getter.isObject());
 
     auto property = subscript.toPropertyKey(exec);
@@ -1168,13 +1168,13 @@ LLINT_SLOW_PATH_DECL(slow_path_put_setter_by_val)
 {
     LLINT_BEGIN();
     auto bytecode = pc->as<OpPutSetterByVal>();
-    ASSERT(LLINT_OP(bytecode.base).jsValue().isObject());
-    JSObject* baseObj = asObject(LLINT_OP(bytecode.base).jsValue());
-    JSValue subscript = LLINT_OP_C(bytecode.property).jsValue();
+    ASSERT(LLINT_OP(bytecode.m_base).jsValue().isObject());
+    JSObject* baseObj = asObject(LLINT_OP(bytecode.m_base).jsValue());
+    JSValue subscript = LLINT_OP_C(bytecode.m_property).jsValue();
 
-    unsigned options = bytecode.attributes;
+    unsigned options = bytecode.m_attributes;
 
-    JSValue setter = LLINT_OP(bytecode.accessor).jsValue();
+    JSValue setter = LLINT_OP(bytecode.m_accessor).jsValue();
     ASSERT(setter.isObject());
 
     auto property = subscript.toPropertyKey(exec);
@@ -1188,112 +1188,112 @@ LLINT_SLOW_PATH_DECL(slow_path_jtrue)
 {
     LLINT_BEGIN();
     auto bytecode = pc->as<OpJtrue>();
-    LLINT_BRANCH(LLINT_OP_C(bytecode.condition).jsValue().toBoolean(exec));
+    LLINT_BRANCH(LLINT_OP_C(bytecode.m_condition).jsValue().toBoolean(exec));
 }
 
 LLINT_SLOW_PATH_DECL(slow_path_jfalse)
 {
     LLINT_BEGIN();
     auto bytecode = pc->as<OpJfalse>();
-    LLINT_BRANCH(!LLINT_OP_C(bytecode.condition).jsValue().toBoolean(exec));
+    LLINT_BRANCH(!LLINT_OP_C(bytecode.m_condition).jsValue().toBoolean(exec));
 }
 
 LLINT_SLOW_PATH_DECL(slow_path_jless)
 {
     LLINT_BEGIN();
     auto bytecode = pc->as<OpJless>();
-    LLINT_BRANCH(jsLess<true>(exec, LLINT_OP_C(bytecode.lhs).jsValue(), LLINT_OP_C(bytecode.rhs).jsValue()));
+    LLINT_BRANCH(jsLess<true>(exec, LLINT_OP_C(bytecode.m_lhs).jsValue(), LLINT_OP_C(bytecode.m_rhs).jsValue()));
 }
 
 LLINT_SLOW_PATH_DECL(slow_path_jnless)
 {
     LLINT_BEGIN();
     auto bytecode = pc->as<OpJnless>();
-    LLINT_BRANCH(!jsLess<true>(exec, LLINT_OP_C(bytecode.lhs).jsValue(), LLINT_OP_C(bytecode.rhs).jsValue()));
+    LLINT_BRANCH(!jsLess<true>(exec, LLINT_OP_C(bytecode.m_lhs).jsValue(), LLINT_OP_C(bytecode.m_rhs).jsValue()));
 }
 
 LLINT_SLOW_PATH_DECL(slow_path_jgreater)
 {
     LLINT_BEGIN();
     auto bytecode = pc->as<OpJgreater>();
-    LLINT_BRANCH(jsLess<false>(exec, LLINT_OP_C(bytecode.rhs).jsValue(), LLINT_OP_C(bytecode.lhs).jsValue()));
+    LLINT_BRANCH(jsLess<false>(exec, LLINT_OP_C(bytecode.m_rhs).jsValue(), LLINT_OP_C(bytecode.m_lhs).jsValue()));
 }
 
 LLINT_SLOW_PATH_DECL(slow_path_jngreater)
 {
     LLINT_BEGIN();
     auto bytecode = pc->as<OpJngreater>();
-    LLINT_BRANCH(!jsLess<false>(exec, LLINT_OP_C(bytecode.rhs).jsValue(), LLINT_OP_C(bytecode.lhs).jsValue()));
+    LLINT_BRANCH(!jsLess<false>(exec, LLINT_OP_C(bytecode.m_rhs).jsValue(), LLINT_OP_C(bytecode.m_lhs).jsValue()));
 }
 
 LLINT_SLOW_PATH_DECL(slow_path_jlesseq)
 {
     LLINT_BEGIN();
     auto bytecode = pc->as<OpJlesseq>();
-    LLINT_BRANCH(jsLessEq<true>(exec, LLINT_OP_C(bytecode.lhs).jsValue(), LLINT_OP_C(bytecode.rhs).jsValue()));
+    LLINT_BRANCH(jsLessEq<true>(exec, LLINT_OP_C(bytecode.m_lhs).jsValue(), LLINT_OP_C(bytecode.m_rhs).jsValue()));
 }
 
 LLINT_SLOW_PATH_DECL(slow_path_jnlesseq)
 {
     LLINT_BEGIN();
     auto bytecode = pc->as<OpJnlesseq>();
-    LLINT_BRANCH(!jsLessEq<true>(exec, LLINT_OP_C(bytecode.lhs).jsValue(), LLINT_OP_C(bytecode.rhs).jsValue()));
+    LLINT_BRANCH(!jsLessEq<true>(exec, LLINT_OP_C(bytecode.m_lhs).jsValue(), LLINT_OP_C(bytecode.m_rhs).jsValue()));
 }
 
 LLINT_SLOW_PATH_DECL(slow_path_jgreatereq)
 {
     LLINT_BEGIN();
     auto bytecode = pc->as<OpJgreatereq>();
-    LLINT_BRANCH(jsLessEq<false>(exec, LLINT_OP_C(bytecode.rhs).jsValue(), LLINT_OP_C(bytecode.lhs).jsValue()));
+    LLINT_BRANCH(jsLessEq<false>(exec, LLINT_OP_C(bytecode.m_rhs).jsValue(), LLINT_OP_C(bytecode.m_lhs).jsValue()));
 }
 
 LLINT_SLOW_PATH_DECL(slow_path_jngreatereq)
 {
     LLINT_BEGIN();
     auto bytecode = pc->as<OpJngreatereq>();
-    LLINT_BRANCH(!jsLessEq<false>(exec, LLINT_OP_C(bytecode.rhs).jsValue(), LLINT_OP_C(bytecode.lhs).jsValue()));
+    LLINT_BRANCH(!jsLessEq<false>(exec, LLINT_OP_C(bytecode.m_rhs).jsValue(), LLINT_OP_C(bytecode.m_lhs).jsValue()));
 }
 
 LLINT_SLOW_PATH_DECL(slow_path_jeq)
 {
     LLINT_BEGIN();
     auto bytecode = pc->as<OpJeq>();
-    LLINT_BRANCH(JSValue::equal(exec, LLINT_OP_C(bytecode.lhs).jsValue(), LLINT_OP_C(bytecode.rhs).jsValue()));
+    LLINT_BRANCH(JSValue::equal(exec, LLINT_OP_C(bytecode.m_lhs).jsValue(), LLINT_OP_C(bytecode.m_rhs).jsValue()));
 }
 
 LLINT_SLOW_PATH_DECL(slow_path_jneq)
 {
     LLINT_BEGIN();
     auto bytecode = pc->as<OpJneq>();
-    LLINT_BRANCH(!JSValue::equal(exec, LLINT_OP_C(bytecode.lhs).jsValue(), LLINT_OP_C(bytecode.rhs).jsValue()));
+    LLINT_BRANCH(!JSValue::equal(exec, LLINT_OP_C(bytecode.m_lhs).jsValue(), LLINT_OP_C(bytecode.m_rhs).jsValue()));
 }
 
 LLINT_SLOW_PATH_DECL(slow_path_jstricteq)
 {
     LLINT_BEGIN();
     auto bytecode = pc->as<OpJstricteq>();
-    LLINT_BRANCH(JSValue::strictEqual(exec, LLINT_OP_C(bytecode.lhs).jsValue(), LLINT_OP_C(bytecode.rhs).jsValue()));
+    LLINT_BRANCH(JSValue::strictEqual(exec, LLINT_OP_C(bytecode.m_lhs).jsValue(), LLINT_OP_C(bytecode.m_rhs).jsValue()));
 }
 
 LLINT_SLOW_PATH_DECL(slow_path_jnstricteq)
 {
     LLINT_BEGIN();
     auto bytecode = pc->as<OpJnstricteq>();
-    LLINT_BRANCH(!JSValue::strictEqual(exec, LLINT_OP_C(bytecode.lhs).jsValue(), LLINT_OP_C(bytecode.rhs).jsValue()));
+    LLINT_BRANCH(!JSValue::strictEqual(exec, LLINT_OP_C(bytecode.m_lhs).jsValue(), LLINT_OP_C(bytecode.m_rhs).jsValue()));
 }
 
 LLINT_SLOW_PATH_DECL(slow_path_switch_imm)
 {
     LLINT_BEGIN();
     auto bytecode = pc->as<OpSwitchImm>();
-    JSValue scrutinee = LLINT_OP_C(bytecode.scrutinee).jsValue();
+    JSValue scrutinee = LLINT_OP_C(bytecode.m_scrutinee).jsValue();
     ASSERT(scrutinee.isDouble());
     double value = scrutinee.asDouble();
     int32_t intValue = static_cast<int32_t>(value);
-    int defaultOffset = JUMP_OFFSET(bytecode.defaultOffset);
+    int defaultOffset = JUMP_OFFSET(bytecode.m_defaultOffset);
     if (value == intValue) {
         CodeBlock* codeBlock = exec->codeBlock();
-        JUMP_TO(codeBlock->switchJumpTable(bytecode.tableIndex).offsetForValue(intValue, defaultOffset));
+        JUMP_TO(codeBlock->switchJumpTable(bytecode.m_tableIndex).offsetForValue(intValue, defaultOffset));
     } else
         JUMP_TO(defaultOffset);
     LLINT_END();
@@ -1303,14 +1303,14 @@ LLINT_SLOW_PATH_DECL(slow_path_switch_char)
 {
     LLINT_BEGIN();
     auto bytecode = pc->as<OpSwitchChar>();
-    JSValue scrutinee = LLINT_OP_C(bytecode.scrutinee).jsValue();
+    JSValue scrutinee = LLINT_OP_C(bytecode.m_scrutinee).jsValue();
     ASSERT(scrutinee.isString());
     JSString* string = asString(scrutinee);
     ASSERT(string->length() == 1);
-    int defaultOffset = JUMP_OFFSET(bytecode.defaultOffset);
+    int defaultOffset = JUMP_OFFSET(bytecode.m_defaultOffset);
     StringImpl* impl = string->value(exec).impl();
     CodeBlock* codeBlock = exec->codeBlock();
-    JUMP_TO(codeBlock->switchJumpTable(bytecode.tableIndex).offsetForValue((*impl)[0], defaultOffset));
+    JUMP_TO(codeBlock->switchJumpTable(bytecode.m_tableIndex).offsetForValue((*impl)[0], defaultOffset));
     LLINT_END();
 }
 
@@ -1318,13 +1318,13 @@ LLINT_SLOW_PATH_DECL(slow_path_switch_string)
 {
     LLINT_BEGIN();
     auto bytecode = pc->as<OpSwitchString>();
-    JSValue scrutinee = LLINT_OP_C(bytecode.scrutinee).jsValue();
-    int defaultOffset = JUMP_OFFSET(bytecode.defaultOffset);
+    JSValue scrutinee = LLINT_OP_C(bytecode.m_scrutinee).jsValue();
+    int defaultOffset = JUMP_OFFSET(bytecode.m_defaultOffset);
     if (!scrutinee.isString())
         JUMP_TO(defaultOffset);
     else {
         CodeBlock* codeBlock = exec->codeBlock();
-        JUMP_TO(codeBlock->stringSwitchJumpTable(bytecode.tableIndex).offsetForValue(asString(scrutinee)->value(exec).impl(), defaultOffset));
+        JUMP_TO(codeBlock->stringSwitchJumpTable(bytecode.m_tableIndex).offsetForValue(asString(scrutinee)->value(exec).impl(), defaultOffset));
     }
     LLINT_END();
 }
@@ -1334,9 +1334,9 @@ LLINT_SLOW_PATH_DECL(slow_path_new_func)
     LLINT_BEGIN();
     auto bytecode = pc->as<OpNewFunc>();
     CodeBlock* codeBlock = exec->codeBlock();
-    JSScope* scope = exec->uncheckedR(bytecode.scope).Register::scope();
+    JSScope* scope = exec->uncheckedR(bytecode.m_scope).Register::scope();
     slowPathLogF("Creating function!\n");
-    LLINT_RETURN(JSFunction::create(vm, codeBlock->functionDecl(bytecode.functionDecl), scope));
+    LLINT_RETURN(JSFunction::create(vm, codeBlock->functionDecl(bytecode.m_functionDecl), scope));
 }
 
 LLINT_SLOW_PATH_DECL(slow_path_new_generator_func)
@@ -1344,9 +1344,9 @@ LLINT_SLOW_PATH_DECL(slow_path_new_generator_func)
     LLINT_BEGIN();
     auto bytecode = pc->as<OpNewGeneratorFunc>();
     CodeBlock* codeBlock = exec->codeBlock();
-    JSScope* scope = exec->uncheckedR(bytecode.scope).Register::scope();
+    JSScope* scope = exec->uncheckedR(bytecode.m_scope).Register::scope();
     slowPathLogF("Creating function!\n");
-    LLINT_RETURN(JSGeneratorFunction::create(vm, codeBlock->functionDecl(bytecode.functionDecl), scope));
+    LLINT_RETURN(JSGeneratorFunction::create(vm, codeBlock->functionDecl(bytecode.m_functionDecl), scope));
 }
 
 LLINT_SLOW_PATH_DECL(slow_path_new_async_func)
@@ -1354,9 +1354,9 @@ LLINT_SLOW_PATH_DECL(slow_path_new_async_func)
     LLINT_BEGIN();
     auto bytecode = pc->as<OpNewAsyncFunc>();
     CodeBlock* codeBlock = exec->codeBlock();
-    JSScope* scope = exec->uncheckedR(bytecode.scope).Register::scope();
+    JSScope* scope = exec->uncheckedR(bytecode.m_scope).Register::scope();
     slowPathLogF("Creating async function!\n");
-    LLINT_RETURN(JSAsyncFunction::create(vm, codeBlock->functionDecl(bytecode.functionDecl), scope));
+    LLINT_RETURN(JSAsyncFunction::create(vm, codeBlock->functionDecl(bytecode.m_functionDecl), scope));
 }
 
 LLINT_SLOW_PATH_DECL(slow_path_new_async_generator_func)
@@ -1364,9 +1364,9 @@ LLINT_SLOW_PATH_DECL(slow_path_new_async_generator_func)
     LLINT_BEGIN();
     auto bytecode = pc->as<OpNewAsyncGeneratorFunc>();
     CodeBlock* codeBlock = exec->codeBlock();
-    JSScope* scope = exec->uncheckedR(bytecode.scope).Register::scope();
+    JSScope* scope = exec->uncheckedR(bytecode.m_scope).Register::scope();
     slowPathLogF("Creating async generator function!\n");
-    LLINT_RETURN(JSAsyncGeneratorFunction::create(vm, codeBlock->functionDecl(bytecode.functionDecl), scope));
+    LLINT_RETURN(JSAsyncGeneratorFunction::create(vm, codeBlock->functionDecl(bytecode.m_functionDecl), scope));
 }
     
 LLINT_SLOW_PATH_DECL(slow_path_new_func_exp)
@@ -1375,8 +1375,8 @@ LLINT_SLOW_PATH_DECL(slow_path_new_func_exp)
     
     auto bytecode = pc->as<OpNewFuncExp>();
     CodeBlock* codeBlock = exec->codeBlock();
-    JSScope* scope = exec->uncheckedR(bytecode.scope).Register::scope();
-    FunctionExecutable* executable = codeBlock->functionExpr(bytecode.functionDecl);
+    JSScope* scope = exec->uncheckedR(bytecode.m_scope).Register::scope();
+    FunctionExecutable* executable = codeBlock->functionExpr(bytecode.m_functionDecl);
     
     LLINT_RETURN(JSFunction::create(vm, executable, scope));
 }
@@ -1387,8 +1387,8 @@ LLINT_SLOW_PATH_DECL(slow_path_new_generator_func_exp)
 
     auto bytecode = pc->as<OpNewGeneratorFuncExp>();
     CodeBlock* codeBlock = exec->codeBlock();
-    JSScope* scope = exec->uncheckedR(bytecode.scope).Register::scope();
-    FunctionExecutable* executable = codeBlock->functionExpr(bytecode.functionDecl);
+    JSScope* scope = exec->uncheckedR(bytecode.m_scope).Register::scope();
+    FunctionExecutable* executable = codeBlock->functionExpr(bytecode.m_functionDecl);
 
     LLINT_RETURN(JSGeneratorFunction::create(vm, executable, scope));
 }
@@ -1399,8 +1399,8 @@ LLINT_SLOW_PATH_DECL(slow_path_new_async_func_exp)
     
     auto bytecode = pc->as<OpNewAsyncFuncExp>();
     CodeBlock* codeBlock = exec->codeBlock();
-    JSScope* scope = exec->uncheckedR(bytecode.scope).Register::scope();
-    FunctionExecutable* executable = codeBlock->functionExpr(bytecode.functionDecl);
+    JSScope* scope = exec->uncheckedR(bytecode.m_scope).Register::scope();
+    FunctionExecutable* executable = codeBlock->functionExpr(bytecode.m_functionDecl);
     
     LLINT_RETURN(JSAsyncFunction::create(vm, executable, scope));
 }
@@ -1411,8 +1411,8 @@ LLINT_SLOW_PATH_DECL(slow_path_new_async_generator_func_exp)
         
     auto bytecode = pc->as<OpNewAsyncGeneratorFuncExp>();
     CodeBlock* codeBlock = exec->codeBlock();
-    JSScope* scope = exec->uncheckedR(bytecode.scope).Register::scope();
-    FunctionExecutable* executable = codeBlock->functionExpr(bytecode.functionDecl);
+    JSScope* scope = exec->uncheckedR(bytecode.m_scope).Register::scope();
+    FunctionExecutable* executable = codeBlock->functionExpr(bytecode.m_functionDecl);
         
     LLINT_RETURN(JSAsyncGeneratorFunction::create(vm, executable, scope));
 }
@@ -1421,8 +1421,8 @@ LLINT_SLOW_PATH_DECL(slow_path_set_function_name)
 {
     LLINT_BEGIN();
     auto bytecode = pc->as<OpSetFunctionName>();
-    JSFunction* func = jsCast<JSFunction*>(LLINT_OP(bytecode.function).Register::unboxedCell());
-    JSValue name = LLINT_OP_C(bytecode.name).Register::jsValue();
+    JSFunction* func = jsCast<JSFunction*>(LLINT_OP(bytecode.m_function).Register::unboxedCell());
+    JSValue name = LLINT_OP_C(bytecode.m_name).Register::jsValue();
     func->setFunctionName(exec, name);
     LLINT_END();
 }
@@ -1572,16 +1572,16 @@ inline SlowPathReturnType genericCall(ExecState* exec, Op&& bytecode, CodeSpecia
     // - If possible, link the call's inline cache.
     // - Return a tuple of machine code address to call and the new call frame.
     
-    JSValue calleeAsValue = LLINT_OP_C(bytecode.callee).jsValue();
+    JSValue calleeAsValue = LLINT_OP_C(bytecode.m_callee).jsValue();
     
-    ExecState* execCallee = exec - bytecode.argv;
+    ExecState* execCallee = exec - bytecode.m_argv;
     
-    execCallee->setArgumentCountIncludingThis(bytecode.argc);
+    execCallee->setArgumentCountIncludingThis(bytecode.m_argc);
     execCallee->uncheckedR(CallFrameSlot::callee) = calleeAsValue;
     execCallee->setCallerFrame(exec);
     
     auto& metadata = bytecode.metadata(exec);
-    return setUpCall(execCallee, kind, calleeAsValue, &metadata.callLinkInfo);
+    return setUpCall(execCallee, kind, calleeAsValue, &metadata.m_callLinkInfo);
 }
 
 LLINT_SLOW_PATH_DECL(slow_path_call)
@@ -1614,23 +1614,23 @@ LLINT_SLOW_PATH_DECL(slow_path_size_frame_for_varargs)
     switch (pc->opcodeID()) {
     case op_call_varargs: {
         auto bytecode = pc->as<OpCallVarargs>();
-        numUsedStackSlots = -bytecode.firstFree.offset();
-        arguments = LLINT_OP_C(bytecode.arguments).jsValue();
-        firstVarArg = bytecode.firstVarArg;
+        numUsedStackSlots = -bytecode.m_firstFree.offset();
+        arguments = LLINT_OP_C(bytecode.m_arguments).jsValue();
+        firstVarArg = bytecode.m_firstVarArg;
         break;
     }
     case op_tail_call_varargs: {
         auto bytecode = pc->as<OpTailCallVarargs>();
-        numUsedStackSlots = -bytecode.firstFree.offset();
-        arguments = LLINT_OP_C(bytecode.arguments).jsValue();
-        firstVarArg = bytecode.firstVarArg;
+        numUsedStackSlots = -bytecode.m_firstFree.offset();
+        arguments = LLINT_OP_C(bytecode.m_arguments).jsValue();
+        firstVarArg = bytecode.m_firstVarArg;
         break;
     }
     case op_construct_varargs: {
         auto bytecode = pc->as<OpConstructVarargs>();
-        numUsedStackSlots = -bytecode.firstFree.offset();
-        arguments = LLINT_OP_C(bytecode.arguments).jsValue();
-        firstVarArg = bytecode.firstVarArg;
+        numUsedStackSlots = -bytecode.m_firstFree.offset();
+        arguments = LLINT_OP_C(bytecode.m_arguments).jsValue();
+        firstVarArg = bytecode.m_firstVarArg;
         break;
     }
     default:
@@ -1653,7 +1653,7 @@ LLINT_SLOW_PATH_DECL(slow_path_size_frame_for_forward_arguments)
     // - Set up a call frame with the same arguments as the current frame.
 
     auto bytecode = pc->as<OpTailCallForwardArguments>();
-    unsigned numUsedStackSlots = -bytecode.firstFree.offset();
+    unsigned numUsedStackSlots = -bytecode.m_firstFree.offset();
 
     unsigned arguments = sizeFrameForForwardArguments(exec, vm, numUsedStackSlots);
     LLINT_CALL_CHECK_EXCEPTION(exec, exec);
@@ -1680,15 +1680,15 @@ inline SlowPathReturnType varargsSetup(ExecState* exec, const Instruction* pc, C
     // - Return a tuple of machine code address to call and the new call frame.
 
     auto bytecode = pc->as<Op>();
-    JSValue calleeAsValue = LLINT_OP_C(bytecode.callee).jsValue();
+    JSValue calleeAsValue = LLINT_OP_C(bytecode.m_callee).jsValue();
 
     ExecState* execCallee = vm.newCallFrameReturnValue;
 
     if (set == SetArgumentsWith::Object) {
-        setupVarargsFrameAndSetThis(exec, execCallee, LLINT_OP_C(bytecode.thisValue).jsValue(), LLINT_OP_C(bytecode.arguments).jsValue(), bytecode.firstVarArg, vm.varargsLength);
+        setupVarargsFrameAndSetThis(exec, execCallee, LLINT_OP_C(bytecode.m_thisValue).jsValue(), LLINT_OP_C(bytecode.m_arguments).jsValue(), bytecode.m_firstVarArg, vm.varargsLength);
         LLINT_CALL_CHECK_EXCEPTION(exec, exec);
     } else
-        setupForwardArgumentsFrameAndSetThis(exec, execCallee, LLINT_OP_C(bytecode.thisValue).jsValue(), vm.varargsLength);
+        setupForwardArgumentsFrameAndSetThis(exec, execCallee, LLINT_OP_C(bytecode.m_thisValue).jsValue(), vm.varargsLength);
 
     execCallee->setCallerFrame(exec);
     execCallee->uncheckedR(CallFrameSlot::callee) = calleeAsValue;
@@ -1721,11 +1721,11 @@ inline SlowPathReturnType commonCallEval(ExecState* exec, const Instruction* pc,
 {
     LLINT_BEGIN_NO_SET_PC();
     auto bytecode = pc->as<OpCallEval>();
-    JSValue calleeAsValue = LLINT_OP(bytecode.callee).jsValue();
+    JSValue calleeAsValue = LLINT_OP(bytecode.m_callee).jsValue();
     
-    ExecState* execCallee = exec - bytecode.argv;
+    ExecState* execCallee = exec - bytecode.m_argv;
     
-    execCallee->setArgumentCountIncludingThis(bytecode.argc);
+    execCallee->setArgumentCountIncludingThis(bytecode.m_argc);
     execCallee->setCallerFrame(exec);
     execCallee->uncheckedR(CallFrameSlot::callee) = calleeAsValue;
     execCallee->setReturnPC(returnPoint.executableAddress());
@@ -1753,21 +1753,21 @@ LLINT_SLOW_PATH_DECL(slow_path_strcat)
 {
     LLINT_BEGIN();
     auto bytecode = pc->as<OpStrcat>();
-    LLINT_RETURN(jsStringFromRegisterArray(exec, &LLINT_OP(bytecode.src), bytecode.count));
+    LLINT_RETURN(jsStringFromRegisterArray(exec, &LLINT_OP(bytecode.m_src), bytecode.m_count));
 }
 
 LLINT_SLOW_PATH_DECL(slow_path_to_primitive)
 {
     LLINT_BEGIN();
     auto bytecode = pc->as<OpToPrimitive>();
-    LLINT_RETURN(LLINT_OP_C(bytecode.src).jsValue().toPrimitive(exec));
+    LLINT_RETURN(LLINT_OP_C(bytecode.m_src).jsValue().toPrimitive(exec));
 }
 
 LLINT_SLOW_PATH_DECL(slow_path_throw)
 {
     LLINT_BEGIN();
     auto bytecode = pc->as<OpThrow>();
-    LLINT_THROW(LLINT_OP_C(bytecode.value).jsValue());
+    LLINT_THROW(LLINT_OP_C(bytecode.m_value).jsValue());
 }
 
 LLINT_SLOW_PATH_DECL(slow_path_handle_traps)
@@ -1783,7 +1783,7 @@ LLINT_SLOW_PATH_DECL(slow_path_debug)
 {
     LLINT_BEGIN();
     auto bytecode = pc->as<OpDebug>();
-    vm.interpreter->debug(exec, bytecode.debugHookType);
+    vm.interpreter->debug(exec, bytecode.m_debugHookType);
     
     LLINT_END();
 }
@@ -1801,15 +1801,15 @@ LLINT_SLOW_PATH_DECL(slow_path_get_from_scope)
     LLINT_BEGIN();
     auto bytecode = pc->as<OpGetFromScope>();
     auto& metadata = bytecode.metadata(exec);
-    const Identifier& ident = exec->codeBlock()->identifier(bytecode.var);
-    JSObject* scope = jsCast<JSObject*>(LLINT_OP(bytecode.scope).jsValue());
+    const Identifier& ident = exec->codeBlock()->identifier(bytecode.m_var);
+    JSObject* scope = jsCast<JSObject*>(LLINT_OP(bytecode.m_scope).jsValue());
 
     // ModuleVar is always converted to ClosureVar for get_from_scope.
-    ASSERT(metadata.getPutInfo.resolveType() != ModuleVar);
+    ASSERT(metadata.m_getPutInfo.resolveType() != ModuleVar);
 
     LLINT_RETURN(scope->getPropertySlot(exec, ident, [&] (bool found, PropertySlot& slot) -> JSValue {
         if (!found) {
-            if (metadata.getPutInfo.resolveMode() == ThrowIfNotFound)
+            if (metadata.m_getPutInfo.resolveMode() == ThrowIfNotFound)
                 return throwException(exec, throwScope, createUndefinedVariableError(exec, ident));
             return jsUndefined();
         }
@@ -1837,18 +1837,18 @@ LLINT_SLOW_PATH_DECL(slow_path_put_to_scope)
     auto bytecode = pc->as<OpPutToScope>();
     auto& metadata = bytecode.metadata(exec);
     CodeBlock* codeBlock = exec->codeBlock();
-    const Identifier& ident = codeBlock->identifier(bytecode.var);
-    JSObject* scope = jsCast<JSObject*>(LLINT_OP(bytecode.scope).jsValue());
-    JSValue value = LLINT_OP_C(bytecode.value).jsValue();
-    if (metadata.getPutInfo.resolveType() == LocalClosureVar) {
+    const Identifier& ident = codeBlock->identifier(bytecode.m_var);
+    JSObject* scope = jsCast<JSObject*>(LLINT_OP(bytecode.m_scope).jsValue());
+    JSValue value = LLINT_OP_C(bytecode.m_value).jsValue();
+    if (metadata.m_getPutInfo.resolveType() == LocalClosureVar) {
         JSLexicalEnvironment* environment = jsCast<JSLexicalEnvironment*>(scope);
-        environment->variableAt(ScopeOffset(metadata.operand)).set(vm, environment, value);
+        environment->variableAt(ScopeOffset(metadata.m_operand)).set(vm, environment, value);
         
         // Have to do this *after* the write, because if this puts the set into IsWatched, then we need
         // to have already changed the value of the variable. Otherwise we might watch and constant-fold
         // to the Undefined value from before the assignment.
-        if (metadata.watchpointSet)
-            metadata.watchpointSet->touch(vm, "Executed op_put_scope<LocalClosureVar>");
+        if (metadata.m_watchpointSet)
+            metadata.m_watchpointSet->touch(vm, "Executed op_put_scope<LocalClosureVar>");
         LLINT_END();
     }
 
@@ -1856,7 +1856,7 @@ LLINT_SLOW_PATH_DECL(slow_path_put_to_scope)
     LLINT_CHECK_EXCEPTION();
     if (hasProperty
         && scope->isGlobalLexicalEnvironment()
-        && !isInitialization(metadata.getPutInfo.initializationMode())) {
+        && !isInitialization(metadata.m_getPutInfo.initializationMode())) {
         // When we can't statically prove we need a TDZ check, we must perform the check on the slow path.
         PropertySlot slot(scope, PropertySlot::InternalMethodType::Get);
         JSGlobalLexicalEnvironment::getOwnPropertySlot(scope, exec, ident, slot);
@@ -1864,10 +1864,10 @@ LLINT_SLOW_PATH_DECL(slow_path_put_to_scope)
             LLINT_THROW(createTDZError(exec));
     }
 
-    if (metadata.getPutInfo.resolveMode() == ThrowIfNotFound && !hasProperty)
+    if (metadata.m_getPutInfo.resolveMode() == ThrowIfNotFound && !hasProperty)
         LLINT_THROW(createUndefinedVariableError(exec, ident));
 
-    PutPropertySlot slot(scope, codeBlock->isStrictMode(), PutPropertySlot::UnknownContext, isInitialization(metadata.getPutInfo.initializationMode()));
+    PutPropertySlot slot(scope, codeBlock->isStrictMode(), PutPropertySlot::UnknownContext, isInitialization(metadata.m_getPutInfo.initializationMode()));
     scope->methodTable(vm)->put(scope, exec, ident, value, slot);
     
     CommonSlowPaths::tryCachePutToScopeGlobal(exec, codeBlock, bytecode, scope, slot, ident);
@@ -1890,7 +1890,7 @@ LLINT_SLOW_PATH_DECL(slow_path_log_shadow_chicken_prologue)
     LLINT_BEGIN();
     
     auto bytecode = pc->as<OpLogShadowChickenPrologue>();
-    JSScope* scope = exec->uncheckedR(bytecode.scope).Register::scope();
+    JSScope* scope = exec->uncheckedR(bytecode.m_scope).Register::scope();
     vm.shadowChicken().log(vm, exec, ShadowChicken::Packet::prologue(exec->jsCallee(), exec, exec->callerFrame(), scope));
     
     LLINT_END();
@@ -1901,8 +1901,8 @@ LLINT_SLOW_PATH_DECL(slow_path_log_shadow_chicken_tail)
     LLINT_BEGIN();
 
     auto bytecode = pc->as<OpLogShadowChickenTail>();
-    JSValue thisValue = LLINT_OP(bytecode.thisValue).jsValue();
-    JSScope* scope = exec->uncheckedR(bytecode.scope).Register::scope();
+    JSValue thisValue = LLINT_OP(bytecode.m_thisValue).jsValue();
+    JSScope* scope = exec->uncheckedR(bytecode.m_scope).Register::scope();
     
 #if USE(JSVALUE64)
     CallSiteIndex callSiteIndex(exec->codeBlock()->bytecodeOffset(pc));
@@ -1922,7 +1922,7 @@ LLINT_SLOW_PATH_DECL(slow_path_profile_catch)
 
     auto bytecode = pc->as<OpCatch>();
     auto& metadata = bytecode.metadata(exec);
-    metadata.buffer->forEach([&] (ValueProfileAndOperand& profile) {
+    metadata.m_buffer->forEach([&] (ValueProfileAndOperand& profile) {
         profile.m_profile.m_buckets[0] = JSValue::encode(exec->uncheckedR(profile.m_operand).jsValue());
     });
 

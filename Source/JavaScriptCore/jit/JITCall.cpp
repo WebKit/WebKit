@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008-2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2008-2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -51,7 +51,7 @@ template<typename Op>
 void JIT::emitPutCallResult(const Op& bytecode)
 {
     emitValueProfilingSite(bytecode.metadata(m_codeBlock));
-    emitPutVirtualRegister(bytecode.dst.offset());
+    emitPutVirtualRegister(bytecode.m_dst.offset());
 }
 
 template<typename Op>
@@ -62,14 +62,14 @@ std::enable_if_t<
 JIT::compileSetupFrame(const Op& bytecode, CallLinkInfo*)
 {
     auto& metadata = bytecode.metadata(m_codeBlock);
-    int argCount = bytecode.argc;
-    int registerOffset = -static_cast<int>(bytecode.argv);
+    int argCount = bytecode.m_argc;
+    int registerOffset = -static_cast<int>(bytecode.m_argv);
 
     if (Op::opcodeID == op_call && shouldEmitProfiling()) {
         emitGetVirtualRegister(registerOffset + CallFrame::argumentOffsetIncludingThis(0), regT0);
         Jump done = branchIfNotCell(regT0);
         load32(Address(regT0, JSCell::structureIDOffset()), regT0);
-        store32(regT0, metadata.arrayProfile.addressOfLastSeenStructureID());
+        store32(regT0, metadata.m_arrayProfile.addressOfLastSeenStructureID());
         done.link(this);
     }
 
@@ -85,10 +85,10 @@ std::enable_if_t<
 , void>
 JIT::compileSetupFrame(const Op& bytecode, CallLinkInfo* info)
 {
-    int thisValue = bytecode.thisValue.offset();
-    int arguments = bytecode.arguments.offset();
-    int firstFreeRegister = bytecode.firstFree.offset();
-    int firstVarArgOffset = bytecode.firstVarArg;
+    int thisValue = bytecode.m_thisValue.offset();
+    int arguments = bytecode.m_arguments.offset();
+    int firstFreeRegister = bytecode.m_firstFree.offset();
+    int firstVarArgOffset = bytecode.m_firstVarArg;
 
     emitGetVirtualRegister(arguments, regT1);
     Z_JITOperation_EJZZ sizeOperation;
@@ -157,7 +157,7 @@ void JIT::compileCallEvalSlowCase(const Instruction* instruction, Vector<SlowCas
     CallLinkInfo* info = m_codeBlock->addCallLinkInfo();
     info->setUpCall(CallLinkInfo::Call, CodeOrigin(m_bytecodeOffset), regT0);
 
-    int registerOffset = -bytecode.argv;
+    int registerOffset = -bytecode.m_argv;
 
     addPtr(TrustedImm32(registerOffset * sizeof(Register) + sizeof(CallerFrameAndPC)), callFrameRegister, stackPointerRegister);
 
@@ -181,15 +181,15 @@ template<>
 bool JIT::compileTailCall(const OpTailCall& bytecode, CallLinkInfo* info, unsigned callLinkInfoIndex)
 {
     CallFrameShuffleData shuffleData;
-    shuffleData.numPassedArgs = bytecode.argc;
+    shuffleData.numPassedArgs = bytecode.m_argc;
     shuffleData.tagTypeNumber = GPRInfo::tagTypeNumberRegister;
     shuffleData.numLocals =
-        bytecode.argv - sizeof(CallerFrameAndPC) / sizeof(Register);
-    shuffleData.args.resize(bytecode.argc);
-    for (unsigned i = 0; i < bytecode.argc; ++i) {
+        bytecode.m_argv - sizeof(CallerFrameAndPC) / sizeof(Register);
+    shuffleData.args.resize(bytecode.m_argc);
+    for (unsigned i = 0; i < bytecode.m_argc; ++i) {
         shuffleData.args[i] =
             ValueRecovery::displacedInJSStack(
-                virtualRegisterForArgument(i) - bytecode.argv,
+                virtualRegisterForArgument(i) - bytecode.m_argv,
                 DataFormatJS);
     }
     shuffleData.callee =
@@ -206,7 +206,7 @@ void JIT::compileOpCall(const Instruction* instruction, unsigned callLinkInfoInd
 {
     OpcodeID opcodeID = Op::opcodeID;
     auto bytecode = instruction->as<Op>();
-    int callee = bytecode.callee.offset();
+    int callee = bytecode.m_callee.offset();
 
     /* Caller always:
         - Updates callFrameRegister to callee callFrame.

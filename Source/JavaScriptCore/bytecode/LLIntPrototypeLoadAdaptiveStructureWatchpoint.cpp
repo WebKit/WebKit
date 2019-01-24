@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -59,9 +59,9 @@ void LLIntPrototypeLoadAdaptiveStructureWatchpoint::fireInternal(VM& vm, const F
 
 void LLIntPrototypeLoadAdaptiveStructureWatchpoint::clearLLIntGetByIdCache(OpGetById::Metadata& metadata)
 {
-    metadata.mode = GetByIdMode::Default;
-    metadata.modeMetadata.defaultMode.cachedOffset = 0;
-    metadata.modeMetadata.defaultMode.structure = 0;
+    metadata.m_mode = GetByIdMode::Default;
+    metadata.m_modeMetadata.defaultMode.cachedOffset = 0;
+    metadata.m_modeMetadata.defaultMode.structure = 0;
 }
 
 

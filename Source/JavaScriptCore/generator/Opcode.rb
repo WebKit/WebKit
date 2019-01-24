@@ -1,4 +1,4 @@
-# Copyright (C) 2018 Apple Inc. All rights reserved.
+# Copyright (C) 2018-2019 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -164,7 +164,7 @@ EOF
         dumper->printLocationAndOp(__location, &"*#{@name}"[!__isWide]);
 #{print_args { |arg|
 <<-EOF.chomp
-        dumper->dumpOperand(#{arg.name}, #{arg.index == 1});
+        dumper->dumpOperand(#{arg.field_name}, #{arg.index == 1});
 EOF
     }}
     }
@@ -225,7 +225,7 @@ EOF
 
     def struct_indices
         out = []
-        out += @args.map(&:name) unless @args.nil?
+        out += @args.map(&:field_name) unless @args.nil?
         out << Metadata.field_name unless @metadata.empty?
         out.map.with_index do |name, index|
             "const unsigned #{capitalized_name}_#{name}_index = #{index + 1};"

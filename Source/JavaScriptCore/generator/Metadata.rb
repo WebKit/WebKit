@@ -1,4 +1,4 @@
-# Copyright (C) 2018 Apple Inc. All rights reserved.
+# Copyright (C) 2018-2019 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -47,7 +47,7 @@ class Metadata
                 if type.kind_of? Hash
                     "#{prefix}union {\n#{convertFields(prefix + '    ', type)}\n#{prefix}};"
                 else
-                    "#{prefix}#{type.to_s} #{field.to_s};"
+                    "#{prefix}#{type.to_s} m_#{field.to_s};"
                 end
             end.join("\n")
         end
@@ -57,7 +57,7 @@ class Metadata
         inits = nil
         if @initializers && (not @initializers.empty?)
             inits = "\n            : " + @initializers.map do |metadata, arg|
-                "#{metadata}(__op.#{arg})"
+                "m_#{metadata}(__op.m_#{arg})"
             end.join("\n            , ").concat("\n       ");
         end
 
@@ -121,6 +121,6 @@ EOF
     end
 
     def self.field_name
-        "metadataID"
+        "m_metadataID"
     end
 end

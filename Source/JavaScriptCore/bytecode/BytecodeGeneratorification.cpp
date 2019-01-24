@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2016 Yusuke Suzuki <utatane.tea@gmail.com>
- * Copyright (C) 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -74,12 +74,12 @@ public:
 
                 case op_yield: {
                     auto bytecode = instruction->as<OpYield>();
-                    unsigned liveCalleeLocalsIndex = bytecode.yieldPoint;
+                    unsigned liveCalleeLocalsIndex = bytecode.m_yieldPoint;
                     if (liveCalleeLocalsIndex >= m_yields.size())
                         m_yields.resize(liveCalleeLocalsIndex + 1);
                     YieldData& data = m_yields[liveCalleeLocalsIndex];
                     data.point = instruction.offset();
-                    data.argument = bytecode.argument;
+                    data.argument = bytecode.m_argument;
                     break;
                 }
 

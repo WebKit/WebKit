@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2011-2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -123,7 +123,7 @@ inline void tryCachePutToScopeGlobal(
 {
     // Covers implicit globals. Since they don't exist until they first execute, we didn't know how to cache them at compile time.
     auto& metadata = bytecode.metadata(exec);
-    ResolveType resolveType = metadata.getPutInfo.resolveType();
+    ResolveType resolveType = metadata.m_getPutInfo.resolveType();
     if (resolveType != GlobalProperty && resolveType != GlobalPropertyWithVarInjectionChecks 
         && resolveType != UnresolvedProperty && resolveType != UnresolvedPropertyWithVarInjectionChecks)
         return;
@@ -133,16 +133,16 @@ inline void tryCachePutToScopeGlobal(
             ResolveType newResolveType = resolveType == UnresolvedProperty ? GlobalProperty : GlobalPropertyWithVarInjectionChecks;
             resolveType = newResolveType;
             ConcurrentJSLocker locker(codeBlock->m_lock);
-            metadata.getPutInfo = GetPutInfo(metadata.getPutInfo.resolveMode(), newResolveType, metadata.getPutInfo.initializationMode());
+            metadata.m_getPutInfo = GetPutInfo(metadata.m_getPutInfo.resolveMode(), newResolveType, metadata.m_getPutInfo.initializationMode());
         } else if (scope->isGlobalLexicalEnvironment()) {
             JSGlobalLexicalEnvironment* globalLexicalEnvironment = jsCast<JSGlobalLexicalEnvironment*>(scope);
             ResolveType newResolveType = resolveType == UnresolvedProperty ? GlobalLexicalVar : GlobalLexicalVarWithVarInjectionChecks;
-            metadata.getPutInfo = GetPutInfo(metadata.getPutInfo.resolveMode(), newResolveType, metadata.getPutInfo.initializationMode());
+            metadata.m_getPutInfo = GetPutInfo(metadata.m_getPutInfo.resolveMode(), newResolveType, metadata.m_getPutInfo.initializationMode());
             SymbolTableEntry entry = globalLexicalEnvironment->symbolTable()->get(ident.impl());
             ASSERT(!entry.isNull());
             ConcurrentJSLocker locker(codeBlock->m_lock);
-            metadata.watchpointSet = entry.watchpointSet();
-            metadata.operand = reinterpret_cast<uintptr_t>(globalLexicalEnvironment->variableAt(entry.scopeOffset()).slot());
+            metadata.m_watchpointSet = entry.watchpointSet();
+            metadata.m_operand = reinterpret_cast<uintptr_t>(globalLexicalEnvironment->variableAt(entry.scopeOffset()).slot());
         }
     }
     
@@ -165,8 +165,8 @@ inline void tryCachePutToScopeGlobal(
         scope->structure(vm)->didCachePropertyReplacement(vm, slot.cachedOffset());
 
         ConcurrentJSLocker locker(codeBlock->m_lock);
-        metadata.structure.set(vm, codeBlock, scope->structure(vm));
-        metadata.operand = slot.cachedOffset();
+        metadata.m_structure.set(vm, codeBlock, scope->structure(vm));
+        metadata.m_operand = slot.cachedOffset();
     }
 }
 
@@ -174,23 +174,23 @@ inline void tryCacheGetFromScopeGlobal(
     ExecState* exec, VM& vm, OpGetFromScope& bytecode, JSObject* scope, PropertySlot& slot, const Identifier& ident)
 {
     auto& metadata = bytecode.metadata(exec);
-    ResolveType resolveType = metadata.getPutInfo.resolveType();
+    ResolveType resolveType = metadata.m_getPutInfo.resolveType();
 
     if (resolveType == UnresolvedProperty || resolveType == UnresolvedPropertyWithVarInjectionChecks) {
         if (scope->isGlobalObject()) {
             ResolveType newResolveType = resolveType == UnresolvedProperty ? GlobalProperty : GlobalPropertyWithVarInjectionChecks;
             resolveType = newResolveType; // Allow below caching mechanism to kick in.
             ConcurrentJSLocker locker(exec->codeBlock()->m_lock);
-            metadata.getPutInfo = GetPutInfo(metadata.getPutInfo.resolveMode(), newResolveType, metadata.getPutInfo.initializationMode());
+            metadata.m_getPutInfo = GetPutInfo(metadata.m_getPutInfo.resolveMode(), newResolveType, metadata.m_getPutInfo.initializationMode());
         } else if (scope->isGlobalLexicalEnvironment()) {
             JSGlobalLexicalEnvironment* globalLexicalEnvironment = jsCast<JSGlobalLexicalEnvironment*>(scope);
             ResolveType newResolveType = resolveType == UnresolvedProperty ? GlobalLexicalVar : GlobalLexicalVarWithVarInjectionChecks;
             SymbolTableEntry entry = globalLexicalEnvironment->symbolTable()->get(ident.impl());
             ASSERT(!entry.isNull());
             ConcurrentJSLocker locker(exec->codeBlock()->m_lock);
-            metadata.getPutInfo = GetPutInfo(metadata.getPutInfo.resolveMode(), newResolveType, metadata.getPutInfo.initializationMode());
-            metadata.watchpointSet = entry.watchpointSet();
-            metadata.operand = reinterpret_cast<uintptr_t>(globalLexicalEnvironment->variableAt(entry.scopeOffset()).slot());
+            metadata.m_getPutInfo = GetPutInfo(metadata.m_getPutInfo.resolveMode(), newResolveType, metadata.m_getPutInfo.initializationMode());
+            metadata.m_watchpointSet = entry.watchpointSet();
+            metadata.m_operand = reinterpret_cast<uintptr_t>(globalLexicalEnvironment->variableAt(entry.scopeOffset()).slot());
         }
     }
 
@@ -203,8 +203,8 @@ inline void tryCacheGetFromScopeGlobal(
             Structure* structure = scope->structure(vm);
             {
                 ConcurrentJSLocker locker(codeBlock->m_lock);
-                metadata.structure.set(vm, codeBlock, structure);
-                metadata.operand = slot.cachedOffset();
+                metadata.m_structure.set(vm, codeBlock, structure);
+                metadata.m_operand = slot.cachedOffset();
             }
             structure->startWatchingPropertyForReplacements(vm, slot.cachedOffset());
         }

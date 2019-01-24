@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008-2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2008-2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -157,8 +157,8 @@ void JIT::emit_op_jbeloweq(const Instruction* currentInstruction)
 void JIT::emit_op_unsigned(const Instruction* currentInstruction)
 {
     auto bytecode = currentInstruction->as<OpUnsigned>();
-    int result = bytecode.dst.offset();
-    int op1 = bytecode.operand.offset();
+    int result = bytecode.m_dst.offset();
+    int op1 = bytecode.m_operand.offset();
     
     emitGetVirtualRegister(op1, regT0);
     emitJumpSlowCaseIfNotInt(regT0);
@@ -176,9 +176,9 @@ void JIT::emit_compareAndJump(const Instruction* instruction, RelationalConditio
     // - int immediate to int immediate
 
     auto bytecode = instruction->as<Op>();
-    int op1 = bytecode.lhs.offset();
-    int op2 = bytecode.rhs.offset();
-    unsigned target = jumpTarget(instruction, bytecode.target);
+    int op1 = bytecode.m_lhs.offset();
+    int op2 = bytecode.m_rhs.offset();
+    unsigned target = jumpTarget(instruction, bytecode.m_target);
     if (isOperandConstantChar(op1)) {
         emitGetVirtualRegister(op2, regT0);
         addSlowCase(branchIfNotCell(regT0));
@@ -223,9 +223,9 @@ template<typename Op>
 void JIT::emit_compareUnsignedAndJump(const Instruction* instruction, RelationalCondition condition)
 {
     auto bytecode = instruction->as<Op>();
-    int op1 = bytecode.lhs.offset();
-    int op2 = bytecode.rhs.offset();
-    unsigned target = jumpTarget(instruction, bytecode.target);
+    int op1 = bytecode.m_lhs.offset();
+    int op2 = bytecode.m_rhs.offset();
+    unsigned target = jumpTarget(instruction, bytecode.m_target);
     if (isOperandConstantInt(op2)) {
         emitGetVirtualRegister(op1, regT0);
         int32_t op2imm = getOperandConstantInt(op2);
@@ -244,9 +244,9 @@ template<typename Op>
 void JIT::emit_compareUnsigned(const Instruction* instruction, RelationalCondition condition)
 {
     auto bytecode = instruction->as<Op>();
-    int dst = bytecode.dst.offset();
-    int op1 = bytecode.lhs.offset();
-    int op2 = bytecode.rhs.offset();
+    int dst = bytecode.m_dst.offset();
+    int op1 = bytecode.m_lhs.offset();
+    int op2 = bytecode.m_rhs.offset();
     if (isOperandConstantInt(op2)) {
         emitGetVirtualRegister(op1, regT0);
         int32_t op2imm = getOperandConstantInt(op2);
@@ -267,9 +267,9 @@ template<typename Op>
 void JIT::emit_compareAndJumpSlow(const Instruction* instruction, DoubleCondition condition, size_t (JIT_OPERATION *operation)(ExecState*, EncodedJSValue, EncodedJSValue), bool invert, Vector<SlowCaseEntry>::iterator& iter)
 {
     auto bytecode = instruction->as<Op>();
-    int op1 = bytecode.lhs.offset();
-    int op2 = bytecode.rhs.offset();
-    unsigned target = jumpTarget(instruction, bytecode.target);
+    int op1 = bytecode.m_lhs.offset();
+    int op2 = bytecode.m_rhs.offset();
+    unsigned target = jumpTarget(instruction, bytecode.m_target);
 
     // We generate inline code for the following cases in the slow path:
     // - floating-point number to constant int immediate
@@ -365,7 +365,7 @@ void JIT::emit_compareAndJumpSlow(const Instruction* instruction, DoubleConditio
 void JIT::emit_op_inc(const Instruction* currentInstruction)
 {
     auto bytecode = currentInstruction->as<OpInc>();
-    int srcDst = bytecode.srcDst.offset();
+    int srcDst = bytecode.m_srcDst.offset();
 
     emitGetVirtualRegister(srcDst, regT0);
     emitJumpSlowCaseIfNotInt(regT0);
@@ -377,7 +377,7 @@ void JIT::emit_op_inc(const Instruction* currentInstruction)
 void JIT::emit_op_dec(const Instruction* currentInstruction)
 {
     auto bytecode = currentInstruction->as<OpDec>();
-    int srcDst = bytecode.srcDst.offset();
+    int srcDst = bytecode.m_srcDst.offset();
 
     emitGetVirtualRegister(srcDst, regT0);
     emitJumpSlowCaseIfNotInt(regT0);
@@ -393,9 +393,9 @@ void JIT::emit_op_dec(const Instruction* currentInstruction)
 void JIT::emit_op_mod(const Instruction* currentInstruction)
 {
     auto bytecode = currentInstruction->as<OpMod>();
-    int result = bytecode.dst.offset();
-    int op1 = bytecode.lhs.offset();
-    int op2 = bytecode.rhs.offset();
+    int result = bytecode.m_dst.offset();
+    int op1 = bytecode.m_lhs.offset();
+    int op2 = bytecode.m_rhs.offset();
 
     // Make sure registers are correct for x86 IDIV instructions.
     ASSERT(regT0 == X86Registers::eax);
@@ -451,7 +451,7 @@ void JIT::emitSlow_op_mod(const Instruction*, Vector<SlowCaseEntry>::iterator&)
 
 void JIT::emit_op_negate(const Instruction* currentInstruction)
 {
-    ArithProfile* arithProfile = &currentInstruction->as<OpNegate>().metadata(m_codeBlock).arithProfile;
+    ArithProfile* arithProfile = &currentInstruction->as<OpNegate>().metadata(m_codeBlock).m_arithProfile;
     JITNegIC* negateIC = m_codeBlock->addJITNegIC(arithProfile, currentInstruction);
     m_instructionToMathIC.add(currentInstruction, negateIC);
     emitMathICFast<OpNegate>(negateIC, currentInstruction, operationArithNegateProfiled, operationArithNegate);
@@ -469,9 +469,9 @@ template<typename Op, typename SnippetGenerator>
 void JIT::emitBitBinaryOpFastPath(const Instruction* currentInstruction, ProfilingPolicy profilingPolicy)
 {
     auto bytecode = currentInstruction->as<Op>();
-    int result = bytecode.dst.offset();
-    int op1 = bytecode.lhs.offset();
-    int op2 = bytecode.rhs.offset();
+    int result = bytecode.m_dst.offset();
+    int op1 = bytecode.m_lhs.offset();
+    int op2 = bytecode.m_rhs.offset();
 
 #if USE(JSVALUE64)
     JSValueRegs leftRegs = JSValueRegs(regT0);
@@ -516,8 +516,8 @@ void JIT::emitBitBinaryOpFastPath(const Instruction* currentInstruction, Profili
 void JIT::emit_op_bitnot(const Instruction* currentInstruction)
 {
     auto bytecode = currentInstruction->as<OpBitnot>();
-    int result = bytecode.dst.offset();
-    int op1 = bytecode.operand.offset();
+    int result = bytecode.m_dst.offset();
+    int op1 = bytecode.m_operand.offset();
 
 #if USE(JSVALUE64)
     JSValueRegs leftRegs = JSValueRegs(regT0);
@@ -577,9 +577,9 @@ template<typename Op>
 void JIT::emitRightShiftFastPath(const Instruction* currentInstruction, JITRightShiftGenerator::ShiftType snippetShiftType)
 {
     auto bytecode = currentInstruction->as<Op>();
-    int result = bytecode.dst.offset();
-    int op1 = bytecode.lhs.offset();
-    int op2 = bytecode.rhs.offset();
+    int result = bytecode.m_dst.offset();
+    int op1 = bytecode.m_lhs.offset();
+    int op2 = bytecode.m_rhs.offset();
 
 #if USE(JSVALUE64)
     JSValueRegs leftRegs = JSValueRegs(regT0);
@@ -639,7 +639,7 @@ ALWAYS_INLINE static OperandTypes getOperandTypes(const ArithProfile& arithProfi
 
 void JIT::emit_op_add(const Instruction* currentInstruction)
 {
-    ArithProfile* arithProfile = &currentInstruction->as<OpAdd>().metadata(m_codeBlock).arithProfile;
+    ArithProfile* arithProfile = &currentInstruction->as<OpAdd>().metadata(m_codeBlock).m_arithProfile;
     JITAddIC* addIC = m_codeBlock->addJITAddIC(arithProfile, currentInstruction);
     m_instructionToMathIC.add(currentInstruction, addIC);
     emitMathICFast<OpAdd>(addIC, currentInstruction, operationValueAddProfiled, operationValueAdd);
@@ -657,8 +657,8 @@ template <typename Op, typename Generator, typename ProfiledFunction, typename N
 void JIT::emitMathICFast(JITUnaryMathIC<Generator>* mathIC, const Instruction* currentInstruction, ProfiledFunction profiledFunction, NonProfiledFunction nonProfiledFunction)
 {
     auto bytecode = currentInstruction->as<Op>();
-    int result = bytecode.dst.offset();
-    int operand = bytecode.operand.offset();
+    int result = bytecode.m_dst.offset();
+    int operand = bytecode.m_operand.offset();
 
 #if USE(JSVALUE64)
     // ArithNegate benefits from using the same register as src and dst.
@@ -708,9 +708,9 @@ void JIT::emitMathICFast(JITBinaryMathIC<Generator>* mathIC, const Instruction* 
 {
     auto bytecode = currentInstruction->as<Op>();
     OperandTypes types = getOperandTypes(copiedArithProfile(bytecode));
-    int result = bytecode.dst.offset();
-    int op1 = bytecode.lhs.offset();
-    int op2 = bytecode.rhs.offset();
+    int result = bytecode.m_dst.offset();
+    int op1 = bytecode.m_lhs.offset();
+    int op2 = bytecode.m_rhs.offset();
 
 #if USE(JSVALUE64)
     JSValueRegs leftRegs = JSValueRegs(regT1);
@@ -783,7 +783,7 @@ void JIT::emitMathICSlow(JITUnaryMathIC<Generator>* mathIC, const Instruction* c
     mathICGenerationState.slowPathStart = label();
 
     auto bytecode = currentInstruction->as<Op>();
-    int result = bytecode.dst.offset();
+    int result = bytecode.m_dst.offset();
 
 #if USE(JSVALUE64)
     JSValueRegs srcRegs = JSValueRegs(regT1);
@@ -830,9 +830,9 @@ void JIT::emitMathICSlow(JITBinaryMathIC<Generator>* mathIC, const Instruction* 
 
     auto bytecode = currentInstruction->as<Op>();
     OperandTypes types = getOperandTypes(copiedArithProfile(bytecode));
-    int result = bytecode.dst.offset();
-    int op1 = bytecode.lhs.offset();
-    int op2 = bytecode.rhs.offset();
+    int result = bytecode.m_dst.offset();
+    int op1 = bytecode.m_lhs.offset();
+    int op2 = bytecode.m_rhs.offset();
 
 #if USE(JSVALUE64)
     JSValueRegs leftRegs = JSValueRegs(regT1);
@@ -892,18 +892,18 @@ void JIT::emit_op_div(const Instruction* currentInstruction)
 {
     auto bytecode = currentInstruction->as<OpDiv>();
     auto& metadata = bytecode.metadata(m_codeBlock);
-    int result = bytecode.dst.offset();
-    int op1 = bytecode.lhs.offset();
-    int op2 = bytecode.rhs.offset();
+    int result = bytecode.m_dst.offset();
+    int op1 = bytecode.m_lhs.offset();
+    int op2 = bytecode.m_rhs.offset();
 
 #if USE(JSVALUE64)
-    OperandTypes types = getOperandTypes(metadata.arithProfile);
+    OperandTypes types = getOperandTypes(metadata.m_arithProfile);
     JSValueRegs leftRegs = JSValueRegs(regT0);
     JSValueRegs rightRegs = JSValueRegs(regT1);
     JSValueRegs resultRegs = leftRegs;
     GPRReg scratchGPR = regT2;
 #else
-    OperandTypes types = getOperandTypes(metadata.arithProfile);
+    OperandTypes types = getOperandTypes(metadata.m_arithProfile);
     JSValueRegs leftRegs = JSValueRegs(regT1, regT0);
     JSValueRegs rightRegs = JSValueRegs(regT3, regT2);
     JSValueRegs resultRegs = leftRegs;
@@ -913,7 +913,7 @@ void JIT::emit_op_div(const Instruction* currentInstruction)
 
     ArithProfile* arithProfile = nullptr;
     if (shouldEmitProfiling())
-        arithProfile = &currentInstruction->as<OpDiv>().metadata(m_codeBlock).arithProfile;
+        arithProfile = &currentInstruction->as<OpDiv>().metadata(m_codeBlock).m_arithProfile;
 
     SnippetOperand leftOperand(types.first());
     SnippetOperand rightOperand(types.second());
@@ -958,7 +958,7 @@ void JIT::emit_op_div(const Instruction* currentInstruction)
 
 void JIT::emit_op_mul(const Instruction* currentInstruction)
 {
-    ArithProfile* arithProfile = &currentInstruction->as<OpMul>().metadata(m_codeBlock).arithProfile;
+    ArithProfile* arithProfile = &currentInstruction->as<OpMul>().metadata(m_codeBlock).m_arithProfile;
     JITMulIC* mulIC = m_codeBlock->addJITMulIC(arithProfile, currentInstruction);
     m_instructionToMathIC.add(currentInstruction, mulIC);
     emitMathICFast<OpMul>(mulIC, currentInstruction, operationValueMulProfiled, operationValueMul);
@@ -974,7 +974,7 @@ void JIT::emitSlow_op_mul(const Instruction* currentInstruction, Vector<SlowCase
 
 void JIT::emit_op_sub(const Instruction* currentInstruction)
 {
-    ArithProfile* arithProfile = &currentInstruction->as<OpSub>().metadata(m_codeBlock).arithProfile;
+    ArithProfile* arithProfile = &currentInstruction->as<OpSub>().metadata(m_codeBlock).m_arithProfile;
     JITSubIC* subIC = m_codeBlock->addJITSubIC(arithProfile, currentInstruction);
     m_instructionToMathIC.add(currentInstruction, subIC);
     emitMathICFast<OpSub>(subIC, currentInstruction, operationValueSubProfiled, operationValueSub);
