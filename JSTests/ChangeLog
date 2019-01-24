@@ -1,5 +1,52 @@
 2019-01-23  Alan Coon  <alancoon@apple.com>
 
+        Cherry-pick r240106. rdar://problem/47458403
+
+    [JSC] ToThis omission in DFGByteCodeParser is wrong
+    https://bugs.webkit.org/show_bug.cgi?id=193513
+    <rdar://problem/45842236>
+    
+    Reviewed by Saam Barati.
+    
+    JSTests:
+    
+    * stress/to-this-omission-with-different-strict-modes.js: Added.
+    (thisA):
+    (thisAStrictWrapper):
+    
+    Source/JavaScriptCore:
+    
+    DFGByteCodeParser omitted ToThis node when we have `ToThis(ToThis(value))`. This semantics is wrong if ToThis has different semantics
+    in the sloppy mode and the strict mode. If we convert `ToThisInSloppyMode(ToThisInStrictMode(boolean))` to `ToThisInStrictMode(boolean)`,
+    we get boolean instead of BooleanObject.
+    
+    This optimization is introduced more than 7 years ago, and from that, we have several optimizations that can remove such ToThis nodes
+    in BytecodeParser, AI, and Fixup. Furthermore, this optimization is simply wrong since `toThis()` function of JSCell can be defined
+    as they want. Before ensuring all the toThis function is safe, we should not fold `ToThis(ToThis(value))` => `ToThis(value)`.
+    This patch just removes the problematic optimization. The performance numbers look neutral.
+    
+    * dfg/DFGAbstractInterpreterInlines.h:
+    (JSC::DFG::AbstractInterpreter<AbstractStateType>::executeEffects):
+    * dfg/DFGByteCodeParser.cpp:
+    (JSC::DFG::ByteCodeParser::parseBlock):
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@240106 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2019-01-17  Yusuke Suzuki  <yusukesuzuki@slowstart.org>
+
+            [JSC] ToThis omission in DFGByteCodeParser is wrong
+            https://bugs.webkit.org/show_bug.cgi?id=193513
+            <rdar://problem/45842236>
+
+            Reviewed by Saam Barati.
+
+            * stress/to-this-omission-with-different-strict-modes.js: Added.
+            (thisA):
+            (thisAStrictWrapper):
+
+2019-01-23  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r240229. rdar://problem/47458326
 
     DFG: When inlining DataView set* intrinsics we need to set undefined as our result
