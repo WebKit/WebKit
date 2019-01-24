@@ -170,9 +170,7 @@ private:
     bool platformPaused() const override;
     MediaTime currentMediaTime() const override;
     void setVolume(float) override;
-#if PLATFORM(IOS_FAMILY)
     bool supportsMuting() const override { return true; }
-#endif
     void setMuted(bool) override;
     void setClosedCaptionsVisible(bool) override;
     void paint(GraphicsContext&, const FloatRect&) override;
