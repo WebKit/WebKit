@@ -67,6 +67,12 @@ protected:
     xpc_object_t m_initializerMessage;
 };
 
+template<typename XPCServiceType>
+void initializeChildProcess(ChildProcessInitializationParameters&& parameters)
+{
+    XPCServiceType::singleton().initialize(WTFMove(parameters));
+}
+
 template<typename XPCServiceType, typename XPCServiceInitializerDelegateType>
 void XPCServiceInitializer(OSObjectPtr<xpc_connection_t> connection, xpc_object_t initializerMessage, xpc_object_t priorityBoostMessage)
 {
@@ -119,7 +125,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
     parameters.processType = XPCServiceType::processType;
 
-    XPCServiceType::singleton().initialize(parameters);
+    initializeChildProcess<XPCServiceType>(WTFMove(parameters));
 }
 
 int XPCServiceMain(int, const char**);

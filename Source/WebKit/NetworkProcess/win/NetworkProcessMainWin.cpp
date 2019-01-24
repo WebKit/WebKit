@@ -31,6 +31,12 @@
 
 namespace WebKit {
 
+template<>
+void initializeChildProcess<NetworkProcess>(ChildProcessInitializationParameters&& parameters)
+{
+    static NeverDestroyed<NetworkProcess> networkProcess(WTFMove(parameters));
+}
+
 int NetworkProcessMainWin(int argc, char** argv)
 {
     return ChildProcessMain<NetworkProcess, ChildProcessMainBase>(argc, argv);

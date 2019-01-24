@@ -108,8 +108,8 @@ class NetworkProcess : public ChildProcess, private DownloadManager::Client, pub
 {
     WTF_MAKE_NONCOPYABLE(NetworkProcess);
 public:
+    NetworkProcess(ChildProcessInitializationParameters&&);
     ~NetworkProcess();
-    static NetworkProcess& singleton();
     static constexpr ProcessType processType = ProcessType::Network;
 
     template <typename T>
@@ -288,8 +288,6 @@ public:
     void requestCacheStorageSpace(PAL::SessionID, const WebCore::ClientOrigin&, uint64_t quota, uint64_t currentSize, uint64_t spaceRequired, CompletionHandler<void(Optional<uint64_t>)>&&);
 
 private:
-    NetworkProcess();
-
     void platformInitializeNetworkProcess(const NetworkProcessCreationParameters&);
     std::unique_ptr<WebCore::NetworkStorageSession> platformCreateDefaultStorageSession() const;
 
@@ -425,11 +423,11 @@ private:
     Vector<RefPtr<NetworkConnectionToWebProcess>> m_webProcessConnections;
 
     String m_diskCacheDirectory;
-    bool m_hasSetCacheModel;
-    CacheModel m_cacheModel;
+    bool m_hasSetCacheModel { false };
+    CacheModel m_cacheModel { CacheModel::DocumentViewer };
     bool m_suppressMemoryPressureHandler { false };
-    bool m_diskCacheIsDisabledForTesting;
-    bool m_canHandleHTTPSServerTrustEvaluation;
+    bool m_diskCacheIsDisabledForTesting { false };
+    bool m_canHandleHTTPSServerTrustEvaluation { true };
     String m_uiProcessBundleIdentifier;
     DownloadManager m_downloadManager;
 
@@ -453,7 +451,7 @@ private:
     // FIXME: We'd like to be able to do this without the #ifdef, but WorkQueue + BinarySemaphore isn't good enough since
     // multiple requests to clear the cache can come in before previous requests complete, and we need to wait for all of them.
     // In the future using WorkQueue and a counting semaphore would work, as would WorkQueue supporting the libdispatch concept of "work groups".
-    dispatch_group_t m_clearCacheDispatchGroup;
+    dispatch_group_t m_clearCacheDispatchGroup { nullptr };
 
     bool m_suppressesConnectionTerminationOnSystemChange { false };
 #endif
@@ -462,12 +460,12 @@ private:
     NetworkContentRuleListManager m_networkContentRuleListManager;
 #endif
 
-    Ref<WorkQueue> m_storageTaskQueue;
+    Ref<WorkQueue> m_storageTaskQueue { WorkQueue::create("com.apple.WebKit.StorageTask") };
 
 #if ENABLE(INDEXED_DATABASE)
     HashMap<PAL::SessionID, String> m_idbDatabasePaths;
     HashMap<PAL::SessionID, RefPtr<WebCore::IDBServer::IDBServer>> m_idbServers;
-    uint64_t m_idbPerOriginQuota;
+    uint64_t m_idbPerOriginQuota { WebCore::IDBServer::defaultPerOriginQuota };
 #endif
 
     Deque<CrossThreadTask> m_storageTasks;

@@ -74,7 +74,7 @@ private:
     void startRequest(GRefPtr<GTask>&& task) override
     {
         WebKitSoupRequestGeneric* request = WEBKIT_SOUP_REQUEST_GENERIC(g_task_get_source_object(task.get()));
-        auto* customProtocolManager = NetworkProcess::singleton().supplement<LegacyCustomProtocolManager>();
+        auto* customProtocolManager = lastCreatedNetworkProcess()->supplement<LegacyCustomProtocolManager>();
         if (!customProtocolManager)
             return;
 

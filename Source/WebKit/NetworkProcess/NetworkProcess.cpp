@@ -124,27 +124,10 @@ static void callExitSoon(IPC::Connection*)
     });
 }
 
-NetworkProcess& NetworkProcess::singleton()
-{
-    static NeverDestroyed<Ref<NetworkProcess>> networkProcess(adoptRef(*new NetworkProcess));
-    return networkProcess.get();
-}
-
-NetworkProcess::NetworkProcess()
-    : m_hasSetCacheModel(false)
-    , m_cacheModel(CacheModel::DocumentViewer)
-    , m_diskCacheIsDisabledForTesting(false)
-    , m_canHandleHTTPSServerTrustEvaluation(true)
-    , m_downloadManager(*this)
-#if PLATFORM(COCOA)
-    , m_clearCacheDispatchGroup(0)
-#endif
+NetworkProcess::NetworkProcess(ChildProcessInitializationParameters&& parameters)
+    : m_downloadManager(*this)
 #if ENABLE(CONTENT_EXTENSIONS)
     , m_networkContentRuleListManager(*this)
-#endif
-    , m_storageTaskQueue(WorkQueue::create("com.apple.WebKit.StorageTask"))
-#if ENABLE(INDEXED_DATABASE)
-    , m_idbPerOriginQuota(IDBServer::defaultPerOriginQuota)
 #endif
 {
     NetworkProcessPlatformStrategies::initialize();
@@ -172,6 +155,8 @@ NetworkProcess::NetworkProcess()
         for (auto& webProcessConnection : webProcessConnections)
             webProcessConnection->setOnLineState(isOnLine);
     });
+
+    initialize(WTFMove(parameters));
 }
 
 NetworkProcess::~NetworkProcess()

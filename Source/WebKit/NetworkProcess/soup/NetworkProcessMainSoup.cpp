@@ -33,16 +33,25 @@
 
 namespace WebKit {
 
+static RefPtr<NetworkProcess> globalNetworkProcess;
+
 class NetworkProcessMain final: public ChildProcessMainBase {
 public:
     void platformFinalize() override
     {
         // Needed to destroy the SoupSession and SoupCookieJar, e.g. to avoid
         // leaking SQLite temporary journaling files.
-        NetworkProcess::singleton().defaultStorageSession().clearSoupNetworkSession();
+        globalNetworkProcess->defaultStorageSession().clearSoupNetworkSession();
     }
 };
 
+template<>
+void initializeChildProcess<NetworkProcess>(ChildProcessInitializationParameters&& parameters)
+{
+    static NeverDestroyed<NetworkProcess> networkProcess(WTFMove(parameters));
+    globalNetworkProcess = &networkProcess.get();
+}
+    
 int NetworkProcessMainUnix(int argc, char** argv)
 {
     return ChildProcessMain<NetworkProcess, NetworkProcessMain>(argc, argv);

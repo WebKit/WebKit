@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef ChildProcessMain_h
-#define ChildProcessMain_h
+#pragma once
 
 #include "ChildProcess.h"
 #include "WebKit2Initialize.h"
@@ -38,11 +37,17 @@ public:
     virtual bool parseCommandLine(int argc, char** argv);
     virtual void platformFinalize() { }
 
-    const ChildProcessInitializationParameters& initializationParameters() const { return m_parameters; }
+    ChildProcessInitializationParameters&& takeInitializationParameters() { return WTFMove(m_parameters); }
 
 protected:
     ChildProcessInitializationParameters m_parameters;
 };
+
+template<typename ChildProcessType>
+void initializeChildProcess(ChildProcessInitializationParameters&& parameters)
+{
+    ChildProcessType::singleton().initialize(WTFMove(parameters));
+}
 
 template<typename ChildProcessType, typename ChildProcessMainType>
 int ChildProcessMain(int argc, char** argv)
@@ -57,7 +62,7 @@ int ChildProcessMain(int argc, char** argv)
     if (!childMain.parseCommandLine(argc, argv))
         return EXIT_FAILURE;
 
-    ChildProcessType::singleton().initialize(childMain.initializationParameters());
+    initializeChildProcess<ChildProcessType>(childMain.takeInitializationParameters());
     RunLoop::run();
     childMain.platformFinalize();
 
@@ -65,5 +70,3 @@ int ChildProcessMain(int argc, char** argv)
 }
 
 } // namespace WebKit
-
-#endif // ChildProcessMain_h

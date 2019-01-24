@@ -1,3 +1,27 @@
+2019-01-23  Alex Christensen  <achristensen@webkit.org>
+
+        Stop using NetworkProcess::singleton
+        https://bugs.webkit.org/show_bug.cgi?id=193700
+
+        Reviewed by Don Olmstead.
+
+        This replaces it with a NeverDestroyed<NetworkProcess> and paves the way for more interesting things.
+
+        * NetworkProcess/CustomProtocols/soup/LegacyCustomProtocolManagerSoup.cpp:
+        * NetworkProcess/EntryPoint/mac/XPCService/NetworkServiceEntryPoint.mm:
+        (WebKit::initializeChildProcess<WebKit::NetworkProcess>):
+        * NetworkProcess/NetworkProcess.cpp:
+        (WebKit::NetworkProcess::NetworkProcess):
+        (WebKit::NetworkProcess::singleton): Deleted.
+        * NetworkProcess/NetworkProcess.h:
+        * NetworkProcess/soup/NetworkProcessMainSoup.cpp:
+        (WebKit::initializeChildProcess<WebKit::NetworkProcess>):
+        * NetworkProcess/win/NetworkProcessMainWin.cpp:
+        (WebKit::initializeChildProcess<WebKit::NetworkProcess>):
+        * Shared/EntryPointUtilities/mac/XPCService/XPCServiceEntryPoint.h:
+        (WebKit::initializeChildProcess):
+        (WebKit::XPCServiceInitializer):
+
 2019-01-23  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed, rolling out r240343.
