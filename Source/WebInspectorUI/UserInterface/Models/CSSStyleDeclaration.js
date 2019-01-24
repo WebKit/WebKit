@@ -111,8 +111,8 @@ WI.CSSStyleDeclaration = class CSSStyleDeclaration extends WI.Object
         text = text || "";
         properties = properties || [];
 
-        var oldProperties = this._properties || [];
-        var oldText = this._text;
+        let oldProperties = this._properties || [];
+        let oldText = this._text;
 
         this._text = text;
         this._properties = properties;
@@ -123,7 +123,7 @@ WI.CSSStyleDeclaration = class CSSStyleDeclaration extends WI.Object
 
         this._visibleProperties = null;
 
-        var editable = this.editable;
+        let editable = this.editable;
 
         for (let property of this._properties) {
             property.ownerStyle = this;
@@ -140,46 +140,29 @@ WI.CSSStyleDeclaration = class CSSStyleDeclaration extends WI.Object
             }
         }
 
-        var removedProperties = [];
-        for (var i = 0; i < oldProperties.length; ++i) {
-            var oldProperty = oldProperties[i];
+        for (let oldProperty of oldProperties) {
+            if (this._enabledProperties.includes(oldProperty))
+                continue;
 
-            if (!this._enabledProperties.includes(oldProperty)) {
-                // Clear the index, since it is no longer valid.
-                oldProperty.index = NaN;
+            // Clear the index, since it is no longer valid.
+            oldProperty.index = NaN;
 
-                removedProperties.push(oldProperty);
-
-                // Keep around old properties in pending in case they
-                // are needed again during editing.
-                if (editable)
-                    this._pendingProperties.push(oldProperty);
-            }
+            // Keep around old properties in pending in case they
+            // are needed again during editing.
+            if (editable)
+                this._pendingProperties.push(oldProperty);
         }
 
         if (dontFireEvents)
             return;
 
-        var addedProperties = [];
-        for (var i = 0; i < this._enabledProperties.length; ++i) {
-            if (!oldProperties.includes(this._enabledProperties[i]))
-                addedProperties.push(this._enabledProperties[i]);
-        }
-
         // Don't fire the event if there is text and it hasn't changed.
-        if (oldText && this._text && oldText === this._text) {
-            if (!this._locked || suppressLock) {
-                // We shouldn't have any added or removed properties in this case.
-                console.assert(!addedProperties.length && !removedProperties.length);
-            }
-
-            if (!addedProperties.length && !removedProperties.length)
-                return;
-        }
+        if (oldText && this._text && oldText === this._text)
+            return;
 
         function delayed()
         {
-            this.dispatchEventToListeners(WI.CSSStyleDeclaration.Event.PropertiesChanged, {addedProperties, removedProperties});
+            this.dispatchEventToListeners(WI.CSSStyleDeclaration.Event.PropertiesChanged);
         }
 
         // Delay firing the PropertiesChanged event so DOMNodeStyles has a chance to mark overridden and associated properties.
