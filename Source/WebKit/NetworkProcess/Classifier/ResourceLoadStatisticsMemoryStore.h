@@ -124,9 +124,6 @@ public:
 
     void logFrameNavigation(const String& targetPrimaryDomain, const String& mainFramePrimaryDomain, const String& sourcePrimaryDomain, const String& targetHost, const String& mainFrameHost, bool isRedirect, bool isMainFrame);
     void logUserInteraction(const String& primaryDomain);
-    void logWebSocketLoading(const String& targetPrimaryDomain, const String& mainFramePrimaryDomain, WallTime lastSeen);
-    void logSubresourceLoading(const String& targetPrimaryDomain, const String& mainFramePrimaryDomain, WallTime lastSeen);
-    void logSubresourceRedirect(const String& sourcePrimaryDomain, const String& targetPrimaryDomain);
 
     void clearUserInteraction(const String& primaryDomain);
     bool hasHadUserInteraction(const String& primaryDomain);

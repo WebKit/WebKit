@@ -92,10 +92,6 @@ void NetworkSession::setResourceLoadStatisticsEnabled(bool enable)
     if (m_resourceLoadStatistics)
         return;
 
-    // FIXME(193728): Support ResourceLoadStatistics for ephemeral sessions, too.
-    if (m_sessionID.isEphemeral())
-        return;
-    
     m_resourceLoadStatistics = WebResourceLoadStatisticsStore::create(*this, m_resourceLoadStatisticsDirectory);
 }
 

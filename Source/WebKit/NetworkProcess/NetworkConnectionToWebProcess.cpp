@@ -595,50 +595,6 @@ void NetworkConnectionToWebProcess::logUserInteraction(PAL::SessionID sessionID,
 #endif
 }
 
-void NetworkConnectionToWebProcess::logWebSocketLoading(PAL::SessionID sessionID, const String& targetPrimaryDomain, const String& mainFramePrimaryDomain, WallTime lastSeen)
-{
-#if ENABLE(RESOURCE_LOAD_STATISTICS)
-    if (auto networkSession = networkProcess().networkSession(sessionID)) {
-        if (auto* resourceLoadStatistics = networkSession->resourceLoadStatistics())
-            resourceLoadStatistics->logWebSocketLoading(targetPrimaryDomain, mainFramePrimaryDomain, lastSeen, [] { });
-    }
-#else
-    UNUSED_PARAM(sessionID);
-    UNUSED_PARAM(targetPrimaryDomain);
-    UNUSED_PARAM(mainFramePrimaryDomain);
-    UNUSED_PARAM(lastSeen);
-#endif
-}
-
-void NetworkConnectionToWebProcess::logSubresourceLoading(PAL::SessionID sessionID, const String& targetPrimaryDomain, const String& mainFramePrimaryDomain, WallTime lastSeen)
-{
-#if ENABLE(RESOURCE_LOAD_STATISTICS)
-    if (auto networkSession = networkProcess().networkSession(sessionID)) {
-        if (auto* resourceLoadStatistics = networkSession->resourceLoadStatistics())
-            resourceLoadStatistics->logSubresourceLoading(targetPrimaryDomain, mainFramePrimaryDomain, lastSeen, [] { });
-    }
-#else
-    UNUSED_PARAM(sessionID);
-    UNUSED_PARAM(targetPrimaryDomain);
-    UNUSED_PARAM(mainFramePrimaryDomain);
-    UNUSED_PARAM(lastSeen);
-#endif
-}
-
-void NetworkConnectionToWebProcess::logSubresourceRedirect(PAL::SessionID sessionID, const String& sourcePrimaryDomain, const String& targetPrimaryDomain)
-{
-#if ENABLE(RESOURCE_LOAD_STATISTICS)
-    if (auto networkSession = networkProcess().networkSession(sessionID)) {
-        if (auto* resourceLoadStatistics = networkSession->resourceLoadStatistics())
-            resourceLoadStatistics->logSubresourceRedirect(sourcePrimaryDomain, targetPrimaryDomain, [] { });
-    }
-#else
-    UNUSED_PARAM(sessionID);
-    UNUSED_PARAM(sourcePrimaryDomain);
-    UNUSED_PARAM(targetPrimaryDomain);
-#endif
-}
-
 void NetworkConnectionToWebProcess::addOriginAccessWhitelistEntry(const String& sourceOrigin, const String& destinationProtocol, const String& destinationHost, bool allowDestinationSubdomains)
 {
     SecurityPolicy::addOriginAccessWhitelistEntry(SecurityOrigin::createFromString(sourceOrigin).get(), destinationProtocol, destinationHost, allowDestinationSubdomains);

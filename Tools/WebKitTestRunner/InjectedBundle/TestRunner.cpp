@@ -1860,13 +1860,6 @@ void TestRunner::statisticsDidModifyDataRecordsCallback()
 void TestRunner::installStatisticsDidScanDataRecordsCallback(JSValueRef callback)
 {
     cacheTestRunnerCallback(StatisticsDidScanDataRecordsCallbackID, callback);
-
-    bool notifyPagesWhenDataRecordsWereScanned = !!callback;
-
-    // Setting a callback implies we expect to receive callbacks. So register for them.
-    WKRetainPtr<WKStringRef> messageName(AdoptWK, WKStringCreateWithUTF8CString("StatisticsNotifyPagesWhenDataRecordsWereScanned"));
-    WKRetainPtr<WKBooleanRef> messageBody(AdoptWK, WKBooleanCreate(notifyPagesWhenDataRecordsWereScanned));
-    WKBundlePostSynchronousMessage(InjectedBundle::singleton().bundle(), messageName.get(), messageBody.get(), nullptr);
 }
 
 void TestRunner::statisticsDidScanDataRecordsCallback()
