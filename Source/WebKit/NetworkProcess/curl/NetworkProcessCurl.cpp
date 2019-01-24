@@ -41,7 +41,7 @@ void NetworkProcess::platformInitializeNetworkProcess(const NetworkProcessCreati
 
 std::unique_ptr<WebCore::NetworkStorageSession> NetworkProcess::platformCreateDefaultStorageSession() const
 {
-    return std::make_unique<WebCore::NetworkStorageSession>(PAL::SessionID::defaultSessionID(), nullptr);
+    return std::make_unique<WebCore::NetworkStorageSession>(PAL::SessionID::defaultSessionID(), CurlContext::singleton());
 }
 
 void NetworkProcess::allowSpecificHTTPSCertificateForHost(const CertificateInfo& certificateInfo, const String& host)
@@ -88,7 +88,7 @@ void NetworkProcess::platformProcessDidTransitionToBackground()
 
 void NetworkProcess::setNetworkProxySettings(PAL::SessionID sessionID, WebCore::CurlProxySettings&& settings)
 {
-    if (auto* networkStorageSession = storageSession(sessionID))
+    if (auto* networkStorageSession = NetworkStorageSession::storageSession(sessionID))
         networkStorageSession->setProxySettings(WTFMove(settings));
     else
         ASSERT_NOT_REACHED();
