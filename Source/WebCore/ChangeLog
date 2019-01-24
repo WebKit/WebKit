@@ -1,3 +1,17 @@
+2019-01-24  Youenn Fablet  <youenn@apple.com>
+
+        Use MonotonicTime in WorkerRunLoop
+        https://bugs.webkit.org/show_bug.cgi?id=193417
+
+        Reviewed by Saam Barati.
+
+        Condition is based on MonotonicTime so MessageQueue should also be based on MonotonicTime.
+        Ditto for WorkerRunLoop.
+        No easy way to test the change which should not be easily observable.
+
+        * workers/WorkerRunLoop.cpp:
+        (WebCore::WorkerRunLoop::runInMode):
+
 2019-01-24  Ross Kirsling  <ross.kirsling@sony.com>
 
         Move FileSystem to WTF

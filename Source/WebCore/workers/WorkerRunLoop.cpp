@@ -49,17 +49,17 @@ namespace WebCore {
 class WorkerSharedTimer final : public SharedTimer {
 public:
     // SharedTimer interface.
-    void setFiredFunction(WTF::Function<void()>&& function) override { m_sharedTimerFunction = WTFMove(function); }
-    void setFireInterval(Seconds interval) override { m_nextFireTime = interval + WallTime::now(); }
-    void stop() override { m_nextFireTime = WallTime(); }
+    void setFiredFunction(WTF::Function<void()>&& function) final { m_sharedTimerFunction = WTFMove(function); }
+    void setFireInterval(Seconds interval) final { m_nextFireTime = MonotonicTime::now() + interval; }
+    void stop() final { m_nextFireTime = MonotonicTime { }; }
 
     bool isActive() { return m_sharedTimerFunction && m_nextFireTime; }
-    WallTime fireTime() { return m_nextFireTime; }
+    Seconds fireTimeDelay() { return std::max(0_s, m_nextFireTime - MonotonicTime::now()); }
     void fire() { m_sharedTimerFunction(); }
 
 private:
     WTF::Function<void()> m_sharedTimerFunction;
-    WallTime m_nextFireTime;
+    MonotonicTime m_nextFireTime;
 };
 
 class ModePredicate {
@@ -176,28 +176,23 @@ MessageQueueWaitResult WorkerRunLoop::runInMode(WorkerGlobalScope* context, cons
         g_main_context_iteration(mainContext, FALSE);
 #endif
 
-    WallTime deadline = WallTime::infinity();
+    Seconds timeoutDelay = Seconds::infinity();
 
 #if USE(CF)
     CFAbsoluteTime nextCFRunLoopTimerFireDate = CFRunLoopGetNextTimerFireDate(CFRunLoopGetCurrent(), kCFRunLoopDefaultMode);
     double timeUntilNextCFRunLoopTimerInSeconds = nextCFRunLoopTimerFireDate - CFAbsoluteTimeGetCurrent();
-    deadline = WallTime::now() + std::max(0_s, Seconds(timeUntilNextCFRunLoopTimerInSeconds));
+    timeoutDelay = std::max(0_s, Seconds(timeUntilNextCFRunLoopTimerInSeconds));
 #endif
 
-    WallTime absoluteTime;
-    if (waitMode == WaitForMessage) {
-        if (predicate.isDefaultMode() && m_sharedTimer->isActive())
-            absoluteTime = std::min(deadline, m_sharedTimer->fireTime());
-        else
-            absoluteTime = deadline;
-    }
+    if (waitMode == WaitForMessage && predicate.isDefaultMode() && m_sharedTimer->isActive())
+        timeoutDelay = std::min(timeoutDelay, m_sharedTimer->fireTimeDelay());
 
     if (WorkerScriptController* script = context->script()) {
         script->releaseHeapAccess();
         script->addTimerSetNotification(timerAddedTask);
     }
     MessageQueueWaitResult result;
-    auto task = m_messageQueue.waitForMessageFilteredWithTimeout(result, predicate, absoluteTime);
+    auto task = m_messageQueue.waitForMessageFilteredWithTimeout(result, predicate, timeoutDelay);
     if (WorkerScriptController* script = context->script()) {
         script->acquireHeapAccess();
         script->removeTimerSetNotification(timerAddedTask);
