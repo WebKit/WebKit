@@ -1,3 +1,45 @@
+2019-01-24  Brent Fulgham  <bfulgham@apple.com>
+
+        Activate the WebResourceLoadStatisticsStore in the NetworkProcess and deactivate it in the UIProcess.
+        https://bugs.webkit.org/show_bug.cgi?id=193297
+        <rdar://problem/47158841>
+
+        Reviewed by Alex Christensen.
+
+        This patch activates the ResourceLoadStatistics code in the NetworkProcess, and turns
+        it off in the UIProcess. It also updates test infrastructure to work with this change
+        in architecture.
+
+        * NetworkProcess/Classifier/ResourceLoadStatisticsMemoryStore.cpp:
+        (WebKit::ResourceLoadStatisticsMemoryStore::logSubresourceLoading): Added.
+        (WebKit::ResourceLoadStatisticsMemoryStore::logSubresourceRedirect): Added.
+        (WebKit::ResourceLoadStatisticsMemoryStore::logWebSocketLoading): Added.
+        * NetworkProcess/Classifier/WebResourceLoadStatisticsStore.cpp:
+        (WebKit::WebResourceLoadStatisticsStore::logSubresourceLoading): Added.
+        (WebKit::WebResourceLoadStatisticsStore::logSubresourceRedirect): Added.
+        (WebKit::WebResourceLoadStatisticsStore::logWebSocketLoading): Added.
+        (WebKit::WebResourceLoadStatisticsStore::removeAllStorageAccess):
+        (WebKit::WebResourceLoadStatisticsStore::setCacheMaxAgeCap):
+        (WebKit::WebResourceLoadStatisticsStore::setCacheMaxAgeCapForPrevalentResources): Deleted.
+        * NetworkProcess/Classifier/WebResourceLoadStatisticsStore.h:
+        * NetworkProcess/NetworkConnectionToWebProcess.cpp:
+        (WebKit::NetworkConnectionToWebProcess::logSubresourceLoading): Added.
+        (WebKit::NetworkConnectionToWebProcess::logSubresourceRedirect): Added.
+        (WebKit::NetworkConnectionToWebProcess::logWebSocketLoading): Added.
+        * NetworkProcess/NetworkConnectionToWebProcess.messages.in:
+        * NetworkProcess/NetworkSession.cpp:
+        (WebKit::NetworkSession::setResourceLoadStatisticsEnabled):
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::WebProcessPool::ensureNetworkProcess):
+        * UIProcess/WebsiteData/Cocoa/WebsiteDataStoreCocoa.mm:
+        (WebKit::WebsiteDataStore::parameters):
+        * UIProcess/WebsiteData/WebsiteDataStore.cpp:
+        (WebKit::WebsiteDataStore::removeData):
+        (WebKit::WebsiteDataStore::setResourceLoadStatisticsEnabled):
+        (WebKit::WebsiteDataStore::enableResourceLoadStatisticsAndSetTestingCallback):
+        * Webprocess/WebProcess.cpp:
+        (WebKit::WebProcess::initializeWebProcess): Register new ResourceLoadObserver callbacks.
+
 2019-01-24  John Wilander  <wilander@apple.com>
 
         Add Ad Click Attribution as an internal/experimental feature

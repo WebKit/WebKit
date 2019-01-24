@@ -417,12 +417,6 @@ void WebResourceLoadStatisticsStore::didCreateNetworkProcess()
     });
 }
 
-void WebResourceLoadStatisticsStore::removeAllStorageAccess()
-{
-    if (m_networkSession)
-        m_networkSession->networkStorageSession().removeAllStorageAccess();
-}
-
 void WebResourceLoadStatisticsStore::removeAllStorageAccess(CompletionHandler<void()>&& completionHandler)
 {
     ASSERT(RunLoop::isMain());
@@ -431,7 +425,10 @@ void WebResourceLoadStatisticsStore::removeAllStorageAccess(CompletionHandler<vo
         m_websiteDataStore->removeAllStorageAccessHandler(WTFMove(completionHandler));
         return;
     }
-    removeAllStorageAccess();
+
+    if (m_networkSession)
+        m_networkSession->networkStorageSession().removeAllStorageAccess();
+
     completionHandler();
 }
 
@@ -501,6 +498,36 @@ void WebResourceLoadStatisticsStore::logFrameNavigation(const String& targetPrim
         
         if (m_memoryStore)
             m_memoryStore->logFrameNavigation(targetPrimaryDomain, mainFramePrimaryDomain, sourcePrimaryDomain, targetHost, mainFrameHost, isRedirect, isMainFrame);
+    });
+}
+
+void WebResourceLoadStatisticsStore::logWebSocketLoading(const String& targetPrimaryDomain, const String& mainFramePrimaryDomain, WallTime lastSeen, CompletionHandler<void()>&& completionHandler)
+{
+    postTask([this, targetPrimaryDomain = targetPrimaryDomain.isolatedCopy(), mainFramePrimaryDomain = mainFramePrimaryDomain.isolatedCopy(), lastSeen, completionHandler = WTFMove(completionHandler)]() mutable {
+        if (m_memoryStore)
+            m_memoryStore->logWebSocketLoading(targetPrimaryDomain, mainFramePrimaryDomain, lastSeen);
+
+        postTaskReply(WTFMove(completionHandler));
+    });
+}
+
+void WebResourceLoadStatisticsStore::logSubresourceLoading(const String& targetPrimaryDomain, const String& mainFramePrimaryDomain, WallTime lastSeen, CompletionHandler<void()>&& completionHandler)
+{
+    postTask([this, targetPrimaryDomain = targetPrimaryDomain.isolatedCopy(), mainFramePrimaryDomain = mainFramePrimaryDomain.isolatedCopy(), lastSeen, completionHandler = WTFMove(completionHandler)]() mutable {
+        if (m_memoryStore)
+            m_memoryStore->logSubresourceLoading(targetPrimaryDomain, mainFramePrimaryDomain, lastSeen);
+        
+        postTaskReply(WTFMove(completionHandler));
+    });
+}
+
+void WebResourceLoadStatisticsStore::logSubresourceRedirect(const String& sourcePrimaryDomain, const String& targetPrimaryDomain, CompletionHandler<void()>&& completionHandler)
+{
+    postTask([this, sourcePrimaryDomain = sourcePrimaryDomain.isolatedCopy(), targetPrimaryDomain = targetPrimaryDomain.isolatedCopy(), completionHandler = WTFMove(completionHandler)]() mutable {
+        if (m_memoryStore)
+            m_memoryStore->logSubresourceRedirect(sourcePrimaryDomain, targetPrimaryDomain);
+        
+        postTaskReply(WTFMove(completionHandler));
     });
 }
 
@@ -1080,12 +1107,6 @@ void WebResourceLoadStatisticsStore::setGrandfatheringTime(Seconds seconds, Comp
     });
 }
 
-void WebResourceLoadStatisticsStore::setCacheMaxAgeCapForPrevalentResources(Seconds seconds)
-{
-    if (m_networkSession)
-        m_networkSession->networkStorageSession().setCacheMaxAgeCapForPrevalentResources(seconds);
-}
-
 void WebResourceLoadStatisticsStore::setCacheMaxAgeCap(Seconds seconds, CompletionHandler<void()>&& completionHandler)
 {
     ASSERT(RunLoop::isMain());
@@ -1095,7 +1116,10 @@ void WebResourceLoadStatisticsStore::setCacheMaxAgeCap(Seconds seconds, Completi
         m_websiteDataStore->setCacheMaxAgeCapForPrevalentResources(seconds, WTFMove(completionHandler));
         return;
     }
-    setCacheMaxAgeCapForPrevalentResources(seconds);
+
+    if (m_networkSession)
+        m_networkSession->networkStorageSession().setCacheMaxAgeCapForPrevalentResources(seconds);
+
     completionHandler();
 }
 

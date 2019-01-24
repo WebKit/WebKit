@@ -555,7 +555,7 @@ NetworkProcessProxy& WebProcessPool::ensureNetworkProcess(WebsiteDataStore* with
 
     SandboxExtension::createHandleForReadWriteDirectory(parameters.defaultDataStoreParameters.networkSessionParameters.resourceLoadStatisticsDirectory, parameters.defaultDataStoreParameters.networkSessionParameters.resourceLoadStatisticsDirectoryExtensionHandle);
 
-    parameters.defaultDataStoreParameters.networkSessionParameters.enableResourceLoadStatistics = false; // FIXME(193297): Turn on when the feature is on. (m_configuration->resourceLoadStatisticsEnabled()?)
+    parameters.defaultDataStoreParameters.networkSessionParameters.enableResourceLoadStatistics = true; // FIXME(193705): m_configuration->resourceLoadStatisticsEnabled();
 
     // Add any platform specific parameters
     platformInitializeNetworkProcess(parameters);

@@ -1,3 +1,15 @@
+2019-01-24  Brent Fulgham  <bfulgham@apple.com>
+
+        Activate the WebResourceLoadStatisticsStore in the NetworkProcess and deactivate it in the UIProcess.
+        https://bugs.webkit.org/show_bug.cgi?id=193297
+        <rdar://problem/47158841>
+
+        Reviewed by Alex Christensen.
+
+        * WebKitTestRunner/InjectedBundle/TestRunner.cpp:
+        (WTR::TestRunner::installStatisticsDidScanDataRecordsCallback): Simplify test configuration by
+        activating the message used to trigger the callback when it is set.
+
 2019-01-24  John Wilander  <wilander@apple.com>
 
         Add Ad Click Attribution as an internal/experimental feature

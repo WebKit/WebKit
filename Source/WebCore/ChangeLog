@@ -1,3 +1,23 @@
+2019-01-24  Brent Fulgham  <bfulgham@apple.com>
+
+        Activate the WebResourceLoadStatisticsStore in the NetworkProcess and deactivate it in the UIProcess.
+        https://bugs.webkit.org/show_bug.cgi?id=193297
+        <rdar://problem/47158841>
+
+        Reviewed by Alex Christensen.
+
+        Trigger logging to the UIProcess when the ResourceLoadObserver is used in the NetworkProcess.
+
+        * Modules/websockets/WebSocket.cpp:
+        (WebCore::WebSocket::connect): Notify NetworkProcess a connection was made to a resource.
+        * loader/ResourceLoadObserver.cpp:
+        (WebCore::ResourceLoadObserver::setLogWebSocketLoadingNotificationCallback): Added.
+        (WebCore::ResourceLoadObserver::setLogSubresourceLoadingNotificationCallback): Added.
+        (WebCore::ResourceLoadObserver::setLogSubresourceRedirectNotificationCallback): Added.
+        (WebCore::ResourceLoadObserver::logSubresourceLoading): Notify NetworkProcess of the load.
+        (WebCore::ResourceLoadObserver::logWebSocketLoading): Ditto.
+        (WebCore::ResourceLoadObserver::logUserInteractionWithReducedTimeResolution): Ditto.
+
 2019-01-24  John Wilander  <wilander@apple.com>
 
         Add Ad Click Attribution as an internal/experimental feature
