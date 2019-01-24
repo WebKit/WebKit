@@ -1,5 +1,40 @@
 2019-01-23  Alan Coon  <alancoon@apple.com>
 
+        Cherry-pick r239929. rdar://problem/47295348
+
+    Fix property access on ARM with the baseline JIT
+    https://bugs.webkit.org/show_bug.cgi?id=193393
+    
+    Reviewed by Yusuke Suzuki.
+    
+    Code was still using currentInstruction[4] to access the instruction's metadata.
+    Updated to use metadata.getPutInfo and metadata.resolveType.
+    
+    * jit/JITPropertyAccess32_64.cpp:
+    (JSC::JIT::emit_op_resolve_scope):
+    (JSC::JIT::emit_op_get_from_scope):
+    (JSC::JIT::emit_op_put_to_scope):
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@239929 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2019-01-14  Dominik Infuehr  <dinfuehr@igalia.com>
+
+            Fix property access on ARM with the baseline JIT
+            https://bugs.webkit.org/show_bug.cgi?id=193393
+
+            Reviewed by Yusuke Suzuki.
+
+            Code was still using currentInstruction[4] to access the instruction's metadata.
+            Updated to use metadata.getPutInfo and metadata.resolveType.
+
+            * jit/JITPropertyAccess32_64.cpp:
+            (JSC::JIT::emit_op_resolve_scope):
+            (JSC::JIT::emit_op_get_from_scope):
+            (JSC::JIT::emit_op_put_to_scope):
+
+2019-01-23  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r240254. rdar://problem/47458354
 
     [JSC] Invalidate old scope operations using global lexical binding epoch
