@@ -160,6 +160,9 @@
 )
 #endif
 
+;; <rdar://problem/47268166>
+(allow mach-lookup (xpc-service-name "com.apple.MTLCompilerService"))
+
 ;; Utility functions
 (define (home-literal home-relative-literal)
     (literal (string-append (param "HOME_DIR") home-relative-literal)))

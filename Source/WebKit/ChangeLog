@@ -1,5 +1,33 @@
 2019-01-23  Alan Coon  <alancoon@apple.com>
 
+        Cherry-pick r239994. rdar://problem/47295338
+
+    Add allow directive for MTLCompilerService.xpc to PluginProcess and WebContent
+    https://bugs.webkit.org/show_bug.cgi?id=193453
+    <rdar://problem/47268166>
+    
+    Reviewed by Brent Fulgham.
+    
+    * PluginProcess/mac/com.apple.WebKit.plugin-common.sb.in:
+    * Resources/SandboxProfiles/ios/com.apple.WebKit.WebContent.sb:
+    * WebProcess/com.apple.WebProcess.sb.in:
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@239994 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2019-01-15  Per Arne Vollan  <pvollan@apple.com>
+
+            Add allow directive for MTLCompilerService.xpc to PluginProcess and WebContent
+            https://bugs.webkit.org/show_bug.cgi?id=193453
+            <rdar://problem/47268166>
+
+            Reviewed by Brent Fulgham.
+
+            * PluginProcess/mac/com.apple.WebKit.plugin-common.sb.in:
+            * Resources/SandboxProfiles/ios/com.apple.WebKit.WebContent.sb:
+            * WebProcess/com.apple.WebProcess.sb.in:
+
+2019-01-23  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r239947. rdar://problem/47295371
 
     Re-enable ability to build --cloop builds.
