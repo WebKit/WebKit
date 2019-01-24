@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006-2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2006-2019 Apple Inc. All rights reserved.
  * Copyright (C) 2007-2009 Torch Mobile, Inc.
  * Copyright (C) 2010, 2011 Research In Motion Limited. All rights reserved.
  *
@@ -958,12 +958,10 @@
 #define JIT_OPERATION
 #endif
 
-#ifndef ENABLE_SEPARATED_WX_HEAP
-#if (!ENABLE(FAST_JIT_PERMISSIONS) || !CPU(ARM64E)) && PLATFORM(IOS_FAMILY) && CPU(ARM64)
+#if PLATFORM(IOS_FAMILY) && CPU(ARM64) && (!ENABLE(FAST_JIT_PERMISSIONS) || !CPU(ARM64E))
 #define ENABLE_SEPARATED_WX_HEAP 1
 #else
 #define ENABLE_SEPARATED_WX_HEAP 0
-#endif
 #endif
 
 /* Configure the interpreter */

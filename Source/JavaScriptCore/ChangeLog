@@ -1,3 +1,14 @@
+2019-01-23  Mark Lam  <mark.lam@apple.com>
+
+        ARM64E should not ENABLE(SEPARATED_WX_HEAP).
+        https://bugs.webkit.org/show_bug.cgi?id=193744
+        <rdar://problem/46262952>
+
+        Reviewed by Saam Barati.
+
+        * assembler/LinkBuffer.cpp:
+        (JSC::LinkBuffer::copyCompactAndLinkCode):
+
 2019-01-23  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [DFG] AvailabilityMap::pruneByLiveness should make non-live operands Availability::unavailable instead of Availability()

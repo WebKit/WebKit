@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2012-2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -40,10 +40,6 @@
 #endif
 
 namespace JSC {
-
-#if ENABLE(SEPARATED_WX_HEAP)
-extern JS_EXPORT_PRIVATE bool useFastPermisionsJITCopy;
-#endif // ENABLE(SEPARATED_WX_HEAP)
 
 bool shouldDumpDisassemblyFor(CodeBlock* codeBlock)
 {
@@ -120,14 +116,6 @@ static ALWAYS_INLINE void recordLinkOffsets(AssemblerData& assemblerData, int32_
 template <typename InstructionType>
 void LinkBuffer::copyCompactAndLinkCode(MacroAssembler& macroAssembler, void* ownerUID, JITCompilationEffort effort)
 {
-#if CPU(ARM64E) && ENABLE(FAST_JIT_PERMISSIONS)
-#if ENABLE(SEPARATED_WX_HEAP)
-    const bool isUsingFastPermissionsJITCopy = useFastPermisionsJITCopy;
-#else
-    const bool isUsingFastPermissionsJITCopy = true;
-#endif
-#endif
-
     allocate(macroAssembler, ownerUID, effort);
     const size_t initialSize = macroAssembler.m_assembler.codeSize();
     if (didFailToAllocate())
@@ -142,11 +130,6 @@ void LinkBuffer::copyCompactAndLinkCode(MacroAssembler& macroAssembler, void* ow
     const uint32_t expectedFinalHash = macroAssembler.m_assembler.buffer().hash().finalHash();
     ARM64EHash verifyUncompactedHash;
     uint8_t* outData = codeOutData;
-#if ENABLE(SEPARATED_WX_HEAP)
-    AssemblerData outBuffer(m_size);
-    if (!isUsingFastPermissionsJITCopy)
-        outData = reinterpret_cast<uint8_t*>(outBuffer.buffer());
-#endif // ENABLE(SEPARATED_WX_HEAP)
 #else
     AssemblerData outBuffer(m_size);
     uint8_t* outData = reinterpret_cast<uint8_t*>(outBuffer.buffer());
@@ -161,8 +144,7 @@ void LinkBuffer::copyCompactAndLinkCode(MacroAssembler& macroAssembler, void* ow
     unsigned jumpCount = jumpsToLink.size();
 
 #if CPU(ARM64E) && ENABLE(FAST_JIT_PERMISSIONS)
-    if (isUsingFastPermissionsJITCopy)
-        os_thread_self_restrict_rwx_to_rw();
+    os_thread_self_restrict_rwx_to_rw();
 #endif
 
     if (m_shouldPerformBranchCompaction) {
@@ -249,8 +231,6 @@ void LinkBuffer::copyCompactAndLinkCode(MacroAssembler& macroAssembler, void* ow
     for (unsigned i = 0; i < jumpCount; ++i) {
 #if CPU(ARM64E) && ENABLE(FAST_JIT_PERMISSIONS)
         auto memcpyFunction = memcpy;
-        if (!isUsingFastPermissionsJITCopy)
-            memcpyFunction = performJITMemcpy;
 #else
         auto memcpyFunction = performJITMemcpy;
 #endif
@@ -267,8 +247,7 @@ void LinkBuffer::copyCompactAndLinkCode(MacroAssembler& macroAssembler, void* ow
     }
 
 #if CPU(ARM64E) && ENABLE(FAST_JIT_PERMISSIONS)
-    if (isUsingFastPermissionsJITCopy)
-        os_thread_self_restrict_rwx_to_rx();
+    os_thread_self_restrict_rwx_to_rx();
 #endif
 
     if (m_executableMemory) {
@@ -280,12 +259,7 @@ void LinkBuffer::copyCompactAndLinkCode(MacroAssembler& macroAssembler, void* ow
     ASSERT(codeOutData != outData);
     performJITMemcpy(codeOutData, outData, m_size);
 #else
-    if (isUsingFastPermissionsJITCopy)
-        ASSERT(codeOutData == outData);
-    else {
-        ASSERT(codeOutData != outData);
-        performJITMemcpy(codeOutData, outData, m_size);
-    }
+    ASSERT(codeOutData == outData);
 #endif
 
     jumpsToLink.clear();
