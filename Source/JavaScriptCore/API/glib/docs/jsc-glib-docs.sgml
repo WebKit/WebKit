@@ -17,11 +17,17 @@
     <xi:include href="xml/JSCWeakValue.xml"/>
     <xi:include href="xml/JSCException.xml"/>
     <xi:include href="xml/JSCClass.xml"/>
+    <xi:include href="xml/JSCOptions.xml"/>
     <xi:include href="xml/JSCVersion.xml"/>
   </chapter>
 
   <index id="index-all">
     <title>Index</title>
+  </index>
+
+  <index id="api-index-2-24" role="2.24">
+    <title>Index of new symbols in 2.24</title>
+    <xi:include href="xml/api-index-2.24.xml"><xi:fallback /></xi:include>
   </index>
 
   <xi:include href="xml/annotation-glossary.xml"><xi:fallback /></xi:include>

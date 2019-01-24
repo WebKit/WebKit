@@ -26,6 +26,7 @@
 #include <jsc/JSCContext.h>
 #include <jsc/JSCDefines.h>
 #include <jsc/JSCException.h>
+#include <jsc/JSCOptions.h>
 #include <jsc/JSCValue.h>
 #include <jsc/JSCVersion.h>
 #include <jsc/JSCVirtualMachine.h>

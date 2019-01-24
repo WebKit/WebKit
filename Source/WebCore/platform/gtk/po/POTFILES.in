@@ -2,6 +2,7 @@
 LocalizedStringsGtk.cpp
 ../LocalizedStrings.cpp
 ../network/soup/NetworkStorageSessionSoup.cpp
+../../../JavaScriptCore/API/glib/JSCOptions.cpp
 ../../../WebKit/Shared/API/glib/WebKitHitTestResult.cpp
 ../../../WebKit/Shared/API/glib/WebKitURIRequest.cpp
 ../../../WebKit/Shared/API/glib/WebKitURIResponse.cpp

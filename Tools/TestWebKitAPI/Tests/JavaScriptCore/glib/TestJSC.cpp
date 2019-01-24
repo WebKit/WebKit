@@ -3227,6 +3227,211 @@ static void testsJSCVirtualMachine()
     }
 }
 
+static void testsJSCOptions()
+{
+    gboolean useJIT;
+    g_assert_true(jsc_options_get_boolean(JSC_OPTIONS_USE_JIT, &useJIT));
+    g_assert_true(useJIT);
+    g_assert_true(jsc_options_set_boolean(JSC_OPTIONS_USE_JIT, FALSE));
+    g_assert_true(jsc_options_get_boolean(JSC_OPTIONS_USE_JIT, &useJIT));
+    g_assert_false(useJIT);
+    g_assert_true(jsc_options_set_boolean(JSC_OPTIONS_USE_JIT, TRUE));
+
+    gint thresholdForJITAfterWarmUp;
+    g_assert_true(jsc_options_get_int("thresholdForJITAfterWarmUp", &thresholdForJITAfterWarmUp));
+    g_assert_cmpint(thresholdForJITAfterWarmUp, ==, 500);
+    g_assert_true(jsc_options_set_int("thresholdForJITAfterWarmUp", 1000));
+    g_assert_true(jsc_options_get_int("thresholdForJITAfterWarmUp", &thresholdForJITAfterWarmUp));
+    g_assert_cmpint(thresholdForJITAfterWarmUp, ==, 1000);
+    g_assert_true(jsc_options_set_int("thresholdForJITAfterWarmUp", 500));
+
+    guint maxPerThreadStackUsage;
+    g_assert_true(jsc_options_get_uint("maxPerThreadStackUsage", &maxPerThreadStackUsage));
+    g_assert_cmpuint(maxPerThreadStackUsage, ==, 4194304);
+    g_assert_true(jsc_options_set_uint("maxPerThreadStackUsage", 4096));
+    g_assert_true(jsc_options_get_uint("maxPerThreadStackUsage", &maxPerThreadStackUsage));
+    g_assert_cmpuint(maxPerThreadStackUsage, ==, 4096);
+    g_assert_true(jsc_options_set_uint("maxPerThreadStackUsage", 4194304));
+
+    gsize webAssemblyPartialCompileLimit;
+    g_assert_true(jsc_options_get_size("webAssemblyPartialCompileLimit", &webAssemblyPartialCompileLimit));
+    g_assert_cmpuint(webAssemblyPartialCompileLimit, ==, 5000);
+    g_assert_true(jsc_options_set_size("webAssemblyPartialCompileLimit", 6000));
+    g_assert_true(jsc_options_get_size("webAssemblyPartialCompileLimit", &webAssemblyPartialCompileLimit));
+    g_assert_cmpuint(webAssemblyPartialCompileLimit, ==, 6000);
+    g_assert_true(jsc_options_set_size("webAssemblyPartialCompileLimit", 5000));
+
+    gdouble smallHeapRAMFraction;
+    g_assert_true(jsc_options_get_double("smallHeapRAMFraction", &smallHeapRAMFraction));
+    g_assert_cmpfloat(smallHeapRAMFraction, ==, 0.25);
+    g_assert_true(jsc_options_set_double("smallHeapRAMFraction", 0.50));
+    g_assert_true(jsc_options_get_double("smallHeapRAMFraction", &smallHeapRAMFraction));
+    g_assert_cmpfloat(smallHeapRAMFraction, ==, 0.50);
+    g_assert_true(jsc_options_set_double("smallHeapRAMFraction", 0.25));
+
+    GUniqueOutPtr<char> configFile;
+    g_assert_true(jsc_options_get_string("configFile", &configFile.outPtr()));
+    g_assert_null(configFile.get());
+    g_assert_true(jsc_options_set_string("configFile", "/tmp/foo"));
+    g_assert_true(jsc_options_get_string("configFile", &configFile.outPtr()));
+    g_assert_cmpstr(configFile.get(), ==, "/tmp/foo");
+    g_assert_true(jsc_options_set_string("configFile", nullptr));
+    g_assert_true(jsc_options_get_string("configFile", &configFile.outPtr()));
+    g_assert_null(configFile.get());
+
+    GUniqueOutPtr<char> bytecodeRangeToJITCompile;
+    g_assert_true(jsc_options_get_range_string("bytecodeRangeToJITCompile", &bytecodeRangeToJITCompile.outPtr()));
+    g_assert_null(bytecodeRangeToJITCompile.get());
+    g_assert_true(jsc_options_set_range_string("bytecodeRangeToJITCompile", "100"));
+    g_assert_true(jsc_options_get_range_string("bytecodeRangeToJITCompile", &bytecodeRangeToJITCompile.outPtr()));
+    g_assert_cmpstr(bytecodeRangeToJITCompile.get(), ==, "100");
+    g_assert_true(jsc_options_set_range_string("bytecodeRangeToJITCompile", "100:200"));
+    g_assert_true(jsc_options_get_range_string("bytecodeRangeToJITCompile", &bytecodeRangeToJITCompile.outPtr()));
+    g_assert_cmpstr(bytecodeRangeToJITCompile.get(), ==, "100:200");
+    g_assert_true(jsc_options_set_range_string("bytecodeRangeToJITCompile", "!100:200"));
+    g_assert_true(jsc_options_get_range_string("bytecodeRangeToJITCompile", &bytecodeRangeToJITCompile.outPtr()));
+    g_assert_cmpstr(bytecodeRangeToJITCompile.get(), ==, "!100:200");
+    g_assert_false(jsc_options_set_range_string("bytecodeRangeToJITCompile", "200:100"));
+    g_assert_true(jsc_options_get_range_string("bytecodeRangeToJITCompile", &bytecodeRangeToJITCompile.outPtr()));
+    g_assert_cmpstr(bytecodeRangeToJITCompile.get(), ==, "!100:200");
+    g_assert_true(jsc_options_set_range_string("bytecodeRangeToJITCompile", nullptr));
+    g_assert_true(jsc_options_get_range_string("bytecodeRangeToJITCompile", &bytecodeRangeToJITCompile.outPtr()));
+    g_assert_null(bytecodeRangeToJITCompile.get());
+
+    guint logGC;
+    g_assert_true(jsc_options_get_uint("logGC", &logGC));
+    g_assert_cmpuint(logGC, ==, 0);
+    g_assert_true(jsc_options_set_uint("logGC", 1));
+    g_assert_true(jsc_options_get_uint("logGC", &logGC));
+    g_assert_cmpuint(logGC, ==, 1);
+    g_assert_true(jsc_options_set_uint("logGC", 2));
+    g_assert_true(jsc_options_get_uint("logGC", &logGC));
+    g_assert_cmpuint(logGC, ==, 2);
+    g_assert_false(jsc_options_set_uint("logGC", 3));
+    g_assert_true(jsc_options_get_uint("logGC", &logGC));
+    g_assert_cmpuint(logGC, ==, 2);
+    g_assert_true(jsc_options_set_uint("logGC", 0));
+    g_assert_true(jsc_options_get_uint("logGC", &logGC));
+    g_assert_cmpuint(logGC, ==, 0);
+
+    gboolean value = TRUE;
+    g_assert_false(jsc_options_get_boolean("InvalidOption", &value));
+    g_assert_true(value);
+    g_assert_false(jsc_options_set_boolean("InvalidOption", TRUE));
+    g_assert_false(jsc_options_get_boolean("InvalidOption", &value));
+    g_assert_true(value);
+
+    // Find a particular option.
+    bool found = false;
+    jsc_options_foreach([](const char* option, JSCOptionType type, const char* description, gpointer userData) -> gboolean {
+        if (!g_strcmp0(option, "useJIT")) {
+            *static_cast<bool*>(userData) = true;
+            return TRUE;
+        }
+        return FALSE;
+    }, &found);
+    g_assert_true(found);
+
+    unsigned optionsCount = 0;
+    jsc_options_foreach([](const char* option, JSCOptionType type, const char* description, gpointer userData) -> gboolean {
+        (*static_cast<unsigned*>(userData))++;
+        return FALSE;
+    }, &optionsCount);
+    g_assert_cmpuint(optionsCount, >, 100);
+    g_assert_cmpuint(optionsCount, <, 500);
+
+    optionsCount = 0;
+    jsc_options_foreach([](const char* option, JSCOptionType type, const char* description, gpointer userData) -> gboolean {
+        if (!g_strcmp0(option, "useJIT"))
+            g_assert_true(type == JSC_OPTION_BOOLEAN);
+        else if (!g_strcmp0(option, "thresholdForJITAfterWarmUp"))
+            g_assert_true(type == JSC_OPTION_INT);
+        else if (!g_strcmp0(option, "maxPerThreadStackUsage"))
+            g_assert_true(type == JSC_OPTION_UINT);
+        else if (!g_strcmp0(option, "webAssemblyPartialCompileLimit"))
+            g_assert_true(type == JSC_OPTION_SIZE);
+        else if (!g_strcmp0(option, "smallHeapRAMFraction"))
+            g_assert_true(type == JSC_OPTION_DOUBLE);
+        else if (!g_strcmp0(option, "configFile"))
+            g_assert_true(type == JSC_OPTION_STRING);
+        else if (!g_strcmp0(option, "bytecodeRangeToJITCompile"))
+            g_assert_true(type == JSC_OPTION_RANGE_STRING);
+        else
+            return FALSE;
+
+        (*static_cast<unsigned*>(userData))++;
+        return FALSE;
+    }, &optionsCount);
+    g_assert_cmpuint(optionsCount, ==, 7);
+
+    GOptionContext* context = g_option_context_new(nullptr);
+    g_option_context_add_group(context, jsc_options_get_option_group());
+    static const char* argv[] = {
+        __FILE__,
+        "--jsc-useJIT=false",
+        "--jsc-thresholdForJITAfterWarmUp=2000",
+        "--jsc-maxPerThreadStackUsage=1024",
+        "--jsc-webAssemblyPartialCompileLimit=4000",
+        "--jsc-smallHeapRAMFraction=0.75",
+        "--jsc-configFile=/tmp/bar",
+        "--jsc-bytecodeRangeToJITCompile=100:300",
+        "--jsc-logGC=1",
+        nullptr
+    };
+    GUniquePtr<char*> copy(g_strdupv(const_cast<char**>(argv)));
+    int argc = g_strv_length(copy.get());
+    auto* copyPtr = copy.get();
+    g_assert_true(g_option_context_parse(context, &argc, &copyPtr, nullptr));
+    g_option_context_free(context);
+
+    g_assert_true(jsc_options_get_boolean(JSC_OPTIONS_USE_JIT, &useJIT));
+    g_assert_false(useJIT);
+    g_assert_true(jsc_options_get_int("thresholdForJITAfterWarmUp", &thresholdForJITAfterWarmUp));
+    g_assert_cmpint(thresholdForJITAfterWarmUp, ==, 2000);
+    g_assert_true(jsc_options_get_uint("maxPerThreadStackUsage", &maxPerThreadStackUsage));
+    g_assert_cmpuint(maxPerThreadStackUsage, ==, 1024);
+    g_assert_true(jsc_options_get_size("webAssemblyPartialCompileLimit", &webAssemblyPartialCompileLimit));
+    g_assert_cmpuint(webAssemblyPartialCompileLimit, ==, 4000);
+    g_assert_true(jsc_options_get_double("smallHeapRAMFraction", &smallHeapRAMFraction));
+    g_assert_cmpfloat(smallHeapRAMFraction, ==, 0.75);
+    g_assert_true(jsc_options_get_string("configFile", &configFile.outPtr()));
+    g_assert_cmpstr(configFile.get(), ==, "/tmp/bar");
+    g_assert_true(jsc_options_get_range_string("bytecodeRangeToJITCompile", &bytecodeRangeToJITCompile.outPtr()));
+    g_assert_cmpstr(bytecodeRangeToJITCompile.get(), ==, "100:300");
+    g_assert_true(jsc_options_get_uint("logGC", &logGC));
+    g_assert_cmpuint(logGC, ==, 1);
+
+    // Restore options their default values.
+    g_assert_true(jsc_options_set_boolean(JSC_OPTIONS_USE_JIT, TRUE));
+    g_assert_true(jsc_options_set_int("thresholdForJITAfterWarmUp", 500));
+    g_assert_true(jsc_options_set_uint("maxPerThreadStackUsage", 4194304));
+    g_assert_true(jsc_options_set_size("webAssemblyPartialCompileLimit", 5000));
+    g_assert_true(jsc_options_set_double("smallHeapRAMFraction", 0.25));
+    g_assert_true(jsc_options_set_string("configFile", nullptr));
+    g_assert_true(jsc_options_set_range_string("bytecodeRangeToJITCompile", nullptr));
+    g_assert_true(jsc_options_set_uint("logGC", 0));
+
+    context = g_option_context_new(nullptr);
+    g_option_context_add_group(context, jsc_options_get_option_group());
+    static const char* argv2[] = { __FILE__, "--jsc-InvalidOption=true", nullptr };
+    copy.reset(g_strdupv(const_cast<char**>(argv2)));
+    argc = g_strv_length(copy.get());
+    copyPtr = copy.get();
+    g_assert_false(g_option_context_parse(context, &argc, &copyPtr, nullptr));
+    g_option_context_free(context);
+
+    context = g_option_context_new(nullptr);
+    g_option_context_add_group(context, jsc_options_get_option_group());
+    static const char* argv3[] = { __FILE__, "--jsc-useJIT=nein", nullptr };
+    copy.reset(g_strdupv(const_cast<char**>(argv3)));
+    argc = g_strv_length(copy.get());
+    copyPtr = copy.get();
+    g_assert_false(g_option_context_parse(context, &argc, &copyPtr, nullptr));
+    g_option_context_free(context);
+    g_assert_true(jsc_options_get_boolean(JSC_OPTIONS_USE_JIT, &useJIT));
+    g_assert_true(useJIT);
+}
+
 #ifdef G_DEFINE_AUTOPTR_CLEANUP_FUNC
 static void testsJSCAutocleanups()
 {
@@ -3270,6 +3475,7 @@ int main(int argc, char** argv)
     g_test_add_func("/jsc/garbage-collector", testJSCGarbageCollector);
     g_test_add_func("/jsc/weak-value", testJSCWeakValue);
     g_test_add_func("/jsc/vm", testsJSCVirtualMachine);
+    g_test_add_func("/jsc/options", testsJSCOptions);
 #ifdef G_DEFINE_AUTOPTR_CLEANUP_FUNC
     g_test_add_func("/jsc/autocleanups", testsJSCAutocleanups);
 #endif

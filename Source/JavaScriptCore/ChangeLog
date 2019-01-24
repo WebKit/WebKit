@@ -1,3 +1,41 @@
+2019-01-24  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GLIB] Expose JavaScriptCore options in GLib public API
+        https://bugs.webkit.org/show_bug.cgi?id=188742
+
+        Reviewed by Michael Catanzaro.
+
+        Add new API to set, get and iterate JSC options.
+
+        * API/glib/JSCOptions.cpp: Added.
+        (valueFromGValue):
+        (valueToGValue):
+        (jscOptionsSetValue):
+        (jscOptionsGetValue):
+        (jsc_options_set_boolean):
+        (jsc_options_get_boolean):
+        (jsc_options_set_int):
+        (jsc_options_get_int):
+        (jsc_options_set_uint):
+        (jsc_options_get_uint):
+        (jsc_options_set_size):
+        (jsc_options_get_size):
+        (jsc_options_set_double):
+        (jsc_options_get_double):
+        (jsc_options_set_string):
+        (jsc_options_get_string):
+        (jsc_options_set_range_string):
+        (jsc_options_get_range_string):
+        (jscOptionsType):
+        (jsc_options_foreach):
+        (setOptionEntry):
+        (jsc_options_get_option_group):
+        * API/glib/JSCOptions.h: Added.
+        * API/glib/docs/jsc-glib-4.0-sections.txt:
+        * API/glib/docs/jsc-glib-docs.sgml:
+        * API/glib/jsc.h:
+        * GLib.cmake:
+
 2019-01-23  Mark Lam  <mark.lam@apple.com>
 
         ARM64E should not ENABLE(SEPARATED_WX_HEAP).
