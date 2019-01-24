@@ -36,16 +36,23 @@
 
 namespace JSC { namespace DFG {
 
-bool DesiredGlobalProperties::isStillValidOnMainThread(DesiredIdentifiers& identifiers)
+bool DesiredGlobalProperties::isStillValidOnMainThread(VM& vm, DesiredIdentifiers& identifiers)
 {
+    bool isStillValid = true;
     for (const auto& property : m_set) {
         auto* uid = identifiers.at(property.identifierNumber());
-        if (auto* watchpointSet = property.globalObject()->getReferencedPropertyWatchpointSet(uid)) {
-            if (!watchpointSet->isStillValid())
-                return false;
+        JSGlobalObject* globalObject = property.globalObject();
+        {
+            SymbolTable* symbolTable = globalObject->globalLexicalEnvironment()->symbolTable();
+            ConcurrentJSLocker locker(symbolTable->m_lock);
+            if (!symbolTable->contains(locker, uid))
+                continue;
         }
+        // Set invalidated WatchpointSet here to prevent further compile-and-fail loop.
+        property.globalObject()->ensureReferencedPropertyWatchpointSet(uid).fireAll(vm, "Lexical binding shadows an existing global property");
+        isStillValid = false;
     }
-    return true;
+    return isStillValid;
 }
 
 void DesiredGlobalProperties::reallyAdd(CodeBlock* codeBlock, DesiredIdentifiers& identifiers, CommonData& common)

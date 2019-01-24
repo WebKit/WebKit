@@ -2139,9 +2139,18 @@ end
 llintOpWithMetadata(op_resolve_scope, OpResolveScope, macro (size, get, dispatch, metadata, return)
     metadata(t5, t0)
 
-    macro getConstantScope()
-        loadp OpResolveScope::Metadata::m_constantScope[t5],  t0
+    macro getConstantScope(dst)
+        loadp OpResolveScope::Metadata::m_constantScope[t5], dst
+    end
+
+    macro returnConstantScope()
+        getConstantScope(t0)
         return(t0)
+    end
+
+    macro globalLexicalBindingEpochCheck(slowPath, globalObject, scratch)
+        loadi OpResolveScope::Metadata::m_globalLexicalBindingEpoch[t5], scratch
+        bineq JSGlobalObject::m_globalLexicalBindingEpoch[globalObject], scratch, slowPath
     end
 
     macro resolveScope()
@@ -2163,15 +2172,17 @@ llintOpWithMetadata(op_resolve_scope, OpResolveScope, macro (size, get, dispatch
 
 #rGlobalProperty:
     bineq t0, GlobalProperty, .rGlobalVar
-    getConstantScope()
+    getConstantScope(t0)
+    globalLexicalBindingEpochCheck(.rDynamic, t0, t2)
+    return(t0)
 
 .rGlobalVar:
     bineq t0, GlobalVar, .rGlobalLexicalVar
-    getConstantScope()
+    returnConstantScope()
 
 .rGlobalLexicalVar:
     bineq t0, GlobalLexicalVar, .rClosureVar
-    getConstantScope()
+    returnConstantScope()
 
 .rClosureVar:
     bineq t0, ClosureVar, .rModuleVar
@@ -2179,22 +2190,24 @@ llintOpWithMetadata(op_resolve_scope, OpResolveScope, macro (size, get, dispatch
 
 .rModuleVar:
     bineq t0, ModuleVar, .rGlobalPropertyWithVarInjectionChecks
-    getConstantScope()
+    returnConstantScope()
 
 .rGlobalPropertyWithVarInjectionChecks:
     bineq t0, GlobalPropertyWithVarInjectionChecks, .rGlobalVarWithVarInjectionChecks
     varInjectionCheck(.rDynamic, t2)
-    getConstantScope()
+    getConstantScope(t0)
+    globalLexicalBindingEpochCheck(.rDynamic, t0, t2)
+    return(t0)
 
 .rGlobalVarWithVarInjectionChecks:
     bineq t0, GlobalVarWithVarInjectionChecks, .rGlobalLexicalVarWithVarInjectionChecks
     varInjectionCheck(.rDynamic, t2)
-    getConstantScope()
+    returnConstantScope()
 
 .rGlobalLexicalVarWithVarInjectionChecks:
     bineq t0, GlobalLexicalVarWithVarInjectionChecks, .rClosureVarWithVarInjectionChecks
     varInjectionCheck(.rDynamic, t2)
-    getConstantScope()
+    returnConstantScope()
 
 .rClosureVarWithVarInjectionChecks:
     bineq t0, ClosureVarWithVarInjectionChecks, .rDynamic
@@ -2245,7 +2258,7 @@ llintOpWithMetadata(op_get_from_scope, OpGetFromScope, macro (size, get, dispatc
 
 #gGlobalProperty:
     bineq t0, GlobalProperty, .gGlobalVar
-    loadWithStructureCheck(OpGetFromScope, get, .gDynamic)
+    loadWithStructureCheck(OpGetFromScope, get, .gDynamic) # This structure check includes lexical binding epoch check since when the epoch is changed, scope will be changed too.
     getProperty()
 
 .gGlobalVar:
@@ -2266,7 +2279,7 @@ llintOpWithMetadata(op_get_from_scope, OpGetFromScope, macro (size, get, dispatc
 
 .gGlobalPropertyWithVarInjectionChecks:
     bineq t0, GlobalPropertyWithVarInjectionChecks, .gGlobalVarWithVarInjectionChecks
-    loadWithStructureCheck(OpGetFromScope, get, .gDynamic)
+    loadWithStructureCheck(OpGetFromScope, get, .gDynamic) # This structure check includes lexical binding epoch check since when the epoch is changed, scope will be changed too.
     getProperty()
 
 .gGlobalVarWithVarInjectionChecks:
@@ -2353,7 +2366,7 @@ llintOpWithMetadata(op_put_to_scope, OpPutToScope, macro (size, get, dispatch, m
 
 .pGlobalProperty:
     bineq t0, GlobalProperty, .pGlobalVar
-    loadWithStructureCheck(OpPutToScope, get, .pDynamic)
+    loadWithStructureCheck(OpPutToScope, get, .pDynamic) # This structure check includes lexical binding epoch check since when the epoch is changed, scope will be changed too.
     putProperty()
     writeBarrierOnOperands(size, get, m_scope, m_value)
     dispatch()
@@ -2380,7 +2393,7 @@ llintOpWithMetadata(op_put_to_scope, OpPutToScope, macro (size, get, dispatch, m
 
 .pGlobalPropertyWithVarInjectionChecks:
     bineq t0, GlobalPropertyWithVarInjectionChecks, .pGlobalVarWithVarInjectionChecks
-    loadWithStructureCheck(OpPutToScope, get, .pDynamic)
+    loadWithStructureCheck(OpPutToScope, get, .pDynamic) # This structure check includes lexical binding epoch check since when the epoch is changed, scope will be changed too.
     putProperty()
     writeBarrierOnOperands(size, get, m_scope, m_value)
     dispatch()

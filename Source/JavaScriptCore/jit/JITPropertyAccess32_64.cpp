@@ -769,7 +769,18 @@ void JIT::emit_op_resolve_scope(const Instruction* currentInstruction)
     auto emitCode = [&] (ResolveType resolveType) {
         switch (resolveType) {
         case GlobalProperty:
-        case GlobalPropertyWithVarInjectionChecks:
+        case GlobalPropertyWithVarInjectionChecks: {
+            JSScope* constantScope = JSScope::constantScopeForCodeBlock(resolveType, m_codeBlock);
+            RELEASE_ASSERT(constantScope);
+            emitVarInjectionCheck(needsVarInjectionChecks(resolveType));
+            load32(&metadata.m_globalLexicalBindingEpoch, regT1);
+            addSlowCase(branch32(NotEqual, AbsoluteAddress(m_codeBlock->globalObject()->addressOfGlobalLexicalBindingEpoch()), regT1));
+            move(TrustedImm32(JSValue::CellTag), regT1);
+            move(TrustedImmPtr(constantScope), regT0);
+            emitStore(dst, regT1, regT0);
+            break;
+        }
+
         case GlobalVar:
         case GlobalVarWithVarInjectionChecks: 
         case GlobalLexicalVar:
@@ -803,12 +814,17 @@ void JIT::emit_op_resolve_scope(const Instruction* currentInstruction)
     switch (resolveType) {
     case GlobalProperty:
     case GlobalPropertyWithVarInjectionChecks: {
-        // Since these GlobalProperty can be changed to GlobalLexicalVar, we should load the value from metadata.
-        JSScope** constantScopeSlot = metadata.m_constantScope.slot();
-        emitVarInjectionCheck(needsVarInjectionChecks(resolveType));
-        move(TrustedImm32(JSValue::CellTag), regT1);
-        loadPtr(constantScopeSlot, regT0);
-        emitStore(dst, regT1, regT0);
+        JumpList skipToEnd;
+        load32(&metadata.m_resolveType, regT0);
+
+        Jump notGlobalProperty = branch32(NotEqual, regT0, TrustedImm32(resolveType));
+        emitCode(resolveType);
+        skipToEnd.append(jump());
+
+        notGlobalProperty.link(this);
+        emitCode(needsVarInjectionChecks(resolveType) ? GlobalLexicalVarWithVarInjectionChecks : GlobalLexicalVar);
+
+        skipToEnd.link(this);
         break;
     }
     case UnresolvedProperty:
