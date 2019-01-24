@@ -13874,6 +13874,7 @@ private:
         // https://bugs.webkit.org/show_bug.cgi?id=175493
         return m_out.opaque(result);
 #else
+        UNUSED_PARAM(kind);
         return ptr;
 #endif
     }
