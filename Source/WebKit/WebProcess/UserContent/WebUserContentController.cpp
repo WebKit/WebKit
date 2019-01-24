@@ -318,8 +318,10 @@ void WebUserContentController::removeAllUserScriptMessageHandlers(const Vector<u
 #if ENABLE(USER_MESSAGE_HANDLERS)
 void WebUserContentController::addUserScriptMessageHandlerInternal(InjectedBundleScriptWorld& world, uint64_t userScriptMessageHandlerIdentifier, const String& name)
 {
-    auto& messageHandlersInWorld = m_userMessageHandlers.ensure(&world, [] { return Vector<RefPtr<WebUserMessageHandlerDescriptorProxy>>(); }).iterator->value;
-    messageHandlersInWorld.append(WebUserMessageHandlerDescriptorProxy::create(this, name, world, userScriptMessageHandlerIdentifier));
+    auto& messageHandlersInWorld = m_userMessageHandlers.ensure(&world, [] { return Vector<std::pair<uint64_t, RefPtr<WebUserMessageHandlerDescriptorProxy>>> { }; }).iterator->value;
+    if (messageHandlersInWorld.findMatching([&](auto& pair) { return pair.first ==  userScriptMessageHandlerIdentifier; }) != notFound)
+        return;
+    messageHandlersInWorld.append(std::make_pair(userScriptMessageHandlerIdentifier, WebUserMessageHandlerDescriptorProxy::create(this, name, world, userScriptMessageHandlerIdentifier)));
 }
 
 void WebUserContentController::removeUserScriptMessageHandlerInternal(InjectedBundleScriptWorld& world, uint64_t userScriptMessageHandlerIdentifier)
@@ -329,14 +331,9 @@ void WebUserContentController::removeUserScriptMessageHandlerInternal(InjectedBu
         return;
 
     auto& userMessageHandlers = it->value;
-
-    bool userMessageHandlersChanged = false;
-    for (int i = userMessageHandlers.size() - 1; i >= 0; --i) {
-        if (userMessageHandlers[i]->identifier() == userScriptMessageHandlerIdentifier) {
-            userMessageHandlers.remove(i);
-            userMessageHandlersChanged = true;
-        }
-    }
+    bool userMessageHandlersChanged = userMessageHandlers.removeFirstMatching([userScriptMessageHandlerIdentifier](auto& pair) {
+        return pair.first ==  userScriptMessageHandlerIdentifier;
+    });
 
     if (!userMessageHandlersChanged)
         return;
@@ -370,7 +367,7 @@ void WebUserContentController::removeAllContentRuleLists()
 }
 #endif
 
-void WebUserContentController::addUserScriptInternal(InjectedBundleScriptWorld& world, uint64_t userScriptIdentifier, UserScript&& userScript, InjectUserScriptImmediately immediately)
+void WebUserContentController::addUserScriptInternal(InjectedBundleScriptWorld& world, const Optional<uint64_t>& userScriptIdentifier, UserScript&& userScript, InjectUserScriptImmediately immediately)
 {
     if (immediately == InjectUserScriptImmediately::Yes) {
         Page::forEachPage([&] (auto& page) {
@@ -388,13 +385,16 @@ void WebUserContentController::addUserScriptInternal(InjectedBundleScriptWorld& 
         });
     }
 
-    auto& scriptsInWorld = m_userScripts.ensure(&world, [] { return Vector<std::pair<uint64_t, WebCore::UserScript>>(); }).iterator->value;
+    auto& scriptsInWorld = m_userScripts.ensure(&world, [] { return Vector<std::pair<Optional<uint64_t>, WebCore::UserScript>>(); }).iterator->value;
+    if (userScriptIdentifier && scriptsInWorld.findMatching([&](auto& pair) { return pair.first == userScriptIdentifier; }) != notFound)
+        return;
+
     scriptsInWorld.append(std::make_pair(userScriptIdentifier, WTFMove(userScript)));
 }
 
 void WebUserContentController::addUserScript(InjectedBundleScriptWorld& world, UserScript&& userScript)
 {
-    addUserScriptInternal(world, 0, WTFMove(userScript), InjectUserScriptImmediately::No);
+    addUserScriptInternal(world, WTF::nullopt, WTFMove(userScript), InjectUserScriptImmediately::No);
 }
 
 void WebUserContentController::removeUserScriptWithURL(InjectedBundleScriptWorld& world, const URL& url)
@@ -404,10 +404,9 @@ void WebUserContentController::removeUserScriptWithURL(InjectedBundleScriptWorld
         return;
 
     auto& scripts = it->value;
-    for (int i = scripts.size() - 1; i >= 0; --i) {
-        if (scripts[i].second.url() == url)
-            scripts.remove(i);
-    }
+    scripts.removeAllMatching([&](auto& pair) {
+        return pair.second.url() == url;
+    });
 
     if (scripts.isEmpty())
         m_userScripts.remove(it);
@@ -420,10 +419,9 @@ void WebUserContentController::removeUserScriptInternal(InjectedBundleScriptWorl
         return;
 
     auto& scripts = it->value;
-    for (int i = scripts.size() - 1; i >= 0; --i) {
-        if (scripts[i].first == userScriptIdentifier)
-            scripts.remove(i);
-    }
+    scripts.removeFirstMatching([userScriptIdentifier](auto& pair) {
+        return pair.first == userScriptIdentifier;
+    });
 
     if (scripts.isEmpty())
         m_userScripts.remove(it);
@@ -434,15 +432,18 @@ void WebUserContentController::removeUserScripts(InjectedBundleScriptWorld& worl
     m_userScripts.remove(&world);
 }
 
-void WebUserContentController::addUserStyleSheetInternal(InjectedBundleScriptWorld& world, uint64_t userStyleSheetIdentifier, UserStyleSheet&& userStyleSheet)
+void WebUserContentController::addUserStyleSheetInternal(InjectedBundleScriptWorld& world, const Optional<uint64_t>& userStyleSheetIdentifier, UserStyleSheet&& userStyleSheet)
 {
-    auto& styleSheetsInWorld = m_userStyleSheets.ensure(&world, [] { return Vector<std::pair<uint64_t, WebCore::UserStyleSheet>>(); }).iterator->value;
+    auto& styleSheetsInWorld = m_userStyleSheets.ensure(&world, [] { return Vector<std::pair<Optional<uint64_t>, WebCore::UserStyleSheet>>(); }).iterator->value;
+    if (userStyleSheetIdentifier && styleSheetsInWorld.findMatching([&](auto& pair) { return pair.first == userStyleSheetIdentifier; }) != notFound)
+        return;
+
     styleSheetsInWorld.append(std::make_pair(userStyleSheetIdentifier, WTFMove(userStyleSheet)));
 }
 
 void WebUserContentController::addUserStyleSheet(InjectedBundleScriptWorld& world, UserStyleSheet&& userStyleSheet)
 {
-    addUserStyleSheetInternal(world, 0, WTFMove(userStyleSheet));
+    addUserStyleSheetInternal(world, WTF::nullopt, WTFMove(userStyleSheet));
     invalidateInjectedStyleSheetCacheInAllFramesInAllPages();
 }
 
@@ -453,14 +454,9 @@ void WebUserContentController::removeUserStyleSheetWithURL(InjectedBundleScriptW
         return;
 
     auto& stylesheets = it->value;
-
-    bool sheetsChanged = false;
-    for (int i = stylesheets.size() - 1; i >= 0; --i) {
-        if (stylesheets[i].second.url() == url) {
-            stylesheets.remove(i);
-            sheetsChanged = true;
-        }
-    }
+    bool sheetsChanged = stylesheets.removeAllMatching([&](auto& pair) {
+        return pair.second.url() == url;
+    });
 
     if (!sheetsChanged)
         return;
@@ -478,14 +474,9 @@ void WebUserContentController::removeUserStyleSheetInternal(InjectedBundleScript
         return;
 
     auto& stylesheets = it->value;
-
-    bool sheetsChanged = false;
-    for (int i = stylesheets.size() - 1; i >= 0; --i) {
-        if (stylesheets[i].first == userStyleSheetIdentifier) {
-            stylesheets.remove(i);
-            sheetsChanged = true;
-        }
-    }
+    bool sheetsChanged = stylesheets.removeFirstMatching([userStyleSheetIdentifier](auto& pair) {
+        return pair.first == userStyleSheetIdentifier;
+    });
 
     if (!sheetsChanged)
         return;
@@ -534,9 +525,9 @@ void WebUserContentController::forEachUserStyleSheet(Function<void(const WebCore
 #if ENABLE(USER_MESSAGE_HANDLERS)
 void WebUserContentController::forEachUserMessageHandler(Function<void(const WebCore::UserMessageHandlerDescriptor&)>&& functor) const
 {
-    for (const auto& userMessageHandlerVector : m_userMessageHandlers.values()) {
-        for (const auto& userMessageHandler : userMessageHandlerVector)
-            functor(*userMessageHandler.get());
+    for (auto& userMessageHandlerVector : m_userMessageHandlers.values()) {
+        for (auto& pair : userMessageHandlerVector)
+            functor(*pair.second.get());
     }
 }
 #endif
