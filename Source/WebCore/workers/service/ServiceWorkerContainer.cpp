@@ -632,6 +632,7 @@ void ServiceWorkerContainer::stop()
     m_isStopped = true;
     removeAllEventListeners();
     m_pendingPromises.clear();
+    m_readyPromise = nullptr;
     for (auto& job : m_jobMap.values())
         job->cancelPendingLoad();
 }
