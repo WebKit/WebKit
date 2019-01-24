@@ -52,6 +52,7 @@ public:
 
     void waitUntilReadyToUnsuspend(CompletionHandler<void(SuspendedPageProxy*)>&&);
     void unsuspend();
+    void close();
 
 #if !LOG_DISABLED
     const char* loggingString() const;
@@ -69,6 +70,7 @@ private:
     Ref<WebProcessProxy> m_process;
     uint64_t m_mainFrameID;
     String m_registrableDomain;
+    bool m_isClosed { false };
 
     SuspensionState m_suspensionState { SuspensionState::Suspending };
     CompletionHandler<void(SuspendedPageProxy*)> m_readyToUnsuspendHandler;

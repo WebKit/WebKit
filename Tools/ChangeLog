@@ -1,3 +1,16 @@
+2019-01-24  Antti Koivisto  <antti@apple.com>
+
+        [PSON] Flash on back navigation on Mac
+        https://bugs.webkit.org/show_bug.cgi?id=193716
+        <rdar://problem/47148458>
+
+        Reviewed by Chris Dumez.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/ProcessSwapOnNavigation.mm:
+
+        Closing of the previous page is delayed so waiting for didFinishNavigation is
+        not sufficient to guarantee we have received all the messages. Wait for them.
+
 2019-01-24  Chris Dumez  <cdumez@apple.com>
 
         Regression(PSON) Back/Forward list items' URL sometimes gets replaced with the URL of a subframe

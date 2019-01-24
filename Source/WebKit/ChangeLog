@@ -1,3 +1,38 @@
+2019-01-24  Antti Koivisto  <antti@apple.com>
+
+        [PSON] Flash on back navigation on Mac
+        https://bugs.webkit.org/show_bug.cgi?id=193716
+        <rdar://problem/47148458>
+
+        Reviewed by Chris Dumez.
+
+        We close the page immediately if we fail to suspend. Layers disappear and we get a flash.
+
+        * UIProcess/SuspendedPageProxy.cpp:
+        (WebKit::SuspendedPageProxy::~SuspendedPageProxy):
+        (WebKit::SuspendedPageProxy::close):
+
+        Track closed state so we don't send the message twice, causing unhandled message errors in web process.
+
+        (WebKit::SuspendedPageProxy::didProcessRequestToSuspend):
+
+        Close the suspended page if the suspension fails.
+        Skip this if we are using web process side compositing on Mac.
+
+        * UIProcess/SuspendedPageProxy.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::enterAcceleratedCompositingMode):
+
+        On Mac, close the failed SuspendedPageProxy when entering compositing mode. At this point we don't need it to keep layers alive.
+
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::WebProcessPool::closeFailedSuspendedPagesForPage):
+        * UIProcess/WebProcessPool.h:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::suspendForProcessSwap):
+
+        Don't close the page on suspension failure. This is now managed by the UI process.
+
 2019-01-24  Chris Dumez  <cdumez@apple.com>
 
         Regression(PSON) Back/Forward list items' URL sometimes gets replaced with the URL of a subframe
