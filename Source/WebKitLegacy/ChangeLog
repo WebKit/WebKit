@@ -1,3 +1,14 @@
+2019-01-23  Ross Kirsling  <ross.kirsling@sony.com>
+
+        [Curl] Unreviewed build fix for r240292 and friends.
+
+        WinCairo test stability must be restored in subsequent patch.
+
+        * WebCoreSupport/NetworkStorageSessionMap.cpp:
+        (NetworkStorageSessionMap::defaultStorageSession):
+        (NetworkStorageSessionMap::switchToNewTestingSession):
+        (NetworkStorageSessionMap::ensureSession):
+
 2019-01-23  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r240403.
