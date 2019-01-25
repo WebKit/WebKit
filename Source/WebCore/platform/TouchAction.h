@@ -25,6 +25,8 @@
 
 #pragma once
 
+#if ENABLE(POINTER_EVENTS)
+
 namespace WebCore {
 
 enum class TouchAction : uint8_t {
@@ -37,3 +39,5 @@ enum class TouchAction : uint8_t {
 };
 
 }
+
+#endif // ENABLE(POINTER_EVENTS)

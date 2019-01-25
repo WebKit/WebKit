@@ -174,7 +174,7 @@ public:
     DataRef<StyleCustomPropertyData> customProperties;
     std::unique_ptr<HashSet<String>> customPaintWatchedProperties;
 
-#if ENABLE(TOUCH_EVENTS)
+#if ENABLE(POINTER_EVENTS)
     unsigned touchActions : 5; // TouchAction
 #endif
 

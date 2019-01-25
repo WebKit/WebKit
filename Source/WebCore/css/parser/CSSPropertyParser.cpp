@@ -1347,7 +1347,7 @@ static RefPtr<CSSValue> consumeClip(CSSParserTokenRange& range, CSSParserMode cs
     return CSSValuePool::singleton().createValue(WTFMove(rect));
 }
 
-#if ENABLE(TOUCH_EVENTS)
+#if ENABLE(POINTER_EVENTS)
 static RefPtr<CSSValue> consumeTouchAction(CSSParserTokenRange& range)
 {
     CSSValueID id = range.peek().id();
@@ -4038,7 +4038,7 @@ RefPtr<CSSValue> CSSPropertyParser::parseSingleValue(CSSPropertyID property, CSS
 #endif
     case CSSPropertyClip:
         return consumeClip(m_range, m_context.mode);
-#if ENABLE(TOUCH_EVENTS)
+#if ENABLE(POINTER_EVENTS)
     case CSSPropertyTouchAction:
         return consumeTouchAction(m_range);
 #endif

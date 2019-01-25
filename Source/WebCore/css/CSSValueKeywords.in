@@ -1352,7 +1352,7 @@ style
 scroll-position
 //contents
 
-#if defined(ENABLE_TOUCH_EVENTS) && ENABLE_TOUCH_EVENTS
+#if defined(ENABLE_POINTER_EVENTS) && ENABLE_POINTER_EVENTS
 // touch-action
 // auto
 // none

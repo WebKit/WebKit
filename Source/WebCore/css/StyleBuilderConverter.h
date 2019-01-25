@@ -117,6 +117,8 @@ public:
 #endif
 #if ENABLE(TOUCH_EVENTS)
     static Color convertTapHighlightColor(StyleResolver&, const CSSValue&);
+#endif
+#if ENABLE(POINTER_EVENTS)
     static OptionSet<TouchAction> convertTouchAction(StyleResolver&, const CSSValue&);
 #endif
 #if ENABLE(ACCELERATED_OVERFLOW_SCROLLING)
@@ -1347,7 +1349,9 @@ inline Color StyleBuilderConverter::convertTapHighlightColor(StyleResolver& styl
 {
     return styleResolver.colorFromPrimitiveValue(downcast<CSSPrimitiveValue>(value));
 }
+#endif
 
+#if ENABLE(POINTER_EVENTS)
 inline OptionSet<TouchAction> StyleBuilderConverter::convertTouchAction(StyleResolver&, const CSSValue& value)
 {
     if (is<CSSPrimitiveValue>(value))

@@ -1747,7 +1747,7 @@ static Ref<CSSPrimitiveValue> valueForFamily(const AtomicString& family)
     return CSSValuePool::singleton().createFontFamilyValue(family);
 }
 
-#if ENABLE(TOUCH_EVENTS)
+#if ENABLE(POINTER_EVENTS)
 static Ref<CSSValue> touchActionFlagsToCSSValue(OptionSet<TouchAction> touchActions)
 {
     auto& cssValuePool = CSSValuePool::singleton();
@@ -3762,6 +3762,8 @@ RefPtr<CSSValue> ComputedStyleExtractor::valueForPropertyinStyle(const RenderSty
 #if ENABLE(TOUCH_EVENTS)
         case CSSPropertyWebkitTapHighlightColor:
             return currentColorOrValidColor(&style, style.tapHighlightColor());
+#endif
+#if ENABLE(POINTER_EVENTS)
         case CSSPropertyTouchAction:
             return touchActionFlagsToCSSValue(style.touchActions());
 #endif

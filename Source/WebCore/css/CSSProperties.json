@@ -6934,7 +6934,7 @@
             ],
             "codegen-properties": {
                 "name-for-methods": "TouchActions",
-                "enable-if": "ENABLE_TOUCH_EVENTS",
+                "enable-if": "ENABLE_POINTER_EVENTS",
                 "converter": "TouchAction"
             },
             "specification": {

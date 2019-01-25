@@ -5236,7 +5236,7 @@ template<> inline CSSPrimitiveValue::CSSPrimitiveValue(TextZoom textZoom)
     m_value.valueID = CSSValueNormal;
 }
 
-#if ENABLE(TOUCH_EVENTS)
+#if ENABLE(POINTER_EVENTS)
 template<> inline CSSPrimitiveValue::CSSPrimitiveValue(TouchAction touchAction)
     : CSSValue(PrimitiveClass)
 {

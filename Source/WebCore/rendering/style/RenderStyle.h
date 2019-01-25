@@ -704,7 +704,7 @@ public:
     int initialLetterDrop() const { return initialLetter().width(); }
     int initialLetterHeight() const { return initialLetter().height(); }
 
-#if ENABLE(TOUCH_EVENTS)
+#if ENABLE(POINTER_EVENTS)
     OptionSet<TouchAction> touchActions() const { return OptionSet<TouchAction>::fromRaw(m_rareNonInheritedData->touchActions); }
 #endif
 
@@ -1223,7 +1223,7 @@ public:
     
     void setInitialLetter(const IntSize& size) { SET_VAR(m_rareNonInheritedData, initialLetter, size); }
     
-#if ENABLE(TOUCH_EVENTS)
+#if ENABLE(POINTER_EVENTS)
     void setTouchActions(OptionSet<TouchAction> touchActions) { SET_VAR(m_rareNonInheritedData, touchActions, touchActions.toRaw()); }
 #endif
 
@@ -1619,7 +1619,7 @@ public:
 
     static WillChangeData* initialWillChange() { return nullptr; }
 
-#if ENABLE(TOUCH_EVENTS)
+#if ENABLE(POINTER_EVENTS)
     static TouchAction initialTouchActions() { return TouchAction::Auto; }
 #endif
 

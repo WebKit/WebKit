@@ -1665,8 +1665,10 @@ URL Element::absoluteLinkURL() const
 #if ENABLE(TOUCH_EVENTS)
 bool Element::allowsDoubleTapGesture() const
 {
+#if ENABLE(POINTER_EVENTS)
     if (renderStyle() && renderStyle()->touchActions() != TouchAction::Auto)
         return false;
+#endif
 
     Element* parent = parentElement();
     return !parent || parent->allowsDoubleTapGesture();
