@@ -3775,6 +3775,12 @@ void WebPageProxy::didStartProvisionalLoadForFrameShared(Ref<WebProcessProxy>&& 
     MESSAGE_CHECK(process, frame);
     MESSAGE_CHECK_URL(process, url);
 
+    // If the page starts a new main frame provisional load, then cancel any pending one in a provisional process.
+    if (frame->isMainFrame() && m_provisionalPage && m_provisionalPage->mainFrame() != frame) {
+        m_provisionalPage->cancel();
+        m_provisionalPage = nullptr;
+    }
+
     // FIXME: We should message check that navigationID is not zero here, but it's currently zero for some navigations through the page cache.
     RefPtr<API::Navigation> navigation;
     if (frame->isMainFrame() && navigationID)

@@ -1,5 +1,21 @@
 2019-01-25  Chris Dumez  <cdumez@apple.com>
 
+        Regression(PSON) cross-site provisional page is not canceled if a new same-site one is started
+        https://bugs.webkit.org/show_bug.cgi?id=193788
+        <rdar://problem/47531231>
+
+        Reviewed by Alex Christensen.
+
+        When the page starts a new provisional load, make sure we cancel any pending one in the provisional
+        process, as it would have happened in the first provisional load happened in the same process.
+        Without this, we could have 2 parallel loads happening, one in the committed process and another
+        in the provisional one, leading to assertion failures in debug.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::didStartProvisionalLoadForFrameShared):
+
+2019-01-25  Chris Dumez  <cdumez@apple.com>
+
         Drop WebKit::WebKitPolicyAction type as it is no longer needed
         https://bugs.webkit.org/show_bug.cgi?id=193827
 

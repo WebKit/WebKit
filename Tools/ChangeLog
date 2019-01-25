@@ -1,3 +1,16 @@
+2019-01-25  Chris Dumez  <cdumez@apple.com>
+
+        Regression(PSON) cross-site provisional page is not canceled if a new same-site one is started
+        https://bugs.webkit.org/show_bug.cgi?id=193788
+        <rdar://problem/47531231>
+
+        Reviewed by Alex Christensen.
+
+        Add API test coverage.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/ProcessSwapOnNavigation.mm:
+        (-[PSONNavigationDelegate webView:didStartProvisionalNavigation:]):
+
 2019-01-25  Jonathan Bedard  <jbedard@apple.com>
 
         webkitpy: Missing PID in crashlog name should not be fatal (Follow-up fix)
