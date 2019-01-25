@@ -1337,3 +1337,5 @@ fast/forms/auto-fill-button/caps-lock-indicator-should-be-visible-after-hiding-a
 fast/forms/auto-fill-button/caps-lock-indicator-should-not-be-visible-when-auto-fill-strong-password-button-is-visible.html [ Skip ]
 fast/forms/password-scrolled-after-caps-lock-toggled.html [ Skip ]
 fast/repaint/placeholder-after-caps-lock-hidden.html [ Skip ]
+
+webkit.org/b/190888 [ Release ] fast/animation/request-animation-frame.html [ Pass Failure ]
