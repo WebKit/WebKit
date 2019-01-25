@@ -625,7 +625,7 @@ bool CodeBlock::finishCreation(VM& vm, ScriptExecutable* ownerExecutable, Unlink
                     metadata.m_symbolTable.set(vm, this, op.lexicalEnvironment->symbolTable());
             } else if (JSScope* constantScope = JSScope::constantScopeForCodeBlock(op.type, this)) {
                 metadata.m_constantScope.set(vm, this, constantScope);
-                if (op.type == GlobalLexicalVar || op.type == GlobalLexicalVarWithVarInjectionChecks)
+                if (op.type == GlobalProperty || op.type == GlobalPropertyWithVarInjectionChecks)
                     metadata.m_globalLexicalBindingEpoch = m_globalObject->globalLexicalBindingEpoch();
             } else
                 metadata.m_globalObject = nullptr;
