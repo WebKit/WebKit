@@ -1,3 +1,14 @@
+2019-01-25  Per Arne Vollan  <pvollan@apple.com>
+
+        [iOS] Add logging of calls
+        https://bugs.webkit.org/show_bug.cgi?id=193784
+
+        Reviewed by Brent Fulgham.
+
+        Add permissive logging of calls on iOS.
+
+        * Resources/SandboxProfiles/ios/com.apple.WebKit.WebContent.sb:
+
 2019-01-25  Chris Dumez  <cdumez@apple.com>
 
         Regression(PSON?) Crash under NavigationState::NavigationClient::decidePolicyForNavigationAction()
