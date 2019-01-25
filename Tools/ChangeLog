@@ -1,5 +1,9 @@
 2019-01-25  Alexey Proskuryakov  <ap@apple.com>
 
+        * Scripts/webkitpy/common/config/contributors.json: Removing a stray comma.
+
+2019-01-25  Alexey Proskuryakov  <ap@apple.com>
+
         Add contributors.json entries for Ling Ho and for a new bot watchers group.
 
         * Scripts/webkitpy/common/config/contributors.json:
