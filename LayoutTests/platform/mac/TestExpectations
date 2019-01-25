@@ -1394,8 +1394,6 @@ webkit.org/b/178127 media/modern-media-controls/media-controller/media-controlle
 # on iOS, and the bug it was created to regression-test was iOS-only, so there is no hurry to make it work on Mac.
 media/modern-media-controls/media-documents/background-color-and-centering.html [ Pass ImageOnlyFailure ]
 
-media/modern-media-controls/pip-support/ipad [ Skip ]
-
 webkit.org/b/169158 media/modern-media-controls/tracks-support/tracks-support-show-panel-after-dragging-controls.html [ Skip ]
 
 webkit.org/b/170907 [ Debug ] imported/w3c/web-platform-tests/WebCryptoAPI/derive_bits_keys/hkdf.https.worker.html [ Pass Failure Timeout ]
