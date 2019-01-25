@@ -26,7 +26,7 @@
 .timeline-record-bar {
     position: absolute;
     height: 12px;
-    z-index: 1;
+    z-index: var(--timeline-record-z-index);
 
     --timeline-record-bar-has-inactive-segment-not-inactive-segment-border-start: 1px solid hsla(215, 67%, 53%, 0.7) !important;
 }
@@ -38,7 +38,7 @@
     border: 1px solid hsl(0, 0%, 78%);
     border-radius: 3px;
     min-width: 4px;
-    z-index: 1;
+    z-index: var(--timeline-record-z-index);
 }
 
 .timeline-record-bar.selected > .segment {

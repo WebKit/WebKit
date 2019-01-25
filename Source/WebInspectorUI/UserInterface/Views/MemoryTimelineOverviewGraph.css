@@ -35,6 +35,7 @@ body .timeline-overview > .graphs-container > .timeline-overview-graph.memory {
 .timeline-overview-graph.memory > .legend {
     position: absolute;
     top: 0;
+    z-index: var(--timeline-record-z-index);
     padding: 2px;
     font-size: 8px;
     color: hsl(0, 0%, 50%);

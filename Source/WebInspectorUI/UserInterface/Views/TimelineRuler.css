@@ -26,7 +26,6 @@
 .timeline-ruler {
     position: relative;
     pointer-events: none;
-    z-index: 1;
 
     --timeline-ruler-marker-translateX: -1px;
 }
@@ -103,7 +102,7 @@ body[dir=rtl] .timeline-ruler > .header > .divider > .label {
     left: 0;
     right: 0;
     bottom: 0;
-    z-index: 10;
+    z-index: var(--timeline-marker-z-index);
 }
 
 .timeline-ruler > .markers > .divider {
@@ -118,69 +117,84 @@ body[dir=rtl] .timeline-ruler > .header > .divider > .label {
     position: absolute;
     top: 0;
     bottom: 0;
+    width: 3px;
+    color: hsla(0, 0%, 50%, 0.5);
+    border: 0 solid currentColor;
     pointer-events: all;
 
-    border: 0 solid hsla(0, 0%, 50%, 0.5);
+    --timeline-ruler-marker-border-width: 1px;
 }
 
 body[dir=ltr] .timeline-ruler > .markers > .marker {
-    border-left-width: 1px;
+    border-left-width: var(--timeline-ruler-marker-border-width);
 }
 
 body[dir=rtl] .timeline-ruler > .markers > .marker {
-    border-right-width: 1px;
-}
-
-/* Larger tooltip area */
-.timeline-ruler > .markers > .marker {
-    z-index: 20;
-    width: 3px;
+    border-right-width: var(--timeline-ruler-marker-border-width);
 }
 
 .timeline-ruler > .markers > .marker::before {
-    width: 3px;
-    content: "";
+    width: var(--timeline-ruler-marker-before-size);
     position: absolute;
     top: 0;
     bottom: 0;
+    content: "";
 
-    --timeline-ruler-marker-before-offset-start: -3px;
+    --timeline-ruler-marker-before-size: 6px;
+    --timeline-ruler-marker-before-offset: calc(-1 * ((var(--timeline-ruler-marker-before-size) + var(--timeline-ruler-marker-border-width)) / 2));
 }
 
 body[dir=ltr] .timeline-ruler > .markers > .marker::before {
-    left: var(--timeline-ruler-marker-before-offset-start);
+    left: var(--timeline-ruler-marker-before-offset);
 }
 
 body[dir=rtl] .timeline-ruler > .markers > .marker::before {
-    right: var(--timeline-ruler-marker-before-offset-start);
+    right: var(--timeline-ruler-marker-before-offset);
+}
+
+.timeline-ruler > .markers > .marker::after {
+    position: absolute;
+    top: calc(-1 * (var(--timeline-ruler-marker-after-size) - 1px) / 2);
+    content: "";
+    border-right: calc(var(--timeline-ruler-marker-after-size) / 2) solid transparent;
+    border-left: calc(var(--timeline-ruler-marker-after-size) / 2) solid transparent;
+    border-top: calc(var(--timeline-ruler-marker-after-size) / 2) solid currentColor;
+
+    --timeline-ruler-marker-after-size: 10px;
+    --timeline-ruler-marker-after-offset: calc(-1 * ((var(--timeline-ruler-marker-after-size) + var(--timeline-ruler-marker-border-width)) / 2));
+}
+
+body[dir=ltr] .timeline-ruler > .markers > .marker::after {
+    left: var(--timeline-ruler-marker-after-offset);
+}
+
+body[dir=rtl] .timeline-ruler > .markers > .marker::after {
+    right: var(--timeline-ruler-marker-after-offset);
 }
 
 .timeline-ruler > .markers > .marker.current-time {
-    border-color: red;
+    color: red;
 }
 
-.timeline-ruler > .markers > .marker.current-time::before {
-    position: absolute;
-    top: -5px;
-    width: 9px;
-    height: 9px;
-    background-color: red;
+.timeline-ruler > .markers > .marker.current-time::after {
+    top: var(--timeline-ruler-marker-after-offset);
+    width: var(--timeline-ruler-marker-after-size);
+    height: var(--timeline-ruler-marker-after-size);
+    background-color: currentColor;
+    border: none;
     border-radius: 5px;
-    content: "";
-
-     --timeline-ruler-marker-before-offset-start: -5px;
 }
 
 .timeline-ruler > .markers > .marker.load-event {
-    border-color: hsla(0, 100%, 50%, 0.25);
+    color: hsl(0, 100%, 50%);
 }
 
 .timeline-ruler > .markers > .marker.dom-content-event {
-    border-color: hsla(240, 100%, 50%, 0.25);
+    color: hsl(240, 100%, 50%);
 }
 
 .timeline-ruler > .markers > .marker.timestamp {
-    border-color: hsla(119, 100%, 21%, 0.25);
+    color: hsl(119, 100%, 21%);
 }
 
 .timeline-ruler > .selection-drag {
@@ -208,7 +222,7 @@ body[dir=rtl] .timeline-ruler > .markers > .marker::before {
     border: 1px solid white;
     cursor: col-resize;
     pointer-events: all;
-    z-index: 15;
+    z-index: var(--timeline-selection-z-index);
 
     --timeline-ruler-selection-handle-translateX: -4px;
 }
@@ -233,7 +247,7 @@ body[dir=rtl] .timeline-ruler > .markers > .marker::before {
 }
 
 .timeline-ruler.both-handles-clamped > .selection-handle {
-    z-index: 14;
+    z-index: calc(var(--timeline-selection-z-index) - 1);
 }
 
 .timeline-ruler > .selection-handle.clamped.hidden {
@@ -255,7 +269,7 @@ body[dir=rtl] .timeline-ruler > .selection-handle.left {
     top: 0;
     bottom: 0;
     background-color: hsla(0, 0%, 0%, 0.1);
-    z-index: 15;
+    z-index: var(--timeline-selection-z-index);
 }
 
 body[dir=ltr] .timeline-ruler > .shaded-area.left,

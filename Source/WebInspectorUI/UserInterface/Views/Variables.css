@@ -105,6 +105,10 @@
 
     --syntax-highlight-regex-group-color: var(--text-color-gray-medium);
 
+    --timeline-marker-z-index: 4;
+    --timeline-record-z-index: 8;
+    --timeline-selection-z-index: 16;
+
     --memory-javascript-fill-color: hsl(269, 65%, 75%);
     --memory-javascript-stroke-color: hsl(269, 33%, 50%);
     --memory-images-fill-color: hsl(0, 65%, 75%);

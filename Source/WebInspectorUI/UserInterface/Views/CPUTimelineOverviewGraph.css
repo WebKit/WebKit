@@ -35,6 +35,7 @@ body .timeline-overview > .graphs-container > .timeline-overview-graph.cpu {
 .timeline-overview-graph.cpu > .legend {
     position: absolute;
     top: 0;
+    z-index: var(--timeline-record-z-index);
     padding: 2px;
     font-size: 8px;
     color: hsl(0, 0%, 50%);

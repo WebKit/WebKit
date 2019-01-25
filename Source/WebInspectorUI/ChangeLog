@@ -1,5 +1,50 @@
 2019-01-25  Devin Rousso  <drousso@apple.com>
 
+        Web Inspector: Timelines: DOMContentLoaded and load event lines need to be more obvious
+        https://bugs.webkit.org/show_bug.cgi?id=193186
+        <rdar://problem/45100694>
+
+        Reviewed by Joseph Pecoraro.
+
+        Shift around z-index values to make Timelines markers appear behind record bars. Widen the
+        marker hit region to make it easier to see the tooltip.
+
+        * UserInterface/Views/Variables.css:
+        (:root):
+
+        * UserInterface/Views/TimelineRuler.css:
+        (.timeline-ruler):
+        (.timeline-ruler > .markers):
+        (.timeline-ruler > .markers > .marker):
+        (body[dir=ltr] .timeline-ruler > .markers > .marker):
+        (body[dir=rtl] .timeline-ruler > .markers > .marker):
+        (.timeline-ruler > .markers > .marker::before):
+        (body[dir=ltr] .timeline-ruler > .markers > .marker::before):
+        (body[dir=rtl] .timeline-ruler > .markers > .marker::before):
+        (.timeline-ruler > .markers > .marker::after): Added.
+        (body[dir=ltr] .timeline-ruler > .markers > .marker::after): Added.
+        (body[dir=rtl] .timeline-ruler > .markers > .marker::after): Added.
+        (.timeline-ruler > .markers > .marker.current-time):
+        (.timeline-ruler > .markers > .marker.current-time::after): Added.
+        (.timeline-ruler > .markers > .marker.load-event):
+        (.timeline-ruler > .markers > .marker.dom-content-event):
+        (.timeline-ruler > .markers > .marker.timestamp):
+        (.timeline-ruler > .selection-handle):
+        (.timeline-ruler.both-handles-clamped > .selection-handle):
+        (.timeline-ruler > .shaded-area):
+        (.timeline-ruler > .markers > .marker.current-time::before): Deleted.
+
+        * UserInterface/Views/TimelineRecordBar.css:
+        (.timeline-record-bar):
+        (.timeline-record-bar > .segment):
+
+        * UserInterface/Views/CPUTimelineOverviewGraph.css:
+        (.timeline-overview-graph.cpu > .legend):
+        * UserInterface/Views/MemoryTimelineOverviewGraph.css:
+        (.timeline-overview-graph.memory > .legend):
+
+2019-01-25  Devin Rousso  <drousso@apple.com>
+
         Web Inspector: Audit: remove experimental setting
         https://bugs.webkit.org/show_bug.cgi?id=193743
         <rdar://problem/28234022>
