@@ -65,8 +65,6 @@ class WebPage;
 struct FrameInfoData;
 struct WebsitePoliciesData;
 
-enum class WebPolicyAction : uint8_t;
-
 class WebFrame : public API::ObjectImpl<API::Object::Type::BundleFrame> {
 public:
     static Ref<WebFrame> createWithCoreMainFrame(WebPage*, WebCore::Frame*);
@@ -87,7 +85,7 @@ public:
     enum class ForNavigationAction { No, Yes };
     uint64_t setUpPolicyListener(WebCore::FramePolicyFunction&&, ForNavigationAction);
     void invalidatePolicyListener();
-    void didReceivePolicyDecision(uint64_t listenerID, WebPolicyAction, uint64_t navigationID, DownloadID, Optional<WebsitePoliciesData>&&);
+    void didReceivePolicyDecision(uint64_t listenerID, WebCore::PolicyAction, uint64_t navigationID, DownloadID, Optional<WebsitePoliciesData>&&);
 
     uint64_t setUpWillSubmitFormListener(CompletionHandler<void()>&&);
     void continueWillSubmitForm(uint64_t);

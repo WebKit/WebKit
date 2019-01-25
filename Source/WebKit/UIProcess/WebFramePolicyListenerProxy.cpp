@@ -50,7 +50,7 @@ void WebFramePolicyListenerProxy::didReceiveSafeBrowsingResults(RefPtr<SafeBrows
     ASSERT(!m_safeBrowsingWarning);
     if (m_policyResult) {
         if (m_reply)
-            m_reply(WebPolicyAction::Use, m_policyResult->first.get(), m_policyResult->second, WTFMove(safeBrowsingWarning));
+            m_reply(WebCore::PolicyAction::Use, m_policyResult->first.get(), m_policyResult->second, WTFMove(safeBrowsingWarning));
     } else
         m_safeBrowsingWarning = WTFMove(safeBrowsingWarning);
 }
@@ -59,7 +59,7 @@ void WebFramePolicyListenerProxy::use(API::WebsitePolicies* policies, ProcessSwa
 {
     if (m_safeBrowsingWarning) {
         if (m_reply)
-            m_reply(WebPolicyAction::Use, policies, processSwapRequestedByClient, WTFMove(*m_safeBrowsingWarning));
+            m_reply(WebCore::PolicyAction::Use, policies, processSwapRequestedByClient, WTFMove(*m_safeBrowsingWarning));
     } else if (!m_policyResult)
         m_policyResult = {{ policies, processSwapRequestedByClient }};
 }
@@ -67,13 +67,13 @@ void WebFramePolicyListenerProxy::use(API::WebsitePolicies* policies, ProcessSwa
 void WebFramePolicyListenerProxy::download()
 {
     if (m_reply)
-        m_reply(WebPolicyAction::Download, nullptr, ProcessSwapRequestedByClient::No, { });
+        m_reply(WebCore::PolicyAction::Download, nullptr, ProcessSwapRequestedByClient::No, { });
 }
 
 void WebFramePolicyListenerProxy::ignore()
 {
     if (m_reply)
-        m_reply(WebPolicyAction::Ignore, nullptr, ProcessSwapRequestedByClient::No, { });
+        m_reply(WebCore::PolicyAction::Ignore, nullptr, ProcessSwapRequestedByClient::No, { });
 }
 
 } // namespace WebKit
