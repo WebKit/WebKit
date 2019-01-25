@@ -33,31 +33,35 @@ namespace JSC {
 class JSArrayBufferPrototype;
 class GetterSetter;
 
-class JSArrayBufferConstructor final : public InternalFunction {
+template<ArrayBufferSharingMode sharingMode>
+class JSGenericArrayBufferConstructor final : public InternalFunction {
 public:
-    typedef InternalFunction Base;
-
-    template<typename CellType>
-    static IsoSubspace* subspaceFor(VM& vm)
-    {
-        return &vm.arrayBufferConstructorSpace;
-    }
+    using Base = InternalFunction;
 
 protected:
-    JSArrayBufferConstructor(VM&, Structure*, ArrayBufferSharingMode);
+    JSGenericArrayBufferConstructor(VM&, Structure*);
     void finishCreation(VM&, JSArrayBufferPrototype*, GetterSetter* speciesSymbol);
 
+    static EncodedJSValue JSC_HOST_CALL constructArrayBuffer(ExecState*);
+
 public:
-    static JSArrayBufferConstructor* create(VM&, Structure*, JSArrayBufferPrototype*, GetterSetter* speciesSymbol, ArrayBufferSharingMode);
-    
-    DECLARE_INFO;
-    
+    static JSGenericArrayBufferConstructor* create(VM& vm, Structure* structure, JSArrayBufferPrototype* prototype, GetterSetter* speciesSymbol)
+    {
+        JSGenericArrayBufferConstructor* result =
+            new (NotNull, allocateCell<JSGenericArrayBufferConstructor>(vm.heap)) JSGenericArrayBufferConstructor(vm, structure);
+        result->finishCreation(vm, prototype, speciesSymbol);
+        return result;
+    }
+
     static Structure* createStructure(VM&, JSGlobalObject*, JSValue prototype);
     
-    ArrayBufferSharingMode sharingMode() const { return m_sharingMode; }
-
-private:
-    ArrayBufferSharingMode m_sharingMode;
+    static const ClassInfo s_info; // This is never accessed directly, since that would break linkage on some compilers.
+    static const ClassInfo* info();
 };
+
+using JSArrayBufferConstructor = JSGenericArrayBufferConstructor<ArrayBufferSharingMode::Default>;
+using JSSharedArrayBufferConstructor = JSGenericArrayBufferConstructor<ArrayBufferSharingMode::Shared>;
+static_assert(sizeof(JSArrayBufferConstructor::Base) == sizeof(JSArrayBufferConstructor), "");
+static_assert(sizeof(JSSharedArrayBufferConstructor::Base) == sizeof(JSSharedArrayBufferConstructor), "");
 
 } // namespace JSC

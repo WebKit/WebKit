@@ -367,7 +367,6 @@ public:
     CompleteSubspace eagerlySweptDestructibleObjectSpace;
     CompleteSubspace segmentedVariableObjectSpace;
     
-    IsoSubspace arrayBufferConstructorSpace;
     IsoSubspace asyncFunctionSpace;
     IsoSubspace asyncGeneratorFunctionSpace;
     IsoSubspace boundFunctionSpace;
