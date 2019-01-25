@@ -1976,6 +1976,7 @@ commonOp(llint_op_catch, macro() end, macro (size)
     restoreStackPointerAfterCall()
 
     loadp CodeBlock[cfr], PB
+    loadp CodeBlock::m_metadata[PB], metadataTable
     loadp CodeBlock::m_instructionsRawPointer[PB], PB
     unpoison(_g_CodeBlockPoison, PB, t2)
     loadp VM::targetInterpreterPCForThrow[t3], PC

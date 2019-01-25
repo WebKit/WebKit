@@ -103,6 +103,7 @@ bool CLoopStack::grow(Register* newTopOfStack)
     m_reservation.commit(newCommitTop, delta);
     addToCommittedByteCount(delta);
     m_commitTop = newCommitTop;
+    newTopOfStack = m_commitTop + m_softReservedZoneSizeInRegisters;
     setCLoopStackLimit(newTopOfStack);
     return true;
 }

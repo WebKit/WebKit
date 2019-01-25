@@ -1,4 +1,4 @@
-//@ skip if $hostOS != "darwin" or $architecture == "arm" or $architecture == "x86"
+//@ skip if $hostOS != "darwin" or $architecture == "arm" or $architecture == "x86" or not $jitTests
 // Test that throw an OOM exception when compiling a pathological, but valid nested RegExp.
 
 var failures = [];

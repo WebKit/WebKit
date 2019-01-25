@@ -33,21 +33,21 @@ require "opt"
 
 def cloopMapType(type)
     case type
-    when :int;            ".i"
-    when :uint;           ".u"
-    when :int32;          ".i32"
-    when :uint32;         ".u32"
-    when :int64;          ".i64"
-    when :uint64;         ".u64"
-    when :int8;           ".i8"
-    when :uint8;          ".u8"
-    when :int8Ptr;        ".i8p"
-    when :voidPtr;        ".vp"
-    when :nativeFunc;     ".nativeFunc"
-    when :double;         ".d"
-    when :castToDouble;   ".castToDouble"
-    when :castToInt64;    ".castToInt64"
-    when :opcode;         ".opcode"
+    when :int;            ".i()"
+    when :uint;           ".u()"
+    when :int32;          ".i32()"
+    when :uint32;         ".u32()"
+    when :int64;          ".i64()"
+    when :uint64;         ".u64()"
+    when :int8;           ".i8()"
+    when :uint8;          ".u8()"
+    when :int8Ptr;        ".i8p()"
+    when :voidPtr;        ".vp()"
+    when :nativeFunc;     ".nativeFunc()"
+    when :double;         ".d()"
+    when :bitsAsDouble;   ".bitsAsDouble()"
+    when :bitsAsInt64;    ".bitsAsInt64()"
+    when :opcode;         ".opcode()"
     else;
         raise "Unsupported type"
     end
@@ -55,6 +55,9 @@ end
 
 
 class SpecialRegister < NoChildren
+    def clLValue(type=:int)
+        clDump
+    end
     def clDump
         @name
     end
@@ -100,6 +103,9 @@ class RegisterID
             raise "Bad register #{name} for C_LOOP at #{codeOriginString}"
         end
     end
+    def clLValue(type=:int)
+        clDump
+    end
     def clValue(type=:int)
         clDump + cloopMapType(type)
     end
@@ -124,6 +130,9 @@ class FPRegisterID
             raise "Bad register #{name} for C_LOOP at #{codeOriginString}"
         end
     end
+    def clLValue(type=:int)
+        clDump
+    end
     def clValue(type=:int)
         clDump + cloopMapType(type)
     end
@@ -132,6 +141,9 @@ end
 class Immediate
     def clDump
         "#{value}"
+    end
+    def clLValue(type=:int)
+        raise "Immediate cannot be used as an LValue"
     end
     def clValue(type=:int)
         # There is a case of a very large unsigned number (0x8000000000000000)
@@ -164,6 +176,9 @@ end
 class Address
     def clDump
         "[#{base.clDump}, #{offset.value}]"
+    end
+    def clLValue(type=:int)
+        clValue(type)
     end
     def clValue(type=:int)
         case type
@@ -235,6 +250,9 @@ class BaseIndex
     def clDump
         "[#{base.clDump}, #{offset.clDump}, #{index.clDump} << #{scaleShift}]"
     end
+    def clLValue(type=:int)
+        clValue(type)
+    end
     def clValue(type=:int)
         case type
         when :int8;       int8MemRef
@@ -299,6 +317,9 @@ class AbsoluteAddress
     def clDump
         "#{codeOriginString}"
     end
+    def clLValue(type=:int)
+        clValue(type)
+    end
     def clValue
         clDump
     end
@@ -309,7 +330,7 @@ class LabelReference
         "*CAST<intptr_t*>(&#{cLabel})"
     end
     def cloopEmitLea(destination, type)
-        $asm.putc "#{destination.clValue(:voidPtr)} = CAST<void*>(&#{cLabel});"
+        $asm.putc "#{destination.clLValue(:voidPtr)} = CAST<void*>(&#{cLabel});"
     end
 end
 
@@ -321,9 +342,9 @@ end
 class Address
     def cloopEmitLea(destination, type)
         if destination == base
-            $asm.putc "#{destination.clValue(:int8Ptr)} += #{offset.clValue(type)};"
+            $asm.putc "#{destination.clLValue(:int8Ptr)} += #{offset.clValue(type)};"
         else
-            $asm.putc "#{destination.clValue(:int8Ptr)} = #{base.clValue(:int8Ptr)} + #{offset.clValue(type)};"
+            $asm.putc "#{destination.clLValue(:int8Ptr)} = #{base.clValue(:int8Ptr)} + #{offset.clValue(type)};"
         end
     end
 end
@@ -331,7 +352,7 @@ end
 class BaseIndex
     def cloopEmitLea(destination, type)
         raise "Malformed BaseIndex, offset should be zero at #{codeOriginString}" unless offset.value == 0
-        $asm.putc "#{destination.clValue(:int8Ptr)} = #{base.clValue(:int8Ptr)} + (#{index.clValue} << #{scaleShift});"
+        $asm.putc "#{destination.clLValue(:int8Ptr)} = #{base.clValue(:int8Ptr)} + (#{index.clValue} << #{scaleShift});"
     end
 end
 
@@ -367,45 +388,61 @@ def cloopEmitOperation(operands, type, operator)
     raise unless type == :int || type == :uint || type == :int32 || type == :uint32 || \
         type == :int64 || type == :uint64 || type == :double
     if operands.size == 3
-        $asm.putc "#{operands[2].clValue(type)} = #{operands[0].clValue(type)} #{operator} #{operands[1].clValue(type)};"
-        if operands[2].is_a? RegisterID and (type == :int32 or type == :uint32)
-            $asm.putc "#{operands[2].clDump}.clearHighWord();" # Just clear it. It does nothing on the 32-bit port.
-        end
+        op1 = operands[0]
+        op2 = operands[1]
+        dst = operands[2]
     else
         raise unless operands.size == 2
-        raise unless not operands[1].is_a? Immediate
-        $asm.putc "#{operands[1].clValue(type)} = #{operands[1].clValue(type)} #{operator} #{operands[0].clValue(type)};"
-        if operands[1].is_a? RegisterID and (type == :int32 or type == :uint32)
-            $asm.putc "#{operands[1].clDump}.clearHighWord();" # Just clear it. It does nothing on the 32-bit port.
-        end
+        op1 = operands[1]
+        op2 = operands[0]
+        dst = operands[1]
     end
+    raise unless not dst.is_a? Immediate
+    if dst.is_a? RegisterID and (type == :int32 or type == :uint32)
+        truncationHeader = "(uint32_t)("
+        truncationFooter = ")"
+    else
+        truncationHeader = ""
+        truncationFooter = ""
+    end
+    $asm.putc "#{dst.clLValue(type)} = #{truncationHeader}#{op1.clValue(type)} #{operator} #{op2.clValue(type)}#{truncationFooter};"
 end
 
 def cloopEmitShiftOperation(operands, type, operator)
     raise unless type == :int || type == :uint || type == :int32 || type == :uint32 || type == :int64 || type == :uint64
     if operands.size == 3
-        $asm.putc "#{operands[2].clValue(type)} = #{operands[1].clValue(type)} #{operator} (#{operands[0].clValue(:int)} & 0x1f);"
-        if operands[2].is_a? RegisterID and (type == :int32 or type == :uint32)
-            $asm.putc "#{operands[2].clDump}.clearHighWord();" # Just clear it. It does nothing on the 32-bit port.
-        end
+        op1 = operands[0]
+        op2 = operands[1]
+        dst = operands[2]
     else
-        raise unless operands.size == 2
-        raise unless not operands[1].is_a? Immediate
-        $asm.putc "#{operands[1].clValue(type)} = #{operands[1].clValue(type)} #{operator} (#{operands[0].clValue(:int)} & 0x1f);"
-        if operands[1].is_a? RegisterID and (type == :int32 or type == :uint32)
-            $asm.putc "#{operands[1].clDump}.clearHighWord();" # Just clear it. It does nothing on the 32-bit port.
-        end
+        op1 = operands[1]
+        op2 = operands[0]
+        dst = operands[1]
     end
+    if dst.is_a? RegisterID and (type == :int32 or type == :uint32)
+        truncationHeader = "(uint32_t)("
+        truncationFooter = ")"
+    else
+        truncationHeader = ""
+        truncationFooter = ""
+    end
+    $asm.putc "#{dst.clLValue(type)} = #{truncationHeader}#{operands[1].clValue(type)} #{operator} (#{operands[0].clValue(:int)} & 0x1f)#{truncationFooter};"
 end
 
 def cloopEmitUnaryOperation(operands, type, operator)
     raise unless type == :int || type == :uint || type == :int32 || type == :uint32 || type == :int64 || type == :uint64
     raise unless operands.size == 1
     raise unless not operands[0].is_a? Immediate
-    $asm.putc "#{operands[0].clValue(type)} = #{operator}#{operands[0].clValue(type)};"
-    if operands[0].is_a? RegisterID and (type == :int32 or type == :uint32)
-        $asm.putc "#{operands[0].clDump}.clearHighWord();" # Just clear it. It does nothing on the 32-bit port.
+    op = operands[0]
+    dst = operands[0]
+    if dst.is_a? RegisterID and (type == :int32 or type == :uint32)
+        truncationHeader = "(uint32_t)("
+        truncationFooter = ")"
+    else
+        truncationHeader = ""
+        truncationFooter = ""
     end
+    $asm.putc "#{dst.clLValue(type)} = #{truncationHeader}#{operator}#{op.clValue(type)}#{truncationFooter};"
 end
 
 def cloopEmitCompareDoubleWithNaNCheckAndBranch(operands, condition)
@@ -418,7 +455,7 @@ end
 def cloopEmitCompareAndSet(operands, type, comparator)
     # The result is a boolean.  Hence, it doesn't need to be based on the type
     # of the arguments being compared.
-    $asm.putc "#{operands[2].clValue} = (#{operands[0].clValue(type)} #{comparator} #{operands[1].clValue(type)});"
+    $asm.putc "#{operands[2].clLValue(type)} = (#{operands[0].clValue(type)} #{comparator} #{operands[1].clValue(type)});"
 end
 
 
@@ -459,7 +496,7 @@ def cloopEmitTestSet(operands, type, conditionTest)
     # int.  The passed in type is only used for the values being tested in
     # the condition test.
     conditionExpr = cloopGenerateConditionExpression(operands, type, conditionTest)
-    $asm.putc "#{operands[-1].clValue} = (#{conditionExpr});"
+    $asm.putc "#{operands[-1].clLValue} = (#{conditionExpr});"
 end
 
 def cloopEmitOpAndBranch(operands, operator, type, conditionTest)
@@ -471,12 +508,9 @@ def cloopEmitOpAndBranch(operands, operator, type, conditionTest)
         raise "Unimplemented type"
     end
 
-    op1 = operands[0].clValue(type)
-    op2 = operands[1].clValue(type)
-
     $asm.putc "{"
-    $asm.putc "    #{tempType} temp = #{op2} #{operator} #{op1};"
-    $asm.putc "    #{op2} = temp;"
+    $asm.putc "    #{tempType} temp = #{operands[1].clValue(type)} #{operator} #{operands[0].clValue(type)};"
+    $asm.putc "    #{operands[1].clLValue(type)} = temp;"
     $asm.putc "    if (temp #{conditionTest})"
     $asm.putc "        goto  #{operands[2].cLabel};"
     $asm.putc "}"
@@ -486,6 +520,8 @@ def cloopEmitOpAndBranchIfOverflow(operands, operator, type)
     case type
     when :int32
         tempType = "int32_t"
+        truncationHeader = "(uint32_t)("
+        truncationFooter = ")"
     else
         raise "Unimplemented type"
     end
@@ -501,7 +537,10 @@ def cloopEmitOpAndBranchIfOverflow(operands, operator, type)
         raise "Unimplemented opeartor"
     end
 
-    $asm.putc "    if (!WTF::ArithmeticOperations<#{tempType}, #{tempType}, #{tempType}>::#{operation}(#{operands[1].clValue(type)}, #{operands[0].clValue(type)}, #{operands[1].clValue(type)}))"
+    $asm.putc "    #{tempType} result;"
+    $asm.putc "    bool success = WTF::ArithmeticOperations<#{tempType}, #{tempType}, #{tempType}>::#{operation}(#{operands[1].clValue(type)}, #{operands[0].clValue(type)}, result);"
+    $asm.putc "    #{operands[1].clLValue(type)} = #{truncationHeader}result#{truncationFooter};"
+    $asm.putc "    if (!success)"
     $asm.putc "        goto #{operands[2].cLabel};"
     $asm.putc "}"
 end
@@ -509,14 +548,14 @@ end
 # operands: callTarget, currentFrame, currentPC
 def cloopEmitCallSlowPath(operands)
     $asm.putc "{"
-    $asm.putc "    cloopStack.setCurrentStackPointer(sp.vp);"
+    $asm.putc "    cloopStack.setCurrentStackPointer(sp.vp());"
     $asm.putc "    SlowPathReturnType result = #{operands[0].cLabel}(#{operands[1].clDump}, #{operands[2].clDump});"
-    $asm.putc "    decodeResult(result, t0.cvp, t1.cvp);"
+    $asm.putc "    decodeResult(result, t0, t1);"
     $asm.putc "}"
 end
 
 def cloopEmitCallSlowPathVoid(operands)
-    $asm.putc "cloopStack.setCurrentStackPointer(sp.vp);"
+    $asm.putc "cloopStack.setCurrentStackPointer(sp.vp());"
     $asm.putc "#{operands[0].cLabel}(#{operands[1].clDump}, #{operands[2].clDump});"
 end
 
@@ -597,15 +636,15 @@ class Instruction
             cloopEmitUnaryOperation(operands, :int32, "~")
 
         when "loadi"
-            $asm.putc "#{operands[1].clValue(:uint)} = #{operands[0].uint32MemRef};"
+            $asm.putc "#{operands[1].clLValue(:uint32)} = #{operands[0].uint32MemRef};"
             # There's no need to call clearHighWord() here because the above will
             # automatically take care of 0 extension.
         when "loadis"
-            $asm.putc "#{operands[1].clValue(:int)} = #{operands[0].int32MemRef};"
+            $asm.putc "#{operands[1].clLValue(:int32)} = #{operands[0].int32MemRef};"
         when "loadq"
-            $asm.putc "#{operands[1].clValue(:int64)} = #{operands[0].int64MemRef};"
+            $asm.putc "#{operands[1].clLValue(:int64)} = #{operands[0].int64MemRef};"
         when "loadp"
-            $asm.putc "#{operands[1].clValue(:int)} = #{operands[0].intMemRef};"
+            $asm.putc "#{operands[1].clLValue} = #{operands[0].intMemRef};"
         when "storei"
             $asm.putc "#{operands[1].int32MemRef} = #{operands[0].clValue(:int32)};"
         when "storeq"
@@ -613,19 +652,21 @@ class Instruction
         when "storep"
             $asm.putc "#{operands[1].intMemRef} = #{operands[0].clValue(:int)};"
         when "loadb"
-            $asm.putc "#{operands[1].clValue(:int)} = #{operands[0].uint8MemRef};"
-        when "loadbs", "loadbsp"
-            $asm.putc "#{operands[1].clValue(:int)} = #{operands[0].int8MemRef};"
+            $asm.putc "#{operands[1].clLValue(:int)} = #{operands[0].uint8MemRef};"
+        when "loadbs"
+            $asm.putc "#{operands[1].clLValue(:int)} = (uint32_t)(#{operands[0].int8MemRef});"
+        when "loadbsp"
+            $asm.putc "#{operands[1].clLValue(:int)} = #{operands[0].int8MemRef};"
         when "storeb"
             $asm.putc "#{operands[1].uint8MemRef} = #{operands[0].clValue(:int8)};"
         when "loadh"
-            $asm.putc "#{operands[1].clValue(:int)} = #{operands[0].uint16MemRef};"
+            $asm.putc "#{operands[1].clLValue(:int)} = #{operands[0].uint16MemRef};"
         when "loadhs"
-            $asm.putc "#{operands[1].clValue(:int)} = #{operands[0].int16MemRef};"
+            $asm.putc "#{operands[1].clLValue(:int)} = (uint32_t)(#{operands[0].int16MemRef});"
         when "storeh"
             $asm.putc "*#{operands[1].uint16MemRef} = #{operands[0].clValue(:int16)};"
         when "loadd"
-            $asm.putc "#{operands[1].clValue(:double)} = #{operands[0].dblMemRef};"
+            $asm.putc "#{operands[1].clLValue(:double)} = #{operands[0].dblMemRef};"
         when "stored"
             $asm.putc "#{operands[1].dblMemRef} = #{operands[0].clValue(:double)};"
 
@@ -640,8 +681,8 @@ class Instruction
 
         # Convert an int value to its double equivalent, and store it in a double register.
         when "ci2d"
-            $asm.putc "#{operands[1].clValue(:double)} = #{operands[0].clValue(:int32)};"
-            
+            $asm.putc "#{operands[1].clLValue(:double)} = (double)#{operands[0].clValue(:int32)}; // ci2d"
+
         when "bdeq"
             cloopEmitCompareAndBranch(operands, :double, "==")
         when "bdneq"
@@ -669,25 +710,23 @@ class Instruction
             cloopEmitCompareDoubleWithNaNCheckAndBranch(operands, "<=")
 
         when "td2i"
-            $asm.putc "#{operands[1].clValue(:int)} = #{operands[0].clValue(:double)};"
-            $asm.putc "#{operands[1].clDump}.clearHighWord();"
+            $asm.putc "#{operands[1].clLValue(:int)} = (uint32_t)(intptr_t)#{operands[0].clValue(:double)}; // td2i"
 
         when "bcd2i"  # operands: srcDbl dstInt slowPath
-            $asm.putc "{"
+            $asm.putc "{ // bcd2i"
             $asm.putc "    double d = #{operands[0].clValue(:double)};"
             $asm.putc "    const int32_t asInt32 = int32_t(d);"
             $asm.putc "    if (asInt32 != d || (!asInt32 && std::signbit(d))) // true for -0.0"
             $asm.putc "        goto  #{operands[2].cLabel};"
-            $asm.putc "    #{operands[1].clValue} = asInt32;"            
-            $asm.putc "    #{operands[1].clDump}.clearHighWord();"
+            $asm.putc "    #{operands[1].clLValue} = (uint32_t)asInt32;"
             $asm.putc "}"
 
         when "move"
-            $asm.putc "#{operands[1].clValue(:int)} = #{operands[0].clValue(:int)};"
+            $asm.putc "#{operands[1].clLValue(:int)} = #{operands[0].clValue(:int)};"
         when "sxi2q"
-            $asm.putc "#{operands[1].clValue(:int64)} = #{operands[0].clValue(:int32)};"
+            $asm.putc "#{operands[1].clLValue(:int64)} = #{operands[0].clValue(:int32)};"
         when "zxi2q"
-            $asm.putc "#{operands[1].clValue(:uint64)} = #{operands[0].clValue(:uint32)};"
+            $asm.putc "#{operands[1].clLValue(:uint64)} = #{operands[0].clValue(:uint32)};"
         when "nop"
             $asm.putc "// nop"
         when "bbeq"
@@ -831,7 +870,7 @@ class Instruction
         when "break"
             $asm.putc "CRASH(); // break instruction not implemented."
         when "ret"
-            $asm.putc "opcode = lr.opcode;"
+            $asm.putc "opcode = lr.opcode();"
             $asm.putc "DISPATCH_OPCODE();"
 
         when "cbeq"
@@ -955,12 +994,10 @@ class Instruction
         # Sign extends the lower 32 bits of t0, but put the sign extension into
         # the lower 32 bits of t1. Leave the upper 32 bits of t0 and t1 unchanged.
         when "cdqi"
-            $asm.putc "{"
-            $asm.putc "    int64_t temp = t0.i32; // sign extend the low 32bit"
-            $asm.putc "    t0.i32 = temp; // low word"
-            $asm.putc "    t0.clearHighWord();"
-            $asm.putc "    t1.i32 = uint64_t(temp) >> 32; // high word"
-            $asm.putc "    t1.clearHighWord();"
+            $asm.putc "{ // cdqi"
+            $asm.putc "    int64_t temp = t0.i32(); // sign extend the low 32bit"
+            $asm.putc "    t0 = (uint32_t)temp; // low word"
+            $asm.putc "    t1 = (uint32_t)(temp >> 32); // high word"
             $asm.putc "}"
 
         # 64-bit instruction: idivi op1 (based on X64)
@@ -976,34 +1013,32 @@ class Instruction
         when "idivi"
             # Divide t1,t0 (EDX,EAX) by the specified arg, and store the remainder in t1,
             # and quotient in t0:
-            $asm.putc "{"
-            $asm.putc "    int64_t dividend = (int64_t(t1.u32) << 32) | t0.u32;"
+            $asm.putc "{ // idivi"
+            $asm.putc "    int64_t dividend = (int64_t(t1.u32()) << 32) | t0.u32();"
             $asm.putc "    int64_t divisor = #{operands[0].clValue(:int)};"
-            $asm.putc "    t1.i32 = dividend % divisor; // remainder"
-            $asm.putc "    t1.clearHighWord();"
-            $asm.putc "    t0.i32 = dividend / divisor; // quotient"
-            $asm.putc "    t0.clearHighWord();"
+            $asm.putc "    t1 = (uint32_t)(dividend % divisor); // remainder"
+            $asm.putc "    t0 = (uint32_t)(dividend / divisor); // quotient"
             $asm.putc "}"
 
         # 32-bit instruction: fii2d int32LoOp int32HiOp dblOp (based on ARMv7)
         # Decode 2 32-bit ints (low and high) into a 64-bit double.
         when "fii2d"
-            $asm.putc "#{operands[2].clValue(:double)} = Ints2Double(#{operands[0].clValue(:uint32)}, #{operands[1].clValue(:uint32)});"
+            $asm.putc "#{operands[2].clLValue(:double)} = ints2Double(#{operands[0].clValue(:uint32)}, #{operands[1].clValue(:uint32)}); // fii2d"
 
         # 32-bit instruction: f2dii dblOp int32LoOp int32HiOp (based on ARMv7)
         # Encode a 64-bit double into 2 32-bit ints (low and high).
         when "fd2ii"
-            $asm.putc "Double2Ints(#{operands[0].clValue(:double)}, #{operands[1].clValue(:uint32)}, #{operands[2].clValue(:uint32)});"
+            $asm.putc "double2Ints(#{operands[0].clValue(:double)}, #{operands[1].clDump}, #{operands[2].clDump}); // fd2ii"
 
         # 64-bit instruction: fq2d int64Op dblOp (based on X64)
         # Copy a bit-encoded double in a 64-bit int register to a double register.
         when "fq2d"
-            $asm.putc "#{operands[1].clValue(:double)} = #{operands[0].clValue(:castToDouble)};"
+            $asm.putc "#{operands[1].clLValue(:double)} = #{operands[0].clValue(:bitsAsDouble)}; // fq2d"
 
         # 64-bit instruction: fd2q dblOp int64Op (based on X64 instruction set)
         # Copy a double as a bit-encoded double into a 64-bit int register.
         when "fd2q"
-            $asm.putc "#{operands[1].clValue(:int64)} = #{operands[0].clValue(:castToInt64)};"
+            $asm.putc "#{operands[1].clLValue(:int64)} = #{operands[0].clValue(:bitsAsInt64)}; // fd2q"
 
         when "leai"
             operands[0].cloopEmitLea(operands[1], :int32)
@@ -1079,7 +1114,7 @@ class Instruction
         # as an opcode dispatch.
         when "cloopCallJSFunction"
             uid = $asm.newUID
-            $asm.putc "lr.opcode = getOpcode(llint_cloop_did_return_from_js_#{uid});"
+            $asm.putc "lr = getOpcode(llint_cloop_did_return_from_js_#{uid});"
             $asm.putc "opcode = #{operands[0].clValue(:opcode)};"
             $asm.putc "DISPATCH_OPCODE();"
             $asm.putsLabel("llint_cloop_did_return_from_js_#{uid}", false)
@@ -1088,15 +1123,15 @@ class Instruction
         # fortunately we don't have to here. All native function calls always
         # have a fixed prototype of 1 args: the passed ExecState.
         when "cloopCallNative"
-            $asm.putc "cloopStack.setCurrentStackPointer(sp.vp);"
+            $asm.putc "cloopStack.setCurrentStackPointer(sp.vp());"
             $asm.putc "nativeFunc = #{operands[0].clValue(:nativeFunc)};"
-            $asm.putc "functionReturnValue = JSValue::decode(nativeFunc(t0.execState));"
+            $asm.putc "functionReturnValue = JSValue::decode(nativeFunc(t0.execState()));"
             $asm.putc "#if USE(JSVALUE32_64)"
-            $asm.putc "    t1.i = functionReturnValue.tag();"
-            $asm.putc "    t0.i = functionReturnValue.payload();"
+            $asm.putc "    t1 = functionReturnValue.tag();"
+            $asm.putc "    t0 = functionReturnValue.payload();"
             $asm.putc "#else // USE_JSVALUE64)"
-            $asm.putc "    t0.encodedJSValue = JSValue::encode(functionReturnValue);"
-            $asm.putc "#endif // USE_JSVALUE64)"            
+            $asm.putc "    t0 = JSValue::encode(functionReturnValue);"
+            $asm.putc "#endif // USE_JSVALUE64)"
 
         # We can't do generic function calls with an arbitrary set of args, but
         # fortunately we don't have to here. All slow path function calls always

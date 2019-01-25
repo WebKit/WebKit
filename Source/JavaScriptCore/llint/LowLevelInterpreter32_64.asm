@@ -470,7 +470,7 @@ macro loadConstantOrVariableTag(size, index, tag)
     .constant:
         loadp CodeBlock[cfr], tag
         loadp CodeBlock::m_constantRegisters + VectorBufferOffset[tag], tag
-        subp FirstConstantRegisterIndex, index
+        subi FirstConstantRegisterIndex, index
         loadp TagOffset[tag, index, 8], tag
     .done:
     end)
@@ -486,7 +486,7 @@ macro loadConstantOrVariable2Reg(size, index, tag, payload)
     .constant:
         loadp CodeBlock[cfr], tag
         loadp CodeBlock::m_constantRegisters + VectorBufferOffset[tag], tag
-        subp FirstConstantRegisterIndex, index
+        subi FirstConstantRegisterIndex, index
         lshifti 3, index
         addp index, tag
         loadp PayloadOffset[tag], payload
