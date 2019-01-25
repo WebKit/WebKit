@@ -649,8 +649,6 @@ void NetworkConnectionToWebProcess::requestResourceLoadStatisticsUpdate()
         if (auto* resourceLoadStatistics = networkSession->resourceLoadStatistics())
             resourceLoadStatistics->requestUpdate();
     }
-#else
-    UNUSED_PARAM(sessionID);
 #endif
 }
 

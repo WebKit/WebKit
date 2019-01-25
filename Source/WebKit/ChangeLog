@@ -1,3 +1,10 @@
+2019-01-25  Alex Christensen  <achristensen@webkit.org>
+
+        Fix Linux build.
+
+        * NetworkProcess/NetworkConnectionToWebProcess.cpp:
+        (WebKit::NetworkConnectionToWebProcess::requestResourceLoadStatisticsUpdate):
+
 2019-01-25  Keith Rollin  <krollin@apple.com>
 
         Update WebKitAdditions.xcconfig with correct order of variable definitions
