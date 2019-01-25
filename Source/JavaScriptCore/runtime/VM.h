@@ -372,7 +372,6 @@ public:
     IsoSubspace boundFunctionSpace;
     IsoSubspace callbackFunctionSpace;
     IsoSubspace customGetterSetterFunctionSpace;
-    IsoSubspace errorConstructorSpace;
     IsoSubspace executableToCodeBlockEdgeSpace;
     IsoSubspace functionSpace;
     IsoSubspace generatorFunctionSpace;

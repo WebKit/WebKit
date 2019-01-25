@@ -117,8 +117,6 @@ namespace JSC {
         NEVER_INLINE void debug(CallFrame*, DebugHookType);
         static String stackTraceAsString(VM&, const Vector<StackFrame>&);
 
-        static EncodedJSValue JSC_HOST_CALL constructWithErrorConstructor(ExecState*);
-        static EncodedJSValue JSC_HOST_CALL callErrorConstructor(ExecState*);
         static EncodedJSValue JSC_HOST_CALL constructWithNativeErrorConstructor(ExecState*);
         static EncodedJSValue JSC_HOST_CALL callNativeErrorConstructor(ExecState*);
 

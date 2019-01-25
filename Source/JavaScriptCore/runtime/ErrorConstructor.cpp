@@ -33,8 +33,11 @@ STATIC_ASSERT_IS_TRIVIALLY_DESTRUCTIBLE(ErrorConstructor);
 
 const ClassInfo ErrorConstructor::s_info = { "Function", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(ErrorConstructor) };
 
+static EncodedJSValue JSC_HOST_CALL callErrorConstructor(ExecState*);
+static EncodedJSValue JSC_HOST_CALL constructErrorConstructor(ExecState*);
+
 ErrorConstructor::ErrorConstructor(VM& vm, Structure* structure)
-    : InternalFunction(vm, structure, Interpreter::callErrorConstructor, Interpreter::constructWithErrorConstructor)
+    : InternalFunction(vm, structure, callErrorConstructor, constructErrorConstructor)
 {
 }
 
@@ -44,15 +47,12 @@ void ErrorConstructor::finishCreation(VM& vm, ErrorPrototype* errorPrototype)
     // ECMA 15.11.3.1 Error.prototype
     putDirectWithoutTransition(vm, vm.propertyNames->prototype, errorPrototype, PropertyAttribute::DontEnum | PropertyAttribute::DontDelete | PropertyAttribute::ReadOnly);
     putDirectWithoutTransition(vm, vm.propertyNames->length, jsNumber(1), PropertyAttribute::DontEnum | PropertyAttribute::ReadOnly);
-
-    unsigned defaultStackTraceLimit = Options::defaultErrorStackTraceLimit();
-    m_stackTraceLimit = defaultStackTraceLimit;
-    putDirectWithoutTransition(vm, vm.propertyNames->stackTraceLimit, jsNumber(defaultStackTraceLimit), static_cast<unsigned>(PropertyAttribute::None));
+    putDirectWithoutTransition(vm, vm.propertyNames->stackTraceLimit, jsNumber(globalObject(vm)->stackTraceLimit().valueOr(Options::defaultErrorStackTraceLimit())), static_cast<unsigned>(PropertyAttribute::None));
 }
 
 // ECMA 15.9.3
 
-EncodedJSValue JSC_HOST_CALL Interpreter::constructWithErrorConstructor(ExecState* exec)
+EncodedJSValue JSC_HOST_CALL constructErrorConstructor(ExecState* exec)
 {
     VM& vm = exec->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
@@ -62,7 +62,7 @@ EncodedJSValue JSC_HOST_CALL Interpreter::constructWithErrorConstructor(ExecStat
     RELEASE_AND_RETURN(scope, JSValue::encode(ErrorInstance::create(exec, errorStructure, message, nullptr, TypeNothing, false)));
 }
 
-EncodedJSValue JSC_HOST_CALL Interpreter::callErrorConstructor(ExecState* exec)
+EncodedJSValue JSC_HOST_CALL callErrorConstructor(ExecState* exec)
 {
     JSValue message = exec->argument(0);
     Structure* errorStructure = jsCast<InternalFunction*>(exec->jsCallee())->globalObject(exec->vm())->errorStructure();
@@ -79,9 +79,9 @@ bool ErrorConstructor::put(JSCell* cell, ExecState* exec, PropertyName propertyN
             double effectiveLimit = value.asNumber();
             effectiveLimit = std::max(0., effectiveLimit);
             effectiveLimit = std::min(effectiveLimit, static_cast<double>(std::numeric_limits<unsigned>::max()));
-            thisObject->m_stackTraceLimit = static_cast<unsigned>(effectiveLimit);
+            thisObject->globalObject(vm)->setStackTraceLimit(static_cast<unsigned>(effectiveLimit));
         } else
-            thisObject->m_stackTraceLimit = { };
+            thisObject->globalObject(vm)->setStackTraceLimit(WTF::nullopt);
     }
 
     return Base::put(thisObject, exec, propertyName, value, slot);
@@ -93,7 +93,7 @@ bool ErrorConstructor::deleteProperty(JSCell* cell, ExecState* exec, PropertyNam
     ErrorConstructor* thisObject = jsCast<ErrorConstructor*>(cell);
 
     if (propertyName == vm.propertyNames->stackTraceLimit)
-        thisObject->m_stackTraceLimit = { };
+        thisObject->globalObject(vm)->setStackTraceLimit(WTF::nullopt);
 
     return Base::deleteProperty(thisObject, exec, propertyName);
 }

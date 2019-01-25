@@ -360,6 +360,7 @@ JSGlobalObject::JSGlobalObject(VM& vm, Structure* structure, const GlobalObjectM
     , m_arraySpeciesWatchpoint(ClearWatchpoint)
     , m_numberToStringWatchpoint(IsWatched)
     , m_runtimeFlags()
+    , m_stackTraceLimit(Options::defaultErrorStackTraceLimit())
     , m_globalObjectMethodTable(globalObjectMethodTable ? globalObjectMethodTable : &s_globalObjectMethodTable)
 {
 }
@@ -700,7 +701,6 @@ m_ ## lowerName ## Prototype->putDirectWithoutTransition(vm, vm.propertyNames->c
     
 #undef CREATE_CONSTRUCTOR_FOR_SIMPLE_TYPE
 
-    m_errorConstructor.set(vm, this, errorConstructor);
     m_promiseConstructor.set(vm, this, promiseConstructor);
     m_internalPromiseConstructor.set(vm, this, internalPromiseConstructor);
     
@@ -878,7 +878,7 @@ putDirectWithoutTransition(vm, vm.propertyNames-> jsName, lowerName ## Construct
         GlobalPropertyInfo(vm.propertyNames->builtinNames().propertyIsEnumerablePrivateName(), privateFuncPropertyIsEnumerable, PropertyAttribute::DontEnum | PropertyAttribute::DontDelete | PropertyAttribute::ReadOnly),
         GlobalPropertyInfo(vm.propertyNames->builtinNames().importModulePrivateName(), privateFuncImportModule, PropertyAttribute::DontEnum | PropertyAttribute::DontDelete | PropertyAttribute::ReadOnly),
         GlobalPropertyInfo(vm.propertyNames->builtinNames().enqueueJobPrivateName(), JSFunction::create(vm, this, 0, String(), enqueueJob), PropertyAttribute::DontEnum | PropertyAttribute::DontDelete | PropertyAttribute::ReadOnly),
-        GlobalPropertyInfo(vm.propertyNames->builtinNames().ErrorPrivateName(), m_errorConstructor.get(), PropertyAttribute::DontEnum | PropertyAttribute::DontDelete | PropertyAttribute::ReadOnly),
+        GlobalPropertyInfo(vm.propertyNames->builtinNames().ErrorPrivateName(), errorConstructor, PropertyAttribute::DontEnum | PropertyAttribute::DontDelete | PropertyAttribute::ReadOnly),
         GlobalPropertyInfo(vm.propertyNames->builtinNames().RangeErrorPrivateName(), m_rangeErrorConstructor.get(), PropertyAttribute::DontEnum | PropertyAttribute::DontDelete | PropertyAttribute::ReadOnly),
         GlobalPropertyInfo(vm.propertyNames->builtinNames().TypeErrorPrivateName(), m_typeErrorConstructor.get(), PropertyAttribute::DontEnum | PropertyAttribute::DontDelete | PropertyAttribute::ReadOnly),
         GlobalPropertyInfo(vm.propertyNames->builtinNames().typedArrayLengthPrivateName(), privateFuncTypedArrayLength, PropertyAttribute::DontEnum | PropertyAttribute::DontDelete | PropertyAttribute::ReadOnly),
@@ -1548,7 +1548,6 @@ void JSGlobalObject::visitChildren(JSCell* cell, SlotVisitor& visitor)
     visitor.append(thisObject->m_globalCallee);
     visitor.append(thisObject->m_stackOverflowFrameCallee);
     visitor.append(thisObject->m_regExpConstructor);
-    visitor.append(thisObject->m_errorConstructor);
     visitor.append(thisObject->m_nativeErrorPrototypeStructure);
     visitor.append(thisObject->m_nativeErrorStructure);
     thisObject->m_evalErrorConstructor.visit(visitor);

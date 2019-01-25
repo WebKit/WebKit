@@ -29,13 +29,7 @@ class GetterSetter;
 
 class ErrorConstructor final : public InternalFunction {
 public:
-    typedef InternalFunction Base;
-
-    template<typename CellType>
-    static IsoSubspace* subspaceFor(VM& vm)
-    {
-        return &vm.errorConstructorSpace;
-    }
+    using Base = InternalFunction;
 
     static ErrorConstructor* create(VM& vm, Structure* structure, ErrorPrototype* errorPrototype, GetterSetter*)
     {
@@ -51,8 +45,6 @@ public:
         return Structure::create(vm, globalObject, prototype, TypeInfo(InternalFunctionType, StructureFlags), info()); 
     }
 
-    Optional<unsigned> stackTraceLimit() const { return m_stackTraceLimit; }
-
 protected:
     void finishCreation(VM&, ErrorPrototype*);
 
@@ -62,7 +54,8 @@ protected:
 private:
     ErrorConstructor(VM&, Structure*);
 
-    Optional<unsigned> m_stackTraceLimit;
 };
+
+static_assert(sizeof(ErrorConstructor) == sizeof(InternalFunction), "");
 
 } // namespace JSC

@@ -259,7 +259,6 @@ public:
     WriteBarrier<JSCallee> m_globalCallee;
     WriteBarrier<JSCallee> m_stackOverflowFrameCallee;
     WriteBarrier<RegExpConstructor> m_regExpConstructor;
-    WriteBarrier<ErrorConstructor> m_errorConstructor;
     WriteBarrier<Structure> m_nativeErrorPrototypeStructure;
     WriteBarrier<Structure> m_nativeErrorStructure;
     LazyProperty<JSGlobalObject, NativeErrorConstructor> m_evalErrorConstructor;
@@ -498,6 +497,7 @@ public:
     String m_webAssemblyDisabledErrorMessage;
     RuntimeFlags m_runtimeFlags;
     ConsoleClient* m_consoleClient { nullptr };
+    Optional<unsigned> m_stackTraceLimit;
 
 #if !ASSERT_DISABLED
     const ExecState* m_callFrameAtDebuggerEntry { nullptr };
@@ -529,6 +529,9 @@ public:
     WatchpointSet* getReferencedPropertyWatchpointSet(UniquedStringImpl*);
     WatchpointSet& ensureReferencedPropertyWatchpointSet(UniquedStringImpl*);
 #endif
+
+    Optional<unsigned> stackTraceLimit() const { return m_stackTraceLimit; }
+    void setStackTraceLimit(Optional<unsigned> value) { m_stackTraceLimit = value; }
 
 protected:
     JS_EXPORT_PRIVATE explicit JSGlobalObject(VM&, Structure*, const GlobalObjectMethodTable* = nullptr);
@@ -573,7 +576,6 @@ public:
 
     RegExpConstructor* regExpConstructor() const { return m_regExpConstructor.get(); }
 
-    ErrorConstructor* errorConstructor() const { return m_errorConstructor.get(); }
     ArrayConstructor* arrayConstructor() const { return m_arrayConstructor.get(); }
     ObjectConstructor* objectConstructor() const { return m_objectConstructor.get(); }
     JSPromiseConstructor* promiseConstructor() const { return m_promiseConstructor.get(); }
