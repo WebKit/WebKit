@@ -1,3 +1,27 @@
+2019-01-25  Keith Rollin  <krollin@apple.com>
+
+        Fix missing dependencies in extract-dependencies-from-makefile
+        https://bugs.webkit.org/show_bug.cgi?id=193783
+        <rdar://problem/47201571>
+
+        Reviewed by Alex Christensen.
+
+        The extract-dependencies-from-makefile script generates .xcfilelists
+        for XCBuild by invoking a makefile in --debug mode, parsing the
+        dependency information in the output, and extracting information
+        regarding targets and dependents. However, the way `make` emits this
+        dependency information is not rigorous, and so we need to determine
+        what lines to look for and parse by trial and error. This approach
+        didn't coriginally atch all the information we needed to collect, so
+        update the script to look for the additional lines we now know to look
+        for.
+
+        * Scripts/extract-dependencies-from-makefile:
+        (Parser):
+        (Parser.addTarget):
+        (Parser.addPrereq):
+        (Parser.doParse):
+
 2019-01-25  Brent Fulgham  <bfulgham@apple.com>
 
         Activate the WebResourceLoadStatisticsStore in the NetworkProcess and deactivate it in the UIProcess.

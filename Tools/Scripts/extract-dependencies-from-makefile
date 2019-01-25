@@ -45,6 +45,7 @@ class Parser(object):
 
     fileNamePattern         = r"`([^']+)'"
     rePrerequisite          = re.compile(r"Prerequisite {} is .* than target {}".format(fileNamePattern, fileNamePattern))
+    reMustRemakeTarget      = re.compile(r"Must remake target {}".format(fileNamePattern))
     reWasConsideredAlready  = re.compile(r"{} was considered already.".format(fileNamePattern))
     rePruningFile           = re.compile(r"Pruning file {}.".format(fileNamePattern))
 
@@ -60,10 +61,12 @@ class Parser(object):
             if line: yield line
 
     def addTarget(self, target):
-        self.targets[target] = 1
+        if target != 'all' and target != 'force':
+            self.targets[target] = 1
 
     def addPrereq(self, prereq):
-        self.prereqs[prereq] = 1
+        if prereq != 'all' and prereq != 'force':
+            self.prereqs[prereq] = 1
 
     def doParse(self, input):
 
@@ -74,6 +77,11 @@ class Parser(object):
             if m:
                 self.addTarget(m.group(2))
                 self.addPrereq(m.group(1))
+                continue
+
+            m = Parser.reMustRemakeTarget.search(line)
+            if m:
+                self.addTarget(m.group(1))
                 continue
 
             m = Parser.reWasConsideredAlready.search(line)
