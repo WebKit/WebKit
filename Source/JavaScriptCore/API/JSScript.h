@@ -29,7 +29,7 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-OBJC_CLASS JSVirtualMachine;
+@class JSVirtualMachine;
 
 JSC_CLASS_AVAILABLE(macosx(JSC_MAC_TBA), ios(JSC_IOS_TBA))
 @interface JSScript : NSObject

@@ -1,3 +1,17 @@
+2019-01-24  Keith Miller  <keith_miller@apple.com>
+
+        Remove usage of internal macro from private header
+        https://bugs.webkit.org/show_bug.cgi?id=193809
+
+        Reviewed by Saam Barati.
+
+        Also, add a new file to include all of our API headers to make sure
+        they don't accidentally include C++ or internal values.
+
+        * API/JSScript.h:
+        * API/tests/testIncludes.m: Added.
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+
 2019-01-24  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] ErrorConstructor should not have own IsoSubspace
