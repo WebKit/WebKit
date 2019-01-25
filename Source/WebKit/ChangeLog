@@ -1,3 +1,27 @@
+2019-01-25  Alex Christensen  <achristensen@webkit.org>
+
+        WKWebView.goBack should reload if there is a safe browsing warning
+        https://bugs.webkit.org/show_bug.cgi?id=193805
+        <rdar://problem/46908216>
+
+        Reviewed by Geoff Garen.
+
+        If a WKWebView is showing a safe browsing warning and the user clicks a back button
+        in the app which calls WKWebView.goBack, the WKWebView is in a state where it has not navigated yet,
+        so actually going back will appear to the user to go back twice.  We can't just do nothing because the
+        app is in a state where it is expecting a navigation to happen.  Reloading achieves what the user expects
+        and makes the app work like the app expects.
+
+        * UIProcess/API/C/WKPage.cpp:
+        (WKPageGoBack):
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView goBack]):
+        * UIProcess/PageClient.h:
+        (WebKit::PageClient::hasSafeBrowsingWarning const):
+        * UIProcess/mac/PageClientImplMac.h:
+        * UIProcess/mac/PageClientImplMac.mm:
+        (WebKit::PageClientImpl::hasSafeBrowsingWarning const):
+
 2019-01-25  Chris Dumez  <cdumez@apple.com>
 
         Regression(PSON) cross-site provisional page is not canceled if a new same-site one is started

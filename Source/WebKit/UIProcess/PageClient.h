@@ -424,6 +424,8 @@ public:
     virtual void pinnedStateWillChange() { }
     virtual void pinnedStateDidChange() { }
 
+    virtual bool hasSafeBrowsingWarning() const { return false; }
+    
 #if PLATFORM(MAC)
     virtual void didPerformImmediateActionHitTest(const WebHitTestResultData&, bool contentPreventsDefault, API::Object*) = 0;
     virtual NSObject *immediateActionAnimationControllerForHitTestResult(RefPtr<API::HitTestResult>, uint64_t, RefPtr<API::Object>) = 0;

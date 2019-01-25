@@ -355,6 +355,64 @@ TEST(SafeBrowsing, URLObservation)
     }
 }
 
+@interface Simple3LookupContext : NSObject
+@end
+
+@implementation Simple3LookupContext
+
++ (Simple3LookupContext *)sharedLookupContext
+{
+    static Simple3LookupContext *context = [[Simple3LookupContext alloc] init];
+    return context;
+}
+
+- (void)lookUpURL:(NSURL *)URL completionHandler:(void (^)(TestLookupResult *, NSError *))completionHandler
+{
+    BOOL phishing = NO;
+    if ([URL isEqual:resourceURL(@"simple3")])
+        phishing = YES;
+    completionHandler([TestLookupResult resultWithResults:@[[TestServiceLookupResult resultWithProvider:@"TestProvider" phishing:phishing malware:NO unwantedSoftware:NO]]], nil);
+}
+
+@end
+
+static bool navigationFinished;
+
+@interface WKWebViewGoBackNavigationDelegate : NSObject <WKNavigationDelegate>
+@end
+
+@implementation WKWebViewGoBackNavigationDelegate
+
+- (void)webView:(WKWebView *)webView didFinishNavigation:(null_unspecified WKNavigation *)navigation
+{
+    navigationFinished = true;
+}
+
+@end
+
+TEST(SafeBrowsing, WKWebViewGoBack)
+{
+    ClassMethodSwizzler swizzler(objc_getClass("SSBLookupContext"), @selector(sharedLookupContext), [Simple3LookupContext methodForSelector:@selector(sharedLookupContext)]);
+    
+    auto delegate = adoptNS([WKWebViewGoBackNavigationDelegate new]);
+    auto webView = adoptNS([WKWebView new]);
+    [webView setNavigationDelegate:delegate.get()];
+    [webView loadRequest:[NSURLRequest requestWithURL:resourceURL(@"simple")]];
+    TestWebKitAPI::Util::run(&navigationFinished);
+
+    navigationFinished = false;
+    [webView loadRequest:[NSURLRequest requestWithURL:resourceURL(@"simple2")]];
+    TestWebKitAPI::Util::run(&navigationFinished);
+
+    navigationFinished = false;
+    [webView loadRequest:[NSURLRequest requestWithURL:resourceURL(@"simple3")]];
+    while (![webView _safeBrowsingWarning])
+        TestWebKitAPI::Util::spinRunLoop();
+    [webView goBack];
+    TestWebKitAPI::Util::run(&navigationFinished);
+    EXPECT_TRUE([[webView URL] isEqual:resourceURL(@"simple2")]);
+}
+
 @interface NullLookupContext : NSObject
 @end
 @implementation NullLookupContext
