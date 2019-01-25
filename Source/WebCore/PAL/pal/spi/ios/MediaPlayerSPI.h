@@ -34,6 +34,10 @@
 
 #import <MediaPlayer/MPAVRoutingController.h>
 
+#if __IPHONE_OS_VERSION_MIN_REQUIRED >= 120000
+#import <MediaPlayer/MPMediaControlsConfiguration.h>
+#endif
+
 #if __IPHONE_OS_VERSION_MIN_REQUIRED >= 110000 && !PLATFORM(WATCHOS) && !PLATFORM(APPLETV)
 #import <MediaPlayer/MPMediaControlsViewController.h>
 #else

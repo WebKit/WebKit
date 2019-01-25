@@ -165,6 +165,8 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
 #else 
 
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
+
 SOFT_LINK_FRAMEWORK(MediaPlayer)
 SOFT_LINK_CLASS(MediaPlayer, MPAVRoutingController)
 SOFT_LINK_CLASS(MediaPlayer, MPMediaControlsConfiguration)
@@ -229,6 +231,8 @@ typedef NSInteger WKAirPlayRoutePickerRouteSharingPolicy;
 }
 
 @end
+
+ALLOW_DEPRECATED_DECLARATIONS_END
 
 #endif
 
