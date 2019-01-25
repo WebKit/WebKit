@@ -58,18 +58,17 @@ private:
     void computeWidthAndMargin(const Box&) const;
     void computeHeightAndMargin(const Box&) const;
 
-    void computeStaticPosition(const Box&) const;
+    void computeStaticPosition(const FloatingContext&, const Box&) const;
     void computeFloatingPosition(const FloatingContext&, const Box&) const;
     void computePositionToAvoidFloats(const FloatingContext&, const Box&) const;
-    void computeVerticalPositionForFloatClear(const FloatingContext&, const Box&) const;
 
     void computeEstimatedVerticalPosition(const Box&) const;
     void computeEstimatedVerticalPositionForAncestors(const Box&) const;
     void computeEstimatedVerticalPositionForFormattingRoot(const Box&) const;
-    void computeEstimatedVerticalPositionForFloatClear(const Box&) const;
+    void computeEstimatedVerticalPositionForFloatClear(const FloatingContext&, const Box&) const;
 
     InstrinsicWidthConstraints instrinsicWidthConstraints() const override;
-    LayoutUnit adjustedVerticalPositionAfterMarginCollapsing(const Box&, const UsedVerticalMargin&) const;
+    LayoutUnit verticalPositionWithMargin(const Box&, const UsedVerticalMargin&) const;
 
     // This class implements positioning and sizing for boxes participating in a block formatting context.
     class Geometry : public FormattingContext::Geometry {

@@ -582,11 +582,9 @@ EstimatedMarginBefore BlockFormattingContext::MarginCollapse::estimatedMarginBef
         return { };
 
     ASSERT(layoutBox.isBlockLevelBox());
-    // Can't estimate vertical margins for out of flow boxes (and we shouldn't need to do it for float boxes).
-    ASSERT(layoutBox.isInFlow());
+    // Don't estimate vertical margins for out of flow boxes.
+    ASSERT(layoutBox.isInFlow() || layoutBox.isFloatingPositioned());
     ASSERT(!layoutBox.replaced());
-    // Can't cross block formatting context boundary.
-    ASSERT(!layoutBox.establishesBlockFormattingContext());
     
     auto computedVerticalMargin = Geometry::computedVerticalMargin(layoutState, layoutBox);
     auto nonCollapsedMargin = UsedVerticalMargin::NonCollapsedValues { computedVerticalMargin.before.valueOr(0), computedVerticalMargin.after.valueOr(0) };

@@ -1,5 +1,38 @@
 2019-01-25  Zalan Bujtas  <zalan@apple.com>
 
+        [LFC][BFC][MarginCollapsing] Add "clear" to static position computation.
+        https://bugs.webkit.org/show_bug.cgi?id=193824
+
+        Reviewed by Antti Koivisto.
+
+        When clear property is set and floats are present, we have to estimate and set the box's vertical position during
+        static positioning to be able to properly layout its subtree.
+
+        <div style="float: left; width: 100px; height: 100px;"></div>
+        <div style="clear: left;">
+          <div style="float: left; width: 100px; height: 100px;"></div>
+        </div>
+
+        In the above example since the second float's parent clears the first float, the second float is positioned below
+        the first float. If we didn't push down (clear) the box, the float child would get placed next to the first float.
+
+        * layout/blockformatting/BlockFormattingContext.cpp:
+        (WebCore::Layout::BlockFormattingContext::layout const):
+        (WebCore::Layout::BlockFormattingContext::layoutFormattingContextRoot const):
+        (WebCore::Layout::BlockFormattingContext::computeStaticPosition const):
+        (WebCore::Layout::BlockFormattingContext::computeEstimatedVerticalPosition const):
+        (WebCore::Layout::BlockFormattingContext::computeEstimatedVerticalPositionForFloatClear const):
+        (WebCore::Layout::BlockFormattingContext::computeHeightAndMargin const):
+        (WebCore::Layout::BlockFormattingContext::verticalPositionWithMargin const):
+        (WebCore::Layout::BlockFormattingContext::computeVerticalPositionForFloatClear const): Deleted.
+        (WebCore::Layout::BlockFormattingContext::adjustedVerticalPositionAfterMarginCollapsing const): Deleted.
+        * layout/blockformatting/BlockFormattingContext.h:
+        * layout/blockformatting/BlockMarginCollapse.cpp:
+        (WebCore::Layout::BlockFormattingContext::MarginCollapse::estimatedMarginBefore):
+        * layout/displaytree/DisplayBox.h:
+
+2019-01-25  Zalan Bujtas  <zalan@apple.com>
+
         [LFC][BFC][MarginCollapsing] Move positive/negative margin value updating to a dedicated function
         https://bugs.webkit.org/show_bug.cgi?id=193812
 

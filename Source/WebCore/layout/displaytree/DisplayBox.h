@@ -242,7 +242,7 @@ private:
     Layout::UsedHorizontalMargin m_horizontalMargin;
     Layout::UsedVerticalMargin m_verticalMargin;
     Layout::ComputedHorizontalMargin m_horizontalComputedMargin;
-    bool m_hasClearance;
+    bool m_hasClearance { false };
 
     Layout::Edges m_border;
     Optional<Layout::Edges> m_padding;
