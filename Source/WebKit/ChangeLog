@@ -1,3 +1,15 @@
+2019-01-25  Per Arne Vollan  <pvollan@apple.com>
+
+        [iOS] Deny mach lookups to services not used.
+        https://bugs.webkit.org/show_bug.cgi?id=193828
+
+        Reviewed by Brent Fulgham.
+
+        Start denying mach lookups to iOS services, which were previously allowed with reporting.
+        Living-on has indicated that these services are not used.
+
+        * Resources/SandboxProfiles/ios/com.apple.WebKit.WebContent.sb:
+
 2019-01-25  Brent Fulgham  <bfulgham@apple.com>
 
         Activate the WebResourceLoadStatisticsStore in the NetworkProcess and deactivate it in the UIProcess.
