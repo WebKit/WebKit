@@ -28,5 +28,5 @@
     ImplementationLacksVTable,
     GenerateIsReachable=ImplDocument,
 ] interface UndoManager {
-    void addItem(UndoItem item);
+    [MayThrowException] void addItem(UndoItem item);
 };

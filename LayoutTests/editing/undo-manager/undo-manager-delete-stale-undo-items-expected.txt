@@ -1,0 +1,10 @@
+E
+Verifies that JSUndoItems are deleted when they are no longer needed by the platform clipboard. This test requires WebKitTestRunner.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+PASS objectCountBeforeClearingUndoStack - objectCountAfterClearingUndoStack is >= 580
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

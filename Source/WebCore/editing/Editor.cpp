@@ -39,6 +39,7 @@
 #include "ClipboardEvent.h"
 #include "CompositionEvent.h"
 #include "CreateLinkCommand.h"
+#include "CustomUndoStep.h"
 #include "DataTransfer.h"
 #include "DeleteSelectionCommand.h"
 #include "DictationAlternative.h"
@@ -1738,6 +1739,13 @@ void Editor::redo()
 {
     if (client())
         client()->redo();
+}
+
+void Editor::registerCustomUndoStep(Ref<CustomUndoStep>&& undoStep)
+{
+    ASSERT(RuntimeEnabledFeatures::sharedFeatures().undoManagerAPIEnabled());
+    if (auto* client = this->client())
+        client->registerUndoStep(WTFMove(undoStep));
 }
 
 void Editor::didBeginEditing()

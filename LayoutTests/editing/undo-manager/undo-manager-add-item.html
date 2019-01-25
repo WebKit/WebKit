@@ -1,0 +1,93 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ enableUndoManagerAPI=true ] -->
+<html>
+    <head>
+        <script src="../../resources/js-test.js"></script>
+        <script src="../../resources/ui-helper.js"></script>
+        <script>
+        function addUndoItem()
+        {
+            document.undoManager.addItem(new UndoItem({
+                label: "mainframe",
+                undo: () => debug("** UNDO **"),
+                redo: () => debug("** REDO **")
+            }));
+        }
+        </script>
+    </head>
+    <body>
+        <p>This test verifies that <code>UndoManager.addItem()</code> can be used to add undo items to the platform undo stack.</p>
+        <iframe id="frame" srcdoc="
+            <body>
+                <pre id='output'></pre>
+            </body>
+            <script>
+            function appendOutput(string)
+            {
+                if (output.textContent.length)
+                    output.textContent += ', ';
+                output.textContent += string;
+            }
+
+            function addUndoItem()
+            {
+                document.undoManager.addItem(new UndoItem({
+                    label: 'subframe',
+                    undo: () => appendOutput('UNDO'),
+                    redo: () => appendOutput('REDO')
+                }));
+            }
+            </script>
+        "></iframe>
+        <pre id='console'></pre>
+    </body>
+    <script>
+        jsTestIsAsync = true;
+        undoName = null;
+        redoName = null;
+
+        if (window.testRunner)
+            testRunner.dumpChildFramesAsText();
+
+        addEventListener("load", async () => {
+            debug("After adding an undo item (mainframe):");
+            addUndoItem();
+            [undoName, redoName] = await UIHelper.undoAndRedoLabels();
+            shouldBeEqualToString("undoName", "mainframe");
+            shouldBeEqualToString("redoName", "");
+
+            debug("After performing undo (mainframe):");
+            document.execCommand("undo");
+            [undoName, redoName] = await UIHelper.undoAndRedoLabels();
+            shouldBeEqualToString("undoName", "");
+            shouldBeEqualToString("redoName", "mainframe");
+
+            debug("After performing redo (mainframe):");
+            document.execCommand("redo");
+            [undoName, redoName] = await UIHelper.undoAndRedoLabels();
+            shouldBeEqualToString("undoName", "mainframe");
+            shouldBeEqualToString("redoName", "");
+
+            const frameWindow = frame.contentWindow;
+
+            debug("After adding an undo item (subframe):");
+            frameWindow.addUndoItem();
+            [undoName, redoName] = await UIHelper.undoAndRedoLabels();
+            shouldBeEqualToString("undoName", "subframe");
+            shouldBeEqualToString("redoName", "");
+
+            debug("After performing undo (subframe):");
+            document.execCommand("undo");
+            [undoName, redoName] = await UIHelper.undoAndRedoLabels();
+            shouldBeEqualToString("undoName", "mainframe");
+            shouldBeEqualToString("redoName", "subframe");
+
+            debug("After performing redo (subframe):");
+            document.execCommand("redo");
+            [undoName, redoName] = await UIHelper.undoAndRedoLabels();
+            shouldBeEqualToString("undoName", "subframe");
+            shouldBeEqualToString("redoName", "");
+
+            finishJSTest();
+        });
+    </script>
+</html>

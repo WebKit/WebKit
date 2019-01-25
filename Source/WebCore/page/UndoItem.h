@@ -55,6 +55,7 @@ public:
 
     Document* document() const;
 
+    UndoManager* undoManager() const { return m_undoManager.get(); }
     void setUndoManager(UndoManager*);
 
     const String& label() const { return m_label; }

@@ -58,6 +58,7 @@ class AlternativeTextController;
 class ArchiveResource;
 class DataTransfer;
 class CompositeEditCommand;
+class CustomUndoStep;
 class DeleteButtonController;
 class EditCommand;
 class EditCommandComposition;
@@ -323,6 +324,8 @@ public:
     void undo();
     bool canRedo() const;
     void redo();
+
+    void registerCustomUndoStep(Ref<CustomUndoStep>&&);
 
     void didBeginEditing();
     void didEndEditing();

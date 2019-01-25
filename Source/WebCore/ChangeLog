@@ -1,3 +1,46 @@
+2019-01-25  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Need a way for JavaScript (or bundle) code to participate in undo
+        https://bugs.webkit.org/show_bug.cgi?id=190009
+        <rdar://problem/44807048>
+
+        Reviewed by Ryosuke Niwa.
+
+        Finish hooking up `UndoManager::addItems()` to CustomUndoStep.
+
+        Tests: editing/undo-manager/undo-manager-add-item-exceptions.html
+               editing/undo-manager/undo-manager-add-item.html
+               editing/undo-manager/undo-manager-delete-stale-undo-items.html
+               editing/undo-manager/undo-manager-item-labels.html
+               editing/undo-manager/undo-manager-undo-redo-after-garbage-collection.html
+
+        * editing/CompositeEditCommand.h:
+        * editing/CustomUndoStep.cpp:
+        (WebCore::CustomUndoStep::didRemoveFromUndoManager):
+
+        Add a method to invalidate CustomUndoStep. This clears out the pointer to the undo item, and also invalidates
+        the UndoItem, removing it from its UndoManager.
+
+        * editing/CustomUndoStep.h:
+        * editing/Editor.cpp:
+        (WebCore::Editor::registerCustomUndoStep):
+
+        Add a helper method to register a CustomUndoStep as a platform undoable step.
+
+        * editing/Editor.h:
+        * editing/UndoStep.h:
+        * page/UndoItem.h:
+        (WebCore::UndoItem::undoManager const):
+        * page/UndoManager.cpp:
+        (WebCore::UndoManager::addItem):
+
+        Create a CustomUndoStep with the given UndoItem, and register it with the platform undo manager.
+
+        * page/UndoManager.h:
+        * page/UndoManager.idl:
+
+        Mark addItem() as capable of throwing exceptions.
+
 2019-01-25  Zalan Bujtas  <zalan@apple.com>
 
         [LFC][BFC][MarginCollapsing] Add "clear" to static position computation.

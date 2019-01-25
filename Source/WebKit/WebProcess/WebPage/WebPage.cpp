@@ -3791,12 +3791,14 @@ WebUndoStep* WebPage::webUndoStep(WebUndoStepID stepID)
 
 void WebPage::addWebUndoStep(WebUndoStepID stepID, Ref<WebUndoStep>&& entry)
 {
-    m_undoStepMap.set(stepID, WTFMove(entry));
+    auto addResult = m_undoStepMap.set(stepID, WTFMove(entry));
+    ASSERT_UNUSED(addResult, addResult.isNewEntry);
 }
 
 void WebPage::removeWebEditCommand(WebUndoStepID stepID)
 {
-    m_undoStepMap.remove(stepID);
+    if (auto undoStep = m_undoStepMap.take(stepID))
+        undoStep->didRemoveFromUndoManager();
 }
 
 bool WebPage::isAlwaysOnLoggingAllowed() const

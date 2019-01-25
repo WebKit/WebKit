@@ -450,6 +450,21 @@ void UIScriptController::setKeyboardInputModeIdentifier(JSStringRef)
 {
 }
 
+JSRetainPtr<JSStringRef> UIScriptController::lastUndoLabel() const
+{
+    return nullptr;
+}
+
+JSRetainPtr<JSStringRef> UIScriptController::firstRedoLabel() const
+{
+    return nullptr;
+}
+
+NSUndoManager *UIScriptController::platformUndoManager() const
+{
+    return nil;
+}
+
 }
 
 #endif // PLATFORM(IOS_FAMILY)

@@ -1,0 +1,66 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ enableUndoManagerAPI=true ] -->
+<html>
+    <meta charset="utf8">
+    <head>
+        <script src="../../resources/js-test.js"></script>
+        <script src="../editing.js"></script>
+        <script>
+        jsTestIsAsync = true;
+
+        function objectCountAfterSimulatingMemoryPressureAndGarbageCollection() {
+            internals.beginSimulatedMemoryPressure();
+            internals.endSimulatedMemoryPressure();
+            GCController.collect();
+            return GCController.getJSObjectCount();
+        }
+
+        async function runTest() {
+            description("Verifies that JSUndoItems are deleted when they are no longer needed by the platform clipboard. This test requires WebKitTestRunner.");
+
+            if (!window.GCController)
+                return;
+
+            editor = document.getElementById("editor");
+            editor.focus();
+
+            const undoItemCount = 200;
+
+            for (let i = 0; i < undoItemCount; ++i) {
+                document.undoManager.addItem(new UndoItem({
+                    label: "",
+                    undo: () => { },
+                    redo: () => { }
+                }));
+            }
+
+            for (let i = 0; i < undoItemCount; ++i)
+                document.execCommand("Undo");
+
+            objectCountBeforeClearingUndoStack = objectCountAfterSimulatingMemoryPressureAndGarbageCollection();
+
+            selectAllCommand();
+            typeCharacterCommand("E");
+
+            // Wait until almost all of the wrappers are collected. For each UndoItem, we expect a total of 3 wrappers:
+            // one each for the undo and redo handlers, and one for the UndoItem itself. However, we also give ourselves
+            // some wiggle room for additional wrappers created when calling some testing helper functions. This is
+            // still a useful test, since it will time out in the case where either our undo items or their undo/redo
+            // handlers are not properly relinquished once they're no longer needed.
+            const minimumNumberOfWrappersToCollectBeforePassing = 3 * undoItemCount - 20;
+            objectCountAfterClearingUndoStack = objectCountBeforeClearingUndoStack;
+            while (objectCountBeforeClearingUndoStack - objectCountAfterClearingUndoStack < minimumNumberOfWrappersToCollectBeforePassing) {
+                await new Promise(resolve => setTimeout(resolve, 100));
+                objectCountAfterClearingUndoStack = objectCountAfterSimulatingMemoryPressureAndGarbageCollection();
+            }
+
+            shouldBeGreaterThanOrEqual("objectCountBeforeClearingUndoStack - objectCountAfterClearingUndoStack", `${minimumNumberOfWrappersToCollectBeforePassing}`);
+            finishJSTest();
+        }
+        </script>
+    </head>
+    <body onload="runTest()">
+        <div contenteditable id="editor"></div>
+        <pre id="description"></pre>
+        <pre id="console"></pre>
+    </body>
+</html>

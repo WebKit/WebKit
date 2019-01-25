@@ -1,0 +1,31 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ enableUndoManagerAPI=true ] -->
+<html>
+    <meta charset="utf8">
+    <head>
+        <script src="../../resources/js-test.js"></script>
+        <script>
+        addEventListener("load", () => {
+            description("Verifies that UndoManager.addItem() throws JavaScript exceptions. This test requires WebKitTestRunner.");
+
+            item = new UndoItem({ label: '', undo: () => debug("Performed undo."), redo: () => debug("Performed redo.") });
+
+            const firstFrame = document.getElementById("one");
+            firstFrameDocument = firstFrame.contentDocument;
+            firstFrame.remove();
+
+            secondFrameDocument = document.getElementById("two").contentDocument;
+
+            shouldThrow("firstFrameDocument.undoManager.addItem(item)");
+            shouldNotThrow("document.undoManager.addItem(item)");
+            shouldThrow("secondFrameDocument.undoManager.addItem(item)");
+
+            document.execCommand("Undo");
+            document.execCommand("Redo");
+        });
+        </script>
+    </head>
+    <body>
+        <iframe id="one" srcdoc="<body>One</body>"></iframe>
+        <iframe id="two" srcdoc="<body>Two</body>"></iframe>
+    </body>
+</html>

@@ -569,6 +569,16 @@ void UIScriptController::overridePreference(JSStringRef, JSStringRef)
 {
 }
 
+JSRetainPtr<JSStringRef> UIScriptController::lastUndoLabel() const
+{
+    return nullptr;
+}
+
+JSRetainPtr<JSStringRef> UIScriptController::firstRedoLabel() const
+{
+    return nullptr;
+}
+
 #endif // !PLATFORM(COCOA)
 
 #if !PLATFORM(MAC)

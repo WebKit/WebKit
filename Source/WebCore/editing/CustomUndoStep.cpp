@@ -74,4 +74,10 @@ String CustomUndoStep::label() const
     return m_undoItem->label();
 }
 
+void CustomUndoStep::didRemoveFromUndoManager()
+{
+    if (auto undoItem = std::exchange(m_undoItem, nullptr))
+        undoItem->invalidate();
+}
+
 } // namespace WebCore

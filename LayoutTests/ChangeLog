@@ -1,3 +1,48 @@
+2019-01-25  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Need a way for JavaScript (or bundle) code to participate in undo
+        https://bugs.webkit.org/show_bug.cgi?id=190009
+        <rdar://problem/44807048>
+
+        Reviewed by Ryosuke Niwa.
+
+        Add a few new layout tests covering `UndoManager.addItem()`.
+
+        * editing/undo-manager/undo-manager-add-item-exceptions-expected.txt: Added.
+        * editing/undo-manager/undo-manager-add-item-exceptions.html: Added.
+
+        Add a test to verify that we throw exceptions when calling addItem() in a couple of circumstances.
+
+        * editing/undo-manager/undo-manager-add-item-expected.txt: Added.
+        * editing/undo-manager/undo-manager-add-item.html: Added.
+
+        Add a test that exercises the new API in both the top-level context and a child frame.
+
+        * editing/undo-manager/undo-manager-delete-stale-undo-items-expected.txt: Added.
+        * editing/undo-manager/undo-manager-delete-stale-undo-items.html: Added.
+
+        Add a test to verify that after adding undo items, undoing, and then performing other edit actions, garbage
+        collection will destroy JS wrappers for the previously added UndoItems, since these undo items' handlers can no
+        longer be invoked.
+
+        * editing/undo-manager/undo-manager-item-labels-expected.txt: Added.
+        * editing/undo-manager/undo-manager-item-labels.html: Added.
+
+        Add a test verifying that the undo and redo action labels are updated correctly when undoing and redoing.
+
+        * editing/undo-manager/undo-manager-undo-redo-after-garbage-collection-expected.txt: Added.
+        * editing/undo-manager/undo-manager-undo-redo-after-garbage-collection.html: Added.
+
+        Add a test to verify that triggering garbage collection after adding an undo item without keeping references to
+        the item (or its undo/redo handlers) doesn't break the API.
+
+        * resources/ui-helper.js:
+        (window.UIHelper.undoAndRedoLabels):
+
+        Add a helper method to grab the platform's current undo and redo action names.
+
+        (window.UIHelper):
+
 2019-01-25  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: improve invalid Audit/Recording JSON error messages

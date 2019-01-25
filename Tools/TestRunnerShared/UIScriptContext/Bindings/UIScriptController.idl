@@ -290,8 +290,11 @@ interface UIScriptController {
     void makeWindowContentViewFirstResponder();
     readonly attribute boolean isWindowContentViewFirstResponder;
 
+    object attachmentInfo(DOMString attachmentIdentifier);
+
+    // Editing
     void drawSquareInEditableImage();
     readonly attribute long numberOfStrokesInEditableImage;
-
-    object attachmentInfo(DOMString attachmentIdentifier);
+    readonly attribute DOMString lastUndoLabel;
+    readonly attribute DOMString firstRedoLabel;
 };

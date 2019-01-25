@@ -31,6 +31,8 @@
 #include <wtf/Optional.h>
 #include <wtf/Ref.h>
 
+OBJC_CLASS NSUndoManager;
+
 namespace WebCore {
 class FloatRect;
 }
@@ -206,6 +208,9 @@ public:
     void drawSquareInEditableImage();
     long numberOfStrokesInEditableImage();
 
+    JSRetainPtr<JSStringRef> lastUndoLabel() const;
+    JSRetainPtr<JSStringRef> firstRedoLabel() const;
+
     JSObjectRef attachmentInfo(JSStringRef attachmentIdentifier);
 
 private:
@@ -224,6 +229,10 @@ private:
     void platformSetDidEndScrollingCallback();
     void platformClearAllCallbacks();
     void platformPlayBackEventStream(JSStringRef, JSValueRef);
+
+#if PLATFORM(COCOA)
+    NSUndoManager *platformUndoManager() const;
+#endif
 
     JSClassRef wrapperClass() final;
 

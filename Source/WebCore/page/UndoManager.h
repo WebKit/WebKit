@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include "ExceptionOr.h"
 #include <wtf/IsoMalloc.h>
 #include <wtf/Ref.h>
 #include <wtf/RefCounted.h>
@@ -48,7 +49,7 @@ public:
 
     void removeItem(UndoItem&);
     void removeAllItems();
-    void addItem(Ref<UndoItem>&&);
+    ExceptionOr<void> addItem(Ref<UndoItem>&&);
     Document& document() { return m_document; }
 
 private:

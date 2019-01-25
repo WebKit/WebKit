@@ -1,0 +1,32 @@
+This test verifies that UndoManager.addItem() can be used to add undo items to the platform undo stack.
+
+
+After adding an undo item (mainframe):
+PASS undoName is "mainframe"
+PASS redoName is ""
+After performing undo (mainframe):
+** UNDO **
+PASS undoName is ""
+PASS redoName is "mainframe"
+After performing redo (mainframe):
+** REDO **
+PASS undoName is "mainframe"
+PASS redoName is ""
+After adding an undo item (subframe):
+PASS undoName is "subframe"
+PASS redoName is ""
+After performing undo (subframe):
+PASS undoName is "mainframe"
+PASS redoName is "subframe"
+After performing redo (subframe):
+PASS undoName is "subframe"
+PASS redoName is ""
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
+
+--------
+Frame: '<!--frame1-->'
+--------
+UNDO, REDO

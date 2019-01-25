@@ -1,3 +1,35 @@
+2019-01-25  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Need a way for JavaScript (or bundle) code to participate in undo
+        https://bugs.webkit.org/show_bug.cgi?id=190009
+        <rdar://problem/44807048>
+
+        Reviewed by Ryosuke Niwa.
+
+        Add UIScriptController helpers to grab the platform undo and redo action labels. Currently only implemented for
+        Cocoa platforms in WebKit2. See other ChangeLogs for more detail.
+
+        * DumpRenderTree/ios/UIScriptControllerIOS.mm:
+        (WTR::UIScriptController::lastUndoLabel const):
+        (WTR::UIScriptController::firstRedoLabel const):
+        (WTR::UIScriptController::platformUndoManager const):
+        * DumpRenderTree/mac/UIScriptControllerMac.mm:
+        (WTR::UIScriptController::lastUndoLabel const):
+        (WTR::UIScriptController::firstRedoLabel const):
+        (WTR::UIScriptController::platformUndoManager const):
+        * TestRunnerShared/UIScriptContext/Bindings/UIScriptController.idl:
+        * TestRunnerShared/UIScriptContext/UIScriptController.cpp:
+        (WTR::UIScriptController::lastUndoLabel const):
+        (WTR::UIScriptController::firstRedoLabel const):
+        * TestRunnerShared/UIScriptContext/UIScriptController.h:
+        * WebKitTestRunner/UIScriptControllerCocoa.mm:
+        (WTR::UIScriptController::lastUndoLabel const):
+        (WTR::UIScriptController::firstRedoLabel const):
+        * WebKitTestRunner/ios/UIScriptControllerIOS.mm:
+        (WTR::UIScriptController::platformUndoManager const):
+        * WebKitTestRunner/mac/UIScriptControllerMac.mm:
+        (WTR::UIScriptController::platformUndoManager const):
+
 2019-01-25  Zalan Bujtas  <zalan@apple.com>
 
         [LFC][BFC][MarginCollapsing] Add "clear" to static position computation.

@@ -192,5 +192,15 @@ JSObjectRef UIScriptController::calendarType() const
     return nullptr;
 #endif
 }
-    
+
+JSRetainPtr<JSStringRef> UIScriptController::lastUndoLabel() const
+{
+    return JSStringCreateWithCFString((__bridge CFStringRef)platformUndoManager().undoActionName);
+}
+
+JSRetainPtr<JSStringRef> UIScriptController::firstRedoLabel() const
+{
+    return JSStringCreateWithCFString((__bridge CFStringRef)platformUndoManager().redoActionName);
+}
+
 } // namespace WTR

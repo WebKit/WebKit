@@ -26,6 +26,8 @@
 #include "config.h"
 #include "UndoManager.h"
 
+#include "CustomUndoStep.h"
+#include "Frame.h"
 #include "UndoItem.h"
 #include <wtf/IsoMallocInlines.h>
 
@@ -40,12 +42,19 @@ UndoManager::UndoManager(Document& document)
 
 UndoManager::~UndoManager() = default;
 
-void UndoManager::addItem(Ref<UndoItem>&& item)
+ExceptionOr<void> UndoManager::addItem(Ref<UndoItem>&& item)
 {
-    UNUSED_PARAM(m_document);
+    if (item->undoManager())
+        return Exception { InvalidModificationError, "This item has already been added to an UndoManager"_s };
+
+    auto frame = makeRefPtr(m_document.frame());
+    if (!frame)
+        return Exception { SecurityError, "A browsing context is required to add an UndoItem"_s };
 
     item->setUndoManager(this);
+    frame->editor().registerCustomUndoStep(CustomUndoStep::create(item));
     m_items.add(WTFMove(item));
+    return { };
 }
 
 void UndoManager::removeItem(UndoItem& item)

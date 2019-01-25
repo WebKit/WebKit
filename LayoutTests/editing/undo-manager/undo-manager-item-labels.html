@@ -1,0 +1,95 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ enableUndoManagerAPI=true ] -->
+<html>
+    <meta charset="utf8">
+    <head>
+        <script src="../../resources/js-test.js"></script>
+        <script src="../../resources/ui-helper.js"></script>
+        <script src="../editing.js"></script>
+        <script>
+        jsTestIsAsync = true;
+        undoName = null;
+        redoName = null;
+
+        async function runTest() {
+            description("Verifies that setting the label attribute of UndoItem affects the undo and redo action names "
+                + "in the platform undo manager.");
+
+            field.focus();
+
+            debug("After typing:");
+            document.execCommand("InsertText", true, "hello");
+            [undoName, redoName] = await UIHelper.undoAndRedoLabels();
+            shouldBeEqualToString("undoName", "Typing");
+            shouldBeEqualToString("redoName", "");
+
+            function createUndoItemWithLabel(labelString) {
+                return new UndoItem({
+                    label: labelString,
+                    undo: () => { },
+                    redo: () => { }
+                });
+            }
+
+            debug("After adding the first UndoItem:");
+            const firstItem = createUndoItemWithLabel("First 🥇");
+            document.undoManager.addItem(firstItem);
+            [undoName, redoName] = await UIHelper.undoAndRedoLabels();
+            shouldBeEqualToString("undoName", firstItem.label);
+            shouldBeEqualToString("redoName", "");
+
+            debug("After adding the second UndoItem:");
+            const secondItem = createUndoItemWithLabel("Second 🥈");
+            document.undoManager.addItem(secondItem);
+            [undoName, redoName] = await UIHelper.undoAndRedoLabels();
+            shouldBeEqualToString("undoName", secondItem.label);
+            shouldBeEqualToString("redoName", "");
+
+            debug("After undoing:");
+            document.execCommand("undo");
+            [undoName, redoName] = await UIHelper.undoAndRedoLabels();
+            shouldBeEqualToString("undoName", firstItem.label);
+            shouldBeEqualToString("redoName", secondItem.label);
+
+            debug("After undoing again:");
+            document.execCommand("undo");
+            [undoName, redoName] = await UIHelper.undoAndRedoLabels();
+            shouldBeEqualToString("undoName", "Typing");
+            shouldBeEqualToString("redoName", firstItem.label);
+
+            debug("After redoing:");
+            document.execCommand("redo");
+            [undoName, redoName] = await UIHelper.undoAndRedoLabels();
+            shouldBeEqualToString("undoName", firstItem.label);
+            shouldBeEqualToString("redoName", secondItem.label);
+
+            debug("After redoing again:");
+            document.execCommand("redo");
+            [undoName, redoName] = await UIHelper.undoAndRedoLabels();
+            shouldBeEqualToString("undoName", secondItem.label);
+            shouldBeEqualToString("redoName", "");
+
+            debug("After undoing and then pasting:");
+            document.execCommand("undo");
+            selectAllCommand();
+            copyCommand();
+            pasteCommand();
+            [undoName, redoName] = await UIHelper.undoAndRedoLabels();
+            shouldBeEqualToString("undoName", "Paste");
+            shouldBeEqualToString("redoName", "");
+
+            debug("After undoing the paste command:");
+            document.execCommand("undo");
+            [undoName, redoName] = await UIHelper.undoAndRedoLabels();
+            shouldBeEqualToString("undoName", firstItem.label);
+            shouldBeEqualToString("redoName", "Paste");
+
+            finishJSTest();
+        }
+        </script>
+    </head>
+    <body onload="runTest()">
+        <input id="field"></input>
+        <pre id="description"></pre>
+        <pre id="console"></pre>
+    </body>
+</html>

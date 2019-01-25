@@ -566,4 +566,13 @@ window.UIHelper = class UIHelper {
             resolve({ x: offsetX, y: offsetY });
         }));
     }
+
+    static undoAndRedoLabels()
+    {
+        if (!this.isWebKit2())
+            return Promise.resolve();
+
+        const script = "JSON.stringify([uiController.lastUndoLabel, uiController.firstRedoLabel])";
+        return new Promise(resolve => testRunner.runUIScript(script, result => resolve(JSON.parse(result))));
+    }
 }

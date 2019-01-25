@@ -49,6 +49,7 @@ private:
     EditAction editingAction() const final { return EditAction::Unspecified; }
     String label() const final;
 
+    void didRemoveFromUndoManager() final;
     bool isValid() const;
 
     WeakPtr<UndoItem> m_undoItem;
