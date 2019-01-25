@@ -1,3 +1,20 @@
+2019-01-25  Daniel Bates  <dabates@apple.com>
+
+        [iOS] Pressing Tab key doesn't move to next cell with Google Sheets
+        https://bugs.webkit.org/show_bug.cgi?id=193048
+        <rdar://problem/46433836>
+
+        Reviewed by Brent Fulgham.
+
+        WebCore knows how interpret the Tab and Shift + Tab keys. When building with UIKit keyboard additions
+        we do not need to register key commands for handling them from the UIProcess code. Instead UIKit will
+        sends key events for these commands to us. This will make the behavior of these key commands when executed
+        in an editable field match the behavior of these command when executed in a non-editable field since
+        both code paths will now go through WebCore.
+
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView keyCommands]): Only compile when building with !USE(UIKIT_KEYBOARD_ADDITIONS).
+
 2019-01-25  Alex Christensen  <achristensen@webkit.org>
 
         Fix Linux build.

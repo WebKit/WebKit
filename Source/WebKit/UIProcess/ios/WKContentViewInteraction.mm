@@ -3306,6 +3306,7 @@ static void selectionChangedWithTouch(WKContentView *view, const WebCore::IntPoi
     [self resignFirstResponder];
 }
 
+#if !USE(UIKIT_KEYBOARD_ADDITIONS)
 - (NSArray *)keyCommands
 {
     if (!_page->editorState().isContentEditable)
@@ -3317,6 +3318,7 @@ static void selectionChangedWithTouch(WKContentView *view, const WebCore::IntPoi
     ] retain];
     return editableKeyCommands;
 }
+#endif
 
 - (void)_nextAccessoryTabForWebView:(id)sender
 {
