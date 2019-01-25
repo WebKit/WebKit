@@ -75,6 +75,7 @@ struct ResourceUsageData {
     constexpr ResourceUsageData() = default;
 
     float cpu { 0 };
+    float cpuExcludingDebuggerThreads { 0 };
     size_t totalDirtySize { 0 };
     size_t totalExternalSize { 0 };
     std::array<MemoryCategoryInfo, MemoryCategory::NumberOfCategories> categories { {

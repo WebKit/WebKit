@@ -84,7 +84,7 @@ void InspectorCPUProfilerAgent::collectSample(const ResourceUsageData& data)
 {
     auto event = Protocol::CPUProfiler::Event::create()
         .setTimestamp(m_environment.executionStopwatch()->elapsedTimeSince(data.timestamp).seconds())
-        .setUsage(data.cpu)
+        .setUsage(data.cpuExcludingDebuggerThreads)
         .release();
 
     m_frontendDispatcher->trackingUpdate(WTFMove(event));

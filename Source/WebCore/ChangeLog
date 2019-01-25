@@ -1,3 +1,39 @@
+2019-01-25  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Exclude Debugger Threads from CPU Usage values in Web Inspector
+        https://bugs.webkit.org/show_bug.cgi?id=193796
+        <rdar://problem/47532910>
+
+        Reviewed by Devin Rousso.
+
+        * page/ResourceUsageData.h:
+        * inspector/agents/InspectorCPUProfilerAgent.cpp:
+        (WebCore::InspectorCPUProfilerAgent::collectSample):
+        Show the CPU usage without debugger threads in the Web Inspector's timeline.
+
+        * page/ResourceUsageThread.h:
+        * page/cocoa/ResourceUsageThreadCocoa.mm:
+        (WebCore::ResourceUsageThread::platformSaveStateBeforeStarting):
+        For OS(DARWIN) ports, when starting to observe resource usage,
+        we grab the mach_port_t of SamplingProfiler on the main thread
+        in a thread safe way. For our purposes (Web Inspector timelines),
+        this will be good enough to identify the SamplingProfiler thread
+        during timeline recording. The SamplingProfiler thread won't change
+        during a timeline recording and recording start/stops will never
+        miss the SamplingProfiler changing.
+
+        (WebCore::filterThreads):
+        (WebCore::threadSendRights):
+        (WebCore::threadSendRightsExcludingDebuggerThreads):
+        (WebCore::cpuUsage):
+        (WebCore::ResourceUsageThread::platformCollectCPUData):
+        Calculate CPU usage twice, the second time excluding some threads.
+
+        * page/linux/ResourceUsageThreadLinux.cpp:
+        (WebCore::ResourceUsageThread::platformSaveStateBeforeStarting):
+        (WebCore::ResourceUsageThread::platformCollectCPUData):
+        Stubs for linux ports.
+
 2019-01-25  Zalan Bujtas  <zalan@apple.com>
 
         Remove FrameView::m_significantRenderedTextMilestonePending

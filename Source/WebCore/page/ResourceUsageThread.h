@@ -37,6 +37,10 @@
 #include <wtf/Noncopyable.h>
 #include <wtf/Threading.h>
 
+#if OS(DARWIN)
+#include <mach/mach.h>
+#endif
+
 namespace JSC {
 class VM;
 }
@@ -70,6 +74,7 @@ private:
     void createThreadIfNeeded();
     void threadBody();
 
+    void platformSaveStateBeforeStarting();
     void platformCollectCPUData(JSC::VM*, ResourceUsageData&);
     void platformCollectMemoryData(JSC::VM*, ResourceUsageData&);
 
@@ -82,6 +87,11 @@ private:
     // Platforms may need to access some data from the common VM.
     // They should ensure their use of the VM is thread safe.
     JSC::VM* m_vm { nullptr };
+
+#if ENABLE(SAMPLING_PROFILER) && OS(DARWIN)
+    mach_port_t m_samplingProfilerMachThread { MACH_PORT_NULL };
+#endif
+
 };
 
 #if PLATFORM(COCOA)

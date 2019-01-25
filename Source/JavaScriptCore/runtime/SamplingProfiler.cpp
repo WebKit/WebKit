@@ -1079,6 +1079,16 @@ void SamplingProfiler::reportTopBytecodes(PrintStream& out)
     }
 }
 
+#if OS(DARWIN)
+mach_port_t SamplingProfiler::machThread()
+{
+    if (!m_thread)
+        return MACH_PORT_NULL;
+
+    return m_thread->machThread();
+}
+#endif
+
 } // namespace JSC
 
 namespace WTF {

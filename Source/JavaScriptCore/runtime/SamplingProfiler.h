@@ -182,6 +182,10 @@ public:
     JS_EXPORT_PRIVATE void reportTopBytecodes();
     JS_EXPORT_PRIVATE void reportTopBytecodes(PrintStream&);
 
+#if OS(DARWIN)
+    JS_EXPORT_PRIVATE mach_port_t machThread();
+#endif
+
 private:
     void createThreadIfNecessary(const AbstractLocker&);
     void timerLoop();

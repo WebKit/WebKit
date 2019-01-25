@@ -150,9 +150,17 @@ static float cpuUsage()
     return clampTo<float>(usage, 0, 100);
 }
 
+void ResourceUsageThread::platformSaveStateBeforeStarting()
+{
+}
+
 void ResourceUsageThread::platformCollectCPUData(JSC::VM*, ResourceUsageData& data)
 {
     data.cpu = cpuUsage();
+
+    // FIXME: Exclude the ResourceUsage thread.
+    // FIXME: Exclude the SamplingProfiler thread.
+    data.cpuExcludingDebuggerThreads = data.cpu;
 }
 
 void ResourceUsageThread::platformCollectMemoryData(JSC::VM* vm, ResourceUsageData& data)
