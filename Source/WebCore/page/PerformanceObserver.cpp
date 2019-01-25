@@ -113,4 +113,15 @@ void PerformanceObserver::deliver()
     InspectorInstrumentation::didFireObserverCallback(cookie);
 }
 
+Vector<String> PerformanceObserver::supportedEntryTypes()
+{
+    return {
+        // FIXME: <https://webkit.org/b/184363> Add support for Navigation Timing Level 2
+        // "navigation"_s,
+        "mark"_s,
+        "measure"_s,
+        "resource"_s
+    };
+}
+
 } // namespace WebCore

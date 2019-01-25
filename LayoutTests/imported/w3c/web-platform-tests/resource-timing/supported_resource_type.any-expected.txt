@@ -1,3 +1,4 @@
 
-FAIL supportedEntryTypes contains 'resource'. assert_unreached: supportedEntryTypes is not supported. Reached unreachable code
+PASS supportedEntryTypes contains 'resource'. 
+PASS 'resource' entries should be observable. 
 

@@ -1,3 +1,13 @@
+2019-01-24  Charles Vazac  <cvazac@akamai.com>
+
+        Implement PerformanceObserver.supportedEntryTypes
+        https://bugs.webkit.org/show_bug.cgi?id=193428
+
+        Reviewed by Joseph Pecoraro.
+
+        * web-platform-tests/resource-timing/supported_resource_type.any-expected.txt:
+        * web-platform-tests/resource-timing/supported_resource_type.any.worker-expected.txt:
+
 2019-01-23  Oriol Brufau  <obrufau@igalia.com>
 
         [css-logical] Implement flow-relative inset properties

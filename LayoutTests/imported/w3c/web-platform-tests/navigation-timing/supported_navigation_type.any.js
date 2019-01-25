@@ -1,12 +1,12 @@
-﻿test(() => {
+test(() => {
   if (typeof PerformanceObserver.supportedEntryTypes === "undefined")
     assert_unreached("supportedEntryTypes is not supported.");
-  assert_true(PerformanceObserver.supportedEntryTypes.includes("resource"),
-    "There should be an entry 'resource' in PerformanceObserver.supportedEntryTypes");
-}, "supportedEntryTypes contains 'resource'.");
+  assert_true(PerformanceObserver.supportedEntryTypes.includes("navigation"),
+    "There should be an entry 'navigation' in PerformanceObserver.supportedEntryTypes");
+}, "supportedEntryTypes contains 'navigation'.");
 
 if (typeof PerformanceObserver.supportedEntryTypes !== "undefined") {
-  const entryType = "resource";
+  const entryType = "navigation";
   if (PerformanceObserver.supportedEntryTypes.includes(entryType)) {
     promise_test(async() => {
       await new Promise((resolve) => {
@@ -14,10 +14,6 @@ if (typeof PerformanceObserver.supportedEntryTypes !== "undefined") {
           observer.disconnect();
           resolve();
         }).observe({entryTypes: [entryType]});
-
-        // Force the PerformanceEntry.
-        // Use `self` for Workers.
-        fetch(self.location.href + "?" + Math.random());
       })
     }, `'${entryType}' entries should be observable.`)
   }
