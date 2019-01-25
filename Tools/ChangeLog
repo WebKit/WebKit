@@ -1,3 +1,14 @@
+2019-01-24  Jonathan Bedard  <jbedard@apple.com>
+
+        [webkitdirs] iosSimulatorApplicationsPath may not have iOS.simruntime in its path
+        https://bugs.webkit.org/show_bug.cgi?id=193787
+        <rdar://problem/47497634>
+
+        Reviewed by Alexey Proskuryakov.
+
+        * Scripts/webkitdirs.pm:
+        (iosSimulatorApplicationsPath): Pick from available runtime directories.
+
 2019-01-24  Truitt Savell  <tsavell@apple.com>
 
         Unreviewed, rolling out r240446.

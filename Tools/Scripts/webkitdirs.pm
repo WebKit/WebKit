@@ -2504,8 +2504,13 @@ sub setupIOSWebKitEnvironment($)
 
 sub iosSimulatorApplicationsPath()
 {
-    my $iphoneOSPlatformPath = sdkPlatformDirectory("iphoneos");
-    return File::Spec->catdir($iphoneOSPlatformPath, "Developer", "Library", "CoreSimulator", "Profiles", "Runtimes", "iOS.simruntime", "Contents", "Resources", "RuntimeRoot", "Applications");
+    # FIXME: We should ask simctl for this information, instead of guessing from available runtimes.
+    my $runtimePath = File::Spec->catdir(sdkPlatformDirectory("iphoneos"), "Developer", "Library", "CoreSimulator", "Profiles", "Runtimes");
+    opendir(RUNTIMES, $runtimePath);
+    my @runtimes = grep {/.*\.simruntime/} readdir(RUNTIMES);
+    close(RUNTIMES);
+    my $sult = File::Spec->catdir($runtimePath, @runtimes ? $runtimes[0] : "iOS.simruntime", "Contents", "Resources", "RuntimeRoot", "Applications");
+    return $sult;
 }
 
 sub installedMobileSafariBundle()
