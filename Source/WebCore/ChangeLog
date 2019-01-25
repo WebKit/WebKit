@@ -1,3 +1,22 @@
+2019-01-25  Keith Rollin  <krollin@apple.com>
+
+        Update existing .xcfilelists
+        https://bugs.webkit.org/show_bug.cgi?id=193791
+        <rdar://problem/47201706>
+
+        Reviewed by Alex Christensen.
+
+        Many .xcfilelist files were added in r238824 in order to support
+        XCBuild. Update these with recent changes to the set of build files
+        and with the current generate-xcfilelist script.
+
+        No new tests since there should be no observable behavior difference.
+
+        * DerivedSources-input.xcfilelist:
+        * DerivedSources-output.xcfilelist:
+        * UnifiedSources-input.xcfilelist:
+        * UnifiedSources-output.xcfilelist:
+
 2019-01-25  Brent Fulgham  <bfulgham@apple.com>
 
         Activate the WebResourceLoadStatisticsStore in the NetworkProcess and deactivate it in the UIProcess.

@@ -1,5 +1,22 @@
 2019-01-25  Keith Rollin  <krollin@apple.com>
 
+        Update existing .xcfilelists
+        https://bugs.webkit.org/show_bug.cgi?id=193791
+        <rdar://problem/47201706>
+
+        Reviewed by Alex Christensen.
+
+        Many .xcfilelist files were added in r238824 in order to support
+        XCBuild. Update these with recent changes to the set of build files
+        and with the current generate-xcfilelist script.
+
+        * DumpRenderTree/DerivedSources-input.xcfilelist:
+        * DumpRenderTree/DerivedSources-output.xcfilelist:
+        * WebKitTestRunner/DerivedSources-input.xcfilelist:
+        * WebKitTestRunner/DerivedSources-output.xcfilelist:
+
+2019-01-25  Keith Rollin  <krollin@apple.com>
+
         Fix missing dependencies in extract-dependencies-from-makefile
         https://bugs.webkit.org/show_bug.cgi?id=193783
         <rdar://problem/47201571>
