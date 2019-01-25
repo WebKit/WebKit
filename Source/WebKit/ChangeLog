@@ -1,3 +1,42 @@
+2019-01-25  Antti Koivisto  <antti@apple.com>
+
+        REGRESSION (PSON): After swipe back, first few attempts to swipe forward not recognized as swipe gestures
+        https://bugs.webkit.org/show_bug.cgi?id=193818
+        <rdar://problem/47456584>
+
+        Reviewed by Tim Horton.
+
+        We don't hit the RenderTreeSizeThreshold milestone to remove the snapshot and allow interaction because we request it
+        from a wrong process (the one we are leaving behind).
+
+        * UIProcess/Cocoa/ViewGestureController.cpp:
+        (WebKit::ViewGestureController::didStartProvisionalLoadForMainFrame):
+
+        Request the RenderTreeSizeThreshold notification when the load has started and we know the process to use.
+
+        (WebKit::ViewGestureController::SnapshotRemovalTracker::hasOutstandingEvent):
+        * UIProcess/Cocoa/ViewGestureController.h:
+        (WebKit::ViewGestureController::SnapshotRemovalTracker::renderTreeSizeThreshold const):
+        (WebKit::ViewGestureController::SnapshotRemovalTracker::setRenderTreeSizeThreshold):
+        * UIProcess/mac/ViewGestureControllerMac.mm:
+        (WebKit::ViewGestureController::endSwipeGesture):
+
+        Don't request immediately, save the threshold to SnapshotRemovalTracker.
+
+        (WebKit::ViewGestureController::requestRenderTreeSizeNotificationIfNeeded):
+
+        Do the request to the right process.
+
+        * WebProcess/WebPage/ViewGestureGeometryCollector.cpp:
+        (WebKit::ViewGestureGeometryCollector::setRenderTreeSizeNotificationThreshold):
+
+        Ensure we send the notification even if we reached the threshold before it was requested.
+
+        (WebKit::ViewGestureGeometryCollector::sendDidHitRenderTreeSizeThresholdIfNeeded):
+        (WebKit::ViewGestureGeometryCollector::mainFrameDidLayout):
+        * WebProcess/WebPage/ViewGestureGeometryCollector.h:
+        (WebKit::ViewGestureGeometryCollector::setRenderTreeSizeNotificationThreshold): Deleted.
+
 2019-01-25  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [iOS] Rename some WebKit-internal functions and variables that reference "data interaction"

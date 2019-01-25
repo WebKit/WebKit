@@ -55,9 +55,8 @@ private:
 
 #if PLATFORM(MAC)
     void collectGeometryForMagnificationGesture();
-    void setRenderTreeSizeNotificationThreshold(uint64_t size) { m_renderTreeSizeNotificationThreshold = size; }
-
-    void renderTreeSizeNotificationTimerFired();
+    void setRenderTreeSizeNotificationThreshold(uint64_t);
+    void sendDidHitRenderTreeSizeThresholdIfNeeded();
 #endif
 
     void dispatchDidCollectGeometryForSmartMagnificationGesture(WebCore::FloatPoint origin, WebCore::FloatRect targetRect, WebCore::FloatRect visibleContentRect, bool fitEntireRect, double viewportMinimumScale, double viewportMaximumScale);
