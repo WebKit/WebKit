@@ -1,3 +1,23 @@
+2019-01-25  Zalan Bujtas  <zalan@apple.com>
+
+        Remove FrameView::m_significantRenderedTextMilestonePending
+        https://bugs.webkit.org/show_bug.cgi?id=193842
+
+        Reviewed by Wenson Hsieh.
+
+        Currently we keep processing the incoming text content until after the "SignificantRenderedTextMilestone" has been reached.
+        We can actually stop doing it right when the text content is above the threshold (regardless of whether all the conditions are met for the milestone).
+        This patch also ensures that we don't update Document::m_mainArticleElement once the threshold is reached.
+
+        * page/FrameView.cpp:
+        (WebCore::FrameView::resetLayoutMilestones):
+        (WebCore::FrameView::incrementVisuallyNonEmptyCharacterCount):
+        (WebCore::FrameView::hasReachedSignificantRenderedTextThreashold):
+        (WebCore::FrameView::qualifiesAsSignificantRenderedText const):
+        (WebCore::FrameView::fireLayoutRelatedMilestonesIfNeeded):
+        (WebCore::FrameView::updateSignificantRenderedTextMilestoneIfNeeded): Deleted.
+        * page/FrameView.h:
+
 2019-01-25  Keith Rollin  <krollin@apple.com>
 
         Update Xcode projects with "Apply Configuration to XCFileLists" build target

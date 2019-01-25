@@ -793,6 +793,9 @@ private:
     void markRootOrBodyRendererDirty() const;
 
     bool qualifiesAsVisuallyNonEmpty() const;
+    bool qualifiesAsSignificantRenderedText() const;
+    void updateHasReachedSignificantRenderedTextThreshold();
+
     bool isViewForDocumentInFrame() const;
 
     AXObjectCache* axObjectCache() const;
@@ -883,8 +886,8 @@ private:
     unsigned m_visuallyNonEmptyPixelCount { 0 };
 
     unsigned m_textRendererCountForVisuallyNonEmptyCharacters { 0 };
-    bool m_renderedSignificantAmountOfText;
-    bool m_significantRenderedTextMilestonePending;
+    bool m_renderedSignificantAmountOfText { false };
+    bool m_hasReachedSignificantRenderedTextThreshold { false };
 
     bool m_needsDeferredScrollbarsUpdate { false };
 

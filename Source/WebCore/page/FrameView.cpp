@@ -293,7 +293,7 @@ void FrameView::resetLayoutMilestones()
 {
     m_firstLayoutCallbackPending = false;
     m_isVisuallyNonEmpty = false;
-    m_significantRenderedTextMilestonePending = true;
+    m_hasReachedSignificantRenderedTextThreshold = false;
     m_renderedSignificantAmountOfText = false;
     m_visuallyNonEmptyCharacterCount = 0;
     m_visuallyNonEmptyPixelCount = 0;
@@ -3307,8 +3307,7 @@ void FrameView::performPostLayoutTasks()
 {
     // FIXME: We should not run any JavaScript code in this function.
     LOG(Layout, "FrameView %p performPostLayoutTasks", this);
-
-    frame().document()->updateMainArticleElementAfterLayout();
+    updateHasReachedSignificantRenderedTextThreshold();
     frame().selection().updateAppearanceAfterLayout();
 
     flushPostLayoutTasksQueue();
@@ -4387,10 +4386,8 @@ void FrameView::updateLayoutAndStyleIfNeededRecursive()
 
 void FrameView::incrementVisuallyNonEmptyCharacterCount(const String& inlineText)
 {
-    if (m_visuallyNonEmptyCharacterCount > visualCharacterThreshold && m_renderedSignificantAmountOfText)
+    if (m_visuallyNonEmptyCharacterCount > visualCharacterThreshold && m_hasReachedSignificantRenderedTextThreshold)
         return;
-
-    ++m_textRendererCountForVisuallyNonEmptyCharacters;
 
     auto nonWhitespaceLength = [](auto& inlineText) {
         auto length = inlineText.length();
@@ -4402,9 +4399,7 @@ void FrameView::incrementVisuallyNonEmptyCharacterCount(const String& inlineText
         return length;
     };
     m_visuallyNonEmptyCharacterCount += nonWhitespaceLength(inlineText);
-
-    if (!m_renderedSignificantAmountOfText)
-        updateSignificantRenderedTextMilestoneIfNeeded();
+    ++m_textRendererCountForVisuallyNonEmptyCharacters;
 }
 
 static bool elementOverflowRectIsLargerThanThreshold(const Element& element)
@@ -4416,6 +4411,42 @@ static bool elementOverflowRectIsLargerThanThreshold(const Element& element)
         return snappedIntRect(elementRenderBox->layoutOverflowRect()).height() >= documentHeightThreshold;
 
     return false;
+}
+
+void FrameView::updateHasReachedSignificantRenderedTextThreshold()
+{
+    if (m_hasReachedSignificantRenderedTextThreshold)
+        return;
+
+    auto* document = frame().document();
+    if (!document)
+        return;
+
+    document->updateMainArticleElementAfterLayout();
+    auto hasMainArticleElement = document->hasMainArticleElement();
+    auto characterThreshold = hasMainArticleElement ? mainArticleSignificantRenderedTextCharacterThreshold : defaultSignificantRenderedTextCharacterThreshold;
+    if (m_visuallyNonEmptyCharacterCount < characterThreshold)
+        return;
+
+    auto meanLength = hasMainArticleElement ? mainArticleSignificantRenderedTextMeanLength : defaultSignificantRenderedTextMeanLength;
+    if (!m_textRendererCountForVisuallyNonEmptyCharacters || m_visuallyNonEmptyCharacterCount / static_cast<float>(m_textRendererCountForVisuallyNonEmptyCharacters) < meanLength)
+        return;
+
+    m_hasReachedSignificantRenderedTextThreshold = true;
+}
+
+bool FrameView::qualifiesAsSignificantRenderedText() const
+{
+    ASSERT(!m_renderedSignificantAmountOfText);
+    auto* document = frame().document();
+    if (!document || document->styleScope().hasPendingSheetsBeforeBody())
+        return false;
+
+    auto* documentElement = document->documentElement();
+    if (!documentElement || !elementOverflowRectIsLargerThanThreshold(*documentElement))
+        return false;
+
+    return m_hasReachedSignificantRenderedTextThreshold;
 }
 
 bool FrameView::qualifiesAsVisuallyNonEmpty() const
@@ -4488,31 +4519,6 @@ bool FrameView::qualifiesAsVisuallyNonEmpty() const
         return !isMoreContentExpected();
 
     return false;
-}
-
-void FrameView::updateSignificantRenderedTextMilestoneIfNeeded()
-{
-    if (m_renderedSignificantAmountOfText)
-        return;
-
-    auto* document = frame().document();
-    if (!document || document->styleScope().hasPendingSheetsBeforeBody())
-        return;
-
-    auto* documentElement = document->documentElement();
-    if (!documentElement || !elementOverflowRectIsLargerThanThreshold(*documentElement))
-        return;
-
-    auto characterThreshold = document->hasMainArticleElement() ? mainArticleSignificantRenderedTextCharacterThreshold : defaultSignificantRenderedTextCharacterThreshold;
-    auto meanLength = document->hasMainArticleElement() ? mainArticleSignificantRenderedTextMeanLength : defaultSignificantRenderedTextMeanLength;
-
-    if (m_visuallyNonEmptyCharacterCount < characterThreshold)
-        return;
-
-    if (!m_textRendererCountForVisuallyNonEmptyCharacters || m_visuallyNonEmptyCharacterCount / static_cast<float>(m_textRendererCountForVisuallyNonEmptyCharacters) < meanLength)
-        return;
-
-    m_renderedSignificantAmountOfText = true;
 }
 
 bool FrameView::isViewForDocumentInFrame() const
@@ -5136,7 +5142,6 @@ void FrameView::fireLayoutRelatedMilestonesIfNeeded()
         if (frame().isMainFrame())
             page->startCountingRelevantRepaintedObjects();
     }
-    updateSignificantRenderedTextMilestoneIfNeeded();
 
     if (!m_isVisuallyNonEmpty && qualifiesAsVisuallyNonEmpty()) {
         m_isVisuallyNonEmpty = true;
@@ -5145,8 +5150,8 @@ void FrameView::fireLayoutRelatedMilestonesIfNeeded()
             milestonesAchieved.add(DidFirstVisuallyNonEmptyLayout);
     }
 
-    if (m_renderedSignificantAmountOfText && m_significantRenderedTextMilestonePending) {
-        m_significantRenderedTextMilestonePending = false;
+    if (!m_renderedSignificantAmountOfText && qualifiesAsSignificantRenderedText()) {
+        m_renderedSignificantAmountOfText = true;
         if (requestedMilestones & DidRenderSignificantAmountOfText)
             milestonesAchieved.add(DidRenderSignificantAmountOfText);
     }
