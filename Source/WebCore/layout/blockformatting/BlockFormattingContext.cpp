@@ -429,12 +429,10 @@ void BlockFormattingContext::computeHeightAndMargin(const Box& layoutBox) const
     ASSERT(!hasEstimatedMarginBefore(layoutBox) || estimatedMarginBefore(layoutBox).usedValue() == verticalMargin.before());
     removeEstimatedMarginBefore(layoutBox);
     displayBox.setTop(adjustedVerticalPositionAfterMarginCollapsing(layoutBox, verticalMargin));
-    // Adjust the previous sibling's margin bottom now that this box's vertical margin is computed.
-    if (MarginCollapse::marginBeforeCollapsesWithPreviousSiblingMarginAfter(layoutState, layoutBox))
-        MarginCollapse::updateCollapsedMarginAfter(layoutState, *layoutBox.previousInFlowSibling(), verticalMargin);
-
     displayBox.setContentBoxHeight(heightAndMargin.height);
     displayBox.setVerticalMargin(verticalMargin);
+    // Adjust the previous sibling's margin bottom now that this box's vertical margin is computed.
+    MarginCollapse::updateMarginAfterForPreviousSibling(layoutState, layoutBox);
 }
 
 FormattingContext::InstrinsicWidthConstraints BlockFormattingContext::instrinsicWidthConstraints() const

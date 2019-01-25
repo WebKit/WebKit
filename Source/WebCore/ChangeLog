@@ -1,3 +1,19 @@
+2019-01-24  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC][BFC][MarginCollapsing] Refactor MarginCollapse::updateCollapsedMarginAfter
+        https://bugs.webkit.org/show_bug.cgi?id=193807
+
+        Reviewed by Simon Fraser.
+
+        Rename updateCollapsedMarginAfter to updateMarginAfterForPreviousSibling and make the margin updating logic more explicit.
+
+        * layout/blockformatting/BlockFormattingContext.cpp:
+        (WebCore::Layout::BlockFormattingContext::computeHeightAndMargin const):
+        * layout/blockformatting/BlockFormattingContext.h:
+        * layout/blockformatting/BlockMarginCollapse.cpp:
+        (WebCore::Layout::BlockFormattingContext::MarginCollapse::updateMarginAfterForPreviousSibling):
+        (WebCore::Layout::BlockFormattingContext::MarginCollapse::updateCollapsedMarginAfter): Deleted.
+
 2019-01-24  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: CPU Usage Timeline
