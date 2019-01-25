@@ -46,10 +46,6 @@
 
 namespace WebKit {
 
-void ChildProcess::setApplicationIsDaemon()
-{
-}
-
 void ChildProcess::platformInitialize()
 {
     FloatingPointEnvironment& floatingPointEnvironment = FloatingPointEnvironment::singleton(); 

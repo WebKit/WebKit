@@ -42,6 +42,7 @@
 #import <notify.h>
 #import <pal/spi/cf/CFNetworkSPI.h>
 #import <pal/spi/cocoa/LaunchServicesSPI.h>
+#import <pal/spi/mac/HIServicesSPI.h>
 #import <sysexits.h>
 #import <wtf/FileSystem.h>
 #import <wtf/MemoryPressureHandler.h>
@@ -52,8 +53,13 @@ using namespace WebCore;
 
 void NetworkProcess::initializeProcess(const ChildProcessInitializationParameters&)
 {
+#if PLATFORM(MAC) && !PLATFORM(IOSMAC)
     // Having a window server connection in this process would result in spin logs (<rdar://problem/13239119>).
-    setApplicationIsDaemon();
+    OSStatus error = SetApplicationIsDaemon(true);
+    ASSERT_UNUSED(error, error == noErr);
+#endif
+
+    launchServicesCheckIn();
 }
 
 void NetworkProcess::initializeProcessName(const ChildProcessInitializationParameters& parameters)

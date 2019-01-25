@@ -76,9 +76,6 @@ typedef bool (^LSServerConnectionAllowedBlock) ( CFDictionaryRef optionsRef );
 extern "C" void _LSSetApplicationLaunchServicesServerConnectionStatus(uint64_t flags, LSServerConnectionAllowedBlock block);
 extern "C" CFDictionaryRef _LSApplicationCheckIn(LSSessionID sessionID, CFDictionaryRef applicationInfo);
 
-extern "C" OSStatus SetApplicationIsDaemon(Boolean isDaemon);
-
-
 namespace WebKit {
 using namespace WebCore;
 
@@ -150,17 +147,6 @@ static void initializeTimerCoalescingPolicy()
     struct task_qos_policy qosinfo = { LATENCY_QOS_TIER_0, THROUGHPUT_QOS_TIER_0 };
     kern_return_t kr = task_policy_set(mach_task_self(), TASK_BASE_QOS_POLICY, (task_policy_t)&qosinfo, TASK_QOS_POLICY_COUNT);
     ASSERT_UNUSED(kr, kr == KERN_SUCCESS);
-}
-
-void ChildProcess::setApplicationIsDaemon()
-{
-#if !PLATFORM(IOSMAC)
-    OSStatus error = SetApplicationIsDaemon(true);
-    ASSERT_UNUSED(error, error == noErr);
-#endif
-
-    // FIXME: Is this needed in iOSMac?
-    launchServicesCheckIn();
 }
 
 void ChildProcess::launchServicesCheckIn()
