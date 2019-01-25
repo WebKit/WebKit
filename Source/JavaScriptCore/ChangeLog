@@ -1,3 +1,14 @@
+2019-01-25  Jon Davis  <jond@apple.com>
+
+        Update JavaScriptCore feature status entries.
+        https://bugs.webkit.org/show_bug.cgi?id=193797
+
+        Reviewed by Mark Lam.
+        
+        Updated feature status for Async Iteration, and Object rest/spread.
+
+        * features.json:
+
 2019-01-24  Keith Miller  <keith_miller@apple.com>
 
         Remove usage of internal macro from private header
