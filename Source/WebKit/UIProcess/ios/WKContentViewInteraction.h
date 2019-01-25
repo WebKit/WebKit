@@ -429,11 +429,11 @@ FOR_EACH_PRIVATE_WKCONTENTVIEW_ACTION(DECLARE_WKCONTENTVIEW_ACTION_FOR_WEB_VIEW)
 #if ENABLE(DATA_INTERACTION)
 - (void)_didChangeDragInteractionPolicy;
 - (void)_didPerformDragOperation:(BOOL)handled;
-- (void)_didHandleStartDataInteractionRequest:(BOOL)started;
+- (void)_didHandleDragStartRequest:(BOOL)started;
 - (void)_didHandleAdditionalDragItemsRequest:(BOOL)added;
 - (void)_startDrag:(RetainPtr<CGImageRef>)image item:(const WebCore::DragItem&)item;
-- (void)_didConcludeEditDataInteraction:(Optional<WebCore::TextIndicatorData>)data;
-- (void)_didChangeDataInteractionCaretRect:(CGRect)previousRect currentRect:(CGRect)rect;
+- (void)_didConcludeEditDrag:(Optional<WebCore::TextIndicatorData>)data;
+- (void)_didChangeDragCaretRect:(CGRect)previousRect currentRect:(CGRect)rect;
 #endif
 
 - (void)reloadContextViewForPresentedListViewController;

@@ -289,7 +289,7 @@ messages -> WebPage LegacyReceiver {
 #endif
 
 #if ENABLE(DATA_INTERACTION)
-    RequestStartDataInteraction(WebCore::IntPoint clientPosition, WebCore::IntPoint globalPosition)
+    RequestDragStart(WebCore::IntPoint clientPosition, WebCore::IntPoint globalPosition)
     RequestAdditionalItemsForDragSession(WebCore::IntPoint clientPosition, WebCore::IntPoint globalPosition)
 #endif
 

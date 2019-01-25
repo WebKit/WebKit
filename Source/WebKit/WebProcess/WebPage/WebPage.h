@@ -1095,7 +1095,7 @@ public:
     void setUseIconLoadingClient(bool);
 
 #if ENABLE(DATA_INTERACTION)
-    void didConcludeEditDataInteraction();
+    void didConcludeEditDrag();
 #endif
 
     WebURLSchemeHandlerProxy* urlSchemeHandlerForScheme(const String&);
@@ -1181,7 +1181,7 @@ private:
 #endif
 
 #if PLATFORM(IOS_FAMILY) && ENABLE(DATA_INTERACTION)
-    void requestStartDataInteraction(const WebCore::IntPoint& clientPosition, const WebCore::IntPoint& globalPosition);
+    void requestDragStart(const WebCore::IntPoint& clientPosition, const WebCore::IntPoint& globalPosition);
     void requestAdditionalItemsForDragSession(const WebCore::IntPoint& clientPosition, const WebCore::IntPoint& globalPosition);
 #endif
 

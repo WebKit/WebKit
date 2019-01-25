@@ -210,7 +210,7 @@ void WebDragClient::declareAndWriteDragImage(const String& pasteboardName, Eleme
 
 void WebDragClient::didConcludeEditDrag()
 {
-    m_page->didConcludeEditDataInteraction();
+    m_page->didConcludeEditDrag();
 }
 
 #endif // PLATFORM(IOS_FAMILY)

@@ -1,3 +1,56 @@
+2019-01-25  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [iOS] Rename some WebKit-internal functions and variables that reference "data interaction"
+        https://bugs.webkit.org/show_bug.cgi?id=193829
+
+        Reviewed by Tim Horton.
+
+        * UIProcess/Cocoa/WebPageProxyCocoa.mm:
+        (WebKit::WebPageProxy::setDragCaretRect):
+        * UIProcess/PageClient.h:
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPageProxy.messages.in:
+        * UIProcess/ios/PageClientImplIOS.h:
+        * UIProcess/ios/PageClientImplIOS.mm:
+        (WebKit::PageClientImpl::didHandleDragStartRequest):
+        (WebKit::PageClientImpl::didConcludeEditDrag):
+        (WebKit::PageClientImpl::didChangeDragCaretRect):
+        (WebKit::PageClientImpl::didHandleStartDataInteractionRequest): Deleted.
+        (WebKit::PageClientImpl::didConcludeEditDataInteraction): Deleted.
+        (WebKit::PageClientImpl::didChangeDataInteractionCaretRect): Deleted.
+        * UIProcess/ios/WKContentViewInteraction.h:
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView setupInteraction]):
+        (-[WKContentView cleanupInteraction]):
+        (-[WKContentView setupDragAndDropInteractions]):
+        (-[WKContentView teardownDragAndDropInteractions]):
+        (-[WKContentView _didHandleDragStartRequest:]):
+        (-[WKContentView _didConcludeEditDrag:]):
+        (-[WKContentView _didChangeDragCaretRect:currentRect:]):
+        (-[WKContentView _dragInteraction:prepareForSession:completion:]):
+        (-[WKContentView setupDataInteractionDelegates]): Deleted.
+        (-[WKContentView teardownDataInteractionDelegates]): Deleted.
+        (-[WKContentView _didHandleStartDataInteractionRequest:]): Deleted.
+        (-[WKContentView _didConcludeEditDataInteraction:]): Deleted.
+        (-[WKContentView _didChangeDataInteractionCaretRect:currentRect:]): Deleted.
+        * UIProcess/ios/WebPageProxyIOS.mm:
+        (WebKit::WebPageProxy::didHandleDragStartRequest):
+        (WebKit::WebPageProxy::requestDragStart):
+        (WebKit::WebPageProxy::didConcludeEditDrag):
+        (WebKit::WebPageProxy::didHandleStartDataInteractionRequest): Deleted.
+        (WebKit::WebPageProxy::requestStartDataInteraction): Deleted.
+        (WebKit::WebPageProxy::didConcludeEditDataInteraction): Deleted.
+        * WebProcess/WebCoreSupport/mac/WebDragClientMac.mm:
+        (WebKit::WebDragClient::didConcludeEditDrag):
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/WebPage.messages.in:
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::requestDragStart):
+        (WebKit::WebPage::requestAdditionalItemsForDragSession):
+        (WebKit::WebPage::didConcludeEditDrag):
+        (WebKit::WebPage::requestStartDataInteraction): Deleted.
+        (WebKit::WebPage::didConcludeEditDataInteraction): Deleted.
+
 2019-01-25  Alex Christensen  <achristensen@webkit.org>
 
         WKWebView.goBack should reload if there is a safe browsing warning

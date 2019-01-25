@@ -656,10 +656,10 @@ void WebPage::requestFocusedElementInformation(WebKit::CallbackID callbackID)
 }
 
 #if ENABLE(DATA_INTERACTION)
-void WebPage::requestStartDataInteraction(const IntPoint& clientPosition, const IntPoint& globalPosition)
+void WebPage::requestDragStart(const IntPoint& clientPosition, const IntPoint& globalPosition)
 {
-    bool didStart = m_page->mainFrame().eventHandler().tryToBeginDataInteractionAtPoint(clientPosition, globalPosition);
-    send(Messages::WebPageProxy::DidHandleStartDataInteractionRequest(didStart));
+    bool didStart = m_page->mainFrame().eventHandler().tryToBeginDragAtPoint(clientPosition, globalPosition);
+    send(Messages::WebPageProxy::DidHandleDragStartRequest(didStart));
 }
 
 void WebPage::requestAdditionalItemsForDragSession(const IntPoint& clientPosition, const IntPoint& globalPosition)
@@ -671,22 +671,22 @@ void WebPage::requestAdditionalItemsForDragSession(const IntPoint& clientPositio
     m_page->dragController().dragEnded();
     m_page->mainFrame().eventHandler().dragSourceEndedAt(event, DragOperationNone, MayExtendDragSession::Yes);
 
-    bool didHandleDrag = m_page->mainFrame().eventHandler().tryToBeginDataInteractionAtPoint(clientPosition, globalPosition);
+    bool didHandleDrag = m_page->mainFrame().eventHandler().tryToBeginDragAtPoint(clientPosition, globalPosition);
     send(Messages::WebPageProxy::DidHandleAdditionalDragItemsRequest(didHandleDrag));
 }
 
-void WebPage::didConcludeEditDataInteraction()
+void WebPage::didConcludeEditDrag()
 {
     Optional<TextIndicatorData> textIndicatorData;
 
-    static auto defaultEditDataInteractionTextIndicatorOptions = TextIndicatorOptionIncludeSnapshotOfAllVisibleContentWithoutSelection | TextIndicatorOptionExpandClipBeyondVisibleRect | TextIndicatorOptionPaintAllContent | TextIndicatorOptionIncludeMarginIfRangeMatchesSelection | TextIndicatorOptionPaintBackgrounds | TextIndicatorOptionComputeEstimatedBackgroundColor| TextIndicatorOptionUseSelectionRectForSizing | TextIndicatorOptionIncludeSnapshotWithSelectionHighlight;
+    static auto defaultTextIndicatorOptionsForEditDrag = TextIndicatorOptionIncludeSnapshotOfAllVisibleContentWithoutSelection | TextIndicatorOptionExpandClipBeyondVisibleRect | TextIndicatorOptionPaintAllContent | TextIndicatorOptionIncludeMarginIfRangeMatchesSelection | TextIndicatorOptionPaintBackgrounds | TextIndicatorOptionComputeEstimatedBackgroundColor| TextIndicatorOptionUseSelectionRectForSizing | TextIndicatorOptionIncludeSnapshotWithSelectionHighlight;
     auto& frame = m_page->focusController().focusedOrMainFrame();
     if (auto range = frame.selection().selection().toNormalizedRange()) {
-        if (auto textIndicator = TextIndicator::createWithRange(*range, defaultEditDataInteractionTextIndicatorOptions, TextIndicatorPresentationTransition::None, FloatSize()))
+        if (auto textIndicator = TextIndicator::createWithRange(*range, defaultTextIndicatorOptionsForEditDrag, TextIndicatorPresentationTransition::None, FloatSize()))
             textIndicatorData = textIndicator->data();
     }
 
-    send(Messages::WebPageProxy::DidConcludeEditDataInteraction(textIndicatorData));
+    send(Messages::WebPageProxy::DidConcludeEditDrag(WTFMove(textIndicatorData)));
 }
 #endif
 

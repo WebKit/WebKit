@@ -329,8 +329,8 @@ public:
 
     static Widget* widgetForEventTarget(Element* eventTarget);
 
-#if ENABLE(DATA_INTERACTION)
-    WEBCORE_EXPORT bool tryToBeginDataInteractionAtPoint(const IntPoint& clientPosition, const IntPoint& globalPosition);
+#if PLATFORM(IOS_FAMILY) && ENABLE(DRAG_SUPPORT)
+    WEBCORE_EXPORT bool tryToBeginDragAtPoint(const IntPoint& clientPosition, const IntPoint& globalPosition);
 #endif
     
 #if PLATFORM(IOS_FAMILY)

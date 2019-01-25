@@ -264,7 +264,7 @@ OBJC_CLASS NSTextAlternatives;
 
 #if ENABLE(DATA_INTERACTION) && defined(__cplusplus)
 - (void)_startDrag:(const WebCore::DragItem&)dragItem;
-- (void)_didConcludeEditDataInteraction;
+- (void)_didConcludeEditDrag;
 #endif
 
 - (void)_preferencesChanged:(WebPreferences *)preferences;

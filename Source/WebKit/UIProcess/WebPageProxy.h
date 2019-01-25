@@ -679,11 +679,11 @@ public:
     void cancelAutoscroll();
     void hardwareKeyboardAvailabilityChanged();
 #if ENABLE(DATA_INTERACTION)
-    void didHandleStartDataInteractionRequest(bool started);
+    void didHandleDragStartRequest(bool started);
     void didHandleAdditionalDragItemsRequest(bool added);
-    void requestStartDataInteraction(const WebCore::IntPoint& clientPosition, const WebCore::IntPoint& globalPosition);
+    void requestDragStart(const WebCore::IntPoint& clientPosition, const WebCore::IntPoint& globalPosition);
     void requestAdditionalItemsForDragSession(const WebCore::IntPoint& clientPosition, const WebCore::IntPoint& globalPosition);
-    void didConcludeEditDataInteraction(Optional<WebCore::TextIndicatorData>);
+    void didConcludeEditDrag(Optional<WebCore::TextIndicatorData>);
 #endif
 #endif
 #if ENABLE(DATA_DETECTION)

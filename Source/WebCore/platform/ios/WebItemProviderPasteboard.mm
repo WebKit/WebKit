@@ -690,12 +690,12 @@ static NSURL *linkTemporaryItemProviderFilesToDropStagingDirectory(NSURL *url, N
 {
     static NSString *defaultDropFolderName = @"folder";
     static NSString *defaultDropFileName = @"file";
-    static NSString *dataInteractionDirectoryPrefix = @"data-interaction";
+    static NSString *droppedDataDirectoryPrefix = @"dropped-data";
     if (!url)
         return nil;
 
-    NSString *temporaryDataInteractionDirectory = FileSystem::createTemporaryDirectory(dataInteractionDirectoryPrefix);
-    if (!temporaryDataInteractionDirectory)
+    NSString *temporaryDropDataDirectory = FileSystem::createTemporaryDirectory(droppedDataDirectoryPrefix);
+    if (!temporaryDropDataDirectory)
         return nil;
 
     NSURL *destination = nil;
@@ -708,7 +708,7 @@ static NSURL *linkTemporaryItemProviderFilesToDropStagingDirectory(NSURL *url, N
     if (![suggestedName containsString:@"."] && !isFolder)
         suggestedName = [suggestedName stringByAppendingPathExtension:url.pathExtension];
 
-    destination = [NSURL fileURLWithPath:[temporaryDataInteractionDirectory stringByAppendingPathComponent:suggestedName]];
+    destination = [NSURL fileURLWithPath:[temporaryDropDataDirectory stringByAppendingPathComponent:suggestedName]];
     return [fileManager linkItemAtURL:url toURL:destination error:nil] ? destination : nil;
 }
 

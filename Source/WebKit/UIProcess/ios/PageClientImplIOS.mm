@@ -788,9 +788,9 @@ void PageClientImpl::didPerformDragOperation(bool handled)
     [m_contentView _didPerformDragOperation:handled];
 }
 
-void PageClientImpl::didHandleStartDataInteractionRequest(bool started)
+void PageClientImpl::didHandleDragStartRequest(bool started)
 {
-    [m_contentView _didHandleStartDataInteractionRequest:started];
+    [m_contentView _didHandleDragStartRequest:started];
 }
 
 void PageClientImpl::didHandleAdditionalDragItemsRequest(bool added)
@@ -803,14 +803,14 @@ void PageClientImpl::startDrag(const DragItem& item, const ShareableBitmap::Hand
     [m_contentView _startDrag:ShareableBitmap::create(image)->makeCGImageCopy() item:item];
 }
 
-void PageClientImpl::didConcludeEditDataInteraction(Optional<TextIndicatorData> data)
+void PageClientImpl::didConcludeEditDrag(Optional<TextIndicatorData> data)
 {
-    [m_contentView _didConcludeEditDataInteraction:data];
+    [m_contentView _didConcludeEditDrag:data];
 }
 
-void PageClientImpl::didChangeDataInteractionCaretRect(const IntRect& previousCaretRect, const IntRect& caretRect)
+void PageClientImpl::didChangeDragCaretRect(const IntRect& previousCaretRect, const IntRect& caretRect)
 {
-    [m_contentView _didChangeDataInteractionCaretRect:previousCaretRect currentRect:caretRect];
+    [m_contentView _didChangeDragCaretRect:previousCaretRect currentRect:caretRect];
 }
 #endif
 

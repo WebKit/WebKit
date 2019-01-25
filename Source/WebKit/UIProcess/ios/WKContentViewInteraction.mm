@@ -692,7 +692,7 @@ static inline bool hasFocusedElement(WebKit::FocusedElementInformation focusedEl
     [self _createAndConfigureLongPressGestureRecognizer];
 
 #if ENABLE(DATA_INTERACTION)
-    [self setupDataInteractionDelegates];
+    [self setupDragAndDropInteractions];
 #endif
 
     _twoFingerSingleTapGestureRecognizer = adoptNS([[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(_twoFingerSingleTapGestureRecognized:)]);
@@ -808,7 +808,7 @@ static inline bool hasFocusedElement(WebKit::FocusedElementInformation focusedEl
 
 #if ENABLE(DATA_INTERACTION)
     [existingLocalDragSessionContext(_dragDropInteractionState.dragSession()) cleanUpTemporaryDirectories];
-    [self teardownDataInteractionDelegates];
+    [self teardownDragAndDropInteractions];
 #endif
 
     _inspectorNodeSearchEnabled = NO;
@@ -5431,7 +5431,7 @@ static BOOL shouldEnableDragInteractionForPolicy(_WKDragInteractionPolicy policy
     return (id <WKUIDelegatePrivate>)[_webView UIDelegate];
 }
 
-- (void)setupDataInteractionDelegates
+- (void)setupDragAndDropInteractions
 {
     _dragInteraction = adoptNS([[UIDragInteraction alloc] initWithDelegate:self]);
     _dropInteraction = adoptNS([[UIDropInteraction alloc] initWithDelegate:self]);
@@ -5442,7 +5442,7 @@ static BOOL shouldEnableDragInteractionForPolicy(_WKDragInteractionPolicy policy
     [self addInteraction:_dropInteraction.get()];
 }
 
-- (void)teardownDataInteractionDelegates
+- (void)teardownDragAndDropInteractions
 {
     if (_dragInteraction)
         [self removeInteraction:_dragInteraction.get()];
@@ -5492,7 +5492,7 @@ static BOOL shouldEnableDragInteractionForPolicy(_WKDragInteractionPolicy policy
         _page->didStartDrag();
 }
 
-- (void)_didHandleStartDataInteractionRequest:(BOOL)started
+- (void)_didHandleDragStartRequest:(BOOL)started
 {
     BlockPtr<void()> savedCompletionBlock = _dragDropInteractionState.takeDragStartCompletionBlock();
     ASSERT(savedCompletionBlock);
@@ -5586,7 +5586,7 @@ static NSArray<NSItemProvider *> *extractItemProvidersFromDropSession(id <UIDrop
     return extractItemProvidersFromDragItems(session.items);
 }
 
-- (void)_didConcludeEditDataInteraction:(Optional<WebCore::TextIndicatorData>)data
+- (void)_didConcludeEditDrag:(Optional<WebCore::TextIndicatorData>)data
 {
     if (!data)
         return;
@@ -5599,12 +5599,12 @@ static NSArray<NSItemProvider *> *extractItemProvidersFromDropSession(id <UIDrop
     if (!unselectedSnapshotImage)
         return;
 
-    auto dataInteractionUnselectedContentImage = adoptNS([[UIImage alloc] initWithCGImage:unselectedSnapshotImage.get() scale:_page->deviceScaleFactor() orientation:UIImageOrientationUp]);
-    RetainPtr<UIImageView> unselectedContentSnapshot = adoptNS([[UIImageView alloc] initWithImage:dataInteractionUnselectedContentImage.get()]);
+    auto unselectedContentImageForEditDrag = adoptNS([[UIImage alloc] initWithCGImage:unselectedSnapshotImage.get() scale:_page->deviceScaleFactor() orientation:UIImageOrientationUp]);
+    auto unselectedContentSnapshot = adoptNS([[UIImageView alloc] initWithImage:unselectedContentImageForEditDrag.get()]);
     [unselectedContentSnapshot setFrame:data->contentImageWithoutSelectionRectInRootViewCoordinates];
 
-    RetainPtr<WKContentView> protectedSelf = self;
-    RetainPtr<UIView> visibleContentViewSnapshot = adoptNS(_visibleContentViewSnapshot.leakRef());
+    auto protectedSelf = retainPtr(self);
+    auto visibleContentViewSnapshot = adoptNS(_visibleContentViewSnapshot.leakRef());
 
     _isAnimatingConcludeEditDrag = YES;
     [self insertSubview:unselectedContentSnapshot.get() belowSubview:visibleContentViewSnapshot.get()];
@@ -5639,7 +5639,7 @@ static NSArray<NSItemProvider *> *extractItemProvidersFromDropSession(id <UIDrop
     _page->dragEnded(WebCore::roundedIntPoint(client), WebCore::roundedIntPoint(global), _page->currentDragOperation());
 }
 
-- (void)_didChangeDataInteractionCaretRect:(CGRect)previousRect currentRect:(CGRect)rect
+- (void)_didChangeDragCaretRect:(CGRect)previousRect currentRect:(CGRect)rect
 {
     BOOL previousRectIsEmpty = CGRectIsEmpty(previousRect);
     BOOL currentRectIsEmpty = CGRectIsEmpty(rect);
@@ -5853,7 +5853,7 @@ static NSArray<NSItemProvider *> *extractItemProvidersFromDropSession(id <UIDrop
     _dragDropInteractionState.prepareForDragSession(session, completion);
 
     auto dragOrigin = WebCore::roundedIntPoint([session locationInView:self]);
-    _page->requestStartDataInteraction(dragOrigin, WebCore::roundedIntPoint([self convertPoint:dragOrigin toView:self.window]));
+    _page->requestDragStart(dragOrigin, WebCore::roundedIntPoint([self convertPoint:dragOrigin toView:self.window]));
 
     RELEASE_LOG(DragAndDrop, "Drag session requested: %p at origin: {%d, %d}", session, dragOrigin.x(), dragOrigin.y());
 }

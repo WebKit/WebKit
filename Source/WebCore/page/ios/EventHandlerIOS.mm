@@ -650,7 +650,7 @@ bool EventHandler::eventLoopHandleMouseDragged(const MouseEventWithHitTestResult
     return false;
 }
 
-bool EventHandler::tryToBeginDataInteractionAtPoint(const IntPoint& clientPosition, const IntPoint&)
+bool EventHandler::tryToBeginDragAtPoint(const IntPoint& clientPosition, const IntPoint&)
 {
     Ref<Frame> protectedFrame(m_frame);
 
@@ -673,7 +673,7 @@ bool EventHandler::tryToBeginDataInteractionAtPoint(const IntPoint& clientPositi
     auto hitTestedMouseEvent = document->prepareMouseEvent(request, documentPoint, syntheticMouseMoveEvent);
 
     RefPtr<Frame> subframe = subframeForHitTestResult(hitTestedMouseEvent);
-    if (subframe && subframe->eventHandler().tryToBeginDataInteractionAtPoint(adjustedClientPosition, adjustedGlobalPosition))
+    if (subframe && subframe->eventHandler().tryToBeginDragAtPoint(adjustedClientPosition, adjustedGlobalPosition))
         return true;
 
     if (!eventMayStartDrag(syntheticMousePressEvent))
