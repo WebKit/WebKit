@@ -1,3 +1,17 @@
+2019-01-25  Brent Fulgham  <bfulgham@apple.com>
+
+        Activate the WebResourceLoadStatisticsStore in the NetworkProcess and deactivate it in the UIProcess.
+        https://bugs.webkit.org/show_bug.cgi?id=193297
+        <rdar://problem/47158841>
+
+        Unreviewed test case fix.
+
+        These test cases require ResourceLoadStatistics to be active, so the feature must be turned on.
+        Previously, the default data store turned the feature on automatically, allowing these tests to pass.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/ResourceLoadStatistics.mm:
+        (TEST):
+
 2019-01-25  Keith Rollin  <krollin@apple.com>
 
         Update existing .xcfilelists
