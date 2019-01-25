@@ -82,6 +82,16 @@ function handleUncaughtException(event) {
     });
 }
 
+function handleUnhandledPromiseRejection(event) {
+    handleUncaughtExceptionRecord({
+        message: event.reason.message,
+        url: urlLastPathComponent(event.reason.sourceURL),
+        lineNumber: event.reason.line,
+        columnNumber: event.reason.column,
+        stack: event.reason.stack,
+    });
+}
+
 function handleUncaughtExceptionRecord(exceptionRecord) {
     try {
         if (!WI.settings.enableUncaughtExceptionReporter.value)
@@ -288,6 +298,7 @@ Document any additional information that might be useful in resolving the proble
 }
 
 window.addEventListener("error", handleUncaughtException);
+window.addEventListener("unhandledrejection", handleUnhandledPromiseRejection);
 window.handlePromiseException = window.handleInternalException = handleError;
 
 })();

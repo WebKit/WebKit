@@ -1,5 +1,15 @@
 2019-01-25  Devin Rousso  <drousso@apple.com>
 
+        Web Inspector: show uncaught exception view for unhandled promise rejections
+        https://bugs.webkit.org/show_bug.cgi?id=193832
+
+        Reviewed by Matt Baker.
+
+        * UserInterface/Debug/UncaughtExceptionReporter.js:
+        (handleUnhandledPromiseRejection): Added.
+
+2019-01-25  Devin Rousso  <drousso@apple.com>
+
         Web Inspector: REGRESSION (r237808): offscreen path warning doesn't work
         https://bugs.webkit.org/show_bug.cgi?id=193830
 
