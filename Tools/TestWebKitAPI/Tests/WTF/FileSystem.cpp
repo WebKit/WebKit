@@ -49,7 +49,7 @@ public:
         FileSystem::writeToFile(handle, FileSystemTestData, strlen(FileSystemTestData));
         FileSystem::closeFile(handle);
 
-        m_tempFileSymlinkPath = m_tempFilePath + "-symlink";
+        m_tempFileSymlinkPath = "tempTestFile-symlink";
         FileSystem::createSymbolicLink(m_tempFilePath, m_tempFileSymlinkPath);
 
         m_tempEmptyFilePath = FileSystem::openTemporaryFile("tempEmptyTestFile", handle);

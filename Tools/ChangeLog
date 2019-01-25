@@ -1,3 +1,11 @@
+2019-01-24  Ross Kirsling  <ross.kirsling@sony.com>
+
+        Unreviewed fix for API test failure after r240437.
+
+        TestWTF.WTF.StringOperators apparently can't deal with another test using String::operator+. This is fine...
+
+        * TestWebKitAPI/Tests/WTF/FileSystem.cpp:
+
 2019-01-24  Jonathan Bedard  <jbedard@apple.com>
 
         [webkitdirs] iosSimulatorApplicationsPath may not have iOS.simruntime in its path
