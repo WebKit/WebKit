@@ -4,11 +4,11 @@ To manually test, focus the input element below. The software keyboard should sh
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
-Element has inputmode=none
-PASS keyboardRect.height is 0
+inputmode="text"
+PASS textHeight = keyboardRect.height; keyboardRect.height > 0 is true
 
-inputmode has been removed
-PASS keyboardRect.height > 0 is true
+inputmode="number"
+PASS keyboardRect.height is not textHeight
 PASS successfullyParsed is true
 
 TEST COMPLETE

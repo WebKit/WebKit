@@ -1,3 +1,20 @@
+2019-01-25  Ryosuke Niwa  <rniwa@webkit.org>
+
+        iOS: inputmode="none" disables hardware keyboard's globe key
+        https://bugs.webkit.org/show_bug.cgi?id=193811
+        <rdar://problem/47406553>
+
+        Reviewed by Wenson Hsieh.
+
+        Updated and renamed the test expecting the keyboard to update upon inputmode content attribute changed
+        to use inputmode="decimal" instead of inputmode="none", and updated another test to expect inputmode="none"
+        has no effect instead of hiding the keyboard.
+
+        * fast/forms/ios/inputmode-change-update-keyboard-expected.txt: Renamed from inputmode-none-removed-expected.txt.
+        * fast/forms/ios/inputmode-change-update-keyboard.html: Renamed from inputmode-none-removed.html.
+        * fast/forms/ios/inputmode-none-expected.txt:
+        * fast/forms/ios/inputmode-none.html:
+
 2019-01-25  Jonathan Bedard  <jbedard@apple.com>
 
         webkitpy: Implement device type specific expected results (Gardening)

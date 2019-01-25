@@ -5,11 +5,11 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 
 
 ACTIVATE input with inputmode=text
-PASS systemKeyboardRect.height > 0 is true
+PASS textKeyboardHeight = systemKeyboardRect.height; systemKeyboardRect.height > 0 is true
 PASS inputWithSystemKeyboard.value is "Text"
 
 ACTIVATE input with inputmode=none
-PASS systemKeyboardRect.height === 0 is true
+PASS systemKeyboardRect.height is textKeyboardHeight
 
 TEST enter text in input with inputmode=none
 PASS inputWithoutSystemKeyboard.value is "None"

@@ -20,14 +20,14 @@ async function runTest() {
     debug('\nACTIVATE input with inputmode=text');
     await UIHelper.activateFormControl(inputWithSystemKeyboard);
     systemKeyboardRect = await UIHelper.inputViewBounds();
-    shouldBe('systemKeyboardRect.height > 0', 'true');
+    shouldBe('textKeyboardHeight = systemKeyboardRect.height; systemKeyboardRect.height > 0', 'true');
     await UIHelper.enterText("Text");
     shouldBe('inputWithSystemKeyboard.value', '"Text"');
 
     debug('\nACTIVATE input with inputmode=none');
     await UIHelper.activateFormControl(inputWithoutSystemKeyboard);
     systemKeyboardRect = await UIHelper.inputViewBounds();
-    shouldBe('systemKeyboardRect.height === 0', 'true');
+    shouldBe('systemKeyboardRect.height', 'textKeyboardHeight');
 
     debug('\nTEST enter text in input with inputmode=none');
     await UIHelper.enterText("None");

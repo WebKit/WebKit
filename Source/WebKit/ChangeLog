@@ -1,3 +1,20 @@
+2019-01-25  Ryosuke Niwa  <rniwa@webkit.org>
+
+        iOS: inputmode="none" disables hardware keyboard's globe key
+        https://bugs.webkit.org/show_bug.cgi?id=193811
+        <rdar://problem/47406553>
+
+        Reviewed by Wenson Hsieh.
+
+        Removed the support for inputmode="none" for now since we need a new SPI from UIKit
+        to properly implement this feature some time in the future.
+
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView _zoomToRevealFocusedElement]):
+        (-[WKContentView inputView]):
+        (-[WKContentView requiresAccessoryView]):
+        (-[WKContentView textInputTraits]):
+
 2019-01-25  David Kilzer  <ddkilzer@apple.com>
 
         Move soft-linking of Lookup.framework out of LookupSPI.h

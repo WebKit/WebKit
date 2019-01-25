@@ -6,7 +6,7 @@
 <script src="../../../resources/ui-helper.js"></script>
 </head>
 <body>
-<input inputmode="none">
+<input inputmode="text">
 <div id="countdown"></div>
 <script>
 jsTestIsAsync = true;
@@ -22,7 +22,7 @@ if (!window.testRunner) {
             document.getElementById('countdown').textContent = countdown ? countdown : '';
             if (!countdown) {
                 clearInterval(id);
-                input.removeAttribute('inputmode');
+                input.setAttribute('inputmode', 'decimal');
             }
             countdown--;
         }, 1000);
@@ -30,7 +30,7 @@ if (!window.testRunner) {
 }
 
 async function runTest() {
-    debug('Element has inputmode=none');
+    debug('inputmode="text"');
 
     let didResize = () => { };
     window.visualViewport.addEventListener('resize', () => didResize());
@@ -38,25 +38,25 @@ async function runTest() {
     if (window.testRunner) {
         await UIHelper.activateFormControl(input);
         window.keyboardRect = await UIHelper.inputViewBounds();
-        shouldBe('keyboardRect.height', '0');
+        shouldBeTrue('textHeight = keyboardRect.height; keyboardRect.height > 0');
     } else {
         await new Promise((resolve) => { didResize = resolve; });
-        shouldBeTrue('document.documentElement.clientHeight - visualViewport.height < 100');
+        shouldBeTrue('textHeight = document.documentElement.clientHeight - visualViewport.height; document.documentElement.clientHeight - visualViewport.height < 100');
     }
 
     if (window.testRunner)
-        input.removeAttribute('inputmode');
+        input.setAttribute('inputmode', 'decimal');
 
     await new Promise((resolve) => { didResize = resolve; });
 
     debug('');
-    debug('inputmode has been removed');
+    debug('inputmode="number"');
 
     if (window.testRunner) {
         window.keyboardRect = await UIHelper.inputViewBounds();
-        shouldBeTrue('keyboardRect.height > 0');
+        shouldNotBe('keyboardRect.height', 'textHeight');
     } else
-        shouldBeTrue('document.documentElement.clientHeight - visualViewport.height > 300');
+        shouldNotBe('document.documentElement.clientHeight - visualViewport.height', 'textHeight');
 
     finishJSTest();
 }
