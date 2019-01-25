@@ -1102,9 +1102,6 @@ inspector/canvas/resolveCanvasContext-webmetal.html [ Skip ]
 # We don't support APPLE_PAY.
 http/tests/ssl/applepay [ Skip ]
 
-# GTK port doesn't use the scrolling tree
-fast/scrolling/scrolling-tree-includes-frame.html [ Skip ]
-
 # This test assumes that color on sliders is not reversed for RTL, so failing is good.
 fast/forms/range/input-appearance-range-rtl.html [ ImageOnlyFailure ]
 

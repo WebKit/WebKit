@@ -1,5 +1,40 @@
 2019-01-25  Simon Fraser  <simon.fraser@apple.com>
 
+        Move more scrolling tree tests into scrollingcoordinator/scrolling-tree
+        https://bugs.webkit.org/show_bug.cgi?id=193845
+
+        Reviewed by Tim Horton.
+
+        Gather more tests of the scrolling tree into scrollingcoordinator/scrolling-tree.
+
+        * platform/gtk/TestExpectations:
+        * platform/ios-wk1/fast/scrolling/scrolling-tree-includes-frame-expected.txt: Removed.
+        * platform/ios-wk2/scrollingcoordinator/scrolling-tree/coordinated-frame-expected.txt: Added.
+        * platform/ios-wk2/scrollingcoordinator/scrolling-tree/coordinated-frame-gain-scrolling-ancestor-expected.txt: Copied from LayoutTests/tiled-drawing/scrolling/frames/coordinated-frame-gain-scrolling-ancestor-expected.txt.
+        * platform/ios-wk2/scrollingcoordinator/scrolling-tree/coordinated-frame-in-fixed-expected.txt: Added.
+        * platform/ios-wk2/scrollingcoordinator/scrolling-tree/coordinated-frame-lose-scrolling-ancestor-expected.txt: Added.
+        * platform/ios-wk2/scrollingcoordinator/scrolling-tree/remove-coordinated-frame-expected.txt: Renamed from LayoutTests/platform/ios/fast/scrolling/scrolling-tree-includes-frame-expected.txt.
+        * platform/ios-wk2/scrollingcoordinator/scrolling-tree/scrolling-tree-includes-frame-expected.txt: Renamed from LayoutTests/platform/ios-wk2/fast/scrolling/scrolling-tree-includes-frame-expected.txt.
+        * platform/mac-wk1/fast/scrolling/scrolling-tree-includes-frame-expected.txt: Removed.
+        * platform/win/TestExpectations:
+        * scrollingcoordinator/scrolling-tree/coordinated-frame-expected.txt: Renamed from LayoutTests/tiled-drawing/scrolling/frames/coordinated-frame-expected.txt.
+        * scrollingcoordinator/scrolling-tree/coordinated-frame-gain-scrolling-ancestor-expected.txt: Renamed from LayoutTests/tiled-drawing/scrolling/frames/coordinated-frame-gain-scrolling-ancestor-expected.txt.
+        * scrollingcoordinator/scrolling-tree/coordinated-frame-gain-scrolling-ancestor.html: Renamed from LayoutTests/tiled-drawing/scrolling/frames/coordinated-frame-gain-scrolling-ancestor.html.
+        * scrollingcoordinator/scrolling-tree/coordinated-frame-in-fixed-expected.txt: Renamed from LayoutTests/tiled-drawing/scrolling/frames/coordinated-frame-in-fixed-expected.txt.
+        * scrollingcoordinator/scrolling-tree/coordinated-frame-in-fixed.html: Renamed from LayoutTests/tiled-drawing/scrolling/frames/coordinated-frame-in-fixed.html.
+        * scrollingcoordinator/scrolling-tree/coordinated-frame-lose-scrolling-ancestor-expected.txt: Renamed from LayoutTests/tiled-drawing/scrolling/frames/coordinated-frame-lose-scrolling-ancestor-expected.txt.
+        * scrollingcoordinator/scrolling-tree/coordinated-frame-lose-scrolling-ancestor.html: Renamed from LayoutTests/tiled-drawing/scrolling/frames/coordinated-frame-lose-scrolling-ancestor.html.
+        * scrollingcoordinator/scrolling-tree/coordinated-frame.html: Renamed from LayoutTests/tiled-drawing/scrolling/frames/coordinated-frame.html.
+        * scrollingcoordinator/scrolling-tree/remove-coordinated-frame-expected.txt: Renamed from LayoutTests/tiled-drawing/scrolling/frames/remove-coordinated-frame-expected.txt.
+        * scrollingcoordinator/scrolling-tree/remove-coordinated-frame.html: Renamed from LayoutTests/tiled-drawing/scrolling/frames/remove-coordinated-frame.html.
+        * scrollingcoordinator/scrolling-tree/remove-scrolling-role-expected.txt: Renamed from LayoutTests/fast/scrolling/ios/remove-scrolling-role-expected.txt.
+        * scrollingcoordinator/scrolling-tree/remove-scrolling-role.html: Renamed from LayoutTests/fast/scrolling/ios/remove-scrolling-role.html.
+        * scrollingcoordinator/scrolling-tree/resources/doc-with-sticky.html: Renamed from LayoutTests/tiled-drawing/scrolling/frames/resources/doc-with-sticky.html.
+        * scrollingcoordinator/scrolling-tree/scrolling-tree-includes-frame-expected.txt: Renamed from LayoutTests/fast/scrolling/scrolling-tree-includes-frame-expected.txt.
+        * scrollingcoordinator/scrolling-tree/scrolling-tree-includes-frame.html: Renamed from LayoutTests/fast/scrolling/scrolling-tree-includes-frame.html.
+
+2019-01-25  Simon Fraser  <simon.fraser@apple.com>
+
         Move tests for scrolling tree mutations into their own directory
         https://bugs.webkit.org/show_bug.cgi?id=193836
 

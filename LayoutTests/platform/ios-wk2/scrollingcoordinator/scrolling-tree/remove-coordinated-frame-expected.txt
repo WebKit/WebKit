@@ -1,8 +1,7 @@
 
-
 (Frame scrolling node
   (scrollable area size 800 600)
-  (contents size 800 600)
+  (contents size 800 1016)
   (scrollable area parameters 
     (horizontal scroll elasticity 1)
     (vertical scroll elasticity 1)
@@ -11,10 +10,16 @@
   (visual viewport enabled 1)
   (layout viewport at (0,0) size 800x600)
   (min layout viewport origin (0,0))
-  (max layout viewport origin (0,0))
-  (synchronous event dispatch region for event wheel
-    at (9,9) size 100x200)
+  (max layout viewport origin (0,416))
   (behavior for fixed 0)
+  (children 1
+    (Fixed node
+      (anchor edges: AnchorEdgeLeft AnchorEdgeTop)
+      (viewport rect at last layout at (0,0) size 800x600)
+      (layer position at last layout (8,10))
+      (children 0
+      )
+    )
+  )
 )
-
 
