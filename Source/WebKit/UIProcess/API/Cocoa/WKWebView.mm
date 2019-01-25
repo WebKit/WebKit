@@ -3175,6 +3175,9 @@ static int32_t activeOrientation(WKWebView *webView)
     else
         _inputViewBounds = [self.window convertRect:CGRectIntersection([endFrameValue CGRectValue], self.window.screen.bounds) fromWindow:nil];
 
+    if ([[UIPeripheralHost sharedInstance] isUndocked])
+        _inputViewBounds = CGRectZero;
+
     if (adjustScrollView) {
         CGFloat bottomInsetBeforeAdjustment = [_scrollView contentInset].bottom;
         SetForScope<BOOL> insetAdjustmentGuard(_currentlyAdjustingScrollViewInsetsForKeyboard, YES);

@@ -297,6 +297,7 @@ typedef enum {
 + (UIPeripheralHost *)activeInstance;
 + (CGRect)visiblePeripheralFrame;
 - (BOOL)isOnScreen;
+- (BOOL)isUndocked;
 - (UIKeyboardRotationState *)rotationState;
 @end
 
