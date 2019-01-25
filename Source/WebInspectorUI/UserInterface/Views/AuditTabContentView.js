@@ -49,7 +49,7 @@ WI.AuditTabContentView = class AuditTabContentView extends WI.ContentBrowserTabC
 
     static isTabAllowed()
     {
-        return !!window.RuntimeAgent && WI.settings.experimentalEnableAuditTab.value;
+        return WI.sharedApp.debuggableType === WI.DebuggableType.Web;
     }
 
     // Public

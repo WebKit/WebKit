@@ -148,6 +148,7 @@ WI.loaded = function()
         WI.TimelineTabContentView.Type,
         WI.StorageTabContentView.Type,
         WI.CanvasTabContentView.Type,
+        WI.AuditTabContentView.Type,
         WI.ConsoleTabContentView.Type,
     ]);
     this._selectedTabIndexSetting = new WI.Setting("selected-tab-index", 0);
