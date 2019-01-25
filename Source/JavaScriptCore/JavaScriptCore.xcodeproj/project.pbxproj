@@ -814,6 +814,7 @@
 		14C25B9E216EA36A00137764 /* InstructionStream.h in Headers */ = {isa = PBXBuildFile; fileRef = 14CC3BA22138A238002D58B6 /* InstructionStream.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		14CA958B16AB50DE00938A06 /* StaticPropertyAnalyzer.h in Headers */ = {isa = PBXBuildFile; fileRef = 14CA958A16AB50DE00938A06 /* StaticPropertyAnalyzer.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		14CA958D16AB50FA00938A06 /* ObjectAllocationProfile.h in Headers */ = {isa = PBXBuildFile; fileRef = 14CA958C16AB50FA00938A06 /* ObjectAllocationProfile.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		14D01A7721FB351F00BC54E9 /* JSScriptSourceProvider.h in Headers */ = {isa = PBXBuildFile; fileRef = 14D01A7621FB350300BC54E9 /* JSScriptSourceProvider.h */; };
 		14D2F3DB139F4BE200491031 /* MarkedSpace.h in Headers */ = {isa = PBXBuildFile; fileRef = 14D2F3D9139F4BE200491031 /* MarkedSpace.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		14DF04DA16B3996D0016A513 /* StaticPropertyAnalysis.h in Headers */ = {isa = PBXBuildFile; fileRef = 14DF04D916B3996D0016A513 /* StaticPropertyAnalysis.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		14E84F9F14EE1ACC00D6D5D4 /* WeakBlock.h in Headers */ = {isa = PBXBuildFile; fileRef = 14E84F9A14EE1ACC00D6D5D4 /* WeakBlock.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -3238,6 +3239,8 @@
 		14CA958C16AB50FA00938A06 /* ObjectAllocationProfile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ObjectAllocationProfile.h; sourceTree = "<group>"; };
 		14CC3BA12138A238002D58B6 /* InstructionStream.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = InstructionStream.cpp; sourceTree = "<group>"; };
 		14CC3BA22138A238002D58B6 /* InstructionStream.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InstructionStream.h; sourceTree = "<group>"; };
+		14D01A7521FB350300BC54E9 /* JSScriptSourceProvider.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = JSScriptSourceProvider.mm; sourceTree = "<group>"; };
+		14D01A7621FB350300BC54E9 /* JSScriptSourceProvider.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JSScriptSourceProvider.h; sourceTree = "<group>"; };
 		14D2F3D9139F4BE200491031 /* MarkedSpace.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MarkedSpace.h; sourceTree = "<group>"; };
 		14D792640DAA03FB001A9F05 /* CLoopStack.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CLoopStack.h; sourceTree = "<group>"; };
 		14D857740A4696C80032146C /* testapi.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; name = testapi.js; path = API/tests/testapi.js; sourceTree = "<group>"; };
@@ -5993,6 +5996,8 @@
 				53EE01B7218F7EFF00AD1F8D /* JSScriptInternal.h */,
 				A7C0C4AA167C08CD0017011D /* JSScriptRef.cpp */,
 				A7C0C4AB167C08CD0017011D /* JSScriptRefPrivate.h */,
+				14D01A7621FB350300BC54E9 /* JSScriptSourceProvider.h */,
+				14D01A7521FB350300BC54E9 /* JSScriptSourceProvider.mm */,
 				1482B74C0A43032800517CFC /* JSStringRef.cpp */,
 				1482B74B0A43032800517CFC /* JSStringRef.h */,
 				146AAB370B66A94400E55F16 /* JSStringRefCF.cpp */,
@@ -9775,6 +9780,7 @@
 				14F7256614EE265E00B1652B /* WeakHandleOwner.h in Headers */,
 				14E84FA214EE1ACC00D6D5D4 /* WeakImpl.h in Headers */,
 				14BE7D3317135CF400D1807A /* WeakInlines.h in Headers */,
+				14D01A7721FB351F00BC54E9 /* JSScriptSourceProvider.h in Headers */,
 				A7CA3AE417DA41AE006538AF /* WeakMapConstructor.h in Headers */,
 				E3A32BC71FC83147007D7E76 /* WeakMapImpl.h in Headers */,
 				E393ADD81FE702D00022D681 /* WeakMapImplInlines.h in Headers */,

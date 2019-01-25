@@ -164,7 +164,6 @@ JSInternalPromise* JSAPIGlobalObject::moduleLoaderFetch(JSGlobalObject* globalOb
     auto deferredPromise = Strong<JSInternalPromiseDeferred>(vm, deferred);
     auto strongKey = Strong<JSString>(vm, jsSecureCast<JSString*>(vm, key));
     auto* resolve = JSNativeStdFunction::create(vm, globalObject, 1, "resolve", [=] (ExecState* exec) {
-        VM& vm = exec->vm();
         // This captures the globalObject but that's ok because our structure keeps it alive anyway.
         JSContext *context = [JSContext contextWithJSGlobalContextRef:toGlobalRef(globalObject->globalExec())];
         id script = valueToObject(context, toRef(exec, exec->argument(0)));
@@ -176,8 +175,7 @@ JSInternalPromise* JSAPIGlobalObject::moduleLoaderFetch(JSGlobalObject* globalOb
             return encodedJSUndefined();
         }
 
-        const String& source = getJSScriptSourceCode(static_cast<JSScript *>(script));
-        args.append(JSSourceCode::create(vm, makeSource(source, SourceOrigin(moduleKey.string()), URL({ }, moduleKey.string()), TextPosition(), JSC::SourceProviderSourceType::Module)));
+        args.append([static_cast<JSScript *>(script) jsSourceCode:moduleKey]);
         call(exec, deferredPromise->JSPromiseDeferred::resolve(), args, "This should never be seen...");
         return encodedJSUndefined();
     });

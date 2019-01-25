@@ -81,6 +81,11 @@ namespace JSC {
 
         bool isHashTableDeletedValue() const { return m_provider.isHashTableDeletedValue(); }
 
+        const SourceProvider& provider() const
+        {
+            return *m_provider;
+        }
+
         unsigned hash() const
         {
             ASSERT(m_provider);

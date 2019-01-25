@@ -527,9 +527,6 @@ static void recomputeDependentOptions()
 
     if (!Options::useCodeCache())
         Options::diskCachePath() = nullptr;
-
-    if (!Options::diskCachePath())
-        Options::forceDiskCache() = false;
 }
 
 void Options::initialize()

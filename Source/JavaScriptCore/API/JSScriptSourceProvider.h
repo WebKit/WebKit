@@ -23,34 +23,32 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
-
-#import "JSScript.h"
-#import "SourceCode.h"
-
 #if JSC_OBJC_API_ENABLED
 
-NS_ASSUME_NONNULL_BEGIN
+#import "SourceProvider.h"
 
-namespace JSC {
-class CachedBytecode;
-class Identifier;
-class JSSourceCode;
+@class JSScript;
+
+class JSScriptSourceProvider : public JSC::SourceProvider {
+public:
+    template<typename... Args>
+    static Ref<JSScriptSourceProvider> create(JSScript *script, Args&&... args)
+    {
+        return adoptRef(*new JSScriptSourceProvider(script, std::forward<Args>(args)...));
+    }
+
+    unsigned hash() const override;
+    StringView source() const override;
+    const JSC::CachedBytecode* cachedBytecode() const override;
+
+private:
+    template<typename... Args>
+    JSScriptSourceProvider(JSScript *script, Args&&... args)
+        : SourceProvider(std::forward<Args>(args)...)
+        , m_script(script)
+    { }
+
+    RetainPtr<JSScript> m_script;
 };
-
-namespace WTF {
-class String;
-};
-
-@interface JSScript(Internal)
-
-- (unsigned)hash;
-- (const WTF::String&)source;
-- (const JSC::CachedBytecode*)cachedBytecode;
-- (JSC::JSSourceCode*)jsSourceCode:(const JSC::Identifier&)moduleKey;
-
-@end
-
-NS_ASSUME_NONNULL_END
 
 #endif // JSC_OBJC_API_ENABLED

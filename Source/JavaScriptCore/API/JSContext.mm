@@ -34,7 +34,6 @@
 #import "JSGlobalObject.h"
 #import "JSInternalPromise.h"
 #import "JSModuleLoader.h"
-#import "JSScriptInternal.h"
 #import "JSValueInternal.h"
 #import "JSVirtualMachineInternal.h"
 #import "JSWrapperMap.h"
@@ -133,11 +132,6 @@
     if (!m_exception)
         return nil;
     return [JSValue valueWithJSValueRef:toRef(m_exception.get()) inContext:self];
-}
-
-- (JSWrapperMap *)wrapperMap
-{
-    return toJS(m_context)->lexicalGlobalObject()->wrapperMap();
 }
 
 - (JSValue *)globalObject
@@ -330,6 +324,11 @@
 {
     JSC::JSLockHolder locker(toJS(m_context));
     return [[self wrapperMap] jsWrapperForObject:object inContext:self];
+}
+
+- (JSWrapperMap *)wrapperMap
+{
+    return toJS(m_context)->lexicalGlobalObject()->wrapperMap();
 }
 
 - (JSValue *)wrapperForJSObject:(JSValueRef)value

@@ -51,6 +51,7 @@ struct CallbackData {
 - (void)beginCallbackWithData:(CallbackData *)callbackData calleeValue:(JSValueRef)calleeValue thisValue:(JSValueRef)thisValue argumentCount:(size_t)argumentCount arguments:(const JSValueRef *)arguments;
 - (void)endCallbackWithData:(CallbackData *)callbackData;
 
+- (JSWrapperMap *)wrapperMap;
 - (JSValue *)wrapperForObjCObject:(id)object;
 - (JSValue *)wrapperForJSObject:(JSValueRef)value;
 

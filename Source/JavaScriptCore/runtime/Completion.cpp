@@ -25,6 +25,7 @@
 
 #include "CallFrame.h"
 #include "CatchScope.h"
+#include "CodeCache.h"
 #include "CodeProfiling.h"
 #include "Exception.h"
 #include "IdentifierInlines.h"
@@ -88,6 +89,36 @@ bool checkModuleSyntax(ExecState* exec, const SourceCode& source, ParserError& e
     ModuleAnalyzer moduleAnalyzer(exec, Identifier::fromUid(privateName), source, moduleProgramNode->varDeclarations(), moduleProgramNode->lexicalVariables());
     moduleAnalyzer.analyze(*moduleProgramNode);
     return true;
+}
+
+CachedBytecode generateBytecode(VM& vm, const SourceCode& source, ParserError& error)
+{
+    JSLockHolder lock(vm);
+    RELEASE_ASSERT(vm.atomicStringTable() == Thread::current().atomicStringTable());
+
+    VariableEnvironment variablesUnderTDZ;
+    JSParserStrictMode strictMode = JSParserStrictMode::NotStrict;
+    JSParserScriptMode scriptMode = JSParserScriptMode::Classic;
+    DebuggerMode debuggerMode = DebuggerOff;
+    EvalContextType evalContextType = EvalContextType::None;
+
+    UnlinkedCodeBlock* unlinkedCodeBlock = recursivelyGenerateUnlinkedCodeBlock<UnlinkedProgramCodeBlock>(vm, source, strictMode, scriptMode, debuggerMode, error, evalContextType, &variablesUnderTDZ);
+    return serializeBytecode(vm, unlinkedCodeBlock, source, SourceCodeType::ProgramType, strictMode, scriptMode, debuggerMode);
+}
+
+CachedBytecode generateModuleBytecode(VM& vm, const SourceCode& source, ParserError& error)
+{
+    JSLockHolder lock(vm);
+    RELEASE_ASSERT(vm.atomicStringTable() == Thread::current().atomicStringTable());
+
+    VariableEnvironment variablesUnderTDZ;
+    JSParserStrictMode strictMode = JSParserStrictMode::Strict;
+    JSParserScriptMode scriptMode = JSParserScriptMode::Module;
+    DebuggerMode debuggerMode = DebuggerOff;
+    EvalContextType evalContextType = EvalContextType::None;
+
+    UnlinkedCodeBlock* unlinkedCodeBlock = recursivelyGenerateUnlinkedCodeBlock<UnlinkedModuleProgramCodeBlock>(vm, source, strictMode, scriptMode, debuggerMode, error, evalContextType, &variablesUnderTDZ);
+    return serializeBytecode(vm, unlinkedCodeBlock, source, SourceCodeType::ModuleType, strictMode, scriptMode, debuggerMode);
 }
 
 JSValue evaluate(ExecState* exec, const SourceCode& source, JSValue thisValue, NakedPtr<Exception>& returnedException)

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008, 2009, 2012, 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2008-2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -42,6 +42,66 @@ namespace JSC {
         WebAssembly,
     };
 
+    class CachedBytecode {
+        WTF_MAKE_NONCOPYABLE(CachedBytecode);
+
+    public:
+        CachedBytecode()
+            : CachedBytecode(nullptr, 0)
+        {
+        }
+
+        CachedBytecode(const void* data, size_t size)
+            : m_owned(false)
+            , m_size(size)
+            , m_data(data)
+        {
+        }
+
+        CachedBytecode(MallocPtr<uint8_t>&& data, size_t size)
+            : m_owned(true)
+            , m_size(size)
+            , m_data(data.leakPtr())
+        {
+        }
+
+        CachedBytecode(CachedBytecode&& other)
+        {
+            *this = WTFMove(other);
+        }
+
+        CachedBytecode& operator=(CachedBytecode&& other)
+        {
+            freeDataIfOwned();
+            m_owned = other.m_owned;
+            m_size = other.m_size;
+            m_data = other.m_data;
+            other.m_owned = false;
+            return *this;
+        }
+
+        const void* data() const { return m_data; }
+        size_t size() const { return m_size; }
+        bool owned() const { return m_owned; }
+
+        ~CachedBytecode()
+        {
+            freeDataIfOwned();
+        }
+
+    private:
+        void freeDataIfOwned()
+        {
+            if (m_data && m_owned)
+                fastFree(const_cast<void*>(m_data));
+        }
+
+        bool m_owned;
+        size_t m_size;
+        const void* m_data;
+    };
+
+
     class SourceProvider : public RefCounted<SourceProvider> {
     public:
         static const intptr_t nullID = 1;
@@ -52,6 +112,8 @@ namespace JSC {
 
         virtual unsigned hash() const = 0;
         virtual StringView source() const = 0;
+        virtual const CachedBytecode* cachedBytecode() const { return nullptr; }
+
         StringView getRange(int start, int end) const
         {
             return source().substring(start, end - start);
@@ -104,16 +166,17 @@ namespace JSC {
             return m_source.get();
         }
 
-    private:
+    protected:
         StringSourceProvider(const String& source, const SourceOrigin& sourceOrigin, URL&& url, const TextPosition& startPosition, SourceProviderSourceType sourceType)
             : SourceProvider(sourceOrigin, WTFMove(url), startPosition, sourceType)
             , m_source(source.isNull() ? *StringImpl::empty() : *source.impl())
         {
         }
 
+    private:
         Ref<StringImpl> m_source;
     };
-    
+
 #if ENABLE(WEBASSEMBLY)
     class WebAssemblySourceProvider : public SourceProvider {
     public:

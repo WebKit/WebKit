@@ -24,6 +24,7 @@
 API/JSAPIGlobalObject.mm
 API/JSAPIWrapperObject.mm
 API/JSScript.mm
+API/JSScriptSourceProvider.mm
 API/JSContext.mm
 API/JSManagedValue.mm
 API/JSRemoteInspector.cpp

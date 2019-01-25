@@ -1980,6 +1980,68 @@ static void testImportModuleTwice()
     }
 }
 
+static void testBytecodeCache()
+{
+    @autoreleasepool {
+        NSURL* tempDirectory = [NSURL fileURLWithPath:NSTemporaryDirectory() isDirectory:YES];
+
+        NSString* fooSource = @"import { n } from \"../foo.js\"; export let foo = n;";
+        NSString* barSource = @"import \"otherDirectory/baz.js\"; export let n = null;";
+        NSString* bazSource = @"import { foo } from \"../directory/bar.js\"; globalThis.ran = null; export let exp = foo;";
+
+        NSURL* fooPath = [tempDirectory URLByAppendingPathComponent:@"foo.js"];
+        NSURL* barPath = [tempDirectory URLByAppendingPathComponent:@"bar.js"];
+        NSURL* bazPath = [tempDirectory URLByAppendingPathComponent:@"baz.js"];
+
+        NSURL* fooCachePath = [tempDirectory URLByAppendingPathComponent:@"foo.js.cache"];
+        NSURL* barCachePath = [tempDirectory URLByAppendingPathComponent:@"bar.js.cache"];
+        NSURL* bazCachePath = [tempDirectory URLByAppendingPathComponent:@"baz.js.cache"];
+
+        [fooSource writeToURL:fooPath atomically:NO encoding:NSASCIIStringEncoding error:nil];
+        [barSource writeToURL:barPath atomically:NO encoding:NSASCIIStringEncoding error:nil];
+        [bazSource writeToURL:bazPath atomically:NO encoding:NSASCIIStringEncoding error:nil];
+
+        __block bool forceDiskCache = false;
+        auto block = ^(JSContext *context, JSValue *identifier, JSValue *resolve, JSValue *reject) {
+            JSC::Options::forceDiskCache() = forceDiskCache;
+            if ([identifier isEqualToObject:@"file:///directory/bar.js"])
+                [resolve callWithArguments:@[[JSScript scriptFromASCIIFile:fooPath inVirtualMachine:context.virtualMachine withCodeSigning:nil andBytecodeCache:fooCachePath]]];
+            else if ([identifier isEqualToObject:@"file:///foo.js"])
+                [resolve callWithArguments:@[[JSScript scriptFromASCIIFile:barPath inVirtualMachine:context.virtualMachine withCodeSigning:nil andBytecodeCache:barCachePath]]];
+            else if ([identifier isEqualToObject:@"file:///otherDirectory/baz.js"])
+                [resolve callWithArguments:@[[JSScript scriptFromASCIIFile:bazPath inVirtualMachine:context.virtualMachine withCodeSigning:nil andBytecodeCache:bazCachePath]]];
+            else
+                [reject callWithArguments:@[[JSValue valueWithNewErrorFromMessage:@"Weird path" inContext:context]]];
+        };
+
+        @autoreleasepool {
+            auto *context = [JSContextFetchDelegate contextWithBlockForFetch:block];
+            context.moduleLoaderDelegate = context;
+            JSValue *promise = [context evaluateScript:@"import('../otherDirectory/baz.js');" withSourceURL:[NSURL fileURLWithPath:@"/directory" isDirectory:YES]];
+            JSValue *null = [JSValue valueWithNullInContext:context];
+            checkModuleCodeRan(context, promise, null);
+        }
+
+        @autoreleasepool {
+            forceDiskCache = true;
+            auto *context = [JSContextFetchDelegate contextWithBlockForFetch:block];
+            context.moduleLoaderDelegate = context;
+            JSValue *promise = [context evaluateScript:@"import('../otherDirectory/baz.js');" withSourceURL:[NSURL fileURLWithPath:@"/directory" isDirectory:YES]];
+            JSValue *null = [JSValue valueWithNullInContext:context];
+            checkModuleCodeRan(context, promise, null);
+            JSC::Options::forceDiskCache() = false;
+        }
+
+        NSFileManager* fileManager = [NSFileManager defaultManager];
+        [fileManager removeItemAtURL:fooPath error:nil];
+        [fileManager removeItemAtURL:barPath error:nil];
+        [fileManager removeItemAtURL:bazPath error:nil];
+        [fileManager removeItemAtURL:fooCachePath error:nil];
+        [fileManager removeItemAtURL:barCachePath error:nil];
+        [fileManager removeItemAtURL:bazCachePath error:nil];
+    }
+}
+
 @interface JSContextFileLoaderDelegate : JSContext <JSModuleLoaderDelegate>
 
 + (instancetype)newContext;
@@ -2017,7 +2079,7 @@ static NSURL *resolvePathToScripts()
 - (void)context:(JSContext *)context fetchModuleForIdentifier:(JSValue *)identifier withResolveHandler:(JSValue *)resolve andRejectHandler:(JSValue *)reject
 {
     NSURL *filePath = [NSURL URLWithString:[identifier toString]];
-    auto *script = [JSScript scriptFromASCIIFile:filePath inVirtualMachine:[context virtualMachine] withCodeSigning:nil andBytecodeCache:nil];
+    auto *script = [JSScript scriptFromASCIIFile:filePath inVirtualMachine:context.virtualMachine withCodeSigning:nil andBytecodeCache:nil];
     if (script)
         [resolve callWithArguments:@[script]];
     else
@@ -2049,6 +2111,7 @@ void testObjectiveCAPI()
     testFetchWithTwoCycle();
     testFetchWithThreeCycle();
     testImportModuleTwice();
+    testBytecodeCache();
 
     testLoaderRejectsNilScriptURL();
     testLoaderRejectsFailedFetch();

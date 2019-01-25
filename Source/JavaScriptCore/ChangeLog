@@ -1,3 +1,82 @@
+2019-01-25  Tadeu Zagallo  <tzagallo@apple.com>
+
+        Add API to generate and consume cached bytecode
+        https://bugs.webkit.org/show_bug.cgi?id=193401
+        <rdar://problem/47514099>
+
+        Reviewed by Keith Miller.
+
+        Add the `generateBytecode` and `generateModuleBytecode` functions to
+        generate serialized bytecode for a given `SourceCode`. These functions
+        will eagerly generate code for all the nested functions.
+
+        Additionally, update the API methods in JSScript to generate and use the
+        bytecode when the bytecodeCache path is provided.
+
+        * API/JSAPIGlobalObject.mm:
+        (JSC::JSAPIGlobalObject::moduleLoaderFetch):
+        * API/JSContext.mm:
+        (-[JSContext wrapperMap]):
+        * API/JSContextInternal.h:
+        * API/JSScript.mm:
+        (+[JSScript scriptWithSource:inVirtualMachine:]):
+        (+[JSScript scriptFromASCIIFile:inVirtualMachine:withCodeSigning:andBytecodeCache:]):
+        (-[JSScript dealloc]):
+        (-[JSScript readCache]):
+        (-[JSScript writeCache]):
+        (-[JSScript hash]):
+        (-[JSScript source]):
+        (-[JSScript cachedBytecode]):
+        (-[JSScript jsSourceCode:]):
+        * API/JSScriptInternal.h:
+        * API/JSScriptSourceProvider.h: Copied from Source/JavaScriptCore/API/JSScriptInternal.h.
+        (JSScriptSourceProvider::create):
+        (JSScriptSourceProvider::JSScriptSourceProvider):
+        * API/JSScriptSourceProvider.mm: Copied from Source/JavaScriptCore/API/JSScriptInternal.h.
+        (JSScriptSourceProvider::hash const):
+        (JSScriptSourceProvider::source const):
+        (JSScriptSourceProvider::cachedBytecode const):
+        * API/JSVirtualMachine.mm:
+        (-[JSVirtualMachine vm]):
+        * API/JSVirtualMachineInternal.h:
+        * API/tests/testapi.mm:
+        (testBytecodeCache):
+        (-[JSContextFileLoaderDelegate context:fetchModuleForIdentifier:withResolveHandler:andRejectHandler:]):
+        (testObjectiveCAPI):
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * SourcesCocoa.txt:
+        * bytecode/UnlinkedFunctionExecutable.cpp:
+        (JSC::UnlinkedFunctionExecutable::unlinkedCodeBlockFor):
+        * bytecode/UnlinkedFunctionExecutable.h:
+        * parser/SourceCodeKey.h:
+        (JSC::SourceCodeKey::source const):
+        * parser/SourceProvider.h:
+        (JSC::CachedBytecode::CachedBytecode):
+        (JSC::CachedBytecode::operator=):
+        (JSC::CachedBytecode::data const):
+        (JSC::CachedBytecode::size const):
+        (JSC::CachedBytecode::owned const):
+        (JSC::CachedBytecode::~CachedBytecode):
+        (JSC::CachedBytecode::freeDataIfOwned):
+        (JSC::SourceProvider::cachedBytecode const):
+        * parser/UnlinkedSourceCode.h:
+        (JSC::UnlinkedSourceCode::provider const):
+        * runtime/CodeCache.cpp:
+        (JSC::generateUnlinkedCodeBlockForFunctions):
+        (JSC::writeCodeBlock):
+        (JSC::serializeBytecode):
+        * runtime/CodeCache.h:
+        (JSC::CodeCacheMap::fetchFromDiskImpl):
+        (JSC::CodeCacheMap::findCacheAndUpdateAge):
+        (JSC::generateUnlinkedCodeBlockImpl):
+        (JSC::generateUnlinkedCodeBlock):
+        * runtime/Completion.cpp:
+        (JSC::generateBytecode):
+        (JSC::generateModuleBytecode):
+        * runtime/Completion.h:
+        * runtime/Options.cpp:
+        (JSC::recomputeDependentOptions):
+
 2019-01-25  Keith Rollin  <krollin@apple.com>
 
         Update WebKitAdditions.xcconfig with correct order of variable definitions

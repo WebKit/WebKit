@@ -100,6 +100,8 @@ public:
 
     unsigned hash() const { return m_hash; }
 
+    const UnlinkedSourceCode& source() const { return m_sourceCode; }
+
     size_t length() const { return m_sourceCode.length(); }
 
     bool isNull() const { return m_sourceCode.isNull(); }

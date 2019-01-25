@@ -162,4 +162,65 @@ void CodeCache::write(VM& vm)
         writeCodeBlock(vm, it.key, it.value);
 }
 
+void generateUnlinkedCodeBlockForFunctions(VM& vm, UnlinkedCodeBlock* unlinkedCodeBlock, const SourceCode& parentSource, DebuggerMode debuggerMode, ParserError& error)
+{
+    auto generate = [&](UnlinkedFunctionExecutable* unlinkedExecutable, CodeSpecializationKind constructorKind) {
+        if (constructorKind == CodeForConstruct && SourceParseModeSet(SourceParseMode::AsyncArrowFunctionMode, SourceParseMode::AsyncMethodMode, SourceParseMode::AsyncFunctionMode).contains(unlinkedExecutable->parseMode()))
+            return;
+
+        FunctionExecutable* executable = unlinkedExecutable->link(vm, parentSource);
+        const SourceCode& source = executable->source();
+        UnlinkedFunctionCodeBlock* unlinkedFunctionCodeBlock = unlinkedExecutable->unlinkedCodeBlockFor(vm, source, constructorKind, debuggerMode, error, unlinkedExecutable->parseMode());
+        if (unlinkedFunctionCodeBlock)
+            generateUnlinkedCodeBlockForFunctions(vm, unlinkedFunctionCodeBlock, source, debuggerMode, error);
+    };
+
+    // FIXME: We should also generate CodeBlocks for CodeForConstruct
+    // https://bugs.webkit.org/show_bug.cgi?id=193823
+    for (unsigned i = 0; i < unlinkedCodeBlock->numberOfFunctionDecls(); i++)
+        generate(unlinkedCodeBlock->functionDecl(i), CodeForCall);
+    for (unsigned i = 0; i < unlinkedCodeBlock->numberOfFunctionExprs(); i++)
+        generate(unlinkedCodeBlock->functionExpr(i), CodeForCall);
+}
+
+void writeCodeBlock(VM& vm, const SourceCodeKey& key, const SourceCodeValue& value)
+{
+#if OS(DARWIN)
+    const char* cachePath = Options::diskCachePath();
+    if (LIKELY(!cachePath))
+        return;
+
+    UnlinkedCodeBlock* codeBlock = jsDynamicCast<UnlinkedCodeBlock*>(vm, value.cell.get());
+    if (!codeBlock)
+        return;
+
+    std::pair<MallocPtr<uint8_t>, size_t> result = encodeCodeBlock(vm, key, codeBlock);
+
+    String filename = makeString(cachePath, '/', String::number(key.hash()), ".cache");
+    int fd = open(filename.utf8().data(), O_CREAT | O_WRONLY, 0666);
+    if (fd == -1)
+        return;
+    int rc = flock(fd, LOCK_EX | LOCK_NB);
+    if (!rc)
+        ::write(fd, result.first.get(), result.second);
+    close(fd);
+#else
+    UNUSED_PARAM(vm);
+    UNUSED_PARAM(key);
+    UNUSED_PARAM(value);
+#endif
+}
+
+CachedBytecode serializeBytecode(VM& vm, UnlinkedCodeBlock* codeBlock, const SourceCode& source, SourceCodeType codeType, JSParserStrictMode strictMode, JSParserScriptMode scriptMode, DebuggerMode debuggerMode)
+{
+    SourceCodeKey key(
+        source, String(), codeType, strictMode, scriptMode,
+        DerivedContextType::None, EvalContextType::None, false, debuggerMode,
+        vm.typeProfiler() ? TypeProfilerEnabled::Yes : TypeProfilerEnabled::No,
+        vm.controlFlowProfiler() ? ControlFlowProfilerEnabled::Yes : ControlFlowProfilerEnabled::No,
+        WTF::nullopt);
+    std::pair<MallocPtr<uint8_t>, size_t> result = encodeCodeBlock(vm, key, codeBlock);
+    return CachedBytecode { WTFMove(result.first), result.second };
+}
+
 }

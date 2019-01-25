@@ -297,6 +297,11 @@ JSContextGroupRef getGroupFromVirtualMachine(JSVirtualMachine *virtualMachine)
 
 #endif // ENABLE(DFG_JIT)
 
+- (JSC::VM&)vm
+{
+    return *toJS(m_group);
+}
+
 @end
 
 static void scanExternalObjectGraph(JSC::VM& vm, JSC::SlotVisitor& visitor, void* root, bool lockAcquired)
