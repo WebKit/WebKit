@@ -293,7 +293,6 @@ void FrameView::resetLayoutMilestones()
 {
     m_firstLayoutCallbackPending = false;
     m_isVisuallyNonEmpty = false;
-    m_firstVisuallyNonEmptyLayoutCallbackPending = true;
     m_significantRenderedTextMilestonePending = true;
     m_renderedSignificantAmountOfText = false;
     m_visuallyNonEmptyCharacterCount = 0;
@@ -2851,8 +2850,7 @@ void FrameView::disableLayerFlushThrottlingTemporarilyForInteraction()
 
 void FrameView::loadProgressingStatusChanged()
 {
-    auto hasPendingVisuallyNonEmptyCallback = m_firstVisuallyNonEmptyLayoutCallbackPending && !m_isVisuallyNonEmpty;
-    if (hasPendingVisuallyNonEmptyCallback && frame().loader().isComplete())
+    if (!m_isVisuallyNonEmpty && frame().loader().isComplete())
         fireLayoutRelatedMilestonesIfNeeded();
     updateLayerFlushThrottling();
     adjustTiledBackingCoverage();
@@ -4389,7 +4387,7 @@ void FrameView::updateLayoutAndStyleIfNeededRecursive()
 
 void FrameView::incrementVisuallyNonEmptyCharacterCount(const String& inlineText)
 {
-    if (m_isVisuallyNonEmpty && m_renderedSignificantAmountOfText)
+    if (m_visuallyNonEmptyCharacterCount > visualCharacterThreshold && m_renderedSignificantAmountOfText)
         return;
 
     ++m_textRendererCountForVisuallyNonEmptyCharacters;
@@ -4404,9 +4402,6 @@ void FrameView::incrementVisuallyNonEmptyCharacterCount(const String& inlineText
         return length;
     };
     m_visuallyNonEmptyCharacterCount += nonWhitespaceLength(inlineText);
-
-    if (!m_isVisuallyNonEmpty && m_visuallyNonEmptyCharacterCount > visualCharacterThreshold)
-        updateIsVisuallyNonEmpty();
 
     if (!m_renderedSignificantAmountOfText)
         updateSignificantRenderedTextMilestoneIfNeeded();
@@ -4518,16 +4513,6 @@ void FrameView::updateSignificantRenderedTextMilestoneIfNeeded()
         return;
 
     m_renderedSignificantAmountOfText = true;
-}
-
-void FrameView::updateIsVisuallyNonEmpty()
-{
-    if (m_isVisuallyNonEmpty)
-        return;
-    if (!qualifiesAsVisuallyNonEmpty())
-        return;
-    m_isVisuallyNonEmpty = true;
-    adjustTiledBackingCoverage();
 }
 
 bool FrameView::isViewForDocumentInFrame() const
@@ -5151,14 +5136,11 @@ void FrameView::fireLayoutRelatedMilestonesIfNeeded()
         if (frame().isMainFrame())
             page->startCountingRelevantRepaintedObjects();
     }
-    updateIsVisuallyNonEmpty();
     updateSignificantRenderedTextMilestoneIfNeeded();
 
-    // If the layout was done with pending sheets, we are not in fact visually non-empty yet.
-    if (m_isVisuallyNonEmpty && m_firstVisuallyNonEmptyLayoutCallbackPending) {
-        m_firstVisuallyNonEmptyLayoutCallbackPending = false;
+    if (!m_isVisuallyNonEmpty && qualifiesAsVisuallyNonEmpty()) {
+        m_isVisuallyNonEmpty = true;
         addPaintPendingMilestones(DidFirstMeaningfulPaint);
-
         if (requestedMilestones & DidFirstVisuallyNonEmptyLayout)
             milestonesAchieved.add(DidFirstVisuallyNonEmptyLayout);
     }

@@ -878,10 +878,9 @@ private:
     OptionSet<PaintBehavior> m_paintBehavior;
     bool m_isPainting;
 
-    unsigned m_visuallyNonEmptyCharacterCount;
-    unsigned m_visuallyNonEmptyPixelCount;
-    bool m_isVisuallyNonEmpty;
-    bool m_firstVisuallyNonEmptyLayoutCallbackPending;
+    bool m_isVisuallyNonEmpty { false };
+    unsigned m_visuallyNonEmptyCharacterCount { 0 };
+    unsigned m_visuallyNonEmptyPixelCount { 0 };
 
     unsigned m_textRendererCountForVisuallyNonEmptyCharacters { 0 };
     bool m_renderedSignificantAmountOfText;
@@ -952,12 +951,9 @@ private:
 
 inline void FrameView::incrementVisuallyNonEmptyPixelCount(const IntSize& size)
 {
-    if (m_isVisuallyNonEmpty)
+    if (m_visuallyNonEmptyPixelCount > visualPixelThreshold)
         return;
     m_visuallyNonEmptyPixelCount += size.width() * size.height();
-    if (m_visuallyNonEmptyPixelCount <= visualPixelThreshold)
-        return;
-    updateIsVisuallyNonEmpty();
 }
 
 } // namespace WebCore

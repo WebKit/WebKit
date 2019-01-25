@@ -1,3 +1,27 @@
+2019-01-25  Zalan Bujtas  <zalan@apple.com>
+
+        Remove FrameView::m_firstVisuallyNonEmptyLayoutCallbackPending
+        https://bugs.webkit.org/show_bug.cgi?id=193835
+
+        Reviewed by Simon Fraser.
+
+        Currently updateIsVisuallyNonEmpty() is called from fireLayoutRelatedMilestonesIfNeeded() and from the incrementVisually*() functions.
+        By calling it from incrementVisually*() and setting the m_isVisuallyNonEmpty flag to true early does not have any impact on when the milestone is fired.
+        The milestone firing, as part of the post-layout tasks is triggered by a subsequent layout.
+        However having multiple callers of updateIsVisuallyNonEmpty() requires an extra boolen (m_firstVisuallyNonEmptyLayoutCallbackPending) to maintain.
+        Also calling updateIsVisuallyNonEmpty() repeatedly could be costly (with the current threshold of 200 characters, I don't think it is though).
+
+        This patch removes m_firstVisuallyNonEmptyLayoutCallbackPending and moves the logic from updateIsVisuallyNonEmpty() to fireLayoutRelatedMilestonesIfNeeded().
+
+        * page/FrameView.cpp:
+        (WebCore::FrameView::resetLayoutMilestones):
+        (WebCore::FrameView::loadProgressingStatusChanged):
+        (WebCore::FrameView::incrementVisuallyNonEmptyCharacterCount):
+        (WebCore::FrameView::fireLayoutRelatedMilestonesIfNeeded):
+        (WebCore::FrameView::updateIsVisuallyNonEmpty): Deleted.
+        * page/FrameView.h:
+        (WebCore::FrameView::incrementVisuallyNonEmptyPixelCount):
+
 2019-01-25  David Kilzer  <ddkilzer@apple.com>
 
         Move soft-linking of Lookup.framework out of LookupSPI.h
