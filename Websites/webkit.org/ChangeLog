@@ -1,3 +1,12 @@
+2019-01-25  Jon Davis  <jond@apple.com>
+
+        Added feature status entry for "Removed in Preview"
+        https://bugs.webkit.org/show_bug.cgi?id=193794
+
+        Reviewed by Joseph Pecoraro.
+
+        * wp-content/themes/webkit/status.php:
+
 2018-12-20  Jon Davis  <jond@apple.com>
 
         Ensure new styles are served on webkit.org.

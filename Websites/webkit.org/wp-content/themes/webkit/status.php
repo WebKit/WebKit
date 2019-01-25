@@ -627,6 +627,7 @@ function initializeStatusPage() {
         'supported',
         'deprecated',
         'removed',
+        'removed in preview',
         'not considering'
     ];
 

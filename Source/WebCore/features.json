@@ -61,7 +61,7 @@
     {
         "name": "CSS Font Display",
         "status": {
-            "status": "In Development",
+            "status": "Supported",
             "enabled-by-default": false
         },
         "url": "https://drafts.csswg.org/css-fonts-4/#font-display-desc",
@@ -216,8 +216,8 @@
     {
         "name": "CSS Text Decoration Level 4",
         "status": {
-            "status": "Under Consideration",
-            "enabled-by-default": false
+            "status": "Supported in Preview",
+            "enabled-by-default": true
         },
         "url": "https://drafts.csswg.org/css-text-decor-4/",
         "keywords": ["css text decoration", "text decoration"],
@@ -537,7 +537,7 @@
     {
         "name": "SVG in OpenType Fonts",
         "status": {
-            "status": "Under Consideration"
+            "status": "Supported"
         },
         "url": "https://www.microsoft.com/typography/otspec/svg.htm/",
         "keywords": ["svg", "font", "opentype", "OT-SVG"],
@@ -658,6 +658,20 @@
             "name": "Jiewen Tan",
             "email": "jiewen_tan@apple.com",
             "twitter": "@alanwaketan"
+        }
+    },
+    {
+        "name": "Web SQL Database",
+        "status": {
+            "status": "Removed In Preview"
+        },
+        "url": "https://dev.w3.org/html5/webdatabase/",
+        "keywords": ["websql", "web sql", "db", "storage", "database"],
+        "description": "An API for storing data in databases that can be queried using a variant of SQL.",
+        "contact": {
+            "name": "Jon Davis",
+            "twitter": "@jonathandavis",
+            "email": "web-evangelist@apple.com"
         }
     },
     {
@@ -935,7 +949,7 @@
     {
         "name": "File and Directory Entries API",
         "status": {
-            "status": "In Development"
+            "status": "Supported"
         },
         "url": "https://wicg.github.io/entries-api/",
         "webkit-url": "https://bugs.webkit.org/show_bug.cgi?id=175976",
@@ -1054,7 +1068,7 @@
     {
         "name": "MediaStream Recording API",
         "status": {
-            "status": "Under Consideration"
+            "status": "In Development"
         },
         "url": "https://w3c.github.io/mediacapture-record",
         "webkit-url": "https://bugs.webkit.org/show_bug.cgi?id=85851",
@@ -1111,7 +1125,7 @@
     {
         "name": "Readable Streams",
         "status": {
-            "status": "In Development",
+            "status": "Supported",
             "enabled-by-default": true
         },
         "url": "https://streams.spec.whatwg.org/#rs",
@@ -1207,7 +1221,7 @@
     {
         "name": "Subresource Integrity",
         "status": {
-            "status": "Supported In Preview"
+            "status": "Supported"
         },
         "url": "https://w3c.github.io/webappsec-subresource-integrity/",
         "description": "Extends script and link elements with an integrity attribute that contains a cryptographic hash of the representation of the resource the author expects to load.",
@@ -1266,7 +1280,7 @@
     {
         "name": "Visual Viewport API",
         "status": {
-            "status": "In Development"
+            "status": "Supported In Preview"
         },
         "url": "https://wicg.github.io/visual-viewport/",
         "description": "A proposal to add explicit APIs to the Web for querying and setting the visual viewport.",
@@ -1275,7 +1289,7 @@
     {
         "name": "Web Audio",
         "status": {
-            "status": "In Development"
+            "status": "Partially Supported"
         },
         "url": "https://www.w3.org/TR/webaudio/",
         "keywords": ["audio", "webaudio"],
