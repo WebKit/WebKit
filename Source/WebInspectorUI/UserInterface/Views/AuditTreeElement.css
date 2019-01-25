@@ -35,7 +35,7 @@
     height: 100%;
 }
 
-.tree-outline .item.audit:matches(.test-case, .test-group):not(.manager-active) > .status:hover > img {
+.tree-outline .item.audit:matches(.test-case, .test-group):not(.unsupported, .manager-active) > .status:hover > img {
     width: 75%;
     height: 75%;
     margin: 0 auto;
@@ -43,14 +43,26 @@
 }
 
 .tree-outline .item.audit > .status:not(:hover) > img.show-on-hover,
-.tree-outline .item.audit.test-group.expanded:not(.editing-audits) > .status:not(:hover) {
+.tree-outline .item.audit.test-group.expanded:not(.unsupported, .editing-audits) > .status:not(:hover) {
     opacity: 0;
 }
 
 .tree-outline .item.audit.manager-active > .status > img.show-on-hover,
 .tree-outline .item.audit.test-group.expanded:not(.editing-audits) > .status:hover > :not(img),
-.tree-outline .item.audit.test-group-result.expanded > .status {
+.tree-outline .item.audit.test-group-result.expanded > .status,
+.tree-outline .item.audit.unsupported + .children .item.audit.unsupported  > .status > img {
     display: none;
+}
+
+.tree-outline .item.audit.unsupported:not(.selected) > :matches(.icon, .titles) {
+    opacity: 0.5;
+}
+
+.tree-outline .item.audit.unsupported > .status > img {
+    width: 75%;
+    height: 75%;
+    margin: 0 auto;
+    content: url(../Images/Warning.svg);
 }
 
 .tree-outline .item.audit > .status > img.pass {

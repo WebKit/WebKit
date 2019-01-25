@@ -954,6 +954,7 @@ localizedStrings["These are all of the different types of data that can be retur
 localizedStrings["These tests serve as a demonstration of the functionality and structure of audits."] = "These tests serve as a demonstration of the functionality and structure of audits.";
 localizedStrings["This action causes no visual change"] = "This action causes no visual change";
 localizedStrings["This action moves the path outside the visible area"] = "This action moves the path outside the visible area";
+localizedStrings["This audit is not supported"] = "This audit is not supported";
 localizedStrings["This is an example of how errors are shown. The error was thrown manually, but execution errors will appear in the same way."] = "This is an example of how errors are shown. The error was thrown manually, but execution errors will appear in the same way.";
 localizedStrings["This is an example of how result DOM nodes are shown. It will pass with all elements with an id attribute."] = "This is an example of how result DOM nodes are shown. It will pass with all elements with an id attribute.";
 localizedStrings["This is an example of how result DOM nodes are shown. It will pass with the <body> element."] = "This is an example of how result DOM nodes are shown. It will pass with the <body> element.";

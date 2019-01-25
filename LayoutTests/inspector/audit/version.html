@@ -11,7 +11,7 @@ function test()
         name: "Audit.VERSION.MatchesFrontend",
         description: "Check that the audit system version is in sync with the frontend version.",
         test() {
-            InspectorTest.expectEqual(AuditAgent.VERSION, WI.AuditTestCase.Version, "The audit system version should match the frontend version.");
+            InspectorTest.expectEqual(AuditAgent.VERSION, WI.AuditTestBase.Version, "The audit system version should match the frontend version.");
             return true;
         },
     });

@@ -38,14 +38,25 @@ WI.AuditTestGroup = class AuditTestGroup extends WI.AuditTestBase
         this._tests = tests;
         this._preventDisabledPropagation = false;
 
-        if (disabled)
-            this.disabled = disabled;
+        if (disabled || !this.supported)
+            this.disabled = true;
+
+        let hasSupportedTest = false;
 
         for (let test of this._tests) {
+            if (!this.supported)
+                test.supported = false;
+            else if (test.supported)
+                hasSupportedTest = true;
+
             test.addEventListener(WI.AuditTestBase.Event.Completed, this._handleTestCompleted, this);
             test.addEventListener(WI.AuditTestBase.Event.DisabledChanged, this._handleTestDisabledChanged, this);
             test.addEventListener(WI.AuditTestBase.Event.Progress, this._handleTestProgress, this);
+
         }
+
+        if (!hasSupportedTest)
+            this.supported = false;
     }
 
     // Static
@@ -55,7 +66,7 @@ WI.AuditTestGroup = class AuditTestGroup extends WI.AuditTestBase
         if (typeof payload !== "object" || payload === null)
             return null;
 
-        let {type, name, tests, description, disabled} = payload;
+        let {type, name, tests, description, supports, disabled} = payload;
 
         if (type !== WI.AuditTestGroup.TypeIdentifier)
             return null;
@@ -84,6 +95,8 @@ WI.AuditTestGroup = class AuditTestGroup extends WI.AuditTestBase
         let options = {};
         if (typeof description === "string")
             options.description = description;
+        if (typeof supports === "number")
+            options.supports = supports;
         if (typeof disabled === "boolean")
             options.disabled = disabled;
 
@@ -93,6 +106,19 @@ WI.AuditTestGroup = class AuditTestGroup extends WI.AuditTestBase
     // Public
 
     get tests() { return this._tests; }
+
+    get supported()
+    {
+        return super.supported;
+    }
+
+    set supported(supported)
+    {
+        for (let test of this._tests)
+            test.supported = supported;
+
+        super.supported = supported;
+    }
 
     get disabled()
     {

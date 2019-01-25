@@ -294,7 +294,6 @@ WI.AuditNavigationSidebarPanel = class AuditNavigationSidebarPanel extends WI.Na
             return;
         }
 
-        console.assert(!WI.auditManager.editing);
         if (WI.auditManager.editing)
             return;
 

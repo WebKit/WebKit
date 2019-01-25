@@ -41,7 +41,7 @@ WI.AuditTestCase = class AuditTestCase extends WI.AuditTestBase
         if (typeof payload !== "object" || payload === null)
             return null;
 
-        let {type, name, test, description, disabled} = payload;
+        let {type, name, test, description, supports, disabled} = payload;
 
         if (type !== WI.AuditTestCase.TypeIdentifier)
             return null;
@@ -55,6 +55,8 @@ WI.AuditTestCase = class AuditTestCase extends WI.AuditTestBase
         let options = {};
         if (typeof description === "string")
             options.description = description;
+        if (typeof supports === "number")
+            options.supports = supports;
         if (typeof disabled === "boolean")
             options.disabled = disabled;
 
@@ -278,8 +280,5 @@ WI.AuditTestCase = class AuditTestCase extends WI.AuditTestBase
         this._result = new WI.AuditTestCaseResult(this.name, level, options);
     }
 };
-
-// Keep this in sync with Inspector::Protocol::Audit::VERSION.
-WI.AuditTestCase.Version = 1;
 
 WI.AuditTestCase.TypeIdentifier = "test-case";

@@ -1,3 +1,60 @@
+2019-01-24  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: Audit: add supports key to test/group for compatibility
+        https://bugs.webkit.org/show_bug.cgi?id=193686
+        <rdar://problem/47460872>
+
+        Reviewed by Joseph Pecoraro.
+
+        * UserInterface/Models/AuditTestBase.js:
+        (WI.AuditTestBase):
+        (WI.AuditTestBase.prototype.get supported): Added.
+        (WI.AuditTestBase.prototype.set supported): Added.
+        (WI.AuditTestBase.prototype.set disabled):
+        (WI.AuditTestBase.prototype.async start):
+        (WI.AuditTestBase.prototype.stop):
+        (WI.AuditTestBase.toJSON):
+        * UserInterface/Models/AuditTestCase.js:
+        (WI.AuditTestCase.async fromPayload):
+        * UserInterface/Models/AuditTestGroup.js:
+        (WI.AuditTestGroup):
+        (WI.AuditTestGroup.async fromPayload):
+        (WI.AuditTestGroup.prototype.get supported): Added.
+        (WI.AuditTestGroup.prototype.set supported): Added.
+        Add support for a "supports" key in the test JSON that prevents the test from being run if
+        it's value is lower than the frontend/backend version.
+
+        * UserInterface/Views/AuditTreeElement.js:
+        (WI.AuditTreeElement.prototype.onattach):
+        (WI.AuditTreeElement.prototype.ondelete):
+        (WI.AuditTreeElement.prototype.populateContextMenu):
+        (WI.AuditTreeElement.prototype._updateStatus): Added.
+        (WI.AuditTreeElement.prototype._showRunningSpinner):
+        (WI.AuditTreeElement.prototype._showRunningProgress):
+        (WI.AuditTreeElement.prototype._updateTestGroupDisabled):
+        (WI.AuditTreeElement.prototype._handleTestCaseCompleted):
+        (WI.AuditTreeElement.prototype._handleTestResultCleared):
+        (WI.AuditTreeElement.prototype._handleTestGroupCompleted):
+        (WI.AuditTreeElement.prototype._handleManagerEditingChanged):
+        (WI.AuditTreeElement.prototype.canSelectOnMouseDown): Deleted.
+        (WI.AuditTreeElement.prototype._updateLevel): Deleted.
+        * UserInterface/Views/AuditTreeElement.css:
+        (.tree-outline .item.audit:matches(.test-case, .test-group):not(.unsupported, .manager-active) > .status:hover > img): Added.
+        (.tree-outline .item.audit > .status:not(:hover) > img.show-on-hover, .tree-outline .item.audit.test-group.expanded:not(.unsupported, .editing-audits) > .status:not(:hover)): Added.
+        (.tree-outline .item.audit.manager-active > .status > img.show-on-hover, .tree-outline .item.audit.test-group.expanded:not(.editing-audits) > .status:hover > :not(img), .tree-outline .item.audit.test-group-result.expanded > .status, .tree-outline .item.audit.unsupported + .children .item.audit.unsupported  > .status > img): Added.
+        (.tree-outline .item.audit.unsupported:not(.selected) > :matches(.icon, .titles)): Added.
+        (.tree-outline .item.audit.unsupported > .status > img): Added.
+        (.tree-outline .item.audit:matches(.test-case, .test-group):not(.manager-active) > .status:hover > img): Deleted.
+        (.tree-outline .item.audit > .status:not(:hover) > img.show-on-hover, .tree-outline .item.audit.test-group.expanded:not(.editing-audits) > .status:not(:hover)): Deleted.
+        (.tree-outline .item.audit.manager-active > .status > img.show-on-hover, .tree-outline .item.audit.test-group.expanded:not(.editing-audits) > .status:hover > :not(img), .tree-outline .item.audit.test-group-result.expanded > .status): Deleted.
+        Hide unsupported tests unless in edit mode, where they are greyed out and cannot be enabled.
+        Drive-by: only allow tests to be deleted when in edit mode.
+
+        * UserInterface/Views/AuditNavigationSidebarPanel.js:
+        (WI.AuditNavigationSidebarPanel.prototype._treeSelectionDidChange):
+
+        * Localizations/en.lproj/localizedStrings.js:
+
 2019-01-24  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: CPU Usage Timeline

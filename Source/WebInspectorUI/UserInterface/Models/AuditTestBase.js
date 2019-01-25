@@ -25,10 +25,11 @@
 
 WI.AuditTestBase = class AuditTestBase extends WI.Object
 {
-    constructor(name, {description, disabled} = {})
+    constructor(name, {description, supports, disabled} = {})
     {
         console.assert(typeof name === "string");
         console.assert(!description || typeof description === "string");
+        console.assert(supports === undefined || typeof supports === "number");
         console.assert(disabled === undefined || typeof disabled === "boolean");
 
         super();
@@ -38,6 +39,18 @@ WI.AuditTestBase = class AuditTestBase extends WI.Object
 
         this._name = name;
         this._description = description || null;
+        this._supports = supports;
+
+        this._supported = true;
+        if (typeof this._supports === "number") {
+            if (this._supports > WI.AuditTestBase.Version)
+                this._supported = false;
+            else if (InspectorBackend.domains.Audit && this._supports > InspectorBackend.domains.Audit.VERSION)
+                this._supported = false;
+        }
+
+        if (!this.supported)
+            disabled = true;
 
         this._runningState = disabled ? WI.AuditManager.RunningState.Disabled : WI.AuditManager.RunningState.Inactive;
         this._result = null;
@@ -50,6 +63,18 @@ WI.AuditTestBase = class AuditTestBase extends WI.Object
     get runningState() { return this._runningState; }
     get result() { return this._result; }
 
+    get supported()
+    {
+        return this._supported;
+    }
+
+    set supported(supported)
+    {
+        this._supported = supported;
+        if (!this._supported)
+            this.disabled = true;
+    }
+
     get disabled()
     {
         return this._runningState === WI.AuditManager.RunningState.Disabled;
@@ -60,6 +85,9 @@ WI.AuditTestBase = class AuditTestBase extends WI.Object
         console.assert(this._runningState === WI.AuditManager.RunningState.Disabled || this._runningState === WI.AuditManager.RunningState.Inactive);
         if (this._runningState !== WI.AuditManager.RunningState.Disabled && this._runningState !== WI.AuditManager.RunningState.Inactive)
             return;
+
+        if (!this.supported)
+            disabled = true;
 
         let runningState = disabled ? WI.AuditManager.RunningState.Disabled : WI.AuditManager.RunningState.Inactive;
         if (runningState === this._runningState)
@@ -76,6 +104,8 @@ WI.AuditTestBase = class AuditTestBase extends WI.Object
 
         if (this.disabled)
             return;
+
+        console.assert(this.supported);
 
         console.assert(WI.auditManager.runningState === WI.AuditManager.RunningState.Active);
 
@@ -98,6 +128,8 @@ WI.AuditTestBase = class AuditTestBase extends WI.Object
 
         if (this.disabled)
             return;
+
+        console.assert(this.supported);
 
         console.assert(WI.auditManager.runningState === WI.AuditManager.RunningState.Stopping);
 
@@ -134,6 +166,8 @@ WI.AuditTestBase = class AuditTestBase extends WI.Object
         };
         if (this._description)
             json.description = this._description;
+        if (typeof this._supports === "number")
+            json.supports = this._supports;
         if (key === WI.ObjectStore.toJSONSymbol)
             json.disabled = this.disabled;
         return json;
@@ -146,6 +180,9 @@ WI.AuditTestBase = class AuditTestBase extends WI.Object
         throw WI.NotImplementedError.subclassMustOverride();
     }
 };
+
+// Keep this in sync with Inspector::Protocol::Audit::VERSION.
+WI.AuditTestBase.Version = 1;
 
 WI.AuditTestBase.Event = {
     Completed: "audit-test-base-completed",
