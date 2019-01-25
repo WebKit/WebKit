@@ -475,7 +475,7 @@ static InterpolationType interpolationFromString(NSString *string)
     return YES;
 }
 
-- (BOOL)_sendMarkerHIDEventWithCompletionBlock:(void (^)(void))completionBlock
+- (BOOL)sendMarkerHIDEventWithCompletionBlock:(void (^)(void))completionBlock
 {
     auto callbackID = [HIDEventGenerator nextEventCallbackID];
     [_eventCallbacks setObject:Block_copy(completionBlock) forKey:@(callbackID)];
@@ -629,13 +629,13 @@ static InterpolationType interpolationFromString(NSString *string)
 - (void)touchDown:(CGPoint)location touchCount:(NSUInteger)count completionBlock:(void (^)(void))completionBlock
 {
     [self touchDown:location touchCount:count];
-    [self _sendMarkerHIDEventWithCompletionBlock:completionBlock];
+    [self sendMarkerHIDEventWithCompletionBlock:completionBlock];
 }
 
 - (void)liftUp:(CGPoint)location touchCount:(NSUInteger)count completionBlock:(void (^)(void))completionBlock
 {
     [self liftUp:location touchCount:count];
-    [self _sendMarkerHIDEventWithCompletionBlock:completionBlock];
+    [self sendMarkerHIDEventWithCompletionBlock:completionBlock];
 }
 
 - (void)stylusDownAtPoint:(CGPoint)location azimuthAngle:(CGFloat)azimuthAngle altitudeAngle:(CGFloat)altitudeAngle pressure:(CGFloat)pressure
@@ -686,19 +686,19 @@ static InterpolationType interpolationFromString(NSString *string)
 - (void)stylusDownAtPoint:(CGPoint)location azimuthAngle:(CGFloat)azimuthAngle altitudeAngle:(CGFloat)altitudeAngle pressure:(CGFloat)pressure completionBlock:(void (^)(void))completionBlock
 {
     [self stylusDownAtPoint:location azimuthAngle:azimuthAngle altitudeAngle:altitudeAngle pressure:pressure];
-    [self _sendMarkerHIDEventWithCompletionBlock:completionBlock];
+    [self sendMarkerHIDEventWithCompletionBlock:completionBlock];
 }
 
 - (void)stylusMoveToPoint:(CGPoint)location azimuthAngle:(CGFloat)azimuthAngle altitudeAngle:(CGFloat)altitudeAngle pressure:(CGFloat)pressure completionBlock:(void (^)(void))completionBlock
 {
     [self stylusMoveToPoint:location azimuthAngle:azimuthAngle altitudeAngle:altitudeAngle pressure:pressure];
-    [self _sendMarkerHIDEventWithCompletionBlock:completionBlock];
+    [self sendMarkerHIDEventWithCompletionBlock:completionBlock];
 }
 
 - (void)stylusUpAtPoint:(CGPoint)location completionBlock:(void (^)(void))completionBlock
 {
     [self stylusUpAtPoint:location];
-    [self _sendMarkerHIDEventWithCompletionBlock:completionBlock];
+    [self sendMarkerHIDEventWithCompletionBlock:completionBlock];
 }
 
 - (void)stylusTapAtPoint:(CGPoint)location azimuthAngle:(CGFloat)azimuthAngle altitudeAngle:(CGFloat)altitudeAngle pressure:(CGFloat)pressure completionBlock:(void (^)(void))completionBlock
@@ -709,7 +709,7 @@ static InterpolationType interpolationFromString(NSString *string)
     nanosleep(&pressDelay, 0);
     [self stylusUpAtPoint:location];
 
-    [self _sendMarkerHIDEventWithCompletionBlock:completionBlock];
+    [self sendMarkerHIDEventWithCompletionBlock:completionBlock];
 }
 
 - (void)sendTaps:(int)tapCount location:(CGPoint)location withNumberOfTouches:(int)touchCount completionBlock:(void (^)(void))completionBlock
@@ -725,7 +725,7 @@ static InterpolationType interpolationFromString(NSString *string)
             nanosleep(&doubleDelay, 0);
     }
     
-    [self _sendMarkerHIDEventWithCompletionBlock:completionBlock];
+    [self sendMarkerHIDEventWithCompletionBlock:completionBlock];
 }
 
 - (void)tap:(CGPoint)location completionBlock:(void (^)(void))completionBlock
@@ -750,7 +750,7 @@ static InterpolationType interpolationFromString(NSString *string)
 
     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, longPressHoldDelay * nanosecondsPerSecond), dispatch_get_main_queue(), ^ {
         [self liftUp:location];
-        [self _sendMarkerHIDEventWithCompletionBlock:completionBlockCopy.get()];
+        [self sendMarkerHIDEventWithCompletionBlock:completionBlockCopy.get()];
     });
 }
 
@@ -759,7 +759,7 @@ static InterpolationType interpolationFromString(NSString *string)
     [self touchDown:startLocation touchCount:1];
     [self moveToPoints:&endLocation touchCount:1 duration:seconds];
     [self liftUp:endLocation];
-    [self _sendMarkerHIDEventWithCompletionBlock:completionBlock];
+    [self sendMarkerHIDEventWithCompletionBlock:completionBlock];
 }
 
 - (void)pinchCloseWithStartPoint:(CGPoint)startLocation endPoint:(CGPoint)endLocation duration:(double)seconds completionBlock:(void (^)(void))completionBlock
@@ -888,6 +888,8 @@ static inline uint32_t hidUsageCodeForCharacter(NSString *key)
         case '=':
         case '+':
             return kHIDUsage_KeyboardEqualSign;
+        case '\b':
+            return kHIDUsage_KeyboardDeleteOrBackspace;
         case '\t':
             return kHIDUsage_KeyboardTab;
         case '[':
@@ -925,7 +927,7 @@ static inline uint32_t hidUsageCodeForCharacter(NSString *key)
     if (auto keyCode = keyCodeForDOMFunctionKey(key))
         return *keyCode;
 
-    if ([key isEqualToString:@"capsLock"])
+    if ([key isEqualToString:@"capsLock"] || [key isEqualToString:@"capsLockKey"])
         return kHIDUsage_KeyboardCapsLock;
     if ([key isEqualToString:@"pageUp"])
         return kHIDUsage_KeyboardPageUp;
@@ -953,21 +955,21 @@ static inline uint32_t hidUsageCodeForCharacter(NSString *key)
         return kHIDUsage_KeyboardDeleteOrBackspace;
     if ([key isEqualToString:@"forwardDelete"])
         return kHIDUsage_KeyboardDeleteForward;
-    if ([key isEqualToString:@"leftCommand"])
+    if ([key isEqualToString:@"leftCommand"] || [key isEqualToString:@"metaKey"])
         return kHIDUsage_KeyboardLeftGUI;
     if ([key isEqualToString:@"rightCommand"])
         return kHIDUsage_KeyboardRightGUI;
     if ([key isEqualToString:@"clear"]) // Num Lock / Clear
         return kHIDUsage_KeypadNumLock;
-    if ([key isEqualToString:@"leftControl"])
+    if ([key isEqualToString:@"leftControl"] || [key isEqualToString:@"ctrlKey"])
         return kHIDUsage_KeyboardLeftControl;
     if ([key isEqualToString:@"rightControl"])
         return kHIDUsage_KeyboardRightControl;
-    if ([key isEqualToString:@"leftShift"])
+    if ([key isEqualToString:@"leftShift"] || [key isEqualToString:@"shiftKey"])
         return kHIDUsage_KeyboardLeftShift;
     if ([key isEqualToString:@"rightShift"])
         return kHIDUsage_KeyboardRightShift;
-    if ([key isEqualToString:@"leftAlt"])
+    if ([key isEqualToString:@"leftAlt"] || [key isEqualToString:@"altKey"])
         return kHIDUsage_KeyboardLeftAlt;
     if ([key isEqualToString:@"rightAlt"])
         return kHIDUsage_KeyboardRightAlt;
@@ -978,6 +980,16 @@ static inline uint32_t hidUsageCodeForCharacter(NSString *key)
 RetainPtr<IOHIDEventRef> createHIDKeyEvent(NSString *character, uint64_t timestamp, bool isKeyDown)
 {
     return adoptCF(IOHIDEventCreateKeyboardEvent(kCFAllocatorDefault, timestamp, kHIDPage_KeyboardOrKeypad, hidUsageCodeForCharacter(character), isKeyDown, kIOHIDEventOptionNone));
+}
+
+- (void)keyDown:(NSString *)character
+{
+    [self _sendIOHIDKeyboardEvent:mach_absolute_time() usage:hidUsageCodeForCharacter(character) isKeyDown:true];
+}
+
+- (void)keyUp:(NSString *)character
+{
+    [self _sendIOHIDKeyboardEvent:mach_absolute_time() usage:hidUsageCodeForCharacter(character) isKeyDown:false];
 }
 
 - (void)keyPress:(NSString *)character completionBlock:(void (^)(void))completionBlock
@@ -995,7 +1007,7 @@ RetainPtr<IOHIDEventRef> createHIDKeyEvent(NSString *character, uint64_t timesta
     if (shouldWrapWithShift)
         [self _sendIOHIDKeyboardEvent:absoluteMachTime usage:kHIDUsage_KeyboardLeftShift isKeyDown:false];
 
-    [self _sendMarkerHIDEventWithCompletionBlock:completionBlock];
+    [self sendMarkerHIDEventWithCompletionBlock:completionBlock];
 }
 
 - (void)dispatchEventWithInfo:(NSDictionary *)eventInfo
@@ -1112,7 +1124,7 @@ RetainPtr<IOHIDEventRef> createHIDKeyEvent(NSString *character, uint64_t timesta
     }
     
     dispatch_async(dispatch_get_main_queue(), ^ {
-        [self _sendMarkerHIDEventWithCompletionBlock:completionBlock];
+        [self sendMarkerHIDEventWithCompletionBlock:completionBlock];
     });
 }
 

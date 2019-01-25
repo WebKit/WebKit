@@ -1,3 +1,44 @@
+2019-01-25  Daniel Bates  <dabates@apple.com>
+
+        [iOS] uiController.keyDown() does not translate Control modified key
+        https://bugs.webkit.org/show_bug.cgi?id=192898
+
+        Reviewed by Wenson Hsieh.
+
+        Implement uiController.keyDown() in terms of HIDEventGenerator so that UIKit performs
+        key translation, as applicable. Among other cases, key translation occurs when performing
+        a Control key modified key sequence. Writing uiController.keyDown() in terms of HIDEventGenerator
+        also makes the behavior of uiController.keyDown() more closely match the behavior of a
+        human pressing down and releasing key(s) using a hardware keyboard.
+
+        * WebKitTestRunner/ios/HIDEventGenerator.h:
+        * WebKitTestRunner/ios/HIDEventGenerator.mm:
+        (-[HIDEventGenerator sendMarkerHIDEventWithCompletionBlock:]): Renamed; formerly named _sendMarkerHIDEventWithCompletionBlock.
+
+        (-[HIDEventGenerator touchDown:touchCount:completionBlock:]):
+        (-[HIDEventGenerator liftUp:touchCount:completionBlock:]):
+        (-[HIDEventGenerator stylusDownAtPoint:azimuthAngle:altitudeAngle:pressure:completionBlock:]):
+        (-[HIDEventGenerator stylusMoveToPoint:azimuthAngle:altitudeAngle:pressure:completionBlock:]):
+        (-[HIDEventGenerator stylusUpAtPoint:completionBlock:]):
+        (-[HIDEventGenerator stylusTapAtPoint:azimuthAngle:altitudeAngle:pressure:completionBlock:]):
+        (-[HIDEventGenerator sendTaps:location:withNumberOfTouches:completionBlock:]):
+        (-[HIDEventGenerator longPress:completionBlock:]):
+        (-[HIDEventGenerator dragWithStartPoint:endPoint:duration:completionBlock:]):
+        Update code for above renaming.
+
+        (hidUsageCodeForCharacter): Translate \b to a backspace and teach this function to recognize the
+        DumpRenderTree EventSender-compatible modifier key names (e.g. "metaKey").
+
+        (-[HIDEventGenerator keyDown:]): Added.
+        (-[HIDEventGenerator keyUp:]): Added.
+        (-[HIDEventGenerator keyPress:completionBlock:]):
+        (-[HIDEventGenerator eventDispatchThreadEntry:]):
+        (-[HIDEventGenerator _sendMarkerHIDEventWithCompletionBlock:]): Deleted; renamed to sendMarkerHIDEventWithCompletionBlock.
+        * WebKitTestRunner/ios/UIScriptControllerIOS.mm:
+        (WTR::parseModifierArray): Modified to return a vector of strings that represent the modifier keys to press.
+        (WTR::UIScriptController::keyDown): Write in terms of HIDEventGenerator.
+        (WTR::parseModifier): Deleted.
+
 2019-01-25  Keith Rollin  <krollin@apple.com>
 
         Complete the implementation of generate-xcfilelists

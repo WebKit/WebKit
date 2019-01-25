@@ -1,3 +1,22 @@
+2019-01-25  Daniel Bates  <dabates@apple.com>
+
+        [iOS] uiController.keyDown() does not translate Control modified key
+        https://bugs.webkit.org/show_bug.cgi?id=192898
+
+        Reviewed by Wenson Hsieh.
+
+        Make tests more robusts.
+
+        * fast/events/ios/key-command-italic-dispatches-keydown.html: Remove the need to special-case the test runner and
+        expect a single key event that represents Command + I. Now that uiController.keyDown() makes use of HIDEventGenerator
+        we emit separate key events for each key pressed in the sequence: keydown Command, keydown i, keyup i, keyup Command.
+        This matches how a human being would execute such a key sequence.
+        * fast/forms/auto-fill-button/caps-lock-indicator-should-not-be-visible-when-auto-fill-strong-password-button-is-visible-expected.html:
+        Make the test less flaky by hiding the tap highlight. Depending on timing, the tap highlight may be snapshotted and thus
+        cause the reference test to mismatch the test. Mitigate this by hiding the tap highlight.
+        * fast/text/scroll-text-overflow-ellipsis.html: Wait for a keyup event for the down arrow before declaring the
+        test complete.
+
 2019-01-25  Simon Fraser  <simon.fraser@apple.com>
 
         Move more scrolling tree tests into scrollingcoordinator/scrolling-tree

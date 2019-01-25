@@ -32,7 +32,7 @@ function shouldIgnoreKeyDownEvent(event)
     // When performing the test manually a person is not fast enough to press Command + I simultaneously.
     // We receive a key down for Command followed by a key down for Command + I. So, we ignore the first
     // event to normalize the test result.
-    if (window.testRunner || ignoredFirstKeyDownEvent)
+    if (ignoredFirstKeyDownEvent)
         return false;
     ignoredFirstKeyDownEvent = true;
     console.assert(event.key == "Meta");

@@ -36,21 +36,22 @@ body {
 </div>
 <div id="ellipsizedText" contenteditable="true">abcde</div>
 <script>
+function done()
+{
+    document.getElementById("ellipsizedText").blur(); // To avoid painting the caret.
+    if (window.testRunner)
+        testRunner.notifyDone();
+}
+
 function runTest()
 {
-    function scrollToEndOfLine()
-    {
+    function scrollToEndOfLine() {
         return UIHelper.keyDown("downArrow");
     }
-
-    function done()
-    {
-        document.getElementById("ellipsizedText").blur(); // To avoid painting the caret.
-        testRunner.notifyDone();
-    }
-
-    UIHelper.activateAndWaitForInputSessionAt(0, 0).then(scrollToEndOfLine).then(done);
+    UIHelper.activateAndWaitForInputSessionAt(0, 0).then(scrollToEndOfLine);
 }
+
+document.getElementById("ellipsizedText").addEventListener("scroll", done, {once: true});
 
 if (!window.testRunner)
     document.getElementById("manual-instructions").classList.remove("hidden"); // Show manual instructions
