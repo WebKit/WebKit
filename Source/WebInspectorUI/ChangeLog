@@ -1,3 +1,50 @@
+2019-01-25  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Improve Dark Mode appearance within Memory timeline
+        https://bugs.webkit.org/show_bug.cgi?id=193804
+
+        Reviewed by Matt Baker.
+
+        * UserInterface/Views/TimelineOverview.css:
+        (.timeline-overview.edit-instruments > .tree-outline.timelines .item.selected):
+        (.timeline-overview > .tree-outline.timelines .item.selected + .item,):
+        (@media (prefers-color-scheme: dark)):
+        (.timeline-overview > .tree-outline.timelines .item.selected + .item): Deleted.
+        (body.window-inactive .timeline-overview > .tree-outline.timelines .item.selected + .item): Deleted.
+        Fix some colors for Timelines edit mode.
+
+        * UserInterface/Views/CPUTimelineOverviewGraph.css:
+        (.timeline-overview-graph.cpu:nth-child(even) > .legend):
+        (@media (prefers-color-scheme: dark)):
+        (.timeline-overview-graph.cpu > .legend):
+        (.timeline-overview-graph:nth-child(even) > .legend): Deleted.
+        * UserInterface/Views/MemoryTimelineOverviewGraph.css:
+        (.timeline-overview-graph.memory:nth-child(even) > .legend):
+        (@media (prefers-color-scheme: dark)):
+        (.timeline-overview-graph.memory > .legend):
+        (.timeline-overview-graph:nth-child(even) > .legend): Deleted.
+        Improved colors in CPU / Memory overview graph legends.
+
+        * UserInterface/Views/CPUUsageView.css:
+        (.cpu-usage-view > .details):
+        * UserInterface/Views/CircleChart.css:
+        (.circle-chart > svg > path.background):
+        * UserInterface/Views/MemoryCategoryView.css:
+        (.memory-category-view > .details):
+        (.memory-category-view > .details > .name):
+        * UserInterface/Views/MemoryTimelineView.css:
+        (.timeline-view.memory > .content > .overview .total-usage,):
+        (.timeline-view.memory .legend > .row > .size):
+        Improved colors in CPU / Memory detail views.
+
+        * UserInterface/Views/Variables.css:
+        (:root):
+        Add a default --text-secondary-color which will end up slightly
+        lighter in dark mode where it was already implemented.
+
+        (@media (prefers-color-scheme: dark)):
+        Improved max-comparison colors.
+
 2019-01-25  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: Timelines: DOMContentLoaded and load event lines need to be more obvious

@@ -53,8 +53,18 @@ body[dir=rtl] .timeline-overview-graph.cpu > .legend {
     left: var(--cpu-timeline-overview-graph-legend-offset-end);
 }
 
-.timeline-overview-graph:nth-child(even) > .legend {
+.timeline-overview-graph.cpu:nth-child(even) > .legend {
     background-color: hsl(0, 0%, 96%);
+}
+
+@media (prefers-color-scheme: dark) {
+    .timeline-overview-graph.cpu > .legend {
+        background-color: hsl(0, 0%, 21%);
+    }
+
+    .timeline-overview-graph.cpu:nth-child(even) > .legend {
+        background-color: hsl(0, 0%, 25%);
+    }
 }
 
 body[dir=rtl] .timeline-overview-graph.cpu > .bar-chart {

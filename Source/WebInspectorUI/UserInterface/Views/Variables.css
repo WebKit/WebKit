@@ -37,6 +37,8 @@
     --text-color: black;
     --text-color-active: black;
 
+    --text-color-secondary: hsl(0, 0%, 50%);
+
     /* Dividers, separators, background fills */
     --text-color-quaternary: hsl(0, 0%, 85%);
 
@@ -255,6 +257,9 @@ body.window-inactive * {
         --warning-background-color-secondary: hsl(21, 18%, 25%);
         --error-background-color: hsl(11, 70%, 32%);
         --error-background-color-secondary: hsl(6, 23%, 25%);
+
+        --memory-max-comparison-fill-color: hsl(225, 5%, 45%);
+        --memory-max-comparison-stroke-color: hsl(225, 5%, 65%);
 
         --network-header-color: hsl(204, 52%, 55%);
         --network-system-color: hsl(79, 95%, 50%);

@@ -29,7 +29,7 @@
 
 .circle-chart > svg > path.background {
     fill: hsla(0, 0%, 0%, 0.02);
-    stroke: hsla(0, 0%, 0%, 0.1);
+    stroke: hsla(0, 0%, var(--foreground-lightness), 0.1);
     stroke-width: 1;
 }
 

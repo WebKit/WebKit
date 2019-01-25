@@ -67,8 +67,18 @@ body[dir=rtl] .timeline-overview-graph.memory .memory-pressure-event {
     border-right: var(--memory-timeline-overview-graph-pressure-event-border-start);
 }
 
-.timeline-overview-graph:nth-child(even) > .legend {
+.timeline-overview-graph.memory:nth-child(even) > .legend {
     background-color: hsl(0, 0%, 96%);
+}
+
+@media (prefers-color-scheme: dark) {
+    .timeline-overview-graph.memory > .legend {
+        background-color: hsl(0, 0%, 21%);
+    }
+
+    .timeline-overview-graph.memory:nth-child(even) > .legend {
+        background-color: hsl(0, 0%, 25%);
+    }
 }
 
 body[dir=rtl] .timeline-overview-graph.memory > .stacked-line-chart {

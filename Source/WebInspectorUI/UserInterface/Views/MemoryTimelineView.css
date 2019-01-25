@@ -107,7 +107,7 @@ body[dir=rtl] .timeline-view.memory > .content > .overview > .divider {
 .timeline-view.memory > .content > .overview .total-usage,
 .timeline-view.memory > .content > .overview .max-percentage {
     margin: auto;
-    color: hsl(0, 0%, 70%);
+    color: var(--text-color-secondary);
 }
 
 .timeline-view.memory .legend {
@@ -167,7 +167,7 @@ body[dir=rtl] .timeline-view.memory .legend > .row > :matches(.label, .size) {
 .timeline-view.memory .legend > .row > .size {
     position: absolute;
     top: 12px;
-    color: hsl(0, 0%, 70%);
+    color: var(--text-color-secondary);
 }
 
 .timeline-view.memory .legend > .row > .swatch.javascript {

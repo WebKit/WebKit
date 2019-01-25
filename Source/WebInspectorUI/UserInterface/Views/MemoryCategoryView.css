@@ -33,7 +33,7 @@
     padding-top: 10px;
     font-family: -webkit-system-font, sans-serif;
     font-size: 12px;
-    color: hsl(0, 0%, 70%);
+    color: var(--text-color-secondary);
     -webkit-padding-start: 15px;
 
     --memory-category-view-details-border-end: 1px solid var(--border-color);
@@ -48,7 +48,7 @@ body[dir=rtl] .memory-category-view > .details {
 }
 
 .memory-category-view > .details > .name {
-    color: black;
+    color: var(--text-color);
 }
 
 .memory-category-view > .graph {
