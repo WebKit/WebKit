@@ -1,3 +1,27 @@
+2019-01-25  Keith Rollin  <krollin@apple.com>
+
+        Complete the implementation of generate-xcfilelists
+        https://bugs.webkit.org/show_bug.cgi?id=193782
+
+        Reviewed by Alex Christensen.
+
+        A preliminary version of generate-xcfilelists was added in r238008.
+        This patch updates that script in order to:
+
+        - Support checking of .xcfilelists
+        - Perform better execution of `make DerivedSources.make` by
+          relaunching generate-xcfilelists under xcodebuild
+        - Support incremental generation and checking of .xcfilelists
+        - Support supplementary .xcfilelists files from WebKitAdditions
+        - Support being wrapped by parallel version of generate-xcfilelists in
+          Internal that adds support for (re)generating WebKit projects in
+          that repo.
+        - Support builds that have been performed in WebKitBuild as well as
+          ~/Library/Developer/code/DerivedData
+        - Increase robustness and debugging facilities.
+
+        * Scripts/generate-xcfilelists:
+
 2019-01-25  Brent Fulgham  <bfulgham@apple.com>
 
         Activate the WebResourceLoadStatisticsStore in the NetworkProcess and deactivate it in the UIProcess.

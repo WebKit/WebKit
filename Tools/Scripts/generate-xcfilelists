@@ -1,6 +1,6 @@
-#!/bin/sh
+#!/bin/bash
 #
-# Copyright (C) 2018 Apple Inc.  All rights reserved.
+# Copyright (C) 2018-2019 Apple Inc.  All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -37,436 +37,1339 @@
 # UnifiedSources*.cpp/mm files, albeit in a mode that produces .xcfilelist
 # files instead.
 #
-# The generated DerivedSources.make .xcfilelist files are created in in the
-# same directory as the DerivedSources.make file. The generated UnifiedSources
-# .xcfilelist files are created in ${PROJECT_DIR}.
+# This script not only generates .xcfilelists, but -- when given a "check"
+# command -- it also checks that they are up-to-date. In this mode, the
+# .xcfilelist files are created in a temporary location and are then compared
+# to the versions checked into the repository. If there are differences, the
+# user is notified so that they know that the .xcfilelist files need to be
+# regenerated. This facility can be incorporated into a build phase, a check-in
+# hook, or into the EWS (perhaps as part of check-webkit-style).
 #
-# This script assumes that the generated/derived sources are created in the
-# following location, and incorporates that path into the paths it stores in
-# the .xcfilelists:
-#
-#   $(BUILT_PRODUCTS_DIR)/DerivedSources/${PROJECT_NAME}/
-#
-# Sometimes the generated files are stored in sub-directories, as with
-# unified-sources. In other cases, we need to take into account the fact that
-# generated/derived files are stored in a directory with a legacy name. For
-# instance, WebKit files are stored in a WebKit2 directory, and WebKitLegacy
-# files are stored in a WebKit directory. This discrepancy should probably be
-# cleaned up some day.
-#
-# This script not only generates .xcfilelists, but -- when given a --check
-# command line parameters -- it also checks that they are up-to-date. In this
-# mode, the .xcfilelist files are created in a temporary location and are then
-# compared to the versions checked into the repository. If there are
-# differences, the user is notified so that they know that the .xcfilelist
-# files need to be regenerated. This facility can be incorporated into a
-# build phase, a check-in hook, or into the EWS (perhaps as part of
-# check-webkit-style).
+# As part of its operation, this script can sub-launch itself under Xcode. It
+# does this in order to establish the context in which builds occur. In
+# particular, it does this in order to set needed environment variables. In
+# order to protect against environment variable name collision, all variable
+# names in this script start with "GX_".
 
 
-HERE="$(cd "$(dirname "$0")" && pwd -P)"
+function stdout()
+{
+    (( ${GX_QUIET} )) || echo "$@" >&1
+}
 
 
-# Print an error message and exit.
+function stderr()
+{
+    echo "$@" >&2
+}
+
+
+function remove_extra_spaces()
+{
+    echo $1
+}
+
+function print_option()
+{
+    local GX_OPTION="$1"
+    local GX_MESSAGE="$(remove_extra_spaces "$2")"
+
+    local GX_LINE
+    local GX_LINE_WIDTH=90
+    local GX_OPTION_WIDTH=17
+
+    if (( ${#GX_OPTION} <= GX_OPTION_WIDTH ))
+    then
+        local GX_MESSAGE_CATENATED=$(printf "  %-${GX_OPTION_WIDTH}s %s" "$GX_OPTION" "$GX_MESSAGE")
+        if (( ${#GX_MESSAGE_CATENATED} <= GX_LINE_WIDTH ))
+        then
+            stderr "${GX_MESSAGE_CATENATED}"
+            return
+        fi
+
+        local GX_MESSAGE_FIRST_LINE="${GX_MESSAGE_CATENATED:0:${GX_LINE_WIDTH}}"    # Get the first 80 characters
+        GX_MESSAGE_FIRST_LINE="${GX_MESSAGE_FIRST_LINE% *}"                         # Trim back to the last space
+        GX_MESSAGE="${GX_MESSAGE_CATENATED:${#GX_MESSAGE_FIRST_LINE}+1}"            # Get the rest after that space
+
+        stderr "${GX_MESSAGE_FIRST_LINE}"
+    else
+        stderr "  ${GX_OPTION}"
+    fi
+
+    while IFS='' read -r GX_LINE
+    do
+        GX_LINE=$(printf "  %${GX_OPTION_WIDTH}s %s" "" "$GX_LINE")
+        stderr "${GX_LINE}"
+    done < <(echo "${GX_MESSAGE}" | fold -w $(( GX_LINE_WIDTH - GX_OPTION_WIDTH - 3)) -s)
+}
+
+
+function join_by()
+{
+    local GX_DELIM=$1
+    shift
+
+    echo -n "$1"
+    shift
+
+    printf "%s" "${@/#/${GX_DELIM}}"
+}
+
+
+function usage()
+{
+    local GX_JOINED_PROJECT_TAGS=$(join_by ", " "${GX_PROJECT_TAGS[@]}")
+
+    stderr "Usage: $(basename "${GX_ME}") [OPTION...] COMMAND [PARAMETER...]"
+    stderr ""
+    stderr "Generate or check .xcfilelist files"
+    stderr ""
+    stderr "Commands:"
+    stderr ""
+    print_option "generate" "Generate a complete and up-to-date set of
+        .xcfilelist files and copy them to their appropriate places in the
+        project directories."
+    print_option "generate-xcode" "Generate .xcfilelist files for the current
+        target configuration an copy them to their appropriate places in the
+        project directories. Invoked from withing Xcode to update the current
+        build if needed."
+    print_option "check" "Generate a complete and up-to-date set of .xcfilelist
+        files and compare them to their counterparts in the project
+        directories."
+    print_option "check-xcode" "Generate .xcfilelist files for the current
+        target configuration and see if any files appear that aren't in the
+        checked-in .xcfilelist files. Invoked from within Xcode to validate the
+        current build."
+    print_option "subgenerate" "Generate an .xcfilelist file for a particular
+        combination of project, platform, and configuration. This operation is
+        performed in the context of an Xcode build in order to inherit the same
+        environment as that build."
+    print_option "help" "Print this text and exit."
+    stderr ""
+    stderr "Options:"
+    stderr ""
+    print_option "--project <project>" "Specify which project for which to
+        generate .xcfilelist files or to check. Possible values are
+        (${GX_JOINED_PROJECT_TAGS}). Default is to iterate over all projects."
+    print_option "--platform <platform>" "Specify which platform for which to
+        generate .xcfilelist files or to check. Possible values are (macosx,
+        iphoneos). Default is to iterate over all platforms, filtered to those
+        platforms that a particular project supports (e.g., you can't specify
+        'iphoneos' for WebKitTestRunner)."
+    print_option "--configuration <configuration>" "Specify which configuration
+        for which to generate .xcfilelist files or to check, Possible values
+        are (release, debug). Default is to iterate over all configurations."
+    print_option "--xcode" "Specify that existing build output can be found in
+        the directory created by the Xcode IDE (in ~/Library/Developer/Xcode)."
+    print_option "--webkitbuild" "Specify that existing build output can be
+        found in the directory used by the WebKit make files or the
+        build-webkit script (that is, in WebKitBuild or in the directory
+        identified by WEBKIT_OUTPUTDIR). This option is the default, so it
+        doesn't really get you anything by specifying this option (or by my
+        implementing it)."
+    print_option "--nocleanup" "Disable cleaning up temporary files after a
+        subgenerate operation. Normally these are cleaned up, but if
+        'subgenerate' is part of an overall 'generate' operation, then the
+        'generate' operation needs to keep around the temporary files until it
+        can complete aggregating them."
+    stderr ""
+    print_option "--dry-run" "When running through the requested process, don't
+        make any material changes. For example, for 'generate', create the new
+        .xcfilelist files, but don't copy them into their final locations"
+    print_option "--debug" "Provide verbose output."
+    print_option "--quiet" "Don't print any std output."
+    print_option "--help" "Print this text and exit."
+    stderr ""
+}
+
+
+function cleanup()
+{
+    if (( ${GX_DO_CLEANUP} )) && (( ${GX_DEFERRED_EXIT_CODE} == 0 ))
+    then
+        rm -rf "${GX_TEMP}" &> /dev/null
+    fi
+}
+
+
+function my_exit()
+{
+    local GX_ERR=$1
+    exit $GX_ERR
+}
+
 
 function die()
 {
-    echo "### $@" 1>&2
-    exit 1
+    local GX_ERR=$2
+    [[ "$GX_ERR" == "" ]] && GX_ERR=1
+    stderr "### (${FUNCNAME[@]}) $1"
+    my_exit $GX_ERR
 }
 
 
-# Utility: replace one string with another in a file.
+function log_debug()
+{
+    (( "${GX_DEBUG}" > 0 )) && stderr "... $@"
+}
+
+
+function log_debug_var()
+{
+    local GX_VAR_NAME=$1
+    local GX_IS_ARRAY=$(declare -p ${GX_VAR_NAME} 2> /dev/null | grep -q '^declare -a' && echo 1 || echo 0)
+
+    if (( $GX_IS_ARRAY ))
+    then
+        log_debug $(printf "%-47s = (%s)" $GX_VAR_NAME "$(eval echo \$\{${GX_VAR_NAME}\[\@\]\})")
+    else
+        log_debug $(printf "%-47s = %s" $GX_VAR_NAME "$(eval echo \$\{${GX_VAR_NAME}\})")
+    fi
+}
+
+
+function log_callstack_and_parameters()
+{
+    if (( "${GX_DEBUG}" > "1" ))
+    then
+        local GX_ARGS=("$@")
+        local GX_CALLSTACK=("${FUNCNAME[@]}")
+        unset GX_CALLSTACK[0]
+        stderr "... (${GX_CALLSTACK[@]}): ${GX_ARGS[@]}"
+    fi
+}
+
+
+function log_progress()
+{
+    stdout "... $@"
+}
+
+
+function log_progress_long()
+{
+    local GX_MESSAGE="$(remove_extra_spaces "$1")"
+    local GX_LINE
+    while IFS='' read -r GX_LINE
+    do
+        log_progress $GX_LINE
+    done < <(echo "${GX_MESSAGE}" | fold -w 86 -s)
+}
+
+
+function normalize_directory_path()
+{
+    log_callstack_and_parameters "$@"
+
+    [[ -z "$1" ]] && { echo "$1"; return; }
+    cd "$1" 2> /dev/null || { echo "$1"; return; }
+    pwd -P
+}
+
+
+function normalize_file_path()
+{
+    log_callstack_and_parameters "$@"
+
+    [[ -z "$1" ]] && { echo "$1"; return; }
+    echo $(normalize_directory_path "$(dirname "$1")")/$(basename "$1")
+}
+
+
+function call()
+{
+    log_callstack_and_parameters "$@"
+
+    local GX_FN="$1"
+    [[ "$(type -t ${GX_FN})" == "function" ]] || return $?
+    eval "${GX_FN}"
+}
+
+
+function set_project_specific_settings_for_JavaScriptCore()
+{
+    log_callstack_and_parameters "$@"
+
+    GX_PS_PROJECT_FILE_PATH="${GX_OPENSOURCE_DIR}/Source/JavaScriptCore/JavaScriptCore.xcodeproj" # Can't use PROJECT_FILE_PATH because this is used pre-Xcode.
+    GX_PS_DERIVEDSOURCES_GENERATOR_RELATIVE_PATH="Scripts/generate-derived-sources.sh"
+    GX_PS_UNIFIEDSOURCES_GENERATOR_RELATIVE_PATH="Scripts/generate-unified-sources.sh"
+    GX_PS_PLATFORM_NAMES=(macosx iphoneos)
+}
+
+
+function set_project_specific_settings_for_WebCore()
+{
+    log_callstack_and_parameters "$@"
+
+    GX_PS_PROJECT_FILE_PATH="${GX_OPENSOURCE_DIR}/Source/WebCore/WebCore.xcodeproj" # Can't use PROJECT_FILE_PATH because this is used pre-Xcode.
+    GX_PS_DERIVEDSOURCES_GENERATOR_RELATIVE_PATH="Scripts/generate-derived-sources.sh"
+    GX_PS_UNIFIEDSOURCES_GENERATOR_RELATIVE_PATH="Scripts/generate-unified-sources.sh"
+    GX_PS_PLATFORM_NAMES=(macosx iphoneos)
+}
+
+
+function set_project_specific_settings_for_WebKit()
+{
+    log_callstack_and_parameters "$@"
+
+    GX_PS_PROJECT_FILE_PATH="${GX_OPENSOURCE_DIR}/Source/WebKit/WebKit.xcodeproj" # Can't use PROJECT_FILE_PATH because this is used pre-Xcode.
+    GX_PS_DERIVED_SOURCES_DIR="${BUILT_PRODUCTS_DIR}/DerivedSources/WebKit2"
+    GX_PS_DERIVEDSOURCES_GENERATOR_RELATIVE_PATH="Scripts/generate-derived-sources.sh"
+    GX_PS_UNIFIEDSOURCES_GENERATOR_RELATIVE_PATH="Scripts/generate-unified-sources.sh"
+    GX_PS_PLATFORM_NAMES=(macosx iphoneos)
+}
+
+
+function set_project_specific_settings_for_DumpRenderTree()
+{
+    log_callstack_and_parameters "$@"
+
+    GX_PS_PROJECT_FILE_PATH="${GX_OPENSOURCE_DIR}/Tools/DumpRenderTree/DumpRenderTree.xcodeproj" # Can't use PROJECT_FILE_PATH because this is used pre-Xcode.
+    GX_PS_DERIVEDSOURCES_GENERATOR_RELATIVE_PATH="Scripts/generate-derived-sources.sh"
+    GX_PS_PLATFORM_NAMES=(macosx)
+}
+
+
+function set_project_specific_settings_for_WebKitTestRunner()
+{
+    log_callstack_and_parameters "$@"
+
+    GX_PS_PROJECT_FILE_PATH="${GX_OPENSOURCE_DIR}/Tools/WebKitTestRunner/WebKitTestRunner.xcodeproj" # Can't use PROJECT_FILE_PATH because this is used pre-Xcode.
+    GX_PS_DERIVEDSOURCES_GENERATOR_RELATIVE_PATH="Scripts/generate-derived-sources.sh"
+    GX_PS_PLATFORM_NAMES=(macosx)
+}
+
+
+function set_project_specific_settings()
+{
+    log_callstack_and_parameters "$@"
+
+    # Unset the variables that the set_project_specific_settings_for_FOO
+    # functions set. We need to do this in case the function for project BAR
+    # doesn't define one or more of them, causing it to inherit the settings
+    # for a previous project FOO.
+    #
+    # To achieve this unsetting, we prefix all the variables we want to unset
+    # with "GX_PS_" ("PS for "project specific"). We can then gather all
+    # variables that start with this prefix and unset them.
+
+    unset ${!GX_PS_*}
+
+    [[ -n "${GX_PROJECT_TAG}" ]] || die "GX_PROJECT_TAG is not defined."
+
+    call set_project_specific_settings_for_${GX_PROJECT_TAG} || die "Could not set build variables for ${GX_PROJECT_TAG}."
+}
+
+
+function set_common_project_settings()
+{
+    log_callstack_and_parameters "$@"
+
+    local GX_EFFECTIVE_PROJECT_FILE_PATH="${GX_PS_PROJECT_FILE_PATH}"
+    local GX_EFFECTIVE_PROJECT_DIR=$(dirname "${GX_EFFECTIVE_PROJECT_FILE_PATH}")
+
+    [[ -n "${GX_EFFECTIVE_PROJECT_FILE_PATH}" ]] || die "GX_EFFECTIVE_PROJECT_FILE_PATH is not defined."
+    [[ -d "${GX_EFFECTIVE_PROJECT_FILE_PATH}" ]] || die "${GX_EFFECTIVE_PROJECT_FILE_PATH} is not a directory."
+    [[ -n "${GX_EFFECTIVE_PROJECT_DIR}" ]] || die "GX_EFFECTIVE_PROJECT_DIR is not defined."
+    [[ -d "${GX_EFFECTIVE_PROJECT_DIR}" ]] || die "${GX_EFFECTIVE_PROJECT_DIR} is not a directory."
+
+    # Get the paths to the scripts that drive the generation of the
+    # .xcfilelists or the data going into the .xcfilelists.
+
+    GX_DERIVEDSOURCES_GENERATOR="${GX_PS_DERIVEDSOURCES_GENERATOR_RELATIVE_PATH:+${GX_EFFECTIVE_PROJECT_DIR}/${GX_PS_DERIVEDSOURCES_GENERATOR_RELATIVE_PATH}}"
+    GX_UNIFIEDSOURCES_GENERATOR="${GX_PS_UNIFIEDSOURCES_GENERATOR_RELATIVE_PATH:+${GX_EFFECTIVE_PROJECT_DIR}/${GX_PS_UNIFIEDSOURCES_GENERATOR_RELATIVE_PATH}}"
+
+    [[ -n "${GX_DERIVEDSOURCES_GENERATOR}" ]] && { [[ -f "${GX_DERIVEDSOURCES_GENERATOR}" ]] || die "${GX_DERIVEDSOURCES_GENERATOR} does not exist."; }
+    [[ -n "${GX_UNIFIEDSOURCES_GENERATOR}" ]] && { [[ -f "${GX_UNIFIEDSOURCES_GENERATOR}" ]] || die "${GX_UNIFIEDSOURCES_GENERATOR} does not exist."; }
+
+    # Get the paths to the locations of the final .xcfilelist files.
+
+    local GX_BASE_PATH="${GX_EFFECTIVE_PROJECT_DIR}/${GX_PS_XCFILELIST_RELATIVE_PATH}"
+    GX_INPUT_DERIVED_XCFILELIST_PROJECT_PATH="${GX_BASE_PATH}/DerivedSources-input.xcfilelist"
+    GX_OUTPUT_DERIVED_XCFILELIST_PROJECT_PATH="${GX_BASE_PATH}/DerivedSources-output.xcfilelist"
+    GX_INPUT_UNIFIED_XCFILELIST_PROJECT_PATH="${GX_BASE_PATH}/UnifiedSources-input.xcfilelist"
+    GX_OUTPUT_UNIFIED_XCFILELIST_PROJECT_PATH="${GX_BASE_PATH}/UnifiedSources-output.xcfilelist"
+
+    # Get the paths to the locations of the temporary .xcfilelist files (the
+    # ones being built up before being moved to their final locations).
+
+    GX_INPUT_DERIVED_XCFILELIST_PROJECT_TEMP_PATH="${GX_TEMP}/${GX_INPUT_DERIVED_XCFILELIST_PROJECT_PATH}"
+    GX_OUTPUT_DERIVED_XCFILELIST_PROJECT_TEMP_PATH="${GX_TEMP}/${GX_OUTPUT_DERIVED_XCFILELIST_PROJECT_PATH}"
+    GX_INPUT_UNIFIED_XCFILELIST_PROJECT_TEMP_PATH="${GX_TEMP}/${GX_INPUT_UNIFIED_XCFILELIST_PROJECT_PATH}"
+    GX_OUTPUT_UNIFIED_XCFILELIST_PROJECT_TEMP_PATH="${GX_TEMP}/${GX_OUTPUT_UNIFIED_XCFILELIST_PROJECT_PATH}"
+
+    # Collect the default per-project commands to execute during the generate,
+    # merge, and compare stages.
+
+    GX_SUBGENERATE_ACTIONS=()
+    GX_MERGE_ACTIONS=()
+    GX_CHECK_ACTIONS=()
+
+    if [[ -n "${GX_DERIVEDSOURCES_GENERATOR}" ]]
+    then
+        GX_SUBGENERATE_ACTIONS+=(generate_derivedsources_xcfilelists)
+        GX_MERGE_ACTIONS+=(merge_derivedsources_xcfilelists)
+        GX_CHECK_ACTIONS+=(check_derivedsources_xcfilelists)
+    fi
+
+    if [[ -n "${GX_UNIFIEDSOURCES_GENERATOR}" ]]
+    then
+        GX_SUBGENERATE_ACTIONS+=(generate_unifiedsources_xcfilelists)
+        GX_MERGE_ACTIONS+=(merge_unifiedsources_xcfilelists)
+        GX_CHECK_ACTIONS+=(check_unifiedsources_xcfilelists)
+    fi
+
+    [[ -z "${GX_PS_DERIVED_SOURCES_DIR}" ]] && GX_PS_DERIVED_SOURCES_DIR="${BUILT_PRODUCTS_DIR}/DerivedSources/${PROJECT_NAME}"
+
+    GX_TEMP_INPUT_XCFILELIST="${GX_TEMP}/input.xcfilelist"
+    GX_TEMP_OUTPUT_XCFILELIST="${GX_TEMP}/output.xcfilelist"
+}
+
+
+function dump_project_settings()
+{
+    log_callstack_and_parameters "$@"
+
+    log_debug_var BUILD_SCRIPTS_DIR
+    log_debug_var BUILT_PRODUCTS_DIR
+    log_debug_var CONFIGURATION
+    log_debug_var DERIVED_SOURCES_DIR
+    log_debug_var JAVASCRIPTCORE_PRIVATE_HEADERS_DIR
+    log_debug_var PROJECT_DIR
+    log_debug_var PROJECT_FILE_PATH
+    log_debug_var PROJECT_NAME
+    log_debug_var WEBCORE_PRIVATE_HEADERS_DIR
+    log_debug_var WEBKIT2_PRIVATE_HEADERS_DIR
+    log_debug
+    log_debug_var GX_PS_PROJECT_FILE_PATH
+    log_debug_var GX_PS_DERIVEDSOURCES_GENERATOR_RELATIVE_PATH
+    log_debug_var GX_PS_UNIFIEDSOURCES_GENERATOR_RELATIVE_PATH
+    log_debug_var GX_PS_XCFILELIST_RELATIVE_PATH
+    log_debug_var GX_PS_PLATFORM_NAMES
+    log_debug
+    log_debug_var GX_PROJECT_TAG
+    log_debug_var GX_PLATFORM_NAME
+    log_debug_var GX_CONFIGURATION
+    log_debug
+    log_debug_var GX_EFFECTIVE_PROJECT_FILE_PATH
+    log_debug_var GX_EFFECTIVE_PROJECT_DIR
+    log_debug
+    log_debug_var GX_DERIVEDSOURCES_GENERATOR
+    log_debug_var GX_UNIFIEDSOURCES_GENERATOR
+    log_debug
+    log_debug_var GX_INPUT_DERIVED_XCFILELIST_PROJECT_TEMP_PATH
+    log_debug_var GX_OUTPUT_DERIVED_XCFILELIST_PROJECT_TEMP_PATH
+    log_debug_var GX_INPUT_UNIFIED_XCFILELIST_PROJECT_TEMP_PATH
+    log_debug_var GX_OUTPUT_UNIFIED_XCFILELIST_PROJECT_TEMP_PATH
+    log_debug
+    log_debug_var GX_INPUT_DERIVED_XCFILELIST_PROJECT_PATH
+    log_debug_var GX_OUTPUT_DERIVED_XCFILELIST_PROJECT_PATH
+    log_debug_var GX_INPUT_UNIFIED_XCFILELIST_PROJECT_PATH
+    log_debug_var GX_OUTPUT_UNIFIED_XCFILELIST_PROJECT_PATH
+    log_debug
+    log_debug_var GX_PS_DERIVED_SOURCES_DIR
+    log_debug
+    log_debug_var GX_SUBGENERATE_ACTIONS
+    log_debug_var GX_MERGE_ACTIONS
+    log_debug_var GX_CHECK_ACTIONS
+}
+
+
+function set_project_settings()
+{
+    log_callstack_and_parameters "$@"
+
+    [[ -z "${GX_PROJECT_TAG}" ]] && return
+
+    set_project_specific_settings
+    set_common_project_settings
+    dump_project_settings
+}
+
+
+function ensure_directories_exist()
+{
+    log_callstack_and_parameters "$@"
+
+    local GX_DIR
+    for GX_DIR in "$@"
+    do
+        log_debug "Creating ${GX_DIR}"
+        mkdir -p "${GX_DIR}" &> /dev/null || die "Unable to create "${GX_DIR}"."
+    done
+}
+
+
+function create_empty_files()
+{
+    log_callstack_and_parameters "$@"
+
+    local GX_FILE
+    for GX_FILE in "$@"
+    do
+        ensure_directories_exist "$(dirname "${GX_FILE}")"
+
+        log_debug "Creating ${GX_FILE}"
+        echo -n '' > "${GX_FILE}"
+    done
+}
+
+
+function append_xcfilelist_header()
+{
+    log_callstack_and_parameters "$@"
+
+    local GX_FILE
+    for GX_FILE in "$@"
+    do
+        echo '# This file is generated by the generate-xcfilelists script.' >> "${GX_FILE}"
+    done
+}
+
+
+function sort_and_unique_in_place()
+{
+    sort -u "$1" -o "$1"
+}
+
 
 function replace()
 {
-    FILE="$1"
-    PATTERN="$2"
-    REPLACEMENT="$3"
+    log_callstack_and_parameters "$@"
 
-    sed -E -e "s|^${PATTERN}/|${REPLACEMENT}/|" -i '' "${FILE}"
-}
+    local GX_FILE="$1"
+    local GX_PATTERN="$2"
+    local GX_REPLACEMENT="$3"
 
-# Given an .xcfilelist list file containing partial paths to the generated
-# files, modify each path to also include the actual location of generated
-# files for the given project. For instance, modify "UnifiedSources1.cpp" to
-# "$(BUILT_PRODUCTS_DIR)/DerivedSources/MyProject/UnifiedSources1.cpp".
+    [[ -n "${GX_FILE}" ]] || die "GX_FILE is not defined."
+    [[ -f "${GX_FILE}" ]] || die "${GX_FILE} does not exist."
 
-function prepend_prefix_to_all_paths()
-{
-    FILE="$1"
-    sed -E -e "s|^|${DERIVED_SOURCES_DIR}/|" -i '' "${FILE}"
+    sed -E -e "s|${GX_PATTERN}|${GX_REPLACEMENT}|" -i '' "${GX_FILE}"
 }
 
 
-# Utility: given a list of directories, return the first one that actually
-# exists.
-
-function find_first_existing()
+function unexpand()
 {
-    ITEMS=("$@")
-    for ITEM in "${ITEMS[@]}"
+    log_callstack_and_parameters "$@"
+
+    local GX_FILE="$1"
+    local GX_VAR="$2"
+    local GX_VALUE=$(eval echo \$${GX_VAR})
+
+    [[ -n "${GX_VALUE}" ]] && replace "${GX_FILE}" "^${GX_VALUE}/" "\$\($GX_VAR\)/"
+}
+
+
+function find_additions()
+{
+    # Find additions and removals so that we can report them.
+    #
+    # UPDATE: We can't really report removals. It's possible -- even
+    # overwhelmingly likely -- that we are generating .xcfilelist information
+    # for only a subset of the possible configurations for which we build. For
+    # example, a developer may be building for macOS and iOS, but not watchOS.
+    # In situations like this, we'll be generating the .xcfilelist for those
+    # two platforms, but any files specific to watchOS will not be discovered
+    # and won't be included in the .xcfilelists. If we were to report those
+    # watchOS files as files that should be removed from the .xcfilelists, then
+    # the watchOS build may fail. So, for now, let any obsolete files
+    # accumulate in the .xcfilelist files; they're mostly harmless.
+
+    local GX_NEW="$1"
+    local GX_ORIG="$2"
+    local GX_ADDITIONS="$3"
+
+    [[ -f "${GX_NEW}" ]] || die "${GX_NEW} does not exist."
+    [[ -f "${GX_ORIG}" ]] || die "${GX_ORIG} does not exist."
+
+    comm -2 -3 <(sort "${GX_NEW}") <(sort "${GX_ORIG}") > "${GX_ADDITIONS}"
+}
+
+
+function get_sdks()
+{
+    log_callstack_and_parameters "$@"
+
+    (( ${#GX_SDKS[@]} )) && return
+
+    GX_SDKS=($(
+        xcodebuild -showsdks \
+        | grep -e '\s-sdk\s' \
+        | sed -E \
+            -e 's/.*-sdk ([^[:digit:]]+)$/\1/' \
+            -e 's/.*-sdk ([^[:digit:]]+)([[:digit:]\.]+)$/\1/' \
+            -e 's/.*-sdk ([^[:digit:]]+)([[:digit:]\.]+)([^[:digit:]]+)$/\1.\3/' \
+        | sort -u
+    ))
+
+    (( ${#GX_SDKS[@]} )) || die "Unable to find any SDKs."
+}
+
+
+function get_canonical_configuration()
+{
+    log_callstack_and_parameters "$@"
+
+    local GX_PROVISIONAL_CONFIGURATION=$(echo "$1" | tr '[:upper:]' '[:lower:]')
+
+    [[ "${GX_PROVISIONAL_CONFIGURATION}" == "" ]] && { echo ""; return; }
+
+    [[ "${GX_PROVISIONAL_CONFIGURATION}" == "debug" ]] && { echo "Debug"; return; }
+    [[ "${GX_PROVISIONAL_CONFIGURATION}" == "release" ]] && { echo "Release"; return; }
+    [[ "${GX_PROVISIONAL_CONFIGURATION}" == "production" ]] && { echo "Production"; return; }
+    [[ "${GX_PROVISIONAL_CONFIGURATION}" == "profiling" ]] && { echo "Profiling"; return; }
+
+    die "Unrecognized configuration: $1"
+}
+
+
+function get_canonical_platform_name()
+{
+    log_callstack_and_parameters "$@"
+
+    local GX_PROVISIONAL_PLATFORM_NAME=$(echo "$1" | tr '[:upper:]' '[:lower:]')
+
+    [[ "${GX_PROVISIONAL_PLATFORM_NAME}" == "" ]] && { echo ""; return; }
+
+    [[ "${GX_PROVISIONAL_PLATFORM_NAME}" == "ios" ]] && { echo "iphoneos"; return; }
+    [[ "${GX_PROVISIONAL_PLATFORM_NAME}" == "iphone" ]] && { echo "iphoneos"; return; }
+    [[ "${GX_PROVISIONAL_PLATFORM_NAME}" == "ipad" ]] && { echo "iphoneos"; return; }
+    [[ "${GX_PROVISIONAL_PLATFORM_NAME}" == "iphoneos" ]] && { echo "iphoneos"; return; }
+
+    [[ "${GX_PROVISIONAL_PLATFORM_NAME}" == "mac" ]] && { echo "macosx"; return; }
+    [[ "${GX_PROVISIONAL_PLATFORM_NAME}" == "osx" ]] && { echo "macosx"; return; }
+    [[ "${GX_PROVISIONAL_PLATFORM_NAME}" == "macos" ]] && { echo "macosx"; return; }
+    [[ "${GX_PROVISIONAL_PLATFORM_NAME}" == "macosx" ]] && { echo "macosx"; return; }
+
+    die "Unrecognized platform name: $1"
+}
+
+
+function get_sdk_name()
+{
+    log_callstack_and_parameters "$@"
+
+    local GX_SDK=$(get_canonical_platform_name "$1")
+    local GX_INTERNAL_SDK="${GX_SDK}.internal"
+
+    get_sdks
+
+    # Prefer an internal SDK if one exists.
+
+    [[ " ${GX_SDKS[@]} " =~ " ${GX_INTERNAL_SDK} " ]] && { echo "${GX_INTERNAL_SDK}"; return; }
+    [[ " ${GX_SDKS[@]} " =~ " ${GX_SDK} " ]] && { echo "${GX_SDK}"; return; }
+
+    die "Unsupported SDK: ${GX_SDK}."
+}
+
+
+function invoke_each_action()
+{
+    log_callstack_and_parameters "$@"
+
+    local GX_ACTION
+    for GX_ACTION in "$@"
     do
-        [[ -e "${ITEM}" ]] && { echo "${ITEM}"; return 0; }
+        eval "${GX_ACTION}"
     done
+}
+
+
+function for_each_configuration()
+{
+    log_callstack_and_parameters "$@"
+
+    if [[ -z "${GX_CONFIGURATION}" ]]
+    then
+        for GX_CONFIGURATION in "${GX_CONFIGURATIONS[@]}"
+        do
+            eval "$@"
+        done
+
+        GX_CONFIGURATION=
+    else
+        eval "$@"
+    fi
+}
+
+
+function for_each_platform()
+{
+    log_callstack_and_parameters "$@"
+
+    if [[ -z "${GX_PLATFORM_NAME}" ]]
+    then
+        for GX_PLATFORM_NAME in "${GX_PS_PLATFORM_NAMES[@]}"
+        do
+            eval "$@"
+        done
+
+        GX_PLATFORM_NAME=
+    else
+        eval "$@"
+    fi
+}
+
+
+function for_each_project()
+{
+    log_callstack_and_parameters "$@"
+
+    if [[ -z "${GX_PROJECT_TAG}" ]]
+    then
+        for GX_PROJECT_TAG in "${GX_PROJECT_TAGS[@]}"
+        do
+            set_project_settings
+            eval "$@"
+        done
+
+        GX_PROJECT_TAG=
+    else
+        set_project_settings
+        eval "$@"
+    fi
+}
+
+
+function generate_derivedsources_xcfilelists()
+{
+    log_callstack_and_parameters "$@"
+
+    create_empty_files "${GX_TEMP_INPUT_XCFILELIST}" "${GX_TEMP_OUTPUT_XCFILELIST}"
+
+    local GX_DERIVEDSOURCES_EXTRACTOR="${GX_HERE}/extract-dependencies-from-makefile"
+
+    [[ -n "${GX_DERIVEDSOURCES_GENERATOR}" ]] || die "GX_DERIVEDSOURCES_GENERATOR is not defined."
+    [[ -x "${GX_DERIVEDSOURCES_GENERATOR}" ]] || die "${GX_DERIVEDSOURCES_GENERATOR} does not exist or is not executable."
+    [[ -x "${GX_DERIVEDSOURCES_EXTRACTOR}" ]] || die "${GX_DERIVEDSOURCES_EXTRACTOR} does not exist or is not executable."
+
+    log_debug "Creating derived .xcfilelists for ${PROJECT_NAME}/${PLATFORM_NAME}/${CONFIGURATION}"
+
+    "${GX_DERIVEDSOURCES_GENERATOR}" \
+        NO_SUPPLEMENTAL_FILES=1 \
+        --no-builtin-rules \
+        --dry-run \
+        --always-make \
+        --debug=abvijm all \
+        1> "${GX_TEMP}/std.out" 2> "${GX_TEMP}/std.err"
+    local GX_RESULT=$?
+
+    if (( ${GX_RESULT} ))
+    then
+        sed -E -e 's/^/... /' < "${GX_TEMP}/std.err"
+        die "Error generating derived sources: error = ${GX_RESULT}" ${GX_RESULT}
+    fi
+
+    cat "${GX_TEMP}/std.out" \
+    | "${GX_DERIVEDSOURCES_EXTRACTOR}" \
+        --input "${GX_TEMP_INPUT_XCFILELIST}" \
+        --output "${GX_TEMP_OUTPUT_XCFILELIST}"
+    local GX_RESULT=$?
+
+    (( ${GX_RESULT} )) && die "Error extracting dependencies from DerivedSources.make: error = ${GX_RESULT}"
+    [[ -f "${GX_TEMP_INPUT_XCFILELIST}" ]] || die "${GX_TEMP_INPUT_XCFILELIST} was not generated."
+    [[ -f "${GX_TEMP_OUTPUT_XCFILELIST}" ]] || die "${GX_TEMP_OUTPUT_XCFILELIST} was not generated."
+
+    replace "${GX_TEMP_INPUT_XCFILELIST}" '^WebCore/'                      '$(PROJECT_DIR)/'
+    replace "${GX_TEMP_INPUT_XCFILELIST}" '^JavaScriptCore/'               '$(PROJECT_DIR)/'
+    replace "${GX_TEMP_INPUT_XCFILELIST}" '^JavaScriptCorePrivateHeaders/' '$(JAVASCRIPTCORE_PRIVATE_HEADERS_DIR)/'
+    replace "${GX_TEMP_INPUT_XCFILELIST}" '^WebKit2PrivateHeaders/'        '$(WEBKIT2_PRIVATE_HEADERS_DIR)/'
+    unexpand "${GX_TEMP_INPUT_XCFILELIST}" PROJECT_DIR
+    unexpand "${GX_TEMP_INPUT_XCFILELIST}" WEBKITADDITIONS_HEADERS_FOLDER_PATH
+    unexpand "${GX_TEMP_INPUT_XCFILELIST}" WEBCORE_PRIVATE_HEADERS_DIR
+    unexpand "${GX_TEMP_INPUT_XCFILELIST}" WEBKIT2_PRIVATE_HEADERS_DIR
+    unexpand "${GX_TEMP_INPUT_XCFILELIST}" JAVASCRIPTCORE_PRIVATE_HEADERS_DIR
+    unexpand "${GX_TEMP_INPUT_XCFILELIST}" BUILT_PRODUCTS_DIR
+
+    replace "${GX_TEMP_OUTPUT_XCFILELIST}" "^" "${GX_PS_DERIVED_SOURCES_DIR}/"
+    unexpand "${GX_TEMP_OUTPUT_XCFILELIST}" BUILT_PRODUCTS_DIR
+
+    merge_xcfilelists_helper "${GX_TEMP_INPUT_XCFILELIST}" "${GX_INPUT_DERIVED_XCFILELIST_PROJECT_TEMP_PATH}"
+    merge_xcfilelists_helper "${GX_TEMP_OUTPUT_XCFILELIST}" "${GX_OUTPUT_DERIVED_XCFILELIST_PROJECT_TEMP_PATH}"
+}
+
+
+function generate_unifiedsources_xcfilelists()
+{
+    log_callstack_and_parameters "$@"
+
+    create_empty_files "${GX_TEMP_INPUT_XCFILELIST}" "${GX_TEMP_OUTPUT_XCFILELIST}"
+
+    [[ -n "${GX_UNIFIEDSOURCES_GENERATOR}" ]] || die "GX_UNIFIEDSOURCES_GENERATOR is not defined."
+    [[ -x "${GX_UNIFIEDSOURCES_GENERATOR}" ]] || die "${GX_UNIFIEDSOURCES_GENERATOR} does not exist or is not executable."
+
+    local GX_BUILD_SCRIPTS_DIR="${GX_OPENSOURCE_DIR}/Source/WTF/Scripts"
+    [[ -d "${GX_BUILD_SCRIPTS_DIR}" ]] || die "${GX_BUILD_SCRIPTS_DIR} does not exist or is not a directory."
+    [[ -f "${GX_BUILD_SCRIPTS_DIR}/generate-unified-source-bundles.rb" ]] || die "${GX_BUILD_SCRIPTS_DIR}/generate-unified-source-bundles.rb does not exist or is not a file."
+
+    log_debug "Creating unified .xcfilelists for ${PROJECT_NAME}/${PLATFORM_NAME}/${CONFIGURATION}"
+
+    BUILD_SCRIPTS_DIR="${GX_BUILD_SCRIPTS_DIR}" \
+    "${GX_UNIFIEDSOURCES_GENERATOR}" \
+        --generate-xcfilelists \
+        --input-xcfilelist-path "${GX_TEMP_INPUT_XCFILELIST}" \
+        --output-xcfilelist-path "${GX_TEMP_OUTPUT_XCFILELIST}"
+    GX_RESULT=$?
+
+    (( ${GX_RESULT} )) && die "Error generating unified sources: error = ${GX_RESULT}"
+    [[ -f "${GX_TEMP_INPUT_XCFILELIST}" ]] || die "${GX_TEMP_INPUT_XCFILELIST} was not generated."
+    [[ -f "${GX_TEMP_OUTPUT_XCFILELIST}" ]] || die "${GX_TEMP_OUTPUT_XCFILELIST} was not generated."
+
+    unexpand "${GX_TEMP_INPUT_XCFILELIST}" BUILT_PRODUCTS_DIR
+    unexpand "${GX_TEMP_OUTPUT_XCFILELIST}" BUILT_PRODUCTS_DIR
+
+    merge_xcfilelists_helper "${GX_TEMP_INPUT_XCFILELIST}" "${GX_INPUT_UNIFIED_XCFILELIST_PROJECT_TEMP_PATH}"
+    merge_xcfilelists_helper "${GX_TEMP_OUTPUT_XCFILELIST}" "${GX_OUTPUT_UNIFIED_XCFILELIST_PROJECT_TEMP_PATH}"
+}
+
+
+function subgenerate_xcfilelists()
+{
+    log_callstack_and_parameters "$@"
+
+    invoke_each_action "${GX_SUBGENERATE_ACTIONS[@]}"
+}
+
+
+function sublaunch_under_xcode()
+{
+    log_callstack_and_parameters "$@"
+
+    # Sublaunch the script for the given project, for each platform for which
+    # the project is built, and for Debug and Release configurations.
+
+    local GX_ARGS=("$@")
+    (( ${GX_DRY_RUN} )) && GX_ARGS+=("--dry-run")
+    (( ${GX_DEBUG} )) && { for n in $(seq $GX_DEBUG); do GX_ARGS+=("--debug"); done; }
+    (( ${GX_QUIET} )) && GX_ARGS+=("--quiet")
+
+    local GX_SDK_NAME=$(get_sdk_name "${GX_PLATFORM_NAME}")
+
+    log_debug "Sublaunching for: ${GX_PROJECT_TAG}/${GX_PLATFORM_NAME}/${GX_CONFIGURATION}"
+
+    local GX_XCODE_PARAMETERS=(
+        -project "${GX_PS_PROJECT_FILE_PATH}"
+        -sdk "${GX_SDK_NAME}"
+        -configuration "${GX_CONFIGURATION}"
+        -target "Apply Configuration to XCFileLists"
+    )
+
+    if (( ${GX_USE_WEBKITBUILD_BUILD_OUTPUT} ))
+    then
+        local GX_WEBKITBUILD_DIR="${WEBKIT_OUTPUTDIR:-${GX_OPENSOURCE_DIR}/WebKitBuild}"
+        [[ -d "${GX_WEBKITBUILD_DIR}" ]] || die "${GX_WEBKITBUILD_DIR} does not exist."
+
+        GX_XCODE_PARAMETERS+=(
+            SYMROOT="${GX_WEBKITBUILD_DIR}"
+            OBJROOT="${GX_WEBKITBUILD_DIR}"
+            SHARED_PRECOMPS_DIR="${GX_WEBKITBUILD_DIR}/PrecompiledHeaders"
+        )
+    fi
+
+    if (( $GX_DEBUG > 0 ))
+    then
+        WK_SUBLAUNCH_SCRIPT_PARAMETERS=("${GX_ARGS[@]}") xcodebuild "${GX_XCODE_PARAMETERS[@]}"
+    else
+        WK_SUBLAUNCH_SCRIPT_PARAMETERS=("${GX_ARGS[@]}") xcodebuild "${GX_XCODE_PARAMETERS[@]}" | grep '^\.\.\. '
+    fi
+
+    local GX_RESULT=${PIPESTATUS[0]}
+    (( ${GX_RESULT} )) && die "Error sub-launching under xcode: error = ${GX_RESULT}"
+}
+
+
+function reset_project_specific_temp_files()
+{
+    log_callstack_and_parameters "$@"
+
+    create_empty_files \
+        "${GX_INPUT_DERIVED_XCFILELIST_PROJECT_TEMP_PATH}" "${GX_OUTPUT_DERIVED_XCFILELIST_PROJECT_TEMP_PATH}" \
+        "${GX_INPUT_UNIFIED_XCFILELIST_PROJECT_TEMP_PATH}" "${GX_OUTPUT_UNIFIED_XCFILELIST_PROJECT_TEMP_PATH}"
+}
+
+
+function generate_xcfilelists()
+{
+    log_callstack_and_parameters "$@"
+
+    reset_project_specific_temp_files
+
+    for_each_platform \
+        for_each_configuration \
+            sublaunch_under_xcode \
+                "${GX_SUBEXECUTE_SCRIPT}" subgenerate --nocleanup --project "${GX_PROJECT_TAG}"
+}
+
+
+function merge_xcfilelists_helper()
+{
+    log_callstack_and_parameters "$@"
+
+    local GX_SOURCE="$1"
+    local GX_DEST="$2"
+    local GX_ADDITIONS="${GX_TEMP}/diff_added.tmp"
+
+    append_xcfilelist_header "${GX_SOURCE}"
+    sort_and_unique_in_place "${GX_SOURCE}"
+
+    find_additions "${GX_SOURCE}" "${GX_DEST}" "${GX_ADDITIONS}"
+
+    if [[ -s "${GX_ADDITIONS}" ]]
+    then
+        cat "${GX_SOURCE}" >> "${GX_DEST}"
+        sort_and_unique_in_place "${GX_DEST}"
+        return 0
+    fi
+
     return 1
 }
 
 
-# Given a checked-in .xcfilelist and a newly-generated one stored in a
-# temporary location, compare the two to see if there are any changes that need
-# to be accounted for. If there are differences, print out a notice and prep
-# the script to exit with code 2.
-
-function check_xcfilelist()
+function merge_derivedsources_xcfilelists()
 {
-    local ORIG="$1"
-    local TEMP="$2"
+    log_callstack_and_parameters "$@"
 
-    if ! diff -q "${ORIG}" "${TEMP}" &> /dev/null
+    log_debug "Merging ${GX_INPUT_DERIVED_XCFILELIST_PROJECT_TEMP_PATH} into ${GX_INPUT_DERIVED_XCFILELIST_PROJECT_PATH}"
+    log_debug "Merging ${GX_OUTPUT_DERIVED_XCFILELIST_PROJECT_TEMP_PATH} into ${GX_OUTPUT_DERIVED_XCFILELIST_PROJECT_PATH}"
+
+    if (( ! ${GX_DRY_RUN} ))
     then
-        echo "### xcfilelist changed:"
-        diff -u "${ORIG}" "${TEMP}"
-        DEFERRED_EXIT_CODE=2
+        merge_xcfilelists_helper "${GX_INPUT_DERIVED_XCFILELIST_PROJECT_TEMP_PATH}" "${GX_INPUT_DERIVED_XCFILELIST_PROJECT_PATH}" && GX_DEFERRED_EXIT_CODE=3
+        log_debug "GX_DEFERRED_EXIT_CODE = $GX_DEFERRED_EXIT_CODE"
+
+        merge_xcfilelists_helper "${GX_OUTPUT_DERIVED_XCFILELIST_PROJECT_TEMP_PATH}" "${GX_OUTPUT_DERIVED_XCFILELIST_PROJECT_PATH}" && GX_DEFERRED_EXIT_CODE=3
+        log_debug "GX_DEFERRED_EXIT_CODE = $GX_DEFERRED_EXIT_CODE"
     fi
-
-    rm "${TEMP}"
 }
 
 
-function set_build_variables_for_JavaScriptCore()
+function merge_unifiedsources_xcfilelists()
 {
-    PROJECT_NAME=JavaScriptCore
-    PROJECT_DIR="${OPENSOURCE_DIR}/Source/${PROJECT_NAME}"
-    GENERATOR="${PROJECT_DIR}/Scripts/generate-derived-sources.sh"
-    DERIVED_SOURCES_MAKE="${PROJECT_DIR}/DerivedSources.make"
-    DERIVED_SOURCES_DIR="${BUILT_PRODUCTS_DIR}/DerivedSources/${PROJECT_NAME}"
+    log_callstack_and_parameters "$@"
 
-    export FRAMEWORK_SEARCH_PATHS=
-    export HEADER_SEARCH_PATHS="
-        ${BUILT_PRODUCTS_DIR}/DerivedSources/JavaScriptCore
-        .
-        ${BUILT_PRODUCTS_DIR}/usr/local/include"
-    export SYSTEM_FRAMEWORK_SEARCH_PATHS="
-        ${SDKROOT}/System/Library/PrivateFrameworks"
-    export SYSTEM_HEADER_SEARCH_PATHS=
-}
+    log_debug "Merging ${GX_INPUT_UNIFIED_XCFILELIST_PROJECT_TEMP_PATH} into ${GX_INPUT_UNIFIED_XCFILELIST_PROJECT_PATH}"
+    log_debug "Merging ${GX_OUTPUT_UNIFIED_XCFILELIST_PROJECT_TEMP_PATH} into ${GX_OUTPUT_UNIFIED_XCFILELIST_PROJECT_PATH}"
 
-
-function set_build_variables_for_WebCore()
-{
-    PROJECT_NAME=WebCore
-    PROJECT_DIR="${OPENSOURCE_DIR}/Source/${PROJECT_NAME}"
-    GENERATOR="${PROJECT_DIR}/Scripts/generate-derived-sources.sh"
-    DERIVED_SOURCES_MAKE="${PROJECT_DIR}/DerivedSources.make"
-    DERIVED_SOURCES_DIR="${BUILT_PRODUCTS_DIR}/DerivedSources/${PROJECT_NAME}"
-
-    export FRAMEWORK_SEARCH_PATHS="
-        ${BUILT_PRODUCTS_DIR}"
-    export HEADER_SEARCH_PATHS="
-        PAL
-        ForwardingHeaders
-        /usr/include/libxslt
-        /usr/include/libxml2
-        ${BUILT_PRODUCTS_DIR}/DerivedSources/WebCore
-        ${BUILT_PRODUCTS_DIR}/usr/local/include
-        ${BUILT_PRODUCTS_DIR}/usr/local/include/WebKitAdditions
-        ${SDKROOT}/usr/local/include/WebKitAdditions
-        ${BUILT_PRODUCTS_DIR}/usr/local/include/webrtc
-        ${SDKROOT}/usr/local/include/webrtc
-        ${BUILT_PRODUCTS_DIR}/usr/local/include/webrtc/sdk/objc/Framework/Headers
-        ${SDKROOT}/usr/local/include/webrtc/sdk/objc/Framework/Headers
-        ${PROJECT_DIR}"
-    export SYSTEM_FRAMEWORK_SEARCH_PATHS="
-        ${SDKROOT}/System/Library/PrivateFrameworks
-        ${SDKROOT}/System/Library/Frameworks"
-    export SYSTEM_HEADER_SEARCH_PATHS=
-}
-
-
-function set_build_variables_for_WebKit()
-{
-    PROJECT_NAME=WebKit
-    PROJECT_DIR="${OPENSOURCE_DIR}/Source/${PROJECT_NAME}"
-    GENERATOR="${PROJECT_DIR}/Scripts/generate-derived-sources.sh"
-    DERIVED_SOURCES_MAKE="${PROJECT_DIR}/DerivedSources.make"
-    DERIVED_SOURCES_DIR="${BUILT_PRODUCTS_DIR}/DerivedSources/WebKit2"
-
-    export FRAMEWORK_SEARCH_PATHS="
-        ${BUILT_PRODUCTS_DIR}"
-    export HEADER_SEARCH_PATHS="
-        ${BUILT_PRODUCTS_DIR}/usr/local/include
-        ${BUILT_PRODUCTS_DIR}/WebCore.framework/PrivateHeaders/ForwardingHeaders
-        ${BUILT_PRODUCTS_DIR}/DerivedSources/WebKit2
-        ${BUILT_PRODUCTS_DIR}/usr/local/include/WebKitAdditions
-        ${SDKROOT}/usr/local/include/WebKitAdditions
-        ${BUILT_PRODUCTS_DIR}/usr/local/include/webrtc
-        ${SDKROOT}/usr/local/include/webrtc
-        ${PROJECT_DIR}"
-    export SYSTEM_FRAMEWORK_SEARCH_PATHS="
-        ${SDKROOT}/System/Library/PrivateFrameworks
-        ${SDKROOT}/System/Library/Frameworks"
-    export SYSTEM_HEADER_SEARCH_PATHS=
-}
-
-
-function set_build_variables_for_DumpRenderTree()
-{
-    PROJECT_NAME=DumpRenderTree
-    PROJECT_DIR="${OPENSOURCE_DIR}/Tools/${PROJECT_NAME}"
-    GENERATOR="${PROJECT_DIR}/Scripts/generate-derived-sources.sh"
-    DERIVED_SOURCES_MAKE="${PROJECT_DIR}/DerivedSources.make"
-    DERIVED_SOURCES_DIR="${BUILT_PRODUCTS_DIR}/DerivedSources/${PROJECT_NAME}"
-
-    export FRAMEWORK_SEARCH_PATHS=
-    export HEADER_SEARCH_PATHS=
-    export SYSTEM_FRAMEWORK_SEARCH_PATHS=
-    export SYSTEM_HEADER_SEARCH_PATHS=
-}
-
-function set_build_variables_for_WebKitTestRunner()
-{
-    PROJECT_NAME=WebKitTestRunner
-    PROJECT_DIR="${OPENSOURCE_DIR}/Tools/${PROJECT_NAME}"
-    GENERATOR="${PROJECT_DIR}/Scripts/generate-derived-sources.sh"
-    DERIVED_SOURCES_MAKE="${PROJECT_DIR}/DerivedSources.make"
-    DERIVED_SOURCES_DIR="${BUILT_PRODUCTS_DIR}/DerivedSources/${PROJECT_NAME}"
-
-    export FRAMEWORK_SEARCH_PATHS=
-    export HEADER_SEARCH_PATHS=
-    export SYSTEM_FRAMEWORK_SEARCH_PATHS=
-    export SYSTEM_HEADER_SEARCH_PATHS=
-}
-
-
-function dump_variables()
-{
-    echo "ACTION                              = ${ACTION}"
-    echo "OS                                  = ${OS}"
-    echo "PLATFORM_NAME                       = ${PLATFORM_NAME}"
-    echo "SDKROOT                             = ${SDKROOT}"
-    echo "SRCROOT                             = ${SRCROOT}"
-    echo "BUILD_SCRIPTS_DIR                   = ${BUILD_SCRIPTS_DIR}"
-    echo "BUILT_PRODUCTS_DIR                  = ${BUILT_PRODUCTS_DIR}"
-    echo "WEBCORE_PRIVATE_HEADERS_DIR         = ${WEBCORE_PRIVATE_HEADERS_DIR}"
-    echo "WEBKIT2_PRIVATE_HEADERS_DIR         = ${WEBKIT2_PRIVATE_HEADERS_DIR}"
-    echo "JAVASCRIPTCORE_PRIVATE_HEADERS_DIR  = ${JAVASCRIPTCORE_PRIVATE_HEADERS_DIR}"
-    echo "WEBKITADDITIONS_HEADER_SEARCH_PATHS = ${WEBKITADDITIONS_HEADER_SEARCH_PATHS}"
-    echo ""
-    echo "PROJECT_NAME                        = ${PROJECT_NAME}"
-    echo "PROJECT_DIR                         = ${PROJECT_DIR}"
-    echo "GENERATOR                           = ${GENERATOR}"
-    echo "DERIVED_SOURCES_MAKE                = ${DERIVED_SOURCES_MAKE}"
-    echo "DERIVED_SOURCES_DIR                 = ${DERIVED_SOURCES_DIR}"
-    echo ""
-    echo "FRAMEWORK_SEARCH_PATHS              = ${FRAMEWORK_SEARCH_PATHS}"
-    echo "HEADER_SEARCH_PATHS                 = ${HEADER_SEARCH_PATHS}"
-    echo "SYSTEM_FRAMEWORK_SEARCH_PATHS       = ${SYSTEM_FRAMEWORK_SEARCH_PATHS}"
-}
-
-
-function set_build_variables()
-{
-    PROJECT_TAG="$1"
-
-    export ACTION=build
-    export OS=MACOS
-    export PLATFORM_NAME=macosx
-    export SDKROOT="$(xcrun -show-sdk-path)"
-    export BUILD_SCRIPTS_DIR="${OPENSOURCE_DIR}/Source/WTF/Scripts"
-    export BUILT_PRODUCTS_DIR="$(find_first_existing "${OPENSOURCE_DIR}/WebKitBuild/"{Debug,Release}*)"
-    [[ -n "${SDKROOT}" ]] || die "SDKROOT is not defined"
-    [[ -e "${BUILD_SCRIPTS_DIR}" ]] || die "$BUILD_SCRIPTS_DIR does not exist"
-    [[ -n "${BUILT_PRODUCTS_DIR}" ]] || die "BUILT_PRODUCTS_DIR is not defined. You may need to build WebKit first."
-
-    export WEBCORE_PRIVATE_HEADERS_DIR="${BUILT_PRODUCTS_DIR}/WebCore.framework/PrivateHeaders"
-    export WEBKIT2_PRIVATE_HEADERS_DIR="${BUILT_PRODUCTS_DIR}/WebKit.framework/PrivateHeaders"
-    export JAVASCRIPTCORE_PRIVATE_HEADERS_DIR="${BUILT_PRODUCTS_DIR}/JavaScriptCore.framework/PrivateHeaders"
-    export WEBKITADDITIONS_HEADER_SEARCH_PATHS="${BUILT_PRODUCTS_DIR}/usr/local/include/WebKitAdditions ${SDKROOT}/usr/local/include/WebKitAdditions"
-    [[ -e "${WEBCORE_PRIVATE_HEADERS_DIR}" ]] || die "$WEBCORE_PRIVATE_HEADERS_DIR does not exist. You may need to build WebKit first."
-    [[ -e "${JAVASCRIPTCORE_PRIVATE_HEADERS_DIR}" ]] || die "$JAVASCRIPTCORE_PRIVATE_HEADERS_DIR does not exist. You may need to build WebKit first."
-    # [[ -e "${WEBKITADDITIONS_HEADER_SEARCH_PATHS}" ]] || die "$WEBKITADDITIONS_HEADER_SEARCH_PATHS does not exist. You may need to build WebKit first."
-
-    local FN=set_build_variables_for_${PROJECT_TAG}
-    local IS_FUNCTION=$(type -t $FN)
-    [[ "${IS_FUNCTION}" == "function" ]] && eval $FN || die "Could not set build variables for ${PROJECT_TAG}"
-
-    # Do these after project-specific initialization.
-
-    export SRCROOT="${PROJECT_DIR}"
-
-    [[ -e "${PROJECT_DIR}" ]] || die "$PROJECT_DIR does not exist"
-    [[ -e "${GENERATOR}" ]] || die "$GENERATOR does not exist"
-    [[ -e "${DERIVED_SOURCES_MAKE}" ]] || die "$DERIVED_SOURCES_MAKE does not exist"
-    [[ -e "${DERIVED_SOURCES_DIR}" ]] || die "$DERIVED_SOURCES_DIR does not exist"
-
-    # dump_variables
-}
-
-
-function sort_files()
-{
-    sort "${INPUT_XCFILELIST_PATH}" -o "${INPUT_XCFILELIST_PATH}"
-    sort "${OUTPUT_XCFILELIST_PATH}" -o "${OUTPUT_XCFILELIST_PATH}"
-}
-
-
-# If we're doing a check (as opposed to generating the files), then redirect
-# the script to generate the files in a temporary location (so that we can
-# compare those to the originals later).
-
-function check_prolog()
-{
-    if (( ${DO_CHECK} ))
+    if (( ! ${GX_DRY_RUN} ))
     then
-        INPUT_XCFILELIST_PATH_ORIG="${INPUT_XCFILELIST_PATH}"
-        INPUT_XCFILELIST_PATH="/tmp/${INPUT_XCFILELIST_PATH##/}"
-        OUTPUT_XCFILELIST_PATH_ORIG="${OUTPUT_XCFILELIST_PATH}"
-        OUTPUT_XCFILELIST_PATH="/tmp/${OUTPUT_XCFILELIST_PATH##/}"
-        mkdir -p "$(dirname "${INPUT_XCFILELIST_PATH}")"
-        mkdir -p "$(dirname "${OUTPUT_XCFILELIST_PATH}")"
+        merge_xcfilelists_helper "${GX_INPUT_UNIFIED_XCFILELIST_PROJECT_TEMP_PATH}" "${GX_INPUT_UNIFIED_XCFILELIST_PROJECT_PATH}" && GX_DEFERRED_EXIT_CODE=3
+        log_debug "GX_DEFERRED_EXIT_CODE = $GX_DEFERRED_EXIT_CODE"
+
+        merge_xcfilelists_helper "${GX_OUTPUT_UNIFIED_XCFILELIST_PROJECT_TEMP_PATH}" "${GX_OUTPUT_UNIFIED_XCFILELIST_PROJECT_PATH}" && GX_DEFERRED_EXIT_CODE=3
+        log_debug "GX_DEFERRED_EXIT_CODE = $GX_DEFERRED_EXIT_CODE"
+    fi
+}
+
+
+function merge_xcfilelists()
+{
+    log_callstack_and_parameters "$@"
+
+    invoke_each_action "${GX_MERGE_ACTIONS[@]}"
+
+    log_debug "GX_DEFERRED_EXIT_CODE = $GX_DEFERRED_EXIT_CODE"
+}
+
+
+function check_xcfilelists_helper()
+{
+    log_callstack_and_parameters "$@"
+
+    local GX_NEW="$1"
+    local GX_ORIG="$2"
+    local GX_ADDITIONS="${GX_TEMP}/diff_added.tmp"
+
+    log_debug "Checking ${GX_NEW} against ${GX_ORIG}"
+
+    find_additions "${GX_NEW}" "${GX_ORIG}" "${GX_ADDITIONS}"
+
+    if [[ -s "${GX_ADDITIONS}" ]]
+    then
+        log_progress
+        log_progress "------------------------------------------------------------------------------"
+        log_progress "Found added files for ${GX_ORIG}:"
+        log_progress "------------------------------------------------------------------------------"
+
+        local GX_LINE
+        while IFS='' read -r GX_LINE
+        do
+            log_progress "${GX_LINE}"
+        done < "${GX_ADDITIONS}"
+
+        log_progress "------------------------------------------------------------------------------"
+
+        GX_DEFERRED_EXIT_CODE=2
+    fi
+}
+
+
+function check_derivedsources_xcfilelists()
+{
+    log_callstack_and_parameters "$@"
+
+    check_xcfilelists_helper "${GX_INPUT_DERIVED_XCFILELIST_PROJECT_TEMP_PATH}" "${GX_INPUT_DERIVED_XCFILELIST_PROJECT_PATH}"
+    check_xcfilelists_helper "${GX_OUTPUT_DERIVED_XCFILELIST_PROJECT_TEMP_PATH}" "${GX_OUTPUT_DERIVED_XCFILELIST_PROJECT_PATH}"
+}
+
+
+function check_unifiedsources_xcfilelists()
+{
+    log_callstack_and_parameters "$@"
+
+    check_xcfilelists_helper "${GX_INPUT_UNIFIED_XCFILELIST_PROJECT_TEMP_PATH}" "${GX_INPUT_UNIFIED_XCFILELIST_PROJECT_PATH}"
+    check_xcfilelists_helper "${GX_OUTPUT_UNIFIED_XCFILELIST_PROJECT_TEMP_PATH}" "${GX_OUTPUT_UNIFIED_XCFILELIST_PROJECT_PATH}"
+}
+
+
+function check_xcfilelists()
+{
+    log_callstack_and_parameters "$@"
+
+    invoke_each_action "${GX_CHECK_ACTIONS[@]}"
+}
+
+
+function report_merge_results()
+{
+    log_callstack_and_parameters "$@"
+
+    log_debug "GX_DEFERRED_EXIT_CODE = $GX_DEFERRED_EXIT_CODE"
+
+    if (( ${GX_DEFERRED_EXIT_CODE} ))
+    then
+        log_progress
+
+        local GX_MESSAGE='".xcfilelist" files tell the build system what files
+            are consumed and produced by the "Run Script" build phases in
+            Xcode. At least one of these .xcfilelist files was out of date and
+            has been updated. You now need to restart your build.'
+
+        log_progress_long "${GX_MESSAGE}"
+    fi
+}
+
+
+function report_remediation_steps()
+{
+    log_callstack_and_parameters "$@"
+
+    if (( ${GX_DEFERRED_EXIT_CODE} ))
+    then
+        log_progress
+
+        # We can either be called from within an xcodebuild context (meaning
+        # that we are being called during a build to validate the .xcfilelists
+        # for the current build configuration) or from the command line (to
+        # validate all .xcfilelists). We'll determine which of these is the
+        # case by checking $GX_PROJECT_TAG (which will have been set via the
+        # --project <TAG> option passed in to us when we're invoked in this
+        # context).
+        #
+        # Further, if called from within xcodebuild, it's important to know if
+        # we're being called from within Xcode or being invoked by a Makefile.
+        # If the former, the output/build files we are looking for are found in
+        # ~/Library/Developer/Xcode/DerivedData. Otherwise, they'll be found in
+        # OpenSource/WebKitBuild (or whatever $WEBKIT_OUTPUTDIR points to). We
+        # need to distinguish between these so that we can tell the user how to
+        # invoke us in a way that finds the right output/build files.
+        #
+        # If invoked from the command line, we really can't tell where the
+        # output files are, so give the user advice in this area.
+
+        local GX_MESSAGE='".xcfilelist" files tell the build system what files
+            are consumed and produced by the "Run Script" build phases in
+            Xcode. At least one of these .xcfilelist files are out of date and
+            need to be regenerated. Regenerate these files by running
+            `Tools/Scripts/generate-xcfilelists generate'
+
+        if [[ -n "${GX_PROJECT_TAG}" ]]
+        then
+            local GX_MESSAGE+=" --project ${GX_PROJECT_TAG}"
+            if [[ "${SYMROOT}" =~ Library/Developer/Xcode/DerivedData ]]
+            then
+                local GX_MESSAGE+=" --xcode"
+            fi
+        else
+            if (( ${GX_USE_XCODE_BUILD_OUTPUT} ))
+            then
+                local GX_MESSAGE+=" --xcode"
+            fi
+        fi
+
+        local GX_MESSAGE+='`, or manually add the file or files shown above to
+        the indicated .xcfilelist files. Then restart your build. When
+        submitting, include the updated .xcfilelist files.'
+
+        log_progress_long "${GX_MESSAGE}"
+    fi
+}
+
+
+function do_generate()
+{
+    # Invoked from the command line to generate .xcfilelist files. Use any
+    # specified project, platform, and/or configuration. Any of those that
+    # aren't specified results in our iterating over all possible values for
+    # the unspecified value.
+
+    log_callstack_and_parameters "$@"
+
+    if [[ -z "${GX_PROJECT_TAG}" ]]
+    then
+        log_progress "=== Generating all .xcfilelists ==="
     else
-        echo "### Generating: ${INPUT_XCFILELIST_PATH}"
-        echo "### Generating: ${OUTPUT_XCFILELIST_PATH}"
+        log_progress "=== Generating .xcfilelists for ${GX_PROJECT_TAG} ==="
     fi
+
+    for_each_project \
+        generate_xcfilelists
 }
 
 
-# If we're doing a check, then diff the new files against the originals.
-
-function check_epilog()
+function do_merge()
 {
-    if (( ${DO_CHECK} ))
+    # Implicitly invoked for generate and generate-xcode operations to move the
+    # temporary results into the Xcode project.
+
+    log_callstack_and_parameters "$@"
+
+    if [[ -z "${GX_PROJECT_TAG}" ]]
     then
-        echo "### Checking: ${INPUT_XCFILELIST_PATH}"
-        check_xcfilelist "${INPUT_XCFILELIST_PATH_ORIG}" "${INPUT_XCFILELIST_PATH}"
-
-        echo "### Checking: ${OUTPUT_XCFILELIST_PATH}"
-        check_xcfilelist "${OUTPUT_XCFILELIST_PATH_ORIG}" "${OUTPUT_XCFILELIST_PATH}"
+        log_progress "=== Merging all .xcfilelists into place ==="
+    else
+        log_progress "=== Merging .xcfilelists for ${GX_PROJECT_TAG} ==="
     fi
+
+    for_each_project \
+        merge_xcfilelists
+
+    log_debug "GX_DEFERRED_EXIT_CODE = $GX_DEFERRED_EXIT_CODE"
 }
 
 
-# Generate .xcfilelist files based on the output of DerivedSources.make when
-# invoked to print out its dependency list.
-
-function generate_xcfilelists_from_derivedsources()
+function do_check()
 {
-    set_build_variables "$1"
+    # Implicitly invoked for check and check-xcode operations to check the
+    # temporary results against the Xcode project.
 
-    local DERIVED_SOURCES_MAKE_PATH="$(dirname "${DERIVED_SOURCES_MAKE}")"
-    INPUT_XCFILELIST_PATH="${DERIVED_SOURCES_MAKE_PATH}/DerivedSources-input.xcfilelist"
-    OUTPUT_XCFILELIST_PATH="${DERIVED_SOURCES_MAKE_PATH}/DerivedSources-output.xcfilelist"
+    log_callstack_and_parameters "$@"
 
-    # See comments in generate_xcfilelists_from_unifiedsources for what we're
-    # trying to achieve with FEATURE_DEFINES.
+    # Being invoked from the command-line to check everything.
 
-    export FEATURE_DEFINES="$(grep 'ifeq.*findstring .*FEATURE_DEFINES.*' "${DERIVED_SOURCES_MAKE}" | sed -E -e 's/.*, (.*)\)/\1/')"
+    if [[ -z "${GX_PROJECT_TAG}" ]]
+    then
+        log_progress "=== Checking all .xcfilelists ==="
+    else
+        log_progress "=== Checking .xcfilelists for ${GX_PROJECT_TAG} ==="
+    fi
 
-    # Generate the .xcfilelist files.
-
-    check_prolog
-
-    "${GENERATOR}" NO_SUPPLEMENTAL_FILES=1 --no-builtin-rules --dry-run --always-make --debug=abvijm all |
-        "${OPENSOURCE_DIR}"/Tools/Scripts/extract-dependencies-from-makefile --input "${INPUT_XCFILELIST_PATH}" --output "${OUTPUT_XCFILELIST_PATH}"
-
-    replace "${INPUT_XCFILELIST_PATH}" 'WebCore' '$(PROJECT_DIR)'
-    replace "${INPUT_XCFILELIST_PATH}" 'JavaScriptCore' '$(PROJECT_DIR)'
-    replace "${INPUT_XCFILELIST_PATH}" 'JavaScriptCorePrivateHeaders' '$(JAVASCRIPTCORE_PRIVATE_HEADERS_DIR)'
-    replace "${INPUT_XCFILELIST_PATH}" 'WebKit2PrivateHeaders' '$(WEBKIT2_PRIVATE_HEADERS_DIR)'
-    replace "${INPUT_XCFILELIST_PATH}" "${PROJECT_DIR}" '$(PROJECT_DIR)'
-    replace "${INPUT_XCFILELIST_PATH}" "${WEBCORE_PRIVATE_HEADERS_DIR}" '$(WEBCORE_PRIVATE_HEADERS_DIR)'
-    replace "${INPUT_XCFILELIST_PATH}" "${WEBKIT2_PRIVATE_HEADERS_DIR}" '$(WEBKIT2_PRIVATE_HEADERS_DIR)'
-    replace "${INPUT_XCFILELIST_PATH}" "${JAVASCRIPTCORE_PRIVATE_HEADERS_DIR}" '$(JAVASCRIPTCORE_PRIVATE_HEADERS_DIR)'
-    replace "${INPUT_XCFILELIST_PATH}" "${BUILT_PRODUCTS_DIR}" '$(BUILT_PRODUCTS_DIR)'
-
-    prepend_prefix_to_all_paths "${OUTPUT_XCFILELIST_PATH}"
-    replace "${OUTPUT_XCFILELIST_PATH}" "${BUILT_PRODUCTS_DIR}" '$(BUILT_PRODUCTS_DIR)'
-
-    sort_files
-    check_epilog
+    for_each_project \
+        check_xcfilelists
 }
 
 
-# Generate .xcfilelist files for "unified sources" derived files. We generate
-# two files: UnifiedSources-input.xcfilelist (the original source files that
-# get bundled into the various UnifiedSource*.cpp/mm files) and
-# UnifiedSources-output.xcfilelist (the list of UnifiedSource*.cpp/mm files).
-# Both of these are generated from the same Sources*.txt files used by
-# generate-unified-source-bundles.rb. The .xcfilelist files are written into
-# the associated project directory.
-
-function generate_xcfilelists_from_unifiedsources()
+function do_subgenerate()
 {
-    set_build_variables "$1"
+    # Invoked from within an Xcode context to generate .xcfilelist files. Use
+    # the project, platform, an configuration established in the environment.
 
-    INPUT_XCFILELIST_PATH="${PROJECT_DIR}/UnifiedSources-input.xcfilelist"
-    OUTPUT_XCFILELIST_PATH="${PROJECT_DIR}/UnifiedSources-output.xcfilelist"
+    log_callstack_and_parameters "$@"
 
-    # Define FEATURE_DEFINES in order to enable every possible feature, thus
-    # including every possible input file into the generated .xcfilelist file.
-    # This may over-specify the input -- that is, include files that aren't
-    # actually included in the UnifiedSources files -- but that's OK. The worst
-    # that will happen is that one of these extra files will get modified and
-    # we'll unnecessarily go through the Generate Unified Sources phase. This
-    # will unnecessarily go through the process of generating the
-    # UnifiedSources, but since that process writes/updates the UnifiedSources
-    # files only if their contents actually change, we won't end up changing
-    # any UnifiedSources files and nothing gets unnecessarily recompiled.
+    [[ -n "${GX_PROJECT_TAG}" ]] || die "GX_PROJECT_TAG is not defined."
+    [[ -n "${PROJECT_NAME}" ]] || die "subgenerate should only be invoked in an Xcode context."
 
-    export FEATURE_DEFINES="$(cd "${PROJECT_DIR}"; grep '#if' $(find . -name 'Sources*.txt') | sed -E -e 's/.*if (ENABLE.*)/\1/')"
+    log_progress "=== Generating .xcfilelists for ${PROJECT_NAME}/${PLATFORM_NAME}/${CONFIGURATION} ==="
 
-    # Generate the .xcfilelist files.
+    set_project_settings
 
-    check_prolog
+    # We're called during generate-xcode, check-xcode, and subgenerate
+    # operations. We need to reset our project-specific temp files for the
+    # first two, but not the last one.
 
-    "${PROJECT_DIR}/Scripts/generate-unified-sources.sh" \
-        --generate-xcfilelists \
-        --input-xcfilelist-path "${INPUT_XCFILELIST_PATH}" \
-        --output-xcfilelist-path "${OUTPUT_XCFILELIST_PATH}"
+    (( ${GX_DO_SUBGENERATE} )) || reset_project_specific_temp_files
 
-    replace "${INPUT_XCFILELIST_PATH}" "${BUILT_PRODUCTS_DIR}" '$(BUILT_PRODUCTS_DIR)'
-    replace "${OUTPUT_XCFILELIST_PATH}" "${BUILT_PRODUCTS_DIR}" '$(BUILT_PRODUCTS_DIR)'
-
-    sort_files
-    check_epilog
+    subgenerate_xcfilelists
 }
+
+
+function main()
+{
+    log_callstack_and_parameters "$@"
+
+    log_debug_var GX_ME
+    log_debug_var GX_HERE
+    log_debug_var GX_ROOT_DIR
+    log_debug_var GX_OPENSOURCE_DIR
+    log_debug_var GX_TEMP
+    log_debug_var GX_PROJECT_TAGS
+    log_debug_var GX_CONFIGURATIONS
+    log_debug_var GX_SUBEXECUTE_SCRIPT
+    log_debug_var GX_DO_GENERATE
+    log_debug_var GX_DO_GENERATE_XCODE
+    log_debug_var GX_DO_CHECK
+    log_debug_var GX_DO_CHECK_XCODE
+    log_debug_var GX_DO_SUBGENERATE
+    log_debug_var GX_DO_CLEANUP
+    log_debug_var GX_USE_XCODE_BUILD_OUTPUT
+    log_debug_var GX_USE_WEBKITBUILD_BUILD_OUTPUT
+    log_debug_var GX_DRY_RUN
+    log_debug_var GX_DEBUG
+    log_debug_var GX_QUIET
+    log_debug_var GX_ORIG_ARGS
+
+    if (( ${GX_DO_HELP} ))
+    then
+        usage
+        my_exit 0
+    fi
+
+    if (( GX_DO_GENERATE + GX_DO_GENERATE_XCODE + GX_DO_CHECK + GX_DO_CHECK_XCODE + GX_DO_SUBGENERATE + GX_DO_HELP < 1 ))
+    then
+        stderr "### One of generate, generate-xcode, check, check-xcode, subgenerate, or --help must be specified."
+        my_exit 1
+    fi
+
+    if (( GX_DO_GENERATE + GX_DO_GENERATE_XCODE + GX_DO_CHECK + GX_DO_CHECK_XCODE + GX_DO_SUBGENERATE + GX_DO_HELP > 1 ))
+    then
+        stderr "### Only one of generate, generate-xcode, check, check-xcode, subgenerate, or --help can be specified."
+        my_exit 1
+    fi
+
+    [[ -z "${GX_PROJECT_TAG}" || ( " ${GX_PROJECT_TAGS[@]} " =~ " ${GX_PROJECT_TAG} " ) ]] || { die "Unrecognized project: ${GX_PROJECT_TAG}";  }
+    GX_PLATFORM_NAME=$(get_canonical_platform_name "${GX_PLATFORM_NAME}")
+    GX_CONFIGURATION=$(get_canonical_configuration "${GX_CONFIGURATION}")
+
+    if (( ${GX_DO_GENERATE} ))
+    then
+        do_generate
+        call post_generate_hook
+
+        do_merge
+        call post_merge_hook
+
+        report_merge_results
+    elif (( ${GX_DO_GENERATE_XCODE} ))
+    then
+        do_subgenerate
+        call post_generate_hook
+
+        do_merge
+        call post_merge_hook
+
+        report_merge_results
+    elif (( ${GX_DO_CHECK} ))
+    then
+        do_generate
+        call post_generate_hook
+
+        do_check
+        call post_check_hook
+
+        report_remediation_steps
+    elif (( ${GX_DO_CHECK_XCODE} ))
+    then
+        do_subgenerate
+        call post_generate_hook
+
+        do_check
+        call post_check_hook
+
+        report_remediation_steps
+    elif (( ${GX_DO_SUBGENERATE} ))
+    then
+        do_subgenerate
+    else
+        stderr "### No subcommand provided"
+        usage
+        my_exit 1
+    fi
+
+    my_exit ${GX_DEFERRED_EXIT_CODE}
+}
+
+
+# Initialize and sanity check
+
+GX_ORIG_ARGS=("$@")
+
+GX_DO_GENERATE=0
+GX_DO_GENERATE_XCODE=0
+GX_DO_CHECK=0
+GX_DO_CHECK_XCODE=0
+GX_DO_SUBGENERATE=0
+GX_DO_HELP=0
+GX_DO_CLEANUP=0
+GX_USE_XCODE_BUILD_OUTPUT=0
+GX_USE_WEBKITBUILD_BUILD_OUTPUT=1
+GX_DRY_RUN=0
+GX_DEBUG=0
+GX_QUIET=0
+
+GX_DEFERRED_EXIT_CODE=0
+GX_PROJECT_TAG=
+GX_PLATFORM_NAME=
+GX_CONFIGURATION=
+GX_SDKS=()
+
+GX_ME=$(normalize_file_path "${BASH_SOURCE[0]}")
+GX_HERE=$(dirname "${GX_ME}")
+GX_ROOT_DIR=$(normalize_directory_path "${GX_HERE}/../../..")
+GX_OPENSOURCE_DIR="${GX_ROOT_DIR}/OpenSource"
+GX_TEMP=$(normalize_directory_path /tmp/generate-xcfilelists)
+GX_PROJECT_TAGS=(JavaScriptCore WebCore WebKit DumpRenderTree WebKitTestRunner)
+GX_CONFIGURATIONS=(Release Debug)
+GX_SUBEXECUTE_SCRIPT="${GX_ME}"
+
+[[ -n "${GX_ROOT_DIR}" ]] || die "Could not find GX_ROOT_DIR."
+[[ -n "${GX_OPENSOURCE_DIR}" ]] || die "Could not find GX_OPENSOURCE_DIR."
+[[ -d "${GX_ROOT_DIR}" ]] || die "${GX_ROOT_DIR} does not exist."
+[[ -d "${GX_OPENSOURCE_DIR}" ]] || die "${GX_OPENSOURCE_DIR} does not exist."
+
+trap cleanup EXIT
+
+ensure_directories_exist "${GX_TEMP}"
 
 
 # Process command-line parameters.
 
-ROOT_DIR="$(cd "${HERE}/../../.." && pwd -P)"
-OPENSOURCE_DIR="${ROOT_DIR}/OpenSource"
-[[ -n "${ROOT_DIR}" ]] || die "Could not find ROOT_DIR"
-[[ -n "${OPENSOURCE_DIR}" ]] || die "Could not find OPENSOURCE_DIR"
-[[ -e "${OPENSOURCE_DIR}" ]] || die "$OPENSOURCE_DIR does not exist"
-
-DO_CHECK=0
-DEFERRED_EXIT_CODE=0
-
 while [[ "${1:+x}" ]]
 do
     case "${1}" in
-        --check)    DO_CHECK=1; ;;
-        *)          echo "### Unknown parameter: ${1}"; exit 1; ;;
+        generate)       GX_DO_GENERATE=1 ;;
+        generate-xcode) GX_DO_GENERATE_XCODE=1 ;;
+        check)          GX_DO_CHECK=1 ;;
+        check-xcode)    GX_DO_CHECK_XCODE=1 ;;
+        subgenerate)    GX_DO_SUBGENERATE=1 ;;
+        help)           GX_DO_HELP=1 ;;
+
+        --project)      shift; GX_PROJECT_TAG="$1" ;;
+        --platform)     shift; GX_PLATFORM_NAME="$1" ;;
+        --configuration)shift; GX_CONFIGURATION="$1" ;;
+        --xcode)        GX_USE_XCODE_BUILD_OUTPUT=1; GX_USE_WEBKITBUILD_BUILD_OUTPUT=0 ;;
+        --webkitbuild)  GX_USE_XCODE_BUILD_OUTPUT=0; GX_USE_WEBKITBUILD_BUILD_OUTPUT=1 ;;
+        --nocleanup)    GX_DO_CLEANUP=0 ;;
+
+        -n | --dry-run) GX_DRY_RUN=1 ;;
+        -d | --debug)   GX_DEBUG=$(( $GX_DEBUG + 1 )) ;;
+        -q | --quiet)   GX_QUIET=1 ;;
+        -h | --help)    GX_DO_HELP=1 ;;
+
+        *)              stderr "### Unknown command: $1"
+                        usage
+                        my_exit 1 ;;
     esac
     shift
 done
 
-generate_xcfilelists_from_derivedsources JavaScriptCore
-generate_xcfilelists_from_derivedsources WebCore
-generate_xcfilelists_from_derivedsources WebKit
-generate_xcfilelists_from_derivedsources DumpRenderTree
-generate_xcfilelists_from_derivedsources WebKitTestRunner
 
-generate_xcfilelists_from_unifiedsources JavaScriptCore
-generate_xcfilelists_from_unifiedsources WebCore
-generate_xcfilelists_from_unifiedsources WebKit
-
-
-SOURCED=$([[ "$0" == "${BASH_SOURCE[@]}" ]] && echo 0 || echo 1)
-if (( ! $SOURCED ))
+GX_SOURCED=$([[ "$0" == "${BASH_SOURCE[@]}" ]] && echo 0 || echo 1)
+if (( ! ${GX_SOURCED} ))
 then
-    exit ${DEFERRED_EXIT_CODE}
+    GX_INTERNAL_ME="${GX_ROOT_DIR}/Internal/Tools/Scripts/generate-xcfilelists"
+    if [[ -x "${GX_INTERNAL_ME}" ]]
+    then
+        "${GX_INTERNAL_ME}" "${GX_ORIG_ARGS[@]}"
+    else
+        main
+    fi
 fi
-
