@@ -1,5 +1,43 @@
 2019-01-25  Keith Rollin  <krollin@apple.com>
 
+        Update Xcode projects with "Apply Configuration to XCFileLists" build target
+        https://bugs.webkit.org/show_bug.cgi?id=193781
+        <rdar://problem/47201153>
+
+        Reviewed by Alex Christensen.
+
+        Part of generating the .xcfilelists used as part of adopting XCBuild
+        includes running `make DerivedSources.make` from a standalone script.
+        It’s important for this invocation to have the same environment as
+        when the actual build invokes `make DerivedSources.make`. If the
+        environments are different, then the two invocations will provide
+        different results. In order to get the same environment in the
+        standalone script, have the script launch xcodebuild targeting the
+        "Apply Configuration to XCFileLists" build target, which will then
+        re-invoke our standalone script. The script is now running again, this
+        time in an environment with all workspace, project, target, xcconfig
+        and other environment variables established.
+
+        The "Apply Configuration to XCFileLists" build target accomplishes
+        this task via a small embedded shell script that consists only of:
+
+            eval "${WK_SUBLAUNCH_SCRIPT_PARAMETERS[@]}"
+
+        The process that invokes "Apply Configuration to XCFileLists" first
+        sets WK_SUBLAUNCH_SCRIPT_PARAMETERS to an array of commands to be
+        evaluated and exports it into the shell environment. When xcodebuild
+        is invoked, it inherits the value of this variable and can `eval` the
+        contents of that variable. Our external standalone script can then set
+        WK_SUBLAUNCH_SCRIPT_PARAMETERS to the path to itself, along with a set
+        of command-line parameters needed to restart itself in the appropriate
+        state.
+
+        No new tests since there should be no observable behavior difference.
+
+        * WebCore.xcodeproj/project.pbxproj:
+
+2019-01-25  Keith Rollin  <krollin@apple.com>
+
         Update WebKitAdditions.xcconfig with correct order of variable definitions
         https://bugs.webkit.org/show_bug.cgi?id=193793
         <rdar://problem/47532439>

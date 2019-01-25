@@ -7,6 +7,17 @@
 	objects = {
 
 /* Begin PBXAggregateTarget section */
+		5325BDD921DFF4F500A0DEE1 /* Apply Configuration to XCFileLists */ = {
+			isa = PBXAggregateTarget;
+			buildConfigurationList = 5325BDDD21DFF4F500A0DEE1 /* Build configuration list for PBXAggregateTarget "Apply Configuration to XCFileLists" */;
+			buildPhases = (
+				5325BDDE21DFF4F800A0DEE1 /* ShellScript */,
+			);
+			dependencies = (
+			);
+			name = "Apply Configuration to XCFileLists";
+			productName = "Apply Configuration to XCFileLists";
+		};
 		A115CCB41B9D769D00E89159 /* All */ = {
 			isa = PBXAggregateTarget;
 			buildConfigurationList = A115CCB51B9D769D00E89159 /* Build configuration list for PBXAggregateTarget "All" */;
@@ -958,9 +969,13 @@
 		08FB7793FE84155DC02AAC07 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
+				DefaultBuildSystemTypeForWorkspace = Original;
 				LastSwiftUpdateCheck = 0700;
 				LastUpgradeCheck = 1000;
 				TargetAttributes = {
+					5325BDD921DFF4F500A0DEE1 = {
+						CreatedOnToolsVersion = 10.1;
+					};
 					A115CCB41B9D769D00E89159 = {
 						CreatedOnToolsVersion = 7.0;
 					};
@@ -986,6 +1001,7 @@
 				BC25186111D15D54002EBC01 /* WebKitTestRunnerInjectedBundle */,
 				BC952D7711F3BF5D003398B4 /* Derived Sources */,
 				A18510261B9ADE4800744AEB /* WebKitTestRunner (Library) */,
+				5325BDD921DFF4F500A0DEE1 /* Apply Configuration to XCFileLists */,
 			);
 		};
 /* End PBXProject section */
@@ -1026,6 +1042,23 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
+		5325BDDE21DFF4F800A0DEE1 /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "eval \"${WK_SUBLAUNCH_SCRIPT_PARAMETERS[@]}\"\n";
+		};
 		BC952D8211F3BF78003398B4 /* Generate Derived Sources */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
@@ -1250,6 +1283,33 @@
 			};
 			name = Production;
 		};
+		5325BDDA21DFF4F500A0DEE1 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = A18510381B9ADF2200744AEB /* WebKitTestRunner.xcconfig */;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		5325BDDB21DFF4F500A0DEE1 /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = A18510381B9ADF2200744AEB /* WebKitTestRunner.xcconfig */;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
+		5325BDDC21DFF4F500A0DEE1 /* Production */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = A18510381B9ADF2200744AEB /* WebKitTestRunner.xcconfig */;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Production;
+		};
 		A115CCB61B9D769D00E89159 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -1377,6 +1437,16 @@
 				2EE52D091890A9A90010ED21 /* Debug */,
 				2EE52D0A1890A9A90010ED21 /* Release */,
 				2EE52D0B1890A9A90010ED21 /* Production */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Production;
+		};
+		5325BDDD21DFF4F500A0DEE1 /* Build configuration list for PBXAggregateTarget "Apply Configuration to XCFileLists" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				5325BDDA21DFF4F500A0DEE1 /* Debug */,
+				5325BDDB21DFF4F500A0DEE1 /* Release */,
+				5325BDDC21DFF4F500A0DEE1 /* Production */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Production;
