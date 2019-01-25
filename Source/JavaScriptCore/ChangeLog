@@ -1,3 +1,10 @@
+2019-01-25  Alex Christensen  <achristensen@webkit.org>
+
+        Fix Windows build after r240511
+
+        * bytecode/UnlinkedFunctionExecutable.cpp:
+        (JSC::UnlinkedFunctionExecutable::unlinkedCodeBlockFor):
+
 2019-01-25  Keith Rollin  <krollin@apple.com>
 
         Update Xcode projects with "Apply Configuration to XCFileLists" build target

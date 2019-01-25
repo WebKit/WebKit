@@ -202,6 +202,8 @@ UnlinkedFunctionCodeBlock* UnlinkedFunctionExecutable::unlinkedCodeBlockFor(Code
     case CodeForConstruct:
         return m_unlinkedCodeBlockForConstruct.get();
     }
+    ASSERT_NOT_REACHED();
+    return nullptr;
 }
 
 UnlinkedFunctionCodeBlock* UnlinkedFunctionExecutable::unlinkedCodeBlockFor(
