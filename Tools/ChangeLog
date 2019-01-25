@@ -1,3 +1,20 @@
+2019-01-24  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [Win][WebKitTestRunner] Implement EventSenderProxy
+        https://bugs.webkit.org/show_bug.cgi?id=193755
+
+        Reviewed by Don Olmstead.
+
+        * WebKitTestRunner/EventSenderProxy.h: Removed unused members m_buttonState and m_mouseButtonsCurrentlyDown.
+        * WebKitTestRunner/win/EventSenderProxyWin.cpp:
+        (WTR::EventSenderProxy::dispatchMessage):
+        (WTR::EventSenderProxy::EventSenderProxy):
+        (WTR::EventSenderProxy::mouseDown):
+        (WTR::EventSenderProxy::mouseUp):
+        (WTR::EventSenderProxy::mouseMoveTo):
+        (WTR::EventSenderProxy::mouseScrollBy):
+        (WTR::EventSenderProxy::mouseScrollByWithWheelAndMomentumPhases):
+
 2019-01-24  Ross Kirsling  <ross.kirsling@sony.com>
 
         Unreviewed fix for API test failure after r240437.

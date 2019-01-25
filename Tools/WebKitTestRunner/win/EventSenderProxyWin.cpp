@@ -33,23 +33,19 @@
 
 namespace WTR {
 
-// Key event location code defined in DOM Level 3.
-enum KeyLocationCode {
-    DOMKeyLocationStandard      = 0x00,
-    DOMKeyLocationLeft          = 0x01,
-    DOMKeyLocationRight         = 0x02,
-    DOMKeyLocationNumpad        = 0x03
-};
+LRESULT EventSenderProxy::dispatchMessage(UINT message, WPARAM wParam, LPARAM lParam)
+{
+    MSG msg { };
+    msg.hwnd = WKViewGetWindow(m_testController->mainWebView()->platformView());
+    msg.message = message;
+    msg.wParam = wParam;
+    msg.lParam = lParam;
+    msg.time = GetTickCount() + static_cast<DWORD>(m_time);
+    msg.pt = positionInPoint();
 
-enum ButtonState {
-    ButtonReleased = 0,
-    ButtonPressed = 1
-};
-
-enum PointerAxis {
-    VerticalScroll = 0,
-    HorizontalScroll = 1
-};
+    TranslateMessage(&msg);
+    return DispatchMessage(&msg);
+}
 
 EventSenderProxy::EventSenderProxy(TestController* testController)
     : m_testController(testController)
@@ -58,7 +54,6 @@ EventSenderProxy::EventSenderProxy(TestController* testController)
     , m_clickCount(0)
     , m_clickTime(0)
     , m_clickButton(kWKEventMouseButtonNoButton)
-    , m_buttonState(ButtonReleased)
 {
 }
 
@@ -68,25 +63,82 @@ EventSenderProxy::~EventSenderProxy()
 
 void EventSenderProxy::mouseDown(unsigned button, WKEventModifiers wkModifiers)
 {
-    notImplemented();
+    int messageType;
+    switch (button) {
+    case 0:
+        messageType = WM_LBUTTONDOWN;
+        break;
+    case 1:
+        messageType = WM_MBUTTONDOWN;
+        break;
+    case 2:
+        messageType = WM_RBUTTONDOWN;
+        break;
+    case 3:
+        // fast/events/mouse-click-events expects the 4th button has event.button = 1, so send an WM_MBUTTONDOWN
+        messageType = WM_MBUTTONDOWN;
+        break;
+    default:
+        messageType = WM_LBUTTONDOWN;
+        break;
+    }
+    WPARAM wparam = 0;
+    dispatchMessage(messageType, wparam, MAKELPARAM(positionInPoint().x, positionInPoint().y));
 }
 
 void EventSenderProxy::mouseUp(unsigned button, WKEventModifiers wkModifiers)
 {
-    notImplemented();
+    int messageType;
+    switch (button) {
+    case 0:
+        messageType = WM_LBUTTONUP;
+        break;
+    case 1:
+        messageType = WM_MBUTTONUP;
+        break;
+    case 2:
+        messageType = WM_RBUTTONUP;
+        break;
+    case 3:
+        // fast/events/mouse-click-events expects the 4th button has event.button = 1, so send an WM_MBUTTONUP
+        messageType = WM_MBUTTONUP;
+        break;
+    default:
+        messageType = WM_LBUTTONUP;
+        break;
+    }
+    WPARAM wparam = 0;
+    dispatchMessage(messageType, wparam, MAKELPARAM(positionInPoint().x, positionInPoint().y));
 }
 
 void EventSenderProxy::mouseMoveTo(double x, double y)
 {
-    notImplemented();
+    m_position.x = x;
+    m_position.y = y;
+    dispatchMessage(WM_MOUSEMOVE, 0, MAKELPARAM(positionInPoint().x, positionInPoint().y));
 }
 
-void EventSenderProxy::mouseScrollBy(int horizontal, int vertical)
+void EventSenderProxy::mouseScrollBy(int x, int y)
 {
-    notImplemented();
+    RECT rect;
+    GetWindowRect(WKViewGetWindow(m_testController->mainWebView()->platformView()), &rect);
+
+    if (x) {
+        UINT scrollChars = 1;
+        SystemParametersInfo(SPI_GETWHEELSCROLLCHARS, 0, &scrollChars, 0);
+        x *= WHEEL_DELTA / scrollChars;
+        dispatchMessage(WM_MOUSEHWHEEL, MAKEWPARAM(0, x), MAKELPARAM(rect.left + positionInPoint().x, rect.top + positionInPoint().y));
+    }
+
+    if (y) {
+        UINT scrollLines = 3;
+        SystemParametersInfo(SPI_GETWHEELSCROLLLINES, 0, &scrollLines, 0);
+        y *= WHEEL_DELTA / scrollLines;
+        dispatchMessage(WM_MOUSEWHEEL, MAKEWPARAM(0, y), MAKELPARAM(rect.left + positionInPoint().x, rect.top + positionInPoint().y));
+    }
 }
 
-void EventSenderProxy::mouseScrollByWithWheelAndMomentumPhases(int horizontal, int vertical, int, int)
+void EventSenderProxy::mouseScrollByWithWheelAndMomentumPhases(int, int, int, int)
 {
     notImplemented();
 }

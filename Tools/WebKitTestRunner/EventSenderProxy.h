@@ -123,6 +123,11 @@ private:
     void prepareAndDispatchTouchEvent(enum wpe_input_touch_event_type);
 #endif
 
+#if PLATFORM(WIN)
+    LRESULT dispatchMessage(UINT message, WPARAM, LPARAM);
+    POINT positionInPoint() const { return { static_cast<LONG>(m_position.x), static_cast<LONG>(m_position.y) }; }
+#endif
+
     double m_time;
     WKPoint m_position;
     bool m_leftMouseButtonDown;
@@ -143,9 +148,6 @@ private:
     uint32_t m_mouseButtonsCurrentlyDown { 0 };
     Vector<struct wpe_input_touch_event_raw> m_touchEvents;
     HashSet<unsigned, DefaultHash<unsigned>::Hash, WTF::UnsignedWithZeroKeyHashTraits<unsigned>> m_updatedTouchEvents;
-#elif PLATFORM(WIN)
-    uint32_t m_buttonState;
-    uint32_t m_mouseButtonsCurrentlyDown { 0 };
 #endif
 };
 
