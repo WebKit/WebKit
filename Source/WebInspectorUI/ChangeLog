@@ -1,3 +1,42 @@
+2019-01-25  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: improve invalid Audit/Recording JSON error messages
+        https://bugs.webkit.org/show_bug.cgi?id=193476
+        <rdar://problem/47303659>
+
+        Reviewed by Joseph Pecoraro.
+
+        * UserInterface/Models/AuditTestBase.js:
+        (WI.AuditTestBase):
+        * UserInterface/Models/AuditTestCase.js:
+        (WI.AuditTestCase.async fromPayload):
+        * UserInterface/Models/AuditTestGroup.js:
+        (WI.AuditTestGroup.async fromPayload):
+        * UserInterface/Models/AuditTestCaseResult.js:
+        (WI.AuditTestCaseResult.async fromPayload.checkArray):
+        (WI.AuditTestCaseResult.async fromPayload):
+        * UserInterface/Models/AuditTestGroupResult.js:
+        (WI.AuditTestGroupResult.async fromPayload):
+        * UserInterface/Controllers/AuditManager.js:
+        (WI.AuditManager.synthesizeWarning): Added.
+        (WI.AuditManager.synthesizeError):
+        (WI.AuditManager.prototype.async processJSON):
+
+        * UserInterface/Models/Recording.js:
+        (WI.Recording.fromPayload):
+        (WI.Recording.synthesizeWarning): Added.
+        (WI.Recording.synthesizeError):
+        * UserInterface/Models/RecordingFrame.js:
+        (WI.RecordingFrame.fromPayload):
+        * UserInterface/Models/RecordingAction.js:
+        (WI.RecordingAction.fromPayload):
+        (WI.RecordingAction.prototype.async swizzle):
+        (WI.RecordingAction.prototype.apply):
+        * UserInterface/Controllers/CanvasManager.js:
+        (WI.CanvasManager.prototype.processJSON):
+
+        * Localizations/en.lproj/localizedStrings.js:
+
 2019-01-24  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: Audit: add supports key to test/group for compatibility

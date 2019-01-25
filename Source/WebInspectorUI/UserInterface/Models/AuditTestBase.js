@@ -43,10 +43,13 @@ WI.AuditTestBase = class AuditTestBase extends WI.Object
 
         this._supported = true;
         if (typeof this._supports === "number") {
-            if (this._supports > WI.AuditTestBase.Version)
+            if (this._supports > WI.AuditTestBase.Version) {
+                WI.AuditManager.synthesizeWarning(WI.UIString("\u0022%s\u0022 is too new to run in this Web Inspector").format(this.name));
                 this._supported = false;
-            else if (InspectorBackend.domains.Audit && this._supports > InspectorBackend.domains.Audit.VERSION)
+            } else if (InspectorBackend.domains.Audit && this._supports > InspectorBackend.domains.Audit.VERSION) {
+                WI.AuditManager.synthesizeWarning(WI.UIString("\u0022%s\u0022 is too new to run on this inspected page").format(this.name));
                 this._supported = false;
+            }
         }
 
         if (!this.supported)

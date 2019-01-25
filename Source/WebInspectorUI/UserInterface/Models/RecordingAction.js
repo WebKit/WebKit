@@ -63,23 +63,43 @@ WI.RecordingAction = class RecordingAction extends WI.Object
         if (!Array.isArray(payload))
             payload = [];
 
-        if (isNaN(payload[0]))
+        if (typeof payload[0] !== "number") {
+            if (payload.length > 0)
+                WI.Recording.synthesizeWarning(WI.UIString("non-number %s").format(WI.unlocalizedString("name")));
+
             payload[0] = -1;
-
-        if (!Array.isArray(payload[1]))
-            payload[1] = [];
-
-        if (!Array.isArray(payload[2]))
-            payload[2] = [];
-
-        if (isNaN(payload[3]) || (!payload[3] && payload[3] !== 0)) {
-            // COMPATIBILITY (iOS 12.1): "trace" was sent as an array of call frames instead of a single call stack
-            if (!Array.isArray(payload[3]))
-                payload[3] = [];
         }
 
-        if (payload.length >= 5 && isNaN(payload[4]))
+        if (!Array.isArray(payload[1])) {
+            if (payload.length > 1)
+                WI.Recording.synthesizeWarning(WI.UIString("non-array %s").format(WI.unlocalizedString("parameters")));
+
+            payload[1] = [];
+        }
+
+        if (!Array.isArray(payload[2])) {
+            if (payload.length > 2)
+                WI.Recording.synthesizeWarning(WI.UIString("non-array %s").format(WI.unlocalizedString("swizzleTypes")));
+
+            payload[2] = [];
+        }
+
+        if (typeof payload[3] !== "number" || isNaN(payload[3]) || (!payload[3] && payload[3] !== 0)) {
+            // COMPATIBILITY (iOS 12.1): "trace" was sent as an array of call frames instead of a single call stack
+            if (!Array.isArray(payload[3])) {
+                if (payload.length > 3)
+                    WI.Recording.synthesizeWarning(WI.UIString("non-number %s").format(WI.unlocalizedString("trace")));
+
+                payload[3] = [];
+            }
+        }
+
+        if (typeof payload[4] !== "number" || isNaN(payload[4])) {
+            if (payload.length > 4)
+                WI.Recording.synthesizeWarning(WI.UIString("non-number %s").format(WI.unlocalizedString("snapshot")));
+
             payload[4] = -1;
+        }
 
         return new WI.RecordingAction(...payload);
     }
@@ -310,7 +330,7 @@ WI.RecordingAction = class RecordingAction extends WI.Object
                 if (prototype && !(name in prototype)) {
                     this.markInvalid();
 
-                    WI.Recording.synthesizeError(WI.UIString("\u0022%s\u0022 is invalid.").format(name));
+                    WI.Recording.synthesizeWarning(WI.UIString("\u0022%s\u0022 is not valid for %s").format(name, prototype.constructor.name));
                 }
             }
         }
@@ -360,7 +380,7 @@ WI.RecordingAction = class RecordingAction extends WI.Object
         } catch {
             this.markInvalid();
 
-            WI.Recording.synthesizeError(WI.UIString("\u0022%s\u0022 threw an error.").format(this._name));
+            WI.Recording.synthesizeWarning(WI.UIString("\u0022%s\u0022 threw an error").format(this._name));
         }
     }
 

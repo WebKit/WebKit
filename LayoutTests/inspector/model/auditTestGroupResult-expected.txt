@@ -34,6 +34,10 @@ null
 }
 
 -- Running test case: AuditTestGroupResult.fromPayload.validWithInvalidOptionals
+WARN: Audit Warning: "validWithInvalidOptionals test result name" has a non-object "data" value
+WARN: Audit Warning: "validWithInvalidOptionals test result name" has a non-object "metadata" value
+WARN: Audit Warning: "validWithInvalidOptionals test result name" has a non-string "description" value
+WARN: Audit Warning: "validWithInvalidOptionals group result name" has a non-string "description" value
 {
   "type": "test-group-result",
   "name": "validWithInvalidOptionals group result name",

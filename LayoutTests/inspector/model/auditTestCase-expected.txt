@@ -22,9 +22,12 @@ null
 }
 
 -- Running test case: AuditTestCase.fromPayload.validWithInvalidOptionals
+WARN: Audit Warning: "validWithInvalidOptionals test name" has a non-string "description" value
+WARN: Audit Warning: "validWithInvalidOptionals test name" is too new to run in this Web Inspector
 {
   "type": "test-case",
   "name": "validWithInvalidOptionals test name",
+  "supports": 2,
   "test": "validWithInvalidOptionals test function"
 }
 
@@ -33,6 +36,7 @@ null
   "type": "test-case",
   "name": "validWithValidOptionals test name",
   "description": "validWithValidOptionals test description",
+  "supports": 0,
   "test": "validWithValidOptionals test function"
 }
 

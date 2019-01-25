@@ -51,8 +51,20 @@ WI.Recording = class Recording extends WI.Object
         if (typeof payload !== "object" || payload === null)
             return null;
 
-        if (isNaN(payload.version) || payload.version <= 0 || payload.version > WI.Recording.Version)
+        if (typeof payload.version !== "number") {
+            WI.Recording.synthesizeError(WI.UIString("non-number %s").format(WI.unlocalizedString("version")));
             return null;
+        }
+
+        if (payload.version < 1 || payload.version > WI.Recording.Version) {
+            WI.Recording.synthesizeError(WI.UIString("unsupported %s").format(WI.unlocalizedString("version")));
+            return null;
+        }
+
+        if (parseInt(payload.version) !== payload.version) {
+            WI.Recording.synthesizeWarning(WI.UIString("non-integer %s").format(WI.unlocalizedString("version")));
+            payload.version = parseInt(payload.version);
+        }
 
         let type = null;
         switch (payload.type) {
@@ -66,15 +78,29 @@ WI.Recording = class Recording extends WI.Object
             type = WI.Recording.Type.CanvasWebGL;
             break;
         default:
+            WI.Recording.synthesizeWarning(WI.UIString("unknown %s \u0022%s\u0022").format(WI.unlocalizedString("type"), payload.type));
             type = String(payload.type);
             break;
         }
 
-        if (typeof payload.initialState !== "object" || payload.initialState === null)
+        if (typeof payload.initialState !== "object" || payload.initialState === null) {
+            if ("initialState" in payload)
+                WI.Recording.synthesizeWarning(WI.UIString("non-object %s").format(WI.unlocalizedString("initialState")));
+
             payload.initialState = {};
-        if (typeof payload.initialState.attributes !== "object" || payload.initialState.attributes === null)
+        }
+
+        if (typeof payload.initialState.attributes !== "object" || payload.initialState.attributes === null) {
+            if ("attributes" in payload.initialState)
+                WI.Recording.synthesizeWarning(WI.UIString("non-object %s").format(WI.unlocalizedString("initialState.attributes")));
+
             payload.initialState.attributes = {};
+        }
+
         if (!Array.isArray(payload.initialState.states) || payload.initialState.states.some((item) => typeof item !== "object" || item === null)) {
+            if ("states" in payload.initialState)
+                WI.Recording.synthesizeWarning(WI.UIString("non-array %s").format(WI.unlocalizedString("initialState.states")));
+
             payload.initialState.states = [];
 
             // COMPATIBILITY (iOS 12.0): Recording.InitialState.states did not exist yet
@@ -84,16 +110,34 @@ WI.Recording = class Recording extends WI.Object
                     payload.initialState.states.push(state);
             }
         }
-        if (!Array.isArray(payload.initialState.parameters))
+
+        if (!Array.isArray(payload.initialState.parameters)) {
+            if ("parameters" in payload.initialState)
+                WI.Recording.synthesizeWarning(WI.UIString("non-array %s").format(WI.unlocalizedString("initialState.attributes")));
+
             payload.initialState.parameters = [];
-        if (typeof payload.initialState.content !== "string")
+        }
+
+        if (typeof payload.initialState.content !== "string") {
+            if ("content" in payload.initialState)
+                WI.Recording.synthesizeWarning(WI.UIString("non-string %s").format(WI.unlocalizedString("initialState.content")));
+
             payload.initialState.content = "";
+        }
 
-        if (!Array.isArray(payload.frames))
+        if (!Array.isArray(payload.frames)) {
+            if ("frames" in payload)
+                WI.Recording.synthesizeWarning(WI.UIString("non-array %s").format(WI.unlocalizedString("frames")));
+
             payload.frames = [];
+        }
 
-        if (!Array.isArray(payload.data))
+        if (!Array.isArray(payload.data)) {
+            if ("data" in payload)
+                WI.Recording.synthesizeWarning(WI.UIString("non-array %s").format(WI.unlocalizedString("data")));
+
             payload.data = [];
+        }
 
         if (!frames)
             frames = payload.frames.map(WI.RecordingFrame.fromPayload)
@@ -150,12 +194,31 @@ WI.Recording = class Recording extends WI.Object
         }
     }
 
+    static synthesizeWarning(message)
+    {
+        message = WI.UIString("Recording Warning: %s").format(message);
+
+        if (window.InspectorTest) {
+            console.warn(message);
+            return;
+        }
+
+        let consoleMessage = new WI.ConsoleMessage(WI.mainTarget, WI.ConsoleMessage.MessageSource.Other, WI.ConsoleMessage.MessageLevel.Warning, message);
+        consoleMessage.shouldRevealConsole = true;
+
+        WI.consoleLogViewController.appendConsoleMessage(consoleMessage);
+    }
+
     static synthesizeError(message)
     {
-        const target = WI.mainTarget;
-        const source = WI.ConsoleMessage.MessageSource.Other;
-        const level = WI.ConsoleMessage.MessageLevel.Error;
-        let consoleMessage = new WI.ConsoleMessage(target, source, level, WI.UIString("Recording error: %s").format(message));
+        message = WI.UIString("Recording Error: %s").format(message);
+
+        if (window.InspectorTest) {
+            console.error(message);
+            return;
+        }
+
+        let consoleMessage = new WI.ConsoleMessage(WI.mainTarget, WI.ConsoleMessage.MessageSource.Other, WI.ConsoleMessage.MessageLevel.Error, message);
         consoleMessage.shouldRevealConsole = true;
 
         WI.consoleLogViewController.appendConsoleMessage(consoleMessage);

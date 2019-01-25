@@ -41,18 +41,20 @@ WI.AuditTestGroupResult = class AuditTestGroupResult extends WI.AuditTestResultB
         if (typeof payload !== "object" || payload === null)
             return null;
 
-        let {type, name, description, results} = payload;
-
-        if (type !== WI.AuditTestGroupResult.TypeIdentifier)
+        if (payload.type !== WI.AuditTestGroupResult.TypeIdentifier)
             return null;
 
-        if (typeof name !== "string")
+        if (typeof payload.name !== "string") {
+            WI.AuditManager.synthesizeError(WI.UIString("\u0022%s\u0022 has a non-string \u0022%s\u0022 value").format(payload.name, WI.unlocalizedString("name")));
             return null;
+        }
 
-        if (!Array.isArray(results))
+        if (!Array.isArray(payload.results)) {
+            WI.AuditManager.synthesizeError(WI.UIString("\u0022%s\u0022 has a non-array \u0022%s\u0022 value").format(payload.name, WI.unlocalizedString("results")));
             return null;
+        }
 
-        results = await Promise.all(results.map(async (test) => {
+        let results = await Promise.all(payload.results.map(async (test) => {
             let testCaseResult = await WI.AuditTestCaseResult.fromPayload(test);
             if (testCaseResult)
                 return testCaseResult;
@@ -68,10 +70,13 @@ WI.AuditTestGroupResult = class AuditTestGroupResult extends WI.AuditTestResultB
             return null;
 
         let options = {};
-        if (typeof description === "string")
-            options.description = description;
 
-        return new WI.AuditTestGroupResult(name, results, options);
+        if (typeof payload.description === "string")
+            options.description = payload.description;
+        else if ("description" in payload)
+            WI.AuditManager.synthesizeWarning(WI.UIString("\u0022%s\u0022 has a non-string \u0022%s\u0022 value").format(payload.name, WI.unlocalizedString("description")));
+
+        return new WI.AuditTestGroupResult(payload.name, results, options);
     }
 
     // Public

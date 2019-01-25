@@ -74,11 +74,14 @@ WI.CanvasManager = class CanvasManager extends WI.Object
             return;
         }
 
-        let recording = WI.Recording.fromPayload(json);
-        if (!recording) {
-            WI.Recording.synthesizeError(WI.UIString("unsupported version."));
+        if (typeof json !== "object" || json === null) {
+            WI.Recording.synthesizeError(WI.UIString("invalid JSON"));
             return;
         }
+
+        let recording = WI.Recording.fromPayload(json);
+        if (!recording)
+            return;
 
         let extensionStart = filename.lastIndexOf(".");
         if (extensionStart !== -1)

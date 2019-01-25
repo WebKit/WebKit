@@ -39,8 +39,12 @@ WI.RecordingFrame = class RecordingFrame
         if (typeof payload !== "object" || payload === null)
             payload = {};
 
-        if (!Array.isArray(payload.actions))
+        if (!Array.isArray(payload.actions)) {
+            if ("actions" in payload)
+                WI.Recording.synthesizeWarning(WI.UIString("non-array %s").format(WI.unlocalizedString("actions")));
+
             payload.actions = [];
+        }
 
         let actions = payload.actions.map(WI.RecordingAction.fromPayload);
         return new WI.RecordingFrame(actions, {

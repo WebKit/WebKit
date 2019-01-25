@@ -41,26 +41,35 @@ WI.AuditTestCase = class AuditTestCase extends WI.AuditTestBase
         if (typeof payload !== "object" || payload === null)
             return null;
 
-        let {type, name, test, description, supports, disabled} = payload;
-
-        if (type !== WI.AuditTestCase.TypeIdentifier)
+        if (payload.type !== WI.AuditTestCase.TypeIdentifier)
             return null;
 
-        if (typeof name !== "string")
+        if (typeof payload.name !== "string") {
+            WI.AuditManager.synthesizeError(WI.UIString("\u0022%s\u0022 has a non-string \u0022%s\u0022 value").format(payload.name, WI.unlocalizedString("name")));
             return null;
+        }
 
-        if (typeof test !== "string")
+        if (typeof payload.test !== "string") {
+            WI.AuditManager.synthesizeError(WI.UIString("\u0022%s\u0022 has a non-string \u0022%s\u0022 value").format(payload.name, WI.unlocalizedString("test")));
             return null;
+        }
 
         let options = {};
-        if (typeof description === "string")
-            options.description = description;
-        if (typeof supports === "number")
-            options.supports = supports;
-        if (typeof disabled === "boolean")
-            options.disabled = disabled;
 
-        return new WI.AuditTestCase(name, test, options);
+        if (typeof payload.description === "string")
+            options.description = payload.description;
+        else if ("description" in payload)
+            WI.AuditManager.synthesizeWarning(WI.UIString("\u0022%s\u0022 has a non-string \u0022%s\u0022 value").format(payload.name, WI.unlocalizedString("description")));
+
+        if (typeof payload.supports === "number")
+            options.supports = payload.supports;
+        else if ("supports" in payload)
+            WI.AuditManager.synthesizeWarning(WI.UIString("\u0022%s\u0022 has a non-number \u0022%s\u0022 value").format(payload.name, WI.unlocalizedString("supports")));
+
+        if (typeof payload.disabled === "boolean")
+            options.disabled = payload.disabled;
+
+        return new WI.AuditTestCase(payload.name, payload.test, options);
     }
 
     // Public
