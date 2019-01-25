@@ -1,3 +1,26 @@
+2019-01-25  Simon Fraser  <simon.fraser@apple.com>
+
+        Move tests for scrolling tree mutations into their own directory
+        https://bugs.webkit.org/show_bug.cgi?id=193836
+
+        Reviewed by Tim Horton.
+
+        Add a scrollingcoordinator/scrolling-tree directory, which will contain tests for scrolling
+        tree mutations.
+
+        * platform/ios-wk2/scrollingcoordinator/scrolling-tree/gain-scrolling-node-parent-expected.txt: Renamed from LayoutTests/platform/ios/scrollingcoordinator/gain-scrolling-node-parent-expected.txt.
+        * platform/ios-wk2/scrollingcoordinator/scrolling-tree/lose-scrolling-node-parent-expected.txt: Renamed from LayoutTests/platform/ios/scrollingcoordinator/lose-scrolling-node-parent-expected.txt.
+        * platform/ios-wk2/scrollingcoordinator/scrolling-tree/reparent-across-compositing-layers-expected.txt: Renamed from LayoutTests/platform/ios-wk2/scrollingcoordinator/reparent-across-compositing-layers-expected.txt.
+        * platform/ios-wk2/scrollingcoordinator/scrolling-tree/reparent-with-layer-removal-expected.txt: Renamed from LayoutTests/platform/ios-wk2/scrollingcoordinator/reparent-with-layer-removal-expected.txt.
+        * scrollingcoordinator/scrolling-tree/gain-scrolling-node-parent-expected.txt: Renamed from LayoutTests/scrollingcoordinator/gain-scrolling-node-parent-expected.txt.
+        * scrollingcoordinator/scrolling-tree/gain-scrolling-node-parent.html: Renamed from LayoutTests/scrollingcoordinator/gain-scrolling-node-parent.html.
+        * scrollingcoordinator/scrolling-tree/lose-scrolling-node-parent-expected.txt: Renamed from LayoutTests/scrollingcoordinator/lose-scrolling-node-parent-expected.txt.
+        * scrollingcoordinator/scrolling-tree/lose-scrolling-node-parent.html: Renamed from LayoutTests/scrollingcoordinator/lose-scrolling-node-parent.html.
+        * scrollingcoordinator/scrolling-tree/reparent-across-compositing-layers-expected.txt: Renamed from LayoutTests/scrollingcoordinator/reparent-across-compositing-layers-expected.txt.
+        * scrollingcoordinator/scrolling-tree/reparent-across-compositing-layers.html: Renamed from LayoutTests/scrollingcoordinator/reparent-across-compositing-layers.html.
+        * scrollingcoordinator/scrolling-tree/reparent-with-layer-removal-expected.txt: Renamed from LayoutTests/scrollingcoordinator/reparent-with-layer-removal-expected.txt.
+        * scrollingcoordinator/scrolling-tree/reparent-with-layer-removal.html: Renamed from LayoutTests/scrollingcoordinator/reparent-with-layer-removal.html.
+
 2019-01-25  Ryosuke Niwa  <rniwa@webkit.org>
 
         iOS: inputmode="none" disables hardware keyboard's globe key
