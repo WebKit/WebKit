@@ -1,3 +1,30 @@
+2019-01-25  Keith Rollin  <krollin@apple.com>
+
+        Update Xcode projects with "Check .xcfilelists" build phase
+        https://bugs.webkit.org/show_bug.cgi?id=193790
+        <rdar://problem/47201374>
+
+        Reviewed by Alex Christensen.
+
+        Support for XCBuild includes specifying inputs and outputs to various
+        Run Script build phases. These inputs and outputs are specified as
+        .xcfilelist files. Once created, these .xcfilelist files need to be
+        kept up-to-date. In order to check that they are up-to-date or not,
+        add an Xcode build step that invokes an external script that performs
+        the checking. If the .xcfilelists are found to be out-of-date, update
+        them, halt the build, and instruct the developer to restart the build
+        with up-to-date files.
+
+        At this time, the checking and regenerating is performed only if the
+        WK_ENABLE_CHECK_XCFILELISTS environment variable is set to 1. People
+        who want to use this facility can set this variable and test out the
+        checking/regenerating. Once it seems like there are no egregious
+        issues that upset a developer's workflow, we'll unconditionally enable
+        this facility.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * Scripts/check-xcfilelists.sh: Added.
+
 2019-01-25  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Exclude Debugger Threads from CPU Usage values in Web Inspector

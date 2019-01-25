@@ -1,0 +1,11 @@
+#!/bin/sh
+
+[ "${WK_ENABLE_CHECK_XCFILELISTS}" == "" ] && { echo "### Not running because WK_ENABLE_CHECK_XCFILELISTS is not set"; exit 0; }
+[ "${DEPLOYMENT_LOCATION}" == "YES" ] && { echo "### Not running because DEPLOYMENT_LOCATION is YES"; exit 0; }
+[ "${USE_INTERNAL_SDK}" == "YES" ] || { echo "### Not running because USE_INTERNAL_SDK is not YES"; exit 0; }
+
+SCRIPT="${BUILD_SCRIPTS_DIR}/generate-xcfilelists"
+[ -f "${SCRIPT}" ] || SCRIPT="${PROJECT_DIR}/../../Tools/Scripts/generate-xcfilelists"
+[ -f "${SCRIPT}" ] || { echo "### Cannot find generate-xcfilelists script"; exit 1; }
+
+"${SCRIPT}" generate-xcode --project JavaScriptCore --platform "${PLATFORM_NAME}" --configuration "${CONFIGURATION}"

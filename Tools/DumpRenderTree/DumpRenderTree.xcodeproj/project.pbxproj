@@ -953,6 +953,7 @@
 			buildConfigurationList = A1321C9F188F9A3600125434 /* Build configuration list for PBXNativeTarget "DumpRenderTree (Library)" */;
 			buildPhases = (
 				9340994D08540CAE007F3BC8 /* Sources */,
+				53A8193B21E52997000B93AB /* Check .xcfilelists */,
 			);
 			buildRules = (
 			);
@@ -1053,6 +1054,24 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "eval \"${WK_SUBLAUNCH_SCRIPT_PARAMETERS[@]}\"\n";
+		};
+		53A8193B21E52997000B93AB /* Check .xcfilelists */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			name = "Check .xcfilelists";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "Scripts/check-xcfilelists.sh\n";
 		};
 /* End PBXShellScriptBuildPhase section */
 

@@ -952,6 +952,7 @@
 				BC25185E11D15D54002EBC01 /* Resources */,
 				BC25185F11D15D54002EBC01 /* Sources */,
 				BC25186011D15D54002EBC01 /* Frameworks */,
+				53A8193A21E52973000B93AB /* Check .xcfilelists */,
 			);
 			buildRules = (
 			);
@@ -1058,6 +1059,24 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "eval \"${WK_SUBLAUNCH_SCRIPT_PARAMETERS[@]}\"\n";
+		};
+		53A8193A21E52973000B93AB /* Check .xcfilelists */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			name = "Check .xcfilelists";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "Scripts/check-xcfilelists.sh\n";
 		};
 		BC952D8211F3BF78003398B4 /* Generate Derived Sources */ = {
 			isa = PBXShellScriptBuildPhase;
