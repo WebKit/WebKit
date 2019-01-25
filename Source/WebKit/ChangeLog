@@ -1,3 +1,21 @@
+2019-01-25  Alex Christensen  <achristensen@webkit.org>
+
+        Add SPI to inform an application that "Go Back" has been clicked from a safe browsing warning
+        https://bugs.webkit.org/show_bug.cgi?id=193802
+        <rdar://problem/46010580>
+
+        Reviewed by Andy Estes.
+
+        * UIProcess/API/APIUIClient.h:
+        (API::UIClient::didClickGoBackFromSafeBrowsingWarning):
+        * UIProcess/API/Cocoa/WKUIDelegatePrivate.h:
+        * UIProcess/Cocoa/UIDelegate.h:
+        * UIProcess/Cocoa/UIDelegate.mm:
+        (WebKit::UIDelegate::setDelegate):
+        (WebKit::UIDelegate::UIClient::didClickGoBackFromSafeBrowsingWarning):
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::decidePolicyForNavigationAction):
+
 2019-01-25  Daniel Bates  <dabates@apple.com>
 
         [iOS] Pressing Tab key doesn't move to next cell with Google Sheets

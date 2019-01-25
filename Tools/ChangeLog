@@ -1,3 +1,15 @@
+2019-01-25  Alex Christensen  <achristensen@webkit.org>
+
+        Add SPI to inform an application that "Go Back" has been clicked from a safe browsing warning
+        https://bugs.webkit.org/show_bug.cgi?id=193802
+        <rdar://problem/46010580>
+
+        Reviewed by Andy Estes.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/SafeBrowsing.mm:
+        (-[SafeBrowsingNavigationDelegate _webViewDidClickGoBackFromSafeBrowsingWarning:]):
+        (TEST):
+
 2019-01-25  Daniel Bates  <dabates@apple.com>
 
         [iOS] uiController.keyDown() does not translate Control modified key

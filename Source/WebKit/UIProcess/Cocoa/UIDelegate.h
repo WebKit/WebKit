@@ -147,6 +147,7 @@ private:
 
         void imageOrMediaDocumentSizeChanged(const WebCore::IntSize&) final;
         void didShowSafeBrowsingWarning() final;
+        void didClickGoBackFromSafeBrowsingWarning() final;
 
         UIDelegate& m_uiDelegate;
     };
@@ -224,6 +225,7 @@ private:
 #endif
         bool webViewHasVideoInPictureInPictureDidChange : 1;
         bool webViewDidShowSafeBrowsingWarning : 1;
+        bool webViewDidClickGoBackFromSafeBrowsingWarning : 1;
     } m_delegateMethods;
 };
 

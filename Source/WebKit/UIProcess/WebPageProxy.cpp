@@ -4439,6 +4439,7 @@ void WebPageProxy::decidePolicyForNavigationAction(Ref<WebProcessProxy>&& proces
                 }, [&] (ContinueUnsafeLoad continueUnsafeLoad) {
                     switch (continueUnsafeLoad) {
                     case ContinueUnsafeLoad::No:
+                        protectedThis->m_uiClient->didClickGoBackFromSafeBrowsingWarning();
                         completionHandler(PolicyAction::Ignore);
                         break;
                     case ContinueUnsafeLoad::Yes:

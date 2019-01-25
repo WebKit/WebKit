@@ -40,6 +40,7 @@
 
 static bool committedNavigation;
 static bool warningShown;
+static bool goBackClicked;
 
 @interface SafeBrowsingNavigationDelegate : NSObject <WKNavigationDelegate, WKUIDelegatePrivate>
 @end
@@ -54,6 +55,11 @@ static bool warningShown;
 - (void)_webViewDidShowSafeBrowsingWarning:(WKWebView *)webView
 {
     warningShown = true;
+}
+
+- (void)_webViewDidClickGoBackFromSafeBrowsingWarning:(WKWebView *)webView
+{
+    goBackClicked = true;
 }
 
 @end
@@ -221,7 +227,9 @@ template<typename ViewType> void goBack(ViewType *view)
 TEST(SafeBrowsing, GoBack)
 {
     auto webView = safeBrowsingView();
+    EXPECT_FALSE(goBackClicked);
     goBack([webView _safeBrowsingWarning]);
+    EXPECT_TRUE(goBackClicked);
 }
 
 template<typename ViewType> void visitUnsafeSite(ViewType *view)

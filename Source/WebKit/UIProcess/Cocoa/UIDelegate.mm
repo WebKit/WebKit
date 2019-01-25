@@ -172,6 +172,7 @@ void UIDelegate::setDelegate(id <WKUIDelegate> delegate)
     
     m_delegateMethods.webViewHasVideoInPictureInPictureDidChange = [delegate respondsToSelector:@selector(_webView:hasVideoInPictureInPictureDidChange:)];
     m_delegateMethods.webViewDidShowSafeBrowsingWarning = [delegate respondsToSelector:@selector(_webViewDidShowSafeBrowsingWarning:)];
+    m_delegateMethods.webViewDidClickGoBackFromSafeBrowsingWarning = [delegate respondsToSelector:@selector(_webViewDidClickGoBackFromSafeBrowsingWarning:)];
 }
 
 #if ENABLE(CONTEXT_MENUS)
@@ -1255,6 +1256,18 @@ void UIDelegate::UIClient::didShowSafeBrowsingWarning()
         return;
 
     [static_cast<id <WKUIDelegatePrivate>>(delegate) _webViewDidShowSafeBrowsingWarning:m_uiDelegate.m_webView];
+}
+
+void UIDelegate::UIClient::didClickGoBackFromSafeBrowsingWarning()
+{
+    if (!m_uiDelegate.m_delegateMethods.webViewDidClickGoBackFromSafeBrowsingWarning)
+        return;
+    
+    auto delegate = m_uiDelegate.m_delegate.get();
+    if (!delegate)
+        return;
+
+    [static_cast<id <WKUIDelegatePrivate>>(delegate) _webViewDidClickGoBackFromSafeBrowsingWarning:m_uiDelegate.m_webView];
 }
 
 void UIDelegate::UIClient::hasVideoInPictureInPictureDidChange(WebPageProxy*, bool hasVideoInPictureInPicture)
