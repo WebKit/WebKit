@@ -229,7 +229,7 @@ void ResourceUsageOverlay::platformInitialize()
 
     overlay().layer().setContentsToPlatformLayer(m_layer.get(), GraphicsLayer::ContentsLayerPurpose::None);
 
-    ResourceUsageThread::addObserver(this, [this] (const ResourceUsageData& data) {
+    ResourceUsageThread::addObserver(this, All, [this] (const ResourceUsageData& data) {
         appendDataToHistory(data);
 
         // FIXME: It shouldn't be necessary to update the bounds on every single thread loop iteration,

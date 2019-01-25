@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,27 +23,39 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WI.MemoryObserver = class MemoryObserver
+WI.CPUInstrument = class CPUInstrument extends WI.Instrument
 {
-    // Events defined by the "Memory" domain.
-
-    memoryPressure(timestamp, severity)
+    constructor()
     {
-        WI.memoryManager.memoryPressure(timestamp, severity);
+        super();
+
+        console.assert(WI.CPUInstrument.supported());
     }
 
-    trackingStart(timestamp)
+    // Static
+
+    static supported()
     {
-        WI.timelineManager.memoryTrackingStarted(timestamp);
+        // COMPATIBILITY (iOS 12): CPUProfiler domain did not exist.
+        return InspectorBackend.domains.CPUProfiler;
     }
 
-    trackingUpdate(event)
+    // Protected
+
+    get timelineRecordType()
     {
-        WI.timelineManager.memoryTrackingUpdated(event);
+        return WI.TimelineRecord.Type.CPU;
     }
 
-    trackingComplete()
+    startInstrumentation(initiatedByBackend)
     {
-        WI.timelineManager.memoryTrackingCompleted();
+        if (!initiatedByBackend)
+            CPUProfilerAgent.startTracking();
+    }
+
+    stopInstrumentation(initiatedByBackend)
+    {
+        if (!initiatedByBackend)
+            CPUProfilerAgent.stopTracking();
     }
 };

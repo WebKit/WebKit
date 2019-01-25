@@ -1,3 +1,22 @@
+2019-01-24  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: CPU Usage Timeline
+        https://bugs.webkit.org/show_bug.cgi?id=193730
+        <rdar://problem/46797201>
+
+        Reviewed by Devin Rousso.
+
+        * CMakeLists.txt:
+        * DerivedSources-input.xcfilelist:
+        * DerivedSources.make:
+        New files.
+
+        * inspector/protocol/CPUProfiler.json: Added.
+        New domain that follows the pattern of Memory/ScriptProfiler.
+
+        * inspector/protocol/Timeline.json:
+        New enum to auto-start a CPU instrument in the backend.
+
 2019-01-24  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] SharedArrayBufferConstructor and ArrayBufferConstructor should not have their own IsoSubspace

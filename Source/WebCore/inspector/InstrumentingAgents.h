@@ -44,18 +44,19 @@ class InspectorDebuggerAgent;
 namespace WebCore {
 
 class InspectorApplicationCacheAgent;
-class InspectorCanvasAgent;
+class InspectorCPUProfilerAgent;
 class InspectorCSSAgent;
+class InspectorCanvasAgent;
 class InspectorDOMAgent;
 class InspectorDOMDebuggerAgent;
 class InspectorDOMStorageAgent;
 class InspectorDatabaseAgent;
 class InspectorLayerTreeAgent;
-class InspectorWorkerAgent;
 class InspectorMemoryAgent;
 class InspectorNetworkAgent;
 class InspectorPageAgent;
 class InspectorTimelineAgent;
+class InspectorWorkerAgent;
 class Page;
 class PageDebuggerAgent;
 class PageHeapAgent;
@@ -111,6 +112,9 @@ public:
     void setInspectorDOMStorageAgent(InspectorDOMStorageAgent* agent) { m_inspectorDOMStorageAgent = agent; }
 
 #if ENABLE(RESOURCE_USAGE)
+    InspectorCPUProfilerAgent* inspectorCPUProfilerAgent() const { return m_inspectorCPUProfilerAgent; }
+    void setInspectorCPUProfilerAgent(InspectorCPUProfilerAgent* agent) { m_inspectorCPUProfilerAgent = agent; }
+
     InspectorMemoryAgent* inspectorMemoryAgent() const { return m_inspectorMemoryAgent; }
     void setInspectorMemoryAgent(InspectorMemoryAgent* agent) { m_inspectorMemoryAgent = agent; }
 #endif
@@ -157,6 +161,7 @@ private:
     InspectorTimelineAgent* m_persistentInspectorTimelineAgent { nullptr };
     InspectorDOMStorageAgent* m_inspectorDOMStorageAgent { nullptr };
 #if ENABLE(RESOURCE_USAGE)
+    InspectorCPUProfilerAgent* m_inspectorCPUProfilerAgent { nullptr };
     InspectorMemoryAgent* m_inspectorMemoryAgent { nullptr };
 #endif
     InspectorDatabaseAgent* m_inspectorDatabaseAgent { nullptr };

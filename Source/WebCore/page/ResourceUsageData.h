@@ -82,6 +82,7 @@ struct ResourceUsageData {
 WEBCORE_EACH_MEMORY_CATEGORIES(WEBCORE_DEFINE_MEMORY_CATEGORY)
 #undef WEBCORE_DEFINE_MEMORY_CATEGORY
     } };
+    MonotonicTime timestamp { MonotonicTime::now() };
     MonotonicTime timeOfNextEdenCollection { MonotonicTime::nan() };
     MonotonicTime timeOfNextFullCollection { MonotonicTime::nan() };
 };

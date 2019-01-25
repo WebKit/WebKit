@@ -75,6 +75,8 @@ WI.loaded = function()
         InspectorBackend.registerDOMStorageDispatcher(new WI.DOMStorageObserver);
     if (InspectorBackend.registerApplicationCacheDispatcher)
         InspectorBackend.registerApplicationCacheDispatcher(new WI.ApplicationCacheObserver);
+    if (InspectorBackend.registerCPUProfilerDispatcher)
+        InspectorBackend.registerCPUProfilerDispatcher(new WI.CPUProfilerObserver);
     if (InspectorBackend.registerScriptProfilerDispatcher)
         InspectorBackend.registerScriptProfilerDispatcher(new WI.ScriptProfilerObserver);
     if (InspectorBackend.registerTimelineDispatcher)

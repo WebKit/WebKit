@@ -24,7 +24,7 @@
  */
 
 .resource-sizes {
-    font-family: '-webkit-system-font';
+    font-family: -webkit-system-font, sans-serif;
 }
 
 .resource-sizes > .content {

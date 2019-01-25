@@ -5,10 +5,10 @@
 <script>
 function test()
 {
-    let suite = ProtocolTest.createAsyncSuite("ScriptProfiler.startTracking and ScriptProfiler.stopTracking");
+    let suite = ProtocolTest.createAsyncSuite("ScriptProfiler.Tracking");
 
     suite.addTestCase({
-        name: "StartAndStopTracking",
+        name: "ScriptProfiler.Tracking.StartAndStopTracking",
         description: "Start and stop the ScriptProfiler should cause trackingStart and trackingComplete events.",
         test(resolve, reject) {
             InspectorProtocol.awaitEvent({event: "ScriptProfiler.trackingStart"}).then((messageObject) => {

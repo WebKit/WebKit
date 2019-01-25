@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,27 +23,41 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WI.MemoryObserver = class MemoryObserver
-{
-    // Events defined by the "Memory" domain.
+#pragma once
 
-    memoryPressure(timestamp, severity)
-    {
-        WI.memoryManager.memoryPressure(timestamp, severity);
-    }
+#if ENABLE(RESOURCE_USAGE)
 
-    trackingStart(timestamp)
-    {
-        WI.timelineManager.memoryTrackingStarted(timestamp);
-    }
+#include "InspectorWebAgentBase.h"
+#include "ResourceUsageData.h"
+#include <JavaScriptCore/InspectorBackendDispatchers.h>
+#include <JavaScriptCore/InspectorFrontendDispatchers.h>
 
-    trackingUpdate(event)
-    {
-        WI.timelineManager.memoryTrackingUpdated(event);
-    }
+namespace WebCore {
 
-    trackingComplete()
-    {
-        WI.timelineManager.memoryTrackingCompleted();
-    }
+typedef String ErrorString;
+
+class InspectorCPUProfilerAgent final : public InspectorAgentBase, public Inspector::CPUProfilerBackendDispatcherHandler {
+    WTF_MAKE_NONCOPYABLE(InspectorCPUProfilerAgent);
+    WTF_MAKE_FAST_ALLOCATED;
+public:
+    InspectorCPUProfilerAgent(PageAgentContext&);
+    virtual ~InspectorCPUProfilerAgent() = default;
+
+    void didCreateFrontendAndBackend(Inspector::FrontendRouter*, Inspector::BackendDispatcher*) override;
+    void willDestroyFrontendAndBackend(Inspector::DisconnectReason) override;
+
+    // CPUProfilerBackendDispatcherHandler
+    void startTracking(ErrorString&) override;
+    void stopTracking(ErrorString&) override;
+
+private:
+    void collectSample(const ResourceUsageData&);
+
+    std::unique_ptr<Inspector::CPUProfilerFrontendDispatcher> m_frontendDispatcher;
+    RefPtr<Inspector::CPUProfilerBackendDispatcher> m_backendDispatcher;
+    bool m_tracking { false };
 };
+
+} // namespace WebCore
+
+#endif // ENABLE(RESOURCE_USAGE)

@@ -1,8 +1,8 @@
 Tests that Heap.startTracking and Heap.stopTracking trigger trackingStart and trackingComplete events with expected data.
 
 
-== Running test suite: Heap.startTracking and Heap.stopTracking
--- Running test case: StartAndStopTrackingIncludeSnapshots
+== Running test suite: Heap.Tracking
+-- Running test case: Heap.Tracking.StartAndStopTrackingIncludeSnapshots
 Heap.trackingStart
 PASS: Should have a timestamp when starting.
 PASS: Should have snapshotData when starting.

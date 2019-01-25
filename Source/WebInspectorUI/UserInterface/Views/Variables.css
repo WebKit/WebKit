@@ -116,6 +116,9 @@
     --memory-max-comparison-fill-color: hsl(220, 10%, 75%);
     --memory-max-comparison-stroke-color: hsl(220, 10%, 55%);
 
+    --cpu-stroke-color: hsl(118, 33%, 42%);
+    --cpu-fill-color: hsl(118, 43%, 55%);
+
     --network-header-color: hsl(204, 52%, 55%);
     --network-system-color: hsl(79, 32%, 50%);
     --network-pseudo-header-color: hsl(312, 35%, 51%);

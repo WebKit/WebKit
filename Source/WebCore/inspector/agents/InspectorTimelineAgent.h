@@ -164,6 +164,7 @@ private:
     void toggleInstruments(InstrumentState);
     void toggleScriptProfilerInstrument(InstrumentState);
     void toggleHeapInstrument(InstrumentState);
+    void toggleCPUInstrument(InstrumentState);
     void toggleMemoryInstrument(InstrumentState);
     void toggleTimelineInstrument(InstrumentState);
     void disableBreakpoints();

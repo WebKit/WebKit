@@ -3116,6 +3116,7 @@
 		A58C59D11E382EAE0047859C /* JSPerformanceMark.h in Headers */ = {isa = PBXBuildFile; fileRef = A58C59CD1E382EA90047859C /* JSPerformanceMark.h */; };
 		A58C59D31E382EB20047859C /* JSPerformanceMeasure.h in Headers */ = {isa = PBXBuildFile; fileRef = A58C59CF1E382EA90047859C /* JSPerformanceMeasure.h */; };
 		A593CF8B1840535200BFCE27 /* InspectorWebAgentBase.h in Headers */ = {isa = PBXBuildFile; fileRef = A593CF8A1840535200BFCE27 /* InspectorWebAgentBase.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		A59C230A21F29206004EC939 /* InspectorCPUProfilerAgent.h in Headers */ = {isa = PBXBuildFile; fileRef = A59C230821F29206004EC939 /* InspectorCPUProfilerAgent.h */; };
 		A5A2AF0C1829734300DE1729 /* PageDebuggable.h in Headers */ = {isa = PBXBuildFile; fileRef = A5A2AF0A1829734300DE1729 /* PageDebuggable.h */; };
 		A5A7AA43132F0ECC00D3A3C2 /* AutocapitalizeTypes.h in Headers */ = {isa = PBXBuildFile; fileRef = A5A7AA42132F0ECC00D3A3C2 /* AutocapitalizeTypes.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A5A9933D1E37FB19005B5E4D /* PerformanceObserver.h in Headers */ = {isa = PBXBuildFile; fileRef = A5A993361E37FAFD005B5E4D /* PerformanceObserver.h */; };
@@ -11451,6 +11452,8 @@
 		A58C59CE1E382EA90047859C /* JSPerformanceMeasure.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSPerformanceMeasure.cpp; sourceTree = "<group>"; };
 		A58C59CF1E382EA90047859C /* JSPerformanceMeasure.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSPerformanceMeasure.h; sourceTree = "<group>"; };
 		A593CF8A1840535200BFCE27 /* InspectorWebAgentBase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InspectorWebAgentBase.h; sourceTree = "<group>"; };
+		A59C230621F29205004EC939 /* InspectorCPUProfilerAgent.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = InspectorCPUProfilerAgent.cpp; sourceTree = "<group>"; };
+		A59C230821F29206004EC939 /* InspectorCPUProfilerAgent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InspectorCPUProfilerAgent.h; sourceTree = "<group>"; };
 		A5A2AF091829734300DE1729 /* PageDebuggable.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PageDebuggable.cpp; sourceTree = "<group>"; };
 		A5A2AF0A1829734300DE1729 /* PageDebuggable.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PageDebuggable.h; sourceTree = "<group>"; };
 		A5A7AA42132F0ECC00D3A3C2 /* AutocapitalizeTypes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AutocapitalizeTypes.h; sourceTree = "<group>"; };
@@ -22466,6 +22469,8 @@
 				A5B81C971FAA44260037D1E6 /* InspectorApplicationCacheAgent.h */,
 				A5B81C961FAA44260037D1E6 /* InspectorCanvasAgent.cpp */,
 				A5B81C911FAA44260037D1E6 /* InspectorCanvasAgent.h */,
+				A59C230621F29205004EC939 /* InspectorCPUProfilerAgent.cpp */,
+				A59C230821F29206004EC939 /* InspectorCPUProfilerAgent.h */,
 				A5B81C921FAA44260037D1E6 /* InspectorCSSAgent.cpp */,
 				A5B81CA11FAA44270037D1E6 /* InspectorCSSAgent.h */,
 				A5B81CA51FAA44270037D1E6 /* InspectorDatabaseAgent.cpp */,
@@ -29536,6 +29541,7 @@
 				F55B3DC21251F12D003EF269 /* ImageInputType.h in Headers */,
 				089582560E857A7E00F82C83 /* ImageLoader.h in Headers */,
 				BC7F44A80B9E324E00A9D081 /* ImageObserver.h in Headers */,
+				A59C230A21F29206004EC939 /* InspectorCPUProfilerAgent.h in Headers */,
 				2D5A5931152525D00036EE51 /* ImageOrientation.h in Headers */,
 				B51A2F3F17D7D3AE0072517A /* ImageQualityController.h in Headers */,
 				49291E4B134172C800E753DE /* ImageRenderingMode.h in Headers */,

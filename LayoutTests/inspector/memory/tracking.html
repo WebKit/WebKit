@@ -5,10 +5,10 @@
 <script>
 function test()
 {
-    let suite = ProtocolTest.createAsyncSuite("Memory.startTracking and Memory.stopTracking");
+    let suite = ProtocolTest.createAsyncSuite("Memory.Tracking");
 
     suite.addTestCase({
-        name: "StartAndStopTrackingWithEvent",
+        name: "Memory.Tracking.StartAndStopTrackingWithEvent",
         test(resolve, reject) {
             InspectorProtocol.awaitEvent({event: "Memory.trackingStart"}).then((messageObject) => {
                 ProtocolTest.log("Memory.trackingStart");

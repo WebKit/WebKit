@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,23 +23,17 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WI.MemoryCategoryView = class MemoryCategoryView
+WI.CPUUsageView = class CPUUsageView
 {
-    constructor(category, displayName)
+    constructor()
     {
-        console.assert(typeof category === "string");
-
-        this._category = category;
-
         this._element = document.createElement("div");
-        this._element.classList.add("memory-category-view", category);
+        this._element.classList.add("cpu-usage-view");
 
         this._detailsElement = this._element.appendChild(document.createElement("div"));
         this._detailsElement.classList.add("details");
 
-        let detailsNameElement = this._detailsElement.appendChild(document.createElement("span"));
-        detailsNameElement.classList.add("name");
-        detailsNameElement.textContent = displayName;
+        this._detailsAverageElement = this._detailsElement.appendChild(document.createElement("span"));        
         this._detailsElement.appendChild(document.createElement("br"));
         this._detailsMaxElement = this._detailsElement.appendChild(document.createElement("span"));
         this._detailsElement.appendChild(document.createElement("br"));
@@ -50,7 +44,7 @@ WI.MemoryCategoryView = class MemoryCategoryView
         this._graphElement.classList.add("graph");
 
         // FIXME: <https://webkit.org/b/153758> Web Inspector: Memory / CPU Timeline Views should be responsive / resizable
-        let size = new WI.Size(800, 75);
+        let size = new WI.Size(800, 150);
         this._chart = new WI.LineChart(size);
         this._graphElement.appendChild(this._chart.element);
     }
@@ -58,10 +52,10 @@ WI.MemoryCategoryView = class MemoryCategoryView
     // Public
 
     get element() { return this._element; }
-    get category() { return this._category; }
 
     clear()
     {
+        this._cachedAverageSize = undefined;
         this._cachedMinSize = undefined;
         this._cachedMaxSize = undefined;
         this._updateDetails(NaN, NaN);
@@ -70,13 +64,13 @@ WI.MemoryCategoryView = class MemoryCategoryView
         this._chart.needsLayout();
     }
 
-    layoutWithDataPoints(dataPoints, lastTime, minSize, maxSize, xScale, yScale)
+    layoutWithDataPoints(dataPoints, lastTime, minSize, maxSize, averageSize, xScale, yScale)
     {
         console.assert(minSize >= 0);
         console.assert(maxSize >= 0);
         console.assert(minSize <= maxSize);
 
-        this._updateDetails(minSize, maxSize);
+        this._updateDetails(minSize, maxSize, averageSize);
         this._chart.clear();
 
         if (!dataPoints.length)
@@ -109,15 +103,17 @@ WI.MemoryCategoryView = class MemoryCategoryView
 
     // Private
 
-    _updateDetails(minSize, maxSize)
+    _updateDetails(minSize, maxSize, averageSize)
     {
-        if (this._cachedMinSize === minSize && this._cachedMaxSize === maxSize)
+        if (this._cachedMinSize === minSize && this._cachedMaxSize === maxSize && this._cachedAverageSize === averageSize)
             return;
 
+        this._cachedAverageSize = averageSize;
         this._cachedMinSize = minSize;
         this._cachedMaxSize = maxSize;
 
-        this._detailsMaxElement.textContent = WI.UIString("Highest: %s").format(Number.isFinite(maxSize) ? Number.bytesToString(maxSize) : emDash);
-        this._detailsMinElement.textContent = WI.UIString("Lowest: %s").format(Number.isFinite(minSize) ? Number.bytesToString(minSize) : emDash);
+        this._detailsAverageElement.textContent = WI.UIString("Average: %s").format(Number.isFinite(maxSize) ? Number.percentageString(averageSize / 100) : emDash);
+        this._detailsMaxElement.textContent = WI.UIString("Highest: %s").format(Number.isFinite(maxSize) ? Number.percentageString(maxSize / 100) : emDash);
+        this._detailsMinElement.textContent = WI.UIString("Lowest: %s").format(Number.isFinite(minSize) ? Number.percentageString(minSize / 100) : emDash);
     }
 };

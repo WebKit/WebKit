@@ -37,7 +37,7 @@
 .uncaught-exception-sheet {
     min-width: 400px;
     padding: 50px 0;
-    font-family: '-webkit-system-font';
+    font-family: -webkit-system-font, sans-serif;
     font-size: 11pt;
     color: hsl(0, 0%, 40%);
 

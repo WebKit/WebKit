@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,27 +23,22 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WI.MemoryObserver = class MemoryObserver
+WI.CPUProfilerObserver = class CPUProfilerObserver
 {
-    // Events defined by the "Memory" domain.
-
-    memoryPressure(timestamp, severity)
-    {
-        WI.memoryManager.memoryPressure(timestamp, severity);
-    }
+    // Events defined by the "CPUProfiler" domain.
 
     trackingStart(timestamp)
     {
-        WI.timelineManager.memoryTrackingStarted(timestamp);
+        WI.timelineManager.cpuProfilerTrackingStarted(timestamp);
     }
 
     trackingUpdate(event)
     {
-        WI.timelineManager.memoryTrackingUpdated(event);
+        WI.timelineManager.cpuProfilerTrackingUpdated(event);
     }
 
-    trackingComplete()
+    trackingComplete(samples)
     {
-        WI.timelineManager.memoryTrackingCompleted();
+        WI.timelineManager.cpuProfilerTrackingCompleted(samples);
     }
 };

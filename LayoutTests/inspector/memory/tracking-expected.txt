@@ -1,8 +1,8 @@
 Tests that Memory.startTracking and Memory.stopTracking trigger trackingStart, trackingUpdate, and trackingComplete events with expected data.
 
 
-== Running test suite: Memory.startTracking and Memory.stopTracking
--- Running test case: StartAndStopTrackingWithEvent
+== Running test suite: Memory.Tracking
+-- Running test case: Memory.Tracking.StartAndStopTrackingWithEvent
 Memory.trackingStart
 PASS: Should have a timestamp when starting.
 Memory.trackingUpdate

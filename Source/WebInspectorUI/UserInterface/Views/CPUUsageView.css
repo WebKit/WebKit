@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,27 +23,35 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WI.MemoryObserver = class MemoryObserver
-{
-    // Events defined by the "Memory" domain.
+.cpu-usage-view {
+    display: flex;
+    border-bottom: 1px solid var(--border-color);
+}
 
-    memoryPressure(timestamp, severity)
-    {
-        WI.memoryManager.memoryPressure(timestamp, severity);
-    }
+.cpu-usage-view > .details {
+    width: 150px;
+    padding-top: 10px;
+    font-family: -webkit-system-font, sans-serif;
+    font-size: 12px;
+    color: hsl(0, 0%, 70%);
+    -webkit-padding-start: 15px;
 
-    trackingStart(timestamp)
-    {
-        WI.timelineManager.memoryTrackingStarted(timestamp);
-    }
+    --cpu-usage-view-details-border-end: 1px solid var(--border-color);
+}
 
-    trackingUpdate(event)
-    {
-        WI.timelineManager.memoryTrackingUpdated(event);
-    }
+body[dir=ltr] .cpu-usage-view > .details {
+    border-right: var(--cpu-usage-view-details-border-end);
+}
 
-    trackingComplete()
-    {
-        WI.timelineManager.memoryTrackingCompleted();
-    }
-};
+body[dir=rtl] .cpu-usage-view > .details {
+    border-left: var(--cpu-usage-view-details-border-end);
+}
+
+.cpu-usage-view > .graph {
+    position: relative;
+    bottom: -3px;
+}
+
+body[dir=rtl] .cpu-usage-view > .graph {
+    transform: scaleX(-1);
+}

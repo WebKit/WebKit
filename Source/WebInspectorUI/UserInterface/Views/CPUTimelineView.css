@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,27 +23,53 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WI.MemoryObserver = class MemoryObserver
-{
-    // Events defined by the "Memory" domain.
+.timeline-view.cpu {
+    overflow: scroll;
+}
 
-    memoryPressure(timestamp, severity)
-    {
-        WI.memoryManager.memoryPressure(timestamp, severity);
-    }
+.timeline-view.cpu > .content {
+    width: 970px;
+    margin: 10px auto;
+}
 
-    trackingStart(timestamp)
-    {
-        WI.timelineManager.memoryTrackingStarted(timestamp);
-    }
+.timeline-view.cpu > .content .subtitle {
+    font-family: -webkit-system-font, sans-serif;
+    font-size: 14px;
+}
 
-    trackingUpdate(event)
-    {
-        WI.timelineManager.memoryTrackingUpdated(event);
-    }
+.timeline-view.cpu > .content > .details {
+    position: relative;
+}
 
-    trackingComplete()
-    {
-        WI.timelineManager.memoryTrackingCompleted();
-    }
-};
+.timeline-view.cpu > .content > .details > .timeline-ruler {
+    position: absolute;
+    top: 5px;
+    bottom: 0;
+    right: 0;
+    left: 0;
+
+    --cpu-timeline-view-details-timeline-ruler-offset-start: 150px;
+}
+
+body[dir=ltr] .timeline-view.cpu > .content > .details > .timeline-ruler {
+    left: var(--cpu-timeline-view-details-timeline-ruler-offset-start);
+}
+
+body[dir=rtl] .timeline-view.cpu > .content > .details > .timeline-ruler {
+    right: var(--cpu-timeline-view-details-timeline-ruler-offset-start);
+}
+
+.timeline-view.cpu > .content > .details > .subtitle {
+    padding: 0 10px 10px;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.cpu-usage-view .line-chart > svg > path {
+    stroke: var(--cpu-stroke-color);
+    fill: var(--cpu-fill-color);
+}
+
+.timeline-view.cpu .legend > .row > .swatch.current {
+    border: 1px solid var(--cpu-max-comparison-stroke-color);
+    background: var(--cpu-max-comparison-fill-color);
+}

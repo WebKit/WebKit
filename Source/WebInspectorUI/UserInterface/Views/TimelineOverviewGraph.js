@@ -63,6 +63,9 @@ WI.TimelineOverviewGraph = class TimelineOverviewGraph extends WI.View
         if (timelineType === WI.TimelineRecord.Type.RenderingFrame)
             return new WI.RenderingFrameTimelineOverviewGraph(timeline, timelineOverview);
 
+        if (timelineType === WI.TimelineRecord.Type.CPU)
+            return new WI.CPUTimelineOverviewGraph(timeline, timelineOverview);
+
         if (timelineType === WI.TimelineRecord.Type.Memory)
             return new WI.MemoryTimelineOverviewGraph(timeline, timelineOverview);
 

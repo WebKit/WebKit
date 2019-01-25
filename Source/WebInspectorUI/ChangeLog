@@ -1,3 +1,165 @@
+2019-01-24  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: CPU Usage Timeline
+        https://bugs.webkit.org/show_bug.cgi?id=193730
+        <rdar://problem/46797201>
+
+        Reviewed by Devin Rousso.
+
+        CPU Usage is gathered in the backend twice a second, the frequency of the
+        ResourceUsageThread in WebCore. The frontend displays cpu usage in a few
+        ways in the Timeline.
+
+        We use a column chart in the timeline overview to display the frequency and
+        relative distance of samples. This helps show if the samples were close
+        together or far apart, which indicates how meaningful they will be at a
+        particular scale.
+
+        We use a line chart in the timeline detail view which will be easier to see
+        the changes over a particular time range selection.
+
+        * Localizations/en.lproj/localizedStrings.js:
+        New strings.
+
+        * UserInterface/Main.html:
+        * UserInterface/Base/Main.js:
+        (WI.loaded):
+        * UserInterface/Test.html:
+        * UserInterface/Test/Test.js:
+        (WI.loaded):
+        * UserInterface/Protocol/CPUProfilerObserver.js:
+        (WI.CPUProfilerObserver.prototype.trackingStart):
+        (WI.CPUProfilerObserver.prototype.trackingUpdate):
+        (WI.CPUProfilerObserver.prototype.trackingComplete):
+        (WI.CPUProfilerObserver):
+        New files and default registration.
+
+        * UserInterface/Protocol/Target.js:
+        (WI.Target.prototype.get CPUProfilerAgent):
+        New Agent.
+
+        * UserInterface/Controllers/TimelineManager.js:
+        (WI.TimelineManager.availableTimelineTypes):
+        (WI.TimelineManager.prototype.cpuProfilerTrackingStarted):
+        (WI.TimelineManager.prototype.cpuProfilerTrackingUpdated):
+        (WI.TimelineManager.prototype.cpuProfilerTrackingCompleted):
+        (WI.TimelineManager.prototype._updateAutoCaptureInstruments):
+        (WI.TimelineManager.prototype.memoryTrackingStart): Renamed.
+        (WI.TimelineManager.prototype.memoryTrackingUpdate): Renamed.
+        (WI.TimelineManager.prototype.memoryTrackingComplete): Renamed.
+        * UserInterface/Models/CPUInstrument.js:
+        (WI.CPUInstrument):
+        (WI.CPUInstrument.supported):
+        (WI.CPUInstrument.prototype.get timelineRecordType):
+        (WI.CPUInstrument.prototype.startInstrumentation):
+        (WI.CPUInstrument.prototype.stopInstrumentation):
+        * UserInterface/Models/CPUTimelineRecord.js:
+        (WI.CPUTimelineRecord):
+        (WI.CPUTimelineRecord.prototype.get timestamp):
+        (WI.CPUTimelineRecord.prototype.get usage):
+        * UserInterface/Models/Instrument.js:
+        (WI.Instrument.createForTimelineType):
+        * UserInterface/Models/TimelineRecord.js:
+        * UserInterface/Models/TimelineRecording.js:
+        (WI.TimelineRecording.prototype.addRecord):
+        Expose a new CPU instrument and timeline.
+
+        * UserInterface/Views/ColumnChart.js: Added.
+        (WI.ColumnChart):
+        (WI.ColumnChart.prototype.get element):
+        (WI.ColumnChart.prototype.get bars):
+        (WI.ColumnChart.prototype.get size):
+        (WI.ColumnChart.prototype.set size):
+        (WI.ColumnChart.prototype.addBar):
+        (WI.ColumnChart.prototype.clear):
+        (WI.ColumnChart.prototype.needsLayout):
+        (WI.ColumnChart.prototype.updateLayout):
+        View that will draw vertical bars with independent widths.
+        This is meant to be used similiar to WI.LineChart.
+
+        * UserInterface/Images/CPUInstrument.svg: Added.
+        * UserInterface/Views/Variables.css:
+        (:root):
+        CPU timeline colors and icon.
+
+        * UserInterface/Views/CPUTimelineOverviewGraph.css:
+        (body .sidebar > .panel.navigation.timeline > .timelines-content li.item.cpu,):
+        (.timeline-overview-graph.cpu):
+        (.timeline-overview-graph.cpu > .legend):
+        (body[dir=ltr] .timeline-overview-graph.cpu > .legend):
+        (body[dir=rtl] .timeline-overview-graph.cpu > .legend):
+        (.timeline-overview-graph:nth-child(even) > .legend):
+        (body[dir=rtl] .timeline-overview-graph.cpu > .bar-chart):
+        (.timeline-overview-graph.cpu > .bar-chart > svg > g > rect):
+        * UserInterface/Views/CPUTimelineOverviewGraph.js: Added.
+        (WI.CPUTimelineOverviewGraph):
+        (WI.CPUTimelineOverviewGraph.prototype.get height):
+        (WI.CPUTimelineOverviewGraph.prototype.reset):
+        (WI.CPUTimelineOverviewGraph.prototype.layout.xScale):
+        (WI.CPUTimelineOverviewGraph.prototype.layout.yScale):
+        (WI.CPUTimelineOverviewGraph.prototype.layout.yScaleForRecord):
+        (WI.CPUTimelineOverviewGraph.prototype.layout):
+        (WI.CPUTimelineOverviewGraph.prototype._updateLegend):
+        (WI.CPUTimelineOverviewGraph.prototype._cpuTimelineRecordAdded):
+        * UserInterface/Views/CPUTimelineView.css:
+        (.timeline-view.cpu):
+        (.timeline-view.cpu > .content):
+        (.timeline-view.cpu > .content .subtitle):
+        (.timeline-view.cpu > .content > .details):
+        (.timeline-view.cpu > .content > .details > .timeline-ruler):
+        (body[dir=ltr] .timeline-view.cpu > .content > .details > .timeline-ruler):
+        (body[dir=rtl] .timeline-view.cpu > .content > .details > .timeline-ruler):
+        (.timeline-view.cpu > .content > .details > .subtitle):
+        (.cpu-usage-view .line-chart > svg > path):
+        (.timeline-view.cpu .legend > .row > .swatch.current):
+        * UserInterface/Views/CPUTimelineView.js: Added.
+        (WI.CPUTimelineView):
+        (WI.CPUTimelineView.prototype.shown):
+        (WI.CPUTimelineView.prototype.hidden):
+        (WI.CPUTimelineView.prototype.closed):
+        (WI.CPUTimelineView.prototype.reset):
+        (WI.CPUTimelineView.prototype.get scrollableElements):
+        (WI.CPUTimelineView.prototype.get showsFilterBar):
+        (WI.CPUTimelineView.prototype.layout.layoutView):
+        (WI.CPUTimelineView.prototype.layout.xScale):
+        (WI.CPUTimelineView.prototype.layout.yScale):
+        (WI.CPUTimelineView.prototype.layout):
+        (WI.CPUTimelineView.prototype._cpuTimelineRecordAdded):
+        * UserInterface/Views/CPUUsageView.css:
+        (.cpu-usage-view):
+        (.cpu-usage-view > .details):
+        (body[dir=ltr] .cpu-usage-view > .details):
+        (body[dir=rtl] .cpu-usage-view > .details):
+        (.cpu-usage-view > .graph):
+        (body[dir=rtl] .cpu-usage-view > .graph):
+        * UserInterface/Views/CPUUsageView.js:
+        (WI.CPUUsageView):
+        (WI.CPUUsageView.prototype.get element):
+        (WI.CPUUsageView.prototype.clear):
+        (WI.CPUUsageView.prototype.layoutWithDataPoints):
+        (WI.CPUUsageView.prototype._updateDetails):
+        * UserInterface/Views/ContentView.js:
+        (WI.ContentView.createFromRepresentedObject):
+        * UserInterface/Views/TimelineIcons.css:
+        (.cpu-icon .icon):
+        * UserInterface/Views/TimelineOverviewGraph.js:
+        (WI.TimelineOverviewGraph.createForTimeline):
+        * UserInterface/Views/TimelineTabContentView.js:
+        (WI.TimelineTabContentView.displayNameForTimelineType):
+        (WI.TimelineTabContentView.iconClassNameForTimelineType):
+        (WI.TimelineTabContentView.genericClassNameForTimelineType):
+        (WI.TimelineTabContentView.iconClassNameForRecord):
+        (WI.TimelineTabContentView.displayNameForRecord):
+        Timeline views for CPU usage.
+
+        * UserInterface/Views/MemoryCategoryView.js:
+        (WI.MemoryCategoryView):
+        * UserInterface/Views/MemoryTimelineView.js:
+        (WI.MemoryTimelineView.createChartContainer):
+        (WI.MemoryTimelineView):
+        (WI.MemoryTimelineView.prototype._clearMaxComparisonLegend):
+        Minor updates to style and comments.
+
 2019-01-23  Nikita Vasilyev  <nvasilyev@apple.com>
 
         Web Inspector: Refactor WI.CSSStyleDeclaration.prototype.update

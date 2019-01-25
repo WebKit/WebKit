@@ -1,3 +1,26 @@
+2019-01-24  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: CPU Usage Timeline
+        https://bugs.webkit.org/show_bug.cgi?id=193730
+        <rdar://problem/46797201>
+
+        Reviewed by Devin Rousso.
+
+        * inspector/cpu-profiler/tracking-expected.txt: Added.
+        * inspector/cpu-profiler/tracking.html: Added.
+        Test the CPUProfiler domain emits events.
+
+        * inspector/heap/tracking-expected.txt:
+        * inspector/heap/tracking.html:
+        * inspector/memory/tracking-expected.txt:
+        * inspector/memory/tracking.html:
+        * inspector/script-profiler/tracking-expected.txt:
+        * inspector/script-profiler/tracking.html:
+        Update test naming.
+
+        * platform/win/TestExpectations:
+        Skip on platforms without RESOURCE_USAGE.
+
 2019-01-24  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [iOS] Unable to make a selection in jsfiddle.net using arrow keys when requesting desktop site

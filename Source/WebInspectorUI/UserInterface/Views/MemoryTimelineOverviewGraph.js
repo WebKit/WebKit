@@ -27,11 +27,11 @@ WI.MemoryTimelineOverviewGraph = class MemoryTimelineOverviewGraph extends WI.Ti
 {
     constructor(timeline, timelineOverview)
     {
+        console.assert(timeline instanceof WI.MemoryTimeline);
+
         super(timelineOverview);
 
         this.element.classList.add("memory");
-
-        console.assert(timeline instanceof WI.MemoryTimeline);
 
         this._memoryTimeline = timeline;
         this._memoryTimeline.addEventListener(WI.Timeline.Event.RecordAdded, this._memoryTimelineRecordAdded, this);

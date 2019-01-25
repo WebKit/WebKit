@@ -23,27 +23,22 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WI.MemoryObserver = class MemoryObserver
+WI.CPUTimelineRecord = class CPUTimelineRecord extends WI.TimelineRecord
 {
-    // Events defined by the "Memory" domain.
-
-    memoryPressure(timestamp, severity)
+    constructor(timestamp, usage)
     {
-        WI.memoryManager.memoryPressure(timestamp, severity);
+        super(WI.TimelineRecord.Type.CPU, timestamp, timestamp);
+
+        console.assert(typeof timestamp === "number");
+        console.assert(typeof usage === "number");
+        console.assert(usage >= 0);
+
+        this._timestamp = timestamp;
+        this._usage = usage;
     }
 
-    trackingStart(timestamp)
-    {
-        WI.timelineManager.memoryTrackingStarted(timestamp);
-    }
+    // Public
 
-    trackingUpdate(event)
-    {
-        WI.timelineManager.memoryTrackingUpdated(event);
-    }
-
-    trackingComplete()
-    {
-        WI.timelineManager.memoryTrackingCompleted();
-    }
+    get timestamp() { return this._timestamp; }
+    get usage() { return this._usage; }
 };

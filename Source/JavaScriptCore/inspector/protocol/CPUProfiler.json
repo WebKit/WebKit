@@ -1,0 +1,46 @@
+{
+    "domain": "CPUProfiler",
+    "description": "CPUProfiler domain exposes cpu usage tracking.",
+    "featureGuard": "ENABLE(RESOURCE_USAGE)",
+    "availability": ["web"],
+    "types": [
+        {
+            "id": "Event",
+            "type": "object",
+            "properties": [
+                { "name": "timestamp", "type": "number" },
+                { "name": "usage", "type": "number", "description": "Percent of total cpu usage. If there are multiple cores the usage may be greater than 100%." }
+            ]
+        }
+    ],
+    "commands": [
+        {
+            "name": "startTracking",
+            "description": "Start tracking cpu usage."
+        },
+        {
+            "name": "stopTracking",
+            "description": "Stop tracking cpu usage. This will produce a `trackingComplete` event."
+        }
+    ],
+    "events": [
+        {
+            "name": "trackingStart",
+            "description": "Tracking started.",
+            "parameters": [
+                { "name": "timestamp", "type": "number" }
+            ]
+        },
+        {
+            "name": "trackingUpdate",
+            "description": "Periodic tracking updates with event data.",
+            "parameters": [
+                { "name": "event", "$ref": "Event" }
+            ]
+        },
+        {
+            "name": "trackingComplete",
+            "description": "Tracking stopped. Includes any buffered data during tracking, such as profiling information."
+        }
+    ]
+}

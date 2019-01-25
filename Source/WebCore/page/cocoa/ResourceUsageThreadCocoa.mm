@@ -205,10 +205,13 @@ static unsigned categoryForVMTag(unsigned tag)
     }
 }
 
-void ResourceUsageThread::platformThreadBody(JSC::VM* vm, ResourceUsageData& data)
+void ResourceUsageThread::platformCollectCPUData(JSC::VM*, ResourceUsageData& data)
 {
     data.cpu = cpuUsage();
+}
 
+void ResourceUsageThread::platformCollectMemoryData(JSC::VM* vm, ResourceUsageData& data)
+{
     auto tags = pagesPerVMTag();
     std::array<TagInfo, MemoryCategory::NumberOfCategories> pagesPerCategory;
     size_t totalDirtyPages = 0;
@@ -248,9 +251,8 @@ void ResourceUsageThread::platformThreadBody(JSC::VM* vm, ResourceUsageData& dat
 
     data.totalExternalSize = currentGCOwnedExternal;
 
-    auto now = MonotonicTime::now();
-    data.timeOfNextEdenCollection = now + vm->heap.edenActivityCallback()->timeUntilFire().valueOr(Seconds(std::numeric_limits<double>::infinity()));
-    data.timeOfNextFullCollection = now + vm->heap.fullActivityCallback()->timeUntilFire().valueOr(Seconds(std::numeric_limits<double>::infinity()));
+    data.timeOfNextEdenCollection = data.timestamp + vm->heap.edenActivityCallback()->timeUntilFire().valueOr(Seconds(std::numeric_limits<double>::infinity()));
+    data.timeOfNextFullCollection = data.timestamp + vm->heap.fullActivityCallback()->timeUntilFire().valueOr(Seconds(std::numeric_limits<double>::infinity()));
 }
 
 }

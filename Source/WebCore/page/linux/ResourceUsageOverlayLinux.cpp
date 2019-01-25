@@ -139,7 +139,7 @@ void ResourceUsageOverlay::platformInitialize()
     m_paintLayer->setDrawsContent(true);
     overlay().layer().addChild(*m_paintLayer);
 
-    ResourceUsageThread::addObserver(this, [this] (const ResourceUsageData& data) {
+    ResourceUsageThread::addObserver(this, All, [this] (const ResourceUsageData& data) {
         gData = data;
         m_paintLayer->setNeedsDisplay();
     });

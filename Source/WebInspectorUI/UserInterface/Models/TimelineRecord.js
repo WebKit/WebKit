@@ -158,6 +158,7 @@ WI.TimelineRecord.Type = {
     Layout: "timeline-record-type-layout",
     Script: "timeline-record-type-script",
     RenderingFrame: "timeline-record-type-rendering-frame",
+    CPU: "timeline-record-type-cpu",
     Memory: "timeline-record-type-memory",
     HeapAllocations: "timeline-record-type-heap-allocations",
     Media: "timeline-record-type-media",

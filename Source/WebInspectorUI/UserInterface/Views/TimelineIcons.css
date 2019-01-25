@@ -31,6 +31,10 @@
     content: url(../Images/ScriptsInstrument.svg);
 }
 
+.cpu-icon .icon {
+    content: url(../Images/CPUInstrument.svg);
+}
+
 .memory-icon .icon {
     content: url(../Images/MemoryInstrument.svg);
 }

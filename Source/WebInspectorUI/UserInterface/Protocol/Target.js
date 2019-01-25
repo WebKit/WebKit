@@ -111,6 +111,7 @@ WI.Target = class Target extends WI.Object
 
     get AuditAgent() { return this._agents.Audit; }
     get ApplicationCacheAgent() { return this._agents.ApplicationCache; }
+    get CPUProfilerAgent() { return this._agents.CPUProfiler; }
     get CSSAgent() { return this._agents.CSS; }
     get CanvasAgent() { return this._agents.Canvas; }
     get ConsoleAgent() { return this._agents.Console; }

@@ -43,6 +43,9 @@
     <link rel="stylesheet" href="Views/BreakpointTreeElement.css">
     <link rel="stylesheet" href="Views/ButtonNavigationItem.css">
     <link rel="stylesheet" href="Views/ButtonToolbarItem.css">
+    <link rel="stylesheet" href="Views/CPUTimelineOverviewGraph.css">
+    <link rel="stylesheet" href="Views/CPUTimelineView.css">
+    <link rel="stylesheet" href="Views/CPUUsageView.css">
     <link rel="stylesheet" href="Views/CallFrameIcons.css">
     <link rel="stylesheet" href="Views/CallFrameTreeElement.css">
     <link rel="stylesheet" href="Views/CallFrameView.css">
@@ -90,10 +93,10 @@
     <link rel="stylesheet" href="Views/DetailsSection.css">
     <link rel="stylesheet" href="Views/DividerNavigationItem.css">
     <link rel="stylesheet" href="Views/Editing.css">
+    <link rel="stylesheet" href="Views/ErrorObjectView.css">
     <link rel="stylesheet" href="Views/EventBreakpointPopover.css">
     <link rel="stylesheet" href="Views/EventBreakpointTreeElement.css">
     <link rel="stylesheet" href="Views/EventListenerSectionGroup.css">
-    <link rel="stylesheet" href="Views/ErrorObjectView.css">
     <link rel="stylesheet" href="Views/FilterBar.css">
     <link rel="stylesheet" href="Views/FindBanner.css">
     <link rel="stylesheet" href="Views/FlexibleSpaceNavigationItem.css">
@@ -307,6 +310,7 @@
     <script src="Protocol/WorkerTarget.js"></script>
 
     <script src="Protocol/ApplicationCacheObserver.js"></script>
+    <script src="Protocol/CPUProfilerObserver.js"></script>
     <script src="Protocol/CSSObserver.js"></script>
     <script src="Protocol/CanvasObserver.js"></script>
     <script src="Protocol/ConsoleObserver.js"></script>
@@ -344,8 +348,8 @@
     <script src="Models/BackForwardEntry.js"></script>
     <script src="Models/Branch.js"></script>
     <script src="Models/Breakpoint.js"></script>
-    <script src="Models/CallingContextTree.js"></script>
-    <script src="Models/CallingContextTreeNode.js"></script>
+    <script src="Models/CPUInstrument.js"></script>
+    <script src="Models/CPUTimelineRecord.js"></script>
     <script src="Models/CSSCompletions.js"></script>
     <script src="Models/CSSKeywordCompletions.js"></script>
     <script src="Models/CSSMedia.js"></script>
@@ -355,6 +359,8 @@
     <script src="Models/CSSStyleDeclaration.js"></script>
     <script src="Models/CSSStyleSheet.js"></script>
     <script src="Models/CallFrame.js"></script>
+    <script src="Models/CallingContextTree.js"></script>
+    <script src="Models/CallingContextTreeNode.js"></script>
     <script src="Models/Canvas.js"></script>
     <script src="Models/Collection.js"></script>
     <script src="Models/CollectionEntry.js"></script>
@@ -560,6 +566,7 @@
     <script src="Views/SettingsGroup.js"></script>
     <script src="Views/SettingsView.js"></script>
 
+    <script src="Views/AuditTestContentView.js"></script>
     <script src="Views/CollectionContentView.js"></script>
 
     <script src="Views/ActivateButtonNavigationItem.js"></script>
@@ -569,7 +576,6 @@
     <script src="Views/ApplicationCacheFrameTreeElement.js"></script>
     <script src="Views/ApplicationCacheManifestTreeElement.js"></script>
     <script src="Views/AuditNavigationSidebarPanel.js"></script>
-    <script src="Views/AuditTestContentView.js"></script>
     <script src="Views/AuditTestCaseContentView.js"></script>
     <script src="Views/AuditTestGroupContentView.js"></script>
     <script src="Views/AuditTreeElement.js"></script>
@@ -578,6 +584,9 @@
     <script src="Views/BreakpointActionView.js"></script>
     <script src="Views/BreakpointTreeElement.js"></script>
     <script src="Views/ButtonToolbarItem.js"></script>
+    <script src="Views/CPUTimelineOverviewGraph.js"></script>
+    <script src="Views/CPUTimelineView.js"></script>
+    <script src="Views/CPUUsageView.js"></script>
     <script src="Views/CSSStyleSheetTreeElement.js"></script>
     <script src="Views/CallFrameTreeElement.js"></script>
     <script src="Views/CallFrameView.js"></script>
@@ -597,6 +606,7 @@
     <script src="Views/CodeMirrorTextMarkers.js"></script>
     <script src="Views/ColorPicker.js"></script>
     <script src="Views/ColorWheel.js"></script>
+    <script src="Views/ColumnChart.js"></script>
     <script src="Views/CompletionSuggestionsView.js"></script>
     <script src="Views/ComputedStyleDetailsPanel.js"></script>
     <script src="Views/ComputedStyleSection.js"></script>

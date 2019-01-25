@@ -39,6 +39,7 @@
 #include "Frame.h"
 #include "GraphicsContext.h"
 #include "InspectorApplicationCacheAgent.h"
+#include "InspectorCPUProfilerAgent.h"
 #include "InspectorCSSAgent.h"
 #include "InspectorCanvasAgent.h"
 #include "InspectorClient.h"
@@ -205,6 +206,7 @@ void InspectorController::createLazyAgents()
     m_agents.append(std::make_unique<InspectorIndexedDBAgent>(pageContext, m_pageAgent));
 #endif
 #if ENABLE(RESOURCE_USAGE)
+    m_agents.append(std::make_unique<InspectorCPUProfilerAgent>(pageContext));
     m_agents.append(std::make_unique<InspectorMemoryAgent>(pageContext));
 #endif
     m_agents.append(std::make_unique<PageAuditAgent>(pageContext));

@@ -1286,6 +1286,7 @@ inspector/WorkerInspectorController.cpp
 inspector/WorkerScriptDebugServer.cpp
 
 inspector/agents/InspectorApplicationCacheAgent.cpp
+inspector/agents/InspectorCPUProfilerAgent.cpp
 inspector/agents/InspectorCSSAgent.cpp
 inspector/agents/InspectorCanvasAgent.cpp
 inspector/agents/InspectorDOMAgent.cpp

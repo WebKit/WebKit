@@ -36,6 +36,7 @@
 #include "DOMWindow.h"
 #include "Event.h"
 #include "Frame.h"
+#include "InspectorCPUProfilerAgent.h"
 #include "InspectorMemoryAgent.h"
 #include "InspectorPageAgent.h"
 #include "InstrumentingAgents.h"
@@ -514,6 +515,10 @@ void InspectorTimelineAgent::toggleInstruments(InstrumentState state)
             toggleHeapInstrument(state);
             break;
         }
+        case Inspector::Protocol::Timeline::Instrument::CPU: {
+            toggleCPUInstrument(state);
+            break;
+        }
         case Inspector::Protocol::Timeline::Instrument::Memory: {
             toggleMemoryInstrument(state);
             break;
@@ -547,6 +552,21 @@ void InspectorTimelineAgent::toggleHeapInstrument(InstrumentState state)
         } else
             m_heapAgent->stopTracking(unused);
     }
+}
+
+void InspectorTimelineAgent::toggleCPUInstrument(InstrumentState state)
+{
+#if ENABLE(RESOURCE_USAGE)
+    if (InspectorCPUProfilerAgent* cpuProfilerAgent = m_instrumentingAgents.inspectorCPUProfilerAgent()) {
+        ErrorString unused;
+        if (state == InstrumentState::Start)
+            cpuProfilerAgent->startTracking(unused);
+        else
+            cpuProfilerAgent->stopTracking(unused);
+    }
+#else
+    UNUSED_PARAM(state);
+#endif
 }
 
 void InspectorTimelineAgent::toggleMemoryInstrument(InstrumentState state)

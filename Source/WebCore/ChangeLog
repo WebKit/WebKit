@@ -1,3 +1,73 @@
+2019-01-24  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: CPU Usage Timeline
+        https://bugs.webkit.org/show_bug.cgi?id=193730
+        <rdar://problem/46797201>
+
+        Reviewed by Devin Rousso.
+
+        Test: inspector/cpu-profiler/tracking.html
+
+        * Sources.txt:
+        * UnifiedSources-input.xcfilelist:
+        * WebCore.xcodeproj/project.pbxproj:
+        New files.
+
+        * inspector/InspectorController.cpp:
+        (WebCore::InspectorController::createLazyAgents):
+        * inspector/InstrumentingAgents.cpp:
+        (WebCore::InstrumentingAgents::reset):
+        * inspector/InstrumentingAgents.h:
+        (WebCore::InstrumentingAgents::inspectorCPUProfilerAgent const):
+        (WebCore::InstrumentingAgents::setInspectorCPUProfilerAgent):
+        Create and track the CPUProfilerAgent.
+
+        * inspector/agents/InspectorTimelineAgent.cpp:
+        (WebCore::InspectorTimelineAgent::toggleInstruments):
+        (WebCore::InspectorTimelineAgent::toggleCPUInstrument):
+        Handle backend auto-start of the CPU instrument / timeline.
+
+        * inspector/agents/InspectorCPUProfilerAgent.h:
+        * inspector/agents/InspectorCPUProfilerAgent.cpp: Added.
+        (WebCore::InspectorCPUProfilerAgent::InspectorCPUProfilerAgent):
+        (WebCore::InspectorCPUProfilerAgent::didCreateFrontendAndBackend):
+        (WebCore::InspectorCPUProfilerAgent::willDestroyFrontendAndBackend):
+        (WebCore::InspectorCPUProfilerAgent::startTracking):
+        (WebCore::InspectorCPUProfilerAgent::stopTracking):
+        (WebCore::InspectorCPUProfilerAgent::collectSample):
+        CPUProfilerAgent uses the ResourceUsageThread to get CPU data.
+
+        * inspector/agents/InspectorTimelineAgent.h:
+        * inspector/agents/InspectorMemoryAgent.cpp:
+        (WebCore::InspectorMemoryAgent::startTracking):
+        (WebCore::InspectorMemoryAgent::collectSample):
+        Update the MemoryAgent to collect only Memory data and use a more accurate sample timestamp.
+
+        * page/ResourceUsageData.h:
+        * page/ResourceUsageThread.cpp:
+        (WebCore::ResourceUsageThread::addObserver):
+        (WebCore::ResourceUsageThread::removeObserver):
+        (WebCore::ResourceUsageThread::notifyObservers):
+        (WebCore::ResourceUsageThread::recomputeCollectionMode):
+        (WebCore::ResourceUsageThread::threadBody):
+        * page/ResourceUsageThread.h:
+        * page/cocoa/ResourceUsageOverlayCocoa.mm:
+        (WebCore::ResourceUsageOverlay::platformInitialize):
+        * page/cocoa/ResourceUsageThreadCocoa.mm:
+        (WebCore::ResourceUsageThread::platformCollectCPUData):
+        (WebCore::ResourceUsageThread::platformCollectMemoryData):
+        (WebCore::ResourceUsageThread::platformThreadBody): Deleted.
+        * page/linux/ResourceUsageOverlayLinux.cpp:
+        (WebCore::ResourceUsageOverlay::platformInitialize):
+        * page/linux/ResourceUsageThreadLinux.cpp:
+        (WebCore::ResourceUsageThread::platformCollectCPUData):
+        (WebCore::ResourceUsageThread::platformCollectMemoryData):
+        (WebCore::ResourceUsageThread::platformThreadBody):
+        Give each observer their own collection mode. The ResourceUsageThread
+        will then collect data that is the union of all of the active observers.
+        This allows collecting CPU and Memory data separately, reducing the cost
+        of each when gathered individually.
+
 2019-01-24  Charles Vazac  <cvazac@akamai.com>
 
         Implement PerformanceObserver.supportedEntryTypes

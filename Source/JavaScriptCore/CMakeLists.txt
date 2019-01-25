@@ -1096,6 +1096,7 @@ endif ()
 
 if (ENABLE_RESOURCE_USAGE)
     list(APPEND JavaScriptCore_INSPECTOR_DOMAINS
+        ${JAVASCRIPTCORE_DIR}/inspector/protocol/CPUProfiler.json
         ${JAVASCRIPTCORE_DIR}/inspector/protocol/Memory.json
     )
 endif ()

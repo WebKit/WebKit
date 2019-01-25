@@ -74,7 +74,7 @@ void InspectorMemoryAgent::startTracking(ErrorString&)
     if (m_tracking)
         return;
 
-    ResourceUsageThread::addObserver(this, [this] (const ResourceUsageData& data) {
+    ResourceUsageThread::addObserver(this, Memory, [this] (const ResourceUsageData& data) {
         collectSample(data);
     });
 
@@ -145,13 +145,13 @@ void InspectorMemoryAgent::collectSample(const ResourceUsageData& data)
     categories->addItem(WTFMove(otherCategory));
 
     auto event = Protocol::Memory::Event::create()
-        .setTimestamp(m_environment.executionStopwatch()->elapsedTime().seconds())
+        .setTimestamp(m_environment.executionStopwatch()->elapsedTimeSince(data.timestamp).seconds())
         .setCategories(WTFMove(categories))
         .release();
 
     m_frontendDispatcher->trackingUpdate(WTFMove(event));
 }
 
-} // namespace Inspector
+} // namespace WebCore
 
 #endif // ENABLE(RESOURCE_USAGE)

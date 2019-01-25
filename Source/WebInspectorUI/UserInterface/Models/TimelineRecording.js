@@ -211,6 +211,7 @@ WI.TimelineRecording = class TimelineRecording extends WI.Object
         // Some records don't have source code timelines.
         if (record.type === WI.TimelineRecord.Type.Network
             || record.type === WI.TimelineRecord.Type.RenderingFrame
+            || record.type === WI.TimelineRecord.Type.CPU
             || record.type === WI.TimelineRecord.Type.Memory
             || record.type === WI.TimelineRecord.Type.HeapAllocations
             || record.type === WI.TimelineRecord.Type.Media)

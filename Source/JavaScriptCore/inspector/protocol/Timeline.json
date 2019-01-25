@@ -39,6 +39,7 @@
             "enum": [
                 "ScriptProfiler",
                 "Timeline",
+                "CPU",
                 "Memory",
                 "Heap"
             ]

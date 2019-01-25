@@ -39,7 +39,7 @@
 }
 
 .timeline-view.memory > .content .subtitle {
-    font-family: '-webkit-system-font';
+    font-family: -webkit-system-font, sans-serif;
     font-size: 14px;
 }
 

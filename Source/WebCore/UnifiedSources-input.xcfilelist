@@ -2201,6 +2201,7 @@ $(SRCROOT)/inspector/WebInjectedScriptManager.cpp
 $(SRCROOT)/inspector/WorkerInspectorController.cpp
 $(SRCROOT)/inspector/WorkerScriptDebugServer.cpp
 $(SRCROOT)/inspector/agents/InspectorApplicationCacheAgent.cpp
+$(SRCROOT)/inspector/agents/InspectorCPUProfilerAgent.cpp
 $(SRCROOT)/inspector/agents/InspectorCSSAgent.cpp
 $(SRCROOT)/inspector/agents/InspectorCanvasAgent.cpp
 $(SRCROOT)/inspector/agents/InspectorDOMAgent.cpp

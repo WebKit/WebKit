@@ -31,21 +31,19 @@
 .memory-category-view > .details {
     width: 150px;
     padding-top: 10px;
-    font-family: '-webkit-system-font';
+    font-family: -webkit-system-font, sans-serif;
     font-size: 12px;
     color: hsl(0, 0%, 70%);
+    -webkit-padding-start: 15px;
 
-    --memory-category-view-details-padding-start: 15px;
     --memory-category-view-details-border-end: 1px solid var(--border-color);
 }
 
 body[dir=ltr] .memory-category-view > .details {
-    padding-left: var(--memory-category-view-details-padding-start);
     border-right: var(--memory-category-view-details-border-end);
 }
 
 body[dir=rtl] .memory-category-view > .details {
-    padding-right: var(--memory-category-view-details-padding-start);
     border-left: var(--memory-category-view-details-border-end);
 }
 

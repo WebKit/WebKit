@@ -41,8 +41,7 @@ WI.MemoryTimelineView = class MemoryTimelineView extends WI.TimelineView
         let overviewElement = contentElement.appendChild(document.createElement("div"));
         overviewElement.classList.add("overview");
 
-        function createChartContainer(parentElement, subtitle, tooltip)
-        {
+        function createChartContainer(parentElement, subtitle, tooltip) {
             let chartElement = parentElement.appendChild(document.createElement("div"));
             chartElement.classList.add("chart");
 
@@ -120,11 +119,6 @@ WI.MemoryTimelineView = class MemoryTimelineView extends WI.TimelineView
         this._timelineRuler.updateLayout(WI.View.LayoutReason.Resize);
     }
 
-    hidden()
-    {
-        super.hidden();
-    }
-
     closed()
     {
         console.assert(this.representedObject instanceof WI.Timeline);
@@ -200,7 +194,7 @@ WI.MemoryTimelineView = class MemoryTimelineView extends WI.TimelineView
         this._maxComparisonCircleChart.updateLayout();
         this._updateMaxComparisonLegend(lastRecord.totalSize);
 
-        // FIXME: <https://webkit.org/b/153758> Web Inspector: Memory Timeline View should be responsive / resizable
+        // FIXME: <https://webkit.org/b/153758> Web Inspector: Memory / CPU Timeline Views should be responsive / resizable
         const categoryViewWidth = 800;
         const categoryViewHeight = 75;
 
@@ -310,8 +304,10 @@ WI.MemoryTimelineView = class MemoryTimelineView extends WI.TimelineView
 
     _clearMaxComparisonLegend()
     {
-        this._maxComparisonMaximumSizeElement.textContent = emDash;
-        this._maxComparisonCurrentSizeElement.textContent = emDash;
+        if (this._maxComparisonMaximumSizeElement)
+            this._maxComparisonMaximumSizeElement.textContent = emDash;
+        if (this._maxComparisonCurrentSizeElement)
+            this._maxComparisonCurrentSizeElement.textContent = emDash;
 
         let totalElement = this._maxComparisonCircleChart.centerElement.firstChild;
         if (totalElement)
