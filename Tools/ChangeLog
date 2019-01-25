@@ -1,3 +1,9 @@
+2019-01-25  Alexey Proskuryakov  <ap@apple.com>
+
+        Add contributors.json entries for Ling Ho and for a new bot watchers group.
+
+        * Scripts/webkitpy/common/config/contributors.json:
+
 2019-01-25  Chris Dumez  <cdumez@apple.com>
 
         Regression(PSON?) Crash under NavigationState::NavigationClient::decidePolicyForNavigationAction()

@@ -758,6 +758,11 @@
       ],
       "status" : "reviewer"
    },
+   "Apple Bot Watchers" : {
+      "emails" : [
+         "webkit-bot-watchers-bugzilla@group.apple.com"
+      ]
+   },
    "Ariya Hidayat" : {
       "emails" : [
          "ariya.hidayat@gmail.com",
@@ -3790,6 +3795,12 @@
          "liachen@blackberry.com",
          "liachen@rim.com"
       ]
+   },
+   "Ling Ho" : {
+      "emails" : [
+         "lingho@apple.com"
+      ],
+      "expertise" : "webkit.org admin",
    },
    "Lorenzo Tilve" : {
       "emails" : [
