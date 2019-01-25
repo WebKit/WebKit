@@ -1,3 +1,17 @@
+2019-01-25  Chris Dumez  <cdumez@apple.com>
+
+        Regression(PSON?) Crash under NavigationState::NavigationClient::decidePolicyForNavigationAction()
+        https://bugs.webkit.org/show_bug.cgi?id=193779
+        <rdar://problem/46170903>
+
+        Reviewed by Antti Koivisto.
+
+        Add API test that quickly navigates forward to a previous process without waiting for it to
+        suspend. I suspect the crash could have been happening due to receiving leftover IPC from
+        the process' previous page when reconnecting the it for the forward navigation.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/ProcessSwapOnNavigation.mm:
+
 2019-01-25  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Need a way for JavaScript (or bundle) code to participate in undo

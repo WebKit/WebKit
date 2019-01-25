@@ -1,3 +1,22 @@
+2019-01-25  Chris Dumez  <cdumez@apple.com>
+
+        Regression(PSON?) Crash under NavigationState::NavigationClient::decidePolicyForNavigationAction()
+        https://bugs.webkit.org/show_bug.cgi?id=193779
+        <rdar://problem/46170903>
+
+        Reviewed by Antti Koivisto.
+
+        * UIProcess/Cocoa/NavigationState.mm:
+        (WebKit::tryAppLink):
+        (WebKit::NavigationState::NavigationClient::decidePolicyForNavigationAction):
+        We were crashing when trying to get the URL of the main frame, which was sad because we never
+        ended up using the main frame URL. Therefore, this patch drops the code in question.
+
+        * UIProcess/ProvisionalPageProxy.cpp:
+        (WebKit::ProvisionalPageProxy::decidePolicyForNavigationActionAsync):
+        Add assertion to make sure that the DecidePolicyForNavigationActionAsync IPC it is getting
+        from the process is related to its main frame.
+
 2019-01-25  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Need a way for JavaScript (or bundle) code to participate in undo
