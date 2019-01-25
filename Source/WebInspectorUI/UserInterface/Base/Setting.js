@@ -37,9 +37,7 @@ WI.Setting = class Setting extends WI.Object
 
         this._name = name;
 
-        let inspectionLevel = InspectorFrontendHost ? InspectorFrontendHost.inspectionLevel() : 1;
-        let levelString = inspectionLevel > 1 ? "-" + inspectionLevel : "";
-        this._localStorageKey = `com.apple.WebInspector${levelString}.${name}`;
+        this._localStorageKey = WI.Setting._localStorageKey(this._name);
         this._defaultValue = defaultValue;
     }
 
@@ -47,15 +45,24 @@ WI.Setting = class Setting extends WI.Object
 
     static migrateValue(key)
     {
+        let localStorageKey = WI.Setting._localStorageKey(key);
+
         let value = undefined;
-        if (!window.InspectorTest && window.localStorage && key in window.localStorage) {
+        if (!window.InspectorTest && window.localStorage && localStorageKey in window.localStorage) {
             try {
-                value = JSON.parse(window.localStorage[key]);
+                value = JSON.parse(window.localStorage[localStorageKey]);
             } catch { }
 
-            window.localStorage.removeItem(key);
+            window.localStorage.removeItem(localStorageKey);
         }
         return value;
+    }
+
+    static _localStorageKey(name)
+    {
+        let inspectionLevel = InspectorFrontendHost ? InspectorFrontendHost.inspectionLevel() : 1;
+        let levelString = inspectionLevel > 1 ? "-" + inspectionLevel : "";
+        return `com.apple.WebInspector${levelString}.${name}`;
     }
 
     // Public
