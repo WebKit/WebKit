@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014-2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2014-2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -50,7 +50,6 @@
 #import <pal/spi/cg/CoreGraphicsSPI.h>
 #import <pal/spi/cocoa/RevealSPI.h>
 #import <pal/spi/ios/UIKitSPI.h>
-#import <pal/spi/mac/LookupSPI.h>
 #import <wtf/BlockObjCExceptions.h>
 #import <wtf/RefPtr.h>
 

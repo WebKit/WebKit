@@ -1,3 +1,16 @@
+2019-01-25  David Kilzer  <ddkilzer@apple.com>
+
+        Move soft-linking of Lookup.framework out of LookupSPI.h
+        <https://webkit.org/b/193815>
+
+        Reviewed by Tim Horton.
+
+        * WebView/WebImmediateActionController.mm:
+        (-[WebImmediateActionController _animationControllerForText]):
+        * WebView/WebView.mm:
+        (-[WebView _prepareForDictionaryLookup]):
+        - Move soft-linking to LookupSoftLink.{h,mm}.
+
 2019-01-25  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [iOS] Rename some WebKit-internal functions and variables that reference "data interaction"

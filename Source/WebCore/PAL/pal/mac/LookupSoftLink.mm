@@ -23,29 +23,18 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#include "config.h"
+
 #if PLATFORM(MAC)
 
-#import <objc/runtime.h>
-#import <pal/mac/LookupSoftLink.h>
-#import <pal/spi/mac/NSImmediateActionGestureRecognizerSPI.h>
+#import <wtf/SoftLinking.h>
 
-#if USE(APPLE_INTERNAL_SDK)
+SOFT_LINK_PRIVATE_FRAMEWORK_FOR_SOURCE(PAL, Lookup)
+SOFT_LINK_CLASS_FOR_SOURCE_OPTIONAL_WITH_EXPORT(PAL, Lookup, LULookupDefinitionModule, PAL_EXPORT)
+SOFT_LINK_CONSTANT_MAY_FAIL_FOR_SOURCE(PAL, Lookup, LUTermOptionDisableSearchTermIndicator, NSString *)
 
-#import <Lookup/Lookup.h>
-
-#else
-
-@interface LULookupDefinitionModule : NSObject
-
-+ (NSRange)tokenRangeForString:(NSString *)string range:(NSRange)range options:(NSDictionary **)options;
-+ (void)showDefinitionForTerm:(NSAttributedString *)term atLocation:(NSPoint)screenPoint options:(NSDictionary *)options;
-+ (void)showDefinitionForTerm:(NSAttributedString *)term relativeToRect:(NSRect)positioningRect ofView:(NSView *)positioningView options:(NSDictionary *)options;
-+ (void)hideDefinition;
-+ (id<NSImmediateActionAnimationController>)lookupAnimationControllerForTerm:(NSAttributedString *)term atLocation:(NSPoint)screenPoint options:(NSDictionary *)options;
-+ (id<NSImmediateActionAnimationController>)lookupAnimationControllerForTerm:(NSAttributedString *)term relativeToRect:(NSRect)positioningRect ofView:(NSView *)positioningView options:(NSDictionary *)options;
-
-@end
-
-#endif // !USE(APPLE_INTERNAL_SDK)
+#if !ENABLE(REVEAL)
+SOFT_LINK_CONSTANT_MAY_FAIL_FOR_SOURCE_WITH_EXPORT(PAL, Lookup, LUNotificationPopoverWillClose, NSString *, PAL_EXPORT)
+#endif
 
 #endif // PLATFORM(MAC)

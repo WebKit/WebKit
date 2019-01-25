@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015-2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -135,10 +135,6 @@ SOFT_LINK_CLASS(AVKit, AVFunctionBarScrubber)
 static NSString * const WKMediaExitFullScreenItem = @"WKMediaExitFullScreenItem";
 #endif // HAVE(TOUCH_BAR) && ENABLE(WEB_PLAYBACK_CONTROLS_MANAGER)
 
-#if PLATFORM(MAC) && !ENABLE(REVEAL)
-SOFT_LINK_CONSTANT_MAY_FAIL(Lookup, LUNotificationPopoverWillClose, NSString *)
-#endif // ENABLE(REVEAL)
-
 WTF_DECLARE_CF_TYPE_TRAIT(CGImage);
 
 @interface NSApplication ()
@@ -233,8 +229,8 @@ WTF_DECLARE_CF_TYPE_TRAIT(CGImage);
 - (void)dealloc
 {
 #if !ENABLE(REVEAL)
-    if (_didRegisterForLookupPopoverCloseNotifications && canLoadLUNotificationPopoverWillClose())
-        [[NSNotificationCenter defaultCenter] removeObserver:self name:getLUNotificationPopoverWillClose() object:nil];
+    if (_didRegisterForLookupPopoverCloseNotifications && PAL::canLoad_Lookup_LUNotificationPopoverWillClose())
+        [[NSNotificationCenter defaultCenter] removeObserver:self name:PAL::get_Lookup_LUNotificationPopoverWillClose() object:nil];
 #endif // !ENABLE(REVEAL)
 
     NSNotificationCenter *workspaceNotificationCenter = [[NSWorkspace sharedWorkspace] notificationCenter];
@@ -310,8 +306,8 @@ static void* keyValueObservingContext = &keyValueObservingContext;
 
     _didRegisterForLookupPopoverCloseNotifications = YES;
 #if !ENABLE(REVEAL)
-    if (canLoadLUNotificationPopoverWillClose())
-        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_dictionaryLookupPopoverWillClose:) name:getLUNotificationPopoverWillClose() object:nil];
+    if (PAL::canLoad_Lookup_LUNotificationPopoverWillClose())
+        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_dictionaryLookupPopoverWillClose:) name:PAL::get_Lookup_LUNotificationPopoverWillClose() object:nil];
 #endif
 }
 

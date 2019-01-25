@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014-2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2014-2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -48,18 +48,16 @@
 #import <wtf/BlockObjCExceptions.h>
 #import <wtf/RefPtr.h>
 
-SOFT_LINK_CONSTANT_MAY_FAIL(Lookup, LUTermOptionDisableSearchTermIndicator, NSString *)
-
 namespace WebCore {
 
 static NSRange tokenRange(const String& string, NSRange range, NSDictionary **options)
 {
-    if (!getLULookupDefinitionModuleClass())
+    if (!PAL::getLULookupDefinitionModuleClass())
         return NSMakeRange(NSNotFound, 0);
 
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
 
-    return [classLULookupDefinitionModule tokenRangeForString:string range:range options:options];
+    return [PAL::getLULookupDefinitionModuleClass() tokenRangeForString:string range:range options:options];
 
     END_BLOCK_OBJC_EXCEPTIONS;
 
@@ -206,7 +204,7 @@ static id <NSImmediateActionAnimationController> showPopupOrCreateAnimationContr
 {
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
 
-    if (!getLULookupDefinitionModuleClass())
+    if (!PAL::getLULookupDefinitionModuleClass())
         return nil;
 
     RetainPtr<NSMutableDictionary> mutableOptions = adoptNS([[NSMutableDictionary alloc] init]);
@@ -215,9 +213,9 @@ static id <NSImmediateActionAnimationController> showPopupOrCreateAnimationContr
 
     auto textIndicator = TextIndicator::create(dictionaryPopupInfo.textIndicator);
 
-    if (canLoadLUTermOptionDisableSearchTermIndicator() && textIndicator.get().contentImage()) {
+    if (PAL::canLoad_Lookup_LUTermOptionDisableSearchTermIndicator() && textIndicator.get().contentImage()) {
         textIndicatorInstallationCallback(textIndicator.get());
-        [mutableOptions setObject:@YES forKey:getLUTermOptionDisableSearchTermIndicator()];
+        [mutableOptions setObject:@YES forKey:PAL::get_Lookup_LUTermOptionDisableSearchTermIndicator()];
 
         FloatRect firstTextRectInViewCoordinates = textIndicator.get().textRectsInBoundingRectCoordinates()[0];
         FloatRect textBoundingRectInViewCoordinates = textIndicator.get().textBoundingRectInRootViewCoordinates();
@@ -225,9 +223,9 @@ static id <NSImmediateActionAnimationController> showPopupOrCreateAnimationContr
             textBoundingRectInViewCoordinates = rootViewToViewConversionCallback(textBoundingRectInViewCoordinates);
         firstTextRectInViewCoordinates.moveBy(textBoundingRectInViewCoordinates.location());
         if (createAnimationController)
-            return [getLULookupDefinitionModuleClass() lookupAnimationControllerForTerm:dictionaryPopupInfo.attributedString.get() relativeToRect:firstTextRectInViewCoordinates ofView:view options:mutableOptions.get()];
+            return [PAL::getLULookupDefinitionModuleClass() lookupAnimationControllerForTerm:dictionaryPopupInfo.attributedString.get() relativeToRect:firstTextRectInViewCoordinates ofView:view options:mutableOptions.get()];
 
-        [getLULookupDefinitionModuleClass() showDefinitionForTerm:dictionaryPopupInfo.attributedString.get() relativeToRect:firstTextRectInViewCoordinates ofView:view options:mutableOptions.get()];
+        [PAL::getLULookupDefinitionModuleClass() showDefinitionForTerm:dictionaryPopupInfo.attributedString.get() relativeToRect:firstTextRectInViewCoordinates ofView:view options:mutableOptions.get()];
         return nil;
     }
 
@@ -238,9 +236,9 @@ static id <NSImmediateActionAnimationController> showPopupOrCreateAnimationContr
     textBaselineOrigin = [view.window convertRectToScreen:NSMakeRect(textBaselineOrigin.x, textBaselineOrigin.y, 0, 0)].origin;
 
     if (createAnimationController)
-        return [getLULookupDefinitionModuleClass() lookupAnimationControllerForTerm:dictionaryPopupInfo.attributedString.get() atLocation:textBaselineOrigin options:mutableOptions.get()];
+        return [PAL::getLULookupDefinitionModuleClass() lookupAnimationControllerForTerm:dictionaryPopupInfo.attributedString.get() atLocation:textBaselineOrigin options:mutableOptions.get()];
 
-    [getLULookupDefinitionModuleClass() showDefinitionForTerm:dictionaryPopupInfo.attributedString.get() atLocation:textBaselineOrigin options:mutableOptions.get()];
+    [PAL::getLULookupDefinitionModuleClass() showDefinitionForTerm:dictionaryPopupInfo.attributedString.get() atLocation:textBaselineOrigin options:mutableOptions.get()];
     return nil;
 
     END_BLOCK_OBJC_EXCEPTIONS;
@@ -258,9 +256,9 @@ void DictionaryLookup::hidePopup()
 {
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
 
-    if (!getLULookupDefinitionModuleClass())
+    if (!PAL::getLULookupDefinitionModuleClass())
         return;
-    [getLULookupDefinitionModuleClass() hideDefinition];
+    [PAL::getLULookupDefinitionModuleClass() hideDefinition];
 
     END_BLOCK_OBJC_EXCEPTIONS;
 }

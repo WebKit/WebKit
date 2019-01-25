@@ -1,3 +1,24 @@
+2019-01-25  David Kilzer  <ddkilzer@apple.com>
+
+        Move soft-linking of Lookup.framework out of LookupSPI.h
+        <https://webkit.org/b/193815>
+
+        Reviewed by Tim Horton.
+
+        * wtf/cocoa/SoftLinking.h:
+        (SOFT_LINK_CONSTANT_FOR_HEADER):
+        (SOFT_LINK_CONSTANT_FOR_SOURCE_WITH_EXPORT):
+        (SOFT_LINK_CONSTANT_MAY_FAIL_FOR_HEADER):
+        - Remove local declaration of constant.  This should be handled
+          by including *SPI.h or "real" headers.
+        (SOFT_LINK_CONSTANT_MAY_FAIL_FOR_SOURCE_WITH_EXPORT):
+        - Remove local declaration of constant.
+        - Rename from SOFT_LINK_CONSTANT_MAY_FAIL_FOR_SOURCE() and add
+          `export` argument to support exporting of functions.
+        (SOFT_LINK_CONSTANT_MAY_FAIL_FOR_SOURCE):
+        - Redefine in terms of
+          SOFT_LINK_CONSTANT_MAY_FAIL_FOR_SOURCE_WITH_EXPORT().
+
 2019-01-24  Youenn Fablet  <youenn@apple.com>
 
         Use MonotonicTime in WorkerRunLoop

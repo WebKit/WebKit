@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007-2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2007-2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -429,17 +429,11 @@
     SOFT_LINK_CLASS_FOR_SOURCE_WITH_EXPORT_AND_ASSERTION(functionNamespace, framework, className, , NO_ASSERT)
 
 #define SOFT_LINK_CONSTANT_FOR_HEADER(functionNamespace, framework, variableName, variableType) \
-    WTF_EXTERN_C_BEGIN \
-    extern const variableType variableName; \
-    WTF_EXTERN_C_END \
     namespace functionNamespace { \
     variableType get_##framework##_##variableName(); \
     }
 
 #define SOFT_LINK_CONSTANT_FOR_SOURCE_WITH_EXPORT(functionNamespace, framework, variableName, variableType, export) \
-    WTF_EXTERN_C_BEGIN \
-    extern const variableType variableName; \
-    WTF_EXTERN_C_END \
     namespace functionNamespace { \
     export variableType get_##framework##_##variableName(); \
     variableType get_##framework##_##variableName() \
@@ -459,19 +453,13 @@
     SOFT_LINK_CONSTANT_FOR_SOURCE_WITH_EXPORT(functionNamespace, framework, variableName, variableType, )
 
 #define SOFT_LINK_CONSTANT_MAY_FAIL_FOR_HEADER(functionNamespace, framework, variableName, variableType) \
-    WTF_EXTERN_C_BEGIN \
-    extern const variableType variableName; \
-    WTF_EXTERN_C_END \
     namespace functionNamespace { \
     bool canLoad_##framework##_##variableName(); \
     bool init_##framework##_##variableName(); \
     variableType get_##framework##_##variableName(); \
     }
 
-#define SOFT_LINK_CONSTANT_MAY_FAIL_FOR_SOURCE(functionNamespace, framework, variableName, variableType) \
-    WTF_EXTERN_C_BEGIN \
-    extern const variableType variableName; \
-    WTF_EXTERN_C_END \
+#define SOFT_LINK_CONSTANT_MAY_FAIL_FOR_SOURCE_WITH_EXPORT(functionNamespace, framework, variableName, variableType, export) \
     namespace functionNamespace { \
     static variableType constant##framework##variableName; \
     bool init_##framework##_##variableName(); \
@@ -483,18 +471,21 @@
         constant##framework##variableName = *static_cast<variableType const *>(constant); \
         return true; \
     } \
-    bool canLoad_##framework##_##variableName(); \
+    export bool canLoad_##framework##_##variableName(); \
     bool canLoad_##framework##_##variableName() \
     { \
         static bool loaded = init_##framework##_##variableName(); \
         return loaded; \
     } \
-    variableType get_##framework##_##variableName(); \
+    export variableType get_##framework##_##variableName(); \
     variableType get_##framework##_##variableName() \
     { \
         return constant##framework##variableName; \
     } \
     }
+
+#define SOFT_LINK_CONSTANT_MAY_FAIL_FOR_SOURCE(functionNamespace, framework, variableName, variableType) \
+    SOFT_LINK_CONSTANT_MAY_FAIL_FOR_SOURCE_WITH_EXPORT(functionNamespace, framework, variableName, variableType, )
 
 #define SOFT_LINK_FUNCTION_FOR_HEADER(functionNamespace, framework, functionName, resultType, parameterDeclarations, parameterNames) \
     WTF_EXTERN_C_BEGIN \

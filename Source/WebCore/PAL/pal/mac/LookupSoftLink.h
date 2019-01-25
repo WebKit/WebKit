@@ -25,27 +25,14 @@
 
 #if PLATFORM(MAC)
 
-#import <objc/runtime.h>
-#import <pal/mac/LookupSoftLink.h>
-#import <pal/spi/mac/NSImmediateActionGestureRecognizerSPI.h>
+#import <wtf/SoftLinking.h>
 
-#if USE(APPLE_INTERNAL_SDK)
+SOFT_LINK_FRAMEWORK_FOR_HEADER(PAL, Lookup)
+SOFT_LINK_CLASS_FOR_HEADER(PAL, LULookupDefinitionModule)
+SOFT_LINK_CONSTANT_MAY_FAIL_FOR_HEADER(PAL, Lookup, LUTermOptionDisableSearchTermIndicator, NSString *)
 
-#import <Lookup/Lookup.h>
-
-#else
-
-@interface LULookupDefinitionModule : NSObject
-
-+ (NSRange)tokenRangeForString:(NSString *)string range:(NSRange)range options:(NSDictionary **)options;
-+ (void)showDefinitionForTerm:(NSAttributedString *)term atLocation:(NSPoint)screenPoint options:(NSDictionary *)options;
-+ (void)showDefinitionForTerm:(NSAttributedString *)term relativeToRect:(NSRect)positioningRect ofView:(NSView *)positioningView options:(NSDictionary *)options;
-+ (void)hideDefinition;
-+ (id<NSImmediateActionAnimationController>)lookupAnimationControllerForTerm:(NSAttributedString *)term atLocation:(NSPoint)screenPoint options:(NSDictionary *)options;
-+ (id<NSImmediateActionAnimationController>)lookupAnimationControllerForTerm:(NSAttributedString *)term relativeToRect:(NSRect)positioningRect ofView:(NSView *)positioningView options:(NSDictionary *)options;
-
-@end
-
-#endif // !USE(APPLE_INTERNAL_SDK)
+#if !ENABLE(REVEAL)
+SOFT_LINK_CONSTANT_MAY_FAIL_FOR_HEADER(PAL, Lookup, LUNotificationPopoverWillClose, NSString *)
+#endif
 
 #endif // PLATFORM(MAC)

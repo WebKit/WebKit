@@ -114,6 +114,8 @@
 		442956CD218A72DF0080DB54 /* RevealSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = 442956CC218A72DE0080DB54 /* RevealSPI.h */; };
 		4450FC9F21F5F602004DFA56 /* QuickLookSoftLink.mm in Sources */ = {isa = PBXBuildFile; fileRef = 4450FC9D21F5F602004DFA56 /* QuickLookSoftLink.mm */; };
 		4450FCA021F5F602004DFA56 /* QuickLookSoftLink.h in Headers */ = {isa = PBXBuildFile; fileRef = 4450FC9E21F5F602004DFA56 /* QuickLookSoftLink.h */; };
+		44E1A8AF21FA54E600C3048E /* LookupSoftLink.h in Headers */ = {isa = PBXBuildFile; fileRef = 44E1A8AD21FA54DA00C3048E /* LookupSoftLink.h */; };
+		44E1A8B021FA54EB00C3048E /* LookupSoftLink.mm in Sources */ = {isa = PBXBuildFile; fileRef = 44E1A8AE21FA54DA00C3048E /* LookupSoftLink.mm */; };
 		570AB8F120AE2E8D00B8BE87 /* SecKeyProxySPI.h in Headers */ = {isa = PBXBuildFile; fileRef = 570AB8F020AE2E8D00B8BE87 /* SecKeyProxySPI.h */; };
 		570AB8F920AF6E3D00B8BE87 /* NSXPCConnectionSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = 570AB8F820AF6E3D00B8BE87 /* NSXPCConnectionSPI.h */; };
 		63C7EDC721AFAE04006A7B99 /* NSProgressSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = 63E369F921AFA83F001C14BC /* NSProgressSPI.h */; };
@@ -273,6 +275,8 @@
 		442956CC218A72DE0080DB54 /* RevealSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RevealSPI.h; sourceTree = "<group>"; };
 		4450FC9D21F5F602004DFA56 /* QuickLookSoftLink.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = QuickLookSoftLink.mm; sourceTree = "<group>"; };
 		4450FC9E21F5F602004DFA56 /* QuickLookSoftLink.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = QuickLookSoftLink.h; sourceTree = "<group>"; };
+		44E1A8AD21FA54DA00C3048E /* LookupSoftLink.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = LookupSoftLink.h; sourceTree = "<group>"; };
+		44E1A8AE21FA54DA00C3048E /* LookupSoftLink.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = LookupSoftLink.mm; sourceTree = "<group>"; };
 		570AB8F020AE2E8D00B8BE87 /* SecKeyProxySPI.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SecKeyProxySPI.h; sourceTree = "<group>"; };
 		570AB8F820AF6E3D00B8BE87 /* NSXPCConnectionSPI.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NSXPCConnectionSPI.h; sourceTree = "<group>"; };
 		63E369F921AFA83F001C14BC /* NSProgressSPI.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NSProgressSPI.h; sourceTree = "<group>"; };
@@ -517,6 +521,7 @@
 				1C4876DE1F8D831300CCEEBD /* cocoa */,
 				1C09D0511E31C41200725F18 /* crypto */,
 				2E87C06E215A993100D6CD32 /* ios */,
+				44E1A8AC21FA548F00C3048E /* mac */,
 				0C2DA0651F33CA3300DBC317 /* spi */,
 				A3788E9F1F05B7CE00679425 /* system */,
 				A30D411D1F0DD0AC00B71954 /* text */,
@@ -583,6 +588,15 @@
 				2E1342CB215AA10A007199D2 /* UIKitSoftLink.mm */,
 			);
 			path = ios;
+			sourceTree = "<group>";
+		};
+		44E1A8AC21FA548F00C3048E /* mac */ = {
+			isa = PBXGroup;
+			children = (
+				44E1A8AD21FA54DA00C3048E /* LookupSoftLink.h */,
+				44E1A8AE21FA54DA00C3048E /* LookupSoftLink.mm */,
+			);
+			path = mac;
 			sourceTree = "<group>";
 		};
 		A30D411D1F0DD0AC00B71954 /* text */ = {
@@ -693,6 +707,7 @@
 				A30D41211F0DD0EA00B71954 /* KillRing.h in Headers */,
 				0C5AF91C1F43A4C7002EAC02 /* LaunchServicesSPI.h in Headers */,
 				1C4876D91F8D7F4E00CCEEBD /* Logging.h in Headers */,
+				44E1A8AF21FA54E600C3048E /* LookupSoftLink.h in Headers */,
 				0C77858B1F45130F00F4EBB6 /* LookupSPI.h in Headers */,
 				0C2DA1481F3BEB4900DBC317 /* MachVMSPI.h in Headers */,
 				0C5AF91D1F43A4C7002EAC02 /* MediaPlayerSPI.h in Headers */,
@@ -867,6 +882,7 @@
 				A30D41221F0DD0EA00B71954 /* KillRing.cpp in Sources */,
 				A30D41251F0DD12D00B71954 /* KillRingMac.mm in Sources */,
 				1C4876D81F8D7F4E00CCEEBD /* Logging.cpp in Sources */,
+				44E1A8B021FA54EB00C3048E /* LookupSoftLink.mm in Sources */,
 				0CF99CA41F736375007EE793 /* MediaTimeAVFoundation.cpp in Sources */,
 				A1F63CA021A4DBF7006FB43B /* PassKitSoftLink.mm in Sources */,
 				A1175B4F1F6B337300C4B9F0 /* PopupMenu.mm in Sources */,

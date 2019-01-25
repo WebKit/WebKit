@@ -1,3 +1,28 @@
+2019-01-25  David Kilzer  <ddkilzer@apple.com>
+
+        Move soft-linking of Lookup.framework out of LookupSPI.h
+        <https://webkit.org/b/193815>
+
+        Reviewed by Tim Horton.
+
+        * PAL.xcodeproj/project.pbxproj:
+        * pal/PlatformMac.cmake:
+        - Add LookupSoftLink.{h,mm} files to the project.
+
+        * pal/ios/UIKitSoftLink.h:
+        * pal/ios/UIKitSoftLink.mm:
+        - Change SOFT_LINK_VARIABLE_FOR_HEADER() to
+          SOFT_LINK_CONSTANT_FOR_HEADER() for
+          UIAccessibilityAnnouncementNotification constant.
+
+        * pal/mac/LookupSoftLink.h: Copied from Source/WebCore/PAL/pal/spi/mac/LookupSPI.h.
+        * pal/mac/LookupSoftLink.mm: Copied from Source/WebCore/PAL/pal/spi/mac/LookupSPI.h.
+        - Migrate soft-linking from LookupSPI.h to here.
+
+        * pal/spi/mac/LookupSPI.h:
+        - Replace soft-linking of Lookup.framework with
+          LookupSoftLink.h.
+
 2019-01-24  Eric Carlson  <eric.carlson@apple.com>
 
         [iOS] Silence MediaPlayer compile warnings

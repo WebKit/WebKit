@@ -135,7 +135,7 @@ void ValidationBubble::show()
         [protectedThis->m_popoverController.get().view setAccessibilityElementsHidden:YES];
     }];
 
-    PAL::softLinkUIKitUIAccessibilityPostNotification(*PAL::get_UIKit_UIAccessibilityAnnouncementNotification(), m_message);
+    PAL::softLinkUIKitUIAccessibilityPostNotification(PAL::get_UIKit_UIAccessibilityAnnouncementNotification(), m_message);
 }
 
 static UIViewController *fallbackViewController(UIView *view)

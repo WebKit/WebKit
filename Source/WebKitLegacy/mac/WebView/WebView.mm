@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005-2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2005-2019 Apple Inc. All rights reserved.
  * Copyright (C) 2006 David Smith (catfish.man@gmail.com)
  * Copyright (C) 2010 Igalia S.L
  *
@@ -351,10 +351,6 @@ SOFT_LINK_CLASS(AVKit, AVFunctionBarPlaybackControlsProvider)
 SOFT_LINK_CLASS(AVKit, AVFunctionBarScrubber)
 #endif // __MAC_OS_X_VERSION_MIN_REQUIRED >= 101300
 #endif // HAVE(TOUCH_BAR) && ENABLE(WEB_PLAYBACK_CONTROLS_MANAGER)
-
-#if PLATFORM(MAC) && !ENABLE(REVEAL)
-SOFT_LINK_CONSTANT_MAY_FAIL(Lookup, LUNotificationPopoverWillClose, NSString *)
-#endif
 
 #if !PLATFORM(IOS_FAMILY)
 
@@ -9618,8 +9614,8 @@ bool LayerFlushController::flushLayers()
     _private->hasInitializedLookupObserver = YES;
     
 #if !ENABLE(REVEAL)
-    if (canLoadLUNotificationPopoverWillClose())
-        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_dictionaryLookupPopoverWillClose:) name:getLUNotificationPopoverWillClose() object:nil];
+    if (PAL::canLoad_Lookup_LUNotificationPopoverWillClose())
+        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_dictionaryLookupPopoverWillClose:) name:PAL::get_Lookup_LUNotificationPopoverWillClose() object:nil];
 #endif // !ENABLE(REVEAL)
     
 }

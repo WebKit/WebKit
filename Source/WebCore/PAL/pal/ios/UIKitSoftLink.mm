@@ -34,6 +34,7 @@
 
 SOFT_LINK_FRAMEWORK_FOR_SOURCE(PAL, UIKit)
 
+SOFT_LINK_CONSTANT_FOR_SOURCE(PAL, UIKit, UIAccessibilityAnnouncementNotification, UIAccessibilityNotifications)
 SOFT_LINK_CONSTANT_FOR_SOURCE(PAL, UIKit, UIApplicationWillResignActiveNotification, NSNotificationName)
 SOFT_LINK_CONSTANT_FOR_SOURCE(PAL, UIKit, UIApplicationWillEnterForegroundNotification, NSNotificationName)
 SOFT_LINK_CONSTANT_FOR_SOURCE(PAL, UIKit, UIApplicationDidBecomeActiveNotification, NSNotificationName)
@@ -63,6 +64,5 @@ SOFT_LINK_FUNCTION_FOR_SOURCE(PAL, UIKit, UIAccessibilityIsGrayscaleEnabled, BOO
 SOFT_LINK_FUNCTION_FOR_SOURCE(PAL, UIKit, UIAccessibilityIsInvertColorsEnabled, BOOL, (void), ())
 SOFT_LINK_FUNCTION_FOR_SOURCE_WITH_EXPORT(PAL, UIKit, UIAccessibilityIsReduceMotionEnabled, BOOL, (void), (), PAL_EXPORT)
 SOFT_LINK_FUNCTION_FOR_SOURCE(PAL, UIKit, UIAccessibilityPostNotification, void, (UIAccessibilityNotifications n, id argument), (n, argument))
-SOFT_LINK_VARIABLE_FOR_SOURCE(PAL, UIKit, UIAccessibilityAnnouncementNotification, UIAccessibilityNotifications)
 
 #endif
