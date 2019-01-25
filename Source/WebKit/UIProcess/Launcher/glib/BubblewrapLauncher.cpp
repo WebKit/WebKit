@@ -759,17 +759,12 @@ GRefPtr<GSubprocess> bubblewrapSpawn(GSubprocessLauncher* launcher, const Proces
 #endif
             bindX11(sandboxArgs);
 
-        // NOTE: This is not a great solution but we just assume that applications create this directory
-        // ahead of time if they require it.
-        GUniquePtr<char> configDir(g_build_filename(g_get_user_config_dir(), g_get_prgname(), nullptr));
-        GUniquePtr<char> cacheDir(g_build_filename(g_get_user_cache_dir(), g_get_prgname(), nullptr));
-        GUniquePtr<char> dataDir(g_build_filename(g_get_user_data_dir(), g_get_prgname(), nullptr));
-
-        sandboxArgs.appendVector(Vector<CString>({
-            "--ro-bind-try", cacheDir.get(), cacheDir.get(),
-            "--ro-bind-try", configDir.get(), configDir.get(),
-            "--ro-bind-try", dataDir.get(), dataDir.get(),
-        }));
+        for (const auto& pathAndPermission : launchOptions.extraWebProcessSandboxPaths) {
+            sandboxArgs.appendVector(Vector<CString>({
+                pathAndPermission.value == SandboxPermission::ReadOnly ? "--ro-bind-try": "--bind-try",
+                pathAndPermission.key, pathAndPermission.key
+            }));
+        }
 
         Vector<String> extraPaths = { "applicationCacheDirectory", "waylandSocket"};
         for (const auto& path : extraPaths) {

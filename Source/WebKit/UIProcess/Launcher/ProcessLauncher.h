@@ -41,6 +41,13 @@
 
 namespace WebKit {
 
+#if PLATFORM(GTK) || PLATFORM(WPE)
+enum class SandboxPermission {
+    ReadOnly,
+    ReadWrite,
+};
+#endif
+
 class ProcessLauncher : public ThreadSafeRefCounted<ProcessLauncher>, public CanMakeWeakPtr<ProcessLauncher> {
 public:
     class Client {
@@ -68,8 +75,11 @@ public:
         bool shouldMakeProcessLaunchFailForTesting { false };
         CString customWebContentServiceBundleIdentifier;
 
-#if ENABLE(DEVELOPER_MODE) && (PLATFORM(GTK) || PLATFORM(WPE))
+#if PLATFORM(GTK) || PLATFORM(WPE)
+        HashMap<CString, SandboxPermission> extraWebProcessSandboxPaths;
+#if ENABLE(DEVELOPER_MODE)
         String processCmdPrefix;
+#endif
 #endif
     };
 

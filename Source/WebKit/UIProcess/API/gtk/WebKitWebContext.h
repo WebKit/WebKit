@@ -254,6 +254,11 @@ webkit_web_context_set_sandbox_enabled              (WebKitWebContext           
 WEBKIT_API gboolean
 webkit_web_context_get_sandbox_enabled              (WebKitWebContext              *context);
 
+WEBKIT_API void
+webkit_web_context_add_path_to_sandbox              (WebKitWebContext              *context,
+                                                     const char                    *path,
+                                                     gboolean                       read_only);
+
 WEBKIT_API gboolean
 webkit_web_context_get_spell_checking_enabled       (WebKitWebContext              *context);
 

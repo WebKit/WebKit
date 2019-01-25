@@ -44,6 +44,8 @@ void WebProcessProxy::platformGetLaunchOptions(ProcessLauncher::LaunchOptions& l
     websiteDataStore().resolveDirectoriesIfNecessary();
     launchOptions.extraInitializationData.set("applicationCacheDirectory", websiteDataStore().resolvedApplicationCacheDirectory());
 
+    launchOptions.extraWebProcessSandboxPaths = m_processPool->sandboxPaths();
+
 #if PLATFORM(WAYLAND) && USE(EGL)
     if (PlatformDisplay::sharedDisplay().type() == PlatformDisplay::Type::Wayland) {
         String displayName = WaylandCompositor::singleton().displayName();

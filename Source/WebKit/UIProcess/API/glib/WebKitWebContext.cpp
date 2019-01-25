@@ -1159,10 +1159,6 @@ void webkit_web_context_register_uri_scheme(WebKitWebContext* context, const cha
  *
  * This is only implemented on Linux and is a no-op otherwise.
  *
- * The web process is granted read-only access to the subdirectory matching g_get_prgname()
- * in `$XDG_CONFIG_HOME`, `$XDG_CACHE_HOME`, and `$XDG_DATA_HOME` if it exists before the
- * process is created. This behavior may change in the future.
- *
  * Since: 2.24
  */
 void webkit_web_context_set_sandbox_enabled(WebKitWebContext* context, gboolean enabled)
@@ -1173,6 +1169,32 @@ void webkit_web_context_set_sandbox_enabled(WebKitWebContext* context, gboolean 
         g_error("Sandboxing cannot be changed after subprocesses were spawned.");
 
     context->priv->processPool->setSandboxEnabled(enabled);
+}
+
+/**
+ * webkit_web_context_add_path_to_sandbox:
+ * @context: a #WebKitWebContext
+ * @path: (type filename): an absolute path to mount in the sandbox
+ * @read_only: if %TRUE the path will be read-only
+ *
+ * Adds a path to be mounted in the sandbox. @path must exist before any web process
+ * has been created otherwise it will be silently ignored. It is a fatal error to
+ * add paths after a web process has been spawned.
+ *
+ * See also webkit_web_context_set_sandbox_enabled()
+ *
+ * Since: 2.24
+ */
+void webkit_web_context_add_path_to_sandbox(WebKitWebContext* context, const char* path, gboolean readOnly)
+{
+    g_return_if_fail(WEBKIT_IS_WEB_CONTEXT(context));
+    g_return_if_fail(g_path_is_absolute(path));
+
+    if (context->priv->processPool->processes().size())
+        g_error("Sandbox paths cannot be changed after subprocesses were spawned.");
+
+    auto permission = readOnly ? SandboxPermission::ReadOnly : SandboxPermission::ReadWrite;
+    context->priv->processPool->addSandboxPath(path, permission);
 }
 
 /**
