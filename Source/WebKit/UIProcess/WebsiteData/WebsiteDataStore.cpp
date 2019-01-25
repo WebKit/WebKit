@@ -1252,15 +1252,12 @@ void WebsiteDataStore::removeData(OptionSet<WebsiteDataType> dataTypes, const Ve
 
         // If we are deleting all of the data types that the resource load statistics store monitors
         // we do not need to re-grandfather old data.
+        auto shouldGrandfather = ((monitoredTypesRaw & deletedTypesRaw) == monitoredTypesRaw) ? ShouldGrandfatherStatistics::No : ShouldGrandfatherStatistics::Yes;
+
         callbackAggregator->addPendingCallback();
-        if ((monitoredTypesRaw & deletedTypesRaw) == monitoredTypesRaw)
-            m_resourceLoadStatistics->scheduleClearInMemoryAndPersistent(ShouldGrandfatherStatistics::No, [callbackAggregator] {
-                callbackAggregator->removePendingCallback();
-            });
-        else
-            m_resourceLoadStatistics->scheduleClearInMemoryAndPersistent(ShouldGrandfatherStatistics::Yes, [callbackAggregator] {
-                callbackAggregator->removePendingCallback();
-            });
+        m_resourceLoadStatistics->scheduleClearInMemoryAndPersistent(shouldGrandfather, [callbackAggregator] {
+            callbackAggregator->removePendingCallback();
+        });
 
         callbackAggregator->addPendingCallback();
         clearResourceLoadStatisticsInWebProcesses([callbackAggregator] {
@@ -2325,15 +2322,9 @@ void WebsiteDataStore::setResourceLoadStatisticsEnabled(bool enabled)
         return;
 
     if (enabled) {
-        // FIXME(193297): Remove this assert
-        ASSERT(!m_resourceLoadStatistics);
         enableResourceLoadStatisticsAndSetTestingCallback(nullptr);
         return;
     }
-
-    // FIXME(193297): Remove these two lines
-    unregisterWebResourceLoadStatisticsStoreAsMessageReceiver();
-    m_resourceLoadStatistics = nullptr;
 
     for (auto& processPool : processPools(std::numeric_limits<size_t>::max(), false)) {
         processPool->setResourceLoadStatisticsEnabled(false);
@@ -2395,15 +2386,7 @@ void WebsiteDataStore::enableResourceLoadStatisticsAndSetTestingCallback(Functio
     m_resourceLoadStatisticsEnabled = true;
     setStatisticsTestingCallback(WTFMove(callback));
 
-    // FIXME(193297): Remove this check
-    if (m_resourceLoadStatistics)
-        return;
-
     resolveDirectoriesIfNecessary();
-
-    // FIXME(193297): Remove these two lines
-    m_resourceLoadStatistics = WebResourceLoadStatisticsStore::create(*this);
-    registerWebResourceLoadStatisticsStoreAsMessageReceiver();
 
     for (auto& processPool : processPools(std::numeric_limits<size_t>::max(), false)) {
         processPool->setResourceLoadStatisticsEnabled(true);

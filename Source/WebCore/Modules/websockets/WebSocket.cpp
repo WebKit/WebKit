@@ -279,8 +279,8 @@ ExceptionOr<void> WebSocket::connect(const String& url, const Vector<String>& pr
         }
     }
 
-    RunLoop::main().dispatch([targetURL = m_url.isolatedCopy(), mainFrameURL = context.url().isolatedCopy(), usesEphemeralSession = context.sessionID().isEphemeral()]() {
-        ResourceLoadObserver::shared().logWebSocketLoading(targetURL, mainFrameURL, usesEphemeralSession);
+    RunLoop::main().dispatch([targetURL = m_url.isolatedCopy(), mainFrameURL = context.url().isolatedCopy(), sessionID = context.sessionID()]() {
+        ResourceLoadObserver::shared().logWebSocketLoading(targetURL, mainFrameURL, sessionID);
     });
 
     if (is<Document>(context)) {

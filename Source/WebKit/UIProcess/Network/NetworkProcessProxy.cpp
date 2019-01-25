@@ -877,6 +877,12 @@ void NetworkProcessProxy::scheduleClearInMemoryAndPersistent(PAL::SessionID sess
     sendWithAsyncReply(Messages::NetworkProcess::ScheduleClearInMemoryAndPersistent(sessionID, { }, shouldGrandfather), WTFMove(completionHandler));
 }
 
+void NetworkProcessProxy::logTestingEvent(PAL::SessionID sessionID, const String& event)
+{
+    if (auto* websiteDataStore = websiteDataStoreFromSessionID(sessionID))
+        websiteDataStore->logTestingEvent(event);
+}
+
 void NetworkProcessProxy::notifyResourceLoadStatisticsProcessed()
 {
     WebProcessProxy::notifyPageStatisticsAndDataRecordsProcessed();

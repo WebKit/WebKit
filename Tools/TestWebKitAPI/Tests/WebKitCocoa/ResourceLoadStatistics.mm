@@ -57,6 +57,9 @@ static bool finishedNavigation = false;
 
 TEST(ResourceLoadStatistics, GrandfatherCallback)
 {
+    // We need an active NetworkProcess to perform ResourceLoadStatistics operations.
+    auto webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)]);
+
     auto *dataStore = [WKWebsiteDataStore defaultDataStore];
     [dataStore _setResourceLoadStatisticsEnabled:NO];
 
@@ -118,6 +121,9 @@ TEST(ResourceLoadStatistics, GrandfatherCallback)
 
 TEST(ResourceLoadStatistics, ShouldNotGrandfatherOnStartup)
 {
+    // We need an active NetworkProcess to perform ResourceLoadStatistics operations.
+    auto webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)]);
+
     auto *dataStore = [WKWebsiteDataStore defaultDataStore];
     [dataStore _setResourceLoadStatisticsEnabled:NO];
 
@@ -146,6 +152,9 @@ TEST(ResourceLoadStatistics, ChildProcessesNotLaunched)
 
     EXPECT_EQ((size_t)0, [sharedProcessPool _pluginProcessCount]);
 
+    // We need an active NetworkProcess to perform ResourceLoadStatistics operations.
+    auto webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)]);
+
     auto *dataStore = [WKWebsiteDataStore defaultDataStore];
     [dataStore _setResourceLoadStatisticsEnabled:NO];
 
@@ -167,6 +176,8 @@ TEST(ResourceLoadStatistics, ChildProcessesNotLaunched)
     TestWebKitAPI::Util::run(&doneFlag);
 
     EXPECT_TRUE([[NSFileManager defaultManager] fileExistsAtPath:targetURL.path]);
+
+    webView.clear();
 
     EXPECT_EQ((size_t)0, [sharedProcessPool _pluginProcessCount]);
 }

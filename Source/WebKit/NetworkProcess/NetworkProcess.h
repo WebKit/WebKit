@@ -137,7 +137,10 @@ public:
     void setSession(const PAL::SessionID&, Ref<NetworkSession>&&);
     NetworkSession* networkSession(const PAL::SessionID&) const override;
     void destroySession(const PAL::SessionID&);
-    
+
+    // Needed for test infrastructure
+    HashMap<PAL::SessionID, Ref<NetworkSession>>& networkSessions() { return m_networkSessions; }
+
     void forEachNetworkStorageSession(const Function<void(WebCore::NetworkStorageSession&)>&);
     WebCore::NetworkStorageSession* storageSession(const PAL::SessionID&) const;
     WebCore::NetworkStorageSession& defaultStorageSession() const;

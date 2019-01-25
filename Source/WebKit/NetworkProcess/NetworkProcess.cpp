@@ -1327,25 +1327,25 @@ void NetworkProcess::deleteWebsiteData(PAL::SessionID sessionID, OptionSet<Websi
         swServerForSession(sessionID).clearAll([clearTasksHandler = clearTasksHandler.copyRef()] { });
 #endif
 
-    if (websiteDataTypes.contains(WebsiteDataType::DiskCache) && !sessionID.isEphemeral())
-        clearDiskCache(modifiedSince, [clearTasksHandler = WTFMove(clearTasksHandler)] { });
-
 #if ENABLE(RESOURCE_LOAD_STATISTICS)
     if (websiteDataTypes.contains(WebsiteDataType::ResourceLoadStatistics)) {
         if (auto* networkSession = this->networkSession(sessionID)) {
             if (auto* resourceLoadStatistics = networkSession->resourceLoadStatistics()) {
                 auto deletedTypesRaw = websiteDataTypes.toRaw();
                 auto monitoredTypesRaw = WebResourceLoadStatisticsStore::monitoredDataTypes().toRaw();
-
+                
                 // If we are deleting all of the data types that the resource load statistics store monitors
                 // we do not need to re-grandfather old data.
                 auto shouldGrandfather = ((monitoredTypesRaw & deletedTypesRaw) == monitoredTypesRaw) ? ShouldGrandfatherStatistics::No : ShouldGrandfatherStatistics::Yes;
-
+                
                 resourceLoadStatistics->scheduleClearInMemoryAndPersistent(modifiedSince, shouldGrandfather, [clearTasksHandler = clearTasksHandler.copyRef()] { });
             }
         }
     }
 #endif
+
+    if (websiteDataTypes.contains(WebsiteDataType::DiskCache) && !sessionID.isEphemeral())
+        clearDiskCache(modifiedSince, [clearTasksHandler = WTFMove(clearTasksHandler)] { });
 }
 
 static void clearDiskCacheEntries(NetworkCache::Cache* cache, const Vector<SecurityOriginData>& origins, CompletionHandler<void()>&& completionHandler)

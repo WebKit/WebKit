@@ -102,7 +102,7 @@ WebsiteDataStoreParameters WebsiteDataStore::parameters()
         WTFMove(httpsProxy),
         WTFMove(resourceLoadStatisticsDirectory),
         WTFMove(resourceLoadStatisticsDirectoryHandle),
-        false // FIXME(193297): Switch to m_configuration->resourceLoadStatisticsEnabled()
+        false
     };
 
     auto cookieFile = resolvedCookieStorageFile();

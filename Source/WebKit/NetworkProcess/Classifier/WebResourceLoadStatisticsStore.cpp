@@ -252,6 +252,11 @@ void WebResourceLoadStatisticsStore::scheduleStatisticsAndDataRecordsProcessing(
     });
 }
 
+void WebResourceLoadStatisticsStore::requestUpdate()
+{
+    resourceLoadStatisticsUpdated({ });
+}
+
 void WebResourceLoadStatisticsStore::resourceLoadStatisticsUpdated(Vector<WebCore::ResourceLoadStatistics>&& origins)
 {
     ASSERT(RunLoop::isMain());
@@ -417,12 +422,6 @@ void WebResourceLoadStatisticsStore::didCreateNetworkProcess()
     });
 }
 
-void WebResourceLoadStatisticsStore::removeAllStorageAccess()
-{
-    if (m_networkSession)
-        m_networkSession->networkStorageSession().removeAllStorageAccess();
-}
-
 void WebResourceLoadStatisticsStore::removeAllStorageAccess(CompletionHandler<void()>&& completionHandler)
 {
     ASSERT(RunLoop::isMain());
@@ -431,7 +430,10 @@ void WebResourceLoadStatisticsStore::removeAllStorageAccess(CompletionHandler<vo
         m_websiteDataStore->removeAllStorageAccessHandler(WTFMove(completionHandler));
         return;
     }
-    removeAllStorageAccess();
+
+    if (m_networkSession)
+        m_networkSession->networkStorageSession().removeAllStorageAccess();
+
     completionHandler();
 }
 
@@ -501,6 +503,36 @@ void WebResourceLoadStatisticsStore::logFrameNavigation(const String& targetPrim
         
         if (m_memoryStore)
             m_memoryStore->logFrameNavigation(targetPrimaryDomain, mainFramePrimaryDomain, sourcePrimaryDomain, targetHost, mainFrameHost, isRedirect, isMainFrame);
+    });
+}
+
+void WebResourceLoadStatisticsStore::logWebSocketLoading(const String& targetPrimaryDomain, const String& mainFramePrimaryDomain, WallTime lastSeen, CompletionHandler<void()>&& completionHandler)
+{
+    postTask([this, targetPrimaryDomain = targetPrimaryDomain.isolatedCopy(), mainFramePrimaryDomain = mainFramePrimaryDomain.isolatedCopy(), lastSeen, completionHandler = WTFMove(completionHandler)]() mutable {
+        if (m_memoryStore)
+            m_memoryStore->logSubresourceLoading(targetPrimaryDomain, mainFramePrimaryDomain, lastSeen);
+
+        postTaskReply(WTFMove(completionHandler));
+    });
+}
+
+void WebResourceLoadStatisticsStore::logSubresourceLoading(const String& targetPrimaryDomain, const String& mainFramePrimaryDomain, WallTime lastSeen, CompletionHandler<void()>&& completionHandler)
+{
+    postTask([this, targetPrimaryDomain = targetPrimaryDomain.isolatedCopy(), mainFramePrimaryDomain = mainFramePrimaryDomain.isolatedCopy(), lastSeen, completionHandler = WTFMove(completionHandler)]() mutable {
+        if (m_memoryStore)
+            m_memoryStore->logSubresourceLoading(targetPrimaryDomain, mainFramePrimaryDomain, lastSeen);
+        
+        postTaskReply(WTFMove(completionHandler));
+    });
+}
+
+void WebResourceLoadStatisticsStore::logSubresourceRedirect(const String& sourcePrimaryDomain, const String& targetPrimaryDomain, CompletionHandler<void()>&& completionHandler)
+{
+    postTask([this, sourcePrimaryDomain = sourcePrimaryDomain.isolatedCopy(), targetPrimaryDomain = targetPrimaryDomain.isolatedCopy(), completionHandler = WTFMove(completionHandler)]() mutable {
+        if (m_memoryStore)
+            m_memoryStore->logSubresourceRedirect(sourcePrimaryDomain, targetPrimaryDomain);
+        
+        postTaskReply(WTFMove(completionHandler));
     });
 }
 
@@ -1080,12 +1112,6 @@ void WebResourceLoadStatisticsStore::setGrandfatheringTime(Seconds seconds, Comp
     });
 }
 
-void WebResourceLoadStatisticsStore::setCacheMaxAgeCapForPrevalentResources(Seconds seconds)
-{
-    if (m_networkSession)
-        m_networkSession->networkStorageSession().setCacheMaxAgeCapForPrevalentResources(seconds);
-}
-
 void WebResourceLoadStatisticsStore::setCacheMaxAgeCap(Seconds seconds, CompletionHandler<void()>&& completionHandler)
 {
     ASSERT(RunLoop::isMain());
@@ -1095,14 +1121,11 @@ void WebResourceLoadStatisticsStore::setCacheMaxAgeCap(Seconds seconds, Completi
         m_websiteDataStore->setCacheMaxAgeCapForPrevalentResources(seconds, WTFMove(completionHandler));
         return;
     }
-    setCacheMaxAgeCapForPrevalentResources(seconds);
-    completionHandler();
-}
 
-void WebResourceLoadStatisticsStore::updatePrevalentDomainsToBlockCookiesFor(const Vector<String>& domainsToBlock)
-{
     if (m_networkSession)
-        m_networkSession->networkStorageSession().setPrevalentDomainsToBlockCookiesFor(domainsToBlock);
+        m_networkSession->networkStorageSession().setCacheMaxAgeCapForPrevalentResources(seconds);
+
+    completionHandler();
 }
 
 void WebResourceLoadStatisticsStore::callUpdatePrevalentDomainsToBlockCookiesForHandler(const Vector<String>& domainsToBlock, CompletionHandler<void()>&& completionHandler)
@@ -1113,7 +1136,10 @@ void WebResourceLoadStatisticsStore::callUpdatePrevalentDomainsToBlockCookiesFor
         m_websiteDataStore->updatePrevalentDomainsToBlockCookiesFor(domainsToBlock, WTFMove(completionHandler));
         return;
     }
-    updatePrevalentDomainsToBlockCookiesFor(domainsToBlock);
+
+    if (m_networkSession)
+        m_networkSession->networkStorageSession().setPrevalentDomainsToBlockCookiesFor(domainsToBlock);
+
     completionHandler();
 }
 
@@ -1175,7 +1201,9 @@ void WebResourceLoadStatisticsStore::logTestingEvent(const String& event)
         m_websiteDataStore->logTestingEvent(event);
         return;
     }
-    // FIXME(193297): Send message to UIProcess
+
+    if (m_networkSession)
+        m_networkSession->networkProcess().parentProcessConnection()->send(Messages::NetworkProcessProxy::LogTestingEvent(m_networkSession->sessionID(), event), 0);
 }
 
 void WebResourceLoadStatisticsStore::notifyResourceLoadStatisticsProcessed()

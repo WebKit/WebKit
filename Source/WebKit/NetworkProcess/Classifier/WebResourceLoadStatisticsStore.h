@@ -91,6 +91,9 @@ public:
     void logFrameNavigation(const String& targetPrimaryDomain, const String& mainFramePrimaryDomain, const String& sourcePrimaryDomain, const String& targetHost, const String& mainFrameHost, bool isRedirect, bool isMainFrame);
     void logUserInteraction(const URL&, CompletionHandler<void()>&&);
     void logUserInteraction(const String& targetPrimaryDomain, CompletionHandler<void()>&&);
+    void logWebSocketLoading(const String& targetPrimaryDomain, const String& mainFramePrimaryDomain, WallTime lastSeen, CompletionHandler<void()>&&);
+    void logSubresourceLoading(const String& targetPrimaryDomain, const String& mainFramePrimaryDomain, WallTime lastSeen, CompletionHandler<void()>&&);
+    void logSubresourceRedirect(const String& sourcePrimaryDomain, const String& targetPrimaryDomain, CompletionHandler<void()>&&);
     void clearUserInteraction(const URL&, CompletionHandler<void()>&&);
     void clearUserInteraction(const String& targetPrimaryDomain, CompletionHandler<void()>&&);
     void deleteWebsiteDataForTopPrivatelyControlledDomainsInAllPersistentDataStores(OptionSet<WebsiteDataType>, Vector<String>&& topPrivatelyControlledDomains, bool shouldNotifyPage, CompletionHandler<void(const HashSet<String>&)>&&);
@@ -101,6 +104,7 @@ public:
     void hasStorageAccess(const String& subFrameHost, const String& topFrameHost, Optional<uint64_t> frameID, uint64_t pageID, CompletionHandler<void(bool)>&& callback);
     bool hasStorageAccessForFrame(const String& resourceDomain, const String& firstPartyDomain, uint64_t frameID, uint64_t pageID);
     void requestStorageAccess(const String& resourceDomain, const String& firstPartyDomain, Optional<uint64_t> frameID, uint64_t pageID, bool promptEnabled, CompletionHandler<void(StorageAccessStatus)>&&);
+    void requestUpdate();
     void setLastSeen(const URL&, Seconds, CompletionHandler<void()>&&);
     void setLastSeen(const String& resourceDomain, Seconds, CompletionHandler<void()>&&);
     void setPrevalentResource(const URL&, CompletionHandler<void()>&&);
@@ -124,9 +128,7 @@ public:
     void setGrandfathered(const String&, bool, CompletionHandler<void()>&&);
     void isGrandfathered(const URL&, CompletionHandler<void(bool)>&&);
     void isGrandfathered(const String&, CompletionHandler<void(bool)>&&);
-    void removeAllStorageAccess();
     void removePrevalentDomains(const Vector<String>& domainsToBlock);
-    void setCacheMaxAgeCapForPrevalentResources(Seconds);
     void setNotifyPagesWhenDataRecordsWereScanned(bool, CompletionHandler<void()>&&);
     void setSubframeUnderTopFrameOrigin(const URL& subframe, const URL& topFrame, CompletionHandler<void()>&&);
     void setSubframeUnderTopFrameOrigin(const String& subframe, const String& topFrame, CompletionHandler<void()>&&);
@@ -145,7 +147,6 @@ public:
     void scheduleClearBlockingStateForDomains(const Vector<String>& domains, CompletionHandler<void()>&&);
     void scheduleStatisticsAndDataRecordsProcessing(CompletionHandler<void()>&&);
     void submitTelemetry(CompletionHandler<void()>&&);
-    void updatePrevalentDomainsToBlockCookiesFor(const Vector<String>& domainsToBlock);
     void scheduleClearInMemoryAndPersistent(ShouldGrandfatherStatistics, CompletionHandler<void()>&&);
     void scheduleClearInMemoryAndPersistent(WallTime modifiedSince, ShouldGrandfatherStatistics, CompletionHandler<void()>&&);
 

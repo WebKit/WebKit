@@ -185,6 +185,7 @@ private:
     void logDiagnosticMessageWithValue(uint64_t pageID, const String& message, const String& description, double value, unsigned significantFigures, WebCore::ShouldSample);
     void logGlobalDiagnosticMessageWithValue(const String& message, const String& description, double value, unsigned significantFigures, WebCore::ShouldSample);
 #if ENABLE(RESOURCE_LOAD_STATISTICS)
+    void logTestingEvent(PAL::SessionID, const String& event);
     void notifyResourceLoadStatisticsProcessed();
     void notifyWebsiteDataDeletionForTopPrivatelyOwnedDomainsFinished();
     void notifyWebsiteDataScanForTopPrivatelyControlledDomainsFinished();

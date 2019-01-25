@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016-2017 Apple Inc.  All rights reserved.
+ * Copyright (C) 2016-2019 Apple Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -60,7 +60,7 @@ public:
     WEBCORE_EXPORT static ResourceLoadObserver& shared();
 
     void logSubresourceLoading(const Frame*, const ResourceRequest& newRequest, const ResourceResponse& redirectResponse);
-    void logWebSocketLoading(const URL& targetURL, const URL& mainFrameURL, bool usesEphemeralSession);
+    void logWebSocketLoading(const URL& targetURL, const URL& mainFrameURL, PAL::SessionID);
     void logUserInteractionWithReducedTimeResolution(const Document&);
     
     void logFontLoad(const Document&, const String& familyName, bool loadStatus);
@@ -72,8 +72,11 @@ public:
     WEBCORE_EXPORT String statisticsForOrigin(const String&);
 
     WEBCORE_EXPORT void setNotificationCallback(WTF::Function<void (Vector<ResourceLoadStatistics>&&)>&&);
-    WEBCORE_EXPORT void setRequestStorageAccessUnderOpenerCallback(WTF::Function<void(const String&, uint64_t, const String&)>&&);
-    WEBCORE_EXPORT void setLogUserInteractionNotificationCallback(WTF::Function<void(PAL::SessionID, const String&)>&&);
+    WEBCORE_EXPORT void setRequestStorageAccessUnderOpenerCallback(Function<void(const String&, uint64_t, const String&)>&&);
+    WEBCORE_EXPORT void setLogUserInteractionNotificationCallback(Function<void(PAL::SessionID, const String&)>&&);
+    WEBCORE_EXPORT void setLogWebSocketLoadingNotificationCallback(Function<void(PAL::SessionID, const String&, const String&, WallTime)>&&);
+    WEBCORE_EXPORT void setLogSubresourceLoadingNotificationCallback(Function<void(PAL::SessionID, const String&, const String&, WallTime)>&&);
+    WEBCORE_EXPORT void setLogSubresourceRedirectNotificationCallback(Function<void(PAL::SessionID, const String&, const String&)>&&);
 
     WEBCORE_EXPORT void notifyObserver();
     WEBCORE_EXPORT void clearState();
@@ -98,9 +101,13 @@ private:
 
     HashMap<String, ResourceLoadStatistics> m_resourceStatisticsMap;
     HashMap<String, WTF::WallTime> m_lastReportedUserInteractionMap;
-    WTF::Function<void (Vector<ResourceLoadStatistics>&&)> m_notificationCallback;
-    WTF::Function<void(const String&, uint64_t, const String&)> m_requestStorageAccessUnderOpenerCallback;
-    WTF::Function<void(PAL::SessionID, const String&)> m_logUserInteractionNotificationCallback;
+    Function<void(Vector<ResourceLoadStatistics>&&)> m_notificationCallback;
+    Function<void(const String&, uint64_t, const String&)> m_requestStorageAccessUnderOpenerCallback;
+    Function<void(PAL::SessionID, const String&)> m_logUserInteractionNotificationCallback;
+    Function<void(PAL::SessionID, const String&, const String&, WallTime)> m_logWebSocketLoadingNotificationCallback;
+    Function<void(PAL::SessionID, const String&, const String&, WallTime)> m_logSubresourceLoadingNotificationCallback;
+    Function<void(PAL::SessionID, const String&, const String&)> m_logSubresourceRedirectNotificationCallback;
+
     Timer m_notificationTimer;
 #if ENABLE(RESOURCE_LOAD_STATISTICS) && !RELEASE_LOG_DISABLED
     uint64_t m_loggingCounter { 0 };

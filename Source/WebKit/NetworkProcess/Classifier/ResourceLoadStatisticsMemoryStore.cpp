@@ -638,6 +638,29 @@ void ResourceLoadStatisticsMemoryStore::logFrameNavigation(const String& targetP
         scheduleStatisticsProcessingRequestIfNecessary();
 }
 
+void ResourceLoadStatisticsMemoryStore::logSubresourceLoading(const String& targetPrimaryDomain, const String& mainFramePrimaryDomain, WallTime lastSeen)
+{
+    ASSERT(!RunLoop::isMain());
+
+    auto& targetStatistics = ensureResourceStatisticsForPrimaryDomain(targetPrimaryDomain);
+    targetStatistics.lastSeen = lastSeen;
+    if (targetStatistics.subresourceUnderTopFrameOrigins.add(mainFramePrimaryDomain).isNewEntry)
+        scheduleStatisticsProcessingRequestIfNecessary();
+}
+
+void ResourceLoadStatisticsMemoryStore::logSubresourceRedirect(const String& sourcePrimaryDomain, const String& targetPrimaryDomain)
+{
+    ASSERT(!RunLoop::isMain());
+
+    auto& redirectingOriginStatistics = ensureResourceStatisticsForPrimaryDomain(sourcePrimaryDomain);
+    bool isNewRedirectToEntry = redirectingOriginStatistics.subresourceUniqueRedirectsTo.add(targetPrimaryDomain).isNewEntry;
+    auto& targetStatistics = ensureResourceStatisticsForPrimaryDomain(targetPrimaryDomain);
+    bool isNewRedirectFromEntry = targetStatistics.subresourceUniqueRedirectsFrom.add(sourcePrimaryDomain).isNewEntry;
+    
+    if (isNewRedirectToEntry || isNewRedirectFromEntry)
+        scheduleStatisticsProcessingRequestIfNecessary();
+}
+
 void ResourceLoadStatisticsMemoryStore::logUserInteraction(const String& primaryDomain)
 {
     ASSERT(!RunLoop::isMain());

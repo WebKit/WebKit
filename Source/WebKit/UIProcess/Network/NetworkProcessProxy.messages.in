@@ -41,6 +41,7 @@ messages -> NetworkProcessProxy LegacyReceiver {
     LogGlobalDiagnosticMessageWithValue(String message, String description, double value, unsigned significantFigures, enum:bool WebCore::ShouldSample shouldSample)
 
 #if ENABLE(RESOURCE_LOAD_STATISTICS)
+    LogTestingEvent(PAL::SessionID sessionID, String event)
     NotifyResourceLoadStatisticsProcessed()
     NotifyWebsiteDataDeletionForTopPrivatelyOwnedDomainsFinished()
     NotifyWebsiteDataScanForTopPrivatelyControlledDomainsFinished()
