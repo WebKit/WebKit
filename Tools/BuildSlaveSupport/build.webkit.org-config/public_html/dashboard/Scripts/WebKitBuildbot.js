@@ -42,7 +42,6 @@ WebKitBuildbot = function()
         "Apple High Sierra Release WK2 (Perf)": {platform: Dashboard.Platform.macOSHighSierra, debug: false, performance: true, heading: "Performance"},
         "Apple High Sierra Release WK2 (Tests)": {platform: Dashboard.Platform.macOSHighSierra, debug: false, tester: true, testCategory: Buildbot.TestCategory.WebKit2},
         "Apple High Sierra JSC": {platform: Dashboard.Platform.macOSHighSierra, heading: "JavaScript", combinedQueues: {
-            "Apple High Sierra 32-bit JSC (BuildAndTest)": {heading: "32-bit JSC (BuildAndTest)"},
             "Apple High Sierra LLINT CLoop (BuildAndTest)": {heading: "LLINT CLoop (BuildAndTest)"},
             "Apple High Sierra Debug JSC (Tests)": {heading: "Debug JSC (Tests)"},
             "Apple High Sierra Release JSC (Tests)": {heading: "Release JSC (Tests)"},

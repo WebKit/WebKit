@@ -1,3 +1,17 @@
+2019-01-24  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Update macOS JSC bot configurations
+        https://bugs.webkit.org/show_bug.cgi?id=193739
+
+        Reviewed by Alexey Proskuryakov.
+
+        * BuildSlaveSupport/build.webkit.org-config/config.json: Remove 32-bit BuildAndTest queue.
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Scripts/BubbleQueueServer.js:
+        (BubbleQueueServer): Move JSC EWS to Mojave section.
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Scripts/WebKitBuildbot.js:
+        (WebKitBuildbot): Remove 32-bit BuildAndTest queue from dashboard.
+        * BuildSlaveSupport/build.webkit.org-config/steps_unittest.py: Update unit test.
+
 2019-01-24  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         [Win][WebKitTestRunner] Implement EventSenderProxy

@@ -32,7 +32,7 @@ BubbleQueueServer = function()
         "ios-ews": {platform: Dashboard.Platform.iOS12Device, shortName: "ios", title: "Release\xa0Build\xa0EWS"},
         "ios-sim-ews": {platform: Dashboard.Platform.iOS12Simulator, shortName: "ios-sim", title: "WebKit2\xa0Release\xa0Tests\xa0EWS"},
         "jsc-armv7-ews": {platform: Dashboard.Platform.LinuxJSCOnly, shortName: "jsc-armv7", title: "ARMv7\xa0Release\xa0Build\xa0EWS"},
-        "jsc-ews": {platform: Dashboard.Platform.macOSHighSierra, shortName: "jsc", title: "Release\xa0JSC\xa0Tests\xa0EWS"},
+        "jsc-ews": {platform: Dashboard.Platform.macOSMojave, shortName: "jsc", title: "Release\xa0JSC\xa0Tests\xa0EWS"},
         "jsc-mips-ews": {platform: Dashboard.Platform.LinuxJSCOnly, shortName: "jsc-mips-ews", title: "MIPS\xa0Release\xa0Build\xa0EWS"},
         "mac-32bit-ews": {platform: Dashboard.Platform.macOSHighSierra, shortName: "mac-32bit", title: "Release\xa032\u2011bit\xa0Build\xa0EWS"},
         "mac-ews": {platform: Dashboard.Platform.macOSHighSierra, shortName: "mac", title: "WebKit1\xa0Release\xa0Tests\xa0EWS"},

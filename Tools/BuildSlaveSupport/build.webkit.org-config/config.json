@@ -21,7 +21,6 @@
                     { "name": "bot163", "platform": "mac-highsierra" },
                     { "name": "bot182", "platform": "mac-highsierra" },
                     { "name": "bot186", "platform": "mac-highsierra" },
-                    { "name": "bot187", "platform": "mac-highsierra" },
                     { "name": "bot194", "platform": "mac-highsierra" },
                     { "name": "bot197", "platform": "mac-highsierra" },
                     { "name": "bot205", "platform": "mac-highsierra" },
@@ -165,10 +164,6 @@
                     { "name": "Apple High Sierra LLINT CLoop (BuildAndTest)", "type": "BuildAndTestLLINTCLoop", "builddir": "highsierra-cloop-debug",
                       "platform": "mac-highsierra", "configuration": "debug", "architectures": ["x86_64"],
                       "slavenames": ["bot186"]
-                    },
-                    { "name": "Apple High Sierra 32-bit JSC (BuildAndTest)", "type": "BuildAndTest32bitJSC", "builddir": "highsierra-32bitJSC-debug",
-                      "platform": "mac-highsierra", "configuration": "debug", "architectures": ["i386"],
-                      "slavenames": ["bot187"]
                     },
                     { "name": "Apple High Sierra Debug Test262 (Tests)", "type": "Test262", "builddir": "highsierra-debug-tests-test262",
                       "platform": "mac-highsierra", "configuration": "debug", "architectures": ["x86_64"],
@@ -400,7 +395,7 @@
                       "builderNames": ["Apple Mojave (Leaks)"]
                     },
                     { "type": "PlatformSpecificScheduler", "platform": "mac-highsierra", "branch": "trunk", "treeStableTimer": 45.0,
-                      "builderNames": ["Apple High Sierra Release (Build)", "Apple High Sierra Debug (Build)", "Apple High Sierra Release (32-bit Build)", "Apple High Sierra LLINT CLoop (BuildAndTest)", "Apple High Sierra 32-bit JSC (BuildAndTest)"]
+                      "builderNames": ["Apple High Sierra Release (Build)", "Apple High Sierra Debug (Build)", "Apple High Sierra Release (32-bit Build)", "Apple High Sierra LLINT CLoop (BuildAndTest)"]
                     },
                     { "type": "PlatformSpecificScheduler", "platform": "ios-12", "branch": "trunk", "treeStableTimer": 45.0,
                       "builderNames": ["Apple iOS 12 Release (Build)"]
