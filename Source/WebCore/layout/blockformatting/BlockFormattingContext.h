@@ -97,6 +97,7 @@ private:
         static EstimatedMarginBefore estimatedMarginBefore(const LayoutState&, const Box&);
         static LayoutUnit marginBeforeIgnoringCollapsingThrough(const LayoutState&, const Box&, const UsedVerticalMargin::NonCollapsedValues&);
         static void updateMarginAfterForPreviousSibling(const LayoutState&, const Box&);
+        static void updatePositiveNegativeMarginValues(const LayoutState&, const Box&);
 
         static bool marginBeforeCollapsesWithParentMarginBefore(const LayoutState&, const Box&);
         static bool marginBeforeCollapsesWithFirstInFlowChildMarginBefore(const LayoutState&, const Box&);

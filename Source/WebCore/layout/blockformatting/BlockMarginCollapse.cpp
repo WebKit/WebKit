@@ -606,6 +606,22 @@ LayoutUnit BlockFormattingContext::MarginCollapse::marginBeforeIgnoringCollapsin
     return marginValue(positiveNegativeMarginBefore(layoutState, layoutBox, nonCollapsedValues)).valueOr(nonCollapsedValues.before);
 }
 
+void BlockFormattingContext::MarginCollapse::updatePositiveNegativeMarginValues(const LayoutState& layoutState, const Box& layoutBox)
+{
+    ASSERT(layoutBox.isBlockLevelBox());
+    auto nonCollapsedValues = layoutState.displayBoxForLayoutBox(layoutBox).verticalMargin().nonCollapsedValues();
+
+    auto positiveNegativeMarginBefore = MarginCollapse::positiveNegativeMarginBefore(layoutState, layoutBox, nonCollapsedValues);
+    auto positiveNegativeMarginAfter = MarginCollapse::positiveNegativeMarginAfter(layoutState, layoutBox, nonCollapsedValues);
+
+    if (MarginCollapse::marginsCollapseThrough(layoutState, layoutBox)) {
+        positiveNegativeMarginBefore = computedPositiveAndNegativeMargin(positiveNegativeMarginBefore, positiveNegativeMarginAfter);
+        positiveNegativeMarginAfter = positiveNegativeMarginBefore;
+    }
+    auto& blockFormattingState = downcast<BlockFormattingState>(layoutState.formattingStateForBox(layoutBox));
+    blockFormattingState.setPositiveAndNegativeVerticalMargin(layoutBox, { positiveNegativeMarginBefore, positiveNegativeMarginAfter });
+}
+
 UsedVerticalMargin::CollapsedValues BlockFormattingContext::MarginCollapse::collapsedVerticalValues(const LayoutState& layoutState, const Box& layoutBox, const UsedVerticalMargin::NonCollapsedValues& nonCollapsedValues)
 {
     if (layoutBox.isAnonymous())
@@ -624,10 +640,6 @@ UsedVerticalMargin::CollapsedValues BlockFormattingContext::MarginCollapse::coll
         positiveNegativeMarginBefore = computedPositiveAndNegativeMargin(positiveNegativeMarginBefore, positiveNegativeMarginAfter);
         positiveNegativeMarginAfter = positiveNegativeMarginBefore;
     }
-
-    // FIXME: Move state saving out of this function.
-    auto& blockFormattingState = downcast<BlockFormattingState>(layoutState.formattingStateForBox(layoutBox));
-    blockFormattingState.setPositiveAndNegativeVerticalMargin(layoutBox, { positiveNegativeMarginBefore, positiveNegativeMarginAfter });
 
     auto beforeMarginIsCollapsedValue = marginBeforeCollapsesWithFirstInFlowChildMarginBefore(layoutState, layoutBox) || marginBeforeCollapsesWithPreviousSiblingMarginAfter(layoutState, layoutBox);
     auto afterMarginIsCollapsedValue = marginAfterCollapsesWithLastInFlowChildMarginAfter(layoutState, layoutBox);

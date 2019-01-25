@@ -1,3 +1,21 @@
+2019-01-25  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC][BFC][MarginCollapsing] Move positive/negative margin value updating to a dedicated function
+        https://bugs.webkit.org/show_bug.cgi?id=193812
+
+        Reviewed by Antti Koivisto.
+
+        Move update logic to BlockFormattingContext::MarginCollapse::updatePositiveNegativeMarginValues().
+
+        * layout/blockformatting/BlockFormattingContext.cpp:
+        (WebCore::Layout::BlockFormattingContext::computeHeightAndMargin const):
+        * layout/blockformatting/BlockFormattingContext.h:
+        * layout/blockformatting/BlockMarginCollapse.cpp:
+        (WebCore::Layout::BlockFormattingContext::MarginCollapse::updatePositiveNegativeMarginValues):
+        (WebCore::Layout::BlockFormattingContext::MarginCollapse::collapsedVerticalValues):
+        * page/FrameViewLayoutContext.cpp:
+        (WebCore::layoutUsingFormattingContext):
+
 2019-01-25  Antoine Quint  <graouts@apple.com>
 
         Use ENABLE_POINTER_EVENTS for the touch-action property
