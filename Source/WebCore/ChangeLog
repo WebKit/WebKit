@@ -1,5 +1,33 @@
 2019-01-26  Zalan Bujtas  <zalan@apple.com>
 
+        [LFC][BFC] Ignore last inflow child's collapsed through margin after when computing containing block's height.
+        https://bugs.webkit.org/show_bug.cgi?id=193865
+
+        Reviewed by Antti Koivisto.
+
+        Height computation ->
+        // 10.6.3 Block-level non-replaced elements in normal flow when 'overflow' computes to 'visible'
+        // ...the bottom edge of the bottom (possibly collapsed) margin of its last in-flow child, if the child's bottom
+        // margin does not collapse with the element's bottom margin
+
+        <div style="border: 1px solid green">
+          <div style="margin-top: 100px;"></div>
+        </div>
+
+        When the child vertical margins collapse through (margin-top = margin-bottom = 100px), the bottom edge of the bottom margin is
+        the same as the bottom edge of the top margin which is alredy taken into use while positioning so technically the bottom margin value should be ignored. 
+
+        Test: fast/block/margin-collapse/collapsed-through-child-simple.html
+
+        * layout/MarginTypes.h:
+        (WebCore::Layout::UsedVerticalMargin::isCollapsedThrough const):
+        * layout/blockformatting/BlockFormattingContextGeometry.cpp:
+        (WebCore::Layout::BlockFormattingContext::Geometry::inFlowNonReplacedHeightAndMargin):
+        * layout/displaytree/DisplayBox.h:
+        (WebCore::Display::Box::hasCollapsedThroughMargin const):
+
+2019-01-26  Zalan Bujtas  <zalan@apple.com>
+
         [LFC][BFC][MarginCollapsing] marginAfterCollapsesWithParentMarginAfter/marginAfterCollapsesWithLastInFlowChildMarginAfter should check for border/padding after values.
         https://bugs.webkit.org/show_bug.cgi?id=193864
 

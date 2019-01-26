@@ -143,6 +143,7 @@ public:
     LayoutUnit marginStart() const;
     LayoutUnit marginAfter() const;
     LayoutUnit marginEnd() const;
+    bool hasCollapsedThroughMargin() const { return m_verticalMargin.isCollapsedThrough(); }
     bool hasClearance() const { return m_hasClearance; }
 
     LayoutUnit nonCollapsedMarginBefore() const;
