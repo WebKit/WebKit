@@ -222,42 +222,34 @@ bool Box::isInitialContainingBlock() const
 
 const Box* Box::nextInFlowSibling() const
 {
-    if (auto* nextSibling = this->nextSibling()) {
-        if (nextSibling->isInFlow())
-            return nextSibling;
-        return nextSibling->nextInFlowSibling();
-    }
-    return nullptr;
+    auto* nextSibling = this->nextSibling();
+    while (nextSibling && !nextSibling->isInFlow())
+        nextSibling = nextSibling->nextSibling();
+    return nextSibling;
 }
 
 const Box* Box::nextInFlowOrFloatingSibling() const
 {
-    if (auto* nextSibling = this->nextSibling()) {
-        if (nextSibling->isInFlow() || nextSibling->isFloatingPositioned())
-            return nextSibling;
-        return nextSibling->nextInFlowSibling();
-    }
-    return nullptr;
+    auto* nextSibling = this->nextSibling();
+    while (nextSibling && !(nextSibling->isInFlow() || nextSibling->isFloatingPositioned()))
+        nextSibling = nextSibling->nextSibling();
+    return nextSibling;
 }
 
 const Box* Box::previousInFlowSibling() const
 {
-    if (auto* previousSibling = this->previousSibling()) {
-        if (previousSibling->isInFlow())
-            return previousSibling;
-        return previousSibling->previousInFlowSibling();
-    }
-    return nullptr;
+    auto* previousSibling = this->previousSibling();
+    while (previousSibling && !previousSibling->isInFlow())
+        previousSibling = previousSibling->previousSibling();
+    return previousSibling;
 }
 
 const Box* Box::previousInFlowOrFloatingSibling() const
 {
-    if (auto* previousSibling = this->previousSibling()) {
-        if (previousSibling->isInFlow() || previousSibling->isFloatingPositioned())
-            return previousSibling;
-        return previousSibling->previousInFlowOrFloatingSibling();
-    }
-    return nullptr;
+    auto* previousSibling = this->previousSibling();
+    while (previousSibling && !(previousSibling->isInFlow() || previousSibling->isFloatingPositioned()))
+        previousSibling = previousSibling->previousSibling();
+    return previousSibling;
 }
 
 bool Box::isOverflowVisible() const
