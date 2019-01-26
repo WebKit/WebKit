@@ -772,6 +772,7 @@ set(JavaScriptCore_PRIVATE_FRAMEWORK_HEADERS
     runtime/ErrorHandlingScope.h
     runtime/ErrorInstance.h
     runtime/ErrorPrototype.h
+    runtime/ErrorType.h
     runtime/EvalExecutable.h
     runtime/Exception.h
     runtime/ExceptionEventLocation.h

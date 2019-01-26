@@ -377,7 +377,6 @@ public:
     IsoSubspace generatorFunctionSpace;
     IsoSubspace inferredValueSpace;
     IsoSubspace internalFunctionSpace;
-    IsoSubspace nativeErrorConstructorSpace;
     IsoSubspace nativeExecutableSpace;
     IsoSubspace nativeStdFunctionSpace;
 #if JSC_OBJC_API_ENABLED

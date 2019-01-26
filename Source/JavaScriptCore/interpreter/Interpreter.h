@@ -117,9 +117,6 @@ namespace JSC {
         NEVER_INLINE void debug(CallFrame*, DebugHookType);
         static String stackTraceAsString(VM&, const Vector<StackFrame>&);
 
-        static EncodedJSValue JSC_HOST_CALL constructWithNativeErrorConstructor(ExecState*);
-        static EncodedJSValue JSC_HOST_CALL callNativeErrorConstructor(ExecState*);
-
         void getStackTrace(JSCell* owner, Vector<StackFrame>& results, size_t framesToSkip = 0, size_t maxStackSize = std::numeric_limits<size_t>::max());
 
     private:

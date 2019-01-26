@@ -748,6 +748,7 @@ runtime/ErrorConstructor.cpp
 runtime/ErrorHandlingScope.cpp
 runtime/ErrorInstance.cpp
 runtime/ErrorPrototype.cpp
+runtime/ErrorType.cpp
 runtime/EvalExecutable.cpp
 runtime/Exception.cpp
 runtime/ExceptionEventLocation.cpp

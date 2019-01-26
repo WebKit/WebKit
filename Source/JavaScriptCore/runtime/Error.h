@@ -23,6 +23,7 @@
 #pragma once
 
 #include "ErrorInstance.h"
+#include "ErrorType.h"
 #include "InternalFunction.h"
 #include "JSObject.h"
 #include "ThrowScope.h"
@@ -37,16 +38,6 @@ class JSGlobalObject;
 class JSObject;
 class SourceCode;
 class Structure;
-
-enum class ErrorType : uint8_t {
-    Error,
-    EvalError,
-    RangeError,
-    ReferenceError,
-    SyntaxError,
-    TypeError,
-    URIError,
-};
 
 // ExecState wrappers.
 JSObject* createError(ExecState*, const String&, ErrorInstance::SourceAppender);
@@ -105,11 +96,3 @@ inline EncodedJSValue throwVMRangeError(ExecState* state, ThrowScope& scope, con
 inline EncodedJSValue throwVMDOMAttributeGetterTypeError(ExecState* state, ThrowScope& scope, const ClassInfo* classInfo, PropertyName propertyName) { return JSValue::encode(throwDOMAttributeGetterTypeError(state, scope, classInfo, propertyName)); }
 
 } // namespace JSC
-
-namespace WTF {
-
-class PrintStream;
-
-void printInternal(PrintStream&, JSC::ErrorType);
-
-} // namespace WTF

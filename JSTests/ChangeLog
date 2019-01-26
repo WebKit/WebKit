@@ -1,3 +1,15 @@
+2019-01-25  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] NativeErrorConstructor should not have own IsoSubspace
+        https://bugs.webkit.org/show_bug.cgi?id=193713
+
+        Reviewed by Saam Barati.
+
+        Remove @Error use.
+
+        * stress/try-get-by-id-should-spill-registers-dfg.js:
+        (let.f.createBuiltin):
+
 2019-01-24  Yusuke Suzuki  <ysuzuki@apple.com>
 
         stress/const-semantics.js fails a dfg-eager / ftl-eager run with an ASAN release build.

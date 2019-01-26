@@ -302,7 +302,6 @@ VM::VM(VMType vmType, HeapType heapType)
     , generatorFunctionSpace ISO_SUBSPACE_INIT(heap, cellJSValueOOBHeapCellType.get(), JSGeneratorFunction)
     , inferredValueSpace ISO_SUBSPACE_INIT(heap, destructibleCellHeapCellType.get(), InferredValue)
     , internalFunctionSpace ISO_SUBSPACE_INIT(heap, destructibleObjectHeapCellType.get(), InternalFunction)
-    , nativeErrorConstructorSpace ISO_SUBSPACE_INIT(heap, destructibleObjectHeapCellType.get(), NativeErrorConstructor)
     , nativeExecutableSpace ISO_SUBSPACE_INIT(heap, destructibleCellHeapCellType.get(), NativeExecutable)
     , nativeStdFunctionSpace ISO_SUBSPACE_INIT(heap, cellJSValueOOBHeapCellType.get(), JSNativeStdFunction)
 #if JSC_OBJC_API_ENABLED

@@ -74,8 +74,6 @@ namespace JSC {
     macro(getOwnPropertyDescriptor) \
     macro(getOwnPropertyNames) \
     macro(ownKeys) \
-    macro(Error) \
-    macro(RangeError) \
     macro(Set) \
     macro(TypeError) \
     macro(typedArrayLength) \

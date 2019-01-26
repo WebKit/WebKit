@@ -1,3 +1,75 @@
+2019-01-25  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] NativeErrorConstructor should not have own IsoSubspace
+        https://bugs.webkit.org/show_bug.cgi?id=193713
+
+        Reviewed by Saam Barati.
+
+        This removes an additional member in NativeErrorConstructor, and make sizeof(NativeErrorConstructor) == sizeof(InternalFunction).
+        We also make error constructors lazily allocated by using LazyClassStructure. Since error structures are not accessed from DFG / FTL
+        threads, this is OK. While TypeError constructor is eagerly allocated because it is touched from our builtin JS as @TypeError, we should
+        offer some function instead of exposing TypeError constructor in the future, and remove this @TypeError reference. This change removes
+        IsoSubspace for NativeErrorConstructor in VM. We also remove @Error and @RangeError references for builtins since they are no longer
+        referenced.
+
+        * CMakeLists.txt:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * Sources.txt:
+        * builtins/BuiltinNames.h:
+        * interpreter/Interpreter.h:
+        * runtime/Error.cpp:
+        (JSC::createEvalError):
+        (JSC::createRangeError):
+        (JSC::createReferenceError):
+        (JSC::createSyntaxError):
+        (JSC::createTypeError):
+        (JSC::createURIError):
+        (WTF::printInternal): Deleted.
+        * runtime/Error.h:
+        * runtime/ErrorPrototype.cpp:
+        (JSC::ErrorPrototype::create):
+        (JSC::ErrorPrototype::finishCreation):
+        * runtime/ErrorPrototype.h:
+        (JSC::ErrorPrototype::create): Deleted.
+        * runtime/ErrorType.cpp: Added.
+        (JSC::errorTypeName):
+        (WTF::printInternal):
+        * runtime/ErrorType.h: Added.
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::initializeErrorConstructor):
+        (JSC::JSGlobalObject::init):
+        (JSC::JSGlobalObject::visitChildren):
+        * runtime/JSGlobalObject.h:
+        (JSC::JSGlobalObject::internalPromiseConstructor const):
+        (JSC::JSGlobalObject::errorStructure const):
+        (JSC::JSGlobalObject::evalErrorConstructor const): Deleted.
+        (JSC::JSGlobalObject::rangeErrorConstructor const): Deleted.
+        (JSC::JSGlobalObject::referenceErrorConstructor const): Deleted.
+        (JSC::JSGlobalObject::syntaxErrorConstructor const): Deleted.
+        (JSC::JSGlobalObject::typeErrorConstructor const): Deleted.
+        (JSC::JSGlobalObject::URIErrorConstructor const): Deleted.
+        * runtime/NativeErrorConstructor.cpp:
+        (JSC::NativeErrorConstructor<errorType>::NativeErrorConstructor):
+        (JSC::NativeErrorConstructorBase::finishCreation):
+        (JSC::NativeErrorConstructor<errorType>::constructNativeErrorConstructor):
+        (JSC::NativeErrorConstructor<errorType>::callNativeErrorConstructor):
+        (JSC::NativeErrorConstructor::NativeErrorConstructor): Deleted.
+        (JSC::NativeErrorConstructor::finishCreation): Deleted.
+        (JSC::NativeErrorConstructor::visitChildren): Deleted.
+        (JSC::Interpreter::constructWithNativeErrorConstructor): Deleted.
+        (JSC::Interpreter::callNativeErrorConstructor): Deleted.
+        * runtime/NativeErrorConstructor.h:
+        (JSC::NativeErrorConstructorBase::createStructure):
+        (JSC::NativeErrorConstructorBase::NativeErrorConstructorBase):
+        * runtime/NativeErrorPrototype.cpp:
+        (JSC::NativeErrorPrototype::finishCreation): Deleted.
+        * runtime/NativeErrorPrototype.h:
+        * runtime/VM.cpp:
+        (JSC::VM::VM):
+        * runtime/VM.h:
+        * wasm/js/WasmToJS.cpp:
+        (JSC::Wasm::handleBadI64Use):
+
 2019-01-25  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: provide a way to edit page settings on a remote target

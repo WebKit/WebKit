@@ -31,12 +31,7 @@ public:
     typedef JSNonFinalObject Base;
     static const unsigned StructureFlags = Base::StructureFlags | HasStaticPropertyTable;
 
-    static ErrorPrototype* create(VM& vm, JSGlobalObject*, Structure* structure)
-    {
-        ErrorPrototype* prototype = new (NotNull, allocateCell<ErrorPrototype>(vm.heap)) ErrorPrototype(vm, structure);
-        prototype->finishCreation(vm);
-        return prototype;
-    }
+    static ErrorPrototype* create(VM&, JSGlobalObject*, Structure*);
 
     DECLARE_INFO;
 
@@ -47,7 +42,7 @@ public:
 
 protected:
     ErrorPrototype(VM&, Structure*);
-    void finishCreation(VM&);
+    void finishCreation(VM&, const String&);
 };
 
 } // namespace JSC

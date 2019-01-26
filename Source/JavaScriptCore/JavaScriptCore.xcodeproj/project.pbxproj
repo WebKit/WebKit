@@ -1773,6 +1773,7 @@
 		E3C79CAB1DB9A4DC00D1ECA4 /* DOMJITEffect.h in Headers */ = {isa = PBXBuildFile; fileRef = E3C79CAA1DB9A4D600D1ECA4 /* DOMJITEffect.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E3D239C91B829C1C00BBEF67 /* JSModuleEnvironment.h in Headers */ = {isa = PBXBuildFile; fileRef = E3D239C71B829C1C00BBEF67 /* JSModuleEnvironment.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E3D877741E65C0A000BE945A /* BytecodeDumper.h in Headers */ = {isa = PBXBuildFile; fileRef = E3D877721E65C08900BE945A /* BytecodeDumper.h */; };
+		E3EE137621FBD43500D83C4B /* ErrorType.h in Headers */ = {isa = PBXBuildFile; fileRef = E3EE137421FBD43400D83C4B /* ErrorType.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E3F23A7F1ECF13EE00978D99 /* SnippetSlowPathCalls.h in Headers */ = {isa = PBXBuildFile; fileRef = E3F23A7E1ECF13E500978D99 /* SnippetSlowPathCalls.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E3F23A801ECF13F500978D99 /* SnippetReg.h in Headers */ = {isa = PBXBuildFile; fileRef = E3F23A7D1ECF13E500978D99 /* SnippetReg.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E3F23A811ECF13FA00978D99 /* SnippetParams.h in Headers */ = {isa = PBXBuildFile; fileRef = E3F23A7C1ECF13E500978D99 /* SnippetParams.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -4722,6 +4723,8 @@
 		E3D2642A1D38C042000BE174 /* BytecodeRewriter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BytecodeRewriter.h; sourceTree = "<group>"; };
 		E3D877711E65C08900BE945A /* BytecodeDumper.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = BytecodeDumper.cpp; sourceTree = "<group>"; };
 		E3D877721E65C08900BE945A /* BytecodeDumper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BytecodeDumper.h; sourceTree = "<group>"; };
+		E3EE137421FBD43400D83C4B /* ErrorType.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ErrorType.h; sourceTree = "<group>"; };
+		E3EE137521FBD43400D83C4B /* ErrorType.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ErrorType.cpp; sourceTree = "<group>"; };
 		E3F23A7B1ECF13E500978D99 /* Snippet.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Snippet.h; sourceTree = "<group>"; };
 		E3F23A7C1ECF13E500978D99 /* SnippetParams.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SnippetParams.h; sourceTree = "<group>"; };
 		E3F23A7D1ECF13E500978D99 /* SnippetReg.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SnippetReg.h; sourceTree = "<group>"; };
@@ -6698,6 +6701,8 @@
 				BC02E98B0E183E38000F9297 /* ErrorInstance.h */,
 				BC02E9060E1839DB000F9297 /* ErrorPrototype.cpp */,
 				BC02E9070E1839DB000F9297 /* ErrorPrototype.h */,
+				E3EE137521FBD43400D83C4B /* ErrorType.cpp */,
+				E3EE137421FBD43400D83C4B /* ErrorType.h */,
 				147341DB1DC2CE9600AA29BA /* EvalExecutable.cpp */,
 				147341D11DC02E2E00AA29BA /* EvalExecutable.h */,
 				FE1C0FFE1B194FD100B53FCA /* Exception.cpp */,
@@ -8911,6 +8916,7 @@
 				BC02E98D0E183E38000F9297 /* ErrorInstance.h in Headers */,
 				BC02E90F0E1839DB000F9297 /* ErrorPrototype.h in Headers */,
 				996B731B1BDA08D100331B84 /* ErrorPrototype.lut.h in Headers */,
+				E3EE137621FBD43500D83C4B /* ErrorType.h in Headers */,
 				14AD910C1DCA92940014F9FE /* EvalCodeBlock.h in Headers */,
 				147341D21DC02E2E00AA29BA /* EvalExecutable.h in Headers */,
 				A54982041891D0B00081E5B8 /* EventLoop.h in Headers */,
@@ -9321,6 +9327,7 @@
 				E3201C1D1F8E82360076A032 /* JSScriptFetchParameters.h in Headers */,
 				53EE01B8218F7EFF00AD1F8D /* JSScriptInternal.h in Headers */,
 				A7C0C4AC168103020017011D /* JSScriptRefPrivate.h in Headers */,
+				14D01A7721FB351F00BC54E9 /* JSScriptSourceProvider.h in Headers */,
 				0F919D11157F332C004A4E7D /* JSSegmentedVariableObject.h in Headers */,
 				0F4F82881E2FFDE00075184C /* JSSegmentedVariableObjectHeapCellType.h in Headers */,
 				A7299D9E17D12837005F5FF9 /* JSSet.h in Headers */,
@@ -9791,7 +9798,6 @@
 				14F7256614EE265E00B1652B /* WeakHandleOwner.h in Headers */,
 				14E84FA214EE1ACC00D6D5D4 /* WeakImpl.h in Headers */,
 				14BE7D3317135CF400D1807A /* WeakInlines.h in Headers */,
-				14D01A7721FB351F00BC54E9 /* JSScriptSourceProvider.h in Headers */,
 				A7CA3AE417DA41AE006538AF /* WeakMapConstructor.h in Headers */,
 				E3A32BC71FC83147007D7E76 /* WeakMapImpl.h in Headers */,
 				E393ADD81FE702D00022D681 /* WeakMapImplInlines.h in Headers */,

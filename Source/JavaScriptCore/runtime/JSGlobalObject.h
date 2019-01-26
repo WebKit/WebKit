@@ -25,6 +25,7 @@
 #include "ArrayBufferSharingMode.h"
 #include "BigIntPrototype.h"
 #include "BooleanPrototype.h"
+#include "ErrorType.h"
 #include "ExceptionHelpers.h"
 #include "InternalFunction.h"
 #include "JSArray.h"
@@ -101,7 +102,7 @@ class MapPrototype;
 class Microtask;
 class ModuleLoader;
 class ModuleProgramExecutable;
-class NativeErrorConstructor;
+class NativeErrorConstructorBase;
 class NullGetterFunction;
 class NullSetterFunction;
 class ObjectConstructor;
@@ -259,14 +260,15 @@ public:
     WriteBarrier<JSCallee> m_globalCallee;
     WriteBarrier<JSCallee> m_stackOverflowFrameCallee;
     WriteBarrier<RegExpConstructor> m_regExpConstructor;
-    WriteBarrier<Structure> m_nativeErrorPrototypeStructure;
-    WriteBarrier<Structure> m_nativeErrorStructure;
-    LazyProperty<JSGlobalObject, NativeErrorConstructor> m_evalErrorConstructor;
-    WriteBarrier<NativeErrorConstructor> m_rangeErrorConstructor;
-    LazyProperty<JSGlobalObject, NativeErrorConstructor> m_referenceErrorConstructor;
-    LazyProperty<JSGlobalObject, NativeErrorConstructor> m_syntaxErrorConstructor;
-    WriteBarrier<NativeErrorConstructor> m_typeErrorConstructor;
-    LazyProperty<JSGlobalObject, NativeErrorConstructor> m_URIErrorConstructor;
+
+    WriteBarrier<ErrorConstructor> m_errorConstructor;
+    LazyClassStructure m_evalErrorStructure;
+    LazyClassStructure m_rangeErrorStructure;
+    LazyClassStructure m_referenceErrorStructure;
+    LazyClassStructure m_syntaxErrorStructure;
+    LazyClassStructure m_typeErrorStructure;
+    LazyClassStructure m_URIErrorStructure;
+
     WriteBarrier<ObjectConstructor> m_objectConstructor;
     WriteBarrier<ArrayConstructor> m_arrayConstructor;
     WriteBarrier<JSPromiseConstructor> m_promiseConstructor;
@@ -580,12 +582,6 @@ public:
     ObjectConstructor* objectConstructor() const { return m_objectConstructor.get(); }
     JSPromiseConstructor* promiseConstructor() const { return m_promiseConstructor.get(); }
     JSInternalPromiseConstructor* internalPromiseConstructor() const { return m_internalPromiseConstructor.get(); }
-    NativeErrorConstructor* evalErrorConstructor() const { return m_evalErrorConstructor.get(this); }
-    NativeErrorConstructor* rangeErrorConstructor() const { return m_rangeErrorConstructor.get(); }
-    NativeErrorConstructor* referenceErrorConstructor() const { return m_referenceErrorConstructor.get(this); }
-    NativeErrorConstructor* syntaxErrorConstructor() const { return m_syntaxErrorConstructor.get(this); }
-    NativeErrorConstructor* typeErrorConstructor() const { return m_typeErrorConstructor.get(); }
-    NativeErrorConstructor* URIErrorConstructor() const { return m_URIErrorConstructor.get(this); }
 
 #if ENABLE(INTL)
     IntlObject* intlObject() const { return m_intlObject.get(); }
@@ -693,6 +689,27 @@ public:
     Structure* dateStructure() const { return m_dateStructure.get(this); }
     Structure* nullPrototypeObjectStructure() const { return m_nullPrototypeObjectStructure.get(); }
     Structure* errorStructure() const { return m_errorStructure.get(); }
+    Structure* errorStructure(ErrorType errorType) const
+    {
+        switch (errorType) {
+        case ErrorType::Error:
+            return errorStructure();
+        case ErrorType::EvalError:
+            return m_evalErrorStructure.get(this);
+        case ErrorType::RangeError:
+            return m_rangeErrorStructure.get(this);
+        case ErrorType::ReferenceError:
+            return m_referenceErrorStructure.get(this);
+        case ErrorType::SyntaxError:
+            return m_syntaxErrorStructure.get(this);
+        case ErrorType::TypeError:
+            return m_typeErrorStructure.get(this);
+        case ErrorType::URIError:
+            return m_URIErrorStructure.get(this);
+        }
+        ASSERT_NOT_REACHED();
+        return nullptr;
+    }
     Structure* calleeStructure() const { return m_calleeStructure.get(); }
     Structure* hostFunctionStructure() const { return m_hostFunctionStructure.get(); }
 
@@ -999,6 +1016,9 @@ private:
 
     void fireWatchpointAndMakeAllArrayStructuresSlowPut(VM&);
     void setGlobalThis(VM&, JSObject* globalThis);
+
+    template<ErrorType errorType>
+    void initializeErrorConstructor(LazyClassStructure::Initializer&);
 
     JS_EXPORT_PRIVATE void init(VM&);
 

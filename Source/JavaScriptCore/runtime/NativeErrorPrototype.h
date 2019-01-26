@@ -24,8 +24,6 @@
 
 namespace JSC {
 
-class NativeErrorConstructor;
-
 class NativeErrorPrototype final : public ErrorPrototype {
 private:
     NativeErrorPrototype(VM&, Structure*);
@@ -33,15 +31,12 @@ private:
 public:
     typedef ErrorPrototype Base;
 
-    static NativeErrorPrototype* create(VM& vm, Structure* structure, const String& name, NativeErrorConstructor* constructor)
+    static NativeErrorPrototype* create(VM& vm, Structure* structure, const String& name)
     {
         NativeErrorPrototype* prototype = new (NotNull, allocateCell<NativeErrorPrototype>(vm.heap)) NativeErrorPrototype(vm, structure);
-        prototype->finishCreation(vm, name, constructor);
+        prototype->finishCreation(vm, name);
         return prototype;
     }
-
-protected:
-    void finishCreation(VM&, const String& nameAndMessage, NativeErrorConstructor*);
 };
 
 } // namespace JSC
