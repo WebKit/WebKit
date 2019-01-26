@@ -198,8 +198,8 @@ WI.AuditManager = class AuditManager extends WI.Object
             return;
         }
 
-        if (json.type !== WI.AuditTestCase.TypeIdentifier || json.type !== WI.AuditTestGroup.TypeIdentifier
-            || json.type !== WI.AuditTestCaseResult.TypeIdentifier || json.type !== WI.AuditTestGroupResult.TypeIdentifier) {
+        if (json.type !== WI.AuditTestCase.TypeIdentifier && json.type !== WI.AuditTestGroup.TypeIdentifier
+            && json.type !== WI.AuditTestCaseResult.TypeIdentifier && json.type !== WI.AuditTestGroupResult.TypeIdentifier) {
             WI.AuditManager.synthesizeError(WI.UIString("unknown %s \u0022%s\u0022").format(WI.unlocalizedString("type"), json.type));
             return;
         }
