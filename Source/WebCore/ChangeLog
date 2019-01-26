@@ -1,5 +1,16 @@
 2019-01-26  Zalan Bujtas  <zalan@apple.com>
 
+        [LFC][BFC][MarginCollapsing] marginAfterCollapsesWithParentMarginAfter/marginAfterCollapsesWithLastInFlowChildMarginAfter should check for border/padding after values.
+        https://bugs.webkit.org/show_bug.cgi?id=193864
+
+        Reviewed by Antti Koivisto.
+
+        * layout/blockformatting/BlockMarginCollapse.cpp:
+        (WebCore::Layout::BlockFormattingContext::MarginCollapse::marginAfterCollapsesWithParentMarginAfter):
+        (WebCore::Layout::BlockFormattingContext::MarginCollapse::marginAfterCollapsesWithLastInFlowChildMarginAfter):
+
+2019-01-26  Zalan Bujtas  <zalan@apple.com>
+
         [LFC] Box::nextInFlowOrFloatingSibling() should always return sibling floats as well.
         https://bugs.webkit.org/show_bug.cgi?id=193855
 

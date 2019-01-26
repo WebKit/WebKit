@@ -295,11 +295,11 @@ bool BlockFormattingContext::MarginCollapse::marginAfterCollapsesWithParentMargi
         return false;
 
     // the box has no bottom padding, and
-    if (hasPaddingBefore(parent))
+    if (hasPaddingAfter(parent))
         return false;
 
     // the box has no bottom border, and
-    if (hasBorderBefore(parent))
+    if (hasBorderAfter(parent))
         return false;
 
     // the child's bottom margin neither collapses with a top margin that has clearance...
@@ -337,11 +337,11 @@ bool BlockFormattingContext::MarginCollapse::marginAfterCollapsesWithLastInFlowC
         return false;
 
     // the box has no bottom padding, and
-    if (hasPaddingBefore(layoutBox))
+    if (hasPaddingAfter(layoutBox))
         return false;
 
     // the box has no bottom border, and
-    if (hasBorderBefore(layoutBox))
+    if (hasBorderAfter(layoutBox))
         return false;
 
     // the child's bottom margin neither collapses with a top margin that has clearance...
