@@ -2457,6 +2457,7 @@ webkit.org/b/142969 editing/spelling/copy-paste-crash.html
 platform/ios/media/video-interruption-suspendunderlock.html [ Skip ]
 
 media/accessibility-closed-captions-has-aria-owns.html
+media/airplay-allows-buffering.html
 media/airplay-autoplay.html
 media/airplay-target-availability.html
 media/audio-delete-while-slider-thumb-clicked.html

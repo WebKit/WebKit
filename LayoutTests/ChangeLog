@@ -1,3 +1,14 @@
+2019-01-25  Jer Noble  <jer.noble@apple.com>
+
+        <video> elements not in the DOM should be allowed to AirPlay
+        https://bugs.webkit.org/show_bug.cgi?id=193837
+
+        Reviewed by Eric Carlson.
+
+        * media/airplay-allows-buffering-expected.txt: Added.
+        * media/airplay-allows-buffering.html: Added.
+        * platform/ios/TestExpectations:
+
 2019-01-25  Simon Fraser  <simon.fraser@apple.com>
 
         Fix failing scrollingcoordinator/scrolling-tree/remove-scrolling-role.html

@@ -1,3 +1,24 @@
+2019-01-25  Jer Noble  <jer.noble@apple.com>
+
+        <video> elements not in the DOM should be allowed to AirPlay
+        https://bugs.webkit.org/show_bug.cgi?id=193837
+        <rdar://42559491>
+
+        Reviewed by Eric Carlson.
+
+        Test: media/airplay-allows-buffering.html
+
+        Some websites will switch between <video> elements backed by MSE to one backed by
+        a media file in order to implement an AirPlay control. But when a <video> element is
+        removed from the DOM and paused, further buffering is blocked. For some ports (namely
+        Cocoa ones), this keeps AirPlay from engaging. Relax this buffering restriction for
+        elements who have been asked to play wirelessly, but whose wireless playback has not
+        started yet.
+
+        * html/MediaElementSession.cpp:
+        (WebCore::MediaElementSession::dataBufferingPermitted const):
+        (WebCore::MediaElementSession::setShouldPlayToPlaybackTarget):
+
 2019-01-25  Keith Rollin  <krollin@apple.com>
 
         Update Xcode projects with "Check .xcfilelists" build phase

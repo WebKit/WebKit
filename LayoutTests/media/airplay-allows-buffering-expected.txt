@@ -1,0 +1,13 @@
+EVENT(load)
+RUN(internals.setMockMediaPlaybackTargetPickerEnabled(true))
+RUN(video.src = findMediaFile('video', 'content/test'))
+EVENT(loadedmetadata)
+RUN(video.parentNode.removeChild(video))
+EXPECTED (internals.elementShouldBufferData(video) == 'false') OK
+RUN(video.webkitShowPlaybackTargetPicker())
+RUN(internals.setMockMediaPlaybackTargetPickerState('Sleepy TV', 'DeviceAvailable'))
+EVENT(webkitcurrentplaybacktargetiswirelesschanged)
+EXPECTED (video.webkitCurrentPlaybackTargetIsWireless == 'true') OK
+EXPECTED (internals.elementShouldBufferData(video) == 'true') OK
+END OF TEST
+
