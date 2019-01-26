@@ -1,3 +1,21 @@
+2019-01-25  Tim Horton  <timothy_horton@apple.com>
+
+        REGRESSION (r238818): Snapshot is removed too late after swiping back on Twitter
+        https://bugs.webkit.org/show_bug.cgi?id=193860
+        <rdar://problem/47535022>
+
+        Reviewed by Antti Koivisto.
+
+        * UIProcess/Cocoa/ViewGestureController.cpp:
+        (WebKit::ViewGestureController::didStartProvisionalOrSameDocumentLoadForMainFrame):
+        (WebKit::ViewGestureController::didStartProvisionalLoadForMainFrame):
+        (WebKit::ViewGestureController::didSameDocumentNavigationForMainFrame):
+        * UIProcess/Cocoa/ViewGestureController.h:
+        Treat provisional load and same document load the same: they already both
+        unpause the snapshot removal tracker, request render tree size notifications,
+        but same-document navigation was missing the call to dispatchAfterEnsuringDrawing
+        and thus would get stuck waiting for RepaintAfterNavigation.
+
 2019-01-25  Ryosuke Niwa  <rniwa@webkit.org>
 
         Need a mechanism to override navigator.userAgent
