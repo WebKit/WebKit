@@ -234,6 +234,7 @@ public:
 
     void dispatchOnloadEvents();
     String userAgent(const URL&) const;
+    String userAgentForJavaScript(const URL&) const;
     String navigatorPlatform() const;
 
     void dispatchDidClearWindowObjectInWorld(DOMWrapperWorld&);

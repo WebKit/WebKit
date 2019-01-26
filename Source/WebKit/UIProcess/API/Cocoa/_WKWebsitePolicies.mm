@@ -209,6 +209,16 @@
     return _websitePolicies->customUserAgent();
 }
 
+- (void)setCustomJavaScriptUserAgent:(NSString *)customUserAgent
+{
+    _websitePolicies->setCustomJavaScriptUserAgent(customUserAgent);
+}
+
+- (NSString *)customJavaScriptUserAgent
+{
+    return _websitePolicies->customJavaScriptUserAgent();
+}
+
 - (void)setCustomNavigatorPlatform:(NSString *)customNavigatorPlatform
 {
     _websitePolicies->setCustomNavigatorPlatform(customNavigatorPlatform);

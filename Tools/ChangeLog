@@ -1,3 +1,17 @@
+2019-01-25  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Need a mechanism to override navigator.userAgent
+        https://bugs.webkit.org/show_bug.cgi?id=193762
+        <rdar://problem/47504939>
+
+        Reviewed by Brent Fulgham.
+
+        Added test cases for _WKWebsitePolicies.customJavaScriptUserAgent.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/WebsitePolicies.mm:
+        (-[CustomJavaScriptUserAgentDelegate _webView:decidePolicyForNavigationAction:userInfo:decisionHandler:]):
+        (-[CustomJavaScriptUserAgentDelegate webView:didFinishNavigation:]):
+
 2019-01-25  Dean Jackson  <dino@apple.com>
 
         REGRESSION: Some USDz from 3rd party websites don't go directly to AR QL

@@ -270,7 +270,10 @@ public:
 
     void setCustomUserAgent(const String& customUserAgent) { m_customUserAgent = customUserAgent; }
     const String& customUserAgent() const { return m_customUserAgent; }
-        
+
+    void setCustomJavaScriptUserAgent(const String& customJavaScriptUserAgent) { m_customJavaScriptUserAgent = customJavaScriptUserAgent; }
+    const String& customJavaScriptUserAgent() const { return m_customJavaScriptUserAgent; }
+
     void setCustomNavigatorPlatform(const String& customNavigatorPlatform) { m_customNavigatorPlatform = customNavigatorPlatform; }
     const String& customNavigatorPlatform() const { return m_customNavigatorPlatform; }
 
@@ -543,6 +546,7 @@ private:
     HashMap<String, Vector<std::pair<String, uint32_t>>> m_pendingContentExtensionDisplayNoneSelectors;
 #endif
     String m_customUserAgent;
+    String m_customJavaScriptUserAgent;
     String m_customNavigatorPlatform;
     bool m_userContentExtensionsEnabled { true };
     bool m_deviceOrientationEventEnabled { true };

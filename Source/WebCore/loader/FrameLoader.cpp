@@ -2705,6 +2705,20 @@ String FrameLoader::userAgent(const URL& url) const
 
     return m_client.userAgent(url);
 }
+
+String FrameLoader::userAgentForJavaScript(const URL& url) const
+{
+    if (auto* documentLoader = m_frame.mainFrame().loader().activeDocumentLoader()) {
+        auto& customJavaScriptUserAgent = documentLoader->customJavaScriptUserAgent();
+        if (!customJavaScriptUserAgent.isEmpty())
+            return customJavaScriptUserAgent;
+        auto& customUserAgent = documentLoader->customUserAgent();
+        if (!customUserAgent.isEmpty())
+            return customUserAgent;
+    }
+
+    return m_client.userAgent(url);
+}
     
 String FrameLoader::navigatorPlatform() const
 {

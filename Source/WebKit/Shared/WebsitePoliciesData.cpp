@@ -44,6 +44,7 @@ void WebsitePoliciesData::encode(IPC::Encoder& encoder) const
     encoder << popUpPolicy;
     encoder << websiteDataStoreParameters;
     encoder << customUserAgent;
+    encoder << customJavaScriptUserAgent;
     encoder << customNavigatorPlatform;
 }
 
@@ -89,6 +90,11 @@ Optional<WebsitePoliciesData> WebsitePoliciesData::decode(IPC::Decoder& decoder)
     if (!customUserAgent)
         return WTF::nullopt;
 
+    Optional<String> customJavaScriptUserAgent;
+    decoder >> customJavaScriptUserAgent;
+    if (!customJavaScriptUserAgent)
+        return WTF::nullopt;
+
     Optional<String> customNavigatorPlatform;
     decoder >> customNavigatorPlatform;
     if (!customNavigatorPlatform)
@@ -103,6 +109,7 @@ Optional<WebsitePoliciesData> WebsitePoliciesData::decode(IPC::Decoder& decoder)
         WTFMove(*popUpPolicy),
         WTFMove(*websiteDataStoreParameters),
         WTFMove(*customUserAgent),
+        WTFMove(*customJavaScriptUserAgent),
         WTFMove(*customNavigatorPlatform),
     } };
 }
@@ -111,6 +118,7 @@ void WebsitePoliciesData::applyToDocumentLoader(WebsitePoliciesData&& websitePol
 {
     documentLoader.setCustomHeaderFields(WTFMove(websitePolicies.customHeaderFields));
     documentLoader.setCustomUserAgent(websitePolicies.customUserAgent);
+    documentLoader.setCustomJavaScriptUserAgent(websitePolicies.customJavaScriptUserAgent);
     documentLoader.setCustomNavigatorPlatform(websitePolicies.customNavigatorPlatform);
     documentLoader.setDeviceOrientationEventEnabled(websitePolicies.deviceOrientationEventEnabled);
     

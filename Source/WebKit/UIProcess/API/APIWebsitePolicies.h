@@ -74,7 +74,10 @@ public:
 
     void setCustomUserAgent(const WTF::String& customUserAgent) { m_customUserAgent = customUserAgent; }
     const WTF::String& customUserAgent() const { return m_customUserAgent; }
-    
+
+    void setCustomJavaScriptUserAgent(const WTF::String& customJavaScriptUserAgent) { m_customJavaScriptUserAgent = customJavaScriptUserAgent; }
+    const WTF::String& customJavaScriptUserAgent() const { return m_customJavaScriptUserAgent; }
+
     void setCustomNavigatorPlatform(const WTF::String& customNavigatorPlatform) { m_customNavigatorPlatform = customNavigatorPlatform; }
     const WTF::String& customNavigatorPlatform() const { return m_customNavigatorPlatform; }
 
@@ -89,6 +92,7 @@ private:
     WebKit::WebsitePopUpPolicy m_popUpPolicy { WebKit::WebsitePopUpPolicy::Default };
     RefPtr<WebsiteDataStore> m_websiteDataStore;
     WTF::String m_customUserAgent;
+    WTF::String m_customJavaScriptUserAgent;
     WTF::String m_customNavigatorPlatform;
 };
 

@@ -1046,6 +1046,9 @@ onload = () => {
         fetch("test://www.webkit.org/fetchResource.html");
     }, 0);
 }
+onmessage = (event) => {
+    window.subframeUserAgent = event.data;
+}
 </script>
 )TESTRESOURCE";
 
@@ -1058,6 +1061,7 @@ onload = () => {
     setTimeout(() => {
         fetch("test://www.apple.com/fetchResource.html");
     }, 0);
+    top.postMessage(navigator.userAgent, '*');
 }
 </script>
 )TESTRESOURCE";
@@ -1098,6 +1102,96 @@ TEST(WebKit, WebsitePoliciesCustomUserAgent)
 
     EXPECT_EQ(1U, loadCount);
     loadCount = 0;
+}
+
+@interface CustomJavaScriptUserAgentDelegate : NSObject <WKNavigationDelegate>
+@property (nonatomic) BOOL setCustomUserAgent;
+@end
+
+@implementation CustomJavaScriptUserAgentDelegate
+
+- (void)_webView:(WKWebView *)webView decidePolicyForNavigationAction:(WKNavigationAction *)navigationAction userInfo:(id <NSSecureCoding>)userInfo decisionHandler:(void (^)(WKNavigationActionPolicy, _WKWebsitePolicies *))decisionHandler
+{
+    _WKWebsitePolicies *websitePolicies = [[[_WKWebsitePolicies alloc] init] autorelease];
+    if (navigationAction.targetFrame.mainFrame) {
+        [websitePolicies setCustomJavaScriptUserAgent:@"Foo Custom JavaScript UserAgent"];
+        if (_setCustomUserAgent)
+            [websitePolicies setCustomUserAgent:@"Foo Custom Request UserAgent"];
+    }
+
+    decisionHandler(WKNavigationActionPolicyAllow, websitePolicies);
+}
+
+- (void)webView:(WKWebView *)webView didFinishNavigation:(WKNavigation *)navigation
+{
+    finishedNavigation = true;
+}
+
+@end
+
+TEST(WebKit, WebsitePoliciesCustomJavaScriptUserAgent)
+{
+    auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+
+    auto schemeHandler = adoptNS([[DataMappingSchemeHandler alloc] init]);
+    [schemeHandler addMappingFromURLString:@"test://www.webkit.org/main.html" toData:customUserAgentMainFrameTestBytes];
+    [schemeHandler addMappingFromURLString:@"test://www.apple.com/subframe.html" toData:customUserAgentSubFrameTestBytes];
+    [schemeHandler setTaskHandler:[](id <WKURLSchemeTask> task) {
+        auto* userAgentString = [task.request valueForHTTPHeaderField:@"User-Agent"];
+        EXPECT_TRUE([userAgentString hasPrefix:@"Mozilla/5.0 (Macintosh;"]);
+        EXPECT_TRUE([userAgentString hasSuffix:@"(KHTML, like Gecko)"]);
+    }];
+    [configuration setURLSchemeHandler:schemeHandler.get() forURLScheme:@"test"];
+
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
+
+    auto delegate = adoptNS([[CustomJavaScriptUserAgentDelegate alloc] init]);
+    [webView setNavigationDelegate:delegate.get()];
+
+    loadCount = 0;
+    NSURLRequest *request = [NSURLRequest requestWithURL:[NSURL URLWithString:@"test://www.webkit.org/main.html"]];
+    [webView loadRequest:request];
+
+    TestWebKitAPI::Util::run(&finishedNavigation);
+    finishedNavigation = false;
+
+    while (loadCount != 9U)
+        TestWebKitAPI::Util::spinRunLoop();
+
+    EXPECT_STREQ("Foo Custom JavaScript UserAgent", [[webView stringByEvaluatingJavaScript:@"navigator.userAgent"] UTF8String]);
+    EXPECT_STREQ("Foo Custom JavaScript UserAgent", [[webView stringByEvaluatingJavaScript:@"subframeUserAgent"] UTF8String]);
+}
+
+TEST(WebKit, WebsitePoliciesCustomUserAgents)
+{
+    auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+
+    auto schemeHandler = adoptNS([[DataMappingSchemeHandler alloc] init]);
+    [schemeHandler addMappingFromURLString:@"test://www.webkit.org/main.html" toData:customUserAgentMainFrameTestBytes];
+    [schemeHandler addMappingFromURLString:@"test://www.apple.com/subframe.html" toData:customUserAgentSubFrameTestBytes];
+    [schemeHandler setTaskHandler:[](id <WKURLSchemeTask> task) {
+        EXPECT_STREQ("Foo Custom Request UserAgent", [[task.request valueForHTTPHeaderField:@"User-Agent"] UTF8String]);
+    }];
+    [configuration setURLSchemeHandler:schemeHandler.get() forURLScheme:@"test"];
+
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
+
+    auto delegate = adoptNS([[CustomJavaScriptUserAgentDelegate alloc] init]);
+    delegate.get().setCustomUserAgent = YES;
+    [webView setNavigationDelegate:delegate.get()];
+
+    loadCount = 0;
+    NSURLRequest *request = [NSURLRequest requestWithURL:[NSURL URLWithString:@"test://www.webkit.org/main.html"]];
+    [webView loadRequest:request];
+
+    TestWebKitAPI::Util::run(&finishedNavigation);
+    finishedNavigation = false;
+
+    while (loadCount != 9U)
+        TestWebKitAPI::Util::spinRunLoop();
+
+    EXPECT_STREQ("Foo Custom JavaScript UserAgent", [[webView stringByEvaluatingJavaScript:@"navigator.userAgent"] UTF8String]);
+    EXPECT_STREQ("Foo Custom JavaScript UserAgent", [[webView stringByEvaluatingJavaScript:@"subframeUserAgent"] UTF8String]);
 }
 
 @interface CustomNavigatorPlatformDelegate : NSObject <WKNavigationDelegate> {

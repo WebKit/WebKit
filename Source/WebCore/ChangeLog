@@ -1,3 +1,22 @@
+2019-01-25  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Need a mechanism to override navigator.userAgent
+        https://bugs.webkit.org/show_bug.cgi?id=193762
+        <rdar://problem/47504939>
+
+        Reviewed by Brent Fulgham.
+
+        Added the ability to specify user agent string just for navigator.userAgent via DocumentLoader.
+
+        * loader/DocumentLoader.h:
+        (WebCore::DocumentLoader::setCustomJavaScriptUserAgent):
+        (WebCore::DocumentLoader::customJavaScriptUserAgent const):
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::userAgentForJavaScript const):
+        * loader/FrameLoader.h:
+        * page/Navigator.cpp:
+        (WebCore::Navigator::userAgent const):
+
 2019-01-25  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: provide a way to edit page settings on a remote target
