@@ -83,6 +83,13 @@ namespace WebCore {
 
 using namespace Inspector;
 
+#define FOR_EACH_INSPECTOR_OVERRIDE_SETTING(macro) \
+    macro(AuthorAndUserStylesEnabled) \
+    macro(ImagesEnabled) \
+    macro(NeedsSiteSpecificQuirks) \
+    macro(ScriptEnabled) \
+    macro(WebSecurityEnabled)
+
 static bool decodeBuffer(const char* buffer, unsigned size, const String& textEncodingName, String* result)
 {
     if (buffer) {
@@ -315,6 +322,13 @@ void InspectorPageAgent::disable(ErrorString&)
     setShowPaintRects(unused, false);
     setEmulatedMedia(unused, emptyString());
     setForcedAppearance(unused, emptyString());
+
+#define DISABLE_INSPECTOR_OVERRIDE_SETTING(name) \
+    m_page.settings().set##name##InspectorOverride(WTF::nullopt);
+
+    FOR_EACH_INSPECTOR_OVERRIDE_SETTING(DISABLE_INSPECTOR_OVERRIDE_SETTING)
+
+#undef DISABLE_INSPECTOR_OVERRIDE_SETTING
 }
 
 void InspectorPageAgent::reload(ErrorString&, const bool* optionalReloadFromOrigin, const bool* optionalRevalidateAllResources)
@@ -339,6 +353,37 @@ void InspectorPageAgent::navigate(ErrorString&, const String& url)
     ResourceRequest resourceRequest { frame.document()->completeURL(url) };
     FrameLoadRequest frameLoadRequest { *frame.document(), frame.document()->securityOrigin(), resourceRequest, "_self"_s, LockHistory::No, LockBackForwardList::No, MaybeSendReferrer, AllowNavigationToInvalidURL::No, NewFrameOpenerPolicy::Allow, ShouldOpenExternalURLsPolicy::ShouldNotAllow, InitiatedByMainFrame::Unknown };
     frame.loader().changeLocation(WTFMove(frameLoadRequest));
+}
+
+void InspectorPageAgent::overrideSetting(ErrorString& errorString, const String& settingString, const bool* value)
+{
+    if (settingString.isEmpty()) {
+        errorString = "Preference is empty"_s;
+        return;
+    }
+
+    auto setting = Inspector::Protocol::InspectorHelpers::parseEnumValueFromString<Inspector::Protocol::Page::Setting>(settingString);
+    if (!setting) {
+        errorString = makeString("Unknown setting: "_s, settingString);
+        return;
+    }
+
+    switch (setting.value()) {
+#define CASE_INSPECTOR_OVERRIDE_SETTING(name) \
+    case Inspector::Protocol::Page::Setting::name: { \
+        if (value) \
+            m_page.settings().set##name##InspectorOverride(*value); \
+        else \
+            m_page.settings().set##name##InspectorOverride(WTF::nullopt); \
+        return; \
+    } \
+
+    FOR_EACH_INSPECTOR_OVERRIDE_SETTING(CASE_INSPECTOR_OVERRIDE_SETTING)
+
+#undef CASE_INSPECTOR_OVERRIDE_SETTING
+    }
+
+    ASSERT_NOT_REACHED();
 }
 
 static Inspector::Protocol::Page::CookieSameSitePolicy cookieSameSitePolicyJSON(Cookie::SameSitePolicy policy)

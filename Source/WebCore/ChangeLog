@@ -1,3 +1,34 @@
+2019-01-25  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: provide a way to edit page settings on a remote target
+        https://bugs.webkit.org/show_bug.cgi?id=193813
+        <rdar://problem/47359510>
+
+        Reviewed by Joseph Pecoraro.
+
+        Test: inspector/page/overrideSetting.html
+
+        * page/Settings.yaml:
+        * Scripts/GenerateSettings.rb:
+        * Scripts/SettingsTemplates/Settings.cpp.erb:
+        * Scripts/SettingsTemplates/Settings.h.erb:
+        Add support for an `inspectorOverride` boolean value for each setting that will take
+        precedence over the actual `Setting`'s value when set.
+
+        * inspector/agents/InspectorPageAgent.h:
+        * inspector/agents/InspectorPageAgent.cpp:
+        (WebCore::InspectorPageAgent::disable):
+        (WebCore::InspectorPageAgent::overrideSetting): Added.
+
+        * inspector/InspectorFrontendHost.idl:
+        * inspector/InspectorFrontendHost.h:
+        * inspector/InspectorFrontendHost.cpp:
+        (WebCore::InspectorFrontendHost::isRemote const): Added.
+        * inspector/InspectorFrontendClient.h:
+        (WebCore::InspectorFrontendClient::isRemote const): Added.
+        * inspector/InspectorFrontendClientLocal.h:
+        (WebCore::InspectorFrontendClientLocal::isRemote const): Added.
+
 2019-01-25  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Document::updateMainArticleElementAfterLayout() should be a no-op when no client depends on knowing the main article element

@@ -387,6 +387,33 @@ body[dir=rtl] .go-to-arrow {
     background-position: 10px 10px, 10px 0px, 0 0, 0 10px;
 }
 
+.device-settings-content {
+    padding: 8px;
+
+    --label-input-margin-after: 4px;
+}
+
+.device-settings-content .columns {
+    display: flex;
+}
+
+.device-settings-content .columns > .column {
+    display: flex;
+    flex-direction: column;
+}
+
+.device-settings-content .columns > .column + .column {
+    -webkit-margin-start: 20px;
+}
+
+body[dir=ltr] .device-settings-content label > input {
+    margin-right: var(--label-input-margin-after);
+}
+
+body[dir=rtl] .device-settings-content label > input {
+    margin-left: var(--label-input-margin-after);
+}
+
 @media (prefers-color-scheme: dark) {
     .go-to-arrow {
         filter: invert();

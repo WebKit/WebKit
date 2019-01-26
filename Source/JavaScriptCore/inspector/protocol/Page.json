@@ -4,6 +4,18 @@
     "availability": ["web"],
     "types": [
         {
+            "id": "Setting",
+            "type": "string",
+            "description": "List of settings able to be overridden by WebInspector. Keep this in sync with FOR_EACH_INSPECTOR_OVERRIDE_SETTING.",
+            "enum": [
+                "AuthorAndUserStylesEnabled",
+                "ImagesEnabled",
+                "NeedsSiteSpecificQuirks",
+                "ScriptEnabled",
+                "WebSecurityEnabled"
+            ]
+        },
+        {
             "id": "ResourceType",
             "type": "string",
             "enum": ["Document", "Stylesheet", "Image", "Font", "Script", "XHR", "Fetch", "Ping", "Beacon", "WebSocket", "Other"],
@@ -115,6 +127,14 @@
             "description": "Navigates current page to the given URL.",
             "parameters": [
                 { "name": "url", "type": "string", "description": "URL to navigate the page to." }
+            ]
+        },
+        {
+            "name": "overrideSetting",
+            "description": "Allows the frontend to override the inspected page's settings.",
+            "parameters": [
+                { "name": "setting", "$ref": "Setting" },
+                { "name": "value", "type": "boolean", "optional": true, "description": "Value to override the setting with. If this value is not provided, the override is removed. Overrides are removed when Web Inspector closes/disconnects." }
             ]
         },
         {

@@ -71,6 +71,17 @@ Settings::~Settings()
 {
 }
 
+<%- for @setting in @unconditionalSettingWithComplexGetters do -%>
+<%= @setting.parameterType %> Settings::<%= @setting.getterFunctionName %>() const
+{
+<%- if @setting.hasInspectorOverride? -%>
+    if (m_<%= @setting.name %>InspectorOverride)
+        return m_<%= @setting.name %>InspectorOverride.value();
+<%- end -%>
+    return m_<%= @setting.name %>;
+}
+
+<%- end -%>
 <%- for @setting in @unconditionalSettingWithComplexSetters do -%>
 void Settings::<%= @setting.setterFunctionName %>(<%= @setting.parameterType %> <%= @setting.name %>)
 {
@@ -82,8 +93,18 @@ void Settings::<%= @setting.setterFunctionName %>(<%= @setting.parameterType %> 
 
 <%- end -%>
 <%- for @conditional in @conditionals do -%>
-<%- if @conditional.settingsWithComplexSetters.length != 0 -%>
+<%- if @conditional.settingsWithComplexGetters.length != 0 or @conditional.settingsWithComplexSetters.length != 0-%>
 #if ENABLE(<%= @conditional.condition %>)
+<%- for @setting in @conditional.settingsWithComplexGetters do -%>
+<%= @setting.parameterType %> Settings::<%= @setting.getterFunctionName %>() const
+{
+<%- if @setting.hasInspectorOverride? -%>
+    if (m_<%= @setting.name %>InspectorOverride)
+        return m_<%= @setting.name %>InspectorOverride.value();
+<%- end -%>
+    return m_<%= @setting.name %>;
+}
+<%- end -%>
 <%- for @setting in @conditional.settingsWithComplexSetters -%>
 void Settings::<%= @setting.setterFunctionName %>(<%= @setting.parameterType %> <%= @setting.name %>)
 {
@@ -94,6 +115,18 @@ void Settings::<%= @setting.setterFunctionName %>(<%= @setting.parameterType %> 
 }
 <%- end -%>
 #endif
+
+<%- end -%>
+<%- end -%>
+<%- for @setting in @inspectorOverrideSettings do -%>
+<%- if @setting.hasComplexSetter? -%>
+void Settings::<%= @setting.setterFunctionName %>InspectorOverride(Optional<<%= @setting.parameterType %>> <%= @setting.name %>InspectorOverride)
+{
+    if (m_<%= @setting.name %>InspectorOverride == <%= @setting.name %>InspectorOverride)
+        return;
+    m_<%= @setting.name %>InspectorOverride = <%= @setting.name %>InspectorOverride;
+    <%= @setting.onChange %>();
+}
 
 <%- end -%>
 <%- end -%>

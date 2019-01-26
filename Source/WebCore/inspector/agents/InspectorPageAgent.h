@@ -90,6 +90,7 @@ public:
     void disable(ErrorString&) final;
     void reload(ErrorString&, const bool* optionalReloadFromOrigin, const bool* optionalRevalidateAllResources) final;
     void navigate(ErrorString&, const String& url) final;
+    void overrideSetting(ErrorString&, const String& setting, const bool* value) final;
     void getCookies(ErrorString&, RefPtr<JSON::ArrayOf<Inspector::Protocol::Page::Cookie>>& cookies) final;
     void deleteCookie(ErrorString&, const String& cookieName, const String& url) final;
     void getResourceTree(ErrorString&, RefPtr<Inspector::Protocol::Page::FrameResourceTree>&) final;

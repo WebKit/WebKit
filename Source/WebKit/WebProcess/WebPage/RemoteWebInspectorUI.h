@@ -58,6 +58,7 @@ public:
     void startWindowDrag() override;
     void moveWindowBy(float x, float y) override;
 
+    bool isRemote() const final { return true; }
     String localizedStringsURL() override;
     String backendCommandsURL() override { return m_backendCommandsURL; }
     String debuggableType() override { return m_debuggableType; }

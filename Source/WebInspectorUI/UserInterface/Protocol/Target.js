@@ -73,11 +73,7 @@ WI.Target = class Target extends WI.Object
         }
 
         // Non-manager specific initialization.
-        // COMPATIBILITY (iOS 8): Page.setShowPaintRects did not exist.
-        if (this.PageAgent) {
-            if (this.PageAgent.setShowPaintRects && WI.settings.showPaintRects.value)
-                this.PageAgent.setShowPaintRects(true);
-        }
+        WI.initializeTarget(this);
 
         // Intentionally defer ConsoleAgent initialization to the end. We do this so that any
         // previous initialization messages will have their responses arrive before a stream

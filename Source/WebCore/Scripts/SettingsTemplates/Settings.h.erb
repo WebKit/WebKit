@@ -41,7 +41,11 @@ public:
     ~Settings();
 
 <%- for @setting in @unconditionalSetting do -%>
+    <%- if @setting.hasComplexGetter? -%>
+    WEBCORE_EXPORT <%= @setting.parameterType %> <%= @setting.getterFunctionName %>() const;
+    <%- else -%>
     <%= @setting.parameterType %> <%= @setting.getterFunctionName %>() const { return m_<%= @setting.name %>; } 
+    <%- end -%>
     <%- if @setting.hasComplexSetter? -%>
     WEBCORE_EXPORT void <%= @setting.setterFunctionName %>(<%= @setting.parameterType %>);
     <%- else -%>
@@ -52,7 +56,11 @@ public:
 <%- for @conditional in @conditionals do -%>
 #if ENABLE(<%= @conditional.condition %>)
 <%- for @setting in @conditional.settings do -%>
+    <%- if @setting.hasComplexGetter? -%>
+    WEBCORE_EXPORT <%= @setting.parameterType %> <%= @setting.getterFunctionName %>() const;
+    <%- else -%>
     <%= @setting.parameterType %> <%= @setting.getterFunctionName %>() const { return m_<%= @setting.name %>; } 
+    <%- end -%>
     <%- if @setting.hasComplexSetter? -%>
     WEBCORE_EXPORT void <%= @setting.setterFunctionName %>(<%= @setting.parameterType %>);
     <%- else -%>
@@ -62,9 +70,20 @@ public:
 #endif
 
 <%- end -%>
+<%- for @setting in @inspectorOverrideSettings do -%>
+    <%- if @setting.hasComplexSetter? -%>
+    WEBCORE_EXPORT void <%= @setting.setterFunctionName %>InspectorOverride(Optional<<%= @setting.parameterType %>>);
+    <%- else -%>
+    void <%= @setting.setterFunctionName %>InspectorOverride(Optional<<%= @setting.parameterType %>> <%= @setting.name %>InspectorOverride) { m_<%= @setting.name %>InspectorOverride = <%= @setting.name %>InspectorOverride; }
+    <%- end -%>
+<%- end -%>
 
 private:
     explicit Settings(Page*);
+
+<%- for @setting in @inspectorOverrideSettings do -%>
+    Optional<<%= @setting.type %>> m_<%= @setting.name %>InspectorOverride;
+<%- end -%>
 
 <%- for @setting in @unconditionalNonBoolSetting do -%>
     <%= @setting.type %> m_<%= @setting.name %>;

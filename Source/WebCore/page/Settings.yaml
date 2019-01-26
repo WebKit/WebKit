@@ -128,6 +128,7 @@ textAreasAreResizable:
 authorAndUserStylesEnabled:
   initial: true
   onChange: setNeedsRecalcStyleInAllFrames
+  inspectorOverride: true
 userStyleSheetLocation:
   type: URL
   onChange: userStyleSheetLocationChanged
@@ -179,6 +180,7 @@ scriptMarkupEnabled:
   initial: true
 needsSiteSpecificQuirks:
   initial: false
+  inspectorOverride: true
 domTimersThrottlingEnabled:
   initial: true
 webArchiveDebugModeEnabled:
@@ -385,6 +387,7 @@ asyncOverflowScrollingEnabled:
 
 webSecurityEnabled:
   initial: true
+  inspectorOverride: true
 spatialNavigationEnabled:
   initial: false
 
@@ -669,9 +672,11 @@ imagesEnabled:
   initial: true
   getter: areImagesEnabled
   onChange: imagesEnabledChanged
+  inspectorOverride: true
 scriptEnabled:
   initial: false
   getter: isScriptEnabled
+  inspectorOverride: true
 pluginsEnabled:
   initial: false
   getter: arePluginsEnabled

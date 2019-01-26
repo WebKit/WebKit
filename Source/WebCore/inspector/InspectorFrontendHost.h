@@ -75,6 +75,7 @@ public:
     void startWindowDrag();
     void moveWindowBy(float x, float y) const;
 
+    bool isRemote() const;
     String localizedStringsURL();
     String backendCommandsURL();
     String debuggableType();

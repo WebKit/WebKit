@@ -1,3 +1,16 @@
+2019-01-25  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: provide a way to edit page settings on a remote target
+        https://bugs.webkit.org/show_bug.cgi?id=193813
+        <rdar://problem/47359510>
+
+        Reviewed by Joseph Pecoraro.
+
+        * WebProcess/WebPage/WebInspectorUI.h:
+        (WebKit::WebInspectorUI::isRemote() const): Added.
+        * WebProcess/WebPage/RemoteWebInspectorUI.h:
+        (WebKit::RemoteWebInspectorUI::isRemote() const): Added.
+
 2019-01-25  Dean Jackson  <dino@apple.com>
 
         REGRESSION: Some USDz from 3rd party websites don't go directly to AR QL

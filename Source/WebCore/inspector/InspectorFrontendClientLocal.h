@@ -81,6 +81,7 @@ public:
     WEBCORE_EXPORT void sendMessageToBackend(const String& message) final;
 
     WEBCORE_EXPORT bool isUnderTest() final;
+    bool isRemote() const final { return false; }
     WEBCORE_EXPORT unsigned inspectionLevel() const final;
 
     WEBCORE_EXPORT bool canAttachWindow();

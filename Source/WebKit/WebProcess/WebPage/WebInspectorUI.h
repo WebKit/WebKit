@@ -88,6 +88,7 @@ public:
     void startWindowDrag() override;
     void moveWindowBy(float x, float y) override;
 
+    bool isRemote() const final { return false; }
     String localizedStringsURL() override;
 
     void bringToFront() override;

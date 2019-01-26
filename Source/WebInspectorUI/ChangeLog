@@ -1,5 +1,44 @@
 2019-01-25  Devin Rousso  <drousso@apple.com>
 
+        Web Inspector: provide a way to edit page settings on a remote target
+        https://bugs.webkit.org/show_bug.cgi?id=193813
+        <rdar://problem/47359510>
+
+        Reviewed by Joseph Pecoraro.
+
+        Add toolbar button that shows a popover with the target's (page's) settings when clicked.
+
+        * UserInterface/Base/Main.js:
+        (WI.loaded):
+        (WI.contentLoaded):
+        (WI.initializeTarget): Added.
+        (WI._handleDeviceSettingsToolbarButtonClicked): Added.
+        (WI.didDismissPopover): Added.
+        * UserInterface/Views/Main.css:
+        (.device-settings-content): Added.
+        (.device-settings-content .columns): Added.
+        (.device-settings-content .columns > .column): Added.
+        (.device-settings-content .columns > .column + .column): Added.
+        (body[dir=ltr] .device-settings-content label > input): Added.
+        (body[dir=rtl] .device-settings-content label > input): Added.
+
+        * UserInterface/Views/Popover.js:
+        (WI.Popover.prototype._update.area):
+        (WI.Popover.prototype._update):
+        (WI.Popover.prototype._drawBackground):
+        (WI.Popover.prototype._bestMetricsForEdge):
+        (WI.Popover.prototype._drawFrame):
+        If the best area is negative, treat it as the worst area.
+        Allow areas to be clamped so long as the clamped edge is not the preferred edge.
+
+        * UserInterface/Base/Test.js:
+        (WI.initializeTarget): Added.
+
+        * UserInterface/Images/Device.svg: Added.
+        * Localizations/en.lproj/localizedStrings.js:
+
+2019-01-25  Devin Rousso  <drousso@apple.com>
+
         Web Inspector: Audit: unable to import audits
         https://bugs.webkit.org/show_bug.cgi?id=193861
 

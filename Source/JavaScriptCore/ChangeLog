@@ -1,3 +1,14 @@
+2019-01-25  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: provide a way to edit page settings on a remote target
+        https://bugs.webkit.org/show_bug.cgi?id=193813
+        <rdar://problem/47359510>
+
+        Reviewed by Joseph Pecoraro.
+
+        * inspector/protocol/Page.json:
+        Add `overrideSetting` command with supporting `Setting` enum type.
+
 2019-01-25  Keith Rollin  <krollin@apple.com>
 
         Update Xcode projects with "Check .xcfilelists" build phase

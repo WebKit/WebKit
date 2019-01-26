@@ -254,6 +254,11 @@ void InspectorFrontendHost::moveWindowBy(float x, float y) const
         m_client->moveWindowBy(x, y);
 }
 
+bool InspectorFrontendHost::isRemote() const
+{
+    return m_client ? m_client->isRemote() : false;
+}
+
 String InspectorFrontendHost::localizedStringsURL()
 {
     return m_client ? m_client->localizedStringsURL() : String();

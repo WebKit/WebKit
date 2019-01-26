@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script>
+
+function printStyleProperty(property) {
+    let computedStyle = window.getComputedStyle(document.body);
+    let propertyValue = computedStyle.getPropertyValue(property);
+    TestPage.addResult(`Property "${property}" equals "${propertyValue}"`);
+}
+
+function test()
+{
+    let suite = InspectorTest.createAsyncSuite("Page.overrideSetting");
+
+    suite.addTestCase({
+        name: "Page.overrideSetting.AuthorAndUserStylesEnabled",
+        description: "Test that author/user styles aren't applied when that setting is overridden.",
+        async test() {
+            await InspectorTest.evaluateInPage(`printStyleProperty("color")`);
+
+            InspectorTest.log("Overriding AuthorAndUserStylesEnabled to false...");
+            await PageAgent.overrideSetting(PageAgent.Setting.AuthorAndUserStylesEnabled, false);
+
+            await InspectorTest.evaluateInPage(`printStyleProperty("color")`);
+
+            InspectorTest.log("Removing AuthorAndUserStylesEnabled override...");
+            await PageAgent.overrideSetting(PageAgent.Setting.AuthorAndUserStylesEnabled);
+
+            await InspectorTest.evaluateInPage(`printStyleProperty("color")`);
+        },
+    });
+
+    suite.runTestCasesAndFinish();
+}
+
+</script>
+</head>
+<body onload="runTest()">
+    <p>Tests for the Page.overrideSetting command.</p>
+
+    <style>
+    body {
+        color: red;
+    }
+    </style>
+</body>
+</html>

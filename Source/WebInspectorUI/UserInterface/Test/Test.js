@@ -151,6 +151,10 @@ WI.performOneTimeFrontendInitializationsUsingTarget = function(target)
     }
 };
 
+WI.initializeTarget = function(target)
+{
+};
+
 Object.defineProperty(WI, "mainTarget",
 {
     get() { return WI.pageTarget || WI.backendTarget; }

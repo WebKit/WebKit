@@ -1,0 +1,11 @@
+Tests for the Page.overrideSetting command.
+
+
+== Running test suite: Page.overrideSetting
+-- Running test case: Page.overrideSetting.AuthorAndUserStylesEnabled
+Property "color" equals "rgb(255, 0, 0)"
+Overriding AuthorAndUserStylesEnabled to false...
+Property "color" equals "rgb(0, 0, 0)"
+Removing AuthorAndUserStylesEnabled override...
+Property "color" equals "rgb(255, 0, 0)"
+
