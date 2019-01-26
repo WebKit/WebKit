@@ -103,8 +103,10 @@ static LayoutUnit contentHeightForFormattingContextRoot(const LayoutState& layou
     if (!is<Container>(layoutBox) || !downcast<Container>(layoutBox).hasInFlowOrFloatingChild())
         return 0;
 
-    LayoutUnit top;
-    LayoutUnit bottom;
+    auto& displayBox = layoutState.displayBoxForLayoutBox(layoutBox);
+    auto borderAndPaddingTop = displayBox.borderTop() + displayBox.paddingTop().valueOr(0);
+    auto top = borderAndPaddingTop;
+    auto bottom = borderAndPaddingTop;
     auto& formattingRootContainer = downcast<Container>(layoutBox);
     if (formattingRootContainer.establishesInlineFormattingContext()) {
         // This is temp and will be replaced by the correct display box once inline runs move over to the display tree.

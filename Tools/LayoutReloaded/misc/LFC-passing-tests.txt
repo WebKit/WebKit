@@ -81,6 +81,7 @@ fast/block/block-only/out-of-flow-with-containing-block-border-padding.html
 fast/block/block-only/non-auto-top-bottom-left-right-widht-height-out-of-flow.html
 fast/block/block-only/non-auto-top-bottom-height-with-margins.html
 fast/block/block-only/non-auto-top-bottom-height-with-auto-margins.html
+fast/block/block-only/abs-pos-with-border-padding-and-float-child-expected.html
 fast/block/basic/002.html
 fast/block/basic/003.html
 fast/block/basic/004.html
