@@ -162,7 +162,7 @@ the public iOS SDK. See <https://webkit.org/b/179167>. */
 #endif
 
 #if !defined(ENABLE_DOWNLOAD_ATTRIBUTE)
-#define ENABLE_DOWNLOAD_ATTRIBUTE 0
+#define ENABLE_DOWNLOAD_ATTRIBUTE 1
 #endif
 
 #if !defined(ENABLE_WKLEGACYPDFVIEW)

@@ -1,7 +1,9 @@
-<!DOCTYPE html>
+<!DOCTYPE html><!-- webkit-test-runner [ useFlexibleViewport=true ] -->
 <html>
 <head>
+<meta name="viewport" content="width=device-width">
 <script src="../../../resources/js-test-pre.js"></script>
+<script src="/js-test-resources/ui-helper.js"></script>
 <script>
     if (window.testRunner)
         testRunner.waitUntilDone();
@@ -20,9 +22,7 @@ Tests that the download attribute is ignored if
         if (!window.eventSender)
             return;
 
-        eventSender.mouseMoveTo(elmt.offsetLeft + 5, elmt.offsetTop + 5);
-        eventSender.mouseDown();
-        eventSender.mouseUp();
+        UIHelper.activateAt(elmt.offsetLeft + 5, elmt.offsetTop + 5);
     }
 
     function runTest()

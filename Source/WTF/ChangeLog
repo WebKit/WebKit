@@ -1,3 +1,15 @@
+2019-01-25  Chris Dumez  <cdumez@apple.com>
+
+        [iOS] Add support for the download attribute
+        https://bugs.webkit.org/show_bug.cgi?id=167341
+        <rdar://problem/30296281>
+
+        Reviewed by Geoffrey Garen.
+
+        Turn on HTML download attribute support on iOS.
+
+        * wtf/FeatureDefines.h:
+
 2019-01-25  David Kilzer  <ddkilzer@apple.com>
 
         Move soft-linking of Lookup.framework out of LookupSPI.h

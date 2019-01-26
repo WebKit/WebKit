@@ -6843,38 +6843,38 @@ PASS area.target: IDL set to "\0"
 PASS area.target: IDL set to null 
 PASS area.target: IDL set to object "test-toString" 
 PASS area.target: IDL set to object "test-valueOf" 
-FAIL area.download: typeof IDL attribute assert_equals: expected "string" but got "undefined"
-FAIL area.download: IDL get with DOM attribute unset assert_equals: expected (string) "" but got (undefined) undefined
-FAIL area.download: setAttribute() to "" assert_equals: IDL get expected (string) "" but got (undefined) undefined
-FAIL area.download: setAttribute() to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0f \x10\x11\x12\x13\x14\x15\x16\x17 \x18\x19\x1a\x1b\x1c\x1d\x1e\x1f  foo " assert_equals: IDL get expected (string) " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0f \x10\x11\x12\x13\x14\x15\x16\x17 \x18\x19\x1a\x1b\x1c\x1d\x1e\x1f  foo " but got (undefined) undefined
-FAIL area.download: setAttribute() to undefined assert_equals: IDL get expected (string) "undefined" but got (undefined) undefined
-FAIL area.download: setAttribute() to 7 assert_equals: IDL get expected (string) "7" but got (undefined) undefined
-FAIL area.download: setAttribute() to 1.5 assert_equals: IDL get expected (string) "1.5" but got (undefined) undefined
-FAIL area.download: setAttribute() to true assert_equals: IDL get expected (string) "true" but got (undefined) undefined
-FAIL area.download: setAttribute() to false assert_equals: IDL get expected (string) "false" but got (undefined) undefined
-FAIL area.download: setAttribute() to object "[object Object]" assert_equals: IDL get expected (string) "[object Object]" but got (undefined) undefined
-FAIL area.download: setAttribute() to NaN assert_equals: IDL get expected (string) "NaN" but got (undefined) undefined
-FAIL area.download: setAttribute() to Infinity assert_equals: IDL get expected (string) "Infinity" but got (undefined) undefined
-FAIL area.download: setAttribute() to -Infinity assert_equals: IDL get expected (string) "-Infinity" but got (undefined) undefined
-FAIL area.download: setAttribute() to "\0" assert_equals: IDL get expected (string) "\0" but got (undefined) undefined
-FAIL area.download: setAttribute() to null assert_equals: IDL get expected (string) "null" but got (undefined) undefined
-FAIL area.download: setAttribute() to object "test-toString" assert_equals: IDL get expected (string) "test-toString" but got (undefined) undefined
-FAIL area.download: setAttribute() to object "test-valueOf" assert_equals: IDL get expected (string) "test-valueOf" but got (undefined) undefined
-FAIL area.download: IDL set to "" assert_equals: getAttribute() expected "" but got "test-valueOf"
-FAIL area.download: IDL set to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0f \x10\x11\x12\x13\x14\x15\x16\x17 \x18\x19\x1a\x1b\x1c\x1d\x1e\x1f  foo " assert_equals: getAttribute() expected " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0f \x10\x11\x12\x13\x14\x15\x16\x17 \x18\x19\x1a\x1b\x1c\x1d\x1e\x1f  foo " but got "test-valueOf"
-FAIL area.download: IDL set to undefined assert_equals: getAttribute() expected "undefined" but got "test-valueOf"
-FAIL area.download: IDL set to 7 assert_equals: getAttribute() expected "7" but got "test-valueOf"
-FAIL area.download: IDL set to 1.5 assert_equals: getAttribute() expected "1.5" but got "test-valueOf"
-FAIL area.download: IDL set to true assert_equals: getAttribute() expected "true" but got "test-valueOf"
-FAIL area.download: IDL set to false assert_equals: getAttribute() expected "false" but got "test-valueOf"
-FAIL area.download: IDL set to object "[object Object]" assert_equals: getAttribute() expected "[object Object]" but got "test-valueOf"
-FAIL area.download: IDL set to NaN assert_equals: getAttribute() expected "NaN" but got "test-valueOf"
-FAIL area.download: IDL set to Infinity assert_equals: getAttribute() expected "Infinity" but got "test-valueOf"
-FAIL area.download: IDL set to -Infinity assert_equals: getAttribute() expected "-Infinity" but got "test-valueOf"
-FAIL area.download: IDL set to "\0" assert_equals: getAttribute() expected "\0" but got "test-valueOf"
-FAIL area.download: IDL set to null assert_equals: getAttribute() expected "null" but got "test-valueOf"
-FAIL area.download: IDL set to object "test-toString" assert_equals: getAttribute() expected "test-toString" but got "test-valueOf"
-FAIL area.download: IDL set to object "test-valueOf" assert_equals: IDL get expected (string) "test-valueOf" but got (object) object "test-valueOf"
+PASS area.download: typeof IDL attribute 
+PASS area.download: IDL get with DOM attribute unset 
+PASS area.download: setAttribute() to "" 
+PASS area.download: setAttribute() to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0f \x10\x11\x12\x13\x14\x15\x16\x17 \x18\x19\x1a\x1b\x1c\x1d\x1e\x1f  foo " 
+PASS area.download: setAttribute() to undefined 
+PASS area.download: setAttribute() to 7 
+PASS area.download: setAttribute() to 1.5 
+PASS area.download: setAttribute() to true 
+PASS area.download: setAttribute() to false 
+PASS area.download: setAttribute() to object "[object Object]" 
+PASS area.download: setAttribute() to NaN 
+PASS area.download: setAttribute() to Infinity 
+PASS area.download: setAttribute() to -Infinity 
+PASS area.download: setAttribute() to "\0" 
+PASS area.download: setAttribute() to null 
+PASS area.download: setAttribute() to object "test-toString" 
+PASS area.download: setAttribute() to object "test-valueOf" 
+PASS area.download: IDL set to "" 
+PASS area.download: IDL set to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0f \x10\x11\x12\x13\x14\x15\x16\x17 \x18\x19\x1a\x1b\x1c\x1d\x1e\x1f  foo " 
+PASS area.download: IDL set to undefined 
+PASS area.download: IDL set to 7 
+PASS area.download: IDL set to 1.5 
+PASS area.download: IDL set to true 
+PASS area.download: IDL set to false 
+PASS area.download: IDL set to object "[object Object]" 
+PASS area.download: IDL set to NaN 
+PASS area.download: IDL set to Infinity 
+PASS area.download: IDL set to -Infinity 
+PASS area.download: IDL set to "\0" 
+PASS area.download: IDL set to null 
+PASS area.download: IDL set to object "test-toString" 
+PASS area.download: IDL set to object "test-valueOf" 
 PASS area.ping: typeof IDL attribute 
 PASS area.ping: IDL get with DOM attribute unset 
 PASS area.ping: setAttribute() to "" 

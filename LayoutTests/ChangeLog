@@ -1,3 +1,42 @@
+2019-01-25  Chris Dumez  <cdumez@apple.com>
+
+        [iOS] Add support for the download attribute
+        https://bugs.webkit.org/show_bug.cgi?id=167341
+        <rdar://problem/30296281>
+
+        Reviewed by Geoffrey Garen.
+
+        Make download attribute layout tests iOS-friendly and unskip them now that they pass.
+
+        * fast/dom/HTMLAnchorElement/anchor-download-unset.html:
+        * fast/dom/HTMLAnchorElement/anchor-download-user-triggered-synthetic-click.html:
+        * fast/dom/HTMLAnchorElement/anchor-file-blob-convert-to-download-async-delegate.html:
+        * fast/dom/HTMLAnchorElement/anchor-file-blob-convert-to-download.html:
+        * fast/dom/HTMLAnchorElement/anchor-file-blob-download-blank-base-target-popup-not-allowed.html:
+        * fast/dom/HTMLAnchorElement/anchor-file-blob-download-blank-target-popup-not-allowed.html:
+        * fast/dom/HTMLAnchorElement/anchor-file-blob-download-blank-target.html:
+        * fast/dom/HTMLAnchorElement/anchor-file-blob-download-includes-backslash.html:
+        * fast/dom/HTMLAnchorElement/anchor-file-blob-download-includes-doublequote.html:
+        * fast/dom/HTMLAnchorElement/anchor-file-blob-download-includes-slashes.html:
+        * fast/dom/HTMLAnchorElement/anchor-file-blob-download-includes-unicode.html:
+        * fast/dom/HTMLAnchorElement/anchor-file-blob-download-no-extension.html:
+        * fast/dom/HTMLAnchorElement/anchor-file-blob-download.html:
+        * fast/dom/HTMLAnchorElement/anchor-nodownload-set.html:
+        * fast/dom/HTMLAnchorElement/anchor-nodownload.html:
+        * http/tests/download/anchor-download-attribute-content-disposition.html:
+        * http/tests/download/anchor-download-no-extension.html:
+        * http/tests/download/anchor-download-no-value.html:
+        * http/tests/download/anchor-download-redirect.html:
+        * http/tests/download/area-download.html:
+        * http/tests/download/convert-cached-load-to-download.html:
+        * http/tests/security/anchor-download-allow-blob.html:
+        * http/tests/security/anchor-download-allow-data.html:
+        * http/tests/security/anchor-download-allow-sameorigin.html:
+        * http/tests/security/anchor-download-block-crossorigin-expected.txt:
+        * http/tests/security/anchor-download-block-crossorigin.html:
+        * platform/ios-wk2/TestExpectations:
+        * platform/ios-wk2/http/tests/security/anchor-download-block-crossorigin-expected.txt: Copied from LayoutTests/http/tests/security/anchor-download-block-crossorigin-expected.txt.
+
 2019-01-25  Shawn Roberts  <sroberts@apple.com>
 
         [ iOS Simulator Release ] Layout Test fast/animation/request-animation-frame.html is a flaky failure.

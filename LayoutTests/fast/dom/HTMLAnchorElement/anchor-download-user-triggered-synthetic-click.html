@@ -1,6 +1,8 @@
-<!DOCTYPE html>
+<!DOCTYPE html><!-- webkit-test-runner [ useFlexibleViewport=true ] -->
 <html>
 <head>
+<meta name="viewport" content="width=device-width">
+<script src="../../../resources/ui-helper.js"></script>
 <script>
 if (window.testRunner) {
   testRunner.dumpAsText();
@@ -21,9 +23,7 @@ function userClick(element)
         alert('Click the button to run the test.');
         return;
     }
-    eventSender.mouseMoveTo(element.offsetLeft + 5, element.offsetTop + 5);
-    eventSender.mouseDown();
-    eventSender.mouseUp();
+    UIHelper.activateAt(element.offsetLeft + 5, element.offsetTop + 5);
 }
 
 function runTest()
