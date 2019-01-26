@@ -1,0 +1,96 @@
+
+
+(Frame scrolling node
+  (scrollable area size 800 600)
+  (contents size 800 657)
+  (scrollable area parameters 
+    (horizontal scroll elasticity 1)
+    (vertical scroll elasticity 1)
+    (horizontal scrollbar mode 0)
+    (vertical scrollbar mode 0))
+  (visual viewport enabled 1)
+  (layout viewport at (0,0) size 800x600)
+  (min layout viewport origin (0,0))
+  (max layout viewport origin (0,57))
+  (behavior for fixed 0)
+  (children 1
+    (Frame scrolling node
+      (scrollable area size 480 400)
+      (contents size 480 1016)
+      (requested scroll position 0 120)
+      (requested scroll position represents programmatic scroll 1)
+      (scrollable area parameters 
+        (horizontal scroll elasticity 1)
+        (vertical scroll elasticity 1)
+        (horizontal scrollbar mode 0)
+        (vertical scrollbar mode 0))
+      (visual viewport enabled 1)
+      (layout viewport at (0,120) size 480x400)
+      (min layout viewport origin (0,0))
+      (max layout viewport origin (0,616))
+      (behavior for fixed 0)
+      (children 1
+        (Fixed node
+          (anchor edges: AnchorEdgeLeft AnchorEdgeTop)
+          (viewport rect at last layout at (0,120) size 480x400)
+          (layer position at last layout (10,130))
+        )
+      )
+    )
+  )
+)
+(GraphicsLayer
+  (anchor 0.00 0.00)
+  (bounds 800.00 657.00)
+  (children 1
+    (GraphicsLayer
+      (bounds 800.00 657.00)
+      (contentsOpaque 1)
+      (children 1
+        (GraphicsLayer
+          (offsetFromRenderer width=-10 height=-10)
+          (position 98.00 98.00)
+          (bounds 504.00 424.00)
+          (drawsContent 1)
+          (children 1
+            (GraphicsLayer
+              (position 12.00 12.00)
+              (children 1
+                (GraphicsLayer
+                  (anchor 0.00 0.00)
+                  (bounds 480.00 400.00)
+                  (children 1
+                    (GraphicsLayer
+                      (position 0.00 -120.00)
+                      (children 1
+                        (GraphicsLayer
+                          (anchor 0.00 0.00)
+                          (bounds 480.00 1016.00)
+                          (children 1
+                            (GraphicsLayer
+                              (bounds 480.00 1016.00)
+                              (drawsContent 1)
+                              (children 1
+                                (GraphicsLayer
+                                  (position 10.00 130.00)
+                                  (bounds 470.00 100.00)
+                                  (contentsOpaque 1)
+                                  (drawsContent 1)
+                                )
+                              )
+                            )
+                          )
+                        )
+                      )
+                    )
+                  )
+                )
+              )
+            )
+          )
+        )
+      )
+    )
+  )
+)
+

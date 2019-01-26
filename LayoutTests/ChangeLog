@@ -1,3 +1,18 @@
+2019-01-26  Simon Fraser  <simon.fraser@apple.com>
+
+        Move scrolling-tree/fixed-inside-frame.html into scrolling tree tests
+        https://bugs.webkit.org/show_bug.cgi?id=193871
+
+        Reviewed by Zalan Bujtas.
+
+        Move another test into scrollingcoordinator/scrolling-tree, and now that it runs on iOS,
+        add iOS results.
+
+        * platform/ios-wk2/scrollingcoordinator/scrolling-tree/fixed-inside-frame-expected.txt: Copied from LayoutTests/tiled-drawing/scrolling/frames/fixed-inside-frame-expected.txt.
+        * scrollingcoordinator/scrolling-tree/fixed-inside-frame-expected.txt: Renamed from LayoutTests/tiled-drawing/scrolling/frames/fixed-inside-frame-expected.txt.
+        * scrollingcoordinator/scrolling-tree/fixed-inside-frame.html: Renamed from LayoutTests/tiled-drawing/scrolling/frames/fixed-inside-frame.html.
+        * scrollingcoordinator/scrolling-tree/resources/autoscrolling-frame-with-fixed.html: Renamed from LayoutTests/tiled-drawing/scrolling/frames/resources/autoscrolling-frame-with-fixed.html.
+
 2019-01-26  Zalan Bujtas  <zalan@apple.com>
 
         [LFC] The default values for top/bottom in contentHeightForFormattingContextRoot should not be 0.
