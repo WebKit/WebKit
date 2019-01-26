@@ -1,3 +1,14 @@
+2019-01-26  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: provide a way to edit the user agent of a remote target
+        https://bugs.webkit.org/show_bug.cgi?id=193862
+        <rdar://problem/47359292>
+
+        Reviewed by Joseph Pecoraro.
+
+        * inspector/page/overrideUserAgent.html: Added.
+        * inspector/page/overrideUserAgent-expected.txt: Added.
+
 2019-01-26  Simon Fraser  <simon.fraser@apple.com>
 
         Move scrolling-tree/fixed-inside-frame.html into scrolling tree tests

@@ -568,6 +568,12 @@ void InspectorInstrumentation::didScheduleStyleRecalculationImpl(InstrumentingAg
         networkAgent->didScheduleStyleRecalculation(document);
 }
 
+void InspectorInstrumentation::applyUserAgentOverrideImpl(InstrumentingAgents& instrumentingAgents, String& userAgent)
+{
+    if (InspectorPageAgent* pageAgent = instrumentingAgents.inspectorPageAgent())
+        pageAgent->applyUserAgentOverride(userAgent);
+}
+
 void InspectorInstrumentation::applyEmulatedMediaImpl(InstrumentingAgents& instrumentingAgents, String& media)
 {
     if (InspectorPageAgent* pageAgent = instrumentingAgents.inspectorPageAgent())

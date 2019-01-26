@@ -173,6 +173,7 @@ public:
     static InspectorInstrumentationCookie willRecalculateStyle(Document&);
     static void didRecalculateStyle(const InspectorInstrumentationCookie&);
     static void didScheduleStyleRecalculation(Document&);
+    static void applyUserAgentOverride(Frame&, String&);
     static void applyEmulatedMedia(Frame&, String&);
 
     static void willSendRequest(Frame*, unsigned long identifier, DocumentLoader*, ResourceRequest&, const ResourceResponse& redirectResponse);
@@ -365,6 +366,7 @@ private:
     static InspectorInstrumentationCookie willRecalculateStyleImpl(InstrumentingAgents&, Document&);
     static void didRecalculateStyleImpl(const InspectorInstrumentationCookie&);
     static void didScheduleStyleRecalculationImpl(InstrumentingAgents&, Document&);
+    static void applyUserAgentOverrideImpl(InstrumentingAgents&, String&);
     static void applyEmulatedMediaImpl(InstrumentingAgents&, String&);
 
     static void willSendRequestImpl(InstrumentingAgents&, unsigned long identifier, DocumentLoader*, ResourceRequest&, const ResourceResponse& redirectResponse);
@@ -945,6 +947,13 @@ inline void InspectorInstrumentation::didScheduleStyleRecalculation(Document& do
     FAST_RETURN_IF_NO_FRONTENDS(void());
     if (InstrumentingAgents* instrumentingAgents = instrumentingAgentsForDocument(document))
         didScheduleStyleRecalculationImpl(*instrumentingAgents, document);
+}
+
+inline void InspectorInstrumentation::applyUserAgentOverride(Frame& frame, String& userAgent)
+{
+    FAST_RETURN_IF_NO_FRONTENDS(void());
+    if (InstrumentingAgents* instrumentingAgents = instrumentingAgentsForFrame(frame))
+        applyUserAgentOverrideImpl(*instrumentingAgents, userAgent);
 }
 
 inline void InspectorInstrumentation::applyEmulatedMedia(Frame& frame, String& media)

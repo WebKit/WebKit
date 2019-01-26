@@ -2697,25 +2697,33 @@ int FrameLoader::numPendingOrLoadingRequests(bool recurse) const
 
 String FrameLoader::userAgent(const URL& url) const
 {
-    if (auto* documentLoader = m_frame.mainFrame().loader().activeDocumentLoader()) {
-        auto& customUserAgent = documentLoader->customUserAgent();
-        if (!customUserAgent.isEmpty())
-            return customUserAgent;
-    }
+    String userAgent;
+
+    if (auto* documentLoader = m_frame.mainFrame().loader().activeDocumentLoader())
+        userAgent = documentLoader->customUserAgent();
+
+    InspectorInstrumentation::applyUserAgentOverride(m_frame, userAgent);
+
+    if (!userAgent.isEmpty())
+        return userAgent;
 
     return m_client.userAgent(url);
 }
 
 String FrameLoader::userAgentForJavaScript(const URL& url) const
 {
+    String userAgent;
+
     if (auto* documentLoader = m_frame.mainFrame().loader().activeDocumentLoader()) {
-        auto& customJavaScriptUserAgent = documentLoader->customJavaScriptUserAgent();
-        if (!customJavaScriptUserAgent.isEmpty())
-            return customJavaScriptUserAgent;
-        auto& customUserAgent = documentLoader->customUserAgent();
-        if (!customUserAgent.isEmpty())
-            return customUserAgent;
+        userAgent = documentLoader->customJavaScriptUserAgent();
+        if (userAgent.isEmpty())
+            userAgent = documentLoader->customUserAgent();
     }
+
+    InspectorInstrumentation::applyUserAgentOverride(m_frame, userAgent);
+
+    if (!userAgent.isEmpty())
+        return userAgent;
 
     return m_client.userAgent(url);
 }

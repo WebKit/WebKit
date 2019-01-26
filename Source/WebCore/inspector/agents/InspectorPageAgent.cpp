@@ -320,6 +320,7 @@ void InspectorPageAgent::disable(ErrorString&)
 
     ErrorString unused;
     setShowPaintRects(unused, false);
+    overrideUserAgent(unused, nullptr);
     setEmulatedMedia(unused, emptyString());
     setForcedAppearance(unused, emptyString());
 
@@ -353,6 +354,11 @@ void InspectorPageAgent::navigate(ErrorString&, const String& url)
     ResourceRequest resourceRequest { frame.document()->completeURL(url) };
     FrameLoadRequest frameLoadRequest { *frame.document(), frame.document()->securityOrigin(), resourceRequest, "_self"_s, LockHistory::No, LockBackForwardList::No, MaybeSendReferrer, AllowNavigationToInvalidURL::No, NewFrameOpenerPolicy::Allow, ShouldOpenExternalURLsPolicy::ShouldNotAllow, InitiatedByMainFrame::Unknown };
     frame.loader().changeLocation(WTFMove(frameLoadRequest));
+}
+
+void InspectorPageAgent::overrideUserAgent(ErrorString&, const String* value)
+{
+    m_userAgentOverride = value ? *value : String();
 }
 
 void InspectorPageAgent::overrideSetting(ErrorString& errorString, const String& settingString, const bool* value)
@@ -878,6 +884,12 @@ void InspectorPageAgent::setForcedAppearance(ErrorString&, const String& appeara
         m_page.setUseDarkAppearanceOverride(true);
     else
         m_page.setUseDarkAppearanceOverride(WTF::nullopt);
+}
+
+void InspectorPageAgent::applyUserAgentOverride(String& userAgent)
+{
+    if (!m_userAgentOverride.isEmpty())
+        userAgent = m_userAgentOverride;
 }
 
 void InspectorPageAgent::applyEmulatedMedia(String& media)

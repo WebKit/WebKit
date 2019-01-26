@@ -161,7 +161,8 @@ WI.loaded = function()
     this.visible = false;
     this._windowKeydownListeners = [];
     this._targetsAvailablePromise = new WI.WrappedPromise;
-    this._overridenDeviceSettings = new Set;
+    WI._overridenDeviceUserAgent = null;
+    WI._overridenDeviceSettings = new Set;
 
     // Targets.
     WI.backendTarget = null;
@@ -447,12 +448,12 @@ WI.contentLoaded = function()
     this._inspectModeToolbarButton.addEventListener(WI.ButtonNavigationItem.Event.Clicked, this._toggleInspectMode, this);
 
     // COMPATIBILITY (iOS 12.2): Page.overrideSetting did not exist.
-    if (InspectorFrontendHost.isRemote && WI.sharedApp.debuggableType === WI.DebuggableType.Web && InspectorBackend.domains.Page && InspectorBackend.domains.Page.overrideSetting) {
+    if (InspectorFrontendHost.isRemote && WI.sharedApp.debuggableType === WI.DebuggableType.Web && InspectorBackend.domains.Page && InspectorBackend.domains.Page.overrideUserAgent && InspectorBackend.domains.Page.overrideSetting) {
         const deviceSettingsTooltip = WI.UIString("Device Settings");
-        this._deviceSettingsToolbarButton = new WI.ActivateButtonToolbarItem("device-settings", deviceSettingsTooltip, deviceSettingsTooltip, "Images/Device.svg");
-        this._deviceSettingsToolbarButton.addEventListener(WI.ButtonNavigationItem.Event.Clicked, this._handleDeviceSettingsToolbarButtonClicked, this);
+        WI._deviceSettingsToolbarButton = new WI.ActivateButtonToolbarItem("device-settings", deviceSettingsTooltip, deviceSettingsTooltip, "Images/Device.svg");
+        WI._deviceSettingsToolbarButton.addEventListener(WI.ButtonNavigationItem.Event.Clicked, this._handleDeviceSettingsToolbarButtonClicked, this);
 
-        this._deviceSettingsPopover = null;
+        WI._deviceSettingsPopover = null;
     }
 
     this._updateReloadToolbarButton();
@@ -480,8 +481,8 @@ WI.contentLoaded = function()
 
     this.toolbar.addToolbarItem(this._inspectModeToolbarButton, WI.Toolbar.Section.CenterRight);
 
-    if (this._deviceSettingsToolbarButton)
-        this.toolbar.addToolbarItem(this._deviceSettingsToolbarButton, WI.Toolbar.Section.CenterRight);
+    if (WI._deviceSettingsToolbarButton)
+        this.toolbar.addToolbarItem(WI._deviceSettingsToolbarButton, WI.Toolbar.Section.CenterRight);
 
     this._searchTabContentView = new WI.SearchTabContentView;
 
@@ -605,9 +606,13 @@ WI.performOneTimeFrontendInitializationsUsingTarget = function(target)
 WI.initializeTarget = function(target)
 {
     if (target.PageAgent) {
+        // COMPATIBILITY (iOS 12.2): Page.overrideUserAgent did not exist.
+        if (target.PageAgent.overrideUserAgent && WI._overridenDeviceUserAgent)
+            target.PageAgent.overrideUserAgent(WI._overridenDeviceUserAgent);
+
         // COMPATIBILITY (iOS 12.2): Page.overrideSetting did not exist.
         if (target.PageAgent.overrideSetting) {
-            for (let setting of this._overridenDeviceSettings)
+            for (let setting of WI._overridenDeviceSettings)
                 target.PageAgent.overrideSetting(setting, true);
         }
 
@@ -1952,11 +1957,69 @@ WI._handleDeviceSettingsToolbarButtonClicked = function(event)
         return;
     }
 
-    let updateActivatedState = () => {
-        this._deviceSettingsToolbarButton.activated = this._overridenDeviceSettings.size > 0;
-    };
+    function updateActivatedState() {
+        WI._deviceSettingsToolbarButton.activated = WI._overridenDeviceUserAgent || WI._overridenDeviceSettings.size > 0;
+    }
 
-    let createContainer = (parent, title) => {
+    function applyOverriddenUserAgent(value, force) {
+        if (value === WI._overridenDeviceUserAgent)
+            return;
+
+        if (!force && (!value || value === "default")) {
+            PageAgent.overrideUserAgent((error) => {
+                if (error) {
+                    console.error(error);
+                    return;
+                }
+
+                WI._overridenDeviceUserAgent = null;
+                updateActivatedState();
+                PageAgent.reload();
+            });
+        } else {
+            PageAgent.overrideUserAgent(value, (error) => {
+                if (error) {
+                    console.error(error);
+                    return;
+                }
+
+                WI._overridenDeviceUserAgent = value;
+                updateActivatedState();
+                PageAgent.reload();
+            });
+        }
+    }
+
+    function applyOverriddenSetting(setting, callback) {
+        if (WI._overridenDeviceSettings.has(setting)) {
+            // We've just "disabled" the checkbox, so clear the override instead of applying it.
+            PageAgent.overrideSetting(setting, (error) => {
+                if (error) {
+                    console.error(error);
+                    return;
+                }
+
+                WI._overridenDeviceSettings.delete(setting);
+                callback(false);
+                updateActivatedState();
+            });
+        } else {
+            // Override to false since the labels are the inverse of the setting.
+            const value = false;
+            PageAgent.overrideSetting(setting, value, (error) => {
+                if (error) {
+                    console.error(error);
+                    return;
+                }
+
+                WI._overridenDeviceSettings.add(setting);
+                callback(true);
+                updateActivatedState();
+            });
+        }
+    }
+
+    function createContainer(parent, title) {
         let container = parent.appendChild(document.createElement("div"));
         container.classList.add("container");
 
@@ -1966,9 +2029,9 @@ WI._handleDeviceSettingsToolbarButtonClicked = function(event)
         }
 
         return container;
-    };
+    }
 
-    let createColumns = (parent, count) => {
+    function createColumns(parent, count) {
         let columnContainer = parent.appendChild(document.createElement("div"));
         columnContainer.classList.add("columns");
 
@@ -1979,52 +2042,26 @@ WI._handleDeviceSettingsToolbarButtonClicked = function(event)
             columns.push(column);
         }
         return columns;
-    };
+    }
 
-    let createCheckbox = (container, label, setting) => {
-        let enabled = this._overridenDeviceSettings.has(setting);
-
+    function createCheckbox(container, label, setting) {
         let labelElement = container.appendChild(document.createElement("label"));
 
         let checkboxElement = labelElement.appendChild(document.createElement("input"));
         checkboxElement.type = "checkbox";
-        checkboxElement.checked = enabled;
+        checkboxElement.checked = WI._overridenDeviceSettings.has(setting);
         checkboxElement.addEventListener("change", (event) => {
-            if (enabled) {
-                // We've just "disabled" the checkbox, so clear the override instead of applying it.
-                PageAgent.overrideSetting(setting, (error) => {
-                    if (error) {
-                        console.error(error);
-                        return;
-                    }
-
-                    this._overridenDeviceSettings.delete(setting);
-                    enabled = checkboxElement.checked = false;
-                    updateActivatedState();
-                });
-                
-            } else {
-                // Override to false since the labels are the inverse of the setting.
-                const value = false;
-                PageAgent.overrideSetting(setting, value, (error) => {
-                    if (error) {
-                        console.error(error);
-                        return;
-                    }
-
-                    this._overridenDeviceSettings.add(setting);
-                    enabled = checkboxElement.checked = true;
-                    updateActivatedState();
-                });
-            }
+            applyOverriddenSetting(setting, (enabled) => {
+                checkboxElement.checked = enabled;
+            });
         });
 
         labelElement.append(label);
-    };
+    }
 
-    let calculateTargetFrame = () => {
-        return WI.Rect.rectFromClientRect(this._deviceSettingsToolbarButton.element.getBoundingClientRect());
-    };
+    function calculateTargetFrame() {
+        return WI.Rect.rectFromClientRect(WI._deviceSettingsToolbarButton.element.getBoundingClientRect());
+    }
 
     const preferredEdges = [WI.RectEdge.MAX_Y, WI.RectEdge.MIN_X, WI.RectEdge.MAX_X];
 
@@ -2035,6 +2072,101 @@ WI._handleDeviceSettingsToolbarButtonClicked = function(event)
 
     let contentElement = document.createElement("div");
     contentElement.classList.add("device-settings-content");
+
+    let userAgentContainer = contentElement.appendChild(document.createElement("label"));
+    userAgentContainer.textContent = WI.UIString("User Agent:");
+
+    let userAgentValueContainer = userAgentContainer.appendChild(document.createElement("span"));
+    userAgentValueContainer.classList.add("user-agent-value");
+
+    let userAgentSelect = userAgentValueContainer.appendChild(document.createElement("select"));
+
+    const userAgents = [
+        [
+            { name: WI.UIString("Default"), value: "default" },
+        ],
+        [
+            { name: `Safari ${emDash} iOS 12.1.3 ${emDash} iPhone`, value: "Mozilla/5.0 (iPhone; CPU iPhone OS 12_1_3 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/12.0 Mobile/15E148 Safari/604.1" },
+            { name: `Safari ${emDash} iOS 12.1.3 ${emDash} iPod Touch`, value: "Mozilla/5.0 (iPod; CPU iPhone OS 12_1_3 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/12.0 Mobile/15E148 Safari/604.1" },
+            { name: `Safari ${emDash} iOS 12.1.3 ${emDash} iPad`, value: "Mozilla/5.0 (iPad; CPU iPhone OS 12_1_3 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/12.0 Mobile/15E148 Safari/604.1" },
+        ],
+        [
+            { name: `Microsoft Edge`, value: "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.36 Edge/16.16299" },
+        ],
+        [
+            { name: `Internet Explorer 11`, value: "Mozilla/5.0 (Windows NT 6.3; Win64, x64; Trident/7.0; rv:11.0) like Gecko" },
+            { name: `Internet Explorer 10`, value: "Mozilla/5.0 (compatible; MSIE 10.0; Windows NT 6.2; Win64; x64; Trident/6.0)" },
+            { name: `Internet Explorer 9`, value: "Mozilla/5.0 (compatible; MSIE 9.0; Windows NT 6.1; Trident/5.0)" },
+            { name: `Internet Explorer 8`, value: "Mozilla/4.0 (compatible; MSIE 8.0; Windows NT 6.0; Trident/4.0)" },
+            { name: `Internet Explorer 7`, value: "Mozilla/4.0 (compatible; MSIE 7.0; Windows NT 6.0)" },
+        ],
+        [
+            { name: `Google Chrome ${emDash} macOS`, value: "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_3) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/71.0.3578.98 Safari/537.36" },
+            { name: `Google Chrome ${emDash} Windows`, value: "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/71.0.3578.98 Safari/537.36" },
+        ],
+        [
+            { name: `Firefox ${emDash} macOS`, value: "Mozilla/5.0 (Macintosh; Intel Mac OS X 10.14; rv:63.0) Gecko/20100101 Firefox/63.0" },
+            { name: `Firefox ${emDash} Windows`, value: "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:63.0) Gecko/20100101 Firefox/63.0" },
+        ],
+        [
+            { name: WI.UIString("Other\u2026"), value: "other" },
+        ],
+    ];
+
+    let selectedOptionElement = null;
+
+    for (let group of userAgents) {
+        for (let {name, value} of group) {
+            let optionElement = userAgentSelect.appendChild(document.createElement("option"));
+            optionElement.value = value;
+            optionElement.textContent = name;
+
+            if (value === WI._overridenDeviceUserAgent)
+                selectedOptionElement = optionElement;
+        }
+
+        if (group !== userAgents.lastValue)
+            userAgentSelect.appendChild(document.createElement("hr"));
+    }
+
+    let userAgentInput = null;
+
+    function showUserAgentInput() {
+        if (userAgentInput)
+            return;
+
+        userAgentInput = userAgentValueContainer.appendChild(document.createElement("input"));
+        userAgentInput.value = userAgentInput.placeholder = WI._overridenDeviceUserAgent || navigator.userAgent;
+        userAgentInput.addEventListener("click", (clickEvent) => {
+            clickEvent.preventDefault();
+        });
+        userAgentInput.addEventListener("change", (inputEvent) => {
+            applyOverriddenUserAgent(userAgentInput.value, true);
+        });
+    }
+
+    if (selectedOptionElement)
+        userAgentSelect.value = selectedOptionElement.value;
+    else if (WI._overridenDeviceUserAgent) {
+        userAgentSelect.value = "other";
+        showUserAgentInput();
+    }
+
+    userAgentSelect.addEventListener("change", () => {
+        let value = userAgentSelect.value;
+        if (value === "other") {
+            showUserAgentInput();
+            userAgentInput.selectionStart = userAgentInput.selectionEnd = 0;
+            userAgentInput.focus();
+        } else {
+            if (userAgentInput) {
+                userAgentInput.remove();
+                userAgentInput = null;
+            }
+
+            applyOverriddenUserAgent(value);
+        }
+    });
 
     let disableColumns = createColumns(createContainer(contentElement, WI.UIString("Disable:")), 2);
     createCheckbox(disableColumns[0], WI.UIString("Images"), PageAgent.Setting.ImagesEnabled);

@@ -130,6 +130,13 @@
             ]
         },
         {
+            "name": "overrideUserAgent",
+            "description": "Override's the user agent of the inspected page",
+            "parameters": [
+                { "name": "value", "type": "string", "optional": true, "description": "Value to override the user agent with. If this value is not provided, the override is removed. Overrides are removed when Web Inspector closes/disconnects." }
+            ]
+        },
+        {
             "name": "overrideSetting",
             "description": "Allows the frontend to override the inspected page's settings.",
             "parameters": [

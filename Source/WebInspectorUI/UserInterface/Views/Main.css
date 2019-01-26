@@ -389,8 +389,6 @@ body[dir=rtl] .go-to-arrow {
 
 .device-settings-content {
     padding: 8px;
-
-    --label-input-margin-after: 4px;
 }
 
 .device-settings-content .columns {
@@ -406,12 +404,47 @@ body[dir=rtl] .go-to-arrow {
     -webkit-margin-start: 20px;
 }
 
-body[dir=ltr] .device-settings-content label > input {
-    margin-right: var(--label-input-margin-after);
+.device-settings-content .user-agent-value {
+    display: inline-block;
+    position: relative;
 }
 
-body[dir=rtl] .device-settings-content label > input {
-    margin-left: var(--label-input-margin-after);
+.device-settings-content .user-agent-value > select {
+    -webkit-margin-start: 4px;
+}
+
+.device-settings-content .user-agent-value > input {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    z-index: 1;
+    margin: 0;
+    -webkit-margin-start: 5px;
+    -webkit-margin-before: 3px;
+    -webkit-margin-after: 3px;
+    -webkit-padding-start: 7px;
+    -webkit-padding-end: 9px;
+    background-color: white;
+    border: none;
+    -webkit-border-top-left-radius: 3px;
+    -webkit-border-bottom-left-radius: 3px;
+    outline: none;
+    pointer-events: all;
+
+    --offset-end: 17px;
+}
+
+body[dir=ltr] .device-settings-content .user-agent-value > input {
+    right: var(--offset-end);
+}
+
+body[dir=rtl] .device-settings-content .user-agent-value > input {
+    left: var(--offset-end);
+}
+
+.device-settings-content label > input {
+    -webkit-margin-end: 4px;
 }
 
 @media (prefers-color-scheme: dark) {
