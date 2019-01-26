@@ -1,5 +1,16 @@
 2019-01-25  Simon Fraser  <simon.fraser@apple.com>
 
+        Fix failing scrollingcoordinator/scrolling-tree/remove-scrolling-role.html
+
+        Test needed different macOS and iOS results. Added window.internals.settings.setAsyncOverflowScrollingEnabled(true)
+        so the test uses async overflow scrolling in the macOS result.
+
+        * platform/ios-wk2/scrollingcoordinator/scrolling-tree/remove-scrolling-role-expected.txt: Copied from LayoutTests/scrollingcoordinator/scrolling-tree/remove-scrolling-role-expected.txt.
+        * scrollingcoordinator/scrolling-tree/remove-scrolling-role-expected.txt:
+        * scrollingcoordinator/scrolling-tree/remove-scrolling-role.html:
+
+2019-01-25  Simon Fraser  <simon.fraser@apple.com>
+
         Add a scrolling tree test that toggles scrollability on an intermediate iframe
         https://bugs.webkit.org/show_bug.cgi?id=193849
 

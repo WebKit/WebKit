@@ -36,6 +36,9 @@
             testRunner.dumpAsText();
         }
 
+        if (window.internals)
+            window.internals.settings.setAsyncOverflowScrollingEnabled(true);
+
         function doTest()
         {
             window.setTimeout(function() {
