@@ -195,7 +195,11 @@ WI.CanvasTabContentView = class CanvasTabContentView extends WI.ContentBrowserTa
     {
         let treeElement = this._canvasTreeOutline.findTreeElement(canvas);
         console.assert(treeElement, "Missing tree element for canvas.", canvas);
+
+        const suppressNotification = true;
+        treeElement.deselect(suppressNotification);
         this._overviewTreeElement.removeChild(treeElement);
+
         this._canvasCollection.remove(canvas);
 
         const options = {
@@ -206,7 +210,9 @@ WI.CanvasTabContentView = class CanvasTabContentView extends WI.ContentBrowserTa
             this._addRecording(recording, options);
 
         let currentContentView = this.contentBrowser.currentContentView;
-        if (currentContentView instanceof WI.RecordingContentView && canvas.recordingCollection.has(currentContentView.representedObject))
+        if (currentContentView instanceof WI.CanvasContentView)
+            WI.showRepresentedObject(this._canvasCollection);
+        else if (currentContentView instanceof WI.RecordingContentView && canvas.recordingCollection.has(currentContentView.representedObject))
             this.contentBrowser.updateHierarchicalPathForCurrentContentView();
 
         let navigationSidebarPanel = this.navigationSidebarPanel;

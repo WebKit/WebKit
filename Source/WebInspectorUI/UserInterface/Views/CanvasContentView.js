@@ -43,18 +43,6 @@ WI.CanvasContentView = class CanvasContentView extends WI.ContentView
         this._pixelSizeElement = null;
         this._canvasNode = null;
 
-        if (this.representedObject.contextType === WI.Canvas.ContextType.Canvas2D || this.representedObject.contextType === WI.Canvas.ContextType.BitmapRenderer || this.representedObject.contextType === WI.Canvas.ContextType.WebGL) {
-            const toolTip = WI.UIString("Start recording canvas actions.\nShift-click to record a single frame.");
-            const altToolTip = WI.UIString("Stop recording canvas actions");
-            this._recordButtonNavigationItem = new WI.ToggleButtonNavigationItem("record-start-stop", toolTip, altToolTip, "Images/Record.svg", "Images/Stop.svg", 13, 13);
-            this._recordButtonNavigationItem.visibilityPriority = WI.NavigationItem.VisibilityPriority.High;
-            this._recordButtonNavigationItem.addEventListener(WI.ButtonNavigationItem.Event.Clicked, this._toggleRecording, this);
-        }
-
-        this._canvasElementButtonNavigationItem = new WI.ButtonNavigationItem("canvas-element", WI.UIString("Canvas Element"), "Images/Markup.svg", 16, 16);
-        this._canvasElementButtonNavigationItem.visibilityPriority = WI.NavigationItem.VisibilityPriority.Low;
-        this._canvasElementButtonNavigationItem.addEventListener(WI.ButtonNavigationItem.Event.Clicked, this._canvasElementButtonClicked, this);
-
         this._refreshButtonNavigationItem = new WI.ButtonNavigationItem("refresh", WI.UIString("Refresh"), "Images/ReloadFull.svg", 13, 13);
         this._refreshButtonNavigationItem.visibilityPriority = WI.NavigationItem.VisibilityPriority.Low;
         this._refreshButtonNavigationItem.addEventListener(WI.ButtonNavigationItem.Event.Clicked, this.refresh, this);
@@ -95,62 +83,86 @@ WI.CanvasContentView = class CanvasContentView extends WI.ContentView
     {
         super.initialLayout();
 
-        let header = this.element.appendChild(document.createElement("header"));
-        header.addEventListener("click", (event) => { event.stopPropagation(); });
+        let isCard = !this._refreshButtonNavigationItem.parentNavigationBar;
 
-        let titles = header.appendChild(document.createElement("div"));
-        titles.className = "titles";
+        if (isCard) {
+            let header = this.element.appendChild(document.createElement("header"));
+            header.addEventListener("click", (event) => { event.stopPropagation(); });
 
-        let title = titles.appendChild(document.createElement("span"));
-        title.className = "title";
-        title.textContent = this.representedObject.displayName;
+            let titles = header.appendChild(document.createElement("div"));
+            titles.className = "titles";
 
-        let subtitle = titles.appendChild(document.createElement("span"));
-        subtitle.className = "subtitle";
-        subtitle.textContent = WI.Canvas.displayNameForContextType(this.representedObject.contextType);
+            let title = titles.appendChild(document.createElement("span"));
+            title.className = "title";
+            title.textContent = this.representedObject.displayName;
 
-        let navigationBar = new WI.NavigationBar;
-        if (this._recordButtonNavigationItem)
-            navigationBar.addNavigationItem(this._recordButtonNavigationItem);
-        navigationBar.addNavigationItem(this._canvasElementButtonNavigationItem);
-        navigationBar.addNavigationItem(this._refreshButtonNavigationItem);
+            let subtitle = titles.appendChild(document.createElement("span"));
+            subtitle.className = "subtitle";
+            subtitle.textContent = WI.Canvas.displayNameForContextType(this.representedObject.contextType);
 
-        header.append(navigationBar.element);
+            let navigationBar = new WI.NavigationBar;
+
+            if (this.representedObject.contextType === WI.Canvas.ContextType.Canvas2D || this.representedObject.contextType === WI.Canvas.ContextType.BitmapRenderer || this.representedObject.contextType === WI.Canvas.ContextType.WebGL) {
+                const toolTip = WI.UIString("Start recording canvas actions.\nShift-click to record a single frame.");
+                const altToolTip = WI.UIString("Stop recording canvas actions");
+                this._recordButtonNavigationItem = new WI.ToggleButtonNavigationItem("record-start-stop", toolTip, altToolTip, "Images/Record.svg", "Images/Stop.svg", 13, 13);
+                this._recordButtonNavigationItem.visibilityPriority = WI.NavigationItem.VisibilityPriority.High;
+                this._recordButtonNavigationItem.addEventListener(WI.ButtonNavigationItem.Event.Clicked, this._toggleRecording, this);
+                navigationBar.addNavigationItem(this._recordButtonNavigationItem);
+            }
+
+            let canvasElementButtonNavigationItem = new WI.ButtonNavigationItem("canvas-element", WI.UIString("Canvas Element"), "Images/Markup.svg", 16, 16);
+            canvasElementButtonNavigationItem.visibilityPriority = WI.NavigationItem.VisibilityPriority.Low;
+            canvasElementButtonNavigationItem.addEventListener(WI.ButtonNavigationItem.Event.Clicked, this._canvasElementButtonClicked, this);
+            navigationBar.addNavigationItem(canvasElementButtonNavigationItem);
+
+            navigationBar.addNavigationItem(this._refreshButtonNavigationItem);
+
+            header.append(navigationBar.element);
+        }
 
         this._previewContainerElement = this.element.appendChild(document.createElement("div"));
         this._previewContainerElement.className = "preview";
 
-        let footer = this.element.appendChild(document.createElement("footer"));
-        footer.addEventListener("click", (event) => { event.stopPropagation(); });
+        if (isCard) {
+            let footer = this.element.appendChild(document.createElement("footer"));
+            footer.addEventListener("click", (event) => { event.stopPropagation(); });
 
-        this._viewRelatedItemsContainer = footer.appendChild(document.createElement("div"));
-        this._viewRelatedItemsContainer.classList.add("view-related-items");
+            this._viewRelatedItemsContainer = footer.appendChild(document.createElement("div"));
+            this._viewRelatedItemsContainer.classList.add("view-related-items");
 
-        this._viewShaderButton = document.createElement("img");
-        this._viewShaderButton.classList.add("view-shader");
-        this._viewShaderButton.title = WI.UIString("View Shader");
-        this._viewShaderButton.addEventListener("click", this._handleViewShaderButtonClicked.bind(this));
+            this._viewShaderButton = document.createElement("img");
+            this._viewShaderButton.classList.add("view-shader");
+            this._viewShaderButton.title = WI.UIString("View Shader");
+            this._viewShaderButton.addEventListener("click", this._handleViewShaderButtonClicked.bind(this));
 
-        this._viewRecordingButton = document.createElement("img");
-        this._viewRecordingButton.classList.add("view-recording");
-        this._viewRecordingButton.title = WI.UIString("View Recording");
-        this._viewRecordingButton.addEventListener("click", this._handleViewRecordingButtonClicked.bind(this));
+            this._viewRecordingButton = document.createElement("img");
+            this._viewRecordingButton.classList.add("view-recording");
+            this._viewRecordingButton.title = WI.UIString("View Recording");
+            this._viewRecordingButton.addEventListener("click", this._handleViewRecordingButtonClicked.bind(this));
 
-        this._updateViewRelatedItems();
+            this._updateViewRelatedItems();
 
-        let flexibleSpaceElement = footer.appendChild(document.createElement("div"));
-        flexibleSpaceElement.className = "flexible-space";
+            let flexibleSpaceElement = footer.appendChild(document.createElement("div"));
+            flexibleSpaceElement.className = "flexible-space";
 
-        let metrics = footer.appendChild(document.createElement("div"));
-        this._pixelSizeElement = metrics.appendChild(document.createElement("span"));
-        this._pixelSizeElement.className = "pixel-size";
-        this._memoryCostElement = metrics.appendChild(document.createElement("span"));
-        this._memoryCostElement.className = "memory-cost";
+            let metrics = footer.appendChild(document.createElement("div"));
+
+            this._pixelSizeElement = metrics.appendChild(document.createElement("span"));
+            this._pixelSizeElement.className = "pixel-size";
+
+            this._memoryCostElement = metrics.appendChild(document.createElement("span"));
+            this._memoryCostElement.className = "memory-cost";
+        }
 
         if (this._errorElement)
             this._showError();
 
-        this._updateProgressView();
+        if (isCard) {
+            this._refreshPixelSize();
+            this._updateMemoryCost();
+            this._updateProgressView();
+        }
     }
 
     layout()
@@ -177,9 +189,6 @@ WI.CanvasContentView = class CanvasContentView extends WI.ContentView
             this._previewContainerElement.appendChild(this._previewImageElement);
 
         this._updateImageGrid();
-
-        this._refreshPixelSize();
-        this._updateMemoryCost();
     }
 
     shown()
@@ -288,7 +297,7 @@ WI.CanvasContentView = class CanvasContentView extends WI.ContentView
     _refreshPixelSize()
     {
         let updatePixelSize = (size) => {
-            if (this._pixelSize && size.width === this._pixelSize.width && size.height === this._pixelSize.height)
+            if (Object.shallowEqual(this._pixelSize, size))
                 return;
 
             this._pixelSize = size;

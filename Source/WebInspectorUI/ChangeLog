@@ -1,3 +1,21 @@
+2019-01-25  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: Uncaught Exception: No node with given id found
+        https://bugs.webkit.org/show_bug.cgi?id=193833
+
+        Reviewed by Joseph Pecoraro.
+
+        * UserInterface/Views/CanvasContentView.js:
+        (WI.CanvasContentView):
+        (WI.CanvasContentView.prototype.initialLayout):
+        (WI.CanvasContentView.prototype.layout):
+        (WI.CanvasContentView.prototype._refreshPixelSize):
+        Drive-by: show the refresh button when viewing a specific canvas.
+
+        * UserInterface/Views/CanvasTabContentView.js:
+        (WI.CanvasTabContentView.prototype._removeCanvas):
+        Reset to the overview if the canvas is removed.
+
 2019-01-25  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Improve Dark Mode appearance within Memory timeline
