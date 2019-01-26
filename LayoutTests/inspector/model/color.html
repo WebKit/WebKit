@@ -40,14 +40,16 @@ function test()
         test() {
             function testGood(string, expectedFormat) {
                 let color = WI.Color.fromString(string);
-                InspectorTest.expectThat(color instanceof WI.Color, `'${string}' should be detected`);
-                InspectorTest.expectThat(color && color.format === expectedFormat, `'${string}' was the expected '${formatToString(expectedFormat)}' format`);
+                InspectorTest.assert(color instanceof WI.Color, `'${string}' should be detected`);
+                InspectorTest.assert(color.format === expectedFormat, `'${string}' was the expected '${formatToString(expectedFormat)}' format`);
+                InspectorTest.log(`"${string}" resolves to "${color.toString()}"`);
             }
 
             function testBad(string) {
                 let color = WI.Color.fromString(string);
-                InspectorTest.expectThat(color === null, `'${string}' should not be detected`);
-                if (color) InspectorTest.log(`'${string}' detected with format '${formatToString(color.format)}'`);
+                InspectorTest.expectNull(color, `'${string}' should not be detected`);
+                if (color)
+                    InspectorTest.log(`'${string}' detected with format '${formatToString(color.format)}'`);
             }
 
             testGood("#000", WI.Color.Format.ShortHEX);
@@ -60,32 +62,167 @@ function test()
             testGood("#00000000", WI.Color.Format.HEXAlpha);
             testGood("#a0Aa0Aff", WI.Color.Format.HEXAlpha);
 
-            testGood("rgb(1,2,3)", WI.Color.Format.RGB);
-            testGood("RGB(1,2,3)", WI.Color.Format.RGB);
+            testGood("rgb(10,20,30)", WI.Color.Format.RGB);
+            testGood("RGB(10,20,30)", WI.Color.Format.RGB);
+            testGood("rgb( 10 , 20 , 30 )", WI.Color.Format.RGB);
             testGood("rgb(999, 999, 999)", WI.Color.Format.RGB);
-            testGood("rgb( 1 , 1 , 1 )", WI.Color.Format.RGB);
 
-            testGood("rgba(1,2,3,0)", WI.Color.Format.RGBA);
-            testGood("RGBA(1,2,3,0)", WI.Color.Format.RGBA);
+            testGood("rgb(10 20 30)", WI.Color.Format.RGB);
+            testGood("RGB(10 20 30)", WI.Color.Format.RGB);
+            testGood("rgb( 10 20 30 )", WI.Color.Format.RGB);
+            testGood("rgb(999 999 999)", WI.Color.Format.RGB);
+
+            testGood("rgb(10,20,30,40)", WI.Color.Format.RGBA);
+            testGood("RGB(10,20,30,40)", WI.Color.Format.RGBA);
+            testGood("rgb( 10 , 20 , 30 , 40 )", WI.Color.Format.RGBA);
+            testGood("rgb(999, 999, 999, 999)", WI.Color.Format.RGBA);
+
+            testGood("rgb(10,20,30,40%)", WI.Color.Format.RGBA);
+            testGood("RGB(10,20,30,40%)", WI.Color.Format.RGBA);
+            testGood("rgb( 10 , 20 , 30 , 40% )", WI.Color.Format.RGBA);
+            testGood("rgb(999, 999, 999, 999%)", WI.Color.Format.RGBA);
+
+            testGood("rgb(10 20 30 / 40)", WI.Color.Format.RGBA);
+            testGood("RGB(10 20 30 / 40)", WI.Color.Format.RGBA);
+            testGood("rgb( 10  20  30 / 40 )", WI.Color.Format.RGBA);
+            testGood("rgb(999 999 999 / 999)", WI.Color.Format.RGBA);
+
+            testGood("rgb(10 20 30 / 40%)", WI.Color.Format.RGBA);
+            testGood("RGB(10 20 30 / 40%)", WI.Color.Format.RGBA);
+            testGood("rgb( 10  20  30 / 40% )", WI.Color.Format.RGBA);
+            testGood("rgb(999 999 999 / 999%)", WI.Color.Format.RGBA);
+
+            testGood("rgba(10,20,30,40)", WI.Color.Format.RGBA);
+            testGood("RGBA(10,20,30,40)", WI.Color.Format.RGBA);
+            testGood("rgba( 10 , 20 , 30 , 40 )", WI.Color.Format.RGBA);
             testGood("rgba(999, 999, 999, 999)", WI.Color.Format.RGBA);
-            testGood("rgba( 1 , 1 , 1 , 0.5 )", WI.Color.Format.RGBA);
 
-            testGood("hsl(0, 0%, 50%)", WI.Color.Format.HSL);
-            testGood("HSL(0, 0%, 50%)", WI.Color.Format.HSL);
-            testGood("hsl(999, 999%, 999%)", WI.Color.Format.HSL);
-            testGood("hsl( 0 , 0% , 50% )", WI.Color.Format.HSL);
-            
-            testGood("hsla(0, 0%, 50%, 0)", WI.Color.Format.HSLA);
-            testGood("HSLA(0, 0%, 50%, 0)", WI.Color.Format.HSLA);
-            testGood("hsla(999, 999%, 999%, 999)", WI.Color.Format.HSLA);
-            testGood("hsla( 0 , 0% , 50% , 0.5 )", WI.Color.Format.HSLA);
+            testGood("rgba(10,20,30,40%)", WI.Color.Format.RGBA);
+            testGood("RGBA(10,20,30,40%)", WI.Color.Format.RGBA);
+            testGood("rgba( 10 , 20 , 30 , 40% )", WI.Color.Format.RGBA);
+            testGood("rgba(999, 999, 999, 999%)", WI.Color.Format.RGBA);
 
-            testGood("blue", WI.Color.Format.Keyword);
-            testGood("BLuE", WI.Color.Format.Keyword);
-            testGood("midnightblue", WI.Color.Format.Keyword);
-            testGood("royalblue", WI.Color.Format.Keyword);
-            testGood("steelblue", WI.Color.Format.Keyword);
-            testGood("transparent", WI.Color.Format.Keyword);
+            testGood("rgba(10 20 30 / 40)", WI.Color.Format.RGBA);
+            testGood("RGBA(10 20 30 / 40)", WI.Color.Format.RGBA);
+            testGood("rgba( 10  20  30 / 40 )", WI.Color.Format.RGBA);
+            testGood("rgba(999 999 999 / 999)", WI.Color.Format.RGBA);
+
+            testGood("rgba(10 20 30 / 40%)", WI.Color.Format.RGBA);
+            testGood("RGBA(10 20 30 / 40%)", WI.Color.Format.RGBA);
+            testGood("rgba( 10  20  30 / 40% )", WI.Color.Format.RGBA);
+            testGood("rgba(999 999 999 / 999%)", WI.Color.Format.RGBA);
+
+            testGood("rgb(10%,20%,30%)", WI.Color.Format.RGB);
+            testGood("RGB(10%,20%,30%)", WI.Color.Format.RGB);
+            testGood("rgb( 10% , 20% , 30% )", WI.Color.Format.RGB);
+            testGood("rgb(999%, 999%, 999%)", WI.Color.Format.RGB);
+
+            testGood("rgb(10% 20% 30%)", WI.Color.Format.RGB);
+            testGood("RGB(10% 20% 30%)", WI.Color.Format.RGB);
+            testGood("rgb( 10%  20%  30% )", WI.Color.Format.RGB);
+            testGood("rgb(999% 999% 999%)", WI.Color.Format.RGB);
+
+            testGood("rgb(10%,20%,30%,40)", WI.Color.Format.RGBA);
+            testGood("RGB(10%,20%,30%,40)", WI.Color.Format.RGBA);
+            testGood("rgb( 10% , 20% , 30% , 40 )", WI.Color.Format.RGBA);
+            testGood("rgb(999%, 999%, 999%, 999%)", WI.Color.Format.RGBA);
+
+            testGood("rgb(10%,20%,30%,40%)", WI.Color.Format.RGBA);
+            testGood("RGB(10%,20%,30%,40%)", WI.Color.Format.RGBA);
+            testGood("rgb( 10% , 20% , 30% , 40% )", WI.Color.Format.RGBA);
+            testGood("rgb(999%, 999%, 999%, 999%)", WI.Color.Format.RGBA);
+
+            testGood("rgb(10% 20% 30% / 40)", WI.Color.Format.RGBA);
+            testGood("RGB(10% 20% 30% / 40)", WI.Color.Format.RGBA);
+            testGood("rgb( 10%  20%  30% / 40 )", WI.Color.Format.RGBA);
+            testGood("rgb(999% 999% 999% / 999%)", WI.Color.Format.RGBA);
+
+            testGood("rgb(10% 20% 30% / 40%)", WI.Color.Format.RGBA);
+            testGood("RGB(10% 20% 30% / 40%)", WI.Color.Format.RGBA);
+            testGood("rgb( 10%  20%  30% / 40% )", WI.Color.Format.RGBA);
+            testGood("rgb(999% 999% 999% / 999%)", WI.Color.Format.RGBA);
+
+            testGood("rgba(10%,20%,30%,40)", WI.Color.Format.RGBA);
+            testGood("RGBA(10%,20%,30%,40)", WI.Color.Format.RGBA);
+            testGood("rgba( 10% , 20% , 30% , 40 )", WI.Color.Format.RGBA);
+            testGood("rgba(999%, 999%, 999%, 999%)", WI.Color.Format.RGBA);
+
+            testGood("rgba(10%,20%,30%,40%)", WI.Color.Format.RGBA);
+            testGood("RGBA(10%,20%,30%,40%)", WI.Color.Format.RGBA);
+            testGood("rgba( 10% , 20% , 30% , 40% )", WI.Color.Format.RGBA);
+            testGood("rgba(999%, 999%, 999%, 999%)", WI.Color.Format.RGBA);
+
+            testGood("rgba(10% 20% 30% / 40)", WI.Color.Format.RGBA);
+            testGood("RGBA(10% 20% 30% / 40)", WI.Color.Format.RGBA);
+            testGood("rgba( 10%  20%  30% / 40 )", WI.Color.Format.RGBA);
+            testGood("rgba(999% 999% 999% / 999%)", WI.Color.Format.RGBA);
+
+            testGood("rgba(10% 20% 30% / 40%)", WI.Color.Format.RGBA);
+            testGood("RGBA(10% 20% 30% / 40%)", WI.Color.Format.RGBA);
+            testGood("rgba( 10%  20%  30% / 40% )", WI.Color.Format.RGBA);
+            testGood("rgba(999% 999% 999% / 999%)", WI.Color.Format.RGBA);
+
+            for (let unit of ["", "deg", "rad", "grad", "turn"]) {
+                testGood(`hsl(10${unit},20%,30%)`, WI.Color.Format.HSL);
+                testGood(`HSL(10${unit},20%,30%)`, WI.Color.Format.HSL);
+                testGood(`hsl( 10${unit} , 20% , 30% )`, WI.Color.Format.HSL);
+                testGood(`hsl(999${unit}, 999%, 999%)`, WI.Color.Format.HSL);
+
+                testGood(`hsl(10${unit} 20% 30%)`, WI.Color.Format.HSL);
+                testGood(`HSL(10${unit} 20% 30%)`, WI.Color.Format.HSL);
+                testGood(`hsl( 10${unit}  20%  30% )`, WI.Color.Format.HSL);
+                testGood(`hsl(999${unit} 999% 999%)`, WI.Color.Format.HSL);
+
+                testGood(`hsl(10${unit},20%,30%,40)`, WI.Color.Format.HSLA);
+                testGood(`HSL(10${unit},20%,30%,40)`, WI.Color.Format.HSLA);
+                testGood(`hsl( 10${unit} , 20% , 30% , 40 )`, WI.Color.Format.HSLA);
+                testGood(`hsl(999${unit}, 999%, 999%, 999)`, WI.Color.Format.HSLA);
+
+                testGood(`hsl(10${unit},20%,30%,40%)`, WI.Color.Format.HSLA);
+                testGood(`HSL(10${unit},20%,30%,40%)`, WI.Color.Format.HSLA);
+                testGood(`hsl( 10${unit} , 20% , 30% , 40% )`, WI.Color.Format.HSLA);
+                testGood(`hsl(999${unit}, 999%, 999%, 999%)`, WI.Color.Format.HSLA);
+
+                testGood(`hsl(10${unit} 20% 30% / 40)`, WI.Color.Format.HSLA);
+                testGood(`HSL(10${unit} 20% 30% / 40)`, WI.Color.Format.HSLA);
+                testGood(`hsl( 10${unit}  20%  30% / 40 )`, WI.Color.Format.HSLA);
+                testGood(`hsl(999${unit} 999% 999% / 999)`, WI.Color.Format.HSLA);
+
+                testGood(`hsl(10${unit} 20% 30% / 40%)`, WI.Color.Format.HSLA);
+                testGood(`HSL(10${unit} 20% 30% / 40%)`, WI.Color.Format.HSLA);
+                testGood(`hsl( 10${unit}  20%  30% / 40% )`, WI.Color.Format.HSLA);
+                testGood(`hsl(999${unit} 999% 999% / 999%)`, WI.Color.Format.HSLA);
+
+                testGood(`hsl(10${unit},20%,30%,40)`, WI.Color.Format.HSLA);
+                testGood(`HSL(10${unit},20%,30%,40)`, WI.Color.Format.HSLA);
+                testGood(`hsl( 10${unit} , 20% , 30% , 40 )`, WI.Color.Format.HSLA);
+                testGood(`hsl(999${unit}, 999%, 999%, 999)`, WI.Color.Format.HSLA);
+
+                testGood(`hsl(10${unit},20%,30%,40%)`, WI.Color.Format.HSLA);
+                testGood(`HSL(10${unit},20%,30%,40%)`, WI.Color.Format.HSLA);
+                testGood(`hsl( 10${unit} , 20% , 30% , 40% )`, WI.Color.Format.HSLA);
+                testGood(`hsl(999${unit}, 999%, 999%, 999%)`, WI.Color.Format.HSLA);
+
+                testGood(`hsla(10${unit},20%,30%,40)`, WI.Color.Format.HSLA);
+                testGood(`HSLA(10${unit},20%,30%,40)`, WI.Color.Format.HSLA);
+                testGood(`hsla( 10${unit} , 0% , 50% , 40 )`, WI.Color.Format.HSLA);
+                testGood(`hsla(999${unit}, 999%, 999%, 999)`, WI.Color.Format.HSLA);
+
+                testGood(`hsla(10${unit},20%,30%,40%)`, WI.Color.Format.HSLA);
+                testGood(`HSLA(10${unit},20%,30%,40%)`, WI.Color.Format.HSLA);
+                testGood(`hsla( 10${unit} , 20% , 30% , 40% )`, WI.Color.Format.HSLA);
+                testGood(`hsla(999${unit}, 999%, 999%, 999%)`, WI.Color.Format.HSLA);
+
+                testGood(`hsla(10${unit} 20% 30% / 40)`, WI.Color.Format.HSLA);
+                testGood(`HSLA(10${unit} 20% 30% / 40)`, WI.Color.Format.HSLA);
+                testGood(`hsla( 10${unit}  20%  30% / 40 )`, WI.Color.Format.HSLA);
+                testGood(`hsla(999${unit} 999% 999% / 999)`, WI.Color.Format.HSLA);
+
+                testGood(`hsla(10${unit} 20% 30% / 40%)`, WI.Color.Format.HSLA);
+                testGood(`HSLA(10${unit} 20% 30% / 40%)`, WI.Color.Format.HSLA);
+                testGood(`hsla( 10${unit}  20%  30% / 40% )`, WI.Color.Format.HSLA);
+                testGood(`hsla(999${unit} 999% 999% / 999%)`, WI.Color.Format.HSLA);
+            }
 
             InspectorTest.log("");
 
@@ -96,9 +233,9 @@ function test()
             testBad("#12345"); // 5
             testBad("#1234567"); // 7
             testBad("#123456789"); // 9
-            testBad("rgb(255, 255, 255, 0.5)"); // extra values
+            testBad("rgb(255, 255, 255, 0.5, 1)"); // extra values
             testBad("rgba(255, 255, 255, 0.5, 1)"); // extra values
-            testBad("hsl(0, 0%, 50%, 1)"); // extra value
+            testBad("hsl(0, 0%, 50%, 1, 2)"); // extra value
             testBad("hsla(0, 0%, 50%, 1, 2)"); // extra values
             testBad("superblue"); // not a keyword
 
