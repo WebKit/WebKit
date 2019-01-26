@@ -1,3 +1,28 @@
+2019-01-25  Dean Jackson  <dino@apple.com>
+
+        REGRESSION: Some USDz from 3rd party websites don't go directly to AR QL
+        https://bugs.webkit.org/show_bug.cgi?id=193831
+        <rdar://problem/47399263>
+
+        Reviewed by Chris Dumez.
+
+        A System Preview (<a rel="ar">) displays in a modal and doesn't trigger
+        a navigation. If the link was cross origin, it was causing a process swap,
+        which meant that the response defaulted back to a navigation.
+
+        The fix is to not cause a PSON when the navigation is a system preview.
+
+        * UIProcess/API/APINavigation.h:
+        (API::Navigation::shouldForceDownload const): This is now just tracking
+        the "download" attribute, and not including System Preview.
+        (API::Navigation::isSystemPreview const): New method to check for a
+        navigation triggered as a System Preview.
+        * UIProcess/WebPageProxy.cpp: Move the code from receivedPolicyDecision to
+        receivedNavigationPolicyDecision, so that downloads and System Previews are
+        detected before we decide to change process.
+        (WebKit::WebPageProxy::receivedNavigationPolicyDecision):
+        (WebKit::WebPageProxy::receivedPolicyDecision):
+
 2019-01-25  Tim Horton  <timothy_horton@apple.com>
 
         Find-in-page on nyt.com scrolls around without touching the screen when find holes are visible

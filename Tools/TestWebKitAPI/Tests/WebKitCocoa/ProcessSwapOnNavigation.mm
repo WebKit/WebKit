@@ -1583,6 +1583,100 @@ TEST(ProcessSwap, CrossSiteDownload)
     done = false;
 }
 
+#if USE(SYSTEM_PREVIEW)
+
+static const char* systemPreviewSameOriginTestBytes = R"PSONRESOURCE(
+<body>
+    <a id="testLink" rel="ar" href="pson://www.webkit.org/whatever">
+        <img src="http://www.webkit.org/image">
+    </a>
+</body>
+)PSONRESOURCE";
+
+static const char* systemPreviewCrossOriginTestBytes = R"PSONRESOURCE(
+<body>
+    <a id="testLink" rel="ar" href="pson://www.apple.com/whatever">
+        <img src="http://www.webkit.org/image">
+    </a>
+</body>
+)PSONRESOURCE";
+
+TEST(ProcessSwap, SameOriginSystemPreview)
+{
+    auto processPoolConfiguration = adoptNS([[_WKProcessPoolConfiguration alloc] init]);
+    processPoolConfiguration.get().processSwapsOnNavigation = YES;
+    auto processPool = adoptNS([[WKProcessPool alloc] _initWithConfiguration:processPoolConfiguration.get()]);
+
+    auto webViewConfiguration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    [webViewConfiguration setProcessPool:processPool.get()];
+    auto handler = adoptNS([[PSONScheme alloc] init]);
+    [handler addMappingFromURLString:@"pson://www.webkit.org/main.html" toData:systemPreviewSameOriginTestBytes];
+    [handler addMappingFromURLString:@"pson://www.webkit.org/whatever" toData:"Fake USDZ data"];
+    [webViewConfiguration setURLSchemeHandler:handler.get() forURLScheme:@"pson"];
+
+    [webViewConfiguration _setSystemPreviewEnabled:YES];
+
+    auto webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:webViewConfiguration.get()]);
+    auto navigationDelegate = adoptNS([[PSONNavigationDelegate alloc] init]);
+    [webView setNavigationDelegate:navigationDelegate.get()];
+
+    NSURLRequest *request = [NSURLRequest requestWithURL:[NSURL URLWithString:@"pson://www.webkit.org/main.html"]];
+    [webView loadRequest:request];
+
+    TestWebKitAPI::Util::run(&done);
+    done = false;
+    auto pidAfterFirstLoad = [webView _webProcessIdentifier];
+
+    didStartProvisionalLoad = false;
+    [webView evaluateJavaScript:@"testLink.click()" completionHandler:nil];
+
+    TestWebKitAPI::Util::sleep(0.5);
+
+    // We should still be on webkit.org.
+    EXPECT_EQ(pidAfterFirstLoad, [webView _webProcessIdentifier]);
+    EXPECT_WK_STREQ(@"pson://www.webkit.org/main.html", [[webView URL] absoluteString]);
+    EXPECT_FALSE(didStartProvisionalLoad);
+}
+
+TEST(ProcessSwap, CrossOriginSystemPreview)
+{
+    auto processPoolConfiguration = adoptNS([[_WKProcessPoolConfiguration alloc] init]);
+    processPoolConfiguration.get().processSwapsOnNavigation = YES;
+    auto processPool = adoptNS([[WKProcessPool alloc] _initWithConfiguration:processPoolConfiguration.get()]);
+
+    auto webViewConfiguration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    [webViewConfiguration setProcessPool:processPool.get()];
+    auto handler = adoptNS([[PSONScheme alloc] init]);
+    [handler addMappingFromURLString:@"pson://www.webkit.org/main.html" toData:systemPreviewCrossOriginTestBytes];
+    [handler addMappingFromURLString:@"pson://www.apple.com/whatever" toData:"Fake USDZ data"];
+    [webViewConfiguration setURLSchemeHandler:handler.get() forURLScheme:@"pson"];
+
+    [webViewConfiguration _setSystemPreviewEnabled:YES];
+
+    auto webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:webViewConfiguration.get()]);
+    auto navigationDelegate = adoptNS([[PSONNavigationDelegate alloc] init]);
+    [webView setNavigationDelegate:navigationDelegate.get()];
+
+    NSURLRequest *request = [NSURLRequest requestWithURL:[NSURL URLWithString:@"pson://www.webkit.org/main.html"]];
+    [webView loadRequest:request];
+
+    TestWebKitAPI::Util::run(&done);
+    done = false;
+    auto pidAfterFirstLoad = [webView _webProcessIdentifier];
+
+    didStartProvisionalLoad = false;
+    [webView evaluateJavaScript:@"testLink.click()" completionHandler:nil];
+
+    TestWebKitAPI::Util::sleep(0.5);
+
+    // We should still be on webkit.org.
+    EXPECT_EQ(pidAfterFirstLoad, [webView _webProcessIdentifier]);
+    EXPECT_WK_STREQ(@"pson://www.webkit.org/main.html", [[webView URL] absoluteString]);
+    EXPECT_FALSE(didStartProvisionalLoad);
+}
+
+#endif
+
 enum class ShouldEnablePSON { No, Yes };
 static void runClientSideRedirectTest(ShouldEnablePSON shouldEnablePSON)
 {

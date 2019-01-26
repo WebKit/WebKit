@@ -1,3 +1,16 @@
+2019-01-25  Dean Jackson  <dino@apple.com>
+
+        REGRESSION: Some USDz from 3rd party websites don't go directly to AR QL
+        https://bugs.webkit.org/show_bug.cgi?id=193831
+        <rdar://problem/47399263>
+
+        Reviewed by Chris Dumez.
+
+        Two new tests that exercise cross-origin and same-origin System
+        Previews.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/ProcessSwapOnNavigation.mm:
+
 2019-01-25  Keith Rollin  <krollin@apple.com>
 
         Update Xcode projects with "Check .xcfilelists" build phase

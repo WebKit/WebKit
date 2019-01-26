@@ -2687,6 +2687,9 @@ void WebPageProxy::receivedNavigationPolicyDecision(PolicyAction policyAction, A
             changeWebsiteDataStore(policies->websiteDataStore()->websiteDataStore());
     }
 
+    if (policyAction == PolicyAction::Use && navigation && (navigation->isSystemPreview() || navigation->shouldForceDownload()))
+        policyAction = PolicyAction::Download;
+
     if (policyAction != PolicyAction::Use || !frame.isMainFrame() || !navigation) {
         receivedPolicyDecision(policyAction, navigation, WTFMove(data), WTFMove(sender));
         return;
@@ -2731,9 +2734,6 @@ void WebPageProxy::receivedPolicyDecision(PolicyAction action, API::Navigation* 
 
     if (action == PolicyAction::Ignore)
         m_pageLoadState.clearPendingAPIRequestURL(transaction);
-
-    if (navigation && navigation->shouldForceDownload() && action == PolicyAction::Use)
-        action = PolicyAction::Download;
 
     DownloadID downloadID = { };
     if (action == PolicyAction::Download) {
