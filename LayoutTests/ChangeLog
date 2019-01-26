@@ -1,3 +1,15 @@
+2019-01-25  Simon Fraser  <simon.fraser@apple.com>
+
+        Add a scrolling tree test that toggles scrollability on an intermediate iframe
+        https://bugs.webkit.org/show_bug.cgi?id=193849
+
+        Reviewed by Dean Jackson.
+
+        * platform/ios-wk2/scrollingcoordinator/scrolling-tree/toggle-coordinated-frame-scrolling-expected.txt: Added.
+        * scrollingcoordinator/scrolling-tree/resources/scroll-toggling-frame.html: Added.
+        * scrollingcoordinator/scrolling-tree/toggle-coordinated-frame-scrolling-expected.txt: Added.
+        * scrollingcoordinator/scrolling-tree/toggle-coordinated-frame-scrolling.html: Added.
+
 2019-01-25  Truitt Savell  <tsavell@apple.com>
 
         Remove expectation for inspector/css/createStyleSheet.html as test appears to be passing. 

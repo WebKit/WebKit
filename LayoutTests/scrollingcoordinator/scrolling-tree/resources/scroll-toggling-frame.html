@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        body {
+            height: 1000px;
+        }
+        body.changed {
+            height: auto;
+        }
+        iframe {
+            width: 500px;
+            height: 400px;
+            background-color: #FFFFC1;
+            box-shadow: 0 0 10px black;
+            border: 2px solid black;
+        }
+    </style>
+    <script>
+        window.addEventListener('load', () => {
+            requestAnimationFrame(() => {
+                document.body.classList.add('changed');
+                parent.subFrameBecameNonScrollable();
+
+                requestAnimationFrame(() => {
+                    document.body.classList.remove('changed');
+                    parent.subFrameBecameScrollable();
+                });
+            });
+        }, false);
+    </script>
+</head>
+<body>
+    <p>Middle frame</p>
+    <iframe srcdoc="
+        <style>
+            body { height: 1000px; }
+        </style>
+        <p>Inner frame</p>">
+    </iframe>
+</body>
+</html>

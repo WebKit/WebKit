@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Checks the scrolling tree afterr an intermediate frame becomes non-scrollable.</title>
+    <script>
+      if (window.testRunner) {
+          testRunner.dumpAsText();
+          testRunner.waitUntilDone();
+      }
+
+      if (window.internals)
+          window.internals.settings.setAsyncFrameScrollingEnabled(true);
+
+      function subFrameBecameNonScrollable()
+      {
+          if (window.internals)
+              document.getElementById('scrollingTree1').innerText = window.internals.scrollingStateTreeAsText() + "\n";
+      }
+
+      function subFrameBecameScrollable()
+      {
+          if (window.internals)
+              document.getElementById('scrollingTree2').innerText = window.internals.scrollingStateTreeAsText() + "\n";
+
+          if (window.testRunner)
+              testRunner.notifyDone();
+      }
+    </script>
+    <style>
+      iframe {
+          margin: 20px;
+          width: 600px;
+          height: 500px;
+          background-color: silver;
+          box-shadow: 0 0 10px black;
+          border: 2px solid black;
+      }
+    </style>
+  </head>
+  <body>
+    <iframe src="resources/scroll-toggling-frame.html">
+    </iframe>
+    <p>Scrolling tree on non-scrollable</p>
+<pre id="scrollingTree1"></pre>
+    <p>Scrolling tree on scrollable</p>
+<pre id="scrollingTree2"></pre>
+  </body>
+</html>
