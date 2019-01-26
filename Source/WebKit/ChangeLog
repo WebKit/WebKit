@@ -1,3 +1,17 @@
+2019-01-25  Tim Horton  <timothy_horton@apple.com>
+
+        Find-in-page on nyt.com scrolls around without touching the screen when find holes are visible
+        https://bugs.webkit.org/show_bug.cgi?id=193853
+
+        Reviewed by Simon Fraser.
+
+        * WebProcess/WebPage/ios/FindControllerIOS.mm:
+        (WebKit::FindController::updateFindIndicator):
+        There is no reason to scroll/zoom to the find indicator just because the
+        holes are up, we should only do it on initial indicator presentation.
+        This was a mistake in r178755 that was previously never exercised because
+        isShowingOverlay was always false.
+
 2019-01-25  Keith Rollin  <krollin@apple.com>
 
         Update Xcode projects with "Check .xcfilelists" build phase
