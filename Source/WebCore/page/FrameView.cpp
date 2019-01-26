@@ -4418,6 +4418,10 @@ void FrameView::updateHasReachedSignificantRenderedTextThreshold()
     if (m_hasReachedSignificantRenderedTextThreshold)
         return;
 
+    auto* page = frame().page();
+    if (!page || !page->requestedLayoutMilestones().contains(DidRenderSignificantAmountOfText))
+        return;
+
     auto* document = frame().document();
     if (!document)
         return;

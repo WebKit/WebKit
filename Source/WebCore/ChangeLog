@@ -1,3 +1,22 @@
+2019-01-25  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Document::updateMainArticleElementAfterLayout() should be a no-op when no client depends on knowing the main article element
+        https://bugs.webkit.org/show_bug.cgi?id=193843
+
+        Reviewed by Zalan Bujtas.
+
+        * dom/Document.cpp:
+        (WebCore::Document::updateMainArticleElementAfterLayout):
+
+        This function currently does a bit of wasted work after every layout, on clients that don't listen to the
+        "significant rendered text" layout milestone and therefore don't need to guess the main article element. Simply
+        don't bother keeping the main article element up to date in this scenario by bailing from
+        FrameView::updateHasReachedSignificantRenderedTextThreshold if the client doesn't care about the significant
+        rendered text milestone.
+
+        * page/FrameView.cpp:
+        (WebCore::FrameView::updateHasReachedSignificantRenderedTextThreshold):
+
 2019-01-25  Jer Noble  <jer.noble@apple.com>
 
         <video> elements not in the DOM should be allowed to AirPlay
