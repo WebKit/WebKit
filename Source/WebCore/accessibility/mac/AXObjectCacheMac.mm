@@ -28,6 +28,7 @@
 
 #if HAVE(ACCESSIBILITY) && PLATFORM(MAC)
 
+#import "AXIsolatedTreeNode.h"
 #import "AccessibilityObject.h"
 #import "AccessibilityTable.h"
 #import "RenderObject.h"
@@ -236,6 +237,14 @@ void AXObjectCache::detachWrapper(AccessibilityObject* obj, AccessibilityDetachm
     [obj->wrapper() detach];
     obj->setWrapper(nullptr);
 }
+
+#if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
+void AXObjectCache::associateIsolatedTreeNode(AccessibilityObject& object, AXIsolatedTreeNode& node, AXIsolatedTreeID treeID)
+{
+    object.wrapper().isolatedTreeIdentifier = treeID;
+    node.setWrapper(object.wrapper());
+}
+#endif
 
 void AXObjectCache::attachWrapper(AccessibilityObject* obj)
 {

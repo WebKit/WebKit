@@ -1,3 +1,13 @@
+2019-01-27  Chris Fleizach  <cfleizach@apple.com>
+
+        AX: Introduce isolated accessibility tree
+        https://bugs.webkit.org/show_bug.cgi?id=193348
+        <rdar://problem/47203295>
+
+        Reviewed by Ryosuke Niwa.
+
+        * Configurations/FeatureDefines.xcconfig:
+
 2019-01-25  Alex Christensen  <achristensen@webkit.org>
 
         Move logic from ChildProcess::setApplicationIsDaemon to NetworkProcess::initializeProcess

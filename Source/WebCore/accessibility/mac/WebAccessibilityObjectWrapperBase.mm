@@ -31,10 +31,13 @@
 
 #if HAVE(ACCESSIBILITY)
 
+#import "AXIsolatedTree.h"
+#import "AXIsolatedTreeNode.h"
 #import "AXObjectCache.h"
 #import "AccessibilityARIAGridRow.h"
 #import "AccessibilityList.h"
 #import "AccessibilityListBox.h"
+#import "AccessibilityObjectInterface.h"
 #import "AccessibilityRenderObject.h"
 #import "AccessibilityScrollView.h"
 #import "AccessibilitySpinButton.h"
@@ -270,22 +273,47 @@ NSArray *convertToNSArray(const AccessibilityObject::AccessibilityChildrenVector
 
 @implementation WebAccessibilityObjectWrapperBase
 
+@synthesize identifier=_identifier;
+#if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
+@synthesize isolatedTreeIdentifier=_isolatedTreeIdentifier;
+#endif
+
 - (id)initWithAccessibilityObject:(AccessibilityObject*)axObject
 {
     if (!(self = [super init]))
         return nil;
 
     m_object = axObject;
+    _identifier = m_object->axObjectID();
+
     return self;
 }
+
+#if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
+- (RefPtr<WebCore::AXIsolatedTreeNode>)isolatedTreeNode
+{
+    RELEASE_ASSERT(!isMainThread());
+    return AXIsolatedTree::treeForID(_isolatedTreeIdentifier)->nodeForID(_identifier);
+}
+#endif
 
 - (void)detach
 {
     m_object = nullptr;
+    _identifier = 0;
+
+#if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
+    _isolatedTreeIdentifier = 0;
+#endif
 }
 
 - (BOOL)updateObjectBackingStore
 {
+#if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
+    RELEASE_ASSERT(!isMainThread());
+    AXIsolatedTree::treeForID(self.isolatedTreeIdentifier)->applyPendingChanges();
+    return _identifier;
+#else
     // Calling updateBackingStore() can invalidate this element so self must be retained.
     // If it does become invalidated, m_object will be nil.
     CFRetain((__bridge CFTypeRef)self);
@@ -299,6 +327,7 @@ NSArray *convertToNSArray(const AccessibilityObject::AccessibilityChildrenVector
         return NO;
     
     return YES;
+#endif
 }
 
 - (id)attachmentView
@@ -360,11 +389,21 @@ NSArray *convertToNSArray(const AccessibilityObject::AccessibilityChildrenVector
     return [NSString string];
 }
 
+#define _axBackingObject self.axBackingObject
+- (WebCore::AccessibilityObjectInterface*)axBackingObject
+{
+#if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
+    return self.isolatedTreeNode.get();
+#else
+    return m_object;
+#endif
+}
+
 - (NSString *)baseAccessibilityDescription
 {
     // Static text objects should not have a description. Its content is communicated in its AXValue.
     // One exception is the media control labels that have a value and a description. Those are set programatically.
-    if (m_object->roleValue() == AccessibilityRole::StaticText && !m_object->isMediaControlLabel())
+    if (_axBackingObject->roleValue() == AccessibilityRole::StaticText && !_axBackingObject->isMediaControlLabel())
         return [NSString string];
     
     Vector<AccessibilityText> textOrder;

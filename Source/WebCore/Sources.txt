@@ -405,6 +405,8 @@ accessibility/AccessibilityTableRow.cpp
 accessibility/AccessibilityTree.cpp
 accessibility/AccessibilityTreeItem.cpp
 accessibility/AccessibleSetValueEvent.cpp
+accessibility/isolatedtree/AXIsolatedTree.cpp
+accessibility/isolatedtree/AXIsolatedTreeNode.cpp
 
 animation/AnimationEffect.cpp
 animation/AnimationPlaybackEvent.cpp

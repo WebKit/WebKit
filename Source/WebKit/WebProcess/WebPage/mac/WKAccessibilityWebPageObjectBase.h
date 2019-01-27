@@ -32,7 +32,9 @@ class WebPage;
 
 @interface WKAccessibilityWebPageObjectBase : NSObject {
     WebKit::WebPage* m_page;
+    uint64_t m_pageID;
     id m_parent;
+    bool m_hasPlugin;
 }
 
 - (void)setWebPage:(WebKit::WebPage*)page;

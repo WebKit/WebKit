@@ -1,3 +1,78 @@
+2019-01-27  Chris Fleizach  <cfleizach@apple.com>
+
+        AX: Introduce a static accessibility tree
+        https://bugs.webkit.org/show_bug.cgi?id=193348
+        <rdar://problem/47203295>
+
+        Reviewed by Ryosuke Niwa.
+
+        In order to improve performance when requesting the accessibility hierarchy, we introduce the idea of a "static accessibility tree" which 
+        could be accessed on a different thread by assistive technologies.
+        That is accomplished by storing all the data needed to answer accessibility attribute queries in a static object that mirrors the 
+        "live" AccessibilityObjects (which interact with both DOM and Render trees).
+        These static objects are generally created after layout is done and final tasks are being performed. They are then stored in the static tree 
+        representation and able to be read from anywhere.
+        Tactically this is done with AXIsolatedTreeNodes inside of an AXIsolatedTree. The TreeNodes implement an AccessibilityObjectInterface shared 
+        with AccessibilityObject.
+        This allows the wrappers to access either one depending on conditions and platforms without significant code duplication or re-organization.
+
+        * CMakeLists.txt:
+        * Configurations/FeatureDefines.xcconfig:
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * accessibility/AXObjectCache.cpp:
+        (WebCore::AXObjectCache::remove):
+        (WebCore::AXObjectCache::createIsolatedAccessibilityTree):
+        (WebCore::AXObjectCache::generateStaticAccessibilityTreeIfNeeded):
+        * accessibility/AXObjectCache.h:
+        * accessibility/AccessibilityObject.h:
+        * accessibility/AccessibilityObjectInterface.h: Added.
+        * accessibility/isolatedtree: Added.
+        * accessibility/isolatedtree/AXIsolatedTree.cpp: Added.
+        (WebCore::AXIsolatedTree::treeCache):
+        (WebCore::AXIsolatedTree::AXIsolatedTree):
+        (WebCore::AXIsolatedTree::create):
+        (WebCore::AXIsolatedTree::treeForID):
+        (WebCore::AXIsolatedTree::treeForPageID):
+        (WebCore::AXIsolatedTree::nodeForID const):
+        (WebCore::AXIsolatedTree::rootNode):
+        (WebCore::AXIsolatedTree::removeNode):
+        (WebCore::AXIsolatedTree::appendNodeChanges):
+        (WebCore::AXIsolatedTree::applyPendingChanges):
+        * accessibility/isolatedtree/AXIsolatedTree.h: Added.
+        (WebCore::AXIsolatedTree::treeIdentifier const):
+        * accessibility/isolatedtree/AXIsolatedTreeNode.cpp: Added.
+            To note: we don't mark the attribute map const because even though attributes don't change after initial creation,
+            we may copy an existing node and replace specific values.
+        (WebCore::AXIsolatedTreeNode::AXIsolatedTreeNode):
+        (WebCore::AXIsolatedTreeNode::create):
+        (WebCore::AXIsolatedTreeNode::initializeAttributeData):
+        (WebCore::AXIsolatedTreeNode::setProperty):
+        (WebCore::AXIsolatedTreeNode::doubleAttributeValue const):
+        (WebCore::AXIsolatedTreeNode::unsignedAttributeValue const):
+        (WebCore::AXIsolatedTreeNode::boolAttributeValue const):
+        (WebCore::AXIsolatedTreeNode::stringAttributeValue const):
+        (WebCore::AXIsolatedTreeNode::intAttributeValue const):
+        * accessibility/isolatedtree/AXIsolatedTreeNode.h: Added.
+        * accessibility/mac/AXObjectCacheMac.mm:
+        (WebCore::AXObjectCache::associateIsolatedTreeNode):
+        * accessibility/mac/WebAccessibilityObjectWrapperBase.h:
+        * accessibility/mac/WebAccessibilityObjectWrapperBase.mm:
+        (-[WebAccessibilityObjectWrapperBase initWithAccessibilityObject:]):
+        (-[WebAccessibilityObjectWrapperBase isolatedTreeNode]):
+        (-[WebAccessibilityObjectWrapperBase detach]):
+        (-[WebAccessibilityObjectWrapperBase updateObjectBackingStore]):
+        (-[WebAccessibilityObjectWrapperBase axBackingObject]):
+        (-[WebAccessibilityObjectWrapperBase baseAccessibilityDescription]):
+        * accessibility/mac/WebAccessibilityObjectWrapperMac.mm:
+        (-[WebAccessibilityObjectWrapper role]):
+        (-[WebAccessibilityObjectWrapper subrole]):
+        (-[WebAccessibilityObjectWrapper roleDescription]):
+        (-[WebAccessibilityObjectWrapper accessibilityAttributeValue:]):
+        * dom/Document.cpp:
+        (WebCore::Document::pageID const):
+        * dom/Document.h:
+
 2019-01-26  Simon Fraser  <simon.fraser@apple.com>
 
         Allow scrolling tree nodes to exist in a detached state

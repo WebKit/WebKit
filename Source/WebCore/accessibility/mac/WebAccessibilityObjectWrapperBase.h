@@ -29,11 +29,18 @@
 #ifndef WebAccessibilityObjectWrapperBase_h
 #define WebAccessibilityObjectWrapperBase_h
 
+#include "AXIsolatedTree.h"
 #include "AccessibilityObject.h"
 #include <CoreGraphics/CoreGraphics.h>
+#include <wtf/RefPtr.h>
+#include <wtf/Variant.h>
+#include <wtf/WeakPtr.h>
 
 namespace WebCore {
 class AccessibilityObject;
+#if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
+class AXIsolatedTreeNode;
+#endif
 struct AccessibilitySearchCriteria;
 class IntRect;
 class FloatPoint;
@@ -44,12 +51,25 @@ class VisiblePosition;
 
 @interface WebAccessibilityObjectWrapperBase : NSObject {
     WebCore::AccessibilityObject* m_object;
+    WebCore::AXID _identifier;
 }
  
 - (id)initWithAccessibilityObject:(WebCore::AccessibilityObject*)axObject;
+
+#if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
+@property (nonatomic, readonly) RefPtr<WebCore::AXIsolatedTreeNode> isolatedTreeNode;
+@property (nonatomic, assign) WebCore::AXIsolatedTreeID isolatedTreeIdentifier;
+#endif
+
 - (void)detach;
+
+@property (nonatomic, assign) WebCore::AXID identifier;
+
 - (WebCore::AccessibilityObject*)accessibilityObject;
 - (BOOL)updateObjectBackingStore;
+
+// This can be either an AccessibilityObject or an AXIsolatedTreeNode
+- (WebCore::AccessibilityObjectInterface*)axBackingObject;
 
 // These are pre-fixed with base so that AppKit does not end up calling into these directly (bypassing safety checks).
 - (NSString *)baseAccessibilityTitle;

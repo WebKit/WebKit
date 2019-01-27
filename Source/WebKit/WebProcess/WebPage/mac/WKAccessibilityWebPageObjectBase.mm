@@ -34,6 +34,7 @@
 #import "WKSharedAPICast.h"
 #import "WKString.h"
 #import "WKStringCF.h"
+#import <WebCore/AXIsolatedTree.h>
 #import <WebCore/AXObjectCache.h>
 #import <WebCore/Document.h>
 #import <WebCore/Frame.h>
@@ -47,39 +48,93 @@ using namespace WebKit;
 
 @implementation WKAccessibilityWebPageObjectBase
 
+- (WebCore::AXObjectCache*)axObjectCache
+{
+    WebCore::Page* page = m_page->corePage();
+    if (!page)
+        return nil;
+    WebCore::Frame& core = page->mainFrame();
+    if (!core.document())
+        return nil;
+
+    return core.document()->axObjectCache();
+}
+
+- (id)accessibilityPluginObject
+{
+    auto retrieveBlock = [&self]() -> id {
+        id axPlugin = nil;
+        auto dispatchBlock = [&axPlugin, &self] {
+            if (self->m_page)
+                axPlugin = self->m_page->accessibilityObjectForMainFramePlugin();
+        };
+
+        if (isMainThread())
+            dispatchBlock();
+        else {
+            callOnMainThreadAndWait([&dispatchBlock] {
+                dispatchBlock();
+            });
+        }
+        return axPlugin;
+    };
+    
+    return retrieveBlock();
+}
+
 - (id)accessibilityRootObjectWrapper
 {
     if (!WebCore::AXObjectCache::accessibilityEnabled())
         WebCore::AXObjectCache::enableAccessibility();
 
-    if (!m_page)
-        return nil;
-    
-    NSObject* mainFramePluginAccessibilityObjectWrapper = m_page->accessibilityObjectForMainFramePlugin();
-    if (mainFramePluginAccessibilityObjectWrapper)
-        return mainFramePluginAccessibilityObjectWrapper;
+    if (m_hasPlugin)
+        return self.accessibilityPluginObject;
 
-    WebCore::Page* page = m_page->corePage();
-    if (!page)
-        return nil;
-    
-    WebCore::Frame& core = page->mainFrame();
-    if (!core.document())
-        return nil;
-    
-    WebCore::AXObjectCache* cache = core.document()->axObjectCache();
-    if (!cache)
-        return nil;
-    
-    if (WebCore::AccessibilityObject* root = cache->rootObject())
-        return root->wrapper();
-    
+#if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
+    auto generateBlock = [&] {
+        auto dispatchBlock = [&self] {
+            if (auto cache = [self axObjectCache])
+                cache->generateIsolatedAccessibilityTree();
+        };
+
+        if (isMainThread())
+            dispatchBlock();
+        else {
+            callOnMainThreadAndWait([&dispatchBlock] {
+                dispatchBlock();
+            });
+        }
+    };
+
+    auto tree = AXIsolatedTree::treeForPageID(m_pageID);
+    if (!tree)
+        generateBlock();
+
+    if ((tree = AXIsolatedTree::treeForPageID(m_pageID))) {
+        ASSERT(!isMainThread());
+        tree->applyPendingChanges();
+        return tree->rootNode()->wrapper();
+    }
+#else
+    if (AXObjectCache* cache = [self axObjectCache]) {
+        if (WebCore::AccessibilityObject* root = cache->rootObject())
+            return root->wrapper();
+    }
+#endif
     return nil;
 }
 
 - (void)setWebPage:(WebPage*)page
 {
     m_page = page;
+    
+    if (page) {
+        m_pageID = page->pageID();
+        m_hasPlugin = page->accessibilityObjectForMainFramePlugin();
+    } else {
+        m_pageID = 0;
+        m_hasPlugin = false;
+    }
 }
 
 - (void)setRemoteParent:(id)parent

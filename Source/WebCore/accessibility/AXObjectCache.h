@@ -25,6 +25,9 @@
 
 #pragma once
 
+#if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
+#include "AXIsolatedTree.h"
+#endif
 #include "AXTextStateChangeIntent.h"
 #include "AccessibilityObject.h"
 #include "Range.h"
@@ -39,6 +42,9 @@
 
 namespace WebCore {
 
+#if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
+class AXIsolatedTreeNode;
+#endif
 class Document;
 class HTMLAreaElement;
 class HTMLTextFormControlElement;
@@ -180,6 +186,13 @@ public:
     void deferAttributeChangeIfNeeded(const QualifiedName&, Element*);
     void recomputeIsIgnored(RenderObject* renderer);
 
+#if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
+    WEBCORE_EXPORT Ref<AXIsolatedTree> generateIsolatedAccessibilityTree();
+
+    void associateIsolatedTreeNode(AccessibilityObject&, AXIsolatedTreeNode&, AXIsolatedTreeID);
+    Ref<AXIsolatedTreeNode> createIsolatedAccessibilityTreeHierarchy(AccessibilityObject&, AXID, AXIsolatedTree&, Vector<Ref<AXIsolatedTreeNode>>&);
+#endif
+    
 #if HAVE(ACCESSIBILITY)
     WEBCORE_EXPORT static void enableAccessibility();
     WEBCORE_EXPORT static void disableAccessibility();
@@ -187,6 +200,7 @@ public:
     // Enhanced user interface accessibility can be toggled by the assistive technology.
     WEBCORE_EXPORT static void setEnhancedUserInterfaceAccessibility(bool flag);
     
+    // Note: these may be called from a non-main thread concurrently as other readers.
     static bool accessibilityEnabled() { return gAccessibilityEnabled; }
     static bool accessibilityEnhancedUserInterfaceEnabled() { return gAccessibilityEnhancedUserInterfaceEnabled; }
 #else

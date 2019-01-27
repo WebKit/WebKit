@@ -29,6 +29,7 @@
 
 #pragma once
 
+#include "AccessibilityObjectInterface.h"
 #include "FloatQuad.h"
 #include "HTMLTextFormControlElement.h"
 #include "LayoutRect.h"
@@ -88,157 +89,6 @@ class RenderObject;
 class ScrollableArea;
 class ScrollView;
 class Widget;
-
-typedef unsigned AXID;
-
-enum class AccessibilityRole {
-    Annotation = 1,
-    Application,
-    ApplicationAlert,
-    ApplicationAlertDialog,
-    ApplicationDialog,
-    ApplicationGroup,
-    ApplicationLog,
-    ApplicationMarquee,
-    ApplicationStatus,
-    ApplicationTextGroup,
-    ApplicationTimer,
-    Audio,
-    Blockquote,
-    Browser,
-    BusyIndicator,
-    Button,
-    Canvas,
-    Caption,
-    Cell,
-    CheckBox,
-    ColorWell,
-    Column,
-    ColumnHeader,
-    ComboBox,
-    Definition,
-    DescriptionList,
-    DescriptionListTerm,
-    DescriptionListDetail,
-    Details,
-    Directory,
-    DisclosureTriangle,
-    Div,
-    Document,
-    DocumentArticle,
-    DocumentMath,
-    DocumentNote,
-    Drawer,
-    EditableText,
-    Feed,
-    Figure,
-    Footer,
-    Footnote,
-    Form,
-    GraphicsDocument,
-    GraphicsObject,
-    GraphicsSymbol,
-    Grid,
-    GridCell,
-    Group,
-    GrowArea,
-    Heading,
-    HelpTag,
-    HorizontalRule,
-    Ignored,
-    Inline,
-    Image,
-    ImageMap,
-    ImageMapLink,
-    Incrementor,
-    Label,
-    LandmarkBanner,
-    LandmarkComplementary,
-    LandmarkContentInfo,
-    LandmarkDocRegion,
-    LandmarkMain,
-    LandmarkNavigation,
-    LandmarkRegion,
-    LandmarkSearch,
-    Legend,
-    Link,
-    List,
-    ListBox,
-    ListBoxOption,
-    ListItem,
-    ListMarker,
-    Mark,
-    MathElement,
-    Matte,
-    Menu,
-    MenuBar,
-    MenuButton,
-    MenuItem,
-    MenuItemCheckbox,
-    MenuItemRadio,
-    MenuListPopup,
-    MenuListOption,
-    Outline,
-    Paragraph,
-    PopUpButton,
-    Pre,
-    Presentational,
-    ProgressIndicator,
-    RadioButton,
-    RadioGroup,
-    RowHeader,
-    Row,
-    RowGroup,
-    RubyBase,
-    RubyBlock,
-    RubyInline,
-    RubyRun,
-    RubyText,
-    Ruler,
-    RulerMarker,
-    ScrollArea,
-    ScrollBar,
-    SearchField,
-    Sheet,
-    Slider,
-    SliderThumb,
-    SpinButton,
-    SpinButtonPart,
-    SplitGroup,
-    Splitter,
-    StaticText,
-    Summary,
-    Switch,
-    SystemWide,
-    SVGRoot,
-    SVGText,
-    SVGTSpan,
-    SVGTextPath,
-    TabGroup,
-    TabList,
-    TabPanel,
-    Tab,
-    Table,
-    TableHeaderContainer,
-    TextArea,
-    TextGroup,
-    Term,
-    Time,
-    Tree,
-    TreeGrid,
-    TreeItem,
-    TextField,
-    ToggleButton,
-    Toolbar,
-    Unknown,
-    UserInterfaceTooltip,
-    ValueIndicator,
-    Video,
-    WebApplication,
-    WebArea,
-    WebCoreLink,
-    Window,
-};
 
 enum class AccessibilityTextSource {
     Alternative,
@@ -491,7 +341,7 @@ enum class AccessibilityCurrentState { False, True, Page, Step, Location, Date, 
     
 bool nodeHasPresentationRole(Node*);
     
-class AccessibilityObject : public RefCounted<AccessibilityObject> {
+class AccessibilityObject : public RefCounted<AccessibilityObject>, public AccessibilityObjectInterface {
 protected:
     AccessibilityObject() = default;
     
@@ -1159,7 +1009,10 @@ protected:
     AccessibilityIsIgnoredFromParentData m_isIgnoredFromParentData { };
     bool m_childrenDirty { false };
     bool m_subtreeDirty { false };
-
+#if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
+    bool m_isolatedTreeNodeInitialized { false };
+#endif
+    
     void setIsIgnoredFromParentData(AccessibilityIsIgnoredFromParentData& data) { m_isIgnoredFromParentData = data; }
 
     virtual bool computeAccessibilityIsIgnored() const { return true; }

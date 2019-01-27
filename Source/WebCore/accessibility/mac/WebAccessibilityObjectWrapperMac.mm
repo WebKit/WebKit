@@ -416,6 +416,8 @@ using namespace HTMLNames;
 #define NSAccessibilityRelativeFrameAttribute @"AXRelativeFrame"
 #endif
 
+#define _axBackingObject self.axBackingObject
+
 extern "C" AXUIElementRef NSAccessibilityCreateAXUIElementRef(id element);
 
 @implementation WebAccessibilityObjectWrapper
@@ -1970,10 +1972,10 @@ static NSString *roleValueToNSString(AccessibilityRole value)
 - (NSString*)role
 {
     ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-    if (m_object->isAttachment())
+    if (_axBackingObject->isAttachment())
         return [[self attachmentView] accessibilityAttributeValue:NSAccessibilityRoleAttribute];
     ALLOW_DEPRECATED_DECLARATIONS_END
-    AccessibilityRole role = m_object->roleValue();
+    AccessibilityRole role = _axBackingObject->roleValue();
 
     if (role == AccessibilityRole::Label && is<AccessibilityLabel>(*m_object) && downcast<AccessibilityLabel>(*m_object).containsOnlyStaticText())
         role = AccessibilityRole::StaticText;
@@ -2000,7 +2002,7 @@ ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     if (m_object->isSearchField())
         return NSAccessibilitySearchFieldSubrole;
     
-    if (m_object->isAttachment()) {
+    if (_axBackingObject->isAttachment()) {
         NSView* attachView = [self attachmentView];
         if ([[attachView accessibilityAttributeNames] containsObject:NSAccessibilitySubroleAttribute])
             return [attachView accessibilityAttributeValue:NSAccessibilitySubroleAttribute];
@@ -2211,7 +2213,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
     ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     // attachments have the AXImage role, but a different subrole
-    if (m_object->isAttachment())
+    if (_axBackingObject->isAttachment())
         return [[self attachmentView] accessibilityAttributeValue:NSAccessibilityRoleDescriptionAttribute];
     ALLOW_DEPRECATED_DECLARATIONS_END
 
@@ -2568,7 +2570,7 @@ IGNORE_WARNINGS_END
         return [NSNumber numberWithBool: m_object->isVisited()];
     
     if ([attributeName isEqualToString: NSAccessibilityTitleAttribute]) {
-        if (m_object->isAttachment()) {
+        if (_axBackingObject->isAttachment()) {
             if ([[[self attachmentView] accessibilityAttributeNames] containsObject:NSAccessibilityTitleAttribute])
                 return [[self attachmentView] accessibilityAttributeValue:NSAccessibilityTitleAttribute];
         }
@@ -2585,7 +2587,7 @@ IGNORE_WARNINGS_END
     }
     
     if ([attributeName isEqualToString: NSAccessibilityDescriptionAttribute]) {
-        if (m_object->isAttachment()) {
+        if (_axBackingObject->isAttachment()) {
             if ([[[self attachmentView] accessibilityAttributeNames] containsObject:NSAccessibilityDescriptionAttribute])
                 return [[self attachmentView] accessibilityAttributeValue:NSAccessibilityDescriptionAttribute];
         }
@@ -2593,7 +2595,7 @@ IGNORE_WARNINGS_END
     }
     
     if ([attributeName isEqualToString: NSAccessibilityValueAttribute]) {
-        if (m_object->isAttachment()) {
+        if (_axBackingObject->isAttachment()) {
             if ([[[self attachmentView] accessibilityAttributeNames] containsObject:NSAccessibilityValueAttribute])
                 return [[self attachmentView] accessibilityAttributeValue:NSAccessibilityValueAttribute];
         }

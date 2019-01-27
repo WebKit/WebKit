@@ -32,6 +32,8 @@
 
 #include "AXObjectCache.h"
 
+#include "AXIsolatedTree.h"
+#include "AXIsolatedTreeNode.h"
 #include "AccessibilityARIAGrid.h"
 #include "AccessibilityARIAGridCell.h"
 #include "AccessibilityARIAGridRow.h"
@@ -114,6 +116,8 @@
 namespace WebCore {
 
 using namespace HTMLNames;
+
+const AXID InvalidAXID = 0;
 
 // Post value change notifications for password fields or elements contained in password fields at a 40hz interval to thwart analysis of typing cadence
 static const Seconds accessibilityPasswordValueChangeNotificationInterval { 25_ms };
@@ -723,6 +727,10 @@ void AXObjectCache::remove(AXID axID)
     object->setAXObjectID(0);
 
     m_idsInUse.remove(axID);
+#if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
+    if (auto pageID = m_document.pageID())
+        AXIsolatedTree::treeForPageID(*pageID)->removeNode(axID);
+#endif
 
     ASSERT(m_objects.size() >= m_idsInUse.size());
 }
@@ -2906,6 +2914,40 @@ void AXObjectCache::performDeferredCacheUpdate()
         handleFocusedUIElementChanged(deferredFocusedChangeContext.first, deferredFocusedChangeContext.second);
     m_deferredFocusedNodeChange.clear();
 }
+    
+#if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
+Ref<AXIsolatedTreeNode> AXObjectCache::createIsolatedAccessibilityTreeHierarchy(AccessibilityObject& object, AXID parentID, AXIsolatedTree& tree, Vector<Ref<AXIsolatedTreeNode>>& nodeChanges)
+{
+    auto isolatedTreeNode = AXIsolatedTreeNode::create(object);
+    nodeChanges.append(isolatedTreeNode.copyRef());
+
+    isolatedTreeNode->setParent(parentID);
+    associateIsolatedTreeNode(object, isolatedTreeNode, tree.treeIdentifier());
+
+    for (auto child : object.children()) {
+        auto staticChild = createIsolatedAccessibilityTreeHierarchy(*child, isolatedTreeNode->identifier(), tree, nodeChanges);
+        isolatedTreeNode->appendChild(staticChild->identifier());
+    }
+
+    return isolatedTreeNode;
+}
+    
+Ref<AXIsolatedTree> AXObjectCache::generateIsolatedAccessibilityTree()
+{
+    RELEASE_ASSERT(isMainThread());
+
+    auto tree = AXIsolatedTree::treeForPageID(*m_document.pageID());
+    if (!tree)
+        tree = AXIsolatedTree::createTreeForPageID(*m_document.pageID());
+    
+    Vector<Ref<AXIsolatedTreeNode>> nodeChanges;
+    auto root = createIsolatedAccessibilityTreeHierarchy(*rootObject(), InvalidAXID, *tree, nodeChanges);
+    root->setIsRootNode(true);
+    tree->appendNodeChanges(nodeChanges);
+
+    return makeRef(*tree);
+}
+#endif
     
 void AXObjectCache::deferRecomputeIsIgnoredIfNeeded(Element* element)
 {
