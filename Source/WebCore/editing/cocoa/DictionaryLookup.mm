@@ -55,7 +55,7 @@
 
 #if PLATFORM(MAC)
 #import <Quartz/Quartz.h>
-#elif !PLATFORM(WATCH)
+#else
 #import <PDFKit/PDFKit.h>
 #endif
 
@@ -372,8 +372,6 @@ std::tuple<RefPtr<Range>, NSDictionary *> DictionaryLookup::rangeAtHitTestResult
     return { nullptr, nil };
     
 }
-    
-#if !PLATFORM(WATCH)
 
 static void expandSelectionByCharacters(PDFSelection *selection, NSInteger numberOfCharactersToExpand, NSInteger& charactersAddedBeforeStart, NSInteger& charactersAddedAfterEnd)
 {
@@ -431,8 +429,6 @@ std::tuple<NSString *, NSDictionary *> DictionaryLookup::stringForPDFSelection(P
 
     return { @"", nil };
 }
-    
-#endif // !PLATFORM(WATCH)
 
 static WKRevealController showPopupOrCreateAnimationController(bool createAnimationController, const DictionaryPopupInfo& dictionaryPopupInfo, RevealView *view, const WTF::Function<void(TextIndicator&)>& textIndicatorInstallationCallback, const WTF::Function<FloatRect(FloatRect)>& rootViewToViewConversionCallback, WTF::Function<void()>&& clearTextIndicator)
 {

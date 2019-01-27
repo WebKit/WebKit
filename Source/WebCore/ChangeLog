@@ -1,3 +1,14 @@
+2019-01-27  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Remove a couple of PLATFORM defines intended for watchOS
+        https://bugs.webkit.org/show_bug.cgi?id=193888
+
+        Reviewed by Alexey Proskuryakov.
+
+        Remove the use of !PLATFORM(WATCH), since this is true on every platform.
+
+        * editing/cocoa/DictionaryLookup.mm:
+
 2019-01-27  Jiewen Tan  <jiewen_tan@apple.com>
 
         Use a load optimizer for some sites
