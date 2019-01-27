@@ -240,7 +240,10 @@ public:
     void appendChild(Ref<ScrollingStateNode>&&);
     void insertChild(Ref<ScrollingStateNode>&&, size_t index);
 
+    // Note that node ownership is via the parent, so these functions can trigger node deletion.
+    void removeFromParent();
     void removeChildAtIndex(size_t index);
+    void removeChild(ScrollingStateNode&);
 
     size_t indexOfChild(ScrollingStateNode&) const;
 

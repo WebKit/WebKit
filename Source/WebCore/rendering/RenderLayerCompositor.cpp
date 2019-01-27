@@ -3788,7 +3788,7 @@ void RenderLayerCompositor::reattachSubframeScrollLayers()
         if (!parentNodeID)
             continue;
 
-        scrollingCoordinator->attachToStateTree(child->isMainFrame() ? ScrollingNodeType::MainFrame : ScrollingNodeType::Subframe, frameScrollingNodeID, parentNodeID);
+        scrollingCoordinator->insertNode(child->isMainFrame() ? ScrollingNodeType::MainFrame : ScrollingNodeType::Subframe, frameScrollingNodeID, parentNodeID);
     }
 }
 
@@ -3823,7 +3823,7 @@ ScrollingNodeID RenderLayerCompositor::attachScrollingNode(RenderLayer& layer, S
     if (!nodeID)
         nodeID = scrollingCoordinator->uniqueScrollingNodeID();
 
-    nodeID = scrollingCoordinator->attachToStateTree(nodeType, nodeID, parentNodeID);
+    nodeID = scrollingCoordinator->insertNode(nodeType, nodeID, parentNodeID);
     if (!nodeID)
         return 0;
 

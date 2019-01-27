@@ -486,20 +486,45 @@ void AsyncScrollingCoordinator::scrollableAreaScrollbarLayerDidChange(Scrollable
     }
 }
 
-ScrollingNodeID AsyncScrollingCoordinator::attachToStateTree(ScrollingNodeType nodeType, ScrollingNodeID newNodeID, ScrollingNodeID parentID, size_t childIndex)
+ScrollingNodeID AsyncScrollingCoordinator::createNode(ScrollingNodeType nodeType, ScrollingNodeID newNodeID)
 {
-    LOG_WITH_STREAM(Scrolling, stream << "AsyncScrollingCoordinator::attachToStateTree " << nodeType << " node " << newNodeID << " parent " << parentID << " index " << childIndex);
-    return m_scrollingStateTree->attachNode(nodeType, newNodeID, parentID, childIndex);
+    LOG_WITH_STREAM(Scrolling, stream << "AsyncScrollingCoordinator::createNode " << nodeType << " node " << newNodeID);
+    return m_scrollingStateTree->createUnparentedNode(nodeType, newNodeID);
 }
 
-void AsyncScrollingCoordinator::detachFromStateTree(ScrollingNodeID nodeID)
+ScrollingNodeID AsyncScrollingCoordinator::insertNode(ScrollingNodeType nodeType, ScrollingNodeID newNodeID, ScrollingNodeID parentID, size_t childIndex)
 {
-    m_scrollingStateTree->detachNode(nodeID);
+    LOG_WITH_STREAM(Scrolling, stream << "AsyncScrollingCoordinator::insertNode " << nodeType << " node " << newNodeID << " parent " << parentID << " index " << childIndex);
+    return m_scrollingStateTree->insertNode(nodeType, newNodeID, parentID, childIndex);
 }
 
-void AsyncScrollingCoordinator::clearStateTree()
+void AsyncScrollingCoordinator::unparentNode(ScrollingNodeID nodeID)
+{
+    m_scrollingStateTree->unparentNode(nodeID);
+}
+
+void AsyncScrollingCoordinator::unparentChildrenAndDestroyNode(ScrollingNodeID nodeID)
+{
+    m_scrollingStateTree->unparentChildrenAndDestroyNode(nodeID);
+}
+
+void AsyncScrollingCoordinator::detachAndDestroySubtree(ScrollingNodeID nodeID)
+{
+    m_scrollingStateTree->detachAndDestroySubtree(nodeID);
+}
+
+void AsyncScrollingCoordinator::clearAllNodes()
 {
     m_scrollingStateTree->clear();
+}
+
+ScrollingNodeID AsyncScrollingCoordinator::parentOfNode(ScrollingNodeID nodeID) const
+{
+    auto* scrollingNode = m_scrollingStateTree->stateNodeForID(nodeID);
+    if (!scrollingNode)
+        return 0;
+
+    return scrollingNode->parentNodeID();
 }
 
 Vector<ScrollingNodeID> AsyncScrollingCoordinator::childrenOfNode(ScrollingNodeID nodeID) const
@@ -540,7 +565,7 @@ void AsyncScrollingCoordinator::ensureRootStateNodeForFrameView(FrameView& frame
     // For non-main frames, it is only possible to arrive in this function from
     // RenderLayerCompositor::updateBacking where the node has already been created.
     ASSERT(frameView.frame().isMainFrame());
-    attachToStateTree(ScrollingNodeType::MainFrame, frameView.scrollLayerID(), 0, 0);
+    insertNode(ScrollingNodeType::MainFrame, frameView.scrollLayerID(), 0, 0);
 }
 
 void AsyncScrollingCoordinator::setNodeLayers(ScrollingNodeID nodeID, GraphicsLayer* layer, GraphicsLayer* scrolledContentsLayer, GraphicsLayer* counterScrollingLayer, GraphicsLayer* insetClipLayer)

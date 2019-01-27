@@ -1,3 +1,92 @@
+2019-01-26  Simon Fraser  <simon.fraser@apple.com>
+
+        Allow scrolling tree nodes to exist in a detached state
+        https://bugs.webkit.org/show_bug.cgi?id=193754
+
+        Reviewed by Zalan Bujtas.
+
+        One of the (questionable?) design decisions of the scrolling tree is that the tree implementation
+        is hidden behind the ScrollingCoordinator interface. That interface only allowed nodes to exist
+        in a connected state; attachToStateTree() required a non-zero parent for any node that was not
+        the root.
+
+        This makes it impossible to coordinate the hookup of the scrolling tree across frame boundaries;
+        the scrolling tree has to have been fully constructed in ancestor frames before subframe nodes
+        can be attached. This is a significant difference from compositing, where a subframe can create
+        GraphicsLayers which don't have to be parented right away, and actually get parented later via
+        a compositing update in the parent frame.
+
+        We want to be able to hook up the scrolling tree via the same code paths as GraphicsLayer
+        connection (anything else is too confusing). So we need to be able to instantiate scrolling
+        tree nodes in a disconnected state, and attach them later.
+
+        To achieve this, add the notion of "unparented" nodes to ScrollingCoordinator and the ScrollingStateTree.
+        Allow clients to create unparented nodes, which can be attached later. ScrollingCoordinator stores
+        the roots of unparented subtrees in an owning HashMap. Nodes in unparented trees are still referenced
+        by m_stateNodeMap, so it's possible to find them and set state on them.
+
+        Clean up the ScrollingCoordinator interface to remove "state tree" terminology; the state vs. scrolling tree
+        is really an implementation detail.
+
+        This also removes the special-casing of ScrollingNodeType::Subframe nodes which ScrollingStateTree stored
+        in m_orphanedSubframeNodes; now the unparenting is controlled by the client.
+
+        Currently no code creates unparented nodes so there is no behavior change.
+
+        * dom/Document.cpp:
+        (WebCore::Document::setPageCacheState):
+        * page/scrolling/AsyncScrollingCoordinator.cpp:
+        (WebCore::AsyncScrollingCoordinator::createNode):
+        (WebCore::AsyncScrollingCoordinator::insertNode):
+        (WebCore::AsyncScrollingCoordinator::unparentNode):
+        (WebCore::AsyncScrollingCoordinator::unparentChildrenAndDestroyNode):
+        (WebCore::AsyncScrollingCoordinator::detachAndDestroySubtree):
+        (WebCore::AsyncScrollingCoordinator::clearAllNodes):
+        (WebCore::AsyncScrollingCoordinator::parentOfNode const):
+        (WebCore::AsyncScrollingCoordinator::ensureRootStateNodeForFrameView):
+        (WebCore::AsyncScrollingCoordinator::attachToStateTree): Deleted.
+        (WebCore::AsyncScrollingCoordinator::detachFromStateTree): Deleted.
+        (WebCore::AsyncScrollingCoordinator::clearStateTree): Deleted.
+        * page/scrolling/AsyncScrollingCoordinator.h:
+        * page/scrolling/ScrollingCoordinator.h:
+        (WebCore::ScrollingCoordinator::handleWheelEvent):
+        (WebCore::ScrollingCoordinator::createNode):
+        (WebCore::ScrollingCoordinator::insertNode):
+        (WebCore::ScrollingCoordinator::unparentNode):
+        (WebCore::ScrollingCoordinator::unparentChildrenAndDestroyNode):
+        (WebCore::ScrollingCoordinator::detachAndDestroySubtree):
+        (WebCore::ScrollingCoordinator::clearAllNodes):
+        (WebCore::ScrollingCoordinator::parentOfNode const):
+        (WebCore::ScrollingCoordinator::childrenOfNode const):
+        (WebCore::ScrollingCoordinator::attachToStateTree): Deleted.
+        (WebCore::ScrollingCoordinator::detachFromStateTree): Deleted.
+        (WebCore::ScrollingCoordinator::clearStateTree): Deleted.
+        * page/scrolling/ScrollingStateNode.cpp:
+        (WebCore::ScrollingStateNode::removeFromParent):
+        (WebCore::ScrollingStateNode::removeChild):
+        * page/scrolling/ScrollingStateNode.h:
+        * page/scrolling/ScrollingStateTree.cpp:
+        (WebCore::ScrollingStateTree::ScrollingStateTree):
+        (WebCore::ScrollingStateTree::createUnparentedNode):
+        (WebCore::ScrollingStateTree::insertNode):
+        (WebCore::ScrollingStateTree::unparentNode):
+        (WebCore::ScrollingStateTree::unparentChildrenAndDestroyNode):
+        (WebCore::ScrollingStateTree::detachAndDestroySubtree):
+        (WebCore::ScrollingStateTree::clear):
+        (WebCore::ScrollingStateTree::commit):
+        (WebCore::ScrollingStateTree::removeNodeAndAllDescendants):
+        (WebCore::ScrollingStateTree::recursiveNodeWillBeRemoved):
+        (showScrollingStateTree):
+        (WebCore::ScrollingStateTree::attachNode): Deleted.
+        (WebCore::ScrollingStateTree::detachNode): Deleted.
+        * page/scrolling/ScrollingStateTree.h:
+        (WebCore::ScrollingStateTree::nodeCount const):
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::detachFromScrollingCoordinator):
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::reattachSubframeScrollLayers):
+        (WebCore::RenderLayerCompositor::attachScrollingNode):
+
 2019-01-26  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: provide a way to edit the user agent of a remote target

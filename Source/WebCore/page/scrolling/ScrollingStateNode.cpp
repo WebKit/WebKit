@@ -111,6 +111,21 @@ void ScrollingStateNode::insertChild(Ref<ScrollingStateNode>&& childNode, size_t
     setPropertyChanged(ChildNodes);
 }
 
+void ScrollingStateNode::removeFromParent()
+{
+    if (!m_parent)
+        return;
+
+    m_parent->removeChild(*this);
+}
+
+void ScrollingStateNode::removeChild(ScrollingStateNode& childNode)
+{
+    auto childIndex = indexOfChild(childNode);
+    if (childIndex != notFound)
+        removeChildAtIndex(childIndex);
+}
+
 void ScrollingStateNode::removeChildAtIndex(size_t index)
 {
     ASSERT(m_children && index < m_children->size());

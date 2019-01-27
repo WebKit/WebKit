@@ -5200,7 +5200,7 @@ void Document::setPageCacheState(PageCacheState state)
             if (page && m_frame->isMainFrame()) {
                 v->resetScrollbarsAndClearContentsSize();
                 if (ScrollingCoordinator* scrollingCoordinator = page->scrollingCoordinator())
-                    scrollingCoordinator->clearStateTree();
+                    scrollingCoordinator->clearAllNodes();
             }
         }
 

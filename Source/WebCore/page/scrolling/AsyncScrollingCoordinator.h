@@ -97,10 +97,14 @@ private:
 
     WEBCORE_EXPORT bool requestScrollPositionUpdate(FrameView&, const IntPoint&) override;
 
-    WEBCORE_EXPORT ScrollingNodeID attachToStateTree(ScrollingNodeType, ScrollingNodeID newNodeID, ScrollingNodeID parentID, size_t childIndex) override;
-    WEBCORE_EXPORT void detachFromStateTree(ScrollingNodeID) override;
-    WEBCORE_EXPORT void clearStateTree() override;
+    WEBCORE_EXPORT ScrollingNodeID createNode(ScrollingNodeType, ScrollingNodeID newNodeID) override;
+    WEBCORE_EXPORT ScrollingNodeID insertNode(ScrollingNodeType, ScrollingNodeID newNodeID, ScrollingNodeID parentID, size_t childIndex) override;
+    WEBCORE_EXPORT void unparentNode(ScrollingNodeID) override;
+    WEBCORE_EXPORT void unparentChildrenAndDestroyNode(ScrollingNodeID) override;
+    WEBCORE_EXPORT void detachAndDestroySubtree(ScrollingNodeID) override;
+    WEBCORE_EXPORT void clearAllNodes() override;
 
+    WEBCORE_EXPORT ScrollingNodeID parentOfNode(ScrollingNodeID) const override;
     WEBCORE_EXPORT Vector<ScrollingNodeID> childrenOfNode(ScrollingNodeID) const override;
 
     WEBCORE_EXPORT void setNodeLayers(ScrollingNodeID, GraphicsLayer* /*layer*/, GraphicsLayer* /*scrolledContentsLayer*/ = nullptr, GraphicsLayer* /*counterScrollingLayer*/ = nullptr, GraphicsLayer* /*insetClipLayer*/ = nullptr) override;

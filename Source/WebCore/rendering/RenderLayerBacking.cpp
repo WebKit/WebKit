@@ -1778,19 +1778,19 @@ void RenderLayerBacking::detachFromScrollingCoordinator(OptionSet<ScrollCoordina
 
     if (roles.contains(ScrollCoordinationRole::Scrolling) && m_scrollingNodeID) {
         LOG(Compositing, "Detaching Scrolling node %" PRIu64, m_scrollingNodeID);
-        scrollingCoordinator->detachFromStateTree(m_scrollingNodeID);
+        scrollingCoordinator->unparentChildrenAndDestroyNode(m_scrollingNodeID);
         m_scrollingNodeID = 0;
     }
 
     if (roles.contains(ScrollCoordinationRole::Scrolling) && m_frameHostingNodeID) {
         LOG(Compositing, "Detaching FrameHosting node %" PRIu64, m_frameHostingNodeID);
-        scrollingCoordinator->detachFromStateTree(m_frameHostingNodeID);
+        scrollingCoordinator->unparentChildrenAndDestroyNode(m_frameHostingNodeID);
         m_frameHostingNodeID = 0;
     }
 
     if (roles.contains(ScrollCoordinationRole::ViewportConstrained) && m_viewportConstrainedNodeID) {
         LOG(Compositing, "Detaching ViewportConstrained node %" PRIu64, m_viewportConstrainedNodeID);
-        scrollingCoordinator->detachFromStateTree(m_viewportConstrainedNodeID);
+        scrollingCoordinator->unparentChildrenAndDestroyNode(m_viewportConstrainedNodeID);
         m_viewportConstrainedNodeID = 0;
     }
 }

@@ -168,11 +168,22 @@ public:
     virtual void commitTreeStateIfNeeded() { }
     virtual bool requestScrollPositionUpdate(FrameView&, const IntPoint&) { return false; }
     virtual bool handleWheelEvent(FrameView&, const PlatformWheelEvent&) { return true; }
-    virtual ScrollingNodeID attachToStateTree(ScrollingNodeType, ScrollingNodeID newNodeID, ScrollingNodeID /*parentID*/, size_t /*childIndex*/ = notFound) { return newNodeID; }
-    virtual Vector<ScrollingNodeID> childrenOfNode(ScrollingNodeID) const { return { }; }
 
-    virtual void detachFromStateTree(ScrollingNodeID) { }
-    virtual void clearStateTree() { }
+    // Create an unparented node.
+    virtual ScrollingNodeID createNode(ScrollingNodeType, ScrollingNodeID newNodeID) { return newNodeID; }
+    // Parent a node in the scrolling tree. This may return a new nodeID if the node type changed. parentID = 0 sets the root node.
+    virtual ScrollingNodeID insertNode(ScrollingNodeType, ScrollingNodeID newNodeID, ScrollingNodeID /*parentID*/, size_t /*childIndex*/ = notFound) { return newNodeID; }
+    // Node will be unparented, but not destroyed. It's the client's responsibility to either re-parent or destroy this node.
+    virtual void unparentNode(ScrollingNodeID) { }
+    // Node will be destroyed, and its children left unparented.
+    virtual void unparentChildrenAndDestroyNode(ScrollingNodeID) { }
+    // Node will be unparented, and it and its children destroyed.
+    virtual void detachAndDestroySubtree(ScrollingNodeID) { }
+    // Destroy the tree, including both parented and unparented nodes.
+    virtual void clearAllNodes() { }
+
+    virtual ScrollingNodeID parentOfNode(ScrollingNodeID) const { return 0; }
+    virtual Vector<ScrollingNodeID> childrenOfNode(ScrollingNodeID) const { return { }; }
 
     virtual void setNodeLayers(ScrollingNodeID, GraphicsLayer* /*layer*/, GraphicsLayer* /*scrolledContentsLayer*/ = nullptr, GraphicsLayer* /*counterScrollingLayer*/ = nullptr, GraphicsLayer* /*insetClipLayer*/ = nullptr) { }
 

@@ -51,8 +51,11 @@ public:
     ScrollingStateFrameScrollingNode* rootStateNode() const { return m_rootStateNode.get(); }
     WEBCORE_EXPORT ScrollingStateNode* stateNodeForID(ScrollingNodeID) const;
 
-    WEBCORE_EXPORT ScrollingNodeID attachNode(ScrollingNodeType, ScrollingNodeID, ScrollingNodeID parentID, size_t childIndex);
-    void detachNode(ScrollingNodeID);
+    ScrollingNodeID createUnparentedNode(ScrollingNodeType, ScrollingNodeID);
+    WEBCORE_EXPORT ScrollingNodeID insertNode(ScrollingNodeType, ScrollingNodeID, ScrollingNodeID parentID, size_t childIndex);
+    void unparentNode(ScrollingNodeID);
+    void unparentChildrenAndDestroyNode(ScrollingNodeID);
+    void detachAndDestroySubtree(ScrollingNodeID);
     void clear();
     
     const HashSet<ScrollingNodeID>& removedNodes() const { return m_nodesRemovedSinceLastCommit; }
@@ -66,8 +69,8 @@ public:
 
     bool hasNewRootStateNode() const { return m_hasNewRootStateNode; }
     void setHasNewRootStateNode(bool hasNewRoot) { m_hasNewRootStateNode = hasNewRoot; }
-    
-    int nodeCount() const { return m_stateNodeMap.size(); }
+
+    unsigned nodeCount() const { return m_stateNodeMap.size(); }
 
     typedef HashMap<ScrollingNodeID, ScrollingStateNode*> StateNodeMap;
     const StateNodeMap& nodeMap() const { return m_stateNodeMap; }
@@ -83,20 +86,22 @@ private:
 
     bool nodeTypeAndParentMatch(ScrollingStateNode&, ScrollingNodeType, ScrollingStateNode* parentNode) const;
 
-    enum class SubframeNodeRemoval { Delete, Orphan };
-    void removeNodeAndAllDescendants(ScrollingStateNode*, SubframeNodeRemoval = SubframeNodeRemoval::Delete);
+    void removeNodeAndAllDescendants(ScrollingStateNode*);
 
-    void recursiveNodeWillBeRemoved(ScrollingStateNode* currNode, SubframeNodeRemoval);
+    void recursiveNodeWillBeRemoved(ScrollingStateNode* currNode);
     void willRemoveNode(ScrollingStateNode*);
 
     AsyncScrollingCoordinator* m_scrollingCoordinator;
+    // Contains all the nodes we know about (those in the m_rootStateNode tree, and in m_unparentedNodes subtrees).
     StateNodeMap m_stateNodeMap;
+    // Owns roots of unparented subtrees.
+    HashMap<ScrollingNodeID, RefPtr<ScrollingStateNode>> m_unparentedNodes;
+
     RefPtr<ScrollingStateFrameScrollingNode> m_rootStateNode;
     HashSet<ScrollingNodeID> m_nodesRemovedSinceLastCommit;
-    HashMap<ScrollingNodeID, RefPtr<ScrollingStateNode>> m_orphanedSubframeNodes;
-    bool m_hasChangedProperties;
-    bool m_hasNewRootStateNode;
-    LayerRepresentation::Type m_preferredLayerRepresentation;
+    bool m_hasChangedProperties { false };
+    bool m_hasNewRootStateNode { false };
+    LayerRepresentation::Type m_preferredLayerRepresentation { LayerRepresentation::GraphicsLayerRepresentation };
 };
 
 } // namespace WebCore
