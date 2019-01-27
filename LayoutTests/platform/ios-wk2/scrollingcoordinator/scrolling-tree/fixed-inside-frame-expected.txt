@@ -14,26 +14,30 @@
   (max layout viewport origin (0,57))
   (behavior for fixed 0)
   (children 1
-    (Frame scrolling node
-      (scrollable area size 480 400)
-      (contents size 480 1016)
-      (requested scroll position 0 120)
-      (requested scroll position represents programmatic scroll 1)
-      (scrollable area parameters 
-        (horizontal scroll elasticity 1)
-        (vertical scroll elasticity 1)
-        (horizontal scrollbar mode 0)
-        (vertical scrollbar mode 0))
-      (visual viewport enabled 1)
-      (layout viewport at (0,120) size 480x400)
-      (min layout viewport origin (0,0))
-      (max layout viewport origin (0,616))
-      (behavior for fixed 0)
+    (Frame hosting node
       (children 1
-        (Fixed node
-          (anchor edges: AnchorEdgeLeft AnchorEdgeTop)
-          (viewport rect at last layout at (0,120) size 480x400)
-          (layer position at last layout (10,130))
+        (Frame scrolling node
+          (scrollable area size 480 400)
+          (contents size 480 1016)
+          (requested scroll position 0 120)
+          (requested scroll position represents programmatic scroll 1)
+          (scrollable area parameters 
+            (horizontal scroll elasticity 1)
+            (vertical scroll elasticity 1)
+            (horizontal scrollbar mode 0)
+            (vertical scrollbar mode 0))
+          (visual viewport enabled 1)
+          (layout viewport at (0,120) size 480x400)
+          (min layout viewport origin (0,0))
+          (max layout viewport origin (0,616))
+          (behavior for fixed 0)
+          (children 1
+            (Fixed node
+              (anchor edges: AnchorEdgeLeft AnchorEdgeTop)
+              (viewport rect at last layout at (0,120) size 480x400)
+              (layer position at last layout (10,130))
+            )
+          )
         )
       )
     )

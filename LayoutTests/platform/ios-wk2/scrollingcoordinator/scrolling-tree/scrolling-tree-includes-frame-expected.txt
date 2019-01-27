@@ -14,19 +14,23 @@
   (max layout viewport origin (0,0))
   (behavior for fixed 0)
   (children 1
-    (Frame scrolling node
-      (scrollable area size 100 200)
-      (contents size 308 416)
-      (scrollable area parameters 
-        (horizontal scroll elasticity 1)
-        (vertical scroll elasticity 1)
-        (horizontal scrollbar mode 0)
-        (vertical scrollbar mode 0))
-      (visual viewport enabled 1)
-      (layout viewport at (0,0) size 100x200)
-      (min layout viewport origin (0,0))
-      (max layout viewport origin (208,216))
-      (behavior for fixed 0)
+    (Frame hosting node
+      (children 1
+        (Frame scrolling node
+          (scrollable area size 100 200)
+          (contents size 308 416)
+          (scrollable area parameters 
+            (horizontal scroll elasticity 1)
+            (vertical scroll elasticity 1)
+            (horizontal scrollbar mode 0)
+            (vertical scrollbar mode 0))
+          (visual viewport enabled 1)
+          (layout viewport at (0,0) size 100x200)
+          (min layout viewport origin (0,0))
+          (max layout viewport origin (208,216))
+          (behavior for fixed 0)
+        )
+      )
     )
   )
 )

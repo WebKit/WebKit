@@ -1,3 +1,15 @@
+2019-01-26  Simon Fraser  <simon.fraser@apple.com>
+
+        Have composited RenderIFrame layers make FrameHosting scrolling tree nodes to parent the iframe's scrolling node
+        https://bugs.webkit.org/show_bug.cgi?id=193879
+
+        Reviewed by Antti Koivisto.
+
+        Need a specialization of dump() for ScrollingStateFrameHostingNode to avoid infinite recursion.
+
+        * Shared/RemoteLayerTree/RemoteScrollingCoordinatorTransaction.cpp:
+        (WebKit::dump):
+
 2019-01-27  Chris Fleizach  <cfleizach@apple.com>
 
         AX: Introduce a static accessibility tree

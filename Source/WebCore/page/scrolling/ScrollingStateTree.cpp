@@ -213,6 +213,8 @@ void ScrollingStateTree::unparentChildrenAndDestroyNode(ScrollingNodeID nodeID)
     if (!nodeID)
         return;
 
+    LOG_WITH_STREAM(Scrolling, stream << "ScrollingStateTree " << this << " unparentChildrenAndDestroyNode " << nodeID);
+
     // The node may not be found if clear() was recently called.
     RefPtr<ScrollingStateNode> protectedNode = m_stateNodeMap.take(nodeID);
     if (!protectedNode)
@@ -221,6 +223,7 @@ void ScrollingStateTree::unparentChildrenAndDestroyNode(ScrollingNodeID nodeID)
     if (auto* children = protectedNode->children()) {
         for (auto child : *children) {
             child->removeFromParent();
+            LOG_WITH_STREAM(Scrolling, stream << " moving " << child->scrollingNodeID() << " to unparented nodes");
             m_unparentedNodes.add(child->scrollingNodeID(), WTFMove(child));
         }
         children->clear();
@@ -234,6 +237,8 @@ void ScrollingStateTree::detachAndDestroySubtree(ScrollingNodeID nodeID)
 {
     if (!nodeID)
         return;
+
+    LOG_WITH_STREAM(Scrolling, stream << "ScrollingStateTree " << this << " detachAndDestroySubtree " << nodeID);
 
     // The node may not be found if clear() was recently called.
     auto* node = m_stateNodeMap.take(nodeID);

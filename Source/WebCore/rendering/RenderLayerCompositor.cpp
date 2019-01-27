@@ -1928,12 +1928,19 @@ String RenderLayerCompositor::layerTreeAsText(LayerTreeFlags flags)
     return layerTreeText;
 }
 
+static RenderView* frameContentsRenderView(RenderWidget& renderer)
+{
+    if (auto* contentDocument = renderer.frameOwnerElement().contentDocument())
+        return contentDocument->renderView();
+
+    return nullptr;
+}
+
 RenderLayerCompositor* RenderLayerCompositor::frameContentsCompositor(RenderWidget& renderer)
 {
-    if (auto* contentDocument = renderer.frameOwnerElement().contentDocument()) {
-        if (auto* view = contentDocument->renderView())
-            return &view->compositor();
-    }
+    if (auto* view = frameContentsRenderView(renderer))
+        return &view->compositor();
+
     return nullptr;
 }
 
@@ -1954,6 +1961,15 @@ bool RenderLayerCompositor::parentFrameContentLayers(RenderWidget& renderer)
         hostingLayer->removeAllChildren();
         hostingLayer->addChild(*rootLayer);
     }
+
+    if (auto frameHostingNodeID = backing->scrollingNodeIDForRole(ScrollCoordinationRole::FrameHosting)) {
+        auto* contentsRenderView = frameContentsRenderView(renderer);
+        if (auto frameRootScrollingNodeID = contentsRenderView->frameView().scrollLayerID()) {
+            if (auto* scrollingCoordinator = this->scrollingCoordinator())
+                scrollingCoordinator->insertNode(ScrollingNodeType::Subframe, frameRootScrollingNodeID, frameHostingNodeID, 0);
+        }
+    }
+
     // FIXME: Why always return true and not just when the layers changed?
     return true;
 }
@@ -2843,6 +2859,25 @@ bool RenderLayerCompositor::useCoordinatedScrollingForLayer(const RenderLayer& l
     return false;
 }
 
+bool RenderLayerCompositor::isLayerForIFrameWithScrollCoordinatedContents(const RenderLayer& layer) const
+{
+    if (!is<RenderWidget>(layer.renderer()))
+        return false;
+
+    auto* contentDocument = downcast<RenderWidget>(layer.renderer()).frameOwnerElement().contentDocument();
+    if (!contentDocument)
+        return false;
+
+    auto* view = contentDocument->renderView();
+    if (!view)
+        return false;
+
+    if (auto* scrollingCoordinator = this->scrollingCoordinator())
+        return scrollingCoordinator->coordinatesScrollingForFrameView(view->frameView());
+
+    return false;
+}
+
 bool RenderLayerCompositor::isRunningTransformAnimation(RenderLayerModelObject& renderer) const
 {
     if (!(m_compositingTriggers & ChromeClient::AnimationTrigger))
@@ -2859,8 +2894,7 @@ bool RenderLayerCompositor::isRunningTransformAnimation(RenderLayerModelObject& 
 }
 
 // If an element has negative z-index children, those children render in front of the 
-// layer background, so we need an extra 'contents' layer for the foreground of the layer
-// object.
+// layer background, so we need an extra 'contents' layer for the foreground of the layer object.
 bool RenderLayerCompositor::needsContentsCompositingLayer(const RenderLayer& layer) const
 {
     return layer.hasNegativeZOrderLayers();
@@ -3534,7 +3568,7 @@ void RenderLayerCompositor::detachRootLayer()
 
     switch (m_rootLayerAttachment) {
     case RootLayerAttachedViaEnclosingFrame: {
-        // The layer will get unhooked up via RenderLayerBacking::updateGraphicsLayerConfiguration()
+        // The layer will get unhooked up via RenderLayerBacking::updateConfiguration()
         // for the frame's renderer in the parent document.
         if (m_overflowControlsHostLayer)
             m_overflowControlsHostLayer->removeFromParent();
@@ -3543,6 +3577,11 @@ void RenderLayerCompositor::detachRootLayer()
 
         if (auto* ownerElement = m_renderView.document().ownerElement())
             ownerElement->scheduleInvalidateStyleAndLayerComposition();
+
+        if (auto frameRootScrollingNodeID = m_renderView.frameView().scrollLayerID()) {
+            if (auto* scrollingCoordinator = this->scrollingCoordinator())
+                scrollingCoordinator->unparentNode(frameRootScrollingNodeID);
+        }
         break;
     }
     case RootLayerAttachedViaChromeClient: {
@@ -3651,6 +3690,12 @@ void RenderLayerCompositor::updateScrollCoordinatedStatus(RenderLayer& layer, Op
     if (useCoordinatedScrollingForLayer(layer))
         coordinationRoles.add(ScrollCoordinationRole::Scrolling);
 
+    if (isLayerForIFrameWithScrollCoordinatedContents(layer)) {
+        // We never expect a RenderIFrame to have scrollable overflow.
+        ASSERT(!coordinationRoles.contains(ScrollCoordinationRole::Scrolling));
+        coordinationRoles.add(ScrollCoordinationRole::FrameHosting);
+    }
+
     if (layer.isComposited())
         layer.backing()->setIsScrollCoordinatedWithViewportConstrainedRole(coordinationRoles.contains(ScrollCoordinationRole::ViewportConstrained));
 
@@ -3673,7 +3718,7 @@ void RenderLayerCompositor::removeFromScrollCoordinatedLayers(RenderLayer& layer
     m_scrollCoordinatedLayers.remove(&layer);
     m_scrollCoordinatedLayersNeedingUpdate.remove(&layer);
 
-    detachScrollCoordinatedLayer(layer, { ScrollCoordinationRole::Scrolling, ScrollCoordinationRole::ViewportConstrained });
+    detachScrollCoordinatedLayer(layer, { ScrollCoordinationRole::Scrolling, ScrollCoordinationRole::ViewportConstrained, ScrollCoordinationRole::FrameHosting });
 }
 
 FixedPositionViewportConstraints RenderLayerCompositor::computeFixedViewportConstraints(RenderLayer& layer) const
@@ -3747,22 +3792,27 @@ static ScrollingNodeID enclosingScrollingNodeID(RenderLayer& layer, IncludeSelfO
     return 0;
 }
 
-static ScrollingNodeID scrollCoordinatedAncestorInParentOfFrame(Frame& frame)
+static Optional<ScrollingNodeID> scrollCoordinatedAncestorInParentOfFrame(Frame& frame)
 {
     if (!frame.document() || !frame.view())
-        return 0;
+        return { };
 
     // Find the frame's enclosing layer in our render tree.
     auto* ownerElement = frame.document()->ownerElement();
     auto* frameRenderer = ownerElement ? ownerElement->renderer() : nullptr;
-    if (!frameRenderer)
-        return 0;
+    if (!frameRenderer || !is<RenderWidget>(frameRenderer))
+        return { };
 
-    auto* layerInParentDocument = frameRenderer->enclosingLayer();
-    if (!layerInParentDocument)
-        return 0;
+    auto& widgetRenderer = downcast<RenderWidget>(*frameRenderer);
+    if (!widgetRenderer.hasLayer() || !widgetRenderer.layer()->isComposited()) {
+        LOG(Scrolling, "scrollCoordinatedAncestorInParentOfFrame: frame renderer has no layer or is not composited.");
+        return { };
+    }
 
-    return enclosingScrollingNodeID(*layerInParentDocument, IncludeSelf);
+    if (auto frameHostingNodeID = widgetRenderer.layer()->backing()->scrollingNodeIDForRole(ScrollCoordinationRole::FrameHosting))
+        return frameHostingNodeID;
+
+    return { };
 }
 
 void RenderLayerCompositor::reattachSubframeScrollLayers()
@@ -3784,11 +3834,13 @@ void RenderLayerCompositor::reattachSubframeScrollLayers()
         if (!frameScrollingNodeID)
             continue;
 
-        ScrollingNodeID parentNodeID = scrollCoordinatedAncestorInParentOfFrame(*child);
-        if (!parentNodeID)
+        auto parentNodeID = scrollCoordinatedAncestorInParentOfFrame(*child);
+        if (!parentNodeID) {
+            LOG(Scrolling, "RenderLayerCompositor %p reattachSubframeScrollLayers: failed to find scrolling node parent for frame with nodeID %llu.", this, frameScrollingNodeID);
             continue;
+        }
 
-        scrollingCoordinator->insertNode(child->isMainFrame() ? ScrollingNodeType::MainFrame : ScrollingNodeType::Subframe, frameScrollingNodeID, parentNodeID);
+        scrollingCoordinator->insertNode(child->isMainFrame() ? ScrollingNodeType::MainFrame : ScrollingNodeType::Subframe, frameScrollingNodeID, parentNodeID.value());
     }
 }
 
@@ -3809,7 +3861,7 @@ static inline ScrollCoordinationRole scrollCoordinationRoleForNodeType(Scrolling
     return ScrollCoordinationRole::Scrolling;
 }
 
-ScrollingNodeID RenderLayerCompositor::attachScrollingNode(RenderLayer& layer, ScrollingNodeType nodeType, ScrollingNodeID parentNodeID)
+ScrollingNodeID RenderLayerCompositor::attachScrollingNode(RenderLayer& layer, ScrollingNodeType nodeType, Optional<ScrollingNodeID> parentNodeID)
 {
     auto* scrollingCoordinator = this->scrollingCoordinator();
     auto* backing = layer.backing();
@@ -3823,13 +3875,19 @@ ScrollingNodeID RenderLayerCompositor::attachScrollingNode(RenderLayer& layer, S
     if (!nodeID)
         nodeID = scrollingCoordinator->uniqueScrollingNodeID();
 
-    nodeID = scrollingCoordinator->insertNode(nodeType, nodeID, parentNodeID);
+    LOG_WITH_STREAM(Scrolling, stream << "RenderLayerCompositor " << this << " attachScrollingNode " << nodeID << " type " << nodeType << " parent " << parentNodeID.valueOr(0));
+
+    if (nodeType == ScrollingNodeType::Subframe && !parentNodeID)
+        nodeID = scrollingCoordinator->createNode(nodeType, nodeID);
+    else
+        nodeID = scrollingCoordinator->insertNode(nodeType, nodeID, parentNodeID.valueOr(0));
+
     if (!nodeID)
         return 0;
 
     backing->setScrollingNodeIDForRole(nodeID, role);
     m_scrollingNodeToLayerMap.add(nodeID, &layer);
-    
+
     return nodeID;
 }
 
@@ -3869,7 +3927,7 @@ void RenderLayerCompositor::detachScrollCoordinatedLayer(RenderLayer& layer, Opt
     backing->detachFromScrollingCoordinator(roles);
 }
 
-void RenderLayerCompositor::updateScrollCoordinationForThisFrame(ScrollingNodeID parentNodeID, OptionSet<ScrollingNodeChangeFlags> changes)
+void RenderLayerCompositor::updateScrollCoordinationForThisFrame(Optional<ScrollingNodeID> parentNodeID, OptionSet<ScrollingNodeChangeFlags> changes)
 {
     auto* scrollingCoordinator = this->scrollingCoordinator();
     FrameView& frameView = m_renderView.frameView();
@@ -3907,10 +3965,7 @@ void RenderLayerCompositor::updateScrollCoordinatedLayer(RenderLayer& layer, Opt
         return;
 
     if (!m_renderView.frame().isMainFrame()) {
-        ScrollingNodeID parentDocumentHostingNodeID = scrollCoordinatedAncestorInParentOfFrame(m_renderView.frame());
-        if (!parentDocumentHostingNodeID)
-            return;
-
+        auto parentDocumentHostingNodeID = scrollCoordinatedAncestorInParentOfFrame(m_renderView.frame());
         updateScrollCoordinationForThisFrame(parentDocumentHostingNodeID, changes);
         if (!(roles.contains(ScrollCoordinationRole::ViewportConstrained)) && isRenderViewLayer)
             return;

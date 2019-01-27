@@ -152,10 +152,9 @@ public:
 
     WEBCORE_EXPORT TiledBacking* tiledBacking() const final;
 
-    // In the future when any ScrollableArea can have a node in th ScrollingTree, this should
-    // become a virtual function on ScrollableArea.
     uint64_t scrollLayerID() const override;
     ScrollableArea* scrollableAreaForScrollLayerID(uint64_t) const;
+    bool usesAsyncScrolling() const final;
 
     WEBCORE_EXPORT void enterCompositingMode();
     WEBCORE_EXPORT bool isEnclosedInCompositingLayer() const;
@@ -746,7 +745,6 @@ private:
 #endif
 
     bool usesCompositedScrolling() const final;
-    bool usesAsyncScrolling() const final;
     bool usesMockScrollAnimator() const final;
     void logMockScrollAnimatorMessage(const String&) const final;
 

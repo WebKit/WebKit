@@ -117,6 +117,7 @@ void ScrollingStateNode::removeFromParent()
         return;
 
     m_parent->removeChild(*this);
+    m_parent = nullptr;
 }
 
 void ScrollingStateNode::removeChild(ScrollingStateNode& childNode)

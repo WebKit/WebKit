@@ -6690,8 +6690,38 @@ static void outputPaintOrderTreeRecursive(TextStream& stream, const WebCore::Ren
     auto layerRect = layer.rect();
 
     stream << &layer << " " << layerRect;
-    if (layer.isComposited())
-        stream << " (layerID " << layer.backing()->graphicsLayer()->primaryLayerID() << ")";
+    if (layer.isComposited()) {
+        auto& backing = *layer.backing();
+        stream << " (layerID " << backing.graphicsLayer()->primaryLayerID() << ")";
+
+        auto scrollingNodeID = backing.scrollingNodeIDForRole(WebCore::ScrollCoordinationRole::Scrolling);
+        auto frameHostingNodeID = backing.scrollingNodeIDForRole(WebCore::ScrollCoordinationRole::FrameHosting);
+        auto viewportConstrainedNodeID = backing.scrollingNodeIDForRole(WebCore::ScrollCoordinationRole::ViewportConstrained);
+
+        if (scrollingNodeID || frameHostingNodeID || viewportConstrainedNodeID) {
+            stream << " {";
+            bool first = true;
+            if (scrollingNodeID) {
+                stream << "sc " << scrollingNodeID;
+                first = false;
+            }
+
+            if (frameHostingNodeID) {
+                if (!first)
+                    stream << ", ";
+                stream << "fh " << frameHostingNodeID;
+                first = false;
+            }
+
+            if (viewportConstrainedNodeID) {
+                if (!first)
+                    stream << ", ";
+                stream << "vc " << viewportConstrainedNodeID;
+            }
+
+            stream << "}";
+        }
+    }
     stream << " " << layer.name();
     stream.nextLine();
 

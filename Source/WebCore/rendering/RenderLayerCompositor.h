@@ -272,7 +272,7 @@ public:
     
     static RenderLayerCompositor* frameContentsCompositor(RenderWidget&);
     // Return true if the layers changed.
-    static bool parentFrameContentLayers(RenderWidget&);
+    bool parentFrameContentLayers(RenderWidget&);
 
     // Update the geometry of the layers used for clipping and scrolling in frames.
     void frameViewDidChangeLocation(const IntPoint& contentsOffset);
@@ -326,6 +326,7 @@ public:
     void removeFromScrollCoordinatedLayers(RenderLayer&);
 
     bool useCoordinatedScrollingForLayer(const RenderLayer&) const;
+    bool isLayerForIFrameWithScrollCoordinatedContents(const RenderLayer&) const;
 
     void willRemoveScrollingLayerWithBacking(RenderLayer&, RenderLayerBacking&);
     void didAddScrollingLayer(RenderLayer&);
@@ -476,8 +477,8 @@ private:
 
     void updateCustomLayersAfterFlush();
 
-    void updateScrollCoordinationForThisFrame(ScrollingNodeID, OptionSet<ScrollingNodeChangeFlags>);
-    ScrollingNodeID attachScrollingNode(RenderLayer&, ScrollingNodeType, ScrollingNodeID parentNodeID);
+    void updateScrollCoordinationForThisFrame(Optional<ScrollingNodeID>, OptionSet<ScrollingNodeChangeFlags>);
+    ScrollingNodeID attachScrollingNode(RenderLayer&, ScrollingNodeType, Optional<ScrollingNodeID> parentNodeID);
     void updateScrollCoordinatedLayer(RenderLayer&, OptionSet<ScrollCoordinationRole>, OptionSet<ScrollingNodeChangeFlags>);
     void detachScrollCoordinatedLayer(RenderLayer&, OptionSet<ScrollCoordinationRole>);
     void detachScrollCoordinatedLayerWithRole(RenderLayer&, ScrollingCoordinator&, ScrollCoordinationRole);

@@ -1,3 +1,47 @@
+2019-01-26  Simon Fraser  <simon.fraser@apple.com>
+
+        Have composited RenderIFrame layers make FrameHosting scrolling tree nodes to parent the iframe's scrolling node
+        https://bugs.webkit.org/show_bug.cgi?id=193879
+
+        Reviewed by Antti Koivisto.
+
+        Currently we parent iframe scrolling tree nodes by finding the closest ancestor layer with a scrolling tree node.
+        This results in scrolling tree nodes being connected across iframe boundaries in some arbitrary ancestor. This
+        makes updating scrolling tree geometry very error-prone, since changes in the parent document will need to trigger
+        updates of the scrolling tree node in an iframe.
+        
+        To address this, I already added a new "FrameHosting" scrolling node type. This patch actually instantiates these
+        nodes, which are owned by the RenderIFrame's composited layer. Connecting across frame boundaries is theforefore
+        simply a case of getting the FrameHosting node from the ownerElement's renderer; this is very similar to how we
+        connect GraphicsLayers together.
+        
+        RenderLayerBacking gains another scrolling role for FrameHosting and ScrollingNodeID.
+
+        Tested by existing tests.
+
+        * page/FrameView.h:
+        * rendering/RenderLayer.cpp:
+        (WebCore::outputPaintOrderTreeRecursive):
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::updateConfiguration):
+        (WebCore::RenderLayerBacking::detachFromScrollingCoordinator):
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::frameContentsRenderView):
+        (WebCore::RenderLayerCompositor::frameContentsCompositor):
+        (WebCore::RenderLayerCompositor::parentFrameContentLayers):
+        (WebCore::RenderLayerCompositor::isLayerForIFrameWithScrollCoordinatedContents const):
+        (WebCore::RenderLayerCompositor::detachRootLayer):
+        (WebCore::RenderLayerCompositor::updateScrollCoordinatedStatus):
+        (WebCore::RenderLayerCompositor::removeFromScrollCoordinatedLayers):
+        (WebCore::scrollCoordinatedAncestorInParentOfFrame):
+        (WebCore::RenderLayerCompositor::reattachSubframeScrollLayers):
+        (WebCore::RenderLayerCompositor::attachScrollingNode):
+        (WebCore::RenderLayerCompositor::updateScrollCoordinationForThisFrame):
+        (WebCore::RenderLayerCompositor::updateScrollCoordinatedLayer):
+        * rendering/RenderLayerCompositor.h:
+        * testing/Internals.cpp:
+        (WebCore::Internals::scrollingStateTreeAsText const):
+
 2019-01-27  Chris Fleizach  <cfleizach@apple.com>
 
         AX: Introduce a static accessibility tree

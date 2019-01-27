@@ -2568,6 +2568,8 @@ ExceptionOr<String> Internals::scrollingStateTreeAsText() const
     if (!document || !document->frame())
         return Exception { InvalidAccessError };
 
+    document->updateLayoutIgnorePendingStylesheets();
+
     Page* page = document->page();
     if (!page)
         return String();
