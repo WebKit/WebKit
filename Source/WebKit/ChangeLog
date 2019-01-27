@@ -1,3 +1,34 @@
+2019-01-27  Jiewen Tan  <jiewen_tan@apple.com>
+
+        Use a load optimizer for some sites
+        https://bugs.webkit.org/show_bug.cgi?id=193881
+        <rdar://problem/46325455>
+
+        Reviewed by Brent Fulgham.
+
+        We will try to speed up some sites with a dedicated load optimizer. The load optimizer lives
+        within the WebsiteDataStore as one client instance should have only one and it should live
+        as long as the client lives. How does the load optimizer work? It intercepts every load in
+        the navigation state. If a request meets some requirements, it will then fetch the request
+        from its own cache. Once the fetch succeeds, the original load will be ignored and the
+        optimizer will display the cached content.
+
+        Covered by API tests.
+
+        * SourcesCocoa.txt:
+        * UIProcess/Cocoa/LoadOptimizer.h: Added.
+        * UIProcess/Cocoa/LoadOptimizer.mm: Added.
+        * UIProcess/Cocoa/MediaCaptureUtilities.h:
+        * UIProcess/Cocoa/NavigationState.mm:
+        (WebKit::tryInterceptNavigation):
+        (WebKit::NavigationState::NavigationClient::decidePolicyForNavigationAction):
+        (WebKit::tryAppLink): Deleted.
+        * UIProcess/WebsiteData/WebsiteDataStore.cpp:
+        (WebKit::WebsiteDataStore::WebsiteDataStore):
+        * UIProcess/WebsiteData/WebsiteDataStore.h:
+        (WebKit::WebsiteDataStore::loadOptimizer):
+        * WebKit.xcodeproj/project.pbxproj:
+
 2019-01-25  Brian Burg  <bburg@apple.com>
 
         Web Automation: add support for simulating single touches to Automation.performInteractionSequence

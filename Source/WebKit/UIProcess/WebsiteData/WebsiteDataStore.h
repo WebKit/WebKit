@@ -59,6 +59,7 @@ class SecurityOrigin;
 namespace WebKit {
 
 class AuthenticatorManager;
+class LoadOptimizer;
 class SecKeyProxyStore;
 class StorageManager;
 class DeviceIdHashSaltStorage;
@@ -237,6 +238,10 @@ public:
     WebsiteDataStoreClient& client() { return m_client.get(); }
     void setClient(UniqueRef<WebsiteDataStoreClient>&& client) { m_client = WTFMove(client); }
 
+#if HAVE(LOAD_OPTIMIZER)
+    LoadOptimizer& loadOptimizer() { return m_loadOptimizer.get(); }
+#endif
+
 private:
     explicit WebsiteDataStore(PAL::SessionID);
     explicit WebsiteDataStore(Ref<WebsiteDataStoreConfiguration>&&, PAL::SessionID);
@@ -314,6 +319,10 @@ private:
 #endif
 
     UniqueRef<WebsiteDataStoreClient> m_client;
+
+#if HAVE(LOAD_OPTIMIZER)
+    UniqueRef<LoadOptimizer> m_loadOptimizer;
+#endif
 };
 
 }

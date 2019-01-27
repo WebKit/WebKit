@@ -281,6 +281,7 @@
 		57599E2A1F071AA000A3FB8C /* IndexedDBStructuredCloneBackwardCompatibilityRead.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 57599E251F07192C00A3FB8C /* IndexedDBStructuredCloneBackwardCompatibilityRead.html */; };
 		57599E2B1F071AA000A3FB8C /* IndexedDBStructuredCloneBackwardCompatibilityWrite.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 57599E231F07192C00A3FB8C /* IndexedDBStructuredCloneBackwardCompatibilityWrite.html */; };
 		5769C50B1D9B0002000847FB /* SerializedCryptoKeyWrap.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5769C50A1D9B0001000847FB /* SerializedCryptoKeyWrap.mm */; };
+		5774AA6821FBBF7800AF2A1B /* TestLoadOptimizer.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5774AA6721FBBF7800AF2A1B /* TestLoadOptimizer.mm */; };
 		578CBD67204FB2C80083B9F2 /* LocalAuthentication.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 578CBD66204FB2C70083B9F2 /* LocalAuthentication.framework */; };
 		57901FB11CAF142D00ED64F9 /* LoadInvalidURLRequest.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 57901FB01CAF141C00ED64F9 /* LoadInvalidURLRequest.html */; };
 		579651E7216BFDED006EBFE5 /* FidoHidMessageTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 579651E6216BFD53006EBFE5 /* FidoHidMessageTest.cpp */; };
@@ -1653,6 +1654,7 @@
 		57599E251F07192C00A3FB8C /* IndexedDBStructuredCloneBackwardCompatibilityRead.html */ = {isa = PBXFileReference; lastKnownFileType = text.html; path = IndexedDBStructuredCloneBackwardCompatibilityRead.html; sourceTree = "<group>"; };
 		57599E261F07192C00A3FB8C /* IndexedDBStructuredCloneBackwardCompatibility.sqlite3-shm */ = {isa = PBXFileReference; lastKnownFileType = file; path = "IndexedDBStructuredCloneBackwardCompatibility.sqlite3-shm"; sourceTree = "<group>"; };
 		5769C50A1D9B0001000847FB /* SerializedCryptoKeyWrap.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = SerializedCryptoKeyWrap.mm; sourceTree = "<group>"; };
+		5774AA6721FBBF7800AF2A1B /* TestLoadOptimizer.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = TestLoadOptimizer.mm; sourceTree = "<group>"; };
 		578CBD66204FB2C70083B9F2 /* LocalAuthentication.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = LocalAuthentication.framework; path = System/Library/Frameworks/LocalAuthentication.framework; sourceTree = SDKROOT; };
 		57901FAC1CAF12C200ED64F9 /* LoadInvalidURLRequest.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = LoadInvalidURLRequest.mm; sourceTree = "<group>"; };
 		57901FAE1CAF137100ED64F9 /* LoadInvalidURLRequest.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = LoadInvalidURLRequest.mm; sourceTree = "<group>"; };
@@ -2509,6 +2511,7 @@
 				A125478D1DB18B9400358564 /* LoadDataWithNilMIMEType.mm */,
 				4612C2B8210A6ABF00B788A6 /* LoadFileThenReload.mm */,
 				57901FAC1CAF12C200ED64F9 /* LoadInvalidURLRequest.mm */,
+				5774AA6721FBBF7800AF2A1B /* TestLoadOptimizer.mm */,
 				51E6A8921D2F1BEC00C004B6 /* LocalStorageClear.mm */,
 				CA38459520AE012E00990D3B /* LocalStorageDatabaseTracker.mm */,
 				46C519D81D355A7300DAA51A /* LocalStorageNullEntries.mm */,
@@ -4252,6 +4255,7 @@
 				7CCE7F271A411AF600447C4C /* UserContentController.mm in Sources */,
 				7CCE7F2D1A411B1000447C4C /* UserContentTest.mm in Sources */,
 				7C882E0A1C80C764006BF731 /* UserContentWorld.mm in Sources */,
+				5774AA6821FBBF7800AF2A1B /* TestLoadOptimizer.mm in Sources */,
 				7CCB99211D3B41F6003922F6 /* UserInitiatedActionInNavigationAction.mm in Sources */,
 				7CCE7F171A411AE600447C4C /* UserMedia.cpp in Sources */,
 				0799C3491EBA2D7B003B7532 /* UserMediaDisabled.mm in Sources */,

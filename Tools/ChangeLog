@@ -1,3 +1,14 @@
+2019-01-27  Jiewen Tan  <jiewen_tan@apple.com>
+
+        Use a load optimizer for some sites
+        https://bugs.webkit.org/show_bug.cgi?id=193881
+        <rdar://problem/46325455>
+
+        Reviewed by Brent Fulgham.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WebKitCocoa/TestLoadOptimizer.mm: Added.
+
 2019-01-27  Chris Fleizach  <cfleizach@apple.com>
 
         AX: Introduce a static accessibility tree

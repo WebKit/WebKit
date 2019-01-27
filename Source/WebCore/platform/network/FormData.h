@@ -221,7 +221,7 @@ public:
     WEBCORE_EXPORT void appendFileRange(const String& filename, long long start, long long length, Optional<WallTime> expectedModificationTime, bool shouldGenerateFile = false);
     WEBCORE_EXPORT void appendBlob(const URL& blobURL);
 
-    Vector<char> flatten() const; // omits files
+    WEBCORE_EXPORT Vector<char> flatten() const; // omits files
     String flattenToString() const; // omits files
 
     // Resolve all blob references so we only have file and data.
