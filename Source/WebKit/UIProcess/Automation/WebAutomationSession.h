@@ -99,7 +99,9 @@ class WebAutomationSession final : public API::ObjectImpl<API::Object::Type::Aut
     , public Inspector::RemoteAutomationTarget
 #endif
     , public Inspector::AutomationBackendDispatcherHandler
+#if ENABLE(WEBDRIVER_ACTIONS_API)
     , public SimulatedInputDispatcher::Client
+#endif
 {
 public:
     WebAutomationSession();
@@ -135,10 +137,21 @@ public:
 #endif
     void terminate();
 
+#if ENABLE(WEBDRIVER_ACTIONS_API)
+
     // SimulatedInputDispatcher::Client API
+#if ENABLE(WEBDRIVER_MOUSE_INTERACTIONS)
     void simulateMouseInteraction(WebPageProxy&, MouseInteraction, WebMouseEvent::Button, const WebCore::IntPoint& locationInView, AutomationCompletionHandler&&) final;
+#endif
+#if ENABLE(WEBDRIVER_TOUCH_INTERACTIONS)
+    void simulateTouchInteraction(WebPageProxy&, TouchInteraction, const WebCore::IntPoint& locationInView, Optional<Seconds> duration, AutomationCompletionHandler&&) final;
+#endif
+#if ENABLE(WEBDRIVER_KEYBOARD_INTERACTIONS)
     void simulateKeyboardInteraction(WebPageProxy&, KeyboardInteraction, WTF::Variant<VirtualKey, CharKey>&&, AutomationCompletionHandler&&) final;
+#endif
     void viewportInViewCenterPointOfElement(WebPageProxy&, uint64_t frameID, const String& nodeHandle, Function<void (Optional<WebCore::IntPoint>, Optional<AutomationCommandError>)>&&) final;
+
+#endif // ENABLE(WEBDRIVER_ACTIONS_API)
 
     // Inspector::AutomationBackendDispatcherHandler API
     // NOTE: the set of declarations included in this interface depend on the "platform" property in Automation.json
@@ -188,8 +201,10 @@ public:
 
     // Event Simulation Support.
     bool isSimulatingUserInteraction() const;
+#if ENABLE(WEBDRIVER_ACTIONS_API)
     SimulatedInputDispatcher& inputDispatcherForPage(WebPageProxy&);
     SimulatedInputSource* inputSourceForType(SimulatedInputSourceType) const;
+#endif
 
 #if PLATFORM(MAC)
     bool wasEventSynthesizedForAutomation(NSEvent *);
@@ -231,11 +246,20 @@ private:
     void didDeleteCookie(uint64_t callbackID, const String& errorType);
 
     // Platform-dependent implementations.
+#if ENABLE(WEBDRIVER_MOUSE_INTERACTIONS)
     void platformSimulateMouseInteraction(WebPageProxy&, MouseInteraction, WebMouseEvent::Button, const WebCore::IntPoint& locationInView, WebEvent::Modifiers keyModifiers);
+#endif
+#if ENABLE(WEBDRIVER_TOUCH_INTERACTIONS)
+    // Simulates a single touch point being pressed, moved, and released.
+    void platformSimulateTouchInteraction(WebPageProxy&, TouchInteraction, const WebCore::IntPoint& locationInViewport, Optional<Seconds> duration, AutomationCompletionHandler&&);
+#endif
+#if ENABLE(WEBDRIVER_KEYBOARD_INTERACTIONS)
     // Simulates a single virtual or char key being pressed/released, such as 'a', Control, F-keys, Numpad keys, etc. as allowed by the protocol.
     void platformSimulateKeyboardInteraction(WebPageProxy&, KeyboardInteraction, WTF::Variant<VirtualKey, CharKey>&&);
     // Simulates key presses to produce the codepoints in a string. One or more code points are delivered atomically at grapheme cluster boundaries.
     void platformSimulateKeySequence(WebPageProxy&, const String&);
+#endif // ENABLE(WEBDRIVER_KEYBOARD_INTERACTIONS)
+
     // Get base64 encoded PNG data from a bitmap.
     Optional<String> platformGetBase64EncodedPNGData(const ShareableBitmap::Handle&);
 
@@ -267,8 +291,12 @@ private:
     HashMap<uint64_t, RefPtr<Inspector::BackendDispatcher::CallbackBase>> m_pendingNormalNavigationInBrowsingContextCallbacksPerFrame;
     HashMap<uint64_t, RefPtr<Inspector::BackendDispatcher::CallbackBase>> m_pendingEagerNavigationInBrowsingContextCallbacksPerFrame;
     HashMap<uint64_t, RefPtr<Inspector::BackendDispatcher::CallbackBase>> m_pendingInspectorCallbacksPerPage;
+#if ENABLE(WEBDRIVER_KEYBOARD_INTERACTIONS)
     HashMap<uint64_t, Function<void(Optional<AutomationCommandError>)>> m_pendingKeyboardEventsFlushedCallbacksPerPage;
+#endif
+#if ENABLE(WEBDRIVER_MOUSE_INTERACTIONS)
     HashMap<uint64_t, Function<void(Optional<AutomationCommandError>)>> m_pendingMouseEventsFlushedCallbacksPerPage;
+#endif
 
     uint64_t m_nextEvaluateJavaScriptCallbackID { 1 };
     HashMap<uint64_t, RefPtr<Inspector::AutomationBackendDispatcherHandler::EvaluateJavaScriptFunctionCallback>> m_evaluateJavaScriptFunctionCallbacks;
@@ -310,14 +338,20 @@ private:
 
     bool m_permissionForGetUserMedia { true };
 
-    // Keep track of currently active modifiers across multiple keystrokes.
-    // Most platforms do not track current modifiers from synthesized events.
-    unsigned m_currentModifiers { 0 };
-
+#if ENABLE(WEBDRIVER_ACTIONS_API)
     // SimulatedInputDispatcher APIs take a set of input sources. We also intern these
     // so that previous input source state is used as initial state for later commands.
     HashSet<Ref<SimulatedInputSource>> m_inputSources;
     HashMap<uint64_t, Ref<SimulatedInputDispatcher>> m_inputDispatchersByPage;
+#endif
+#if ENABLE(WEBDRIVER_KEYBOARD_INTERACTIONS)
+    // Keep track of currently active modifiers across multiple keystrokes.
+    // Most platforms do not track current modifiers from synthesized events.
+    unsigned m_currentModifiers { 0 };
+#endif
+#if ENABLE(WEBDRIVER_TOUCH_INTERACTIONS)
+    bool m_simulatingTouchInteraction { false };
+#endif
 
 #if ENABLE(REMOTE_INSPECTOR)
     Inspector::FrontendChannel* m_remoteChannel { nullptr };

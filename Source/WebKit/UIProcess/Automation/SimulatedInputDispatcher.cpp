@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2018, 2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,6 +25,8 @@
 
 #include "config.h"
 #include "SimulatedInputDispatcher.h"
+
+#if ENABLE(WEBDRIVER_ACTIONS_API)
 
 #include "AutomationProtocolObjects.h"
 #include "Logging.h"
@@ -259,6 +261,9 @@ void SimulatedInputDispatcher::transitionInputSourceToState(SimulatedInputSource
         eventDispatchFinished(WTF::nullopt);
         break;
     case SimulatedInputSourceType::Mouse: {
+#if !ENABLE(WEBDRIVER_MOUSE_INTERACTIONS)
+        RELEASE_ASSERT_NOT_REACHED();
+#else
         resolveLocation(a.location.valueOr(WebCore::IntPoint()), b.location, b.origin.valueOr(MouseMoveOrigin::Viewport), b.nodeHandle, [this, &a, &b, eventDispatchFinished = WTFMove(eventDispatchFinished)](Optional<WebCore::IntPoint> location, Optional<AutomationCommandError> error) mutable {
             if (error) {
                 eventDispatchFinished(error);
@@ -270,25 +275,56 @@ void SimulatedInputDispatcher::transitionInputSourceToState(SimulatedInputSource
             if (!a.pressedMouseButton && b.pressedMouseButton) {
 #if !LOG_DISABLED
                 String mouseButtonName = Inspector::Protocol::AutomationHelpers::getEnumConstantValue(b.pressedMouseButton.value());
-                LOG(Automation, "SimulatedInputDispatcher[%p]: simulating MouseDown[button=%s] for transition to %d.%d", this, mouseButtonName.utf8().data(), m_keyframeIndex, m_inputSourceStateIndex);
+                LOG(Automation, "SimulatedInputDispatcher[%p]: simulating MouseDown[button=%s] @ (%d, %d) for transition to %d.%d", this, mouseButtonName.utf8().data(), b.location.value().x(), b.location.value().y(), m_keyframeIndex, m_inputSourceStateIndex);
 #endif
                 m_client.simulateMouseInteraction(m_page, MouseInteraction::Down, b.pressedMouseButton.value(), b.location.value(), WTFMove(eventDispatchFinished));
             } else if (a.pressedMouseButton && !b.pressedMouseButton) {
 #if !LOG_DISABLED
                 String mouseButtonName = Inspector::Protocol::AutomationHelpers::getEnumConstantValue(a.pressedMouseButton.value());
-                LOG(Automation, "SimulatedInputDispatcher[%p]: simulating MouseUp[button=%s] for transition to %d.%d", this, mouseButtonName.utf8().data(), m_keyframeIndex, m_inputSourceStateIndex);
+                LOG(Automation, "SimulatedInputDispatcher[%p]: simulating MouseUp[button=%s] @ (%d, %d) for transition to %d.%d", this, mouseButtonName.utf8().data(), a.location.value().x(), a.location.value().y(), m_keyframeIndex, m_inputSourceStateIndex);
 #endif
                 m_client.simulateMouseInteraction(m_page, MouseInteraction::Up, a.pressedMouseButton.value(), b.location.value(), WTFMove(eventDispatchFinished));
             } else if (a.location != b.location) {
-                LOG(Automation, "SimulatedInputDispatcher[%p]: simulating MouseMove for transition to %d.%d", this, m_keyframeIndex, m_inputSourceStateIndex);
+                LOG(Automation, "SimulatedInputDispatcher[%p]: simulating MouseMove from (%d, %d) to (%d, %d) for transition to %d.%d", this, a.location.value().x(), a.location.value().y(), b.location.value().x(), b.location.value().y(), m_keyframeIndex, m_inputSourceStateIndex);
                 // FIXME: This does not interpolate mousemoves per the "perform a pointer move" algorithm (§17.4 Dispatching Actions).
                 m_client.simulateMouseInteraction(m_page, MouseInteraction::Move, b.pressedMouseButton.valueOr(MouseButton::NoButton), b.location.value(), WTFMove(eventDispatchFinished));
             } else
                 eventDispatchFinished(WTF::nullopt);
         });
+#endif // ENABLE(WEBDRIVER_MOUSE_INTERACTIONS)
+        break;
+    }
+    case SimulatedInputSourceType::Touch: {
+#if !ENABLE(WEBDRIVER_TOUCH_INTERACTIONS)
+        RELEASE_ASSERT_NOT_REACHED();
+#else
+        resolveLocation(a.location.valueOr(WebCore::IntPoint()), b.location, b.origin.valueOr(MouseMoveOrigin::Viewport), b.nodeHandle, [this, &a, &b, eventDispatchFinished = WTFMove(eventDispatchFinished)](Optional<WebCore::IntPoint> location, Optional<AutomationCommandError> error) mutable {
+            if (error) {
+                eventDispatchFinished(error);
+                return;
+            }
+            RELEASE_ASSERT(location);
+            b.location = location;
+            // The "dispatch a pointer{Down,Up,Move} action" algorithms (§17.4 Dispatching Actions).
+            if (!a.pressedMouseButton && b.pressedMouseButton) {
+                LOG(Automation, "SimulatedInputDispatcher[%p]: simulating TouchDown @ (%d, %d) for transition to %d.%d", this, b.location.value().x(), b.location.value().y(), m_keyframeIndex, m_inputSourceStateIndex);
+                m_client.simulateTouchInteraction(m_page, TouchInteraction::TouchDown, b.location.value(), WTF::nullopt, WTFMove(eventDispatchFinished));
+            } else if (a.pressedMouseButton && !b.pressedMouseButton) {
+                LOG(Automation, "SimulatedInputDispatcher[%p]: simulating LiftUp @ (%d, %d) for transition to %d.%d", this, a.location.value().x(), a.location.value().y(), m_keyframeIndex, m_inputSourceStateIndex);
+                m_client.simulateTouchInteraction(m_page, TouchInteraction::LiftUp, b.location.value(), WTF::nullopt, WTFMove(eventDispatchFinished));
+            } else if (a.location != b.location) {
+                LOG(Automation, "SimulatedInputDispatcher[%p]: simulating MoveTo from (%d, %d) to (%d, %d) for transition to %d.%d", this, a.location.value().x(), a.location.value().y(), b.location.value().x(), b.location.value().y(), m_keyframeIndex, m_inputSourceStateIndex);
+                m_client.simulateTouchInteraction(m_page, TouchInteraction::MoveTo, b.location.value(), a.duration.valueOr(0_s), WTFMove(eventDispatchFinished));
+            } else
+                eventDispatchFinished(WTF::nullopt);
+        });
+#endif // !ENABLE(WEBDRIVER_TOUCH_INTERACTIONS)
         break;
     }
     case SimulatedInputSourceType::Keyboard:
+#if !ENABLE(WEBDRIVER_KEYBOARD_INTERACTIONS)
+        RELEASE_ASSERT_NOT_REACHED();
+#else
         // The "dispatch a key{Down,Up} action" algorithms (§17.4 Dispatching Actions).
         if (!a.pressedCharKey && b.pressedCharKey) {
             LOG(Automation, "SimulatedInputDispatcher[%p]: simulating KeyPress[key=%c] for transition to %d.%d", this, b.pressedCharKey.value(), m_keyframeIndex, m_inputSourceStateIndex);
@@ -327,11 +363,7 @@ void SimulatedInputDispatcher::transitionInputSourceToState(SimulatedInputSource
             }
         } else
             eventDispatchFinished(WTF::nullopt);
-        break;
-    case SimulatedInputSourceType::Touch:
-        // Not supported yet.
-        ASSERT_NOT_REACHED();
-        eventDispatchFinished(AUTOMATION_COMMAND_ERROR_WITH_NAME(NotImplemented));
+#endif // !ENABLE(WEBDRIVER_KEYBOARD_INTERACTIONS)
         break;
     }
 }
@@ -387,3 +419,5 @@ void SimulatedInputDispatcher::finishDispatching(Optional<AutomationCommandError
 }
 
 } // namespace Webkit
+
+#endif // ENABLE(WEBDRIVER_ACTIONS_API)

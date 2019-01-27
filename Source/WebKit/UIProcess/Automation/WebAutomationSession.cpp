@@ -78,10 +78,19 @@ WebAutomationSession::WebAutomationSession()
     , m_domainNotifier(std::make_unique<AutomationFrontendDispatcher>(m_frontendRouter))
     , m_loadTimer(RunLoop::main(), this, &WebAutomationSession::loadTimerFired)
 {
+#if ENABLE(WEBDRIVER_ACTIONS_API)
     // Set up canonical input sources to be used for 'performInteractionSequence' and 'cancelInteractionSequence'.
+#if ENABLE(WEBDRIVER_TOUCH_INTERACTIONS)
+    m_inputSources.add(SimulatedInputSource::create(SimulatedInputSourceType::Touch));
+#endif
+#if ENABLE(WEBDRIVER_MOUSE_INTERACTIONS)
     m_inputSources.add(SimulatedInputSource::create(SimulatedInputSourceType::Mouse));
+#endif
+#if ENABLE(WEBDRIVER_KEYBOARD_INTERACTIONS)
     m_inputSources.add(SimulatedInputSource::create(SimulatedInputSourceType::Keyboard));
+#endif
     m_inputSources.add(SimulatedInputSource::create(SimulatedInputSourceType::Null));
+#endif // ENABLE(WEBDRIVER_ACTIONS_API)
 }
 
 WebAutomationSession::~WebAutomationSession()
@@ -139,15 +148,19 @@ void WebAutomationSession::disconnect(Inspector::FrontendChannel& channel)
 
 void WebAutomationSession::terminate()
 {
+#if ENABLE(WEBDRIVER_KEYBOARD_INTERACTIONS)
     for (auto& identifier : copyToVector(m_pendingKeyboardEventsFlushedCallbacksPerPage.keys())) {
         auto callback = m_pendingKeyboardEventsFlushedCallbacksPerPage.take(identifier);
         callback(AUTOMATION_COMMAND_ERROR_WITH_NAME(InternalError));
     }
+#endif // ENABLE(WEBDRIVER_KEYBOARD_INTERACTIONS)
 
+#if ENABLE(WEBDRIVER_MOUSE_INTERACTIONS)
     for (auto& identifier : copyToVector(m_pendingMouseEventsFlushedCallbacksPerPage.keys())) {
         auto callback = m_pendingMouseEventsFlushedCallbacksPerPage.take(identifier);
         callback(AUTOMATION_COMMAND_ERROR_WITH_NAME(InternalError));
     }
+#endif // ENABLE(WEBDRIVER_MOUSE_INTERACTIONS)
 
 #if ENABLE(REMOTE_INSPECTOR)
     if (Inspector::FrontendChannel* channel = m_remoteChannel) {
@@ -645,20 +658,24 @@ void WebAutomationSession::willShowJavaScriptDialog(WebPageProxy& page)
                 callback->sendFailure(unexpectedAlertOpenError);
             }
         }
-        
+
+#if ENABLE(WEBDRIVER_MOUSE_INTERACTIONS)
         if (!m_pendingMouseEventsFlushedCallbacksPerPage.isEmpty()) {
             for (auto key : copyToVector(m_pendingMouseEventsFlushedCallbacksPerPage.keys())) {
                 auto callback = m_pendingMouseEventsFlushedCallbacksPerPage.take(key);
                 callback(WTF::nullopt);
             }
         }
+#endif // ENABLE(WEBDRIVER_MOUSE_INTERACTIONS)
 
+#if ENABLE(WEBDRIVER_KEYBOARD_INTERACTIONS)
         if (!m_pendingKeyboardEventsFlushedCallbacksPerPage.isEmpty()) {
             for (auto key : copyToVector(m_pendingKeyboardEventsFlushedCallbacksPerPage.keys())) {
                 auto callback = m_pendingKeyboardEventsFlushedCallbacksPerPage.take(key);
                 callback(WTF::nullopt);
             }
         }
+#endif // ENABLE(WEBDRIVER_KEYBOARD_INTERACTIONS)
     });
 }
     
@@ -776,14 +793,22 @@ void WebAutomationSession::inspectorFrontendLoaded(const WebPageProxy& page)
 
 void WebAutomationSession::mouseEventsFlushedForPage(const WebPageProxy& page)
 {
+#if ENABLE(WEBDRIVER_MOUSE_INTERACTIONS)
     if (auto callback = m_pendingMouseEventsFlushedCallbacksPerPage.take(page.pageID()))
         callback(WTF::nullopt);
+#else
+    UNUSED_PARAM(page);
+#endif
 }
 
 void WebAutomationSession::keyboardEventsFlushedForPage(const WebPageProxy& page)
 {
+#if ENABLE(WEBDRIVER_KEYBOARD_INTERACTIONS)
     if (auto callback = m_pendingKeyboardEventsFlushedCallbacksPerPage.take(page.pageID()))
         callback(WTF::nullopt);
+#else
+    UNUSED_PARAM(page);
+#endif
 }
 
 void WebAutomationSession::willClosePage(const WebPageProxy& page)
@@ -793,15 +818,21 @@ void WebAutomationSession::willClosePage(const WebPageProxy& page)
 
     // Cancel pending interactions on this page. By providing an error, this will cause subsequent
     // actions to be aborted and the SimulatedInputDispatcher::run() call will unwind and fail.
+#if ENABLE(WEBDRIVER_MOUSE_INTERACTIONS)
     if (auto callback = m_pendingMouseEventsFlushedCallbacksPerPage.take(page.pageID()))
         callback(AUTOMATION_COMMAND_ERROR_WITH_NAME(WindowNotFound));
-    if (auto callback = m_pendingMouseEventsFlushedCallbacksPerPage.take(page.pageID()))
+#endif
+#if ENABLE(WEBDRIVER_KEYBOARD_INTERACTIONS)
+    if (auto callback = m_pendingKeyboardEventsFlushedCallbacksPerPage.take(page.pageID()))
         callback(AUTOMATION_COMMAND_ERROR_WITH_NAME(WindowNotFound));
+#endif
 
+#if ENABLE(WEBDRIVER_ACTIONS_API)
     // Then tell the input dispatcher to cancel so timers are stopped, and let it go out of scope.
     Optional<Ref<SimulatedInputDispatcher>> inputDispatcher = m_inputDispatchersByPage.take(page.pageID());
     if (inputDispatcher.hasValue())
         inputDispatcher.value()->cancel();
+#endif
 }
 
 static bool fileCanBeAcceptedForUpload(const String& filename, const HashSet<String>& allowedMIMETypes, const HashSet<String>& allowedFileExtensions)
@@ -1434,14 +1465,22 @@ bool WebAutomationSession::shouldAllowGetUserMediaForPage(const WebPageProxy&) c
 
 bool WebAutomationSession::isSimulatingUserInteraction() const
 {
+#if ENABLE(WEBDRIVER_MOUSE_INTERACTIONS)
     if (!m_pendingMouseEventsFlushedCallbacksPerPage.isEmpty())
         return true;
+#endif
+#if ENABLE(WEBDRIVER_KEYBOARD_INTERACTIONS)
     if (!m_pendingKeyboardEventsFlushedCallbacksPerPage.isEmpty())
         return true;
-
+#endif
+#if ENABLE(WEBDRIVER_TOUCH_INTERACTIONS)
+    if (m_simulatingTouchInteraction)
+        return true;
+#endif
     return false;
 }
 
+#if ENABLE(WEBDRIVER_ACTIONS_API)
 SimulatedInputDispatcher& WebAutomationSession::inputDispatcherForPage(WebPageProxy& page)
 {
     return m_inputDispatchersByPage.ensure(page.pageID(), [&] {
@@ -1460,7 +1499,7 @@ SimulatedInputSource* WebAutomationSession::inputSourceForType(SimulatedInputSou
     return nullptr;
 }
 
-// SimulatedInputDispatcher::Client API
+// MARK: SimulatedInputDispatcher::Client API
 void WebAutomationSession::viewportInViewCenterPointOfElement(WebPageProxy& page, uint64_t frameID, const String& nodeHandle, Function<void (Optional<WebCore::IntPoint>, Optional<AutomationCommandError>)>&& completionHandler)
 {
     // Start at 3 and use only odd numbers to not conflict with m_nextComputeElementLayoutCallbackID.
@@ -1470,6 +1509,7 @@ void WebAutomationSession::viewportInViewCenterPointOfElement(WebPageProxy& page
     page.process().send(Messages::WebAutomationSessionProxy::ComputeElementLayout(page.pageID(), frameID, nodeHandle, false, CoordinateSystem::LayoutViewport, callbackID), 0);
 }
 
+#if ENABLE(WEBDRIVER_MOUSE_INTERACTIONS)
 void WebAutomationSession::simulateMouseInteraction(WebPageProxy& page, MouseInteraction interaction, WebMouseEvent::Button mouseButton, const WebCore::IntPoint& locationInViewport, CompletionHandler<void(Optional<AutomationCommandError>)>&& completionHandler)
 {
     WebCore::IntPoint locationInView = WebCore::IntPoint(locationInViewport.x(), locationInViewport.y() + page.topContentInset());
@@ -1502,7 +1542,27 @@ void WebAutomationSession::simulateMouseInteraction(WebPageProxy& page, MouseInt
         // Otherwise, wait for mouseEventsFlushedCallback to run when all events are handled.
     });
 }
+#endif // ENABLE(WEBDRIVER_MOUSE_INTERACTIONS)
 
+#if ENABLE(WEBDRIVER_TOUCH_INTERACTIONS)
+void WebAutomationSession::simulateTouchInteraction(WebPageProxy& page, TouchInteraction interaction, const WebCore::IntPoint& locationInViewport, Optional<Seconds> duration, CompletionHandler<void(Optional<AutomationCommandError>)>&& completionHandler)
+{
+#if PLATFORM(IOS_FAMILY)
+    if (!page.unobscuredContentRect().contains(locationInViewport)) {
+        completionHandler(AUTOMATION_COMMAND_ERROR_WITH_NAME(TargetOutOfBounds));
+        return;
+    }
+#endif
+
+    m_simulatingTouchInteraction = true;
+    platformSimulateTouchInteraction(page, interaction, locationInViewport, duration, [this, protectedThis = makeRef(*this), completionHandler = WTFMove(completionHandler)](Optional<AutomationCommandError> error) mutable {
+        m_simulatingTouchInteraction = false;
+        completionHandler(error);
+    });
+}
+#endif // ENABLE(WEBDRIVER_TOUCH_INTERACTIONS)
+
+#if ENABLE(WEBDRIVER_KEYBOARD_INTERACTIONS)
 void WebAutomationSession::simulateKeyboardInteraction(WebPageProxy& page, KeyboardInteraction interaction, WTF::Variant<VirtualKey, CharKey>&& key, CompletionHandler<void(Optional<AutomationCommandError>)>&& completionHandler)
 {
     // Bridge the flushed callback to our command's completion handler.
@@ -1526,8 +1586,10 @@ void WebAutomationSession::simulateKeyboardInteraction(WebPageProxy& page, Keybo
 
     // Otherwise, wait for keyboardEventsFlushedCallback to run when all events are handled.
 }
+#endif // ENABLE(WEBDRIVER_KEYBOARD_INTERACTIONS)
+#endif // ENABLE(WEBDRIVER_ACTIONS_API)
 
-#if USE(APPKIT) || PLATFORM(GTK) || PLATFORM(WPE)
+#if ENABLE(WEBDRIVER_MOUSE_INTERACTIONS)
 static WebEvent::Modifiers protocolModifierToWebEventModifier(Inspector::Protocol::Automation::KeyModifier modifier)
 {
     switch (modifier) {
@@ -1545,7 +1607,9 @@ static WebEvent::Modifiers protocolModifierToWebEventModifier(Inspector::Protoco
 
     RELEASE_ASSERT_NOT_REACHED();
 }
+#endif // ENABLE(WEBDRIVER_MOUSE_INTERACTIONS)
 
+#if ENABLE(WEBDRIVER_ACTIONS_API)
 static WebMouseEvent::Button protocolMouseButtonToWebMouseEventButton(Inspector::Protocol::Automation::MouseButton button)
 {
     switch (button) {
@@ -1561,11 +1625,11 @@ static WebMouseEvent::Button protocolMouseButtonToWebMouseEventButton(Inspector:
 
     RELEASE_ASSERT_NOT_REACHED();
 }
-#endif // USE(APPKIT) || PLATFORM(GTK) || PLATFORM(WPE)
+#endif // ENABLE(WEBDRIVER_ACTIONS_API)
 
 void WebAutomationSession::performMouseInteraction(const String& handle, const JSON::Object& requestedPositionObject, const String& mouseButtonString, const String& mouseInteractionString, const JSON::Array& keyModifierStrings, Ref<PerformMouseInteractionCallback>&& callback)
 {
-#if !USE(APPKIT) && !PLATFORM(GTK) && !PLATFORM(WPE)
+#if !ENABLE(WEBDRIVER_MOUSE_INTERACTIONS)
     ASYNC_FAIL_WITH_PREDEFINED_ERROR(NotImplemented);
 #else
     WebPageProxy* page = webPageProxyForHandle(handle);
@@ -1634,12 +1698,12 @@ void WebAutomationSession::performMouseInteraction(const String& handle, const J
             callbackToCancel(WTF::nullopt);
         }
     });
-#endif // USE(APPKIT) || PLATFORM(GTK) || PLATFORM(WPE)
+#endif // ENABLE(WEBDRIVER_MOUSE_INTERACTIONS)
 }
 
 void WebAutomationSession::performKeyboardInteractions(const String& handle, const JSON::Array& interactions, Ref<PerformKeyboardInteractionsCallback>&& callback)
 {
-#if !PLATFORM(COCOA) && !PLATFORM(GTK) && !PLATFORM(WPE)
+#if !ENABLE(WEBDRIVER_KEYBOARD_INTERACTIONS)
     ASYNC_FAIL_WITH_PREDEFINED_ERROR(NotImplemented);
 #else
     WebPageProxy* page = webPageProxyForHandle(handle);
@@ -1716,10 +1780,10 @@ void WebAutomationSession::performKeyboardInteractions(const String& handle, con
 
     for (auto& action : actionsToPerform)
         action();
-#endif // PLATFORM(COCOA) || PLATFORM(GTK) || PLATFORM(WPE)
+#endif // ENABLE(WEBDRIVER_KEYBOARD_INTERACTIONS)
 }
 
-#if USE(APPKIT) || PLATFORM(GTK) || PLATFORM(WPE)
+#if ENABLE(WEBDRIVER_ACTIONS_API)
 static SimulatedInputSourceType simulatedInputSourceTypeFromProtocolSourceType(Inspector::Protocol::Automation::InputSourceType protocolType)
 {
     switch (protocolType) {
@@ -1735,13 +1799,13 @@ static SimulatedInputSourceType simulatedInputSourceTypeFromProtocolSourceType(I
 
     RELEASE_ASSERT_NOT_REACHED();
 }
-#endif // USE(APPKIT) || PLATFORM(GTK) || PLATFORM(WPE)
+#endif // ENABLE(WEBDRIVER_ACTIONS_API)
 
 void WebAutomationSession::performInteractionSequence(const String& handle, const String* optionalFrameHandle, const JSON::Array& inputSources, const JSON::Array& steps, Ref<WebAutomationSession::PerformInteractionSequenceCallback>&& callback)
 {
     // This command implements WebKit support for §17.5 Perform Actions.
 
-#if !USE(APPKIT) && !PLATFORM(GTK) && !PLATFORM(WPE)
+#if !ENABLE(WEBDRIVER_ACTIONS_API)
     ASYNC_FAIL_WITH_PREDEFINED_ERROR(NotImplemented);
 #else
     WebPageProxy* page = webPageProxyForHandle(handle);
@@ -1778,9 +1842,26 @@ void WebAutomationSession::performInteractionSequence(const String& handle, cons
             ASYNC_FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS(InvalidParameter, "An input source in the 'inputSources' parameter has an invalid 'sourceType'.");
 
         SimulatedInputSourceType inputSourceType = simulatedInputSourceTypeFromProtocolSourceType(*parsedInputSourceType);
+
+        // Note: iOS does not support mouse input sources, and other platforms do not support touch input sources.
+        // If a mismatch happens, alias to the supported input source. This works because both Mouse and Touch input sources
+        // use a MouseButton to indicate the result of interacting (down/up/move), which can be interpreted for touch or mouse.
+#if !ENABLE(WEBDRIVER_MOUSE_INTERACTIONS) && ENABLE(WEBDRIVER_TOUCH_INTERACTIONS)
+        if (inputSourceType == SimulatedInputSourceType::Mouse)
+            inputSourceType = SimulatedInputSourceType::Touch;
+#endif
+#if !ENABLE(WEBDRIVER_MOUSE_INTERACTIONS)
+        if (inputSourceType == SimulatedInputSourceType::Mouse)
+            ASYNC_FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS(NotImplemented, "Mouse input sources are not yet supported.");
+#endif
+#if !ENABLE(WEBDRIVER_TOUCH_INTERACTIONS)
         if (inputSourceType == SimulatedInputSourceType::Touch)
             ASYNC_FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS(NotImplemented, "Touch input sources are not yet supported.");
-
+#endif
+#if !ENABLE(WEBDRIVER_KEYBOARD_INTERACTIONS)
+        if (inputSourceType == SimulatedInputSourceType::Keyboard)
+            ASYNC_FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS(NotImplemented, "Keyboard input sources are not yet supported.");
+#endif
         if (typeToSourceIdMap.contains(inputSourceType))
             ASYNC_FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS(InvalidParameter, "Two input sources with the same type were specified.");
         if (sourceIdToInputSourceMap.contains(sourceId))
@@ -1892,14 +1973,14 @@ void WebAutomationSession::performInteractionSequence(const String& handle, cons
         else
             callback->sendSuccess();
     });
-#endif // PLATFORM(COCOA) || PLATFORM(GTK) || PLATFORM(WPE)
+#endif // ENABLE(WEBDRIVER_ACTIONS_API)
 }
 
 void WebAutomationSession::cancelInteractionSequence(const String& handle, const String* optionalFrameHandle, Ref<CancelInteractionSequenceCallback>&& callback)
 {
     // This command implements WebKit support for §17.6 Release Actions.
 
-#if !USE(APPKIT) && !PLATFORM(GTK) && !PLATFORM(WPE)
+#if !ENABLE(WEBDRIVER_ACTIONS_API)
     ASYNC_FAIL_WITH_PREDEFINED_ERROR(NotImplemented);
 #else
     WebPageProxy* page = webPageProxyForHandle(handle);
@@ -1920,7 +2001,7 @@ void WebAutomationSession::cancelInteractionSequence(const String& handle, const
         else
             callback->sendSuccess();
     });
-#endif // PLATFORM(COCOA) || PLATFORM(GTK) || PLATFORM(WPE)
+#endif // ENABLE(WEBDRIVER_ACTIONS_API)
 }
 
 void WebAutomationSession::takeScreenshot(const String& handle, const String* optionalFrameHandle, const String* optionalNodeHandle, const bool* optionalScrollIntoViewIfNeeded, const bool* optionalClipToViewport, Ref<TakeScreenshotCallback>&& callback)
@@ -1960,22 +2041,6 @@ void WebAutomationSession::didTakeScreenshot(uint64_t callbackID, const Shareabl
 
     callback->sendSuccess(base64EncodedData.value());
 }
-
-// Platform-dependent Implementation Stubs.
-
-#if !PLATFORM(MAC) && !PLATFORM(GTK) && !PLATFORM(WPE)
-void WebAutomationSession::platformSimulateMouseInteraction(WebPageProxy&, MouseInteraction, WebMouseEvent::Button, const WebCore::IntPoint&, WebEvent::Modifiers)
-{
-}
-#endif // !PLATFORM(MAC) && !PLATFORM(GTK) && !PLATFORM(WPE)
-
-#if !PLATFORM(COCOA) && !PLATFORM(GTK) && !PLATFORM(WPE)
-
-
-void WebAutomationSession::platformSimulateKeyboardInteraction(WebPageProxy&, KeyboardInteraction, WTF::Variant<VirtualKey, CharKey>&&)
-{
-}
-#endif // !PLATFORM(COCOA) && !PLATFORM(GTK) && !PLATFORM(WPE)
 
 #if !PLATFORM(COCOA) && !USE(CAIRO)
 Optional<String> WebAutomationSession::platformGetBase64EncodedPNGData(const ShareableBitmap::Handle&)

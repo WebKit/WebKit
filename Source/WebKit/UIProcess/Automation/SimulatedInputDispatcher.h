@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2018, 2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -24,6 +24,8 @@
  */
 
 #pragma once
+
+#if ENABLE(WEBDRIVER_ACTIONS_API)
 
 #include "WebEvent.h"
 #include <wtf/CompletionHandler.h>
@@ -63,6 +65,12 @@ enum class SimulatedInputSourceType {
     Keyboard,
     Mouse,
     Touch,
+};
+
+enum class TouchInteraction {
+    TouchDown,
+    MoveTo,
+    LiftUp,
 };
 
 struct SimulatedInputSourceState {
@@ -115,8 +123,15 @@ public:
     class Client {
     public:
         virtual ~Client() { }
+#if ENABLE(WEBDRIVER_MOUSE_INTERACTIONS)
         virtual void simulateMouseInteraction(WebPageProxy&, MouseInteraction, WebMouseEvent::Button, const WebCore::IntPoint& locationInView, AutomationCompletionHandler&&) = 0;
+#endif
+#if ENABLE(WEBDRIVER_TOUCH_INTERACTIONS)
+        virtual void simulateTouchInteraction(WebPageProxy&, TouchInteraction, const WebCore::IntPoint& locationInView, Optional<Seconds> duration, AutomationCompletionHandler&&) = 0;
+#endif
+#if ENABLE(WEBDRIVER_KEYBOARD_INTERACTIONS)
         virtual void simulateKeyboardInteraction(WebPageProxy&, KeyboardInteraction, WTF::Variant<VirtualKey, CharKey>&&, AutomationCompletionHandler&&) = 0;
+#endif
         virtual void viewportInViewCenterPointOfElement(WebPageProxy&, uint64_t frameID, const String& nodeHandle, Function<void (Optional<WebCore::IntPoint>, Optional<AutomationCommandError>)>&&) = 0;
     };
 
@@ -167,3 +182,5 @@ private:
 };
 
 } // namespace WebKit
+
+#endif // ENABLE(WEBDRIVER_ACTIONS_API)

@@ -1,3 +1,108 @@
+2019-01-25  Brian Burg  <bburg@apple.com>
+
+        Web Automation: add support for simulating single touches to Automation.performInteractionSequence
+        https://bugs.webkit.org/show_bug.cgi?id=193852
+        <rdar://problem/28360781>
+
+        Reviewed by Joseph Pecoraro and Simon Fraser.
+
+        This patch makes it possible to simulate touches via the Actions API. The approach is to
+        use a stripped down version of HIDEventGenerator to send HID events to the UIWindow.
+        The initial version supports a single touch point; this may be expanded if needed, but
+        so far it hasn't been an impediment when running desktop-oriented WebDriver test suites.
+
+        As part of implementing this support, I went through and added [somewhat obnoxious] ENABLE()
+        guards so that we don't mistakenly compile mouse support on iOS and touch on Mac,
+        and vice versa. Each of the interaction methods---touch, mouse, keyboard---can be independently
+        compiled out. If none is supported (i.e., Windows), then we don't even try to compile
+        platformSimulate*Interaction methods or SimulatedInputDispatcher. This allows WebAutomationSession
+        to not include members and code that are never going to be used on a particular platform.
+
+        This functionality is covered by existing WebDriver test suites that use Element Click command.
+        Additional tests that explicitly include 'touch' pointerType will be submitted to WPT later.
+
+        * UIProcess/Automation/Automation.json: Update comment.
+
+        * UIProcess/Automation/SimulatedInputDispatcher.h:
+        * UIProcess/Automation/SimulatedInputDispatcher.cpp:
+        (WebKit::SimulatedInputDispatcher::transitionInputSourceToState):
+        - Add appropriate guards for code specific to each interaction type.
+        - Handle SimulatedInputSourceType::Touch and call out to dispatch events.
+
+        * UIProcess/Automation/WebAutomationSession.h:
+        * UIProcess/Automation/WebAutomationSession.cpp:
+        (WebKit::WebAutomationSession::WebAutomationSession):
+        (WebKit::WebAutomationSession::terminate):
+        (WebKit::WebAutomationSession::willShowJavaScriptDialog):
+        (WebKit::WebAutomationSession::mouseEventsFlushedForPage):
+        (WebKit::WebAutomationSession::keyboardEventsFlushedForPage):
+        (WebKit::WebAutomationSession::willClosePage):
+        Add appropriate guards for code specific to each interaction type.
+
+        (WebKit::WebAutomationSession::isSimulatingUserInteraction const):
+        Add new hook so that we can detect when a touch simulation is in progress.
+        We don't rely on checking WebKit's event queue, so use a flag.
+
+        (WebKit::WebAutomationSession::simulateTouchInteraction):
+        (WebKit::WebAutomationSession::performMouseInteraction):
+        (WebKit::WebAutomationSession::performKeyboardInteractions):
+        (WebKit::WebAutomationSession::cancelInteractionSequence):
+        (WebKit::WebAutomationSession::performInteractionSequence):
+        - Add appropriate guards for code specific to each interaction type.
+        - Bail out immediately if a requested interaction type is not supported.
+        - Shim Touch input type to Mouse if mouse is not supported but touches are.
+        Nearly all WebDriver tests in the wild will be requesting a 'mouse' pointerType,
+        so this is necessary for compatibility. It's easier to shim at this level than try
+        to implement platformSimulateMouseInteraction for iOS because
+        platformSimulateMouseinteraction does not use a completion handler but the iOS
+        implementation would require that.
+
+        (WebKit::WebAutomationSession::platformSimulateMouseInteraction): Deleted.
+        (WebKit::WebAutomationSession::platformSimulateKeyboardInteraction): Deleted.
+        - Remove these stubs. Platform methods of this class are no longer being filled
+        with stubs on unsupported platforms because we expect the command to fail earlier.
+
+        * UIProcess/Automation/ios/WebAutomationSessionIOS.mm:
+        (WebKit::WebAutomationSession::platformSimulateTouchInteraction):
+        - Add appropriate guards for code specific to each interaction type.
+        - Implement new platform method to simulate touches. This uses _WKTouchEventGenerator.
+
+        * UIProcess/Automation/mac/WebAutomationSessionMac.mm:
+        Add appropriate guards for code specific to each interaction type.
+
+        * UIProcess/_WKTouchEventGenerator.h: Added.
+        * UIProcess/_WKTouchEventGenerator.mm: Added.
+        (simpleCurveInterpolation):
+        (calculateNextCurveLocation):
+        (delayBetweenMove):
+        (+[_WKTouchEventGenerator sharedTouchEventGenerator]):
+        (+[_WKTouchEventGenerator nextEventCallbackID]):
+        (-[_WKTouchEventGenerator init]):
+        (-[_WKTouchEventGenerator dealloc]):
+        (-[_WKTouchEventGenerator _createIOHIDEventType:]):
+        (-[_WKTouchEventGenerator _sendHIDEvent:]):
+        (-[_WKTouchEventGenerator _sendMarkerHIDEventWithCompletionBlock:]):
+        (-[_WKTouchEventGenerator _updateTouchPoints:count:]):
+        (-[_WKTouchEventGenerator touchDownAtPoints:touchCount:]):
+        (-[_WKTouchEventGenerator touchDown:touchCount:]):
+        (-[_WKTouchEventGenerator touchDown:]):
+        (-[_WKTouchEventGenerator liftUpAtPoints:touchCount:]):
+        (-[_WKTouchEventGenerator liftUp:touchCount:]):
+        (-[_WKTouchEventGenerator liftUp:]):
+        (-[_WKTouchEventGenerator moveToPoints:touchCount:duration:]):
+        (-[_WKTouchEventGenerator touchDown:completionBlock:]):
+        (-[_WKTouchEventGenerator liftUp:completionBlock:]):
+        (-[_WKTouchEventGenerator moveToPoint:duration:completionBlock:]):
+        (-[_WKTouchEventGenerator receivedHIDEvent:]):
+        Copied and simplified from HIDEventGenerator in WebKitTestRunner.
+
+        * WebKit.xcodeproj/project.pbxproj:
+        Add _WKTouchEventGenerator.{h,mm} and make it a private header. The client needs to
+        route received HID events to -receivedHIDEvent: in order to detect when the marker
+        HID event has been processed (and thus the interaction is completed).
+
+        * config.h: Add ENABLE(WEBDRIVER_*_INTERACTIONS) macros here.
+
 2019-01-26  Simon Fraser  <simon.fraser@apple.com>
 
         Have composited RenderIFrame layers make FrameHosting scrolling tree nodes to parent the iframe's scrolling node
