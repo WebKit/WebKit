@@ -1,3 +1,13 @@
+2019-01-28  Aakash Jain  <aakash_jain@apple.com>
+
+        [ews-app] Allow certain fields to be empty
+        https://bugs.webkit.org/show_bug.cgi?id=193892
+
+        Reviewed by Lucas Forschler.
+
+        * BuildSlaveSupport/ews-app/ews/models/build.py:
+        * BuildSlaveSupport/ews-app/ews/models/step.py:
+
 2019-01-28  Rob Buis  <rbuis@igalia.com>
 
         Update MIME type parser

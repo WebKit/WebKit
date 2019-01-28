@@ -31,10 +31,10 @@ class Build(models.Model):
     buildid = models.IntegerField(primary_key=True)
     builderid = models.IntegerField()
     number = models.IntegerField()
-    result = models.IntegerField()
+    result = models.IntegerField(null=True, blank=True)
     state_string = models.TextField()
-    started_at = models.IntegerField()
-    complete_at = models.IntegerField()
+    started_at = models.IntegerField(null=True, blank=True)
+    complete_at = models.IntegerField(null=True, blank=True)
     created = models.DateTimeField(auto_now_add=True)
     modified = models.DateTimeField(auto_now=True)
 

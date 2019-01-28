@@ -29,10 +29,10 @@ from ews.models.build import Build
 class Step(models.Model):
     stepid = models.IntegerField(primary_key=True)
     build = models.ForeignKey(Build, on_delete=models.CASCADE)
-    result = models.IntegerField()
+    result = models.IntegerField(null=True, blank=True)
     state_string = models.TextField()
-    started_at = models.IntegerField()
-    complete_at = models.IntegerField()
+    started_at = models.IntegerField(null=True, blank=True)
+    complete_at = models.IntegerField(null=True, blank=True)
     created = models.DateTimeField(auto_now_add=True)
     modified = models.DateTimeField(auto_now=True)
 
