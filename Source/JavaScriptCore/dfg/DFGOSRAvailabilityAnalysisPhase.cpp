@@ -35,6 +35,9 @@
 #include "JSCInlines.h"
 
 namespace JSC { namespace DFG {
+namespace DFGOSRAvailabilityAnalysisPhaseInternal {
+static constexpr bool verbose = false;
+}
 
 class OSRAvailabilityAnalysisPhase : public Phase {
 public:
@@ -63,6 +66,21 @@ public:
 
         // This could be made more efficient by processing blocks in reverse postorder.
         
+        auto dumpAvailability = [] (BasicBlock* block) {
+            dataLogLn(block->ssa->availabilityAtHead);
+            dataLogLn(block->ssa->availabilityAtTail);
+        };
+
+        auto dumpBytecodeLivenessAtHead = [&] (BasicBlock* block) {
+            dataLog("Live: ");
+            m_graph.forAllLiveInBytecode(
+                block->at(0)->origin.forExit,
+                [&] (VirtualRegister reg) {
+                    dataLog(reg, " ");
+                });
+            dataLogLn("");
+        };
+
         LocalOSRAvailabilityCalculator calculator(m_graph);
         bool changed;
         do {
@@ -73,6 +91,10 @@ public:
                 if (!block)
                     continue;
                 
+                if (DFGOSRAvailabilityAnalysisPhaseInternal::verbose) {
+                    dataLogLn("Before changing Block #", block->index);
+                    dumpAvailability(block);
+                }
                 calculator.beginBlock(block);
                 
                 for (unsigned nodeIndex = 0; nodeIndex < block->size(); ++nodeIndex)
@@ -84,6 +106,11 @@ public:
                 block->ssa->availabilityAtTail = calculator.m_availability;
                 changed = true;
 
+                if (DFGOSRAvailabilityAnalysisPhaseInternal::verbose) {
+                    dataLogLn("After changing Block #", block->index);
+                    dumpAvailability(block);
+                }
+
                 for (unsigned successorIndex = block->numSuccessors(); successorIndex--;) {
                     BasicBlock* successor = block->successor(successorIndex);
                     successor->ssa->availabilityAtHead.merge(calculator.m_availability);
@@ -93,6 +120,11 @@ public:
                     BasicBlock* successor = block->successor(successorIndex);
                     successor->ssa->availabilityAtHead.pruneByLiveness(
                         m_graph, successor->at(0)->origin.forExit);
+                    if (DFGOSRAvailabilityAnalysisPhaseInternal::verbose) {
+                        dataLogLn("After pruning Block #", successor->index);
+                        dumpAvailability(successor);
+                        dumpBytecodeLivenessAtHead(successor);
+                    }
                 }
             }
         } while (changed);
