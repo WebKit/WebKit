@@ -114,8 +114,24 @@ static GLXContext createGLXARBContext(Display* display, GLXFBConfig config, GLXC
     return glXCreateContextAttribsARB(display, config, sharingContext, GL_TRUE, nullptr);
 }
 
+static bool compatibleVisuals(XVisualInfo* a, XVisualInfo* b)
+{
+    return a->c_class == b->c_class
+        && a->depth == b->depth
+        && a->red_mask == b->red_mask
+        && a->green_mask == b->green_mask
+        && a->blue_mask == b->blue_mask
+        && a->colormap_size == b->colormap_size
+        && a->bits_per_rgb == b->bits_per_rgb;
+}
+
 std::unique_ptr<GLContextGLX> GLContextGLX::createWindowContext(GLNativeWindowType window, PlatformDisplay& platformDisplay, GLXContext sharingContext)
 {
+    // In order to create the GLContext, we need to select a GLXFBConfig that has depth and stencil
+    // buffers that is compatible with the Visual used to create the window. To do this, we request
+    // all the GLXFBConfigs that have the features we need and compare their XVisualInfo to check whether
+    // they are compatible with the window one. Then we try to create the GLContext with each of those
+    // configs until we succeed, and finally fallback to the window config if nothing else works.
     Display* display = downcast<PlatformDisplayX11>(platformDisplay).native();
     XWindowAttributes attributes;
     if (!XGetWindowAttributes(display, static_cast<Window>(window), &attributes))
@@ -125,27 +141,66 @@ std::unique_ptr<GLContextGLX> GLContextGLX::createWindowContext(GLNativeWindowTy
     visualInfo.visualid = XVisualIDFromVisual(attributes.visual);
 
     int numConfigs = 0;
-    GLXFBConfig config = nullptr;
+    GLXFBConfig windowConfig = nullptr;
     XUniquePtr<GLXFBConfig> configs(glXGetFBConfigs(display, DefaultScreen(display), &numConfigs));
     for (int i = 0; i < numConfigs; i++) {
         XUniquePtr<XVisualInfo> glxVisualInfo(glXGetVisualFromFBConfig(display, configs.get()[i]));
         if (!glxVisualInfo)
             continue;
-
         if (glxVisualInfo.get()->visualid == visualInfo.visualid) {
-            config = configs.get()[i];
+            windowConfig = configs.get()[i];
             break;
         }
     }
-    ASSERT(config);
+    ASSERT(windowConfig);
+    XUniquePtr<XVisualInfo> windowVisualInfo(glXGetVisualFromFBConfig(display, windowConfig));
 
+    static const int fbConfigAttributes[] = {
+        GLX_DRAWABLE_TYPE, GLX_WINDOW_BIT,
+        GLX_RENDER_TYPE, GLX_RGBA_BIT,
+        GLX_X_RENDERABLE, GL_TRUE,
+        GLX_RED_SIZE, 1,
+        GLX_GREEN_SIZE, 1,
+        GLX_BLUE_SIZE, 1,
+        GLX_ALPHA_SIZE, 1,
+        GLX_DEPTH_SIZE, 1,
+        GLX_STENCIL_SIZE, 1,
+        GLX_DOUBLEBUFFER, GL_TRUE,
+        GLX_CONFIG_CAVEAT, GLX_NONE,
+#ifdef GLX_FRAMEBUFFER_SRGB_CAPABLE_EXT
+        // Discard sRGB configs if any sRGB extension is installed.
+        GLX_FRAMEBUFFER_SRGB_CAPABLE_EXT, GL_FALSE,
+#endif
+        0
+    };
+    configs.reset(glXChooseFBConfig(display, DefaultScreen(display), fbConfigAttributes, &numConfigs));
     XUniqueGLXContext context;
+    for (int i = 0; i < numConfigs; i++) {
+        XUniquePtr<XVisualInfo> configVisualInfo(glXGetVisualFromFBConfig(display, configs.get()[i]));
+        if (!configVisualInfo)
+            continue;
+        if (compatibleVisuals(windowVisualInfo.get(), configVisualInfo.get())) {
+            // Try to create a context with this config. Use the trapper in case we get an XError.
+            XErrorTrapper trapper(display, XErrorTrapper::Policy::Ignore);
+            if (hasGLXARBCreateContextExtension(display))
+                context.reset(createGLXARBContext(display, configs.get()[i], sharingContext));
+            else {
+                // Legacy OpenGL version.
+                context.reset(glXCreateContext(display, configVisualInfo.get(), sharingContext, True));
+            }
+
+            if (context)
+                return std::unique_ptr<GLContextGLX>(new GLContextGLX(platformDisplay, WTFMove(context), window));
+        }
+    }
+
+    // Fallback to the config used by the window. We don't probably have the buffers we need in
+    // this config and that will cause artifacts, but it's better than not rendering anything.
     if (hasGLXARBCreateContextExtension(display))
-        context.reset(createGLXARBContext(display, config, sharingContext));
+        context.reset(createGLXARBContext(display, windowConfig, sharingContext));
     else {
         // Legacy OpenGL version.
-        XUniquePtr<XVisualInfo> visualInfoList(glXGetVisualFromFBConfig(display, config));
-        context.reset(glXCreateContext(display, visualInfoList.get(), sharingContext, True));
+        context.reset(glXCreateContext(display, windowVisualInfo.get(), sharingContext, True));
     }
 
     if (!context)
