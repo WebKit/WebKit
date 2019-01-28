@@ -43,7 +43,6 @@
 #include "WebResourceLoadStatisticsStoreMessages.h"
 #include "WebResourceLoadStatisticsTelemetry.h"
 #include "WebsiteDataFetchOption.h"
-#include "WebsiteDataStore.h"
 #include <WebCore/DiagnosticLoggingClient.h>
 #include <WebCore/DiagnosticLoggingKeys.h>
 #include <WebCore/NetworkStorageSession.h>
@@ -138,21 +137,6 @@ void WebResourceLoadStatisticsStore::setNotifyPagesWhenTelemetryWasCaptured(bool
     completionHandler();
 }
 
-WebResourceLoadStatisticsStore::WebResourceLoadStatisticsStore(WebsiteDataStore& websiteDataStore)
-    : m_websiteDataStore(makeWeakPtr(websiteDataStore))
-    , m_statisticsQueue(WorkQueue::create("WebResourceLoadStatisticsStore Process Data Queue", WorkQueue::Type::Serial, WorkQueue::QOS::Utility))
-    , m_dailyTasksTimer(RunLoop::main(), this, &WebResourceLoadStatisticsStore::performDailyTasks)
-{
-    ASSERT(RunLoop::isMain());
-
-    postTask([this, resourceLoadStatisticsDirectory = websiteDataStore.resolvedResourceLoadStatisticsDirectory().isolatedCopy()] {
-        m_memoryStore = std::make_unique<ResourceLoadStatisticsMemoryStore>(*this, m_statisticsQueue);
-        m_persistentStorage = std::make_unique<ResourceLoadStatisticsPersistentStorage>(*m_memoryStore, m_statisticsQueue, resourceLoadStatisticsDirectory);
-    });
-
-    m_dailyTasksTimer.startRepeating(24_h);
-}
-
 WebResourceLoadStatisticsStore::WebResourceLoadStatisticsStore(NetworkSession& networkSession, const String& resourceLoadStatisticsDirectory)
     : m_networkSession(makeWeakPtr(networkSession))
     , m_statisticsQueue(WorkQueue::create("WebResourceLoadStatisticsStore Process Data Queue", WorkQueue::Type::Serial, WorkQueue::QOS::Utility))
@@ -221,13 +205,6 @@ void WebResourceLoadStatisticsStore::setResourceLoadStatisticsDebugMode(bool val
             m_memoryStore->setResourceLoadStatisticsDebugMode(value);
         postTaskReply(WTFMove(completionHandler));
     });
-}
-
-void WebResourceLoadStatisticsStore::setPrevalentResourceForDebugMode(const URL& url, CompletionHandler<void()>&& completionHandler)
-{
-    ASSERT(RunLoop::isMain());
-
-    setPrevalentResourceForDebugMode(WebCore::ResourceLoadStatistics::primaryDomain(url), WTFMove(completionHandler));
 }
 
 void WebResourceLoadStatisticsStore::setPrevalentResourceForDebugMode(const String& primaryDomain, CompletionHandler<void()>&& completionHandler)
@@ -307,11 +284,6 @@ bool WebResourceLoadStatisticsStore::hasStorageAccessForFrame(const String& reso
 void WebResourceLoadStatisticsStore::callHasStorageAccessForFrameHandler(const String& resourceDomain, const String& firstPartyDomain, uint64_t frameID, uint64_t pageID, CompletionHandler<void(bool hasAccess)>&& callback)
 {
     ASSERT(RunLoop::isMain());
-
-    if (m_websiteDataStore) {
-        m_websiteDataStore->hasStorageAccessForFrameHandler(resourceDomain, firstPartyDomain, frameID, pageID, WTFMove(callback));
-        return;
-    }
 
     if (m_networkSession) {
         callback(m_networkSession->networkStorageSession().hasStorageAccess(resourceDomain, firstPartyDomain, frameID, pageID));
@@ -403,11 +375,6 @@ void WebResourceLoadStatisticsStore::callGrantStorageAccessHandler(const String&
 {
     ASSERT(RunLoop::isMain());
 
-    if (m_websiteDataStore) {
-        m_websiteDataStore->grantStorageAccessHandler(subFramePrimaryDomain, topFramePrimaryDomain, frameID, pageID, WTFMove(callback));
-        return;
-    }
-
     callback(grantStorageAccess(subFramePrimaryDomain, topFramePrimaryDomain, frameID, pageID));
 }
 
@@ -425,11 +392,6 @@ void WebResourceLoadStatisticsStore::didCreateNetworkProcess()
 void WebResourceLoadStatisticsStore::removeAllStorageAccess(CompletionHandler<void()>&& completionHandler)
 {
     ASSERT(RunLoop::isMain());
-
-    if (m_websiteDataStore) {
-        m_websiteDataStore->removeAllStorageAccessHandler(WTFMove(completionHandler));
-        return;
-    }
 
     if (m_networkSession)
         m_networkSession->networkStorageSession().removeAllStorageAccess();
@@ -536,18 +498,6 @@ void WebResourceLoadStatisticsStore::logSubresourceRedirect(const String& source
     });
 }
 
-void WebResourceLoadStatisticsStore::logUserInteraction(const URL& url, CompletionHandler<void()>&& completionHandler)
-{
-    ASSERT(RunLoop::isMain());
-
-    if (url.protocolIsAbout() || url.isEmpty()) {
-        completionHandler();
-        return;
-    }
-
-    logUserInteraction(WebCore::ResourceLoadStatistics::primaryDomain(url), WTFMove(completionHandler));
-}
-
 void WebResourceLoadStatisticsStore::logUserInteraction(const String& targetPrimaryDomain, CompletionHandler<void()>&& completionHandler)
 {
     ASSERT(RunLoop::isMain());
@@ -557,18 +507,6 @@ void WebResourceLoadStatisticsStore::logUserInteraction(const String& targetPrim
             m_memoryStore->logUserInteraction(primaryDomain);
         postTaskReply(WTFMove(completionHandler));
     });
-}
-
-void WebResourceLoadStatisticsStore::clearUserInteraction(const URL& url, CompletionHandler<void()>&& completionHandler)
-{
-    ASSERT(RunLoop::isMain());
-
-    if (url.protocolIsAbout() || url.isEmpty()) {
-        completionHandler();
-        return;
-    }
-
-    clearUserInteraction(WebCore::ResourceLoadStatistics::primaryDomain(url), WTFMove(completionHandler));
 }
 
 void WebResourceLoadStatisticsStore::clearUserInteraction(const String& targetPrimaryDomain, CompletionHandler<void()>&& completionHandler)
@@ -582,18 +520,6 @@ void WebResourceLoadStatisticsStore::clearUserInteraction(const String& targetPr
     });
 }
 
-void WebResourceLoadStatisticsStore::hasHadUserInteraction(const URL& url, CompletionHandler<void (bool)>&& completionHandler)
-{
-    ASSERT(RunLoop::isMain());
-
-    if (url.protocolIsAbout() || url.isEmpty()) {
-        completionHandler(false);
-        return;
-    }
-
-    hasHadUserInteraction(WebCore::ResourceLoadStatistics::primaryDomain(url), WTFMove(completionHandler));
-}
-
 void WebResourceLoadStatisticsStore::hasHadUserInteraction(const String& primaryDomain, CompletionHandler<void(bool)>&& completionHandler)
 {
     postTask([this, primaryDomain = primaryDomain.isolatedCopy(), completionHandler = WTFMove(completionHandler)]() mutable {
@@ -602,18 +528,6 @@ void WebResourceLoadStatisticsStore::hasHadUserInteraction(const String& primary
             completionHandler(hadUserInteraction);
         });
     });
-}
-
-void WebResourceLoadStatisticsStore::setLastSeen(const URL& url, Seconds seconds, CompletionHandler<void()>&& completionHandler)
-{
-    ASSERT(RunLoop::isMain());
-
-    if (url.protocolIsAbout() || url.isEmpty()) {
-        completionHandler();
-        return;
-    }
-
-    setLastSeen(WebCore::ResourceLoadStatistics::primaryDomain(url), seconds, WTFMove(completionHandler));
 }
 
 void WebResourceLoadStatisticsStore::setLastSeen(const String& resourceDomain, Seconds seconds, CompletionHandler<void()>&& completionHandler)
@@ -627,18 +541,6 @@ void WebResourceLoadStatisticsStore::setLastSeen(const String& resourceDomain, S
     });
 }
     
-void WebResourceLoadStatisticsStore::setPrevalentResource(const URL& url, CompletionHandler<void()>&& completionHandler)
-{
-    ASSERT(RunLoop::isMain());
-
-    if (url.protocolIsAbout() || url.isEmpty()) {
-        completionHandler();
-        return;
-    }
-
-    setPrevalentResource(WebCore::ResourceLoadStatistics::primaryDomain(url), WTFMove(completionHandler));
-}
-
 void WebResourceLoadStatisticsStore::setPrevalentResource(const String& resourceDomain, CompletionHandler<void()>&& completionHandler)
 {
     ASSERT(RunLoop::isMain());
@@ -648,18 +550,6 @@ void WebResourceLoadStatisticsStore::setPrevalentResource(const String& resource
             m_memoryStore->setPrevalentResource(resourceDomain);
         postTaskReply(WTFMove(completionHandler));
     });
-}
-
-void WebResourceLoadStatisticsStore::setVeryPrevalentResource(const URL& url, CompletionHandler<void()>&& completionHandler)
-{
-    ASSERT(RunLoop::isMain());
-
-    if (url.protocolIsAbout() || url.isEmpty()) {
-        completionHandler();
-        return;
-    }
-
-    setVeryPrevalentResource(WebCore::ResourceLoadStatistics::primaryDomain(url), WTFMove(completionHandler));
 }
 
 void WebResourceLoadStatisticsStore::setVeryPrevalentResource(const String& primaryDomain, CompletionHandler<void()>&& completionHandler)
@@ -685,18 +575,6 @@ void WebResourceLoadStatisticsStore::dumpResourceLoadStatistics(CompletionHandle
     });
 }
 
-void WebResourceLoadStatisticsStore::isPrevalentResource(const URL& url, CompletionHandler<void (bool)>&& completionHandler)
-{
-    ASSERT(RunLoop::isMain());
-
-    if (url.protocolIsAbout() || url.isEmpty()) {
-        completionHandler(false);
-        return;
-    }
-
-    isPrevalentResource(WebCore::ResourceLoadStatistics::primaryDomain(url), WTFMove(completionHandler));
-}
-
 void WebResourceLoadStatisticsStore::isPrevalentResource(const String& primaryDomain, CompletionHandler<void(bool)>&& completionHandler)
 {
     ASSERT(RunLoop::isMain());
@@ -709,18 +587,6 @@ void WebResourceLoadStatisticsStore::isPrevalentResource(const String& primaryDo
     });
 }
     
-void WebResourceLoadStatisticsStore::isVeryPrevalentResource(const URL& url, CompletionHandler<void(bool)>&& completionHandler)
-{
-    ASSERT(RunLoop::isMain());
-
-    if (url.protocolIsAbout() || url.isEmpty()) {
-        completionHandler(false);
-        return;
-    }
-    
-    isVeryPrevalentResource(WebCore::ResourceLoadStatistics::primaryDomain(url), WTFMove(completionHandler));
-}
-
 void WebResourceLoadStatisticsStore::isVeryPrevalentResource(const String& primaryDomain, CompletionHandler<void(bool)>&& completionHandler)
 {
     ASSERT(RunLoop::isMain());
@@ -731,13 +597,6 @@ void WebResourceLoadStatisticsStore::isVeryPrevalentResource(const String& prima
             completionHandler(isVeryPrevalentResource);
         });
     });
-}
-
-void WebResourceLoadStatisticsStore::isRegisteredAsSubresourceUnder(const URL& subresource, const URL& topFrame, CompletionHandler<void(bool)>&& completionHandler)
-{
-    ASSERT(RunLoop::isMain());
-
-    isRegisteredAsSubresourceUnder(WebCore::ResourceLoadStatistics::primaryDomain(subresource), WebCore::ResourceLoadStatistics::primaryDomain(topFrame), WTFMove(completionHandler));
 }
 
 void WebResourceLoadStatisticsStore::isRegisteredAsSubresourceUnder(const String& subresource, const String& topFrame, CompletionHandler<void(bool)>&& completionHandler)
@@ -752,13 +611,6 @@ void WebResourceLoadStatisticsStore::isRegisteredAsSubresourceUnder(const String
     });
 }
 
-void WebResourceLoadStatisticsStore::isRegisteredAsSubFrameUnder(const URL& subFrame, const URL& topFrame, CompletionHandler<void (bool)>&& completionHandler)
-{
-    ASSERT(RunLoop::isMain());
-
-    isRegisteredAsSubFrameUnder(WebCore::ResourceLoadStatistics::primaryDomain(subFrame), WebCore::ResourceLoadStatistics::primaryDomain(topFrame), WTFMove(completionHandler));
-}
-
 void WebResourceLoadStatisticsStore::isRegisteredAsSubFrameUnder(const String& subFrame, const String& topFrame, CompletionHandler<void(bool)>&& completionHandler)
 {
     ASSERT(RunLoop::isMain());
@@ -769,13 +621,6 @@ void WebResourceLoadStatisticsStore::isRegisteredAsSubFrameUnder(const String& s
             completionHandler(isRegisteredAsSubFrameUnder);
         });
     });
-}
-
-void WebResourceLoadStatisticsStore::isRegisteredAsRedirectingTo(const URL& hostRedirectedFrom, const URL& hostRedirectedTo, CompletionHandler<void (bool)>&& completionHandler)
-{
-    ASSERT(RunLoop::isMain());
-
-    isRegisteredAsRedirectingTo(WebCore::ResourceLoadStatistics::primaryDomain(hostRedirectedFrom), WebCore::ResourceLoadStatistics::primaryDomain(hostRedirectedTo), WTFMove(completionHandler));
 }
 
 void WebResourceLoadStatisticsStore::isRegisteredAsRedirectingTo(const String& hostRedirectedFrom, const String& hostRedirectedTo, CompletionHandler<void(bool)>&& completionHandler)
@@ -790,18 +635,6 @@ void WebResourceLoadStatisticsStore::isRegisteredAsRedirectingTo(const String& h
     });
 }
 
-void WebResourceLoadStatisticsStore::clearPrevalentResource(const URL& url, CompletionHandler<void()>&& completionHandler)
-{
-    ASSERT(RunLoop::isMain());
-
-    if (url.protocolIsAbout() || url.isEmpty()) {
-        completionHandler();
-        return;
-    }
-
-    clearPrevalentResource(WebCore::ResourceLoadStatistics::primaryDomain(url), WTFMove(completionHandler));
-}
-
 void WebResourceLoadStatisticsStore::clearPrevalentResource(const String& resourceDomain, CompletionHandler<void()>&& completionHandler)
 {
     ASSERT(RunLoop::isMain());
@@ -811,16 +644,6 @@ void WebResourceLoadStatisticsStore::clearPrevalentResource(const String& resour
             m_memoryStore->clearPrevalentResource(resourceDomain);
         postTaskReply(WTFMove(completionHandler));
     });
-}
-
-void WebResourceLoadStatisticsStore::setGrandfathered(const URL& url, bool value, CompletionHandler<void()>&& completionHandler)
-{
-    ASSERT(RunLoop::isMain());
-
-    if (url.protocolIsAbout() || url.isEmpty())
-        return;
-
-    setGrandfathered(WebCore::ResourceLoadStatistics::primaryDomain(url), value, WTFMove(completionHandler));
 }
 
 void WebResourceLoadStatisticsStore::setGrandfathered(const String& domain, bool value, CompletionHandler<void()>&& completionHandler)
@@ -834,18 +657,6 @@ void WebResourceLoadStatisticsStore::setGrandfathered(const String& domain, bool
     });
 }
     
-void WebResourceLoadStatisticsStore::isGrandfathered(const URL& url, CompletionHandler<void (bool)>&& completionHandler)
-{
-    ASSERT(RunLoop::isMain());
-
-    if (url.protocolIsAbout() || url.isEmpty()) {
-        completionHandler(false);
-        return;
-    }
-
-    isGrandfathered(WebCore::ResourceLoadStatistics::primaryDomain(url), WTFMove(completionHandler));
-}
-
 void WebResourceLoadStatisticsStore::isGrandfathered(const String& primaryDomain, CompletionHandler<void(bool)>&& completionHandler)
 {
     ASSERT(RunLoop::isMain());
@@ -856,18 +667,6 @@ void WebResourceLoadStatisticsStore::isGrandfathered(const String& primaryDomain
             completionHandler(isGrandFathered);
         });
     });
-}
-
-void WebResourceLoadStatisticsStore::setSubframeUnderTopFrameOrigin(const URL& subframe, const URL& topFrame, CompletionHandler<void()>&& completionHandler)
-{
-    ASSERT(RunLoop::isMain());
-
-    if (subframe.protocolIsAbout() || subframe.isEmpty() || topFrame.protocolIsAbout() || topFrame.isEmpty()) {
-        completionHandler();
-        return;
-    }
-
-    setSubframeUnderTopFrameOrigin(WebCore::ResourceLoadStatistics::primaryDomain(subframe), WebCore::ResourceLoadStatistics::primaryDomain(topFrame), WTFMove(completionHandler));
 }
 
 void WebResourceLoadStatisticsStore::setSubframeUnderTopFrameOrigin(const String& subframe, const String& topFrame, CompletionHandler<void()>&& completionHandler)
@@ -881,18 +680,6 @@ void WebResourceLoadStatisticsStore::setSubframeUnderTopFrameOrigin(const String
     });
 }
 
-void WebResourceLoadStatisticsStore::setSubresourceUnderTopFrameOrigin(const URL& subresource, const URL& topFrame, CompletionHandler<void()>&& completionHandler)
-{
-    ASSERT(RunLoop::isMain());
-
-    if (subresource.protocolIsAbout() || subresource.isEmpty() || topFrame.protocolIsAbout() || topFrame.isEmpty()) {
-        completionHandler();
-        return;
-    }
-
-    setSubresourceUnderTopFrameOrigin(WebCore::ResourceLoadStatistics::primaryDomain(subresource), WebCore::ResourceLoadStatistics::primaryDomain(topFrame), WTFMove(completionHandler));
-}
-
 void WebResourceLoadStatisticsStore::setSubresourceUnderTopFrameOrigin(const String& subresource, const String& topFrame, CompletionHandler<void()>&& completionHandler)
 {
     ASSERT(RunLoop::isMain());
@@ -902,18 +689,6 @@ void WebResourceLoadStatisticsStore::setSubresourceUnderTopFrameOrigin(const Str
             m_memoryStore->setSubresourceUnderTopFrameOrigin(primarySubresourceDomain, primaryTopFrameDomain);
         postTaskReply(WTFMove(completionHandler));
     });
-}
-
-void WebResourceLoadStatisticsStore::setSubresourceUniqueRedirectTo(const URL& subresource, const URL& hostNameRedirectedTo, CompletionHandler<void()>&& completionHandler)
-{
-    ASSERT(RunLoop::isMain());
-
-    if (subresource.protocolIsAbout() || subresource.isEmpty() || hostNameRedirectedTo.protocolIsAbout() || hostNameRedirectedTo.isEmpty()) {
-        completionHandler();
-        return;
-    }
-
-    setSubresourceUniqueRedirectTo(WebCore::ResourceLoadStatistics::primaryDomain(subresource), WebCore::ResourceLoadStatistics::primaryDomain(hostNameRedirectedTo), WTFMove(completionHandler));
 }
 
 void WebResourceLoadStatisticsStore::setSubresourceUniqueRedirectTo(const String& subresource, const String& hostNameRedirectedTo, CompletionHandler<void()>&& completionHandler)
@@ -927,18 +702,6 @@ void WebResourceLoadStatisticsStore::setSubresourceUniqueRedirectTo(const String
     });
 }
 
-void WebResourceLoadStatisticsStore::setSubresourceUniqueRedirectFrom(const URL& subresource, const URL& hostNameRedirectedFrom, CompletionHandler<void()>&& completionHandler)
-{
-    ASSERT(RunLoop::isMain());
-
-    if (subresource.protocolIsAbout() || subresource.isEmpty() || hostNameRedirectedFrom.protocolIsAbout() || hostNameRedirectedFrom.isEmpty()) {
-        completionHandler();
-        return;
-    }
-
-    setSubresourceUniqueRedirectFrom(WebCore::ResourceLoadStatistics::primaryDomain(subresource), WebCore::ResourceLoadStatistics::primaryDomain(hostNameRedirectedFrom), WTFMove(completionHandler));
-}
-
 void WebResourceLoadStatisticsStore::setSubresourceUniqueRedirectFrom(const String& subresource, const String& hostNameRedirectedFrom, CompletionHandler<void()>&& completionHandler)
 {
     ASSERT(RunLoop::isMain());
@@ -950,18 +713,6 @@ void WebResourceLoadStatisticsStore::setSubresourceUniqueRedirectFrom(const Stri
     });
 }
 
-void WebResourceLoadStatisticsStore::setTopFrameUniqueRedirectTo(const URL& topFrameHostName, const URL& hostNameRedirectedTo, CompletionHandler<void()>&& completionHandler)
-{
-    ASSERT(RunLoop::isMain());
-
-    if (topFrameHostName.protocolIsAbout() || topFrameHostName.isEmpty() || hostNameRedirectedTo.protocolIsAbout() || hostNameRedirectedTo.isEmpty()) {
-        completionHandler();
-        return;
-    }
-
-    setTopFrameUniqueRedirectTo(WebCore::ResourceLoadStatistics::primaryDomain(topFrameHostName), WebCore::ResourceLoadStatistics::primaryDomain(hostNameRedirectedTo), WTFMove(completionHandler));
-}
-
 void WebResourceLoadStatisticsStore::setTopFrameUniqueRedirectTo(const String& topFrameHostName, const String& hostNameRedirectedTo, CompletionHandler<void()>&& completionHandler)
 {
     ASSERT(RunLoop::isMain());
@@ -971,18 +722,6 @@ void WebResourceLoadStatisticsStore::setTopFrameUniqueRedirectTo(const String& t
             m_memoryStore->setTopFrameUniqueRedirectTo(topFramePrimaryDomain, primaryRedirectDomain);
         postTaskReply(WTFMove(completionHandler));
     });
-}
-
-void WebResourceLoadStatisticsStore::setTopFrameUniqueRedirectFrom(const URL& topFrameHostName, const URL& hostNameRedirectedFrom, CompletionHandler<void()>&& completionHandler)
-{
-    ASSERT(RunLoop::isMain());
-
-    if (topFrameHostName.protocolIsAbout() || topFrameHostName.isEmpty() || hostNameRedirectedFrom.protocolIsAbout() || hostNameRedirectedFrom.isEmpty()) {
-        completionHandler();
-        return;
-    }
-
-    setTopFrameUniqueRedirectFrom(WebCore::ResourceLoadStatistics::primaryDomain(topFrameHostName), WebCore::ResourceLoadStatistics::primaryDomain(hostNameRedirectedFrom), WTFMove(completionHandler));
 }
 
 void WebResourceLoadStatisticsStore::setTopFrameUniqueRedirectFrom(const String& topFrameHostName, const String& hostNameRedirectedFrom, CompletionHandler<void()>&& completionHandler)
@@ -1117,11 +856,6 @@ void WebResourceLoadStatisticsStore::setCacheMaxAgeCap(Seconds seconds, Completi
     ASSERT(RunLoop::isMain());
     ASSERT(seconds >= 0_s);
     
-    if (m_websiteDataStore) {
-        m_websiteDataStore->setCacheMaxAgeCapForPrevalentResources(seconds, WTFMove(completionHandler));
-        return;
-    }
-
     if (m_networkSession)
         m_networkSession->networkStorageSession().setCacheMaxAgeCapForPrevalentResources(seconds);
 
@@ -1131,11 +865,6 @@ void WebResourceLoadStatisticsStore::setCacheMaxAgeCap(Seconds seconds, Completi
 void WebResourceLoadStatisticsStore::callUpdatePrevalentDomainsToBlockCookiesForHandler(const Vector<String>& domainsToBlock, CompletionHandler<void()>&& completionHandler)
 {
     ASSERT(RunLoop::isMain());
-
-    if (m_websiteDataStore) {
-        m_websiteDataStore->updatePrevalentDomainsToBlockCookiesFor(domainsToBlock, WTFMove(completionHandler));
-        return;
-    }
 
     if (m_networkSession)
         m_networkSession->networkStorageSession().setPrevalentDomainsToBlockCookiesFor(domainsToBlock);
@@ -1153,8 +882,6 @@ void WebResourceLoadStatisticsStore::callRemoveDomainsHandler(const Vector<Strin
 {
     ASSERT(RunLoop::isMain());
 
-    if (m_websiteDataStore)
-        m_websiteDataStore->removePrevalentDomains(domains);
     removePrevalentDomains(domains);
 }
     
@@ -1197,11 +924,6 @@ void WebResourceLoadStatisticsStore::logTestingEvent(const String& event)
 {
     ASSERT(RunLoop::isMain());
 
-    if (m_websiteDataStore) {
-        m_websiteDataStore->logTestingEvent(event);
-        return;
-    }
-
     if (m_networkSession)
         m_networkSession->networkProcess().parentProcessConnection()->send(Messages::NetworkProcessProxy::LogTestingEvent(m_networkSession->sessionID(), event), 0);
 }
@@ -1210,9 +932,6 @@ void WebResourceLoadStatisticsStore::notifyResourceLoadStatisticsProcessed()
 {
     ASSERT(RunLoop::isMain());
     
-    if (m_websiteDataStore)
-        WebProcessProxy::notifyPageStatisticsAndDataRecordsProcessed();
-
     if (m_networkSession)
         m_networkSession->notifyResourceLoadStatisticsProcessed();
 }
@@ -1221,11 +940,6 @@ void WebResourceLoadStatisticsStore::deleteWebsiteDataForTopPrivatelyControlledD
 {
     ASSERT(RunLoop::isMain());
     
-    if (m_websiteDataStore) {
-        WebProcessProxy::deleteWebsiteDataForTopPrivatelyControlledDomainsInAllPersistentDataStores(dataTypes, WTFMove(topPrivatelyControlledDomains), shouldNotifyPage, WTFMove(completionHandler));
-        return;
-    }
-
     if (m_networkSession) {
         m_networkSession->deleteWebsiteDataForTopPrivatelyControlledDomainsInAllPersistentDataStores(dataTypes, WTFMove(topPrivatelyControlledDomains), shouldNotifyPage, WTFMove(completionHandler));
         return;
@@ -1238,11 +952,6 @@ void WebResourceLoadStatisticsStore::topPrivatelyControlledDomainsWithWebsiteDat
 {
     ASSERT(RunLoop::isMain());
     
-    if (m_websiteDataStore) {
-        WebProcessProxy::topPrivatelyControlledDomainsWithWebsiteData(dataTypes, shouldNotifyPage, WTFMove(completionHandler));
-        return;
-    }
-
     if (m_networkSession) {
         m_networkSession->topPrivatelyControlledDomainsWithWebsiteData(dataTypes, shouldNotifyPage, WTFMove(completionHandler));
         return;
@@ -1253,25 +962,12 @@ void WebResourceLoadStatisticsStore::topPrivatelyControlledDomainsWithWebsiteDat
 
 void WebResourceLoadStatisticsStore::sendDiagnosticMessageWithValue(const String& message, const String& description, unsigned value, unsigned sigDigits, WebCore::ShouldSample shouldSample) const
 {
-    if (m_websiteDataStore) {
-        if (auto* webPageProxy = WebPageProxy::nonEphemeralWebPageProxy())
-            webPageProxy->logDiagnosticMessageWithValue(message, description, value, sigDigits, shouldSample);
-    }
-
     if (m_networkSession)
         const_cast<WebResourceLoadStatisticsStore*>(this)->networkSession()->logDiagnosticMessageWithValue(message, description, value, sigDigits, shouldSample);
 }
 
 void WebResourceLoadStatisticsStore::notifyPageStatisticsTelemetryFinished(unsigned totalPrevalentResources, unsigned totalPrevalentResourcesWithUserInteraction, unsigned top3SubframeUnderTopFrameOrigins) const
 {
-    if (m_websiteDataStore) {
-        API::Dictionary::MapType messageBody;
-        messageBody.set("TotalPrevalentResources"_s, API::UInt64::create(totalPrevalentResources));
-        messageBody.set("TotalPrevalentResourcesWithUserInteraction"_s, API::UInt64::create(totalPrevalentResourcesWithUserInteraction));
-        messageBody.set("Top3SubframeUnderTopFrameOrigins"_s, API::UInt64::create(top3SubframeUnderTopFrameOrigins));
-        WebProcessProxy::notifyPageStatisticsTelemetryFinished(API::Dictionary::create(messageBody).ptr());
-    }
-
     if (m_networkSession)
         const_cast<WebResourceLoadStatisticsStore*>(this)->networkSession()->notifyPageStatisticsTelemetryFinished(totalPrevalentResources, totalPrevalentResourcesWithUserInteraction, top3SubframeUnderTopFrameOrigins);
 }

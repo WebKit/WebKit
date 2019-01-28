@@ -1,3 +1,92 @@
+2019-01-28  Brent Fulgham  <bfulgham@apple.com>
+
+        Remove the UIProcess components of the ResourceLoadStatistics code
+        https://bugs.webkit.org/show_bug.cgi?id=193303
+        <rdar://problem/47160073>
+
+        Reviewed by Chris Dumez.
+
+        Now that the ResourceLoadStatistics code is running in the NetworkProcess, we can get rid
+        of the UIProcess copies of these routines.
+
+        Tested by existing ResourceLoadStatistics and StorageAccess tests.
+
+        * NetworkProcess/Classifier/ResourceLoadStatisticsMemoryStore.cpp:
+        (WebKit::ResourceLoadStatisticsMemoryStore::updateClientSideCookiesAgeCap):
+        * NetworkProcess/Classifier/WebResourceLoadStatisticsStore.cpp:
+        (WebKit::WebResourceLoadStatisticsStore::callHasStorageAccessForFrameHandler):
+        (WebKit::WebResourceLoadStatisticsStore::callGrantStorageAccessHandler):
+        (WebKit::WebResourceLoadStatisticsStore::removeAllStorageAccess):
+        (WebKit::WebResourceLoadStatisticsStore::setCacheMaxAgeCap):
+        (WebKit::WebResourceLoadStatisticsStore::callUpdatePrevalentDomainsToBlockCookiesForHandler):
+        (WebKit::WebResourceLoadStatisticsStore::callRemoveDomainsHandler):
+        (WebKit::WebResourceLoadStatisticsStore::logTestingEvent):
+        (WebKit::WebResourceLoadStatisticsStore::notifyResourceLoadStatisticsProcessed):
+        (WebKit::WebResourceLoadStatisticsStore::deleteWebsiteDataForTopPrivatelyControlledDomainsInAllPersistentDataStores):
+        (WebKit::WebResourceLoadStatisticsStore::topPrivatelyControlledDomainsWithWebsiteData):
+        (WebKit::WebResourceLoadStatisticsStore::sendDiagnosticMessageWithValue const):
+        (WebKit::WebResourceLoadStatisticsStore::notifyPageStatisticsTelemetryFinished const):
+        * NetworkProcess/Classifier/WebResourceLoadStatisticsStore.h:
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcessProxy::deleteWebsiteDataForTopPrivatelyControlledDomainsInAllPersistentDataStores): Deleted.
+        (WebKit::WebProcessProxy::topPrivatelyControlledDomainsWithWebsiteData): Deleted.
+        * UIProcess/WebProcessProxy.h:
+        * UIProcess/WebsiteData/WebsiteDataStore.cpp:
+        (WebKit::WebsiteDataStore::fetchDataForTopPrivatelyControlledDomains):
+        (WebKit::WebsiteDataStore::removeData):
+        (WebKit::WebsiteDataStore::setMaxStatisticsEntries):
+        (WebKit::WebsiteDataStore::setPruneEntriesDownTo):
+        (WebKit::WebsiteDataStore::setGrandfatheringTime):
+        (WebKit::WebsiteDataStore::setMinimumTimeBetweenDataRecordsRemoval):
+        (WebKit::WebsiteDataStore::dumpResourceLoadStatistics):
+        (WebKit::WebsiteDataStore::isPrevalentResource):
+        (WebKit::WebsiteDataStore::setPrevalentResource):
+        (WebKit::WebsiteDataStore::setPrevalentResourceForDebugMode):
+        (WebKit::WebsiteDataStore::isVeryPrevalentResource):
+        (WebKit::WebsiteDataStore::setVeryPrevalentResource):
+        (WebKit::WebsiteDataStore::setShouldClassifyResourcesBeforeDataRecordsRemoval):
+        (WebKit::WebsiteDataStore::setSubframeUnderTopFrameOrigin):
+        (WebKit::WebsiteDataStore::isRegisteredAsSubFrameUnder):
+        (WebKit::WebsiteDataStore::setSubresourceUnderTopFrameOrigin):
+        (WebKit::WebsiteDataStore::isRegisteredAsSubresourceUnder):
+        (WebKit::WebsiteDataStore::setSubresourceUniqueRedirectTo):
+        (WebKit::WebsiteDataStore::setSubresourceUniqueRedirectFrom):
+        (WebKit::WebsiteDataStore::setTopFrameUniqueRedirectTo):
+        (WebKit::WebsiteDataStore::setTopFrameUniqueRedirectFrom):
+        (WebKit::WebsiteDataStore::isRegisteredAsRedirectingTo):
+        (WebKit::WebsiteDataStore::clearPrevalentResource):
+        (WebKit::WebsiteDataStore::resetParametersToDefaultValues):
+        (WebKit::WebsiteDataStore::submitTelemetry):
+        (WebKit::WebsiteDataStore::scheduleClearInMemoryAndPersistent):
+        (WebKit::WebsiteDataStore::scheduleCookieBlockingUpdate):
+        (WebKit::WebsiteDataStore::scheduleStatisticsAndDataRecordsProcessing):
+        (WebKit::WebsiteDataStore::setLastSeen):
+        (WebKit::WebsiteDataStore::setNotifyPagesWhenDataRecordsWereScanned):
+        (WebKit::WebsiteDataStore::setNotifyPagesWhenTelemetryWasCaptured):
+        (WebKit::WebsiteDataStore::hasStorageAccess):
+        (WebKit::WebsiteDataStore::requestStorageAccess):
+        (WebKit::WebsiteDataStore::grantStorageAccess):
+        (WebKit::WebsiteDataStore::setTimeToLiveUserInteraction):
+        (WebKit::WebsiteDataStore::logUserInteraction):
+        (WebKit::WebsiteDataStore::hasHadUserInteraction):
+        (WebKit::WebsiteDataStore::clearUserInteraction):
+        (WebKit::WebsiteDataStore::setGrandfathered):
+        (WebKit::WebsiteDataStore::webProcessWillOpenConnection):
+        (WebKit::WebsiteDataStore::webProcessDidCloseConnection):
+        (WebKit::WebsiteDataStore::setResourceLoadStatisticsDebugMode):
+        (WebKit::WebsiteDataStore::didCreateNetworkProcess):
+        (WebKit::WebsiteDataStore::topPrivatelyControlledDomainsWithWebsiteData): Deleted.
+        (WebKit::WebsiteDataStore::removeDataForTopPrivatelyControlledDomains): Deleted.
+        (WebKit::WebsiteDataStore::setCacheMaxAgeCap): Deleted.
+        (WebKit::WebsiteDataStore::updatePrevalentDomainsToBlockCookiesFor): Deleted.
+        (WebKit::WebsiteDataStore::setAgeCapForClientSideCookies): Deleted.
+        (WebKit::WebsiteDataStore::hasStorageAccessForFrameHandler): Deleted.
+        (WebKit::WebsiteDataStore::grantStorageAccessHandler): Deleted.
+        (WebKit::WebsiteDataStore::removeAllStorageAccessHandler): Deleted.
+        (WebKit::WebsiteDataStore::removePrevalentDomains): Deleted.
+        (WebKit::WebsiteDataStore::isGrandfathered): Deleted.
+        * UIProcess/WebsiteData/WebsiteDataStore.h:
+
 2019-01-28  Antoine Quint  <graouts@apple.com>
 
         Limit user-agent interactions based on the touch-action property on iOS

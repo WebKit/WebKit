@@ -142,10 +142,6 @@ WebsiteDataStore::~WebsiteDataStore()
 
     platformDestroy();
 
-#if ENABLE(RESOURCE_LOAD_STATISTICS)
-    unregisterWebResourceLoadStatisticsStoreAsMessageReceiver();
-#endif
-
     if (m_sessionID.isValid() && m_sessionID != PAL::SessionID::defaultSessionID()) {
         ASSERT(nonDefaultDataStores().get(m_sessionID) == this);
         nonDefaultDataStores().remove(m_sessionID);
@@ -649,20 +645,6 @@ void WebsiteDataStore::fetchDataForTopPrivatelyControlledDomains(OptionSet<Websi
         });
     });
 }
-    
-void WebsiteDataStore::topPrivatelyControlledDomainsWithWebsiteData(OptionSet<WebsiteDataType> dataTypes, OptionSet<WebsiteDataFetchOption> fetchOptions, Function<void(HashSet<String>&&)>&& completionHandler)
-{
-    fetchData(dataTypes, fetchOptions, [completionHandler = WTFMove(completionHandler), protectedThis = makeRef(*this)](auto&& existingDataRecords) {
-        HashSet<String> domainsWithDataRecords;
-        for (auto&& dataRecord : existingDataRecords) {
-            String domain = dataRecord.topPrivatelyControlledDomain();
-            if (domain.isEmpty())
-                continue;
-            domainsWithDataRecords.add(WTFMove(domain));
-        }
-        completionHandler(WTFMove(domainsWithDataRecords));
-    });
-}
 #endif
 
 static ProcessAccessType computeNetworkProcessAccessTypeForDataRemoval(OptionSet<WebsiteDataType> dataTypes, bool isNonPersistentStore)
@@ -949,19 +931,7 @@ void WebsiteDataStore::removeData(OptionSet<WebsiteDataType> dataTypes, WallTime
 
 #if ENABLE(RESOURCE_LOAD_STATISTICS)
     if (dataTypes.contains(WebsiteDataType::ResourceLoadStatistics)) {
-        auto deletedTypesRaw = dataTypes.toRaw();
-        auto monitoredTypesRaw = WebResourceLoadStatisticsStore::monitoredDataTypes().toRaw();
-        
-        // If we are deleting all of the data types that the resource load statistics store monitors
-        // we do not need to re-grandfather old data.
-        auto shouldGrandfather = ((monitoredTypesRaw & deletedTypesRaw) == monitoredTypesRaw) ? ShouldGrandfatherStatistics::No : ShouldGrandfatherStatistics::Yes;
-        
-        if (m_resourceLoadStatistics) {
-            callbackAggregator->addPendingCallback();
-            m_resourceLoadStatistics->scheduleClearInMemoryAndPersistent(modifiedSince, shouldGrandfather, [callbackAggregator] {
-                callbackAggregator->removePendingCallback();
-            });
-        } else if (!didNotifyNetworkProcessToDeleteWebsiteData) {
+        if (!didNotifyNetworkProcessToDeleteWebsiteData) {
             for (auto& processPool : processPools()) {
                 if (auto* process = processPool->networkProcess()) {
                     callbackAggregator->addPendingCallback();
@@ -1253,52 +1223,15 @@ void WebsiteDataStore::removeData(OptionSet<WebsiteDataType> dataTypes, const Ve
     }
 #endif
 
-#if ENABLE(RESOURCE_LOAD_STATISTICS)
-    // FIXME <rdar://problem/33491222>; scheduleClearInMemoryAndPersistent does not have a completion handler,
-    // so the completion handler for this removeData() call can be called prematurely.
-    if (dataTypes.contains(WebsiteDataType::ResourceLoadStatistics) && m_resourceLoadStatistics) {
-        auto deletedTypesRaw = dataTypes.toRaw();
-        auto monitoredTypesRaw = WebResourceLoadStatisticsStore::monitoredDataTypes().toRaw();
-
-        // If we are deleting all of the data types that the resource load statistics store monitors
-        // we do not need to re-grandfather old data.
-        auto shouldGrandfather = ((monitoredTypesRaw & deletedTypesRaw) == monitoredTypesRaw) ? ShouldGrandfatherStatistics::No : ShouldGrandfatherStatistics::Yes;
-
-        callbackAggregator->addPendingCallback();
-        m_resourceLoadStatistics->scheduleClearInMemoryAndPersistent(shouldGrandfather, [callbackAggregator] {
-            callbackAggregator->removePendingCallback();
-        });
-
-        callbackAggregator->addPendingCallback();
-        clearResourceLoadStatisticsInWebProcesses([callbackAggregator] {
-            callbackAggregator->removePendingCallback();
-        });
-    }
-#endif
-
     // There's a chance that we don't have any pending callbacks. If so, we want to dispatch the completion handler right away.
     callbackAggregator->callIfNeeded();
 }
 
 #if ENABLE(RESOURCE_LOAD_STATISTICS)
-void WebsiteDataStore::removeDataForTopPrivatelyControlledDomains(OptionSet<WebsiteDataType> dataTypes, OptionSet<WebsiteDataFetchOption> fetchOptions, const Vector<String>& topPrivatelyControlledDomains, Function<void(HashSet<String>&&)>&& completionHandler)
-{
-    fetchDataForTopPrivatelyControlledDomains(dataTypes, fetchOptions, topPrivatelyControlledDomains, [dataTypes, completionHandler = WTFMove(completionHandler), this, protectedThis = makeRef(*this)](Vector<WebsiteDataRecord>&& websiteDataRecords, HashSet<String>&& domainsWithDataRecords) mutable {
-        this->removeData(dataTypes, websiteDataRecords, [domainsWithDataRecords = WTFMove(domainsWithDataRecords), completionHandler = WTFMove(completionHandler)]() mutable {
-            completionHandler(WTFMove(domainsWithDataRecords));
-        });
-    });
-}
-
 void WebsiteDataStore::setMaxStatisticsEntries(size_t maximumEntryCount, CompletionHandler<void()>&& completionHandler)
 {
     ASSERT(RunLoop::isMain());
 
-    if (m_resourceLoadStatistics) {
-        m_resourceLoadStatistics->setMaxStatisticsEntries(maximumEntryCount, WTFMove(completionHandler));
-        return;
-    }
-    
     auto callbackAggregator = CallbackAggregator::create(WTFMove(completionHandler));
 
     for (auto& processPool : processPools())
@@ -1309,11 +1242,6 @@ void WebsiteDataStore::setPruneEntriesDownTo(size_t pruneTargetCount, Completion
 {
     ASSERT(RunLoop::isMain());
     
-    if (m_resourceLoadStatistics) {
-        m_resourceLoadStatistics->setPruneEntriesDownTo(pruneTargetCount, WTFMove(completionHandler));
-        return;
-    }
-
     auto callbackAggregator = CallbackAggregator::create(WTFMove(completionHandler));
 
     for (auto& processPool : processPools()) {
@@ -1325,42 +1253,16 @@ void WebsiteDataStore::setGrandfatheringTime(Seconds seconds, CompletionHandler<
 {
     ASSERT(RunLoop::isMain());
 
-    if (m_resourceLoadStatistics) {
-        m_resourceLoadStatistics->setGrandfatheringTime(seconds, WTFMove(completionHandler));
-        return;
-    }
-    
     auto callbackAggregator = CallbackAggregator::create(WTFMove(completionHandler));
 
     for (auto& processPool : processPools())
         processPool->ensureNetworkProcess().setGrandfatheringTime(m_sessionID, seconds, [processPool, callbackAggregator = callbackAggregator.copyRef()] { });
 }
 
-void WebsiteDataStore::setCacheMaxAgeCap(Seconds seconds, CompletionHandler<void()>&& completionHandler)
-{
-    ASSERT(RunLoop::isMain());
-    ASSERT(seconds >= 0_s);
-    
-    if (m_resourceLoadStatistics) {
-        setCacheMaxAgeCap(seconds, WTFMove(completionHandler));
-        return;
-    }
-
-    auto callbackAggregator = CallbackAggregator::create(WTFMove(completionHandler));
-
-    for (auto& processPool : processPools())
-        processPool->ensureNetworkProcess().setCacheMaxAgeCap(m_sessionID, seconds, [processPool, callbackAggregator = callbackAggregator.copyRef()] { });
-}
-
 void WebsiteDataStore::setMinimumTimeBetweenDataRecordsRemoval(Seconds seconds, CompletionHandler<void()>&& completionHandler)
 {
     ASSERT(RunLoop::isMain());
 
-    if (m_resourceLoadStatistics) {
-        m_resourceLoadStatistics->setMinimumTimeBetweenDataRecordsRemoval(seconds, WTFMove(completionHandler));
-        return;
-    }
-    
     auto callbackAggregator = CallbackAggregator::create(WTFMove(completionHandler));
 
     for (auto& processPool : processPools())
@@ -1371,11 +1273,6 @@ void WebsiteDataStore::dumpResourceLoadStatistics(CompletionHandler<void(const S
 {
     ASSERT(RunLoop::isMain());
 
-    if (m_resourceLoadStatistics) {
-        m_resourceLoadStatistics->dumpResourceLoadStatistics(WTFMove(completionHandler));
-        return;
-    }
-    
     for (auto& processPool : processPools()) {
         if (auto* process = processPool->networkProcess()) {
             process->dumpResourceLoadStatistics(m_sessionID, WTFMove(completionHandler));
@@ -1391,11 +1288,6 @@ void WebsiteDataStore::isPrevalentResource(const URL& url, CompletionHandler<voi
     
     if (url.protocolIsAbout() || url.isEmpty()) {
         completionHandler(false);
-        return;
-    }
-
-    if (m_resourceLoadStatistics) {
-        m_resourceLoadStatistics->isPrevalentResource(url, WTFMove(completionHandler));
         return;
     }
 
@@ -1417,11 +1309,6 @@ void WebsiteDataStore::setPrevalentResource(const URL& url, CompletionHandler<vo
         return;
     }
     
-    if (m_resourceLoadStatistics) {
-        m_resourceLoadStatistics->setPrevalentResource(url, WTFMove(completionHandler));
-        return;
-    }
-
     auto callbackAggregator = CallbackAggregator::create(WTFMove(completionHandler));
 
     for (auto& processPool : processPools()) {
@@ -1435,11 +1322,6 @@ void WebsiteDataStore::setPrevalentResourceForDebugMode(const URL& url, Completi
     
     if (url.protocolIsAbout() || url.isEmpty()) {
         completionHandler();
-        return;
-    }
-    
-    if (m_resourceLoadStatistics) {
-        m_resourceLoadStatistics->setPrevalentResourceForDebugMode(url, WTFMove(completionHandler));
         return;
     }
     
@@ -1457,11 +1339,6 @@ void WebsiteDataStore::isVeryPrevalentResource(const URL& url, CompletionHandler
     
     if (url.protocolIsAbout() || url.isEmpty()) {
         completionHandler(false);
-        return;
-    }
-    
-    if (m_resourceLoadStatistics) {
-        m_resourceLoadStatistics->isVeryPrevalentResource(url, WTFMove(completionHandler));
         return;
     }
     
@@ -1483,11 +1360,6 @@ void WebsiteDataStore::setVeryPrevalentResource(const URL& url, CompletionHandle
         return;
     }
     
-    if (m_resourceLoadStatistics) {
-        m_resourceLoadStatistics->setVeryPrevalentResource(url, WTFMove(completionHandler));
-        return;
-    }
-    
     auto callbackAggregator = CallbackAggregator::create(WTFMove(completionHandler));
     
     for (auto& processPool : processPools()) {
@@ -1499,11 +1371,6 @@ void WebsiteDataStore::setVeryPrevalentResource(const URL& url, CompletionHandle
 void WebsiteDataStore::setShouldClassifyResourcesBeforeDataRecordsRemoval(bool value, CompletionHandler<void()>&& completionHandler)
 {
     ASSERT(RunLoop::isMain());
-    
-    if (m_resourceLoadStatistics) {
-        m_resourceLoadStatistics->setShouldClassifyResourcesBeforeDataRecordsRemoval(value, WTFMove(completionHandler));
-        return;
-    }
     
     auto callbackAggregator = CallbackAggregator::create(WTFMove(completionHandler));
 
@@ -1520,11 +1387,6 @@ void WebsiteDataStore::setSubframeUnderTopFrameOrigin(const URL& subframe, const
         return;
     }
 
-    if (m_resourceLoadStatistics) {
-        m_resourceLoadStatistics->setSubframeUnderTopFrameOrigin(subframe, topFrame, WTFMove(completionHandler));
-        return;
-    }
-    
     auto callbackAggregator = CallbackAggregator::create(WTFMove(completionHandler));
     
     for (auto& processPool : processPools()) {
@@ -1537,11 +1399,6 @@ void WebsiteDataStore::isRegisteredAsSubFrameUnder(const URL& subFrame, const UR
 {
     ASSERT(RunLoop::isMain());
 
-    if (m_resourceLoadStatistics) {
-        m_resourceLoadStatistics->isRegisteredAsSubFrameUnder(subFrame, topFrame, WTFMove(completionHandler));
-        return;
-    }
-    
     for (auto& processPool : processPools()) {
         if (auto* process = processPool->networkProcess()) {
             process->isRegisteredAsSubFrameUnder(m_sessionID, WebCore::ResourceLoadStatistics::primaryDomain(subFrame), WebCore::ResourceLoadStatistics::primaryDomain(topFrame), WTFMove(completionHandler));
@@ -1560,11 +1417,6 @@ void WebsiteDataStore::setSubresourceUnderTopFrameOrigin(const URL& subresource,
         return;
     }
 
-    if (m_resourceLoadStatistics) {
-        m_resourceLoadStatistics->setSubresourceUnderTopFrameOrigin(subresource, topFrame, WTFMove(completionHandler));
-        return;
-    }
-
     auto callbackAggregator = CallbackAggregator::create(WTFMove(completionHandler));
     
     for (auto& processPool : processPools()) {
@@ -1577,11 +1429,6 @@ void WebsiteDataStore::isRegisteredAsSubresourceUnder(const URL& subresource, co
 {
     ASSERT(RunLoop::isMain());
     
-    if (m_resourceLoadStatistics) {
-        m_resourceLoadStatistics->isRegisteredAsSubresourceUnder(subresource, topFrame, WTFMove(completionHandler));
-        return;
-    }
-
     for (auto& processPool : processPools()) {
         if (auto* process = processPool->networkProcess()) {
             process->isRegisteredAsSubresourceUnder(m_sessionID, WebCore::ResourceLoadStatistics::primaryDomain(subresource), WebCore::ResourceLoadStatistics::primaryDomain(topFrame), WTFMove(completionHandler));
@@ -1600,11 +1447,6 @@ void WebsiteDataStore::setSubresourceUniqueRedirectTo(const URL& subresource, co
         return;
     }
 
-    if (m_resourceLoadStatistics) {
-        m_resourceLoadStatistics->setSubresourceUniqueRedirectTo(subresource, hostNameRedirectedTo, WTFMove(completionHandler));
-        return;
-    }
-    
     auto callbackAggregator = CallbackAggregator::create(WTFMove(completionHandler));
     
     for (auto& processPool : processPools()) {
@@ -1622,11 +1464,6 @@ void WebsiteDataStore::setSubresourceUniqueRedirectFrom(const URL& subresource, 
         return;
     }
 
-    if (m_resourceLoadStatistics) {
-        m_resourceLoadStatistics->setSubresourceUniqueRedirectFrom(subresource, hostNameRedirectedFrom, WTFMove(completionHandler));
-        return;
-    }
-    
     auto callbackAggregator = CallbackAggregator::create(WTFMove(completionHandler));
     
     for (auto& processPool : processPools()) {
@@ -1644,11 +1481,6 @@ void WebsiteDataStore::setTopFrameUniqueRedirectTo(const URL& topFrameHostName, 
         return;
     }
 
-    if (m_resourceLoadStatistics) {
-        m_resourceLoadStatistics->setTopFrameUniqueRedirectTo(topFrameHostName, hostNameRedirectedTo, WTFMove(completionHandler));
-        return;
-    }
-    
     auto callbackAggregator = CallbackAggregator::create(WTFMove(completionHandler));
     
     for (auto& processPool : processPools()) {
@@ -1666,11 +1498,6 @@ void WebsiteDataStore::setTopFrameUniqueRedirectFrom(const URL& topFrameHostName
         return;
     }
 
-    if (m_resourceLoadStatistics) {
-        m_resourceLoadStatistics->setTopFrameUniqueRedirectFrom(topFrameHostName, hostNameRedirectedFrom, WTFMove(completionHandler));
-        return;
-    }
-    
     auto callbackAggregator = CallbackAggregator::create(WTFMove(completionHandler));
     
     for (auto& processPool : processPools()) {
@@ -1683,11 +1510,6 @@ void WebsiteDataStore::isRegisteredAsRedirectingTo(const URL& hostRedirectedFrom
 {
     ASSERT(RunLoop::isMain());
     
-    if (m_resourceLoadStatistics) {
-        m_resourceLoadStatistics->isRegisteredAsRedirectingTo(hostRedirectedFrom, hostRedirectedTo, WTFMove(completionHandler));
-        return;
-    }
-
     for (auto& processPool : processPools()) {
         if (auto* process = processPool->networkProcess()) {
             process->isRegisteredAsRedirectingTo(m_sessionID, WebCore::ResourceLoadStatistics::primaryDomain(hostRedirectedFrom), WebCore::ResourceLoadStatistics::primaryDomain(hostRedirectedTo), WTFMove(completionHandler));
@@ -1706,11 +1528,6 @@ void WebsiteDataStore::clearPrevalentResource(const URL& url, CompletionHandler<
         return;
     }
 
-    if (m_resourceLoadStatistics) {
-        m_resourceLoadStatistics->clearPrevalentResource(url, WTFMove(completionHandler));
-        return;
-    }
-
     auto callbackAggregator = CallbackAggregator::create(WTFMove(completionHandler));
 
     const auto& primaryDomain = WebCore::ResourceLoadStatistics::primaryDomain(url);
@@ -1724,11 +1541,6 @@ void WebsiteDataStore::resetParametersToDefaultValues(CompletionHandler<void()>&
 {
     ASSERT(RunLoop::isMain());
 
-    if (m_resourceLoadStatistics) {
-        m_resourceLoadStatistics->resetParametersToDefaultValues(WTFMove(completionHandler));
-        return;
-    }
-
     auto callbackAggregator = CallbackAggregator::create(WTFMove(completionHandler));
     
     for (auto& processPool : processPools()) {
@@ -1741,11 +1553,6 @@ void WebsiteDataStore::submitTelemetry()
 {
     ASSERT(RunLoop::isMain());
     
-    if (m_resourceLoadStatistics) {
-        m_resourceLoadStatistics->submitTelemetry([] { });
-        return;
-    }
-    
     for (auto& processPool : processPools()) {
         if (auto* process = processPool->networkProcess())
             process->submitTelemetry(m_sessionID, [] { });
@@ -1755,11 +1562,6 @@ void WebsiteDataStore::submitTelemetry()
 void WebsiteDataStore::scheduleClearInMemoryAndPersistent(WallTime modifiedSince, ShouldGrandfatherStatistics shouldGrandfather, CompletionHandler<void()>&& completionHandler)
 {
     ASSERT(RunLoop::isMain());
-    
-    if (m_resourceLoadStatistics) {
-        m_resourceLoadStatistics->scheduleClearInMemoryAndPersistent(modifiedSince, shouldGrandfather, WTFMove(completionHandler));
-        return;
-    }
     
     auto callbackAggregator = CallbackAggregator::create(WTFMove(completionHandler));
 
@@ -1773,11 +1575,6 @@ void WebsiteDataStore::scheduleClearInMemoryAndPersistent(ShouldGrandfatherStati
 {
     ASSERT(RunLoop::isMain());
     
-    if (m_resourceLoadStatistics) {
-        m_resourceLoadStatistics->scheduleClearInMemoryAndPersistent(shouldGrandfather, WTFMove(completionHandler));
-        return;
-    }
-
     auto callbackAggregator = CallbackAggregator::create(WTFMove(completionHandler));
 
     for (auto& processPool : processPools()) {
@@ -1788,11 +1585,6 @@ void WebsiteDataStore::scheduleClearInMemoryAndPersistent(ShouldGrandfatherStati
 
 void WebsiteDataStore::scheduleCookieBlockingUpdate(CompletionHandler<void()>&& completionHandler)
 {
-    if (m_resourceLoadStatistics) {
-        m_resourceLoadStatistics->scheduleCookieBlockingUpdate(WTFMove(completionHandler));
-        return;
-    }
-
     auto callbackAggregator = CallbackAggregator::create(WTFMove(completionHandler));
 
     for (auto& processPool : processPools()) {
@@ -1805,11 +1597,6 @@ void WebsiteDataStore::scheduleStatisticsAndDataRecordsProcessing(CompletionHand
 {
     ASSERT(RunLoop::isMain());
     
-    if (m_resourceLoadStatistics) {
-        m_resourceLoadStatistics->scheduleStatisticsAndDataRecordsProcessing(WTFMove(completionHandler));
-        return;
-    }
-    
     auto callbackAggregator = CallbackAggregator::create(WTFMove(completionHandler));
     
     for (auto& processPool : processPools()) {
@@ -1818,35 +1605,10 @@ void WebsiteDataStore::scheduleStatisticsAndDataRecordsProcessing(CompletionHand
     }
 }
 
-#if ENABLE(RESOURCE_LOAD_STATISTICS)
-void WebsiteDataStore::updatePrevalentDomainsToBlockCookiesFor(const Vector<String>& domainsToBlock, CompletionHandler<void()>&& completionHandler)
-{
-    auto callbackAggregator = CallbackAggregator::create(WTFMove(completionHandler));
-
-    for (auto& processPool : processPools()) {
-        if (auto* process = processPool->networkProcess())
-            process->updatePrevalentDomainsToBlockCookiesFor(m_sessionID, domainsToBlock, [processPool, callbackAggregator = callbackAggregator.copyRef()] { });
-    }
-}
-#endif
-
-void WebsiteDataStore::setAgeCapForClientSideCookies(Optional<Seconds> seconds, CompletionHandler<void()>&& completionHandler)
-{
-    auto callbackAggregator = CallbackAggregator::create(WTFMove(completionHandler));
-    
-    for (auto& processPool : processPools())
-        processPool->ensureNetworkProcess().setAgeCapForClientSideCookies(m_sessionID, seconds, [processPool, callbackAggregator = callbackAggregator.copyRef()] { });
-}
-
 void WebsiteDataStore::setLastSeen(const URL& url, Seconds seconds, CompletionHandler<void()>&& completionHandler)
 {
     if (url.protocolIsAbout() || url.isEmpty()) {
         completionHandler();
-        return;
-    }
-
-    if (m_resourceLoadStatistics) {
-        m_resourceLoadStatistics->setLastSeen(url, seconds, WTFMove(completionHandler));
         return;
     }
 
@@ -1861,11 +1623,6 @@ void WebsiteDataStore::setLastSeen(const URL& url, Seconds seconds, CompletionHa
 
 void WebsiteDataStore::setNotifyPagesWhenDataRecordsWereScanned(bool value, CompletionHandler<void()>&& completionHandler)
 {
-    if (m_resourceLoadStatistics) {
-        m_resourceLoadStatistics->setNotifyPagesWhenDataRecordsWereScanned(value, WTFMove(completionHandler));
-        return;
-    }
-
     auto callbackAggregator = CallbackAggregator::create(WTFMove(completionHandler));
 
     for (auto& processPool : processPools())
@@ -1874,27 +1631,10 @@ void WebsiteDataStore::setNotifyPagesWhenDataRecordsWereScanned(bool value, Comp
 
 void WebsiteDataStore::setNotifyPagesWhenTelemetryWasCaptured(bool value, CompletionHandler<void()>&& completionHandler)
 {
-    if (m_resourceLoadStatistics) {
-        m_resourceLoadStatistics->setNotifyPagesWhenTelemetryWasCaptured(value, WTFMove(completionHandler));
-        return;
-    }
-    
     auto callbackAggregator = CallbackAggregator::create(WTFMove(completionHandler));
     
     for (auto& processPool : processPools())
         processPool->ensureNetworkProcess().setNotifyPagesWhenTelemetryWasCaptured(m_sessionID, value, [processPool, callbackAggregator = callbackAggregator.copyRef()] { });
-}
-
-void WebsiteDataStore::hasStorageAccessForFrameHandler(const String& resourceDomain, const String& firstPartyDomain, uint64_t frameID, uint64_t pageID, CompletionHandler<void(bool hasAccess)>&& completionHandler)
-{
-    auto* webPage = WebProcessProxy::webPage(pageID);
-    if (!webPage) {
-        completionHandler(false);
-        return;
-    }
-
-    auto& networkProcess = webPage->process().processPool().ensureNetworkProcess();
-    networkProcess.hasStorageAccessForFrame(m_sessionID, resourceDomain, firstPartyDomain, frameID, pageID, WTFMove(completionHandler));
 }
 
 void WebsiteDataStore::getAllStorageAccessEntries(uint64_t pageID, CompletionHandler<void(Vector<String>&& domains)>&& completionHandler)
@@ -1909,43 +1649,10 @@ void WebsiteDataStore::getAllStorageAccessEntries(uint64_t pageID, CompletionHan
     networkProcess.getAllStorageAccessEntries(m_sessionID, WTFMove(completionHandler));
 }
 
-void WebsiteDataStore::grantStorageAccessHandler(const String& resourceDomain, const String& firstPartyDomain, Optional<uint64_t> frameID, uint64_t pageID, CompletionHandler<void(bool wasGranted)>&& completionHandler)
-{
-    auto* webPage = WebProcessProxy::webPage(pageID);
-    if (!webPage) {
-        completionHandler(false);
-        return;
-    }
-
-    auto& networkProcess = webPage->process().processPool().ensureNetworkProcess();
-    networkProcess.grantStorageAccess(m_sessionID, resourceDomain, firstPartyDomain, frameID, pageID, false, WTFMove(completionHandler));
-}
-
-void WebsiteDataStore::removeAllStorageAccessHandler(CompletionHandler<void()>&& completionHandler)
-{
-    auto callbackAggregator = CallbackAggregator::create(WTFMove(completionHandler));
-    
-    for (auto& processPool : processPools()) {
-        if (auto networkProcess = processPool->networkProcess())
-            networkProcess->removeAllStorageAccess(m_sessionID, [processPool, callbackAggregator = callbackAggregator.copyRef()] { });
-    }
-}
-
-void WebsiteDataStore::removePrevalentDomains(const Vector<String>& domains)
-{
-    for (auto& processPool : processPools())
-        processPool->sendToNetworkingProcess(Messages::NetworkProcess::RemovePrevalentDomains(m_sessionID, domains));
-}
-
 void WebsiteDataStore::hasStorageAccess(String&& subFrameHost, String&& topFrameHost, uint64_t frameID, uint64_t pageID, CompletionHandler<void(bool)>&& completionHandler)
 {
     if (!resourceLoadStatisticsEnabled()) {
         completionHandler(false);
-        return;
-    }
-
-    if (m_resourceLoadStatistics) {
-        m_resourceLoadStatistics->hasStorageAccess(WTFMove(subFrameHost), WTFMove(topFrameHost), frameID, pageID, WTFMove(completionHandler));
         return;
     }
 
@@ -1966,11 +1673,6 @@ void WebsiteDataStore::requestStorageAccess(String&& subFrameHost, String&& topF
         return;
     }
     
-    if (m_resourceLoadStatistics) {
-        m_resourceLoadStatistics->requestStorageAccess(WTFMove(subFrameHost), WTFMove(topFrameHost), frameID, pageID, promptEnabled, WTFMove(completionHandler));
-        return;
-    }
-
     auto* webPage = WebProcessProxy::webPage(pageID);
     if (!webPage) {
         completionHandler(StorageAccessStatus::CannotRequestAccess);
@@ -1988,11 +1690,6 @@ void WebsiteDataStore::grantStorageAccess(String&& subFrameHost, String&& topFra
         return;
     }
     
-    if (m_resourceLoadStatistics) {
-        m_resourceLoadStatistics->grantStorageAccess(WTFMove(subFrameHost), WTFMove(topFrameHost), frameID, pageID, userWasPrompted, WTFMove(completionHandler));
-        return;
-    }
-
     auto* webPage = WebProcessProxy::webPage(pageID);
     if (!webPage) {
         completionHandler(false);
@@ -2005,11 +1702,6 @@ void WebsiteDataStore::grantStorageAccess(String&& subFrameHost, String&& topFra
 
 void WebsiteDataStore::setTimeToLiveUserInteraction(Seconds seconds, CompletionHandler<void()>&& completionHandler)
 {
-    if (m_resourceLoadStatistics) {
-        m_resourceLoadStatistics->setTimeToLiveUserInteraction(seconds, WTFMove(completionHandler));
-        return;
-    }
-
     auto callbackAggregator = CallbackAggregator::create(WTFMove(completionHandler));
     
     for (auto& processPool : processPools())
@@ -2025,11 +1717,6 @@ void WebsiteDataStore::logUserInteraction(const URL& url, CompletionHandler<void
         return;
     }
     
-    if (m_resourceLoadStatistics) {
-        m_resourceLoadStatistics->logUserInteraction(url, WTFMove(completionHandler));
-        return;
-    }
-
     auto callbackAggregator = CallbackAggregator::create(WTFMove(completionHandler));
 
     for (auto& processPool : processPools()) {
@@ -2044,11 +1731,6 @@ void WebsiteDataStore::hasHadUserInteraction(const URL& url, CompletionHandler<v
     
     if (url.protocolIsAbout() || url.isEmpty()) {
         completionHandler(false);
-        return;
-    }
-    
-    if (m_resourceLoadStatistics) {
-        m_resourceLoadStatistics->hasHadUserInteraction(url, WTFMove(completionHandler));
         return;
     }
     
@@ -2070,39 +1752,11 @@ void WebsiteDataStore::clearUserInteraction(const URL& url, CompletionHandler<vo
         return;
     }
     
-    if (m_resourceLoadStatistics) {
-        m_resourceLoadStatistics->clearUserInteraction(url, WTFMove(completionHandler));
-        return;
-    }
-    
     auto callbackAggregator = CallbackAggregator::create(WTFMove(completionHandler));
 
     for (auto& processPool : processPools()) {
         if (auto* process = processPool->networkProcess())
             process->clearUserInteraction(m_sessionID, WebCore::ResourceLoadStatistics::primaryDomain(url), [callbackAggregator = callbackAggregator.copyRef()] { });
-    }
-}
-
-void WebsiteDataStore::isGrandfathered(const URL& url, CompletionHandler<void(bool)>&& completionHandler)
-{
-    ASSERT(RunLoop::isMain());
-    
-    if (url.protocolIsAbout() || url.isEmpty()) {
-        completionHandler(false);
-        return;
-    }
-    
-    if (m_resourceLoadStatistics) {
-        m_resourceLoadStatistics->isGrandfathered(url, WTFMove(completionHandler));
-        return;
-    }
-    
-    for (auto& processPool : processPools()) {
-        if (auto* process = processPool->networkProcess()) {
-            process->isGrandfathered(m_sessionID, WebCore::ResourceLoadStatistics::primaryDomain(url), WTFMove(completionHandler));
-            ASSERT(processPools().size() == 1);
-            break;
-        }
     }
 }
 
@@ -2112,11 +1766,6 @@ void WebsiteDataStore::setGrandfathered(const URL& url, bool isGrandfathered, Co
     
     if (url.protocolIsAbout() || url.isEmpty()) {
         completionHandler();
-        return;
-    }
-    
-    if (m_resourceLoadStatistics) {
-        m_resourceLoadStatistics->setGrandfathered(url, isGrandfathered, WTFMove(completionHandler));
         return;
     }
     
@@ -2172,11 +1821,6 @@ void WebsiteDataStore::webProcessWillOpenConnection(WebProcessProxy& webProcessP
 {
     if (m_storageManager)
         m_storageManager->processWillOpenConnection(webProcessProxy, connection);
-
-#if ENABLE(RESOURCE_LOAD_STATISTICS)
-    if (m_resourceLoadStatistics)
-        webProcessProxy.addMessageReceiver(Messages::WebResourceLoadStatisticsStore::messageReceiverName(), *m_resourceLoadStatistics);
-#endif
 }
 
 void WebsiteDataStore::webPageWillOpenConnection(WebPageProxy& webPageProxy, IPC::Connection& connection)
@@ -2193,11 +1837,6 @@ void WebsiteDataStore::webPageDidCloseConnection(WebPageProxy& webPageProxy, IPC
 
 void WebsiteDataStore::webProcessDidCloseConnection(WebProcessProxy& webProcessProxy, IPC::Connection& connection)
 {
-#if ENABLE(RESOURCE_LOAD_STATISTICS)
-    if (m_resourceLoadStatistics)
-        webProcessProxy.removeMessageReceiver(Messages::WebResourceLoadStatisticsStore::messageReceiverName());
-#endif
-
     if (m_storageManager)
         m_storageManager->processDidCloseConnection(webProcessProxy, connection);
 }
@@ -2354,11 +1993,7 @@ void WebsiteDataStore::setResourceLoadStatisticsDebugMode(bool enabled, Completi
 {
 #if ENABLE(RESOURCE_LOAD_STATISTICS)
     m_resourceLoadStatisticsDebugMode = enabled;
-    if (m_resourceLoadStatistics) {
-        m_resourceLoadStatistics->setResourceLoadStatisticsDebugMode(enabled, WTFMove(completionHandler));
-        return;
-    }
-    
+
     auto callbackAggregator = CallbackAggregator::create(WTFMove(completionHandler));
     
     for (auto& processPool : processPools())
@@ -2370,25 +2005,6 @@ void WebsiteDataStore::setResourceLoadStatisticsDebugMode(bool enabled, Completi
 }
 
 #if ENABLE(RESOURCE_LOAD_STATISTICS)
-void WebsiteDataStore::unregisterWebResourceLoadStatisticsStoreAsMessageReceiver()
-{
-    if (!m_resourceLoadStatistics)
-        return;
-
-    for (auto* webProcessProxy : processes())
-        webProcessProxy->removeMessageReceiver(Messages::WebResourceLoadStatisticsStore::messageReceiverName());
-}
-
-void WebsiteDataStore::registerWebResourceLoadStatisticsStoreAsMessageReceiver()
-{
-    ASSERT(m_resourceLoadStatistics);
-    if (!m_resourceLoadStatistics)
-        return;
-
-    for (auto* webProcessProxy : processes())
-        webProcessProxy->addMessageReceiver(Messages::WebResourceLoadStatisticsStore::messageReceiverName(), *m_resourceLoadStatistics);
-}
-
 void WebsiteDataStore::enableResourceLoadStatisticsAndSetTestingCallback(Function<void (const String&)>&& callback)
 {
     ASSERT(!m_sessionID.isEphemeral());
@@ -2491,10 +2107,6 @@ void WebsiteDataStore::setMockWebAuthenticationConfiguration(MockWebAuthenticati
 
 void WebsiteDataStore::didCreateNetworkProcess()
 {
-#if ENABLE(RESOURCE_LOAD_STATISTICS)
-    if (m_resourceLoadStatistics)
-        m_resourceLoadStatistics->didCreateNetworkProcess();
-#endif
 }
 
 }

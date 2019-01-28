@@ -55,16 +55,10 @@ class ResourceLoadStatisticsMemoryStore;
 class ResourceLoadStatisticsPersistentStorage;
 class WebFrameProxy;
 class WebProcessProxy;
-class WebsiteDataStore;
 enum class ShouldGrandfatherStatistics : bool;
 
 class WebResourceLoadStatisticsStore final : public ThreadSafeRefCounted<WebResourceLoadStatisticsStore, WTF::DestructionThread::Main>, public IPC::MessageReceiver {
 public:
-    static Ref<WebResourceLoadStatisticsStore> create(WebsiteDataStore& websiteDataStore)
-    {
-        return adoptRef(*new WebResourceLoadStatisticsStore(websiteDataStore));
-    }
-
     static Ref<WebResourceLoadStatisticsStore> create(NetworkSession& networkSession, const String& resourceLoadStatisticsDirectory)
     {
         return adoptRef(*new WebResourceLoadStatisticsStore(networkSession, resourceLoadStatisticsDirectory));
@@ -89,58 +83,38 @@ public:
 
     void logFrameNavigation(const WebFrameProxy&, const URL& pageURL, const WebCore::ResourceRequest&, const URL& redirectURL);
     void logFrameNavigation(const String& targetPrimaryDomain, const String& mainFramePrimaryDomain, const String& sourcePrimaryDomain, const String& targetHost, const String& mainFrameHost, bool isRedirect, bool isMainFrame);
-    void logUserInteraction(const URL&, CompletionHandler<void()>&&);
     void logUserInteraction(const String& targetPrimaryDomain, CompletionHandler<void()>&&);
     void logWebSocketLoading(const String& targetPrimaryDomain, const String& mainFramePrimaryDomain, WallTime lastSeen, CompletionHandler<void()>&&);
     void logSubresourceLoading(const String& targetPrimaryDomain, const String& mainFramePrimaryDomain, WallTime lastSeen, CompletionHandler<void()>&&);
     void logSubresourceRedirect(const String& sourcePrimaryDomain, const String& targetPrimaryDomain, CompletionHandler<void()>&&);
-    void clearUserInteraction(const URL&, CompletionHandler<void()>&&);
     void clearUserInteraction(const String& targetPrimaryDomain, CompletionHandler<void()>&&);
     void deleteWebsiteDataForTopPrivatelyControlledDomainsInAllPersistentDataStores(OptionSet<WebsiteDataType>, Vector<String>&& topPrivatelyControlledDomains, bool shouldNotifyPage, CompletionHandler<void(const HashSet<String>&)>&&);
     void topPrivatelyControlledDomainsWithWebsiteData(OptionSet<WebsiteDataType>, bool shouldNotifyPage, CompletionHandler<void(HashSet<String>&&)>&&);
     bool grantStorageAccess(const String& resourceDomain, const String& firstPartyDomain, Optional<uint64_t> frameID, uint64_t pageID);
-    void hasHadUserInteraction(const URL&, CompletionHandler<void(bool)>&&);
     void hasHadUserInteraction(const String& resourceDomain, CompletionHandler<void(bool)>&&);
     void hasStorageAccess(const String& subFrameHost, const String& topFrameHost, Optional<uint64_t> frameID, uint64_t pageID, CompletionHandler<void(bool)>&& callback);
     bool hasStorageAccessForFrame(const String& resourceDomain, const String& firstPartyDomain, uint64_t frameID, uint64_t pageID);
     void requestStorageAccess(const String& resourceDomain, const String& firstPartyDomain, Optional<uint64_t> frameID, uint64_t pageID, bool promptEnabled, CompletionHandler<void(StorageAccessStatus)>&&);
     void requestUpdate();
-    void setLastSeen(const URL&, Seconds, CompletionHandler<void()>&&);
     void setLastSeen(const String& resourceDomain, Seconds, CompletionHandler<void()>&&);
-    void setPrevalentResource(const URL&, CompletionHandler<void()>&&);
     void setPrevalentResource(const String& resourceDomain, CompletionHandler<void()>&&);
-    void setVeryPrevalentResource(const URL&, CompletionHandler<void()>&&);
     void setVeryPrevalentResource(const String& resourceDomain, CompletionHandler<void()>&&);
     void dumpResourceLoadStatistics(CompletionHandler<void(String)>&&);
-    void isPrevalentResource(const URL&, CompletionHandler<void(bool)>&&);
     void isPrevalentResource(const String&, CompletionHandler<void(bool)>&&);
-    void isVeryPrevalentResource(const URL&, CompletionHandler<void(bool)>&&);
     void isVeryPrevalentResource(const String&, CompletionHandler<void(bool)>&&);
-    void isRegisteredAsSubresourceUnder(const URL& subresource, const URL& topFrame, CompletionHandler<void(bool)>&&);
     void isRegisteredAsSubresourceUnder(const String& subresource, const String& topFrame, CompletionHandler<void(bool)>&&);
-    void isRegisteredAsSubFrameUnder(const URL& subFrame, const URL& topFrame, CompletionHandler<void(bool)>&&);
     void isRegisteredAsSubFrameUnder(const String& subFrame, const String& topFrame, CompletionHandler<void(bool)>&&);
-    void isRegisteredAsRedirectingTo(const URL& hostRedirectedFrom, const URL& hostRedirectedTo, CompletionHandler<void(bool)>&&);
     void isRegisteredAsRedirectingTo(const String& hostRedirectedFrom, const String& hostRedirectedTo, CompletionHandler<void(bool)>&&);
-    void clearPrevalentResource(const URL&, CompletionHandler<void()>&&);
     void clearPrevalentResource(const String&, CompletionHandler<void()>&&);
-    void setGrandfathered(const URL&, bool, CompletionHandler<void()>&&);
     void setGrandfathered(const String&, bool, CompletionHandler<void()>&&);
-    void isGrandfathered(const URL&, CompletionHandler<void(bool)>&&);
     void isGrandfathered(const String&, CompletionHandler<void(bool)>&&);
     void removePrevalentDomains(const Vector<String>& domainsToBlock);
     void setNotifyPagesWhenDataRecordsWereScanned(bool, CompletionHandler<void()>&&);
-    void setSubframeUnderTopFrameOrigin(const URL& subframe, const URL& topFrame, CompletionHandler<void()>&&);
     void setSubframeUnderTopFrameOrigin(const String& subframe, const String& topFrame, CompletionHandler<void()>&&);
-    void setSubresourceUnderTopFrameOrigin(const URL& subresource, const URL& topFrame, CompletionHandler<void()>&&);
     void setSubresourceUnderTopFrameOrigin(const String& subresource, const String& topFrame, CompletionHandler<void()>&&);
-    void setSubresourceUniqueRedirectTo(const URL& subresource, const URL& hostNameRedirectedTo, CompletionHandler<void()>&&);
     void setSubresourceUniqueRedirectTo(const String& subresource, const String& hostNameRedirectedTo, CompletionHandler<void()>&&);
-    void setSubresourceUniqueRedirectFrom(const URL& subresource, const URL& hostNameRedirectedFrom, CompletionHandler<void()>&&);
     void setSubresourceUniqueRedirectFrom(const String& subresource, const String& hostNameRedirectedFrom, CompletionHandler<void()>&&);
-    void setTopFrameUniqueRedirectTo(const URL& topFrameHostName, const URL& hostNameRedirectedTo, CompletionHandler<void()>&&);
     void setTopFrameUniqueRedirectTo(const String& topFrameHostName, const String& hostNameRedirectedTo, CompletionHandler<void()>&&);
-    void setTopFrameUniqueRedirectFrom(const URL& topFrameHostName, const URL& hostNameRedirectedFrom, CompletionHandler<void()>&&);
     void setTopFrameUniqueRedirectFrom(const String& topFrameHostName, const String& hostNameRedirectedFrom, CompletionHandler<void()>&&);
     void scheduleCookieBlockingUpdate(CompletionHandler<void()>&&);
     void scheduleCookieBlockingUpdateForDomains(const Vector<String>& domainsToBlock, CompletionHandler<void()>&&);
@@ -160,7 +134,6 @@ public:
     void resetParametersToDefaultValues(CompletionHandler<void()>&&);
 
     void setResourceLoadStatisticsDebugMode(bool, CompletionHandler<void()>&&);
-    void setPrevalentResourceForDebugMode(const URL&, CompletionHandler<void()>&&);
     void setPrevalentResourceForDebugMode(const String& resourceDomain, CompletionHandler<void()>&&);
 
     void logTestingEvent(const String&);
@@ -174,14 +147,12 @@ public:
 
     void notifyResourceLoadStatisticsProcessed();
 
-    WebsiteDataStore* websiteDataStore() { return m_websiteDataStore.get(); }
     NetworkSession* networkSession() { return m_networkSession.get(); }
 
     void sendDiagnosticMessageWithValue(const String& message, const String& description, unsigned value, unsigned sigDigits, WebCore::ShouldSample) const;
     void notifyPageStatisticsTelemetryFinished(unsigned totalPrevalentResources, unsigned totalPrevalentResourcesWithUserInteraction, unsigned top3SubframeUnderTopFrameOrigins) const;
 
 private:
-    explicit WebResourceLoadStatisticsStore(WebsiteDataStore&);
     explicit WebResourceLoadStatisticsStore(NetworkSession&, const String&);
 
     void postTask(WTF::Function<void()>&&);
@@ -200,7 +171,6 @@ private:
 
     void flushAndDestroyPersistentStore();
 
-    WeakPtr<WebsiteDataStore> m_websiteDataStore;
     WeakPtr<NetworkSession> m_networkSession;
     Ref<WorkQueue> m_statisticsQueue;
     std::unique_ptr<ResourceLoadStatisticsMemoryStore> m_memoryStore;
