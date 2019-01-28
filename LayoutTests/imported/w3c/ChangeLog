@@ -1,3 +1,14 @@
+2019-01-28  Rob Buis  <rbuis@igalia.com>
+
+        Update MIME type parser
+        https://bugs.webkit.org/show_bug.cgi?id=180526
+
+        Reviewed by Frédéric Wang.
+
+        Update improved test expectations.
+
+        * web-platform-tests/xhr/overridemimetype-blob-expected.txt:
+
 2019-01-28  Oriol Brufau  <obrufau@igalia.com>
 
         [css-logical] Reject unitless length quirk in 'inset' shorthand

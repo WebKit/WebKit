@@ -51,7 +51,8 @@ TEST(ParsedContentType, MimeSniff)
 
     EXPECT_TRUE(isValidContentType("text/plain;test", Mode::MimeSniff));
     EXPECT_TRUE(isValidContentType("text/plain; test", Mode::MimeSniff));
-    EXPECT_FALSE(isValidContentType("text/plain;test=", Mode::MimeSniff));
+    EXPECT_TRUE(isValidContentType("text/plain;test=", Mode::MimeSniff));
+    EXPECT_TRUE(isValidContentType("text/plain;test=;test=value", Mode::MimeSniff));
     EXPECT_TRUE(isValidContentType("text/plain;test=value", Mode::MimeSniff));
     EXPECT_TRUE(isValidContentType("text/plain; test=value", Mode::MimeSniff));
     EXPECT_TRUE(isValidContentType("text/plain;test =value", Mode::MimeSniff));
@@ -84,6 +85,7 @@ TEST(ParsedContentType, Rfc2045)
     EXPECT_FALSE(isValidContentType("text/plain;test", Mode::Rfc2045));
     EXPECT_FALSE(isValidContentType("text/plain; test", Mode::Rfc2045));
     EXPECT_FALSE(isValidContentType("text/plain;test=", Mode::Rfc2045));
+    EXPECT_FALSE(isValidContentType("text/plain;test=;test=value", Mode::Rfc2045));
     EXPECT_TRUE(isValidContentType("text/plain;test=value", Mode::Rfc2045));
     EXPECT_TRUE(isValidContentType("text/plain; test=value", Mode::Rfc2045));
     EXPECT_FALSE(isValidContentType("text/plain;test =value", Mode::Rfc2045));

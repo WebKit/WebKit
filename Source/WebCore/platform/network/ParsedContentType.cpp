@@ -264,6 +264,8 @@ bool parseContentType(const String& contentType, ReceiverType& receiver, Mode mo
             valueRange = parseToken(contentType, index, isNotSemicolon, mode, mode == Mode::MimeSniff);
 
         if (!valueRange) {
+            if (mode == Mode::MimeSniff)
+                continue;
             LOG_ERROR("Invalid Content-Type, invalid parameter value.");
             return false;
         }
