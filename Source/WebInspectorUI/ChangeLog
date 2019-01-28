@@ -1,3 +1,30 @@
+2019-01-28  Babak Shafiei  <bshafiei@apple.com>
+
+        Cherry-pick r240488. rdar://problem/47586897
+
+    Web Inspector: Add another Protocol Version (iOS 12.2)
+    https://bugs.webkit.org/show_bug.cgi?id=193810
+    <rdar://problem/42981838>
+    
+    Patch by Joseph Pecoraro <pecoraro@apple.com> on 2019-01-25
+    Reviewed by Matt Baker.
+    
+    * UserInterface/Protocol/Legacy/12.2/InspectorBackendCommands.js: Added.
+    * Versions/Inspector-iOS-12.2.json: Added.
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@240488 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2019-01-25  Joseph Pecoraro  <pecoraro@apple.com>
+
+            Web Inspector: Add another Protocol Version (iOS 12.2)
+            https://bugs.webkit.org/show_bug.cgi?id=193810
+            <rdar://problem/42981838>
+
+            Reviewed by Matt Baker.
+
+            * UserInterface/Protocol/Legacy/12.2/InspectorBackendCommands.js: Added.
+            * Versions/Inspector-iOS-12.2.json: Added.
+
 2019-01-23  Alan Coon  <alancoon@apple.com>
 
         Cherry-pick r240290. rdar://problem/47494764
