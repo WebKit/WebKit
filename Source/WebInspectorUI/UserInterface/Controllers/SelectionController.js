@@ -221,9 +221,12 @@ WI.SelectionController = class SelectionController extends WI.Object
 
     didRemoveItems(indexes)
     {
+        if (!indexes)
+            return;
+
         console.assert(indexes instanceof WI.IndexSet);
 
-        if (!this._selectedIndexes.size)
+        if (!indexes.size || !this._selectedIndexes.size)
             return;
 
         let firstRemovedIndex = indexes.firstIndex;
