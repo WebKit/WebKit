@@ -496,6 +496,13 @@ void PageClientImpl::showSafeBrowsingWarning(const SafeBrowsingWarning& warning,
     m_impl->showSafeBrowsingWarning(warning, WTFMove(completionHandler));
 }
 
+bool PageClientImpl::hasSafeBrowsingWarning() const
+{
+    if (!m_impl)
+        return false;
+    return !!m_impl->safeBrowsingWarning();
+}
+
 void PageClientImpl::clearSafeBrowsingWarning()
 {
     m_impl->clearSafeBrowsingWarning();

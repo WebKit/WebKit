@@ -1005,6 +1005,8 @@ static void validate(WKWebViewConfiguration *configuration)
 
 - (WKNavigation *)goBack
 {
+    if (self._safeBrowsingWarning)
+        return [self reload];
     return wrapper(_page->goBack());
 }
 
