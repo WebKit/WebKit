@@ -1,3 +1,15 @@
+2019-01-28  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        Unreviewed follow-up to r240557, restore a call to makeString
+        https://bugs.webkit.org/show_bug.cgi?id=192742
+        <rdar://problem/46757369>
+
+        It works if we add this #include that was missing. I got confused by the error messages and
+        missed that there were two similarly-named headers.
+
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::logLayerInfo):
+
 2019-01-28  Oriol Brufau  <obrufau@igalia.com>
 
         [css-logical] Reject unitless length quirk in 'inset' shorthand
