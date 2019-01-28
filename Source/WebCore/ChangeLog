@@ -1,3 +1,13 @@
+2019-01-28  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC][BFC][Quirk] Ignore collapsed(through) margin after when stretching body height.
+        https://bugs.webkit.org/show_bug.cgi?id=193894
+
+        Reviewed by Antti Koivisto.
+
+        * layout/blockformatting/BlockFormattingContextQuirks.cpp:
+        (WebCore::Layout::BlockFormattingContext::Quirks::stretchedInFlowHeight):
+
 2019-01-28  Antoine Quint  <graouts@apple.com>
 
         Limit user-agent interactions based on the touch-action property on iOS

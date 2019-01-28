@@ -93,7 +93,8 @@ HeightAndMargin BlockFormattingContext::Quirks::stretchedInFlowHeight(const Layo
 
         auto nonCollapsedMargin = heightAndMargin.nonCollapsedMargin;
         auto collapsedMargin = MarginCollapse::collapsedVerticalValues(layoutState, layoutBox, nonCollapsedMargin);
-        totalVerticalMargin = collapsedMargin.before.valueOr(nonCollapsedMargin.before) + collapsedMargin.after.valueOr(nonCollapsedMargin.after);
+        totalVerticalMargin = collapsedMargin.before.valueOr(nonCollapsedMargin.before);
+        totalVerticalMargin += collapsedMargin.isCollapsedThrough ? nonCollapsedMargin.after : collapsedMargin.after.valueOr(nonCollapsedMargin.after);
     }
 
     // Stretch but never overstretch with the margins.
