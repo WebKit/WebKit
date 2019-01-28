@@ -31,6 +31,7 @@ WI.CSSProperty = class CSSProperty extends WI.Object
 
         this._ownerStyle = null;
         this._index = index;
+        this._initialState = null;
 
         this.update(text, name, value, priority, enabled, overridden, implicit, anonymous, valid, styleSheetTextRange, true);
     }
@@ -125,6 +126,8 @@ WI.CSSProperty = class CSSProperty extends WI.Object
 
     remove()
     {
+        this._markModified();
+
         // Setting name or value to an empty string removes the entire CSSProperty.
         this._name = "";
         const forceRemove = true;
@@ -133,6 +136,8 @@ WI.CSSProperty = class CSSProperty extends WI.Object
 
     replaceWithText(text)
     {
+        this._markModified();
+
         this._updateOwnerStyleText(this._text, text, true);
     }
 
@@ -142,6 +147,7 @@ WI.CSSProperty = class CSSProperty extends WI.Object
         if (this._enabled === !disabled)
             return;
 
+        this._markModified();
         this._enabled = !disabled;
 
         if (disabled)
@@ -160,6 +166,7 @@ WI.CSSProperty = class CSSProperty extends WI.Object
         if (this._text === newText)
             return;
 
+        this._markModified();
         this._updateOwnerStyleText(this._text, newText);
         this._text = newText;
     }
@@ -172,6 +179,11 @@ WI.CSSProperty = class CSSProperty extends WI.Object
         return `${this._name}: ${this._rawValue};`;
     }
 
+    get modified()
+    {
+        return !!this._initialState;
+    }
+
     get name()
     {
         return this._name;
@@ -182,6 +194,7 @@ WI.CSSProperty = class CSSProperty extends WI.Object
         if (name === this._name)
             return;
 
+        this._markModified();
         this._name = name;
         this._updateStyleText();
     }
@@ -214,6 +227,8 @@ WI.CSSProperty = class CSSProperty extends WI.Object
     {
         if (value === this._rawValue)
             return;
+
+        this._markModified();
 
         this._rawValue = value;
         this._value = undefined;
@@ -271,6 +286,11 @@ WI.CSSProperty = class CSSProperty extends WI.Object
     get valid() { return this._valid; }
     get variable() { return this._variable; }
     get styleSheetTextRange() { return this._styleSheetTextRange; }
+
+    get initialState()
+    {
+        return this._initialState;
+    }
 
     get editable()
     {
@@ -349,6 +369,8 @@ WI.CSSProperty = class CSSProperty extends WI.Object
 
     _updateOwnerStyleText(oldText, newText, forceRemove = false)
     {
+        console.assert(this.modified, "CSSProperty was modified without saving initial state.");
+
         if (oldText === newText) {
             if (forceRemove) {
                 const lineDelta = 0;
@@ -401,6 +423,30 @@ WI.CSSProperty = class CSSProperty extends WI.Object
                 property.text = property.text.trimRight() + ";" + match[1];
 
             break;
+        }
+    }
+
+    _markModified()
+    {
+        if (this.modified)
+            return;
+
+        this._initialState = new WI.CSSProperty(
+            this._index,
+            this._text,
+            this._name,
+            this._rawValue,
+            this._priority,
+            this._enabled,
+            this._overridden,
+            this._implicit,
+            this._anonymous,
+            this._valid,
+            this._styleSheetTextRange);
+
+        if (this._ownerStyle) {
+            this._ownerStyle.markModified();
+            this._initialState.ownerStyle = this._ownerStyle.initialState;
         }
     }
 };

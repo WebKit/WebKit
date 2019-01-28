@@ -152,6 +152,35 @@ function test()
     });
 
     suite.addTestCase({
+        name: "Array.diffArrays",
+        test() {
+            function diff(initial, current) {
+                let actual = [];
+                Array.diffArrays(initial, current, (value, changed) => {
+                    actual.push([value, changed]);
+                });
+
+                InspectorTest.log(JSON.stringify(initial) + ", " + JSON.stringify(current) + " => " + JSON.stringify(actual));
+            }
+
+            diff(["a"], []);
+            diff([], ["a"]);
+            diff(["a"], ["b"]);
+            diff(["a"], ["a"]);
+            diff(["a"], ["a", "b"]);
+            diff(["a"], ["b", "a"]);
+            diff(["a", "b"], ["a"]);
+            diff(["b", "a"], ["a"]);
+            diff(["b", "a"], ["a", "c"]);
+            diff(["b", "a"], ["a", "c"]);
+            diff(["b", "a"], ["a", "b"]);
+            diff(["a", "b", "c"], ["a", "d", "c"]);
+
+            return true;
+        }
+    });
+
+    suite.addTestCase({
         name: "Array.prototype.lastValue",
         test() {
             let object1 = {};

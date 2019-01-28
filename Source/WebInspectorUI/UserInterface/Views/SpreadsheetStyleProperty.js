@@ -295,6 +295,9 @@ WI.SpreadsheetStyleProperty = class SpreadsheetStyleProperty extends WI.Object
         if (!this._property.enabled)
             classNames.push("disabled");
 
+        if (this._property.modified)
+            classNames.push("modified");
+
         if (this._selected)
             classNames.push("selected");
 

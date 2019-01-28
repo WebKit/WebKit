@@ -40,18 +40,21 @@ WI.CSSStyleDeclaration = class CSSStyleDeclaration extends WI.Object
         this._node = node || null;
         this._inherited = inherited || false;
 
+        this._initialState = null;
         this._locked = false;
         this._pendingProperties = [];
         this._propertyNameMap = {};
 
         this._properties = [];
-        this._enabledProperties = [];
+        this._enabledProperties = null;
         this._visibleProperties = null;
 
         this.update(text, properties, styleSheetTextRange, {dontFireEvents: true});
     }
 
     // Public
+
+    get initialState() { return this._initialState; }
 
     get id()
     {
@@ -116,11 +119,11 @@ WI.CSSStyleDeclaration = class CSSStyleDeclaration extends WI.Object
 
         this._text = text;
         this._properties = properties;
-        this._enabledProperties = properties.filter((property) => property.enabled);
 
         this._styleSheetTextRange = styleSheetTextRange;
         this._propertyNameMap = {};
 
+        this._enabledProperties = null;
         this._visibleProperties = null;
 
         let editable = this.editable;
@@ -141,7 +144,7 @@ WI.CSSStyleDeclaration = class CSSStyleDeclaration extends WI.Object
         }
 
         for (let oldProperty of oldProperties) {
-            if (this._enabledProperties.includes(oldProperty))
+            if (this.enabledProperties.includes(oldProperty))
                 continue;
 
             // Clear the index, since it is no longer valid.
@@ -205,10 +208,26 @@ WI.CSSStyleDeclaration = class CSSStyleDeclaration extends WI.Object
 
     get enabledProperties()
     {
+        if (!this._enabledProperties)
+            this._enabledProperties = this._properties.filter((property) => property.enabled);
+
         return this._enabledProperties;
     }
 
-    get properties() { return this._properties; }
+    get properties()
+    {
+        return this._properties;
+    }
+
+    set properties(properties)
+    {
+        if (properties === this._properties)
+            return;
+
+        this._properties = properties;
+        this._enabledProperties = null;
+        this._visibleProperties = null;
+    }
 
     get visibleProperties()
     {
@@ -268,7 +287,7 @@ WI.CSSStyleDeclaration = class CSSStyleDeclaration extends WI.Object
 
         var bestMatchProperty = null;
 
-        findMatch(this._enabledProperties);
+        findMatch(this.enabledProperties);
 
         if (bestMatchProperty)
             return bestMatchProperty;
@@ -296,6 +315,7 @@ WI.CSSStyleDeclaration = class CSSStyleDeclaration extends WI.Object
         let valid = false;
         let styleSheetTextRange = this._rangeAfterPropertyAtIndex(propertyIndex - 1);
 
+        this.markModified();
         let property = new WI.CSSProperty(propertyIndex, text, name, value, priority, enabled, overridden, implicit, anonymous, valid, styleSheetTextRange);
 
         this._properties.insertAtIndex(property, propertyIndex);
@@ -305,6 +325,29 @@ WI.CSSStyleDeclaration = class CSSStyleDeclaration extends WI.Object
         this.update(this._text, this._properties, this._styleSheetTextRange, {dontFireEvents: true, suppressLock: true});
 
         return property;
+    }
+
+    markModified()
+    {
+        let properties = this._initialState ? this._initialState.properties : this._properties;
+
+        if (!this._initialState) {
+            this._initialState = new WI.CSSStyleDeclaration(
+                    this._nodeStyles,
+                    this._ownerStyleSheet,
+                    this._id,
+                    this._type,
+                    this._node,
+                    this._inherited,
+                    this._text,
+                    [], // Passing CSS properties here would change their ownerStyle.
+                    this._styleSheetTextRange);
+        }
+
+        this._initialState.properties = properties.map((property) => { return property.initialState || property });
+
+        if (this._ownerRule)
+            this._ownerRule.markModified();
     }
 
     shiftPropertiesAfter(cssProperty, lineDelta, columnDelta, propertyWasRemoved)

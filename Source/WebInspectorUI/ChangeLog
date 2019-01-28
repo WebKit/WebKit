@@ -1,3 +1,91 @@
+2019-01-28  Nikita Vasilyev  <nvasilyev@apple.com>
+
+        Web Inspector: Add Changes panel to Elements tab
+        https://bugs.webkit.org/show_bug.cgi?id=193803
+
+        Reviewed by Devin Rousso.
+
+        Introduce the new experimental Changes Panel. It shows a list of CSS changes
+        made via Web Inspector, so the changes could be copied to the source files.
+
+        * Localizations/en.lproj/localizedStrings.js:
+        * UserInterface/Base/Setting.js:
+        * UserInterface/Base/Utilities.js:
+        (Array.diffArrays): Added.
+
+        * UserInterface/Controllers/CSSManager.js:
+        (WI.CSSManager):
+        (WI.CSSManager.prototype.get modifiedCSSRules):
+        (WI.CSSManager.prototype.addModifiedCSSRule):
+        (WI.CSSManager.prototype.removeModifiedCSSRule):
+        (WI.CSSManager.prototype._mainResourceDidChange):
+
+        * UserInterface/Main.html:
+        * UserInterface/Models/CSSProperty.js:
+        (WI.CSSProperty):
+        (WI.CSSProperty.prototype.remove):
+        (WI.CSSProperty.prototype.replaceWithText):
+        (WI.CSSProperty.prototype.commentOut):
+        (WI.CSSProperty.prototype.set text):
+        (WI.CSSProperty.prototype.get modified):
+        (WI.CSSProperty.prototype.set name):
+        (WI.CSSProperty.prototype.set rawValue):
+        (WI.CSSProperty.prototype.get initialState):
+        (WI.CSSProperty.prototype._updateOwnerStyleText):
+        (WI.CSSProperty.prototype._markModified):
+        Mark CSSProperty modified *before* making any changes to copy its initial state.
+
+        * UserInterface/Models/CSSRule.js:
+        (WI.CSSRule):
+        (WI.CSSRule.prototype.get id):
+        (WI.CSSRule.prototype.get initialState):
+        (WI.CSSRule.prototype.get stringId):
+        (WI.CSSRule.prototype.markModified):
+
+        * UserInterface/Models/CSSStyleDeclaration.js:
+        (WI.CSSStyleDeclaration):
+        (WI.CSSStyleDeclaration.prototype.get initialState):
+        (WI.CSSStyleDeclaration.prototype.get enabledProperties):
+        (WI.CSSStyleDeclaration.prototype.get properties):
+        (WI.CSSStyleDeclaration.prototype.set properties):
+        (WI.CSSStyleDeclaration.prototype.propertyForName):
+        (WI.CSSStyleDeclaration.prototype.newBlankProperty):
+        (WI.CSSStyleDeclaration.prototype.markModified):
+
+        * UserInterface/Views/ChangesDetailsSidebarPanel.css: Added.
+        (.sidebar > .panel.changes-panel):
+        (.sidebar > .panel.changes-panel:not(.empty)):
+        (.sidebar > .panel.changes-panel.empty):
+        (.changes-panel ins):
+        (.changes-panel del):
+        (.changes-panel del.css-property::before):
+        (.changes-panel ins.css-property::before):
+        (@media (prefers-color-scheme: dark)):
+
+        * UserInterface/Views/ChangesDetailsSidebarPanel.js: Added.
+        (WI.ChangesDetailsSidebarPanel):
+        (WI.ChangesDetailsSidebarPanel.prototype.inspect):
+        (WI.ChangesDetailsSidebarPanel.prototype.supportsDOMNode):
+        (WI.ChangesDetailsSidebarPanel.prototype.shown):
+        (WI.ChangesDetailsSidebarPanel.prototype.detached):
+        (WI.ChangesDetailsSidebarPanel.prototype.layout):
+        (WI.ChangesDetailsSidebarPanel.prototype._mainResourceDidChange):
+
+        * UserInterface/Views/ElementsTabContentView.js:
+        (WI.ElementsTabContentView):
+
+        * UserInterface/Views/SettingsTabContentView.js:
+        (WI.SettingsTabContentView.prototype._createExperimentalSettingsView):
+
+        * UserInterface/Views/SpreadsheetCSSStyleDeclarationEditor.css:
+        (.spreadsheet-style-declaration-editor .property):
+        (.spreadsheet-style-declaration-editor .property.modified):
+        (.spreadsheet-style-declaration-editor .property.modified:not(.selected)):
+        (@media (prefers-color-scheme: dark)):
+
+        * UserInterface/Views/SpreadsheetStyleProperty.js:
+        (WI.SpreadsheetStyleProperty.prototype.updateStatus):
+
 2019-01-26  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: handle CSS Color 4 color syntaxes

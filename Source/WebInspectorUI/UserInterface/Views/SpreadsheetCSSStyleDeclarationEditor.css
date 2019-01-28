@@ -38,6 +38,7 @@
 .spreadsheet-style-declaration-editor .property {
     padding-right: var(--css-declaration-horizontal-padding);
     padding-left: calc(var(--css-declaration-horizontal-padding) + 17px);
+    border-right: 2px solid transparent;
     border-left: 1px solid transparent;
     outline: none;
 }
@@ -129,6 +130,14 @@
     -webkit-clip-path: polygon(0% 50%, 6px 0%, 100% 0%, 100% 100%, 6px 100%);
 }
 
+.spreadsheet-style-declaration-editor .property.modified {
+    border-right-color: hsl(120, 100%, 40%);
+}
+
+.spreadsheet-style-declaration-editor .property.modified:not(.selected) {
+    background-color: hsl(90, 100%, 93%);
+}
+
 .spreadsheet-style-declaration-editor .property.selected {
     background-color: var(--background-color-selected);
 }
@@ -187,5 +196,9 @@ body:matches(.window-docked-inactive, .window-inactive) .spreadsheet-style-decla
 
     .spreadsheet-style-declaration-editor :matches(.name, .value).editing {
         outline-color: var(--background-color-secondary) !important;
+    }
+
+    .spreadsheet-style-declaration-editor .property.modified:not(.selected) {
+        background-color: hsl(106, 13%, 25%);
     }
 }

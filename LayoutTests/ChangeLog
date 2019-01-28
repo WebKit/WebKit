@@ -1,3 +1,16 @@
+2019-01-28  Nikita Vasilyev  <nvasilyev@apple.com>
+
+        Web Inspector: Add Changes panel to Elements tab
+        https://bugs.webkit.org/show_bug.cgi?id=193803
+
+        Reviewed by Devin Rousso.
+
+        Test newly added Array.diffArrays.
+
+        * inspector/unit-tests/array-utilities-expected.txt:
+        * inspector/unit-tests/array-utilities.html:
+        Use the old `InspectorTest.log` method since it shows diffs for actual and expected text.
+
 2019-01-26  Simon Fraser  <simon.fraser@apple.com>
 
         Have composited RenderIFrame layers make FrameHosting scrolling tree nodes to parent the iframe's scrolling node

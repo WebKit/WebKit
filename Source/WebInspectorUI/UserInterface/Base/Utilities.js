@@ -489,6 +489,67 @@ Object.defineProperty(Array, "shallowEqual",
     }
 });
 
+Object.defineProperty(Array, "diffArrays",
+{
+    value(initialArray, currentArray, onEach)
+    {
+        let initialSet = new Set(initialArray);
+        let currentSet = new Set(currentArray);
+        let indexInitial = 0;
+        let indexCurrent = 0;
+        let deltaInitial = 0;
+        let deltaCurrent = 0;
+
+        let i = 0;
+        while (true) {
+            if (indexInitial >= initialArray.length || indexCurrent >= currentArray.length)
+                break;
+
+            let initial = initialArray[indexInitial];
+            let current = currentArray[indexCurrent];
+
+            if (initial === current)
+                onEach(current, 0);
+            else if (currentSet.has(initial)) {
+                if (initialSet.has(current)) {
+                    // Moved.
+                    onEach(current, 0);
+                } else {
+                    // Added.
+                    onEach(current, 1);
+                    --i;
+                    ++deltaCurrent;
+                }
+            } else {
+                // Removed.
+                onEach(initial, -1);
+                if (!initialSet.has(current)) {
+                    // Added.
+                    onEach(current, 1);
+                } else {
+                    --i;
+                    ++deltaInitial;
+                }
+            }
+
+            ++i;
+            indexInitial = i + deltaInitial;
+            indexCurrent = i + deltaCurrent;
+        }
+
+        for (let i = indexInitial; i < initialArray.length; ++i) {
+            // Removed.
+            onEach(initialArray[i], -1);
+        }
+
+        for (let i = indexCurrent; i < currentArray.length; ++i) {
+            // Added.
+            onEach(currentArray[i], 1);
+        }
+
+    }
+});
+
 Object.defineProperty(Array.prototype, "lastValue",
 {
     get()

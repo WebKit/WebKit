@@ -28,8 +28,11 @@ WI.ElementsTabContentView = class ElementsTabContentView extends WI.ContentBrows
     constructor(identifier)
     {
         let tabBarItem = WI.GeneralTabBarItem.fromTabInfo(WI.ElementsTabContentView.tabInfo());
-        let detailsSidebarPanelConstructors = [WI.RulesStyleDetailsSidebarPanel, WI.ComputedStyleDetailsSidebarPanel, WI.DOMNodeDetailsSidebarPanel];
 
+        let detailsSidebarPanelConstructors = [WI.RulesStyleDetailsSidebarPanel, WI.ComputedStyleDetailsSidebarPanel];
+        if (WI.settings.experimentalEnableChangesPanel.value)
+            detailsSidebarPanelConstructors.push(WI.ChangesDetailsSidebarPanel);
+        detailsSidebarPanelConstructors.push(WI.DOMNodeDetailsSidebarPanel);
         if (window.LayerTreeAgent)
             detailsSidebarPanelConstructors.push(WI.LayerTreeDetailsSidebarPanel);
 

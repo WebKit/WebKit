@@ -70,6 +70,20 @@ PASS: shallowEqual of a typed-array and non-array should be false.
 PASS: shallowEqual of a non-array with itself should be false.
 PASS: shallowEqual of non-arrays should be false.
 
+-- Running test case: Array.diffArrays
+["a"], [] => [["a",-1]]
+[], ["a"] => [["a",1]]
+["a"], ["b"] => [["a",-1],["b",1]]
+["a"], ["a"] => [["a",0]]
+["a"], ["a","b"] => [["a",0],["b",1]]
+["a"], ["b","a"] => [["b",1],["a",0]]
+["a","b"], ["a"] => [["a",0],["b",-1]]
+["b","a"], ["a"] => [["b",-1],["a",0]]
+["b","a"], ["a","c"] => [["b",-1],["a",0],["c",1]]
+["b","a"], ["a","c"] => [["b",-1],["a",0],["c",1]]
+["b","a"], ["a","b"] => [["a",0],["b",0]]
+["a","b","c"], ["a","d","c"] => [["a",0],["b",-1],["d",1],["c",0]]
+
 -- Running test case: Array.prototype.lastValue
 PASS: lastValue of a nonempty array should be the last value.
 PASS: lastValue of an empty array should be undefined.
