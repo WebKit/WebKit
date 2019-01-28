@@ -2841,6 +2841,9 @@ void FrameView::disableLayerFlushThrottlingTemporarilyForInteraction()
 
 void FrameView::loadProgressingStatusChanged()
 {
+    auto hasPendingVisuallyNonEmptyCallback = m_firstVisuallyNonEmptyLayoutCallbackPending && !m_isVisuallyNonEmpty;
+    if (hasPendingVisuallyNonEmptyCallback && frame().loader().isComplete())
+        fireLayoutRelatedMilestonesIfNeeded();
     updateLayerFlushThrottling();
     adjustTiledBackingCoverage();
 }
@@ -5187,8 +5190,11 @@ void FrameView::fireLayoutRelatedMilestonesIfNeeded()
             milestonesAchieved.add(DidRenderSignificantAmountOfText);
     }
 
-    if (milestonesAchieved && frame().isMainFrame())
+    if (milestonesAchieved && frame().isMainFrame()) {
+        if (milestonesAchieved.contains(DidFirstVisuallyNonEmptyLayout))
+            RELEASE_LOG_IF_ALLOWED("fireLayoutRelatedMilestonesIfNeeded() - firing first visually non-empty layout milestone on the main frame");
         frame().loader().didReachLayoutMilestone(milestonesAchieved);
+    }
 }
 
 void FrameView::firePaintRelatedMilestonesIfNeeded()
