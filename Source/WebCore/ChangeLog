@@ -1,3 +1,13 @@
+2019-01-28  Antoine Quint  <graouts@apple.com>
+
+        Limit user-agent interactions based on the touch-action property on iOS
+        https://bugs.webkit.org/show_bug.cgi?id=193447
+
+        Unreviewed build fix.
+
+        * dom/Element.cpp:
+        (WebCore::parentCrossingFrameBoundaries):
+
 2019-01-28  Eric Carlson  <eric.carlson@apple.com>
 
         AVStreamSession isn't always available, make a HAVE compile flag for it

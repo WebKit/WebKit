@@ -3403,6 +3403,12 @@ bool Element::childShouldCreateRenderer(const Node& child) const
     return true;
 }
 
+static Element* parentCrossingFrameBoundaries(const Element* element)
+{
+    ASSERT(element);
+    return element->parentElement() ? element->parentElement() : element->document().ownerElement();
+}
+
 #if ENABLE(FULLSCREEN_API)
 void Element::webkitRequestFullscreen()
 {
@@ -3418,12 +3424,6 @@ void Element::setContainsFullScreenElement(bool flag)
 {
     ensureElementRareData().setContainsFullScreenElement(flag);
     invalidateStyleAndLayerComposition();
-}
-
-static Element* parentCrossingFrameBoundaries(const Element* element)
-{
-    ASSERT(element);
-    return element->parentElement() ? element->parentElement() : element->document().ownerElement();
 }
 
 void Element::setContainsFullScreenElementOnAncestorsCrossingFrameBoundaries(bool flag)
