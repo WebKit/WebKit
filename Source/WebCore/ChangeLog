@@ -1,3 +1,15 @@
+2019-01-27  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        Unreviewed, fix WPE/GTK debug builds after r240557
+        https://bugs.webkit.org/show_bug.cgi?id=192742
+        <rdar://problem/46757369>
+
+        Also fix an improper format string that was recently added in a different commit.
+
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::logLayerInfo):
+        (WebCore::RenderLayerCompositor::reattachSubframeScrollLayers):
+
 2018-12-15  Darin Adler  <darin@apple.com>
 
         Replace many uses of String::format with more type-safe alternatives

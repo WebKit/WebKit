@@ -1278,7 +1278,7 @@ void RenderLayerCompositor::logLayerInfo(const RenderLayer& layer, const char* p
         backing->backingStoreMemoryEstimate() / 1024));
     
     if (!layer.renderer().style().hasAutoZIndex())
-        logString.append(makeString(" z-index: ", layer.renderer().style().zIndex()));
+        logString.append(String::format(" z-index: %d", layer.renderer().style().zIndex()));
 
     logString.appendLiteral(" (");
     logString.append(logReasonsForCompositing(layer));
@@ -3836,7 +3836,7 @@ void RenderLayerCompositor::reattachSubframeScrollLayers()
 
         auto parentNodeID = scrollCoordinatedAncestorInParentOfFrame(*child);
         if (!parentNodeID) {
-            LOG(Scrolling, "RenderLayerCompositor %p reattachSubframeScrollLayers: failed to find scrolling node parent for frame with nodeID %llu.", this, frameScrollingNodeID);
+            LOG(Scrolling, "RenderLayerCompositor %p reattachSubframeScrollLayers: failed to find scrolling node parent for frame with nodeID %" PRIu64 ".", this, frameScrollingNodeID);
             continue;
         }
 
