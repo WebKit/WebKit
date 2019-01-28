@@ -3999,8 +3999,10 @@ RefPtr<CSSValue> CSSPropertyParser::parseSingleValue(CSSPropertyID property, CSS
     case CSSPropertyBottom:
     case CSSPropertyLeft:
     case CSSPropertyRight:
-    case CSSPropertyTop:
-        return consumeMarginOrOffset(m_range, m_context.mode, UnitlessQuirk::Allow);
+    case CSSPropertyTop: {
+        UnitlessQuirk unitless = currentShorthand != CSSPropertyInset ? UnitlessQuirk::Allow : UnitlessQuirk::Forbid;
+        return consumeMarginOrOffset(m_range, m_context.mode, unitless);
+    }
     case CSSPropertyInsetInlineStart:
     case CSSPropertyInsetInlineEnd:
     case CSSPropertyInsetBlockStart:

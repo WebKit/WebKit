@@ -1,3 +1,34 @@
+2019-01-28  Oriol Brufau  <obrufau@igalia.com>
+
+        [css-logical] Reject unitless length quirk in 'inset' shorthand
+        https://bugs.webkit.org/show_bug.cgi?id=193773
+
+        Reviewed by Manuel Rego Casasnovas.
+
+        Import WPT tests that check that the unitless length quirk is not
+        allowed in the 'inset' shorthand.
+
+        * resources/import-expectations.json:
+        * web-platform-tests/quirks/support/test-ref-iframe.js: Added.
+        (setupIframe):
+        * web-platform-tests/quirks/support/w3c-import.log: Added.
+        * web-platform-tests/quirks/unitless-length/excluded-properties-001-expected.txt: Added.
+        * web-platform-tests/quirks/unitless-length/excluded-properties-001.html: Added.
+        * web-platform-tests/quirks/unitless-length/excluded-properties-002-expected.txt: Added.
+        * web-platform-tests/quirks/unitless-length/excluded-properties-002.html: Added.
+        * web-platform-tests/quirks/unitless-length/excluded-properties-003-expected.txt: Added.
+        * web-platform-tests/quirks/unitless-length/excluded-properties-003.html: Added.
+        * web-platform-tests/quirks/unitless-length/limited-quirks-expected.txt: Added.
+        * web-platform-tests/quirks/unitless-length/limited-quirks.html: Added.
+        * web-platform-tests/quirks/unitless-length/no-quirks-expected.txt: Added.
+        * web-platform-tests/quirks/unitless-length/no-quirks.html: Added.
+        * web-platform-tests/quirks/unitless-length/quirks-expected.txt: Added.
+        * web-platform-tests/quirks/unitless-length/quirks.html: Added.
+        * web-platform-tests/quirks/unitless-length/support/common.js: Added.
+        (onload):
+        * web-platform-tests/quirks/unitless-length/support/w3c-import.log: Added.
+        * web-platform-tests/quirks/unitless-length/w3c-import.log: Added.
+
 2019-01-24  Charles Vazac  <cvazac@akamai.com>
 
         Implement PerformanceObserver.supportedEntryTypes

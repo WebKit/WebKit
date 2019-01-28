@@ -1,3 +1,25 @@
+2019-01-28  Oriol Brufau  <obrufau@igalia.com>
+
+        [css-logical] Reject unitless length quirk in 'inset' shorthand
+        https://bugs.webkit.org/show_bug.cgi?id=193773
+
+        Reviewed by Manuel Rego Casasnovas.
+
+        Even though its longhands ('top', 'right', 'bottom', 'left') accept the
+        unitless length quirk, the 'inset' shorthand is a new CSS property and
+        should reject it. This was resolved by the CSS WG in
+        https://github.com/w3c/csswg-drafts/issues/3525#issuecomment-456902648
+
+        Tests: imported/w3c/web-platform-tests/quirks/unitless-length/excluded-properties-001.html
+               imported/w3c/web-platform-tests/quirks/unitless-length/excluded-properties-002.html
+               imported/w3c/web-platform-tests/quirks/unitless-length/excluded-properties-003.html
+               imported/w3c/web-platform-tests/quirks/unitless-length/limited-quirks.html
+               imported/w3c/web-platform-tests/quirks/unitless-length/no-quirks.html
+               imported/w3c/web-platform-tests/quirks/unitless-length/quirks.html
+
+        * css/parser/CSSPropertyParser.cpp:
+        (WebCore::CSSPropertyParser::parseSingleValue):
+
 2019-01-28  Zalan Bujtas  <zalan@apple.com>
 
         [LFC][MarginCollapsing][Quirks] Quirk margin values get propagated through margin collapsing
