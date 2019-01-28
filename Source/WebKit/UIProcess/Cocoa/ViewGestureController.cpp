@@ -148,6 +148,9 @@ bool ViewGestureController::canSwipeInDirection(SwipeDirection direction) const
 void ViewGestureController::didStartProvisionalLoadForMainFrame()
 {
     m_snapshotRemovalTracker.resume();
+#if PLATFORM(MAC)
+    requestRenderTreeSizeNotificationIfNeeded();
+#endif
 
     if (auto provisionalLoadCallback = WTFMove(m_provisionalLoadCallback))
         provisionalLoadCallback();
@@ -199,6 +202,9 @@ void ViewGestureController::didReachMainFrameLoadTerminalState()
 void ViewGestureController::didSameDocumentNavigationForMainFrame(SameDocumentNavigationType type)
 {
     m_snapshotRemovalTracker.resume();
+#if PLATFORM(MAC)
+    requestRenderTreeSizeNotificationIfNeeded();
+#endif
 
     bool cancelledOutstandingEvent = false;
 
@@ -323,6 +329,11 @@ bool ViewGestureController::SnapshotRemovalTracker::eventOccurred(Events event)
 bool ViewGestureController::SnapshotRemovalTracker::cancelOutstandingEvent(Events event)
 {
     return stopWaitingForEvent(event, "wait for event cancelled: ");
+}
+
+bool ViewGestureController::SnapshotRemovalTracker::hasOutstandingEvent(Event event)
+{
+    return m_outstandingEvents & event;
 }
 
 void ViewGestureController::SnapshotRemovalTracker::fireRemovalCallbackIfPossible()

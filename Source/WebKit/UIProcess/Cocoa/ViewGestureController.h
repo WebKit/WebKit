@@ -61,6 +61,7 @@ namespace WebKit {
 class ViewSnapshot;
 class WebBackForwardListItem;
 class WebPageProxy;
+class WebProcessProxy;
 
 class ViewGestureController : private IPC::MessageReceiver {
     WTF_MAKE_NONCOPYABLE(ViewGestureController);
@@ -179,8 +180,12 @@ private:
 
         bool eventOccurred(Events);
         bool cancelOutstandingEvent(Events);
+        bool hasOutstandingEvent(Event);
 
         void startWatchdog(Seconds);
+
+        uint64_t renderTreeSizeThreshold() const { return m_renderTreeSizeThreshold; }
+        void setRenderTreeSizeThreshold(uint64_t threshold) { m_renderTreeSizeThreshold = threshold; }
 
     private:
         static String eventsDescription(Events);
@@ -195,6 +200,8 @@ private:
         Events m_outstandingEvents { 0 };
         WTF::Function<void()> m_removalCallback;
         MonotonicTime m_startTime;
+
+        uint64_t m_renderTreeSizeThreshold { 0 };
 
         RunLoop::Timer<SnapshotRemovalTracker> m_watchdogTimer;
         
@@ -223,6 +230,8 @@ private:
     void didMoveSwipeSnapshotLayer();
 
     void forceRepaintIfNeeded();
+
+    void requestRenderTreeSizeNotificationIfNeeded();
 
     class PendingSwipeTracker {
     public:
