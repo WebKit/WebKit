@@ -1415,16 +1415,13 @@ static NSValue *nsSizeForTapHighlightBorderRadius(WebCore::IntSize borderRadius,
         minimumScale:_focusedElementInformation.minimumScaleFactor
         maximumScale:_focusedElementInformation.maximumScaleFactorIgnoringAlwaysScalable
         allowScaling:_focusedElementInformation.allowsUserScalingIgnoringAlwaysScalable && !currentUserInterfaceIdiomIsPad()
-        forceScroll:(_focusedElementInformation.inputMode == WebCore::InputMode::None) ? !currentUserInterfaceIdiomIsPad() : [self requiresAccessoryView]];
+        forceScroll:[self requiresAccessoryView]];
 }
 
 - (UIView *)inputView
 {
     if (!hasFocusedElement(_focusedElementInformation))
         return nil;
-
-    if (_focusedElementInformation.inputMode == WebCore::InputMode::None)
-        return [[UIView new] autorelease];
 
     if (!_inputPeripheral) {
         switch (_focusedElementInformation.elementType) {
@@ -2199,9 +2196,6 @@ static void cancelPotentialTapIfNecessary(WKContentView* contentView)
 
     if ([_formInputSession customInputAccessoryView])
         return YES;
-
-    if (_focusedElementInformation.inputMode == WebCore::InputMode::None)
-        return NO;
 
     switch (_focusedElementInformation.elementType) {
     case WebKit::InputType::None:
@@ -3836,6 +3830,7 @@ static NSString *contentTypeFromFieldName(WebCore::AutofillFieldName fieldName)
     }
 
     switch (_focusedElementInformation.inputMode) {
+    case WebCore::InputMode::None:
     case WebCore::InputMode::Unspecified:
         switch (_focusedElementInformation.elementType) {
         case WebKit::InputType::Phone:
@@ -3872,8 +3867,6 @@ static NSString *contentTypeFromFieldName(WebCore::AutofillFieldName fieldName)
 #endif
             [_traits setKeyboardType:UIKeyboardTypeDefault];
         }
-        break;
-    case WebCore::InputMode::None:
         break;
     case WebCore::InputMode::Text:
         [_traits setKeyboardType:UIKeyboardTypeDefault];
