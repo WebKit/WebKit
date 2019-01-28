@@ -1,3 +1,13 @@
+2019-01-28  cathie chen  <cathiechen@igalia.com>
+
+        Add missing #include in ScrollingTreeFrameScrollingNode.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=193905
+
+        Reviewed by Frédéric Wang.
+
+        * page/scrolling/ScrollingTreeFrameScrollingNode.cpp: Add
+        #include "ScrollingStateFrameScrollingNode.h"
+
 2019-01-28  Zalan Bujtas  <zalan@apple.com>
 
         [LFC][BFC][Quirk] Ignore collapsed(through) margin after when stretching body height.

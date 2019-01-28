@@ -30,6 +30,7 @@
 
 #include "FrameView.h"
 #include "Logging.h"
+#include "ScrollingStateFrameScrollingNode.h"
 #include "ScrollingStateTree.h"
 #include "ScrollingTree.h"
 #include <wtf/text/TextStream.h>
