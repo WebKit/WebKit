@@ -7,17 +7,28 @@ if (WIN32)
         text/win/TextBreakIteratorInternalICUWin.cpp
 
         win/CPUTimeWin.cpp
+        win/DbgHelperWin.cpp
+        win/FileSystemWin.cpp
         win/LanguageWin.cpp
         win/MainThreadWin.cpp
+        win/PathWalker.cpp
     )
     list(APPEND WTF_PUBLIC_HEADERS
+        win/DbgHelperWin.h
+        win/PathWalker.h
+
         text/win/WCharStringExtras.h
+    )
+    list(APPEND WTF_LIBRARIES
+        shlwapi
     )
 else ()
     list(APPEND WTF_SOURCES
         UniStdExtras.cpp
 
         generic/MainThreadGeneric.cpp
+
+        posix/FileSystemPOSIX.cpp
 
         text/unix/TextBreakIteratorInternalICUUnix.cpp
 
@@ -37,6 +48,9 @@ endif ()
 if (WIN32)
     list(APPEND WTF_SOURCES
         win/MemoryFootprintWin.cpp
+    )
+    list(APPEND WTF_PUBLIC_HEADERS
+        win/Win32Handle.h
     )
 elseif (APPLE)
     file(COPY mac/MachExceptions.defs DESTINATION ${DERIVED_SOURCES_WTF_DIR})

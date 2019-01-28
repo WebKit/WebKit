@@ -48,7 +48,7 @@ typedef const struct __CFData* CFDataRef;
 
 OBJC_CLASS NSString;
 
-#if PLATFORM(WIN)
+#if OS(WINDOWS)
 typedef void *HANDLE;
 #endif
 
@@ -63,10 +63,10 @@ struct FileMetadata;
 namespace FileSystemImpl {
 
 // PlatformFileHandle
-#if USE(GLIB) && !PLATFORM(WIN)
+#if USE(GLIB) && !OS(WINDOWS)
 typedef GFileIOStream* PlatformFileHandle;
 const PlatformFileHandle invalidPlatformFileHandle = 0;
-#elif PLATFORM(WIN)
+#elif OS(WINDOWS)
 typedef HANDLE PlatformFileHandle;
 // FIXME: -1 is INVALID_HANDLE_VALUE, defined in <winbase.h>. Chromium tries to
 // avoid using Windows headers in headers. We'd rather move this into the .cpp.
@@ -169,22 +169,19 @@ WTF_EXPORT_PRIVATE bool filesHaveSameVolume(const String&, const String&);
 WTF_EXPORT_PRIVATE RetainPtr<CFURLRef> pathAsURL(const String&);
 #endif
 
-#if PLATFORM(GTK) || PLATFORM(WPE)
+#if USE(GLIB)
 String filenameForDisplay(const String&);
 #endif
 
-#if PLATFORM(WIN)
+#if OS(WINDOWS)
 WTF_EXPORT_PRIVATE String localUserSpecificStorageDirectory();
 WTF_EXPORT_PRIVATE String roamingUserSpecificStorageDirectory();
+WTF_EXPORT_PRIVATE String createTemporaryDirectory();
+WTF_EXPORT_PRIVATE bool deleteNonEmptyDirectory(const String&);
 #endif
 
 #if PLATFORM(COCOA)
 WTF_EXPORT_PRIVATE NSString *createTemporaryDirectory(NSString *directoryPrefix);
-WTF_EXPORT_PRIVATE bool deleteNonEmptyDirectory(const String&);
-#endif
-
-#if PLATFORM(WIN_CAIRO)
-WTF_EXPORT_PRIVATE String createTemporaryDirectory();
 WTF_EXPORT_PRIVATE bool deleteNonEmptyDirectory(const String&);
 #endif
 

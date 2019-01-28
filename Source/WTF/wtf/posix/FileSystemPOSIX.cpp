@@ -382,7 +382,7 @@ Vector<String> listDirectory(const String& path, const String& filter)
     return entries;
 }
 
-#if !PLATFORM(COCOA)
+#if !USE(CF)
 String stringFromFileSystemRepresentation(const char* path)
 {
     if (!path)
@@ -395,7 +395,9 @@ CString fileSystemRepresentation(const String& path)
 {
     return path.utf8();
 }
+#endif
 
+#if !PLATFORM(COCOA)
 bool moveFile(const String& oldPath, const String& newPath)
 {
     auto oldFilename = fileSystemRepresentation(oldPath);
@@ -418,9 +420,7 @@ bool getVolumeFreeSpace(const String& path, uint64_t& freeSpace)
     }
     return false;
 }
-#endif
 
-#if !OS(DARWIN)
 String openTemporaryFile(const String& prefix, PlatformFileHandle& handle)
 {
     char buffer[PATH_MAX];
@@ -442,7 +442,7 @@ end:
     handle = invalidPlatformFileHandle;
     return String();
 }
-#endif
+#endif // !PLATFORM(COCOA)
 
 bool hardLinkOrCopyFile(const String& source, const String& destination)
 {

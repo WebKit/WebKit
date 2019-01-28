@@ -1,3 +1,17 @@
+2019-01-28  Ross Kirsling  <ross.kirsling@sony.com>
+
+        [JSCOnly][WTF] Expose FileSystem.
+        https://bugs.webkit.org/show_bug.cgi?id=193789
+
+        Reviewed by Don Olmstead.
+
+        * wtf/FileSystem.h:
+        * wtf/PlatformJSCOnly.cmake:
+        * wtf/posix/FileSystemPOSIX.cpp:
+        (WTF::FileSystemImpl::getVolumeFreeSpace):
+        * wtf/win/FileSystemWin.cpp:
+        (WTF::FileSystemImpl::fileSystemRepresentation):
+
 2019-01-28  Eric Carlson  <eric.carlson@apple.com>
 
         AVStreamSession isn't always available, make a HAVE compile flag for it

@@ -279,7 +279,7 @@ String pathByAppendingComponents(StringView path, const Vector<StringView>& comp
 
 CString fileSystemRepresentation(const String& path)
 {
-    auto upconvertedCharacters = path.upconvertedCharacters();
+    auto upconvertedCharacters = StringView(path).upconvertedCharacters();
 
     const UChar* characters = upconvertedCharacters;
     int size = WideCharToMultiByte(CP_ACP, 0, characters, path.length(), 0, 0, 0, 0) - 1;
