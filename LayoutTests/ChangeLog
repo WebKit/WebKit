@@ -1,5 +1,27 @@
 2019-01-28  Babak Shafiei  <bshafiei@apple.com>
 
+        Cherry-pick r240532. rdar://problem/47586874
+
+    Remove expectation for inspector/css/createStyleSheet.html as test appears to be passing.
+    https://bugs.webkit.org/show_bug.cgi?id=148636
+    
+    Unreviewed test gardening.
+    
+    * platform/mac/TestExpectations:
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@240532 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2019-01-25  Truitt Savell  <tsavell@apple.com>
+
+            Remove expectation for inspector/css/createStyleSheet.html as test appears to be passing.
+            https://bugs.webkit.org/show_bug.cgi?id=148636
+
+            Unreviewed test gardening.
+
+            * platform/mac/TestExpectations:
+
+2019-01-28  Babak Shafiei  <bshafiei@apple.com>
+
         Cherry-pick r240497. rdar://problem/47586863
 
     iOS: inputmode="none" disables hardware keyboard's globe key
