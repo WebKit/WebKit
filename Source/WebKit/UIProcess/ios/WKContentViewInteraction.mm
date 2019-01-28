@@ -1163,6 +1163,7 @@ static inline bool hasFocusedElement(WebKit::FocusedElementInformation focusedEl
 }
 
 #if ENABLE(POINTER_EVENTS)
+#if ENABLE(TOUCH_EVENTS)
 - (void)_handleTouchActionsForTouchEvent:(const WebKit::NativeWebTouchEvent&)touchEvent
 {
     auto* scrollingCoordinator = _page->scrollingCoordinatorProxy();
@@ -1191,6 +1192,7 @@ static inline bool hasFocusedElement(WebKit::FocusedElementInformation focusedEl
             scrollingCoordinator->clearTouchDataForTouchIdentifier(touchPoint.identifier());
     }
 }
+#endif
 
 - (void)_resetPanningPreventionFlags
 {
