@@ -980,15 +980,15 @@ void NetworkProcess::requestStorageAccess(PAL::SessionID sessionID, const String
 
 void NetworkProcess::grantStorageAccess(PAL::SessionID sessionID, const String& resourceDomain, const String& firstPartyDomain, Optional<uint64_t> frameID, uint64_t pageID, bool userWasPrompted, CompletionHandler<void(bool)>&& completionHandler)
 {
-    bool isStorageGranted = false;
-    if (auto* networkStorageSession = storageSession(sessionID)) {
-        networkStorageSession->grantStorageAccess(resourceDomain, firstPartyDomain, frameID, pageID);
-        ASSERT(networkStorageSession->hasStorageAccess(resourceDomain, firstPartyDomain, frameID, pageID));
-        isStorageGranted = true;
-    } else
+    if (auto* networkSession = this->networkSession(sessionID)) {
+        if (auto* resourceLoadStatistics = networkSession->resourceLoadStatistics())
+            resourceLoadStatistics->grantStorageAccess(resourceDomain, firstPartyDomain, frameID.value(), pageID, userWasPrompted, WTFMove(completionHandler));
+        else
+            completionHandler(false);
+    } else {
         ASSERT_NOT_REACHED();
-
-    completionHandler(isStorageGranted);
+        completionHandler(false);
+    }
 }
 
 void NetworkProcess::logFrameNavigation(PAL::SessionID sessionID, const String& targetPrimaryDomain, const String& mainFramePrimaryDomain, const String& sourcePrimaryDomain, const String& targetHost, const String& mainFrameHost, bool isRedirect, bool isMainFrame)

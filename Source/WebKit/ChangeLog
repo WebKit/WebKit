@@ -1,3 +1,24 @@
+2019-01-28  Brent Fulgham  <bfulgham@apple.com>
+
+        REGRESSION (r240498): Storage Access API prompts result is not remembered
+        https://bugs.webkit.org/show_bug.cgi?id=193922
+        <rdar://problem/47608767>
+
+        Reviewed by Chris Dumez.
+
+        The refactoring in r240498 bypassed bookkeeping in ResourceLoadStatisticsMemoryStore
+        that kept track of whether a successful user prompt had been encountered. This
+        patch corrects this codepath so the user is not prompted repeatedly after approving
+        use of the Storage Access API.
+
+        * NetworkProcess/Classifier/WebResourceLoadStatisticsStore.cpp:
+        (WebKit::WebResourceLoadStatisticsStore::grantStorageAccess): Switch from Move operator to
+        const reference to allow the method to be called by the NetworkProcess.
+        * NetworkProcess/Classifier/WebResourceLoadStatisticsStore.h:
+        * NetworkProcess/NetworkProcess.cpp:
+        (WebKit::NetworkProcess::grantStorageAccess): Request access through the WebResourceLoadStatistics
+        object, rather than jumping directly to the NetworkStorageSession.
+
 2019-01-28  Chris Dumez  <cdumez@apple.com>
 
         Regression(PSON) Crash under WebPageProxy::didStartProgress()
