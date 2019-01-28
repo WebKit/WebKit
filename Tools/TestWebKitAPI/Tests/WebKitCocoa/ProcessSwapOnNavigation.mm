@@ -2413,6 +2413,9 @@ TEST(ProcessSwap, PageShowHide)
     TestWebKitAPI::Util::run(&done);
     done = false;
 
+    while ([receivedMessages count] < 7)
+        TestWebKitAPI::Util::sleep(0.1);
+
     EXPECT_EQ(7u, [receivedMessages count]);
     EXPECT_WK_STREQ(@"pson://www.webkit.org/main.html - pageshow NOT persisted", receivedMessages.get()[0]);
     if ([receivedMessages.get()[1] hasPrefix:@"pson://www.webkit.org/main.html"]) {
@@ -2502,6 +2505,9 @@ TEST(ProcessSwap, LoadUnload)
     receivedMessage = false;
     TestWebKitAPI::Util::run(&done);
     done = false;
+
+    while ([receivedMessages count] < 7)
+        TestWebKitAPI::Util::sleep(0.1);
 
     EXPECT_EQ(7u, [receivedMessages count]);
     EXPECT_WK_STREQ(@"pson://www.webkit.org/main.html - load", receivedMessages.get()[0]);
