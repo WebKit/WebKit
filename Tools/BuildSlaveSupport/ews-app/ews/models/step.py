@@ -22,8 +22,14 @@
 
 from __future__ import unicode_literals
 
+import logging
+
 from django.db import models
+from ews.config import ERR_UNEXPECTED, SUCCESS
 from ews.models.build import Build
+import ews.common.util as util
+
+_log = logging.getLogger(__name__)
 
 
 class Step(models.Model):
@@ -38,3 +44,48 @@ class Step(models.Model):
 
     def __str__(self):
         return str(self.step_id)
+
+    @classmethod
+    def save_step(cls, step_id, build_id, result, state_string, started_at, complete_at=None):
+        if not Step.is_valid_result(step_id, build_id, result, state_string, started_at, complete_at):
+            return ERR_UNEXPECTED
+
+        step = Step.get_existing_step(step_id)
+        if step:
+            # If the step data is already present in database, update it, e.g.: step complete event.
+            return Step.update_step(step, step_id, build_id, result, state_string, started_at, complete_at)
+
+        # Save the new step data, e.g.: step start event.
+        Step(step_id, build_id, result, state_string, started_at, complete_at).save()
+        _log.debug('Saved step {} in database for build: {}'.format(step_id, build_id))
+        return SUCCESS
+
+    @classmethod
+    def update_step(cls, step, step_id, build_id, result, state_string, started_at, complete_at):
+        if step.step_id != step_id:
+            _log.error('step_id {} does not match with step_id {}. Ignoring new data.'.format(step.step_id, step_id))
+            return ERR_UNEXPECTED
+        if step.build_id != build_id:
+            _log.error('build_id {} does not match with build_id {}. Ignoring new data.'.format(step.build_id, build_id))
+            return ERR_UNEXPECTED
+        step.result = result
+        step.state_string = state_string
+        step.started_at = started_at
+        step.complete_at = complete_at
+        step.save(update_fields=['result', 'state_string', 'started_at', 'complete_at'])
+        _log.info('Updated step {} in database for build: {}'.format(step_id, build_id))
+        return SUCCESS
+
+    @classmethod
+    def get_existing_step(cls, step_id):
+        try:
+            return Step.objects.get(step_id=step_id)
+        except:
+            return None
+
+    @classmethod
+    def is_valid_result(cls, step_id, build_id, result, state_string, started_at, complete_at):
+        if not (util.is_valid_id(step_id) and util.is_valid_id(build_id)):
+            return False
+
+        return True
