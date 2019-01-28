@@ -1,5 +1,20 @@
 2019-01-28  Aakash Jain  <aakash_jain@apple.com>
 
+        [ews-app] Rename id variables
+        https://bugs.webkit.org/show_bug.cgi?id=193883
+
+        Reviewed by Lucas Forschler.
+
+        * BuildSlaveSupport/ews-app/ews/models/build.py:
+        * BuildSlaveSupport/ews-app/ews/models/buildermapping.py:
+        * BuildSlaveSupport/ews-app/ews/models/step.py:
+        * BuildSlaveSupport/ews-app/ews/urls.py:
+        * BuildSlaveSupport/ews-app/ews/views/patch.py:
+        * BuildSlaveSupport/ews-app/ews/views/results.py:
+        * BuildSlaveSupport/ews-app/ews/views/statusbubble.py:
+
+2019-01-28  Aakash Jain  <aakash_jain@apple.com>
+
         [ews-app] Allow certain fields to be empty
         https://bugs.webkit.org/show_bug.cgi?id=193892
 

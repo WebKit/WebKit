@@ -1,4 +1,4 @@
-# Copyright (C) 2018 Apple Inc. All rights reserved.
+# Copyright (C) 2018-2019 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -28,5 +28,5 @@ from django.views import View
 
 
 class Results(View):
-    def post(self, request, patchid):
-        return HttpResponse("Placeholder to handle post request for result for patch: {}.".format(patchid))
+    def post(self, request, patch_id):
+        return HttpResponse("Placeholder to handle post request for result for patch: {}.".format(patch_id))

@@ -1,4 +1,4 @@
-# Copyright (C) 2018 Apple Inc. All rights reserved.
+# Copyright (C) 2018-2019 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -32,9 +32,9 @@ urlpatterns = [
     # ex: /
     url(r'^$', Index.as_view(), name='index'),
     # ex: /patch/5
-    url(r'^patch/(?P<patchid>[0-9]+)/$', Patch.as_view(), name='patch'),
+    url(r'^patch/(?P<patch_id>[0-9]+)/$', Patch.as_view(), name='patch'),
     # ex: /patch/5/results
-    url(r'^patch/(?P<patchid>[0-9]+)/results$', Results.as_view(), name='results'),
+    url(r'^patch/(?P<patch_id>[0-9]+)/results$', Results.as_view(), name='results'),
     # ex: /status-bubble/5
-    url(r'^status-bubble/(?P<patchid>[0-9]+)/$', StatusBubble.as_view(), name='statusbubble'),
+    url(r'^status-bubble/(?P<patch_id>[0-9]+)/$', StatusBubble.as_view(), name='statusbubble'),
 ]

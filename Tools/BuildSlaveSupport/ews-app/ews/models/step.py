@@ -27,7 +27,7 @@ from ews.models.build import Build
 
 
 class Step(models.Model):
-    stepid = models.IntegerField(primary_key=True)
+    step_id = models.IntegerField(primary_key=True)
     build = models.ForeignKey(Build, on_delete=models.CASCADE)
     result = models.IntegerField(null=True, blank=True)
     state_string = models.TextField()
@@ -37,4 +37,4 @@ class Step(models.Model):
     modified = models.DateTimeField(auto_now=True)
 
     def __str__(self):
-        return str(self.stepid)
+        return str(self.step_id)

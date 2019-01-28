@@ -1,4 +1,4 @@
-# Copyright (C) 2018 Apple Inc. All rights reserved.
+# Copyright (C) 2018-2019 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -28,8 +28,8 @@ from ews.models.patch import Patch
 
 class Build(models.Model):
     patch = models.ForeignKey(Patch, on_delete=models.CASCADE)
-    buildid = models.IntegerField(primary_key=True)
-    builderid = models.IntegerField()
+    build_id = models.IntegerField(primary_key=True)
+    builder_id = models.IntegerField()
     number = models.IntegerField()
     result = models.IntegerField(null=True, blank=True)
     state_string = models.TextField()
@@ -39,4 +39,4 @@ class Build(models.Model):
     modified = models.DateTimeField(auto_now=True)
 
     def __str__(self):
-        return str(self.buildid)
+        return str(self.build_id)
