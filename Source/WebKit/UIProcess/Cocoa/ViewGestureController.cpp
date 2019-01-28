@@ -145,15 +145,20 @@ bool ViewGestureController::canSwipeInDirection(SwipeDirection direction) const
     return !!backForwardList.forwardItem();
 }
 
-void ViewGestureController::didStartProvisionalLoadForMainFrame()
+void ViewGestureController::didStartProvisionalOrSameDocumentLoadForMainFrame()
 {
     m_snapshotRemovalTracker.resume();
 #if PLATFORM(MAC)
     requestRenderTreeSizeNotificationIfNeeded();
 #endif
 
-    if (auto provisionalLoadCallback = WTFMove(m_provisionalLoadCallback))
-        provisionalLoadCallback();
+    if (auto loadCallback = WTFMove(m_loadCallback))
+        loadCallback();
+}
+
+void ViewGestureController::didStartProvisionalLoadForMainFrame()
+{
+    didStartProvisionalOrSameDocumentLoadForMainFrame();
 }
 
 void ViewGestureController::didFirstVisuallyNonEmptyLayoutForMainFrame()
@@ -201,10 +206,7 @@ void ViewGestureController::didReachMainFrameLoadTerminalState()
 
 void ViewGestureController::didSameDocumentNavigationForMainFrame(SameDocumentNavigationType type)
 {
-    m_snapshotRemovalTracker.resume();
-#if PLATFORM(MAC)
-    requestRenderTreeSizeNotificationIfNeeded();
-#endif
+    didStartProvisionalOrSameDocumentLoadForMainFrame();
 
     bool cancelledOutstandingEvent = false;
 

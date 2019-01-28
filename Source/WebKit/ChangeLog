@@ -1,5 +1,46 @@
 2019-01-28  Babak Shafiei  <bshafiei@apple.com>
 
+        Cherry-pick r240542. rdar://problem/47586850
+
+    REGRESSION (r238818): Snapshot is removed too late after swiping back on Twitter
+    https://bugs.webkit.org/show_bug.cgi?id=193860
+    <rdar://problem/47535022>
+    
+    Reviewed by Antti Koivisto.
+    
+    * UIProcess/Cocoa/ViewGestureController.cpp:
+    (WebKit::ViewGestureController::didStartProvisionalOrSameDocumentLoadForMainFrame):
+    (WebKit::ViewGestureController::didStartProvisionalLoadForMainFrame):
+    (WebKit::ViewGestureController::didSameDocumentNavigationForMainFrame):
+    * UIProcess/Cocoa/ViewGestureController.h:
+    Treat provisional load and same document load the same: they already both
+    unpause the snapshot removal tracker, request render tree size notifications,
+    but same-document navigation was missing the call to dispatchAfterEnsuringDrawing
+    and thus would get stuck waiting for RepaintAfterNavigation.
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@240542 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2019-01-25  Tim Horton  <timothy_horton@apple.com>
+
+            REGRESSION (r238818): Snapshot is removed too late after swiping back on Twitter
+            https://bugs.webkit.org/show_bug.cgi?id=193860
+            <rdar://problem/47535022>
+
+            Reviewed by Antti Koivisto.
+
+            * UIProcess/Cocoa/ViewGestureController.cpp:
+            (WebKit::ViewGestureController::didStartProvisionalOrSameDocumentLoadForMainFrame):
+            (WebKit::ViewGestureController::didStartProvisionalLoadForMainFrame):
+            (WebKit::ViewGestureController::didSameDocumentNavigationForMainFrame):
+            * UIProcess/Cocoa/ViewGestureController.h:
+            Treat provisional load and same document load the same: they already both
+            unpause the snapshot removal tracker, request render tree size notifications,
+            but same-document navigation was missing the call to dispatchAfterEnsuringDrawing
+            and thus would get stuck waiting for RepaintAfterNavigation.
+
+2019-01-28  Babak Shafiei  <bshafiei@apple.com>
+
         Cherry-pick r240497. rdar://problem/47586863
 
     iOS: inputmode="none" disables hardware keyboard's globe key

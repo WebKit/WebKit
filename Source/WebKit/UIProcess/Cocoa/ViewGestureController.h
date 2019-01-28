@@ -157,6 +157,8 @@ private:
     void willBeginGesture(ViewGestureType);
     void didEndGesture();
 
+    void didStartProvisionalOrSameDocumentLoadForMainFrame();
+
     class SnapshotRemovalTracker {
     public:
         enum Event : uint8_t {
@@ -321,7 +323,7 @@ private:
     bool m_isConnectedToProcess { false };
 
     SnapshotRemovalTracker m_snapshotRemovalTracker;
-    WTF::Function<void()> m_provisionalLoadCallback;
+    WTF::Function<void()> m_loadCallback;
 };
 
 } // namespace WebKit
