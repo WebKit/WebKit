@@ -1,3 +1,17 @@
+2019-01-28  Aakash Jain  <aakash_jain@apple.com>
+
+        [ews-app] Add method to save Build data to database
+        https://bugs.webkit.org/show_bug.cgi?id=193735
+
+        Reviewed by Lucas Forschler.
+
+        * BuildSlaveSupport/ews-app/ews/models/build.py:
+        (Build.save_build): Method to save build information to database.
+        (Build.get_existing_build): Method to fetch existing build from database.
+        (Build.is_valid_result): Method to validate build result.
+        * BuildSlaveSupport/ews-app/ews/common/util.py:
+        (is_valid_int_id): Method to validate valid id.
+
 2019-01-28  Chris Dumez  <cdumez@apple.com>
 
         Regression(PSON) Crash under WebPageProxy::didStartProgress()

@@ -1,4 +1,4 @@
-# Copyright (C) 2018 Apple Inc. All rights reserved.
+# Copyright (C) 2018-2019 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -41,3 +41,16 @@ def fetch_data_from_url(url):
         _log.error('Accessed {url} with unexpected status code {status_code}.'.format(url=url, status_code=response.status_code))
         return None
     return response
+
+
+def is_valid_id(id, expected_data_type=int):
+    if not id:
+        _log.warn('Invalid id: {}'.format(id))
+        return False
+    if type(id) != expected_data_type:
+        _log.warn('Invalid type {} for id: {}, expected: {}'.format(type(id), id, expected_data_type))
+        return False
+    if expected_data_type == int and id < 0:
+        _log.warn('Invalid id: {}, id should be positive integer.'.format(id))
+        return False
+    return True
