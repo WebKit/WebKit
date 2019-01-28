@@ -5,6 +5,15 @@
 
         Unreviewed build fix.
 
+        * UIProcess/API/Cocoa/WKWebView.mm:
+
+2019-01-28  Antoine Quint  <graouts@apple.com>
+
+        Limit user-agent interactions based on the touch-action property on iOS
+        https://bugs.webkit.org/show_bug.cgi?id=193447
+
+        Unreviewed build fix.
+
         * UIProcess/ios/WKContentViewInteraction.mm:
 
 2019-01-28  Brent Fulgham  <bfulgham@apple.com>

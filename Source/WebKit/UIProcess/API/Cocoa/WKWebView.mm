@@ -2628,6 +2628,7 @@ static WebCore::FloatPoint constrainContentOffset(WebCore::FloatPoint contentOff
     [self _didFinishScrolling];
 }
 
+#if ENABLE(POINTER_EVENTS)
 - (CGPoint)_scrollView:(UIScrollView *)scrollView adjustedOffsetForOffset:(CGPoint)offset translation:(CGPoint)translation startPoint:(CGPoint)start locationInView:(CGPoint)locationInView horizontalVelocity:(inout double *)hv verticalVelocity:(inout double *)vv
 {
     if (![_contentView preventsPanningInXAxis] && ![_contentView preventsPanningInYAxis])
@@ -2641,6 +2642,7 @@ static WebCore::FloatPoint constrainContentOffset(WebCore::FloatPoint contentOff
 
     return adjustedContentOffset;
 }
+#endif
 
 - (void)scrollViewDidScroll:(UIScrollView *)scrollView
 {
