@@ -43,7 +43,6 @@
 #include "WebDocumentLoader.h"
 #include "WebPage.h"
 #include "WebPageProxyMessages.h"
-#include "WebPolicyAction.h"
 #include "WebProcess.h"
 #include "WebsitePoliciesData.h"
 #include <JavaScriptCore/APICast.h>
@@ -254,21 +253,7 @@ void WebFrame::invalidatePolicyListener()
         completionHandler();
 }
 
-static WebCore::PolicyAction toPolicyAction(WebPolicyAction policyAction)
-{
-    switch (policyAction) {
-    case WebPolicyAction::Use:
-        return WebCore::PolicyAction::Use;
-    case WebPolicyAction::Ignore:
-        return WebCore::PolicyAction::Ignore;
-    case WebPolicyAction::Download:
-        return WebCore::PolicyAction::Download;
-    }
-    ASSERT_NOT_REACHED();
-    return WebCore::PolicyAction::Ignore;
-}
-
-void WebFrame::didReceivePolicyDecision(uint64_t listenerID, WebPolicyAction action, uint64_t navigationID, DownloadID downloadID, Optional<WebsitePoliciesData>&& websitePolicies)
+void WebFrame::didReceivePolicyDecision(uint64_t listenerID, PolicyAction action, uint64_t navigationID, DownloadID downloadID, Optional<WebsitePoliciesData>&& websitePolicies)
 {
     if (!m_coreFrame || !m_policyListenerID || listenerID != m_policyListenerID || !m_policyFunction)
         return;
@@ -287,7 +272,7 @@ void WebFrame::didReceivePolicyDecision(uint64_t listenerID, WebPolicyAction act
             documentLoader->setNavigationID(navigationID);
     }
 
-    function(toPolicyAction(action));
+    function(action);
 }
 
 void WebFrame::startDownload(const WebCore::ResourceRequest& request, const String& suggestedName)
