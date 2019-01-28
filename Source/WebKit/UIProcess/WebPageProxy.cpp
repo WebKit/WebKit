@@ -969,6 +969,8 @@ void WebPageProxy::close()
     m_activeContextMenu = nullptr;
 #endif
 
+    m_provisionalPage = nullptr;
+
     m_inspector->invalidate();
 
     m_backForwardList->pageClosed();
@@ -3709,6 +3711,8 @@ double WebPageProxy::estimatedProgress() const
 
 void WebPageProxy::didStartProgress()
 {
+    ASSERT(!m_isClosed);
+
     PageClientProtector protector(pageClient());
 
     auto transaction = m_pageLoadState.transaction();
