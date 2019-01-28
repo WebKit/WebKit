@@ -40,7 +40,7 @@
 #import <AVKit/AVPlayerViewController_WebKitOnly.h>
 #endif
 
-#if !PLATFORM(IOS_FAMILY)
+#if ENABLE(MEDIA_SOURCE)
 #import <AVFoundation/AVStreamDataParser.h>
 #endif
 

@@ -124,7 +124,11 @@ std::unique_ptr<LegacyCDMSession> CDMPrivateMediaSourceAVFObjC::createSession(Le
     if (keySystemStringView.substring(14, 1).toInt() == 3 && CDMSessionAVContentKeySession::isAvailable())
         session = std::make_unique<CDMSessionAVContentKeySession>(protocolVersions, *this, client);
     else
+#if HAVE(AVSTREAMSESSION) && ENABLE(LEGACY_ENCRYPTED_MEDIA)
         session = std::make_unique<CDMSessionAVStreamSession>(protocolVersions, *this, client);
+#else
+        return nullptr;
+#endif
 
     m_sessions.append(session.get());
     return WTFMove(session);

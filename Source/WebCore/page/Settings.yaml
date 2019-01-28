@@ -450,7 +450,7 @@ useGiantTiles:
   initial: false
 
 mediaSourceEnabled:
-  initial: true
+  initial: platformDefaultMediaSourceEnabled()
   conditional: MEDIA_SOURCE
 
 sourceBufferChangeTypeEnabled:

@@ -55,6 +55,7 @@
 #pragma mark - Soft Linking
 
 #import <pal/cf/CoreMediaSoftLink.h>
+#import "CoreVideoSoftLink.h"
 
 SOFT_LINK_FRAMEWORK_OPTIONAL(AVFoundation)
 
@@ -829,7 +830,7 @@ void MediaPlayerPrivateMediaSourceAVFObjC::durationChanged()
 
         weakThis->pauseInternal();
         if (now < duration) {
-            LOG(MediaSource, "   ERROR: boundary time observer called before duration!", weakThis.get());
+            LOG(MediaSource, "MediaPlayerPrivateMediaSourceAVFObjC::durationChanged(%p) ERROR: boundary time observer called before duration!", weakThis.get());
             [weakThis->m_synchronizer setRate:0 time:PAL::toCMTime(duration)];
         }
         weakThis->m_player->timeChanged();
@@ -884,7 +885,7 @@ void MediaPlayerPrivateMediaSourceAVFObjC::flushPendingSizeChanges()
     m_sizeChangeObserverWeakPtrFactory.revokeAll();
 }
 
-#if ENABLE(LEGACY_ENCRYPTED_MEDIA)
+#if HAVE(AVSTREAMSESSION) && ENABLE(LEGACY_ENCRYPTED_MEDIA)
 AVStreamSession* MediaPlayerPrivateMediaSourceAVFObjC::streamSession()
 {
     if (!getAVStreamSessionClass() || ![getAVStreamSessionClass() instancesRespondToSelector:@selector(initWithStorageDirectoryAtURL:)])
@@ -918,11 +919,14 @@ void MediaPlayerPrivateMediaSourceAVFObjC::setCDMSession(LegacyCDMSession* sessi
     for (auto& sourceBuffer : m_mediaSourcePrivate->sourceBuffers())
         sourceBuffer->setCDMSession(m_session.get());
 }
+#endif // HAVE(AVSTREAMSESSION) && ENABLE(LEGACY_ENCRYPTED_MEDIA)
 
+#if ENABLE(LEGACY_ENCRYPTED_MEDIA) || ENABLE(ENCRYPTED_MEDIA)
 void MediaPlayerPrivateMediaSourceAVFObjC::keyNeeded(Uint8Array* initData)
 {
     m_player->keyNeeded(initData);
 }
+#endif
 
 void MediaPlayerPrivateMediaSourceAVFObjC::outputObscuredDueToInsufficientExternalProtectionChanged(bool obscured)
 {
@@ -933,7 +937,6 @@ void MediaPlayerPrivateMediaSourceAVFObjC::outputObscuredDueToInsufficientExtern
     UNUSED_PARAM(obscured);
 #endif
 }
-#endif
 
 #if ENABLE(ENCRYPTED_MEDIA)
 void MediaPlayerPrivateMediaSourceAVFObjC::cdmInstanceAttached(CDMInstance& instance)

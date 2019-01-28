@@ -117,6 +117,13 @@ void SettingsBase::initializeDefaultFontFamilies()
 }
 #endif
 
+#if ENABLE(MEDIA_SOURCE) && !PLATFORM(COCOA)
+bool SettingsBase::platformDefaultMediaSourceEnabled()
+{
+    return true;
+}
+#endif
+
 const AtomicString& SettingsBase::standardFontFamily(UScriptCode script) const
 {
     return m_fontGenericFamilies->standardFontFamily(script);

@@ -1,3 +1,13 @@
+2019-01-28  Eric Carlson  <eric.carlson@apple.com>
+
+        AVStreamSession isn't always available, make a HAVE compile flag for it
+        https://bugs.webkit.org/show_bug.cgi?id=193889
+        <rdar://problem/47452863>
+
+        Reviewed by Jer Noble.
+
+        * wtf/FeatureDefines.h:
+
 2018-12-15  Darin Adler  <darin@apple.com>
 
         Replace many uses of String::format with more type-safe alternatives

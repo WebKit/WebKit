@@ -26,7 +26,7 @@
 #import "config.h"
 #import "CDMSessionAVStreamSession.h"
 
-#if ENABLE(LEGACY_ENCRYPTED_MEDIA) && ENABLE(MEDIA_SOURCE)
+#if HAVE(AVSTREAMSESSION) && ENABLE(LEGACY_ENCRYPTED_MEDIA) && ENABLE(MEDIA_SOURCE)
 
 #import "CDMPrivateMediaSourceAVFObjC.h"
 #import "LegacyCDM.h"

@@ -177,6 +177,14 @@ the public iOS SDK. See <https://webkit.org/b/179167>. */
 #endif
 #endif
 
+#if !defined(HAVE_AVSTREAMSESSION)
+#define HAVE_AVSTREAMSESSION 0
+#endif
+
+#if !defined(ENABLE_MEDIA_SOURCE)
+#define ENABLE_MEDIA_SOURCE 0
+#endif
+
 #endif /* PLATFORM(IOS_FAMILY) */
 
 /* --------- Apple WATCHOS port --------- */
@@ -253,6 +261,14 @@ the public iOS SDK. See <https://webkit.org/b/179167>. */
 
 #if !defined(ENABLE_WEBPROCESS_WINDOWSERVER_BLOCKING)
 #define ENABLE_WEBPROCESS_WINDOWSERVER_BLOCKING ENABLE_WEBPROCESS_NSRUNLOOP
+#endif
+
+#if !defined(HAVE_AVSTREAMSESSION)
+#define HAVE_AVSTREAMSESSION 1
+#endif
+
+#if !defined(ENABLE_MEDIA_SOURCE)
+#define ENABLE_MEDIA_SOURCE 1
 #endif
 
 #endif /* PLATFORM(MAC) */

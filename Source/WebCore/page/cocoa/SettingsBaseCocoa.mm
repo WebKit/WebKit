@@ -90,6 +90,11 @@ void SettingsBase::initializeDefaultFontFamilies()
     setSansSerifFontFamily("Helvetica", USCRIPT_COMMON);
 }
 
+bool SettingsBase::platformDefaultMediaSourceEnabled()
+{
+    return true;
+}
+
 #else
 
 void SettingsBase::initializeDefaultFontFamilies()

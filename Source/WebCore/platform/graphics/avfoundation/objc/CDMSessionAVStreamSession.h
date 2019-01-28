@@ -31,7 +31,7 @@
 #include <wtf/RetainPtr.h>
 #include <wtf/WeakPtr.h>
 
-#if ENABLE(LEGACY_ENCRYPTED_MEDIA) && ENABLE(MEDIA_SOURCE)
+#if HAVE(AVSTREAMSESSION) && ENABLE(LEGACY_ENCRYPTED_MEDIA) && ENABLE(MEDIA_SOURCE)
 
 OBJC_CLASS AVStreamSession;
 OBJC_CLASS WebCDMSessionAVStreamSessionObserver;

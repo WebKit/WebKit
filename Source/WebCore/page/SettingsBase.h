@@ -116,6 +116,10 @@ public:
     WEBCORE_EXPORT static float defaultMinimumZoomFontSize();
     WEBCORE_EXPORT static bool defaultDownloadableBinaryFontsEnabled();
 
+#if ENABLE(MEDIA_SOURCE)
+    static bool platformDefaultMediaSourceEnabled();
+#endif
+
     static const unsigned defaultMaximumHTMLParserDOMTreeDepth = 512;
     static const unsigned defaultMaximumRenderTreeDepth = 512;
 

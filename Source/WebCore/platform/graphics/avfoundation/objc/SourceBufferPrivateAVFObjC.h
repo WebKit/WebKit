@@ -77,7 +77,7 @@ public:
     ALLOW_NEW_API_WITHOUT_GUARDS_END
 };
 
-class SourceBufferPrivateAVFObjC final : public SourceBufferPrivate {
+class SourceBufferPrivateAVFObjC final : public SourceBufferPrivate, public CanMakeWeakPtr<SourceBufferPrivateAVFObjC> {
 public:
     static Ref<SourceBufferPrivateAVFObjC> create(MediaSourcePrivateAVFObjC*);
     virtual ~SourceBufferPrivateAVFObjC();
@@ -195,6 +195,7 @@ private:
     bool m_waitingForKey { true };
     int m_enabledVideoTrackID { -1 };
     int m_protectedTrackID { -1 };
+    uint64_t m_mapID;
 };
 
 }

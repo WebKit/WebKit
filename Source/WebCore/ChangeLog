@@ -1,3 +1,51 @@
+2019-01-28  Eric Carlson  <eric.carlson@apple.com>
+
+        AVStreamSession isn't always available, make a HAVE compile flag for it
+        https://bugs.webkit.org/show_bug.cgi?id=193889
+        <rdar://problem/47452863>
+
+        Reviewed by Jer Noble.
+
+        No new tests, no functional change.
+
+        * page/Settings.yaml:
+        * page/SettingsBase.cpp:
+        (WebCore::SettingsBase::platformDefaultMediaSourceEnabled):
+        * page/SettingsBase.h:
+        * page/cocoa/SettingsBaseCocoa.mm:
+        (WebCore::SettingsBase::platformDefaultMediaSourceEnabled):
+        * platform/graphics/avfoundation/CDMPrivateMediaSourceAVFObjC.mm:
+        (WebCore::CDMPrivateMediaSourceAVFObjC::createSession):
+        * platform/graphics/avfoundation/objc/CDMSessionAVStreamSession.h:
+        * platform/graphics/avfoundation/objc/CDMSessionAVStreamSession.mm:
+
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateMediaSourceAVFObjC.h:
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateMediaSourceAVFObjC.mm:
+        (WebCore::MediaPlayerPrivateMediaSourceAVFObjC::durationChanged): Fix logging.
+        (WebCore::MediaPlayerPrivateMediaSourceAVFObjC::outputObscuredDueToInsufficientExternalProtectionChanged):
+
+        * platform/graphics/avfoundation/objc/SourceBufferPrivateAVFObjC.h:
+        * platform/graphics/avfoundation/objc/SourceBufferPrivateAVFObjC.mm:
+        
+        Use a HashMap to associate CMSampleBuffer with SourceBufferPrivateAVFObjC.
+
+        (-[WebAVSampleBufferErrorListener observeValueForKeyPath:ofObject:change:context:]): isEqualTo
+        -> isEqualToString.
+        (WebCore::sourceBufferMap):
+        (WebCore::nextMapID):
+        (WebCore::bufferWasConsumedCallback):
+        (WebCore::SourceBufferPrivateAVFObjC::SourceBufferPrivateAVFObjC):
+        (WebCore::SourceBufferPrivateAVFObjC::~SourceBufferPrivateAVFObjC):
+        (WebCore::SourceBufferPrivateAVFObjC::willProvideContentKeyRequestInitializationDataForTrackID):
+        (WebCore::SourceBufferPrivateAVFObjC::didProvideContentKeyRequestInitializationDataForTrackID):
+        (WebCore::SourceBufferPrivateAVFObjC::append):
+        (WebCore::SourceBufferPrivateAVFObjC::destroyParser):
+        (WebCore::SourceBufferPrivateAVFObjC::layerDidReceiveError):
+        (WebCore::SourceBufferPrivateAVFObjC::enqueueSample):
+        (WebCore::SourceBufferPrivateAVFObjC::bufferWasConsumed):
+        (-[WebBufferConsumedContext initWithParent:]): Deleted.
+        (-[WebBufferConsumedContext parent]): Deleted.
+
 2019-01-28  Rob Buis  <rbuis@igalia.com>
 
         Update MIME type parser

@@ -354,13 +354,13 @@ ALLOW_NEW_API_WITHOUT_GUARDS_END
         RetainPtr<AVSampleBufferDisplayLayer> layer = (AVSampleBufferDisplayLayer *)object;
         ASSERT(_layers.contains(layer.get()));
 
-        if ([keyPath isEqualTo:@"error"]) {
+        if ([keyPath isEqualToString:@"error"]) {
             RetainPtr<NSError> error = [change valueForKey:NSKeyValueChangeNewKey];
             callOnMainThread([parent = _parent, layer = WTFMove(layer), error = WTFMove(error)] {
                 if (parent)
                     parent->layerDidReceiveError(layer.get(), error.get());
             });
-        } else if ([keyPath isEqualTo:@"outputObscuredDueToInsufficientExternalProtection"]) {
+        } else if ([keyPath isEqualToString:@"outputObscuredDueToInsufficientExternalProtection"]) {
             callOnMainThread([parent = _parent, obscured = [[change valueForKey:NSKeyValueChangeNewKey] boolValue]] {
                 if (parent)
                     parent->outputObscuredDueToInsufficientExternalProtectionChanged(obscured);
@@ -375,7 +375,7 @@ ALLOW_NEW_API_WITHOUT_GUARDS_END
         RetainPtr<NSError> error = [change valueForKey:NSKeyValueChangeNewKey];
 
         ASSERT(_renderers.contains(renderer.get()));
-        ASSERT([keyPath isEqualTo:@"error"]);
+        ASSERT([keyPath isEqualToString:@"error"]);
 
         callOnMainThread([parent = _parent, renderer = WTFMove(renderer), error = WTFMove(error)] {
             if (parent)
@@ -395,30 +395,6 @@ ALLOW_NEW_API_WITHOUT_GUARDS_END
         if (parent)
             parent->layerDidReceiveError(layer.get(), error.get());
     });
-}
-@end
-
-#pragma mark -
-
-@interface WebBufferConsumedContext : NSObject {
-    WeakPtr<WebCore::SourceBufferPrivateAVFObjC> _parent;
-}
-@property (readonly) WebCore::SourceBufferPrivateAVFObjC* parent;
-@end
-
-@implementation WebBufferConsumedContext
-- (id)initWithParent:(WeakPtr<WebCore::SourceBufferPrivateAVFObjC>)parent
-{
-    self = [super init];
-    if (self)
-        _parent = parent;
-    return self;
-}
-
-@dynamic parent;
-- (WebCore::SourceBufferPrivateAVFObjC*)parent
-{
-    return _parent.get();
 }
 @end
 
@@ -461,26 +437,39 @@ protected:
 #pragma mark -
 #pragma mark SourceBufferPrivateAVFObjC
 
-static NSString *kBufferConsumedContext = @"BufferConsumedContext";
-
-static void bufferWasConsumedCallback(CMNotificationCenterRef, const void*, CFStringRef notificationName, const void*, CFTypeRef payload)
+static HashMap<uint64_t, WeakPtr<SourceBufferPrivateAVFObjC>>& sourceBufferMap()
 {
-    if (!isMainThread()) {
-        callOnMainThread([notificationName, payload = retainPtr(payload)] {
-            bufferWasConsumedCallback(nullptr, nullptr, notificationName, nullptr, payload.get());
-        });
-        return;
-    }
+    static NeverDestroyed<HashMap<uint64_t, WeakPtr<SourceBufferPrivateAVFObjC>>> map;
+    return map;
+}
+
+static uint64_t nextMapID()
+{
+    static uint64_t mapID = 0;
+    return ++mapID;
+}
+
+static void bufferWasConsumedCallback(CMNotificationCenterRef, const void* listener, CFStringRef notificationName, const void*, CFTypeRef)
+{
+    LOG(MediaSource, "bufferWasConsumedCallback - nofication %s", [(__bridge NSString *)notificationName UTF8String]);
 
     if (!CFEqual(kCMSampleBufferConsumerNotification_BufferConsumed, notificationName))
         return;
 
-    ASSERT(CFGetTypeID(payload) == CFDictionaryGetTypeID());
-    WebBufferConsumedContext *context = [(__bridge NSDictionary *)payload valueForKey:kBufferConsumedContext];
-    if (!context)
+    if (!isMainThread()) {
+        callOnMainThread([notificationName, listener] {
+            bufferWasConsumedCallback(nullptr, listener, notificationName, nullptr, nullptr);
+        });
         return;
+    }
 
-    if (auto sourceBuffer = context.parent)
+    uint64_t mapID = reinterpret_cast<uint64_t>(listener);
+    if (!mapID) {
+        LOG(MediaSource, "bufferWasConsumedCallback - ERROR: didn't find ID %llu in map", mapID);
+        return;
+    }
+
+    if (auto sourceBuffer = sourceBufferMap().get(mapID).get())
         sourceBuffer->bufferWasConsumed();
 }
 
@@ -495,14 +484,18 @@ SourceBufferPrivateAVFObjC::SourceBufferPrivateAVFObjC(MediaSourcePrivateAVFObjC
     , m_errorListener(adoptNS([[WebAVSampleBufferErrorListener alloc] initWithParent:createWeakPtr()]))
     , m_isAppendingGroup(adoptOSObject(dispatch_group_create()))
     , m_mediaSource(parent)
+    , m_mapID(nextMapID())
 {
-    CMNotificationCenterAddListener(CMNotificationCenterGetDefaultLocalCenter(), this, bufferWasConsumedCallback, kCMSampleBufferConsumerNotification_BufferConsumed, nullptr, 0);
+    CMNotificationCenterAddListener(CMNotificationCenterGetDefaultLocalCenter(), reinterpret_cast<void*>(m_mapID), bufferWasConsumedCallback, kCMSampleBufferConsumerNotification_BufferConsumed, nullptr, 0);
     m_delegate.get().abortSemaphore = Box<Semaphore>::create(0);
+
+    sourceBufferMap().add(m_mapID, makeWeakPtr(*this));
 }
 
 SourceBufferPrivateAVFObjC::~SourceBufferPrivateAVFObjC()
 {
     ASSERT(!m_client);
+    sourceBufferMap().remove(m_mapID);
     destroyParser();
     destroyRenderers();
 
@@ -628,7 +621,7 @@ void SourceBufferPrivateAVFObjC::willProvideContentKeyRequestInitializationDataF
 
     ASSERT(m_parser);
 
-#if ENABLE(LEGACY_ENCRYPTED_MEDIA)
+#if HAVE(AVSTREAMSESSION) && ENABLE(LEGACY_ENCRYPTED_MEDIA)
     LOG(MediaSource, "SourceBufferPrivateAVFObjC::willProvideContentKeyRequestInitializationDataForTrackID(%p) - track:%d", this, trackID);
     m_protectedTrackID = trackID;
 
@@ -649,7 +642,7 @@ void SourceBufferPrivateAVFObjC::didProvideContentKeyRequestInitializationDataFo
     if (!m_mediaSource)
         return;
 
-#if ENABLE(LEGACY_ENCRYPTED_MEDIA)
+#if HAVE(AVSTREAMSESSION) && ENABLE(LEGACY_ENCRYPTED_MEDIA)
     LOG(MediaSource, "SourceBufferPrivateAVFObjC::didProvideContentKeyRequestInitializationDataForTrackID(%p) - track:%d", this, trackID);
     m_protectedTrackID = trackID;
     auto initDataArray = Uint8Array::create([initData length]);
@@ -666,7 +659,6 @@ void SourceBufferPrivateAVFObjC::didProvideContentKeyRequestInitializationDataFo
 #endif
 
 #if ENABLE(ENCRYPTED_MEDIA) && HAVE(AVCONTENTKEYSESSION)
-    //
     auto initDataBuffer = SharedBuffer::create(initData);
     auto keyIDs = CDMPrivateFairPlayStreaming::extractKeyIDsSinf(initDataBuffer);
     if (!keyIDs)
@@ -713,7 +705,7 @@ static dispatch_queue_t globalDataParserQueue()
 
 void SourceBufferPrivateAVFObjC::append(Vector<unsigned char>&& data)
 {
-    LOG(MediaSource, "SourceBufferPrivateAVFObjC::append(%p) - data:%p, length:%d", this, data.data(), data.size());
+    LOG(MediaSource, "SourceBufferPrivateAVFObjC::append(%p) - data:%p, length:%d", this, data.data(), (int)data.size());
 
     // FIXME: Avoid the data copy by wrapping around the Vector<> object.
     RetainPtr<NSData> nsData = adoptNS([[NSData alloc] initWithBytes:data.data() length:data.size()]);
@@ -770,7 +762,7 @@ void SourceBufferPrivateAVFObjC::resetParserState()
 
 void SourceBufferPrivateAVFObjC::destroyParser()
 {
-#if ENABLE(LEGACY_ENCRYPTED_MEDIA)
+#if HAVE(AVSTREAMSESSION) && ENABLE(LEGACY_ENCRYPTED_MEDIA)
     if (m_mediaSource && m_mediaSource->player()->hasStreamSession())
         [m_mediaSource->player()->streamSession() removeStreamDataParser:m_parser.get()];
 #endif
@@ -988,7 +980,7 @@ void SourceBufferPrivateAVFObjC::unregisterForErrorNotifications(SourceBufferPri
 
 void SourceBufferPrivateAVFObjC::layerDidReceiveError(AVSampleBufferDisplayLayer *layer, NSError *error)
 {
-    LOG(MediaSource, "SourceBufferPrivateAVFObjC::layerDidReceiveError(%p): layer(%p), error(%@)", this, layer, [error description]);
+    LOG(MediaSource, "SourceBufferPrivateAVFObjC::layerDidReceiveError(%p): layer(%p), error(%s)", this, layer, [[error description] UTF8String]);
 
     // FIXME(142246): Remove the following once <rdar://problem/20027434> is resolved.
     bool anyIgnored = false;
@@ -1025,7 +1017,7 @@ ALLOW_NEW_API_WITHOUT_GUARDS_BEGIN
 void SourceBufferPrivateAVFObjC::rendererDidReceiveError(AVSampleBufferAudioRenderer *renderer, NSError *error)
 ALLOW_NEW_API_WITHOUT_GUARDS_END
 {
-    LOG(MediaSource, "SourceBufferPrivateAVFObjC::rendererDidReceiveError(%p): renderer(%p), error(%@)", this, renderer, [error description]);
+    LOG(MediaSource, "SourceBufferPrivateAVFObjC::rendererDidReceiveError(%p): renderer(%p), error(%s)", this, renderer, [[error description] UTF8String]);
 
     if ([error code] == 'HDCP')
         m_hdcpError = error;
@@ -1098,7 +1090,7 @@ void SourceBufferPrivateAVFObjC::enqueueSample(Ref<MediaSample>&& sample, const 
         CMFormatDescriptionRef formatDescription = CMSampleBufferGetFormatDescription(platformSample.sample.cmSampleBuffer);
         FloatSize formatSize = FloatSize(CMVideoFormatDescriptionGetPresentationDimensions(formatDescription, true, true));
         if (!m_cachedSize || formatSize != m_cachedSize.value()) {
-            LOG(MediaSource, "SourceBufferPrivateAVFObjC::enqueueSample(%p) - size change detected: {width=%lf, height=%lf}", formatSize.width(), formatSize.height());
+            LOG(MediaSource, "SourceBufferPrivateAVFObjC::enqueueSample(%p) - size change detected: {width=%lf, height=%lf}", this, formatSize.width(), formatSize.height());
             bool sizeWasNull = !m_cachedSize;
             m_cachedSize = formatSize;
             if (m_mediaSource) {
@@ -1114,11 +1106,10 @@ void SourceBufferPrivateAVFObjC::enqueueSample(Ref<MediaSample>&& sample, const 
 
         if (m_displayLayer) {
             if (m_mediaSource && !m_mediaSource->player()->hasAvailableVideoFrame() && !sample->isNonDisplaying()) {
-                auto context = adoptNS([[WebBufferConsumedContext alloc] initWithParent:createWeakPtr()]);
                 CMSampleBufferRef rawSampleCopy;
                 CMSampleBufferCreateCopy(kCFAllocatorDefault, platformSample.sample.cmSampleBuffer, &rawSampleCopy);
                 auto sampleCopy = adoptCF(rawSampleCopy);
-                CMSetAttachment(sampleCopy.get(), kCMSampleBufferAttachmentKey_PostNotificationWhenConsumed, (__bridge CFDictionaryRef)@{kBufferConsumedContext: context.get()}, kCMAttachmentMode_ShouldNotPropagate);
+                CMSetAttachment(sampleCopy.get(), kCMSampleBufferAttachmentKey_PostNotificationWhenConsumed, (__bridge CFDictionaryRef)@{ (__bridge NSString *)kCMSampleBufferAttachmentKey_PostNotificationWhenConsumed : @(YES) }, kCMAttachmentMode_ShouldNotPropagate);
                 [m_displayLayer enqueueSampleBuffer:sampleCopy.get()];
             } else
                 [m_displayLayer enqueueSampleBuffer:platformSample.sample.cmSampleBuffer];
@@ -1133,6 +1124,8 @@ void SourceBufferPrivateAVFObjC::enqueueSample(Ref<MediaSample>&& sample, const 
 
 void SourceBufferPrivateAVFObjC::bufferWasConsumed()
 {
+    LOG(MediaSource, "SourceBufferPrivateAVFObjC::bufferWasConsumed(%p)", this);
+
     if (m_mediaSource)
         m_mediaSource->player()->setHasAvailableVideoFrame(true);
 }

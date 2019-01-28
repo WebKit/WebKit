@@ -109,7 +109,7 @@ public:
     void setTextTrackRepresentation(TextTrackRepresentation*) override;
     void syncTextTrackBounds() override;
     
-#if ENABLE(LEGACY_ENCRYPTED_MEDIA)
+#if HAVE(AVSTREAMSESSION) && ENABLE(LEGACY_ENCRYPTED_MEDIA)
     bool hasStreamSession() { return m_streamSession; }
     AVStreamSession *streamSession();
     void setCDMSession(LegacyCDMSession*) override;
@@ -121,17 +121,17 @@ public:
     void cdmInstanceDetached(CDMInstance&) final;
     void attemptToDecryptWithInstance(CDMInstance&) final;
     bool waitingForKey() const final;
-
     void waitingForKeyChanged();
 #endif
-
-#if ENABLE(LEGACY_ENCRYPTED_MEDIA) || ENABLE(ENCRYPTED_MEDIA)
-    void keyNeeded(Uint8Array*);
 
     void outputObscuredDueToInsufficientExternalProtectionChanged(bool);
     void beginSimulatedHDCPError() override { outputObscuredDueToInsufficientExternalProtectionChanged(true); }
     void endSimulatedHDCPError() override { outputObscuredDueToInsufficientExternalProtectionChanged(false); }
+
+#if ENABLE(LEGACY_ENCRYPTED_MEDIA) || ENABLE(ENCRYPTED_MEDIA)
+    void keyNeeded(Uint8Array*);
 #endif
+
 #if ENABLE(ENCRYPTED_MEDIA)
     void initializationDataEncountered(const String&, RefPtr<ArrayBuffer>&&);
 #endif
