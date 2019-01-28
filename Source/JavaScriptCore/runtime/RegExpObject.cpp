@@ -28,7 +28,6 @@
 #include "JSString.h"
 #include "Lookup.h"
 #include "JSCInlines.h"
-#include "RegExpConstructor.h"
 #include "RegExpObjectInlines.h"
 
 namespace JSC {
@@ -189,20 +188,19 @@ JSValue RegExpObject::matchGlobal(ExecState* exec, JSGlobalObject* globalObject,
 
     String s = string->value(exec);
     RETURN_IF_EXCEPTION(scope, { });
-    RegExpConstructor* regExpConstructor = globalObject->regExpConstructor();
 
     ASSERT(!s.isNull());
     if (regExp->unicode()) {
         unsigned stringLength = s.length();
         RELEASE_AND_RETURN(scope, collectMatches(
-            vm, exec, string, s, regExpConstructor, regExp,
+            vm, exec, string, s, globalObject, regExp,
             [&] (size_t end) -> size_t {
                 return advanceStringUnicode(s, stringLength, end);
             }));
     }
 
     RELEASE_AND_RETURN(scope, collectMatches(
-        vm, exec, string, s, regExpConstructor, regExp,
+        vm, exec, string, s, globalObject, regExp,
         [&] (size_t end) -> size_t {
             return end + 1;
         }));

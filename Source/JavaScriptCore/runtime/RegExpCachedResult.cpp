@@ -31,7 +31,7 @@
 
 namespace JSC {
 
-void RegExpCachedResult::visitChildren(SlotVisitor& visitor)
+void RegExpCachedResult::visitAggregate(SlotVisitor& visitor)
 {
     visitor.append(m_lastInput);
     visitor.append(m_lastRegExp);

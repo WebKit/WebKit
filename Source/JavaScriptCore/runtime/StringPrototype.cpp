@@ -43,7 +43,7 @@
 #include "PropertyNameArray.h"
 #include "RegExpCache.h"
 #include "RegExpConstructor.h"
-#include "RegExpObject.h"
+#include "RegExpGlobalDataInlines.h"
 #include "SuperSampler.h"
 #include <algorithm>
 #include <unicode/uconfig.h>
@@ -483,11 +483,11 @@ static ALWAYS_INLINE JSString* removeUsingRegExpSearch(VM& vm, ExecState* exec, 
     unsigned startPosition = 0;
 
     Vector<StringRange, 16> sourceRanges;
-    RegExpConstructor* regExpConstructor = exec->lexicalGlobalObject()->regExpConstructor();
+    JSGlobalObject* globalObject = exec->lexicalGlobalObject();
     unsigned sourceLen = source.length();
 
     while (true) {
-        MatchResult result = regExpConstructor->performMatch(vm, regExp, string, source, startPosition);
+        MatchResult result = globalObject->regExpGlobalData().performMatch(vm, globalObject, regExp, string, source, startPosition);
         RETURN_IF_EXCEPTION(scope, nullptr);
         if (!result)
             break;
@@ -542,7 +542,7 @@ static ALWAYS_INLINE JSString* replaceUsingRegExpSearch(
 
     // FIXME: This is wrong because we may be called directly from the FTL.
     // https://bugs.webkit.org/show_bug.cgi?id=154874
-    RegExpConstructor* regExpConstructor = exec->lexicalGlobalObject()->regExpConstructor();
+    JSGlobalObject* globalObject = exec->lexicalGlobalObject();
 
     size_t lastIndex = 0;
     unsigned startPosition = 0;
@@ -561,7 +561,7 @@ static ALWAYS_INLINE JSString* replaceUsingRegExpSearch(
         RETURN_IF_EXCEPTION(scope, nullptr);
         while (true) {
             int* ovector;
-            MatchResult result = regExpConstructor->performMatch(vm, regExp, string, source, startPosition, &ovector);
+            MatchResult result = globalObject->regExpGlobalData().performMatch(vm, globalObject, regExp, string, source, startPosition, &ovector);
             RETURN_IF_EXCEPTION(scope, nullptr);
             if (!result)
                 break;
@@ -627,7 +627,7 @@ static ALWAYS_INLINE JSString* replaceUsingRegExpSearch(
     } else {
         do {
             int* ovector;
-            MatchResult result = regExpConstructor->performMatch(vm, regExp, string, source, startPosition, &ovector);
+            MatchResult result = globalObject->regExpGlobalData().performMatch(vm, globalObject, regExp, string, source, startPosition, &ovector);
             RETURN_IF_EXCEPTION(scope, nullptr);
             if (!result)
                 break;

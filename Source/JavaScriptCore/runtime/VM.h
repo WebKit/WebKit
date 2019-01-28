@@ -129,6 +129,7 @@ class JSWebAssemblyInstance;
 class LLIntOffsetsExtractor;
 class NativeExecutable;
 class PromiseDeferredTimer;
+class RegExp;
 class RegExpCache;
 class Register;
 class RegisterAtOffsetList;
@@ -384,7 +385,6 @@ public:
 #endif
     IsoSubspace propertyTableSpace;
     IsoSubspace proxyRevokeSpace;
-    IsoSubspace regExpConstructorSpace;
     IsoSubspace structureRareDataSpace;
     IsoSubspace structureSpace;
     IsoSubspace weakSetSpace;

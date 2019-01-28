@@ -35,7 +35,6 @@
 #include "ObjectPrototype.h"
 #include "RegExp.h"
 #include "RegExpCache.h"
-#include "RegExpConstructor.h"
 #include "RegExpObject.h"
 #include "RegExpObjectInlines.h"
 #include "StringObject.h"
@@ -83,17 +82,6 @@ void RegExpPrototype::finishCreation(VM& vm, JSGlobalObject* globalObject)
     JSC_BUILTIN_FUNCTION_WITHOUT_TRANSITION(vm.propertyNames->searchSymbol, regExpPrototypeSearchCodeGenerator, static_cast<unsigned>(PropertyAttribute::DontEnum));
     JSC_BUILTIN_FUNCTION_WITHOUT_TRANSITION(vm.propertyNames->splitSymbol, regExpPrototypeSplitCodeGenerator, static_cast<unsigned>(PropertyAttribute::DontEnum));
     JSC_BUILTIN_FUNCTION_WITHOUT_TRANSITION(vm.propertyNames->test, regExpPrototypeTestCodeGenerator, static_cast<unsigned>(PropertyAttribute::DontEnum));
-
-    m_emptyRegExp.set(vm, this, RegExp::create(vm, "", NoFlags));
-}
-
-void RegExpPrototype::visitChildren(JSCell* cell, SlotVisitor& visitor)
-{
-    RegExpPrototype* thisObject = jsCast<RegExpPrototype*>(cell);
-    ASSERT_GC_OBJECT_INHERITS(thisObject, info());
-    Base::visitChildren(thisObject, visitor);
-    
-    visitor.append(thisObject->m_emptyRegExp);
 }
 
 // ------------------------------ Functions ---------------------------
@@ -497,8 +485,8 @@ EncodedJSValue JSC_HOST_CALL regExpProtoFuncSearchFast(ExecState* exec)
     String s = string->value(exec);
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
 
-    RegExpConstructor* regExpConstructor = exec->lexicalGlobalObject()->regExpConstructor();
-    MatchResult result = regExpConstructor->performMatch(vm, regExp, string, s, 0);
+    JSGlobalObject* globalObject = exec->lexicalGlobalObject();
+    MatchResult result = globalObject->regExpGlobalData().performMatch(vm, globalObject, regExp, string, s, 0);
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
     return JSValue::encode(result ? jsNumber(result.start) : jsNumber(-1));
 }

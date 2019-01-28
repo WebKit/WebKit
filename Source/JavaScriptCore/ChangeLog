@@ -1,3 +1,103 @@
+2019-01-28  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] RegExpConstructor should not have own IsoSubspace
+        https://bugs.webkit.org/show_bug.cgi?id=193801
+
+        Reviewed by Mark Lam.
+
+        This patch finally removes RegExpConstructor's cached data to JSGlobalObject and remove IsoSubspace for RegExpConstructor.
+        sizeof(RegExpConstructor) != sizeof(InternalFunction), so that we have 16KB memory just for RegExpConstructor. But cached
+        regexp matching data (e.g. `RegExp.$1`) is per-JSGlobalObject one, and we can move this data to JSGlobalObject and remove
+        it from RegExpConstructor members.
+
+        We introduce RegExpGlobalData, which holds the per-global RegExp matching data. And we perform `performMatch` etc. with
+        JSGlobalObject instead of RegExpConstructor. This change requires small changes in DFG / FTL's RecordRegExpCachedResult
+        node since its 1st argument is changed from RegExpConstructor to JSGlobalObject.
+
+        We also move emptyRegExp from RegExpPrototype to VM's RegExpCache because it is more natural place to put it.
+
+        * CMakeLists.txt:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * Sources.txt:
+        * dfg/DFGOperations.cpp:
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileRecordRegExpCachedResult):
+        * dfg/DFGStrengthReductionPhase.cpp:
+        (JSC::DFG::StrengthReductionPhase::handleNode):
+        * ftl/FTLAbstractHeapRepository.cpp:
+        * ftl/FTLAbstractHeapRepository.h:
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::compileRecordRegExpCachedResult):
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::init):
+        (JSC::JSGlobalObject::visitChildren):
+        * runtime/JSGlobalObject.h:
+        (JSC::JSGlobalObject::regExpGlobalData):
+        (JSC::JSGlobalObject::regExpGlobalDataOffset):
+        (JSC::JSGlobalObject::regExpConstructor const): Deleted.
+        * runtime/RegExpCache.cpp:
+        (JSC::RegExpCache::initialize):
+        * runtime/RegExpCache.h:
+        (JSC::RegExpCache::emptyRegExp const):
+        * runtime/RegExpCachedResult.cpp:
+        (JSC::RegExpCachedResult::visitAggregate):
+        (JSC::RegExpCachedResult::visitChildren): Deleted.
+        * runtime/RegExpCachedResult.h:
+        (JSC::RegExpCachedResult::RegExpCachedResult): Deleted.
+        * runtime/RegExpConstructor.cpp:
+        (JSC::RegExpConstructor::RegExpConstructor):
+        (JSC::regExpConstructorDollar):
+        (JSC::regExpConstructorInput):
+        (JSC::regExpConstructorMultiline):
+        (JSC::regExpConstructorLastMatch):
+        (JSC::regExpConstructorLastParen):
+        (JSC::regExpConstructorLeftContext):
+        (JSC::regExpConstructorRightContext):
+        (JSC::setRegExpConstructorInput):
+        (JSC::setRegExpConstructorMultiline):
+        (JSC::RegExpConstructor::destroy): Deleted.
+        (JSC::RegExpConstructor::visitChildren): Deleted.
+        (JSC::RegExpConstructor::getBackref): Deleted.
+        (JSC::RegExpConstructor::getLastParen): Deleted.
+        (JSC::RegExpConstructor::getLeftContext): Deleted.
+        (JSC::RegExpConstructor::getRightContext): Deleted.
+        * runtime/RegExpConstructor.h:
+        (JSC::RegExpConstructor::performMatch): Deleted.
+        (JSC::RegExpConstructor::recordMatch): Deleted.
+        * runtime/RegExpGlobalData.cpp: Added.
+        (JSC::RegExpGlobalData::visitAggregate):
+        (JSC::RegExpGlobalData::getBackref):
+        (JSC::RegExpGlobalData::getLastParen):
+        (JSC::RegExpGlobalData::getLeftContext):
+        (JSC::RegExpGlobalData::getRightContext):
+        * runtime/RegExpGlobalData.h: Added.
+        (JSC::RegExpGlobalData::cachedResult):
+        (JSC::RegExpGlobalData::setMultiline):
+        (JSC::RegExpGlobalData::multiline const):
+        (JSC::RegExpGlobalData::input):
+        (JSC::RegExpGlobalData::offsetOfCachedResult):
+        * runtime/RegExpGlobalDataInlines.h: Added.
+        (JSC::RegExpGlobalData::setInput):
+        (JSC::RegExpGlobalData::performMatch):
+        (JSC::RegExpGlobalData::recordMatch):
+        * runtime/RegExpObject.cpp:
+        (JSC::RegExpObject::matchGlobal):
+        * runtime/RegExpObjectInlines.h:
+        (JSC::RegExpObject::execInline):
+        (JSC::RegExpObject::matchInline):
+        (JSC::collectMatches):
+        * runtime/RegExpPrototype.cpp:
+        (JSC::RegExpPrototype::finishCreation):
+        (JSC::regExpProtoFuncSearchFast):
+        (JSC::RegExpPrototype::visitChildren): Deleted.
+        * runtime/RegExpPrototype.h:
+        * runtime/StringPrototype.cpp:
+        (JSC::removeUsingRegExpSearch):
+        (JSC::replaceUsingRegExpSearch):
+        * runtime/VM.cpp:
+        (JSC::VM::VM):
+        * runtime/VM.h:
+
 2018-12-15  Darin Adler  <darin@apple.com>
 
         Replace many uses of String::format with more type-safe alternatives

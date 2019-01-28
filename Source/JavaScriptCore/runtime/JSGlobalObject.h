@@ -39,6 +39,7 @@
 #include "LazyProperty.h"
 #include "LazyClassStructure.h"
 #include "NumberPrototype.h"
+#include "RegExpGlobalData.h"
 #include "RuntimeFlags.h"
 #include "SpecialPointer.h"
 #include "StringPrototype.h"
@@ -259,7 +260,6 @@ public:
     WriteBarrier<JSScope> m_globalScopeExtension;
     WriteBarrier<JSCallee> m_globalCallee;
     WriteBarrier<JSCallee> m_stackOverflowFrameCallee;
-    WriteBarrier<RegExpConstructor> m_regExpConstructor;
 
     WriteBarrier<ErrorConstructor> m_errorConstructor;
     LazyClassStructure m_evalErrorStructure;
@@ -446,6 +446,7 @@ public:
     std::unique_ptr<JSGlobalObjectRareData> m_rareData;
 
     WeakRandom m_weakRandom;
+    RegExpGlobalData m_regExpGlobalData;
 
     JSCallee* stackOverflowFrameCallee() const { return m_stackOverflowFrameCallee.get(); }
 
@@ -575,8 +576,6 @@ public:
     // replaces the global object's associated property.
 
     GetterSetter* speciesGetterSetter() const { return m_speciesGetterSetter.get(); }
-
-    RegExpConstructor* regExpConstructor() const { return m_regExpConstructor.get(); }
 
     ArrayConstructor* arrayConstructor() const { return m_arrayConstructor.get(); }
     ObjectConstructor* objectConstructor() const { return m_objectConstructor.get(); }
@@ -765,6 +764,9 @@ public:
 
     JS_EXPORT_PRIVATE void setRemoteDebuggingEnabled(bool);
     JS_EXPORT_PRIVATE bool remoteDebuggingEnabled() const;
+
+    RegExpGlobalData& regExpGlobalData() { return m_regExpGlobalData; }
+    static ptrdiff_t regExpGlobalDataOffset() { return OBJECT_OFFSETOF(JSGlobalObject, m_regExpGlobalData); }
 
 #if ENABLE(REMOTE_INSPECTOR)
     Inspector::JSGlobalObjectInspectorController& inspectorController() const { return *m_inspectorController.get(); }

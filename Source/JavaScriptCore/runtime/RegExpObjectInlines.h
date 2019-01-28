@@ -27,7 +27,7 @@
 #include "JSGlobalObject.h"
 #include "JSString.h"
 #include "JSCInlines.h"
-#include "RegExpConstructor.h"
+#include "RegExpGlobalDataInlines.h"
 #include "RegExpMatchesArray.h"
 #include "RegExpObject.h"
 
@@ -66,7 +66,6 @@ inline JSValue RegExpObject::execInline(ExecState* exec, JSGlobalObject* globalO
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     RegExp* regExp = this->regExp();
-    RegExpConstructor* regExpConstructor = globalObject->regExpConstructor();
     String input = string->value(exec);
     RETURN_IF_EXCEPTION(scope, { });
 
@@ -95,7 +94,7 @@ inline JSValue RegExpObject::execInline(ExecState* exec, JSGlobalObject* globalO
     if (globalOrSticky)
         setLastIndex(exec, result.end);
     RETURN_IF_EXCEPTION(scope, { });
-    regExpConstructor->recordMatch(vm, regExp, string, result);
+    globalObject->regExpGlobalData().recordMatch(vm, globalObject, regExp, string, result);
     return array;
 }
 
@@ -107,13 +106,12 @@ inline MatchResult RegExpObject::matchInline(
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     RegExp* regExp = this->regExp();
-    RegExpConstructor* regExpConstructor = globalObject->regExpConstructor();
     String input = string->value(exec);
     RETURN_IF_EXCEPTION(scope, { });
 
     if (!regExp->global() && !regExp->sticky()) {
         scope.release();
-        return regExpConstructor->performMatch(vm, regExp, string, input, 0);
+        return globalObject->regExpGlobalData().performMatch(vm, globalObject, regExp, string, input, 0);
     }
 
     unsigned lastIndex = getRegExpObjectLastIndexAsUnsigned(exec, this, input);
@@ -121,7 +119,7 @@ inline MatchResult RegExpObject::matchInline(
     if (lastIndex == UINT_MAX)
         return MatchResult::failed();
     
-    MatchResult result = regExpConstructor->performMatch(vm, regExp, string, input, lastIndex);
+    MatchResult result = globalObject->regExpGlobalData().performMatch(vm, globalObject, regExp, string, input, lastIndex);
     RETURN_IF_EXCEPTION(scope, { });
     scope.release();
     setLastIndex(exec, result.end);
@@ -145,11 +143,11 @@ inline unsigned advanceStringUnicode(String s, unsigned length, unsigned current
 }
 
 template<typename FixEndFunc>
-JSValue collectMatches(VM& vm, ExecState* exec, JSString* string, const String& s, RegExpConstructor* constructor, RegExp* regExp, const FixEndFunc& fixEnd)
+JSValue collectMatches(VM& vm, ExecState* exec, JSString* string, const String& s, JSGlobalObject* globalObject, RegExp* regExp, const FixEndFunc& fixEnd)
 {
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    MatchResult result = constructor->performMatch(vm, regExp, string, s, 0);
+    MatchResult result = globalObject->regExpGlobalData().performMatch(vm, globalObject, regExp, string, s, 0);
     RETURN_IF_EXCEPTION(scope, { });
     if (!result)
         return jsNull();
@@ -171,7 +169,7 @@ JSValue collectMatches(VM& vm, ExecState* exec, JSString* string, const String& 
         }
         if (!length)
             end = fixEnd(end);
-        result = constructor->performMatch(vm, regExp, string, s, end);
+        result = globalObject->regExpGlobalData().performMatch(vm, globalObject, regExp, string, s, end);
         if (UNLIKELY(scope.exception())) {
             hasException = true;
             return;
@@ -194,12 +192,12 @@ JSValue collectMatches(VM& vm, ExecState* exec, JSString* string, const String& 
                 if (result.empty())
                     end = fixEnd(end);
                 
-                // Using RegExpConstructor::performMatch() instead of calling RegExp::match()
+                // Using RegExpGlobalData::performMatch() instead of calling RegExp::match()
                 // directly is a surprising but profitable choice: it means that when we do OOM, we
                 // will leave the cached result in the state it ought to have had just before the
                 // OOM! On the other hand, if this loop concludes that the result is small enough,
                 // then the iterate() loop below will overwrite the cached result anyway.
-                result = constructor->performMatch(vm, regExp, string, s, end);
+                result = globalObject->regExpGlobalData().performMatch(vm, globalObject, regExp, string, s, end);
                 RETURN_IF_EXCEPTION(scope, { });
             } while (result);
             

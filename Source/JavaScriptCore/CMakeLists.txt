@@ -905,6 +905,8 @@ set(JavaScriptCore_PRIVATE_FRAMEWORK_HEADERS
     runtime/PutDirectIndexMode.h
     runtime/PutPropertySlot.h
     runtime/RegExp.h
+    runtime/RegExpCachedResult.h
+    runtime/RegExpGlobalData.h
     runtime/RegExpKey.h
     runtime/RegExpObject.h
     runtime/RuntimeFlags.h

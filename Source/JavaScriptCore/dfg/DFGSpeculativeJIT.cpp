@@ -58,7 +58,7 @@
 #include "JSLexicalEnvironment.h"
 #include "JSPropertyNameEnumerator.h"
 #include "LinkBuffer.h"
-#include "RegExpConstructor.h"
+#include "RegExpObject.h"
 #include "ScopedArguments.h"
 #include "ScratchRegisterAllocator.h"
 #include "SuperSampler.h"
@@ -11491,45 +11491,45 @@ void SpeculativeJIT::compileMaterializeNewObject(Node* node)
 
 void SpeculativeJIT::compileRecordRegExpCachedResult(Node* node)
 {
-    Edge constructorEdge = m_jit.graph().varArgChild(node, 0);
+    Edge globalObjectEdge = m_jit.graph().varArgChild(node, 0);
     Edge regExpEdge = m_jit.graph().varArgChild(node, 1);
     Edge stringEdge = m_jit.graph().varArgChild(node, 2);
     Edge startEdge = m_jit.graph().varArgChild(node, 3);
     Edge endEdge = m_jit.graph().varArgChild(node, 4);
 
-    SpeculateCellOperand constructor(this, constructorEdge);
+    SpeculateCellOperand globalObject(this, globalObjectEdge);
     SpeculateCellOperand regExp(this, regExpEdge);
     SpeculateCellOperand string(this, stringEdge);
     SpeculateInt32Operand start(this, startEdge);
     SpeculateInt32Operand end(this, endEdge);
 
-    GPRReg constructorGPR = constructor.gpr();
+    GPRReg globalObjectGPR = globalObject.gpr();
     GPRReg regExpGPR = regExp.gpr();
     GPRReg stringGPR = string.gpr();
     GPRReg startGPR = start.gpr();
     GPRReg endGPR = end.gpr();
 
-    ptrdiff_t offset = RegExpConstructor::offsetOfCachedResult();
+    ptrdiff_t offset = JSGlobalObject::regExpGlobalDataOffset() + RegExpGlobalData::offsetOfCachedResult();
 
     m_jit.storePtr(
         regExpGPR,
-        JITCompiler::Address(constructorGPR, offset + RegExpCachedResult::offsetOfLastRegExp()));
+        JITCompiler::Address(globalObjectGPR, offset + RegExpCachedResult::offsetOfLastRegExp()));
     m_jit.storePtr(
         stringGPR,
-        JITCompiler::Address(constructorGPR, offset + RegExpCachedResult::offsetOfLastInput()));
+        JITCompiler::Address(globalObjectGPR, offset + RegExpCachedResult::offsetOfLastInput()));
     m_jit.store32(
         startGPR,
         JITCompiler::Address(
-            constructorGPR,
+            globalObjectGPR,
             offset + RegExpCachedResult::offsetOfResult() + OBJECT_OFFSETOF(MatchResult, start)));
     m_jit.store32(
         endGPR,
         JITCompiler::Address(
-            constructorGPR,
+            globalObjectGPR,
             offset + RegExpCachedResult::offsetOfResult() + OBJECT_OFFSETOF(MatchResult, end)));
     m_jit.store8(
         TrustedImm32(0),
-        JITCompiler::Address(constructorGPR, offset + RegExpCachedResult::offsetOfReified()));
+        JITCompiler::Address(globalObjectGPR, offset + RegExpCachedResult::offsetOfReified()));
 
     noResult(node);
 }

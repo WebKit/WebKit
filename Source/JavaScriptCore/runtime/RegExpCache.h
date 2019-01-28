@@ -46,6 +46,10 @@ public:
     RegExpCache(VM* vm);
     void deleteAllCode();
 
+    void initialize(VM&);
+
+    RegExp* emptyRegExp() const { return m_emptyRegExp.get(); }
+
 private:
     
     static const unsigned maxStrongCacheablePatternLength = 256;
@@ -59,6 +63,7 @@ private:
     RegExpCacheMap m_weakCache; // Holds all regular expressions currently live.
     int m_nextEntryInStrongCache;
     std::array<Strong<RegExp>, maxStrongCacheableEntries> m_strongCache; // Holds a select few regular expressions that have compiled and executed
+    Strong<RegExp> m_emptyRegExp;
     VM* m_vm;
 };
 

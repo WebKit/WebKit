@@ -902,6 +902,7 @@ runtime/RegExp.cpp
 runtime/RegExpCache.cpp
 runtime/RegExpCachedResult.cpp
 runtime/RegExpConstructor.cpp
+runtime/RegExpGlobalData.cpp
 runtime/RegExpMatchesArray.cpp
 runtime/RegExpObject.cpp
 runtime/RegExpPrototype.cpp

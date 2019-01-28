@@ -1,0 +1,76 @@
+/*
+ * Copyright (C) 2019 Apple Inc. All Rights Reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. ``AS IS'' AND ANY
+ * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL APPLE INC. OR
+ * CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
+ * EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+ * PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+ * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
+ * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+#pragma once
+
+#include "RegExpGlobalData.h"
+
+namespace JSC {
+
+inline void RegExpGlobalData::setInput(ExecState* exec, JSGlobalObject* owner, JSString* string)
+{
+    m_cachedResult.setInput(exec, owner, string);
+}
+
+/*
+   To facilitate result caching, exec(), test(), match(), search(), and replace() dipatch regular
+   expression matching through the performMatch function. We use cached results to calculate,
+   e.g., RegExp.lastMatch and RegExp.leftParen.
+*/
+ALWAYS_INLINE MatchResult RegExpGlobalData::performMatch(VM& vm, JSGlobalObject* owner, RegExp* regExp, JSString* string, const String& input, int startOffset, int** ovector)
+{
+    int position = regExp->match(vm, input, startOffset, m_ovector);
+
+    if (ovector)
+        *ovector = m_ovector.data();
+
+    if (position == -1)
+        return MatchResult::failed();
+
+    ASSERT(!m_ovector.isEmpty());
+    ASSERT(m_ovector[0] == position);
+    ASSERT(m_ovector[1] >= position);
+    size_t end = m_ovector[1];
+
+    m_cachedResult.record(vm, owner, regExp, string, MatchResult(position, end));
+
+    return MatchResult(position, end);
+}
+
+ALWAYS_INLINE MatchResult RegExpGlobalData::performMatch(VM& vm, JSGlobalObject* owner, RegExp* regExp, JSString* string, const String& input, int startOffset)
+{
+    MatchResult result = regExp->match(vm, input, startOffset);
+    if (result)
+        m_cachedResult.record(vm, owner, regExp, string, result);
+    return result;
+}
+
+ALWAYS_INLINE void RegExpGlobalData::recordMatch(VM& vm, JSGlobalObject* owner, RegExp* regExp, JSString* string, const MatchResult& result)
+{
+    ASSERT(result);
+    m_cachedResult.record(vm, owner, regExp, string, result);
+}
+
+}

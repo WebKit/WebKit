@@ -37,7 +37,7 @@
 #include "DFGVariableAccessDataDump.h"
 #include "JSCInlines.h"
 #include "MathCommon.h"
-#include "RegExpConstructor.h"
+#include "RegExpObject.h"
 #include "StringPrototype.h"
 #include <cstdlib>
 #include <wtf/text/StringBuilder.h>
@@ -620,8 +620,7 @@ private:
                 }
                 m_graph.registerStructure(structure);
 
-                RegExpConstructor* constructor = globalObject->regExpConstructor();
-                FrozenValue* constructorFrozenValue = m_graph.freeze(constructor);
+                FrozenValue* globalObjectFrozenValue = m_graph.freeze(globalObject);
 
                 MatchResult result;
                 Vector<int> ovector;
@@ -736,7 +735,7 @@ private:
                 } else
                     m_graph.convertToConstant(m_node, jsBoolean(!!result));
 
-                // Whether it's Exec or Test, we need to tell the constructor and RegExpObject what's up.
+                // Whether it's Exec or Test, we need to tell the globalObject and RegExpObject what's up.
                 // Because SetRegExpObjectLastIndex may exit and it clobbers exit state, we do that
                 // first.
 
@@ -756,7 +755,7 @@ private:
                     unsigned firstChild = m_graph.m_varArgChildren.size();
                     m_graph.m_varArgChildren.append(
                         m_insertionSet.insertConstantForUse(
-                            m_nodeIndex, origin, constructorFrozenValue, KnownCellUse));
+                            m_nodeIndex, origin, globalObjectFrozenValue, KnownCellUse));
                     m_graph.m_varArgChildren.append(
                         m_insertionSet.insertConstantForUse(
                             m_nodeIndex, origin, regExpFrozenValue, KnownCellUse));

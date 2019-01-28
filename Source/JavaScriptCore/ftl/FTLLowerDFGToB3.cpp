@@ -11303,25 +11303,25 @@ private:
 
     void compileRecordRegExpCachedResult()
     {
-        Edge constructorEdge = m_graph.varArgChild(m_node, 0);
+        Edge globalObjectEdge = m_graph.varArgChild(m_node, 0);
         Edge regExpEdge = m_graph.varArgChild(m_node, 1);
         Edge stringEdge = m_graph.varArgChild(m_node, 2);
         Edge startEdge = m_graph.varArgChild(m_node, 3);
         Edge endEdge = m_graph.varArgChild(m_node, 4);
         
-        LValue constructor = lowCell(constructorEdge);
+        LValue globalObject = lowCell(globalObjectEdge);
         LValue regExp = lowCell(regExpEdge);
         LValue string = lowCell(stringEdge);
         LValue start = lowInt32(startEdge);
         LValue end = lowInt32(endEdge);
 
-        m_out.storePtr(regExp, constructor, m_heaps.RegExpConstructor_cachedResult_lastRegExp);
-        m_out.storePtr(string, constructor, m_heaps.RegExpConstructor_cachedResult_lastInput);
-        m_out.store32(start, constructor, m_heaps.RegExpConstructor_cachedResult_result_start);
-        m_out.store32(end, constructor, m_heaps.RegExpConstructor_cachedResult_result_end);
+        m_out.storePtr(regExp, globalObject, m_heaps.JSGlobalObject_regExpGlobalData_cachedResult_lastRegExp);
+        m_out.storePtr(string, globalObject, m_heaps.JSGlobalObject_regExpGlobalData_cachedResult_lastInput);
+        m_out.store32(start, globalObject, m_heaps.JSGlobalObject_regExpGlobalData_cachedResult_result_start);
+        m_out.store32(end, globalObject, m_heaps.JSGlobalObject_regExpGlobalData_cachedResult_result_end);
         m_out.store32As8(
             m_out.constInt32(0),
-            m_out.address(constructor, m_heaps.RegExpConstructor_cachedResult_reified));
+            m_out.address(globalObject, m_heaps.JSGlobalObject_regExpGlobalData_cachedResult_reified));
     }
     
     struct ArgumentsLength {
