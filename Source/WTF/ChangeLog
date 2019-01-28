@@ -1,3 +1,17 @@
+2018-12-15  Darin Adler  <darin@apple.com>
+
+        Replace many uses of String::format with more type-safe alternatives
+        https://bugs.webkit.org/show_bug.cgi?id=192742
+
+        Reviewed by Mark Lam.
+
+        * wtf/WorkQueue.cpp:
+        (WTF::WorkQueue::concurrentApply): Use makeString.
+
+        * wtf/dtoa.cpp:
+        (WTF::dtoa): Use sprintf instead of String::format in the comments,
+        since these functions have nothing to do with WTF::String.
+
 2019-01-25  Chris Dumez  <cdumez@apple.com>
 
         [iOS] Add support for the download attribute

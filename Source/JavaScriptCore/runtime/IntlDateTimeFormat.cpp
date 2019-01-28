@@ -504,7 +504,7 @@ void IntlDateTimeFormat::initializeDateTimeFormat(ExecState& exec, JSValue local
         RETURN_IF_EXCEPTION(scope, void());
         tz = canonicalizeTimeZoneName(originalTz);
         if (tz.isNull()) {
-            throwRangeError(&exec, scope, String::format("invalid time zone: %s", originalTz.utf8().data()));
+            throwRangeError(&exec, scope, "invalid time zone: " + originalTz);
             return;
         }
     } else

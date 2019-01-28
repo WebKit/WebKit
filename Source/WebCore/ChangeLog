@@ -1,3 +1,183 @@
+2018-12-15  Darin Adler  <darin@apple.com>
+
+        Replace many uses of String::format with more type-safe alternatives
+        https://bugs.webkit.org/show_bug.cgi?id=192742
+
+        Reviewed by Mark Lam.
+
+        A while back, String::format was more efficient than string concatenation,
+        but that is no longer true, and we should prefer String::number, makeString,
+        or concatenation with the "+" operator to String::format for new code.
+
+        This is not as good for programmers who are fond of printf formatting
+        style, and in some cases it's a little harder to read the strings
+        interspersed with variables rather than a format string, but it's better
+        in a few ways:
+
+        - more efficient (I didn't measure the difference, but it's definitely
+          slower to use String::Format which calls vsnprintf twice than to use
+          the WTF code)
+        - works in a type-safe way without a need to use a format specifier such
+          as "%" PRIu64 or "%tu" making it much easier to avoid problems due to
+          subtle differences between platforms
+        - allows us to use StringView in some cases to sidestep the need to
+          allocate temporary WTF::String objects
+        - does not require converting each WTF::String to a C string, allowing
+          us to remove many cases of ".utf8().data()" and similar expressions,
+          eliminating the allocation of temporary WTF::CString objects
+
+        This patch covers a batch of easiest-to-convert call sites.
+        Later patches will allow us to deprecate or remove String::format.
+
+        * Modules/indexeddb/server/SQLiteIDBBackingStore.cpp:
+        (WebCore::IDBServer::SQLiteIDBBackingStore::addRecord): Use makeString.
+        * Modules/indexeddb/shared/IDBCursorInfo.cpp:
+        (WebCore::IDBCursorInfo::loggingString const): Ditto.
+        * Modules/indexeddb/shared/IDBGetAllRecordsData.cpp:
+        (WebCore::IDBGetAllRecordsData::loggingString const): Ditto.
+        * Modules/indexeddb/shared/IDBGetRecordData.cpp:
+        (WebCore::IDBGetRecordData::loggingString const): Ditto.
+        * Modules/indexeddb/shared/IDBIndexInfo.cpp:
+        (WebCore::IDBIndexInfo::loggingString const): Ditto.
+        (WebCore::IDBIndexInfo::condensedLoggingString const): Ditto.
+        * Modules/indexeddb/shared/IDBIterateCursorData.cpp:
+        (WebCore::IDBIterateCursorData::loggingString const): Ditto.
+        * Modules/indexeddb/shared/IDBObjectStoreInfo.cpp:
+        (WebCore::IDBObjectStoreInfo::condensedLoggingString const): Ditto.
+        * Modules/indexeddb/shared/IDBResourceIdentifier.cpp:
+        (WebCore::IDBResourceIdentifier::loggingString const): Ditto.
+        * Modules/webdatabase/Database.cpp:
+        (WebCore::formatErrorMessage): Ditto.
+        * Modules/webdatabase/SQLError.h:
+        (WebCore::SQLError::create): Ditto.
+
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GenerateImplementation): Use makeString.
+
+        * bindings/scripts/test/JS/JSInterfaceName.cpp:
+        * bindings/scripts/test/JS/JSMapLike.cpp:
+        * bindings/scripts/test/JS/JSReadOnlyMapLike.cpp:
+        * bindings/scripts/test/JS/JSTestActiveDOMObject.cpp:
+        * bindings/scripts/test/JS/JSTestCEReactions.cpp:
+        * bindings/scripts/test/JS/JSTestCEReactionsStringifier.cpp:
+        * bindings/scripts/test/JS/JSTestCallTracer.cpp:
+        * bindings/scripts/test/JS/JSTestClassWithJSBuiltinConstructor.cpp:
+        * bindings/scripts/test/JS/JSTestCustomConstructorWithNoInterfaceObject.cpp:
+        * bindings/scripts/test/JS/JSTestDOMJIT.cpp:
+        * bindings/scripts/test/JS/JSTestEnabledBySetting.cpp:
+        * bindings/scripts/test/JS/JSTestEventConstructor.cpp:
+        * bindings/scripts/test/JS/JSTestEventTarget.cpp:
+        * bindings/scripts/test/JS/JSTestException.cpp:
+        * bindings/scripts/test/JS/JSTestGenerateIsReachable.cpp:
+        * bindings/scripts/test/JS/JSTestGlobalObject.cpp:
+        * bindings/scripts/test/JS/JSTestIndexedSetterNoIdentifier.cpp:
+        * bindings/scripts/test/JS/JSTestIndexedSetterThrowingException.cpp:
+        * bindings/scripts/test/JS/JSTestIndexedSetterWithIdentifier.cpp:
+        * bindings/scripts/test/JS/JSTestInterface.cpp:
+        * bindings/scripts/test/JS/JSTestInterfaceLeadingUnderscore.cpp:
+        * bindings/scripts/test/JS/JSTestIterable.cpp:
+        * bindings/scripts/test/JS/JSTestMediaQueryListListener.cpp:
+        * bindings/scripts/test/JS/JSTestNamedAndIndexedSetterNoIdentifier.cpp:
+        * bindings/scripts/test/JS/JSTestNamedAndIndexedSetterThrowingException.cpp:
+        * bindings/scripts/test/JS/JSTestNamedAndIndexedSetterWithIdentifier.cpp:
+        * bindings/scripts/test/JS/JSTestNamedConstructor.cpp:
+        * bindings/scripts/test/JS/JSTestNamedDeleterNoIdentifier.cpp:
+        * bindings/scripts/test/JS/JSTestNamedDeleterThrowingException.cpp:
+        * bindings/scripts/test/JS/JSTestNamedDeleterWithIdentifier.cpp:
+        * bindings/scripts/test/JS/JSTestNamedDeleterWithIndexedGetter.cpp:
+        * bindings/scripts/test/JS/JSTestNamedGetterCallWith.cpp:
+        * bindings/scripts/test/JS/JSTestNamedGetterNoIdentifier.cpp:
+        * bindings/scripts/test/JS/JSTestNamedGetterWithIdentifier.cpp:
+        * bindings/scripts/test/JS/JSTestNamedSetterNoIdentifier.cpp:
+        * bindings/scripts/test/JS/JSTestNamedSetterThrowingException.cpp:
+        * bindings/scripts/test/JS/JSTestNamedSetterWithIdentifier.cpp:
+        * bindings/scripts/test/JS/JSTestNamedSetterWithIndexedGetter.cpp:
+        * bindings/scripts/test/JS/JSTestNamedSetterWithIndexedGetterAndSetter.cpp:
+        * bindings/scripts/test/JS/JSTestNamedSetterWithOverrideBuiltins.cpp:
+        * bindings/scripts/test/JS/JSTestNamedSetterWithUnforgableProperties.cpp:
+        * bindings/scripts/test/JS/JSTestNamedSetterWithUnforgablePropertiesAndOverrideBuiltins.cpp:
+        * bindings/scripts/test/JS/JSTestNode.cpp:
+        * bindings/scripts/test/JS/JSTestObj.cpp:
+        * bindings/scripts/test/JS/JSTestOverloadedConstructors.cpp:
+        * bindings/scripts/test/JS/JSTestOverloadedConstructorsWithSequence.cpp:
+        * bindings/scripts/test/JS/JSTestOverrideBuiltins.cpp:
+        * bindings/scripts/test/JS/JSTestPluginInterface.cpp:
+        * bindings/scripts/test/JS/JSTestPromiseRejectionEvent.cpp:
+        * bindings/scripts/test/JS/JSTestSerialization.cpp:
+        * bindings/scripts/test/JS/JSTestSerializationIndirectInheritance.cpp:
+        * bindings/scripts/test/JS/JSTestSerializationInherit.cpp:
+        * bindings/scripts/test/JS/JSTestSerializationInheritFinal.cpp:
+        * bindings/scripts/test/JS/JSTestSerializedScriptValueInterface.cpp:
+        * bindings/scripts/test/JS/JSTestStringifier.cpp:
+        * bindings/scripts/test/JS/JSTestStringifierAnonymousOperation.cpp:
+        * bindings/scripts/test/JS/JSTestStringifierNamedOperation.cpp:
+        * bindings/scripts/test/JS/JSTestStringifierOperationImplementedAs.cpp:
+        * bindings/scripts/test/JS/JSTestStringifierOperationNamedToString.cpp:
+        * bindings/scripts/test/JS/JSTestStringifierReadOnlyAttribute.cpp:
+        * bindings/scripts/test/JS/JSTestStringifierReadWriteAttribute.cpp:
+        * bindings/scripts/test/JS/JSTestTypedefs.cpp:
+        Updated expected results.
+:
+        * css/parser/CSSPropertyParserHelpers.cpp:
+        (WebCore::CSSPropertyParserHelpers::parseHexColor): Use String::number
+        and makeString.
+
+        * html/HTMLSelectElement.cpp:
+        (WebCore::HTMLSelectElement::setLength): Use makeString.
+        * html/ImageDocument.cpp:
+        (WebCore::ImageDocument::imageUpdated): Ditto.
+        * html/parser/XSSAuditor.cpp:
+        (WebCore::XSSAuditor::init): Ditto.
+        * inspector/InspectorFrontendClientLocal.cpp:
+        (WebCore::InspectorFrontendClientLocal::setDockingUnavailable): Ditto.
+        (WebCore::InspectorFrontendClientLocal::setAttachedWindow): Ditto.
+        (WebCore::InspectorFrontendClientLocal::setDebuggingEnabled): Ditto.
+        (WebCore::InspectorFrontendClientLocal::setTimelineProfilingEnabled): Ditto.
+        (WebCore::InspectorFrontendClientLocal::showMainResourceForFrame): Ditto.
+        * inspector/agents/InspectorCSSAgent.cpp: Ditto.
+        * inspector/agents/InspectorIndexedDBAgent.cpp: Ditto.
+        * page/MemoryRelease.cpp:
+        (WebCore::logMemoryStatisticsAtTimeOfDeath): Ditto.
+
+        * page/cocoa/ResourceUsageOverlayCocoa.mm:
+        (WebCore::formatByteNumber): Use String::number.
+        (WebCore::ResourceUsageOverlay::platformDraw): Use string concatenation.
+
+        * page/cocoa/ResourceUsageThreadCocoa.mm:
+        (WebCore::logFootprintComparison): Use makeString.
+        * platform/animation/TimingFunction.cpp:
+        (WebCore::TimingFunction::cssText const): Ditto.
+
+        * platform/graphics/avfoundation/AVTrackPrivateAVFObjCImpl.mm:
+        (WebCore::AVTrackPrivateAVFObjCImpl::id const): Use AtomicString::number.
+        * platform/graphics/avfoundation/objc/MediaSampleAVFObjC.h:
+        (WebCore::MediaSampleAVFObjC::MediaSampleAVFObjC): Ditto.
+
+        * platform/graphics/ca/GraphicsLayerCA.cpp:
+        (WebCore::GraphicsLayerCA::setContentsToSolidColor): Use makeString.
+        (WebCore::GraphicsLayerCA::updateContentsImage): Ditto.
+        (WebCore::GraphicsLayerCA::updateContentsRects): Ditto.
+        (WebCore::GraphicsLayerCA::createTransformAnimationsFromKeyframes): Ditto.
+        * platform/mock/MockRealtimeVideoSource.cpp:
+        (WebCore::MockRealtimeVideoSource::drawText): Ditto.
+
+        * platform/mock/mediasource/MockSourceBufferPrivate.cpp: Use String::number.
+
+        * platform/network/ParsedContentRange.cpp:
+        (WebCore::ParsedContentRange::headerValue const): Use makeString.
+
+        * platform/network/cf/NetworkStorageSessionCFNet.cpp: Removed some unnecessary
+        compiler conditionals and reorganized the start/stop of namespaces.
+        (WebCore::NetworkStorageSession::switchToNewTestingSession): Use makeString.
+
+        * platform/sql/SQLiteDatabase.cpp:
+        (WebCore::unauthorizedSQLFunction): Use makeString.
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::logLayerInfo): Ditto.
+        * workers/service/server/RegistrationDatabase.cpp:
+        (WebCore::RegistrationDatabase::ensureValidRecordsTable): Ditto.
+        (WebCore::RegistrationDatabase::importRecords): Ditto.
+
 2019-01-27  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Remove a couple of PLATFORM defines intended for watchOS

@@ -27,7 +27,7 @@
 #include "ParsedContentRange.h"
 
 #include <wtf/StdLibExtras.h>
-#include <wtf/text/WTFString.h>
+#include <wtf/text/StringConcatenateNumbers.h>
 
 namespace WebCore {
 
@@ -127,8 +127,8 @@ String ParsedContentRange::headerValue() const
     if (!m_isValid)
         return String();
     if (m_instanceLength == UnknownLength)
-        return String::format("bytes %" PRId64 "-%" PRId64 "/*", m_firstBytePosition, m_lastBytePosition);
-    return String::format("bytes %" PRId64 "-%" PRId64 "/%" PRId64, m_firstBytePosition, m_lastBytePosition, m_instanceLength);
+        return makeString("bytes ", m_firstBytePosition, '-', m_lastBytePosition, "/*");
+    return makeString("bytes ", m_firstBytePosition, '-', m_lastBytePosition, '/', m_instanceLength);
 }
 
 }

@@ -27,6 +27,7 @@
 #include "CodeCache.h"
 
 #include "IndirectEvalExecutable.h"
+#include <wtf/text/StringConcatenateNumbers.h>
 
 namespace JSC {
 
@@ -196,7 +197,7 @@ void writeCodeBlock(VM& vm, const SourceCodeKey& key, const SourceCodeValue& val
 
     std::pair<MallocPtr<uint8_t>, size_t> result = encodeCodeBlock(vm, key, codeBlock);
 
-    String filename = makeString(cachePath, '/', String::number(key.hash()), ".cache");
+    String filename = makeString(cachePath, '/', key.hash(), ".cache");
     int fd = open(filename.utf8().data(), O_CREAT | O_WRONLY, 0666);
     if (fd == -1)
         return;

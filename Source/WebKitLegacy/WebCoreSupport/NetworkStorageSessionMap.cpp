@@ -30,6 +30,7 @@
 #include <wtf/MainThread.h>
 #include <wtf/ProcessID.h>
 #include <wtf/ProcessPrivilege.h>
+#include <wtf/text/StringConcatenateNumbers.h>
 
 static std::unique_ptr<WebCore::NetworkStorageSession>& defaultNetworkStorageSession()
 {
@@ -67,7 +68,7 @@ void NetworkStorageSessionMap::switchToNewTestingSession()
 {
 #if PLATFORM(COCOA) || USE(CFURLCONNECTION)
     // Session name should be short enough for shared memory region name to be under the limit, otehrwise sandbox rules won't work (see <rdar://problem/13642852>).
-    String sessionName = String::format("WebKit Test-%u", static_cast<uint32_t>(getCurrentProcessID()));
+    String sessionName = makeString("WebKit Test-", getCurrentProcessID());
 
     auto session = adoptCF(WebCore::createPrivateStorageSession(sessionName.createCFString().get()));
 

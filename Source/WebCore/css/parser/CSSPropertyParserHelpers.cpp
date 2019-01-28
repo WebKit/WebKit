@@ -43,6 +43,7 @@
 #include "CSSValuePool.h"
 #include "Pair.h"
 #include "StyleColor.h"
+#include <wtf/text/StringConcatenateNumbers.h>
 
 namespace WebCore {
 
@@ -721,9 +722,9 @@ static Color parseHexColor(CSSParserTokenRange& range, bool acceptQuirkyColors)
                 || token.numericValue() < 0. || token.numericValue() >= 1000000.)
                 return Color();
             if (token.type() == NumberToken) // e.g. 112233
-                color = String::format("%d", static_cast<int>(token.numericValue()));
+                color = String::number(static_cast<int>(token.numericValue()));
             else // e.g. 0001FF
-                color = String::number(static_cast<int>(token.numericValue())) + token.value().toString();
+                color = makeString(static_cast<int>(token.numericValue()), token.value().toString());
             while (color.length() < 6)
                 color = "0" + color;
         } else if (token.type() == IdentToken) { // e.g. FF0000

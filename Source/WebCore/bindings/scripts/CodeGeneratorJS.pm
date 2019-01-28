@@ -4572,7 +4572,7 @@ sub GenerateImplementation
         push(@implContent, "    auto* thisObject = jsCast<${className}*>(cell);\n");
         push(@implContent, "    builder.setWrappedObjectForCell(cell, &thisObject->wrapped());\n");
         push(@implContent, "    if (thisObject->scriptExecutionContext())\n");
-        push(@implContent, "        builder.setLabelForCell(cell, String::format(\"url %s\", thisObject->scriptExecutionContext()->url().string().utf8().data()));\n");
+        push(@implContent, "        builder.setLabelForCell(cell, \"url \" + thisObject->scriptExecutionContext()->url().string());\n");
         push(@implContent, "    Base::heapSnapshot(cell, builder);\n");
         push(@implContent, "}\n\n");
     }

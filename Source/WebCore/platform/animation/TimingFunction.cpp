@@ -30,6 +30,7 @@
 #include "SpringSolver.h"
 #include "StyleProperties.h"
 #include "UnitBezier.h"
+#include <wtf/text/StringConcatenateNumbers.h>
 #include <wtf/text/TextStream.h>
 
 namespace WebCore {
@@ -181,7 +182,7 @@ String TimingFunction::cssText() const
     if (m_type == TimingFunction::StepsFunction) {
         auto& function = downcast<StepsTimingFunction>(*this);
         if (!function.stepAtStart())
-            return String::format("steps(%d)", function.numberOfSteps());
+            return makeString("steps(", function.numberOfSteps(), ')');
     }
 
     TextStream stream;

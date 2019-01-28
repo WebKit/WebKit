@@ -33,6 +33,7 @@
 #include "WebProcessProxy.h"
 #include <wtf/HashMap.h>
 #include <wtf/NeverDestroyed.h>
+#include <wtf/text/StringConcatenateNumbers.h>
 
 namespace WebKit {
 
@@ -57,7 +58,7 @@ unsigned inspectorLevelForPage(WebPageProxy* page)
 
 String inspectorPageGroupIdentifierForPage(WebPageProxy* page)
 {
-    return String::format("__WebInspectorPageGroupLevel%u__", inspectorLevelForPage(page));
+    return makeString("__WebInspectorPageGroupLevel", inspectorLevelForPage(page), "__");
 }
 
 void trackInspectorPage(WebPageProxy* page)

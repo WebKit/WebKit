@@ -431,7 +431,7 @@ static String formatByteNumber(size_t number)
         return String::format("%.2f MB", static_cast<double>(number) / 1048576);
     if (number >= 1024)
         return String::format("%.1f kB", static_cast<double>(number) / 1024);
-    return String::format("%lu", number);
+    return String::number(number);
 }
 
 static String gcTimerString(MonotonicTime timerFireDate, MonotonicTime now)
@@ -469,9 +469,9 @@ void ResourceUsageOverlay::platformDraw(CGContextRef context)
         
         String label = String::format("% 11s: %s", category.name.ascii().data(), formatByteNumber(dirty).ascii().data());
         if (external)
-            label = label + String::format(" + %s", formatByteNumber(external).ascii().data());
+            label = label + makeString(" + ", formatByteNumber(external));
         if (reclaimable)
-            label = label + String::format(" [%s]", formatByteNumber(reclaimable).ascii().data());
+            label = label + makeString(" [", formatByteNumber(reclaimable), ']');
 
         // FIXME: Show size/capacity of GC heap.
         showText(context, 10, y, category.color.get(), label);
@@ -480,8 +480,8 @@ void ResourceUsageOverlay::platformDraw(CGContextRef context)
     y -= 5;
 
     MonotonicTime now = MonotonicTime::now();
-    showText(context, 10, y + 10, colorForLabels, String::format("    Eden GC: %s", gcTimerString(data.timeOfNextEdenCollection, now).ascii().data()));
-    showText(context, 10, y + 20, colorForLabels, String::format("    Full GC: %s", gcTimerString(data.timeOfNextFullCollection, now).ascii().data()));
+    showText(context, 10, y + 10, colorForLabels, "    Eden GC: " + gcTimerString(data.timeOfNextEdenCollection, now));
+    showText(context, 10, y + 20, colorForLabels, "    Full GC: " + gcTimerString(data.timeOfNextFullCollection, now));
 
     drawCpuHistory(context, viewBounds.size.width - 70, 0, viewBounds.size.height, data.cpu);
     drawGCHistory(context, viewBounds.size.width - 140, 0, viewBounds.size.height, data.gcHeapSize, data.categories[MemoryCategory::GCHeap].dirtySize);
