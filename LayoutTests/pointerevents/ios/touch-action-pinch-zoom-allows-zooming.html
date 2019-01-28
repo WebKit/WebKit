@@ -1,0 +1,29 @@
+<!DOCTYPE html><!-- webkit-test-runner [ useFlexibleViewport=true ] -->
+<html>
+<head>
+<meta charset=utf-8>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body>
+<script src="../../resources/testharness.js"></script>
+<script src="../../resources/testharnessreport.js"></script>
+<script src="../utils.js"></script>
+<script>
+
+'use strict';
+
+target_test({ width: "400px", height: "400px" }, (target, test) => {
+    document.body.style.width = "2000px";
+    document.body.style.height = "2000px";
+
+    target.style.touchAction = "pinch-zoom";
+
+    ui.pinchOut({ x: 50, y: 50, width: 100, height: 100, scale: 0.5 }).then(() => {
+        assert_not_equals(window.internals.pageScaleFactor(), 1, "The page was scaled.");
+        test.done();
+    });
+}, "Testing that setting touch-action: pinch-zoom on an element allows page zooming.");
+
+</script>
+</body>
+</html>

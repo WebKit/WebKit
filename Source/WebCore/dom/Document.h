@@ -1276,6 +1276,10 @@ public:
     bool hasTouchEventHandlers() const { return false; }
     bool touchEventTargetsContain(Node&) const { return false; }
 #endif
+#if ENABLE(POINTER_EVENTS)
+    void updateTouchActionElements(Element&, const RenderStyle&);
+    const HashSet<Element*>* touchActionElements() const { return m_touchActionElements.get(); }
+#endif
 
     void didAddTouchEventHandler(Node&);
     void didRemoveTouchEventHandler(Node&, EventHandlerRemoval = EventHandlerRemoval::One);
@@ -1294,6 +1298,7 @@ public:
     const EventTargetSet* wheelEventTargets() const { return m_wheelEventTargets.get(); }
 
     typedef std::pair<Region, bool> RegionFixedPair;
+    RegionFixedPair absoluteEventRegionForNode(Node&);
     RegionFixedPair absoluteRegionForEventTargets(const EventTargetSet*);
 
     LayoutRect absoluteEventHandlerBounds(bool&) final;
@@ -1874,6 +1879,9 @@ private:
     
 #if ENABLE(TOUCH_EVENTS)
     std::unique_ptr<EventTargetSet> m_touchEventTargets;
+#endif
+#if ENABLE(POINTER_EVENTS)
+    std::unique_ptr<HashSet<Element*>> m_touchActionElements;
 #endif
     std::unique_ptr<EventTargetSet> m_wheelEventTargets;
 

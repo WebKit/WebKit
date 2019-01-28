@@ -73,7 +73,19 @@ void EventTrackingRegions::unite(const EventTrackingRegions& eventTrackingRegion
 bool operator==(const EventTrackingRegions& a, const EventTrackingRegions& b)
 {
     return a.asynchronousDispatchRegion == b.asynchronousDispatchRegion
+#if ENABLE(POINTER_EVENTS)
+        && a.touchActionData == b.touchActionData
+#endif
         && a.eventSpecificSynchronousDispatchRegions == b.eventSpecificSynchronousDispatchRegions;
 }
+
+#if ENABLE(POINTER_EVENTS)
+bool operator==(const TouchActionData& a, const TouchActionData& b)
+{
+    return a.touchActions == b.touchActions
+        && a.scrollingNodeID == b.scrollingNodeID
+        && a.region == b.region;
+}
+#endif
 
 } // namespace WebCore

@@ -30,6 +30,7 @@
 #include "PlatformWheelEvent.h"
 #include "ScrollSnapOffsetsInfo.h"
 #include "ScrollTypes.h"
+#include "ScrollingCoordinatorTypes.h"
 #include <wtf/Forward.h>
 #include <wtf/ThreadSafeRefCounted.h>
 #include <wtf/TypeCasts.h>
@@ -51,27 +52,6 @@ class TextStream;
 
 namespace WebCore {
 
-typedef unsigned SynchronousScrollingReasons;
-typedef uint64_t ScrollingNodeID;
-
-enum class ScrollingNodeType : uint8_t {
-    MainFrame,
-    Subframe,
-    FrameHosting,
-    Overflow,
-    Fixed,
-    Sticky
-};
-
-enum ScrollingStateTreeAsTextBehaviorFlags {
-    ScrollingStateTreeAsTextBehaviorNormal                  = 0,
-    ScrollingStateTreeAsTextBehaviorIncludeLayerIDs         = 1 << 0,
-    ScrollingStateTreeAsTextBehaviorIncludeNodeIDs          = 1 << 1,
-    ScrollingStateTreeAsTextBehaviorIncludeLayerPositions   = 1 << 2,
-    ScrollingStateTreeAsTextBehaviorDebug                   = ScrollingStateTreeAsTextBehaviorIncludeLayerIDs | ScrollingStateTreeAsTextBehaviorIncludeNodeIDs | ScrollingStateTreeAsTextBehaviorIncludeLayerPositions
-};
-typedef unsigned ScrollingStateTreeAsTextBehavior;
-
 class Document;
 class Frame;
 class FrameView;
@@ -85,42 +65,6 @@ class ViewportConstraints;
 #if ENABLE(ASYNC_SCROLLING)
 class ScrollingTree;
 #endif
-
-enum class ScrollingLayerPositionAction {
-    Set,
-    SetApproximate,
-    Sync
-};
-
-struct ScrollableAreaParameters {
-    ScrollElasticity horizontalScrollElasticity { ScrollElasticityNone };
-    ScrollElasticity verticalScrollElasticity { ScrollElasticityNone };
-
-    ScrollbarMode horizontalScrollbarMode { ScrollbarAuto };
-    ScrollbarMode verticalScrollbarMode { ScrollbarAuto };
-
-    bool hasEnabledHorizontalScrollbar { false };
-    bool hasEnabledVerticalScrollbar { false };
-
-    bool useDarkAppearanceForScrollbars { false };
-
-    bool operator==(const ScrollableAreaParameters& other) const
-    {
-        return horizontalScrollElasticity == other.horizontalScrollElasticity
-            && verticalScrollElasticity == other.verticalScrollElasticity
-            && horizontalScrollbarMode == other.horizontalScrollbarMode
-            && verticalScrollbarMode == other.verticalScrollbarMode
-            && hasEnabledHorizontalScrollbar == other.hasEnabledHorizontalScrollbar
-            && hasEnabledVerticalScrollbar == other.hasEnabledVerticalScrollbar
-            && useDarkAppearanceForScrollbars == other.useDarkAppearanceForScrollbars;
-    }
-};
-
-enum class ViewportRectStability {
-    Stable,
-    Unstable,
-    ChangingObscuredInsetsInteractively // This implies Unstable.
-};
 
 class ScrollingCoordinator : public ThreadSafeRefCounted<ScrollingCoordinator> {
 public:

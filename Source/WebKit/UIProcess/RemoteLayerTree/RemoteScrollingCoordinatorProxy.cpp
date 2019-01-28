@@ -206,6 +206,33 @@ String RemoteScrollingCoordinatorProxy::scrollingTreeAsText() const
     return emptyString();
 }
 
+#if ENABLE(POINTER_EVENTS)
+Optional<TouchActionData> RemoteScrollingCoordinatorProxy::touchActionDataAtPoint(const IntPoint p) const
+{
+    return m_scrollingTree->touchActionDataAtPoint(p);
+}
+
+Optional<TouchActionData> RemoteScrollingCoordinatorProxy::touchActionDataForScrollNodeID(ScrollingNodeID scrollingNodeID) const
+{
+    for (auto& touchActionData : m_touchActionDataByTouchIdentifier.values()) {
+        if (touchActionData.scrollingNodeID == scrollingNodeID)
+            return touchActionData;
+    }
+    return WTF::nullopt;
+}
+
+void RemoteScrollingCoordinatorProxy::setTouchDataForTouchIdentifier(TouchActionData touchActionData, unsigned touchIdentifier)
+{
+    m_touchActionDataByTouchIdentifier.set(touchIdentifier, touchActionData);
+}
+
+void RemoteScrollingCoordinatorProxy::clearTouchDataForTouchIdentifier(unsigned touchIdentifier)
+{
+    m_touchActionDataByTouchIdentifier.remove(touchIdentifier);
+}
+
+#endif
+
 } // namespace WebKit
 
 #endif // ENABLE(ASYNC_SCROLLING)

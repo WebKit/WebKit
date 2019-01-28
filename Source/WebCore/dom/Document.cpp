@@ -208,6 +208,7 @@
 #include "TextAutoSizing.h"
 #include "TextEvent.h"
 #include "TextNodeTraversal.h"
+#include "TouchAction.h"
 #include "TransformSource.h"
 #include "TreeWalker.h"
 #include "UndoManager.h"
@@ -4151,6 +4152,15 @@ void Document::invalidateRenderingDependentRegions(AnnotationsAction annotations
 #if PLATFORM(IOS_FAMILY) && ENABLE(TOUCH_EVENTS)
     setTouchEventRegionsNeedUpdate();
 #endif
+
+#if ENABLE(POINTER_EVENTS)
+    if (auto* page = this->page()) {
+        if (auto* frameView = view()) {
+            if (auto* scrollingCoordinator = page->scrollingCoordinator())
+                scrollingCoordinator->frameViewEventTrackingRegionsChanged(*frameView);
+        }
+    }
+#endif
 }
 
 void Document::invalidateScrollbarDependentRegions()
@@ -4534,6 +4544,11 @@ void Document::nodeWillBeRemoved(Node& node)
 
     if (is<Text>(node))
         m_markers->removeMarkers(node);
+
+#if ENABLE(POINTER_EVENTS)
+    if (m_touchActionElements && is<Element>(node))
+        m_touchActionElements->remove(&downcast<Element>(node));
+#endif
 }
 
 static Node* fallbackFocusNavigationStartingNodeAfterRemoval(Node& node)
@@ -7096,6 +7111,34 @@ LayoutRect Document::absoluteEventHandlerBounds(bool& includesFixedPositionEleme
     return LayoutRect();
 }
 
+Document::RegionFixedPair Document::absoluteEventRegionForNode(Node& node)
+{
+    Region region;
+    LayoutRect rootRelativeBounds;
+    bool insideFixedPosition = false;
+
+    if (is<Document>(node)) {
+        auto& document = downcast<Document>(node);
+        if (&document == this)
+            rootRelativeBounds = absoluteEventHandlerBounds(insideFixedPosition);
+        else if (Element* element = document.ownerElement())
+            rootRelativeBounds = element->absoluteEventHandlerBounds(insideFixedPosition);
+    } else if (is<Element>(node)) {
+        auto& element = downcast<Element>(node);
+        if (is<HTMLBodyElement>(element)) {
+            // For the body, just use the document bounds.
+            // The body may not cover this whole area, but it's OK for this region to be an overestimate.
+            rootRelativeBounds = absoluteEventHandlerBounds(insideFixedPosition);
+        } else
+            rootRelativeBounds = element.absoluteEventHandlerBounds(insideFixedPosition);
+    }
+
+    if (!rootRelativeBounds.isEmpty())
+        region.unite(Region(enclosingIntRect(rootRelativeBounds)));
+
+    return RegionFixedPair(region, insideFixedPosition);
+}
+
 Document::RegionFixedPair Document::absoluteRegionForEventTargets(const EventTargetSet* targets)
 {
     LayoutDisallowedScope layoutDisallowedScope(LayoutDisallowedScope::Reason::ReentrancyAvoidance);
@@ -7107,26 +7150,11 @@ Document::RegionFixedPair Document::absoluteRegionForEventTargets(const EventTar
     bool insideFixedPosition = false;
 
     for (auto& keyValuePair : *targets) {
-        LayoutRect rootRelativeBounds;
-
-        if (is<Document>(keyValuePair.key)) {
-            Document* document = downcast<Document>(keyValuePair.key);
-            if (document == this)
-                rootRelativeBounds = absoluteEventHandlerBounds(insideFixedPosition);
-            else if (Element* element = document->ownerElement())
-                rootRelativeBounds = element->absoluteEventHandlerBounds(insideFixedPosition);
-        } else if (is<Element>(keyValuePair.key)) {
-            Element* element = downcast<Element>(keyValuePair.key);
-            if (is<HTMLBodyElement>(element)) {
-                // For the body, just use the document bounds.
-                // The body may not cover this whole area, but it's OK for this region to be an overestimate.
-                rootRelativeBounds = absoluteEventHandlerBounds(insideFixedPosition);
-            } else
-                rootRelativeBounds = element->absoluteEventHandlerBounds(insideFixedPosition);
+        if (auto* node = keyValuePair.key) {
+            auto targetRegionFixedPair = absoluteEventRegionForNode(*node);
+            targetRegion.unite(targetRegionFixedPair.first);
+            insideFixedPosition |= targetRegionFixedPair.second;
         }
-        
-        if (!rootRelativeBounds.isEmpty())
-            targetRegion.unite(Region(enclosingIntRect(rootRelativeBounds)));
     }
 
     return RegionFixedPair(targetRegion, insideFixedPosition);
@@ -8655,6 +8683,34 @@ void Document::setPaintWorkletGlobalScopeForName(const String& name, Ref<PaintWo
 {
     auto addResult = m_paintWorkletGlobalScopes.add(name, WTFMove(scope));
     ASSERT_UNUSED(addResult, addResult);
+}
+#endif
+
+#if ENABLE(POINTER_EVENTS)
+void Document::updateTouchActionElements(Element& element, const RenderStyle& style)
+{
+    bool changed = false;
+
+    if (style.touchActions() != TouchAction::Auto) {
+        if (!m_touchActionElements)
+            m_touchActionElements = std::make_unique<HashSet<Element*>>();
+        changed |= m_touchActionElements->add(&element).isNewEntry;
+    } else if (m_touchActionElements)
+        changed |= m_touchActionElements->remove(&element);
+
+#if PLATFORM(IOS_FAMILY)
+    if (!changed)
+        return;
+
+    Page* page = this->page();
+    if (!page)
+        return;
+
+    if (FrameView* frameView = view()) {
+        if (ScrollingCoordinator* scrollingCoordinator = page->scrollingCoordinator())
+            scrollingCoordinator->frameViewEventTrackingRegionsChanged(*frameView);
+    }
+#endif
 }
 #endif
 

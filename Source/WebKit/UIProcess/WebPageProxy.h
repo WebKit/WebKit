@@ -678,6 +678,7 @@ public:
     void startAutoscrollAtPosition(const WebCore::FloatPoint& positionInWindow);
     void cancelAutoscroll();
     void hardwareKeyboardAvailabilityChanged();
+    bool isScrollingOrZooming() const { return m_isScrollingOrZooming; }
 #if ENABLE(DATA_INTERACTION)
     void didHandleDragStartRequest(bool started);
     void didHandleAdditionalDragItemsRequest(bool added);

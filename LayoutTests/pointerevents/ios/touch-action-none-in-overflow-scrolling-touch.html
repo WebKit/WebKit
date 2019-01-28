@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset=utf-8>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+
+#scrolling-container {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 400px;
+    height: 400px;
+    overflow: scroll;
+    -webkit-overflow-scrolling: touch;
+}
+
+#scrolling-container > div {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 200%;
+    height: 200%;
+    touch-action: none;
+}
+
+</style>
+</head>
+<body>
+<div id="scrolling-container"><div></div></div>
+<script src="../../resources/testharness.js"></script>
+<script src="../../resources/testharnessreport.js"></script>
+<script src="../utils.js"></script>
+<script>
+
+'use strict';
+
+async_test(test => {
+    const scrollingContainer = document.body.firstElementChild;
+    ui.swipe({ x: 150, y: 150 }, { x: 50, y: 50 }).then(() => {
+        assert_equals(scrollingContainer.scrollLeft, 0, "The scrolling container was not scrolled in the x-axis.");
+        assert_equals(scrollingContainer.scrollTop, 0, "The scrolling container was not scrolled in the y-axis.");
+        test.done();
+    });
+}, "Testing that setting touch-action: none in content hosted in a scrollable container using '-webkit-overflow-scrolling: touch' prevents scrolling of that container.");
+
+</script>
+</body>
+</html>

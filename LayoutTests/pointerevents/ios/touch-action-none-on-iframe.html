@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset=utf-8>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+
+iframe {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 400px;
+    height: 400px;
+    touch-action: none;
+}
+
+</style>
+</head>
+<body>
+<iframe></iframe>
+<script src="../../resources/testharness.js"></script>
+<script src="../../resources/testharnessreport.js"></script>
+<script src="../utils.js"></script>
+<script>
+
+'use strict';
+
+async_test(test => {
+    const iframe = document.body.firstElementChild;
+    const target = iframe.contentDocument.body.appendChild(document.createElement("div"));
+    target.setAttribute("style", `
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 200%;
+        height: 200%;
+    `);
+
+    ui.swipe({ x: 150, y: 150 }, { x: 50, y: 50 }).then(() => {
+        assert_equals(window.pageXOffset, 0, "The page was not scrolled in the x-axis.");
+        assert_equals(window.pageYOffset, 0, "The page was not scrolled in the y-axis.");
+        test.done();
+    });
+}, "Testing that setting touch-action: none on an iframe and interacting with its content prevents page scrolling.");
+
+</script>
+</body>
+</html>

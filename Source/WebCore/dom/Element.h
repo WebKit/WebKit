@@ -31,6 +31,7 @@
 #include "KeyframeAnimationOptions.h"
 #include "ScrollToOptions.h"
 #include "ScrollTypes.h"
+#include "ScrollingCoordinator.h"
 #include "ShadowRootMode.h"
 #include "SimulatedClickOptions.h"
 #include "StyleChange.h"
@@ -74,6 +75,10 @@ enum class SelectionRevealMode {
     RevealUpToMainFrame, // Scroll overflow and iframes, but not the main frame.
     DoNotReveal
 };
+
+#if ENABLE(POINTER_EVENTS)
+enum class TouchAction : uint8_t;
+#endif
 
 class Element : public ContainerNode {
     WTF_MAKE_ISO_ALLOCATED(Element);
@@ -587,6 +592,13 @@ public:
 
     ExceptionOr<Ref<WebAnimation>> animate(JSC::ExecState&, JSC::Strong<JSC::JSObject>&&, Optional<Variant<double, KeyframeAnimationOptions>>&&);
     Vector<RefPtr<WebAnimation>> getAnimations();
+
+#if ENABLE(POINTER_EVENTS)
+    OptionSet<TouchAction> computedTouchActions() const;
+#if ENABLE(ACCELERATED_OVERFLOW_SCROLLING)
+    ScrollingNodeID nearestScrollingNodeIDUsingTouchOverflowScrolling() const;
+#endif
+#endif
 
 protected:
     Element(const QualifiedName&, Document&, ConstructionType);

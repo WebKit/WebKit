@@ -81,6 +81,8 @@
 #include "PointerLockController.h"
 #include "RenderFragmentContainer.h"
 #include "RenderLayer.h"
+#include "RenderLayerBacking.h"
+#include "RenderLayerCompositor.h"
 #include "RenderListBox.h"
 #include "RenderTheme.h"
 #include "RenderTreeUpdater.h"
@@ -3418,7 +3420,7 @@ void Element::setContainsFullScreenElement(bool flag)
     invalidateStyleAndLayerComposition();
 }
 
-static Element* parentCrossingFrameBoundaries(Element* element)
+static Element* parentCrossingFrameBoundaries(const Element* element)
 {
     ASSERT(element);
     return element->parentElement() ? element->parentElement() : element->document().ownerElement();
@@ -4120,6 +4122,68 @@ void Element::setAttributeStyleMap(Ref<StylePropertyMap>&& map)
 {
     ensureElementRareData().setAttributeStyleMap(WTFMove(map));
 }
+#endif
+
+#if ENABLE(POINTER_EVENTS)
+OptionSet<TouchAction> Element::computedTouchActions() const
+{
+    OptionSet<TouchAction> computedTouchActions = TouchAction::Auto;
+    for (auto* element = this; element; element = parentCrossingFrameBoundaries(element)) {
+        auto* renderer = element->renderer();
+        if (!renderer)
+            continue;
+
+        auto touchActions = renderer->style().touchActions();
+
+        // Once we've encountered touch-action: none, we know that this will be the computed value.
+        if (touchActions == TouchAction::None)
+            return touchActions;
+
+        // If the computed touch-action so far was "auto", we can just use the current element's touch-action.
+        if (computedTouchActions == TouchAction::Auto) {
+            computedTouchActions = touchActions;
+            continue;
+        }
+
+        // If the current element has touch-action: auto or the same touch-action as the computed touch-action,
+        // we need to keep going up the ancestry chain.
+        if (touchActions == TouchAction::Auto || touchActions == computedTouchActions)
+            continue;
+
+        // Now, the element's touch-action and the computed touch-action are different and are neither "auto" nor "none".
+        if (computedTouchActions == TouchAction::Manipulation) {
+            // If the computed touch-action is "manipulation", we can take the current element's touch-action as the newly
+            // computed touch-action.
+            computedTouchActions = touchActions;
+        } else if (touchActions == TouchAction::Manipulation) {
+            // Otherwise, we have a restricted computed touch-action so far. If the current element's touch-action is "manipulation"
+            // then we can just keep going and leave the computed touch-action untouched.
+            continue;
+        }
+
+        // In any other case, we have competing restrictive touch-action values that can only yield "none".
+        return TouchAction::None;
+    }
+    return computedTouchActions;
+}
+
+#if ENABLE(ACCELERATED_OVERFLOW_SCROLLING)
+ScrollingNodeID Element::nearestScrollingNodeIDUsingTouchOverflowScrolling() const
+{
+    if (!renderer())
+        return 0;
+
+    // We are not interested in the root, so check that we also have a valid parent.
+    for (auto* layer = renderer()->enclosingLayer(); layer && layer->parent(); layer = layer->parent()) {
+        if (layer->isComposited()) {
+            if (auto scrollingNodeID = layer->backing()->scrollingNodeIDForRole(ScrollCoordinationRole::Scrolling))
+                return scrollingNodeID;
+        }
+    }
+
+    return 0;
+}
+#endif
 #endif
 
 } // namespace WebCore

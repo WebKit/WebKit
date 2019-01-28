@@ -2096,6 +2096,7 @@
 		712BE4831FE865DD002031CC /* FillMode.h in Headers */ = {isa = PBXBuildFile; fileRef = 712BE4811FE865D4002031CC /* FillMode.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		712BE4881FE8686A002031CC /* JSFillMode.h in Headers */ = {isa = PBXBuildFile; fileRef = 712BE4851FE86818002031CC /* JSFillMode.h */; };
 		712BE4891FE86875002031CC /* JSPlaybackDirection.h in Headers */ = {isa = PBXBuildFile; fileRef = 712BE4861FE86859002031CC /* JSPlaybackDirection.h */; };
+		712DBA4921F8AD83008F36B2 /* ScrollingCoordinatorTypes.h in Headers */ = {isa = PBXBuildFile; fileRef = 712DBA4721F8AD79008F36B2 /* ScrollingCoordinatorTypes.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		713171341FBE78DB00F758DE /* CSSPropertyBlendingClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 713171321FBE78C500F758DE /* CSSPropertyBlendingClient.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		7132445120109DA500AE7FB2 /* WebAnimationUtilities.h in Headers */ = {isa = PBXBuildFile; fileRef = 7132444F20109D9B00AE7FB2 /* WebAnimationUtilities.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		7134496E146941B300720312 /* SVGLengthContext.h in Headers */ = {isa = PBXBuildFile; fileRef = 7134496C146941B300720312 /* SVGLengthContext.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -2418,7 +2419,7 @@
 		834476EF1DA5BC5E002B6ED2 /* JSScrollToOptions.h in Headers */ = {isa = PBXBuildFile; fileRef = 83E9B3011DA5A51E00FFE8F6 /* JSScrollToOptions.h */; };
 		8348BFAC1B85729800912F36 /* ClassCollection.h in Headers */ = {isa = PBXBuildFile; fileRef = 8348BFAA1B85729500912F36 /* ClassCollection.h */; };
 		834DFAD01F7DAE5D00C2725B /* SharedStringHash.h in Headers */ = {isa = PBXBuildFile; fileRef = 834DFACC1F7DAE5600C2725B /* SharedStringHash.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		83520C7E1A71BFCC006BD2AA /* CSSFontFamily.h in Headers */ = {isa = PBXBuildFile; fileRef = 83520C7D1A71BFCC006BD2AA /* CSSFontFamily.h */; };
+		83520C7E1A71BFCC006BD2AA /* CSSFontFamily.h in Headers */ = {isa = PBXBuildFile; fileRef = 83520C7D1A71BFCC006BD2AA /* CSSFontFamily.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		8358CB701C53277500E0C2D8 /* JSXMLDocument.h in Headers */ = {isa = PBXBuildFile; fileRef = 83F570AD1C53268E007FD6CB /* JSXMLDocument.h */; };
 		835D2D781F5F1FBD00141DED /* HTMLInputElementEntriesAPI.h in Headers */ = {isa = PBXBuildFile; fileRef = 835D2D751F5F1FB800141DED /* HTMLInputElementEntriesAPI.h */; };
 		835D363719FF6193004C93AB /* StyleBuilderCustom.h in Headers */ = {isa = PBXBuildFile; fileRef = 835D363619FF6193004C93AB /* StyleBuilderCustom.h */; };
@@ -2904,7 +2905,7 @@
 		9920398318B95BC600B39AF9 /* UserInputBridge.h in Headers */ = {isa = PBXBuildFile; fileRef = 9920398118B95BC600B39AF9 /* UserInputBridge.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		996E59DF1DF0128D006612B9 /* NavigatorWebDriver.h in Headers */ = {isa = PBXBuildFile; fileRef = 996E59DC1DF00D90006612B9 /* NavigatorWebDriver.h */; };
 		9A528E8417D7F52F00AA9518 /* FloatingObjects.h in Headers */ = {isa = PBXBuildFile; fileRef = 9A528E8217D7F52F00AA9518 /* FloatingObjects.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		9AB1F38018E2489A00534743 /* CSSToLengthConversionData.h in Headers */ = {isa = PBXBuildFile; fileRef = 9AB1F37E18E2489A00534743 /* CSSToLengthConversionData.h */; };
+		9AB1F38018E2489A00534743 /* CSSToLengthConversionData.h in Headers */ = {isa = PBXBuildFile; fileRef = 9AB1F37E18E2489A00534743 /* CSSToLengthConversionData.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		9B24DE8E15194B9500C59C27 /* HTMLBDIElement.h in Headers */ = {isa = PBXBuildFile; fileRef = 9B24DE8C15194B9500C59C27 /* HTMLBDIElement.h */; };
 		9B2D8A7914997CCF00ECEF3E /* UndoStep.h in Headers */ = {isa = PBXBuildFile; fileRef = 9B2D8A7814997CCF00ECEF3E /* UndoStep.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		9B32CDA913DF7FA900F34D13 /* RenderedPosition.h in Headers */ = {isa = PBXBuildFile; fileRef = 9B32CDA713DF7FA900F34D13 /* RenderedPosition.h */; };
@@ -4782,7 +4783,7 @@
 		E1E1BF00115FF6FB006F52CA /* WindowsKeyboardCodes.h in Headers */ = {isa = PBXBuildFile; fileRef = E1E1BEFF115FF6FB006F52CA /* WindowsKeyboardCodes.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E1E6EEA80B628DB3005F2F70 /* JSHTMLSelectElement.h in Headers */ = {isa = PBXBuildFile; fileRef = E1E6EEA70B628DB3005F2F70 /* JSHTMLSelectElement.h */; };
 		E1EC29A00BB04C6B00EA187B /* XPathNodeSet.h in Headers */ = {isa = PBXBuildFile; fileRef = E1EC299E0BB04C6B00EA187B /* XPathNodeSet.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		E1ED8AC30CC49BE000BFC557 /* CSSPrimitiveValueMappings.h in Headers */ = {isa = PBXBuildFile; fileRef = E1ED8AC20CC49BE000BFC557 /* CSSPrimitiveValueMappings.h */; };
+		E1ED8AC30CC49BE000BFC557 /* CSSPrimitiveValueMappings.h in Headers */ = {isa = PBXBuildFile; fileRef = E1ED8AC20CC49BE000BFC557 /* CSSPrimitiveValueMappings.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E1F1E8300C3C2BB9006DB391 /* XSLTExtensions.h in Headers */ = {isa = PBXBuildFile; fileRef = E1F1E82E0C3C2BB9006DB391 /* XSLTExtensions.h */; };
 		E1F80B8818317252007885C3 /* CryptoKeyPair.h in Headers */ = {isa = PBXBuildFile; fileRef = E1F80B8618317252007885C3 /* CryptoKeyPair.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E1F80B8E183172B5007885C3 /* JSCryptoKeyPair.h in Headers */ = {isa = PBXBuildFile; fileRef = E1F80B8C183172B5007885C3 /* JSCryptoKeyPair.h */; };
@@ -9306,6 +9307,7 @@
 		712BE4851FE86818002031CC /* JSFillMode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSFillMode.h; sourceTree = "<group>"; };
 		712BE4861FE86859002031CC /* JSPlaybackDirection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSPlaybackDirection.h; sourceTree = "<group>"; };
 		712BE4871FE8685A002031CC /* JSPlaybackDirection.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSPlaybackDirection.cpp; sourceTree = "<group>"; };
+		712DBA4721F8AD79008F36B2 /* ScrollingCoordinatorTypes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScrollingCoordinatorTypes.h; sourceTree = "<group>"; };
 		7130141D1DC9C08600CA3A88 /* pip-support.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; path = "pip-support.js"; sourceTree = "<group>"; };
 		713171321FBE78C500F758DE /* CSSPropertyBlendingClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CSSPropertyBlendingClient.h; sourceTree = "<group>"; };
 		7132444F20109D9B00AE7FB2 /* WebAnimationUtilities.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebAnimationUtilities.h; sourceTree = "<group>"; };
@@ -16906,6 +16908,7 @@
 				0F605AEB15F94848004DF0C0 /* ScrollingConstraints.h */,
 				1AF62EE414DA22A70041556C /* ScrollingCoordinator.cpp */,
 				1AF62EE514DA22A70041556C /* ScrollingCoordinator.h */,
+				712DBA4721F8AD79008F36B2 /* ScrollingCoordinatorTypes.h */,
 				51C61B081DE536E7008A212D /* ScrollingMomentumCalculator.cpp */,
 				51C61B091DE536E7008A212D /* ScrollingMomentumCalculator.h */,
 				93C38BFC164473C700091EB2 /* ScrollingStateFixedNode.cpp */,
@@ -29573,7 +29576,6 @@
 				F55B3DC21251F12D003EF269 /* ImageInputType.h in Headers */,
 				089582560E857A7E00F82C83 /* ImageLoader.h in Headers */,
 				BC7F44A80B9E324E00A9D081 /* ImageObserver.h in Headers */,
-				A59C230A21F29206004EC939 /* InspectorCPUProfilerAgent.h in Headers */,
 				2D5A5931152525D00036EE51 /* ImageOrientation.h in Headers */,
 				B51A2F3F17D7D3AE0072517A /* ImageQualityController.h in Headers */,
 				49291E4B134172C800E753DE /* ImageRenderingMode.h in Headers */,
@@ -29636,6 +29638,7 @@
 				A5B81CA81FAA44620037D1E6 /* InspectorCanvasAgent.h in Headers */,
 				1C81B95C0E97330800266E07 /* InspectorClient.h in Headers */,
 				1C81B95A0E97330800266E07 /* InspectorController.h in Headers */,
+				A59C230A21F29206004EC939 /* InspectorCPUProfilerAgent.h in Headers */,
 				A5B81CA91FAA44620037D1E6 /* InspectorCSSAgent.h in Headers */,
 				4A9CC82116BF9BB400EC645A /* InspectorCSSOMWrappers.h in Headers */,
 				A5B81CAA1FAA44620037D1E6 /* InspectorDatabaseAgent.h in Headers */,
@@ -31412,6 +31415,7 @@
 				1AF62EE814DA22A70041556C /* ScrollingCoordinator.h in Headers */,
 				0FC4E40D187F82E10045882C /* ScrollingCoordinatorIOS.h in Headers */,
 				9391A991162746CB00297330 /* ScrollingCoordinatorMac.h in Headers */,
+				712DBA4921F8AD83008F36B2 /* ScrollingCoordinatorTypes.h in Headers */,
 				51C61B0B1DE536E7008A212D /* ScrollingMomentumCalculator.h in Headers */,
 				517DEEE81DE94B0800B91644 /* ScrollingMomentumCalculatorMac.h in Headers */,
 				93C38BFF164473C700091EB2 /* ScrollingStateFixedNode.h in Headers */,

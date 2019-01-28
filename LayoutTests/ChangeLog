@@ -1,3 +1,33 @@
+2019-01-28  Antoine Quint  <graouts@apple.com>
+
+        Limit user-agent interactions based on the touch-action property on iOS
+        https://bugs.webkit.org/show_bug.cgi?id=193447
+        <rdar://problem/47283874>
+
+        Reviewed by Antti Koivisto and Simon Fraser.
+
+        Add a new series of tests that check that the "none", "pan-x", "pan-y" and "pinch-zoom" values have the expected
+        impact on page panning on iOS.
+
+        * pointerevents/ios/touch-action-none-expected.txt: Added.
+        * pointerevents/ios/touch-action-none-in-overflow-scrolling-touch-expected.txt: Added.
+        * pointerevents/ios/touch-action-none-in-overflow-scrolling-touch.html: Added.
+        * pointerevents/ios/touch-action-none-on-iframe-expected.txt: Added.
+        * pointerevents/ios/touch-action-none-on-iframe.html: Added.
+        * pointerevents/ios/touch-action-none-on-parent-expected.txt: Added.
+        * pointerevents/ios/touch-action-none-on-parent.html: Added.
+        * pointerevents/ios/touch-action-none.html: Added.
+        * pointerevents/ios/touch-action-pan-x-expected.txt: Added.
+        * pointerevents/ios/touch-action-pan-x-pan-y-expected.txt: Added.
+        * pointerevents/ios/touch-action-pan-x-pan-y.html: Added.
+        * pointerevents/ios/touch-action-pan-x.html: Added.
+        * pointerevents/ios/touch-action-pan-y-expected.txt: Added.
+        * pointerevents/ios/touch-action-pan-y.html: Added.
+        * pointerevents/ios/touch-action-pinch-zoom-allows-zooming-expected.txt: Added.
+        * pointerevents/ios/touch-action-pinch-zoom-allows-zooming.html: Added.
+        * pointerevents/ios/touch-action-pinch-zoom-prevents-scrolling-expected.txt: Added.
+        * pointerevents/ios/touch-action-pinch-zoom-prevents-scrolling.html: Added.
+
 2019-01-28  Nikita Vasilyev  <nvasilyev@apple.com>
 
         Web Inspector: Add Changes panel to Elements tab

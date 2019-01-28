@@ -196,6 +196,10 @@ struct WKAutoCorrectionData {
     RetainPtr<UIWebTouchEventsGestureRecognizer> _touchEventGestureRecognizer;
 
     BOOL _canSendTouchEventsAsynchronously;
+#if ENABLE(POINTER_EVENTS)
+    BOOL _preventsPanningInXAxis;
+    BOOL _preventsPanningInYAxis;
+#endif
 
     RetainPtr<WKSyntheticClickTapGestureRecognizer> _singleTapGestureRecognizer;
     RetainPtr<_UIWebHighlightLongPressGestureRecognizer> _highlightLongPressGestureRecognizer;
@@ -349,6 +353,10 @@ struct WKAutoCorrectionData {
 @property (nonatomic, readonly) const WebKit::FocusedElementInformation& focusedElementInformation;
 @property (nonatomic, readonly) UIWebFormAccessory *formAccessoryView;
 @property (nonatomic, readonly) UITextInputAssistantItem *inputAssistantItemForWebView;
+#if ENABLE(POINTER_EVENTS)
+@property (nonatomic, readonly) BOOL preventsPanningInXAxis;
+@property (nonatomic, readonly) BOOL preventsPanningInYAxis;
+#endif
 
 #if ENABLE(DATALIST_ELEMENT)
 @property (nonatomic, strong) UIView <WKFormControl> *dataListTextSuggestionsInputView;

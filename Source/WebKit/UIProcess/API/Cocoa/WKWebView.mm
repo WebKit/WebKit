@@ -2583,6 +2583,14 @@ static WebCore::FloatPoint constrainContentOffset(WebCore::FloatPoint contentOff
     // zooming. We'll animate to the right place once the zoom finishes.
     if ([scrollView isZooming])
         *targetContentOffset = [scrollView contentOffset];
+#if ENABLE(POINTER_EVENTS)
+    else {
+        if ([_contentView preventsPanningInXAxis])
+            targetContentOffset->x = scrollView.contentOffset.x;
+        if ([_contentView preventsPanningInYAxis])
+            targetContentOffset->y = scrollView.contentOffset.y;
+    }
+#endif
 #if ENABLE(CSS_SCROLL_SNAP) && ENABLE(ASYNC_SCROLLING)
     if (WebKit::RemoteScrollingCoordinatorProxy* coordinator = _page->scrollingCoordinatorProxy()) {
         // FIXME: Here, I'm finding the maximum horizontal/vertical scroll offsets. There's probably a better way to do this.
@@ -2618,6 +2626,20 @@ static WebCore::FloatPoint constrainContentOffset(WebCore::FloatPoint contentOff
 - (void)scrollViewDidScrollToTop:(UIScrollView *)scrollView
 {
     [self _didFinishScrolling];
+}
+
+- (CGPoint)_scrollView:(UIScrollView *)scrollView adjustedOffsetForOffset:(CGPoint)offset translation:(CGPoint)translation startPoint:(CGPoint)start locationInView:(CGPoint)locationInView horizontalVelocity:(inout double *)hv verticalVelocity:(inout double *)vv
+{
+    if (![_contentView preventsPanningInXAxis] && ![_contentView preventsPanningInYAxis])
+        return offset;
+
+    CGPoint adjustedContentOffset = CGPointMake(offset.x, offset.y);
+    if ([_contentView preventsPanningInXAxis])
+        adjustedContentOffset.x = start.x;
+    if ([_contentView preventsPanningInYAxis])
+        adjustedContentOffset.y = start.y;
+
+    return adjustedContentOffset;
 }
 
 - (void)scrollViewDidScroll:(UIScrollView *)scrollView

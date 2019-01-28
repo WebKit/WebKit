@@ -403,6 +403,19 @@ String ScrollingTree::scrollingTreeAsText()
     return ts.release();
 }
 
+#if ENABLE(POINTER_EVENTS)
+Optional<TouchActionData> ScrollingTree::touchActionDataAtPoint(IntPoint p) const
+{
+    // FIXME: This does not handle the case where there are multiple regions matching this point.
+    for (auto& touchActionData : m_eventTrackingRegions.touchActionData) {
+        if (touchActionData.region.contains(p))
+            return touchActionData;
+    }
+
+    return WTF::nullopt;
+}
+#endif
+
 } // namespace WebCore
 
 #endif // ENABLE(ASYNC_SCROLLING)

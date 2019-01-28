@@ -236,6 +236,11 @@ ElementUpdates TreeResolver::resolveElement(Element& element)
     auto beforeUpdate = resolvePseudoStyle(element, update, PseudoId::Before);
     auto afterUpdate = resolvePseudoStyle(element, update, PseudoId::After);
 
+#if ENABLE(POINTER_EVENTS)
+    if (RuntimeEnabledFeatures::sharedFeatures().pointerEventsEnabled())
+        m_document.updateTouchActionElements(element, *update.style.get());
+#endif
+
     return { WTFMove(update), descendantsToResolve, WTFMove(beforeUpdate), WTFMove(afterUpdate) };
 }
 

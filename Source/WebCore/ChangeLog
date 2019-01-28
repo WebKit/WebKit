@@ -1,3 +1,68 @@
+2019-01-28  Antoine Quint  <graouts@apple.com>
+
+        Limit user-agent interactions based on the touch-action property on iOS
+        https://bugs.webkit.org/show_bug.cgi?id=193447
+        <rdar://problem/47283874>
+
+        Reviewed by Antti Koivisto and Simon Fraser.
+
+        We now compile a list of elements with a non-auto touch-action property that is updated whenever an element has its style changed
+        or is removed from its document. When the content of that list changes, we inform the scrolling coordinator such that it can compile
+        a list of TouchActionData structures which hold the touch-action value, the ID of the nearest scroll node and the Region containing
+        the bounds of each of those elements to send it up to the UI process along with touch regions. Computing the list of allowed touch
+        actions for a given element accounts for not only the value specified directly on that element's style, but also in its hierarchy,
+        crossing any frame boundary towards the top-level document's root node.
+
+        Tests: pointerevents/ios/touch-action-none-in-overflow-scrolling-touch.html
+               pointerevents/ios/touch-action-none-on-iframe.html
+               pointerevents/ios/touch-action-none-on-parent.html
+               pointerevents/ios/touch-action-none.html
+               pointerevents/ios/touch-action-pan-x-pan-y.html
+               pointerevents/ios/touch-action-pan-x.html
+               pointerevents/ios/touch-action-pan-y.html
+               pointerevents/ios/touch-action-pinch-zoom-allows-zooming.html
+               pointerevents/ios/touch-action-pinch-zoom-prevents-scrolling.html
+
+        * WebCore.xcodeproj/project.pbxproj: Update how certain headers are exposed such that they can be used from WebKit.
+        * dom/Document.cpp:
+        (WebCore::Document::invalidateRenderingDependentRegions):
+        (WebCore::Document::nodeWillBeRemoved): Ensure a node that is being removed from this document is no longer listed in its
+        list of elements with a non-auto touch-action property.
+        (WebCore::Document::absoluteEventRegionForNode):
+        (WebCore::Document::absoluteRegionForEventTargets):
+        (WebCore::Document::updateTouchActionElements): Create a list of elements with a non-auto touch-action property if one doesn't
+        exist yet and update it to add the given element if it contains a non-auto touch-action, or remove it if it doesn't. If the contents
+        of that list changed as a result, the scrolling coordinator is informed.
+        * dom/Document.h:
+        (WebCore::Document:: const):
+        * dom/Element.cpp:
+        (WebCore::parentCrossingFrameBoundaries):
+        (WebCore::Element::computedTouchActions const): Provide the list of allowed touch actions accounting for the "touch-action" property
+        specified on this element and all of its hierarchy, crossing frame boundary.
+        (WebCore::Element::nearestScrollingNodeIDUsingTouchOverflowScrolling const): Provide the ScrollingNodeID, if any, for the nearest scrolling node
+        for that element. This will allow the UI process to identify which scroll view's behavior to customize to reflect the element's allowed
+        touch actions.
+        * dom/Element.h:
+        * page/scrolling/ScrollingCoordinator.cpp:
+        (WebCore::ScrollingCoordinator::absoluteEventTrackingRegionsForFrame const): Compute the region for all elements with a non-auto touch-action property
+        throughout the provided frame and all of its subframes.
+        * page/scrolling/ScrollingCoordinator.h:
+        (WebCore::ScrollableAreaParameters::operator== const): Deleted.
+        * page/scrolling/ScrollingCoordinatorTypes.h: Added.
+        (WebCore::ScrollableAreaParameters::operator== const):
+        * page/scrolling/ScrollingTree.cpp:
+        (WebCore::ScrollingTree::touchActionDataAtPoint const): Query the list of TouchActionData objects for a match based on the provided point. Right
+        now the logic is pretty crude, stopping at the first TouchActionData for which the region contains the provided point, but future patches will
+        account for overlap and nesting.
+        * page/scrolling/ScrollingTree.h:
+        * page/scrolling/ScrollingTreeNode.h:
+        * platform/EventTrackingRegions.cpp:
+        (WebCore::operator==):
+        * platform/EventTrackingRegions.h:
+        (WebCore::operator!=):
+        * style/StyleTreeResolver.cpp:
+        (WebCore::Style::TreeResolver::resolveElement): Update the list of elements with a non-auto touch-action property when an element's style changes.
+
 2019-01-27  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         Unreviewed, fix WPE/GTK debug builds after r240557

@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset=utf-8>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body>
+<script src="../../resources/testharness.js"></script>
+<script src="../../resources/testharnessreport.js"></script>
+<script src="../utils.js"></script>
+<script>
+
+'use strict';
+
+target_test({ width: "200px", height: "200px" }, (target, test) => {
+    document.body.style.width = "2000px";
+    document.body.style.height = "2000px";
+
+    target.style.touchAction = "pan-x pan-y";
+
+    ui.swipe({ x: 150, y: 150 }, { x: 50, y: 50 }).then(() => {
+        assert_not_equals(window.pageXOffset, 0, "The page was scrolled in the x-axis.");
+        assert_not_equals(window.pageYOffset, 0, "The page was scrolled in the y-axis.");
+        test.done();
+    });
+}, "Testing that setting 'touch-action: pan-x pan-y' on an element allows page scrolling in both axes.");
+
+</script>
+</body>
+</html>

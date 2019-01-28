@@ -65,6 +65,9 @@ public:
     WebCore::FloatPoint scrollPosition() const;
     void setScrollLayerPosition(const WebCore::FloatPoint&);
     void updateChildNodesAfterScroll(const WebCore::FloatPoint& scrollPosition);
+#if ENABLE(POINTER_EVENTS)
+    Optional<TouchActionData> touchActionData() const;
+#endif
 
 private:
     RetainPtr<CALayer> m_scrollLayer;

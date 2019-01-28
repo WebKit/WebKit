@@ -129,6 +129,11 @@
 #import <WebKitAdditions/WKPlatformFileUploadPanel.mm>
 #endif
 
+#if ENABLE(POINTER_EVENTS)
+#import "RemoteScrollingCoordinatorProxy.h"
+#import <WebCore/TouchAction.h>
+#endif
+
 #if PLATFORM(WATCHOS)
 
 @interface WKContentView (WatchSupport) <WKFocusedFormControlViewDelegate, WKSelectMenuListViewControllerDelegate, WKTextInputListViewControllerDelegate>
@@ -608,6 +613,18 @@ static inline bool hasFocusedElement(WebKit::FocusedElementInformation focusedEl
     return (focusedElementInformation.elementType != WebKit::InputType::None);
 }
 
+#if ENABLE(POINTER_EVENTS)
+- (BOOL)preventsPanningInXAxis
+{
+    return _preventsPanningInXAxis;
+}
+
+- (BOOL)preventsPanningInYAxis
+{
+    return _preventsPanningInYAxis;
+}
+#endif
+
 - (WKFormInputSession *)_formInputSession
 {
     return _formInputSession.get();
@@ -854,6 +871,10 @@ static inline bool hasFocusedElement(WebKit::FocusedElementInformation focusedEl
     _hasSetUpInteractions = NO;
     _suppressSelectionAssistantReasons = { };
     _isZoomingToRevealFocusedElement = NO;
+
+#if ENABLE(POINTER_EVENTS)
+    [self _resetPanningPreventionFlags];
+#endif
 }
 
 - (void)_removeDefaultGestureRecognizers
@@ -1121,15 +1142,62 @@ static inline bool hasFocusedElement(WebKit::FocusedElementInformation focusedEl
     WebKit::NativeWebTouchEvent nativeWebTouchEvent(lastTouchEvent);
     nativeWebTouchEvent.setCanPreventNativeGestures(!_canSendTouchEventsAsynchronously || [gestureRecognizer isDefaultPrevented]);
 
+#if ENABLE(POINTER_EVENTS)
+    [self _handleTouchActionsForTouchEvent:nativeWebTouchEvent];
+#endif
+
     if (_canSendTouchEventsAsynchronously)
         _page->handleTouchEventAsynchronously(nativeWebTouchEvent);
     else
         _page->handleTouchEventSynchronously(nativeWebTouchEvent);
 
-    if (nativeWebTouchEvent.allTouchPointsAreReleased())
+    if (nativeWebTouchEvent.allTouchPointsAreReleased()) {
         _canSendTouchEventsAsynchronously = NO;
+
+#if ENABLE(POINTER_EVENTS)
+        if (!_page->isScrollingOrZooming())
+            [self _resetPanningPreventionFlags];
+#endif
+    }
 #endif
 }
+
+#if ENABLE(POINTER_EVENTS)
+- (void)_handleTouchActionsForTouchEvent:(const WebKit::NativeWebTouchEvent&)touchEvent
+{
+    auto* scrollingCoordinator = _page->scrollingCoordinatorProxy();
+    if (!scrollingCoordinator)
+        return;
+
+    for (const auto& touchPoint : touchEvent.touchPoints()) {
+        auto phase = touchPoint.phase();
+        if (phase == WebKit::WebPlatformTouchPoint::TouchPressed) {
+            auto touchActionData = scrollingCoordinator->touchActionDataAtPoint(touchPoint.location());
+            if (!touchActionData)
+                continue;
+            if (touchActionData->touchActions == WebCore::TouchAction::None)
+                [_touchEventGestureRecognizer setDefaultPrevented:YES];
+            else if (!touchActionData->touchActions.contains(WebCore::TouchAction::Manipulation)) {
+                if (auto scrollingNodeID = touchActionData->scrollingNodeID)
+                    scrollingCoordinator->setTouchDataForTouchIdentifier(*touchActionData, touchPoint.identifier());
+                else {
+                    if (!touchActionData->touchActions.contains(WebCore::TouchAction::PinchZoom))
+                        _webView.scrollView.pinchGestureRecognizer.enabled = NO;
+                    _preventsPanningInXAxis = !touchActionData->touchActions.contains(WebCore::TouchAction::PanX);
+                    _preventsPanningInYAxis = !touchActionData->touchActions.contains(WebCore::TouchAction::PanY);
+                }
+            }
+        } else if (phase == WebKit::WebPlatformTouchPoint::TouchReleased || phase == WebKit::WebPlatformTouchPoint::TouchCancelled)
+            scrollingCoordinator->clearTouchDataForTouchIdentifier(touchPoint.identifier());
+    }
+}
+
+- (void)_resetPanningPreventionFlags
+{
+    _preventsPanningInXAxis = NO;
+    _preventsPanningInYAxis = NO;
+}
+#endif
 
 - (void)_inspectorNodeSearchRecognized:(UIGestureRecognizer *)gestureRecognizer
 {
@@ -2191,6 +2259,10 @@ static void cancelPotentialTapIfNecessary(WKContentView* contentView)
         [_textSelectionAssistant didEndScrollingOverflow];
     }
     _page->setIsScrollingOrZooming(false);
+
+#if ENABLE(POINTER_EVENTS)
+    [self _resetPanningPreventionFlags];
+#endif
 
 #if PLATFORM(WATCHOS)
     [_focusedFormControlView engageFocusedFormControlNavigation];

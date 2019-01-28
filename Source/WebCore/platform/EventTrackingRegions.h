@@ -30,6 +30,12 @@
 #include <wtf/text/StringHash.h>
 #include <wtf/text/WTFString.h>
 
+#if ENABLE(POINTER_EVENTS)
+#include "CSSPrimitiveValueMappings.h"
+#include "ScrollingCoordinatorTypes.h"
+#include "TouchAction.h"
+#endif
+
 namespace WebCore {
 
 enum class TrackingType : uint8_t {
@@ -38,6 +44,18 @@ enum class TrackingType : uint8_t {
     Synchronous = 2
 };
 
+#if ENABLE(POINTER_EVENTS)
+typedef uint64_t ScrollingNodeID;
+struct TouchActionData {
+    OptionSet<TouchAction> touchActions { TouchAction::Auto };
+    ScrollingNodeID scrollingNodeID { 0 };
+    Region region;
+};
+
+bool operator==(const TouchActionData&, const TouchActionData&);
+inline bool operator!=(const TouchActionData& a, const TouchActionData& b) { return !(a == b); }
+#endif
+
 struct EventTrackingRegions {
     // Region for which events can be dispatched without blocking scrolling.
     Region asynchronousDispatchRegion;
@@ -45,6 +63,10 @@ struct EventTrackingRegions {
     // Regions for which events must be sent before performing the default behavior.
     // The key is the Event Name with an active handler.
     HashMap<String, Region> eventSpecificSynchronousDispatchRegions;
+
+#if ENABLE(POINTER_EVENTS)
+    Vector<TouchActionData> touchActionData;
+#endif
 
     bool isEmpty() const;
 

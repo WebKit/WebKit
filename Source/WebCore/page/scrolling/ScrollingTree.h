@@ -30,6 +30,7 @@
 #include "PlatformWheelEvent.h"
 #include "Region.h"
 #include "ScrollingCoordinator.h"
+#include "TouchAction.h"
 #include "WheelEventTestTrigger.h"
 #include <wtf/HashMap.h>
 #include <wtf/Lock.h>
@@ -104,7 +105,10 @@ public:
 #endif
 
     WEBCORE_EXPORT TrackingType eventTrackingTypeForPoint(const AtomicString& eventName, IntPoint);
-    
+#if ENABLE(POINTER_EVENTS)
+    WEBCORE_EXPORT Optional<TouchActionData> touchActionDataAtPoint(IntPoint) const;
+#endif
+
 #if PLATFORM(MAC)
     virtual void handleWheelEventPhase(PlatformWheelEventPhase) = 0;
     virtual void setActiveScrollSnapIndices(ScrollingNodeID, unsigned /*horizontalIndex*/, unsigned /*verticalIndex*/) { }

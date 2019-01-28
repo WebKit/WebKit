@@ -67,9 +67,29 @@
     _scrollingTreeNodeDelegate->scrollWillStart();
 }
 
-#if ENABLE(CSS_SCROLL_SNAP)
 - (void)scrollViewWillEndDragging:(UIScrollView *)scrollView withVelocity:(CGPoint)velocity targetContentOffset:(inout CGPoint *)targetContentOffset
 {
+#if ENABLE(POINTER_EVENTS)
+    if (![scrollView isZooming]) {
+        if (auto touchActionData = _scrollingTreeNodeDelegate->touchActionData()) {
+            auto touchActions = touchActionData->touchActions;
+            if (touchActions != WebCore::TouchAction::Auto && touchActions != WebCore::TouchAction::Manipulation) {
+                bool canPanX = true;
+                bool canPanY = true;
+                if (!touchActions.contains(WebCore::TouchAction::PanX)) {
+                    canPanX = false;
+                    targetContentOffset->x = scrollView.contentOffset.x;
+                }
+                if (!touchActions.contains(WebCore::TouchAction::PanY)) {
+                    canPanY = false;
+                    targetContentOffset->y = scrollView.contentOffset.y;
+                }
+            }
+        }
+    }
+#endif
+
+#if ENABLE(CSS_SCROLL_SNAP)
     CGFloat horizontalTarget = targetContentOffset->x;
     CGFloat verticalTarget = targetContentOffset->y;
 
@@ -96,8 +116,8 @@
         || originalVerticalSnapPosition != _scrollingTreeNodeDelegate->scrollingNode().currentVerticalSnapPointIndex()) {
         _scrollingTreeNodeDelegate->currentSnapPointIndicesDidChange(_scrollingTreeNodeDelegate->scrollingNode().currentHorizontalSnapPointIndex(), _scrollingTreeNodeDelegate->scrollingNode().currentVerticalSnapPointIndex());
     }
-}
 #endif
+}
 
 - (void)scrollViewDidEndDragging:(UIScrollView *)scrollView willDecelerate:(BOOL)willDecelerate
 {
@@ -116,6 +136,28 @@
         _scrollingTreeNodeDelegate->scrollDidEnd();
     }
 }
+
+#if ENABLE(POINTER_EVENTS)
+- (CGPoint)_scrollView:(UIScrollView *)scrollView adjustedOffsetForOffset:(CGPoint)offset translation:(CGPoint)translation startPoint:(CGPoint)start locationInView:(CGPoint)locationInView horizontalVelocity:(inout double *)hv verticalVelocity:(inout double *)vv
+{
+    auto touchActionData = _scrollingTreeNodeDelegate->touchActionData();
+    if (!touchActionData)
+        return offset;
+
+    auto touchActions = touchActionData->touchActions;
+    if (touchActions == WebCore::TouchAction::Auto || touchActions == WebCore::TouchAction::Manipulation)
+        return offset;
+
+    CGPoint adjustedContentOffset = CGPointMake(offset.x, offset.y);
+
+    if (!touchActions.contains(WebCore::TouchAction::PanX))
+        adjustedContentOffset.x = start.x;
+    if (!touchActions.contains(WebCore::TouchAction::PanY))
+        adjustedContentOffset.y = start.y;
+
+    return adjustedContentOffset;
+}
+#endif
 
 @end
 
@@ -286,6 +328,13 @@ void ScrollingTreeScrollingNodeDelegateIOS::currentSnapPointIndicesDidChange(uns
 
     scrollingTree().currentSnapPointIndicesDidChange(scrollingNode().scrollingNodeID(), horizontal, vertical);
 }
+
+#if ENABLE(POINTER_EVENTS)
+Optional<TouchActionData> ScrollingTreeScrollingNodeDelegateIOS::touchActionData() const
+{
+    return downcast<RemoteScrollingTree>(scrollingTree()).scrollingCoordinatorProxy().touchActionDataForScrollNodeID(scrollingNode().scrollingNodeID());
+}
+#endif
 
 } // namespace WebKit
 
