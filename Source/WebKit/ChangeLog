@@ -1,3 +1,20 @@
+2019-01-28  Chris Dumez  <cdumez@apple.com>
+
+        Regression(PSON) Crash under WebPageProxy::didStartProgress()
+        https://bugs.webkit.org/show_bug.cgi?id=193915
+        <rdar://problem/47560907>
+
+        Reviewed by Alex Christensen.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::close):
+        Make sure we destroy the ProvisionalPageProxy if the page gets closed as we do not want to keep receiving
+        IPC after this or even worse, commit the provisional page.
+
+        (WebKit::WebPageProxy::didStartProgress):
+        Add an assertion in didStartProgress() to make sure we do not receive this IPC after the page has been
+        closed.
+
 2019-01-28  Antoine Quint  <graouts@apple.com>
 
         Limit user-agent interactions based on the touch-action property on iOS
