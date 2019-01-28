@@ -134,7 +134,7 @@ void SlotVisitor::clearMarkStacks()
         });
 }
 
-void SlotVisitor::append(ConservativeRoots& conservativeRoots)
+void SlotVisitor::append(const ConservativeRoots& conservativeRoots)
 {
     HeapCell** roots = conservativeRoots.roots();
     size_t size = conservativeRoots.size();

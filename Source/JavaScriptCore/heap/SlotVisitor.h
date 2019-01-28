@@ -86,7 +86,7 @@ public:
     const VM& vm() const;
     Heap* heap() const;
 
-    void append(ConservativeRoots&);
+    void append(const ConservativeRoots&);
     
     template<typename T, typename Traits> void append(const WriteBarrierBase<T, Traits>&);
     template<typename T, typename Traits> void appendHidden(const WriteBarrierBase<T, Traits>&);
