@@ -1,3 +1,12 @@
+2019-01-28  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC][MarginCollapsing][Quirks] Quirk margin values get propagated through margin collapsing
+        https://bugs.webkit.org/show_bug.cgi?id=193896
+
+        Reviewed by Antti Koivisto.
+
+        * LayoutReloaded/misc/LFC-passing-tests.txt:
+
 2018-12-15  Darin Adler  <darin@apple.com>
 
         Replace many uses of String::format with more type-safe alternatives

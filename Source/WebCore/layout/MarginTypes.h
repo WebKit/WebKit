@@ -84,8 +84,11 @@ struct EstimatedMarginBefore {
 
 struct PositiveAndNegativeVerticalMargin {
     struct Values {
+        bool isNonZero() const { return positive.valueOr(0) || negative.valueOr(0); }
+
         Optional<LayoutUnit> positive;
         Optional<LayoutUnit> negative;
+        bool isQuirk { false };
     };
     Values before;
     Values after;

@@ -155,10 +155,6 @@ bool BlockFormattingContext::MarginCollapse::marginBeforeCollapsesWithPreviousSi
         return false;
 
     auto& previousInFlowSibling = *layoutBox.previousInFlowSibling();
-
-    if (Quirks::shouldIgnoreMarginAfter(layoutState, previousInFlowSibling))
-        return false;
-
     // Margins between a floated box and any other box do not collapse.
     if (layoutBox.isFloatingPositioned() || previousInFlowSibling.isFloatingPositioned())
         return false;
@@ -203,9 +199,6 @@ bool BlockFormattingContext::MarginCollapse::marginBeforeCollapsesWithFirstInFlo
         return false;
 
     auto& firstInFlowChild = *downcast<Container>(layoutBox).firstInFlowChild();
-    if (Quirks::shouldIgnoreMarginBefore(layoutState, firstInFlowChild))
-        return false;
-
     if (!firstInFlowChild.isBlockLevelBox())
         return false;
 
@@ -326,9 +319,6 @@ bool BlockFormattingContext::MarginCollapse::marginAfterCollapsesWithLastInFlowC
         return false;
 
     auto& lastInFlowChild = *downcast<Container>(layoutBox).lastInFlowChild();
-    if (Quirks::shouldIgnoreMarginAfter(layoutState, lastInFlowChild))
-        return false;
-
     if (!lastInFlowChild.isBlockLevelBox())
         return false;
 
@@ -452,19 +442,14 @@ static PositiveAndNegativeVerticalMargin::Values computedPositiveAndNegativeMarg
     else
         computedValues.negative = a.negative ? a.negative : b.negative;
 
-    return computedValues;
-}
+    if (a.isNonZero() && b.isNonZero())
+        computedValues.isQuirk = a.isQuirk && b.isQuirk;
+    else if (a.isNonZero())
+        computedValues.isQuirk = a.isQuirk;
+    else
+        computedValues.isQuirk = b.isQuirk;
 
-static PositiveAndNegativeVerticalMargin::Values computedPositiveAndNegativeMargin(PositiveAndNegativeVerticalMargin::Values a, Optional<LayoutUnit> marginValue)
-{
-    if (!marginValue || !marginValue.value())
-        return a;
-    if (*marginValue > 0)
-        return computedPositiveAndNegativeMargin(a, { marginValue, { } });
-    if (*marginValue < 0)
-        return computedPositiveAndNegativeMargin(a, { { }, marginValue });
-    ASSERT_NOT_REACHED();
-    return { };
+    return computedValues;
 }
 
 static Optional<LayoutUnit> marginValue(PositiveAndNegativeVerticalMargin::Values marginValues)
@@ -560,7 +545,16 @@ PositiveAndNegativeVerticalMargin::Values BlockFormattingContext::MarginCollapse
     // 2. Gather positive and negative margin values from previous inflow sibling if margins are adjoining.
     // 3. Compute min/max positive and negative collapsed margin values using non-collpased computed margin before.
     auto collapsedMarginBefore = computedPositiveAndNegativeMargin(firstChildCollapsedMarginBefore(), previouSiblingCollapsedMarginAfter());
-    return computedPositiveAndNegativeMargin(collapsedMarginBefore, nonCollapsedValues.before);
+    if (collapsedMarginBefore.isQuirk && Quirks::shouldIgnoreCollapsedQuirkMargin(layoutState, layoutBox))
+        collapsedMarginBefore = { };
+
+    PositiveAndNegativeVerticalMargin::Values nonCollapsedBefore;
+    if (nonCollapsedValues.before > 0)
+        nonCollapsedBefore = { nonCollapsedValues.before, { }, layoutBox.style().hasMarginBeforeQuirk() };
+    else if (nonCollapsedValues.before < 0)
+        nonCollapsedBefore = { { }, nonCollapsedValues.before, layoutBox.style().hasMarginBeforeQuirk() };
+
+    return computedPositiveAndNegativeMargin(collapsedMarginBefore, nonCollapsedBefore);
 }
 
 PositiveAndNegativeVerticalMargin::Values BlockFormattingContext::MarginCollapse::positiveNegativeMarginAfter(const LayoutState& layoutState, const Box& layoutBox, const UsedVerticalMargin::NonCollapsedValues& nonCollapsedValues)
@@ -573,7 +567,13 @@ PositiveAndNegativeVerticalMargin::Values BlockFormattingContext::MarginCollapse
 
     // We don't know yet the margin before value of the next sibling. Let's just pretend it does not have one and 
     // update it later when we compute the next sibling's margin before. See updateCollapsedMarginAfter.
-    return computedPositiveAndNegativeMargin(lastChildCollapsedMarginAfter(), nonCollapsedValues.after);
+    PositiveAndNegativeVerticalMargin::Values nonCollapsedAfter;
+    if (nonCollapsedValues.after > 0)
+        nonCollapsedAfter = { nonCollapsedValues.after, { }, layoutBox.style().hasMarginAfterQuirk() };
+    else if (nonCollapsedValues.after < 0)
+        nonCollapsedAfter = { { }, nonCollapsedValues.after, layoutBox.style().hasMarginAfterQuirk() };
+
+    return computedPositiveAndNegativeMargin(lastChildCollapsedMarginAfter(), nonCollapsedAfter);
 }
 
 EstimatedMarginBefore BlockFormattingContext::MarginCollapse::estimatedMarginBefore(const LayoutState& layoutState, const Box& layoutBox)

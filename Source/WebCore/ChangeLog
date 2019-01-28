@@ -1,5 +1,56 @@
 2019-01-28  Zalan Bujtas  <zalan@apple.com>
 
+        [LFC][MarginCollapsing][Quirks] Quirk margin values get propagated through margin collapsing
+        https://bugs.webkit.org/show_bug.cgi?id=193896
+
+        Reviewed by Antti Koivisto.
+
+        This patch implements quirk margin value collapsing. There are a few "quirk" rules when it comes to margin collapsing.
+
+        1. Collapsed quirk margin values are ignored on quirk containers
+
+            <body>
+              <p> p elements have 1em vertical (top/bottom) quirk margin
+            </body>
+
+            In quirk mode, <p> and <body> (quirk container) collapses their vertical margins but <p>'s quirk values(1qem -> 16px) are ignored.
+            Used vertical margin values on the <body> are top: 8px bottom: 8px.
+
+        2. Quirk margin values are turned into non-quirk values when collapsed with non-zero, non-quirk margins.
+
+            <body>
+              <div style="margin-top: 1px">
+                <p> p elements have 1em vertical (top/bottom) quirk margin
+              </div>
+            </body>
+
+            When <p>'s vertical margin collapses with the parent <div>,
+            - the collapsed before value becomes 16px (max(1qem, 1px)) and this collapsed value is now considered as a non-quirk value
+            - the collapsed after value stays 1qem quirk value.
+
+            When <div> collapses with <body>
+            - the collapsed before value becomes 16px (max(16px, 8px))
+            - the <div>'s quirk after value gets ignored and the collapsed after value stays 8px.
+            Used vertical margin values on the <body> are top: 16px (1em) bottom: 8px.
+
+        * layout/MarginTypes.h:
+        (WebCore::Layout::PositiveAndNegativeVerticalMargin::Values::isNonZero const):
+        * layout/blockformatting/BlockFormattingContext.h:
+        * layout/blockformatting/BlockFormattingContextQuirks.cpp:
+        (WebCore::Layout::BlockFormattingContext::Quirks::shouldIgnoreCollapsedQuirkMargin):
+        (WebCore::Layout::hasMarginBeforeQuirkValue): Deleted.
+        (WebCore::Layout::BlockFormattingContext::Quirks::shouldIgnoreMarginBefore): Deleted.
+        (WebCore::Layout::BlockFormattingContext::Quirks::shouldIgnoreMarginAfter): Deleted.
+        * layout/blockformatting/BlockMarginCollapse.cpp:
+        (WebCore::Layout::BlockFormattingContext::MarginCollapse::marginBeforeCollapsesWithPreviousSiblingMarginAfter):
+        (WebCore::Layout::BlockFormattingContext::MarginCollapse::marginBeforeCollapsesWithFirstInFlowChildMarginBefore):
+        (WebCore::Layout::BlockFormattingContext::MarginCollapse::marginAfterCollapsesWithLastInFlowChildMarginAfter):
+        (WebCore::Layout::computedPositiveAndNegativeMargin):
+        (WebCore::Layout::BlockFormattingContext::MarginCollapse::positiveNegativeMarginBefore):
+        (WebCore::Layout::BlockFormattingContext::MarginCollapse::positiveNegativeMarginAfter):
+
+2019-01-28  Zalan Bujtas  <zalan@apple.com>
+
         [LFC][BFC] Remove redundant vertical positioning in BlockFormattingContext::computeFloatingPosition
         https://bugs.webkit.org/show_bug.cgi?id=193872
 

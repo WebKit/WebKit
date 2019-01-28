@@ -48,11 +48,6 @@ static bool isQuirkContainer(const Box& layoutBox)
     return layoutBox.isBodyBox() || layoutBox.isDocumentBox() || layoutBox.isTableCell();
 }
 
-static bool hasMarginBeforeQuirkValue(const Box& layoutBox)
-{
-    return layoutBox.style().hasMarginBeforeQuirk();
-}
-
 bool BlockFormattingContext::Quirks::needsStretching(const LayoutState& layoutState, const Box& layoutBox)
 {
     // In quirks mode, body stretches to html and html to the initial containing block (height: auto only).
@@ -104,26 +99,9 @@ HeightAndMargin BlockFormattingContext::Quirks::stretchedInFlowHeight(const Layo
     return heightAndMargin;
 }
 
-bool BlockFormattingContext::Quirks::shouldIgnoreMarginBefore(const LayoutState& layoutState, const Box& layoutBox)
+bool BlockFormattingContext::Quirks::shouldIgnoreCollapsedQuirkMargin(const LayoutState& layoutState, const Box& layoutBox)
 {
-    if (!layoutBox.parent())
-        return false;
-
-    return layoutState.inQuirksMode() && isQuirkContainer(*layoutBox.parent()) && hasMarginBeforeQuirkValue(layoutBox);
-}
-
-bool BlockFormattingContext::Quirks::shouldIgnoreMarginAfter(const LayoutState& layoutState, const Box& layoutBox)
-{
-    // Ignore maring after when the ignored margin before collapses through.
-    if (!shouldIgnoreMarginBefore(layoutState, layoutBox))
-        return false;
-
-    ASSERT(layoutBox.parent());
-    auto& parent = *layoutBox.parent();
-    if (parent.firstInFlowOrFloatingChild() != &layoutBox || parent.firstInFlowOrFloatingChild() != parent.lastInFlowOrFloatingChild())
-        return false;
-
-    return MarginCollapse::marginsCollapseThrough(layoutState, layoutBox);
+    return layoutState.inQuirksMode() && isQuirkContainer(layoutBox);
 }
 
 }

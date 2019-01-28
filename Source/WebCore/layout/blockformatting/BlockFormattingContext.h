@@ -123,6 +123,7 @@ private:
         static bool needsStretching(const LayoutState&, const Box&);
         static HeightAndMargin stretchedInFlowHeight(const LayoutState&, const Box&, HeightAndMargin);
 
+        static bool shouldIgnoreCollapsedQuirkMargin(const LayoutState&, const Box&);
         static bool shouldIgnoreMarginBefore(const LayoutState&, const Box&);
         static bool shouldIgnoreMarginAfter(const LayoutState&, const Box&);
     };

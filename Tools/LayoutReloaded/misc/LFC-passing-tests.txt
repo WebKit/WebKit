@@ -101,12 +101,15 @@ fast/block/basic/percent-height-inside-anonymous-block.html
 fast/block/basic/quirk-mode-percent-height.html
 fast/block/basic/quirk-percent-height-grandchild.html
 fast/block/float/001.html
+fast/block/float/003.html
 fast/block/float/007.html
 fast/block/float/008.html
 fast/block/float/009.html
 fast/block/float/013.html
 fast/block/float/019.html
+fast/block/float/023.html
 fast/block/float/030.html
+fast/block/float/033.html
 fast/block/float/negative-margin-clear.html
 fast/block/float/overhanging-after-height-decrease-offsets.html
 fast/block/float/overhanging-after-height-decrease.html
@@ -125,8 +128,16 @@ fast/block/float/float-in-descendant-formatting-context.html
 fast/block/float/floats-with-negative-horizontal-margin.html
 fast/block/float/float-forced-below-other-floats.html
 fast/block/float/float-first-child-and-clear-sibling.html
+fast/block/float/intruding-float-sibling-with-margin.html
+fast/block/float/positioned-float-crash.html
+fast/block/float/previous-sibling-abspos-001.html
+fast/block/float/previous-sibling-abspos-002.html
+fast/block/float/previous-sibling-float-001.html
+fast/block/float/previous-sibling-float-002.html
 fast/block/margin-collapse/002.html
 fast/block/margin-collapse/003.html
+# webkit bug negative margin, document renderer size is invalid.
+#fast/block/margin-collapse/004.html
 fast/block/margin-collapse/026.html
 fast/block/margin-collapse/027.html
 fast/block/margin-collapse/028.html
@@ -134,7 +145,9 @@ fast/block/margin-collapse/029.html
 fast/block/margin-collapse/035.html
 fast/block/margin-collapse/039.html
 fast/block/margin-collapse/040.html
+fast/block/margin-collapse/043.html
 fast/block/margin-collapse/044.html
+fast/block/margin-collapse/063.html
 fast/block/margin-collapse/collapsed-through-child-simple.html
 fast/block/positioning/003.html
 fast/block/positioning/004.html
@@ -174,11 +187,16 @@ fast/block/positioning/043.html
 fast/block/positioning/044.html
 fast/block/positioning/045.html
 fast/block/positioning/046.html
+fast/block/positioning/048.html
 fast/block/positioning/049.html
+fast/block/positioning/050.html
 fast/block/positioning/052.html
 fast/block/positioning/054.html
 fast/block/positioning/060.html
+fast/block/positioning/abs-inside-inline-rel.html
+fast/block/positioning/absolute-length-of-neg-666666.html
 fast/block/positioning/absolute-positioning-no-scrollbar.html
+fast/block/positioning/border-change-relayout-test.html
 fast/block/positioning/change-containing-block-for-absolute-positioned.html
 fast/block/positioning/change-containing-block-for-fixed-positioned.html
 fast/block/positioning/complex-positioned-movement.html
@@ -191,6 +209,7 @@ fast/block/positioning/leftmargin-topmargin.html
 fast/block/positioning/negative-rel-position.html
 fast/block/positioning/abs-inside-inline-rel.html
 fast/block/positioning/pref-width-change.html
+fast/block/positioning/relative-overflow-replaced-float.html
 fast/block/positioning/relative-overflow-replaced-float.html
 fast/block/positioning/static-inline-position-dynamic.html
 fast/block/inside-inlines/basic-float-intrusion.html
