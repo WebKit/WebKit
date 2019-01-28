@@ -1103,7 +1103,10 @@ bool MediaPlayerPrivateMediaSourceAVFObjC::performTaskAtMediaTime(WTF::Function<
 {
     __block WTF::Function<void()> taskIn = WTFMove(task);
 
-    [m_synchronizer addBoundaryTimeObserverForTimes:@[[NSValue valueWithCMTime:toCMTime(time)]] queue:dispatch_get_main_queue() usingBlock:^{
+    if (m_performTaskObserver)
+        [m_synchronizer removeTimeObserver:m_performTaskObserver.get()];
+
+    m_performTaskObserver = [m_synchronizer addBoundaryTimeObserverForTimes:@[[NSValue valueWithCMTime:toCMTime(time)]] queue:dispatch_get_main_queue() usingBlock:^{
         taskIn();
     }];
     return true;
