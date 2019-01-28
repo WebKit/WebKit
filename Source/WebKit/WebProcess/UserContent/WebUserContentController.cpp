@@ -330,6 +330,8 @@ void WebUserContentController::removeUserScriptMessageHandlerInternal(InjectedBu
     if (it == m_userMessageHandlers.end())
         return;
 
+    auto protectedThis = makeRef(*this);
+
     auto& userMessageHandlers = it->value;
     bool userMessageHandlersChanged = userMessageHandlers.removeFirstMatching([userScriptMessageHandlerIdentifier](auto& pair) {
         return pair.first ==  userScriptMessageHandlerIdentifier;

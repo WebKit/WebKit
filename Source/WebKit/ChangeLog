@@ -1,3 +1,20 @@
+2019-01-28  Antti Koivisto  <antti@apple.com>
+
+        WebUserContentController::removeUserScriptMessageHandlerInternal may deref and delete itself
+        https://bugs.webkit.org/show_bug.cgi?id=193901
+        <rdar://problem/47338669>
+
+        Reviewed by David Kilzer.
+
+        Don't know how to repro.
+
+        * WebProcess/UserContent/WebUserContentController.cpp:
+        (WebKit::WebUserContentController::removeUserScriptMessageHandlerInternal):
+
+        Calling userMessageHandlers.removeFirstMatching() may remove the last ref to this
+        (because WebUserMessageHandlerDescriptorProxy refs WebUserContentController).
+        Fix by protecting this over the function.
+
 2018-12-15  Darin Adler  <darin@apple.com>
 
         Replace many uses of String::format with more type-safe alternatives
