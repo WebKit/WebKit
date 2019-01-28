@@ -1,3 +1,32 @@
+2019-01-28  Daniel Bates  <dabates@apple.com>
+
+        [iOS] Make Window virtual key code computation match Mac
+        https://bugs.webkit.org/show_bug.cgi?id=193452
+
+        Reviewed by Ryosuke Niwa.
+
+        Add a test that ensures we do not regress DOM key events dispatches for combinations
+        of Option and Command + Option key commands.
+
+        * fast/events/ios/key-events-meta-alt-combinations-expected.txt: Added.
+        * fast/events/ios/key-events-meta-alt-combinations.html: Added.
+        * fast/events/ios/resources/key-tester.js: Added.
+        (computeDifference):
+        (areArraysEqual):
+        (areKeyCommandsEqual):
+        (KeyCommand):
+        (KeyCommand.prototype.toString):
+        (keyCommandsHasCommand):
+        (computeSubsets.compareByModifierOrder):
+        (handleKeyUp):
+        (handleKeyPress):
+        (log):
+        (logKeyEvent):
+        (displayNameForTest):
+        (nextKeyPress):
+        (runTest):
+        (setUp):
+
 2019-01-28  Antoine Quint  <graouts@apple.com>
 
         Limit user-agent interactions based on the touch-action property on iOS

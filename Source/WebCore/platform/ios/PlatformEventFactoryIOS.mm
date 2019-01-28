@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004, 2006, 2007, 2008, 2009, 2010, 2011, 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2004, 2006-2011, 2014, 2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -420,6 +420,69 @@ String codeForKeyEvent(WebEvent *event)
     }
 }
 
+static bool isKeypadEvent(WebEvent* event)
+{
+    // Check that this is the type of event that has a keyCode.
+    if (event.type != WebEventKeyDown && event.type != WebEventKeyUp)
+        return false;
+
+    // With the exception of keypad comma, the following corresponds to the criterion for UIKeyModifierNumericPad.
+    // FIXME: Recognize keypad comma.
+    switch (event.keyCode) {
+    case VK_CLEAR: // Num Pad Clear
+    case VK_OEM_PLUS: // Num Pad =
+    case VK_DIVIDE:
+    case VK_MULTIPLY:
+    case VK_SUBTRACT:
+    case VK_ADD:
+    case VK_RETURN: // Num Pad Enter
+    case VK_DECIMAL: // Num Pad .
+    case VK_NUMPAD0:
+    case VK_NUMPAD1:
+    case VK_NUMPAD2:
+    case VK_NUMPAD3:
+    case VK_NUMPAD4:
+    case VK_NUMPAD5:
+    case VK_NUMPAD6:
+    case VK_NUMPAD7:
+    case VK_NUMPAD8:
+    case VK_NUMPAD9:
+        return true;
+    }
+    return false;
+}
+
+int windowsKeyCodeForKeyEvent(WebEvent* event)
+{
+    if (event.keyboardFlags & WebEventKeyboardInputModifierFlagsChanged)
+        return event.keyCode;
+
+    // There are several kinds of characters for which we produce key code from char code:
+    // 1. Roman letters. Windows keyboard layouts affect both virtual key codes and character codes for these,
+    //    so e.g. 'A' gets the same keyCode on QWERTY, AZERTY or Dvorak layouts.
+    // 2. Keys for which there is no known iOS virtual key codes, like PrintScreen.
+    // 3. Certain punctuation keys. On Windows, these are also remapped depending on current keyboard layout,
+    //    but see comment in windowsKeyCodeForCharCode().
+    if (!isKeypadEvent(event) && (event.type == WebEventKeyDown || event.type == WebEventKeyUp)) {
+        // Cmd switches Roman letters for Dvorak-QWERTY layout, so try modified characters first.
+        NSString *string = event.characters;
+        int code = string.length > 0 ? windowsKeyCodeForCharCode([string characterAtIndex:0]) : 0;
+        if (code)
+            return code;
+
+        // Ctrl+A on an AZERTY keyboard would get VK_Q keyCode if we relied on -[WebEvent keyCode] below.
+        string = event.charactersIgnoringModifiers;
+        code = string.length > 0 ? windowsKeyCodeForCharCode([string characterAtIndex:0]) : 0;
+        if (code)
+            return code;
+    }
+
+    // Use iOS virtual key code directly for any keys not handled above.
+    // E.g. the key next to Caps Lock has the same Event.keyCode on U.S. keyboard ('A') and on
+    // Russian keyboard (CYRILLIC LETTER EF).
+    return event.keyCode;
+}
+
 class PlatformKeyboardEventBuilder : public PlatformKeyboardEvent {
 public:
     PlatformKeyboardEventBuilder(WebEvent *event)
@@ -442,7 +505,7 @@ public:
         m_key = keyForKeyEvent(event);
         m_code = codeForKeyEvent(event);
         m_keyIdentifier = keyIdentifierForKeyEvent(event);
-        m_windowsVirtualKeyCode = event.keyCode;
+        m_windowsVirtualKeyCode = windowsKeyCodeForKeyEvent(event);
         m_isKeypad = false; // iOS does not distinguish the numpad. See <rdar://problem/7190835>.
         m_isSystemKey = false;
         m_Event = event;

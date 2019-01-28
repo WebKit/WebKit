@@ -1,3 +1,23 @@
+2019-01-28  Daniel Bates  <dabates@apple.com>
+
+        [iOS] Make Window virtual key code computation match Mac
+        https://bugs.webkit.org/show_bug.cgi?id=193452
+
+        Reviewed by Ryosuke Niwa.
+
+        Use the same approach for computing the Windows virtual key code on iOS as we do on Mac for
+        web compatibility. On Mac, we prefer to compute the  Windows virtual key code from the input
+        strings of the key event and use the key event's keycode as a last resort.
+
+        Test: fast/events/ios/key-events-meta-alt-combinations.html
+
+        * platform/ios/PlatformEventFactoryIOS.h:
+        * platform/ios/PlatformEventFactoryIOS.mm:
+        (WebCore::isKeypadEvent): Added.
+        (WebCore::windowsKeyCodeForKeyEvent): Added.
+        (WebCore::PlatformKeyboardEventBuilder::PlatformKeyboardEventBuilder): Modified to call
+        WebCore::windowsKeyCodeForKeyEvent() to compute the Windows virtual key code.
+
 2019-01-28  Antoine Quint  <graouts@apple.com>
 
         Limit user-agent interactions based on the touch-action property on iOS

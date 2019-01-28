@@ -68,7 +68,7 @@ WebKit::WebKeyboardEvent WebIOSEventFactory::createWebKeyboardEvent(::WebEvent *
     String key = WebCore::keyForKeyEvent(event);
     String code = WebCore::codeForKeyEvent(event);
     String keyIdentifier = WebCore::keyIdentifierForKeyEvent(event);
-    int windowsVirtualKeyCode = event.keyCode;
+    int windowsVirtualKeyCode = WebCore::windowsKeyCodeForKeyEvent(event);
     // FIXME: This is not correct. WebEvent.keyCode represents the Windows native virtual key code.
     int nativeVirtualKeyCode = event.keyCode;
     int macCharCode = 0;

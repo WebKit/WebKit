@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../../resources/ui-helper.js"></script>
+<script src="resources/key-tester.js"></script>
+<script>
+const modiferKeySubsetsToTest = computeSubsets(["metaKey", "altKey"]);
+for (const k of keysExcludingDeadAndSkippedKeys) {
+    for (const modifiers of modiferKeySubsetsToTest)
+        tests.push(new KeyCommand(k, modifiers));
+}
+</script>
+</head>
+<body>
+<p>This logs DOM keydown, keyup, keypress events that are dispatched when pressing key commands of the form <key>Command<key> + <key>X</key>, <key>Option<key> + <key>X</key> and <key>Command<key> + <key>Option<key> + <key>X</key>. Must be run in WebKitTestRunner.</p>
+<pre id="console"></pre>
+</body>
+</html>

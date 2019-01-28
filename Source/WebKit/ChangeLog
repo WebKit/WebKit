@@ -1,3 +1,15 @@
+2019-01-28  Daniel Bates  <dabates@apple.com>
+
+        [iOS] Make Window virtual key code computation match Mac
+        https://bugs.webkit.org/show_bug.cgi?id=193452
+
+        Reviewed by Ryosuke Niwa.
+
+        Compute the Windows virtual key code from the WebEvent.
+
+        * Shared/ios/WebIOSEventFactory.mm:
+        (WebIOSEventFactory::createWebKeyboardEvent):
+
 2019-01-28  Brent Fulgham  <bfulgham@apple.com>
 
         REGRESSION (r240498): Storage Access API prompts result is not remembered

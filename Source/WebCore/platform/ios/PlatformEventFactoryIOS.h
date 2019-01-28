@@ -53,6 +53,7 @@ public:
 WEBCORE_EXPORT String keyForKeyEvent(WebEvent *);
 WEBCORE_EXPORT String codeForKeyEvent(WebEvent *);
 WEBCORE_EXPORT String keyIdentifierForKeyEvent(WebEvent *);
+WEBCORE_EXPORT int windowsKeyCodeForKeyEvent(WebEvent*);
 
 } // namespace WebCore
 
