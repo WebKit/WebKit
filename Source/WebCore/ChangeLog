@@ -1,3 +1,15 @@
+2019-01-28  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC][BFC] Remove redundant vertical positioning in BlockFormattingContext::computeFloatingPosition
+        https://bugs.webkit.org/show_bug.cgi?id=193872
+
+        Reviewed by Antti Koivisto.
+
+        This is taken care of by verticalPositionWithMargin() in BlockFormattingContext::computeHeightAndMargin(). 
+
+        * layout/blockformatting/BlockFormattingContext.cpp:
+        (WebCore::Layout::BlockFormattingContext::computeFloatingPosition const):
+
 2019-01-28  cathie chen  <cathiechen@igalia.com>
 
         Add missing #include in ScrollingTreeFrameScrollingNode.cpp

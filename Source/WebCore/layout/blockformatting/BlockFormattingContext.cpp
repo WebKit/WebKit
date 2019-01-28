@@ -273,19 +273,9 @@ bool BlockFormattingContext::hasPrecomputedMarginBefore(const Box& layoutBox) co
 
 void BlockFormattingContext::computeFloatingPosition(const FloatingContext& floatingContext, const Box& layoutBox) const
 {
-    auto& layoutState = this->layoutState();
     ASSERT(layoutBox.isFloatingPositioned());
     ASSERT(hasPrecomputedMarginBefore(layoutBox));
-
-    auto& displayBox = layoutState.displayBoxForLayoutBox(layoutBox);
-    // 8.3.1 Collapsing margins
-    // In block formatting context margins between a floated box and any other box do not collapse.
-    // Adjust the static position by using the previous inflow box's non-collapsed margin.
-    if (auto* previousInFlowBox = layoutBox.previousInFlowSibling()) {
-        auto& previousDisplayBox = layoutState.displayBoxForLayoutBox(*previousInFlowBox);
-        displayBox.moveVertically(previousDisplayBox.nonCollapsedMarginAfter() - previousDisplayBox.marginAfter());
-    }
-    displayBox.setTopLeft(floatingContext.positionForFloat(layoutBox));
+    layoutState().displayBoxForLayoutBox(layoutBox).setTopLeft(floatingContext.positionForFloat(layoutBox));
 }
 
 void BlockFormattingContext::computePositionToAvoidFloats(const FloatingContext& floatingContext, const Box& layoutBox) const
