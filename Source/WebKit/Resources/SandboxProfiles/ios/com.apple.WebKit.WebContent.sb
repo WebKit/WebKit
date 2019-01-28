@@ -170,7 +170,8 @@
     (well-known-system-group-container-subpath "/systemgroup.com.apple.lsd.iconscache"))
 (allow mach-lookup
     (xpc-service-name "com.apple.lsdiconservice") ;; Remove this line after <rdar://problem/47151295> is fixed.
-    (xpc-service-name "com.apple.iconservice"))
+    (xpc-service-name "com.apple.iconservices")
+    (global-name "com.apple.iconservices"))
 
 ;; Common mach services needed by UIKit.
 (allow mach-lookup
