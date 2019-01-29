@@ -1,3 +1,20 @@
+2019-01-28  Simon Fraser  <simon.fraser@apple.com>
+
+        css3/filters/blur-filter-page-scroll-self.html crashes under WebCore::ScrollingStateNode::ScrollingStateNode
+        https://bugs.webkit.org/show_bug.cgi?id=193925
+
+        Reviewed by Tim Horton.
+
+        Some css3/filters/ tests disable accelerated compositing (which is crazy). Make these
+        tests not crash by ensuring that unparentNode() and unparentChildrenAndDestroyNode() clears the root
+        node if it's the node being unparented or destroyed.
+
+        Tested by existing tests.
+
+        * page/scrolling/ScrollingStateTree.cpp:
+        (WebCore::ScrollingStateTree::unparentNode):
+        (WebCore::ScrollingStateTree::unparentChildrenAndDestroyNode):
+
 2019-01-28  Daniel Bates  <dabates@apple.com>
 
         [iOS] Make Window virtual key code computation match Mac

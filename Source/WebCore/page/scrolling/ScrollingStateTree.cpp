@@ -204,6 +204,9 @@ void ScrollingStateTree::unparentNode(ScrollingNodeID nodeID)
     if (!protectedNode)
         return;
 
+    if (protectedNode == m_rootStateNode)
+        m_rootStateNode = nullptr;
+
     protectedNode->removeFromParent();
     m_unparentedNodes.add(nodeID, WTFMove(protectedNode));
 }
@@ -219,6 +222,9 @@ void ScrollingStateTree::unparentChildrenAndDestroyNode(ScrollingNodeID nodeID)
     RefPtr<ScrollingStateNode> protectedNode = m_stateNodeMap.take(nodeID);
     if (!protectedNode)
         return;
+
+    if (protectedNode == m_rootStateNode)
+        m_rootStateNode = nullptr;
 
     if (auto* children = protectedNode->children()) {
         for (auto child : *children) {
