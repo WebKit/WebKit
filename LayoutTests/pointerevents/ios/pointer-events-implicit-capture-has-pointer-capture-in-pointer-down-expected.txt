@@ -1,0 +1,3 @@
+
+PASS Calling hasPointerCapture() in the 'pointerdown' event handler returns true for direct manipulation devices. 
+

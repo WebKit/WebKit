@@ -1,3 +1,24 @@
+2019-01-28  Antoine Quint  <graouts@apple.com>
+
+        Implement capture for Pointer Events on iOS
+        https://bugs.webkit.org/show_bug.cgi?id=193917
+        <rdar://problem/47605689>
+
+        Reviewed by Dean Jackson.
+
+        New tests for implicit pointer capture and the Element APIs related to pointer capture.
+
+        * pointerevents/ios/pointer-events-implicit-capture-expected.txt: Added.
+        * pointerevents/ios/pointer-events-implicit-capture-has-pointer-capture-in-pointer-down-expected.txt: Added.
+        * pointerevents/ios/pointer-events-implicit-capture-has-pointer-capture-in-pointer-down.html: Added.
+        * pointerevents/ios/pointer-events-implicit-capture-release-exception-expected.txt: Added.
+        * pointerevents/ios/pointer-events-implicit-capture-release-exception.html: Added.
+        * pointerevents/ios/pointer-events-implicit-capture-release-expected.txt: Added.
+        * pointerevents/ios/pointer-events-implicit-capture-release.html: Added.
+        * pointerevents/ios/pointer-events-implicit-capture.html: Added.
+        * pointerevents/ios/pointer-events-set-pointer-capture-exceptions-expected.txt: Added.
+        * pointerevents/ios/pointer-events-set-pointer-capture-exceptions.html: Added.
+
 2019-01-28  Dean Jackson  <dino@apple.com>
 
         Produce "pen" Pointer Events if using a stylus (e.g. Apple Pencil)

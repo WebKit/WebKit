@@ -1523,6 +1523,7 @@ page/PerformanceResourceTiming.cpp
 page/PerformanceServerTiming.cpp
 page/PerformanceTiming.cpp
 page/PerformanceUserTiming.cpp
+page/PointerCaptureController.cpp
 page/PointerLockController.cpp
 page/PrintContext.cpp
 page/ProcessWarming.cpp

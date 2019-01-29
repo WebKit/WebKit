@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset=utf-8>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body>
+<script src="../../resources/testharness.js"></script>
+<script src="../../resources/testharnessreport.js"></script>
+<script src="../utils.js"></script>
+<script>
+
+'use strict';
+
+target_test((target, test) => {
+    target.addEventListener("pointerdown", event => assert_true(target.hasPointerCapture(event.pointerId)));
+    ui.beginTouches({ x: 50, y: 50 }).then(() => test.done());
+}, "Calling hasPointerCapture() in the 'pointerdown' event handler returns true for direct manipulation devices.");
+
+</script>
+</body>
+</html>

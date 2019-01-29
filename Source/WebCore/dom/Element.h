@@ -497,6 +497,12 @@ public:
     WEBCORE_EXPORT virtual void webkitRequestFullscreen();
 #endif
 
+#if ENABLE(POINTER_EVENTS)
+    ExceptionOr<void> setPointerCapture(int32_t);
+    ExceptionOr<void> releasePointerCapture(int32_t);
+    bool hasPointerCapture(int32_t);
+#endif
+
 #if ENABLE(POINTER_LOCK)
     WEBCORE_EXPORT void requestPointerLock();
 #endif

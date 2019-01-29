@@ -27,6 +27,7 @@
 #if ENABLE(POINTER_LOCK)
 
 #include <wtf/RefPtr.h>
+#include <wtf/WeakPtr.h>
 #include <wtf/text/AtomicString.h>
 
 namespace WebCore {

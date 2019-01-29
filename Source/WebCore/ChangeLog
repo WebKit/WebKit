@@ -1,3 +1,51 @@
+2019-01-28  Antoine Quint  <graouts@apple.com>
+
+        Implement capture for Pointer Events on iOS
+        https://bugs.webkit.org/show_bug.cgi?id=193917
+        <rdar://problem/47605689>
+
+        Reviewed by Dean Jackson.
+
+        We add a new PointerCaptureController object which gets notified upon dispatch of pointer events
+        to implement implicit pointer capture, dispatch the gotpointercapture and lostpointercaptiure events,
+        and implement the Element APIs for pointer capture: hasPointerCapture(), setPointerCapture() and
+        releasePointerCapture().
+
+        Tests: pointerevents/ios/pointer-events-implicit-capture-has-pointer-capture-in-pointer-down.html
+               pointerevents/ios/pointer-events-implicit-capture-release-exception.html
+               pointerevents/ios/pointer-events-implicit-capture-release.html
+               pointerevents/ios/pointer-events-implicit-capture.html
+               pointerevents/ios/pointer-events-set-pointer-capture-exceptions.html
+
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * dom/Element.cpp:
+        (WebCore::Element::setPointerCapture):
+        (WebCore::Element::releasePointerCapture):
+        (WebCore::Element::hasPointerCapture):
+        * dom/Element.h:
+        * dom/Element.idl:
+        * dom/EventNames.h:
+        * dom/PointerEvent.h:
+        * page/Page.cpp:
+        (WebCore::Page::Page):
+        * page/Page.h:
+        (WebCore::Page::pointerCaptureController const):
+        * page/PointerCaptureController.cpp: Added.
+        (WebCore::PointerCaptureController::PointerCaptureController):
+        (WebCore::PointerCaptureController::setPointerCapture):
+        (WebCore::PointerCaptureController::releasePointerCapture):
+        (WebCore::PointerCaptureController::hasPointerCapture):
+        (WebCore::PointerCaptureController::pointerLockWasApplied):
+        (WebCore::PointerCaptureController::touchEndedOrWasCancelledForIdentifier):
+        (WebCore::PointerCaptureController::pointerEventWillBeDispatched):
+        (WebCore::PointerCaptureController::pointerEventWasDispatched):
+        (WebCore::PointerCaptureController::processPendingPointerCapture):
+        * page/PointerCaptureController.h: Added.
+        * page/PointerLockController.cpp:
+        (WebCore::PointerLockController::requestPointerLock):
+        * page/PointerLockController.h:
+
 2019-01-28  Andy Estes  <aestes@apple.com>
 
         [watchOS] Enable Parental Controls content filtering

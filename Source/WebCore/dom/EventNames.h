@@ -140,6 +140,7 @@ namespace WebCore {
     macro(gesturestart) \
     macro(gesturetap) \
     macro(gesturetapdown) \
+    macro(gotpointercapture) \
     macro(hashchange) \
     macro(icecandidate) \
     macro(iceconnectionstatechange) \
@@ -162,6 +163,7 @@ namespace WebCore {
     macro(loadingdone) \
     macro(loadingerror) \
     macro(loadstart) \
+    macro(lostpointercapture) \
     macro(mark) \
     macro(merchantvalidation) \
     macro(message) \

@@ -86,6 +86,7 @@
 #include "PluginData.h"
 #include "PluginInfoProvider.h"
 #include "PluginViewBase.h"
+#include "PointerCaptureController.h"
 #include "PointerLockController.h"
 #include "ProgressTracker.h"
 #include "PublicSuffix.h"
@@ -214,6 +215,9 @@ Page::Page(PageConfiguration&& pageConfiguration)
 #endif
     , m_userInputBridge(std::make_unique<UserInputBridge>(*this))
     , m_inspectorController(std::make_unique<InspectorController>(*this, pageConfiguration.inspectorClient))
+#if ENABLE(POINTER_EVENTS)
+    , m_pointerCaptureController(std::make_unique<PointerCaptureController>())
+#endif
 #if ENABLE(POINTER_LOCK)
     , m_pointerLockController(std::make_unique<PointerLockController>(*this))
 #endif

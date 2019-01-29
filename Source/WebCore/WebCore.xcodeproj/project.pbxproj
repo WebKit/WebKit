@@ -2117,6 +2117,7 @@
 		71A1B6081DEE5AD70073BCFB /* modern-media-controls-localized-strings.js in Resources */ = {isa = PBXBuildFile; fileRef = 71A1B6061DEE5A820073BCFB /* modern-media-controls-localized-strings.js */; };
 		71A57DF2154BE25C0009D120 /* SVGPathUtilities.h in Headers */ = {isa = PBXBuildFile; fileRef = 71A57DF0154BE25C0009D120 /* SVGPathUtilities.h */; };
 		71B28427203CEC4C0036AA5D /* JSCSSAnimation.h in Headers */ = {isa = PBXBuildFile; fileRef = 71B28426203CEC0D0036AA5D /* JSCSSAnimation.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		71B5AB2621F1D9F400376E5C /* PointerCaptureController.h in Headers */ = {isa = PBXBuildFile; fileRef = 71B5AB2421F1D9E200376E5C /* PointerCaptureController.h */; };
 		71B7EE0D21B5C6870031C1EF /* TouchAction.h in Headers */ = {isa = PBXBuildFile; fileRef = 71AEE4EB21B5A49C00DDB036 /* TouchAction.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		71C29E32203CE781008F36D2 /* CSSAnimation.h in Headers */ = {isa = PBXBuildFile; fileRef = 71C29E30203CE76B008F36D2 /* CSSAnimation.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		71C916081D1483A300ACA47D /* UserInterfaceLayoutDirection.h in Headers */ = {isa = PBXBuildFile; fileRef = 71C916071D1483A300ACA47D /* UserInterfaceLayoutDirection.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -9410,6 +9411,8 @@
 		71B0460A1DD3C2EE00EE19CF /* status-support.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; path = "status-support.js"; sourceTree = "<group>"; };
 		71B28424203CEC0B0036AA5D /* JSCSSAnimation.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSCSSAnimation.cpp; sourceTree = "<group>"; };
 		71B28426203CEC0D0036AA5D /* JSCSSAnimation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSCSSAnimation.h; sourceTree = "<group>"; };
+		71B5AB2421F1D9E200376E5C /* PointerCaptureController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PointerCaptureController.h; sourceTree = "<group>"; };
+		71B5AB2521F1D9E300376E5C /* PointerCaptureController.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PointerCaptureController.cpp; sourceTree = "<group>"; };
 		71C29E2E203CE76B008F36D2 /* CSSAnimation.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CSSAnimation.cpp; sourceTree = "<group>"; };
 		71C29E30203CE76B008F36D2 /* CSSAnimation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CSSAnimation.h; sourceTree = "<group>"; };
 		71C29E31203CE76C008F36D2 /* CSSAnimation.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = CSSAnimation.idl; sourceTree = "<group>"; };
@@ -20413,6 +20416,8 @@
 				A554B5F01E383936001D4E03 /* PerformanceUserTiming.cpp */,
 				A554B5F11E383936001D4E03 /* PerformanceUserTiming.h */,
 				31D591B116697A6C00E6BF02 /* PlugInClient.h */,
+				71B5AB2521F1D9E300376E5C /* PointerCaptureController.cpp */,
+				71B5AB2421F1D9E200376E5C /* PointerCaptureController.h */,
 				5CFC434E192406A900A0D3B5 /* PointerLockController.cpp */,
 				5CFC434F192406A900A0D3B5 /* PointerLockController.h */,
 				3772B09516535856000A49CA /* PopupOpeningObserver.h */,
@@ -31956,6 +31961,7 @@
 				26E944DD1AC4B4EA007B85B5 /* Term.h in Headers */,
 				6550B6A6099DF0270090D781 /* Text.h in Headers */,
 				93309E17099E64920056E581 /* TextAffinity.h in Headers */,
+				71B5AB2621F1D9F400376E5C /* PointerCaptureController.h in Headers */,
 				CE7B2DB51586ABAD0098B3FA /* TextAlternativeWithRange.h in Headers */,
 				0F54DCE61881051D003EEDBB /* TextAutoSizing.h in Headers */,
 				B2C3DA340D006C1D00EF6F26 /* TextBoundaries.h in Headers */,

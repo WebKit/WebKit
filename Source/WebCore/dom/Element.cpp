@@ -78,6 +78,7 @@
 #include "MutationRecord.h"
 #include "NodeRenderStyle.h"
 #include "PlatformWheelEvent.h"
+#include "PointerCaptureController.h"
 #include "PointerLockController.h"
 #include "RenderFragmentContainer.h"
 #include "RenderLayer.h"
@@ -3431,6 +3432,29 @@ void Element::setContainsFullScreenElementOnAncestorsCrossingFrameBoundaries(boo
     Element* element = this;
     while ((element = parentCrossingFrameBoundaries(element)))
         element->setContainsFullScreenElement(flag);
+}
+#endif
+
+#if ENABLE(POINTER_EVENTS)
+ExceptionOr<void> Element::setPointerCapture(int32_t pointerId)
+{
+    if (document().page())
+        return document().page()->pointerCaptureController().setPointerCapture(this, pointerId);
+    return { };
+}
+
+ExceptionOr<void> Element::releasePointerCapture(int32_t pointerId)
+{
+    if (document().page())
+        return document().page()->pointerCaptureController().releasePointerCapture(this, pointerId);
+    return { };
+}
+
+bool Element::hasPointerCapture(int32_t pointerId)
+{
+    if (document().page())
+        return document().page()->pointerCaptureController().hasPointerCapture(this, pointerId);
+    return false;
 }
 #endif
 

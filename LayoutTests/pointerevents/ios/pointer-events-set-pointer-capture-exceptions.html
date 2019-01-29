@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset=utf-8>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body>
+<script src="../../resources/testharness.js"></script>
+<script src="../../resources/testharnessreport.js"></script>
+<script src="../utils.js"></script>
+<script>
+
+'use strict';
+
+target_test((target, test) => {
+    assert_throws("NotFoundError", () => document.body.setPointerCapture(10), "Calling setPointerCapture() with an invalid pointer id throws a NotFoundError exception.");
+
+    target.addEventListener("pointerdown", event => {
+        assert_true(target.hasPointerCapture(event.pointerId));
+        assert_throws("InvalidStateError", () => document.createElement("div").setPointerCapture(event.pointerId), "Calling setPointerCapture() with a valid pointer id on a disconnected element throws an InvalidStateError exception.");
+    });
+    ui.beginTouches({ x: 50, y: 50 }).then(() => test.done());
+}, "The setPointerCapture() method can throw.");
+
+</script>
+</body>
+</html>

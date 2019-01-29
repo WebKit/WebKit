@@ -71,6 +71,9 @@ void PointerLockController::requestPointerLock(Element* target)
         }
         m_element = target;
         enqueueEvent(eventNames().pointerlockchangeEvent, target);
+#if ENABLE(POINTER_EVENTS)
+        m_page.pointerCaptureController().pointerLockWasApplied();
+#endif
     } else {
         m_lockPending = true;
         m_element = target;
