@@ -1,3 +1,23 @@
+2019-01-29  Youenn Fablet  <youenn@apple.com>
+
+        Adopt new VCP SPI
+        https://bugs.webkit.org/show_bug.cgi?id=193357
+        <rdar://problem/43656651>
+
+        Reviewed by Eric Carlson.
+
+        Enable VCP through VTB API with specific encoder id.
+        If encoder id is not supported, fallback to VCP.
+        A specific routine is added to check for encoder id presence.
+
+        * Source/webrtc/sdk/WebKit/EncoderUtilities.h:
+        * Source/webrtc/sdk/WebKit/VideoProcessingSoftLink.cpp:
+        * Source/webrtc/sdk/WebKit/VideoProcessingSoftLink.h:
+        * Source/webrtc/sdk/WebKit/WebKitUtilities.mm:
+        (webrtc::setApplicationStatus):
+        * Source/webrtc/sdk/objc/components/video_codec/RTCVideoEncoderH264.mm:
+        (-[RTCSingleVideoEncoderH264 resetCompressionSessionWithPixelFormat:]):
+
 2019-01-25  Keith Rollin  <krollin@apple.com>
 
         Update WebKitAdditions.xcconfig with correct order of variable definitions
