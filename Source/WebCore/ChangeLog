@@ -1,5 +1,22 @@
 2019-01-28  Simon Fraser  <simon.fraser@apple.com>
 
+        svg/text/select-text-inside-non-static-position.html crashes under ScrollingStateTree::unparentChildrenAndDestroyNode()
+        https://bugs.webkit.org/show_bug.cgi?id=193930
+
+        Reviewed by Tim Horton.
+
+        ScrollingStateTree::unparentChildrenAndDestroyNode() should make a copy of the 'children' vector
+        before iterating, since iteration mutates the array.
+
+        Tested by ASan tests.
+
+        * page/scrolling/ScrollingStateNode.h:
+        (WebCore::ScrollingStateNode::takeChildren):
+        * page/scrolling/ScrollingStateTree.cpp:
+        (WebCore::ScrollingStateTree::unparentChildrenAndDestroyNode):
+
+2019-01-28  Simon Fraser  <simon.fraser@apple.com>
+
         css3/filters/blur-filter-page-scroll-self.html crashes under WebCore::ScrollingStateNode::ScrollingStateNode
         https://bugs.webkit.org/show_bug.cgi?id=193925
 

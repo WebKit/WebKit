@@ -227,12 +227,12 @@ void ScrollingStateTree::unparentChildrenAndDestroyNode(ScrollingNodeID nodeID)
         m_rootStateNode = nullptr;
 
     if (auto* children = protectedNode->children()) {
-        for (auto child : *children) {
+        auto isolatedChildren = protectedNode->takeChildren();
+        for (auto child : *isolatedChildren) {
             child->removeFromParent();
             LOG_WITH_STREAM(Scrolling, stream << " moving " << child->scrollingNodeID() << " to unparented nodes");
             m_unparentedNodes.add(child->scrollingNodeID(), WTFMove(child));
         }
-        children->clear();
     }
     
     protectedNode->removeFromParent();
