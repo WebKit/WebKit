@@ -1,5 +1,14 @@
 2019-01-29  Aakash Jain  <aakash_jain@apple.com>
 
+        [ews-app] Make the results url generic
+        https://bugs.webkit.org/show_bug.cgi?id=193928
+
+        Reviewed by Lucas Forschler.
+
+        * BuildSlaveSupport/ews-app/ews/urls.py:
+
+2019-01-29  Aakash Jain  <aakash_jain@apple.com>
+
         [ews-build] Configure buildbot to send events to ews-app
         https://bugs.webkit.org/show_bug.cgi?id=193968
 

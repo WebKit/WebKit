@@ -33,8 +33,8 @@ urlpatterns = [
     url(r'^$', Index.as_view(), name='index'),
     # ex: /patch/5
     url(r'^patch/(?P<patch_id>[0-9]+)/$', Patch.as_view(), name='patch'),
-    # ex: /patch/5/results
-    url(r'^patch/(?P<patch_id>[0-9]+)/results$', Results.as_view(), name='results'),
+    # ex: /results/
+    url(r'^results/$', Results.as_view(), name='results'),
     # ex: /status-bubble/5
     url(r'^status-bubble/(?P<patch_id>[0-9]+)/$', StatusBubble.as_view(), name='statusbubble'),
 ]
