@@ -70,7 +70,8 @@ Ref<DebuggerCallFrame> DebuggerCallFrame::create(VM& vm, CallFrame* callFrame)
     }
 
     Vector<ShadowChicken::Frame> frames;
-    vm.shadowChicken().iterate(vm, callFrame, [&] (const ShadowChicken::Frame& frame) -> bool {
+    vm.ensureShadowChicken();
+    vm.shadowChicken()->iterate(vm, callFrame, [&] (const ShadowChicken::Frame& frame) -> bool {
         frames.append(frame);
         return true;
     });

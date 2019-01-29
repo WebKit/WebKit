@@ -53,7 +53,8 @@ void genericUnwind(VM* vm, ExecState* callFrame)
         CRASH();
     }
     
-    vm->shadowChicken().log(*vm, topJSCallFrame, ShadowChicken::Packet::throwPacket());
+    if (auto* shadowChicken = vm->shadowChicken())
+        shadowChicken->log(*vm, topJSCallFrame, ShadowChicken::Packet::throwPacket());
 
     Exception* exception = scope.exception();
     RELEASE_ASSERT(exception);

@@ -1,3 +1,46 @@
+2019-01-28  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Reduce size of memory used for ShadowChicken
+        https://bugs.webkit.org/show_bug.cgi?id=193546
+
+        Reviewed by Mark Lam.
+
+        This patch lazily instantiate ShadowChicken. We do not need this until we start logging ShadowChicken packets.
+        The removal of ShadowChicken saves 55KB memory.
+
+        * debugger/DebuggerCallFrame.cpp:
+        (JSC::DebuggerCallFrame::create):
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::ensureShadowChickenPacket):
+        * heap/Heap.cpp:
+        (JSC::Heap::stopThePeriphery):
+        (JSC::Heap::addCoreConstraints):
+        * jit/CCallHelpers.cpp:
+        (JSC::CCallHelpers::ensureShadowChickenPacket):
+        * jit/JITExceptions.cpp:
+        (JSC::genericUnwind):
+        * jit/JITOpcodes.cpp:
+        (JSC::JIT::emit_op_log_shadow_chicken_prologue):
+        (JSC::JIT::emit_op_log_shadow_chicken_tail):
+        * jit/JITOpcodes32_64.cpp:
+        (JSC::JIT::emit_op_log_shadow_chicken_prologue):
+        (JSC::JIT::emit_op_log_shadow_chicken_tail):
+        * jit/JITOperations.cpp:
+        * llint/LLIntSlowPaths.cpp:
+        (JSC::LLInt::LLINT_SLOW_PATH_DECL):
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::setDebugger):
+        * runtime/JSGlobalObject.h:
+        (JSC::JSGlobalObject::setDebugger): Deleted.
+        * runtime/VM.cpp:
+        (JSC::VM::VM):
+        (JSC::VM::ensureShadowChicken):
+        * runtime/VM.h:
+        (JSC::VM::shadowChicken):
+        * tools/JSDollarVM.cpp:
+        (JSC::functionShadowChickenFunctionsOnStack):
+        (JSC::changeDebuggerModeWhenIdle):
+
 2019-01-28  Andy Estes  <aestes@apple.com>
 
         [watchOS] Enable Parental Controls content filtering

@@ -1335,6 +1335,7 @@ void JIT::emit_op_profile_type(const Instruction* currentInstruction)
 
 void JIT::emit_op_log_shadow_chicken_prologue(const Instruction* currentInstruction)
 {
+    RELEASE_ASSERT(vm()->shadowChicken());
     updateTopCallFrame();
     static_assert(nonArgGPR0 != regT0 && nonArgGPR0 != regT2, "we will have problems if this is true.");
     auto bytecode = currentInstruction->as<OpLogShadowChickenPrologue>();
@@ -1350,6 +1351,7 @@ void JIT::emit_op_log_shadow_chicken_prologue(const Instruction* currentInstruct
 
 void JIT::emit_op_log_shadow_chicken_tail(const Instruction* currentInstruction)
 {
+    RELEASE_ASSERT(vm()->shadowChicken());
     updateTopCallFrame();
     static_assert(nonArgGPR0 != regT0 && nonArgGPR0 != regT2, "we will have problems if this is true.");
     auto bytecode = currentInstruction->as<OpLogShadowChickenTail>();

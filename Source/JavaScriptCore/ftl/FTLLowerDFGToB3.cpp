@@ -13469,16 +13469,18 @@ private:
     
     LValue ensureShadowChickenPacket()
     {
+        ShadowChicken* shadowChicken = vm().shadowChicken();
+        RELEASE_ASSERT(shadowChicken);
         LBasicBlock slowCase = m_out.newBlock();
         LBasicBlock continuation = m_out.newBlock();
         
-        TypedPointer addressOfLogCursor = m_out.absolute(vm().shadowChicken().addressOfLogCursor());
+        TypedPointer addressOfLogCursor = m_out.absolute(shadowChicken->addressOfLogCursor());
         LValue logCursor = m_out.loadPtr(addressOfLogCursor);
         
         ValueFromBlock fastResult = m_out.anchor(logCursor);
         
         m_out.branch(
-            m_out.below(logCursor, m_out.constIntPtr(vm().shadowChicken().logEnd())),
+            m_out.below(logCursor, m_out.constIntPtr(shadowChicken->logEnd())),
             usually(continuation), rarely(slowCase));
         
         LBasicBlock lastNext = m_out.appendTo(slowCase, continuation);

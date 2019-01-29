@@ -54,14 +54,16 @@ void CCallHelpers::logShadowChickenTailPacket(GPRReg shadowPacket, JSValueRegs t
 
 void CCallHelpers::ensureShadowChickenPacket(VM& vm, GPRReg shadowPacket, GPRReg scratch1NonArgGPR, GPRReg scratch2)
 {
+    ShadowChicken* shadowChicken = vm.shadowChicken();
+    RELEASE_ASSERT(shadowChicken);
     ASSERT(!RegisterSet::argumentGPRS().get(scratch1NonArgGPR));
-    move(TrustedImmPtr(vm.shadowChicken().addressOfLogCursor()), scratch1NonArgGPR);
+    move(TrustedImmPtr(shadowChicken->addressOfLogCursor()), scratch1NonArgGPR);
     loadPtr(Address(scratch1NonArgGPR), shadowPacket);
-    Jump ok = branchPtr(Below, shadowPacket, TrustedImmPtr(vm.shadowChicken().logEnd()));
+    Jump ok = branchPtr(Below, shadowPacket, TrustedImmPtr(shadowChicken->logEnd()));
     setupArguments<decltype(operationProcessShadowChickenLog)>();
     move(TrustedImmPtr(tagCFunctionPtr<OperationPtrTag>(operationProcessShadowChickenLog)), scratch1NonArgGPR);
     call(scratch1NonArgGPR, OperationPtrTag);
-    move(TrustedImmPtr(vm.shadowChicken().addressOfLogCursor()), scratch1NonArgGPR);
+    move(TrustedImmPtr(shadowChicken->addressOfLogCursor()), scratch1NonArgGPR);
     loadPtr(Address(scratch1NonArgGPR), shadowPacket);
     ok.link(this);
     addPtr(TrustedImm32(sizeof(ShadowChicken::Packet)), shadowPacket, scratch2);

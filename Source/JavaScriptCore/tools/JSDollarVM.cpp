@@ -1932,7 +1932,22 @@ static EncodedJSValue JSC_HOST_CALL functionSetHiddenValue(ExecState* exec)
 static EncodedJSValue JSC_HOST_CALL functionShadowChickenFunctionsOnStack(ExecState* exec)
 {
     VM& vm = exec->vm();
-    return JSValue::encode(vm.shadowChicken().functionsOnStack(exec));
+    auto scope = DECLARE_THROW_SCOPE(vm);
+    if (auto* shadowChicken = vm.shadowChicken())
+        return JSValue::encode(shadowChicken->functionsOnStack(exec));
+
+    JSArray* result = constructEmptyArray(exec, 0);
+    RETURN_IF_EXCEPTION(scope, { });
+    StackVisitor::visit(exec, &vm, [&] (StackVisitor& visitor) -> StackVisitor::Status {
+        if (visitor->isInlinedFrame())
+            return StackVisitor::Continue;
+        if (visitor->isWasmFrame())
+            return StackVisitor::Continue;
+        result->push(exec, jsCast<JSObject*>(visitor->callee().asCell()));
+        scope.releaseAssertNoException(); // This function is only called from tests.
+        return StackVisitor::Continue;
+    });
+    return JSValue::encode(result);
 }
 
 static EncodedJSValue JSC_HOST_CALL functionSetGlobalConstRedeclarationShouldNotThrow(ExecState* exec)
@@ -2047,6 +2062,8 @@ static EncodedJSValue changeDebuggerModeWhenIdle(ExecState* exec, DebuggerMode m
     vm->whenIdle([=] () {
         Options::forceDebuggerBytecodeGeneration() = newDebuggerMode;
         vm->deleteAllCode(PreventCollectionAndDeleteAllCode);
+        if (mode == DebuggerMode::DebuggerOn)
+            vm->ensureShadowChicken();
     });
     return JSValue::encode(jsUndefined());
 }

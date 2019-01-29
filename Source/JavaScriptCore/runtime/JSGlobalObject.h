@@ -914,7 +914,7 @@ public:
     }
 
     Debugger* debugger() const { return m_debugger; }
-    void setDebugger(Debugger* debugger) { m_debugger = debugger; }
+    void setDebugger(Debugger*);
 
     const GlobalObjectMethodTable* globalObjectMethodTable() const { return m_globalObjectMethodTable; }
 

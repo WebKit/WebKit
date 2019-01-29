@@ -1897,6 +1897,13 @@ void JSGlobalObject::queueMicrotask(Ref<Microtask>&& task)
     vm().queueMicrotask(*this, WTFMove(task));
 }
 
+void JSGlobalObject::setDebugger(Debugger* debugger)
+{
+    m_debugger = debugger;
+    if (debugger)
+        vm().ensureShadowChicken();
+}
+
 bool JSGlobalObject::hasDebugger() const
 { 
     return m_debugger;

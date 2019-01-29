@@ -857,7 +857,8 @@ public:
 
     BytecodeIntrinsicRegistry& bytecodeIntrinsicRegistry() { return *m_bytecodeIntrinsicRegistry; }
     
-    ShadowChicken& shadowChicken() { return *m_shadowChicken; }
+    ShadowChicken* shadowChicken() { return m_shadowChicken.get(); }
+    void ensureShadowChicken();
     
     template<typename Func>
     void logEvent(CodeBlock*, const char* summary, const Func& func);

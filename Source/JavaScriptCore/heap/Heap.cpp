@@ -1588,7 +1588,8 @@ void Heap::stopThePeriphery(GCConductor conn)
 #endif // ENABLE(JIT)
     UNUSED_PARAM(conn);
     
-    vm()->shadowChicken().update(*vm(), vm()->topCallFrame);
+    if (auto* shadowChicken = vm()->shadowChicken())
+        shadowChicken->update(*vm(), vm()->topCallFrame);
     
     m_structureIDTable.flushOldTables();
     m_objectSpace.stopAllocating();
@@ -2699,7 +2700,8 @@ void Heap::addCoreConstraints()
             if (m_vm->typeProfiler())
                 m_vm->typeProfilerLog()->visit(slotVisitor);
             
-            m_vm->shadowChicken().visitChildren(slotVisitor);
+            if (auto* shadowChicken = m_vm->shadowChicken())
+                shadowChicken->visitChildren(slotVisitor);
         },
         ConstraintVolatility::GreyedByExecution);
     

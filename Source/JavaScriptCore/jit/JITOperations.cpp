@@ -2882,7 +2882,8 @@ void JIT_OPERATION operationProcessShadowChickenLog(ExecState* exec)
 {
     VM& vm = exec->vm();
     NativeCallFrameTracer tracer(&vm, exec);
-    vm.shadowChicken().update(vm, exec);
+    RELEASE_ASSERT(vm.shadowChicken());
+    vm.shadowChicken()->update(vm, exec);
 }
 
 int32_t JIT_OPERATION operationCheckIfExceptionIsUncatchableAndNotifyProfiler(ExecState* exec)
