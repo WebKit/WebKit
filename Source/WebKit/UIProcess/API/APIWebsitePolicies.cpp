@@ -57,7 +57,7 @@ WebKit::WebsitePoliciesData WebsitePolicies::data()
     if (m_websiteDataStore)
         parameters = m_websiteDataStore->websiteDataStore().parameters();
     return { contentBlockersEnabled(), deviceOrientationEventEnabled(), allowedAutoplayQuirks(), autoplayPolicy(),
-        customHeaderFields(), popUpPolicy(), WTFMove(parameters), m_customUserAgent, m_customJavaScriptUserAgent, m_customNavigatorPlatform };
+        customHeaderFields(), popUpPolicy(), WTFMove(parameters), m_customUserAgent, m_customJavaScriptUserAgentAsSiteSpecificQuirks, m_customNavigatorPlatform };
 }
 
 }

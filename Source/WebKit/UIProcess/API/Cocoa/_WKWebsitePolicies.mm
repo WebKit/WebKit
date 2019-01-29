@@ -209,14 +209,14 @@
     return _websitePolicies->customUserAgent();
 }
 
-- (void)setCustomJavaScriptUserAgent:(NSString *)customUserAgent
+- (void)setCustomJavaScriptUserAgentAsSiteSpecificQuirks:(NSString *)customUserAgent
 {
-    _websitePolicies->setCustomJavaScriptUserAgent(customUserAgent);
+    _websitePolicies->setCustomJavaScriptUserAgentAsSiteSpecificQuirks(customUserAgent);
 }
 
-- (NSString *)customJavaScriptUserAgent
+- (NSString *)customJavaScriptUserAgentAsSiteSpecificQuirks
 {
-    return _websitePolicies->customJavaScriptUserAgent();
+    return _websitePolicies->customJavaScriptUserAgentAsSiteSpecificQuirks();
 }
 
 - (void)setCustomNavigatorPlatform:(NSString *)customNavigatorPlatform

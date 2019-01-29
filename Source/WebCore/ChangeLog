@@ -1,3 +1,23 @@
+2019-01-28  Ryosuke Niwa  <rniwa@webkit.org>
+
+        User agent string override for navigator.userAgent should be site specific quirks
+        https://bugs.webkit.org/show_bug.cgi?id=193950
+
+        Reviewed by Brent Fulgham.
+
+        In order to make it possible to toggle the UA string override just for navigator.userAgent via Web Inspector,
+        we need to put this override behind the site specific quirks. Because WebInspector overrides Page's setting
+        without updating WKPreferences, there is no way for WKWebView client's to know whether the site specific quirks
+        had been disabled or not.
+
+        * loader/DocumentLoader.h:
+        (WebCore::DocumentLoader::setCustomJavaScriptUserAgentAsSiteSpecificQuirks):
+        (WebCore::DocumentLoader::customJavaScriptUserAgentAsSiteSpecificQuirks const):
+        (WebCore::DocumentLoader::setCustomJavaScriptUserAgent): Deleted.
+        (WebCore::DocumentLoader::customJavaScriptUserAgent const): Deleted.
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::userAgentForJavaScript const):
+
 2019-01-28  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: provide a way to edit page WebRTC settings on a remote target

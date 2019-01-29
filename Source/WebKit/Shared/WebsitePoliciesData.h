@@ -54,7 +54,7 @@ struct WebsitePoliciesData {
     WebsitePopUpPolicy popUpPolicy { WebsitePopUpPolicy::Default };
     Optional<WebsiteDataStoreParameters> websiteDataStoreParameters;
     String customUserAgent;
-    String customJavaScriptUserAgent;
+    String customJavaScriptUserAgentAsSiteSpecificQuirks;
     String customNavigatorPlatform;
 
     void encode(IPC::Encoder&) const;

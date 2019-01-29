@@ -1,3 +1,15 @@
+2019-01-28  Ryosuke Niwa  <rniwa@webkit.org>
+
+        User agent string override for navigator.userAgent should be site specific quirks
+        https://bugs.webkit.org/show_bug.cgi?id=193950
+
+        Reviewed by Brent Fulgham.
+
+        Updated per the _WKWebsitePolicies rename.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/WebsitePolicies.mm:
+        (-[CustomJavaScriptUserAgentDelegate _webView:decidePolicyForNavigationAction:userInfo:decisionHandler:]):
+
 2019-01-28  Ross Kirsling  <ross.kirsling@sony.com>
 
         Remove unnecessary `using namespace WTF`s (or at least restrict their scope).

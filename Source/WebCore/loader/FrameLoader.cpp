@@ -2715,7 +2715,8 @@ String FrameLoader::userAgentForJavaScript(const URL& url) const
     String userAgent;
 
     if (auto* documentLoader = m_frame.mainFrame().loader().activeDocumentLoader()) {
-        userAgent = documentLoader->customJavaScriptUserAgent();
+        if (m_frame.settings().needsSiteSpecificQuirks())
+            userAgent = documentLoader->customJavaScriptUserAgentAsSiteSpecificQuirks();
         if (userAgent.isEmpty())
             userAgent = documentLoader->customUserAgent();
     }

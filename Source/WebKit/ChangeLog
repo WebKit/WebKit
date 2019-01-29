@@ -1,3 +1,25 @@
+2019-01-28  Ryosuke Niwa  <rniwa@webkit.org>
+
+        User agent string override for navigator.userAgent should be site specific quirks
+        https://bugs.webkit.org/show_bug.cgi?id=193950
+
+        Reviewed by Brent Fulgham.
+
+        Renamed the various member variables, functions, properties and selectors.
+
+        * Shared/WebsitePoliciesData.cpp:
+        (WebKit::WebsitePoliciesData::encode const):
+        (WebKit::WebsitePoliciesData::decode):
+        (WebKit::WebsitePoliciesData::applyToDocumentLoader):
+        * Shared/WebsitePoliciesData.h:
+        * UIProcess/API/APIWebsitePolicies.cpp:
+        (API::WebsitePolicies::data):
+        * UIProcess/API/APIWebsitePolicies.h:
+        * UIProcess/API/Cocoa/_WKWebsitePolicies.h:
+        * UIProcess/API/Cocoa/_WKWebsitePolicies.mm:
+        (-[_WKWebsitePolicies setCustomJavaScriptUserAgentAsSiteSpecificQuirks:]): Renamed from setCustomJavaScriptUserAgent.
+        (-[_WKWebsitePolicies customJavaScriptUserAgentAsSiteSpecificQuirks]): Renamed from customJavaScriptUserAgent.
+
 2019-01-28  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r240630.

@@ -29,6 +29,7 @@
 #import "TestWKWebView.h"
 #import <WebKit/WKNavigationDelegatePrivate.h>
 #import <WebKit/WKPagePrivate.h>
+#import <WebKit/WKPreferencesPrivate.h>
 #import <WebKit/WKPreferencesRefPrivate.h>
 #import <WebKit/WKUIDelegatePrivate.h>
 #import <WebKit/WKURLSchemeTaskPrivate.h>
@@ -1114,7 +1115,7 @@ TEST(WebKit, WebsitePoliciesCustomUserAgent)
 {
     _WKWebsitePolicies *websitePolicies = [[[_WKWebsitePolicies alloc] init] autorelease];
     if (navigationAction.targetFrame.mainFrame) {
-        [websitePolicies setCustomJavaScriptUserAgent:@"Foo Custom JavaScript UserAgent"];
+        [websitePolicies setCustomJavaScriptUserAgentAsSiteSpecificQuirks:@"Foo Custom JavaScript UserAgent"];
         if (_setCustomUserAgent)
             [websitePolicies setCustomUserAgent:@"Foo Custom Request UserAgent"];
     }
@@ -1142,6 +1143,7 @@ TEST(WebKit, WebsitePoliciesCustomJavaScriptUserAgent)
         EXPECT_TRUE([userAgentString hasSuffix:@"(KHTML, like Gecko)"]);
     }];
     [configuration setURLSchemeHandler:schemeHandler.get() forURLScheme:@"test"];
+    [configuration preferences]._needsSiteSpecificQuirks = YES;
 
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
 
@@ -1173,6 +1175,7 @@ TEST(WebKit, WebsitePoliciesCustomUserAgents)
         EXPECT_STREQ("Foo Custom Request UserAgent", [[task.request valueForHTTPHeaderField:@"User-Agent"] UTF8String]);
     }];
     [configuration setURLSchemeHandler:schemeHandler.get() forURLScheme:@"test"];
+    [configuration preferences]._needsSiteSpecificQuirks = YES;
 
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
 
