@@ -148,12 +148,6 @@
 #define OFFLINE_ASM_ASSERT_ENABLED 0
 #endif
 
-#if CPU(BIG_ENDIAN)
-#define OFFLINE_ASM_BIG_ENDIAN 1
-#else
-#define OFFLINE_ASM_BIG_ENDIAN 0
-#endif
-
 #if LLINT_TRACING
 #define OFFLINE_ASM_TRACING 1
 #else

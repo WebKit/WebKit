@@ -1,5 +1,21 @@
 2019-01-29  Mark Lam  <mark.lam@apple.com>
 
+        Remove unneeded CPU(BIG_ENDIAN) handling in LLInt after new bytecode format.
+        https://bugs.webkit.org/show_bug.cgi?id=132333
+
+        Reviewed by Yusuke Suzuki.
+
+        * bytecode/InstructionStream.h:
+        (JSC::InstructionStreamWriter::write):
+        - The 32-bit write() function need not invert the order of the bytes written to
+          the bytecode stream for CPU(BUG_ENDIAN) because the incoming uint32_t value to
+          be written is already in big endian order for CPU(BUG_ENDIAN) platforms.
+
+        * llint/LLIntOfflineAsmConfig.h:
+        - OFFLINE_ASM_BIG_ENDIAN is no longer needed nor used after the new bytecode format.
+
+2019-01-29  Mark Lam  <mark.lam@apple.com>
+
         ValueRecovery::recover() should purify NaN values it recovers.
         https://bugs.webkit.org/show_bug.cgi?id=193978
         <rdar://problem/47625488>
