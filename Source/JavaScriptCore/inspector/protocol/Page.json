@@ -9,7 +9,10 @@
             "description": "List of settings able to be overridden by WebInspector. Keep this in sync with FOR_EACH_INSPECTOR_OVERRIDE_SETTING.",
             "enum": [
                 "AuthorAndUserStylesEnabled",
+                "ICECandidateFilteringEnabled",
                 "ImagesEnabled",
+                "MediaCaptureRequiresSecureConnection",
+                "MockCaptureDevicesEnabled",
                 "NeedsSiteSpecificQuirks",
                 "ScriptEnabled",
                 "WebSecurityEnabled"

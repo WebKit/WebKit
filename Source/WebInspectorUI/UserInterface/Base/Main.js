@@ -162,7 +162,7 @@ WI.loaded = function()
     this._windowKeydownListeners = [];
     this._targetsAvailablePromise = new WI.WrappedPromise;
     WI._overridenDeviceUserAgent = null;
-    WI._overridenDeviceSettings = new Set;
+    WI._overridenDeviceSettings = new Map;
 
     // Targets.
     WI.backendTarget = null;
@@ -612,8 +612,8 @@ WI.initializeTarget = function(target)
 
         // COMPATIBILITY (iOS 12.2): Page.overrideSetting did not exist.
         if (target.PageAgent.overrideSetting) {
-            for (let setting of WI._overridenDeviceSettings)
-                target.PageAgent.overrideSetting(setting, true);
+            for (let [setting, value] of WI._overridenDeviceSettings)
+                target.PageAgent.overrideSetting(setting, value);
         }
 
         // COMPATIBILITY (iOS 8): Page.setShowPaintRects did not exist.
@@ -1990,7 +1990,7 @@ WI._handleDeviceSettingsToolbarButtonClicked = function(event)
         }
     }
 
-    function applyOverriddenSetting(setting, callback) {
+    function applyOverriddenSetting(setting, value, callback) {
         if (WI._overridenDeviceSettings.has(setting)) {
             // We've just "disabled" the checkbox, so clear the override instead of applying it.
             PageAgent.overrideSetting(setting, (error) => {
@@ -2004,15 +2004,13 @@ WI._handleDeviceSettingsToolbarButtonClicked = function(event)
                 updateActivatedState();
             });
         } else {
-            // Override to false since the labels are the inverse of the setting.
-            const value = false;
             PageAgent.overrideSetting(setting, value, (error) => {
                 if (error) {
                     console.error(error);
                     return;
                 }
 
-                WI._overridenDeviceSettings.add(setting);
+                WI._overridenDeviceSettings.set(setting, value);
                 callback(true);
                 updateActivatedState();
             });
@@ -2031,27 +2029,17 @@ WI._handleDeviceSettingsToolbarButtonClicked = function(event)
         return container;
     }
 
-    function createColumns(parent, count) {
-        let columnContainer = parent.appendChild(document.createElement("div"));
-        columnContainer.classList.add("columns");
+    function createCheckbox(container, label, setting, value) {
+        if (!setting)
+            return;
 
-        let columns = [];
-        for (let i = 0; i < count; ++i) {
-            let column = columnContainer.appendChild(document.createElement("div"));
-            column.classList.add("column");
-            columns.push(column);
-        }
-        return columns;
-    }
-
-    function createCheckbox(container, label, setting) {
         let labelElement = container.appendChild(document.createElement("label"));
 
         let checkboxElement = labelElement.appendChild(document.createElement("input"));
         checkboxElement.type = "checkbox";
         checkboxElement.checked = WI._overridenDeviceSettings.has(setting);
         checkboxElement.addEventListener("change", (event) => {
-            applyOverriddenSetting(setting, (enabled) => {
+            applyOverriddenSetting(setting, value, (enabled) => {
                 checkboxElement.checked = enabled;
             });
         });
@@ -2168,12 +2156,50 @@ WI._handleDeviceSettingsToolbarButtonClicked = function(event)
         }
     });
 
-    let disableColumns = createColumns(createContainer(contentElement, WI.UIString("Disable:")), 2);
-    createCheckbox(disableColumns[0], WI.UIString("Images"), PageAgent.Setting.ImagesEnabled);
-    createCheckbox(disableColumns[0], WI.UIString("Styles"), PageAgent.Setting.AuthorAndUserStylesEnabled);
-    createCheckbox(disableColumns[0], WI.UIString("JavaScript"), PageAgent.Setting.ScriptEnabled);
-    createCheckbox(disableColumns[1], WI.UIString("Site-specific Hacks"), PageAgent.Setting.NeedsSiteSpecificQuirks);
-    createCheckbox(disableColumns[1], WI.UIString("Cross-Origin Restrictions"), PageAgent.Setting.WebSecurityEnabled);
+    const settings = [
+        {
+            name: WI.UIString("Disable:"),
+            columns: [
+                [
+                    {name: WI.UIString("Images"), setting: PageAgent.Setting.ImagesEnabled, value: false},
+                    {name: WI.UIString("Styles"), setting: PageAgent.Setting.AuthorAndUserStylesEnabled, value: false},
+                    {name: WI.UIString("JavaScript"), setting: PageAgent.Setting.ScriptEnabled, value: false},
+                ],
+                [
+                    {name: WI.UIString("Site-specific Hacks"), setting: PageAgent.Setting.NeedsSiteSpecificQuirks, value: false},
+                    {name: WI.UIString("Cross-Origin Restrictions"), setting: PageAgent.Setting.WebSecurityEnabled, value: false},
+                ]
+            ],
+        },
+        {
+            name: WI.UIString("%s:").format(WI.unlocalizedString("WebRTC")),
+            columns: [
+                [
+                    {name: WI.UIString("Allow Media Capture on Insecure Sites"), setting: PageAgent.Setting.MediaCaptureRequiresSecureConnection, value: false},
+                    {name: WI.UIString("Disable ICE Candidate Restrictions"), setting: PageAgent.Setting.ICECandidateFilteringEnabled, value: false},
+                    {name: WI.UIString("Use Mock Capture Devices"), setting: PageAgent.Setting.MockCaptureDevicesEnabled, value: true},
+                ],
+            ],
+        },
+    ];
+
+    for (let group of settings) {
+        if (!group.columns.some((column) => column.some((item) => item.setting)))
+            continue;
+
+        let container = createContainer(contentElement, group.name);
+
+        let columnContainer = container.appendChild(document.createElement("div"));
+        columnContainer.classList.add("columns");
+
+        for (let column of group.columns) {
+            let columnElement = columnContainer.appendChild(document.createElement("div"));
+            columnElement.classList.add("column");
+
+            for (let item of column)
+                createCheckbox(columnElement, item.name, item.setting, item.value);
+        }
+    }
 
     WI._deviceSettingsPopover.presentNewContentWithFrame(contentElement, calculateTargetFrame(), preferredEdges);
 };

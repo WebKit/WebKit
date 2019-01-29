@@ -391,6 +391,10 @@ body[dir=rtl] .go-to-arrow {
     padding: 8px;
 }
 
+.device-settings-content .container {
+    margin-top: 8px;
+}
+
 .device-settings-content .columns {
     display: flex;
 }

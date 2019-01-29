@@ -1,0 +1,11 @@
+Tests for the Page.overrideSetting command.
+
+
+== Running test suite: Page.overrideSetting
+-- Running test case: Page.overrideSetting.ICECandidateFilteringEnabled
+PASS: Should not be able to establish a connection when filtering ice candidates.
+Overriding ICECandidateFilteringEnabled to false...
+PASS: Should be able to establish a connection when filtering ice candidates.
+Removing ICECandidateFilteringEnabled override...
+PASS: Should not be able to establish a connection when filtering ice candidates.
+

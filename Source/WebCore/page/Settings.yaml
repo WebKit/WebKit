@@ -796,3 +796,21 @@ editableImagesEnabled:
 
 adClickAttributionEnabled:
   initial: false
+
+# Deprecated
+
+iceCandidateFilteringEnabled:
+  initial: true
+  onChange: iceCandidateFilteringEnabledChanged
+  inspectorOverride: true
+
+mockCaptureDevicesEnabled:
+  initial: false
+  conditional: MEDIA_STREAM
+  onChange: mockCaptureDevicesEnabledChanged
+  inspectorOverride: true
+
+mediaCaptureRequiresSecureConnection:
+  initial: true
+  conditional: MEDIA_STREAM
+  inspectorOverride: true

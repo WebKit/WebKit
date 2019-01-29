@@ -125,7 +125,13 @@ void Settings::<%= @setting.setterFunctionName %>InspectorOverride(Optional<<%= 
     if (m_<%= @setting.name %>InspectorOverride == <%= @setting.name %>InspectorOverride)
         return;
     m_<%= @setting.name %>InspectorOverride = <%= @setting.name %>InspectorOverride;
+<%- if @setting.conditional -%>
+#if ENABLE(<%= @setting.conditional %>)
+<%- end -%>
     <%= @setting.onChange %>();
+<%- if @setting.conditional -%>
+#endif
+<%- end -%>
 }
 
 <%- end -%>

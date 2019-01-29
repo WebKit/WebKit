@@ -146,6 +146,9 @@ fast/mediastream/RTCPeerConnection-ice.html [ Skip ]
 fast/mediastream/RTCPeerConnection-media-setup-callbacks-single-dialog.html [ Skip ]
 fast/mediastream/RTCPeerConnection-stats.html [ Skip ]
 
+[ HighSierra ] inspector/page/overrideSetting-ICECandidateFilteringEnabled.html [ Skip ]
+[ HighSierra ] inspector/page/overrideSetting-MockCaptureDevicesEnabled.html [ Skip ]
+
 # Asserts in debug.
 [ Debug ] fast/images/large-size-image-crash.html [ Skip ]
 

@@ -629,33 +629,15 @@ HTTPEquivEnabled:
   defaultValue: true
   webcoreName: httpEquivEnabled
 
-MockCaptureDevicesEnabled:
-  type: bool
-  defaultValue: DEFAULT_MOCK_CAPTURE_DEVICES_ENABLED
-  webcoreBinding: DeprecatedGlobalSettings
-  condition: ENABLE(MEDIA_STREAM)
-
 MockCaptureDevicesPromptEnabled:
   type: bool
   defaultValue: true
   webcoreBinding: none
 
-MediaCaptureRequiresSecureConnection:
-  type: bool
-  defaultValue: true
-  webcoreBinding: DeprecatedGlobalSettings
-  condition: ENABLE(MEDIA_STREAM)
-
 # FIXME: What is this for?
 EnumeratingAllNetworkInterfacesEnabled:
   type: bool
   defaultValue: false
-  webcoreBinding: none
-
-# FIXME: What is this for?
-ICECandidateFilteringEnabled:
-  type: bool
-  defaultValue: true
   webcoreBinding: none
 
 ShadowDOMEnabled:
@@ -1551,3 +1533,19 @@ AdClickAttributionEnabled:
   humanReadableDescription: "Enable Ad Click Attribution for Cross-Site Link Navigations"
   webcoreBinding: RuntimeEnabledFeatures
   category: internal
+
+# Deprecated
+
+ICECandidateFilteringEnabled:
+  type: bool
+  defaultValue: true
+
+MockCaptureDevicesEnabled:
+  type: bool
+  defaultValue: DEFAULT_MOCK_CAPTURE_DEVICES_ENABLED
+  condition: ENABLE(MEDIA_STREAM)
+
+MediaCaptureRequiresSecureConnection:
+  type: bool
+  defaultValue: true
+  condition: ENABLE(MEDIA_STREAM)

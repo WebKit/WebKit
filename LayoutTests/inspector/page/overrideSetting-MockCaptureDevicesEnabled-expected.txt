@@ -1,0 +1,11 @@
+Tests for the Page.overrideSetting command.
+
+
+== Running test suite: Page.overrideSetting
+-- Running test case: Page.overrideSetting.MockCaptureDevicesEnabled
+Expected Error: The I/O read operation failed.
+Overriding MockCaptureDevicesEnabled to true...
+PASS: getUserMedia should not fail when no devices are available
+Removing MockCaptureDevicesEnabled override...
+Expected Error: The I/O read operation failed.
+

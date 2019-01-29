@@ -48,6 +48,10 @@
 #include <limits>
 #include <wtf/StdLibExtras.h>
 
+#if ENABLE(MEDIA_STREAM)
+#include "MockRealtimeMediaSourceCenter.h"
+#endif
+
 namespace WebCore {
 
 static void invalidateAfterGenericFamilyChange(Page* page)
@@ -304,6 +308,17 @@ void SettingsBase::pluginsEnabledChanged()
     Page::refreshPlugins(false);
 }
 
+void SettingsBase::iceCandidateFilteringEnabledChanged()
+{
+    if (!m_page)
+        return;
+
+    if (m_page->settings().iceCandidateFilteringEnabled())
+        m_page->enableICECandidateFiltering();
+    else
+        m_page->disableICECandidateFiltering();
+}
+
 #if ENABLE(TEXT_AUTOSIZING)
 
 void SettingsBase::shouldEnableTextAutosizingBoostChanged()
@@ -319,6 +334,17 @@ void SettingsBase::shouldEnableTextAutosizingBoostChanged()
     setNeedsRecalcStyleInAllFrames();
 }
 
+#endif
+
+#if ENABLE(MEDIA_STREAM)
+void SettingsBase::mockCaptureDevicesEnabledChanged()
+{
+    bool enabled = false;
+    if (m_page)
+        enabled = m_page->settings().mockCaptureDevicesEnabled();
+
+    MockRealtimeMediaSourceCenter::setMockRealtimeMediaSourceCenterEnabled(enabled);
+}
 #endif
 
 void SettingsBase::userStyleSheetLocationChanged()

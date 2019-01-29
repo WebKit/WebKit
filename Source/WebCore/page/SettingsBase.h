@@ -192,8 +192,12 @@ protected:
     void hiddenPageDOMTimerThrottlingStateChanged();
     void hiddenPageCSSAnimationSuspensionEnabledChanged();
     void resourceUsageOverlayVisibleChanged();
+    void iceCandidateFilteringEnabledChanged();
 #if ENABLE(TEXT_AUTOSIZING)
     void shouldEnableTextAutosizingBoostChanged();
+#endif
+#if ENABLE(MEDIA_STREAM)
+    void mockCaptureDevicesEnabledChanged();
 #endif
 
     Page* m_page;

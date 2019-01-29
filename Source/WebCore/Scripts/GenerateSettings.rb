@@ -120,7 +120,7 @@ class Setting
   end
 
   def setterFunctionName
-    if @name.start_with?("css", "xss", "ftp", "dom", "dns")
+    if @name.start_with?("css", "xss", "ftp", "dom", "dns", "ice")
       "set" + @name[0..2].upcase + @name[3..@name.length]
     else
       "set" + @name[0].upcase + @name[1..@name.length]

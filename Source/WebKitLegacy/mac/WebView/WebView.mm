@@ -3057,8 +3057,8 @@ static bool needsSelfRetainWhileLoadingQuirk()
 #endif
 
 #if ENABLE(MEDIA_STREAM)
-    DeprecatedGlobalSettings::setMockCaptureDevicesEnabled(false);
-    DeprecatedGlobalSettings::setMediaCaptureRequiresSecureConnection(true);
+    settings.setMockCaptureDevicesEnabled(false);
+    settings.setMediaCaptureRequiresSecureConnection(true);
     RuntimeEnabledFeatures::sharedFeatures().setMediaStreamEnabled(false);
     RuntimeEnabledFeatures::sharedFeatures().setMediaDevicesEnabled(false);
     RuntimeEnabledFeatures::sharedFeatures().setMediaRecorderEnabled(preferences.mediaRecorderEnabled);

@@ -29,13 +29,13 @@
 #if ENABLE(MEDIA_STREAM)
 
 #include "DOMWindow.h"
-#include "DeprecatedGlobalSettings.h"
 #include "Document.h"
 #include "DocumentLoader.h"
 #include "Frame.h"
 #include "HTMLIFrameElement.h"
 #include "HTMLParserIdioms.h"
 #include "SchemeRegistry.h"
+#include "Settings.h"
 #include "UserMediaRequest.h"
 
 namespace WebCore {
@@ -113,7 +113,9 @@ UserMediaController::GetUserMediaAccess UserMediaController::canCallGetUserMedia
 {
     ASSERT(!types.isEmpty());
 
-    bool requiresSecureConnection = DeprecatedGlobalSettings::mediaCaptureRequiresSecureConnection();
+    bool requiresSecureConnection = true;
+    if (auto page = document.page())
+        requiresSecureConnection = page->settings().mediaCaptureRequiresSecureConnection();
     auto& documentLoader = *document.loader();
     if (requiresSecureConnection && !isSecure(documentLoader))
         return GetUserMediaAccess::InsecureDocument;

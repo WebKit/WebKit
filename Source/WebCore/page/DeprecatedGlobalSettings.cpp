@@ -31,11 +31,6 @@
 #include "RuntimeApplicationChecks.h"
 #include <wtf/NeverDestroyed.h>
 
-#if ENABLE(MEDIA_STREAM)
-#include "MockRealtimeMediaSourceCenter.h"
-
-#endif
-
 namespace WebCore {
 
 #if USE(AVFOUNDATION)
@@ -50,11 +45,6 @@ bool DeprecatedGlobalSettings::gGStreamerEnabled = true;
 bool DeprecatedGlobalSettings::gMockScrollbarsEnabled = false;
 bool DeprecatedGlobalSettings::gUsesOverlayScrollbars = false;
 bool DeprecatedGlobalSettings::gMockScrollAnimatorEnabled = false;
-
-#if ENABLE(MEDIA_STREAM)
-bool DeprecatedGlobalSettings::gMockCaptureDevicesEnabled = false;
-bool DeprecatedGlobalSettings::gMediaCaptureRequiresSecureConnection = true;
-#endif
 
 #if PLATFORM(WIN)
 bool DeprecatedGlobalSettings::gShouldUseHighResolutionTimers = true;
@@ -110,29 +100,6 @@ void DeprecatedGlobalSettings::setGStreamerEnabled(bool enabled)
 #if ENABLE(VIDEO)
     HTMLMediaElement::resetMediaEngines();
 #endif
-}
-#endif
-
-#if ENABLE(MEDIA_STREAM)
-bool DeprecatedGlobalSettings::mockCaptureDevicesEnabled()
-{
-    return gMockCaptureDevicesEnabled;
-}
-
-void DeprecatedGlobalSettings::setMockCaptureDevicesEnabled(bool enabled)
-{
-    gMockCaptureDevicesEnabled = enabled;
-    MockRealtimeMediaSourceCenter::setMockRealtimeMediaSourceCenterEnabled(enabled);
-}
-
-bool DeprecatedGlobalSettings::mediaCaptureRequiresSecureConnection()
-{
-    return gMediaCaptureRequiresSecureConnection;
-}
-
-void DeprecatedGlobalSettings::setMediaCaptureRequiresSecureConnection(bool mediaCaptureRequiresSecureConnection)
-{
-    gMediaCaptureRequiresSecureConnection = mediaCaptureRequiresSecureConnection;
 }
 #endif
 

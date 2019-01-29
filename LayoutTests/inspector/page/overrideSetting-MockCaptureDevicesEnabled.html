@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script>
+
+if (window.internals)
+    window.internals.setMockMediaCaptureDevicesEnabled(false);
+
+function requestGetUserMedia() {
+    navigator.mediaDevices.getUserMedia({audio: {}, video: {}})
+        .then(() => TestPage.dispatchEventToFrontend("GetUserMedia", {success: true}))
+        .catch((error) => TestPage.dispatchEventToFrontend("GetUserMedia", {error: error.message}));
+}
+
+function test()
+{
+    let suite = InspectorTest.createAsyncSuite("Page.overrideSetting");
+
+    suite.addTestCase({
+        name: "Page.overrideSetting.MockCaptureDevicesEnabled",
+        description: "Test that changing whether mock capture devices are enabled has an effect.",
+        async test() {
+            let [defaultResult] = await Promise.all([
+                InspectorTest.awaitEvent("GetUserMedia"),
+                InspectorTest.evaluateInPage(`requestGetUserMedia()`),
+            ]);
+            InspectorTest.log("Expected Error: " + defaultResult.data.error);
+
+            InspectorTest.log("Overriding MockCaptureDevicesEnabled to true...");
+            await PageAgent.overrideSetting(PageAgent.Setting.MockCaptureDevicesEnabled, true);
+
+            let [overriddenResult] = await Promise.all([
+                InspectorTest.awaitEvent("GetUserMedia"),
+                InspectorTest.evaluateInPage(`requestGetUserMedia()`),
+            ])
+            InspectorTest.expectTrue(overriddenResult.data.success, "getUserMedia should not fail when no devices are available");
+
+            InspectorTest.log("Removing MockCaptureDevicesEnabled override...");
+            await PageAgent.overrideSetting(PageAgent.Setting.MockCaptureDevicesEnabled);
+
+            let [originalResult] = await Promise.all([
+                InspectorTest.awaitEvent("GetUserMedia"),
+                InspectorTest.evaluateInPage(`requestGetUserMedia()`),
+            ])
+            InspectorTest.log("Expected Error: " + originalResult.data.error);
+        },
+    });
+
+    suite.runTestCasesAndFinish();
+}
+
+</script>
+</head>
+<body onload="runTest()">
+    <p>Tests for the Page.overrideSetting command.</p>
+</body>
+</html>

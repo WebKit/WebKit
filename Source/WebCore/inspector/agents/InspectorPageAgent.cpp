@@ -83,9 +83,13 @@ namespace WebCore {
 
 using namespace Inspector;
 
+// Keep this in sync with Page.Setting
 #define FOR_EACH_INSPECTOR_OVERRIDE_SETTING(macro) \
     macro(AuthorAndUserStylesEnabled) \
+    macro(ICECandidateFilteringEnabled) \
     macro(ImagesEnabled) \
+    macro(MediaCaptureRequiresSecureConnection) \
+    macro(MockCaptureDevicesEnabled) \
     macro(NeedsSiteSpecificQuirks) \
     macro(ScriptEnabled) \
     macro(WebSecurityEnabled)

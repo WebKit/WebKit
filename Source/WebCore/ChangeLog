@@ -1,3 +1,44 @@
+2019-01-28  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: provide a way to edit page WebRTC settings on a remote target
+        https://bugs.webkit.org/show_bug.cgi?id=193863
+        <rdar://problem/47572764>
+
+        Reviewed by Joseph Pecoraro.
+
+        Test: inspector/page/overrideSetting-ICECandidateFilteringEnabled.html
+              inspector/page/overrideSetting-MockCaptureDevicesEnabled.html
+
+        * inspector/agents/InspectorPageAgent.cpp:
+
+        * page/Settings.yaml:
+        * page/SettingsBase.h:
+        * page/SettingsBase.cpp:
+        (SettingsBase::iceCandidateFilteringEnabledChanged): Added.
+        (SettingsBase::mockCaptureDevicesEnabledChanged): Added.
+        * Scripts/GenerateSettings.rb:
+        * Scripts/SettingsTemplates/Settings.cpp.erb:
+        Add page-level settings for WebRTC preferences.
+
+        * Modules/mediastream/UserMediaController.cpp:
+        (WebCore::UserMediaController::canCallGetUserMedia):
+
+        * testing/InternalSettings.cpp:
+        (WebCore::InternalSettings::setMediaCaptureRequiresSecureConnection):
+
+        * testing/Internals.h:
+        * testing/Internals.cpp:
+        (WebCore::Internals::Internals):
+        (WebCore::Internals::setMockMediaCaptureDevicesEnabled):
+        (WebCore::Internals::setMediaCaptureRequiresSecureConnection): Added.
+
+        * page/DeprecatedGlobalSettings.h:
+        * page/DeprecatedGlobalSettings.cpp:
+        (WebCore::DeprecatedGlobalSettings::mockCaptureDevicesEnabled): Deleted.
+        (WebCore::DeprecatedGlobalSettings::setMockCaptureDevicesEnabled): Deleted.
+        (WebCore::DeprecatedGlobalSettings::mediaCaptureRequiresSecureConnection): Deleted.
+        (WebCore::DeprecatedGlobalSettings::setMediaCaptureRequiresSecureConnection): Deleted.
+
 2019-01-28  Jer Noble  <jer.noble@apple.com>
 
         webkitcurrentplaybacktargetiswirelesschanged and webkitCurrentPlaybackIsWireless are non-deterministic.

@@ -109,6 +109,5 @@ static const bool defaultConicGradient = true;
 #else
 static const bool defaultConicGradient = false;
 #endif
-    
 
 }
