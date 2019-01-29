@@ -127,6 +127,11 @@ static NSError *toUserContentRuleListStoreError(const NSError *error)
     return self;
 }
 
+- (WKContentRuleListStore *)_contentRuleListStore
+{
+    return _contentRuleListStore.get();
+}
+
 @end
 
 #endif // WK_API_ENABLED
