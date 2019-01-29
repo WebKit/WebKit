@@ -1,3 +1,29 @@
+2019-01-29  Keith Rollin  <krollin@apple.com>
+
+        Add .xcfilelists to Run Script build phases
+        https://bugs.webkit.org/show_bug.cgi?id=193792
+        <rdar://problem/47201785>
+
+        Reviewed by Alex Christensen.
+
+        As part of supporting XCBuild, update the necessary Run Script build
+        phases in their Xcode projects to refer to their associated
+        .xcfilelist files.
+
+        Note that the addition of these files bumps the Xcode project version
+        number to something that's Xcode 10 compatible. This change means that
+        older versions of the Xcode IDE can't read these projects. Nor can it
+        fully load workspaces that refer to these projects (the updated
+        projects are shown as non-expandable placeholders). `xcodebuild` can
+        still build these projects; it's just that the IDE can't open them.
+
+        Make special accommodations for incorporating .xcfilelists from
+        WebKitAdditions.
+
+        * Configurations/Base.xcconfig:
+        * Configurations/DebugRelease.xcconfig:
+        * WebKit.xcodeproj/project.pbxproj:
+
 2019-01-29  Antti Koivisto  <antti@apple.com>
 
         REGRESSION (PSON): Flash on link navigation on Mac

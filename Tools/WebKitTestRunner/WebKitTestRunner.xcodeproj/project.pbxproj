@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 45;
+	objectVersion = 51;
 	objects = {
 
 /* Begin PBXAggregateTarget section */
@@ -1083,9 +1083,15 @@
 			buildActionMask = 2147483647;
 			files = (
 			);
+			inputFileListPaths = (
+				"$(SRCROOT)/DerivedSources-input.xcfilelist",
+			);
 			inputPaths = (
 			);
 			name = "Generate Derived Sources";
+			outputFileListPaths = (
+				"$(SRCROOT)/DerivedSources-output.xcfilelist",
+			);
 			outputPaths = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;

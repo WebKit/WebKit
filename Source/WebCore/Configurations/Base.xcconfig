@@ -138,6 +138,11 @@ WK_COCOA_TOUCH_appletvos = cocoatouch;
 WK_COCOA_TOUCH_appletvsimulator = cocoatouch;
 WK_IS_COCOA_TOUCH = $(WK_NOT_$(WK_EMPTY_$(WK_COCOA_TOUCH)));
 
+WK_WEBKITADDITIONS_INSTALL_PATH = /usr/local/include/WebKitAdditions
+WK_WEBKITADDITIONS_HEADERS_FOLDER_PATH = $(SDKROOT)/$(WK_WEBKITADDITIONS_INSTALL_PATH)
+WK_WEBCORE_DERIVEDSOURCES_INPUT_XCFILELIST_ADDITIONS = $(WK_WEBKITADDITIONS_HEADERS_FOLDER_PATH)/WebCore/DerivedSources-input.xcfilelist
+WK_WEBCORE_DERIVEDSOURCES_OUTPUT_XCFILELIST_ADDITIONS = $(WK_WEBKITADDITIONS_HEADERS_FOLDER_PATH)/WebCore/DerivedSources-output.xcfilelist
+
 // Attempting to build WebCore with full LTO for i386 results in the following
 // linker error, so we drop down to "thin" for that architecture if we were to
 // otherwise attempt to use "full".

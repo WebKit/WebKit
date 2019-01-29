@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 46;
+	objectVersion = 51;
 	objects = {
 
 /* Begin PBXAggregateTarget section */
@@ -10280,10 +10280,14 @@
 			buildActionMask = 2147483647;
 			files = (
 			);
+			inputFileListPaths = (
+				"$(SRCROOT)/UnifiedSources-input.xcfilelist",
+			);
 			inputPaths = (
 			);
 			name = "Generate Unified Sources";
 			outputFileListPaths = (
+				"$(SRCROOT)/UnifiedSources-output.xcfilelist",
 			);
 			outputPaths = (
 			);
@@ -10389,10 +10393,14 @@
 			buildActionMask = 2147483647;
 			files = (
 			);
+			inputFileListPaths = (
+				"$(SRCROOT)/DerivedSources-input.xcfilelist",
+			);
 			inputPaths = (
 			);
 			name = "Generate Derived Sources";
 			outputFileListPaths = (
+				"$(SRCROOT)/DerivedSources-output.xcfilelist",
 			);
 			outputPaths = (
 			);
