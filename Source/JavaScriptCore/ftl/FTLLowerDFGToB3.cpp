@@ -13041,7 +13041,7 @@ private:
     LValue allocateHeapCell(LValue allocator, LBasicBlock slowPath)
     {
         JITAllocator actualAllocator;
-        if (allocator->hasInt32())
+        if (allocator->hasIntPtr())
             actualAllocator = JITAllocator::constant(Allocator(bitwise_cast<LocalAllocator*>(allocator->asIntPtr())));
         else
             actualAllocator = JITAllocator::variable();

@@ -1,3 +1,16 @@
+2019-01-29  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] FTL should handle LocalAllocator*
+        https://bugs.webkit.org/show_bug.cgi?id=193980
+
+        Reviewed by Saam Barati.
+
+        At some point, Allocator holds LocalAllocator* instead of 32bit integer. In FTL allocation path, we fail to use this constant LocalAllocator*
+        because the FTL still use the incoming value as 32bit integer there.
+
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::allocateHeapCell):
+
 2019-01-29  Keith Rollin  <krollin@apple.com>
 
         Add .xcfilelists to Run Script build phases
