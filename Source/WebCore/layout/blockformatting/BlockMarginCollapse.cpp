@@ -151,6 +151,9 @@ bool BlockFormattingContext::MarginCollapse::marginBeforeCollapsesWithPreviousSi
 {
     ASSERT(layoutBox.isBlockLevelBox());
 
+    if (layoutBox.isAnonymous())
+        return false;
+
     if (!layoutBox.previousInFlowSibling())
         return false;
 

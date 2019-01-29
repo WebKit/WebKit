@@ -1,3 +1,13 @@
+2019-01-29  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC][BFC][MarginCollapsing] Anonymous block container's margin before does not collapse with previous inflow sibling margin after.
+        https://bugs.webkit.org/show_bug.cgi?id=193952
+
+        Reviewed by Antti Koivisto.
+
+        * layout/blockformatting/BlockMarginCollapse.cpp:
+        (WebCore::Layout::BlockFormattingContext::MarginCollapse::marginBeforeCollapsesWithPreviousSiblingMarginAfter):
+
 2019-01-29  Frederic Wang  <fwang@igalia.com>
 
         Allow scrolling tree nodes to exist in a detached state
