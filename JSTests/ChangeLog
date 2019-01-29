@@ -1,3 +1,11 @@
+2019-01-28  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        Unreviewed, fix the test after r240543 not to use @Error / Error in builtins
+        https://bugs.webkit.org/show_bug.cgi?id=193713
+
+        * stress/try-get-by-id-should-spill-registers-dfg.js:
+        (let.f.createBuiltin):
+
 2019-01-28  Mark Lam  <mark.lam@apple.com>
 
         ToString node actually does GC.
