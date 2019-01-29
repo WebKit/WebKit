@@ -28,7 +28,7 @@
 #import "ArgumentCodersCF.h"
 #import "SandboxUtilities.h"
 #import "XPCServiceEntryPoint.h"
-#import <WebCore/Process.h>
+#import <WebCore/ProcessIdentifier.h>
 #import <wtf/cocoa/Entitlements.h>
 
 namespace WebKit {

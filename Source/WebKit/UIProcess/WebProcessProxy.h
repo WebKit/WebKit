@@ -40,7 +40,7 @@
 #include "WebProcessProxyMessages.h"
 #include <WebCore/MessagePortChannelProvider.h>
 #include <WebCore/MessagePortIdentifier.h>
-#include <WebCore/Process.h>
+#include <WebCore/ProcessIdentifier.h>
 #include <WebCore/SharedStringHash.h>
 #include <memory>
 #include <pal/SessionID.h>

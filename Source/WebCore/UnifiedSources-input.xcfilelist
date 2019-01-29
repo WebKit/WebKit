@@ -2629,7 +2629,7 @@ $(SRCROOT)/platform/PlatformSpeechSynthesisUtterance.cpp
 $(SRCROOT)/platform/PlatformSpeechSynthesisVoice.cpp
 $(SRCROOT)/platform/PlatformSpeechSynthesizer.cpp
 $(SRCROOT)/platform/PlatformStrategies.cpp
-$(SRCROOT)/platform/Process.cpp
+$(SRCROOT)/platform/ProcessIdentifier.cpp
 $(SRCROOT)/platform/ReferrerPolicy.cpp
 $(SRCROOT)/platform/RemoteCommandListener.cpp
 $(SRCROOT)/platform/RuntimeApplicationChecks.cpp

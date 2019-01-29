@@ -28,7 +28,7 @@
 #include "MessagePortChannel.h"
 #include "MessagePortChannelProvider.h"
 #include "MessagePortIdentifier.h"
-#include "Process.h"
+#include "ProcessIdentifier.h"
 #include <wtf/HashMap.h>
 
 namespace WebCore {

@@ -25,7 +25,7 @@
 
 #pragma once
 
-#include "Process.h"
+#include "ProcessIdentifier.h"
 #include <wtf/DebugUtilities.h>
 #include <wtf/Hasher.h>
 #include <wtf/text/WTFString.h>

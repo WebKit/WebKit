@@ -24,7 +24,7 @@
  */
 
 #include "config.h"
-#include "Process.h"
+#include "ProcessIdentifier.h"
 
 #include <wtf/MainThread.h>
 

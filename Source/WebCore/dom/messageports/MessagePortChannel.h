@@ -28,7 +28,7 @@
 #include "MessagePortChannelProvider.h"
 #include "MessagePortIdentifier.h"
 #include "MessageWithMessagePorts.h"
-#include "Process.h"
+#include "ProcessIdentifier.h"
 #include <wtf/HashSet.h>
 #include <wtf/RefCounted.h>
 #include <wtf/text/WTFString.h>

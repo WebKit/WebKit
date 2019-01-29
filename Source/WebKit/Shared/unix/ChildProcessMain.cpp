@@ -26,7 +26,7 @@
 #include "config.h"
 #include "ChildProcessMain.h"
 
-#include <WebCore/Process.h>
+#include <WebCore/ProcessIdentifier.h>
 #include <stdlib.h>
 
 namespace WebKit {

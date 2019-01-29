@@ -25,7 +25,7 @@
 
 #pragma once
 
-#include "Process.h"
+#include "ProcessIdentifier.h"
 #include <wtf/HashTraits.h>
 #include <wtf/ObjectIdentifier.h>
 

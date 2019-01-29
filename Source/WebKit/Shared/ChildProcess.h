@@ -29,7 +29,7 @@
 #include "Connection.h"
 #include "MessageReceiverMap.h"
 #include "MessageSender.h"
-#include <WebCore/Process.h>
+#include <WebCore/ProcessIdentifier.h>
 #include <WebCore/UserActivity.h>
 #include <wtf/HashMap.h>
 #include <wtf/RunLoop.h>
