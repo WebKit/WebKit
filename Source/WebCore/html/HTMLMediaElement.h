@@ -412,6 +412,7 @@ public:
     void setShouldPlayToPlaybackTarget(bool) override;
 #endif
     bool isPlayingToWirelessPlaybackTarget() const override { return m_isPlayingToWirelessTarget; };
+    void setIsPlayingToWirelessTarget(bool);
     bool webkitCurrentPlaybackTargetIsWireless() const;
 
     void setPlayingOnSecondScreen(bool value);
@@ -963,6 +964,7 @@ private:
     GenericTaskQueue<Timer> m_resourceSelectionTaskQueue;
     GenericTaskQueue<Timer> m_visibilityChangeTaskQueue;
     GenericTaskQueue<Timer> m_fullscreenTaskQueue;
+    GenericTaskQueue<Timer> m_playbackTargetIsWirelessQueue;
     RefPtr<TimeRanges> m_playedTimeRanges;
     GenericEventQueue m_asyncEventQueue;
 

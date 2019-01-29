@@ -5600,10 +5600,8 @@ void HTMLMediaElement::clearMediaPlayer()
         enqueuePlaybackTargetAvailabilityChangedEvent();
     }
 
-    if (m_isPlayingToWirelessTarget) {
-        m_isPlayingToWirelessTarget = false;
-        scheduleEvent(eventNames().webkitcurrentplaybacktargetiswirelesschangedEvent);
-    }
+    if (m_isPlayingToWirelessTarget)
+        setIsPlayingToWirelessTarget(false);
 #endif
 
     if (m_isWaitingUntilMediaCanStart) {
@@ -5843,25 +5841,32 @@ void HTMLMediaElement::wirelessRoutesAvailableDidChange()
 
 void HTMLMediaElement::mediaPlayerCurrentPlaybackTargetIsWirelessChanged(MediaPlayer*)
 {
-    m_isPlayingToWirelessTarget = m_player && m_player->isCurrentPlaybackTargetWireless();
+    setIsPlayingToWirelessTarget(m_player && m_player->isCurrentPlaybackTargetWireless());
+}
 
-    ALWAYS_LOG(LOGIDENTIFIER, m_isPlayingToWirelessTarget);
-    ASSERT(m_player);
-    configureMediaControls();
-    scheduleEvent(eventNames().webkitcurrentplaybacktargetiswirelesschangedEvent);
-    m_mediaSession->isPlayingToWirelessPlaybackTargetChanged(m_isPlayingToWirelessTarget);
-    m_mediaSession->canProduceAudioChanged();
-    scheduleUpdateMediaState();
-    updateSleepDisabling();
+void HTMLMediaElement::setIsPlayingToWirelessTarget(bool isPlayingToWirelessTarget)
+{
+    m_playbackTargetIsWirelessQueue.enqueueTask([this, isPlayingToWirelessTarget] {
+        if (isPlayingToWirelessTarget == m_isPlayingToWirelessTarget)
+            return;
+        m_isPlayingToWirelessTarget = m_player && m_player->isCurrentPlaybackTargetWireless();
+
+        ALWAYS_LOG(LOGIDENTIFIER, m_isPlayingToWirelessTarget);
+        configureMediaControls();
+        m_mediaSession->isPlayingToWirelessPlaybackTargetChanged(m_isPlayingToWirelessTarget);
+        m_mediaSession->canProduceAudioChanged();
+        scheduleUpdateMediaState();
+        updateSleepDisabling();
+
+        m_failedToPlayToWirelessTarget = false;
+        scheduleCheckPlaybackTargetCompatability();
+
+        dispatchEvent(Event::create(eventNames().webkitcurrentplaybacktargetiswirelesschangedEvent, Event::CanBubble::No, Event::IsCancelable::Yes));
+    });
 }
 
 void HTMLMediaElement::dispatchEvent(Event& event)
 {
-    if (event.type() == eventNames().webkitcurrentplaybacktargetiswirelesschangedEvent) {
-        m_failedToPlayToWirelessTarget = false;
-        scheduleCheckPlaybackTargetCompatability();
-    }
-
     DEBUG_LOG(LOGIDENTIFIER, "dispatching '", event.type(), "'");
 
     HTMLElement::dispatchEvent(event);
@@ -6643,6 +6648,12 @@ void HTMLMediaElement::createMediaPlayer()
 #if ENABLE(VIDEO_TRACK)
     forgetResourceSpecificTracks();
 #endif
+
+#if ENABLE(WIRELESS_PLAYBACK_TARGET)
+    if (m_isPlayingToWirelessTarget)
+        setIsPlayingToWirelessTarget(false);
+#endif
+
     m_player = MediaPlayer::create(*this);
     m_player->setShouldBufferData(m_shouldBufferData);
     schedulePlaybackControlsManagerUpdate();
