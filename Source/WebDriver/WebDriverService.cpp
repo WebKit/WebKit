@@ -236,7 +236,7 @@ void WebDriverService::handleRequest(HTTPRequestHandler::Request&& request, Func
     }
 
     RefPtr<JSON::Object> parametersObject;
-    if (method.value() == HTTPMethod::Post && request.dataLength) {
+    if (method.value() == HTTPMethod::Post) {
         RefPtr<JSON::Value> messageValue;
         if (!JSON::Value::parseJSON(String::fromUTF8(request.data, request.dataLength), messageValue)) {
             sendResponse(WTFMove(replyHandler), CommandResult::fail(CommandResult::ErrorCode::InvalidArgument));

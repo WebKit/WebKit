@@ -1,3 +1,18 @@
+2019-01-29  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        WebDriver: POST commands require a valid parameters object
+        https://bugs.webkit.org/show_bug.cgi?id=193906
+
+        Reviewed by Michael Catanzaro.
+
+        We are not failing when http body is empty.
+
+        Fixes tests: imported/w3c/webdriver/tests/set_window_rect/set.py::test_null_parameter_value
+                     imported/w3c/webdriver/tests/set_timeouts/set.py::test_null_parameter_value
+
+        * WebDriverService.cpp:
+        (WebDriver::WebDriverService::handleRequest):
+
 2019-01-04  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         WebDriver: element click command should handle user prompts
