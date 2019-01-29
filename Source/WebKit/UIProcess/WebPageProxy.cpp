@@ -2776,6 +2776,12 @@ void WebPageProxy::commitProvisionalPage(uint64_t frameID, uint64_t navigationID
 
     swapToWebProcess(m_provisionalPage->process(), m_provisionalPage->takeDrawingArea(), m_provisionalPage->mainFrame());
 
+#if PLATFORM(COCOA)
+    auto accessibilityToken = m_provisionalPage->takeAccessibilityToken();
+    if (!accessibilityToken.isEmpty())
+        registerWebProcessAccessibilityToken({ accessibilityToken.data(), accessibilityToken.size() });
+#endif
+
     didCommitLoadForFrame(frameID, navigationID, mimeType, frameHasCustomContentProvider, frameLoadType, certificateInfo, containsPluginDocument, forcedHasInsecureContent, userData);
 
     m_provisionalPage = nullptr;

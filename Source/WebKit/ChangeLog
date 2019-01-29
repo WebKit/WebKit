@@ -1,3 +1,28 @@
+2019-01-29  Chris Dumez  <cdumez@apple.com>
+
+        Regression(r240046) VoiceOver is no longer working after a process swap
+        https://bugs.webkit.org/show_bug.cgi?id=193953
+        <rdar://problem/47612398>
+
+        Reviewed by Alex Christensen.
+
+        ProvisionalPageProxy used to forward the RegisterWebProcessAccessibilityToken IPC from
+        the provisional WebProcess to the WebPageProxy right away. This in turn would notify
+        the PageClient whose logic would rely on WebPageProxy::process(), which returns the
+        committed process instead of the provisional one.
+
+        To address the issue, the ProvisionalPageProxy now stores the token sent by the
+        provisional WebProcess and we only call registerWebProcessAccessibilityToken()
+        on the WebPageProxy *after* we've swapped to the provisional process.
+
+        * UIProcess/ProvisionalPageProxy.cpp:
+        (WebKit::ProvisionalPageProxy::registerWebProcessAccessibilityToken):
+        (WebKit::ProvisionalPageProxy::didReceiveMessage):
+        * UIProcess/ProvisionalPageProxy.h:
+        (WebKit::ProvisionalPageProxy::takeAccessibilityToken):
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::commitProvisionalPage):
+
 2019-01-28  Ryosuke Niwa  <rniwa@webkit.org>
 
         User agent string override for navigator.userAgent should be site specific quirks

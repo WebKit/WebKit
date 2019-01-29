@@ -56,6 +56,10 @@ public:
     DrawingAreaProxy* drawingArea() const { return m_drawingArea.get(); }
     std::unique_ptr<DrawingAreaProxy> takeDrawingArea();
 
+#if PLATFORM(COCOA)
+    Vector<uint8_t> takeAccessibilityToken() { return WTFMove(m_accessibilityToken); }
+#endif
+
     void loadData(API::Navigation&, const IPC::DataReference&, const String& MIMEType, const String& encoding, const String& baseURL, API::Object* userData, Optional<WebsitePoliciesData>&& = WTF::nullopt);
     void loadRequest(API::Navigation&, WebCore::ResourceRequest&&, WebCore::ShouldOpenExternalURLsPolicy, API::Object* userData, Optional<WebsitePoliciesData>&& = WTF::nullopt);
     void goToBackForwardItem(API::Navigation&, WebBackForwardListItem&, Optional<WebsitePoliciesData>&&);
@@ -80,6 +84,9 @@ private:
     void didFailProvisionalLoadForFrame(uint64_t frameID, const WebCore::SecurityOriginData& frameSecurityOrigin, uint64_t navigationID, const String& provisionalURL, const WebCore::ResourceError&, const UserData&);
     void startURLSchemeTask(URLSchemeTaskParameters&&);
     void backForwardGoToItem(const WebCore::BackForwardItemIdentifier&, SandboxExtension::Handle&);
+#if PLATFORM(COCOA)
+    void registerWebProcessAccessibilityToken(const IPC::DataReference&);
+#endif
 
     void initializeWebPage();
     void finishInitializingWebPageAfterProcessLaunch();
@@ -95,6 +102,9 @@ private:
     bool m_wasCommitted { false };
     URL m_provisionalLoadURL;
 
+#if PLATFORM(COCOA)
+    Vector<uint8_t> m_accessibilityToken;
+#endif
 #if PLATFORM(IOS_FAMILY)
     ProcessThrottler::ForegroundActivityToken m_suspensionToken;
 #endif
