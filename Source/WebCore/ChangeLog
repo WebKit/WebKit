@@ -1,3 +1,13 @@
+2019-01-28  Andy Estes  <aestes@apple.com>
+
+        [watchOS] Enable Parental Controls content filtering
+        https://bugs.webkit.org/show_bug.cgi?id=193939
+        <rdar://problem/46641912>
+
+        Reviewed by Ryosuke Niwa.
+
+        * Configurations/FeatureDefines.xcconfig:
+
 2019-01-28  Dean Jackson  <dino@apple.com>
 
         Produce "pen" Pointer Events if using a stylus (e.g. Apple Pencil)
