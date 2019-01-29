@@ -131,10 +131,11 @@ struct WebPageCreationParameters {
     bool controlledByAutomation;
     bool isProcessSwap { false };
 
+    bool useDarkAppearance { false };
+
 #if PLATFORM(MAC)
     ColorSpaceData colorSpace;
     bool useSystemAppearance;
-    bool useDarkAppearance;
 #endif
 #if PLATFORM(IOS_FAMILY)
     WebCore::FloatSize screenSize;

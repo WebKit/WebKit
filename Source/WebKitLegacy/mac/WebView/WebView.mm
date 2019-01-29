@@ -1583,6 +1583,9 @@ static void WebKitInitializeGamepadProviderIfNecessary()
         ResourceHandle::forceContentSniffing();
 
     _private->page->setDeviceScaleFactor([self _deviceScaleFactor]);
+#endif
+
+#if HAVE(OS_DARK_MODE_SUPPORT) && PLATFORM(MAC)
     _private->page->setUseDarkAppearance(self._effectiveAppearanceIsDark);
 #endif
 
@@ -5293,15 +5296,13 @@ static Vector<String> toStringVector(NSArray* patterns)
     return insets;
 }
 
+#if HAVE(OS_DARK_MODE_SUPPORT) && PLATFORM(MAC)
 - (bool)_effectiveAppearanceIsDark
 {
-#if HAVE(OS_DARK_MODE_SUPPORT)
     NSAppearanceName appearance = [[self effectiveAppearance] bestMatchFromAppearancesWithNames:@[ NSAppearanceNameAqua, NSAppearanceNameDarkAqua ]];
     return [appearance isEqualToString:NSAppearanceNameDarkAqua];
-#else
-    return false;
-#endif
 }
+#endif
 
 - (void)_setUseSystemAppearance:(BOOL)useSystemAppearance
 {
@@ -5317,6 +5318,7 @@ static Vector<String> toStringVector(NSArray* patterns)
     return _private->page->useSystemAppearance();
 }
 
+#if HAVE(OS_DARK_MODE_SUPPORT) && PLATFORM(MAC)
 - (void)viewDidChangeEffectiveAppearance
 {
     // This can be called during [super initWithCoder:] and [super initWithFrame:].
@@ -5326,6 +5328,7 @@ static Vector<String> toStringVector(NSArray* patterns)
 
     _private->page->setUseDarkAppearance(self._effectiveAppearanceIsDark);
 }
+#endif
 
 - (void)_setSourceApplicationAuditData:(NSData *)sourceApplicationAuditData
 {

@@ -1216,13 +1216,22 @@ void RenderTheme::adjustSearchFieldResultsButtonStyle(StyleResolver&, RenderStyl
 void RenderTheme::purgeCaches()
 {
     m_colorCache = ColorCache();
+    m_darkColorCache = ColorCache();
 }
 
 void RenderTheme::platformColorsDidChange()
 {
     m_colorCache = ColorCache();
+    m_darkColorCache = ColorCache();
 
     Page::updateStyleForAllPagesAfterGlobalChangeInEnvironment();
+}
+
+auto RenderTheme::colorCache(OptionSet<StyleColor::Options> options) const -> ColorCache&
+{
+    if (options.contains(StyleColor::Options::UseDarkAppearance))
+        return m_darkColorCache;
+    return m_colorCache;
 }
 
 FontCascadeDescription& RenderTheme::cachedSystemFontDescription(CSSValueID systemFontID) const

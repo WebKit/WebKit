@@ -68,8 +68,6 @@ public:
 
     ScrollbarControlSize scrollbarControlSizeForPart(ControlPart) final { return SmallScrollbar; }
 
-    void platformColorsDidChange() final;
-
     int minimumMenuListSize(const RenderStyle&) const final;
 
     void adjustSliderThumbSize(RenderStyle&, const Element*) const final;
@@ -177,8 +175,6 @@ private:
 
     Color systemColor(CSSValueID, OptionSet<StyleColor::Options>) const final;
 
-    ColorCache& colorCache(OptionSet<StyleColor::Options>) const final;
-
     void purgeCaches() final;
 
     // Get the control size based off the font. Used by some of the controls (like buttons).
@@ -255,8 +251,6 @@ private:
 
     bool m_isSliderThumbHorizontalPressed { false };
     bool m_isSliderThumbVerticalPressed { false };
-
-    mutable ColorCache m_darkColorCache;
 
     RetainPtr<WebCoreRenderThemeNotificationObserver> m_notificationObserver;
 

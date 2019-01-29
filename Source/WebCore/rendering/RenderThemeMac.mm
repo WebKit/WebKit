@@ -335,7 +335,6 @@ void RenderThemeMac::purgeCaches()
     m_mediaControlsScript.clearImplIfNotShared();
     m_legacyMediaControlsStyleSheet.clearImplIfNotShared();
     m_mediaControlsStyleSheet.clearImplIfNotShared();
-    m_darkColorCache = ColorCache();
 
     RenderTheme::purgeCaches();
 }
@@ -603,21 +602,6 @@ static RGBA32 menuBackgroundColor()
     [offscreenRep getPixel:pixel atX:0 y:0];
 
     return makeRGBA(pixel[0], pixel[1], pixel[2], pixel[3]);
-}
-
-void RenderThemeMac::platformColorsDidChange()
-{
-    m_darkColorCache = ColorCache();
-
-    RenderTheme::platformColorsDidChange();
-}
-
-auto RenderThemeMac::colorCache(OptionSet<StyleColor::Options> options) const -> ColorCache&
-{
-    LocalDefaultSystemAppearance localAppearance(options.contains(StyleColor::Options::UseDarkAppearance));
-    if (localAppearance.usingDarkAppearance())
-        return m_darkColorCache;
-    return RenderTheme::colorCache(options);
 }
 
 Color RenderThemeMac::systemColor(CSSValueID cssValueID, OptionSet<StyleColor::Options> options) const

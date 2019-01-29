@@ -74,11 +74,11 @@ void WebPageCreationParameters::encode(IPC::Encoder& encoder) const
     encoder << mimeTypesWithCustomContentProviders;
     encoder << controlledByAutomation;
     encoder << isProcessSwap;
+    encoder << useDarkAppearance;
 
 #if PLATFORM(MAC)
     encoder << colorSpace;
     encoder << useSystemAppearance;
-    encoder << useDarkAppearance;
 #endif
 #if PLATFORM(IOS_FAMILY)
     encoder << screenSize;
@@ -229,13 +229,13 @@ Optional<WebPageCreationParameters> WebPageCreationParameters::decode(IPC::Decod
         return WTF::nullopt;
     if (!decoder.decode(parameters.isProcessSwap))
         return WTF::nullopt;
+    if (!decoder.decode(parameters.useDarkAppearance))
+        return WTF::nullopt;
 
 #if PLATFORM(MAC)
     if (!decoder.decode(parameters.colorSpace))
         return WTF::nullopt;
     if (!decoder.decode(parameters.useSystemAppearance))
-        return WTF::nullopt;
-    if (!decoder.decode(parameters.useDarkAppearance))
         return WTF::nullopt;
 #endif
 

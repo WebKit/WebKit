@@ -1,3 +1,14 @@
+2019-01-28  Timothy Hatcher  <timothy@apple.com>
+
+        Make it easier for non-Apple ports to enable dark mode CSS support.
+        https://bugs.webkit.org/show_bug.cgi?id=193882
+
+        Reviewed by Megan Gardner.
+
+        * WebView/WebView.mm:
+        (-[WebView _commonInitializationWithFrameName:groupName:]): Fix some defines.
+        (-[WebView _effectiveAppearanceIsDark]): Ditto.
+
 2019-01-27  Chris Fleizach  <cfleizach@apple.com>
 
         AX: Introduce a static accessibility tree

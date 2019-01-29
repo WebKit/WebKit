@@ -6785,10 +6785,10 @@ WebPageCreationParameters WebPageProxy::creationParameters(WebProcessProxy& proc
     parameters.backgroundExtendsBeyondPage = m_backgroundExtendsBeyondPage;
     parameters.layerHostingMode = m_layerHostingMode;
     parameters.controlledByAutomation = m_controlledByAutomation;
+    parameters.useDarkAppearance = useDarkAppearance();
 #if PLATFORM(MAC)
     parameters.colorSpace = pageClient().colorSpace();
     parameters.useSystemAppearance = m_useSystemAppearance;
-    parameters.useDarkAppearance = useDarkAppearance();
 #endif
 #if PLATFORM(IOS_FAMILY)
     parameters.screenSize = screenSize();
@@ -7406,11 +7406,6 @@ void WebPageProxy::handleAlternativeTextUIResult(const String& result)
         m_process->send(Messages::WebPage::HandleAlternativeTextUIResult(result), m_pageID);
 }
 
-bool WebPageProxy::useDarkAppearance() const
-{
-    return pageClient().effectiveAppearanceIsDark();
-}
-
 #if USE(DICTATION_ALTERNATIVES)
 void WebPageProxy::showDictationAlternativeUI(const WebCore::FloatRect& boundingBoxOfDictatedText, uint64_t dictationContext)
 {
@@ -7917,14 +7912,6 @@ void WebPageProxy::setUseSystemAppearance(bool useSystemAppearance)
     m_process->send(Messages::WebPage::SetUseSystemAppearance(useSystemAppearance), m_pageID);
 }
     
-void WebPageProxy::effectiveAppearanceDidChange()
-{
-    if (!isValid())
-        return;
-
-    m_process->send(Messages::WebPage::SetUseDarkAppearance(useDarkAppearance()), m_pageID);
-}
-
 void WebPageProxy::setHeaderBannerHeightForTesting(int height)
 {
     m_process->send(Messages::WebPage::SetHeaderBannerHeightForTesting(height), m_pageID);
@@ -8273,6 +8260,19 @@ void WebPageProxy::requestStorageAccess(String&& subFrameHost, String&& topFrame
     });
 }
 #endif
+
+bool WebPageProxy::useDarkAppearance() const
+{
+    return pageClient().effectiveAppearanceIsDark();
+}
+
+void WebPageProxy::effectiveAppearanceDidChange()
+{
+    if (!isValid())
+        return;
+
+    m_process->send(Messages::WebPage::SetUseDarkAppearance(useDarkAppearance()), m_pageID);
+}
 
 #if PLATFORM(COCOA)
 void WebPageProxy::touchBarMenuDataChanged(const TouchBarMenuData& touchBarMenuData)

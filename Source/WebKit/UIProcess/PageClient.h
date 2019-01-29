@@ -311,6 +311,8 @@ public:
     virtual void didPerformDictionaryLookup(const WebCore::DictionaryPopupInfo&) = 0;
 #endif
 
+    virtual bool effectiveAppearanceIsDark() const { return false; }
+
     virtual void enterAcceleratedCompositingMode(const LayerTreeContext&) = 0;
     virtual void exitAcceleratedCompositingMode() = 0;
     virtual void updateAcceleratedCompositingMode(const LayerTreeContext&) = 0;
@@ -336,8 +338,6 @@ public:
     virtual void startWindowDrag() = 0;
     virtual NSWindow *platformWindow() = 0;
     virtual void setShouldSuppressFirstResponderChanges(bool) = 0;
-
-    virtual bool effectiveAppearanceIsDark() const = 0;
 
 #if WK_API_ENABLED
     virtual NSView *inspectorAttachmentView() = 0;

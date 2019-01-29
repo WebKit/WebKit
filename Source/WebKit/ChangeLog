@@ -1,3 +1,30 @@
+2019-01-28  Timothy Hatcher  <timothy@apple.com>
+
+        Make it easier for non-Apple ports to enable dark mode CSS support.
+        https://bugs.webkit.org/show_bug.cgi?id=193882
+
+        Reviewed by Megan Gardner.
+
+        Make modern WebKit code for dark mode usable by other ports, to match
+        the WebCore parts that have been cross-platform all along.
+
+        * Shared/WebPageCreationParameters.cpp:
+        (WebKit::WebPageCreationParameters::encode const):
+        (WebKit::WebPageCreationParameters::decode):
+        * Shared/WebPageCreationParameters.h:
+        * UIProcess/PageClient.h:
+        (WebKit::PageClient::effectiveAppearanceIsDark const):
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::creationParameters):
+        (WebKit::WebPageProxy::useDarkAppearance const):
+        (WebKit::WebPageProxy::effectiveAppearanceDidChange):
+        * UIProcess/WebPageProxy.h:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::m_shouldAttachDrawingAreaOnPageTransition):
+        (WebKit::WebPage::setUseDarkAppearance):
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/WebPage.messages.in:
+
 2019-01-28  Andy Estes  <aestes@apple.com>
 
         [Cocoa] Add SPI to _WKUserContentExtensionStore to retrieve its underlying WKContentRuleListStore

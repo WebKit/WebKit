@@ -897,9 +897,10 @@ public:
 #if PLATFORM(MAC)
     void setUseSystemAppearance(bool);
     bool useSystemAppearance() const { return m_useSystemAppearance; }
+#endif
+
     void effectiveAppearanceDidChange();
     bool useDarkAppearance() const;
-#endif
 
 #if PLATFORM(COCOA)
     // Called by the web process through a message.

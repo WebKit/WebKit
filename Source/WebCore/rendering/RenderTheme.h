@@ -438,10 +438,11 @@ protected:
         Color inactiveTextSearchHighlightColor;
     };
 
-    virtual ColorCache& colorCache(OptionSet<StyleColor::Options>) const { return m_colorCache; }
+    virtual ColorCache& colorCache(OptionSet<StyleColor::Options>) const;
 
 private:
     mutable ColorCache m_colorCache;
+    mutable ColorCache m_darkColorCache;
 };
 
 } // namespace WebCore

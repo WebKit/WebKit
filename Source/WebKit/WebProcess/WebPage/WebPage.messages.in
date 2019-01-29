@@ -474,11 +474,12 @@ messages -> WebPage LegacyReceiver {
     HandleAcceptedCandidate(struct WebCore::TextCheckingResult acceptedCandidate)
 
     SetUseSystemAppearance(bool useSystemAppearance);
-    SetUseDarkAppearance(bool useDarkAppearance);
 
     SetHeaderBannerHeightForTesting(int height);
     SetFooterBannerHeightForTesting(int height);
 #endif
+
+    SetUseDarkAppearance(bool useDarkAppearance);
 
 #if PLATFORM(COCOA)
     RequestActiveNowPlayingSessionInfo(WebKit::CallbackID callbackID)
