@@ -34,7 +34,7 @@
 
 
 namespace WebCore {
-using namespace WTF;
+
 #if OS(WINDOWS) && !defined(gmtime_r)
 #define gmtime_r(x, y) gmtime_s((y), (x))
 #endif

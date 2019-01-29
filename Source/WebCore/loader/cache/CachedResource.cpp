@@ -60,11 +60,9 @@
 #include "QuickLook.h"
 #endif
 
-
 #define RELEASE_LOG_IF_ALLOWED(fmt, ...) RELEASE_LOG_IF(cachedResourceLoader.isAlwaysOnLoggingAllowed(), Network, "%p - CachedResource::" fmt, this, ##__VA_ARGS__)
 
 namespace WebCore {
-using namespace WTF;
 
 ResourceLoadPriority CachedResource::defaultPriorityForResourceType(Type type)
 {
@@ -115,7 +113,7 @@ static Seconds deadDecodedDataDeletionIntervalForResourceType(CachedResource::Ty
     return MemoryCache::singleton().deadDecodedDataDeletionInterval();
 }
 
-DEFINE_DEBUG_ONLY_GLOBAL(RefCountedLeakCounter, cachedResourceLeakCounter, ("CachedResource"));
+DEFINE_DEBUG_ONLY_GLOBAL(WTF::RefCountedLeakCounter, cachedResourceLeakCounter, ("CachedResource"));
 
 CachedResource::CachedResource(CachedResourceRequest&& request, Type type, const PAL::SessionID& sessionID, const CookieJar* cookieJar)
     : m_options(request.options())

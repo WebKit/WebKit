@@ -32,8 +32,6 @@
 
 namespace WebCore {
 
-using namespace WTF;
-
 CSSParserSelector* CSSParserSelector::parsePagePseudoSelector(const AtomicString& pseudoTypeString)
 {
     CSSSelector::PagePseudoClassType pseudoType;

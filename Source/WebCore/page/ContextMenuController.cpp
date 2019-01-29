@@ -73,8 +73,8 @@
 
 
 namespace WebCore {
-using namespace WTF;
-using namespace Unicode;
+
+using namespace WTF::Unicode;
 
 ContextMenuController::ContextMenuController(Page& page, ContextMenuClient& client)
     : m_page(page)

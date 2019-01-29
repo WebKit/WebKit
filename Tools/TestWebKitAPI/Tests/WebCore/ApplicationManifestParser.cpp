@@ -31,7 +31,6 @@
 #include <WebCore/ApplicationManifestParser.h>
 #include <wtf/RunLoop.h>
 
-using namespace WTF;
 using namespace WebCore;
 
 namespace WebCore {

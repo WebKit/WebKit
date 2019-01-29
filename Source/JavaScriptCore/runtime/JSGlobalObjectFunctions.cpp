@@ -57,10 +57,9 @@
 #include <wtf/text/StringBuilder.h>
 #include <wtf/unicode/UTF8Conversion.h>
 
-using namespace WTF;
-using namespace Unicode;
-
 namespace JSC {
+
+using namespace WTF::Unicode;
 
 const ASCIILiteral ObjectProtoCalledOnNullOrUndefinedError { "Object.prototype.__proto__ called on null or undefined"_s };
 

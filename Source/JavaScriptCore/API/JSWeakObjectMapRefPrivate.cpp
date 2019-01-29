@@ -34,7 +34,6 @@
 #include "Weak.h"
 #include "WeakGCMapInlines.h"
 
-using namespace WTF;
 using namespace JSC;
 
 #ifdef __cplusplus

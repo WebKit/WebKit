@@ -35,9 +35,9 @@
 #include <wtf/text/win/WCharStringExtras.h>
 #endif
 
-using namespace WTF;
-
 namespace JSC {
+
+using namespace WTF;
 
 template<int width>
 static inline void appendNumber(StringBuilder& builder, int value)

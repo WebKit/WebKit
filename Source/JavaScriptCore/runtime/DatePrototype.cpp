@@ -67,9 +67,9 @@
 #include <CoreFoundation/CoreFoundation.h>
 #endif
 
-using namespace WTF;
-
 namespace JSC {
+
+using namespace WTF;
 
 EncodedJSValue JSC_HOST_CALL dateProtoFuncGetDate(ExecState*);
 EncodedJSValue JSC_HOST_CALL dateProtoFuncGetDay(ExecState*);

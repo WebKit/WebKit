@@ -45,7 +45,6 @@
 #include <wtf/text/CString.h>
 
 namespace WebCore {
-using namespace WTF;
 
 const size_t maxEncodingNameLength = 63;
 

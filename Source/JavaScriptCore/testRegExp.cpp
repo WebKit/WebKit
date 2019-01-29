@@ -48,7 +48,6 @@
 const int MaxLineLength = 100 * 1024;
 
 using namespace JSC;
-using namespace WTF;
 
 struct CommandLine {
     CommandLine()

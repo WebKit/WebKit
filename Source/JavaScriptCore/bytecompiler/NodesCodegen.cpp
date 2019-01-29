@@ -45,8 +45,6 @@
 #include <wtf/Threading.h>
 #include <wtf/text/StringBuilder.h>
 
-using namespace WTF;
-
 namespace JSC {
 
 /*

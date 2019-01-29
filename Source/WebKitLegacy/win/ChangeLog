@@ -1,3 +1,14 @@
+2019-01-28  Ross Kirsling  <ross.kirsling@sony.com>
+
+        Remove unnecessary `using namespace WTF`s (or at least restrict their scope).
+        https://bugs.webkit.org/show_bug.cgi?id=193941
+
+        Reviewed by Alex Christensen.
+
+        * Plugins/PluginMessageThrottlerWin.cpp:
+        * Plugins/PluginView.cpp:
+        * Plugins/PluginViewWin.cpp:
+
 2019-01-24  Ross Kirsling  <ross.kirsling@sony.com>
 
         Move FileSystem to WTF

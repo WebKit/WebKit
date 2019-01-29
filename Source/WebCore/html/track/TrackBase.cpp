@@ -35,7 +35,6 @@
 #include "HTMLMediaElement.h"
 
 namespace WebCore {
-using namespace WTF;
 
 static int s_uniqueId = 0;
 

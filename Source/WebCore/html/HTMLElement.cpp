@@ -76,7 +76,6 @@ namespace WebCore {
 WTF_MAKE_ISO_ALLOCATED_IMPL(HTMLElement);
 
 using namespace HTMLNames;
-using namespace WTF;
 
 Ref<HTMLElement> HTMLElement::create(const QualifiedName& tagName, Document& document)
 {

@@ -37,8 +37,6 @@
 #include <wtf/text/CString.h>
 #include <wtf/text/WTFString.h>
 
-using namespace WTF;
-
 namespace JSC { namespace Yarr {
 
 template<typename CharType>
@@ -1655,7 +1653,7 @@ private:
     bool unicode;
     unsigned* output;
     InputStream input;
-    BumpPointerPool* allocatorPool { nullptr };
+    WTF::BumpPointerPool* allocatorPool { nullptr };
     unsigned startOffset;
     unsigned remainingMatchCount;
 };

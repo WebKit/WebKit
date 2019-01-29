@@ -1,3 +1,12 @@
+2019-01-28  Ross Kirsling  <ross.kirsling@sony.com>
+
+        Remove unnecessary `using namespace WTF`s (or at least restrict their scope).
+        https://bugs.webkit.org/show_bug.cgi?id=193941
+
+        Reviewed by Alex Christensen.
+
+        * Shared/linux/WebMemorySamplerLinux.cpp:
+
 2019-01-28  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         [Win] WebCore/platform/Process.h is conflicting with process.h

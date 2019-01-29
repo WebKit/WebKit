@@ -30,8 +30,6 @@
 #include <wtf/ASCIICType.h>
 #include <wtf/MonotonicTime.h>
 
-using namespace WTF;
-
 namespace WebCore {
 
 // Set a timer to make sure we process any queued messages at least every 16ms.

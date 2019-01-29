@@ -88,8 +88,6 @@ using JSC::JSValue;
 
 #if ENABLE(NETSCAPE_PLUGIN_API)
 
-using namespace WTF;
-
 namespace WebCore {
 
 using namespace HTMLNames;

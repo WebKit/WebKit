@@ -41,7 +41,6 @@
 
 
 namespace WebCore {
-using namespace WTF;
 
 #ifndef NDEBUG
 void EventListenerMap::assertNoActiveIterators() const

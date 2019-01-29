@@ -28,7 +28,6 @@
  */
 
 #include "config.h"
-
 #include "CSSBasicShapes.h"
 
 #include "CSSMarkup.h"
@@ -39,9 +38,7 @@
 #include "SVGPathUtilities.h"
 #include <wtf/text/StringBuilder.h>
 
-
 namespace WebCore {
-using namespace WTF;
 
 static String serializePositionOffset(const Pair& offset, const Pair& other)
 {
@@ -365,7 +362,7 @@ static String buildInsetString(const String& top, const String& right, const Str
             }
 
             if (verticalRadii.size() != horizontalRadii.size()
-                || !VectorComparer<false, String>::compare(verticalRadii.data(), horizontalRadii.data(), verticalRadii.size())) {
+                || !WTF::VectorComparer<false, String>::compare(verticalRadii.data(), horizontalRadii.data(), verticalRadii.size())) {
                 result.appendLiteral(separator);
                 result.appendLiteral("/");
 

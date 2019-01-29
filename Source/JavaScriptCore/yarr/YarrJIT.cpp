@@ -36,8 +36,6 @@
 
 #if ENABLE(YARR_JIT)
 
-using namespace WTF;
-
 namespace JSC { namespace Yarr {
 
 template<YarrJITCompileMode compileMode>

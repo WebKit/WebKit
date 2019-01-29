@@ -26,8 +26,6 @@
 #include "config.h"
 #include <wtf/UniqueArray.h>
 
-using namespace WTF;
-
 namespace TestWebKitAPI {
 
 static unsigned numberOfConstructions { 0 };

@@ -32,8 +32,6 @@
 #include "JSCInlines.h"
 #include "ObjectConstructor.h"
 
-using namespace WTF;
-
 namespace JSC {
 
 JSValue iteratorNext(ExecState* exec, IterationRecord iterationRecord, JSValue argument)

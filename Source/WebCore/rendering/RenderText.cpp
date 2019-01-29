@@ -64,10 +64,9 @@
 #include "SelectionRect.h"
 #endif
 
-
 namespace WebCore {
-using namespace WTF;
-using namespace Unicode;
+
+using namespace WTF::Unicode;
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(RenderText);
 

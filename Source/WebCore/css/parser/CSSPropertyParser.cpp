@@ -82,11 +82,8 @@
 #include <memory>
 #include <wtf/text/StringBuilder.h>
 
-
 namespace WebCore {
-using namespace WTF;
 
-    
 bool isCustomPropertyName(const String& propertyName)
 {
     return propertyName.length() > 2 && propertyName.characterAt(0) == '-' && propertyName.characterAt(1) == '-';

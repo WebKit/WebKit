@@ -31,8 +31,6 @@
 
 #define LOG_CHANNEL_PREFIX Test
 
-using namespace WTF;
-
 const char* logTestingSubsystem = "com.webkit.testing";
 
 DEFINE_LOG_CHANNEL(Channel1, logTestingSubsystem);

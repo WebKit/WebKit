@@ -34,8 +34,6 @@
 #include <wtf/Threading.h>
 #include <wtf/ThreadingPrimitives.h>
 
-using namespace WTF;
-
 namespace TestWebKitAPI {
 
 namespace {

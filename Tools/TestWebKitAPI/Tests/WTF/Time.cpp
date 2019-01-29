@@ -59,8 +59,6 @@ std::basic_ostream<char>& operator<<(std::basic_ostream<char>& out, TimeWithDyna
 
 } // namespace WTF
 
-using namespace WTF;
-
 namespace TestWebKitAPI {
 
 namespace {

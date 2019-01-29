@@ -51,8 +51,6 @@
 
 namespace WebCore {
 
-using namespace WTF;
-
 bool EventTarget::isNode() const
 {
     return false;

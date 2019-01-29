@@ -200,8 +200,7 @@ void ClearTextCommand::CreateAndApply(const RefPtr<Frame> frame)
 }
 
 using namespace HTMLNames;
-using namespace WTF;
-using namespace Unicode;
+using namespace WTF::Unicode;
 
 TemporarySelectionChange::TemporarySelectionChange(Frame& frame, Optional<VisibleSelection> temporarySelection, OptionSet<TemporarySelectionOption> options)
     : m_frame(frame)

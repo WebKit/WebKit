@@ -84,15 +84,9 @@ static inline HWND windowHandleForPageClient(PlatformPageClient client)
     return client;
 }
 
-using JSC::ExecState;
-using JSC::JSLock;
-using JSC::JSObject;
-
-using std::min;
-
-using namespace WTF;
-
 namespace WebCore {
+
+using JSC::JSLock;
 
 using namespace HTMLNames;
 

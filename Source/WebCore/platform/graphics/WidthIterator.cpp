@@ -32,8 +32,8 @@
 
 
 namespace WebCore {
-using namespace WTF;
-using namespace Unicode;
+
+using namespace WTF::Unicode;
 
 WidthIterator::WidthIterator(const FontCascade* font, const TextRun& run, HashSet<const Font*>* fallbackFonts, bool accountForGlyphBounds, bool forTextEmphasis)
     : m_font(font)

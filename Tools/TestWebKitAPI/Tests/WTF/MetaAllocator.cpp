@@ -35,9 +35,9 @@
 #undef small
 #endif
 
-using namespace WTF;
-
 namespace TestWebKitAPI {
+
+using namespace WTF;
 
 class MetaAllocatorTest: public testing::Test {
 public:

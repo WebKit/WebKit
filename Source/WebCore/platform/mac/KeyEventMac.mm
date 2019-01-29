@@ -35,7 +35,6 @@
 #import <wtf/MainThread.h>
 
 namespace WebCore {
-using namespace WTF;
 
 int windowsKeyCodeForKeyCode(uint16_t keyCode)
 {

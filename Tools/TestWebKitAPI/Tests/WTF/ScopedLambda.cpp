@@ -27,8 +27,6 @@
 #include <wtf/ScopedLambda.h>
 #include <wtf/Vector.h>
 
-using namespace WTF;
-
 namespace TestWebKitAPI {
 
 // This test relies on this module being compiled with -fno-elide-constructors

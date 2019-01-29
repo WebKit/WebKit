@@ -36,8 +36,6 @@
 #import <pal/spi/cocoa/IOKitSPI.h>
 #import <wtf/MainThread.h>
 
-using namespace WTF;
-
 namespace WebCore {
 
 int windowsKeyCodeForKeyCode(uint16_t keyCode)

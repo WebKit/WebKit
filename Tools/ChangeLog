@@ -1,3 +1,23 @@
+2019-01-28  Ross Kirsling  <ross.kirsling@sony.com>
+
+        Remove unnecessary `using namespace WTF`s (or at least restrict their scope).
+        https://bugs.webkit.org/show_bug.cgi?id=193941
+
+        Reviewed by Alex Christensen.
+
+        * TestWebKitAPI/Tests/WTF/ConcurrentPtrHashSet.cpp:
+        * TestWebKitAPI/Tests/WTF/Condition.cpp:
+        * TestWebKitAPI/Tests/WTF/Lock.cpp:
+        * TestWebKitAPI/Tests/WTF/MetaAllocator.cpp:
+        * TestWebKitAPI/Tests/WTF/ParkingLot.cpp:
+        * TestWebKitAPI/Tests/WTF/RedBlackTree.cpp:
+        * TestWebKitAPI/Tests/WTF/ScopedLambda.cpp:
+        * TestWebKitAPI/Tests/WTF/Time.cpp:
+        * TestWebKitAPI/Tests/WTF/UniqueArray.cpp:
+        * TestWebKitAPI/Tests/WebCore/ApplicationManifestParser.cpp:
+        * TestWebKitAPI/Tests/WebCore/Logging.cpp:
+        * WebKitTestRunner/InjectedBundle/cocoa/InjectedBundlePageCocoa.mm:
+
 2019-01-28  Yusuke Suzuki  <ysuzuki@apple.com>
 
         Unreviewed, reorder my emails to fix autocomplete in bugzilla

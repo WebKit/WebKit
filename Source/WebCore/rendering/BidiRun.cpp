@@ -27,11 +27,9 @@
 #include <wtf/RefCountedLeakCounter.h>
 #include <wtf/StdLibExtras.h>
 
-
 namespace WebCore {
-using namespace WTF;
 
-DEFINE_DEBUG_ONLY_GLOBAL(RefCountedLeakCounter, bidiRunCounter, ("BidiRun"));
+DEFINE_DEBUG_ONLY_GLOBAL(WTF::RefCountedLeakCounter, bidiRunCounter, ("BidiRun"));
 
 BidiRun::BidiRun(unsigned start, unsigned stop, RenderObject& renderer, BidiContext* context, UCharDirection dir)
     : BidiCharacterRun(start, stop, context, dir)

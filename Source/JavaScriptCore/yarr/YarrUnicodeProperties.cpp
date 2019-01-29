@@ -29,8 +29,6 @@
 #include "Yarr.h"
 #include "YarrPattern.h"
 
-using namespace WTF;
-
 namespace JSC { namespace Yarr {
 
 struct HashIndex {

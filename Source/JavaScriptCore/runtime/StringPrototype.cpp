@@ -55,8 +55,6 @@
 #include <wtf/text/StringView.h>
 #include <wtf/unicode/Collator.h>
 
-using namespace WTF;
-
 namespace JSC {
 
 STATIC_ASSERT_IS_TRIVIALLY_DESTRUCTIBLE(StringPrototype);

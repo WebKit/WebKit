@@ -98,9 +98,9 @@
 #include <sys/timeb.h>
 #endif
 
-using namespace WTF;
-
 namespace JSC {
+
+using namespace WTF;
 
 static inline double timeToMS(double hour, double min, double sec, double ms)
 {

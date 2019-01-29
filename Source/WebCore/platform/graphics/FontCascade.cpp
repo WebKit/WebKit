@@ -46,8 +46,8 @@
 #endif
 
 namespace WebCore {
-using namespace WTF;
-using namespace Unicode;
+
+using namespace WTF::Unicode;
 
 static bool useBackslashAsYenSignForFamily(const AtomicString& family)
 {

@@ -43,8 +43,6 @@
 #include <sys/timeb.h>
 #endif
 
-using namespace WTF;
-
 namespace JSC {
 
 EncodedJSValue JSC_HOST_CALL dateParse(ExecState*);
@@ -55,6 +53,8 @@ EncodedJSValue JSC_HOST_CALL dateUTC(ExecState*);
 #include "DateConstructor.lut.h"
 
 namespace JSC {
+
+using namespace WTF;
 
 const ClassInfo DateConstructor::s_info = { "Function", &InternalFunction::s_info, &dateConstructorTable, nullptr, CREATE_METHOD_TABLE(DateConstructor) };
 

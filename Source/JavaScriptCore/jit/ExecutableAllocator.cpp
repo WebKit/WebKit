@@ -82,9 +82,9 @@ extern "C" {
 
 #endif
 
-using namespace WTF;
-
 namespace JSC {
+
+using namespace WTF;
 
 #if defined(FIXED_EXECUTABLE_MEMORY_POOL_SIZE_IN_MB) && FIXED_EXECUTABLE_MEMORY_POOL_SIZE_IN_MB > 0
 static const size_t fixedExecutableMemoryPoolSize = FIXED_EXECUTABLE_MEMORY_POOL_SIZE_IN_MB * 1024 * 1024;

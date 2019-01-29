@@ -321,16 +321,13 @@
 #include "WebMetalRenderingContext.h"
 #endif
 
-
 namespace WebCore {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(Document);
 
-using namespace PAL;
-using namespace WTF;
-using namespace Unicode;
-
 using namespace HTMLNames;
+using namespace PAL;
+using namespace WTF::Unicode;
 
 static const unsigned cMaxWriteRecursionDepth = 21;
 bool Document::hasEverCreatedAnAXObjectCache = false;

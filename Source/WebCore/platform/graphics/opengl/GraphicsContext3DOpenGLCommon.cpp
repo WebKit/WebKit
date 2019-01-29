@@ -88,7 +88,6 @@
 
 
 namespace WebCore {
-using namespace WTF;
 
 static ThreadSpecific<ShaderNameHash*>& getCurrentNameHashMapForShader()
 {

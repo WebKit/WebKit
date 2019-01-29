@@ -37,7 +37,6 @@
 
 
 namespace WebCore {
-using namespace WTF;
 
 static Length parseLength(const UChar* data, unsigned length)
 {

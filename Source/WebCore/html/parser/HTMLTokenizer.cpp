@@ -35,7 +35,6 @@
 
 
 namespace WebCore {
-using namespace WTF;
 
 using namespace HTMLNames;
 

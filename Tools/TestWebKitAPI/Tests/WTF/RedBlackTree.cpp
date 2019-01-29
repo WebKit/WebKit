@@ -30,9 +30,9 @@
 #include <wtf/RedBlackTree.h>
 #include <wtf/Vector.h>
 
-using namespace WTF;
-
 namespace TestWebKitAPI {
+
+using namespace WTF;
 
 class TestNode : public RedBlackTree<TestNode, char>::Node {
 public:

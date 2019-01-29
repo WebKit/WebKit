@@ -38,8 +38,6 @@
 #include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>
 
-using namespace WTF;
-
 namespace JSC { namespace Yarr {
 
 #include "RegExpJitTables.h"

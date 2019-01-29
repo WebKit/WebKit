@@ -31,8 +31,6 @@
 #include "ModuleScopeData.h"
 #include <wtf/Assertions.h>
 
-using namespace WTF;
-
 namespace JSC {
 
 // ------------------------------ StatementNode --------------------------------

@@ -170,8 +170,6 @@
 #include "RegExp.h"
 #endif
 
-using namespace WTF;
-
 namespace JSC {
 
 #if ENABLE(JIT)

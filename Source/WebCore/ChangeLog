@@ -1,3 +1,45 @@
+2019-01-28  Ross Kirsling  <ross.kirsling@sony.com>
+
+        Remove unnecessary `using namespace WTF`s (or at least restrict their scope).
+        https://bugs.webkit.org/show_bug.cgi?id=193941
+
+        Reviewed by Alex Christensen.
+
+        * css/CSSBasicShapes.cpp:
+        * css/CSSPrimitiveValue.cpp:
+        * css/parser/CSSParser.cpp:
+        * css/parser/CSSParserSelector.cpp:
+        * css/parser/CSSPropertyParser.cpp:
+        * dom/Document.cpp:
+        * dom/EventListenerMap.cpp:
+        * dom/EventTarget.cpp:
+        * editing/Editor.cpp:
+        * html/HTMLElement.cpp:
+        * html/HTMLFontElement.cpp:
+        * html/parser/HTMLTokenizer.cpp:
+        * html/track/TrackBase.cpp:
+        * loader/FTPDirectoryParser.cpp:
+        * loader/TextResourceDecoder.cpp:
+        * loader/cache/CachedResource.cpp:
+        * page/ContextMenuController.cpp:
+        * page/Navigator.cpp:
+        * platform/Length.cpp:
+        * platform/cocoa/KeyEventCocoa.mm:
+        * platform/graphics/FontCascade.cpp:
+        * platform/graphics/WidthIterator.cpp:
+        * platform/graphics/opengl/GraphicsContext3DOpenGLCommon.cpp:
+        * platform/ios/KeyEventIOS.mm:
+        * platform/mac/KeyEventMac.mm:
+        * platform/network/HTTPParsers.cpp:
+        * platform/text/TextCodecUTF8.cpp:
+        * platform/text/TextEncodingRegistry.cpp:
+        * platform/win/KeyEventWin.cpp:
+        * rendering/BidiRun.cpp:
+        * rendering/FloatingObjects.cpp:
+        * rendering/RenderBlock.cpp:
+        * rendering/RenderListMarker.cpp:
+        * rendering/RenderText.cpp:
+
 2019-01-28  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         [Win] WebCore/platform/Process.h is conflicting with process.h

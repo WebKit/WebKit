@@ -37,8 +37,6 @@
 #import "KeyEventCodesIOS.h"
 #endif
 
-using namespace WTF;
-
 namespace WebCore {
 
 bool PlatformKeyboardEvent::currentCapsLockState()

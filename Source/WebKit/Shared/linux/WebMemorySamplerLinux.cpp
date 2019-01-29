@@ -41,9 +41,9 @@
 #include <wtf/text/WTFString.h>
 
 namespace WebKit {
-using namespace WebCore;
+
 using namespace JSC;
-using namespace WTF;
+using namespace WebCore;
 
 static const unsigned int maxBuffer = 128;
 static const unsigned int maxProcessPath = 35;
@@ -113,7 +113,7 @@ WebMemoryStatistics WebMemorySampler::sampleWebKit() const
     size_t totalBytesInUse = 0;
     size_t totalBytesCommitted = 0;
 
-    FastMallocStatistics fastMallocStatistics = WTF::fastMallocStatistics();
+    auto fastMallocStatistics = WTF::fastMallocStatistics();
     size_t fastMallocBytesInUse = fastMallocStatistics.committedVMBytes - fastMallocStatistics.freeListBytes;
     size_t fastMallocBytesCommitted = fastMallocStatistics.committedVMBytes;
     totalBytesInUse += fastMallocBytesInUse;

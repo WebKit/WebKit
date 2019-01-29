@@ -54,7 +54,6 @@
 #include <wtf/text/StringBuilder.h>
 
 namespace WebCore {
-using namespace WTF;
 
 CSSParser::CSSParser(const CSSParserContext& context)
     : m_context(context)

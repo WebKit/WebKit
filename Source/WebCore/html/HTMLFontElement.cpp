@@ -39,7 +39,6 @@ namespace WebCore {
 WTF_MAKE_ISO_ALLOCATED_IMPL(HTMLFontElement);
 
 using namespace HTMLNames;
-using namespace WTF;
 
 HTMLFontElement::HTMLFontElement(const QualifiedName& tagName, Document& document)
     : HTMLElement(tagName, document)

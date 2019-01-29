@@ -29,8 +29,6 @@
 #include <wtf/ThreadingPrimitives.h>
 #include <wtf/WordLock.h>
 
-using namespace WTF;
-
 namespace TestWebKitAPI {
 
 struct LockInspector {

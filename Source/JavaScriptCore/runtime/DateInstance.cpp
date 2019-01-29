@@ -28,9 +28,9 @@
 #include <math.h>
 #include <wtf/MathExtras.h>
 
-using namespace WTF;
-
 namespace JSC {
+
+using namespace WTF;
 
 const ClassInfo DateInstance::s_info = {"Date", &JSWrapperObject::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(DateInstance)};
 

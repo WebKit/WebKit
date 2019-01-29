@@ -35,8 +35,6 @@
 
 namespace WTR {
 
-using namespace WTF;
-
 void InjectedBundlePage::platformDidStartProvisionalLoadForFrame(WKBundleFrameRef frame)
 {
     if (!WKBundleFrameIsMainFrame(frame))

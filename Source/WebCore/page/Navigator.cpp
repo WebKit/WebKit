@@ -47,7 +47,6 @@
 #include <wtf/WeakPtr.h>
 
 namespace WebCore {
-using namespace WTF;
 
 Navigator::Navigator(ScriptExecutionContext* context, DOMWindow& window)
     : NavigatorBase(context)

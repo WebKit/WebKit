@@ -33,7 +33,7 @@
 #include <wtf/unicode/CharacterNames.h>
 
 namespace WebCore {
-using namespace WTF;
+
 using namespace WTF::Unicode;
 
 const int nonCharacter = -1;

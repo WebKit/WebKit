@@ -37,10 +37,9 @@
 #include <wtf/text/StringBuilder.h>
 #include <wtf/unicode/CharacterNames.h>
 
-
 namespace WebCore {
-using namespace WTF;
-using namespace Unicode;
+
+using namespace WTF::Unicode;
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(RenderListMarker);
 

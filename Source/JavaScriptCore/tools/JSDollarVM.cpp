@@ -57,7 +57,6 @@
 #endif
 
 using namespace JSC;
-using namespace WTF;
 
 namespace {
 

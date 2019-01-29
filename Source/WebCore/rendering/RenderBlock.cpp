@@ -71,19 +71,16 @@
 #include "ShadowRoot.h"
 #include "ShapeOutsideInfo.h"
 #include "TransformState.h"
-
 #include <wtf/IsoMallocInlines.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/Optional.h>
 #include <wtf/SetForScope.h>
 #include <wtf/StackStats.h>
 
-
 namespace WebCore {
-using namespace WTF;
-using namespace Unicode;
 
 using namespace HTMLNames;
+using namespace WTF::Unicode;
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(RenderBlock);
 

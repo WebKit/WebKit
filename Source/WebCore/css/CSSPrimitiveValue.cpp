@@ -52,7 +52,6 @@
 
 
 namespace WebCore {
-using namespace WTF;
 
 static inline bool isValidCSSUnitTypeForDoubleConversion(CSSPrimitiveValue::UnitType unitType)
 {

@@ -30,8 +30,6 @@
 #include <wtf/PageBlock.h>
 #include <wtf/StdLibExtras.h>
 
-using namespace WTF;
-
 namespace JSC {
 
 MachineThreads::MachineThreads()
