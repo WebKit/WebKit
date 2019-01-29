@@ -1,3 +1,13 @@
+2019-01-29  Aakash Jain  <aakash_jain@apple.com>
+
+        [ews-build] Configure buildbot to send events to ews-app
+        https://bugs.webkit.org/show_bug.cgi?id=193968
+
+        Reviewed by Lucas Forschler.
+
+        * BuildSlaveSupport/ews-build/events.py: Added.
+        * BuildSlaveSupport/ews-build/master.cfg:
+
 2019-01-29  Keith Rollin  <krollin@apple.com>
 
         Add .xcfilelists to Run Script build phases
