@@ -477,6 +477,10 @@ static bool shouldAllowSettingAnyXHRHeaderFromFileURLs()
 
 #endif
 
+#if USE(APPLE_INTERNAL_SDK)
+#include <WebKitAdditions/WKWebViewInternalAdditions.mm>
+#endif
+
 static bool shouldRequireUserGestureToLoadVideo()
 {
 #if PLATFORM(IOS_FAMILY)
@@ -7041,6 +7045,10 @@ static WebCore::UserInterfaceLayoutDirection toUserInterfaceLayoutDirection(UISe
 }
 
 #endif // PLATFORM(IOS_FAMILY)
+
+#if USE(APPLE_INTERNAL_SDK)
+#include <WebKitAdditions/WKWebViewAdditions.mm>
+#endif
 
 - (BOOL)_beginBackSwipeForTesting
 {

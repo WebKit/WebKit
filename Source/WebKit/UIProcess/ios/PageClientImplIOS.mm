@@ -463,6 +463,10 @@ void PageClientImpl::didPerformDictionaryLookup(const DictionaryPopupInfo& dicti
 #endif // ENABLE(REVEAL)
 }
 
+#if USE(APPLE_INTERNAL_SDK)
+#include <WebKitAdditions/PageClientImplIOSAdditions.mm>
+#endif
+
 void PageClientImpl::setRemoteLayerTreeRootNode(RemoteLayerTreeNode* rootNode)
 {
     [m_contentView _setAcceleratedCompositingRootView:rootNode ? rootNode->uiView() : nil];

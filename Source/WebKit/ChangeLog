@@ -1,5 +1,17 @@
 2019-01-28  Timothy Hatcher  <timothy@apple.com>
 
+        Add back some includes that got removed at some point.
+        https://bugs.webkit.org/show_bug.cgi?id=193942
+
+        Reviewed by Tim Horton.
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        * UIProcess/API/Cocoa/WKWebViewInternal.h:
+        * UIProcess/ios/PageClientImplIOS.h:
+        * UIProcess/ios/PageClientImplIOS.mm:
+
+2019-01-28  Timothy Hatcher  <timothy@apple.com>
+
         Make it easier for non-Apple ports to enable dark mode CSS support.
         https://bugs.webkit.org/show_bug.cgi?id=193882
 
