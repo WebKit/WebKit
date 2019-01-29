@@ -170,6 +170,10 @@ struct PrintInfo;
 @property (nonatomic, readonly, getter=_isRetainingActiveFocusedState) BOOL _retainingActiveFocusedState;
 #endif
 
+#if USE(APPLE_INTERNAL_SDK)
+#include <WebKitAdditions/WKWebViewInternalAdditions.h>
+#endif
+
 #if ENABLE(ACCESSIBILITY_EVENTS)
 - (void)_updateAccessibilityEventsEnabled;
 #endif
