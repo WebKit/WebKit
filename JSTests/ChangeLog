@@ -1,3 +1,13 @@
+2019-01-29  Mark Lam  <mark.lam@apple.com>
+
+        ValueRecovery::recover() should purify NaN values it recovers.
+        https://bugs.webkit.org/show_bug.cgi?id=193978
+        <rdar://problem/47625488>
+
+        Reviewed by Saam Barati.
+
+        * stress/value-recovery-of-double-displaced-in-jsstack-should-be-purified.js: Added.
+
 2019-01-28  Yusuke Suzuki  <ysuzuki@apple.com>
 
         Unreviewed, fix the test after r240543 not to use @Error / Error in builtins
