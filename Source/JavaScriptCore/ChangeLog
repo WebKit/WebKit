@@ -1,3 +1,14 @@
+2019-01-29  Ross Kirsling  <ross.kirsling@sony.com>
+
+        Remove FIXME for Annex B.3.5's "for-of var" subcase.
+
+        Rubber-stamped by Yusuke Suzuki.
+
+        This subcase is removed from the spec in https://github.com/tc39/ecma262/pull/1393.
+
+        * parser/Parser.h:
+        (JSC::Parser::declareHoistedVariable):
+
 2019-01-29  Mark Lam  <mark.lam@apple.com>
 
         Remove unneeded CPU(BIG_ENDIAN) handling in LLInt after new bytecode format.

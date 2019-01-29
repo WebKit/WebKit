@@ -1230,7 +1230,6 @@ private:
         ASSERT(i < m_scopeStack.size());
         while (true) {
             // Annex B.3.5 exempts `try {} catch (e) { var e; }` from being a syntax error.
-            // FIXME: This exemption should not apply if the var declaration is a for-of initializer.
             if (m_scopeStack[i].hasLexicallyDeclaredVariable(*ident) && !m_scopeStack[i].isSimpleCatchParameterScope())
                 return DeclarationResult::InvalidDuplicateDeclaration;
 
