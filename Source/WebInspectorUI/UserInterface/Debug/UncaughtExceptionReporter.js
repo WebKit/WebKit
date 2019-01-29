@@ -299,6 +299,6 @@ Document any additional information that might be useful in resolving the proble
 
 window.addEventListener("error", handleUncaughtException);
 window.addEventListener("unhandledrejection", handleUnhandledPromiseRejection);
-window.handlePromiseException = window.handleInternalException = handleError;
+window.handleInternalException = handleError;
 
 })();

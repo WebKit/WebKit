@@ -1923,7 +1923,7 @@ WI.NetworkTableContentView = class NetworkTableContentView extends WI.ContentVie
                 content: JSON.stringify(har, null, 2),
                 forceSaveAs: true,
             });
-        }).catch(handlePromiseException);
+        });
     }
 
     _waterfallPopoverContent()

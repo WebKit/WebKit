@@ -1769,10 +1769,3 @@ function blobAsText(blob, callback)
     fileReader.addEventListener("loadend", () => { callback(fileReader.result); });
     fileReader.readAsText(blob);
 }
-
-if (!window.handlePromiseException) {
-    window.handlePromiseException = function handlePromiseException(error)
-    {
-        console.error("Uncaught exception in Promise", error);
-    };
-}

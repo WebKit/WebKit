@@ -200,7 +200,7 @@ WI.TextEditor = class TextEditor extends WI.View
 
     updateFormattedState(formatted)
     {
-        return this._format(formatted).catch(handlePromiseException);
+        return this._format(formatted);
     }
 
     hasFormatter()
