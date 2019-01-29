@@ -914,3 +914,5 @@ webkit.org/b/183878 media/modern-media-controls/tracks-panel/tracks-panel-up-cli
 webkit.org/b/191644 [ Sierra ] fast/workers/worker-cloneport.html [ Pass Failure ]
 
 webkit.org/b/191658 [ Sierra Release ] fast/layers/no-clipping-overflow-hidden-added-after-transform.html [ Pass ImageOnlyFailure ]
+
+webkit.org/b/193976 http/tests/cache-storage/cache-clearing-origin.https.html [ Pass Failure ]

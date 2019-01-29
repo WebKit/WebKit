@@ -1,3 +1,12 @@
+2019-01-29  Shawn Roberts  <sroberts@apple.com>
+
+        [ Mac WK2 ] Layout Test http/tests/cache-storage/cache-clearing-origin.https.html is flaky
+        https://bugs.webkit.org/show_bug.cgi?id=193976
+
+        Unreviewed test gardening.
+
+        * platform/mac-wk2/TestExpectations:
+
 2019-01-29  Simon Fraser  <simon.fraser@apple.com>
 
         REGRESSION(r240553): [iOS] Crash in ScrollingTree::updateTreeFromStateNode when attempting to log in to icloud.com
