@@ -1,3 +1,24 @@
+2019-01-29  John Wilander  <wilander@apple.com>
+
+        Add data abstraction and validation for Ad Click Attribution
+        https://bugs.webkit.org/show_bug.cgi?id=193916
+        <rdar://problem/47603481>
+
+        Reviewed by Daniel Bates, Brent Fulgham, and Alex Christensen.
+
+        Ad click attribution has two steps. First, the storage of an ad
+        campaign ID for a click that takes the user to a destination
+        site. Second, a conversion on the destination site that can be
+        attributed to the ad click.
+
+        This patch adds a class that represents a request for ad click
+        attribution. Validation makes sure that the bits of entropy
+        reported through this mechanism is limited.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WebCore/AdClickAttribution.cpp: Added.
+        (TestWebKitAPI::TEST):
+
 2019-01-29  Chris Dumez  <cdumez@apple.com>
 
         REGRESSION (PSON): Twitter link gets stuck at t.co after navigating back in tab

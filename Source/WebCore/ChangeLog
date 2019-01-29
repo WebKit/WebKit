@@ -1,3 +1,45 @@
+2019-01-29  John Wilander  <wilander@apple.com>
+
+        Add data abstraction and validation for Ad Click Attribution
+        https://bugs.webkit.org/show_bug.cgi?id=193916
+        <rdar://problem/47603481>
+
+        Reviewed by Daniel Bates, Brent Fulgham, and Alex Christensen.
+
+        New API tests added.
+
+        Ad click attribution has two steps. First, the storage of an ad
+        campaign ID for a click that takes the user to a destination
+        site. Second, a conversion on the destination site that can be
+        attributed to the ad click.
+
+        This patch adds a class that represents a request for ad click
+        attribution. Validation makes sure that the bits of entropy
+        reported through this mechanism is limited.
+
+        This feature is experimental and off by default.
+
+        * Sources.txt:
+            Added loader/AdClickAttribution.cpp.
+        * WebCore.xcodeproj/project.pbxproj:
+        * loader/AdClickAttribution.cpp: Added.
+        (WebCore::AdClickAttribution::isValid const):
+        (WebCore::AdClickAttribution::setConversion):
+        (WebCore::AdClickAttribution::url const):
+        (WebCore::AdClickAttribution::referrer const):
+        * loader/AdClickAttribution.h: Added.
+        (WebCore::AdClickAttribution::Campaign::Campaign):
+        (WebCore::AdClickAttribution::Campaign::isValid const):
+        (WebCore::AdClickAttribution::Source::Source):
+        (WebCore::AdClickAttribution::Destination::Destination):
+        (WebCore::AdClickAttribution::Priority::Priority):
+        (WebCore::AdClickAttribution::Conversion::Conversion):
+        (WebCore::AdClickAttribution::Conversion::isValid const):
+        (WebCore::AdClickAttribution::AdClickAttribution):
+        (WebCore::AdClickAttribution::earliestTimeToSend const):
+        * loader/DocumentLoader.cpp:
+            Added missing #include "RuntimeEnabledFeatures.h".
+
 2019-01-29  Zalan Bujtas  <zalan@apple.com>
 
         [MathML] Move enum class ScriptType to MathMLScriptsElement.
