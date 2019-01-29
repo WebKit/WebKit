@@ -1,3 +1,27 @@
+2019-01-29  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        WebDriver: add support for running subtests
+        https://bugs.webkit.org/show_bug.cgi?id=193904
+
+        Reviewed by Michael Catanzaro.
+
+        pytest already supports it by passing test.py::subtest, so we can do the same.
+
+        * Scripts/webkitpy/webdriver_tests/pytest_runner.py:
+        (get_item_name): Made this global.
+        (CollectRecorder.__init__): Receive the parameter to ignore.
+        (CollectRecorder.pytest_collectreport): Collect also the subtests.
+        (TestExpectationsMarker.pytest_collection_modifyitems): Use get_item_name().
+        (collect): Add parameter to ignore.
+        * Scripts/webkitpy/webdriver_tests/webdriver_selenium_executor.py:
+        (WebDriverSeleniumExecutor.collect): Pass the driver name as parameter to ignore.
+        * Scripts/webkitpy/webdriver_tests/webdriver_test_runner_selenium.py:
+        (WebDriverTestRunnerSelenium.collect_tests): Handle subtest name in test path.
+        (WebDriverTestRunnerSelenium.run): Ditto.
+        * Scripts/webkitpy/webdriver_tests/webdriver_test_runner_w3c.py:
+        (WebDriverTestRunnerW3C.collect_tests): Ditto.
+        (WebDriverTestRunnerW3C.run): Ditto.
+
 2019-01-28  Ryosuke Niwa  <rniwa@webkit.org>
 
         User agent string override for navigator.userAgent should be site specific quirks

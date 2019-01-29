@@ -52,13 +52,21 @@ class WebDriverTestRunnerW3C(object):
         if not tests:
             tests = [relative_tests_dir]
         for test in tests:
+            subtest = None
+            if '::' in test:
+                test, subtest = test.split('::')
+
             if not test.startswith(relative_tests_dir):
                 continue
+
             test_path = os.path.join(self._tests_dir, test)
             if os.path.isdir(test_path):
                 w3c_tests.extend(self._scan_directory(test_path, skipped))
             elif self._is_test(test_path) and test_path not in skipped:
-                w3c_tests.append(test_path)
+                if subtest is not None:
+                    w3c_tests.append(test_path + '::' + subtest)
+                else:
+                    w3c_tests.append(test_path)
         return w3c_tests
 
     def _is_test(self, test):
@@ -91,7 +99,7 @@ class WebDriverTestRunnerW3C(object):
         need_restart = False
         try:
             for test in tests:
-                test_name = os.path.relpath(test, self._tests_dir)
+                test_name = os.path.relpath(test.split('::')[0], self._tests_dir)
                 harness_result, test_results = executor.run(test)
                 result = WebDriverTestResult(test_name, *harness_result)
                 if harness_result[0] == 'OK':

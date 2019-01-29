@@ -57,7 +57,7 @@ class WebDriverSeleniumExecutor(object):
             do_delayed_imports()
 
     def collect(self, directory):
-        return pytest_runner.collect(directory, self._args)
+        return pytest_runner.collect(directory, self._args, self._driver_name)
 
     def run(self, test, timeout, expectations):
         return pytest_runner.run(test, self._args, timeout, self._env, expectations, self._driver_name)

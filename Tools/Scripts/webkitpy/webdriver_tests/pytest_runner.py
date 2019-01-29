@@ -50,14 +50,32 @@ class TemporaryDirectory(object):
                 raise
 
 
+def get_item_name(item, ignore_param):
+    if ignore_param is None:
+        return item.name
+
+    single_param = '[%s]' % ignore_param
+    if item.name.endswith(single_param):
+        return item.name[:-len(single_param)]
+
+    param = '[%s-' % ignore_param
+    if param in item.name:
+        return item.name.replace('%s-' % ignore_param, '')
+
+    return item.name
+
+
 class CollectRecorder(object):
 
-    def __init__(self):
-        self.tests = []
+    def __init__(self, ignore_param):
+        self._ignore_param = ignore_param
+        self.tests = {}
 
     def pytest_collectreport(self, report):
         if report.nodeid:
-            self.tests.append(report.nodeid)
+            self.tests.setdefault(report.nodeid, [])
+            for subtest in report.result:
+                self.tests[report.nodeid].append(get_item_name(subtest, self._ignore_param))
 
 
 class HarnessResultRecorder(object):
@@ -136,24 +154,10 @@ class TestExpectationsMarker(object):
         self._ignore_param = ignore_param
         self._base_dir = WebKitFinder(FileSystem()).path_from_webkit_base('WebDriverTests')
 
-    def _item_name(self, item):
-        if self._ignore_param is None:
-            return item.name
-
-        single_param = '[%s]' % self._ignore_param
-        if item.name.endswith(single_param):
-            return item.name[:-len(single_param)]
-
-        param = '[%s-' % self._ignore_param
-        if param in item.name:
-            return item.name.replace('%s-' % self._ignore_param, '')
-
-        return item.name
-
     def pytest_collection_modifyitems(self, session, config, items):
         for item in items:
             test = os.path.relpath(str(item.fspath), self._base_dir)
-            item_name = self._item_name(item)
+            item_name = get_item_name(item, self._ignore_param)
             if self._expectations.is_slow(test, item_name):
                 item.add_marker(pytest.mark.timeout(self._timeout * 5))
             expected = self._expectations.get_expectation(test, item_name)[0]
@@ -165,8 +169,8 @@ class TestExpectationsMarker(object):
                 item.add_marker(pytest.mark.skip)
 
 
-def collect(directory, args):
-    collect_recorder = CollectRecorder()
+def collect(directory, args, ignore_param=None):
+    collect_recorder = CollectRecorder(ignore_param)
     stdout = sys.stdout
     with open(os.devnull, 'wb') as devnull:
         sys.stdout = devnull

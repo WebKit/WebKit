@@ -51,18 +51,29 @@ class WebDriverTestRunnerSelenium(object):
         executor = WebDriverSeleniumExecutor(self._driver, self._env)
         # Collected tests are relative to test directory.
         base_dir = os.path.join(self._tests_dir, os.path.dirname(relative_tests_dir))
-        collected_tests = [os.path.join(base_dir, test) for test in executor.collect(os.path.join(self._tests_dir, relative_tests_dir))]
+        collected_tests = {}
+        for test, subtests in executor.collect(os.path.join(self._tests_dir, relative_tests_dir)).iteritems():
+            collected_tests[os.path.join(base_dir, test)] = subtests
         selenium_tests = []
         if not tests:
             tests = [relative_tests_dir]
         for test in tests:
+            subtest = None
+            if '::' in test:
+                test, subtest = test.split('::')
+
             if not test.startswith(relative_tests_dir):
                 continue
+
             test_path = os.path.join(self._tests_dir, test)
             if os.path.isdir(test_path):
                 selenium_tests.extend([test for test in collected_tests if test.startswith(test_path) and test not in skipped])
             elif test_path in collected_tests and test_path not in skipped:
-                selenium_tests.append(test_path)
+                if subtest is not None:
+                    if subtest in collected_tests[test_path]:
+                        selenium_tests.append(test_path + '::' + subtest)
+                else:
+                    selenium_tests.append(test_path)
         return selenium_tests
 
     def run(self, tests=[]):
@@ -72,7 +83,7 @@ class WebDriverTestRunnerSelenium(object):
         executor = WebDriverSeleniumExecutor(self._driver, self._env)
         timeout = self._port.get_option('timeout')
         for test in tests:
-            test_name = os.path.relpath(test, self._tests_dir)
+            test_name = os.path.relpath(test.split('::')[0], self._tests_dir)
             harness_result, test_results = executor.run(test, timeout, self._expectations)
             result = WebDriverTestResult(test_name, *harness_result)
             if harness_result[0] == 'OK':
