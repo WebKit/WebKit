@@ -155,7 +155,7 @@ void BlockFormattingContext::placeInFlowPositionedChildren(const Box& layoutBox)
         if (!childBox.isInFlowPositioned())
             continue;
 
-        auto computeInFlowPositionedPosition = [&]() {
+        auto computeInFlowPositionedPosition = [&] {
             auto& layoutState = this->layoutState();
             auto positionOffset = Geometry::inFlowPositionedPositionOffset(layoutState, childBox);
 

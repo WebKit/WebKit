@@ -1,5 +1,14 @@
 2019-01-29  Zalan Bujtas  <zalan@apple.com>
 
+        [LFC][BFC][MarginCollapsing] Remove incorrect downcast<Container>
+        https://bugs.webkit.org/show_bug.cgi?id=193964
+
+        Reviewed by Antti Koivisto.
+
+        * LayoutReloaded/misc/LFC-passing-tests.txt:
+
+2019-01-29  Zalan Bujtas  <zalan@apple.com>
+
         [LFC][BFC] Do not ignore next sibling box while laying out BFC.
         https://bugs.webkit.org/show_bug.cgi?id=193954
 

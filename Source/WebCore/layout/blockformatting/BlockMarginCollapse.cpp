@@ -538,7 +538,7 @@ PositiveAndNegativeVerticalMargin::Values BlockFormattingContext::MarginCollapse
     auto previouSiblingCollapsedMarginAfter = [&]() -> PositiveAndNegativeVerticalMargin::Values {
         if (!marginBeforeCollapsesWithPreviousSiblingMarginAfter(layoutState, layoutBox))
             return { };
-        return positiveNegativeValues(layoutState, *downcast<Container>(layoutBox).previousInFlowSibling(), MarginType::After);
+        return positiveNegativeValues(layoutState, *layoutBox.previousInFlowSibling(), MarginType::After);
     };
 
     // 1. Gather positive and negative margin values from first child if margins are adjoining.

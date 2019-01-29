@@ -149,6 +149,7 @@ fast/block/margin-collapse/043.html
 fast/block/margin-collapse/044.html
 fast/block/margin-collapse/063.html
 fast/block/margin-collapse/100.html
+fast/block/margin-collapse/101.html
 fast/block/margin-collapse/collapsed-through-child-simple.html
 fast/block/positioning/003.html
 fast/block/positioning/004.html
