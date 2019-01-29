@@ -1,3 +1,15 @@
+2019-01-28  Mark Lam  <mark.lam@apple.com>
+
+        ToString node actually does GC.
+        https://bugs.webkit.org/show_bug.cgi?id=193920
+        <rdar://problem/46695900>
+
+        Reviewed by Yusuke Suzuki.
+
+        * stress/dfg-to-string-on-int-does-gc.js: Added.
+        * stress/dfg-to-string-on-string-object-does-not-gc.js: Added.
+        * stress/dfg-to-string-on-string-or-string-object-does-not-gc.js: Added.
+
 2019-01-25  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] NativeErrorConstructor should not have own IsoSubspace

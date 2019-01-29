@@ -1,3 +1,17 @@
+2019-01-28  Mark Lam  <mark.lam@apple.com>
+
+        ToString node actually does GC.
+        https://bugs.webkit.org/show_bug.cgi?id=193920
+        <rdar://problem/46695900>
+
+        Reviewed by Yusuke Suzuki.
+
+        Other than for StringObjectUse and StringOrStringObjectUse, ToString and
+        CallStringConstructor can allocate new JSStrings, and hence, can GC.
+
+        * dfg/DFGDoesGC.cpp:
+        (JSC::DFG::doesGC):
+
 2019-01-28  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] RegExpConstructor should not have own IsoSubspace
