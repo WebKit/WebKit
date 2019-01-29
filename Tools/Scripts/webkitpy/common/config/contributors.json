@@ -6040,9 +6040,9 @@
    },
    "Yusuke Suzuki" : {
       "emails" : [
+         "ysuzuki@apple.com",
          "yusukesuzuki@slowstart.org",
-         "utatane.tea@gmail.com",
-         "ysuzuki@apple.com"
+         "utatane.tea@gmail.com"
       ],
       "expertise" : "JIT Compilers, CSS JIT, JavaScript/ECMAScript",
       "nicks" : [
