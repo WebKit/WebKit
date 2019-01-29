@@ -1252,9 +1252,13 @@ public:
         m_assembler.vcvt_signedToFloatingPoint(fpTempRegister, fpTempRegisterAsSingle());
         failureCases.append(branchDouble(DoubleNotEqualOrUnordered, src, fpTempRegister));
 
-        // If the result is zero, it might have been -0.0, and the double comparison won't catch this!
-        if (negZeroCheck)
-            failureCases.append(branchTest32(Zero, dest));
+        // Test for negative zero.
+        if (negZeroCheck) {
+            Jump valueIsNonZero = branchTest32(NonZero, dest);
+            m_assembler.vmov(dataTempRegister, ARMRegisters::asSingleUpper(src));
+            failureCases.append(branch32(LessThan, dataTempRegister, TrustedImm32(0)));
+            valueIsNonZero.link(this);
+        }
     }
 
     Jump branchDoubleNonZero(FPRegisterID reg, FPRegisterID)

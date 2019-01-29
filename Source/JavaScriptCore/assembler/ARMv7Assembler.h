@@ -172,6 +172,12 @@ namespace ARMRegisters {
         return (FPSingleRegisterID)(reg << 1);
     }
 
+    inline FPSingleRegisterID asSingleUpper(FPDoubleRegisterID reg)
+    {
+        ASSERT(reg < d16);
+        return (FPSingleRegisterID)((reg << 1) + 1);
+    }
+
     inline FPDoubleRegisterID asDouble(FPSingleRegisterID reg)
     {
         ASSERT(!(reg & 1));
