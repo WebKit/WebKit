@@ -135,10 +135,10 @@ bool RenderMathMLUnderOver::isValid() const
         return false;
     child = child->nextSiblingBox();
     switch (scriptType()) {
-    case ScriptType::Over:
-    case ScriptType::Under:
+    case MathMLScriptsElement::ScriptType::Over:
+    case MathMLScriptsElement::ScriptType::Under:
         return !child;
-    case ScriptType::UnderOver:
+    case MathMLScriptsElement::ScriptType::UnderOver:
         return child && !child->nextSiblingBox();
     default:
         ASSERT_NOT_REACHED();
@@ -162,16 +162,16 @@ RenderBox& RenderMathMLUnderOver::base() const
 RenderBox& RenderMathMLUnderOver::under() const
 {
     ASSERT(isValid());
-    ASSERT(scriptType() == ScriptType::Under || scriptType() == ScriptType::UnderOver);
+    ASSERT(scriptType() == MathMLScriptsElement::ScriptType::Under || scriptType() == MathMLScriptsElement::ScriptType::UnderOver);
     return *firstChildBox()->nextSiblingBox();
 }
 
 RenderBox& RenderMathMLUnderOver::over() const
 {
     ASSERT(isValid());
-    ASSERT(scriptType() == ScriptType::Over || scriptType() == ScriptType::UnderOver);
+    ASSERT(scriptType() == MathMLScriptsElement::ScriptType::Over || scriptType() == MathMLScriptsElement::ScriptType::UnderOver);
     auto* secondChild = firstChildBox()->nextSiblingBox();
-    return scriptType() == ScriptType::Over ? *secondChild : *secondChild->nextSiblingBox();
+    return scriptType() == MathMLScriptsElement::ScriptType::Over ? *secondChild : *secondChild->nextSiblingBox();
 }
 
 
@@ -192,10 +192,10 @@ void RenderMathMLUnderOver::computePreferredLogicalWidths()
 
     LayoutUnit preferredWidth = base().maxPreferredLogicalWidth();
 
-    if (scriptType() == ScriptType::Under || scriptType() == ScriptType::UnderOver)
+    if (scriptType() == MathMLScriptsElement::ScriptType::Under || scriptType() == MathMLScriptsElement::ScriptType::UnderOver)
         preferredWidth = std::max(preferredWidth, under().maxPreferredLogicalWidth());
 
-    if (scriptType() == ScriptType::Over || scriptType() == ScriptType::UnderOver)
+    if (scriptType() == MathMLScriptsElement::ScriptType::Over || scriptType() == MathMLScriptsElement::ScriptType::UnderOver)
         preferredWidth = std::max(preferredWidth, over().maxPreferredLogicalWidth());
 
     m_minPreferredLogicalWidth = m_maxPreferredLogicalWidth = preferredWidth;
@@ -210,7 +210,7 @@ LayoutUnit RenderMathMLUnderOver::horizontalOffset(const RenderBox& child) const
 
 bool RenderMathMLUnderOver::hasAccent(bool accentUnder) const
 {
-    ASSERT(scriptType() == ScriptType::UnderOver || (accentUnder && scriptType() == ScriptType::Under) || (!accentUnder && scriptType() == ScriptType::Over));
+    ASSERT(scriptType() == MathMLScriptsElement::ScriptType::UnderOver || (accentUnder && scriptType() == MathMLScriptsElement::ScriptType::Under) || (!accentUnder && scriptType() == MathMLScriptsElement::ScriptType::Over));
 
     const MathMLElement::BooleanValue& attributeValue = accentUnder ? element().accentUnder() : element().accent();
     if (attributeValue == MathMLElement::BooleanValue::True)
@@ -306,19 +306,19 @@ void RenderMathMLUnderOver::layoutBlock(bool relayoutChildren, LayoutUnit pageLo
     stretchHorizontalOperatorsAndLayoutChildren();
 
     ASSERT(!base().needsLayout());
-    ASSERT(scriptType() == ScriptType::Over || !under().needsLayout());
-    ASSERT(scriptType() == ScriptType::Under || !over().needsLayout());
+    ASSERT(scriptType() == MathMLScriptsElement::ScriptType::Over || !under().needsLayout());
+    ASSERT(scriptType() == MathMLScriptsElement::ScriptType::Under || !over().needsLayout());
 
     LayoutUnit logicalWidth = base().logicalWidth();
-    if (scriptType() == ScriptType::Under || scriptType() == ScriptType::UnderOver)
+    if (scriptType() == MathMLScriptsElement::ScriptType::Under || scriptType() == MathMLScriptsElement::ScriptType::UnderOver)
         logicalWidth = std::max(logicalWidth, under().logicalWidth());
-    if (scriptType() == ScriptType::Over || scriptType() == ScriptType::UnderOver)
+    if (scriptType() == MathMLScriptsElement::ScriptType::Over || scriptType() == MathMLScriptsElement::ScriptType::UnderOver)
         logicalWidth = std::max(logicalWidth, over().logicalWidth());
     setLogicalWidth(logicalWidth);
 
     VerticalParameters parameters = verticalParameters();
     LayoutUnit verticalOffset;
-    if (scriptType() == ScriptType::Over || scriptType() == ScriptType::UnderOver) {
+    if (scriptType() == MathMLScriptsElement::ScriptType::Over || scriptType() == MathMLScriptsElement::ScriptType::UnderOver) {
         verticalOffset += parameters.overExtraAscender;
         over().setLocation(LayoutPoint(horizontalOffset(over()), verticalOffset));
         if (parameters.useUnderOverBarFallBack) {
@@ -336,7 +336,7 @@ void RenderMathMLUnderOver::layoutBlock(bool relayoutChildren, LayoutUnit pageLo
     }
     base().setLocation(LayoutPoint(horizontalOffset(base()), verticalOffset));
     verticalOffset += base().logicalHeight();
-    if (scriptType() == ScriptType::Under || scriptType() == ScriptType::UnderOver) {
+    if (scriptType() == MathMLScriptsElement::ScriptType::Under || scriptType() == MathMLScriptsElement::ScriptType::UnderOver) {
         if (parameters.useUnderOverBarFallBack) {
             if (!hasAccentUnder())
                 verticalOffset += parameters.underGapMin;

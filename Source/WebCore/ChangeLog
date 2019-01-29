@@ -1,3 +1,28 @@
+2019-01-29  Zalan Bujtas  <zalan@apple.com>
+
+        [MathML] Move enum class ScriptType to MathMLScriptsElement.
+        https://bugs.webkit.org/show_bug.cgi?id=193969
+
+        Reviewed by Antti Koivisto.
+
+        * mathml/MathMLScriptsElement.cpp:
+        (WebCore::scriptTypeOf):
+        * mathml/MathMLScriptsElement.h:
+        * rendering/mathml/RenderMathMLScripts.cpp:
+        (WebCore::RenderMathMLScripts::scriptType const):
+        (WebCore::RenderMathMLScripts::validateAndGetReferenceChildren):
+        (WebCore::RenderMathMLScripts::computePreferredLogicalWidths):
+        (WebCore::RenderMathMLScripts::verticalMetrics):
+        (WebCore::RenderMathMLScripts::layoutBlock):
+        * rendering/mathml/RenderMathMLScripts.h:
+        * rendering/mathml/RenderMathMLUnderOver.cpp:
+        (WebCore::RenderMathMLUnderOver::isValid const):
+        (WebCore::RenderMathMLUnderOver::under const):
+        (WebCore::RenderMathMLUnderOver::over const):
+        (WebCore::RenderMathMLUnderOver::computePreferredLogicalWidths):
+        (WebCore::RenderMathMLUnderOver::hasAccent const):
+        (WebCore::RenderMathMLUnderOver::layoutBlock):
+
 2019-01-29  Chris Dumez  <cdumez@apple.com>
 
         Make sure WTF::generateObjectIdentifier() internal counter does not get duplicated

@@ -29,13 +29,10 @@
 
 #if ENABLE(MATHML)
 
+#include "MathMLScriptsElement.h"
 #include "RenderMathMLBlock.h"
 
 namespace WebCore {
-
-class MathMLScriptsElement;
-
-enum class ScriptType { Sub, Super, SubSup, Multiscripts, Under, Over, UnderOver };
 
 // Render a base with scripts.
 class RenderMathMLScripts : public RenderMathMLBlock {
@@ -47,7 +44,7 @@ public:
 protected:
     bool isRenderMathMLScripts() const override { return true; }
     const char* renderName() const override { return "RenderMathMLScripts"; }
-    ScriptType scriptType() const;
+    MathMLScriptsElement::ScriptType scriptType() const;
     void computePreferredLogicalWidths() override;
     void layoutBlock(bool relayoutChildren, LayoutUnit pageLogicalHeight = 0_lu) override;
 

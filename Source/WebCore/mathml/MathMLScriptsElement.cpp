@@ -38,22 +38,22 @@ WTF_MAKE_ISO_ALLOCATED_IMPL(MathMLScriptsElement);
 
 using namespace MathMLNames;
 
-static ScriptType scriptTypeOf(const QualifiedName& tagName)
+static MathMLScriptsElement::ScriptType scriptTypeOf(const QualifiedName& tagName)
 {
     if (tagName == msubTag)
-        return ScriptType::Sub;
+        return MathMLScriptsElement::ScriptType::Sub;
     if (tagName == msupTag)
-        return ScriptType::Super;
+        return MathMLScriptsElement::ScriptType::Super;
     if (tagName == msubsupTag)
-        return ScriptType::SubSup;
+        return MathMLScriptsElement::ScriptType::SubSup;
     if (tagName == munderTag)
-        return ScriptType::Under;
+        return MathMLScriptsElement::ScriptType::Under;
     if (tagName == moverTag)
-        return ScriptType::Over;
+        return MathMLScriptsElement::ScriptType::Over;
     if (tagName == munderoverTag)
-        return ScriptType::UnderOver;
+        return MathMLScriptsElement::ScriptType::UnderOver;
     ASSERT(tagName == mmultiscriptsTag);
-    return ScriptType::Multiscripts;
+    return MathMLScriptsElement::ScriptType::Multiscripts;
 }
 
 MathMLScriptsElement::MathMLScriptsElement(const QualifiedName& tagName, Document& document)
