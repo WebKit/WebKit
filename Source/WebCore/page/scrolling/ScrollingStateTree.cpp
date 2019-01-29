@@ -226,7 +226,7 @@ void ScrollingStateTree::unparentChildrenAndDestroyNode(ScrollingNodeID nodeID)
     if (protectedNode == m_rootStateNode)
         m_rootStateNode = nullptr;
 
-    if (auto* children = protectedNode->children()) {
+    if (protectedNode->children()) {
         auto isolatedChildren = protectedNode->takeChildren();
         for (auto child : *isolatedChildren) {
             child->removeFromParent();

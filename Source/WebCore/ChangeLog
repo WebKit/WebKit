@@ -1,3 +1,14 @@
+2019-01-29  Frederic Wang  <fwang@igalia.com>
+
+        Allow scrolling tree nodes to exist in a detached state
+        https://bugs.webkit.org/show_bug.cgi?id=193754
+
+        Unreviewed build warning fix.
+
+        * page/scrolling/ScrollingStateTree.cpp:
+        (WebCore::ScrollingStateTree::unparentChildrenAndDestroyNode): Remove
+        unused variable.
+
 2019-01-28  Ryosuke Niwa  <rniwa@webkit.org>
 
         User agent string override for navigator.userAgent should be site specific quirks
