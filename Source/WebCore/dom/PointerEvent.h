@@ -47,7 +47,7 @@ public:
         long tiltX { 0 };
         long tiltY { 0 };
         long twist { 0 };
-        String pointerType;
+        String pointerType { "mouse"_s };
         bool isPrimary { false };
     };
 
@@ -97,7 +97,7 @@ private:
     long m_tiltX { 0 };
     long m_tiltY { 0 };
     long m_twist { 0 };
-    String m_pointerType;
+    String m_pointerType { "mouse"_s };
     bool m_isPrimary { false };
 };
 

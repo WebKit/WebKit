@@ -68,9 +68,17 @@ PointerEvent::PointerEvent(const AtomicString& type, const PlatformTouchEvent& e
     , m_pointerId(event.touchIdentifierAtIndex(index))
     , m_width(2 * event.radiusXAtIndex(index))
     , m_height(2 * event.radiusYAtIndex(index))
+    , m_pressure(event.forceAtIndex(index))
     , m_pointerType(event.touchTypeAtIndex(index) == PlatformTouchPoint::TouchType::Stylus ? "pen"_s : "touch"_s)
     , m_isPrimary(isPrimary)
 {
+    // See https://github.com/w3c/pointerevents/issues/274. We might expose the azimuth and altitude
+    // directly as well as the tilt.
+    double azimuthAngle = event.azimuthAngleAtIndex(index);
+    double altitudeAngle = event.altitudeAngleAtIndex(index);
+
+    m_tiltX = round(sin(azimuthAngle) * cos(altitudeAngle) * 90);
+    m_tiltY = round(cos(azimuthAngle) * cos(altitudeAngle) * 90);
 }
 
 } // namespace WebCore

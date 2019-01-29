@@ -1,3 +1,20 @@
+2019-01-28  Dean Jackson  <dino@apple.com>
+
+        Produce "pen" Pointer Events if using a stylus (e.g. Apple Pencil)
+        https://bugs.webkit.org/show_bug.cgi?id=193945
+        <rdar://problem/47618922>
+
+        Reviewed by Antoine Quint.
+
+        Calculate the pressure, tiltX and tiltY values for incoming
+        Pointer Events, which have values when the PlatformTouchEvent
+        originated from a stylus.
+
+        Test: pointerevents/ios/pointer-events-dispatch-on-stylus.html
+
+        * dom/PointerEvent.h: Default to "mouse".
+        * dom/ios/PointerEventIOS.cpp: Calculate the values.
+
 2019-01-28  Timothy Hatcher  <timothy@apple.com>
 
         Make it easier for non-Apple ports to enable dark mode CSS support.

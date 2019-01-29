@@ -34,7 +34,6 @@ function target_test(...args)
 
 class EventTracker
 {
-
     constructor(target, eventNames)
     {
         this.target = target;
@@ -71,7 +70,6 @@ class EventTracker
                 assert_equals(expectedEvent[property], actualEvent[property], `Property ${property} matches for event at index ${i}.`);
         }
     }
-
 }
 
 const ui = new (class UIController {
@@ -186,6 +184,14 @@ const ui = new (class UIController {
                 touches : touches
             }
         }));
+    }
+
+    beginStylus(options)
+    {
+        options.azimuthAngle = options.azimuthAngle || 0;
+        options.altitudeAngle = options.altitudeAngle || 0;
+        options.pressure = options.pressure || 0;
+        return this._run(`uiController.stylusDownAtPoint(${options.x}, ${options.y}, ${options.azimuthAngle}, ${options.altitudeAngle}, ${options.pressure})`);
     }
 
     _runEvents(events)

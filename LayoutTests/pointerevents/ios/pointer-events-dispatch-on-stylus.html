@@ -12,17 +12,23 @@
 
 'use strict';
 
+const fifteenDegrees = Math.PI / 12;
+const thirtyDegrees = Math.PI / 6;
+
 target_test((target, test) => {
     target.addEventListener("pointerdown", event => {
         assert_true(event instanceof PointerEvent);
         assert_equals(event.type, "pointerdown");
         assert_equals(event.clientX, 50);
         assert_equals(event.clientY, 50);
-        assert_equals(event.pointerType, "touch");
+        assert_equals(event.pointerType, "pen");
+        assert_equals(event.pressure, 0.75);
+        assert_approx_equals(event.tiltX, 20, 1);
+        assert_approx_equals(event.tiltY, 75, 1);
         test.done();
     });
-    ui.beginTouches({ x: 50, y: 50 });
-}, "Pointer events get dispatched in response to a touch.");
+    ui.beginStylus({ x: 50, y: 50, pressure: 0.75, azimuthAngle: fifteenDegrees, altitudeAngle: thirtyDegrees });
+}, "Pointer events get dispatched in response to a stylus.");
 
 </script>
 </body>
