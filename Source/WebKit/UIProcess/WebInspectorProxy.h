@@ -105,7 +105,8 @@ public:
     void updateForNewPageProcess(WebPageProxy*);
 
 #if PLATFORM(MAC) && WK_API_ENABLED
-    static RetainPtr<NSWindow> createFrontendWindow(NSRect savedWindowFrame);
+    enum class InspectionTargetType { Local, Remote };
+    static RetainPtr<NSWindow> createFrontendWindow(NSRect savedWindowFrame, InspectionTargetType);
 
     void updateInspectorWindowTitle() const;
     void inspectedViewFrameDidChange(CGFloat = 0);

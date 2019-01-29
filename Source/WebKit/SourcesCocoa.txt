@@ -237,6 +237,7 @@ UIProcess/API/Cocoa/_WKErrorRecoveryAttempting.mm
 UIProcess/API/Cocoa/_WKExperimentalFeature.mm
 UIProcess/API/Cocoa/_WKGeolocationPosition.mm
 UIProcess/API/Cocoa/_WKInspector.mm
+UIProcess/API/Cocoa/_WKInspectorWindow.mm
 UIProcess/API/Cocoa/_WKInternalDebugFeature.mm
 UIProcess/API/Cocoa/_WKLinkIconParameters.mm
 UIProcess/API/Cocoa/_WKProcessPoolConfiguration.mm
@@ -438,7 +439,6 @@ UIProcess/mac/WindowServerConnection.mm
 UIProcess/mac/WKFullScreenWindowController.mm
 UIProcess/mac/WKImmediateActionController.mm
 UIProcess/mac/WKInspectorViewController.mm
-UIProcess/mac/WKInspectorWindow.mm
 UIProcess/mac/WKInspectorWKWebView.mm
 UIProcess/mac/WKPrintingView.mm
 UIProcess/mac/WKSharingServicePickerDelegate.mm

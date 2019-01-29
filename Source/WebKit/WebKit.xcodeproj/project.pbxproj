@@ -1307,7 +1307,7 @@
 		A55BA8351BA3E70A007CD33D /* WebInspectorFrontendAPIDispatcher.h in Headers */ = {isa = PBXBuildFile; fileRef = A55BA8331BA3E6FA007CD33D /* WebInspectorFrontendAPIDispatcher.h */; };
 		A58B6F0818FCA733008CBA53 /* WKFileUploadPanel.h in Headers */ = {isa = PBXBuildFile; fileRef = A58B6F0618FCA733008CBA53 /* WKFileUploadPanel.h */; };
 		A5C0F0A72000654D00536536 /* _WKNSWindowExtras.h in Headers */ = {isa = PBXBuildFile; fileRef = A5C0F0A62000654400536536 /* _WKNSWindowExtras.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		A5C0F0AB2000658200536536 /* WKInspectorWindow.h in Headers */ = {isa = PBXBuildFile; fileRef = A5C0F0AA2000656E00536536 /* WKInspectorWindow.h */; };
+		A5C0F0AB2000658200536536 /* _WKInspectorWindow.h in Headers */ = {isa = PBXBuildFile; fileRef = A5C0F0AA2000656E00536536 /* _WKInspectorWindow.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A5E391FD2183C1F800C8FB31 /* InspectorTargetProxy.h in Headers */ = {isa = PBXBuildFile; fileRef = A5E391FC2183C1E900C8FB31 /* InspectorTargetProxy.h */; };
 		A5EC6AD42151BD7B00677D17 /* WebPageDebuggable.h in Headers */ = {isa = PBXBuildFile; fileRef = A5EC6AD32151BD6900677D17 /* WebPageDebuggable.h */; };
 		A5EFD38C16B0E88C00B2F0E8 /* WKPageVisibilityTypes.h in Headers */ = {isa = PBXBuildFile; fileRef = A5EFD38B16B0E88C00B2F0E8 /* WKPageVisibilityTypes.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -3894,8 +3894,8 @@
 		A58B6F0718FCA733008CBA53 /* WKFileUploadPanel.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = WKFileUploadPanel.mm; path = ios/forms/WKFileUploadPanel.mm; sourceTree = "<group>"; };
 		A5C0F0A52000654400536536 /* _WKNSWindowExtras.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = _WKNSWindowExtras.mm; sourceTree = "<group>"; };
 		A5C0F0A62000654400536536 /* _WKNSWindowExtras.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = _WKNSWindowExtras.h; sourceTree = "<group>"; };
-		A5C0F0A92000656E00536536 /* WKInspectorWindow.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WKInspectorWindow.mm; sourceTree = "<group>"; };
-		A5C0F0AA2000656E00536536 /* WKInspectorWindow.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKInspectorWindow.h; sourceTree = "<group>"; };
+		A5C0F0A92000656E00536536 /* _WKInspectorWindow.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = _WKInspectorWindow.mm; sourceTree = "<group>"; };
+		A5C0F0AA2000656E00536536 /* _WKInspectorWindow.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = _WKInspectorWindow.h; sourceTree = "<group>"; };
 		A5D3504D1D78F0D2005124A9 /* RemoteWebInspectorProxyMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = RemoteWebInspectorProxyMac.mm; sourceTree = "<group>"; };
 		A5E391FB2183C1E900C8FB31 /* InspectorTargetProxy.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = InspectorTargetProxy.cpp; sourceTree = "<group>"; };
 		A5E391FC2183C1E900C8FB31 /* InspectorTargetProxy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InspectorTargetProxy.h; sourceTree = "<group>"; };
@@ -6049,6 +6049,8 @@
 				5CAFDE422130843500B1F7E1 /* _WKInspector.h */,
 				5CAFDE432130843600B1F7E1 /* _WKInspector.mm */,
 				5CAFDE442130843600B1F7E1 /* _WKInspectorInternal.h */,
+				A5C0F0AA2000656E00536536 /* _WKInspectorWindow.h */,
+				A5C0F0A92000656E00536536 /* _WKInspectorWindow.mm */,
 				31B362942141EBAD007BFA53 /* _WKInternalDebugFeature.h */,
 				31B362922141EBAC007BFA53 /* _WKInternalDebugFeature.mm */,
 				31B362932141EBAD007BFA53 /* _WKInternalDebugFeatureInternal.h */,
@@ -8222,8 +8224,6 @@
 				9321D5871A38EE74008052BE /* WKImmediateActionController.mm */,
 				994BADF11F7D77EA00B571E7 /* WKInspectorViewController.h */,
 				994BADF21F7D77EB00B571E7 /* WKInspectorViewController.mm */,
-				A5C0F0AA2000656E00536536 /* WKInspectorWindow.h */,
-				A5C0F0A92000656E00536536 /* WKInspectorWindow.mm */,
 				A518B5D01FE1D55B00F9FA28 /* WKInspectorWKWebView.h */,
 				A518B5D11FE1D55B00F9FA28 /* WKInspectorWKWebView.mm */,
 				0FCB4E5C18BBE3D9000FCFC9 /* WKPrintingView.h */,
@@ -8863,6 +8863,7 @@
 				37A64E5518F38E3C00EB30F1 /* _WKInputDelegate.h in Headers */,
 				5CAFDE452130846300B1F7E1 /* _WKInspector.h in Headers */,
 				5CAFDE472130846A00B1F7E1 /* _WKInspectorInternal.h in Headers */,
+				A5C0F0AB2000658200536536 /* _WKInspectorWindow.h in Headers */,
 				31B362952141EBCD007BFA53 /* _WKInternalDebugFeature.h in Headers */,
 				31B362972141EBD9007BFA53 /* _WKInternalDebugFeatureInternal.h in Headers */,
 				2D790A9D1AD7050D00AB90B3 /* _WKLayoutMode.h in Headers */,

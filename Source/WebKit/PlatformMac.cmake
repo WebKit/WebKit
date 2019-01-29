@@ -296,7 +296,6 @@ list(APPEND WebKit_SOURCES
     UIProcess/mac/WKImmediateActionController.mm
     UIProcess/mac/WKInspectorViewController.mm
     UIProcess/mac/WKInspectorWKWebView.mm
-    UIProcess/mac/WKInspectorWindow.mm
     UIProcess/mac/WKPrintingView.mm
     UIProcess/mac/WKSharingServicePickerDelegate.mm
     UIProcess/mac/WKTextFinderClient.mm

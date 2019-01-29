@@ -30,13 +30,13 @@
 
 #import "WKInspectorPrivateMac.h"
 #import "WKInspectorViewController.h"
-#import "WKInspectorWindow.h"
 #import "WKViewInternal.h"
 #import "WKWebViewInternal.h"
 #import "WebInspectorUIMessages.h"
 #import "WebPageGroup.h"
 #import "WebPageProxy.h"
 #import "_WKInspectorInternal.h"
+#import "_WKInspectorWindow.h"
 #import <SecurityInterface/SFCertificatePanel.h>
 #import <SecurityInterface/SFCertificateView.h>
 #import <WebCore/CertificateInfo.h>
@@ -228,13 +228,16 @@ void WebInspectorProxy::updateInspectorWindowTitle() const
     }
 }
 
-RetainPtr<NSWindow> WebInspectorProxy::createFrontendWindow(NSRect savedWindowFrame)
+RetainPtr<NSWindow> WebInspectorProxy::createFrontendWindow(NSRect savedWindowFrame, InspectionTargetType targetType)
 {
     NSRect windowFrame = !NSIsEmptyRect(savedWindowFrame) ? savedWindowFrame : NSMakeRect(0, 0, initialWindowWidth, initialWindowHeight);
-    auto window = adoptNS([[WKInspectorWindow alloc] initWithContentRect:windowFrame styleMask:windowStyleMask backing:NSBackingStoreBuffered defer:NO]);
+    auto window = adoptNS([[_WKInspectorWindow alloc] initWithContentRect:windowFrame styleMask:windowStyleMask backing:NSBackingStoreBuffered defer:NO]);
     [window setMinSize:NSMakeSize(minimumWindowWidth, minimumWindowHeight)];
     [window setReleasedWhenClosed:NO];
     [window setCollectionBehavior:([window collectionBehavior] | NSWindowCollectionBehaviorFullScreenPrimary)];
+
+    bool forRemoteTarget = targetType == InspectionTargetType::Remote;
+    [window setForRemoteTarget:forRemoteTarget];
 
     CGFloat approximatelyHalfScreenSize = ([window screen].frame.size.width / 2) - 4;
     CGFloat minimumFullScreenWidth = std::max<CGFloat>(636, approximatelyHalfScreenSize);
@@ -282,7 +285,7 @@ void WebInspectorProxy::platformCreateFrontendWindow()
     NSString *savedWindowFrameString = inspectedPage()->pageGroup().preferences().inspectorWindowFrame();
     NSRect savedWindowFrame = NSRectFromString(savedWindowFrameString);
 
-    m_inspectorWindow = WebInspectorProxy::createFrontendWindow(savedWindowFrame);
+    m_inspectorWindow = WebInspectorProxy::createFrontendWindow(savedWindowFrame, InspectionTargetType::Local);
     [m_inspectorWindow setDelegate:m_objCAdapter.get()];
 
     WKWebView *inspectorView = [m_inspectorViewController webView];

@@ -25,9 +25,13 @@
 
 #import <WebKit/WKFoundation.h>
 
-#if PLATFORM(MAC) && WK_API_ENABLED
+#if WK_API_ENABLED && !TARGET_OS_IPHONE
 
-@interface WKInspectorWindow : NSWindow
+WK_CLASS_AVAILABLE(macosx(WK_MAC_TBA))
+@interface _WKInspectorWindow : NSWindow
+
+@property (nonatomic, getter=isForRemoteTarget) BOOL forRemoteTarget;
+
 @end
 
 #endif

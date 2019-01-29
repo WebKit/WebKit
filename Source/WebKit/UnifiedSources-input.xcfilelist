@@ -446,6 +446,7 @@ $(SRCROOT)/UIProcess/API/Cocoa/_WKErrorRecoveryAttempting.mm
 $(SRCROOT)/UIProcess/API/Cocoa/_WKExperimentalFeature.mm
 $(SRCROOT)/UIProcess/API/Cocoa/_WKGeolocationPosition.mm
 $(SRCROOT)/UIProcess/API/Cocoa/_WKInspector.mm
+$(SRCROOT)/UIProcess/API/Cocoa/_WKInspectorWindow.mm
 $(SRCROOT)/UIProcess/API/Cocoa/_WKInternalDebugFeature.mm
 $(SRCROOT)/UIProcess/API/Cocoa/_WKLinkIconParameters.mm
 $(SRCROOT)/UIProcess/API/Cocoa/_WKProcessPoolConfiguration.mm
@@ -718,7 +719,6 @@ $(SRCROOT)/UIProcess/mac/WKFullScreenWindowController.mm
 $(SRCROOT)/UIProcess/mac/WKImmediateActionController.mm
 $(SRCROOT)/UIProcess/mac/WKInspectorViewController.mm
 $(SRCROOT)/UIProcess/mac/WKInspectorWKWebView.mm
-$(SRCROOT)/UIProcess/mac/WKInspectorWindow.mm
 $(SRCROOT)/UIProcess/mac/WKPrintingView.mm
 $(SRCROOT)/UIProcess/mac/WKSharingServicePickerDelegate.mm
 $(SRCROOT)/UIProcess/mac/WKTextFinderClient.mm

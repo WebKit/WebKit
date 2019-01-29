@@ -30,13 +30,13 @@
 
 #if !TARGET_OS_IPHONE
 
-#import "WKInspectorWindow.h"
+#import "_WKInspectorWindow.h"
 
 @implementation NSWindow (WKExtras)
 
 - (BOOL)_web_isWebInspectorWindow
 {
-    return [self isKindOfClass:[WKInspectorWindow class]];
+    return [self isKindOfClass:[_WKInspectorWindow class]];
 }
 
 @end
