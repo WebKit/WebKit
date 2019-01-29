@@ -1,3 +1,39 @@
+
+2019-01-29  Alex Christensen  <achristensen@webkit.org>
+
+        Use lambdas instead of member pointer functions for TransactionOperationImpl
+        https://bugs.webkit.org/show_bug.cgi?id=193933
+
+        Reviewed by Tim Horton.
+
+        No change in behavior.  This just makes it easier to add new parameters to these functions in a straightforward manner.
+
+        * Modules/indexeddb/IDBObjectStore.cpp:
+        (WebCore::IDBObjectStore::putOrAdd):
+        * Modules/indexeddb/IDBTransaction.cpp:
+        (WebCore::IDBTransaction::internalAbort):
+        (WebCore::IDBTransaction::commit):
+        (WebCore::IDBTransaction::createObjectStore):
+        (WebCore::IDBTransaction::renameObjectStore):
+        (WebCore::IDBTransaction::createIndex):
+        (WebCore::IDBTransaction::renameIndex):
+        (WebCore::IDBTransaction::doRequestOpenCursor):
+        (WebCore::IDBTransaction::iterateCursor):
+        (WebCore::IDBTransaction::requestGetAllObjectStoreRecords):
+        (WebCore::IDBTransaction::requestGetAllIndexRecords):
+        (WebCore::IDBTransaction::requestGetRecord):
+        (WebCore::IDBTransaction::requestIndexRecord):
+        (WebCore::IDBTransaction::requestCount):
+        (WebCore::IDBTransaction::requestDeleteRecord):
+        (WebCore::IDBTransaction::requestClearObjectStore):
+        (WebCore::IDBTransaction::requestPutOrAdd):
+        (WebCore::IDBTransaction::deleteObjectStore):
+        (WebCore::IDBTransaction::deleteIndex):
+        * Modules/indexeddb/IDBTransaction.h:
+        * Modules/indexeddb/client/TransactionOperation.h:
+        (WebCore::IDBClient::TransactionOperation::doComplete):
+        (WebCore::IDBClient::createTransactionOperation): Deleted.
+
 2019-01-29  Zalan Bujtas  <zalan@apple.com>
 
         [LFC][BFC][MarginCollapsing] Remove incorrect downcast<Container>

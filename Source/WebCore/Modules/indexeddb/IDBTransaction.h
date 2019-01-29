@@ -113,7 +113,7 @@ public:
     std::unique_ptr<IDBIndex> createIndex(IDBObjectStore&, const IDBIndexInfo&);
     void renameIndex(IDBIndex&, const String& newName);
 
-    Ref<IDBRequest> requestPutOrAdd(JSC::ExecState&, IDBObjectStore&, IDBKey*, SerializedScriptValue&, IndexedDB::ObjectStoreOverwriteMode);
+    Ref<IDBRequest> requestPutOrAdd(JSC::ExecState&, IDBObjectStore&, RefPtr<IDBKey>&&, SerializedScriptValue&, IndexedDB::ObjectStoreOverwriteMode);
     Ref<IDBRequest> requestGetRecord(JSC::ExecState&, IDBObjectStore&, const IDBGetRecordData&);
     Ref<IDBRequest> requestGetAllObjectStoreRecords(JSC::ExecState&, IDBObjectStore&, const IDBKeyRangeData&, IndexedDB::GetAllType, Optional<uint32_t> count);
     Ref<IDBRequest> requestGetAllIndexRecords(JSC::ExecState&, IDBIndex&, const IDBKeyRangeData&, IndexedDB::GetAllType, Optional<uint32_t> count);
