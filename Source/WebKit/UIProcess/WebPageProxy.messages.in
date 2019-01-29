@@ -1,4 +1,4 @@
-# Copyright (C) 2010-2018 Apple Inc. All rights reserved.
+# Copyright (C) 2010-2019 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -533,11 +533,6 @@ messages -> WebPageProxy {
     StartURLSchemeTask(struct WebKit::URLSchemeTaskParameters parameters)
     StopURLSchemeTask(uint64_t handlerIdentifier, uint64_t taskIdentifier)
     LoadSynchronousURLSchemeTask(struct WebKit::URLSchemeTaskParameters parameters) -> (WebCore::ResourceResponse response, WebCore::ResourceError error, IPC::DataReference data) Delayed
-
-#if ENABLE(RESOURCE_LOAD_STATISTICS)
-    HasStorageAccess(String subFrameHost, String topFrameHost, uint64_t frameID, uint64_t contextID)
-    RequestStorageAccess(String subFrameHost, String topFrameHost, uint64_t frameID, uint64_t contextID, bool prompt)
-#endif
 
 #if ENABLE(ATTACHMENT_ELEMENT)
     RegisterAttachmentIdentifierFromData(String identifier, String contentType, String preferredFileName, IPC::SharedBufferDataReference data)

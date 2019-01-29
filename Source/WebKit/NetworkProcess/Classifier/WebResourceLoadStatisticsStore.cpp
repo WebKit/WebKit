@@ -293,14 +293,34 @@ void WebResourceLoadStatisticsStore::callHasStorageAccessForFrameHandler(const S
     callback(false);
 }
 
-void WebResourceLoadStatisticsStore::requestStorageAccess(String&& subFrameHost, String&& topFrameHost, uint64_t frameID, uint64_t pageID, bool promptEnabled, CompletionHandler<void(StorageAccessStatus)>&& completionHandler)
+void WebResourceLoadStatisticsStore::requestStorageAccessGranted(const String& subFrameHost, const String& topFrameHost, uint64_t frameID, uint64_t pageID, bool promptEnabled, CompletionHandler<void(bool)>&& completionHandler)
 {
-    ASSERT(subFrameHost != topFrameHost);
-    ASSERT(RunLoop::isMain());
+    auto statusHandler = [this, protectedThis = makeRef(*this), subFrameHost = subFrameHost.isolatedCopy(), topFrameHost = topFrameHost.isolatedCopy(), promptEnabled, frameID, pageID, completionHandler = WTFMove(completionHandler)](StorageAccessStatus status) mutable {
+        switch (status) {
+        case StorageAccessStatus::CannotRequestAccess:
+            completionHandler(false);
+            return;
+        case StorageAccessStatus::RequiresUserPrompt:
+            {
+            ASSERT_UNUSED(promptEnabled, promptEnabled);
+            CompletionHandler<void(bool)> requestConfirmationCompletionHandler = [this, protectedThis = makeRef(*this), subFrameHost = WTFMove(subFrameHost), topFrameHost = WTFMove(topFrameHost), frameID, pageID, completionHandler = WTFMove(completionHandler)] (bool userDidGrantAccess) mutable {
+                if (userDidGrantAccess)
+                    grantStorageAccess(WTFMove(subFrameHost), WTFMove(topFrameHost), frameID, pageID, userDidGrantAccess, WTFMove(completionHandler));
+                else
+                    completionHandler(false);
+            };
+            m_networkSession->networkProcess().parentProcessConnection()->sendWithAsyncReply(Messages::NetworkProcessProxy::RequestStorageAccessConfirm(pageID, frameID, ResourceLoadStatistics::primaryDomain(subFrameHost), ResourceLoadStatistics::primaryDomain(topFrameHost)), WTFMove(requestConfirmationCompletionHandler));
+            }
+            return;
+        case StorageAccessStatus::HasAccess:
+            completionHandler(true);
+            return;
+        }
+    };
 
-    requestStorageAccess(subFrameHost, topFrameHost, frameID, pageID, promptEnabled, WTFMove(completionHandler));
+    requestStorageAccess(subFrameHost, topFrameHost, frameID, pageID, promptEnabled, WTFMove(statusHandler));
 }
-    
+
 void WebResourceLoadStatisticsStore::requestStorageAccess(const String& subFrameHost, const String& topFrameHost, Optional<uint64_t> frameID, uint64_t pageID, bool promptEnabled, CompletionHandler<void(StorageAccessStatus)>&& completionHandler)
 {
     auto subFramePrimaryDomain = isolatedPrimaryDomain(subFrameHost);

@@ -727,6 +727,17 @@ void NetworkProcessProxy::requestStorageAccess(PAL::SessionID sessionID, const S
     sendWithAsyncReply(Messages::NetworkProcess::RequestStorageAccess(sessionID, resourceDomain, firstPartyDomain, frameID, pageID, promptEnabled), WTFMove(completionHandler));
 }
 
+void NetworkProcessProxy::requestStorageAccessConfirm(uint64_t pageID, uint64_t frameID, const String& subFrameHost, const String& topFrameHost, CompletionHandler<void(bool)>&& completionHandler)
+{
+    WebPageProxy* page = WebProcessProxy::webPage(pageID);
+    if (!page) {
+        completionHandler(false);
+        return;
+    }
+    
+    page->requestStorageAccessConfirm(subFrameHost, topFrameHost, frameID, WTFMove(completionHandler));
+}
+
 void NetworkProcessProxy::grantStorageAccess(PAL::SessionID sessionID, const String& resourceDomain, const String& firstPartyDomain, Optional<uint64_t> frameID, uint64_t pageID, bool userWasPrompted, CompletionHandler<void(bool)>&& completionHandler)
 {
     if (!canSendMessage()) {

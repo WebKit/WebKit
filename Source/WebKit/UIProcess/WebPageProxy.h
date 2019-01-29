@@ -1382,8 +1382,7 @@ public:
 #endif
 
 #if ENABLE(RESOURCE_LOAD_STATISTICS)
-    void hasStorageAccess(String&& subFrameHost, String&& topFrameHost, uint64_t frameID, uint64_t webProcessContextId);
-    void requestStorageAccess(String&& subFrameHost, String&& topFrameHost, uint64_t frameID, uint64_t webProcessContextId, bool prompt);
+    void requestStorageAccessConfirm(const String& subFrameHost, const String& topFrameHost, uint64_t frameID, CompletionHandler<void(bool)>&&);
 #endif
 
     static WebPageProxy* nonEphemeralWebPageProxy();

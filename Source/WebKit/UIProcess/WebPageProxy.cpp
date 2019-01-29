@@ -8237,38 +8237,9 @@ void WebPageProxy::loadSynchronousURLSchemeTask(URLSchemeTaskParameters&& parame
 }
 
 #if ENABLE(RESOURCE_LOAD_STATISTICS)
-void WebPageProxy::hasStorageAccess(String&& subFrameHost, String&& topFrameHost, uint64_t frameID, uint64_t webProcessContextId)
+void WebPageProxy::requestStorageAccessConfirm(const String& subFrameHost, const String& topFrameHost, uint64_t frameID, CompletionHandler<void(bool)>&& completionHandler)
 {
-    m_websiteDataStore->hasStorageAccess(WTFMove(subFrameHost), WTFMove(topFrameHost), frameID, m_pageID, [this, webProcessContextId] (bool hasAccess) {
-        m_process->send(Messages::WebPage::StorageAccessResponse(hasAccess, webProcessContextId), m_pageID);
-    });
-}
-
-void WebPageProxy::requestStorageAccess(String&& subFrameHost, String&& topFrameHost, uint64_t frameID, uint64_t webProcessContextId, bool promptEnabled)
-{
-    CompletionHandler<void(bool)> completionHandler = [this, protectedThis = makeRef(*this), webProcessContextId] (bool access) {
-        m_process->send(Messages::WebPage::StorageAccessResponse(access, webProcessContextId), m_pageID);
-    };
-
-    m_websiteDataStore->requestStorageAccess(String(subFrameHost), String(topFrameHost), frameID, m_pageID, promptEnabled, [this, protectedThis = makeRef(*this), subFrameHost, topFrameHost, promptEnabled, frameID, completionHandler = WTFMove(completionHandler)] (StorageAccessStatus status) mutable {
-        switch (status) {
-        case StorageAccessStatus::CannotRequestAccess:
-            completionHandler(false);
-            return;
-        case StorageAccessStatus::RequiresUserPrompt:
-            ASSERT_UNUSED(promptEnabled, promptEnabled);
-            m_uiClient->requestStorageAccessConfirm(*this, m_process->webFrame(frameID), ResourceLoadStatistics::primaryDomain(subFrameHost), ResourceLoadStatistics::primaryDomain(topFrameHost), [this, protectedThis = makeRef(*this), subFrameHost, topFrameHost, frameID, completionHandler = WTFMove(completionHandler)] (bool userDidGrantAccess) mutable {
-                if (userDidGrantAccess)
-                    m_websiteDataStore->grantStorageAccess(WTFMove(subFrameHost), WTFMove(topFrameHost), frameID, m_pageID, userDidGrantAccess, WTFMove(completionHandler));
-                else
-                    completionHandler(false);
-            });
-            return;
-        case StorageAccessStatus::HasAccess:
-            completionHandler(true);
-            return;
-        }
-    });
+    m_uiClient->requestStorageAccessConfirm(*this, m_process->webFrame(frameID), ResourceLoadStatistics::primaryDomain(subFrameHost), ResourceLoadStatistics::primaryDomain(topFrameHost), WTFMove(completionHandler));
 }
 #endif
 

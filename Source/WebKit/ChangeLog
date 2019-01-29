@@ -1,3 +1,51 @@
+2019-01-29  Brent Fulgham  <bfulgham@apple.com>
+
+        StorageAccess API calls should be direct to the Network Process
+        https://bugs.webkit.org/show_bug.cgi?id=193924
+        <rdar://problem/47611249>
+
+        Reviewed by Alex Christensen.
+
+        Now that the ResourceLoadStatistics data lives in the Network Process, calls to Storage Access
+        API should happen directly between the WebContent and Network processes.
+
+        * NetworkProcess/Classifier/WebResourceLoadStatisticsStore.cpp:
+        (WebKit::WebResourceLoadStatisticsStore::requestStorageAccessGranted):
+        * NetworkProcess/Classifier/WebResourceLoadStatisticsStore.h:
+        * NetworkProcess/NetworkConnectionToWebProcess.cpp:
+        (WebKit::NetworkConnectionToWebProcess::removeStorageAccessForFrame):
+        (WebKit::NetworkConnectionToWebProcess::removeStorageAccessForAllFramesOnPage):
+        (WebKit::NetworkConnectionToWebProcess::logUserInteraction):
+        (WebKit::NetworkConnectionToWebProcess::logWebSocketLoading):
+        (WebKit::NetworkConnectionToWebProcess::logSubresourceLoading):
+        (WebKit::NetworkConnectionToWebProcess::logSubresourceRedirect):
+        (WebKit::NetworkConnectionToWebProcess::requestResourceLoadStatisticsUpdate):
+        (WebKit::NetworkConnectionToWebProcess::hasStorageAccess):
+        (WebKit::NetworkConnectionToWebProcess::requestStorageAccess):
+        * NetworkProcess/NetworkConnectionToWebProcess.h:
+        * NetworkProcess/NetworkConnectionToWebProcess.messages.in:
+        * NetworkProcess/NetworkProcess.cpp:
+        (WebKit::NetworkProcess::requestStorageAccess):
+        (WebKit::NetworkProcess::requestStorageAccessGranted):
+        * NetworkProcess/NetworkProcess.h:
+        * UIProcess/Network/NetworkProcessProxy.cpp:
+        (WebKit::NetworkProcessProxy::requestStorageAccessConfirm):
+        * UIProcess/Network/NetworkProcessProxy.h:
+        * UIProcess/Network/NetworkProcessProxy.messages.in:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::requestStorageAccessConfirm):
+        (WebKit::WebPageProxy::hasStorageAccess): Deleted.
+        (WebKit::WebPageProxy::requestStorageAccess): Deleted.
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPageProxy.messages.in:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::hasStorageAccess):
+        (WebKit::WebPage::requestStorageAccess):
+        (WebKit::nextRequestStorageAccessContextId): Deleted.
+        (WebKit::WebPage::storageAccessResponse): Deleted.
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/WebPage.messages.in:
+
 2019-01-29  Chris Dumez  <cdumez@apple.com>
 
         Regression (r240046): [PSON] Spurious changes to [WKWebView url] and [WKWebView loading] after [WKWebView loadRequest]

@@ -192,13 +192,18 @@ private:
 
     CacheStorageEngineConnection& cacheStorageConnection();
 
+#if ENABLE(RESOURCE_LOAD_STATISTICS)
     void removeStorageAccessForFrame(PAL::SessionID, uint64_t frameID, uint64_t pageID);
     void removeStorageAccessForAllFramesOnPage(PAL::SessionID, uint64_t pageID);
+
     void logUserInteraction(PAL::SessionID, const String& topLevelOrigin);
     void logWebSocketLoading(PAL::SessionID, const String& targetPrimaryDomain, const String& mainFramePrimaryDomain, WallTime lastSeen);
     void logSubresourceLoading(PAL::SessionID, const String& targetPrimaryDomain, const String& mainFramePrimaryDomain, WallTime lastSeen);
     void logSubresourceRedirect(PAL::SessionID, const String& sourcePrimaryDomain, const String& targetPrimaryDomain);
     void requestResourceLoadStatisticsUpdate();
+    void hasStorageAccess(PAL::SessionID, const String& subFrameHost, const String& topFrameHost, uint64_t frameID, uint64_t pageID, CompletionHandler<void(bool)>&&);
+    void requestStorageAccess(PAL::SessionID, const String& subFrameHost, const String& topFrameHost, uint64_t frameID, uint64_t pageID, bool prompt, CompletionHandler<void(bool)>&&);
+#endif
 
     void addOriginAccessWhitelistEntry(const String& sourceOrigin, const String& destinationProtocol, const String& destinationHost, bool allowDestinationSubdomains);
     void removeOriginAccessWhitelistEntry(const String& sourceOrigin, const String& destinationProtocol, const String& destinationHost, bool allowDestinationSubdomains);

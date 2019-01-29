@@ -75,9 +75,7 @@ public:
     void setShouldClassifyResourcesBeforeDataRecordsRemoval(bool, CompletionHandler<void()>&&);
     void setShouldSubmitTelemetry(bool);
 
-    void requestStorageAccess(String&& subFrameHost, String&& topFrameHost, uint64_t frameID, uint64_t pageID, bool promptEnabled, CompletionHandler<void(StorageAccessStatus)>&&);
     void grantStorageAccess(const String& subFrameHost, const String& topFrameHost, uint64_t frameID, uint64_t pageID, bool userWasPromptedNow, CompletionHandler<void(bool)>&&);
-    void requestStorageAccessCallback(bool wasGranted, uint64_t contextId);
 
     void applicationWillTerminate();
 
@@ -95,6 +93,7 @@ public:
     void hasStorageAccess(const String& subFrameHost, const String& topFrameHost, Optional<uint64_t> frameID, uint64_t pageID, CompletionHandler<void(bool)>&& callback);
     bool hasStorageAccessForFrame(const String& resourceDomain, const String& firstPartyDomain, uint64_t frameID, uint64_t pageID);
     void requestStorageAccess(const String& resourceDomain, const String& firstPartyDomain, Optional<uint64_t> frameID, uint64_t pageID, bool promptEnabled, CompletionHandler<void(StorageAccessStatus)>&&);
+    void requestStorageAccessGranted(const String& subFrameHost, const String& topFrameHost, uint64_t frameID, uint64_t pageID, bool promptEnabled, CompletionHandler<void(bool)>&&);
     void requestUpdate();
     void setLastSeen(const String& resourceDomain, Seconds, CompletionHandler<void()>&&);
     void setPrevalentResource(const String& resourceDomain, CompletionHandler<void()>&&);

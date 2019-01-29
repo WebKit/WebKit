@@ -113,6 +113,7 @@ public:
     void grantStorageAccess(PAL::SessionID, const String& resourceDomain, const String& firstPartyDomain, Optional<uint64_t> frameID, uint64_t pageID, bool userWasPrompted, CompletionHandler<void(bool)>&&);
     void hasStorageAccess(PAL::SessionID, const String& subFrameHost, const String& topFrameHost, Optional<uint64_t> frameID, uint64_t pageID, CompletionHandler<void(bool)>&&);
     void requestStorageAccess(PAL::SessionID, const String& resourceDomain, const String& firstPartyDomain, Optional<uint64_t> frameID, uint64_t pageID, bool promptEnabled, CompletionHandler<void(StorageAccessStatus)>&&);
+    void requestStorageAccessConfirm(uint64_t pageID, uint64_t frameID, const String& subFrameHost, const String& topFrameHost, CompletionHandler<void(bool)>&&);
     void resetParametersToDefaultValues(PAL::SessionID, CompletionHandler<void()>&&);
     void removeAllStorageAccess(PAL::SessionID, CompletionHandler<void()>&&);
     void scheduleClearInMemoryAndPersistent(PAL::SessionID, ShouldGrandfatherStatistics, CompletionHandler<void()>&&);

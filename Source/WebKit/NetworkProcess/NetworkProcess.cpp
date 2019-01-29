@@ -969,12 +969,25 @@ void NetworkProcess::requestStorageAccess(PAL::SessionID sessionID, const String
 {
     if (auto* networkSession = this->networkSession(sessionID)) {
         if (auto* resourceLoadStatistics = networkSession->resourceLoadStatistics())
-            resourceLoadStatistics->requestStorageAccess(resourceDomain, firstPartyDomain, frameID, pageID, promptEnabled, WTFMove(completionHandler));
+            resourceLoadStatistics->requestStorageAccess(resourceDomain, firstPartyDomain, frameID.value(), pageID, promptEnabled, WTFMove(completionHandler));
         else
             completionHandler(StorageAccessStatus::CannotRequestAccess);
     } else {
         ASSERT_NOT_REACHED();
         completionHandler(StorageAccessStatus::CannotRequestAccess);
+    }
+}
+
+void NetworkProcess::requestStorageAccessGranted(PAL::SessionID sessionID, const String& subFrameHost, const String& topFrameHost, uint64_t frameID, uint64_t pageID, bool promptEnabled, CompletionHandler<void(bool)>&& completionHandler)
+{
+    if (auto* networkSession = this->networkSession(sessionID)) {
+        if (auto* resourceLoadStatistics = networkSession->resourceLoadStatistics())
+            resourceLoadStatistics->requestStorageAccessGranted(subFrameHost, topFrameHost, frameID, pageID, promptEnabled, WTFMove(completionHandler));
+        else
+            completionHandler(false);
+    } else {
+        ASSERT_NOT_REACHED();
+        completionHandler(false);
     }
 }
 
