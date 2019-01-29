@@ -1,3 +1,38 @@
+2019-01-28  Matt Baker  <mattbaker@apple.com>
+
+        Web Inspector: Elements tab should toggle visibility for all selected nodes
+        https://bugs.webkit.org/show_bug.cgi?id=193089
+        <rdar://problem/47009256>
+
+        Reviewed by Devin Rousso.
+
+        Update "Toggle Visibility" command in DOM tree for multiple selection.
+        When both visible and hidden elements are selected in the DOM tree,
+        the toggle command behaves contextually. If one or more elements are
+        visible, they are hidden, otherwise they are shown. The context menu
+        shows "Hide Elements" or "Show Elements", respectively.
+
+        When only one element is selected, or the context menu target element
+        is not selected, the command continues to be "Toggle Visibility".
+
+        * Localizations/en.lproj/localizedStrings.js:
+
+        * UserInterface/Views/DOMTreeElement.js:
+        (WI.DOMTreeElement.prototype.get isNodeHidden): Added.
+        (WI.DOMTreeElement.prototype.toggleElementVisibility.inspectedPage_node_injectStyleAndToggleClass):
+        (WI.DOMTreeElement.prototype.toggleElementVisibility):
+        (WI.DOMTreeElement.prototype._populateTagContextMenu):
+
+        * UserInterface/Views/DOMTreeOutline.js:
+        (WI.DOMTreeOutline):
+        (WI.DOMTreeOutline.prototype.toggleSelectedElementsVisibility):  Added.
+        Provide a public method for toggling the visibility of selected DOM nodes.
+        Used by the "H" keyboard shortcut and DOMTreeElement context menu.
+
+        (WI.DOMTreeOutline.prototype._hideElements):
+        (WI.DOMTreeOutline.prototype._hideElement): Deleted.
+        Rename for multiple selection.
+
 2019-01-28  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r240351.
