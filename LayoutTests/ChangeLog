@@ -1,3 +1,12 @@
+2019-01-29  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: provide a way to edit page WebRTC settings on a remote target
+        https://bugs.webkit.org/show_bug.cgi?id=193863
+
+        Unreviewed, skip test from r240644 on WK1 since Media Streams aren't supported.
+
+        * platform/mac-wk1/TestExpectations:
+
 2019-01-28  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: provide a way to edit page WebRTC settings on a remote target
