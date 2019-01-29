@@ -1,4 +1,4 @@
-# Copyright (C) 2018 Apple Inc. All rights reserved.
+# Copyright (C) 2018-2019 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -20,6 +20,7 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+from buildbot.plugins import steps, util
 from buildbot.process import buildstep, logobserver, properties
 from buildbot.process.results import Results, SUCCESS, FAILURE, WARNINGS, SKIPPED, EXCEPTION, RETRY
 from buildbot.steps import master, shell, transfer
@@ -741,3 +742,24 @@ class ExtractTestResults(master.MasterShellCommand):
     def finished(self, result):
         self.addCustomURLs()
         return master.MasterShellCommand.finished(self, result)
+
+
+class PrintConfiguration(steps.ShellSequence):
+    name = 'configuration'
+    description = ['configuration']
+    descriptionDone = ['configuration']
+    haltOnFailure = False
+    flunkOnFailure = False
+    warnOnFailure = False
+    command_list = [['hostname'],
+                    ['df', '-hl'],
+                    ['date'],
+                    ['sw_vers'],
+                    ['xcodebuild', '-sdk', '-version']]
+
+    def __init__(self, **kwargs):
+        super(PrintConfiguration, self).__init__(timeout=60, **kwargs)
+        self.commands = []
+        # FIXME: Check platform before running platform specific commands.
+        for command in self.command_list:
+            self.commands.append(util.ShellArg(command=command, logfile=command[0]))

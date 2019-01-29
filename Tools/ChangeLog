@@ -1,3 +1,14 @@
+2019-01-29  Aakash Jain  <aakash_jain@apple.com>
+
+        [ews-build] Add build step to print bot Configuration
+        https://bugs.webkit.org/show_bug.cgi?id=193887
+
+        Reviewed by Lucas Forschler.
+
+        * BuildSlaveSupport/ews-build/steps.py:
+        (PrintConfiguration): Build step to print configuration.
+        * BuildSlaveSupport/ews-build/factories.py:
+
 2019-01-29  Chris Dumez  <cdumez@apple.com>
 
         Regression (r240046): [PSON] Spurious changes to [WKWebView url] and [WKWebView loading] after [WKWebView loadRequest]
