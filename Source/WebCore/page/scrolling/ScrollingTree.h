@@ -143,7 +143,7 @@ public:
     void setLatchedNode(ScrollingNodeID);
     void clearLatchedNode();
 
-    bool hasLatchedNode() const { return m_latchedNode; }
+    bool hasLatchedNode() const { return m_latchedNodeID; }
     void setOrClearLatchedNode(const PlatformWheelEvent&, ScrollingNodeID);
 
     bool hasFixedOrSticky() const { return !!m_fixedOrStickyNodeCount; }
@@ -163,16 +163,14 @@ protected:
     WEBCORE_EXPORT virtual void handleWheelEvent(const PlatformWheelEvent&);
 
 private:
-    void removeDestroyedNodes(const ScrollingStateTree&);
-    
-    typedef HashMap<ScrollingNodeID, RefPtr<ScrollingTreeNode>> OrphanScrollingNodeMap;
-    void updateTreeFromStateNode(const ScrollingStateNode*, OrphanScrollingNodeMap&);
+    using OrphanScrollingNodeMap = HashMap<ScrollingNodeID, RefPtr<ScrollingTreeNode>>;
+    void updateTreeFromStateNode(const ScrollingStateNode*, OrphanScrollingNodeMap&, HashSet<ScrollingNodeID>& unvisitedNodes);
 
     ScrollingTreeNode* nodeForID(ScrollingNodeID) const;
 
     RefPtr<ScrollingTreeNode> m_rootNode;
 
-    typedef HashMap<ScrollingNodeID, ScrollingTreeNode*> ScrollingTreeNodeMap;
+    using ScrollingTreeNodeMap = HashMap<ScrollingNodeID, ScrollingTreeNode*>;
     ScrollingTreeNodeMap m_nodeMap;
 
     Lock m_mutex;
@@ -181,7 +179,7 @@ private:
 
     Lock m_swipeStateMutex;
     ScrollPinningBehavior m_scrollPinningBehavior { DoNotPin };
-    ScrollingNodeID m_latchedNode { 0 };
+    ScrollingNodeID m_latchedNodeID { 0 };
 
     unsigned m_fixedOrStickyNodeCount { 0 };
 

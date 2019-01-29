@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        body {
+            margin: 0;
+        }
+        .container {
+            border: 20px solid blue;
+            padding: 12px;
+            height: 400px;
+            width: 500px;
+            margin: 20px;
+            background-color: orange;
+            outline: 12px solid rgba(0, 0, 0, 0.25);
+        }
+        
+        .frame {
+            height: 100%;
+            width: 100%;
+            background-color: silver;
+            padding: 10px;
+            box-sizing: border-box;
+        }
+        
+        .box {
+            width: 200px;
+            height: 200px;
+            background-color: green;
+        }
+        .scrollbar-obscurer {
+            position: absolute;
+            height: 400px;
+            width: 18px;
+            top: 52px;
+            left: 534px;
+            background-color: gray;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="frame">
+            <div class="box"></div>
+        </div>
+    </div>
+    <div class="scrollbar-obscurer"></div>
+</body>
+</html>

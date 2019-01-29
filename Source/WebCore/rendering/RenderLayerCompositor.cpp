@@ -3444,6 +3444,7 @@ void RenderLayerCompositor::ensureRootLayer()
 #endif
             m_scrollLayer = GraphicsLayer::create(graphicsLayerFactory(), *this, scrollLayerType);
             m_scrollLayer->setName("frame scrolling");
+            m_scrollLayer->setAnchorPoint({ });
 
             if (scrollLayerType == GraphicsLayer::Type::Scrolling) {
                 // Scroll layer clips so there is no need for a separate clipping layer.
@@ -3452,7 +3453,7 @@ void RenderLayerCompositor::ensureRootLayer()
                 m_clipLayer = GraphicsLayer::create(graphicsLayerFactory(), *this);
                 m_clipLayer->setName("frame clipping");
                 m_clipLayer->setMasksToBounds(true);
-                m_clipLayer->setAnchorPoint(FloatPoint3D());
+                m_clipLayer->setAnchorPoint({ });
 
                 m_clipLayer->addChild(*m_scrollLayer);
                 m_overflowControlsHostLayer->addChild(*m_clipLayer);

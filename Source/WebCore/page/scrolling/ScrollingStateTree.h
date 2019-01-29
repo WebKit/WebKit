@@ -57,9 +57,6 @@ public:
     void unparentChildrenAndDestroyNode(ScrollingNodeID);
     void detachAndDestroySubtree(ScrollingNodeID);
     void clear();
-    
-    const HashSet<ScrollingNodeID>& removedNodes() const { return m_nodesRemovedSinceLastCommit; }
-    WEBCORE_EXPORT void setRemovedNodes(HashSet<ScrollingNodeID>);
 
     // Copies the current tree state and clears the changed properties mask in the original.
     WEBCORE_EXPORT std::unique_ptr<ScrollingStateTree> commit(LayerRepresentation::Type preferredLayerRepresentation);
@@ -82,6 +79,8 @@ private:
     void setRootStateNode(Ref<ScrollingStateFrameScrollingNode>&&);
     void addNode(ScrollingStateNode&);
 
+    void nodeWasReattachedRecursive(ScrollingStateNode&);
+
     Ref<ScrollingStateNode> createNode(ScrollingNodeType, ScrollingNodeID);
 
     bool nodeTypeAndParentMatch(ScrollingStateNode&, ScrollingNodeType, ScrollingStateNode* parentNode) const;
@@ -98,7 +97,6 @@ private:
     HashMap<ScrollingNodeID, RefPtr<ScrollingStateNode>> m_unparentedNodes;
 
     RefPtr<ScrollingStateFrameScrollingNode> m_rootStateNode;
-    HashSet<ScrollingNodeID> m_nodesRemovedSinceLastCommit;
     bool m_hasChangedProperties { false };
     bool m_hasNewRootStateNode { false };
     LayerRepresentation::Type m_preferredLayerRepresentation { LayerRepresentation::GraphicsLayerRepresentation };

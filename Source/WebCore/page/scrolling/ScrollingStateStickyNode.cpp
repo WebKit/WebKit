@@ -58,6 +58,12 @@ Ref<ScrollingStateNode> ScrollingStateStickyNode::clone(ScrollingStateTree& adop
     return adoptRef(*new ScrollingStateStickyNode(*this, adoptiveTree));
 }
 
+void ScrollingStateStickyNode::setAllPropertiesChanged()
+{
+    setPropertyChangedBit(ViewportConstraints);
+    ScrollingStateNode::setAllPropertiesChanged();
+}
+
 void ScrollingStateStickyNode::updateConstraints(const StickyPositionViewportConstraints& constraints)
 {
     if (m_constraints == constraints)

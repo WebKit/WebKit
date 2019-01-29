@@ -207,6 +207,7 @@ public:
     Ref<ScrollingStateNode> cloneAndReset(ScrollingStateTree& adoptiveTree);
     void cloneAndResetChildren(ScrollingStateNode&, ScrollingStateTree& adoptiveTree);
 
+    // FIXME: using an OptionSet<> for these and derived class bits would simplify code.
     enum {
         ScrollLayer = 0,
         ChildNodes,
@@ -218,6 +219,7 @@ public:
     bool hasChangedProperty(unsigned propertyBit) const { return m_changedProperties & (static_cast<ChangedProperties>(1) << propertyBit); }
     void resetChangedProperties() { m_changedProperties = 0; }
     void setPropertyChanged(unsigned propertyBit);
+    virtual void setAllPropertiesChanged();
 
     ChangedProperties changedProperties() const { return m_changedProperties; }
     void setChangedProperties(ChangedProperties changedProperties) { m_changedProperties = changedProperties; }
@@ -254,7 +256,9 @@ protected:
     ScrollingStateNode(const ScrollingStateNode&, ScrollingStateTree&);
 
     virtual void dumpProperties(WTF::TextStream&, ScrollingStateTreeAsTextBehavior) const;
-    
+
+    inline void setPropertyChangedBit(unsigned propertyBit);
+
 private:
     void dump(WTF::TextStream&, ScrollingStateTreeAsTextBehavior) const;
 
@@ -269,6 +273,11 @@ private:
 
     LayerRepresentation m_layer;
 };
+
+void ScrollingStateNode::setPropertyChangedBit(unsigned propertyBit)
+{
+    m_changedProperties |= (static_cast<ChangedProperties>(1) << propertyBit);
+}
 
 } // namespace WebCore
 

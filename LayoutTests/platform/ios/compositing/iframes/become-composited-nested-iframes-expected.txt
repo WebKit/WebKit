@@ -20,6 +20,7 @@
                   (bounds 280.00 200.00)
                   (children 1
                     (GraphicsLayer
+                      (anchor 0.00 0.00)
                       (children 1
                         (GraphicsLayer
                           (anchor 0.00 0.00)
@@ -42,6 +43,7 @@
                                           (bounds 250.00 170.00)
                                           (children 1
                                             (GraphicsLayer
+                                              (anchor 0.00 0.00)
                                               (children 1
                                                 (GraphicsLayer
                                                   (anchor 0.00 0.00)
@@ -93,6 +95,7 @@
                   (bounds 280.00 200.00)
                   (children 1
                     (GraphicsLayer
+                      (anchor 0.00 0.00)
                       (children 1
                         (GraphicsLayer
                           (anchor 0.00 0.00)
@@ -115,6 +118,7 @@
                                           (bounds 250.00 170.00)
                                           (children 1
                                             (GraphicsLayer
+                                              (anchor 0.00 0.00)
                                               (children 1
                                                 (GraphicsLayer
                                                   (anchor 0.00 0.00)

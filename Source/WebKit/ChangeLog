@@ -1,3 +1,17 @@
+2019-01-29  Simon Fraser  <simon.fraser@apple.com>
+
+        REGRESSION(r240553): [iOS] Crash in ScrollingTree::updateTreeFromStateNode when attempting to log in to icloud.com
+        https://bugs.webkit.org/show_bug.cgi?id=193907
+
+        Reviewed by Frédéric Wang.
+
+        Remove encode/decode of removedNodes.
+
+        * Shared/RemoteLayerTree/RemoteScrollingCoordinatorTransaction.cpp:
+        (WebKit::RemoteScrollingCoordinatorTransaction::encode const):
+        (WebKit::RemoteScrollingCoordinatorTransaction::decode):
+        (WebKit::dump):
+
 2019-01-29  Brent Fulgham  <bfulgham@apple.com>
 
         StorageAccess API calls should be direct to the Network Process

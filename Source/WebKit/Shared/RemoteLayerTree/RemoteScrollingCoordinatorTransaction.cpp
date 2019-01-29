@@ -413,7 +413,6 @@ void RemoteScrollingCoordinatorTransaction::encode(IPC::Encoder& encoder) const
             encodeNodeAndDescendants(encoder, *rootNode, numNodesEncoded);
 
         ASSERT_UNUSED(numNodesEncoded, numNodesEncoded == numNodes);
-        encoder << m_scrollingStateTree->removedNodes();
     } else
         encoder << Vector<ScrollingNodeID>();
 }
@@ -485,14 +484,6 @@ bool RemoteScrollingCoordinatorTransaction::decode(IPC::Decoder& decoder)
     }
 
     m_scrollingStateTree->setHasNewRootStateNode(hasNewRootNode);
-
-    // Removed nodes
-    HashSet<ScrollingNodeID> removedNodes;
-    if (!decoder.decode(removedNodes))
-        return false;
-    
-    if (removedNodes.size())
-        m_scrollingStateTree->setRemovedNodes(removedNodes);
 
     return true;
 }
@@ -653,9 +644,6 @@ static void dump(TextStream& ts, const ScrollingStateTree& stateTree, bool chang
 
     if (stateTree.rootStateNode())
         recursiveDumpNodes(ts, *stateTree.rootStateNode(), changedPropertiesOnly);
-
-    if (!stateTree.removedNodes().isEmpty())
-        ts.dumpProperty<Vector<ScrollingNodeID>>("removed-nodes", copyToVector(stateTree.removedNodes()));
 }
 
 WTF::CString RemoteScrollingCoordinatorTransaction::description() const

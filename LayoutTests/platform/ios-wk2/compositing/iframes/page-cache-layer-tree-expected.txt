@@ -27,6 +27,7 @@ This tests that layers are rebuilt properly after the page is restored from the 
                   (bounds 300.00 150.00)
                   (children 1
                     (GraphicsLayer
+                      (anchor 0.00 0.00)
                       (children 1
                         (GraphicsLayer
                           (anchor 0.00 0.00)
@@ -77,6 +78,7 @@ This tests that layers are rebuilt properly after the page is restored from the 
                       (bounds 300.00 150.00)
                       (children 1
                         (GraphicsLayer
+                          (anchor 0.00 0.00)
                           (children 1
                             (GraphicsLayer
                               (anchor 0.00 0.00)

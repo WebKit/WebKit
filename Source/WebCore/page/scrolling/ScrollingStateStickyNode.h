@@ -55,6 +55,8 @@ private:
     ScrollingStateStickyNode(ScrollingStateTree&, ScrollingNodeID);
     ScrollingStateStickyNode(const ScrollingStateStickyNode&, ScrollingStateTree&);
 
+    void setAllPropertiesChanged() override;
+
     void reconcileLayerPositionForViewportRect(const LayoutRect& viewportRect, ScrollingLayerPositionAction) override;
 
     void dumpProperties(WTF::TextStream&, ScrollingStateTreeAsTextBehavior) const override;

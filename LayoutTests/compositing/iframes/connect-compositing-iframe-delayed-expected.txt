@@ -23,6 +23,7 @@ When the parent document becomes composited, the layer trees should get connecte
                   (bounds 285.00 150.00)
                   (children 1
                     (GraphicsLayer
+                      (anchor 0.00 0.00)
                       (children 1
                         (GraphicsLayer
                           (anchor 0.00 0.00)

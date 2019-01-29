@@ -153,6 +153,7 @@ ScrollingNodeID ScrollingStateTree::insertNode(ScrollingNodeType nodeType, Scrol
 
     ScrollingStateNode* newNode = nullptr;
     if (!parentID) {
+        RELEASE_ASSERT(nodeType == ScrollingNodeType::MainFrame);
         ASSERT(!childIndex || childIndex == notFound);
         // If we're resetting the root node, we should clear the HashMap and destroy the current children.
         clear();
@@ -169,7 +170,10 @@ ScrollingNodeID ScrollingStateTree::insertNode(ScrollingNodeType nodeType, Scrol
 
         if (parentID) {
             if (auto unparentedNode = m_unparentedNodes.take(newNodeID)) {
+                LOG_WITH_STREAM(Scrolling, stream << "ScrollingStateTree " << this << " insertNode " << newNodeID << " getting node from unparented nodes");
                 newNode = unparentedNode.get();
+                nodeWasReattachedRecursive(*unparentedNode);
+
                 if (childIndex == notFound)
                     parent->appendChild(unparentedNode.releaseNonNull());
                 else
@@ -188,7 +192,6 @@ ScrollingNodeID ScrollingStateTree::insertNode(ScrollingNodeType nodeType, Scrol
     }
 
     addNode(*newNode);
-    m_nodesRemovedSinceLastCommit.remove(newNodeID);
     return newNodeID;
 }
 
@@ -265,6 +268,17 @@ void ScrollingStateTree::clear()
     m_unparentedNodes.clear();
 }
 
+void ScrollingStateTree::nodeWasReattachedRecursive(ScrollingStateNode& node)
+{
+    // When a node is re-attached, the ScrollingTree is recreating the ScrollingNode from scratch, so we need to set all the dirty bits.
+    node.setAllPropertiesChanged();
+
+    if (auto* children = node.children()) {
+        for (auto& child : *children)
+            nodeWasReattachedRecursive(*child);
+    }
+}
+
 std::unique_ptr<ScrollingStateTree> ScrollingStateTree::commit(LayerRepresentation::Type preferredLayerRepresentation)
 {
     if (!m_unparentedNodes.isEmpty()) {
@@ -278,9 +292,6 @@ std::unique_ptr<ScrollingStateTree> ScrollingStateTree::commit(LayerRepresentati
 
     if (m_rootStateNode)
         treeStateClone->setRootStateNode(static_reference_cast<ScrollingStateFrameScrollingNode>(m_rootStateNode->cloneAndReset(*treeStateClone)));
-
-    // Copy the IDs of the nodes that have been removed since the last commit into the clone.
-    treeStateClone->m_nodesRemovedSinceLastCommit.swap(m_nodesRemovedSinceLastCommit);
 
     // Now the clone tree has changed properties, and the original tree does not.
     treeStateClone->m_hasChangedProperties = m_hasChangedProperties;
@@ -334,14 +345,8 @@ void ScrollingStateTree::recursiveNodeWillBeRemoved(ScrollingStateNode* currNode
 
 void ScrollingStateTree::willRemoveNode(ScrollingStateNode* node)
 {
-    m_nodesRemovedSinceLastCommit.add(node->scrollingNodeID());
     m_stateNodeMap.remove(node->scrollingNodeID());
     setHasChangedProperties();
-}
-
-void ScrollingStateTree::setRemovedNodes(HashSet<ScrollingNodeID> nodes)
-{
-    m_nodesRemovedSinceLastCommit = WTFMove(nodes);
 }
 
 ScrollingStateNode* ScrollingStateTree::stateNodeForID(ScrollingNodeID scrollLayerID) const

@@ -94,6 +94,33 @@ Ref<ScrollingStateNode> ScrollingStateFrameScrollingNode::clone(ScrollingStateTr
     return adoptRef(*new ScrollingStateFrameScrollingNode(*this, adoptiveTree));
 }
 
+void ScrollingStateFrameScrollingNode::setAllPropertiesChanged()
+{
+    setPropertyChangedBit(FrameScaleFactor);
+    setPropertyChangedBit(EventTrackingRegion);
+    setPropertyChangedBit(ReasonsForSynchronousScrolling);
+    setPropertyChangedBit(ScrolledContentsLayer);
+    setPropertyChangedBit(CounterScrollingLayer);
+    setPropertyChangedBit(InsetClipLayer);
+    setPropertyChangedBit(ContentShadowLayer);
+    setPropertyChangedBit(HeaderHeight);
+    setPropertyChangedBit(FooterHeight);
+    setPropertyChangedBit(HeaderLayer);
+    setPropertyChangedBit(FooterLayer);
+    setPropertyChangedBit(VerticalScrollbarLayer);
+    setPropertyChangedBit(HorizontalScrollbarLayer);
+    setPropertyChangedBit(PainterForScrollbar);
+    setPropertyChangedBit(BehaviorForFixedElements);
+    setPropertyChangedBit(TopContentInset);
+    setPropertyChangedBit(FixedElementsLayoutRelativeToFrame);
+    setPropertyChangedBit(VisualViewportEnabled);
+    setPropertyChangedBit(LayoutViewport);
+    setPropertyChangedBit(MinLayoutViewportOrigin);
+    setPropertyChangedBit(MaxLayoutViewportOrigin);
+
+    ScrollingStateScrollingNode::setAllPropertiesChanged();
+}
+
 void ScrollingStateFrameScrollingNode::setFrameScaleFactor(float scaleFactor)
 {
     if (m_frameScaleFactor == scaleFactor)

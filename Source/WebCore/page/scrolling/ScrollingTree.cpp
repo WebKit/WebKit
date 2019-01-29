@@ -56,7 +56,7 @@ bool ScrollingTree::shouldHandleWheelEventSynchronously(const PlatformWheelEvent
         return false;
 
     if (shouldSetLatch)
-        m_latchedNode = 0;
+        m_latchedNodeID = 0;
     
     if (!m_eventTrackingRegions.isEmpty() && m_rootNode) {
         auto& frameScrollingNode = downcast<ScrollingTreeFrameScrollingNode>(*m_rootNode);
@@ -138,13 +138,26 @@ void ScrollingTree::commitTreeState(std::unique_ptr<ScrollingStateTree> scrollin
     bool scrollRequestIsProgammatic = rootNode ? rootNode->requestedScrollPositionRepresentsProgrammaticScroll() : false;
     SetForScope<bool> changeHandlingProgrammaticScroll(m_isHandlingProgrammaticScroll, scrollRequestIsProgammatic);
 
-    removeDestroyedNodes(*scrollingStateTree);
+    // unvisitedNodes starts with all nodes in the map; we remove nodes as we visit them. At the end, it's the unvisited nodes.
+    // We can't use orphanNodes for this, because orphanNodes won't contain descendants of removed nodes.
+    HashSet<ScrollingNodeID> unvisitedNodes;
+    for (auto nodeID : m_nodeMap.keys())
+        unvisitedNodes.add(nodeID);
 
+    // orphanNodes keeps child nodes alive while we rebuild child lists.
     OrphanScrollingNodeMap orphanNodes;
-    updateTreeFromStateNode(rootNode, orphanNodes);
+    updateTreeFromStateNode(rootNode, orphanNodes, unvisitedNodes);
+    
+    for (auto nodeID : unvisitedNodes) {
+        if (nodeID == m_latchedNodeID)
+            clearLatchedNode();
+        
+        LOG(Scrolling, "ScrollingTree::commitTreeState - removing unvisited node %llu", nodeID);
+        m_nodeMap.remove(nodeID);
+    }
 }
 
-void ScrollingTree::updateTreeFromStateNode(const ScrollingStateNode* stateNode, OrphanScrollingNodeMap& orphanNodes)
+void ScrollingTree::updateTreeFromStateNode(const ScrollingStateNode* stateNode, OrphanScrollingNodeMap& orphanNodes, HashSet<ScrollingNodeID>& unvisitedNodes)
 {
     if (!stateNode) {
         m_nodeMap.clear();
@@ -158,9 +171,10 @@ void ScrollingTree::updateTreeFromStateNode(const ScrollingStateNode* stateNode,
     auto it = m_nodeMap.find(nodeID);
 
     RefPtr<ScrollingTreeNode> node;
-    if (it != m_nodeMap.end())
+    if (it != m_nodeMap.end()) {
         node = it->value;
-    else {
+        unvisitedNodes.remove(nodeID);
+    } else {
         node = createScrollingTreeNode(stateNode->nodeType(), nodeID);
         if (!parentNodeID) {
             // This is the root node. Clear the node map.
@@ -195,19 +209,10 @@ void ScrollingTree::updateTreeFromStateNode(const ScrollingStateNode* stateNode,
     // Now update the children if we have any.
     if (auto children = stateNode->children()) {
         for (auto& child : *children)
-            updateTreeFromStateNode(child.get(), orphanNodes);
+            updateTreeFromStateNode(child.get(), orphanNodes, unvisitedNodes);
     }
 
     node->commitStateAfterChildren(*stateNode);
-}
-
-void ScrollingTree::removeDestroyedNodes(const ScrollingStateTree& stateTree)
-{
-    for (const auto& removedNodeID : stateTree.removedNodes()) {
-        m_nodeMap.remove(removedNodeID);
-        if (removedNodeID == m_latchedNode)
-            clearLatchedNode();
-    }
 }
 
 ScrollingTreeNode* ScrollingTree::nodeForID(ScrollingNodeID nodeID) const
@@ -364,19 +369,19 @@ bool ScrollingTree::scrollingPerformanceLoggingEnabled()
 ScrollingNodeID ScrollingTree::latchedNode()
 {
     LockHolder locker(m_mutex);
-    return m_latchedNode;
+    return m_latchedNodeID;
 }
 
 void ScrollingTree::setLatchedNode(ScrollingNodeID node)
 {
     LockHolder locker(m_mutex);
-    m_latchedNode = node;
+    m_latchedNodeID = node;
 }
 
 void ScrollingTree::clearLatchedNode()
 {
     LockHolder locker(m_mutex);
-    m_latchedNode = 0;
+    m_latchedNodeID = 0;
 }
 
 String ScrollingTree::scrollingTreeAsText()
@@ -386,8 +391,8 @@ String ScrollingTree::scrollingTreeAsText()
     TextStream::GroupScope scope(ts);
     ts << "scrolling tree";
     
-    if (m_latchedNode)
-        ts.dumpProperty("latched node", m_latchedNode);
+    if (m_latchedNodeID)
+        ts.dumpProperty("latched node", m_latchedNodeID);
 
     if (m_mainFrameScrollPosition != IntPoint())
         ts.dumpProperty("main frame scroll position", m_mainFrameScrollPosition);

@@ -1,3 +1,73 @@
+2019-01-29  Simon Fraser  <simon.fraser@apple.com>
+
+        REGRESSION(r240553): [iOS] Crash in ScrollingTree::updateTreeFromStateNode when attempting to log in to icloud.com
+        https://bugs.webkit.org/show_bug.cgi?id=193907
+        rdar://problem/47604080
+
+        Reviewed by Frédéric Wang.
+
+        Recent scrolling tree changes can trigger unparenting and reparenting of subtrees in the
+        state tree. If a subframe's state tree nodes are unparented, a scrolling tree commit would
+        show these as nodes being destroyed, which destroyed the tree nodes. When re-parented, the
+        commit would re-create the tree node, but the state node would only have a subset of the
+        change flags set, so the new tree node would fail to get all of the state (for example, it
+        would be missing layers and scrolling geometry).
+
+        Fix by ensuring that when we reparent state node subtrees, we set all the change flags
+        so that the full set of data is sent to the scrolling tree (the UI process, in the case of iOS WK2).
+        Annoyingly, virtual setAllPropertiesChanged() functions are needed so each state node subclass can
+        set the right change flags.
+
+        This patch also gets rid of m_nodesRemovedSinceLastCommit in the state tree. We can gain the same
+        information by using copying all of the nodeIDs in m_nodeMap into a HashSet, and removing nodes
+        as we encounter them in the tree walk.
+        
+        Rename m_latchedNode to m_latchedNodeID in ScrollingTree, since it's a nodeID, not a node pointer.
+
+        Test: compositing/geometry/composited-frame-contents.html
+
+        * page/scrolling/ScrollingStateFixedNode.cpp:
+        (WebCore::ScrollingStateFixedNode::setAllPropertiesChanged):
+        * page/scrolling/ScrollingStateFixedNode.h:
+        * page/scrolling/ScrollingStateFrameScrollingNode.cpp:
+        (WebCore::ScrollingStateFrameScrollingNode::setAllPropertiesChanged):
+        * page/scrolling/ScrollingStateFrameScrollingNode.h:
+        * page/scrolling/ScrollingStateNode.cpp:
+        (WebCore::ScrollingStateNode::setPropertyChanged):
+        (WebCore::ScrollingStateNode::setAllPropertiesChanged):
+        * page/scrolling/ScrollingStateNode.h:
+        (WebCore::ScrollingStateNode::setPropertyChangedBit):
+        * page/scrolling/ScrollingStateScrollingNode.cpp:
+        (WebCore::ScrollingStateScrollingNode::setAllPropertiesChanged):
+        * page/scrolling/ScrollingStateScrollingNode.h:
+        * page/scrolling/ScrollingStateStickyNode.cpp:
+        (WebCore::ScrollingStateStickyNode::setAllPropertiesChanged):
+        * page/scrolling/ScrollingStateStickyNode.h:
+        * page/scrolling/ScrollingStateTree.cpp:
+        (WebCore::ScrollingStateTree::insertNode): Add a RELEASE_ASSERT on the type of the node created
+        if parentID == 0, since mistakes here can associate a ScrollingNodeType::MainFrame node with some
+        other nodeID which can result in type confusion later.
+        (WebCore::ScrollingStateTree::nodeWasReattachedRecursive):
+        (WebCore::ScrollingStateTree::commit):
+        (WebCore::ScrollingStateTree::willRemoveNode):
+        (WebCore::ScrollingStateTree::setRemovedNodes): Deleted.
+        * page/scrolling/ScrollingStateTree.h:
+        (WebCore::ScrollingStateTree::removedNodes const): Deleted.
+        * page/scrolling/ScrollingTree.cpp:
+        (WebCore::ScrollingTree::shouldHandleWheelEventSynchronously):
+        (WebCore::ScrollingTree::commitTreeState):
+        (WebCore::ScrollingTree::updateTreeFromStateNode):
+        (WebCore::ScrollingTree::latchedNode):
+        (WebCore::ScrollingTree::setLatchedNode):
+        (WebCore::ScrollingTree::clearLatchedNode):
+        (WebCore::ScrollingTree::scrollingTreeAsText):
+        (WebCore::ScrollingTree::removeDestroyedNodes): Deleted.
+        * page/scrolling/ScrollingTree.h:
+        (WebCore::ScrollingTree::hasLatchedNode const):
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::ensureRootLayer): The scroll layer needs a 0,0,0 anchor point so that
+        setting its position doesn't offset it relative to the center.
+
 2019-01-29  Justin Fan  <justin_fan@apple.com>
 
         [WebGPU] Fix and add validation to WebGPURenderPipeline and MTLVertexDescriptor

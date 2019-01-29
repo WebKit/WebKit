@@ -1,3 +1,72 @@
+2019-01-29  Simon Fraser  <simon.fraser@apple.com>
+
+        REGRESSION(r240553): [iOS] Crash in ScrollingTree::updateTreeFromStateNode when attempting to log in to icloud.com
+        https://bugs.webkit.org/show_bug.cgi?id=193907
+        rdar://problem/47604080
+
+        Reviewed by Frédéric Wang.
+        
+        New ref test for layer positions in composited frames.
+        
+        New baselines with anchor point on the scroll layer.
+
+        * compositing/geometry/composited-frame-contents-expected.html: Added.
+        * compositing/geometry/composited-frame-contents.html: Added.
+        * compositing/iframes/become-composited-nested-iframes-expected.txt:
+        * compositing/iframes/become-overlapped-iframe-expected.txt:
+        * compositing/iframes/composited-parent-iframe-expected.txt:
+        * compositing/iframes/connect-compositing-iframe-delayed-expected.txt:
+        * compositing/iframes/connect-compositing-iframe-expected.txt:
+        * compositing/iframes/connect-compositing-iframe2-expected.txt:
+        * compositing/iframes/connect-compositing-iframe3-expected.txt:
+        * compositing/iframes/enter-compositing-iframe-expected.txt:
+        * compositing/iframes/iframe-resize-expected.txt:
+        * compositing/iframes/iframe-size-from-zero-expected.txt:
+        * compositing/iframes/overlapped-iframe-expected.txt:
+        * compositing/iframes/overlapped-iframe-iframe-expected.txt:
+        * compositing/iframes/overlapped-nested-iframes-expected.txt:
+        * compositing/iframes/page-cache-layer-tree-expected.txt:
+        * compositing/iframes/remove-reinsert-webview-with-iframe-expected.txt:
+        * compositing/iframes/resize-from-zero-size-expected.txt:
+        * compositing/iframes/scrolling-iframe-expected.txt:
+        * compositing/repaint/iframes/compositing-iframe-scroll-repaint-expected.txt:
+        * compositing/repaint/iframes/compositing-iframe-with-fixed-background-doc-repaint-expected.txt:
+        * compositing/visible-rect/iframe-with-layers-outside-viewport-expected.txt:
+        * platform/ios-wk2/compositing/iframes/composited-parent-iframe-expected.txt:
+        * platform/ios-wk2/compositing/iframes/connect-compositing-iframe-delayed-expected.txt:
+        * platform/ios-wk2/compositing/iframes/connect-compositing-iframe-expected.txt:
+        * platform/ios-wk2/compositing/iframes/connect-compositing-iframe2-expected.txt:
+        * platform/ios-wk2/compositing/iframes/connect-compositing-iframe3-expected.txt:
+        * platform/ios-wk2/compositing/iframes/enter-compositing-iframe-expected.txt:
+        * platform/ios-wk2/compositing/iframes/iframe-resize-expected.txt:
+        * platform/ios-wk2/compositing/iframes/leave-compositing-iframe-expected.txt:
+        * platform/ios-wk2/compositing/iframes/overlapped-iframe-expected.txt:
+        * platform/ios-wk2/compositing/iframes/page-cache-layer-tree-expected.txt:
+        * platform/ios-wk2/compositing/iframes/scrolling-iframe-expected.txt:
+        * platform/ios-wk2/compositing/rtl/rtl-iframe-absolute-expected.txt:
+        * platform/ios-wk2/compositing/rtl/rtl-iframe-absolute-overflow-expected.txt:
+        * platform/ios-wk2/compositing/rtl/rtl-iframe-fixed-expected.txt:
+        * platform/ios-wk2/compositing/rtl/rtl-iframe-relative-expected.txt:
+        * platform/ios-wk2/compositing/tiling/tiled-drawing-async-frame-scrolling-expected.txt:
+        * platform/ios-wk2/compositing/visible-rect/iframe-and-layers-expected.txt:
+        * platform/ios-wk2/scrollingcoordinator/scrolling-tree/fixed-inside-frame-expected.txt:
+        * platform/ios/compositing/iframes/become-composited-nested-iframes-expected.txt:
+        * platform/ios/compositing/iframes/become-overlapped-iframe-expected.txt:
+        * platform/ios/compositing/iframes/invisible-nested-iframe-show-expected.txt:
+        * platform/ios/compositing/iframes/overlapped-nested-iframes-expected.txt:
+        * platform/ios/compositing/iframes/remove-reinsert-webview-with-iframe-expected.txt:
+        * platform/ios/compositing/iframes/resizer-expected.txt:
+        * platform/ios/compositing/visible-rect/iframe-with-layers-outside-viewport-expected.txt:
+        * platform/mac-wk1/compositing/iframes/remove-reinsert-webview-with-iframe-expected.txt:
+        * platform/mac-wk1/compositing/repaint/iframes/compositing-iframe-scroll-repaint-expected.txt:
+        * platform/mac-wk1/compositing/repaint/iframes/compositing-iframe-with-fixed-background-doc-repaint-expected.txt:
+        * platform/mac-wk2/compositing/tiling/tiled-drawing-async-frame-scrolling-expected.txt:
+        * platform/mac/compositing/iframes/invisible-nested-iframe-show-expected.txt:
+        * platform/mac/compositing/iframes/resizer-expected.txt:
+        * platform/mac/compositing/visible-rect/iframe-and-layers-expected.txt:
+        * scrollingcoordinator/scrolling-tree/fixed-inside-frame-expected.txt:
+        * tiled-drawing/tile-coverage-iframe-to-zero-coverage-expected.txt:
+
 2019-01-29  Justin Fan  <justin_fan@apple.com>
 
         [WebGPU] Fix and add validation to WebGPURenderPipeline and MTLVertexDescriptor

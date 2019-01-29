@@ -21,6 +21,7 @@
                   (children 1
                     (GraphicsLayer
                       (position -80.00 -80.00)
+                      (anchor 0.00 0.00)
                       (children 1
                         (GraphicsLayer
                           (anchor 0.00 0.00)

@@ -41,6 +41,7 @@
                   (contentsScale 2.00)
                   (children 1
                     (GraphicsLayer
+                      (anchor 0.00 0.00)
                       (visible rect 0.00, 0.00 0.00 x 0.00)
                       (coverage rect 0.00, 0.00 300.00 x 150.00)
                       (intersects coverage rect 0)

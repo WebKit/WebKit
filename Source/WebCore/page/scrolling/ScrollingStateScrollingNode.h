@@ -116,8 +116,10 @@ protected:
     ScrollingStateScrollingNode(ScrollingStateTree&, ScrollingNodeType, ScrollingNodeID);
     ScrollingStateScrollingNode(const ScrollingStateScrollingNode&, ScrollingStateTree&);
 
+    void setAllPropertiesChanged() override;
+
     void dumpProperties(WTF::TextStream&, ScrollingStateTreeAsTextBehavior) const override;
-    
+
 private:
     FloatSize m_scrollableAreaSize;
     FloatSize m_totalContentsSize;

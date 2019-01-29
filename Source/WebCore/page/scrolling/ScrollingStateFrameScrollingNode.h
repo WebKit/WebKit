@@ -145,6 +145,8 @@ private:
     ScrollingStateFrameScrollingNode(ScrollingStateTree&, ScrollingNodeType, ScrollingNodeID);
     ScrollingStateFrameScrollingNode(const ScrollingStateFrameScrollingNode&, ScrollingStateTree&);
 
+    void setAllPropertiesChanged() override;
+
     LayerRepresentation m_counterScrollingLayer;
     LayerRepresentation m_insetClipLayer;
     LayerRepresentation m_contentShadowLayer;
