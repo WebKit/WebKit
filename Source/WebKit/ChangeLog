@@ -1,3 +1,14 @@
+2019-01-28  Per Arne Vollan  <pvollan@apple.com>
+
+        REGRESSION (r240348): Loading netflix home page panics device
+        https://bugs.webkit.org/show_bug.cgi?id=193936
+
+        Reviewed by Alexey Proskuryakov.
+
+        Temporarily enable permissive call filtering.
+
+        * WebProcess/com.apple.WebProcess.sb.in:
+
 2019-01-28  Joseph Pecoraro  <pecoraro@apple.com>
 
         [iOS] Attempting to open a Keynote document to iCloud.com from iCloud Files causes crash
