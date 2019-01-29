@@ -297,6 +297,7 @@
     "web-platform-tests/remote-playback": "skip", 
     "web-platform-tests/requestidlecallback": "skip", 
     "web-platform-tests/resize-observer": "skip", 
+    "web-platform-tests/resize-observer/": "import", 
     "web-platform-tests/resource-timing": "import", 
     "web-platform-tests/resources": "import", 
     "web-platform-tests/screen-orientation": "skip", 

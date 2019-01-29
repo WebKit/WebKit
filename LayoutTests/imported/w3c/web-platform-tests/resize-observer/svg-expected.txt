@@ -1,0 +1,9 @@
+CONSOLE MESSAGE: line 50: ReferenceError: Can't find variable: ResizeObserver
+ResizeObserver svg tests
+
+Here is a paragraph that requires word wrap
+
+svg text tag
+
+FAIL ResizeObserver implemented assert_own_property: expected property "ResizeObserver" missing
+

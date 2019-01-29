@@ -1,0 +1,9 @@
+CONSOLE MESSAGE: line 50: ReferenceError: Can't find variable: ResizeObserver
+ResizeObserver tests
+
+t1
+t2
+ 
+
+FAIL ResizeObserver implemented assert_own_property: expected property "ResizeObserver" missing
+
