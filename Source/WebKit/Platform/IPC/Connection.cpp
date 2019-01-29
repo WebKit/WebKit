@@ -245,7 +245,7 @@ static HashMap<uintptr_t, HashMap<uint64_t, CompletionHandler<void(Decoder*)>>>&
     
 Connection::Connection(Identifier identifier, bool isServer, Client& client)
     : m_client(client)
-    , m_uniqueID(generateObjectIdentifier<UniqueIDType>())
+    , m_uniqueID(UniqueID::generate())
     , m_isServer(isServer)
     , m_syncRequestID(0)
     , m_onlySendMessagesAsDispatchWhenWaitingForSyncReplyWhenProcessingSuchAMessage(false)

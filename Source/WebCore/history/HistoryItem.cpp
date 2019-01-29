@@ -66,7 +66,7 @@ HistoryItem::HistoryItem(const String& urlString, const String& title)
 }
 
 HistoryItem::HistoryItem(const String& urlString, const String& title, const String& alternateTitle)
-    : HistoryItem(urlString, title, alternateTitle, { Process::identifier(), generateObjectIdentifier<BackForwardItemIdentifier::ItemIdentifierType>() })
+    : HistoryItem(urlString, title, alternateTitle, { Process::identifier(), ObjectIdentifier<BackForwardItemIdentifier::ItemIdentifierType>::generate() })
 {
 }
 

@@ -62,7 +62,7 @@ WebUserContentControllerProxy* WebUserContentControllerProxy::get(UserContentCon
 }
     
 WebUserContentControllerProxy::WebUserContentControllerProxy()
-    : m_identifier(generateObjectIdentifier<UserContentControllerIdentifierType>())
+    : m_identifier(UserContentControllerIdentifier::generate())
     , m_userScripts(API::Array::create())
     , m_userStyleSheets(API::Array::create())
 {

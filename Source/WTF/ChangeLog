@@ -1,3 +1,26 @@
+2019-01-29  Chris Dumez  <cdumez@apple.com>
+
+        Make sure WTF::generateObjectIdentifier() internal counter does not get duplicated
+        https://bugs.webkit.org/show_bug.cgi?id=193848
+
+        Reviewed by Youenn Fablet.
+
+        Move WTF::generateObjectIdentifier()'s internal counter out-of-line so make sure it never gets
+        duplicated at each call site. This has caused some hard-to-debug issues with duplicate
+        identifiers such as Bug 193761.
+
+        Also move it to ObjectIdentifier and rename it to generate() as this make call sites nicer
+        when they have a typedef for the ObjectIdentifier<T> type.
+
+        * WTF.xcodeproj/project.pbxproj:
+        * wtf/CMakeLists.txt:
+        * wtf/ObjectIdentifier.cpp: Copied from Source/WebCore/platform/Process.cpp.
+        (WTF::ObjectIdentifierBase::generateIdentifierInternal):
+        (WTF::ObjectIdentifierBase::generateThreadSafeIdentifierInternal):
+        * wtf/ObjectIdentifier.h:
+        (WTF::ObjectIdentifier::generate):
+        (WTF::ObjectIdentifier::generateThreadSafe):
+
 2019-01-28  Ross Kirsling  <ross.kirsling@sony.com>
 
         Move platform-specific files out of WTF root directory.

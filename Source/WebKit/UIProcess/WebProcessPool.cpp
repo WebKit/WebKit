@@ -260,7 +260,7 @@ WebProcessPool::WebProcessPool(API::ProcessPoolConfiguration& configuration)
     std::call_once(onceFlag, [] {
         WTF::setProcessPrivileges(allPrivileges());
         WebCore::NetworkStorageSession::permitProcessToUseCookieAPI(true);
-        Process::setIdentifier(generateObjectIdentifier<WebCore::ProcessIdentifierType>());
+        Process::setIdentifier(WebCore::ProcessIdentifier::generate());
     });
 
     if (m_configuration->shouldHaveLegacyDataStore())

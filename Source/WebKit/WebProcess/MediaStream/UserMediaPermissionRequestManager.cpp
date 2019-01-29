@@ -232,7 +232,7 @@ void UserMediaPermissionRequestManager::revokeUserMediaDeviceSandboxExtensions(c
 
 UserMediaClient::DeviceChangeObserverToken UserMediaPermissionRequestManager::addDeviceChangeObserver(WTF::Function<void()>&& observer)
 {
-    auto identifier = generateObjectIdentifier<WebCore::UserMediaClient::DeviceChangeObserverTokenType>();
+    auto identifier = WebCore::UserMediaClient::DeviceChangeObserverToken::generate();
     m_deviceChangeObserverMap.add(identifier, WTFMove(observer));
 
     if (!m_monitoringDeviceChange) {

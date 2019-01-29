@@ -36,7 +36,7 @@ namespace WebCore {
 
 static SWServerToContextConnectionIdentifier generateServerToContextConnectionIdentifier()
 {
-    return generateObjectIdentifier<SWServerToContextConnectionIdentifierType>();
+    return SWServerToContextConnectionIdentifier::generate();
 }
 
 static HashMap<SecurityOriginData, SWServerToContextConnection*>& allConnectionsByOrigin()

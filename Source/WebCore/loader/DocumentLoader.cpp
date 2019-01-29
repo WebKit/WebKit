@@ -1779,7 +1779,7 @@ void DocumentLoader::registerTemporaryServiceWorkerClient(const URL& url)
         return;
 
     m_temporaryServiceWorkerClient = TemporaryServiceWorkerClient {
-        generateObjectIdentifier<DocumentIdentifierType>(),
+        DocumentIdentifier::generate(),
         *ServiceWorkerProvider::singleton().existingServiceWorkerConnectionForSession(m_frame->page()->sessionID())
     };
 

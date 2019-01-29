@@ -400,8 +400,8 @@ String RegistrationDatabase::importRecords()
         if (!key || !originURL.isValid() || !topOrigin || !updateViaCache || !scriptURL.isValid() || !workerType)
             continue;
 
-        auto workerIdentifier = generateObjectIdentifier<ServiceWorkerIdentifierType>();
-        auto registrationIdentifier = generateObjectIdentifier<ServiceWorkerRegistrationIdentifierType>();
+        auto workerIdentifier = ServiceWorkerIdentifier::generate();
+        auto registrationIdentifier = ServiceWorkerRegistrationIdentifier::generate();
         auto serviceWorkerData = ServiceWorkerData { workerIdentifier, scriptURL, ServiceWorkerState::Activated, *workerType, registrationIdentifier };
         auto registration = ServiceWorkerRegistrationData { WTFMove(*key), registrationIdentifier, URL(originURL, scopePath), *updateViaCache, lastUpdateCheckTime, WTF::nullopt, WTF::nullopt, WTFMove(serviceWorkerData) };
         auto contextData = ServiceWorkerContextData { WTF::nullopt, WTFMove(registration), workerIdentifier, WTFMove(script), WTFMove(contentSecurityPolicy), WTFMove(referrerPolicy), WTFMove(scriptURL), *workerType, m_sessionID, true, WTFMove(scriptResourceMap) };

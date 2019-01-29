@@ -52,7 +52,7 @@ static Seconds terminationDelay { 10_s };
 
 SWServer::Connection::Connection(SWServer& server)
     : m_server(server)
-    , m_identifier(generateObjectIdentifier<SWServerConnectionIdentifierType>())
+    , m_identifier(SWServerConnectionIdentifier::generate())
 {
 }
 
@@ -505,7 +505,7 @@ void SWServer::removeClientServiceWorkerRegistration(Connection& connection, Ser
 
 void SWServer::updateWorker(Connection&, const ServiceWorkerJobDataIdentifier& jobDataIdentifier, SWServerRegistration& registration, const URL& url, const String& script, const ContentSecurityPolicyResponseHeaders& contentSecurityPolicy, const String& referrerPolicy, WorkerType type, HashMap<URL, ServiceWorkerContextData::ImportedScript>&& scriptResourceMap)
 {
-    tryInstallContextData({ jobDataIdentifier, registration.data(), generateObjectIdentifier<ServiceWorkerIdentifierType>(), script, contentSecurityPolicy, referrerPolicy, url, type, sessionID(), false, WTFMove(scriptResourceMap) });
+    tryInstallContextData({ jobDataIdentifier, registration.data(), ServiceWorkerIdentifier::generate(), script, contentSecurityPolicy, referrerPolicy, url, type, sessionID(), false, WTFMove(scriptResourceMap) });
 }
 
 void SWServer::tryInstallContextData(ServiceWorkerContextData&& data)

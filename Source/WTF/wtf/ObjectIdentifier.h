@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2017-2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -33,8 +33,24 @@
 
 namespace WTF {
 
-template<typename T> class ObjectIdentifier {
+class ObjectIdentifierBase {
+protected:
+    WTF_EXPORT_PRIVATE static uint64_t generateIdentifierInternal();
+    WTF_EXPORT_PRIVATE static uint64_t generateThreadSafeIdentifierInternal();
+};
+
+template<typename T> class ObjectIdentifier : private ObjectIdentifierBase {
 public:
+    static ObjectIdentifier generate()
+    {
+        return ObjectIdentifier { generateIdentifierInternal() };
+    }
+
+    static ObjectIdentifier generateThreadSafe()
+    {
+        return ObjectIdentifier { generateThreadSafeIdentifierInternal() };
+    }
+
     ObjectIdentifier() = default;
 
     ObjectIdentifier(HashTableDeletedValueType) : m_identifier(hashTableDeletedValue()) { }
@@ -74,8 +90,6 @@ public:
     }
 
 private:
-    template<typename U> friend ObjectIdentifier<U> generateObjectIdentifier();
-    template<typename U> friend ObjectIdentifier<U> generateThreadSafeObjectIdentifier();
     template<typename U> friend ObjectIdentifier<U> makeObjectIdentifier(uint64_t);
     friend struct HashTraits<ObjectIdentifier>;
     template<typename U> friend struct ObjectIdentifierHash;
@@ -90,22 +104,6 @@ private:
 
     uint64_t m_identifier { 0 };
 };
-
-template<typename T> inline ObjectIdentifier<T> generateObjectIdentifier()
-{
-    static uint64_t currentIdentifier;
-    return ObjectIdentifier<T> { ++currentIdentifier };
-}
-
-template<typename T> inline ObjectIdentifier<T> generateThreadSafeObjectIdentifier()
-{
-    static LazyNeverDestroyed<std::atomic<uint64_t>> currentIdentifier;
-    static std::once_flag initializeCurrentIdentifier;
-    std::call_once(initializeCurrentIdentifier, [] {
-        currentIdentifier.construct(0);
-    });
-    return ObjectIdentifier<T> { ++currentIdentifier.get() };
-}
 
 template<typename T> inline ObjectIdentifier<T> makeObjectIdentifier(uint64_t identifier)
 {
@@ -127,6 +125,4 @@ template<typename T> struct DefaultHash<ObjectIdentifier<T>> {
 } // namespace WTF
 
 using WTF::ObjectIdentifier;
-using WTF::generateObjectIdentifier;
-using WTF::generateThreadSafeObjectIdentifier;
 using WTF::makeObjectIdentifier;

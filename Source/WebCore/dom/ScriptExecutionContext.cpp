@@ -105,7 +105,7 @@ ScriptExecutionContextIdentifier ScriptExecutionContext::contextIdentifier() con
     if (!m_contextIdentifier) {
         Locker<Lock> locker(allScriptExecutionContextsMapLock);
 
-        m_contextIdentifier = generateObjectIdentifier<ScriptExecutionContextIdentifierType>();
+        m_contextIdentifier = ScriptExecutionContextIdentifier::generate();
 
         ASSERT(!allScriptExecutionContextsMap().contains(m_contextIdentifier));
         allScriptExecutionContextsMap().add(m_contextIdentifier, const_cast<ScriptExecutionContext*>(this));

@@ -36,7 +36,7 @@ ServiceWorkerJobData::ServiceWorkerJobData(const Identifier& identifier)
 }
 
 ServiceWorkerJobData::ServiceWorkerJobData(SWServerConnectionIdentifier connectionIdentifier, const DocumentOrWorkerIdentifier& localSourceContext)
-    : m_identifier { connectionIdentifier, generateThreadSafeObjectIdentifier<ServiceWorkerJobIdentifierType>() }
+    : m_identifier { connectionIdentifier, ServiceWorkerJobIdentifier::generateThreadSafe() }
 {
     WTF::switchOn(localSourceContext, [&](DocumentIdentifier documentIdentifier) {
         sourceContext = ServiceWorkerClientIdentifier { connectionIdentifier, documentIdentifier };

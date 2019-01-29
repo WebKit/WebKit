@@ -105,7 +105,7 @@ private:
     RefPtr<IPC::Connection> m_connection;
     IPC::MessageReceiverMap m_messageReceiverMap;
     bool m_alwaysRunsAtBackgroundPriority { false };
-    WebCore::ProcessIdentifier m_processIdentifier { generateObjectIdentifier<WebCore::ProcessIdentifierType>() };
+    WebCore::ProcessIdentifier m_processIdentifier { WebCore::ProcessIdentifier::generate() };
 };
 
 template<typename T>

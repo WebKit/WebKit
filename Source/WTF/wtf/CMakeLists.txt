@@ -375,6 +375,7 @@ set(WTF_SOURCES
     MonotonicTime.cpp
     NumberOfCores.cpp
     OSRandomSource.cpp
+    ObjectIdentifier.cpp
     PageBlock.cpp
     ParallelHelperPool.cpp
     ParallelJobsGeneric.cpp

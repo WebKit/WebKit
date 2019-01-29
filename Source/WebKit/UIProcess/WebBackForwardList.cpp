@@ -434,7 +434,7 @@ void WebBackForwardList::restoreFromState(BackForwardListState backForwardListSt
     items.reserveInitialCapacity(backForwardListState.items.size());
 
     for (auto& backForwardListItemState : backForwardListState.items) {
-        backForwardListItemState.identifier = { Process::identifier(), generateObjectIdentifier<BackForwardItemIdentifier::ItemIdentifierType>() };
+        backForwardListItemState.identifier = { Process::identifier(), ObjectIdentifier<BackForwardItemIdentifier::ItemIdentifierType>::generate() };
         items.uncheckedAppend(WebBackForwardListItem::create(WTFMove(backForwardListItemState), m_page->pageID()));
     }
     m_currentIndex = backForwardListState.currentIndex ? Optional<size_t>(*backForwardListState.currentIndex) : WTF::nullopt;

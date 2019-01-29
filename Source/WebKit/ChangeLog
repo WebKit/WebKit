@@ -1,5 +1,23 @@
 2019-01-29  Chris Dumez  <cdumez@apple.com>
 
+        Make sure WTF::generateObjectIdentifier() internal counter does not get duplicated
+        https://bugs.webkit.org/show_bug.cgi?id=193848
+
+        Reviewed by Youenn Fablet.
+
+        * Platform/IPC/Connection.cpp:
+        (IPC::Connection::Connection):
+        * UIProcess/ChildProcessProxy.h:
+        * UIProcess/UserContent/WebUserContentControllerProxy.cpp:
+        (WebKit::WebUserContentControllerProxy::WebUserContentControllerProxy):
+        * UIProcess/WebBackForwardList.cpp:
+        (WebKit::WebBackForwardList::restoreFromState):
+        * UIProcess/WebProcessPool.cpp:
+        * WebProcess/MediaStream/UserMediaPermissionRequestManager.cpp:
+        (WebKit::UserMediaPermissionRequestManager::addDeviceChangeObserver):
+
+2019-01-29  Chris Dumez  <cdumez@apple.com>
+
         REGRESSION (PSON): Twitter link gets stuck at t.co after navigating back in tab
         https://bugs.webkit.org/show_bug.cgi?id=193932
         <rdar://problem/47598947>

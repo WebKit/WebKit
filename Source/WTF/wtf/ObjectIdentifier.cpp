@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -24,31 +24,25 @@
  */
 
 #include "config.h"
-#include "ProcessIdentifier.h"
+#include "ObjectIdentifier.h"
 
-#include <wtf/MainThread.h>
 
-namespace WebCore {
-namespace Process {
+namespace WTF {
 
-static Optional<ProcessIdentifier> globalIdentifier;
-
-void setIdentifier(ProcessIdentifier processIdentifier)
+uint64_t ObjectIdentifierBase::generateIdentifierInternal()
 {
-    ASSERT(isUIThread());
-    globalIdentifier = processIdentifier;
+    static uint64_t current;
+    return ++current;
 }
 
-ProcessIdentifier identifier()
+uint64_t ObjectIdentifierBase::generateThreadSafeIdentifierInternal()
 {
-    static std::once_flag onceFlag;
-    std::call_once(onceFlag, [] {
-        if (!globalIdentifier)
-            globalIdentifier = ProcessIdentifier::generate();
+    static LazyNeverDestroyed<std::atomic<uint64_t>> current;
+    static std::once_flag initializeCurrentIdentifier;
+    std::call_once(initializeCurrentIdentifier, [] {
+        current.construct(0);
     });
-
-    return *globalIdentifier;
+    return ++current.get();
 }
 
-} // namespace Process
-} // namespace WebCore
+} // namespace WTF
