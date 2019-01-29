@@ -28,6 +28,9 @@ list(APPEND WTF_SOURCES
     glib/RunLoopGLib.cpp
     glib/URLGLib.cpp
 
+    posix/OSAllocatorPOSIX.cpp
+    posix/ThreadingPOSIX.cpp
+
     text/unix/TextBreakIteratorInternalICUUnix.cpp
 
     unix/CPUTimeUnix.cpp

@@ -1,3 +1,28 @@
+2019-01-28  Ross Kirsling  <ross.kirsling@sony.com>
+
+        Move platform-specific files out of WTF root directory.
+        https://bugs.webkit.org/show_bug.cgi?id=193929
+
+        Reviewed by Alex Christensen.
+
+        * WTF.xcodeproj/project.pbxproj:
+        * wtf/CMakeLists.txt:
+        * wtf/PlatformGTK.cmake:
+        * wtf/PlatformJSCOnly.cmake:
+        * wtf/PlatformMac.cmake:
+        * wtf/PlatformPlayStation.cmake:
+        * wtf/PlatformWPE.cmake:
+        * wtf/PlatformWin.cmake:
+        * wtf/cf/RunLoopTimerCF.cpp: Renamed from Source/WTF/wtf/RunLoopTimerCF.cpp.
+        * wtf/cf/SchedulePairCF.cpp: Renamed from Source/WTF/wtf/SchedulePairCF.cpp.
+        * wtf/mac/SchedulePairMac.mm: Renamed from Source/WTF/wtf/SchedulePairMac.mm.
+        * wtf/posix/OSAllocatorPOSIX.cpp: Renamed from Source/WTF/wtf/OSAllocatorPosix.cpp.
+        * wtf/posix/ThreadingPOSIX.cpp: Renamed from Source/WTF/wtf/ThreadingPthreads.cpp.
+        * wtf/win/CONTRIBUTORS.pthreads-win32: Renamed from Source/WTF/wtf/CONTRIBUTORS.pthreads-win32.
+        * wtf/win/OSAllocatorWin.cpp: Renamed from Source/WTF/wtf/OSAllocatorWin.cpp.
+        * wtf/win/ThreadSpecificWin.cpp: Renamed from Source/WTF/wtf/ThreadSpecificWin.cpp.
+        * wtf/win/ThreadingWin.cpp: Renamed from Source/WTF/wtf/ThreadingWin.cpp.
+
 2019-01-28  Andy Estes  <aestes@apple.com>
 
         [watchOS] Enable Parental Controls content filtering

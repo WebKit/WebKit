@@ -26,8 +26,6 @@
 #include "config.h"
 #include <wtf/OSAllocator.h>
 
-#if OS(UNIX)
-
 #include <errno.h>
 #include <sys/mman.h>
 #include <wtf/Assertions.h>
@@ -113,7 +111,7 @@ void* OSAllocator::reserveAndCommit(size_t bytes, Usage usage, bool writable, bo
     }
     if (result && includesGuardPages) {
         // We use mmap to remap the guardpages rather than using mprotect as
-        // mprotect results in multiple references to the code region.  This
+        // mprotect results in multiple references to the code region. This
         // breaks the madvise based mechanism we use to return physical memory
         // to the OS.
         mmap(result, pageSize(), PROT_NONE, MAP_FIXED | MAP_PRIVATE | MAP_ANON, fd, 0);
@@ -182,5 +180,3 @@ void OSAllocator::releaseDecommitted(void* address, size_t bytes)
 }
 
 } // namespace WTF
-
-#endif // OS(UNIX)

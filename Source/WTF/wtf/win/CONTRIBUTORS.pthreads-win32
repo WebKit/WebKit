@@ -1,7 +1,7 @@
 This is a copy of CONTRIBUTORS file for the Pthreads-win32 library, downloaded
 from http://sourceware.org/cgi-bin/cvsweb.cgi/~checkout~/pthreads/CONTRIBUTORS?rev=1.32&cvsroot=pthreads-win32
 
-Included here to compliment the Pthreads-win32 license header in wtf/ThreadingWin.cpp file.
+Included here to compliment the Pthreads-win32 license header in ThreadingWin.cpp file.
 WebKit is using derived sources of ThreadCondition code from Pthreads-win32.
 
 -------------------------------------------------------------------------------

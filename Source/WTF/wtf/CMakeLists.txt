@@ -492,23 +492,6 @@ list(APPEND WTF_LIBRARIES
     ${ICU_LIBRARIES}
 )
 
-if (WIN32)
-    list(APPEND WTF_SOURCES
-        OSAllocatorWin.cpp
-        ThreadSpecificWin.cpp
-        ThreadingWin.cpp
-    )
-    list(APPEND WTF_LIBRARIES
-        DbgHelp
-        winmm
-    )
-else ()
-    list(APPEND WTF_SOURCES
-        OSAllocatorPosix.cpp
-        ThreadingPthreads.cpp
-    )
-endif ()
-
 WEBKIT_FRAMEWORK_DECLARE(WTF)
 WEBKIT_INCLUDE_CONFIG_FILES_IF_EXISTS()
 

@@ -11,7 +11,10 @@ if (WIN32)
         win/FileSystemWin.cpp
         win/LanguageWin.cpp
         win/MainThreadWin.cpp
+        win/OSAllocatorWin.cpp
         win/PathWalker.cpp
+        win/ThreadSpecificWin.cpp
+        win/ThreadingWin.cpp
     )
     list(APPEND WTF_PUBLIC_HEADERS
         win/DbgHelperWin.h
@@ -20,7 +23,9 @@ if (WIN32)
         text/win/WCharStringExtras.h
     )
     list(APPEND WTF_LIBRARIES
+        DbgHelp
         shlwapi
+        winmm
     )
 else ()
     list(APPEND WTF_SOURCES
@@ -29,6 +34,8 @@ else ()
         generic/MainThreadGeneric.cpp
 
         posix/FileSystemPOSIX.cpp
+        posix/OSAllocatorPOSIX.cpp
+        posix/ThreadingPOSIX.cpp
 
         text/unix/TextBreakIteratorInternalICUUnix.cpp
 

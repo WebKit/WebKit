@@ -22,8 +22,6 @@
 #include "config.h"
 #include <wtf/ThreadSpecific.h>
 
-#if OS(WINDOWS)
-
 #if !USE(PTHREADS)
 
 namespace WTF {
@@ -43,5 +41,3 @@ DWORD* flsKeys()
 } // namespace WTF
 
 #endif // !USE(PTHREADS)
-
-#endif // OS(WINDOWS)

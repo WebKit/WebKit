@@ -39,14 +39,13 @@ list(APPEND WTF_PUBLIC_HEADERS
 
 list(APPEND WTF_SOURCES
     BlockObjCExceptions.mm
-    RunLoopTimerCF.cpp
-    SchedulePairCF.cpp
-    SchedulePairMac.mm
 
     cf/CFURLExtras.cpp
     cf/FileSystemCF.cpp
     cf/LanguageCF.cpp
     cf/RunLoopCF.cpp
+    cf/RunLoopTimerCF.cpp
+    cf/SchedulePairCF.cpp
     cf/URLCF.cpp
 
     cocoa/AutodrainedPool.cpp
@@ -63,8 +62,11 @@ list(APPEND WTF_SOURCES
 
     mac/DeprecatedSymbolsUsedBySafari.mm
     mac/FileSystemMac.mm
+    mac/SchedulePairMac.mm
 
     posix/FileSystemPOSIX.cpp
+    posix/OSAllocatorPOSIX.cpp
+    posix/ThreadingPOSIX.cpp
 
     text/cf/AtomicStringImplCF.cpp
     text/cf/StringCF.cpp

@@ -6,6 +6,8 @@ list(APPEND WTF_SOURCES
     generic/WorkQueueGeneric.cpp
 
     posix/FileSystemPOSIX.cpp
+    posix/OSAllocatorPOSIX.cpp
+    posix/ThreadingPOSIX.cpp
 
     text/unix/TextBreakIteratorInternalICUUnix.cpp
 

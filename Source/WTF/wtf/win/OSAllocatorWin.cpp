@@ -26,10 +26,8 @@
 #include "config.h"
 #include <wtf/OSAllocator.h>
 
-#if OS(WINDOWS)
-
-#include <wtf/Assertions.h>
 #include <windows.h>
+#include <wtf/Assertions.h>
 
 namespace WTF {
 
@@ -98,5 +96,3 @@ void OSAllocator::hintMemoryNotNeededSoon(void*, size_t)
 }
 
 } // namespace WTF
-
-#endif // OS(WINDOWS)

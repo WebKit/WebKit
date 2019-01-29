@@ -17,13 +17,18 @@ list(APPEND WTF_SOURCES
     win/MainThreadWin.cpp
     win/MemoryFootprintWin.cpp
     win/MemoryPressureHandlerWin.cpp
+    win/OSAllocatorWin.cpp
     win/PathWalker.cpp
     win/RunLoopWin.cpp
+    win/ThreadSpecificWin.cpp
+    win/ThreadingWin.cpp
     win/WorkQueueWin.cpp
 )
 
 list(APPEND WTF_LIBRARIES
+    DbgHelp
     shlwapi
+    winmm
 )
 
 if (USE_CF)
