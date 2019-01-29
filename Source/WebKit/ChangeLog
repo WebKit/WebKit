@@ -1,3 +1,20 @@
+2019-01-28  David Kilzer  <ddkilzer@apple.com>
+
+        REGRESSION (r236481): Move soft-linking of LocalAuthentication.framework out of LocalAuthenticationSoftLink.h
+        <https://webkit.org/b/193884>
+
+        Reviewed by Jiewen Tan.
+
+        * SourcesCocoa.txt:
+        * UnifiedSources-input.xcfilelist:
+        * WebKit.xcodeproj/project.pbxproj:
+        - Add LocalAuthenticationSoftLink.mm to the project.
+
+        * UIProcess/WebAuthentication/Cocoa/LocalAuthenticationSoftLink.h:
+        * UIProcess/WebAuthentication/Cocoa/LocalAuthenticationSoftLink.mm: Copied from Source/WebKit/UIProcess/WebAuthentication/Cocoa/LocalAuthenticationSoftLink.h.
+        - Move soft-linking implementation to
+          LocalAuthenticationSoftLink.mm.
+
 2019-01-28  Timothy Hatcher  <timothy@apple.com>
 
         Add back some includes that got removed at some point.

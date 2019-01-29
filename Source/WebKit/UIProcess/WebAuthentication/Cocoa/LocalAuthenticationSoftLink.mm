@@ -23,11 +23,10 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#import "config.h"
 
-#import <LocalAuthentication/LocalAuthentication.h>
 #import <wtf/SoftLinking.h>
 
-SOFT_LINK_FRAMEWORK_FOR_HEADER(WebKit, LocalAuthentication);
+SOFT_LINK_FRAMEWORK_FOR_SOURCE(WebKit, LocalAuthentication);
 
-SOFT_LINK_CLASS_FOR_HEADER(WebKit, LAContext);
+SOFT_LINK_CLASS_FOR_SOURCE(WebKit, LocalAuthentication, LAContext);

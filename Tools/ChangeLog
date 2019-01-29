@@ -1,3 +1,14 @@
+2019-01-28  David Kilzer  <ddkilzer@apple.com>
+
+        REGRESSION (r236481): Move soft-linking of LocalAuthentication.framework out of LocalAuthenticationSoftLink.h
+        <https://webkit.org/b/193884>
+
+        Reviewed by Jiewen Tan.
+
+        * Scripts/webkitpy/style/checkers/cpp.py:
+        (check_language): Add LocalAuthentication to
+        `frameworks_with_soft_links`.
+
 2019-01-28  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         [Win][WebKitTestRunner] Error: test and reference images have different sizes. Test image is 784x561, reference image is 800x600

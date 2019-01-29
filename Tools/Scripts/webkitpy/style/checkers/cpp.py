@@ -3339,7 +3339,7 @@ def check_language(filename, clean_lines, line_number, file_extension, include_s
             error(line_number, 'softlink/header', 5,
                   'Never soft-link frameworks in headers. Put the soft-link macros in a source file, or create {framework}SoftLink.{{cpp,mm}} instead.'.format(framework=framework_name))
 
-        frameworks_with_soft_links = ['CoreMedia', 'CoreVideo', 'DataDetectorsCore', 'MediaAccessibility', 'MediaRemote', 'PassKit', 'QuickLook', 'UIKit', 'VideoToolbox']
+        frameworks_with_soft_links = ['CoreMedia', 'CoreVideo', 'DataDetectorsCore', 'LocalAuthentication', 'MediaAccessibility', 'MediaRemote', 'PassKit', 'QuickLook', 'UIKit', 'VideoToolbox']
         if framework_name in frameworks_with_soft_links and not re.compile('^\s*SOFT_LINK_(PRIVATE_)?FRAMEWORK_FOR_(HEADER|SOURCE)(_WITH_EXPORT)?\({}\)'.format(framework_name)).search(line):
             error(line_number, 'softlink/framework', 5,
                   'Use {framework}SoftLink.{{cpp,h,mm}} to soft-link to {framework}.framework.'.format(framework=framework_name))

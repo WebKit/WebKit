@@ -895,6 +895,7 @@
 		41FABD2A1F4DE001006A6C97 /* CacheStorageEngineCache.h in Headers */ = {isa = PBXBuildFile; fileRef = 41FABD281F4DDFDC006A6C97 /* CacheStorageEngineCache.h */; };
 		41FAF5F51E3C0649001AE678 /* WebRTCResolver.h in Headers */ = {isa = PBXBuildFile; fileRef = 41FAF5F41E3C0641001AE678 /* WebRTCResolver.h */; };
 		41FAF5F81E3C1021001AE678 /* LibWebRTCResolver.h in Headers */ = {isa = PBXBuildFile; fileRef = 41FAF5F61E3C0B47001AE678 /* LibWebRTCResolver.h */; };
+		449D90DA21FDC30B00F677C0 /* LocalAuthenticationSoftLink.mm in Sources */ = {isa = PBXBuildFile; fileRef = 449D90D821FD63FE00F677C0 /* LocalAuthenticationSoftLink.mm */; };
 		460F488F1F996F7100CF4B87 /* WebSWContextManagerConnectionMessageReceiver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 460F488D1F996F6C00CF4B87 /* WebSWContextManagerConnectionMessageReceiver.cpp */; };
 		460F48901F996F7100CF4B87 /* WebSWContextManagerConnectionMessages.h in Headers */ = {isa = PBXBuildFile; fileRef = 460F488E1F996F6C00CF4B87 /* WebSWContextManagerConnectionMessages.h */; };
 		463FD4801EB9459600A2982C /* WKProcessTerminationReason.h in Headers */ = {isa = PBXBuildFile; fileRef = 463FD47F1EB9458400A2982C /* WKProcessTerminationReason.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -3084,6 +3085,7 @@
 		41FBE823206DA79C000F0741 /* NetworkContentRuleListManager.messages.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = NetworkContentRuleListManager.messages.in; sourceTree = "<group>"; };
 		41FBE824206DA79C000F0741 /* NetworkContentRuleListManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = NetworkContentRuleListManager.cpp; sourceTree = "<group>"; };
 		4450AEBF1DC3FAE5009943F2 /* SharedMemoryCocoa.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SharedMemoryCocoa.cpp; sourceTree = "<group>"; };
+		449D90D821FD63FE00F677C0 /* LocalAuthenticationSoftLink.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = LocalAuthenticationSoftLink.mm; sourceTree = "<group>"; };
 		44A481C621F2D27B00F2F919 /* ClientCertificateAuthenticationXPCConstants.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = ClientCertificateAuthenticationXPCConstants.cpp; sourceTree = "<group>"; };
 		460F488D1F996F6C00CF4B87 /* WebSWContextManagerConnectionMessageReceiver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = WebSWContextManagerConnectionMessageReceiver.cpp; path = DerivedSources/WebKit2/WebSWContextManagerConnectionMessageReceiver.cpp; sourceTree = BUILT_PRODUCTS_DIR; };
 		460F488E1F996F6C00CF4B87 /* WebSWContextManagerConnectionMessages.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WebSWContextManagerConnectionMessages.h; path = DerivedSources/WebKit2/WebSWContextManagerConnectionMessages.h; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -6780,6 +6782,7 @@
 				5772F204217DBD6A0056BF2C /* HidService.h */,
 				5772F205217DBD6A0056BF2C /* HidService.mm */,
 				578DC2972155A0010074E815 /* LocalAuthenticationSoftLink.h */,
+				449D90D821FD63FE00F677C0 /* LocalAuthenticationSoftLink.mm */,
 				57DCEDA12149C1E20016B847 /* LocalAuthenticator.h */,
 				57DCEDA32149DFF50016B847 /* LocalAuthenticator.mm */,
 				57DCEDA7214A568B0016B847 /* LocalConnection.h */,
@@ -10795,6 +10798,7 @@
 				2D913442212CF9F000128AFD /* JSNPObject.cpp in Sources */,
 				2984F588164BA095004BC0C6 /* LegacyCustomProtocolManagerMessageReceiver.cpp in Sources */,
 				2984F57C164B915F004BC0C6 /* LegacyCustomProtocolManagerProxyMessageReceiver.cpp in Sources */,
+				449D90DA21FDC30B00F677C0 /* LocalAuthenticationSoftLink.mm in Sources */,
 				2D92A779212B6A6100F493FD /* Logging.cpp in Sources */,
 				2D92A781212B6A7100F493FD /* MessageReceiverMap.cpp in Sources */,
 				2D92A782212B6A7100F493FD /* MessageSender.cpp in Sources */,

@@ -471,6 +471,7 @@ UIProcess/RemoteLayerTree/RemoteScrollingTree.cpp
 
 UIProcess/WebAuthentication/Cocoa/HidConnection.mm
 UIProcess/WebAuthentication/Cocoa/HidService.mm
+UIProcess/WebAuthentication/Cocoa/LocalAuthenticationSoftLink.mm @no-unify
 UIProcess/WebAuthentication/Cocoa/LocalAuthenticator.mm
 UIProcess/WebAuthentication/Cocoa/LocalConnection.mm
 UIProcess/WebAuthentication/Cocoa/LocalService.mm
