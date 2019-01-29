@@ -1,3 +1,16 @@
+2019-01-29  Chris Dumez  <cdumez@apple.com>
+
+        Regression (r240046): [PSON] Spurious changes to [WKWebView url] and [WKWebView loading] after [WKWebView loadRequest]
+        https://bugs.webkit.org/show_bug.cgi?id=193967
+        <rdar://problem/47635348>
+
+        Reviewed by Alex Christensen.
+
+        Add API test coverage.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/ProcessSwapOnNavigation.mm:
+        (-[PSONLoadingObserver observeValueForKeyPath:ofObject:change:context:]):
+
 2019-01-29  Aakash Jain  <aakash_jain@apple.com>
 
         [ews-app] Handle incoming results data

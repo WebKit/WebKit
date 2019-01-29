@@ -1,3 +1,19 @@
+2019-01-29  Chris Dumez  <cdumez@apple.com>
+
+        Regression (r240046): [PSON] Spurious changes to [WKWebView url] and [WKWebView loading] after [WKWebView loadRequest]
+        https://bugs.webkit.org/show_bug.cgi?id=193967
+        <rdar://problem/47635348>
+
+        Reviewed by Alex Christensen.
+
+        Update WebPageProxy::receivedPolicyDecision() to no longer clear the pending URL when we send PolicyAction::Ignore to
+        the old process when the load is continuing in a new process due to PSON.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::receivedNavigationPolicyDecision):
+        (WebKit::WebPageProxy::receivedPolicyDecision):
+        * UIProcess/WebPageProxy.h:
+
 2019-01-29  Keith Rollin  <krollin@apple.com>
 
         Add .xcfilelists to Run Script build phases
